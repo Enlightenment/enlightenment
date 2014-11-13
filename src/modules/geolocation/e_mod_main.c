@@ -320,12 +320,14 @@ _gc_init(E_Gadcon *gc, const char *name, const char *id, const char *style)
    Evas_Object *o;
    E_Gadcon_Client *gcc;
    Instance *inst;
+   char buf[4096];
 
    inst = E_NEW(Instance, 1);
 
    o = edje_object_add(gc->evas);
-   e_theme_edje_object_set(o, "base/theme/modules/geolocation",
-                           "e/modules/geolocation/main");
+   snprintf(buf, sizeof(buf), "%s/e-module-geolocation.edj",
+	    e_module_dir_get(geolocation_module));
+   edje_object_file_set(o, buf, "e/modules/geolocation/main");
    evas_object_show(o);
 
    gcc = e_gadcon_client_new(gc, name, id, style, o);

@@ -1,13 +1,21 @@
 EXTRA_DIST += src/modules/geolocation/module.desktop.in \
-src/modules/geolocation/e-module-geolocation.edj
+src/modules/geolocation/e-module-geolocation.edc \
+src/modules/tiling/images/location_on.png \
+src/modules/tiling/images/location_off.png
 if USE_MODULE_GEOLOCATION
 geolocationdir = $(MDIR)/geolocation
 geolocation_DATA = src/modules/geolocation/e-module-geolocation.edj \
 		 src/modules/geolocation/module.desktop
+CLEANFILES += src/modules/geolocation/e-module-geolocation.edj
 
 
 geolocationpkgdir = $(MDIR)/geolocation/$(MODULE_ARCH)
 geolocationpkg_LTLIBRARIES = src/modules/geolocation/module.la
+
+GEOLOCATION_EDJE_FLAGS = $(EDJE_FLAGS) -id $(top_srcdir)/src/modules/geolocation/images
+
+src/modules/geolocation/%.edj: src/modules/geolocation/%.edc Makefile
+	$(EDJE_CC) $(GEOLOCATION_EDJE_FLAGS) $< $@
 
 src_modules_geolocation_module_la_LIBADD = $(MOD_LIBS)
 src_modules_geolocation_module_la_CPPFLAGS = $(MOD_CPPFLAGS)

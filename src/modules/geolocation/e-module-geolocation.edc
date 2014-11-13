@@ -1,0 +1,52 @@
+images {
+   image: "location_off.png" COMP;
+   image: "location_on.png" COMP;
+}
+collections {
+   group {
+      name: "icon";
+      parts {
+	 part {
+	    name: "image";
+	    mouse_events: 0;
+	    description {
+	       state: "default" 0.0;
+	       aspect: 1.0 1.0;
+	       aspect_preference: BOTH;
+	       image.normal: "location_on.png";
+	    }
+	 }
+      }
+   }
+   group { name: "e/modules/geolocation/main";
+      min: 16 16;
+      max: 160 160;
+      parts {
+         part { name: "in_use";
+            description { state: "default" 0.0;
+               rel1.relative: (4/160) (4/160);
+               rel2.relative: (156/160) (156/160);
+               aspect: 1.0 1.0; aspect_preference: BOTH;
+               image.normal: "location_off.png";
+               max: 152 152;
+            }
+            description { state: "visible" 0.0;
+               inherit: "default" 0.0;
+               image.normal: "location_on.png";
+            }
+         }
+      }
+      programs {
+         program {
+            signal: "e,state,location_on"; source: "e";
+            action: STATE_SET "visible" 0.0;
+            target: "in_use";
+         }
+         program {
+            signal: "e,state,location_off"; source: "e";
+            action: STATE_SET "default" 0.0;
+            target: "in_use";
+         }
+      }
+   }
+}
