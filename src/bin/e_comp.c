@@ -919,7 +919,6 @@ _e_comp_act_opacity_obj_finder(E_Object *obj)
      {
       case E_CLIENT_TYPE:
         return ((E_Client*)obj)->frame;
-      default:
       case E_ZONE_TYPE:
       case E_MANAGER_TYPE:
       case E_MENU_TYPE:
@@ -928,7 +927,8 @@ _e_comp_act_opacity_obj_finder(E_Object *obj)
      }
    if (e_obj_is_win(obj))
      return e_win_client_get((void*)obj)->frame;
-   return NULL;
+   ec = e_client_focused_get();
+   return ec ? ec->frame : NULL;
 }
 
 static void

@@ -197,7 +197,7 @@ static Eina_Bool
 _e_elm_win_trap_size_min_set(void *data, Evas_Object *o __UNUSED__, int w, int h)
 {
    Elm_Win_Trap_Ctx *ctx = data;
-   int mw, mh;
+   int mw = 0, mh = 0;
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(ctx, EINA_TRUE);
    if (!ctx->client) return EINA_TRUE;
@@ -216,7 +216,7 @@ static Eina_Bool
 _e_elm_win_trap_size_max_set(void *data, Evas_Object *o __UNUSED__, int w, int h)
 {
    Elm_Win_Trap_Ctx *ctx = data;
-   int mw, mh;
+   int mw = 0, mh = 0;
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(ctx, EINA_TRUE);
    if (!ctx->client) return EINA_TRUE;
@@ -235,7 +235,7 @@ static Eina_Bool
 _e_elm_win_trap_size_base_set(void *data, Evas_Object *o __UNUSED__, int w, int h)
 {
    Elm_Win_Trap_Ctx *ctx = data;
-   int mw, mh;
+   int mw = 0, mh = 0;
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(ctx, EINA_TRUE);
    if (!ctx->client) return EINA_TRUE;

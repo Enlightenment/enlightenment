@@ -19,14 +19,13 @@ _key_down_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *
 }
 
 EAPI E_Obj_Dialog *
-e_obj_dialog_new(E_Comp *c, char *title, char *class_name, char *class_class)
+e_obj_dialog_new(E_Comp *c EINA_UNUSED, char *title, char *class_name, char *class_class)
 {
    E_Obj_Dialog *od;
    Evas_Object *o;
    Eina_Bool kg;
    Evas_Modifier_Mask mask;
 
-   if (!c) c = e_util_comp_current_get();
    od = E_OBJECT_ALLOC(E_Obj_Dialog, E_OBJ_DIALOG_TYPE, _e_obj_dialog_free);
    if (!od) return NULL;
    od->win = elm_win_add(NULL, NULL, ELM_WIN_DIALOG_BASIC);
