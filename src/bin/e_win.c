@@ -111,6 +111,7 @@ _e_elm_win_trap_show(void *data, Evas_Object *o)
         ctx->client->internal_no_remember = ctx->internal_no_remember;
         ctx->client->internal_no_reopen = ctx->internal_no_reopen;
         ctx->client->internal_elm_win = o;
+        elm_win_autodel_set(o, 1);
         evas_object_data_set(o, "E_Client", ctx->client);
 
         evas_object_size_hint_min_get(o, &ctx->client->icccm.min_w, &ctx->client->icccm.min_h);
