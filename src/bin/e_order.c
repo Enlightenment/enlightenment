@@ -5,6 +5,7 @@ static void      _e_order_free(E_Order *eo);
 static void      _e_order_cb_monitor(void *data, Ecore_File_Monitor *em, Ecore_File_Event event, const char *path);
 static void      _e_order_read(E_Order *eo);
 static void      _e_order_save(E_Order *eo);
+static void      _e_order_remove_if_exists(E_Order *eo, Efreet_Desktop *desktop);
 static Eina_Bool _e_order_cb_efreet_cache_update(void *data, int ev_type, void *ev);
 
 static Eina_List *orders = NULL;
@@ -130,6 +131,7 @@ e_order_append(E_Order *eo, Efreet_Desktop *desktop)
    E_OBJECT_CHECK(eo);
    E_OBJECT_TYPE_CHECK(eo, E_ORDER_TYPE);
 
+   _e_order_remove_if_exists(eo, desktop);
    efreet_desktop_ref(desktop);
    eo->desktops = eina_list_append(eo->desktops, desktop);
    _e_order_save(eo);
@@ -141,6 +143,7 @@ e_order_prepend_relative(E_Order *eo, Efreet_Desktop *desktop, Efreet_Desktop *b
    E_OBJECT_CHECK(eo);
    E_OBJECT_TYPE_CHECK(eo, E_ORDER_TYPE);
 
+   _e_order_remove_if_exists(eo, desktop);
    efreet_desktop_ref(desktop);
    eo->desktops = eina_list_prepend_relative(eo->desktops, desktop, before);
    _e_order_save(eo);
@@ -163,6 +166,7 @@ e_order_files_append(E_Order *eo, Eina_List *files)
           file += 7;
         desktop = efreet_desktop_get(file);
         if (!desktop) continue;
+        _e_order_remove_if_exists(eo, desktop);
         eo->desktops = eina_list_append(eo->desktops, desktop);
      }
    _e_order_save(eo);
@@ -185,6 +189,7 @@ e_order_files_prepend_relative(E_Order *eo, Eina_List *files, Efreet_Desktop *be
           file += 7;
         desktop = efreet_desktop_get(file);
         if (!desktop) continue;
+        _e_order_remove_if_exists(eo, desktop);
         eo->desktops = eina_list_prepend_relative(eo->desktops, desktop, before);
      }
    _e_order_save(eo);
@@ -210,6 +215,23 @@ _e_order_free(E_Order *eo)
    if (eo->monitor) ecore_file_monitor_del(eo->monitor);
    orders = eina_list_remove(orders, eo);
    free(eo);
+}
+
+static void
+_e_order_remove_if_exists(E_Order *eo, Efreet_Desktop *desktop)
+{
+   Efreet_Desktop *desk;
+   Eina_List *node, *nnode;
+
+   EINA_LIST_FOREACH_SAFE(eo->desktops, node, nnode, desk)
+     {
+        if (!strcmp(desk->orig_path, desktop->orig_path))
+          {
+             efreet_desktop_free(desktop);
+             eo->desktops = eina_list_remove(eo->desktops, desktop);
+             return;
+          }
+     }
 }
 
 static Eina_Bool
