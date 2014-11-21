@@ -1023,6 +1023,11 @@ m4_ifndef([v_rel],
 
 SUID_CFLAGS=-fPIE
 SUID_LDFLAGS=-pie
+case "$host_os" in
+   freebsd*|pcbsd*)
+      SUID_CFLAGS=-fPIE -pie
+      ;;
+esac
 AC_SUBST([SUID_CFLAGS])
 AC_SUBST([SUID_LDFLAGS])
 
