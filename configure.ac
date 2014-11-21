@@ -962,12 +962,19 @@ HALT="/sbin/shutdown -h now"
 REBOOT="/sbin/shutdown -r now"
 SUSPEND=""
 HIBERNATE=""
+MOUNT="/bin/mount"
+UMOUNT="/bin/umount"
+EJECT="/usr/bin/eject"
 case "$host_os" in
    freebsd*|pcbsd*)
       SUSPEND="acpiconf -s3"
       AC_MSG_NOTICE([use suspend method: $SUSPEND])
       HIBERNATE="acpiconf -s4"
       AC_MSG_NOTICE([use hibernate method: $HIBERNATE])
+      HALT="/sbin/shutdown -p now"
+      MOUNT="/sbin/mount"
+      UMOUNT="/sbin/umount"
+      EJECT="/usr/sbin/cdcontrol eject"
       ;;
    *)
       if test "x${have_systemd_user_session}" = "xyes"; then
@@ -995,6 +1002,9 @@ AC_SUBST([HALT])
 AC_SUBST([REBOOT])
 AC_SUBST([SUSPEND])
 AC_SUBST([HIBERNATE])
+AC_SUBST([MOUNT])
+AC_SUBST([UMOUNT])
+AC_SUBST([EJECT])
 
 m4_ifndef([v_rel],
    [

@@ -47,9 +47,9 @@ action:   halt           @HALT@
 action:   reboot         @REBOOT@
 action:   suspend        @SUSPEND@
 action:   hibernate      @HIBERNATE@
-action:   /bin/mount     /bin/mount
-action:   /bin/umount    /bin/umount
-action:   /usr/bin/eject /usr/bin/eject
+action:   /bin/mount     @MOUNT@
+action:   /bin/umount    @UMOUNT@
+action:   /usr/bin/eject @EJECT@
 action:   l2ping         /usr/bin/l2ping
 
 # on FreeBSD use this instead of the above.
