@@ -1025,7 +1025,8 @@ SUID_CFLAGS=-fPIE
 SUID_LDFLAGS=-pie
 case "$host_os" in
    freebsd*|pcbsd*)
-      SUID_CFLAGS=-fPIE -pie
+      SUID_CFLAGS=
+      SUID_LDFLAGS=
       ;;
 esac
 AC_SUBST([SUID_CFLAGS])
