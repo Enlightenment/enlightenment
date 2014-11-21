@@ -36,8 +36,8 @@ _e_dialog_internal_new(Evas_Object *parent, const char *name, const char *class,
    evas_object_event_callback_add(dia->win, EVAS_CALLBACK_DEL, _e_dialog_cb_delete, dia);
    ecore_evas_name_class_set(ecore_evas_ecore_evas_get(e), name, class);
    dia->bg_object = o = edje_object_add(evas_object_evas_get(dia->win));
-   EXPAND(o);
-   FILL(o);
+   E_EXPAND(o);
+   E_FILL(o);
    elm_win_resize_object_add(dia->win, o);
    e_theme_edje_object_set(o, "base/theme/dialog",
                            "e/widgets/dialog/main");

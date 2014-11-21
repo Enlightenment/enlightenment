@@ -768,8 +768,8 @@ _evry_window_new(E_Zone *zone, E_Zone_Edge edge)
    o = edje_object_add(win->evas);
    win->o_main = o;
    elm_win_resize_object_add(win->ewin, o);
-   EXPAND(o);
-   FILL(o);
+   E_EXPAND(o);
+   E_FILL(o);
    e_theme_edje_object_set(o, "base/theme/modules/everything",
                            "e/modules/everything/main");
 

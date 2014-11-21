@@ -5,8 +5,6 @@
 
 #ifdef HAVE_EEZE
 # include <Eeze.h>
-#else
-# include <E_Hal.h>
 #endif
 
 
