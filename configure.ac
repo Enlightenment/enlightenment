@@ -967,7 +967,8 @@ UMOUNT="/bin/umount"
 EJECT="/usr/bin/eject"
 case "$host_os" in
    freebsd*|pcbsd*)
-      SUSPEND="acpiconf -s3"
+      #SUSPEND="acpiconf -s3"
+      SUSPEND="/usr/sbin/zzz"
       AC_MSG_NOTICE([use suspend method: $SUSPEND])
       HIBERNATE="acpiconf -s4"
       AC_MSG_NOTICE([use hibernate method: $HIBERNATE])
