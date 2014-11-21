@@ -150,7 +150,7 @@ static inline const char *
 _desktop_name_get(const Efreet_Desktop *desktop)
 {
    if (!desktop) return NULL;
-   return desktop->orig_path ?: desktop->name;
+   return desktop->orig_path; //allways return the orig_path
 }
 
 static IBar_Order *
