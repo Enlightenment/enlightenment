@@ -362,14 +362,6 @@ if test "[${e_cv_enable_files}]" = yes; then
 fi
 AC_MSG_RESULT([$e_cv_enable_files])
 
-AC_ARG_ENABLE([device-hal],
-  AS_HELP_STRING([--enable-device-hal],[enable hal device backend @<:@default=disabled@:>@]),
-  [e_cv_want_device_hal=$enableval],
-  [e_cv_want_device_hal=no])
-
-AC_MSG_CHECKING([whether the HAL device backend is enabled])
-AC_MSG_RESULT([${e_cv_want_device_hal}])
-
 AC_ARG_ENABLE([device-udev],
   AS_HELP_STRING([--enable-device-udev],[enable udev device backend @<:@default=enabled@:>@]),
   [e_cv_want_device_udev=$enableval],
@@ -394,13 +386,6 @@ AC_MSG_CHECKING([which device backend to use])
 AC_MSG_RESULT($device_backend)
 
 AM_CONDITIONAL([HAVE_EEZE], [test "x${device_backend}" = "xeeze"])
-
-if test "x${device_backend}" != "xeeze"; then
-  device_backend=hal
-  device_libs=edbus
-  AC_DEFINE_UNQUOTED([HAVE_HAL],[1],[enable HAL support])
-fi
-
 
 DBUS_MOUNT_CONFIG=1
 dbus_mount="dbus-1"
