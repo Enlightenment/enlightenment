@@ -145,12 +145,7 @@ wizard_page_init(E_Wizard_Page *pg __UNUSED__, Eina_Bool *need_xdg_desktops __UN
 EAPI int
 wizard_page_shutdown(E_Wizard_Page *pg __UNUSED__)
 {
-   void *_tmp;
-   EINA_LIST_FREE(blang_list, _tmp)
-     {
-        // we dont need to free _tmp cause this is just a pointer to the basic_language_predefined_pairs
-        // array. a free will end up in a crash
-     }
+   eina_list_free(blang_list);
    return 1;
 }
 
