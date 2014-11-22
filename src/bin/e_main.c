@@ -416,7 +416,7 @@ main(int argc, char **argv)
         _e_main_shutdown(-1);
      }
    TS("Elementary Init Done");
-   _e_main_shutdown_push(elm_shutdown);
+   //_e_main_shutdown_push(elm_shutdown);
 
    TS("Emotion Init");
    if (!emotion_init())
