@@ -1931,8 +1931,6 @@ _e_comp_smart_hide(Evas_Object *obj)
    evas_object_hide(cw->clip);
    if (cw->input_obj) evas_object_hide(cw->input_obj);
    evas_object_hide(cw->effect_obj);
-   if (cw->ec->internal_elm_win)
-     evas_object_hide(cw->ec->internal_elm_win);
    if (stopping) return;
    /* ensure focus-out */
    if (cw->ec->focused)
@@ -1961,7 +1959,7 @@ _e_comp_smart_show(Evas_Object *obj)
    evas_object_show(cw->clip);
    if (cw->input_obj) evas_object_show(cw->input_obj);
    evas_object_show(cw->effect_obj);
-   if (cw->ec->internal_elm_win)
+   if (cw->ec->internal_elm_win && (!evas_object_visible_get(cw->ec->internal_elm_win)))
      evas_object_show(cw->ec->internal_elm_win);
    e_comp_render_queue(cw->comp);
    e_comp_shape_queue(cw->comp);
