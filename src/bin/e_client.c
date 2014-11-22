@@ -3423,8 +3423,6 @@ e_client_focused_set(E_Client *ec)
 
         E_FREE_FUNC(ec_unfocus->raise_timer, ecore_timer_del);
 
-        e_comp_object_signal_emit(ec_unfocus->frame, "e,state,unfocused", "e");
-
         /* if there unfocus client is fullscreen and visible */
         if ((!e_config->allow_above_fullscreen) &&
             (ec_unfocus->fullscreen) && (!ec_unfocus->iconic) && (!ec_unfocus->hidden) &&
