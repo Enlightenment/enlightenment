@@ -31,7 +31,6 @@ _e_dialog_internal_new(Evas_Object *parent, const char *name, const char *class,
         free(dia);
         return NULL;
      }
-   elm_win_autodel_set(dia->win, EINA_TRUE);
    elm_win_modal_set(dia->win, !!parent);
    e = evas_object_evas_get(dia->win);
    evas_object_event_callback_add(dia->win, EVAS_CALLBACK_DEL, _e_dialog_cb_delete, dia);

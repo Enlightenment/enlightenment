@@ -56,7 +56,6 @@ e_int_config_imc_import(E_Config_Dialog *parent)
         return NULL;
      }
 
-   elm_win_autodel_set(win, EINA_TRUE);
    evas = evas_object_evas_get(win);
 
    cfdata = E_NEW(E_Config_Dialog_Data, 1);

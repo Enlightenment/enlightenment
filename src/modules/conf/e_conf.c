@@ -116,7 +116,6 @@ e_configure_show(E_Comp *comp, const char *params)
         free(eco);
         return;
      }
-   elm_win_autodel_set(eco->win, EINA_TRUE);
    evas_object_data_set(eco->win, "e_conf_win", eco);
    eco->comp = comp;
    eco->evas = evas_object_evas_get(eco->win);

@@ -677,7 +677,6 @@ _shot_now(E_Zone *zone, E_Client *ec, const char *params)
    if (win) e_object_del(E_OBJECT(win));
    win = elm_win_add(NULL, NULL, ELM_WIN_BASIC);
 
-   elm_win_autodel_set(win, EINA_TRUE);
    evas = evas_object_evas_get(win);
    elm_win_title_set(win, _("Where to put Screenshot..."));
    evas_object_event_callback_add(win, EVAS_CALLBACK_DEL, _win_delete_cb, NULL);

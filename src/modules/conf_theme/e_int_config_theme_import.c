@@ -57,7 +57,6 @@ e_int_config_theme_import(E_Config_Dialog *parent)
 
    evas = evas_object_evas_get(win);
 
-   elm_win_autodel_set(win, EINA_TRUE);
    cfdata = E_NEW(E_Config_Dialog_Data, 1);
    import->cfdata = cfdata;
    import->win = win;

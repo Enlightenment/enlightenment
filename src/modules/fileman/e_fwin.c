@@ -682,7 +682,6 @@ _e_fwin_new(const char *dev,
         free(fwin);
         return NULL;
      }
-   elm_win_autodel_set(fwin->win, EINA_TRUE);
    fwins = eina_list_append(fwins, fwin);
    evas_object_event_callback_add(fwin->win, EVAS_CALLBACK_DEL, _e_fwin_cb_delete, fwin);
    evas_object_event_callback_add(fwin->win, EVAS_CALLBACK_RESIZE, _e_fwin_cb_resize, fwin);

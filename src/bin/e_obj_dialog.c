@@ -34,7 +34,6 @@ e_obj_dialog_new(E_Comp *c EINA_UNUSED, char *title, char *class_name, char *cla
         free(od);
         return NULL;
      }
-   elm_win_autodel_set(od->win, EINA_TRUE);
    evas_object_event_callback_add(od->win, EVAS_CALLBACK_DEL, (Evas_Object_Event_Cb)_e_obj_dialog_cb_delete, od);
    ecore_evas_name_class_set(e_win_ee_get(od->win), class_name, class_class);
    elm_win_title_set(od->win, title);
