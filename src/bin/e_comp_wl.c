@@ -2050,7 +2050,8 @@ _e_comp_wl_client_cb_del(void *data EINA_UNUSED, E_Client *ec)
 
    /* the client is getting deleted, which means the pixmap will be getting 
     * freed. We need to unset the surface user data */
-   wl_resource_set_user_data(ec->comp_data->surface, NULL);
+   if (ec->comp_data->surface)
+     wl_resource_set_user_data(ec->comp_data->surface, NULL);
 
    if (ec->comp_data->pending.opaque)
      eina_tiler_free(ec->comp_data->pending.opaque);
