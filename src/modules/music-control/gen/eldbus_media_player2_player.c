@@ -3,7 +3,7 @@
 static int _log_main = -1;
 #undef ERR
 #define ERR(...) EINA_LOG_DOM_ERR(_log_main, __VA_ARGS__);
-int MEDIA_PLAYER2_PLAYER_SEEKED_EVENT;
+int MEDIA_PLAYER2_PLAYER_SEEKED_EVENT = 0;
 
 void
 media_player2_player_next_call(Eldbus_Proxy *proxy)
@@ -14,6 +14,7 @@ media_player2_player_next_call(Eldbus_Proxy *proxy)
    if (!eldbus_message_arguments_append(msg, ""))
      {
         ERR("Error: Filling message.");
+        eldbus_message_unref(msg);
         return;
      }
    eldbus_proxy_send(proxy, msg, NULL, NULL, -1);
@@ -28,6 +29,7 @@ media_player2_player_open_uri_call(Eldbus_Proxy *proxy, const char *arg0)
    if (!eldbus_message_arguments_append(msg, "s", arg0))
      {
         ERR("Error: Filling message.");
+        eldbus_message_unref(msg);
         return;
      }
    eldbus_proxy_send(proxy, msg, NULL, NULL, -1);
@@ -42,6 +44,7 @@ media_player2_player_pause_call(Eldbus_Proxy *proxy)
    if (!eldbus_message_arguments_append(msg, ""))
      {
         ERR("Error: Filling message.");
+        eldbus_message_unref(msg);
         return;
      }
    eldbus_proxy_send(proxy, msg, NULL, NULL, -1);
@@ -56,6 +59,7 @@ media_player2_player_play_call(Eldbus_Proxy *proxy)
    if (!eldbus_message_arguments_append(msg, ""))
      {
         ERR("Error: Filling message.");
+        eldbus_message_unref(msg);
         return;
      }
    eldbus_proxy_send(proxy, msg, NULL, NULL, -1);
@@ -70,6 +74,7 @@ media_player2_player_play_pause_call(Eldbus_Proxy *proxy)
    if (!eldbus_message_arguments_append(msg, ""))
      {
         ERR("Error: Filling message.");
+        eldbus_message_unref(msg);
         return;
      }
    eldbus_proxy_send(proxy, msg, NULL, NULL, -1);
@@ -84,6 +89,7 @@ media_player2_player_previous_call(Eldbus_Proxy *proxy)
    if (!eldbus_message_arguments_append(msg, ""))
      {
         ERR("Error: Filling message.");
+        eldbus_message_unref(msg);
         return;
      }
    eldbus_proxy_send(proxy, msg, NULL, NULL, -1);
@@ -98,6 +104,7 @@ media_player2_player_seek_call(Eldbus_Proxy *proxy, int64_t arg0)
    if (!eldbus_message_arguments_append(msg, "x", arg0))
      {
         ERR("Error: Filling message.");
+        eldbus_message_unref(msg);
         return;
      }
    eldbus_proxy_send(proxy, msg, NULL, NULL, -1);
@@ -112,6 +119,7 @@ media_player2_player_set_position_call(Eldbus_Proxy *proxy, const char *arg0, in
    if (!eldbus_message_arguments_append(msg, "ox", arg0, arg1))
      {
         ERR("Error: Filling message.");
+        eldbus_message_unref(msg);
         return;
      }
    eldbus_proxy_send(proxy, msg, NULL, NULL, -1);
@@ -126,15 +134,16 @@ media_player2_player_stop_call(Eldbus_Proxy *proxy)
    if (!eldbus_message_arguments_append(msg, ""))
      {
         ERR("Error: Filling message.");
+        eldbus_message_unref(msg);
         return;
      }
    eldbus_proxy_send(proxy, msg, NULL, NULL, -1);
 }
 
 static void
-media_player2_player_seeked_data_free(void *user_data, void *func_data EINA_UNUSED)
+media_player2_player_seeked_data_free(void *user_data EINA_UNUSED, void *func_data)
 {
-   Media_Player2_Player_Seeked_Data *s_data = user_data;
+   Media_Player2_Player_Seeked_Data *s_data = func_data;
    free(s_data);
 }
 
@@ -464,12 +473,12 @@ cb_media_player2_player_loop_status_set(void *data, const Eldbus_Message *msg, E
 }
 
 Eldbus_Pending *
-media_player2_player_loop_status_propset(Eldbus_Proxy *proxy, Eldbus_Codegen_Property_Set_Cb cb EINA_UNUSED, const void *data, const void *value)
+media_player2_player_loop_status_propset(Eldbus_Proxy *proxy, Eldbus_Codegen_Property_Set_Cb cb, const void *data, const void *value)
 {
    Eldbus_Pending *p;
    EINA_SAFETY_ON_NULL_RETURN_VAL(proxy, NULL);
    EINA_SAFETY_ON_NULL_RETURN_VAL(value, NULL);
-   p = eldbus_proxy_property_set(proxy, "LoopStatus", "s", value, cb_media_player2_player_loop_status_set, data);
+   p = eldbus_proxy_property_set(proxy, "LoopStatus", "s", value, cb_media_player2_player_loop_status_set, cb);
    eldbus_pending_data_set(p, "__user_data", data);
    eldbus_pending_data_set(p, "__proxy", proxy);
    return p;
@@ -742,12 +751,12 @@ cb_media_player2_player_rate_set(void *data, const Eldbus_Message *msg, Eldbus_P
 }
 
 Eldbus_Pending *
-media_player2_player_rate_propset(Eldbus_Proxy *proxy, Eldbus_Codegen_Property_Set_Cb cb EINA_UNUSED, const void *data, const void *value)
+media_player2_player_rate_propset(Eldbus_Proxy *proxy, Eldbus_Codegen_Property_Set_Cb cb, const void *data, const void *value)
 {
    Eldbus_Pending *p;
    EINA_SAFETY_ON_NULL_RETURN_VAL(proxy, NULL);
    EINA_SAFETY_ON_NULL_RETURN_VAL(value, NULL);
-   p = eldbus_proxy_property_set(proxy, "Rate", "d", value, cb_media_player2_player_rate_set, data);
+   p = eldbus_proxy_property_set(proxy, "Rate", "d", value, cb_media_player2_player_rate_set, cb);
    eldbus_pending_data_set(p, "__user_data", data);
    eldbus_pending_data_set(p, "__proxy", proxy);
    return p;
@@ -812,12 +821,12 @@ cb_media_player2_player_shuffle_set(void *data, const Eldbus_Message *msg, Eldbu
 }
 
 Eldbus_Pending *
-media_player2_player_shuffle_propset(Eldbus_Proxy *proxy, Eldbus_Codegen_Property_Set_Cb cb EINA_UNUSED, const void *data, const void *value)
+media_player2_player_shuffle_propset(Eldbus_Proxy *proxy, Eldbus_Codegen_Property_Set_Cb cb, const void *data, const void *value)
 {
    Eldbus_Pending *p;
    EINA_SAFETY_ON_NULL_RETURN_VAL(proxy, NULL);
    EINA_SAFETY_ON_NULL_RETURN_VAL(value, NULL);
-   p = eldbus_proxy_property_set(proxy, "Shuffle", "b", value, cb_media_player2_player_shuffle_set, data);
+   p = eldbus_proxy_property_set(proxy, "Shuffle", "b", value, cb_media_player2_player_shuffle_set, cb);
    eldbus_pending_data_set(p, "__user_data", data);
    eldbus_pending_data_set(p, "__proxy", proxy);
    return p;
@@ -882,12 +891,12 @@ cb_media_player2_player_volume_set(void *data, const Eldbus_Message *msg, Eldbus
 }
 
 Eldbus_Pending *
-media_player2_player_volume_propset(Eldbus_Proxy *proxy, Eldbus_Codegen_Property_Set_Cb cb EINA_UNUSED, const void *data, const void *value)
+media_player2_player_volume_propset(Eldbus_Proxy *proxy, Eldbus_Codegen_Property_Set_Cb cb, const void *data, const void *value)
 {
    Eldbus_Pending *p;
    EINA_SAFETY_ON_NULL_RETURN_VAL(proxy, NULL);
    EINA_SAFETY_ON_NULL_RETURN_VAL(value, NULL);
-   p = eldbus_proxy_property_set(proxy, "Volume", "d", value, cb_media_player2_player_volume_set, data);
+   p = eldbus_proxy_property_set(proxy, "Volume", "d", value, cb_media_player2_player_volume_set, cb);
    eldbus_pending_data_set(p, "__user_data", data);
    eldbus_pending_data_set(p, "__proxy", proxy);
    return p;

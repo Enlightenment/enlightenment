@@ -13,6 +13,7 @@ mpris_media_player2_quit_call(Eldbus_Proxy *proxy)
    if (!eldbus_message_arguments_append(msg, ""))
      {
         ERR("Error: Filling message.");
+        eldbus_message_unref(msg);
         return;
      }
    eldbus_proxy_send(proxy, msg, NULL, NULL, -1);
@@ -27,6 +28,7 @@ mpris_media_player2_raise_call(Eldbus_Proxy *proxy)
    if (!eldbus_message_arguments_append(msg, ""))
      {
         ERR("Error: Filling message.");
+        eldbus_message_unref(msg);
         return;
      }
    eldbus_proxy_send(proxy, msg, NULL, NULL, -1);
