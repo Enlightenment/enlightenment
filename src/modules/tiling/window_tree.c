@@ -645,7 +645,7 @@ tiling_window_tree_node_change_pos(Window_Tree *node, int key)
      _tiling_window_tree_split_type_get(node->parent);
 
    Window_Tree *root = node->parent,
-               *grand_parent;
+               *grand_parent = NULL;
    while(root->parent)
       root = root->parent;
 
