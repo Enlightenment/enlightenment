@@ -536,7 +536,7 @@ tiling_window_tree_edges_get(Window_Tree *node)
 /* Node move */
 /**
  * - break would mean that the node will be breaked out in the parent node and
- *   put into the grand parent node.
+ *   put into the grand parent node. If there is no grand parent node a fake node will be placed there.
  *
  * - join would mean that the node will be put together with the next/previous
  *   child into a new split.
@@ -549,7 +549,32 @@ _tiling_window_tree_node_break_out(Window_Tree *root, Window_Tree *node, Window_
 {
    Window_Tree *res, *ac; /* ac is the child of the root, that is a parent of a node */
 
-   if(!par) return;
+   if (!par)
+     {
+        /* we have no parent, so we add a new node between this, later we do the normal break, */
+        Window_Tree *rnode, *newnode, *newnode2;
+        Eina_Inlist *il;
+
+        newnode2 = calloc(1, sizeof(Window_Tree));
+        newnode2->parent = root;
+        newnode2->weight = 1.0;
+
+        newnode = calloc(1, sizeof(Window_Tree));
+        newnode->weight = 1.0;
+        newnode->parent = newnode2;
+
+        EINA_INLIST_FOREACH_SAFE(root->children, il, rnode)
+          {
+             rnode->parent = newnode;
+             root->children = eina_inlist_remove(root->children, EINA_INLIST_GET(rnode));
+             newnode->children = eina_inlist_append(newnode->children, EINA_INLIST_GET(rnode));
+          }
+
+        root->children = eina_inlist_append(root->children, EINA_INLIST_GET(newnode2));
+        newnode2->children = eina_inlist_append(newnode2->children, EINA_INLIST_GET(newnode));
+        par = newnode2;
+
+     }
 
    /* search a path from the node to the par */
    ac = node;
@@ -581,7 +606,7 @@ _tiling_window_tree_node_break_out(Window_Tree *root, Window_Tree *node, Window_
 void
 _tiling_window_tree_node_join(Window_Tree *root, Window_Tree *node, Eina_Bool dir)
 {
-   Window_Tree *pn, *pl, *wts, *par;
+   Window_Tree *pn, *pl, *par;
 
    if (dir)
       pn = _inlist_next(node);
@@ -599,8 +624,10 @@ _tiling_window_tree_node_join(Window_Tree *root, Window_Tree *node, Eina_Bool di
      }
 
    par = node->parent;
-   if ((eina_inlist_count(par->children) == 2) && /* swap if there are just 2 */
-         par->parent && (eina_inlist_count(par->parent->children) > 1)) /* do not swap if we are in the first level */
+   if ((eina_inlist_count(par->children) == 2) &&
+      ((_inlist_next(node) && _inlist_next(node)->client) ||
+       (_inlist_prev(node) && _inlist_prev(node)->client)))
+      /* swap if there are just 2 simple windows*/
      {
         par->children = eina_inlist_demote(par->children, eina_inlist_first(par->children));
         return;
@@ -624,13 +651,7 @@ _tiling_window_tree_node_join(Window_Tree *root, Window_Tree *node, Eina_Bool di
           {
              //unref changed the position of pn in the tree, result of unref
              //will be the new parent
-             //we need to search the e_client ptr to get the corret relative pos
-             wts = pn->parent;
-             while(wts->client != pn->client)
-               {
-                  wts = _inlist_next(wts);
-               }
-             _tiling_window_tree_parent_add(pl, node, wts, EINA_TRUE);
+             _tiling_window_tree_parent_add(pl, node, NULL, EINA_TRUE);
           }
      }
 }
