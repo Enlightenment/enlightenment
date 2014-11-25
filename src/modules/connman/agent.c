@@ -48,7 +48,7 @@ _dict_append_basic(Eldbus_Message_Iter *array, const char *key, void *val)
    eldbus_message_iter_arguments_append(array, "{sv}", &dict);
    eldbus_message_iter_basic_append(dict, 's', key);
    variant = eldbus_message_iter_container_new(dict, 'v', "s");
-   eldbus_message_iter_basic_append(variant, 's', val);
+   eldbus_message_iter_basic_append(variant, 's', val ?: "");
    eldbus_message_iter_container_close(dict, variant);
    eldbus_message_iter_container_close(array, dict);
 }
