@@ -41,12 +41,11 @@ _systray_theme_path(void)
 #undef TF
 }
 
-
+#if 0
 static void *
 _cfg_data_create(E_Config_Dialog *cfd EINA_UNUSED)
 {
    E_Config_Dialog_Data *cfdata = calloc(1, sizeof(E_Config_Dialog_Data));
-   cfdata->use_xembed = ctx->config->use_xembed;
    return cfdata;
 }
 
@@ -61,8 +60,6 @@ _cfg_widgets_create(E_Config_Dialog *cfd EINA_UNUSED, Evas *evas, E_Config_Dialo
 {
    Evas_Object *o, *of;
    o = e_widget_list_add(evas, 0, 0);
-   of = e_widget_check_add(evas, _("Enable Xembed"), &(cfdata->use_xembed));
-   e_widget_list_object_append(o, of, 1, 1, 0.5);
 
    return o;
 }
@@ -71,24 +68,9 @@ static int
 _cfg_data_apply(E_Config_Dialog *cfd, E_Config_Dialog_Data *cfdata)
 {
    Instance *inst = cfd->data;
-   if (ctx->config->use_xembed == cfdata->use_xembed)
-     return 1;
-
-   if (cfdata->use_xembed)
-     {
-        systray_xembed_init();
-        inst->xembed = systray_xembed_new(inst);
-     }
-   else if (inst->xembed)
-     {
-        systray_xembed_free(inst->xembed);
-        systray_xembed_shutdown();
-        inst->xembed = NULL;
-     }
 
    systray_size_updated(inst);
 
-   ctx->config->use_xembed = cfdata->use_xembed;
    return 1;
 }
 
@@ -107,22 +89,22 @@ _cb_menu_cfg(void *data, E_Menu *m EINA_UNUSED, E_Menu_Item *mi EINA_UNUSED)
                        "_e_mod_systray_config_dialog",
                        NULL, 0, v, data);
 }
-
+#endif
 static void
 _systray_menu_new(Instance *inst, Evas_Event_Mouse_Down *ev)
 {
    E_Zone *zone;
    E_Menu *m;
-   E_Menu_Item *mi;
+   //E_Menu_Item *mi;
    int x, y;
 
    zone = e_util_zone_current_get(e_manager_current_get());
 
    m = e_menu_new();
-   mi = e_menu_item_new(m);
-   e_menu_item_label_set(mi, _("Settings"));
-   e_util_menu_item_theme_icon_set(mi, "configure");
-   e_menu_item_callback_set(mi, _cb_menu_cfg, inst);
+   //mi = e_menu_item_new(m);
+   //e_menu_item_label_set(mi, _("Settings"));
+   //e_util_menu_item_theme_icon_set(mi, "configure");
+   //e_menu_item_callback_set(mi, _cb_menu_cfg, inst);
    m = e_gadcon_client_util_menu_items_append(inst->gcc, m, 0);
    e_gadcon_canvas_zone_geometry_get(inst->gcc->gadcon, &x, &y, NULL, NULL);
    e_menu_activate_mouse(m, zone, x + ev->output.x, y + ev->output.y,
@@ -259,8 +241,6 @@ _gc_init(E_Gadcon *gc, const char *name, const char *id, const char *style)
    evas_object_event_callback_add(inst->ui.gadget, EVAS_CALLBACK_MOUSE_DOWN,
                                   _systray_cb_mouse_down, inst);
 
-   if (ctx->config->use_xembed)
-     inst->xembed = systray_xembed_new(inst);
    inst->notifier = systray_notifier_host_new(inst, inst->gcc->gadcon);
 
    instance = inst;
@@ -278,8 +258,6 @@ _gc_shutdown(E_Gadcon_Client *gcc)
    if (!inst)
      return;
 
-   if (inst->xembed)
-     systray_xembed_free(inst->xembed);
    systray_notifier_host_free(inst->notifier);
 
    evas_object_del(inst->ui.gadget);
@@ -368,8 +346,6 @@ _gc_orient(E_Gadcon_Client *gcc, E_Gadcon_Orient orient)
       default:
         sig = "e,action,orient,horiz";
      }
-   if (inst->xembed)
-     systray_xembed_orient_set(inst->xembed, orient);
 
    edje_object_signal_emit(inst->ui.gadget, sig, _sig_source);
    edje_object_message_signal_process(inst->ui.gadget);
@@ -420,15 +396,12 @@ e_modapi_init(E_Module *m)
    #undef D
    #define T Systray_Config
    #define D ctx->conf_edd
-   E_CONFIG_VAL(D, T, use_xembed, INT);
    ctx->config = e_config_domain_load(_name, ctx->conf_edd);
    if (!ctx->config)
      ctx->config = calloc(1, sizeof(Systray_Config));
 
    e_gadcon_provider_register(&_gc_class);
 
-   if (ctx->config->use_xembed)
-     systray_xembed_init();
    systray_notifier_host_init();
 
    return ctx;
@@ -440,8 +413,6 @@ e_modapi_shutdown(E_Module *m __UNUSED__)
    e_gadcon_provider_unregister(&_gc_class);
    systray_mod = NULL;
 
-   if (ctx->config->use_xembed)
-     systray_xembed_shutdown();
    systray_notifier_host_shutdown();
 
    E_CONFIG_DD_FREE(ctx->conf_edd);
@@ -551,9 +522,6 @@ _systray_size_apply_do(Instance *inst)
    edje_object_message_signal_process(inst->ui.gadget);
    edje_object_size_min_calc(inst->ui.gadget, &w, &h);
    e_gadcon_client_min_size_set(inst->gcc, MAX(w, SYSTRAY_MIN_W), MAX(h, SYSTRAY_MIN_H));
-
-   if (inst->xembed)
-     systray_xembed_size_updated(inst->xembed);
 }
 
 static void
