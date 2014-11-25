@@ -593,10 +593,13 @@ e_hints_window_state_set(E_Client *ec)
      state[num++] = ECORE_X_WINDOW_STATE_MAXIMIZED_HORZ;
    if (ec->netwm.state.shaded)
      state[num++] = ECORE_X_WINDOW_STATE_SHADED;
-   if (ec->netwm.state.skip_taskbar)
-     state[num++] = ECORE_X_WINDOW_STATE_SKIP_TASKBAR;
-   if (ec->netwm.state.skip_pager)
-     state[num++] = ECORE_X_WINDOW_STATE_SKIP_PAGER;
+   if (ec->internal)
+     {
+        if (ec->netwm.state.skip_taskbar)
+          state[num++] = ECORE_X_WINDOW_STATE_SKIP_TASKBAR;
+        if (ec->netwm.state.skip_pager)
+          state[num++] = ECORE_X_WINDOW_STATE_SKIP_PAGER;
+     }
    if (ec->netwm.state.hidden)
      state[num++] = ECORE_X_WINDOW_STATE_HIDDEN;
    if (ec->netwm.state.fullscreen)
@@ -617,6 +620,16 @@ e_hints_window_state_set(E_Client *ec)
         break;
      }
    ecore_x_netwm_window_state_set(e_client_util_win_get(ec), state, num);
+   if (!ec->internal)
+     {
+        num = 0;
+        if (ec->netwm.state.skip_taskbar)
+          state[num++] = ECORE_X_WINDOW_STATE_SKIP_TASKBAR;
+        if (ec->netwm.state.skip_pager)
+          state[num++] = ECORE_X_WINDOW_STATE_SKIP_PAGER;
+        if (num)
+          ecore_x_netwm_window_state_set(e_client_util_win_get(ec), state, num);
+     }
 #endif
 }
 
