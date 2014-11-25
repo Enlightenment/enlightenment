@@ -272,7 +272,6 @@ src/modules/syscon/e_mod_main.c
 src/modules/syscon/e_syscon.c
 src/modules/syscon/e_syscon_gadget.c
 src/modules/systray/e_mod_main.c
-src/modules/systray/e_mod_xembed.c
 src/modules/tasks/e_mod_config.c
 src/modules/tasks/e_mod_main.c
 src/modules/teamwork/e_mod_config.c
