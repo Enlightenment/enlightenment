@@ -225,7 +225,7 @@ e_smart_monitor_output_set(Evas_Object *obj, E_Randr_Output *output)
    sd->max.mode_height = mode->height;
 
    /* set if it's primary */
-   sd->primary = (output->cfg->xid == e_randr_cfg->primary);
+   sd->primary = (output->xid == e_randr_cfg->primary);
    if (sd->primary)
      edje_object_signal_emit(sd->o_frame, "e,state,primary,on", "e"); 
    else
@@ -426,7 +426,7 @@ e_smart_monitor_changes_apply(Evas_Object *obj)
    /* try to get the objects smart data */
    if (!(sd = evas_object_smart_data_get(obj))) return;
 
-   sd->primary = (sd->output->cfg->xid == e_randr_cfg->primary);
+   sd->primary = (sd->output->xid == e_randr_cfg->primary);
 
    if (sd->primary)
      edje_object_signal_emit(sd->o_frame, "e,state,primary,on", "e");
@@ -468,7 +468,7 @@ e_smart_monitor_output_get(Evas_Object *obj)
 
    /* try to get the objects smart data */
    if (!(sd = evas_object_smart_data_get(obj))) return 0;
-   return sd->output->cfg->xid;
+   return sd->output->xid;
 }
 
 void 
@@ -821,7 +821,7 @@ _e_smart_monitor_modes_fill(E_Smart_Data *sd)
    root = ecore_x_window_root_first_get();
 
    /* try to get the modes for this output from ecore_x_randr */
-   modes = ecore_x_randr_output_modes_get(root, sd->output->cfg->xid, &num, NULL);
+   modes = ecore_x_randr_output_modes_get(root, sd->output->xid, &num, NULL);
    if (!modes) return;
 
    /* loop the returned modes */
