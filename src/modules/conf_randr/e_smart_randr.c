@@ -107,7 +107,7 @@ e_smart_randr_virtual_size_calc(Evas_Object *obj)
 
         /* try to get the list of modes for this output */
         modes =
-           ecore_x_randr_output_modes_get(root, output->cfg->xid,
+           ecore_x_randr_output_modes_get(root, output->xid,
                                           &nmode, NULL);
         if (!modes) continue;
 
@@ -191,7 +191,7 @@ e_smart_randr_monitors_create(Evas_Object *obj)
         if ((cw == 0) && (ch == 0))
           {
              /* get the size of the preferred mode for this output */
-             _e_smart_randr_monitor_preferred_mode_size_get(output->cfg->xid,
+             _e_smart_randr_monitor_preferred_mode_size_get(output->xid,
                                                             &cw, &ch);
 
              /* safety */

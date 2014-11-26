@@ -16,15 +16,15 @@ typedef struct _E_Randr E_Randr;
 #define E_RANDR_VERSION_1_3 ((1 << 16) | 3)
 #define E_RANDR_VERSION_1_4 ((1 << 16) | 4)
 
-#define E_RANDR_CONFIG_FILE_EPOCH 4
-#define E_RANDR_CONFIG_FILE_GENERATION 4
+#define E_RANDR_CONFIG_FILE_EPOCH 5
+#define E_RANDR_CONFIG_FILE_GENERATION 1
 #define E_RANDR_CONFIG_FILE_VERSION \
    ((E_RANDR_CONFIG_FILE_EPOCH * 1000000) + E_RANDR_CONFIG_FILE_GENERATION)
 
 struct _E_Config_Randr_Output
 {
-   unsigned int xid;    // ecore_x_randr output id (xid)
-   unsigned int crtc;   // ecore_x_randr crtc id (xid)
+   const char *name;
+   const char *edid;
 
    unsigned int orient; // value of the ecore_x_randr_orientation
    Eina_Rectangle geo;  // geometry
@@ -45,8 +45,10 @@ struct _E_Config_Randr
 
 struct _E_Randr_Output
 {
+   unsigned int xid;  // ecore_x_randr output id (xid)
    unsigned int mode; // ecore_x_randr mode id (xid)
    char *name;        // name of output
+   char *edid;        // edid as a hex string
    Eina_Bool is_lid;  // is this a laptop panel
    Eina_Bool active;  // if this output is active
    Ecore_X_Randr_Connection_Status status;
