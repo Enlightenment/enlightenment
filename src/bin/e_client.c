@@ -4742,6 +4742,7 @@ e_client_pointer_warp_to_center_now(E_Client *ec)
      {
         ecore_evas_pointer_warp(ec->comp->ee, warp_to_x, warp_to_y);
         warp_to = 0;
+        _e_client_pointer_warp_to_center_timer(NULL);
      }
    else
      {
