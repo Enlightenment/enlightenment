@@ -8,9 +8,21 @@
 #include <sys/wait.h>
 #include <sys/stat.h>
 #include <sys/utsname.h>
+
+/* the ptrace interface used here is really linux specific -
+ * FreeBSD, NetBSD and Mac OS X use slightly different ptrace API that should
+ * still be feasible to use (but not compatible), OpenBSD uses a really old
+ * version of the FreeBSD API that lacks required functionality we need, and
+ * Solaris doesn't have ptrace at all
+ */
 #ifdef HAVE_SYS_PTRACE_H
-# include <sys/ptrace.h>
+# ifdef __linux__
+#  include <sys/ptrace.h>
+# else
+#  undef HAVE_SYS_PTRACE_H
+# endif
 #endif
+
 #include <limits.h>
 #include <fcntl.h>
 #ifdef HAVE_ALLOCA_H
@@ -279,10 +291,7 @@ main(int argc, char **argv)
    pid_t cs_child = -1;
    Eina_Bool cs_use = EINA_FALSE;
 #endif
-#if !defined(__OpenBSD__) && !defined(__NetBSD__) && !defined(__FreeBSD__) && \
-   !defined(__FreeBSD_kernel__) && !(defined (__MACH__) && defined (__APPLE__))
    Eina_Bool restart = EINA_TRUE;
-#endif
 
    unsetenv("NOTIFY_SOCKET");
 
@@ -448,16 +457,7 @@ main(int argc, char **argv)
    if (valgrind_tool || valgrind_mode)
      really_know = EINA_TRUE;
 
-#if defined(__OpenBSD__) || defined(__NetBSD__) || defined(__FreeBSD__) || \
-   defined(__FreeBSD_kernel__) || (defined (__MACH__) && defined (__APPLE__))
-   execv(args[0], args);
-#endif
-
    /* not run at the moment !! */
-
-#if !defined(__OpenBSD__) && !defined(__NetBSD__) && !defined(__FreeBSD__) && \
-   !defined(__FreeBSD_kernel__) && !(defined (__MACH__) && defined (__APPLE__))
-
 #ifdef E_CSERVE
    if (getenv("E_CSERVE"))
      {
@@ -676,7 +676,6 @@ main(int argc, char **argv)
                }
           }
      }
-#endif
 
 #ifdef E_CSERVE
    if (cs_child > 0)
