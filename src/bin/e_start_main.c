@@ -494,7 +494,7 @@ main(int argc, char **argv)
              Eina_Bool done = EINA_FALSE;
              Eina_Bool remember_sigill = EINA_FALSE;
              Eina_Bool remember_sigusr1 = EINA_FALSE;
-	     Eina_Bool bad_kernel = EINA_FALSE;
+             Eina_Bool bad_kernel = EINA_FALSE;
 
 #ifdef HAVE_SYS_PTRACE_H
              if (!really_know)
@@ -567,19 +567,19 @@ main(int argc, char **argv)
                             /* And call gdb if available */
                             r = 0;
 
-			    /* Check if patch to prevent ptrace to another process is present in the kernel. */
-			    {
-			       int fd;
-			       char c;
+                            /* Check if patch to prevent ptrace to another process is present in the kernel. */
+                            {
+                               int fd;
+                               char c;
 
-			       fd = open("/proc/sys/kernel/yama/ptrace_scope", O_RDONLY);
-			       if (fd != -1)
-				 {
-				    if (read(fd, &c, sizeof (c)) == sizeof (c) && c != '0')
-				      bad_kernel = EINA_TRUE;
-				 }
-			       close(fd);
-			    }
+                               fd = open("/proc/sys/kernel/yama/ptrace_scope", O_RDONLY);
+                               if (fd != -1)
+                                 {
+                                    if (read(fd, &c, sizeof (c)) == sizeof (c) && c != '0')
+                                      bad_kernel = EINA_TRUE;
+                                 }
+                               close(fd);
+                            }
 
                             if (home && !bad_kernel)
                               {
@@ -589,7 +589,7 @@ main(int argc, char **argv)
                                           "--pid=%i "
                                           "-batch "
                                           "-ex 'set logging file %s/.e-crashdump.txt' "
-					  "-ex 'set logging on' "
+                                          "-ex 'set logging on' "
                                           "-ex 'thread apply all backtrace full' "
                                           "-ex detach > /dev/null 2>&1 < /dev/zero",
                                           child,
@@ -603,7 +603,7 @@ main(int argc, char **argv)
                                           "%s/.e-crashdump.txt",
                                           home);
 
-				 backtrace_str = strdup(buffer);
+                                 backtrace_str = strdup(buffer);
                                  r = WEXITSTATUS(r);
                               }
 
