@@ -7564,7 +7564,7 @@ _e_fm2_cb_icon_mouse_move(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNU
              Eina_List *sl, *icons = NULL;
              size_t sel_length = 0, p_offset, p_length;
 
-             c = e_comp_get(ic->sd->eobj);
+             c = e_comp_get(NULL);
              ic->sd->drag = EINA_TRUE;
              ic->drag.start = EINA_FALSE;
              real_path = e_fm2_real_path_get(ic->sd->obj);
