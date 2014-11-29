@@ -301,7 +301,8 @@ _button_cb_mouse_down(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED_
           }
 
         if ((cpufreq_config->status->frequencies) &&
-            (cpufreq_config->status->can_set_frequency))
+            (cpufreq_config->status->can_set_frequency) &&
+            (!cpufreq_config->status->pstate))
           {
              mo = e_menu_new();
              cpufreq_config->menu_frequency = mo;
@@ -766,6 +767,42 @@ _cpufreq_status_check_available(Cpu_Status *s)
                                         eina_list_count(s->frequencies),
                                         _cpufreq_cb_sort);
      }
+   else
+     do
+       {
+#define CPUFREQ_SYSFSDIR "/sys/devices/system/cpu/cpu0/cpufreq"
+          f = fopen(CPUFREQ_SYSFSDIR "/scaling_cur_freq", "r");
+          if (!f) break;
+          fclose(f);
+
+          f = fopen(CPUFREQ_SYSFSDIR "/scaling_driver", "r");
+          if (!f) break;
+          if (fgets(buf, sizeof(buf), f) == NULL)
+            {
+               fclose(f);
+               break;
+            }
+          fclose(f);
+          if (strcmp(buf, "intel_pstate\n")) break;
+
+          if (s->frequencies)
+            {
+               eina_list_free(s->frequencies);
+               s->frequencies = NULL;
+            }
+#define CPUFREQ_ADDF(filename) \
+          f = fopen(CPUFREQ_SYSFSDIR filename, "r"); \
+          if (f) \
+            { \
+               if (fgets(buf, sizeof(buf), f) != NULL) \
+                 s->frequencies = eina_list_append(s->frequencies, \
+                                                   (void *)(long)(atoi(buf))); \
+               fclose(f); \
+            }
+          CPUFREQ_ADDF("/cpuinfo_min_freq");
+          CPUFREQ_ADDF("/cpuinfo_max_freq");
+       }
+     while (0);
 
    f = fopen("/sys/devices/system/cpu/cpu0/cpufreq/scaling_available_governors", "r");
    if (f)
