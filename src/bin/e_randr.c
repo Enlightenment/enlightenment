@@ -366,7 +366,7 @@ _e_randr_output_edid_string_get(Ecore_X_Window root, Ecore_X_Randr_Output output
    edid = ecore_x_randr_output_edid_get(root, output, &edid_len);
    if (edid)
      {
-        int k, kk;
+        unsigned int k, kk;
 
         edid_str = malloc((edid_len * 2) + 1);
         if (edid_str)
