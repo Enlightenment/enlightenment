@@ -396,9 +396,9 @@ static int
 _e_start_child(char **args, Eina_Bool really_know)
 {
    _e_ptrace_traceme(really_know);
-    execv(args[0], args);
-    /* We failed, 0 mean normal exit from E with no restart or crash so let exit */
-    return 0;
+   execv(args[0], args);
+   /* We failed, 0 mean normal exit from E with no restart or crash so let exit */
+   return 0;
 }
 
 static Eina_Bool
