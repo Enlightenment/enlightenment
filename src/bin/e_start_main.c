@@ -323,9 +323,9 @@ _sig_remember(siginfo_t sig, Eina_Bool *susr1, Eina_Bool *sill)
 static int
 _e_ptrace_attach(int child, int *status, Eina_Bool really_know)
 {
-#ifdef HAVE_SYS_PTRACE_H
    int result = 0;
 
+#ifdef HAVE_SYS_PTRACE_H
    if (really_know)
      return waitpid(child, status, 0);
 
@@ -338,8 +338,9 @@ _e_ptrace_attach(int child, int *status, Eina_Bool really_know)
    (void)child;
    (void)really_know;
    (void)status;
-   return 0;
 #endif
+
+   return result;
 }
 
 static void
