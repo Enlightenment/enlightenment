@@ -682,7 +682,6 @@ not_done:
           {
              if (WIFSTOPPED(status) && !stop_ptrace)
                {
-                  char buffer[4096];
                   char *backtrace_str = NULL;
 
                   siginfo_t sig;
