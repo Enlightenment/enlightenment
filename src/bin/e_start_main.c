@@ -275,6 +275,197 @@ _cserve2_start()
 }
 #endif
 
+static void
+_print_usage(const char *hstr)
+{
+   printf("Options:\n"
+          "\t-valgrind[=MODE]\n"
+          "\t\tRun enlightenment from inside valgrind, mode is OR of:\n"
+          "\t\t   1 = plain valgrind to catch crashes (default)\n"
+          "\t\t   2 = trace children (thumbnailer, efm slaves, ...)\n"
+          "\t\t   4 = check leak\n"
+          "\t\t   8 = show reachable after processes finish.\n"
+          "\t\t all = all of above\n"
+          "\t-massif\n"
+          "\t\tRun enlightenment from inside massif valgrind tool.\n"
+          "\t-callgrind\n"
+          "\t\tRun enlightenment from inside callgrind valgrind tool.\n"
+          "\t-valgrind-log-file=<FILENAME>\n"
+          "\t\tSave valgrind log to file, see valgrind's --log-file for details.\n"
+          "\n"
+          "Please run:\n"
+          "\tenlightenment %s\n"
+          "for more options.\n",
+          hstr);
+   exit(0);
+}
+
+static Eina_Bool
+_sig_continue(siginfo_t sig)
+{
+   return (sig.si_signo != SIGSEGV &&
+           sig.si_signo != SIGFPE &&
+//         sig.si_signo != SIGBUS &&
+           sig.si_signo != SIGABRT);
+}
+
+static void
+_sig_remember(siginfo_t sig, Eina_Bool *susr1, Eina_Bool *sill)
+{
+   if (sig.si_signo == SIGUSR1)
+     {
+        if (*sill) *susr1 = EINA_TRUE;
+     }
+   else
+     *sill = (sig.si_signo == SIGILL);
+}
+
+static int
+_e_ptrace_attach(int child, int *status, Eina_Bool really_know)
+{
+#ifdef HAVE_SYS_PTRACE_H
+   int result = 0;
+
+   if (really_know)
+     return waitpid(child, status, 0);
+
+   ptrace(PT_ATTACH, child, NULL, 0);
+   result = waitpid(child, status, 0);
+
+   if (!stop_ptrace && WIFSTOPPED(*status))
+     ptrace(PT_CONTINUE, child, NULL, 0);
+#else
+   (void)child;
+   (void)really_know;
+   (void)status;
+   return 0;
+#endif
+}
+
+static void
+_e_ptrace_detach(int child, int back, Eina_Bool really_know)
+{
+#ifdef HAVE_SYS_PTRACE_H
+   if (!really_know)
+     ptrace(PT_DETACH, child, NULL, back);
+#else
+   (void)child;
+   (void)back;
+   (void)really_know);
+#endif
+}
+
+static void
+_e_ptrace_traceme(Eina_Bool really_know)
+{
+#ifdef HAVE_SYS_PTRACE_H
+   if (!really_know)
+     ptrace(PT_TRACE_ME, 0, NULL, 0);
+#else
+   (void)really_know;
+#endif
+}
+
+static int
+_e_ptrace_getsiginfo(int child, siginfo_t *sig, Eina_Bool really_know)
+{
+   memset(sig, 0, sizeof(siginfo_t));
+#ifdef HAVE_SYS_PTRACE_H
+   if (!really_know)
+     return ptrace(PT_GETSIGINFO, child, NULL, sig);
+#else
+   (void)really_know;
+#endif
+   return 0;
+}
+
+static void
+_e_ptrace_continue(int child, int back, Eina_Bool really_know)
+{
+#ifdef HAVE_SYS_PTRACE_H
+   if (!really_know)
+     ptrace(PT_CONTINUE, child, NULL, back);
+#else
+   (void)child;
+   (void)back;
+   (void)really_know);
+#endif
+}
+
+static int
+_e_start_child(char **args, Eina_Bool really_know)
+{
+   _e_ptrace_traceme(really_know);
+    execv(args[0], args);
+    /* We failed, 0 mean normal exit from E with no restart or crash so let exit */
+    return 0;
+}
+
+static Eina_Bool
+_e_ptrace_kernel_check()
+{
+#ifdef __linux__
+   /* Check if patch to prevent ptrace to another process is present in the kernel. */
+   Eina_Bool ret = EINA_FALSE;
+   int fd = open("/proc/sys/kernel/yama/ptrace_scope", O_RDONLY);
+   if (fd != -1)
+    {
+       char c;
+       ret = (read(fd, &c, sizeof (c)) == sizeof (c) && c != '0');
+    }
+    close(fd);
+    return ret;
+#else
+   return EINA_FALSE;
+#endif
+}
+
+static int
+_e_call_gdb(int child, const char *home, char **backtrace_str)
+{
+   int r = 0;
+   char buf[4096];
+   /* call e_sys gdb */
+   snprintf(buf, sizeof(buf),
+            "gdb "
+            "--pid=%i "
+            "-batch "
+            "-ex 'set logging file %s/.e-crashdump.txt' "
+            "-ex 'set logging on' "
+            "-ex 'thread apply all backtrace full' "
+            "-ex detach > /dev/null 2>&1 < /dev/zero",
+            child,
+            home);
+   r = system(buf);
+
+   fprintf(stderr, "called gdb with '%s' = %i\n",
+           buf, WEXITSTATUS(r));
+
+   snprintf(buf, 4096,
+            "%s/.e-crashdump.txt",
+            home);
+
+   *backtrace_str = strdup(buf);
+   return WEXITSTATUS(r);
+}
+
+static int
+_e_call_alert(int child, siginfo_t sig, int exit_gdb, const char *backtrace_str,
+              Eina_Bool susr1)
+{
+   char buf[4096];
+   snprintf(buf, sizeof(buf),
+            backtrace_str ?
+            "%s/enlightenment/utils/enlightenment_alert %i %i %i '%s'" :
+            "%s/enlightenment/utils/enlightenment_alert %i %i %i",
+            eina_prefix_lib_get(pfx),
+            (sig.si_signo == SIGSEGV && susr1) ? SIGILL : sig.si_signo,
+            child,
+            exit_gdb,
+            backtrace_str);
+   return system(buf);
+}
+
 int
 main(int argc, char **argv)
 {
@@ -323,88 +514,73 @@ main(int argc, char **argv)
 
    for (i = 1; i < argc; i++)
      {
+        if ((!strcmp(argv[i], "-h")) || (!strcmp(argv[i], "-help")) ||
+            (!strcmp(argv[i], "--help")))
+          {
+             _print_usage(argv[i]);
+          }
         if (!strcmp(argv[i], "-valgrind-gdb"))
           valgrind_gdbserver = 1;
+        else if (!strcmp(argv[i], "-massif"))
+          valgrind_tool = 1;
+        else if (!strcmp(argv[i], "-callgrind"))
+          valgrind_tool = 2;
+        else if (!strcmp(argv[i], "-display"))
+          {
+             i++;
+             env_set("DISPLAY", argv[i]);
+          }
         else if (!strncmp(argv[i], "-valgrind", sizeof("-valgrind") - 1))
           {
              const char *val = argv[i] + sizeof("-valgrind") - 1;
-
-             if (*val == '\0') valgrind_mode = 1;
-             else if (*val == '-')
+             switch (*val)
                {
+                case '\0':
+                  valgrind_mode = 1;
+                  break;
+                case '=':
+                  val++;
+                  if (!strcmp(val, "all")) valgrind_mode = VALGRIND_MODE_ALL;
+                  else valgrind_mode = atoi(val);
+                  break;
+                case '-':
                   val++;
                   if (!strncmp(val, "log-file=", sizeof("log-file=") - 1))
                     {
                        valgrind_log = val + sizeof("log-file=") - 1;
                        if (*valgrind_log == '\0') valgrind_log = NULL;
                     }
+                  break;
+                default:
+                  printf("Unknown valgrind option: %s\n", argv[i]);
+                  break;
                }
-             else if (*val == '=')
-               {
-                  val++;
-                  if (!strcmp(val, "all")) valgrind_mode = VALGRIND_MODE_ALL;
-                  else valgrind_mode = atoi(val);
-               }
-             else
-               printf("Unknown valgrind option: %s\n", argv[i]);
           }
-        else if (!strcmp(argv[i], "-display"))
+        else if (!strcmp(argv[i], "-i-really-know-what-i-am-doing-and-accept"
+                                  "-full-responsibility-for-it"))
           {
-             i++;
-             env_set("DISPLAY", argv[i]);
+             really_know = EINA_TRUE;
           }
-        else if (!strcmp(argv[i], "-massif"))
-          valgrind_tool = 1;
-        else if (!strcmp(argv[i], "-callgrind"))
-          valgrind_tool = 2;
-        else if ((!strcmp(argv[i], "-h")) ||
-                 (!strcmp(argv[i], "-help")) ||
-                 (!strcmp(argv[i], "--help")))
-          {
-             printf
-             (
-               "Options:\n"
-               "\t-valgrind[=MODE]\n"
-               "\t\tRun enlightenment from inside valgrind, mode is OR of:\n"
-               "\t\t   1 = plain valgrind to catch crashes (default)\n"
-               "\t\t   2 = trace children (thumbnailer, efm slaves, ...)\n"
-               "\t\t   4 = check leak\n"
-               "\t\t   8 = show reachable after processes finish.\n"
-               "\t\t all = all of above\n"
-               "\t-massif\n"
-               "\t\tRun enlightenment from inside massif valgrind tool.\n"
-               "\t-callgrind\n"
-               "\t\tRun enlightenment from inside callgrind valgrind tool.\n"
-               "\t-valgrind-log-file=<FILENAME>\n"
-               "\t\tSave valgrind log to file, see valgrind's --log-file for details.\n"
-               "\n"
-               "Please run:\n"
-               "\tenlightenment %s\n"
-               "for more options.\n",
-               argv[i]);
-             exit(0);
-          }
-        else if (!strcmp(argv[i], "-i-really-know-what-i-am-doing-and-accept-full-responsibility-for-it"))
-          really_know = EINA_TRUE;
      }
 
-   if (really_know) _env_path_append("PATH", eina_prefix_bin_get(pfx));
-   else _env_path_prepend("PATH", eina_prefix_bin_get(pfx));
+   if (really_know)
+     _env_path_append("PATH", eina_prefix_bin_get(pfx));
+   else
+     _env_path_prepend("PATH", eina_prefix_bin_get(pfx));
 
-   if (valgrind_mode || valgrind_tool)
+   if ((valgrind_mode || valgrind_tool) &&
+       !find_valgrind(valgrind_path, sizeof(valgrind_path)))
      {
-        if (!find_valgrind(valgrind_path, sizeof(valgrind_path)))
-          {
-             printf("E - valgrind required but no binary found! Ignoring request.\n");
-             valgrind_mode = 0;
-          }
+        printf("E - valgrind required but no binary found! Ignoring request.\n");
+        valgrind_mode = 0;
      }
 
    printf("E - PID=%i, valgrind=%d", getpid(), valgrind_mode);
    if (valgrind_mode)
      {
         printf(" valgrind-command='%s'", valgrind_path);
-        if (valgrind_log) printf(" valgrind-log-file='%s'", valgrind_log);
+        if (valgrind_log)
+          printf(" valgrind-log-file='%s'", valgrind_log);
      }
    putchar('\n');
 
@@ -438,18 +614,25 @@ main(int argc, char **argv)
                }
              fclose(f);
           }
+
         tmps = getenv("XDG_DATA_HOME");
-        if (tmps) snprintf(buf, sizeof(buf), "%s/Applications/.bin", tmps);
-        else snprintf(buf, sizeof(buf), "%s/Applications/.bin", home);
-        if (really_know) _env_path_append("PATH", buf);
-        else _env_path_prepend("PATH", buf);
+        if (tmps)
+          snprintf(buf, sizeof(buf), "%s/Applications/.bin", tmps);
+        else
+          snprintf(buf, sizeof(buf), "%s/Applications/.bin", home);
+
+        if (really_know)
+          _env_path_append("PATH", buf);
+        else
+          _env_path_prepend("PATH", buf);
      }
 
    /* run e directly now */
    snprintf(buf, sizeof(buf), "%s/enlightenment", eina_prefix_bin_get(pfx));
 
    args = alloca((argc + 2 + VALGRIND_MAX_ARGS) * sizeof(char *));
-   i = valgrind_append(args, valgrind_gdbserver, valgrind_mode, valgrind_tool, valgrind_path, valgrind_log);
+   i = valgrind_append(args, valgrind_gdbserver, valgrind_mode, valgrind_tool,
+                       valgrind_path, valgrind_log);
    args[i++] = buf;
    copy_args(args + i, argv + 1, argc - 1);
    args[i + argc - 1] = NULL;
@@ -469,212 +652,108 @@ main(int argc, char **argv)
    /* Now looping until */
    while (restart)
      {
+        pid_t result;
+        int status;
+        Eina_Bool done = EINA_FALSE;
+        Eina_Bool remember_sigill = EINA_FALSE;
+        Eina_Bool remember_sigusr1 = EINA_FALSE;
+
         stop_ptrace = EINA_FALSE;
 
         child = fork();
 
-        if (child < 0) /* failed attempt */
+        if (child < 0)
           return -1;
         else if (child == 0)
-          {
-#ifdef HAVE_SYS_PTRACE_H
-             if (!really_know)
-               /* in the child */
-               ptrace(PT_TRACE_ME, 0, NULL, NULL);
-#endif
-             execv(args[0], args);
-             return 0; /* We failed, 0 mean normal exit from E with no restart or crash so let exit */
-          }
-        else
-          {
-             env_set("E_RESTART", "1");
-             /* in the parent */
-             pid_t result;
-             int status;
-             Eina_Bool done = EINA_FALSE;
-             Eina_Bool remember_sigill = EINA_FALSE;
-             Eina_Bool remember_sigusr1 = EINA_FALSE;
-             Eina_Bool bad_kernel = EINA_FALSE;
+          return _e_start_child(args, really_know);
 
-#ifdef HAVE_SYS_PTRACE_H
-             if (!really_know)
-               ptrace(PT_ATTACH, child, NULL, NULL);
-             result = waitpid(child, &status, 0);
-             if ((!really_know) && (!stop_ptrace))
+        /* in the parent - ptrace attach and continue */
+        env_set("E_RESTART", "1");
+        _e_ptrace_attach(child, &status, really_know);
+
+        /* now loop until done */
+not_done:
+        result = waitpid(child, &status, WNOHANG);
+        /* Wait for evas_cserve2 and E */
+        if (!result)
+          result = waitpid(-1, &status, 0);
+
+        if (result == child)
+          {
+             if (WIFSTOPPED(status) && !stop_ptrace)
                {
-                  if (WIFSTOPPED(status))
-                    ptrace(PT_CONTINUE, child, NULL, NULL);
+                  char buffer[4096];
+                  char *backtrace_str = NULL;
+
+                  siginfo_t sig;
+                  int r = _e_ptrace_getsiginfo(child, &sig,
+                                               really_know);
+
+                  int back = (r == 0 && sig.si_signo != SIGTRAP)
+                              ? sig.si_signo : 0;
+
+                  _sig_remember(sig, &remember_sigusr1, &remember_sigill);
+
+                  if (r != 0 || _sig_continue(sig))
+                    {
+                       _e_ptrace_continue(child, back, really_know);
+                       goto not_done;
+                    }
+                  _e_ptrace_detach(child, back, really_know);
+
+                  /* And call gdb if available */
+                  if (home && !_e_ptrace_kernel_check())
+                    r = _e_call_gdb(child, home, &backtrace_str);
+                  else
+                    r = 0;
+
+                  /* call e_alert */
+                  r = _e_call_alert(child, sig, r, backtrace_str,
+                                    remember_sigusr1);
+                  free(backtrace_str);
+
+                  /* kill e */
+                  kill(child, SIGKILL);
+
+                  if (WEXITSTATUS(r) != 1)
+                    restart = EINA_FALSE;
                }
-#endif
-             while (!done)
+             else if (!WIFEXITED(status) || stop_ptrace)
+               done = EINA_TRUE;
+          }
+        else if (result == -1)
+          {
+             if (errno != EINTR)
                {
-                  result = waitpid(child, &status, WNOHANG);
-                  if (!result)
-                    {
-                       /* Wait for evas_cserve2 and E */
-                       result = waitpid(-1, &status, 0);
-                    }
-
-                  if (result == child)
-                    {
-                       if ((WIFSTOPPED(status)) && (!stop_ptrace))
-                         {
-                            char buffer[4096];
-                            char *backtrace_str = NULL;
-                            siginfo_t sig;
-                            int r = 0;
-                            int back;
-
-                            memset(&sig, 0, sizeof(siginfo_t));
-#ifdef HAVE_SYS_PTRACE_H
-                            if (!really_know)
-                              r = ptrace(PT_GETSIGINFO, child, NULL, &sig);
-#endif
-                            back = r == 0 &&
-                              sig.si_signo != SIGTRAP ? sig.si_signo : 0;
-
-                            if (sig.si_signo == SIGUSR1)
-                              {
-                                 if (remember_sigill)
-                                   remember_sigusr1 = EINA_TRUE;
-                              }
-                            else if (sig.si_signo == SIGILL)
-                              {
-                                 remember_sigill = EINA_TRUE;
-                              }
-                            else
-                              {
-                                 remember_sigill = EINA_FALSE;
-                              }
-
-                            if (r != 0 ||
-                                (sig.si_signo != SIGSEGV &&
-                                 sig.si_signo != SIGFPE &&
-//                                 sig.si_signo != SIGBUS &&
-                                 sig.si_signo != SIGABRT))
-                              {
-#ifdef HAVE_SYS_PTRACE_H
-                                 if (!really_know)
-                                   ptrace(PT_CONTINUE, child, NULL, back);
-#endif
-                                 continue;
-                              }
-#ifdef HAVE_SYS_PTRACE_H
-                            if (!really_know)
-                              /* E should be in pause, we can detach */
-                              ptrace(PT_DETACH, child, NULL, back);
-#endif
-                            /* And call gdb if available */
-                            r = 0;
-
-                            /* Check if patch to prevent ptrace to another process is present in the kernel. */
-                            {
-                               int fd;
-                               char c;
-
-                               fd = open("/proc/sys/kernel/yama/ptrace_scope", O_RDONLY);
-                               if (fd != -1)
-                                 {
-                                    if (read(fd, &c, sizeof (c)) == sizeof (c) && c != '0')
-                                      bad_kernel = EINA_TRUE;
-                                 }
-                               close(fd);
-                            }
-
-                            if (home && !bad_kernel)
-                              {
-                                 /* call e_sys gdb */
-                                 snprintf(buffer, sizeof(buffer),
-                                          "gdb "
-                                          "--pid=%i "
-                                          "-batch "
-                                          "-ex 'set logging file %s/.e-crashdump.txt' "
-                                          "-ex 'set logging on' "
-                                          "-ex 'thread apply all backtrace full' "
-                                          "-ex detach > /dev/null 2>&1 < /dev/zero",
-                                          child,
-                                          home);
-                                 r = system(buffer);
-
-                                 fprintf(stderr, "called gdb with '%s' = %i\n",
-                                         buffer, WEXITSTATUS(r));
-
-                                 snprintf(buffer, 4096,
-                                          "%s/.e-crashdump.txt",
-                                          home);
-
-                                 backtrace_str = strdup(buffer);
-                                 r = WEXITSTATUS(r);
-                              }
-
-                            /* call e_alert */
-                            snprintf(buffer, 4096,
-                                     backtrace_str ?
-                                     "%s/enlightenment/utils/enlightenment_alert %i %i %i '%s'" :
-                                     "%s/enlightenment/utils/enlightenment_alert %i %i %i",
-                                     eina_prefix_lib_get(pfx),
-                                     sig.si_signo == SIGSEGV && remember_sigusr1 ? SIGILL : sig.si_signo,
-                                     child,
-                                     r,
-                                     backtrace_str);
-                            r = system(buffer);
-
-                            /* kill e */
-                            kill(child, SIGKILL);
-
-                            if (WEXITSTATUS(r) != 1)
-                              {
-                                 restart = EINA_FALSE;
-                              }
-                         }
-                       else if (!WIFEXITED(status))
-                         {
-                            done = EINA_TRUE;
-                         }
-                       else if (stop_ptrace)
-                         {
-                            done = EINA_TRUE;
-                         }
-                    }
-                  else if (result == -1)
-                    {
-                       if (errno != EINTR)
-                         {
-                            done = EINA_TRUE;
-                            restart = EINA_FALSE;
-                         }
-                       else
-                         {
-                            if (stop_ptrace)
-                              {
-                                 kill(child, SIGSTOP);
-                                 usleep(200000);
-#ifdef HAVE_SYS_PTRACE_H
-                                 if (!really_know)
-                                   ptrace(PT_DETACH, child, NULL, NULL);
-#endif
-                              }
-                         }
-                    }
+                  done = EINA_TRUE;
+                  restart = EINA_FALSE;
+               }
+             else if (stop_ptrace)
+               {
+                  kill(child, SIGSTOP);
+                  usleep(200000);
+                  _e_ptrace_detach(child, 0, really_know);
+               }
+          }
 #ifdef E_CSERVE
-                  else if (cs_use && (result == cs_child))
-                    {
-                       if (WIFSIGNALED(status))
-                         {
-                            printf("E - cserve2 terminated with signal %d\n",
-                                   WTERMSIG(status));
-                            cs_child = _cserve2_start();
-                         }
-                       else if (WIFEXITED(status))
-                         {
-                            printf("E - cserve2 exited with code %d\n",
-                                   WEXITSTATUS(status));
-                            cs_child = -1;
-                         }
-                    }
-#endif
+        else if (cs_use && (result == cs_child))
+          {
+             if (WIFSIGNALED(status))
+               {
+                  printf("E - cserve2 terminated with signal %d\n",
+                         WTERMSIG(status));
+                  cs_child = _cserve2_start();
+               }
+             else if (WIFEXITED(status))
+               {
+                  printf("E - cserve2 exited with code %d\n",
+                         WEXITSTATUS(status));
+                  cs_child = -1;
                }
           }
+#endif
+        if (!done)
+          goto not_done;
      }
 
 #ifdef E_CSERVE
