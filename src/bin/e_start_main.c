@@ -413,8 +413,8 @@ _e_ptrace_kernel_check()
     {
        char c;
        ret = (read(fd, &c, sizeof (c)) == sizeof (c) && c != '0');
+       close(fd);
     }
-    close(fd);
     return ret;
 #else
    return EINA_FALSE;
