@@ -39,6 +39,7 @@ struct _Instance
    Evas_Object     *o_backlight, *o_table, *o_slider;
    E_Gadcon_Popup  *popup;
    double           val;
+   Ecore_Timer     *popup_timer;
 };
 
 static Eina_List *backlight_instances = NULL;
@@ -406,17 +407,63 @@ _gc_id_new(const E_Gadcon_Client_Class *client_class)
    return buf;
 }
 
+static Eina_Bool
+_backlight_popup_timer_cb(void *data)
+{
+   Instance *inst;
+   inst = data;
+
+   if (inst->popup)
+      _backlight_popup_del_cb(inst->popup);
+   inst->popup_timer = NULL;
+
+   return ECORE_CALLBACK_CANCEL;
+}
+
+static void
+_backlight_popup_timer_new(Instance *inst)
+{
+   if (inst->popup)
+     {
+        if (inst->popup_timer)
+          {
+             ecore_timer_del(inst->popup_timer);
+             e_widget_slider_value_double_set(inst->o_slider, inst->val);
+             inst->popup_timer = ecore_timer_add(1.0, _backlight_popup_timer_cb, inst);
+          }
+     }
+   else
+     {
+        _backlight_popup_new(inst);
+        inst->popup_timer = ecore_timer_add(1.0, _backlight_popup_timer_cb, inst);
+     }
+}
+
 static void
 _e_mod_action_cb(E_Object *obj __UNUSED__,
-                 const char *params __UNUSED__)
+                 const char *params)
 {
    Eina_List *l;
    Instance *inst;
    
    EINA_LIST_FOREACH(backlight_instances, l, inst)
      {
-        if (inst->popup) _backlight_popup_free(inst);
-        else _backlight_popup_new(inst);
+        if (!params)
+          {
+             if (inst->popup) _backlight_popup_free(inst);
+             else _backlight_popup_new(inst);
+          }
+        else
+          {
+             double v = inst->val + atof(params);
+             if (v > 1.0) v = 1.0;
+             if (v < 0.0) v = 0.0;
+             inst->val = v;
+             e_backlight_level_set(inst->gcc->gadcon->zone, v, 0.0);
+             e_config->backlight.normal = v;
+             e_config_save_queue();
+             _backlight_popup_timer_new(inst);
+          }
      }
 }
 
@@ -467,7 +514,8 @@ e_modapi_init(E_Module *m)
    if (act)
      {
         act->func.go = _e_mod_action_cb;
-        e_action_predef_name_set(N_("Screen"), N_("Backlight Controls"), "backlight", NULL, NULL, 0);
+        e_action_predef_name_set(N_("Screen"), N_("Backlight Controls"), "backlight",
+                                 NULL, "syntax: brightness change(-1.0 - 1.0), example: -0.1", 1);
      }
    return m;
 }
