@@ -49,6 +49,7 @@ static Eina_List *handlers;
 
 
 static void _backlight_popup_free(Instance *inst);
+static void _backlight_level_set(Instance *inst, double value, Eina_Bool set_slider);
 
 static void
 _backlight_gadget_update(Instance *inst)
@@ -59,6 +60,20 @@ _backlight_gadget_update(Instance *inst)
    if (msg.val < 0.0) msg.val = 0.0;
    else if (msg.val > 1.0) msg.val = 1.0;
    edje_object_message_send(inst->o_backlight, EDJE_MESSAGE_FLOAT, 0, &msg);
+}
+
+static void
+_backlight_level_set(Instance *inst, double val, Eina_Bool set_slider)
+{
+   if (val > 1.0) val = 1.0;
+   if (val < 0.0) val = 0.0;
+   if (set_slider)
+     e_widget_slider_value_double_set(inst->o_slider, val);
+   inst->val = val;
+   e_backlight_mode_set(inst->gcc->gadcon->zone, E_BACKLIGHT_MODE_NORMAL);
+   e_backlight_level_set(inst->gcc->gadcon->zone, val, 0.0);
+   e_config->backlight.normal = val;
+   e_config_save_queue();
 }
 
 static Eina_Bool
@@ -79,14 +94,7 @@ _backlight_win_key_down_cb(void *data, Ecore_Event_Key *ev)
             (!strcmp(keysym, "bracketright")) ||
             (!strcmp(keysym, "Prior")))
      {
-        double v = inst->val + 0.1;
-        if (v > 1.0) v = 1.0;
-        e_widget_slider_value_double_set(inst->o_slider, v);
-        inst->val = v;
-        e_backlight_mode_set(inst->gcc->gadcon->zone, E_BACKLIGHT_MODE_NORMAL);
-        e_backlight_level_set(inst->gcc->gadcon->zone, v, 0.0);
-        e_config->backlight.normal = v;
-        e_config_save_queue();
+        _backlight_level_set(inst, inst->val + 0.1, EINA_TRUE);
         _backlight_gadget_update(inst);
      }
    else if ((!strcmp(keysym, "Down")) ||
@@ -98,14 +106,7 @@ _backlight_win_key_down_cb(void *data, Ecore_Event_Key *ev)
             (!strcmp(keysym, "bracketleft")) ||
             (!strcmp(keysym, "Next")))
      {
-        double v = inst->val - 0.1;
-        if (v < 0.0) v = 0.0;
-        e_widget_slider_value_double_set(inst->o_slider, v);
-        inst->val = v;
-        e_backlight_mode_set(inst->gcc->gadcon->zone, E_BACKLIGHT_MODE_NORMAL);
-        e_backlight_level_set(inst->gcc->gadcon->zone, v, 0.0);
-        e_config->backlight.normal = v;
-        e_config_save_queue();
+        _backlight_level_set(inst, inst->val - 0.1, EINA_TRUE);
         _backlight_gadget_update(inst);
      }
    else if ((!strcmp(keysym, "0")) ||
@@ -119,13 +120,7 @@ _backlight_win_key_down_cb(void *data, Ecore_Event_Key *ev)
             (!strcmp(keysym, "8")) ||
             (!strcmp(keysym, "9")))
      {
-        double v = (double)atoi(keysym) / 9.0;
-        e_widget_slider_value_double_set(inst->o_slider, v);
-        inst->val = v;
-        e_backlight_mode_set(inst->gcc->gadcon->zone, E_BACKLIGHT_MODE_NORMAL);
-        e_backlight_level_set(inst->gcc->gadcon->zone, v, 0.0);
-        e_config->backlight.normal = v;
-        e_config_save_queue();
+        _backlight_level_set(inst, (double)atoi(keysym) / 9.0, EINA_TRUE);
         _backlight_gadget_update(inst);
      }
    else
@@ -172,10 +167,7 @@ static void
 _slider_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    Instance *inst = data;
-   e_backlight_mode_set(inst->gcc->gadcon->zone, E_BACKLIGHT_MODE_NORMAL);
-   e_backlight_level_set(inst->gcc->gadcon->zone, inst->val, 0.0);
-   e_config->backlight.normal = inst->val;
-   e_config_save_queue();
+   _backlight_level_set(inst, inst->val, EINA_FALSE);
 }
 
 static void
@@ -280,26 +272,6 @@ _backlight_cb_mouse_down(void *data, Evas *evas __UNUSED__, Evas_Object *obj __U
 }
 
 static void
-_backlight_level_decrease(Instance *inst)
-{
-   double v = inst->val - 0.1;
-   if (v < 0.0) v = 0.0;
-   e_backlight_level_set(inst->gcc->gadcon->zone, v, 0.0);
-   e_config->backlight.normal = v;
-   e_config_save_queue();
-}
-
-static void
-_backlight_level_increase(Instance *inst)
-{
-   double v = inst->val + 0.1;
-   if (v > 1.0) v = 1.0;
-   e_backlight_level_set(inst->gcc->gadcon->zone, v, 0.0);
-   e_config->backlight.normal = v;
-   e_config_save_queue();
-}
-
-static void
 _backlight_cb_mouse_wheel(void *data, Evas *evas __UNUSED__, Evas_Object *obj __UNUSED__, void *event)
 {
    Evas_Event_Mouse_Wheel *ev = event;
@@ -307,9 +279,9 @@ _backlight_cb_mouse_wheel(void *data, Evas *evas __UNUSED__, Evas_Object *obj __
 
    inst->val = e_backlight_level_get(inst->gcc->gadcon->zone);
    if (ev->z > 0)
-     _backlight_level_decrease(inst);
+     _backlight_level_set(inst, inst->val - 0.1, EINA_FALSE);
    else if (ev->z < 0)
-     _backlight_level_increase(inst);
+     _backlight_level_set(inst, inst->val + 0.1, EINA_FALSE);
 }
 
 static E_Gadcon_Client *
@@ -455,13 +427,7 @@ _e_mod_action_cb(E_Object *obj __UNUSED__,
           }
         else
           {
-             double v = inst->val + atof(params);
-             if (v > 1.0) v = 1.0;
-             if (v < 0.0) v = 0.0;
-             inst->val = v;
-             e_backlight_level_set(inst->gcc->gadcon->zone, v, 0.0);
-             e_config->backlight.normal = v;
-             e_config_save_queue();
+             _backlight_level_set(inst, inst->val + atof(params), EINA_FALSE);
              _backlight_popup_timer_new(inst);
           }
      }
