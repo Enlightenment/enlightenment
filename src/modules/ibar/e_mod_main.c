@@ -1639,6 +1639,7 @@ _ibar_cb_icon_mouse_down(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUS
 
         if (ic->app->actions)
           {
+             mi = NULL;
              EINA_LIST_FOREACH(ic->app->actions, it, action)
                {
                   mi = e_menu_item_new_relative(m, mi);
@@ -1646,7 +1647,7 @@ _ibar_cb_icon_mouse_down(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUS
                   e_util_menu_item_theme_icon_set(mi, action->icon);
                   e_menu_item_callback_set(mi, _ibar_cb_menu_icon_action_exec, action);
                }
-             mi = e_menu_item_new(m);
+             mi = e_menu_item_new_relative(m, mi);
              e_menu_item_separator_set(mi, 1);
           }
 
