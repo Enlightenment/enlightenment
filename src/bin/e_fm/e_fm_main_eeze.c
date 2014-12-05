@@ -586,7 +586,7 @@ eet_setup(void)
    if (!eet_eina_stream_data_descriptor_class_set(&eddc, sizeof(eddc), "eeze_scanner_event", sizeof(Eeze_Scanner_Event)))
      {
         ERR("Could not create eet data descriptor!");
-        exit(1);
+        _e_fm_main_catch(EFM_MODE_USING_RASTER_MOUNT);
      }
 
    es_edd = eet_data_descriptor_stream_new(&eddc);
@@ -718,7 +718,7 @@ _e_fm_main_eeze_init(void)
    if (!pfx)
      {
         ERR("Could not determine prefix!");
-        exit(1);
+        _e_fm_main_catch(EFM_MODE_USING_RASTER_MOUNT);
      }
    _e_fm_eeze_init = EINA_TRUE;
    ecore_con_init();
