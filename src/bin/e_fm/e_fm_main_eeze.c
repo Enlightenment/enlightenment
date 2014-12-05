@@ -56,6 +56,7 @@ static Ecore_Con_Server *svr = NULL;
 static Eet_Data_Descriptor *es_edd = NULL;
 static Eet_Connection *es_con = NULL;
 static Eina_Prefix *pfx = NULL;
+static Ecore_Poller *scanner_poller = NULL;
 
 void
 e_util_env_set(const char *var, const char *val)
@@ -606,8 +607,8 @@ _scanner_add(void *data, int type __UNUSED__, Ecore_Exe_Event_Add *ev)
 {
    if (data != ecore_exe_data_get(ev->exe)) return ECORE_CALLBACK_PASS_ON;
    INF("Scanner started");
-   if (_scanner_poll(NULL))
-     ecore_poller_add(ECORE_POLLER_CORE, 8, (Ecore_Task_Cb)_scanner_poll, NULL);
+   if ((!_scanner_poll(NULL)) && (!scanner_poller))
+     scanner_poller = ecore_poller_add(ECORE_POLLER_CORE, 8, (Ecore_Task_Cb)_scanner_poll, NULL);
    return ECORE_CALLBACK_RENEW;
 }
 
@@ -675,6 +676,7 @@ static Eina_Bool
 _scanner_con(void *data __UNUSED__, int type __UNUSED__, Ecore_Con_Event_Server_Del *ev __UNUSED__)
 {
    _e_fm_main_catch(EFM_MODE_USING_EEZE_MOUNT);
+   E_FREE_FUNC(scanner_poller, ecore_poller_del);
    INF("Scanner connected");
    es_con = eet_connection_new(_scanner_read, _scanner_write, NULL);
    return ECORE_CALLBACK_RENEW;
@@ -757,6 +759,7 @@ void
 _e_fm_main_eeze_shutdown(void)
 {
    if (scanner) ecore_exe_free(scanner);
+   E_FREE_FUNC(scanner_poller, ecore_poller_del);
    eeze_mount_tabs_unwatch();
    eeze_shutdown();
    ecore_con_shutdown();
