@@ -691,7 +691,7 @@ static Eina_Bool
 _scanner_disc(void *data __UNUSED__, int type __UNUSED__, Ecore_Con_Event_Server_Del *ev __UNUSED__)
 {
    INF("Scanner disconnected");
-   if (_scanner_poll(NULL))
+   if (!_scanner_poll(NULL))
      _scanner_run();
    return ECORE_CALLBACK_RENEW;
 }
