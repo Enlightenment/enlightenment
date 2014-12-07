@@ -970,8 +970,11 @@ _e_comp_intercept_layer_set(void *data, Evas_Object *obj, int layer)
           {
              E_Client *ec;
 
-             e_comp_shape_queue(cw->comp);
-             e_comp_render_queue(cw->comp);
+             if (cw->visible)
+               {
+                  e_comp_shape_queue(cw->comp);
+                  e_comp_render_queue(cw->comp);
+               }
              ec = e_client_above_get(cw->ec);
              if (ec && (evas_object_layer_get(ec->frame) != evas_object_layer_get(obj)))
                {
@@ -1041,6 +1044,7 @@ _e_comp_intercept_layer_set(void *data, Evas_Object *obj, int layer)
         /* can't stack a client above its own layer marker */
         CRI("STACKING ERROR!!!");
      }
+   if (!cw->visible) return;
    e_comp_render_queue(cw->comp);
    e_comp_shape_queue(cw->comp);
 }
@@ -1144,6 +1148,7 @@ _e_comp_intercept_stack_helper(E_Comp_Object *cw, Evas_Object *stack, E_Comp_Obj
        }
    if (cw->ec->new_client || (!ecstack) || (ecstack->frame != o))
      evas_object_data_del(cw->smart_obj, "client_restack");
+   if (!cw->visible) return;
    e_comp_render_queue(cw->comp);
    e_comp_shape_queue(cw->comp);
 }
@@ -1185,6 +1190,7 @@ _e_comp_intercept_lower(void *data, Evas_Object *obj)
    evas_object_data_set(obj, "client_restack", (void*)1);
    evas_object_lower(obj);
    evas_object_data_del(obj, "client_restack");
+   if (!cw->visible) return;
    e_comp_render_queue(cw->comp);
    e_comp_shape_queue(cw->comp);
 }
@@ -1217,6 +1223,7 @@ _e_comp_intercept_raise(void *data, Evas_Object *obj)
         if (e_client_focus_track_enabled())
           e_client_raise_latest_set(cw->ec); //modify raise list if necessary
      }
+   if (!cw->visible) return;
    e_comp_render_queue(cw->comp);
    e_comp_shape_queue(cw->comp);
 }
@@ -2041,7 +2048,7 @@ _e_comp_smart_move(Evas_Object *obj, int x, int y)
    if (cw->input_obj)
      evas_object_geometry_set(cw->input_obj, cw->x + cw->input_rect.x, cw->y + cw->input_rect.y, cw->input_rect.w, cw->input_rect.h);
    /* this gets called once during setup to init coords offscreen and guarantee first move */
-   if (cw->comp)
+   if (cw->comp && cw->visible)
      e_comp_shape_queue(cw->comp);
 }
 
@@ -2094,6 +2101,7 @@ _e_comp_smart_resize(Evas_Object *obj, int w, int h)
      {
         evas_object_resize(cw->effect_obj, w, h);
      }
+   if (!cw->visible) return;
    e_comp_render_queue(cw->comp);
    e_comp_shape_queue(cw->comp);
 }
