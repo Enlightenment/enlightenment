@@ -3976,7 +3976,7 @@ _e_comp_x_hook_client_fetch(void *d EINA_UNUSED, E_Client *ec)
                }
           }
 
-        if (!set)
+        if ((!set) && ec->desk)
           {
              eina_stringshare_replace(&ec->e.state.profile.set, ec->desk->window_profile);
              e_client_desk_window_profile_wait_desk_set(ec, ec->desk);
