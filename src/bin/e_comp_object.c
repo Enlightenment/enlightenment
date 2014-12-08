@@ -20,7 +20,7 @@
 */
 
 #define UPDATE_MAX 512 // same as evas
-#define FAILURE_MAX 10 // seems reasonable
+#define FAILURE_MAX 2 // seems reasonable
 #define SMART_NAME     "e_comp_object"
 
 /* for non-util functions */
