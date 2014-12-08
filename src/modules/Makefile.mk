@@ -113,7 +113,7 @@ include src/modules/Makefile_xkbswitch.mk
 
 include src/modules/Makefile_tiling.mk
 
-include src/modules/Makefile_access.mk
+#include src/modules/Makefile_access.mk
 
 include src/modules/Makefile_music_control.mk
 

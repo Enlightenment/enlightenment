@@ -947,7 +947,7 @@ AC_E_OPTIONAL_MODULE([tasks], true)
 AC_E_OPTIONAL_MODULE([conf_randr], true, $ecore_x)
 AC_E_OPTIONAL_MODULE([xkbswitch], true, $ecore_x)
 AC_E_OPTIONAL_MODULE([tiling], true)
-AC_E_OPTIONAL_MODULE([access], false, $ecore_x)
+#AC_E_OPTIONAL_MODULE([access], false, $ecore_x)
 AC_E_OPTIONAL_MODULE([music_control], true, [CHECK_MODULE_MUSIC_CONTROL])
 AC_E_OPTIONAL_MODULE([packagekit], true)
 AC_E_OPTIONAL_MODULE([contact], false)
@@ -1082,7 +1082,6 @@ src/modules/backlight/module.desktop
 src/modules/tasks/module.desktop
 src/modules/xkbswitch/module.desktop
 src/modules/tiling/module.desktop
-src/modules/access/module.desktop
 src/modules/music-control/module.desktop
 src/modules/packagekit/module.desktop
 src/modules/contact/module.desktop
@@ -1095,7 +1094,7 @@ doc/Doxyfile
 doc/e.dox
 $po_makefile_in
 ])
-
+#src/modules/access/module.desktop
 #src/modules/illume2/doc/illume.dox
 #src/modules/illume2/module.desktop
 #src/modules/illume-home/module.desktop
