@@ -169,7 +169,6 @@ _e_comp_object_event_add(Evas_Object *obj)
 static inline Eina_Bool
 _e_comp_shaped_check(int w, int h, const Eina_Rectangle *rects, int num)
 {
-   if ((!rects) || (num < 1)) return EINA_FALSE;
    if (num > 1) return EINA_TRUE;
    if ((rects[0].x == 0) && (rects[0].y == 0) &&
        ((int)rects[0].w == w) && ((int)rects[0].h == h))
@@ -3049,9 +3048,11 @@ e_comp_object_shape_apply(Evas_Object *obj)
 
    API_ENTRY;
    if (!cw->ec) return; //NYI
-   if (!_e_comp_shaped_check(cw->ec->client.w, cw->ec->client.h, cw->ec->shape_rects, cw->ec->shape_rects_num))
+   if (cw->ec->shaped)
      {
-        if (!cw->ec->shaped) return;
+        if ((cw->ec->shape_rects_num >= 1) &&
+            (!_e_comp_shaped_check(cw->ec->client.w, cw->ec->client.h, cw->ec->shape_rects, cw->ec->shape_rects_num)))
+           return;
      }
    if (cw->native)
      {
@@ -3063,11 +3064,11 @@ e_comp_object_shape_apply(Evas_Object *obj)
 
    //INF("SHAPE RENDER %p", cw->ec);
 
-   if (cw->ec->shape_rects) evas_object_image_native_surface_set(cw->obj, NULL);
-   evas_object_image_alpha_set(cw->obj, !!cw->ec->shape_rects);
+   if (cw->ec->shaped) evas_object_image_native_surface_set(cw->obj, NULL);
+   evas_object_image_alpha_set(cw->obj, !!cw->ec->shaped);
    EINA_LIST_FOREACH(cw->obj_mirror, l, o)
      {
-        if (cw->ec->shape_rects) evas_object_image_native_surface_set(o, NULL);
+        if (cw->ec->shaped) evas_object_image_native_surface_set(o, NULL);
         evas_object_image_alpha_set(o, 1);
      }
 
@@ -3077,7 +3078,7 @@ e_comp_object_shape_apply(Evas_Object *obj)
         evas_object_image_data_set(cw->obj, pix);
         return;
      }
-   if (cw->ec->shape_rects)
+   if (cw->ec->shaped)
      {
         unsigned char *spix, *sp;
 
@@ -3402,7 +3403,7 @@ e_comp_object_util_mirror_add(Evas_Object *obj)
    evas_object_data_set(o, "E_Client", cw->ec);
    evas_object_data_set(o, "comp_mirror", cw);
 
-   evas_object_image_alpha_set(o, cw->ec->argb || (!!cw->ec->shape_rects));
+   evas_object_image_alpha_set(o, cw->ec->argb || (!!cw->ec->shaped));
    evas_object_image_size_set(o, w, h);
 
    if (cw->ec->shaped)

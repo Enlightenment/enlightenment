@@ -604,7 +604,7 @@ _e_comp_shapes_update_comp_client_shape_comp_helper(E_Client *ec, Eina_Tiler *tb
    INF("COMP EC: %p", ec);
 #endif
 
-   if (ec->shape_input_rects || ec->shape_rects)
+   if (ec->shaped || ec->shaped_input)
      {
         int num, tot;
         int l, r, t, b;
