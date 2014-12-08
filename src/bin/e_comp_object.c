@@ -20,6 +20,7 @@
 */
 
 #define UPDATE_MAX 512 // same as evas
+#define FAILURE_MAX 10 // seems reasonable
 #define SMART_NAME     "e_comp_object"
 
 /* for non-util functions */
@@ -95,6 +96,7 @@ typedef struct _E_Comp_Object
    unsigned int         opacity;  // opacity set with _NET_WM_WINDOW_OPACITY
 
    unsigned int         animating;  // it's busy animating
+   unsigned int         failures; //number of consecutive e_pixmap_image_draw() failures
    Eina_Bool            delete_pending : 1;  // delete pendig
    Eina_Bool            defer_hide : 1;  // flag to get hide to work on deferred hide
    Eina_Bool            visible : 1;  // is visible
@@ -3330,8 +3332,14 @@ e_comp_object_render(Evas_Object *obj)
              ret = e_pixmap_image_draw(cw->ec->pixmap, r);
              if (!ret)
                {
-                  WRN("UPDATE [%p]: %i %i %ix%i FAIL!!!!!!!!!!!!!!!!!", cw->ec, r->x, r->y, r->w, r->h);
-                  e_comp_object_damage(obj, 0, 0, pw, ph);
+                  WRN("UPDATE [%p]: %i %i %ix%i FAIL(%u)!!!!!!!!!!!!!!!!!", cw->ec, r->x, r->y, r->w, r->h, cw->failures);
+                  if (++cw->failures < FAILURE_MAX)
+                    e_comp_object_damage(obj, 0, 0, pw, ph);
+                  else
+                    {
+                       e_object_del(E_OBJECT(cw->ec));
+                       return EINA_FALSE;
+                    }
                   break;
                }
              RENDER_DEBUG("UPDATE [%p] %i %i %ix%i", cw->ec, r->x, r->y, r->w, r->h);
@@ -3357,8 +3365,14 @@ e_comp_object_render(Evas_Object *obj)
         ret = e_pixmap_image_draw(cw->ec->pixmap, r);
         if (!ret)
           {
-             WRN("UPDATE [%p]: %i %i %ix%i FAIL!!!!!!!!!!!!!!!!!", cw->ec, r->x, r->y, r->w, r->h);
-             e_comp_object_damage(obj, 0, 0, pw, ph);
+             WRN("UPDATE [%p]: %i %i %ix%i FAIL(%u)!!!!!!!!!!!!!!!!!", cw->ec, r->x, r->y, r->w, r->h, cw->failures);
+             if (++cw->failures < FAILURE_MAX)
+               e_comp_object_damage(obj, 0, 0, pw, ph);
+             else
+               {
+                  e_object_del(E_OBJECT(cw->ec));
+                  return EINA_FALSE;
+               }
              break;
           }
         e_pixmap_image_data_argb_convert(cw->ec->pixmap, pix, srcpix, r, stride);
