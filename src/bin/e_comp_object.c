@@ -646,6 +646,8 @@ _e_comp_object_done_defer(void *data, Evas_Object *obj EINA_UNUSED, const char *
    /* hide only after animation finishes to guarantee a full run of the animation */
    if (cw->defer_hide && (!strcmp(emission, "e,action,hide,done")))
      evas_object_hide(cw->smart_obj);
+   else if (!cw->animating)
+     e_comp_shape_queue(cw->comp);
 }
 
 /////////////////////////////////////////////
@@ -1968,8 +1970,11 @@ _e_comp_smart_show(Evas_Object *obj)
    if (cw->input_obj) evas_object_show(cw->input_obj);
    evas_object_show(cw->effect_obj);
    e_comp_render_queue(cw->comp);
-   e_comp_shape_queue(cw->comp);
-   if (cw->ec->input_only) return;
+   if (cw->ec->input_only)
+     {
+        e_comp_shape_queue(cw->comp);
+        return;
+     }
    if (cw->ec->iconic && (!cw->ec->new_client))
      e_comp_object_signal_emit(cw->smart_obj, "e,action,uniconify", "e");
    else
@@ -1981,7 +1986,10 @@ _e_comp_smart_show(Evas_Object *obj)
      }
    /* ensure some random effect doesn't lock the client offscreen */
    if (!cw->animating)
-     e_comp_object_effect_set(obj, NULL);
+     {
+        e_comp_object_effect_set(obj, NULL);
+        e_comp_shape_queue(cw->comp);
+     }
 }
 
 static void
@@ -2104,7 +2112,8 @@ _e_comp_smart_resize(Evas_Object *obj, int w, int h)
      }
    if (!cw->visible) return;
    e_comp_render_queue(cw->comp);
-   e_comp_shape_queue(cw->comp);
+   if (!cw->animating)
+     e_comp_shape_queue(cw->comp);
 }
 
 static void
@@ -3522,7 +3531,8 @@ _e_comp_object_effect_end_cb(void *data, Evas_Object *obj, const char *emission,
      {
         cw->comp->animating--;
         cw->animating--;
-        e_object_unref(E_OBJECT(cw->ec));
+        if (e_object_unref(E_OBJECT(cw->ec)))
+          e_comp_shape_queue(cw->comp);
      }
 
    end_cb = evas_object_data_get(obj, "_e_comp.end_cb");
