@@ -714,8 +714,10 @@ _e_remember_cb_hook_pre_post_fetch(void *data __UNUSED__, E_Client *ec)
 
         w = ec->client.w;
         h = ec->client.h;
-        ec->client.w = rem->prop.w;
-        ec->client.h = rem->prop.h;
+        if (rem->prop.pos_w)
+          ec->client.w = rem->prop.pos_w;
+        if (rem->prop.pos_h)
+          ec->client.h = rem->prop.pos_h;
         /* we can trust internal windows */
         if (ec->internal)
           {
