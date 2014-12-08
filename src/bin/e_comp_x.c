@@ -3559,7 +3559,7 @@ _e_comp_x_hook_client_fetch(void *d EINA_UNUSED, E_Client *ec)
 
         ec->changes.shape = 0;
         rects = ecore_x_window_shape_rectangles_get(win, &num);
-        if (rects)
+        if (rects && num)
           {
              int cw = 0, ch = 0;
 
@@ -3622,16 +3622,21 @@ _e_comp_x_hook_client_fetch(void *d EINA_UNUSED, E_Client *ec)
                free(rects);
              if (ec->shape_changed)
                e_comp_object_frame_theme_set(ec->frame, E_COMP_OBJECT_FRAME_RESHADOW);
+             evas_object_pass_events_set(ec->frame, 0);
           }
         else
           {
-             // FIXME: no rects i think can mean... totally empty window
+             ec->shaped = 1;
+             E_FREE(ec->shape_rects);
+             E_FREE(ec->shape_input_rects);
+             ec->shape_input_rects_num = 0;
+             e_comp_object_frame_theme_set(ec->frame, E_COMP_OBJECT_FRAME_RESHADOW);
              if (ec->shaped && ec->comp_data->reparented && (!ec->bordername))
                {
                   ec->border.changed = 1;
                   EC_CHANGED(ec);
                }
-             ec->shaped = 0;
+             evas_object_pass_events_set(ec->frame, 1);
           }
         if (ec->shaped != pshaped)
           {
@@ -3649,7 +3654,7 @@ _e_comp_x_hook_client_fetch(void *d EINA_UNUSED, E_Client *ec)
 
         ec->changes.shape_input = 0;
         rects = ecore_x_window_shape_input_rectangles_get(win, &num);
-        if (rects)
+        if (rects && num)
           {
              int cw = 0, ch = 0;
 
@@ -3689,9 +3694,19 @@ _e_comp_x_hook_client_fetch(void *d EINA_UNUSED, E_Client *ec)
                   ec->shape_input_rects = (Eina_Rectangle*)rects;
                   ec->shape_input_rects_num = num;
                }
+             evas_object_pass_events_set(ec->frame, 0);
           }
         else
-          ec->shaped_input = 0;
+          {
+             ec->shaped_input = 1;
+             if (ec->comp_data->reparented)
+               ecore_x_window_shape_input_rectangles_set(pwin, rects, num);
+             changed = EINA_TRUE;
+             evas_object_pass_events_set(ec->frame, 1);
+             free(ec->shape_input_rects);
+             ec->shape_input_rects = NULL;
+             ec->shape_input_rects_num = 0;
+          }
         if (changed || (pshaped != ec->shaped_input))
           {
              ec->need_shape_merge = 1;
