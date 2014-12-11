@@ -106,6 +106,7 @@ e_int_config_desklock_fsel_done(E_Config_Dialog *cfd, Evas_Object *bg, const cha
    if (!cbg) return; //wtf
    eina_stringshare_replace(&cbg->file, bg_file);
    cbg->hide_logo = hide_logo;
+   evas_object_data_set(bg, "hide_logo", (void*)(long)cbg->hide_logo);
    e_widget_preview_edje_set(bg, bg_file, "e/desktop/background");
 }
 
@@ -696,6 +697,7 @@ _cb_method_change(void *data, Evas_Object *obj __UNUSED__, void *event_info __UN
              EINA_LIST_FOREACH(e_config->desklock_backgrounds, l, cbg)
                {
                   if (!ll) break;
+                  evas_object_data_set(ll->data, "hide_logo", (void*)(long)cbg->hide_logo);
                   e_widget_preview_edje_set(ll->data, cbg->file, "e/desktop/background");
                   cfdata->bgs = eina_list_append(cfdata->bgs, desklock_bg_dup(cbg, NULL));
                   ll = ll->next;
