@@ -43,11 +43,12 @@ e_int_config_desklock_fsel(E_Config_Dialog *parent, Evas_Object *bg)
 
 /* local functions */
 static void *
-_create_data(E_Config_Dialog *cfd __UNUSED__)
+_create_data(E_Config_Dialog *cfd)
 {
    E_Config_Dialog_Data *cfdata;
 
    cfdata = E_NEW(E_Config_Dialog_Data, 1);
+   cfdata->hide_logo = !!evas_object_data_get(cfd->data, "hide_logo");
 
    return cfdata;
 }
