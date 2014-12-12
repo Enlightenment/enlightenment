@@ -285,6 +285,8 @@ e_drag_start(E_Drag *drag, int x, int y)
    _drag_win = ecore_x_window_input_new(drag->comp->win,
                                         drag->comp->man->x, drag->comp->man->y,
                                         drag->comp->man->w, drag->comp->man->h);
+   ecore_event_window_register(_drag_win, drag->comp->ee, drag->comp->evas,
+                                 NULL, NULL, NULL, NULL);
    ecore_x_window_show(_drag_win);
 #endif
    _drag_win_root = drag->comp->man->root;
@@ -1153,6 +1155,7 @@ _e_drag_free(E_Drag *drag)
      eina_stringshare_del(drag->types[i]);
    free(drag);
 #ifndef HAVE_WAYLAND_ONLY
+   ecore_event_window_unregister(_drag_win);
    ecore_x_window_free(_drag_win);
    ecore_x_window_shadow_tree_flush();
 #endif
