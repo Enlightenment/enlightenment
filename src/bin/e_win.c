@@ -87,9 +87,13 @@ _e_elm_win_trap_show(void *data, Evas_Object *o)
           {
              E_Pixmap *cp;
              E_Comp *c = NULL;
+             const char *title;
 
              ecore_evas_name_class_set(ee, "E", "_e_internal_window");
-             ecore_evas_title_set(ee, elm_win_title_get(o));
+             title = elm_win_title_get(o);
+             if ((!title) || (!title[0]))
+               title = "E";
+             ecore_evas_title_set(ee, title);
              cp = e_pixmap_new(type, win);
              EINA_SAFETY_ON_NULL_RETURN_VAL(cp, EINA_TRUE);
 
