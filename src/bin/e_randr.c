@@ -139,23 +139,43 @@ e_randr_config_apply(void)
    /* Update output mode */
    EINA_LIST_FOREACH(e_randr->outputs, l, output)
      {
-        if (!output->cfg->connect)
-          _e_randr_output_active_set(output, EINA_FALSE);
-        else if ((!output->active) && (output->status == ECORE_X_RANDR_CONNECTION_STATUS_CONNECTED))
+        printf("RR: apply out %p... [%s]\n", output, output->name);
+        if ((output->cfg) && (!output->cfg->connect))
           {
-             if (_e_randr_output_crtc_find(output))
+             printf("RR:  output disabled\n");
+             _e_randr_output_active_set(output, EINA_FALSE);
+          }
+        else if ((output->cfg) && (output->status == ECORE_X_RANDR_CONNECTION_STATUS_CONNECTED))
+          {
+             if (output->cfg)
                {
+                  printf("RR:  output enabled [%i %i %ix%i | %2.3f orient %i]\n",
+                         output->cfg->geo.x, output->cfg->geo.y,
+                         output->cfg->geo.w, output->cfg->geo.h,
+                         output->cfg->refresh_rate, output->cfg->orient);
+                  printf("RR:    update mode\n");
                   _e_randr_output_mode_update(output);
+                  printf("RR:    active set...\n");
                   _e_randr_output_active_set(output, EINA_TRUE);
+                  printf("RR:    active set done\n");
                }
+             else
+               printf("RR:  no cfg\n");
+          }
+        else
+          {
+             printf("RR:  ???\n");
           }
      }
+   printf("RR: ... lid update\n");
    /* update lid status */
    _e_randr_lid_update();
 
+   printf("RR: randr apply...\n");
    /* apply randr settings */
    _e_randr_apply();
 
+   printf("RR: update primary...\n");
    /* update primary output */
    _e_randr_config_primary_update();
 }
@@ -428,11 +448,15 @@ _e_randr_load(void)
 
                   ecore_x_randr_crtc_info_free(cinfo);
                }
+             printf("RR: crtc found %x | %i %i %ix%i - %x . %i\n",
+                    crtc->xid,
+                    crtc->geo.x, crtc->geo.y, crtc->geo.w, crtc->geo.h,
+                    crtc->mode, crtc->orient);
           }
 
         free(crtcs);
      }
-
+   printf("RR: ====================\n");
    /* try to get the list of outputs from x */
    if ((outputs = ecore_x_randr_outputs_get(root, &noutputs)))
      {
@@ -460,6 +484,7 @@ _e_randr_load(void)
                   if (output->edid) output->cfg->edid = strdup(output->edid);
                   unknown = EINA_TRUE;
                }
+             printf("RR: output %x %s %i %p\n", output->xid, output->name, output->status, output->cfg);
 
              /* find a crtc if we want this output connected */
              if (output->cfg->connect &&
@@ -468,6 +493,7 @@ _e_randr_load(void)
                   E_Randr_Crtc *crtc;
 
                   crtc = _e_randr_output_crtc_find(output);
+                  printf("RR: ouput on crtc = %p\n", crtc);
                   if (crtc)
                     {
                        _e_randr_output_active_set(output, EINA_TRUE);
@@ -489,9 +515,6 @@ _e_randr_load(void)
 
         free(outputs);
      }
-   /* sort list by output id */
-//   e_randr_cfg->outputs = eina_list_sort(e_randr_cfg->outputs, -1,
-//                                         _e_randr_config_output_cmp);
 
    /* update lid status */
    _e_randr_lid_update();
@@ -529,8 +552,39 @@ _e_randr_apply(void)
 
    /* get the min and max screen size */
    ecore_x_randr_screen_size_range_get(root, &minw, &minh, &maxw, &maxh);
-   fprintf(stderr, "RRR: size range: %ix%i -> %ix%i\n", minw, minh, maxw, maxh);
+   printf("RRR0: size range: %ix%i -> %ix%i\n", minw, minh, maxw, maxh);
+   nx = ny = nw = nh = 0;
+   EINA_LIST_FOREACH(e_randr->crtcs, l, crtc)
+     {
+        int x = 0, y = 0, w = 0, h = 0;
+        Ecore_X_Randr_Orientation orient = ECORE_X_RANDR_ORIENTATION_ROT_0;
+        Eina_Rectangle rect;
 
+        printf("RRR0:   crtc: %x %i %i %ix%i rot: %i mode: %i\n", crtc->xid, crtc->geo.x, crtc->geo.y, crtc->geo.w, crtc->geo.h, crtc->orient, crtc->mode);
+        if (!crtc->outputs) continue;
+        _e_randr_crtc_from_outputs_set(crtc);
+        if (crtc->mode == 0) continue;
+        x = crtc->geo.x;
+        y = crtc->geo.y;
+        orient = crtc->orient;
+        rect = crtc->geo;
+        _e_randr_config_mode_geometry(orient, &rect);
+        w = rect.w;
+        h = rect.h;
+        if (((x + w) > maxw) || ((y + h) > maxh)) continue;
+        if ((x + w) > nw) nw = x + w;
+        if ((y + h) > nh) nh = y + h;
+        if (x < nx) nx = x;
+        if (y < ny) ny = y;
+     }
+   /* Adjust size according to origo */
+   nw -= nx;
+   nh -= ny;
+   /* apply the new screen size */
+   printf("RRR1: current screen size: %ix%i\n", nw, nh);
+   ecore_x_randr_screen_current_size_set(root, nw, nh, -1, -1);
+
+   nx = ny = nw = nh = 0;
    /* loop our lists of crtcs */
    EINA_LIST_FOREACH(e_randr->crtcs, l, crtc)
      {
@@ -543,15 +597,7 @@ _e_randr_apply(void)
         int count = 0;
         Ecore_X_Randr_Output *coutputs;
 
-        fprintf(stderr, "RRR: crtc: %x %i %i %ix%i rot: %i mode: %i\n", crtc->xid, crtc->geo.x, crtc->geo.y, crtc->geo.w, crtc->geo.h, crtc->orient, crtc->mode);
-        /* disable crtc if no outputs */
-        if (!crtc->outputs)
-          {
-             ecore_x_randr_crtc_settings_set(root, crtc->xid, NULL, 0, 0, 0, 0,
-                                             ECORE_X_RANDR_ORIENTATION_ROT_0);
-             continue;
-          }
-
+        printf("RRR2:   crtc: %x %i %i %ix%i rot: %i mode: %i\n", crtc->xid, crtc->geo.x, crtc->geo.y, crtc->geo.w, crtc->geo.h, crtc->orient, crtc->mode);
         /* set config from connected outputs */
         _e_randr_crtc_from_outputs_set(crtc);
 
@@ -570,7 +616,7 @@ _e_randr_apply(void)
         /* if the crtc does not fit, disable it */
         if (((x + w) > maxw) || ((y + h) > maxh) || (mode == 0))
           {
-             fprintf(stderr, "RRR: crtc dose not fit - off\n");
+             printf("RRR2:   crtc dose not fit - off\n");
              ecore_x_randr_crtc_settings_set(root, crtc->xid, NULL, 0, 0, 0, 0,
                                              ECORE_X_RANDR_ORIENTATION_ROT_0);
              continue;
@@ -580,40 +626,60 @@ _e_randr_apply(void)
         coutputs = calloc(eina_list_count(crtc->outputs), sizeof(Ecore_X_Randr_Output));
         if (!coutputs)
           {
-             fprintf(stderr, "RRR: cannod alloc coutputs\n");
-             /* TODO: ERROR! */
+             printf("RRR2:   cannot alloc coutputs\n");
              continue;
           }
         EINA_LIST_FOREACH(crtc->outputs, ll, output)
           {
-             coutputs[count] = output->xid;
-             count++;
+             E_Randr_Output *out2 = _e_randr_output_find(output->xid);
+             if (out2)
+               {
+                  if ((out2->cfg) && (out2->crtc == crtc) && (out2->mode) &&
+                      (out2->status == ECORE_X_RANDR_CONNECTION_STATUS_CONNECTED))
+                    {
+                       int i;
+                       Eina_Bool ok;
+
+                       ok = EINA_TRUE;
+                       for (i = 0; i < count; i++)
+                         {
+                            if (coutputs[i] == out2->xid)
+                              {
+                                 ok = EINA_FALSE;
+                                 break;
+                              }
+                         }
+                       if (ok)
+                         {
+                            printf("RRR2:   add output %s\n", out2->name);
+                            coutputs[count] = out2->xid;
+                            count++;
+                         }
+                    }
+               }
           }
 
-        /* get new size */
-        if ((x + w) > nw) nw = x + w;
-        if ((y + h) > nh) nh = y + h;
-        if (x < nx) nx = x;
-        if (y < ny) ny = y;
-
-        fprintf(stderr, "RRR: set mode %x | %i %i %ix%i | %x | %i\n", crtc->xid, crtc->geo.x, crtc->geo.y, crtc->geo.w, crtc->geo.h, crtc->mode, crtc->orient);
+        printf("RRR2:   set mode %x | %i %i %ix%i | %x | %i\n",
+                crtc->xid,
+                crtc->geo.x, crtc->geo.y, crtc->geo.w, crtc->geo.h,
+                crtc->mode, crtc->orient);
         /* apply our stored crtc settings */
-        ecore_x_randr_crtc_settings_set(root, crtc->xid, coutputs,
-                                        count, crtc->geo.x, crtc->geo.y,
-                                        crtc->mode, crtc->orient);
+        if (count > 0)
+          ecore_x_randr_crtc_settings_set(root, crtc->xid, coutputs,
+                                          count, crtc->geo.x, crtc->geo.y,
+                                          crtc->mode, crtc->orient);
+        else
+          {
+             printf("RRR2:   no coutputs - off\n");
+             ecore_x_randr_crtc_settings_set(root, crtc->xid, NULL, 0, 0, 0, 0,
+                                             ECORE_X_RANDR_ORIENTATION_ROT_0);
+          }
 
         /* cleanup */
         free(coutputs);
      }
-   /* Adjust size according to origo */
-   nw -= nx;
-   nh -= ny;
-
-   /* apply the new screen size */
-   ecore_x_randr_screen_current_size_set(root, nw, nh, -1, -1);
    /* this moves screen to (0, 0) */
    ecore_x_randr_screen_reset(root);
-
    /* release the server grab */
    ecore_x_ungrab();
 }
@@ -840,34 +906,40 @@ _e_randr_output_mode_update(E_Randr_Output *output)
    /* grab the root window */
    root = ecore_x_window_root_first_get();
 
+   printf("RR: ... 1 - %s\n", output->name);
    /* get mode infos */
    mode_infos = ecore_x_randr_modes_info_get(root, &nmode_infos);
-   if (nmode_infos == 0)
-     goto error;
+   if (nmode_infos == 0) goto error;
+   printf("RR: ... 2\n");
    /* get the list of modes for this output */
    modes = ecore_x_randr_output_modes_get(root, output->xid, &nmodes, &pref);
-   if (nmodes == 0)
-     goto error;
+   if (nmodes == 0) goto error;
+   printf("RR: ... 3\n");
 
    /* try to find the matching mode */
    output->mode = 0;
    if ((output->cfg->geo.w != 0) && (output->cfg->geo.h != 0))
      {
+        printf("RR: ... 4\n");
         for (i = 0; i < nmode_infos; i++)
           {
              double rate = 0.0;
 
              rate = e_randr_mode_refresh_rate_get(mode_infos[i]);
+             printf("RR: ... 4.1 ... %i %1.3f cfg=%p modes=%p nmodes=%i\n", i, rate, output->cfg, modes, nmodes);
              if ((mode_infos[i]->width == (unsigned int)output->cfg->geo.w) &&
                  (mode_infos[i]->height == (unsigned int)output->cfg->geo.h) &&
                  (dblequal(rate, output->cfg->refresh_rate)) &&
                  (_e_randr_output_mode_valid(mode_infos[i]->xid, modes, nmodes)))
                {
+                  printf("RR: ... 4.2 - match %ix%i @ %2.3f\n", output->cfg->geo.w, output->cfg->geo.h, rate);
                   output->mode = mode_infos[i]->xid;
                   break;
                }
+             printf("RR: ... 4.3\n");
           }
      }
+   printf("RR: ... 5\n");
 
    /* see if we can use the mode of the crtc */
    if ((!output->mode) && (output->crtc))
@@ -875,40 +947,44 @@ _e_randr_output_mode_update(E_Randr_Output *output)
         E_Randr_Crtc *crtc;
 
         crtc = _e_randr_crtc_find(ecore_x_randr_output_crtc_get(root, output->xid));
+        printf("RR: ... 6\n");
         if (crtc && crtc->mode)
           {
+             printf("RR: ... 6.1\n");
              if (_e_randr_output_mode_valid(crtc->mode, modes, nmodes))
                output->mode = crtc->mode;
              /* TODO: See if we have a mode of the same size with another mode id */
           }
      }
+   printf("RR: ... 7\n");
 
    /* set preferred mode */
    if (!output->mode)
      {
-        if (pref > 0)
-          output->mode = modes[pref - 1];
-        else
-          output->mode = modes[0];
+        printf("RR: ... 8\n");
+        if (pref > 0) output->mode = modes[pref - 1];
+        else output->mode = modes[0];
      }
 
    /* set width and height from mode */
    for (i = 0; i < nmode_infos; i++)
      {
+        printf("RR: ... 9\n");
         if (mode_infos[i]->xid == output->mode)
           {
              output->cfg->geo.w = mode_infos[i]->width;
              output->cfg->geo.h = mode_infos[i]->height;
              output->cfg->refresh_rate = e_randr_mode_refresh_rate_get(mode_infos[i]);
+             printf("RR: ... 9.1 %ix%i @ %2.3f\n", output->cfg->geo.w, output->cfg->geo.h, output->cfg->refresh_rate);
              break;
           }
      }
+   printf("RR: ... 10\n");
 
    if (modes) free(modes);
    if (mode_infos)
      {
-        for (i = 0; i < nmode_infos; i++)
-          free(mode_infos[i]);
+        for (i = 0; i < nmode_infos; i++) free(mode_infos[i]);
         free(mode_infos);
      }
    return;
@@ -1180,7 +1256,9 @@ _e_randr_crtc_from_outputs_set(E_Randr_Crtc *crtc)
 
    EINA_LIST_FOREACH(crtc->outputs, l, output)
      {
-        fprintf(stderr, "RRR: output: '%s' lid: %i active: %i status: %i\n", output->name, output->is_lid, output->active, output->status);
+        if (!output->active) continue;
+        if (output->status != ECORE_X_RANDR_CONNECTION_STATUS_CONNECTED) continue;
+        printf("RRR:       output: '%s' lid: %i active: %i status: %i\n", output->name, output->is_lid, output->active, output->status);
         /* TODO: Match all connected outputs, not only the first */
         crtc->mode = output->mode;
         crtc->orient = output->cfg->orient;
@@ -1240,19 +1318,46 @@ _e_randr_output_active_set(E_Randr_Output *output, Eina_Bool active)
    E_Randr_Crtc *crtc;
    Ecore_X_Window root = 0;
 
-   if (output->active == active) return;
+   printf("RR: _e_randr_output_active_set... [%s] %i %i\n", output->name, output->active, active);
    output->active = active;
 
    root = ecore_x_window_root_first_get();
+   printf("RR: ecore_x_randr_output_crtc_get %x = %x\n", output->xid, ecore_x_randr_output_crtc_get(root, output->xid));
    crtc = _e_randr_crtc_find(ecore_x_randr_output_crtc_get(root, output->xid));
+   if (!crtc)
+     {
+        crtc = _e_randr_output_crtc_find(output);
+        if (!crtc) crtc = output->crtc;
+        if (!crtc)
+          {
+             Eina_List *l;
+             E_Randr_Crtc *crtc2;
+
+             EINA_LIST_FOREACH(e_randr->crtcs, l, crtc2)
+               {
+                  printf("RR: ... looking at %x, outputs = %p\n", crtc2->xid, crtc2->outputs);
+                  if (!crtc2->outputs) break;
+                  else
+                    {
+                       if (!crtc2->mode) break;
+                    }
+                  crtc2 = NULL;
+               }
+             if (crtc2) crtc = crtc2;
+          }
+        printf("RR: ... output crtc2 = %p\n", crtc);
+        if (crtc) printf("RR: ... id = %x\n", crtc->xid);
+     }
    if (crtc)
      {
+        printf("RR:  ... found crtc %i\n", active);
         if (active)
           {
              crtc->outputs =
                 eina_list_append(crtc->outputs, output);
              output->crtc = crtc;
              e_randr->active++;
+             printf("RR:  ... add active output for crtc now\n");
           }
         else
           {
@@ -1260,22 +1365,13 @@ _e_randr_output_active_set(E_Randr_Output *output, Eina_Bool active)
                 eina_list_remove(crtc->outputs, output);
              output->crtc = NULL;
              e_randr->active--;
+             printf("RR:  ... remove output for crtc now\n");
           }
      }
    else output->crtc = NULL;
+   printf("RR: _e_randr_output_active_set... done - %p\n", output->crtc);
 }
-/*
-static int
-_e_randr_config_output_cmp(const void *a, const void *b)
-{
-   const E_Config_Randr_Output *cfg1 = a;
-   const E_Config_Randr_Output *cfg2 = b;
 
-   if (cfg1->xid < cfg2->xid) return -1;
-   if (cfg1->xid > cfg2->xid) return 1;
-   return 0;
-}
-*/
 static char *
 _e_randr_output_name_get(Ecore_X_Window root, Ecore_X_Randr_Output output)
 {
