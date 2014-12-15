@@ -138,7 +138,7 @@ _item_submenu_new(E_DBusMenu_Item *item, E_Menu_Item *mi)
           {
              e_menu_item_label_set(submi, child->label);
              e_menu_item_callback_set(submi, _sub_item_clicked_cb, child);
-             if (!child->enabled) e_menu_item_disabled_set(submi, 1);
+             //if (!child->enabled) e_menu_item_disabled_set(submi, 1);
              if (child->toggle_type == E_DBUSMENU_ITEM_TOGGLE_TYPE_CHECKMARK)
                e_menu_item_check_set(submi, 1);
              else if (child->toggle_type == E_DBUSMENU_ITEM_TOGGLE_TYPE_RADIO)
