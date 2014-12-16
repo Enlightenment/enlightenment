@@ -1,3 +1,58 @@
+Release 0.19.2:
+---------------------
+
+Carsten Haitzler (5):
+      e_auth - null out compilert memset opts like lokker
+      e - randr - stop saving config using XID - this is utterly WRONG
+      e randr - fix warning (signed vs unsigned cmp)
+      e randr - make it work on nvidia - lots of "wrong" things fixed
+      e randr - restore edp checks
+
+Marcel Hollerbach (3):
+      Fix wrong deskshow function
+      everything: terminate bc instead of quit
+      Register the new window into out evas.
+
+Mike Blumenkrantz (21):
+      fix teamwork popup positioning for non-dbus popups
+      fix internal window border changing
+      set skip pager/taskbar hints on parent window instead of client window
+      force shape queue on notification delete
+      ensure string safety on dbus message in connman agent
+      apply pointer warp effects immediately when instant warping
+      print more descriptive error messages when scanner connection fails, also don't exit() here
+      don't exit e_fm when eeze init fails, send RASTER mode instead
+      store eeze_scanner connection poller to avoid creating an infinite number
+      only attempt to start eeze_scanner a couple times before giving up
+      attempt to run eeze_scanner on failure to connect, not successful connect
+      ensure clients are visible before triggering shape/render queue
+      fix X crash when trying to apply desktop window profile to client without desk
+      add failure count for client rendering, drop clients after FAILURE_MAX tries
+      redo shaped client checks to use shape flags instead of rect pointer, fix shapeless clients
+      reduce shape recalc for clients which cannot currently receive input
+      remove access module from build
+      greatly reduce FAILURE_MAX
+      remembering size on a window should also remember maximize state
+      apply client size based on correct remember value, only apply if value != 0
+      store hide_logo state for desklock backgrounds
+
+Sebastian Dransfeld (5):
+      randr: further cleanup
+      randr: Don't match DP as LID
+      randr: remember crtcid for fast lookup on reconnect
+      randr: TODO++
+      randr: Don't track active outputs
+
+Stefan Schmidt (1):
+      po: Remove file from now disabled access module to pass distcheck
+
+Takeshi Banse (1):
+      cpufreq: teach cpuinfo_{min,max}_freq as available frequencies
+
+Tom Hacohen (1):
+      Randr: Fix null dereference.
+
+
 Release 0.19.1:
 ---------------------
 
