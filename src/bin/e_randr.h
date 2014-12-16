@@ -70,7 +70,6 @@ struct _E_Randr_Crtc
 
 struct _E_Randr
 {
-   int active;         // number of active outputs
    Eina_List *crtcs;   // list of crtcs
    Eina_List *outputs; // list of outputs
 };
