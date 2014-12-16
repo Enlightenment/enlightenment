@@ -1094,7 +1094,13 @@ _e_randr_output_crtc_find(E_Randr_Output *output)
                goto done;
           }
      }
-   crtc = NULL;
+
+error:
+   free(possible);
+   free(modes);
+
+   output->crtc = NULL;
+   return;
 
 done:
    free(possible);
@@ -1102,13 +1108,6 @@ done:
 
    output->crtcid = crtc->xid;
    output->crtc = crtc;
-   return;
-
-error:
-   free(possible);
-   free(modes);
-
-   output->crtc = NULL;
 }
 
 static void
