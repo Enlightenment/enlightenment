@@ -1209,10 +1209,9 @@ _e_randr_is_lid(E_Randr_Output *cfg)
    else if (strstr(cfg->name, "lvds")) ret = 1;
    else if (strstr(cfg->name, "Lvds")) ret = 1;
    else if (strstr(cfg->name, "LCD")) ret = 1;
-#if 0
-   else if (strstr(cfg->name, "DP")) ret = 1;
-   else if (strstr(cfg->name, "dp")) ret = 1;
-#endif
+   else if (strstr(cfg->name, "eDP")) ret = 1;
+   else if (strstr(cfg->name, "edp")) ret = 1;
+   else if (strstr(cfg->name, "EDP")) ret = 1;
    return ret;
 }
 
