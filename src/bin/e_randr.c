@@ -475,6 +475,7 @@ _e_randr_load(void)
              output->is_lid = _e_randr_is_lid(output);
              output->edid = _e_randr_output_edid_string_get(root, output->xid);
              output->status = ecore_x_randr_output_connection_status_get(root, output->xid);
+             output->crtcid = ecore_x_randr_output_crtc_get(root, output->xid);
              output->cfg = _e_randr_config_output_find(output);
              if (!output->cfg)
                {
@@ -781,6 +782,7 @@ _e_randr_event_cb_output_change(void *data EINA_UNUSED, int type EINA_UNUSED, vo
         if ((!output->crtc) || (output->crtc->xid == 0)) unknown = EINA_TRUE;
 
         /* connected */
+        output->crtcid = ev->crtc;
         if ((ev->crtc != 0) && ((!unknown) && (output->crtc->xid != ev->crtc)))
           {
              /* remove from old crtc */
@@ -1049,16 +1051,16 @@ _e_randr_output_crtc_find(E_Randr_Output *output)
    int num = 0, i = 0;
    int nmodes, pref;
 
-   /* grab the root window */
-   root = ecore_x_window_root_first_get();
-
    /* check if current is available */
-   if ((crtc = _e_randr_crtc_find(ecore_x_randr_output_crtc_get(root, output->xid))))
+   if ((crtc = _e_randr_crtc_find(output->crtcid)))
      {
         if (!crtc->outputs)
           goto done;
      }
    crtc = NULL;
+
+   /* grab the root window */
+   root = ecore_x_window_root_first_get();
 
    /* get a list of possible crtcs for this output */
    possible = ecore_x_randr_output_possible_crtcs_get(root, output->xid, &num);
@@ -1096,6 +1098,7 @@ done:
    free(possible);
    free(modes);
 
+   output->crtcid = crtc->xid;
    output->crtc = crtc;
    return;
 
@@ -1302,6 +1305,7 @@ _e_randr_output_active_set(E_Randr_Output *output, Eina_Bool active)
              output->crtc->outputs =
                 eina_list_remove(output->crtc->outputs, output);
              e_randr->active--;
+             output->crtc = NULL;
              printf("RR:  ... remove output for crtc now\n");
           }
      }

@@ -55,6 +55,7 @@ struct _E_Randr_Output
 
    E_Config_Randr_Output *cfg;
    E_Randr_Crtc *crtc;
+   Ecore_X_Randr_Crtc crtcid;
 };
 
 struct _E_Randr_Crtc
