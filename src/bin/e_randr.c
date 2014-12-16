@@ -228,6 +228,7 @@ _e_randr_config_load(void)
    E_CONFIG_LIST(D, T, outputs, _e_randr_output_edd);
    E_CONFIG_VAL(D, T, restore, UCHAR);
    E_CONFIG_VAL(D, T, config_timestamp, ULL);
+   // TODO: primary must be name + edid
    E_CONFIG_VAL(D, T, primary, UINT);
 
    /* try to load the randr config */
