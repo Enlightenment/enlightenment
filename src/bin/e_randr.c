@@ -598,6 +598,13 @@ _e_randr_apply(void)
         Ecore_X_Randr_Output *coutputs;
 
         printf("RRR2:   crtc: %x %i %i %ix%i rot: %i mode: %i\n", crtc->xid, crtc->geo.x, crtc->geo.y, crtc->geo.w, crtc->geo.h, crtc->orient, crtc->mode);
+        if (!crtc->outputs)
+          {
+             printf("RRR2:   no outputs - off\n");
+             ecore_x_randr_crtc_settings_set(root, crtc->xid, NULL, 0, 0, 0, 0,
+                                             ECORE_X_RANDR_ORIENTATION_ROT_0);
+             continue;
+          }
         /* set config from connected outputs */
         _e_randr_crtc_from_outputs_set(crtc);
 
