@@ -1269,7 +1269,12 @@ _e_randr_crtc_from_outputs_set(E_Randr_Crtc *crtc)
      {
         if (!output->active) continue;
         /* TODO: If status != connected, active should not be set */
-        if (output->status != ECORE_X_RANDR_CONNECTION_STATUS_CONNECTED) continue;
+        if (output->status != ECORE_X_RANDR_CONNECTION_STATUS_CONNECTED)
+          {
+             printf("RRR:  Error, unconnected output which is active.");
+             printf(" output: '%s' lid: %i active: %i status: %i\n", output->na
+             continue;
+          }
         printf("RRR:       output: '%s' lid: %i active: %i status: %i\n", output->name, output->is_lid, output->active, output->status);
         /* TODO: Match all connected outputs, not only the first */
         crtc->mode = output->mode;
