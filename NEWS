@@ -41,16 +41,12 @@ Sebastian Dransfeld (5):
       randr: Don't match DP as LID
       randr: remember crtcid for fast lookup on reconnect
       randr: TODO++
-      randr: Don't track active outputs
 
 Stefan Schmidt (1):
       po: Remove file from now disabled access module to pass distcheck
 
 Takeshi Banse (1):
       cpufreq: teach cpuinfo_{min,max}_freq as available frequencies
-
-Tom Hacohen (1):
-      Randr: Fix null dereference.
 
 
 Release 0.19.1:
