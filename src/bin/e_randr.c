@@ -1291,22 +1291,43 @@ _e_randr_lid_update(void)
    E_Randr_Output *output;
    Eina_List *l;
    Eina_Bool changed = EINA_FALSE;
+   int active_nonlid = 0;
 
-   /* loop through connections to find lid */
    changed = EINA_FALSE;
+   /* Find all non-lids */
    EINA_LIST_FOREACH(e_randr->outputs, l, output)
      {
-        if (!output->is_lid) continue;
-        /* only disable lid if we got more than 1 connected output */
-        if ((_e_randr_lid_is_closed) && (output->active) && (e_randr->active > 1))
+        if (output->is_lid) continue;
+        if (!output->active) continue;
+        active_nonlid++;
+     }
+   if (_e_randr_lid_is_closed && (active_nonlid > 0))
+     {
+        /* Disable lids if closed and we have other monitors */
+        EINA_LIST_FOREACH(e_randr->outputs, l, output)
           {
+             Eina_Bool active;
+
+             if (!output->is_lid) continue;
+             active = output->active;
              _e_randr_output_active_set(output, EINA_FALSE);
-             changed = EINA_TRUE;
+             if (active != output->active) changed = EINA_TRUE;
           }
-        else if (!output->active)
+     }
+   else
+     {
+        /* Enable lids */
+        EINA_LIST_FOREACH(e_randr->outputs, l, output)
           {
-             _e_randr_output_active_set(output, EINA_TRUE);
-             changed = EINA_TRUE;
+             Eina_Bool active;
+
+             if (!output->is_lid) continue;
+             if (output->cfg && output->cfg->connect)
+               {
+                  active = output->active;
+                  _e_randr_output_active_set(output, EINA_TRUE);
+                  if (active != output->active) changed = EINA_TRUE;
+               }
           }
      }
 
