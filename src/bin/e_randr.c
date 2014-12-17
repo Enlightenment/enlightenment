@@ -647,11 +647,14 @@ _e_randr_apply(void)
                   Eina_Bool ok;
 
                   ok = EINA_TRUE;
+                  /* TODO: This is wrong, one output shouldn't be twice in crtc list */
                   for (i = 0; i < count; i++)
                     {
                        if (coutputs[i] == output->xid)
                          {
                             ok = EINA_FALSE;
+                            printf("RRR:  Error, same output twice on crtc.");
+                            printf(" output: '%s' lid: %i active: %i status: %i\n", output->name, output->is_lid, output->active, output->status);
                             break;
                          }
                     }
@@ -1027,6 +1030,7 @@ _e_randr_config_output_find(E_Randr_Output *output)
    E_Config_Randr_Output *output_cfg;
    char b1[4096], b2[4096];
 
+   /* TODO: We should not match outputs with unknown name and edid */
    snprintf(b1, sizeof(b1), "%s.%s",
             output->name ? output->name : "???",
             output->edid ? output->edid : "???");
