@@ -551,7 +551,9 @@ _e_randr_apply(void)
    /* get the min and max screen size */
    ecore_x_randr_screen_size_range_get(root, &minw, &minh, &maxw, &maxh);
    printf("RRR0: size range: %ix%i -> %ix%i\n", minw, minh, maxw, maxh);
-   nx = ny = nw = nh = 0;
+   nx = maxw;
+   ny = maxh;
+   nw = nh = 0;
    EINA_LIST_FOREACH(e_randr->crtcs, l, crtc)
      {
         int x = 0, y = 0, w = 0, h = 0;
