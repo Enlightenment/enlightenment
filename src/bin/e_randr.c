@@ -629,30 +629,28 @@ _e_randr_apply(void)
           }
         EINA_LIST_FOREACH(crtc->outputs, ll, output)
           {
-             E_Randr_Output *out2 = _e_randr_output_find(output->xid);
-             if (out2)
+             /* TODO: If this condition isn't true, the output should not be in crtc->outputs.
+              * crtc->outputs should only contain valid outputs */
+             if ((output->cfg) && (output->crtc == crtc) && (output->mode) &&
+                 (output->status == ECORE_X_RANDR_CONNECTION_STATUS_CONNECTED))
                {
-                  if ((out2->cfg) && (out2->crtc == crtc) && (out2->mode) &&
-                      (out2->status == ECORE_X_RANDR_CONNECTION_STATUS_CONNECTED))
-                    {
-                       int i;
-                       Eina_Bool ok;
+                  int i;
+                  Eina_Bool ok;
 
-                       ok = EINA_TRUE;
-                       for (i = 0; i < count; i++)
+                  ok = EINA_TRUE;
+                  for (i = 0; i < count; i++)
+                    {
+                       if (coutputs[i] == output->xid)
                          {
-                            if (coutputs[i] == out2->xid)
-                              {
-                                 ok = EINA_FALSE;
-                                 break;
-                              }
+                            ok = EINA_FALSE;
+                            break;
                          }
-                       if (ok)
-                         {
-                            printf("RRR2:   add output %s\n", out2->name);
-                            coutputs[count] = out2->xid;
-                            count++;
-                         }
+                    }
+                  if (ok)
+                    {
+                       printf("RRR2:   add output %s\n", output->name);
+                       coutputs[count] = output->xid;
+                       count++;
                     }
                }
           }
@@ -1257,6 +1255,7 @@ _e_randr_crtc_from_outputs_set(E_Randr_Crtc *crtc)
    EINA_LIST_FOREACH(crtc->outputs, l, output)
      {
         if (!output->active) continue;
+        /* TODO: If status != connected, active should not be set */
         if (output->status != ECORE_X_RANDR_CONNECTION_STATUS_CONNECTED) continue;
         printf("RRR:       output: '%s' lid: %i active: %i status: %i\n", output->name, output->is_lid, output->active, output->status);
         /* TODO: Match all connected outputs, not only the first */
