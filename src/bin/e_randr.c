@@ -819,7 +819,7 @@ _e_randr_event_cb_output_change(void *data EINA_UNUSED, int type EINA_UNUSED, vo
              /* remove from old crtc */
              _e_randr_output_active_set(output, EINA_FALSE);
           }
-        if (output->cfg->connect)
+        if ((!output->active) && (output->cfg->connect))
           {
              _e_randr_output_active_set(output, EINA_TRUE);
 
@@ -851,8 +851,11 @@ _e_randr_event_cb_output_change(void *data EINA_UNUSED, int type EINA_UNUSED, vo
    else if (ev->connection == ECORE_X_RANDR_CONNECTION_STATUS_DISCONNECTED)
      {
         /* disconnected */
-        _e_randr_output_active_set(output, EINA_FALSE);
-        changed = EINA_TRUE;
+        if (output->active)
+          {
+             _e_randr_output_active_set(output, EINA_FALSE);
+             changed = EINA_TRUE;
+          }
      }
 
    /* save the config if anything changed or we added a new one */
@@ -1266,12 +1269,7 @@ _e_randr_crtc_from_outputs_set(E_Randr_Crtc *crtc)
      {
         if (!output->active) continue;
         /* TODO: If status != connected, active should not be set */
-        if (output->status != ECORE_X_RANDR_CONNECTION_STATUS_CONNECTED)
-          {
-             printf("RRR:  Error, unconnected output which is active.");
-             printf(" output: '%s' lid: %i active: %i status: %i\n", output->name, output->is_lid, output->active, output->status);
-             continue;
-          }
+        if (output->status != ECORE_X_RANDR_CONNECTION_STATUS_CONNECTED) continue;
         printf("RRR:       output: '%s' lid: %i active: %i status: %i\n", output->name, output->is_lid, output->active, output->status);
         /* TODO: Match all connected outputs, not only the first */
         crtc->mode = output->mode;
@@ -1294,12 +1292,12 @@ _e_randr_lid_update(void)
      {
         if (!output->is_lid) continue;
         /* only disable lid if we got more than 1 connected output */
-        if ((_e_randr_lid_is_closed) && (e_randr->active > 1))
+        if ((_e_randr_lid_is_closed) && (output->active) && (e_randr->active > 1))
           {
              _e_randr_output_active_set(output, EINA_FALSE);
              changed = EINA_TRUE;
           }
-        else
+        else if (!output->active)
           {
              _e_randr_output_active_set(output, EINA_TRUE);
              changed = EINA_TRUE;
