@@ -36,7 +36,6 @@ static Eina_Bool _e_randr_output_mode_valid(Ecore_X_Randr_Mode mode, Ecore_X_Ran
 static void      _e_randr_output_active_set(E_Randr_Output *output, Eina_Bool connected);
 //static int       _e_randr_config_output_cmp(const void *a, const void *b);
 static char     *_e_randr_output_name_get(Ecore_X_Window root, Ecore_X_Randr_Output output);
-static int       _e_randr_active_get(void);
 
 /* local variables */
 static Eina_List *_randr_event_handlers = NULL;
@@ -623,13 +622,10 @@ _e_randr_apply(void)
         /* if the output does not fit, disable it */
         if (((x + w) > maxw) || ((y + h) > maxh) || (mode == 0))
           {
-             Eina_List *ln;
-
              printf("RRR2:   crtc does not fit - off\n");
+             /* TODO: This is wrong, should remove output from crtc->outputs */
              ecore_x_randr_crtc_settings_set(root, crtc->xid, NULL, 0, 0, 0, 0,
                                              ECORE_X_RANDR_ORIENTATION_ROT_0);
-             EINA_LIST_FOREACH_SAFE(crtc->outputs, ll, ln, output)
-                _e_randr_output_active_set(output, EINA_FALSE);
              continue;
           }
 
@@ -795,7 +791,7 @@ _e_randr_event_cb_output_change(void *data EINA_UNUSED, int type EINA_UNUSED, vo
              /* forget out crtc */
              output->crtc = NULL;
           }
-        if (output->cfg && output->cfg->connect)
+        if ((!output->active) && (output->cfg->connect))
           {
              /* connect to crtc */
              _e_randr_output_active_set(output, EINA_TRUE);
@@ -826,8 +822,11 @@ _e_randr_event_cb_output_change(void *data EINA_UNUSED, int type EINA_UNUSED, vo
    else if (ev->connection == ECORE_X_RANDR_CONNECTION_STATUS_DISCONNECTED)
      {
         /* disconnected */
-        _e_randr_output_active_set(output, EINA_FALSE);
-        changed = EINA_TRUE;
+        if (output->active)
+          {
+             _e_randr_output_active_set(output, EINA_FALSE);
+             changed = EINA_TRUE;
+          }
      }
 
    /* save the config if anything changed or we added a new one */
@@ -1249,12 +1248,12 @@ _e_randr_lid_update(void)
      {
         if (!output->is_lid) continue;
         /* only disable lid if we got more than 1 connected output */
-        if ((_e_randr_lid_is_closed) && (_e_randr_active_get() > 1))
+        if ((_e_randr_lid_is_closed) && (output->active) && (e_randr->active > 1))
           {
              _e_randr_output_active_set(output, EINA_FALSE);
              changed = EINA_TRUE;
           }
-        else
+        else if (!output->active)
           {
              _e_randr_output_active_set(output, EINA_TRUE);
              changed = EINA_TRUE;
@@ -1290,21 +1289,22 @@ _e_randr_output_active_set(E_Randr_Output *output, Eina_Bool active)
      {
         _e_randr_output_crtc_find(output);
      }
-   output->active = EINA_FALSE;
    if (output->crtc)
      {
+        output->active = active;
         printf("RR:  ... found crtc %i\n", active);
         if (active)
           {
              output->crtc->outputs =
                 eina_list_append(output->crtc->outputs, output);
+             e_randr->active++;
              printf("RR:  ... add active output for crtc now\n");
-             output->active = EINA_TRUE;
           }
         else
           {
              output->crtc->outputs =
                 eina_list_remove(output->crtc->outputs, output);
+             e_randr->active--;
              output->crtc = NULL;
              printf("RR:  ... remove output for crtc now\n");
           }
@@ -1336,19 +1336,4 @@ _e_randr_output_name_get(Ecore_X_Window root, Ecore_X_Randr_Output output)
           }
      }
    return name;
-}
-
-static int
-_e_randr_active_get(void)
-{
-   int active = 0;
-   E_Randr_Output *output;
-   Eina_List *l;
-
-   EINA_LIST_FOREACH(e_randr->outputs, l, output)
-     {
-        if (output->active)
-          active++;
-     }
-   return active;
 }
