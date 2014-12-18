@@ -8,6 +8,9 @@ Carsten Haitzler (5):
       e randr - make it work on nvidia - lots of "wrong" things fixed
       e randr - restore edp checks
 
+Christopher Michael (1):
+      call e_powersave_init Before we call e_screensaver_init[...]
+
 Marcel Hollerbach (3):
       Fix wrong deskshow function
       everything: terminate bc instead of quit
