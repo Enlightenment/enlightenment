@@ -289,6 +289,7 @@ _basic_create(E_Config_Dialog *cfd, Evas *evas, E_Config_Dialog_Data *cfdata)
    Eina_List *l;
    Config_Mime *m;
 
+   e_dialog_resizable_set(cfd->dia, 1);
    otb = e_widget_toolbook_add(evas, 24, 24);
 
    ot = e_widget_table_add(evas, EINA_FALSE);

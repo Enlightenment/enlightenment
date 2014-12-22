@@ -410,6 +410,7 @@ _basic_create(E_Config_Dialog *cfd EINA_UNUSED, Evas *evas, E_Config_Dialog_Data
    char path[PATH_MAX];
    int mw, mh;
 
+   e_dialog_resizable_set(cfd->dia, 1);
 
    zone = e_zone_current_get(e_comp_get(NULL));
    o = e_widget_list_add(evas, 0, 1);
@@ -563,6 +564,7 @@ _adv_create(E_Config_Dialog *cfd EINA_UNUSED, Evas *evas, E_Config_Dialog_Data *
    char path[PATH_MAX];
    int mw, mh;
 
+   e_dialog_resizable_set(cfd->dia, 1);
 
    zone = e_zone_current_get(e_comp_get(NULL));
    o = e_widget_list_add(evas, 0, 1);

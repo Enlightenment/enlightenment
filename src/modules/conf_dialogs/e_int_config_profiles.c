@@ -100,6 +100,7 @@ _create_widgets(E_Config_Dialog *cfd EINA_UNUSED, Evas *evas, E_Config_Dialog_Da
    Evas_Coord mw, mh;
    char buf[PATH_MAX];
 
+   e_dialog_resizable_set(cfd->dia, 1);
    o = e_widget_list_add(evas, 0, 0);
 
    of = e_widget_framelist_add(evas, _("Available Profiles"), 0);

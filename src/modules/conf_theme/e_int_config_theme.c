@@ -655,6 +655,7 @@ _basic_create_widgets(E_Config_Dialog *cfd EINA_UNUSED, Evas *evas, E_Config_Dia
    char path[PATH_MAX];
 
    z = e_zone_current_get(e_comp_get(NULL));
+   e_dialog_resizable_set(cfd->dia, 1);
 
    ot = e_widget_table_add(evas, 0);
    ol = e_widget_table_add(evas, 0);

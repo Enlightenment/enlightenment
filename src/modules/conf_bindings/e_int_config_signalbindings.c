@@ -617,6 +617,7 @@ _signal_add_show(E_Config_Dialog_Data *cfdata)
    if (cfdata->locals.dia) return;
 
    cfdata->locals.dia = e_dialog_new(cfdata->cfd->dia->win, "E", "_signalbind_new_dialog");
+   e_dialog_resizable_set(cfdata->locals.dia, 1);
    e_dialog_title_set(cfdata->locals.dia, _("Add Signal Binding"));
    e_dialog_icon_set(cfdata->locals.dia, "enlightenment/signals", 48);
    e_dialog_button_add(cfdata->locals.dia, _("OK"), NULL, _signal_add_cb_ok, cfdata);
@@ -818,6 +819,7 @@ _basic_create_widgets(E_Config_Dialog *cfd EINA_UNUSED, Evas *evas, E_Config_Dia
    _update_signal_binding_list(cfdata);
    _fill_actions_list(cfdata);
 
+   e_dialog_resizable_set(cfd->dia, 1);
    return o;
 }
 

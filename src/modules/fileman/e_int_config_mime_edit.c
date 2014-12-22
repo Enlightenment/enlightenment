@@ -298,6 +298,7 @@ _cb_icon_sel(void *data, void *data2)
    else if (cfdata->type == IMG)
      e_dialog_title_set(dia, _("Select an image"));
 
+   e_dialog_resizable_set(dia, 1);
      
    dia->data = cfdata;
    e_object_del_attach_func_set(E_OBJECT(dia), _dia_del);

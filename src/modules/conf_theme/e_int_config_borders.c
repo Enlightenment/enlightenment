@@ -200,6 +200,7 @@ _basic_create(E_Config_Dialog *cfd EINA_UNUSED, Evas *evas, E_Config_Dialog_Data
    int n = 1, sel = 0;
    const char *str, *tmp;
 
+   e_dialog_resizable_set(cfd->dia, 1);
    if (cfdata->client)
      tmp = cfdata->client->border.name;
    else

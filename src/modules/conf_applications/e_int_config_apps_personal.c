@@ -73,6 +73,7 @@ _basic_create(E_Config_Dialog *cfd, Evas *evas, E_Config_Dialog_Data *cfdata)
    Evas_Object *of, *li, *ob;
    Evas_Coord mw, mh;
 
+   e_dialog_resizable_set(cfd->dia, 1);
    
    of = e_widget_table_add(evas, 0);
 

@@ -108,6 +108,7 @@ _basic_create(E_Config_Dialog *cfd __UNUSED__, Evas *evas, E_Config_Dialog_Data 
    Evas_Object *otb, *ol, *of, *ow;
    E_Radio_Group *rg;
 
+   e_dialog_resizable_set(cfd->dia, 1);
    otb = e_widget_toolbook_add(evas, (48 * e_scale), (48 * e_scale));
 
    ol = e_widget_list_add(evas, 0, 0);

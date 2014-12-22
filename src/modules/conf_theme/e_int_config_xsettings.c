@@ -531,6 +531,7 @@ _basic_create(E_Config_Dialog *cfd EINA_UNUSED, Evas *evas, E_Config_Dialog_Data
                                  1, 1, 1, 1, 0.5, 0.0);
 
    e_widget_toolbook_page_show(otb, 0);
+   e_dialog_resizable_set(cfd->dia, 1);
 
    _fill_files_ilist(cfdata);
 

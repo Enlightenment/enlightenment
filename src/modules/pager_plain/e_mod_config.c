@@ -121,6 +121,7 @@ _basic_create(E_Config_Dialog *cfd, Evas *evas, E_Config_Dialog_Data *cfdata)
 {
    Evas_Object *ol, *of, *ow;
 
+   e_dialog_resizable_set(cfd->dia, 1);
    cfdata->cfd = cfd;
    ol = e_widget_list_add(evas, 0, 0);
 
@@ -179,6 +180,7 @@ _adv_create(E_Config_Dialog *cfd, Evas *evas, E_Config_Dialog_Data *cfdata)
    Evas_Object *otb, *ol, *ow;
    Evas_Object *pc, *uc;
 
+   e_dialog_resizable_set(cfd->dia, 1);
    cfdata->cfd = cfd;
    otb = e_widget_toolbook_add(evas, (48 * e_scale), (48 * e_scale));
 

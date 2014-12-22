@@ -272,6 +272,7 @@ _basic_create_widgets(E_Config_Dialog *cfd EINA_UNUSED, Evas *evas, E_Config_Dia
    _update_key_binding_list(cfdata, NULL);
    _fill_actions_list(cfdata);
 
+   e_dialog_resizable_set(cfd->dia, 1);
    return o;
 }
 

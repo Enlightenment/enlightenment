@@ -281,6 +281,7 @@ _basic_create(E_Config_Dialog *cfd EINA_UNUSED, Evas *evas, E_Config_Dialog_Data
    Eina_List *l, *ll, *lll;
    Evas_Coord mw, mh;
    /* Holds the dialog contents, displays a toolbar on the top */
+   e_dialog_resizable_set(cfd->dia, 1);
    mainn = e_widget_toolbook_add(evas, 24, 24);
 
    /* Holds the used layouts ilist and the button table */
@@ -506,6 +507,7 @@ _dlg_add_new(E_Config_Dialog_Data *cfdata)
 
    if (!(dlg = e_dialog_new(NULL, "E", "xkbswitch_config_add_dialog"))) return NULL;
 
+   e_dialog_resizable_set(dlg, 1);
    dlg->data = cfdata;
    
    e_object_del_attach_func_set(E_OBJECT(dlg), _dlg_add_cb_del);

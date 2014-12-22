@@ -222,6 +222,7 @@ _basic_create(E_Config_Dialog *cfd __UNUSED__, Evas *evas, E_Config_Dialog_Data 
    E_Comp *comp;
    int screen_count, x = 0;
 
+   e_dialog_resizable_set(cfd->dia, 1);
    screen_count = eina_list_count(e_xinerama_screens_get());
 
    otb = e_widget_toolbook_add(evas, (24 * e_scale), (24 * e_scale));

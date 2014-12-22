@@ -305,6 +305,7 @@ _basic_create(E_Config_Dialog *cfd  __UNUSED__,
    E_Radio_Group *rg;
    int mw, mh;
 
+   e_dialog_resizable_set(cfd->dia, 1);
    otb = e_widget_toolbook_add(evas, 48 * e_scale, 48 * e_scale);
 
    o = e_widget_list_add(evas, 0, 0);

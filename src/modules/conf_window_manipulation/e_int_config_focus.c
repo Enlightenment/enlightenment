@@ -222,6 +222,7 @@ _basic_create(E_Config_Dialog *cfd __UNUSED__, Evas *evas, E_Config_Dialog_Data 
    Evas_Object *o, *ob;
    E_Radio_Group *rg;
 
+   e_dialog_resizable_set(cfd->dia, 1);
    o = e_widget_list_add(evas, 0, 0);
    rg = e_widget_radio_group_new(&(cfdata->mode));
    ob = e_widget_radio_add(evas, _("Click Window to Focus"), E_FOCUS_CLICK, rg);
@@ -245,6 +246,7 @@ _advanced_create(E_Config_Dialog *cfd __UNUSED__, Evas *evas, E_Config_Dialog_Da
    Evas_Object *autoraise_check;
    E_Radio_Group *rg;
 
+   e_dialog_resizable_set(cfd->dia, 1);
    otb = e_widget_toolbook_add(evas, (24 * e_scale), (24 * e_scale));
 
    /* Focus */

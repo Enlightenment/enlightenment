@@ -1019,6 +1019,7 @@ _basic_create_widgets(E_Config_Dialog *cfd EINA_UNUSED, Evas *evas, E_Config_Dia
    char buf[PATH_MAX];
 
    cfdata->evas = evas;
+   e_dialog_resizable_set(cfd->dia, 1);
    o = e_widget_table_add(evas, 0);
    of = e_widget_framelist_add(evas, _("Language Selector"), 0);
    ob = e_widget_ilist_add(evas, 16, 16, &(cfdata->cur_blang));
@@ -1106,6 +1107,7 @@ _advanced_create_widgets(E_Config_Dialog *cfd EINA_UNUSED, Evas *evas, E_Config_
    int sel = -1;
 
    cfdata->evas = evas;
+   e_dialog_resizable_set(cfd->dia, 1);
    _intl_current_locale_setup(cfdata);
 
    o = e_widget_table_add(evas, 0);

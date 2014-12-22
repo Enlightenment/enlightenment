@@ -279,6 +279,7 @@ _basic_create_widgets(E_Config_Dialog *cfd EINA_UNUSED, Evas *evas, E_Config_Dia
    Eina_List *l;
    E_Config_Env_Var *evr;
    
+   e_dialog_resizable_set(cfd->dia, 1);
    
    o = e_widget_table_add(evas, 0);
    

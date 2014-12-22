@@ -47,7 +47,7 @@ _e_dialog_internal_new(Evas_Object *parent, const char *name, const char *class,
    e_widget_on_focus_hook_set(o, _e_dialog_cb_wid_on_focus, dia);
    dia->box_object = o;
    edje_object_part_swallow(dia->bg_object, "e.swallow.buttons", o);
-   e_dialog_resizable_set(dia, 1);
+   edje_object_signal_emit(dia->bg_object, "e,state,no_resizable", "e");
 
    o = evas_object_rectangle_add(e);
    dia->event_object = o;
