@@ -166,7 +166,7 @@ _basic_create(E_Config_Dialog *cfd, Evas *evas, E_Config_Dialog_Data *cfdata)
    Evas_Object *o, *of, *ol, *ob;
    E_Zone *zone;
 
-   zone = e_zone_current_get(e_comp_get(cfd->dia->win));
+   zone = e_zone_current_get(e_comp_get(NULL));
 
    o = e_widget_list_add(evas, 0, 0);
 
