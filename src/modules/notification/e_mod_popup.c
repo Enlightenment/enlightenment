@@ -28,6 +28,57 @@ _notification_timer_cb(Popup_Data *popup)
    return EINA_FALSE;
 }
 
+static Popup_Data *
+_notification_popup_merge(E_Notification_Notify *n)
+{
+   Eina_List *l;
+   Popup_Data *popup;
+   char *body_final;
+   size_t len;
+
+   if (!n->app_name) return NULL;
+
+   EINA_LIST_FOREACH(notification_cfg->popups, l, popup)
+     {
+        if (!popup->notif) continue;
+        if (popup->notif->app_name == n->app_name) break;
+     }
+
+   if (!popup)
+     {
+        /* printf("- no poup to merge\n"); */
+        return NULL;
+     }
+
+   if (n->summary && (n->summary != popup->notif->summary))
+     {
+        /* printf("- summary doesn match, %s, %s\n", str1, str2); */
+        return NULL;
+     }
+
+   /* TODO  p->n is not fallback alert..*/
+   /* TODO  both allow merging */
+
+   len = strlen(popup->notif->body);
+   len += strlen(n->body);
+   len += 5; /* \xE2\x80\xA9 or <PS/> */
+   if (len < 8192) body_final = alloca(len + 1);
+   else body_final = malloc(len + 1);
+   /* Hack to allow e to include markup */
+   snprintf(body_final, len + 1, "%s<ps/>%s", popup->notif->body, n->body);
+
+   /* printf("set body %s\n", body_final); */
+
+   eina_stringshare_replace(&n->body, body_final);
+
+   e_object_del(E_OBJECT(popup->notif));
+   popup->notif = n;
+   if (len >= 8192) free(body_final);
+
+   return popup;
+}
+
+
 void
 notification_popup_notify(E_Notification_Notify *n,
                           unsigned int id)
@@ -59,6 +110,11 @@ notification_popup_notify(E_Notification_Notify *n,
         popup->notif = n;
         popup->id = id;
         _notification_popup_refresh(popup);
+     }
+   else if (!n->replaces_id)
+     {
+        if ((popup = _notification_popup_merge(n)))
+          _notification_popup_refresh(popup);
      }
 
    if (!popup)
