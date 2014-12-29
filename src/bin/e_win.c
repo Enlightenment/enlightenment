@@ -152,9 +152,9 @@ _e_elm_win_trap_resize(void *data, Evas_Object *o __UNUSED__, int w, int h)
    Elm_Win_Trap_Ctx *ctx = data;
    EINA_SAFETY_ON_NULL_RETURN_VAL(ctx, EINA_TRUE);
    if (!ctx->client) return EINA_TRUE;
+   e_comp_object_frame_wh_adjust(ctx->client->frame, w, h, &w, &h);
    e_client_resize_limit(ctx->client, &w, &h);
-   if ((ctx->client->client.w != w) || (ctx->client->client.h != h))
-     e_client_util_resize_without_frame(ctx->client, w, h);
+   evas_object_resize(ctx->client->frame, w, h);
    return EINA_TRUE;
 }
 
