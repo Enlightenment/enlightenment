@@ -878,7 +878,7 @@ _e_comp_intercept_resize(void *data, Evas_Object *obj, int w, int h)
         return;
      }
    if ((!cw->ec->internal) && e_client_util_resizing_get(cw->ec) && cw->ec->netwm.sync.request &&
-       ((cw->ec->w != w) && (cw->ec->h != h)))
+       ((cw->ec->w != w) || (cw->ec->h != h)))
      {
         /* this is ugly. */
         //INF("PENDING %dx%d", iw, ih);
