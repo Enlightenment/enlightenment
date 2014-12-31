@@ -14,7 +14,7 @@ struct _E_Winlist_Win
 };
 
 static void      _e_winlist_size_adjust(void);
-static void      _e_winlist_client_add(E_Client *ec, E_Zone *zone, E_Desk *desk);
+static Eina_Bool _e_winlist_client_add(E_Client *ec, E_Zone *zone, E_Desk *desk);
 static void      _e_winlist_client_del(E_Client *ec);
 static void      _e_winlist_activate_nth(int n);
 static void      _e_winlist_activate(void);
@@ -780,7 +780,7 @@ _e_winlist_size_adjust(void)
    evas_object_geometry_set(_winlist, x, y, w, h);
 }
 
-static void
+static Eina_Bool
 _e_winlist_client_add(E_Client *ec, E_Zone *zone, E_Desk *desk)
 {
    E_Winlist_Win *ww;
@@ -788,23 +788,23 @@ _e_winlist_client_add(E_Client *ec, E_Zone *zone, E_Desk *desk)
    Evas_Object *o;
 
    if ((!ec->icccm.accepts_focus) &&
-       (!ec->icccm.take_focus)) return;
-   if (ec->netwm.state.skip_taskbar) return;
-   if (ec->user_skip_winlist) return;
+       (!ec->icccm.take_focus)) return EINA_FALSE;
+   if (ec->netwm.state.skip_taskbar) return EINA_FALSE;
+   if (ec->user_skip_winlist) return EINA_FALSE;
    if (ec->iconic)
      {
-        if (!e_config->winlist_list_show_iconified) return;
+        if (!e_config->winlist_list_show_iconified) return EINA_FALSE;
         if ((ec->zone != zone) &&
-            (!e_config->winlist_list_show_other_screen_iconified)) return;
+            (!e_config->winlist_list_show_other_screen_iconified)) return EINA_FALSE;
         if ((ec->desk != desk) &&
-            (!e_config->winlist_list_show_other_desk_iconified)) return;
+            (!e_config->winlist_list_show_other_desk_iconified)) return EINA_FALSE;
      }
    else
      {
         if (ec->sticky)
           {
              if ((ec->zone != zone) &&
-                 (!e_config->winlist_list_show_other_screen_windows)) return;
+                 (!e_config->winlist_list_show_other_screen_windows)) return EINA_FALSE;
           }
         else
           {
@@ -813,21 +813,21 @@ _e_winlist_client_add(E_Client *ec, E_Zone *zone, E_Desk *desk)
                   if ((ec->zone) && (ec->zone != zone))
                     {
                        if (!e_config->winlist_list_show_other_screen_windows)
-                         return;
+                         return EINA_FALSE;
                        if (ec->zone && ec->desk && (ec->desk != e_desk_current_get(ec->zone)))
                          {
                             if (!e_config->winlist_list_show_other_desk_windows)
-                              return;
+                              return EINA_FALSE;
                          }
                     }
                   else if (!e_config->winlist_list_show_other_desk_windows)
-                    return;
+                    return EINA_FALSE;
                }
           }
      }
 
    ww = E_NEW(E_Winlist_Win, 1);
-   if (!ww) return;
+   if (!ww) return EINA_FALSE;
    ww->client = ec;
    _wins = eina_list_append(_wins, ww);
    o = edje_object_add(ec->comp->evas);
@@ -865,6 +865,7 @@ _e_winlist_client_add(E_Client *ec, E_Zone *zone, E_Desk *desk)
                           9999, mh /* max */
                           );
    e_object_ref(E_OBJECT(ww->client));
+   return EINA_TRUE;
 }
 
 static void
@@ -1084,9 +1085,9 @@ _e_winlist_cb_event_border_add(void *data __UNUSED__, int type __UNUSED__,
 {
    E_Event_Client *ev = event;
 
-   _e_winlist_client_add(ev->ec, _winlist_zone,
-                         e_desk_current_get(_winlist_zone));
-   _e_winlist_size_adjust();
+   if (_e_winlist_client_add(ev->ec, _winlist_zone,
+                         e_desk_current_get(_winlist_zone)))
+     _e_winlist_size_adjust();
    return ECORE_CALLBACK_PASS_ON;
 }
 
