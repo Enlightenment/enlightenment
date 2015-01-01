@@ -60,6 +60,7 @@ _e_int_theme_preview_set(Evas_Object *preview, const char *file)
    e = e_widget_preview_evas_get(preview);
    evas_object_size_hint_min_get(preview, &w, &h);
    w *= 2; h *= 2;
+#warning REMOVE STUPID ELM HACK BEFORE RELEASE
    r = evas_object_rectangle_add(e);
    
    o = edje_object_add(e);
