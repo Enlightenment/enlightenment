@@ -211,7 +211,10 @@ _opinfo_op_registry_listener(void *data, const E_Fm2_Op_Registry_Entry *ere)
 
    // resize element to fit the box
    edje_object_size_min_calc(o, &mw, &mh);
-   e_box_pack_options_set(o, 1, 0, 1, 0, 0.0, 0.0, mw, mh, 9999, mh);
+   E_WEIGHT(o, 0, 1);
+   E_ALIGN(o, -1, 0);
+   evas_object_size_hint_min_set(o, mw, mh);
+   evas_object_size_hint_max_set(o, 9999, mh);
    evas_object_show(o);
 }
 
@@ -228,7 +231,6 @@ _opinfo_op_registry_free_data_delayed(void *data)
    
    if (o)
      {
-        e_box_unpack(o);
         evas_object_del(o);
      }
    
@@ -292,7 +294,7 @@ _opinfo_op_registry_entry_add_cb(void *data, __UNUSED__ int type, void *event)
                                    _opinfo_op_registry_abort_cb, (void*)(long)ere->id);
    edje_object_signal_callback_add(o, "e,fm,window,jump", "", 
                                    _opinfo_op_registry_window_jump_cb, (void*)(long)ere->id); 
-   e_box_pack_end(inst->o_box, o);
+   elm_box_pack_end(inst->o_box, o);
    
    e_fm2_op_registry_entry_listener_add(ere, _opinfo_op_registry_listener,
                                         o, _opinfo_op_registry_free_data);
@@ -365,20 +367,23 @@ _gc_init(E_Gadcon *gc, const char *name, const char *id, const char *style)
      }
 
    // main object
-   inst->o_box = e_box_add(gc->evas);
-   e_box_homogenous_set(inst->o_box, 0);
-   e_box_orientation_set(inst->o_box, 0);
-   e_box_align_set(inst->o_box, 0, 0);
+   inst->o_box = elm_box_add(gc->o_container);
+   elm_box_homogeneous_set(inst->o_box, 0);
+   elm_box_horizontal_set(inst->o_box, 0);
+   elm_box_align_set(inst->o_box, 0, 0);
 
    // status line
    inst->o_status = edje_object_add(evas_object_evas_get(inst->o_box));
    if (!e_theme_edje_object_set(inst->o_status, "base/theme/modules/fileman_opinfo",
                                 "modules/fileman_opinfo/status"))
       edje_object_file_set(inst->o_status, inst->theme_file, "modules/fileman_opinfo/status");
-   e_box_pack_end(inst->o_box, inst->o_status);
+   elm_box_pack_end(inst->o_box, inst->o_status);
    evas_object_show(inst->o_status);
    edje_object_size_min_get(inst->o_status, &mw, &mh);
-   e_box_pack_options_set(inst->o_status, 1, 0, 1, 0, 0.0, 0.0, mw, mh, 9999, mh);
+   E_WEIGHT(inst->o_status, 1, 0);
+   E_ALIGN(inst->o_status, -1, 0);
+   evas_object_size_hint_min_set(inst->o_status, mw, mh);
+   evas_object_size_hint_max_set(inst->o_status, 9999, mh);
 
    _opinfo_op_registry_update_all(inst);
 
@@ -407,7 +412,6 @@ _gc_shutdown(E_Gadcon_Client *gcc)
      ecore_event_handler_del(inst->fm_op_entry_add_handler);
    if (inst->fm_op_entry_del_handler)
      ecore_event_handler_del(inst->fm_op_entry_del_handler);
-   e_box_unpack(inst->o_status);
    evas_object_del(inst->o_status);
    evas_object_del(inst->o_box);
    free(inst->theme_file);

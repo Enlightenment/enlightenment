@@ -164,11 +164,20 @@ static void
 _box_button_cb_dnd_move(void *data, const char *type, void *event)
 {
    Instance *inst = data;
+   Eina_List *l;
    Evas_Object *obj;
    E_Event_Dnd_Move *ev = event;
 
    if (strcmp(type, "text/uri-list") && strcmp(type, "XdndDirectSave0")) return;
-   obj = e_box_item_at_xy_get(inst->o_box, ev->x, ev->y);
+   l = elm_box_children_get(inst->o_box);
+   EINA_LIST_FREE(l, obj)
+     {
+        int x, y, w, h;
+
+        evas_object_geometry_get(obj, &x, &y, &w, &h);
+        if (E_INSIDE(ev->x, ev->y, x, y, w, h)) break;
+     }
+   eina_list_free(l);
    if (!obj)
      {
         _box_button_cb_dnd_leave(inst, type, NULL);
@@ -326,10 +335,10 @@ _gc_init(E_Gadcon *gc, const char *name, const char *id, const char *style)
    e_scrollframe_thumbscroll_force(inst->o_scroll, 1);
    evas_object_show(inst->o_scroll);
 
-   inst->o_box = e_box_add(gc->evas);
+   inst->o_box = elm_box_add(gc->o_container);
    evas_object_repeat_events_set(inst->o_box, EINA_TRUE);
-   e_box_orientation_set(inst->o_box, 1);
-   e_box_homogenous_set(inst->o_box, 0);
+   elm_box_horizontal_set(inst->o_box, 1);
+   elm_box_homogeneous_set(inst->o_box, 0);
    e_scrollframe_child_set(inst->o_scroll, inst->o_box);
    evas_object_show(inst->o_box);
 
@@ -649,7 +658,6 @@ _box_button_free(Nav_Item *ni)
 {
    if (!ni) return;
    ni->inst->l_buttons = eina_inlist_remove(ni->inst->l_buttons, EINA_INLIST_GET(ni));
-   e_box_unpack(ni->o);
    evas_object_del(ni->o);
    E_FREE_LIST(ni->handlers, ecore_event_handler_del);
    eio_monitor_del(ni->monitor);
@@ -678,10 +686,12 @@ _box_button_append(Instance *inst, const char *label, Edje_Signal_Cb func)
    edje_object_signal_callback_add(o, "e,action,click", "", func, inst);
    edje_object_part_text_set(o, "e.text.label", label);
    edje_object_size_min_calc(o, &mw, &mh);
-   e_box_pack_end(inst->o_box, o);
+   E_ALIGN(o, -1, 0.5);
+   elm_box_pack_end(inst->o_box, o);
    evas_object_show(o);
-   e_box_pack_options_set(o, 1, 0, 0, 0, 0.5, 0.5, mw, mh, 9999, 9999);
-   e_box_size_min_get(inst->o_box, &mw, NULL);
+   evas_object_size_hint_min_set(o, mw, mh);
+   elm_box_recalculate(inst->o_box);
+   evas_object_size_hint_min_get(inst->o_box, &mw, NULL);
    evas_object_geometry_get(inst->o_scroll, NULL, NULL, NULL, &mh);
    evas_object_resize(inst->o_box, mw, mh);
    ni->o = o;

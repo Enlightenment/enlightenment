@@ -155,10 +155,9 @@ e_winlist_show(E_Zone *zone, E_Winlist_Filter filter)
    e_theme_edje_object_set(o, "base/theme/winlist",
                            "e/widgets/winlist/main");
 
-   o = e_box_add(zone->comp->evas);
+   o = elm_box_add(o);
    _list_object = o;
-   e_box_freeze(_list_object);
-   e_box_homogenous_set(o, 1);
+   elm_box_homogeneous_set(o, 1);
    e_comp_object_util_del_list_append(_winlist, o);
    edje_object_part_swallow(_bg_object, "e.swallow.list", o);
    edje_object_part_text_set(_bg_object, "e.text.title", _("Select a window"));
@@ -189,7 +188,6 @@ e_winlist_show(E_Zone *zone, E_Winlist_Filter filter)
           }
         if (pick) _e_winlist_client_add(ec, _winlist_zone, desk);
      }
-   e_box_thaw(_list_object);
    eina_list_free(wmclasses);
 
    if (!_wins)
@@ -752,14 +750,11 @@ _e_winlist_size_adjust(void)
    E_Zone *zone;
    int x, y, w, h;
 
-   e_box_freeze(_list_object);
-   e_box_size_min_get(_list_object, &mw, &mh);
-   evas_object_size_hint_min_set(_list_object, mw, mh);
+   elm_box_recalculate(_list_object);
    edje_object_part_swallow(_bg_object, "e.swallow.list", _list_object);
    edje_object_size_min_calc(_bg_object, &mw, &mh);
    evas_object_size_hint_min_set(_list_object, -1, -1);
    edje_object_part_swallow(_bg_object, "e.swallow.list", _list_object);
-   e_box_thaw(_list_object);
 
    zone = _winlist_zone;
    w = (double)zone->w * e_config->winlist_pos_size_w;
@@ -831,6 +826,7 @@ _e_winlist_client_add(E_Client *ec, E_Zone *zone, E_Desk *desk)
    ww->client = ec;
    _wins = eina_list_append(_wins, ww);
    o = edje_object_add(ec->comp->evas);
+   E_FILL(o);
    e_comp_object_util_del_list_append(_winlist, o);
    ww->bg_object = o;
    e_theme_edje_object_set(o, "base/theme/winlist",
@@ -856,14 +852,11 @@ _e_winlist_client_add(E_Client *ec, E_Zone *zone, E_Desk *desk)
      }
 
    edje_object_size_min_calc(ww->bg_object, &mw, &mh);
-   e_box_pack_end(_list_object, ww->bg_object);
-   e_box_pack_options_set(ww->bg_object,
-                          1, 1, /* fill */
-                          1, 0, /* expand */
-                          0.5, 0.5, /* align */
-                          mw, mh, /* min */
-                          9999, mh /* max */
-                          );
+   E_WEIGHT(ww->bg_object, 1, 0);
+   E_FILL(ww->bg_object);
+   evas_object_size_hint_min_set(ww->bg_object, mw, mh);
+   evas_object_size_hint_max_set(ww->bg_object, 9999, mh);
+   elm_box_pack_end(_list_object, ww->bg_object);
    e_object_ref(E_OBJECT(ww->client));
 }
 
@@ -1054,7 +1047,7 @@ _e_winlist_show_active(void)
    else
      {
         _scroll_align = _scroll_align_to;
-        e_box_align_set(_list_object, 0.5, fabs(1.0 - _scroll_align));
+        elm_box_align_set(_list_object, 0.5, fabs(1.0 - _scroll_align));
      }
 }
 
@@ -1338,7 +1331,7 @@ _e_winlist_animator(void *data __UNUSED__)
              _scroll_align = _scroll_align_to;
              _scroll_to = 0;
           }
-        e_box_align_set(_list_object, 0.5, fabs(1.0 - _scroll_align));
+        elm_box_align_set(_list_object, 0.5, fabs(1.0 - _scroll_align));
      }
    if (!_scroll_to) _animator = NULL;
    return _scroll_to;

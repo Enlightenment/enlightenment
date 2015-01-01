@@ -1599,7 +1599,7 @@ _cb_list_show(void *data, Evas_Object *obj __UNUSED__, const char *emission __UN
 }
 
 static Evry_View *
-_view_create(Evry_View *ev, const Evry_State *s, const Evas_Object *swallow)
+_view_create(Evry_View *ev, const Evry_State *s, Evas_Object *swallow)
 {
    GET_VIEW(parent, ev);
 
@@ -1664,7 +1664,7 @@ _view_create(Evry_View *ev, const Evry_State *s, const Evas_Object *swallow)
    evas_object_show(v->sframe);
    evas_object_show(v->span);
 
-   v->tabs = evry_tab_view_new(EVRY_VIEW(v), v->state, v->evas);
+   v->tabs = evry_tab_view_new(EVRY_VIEW(v), v->state, v->bg);
 
    EVRY_VIEW(v)->o_list = v->bg;
    EVRY_VIEW(v)->o_bar = v->tabs->o_tabs;

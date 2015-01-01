@@ -54,12 +54,13 @@ _e_int_theme_preview_set(Evas_Object *preview, const char *file)
    Evas *e;
    Evas_Coord w = 320, h = 240, mw = 0, mh = 0;
    Eina_List *objs = NULL;
-   Evas_Object *o, *po, *po2, *po3;
+   Evas_Object *o, *po, *po2, *po3, *r;
    
    _e_int_theme_preview_clear(preview);
    e = e_widget_preview_evas_get(preview);
    evas_object_size_hint_min_get(preview, &w, &h);
    w *= 2; h *= 2;
+   r = evas_object_rectangle_add(e);
    
    o = edje_object_add(e);
    _e_int_theme_edje_file_set(o, file, "e/desktop/background");
@@ -87,8 +88,8 @@ _e_int_theme_preview_set(Evas_Object *preview, const char *file)
    po = o;
    po2 = po;
    
-   o = e_box_add(e);
-   e_box_orientation_set(o, 1);
+   o = elm_box_add(r);
+   elm_box_horizontal_set(o, 1);
    evas_object_show(o);
    edje_object_part_swallow(po, "e.swallow.content", o);
    objs = eina_list_append(objs, o);
@@ -99,20 +100,22 @@ _e_int_theme_preview_set(Evas_Object *preview, const char *file)
    o = edje_object_add(e);
    _e_int_theme_edje_file_set(o, file, "e/modules/start/main");
    evas_object_show(o);
-   e_box_pack_end(po, o);
-   e_box_pack_options_set(o, 1, 1, 0, 0, 0.5, 0.5, mh, 0, 9999, 9999);
+   E_FILL(o);
+   elm_box_pack_end(po, o);
+   evas_object_size_hint_min_set(o, mh, 0);
    objs = eina_list_append(objs, o);
 
    o = edje_object_add(e);
    _e_int_theme_edje_file_set(o, file, "e/shelf/default/inset");
    evas_object_show(o);
-   e_box_pack_end(po, o);
-   e_box_pack_options_set(o, 1, 1, 0, 0, 0.5, 0.5, 4 * mh, 0, 9999, 9999);
+   E_FILL(o);
+   elm_box_pack_end(po, o);
+   evas_object_size_hint_min_set(o, 4 * mh, 0);
    objs = eina_list_append(objs, o);
    po2 = o;
 
-   o = e_box_add(e);
-   e_box_orientation_set(o, 1);
+   o = elm_box_add(r);
+   elm_box_horizontal_set(o, 1);
    evas_object_show(o);
    edje_object_part_swallow(po2, "e.swallow.content", o);
    objs = eina_list_append(objs, o);
@@ -122,57 +125,61 @@ _e_int_theme_preview_set(Evas_Object *preview, const char *file)
    _e_int_theme_edje_file_set(o, file, "e/modules/pager/desk");
    evas_object_show(o);
    edje_object_signal_emit(o, "e,state,selected", "e");
-   e_box_pack_end(po3, o);
-   e_box_pack_options_set(o, 1, 1, 0, 0, 0.5, 0.5, mh, 0, 9999, 9999);
+   elm_box_pack_end(po3, o);
+   evas_object_size_hint_min_set(o, mh, 0);
    objs = eina_list_append(objs, o);
 
    o = edje_object_add(e);
    _e_int_theme_edje_file_set(o, file, "e/modules/pager/desk");
    evas_object_show(o);
-   e_box_pack_end(po3, o);
-   e_box_pack_options_set(o, 1, 1, 0, 0, 0.5, 0.5, mh, 0, 9999, 9999);
+   elm_box_pack_end(po3, o);
+   evas_object_size_hint_min_set(o, mh, 0);
    objs = eina_list_append(objs, o);
 
    o = edje_object_add(e);
    _e_int_theme_edje_file_set(o, file, "e/modules/pager/desk");
    evas_object_show(o);
-   e_box_pack_end(po3, o);
-   e_box_pack_options_set(o, 1, 1, 0, 0, 0.5, 0.5, mh, 0, 9999, 9999);
+   elm_box_pack_end(po3, o);
+   evas_object_size_hint_min_set(o, mh, 0);
    objs = eina_list_append(objs, o);
 
    o = edje_object_add(e);
    _e_int_theme_edje_file_set(o, file, "e/modules/pager/desk");
    evas_object_show(o);
-   e_box_pack_end(po3, o);
-   e_box_pack_options_set(o, 1, 1, 0, 0, 0.5, 0.5, mh, 0, 9999, 9999);
+   elm_box_pack_end(po3, o);
+   evas_object_size_hint_min_set(o, mh, 0);
    objs = eina_list_append(objs, o);
 
    o = edje_object_add(e);
    _e_int_theme_edje_file_set(o, file, "e/modules/backlight/main");
    evas_object_show(o);
-   e_box_pack_end(po, o);
-   e_box_pack_options_set(o, 1, 1, 0, 0, 0.5, 0.5, mh, 0, 9999, 9999);
+   E_FILL(o);
+   elm_box_pack_end(po, o);
+   evas_object_size_hint_min_set(o, mh, 0);
    objs = eina_list_append(objs, o);
 
    o = edje_object_add(e);
    _e_int_theme_edje_file_set(o, file, "e/modules/mixer/main");
    evas_object_show(o);
-   e_box_pack_end(po, o);
-   e_box_pack_options_set(o, 1, 1, 0, 0, 0.5, 0.5, mh, 0, 9999, 9999);
+   E_FILL(o);
+   elm_box_pack_end(po, o);
+   evas_object_size_hint_min_set(o, mh, 0);
    objs = eina_list_append(objs, o);
 
    o = edje_object_add(e);
    _e_int_theme_edje_file_set(o, file, "e/modules/battery/main");
    evas_object_show(o);
-   e_box_pack_end(po, o);
-   e_box_pack_options_set(o, 1, 1, 0, 0, 0.5, 0.5, mh, 0, 9999, 9999);
+   E_FILL(o);
+   elm_box_pack_end(po, o);
+   evas_object_size_hint_min_set(o, mh, 0);
    objs = eina_list_append(objs, o);
    
    o = edje_object_add(e);
    _e_int_theme_edje_file_set(o, file, "e/modules/clock/main");
    evas_object_show(o);
-   e_box_pack_end(po, o);
-   e_box_pack_options_set(o, 1, 1, 0, 0, 0.5, 0.5, mh, 0, 9999, 9999);
+   E_FILL(o);
+   elm_box_pack_end(po, o);
+   evas_object_size_hint_min_set(o, mh, 0);
    objs = eina_list_append(objs, o);
    
    
@@ -257,9 +264,9 @@ _e_int_theme_preview_set(Evas_Object *preview, const char *file)
    edje_object_part_swallow(po, "e.swallow.icon", o);
    objs = eina_list_append(objs, o);
 
-   o = e_box_add(e);
-   e_box_orientation_set(o, 1);
-   e_box_homogenous_set(o, 1);
+   o = elm_box_add(r);
+   elm_box_horizontal_set(o, 1);
+   elm_box_homogeneous_set(o, 1);
    evas_object_show(o);
    edje_object_part_swallow(po, "e.swallow.buttons", o);
    objs = eina_list_append(objs, o);
@@ -270,8 +277,9 @@ _e_int_theme_preview_set(Evas_Object *preview, const char *file)
    evas_object_show(o);
    edje_object_signal_emit(o, "e,state,text", "e");
    edje_object_part_text_set(o, "e.text.label", "OK");
-   e_box_pack_end(po, o);
-   e_box_pack_options_set(o, 1, 1, 0, 0, 0.5, 0.5, 50, 20, 9999, 9999);
+   E_FILL(o);
+   elm_box_pack_end(po, o);
+   evas_object_size_hint_min_set(o, 50, 20);
    objs = eina_list_append(objs, o);
    
    o = edje_object_add(e);
@@ -279,11 +287,13 @@ _e_int_theme_preview_set(Evas_Object *preview, const char *file)
    evas_object_show(o);
    edje_object_signal_emit(o, "e,state,text", "e");
    edje_object_part_text_set(o, "e.text.label", "Cancel");
-   e_box_pack_end(po, o);
-   e_box_pack_options_set(o, 1, 1, 0, 0, 0.5, 0.5, 50, 20, 9999, 9999);
+   E_FILL(o);
+   elm_box_pack_end(po, o);
+   evas_object_size_hint_min_set(o, 50, 20);
    objs = eina_list_append(objs, o);
 
-   e_box_size_min_get(po, &mw, &mh);
+   elm_box_recalculate(po);
+   evas_object_size_hint_min_get(po, &mw, &mh);
    evas_object_size_hint_min_set(po, mw, mh);
    edje_object_part_swallow(po2, "e.swallow.buttons", po);
 

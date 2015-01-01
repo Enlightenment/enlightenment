@@ -130,14 +130,13 @@ _tabs_update(Tab_View *v)
      }
 
    /* remove tabs for not active plugins */
-   e_box_freeze(v->o_tabs);
 
    EINA_LIST_FOREACH (v->tabs, l, tab)
      {
         if (!tab->plugin)
           continue;
 
-        e_box_unpack(tab->o_tab);
+        elm_box_unpack(v->o_tabs, tab->o_tab);
         evas_object_hide(tab->o_tab);
      }
 
@@ -152,10 +151,12 @@ _tabs_update(Tab_View *v)
 
              o = tab->o_tab;
              evas_object_show(o);
-             e_box_pack_end(v->o_tabs, o);
              mw = tab->cw;
              if (mw < tab->mw) mw = tab->mw;
-             e_box_pack_options_set(o, 1, 1, 1, 1, 0.5, 0.5, mw, 1, 99999, 99999);
+             E_EXPAND(o);
+             E_FILL(o);
+             evas_object_size_hint_min_set(o, mw, 1);
+             elm_box_pack_end(v->o_tabs, o);
           }
      }
 
@@ -185,10 +186,12 @@ _tabs_update(Tab_View *v)
 
         o = tab->o_tab;
         evas_object_show(o);
-        e_box_pack_end(v->o_tabs, o);
         mw = tab->cw;
         if (mw < tab->mw) mw = tab->mw;
-        e_box_pack_options_set(o, 1, 1, 1, 1, 0.5, 0.5, mw, 1, 99999, 99999);
+        E_EXPAND(o);
+        E_FILL(o);
+        evas_object_size_hint_min_set(o, mw, 1);
+        elm_box_pack_end(v->o_tabs, o);
 
         if (s->plugin == p)
           edje_object_signal_emit(o, "e,state,selected", "e");
@@ -198,8 +201,7 @@ _tabs_update(Tab_View *v)
         if (++i > 3) break;
      }
 
-   e_box_align_set(v->o_tabs, 0.0, 0.5);
-   e_box_thaw(v->o_tabs);
+   elm_box_align_set(v->o_tabs, 0.0, 0.5);
 }
 
 static void
@@ -208,16 +210,14 @@ _tabs_clear(Tab_View *v)
    Eina_List *l;
    Tab *tab;
 
-   e_box_freeze(v->o_tabs);
    EINA_LIST_FOREACH (v->tabs, l, tab)
      {
         if (!tab->plugin)
           continue;
 
-        e_box_unpack(tab->o_tab);
+        elm_box_unpack(v->o_tabs, tab->o_tab);
         evas_object_hide(tab->o_tab);
      }
-   e_box_thaw(v->o_tabs);
 }
 
 static void
@@ -352,7 +352,7 @@ _tabs_key_down(Tab_View *v, const Ecore_Event_Key *ev)
 }
 
 Tab_View *
-evry_tab_view_new(Evry_View *view, const Evry_State *s, Evas *e)
+evry_tab_view_new(Evry_View *view, const Evry_State *s, Evas_Object *parent)
 {
    Tab_View *v;
    Evas_Object *o;
@@ -364,10 +364,10 @@ evry_tab_view_new(Evry_View *view, const Evry_State *s, Evas *e)
    v->view = view;
    v->state = s;
 
-   v->evas = e;
-   o = e_box_add(e);
-   e_box_orientation_set(o, 1);
-   e_box_homogenous_set(o, 1);
+   v->evas = evas_object_evas_get(parent);
+   o = elm_box_add(parent);
+   elm_box_horizontal_set(o, 1);
+   elm_box_homogeneous_set(o, 1);
    evas_object_event_callback_add(o, EVAS_CALLBACK_MOUSE_WHEEL,
                                   _tabs_cb_wheel, v);
    v->o_tabs = o;
@@ -382,7 +382,6 @@ evry_tab_view_free(Tab_View *v)
 
    EINA_LIST_FREE (v->tabs, tab)
      {
-        e_box_unpack(tab->o_tab);
         evas_object_del(tab->o_tab);
         E_FREE(tab);
      }

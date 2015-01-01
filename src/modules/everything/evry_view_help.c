@@ -30,12 +30,12 @@ _cb_key_down(Evry_View *v, const Ecore_Event_Key *ev)
         o = v->o_list;
         evas_object_geometry_get(o, NULL, NULL, NULL, &h);
         if (!h) h = 1;
-        e_box_align_get(o, NULL, &align);
+        elm_box_align_get(o, NULL, &align);
 
         align = align - 10.0 / (double)h;
         if (align < 0.0) align = 0.0;
 
-        e_box_align_set(v->o_list, 0.5, align);
+        elm_box_align_set(v->o_list, 0.5, align);
 
         return 1;
      }
@@ -44,12 +44,12 @@ _cb_key_down(Evry_View *v, const Ecore_Event_Key *ev)
         o = v->o_list;
         evas_object_geometry_get(o, NULL, NULL, NULL, &h);
         if (!h) h = 1;
-        e_box_align_get(o, NULL, &align);
+        elm_box_align_get(o, NULL, &align);
 
         align = align + 10.0 / (double)h;
         if (align > 1.0) align = 1.0;
 
-        e_box_align_set(v->o_list, 0.5, align);
+        elm_box_align_set(v->o_list, 0.5, align);
         return 1;
      }
 
@@ -58,7 +58,7 @@ _cb_key_down(Evry_View *v, const Ecore_Event_Key *ev)
 }
 
 static Evry_View *
-_view_create(Evry_View *v, const Evry_State *s __UNUSED__, const Evas_Object *swallow)
+_view_create(Evry_View *v, const Evry_State *s __UNUSED__, Evas_Object *swallow)
 {
    Evas_Object *o;
    int mw, mh;
@@ -86,20 +86,21 @@ _view_create(Evry_View *v, const Evry_State *s __UNUSED__, const Evas_Object *sw
 
    if (v->active) return v;
 
-   o = e_box_add(evas_object_evas_get(swallow));
-   e_box_orientation_set(o, 0);
-   e_box_align_set(o, 0.5, 1.0);
+   o = elm_box_add(swallow);
+   elm_box_horizontal_set(o, 0);
+   elm_box_align_set(o, 0.5, 1.0);
    v->o_list = o;
-   e_box_freeze(v->o_list);
    o = edje_object_add(evas_object_evas_get(swallow));
    e_theme_edje_object_set(o, "base/theme/widgets",
                            "e/modules/everything/textblock");
 
    edje_object_part_text_set(o, "e.textblock.text", text);
-   e_box_pack_start(v->o_list, o);
+   elm_box_pack_start(v->o_list, o);
    edje_object_size_min_calc(o, &mw, &mh);
-   e_box_pack_options_set(o, 1, 0, 1, 0, 0.5, 0.5, mw, mh + 200, 999, 999);
-   e_box_thaw(v->o_list);
+   E_WEIGHT(o, 1, 0);
+   E_ALIGN(o, -1, 0.5);
+   evas_object_size_hint_min_set(o, mw, mh + 200);
+   evas_object_size_hint_max_set(o, 999, 999);
    evas_object_show(o);
    o_text = o;
 

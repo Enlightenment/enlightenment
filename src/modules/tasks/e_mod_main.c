@@ -50,7 +50,7 @@ struct _Tasks_Item
    Eina_Bool skip_taskbar : 1;
 };
 
-static Tasks       *_tasks_new(Evas *evas, E_Zone *zone, const char *id);
+static Tasks       *_tasks_new(Evas_Object *parent, E_Zone *zone, const char *id);
 static void         _tasks_free(Tasks *tasks);
 static void         _tasks_refill(Tasks *tasks);
 static void         _tasks_refill_all();
@@ -211,7 +211,7 @@ _gc_init(E_Gadcon *gc, const char *name, const char *id, const char *style)
    /* Evas_Coord x, y, w, h; */
    /* int cx, cy, cw, ch; */
 
-   tasks = _tasks_new(gc->evas, gc->zone, id);
+   tasks = _tasks_new(gc->o_container, gc->zone, id);
 
    o = tasks->o_items;
    gcc = e_gadcon_client_new(gc, name, id, style, o);
@@ -260,7 +260,7 @@ _gc_orient(E_Gadcon_Client *gcc, E_Gadcon_Orient orient)
         if (!tasks->horizontal)
           {
              tasks->horizontal = 1;
-             e_box_orientation_set(tasks->o_items, tasks->horizontal);
+             elm_box_horizontal_set(tasks->o_items, tasks->horizontal);
              _tasks_refill(tasks);
           }
         break;
@@ -275,7 +275,7 @@ _gc_orient(E_Gadcon_Client *gcc, E_Gadcon_Orient orient)
         if (tasks->horizontal)
           {
              tasks->horizontal = 0;
-             e_box_orientation_set(tasks->o_items, tasks->horizontal);
+             elm_box_horizontal_set(tasks->o_items, tasks->horizontal);
              _tasks_refill(tasks);
           }
         break;
@@ -283,7 +283,7 @@ _gc_orient(E_Gadcon_Client *gcc, E_Gadcon_Orient orient)
       default:
         break;
      }
-   e_box_align_set(tasks->o_items, 0.5, 0.5);
+   elm_box_align_set(tasks->o_items, 0.5, 0.5);
 }
 
 static const char *
@@ -355,7 +355,7 @@ _tasks_cb_iconify_provider(void *data, Evas_Object *obj, const char *signal)
 }
 
 static Tasks *
-_tasks_new(Evas *evas, E_Zone *zone, const char *id)
+_tasks_new(Evas_Object *parent, E_Zone *zone, const char *id)
 {
    Tasks *tasks;
    Eina_List *l;
@@ -363,7 +363,7 @@ _tasks_new(Evas *evas, E_Zone *zone, const char *id)
 
    tasks = E_NEW(Tasks, 1);
    tasks->config = _tasks_config_item_get(id);
-   tasks->o_items = e_box_add(evas);
+   tasks->o_items = elm_box_add(parent);
    tasks->horizontal = 1;
    EINA_LIST_FOREACH(zone->comp->clients, l, ec)
      {
@@ -371,9 +371,9 @@ _tasks_new(Evas *evas, E_Zone *zone, const char *id)
           tasks->clients = eina_list_append(tasks->clients, ec);
      }
 
-   e_box_homogenous_set(tasks->o_items, 1);
-   e_box_orientation_set(tasks->o_items, tasks->horizontal);
-   e_box_align_set(tasks->o_items, 0.5, 0.5);
+   elm_box_homogeneous_set(tasks->o_items, 1);
+   elm_box_horizontal_set(tasks->o_items, tasks->horizontal);
+   elm_box_align_set(tasks->o_items, 0.5, 0.5);
    tasks->zone = zone;
    tasks->iconify_provider = e_comp_object_effect_mover_add(90, "e,action,*iconify", _tasks_cb_iconify_provider, tasks);
    return tasks;
@@ -577,14 +577,9 @@ _tasks_item_add(Tasks *tasks, E_Client *ec)
    Tasks_Item *item;
 
    item = _tasks_item_new(tasks, ec);
-   e_box_pack_end(tasks->o_items, item->o_item);
-   e_box_pack_options_set(item->o_item,
-                          1, 1, /* fill */
-                          1, 1, /* expand */
-                          0.5, 0.5, /* align */
-                          1, 1, /* min */
-                          9999, 9999 /* max */
-                          );
+   E_EXPAND(item->o_item);
+   E_FILL(item->o_item);
+   elm_box_pack_end(tasks->o_items, item->o_item);
    tasks->items = eina_list_append(tasks->items, item);
 }
 
@@ -592,7 +587,7 @@ static void
 _tasks_item_remove(Tasks_Item *item)
 {
    item->tasks->items = eina_list_remove(item->tasks->items, item);
-   e_box_unpack(item->o_item);
+   elm_box_unpack(item->tasks->o_items, item->o_item);
    _tasks_item_free(item);
 }
 

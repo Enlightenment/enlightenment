@@ -35,10 +35,10 @@ e_widget_framelist_add(Evas *evas, const char *label, int horiz)
    e_widget_sub_object_add(obj, o);
    e_widget_resize_object_set(obj, o);
 
-   o = e_box_add(evas);
+   o = elm_box_add(obj);
    wd->o_box = o;
-   e_box_orientation_set(o, horiz);
-   e_box_homogenous_set(o, 0);
+   elm_box_horizontal_set(o, horiz);
+   elm_box_homogeneous_set(o, 0);
    edje_object_part_swallow(wd->o_frame, "e.swallow.content", o);
    e_widget_sub_object_add(obj, o);
    evas_object_show(o);
@@ -57,17 +57,15 @@ e_widget_framelist_object_append_full(Evas_Object *obj, Evas_Object *sobj, int f
 
    wd = e_widget_data_get(obj);
 
-   e_box_pack_end(wd->o_box, sobj);
+   elm_box_pack_end(wd->o_box, sobj);
    e_widget_size_min_get(sobj, &mw, &mh);
-   e_box_pack_options_set(sobj,
-                          fill_w, fill_h,
-                          expand_w, expand_h,
-                          align_x, align_y,
-                          min_w, min_h,
-                          max_w, max_h
-                          );
-   e_box_size_min_get(wd->o_box, &mw, &mh);
-   evas_object_size_hint_min_set(wd->o_box, mw, mh);
+   if (fill_w) align_x = -1;
+   if (fill_h) align_y = -1;
+   E_WEIGHT(sobj, expand_w, expand_h);
+   E_ALIGN(sobj, align_x, align_y);
+   evas_object_size_hint_min_set(sobj, min_w, min_h);
+   evas_object_size_hint_max_set(sobj, max_w, max_h);
+   elm_box_recalculate(wd->o_box);
    edje_object_part_swallow(wd->o_frame, "e.swallow.content", wd->o_box);
    edje_object_size_min_calc(wd->o_frame, &mw, &mh);
    e_widget_size_min_set(obj, mw, mh);
@@ -83,17 +81,12 @@ e_widget_framelist_object_append(Evas_Object *obj, Evas_Object *sobj)
 
    wd = e_widget_data_get(obj);
 
-   e_box_pack_end(wd->o_box, sobj);
+   elm_box_pack_end(wd->o_box, sobj);
    e_widget_size_min_get(sobj, &mw, &mh);
-   e_box_pack_options_set(sobj,
-                          1, 1, /* fill */
-                          1, 1, /* expand */
-                          0.5, 0.5, /* align */
-                          mw, mh, /* min */
-                          99999, 99999 /* max */
-                          );
-   e_box_size_min_get(wd->o_box, &mw, &mh);
-   evas_object_size_hint_min_set(wd->o_box, mw, mh);
+   E_EXPAND(sobj);
+   E_FILL(sobj);
+   evas_object_size_hint_min_set(sobj, mw, mh);
+   elm_box_recalculate(wd->o_box);
    edje_object_part_swallow(wd->o_frame, "e.swallow.content", wd->o_box);
    edje_object_size_min_calc(wd->o_frame, &mw, &mh);
    e_widget_size_min_set(obj, mw, mh);
@@ -107,7 +100,7 @@ e_widget_framelist_content_align_set(Evas_Object *obj, double halign, double val
    E_Widget_Data *wd;
 
    wd = e_widget_data_get(obj);
-   e_box_align_set(wd->o_box, halign, valign);
+   elm_box_align_set(wd->o_box, halign, valign);
 }
 
 EAPI void

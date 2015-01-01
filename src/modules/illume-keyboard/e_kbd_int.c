@@ -259,9 +259,10 @@ _e_kbd_int_matches_add(E_Kbd_Int *ki, const char *str, int num)
    edje_object_part_text_set(o, "e.text.label", str);
    edje_object_size_min_calc(o, &mw, &mh);
    if (mw < 32) mw = 32;
-   if (num & 0x1) e_box_pack_start(ki->box_obj, o);
-   else e_box_pack_end(ki->box_obj, o);
-   e_box_pack_options_set(o, 1, 1, 1, 1, 0.5, 0.5, mw, mh, 9999, 9999);
+   if (num & 0x1) elm_box_pack_start(ki->box_obj, o);
+   else elm_box_pack_end(ki->box_obj, o);
+   E_EXPAND(o);
+   evas_object_size_hint_min_set(o, mw, mh);
    if (num == 0)
      edje_object_signal_emit(o, "e,state,selected", "e");
    edje_object_signal_callback_add(o, "e,action,do,select", "",
@@ -292,7 +293,6 @@ _e_kbd_int_matches_update(void *data)
 
    if (!(ki = data)) return;
    evas_event_freeze(ki->win->evas);
-   e_box_freeze(ki->box_obj);
    _e_kbd_int_matches_free(ki);
    matches = e_kbd_buf_string_matches_get(ki->kbuf);
    if (!matches)
@@ -307,7 +307,7 @@ _e_kbd_int_matches_update(void *data)
         for (i = 0, l = matches; l; l = l->next, i++)
           {
              _e_kbd_int_matches_add(ki, l->data, i);
-             e_box_size_min_get(ki->box_obj, &mw, &mh);
+             evas_object_size_hint_min_get(ki->box_obj, &mw, &mh);
              edje_object_part_geometry_get(ki->base_obj, "e.swallow.label", 
                                            NULL, NULL, &vw, &vh);
              if (mw > vw) break;
@@ -326,8 +326,7 @@ _e_kbd_int_matches_update(void *data)
                }
           }
      }
-   e_box_thaw(ki->box_obj);
-   e_box_size_min_get(ki->box_obj, &mw, &mh);
+   evas_object_size_hint_min_get(ki->box_obj, &mw, &mh);
    evas_object_size_hint_min_set(ki->box_obj, 0, mh);
    edje_object_part_swallow(ki->base_obj, "e.swallow.label", ki->box_obj);
    evas_event_thaw(ki->win->evas);
@@ -1769,9 +1768,9 @@ e_kbd_int_new(const char *themedir, const char *syskbds, const char *sysdicts)
    evas_object_show(o);
    ki->icon_obj = o;
 
-   o = e_box_add(ki->win->evas);   
-   e_box_orientation_set(o, 1);
-   e_box_homogenous_set(o, 1);
+   o = elm_box_add(ki->win->evas);
+   elm_box_horizontal_set(o, 1);
+   elm_box_homogeneous_set(o, 1);
    edje_object_part_swallow(ki->base_obj, "e.swallow.label", o);
    evas_object_show(o);
    ki->box_obj = o;

@@ -688,7 +688,7 @@ e_gadcon_orient(E_Gadcon *gc, E_Gadcon_Orient orient)
    e_gadcon_layout_orientation_set(gc->o_container, horiz);
    EINA_LIST_FOREACH(gc->clients, l, gcc)
      {
-        e_box_orientation_set(gcc->o_box, horiz);
+        elm_box_horizontal_set(gcc->o_box, horiz);
         if (gcc->client_class->func.orient)
           gcc->client_class->func.orient(gcc, gc->orient);
      }
@@ -996,6 +996,12 @@ _e_gadcon_client_box_del(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUS
 }
 
 static void
+_e_gadcon_client_box_hints_changed(void *data EINA_UNUSED, Evas *e __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
+{
+   evas_object_size_hint_min_set(obj, 0, 0);
+}
+
+static void
 _e_gadcon_client_frame_del(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    E_Gadcon_Client *gcc = data;
@@ -1061,8 +1067,9 @@ e_gadcon_client_new(E_Gadcon *gc, const char *name, const char *id __UNUSED__, c
         if (gcc->o_frame)
           {
              edje_object_size_min_calc(gcc->o_frame, &(gcc->pad.w), &(gcc->pad.h));
-             gcc->o_box = e_box_add(gcc->gadcon->evas);
+             gcc->o_box = elm_box_add(gcc->gadcon->o_container);
              evas_object_event_callback_add(gcc->o_box, EVAS_CALLBACK_DEL, _e_gadcon_client_box_del, gcc);
+             evas_object_event_callback_add(gcc->o_box, EVAS_CALLBACK_CHANGED_SIZE_HINTS, _e_gadcon_client_box_hints_changed, gcc);
              switch (gcc->gadcon->orient)
                {
                 case E_GADCON_ORIENT_FLOAT:
@@ -1073,7 +1080,7 @@ e_gadcon_client_new(E_Gadcon *gc, const char *name, const char *id __UNUSED__, c
                 case E_GADCON_ORIENT_CORNER_TR:
                 case E_GADCON_ORIENT_CORNER_BL:
                 case E_GADCON_ORIENT_CORNER_BR:
-                  e_box_orientation_set(gcc->o_box, 1);
+                  elm_box_horizontal_set(gcc->o_box, 1);
                   break;
 
                 case E_GADCON_ORIENT_VERT:
@@ -1083,7 +1090,7 @@ e_gadcon_client_new(E_Gadcon *gc, const char *name, const char *id __UNUSED__, c
                 case E_GADCON_ORIENT_CORNER_RT:
                 case E_GADCON_ORIENT_CORNER_LB:
                 case E_GADCON_ORIENT_CORNER_RB:
-                  e_box_orientation_set(gcc->o_box, 0);
+                  elm_box_horizontal_set(gcc->o_box, 0);
                   break;
 
                 default:
@@ -1097,14 +1104,8 @@ e_gadcon_client_new(E_Gadcon *gc, const char *name, const char *id __UNUSED__, c
                                             _e_gadcon_cb_client_frame_mouse_move, gcc);
              if (gcc->o_base)
                {
-                  e_box_pack_end(gcc->o_box, gcc->o_base);
-                  e_box_pack_options_set(gcc->o_base,
-                                         1, 1, /* fill */
-                                         1, 1, /* expand */
-                                         0.5, 0.5, /* align */
-                                         0, 0, /* min */
-                                         -1, -1 /* max */
-                                         );
+                  E_EXPAND(gcc->o_base);
+                  elm_box_pack_end(gcc->o_box, gcc->o_base);
                }
              edje_object_part_swallow(gcc->o_frame, gc->edje.swallow_name, gcc->o_box);
              evas_object_show(gcc->o_box);
@@ -1159,7 +1160,7 @@ e_gadcon_client_edit_begin(E_Gadcon_Client *gcc)
 
    if ((gcc->autoscroll) /* || (gcc->resizable)*/)
      {
-        if (e_box_orientation_get(gcc->o_box))
+        if (elm_box_horizontal_get(gcc->o_box))
           edje_object_signal_emit(gcc->o_control, "e,state,hsize,on", "e");
         else
           edje_object_signal_emit(gcc->o_control, "e,state,vsize,on", "e");
@@ -1909,7 +1910,7 @@ e_gadcon_client_autoscroll_update(E_Gadcon_Client *gcc, Evas_Coord x, Evas_Coord
 
         /* TODO: When using gadman there is no o_box! */
         evas_object_geometry_get(gcc->o_box, NULL, NULL, &w, &h);
-        if (e_box_orientation_get(gcc->o_box))
+        if (elm_box_horizontal_get(gcc->o_box))
           {
              if (w > 1) d = (double)x / (double)(w - 1);
              else d = 0;
@@ -2124,7 +2125,7 @@ _e_gadcon_moveresize_handle(E_Gadcon_Client *gcc)
 /*
    if (gcc->resizable)
      {
-        if (e_box_orientation_get(gcc->o_box))
+        if (elm_box_horizontal_get(gcc->o_box))
           {
              if ((gcc->aspect.w > 0) && (gcc->aspect.h > 0))
                w = (h * gcc->aspect.w) / gcc->aspect.h;
@@ -2138,7 +2139,7 @@ _e_gadcon_moveresize_handle(E_Gadcon_Client *gcc)
  */
    if (gcc->autoscroll)
      {
-        if (e_box_orientation_get(gcc->o_box))
+        if (elm_box_horizontal_get(gcc->o_box))
           {
              if ((gcc->aspect.w > 0) && (gcc->aspect.h > 0))
                {
@@ -2163,13 +2164,8 @@ _e_gadcon_moveresize_handle(E_Gadcon_Client *gcc)
                }
           }
      }
-   e_box_pack_options_set(gcc->o_base,
-                          1, 1, /* fill */
-                          1, 1, /* expand */
-                          0.5, 0.5, /* align */
-                          w, h, /* min */
-                          mw, mh /* max */
-                          );
+   evas_object_size_hint_min_set(gcc->o_base, w, h);
+   evas_object_size_hint_max_set(gcc->o_base, mw, mh);
 }
 
 static void
@@ -2208,10 +2204,10 @@ _e_gadcon_cb_client_scroll_animator(void *data)
    E_Gadcon_Client *gcc;
 
    gcc = data;
-   if (e_box_orientation_get(gcc->o_box))
-     e_box_align_set(gcc->o_box, 1.0 - gcc->scroll_pos, 0.5);
+   if (elm_box_horizontal_get(gcc->o_box))
+     elm_box_align_set(gcc->o_box, 1.0 - gcc->scroll_pos, 0.5);
    else
-     e_box_align_set(gcc->o_box, 0.5, 1.0 - gcc->scroll_pos);
+     elm_box_align_set(gcc->o_box, 0.5, 1.0 - gcc->scroll_pos);
    if (!gcc->scroll_timer)
      {
         gcc->scroll_animator = NULL;

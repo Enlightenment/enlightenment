@@ -55,7 +55,7 @@ e_widget_toolbar_add(Evas *evas, int icon_w, int icon_h)
 
    o = e_scrollframe_add(evas);
    wd->o_base = o;
-   o = e_box_add(evas);
+   o = elm_box_add(o);
    wd->o_box = o;
    o = wd->o_base;
    e_scrollframe_custom_theme_set(o, "base/theme/widgets", "e/widgets/toolbar");
@@ -82,8 +82,8 @@ e_widget_toolbar_add(Evas *evas, int icon_w, int icon_h)
    e_widget_resize_object_set(obj, o);
 
    o = wd->o_box;
-   e_box_orientation_set(o, 1);
-   e_box_homogenous_set(o, 1);
+   elm_box_horizontal_set(o, 1);
+   elm_box_homogeneous_set(o, 1);
    e_scrollframe_child_set(wd->o_base, o);
    e_widget_sub_object_add(obj, o);
    evas_object_show(o);
@@ -158,16 +158,12 @@ e_widget_toolbar_item_append(Evas_Object *obj, Evas_Object *icon, const char *la
    edje_object_part_text_set(o, "e.text.label", label);
    edje_object_size_min_calc(o, &mw, &mh);
    e_widget_sub_object_add(obj, o);
-   e_box_pack_end(wd->o_box, o);
-   e_box_pack_options_set(o,
-                          1, 1, /* fill */
-                          0, 0, /* expand */
-                          0.5, 0.5, /* align */
-                          mw, mh, /* min */
-                          9999, 9999 /* max */
-                          );
+   evas_object_size_hint_min_set(o, mw, mh);
+   E_FILL(o);
+   elm_box_pack_end(wd->o_box, o);
    evas_object_show(o);
-   e_box_size_min_get(wd->o_box, &mw, &mh);
+   elm_box_recalculate(wd->o_box);
+   evas_object_size_hint_min_get(wd->o_box, &mw, &mh);
    evas_object_resize(wd->o_box, mw, mh);
    evas_object_resize(wd->o_base, 500, 500);
    e_scrollframe_child_viewport_size_get(wd->o_base, &vw, &vh);
@@ -235,13 +231,7 @@ e_widget_toolbar_item_label_set(Evas_Object *obj, int num, const char *label)
 
         edje_object_part_text_set(it->o_base, "e.text.label", label);
         edje_object_size_min_calc(it->o_base, &mw, &mh);
-        e_box_pack_options_set(it->o_base,
-                               1, 1, /* fill */
-                               0, 0, /* expand */
-                               0.5, 0.5, /* align */
-                               mw, mh, /* min */
-                               9999, 9999 /* max */
-                               );
+        evas_object_size_hint_min_set(it->o_base, mw, mh);
      }
 }
 
@@ -254,7 +244,8 @@ e_widget_toolbar_scrollable_set(Evas_Object *obj, Eina_Bool scrollable)
    if (!obj) return;
    if (!(wd = e_widget_data_get(obj))) return;
    wd->scrollable = scrollable;
-   e_box_size_min_get(wd->o_box, &mw, &mh);
+   elm_box_recalculate(wd->o_box);
+   evas_object_size_hint_min_get(wd->o_box, &mw, &mh);
    evas_object_resize(wd->o_box, mw, mh);
    evas_object_resize(wd->o_base, 500, 500);
    e_scrollframe_child_viewport_size_get(wd->o_base, &vw, &vh);
@@ -439,7 +430,8 @@ _e_wid_cb_scrollframe_resize(void *data, Evas *e __UNUSED__, Evas_Object *obj __
    if ((!wd->o_base) || (!wd->o_box)) return;
 
    e_scrollframe_child_viewport_size_get(wd->o_base, &vw, &vh);
-   e_box_size_min_get(wd->o_box, &mw, &mh);
+   elm_box_recalculate(wd->o_box);
+   evas_object_size_hint_min_get(wd->o_box, &mw, &mh);
    evas_object_geometry_get(wd->o_box, NULL, NULL, &w, &h);
    if (vw >= mw)
      {

@@ -70,7 +70,7 @@ struct _IBox_Icon
    } drag;
 };
 
-static IBox        *_ibox_new(Evas *evas, E_Zone *zone);
+static IBox        *_ibox_new(Evas_Object *parent, E_Zone *zone);
 static void         _ibox_free(IBox *b);
 static void         _ibox_cb_empty_mouse_down(void *data, Evas *e, Evas_Object *obj, void *event_info);
 static void         _ibox_empty_handle(IBox *b);
@@ -184,7 +184,7 @@ _gc_init(E_Gadcon *gc, const char *name, const char *id, const char *style)
    ci = _ibox_config_item_get(id);
    inst->ci = ci;
 
-   b = _ibox_new(gc->evas, gc->zone);
+   b = _ibox_new(gc->o_container, gc->zone);
    b->inst = inst;
    inst->ibox = b;
    o = b->o_box;
@@ -314,15 +314,15 @@ _gc_id_del(const E_Gadcon_Client_Class *client_class __UNUSED__, const char *id 
 }
 
 static IBox *
-_ibox_new(Evas *evas, E_Zone *zone)
+_ibox_new(Evas_Object *parent, E_Zone *zone)
 {
    IBox *b;
 
    b = E_NEW(IBox, 1);
-   b->o_box = e_box_add(evas);
-   e_box_homogenous_set(b->o_box, 1);
-   e_box_orientation_set(b->o_box, 1);
-   e_box_align_set(b->o_box, 0.5, 0.5);
+   b->o_box = elm_box_add(parent);
+   elm_box_homogeneous_set(b->o_box, 1);
+   elm_box_horizontal_set(b->o_box, 1);
+   elm_box_align_set(b->o_box, 0.5, 0.5);
    b->zone = zone;
    return b;
 }
@@ -382,19 +382,15 @@ _ibox_empty_handle(IBox *b)
              evas_object_event_callback_add(b->o_empty, EVAS_CALLBACK_MOUSE_DOWN, _ibox_cb_empty_mouse_down, b);
              evas_object_color_set(b->o_empty, 0, 0, 0, 0);
              evas_object_show(b->o_empty);
-             e_box_pack_end(b->o_box, b->o_empty);
+             elm_box_pack_end(b->o_box, b->o_empty);
              evas_object_geometry_get(b->o_box, NULL, NULL, &w, &h);
-             if (e_box_orientation_get(b->o_box))
+             if (elm_box_horizontal_get(b->o_box))
                w = h;
              else
                h = w;
-             e_box_pack_options_set(b->o_empty,
-                                    1, 1, /* fill */
-                                    1, 1, /* expand */
-                                    0.5, 0.5, /* align */
-                                    w, h, /* min */
-                                    9999, 9999 /* max */
-                                    );
+             E_EXPAND(b->o_empty);
+             E_FILL(b->o_empty);
+             evas_object_size_hint_min_set(b->o_empty, w, h);
           }
      }
    else if (b->o_empty)
@@ -441,7 +437,7 @@ _ibox_fill(IBox *b)
           {
              ic = _ibox_icon_new(b, ec);
              b->icons = eina_list_append(b->icons, ic);
-             e_box_pack_end(b->o_box, ic->o_holder);
+             elm_box_pack_end(b->o_box, ic->o_holder);
           }
      }
 
@@ -450,7 +446,8 @@ _ibox_fill(IBox *b)
    if (!b->inst->gcc) return;
    if (!b->inst->ci->expand_on_desktop) return;
    if (!e_gadcon_site_is_desktop(b->inst->gcc->gadcon->location->site)) return;
-   e_box_size_min_get(b->o_box, &mw, &mh);
+   elm_box_recalculate(b->o_box);
+   evas_object_size_hint_min_get(b->o_box, &mw, &mh);
    evas_object_geometry_get(b->inst->gcc->o_frame, NULL, NULL, NULL, &h);
    evas_object_resize(b->inst->gcc->o_frame, MIN(mw, b->inst->gcc->gadcon->zone->w), MAX(h, mh));
 }
@@ -465,8 +462,8 @@ _ibox_empty(IBox *b)
 static void
 _ibox_orient_set(IBox *b, int horizontal)
 {
-   e_box_orientation_set(b->o_box, horizontal);
-   e_box_align_set(b->o_box, 0.5, 0.5);
+   elm_box_horizontal_set(b->o_box, horizontal);
+   elm_box_align_set(b->o_box, 0.5, 0.5);
 }
 
 static void
@@ -477,22 +474,15 @@ _ibox_resize_handle(IBox *b)
    int w, h;
 
    evas_object_geometry_get(b->o_box, NULL, NULL, &w, &h);
-   if (e_box_orientation_get(b->o_box))
+   if (elm_box_horizontal_get(b->o_box))
      w = h;
    else
      h = w;
-   e_box_freeze(b->o_box);
    EINA_LIST_FOREACH(b->icons, l, ic)
      {
-        e_box_pack_options_set(ic->o_holder,
-                               1, 1, /* fill */
-                               0, 0, /* expand */
-                               0.5, 0.5, /* align */
-                               w, h, /* min */
-                               w, h /* max */
-                               );
+        evas_object_size_hint_min_set(ic->o_holder, w, h);
+        evas_object_size_hint_max_set(ic->o_holder, w, h);
      }
-   e_box_thaw(b->o_box);
 }
 
 static void
@@ -543,6 +533,7 @@ _ibox_icon_new(IBox *b, E_Client *ec)
    ic->ibox = b;
    ic->client = ec;
    ic->o_holder = edje_object_add(evas_object_evas_get(b->o_box));
+   E_FILL(ic->o_holder);
    e_theme_edje_object_set(ic->o_holder, "base/theme/modules/ibox",
                            "e/modules/ibox/icon");
    evas_object_event_callback_add(ic->o_holder, EVAS_CALLBACK_MOUSE_IN, _ibox_cb_icon_mouse_in, ic);
@@ -884,7 +875,7 @@ _ibox_drop_position_update(Instance *inst, Evas_Coord x, Evas_Coord y)
    inst->ibox->dnd_y = y;
 
    if (inst->ibox->o_drop)
-     e_box_unpack(inst->ibox->o_drop);
+     elm_box_unpack(inst->ibox->o_box, inst->ibox->o_drop);
    ic = _ibox_icon_at_coord(inst->ibox, x, y);
    inst->ibox->ic_drop_before = ic;
    if (ic)
@@ -893,7 +884,7 @@ _ibox_drop_position_update(Instance *inst, Evas_Coord x, Evas_Coord y)
         int before = 0;
 
         evas_object_geometry_get(ic->o_holder, &ix, &iy, &iw, &ih);
-        if (e_box_orientation_get(inst->ibox->o_box))
+        if (elm_box_horizontal_get(inst->ibox->o_box))
           {
              if (x < (ix + (iw / 2))) before = 1;
           }
@@ -902,19 +893,13 @@ _ibox_drop_position_update(Instance *inst, Evas_Coord x, Evas_Coord y)
              if (y < (iy + (ih / 2))) before = 1;
           }
         if (before)
-          e_box_pack_before(inst->ibox->o_box, inst->ibox->o_drop, ic->o_holder);
+          elm_box_pack_before(inst->ibox->o_box, inst->ibox->o_drop, ic->o_holder);
         else
-          e_box_pack_after(inst->ibox->o_box, inst->ibox->o_drop, ic->o_holder);
+          elm_box_pack_after(inst->ibox->o_box, inst->ibox->o_drop, ic->o_holder);
         inst->ibox->drop_before = before;
      }
-   else e_box_pack_end(inst->ibox->o_box, inst->ibox->o_drop);
-   e_box_pack_options_set(inst->ibox->o_drop,
-                          1, 1, /* fill */
-                          1, 1, /* expand */
-                          0.5, 0.5, /* align */
-                          1, 1, /* min */
-                          -1, -1 /* max */
-                          );
+   else elm_box_pack_end(inst->ibox->o_box, inst->ibox->o_drop);
+   evas_object_size_hint_min_set(inst->ibox->o_drop, 1, 1);
    _ibox_resize_handle(inst->ibox);
    _gc_orient(inst->gcc, -1);
 }
@@ -930,6 +915,8 @@ _ibox_inst_cb_enter(void *data, const char *type __UNUSED__, void *event_info)
    inst = data;
    o = edje_object_add(evas_object_evas_get(inst->ibox->o_box));
    inst->ibox->o_drop = o;
+   E_EXPAND(inst->ibox->o_drop);
+   E_FILL(inst->ibox->o_drop);
    o2 = edje_object_add(evas_object_evas_get(inst->ibox->o_box));
    inst->ibox->o_drop_over = o2;
    evas_object_event_callback_add(o, EVAS_CALLBACK_MOVE, _ibox_cb_drop_move, inst->ibox);
@@ -1016,7 +1003,7 @@ _ibox_inst_cb_drop(void *data, const char *type, void *event_info)
         ic = _ibox_icon_new(b, ec);
         if (!ic) return;
         b->icons = eina_list_prepend_relative(b->icons, ic, ic2);
-        e_box_pack_before(b->o_box, ic->o_holder, ic2->o_holder);
+        elm_box_pack_before(b->o_box, ic->o_holder, ic2->o_holder);
      }
    else
      {
@@ -1026,7 +1013,7 @@ atend:
         ic = _ibox_icon_new(b, ec);
         if (!ic) return;
         b->icons = eina_list_append(b->icons, ic);
-        e_box_pack_end(b->o_box, ic->o_holder);
+        elm_box_pack_end(b->o_box, ic->o_holder);
      }
 
    evas_object_del(inst->ibox->o_drop);
@@ -1061,7 +1048,7 @@ _ibox_cb_event_client_add(void *data __UNUSED__, int type __UNUSED__, void *even
         ic = _ibox_icon_new(b, ev->ec);
         if (!ic) continue;
         b->icons = eina_list_append(b->icons, ic);
-        e_box_pack_end(b->o_box, ic->o_holder);
+        elm_box_pack_end(b->o_box, ic->o_holder);
         _ibox_empty_handle(b);
         _ibox_resize_handle(b);
         _gc_orient(b->inst->gcc, -1);
@@ -1116,13 +1103,14 @@ _ibox_cb_event_client_iconify(void *data __UNUSED__, int type __UNUSED__, void *
         ic = _ibox_icon_new(b, ev->ec);
         if (!ic) continue;
         b->icons = eina_list_append(b->icons, ic);
-        e_box_pack_end(b->o_box, ic->o_holder);
+        elm_box_pack_end(b->o_box, ic->o_holder);
         _ibox_empty_handle(b);
         _ibox_resize_handle(b);
         _gc_orient(b->inst->gcc, -1);
         if (!b->inst->ci->expand_on_desktop) continue;
         if (!e_gadcon_site_is_desktop(b->inst->gcc->gadcon->location->site)) continue;
-        e_box_size_min_get(b->o_box, &mw, &mh);
+        elm_box_recalculate(b->o_box);
+        evas_object_size_hint_min_get(b->o_box, &mw, &mh);
         evas_object_geometry_get(b->inst->gcc->o_frame, NULL, NULL, NULL, &h);
         evas_object_resize(b->inst->gcc->o_frame, MIN(mw, b->inst->gcc->gadcon->zone->w), MAX(h, mh));
      }
@@ -1153,7 +1141,8 @@ _ibox_cb_event_client_uniconify(void *data __UNUSED__, int type __UNUSED__, void
         _gc_orient(b->inst->gcc, -1);
         if (!b->inst->ci->expand_on_desktop) continue;
         if (!e_gadcon_site_is_desktop(b->inst->gcc->gadcon->location->site)) continue;
-        e_box_size_min_get(b->o_box, &mw, &mh);
+        elm_box_recalculate(b->o_box);
+        evas_object_size_hint_min_get(b->o_box, &mw, &mh);
         evas_object_geometry_get(b->inst->gcc->o_frame, NULL, NULL, NULL, &h);
         evas_object_resize(b->inst->gcc->o_frame, MIN(mw, b->inst->gcc->gadcon->zone->w), MAX(h, mh));
      }

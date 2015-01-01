@@ -20,7 +20,6 @@
 #include "e_config_data.h"
 #include "e_menu.h"
 #include "e_icon.h"
-#include "e_box.h"
 #include "e_flowlayout.h"
 #include "e_entry.h"
 #include "e_init.h"

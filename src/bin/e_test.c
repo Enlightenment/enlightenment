@@ -697,8 +697,8 @@ _e_test_internal(E_Comp *c)
 
    of = e_scrollframe_add(dia->win->evas);
 
-   ob = e_box_add(dia->win->evas);
-   e_box_orientation_set(ob, 0);
+   ob = elm_box_add(dia->win->evas);
+   elm_box_horizontal_set(ob, 0);
 
    for (i = 0; i < 8; i++)
      {
@@ -729,13 +729,13 @@ _e_test_internal(E_Comp *c)
                             "/home/raster/pix/OLD/Download/orange_chair_heaven_falling.jpg",
                             NULL, NULL);
 
-        e_box_pack_end(ob, o);
-        e_box_pack_options_set(o, 1, 1, 1, 0, 0.5, 0.5, 300, 100, 300, 100);
+        elm_box_pack_end(ob, o);
+        elm_box_pack_options_set(o, 1, 1, 1, 0, 0.5, 0.5, 300, 100, 300, 100);
         evas_object_show(o);
      }
 
    /* fixme... more */
-   e_box_size_min_get(ob, &mw, &mh);
+   evas_object_size_hint_min_get(ob, &mw, &mh);
    evas_object_resize(ob, mw, mh);
 
    e_scrollframe_child_set(of, ob);

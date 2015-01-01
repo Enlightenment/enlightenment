@@ -280,7 +280,7 @@ Evry_Type evry_type_register(const char *type);
 const char *evry_type_get(Evry_Type type);
 
 /*** internal ***/
-Tab_View *evry_tab_view_new(Evry_View *view, const Evry_State *s, Evas *e);
+Tab_View *evry_tab_view_new(Evry_View *view, const Evry_State *s, Evas_Object *parent);
 void  evry_tab_view_free(Tab_View *v);
 
 Eina_Bool evry_view_init(void);

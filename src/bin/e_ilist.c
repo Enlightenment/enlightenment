@@ -75,10 +75,8 @@ e_ilist_append(Evas_Object *obj, Evas_Object *icon, Evas_Object *end, const char
    sd->items = eina_list_append(sd->items, si);
 
    edje_object_size_min_calc(si->o_base, &mw, &mh);
-   e_box_freeze(sd->o_box);
-   e_box_pack_end(sd->o_box, si->o_base);
-   e_box_pack_options_set(si->o_base, 1, 1, 1, 1, 0.5, 0.5,
-                          mw, mh, 99999, 99999);
+   evas_object_size_hint_min_set(si->o_base, mw, mh);
+   elm_box_pack_end(sd->o_box, si->o_base);
    stacking = edje_object_data_get(si->o_base, "stacking");
    if (stacking)
      {
@@ -86,7 +84,6 @@ e_ilist_append(Evas_Object *obj, Evas_Object *icon, Evas_Object *end, const char
         else if (!strcmp(stacking, "above"))
           evas_object_raise(si->o_base);
      }
-   e_box_thaw(sd->o_box);
 
    evas_object_lower(sd->o_box);
 
@@ -110,13 +107,11 @@ e_ilist_append_relative(Evas_Object *obj, Evas_Object *icon, Evas_Object *end, c
      sd->items = eina_list_append(sd->items, si);
 
    edje_object_size_min_calc(si->o_base, &mw, &mh);
-   e_box_freeze(sd->o_box);
+   evas_object_size_hint_min_set(si->o_base, mw, mh);
    if (ri)
-     e_box_pack_after(sd->o_box, si->o_base, ri->o_base);
+     elm_box_pack_after(sd->o_box, si->o_base, ri->o_base);
    else
-     e_box_pack_end(sd->o_box, si->o_base);
-   e_box_pack_options_set(si->o_base, 1, 1, 1, 1, 0.5, 0.5,
-                          mw, mh, 99999, 99999);
+     elm_box_pack_end(sd->o_box, si->o_base);
    stacking = edje_object_data_get(si->o_base, "stacking");
    if (stacking)
      {
@@ -124,7 +119,6 @@ e_ilist_append_relative(Evas_Object *obj, Evas_Object *icon, Evas_Object *end, c
         else if (!strcmp(stacking, "above"))
           evas_object_raise(si->o_base);
      }
-   e_box_thaw(sd->o_box);
 
    evas_object_lower(sd->o_box);
    evas_object_show(si->o_base);
@@ -141,11 +135,8 @@ e_ilist_prepend(Evas_Object *obj, Evas_Object *icon, Evas_Object *end, const cha
    sd->items = eina_list_prepend(sd->items, si);
 
    edje_object_size_min_calc(si->o_base, &mw, &mh);
-   e_box_freeze(sd->o_box);
-   e_box_pack_start(sd->o_box, si->o_base);
-   e_box_pack_options_set(si->o_base, 1, 1, 1, 1, 0.5, 0.5,
-                          mw, mh, 99999, 99999);
-   e_box_thaw(sd->o_box);
+   evas_object_size_hint_min_set(si->o_base, mw, mh);
+   elm_box_pack_start(sd->o_box, si->o_base);
 
    evas_object_lower(sd->o_box);
    evas_object_show(si->o_base);
@@ -167,14 +158,11 @@ e_ilist_prepend_relative(Evas_Object *obj, Evas_Object *icon, Evas_Object *end, 
      sd->items = eina_list_prepend(sd->items, si);
 
    edje_object_size_min_calc(si->o_base, &mw, &mh);
-   e_box_freeze(sd->o_box);
+   evas_object_size_hint_min_set(si->o_base, mw, mh);
    if (ri)
-     e_box_pack_before(sd->o_box, si->o_base, ri->o_base);
+     elm_box_pack_before(sd->o_box, si->o_base, ri->o_base);
    else
-     e_box_pack_end(sd->o_box, si->o_base);
-   e_box_pack_options_set(si->o_base, 1, 1, 1, 1, 0.5, 0.5,
-                          mw, mh, 99999, 99999);
-   e_box_thaw(sd->o_box);
+     elm_box_pack_end(sd->o_box, si->o_base);
 
    evas_object_lower(sd->o_box);
    evas_object_show(si->o_base);
@@ -206,14 +194,12 @@ EAPI void
 e_ilist_freeze(Evas_Object *obj)
 {
    API_ENTRY return;
-   e_box_freeze(sd->o_box);
 }
 
 EAPI void
 e_ilist_thaw(Evas_Object *obj)
 {
    API_ENTRY return;
-   e_box_thaw(sd->o_box);
 }
 
 EAPI int
@@ -255,7 +241,8 @@ EAPI void
 e_ilist_size_min_get(Evas_Object *obj, Evas_Coord *w, Evas_Coord *h)
 {
    API_ENTRY return;
-   e_box_size_min_get(sd->o_box, w, h);
+   elm_box_recalculate(sd->o_box);
+   evas_object_size_hint_min_get(sd->o_box, w, h);
 }
 
 EAPI void
@@ -452,7 +439,10 @@ e_ilist_remove_num(Evas_Object *obj, int n)
 
    evas_object_geometry_get(sd->o_box, NULL, NULL, &w, &h);
    if ((sd->w == w) && (sd->h == h))
-     resize = e_box_item_size_get(si->o_base, &w, &h);
+     {
+        resize = EINA_TRUE;
+        evas_object_geometry_get(si->o_base, NULL, NULL, &w, &h);
+     }
 
    if (sd->selected == n) sd->selected = -1;
    if (si->o_icon) evas_object_del(si->o_icon);
@@ -538,6 +528,8 @@ e_ilist_nth_icon_set(Evas_Object *obj, int n, Evas_Object *icon)
         evas_object_del(si->o_icon);
      }
    si->o_icon = icon;
+   E_WEIGHT(si->o_icon, 1, 0);
+   E_FILL(si->o_icon);
    if (si->o_icon)
      {
         evas_object_size_hint_min_set(si->o_icon, sd->iw, sd->ih);
@@ -638,8 +630,7 @@ e_ilist_icon_size_set(Evas_Object *obj, Evas_Coord w, Evas_Coord h)
           }
 
         edje_object_size_min_calc(si->o_base, &mw, &mh);
-        e_box_pack_options_set(si->o_icon, 1, 1, 1, 0, 0.5, 0.5,
-                               mw, mh, 99999, 99999);
+        evas_object_size_hint_min_set(si->o_icon, mw, mh);
      }
 }
 
@@ -785,9 +776,9 @@ _e_smart_add(Evas_Object *obj)
    sd->typebuf.size = 0;
    sd->typebuf.timer = NULL;
 
-   sd->o_box = e_box_add(e);
-   e_box_align_set(sd->o_box, 0.0, 0.0);
-   e_box_homogenous_set(sd->o_box, 0);
+   sd->o_box = elm_box_add(obj);
+   elm_box_align_set(sd->o_box, 0.0, 0.0);
+   elm_box_homogeneous_set(sd->o_box, 0);
    evas_object_smart_member_add(sd->o_box, obj);
    evas_object_event_callback_add(obj, EVAS_CALLBACK_KEY_DOWN,
                                   _e_smart_event_key_down, sd);
@@ -1350,6 +1341,8 @@ _e_ilist_item_new(E_Smart_Data *sd, Evas_Object *icon, Evas_Object *end, const c
    si = E_NEW(E_Ilist_Item, 1);
    si->sd = sd;
    si->o_base = edje_object_add(evas_object_evas_get(sd->o_smart));
+   E_EXPAND(si->o_base);
+   E_FILL(si->o_base);
 
    isodd = eina_list_count(sd->items) & 0x1;
    _e_ilist_item_theme_set(si, !!sd->theme, header, !isodd);

@@ -47,7 +47,6 @@ src/bin/e_auth.h \
 src/bin/e_backlight.h \
 src/bin/e_bg.h \
 src/bin/e_bindings.h \
-src/bin/e_box.h \
 src/bin/e_client.h \
 src/bin/e_client.x \
 src/bin/e_color_class.h \
@@ -220,7 +219,6 @@ src/bin/e_auth.c \
 src/bin/e_backlight.c \
 src/bin/e_bg.c \
 src/bin/e_bindings.c \
-src/bin/e_box.c \
 src/bin/e_client.c \
 src/bin/e_color.c \
 src/bin/e_color_class.c \
