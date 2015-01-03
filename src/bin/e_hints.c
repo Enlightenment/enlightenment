@@ -13,6 +13,9 @@ EAPI Ecore_X_Atom ATM_GNOME_SM_PROXY = 0;
 EAPI Ecore_X_Atom ATM_ENLIGHTENMENT_COMMS = 0;
 EAPI Ecore_X_Atom ATM_ENLIGHTENMENT_VERSION = 0;
 EAPI Ecore_X_Atom ATM_ENLIGHTENMENT_SCALE = 0;
+
+EAPI Ecore_X_Atom ATM_NETWM_SHOW_WINDOW_MENU = 0;
+EAPI Ecore_X_Atom ATM_NETWM_PERFORM_BUTTON_ACTION = 0;
 #endif
 
 EINTERN void
@@ -26,23 +29,27 @@ e_hints_init(Ecore_Window root, Ecore_Window propwin)
       "GNOME_SM_PROXY",
       "ENLIGHTENMENT_COMMS",
       "ENLIGHTENMENT_VERSION",
-      "ENLIGHTENMENT_SCALE"
+      "ENLIGHTENMENT_SCALE",
+      "_NET_WM_SHOW_WINDOW_MENU",
+      "_NET_WM_PERFORM_BUTTON_ACTION",
    };
-   Ecore_X_Atom atoms[6];
-   Ecore_X_Atom supported[43];
+   Ecore_X_Atom atoms[EINA_C_ARRAY_LENGTH(atom_names)];
+   Ecore_X_Atom supported[45];
    int supported_num;
    Ecore_X_Window win, twin;
    int nwins;
    char *name;
    double ts;
 
-   ecore_x_atoms_get(atom_names, 6, atoms);
+   ecore_x_atoms_get(atom_names, EINA_C_ARRAY_LENGTH(atom_names), atoms);
    ATM__QTOPIA_SOFT_MENU = atoms[0];
    ATM__QTOPIA_SOFT_MENUS = atoms[1];
    ATM_GNOME_SM_PROXY = atoms[2];
    ATM_ENLIGHTENMENT_COMMS = atoms[3];
    ATM_ENLIGHTENMENT_VERSION = atoms[4];
    ATM_ENLIGHTENMENT_SCALE = atoms[5];
+   ATM_NETWM_SHOW_WINDOW_MENU = atoms[6];
+   ATM_NETWM_PERFORM_BUTTON_ACTION = atoms[7];
 
    supported_num = 0;
    /* Set what hints we support */
@@ -120,6 +127,9 @@ e_hints_init(Ecore_Window root, Ecore_Window propwin)
    supported[supported_num++] = ECORE_X_ATOM_NET_WM_SYNC_REQUEST_COUNTER;
    supported[supported_num++] = ECORE_X_ATOM_E_VIDEO_PARENT;
    supported[supported_num++] = ECORE_X_ATOM_E_VIDEO_POSITION;
+
+   supported[supported_num++] = ATM_NETWM_SHOW_WINDOW_MENU;
+   supported[supported_num++] = ATM_NETWM_PERFORM_BUTTON_ACTION;
 
 
 

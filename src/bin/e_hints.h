@@ -55,6 +55,8 @@ extern EAPI Ecore_X_Atom ATM_GNOME_SM_PROXY;
 extern EAPI Ecore_X_Atom ATM_ENLIGHTENMENT_COMMS;
 extern EAPI Ecore_X_Atom ATM_ENLIGHTENMENT_VERSION;
 extern EAPI Ecore_X_Atom ATM_ENLIGHTENMENT_SCALE;
+extern EAPI Ecore_X_Atom ATM_NETWM_SHOW_WINDOW_MENU;
+extern EAPI Ecore_X_Atom ATM_NETWM_PERFORM_BUTTON_ACTION;
 #endif
 #endif
 #endif

@@ -1945,6 +1945,57 @@ _e_comp_x_message(void *data EINA_UNUSED, int type EINA_UNUSED, Ecore_X_Event_Cl
              free(p);
           }
      }
+   else if (ev->message_type == ATM_NETWM_SHOW_WINDOW_MENU)
+     {
+       /*
+         message_type = _NET_WM_SHOW_WINDOW_MENU
+         window = window for which the menu should be shown
+         format = 32
+         data.l[0] = xinput2_device_id
+         data.l[1] = root_x
+         data.l[2] = root_y
+         other data.l[] elements = 0
+        */
+
+        int x, y;
+
+        x = ev->data.l[1];
+        y = ev->data.l[2];
+        e_int_client_menu_show(ec,
+          e_comp_canvas_x_root_adjust(ec->comp, x),
+          e_comp_canvas_y_root_adjust(ec->comp, y),
+          0, 0);
+     }
+   else if (ev->message_type == ATM_NETWM_PERFORM_BUTTON_ACTION)
+     {
+        char emission[128];
+       /*
+         message_type = _NET_WM_PERFORM_BUTTON_ACTION
+         window = window for which the action should be performed
+         format = 32
+         data.l[0] = xinput2_device_id
+         data.l[1] = root_x
+         data.l[2] = root_y
+         data.l[3] = button
+         data.l[4] = timestamp
+        */
+        if (e_dnd_active() || ec->iconic) return ECORE_CALLBACK_RENEW;
+        switch (ev->data.l[3])
+          {
+           case 1:
+           case 2:
+           case 3:
+             snprintf(emission, sizeof(emission), "mouse,down,%d", (int)ev->data.l[3]);
+             e_bindings_signal_handle(E_BINDING_CONTEXT_WINDOW, E_OBJECT(ec), emission, "e.event.titlebar");
+             break;
+           case 4:
+             e_bindings_signal_handle(E_BINDING_CONTEXT_WINDOW, E_OBJECT(ec), "mouse,wheel,?,-1", "e.event.titlebar");
+             break;
+           case 5:
+             e_bindings_signal_handle(E_BINDING_CONTEXT_WINDOW, E_OBJECT(ec), "mouse,wheel,?,1", "e.event.titlebar");
+             break;
+          }
+     }
    return ECORE_CALLBACK_PASS_ON;
 }
 
