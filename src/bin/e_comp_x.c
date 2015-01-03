@@ -6,8 +6,7 @@
 
 #define GRAV_SET(ec, grav)                                                         \
   ecore_x_window_gravity_set(e_client_util_pwin_get(ec), grav);                          \
-  if (ec->comp_data->lock_win) ecore_x_window_gravity_set(ec->comp_data->lock_win, grav);  \
-  ecore_x_window_gravity_set(e_client_util_win_get(ec), grav);
+  if (ec->comp_data->lock_win) ecore_x_window_gravity_set(ec->comp_data->lock_win, grav);
 
 #define E_COMP_X_PIXMAP_CHECK if (e_pixmap_type_get(ec->pixmap) != E_PIXMAP_TYPE_X) return
 
