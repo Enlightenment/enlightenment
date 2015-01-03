@@ -196,7 +196,7 @@ e_int_client_menu_create(E_Client *ec)
                                   "e/widgets/border/default/shade");
      }
 
-   if ((!ec->fullscreen) && (!ec->lock_border) && (!ec->shading) && (!ec->shaded))
+   if ((!ec->fullscreen) && (!ec->lock_border) && (!ec->shading) && (!ec->shaded) && (!ec->mwm.borderless))
      {
         mi = e_menu_item_new(m);
         e_menu_item_label_set(mi, _("Borderless"));
@@ -759,7 +759,7 @@ _e_client_menu_cb_window_pre(void *data, E_Menu *m __UNUSED__, E_Menu_Item *mi)
                                                    "e/widgets/border/default/skip"),
                              "e/widgets/border/default/skip");
 
-   if (!ec->lock_border)
+   if ((!ec->lock_border) && (!ec->mwm.borderless))
      {
         submi = e_menu_item_new(subm);
         e_menu_item_label_set(submi, _("Border"));
