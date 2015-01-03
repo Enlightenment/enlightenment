@@ -4107,6 +4107,11 @@ e_client_border_set(E_Client *ec, const char *name)
      CRI("CALLING WHEN border.changed SET!");
 
    if (!e_util_strcmp(ec->border.name, name)) return EINA_TRUE;
+   if (ec->mwm.borderless && name && strcmp(name, "borderless"))
+     {
+        e_util_dialog_show(_("Client Error!"), _("Something has attempted to set a border when it shouldn't! Report this!"));
+        CRI("border change attempted for MWM borderless client!");
+     }
    pborder = ec->border.name;
    ec->border.name = eina_stringshare_add(name);
    if (e_comp_object_frame_theme_set(ec->frame, name))
