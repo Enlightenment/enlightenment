@@ -220,6 +220,9 @@ is_tilable(const E_Client *ec)
 static void
 change_window_border(E_Client *ec, const char *bordername)
 {
+   if (ec->mwm.borderless)
+      return;
+
    ec->border.changed = 0;
    if (e_client_border_set(ec, bordername))
      eina_stringshare_refplace(&ec->bordername, ec->border.name);
