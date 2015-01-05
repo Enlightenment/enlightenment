@@ -385,7 +385,7 @@ static void
 _e_client_action_finish(void)
 {
    if (comp_grabbed)
-     _e_client_action_input_win_del(action_client ? action_client->comp : e_comp_get(NULL));
+     _e_client_action_input_win_del(e_comp);
 
    E_FREE_FUNC(action_timer, ecore_timer_del);
    E_FREE_FUNC(action_handler_key,  ecore_event_handler_del);
@@ -3961,8 +3961,8 @@ e_client_urgent_set(E_Client *ec, Eina_Bool urgent)
    if (urgent && e_screensaver_on_get() && e_config->screensaver_wake_on_urgent)
      {
         int x, y;
-        ecore_evas_pointer_xy_get(e_comp_get(NULL)->ee, &x, &y);
-        ecore_evas_pointer_warp(e_comp_get(NULL)->ee, x, y);
+        ecore_evas_pointer_xy_get(e_comp->ee, &x, &y);
+        ecore_evas_pointer_warp(e_comp->ee, x, y);
      }
 }
 
@@ -4687,9 +4687,9 @@ e_client_under_pointer_get(E_Desk *desk, E_Client *exclude)
     * zone of either the given desk or the desk of the excluded
     * window, so return if neither is given */
    if (desk)
-     ecore_evas_pointer_xy_get(e_comp_get(desk)->ee, &x, &y);
+     ecore_evas_pointer_xy_get(e_comp->ee, &x, &y);
    else if (exclude)
-     ecore_evas_pointer_xy_get(exclude->comp->ee, &x, &y);
+     ecore_evas_pointer_xy_get(e_comp->ee, &x, &y);
    else
      return NULL;
 

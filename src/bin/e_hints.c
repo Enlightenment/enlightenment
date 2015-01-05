@@ -394,7 +394,7 @@ e_hints_active_window_set(E_Manager *man,
 #ifdef HAVE_WAYLAND_ONLY
 #else
    E_OBJECT_CHECK(man);
-   if (e_comp_get(man)->comp_type != E_PIXMAP_TYPE_X) return;
+   if (e_comp->comp_type != E_PIXMAP_TYPE_X) return;
    if (ec && (e_pixmap_type_get(ec->pixmap) == E_PIXMAP_TYPE_X))
      ecore_x_netwm_client_active_set(man->root, e_client_util_win_get(ec));
    else

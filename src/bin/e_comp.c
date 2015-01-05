@@ -1387,12 +1387,11 @@ e_comp_top_window_at_xy_get(E_Comp *c, Evas_Coord x, Evas_Coord y)
 }
 
 EAPI void
-e_comp_util_wins_print(const E_Comp *c)
+e_comp_util_wins_print(const E_Comp *c EINA_UNUSED)
 {
    Evas_Object *o;
 
-   if (!c) c = e_comp_get(NULL);
-   o = evas_object_top_get(c->evas);
+   o = evas_object_top_get(e_comp->evas);
    while (o)
      {
         E_Client *ec;

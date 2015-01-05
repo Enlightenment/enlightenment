@@ -73,24 +73,24 @@ _e_comp_canvas_cb_mouse_in(E_Comp *c EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Obje
 }
 
 static void
-_e_comp_canvas_cb_mouse_down(E_Comp *c, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info)
+_e_comp_canvas_cb_mouse_down(E_Comp *c EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info)
 {
    if (e_client_action_get()) return;
-   e_bindings_mouse_down_evas_event_handle(E_BINDING_CONTEXT_COMPOSITOR, E_OBJECT(c), event_info);
+   e_bindings_mouse_down_evas_event_handle(E_BINDING_CONTEXT_COMPOSITOR, E_OBJECT(e_comp), event_info);
 }
 
 static void
-_e_comp_canvas_cb_mouse_up(E_Comp *c, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info)
+_e_comp_canvas_cb_mouse_up(E_Comp *c EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info)
 {
    if (e_client_action_get()) return;
-   e_bindings_mouse_up_evas_event_handle(E_BINDING_CONTEXT_COMPOSITOR, E_OBJECT(c), event_info);
+   e_bindings_mouse_up_evas_event_handle(E_BINDING_CONTEXT_COMPOSITOR, E_OBJECT(e_comp), event_info);
 }
 
 static void
-_e_comp_canvas_cb_mouse_wheel(E_Comp *c, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info)
+_e_comp_canvas_cb_mouse_wheel(E_Comp *c EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info)
 {
    if (e_client_action_get()) return;
-   e_bindings_wheel_evas_event_handle(E_BINDING_CONTEXT_COMPOSITOR, E_OBJECT(c), event_info);
+   e_bindings_wheel_evas_event_handle(E_BINDING_CONTEXT_COMPOSITOR, E_OBJECT(e_comp), event_info);
 }
 
 ////////////////////////////////////
@@ -105,14 +105,12 @@ _e_comp_cb_zone_change()
 ////////////////////////////////////
 
 static void
-_e_comp_canvas_screensaver_active(void *d EINA_UNUSED, Evas_Object *obj, const char *sig EINA_UNUSED, const char *src EINA_UNUSED)
+_e_comp_canvas_screensaver_active(void *d EINA_UNUSED, Evas_Object *obj EINA_UNUSED, const char *sig EINA_UNUSED, const char *src EINA_UNUSED)
 {
-   E_Comp *c;
    /* thawed in _e_comp_screensaver_off() */
    ecore_animator_frametime_set(10.0);
-   c = e_comp_util_evas_object_comp_get(obj);
-   if (!c->nocomp)
-     ecore_evas_manual_render_set(c->ee, EINA_TRUE);
+   if (!e_comp->nocomp)
+     ecore_evas_manual_render_set(e_comp->ee, EINA_TRUE);
 }
 
 ////////////////////////////////////
@@ -216,26 +214,23 @@ e_comp_all_thaw(void)
 }
 
 EAPI E_Zone *
-e_comp_zone_xy_get(const E_Comp *c, Evas_Coord x, Evas_Coord y)
+e_comp_zone_xy_get(const E_Comp *c EINA_UNUSED, Evas_Coord x, Evas_Coord y)
 {
    const Eina_List *l;
    E_Zone *zone;
 
-   if (!c) c = e_comp_get(NULL);
-   EINA_LIST_FOREACH(c->zones, l, zone)
+   EINA_LIST_FOREACH(e_comp->zones, l, zone)
      if (E_INSIDE(x, y, zone->x, zone->y, zone->w, zone->h)) return zone;
    return NULL;
 }
 
 EAPI E_Zone *
-e_comp_zone_number_get(E_Comp *c, int num)
+e_comp_zone_number_get(E_Comp *c EINA_UNUSED, int num)
 {
    Eina_List *l = NULL;
    E_Zone *zone = NULL;
 
-   E_OBJECT_CHECK_RETURN(c, NULL);
-   E_OBJECT_TYPE_CHECK_RETURN(c, E_COMP_TYPE, NULL);
-   EINA_LIST_FOREACH(c->zones, l, zone)
+   EINA_LIST_FOREACH(e_comp->zones, l, zone)
      {
         if ((int)zone->num == num) return zone;
      }
@@ -243,14 +238,12 @@ e_comp_zone_number_get(E_Comp *c, int num)
 }
 
 EAPI E_Zone *
-e_comp_zone_id_get(E_Comp *c, int id)
+e_comp_zone_id_get(E_Comp *c EINA_UNUSED, int id)
 {
    Eina_List *l = NULL;
    E_Zone *zone = NULL;
 
-   E_OBJECT_CHECK_RETURN(c, NULL);
-   E_OBJECT_TYPE_CHECK_RETURN(c, E_COMP_TYPE, NULL);
-   EINA_LIST_FOREACH(c->zones, l, zone)
+   EINA_LIST_FOREACH(e_comp->zones, l, zone)
      {
         if (zone->id == id) return zone;
      }
@@ -258,17 +251,15 @@ e_comp_zone_id_get(E_Comp *c, int id)
 }
 
 EAPI E_Desk *
-e_comp_desk_window_profile_get(E_Comp *c, const char *profile)
+e_comp_desk_window_profile_get(E_Comp *c EINA_UNUSED, const char *profile)
 {
    Eina_List *l = NULL;
    E_Zone *zone = NULL;
    int x, y;
 
-   E_OBJECT_CHECK_RETURN(c, NULL);
-   E_OBJECT_TYPE_CHECK_RETURN(c, E_COMP_TYPE, NULL);
    EINA_SAFETY_ON_NULL_RETURN_VAL(profile, NULL);
 
-   EINA_LIST_FOREACH(c->zones, l, zone)
+   EINA_LIST_FOREACH(e_comp->zones, l, zone)
      {
         for (x = 0; x < zone->desk_x_count; x++)
           {
