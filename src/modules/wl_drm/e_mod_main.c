@@ -1,7 +1,56 @@
 #include "e.h"
-/* #include <Ecore_Drm.h> */
+#include <Ecore_Drm.h>
 
 EAPI E_Module_Api e_modapi = { E_MODULE_API_VERSION, "Wl_Drm" };
+
+static Ecore_Event_Handler *activate_handler;
+static Eina_Bool session_state = EINA_FALSE;
+
+static Eina_Bool
+_e_mod_drm_cb_activate(void *data, int type EINA_UNUSED, void *event)
+{
+   Ecore_Drm_Event_Activate *e;
+   E_Comp *c;
+
+   if ((!event) || (!data)) goto end;
+   e = event;
+   c = data;
+
+   if (e->active)
+     {
+        E_Client *ec;
+
+        if (session_state) goto end;
+        session_state = EINA_TRUE;
+
+        ecore_evas_show(c->ee);
+        E_CLIENT_FOREACH(c, ec)
+          {
+             if (ec->visible && (!ec->input_only))
+               e_comp_object_damage(ec->frame, 0, 0, ec->w, ec->h);
+          }
+        e_comp_render_queue(c);
+        e_comp_shape_queue_block(c, 0);
+        ecore_event_add(E_EVENT_COMPOSITOR_ENABLE, NULL, NULL, NULL);
+     }
+   else
+     {
+        session_state = EINA_FALSE;
+        ecore_evas_hide(c->ee);
+        edje_file_cache_flush();
+        edje_collection_cache_flush();
+        evas_image_cache_flush(c->evas);
+        evas_font_cache_flush(c->evas);
+        evas_render_dump(c->evas);
+
+        e_comp_render_queue(c);
+        e_comp_shape_queue_block(c, 1);
+        ecore_event_add(E_EVENT_COMPOSITOR_DISABLE, NULL, NULL, NULL);
+     }
+
+end:
+   return ECORE_CALLBACK_PASS_ON;
+}
 
 EAPI void *
 e_modapi_init(E_Module *m)
@@ -86,6 +135,11 @@ e_modapi_init(E_Module *m)
     * happens to jive with what drm does */
    e_comp_wl_input_keymap_set(comp->wl_comp_data, NULL, NULL, NULL);
 
+   activate_handler =
+      ecore_event_handler_add(ECORE_DRM_EVENT_ACTIVATE,
+                              _e_mod_drm_cb_activate, comp);
+
+
    return m;
 }
 
@@ -94,6 +148,9 @@ e_modapi_shutdown(E_Module *m EINA_UNUSED)
 {
    /* shutdown ecore_drm */
    /* ecore_drm_shutdown(); */
+
+   if (activate_handler) ecore_event_handler_del(activate_handler);
+   activate_handler = NULL;
 
    return 1;
 }
