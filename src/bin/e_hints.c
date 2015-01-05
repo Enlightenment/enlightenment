@@ -326,7 +326,7 @@ e_hints_client_stacking_set(void)
    E_Comp *comp;
    const Eina_List *l;
 
-#define CLIENT_STACK_DEBUG
+//#define CLIENT_STACK_DEBUG
    /* Get client count */
    EINA_LIST_FOREACH(e_comp_list(), l, comp)
      {
