@@ -336,7 +336,7 @@ e_hints_client_stacking_set(void)
    unsigned int c, i = 0, non_x = 0;
    Ecore_X_Window *clients = NULL;
 
-#define CLIENT_STACK_DEBUG
+//#define CLIENT_STACK_DEBUG
    /* Get client count */
    c = e_clients_count(e_comp);
    if (c)
