@@ -5127,7 +5127,7 @@ _e_comp_x_screens_setup(void)
                              n);
         return 0;
      }
-   for (i = 0; i < n; i++)
+   for (i = 0; i < 1; i++)
      {
         int rw, rh;
         Ecore_X_Window root = roots[i];
