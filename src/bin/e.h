@@ -1,6 +1,8 @@
 #ifndef E_H
 # define E_H
 
+# define E_VERSION_MAJOR 20
+
 /**
  * @defgroup API Enlightenment API
  *
