@@ -187,8 +187,7 @@ _free_data(E_Config_Dialog *cfd __UNUSED__, E_Config_Dialog_Data *cfdata)
 static int
 _basic_apply_data(E_Config_Dialog *cfd __UNUSED__, E_Config_Dialog_Data *cfdata)
 {
-   const Eina_List *l, *ll;
-   E_Comp *comp;
+   const Eina_List *l;
    E_Zone *zone;
    E_Config_Binding_Edge *bi, *bi2;
    E_Layer layer;
@@ -231,11 +230,8 @@ _basic_apply_data(E_Config_Dialog *cfd __UNUSED__, E_Config_Dialog_Data *cfdata)
         else
           layer = E_LAYER_CLIENT_EDGE;
 
-        EINA_LIST_FOREACH(e_comp_list(), l, comp)
-          {
-             EINA_LIST_FOREACH(comp->zones, ll, zone)
-               e_zone_edge_win_layer_set(zone, layer);
-          }
+        EINA_LIST_FOREACH(e_comp->zones, l, zone)
+          e_zone_edge_win_layer_set(zone, layer);
      }
 
    e_config->fullscreen_flip = cfdata->fullscreen_flip;

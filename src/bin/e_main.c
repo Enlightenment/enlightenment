@@ -1589,47 +1589,39 @@ _e_main_screens_shutdown(void)
 static void
 _e_main_desk_save(void)
 {
-   E_Comp *c;
    const Eina_List *l;
    char env[1024], name[1024];
+   E_Zone *zone;
 
-   EINA_LIST_FOREACH(e_comp_list(), l, c)
+   EINA_LIST_FOREACH(e_comp->zones, l, zone)
      {
-        Eina_List *zl;
-        E_Zone *zone;
-
-        EINA_LIST_FOREACH(c->zones, zl, zone)
-          {
-             snprintf(name, sizeof(name), "DESK_%d_%d", c->num, zone->num);
-             snprintf(env, sizeof(env), "%d,%d", zone->desk_x_current, zone->desk_y_current);
-             e_util_env_set(name, env);
-          }
+        snprintf(name, sizeof(name), "DESK_%d_%d", e_comp->num, zone->num);
+        snprintf(env, sizeof(env), "%d,%d", zone->desk_x_current, zone->desk_y_current);
+        e_util_env_set(name, env);
      }
 }
 
 static void
 _e_main_desk_restore(void)
 {
-   E_Comp *c;
-   const Eina_List *l, *ll;
+   const Eina_List *l;
    E_Zone *zone;
    char *env;
    char name[1024];
 
-   EINA_LIST_FOREACH(e_comp_list(), l, c)
-      EINA_LIST_FOREACH(c->zones, ll, zone)
-        {
-           E_Desk *desk;
-           int desk_x, desk_y;
+   EINA_LIST_FOREACH(e_comp->zones, l, zone)
+     {
+        E_Desk *desk;
+        int desk_x, desk_y;
 
-           snprintf(name, sizeof(name), "DESK_%d_%d", c->num, zone->num);
-           env = getenv(name);
-           if (!env) continue;
-           if (!sscanf(env, "%d,%d", &desk_x, &desk_y)) continue;
-           desk = e_desk_at_xy_get(zone, desk_x, desk_y);
-           if (!desk) continue;
-           e_desk_show(desk);
-        }
+        snprintf(name, sizeof(name), "DESK_%d_%d", e_comp->num, zone->num);
+        env = getenv(name);
+        if (!env) continue;
+        if (!sscanf(env, "%d,%d", &desk_x, &desk_y)) continue;
+        desk = e_desk_at_xy_get(zone, desk_x, desk_y);
+        if (!desk) continue;
+        e_desk_show(desk);
+     }
 }
 
 static void

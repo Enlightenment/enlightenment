@@ -89,10 +89,9 @@ e_remember_shutdown(void)
 EAPI void
 e_remember_internal_save(void)
 {
-   const Eina_List *l, *ll;
+   const Eina_List *l;
    E_Client *ec;
    E_Remember *rem;
-   E_Comp *c;
 
    //printf("internal save %d\n", restart);
    if (!remembers)
@@ -104,28 +103,27 @@ e_remember_internal_save(void)
         remember_idler_list = eina_list_free(remember_idler_list);
      }
 
-   EINA_LIST_FOREACH(e_comp_list(), l, c)
-     EINA_LIST_FOREACH(c->clients, ll, ec)
-       {
-          if ((!ec->internal) || e_client_util_ignored_get(ec)) continue;
+   EINA_LIST_FOREACH(e_comp->clients, l, ec)
+     {
+        if ((!ec->internal) || e_client_util_ignored_get(ec)) continue;
 
-          rem = E_NEW(E_Remember, 1);
-          if (!rem) break;
+        rem = E_NEW(E_Remember, 1);
+        if (!rem) break;
 
-          e_remember_default_match_set(rem, ec);
-          rem->apply = (E_REMEMBER_APPLY_POS | E_REMEMBER_APPLY_SIZE |
-                        E_REMEMBER_APPLY_BORDER | E_REMEMBER_APPLY_LAYER |
-                        E_REMEMBER_APPLY_SHADE | E_REMEMBER_APPLY_ZONE |
-                        E_REMEMBER_APPLY_DESKTOP | E_REMEMBER_APPLY_LOCKS |
-                        E_REMEMBER_APPLY_SKIP_WINLIST |
-                        E_REMEMBER_APPLY_SKIP_PAGER |
-                        E_REMEMBER_APPLY_SKIP_TASKBAR |
-                        E_REMEMBER_APPLY_OFFER_RESISTANCE |
-                        E_REMEMBER_APPLY_OPACITY);
-          _e_remember_update(ec, rem);
+        e_remember_default_match_set(rem, ec);
+        rem->apply = (E_REMEMBER_APPLY_POS | E_REMEMBER_APPLY_SIZE |
+                      E_REMEMBER_APPLY_BORDER | E_REMEMBER_APPLY_LAYER |
+                      E_REMEMBER_APPLY_SHADE | E_REMEMBER_APPLY_ZONE |
+                      E_REMEMBER_APPLY_DESKTOP | E_REMEMBER_APPLY_LOCKS |
+                      E_REMEMBER_APPLY_SKIP_WINLIST |
+                      E_REMEMBER_APPLY_SKIP_PAGER |
+                      E_REMEMBER_APPLY_SKIP_TASKBAR |
+                      E_REMEMBER_APPLY_OFFER_RESISTANCE |
+                      E_REMEMBER_APPLY_OPACITY);
+        _e_remember_update(ec, rem);
 
-          remembers->list = eina_list_append(remembers->list, rem);
-       }
+        remembers->list = eina_list_append(remembers->list, rem);
+     }
 
    e_config_domain_save("e_remember_restart", e_remember_list_edd, remembers);
 }
@@ -247,18 +245,16 @@ e_remember_unuse(E_Remember *rem)
 EAPI void
 e_remember_del(E_Remember *rem)
 {
-   const Eina_List *l, *ll;
+   const Eina_List *l;
    E_Client *ec;
-   E_Comp *c;
 
-   EINA_LIST_FOREACH(e_comp_list(), l, c)
-     EINA_LIST_FOREACH(c->clients, ll, ec)
-       {
-          if (ec->remember != rem) continue;
+   EINA_LIST_FOREACH(e_comp->clients, l, ec)
+     {
+        if (ec->remember != rem) continue;
 
-          ec->remember = NULL;
-          e_remember_unuse(rem);
-       }
+        ec->remember = NULL;
+        e_remember_unuse(rem);
+     }
 
    _e_remember_free(rem);
 }

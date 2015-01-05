@@ -86,45 +86,40 @@ static Eina_Inlist *_e_client_hooks[] =
 static Eina_Bool
 _e_client_cb_efreet_cache_update(void *data EINA_UNUSED, int type EINA_UNUSED, void *ev EINA_UNUSED)
 {
-   E_Comp *c;
-   const Eina_List *l, *ll;
+   const Eina_List *l;
    E_Client *ec;
 
    /* mark all clients for desktop/icon updates */
-   EINA_LIST_FOREACH(e_comp_list(), l, c)
-      EINA_LIST_FOREACH(c->clients, ll, ec)
-        {
-           E_FREE_FUNC(ec->desktop, efreet_desktop_free);
-           if (e_object_is_del(E_OBJECT(ec))) continue;
-           ec->changes.icon = 1;
-           EC_CHANGED(ec);
-        }
+   EINA_LIST_FOREACH(e_comp->clients, l, ec)
+     {
+        E_FREE_FUNC(ec->desktop, efreet_desktop_free);
+        if (e_object_is_del(E_OBJECT(ec))) continue;
+        ec->changes.icon = 1;
+        EC_CHANGED(ec);
+     }
    return ECORE_CALLBACK_RENEW;
 }
 
 static Eina_Bool
 _e_client_cb_config_icon_theme(void *data EINA_UNUSED, int type EINA_UNUSED, void *ev EINA_UNUSED)
 {
-   E_Comp *c;
-   const Eina_List *l, *ll;
+   const Eina_List *l;
    E_Client *ec;
 
    /* mark all clients for desktop/icon updates */
-   EINA_LIST_FOREACH(e_comp_list(), l, c)
-      EINA_LIST_FOREACH(c->clients, ll, ec)
-        {
-           if (e_object_is_del(E_OBJECT(ec))) continue;
-           ec->changes.icon = 1;
-           EC_CHANGED(ec);
-        }
+   EINA_LIST_FOREACH(e_comp->clients, l, ec)
+     {
+        if (e_object_is_del(E_OBJECT(ec))) continue;
+        ec->changes.icon = 1;
+        EC_CHANGED(ec);
+     }
    return ECORE_CALLBACK_RENEW;
 }
 
 static Eina_Bool
 _e_client_cb_config_mode(void *data EINA_UNUSED, int type EINA_UNUSED, void *ev EINA_UNUSED)
 {
-   E_Comp *c;
-   const Eina_List *l, *ll;
+   const Eina_List *l;
    E_Client *ec;
    E_Layer layer;
 
@@ -137,17 +132,16 @@ _e_client_cb_config_mode(void *data EINA_UNUSED, int type EINA_UNUSED, void *ev 
    else
      return ECORE_CALLBACK_RENEW;
 
-   EINA_LIST_FOREACH(e_comp_list(), l, c)
-      EINA_LIST_FOREACH(c->clients, ll, ec)
-        {
-           if (e_object_is_del(E_OBJECT(ec))) continue;
-           if ((ec->fullscreen) || (ec->need_fullscreen))
-             {
-                ec->fullscreen = 0;
-                evas_object_layer_set(ec->frame, layer);
-                ec->fullscreen = 1;
-             }
-        }
+   EINA_LIST_FOREACH(e_comp->clients, l, ec)
+     {
+        if (e_object_is_del(E_OBJECT(ec))) continue;
+        if ((ec->fullscreen) || (ec->need_fullscreen))
+          {
+             ec->fullscreen = 0;
+             evas_object_layer_set(ec->frame, layer);
+             ec->fullscreen = 1;
+          }
+     }
    return ECORE_CALLBACK_PASS_ON;
 }
 
@@ -163,17 +157,15 @@ _e_client_cb_pointer_warp(void *data EINA_UNUSED, int type EINA_UNUSED, E_Event_
 static Eina_Bool
 _e_client_cb_desk_window_profile_change(void *data EINA_UNUSED, int type EINA_UNUSED, E_Event_Desk_Window_Profile_Change *ev EINA_UNUSED)
 {
-   E_Comp *c;
-   const Eina_List *l, *ll;
+   const Eina_List *l;
    E_Client *ec;
 
-   EINA_LIST_FOREACH(e_comp_list(), l, c)
-      EINA_LIST_FOREACH(c->clients, ll, ec)
-        {
-           if (e_object_is_del(E_OBJECT(ec))) continue;
-           ec->e.fetch.profile = 1;
-           EC_CHANGED(ec);
-        }
+   EINA_LIST_FOREACH(e_comp->clients, l, ec)
+     {
+        if (e_object_is_del(E_OBJECT(ec))) continue;
+        ec->e.fetch.profile = 1;
+        EC_CHANGED(ec);
+     }
    return ECORE_CALLBACK_RENEW;
 }
 
@@ -2268,84 +2260,80 @@ EINTERN void
 e_client_idler_before(void)
 {
    const Eina_List *l;
-   E_Comp *c;
+   E_Client *ec;
 
    if (!eina_hash_population(clients_hash)) return;
 
-   EINA_LIST_FOREACH(e_comp_list(), l, c)
+
+
+   EINA_LIST_FOREACH(e_comp->clients, l, ec)
      {
-        Eina_List *ll;
-        E_Client *ec;
+        Eina_Stringshare *title;
+        // pass 1 - eval0. fetch properties on new or on change and
+        // call hooks to decide what to do - maybe move/resize
+        if (!ec->changed) continue;
 
-        EINA_LIST_FOREACH(c->clients, ll, ec)
+        if (!_e_client_hook_call(E_CLIENT_HOOK_EVAL_PRE_FETCH, ec)) continue;
+        /* FETCH is hooked by the compositor to get client hints */
+        title = e_client_util_name_get(ec);
+        if (!_e_client_hook_call(E_CLIENT_HOOK_EVAL_FETCH, ec)) continue;
+        if (title != e_client_util_name_get(ec))
+          _e_client_event_property(ec, E_CLIENT_PROPERTY_TITLE);
+        /* PRE_POST_FETCH calls e_remember apply for new client */
+        if (!_e_client_hook_call(E_CLIENT_HOOK_EVAL_PRE_POST_FETCH, ec)) continue;
+        if (!_e_client_hook_call(E_CLIENT_HOOK_EVAL_POST_FETCH, ec)) continue;
+        if (!_e_client_hook_call(E_CLIENT_HOOK_EVAL_PRE_FRAME_ASSIGN, ec)) continue;
+
+        if ((ec->border.changed) && (!ec->shaded) && ((!ec->override) || ec->internal) &&
+            (!(((ec->maximized & E_MAXIMIZE_TYPE) == E_MAXIMIZE_FULLSCREEN))))
+          _e_client_frame_update(ec);
+        ec->border.changed = 0;
+        _e_client_hook_call(E_CLIENT_HOOK_EVAL_POST_FRAME_ASSIGN, ec);
+     }
+
+   E_CLIENT_FOREACH(e_comp, ec)
+     {
+        // pass 2 - show windows needing show
+        if ((ec->changes.visible) && (ec->visible) &&
+            (!ec->new_client) && (!ec->changes.pos) &&
+            (!ec->changes.size))
           {
-             Eina_Stringshare *title;
-             // pass 1 - eval0. fetch properties on new or on change and
-             // call hooks to decide what to do - maybe move/resize
-             if (!ec->changed) continue;
-
-             if (!_e_client_hook_call(E_CLIENT_HOOK_EVAL_PRE_FETCH, ec)) continue;
-             /* FETCH is hooked by the compositor to get client hints */
-             title = e_client_util_name_get(ec);
-             if (!_e_client_hook_call(E_CLIENT_HOOK_EVAL_FETCH, ec)) continue;
-             if (title != e_client_util_name_get(ec))
-               _e_client_event_property(ec, E_CLIENT_PROPERTY_TITLE);
-             /* PRE_POST_FETCH calls e_remember apply for new client */
-             if (!_e_client_hook_call(E_CLIENT_HOOK_EVAL_PRE_POST_FETCH, ec)) continue;
-             if (!_e_client_hook_call(E_CLIENT_HOOK_EVAL_POST_FETCH, ec)) continue;
-             if (!_e_client_hook_call(E_CLIENT_HOOK_EVAL_PRE_FRAME_ASSIGN, ec)) continue;
-
-             if ((ec->border.changed) && (!ec->shaded) && ((!ec->override) || ec->internal) &&
-                 (!(((ec->maximized & E_MAXIMIZE_TYPE) == E_MAXIMIZE_FULLSCREEN))))
-               _e_client_frame_update(ec);
-             ec->border.changed = 0;
-             _e_client_hook_call(E_CLIENT_HOOK_EVAL_POST_FRAME_ASSIGN, ec);
+             evas_object_show(ec->frame);
+             ec->changes.visible = !evas_object_visible_get(ec->frame);
           }
 
-        E_CLIENT_FOREACH(c, ec)
+        if ((!ec->new_client) && (!e_client_util_ignored_get(ec)) &&
+            (!E_INSIDE(ec->x, ec->y, 0, 0, ec->comp->man->w - 5, ec->comp->man->h - 5)) &&
+            (!E_INSIDE(ec->x, ec->y, 0 - ec->w + 5, 0 - ec->h + 5, ec->comp->man->w - 5, ec->comp->man->h - 5))
+            )
           {
-             // pass 2 - show windows needing show
-             if ((ec->changes.visible) && (ec->visible) &&
-                 (!ec->new_client) && (!ec->changes.pos) &&
-                 (!ec->changes.size))
-               {
-                  evas_object_show(ec->frame);
-                  ec->changes.visible = !evas_object_visible_get(ec->frame);
-               }
+             if (e_config->screen_limits != E_SCREEN_LIMITS_COMPLETELY)
+               _e_client_move_lost_window_to_center(ec);
+          }
+     }
 
-             if ((!ec->new_client) && (!e_client_util_ignored_get(ec)) &&
-                 (!E_INSIDE(ec->x, ec->y, 0, 0, ec->comp->man->w - 5, ec->comp->man->h - 5)) &&
-                 (!E_INSIDE(ec->x, ec->y, 0 - ec->w + 5, 0 - ec->h + 5, ec->comp->man->w - 5, ec->comp->man->h - 5))
-                 )
-               {
-                  if (e_config->screen_limits != E_SCREEN_LIMITS_COMPLETELY)
-                    _e_client_move_lost_window_to_center(ec);
-               }
+   if (_e_client_layout_cb)
+     _e_client_layout_cb(e_comp);
+
+   // pass 3 - hide windows needing hide and eval (main eval)
+   E_CLIENT_FOREACH(e_comp, ec)
+     {
+        if (e_object_is_del(E_OBJECT(ec))) continue;
+
+        if ((ec->changes.visible) && (!ec->visible))
+          {
+             evas_object_hide(ec->frame);
+             ec->changes.visible = 0;
           }
 
-        if (_e_client_layout_cb)
-          _e_client_layout_cb(c);
+        if (ec->changed)
+          _e_client_eval(ec);
 
-        // pass 3 - hide windows needing hide and eval (main eval)
-        E_CLIENT_FOREACH(c, ec)
+        if ((ec->changes.visible) && (ec->visible) && (!ec->changed))
           {
-             if (e_object_is_del(E_OBJECT(ec))) continue;
-
-             if ((ec->changes.visible) && (!ec->visible))
-               {
-                  evas_object_hide(ec->frame);
-                  ec->changes.visible = 0;
-               }
-
-             if (ec->changed)
-               _e_client_eval(ec);
-
-             if ((ec->changes.visible) && (ec->visible) && (!ec->changed))
-               {
-                  evas_object_show(ec->frame);
-                  ec->changes.visible = !evas_object_visible_get(ec->frame);
-                  ec->changed = ec->changes.visible;
-               }
+             evas_object_show(ec->frame);
+             ec->changes.visible = !evas_object_visible_get(ec->frame);
+             ec->changed = ec->changes.visible;
           }
      }
 }
@@ -2682,28 +2670,16 @@ e_client_warping_get(void)
 
 
 EAPI Eina_List *
-e_clients_immortal_list(const E_Comp *c)
+e_clients_immortal_list(void)
 {
-   const Eina_List *l, *ll;
+   const Eina_List *l;
    Eina_List *list = NULL;
    E_Client *ec;
 
-   if (c)
+   EINA_LIST_FOREACH(e_comp->clients, l, ec)
      {
-        EINA_LIST_FOREACH(c->clients, ll, ec)
-          {
-             if (ec->lock_life)
-               list = eina_list_append(list, ec);
-          }
-     }
-   else
-     {
-        EINA_LIST_FOREACH(e_comp_list(), l, c)
-          EINA_LIST_FOREACH(c->clients, ll, ec)
-            {
-               if (ec->lock_life)
-                 list = eina_list_append(list, ec);
-            }
+        if (ec->lock_life)
+          list = eina_list_append(list, ec);
      }
    return list;
 }
@@ -3530,28 +3506,23 @@ EAPI Eina_List *
 e_client_lost_windows_get(E_Zone *zone)
 {
    Eina_List *list = NULL;
-   const Eina_List *l, *ll;
+   const Eina_List *l;
    E_Client *ec;
-   E_Comp *c;
    int loss_overlap = 5;
 
    E_OBJECT_CHECK_RETURN(zone, NULL);
    E_OBJECT_TYPE_CHECK_RETURN(zone, E_ZONE_TYPE, NULL);
-   EINA_LIST_FOREACH(e_comp_list(), l, c)
+   EINA_LIST_FOREACH(e_comp->clients, l, ec)
      {
-        if (zone->comp != c) continue;
-        EINA_LIST_FOREACH(c->clients, ll, ec)
-          {
-             if (ec->zone != zone) continue;
+        if (ec->zone != zone) continue;
 
-             if (!E_INTERSECTS(ec->zone->x + loss_overlap,
-                               ec->zone->y + loss_overlap,
-                               ec->zone->w - (2 * loss_overlap),
-                               ec->zone->h - (2 * loss_overlap),
-                               ec->x, ec->y, ec->w, ec->h))
-               {
-                  list = eina_list_append(list, ec);
-               }
+        if (!E_INTERSECTS(ec->zone->x + loss_overlap,
+                          ec->zone->y + loss_overlap,
+                          ec->zone->w - (2 * loss_overlap),
+                          ec->zone->h - (2 * loss_overlap),
+                          ec->x, ec->y, ec->w, ec->h))
+          {
+             list = eina_list_append(list, ec);
           }
      }
    return list;

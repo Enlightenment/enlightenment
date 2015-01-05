@@ -358,54 +358,52 @@ _warning_dialog_show(void)
 static int
 _check_matches(E_Remember *rem, int update)
 {
-   const Eina_List *l, *ll;
+   const Eina_List *l;
    E_Client *ec;
-   E_Comp *c;
    const char *title;
    int n = 0;
 
-   EINA_LIST_FOREACH(e_comp_list(), l, c)
-     EINA_LIST_FOREACH(c->clients, ll, ec)
-       {
-          int match = rem->match;
-          title = e_client_util_name_get(ec);
+   EINA_LIST_FOREACH(e_comp->clients, l, ec)
+     {
+        int match = rem->match;
+        title = e_client_util_name_get(ec);
 
-          if ((match & E_REMEMBER_MATCH_NAME) &&
-              (e_util_glob_match(ec->icccm.name, rem->name)))
-            match &= ~E_REMEMBER_MATCH_NAME;
+        if ((match & E_REMEMBER_MATCH_NAME) &&
+            (e_util_glob_match(ec->icccm.name, rem->name)))
+          match &= ~E_REMEMBER_MATCH_NAME;
 
-          if ((match & E_REMEMBER_MATCH_CLASS) &&
-              (e_util_glob_match(ec->icccm.class, rem->class)))
-            match &= ~E_REMEMBER_MATCH_CLASS;
+        if ((match & E_REMEMBER_MATCH_CLASS) &&
+            (e_util_glob_match(ec->icccm.class, rem->class)))
+          match &= ~E_REMEMBER_MATCH_CLASS;
 
-          if ((match & E_REMEMBER_MATCH_TITLE) &&
-              (e_util_glob_match(title, rem->title)))
-            match &= ~E_REMEMBER_MATCH_TITLE;
+        if ((match & E_REMEMBER_MATCH_TITLE) &&
+            (e_util_glob_match(title, rem->title)))
+          match &= ~E_REMEMBER_MATCH_TITLE;
 
-          if ((match & E_REMEMBER_MATCH_ROLE) &&
-              ((!e_util_strcmp(rem->role, ec->icccm.window_role)) ||
-               (e_util_both_str_empty(rem->role, ec->icccm.window_role))))
-            match &= ~E_REMEMBER_MATCH_ROLE;
+        if ((match & E_REMEMBER_MATCH_ROLE) &&
+            ((!e_util_strcmp(rem->role, ec->icccm.window_role)) ||
+             (e_util_both_str_empty(rem->role, ec->icccm.window_role))))
+          match &= ~E_REMEMBER_MATCH_ROLE;
 
-          if ((match & E_REMEMBER_MATCH_TYPE) &&
-              (rem->type == (int)ec->netwm.type))
-            match &= ~E_REMEMBER_MATCH_TYPE;
+        if ((match & E_REMEMBER_MATCH_TYPE) &&
+            (rem->type == (int)ec->netwm.type))
+          match &= ~E_REMEMBER_MATCH_TYPE;
 
-          if ((match & E_REMEMBER_MATCH_TRANSIENT) &&
-              ((rem->transient && ec->icccm.transient_for != 0) ||
-               (!rem->transient && (ec->icccm.transient_for == 0))))
-            match &= ~E_REMEMBER_MATCH_TRANSIENT;
+        if ((match & E_REMEMBER_MATCH_TRANSIENT) &&
+            ((rem->transient && ec->icccm.transient_for != 0) ||
+             (!rem->transient && (ec->icccm.transient_for == 0))))
+          match &= ~E_REMEMBER_MATCH_TRANSIENT;
 
-          if (match == 0) n++;
+        if (match == 0) n++;
 
-          if (update)
-            {
-               ec->changed = 1;
-               ec->changes.icon = 1;
-            }
-          else if (n > 1)
-            break;
-       }
+        if (update)
+          {
+             ec->changed = 1;
+             ec->changes.icon = 1;
+          }
+        else if (n > 1)
+          break;
+     }
    return n;
 }
 

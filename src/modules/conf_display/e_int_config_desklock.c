@@ -11,7 +11,6 @@ static Evas_Object *_basic_create(E_Config_Dialog *cfd, Evas *evas, E_Config_Dia
 static void         _cb_method_change(void *data, Evas_Object *obj, void *event_info);
 static void         _login_method_change(void *data, Evas_Object *obj, void *event_info);
 static void         _cb_login_change(void *data, Evas_Object *obj);
-static int          _zone_count_get(void);
 
 static void         _cb_bg_mouse_down(void *data, Evas *evas, Evas_Object *obj, void *event);
 
@@ -133,7 +132,7 @@ _fill_data(E_Config_Dialog_Data *cfdata)
    E_Config_Desklock_Background *bg;
    int x;
 
-   cfdata->zone_count = _zone_count_get();
+   cfdata->zone_count = eina_list_count(e_comp->zones);
    EINA_LIST_FOREACH(e_config->desklock_backgrounds, l, bg)
      cfdata->bgs = eina_list_append(cfdata->bgs, desklock_bg_dup(bg, NULL));
    if (!cfdata->bgs)
@@ -216,10 +215,9 @@ _basic_create(E_Config_Dialog *cfd __UNUSED__, Evas *evas, E_Config_Dialog_Data 
    E_Config_XKB_Layout *cl;
    int grp = 0;
    Evas_Object *otb, *ol, *ow, *of, *oc;
-   const Eina_List *l, *ll;
+   const Eina_List *l;
    E_Zone *zone;
    E_Radio_Group *rg;
-   E_Comp *comp;
    int screen_count, x = 0;
 
    e_dialog_resizable_set(cfd->dia, 1);
@@ -406,17 +404,16 @@ _basic_create(E_Config_Dialog *cfd __UNUSED__, Evas *evas, E_Config_Dialog_Data 
 
    cfdata->gui.o_table = e_widget_table_add(evas, 1);
 
-   EINA_LIST_FOREACH(e_comp_list(), l, comp)
-     EINA_LIST_FOREACH(comp->zones, ll, zone)
-       {
-          ow = e_widget_preview_add(evas, 100, 140);
-          cfdata->gui.bgs = eina_list_append(cfdata->gui.bgs, ow);
-          evas_object_data_set(ow, "zone", zone);
-          e_widget_disabled_set(ow,
-            (cfdata->bg_method < E_DESKLOCK_BACKGROUND_METHOD_CUSTOM));
-          evas_object_event_callback_add(ow, EVAS_CALLBACK_MOUSE_DOWN, _cb_bg_mouse_down, cfdata);
-          e_widget_table_object_append(cfdata->gui.o_table, ow, x++, 0, 1, 1, 1, 1, 1, 1);
-       }
+   EINA_LIST_FOREACH(e_comp->zones, l, zone)
+     {
+        ow = e_widget_preview_add(evas, 100, 140);
+        cfdata->gui.bgs = eina_list_append(cfdata->gui.bgs, ow);
+        evas_object_data_set(ow, "zone", zone);
+        e_widget_disabled_set(ow,
+          (cfdata->bg_method < E_DESKLOCK_BACKGROUND_METHOD_CUSTOM));
+        evas_object_event_callback_add(ow, EVAS_CALLBACK_MOUSE_DOWN, _cb_bg_mouse_down, cfdata);
+        e_widget_table_object_append(cfdata->gui.o_table, ow, x++, 0, 1, 1, 1, 1, 1, 1);
+     }
    _cb_method_change(cfdata, NULL, NULL);
    e_widget_list_object_append(ol, cfdata->gui.o_table, 1, 1, 0.5);
    e_widget_toolbook_page_append(otb, NULL, _("Wallpaper"), ol,
@@ -746,18 +743,6 @@ _cb_login_change(void *data, Evas_Object *obj __UNUSED__)
 
    if (!(cfdata = data)) return;
    e_widget_disabled_set(cfdata->gui.loginbox_slider, (cfdata->login_zone < 0));
-}
-
-static int
-_zone_count_get(void)
-{
-   int num = 0;
-   const Eina_List *l;
-   E_Comp *comp;
-
-   EINA_LIST_FOREACH(e_comp_list(), l, comp)
-     num += eina_list_count(comp->zones);
-   return num;
 }
 
 static void

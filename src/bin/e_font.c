@@ -25,9 +25,8 @@ EAPI void
 e_font_apply(void)
 {
    char buf[1024];
-   const Eina_List *l, *ll;
+   const Eina_List *l;
    E_Client *ec;
-   E_Comp *c;
    E_Font_Default *efd;
    E_Font_Fallback *eff;
    int blen, len;
@@ -73,9 +72,9 @@ e_font_apply(void)
      }
 
    /* Update clients */
-   EINA_LIST_FOREACH(e_comp_list(), l, c)
-     EINA_LIST_FOREACH(c->clients, ll, ec)
-       e_client_frame_recalc(ec);
+   if (!e_comp) return;
+   EINA_LIST_FOREACH(e_comp->clients, l, ec)
+     e_client_frame_recalc(ec);
 }
 
 EAPI Eina_List *

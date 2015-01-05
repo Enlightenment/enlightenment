@@ -52,20 +52,18 @@ e_policy_shutdown(void)
 void
 e_policy_kbd_override_set(Eina_Bool override)
 {
-   const Eina_List *l, *ll;
+   const Eina_List *l;
    E_Client *ec, *kbd = NULL;;
-   E_Comp *comp;
    
    if (kbd_override == override) return;
    kbd_override = override;
-   EINA_LIST_FOREACH(e_comp_list(), l, comp)
-     EINA_LIST_FOREACH(comp->clients, ll, ec)
-       {
-          if (ec->vkbd.vkbd)
-            {
-               kbd = ec;
-            }
-       }
+   EINA_LIST_FOREACH(e_comp->clients, l, ec)
+     {
+        if (ec->vkbd.vkbd)
+          {
+             kbd = ec;
+          }
+     }
    if (kbd)
      {
         ec = kbd;

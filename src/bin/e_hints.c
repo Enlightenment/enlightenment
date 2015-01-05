@@ -333,63 +333,57 @@ e_hints_client_stacking_set(void)
 {
 #ifdef HAVE_WAYLAND_ONLY
 #else
-   E_Comp *comp;
-   const Eina_List *l;
+   unsigned int c, i = 0, non_x = 0;
+   Ecore_X_Window *clients = NULL;
 
 #define CLIENT_STACK_DEBUG
    /* Get client count */
-   EINA_LIST_FOREACH(e_comp_list(), l, comp)
+   c = e_clients_count(e_comp);
+   if (c)
      {
-        unsigned int c, i = 0, non_x = 0;
-        Ecore_X_Window *clients = NULL;
-
-        c = e_clients_count(comp);
-        if (c)
+        E_Client *ec;
+#ifdef CLIENT_STACK_DEBUG
+        Eina_List *ll = NULL;
+#endif
+        clients = calloc(c, sizeof(Ecore_X_Window));
+        E_CLIENT_FOREACH(e_comp, ec)
           {
-             E_Client *ec;
-#ifdef CLIENT_STACK_DEBUG
-             Eina_List *ll = NULL;
-#endif
-             clients = calloc(c, sizeof(Ecore_X_Window));
-             E_CLIENT_FOREACH(comp, ec)
+             if (e_pixmap_type_get(ec->pixmap) != E_PIXMAP_TYPE_X)
                {
-                  if (e_pixmap_type_get(ec->pixmap) != E_PIXMAP_TYPE_X)
-                    {
-                       non_x++;
-                       continue;
-                    }
-                  clients[i++] = e_client_util_win_get(ec);
-#ifdef CLIENT_STACK_DEBUG
-                  ll = eina_list_append(ll, ec);
-#endif
-                  if (i > c)
-                    {
-                       CRI("Window list size greater than window count.");
-                       break;
-                    }
+                  non_x++;
+                  continue;
                }
-             
-             if (i < c - non_x)
-               {
+             clients[i++] = e_client_util_win_get(ec);
 #ifdef CLIENT_STACK_DEBUG
-                  Eina_List *lll = eina_list_clone(comp->clients);
-
-                  EINA_LIST_FREE(ll, ec)
-                    lll = eina_list_remove(lll, ec);
-                  EINA_LIST_FREE(lll, ec)
-                    WRN("Missing %p: %snew client", ec, ec->new_client ? "" : "not ");
+             ll = eina_list_append(ll, ec);
 #endif
-                  CRI("Window list size less than window count.");
+             if (i > c)
+               {
+                  CRI("Window list size greater than window count.");
+                  break;
                }
           }
-        /* XXX: it should be "more correct" to be setting the stacking atom as "windows per root"
-         * since any apps using it are probably not going to want windows from other screens
-         * to be returned in the list
-         */
-        if (i <= c)
-          ecore_x_netwm_client_list_stacking_set(comp->man->root, clients, c);
-        free(clients);
+        
+        if (i < c - non_x)
+          {
+#ifdef CLIENT_STACK_DEBUG
+             Eina_List *lll = eina_list_clone(e_comp->clients);
+
+             EINA_LIST_FREE(ll, ec)
+               lll = eina_list_remove(lll, ec);
+             EINA_LIST_FREE(lll, ec)
+               WRN("Missing %p: %snew client", ec, ec->new_client ? "" : "not ");
+#endif
+             CRI("Window list size less than window count.");
+          }
      }
+   /* XXX: it should be "more correct" to be setting the stacking atom as "windows per root"
+    * since any apps using it are probably not going to want windows from other screens
+    * to be returned in the list
+    */
+   if (i <= c)
+     ecore_x_netwm_client_list_stacking_set(e_comp->man->root, clients, c);
+   free(clients);
 #endif
 }
 
@@ -1630,13 +1624,10 @@ e_hints_scale_update(void)
 {
 #ifdef HAVE_WAYLAND_ONLY
 #else
-   E_Comp *c;
-   const Eina_List *l;
    unsigned int scale = e_scale * 1000;
 
-   EINA_LIST_FOREACH(e_comp_list(), l, c)
-     if (c->man->root)
-       ecore_x_window_prop_card32_set(c->man->root, ATM_ENLIGHTENMENT_SCALE, &scale, 1);
+   if (e_comp->man->root)
+     ecore_x_window_prop_card32_set(e_comp->man->root, ATM_ENLIGHTENMENT_SCALE, &scale, 1);
 #endif
 }
 

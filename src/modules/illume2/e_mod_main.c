@@ -15,8 +15,6 @@ EAPI E_Module_Api e_modapi = { E_MODULE_API_VERSION, "Illume2" };
 EAPI void *
 e_modapi_init(E_Module *m) 
 {
-   const Eina_List *cl, *zl;
-   E_Comp *comp;
    E_Zone *zone;
    Ecore_X_Window *zones;
    int zcount = 0;
@@ -65,9 +63,7 @@ e_modapi_init(E_Module *m)
    e_mod_kbd_hide();
 
    /* loop zones and get count */
-   EINA_LIST_FOREACH(e_comp_list(), cl, comp) 
-     EINA_LIST_FOREACH(comp->zones, zl, zone) 
-       zcount++;
+   zcount = eina_list_count(e_comp->zones);
 
    /* allocate enough zones */
    zones = calloc(zcount, sizeof(Ecore_X_Window));
@@ -93,29 +89,26 @@ e_modapi_init(E_Module *m)
    zcount = 0;
 
    /* loop the zones and create quickpanels for each one */
-   EINA_LIST_FOREACH(e_comp_list(), cl, comp) 
+   EINA_LIST_FOREACH(e_comp->zones, zl, zone) 
      {
-        EINA_LIST_FOREACH(comp->zones, zl, zone) 
-          {
-             E_Illume_Quickpanel *qp;
+        E_Illume_Quickpanel *qp;
 
-             /* set zone window in list of zones */
-             zones[zcount] = zone->black_win;
+        /* set zone window in list of zones */
+        zones[zcount] = zone->black_win;
 
-             /* increment zone count */
-             zcount++;
+        /* increment zone count */
+        zcount++;
 
-             /* try to create a new quickpanel for this zone */
-             if (!(qp = e_mod_quickpanel_new(zone))) continue;
+        /* try to create a new quickpanel for this zone */
+        if (!(qp = e_mod_quickpanel_new(zone))) continue;
 
-             /* append new qp to list */
-             _e_illume_qps = eina_list_append(_e_illume_qps, qp);
-          }
-        /* set the zone list on this root. This is needed for some 
-         * elm apps like elm_indicator so that they know how many 
-         * indicators to create at startup */
-        ecore_x_e_illume_zone_list_set(comp->man->root, zones, zcount);
+        /* append new qp to list */
+        _e_illume_qps = eina_list_append(_e_illume_qps, qp);
      }
+   /* set the zone list on this root. This is needed for some 
+    * elm apps like elm_indicator so that they know how many 
+    * indicators to create at startup */
+   ecore_x_e_illume_zone_list_set(comp->man->root, zones, zcount);
 
    /* free zones variable */
    free(zones);

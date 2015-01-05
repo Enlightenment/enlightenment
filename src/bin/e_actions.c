@@ -1573,14 +1573,11 @@ ACT_FN_GO(desk_linear_flip_to, )
 
 #define DESK_ACTION_ALL(zone, act)                     \
   E_Zone * zone;                                       \
-  const Eina_List *lc, *lz;                             \
-  E_Comp *c;                                    \
+  const Eina_List *lz;                             \
                                                        \
-  EINA_LIST_FOREACH(e_comp_list(), lc, c) {      \
-    EINA_LIST_FOREACH(c->zones, lz, zone) { \
+    EINA_LIST_FOREACH(e_comp->zones, lz, zone) { \
          act;                                  \
               }                                        \
-         }
 
 /***************************************************************************/
 ACT_FN_GO(desk_flip_by_all, )
@@ -1717,24 +1714,20 @@ ACT_FN_GO(screen_send_by, )
 #define ZONE_DESK_ACTION(con_num, zone_num, zone, act)                    \
   E_Zone * zone;                                                          \
   if ((con_num < 0) || (zone_num < 0)) {                                  \
-       Eina_List *l, *ll;                                           \
-       E_Comp *c;                                                  \
+       Eina_List *l;                                           \
        if ((con_num >= 0) && (zone_num < 0)) /* con=1 zone=all */ {       \
-            c = e_util_comp_number_get(con_num);                   \
-            EINA_LIST_FOREACH(c->zones, l, zone) {                     \
+            EINA_LIST_FOREACH(e_comp->zones, l, zone) {                     \
                  act;                                                     \
               } }                                                         \
        else if ((con_num < 0) && (zone_num >= 0)) /* c=all zone=1 */ {  \
-            EINA_LIST_FOREACH(e_comp_list(), l, c) {                \
               zone = e_comp_zone_number_get(c, zone_num);  \
               if (zone)                                           \
                 act;                                              \
-                    } }                                                  \
+                    }                                                  \
        else if ((con_num < 0) && (zone_num < 0)) /* c=all zone=all */ { \
-            EINA_LIST_FOREACH(e_comp_list(), l, c) {                \
-              EINA_LIST_FOREACH(c->zones, lll, zone) {         \
+              EINA_LIST_FOREACH(e_comp->zones, lll, zone) {         \
                    act;                                           \
-                } } } } }                                         \
+                } } }                                         \
   else {                                                                  \
        zone = e_util_comp_zone_number_get(con_num, zone_num);        \
        if (zone) act;                                                     \

@@ -181,37 +181,35 @@ _notification_theme_cb_find(Popup_Data *popup,
                             const char  *emission __UNUSED__,
                             const char  *source __UNUSED__)
 {
-   const Eina_List *l, *ll;
+   const Eina_List *l;
    E_Client *ec;
-   E_Comp *comp;
 
    if (!popup->app_name) return;
 
-   EINA_LIST_FOREACH(e_comp_list(), l, comp)
-     EINA_LIST_FOREACH(comp->clients, ll, ec)
-       {
-          size_t len, test;
-          const char *name;
+   EINA_LIST_FOREACH(e_comp->clients, l, ec)
+     {
+        size_t len, test;
+        const char *name;
 
-          if (e_client_util_ignored_get(ec)) continue;
-          len = strlen(popup->app_name);
-          name = e_client_util_name_get(ec);
-          if (!name) continue;
-          test = eina_strlen_bounded(name, len + 1);
+        if (e_client_util_ignored_get(ec)) continue;
+        len = strlen(popup->app_name);
+        name = e_client_util_name_get(ec);
+        if (!name) continue;
+        test = eina_strlen_bounded(name, len + 1);
 
-          /* We can't be sure that the app_name really match the application name.
-           * Some plugin put their name instead. But this search gives some good
-           * results.
-           */
-          if (strncasecmp(name, popup->app_name, (test < len) ? test : len))
-            continue;
+        /* We can't be sure that the app_name really match the application name.
+         * Some plugin put their name instead. But this search gives some good
+         * results.
+         */
+        if (strncasecmp(name, popup->app_name, (test < len) ? test : len))
+          continue;
 
-          e_desk_show(ec->desk);
-          evas_object_show(ec->frame);
-          evas_object_raise(ec->frame);
-          e_client_focus_set_with_pointer(ec);
-          break;
-       }
+        e_desk_show(ec->desk);
+        evas_object_show(ec->frame);
+        evas_object_raise(ec->frame);
+        e_client_focus_set_with_pointer(ec);
+        break;
+     }
 }
 
 static void

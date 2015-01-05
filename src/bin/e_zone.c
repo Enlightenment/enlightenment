@@ -65,13 +65,11 @@ e_zone_shutdown(void)
 EAPI void
 e_zone_all_edge_flip_eval(void)
 {
-   const Eina_List *l, *ll;
-   E_Comp *c;
+   const Eina_List *l;
    E_Zone *zone;
 
-   EINA_LIST_FOREACH(e_comp_list(), l, c)
-     EINA_LIST_FOREACH(c->zones, ll, zone)
-       e_zone_edge_flip_eval(zone);
+   EINA_LIST_FOREACH(e_comp->zones, l, zone)
+     e_zone_edge_flip_eval(zone);
 }
 
 static void
@@ -502,8 +500,6 @@ e_zone_flip_coords_handle(E_Zone *zone,
              if (next_zone->y != cy) one_row = 0;
           }
      }
-   if (eina_list_count(e_comp_list()) > 1)
-     goto noflip;
    if (!E_INSIDE(x, y, zone->x, zone->y, zone->w, zone->h))
      goto noflip;
    if ((one_row) && (y == 0))
@@ -808,56 +804,48 @@ e_zone_desk_linear_flip_to(E_Zone *zone,
 EAPI void
 e_zone_edge_enable(void)
 {
-   const Eina_List *l, *ll;
-   E_Comp *c;
+   const Eina_List *l;
    E_Zone *zone;
 
-   EINA_LIST_FOREACH(e_comp_list(), l, c)
+   EINA_LIST_FOREACH(e_comp->zones, l, zone)
      {
-        EINA_LIST_FOREACH(c->zones, ll, zone)
-          {
-             if (zone->edge.left) evas_object_show(zone->edge.left);
-             if (zone->edge.right) evas_object_show(zone->edge.right);
-             if (zone->edge.top) evas_object_show(zone->edge.top);
-             if (zone->edge.bottom) evas_object_show(zone->edge.bottom);
-             if (zone->corner.left_top) evas_object_show(zone->corner.left_top);
-             if (zone->corner.top_left) evas_object_show(zone->corner.top_left);
-             if (zone->corner.top_right) evas_object_show(zone->corner.top_right);
-             if (zone->corner.right_top) evas_object_show(zone->corner.right_top);
-             if (zone->corner.right_bottom) evas_object_show(zone->corner.right_bottom);
-             if (zone->corner.bottom_right) evas_object_show(zone->corner.bottom_right);
-             if (zone->corner.bottom_left) evas_object_show(zone->corner.bottom_left);
-             if (zone->corner.left_bottom) evas_object_show(zone->corner.left_bottom);
-             e_zone_edge_flip_eval(zone);
-          }
+        if (zone->edge.left) evas_object_show(zone->edge.left);
+        if (zone->edge.right) evas_object_show(zone->edge.right);
+        if (zone->edge.top) evas_object_show(zone->edge.top);
+        if (zone->edge.bottom) evas_object_show(zone->edge.bottom);
+        if (zone->corner.left_top) evas_object_show(zone->corner.left_top);
+        if (zone->corner.top_left) evas_object_show(zone->corner.top_left);
+        if (zone->corner.top_right) evas_object_show(zone->corner.top_right);
+        if (zone->corner.right_top) evas_object_show(zone->corner.right_top);
+        if (zone->corner.right_bottom) evas_object_show(zone->corner.right_bottom);
+        if (zone->corner.bottom_right) evas_object_show(zone->corner.bottom_right);
+        if (zone->corner.bottom_left) evas_object_show(zone->corner.bottom_left);
+        if (zone->corner.left_bottom) evas_object_show(zone->corner.left_bottom);
+        e_zone_edge_flip_eval(zone);
      }
 }
 
 EAPI void
 e_zone_edge_disable(void)
 {
-   const Eina_List *l, *ll;
-   E_Comp *c;
+   const Eina_List *l;
    E_Zone *zone;
 
-   EINA_LIST_FOREACH(e_comp_list(), l, c)
+   EINA_LIST_FOREACH(e_comp->zones, l, zone)
      {
-        EINA_LIST_FOREACH(c->zones, ll, zone)
-          {
-             zone->flip.switching = E_ZONE_EDGE_NONE;
-             if (zone->edge.left) evas_object_hide(zone->edge.left);
-             if (zone->edge.right) evas_object_hide(zone->edge.right);
-             if (zone->edge.top) evas_object_hide(zone->edge.top);
-             if (zone->edge.bottom) evas_object_hide(zone->edge.bottom);
-             if (zone->corner.left_top) evas_object_hide(zone->corner.left_top);
-             if (zone->corner.top_left) evas_object_hide(zone->corner.top_left);
-             if (zone->corner.top_right) evas_object_hide(zone->corner.top_right);
-             if (zone->corner.right_top) evas_object_hide(zone->corner.right_top);
-             if (zone->corner.right_bottom) evas_object_hide(zone->corner.right_bottom);
-             if (zone->corner.bottom_right) evas_object_hide(zone->corner.bottom_right);
-             if (zone->corner.bottom_left) evas_object_hide(zone->corner.bottom_left);
-             if (zone->corner.left_bottom) evas_object_hide(zone->corner.left_bottom);
-          }
+        zone->flip.switching = E_ZONE_EDGE_NONE;
+        if (zone->edge.left) evas_object_hide(zone->edge.left);
+        if (zone->edge.right) evas_object_hide(zone->edge.right);
+        if (zone->edge.top) evas_object_hide(zone->edge.top);
+        if (zone->edge.bottom) evas_object_hide(zone->edge.bottom);
+        if (zone->corner.left_top) evas_object_hide(zone->corner.left_top);
+        if (zone->corner.top_left) evas_object_hide(zone->corner.top_left);
+        if (zone->corner.top_right) evas_object_hide(zone->corner.top_right);
+        if (zone->corner.right_top) evas_object_hide(zone->corner.right_top);
+        if (zone->corner.right_bottom) evas_object_hide(zone->corner.right_bottom);
+        if (zone->corner.bottom_right) evas_object_hide(zone->corner.bottom_right);
+        if (zone->corner.bottom_left) evas_object_hide(zone->corner.bottom_left);
+        if (zone->corner.left_bottom) evas_object_hide(zone->corner.left_bottom);
      }
 }
 
@@ -1015,139 +1003,127 @@ e_zone_edge_flip_eval(E_Zone *zone)
 EAPI void
 e_zone_edge_new(E_Zone_Edge edge)
 {
-   const Eina_List *l, *ll;
-   E_Comp *c;
+   const Eina_List *l;
    E_Zone *zone;
    int cw, ch;
 
    if (edge == E_ZONE_EDGE_NONE) return;
-   // configurably disallow edge bindings when we have more than 1 root
-   // window (ie pure old multihead) since we don't know which direction
-   // other root windows are in
-   if ((!e_config->multiscreen_flip) && (eina_list_count(e_comp_list()) > 1)) return;
 
-   EINA_LIST_FOREACH(e_comp_list(), l, c)
+   EINA_LIST_FOREACH(e_comp->zones, l, zone)
      {
-        EINA_LIST_FOREACH(c->zones, ll, zone)
+        // don't allow bindings on edges that are on the boundary
+        // between zones
+        if (e_zone_exists_direction(zone, edge)) continue;
+        cw = zone->w * E_ZONE_CORNER_RATIO;
+        ch = zone->h * E_ZONE_CORNER_RATIO;
+        switch (edge)
           {
-             // don't allow bindings on edges that are on the boundary
-             // between zones
-             if (e_zone_exists_direction(zone, edge)) continue;
-             cw = zone->w * E_ZONE_CORNER_RATIO;
-             ch = zone->h * E_ZONE_CORNER_RATIO;
-             switch (edge)
-               {
 #define EDGE_NEW(MEMBER, X, Y, W, H) do { \
-                  if (!zone->MEMBER) \
-                    { \
-                       zone->MEMBER = evas_object_rectangle_add(c->evas); \
-                       evas_object_name_set(zone->MEMBER, #MEMBER); \
-                       evas_object_move(zone->MEMBER, (X), (Y)); \
-                       evas_object_resize(zone->MEMBER, (W), (H)); \
-                       evas_object_color_set(zone->MEMBER, 0, 0, 0, 0); \
-                       evas_object_event_callback_add(zone->MEMBER, EVAS_CALLBACK_MOUSE_MOVE, _e_zone_cb_mouse_move, zone); \
-                       evas_object_event_callback_add(zone->MEMBER, EVAS_CALLBACK_MOUSE_IN, _e_zone_cb_mouse_in, zone); \
-                       evas_object_event_callback_add(zone->MEMBER, EVAS_CALLBACK_MOUSE_OUT, _e_zone_cb_mouse_out, zone); \
-                       evas_object_event_callback_add(zone->MEMBER, EVAS_CALLBACK_MOUSE_DOWN, _e_zone_cb_mouse_down, zone); \
-                       evas_object_event_callback_add(zone->MEMBER, EVAS_CALLBACK_MOUSE_UP, _e_zone_cb_mouse_up, zone); \
-                       evas_object_show(zone->MEMBER); \
-                    } \
-                 } while (0)
+             if (!zone->MEMBER) \
+               { \
+                  zone->MEMBER = evas_object_rectangle_add(e_comp->evas); \
+                  evas_object_name_set(zone->MEMBER, #MEMBER); \
+                  evas_object_move(zone->MEMBER, (X), (Y)); \
+                  evas_object_resize(zone->MEMBER, (W), (H)); \
+                  evas_object_color_set(zone->MEMBER, 0, 0, 0, 0); \
+                  evas_object_event_callback_add(zone->MEMBER, EVAS_CALLBACK_MOUSE_MOVE, _e_zone_cb_mouse_move, zone); \
+                  evas_object_event_callback_add(zone->MEMBER, EVAS_CALLBACK_MOUSE_IN, _e_zone_cb_mouse_in, zone); \
+                  evas_object_event_callback_add(zone->MEMBER, EVAS_CALLBACK_MOUSE_OUT, _e_zone_cb_mouse_out, zone); \
+                  evas_object_event_callback_add(zone->MEMBER, EVAS_CALLBACK_MOUSE_DOWN, _e_zone_cb_mouse_down, zone); \
+                  evas_object_event_callback_add(zone->MEMBER, EVAS_CALLBACK_MOUSE_UP, _e_zone_cb_mouse_up, zone); \
+                  evas_object_show(zone->MEMBER); \
+               } \
+            } while (0)
 
-                case E_ZONE_EDGE_LEFT:
-                  EDGE_NEW(edge.left, zone->x, zone->y + ch, 1, zone->h - 2 * ch);
-                  break;
-                case E_ZONE_EDGE_RIGHT:
-                  EDGE_NEW(edge.right, zone->x + zone->w - 1, zone->y + ch, 1, zone->h - 2 * ch);
-                  break;
-                case E_ZONE_EDGE_TOP:
-                  EDGE_NEW(edge.top, zone->x + 1 + cw, zone->y, zone->w - 2 * cw - 2, 1);
-                  break;
-                case E_ZONE_EDGE_BOTTOM:
-                  EDGE_NEW(edge.bottom, zone->x + 1 + cw, zone->y + zone->h - 1, zone->w - 2 - 2 * cw, 1);
-                  break;
-                case E_ZONE_EDGE_TOP_LEFT:
-                  EDGE_NEW(corner.left_top, zone->x, zone->y, 1, ch);
-                  EDGE_NEW(corner.top_left, zone->x + 1, zone->y, cw, 1);
-                  break;
-                case E_ZONE_EDGE_TOP_RIGHT:
-                  EDGE_NEW(corner.top_right, zone->x + zone->w - cw - 2, zone->y, cw, 1);
-                  EDGE_NEW(corner.right_top, zone->x + zone->w - 1, zone->y, 1, ch);
-                  break;
-                case E_ZONE_EDGE_BOTTOM_RIGHT:
-                  EDGE_NEW(corner.right_bottom, zone->x + zone->w - 1, zone->y + zone->h - ch, 1, ch);
-                  EDGE_NEW(corner.bottom_right, zone->x + zone->w - cw - 2, zone->y + zone->h - 1, cw, 1);
-                  break;
-                case E_ZONE_EDGE_BOTTOM_LEFT:
-                  EDGE_NEW(corner.bottom_left, zone->x + 1, zone->y + zone->h - 1, cw, 1);
-                  EDGE_NEW(corner.left_bottom, zone->x, zone->y + zone->h - ch, 1, ch);
-                  break;
-                default: continue;
-               }
-             if (e_config->fullscreen_flip)
-               e_zone_edge_win_layer_set(zone, E_LAYER_CLIENT_EDGE_FULLSCREEN);
-             else
-               e_zone_edge_win_layer_set(zone, E_LAYER_CLIENT_EDGE);
+           case E_ZONE_EDGE_LEFT:
+             EDGE_NEW(edge.left, zone->x, zone->y + ch, 1, zone->h - 2 * ch);
+             break;
+           case E_ZONE_EDGE_RIGHT:
+             EDGE_NEW(edge.right, zone->x + zone->w - 1, zone->y + ch, 1, zone->h - 2 * ch);
+             break;
+           case E_ZONE_EDGE_TOP:
+             EDGE_NEW(edge.top, zone->x + 1 + cw, zone->y, zone->w - 2 * cw - 2, 1);
+             break;
+           case E_ZONE_EDGE_BOTTOM:
+             EDGE_NEW(edge.bottom, zone->x + 1 + cw, zone->y + zone->h - 1, zone->w - 2 - 2 * cw, 1);
+             break;
+           case E_ZONE_EDGE_TOP_LEFT:
+             EDGE_NEW(corner.left_top, zone->x, zone->y, 1, ch);
+             EDGE_NEW(corner.top_left, zone->x + 1, zone->y, cw, 1);
+             break;
+           case E_ZONE_EDGE_TOP_RIGHT:
+             EDGE_NEW(corner.top_right, zone->x + zone->w - cw - 2, zone->y, cw, 1);
+             EDGE_NEW(corner.right_top, zone->x + zone->w - 1, zone->y, 1, ch);
+             break;
+           case E_ZONE_EDGE_BOTTOM_RIGHT:
+             EDGE_NEW(corner.right_bottom, zone->x + zone->w - 1, zone->y + zone->h - ch, 1, ch);
+             EDGE_NEW(corner.bottom_right, zone->x + zone->w - cw - 2, zone->y + zone->h - 1, cw, 1);
+             break;
+           case E_ZONE_EDGE_BOTTOM_LEFT:
+             EDGE_NEW(corner.bottom_left, zone->x + 1, zone->y + zone->h - 1, cw, 1);
+             EDGE_NEW(corner.left_bottom, zone->x, zone->y + zone->h - ch, 1, ch);
+             break;
+           default: continue;
           }
+        if (e_config->fullscreen_flip)
+          e_zone_edge_win_layer_set(zone, E_LAYER_CLIENT_EDGE_FULLSCREEN);
+        else
+          e_zone_edge_win_layer_set(zone, E_LAYER_CLIENT_EDGE);
      }
 }
 
 EAPI void
 e_zone_edge_free(E_Zone_Edge edge)
 {
-   const Eina_List *l, *ll;
-   E_Comp *c;
+   const Eina_List *l;
    E_Zone *zone;
 
    if (edge == E_ZONE_EDGE_NONE) return;
-   EINA_LIST_FOREACH(e_comp_list(), l, c)
+   EINA_LIST_FOREACH(e_comp->zones, l, zone)
      {
-        EINA_LIST_FOREACH(c->zones, ll, zone)
+        if (zone->flip.switching == edge)
+          zone->flip.switching = E_ZONE_EDGE_NONE;
+        switch (edge)
           {
-             if (zone->flip.switching == edge)
-               zone->flip.switching = E_ZONE_EDGE_NONE;
-             switch (edge)
-               {
-                case E_ZONE_EDGE_NONE:
-                  /* noop */
-                  break;
+           case E_ZONE_EDGE_NONE:
+             /* noop */
+             break;
 
-                case E_ZONE_EDGE_LEFT:
-                  E_FREE_FUNC(zone->edge.left, evas_object_del);
-                  break;
+           case E_ZONE_EDGE_LEFT:
+             E_FREE_FUNC(zone->edge.left, evas_object_del);
+             break;
 
-                case E_ZONE_EDGE_RIGHT:
-                  E_FREE_FUNC(zone->edge.right, evas_object_del);
-                  break;
+           case E_ZONE_EDGE_RIGHT:
+             E_FREE_FUNC(zone->edge.right, evas_object_del);
+             break;
 
-                case E_ZONE_EDGE_TOP:
-                  E_FREE_FUNC(zone->edge.top, evas_object_del);
-                  break;
+           case E_ZONE_EDGE_TOP:
+             E_FREE_FUNC(zone->edge.top, evas_object_del);
+             break;
 
-                case E_ZONE_EDGE_BOTTOM:
-                  E_FREE_FUNC(zone->edge.bottom, evas_object_del);
-                  break;
+           case E_ZONE_EDGE_BOTTOM:
+             E_FREE_FUNC(zone->edge.bottom, evas_object_del);
+             break;
 
-                case E_ZONE_EDGE_TOP_LEFT:
-                  E_FREE_FUNC(zone->corner.left_top, evas_object_del);
-                  E_FREE_FUNC(zone->corner.top_left, evas_object_del);
-                  break;
+           case E_ZONE_EDGE_TOP_LEFT:
+             E_FREE_FUNC(zone->corner.left_top, evas_object_del);
+             E_FREE_FUNC(zone->corner.top_left, evas_object_del);
+             break;
 
-                case E_ZONE_EDGE_TOP_RIGHT:
-                  E_FREE_FUNC(zone->corner.top_right, evas_object_del);
-                  E_FREE_FUNC(zone->corner.right_top, evas_object_del);
-                  break;
+           case E_ZONE_EDGE_TOP_RIGHT:
+             E_FREE_FUNC(zone->corner.top_right, evas_object_del);
+             E_FREE_FUNC(zone->corner.right_top, evas_object_del);
+             break;
 
-                case E_ZONE_EDGE_BOTTOM_RIGHT:
-                  E_FREE_FUNC(zone->corner.right_bottom, evas_object_del);
-                  E_FREE_FUNC(zone->corner.bottom_right, evas_object_del);
-                  break;
+           case E_ZONE_EDGE_BOTTOM_RIGHT:
+             E_FREE_FUNC(zone->corner.right_bottom, evas_object_del);
+             E_FREE_FUNC(zone->corner.bottom_right, evas_object_del);
+             break;
 
-                case E_ZONE_EDGE_BOTTOM_LEFT:
-                  E_FREE_FUNC(zone->corner.bottom_left, evas_object_del);
-                  E_FREE_FUNC(zone->corner.left_bottom, evas_object_del);
-                  break;
-               }
+           case E_ZONE_EDGE_BOTTOM_LEFT:
+             E_FREE_FUNC(zone->corner.bottom_left, evas_object_del);
+             E_FREE_FUNC(zone->corner.left_bottom, evas_object_del);
+             break;
           }
      }
 }

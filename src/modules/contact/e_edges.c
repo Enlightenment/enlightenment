@@ -36,18 +36,14 @@ static Eina_List *handlers = NULL;
 void
 e_edges_init(void)
 {
-   const Eina_List *l, *ll;
-   E_Comp *comp;
+   const Eina_List *l;
    E_Zone *zone;
    
-   EINA_LIST_FOREACH(e_comp_list(), l, comp)
+   EINA_LIST_FOREACH(e_comp->zones, l, zone)
      {
-        EINA_LIST_FOREACH(comp->zones, ll, zone)
-          {
-             Edgeset *es = _edgeset_new(zone);
-             
-             if (es) edges = eina_list_append(edges, es);
-          }
+        Edgeset *es = _edgeset_new(zone);
+        
+        if (es) edges = eina_list_append(edges, es);
      }
 }
 

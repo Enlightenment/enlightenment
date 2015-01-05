@@ -34,19 +34,15 @@ static Ecore_Timer *next_timer = NULL;
 EAPI int
 e_wizard_init(void)
 {
-   E_Comp *comp;
    E_Zone *zone;
-   const Eina_List *l, *ll;
+   const Eina_List *l;
 
-   EINA_LIST_FOREACH(e_comp_list(), l, comp)
+   EINA_LIST_FOREACH(e_comp->zones, l, zone)
      {
-        EINA_LIST_FOREACH(comp->zones, ll, zone)
-          {
-             if (!pop)
-               pop = _e_wizard_main_new(zone);
-             else
-               pops = eina_list_append(pops, _e_wizard_extra_new(zone));
-          }
+        if (!pop)
+          pop = _e_wizard_main_new(zone);
+        else
+          pops = eina_list_append(pops, _e_wizard_extra_new(zone));
      }
 
    E_LIST_HANDLER_APPEND(handlers, EFREET_EVENT_DESKTOP_CACHE_BUILD,

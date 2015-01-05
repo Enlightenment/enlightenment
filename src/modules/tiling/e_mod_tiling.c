@@ -1535,24 +1535,20 @@ _disable_all_tiling(void)
 static void
 _foreach_desk(void (*func)(E_Desk *desk))
 {
-   const Eina_List *l, *ll;
-   E_Comp *comp;
+   const Eina_List *l;
    E_Zone *zone;
    E_Desk *desk;
    int x, y;
 
-   EINA_LIST_FOREACH(e_comp_list(), l, comp)
+   EINA_LIST_FOREACH(e_comp->zones, l, zone)
      {
-        EINA_LIST_FOREACH(comp->zones, ll, zone)
+        for (x = 0; x < zone->desk_x_count; x++)
           {
-             for (x = 0; x < zone->desk_x_count; x++)
+             for (y = 0; y < zone->desk_y_count; y++)
                {
-                  for (y = 0; y < zone->desk_y_count; y++)
-                    {
-                       desk = zone->desks[x + (y * zone->desk_x_count)];
+                  desk = zone->desks[x + (y * zone->desk_x_count)];
 
-                       func(desk);
-                    }
+                  func(desk);
                }
           }
      }

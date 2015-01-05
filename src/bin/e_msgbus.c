@@ -424,8 +424,7 @@ static Eldbus_Message *
 _e_msgbus_window_list_cb(const Eldbus_Service_Interface *iface __UNUSED__,
                          const Eldbus_Message *msg)
 {
-   const Eina_List *l, *ll;
-   E_Comp *c;
+   const Eina_List *l;
    E_Client *ec;
    Eldbus_Message *reply;
    Eldbus_Message_Iter *main_iter, *array;
@@ -439,19 +438,18 @@ _e_msgbus_window_list_cb(const Eldbus_Service_Interface *iface __UNUSED__,
    eldbus_message_iter_arguments_append(main_iter, "a(si)", &array);
    EINA_SAFETY_ON_FALSE_RETURN_VAL(array, reply);
 
-   EINA_LIST_FOREACH(e_comp_list(), l, c)
-     EINA_LIST_FOREACH(c->clients, ll, ec)
-       {
-          Eldbus_Message_Iter *s;
+   EINA_LIST_FOREACH(e_comp->clients, l, ec)
+     {
+        Eldbus_Message_Iter *s;
 
-          if (e_client_util_ignored_get(ec)) continue;
+        if (e_client_util_ignored_get(ec)) continue;
 
-          eldbus_message_iter_arguments_append(array, "(si)", &s);
-          if (!s) continue;
-          eldbus_message_iter_arguments_append(s, "si", ec->icccm.name,
-                                              e_client_util_win_get(ec));
-          eldbus_message_iter_container_close(array, s);
-       }
+        eldbus_message_iter_arguments_append(array, "(si)", &s);
+        if (!s) continue;
+        eldbus_message_iter_arguments_append(s, "si", ec->icccm.name,
+                                            e_client_util_win_get(ec));
+        eldbus_message_iter_container_close(array, s);
+     }
    eldbus_message_iter_container_close(main_iter, array);
 
    return reply;

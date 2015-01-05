@@ -45,28 +45,13 @@ EAPI void
 e_init_show(void)
 {
    Evas_Object *o;
-   E_Comp *c;
    E_Zone *zone;
    Eina_List *l;
    /* exec init */
 
-   /* extra screens */
-   EINA_LIST_FOREACH(e_comp_list()->next, l, c)
+   EINA_LIST_FOREACH(e_comp->zones, l, zone)
      {
-        o = edje_object_add(c->evas);
-        e_theme_edje_object_set(o, NULL, "e/init/extra_screen");
-        evas_object_name_set(o, "_e_init_extra_screen");
-        evas_object_move(o, 0, 0);
-        evas_object_resize(o, c->man->w, c->man->h);
-        evas_object_layer_set(o, E_LAYER_MAX);
-        evas_object_show(o);
-        splash_objs = eina_list_append(splash_objs, o);
-     }
-
-   c = eina_list_data_get(e_comp_list());
-   EINA_LIST_FOREACH(c->zones, l, zone)
-     {
-        o = edje_object_add(c->evas);
+        o = edje_object_add(e_comp->evas);
         if (!zone->num)
           {
              e_theme_edje_object_set(o, NULL, "e/init/splash");
@@ -99,7 +84,7 @@ EAPI void
 e_init_hide(void)
 {
    E_FREE_LIST(splash_objs, evas_object_del);
-   E_LIST_FOREACH(e_comp_list(), e_comp_shape_queue);
+   e_comp_shape_queue(e_comp);
    _e_init_object = NULL;
    E_FREE_FUNC(_e_init_timeout_timer, ecore_timer_del);
 }

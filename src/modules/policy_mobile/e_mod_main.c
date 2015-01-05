@@ -422,10 +422,8 @@ void
 e_mod_pol_desk_add(E_Desk *desk)
 {
    Pol_Desk *pd;
-   E_Comp *comp;
    E_Client *ec;
    Pol_Softkey *softkey;
-   const Eina_List *l;
 
    pd = eina_hash_find(hash_pol_desks, &desk);
    if (pd) return;
@@ -437,12 +435,11 @@ e_mod_pol_desk_add(E_Desk *desk)
    eina_hash_add(hash_pol_desks, &desk, pd);
 
    /* add clients */
-   EINA_LIST_FOREACH(e_comp_list(), l, comp)
-     E_CLIENT_FOREACH(comp, ec)
-       {
-          if (pd->desk == ec->desk)
-            _pol_client_add(ec);
-       }
+   E_CLIENT_FOREACH(e_comp, ec)
+     {
+        if (pd->desk == ec->desk)
+          _pol_client_add(ec);
+     }
 
    /* add and show softkey */
    if (_pol_mod->conf->use_softkey)
@@ -534,10 +531,9 @@ EAPI void *
 e_modapi_init(E_Module *m)
 {
    Mod *mod;
-   E_Comp *comp;
    E_Zone *zone;
    Config_Desk *d;
-   const Eina_List *l, *ll;
+   const Eina_List *l;
    int i, n;
    char buf[PATH_MAX];
 
@@ -560,32 +556,31 @@ e_modapi_init(E_Module *m)
 
    e_mod_pol_conf_init(mod);
 
-   EINA_LIST_FOREACH(e_comp_list(), l, comp)
-     EINA_LIST_FOREACH(comp->zones, ll, zone)
-       {
-          //Eina_Bool home_add = EINA_FALSE;
-          n = zone->desk_y_count * zone->desk_x_count;
-          for (i = 0; i < n; i++)
-            {
-               d = e_mod_pol_conf_desk_get_by_nums(_pol_mod->conf,
-                                                   comp->num,
-                                                   zone->num,
-                                                   zone->desks[i]->x,
-                                                   zone->desks[i]->y);
-               if (d)
-                 {
-                    e_mod_pol_desk_add(zone->desks[i]);
-                    //home_add = EINA_TRUE;
-                 }
-            }
+   EINA_LIST_FOREACH(e_comp->zones, l, zone)
+     {
+        //Eina_Bool home_add = EINA_FALSE;
+        n = zone->desk_y_count * zone->desk_x_count;
+        for (i = 0; i < n; i++)
+          {
+             d = e_mod_pol_conf_desk_get_by_nums(_pol_mod->conf,
+                                                 e_comp->num,
+                                                 zone->num,
+                                                 zone->desks[i]->x,
+                                                 zone->desks[i]->y);
+             if (d)
+               {
+                  e_mod_pol_desk_add(zone->desks[i]);
+                  //home_add = EINA_TRUE;
+               }
+          }
 
-          /* FIXME: should consider the case that illume-home module
-           * is not loaded yet and make it configurable.
-           * and also, this code will be enabled when e_policy stuff lands in e.
-           */
-          //if (home_add)
-          //  e_policy_zone_home_add_request(zone);
-       }
+        /* FIXME: should consider the case that illume-home module
+         * is not loaded yet and make it configurable.
+         * and also, this code will be enabled when e_policy stuff lands in e.
+         */
+        //if (home_add)
+        //  e_policy_zone_home_add_request(zone);
+     }
 
    E_LIST_HANDLER_APPEND(handlers, E_EVENT_ZONE_ADD, _pol_cb_zone_add, NULL);
    E_LIST_HANDLER_APPEND(handlers, E_EVENT_ZONE_DEL, _pol_cb_zone_del, NULL);

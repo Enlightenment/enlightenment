@@ -88,8 +88,6 @@ _basic_create_widgets(E_Config_Dialog *cfd __UNUSED__, Evas *evas, E_Config_Dial
    E_Radio_Group *rg;
    Evas_Object *o, *of, *ob;
    Evas_Object *show_check = NULL;
-   E_Comp *comp;
-   const Eina_List *l;
    int zone_count = 0;
 
    o = e_widget_list_add(evas, 0, 0);
@@ -134,8 +132,7 @@ _basic_create_widgets(E_Config_Dialog *cfd __UNUSED__, Evas *evas, E_Config_Dial
 
    of = e_widget_framelist_add(evas, _("Screen"), 0);
 
-   EINA_LIST_FOREACH(e_comp_list(), l, comp)
-     zone_count += eina_list_count(comp->zones);
+   zone_count = eina_list_count(e_comp->zones);
 
    if (zone_count <= 1) cfdata->zone_policy = 1;
 

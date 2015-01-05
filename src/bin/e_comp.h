@@ -163,7 +163,7 @@ EAPI void e_comp_shape_queue_block(E_Comp *c, Eina_Bool block);
 EAPI E_Comp_Config *e_comp_config_get(void);
 EAPI const Eina_List *e_comp_list(void);
 EAPI void e_comp_shadows_reset(void);
-EAPI E_Comp *e_comp_get(const void *o);
+EINA_DEPRECATED EAPI E_Comp *e_comp_get(const void *o);
 EAPI Ecore_Window e_comp_top_window_at_xy_get(E_Comp *c, Evas_Coord x, Evas_Coord y);
 EAPI void e_comp_util_wins_print(const E_Comp *c);
 EAPI void e_comp_ignore_win_add(E_Pixmap_Type type, Ecore_Window win);
@@ -191,7 +191,7 @@ EINTERN Evas_Object *e_comp_style_selector_create(Evas *evas, const char **sourc
 EAPI E_Config_Dialog *e_int_config_comp(Evas_Object *parent, const char *params);
 EAPI E_Config_Dialog *e_int_config_comp_match(Evas_Object *parent, const char *params);
 
-static inline E_Comp *
+EINA_DEPRECATED static inline E_Comp *
 e_comp_util_evas_object_comp_get(Evas_Object *obj)
 {
    return ecore_evas_data_get(ecore_evas_ecore_evas_get(evas_object_evas_get(obj)), "comp");
@@ -208,6 +208,8 @@ e_comp_util_client_is_fullscreen(const E_Client *ec)
        (!ec->argb) && (!ec->shaped)
        );
 }
+
+extern EAPI E_Comp *e_comp;
 
 #endif
 #endif

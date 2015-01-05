@@ -117,13 +117,11 @@ _basic_apply_data(E_Config_Dialog *cfd __UNUSED__, E_Config_Dialog_Data *cfdata)
    if ((cfdata->x != e_config->zone_desks_x_count) ||
        (cfdata->y != e_config->zone_desks_y_count))
      {
-        const Eina_List *l, *ll;
-        E_Comp *comp;
+        const Eina_List *l;
         E_Zone *zone;
 
-        EINA_LIST_FOREACH(e_comp_list(), l, comp)
-          EINA_LIST_FOREACH(comp->zones, ll, zone)
-            e_zone_desk_count_set(zone, cfdata->x, cfdata->y);
+        EINA_LIST_FOREACH(e_comp->zones, l, zone)
+          e_zone_desk_count_set(zone, cfdata->x, cfdata->y);
      }
 
    eina_stringshare_replace(&e_config->desk_flip_animate_type, NULL);
@@ -146,19 +144,17 @@ _basic_apply_data(E_Config_Dialog *cfd __UNUSED__, E_Config_Dialog_Data *cfdata)
 static int
 _basic_check_changed(E_Config_Dialog *cfd __UNUSED__, E_Config_Dialog_Data *cfdata)
 {
-   const Eina_List *l, *ll;
-   E_Comp *comp;
+   const Eina_List *l;
    E_Zone *zone;
 
-   EINA_LIST_FOREACH(e_comp_list(), l, comp)
-     EINA_LIST_FOREACH(comp->zones, ll, zone)
-       {
-          int x, y;
+   EINA_LIST_FOREACH(e_comp->zones, l, zone)
+     {
+        int x, y;
 
-          e_zone_desk_count_get(zone, &x, &y);
-          if ((x != cfdata->x) || (y != cfdata->y))
-          return 1;
-       }
+        e_zone_desk_count_get(zone, &x, &y);
+        if ((x != cfdata->x) || (y != cfdata->y))
+        return 1;
+     }
 
    return ((e_util_strcasecmp(eina_list_nth(cfdata->comp_effects, cfdata->flip_mode), e_config->desk_flip_animate_type)) ||
 	   (e_config->desk_flip_animate_interpolation != cfdata->flip_interp) ||

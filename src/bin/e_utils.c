@@ -103,21 +103,13 @@ e_util_glob_case_match(const char *str, const char *pattern)
 EAPI E_Zone *
 e_util_comp_zone_number_get(int c_num, int zone_num)
 {
-   E_Comp *c;
-
-   c = e_comp_number_get(c_num);
-   if (!c) return NULL;
-   return e_comp_zone_number_get(c, zone_num);
+   return e_comp_zone_number_get(e_comp, zone_num);
 }
 
 EAPI E_Zone *
 e_util_comp_zone_id_get(int c_num, int id)
 {
-   E_Comp *c;
-
-   c = e_comp_number_get(c_num);
-   if (!c) return NULL;
-   return e_comp_zone_id_get(c, id);
+   return e_comp_zone_id_get(e_comp, id);
 }
 
 EAPI int
@@ -202,7 +194,7 @@ e_util_immortal_check(void)
 {
    Eina_List *wins;
 
-   wins = e_clients_immortal_list(NULL);
+   wins = e_clients_immortal_list();
    if (wins)
      {
         e_util_dialog_show(_("Cannot exit - immortal windows."),
@@ -1019,25 +1011,21 @@ EAPI Eina_Bool
 e_util_fullscreen_any(void)
 {
    E_Zone *zone;
-   const Eina_List *lc, *lz;
-   E_Comp *c;
+   const Eina_List *lz;
    E_Desk *desk;
    int x, y;
 
-   EINA_LIST_FOREACH(e_comp_list(), lc, c)
+   EINA_LIST_FOREACH(e_comp->zones, lz, zone)
      {
-        EINA_LIST_FOREACH(c->zones, lz, zone)
-          {
-             if (zone->fullscreen > 0) return EINA_TRUE;
+        if (zone->fullscreen > 0) return EINA_TRUE;
 
-             for (x = 0; x < zone->desk_x_count; x++)
-               for (y = 0; y < zone->desk_y_count; y++)
-                 {
-                    desk = e_desk_at_xy_get(zone, x, y);
-                    if ((desk) && (desk->fullscreen_clients))
-                      return EINA_TRUE;
-                 }
-          }
+        for (x = 0; x < zone->desk_x_count; x++)
+          for (y = 0; y < zone->desk_y_count; y++)
+            {
+               desk = e_desk_at_xy_get(zone, x, y);
+               if ((desk) && (desk->fullscreen_clients))
+                 return EINA_TRUE;
+            }
      }
    return EINA_FALSE;
 }

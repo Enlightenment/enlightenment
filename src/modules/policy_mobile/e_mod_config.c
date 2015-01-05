@@ -84,7 +84,6 @@ _pol_cfd_data_free(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfdat
 static int
 _pol_cfd_data_basic_apply(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfdata)
 {
-   E_Comp *comp;
    E_Zone *zone;
    E_Desk *desk;
    Pol_Softkey *softkey;
@@ -133,8 +132,7 @@ _pol_cfd_data_basic_apply(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data
 
    EINA_LIST_FOREACH(cfdata->conf->desks, l, d)
      {
-        comp = e_comp_number_get(d->comp_num);
-        zone = e_comp_zone_number_get(comp, d->zone_num);
+        zone = e_comp_zone_number_get(e_comp, d->zone_num);
         desk = e_desk_at_xy_get(zone, d->x, d->y);
         if (!desk) continue;
 

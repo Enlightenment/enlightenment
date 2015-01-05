@@ -783,20 +783,16 @@ _cover_new(E_Zone *zone)
 static void
 _covers_init(void)
 {
-   const Eina_List *l, *l2;
-   E_Comp *comp;
+   const Eina_List *l;
    int i = 0;
+   E_Zone *zone;
 
-   EINA_LIST_FOREACH(e_comp_list(), l, comp)
+   EINA_LIST_FOREACH(e_comp->zones, l, zone)
      {
-        E_Zone *zone;
-        EINA_LIST_FOREACH(comp->zones, l2, zone)
-          {
-             Cover *cov = _cover_new(zone);
-             if (!cov) continue;
-             covers = eina_list_append(covers, cov);
-             for (i = 0; i < HISTORY_MAX; i++) cov->mouse_history[i] = -1;
-          }
+        Cover *cov = _cover_new(zone);
+        if (!cov) continue;
+        covers = eina_list_append(covers, cov);
+        for (i = 0; i < HISTORY_MAX; i++) cov->mouse_history[i] = -1;
      }
 }
 

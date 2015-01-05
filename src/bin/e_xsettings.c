@@ -373,29 +373,25 @@ _e_xsettings_update(void)
 static void
 _e_xsettings_gtk_icon_update(void)
 {
-   const Eina_List *l, *ll;
+   const Eina_List *l;
    E_Client *ec;
-   E_Comp *c;
 
-   EINA_LIST_FOREACH(e_comp_list(), l, c)
-     EINA_LIST_FOREACH(c->clients, ll, ec)
-       if (ec->icccm.state)
-         ecore_x_client_message8_send(e_client_util_win_get(ec), 
-                                      _atom_gtk_iconthemes, NULL, 0);
+   EINA_LIST_FOREACH(e_comp->clients, l, ec)
+     if (ec->icccm.state)
+       ecore_x_client_message8_send(e_client_util_win_get(ec), 
+                                    _atom_gtk_iconthemes, NULL, 0);
 }
 
 static void
 _e_xsettings_gtk_rcfiles_update(void)
 {
-   const Eina_List *l, *ll;
+   const Eina_List *l;
    E_Client *ec;
-   E_Comp *c;
 
-   EINA_LIST_FOREACH(e_comp_list(), l, c)
-     EINA_LIST_FOREACH(c->clients, ll, ec)
-       if (ec->icccm.state)
-         ecore_x_client_message8_send(e_client_util_win_get(ec), 
-                                      _atom_gtk_rcfiles, NULL, 0);
+   EINA_LIST_FOREACH(e_comp->clients, l, ec)
+     if (ec->icccm.state)
+       ecore_x_client_message8_send(e_client_util_win_get(ec), 
+                                    _atom_gtk_rcfiles, NULL, 0);
 }
 
 static void

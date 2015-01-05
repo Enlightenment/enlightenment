@@ -560,7 +560,6 @@ void
 e_fwin_reload_all(void)
 {
    const Eina_List *l, *ll;
-   E_Comp *comp;
    E_Fwin *fwin;
    E_Zone *zone;
 
@@ -621,13 +620,12 @@ e_fwin_reload_all(void)
      }
 
    /* Hook into zones */
-   EINA_LIST_FOREACH(e_comp_list(), l, comp)
-     EINA_LIST_FOREACH(comp->zones, ll, zone)
-       {
-          if (e_fwin_zone_find(zone)) continue;
-          if (e_config->show_desktop_icons)
-            e_fwin_zone_new(zone, e_mod_fileman_path_find(zone));
-       }
+   EINA_LIST_FOREACH(e_comp->zones, l, zone)
+     {
+        if (e_fwin_zone_find(zone)) continue;
+        if (e_config->show_desktop_icons)
+          e_fwin_zone_new(zone, e_mod_fileman_path_find(zone));
+     }
 }
 
 void *

@@ -1,6 +1,6 @@
 #include "e.h"
 
-static void _e_test_internal(E_Comp *c);
+static void _e_test_internal(void);
 
 #ifdef DESKMIRROR_TEST
 
@@ -30,7 +30,7 @@ deskmirror_test(void *d EINA_UNUSED)
 EAPI void
 e_test(void)
 {
-   E_LIST_FOREACH(e_comp_list(), _e_test_internal);
+   _e_test_internal();
 
 #ifdef DESKMIRROR_TEST
    ecore_timer_add(2.0, deskmirror_test, NULL);
@@ -67,7 +67,7 @@ _e_test_timer(void *data)
 }
 
 static void
-_e_test_internal(E_Comp *c)
+_e_test_internal(void)
 {
    _e_test_timer(NULL);
 }
@@ -92,12 +92,12 @@ _e_test_delete(E_Win *win)
 }
 
 static void
-_e_test_internal(E_Comp *c)
+_e_test_internal(void)
 {
    E_Win *win;
    Evas_Object *o;
 
-   win = e_win_new(c);
+   win = e_win_new(e_comp);
    evas_object_resize_callback_set(win, _e_test_resize);
    e_win_delete_callback_set(win, _e_test_delete);
    e_win_placed_set(win, 0);
@@ -130,7 +130,7 @@ _e_test_timer(void *data)
 }
 
 static void
-_e_test_internal(E_Comp *c)
+_e_test_internal(void)
 {
    E_Menu *m;
    Eina_List *l;
@@ -157,7 +157,7 @@ _e_test_dialog_del(void *obj)
 }
 
 static void
-_e_test_internal(E_Comp *c)
+_e_test_internal(void)
 {
    E_Dialog *dia;
 
@@ -188,7 +188,7 @@ _e_test_click(void *data, Evas *e, Evas_Object *obj, void *event_info)
 }
 
 static void
-_e_test_internal(E_Comp *c)
+_e_test_internal(void)
 {
    E_Dialog *dia;
    Evas_Object *o, *o2, *o3;
@@ -254,7 +254,7 @@ _e_test_timer(void *data)
 }
 
 static void
-_e_test_internal(E_Comp *c)
+_e_test_internal(void)
 {
    tcon = c;
    _e_test_timer(NULL);
@@ -293,7 +293,7 @@ _e_test_resize(void *data, Evas *e, Evas_Object *obj, void *event_info)
 }
 
 static void
-_e_test_internal(E_Comp *c)
+_e_test_internal(void)
 {
    E_Dialog *dia;
    Evas_Coord mw, mh, vw, vh;
@@ -381,7 +381,7 @@ _e_test_cb_e_smart_pan_changed_hook(void *data, Evas_Object *obj, void *event_in
 }
 
 static void
-_e_test_internal(E_Comp *c)
+_e_test_internal(void)
 {
    E_Dialog *dia;
    Evas_Object *o;
@@ -410,7 +410,7 @@ _e_test_internal(E_Comp *c)
 
 #elif 0
 static void
-_e_test_internal(E_Comp *c)
+_e_test_internal(void)
 {
    E_Dialog *dia;
    Evas_Object *o;
@@ -528,7 +528,7 @@ _e_test_cb_selected(void *data, Evas_Object *obj, void *event_info)
 }
 
 static void
-_e_test_internal(E_Comp *c)
+_e_test_internal(void)
 {
    E_Dialog *dia;
    Evas_Object *ofm, *ofm2, *of, *ob, *ot;
@@ -641,7 +641,7 @@ _e_test_cb_selected(void *data, Evas_Object *obj)
 }
 
 static void
-_e_test_internal(E_Comp *c)
+_e_test_internal(void)
 {
    E_Dialog *dia;
    Evas_Object *o;
@@ -674,7 +674,7 @@ _e_test_cb_ok(E_Color_Dialog *dia, E_Color *color, void *data)
 }
 
 static void
-_e_test_internal(E_Comp *c)
+_e_test_internal(void)
 {
    E_Color_Dialog *d;
 
@@ -685,7 +685,7 @@ _e_test_internal(E_Comp *c)
 
 #elif 0
 static void
-_e_test_internal(E_Comp *c)
+_e_test_internal(void)
 {
    E_Dialog *dia;
    Evas_Object *o, *ob, *of;
@@ -754,7 +754,7 @@ _e_test_internal(E_Comp *c)
 }
 
 static void
-_e_test_internal(E_Comp *c)
+_e_test_internal(void)
 {
    ecore_timer_add(1.0, _e_test_timer, c);
 }
@@ -821,7 +821,7 @@ _e_test_timer(void *data)
 }
 
 static void
-_e_test_internal(E_Comp *c)
+_e_test_internal(void)
 {
    ecore_timer_add(1.0, _e_test_timer, c);
 }
@@ -888,14 +888,14 @@ _e_test_timer(void *data)
 }
 
 static void
-_e_test_internal(E_Comp *c)
+_e_test_internal(void)
 {
    ecore_timer_add(1.0, _e_test_timer, c);
 }
 
 #else
 static void
-_e_test_internal(E_Comp *c __UNUSED__)
+_e_test_internal(void)
 {
 }
 

@@ -468,8 +468,6 @@ static Eina_Bool
 _e_comp_x_post_client_idler_cb(void *d EINA_UNUSED)
 {
    E_Client *ec;
-   const Eina_List *l;
-   E_Comp *c;
 
    //INF("POST IDLER");
    EINA_LIST_FREE(post_clients, ec)
@@ -481,6 +479,7 @@ _e_comp_x_post_client_idler_cb(void *d EINA_UNUSED)
         if (ec->post_move)
           {
              E_Client *tmp;
+             Eina_List *l;
 
              EINA_LIST_FOREACH(ec->e.state.video_child, l, tmp)
                {
@@ -584,12 +583,11 @@ _e_comp_x_post_client_idler_cb(void *d EINA_UNUSED)
         ec->post_move = 0;
         ec->post_resize = 0;
      }
-   EINA_LIST_FOREACH(e_comp_list(), l, c)
-     if (c->x_comp_data->restack && (!c->new_clients))
-       {
-          e_hints_client_stacking_set();
-          c->x_comp_data->restack = 0;
-       }
+   if (e_comp->x_comp_data->restack && (!e_comp->new_clients))
+     {
+        e_hints_client_stacking_set();
+        e_comp->x_comp_data->restack = 0;
+     }
    _e_comp_x_post_client_idler = NULL;
    return EINA_FALSE;
 }
@@ -1018,16 +1016,10 @@ _e_comp_x_destroy(void *data EINA_UNUSED, int type EINA_UNUSED, Ecore_X_Event_Wi
    ec = _e_comp_x_client_find_by_window(ev->win);
    if (!ec)
      {
-        const Eina_List *l;
-        E_Comp *c;
-
-        EINA_LIST_FOREACH(e_comp_list(), l, c)
-          {
-             if (!c->x_comp_data->retry_clients) continue;
-             c->x_comp_data->retry_clients = eina_list_remove(c->x_comp_data->retry_clients, (uintptr_t*)(unsigned long)ev->win);
-             if (!c->x_comp_data->retry_clients)
-               E_FREE_FUNC(c->x_comp_data->retry_timer, ecore_timer_del);
-          }
+        if (!e_comp->x_comp_data->retry_clients) return ECORE_CALLBACK_RENEW;
+        e_comp->x_comp_data->retry_clients = eina_list_remove(e_comp->x_comp_data->retry_clients, (uintptr_t*)(unsigned long)ev->win);
+        if (!e_comp->x_comp_data->retry_clients)
+          E_FREE_FUNC(e_comp->x_comp_data->retry_timer, ecore_timer_del);
         return ECORE_CALLBACK_PASS_ON;
      }
    if (ec->comp_data)
@@ -1264,16 +1256,10 @@ _e_comp_x_hide(void *data EINA_UNUSED, int type EINA_UNUSED, Ecore_X_Event_Windo
    ec = _e_comp_x_client_find_by_window(ev->win);
    if (!ec)
      {
-        const Eina_List *l;
-        E_Comp *c;
-
-        EINA_LIST_FOREACH(e_comp_list(), l, c)
-          {
-             if (!c->x_comp_data->retry_clients) continue;
-             c->x_comp_data->retry_clients = eina_list_remove(c->x_comp_data->retry_clients, (uintptr_t*)(unsigned long)ev->win);
-             if (!c->x_comp_data->retry_clients)
-               E_FREE_FUNC(c->x_comp_data->retry_timer, ecore_timer_del);
-          }
+        if (!e_comp->x_comp_data->retry_clients) return ECORE_CALLBACK_RENEW;
+        e_comp->x_comp_data->retry_clients = eina_list_remove(e_comp->x_comp_data->retry_clients, (uintptr_t*)(unsigned long)ev->win);
+        if (!e_comp->x_comp_data->retry_clients)
+          E_FREE_FUNC(e_comp->x_comp_data->retry_timer, ecore_timer_del);
         return ECORE_CALLBACK_PASS_ON;
      }
    if ((!ec->visible) || (ec->hidden && ec->unredirected_single))
@@ -2017,27 +2003,25 @@ _e_comp_x_state_request(void *data EINA_UNUSED, int type EINA_UNUSED, Ecore_X_Ev
 static Eina_Bool
 _e_comp_x_mapping_change(void *data EINA_UNUSED, int type EINA_UNUSED, Ecore_X_Event_Mapping_Change *ev EINA_UNUSED)
 {
-   const Eina_List *l, *ll;
+   const Eina_List *l;
    E_Client *ec;
-   E_Comp *c;
 
    if (_e_comp_x_mapping_change_disabled) return ECORE_CALLBACK_RENEW;
    e_managers_keys_ungrab();
-   EINA_LIST_FOREACH(e_comp_list(), l, c)
-     EINA_LIST_FOREACH(c->clients, ll, ec)
-       {
-          Ecore_X_Window win;
+   EINA_LIST_FOREACH(e_comp->clients, l, ec)
+     {
+        Ecore_X_Window win;
 
-          if (e_pixmap_type_get(ec->pixmap) != E_PIXMAP_TYPE_X) continue;
-          win = e_client_util_pwin_get(ec);
-          if ((!ec->comp_data->first_map) || (!ec->comp_data->reparented)) continue;
-          _e_comp_x_focus_setdown(ec);
-          e_bindings_mouse_ungrab(E_BINDING_CONTEXT_WINDOW, win);
-          e_bindings_wheel_ungrab(E_BINDING_CONTEXT_WINDOW, win);
-          e_bindings_mouse_grab(E_BINDING_CONTEXT_WINDOW, win);
-          e_bindings_wheel_grab(E_BINDING_CONTEXT_WINDOW, win);
-          _e_comp_x_focus_setup(ec);
-       }
+        if (e_pixmap_type_get(ec->pixmap) != E_PIXMAP_TYPE_X) continue;
+        win = e_client_util_pwin_get(ec);
+        if ((!ec->comp_data->first_map) || (!ec->comp_data->reparented)) continue;
+        _e_comp_x_focus_setdown(ec);
+        e_bindings_mouse_ungrab(E_BINDING_CONTEXT_WINDOW, win);
+        e_bindings_wheel_ungrab(E_BINDING_CONTEXT_WINDOW, win);
+        e_bindings_mouse_grab(E_BINDING_CONTEXT_WINDOW, win);
+        e_bindings_wheel_grab(E_BINDING_CONTEXT_WINDOW, win);
+        _e_comp_x_focus_setup(ec);
+     }
    e_managers_keys_grab();
    return ECORE_CALLBACK_PASS_ON;
 }
@@ -4625,16 +4609,15 @@ _e_comp_x_xinerama_setup(int rw, int rh)
 }
 
 static void
-_e_comp_x_ee_resize(Ecore_Evas *ee)
+_e_comp_x_ee_resize(Ecore_Evas *ee EINA_UNUSED)
 {
    E_Client *ec;
-   E_Comp *c = ecore_evas_data_get(ee, "comp");
 
-   ecore_x_netwm_desk_size_set(c->man->root, c->man->w, c->man->h);
-   _e_comp_x_xinerama_setup(c->man->w, c->man->h);
+   ecore_x_netwm_desk_size_set(e_comp->man->root, e_comp->man->w, e_comp->man->h);
+   _e_comp_x_xinerama_setup(e_comp->man->w, e_comp->man->h);
 
-   e_comp_canvas_update(c);
-   E_CLIENT_FOREACH(c, ec)
+   e_comp_canvas_update();
+   E_CLIENT_FOREACH(e_comp, ec)
      {
         if (!e_client_util_ignored_get(ec))
           _e_comp_x_client_zone_geometry_set(ec);
@@ -4856,72 +4839,61 @@ _e_comp_x_desklock_key_down(E_Comp *comp, int t EINA_UNUSED, Ecore_Event_Key *ev
 static void
 _e_comp_x_desklock_hide(void)
 {
-   E_Comp *comp;
-   const Eina_List *l;
-
-   EINA_LIST_FOREACH(e_comp_list(), l, comp)
+   if (e_comp->x_comp_data->lock_win)
      {
-        if (comp->x_comp_data->lock_win)
-          {
-             e_grabinput_release(comp->x_comp_data->lock_win, comp->x_comp_data->lock_win);
-             ecore_x_window_free(comp->x_comp_data->lock_win);
-             comp->x_comp_data->lock_win = 0;
-          }
-
-        if (comp->x_comp_data->lock_grab_break_wnd)
-          ecore_x_window_show(comp->x_comp_data->lock_grab_break_wnd);
-        comp->x_comp_data->lock_grab_break_wnd = 0;
-        E_FREE_FUNC(comp->x_comp_data->lock_key_handler, ecore_event_handler_del);
-        e_comp_override_del(comp);
+        e_grabinput_release(e_comp->x_comp_data->lock_win, e_comp->x_comp_data->lock_win);
+        ecore_x_window_free(e_comp->x_comp_data->lock_win);
+        e_comp->x_comp_data->lock_win = 0;
      }
+
+   if (e_comp->x_comp_data->lock_grab_break_wnd)
+     ecore_x_window_show(e_comp->x_comp_data->lock_grab_break_wnd);
+   e_comp->x_comp_data->lock_grab_break_wnd = 0;
+   E_FREE_FUNC(e_comp->x_comp_data->lock_key_handler, ecore_event_handler_del);
+   e_comp_override_del(e_comp);
 }
 
 static Eina_Bool
 _e_comp_x_desklock_show(void)
 {
-   E_Comp *comp;
-   const Eina_List *l;
+   Ecore_X_Window win;
 
-   EINA_LIST_FOREACH(e_comp_list(), l, comp)
+   win = e_comp->x_comp_data->lock_win =
+     ecore_x_window_input_new(e_comp->man->root, 0, 0, 1, 1);
+   ecore_x_window_show(win);
+   if (!e_grabinput_get(win, 0, win))
      {
-        Ecore_X_Window win;
+        Ecore_X_Window *windows;
+        int wnum, i;
 
-        win = comp->x_comp_data->lock_win =
-          ecore_x_window_input_new(comp->man->root, 0, 0, 1, 1);
-        ecore_x_window_show(win);
-        if (!e_grabinput_get(win, 0, win))
+        windows = ecore_x_window_children_get(e_comp->man->root, &wnum);
+        if (!windows) goto fail;
+        for (i = 0; i < wnum; i++)
           {
-             Ecore_X_Window *windows;
-             int wnum, i;
+             Ecore_X_Window_Attributes att;
 
-             windows = ecore_x_window_children_get(comp->man->root, &wnum);
-             if (!windows) goto fail;
-             for (i = 0; i < wnum; i++)
+             memset(&att, 0, sizeof(Ecore_X_Window_Attributes));
+             ecore_x_window_attributes_get(windows[i], &att);
+             if (att.visible)
                {
-                  Ecore_X_Window_Attributes att;
-
-                  memset(&att, 0, sizeof(Ecore_X_Window_Attributes));
-                  ecore_x_window_attributes_get(windows[i], &att);
-                  if (att.visible)
+                  ecore_x_window_hide(windows[i]);
+                  if (e_grabinput_get(win, 0, win))
                     {
-                       ecore_x_window_hide(windows[i]);
-                       if (e_grabinput_get(win, 0, win))
-                         {
-                            comp->x_comp_data->lock_grab_break_wnd = windows[i];
-                            free(windows);
-                            goto works;
-                         }
-                       ecore_x_window_show(windows[i]);
+                       e_comp->x_comp_data->lock_grab_break_wnd = windows[i];
+                       free(windows);
+                       goto works;
                     }
+                  ecore_x_window_show(windows[i]);
                }
-             free(windows);
           }
-works:
-        e_comp_override_add(comp);
-        e_comp_ignore_win_add(E_PIXMAP_TYPE_X, comp->x_comp_data->lock_win);
-        comp->x_comp_data->lock_key_handler =
-          ecore_event_handler_add(ECORE_EVENT_KEY_DOWN, (Ecore_Event_Handler_Cb)_e_comp_x_desklock_key_down, comp);
+        free(windows);
      }
+works:
+   e_comp_override_add(e_comp);
+   e_comp_ignore_win_add(E_PIXMAP_TYPE_X, e_comp->x_comp_data->lock_win);
+   e_comp->x_comp_data->lock_key_handler =
+     ecore_event_handler_add(ECORE_EVENT_KEY_DOWN, (Ecore_Event_Handler_Cb)_e_comp_x_desklock_key_down, e_comp);
+
    return EINA_TRUE;
 fail:
    /* everything failed - can't lock */

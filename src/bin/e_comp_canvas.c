@@ -1,5 +1,13 @@
 #include "e.h"
 
+static Eina_List *handlers;
+
+static void
+_e_comp_canvas_cb_del()
+{
+   E_FREE_LIST(handlers, ecore_event_handler_del);
+}
+
 static void
 _e_comp_canvas_event_compositor_resize_free(void *data EINA_UNUSED, void *event)
 {
@@ -87,6 +95,15 @@ _e_comp_canvas_cb_mouse_wheel(E_Comp *c, Evas *e EINA_UNUSED, Evas_Object *obj E
 
 ////////////////////////////////////
 
+static Eina_Bool
+_e_comp_cb_zone_change()
+{
+   e_comp_canvas_update();
+   return ECORE_CALLBACK_PASS_ON;
+}
+
+////////////////////////////////////
+
 static void
 _e_comp_canvas_screensaver_active(void *d EINA_UNUSED, Evas_Object *obj, const char *sig EINA_UNUSED, const char *src EINA_UNUSED)
 {
@@ -132,6 +149,7 @@ e_comp_canvas_init(E_Comp *c)
    evas_object_event_callback_add(o, EVAS_CALLBACK_MOUSE_UP, (Evas_Object_Event_Cb)_e_comp_canvas_cb_mouse_up, c);
    evas_object_event_callback_add(o, EVAS_CALLBACK_MOUSE_IN, (Evas_Object_Event_Cb)_e_comp_canvas_cb_mouse_in, c);
    evas_object_event_callback_add(o, EVAS_CALLBACK_MOUSE_WHEEL, (Evas_Object_Event_Cb)_e_comp_canvas_cb_mouse_wheel, c);
+   evas_object_event_callback_add(o, EVAS_CALLBACK_DEL, _e_comp_canvas_cb_del, NULL);
    evas_object_show(o);
 
    ecore_evas_name_class_set(c->ee, "E", "Comp_EE");
@@ -155,6 +173,9 @@ e_comp_canvas_init(E_Comp *c)
      }
    else
      e_zone_new(c, 0, 0, 0, 0, c->man->w, c->man->h);
+   E_LIST_HANDLER_APPEND(handlers, E_EVENT_ZONE_MOVE_RESIZE, _e_comp_cb_zone_change, NULL);
+   E_LIST_HANDLER_APPEND(handlers, E_EVENT_ZONE_ADD, _e_comp_cb_zone_change, NULL);
+   E_LIST_HANDLER_APPEND(handlers, E_EVENT_ZONE_DEL, _e_comp_cb_zone_change, NULL);
 
    return EINA_TRUE;
 }
@@ -233,17 +254,6 @@ e_comp_zone_id_get(E_Comp *c, int id)
      {
         if (zone->id == id) return zone;
      }
-   return NULL;
-}
-
-EAPI E_Comp *
-e_comp_number_get(unsigned int num)
-{
-   const Eina_List *l;
-   E_Comp *c;
-
-   EINA_LIST_FOREACH(e_comp_list(), l, c)
-     if (c->num == num) return c;
    return NULL;
 }
 
@@ -330,7 +340,7 @@ e_comp_canvas_zone_update(E_Zone *zone)
 }
 
 EAPI void
-e_comp_canvas_update(E_Comp *c)
+e_comp_canvas_update(void)
 {
    E_Event_Compositor_Resize *ev;
    Eina_List *l, *screens, *zones = NULL, *ll;
@@ -343,8 +353,8 @@ e_comp_canvas_update(E_Comp *c)
 
    if (screens)
      {
-        zones = c->zones;
-        c->zones = NULL;
+        zones = e_comp->zones;
+        e_comp->zones = NULL;
         EINA_LIST_FOREACH(screens, l, scr)
           {
              zone = NULL;
@@ -360,12 +370,12 @@ e_comp_canvas_update(E_Comp *c)
                   if (changed)
                     printf("@@@ FOUND ZONE %i %i [%p]\n", zone->num, zone->id, zone);
                   zones = eina_list_remove(zones, zone);
-                  c->zones = eina_list_append(c->zones, zone);
+                  e_comp->zones = eina_list_append(e_comp->zones, zone);
                   zone->num = scr->screen;
                }
              else
                {
-                  zone = e_zone_new(c, scr->screen, scr->escreen,
+                  zone = e_zone_new(e_comp, scr->screen, scr->escreen,
                                     scr->x, scr->y, scr->w, scr->h);
                   printf("@@@ NEW ZONE = %p\n", zone);
                   changed = EINA_TRUE;
@@ -374,19 +384,19 @@ e_comp_canvas_update(E_Comp *c)
                printf("@@@ SCREENS: %i %i | %i %i %ix%i\n",
                       scr->screen, scr->escreen, scr->x, scr->y, scr->w, scr->h);
           }
-        c->zones = eina_list_sort(c->zones, 0, _e_comp_canvas_cb_zone_sort);
+        e_comp->zones = eina_list_sort(e_comp->zones, 0, _e_comp_canvas_cb_zone_sort);
         if (zones)
           {
              E_Zone *spare_zone;
 
              changed = EINA_TRUE;
-             spare_zone = eina_list_data_get(c->zones);
+             spare_zone = eina_list_data_get(e_comp->zones);
 
              EINA_LIST_FREE(zones, zone)
                {
                   E_Client *ec;
 
-                  E_CLIENT_FOREACH(c, ec)
+                  E_CLIENT_FOREACH(e_comp, ec)
                     {
                        if (ec->zone == zone)
                          {
@@ -407,10 +417,10 @@ e_comp_canvas_update(E_Comp *c)
      {
         E_Zone *z;
 
-        z = e_comp_zone_number_get(c, 0);
+        z = e_comp_zone_number_get(e_comp, 0);
         if (z)
           {
-             changed |= e_zone_move_resize(z, 0, 0, c->man->w, c->man->h);
+             changed |= e_zone_move_resize(z, 0, 0, e_comp->man->w, e_comp->man->h);
              if (changed) e_shelf_zone_move_resize_handle(z);
           }
      }
@@ -419,12 +429,12 @@ e_comp_canvas_update(E_Comp *c)
    if (!starting)
      {
         ev = calloc(1, sizeof(E_Event_Compositor_Resize));
-        ev->comp = c;
-        e_object_ref(E_OBJECT(c));
+        ev->comp = e_comp;
+        e_object_ref(E_OBJECT(e_comp));
         ecore_event_add(E_EVENT_COMPOSITOR_RESIZE, ev, _e_comp_canvas_event_compositor_resize_free, NULL);
      }
 
-   EINA_LIST_FOREACH(c->zones, l, zone)
+   EINA_LIST_FOREACH(e_comp->zones, l, zone)
      {
         E_FREE_FUNC(zone->base, evas_object_del);
         E_FREE_FUNC(zone->over, evas_object_del);
@@ -445,10 +455,10 @@ e_comp_canvas_update(E_Comp *c)
         Eina_List *tmp = NULL;
         E_Client *ec;
 
-        if (!c->layers[i].clients) continue;
+        if (!e_comp->layers[i].clients) continue;
         /* Make temporary list as e_client_res_change_geometry_restore
          * rearranges the order. */
-        EINA_INLIST_FOREACH(c->layers[i].clients, ec)
+        EINA_INLIST_FOREACH(e_comp->layers[i].clients, ec)
           {
              if (!e_client_util_ignored_get(ec))
                tmp = eina_list_append(tmp, ec);
@@ -485,7 +495,7 @@ e_comp_canvas_fps_toggle(void)
 
    conf->fps_show = !conf->fps_show;
    e_comp_internal_save();
-   E_LIST_FOREACH(e_comp_list(), e_comp_render_queue);
+   e_comp_render_queue(e_comp);
 }
 
 EAPI E_Layer

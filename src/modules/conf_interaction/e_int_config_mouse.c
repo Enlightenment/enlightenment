@@ -98,9 +98,6 @@ _free_data(E_Config_Dialog *cfd __UNUSED__, E_Config_Dialog_Data *cfdata)
 static int
 _basic_apply_data(E_Config_Dialog *cfd __UNUSED__, E_Config_Dialog_Data *cfdata)
 {
-   const Eina_List *l;
-   E_Comp *comp;
-
    e_config->use_e_cursor = cfdata->use_e_cursor;
    e_config->show_cursor = cfdata->show_cursor;
    e_config->idle_cursor = cfdata->idle_cursor;
@@ -113,13 +110,10 @@ _basic_apply_data(E_Config_Dialog *cfd __UNUSED__, E_Config_Dialog_Data *cfdata)
    e_config_save_queue();
 
    /* Apply the above settings */
-   EINA_LIST_FOREACH(e_comp_list(), l, comp)
-     {
-        if ((comp->comp_type == E_PIXMAP_TYPE_X) && (!e_config->show_cursor))
-          e_pointer_hide(comp->pointer);
-        else
-          e_pointers_size_set(e_config->cursor_size);
-     }
+   if ((e_comp->comp_type == E_PIXMAP_TYPE_X) && (!e_config->show_cursor))
+     e_pointer_hide(e_comp->pointer);
+   else
+     e_pointers_size_set(e_config->cursor_size);
 
    e_mouse_update();
 

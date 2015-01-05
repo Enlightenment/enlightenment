@@ -42,19 +42,6 @@ lokker_is_pin(void)
    return e_config->desklock_auth_method == E_DESKLOCK_AUTH_METHOD_PIN;
 }
 
-static int
-_zone_count_get(void)
-{
-   int num = 0;
-   const Eina_List *l;
-   E_Comp *comp;
-
-   EINA_LIST_FOREACH(e_comp_list(), l, comp)
-     num += eina_list_count(comp->zones);
-
-   return num;
-}
-
 static void
 _lokker_state_set(int state)
 {
@@ -316,7 +303,7 @@ _text_login_box_add(Lokker_Popup *lp)
 
    zone = lp->zone;
    last_active_zone = current_zone = e_util_zone_current_get(e_manager_current_get());
-   total_zone_num = _zone_count_get();
+   total_zone_num = eina_list_count(e_comp->zones);
    if (total_zone_num > 1)
      {
         if ((e_config->desklock_login_box_zone == -2) && (zone != current_zone))
@@ -424,7 +411,7 @@ _lokker_popup_add(E_Zone *zone)
    evas_object_clip_set(lp->comp_object, lp->zone->bg_clip_object);
 
    last_active_zone = current_zone = e_util_zone_current_get(e_manager_current_get());
-   total_zone_num = _zone_count_get();
+   total_zone_num = eina_list_count(e_comp->zones);
    if (total_zone_num > 1)
      {
         if ((e_config->desklock_login_box_zone == -2) && (zone != current_zone))
@@ -775,8 +762,6 @@ EINTERN Eina_Bool
 lokker_lock(void)
 {
    int total_zone_num = 0;
-   const Eina_List *l;
-   E_Comp *comp;
 
    if (edd) return EINA_TRUE;
 
@@ -791,11 +776,8 @@ lokker_lock(void)
    edd = E_NEW(Lokker_Data, 1);
    if (!edd) return EINA_FALSE;
 
-   EINA_LIST_FOREACH(e_comp_list(), l, comp)
-     {
-        E_LIST_FOREACH(comp->zones, _lokker_popup_add);
-        total_zone_num += eina_list_count(comp->zones);
-     }
+   E_LIST_FOREACH(e_comp->zones, _lokker_popup_add);
+   total_zone_num = eina_list_count(e_comp->zones);
 
    /* handlers */
    E_LIST_HANDLER_APPEND(edd->handlers, ECORE_EVENT_KEY_DOWN, _lokker_cb_key_down, NULL);

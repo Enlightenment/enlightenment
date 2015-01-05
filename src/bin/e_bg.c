@@ -403,13 +403,11 @@ e_bg_del(int manager, int zone, int desk_x, int desk_y)
 EAPI void
 e_bg_update(void)
 {
-   const Eina_List *l, *ll;
-   E_Comp *c;
+   const Eina_List *l;
    E_Zone *zone;
 
-   EINA_LIST_FOREACH(e_comp_list(), l, c)
-     EINA_LIST_FOREACH(c->zones, ll, zone)
-       e_zone_bg_reconfigure(zone);
+   EINA_LIST_FOREACH(e_comp->zones, l, zone)
+     e_zone_bg_reconfigure(zone);
 }
 
 /* local subsystem functions */

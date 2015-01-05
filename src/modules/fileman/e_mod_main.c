@@ -30,8 +30,7 @@ EAPI E_Module_Api e_modapi =
 EAPI void *
 e_modapi_init(E_Module *m)
 {
-   const Eina_List *l, *ll;
-   E_Comp *comp;
+   const Eina_List *l;
    E_Zone *zone;
 
    conf_module = m;
@@ -65,13 +64,12 @@ e_modapi_init(E_Module *m)
    e_fwin_init();
 
    /* Hook into zones */
-   EINA_LIST_FOREACH(e_comp_list(), l, comp)
-     EINA_LIST_FOREACH(comp->zones, ll, zone)
-       {
-          if (e_fwin_zone_find(zone)) continue;
-          if (e_config->show_desktop_icons)
-            e_fwin_zone_new(zone, e_mod_fileman_path_find(zone));
-       }
+   EINA_LIST_FOREACH(e_comp->zones, l, zone)
+     {
+        if (e_fwin_zone_find(zone)) continue;
+        if (e_config->show_desktop_icons)
+          e_fwin_zone_new(zone, e_mod_fileman_path_find(zone));
+     }
    zone_add_handler = ecore_event_handler_add(E_EVENT_ZONE_ADD,
                                               _e_mod_zone_add, NULL);
 
@@ -87,8 +85,7 @@ e_modapi_init(E_Module *m)
 EAPI int
 e_modapi_shutdown(E_Module *m __UNUSED__)
 {
-   const Eina_List *l, *ll;
-   E_Comp *comp;
+   const Eina_List *l;
    E_Zone *zone;
    E_Config_Dialog *cfd;
 
@@ -98,9 +95,8 @@ e_modapi_shutdown(E_Module *m __UNUSED__)
    zone_add_handler = NULL;
 
    /* Unhook zone fm */
-   EINA_LIST_FOREACH(e_comp_list(), l, comp)
-     EINA_LIST_FOREACH(comp->zones, ll, zone)
-       e_fwin_zone_shutdown(zone);
+   EINA_LIST_FOREACH(e_comp->zones, l, zone)
+     e_fwin_zone_shutdown(zone);
 
    e_fwin_nav_shutdown();
    

@@ -748,7 +748,7 @@ EAPI void e_client_desk_set(E_Client *ec, E_Desk *desk);
 EAPI Eina_Bool e_client_comp_grabbed_get(void);
 EAPI E_Client *e_client_action_get(void);
 EAPI E_Client *e_client_warping_get(void);
-EAPI Eina_List *e_clients_immortal_list(const E_Comp *c);
+EAPI Eina_List *e_clients_immortal_list(void);
 EAPI void e_client_mouse_in(E_Client *ec, int x, int y);
 EAPI void e_client_mouse_out(E_Client *ec, int x, int y);
 EAPI void e_client_mouse_wheel(E_Client *ec, Evas_Point *output, E_Binding_Event_Wheel *ev);

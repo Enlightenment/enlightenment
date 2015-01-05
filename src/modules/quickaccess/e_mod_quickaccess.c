@@ -592,22 +592,19 @@ _e_qa_begin(void)
      }
    if (count)
      {
-        E_Comp *comp;
-        const Eina_List *lll;
         /* some non-transient entries exist without assigned borders
          * try assigning from existing borders
          */
-        EINA_LIST_FOREACH(e_comp_list(), lll, comp)
-          EINA_LIST_FOREACH(comp->clients, l, ec)
-            {
-               if (e_client_util_ignored_get(ec)) continue;
-               entry = _e_qa_entry_find_match(ec, 1);
-               if ((!entry) || entry->client) continue;
-               DBG("border=%p matches entry %s", ec, entry->id);
-               _e_qa_entry_border_associate(entry, ec);
-               count--;
-               if (!count) break;
-            }
+        EINA_LIST_FOREACH(e_comp->clients, l, ec)
+          {
+             if (e_client_util_ignored_get(ec)) continue;
+             entry = _e_qa_entry_find_match(ec, 1);
+             if ((!entry) || entry->client) continue;
+             DBG("border=%p matches entry %s", ec, entry->id);
+             _e_qa_entry_border_associate(entry, ec);
+             count--;
+             if (!count) break;
+          }
      }
 }
 

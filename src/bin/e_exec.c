@@ -160,22 +160,20 @@ e_exec(E_Zone *zone, Efreet_Desktop *desktop, const char *exec,
 
              if (dosingle)
                {
-                  const Eina_List *l, *ll;
+                  const Eina_List *l;
                   E_Client *ec;
-                  E_Comp *c;
 
-                  EINA_LIST_FOREACH(e_comp_list(), l, c)
-                    EINA_LIST_FOREACH(c->clients, ll, ec)
-                      {
-                         if (ec && (ec->desktop == desktop))
-                           {
-                              if (!ec->focused)
-                                e_client_activate(ec, EINA_TRUE);
-                              else
-                                evas_object_raise(ec->frame);
-                              return NULL;
-                           }
-                      }
+                  EINA_LIST_FOREACH(e_comp->clients, l, ec)
+                    {
+                       if (ec && (ec->desktop == desktop))
+                         {
+                            if (!ec->focused)
+                              e_client_activate(ec, EINA_TRUE);
+                            else
+                              evas_object_raise(ec->frame);
+                            return NULL;
+                         }
+                    }
                }
           }
      }

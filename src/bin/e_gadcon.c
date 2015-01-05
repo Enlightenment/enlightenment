@@ -5764,8 +5764,7 @@ _e_gadcon_location_change(E_Gadcon_Client *gcc, E_Gadcon_Location *src, E_Gadcon
 EAPI Eina_Bool
 e_gadcon_client_visible_get(const E_Gadcon_Client *gcc, const E_Desk *desk)
 {
-   const Eina_List *l, *ll;
-   E_Comp *c;
+   const Eina_List *l;
    E_Zone *zone;
 
    if (!gcc->gadcon) return EINA_FALSE;
@@ -5775,17 +5774,15 @@ e_gadcon_client_visible_get(const E_Gadcon_Client *gcc, const E_Desk *desk)
         return EINA_TRUE; // FIXME for when gadman allows per-desk gadgets
       case E_GADCON_SITE_SHELF:
         if (desk) return e_shelf_desk_visible(gcc->gadcon->shelf, desk);
-        EINA_LIST_FOREACH(e_comp_list(), l, c)
-          EINA_LIST_FOREACH(c->zones, ll, zone)
-            if (e_shelf_desk_visible(gcc->gadcon->shelf, e_desk_current_get(zone)))
-              return EINA_TRUE;
+        EINA_LIST_FOREACH(e_comp->zones, l, zone)
+          if (e_shelf_desk_visible(gcc->gadcon->shelf, e_desk_current_get(zone)))
+            return EINA_TRUE;
         break;
       case E_GADCON_SITE_TOOLBAR:
       case E_GADCON_SITE_EFM_TOOLBAR:
         if (desk) return (e_win_client_get(gcc->gadcon->toolbar->fwin)->desk == desk);
-        EINA_LIST_FOREACH(e_comp_list(), l, c)
-          EINA_LIST_FOREACH(c->zones, ll, zone)
-            if (e_win_client_get(gcc->gadcon->toolbar->fwin)->desk == e_desk_current_get(zone)) return EINA_TRUE;
+        EINA_LIST_FOREACH(e_comp->zones, l, zone)
+          if (e_win_client_get(gcc->gadcon->toolbar->fwin)->desk == e_desk_current_get(zone)) return EINA_TRUE;
       default:
         break;
      }

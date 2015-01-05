@@ -100,15 +100,13 @@ e_backlight_exists(void)
 EAPI void
 e_backlight_update(void)
 {
-   const Eina_List *l, *ll;
-   E_Comp *c;
+   const Eina_List *l;
    E_Zone *zone;
 
    if (bl_avail == EINA_FALSE) return;
 
-   EINA_LIST_FOREACH(e_comp_list(), l, c)
-     EINA_LIST_FOREACH(c->zones, ll, zone)
-       _e_backlight_update(zone);
+   EINA_LIST_FOREACH(e_comp->zones, l, zone)
+     _e_backlight_update(zone);
 }
 
 EAPI void

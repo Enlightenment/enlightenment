@@ -103,11 +103,6 @@ _e_drop_handler_active_check(E_Drop_Handler *h, const E_Drag *drag, Eina_Strings
 EINTERN int
 e_dnd_init(void)
 {
-#ifndef HAVE_WAYLAND_ONLY
-   E_Comp *c;
-   const Eina_List *l;
-#endif
-
    _type_text_uri_list = eina_stringshare_add("text/uri-list");
    _type_xds = eina_stringshare_add("XdndDirectSave0");
    _type_text_x_moz_url = eina_stringshare_add("text/x-moz-url");
@@ -135,8 +130,7 @@ e_dnd_init(void)
    E_LIST_HANDLER_APPEND(_event_handlers, ECORE_X_EVENT_SELECTION_NOTIFY, _e_dnd_cb_event_dnd_selection, NULL);
    E_LIST_HANDLER_APPEND(_event_handlers, ECORE_X_EVENT_WINDOW_HIDE, _e_dnd_cb_event_hide, NULL);
 
-   EINA_LIST_FOREACH(e_comp_list(), l, c)
-     e_drop_xdnd_register_set(c->ee_win, 1);
+   e_drop_xdnd_register_set(e_comp->ee_win, 1);
 
    _action = ECORE_X_ATOM_XDND_ACTION_PRIVATE;
 #endif

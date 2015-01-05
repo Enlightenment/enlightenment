@@ -173,45 +173,41 @@ e_desk_name_del(int manager, int zone, int desk_x, int desk_y)
 EAPI void
 e_desk_name_update(void)
 {
-   const Eina_List *z, *l, *ll;
-   E_Comp *c;
+   const Eina_List *z, *l;
    E_Zone *zone;
    E_Desk *desk;
    E_Config_Desktop_Name *cfname;
    int d_x, d_y, ok;
    char name[40];
 
-   EINA_LIST_FOREACH(e_comp_list(), l, c)
+   EINA_LIST_FOREACH(e_comp->zones, z, zone)
      {
-        EINA_LIST_FOREACH(c->zones, z, zone)
+        for (d_x = 0; d_x < zone->desk_x_count; d_x++)
           {
-             for (d_x = 0; d_x < zone->desk_x_count; d_x++)
+             for (d_y = 0; d_y < zone->desk_y_count; d_y++)
                {
-                  for (d_y = 0; d_y < zone->desk_y_count; d_y++)
+                  desk = zone->desks[d_x + zone->desk_x_count * d_y];
+                  ok = 0;
+
+                  EINA_LIST_FOREACH(e_config->desktop_names, l, cfname)
                     {
-                       desk = zone->desks[d_x + zone->desk_x_count * d_y];
-                       ok = 0;
+                       if ((cfname->manager >= 0) &&
+                           ((int)e_comp->num != cfname->manager)) continue;
+                       if ((cfname->zone >= 0) &&
+                           ((int)zone->num != cfname->zone)) continue;
+                       if ((cfname->desk_x != d_x) ||
+                           (cfname->desk_y != d_y)) continue;
+                       e_desk_name_set(desk, cfname->name);
+                       ok = 1;
+                       break;
+                    }
 
-                       EINA_LIST_FOREACH(e_config->desktop_names, ll, cfname)
-                         {
-                            if ((cfname->manager >= 0) &&
-                                ((int)c->num != cfname->manager)) continue;
-                            if ((cfname->zone >= 0) &&
-                                ((int)zone->num != cfname->zone)) continue;
-                            if ((cfname->desk_x != d_x) ||
-                                (cfname->desk_y != d_y)) continue;
-                            e_desk_name_set(desk, cfname->name);
-                            ok = 1;
-                            break;
-                         }
-
-                       if (!ok)
-                         {
-                            snprintf(name, sizeof(name),
-                                     _(e_config->desktop_default_name),
-                                     d_x, d_y);
-                            e_desk_name_set(desk, name);
-                         }
+                  if (!ok)
+                    {
+                       snprintf(name, sizeof(name),
+                                _(e_config->desktop_default_name),
+                                d_x, d_y);
+                       e_desk_name_set(desk, name);
                     }
                }
           }
@@ -615,8 +611,7 @@ e_desk_window_profile_del(int manager,
 EAPI void
 e_desk_window_profile_update(void)
 {
-   const Eina_List *z, *l, *ll;
-   E_Comp *c;
+   const Eina_List *z, *l;
    E_Zone *zone;
    E_Desk *desk;
    E_Config_Desktop_Window_Profile *cfprof;
@@ -627,35 +622,32 @@ e_desk_window_profile_update(void)
    if (!(e_config->use_desktop_window_profile))
      return;
 
-   EINA_LIST_FOREACH(e_comp_list(), l, c)
+   EINA_LIST_FOREACH(e_comp->zones, z, zone)
      {
-        EINA_LIST_FOREACH(c->zones, z, zone)
+        for (d_x = 0; d_x < zone->desk_x_count; d_x++)
           {
-             for (d_x = 0; d_x < zone->desk_x_count; d_x++)
+             for (d_y = 0; d_y < zone->desk_y_count; d_y++)
                {
-                  for (d_y = 0; d_y < zone->desk_y_count; d_y++)
+                  desk = zone->desks[d_x + zone->desk_x_count * d_y];
+                  ok = 0;
+
+                  EINA_LIST_FOREACH(e_config->desktop_window_profiles, l, cfprof)
                     {
-                       desk = zone->desks[d_x + zone->desk_x_count * d_y];
-                       ok = 0;
+                       if ((cfprof->manager >= 0) &&
+                           ((int)e_comp->num != cfprof->manager)) continue;
+                       if ((cfprof->zone >= 0) &&
+                           ((int)zone->num != cfprof->zone)) continue;
+                       if ((cfprof->desk_x != d_x) ||
+                           (cfprof->desk_y != d_y)) continue;
+                       e_desk_window_profile_set(desk, cfprof->profile);
+                       ok = 1;
+                       break;
+                    }
 
-                       EINA_LIST_FOREACH(e_config->desktop_window_profiles, ll, cfprof)
-                         {
-                            if ((cfprof->manager >= 0) &&
-                                ((int)c->num != cfprof->manager)) continue;
-                            if ((cfprof->zone >= 0) &&
-                                ((int)zone->num != cfprof->zone)) continue;
-                            if ((cfprof->desk_x != d_x) ||
-                                (cfprof->desk_y != d_y)) continue;
-                            e_desk_window_profile_set(desk, cfprof->profile);
-                            ok = 1;
-                            break;
-                         }
-
-                       if (!ok)
-                         {
-                            e_desk_window_profile_set
-                              (desk, e_config->desktop_default_window_profile);
-                         }
+                  if (!ok)
+                    {
+                       e_desk_window_profile_set
+                         (desk, e_config->desktop_default_window_profile);
                     }
                }
           }

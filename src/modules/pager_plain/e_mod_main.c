@@ -1734,7 +1734,6 @@ _pager_cb_event_bg_update(void *data __UNUSED__, int type __UNUSED__, void *even
    Eina_List *l, *ll;
    Pager *p;
    Pager_Desk *pd;
-   E_Comp *comp;
    E_Zone *zone;
    E_Desk *desk;
 
@@ -1745,9 +1744,7 @@ _pager_cb_event_bg_update(void *data __UNUSED__, int type __UNUSED__, void *even
             _pager_desk_livethumb_setup(pd);
         return ECORE_CALLBACK_RENEW;
      }
-   comp = eina_list_nth(e_comp_list(), ev->manager);
-   if (!comp) return ECORE_CALLBACK_RENEW;
-   zone = eina_list_nth(comp->zones, ev->zone);
+   zone = eina_list_nth(e_comp->zones, ev->zone);
    if (!zone) return ECORE_CALLBACK_RENEW;
    desk = e_desk_at_xy_get(zone, ev->desk_x, ev->desk_y);
    if (!zone) return ECORE_CALLBACK_RENEW;

@@ -86,7 +86,6 @@ _e_elm_win_trap_show(void *data, Evas_Object *o)
         else
           {
              E_Pixmap *cp;
-             E_Comp *c = NULL;
              const char *title;
 
              ecore_evas_name_class_set(ee, "E", "_e_internal_window");
@@ -97,18 +96,7 @@ _e_elm_win_trap_show(void *data, Evas_Object *o)
              cp = e_pixmap_new(type, win);
              EINA_SAFETY_ON_NULL_RETURN_VAL(cp, EINA_TRUE);
 
-             /* if (eina_list_count(e_comp_list()) > 1) */
-             /*   { */
-/* #ifndef HAVE_WAYLAND_ONLY */
-             /*      c = e_comp_find_by_window(ecore_x_window_root_get(win)); */
-/* #else */
-             /*      c = ; */
-/* #endif */
-             /*   } */
-
-             if (!c)
-               c = e_comp_get(NULL);
-             ctx->client = e_client_new(c, cp, 0, 1);
+             ctx->client = e_client_new(e_comp, cp, 0, 1);
              EINA_SAFETY_ON_NULL_RETURN_VAL(ctx->client, EINA_TRUE);
           }
         ctx->client->placed = ctx->placed | ctx->centered;
