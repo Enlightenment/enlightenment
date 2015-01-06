@@ -1492,7 +1492,7 @@ e_modapi_init(E_Module *m)
    E_Comp_Data *cdata;
 
    /* try to get the current compositor */
-   if (!(comp = e_comp_get(NULL))) return NULL;
+   if (!(comp = e_comp)) return NULL;
 
    /* make sure it's a wayland compositor */
    /* if (comp->comp_type != E_PIXMAP_TYPE_WL) return NULL; */
