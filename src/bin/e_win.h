@@ -24,6 +24,12 @@ e_win_evas_object_win_get(Evas_Object *obj)
    return ecore_evas_data_get(e_win_ee_get(obj), "elm_win");
 }
 
+static inline Evas_Object *
+e_win_evas_win_get(Evas *e)
+{
+   return ecore_evas_data_get(ecore_evas_ecore_evas_get(e), "elm_win");
+}
+
 static inline Eina_Bool
 e_obj_is_win(const void *obj)
 {
