@@ -23,9 +23,15 @@ e_modapi_init(E_Module *m)
 
    ecore_fb_size_get(&w, &h);
    ee = ecore_evas_fb_new(NULL, 0, w, h);
-   comp = e_comp_new();
-   comp->comp_type = E_PIXMAP_TYPE_WL;
+
+   if (!(comp = e_comp))
+     {
+        comp = e_comp_new();
+        comp->comp_type = E_PIXMAP_TYPE_WL;
+     }
+
    comp->ee = ee;
+
    if (!e_xinerama_fake_screens_exist())
      {
         screen = E_NEW(E_Screen, 1);

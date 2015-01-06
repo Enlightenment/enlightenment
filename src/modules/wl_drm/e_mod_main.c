@@ -67,8 +67,11 @@ e_modapi_init(E_Module *m)
    /*      return NULL; */
    /*   } */
 
-   comp = e_comp_new();
-   comp->comp_type = E_PIXMAP_TYPE_WL;
+   if (!(comp = e_comp))
+     {
+        comp = e_comp_new();
+        comp->comp_type = E_PIXMAP_TYPE_WL;
+     }
 
    if ((e_comp_gl_get()) &&
        (e_comp_config_get()->engine == E_COMP_ENGINE_GL))

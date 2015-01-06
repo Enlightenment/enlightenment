@@ -77,9 +77,14 @@ e_modapi_init(E_Module *m)
    ee = ecore_evas_software_x11_new(NULL, 0, 0, 0, SCREEN_W, SCREEN_H);
    ecore_evas_callback_delete_request_set(ee, _cb_delete_request);
 
-   comp = e_comp_new();
-   comp->comp_type = E_PIXMAP_TYPE_WL;
+   if (!(comp = e_comp))
+     {
+        comp = e_comp_new();
+        comp->comp_type = E_PIXMAP_TYPE_WL;
+     }
+
    comp->ee = ee;
+
    if (!e_xinerama_fake_screens_exist())
      {
         screen = E_NEW(E_Screen, 1);
