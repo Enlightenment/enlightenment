@@ -405,9 +405,11 @@ e_win_no_reopen_set(Evas_Object *obj, Eina_Bool no_reopen)
 EAPI Evas_Object *
 e_elm_win_add(Evas_Object *parent, const char *name, Elm_Win_Type type)
 {
-   char *eng = eina_strdup(getenv("ELM_ACCEL"));
+   char *eng;
    Evas_Object *o;
 
+   if (type == ELM_WIN_INLINED_IMAGE) return elm_win_add(parent, name, type);
+   eng = eina_strdup(getenv("ELM_ACCEL"));
    e_util_env_set("ELM_ACCEL", "none");
    o = elm_win_add(parent, name, type);
    e_util_env_set("ELM_ACCEL", eng);
