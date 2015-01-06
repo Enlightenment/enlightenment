@@ -2279,7 +2279,7 @@ _e_comp_wl_compositor_create(void)
    int fd = 0;
 
    /* check for existing compositor. create if needed */
-   if (!(comp = e_comp_get(NULL)))
+   if (!(comp = e_comp))
      {
         comp = e_comp_new();
         comp->comp_type = E_PIXMAP_TYPE_WL;
