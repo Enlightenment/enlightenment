@@ -1697,8 +1697,6 @@ _e_comp_smart_cb_shaded(void *data, Evas_Object *obj EINA_UNUSED, void *event_in
    if (!cw->ec) return; //NYI
    E_FREE_FUNC(cw->shade.anim, ecore_timer_del);
 
-   cw->shade.x = cw->x;
-   cw->shade.y = cw->y;
    e_comp_object_signal_emit(cw->smart_obj, "e,state,shaded", "e");
    cw->shade.start = -100;
    cw->shade.dir = (E_Direction)event_info;
@@ -1714,17 +1712,6 @@ _e_comp_smart_cb_unshading(void *data, Evas_Object *obj EINA_UNUSED, void *event
    E_FREE_FUNC(cw->shade.anim, ecore_timer_del);
 
    cw->shade.dir = (E_Direction)event_info;
-   if (cw->shade.dir == E_DIRECTION_UP ||
-       cw->shade.dir == E_DIRECTION_LEFT)
-     {
-        cw->shade.x = cw->x;
-        cw->shade.y = cw->y;
-     }
-   else
-     {
-        cw->shade.x = cw->x - cw->w;
-        cw->shade.y = cw->y - cw->h;
-     }
    e_comp_object_signal_emit(cw->smart_obj, "e,state,unshading", "e");
    cw->shade.start = ecore_loop_time_get();
    cw->shade.anim = ecore_animator_add(_e_comp_object_shade_animator, cw);
