@@ -5286,4 +5286,5 @@ e_comp_x_nocomp_end(E_Comp *comp)
    comp->nocomp = 0;
    ecore_x_window_show(comp->win);
    ecore_x_composite_redirect_subwindows(comp->man->root, ECORE_X_COMPOSITE_UPDATE_MANUAL);
+   _e_comp_x_focus_check(comp);
 }
