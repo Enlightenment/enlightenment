@@ -272,7 +272,11 @@ _e_shell_surface_cb_toplevel_set(struct wl_client *client EINA_UNUSED, struct wl
    /* set toplevel client properties */
    ec->argb = EINA_TRUE;
    ec->no_shape_cut = EINA_TRUE;
+
    ec->borderless = !ec->internal;
+   if ((ec->internal_elm_win) || (ec->override))
+     ec->borderless = EINA_TRUE;
+
    ec->lock_border = EINA_TRUE;
    ec->border.changed = ec->changes.border = !ec->borderless;
    ec->netwm.type = E_WINDOW_TYPE_NORMAL;
@@ -827,8 +831,8 @@ _e_xdg_shell_surface_cb_resize(struct wl_client *client EINA_UNUSED, struct wl_r
    E_Comp_Data *cdata;
    E_Binding_Event_Mouse_Button ev;
 
-   DBG("XDG_SHELL: Surface Resize: %d\tEdges: %d", 
-       wl_resource_get_id(resource), edges);
+   /* DBG("XDG_SHELL: Surface Resize: %d\tEdges: %d",  */
+   /*     wl_resource_get_id(resource), edges); */
 
    /* get the client for this resource */
    if (!(ec = wl_resource_get_user_data(resource)))
@@ -1030,8 +1034,8 @@ _e_xdg_shell_surface_configure(struct wl_resource *resource, Evas_Coord x, Evas_
 {
    E_Client *ec;
 
-   DBG("XDG_SHELL: Surface Configure: %d \t%d %d %d %d", 
-       wl_resource_get_id(resource), x, y, w, h);
+   /* DBG("XDG_SHELL: Surface Configure: %d \t%d %d %d %d",  */
+   /*     wl_resource_get_id(resource), x, y, w, h); */
 
    /* get the client for this resource */
    if (!(ec = wl_resource_get_user_data(resource)))
@@ -1041,8 +1045,6 @@ _e_xdg_shell_surface_configure(struct wl_resource *resource, Evas_Coord x, Evas_
                                "No Client For Shell Surface");
         return;
      }
-
-   DBG("\tClient Size: %d %d", ec->client.w, ec->client.h);
 
    if (ec->parent)
      {
@@ -1064,7 +1066,7 @@ _e_xdg_shell_surface_configure(struct wl_resource *resource, Evas_Coord x, Evas_
         ec->changes.pos = EINA_TRUE;
      }
 
-//   if ((ec->client.w != w) || (ec->client.h != h))
+   if ((ec->client.w != w) || (ec->client.h != h))
      {
         ec->client.w = w;
         ec->client.h = h;
@@ -1235,6 +1237,8 @@ _e_xdg_shell_cb_surface_get(struct wl_client *client, struct wl_resource *resour
    ec->argb = EINA_TRUE;
    ec->no_shape_cut = EINA_TRUE;
    ec->borderless = !ec->internal;
+   if ((ec->internal_elm_win) || (ec->override))
+     ec->borderless = EINA_TRUE;
    ec->lock_border = EINA_TRUE;
    ec->border.changed = ec->changes.border = !ec->borderless;
    ec->netwm.type = E_WINDOW_TYPE_NORMAL;
