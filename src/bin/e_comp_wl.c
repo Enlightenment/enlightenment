@@ -1145,7 +1145,6 @@ _e_comp_wl_compositor_cb_surface_create(struct wl_client *client, struct wl_reso
 {
    E_Comp *comp;
    struct wl_resource *res;
-   pid_t pid;
    E_Pixmap *ep;
 
    if (!(comp = wl_resource_get_user_data(resource))) return;
