@@ -15,13 +15,15 @@ typedef enum _E_Zone_Edge
 
 typedef struct _E_Zone                      E_Zone;
 
-typedef struct _E_Event_Zone_Desk_Count_Set E_Event_Zone_Desk_Count_Set;
-typedef struct _E_Event_Zone_Move_Resize    E_Event_Zone_Move_Resize;
-typedef struct _E_Event_Zone_Add            E_Event_Zone_Add;
-typedef struct _E_Event_Zone_Del            E_Event_Zone_Del;
+typedef struct _E_Event_Zone_Generic        E_Event_Zone_Desk_Count_Set;
+typedef struct _E_Event_Zone_Generic        E_Event_Zone_Move_Resize;
+typedef struct _E_Event_Zone_Generic        E_Event_Zone_Add;
+typedef struct _E_Event_Zone_Generic        E_Event_Zone_Del;
 /* TODO: Move this to a general place? */
 typedef struct _E_Event_Pointer_Warp        E_Event_Pointer_Warp;
 typedef struct _E_Event_Zone_Edge           E_Event_Zone_Edge;
+typedef struct _E_Event_Zone_Generic        E_Event_Zone_Stow;
+typedef struct _E_Event_Zone_Generic        E_Event_Zone_Unstow;
 
 #else
 #ifndef E_ZONE_H
@@ -87,24 +89,10 @@ struct _E_Zone
       int       x, y, w, h;
       Eina_Bool dirty : 1;
    } useful_geometry;
+   Eina_Bool      stowed : 1;
 };
 
-struct _E_Event_Zone_Desk_Count_Set
-{
-   E_Zone *zone;
-};
-
-struct _E_Event_Zone_Move_Resize
-{
-   E_Zone *zone;
-};
-
-struct _E_Event_Zone_Add
-{
-   E_Zone *zone;
-};
-
-struct _E_Event_Zone_Del
+struct _E_Event_Zone_Generic
 {
    E_Zone *zone;
 };
@@ -159,8 +147,10 @@ EAPI void      e_zone_edge_win_layer_set(E_Zone *zone, E_Layer layer);
 EAPI void      e_zone_useful_geometry_dirty(E_Zone *zone);
 EAPI void      e_zone_useful_geometry_get(E_Zone *zone, int *x, int *y, int *w, int *h);
 EAPI void      e_zone_desk_useful_geometry_get(const E_Zone *zone, const E_Desk *desk, int *x, int *y, int *w, int *h);
+EAPI void      e_zone_stow(E_Zone *zone);
+EAPI void      e_zone_unstow(E_Zone *zone);
 
-EAPI void e_zone_fade_handle(E_Zone *zone, int out, double tim);
+EAPI void      e_zone_fade_handle(E_Zone *zone, int out, double tim);
 
 extern EAPI int E_EVENT_ZONE_DESK_COUNT_SET;
 extern EAPI int E_EVENT_ZONE_MOVE_RESIZE;
@@ -170,6 +160,8 @@ extern EAPI int E_EVENT_POINTER_WARP;
 extern EAPI int E_EVENT_ZONE_EDGE_IN;
 extern EAPI int E_EVENT_ZONE_EDGE_OUT;
 extern EAPI int E_EVENT_ZONE_EDGE_MOVE;
+extern EAPI int E_EVENT_ZONE_STOW;
+extern EAPI int E_EVENT_ZONE_UNSTOW;
 
 #endif
 #endif
