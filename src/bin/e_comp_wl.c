@@ -115,6 +115,33 @@ _e_comp_wl_evas_cb_show(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj EIN
 
    if (!ec->override) e_hints_window_visible_set(ec);
 
+   if ((!ec->override) && (!ec->re_manage) && (!ec->comp_data->reparented) && 
+       (!ec->comp_data->need_reparent))
+     {
+        ec->comp_data->need_reparent = EINA_TRUE;
+        ec->visible = EINA_TRUE;
+        if (ec->internal_elm_win) ec->take_focus = EINA_TRUE;
+        EC_CHANGED(ec);
+     }
+
+   if (!ec->comp_data->need_reparent)
+     {
+        if ((ec->hidden) || (ec->iconic))
+          {
+             evas_object_hide(ec->frame);
+             e_comp_object_damage(ec->frame, 0, 0, ec->w, ec->h);
+          }
+        else if (!ec->internal_elm_win)
+          evas_object_show(ec->frame);
+
+        if (ec->internal_elm_win)
+          {
+             _e_comp_wl_client_idler_add(ec);
+             ec->post_move = EINA_TRUE;
+             ec->post_resize = EINA_TRUE;
+          }
+     }
+
    EINA_LIST_FOREACH(ec->e.state.video_child, l, tmp)
      evas_object_show(tmp->frame);
 }
@@ -493,17 +520,20 @@ static Eina_Bool
 _e_comp_wl_client_cb_idle(void *data EINA_UNUSED)
 {
    E_Client *ec;
+   E_Comp_Client_Data *cdata;
 
    EINA_LIST_FREE(_idle_clients, ec)
      {
-        if ((e_object_is_del(E_OBJECT(ec)) || (!ec->comp_data))) continue;
+        if (e_object_is_del(E_OBJECT(ec))) continue;
+
+        if (!(cdata = ec->comp_data)) continue;
 
         if ((ec->post_resize) && (!ec->maximized))
           {
-             if (ec->comp_data->shell.configure_send)
-               ec->comp_data->shell.configure_send(ec->comp_data->shell.surface, 
-                                                   ec->comp->wl_comp_data->resize.edges, 
-                                                   ec->client.w, ec->client.h);
+             if (cdata->shell.configure_send)
+               cdata->shell.configure_send(cdata->shell.surface, 
+                                           ec->comp->wl_comp_data->resize.edges,
+                                           ec->client.w, ec->client.h);
           }
 
         ec->post_move = EINA_FALSE;
@@ -1114,7 +1144,6 @@ _e_comp_wl_compositor_cb_surface_create(struct wl_client *client, struct wl_reso
 {
    E_Comp *comp;
    struct wl_resource *res;
-   uint64_t wid;
    pid_t pid;
    E_Pixmap *ep;
 
@@ -1137,15 +1166,11 @@ _e_comp_wl_compositor_cb_surface_create(struct wl_client *client, struct wl_reso
    wl_resource_set_implementation(res, &_e_surface_interface, NULL, 
                                   _e_comp_wl_surface_destroy);
 
-   /* get the client pid and generate a pixmap id */
-   wl_client_get_credentials(client, &pid, NULL, NULL);
-   wid = e_comp_wl_id_get(pid, id);
-
    /* check for existing pixmap */
-   if (!(ep = e_pixmap_find(E_PIXMAP_TYPE_WL, wid)))
+   if (!(ep = e_pixmap_find(E_PIXMAP_TYPE_WL, id)))
      {
         /* try to create new pixmap */
-        if (!(ep = e_pixmap_new(E_PIXMAP_TYPE_WL, wid)))
+        if (!(ep = e_pixmap_new(E_PIXMAP_TYPE_WL, id)))
           {
              ERR("Could not create new pixmap");
              wl_resource_destroy(res);
@@ -1154,7 +1179,7 @@ _e_comp_wl_compositor_cb_surface_create(struct wl_client *client, struct wl_reso
           }
      }
 
-   DBG("\tUsing Pixmap: %"PRIu64, wid);
+   DBG("\tUsing Pixmap: %d", id);
 
    /* set reference to pixmap so we can fetch it later */
    wl_resource_set_user_data(res, ep);
@@ -1956,8 +1981,6 @@ _e_comp_wl_client_cb_new(void *data EINA_UNUSED, E_Client *ec)
 {
    uint64_t win;
 
-   DBG("Comp Hook Client New");
-
    /* make sure this is a wayland client */
    E_COMP_WL_PIXMAP_CHECK;
 
@@ -1995,14 +2018,14 @@ _e_comp_wl_client_cb_new(void *data EINA_UNUSED, E_Client *ec)
    /* NB: could not find a better place to do this, BUT for internal windows, 
     * we need to set delete_request else the close buttons on the frames do 
     * basically nothing */
-   if (ec->internal) ec->icccm.delete_request = EINA_TRUE;
+   if ((ec->internal) || (ec->internal_elm_win)) 
+     ec->icccm.delete_request = EINA_TRUE;
 
    /* set initial client data properties */
    ec->comp_data->mapped = EINA_FALSE;
    ec->comp_data->first_damage = ((ec->internal) || (ec->override));
 
-   if ((!e_client_util_ignored_get(ec)) && 
-       (!ec->internal))
+   if ((!e_client_util_ignored_get(ec)) && (!ec->internal))
      {
         ec->comp_data->need_reparent = EINA_TRUE;
         ec->take_focus = !starting;
@@ -2262,8 +2285,8 @@ _e_comp_wl_client_cb_resize_end(void *data EINA_UNUSED, E_Client *ec)
    if (ec->pending_resize)
      {
 
-        ec->changes.pos = 1;
-        ec->changes.size = 1;
+        ec->changes.pos = EINA_TRUE;
+        ec->changes.size = EINA_TRUE;
         EC_CHANGED(ec);
      }
 
