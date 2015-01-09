@@ -19,6 +19,7 @@
  */
 
 static void _e_comp_wl_subsurface_parent_commit(E_Client *ec, Eina_Bool parent_synchronized);
+static void _e_comp_wl_client_idler_add(E_Client *ec);
 
 /* local variables */
 /* static Eina_Hash *clients_win_hash = NULL; */
