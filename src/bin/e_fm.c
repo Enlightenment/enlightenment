@@ -7559,12 +7559,10 @@ _e_fm2_cb_icon_mouse_move(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNU
              Evas_Object *o = NULL, *o2 = NULL, *layout = NULL;
              const char *drag_types[] = { "text/uri-list" }, *real_path;
              char buf[PATH_MAX + 8], *p, *sel = NULL;
-             E_Comp *c = NULL;
              Eina_Binbuf *sbuf;
              Eina_List *sl, *icons = NULL;
              size_t sel_length = 0, p_offset, p_length;
 
-             c = e_comp_get(NULL);
              ic->sd->drag = EINA_TRUE;
              ic->drag.start = EINA_FALSE;
              real_path = e_fm2_real_path_get(ic->sd->obj);
@@ -7664,7 +7662,7 @@ _e_fm2_cb_icon_mouse_move(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNU
              sel = (char*)eina_binbuf_string_steal(sbuf);
              eina_binbuf_free(sbuf);
 
-             d = e_drag_new(c, 0, 0, drag_types, 1,
+             d = e_drag_new(e_comp, 0, 0, drag_types, 1,
                             sel, sel_length, NULL, _e_fm2_cb_drag_finished);
              if (layout)
                d->x = ic->sd->x, d->y = ic->sd->y;
@@ -10339,7 +10337,6 @@ static Evas_Object *
 _e_fm2_icon_entry_widget_add(E_Fm2_Icon *ic)
 {
    Evas *e;
-   E_Comp *c;
 
    if (ic->sd->iop_icon)
      _e_fm2_icon_entry_widget_accept(ic->sd->iop_icon);
@@ -10348,16 +10345,15 @@ _e_fm2_icon_entry_widget_add(E_Fm2_Icon *ic)
      return NULL;
 
    e = evas_object_evas_get(ic->obj);
-   c = e_comp_evas_find(e);
    ic->entry_widget = e_widget_entry_add(e, NULL, NULL, NULL, NULL);
    evas_object_event_callback_add(ic->entry_widget, EVAS_CALLBACK_KEY_DOWN,
                                   _e_fm2_icon_entry_widget_cb_key_down, ic);
 #ifndef HAVE_WAYLAND_ONLY
    evas_event_feed_mouse_out(evas_object_evas_get(ic->obj), ecore_x_current_time_get(), NULL);
 #endif
-   if (c)
-     e_comp_grab_input(c, 0, 1);
-   ic->keygrab = !!c;
+   if (e_comp->evas == e)
+     e_comp_grab_input(e_comp, 0, 1);
+   ic->keygrab = (e_comp->evas == e);
    edje_object_part_swallow(ic->obj, "e.swallow.entry", ic->entry_widget);
    evas_object_show(ic->entry_widget);
    edje_object_signal_emit(ic->obj, "e,state,rename,on", "e");
@@ -10384,11 +10380,8 @@ _e_fm2_icon_entry_widget_del(E_Fm2_Icon *ic)
    ic->sd->typebuf.disabled = EINA_FALSE;
    if (ic->keygrab)
      {
-        E_Comp *c;
-
-        c = e_comp_evas_find(evas_object_evas_get(ic->obj));
-        if (c)
-          e_comp_ungrab_input(c, 0, 1);
+        if (e_comp_evas_find(evas_object_evas_get(ic->obj)))
+          e_comp_ungrab_input(e_comp, 0, 1);
      }
    ic->keygrab = 0;
    _e_fm2_icon_select(ic);
