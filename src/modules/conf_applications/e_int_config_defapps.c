@@ -297,7 +297,7 @@ _basic_create(E_Config_Dialog *cfd, Evas *evas, E_Config_Dialog_Data *cfdata)
    ob = e_widget_label_add(evas, _("Custom Browser Command"));
    e_widget_table_object_append(ot, ob, 0, 0, 1, 1, 1, 1, 0, 0);
 
-   ob = e_widget_entry_add(evas, &(cfdata->browser_custom), NULL, NULL, NULL);
+   ob = e_widget_entry_add(cfd->dia->win, &(cfdata->browser_custom), NULL, NULL, NULL);
    cfdata->obj.entry = ob;
    e_widget_table_object_append(ot, ob, 1, 0, 1, 1, 1, 1, 1, 0);
 

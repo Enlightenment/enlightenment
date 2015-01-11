@@ -210,7 +210,7 @@ _free_data(E_Config_Dialog *cfd __UNUSED__, E_Config_Dialog_Data *cfdata)
 }
 
 static Evas_Object *
-_basic_create(E_Config_Dialog *cfd __UNUSED__, Evas *evas, E_Config_Dialog_Data *cfdata)
+_basic_create(E_Config_Dialog *cfd, Evas *evas, E_Config_Dialog_Data *cfdata)
 {
    E_Config_XKB_Layout *cl;
    int grp = 0;
@@ -249,19 +249,19 @@ _basic_create(E_Config_Dialog *cfd __UNUSED__, Evas *evas, E_Config_Dialog_Data 
    e_widget_list_object_append(ol, ow, 1, 1, 0.5);
 
    of = e_widget_framelist_add(evas, _("Personal Screenlock Password"), 0);
-   cfdata->passwd_entry = ow = e_widget_entry_add(evas, &(cfdata->desklock_personal_passwd), NULL, NULL, NULL);
+   cfdata->passwd_entry = ow = e_widget_entry_add(cfd->dia->win, &(cfdata->desklock_personal_passwd), NULL, NULL, NULL);
    e_widget_entry_password_set(ow, 1);
    e_widget_framelist_object_append(of, ow);
    e_widget_list_object_append(ol, of, 1, 1, 0.5);
 
    of = e_widget_framelist_add(evas, _("PIN Entry"), 0);
-   cfdata->pin_entry = ow = e_widget_entry_add(evas, &(cfdata->pin_str), NULL, NULL, NULL);
+   cfdata->pin_entry = ow = e_widget_entry_add(cfd->dia->win, &(cfdata->pin_str), NULL, NULL, NULL);
    e_widget_entry_password_set(ow, 1);
    e_widget_framelist_object_append(of, ow);
    e_widget_list_object_append(ol, of, 1, 1, 0.5);
 
    of = e_widget_framelist_add(evas, _("External Screenlock Command"), 0);
-   cfdata->lock_cmd_entry = ow = e_widget_entry_add(evas, &(cfdata->custom_lock_cmd), NULL, NULL, NULL);
+   cfdata->lock_cmd_entry = ow = e_widget_entry_add(cfd->dia->win, &(cfdata->custom_lock_cmd), NULL, NULL, NULL);
    e_widget_framelist_object_append(of, ow);
 
    e_widget_disabled_set(cfdata->passwd_entry,

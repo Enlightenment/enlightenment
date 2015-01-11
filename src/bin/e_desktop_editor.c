@@ -694,10 +694,11 @@ _e_desktop_edit_basic_create_widgets(E_Config_Dialog *cfd __UNUSED__, Evas *evas
 {
    E_Desktop_Edit *editor = cfdata->editor;
    E_Radio_Group *rg;
-   Evas_Object *otb, *ol, *o, *ot;
+   Evas_Object *otb, *ol, *o, *ot, *win;
    Evas_Coord mw, mh;
 
    editor->evas = evas;
+   win = e_win_evas_win_get(evas);
 
    otb = e_widget_toolbook_add(evas, 48 * e_scale, 48 * e_scale);
 
@@ -706,7 +707,7 @@ _e_desktop_edit_basic_create_widgets(E_Config_Dialog *cfd __UNUSED__, Evas *evas
    o = e_widget_label_add(evas, _("Name"));
    e_widget_table_object_append(ot, o, 0, 0, 1, 1, 1, 1, 0, 0);
 
-   o = e_widget_entry_add(evas, &(cfdata->name), NULL, NULL, NULL);
+   o = e_widget_entry_add(win, &(cfdata->name), NULL, NULL, NULL);
    e_widget_size_min_get(o, &mw, &mh);
    if (mw < 220) mw = 220;
    e_widget_size_min_set(o, mw, mh);
@@ -717,7 +718,7 @@ _e_desktop_edit_basic_create_widgets(E_Config_Dialog *cfd __UNUSED__, Evas *evas
    o = e_widget_label_add(evas, _("Comment"));
    e_widget_table_object_append(ot, o, 0, 1, 1, 1, 1, 1, 0, 0);
 
-   o = e_widget_entry_add(evas, &(cfdata->comment), NULL, NULL, NULL);
+   o = e_widget_entry_add(win, &(cfdata->comment), NULL, NULL, NULL);
    e_widget_table_object_append(ot, o, 1, 1, 1, 1, 1, 1, 1, 0);
 
    rg = e_widget_radio_group_new(&(cfdata->type));
@@ -761,7 +762,7 @@ _e_desktop_edit_basic_create_widgets(E_Config_Dialog *cfd __UNUSED__, Evas *evas
    o = e_widget_label_add(evas, _("Icon"));
    e_widget_table_object_append(ot, o, 0, 1, 1, 1, 1, 1, 0, 0);
 
-   o = e_widget_entry_add(evas, &(cfdata->icon), NULL, NULL, NULL);
+   o = e_widget_entry_add(win, &(cfdata->icon), NULL, NULL, NULL);
    cfdata->icon_entry = o;
    e_widget_on_change_hook_set(o, _e_desktop_editor_icon_entry_changed, cfdata);
    e_widget_table_object_append(ot, o, 1, 1, 1, 1, 1, 1, 1, 0);
@@ -774,33 +775,33 @@ _e_desktop_edit_basic_create_widgets(E_Config_Dialog *cfd __UNUSED__, Evas *evas
    o = e_widget_label_add(evas, _("Generic Name"));
    e_widget_table_object_append(ot, o, 0, 0, 1, 1, 1, 1, 0, 0);
 
-   o = e_widget_entry_add(evas, &(cfdata->generic_name), NULL, NULL, NULL);
+   o = e_widget_entry_add(win, &(cfdata->generic_name), NULL, NULL, NULL);
    e_widget_table_object_append(ot, o, 1, 0, 1, 1, 1, 1, 1, 0);
 
    o = e_widget_label_add(evas, _("Window Class"));
    e_widget_table_object_append(ot, o, 0, 1, 1, 1, 1, 1, 0, 0);
 
-   o = e_widget_entry_add(evas, &(cfdata->startup_wm_class), NULL, NULL, NULL);
+   o = e_widget_entry_add(win, &(cfdata->startup_wm_class), NULL, NULL, NULL);
    e_widget_table_object_append(ot, o, 1, 1, 1, 1, 1, 1, 1, 0);
 
    o = e_widget_label_add(evas, _("Categories"));
    e_widget_table_object_append(ot, o, 0, 2, 1, 1, 1, 1, 0, 0);
 
-   o = e_widget_entry_add(evas, &(cfdata->categories), NULL, NULL, NULL);
+   o = e_widget_entry_add(win, &(cfdata->categories), NULL, NULL, NULL);
    e_widget_on_change_hook_set(o, _e_desktop_editor_categories_changed, cfdata);
    e_widget_table_object_append(ot, o, 1, 2, 1, 1, 1, 1, 1, 0);
 
    o = e_widget_label_add(evas, _("Mime Types"));
    e_widget_table_object_append(ot, o, 0, 3, 1, 1, 1, 1, 0, 0);
 
-   o = e_widget_entry_add(evas, &(cfdata->mimes), NULL, NULL, NULL);
+   o = e_widget_entry_add(win, &(cfdata->mimes), NULL, NULL, NULL);
    e_widget_on_change_hook_set(o, _e_desktop_editor_mimes_changed, cfdata);
    e_widget_table_object_append(ot, o, 1, 3, 1, 1, 1, 1, 1, 0);
 
    o = e_widget_label_add(evas, _("Desktop file"));
    e_widget_table_object_append(ot, o, 0, 4, 1, 1, 1, 1, 0, 0);
 
-   o = e_widget_entry_add(evas, NULL, NULL, NULL, NULL);
+   o = e_widget_entry_add(win, NULL, NULL, NULL, NULL);
    e_widget_table_object_append(ot, o, 1, 4, 1, 1, 1, 1, 1, 0);
    e_widget_entry_readonly_set(o, 1);
    cfdata->orig_path_entry = o;

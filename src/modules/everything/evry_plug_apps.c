@@ -1325,7 +1325,7 @@ _free_data(E_Config_Dialog *cfd __UNUSED__, E_Config_Dialog_Data *cfdata)
 }
 
 static Evas_Object *
-_basic_create(E_Config_Dialog *cfd __UNUSED__, Evas *e, E_Config_Dialog_Data *cfdata)
+_basic_create(E_Config_Dialog *cfd, Evas *e, E_Config_Dialog_Data *cfdata)
 {
    Evas_Object *o = NULL, *of = NULL, *ow = NULL;
 
@@ -1334,12 +1334,12 @@ _basic_create(E_Config_Dialog *cfd __UNUSED__, Evas *e, E_Config_Dialog_Data *cf
    of = e_widget_framelist_add(e, _("Commands"), 0);
    ow = e_widget_label_add(e, _("Terminal Command"));
    e_widget_framelist_object_append(of, ow);
-   ow = e_widget_entry_add(e, &(cfdata->cmd_terminal), NULL, NULL, NULL);
+   ow = e_widget_entry_add(cfd->dia->win, &(cfdata->cmd_terminal), NULL, NULL, NULL);
    e_widget_framelist_object_append(of, ow);
 
    ow = e_widget_label_add(e, _("Sudo GUI"));
    e_widget_framelist_object_append(of, ow);
-   ow = e_widget_entry_add(e, &(cfdata->cmd_sudo), NULL, NULL, NULL);
+   ow = e_widget_entry_add(cfd->dia->win, &(cfdata->cmd_sudo), NULL, NULL, NULL);
    e_widget_framelist_object_append(of, ow);
 
    e_widget_list_object_append(o, of, 1, 1, 0.5);

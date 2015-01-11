@@ -139,7 +139,7 @@ _basic_create_general(E_Config_Dialog *dialog, Evas *evas, E_Config_Dialog_Data 
    e_widget_check_checked_set(chk, ctxt->external_mixer_enabled);
    e_widget_list_object_append(cfdata->ui.list, chk, 1, 1, 0.5);
 
-   edit = e_widget_entry_add(evas, &ctxt->external_mixer_command, NULL, NULL, NULL);
+   edit = e_widget_entry_add(dialog->dia->win, &ctxt->external_mixer_command, NULL, NULL, NULL);
    e_widget_list_object_append(cfdata->ui.list, edit, 1, 1, 0.5);
 }
 

@@ -659,7 +659,7 @@ _basic_create_widgets(E_Config_Dialog *cfd __UNUSED__, Evas *evas, E_Config_Dial
 }
 
 static Evas_Object *
-_advanced_create_widgets(E_Config_Dialog *cfd __UNUSED__, Evas *evas, E_Config_Dialog_Data *cfdata)
+_advanced_create_widgets(E_Config_Dialog *cfd, Evas *evas, E_Config_Dialog_Data *cfdata)
 {
    /* generate the core widget layout for an advanced dialog */
    Evas_Object *o, *ob, *of, *oc;
@@ -674,7 +674,7 @@ _advanced_create_widgets(E_Config_Dialog *cfd __UNUSED__, Evas *evas, E_Config_D
         ob = e_widget_check_add(evas, _("Window name"),
                                 &(cfdata->remember.match_name));
         e_widget_list_object_append(of, ob, 1, 0, 0.5);
-        ob = e_widget_entry_add(evas, &cfdata->name, NULL, NULL, NULL);
+        ob = e_widget_entry_add(cfd->dia->win, &cfdata->name, NULL, NULL, NULL);
         e_widget_list_object_append(of, ob, 1, 0, 0.5);
      }
    else
@@ -686,7 +686,7 @@ _advanced_create_widgets(E_Config_Dialog *cfd __UNUSED__, Evas *evas, E_Config_D
         ob = e_widget_check_add(evas, _("Window class"),
                                 &(cfdata->remember.match_class));
         e_widget_list_object_append(of, ob, 1, 0, 0.5);
-        ob = e_widget_entry_add(evas, &cfdata->class, NULL, NULL, NULL);
+        ob = e_widget_entry_add(cfd->dia->win, &cfdata->class, NULL, NULL, NULL);
         e_widget_list_object_append(of, ob, 1, 0, 0.5);
      }
    else
@@ -698,7 +698,7 @@ _advanced_create_widgets(E_Config_Dialog *cfd __UNUSED__, Evas *evas, E_Config_D
         ob = e_widget_check_add(evas, _("Title"),
                                 &(cfdata->remember.match_title));
         e_widget_list_object_append(of, ob, 1, 0, 0.5);
-        ob = e_widget_entry_add(evas, &cfdata->title, NULL, NULL, NULL);
+        ob = e_widget_entry_add(cfd->dia->win, &cfdata->title, NULL, NULL, NULL);
         e_widget_list_object_append(of, ob, 1, 0, 0.5);
      }
    else
@@ -710,7 +710,7 @@ _advanced_create_widgets(E_Config_Dialog *cfd __UNUSED__, Evas *evas, E_Config_D
         ob = e_widget_check_add(evas, _("Window Role"),
                                 &(cfdata->remember.match_role));
         e_widget_list_object_append(of, ob, 1, 0, 0.5);
-        ob = e_widget_entry_add(evas, &cfdata->role, NULL, NULL, NULL);
+        ob = e_widget_entry_add(cfd->dia->win, &cfdata->role, NULL, NULL, NULL);
         e_widget_list_object_append(of, ob, 1, 0, 0.5);
      }
    else
@@ -790,7 +790,7 @@ _advanced_create_widgets(E_Config_Dialog *cfd __UNUSED__, Evas *evas, E_Config_D
    oc = e_widget_check_add(evas, _("Application file or name (.desktop)"),
                            &(cfdata->remember.apply_desktop_file));
    e_widget_table_object_append(of, oc, 0, 8, 1, 1, 1, 0, 1, 0);
-   ob = e_widget_entry_add(evas, &cfdata->desktop, NULL, NULL, NULL);
+   ob = e_widget_entry_add(cfd->dia->win, &cfdata->desktop, NULL, NULL, NULL);
    e_widget_check_widget_disable_on_unchecked_add(oc, ob);
    e_widget_table_object_append(of, ob, 0, 9, 2, 1, 1, 0, 1, 0);
    e_widget_toolbook_page_append(o, NULL, _("Properties"), of, 1, 1, 1, 1, 0.5, 0.0);

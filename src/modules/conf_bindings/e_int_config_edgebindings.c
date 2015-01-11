@@ -242,7 +242,7 @@ _basic_apply_data(E_Config_Dialog *cfd __UNUSED__, E_Config_Dialog_Data *cfdata)
 }
 
 static Evas_Object *
-_basic_create_widgets(E_Config_Dialog *cfd EINA_UNUSED, Evas *evas, E_Config_Dialog_Data *cfdata)
+_basic_create_widgets(E_Config_Dialog *cfd, Evas *evas, E_Config_Dialog_Data *cfdata)
 {
    Evas_Object *o, *ol, *ot, *of, *ob;
 
@@ -289,7 +289,7 @@ _basic_create_widgets(E_Config_Dialog *cfd EINA_UNUSED, Evas *evas, E_Config_Dia
    cfdata->gui.o_button = ob;
 
    of = e_widget_framelist_add(evas, _("Action Params"), 0);
-   ob = e_widget_entry_add(evas, &(cfdata->locals.params), NULL, NULL, NULL);
+   ob = e_widget_entry_add(cfd->dia->win, &(cfdata->locals.params), NULL, NULL, NULL);
    cfdata->gui.o_params = ob;
    e_widget_disabled_set(ob, 1);
    e_widget_framelist_object_append(of, ob);

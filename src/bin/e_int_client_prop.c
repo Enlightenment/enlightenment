@@ -413,7 +413,7 @@ _ec_go(void *data, void *data2)
      ob = e_widget_label_add(evas, label);                             \
      if (!cfdata->val) e_widget_disabled_set(ob, 1);                   \
      e_widget_table_object_append(o, ob, x, y, 1, 1, 1, 1, 0, 1);      \
-     ob = e_widget_entry_add(evas, & (cfdata->val), NULL, NULL, NULL); \
+     ob = e_widget_entry_add(dia->win, & (cfdata->val), NULL, NULL, NULL); \
      e_widget_entry_readonly_set(ob, 1);                               \
      e_widget_size_min_get(ob, &mw, &mh);                              \
      e_widget_size_min_set(ob, 160, mh);                               \

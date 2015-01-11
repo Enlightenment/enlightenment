@@ -667,7 +667,7 @@ _basic_create(E_Config_Dialog *cfd, Evas *e, E_Config_Dialog_Data *cfdata)
    o = e_widget_list_add(e, 0, 0);
 
    of = e_widget_framelist_add(e, _("Plugin"), 0);
-   /* ow = e_widget_entry_add(e, &(cfdata->plugin), NULL, NULL, NULL);
+   /* ow = e_widget_entry_add(cfd->dia->win, &(cfdata->plugin), NULL, NULL, NULL);
     * e_widget_framelist_object_append(of, ow); */
 
    ow = e_widget_ilist_add(e, 24, 24, &cfdata->plugin);

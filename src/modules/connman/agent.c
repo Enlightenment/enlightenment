@@ -186,7 +186,7 @@ _dialog_field_add(E_Connman_Agent *agent, struct Connman_Field *field)
 
    input = E_NEW(E_Connman_Agent_Input, 1);
    input->key = strdup(field->name);
-   entry = e_widget_entry_add(evas, &(input->value), NULL, NULL, NULL);
+   entry = e_widget_entry_add(agent->dialog->win, &(input->value), NULL, NULL, NULL);
    evas_object_show(entry);
 
    list = evas_object_data_get(toolbook, field->requirement);

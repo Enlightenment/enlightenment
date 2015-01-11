@@ -10345,7 +10345,7 @@ _e_fm2_icon_entry_widget_add(E_Fm2_Icon *ic)
      return NULL;
 
    e = evas_object_evas_get(ic->obj);
-   ic->entry_widget = e_widget_entry_add(e, NULL, NULL, NULL, NULL);
+   ic->entry_widget = e_widget_entry_add(e_win_evas_win_get(e), NULL, NULL, NULL, NULL);
    evas_object_event_callback_add(ic->entry_widget, EVAS_CALLBACK_KEY_DOWN,
                                   _e_fm2_icon_entry_widget_cb_key_down, ic);
 #ifndef HAVE_WAYLAND_ONLY

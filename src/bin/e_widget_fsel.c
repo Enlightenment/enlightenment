@@ -447,7 +447,7 @@ e_widget_fsel_add(Evas *evas, const char *dev, const char *path, char *selected,
    e_widget_size_min_set(o, 128, 128);
    e_widget_table_object_append(wd->o_table2, o, 1, 1, 1, 1, 1, 1, 0, 1);
 
-   o = e_widget_entry_add(evas, &(wd->entry_text), NULL, NULL, NULL);
+   o = e_widget_entry_add(e_win_evas_win_get(evas), &(wd->entry_text), NULL, NULL, NULL);
    wd->o_entry = o;
    if (selected) e_widget_entry_text_set(o, selected);
 

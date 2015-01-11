@@ -72,7 +72,6 @@ src/bin/e_dialog.h \
 src/bin/e_dnd.h \
 src/bin/e_dpms.h \
 src/bin/e_desktop_editor.h \
-src/bin/e_entry.h \
 src/bin/e_entry_dialog.h \
 src/bin/e_env.h \
 src/bin/e_error.h \
@@ -242,7 +241,6 @@ src/bin/e_dialog.c \
 src/bin/e_dpms.c \
 src/bin/e_desktop_editor.c \
 src/bin/e_dnd.c \
-src/bin/e_entry.c \
 src/bin/e_entry_dialog.c \
 src/bin/e_env.c \
 src/bin/e_error.c \

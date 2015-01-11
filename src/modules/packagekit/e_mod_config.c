@@ -33,7 +33,7 @@ _cfg_data_free(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfdata)
 }
 
 static Evas_Object *
-_cfg_widgets_create(E_Config_Dialog *cfd EINA_UNUSED, Evas *evas, E_Config_Dialog_Data *cfdata)
+_cfg_widgets_create(E_Config_Dialog *cfd, Evas *evas, E_Config_Dialog_Data *cfdata)
 {
    Evas_Object *list, *of, *ob;
    E_Radio_Group *rg;
@@ -61,7 +61,7 @@ _cfg_widgets_create(E_Config_Dialog *cfd EINA_UNUSED, Evas *evas, E_Config_Dialo
    e_widget_list_object_append(list, of, 1, 0, 0.5);
 
    of = e_widget_framelist_add(evas, _("Package Manager"), 0);
-   ob = e_widget_entry_add(evas, &(cfdata->manager_command), NULL, NULL, NULL);
+   ob = e_widget_entry_add(cfd->dia->win, &(cfdata->manager_command), NULL, NULL, NULL);
    e_widget_framelist_object_append(of, ob);
    e_widget_list_object_append(list, of, 1, 0, 0.5);
 

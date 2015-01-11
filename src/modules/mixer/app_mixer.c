@@ -366,20 +366,20 @@ _create_channels(E_Dialog *dialog __UNUSED__, Evas *evas, E_Mixer_App_Dialog_Dat
 }
 
 static void
-_create_channel_editor(E_Dialog *dialog __UNUSED__, Evas *evas, E_Mixer_App_Dialog_Data *app)
+_create_channel_editor(E_Dialog *dialog, Evas *evas, E_Mixer_App_Dialog_Data *app)
 {
    struct e_mixer_app_ui_channel_editor *ui = &app->ui.channel_editor;
 
    ui->label_card = e_widget_label_add(evas, _("Card:"));
-   ui->card = e_widget_entry_add(evas, NULL, NULL, NULL, NULL);
+   ui->card = e_widget_entry_add(dialog->win, NULL, NULL, NULL, NULL);
    e_widget_entry_readonly_set(ui->card, 1);
 
    ui->label_channel = e_widget_label_add(evas, _("Channel:"));
-   ui->channel = e_widget_entry_add(evas, NULL, NULL, NULL, NULL);
+   ui->channel = e_widget_entry_add(dialog->win, NULL, NULL, NULL, NULL);
    e_widget_entry_readonly_set(ui->channel, 1);
 
    ui->label_type = e_widget_label_add(evas, _("Type:"));
-   ui->type = e_widget_entry_add(evas, NULL, NULL, NULL, NULL);
+   ui->type = e_widget_entry_add(dialog->win, NULL, NULL, NULL, NULL);
    e_widget_entry_readonly_set(ui->type, 1);
 
    ui->label_left = e_widget_label_add(evas, _("Left:"));

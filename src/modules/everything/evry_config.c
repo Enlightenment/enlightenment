@@ -408,7 +408,7 @@ _create_plugin_page(E_Config_Dialog_Data *cfdata __UNUSED__, Evas *e, Plugin_Pag
    e_widget_table_object_append(ob, of, 1, 0, 1, 1, 1, 1, 1, 0);
 
    of = e_widget_framelist_add(e, _("Plugin Trigger"), 0);
-   o = e_widget_entry_add(e, &(page->trigger), NULL, NULL, NULL);
+   o = e_widget_entry_add(e_win_evas_win_get(e), &(page->trigger), NULL, NULL, NULL);
    e_widget_disabled_set(o, 1);
    page->o_trigger = o;
    e_widget_framelist_object_append(of, o);

@@ -273,7 +273,7 @@ _unset_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 
 
 static Evas_Object *
-_basic_create_widgets(E_Config_Dialog *cfd EINA_UNUSED, Evas *evas, E_Config_Dialog_Data *cfdata)
+_basic_create_widgets(E_Config_Dialog *cfd, Evas *evas, E_Config_Dialog_Data *cfdata)
 {
    Evas_Object *o, *ol, *oe, *ob, *oc;
    Eina_List *l;
@@ -295,11 +295,11 @@ _basic_create_widgets(E_Config_Dialog *cfd EINA_UNUSED, Evas *evas, E_Config_Dia
    e_widget_size_min_set(ol, 200, 160);
    e_widget_table_object_append(o, ol, 0, 0, 3, 1, 1, 1, 1, 1);
    
-   oe = e_widget_entry_add(evas, &(cfdata->var_str), NULL, NULL, NULL);
+   oe = e_widget_entry_add(cfd->dia->win, &(cfdata->var_str), NULL, NULL, NULL);
    cfdata->gui.var_en = oe;
    e_widget_table_object_append(o, oe, 0, 1, 1, 1, 1, 1, 1, 0);
    
-   oe = e_widget_entry_add(evas, &(cfdata->val_str), NULL, NULL, NULL);
+   oe = e_widget_entry_add(cfd->dia->win, &(cfdata->val_str), NULL, NULL, NULL);
    cfdata->gui.val_en = oe;
    e_widget_table_object_append(o, oe, 1, 1, 1, 1, 1, 1, 1, 0);
    

@@ -32,7 +32,7 @@ struct _E_Widget_Data
 
 /* Externally accessible functions */
 EAPI Evas_Object *
-e_widget_config_list_add(Evas *evas, Evas_Object * (*func_entry_add)(Evas * evas, char **val, void (*func)(void *data, void *data2), void *data, void *data2), const char *label, int listspan __UNUSED__)
+e_widget_config_list_add(Evas *evas, Evas_Object * (*func_entry_add)(Evas_Object *, char **val, void (*func)(void *data, void *data2), void *data, void *data2), const char *label, int listspan __UNUSED__)
 {
    Evas_Object *obj, *o;
    E_Widget_Data *wd;
@@ -51,7 +51,7 @@ e_widget_config_list_add(Evas *evas, Evas_Object * (*func_entry_add)(Evas * evas
    o = e_widget_label_add(evas, label);
    e_widget_table_object_append(wd->gui.table, o, 0, 1, 2, 1, 1, 0, 1, 0);
 
-   o = func_entry_add(evas, &(wd->cur_entry), NULL, NULL, NULL);
+   o = func_entry_add(e_win_evas_win_get(evas), &(wd->cur_entry), NULL, NULL, NULL);
    wd->gui.entry = o;
    e_widget_disabled_set(o, 1);
    e_widget_size_min_set(o, 100, 25);

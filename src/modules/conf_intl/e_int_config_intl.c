@@ -1010,7 +1010,7 @@ _basic_advanced_apply_data(E_Config_Dialog *cfd __UNUSED__, E_Config_Dialog_Data
 }
 
 static Evas_Object *
-_basic_create_widgets(E_Config_Dialog *cfd EINA_UNUSED, Evas *evas, E_Config_Dialog_Data *cfdata)
+_basic_create_widgets(E_Config_Dialog *cfd, Evas *evas, E_Config_Dialog_Data *cfdata)
 {
    Evas_Object *o, *of, *ob, *ic;
    char *cur_sig_loc = NULL;
@@ -1088,7 +1088,7 @@ _basic_create_widgets(E_Config_Dialog *cfd EINA_UNUSED, Evas *evas, E_Config_Dia
    of = e_widget_frametable_add(evas, _("Locale Selected"), 0);
    ob = e_widget_label_add(evas, _("Locale"));
    e_widget_frametable_object_append(of, ob, 0, 0, 1, 1, 1, 0, 1, 0);
-   ob = e_widget_entry_add(evas, &(cfdata->cur_language), NULL, NULL, NULL);
+   ob = e_widget_entry_add(cfd->dia->win, &(cfdata->cur_language), NULL, NULL, NULL);
    cfdata->gui.locale_entry = ob;
    e_widget_entry_readonly_set(cfdata->gui.locale_entry, 1);
    e_widget_size_min_set(cfdata->gui.locale_entry, 100, 25);
@@ -1100,7 +1100,7 @@ _basic_create_widgets(E_Config_Dialog *cfd EINA_UNUSED, Evas *evas, E_Config_Dia
 }
 
 static Evas_Object *
-_advanced_create_widgets(E_Config_Dialog *cfd EINA_UNUSED, Evas *evas, E_Config_Dialog_Data *cfdata)
+_advanced_create_widgets(E_Config_Dialog *cfd, Evas *evas, E_Config_Dialog_Data *cfdata)
 {
    Evas_Object *o, *of, *ob;
    const char *lang, *reg, *cs, *mod;
@@ -1166,7 +1166,7 @@ _advanced_create_widgets(E_Config_Dialog *cfd EINA_UNUSED, Evas *evas, E_Config_
    of = e_widget_frametable_add(evas, _("Locale Selected"), 0);
    ob = e_widget_label_add(evas, _("Locale"));
    e_widget_frametable_object_append(of, ob, 0, 0, 1, 1, 1, 0, 1, 0);
-   ob = e_widget_entry_add(evas, &(cfdata->cur_language), NULL, NULL, NULL);
+   ob = e_widget_entry_add(cfd->dia->win, &(cfdata->cur_language), NULL, NULL, NULL);
    cfdata->gui.locale_entry = ob;
    e_widget_entry_readonly_set(cfdata->gui.locale_entry, 1);
    e_widget_size_min_set(cfdata->gui.locale_entry, 100, 25);

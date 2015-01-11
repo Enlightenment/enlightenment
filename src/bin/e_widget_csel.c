@@ -267,7 +267,7 @@ e_widget_csel_add(Evas *evas, E_Color *color, Eina_Bool alpha_enabled)
         e_widget_size_min_set(o, 32, 16);
         e_widget_table_object_append(frame, o, 1, i, 6, 1, 1, 1, 1, 0);
 
-        o = e_widget_entry_add(evas, &(wd->values[i]), NULL, NULL, NULL);
+        o = e_widget_entry_add(e_win_evas_win_get(evas), &(wd->values[i]), NULL, NULL, NULL);
         e_widget_sub_object_add(obj, o);
         evas_object_show(o);
         wd->entries = eina_list_append(wd->entries, o);

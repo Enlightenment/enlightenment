@@ -36,12 +36,14 @@ static void _e_wid_movresz(void *data, Evas *e, Evas_Object *obj, void *event_in
  * @return Returns the new entry widget
  */
 EAPI Evas_Object *
-e_widget_entry_add(Evas *evas, char **text_location, void (*func)(void *data, void *data2), void *data, void *data2)
+e_widget_entry_add(Evas_Object *parent, char **text_location, void (*func)(void *data, void *data2), void *data, void *data2)
 {
    Evas_Object *obj, *o;
    E_Widget_Data *wd;
    Evas_Coord minw, minh;
+   Evas *evas;
 
+   evas = evas_object_evas_get(parent);
    obj = e_widget_add(evas);
 
    e_widget_del_hook_set(obj, _e_wid_del_hook);
@@ -52,8 +54,17 @@ e_widget_entry_add(Evas *evas, char **text_location, void (*func)(void *data, vo
    e_widget_data_set(obj, wd);
    wd->text_location = text_location;
 
-   o = e_entry_add(evas);
+   o = elm_entry_add(parent);
+   elm_object_text_set(o, "test");
+   elm_entry_scrollable_set(o, 1);
+   elm_entry_single_line_set(o, 1);
+   elm_entry_scrollbar_policy_set(o, ELM_SCROLLER_POLICY_AUTO, ELM_SCROLLER_POLICY_OFF);
    wd->o_entry = o;
+   evas_object_size_hint_min_get(wd->o_entry, &minw, &minh);
+   e_widget_size_min_set(obj, minw, minh);
+   evas_object_size_hint_min_set(obj, minw, minh);
+   elm_object_text_set(o, NULL);
+
    e_widget_sub_object_add(obj, o);
    e_widget_resize_object_set(obj, o);
    evas_object_show(o);
@@ -76,11 +87,7 @@ e_widget_entry_add(Evas *evas, char **text_location, void (*func)(void *data, vo
 
    o = wd->o_entry;
    if ((text_location) && (*text_location))
-     e_entry_text_set(o, *text_location);
-
-   e_entry_size_min_get(o, &minw, &minh);
-   e_widget_size_min_set(obj, minw, minh);
-   evas_object_size_hint_min_set(obj, minw, minh);
+     elm_object_text_set(o, *text_location);
 
    wd->func = func;
    wd->data = data;
@@ -103,7 +110,7 @@ e_widget_entry_text_set(Evas_Object *entry, const char *text)
 
    if (!(entry) || (!(wd = e_widget_data_get(entry))))
      return;
-   e_entry_text_set(wd->o_entry, text);
+   elm_object_text_set(wd->o_entry, text);
 }
 
 /**
@@ -119,7 +126,7 @@ e_widget_entry_text_get(Evas_Object *entry)
 
    if (!(entry) || (!(wd = e_widget_data_get(entry))))
      return NULL;
-   return e_entry_text_get(wd->o_entry);
+   return elm_object_text_get(wd->o_entry);
 }
 
 /**
@@ -134,7 +141,7 @@ e_widget_entry_clear(Evas_Object *entry)
 
    if (!(entry) || (!(wd = e_widget_data_get(entry))))
      return;
-   e_entry_clear(wd->o_entry);
+   elm_object_text_set(wd->o_entry, NULL);
 }
 
 /**
@@ -151,7 +158,7 @@ e_widget_entry_password_set(Evas_Object *entry, int password_mode)
 
    if (!(entry) || (!(wd = e_widget_data_get(entry))))
      return;
-   e_entry_password_set(wd->o_entry, password_mode);
+   elm_entry_password_set(wd->o_entry, !!password_mode);
 }
 
 /**
@@ -169,10 +176,7 @@ e_widget_entry_readonly_set(Evas_Object *entry, int readonly_mode)
    if (!(entry) || (!(wd = e_widget_data_get(entry))))
      return;
 
-   if (readonly_mode)
-     e_entry_noedit(wd->o_entry);
-   else
-     e_entry_edit(wd->o_entry);
+   elm_entry_editable_set(wd->o_entry, !readonly_mode);
 }
 
 /**
@@ -187,7 +191,7 @@ e_widget_entry_select_all(Evas_Object *entry)
 
    if (!(entry) || (!(wd = e_widget_data_get(entry))))
      return;
-   e_entry_select_all(wd->o_entry);
+   elm_entry_select_all(wd->o_entry);
 }
 
 /* Private functions */
@@ -219,10 +223,7 @@ _e_wid_focus_hook(Evas_Object *obj)
    if (!(obj) || (!(wd = e_widget_data_get(obj))))
      return;
 
-   if (e_widget_focus_get(obj))
-     e_entry_focus(wd->o_entry);
-   else
-     e_entry_unfocus(wd->o_entry);
+   elm_object_focus_set(wd->o_entry, !!e_widget_focus_get(obj));
 }
 
 static void
@@ -233,10 +234,7 @@ _e_wid_disable_hook(Evas_Object *obj)
    if (!(obj) || (!(wd = e_widget_data_get(obj))))
      return;
 
-   if (e_widget_disabled_get(obj))
-     e_entry_disable(wd->o_entry);
-   else
-     e_entry_enable(wd->o_entry);
+   elm_object_disabled_set(wd->o_entry, !!e_widget_disabled_get(obj));
 }
 
 static void
@@ -285,7 +283,7 @@ _e_wid_changed_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __UN
 
    if (wd->text_location)
      {
-        text = e_entry_text_get(wd->o_entry);
+        text = elm_object_text_get(wd->o_entry);
         free(*wd->text_location);
         *wd->text_location = text ? strdup(text) : NULL;
      }

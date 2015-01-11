@@ -349,7 +349,7 @@ _create_edit_frame(E_Config_Dialog *cfd, Evas *evas, E_Config_Dialog_Data *cfdat
         else m->title = NULL;
         lb = e_widget_label_add(evas, _("Title"));
         e_widget_table_object_append(tab2, lb, 0, 0, 1, 1, 1, 0, 0, 0);
-        en = e_widget_entry_add(evas, &(m->title), NULL, NULL, NULL);
+        en = e_widget_entry_add(cfd->dia->win, &(m->title), NULL, NULL, NULL);
         e_widget_table_object_append(tab2, en, 1, 0, 1, 1, 1, 0, 1, 0);
      }
    if ((cfdata->edit_il == cfdata->borders_il) ||
@@ -360,7 +360,7 @@ _create_edit_frame(E_Config_Dialog *cfd, Evas *evas, E_Config_Dialog_Data *cfdat
         else m->name = NULL;
         lb = e_widget_label_add(evas, _("Name"));
         e_widget_table_object_append(tab2, lb, 0, 1, 1, 1, 1, 0, 0, 0);
-        en = e_widget_entry_add(evas, &(m->name), NULL, NULL, NULL);
+        en = e_widget_entry_add(cfd->dia->win, &(m->name), NULL, NULL, NULL);
         e_widget_table_object_append(tab2, en, 1, 1, 1, 1, 1, 0, 1, 0);
      }
    if ((cfdata->edit_il == cfdata->borders_il) ||
@@ -370,7 +370,7 @@ _create_edit_frame(E_Config_Dialog *cfd, Evas *evas, E_Config_Dialog_Data *cfdat
         else m->clas = NULL;
         lb = e_widget_label_add(evas, _("Class"));
         e_widget_table_object_append(tab2, lb, 0, 2, 1, 1, 1, 0, 0, 0);
-        en = e_widget_entry_add(evas, &(m->clas), NULL, NULL, NULL);
+        en = e_widget_entry_add(cfd->dia->win, &(m->clas), NULL, NULL, NULL);
         e_widget_table_object_append(tab2, en, 1, 2, 1, 1, 1, 0, 1, 0);
      }
    if (cfdata->edit_il == cfdata->borders_il)
@@ -379,7 +379,7 @@ _create_edit_frame(E_Config_Dialog *cfd, Evas *evas, E_Config_Dialog_Data *cfdat
         else m->role = NULL;
         lb = e_widget_label_add(evas, _("Role"));
         e_widget_table_object_append(tab2, lb, 0, 3, 1, 1, 1, 0, 0, 0);
-        en = e_widget_entry_add(evas, &(m->role), NULL, NULL, NULL);
+        en = e_widget_entry_add(cfd->dia->win, &(m->role), NULL, NULL, NULL);
         e_widget_table_object_append(tab2, en, 1, 3, 1, 1, 1, 0, 1, 0);
      }
    e_widget_toolbook_page_append(tb, NULL, _("Names"), tab2, 1, 1, 1, 1, 0.5, 0.0);

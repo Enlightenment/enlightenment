@@ -21,7 +21,6 @@ src/bin/e_desktop_editor.c
 src/bin/e_dialog.c
 src/bin/e_dnd.c
 src/bin/e_dpms.c
-src/bin/e_entry.c
 src/bin/e_entry_dialog.c
 src/bin/e_error.c
 src/bin/e_exec.c

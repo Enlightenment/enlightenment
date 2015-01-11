@@ -506,7 +506,7 @@ _win_share_cb(void *data __UNUSED__, void *data2 __UNUSED__)
                           _("Screenshot is available at this location:"));
    e_widget_list_object_append(ol, o, 0, 0, 0.5);
 
-   o = e_widget_entry_add(evas_object_evas_get(dia->win), NULL, NULL, NULL, NULL);
+   o = e_widget_entry_add(dia->win, NULL, NULL, NULL, NULL);
    o_entry = o;
    e_widget_list_object_append(ol, o, 1, 0, 0.5);
 

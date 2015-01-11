@@ -630,12 +630,12 @@ _signal_add_show(E_Config_Dialog_Data *cfdata)
    obg = e_widget_list_add(evas, 1, 0);
 
    ol = e_widget_framelist_add(evas, _("Source:"), 0);
-   entry = o = e_widget_entry_add(evas, &cfdata->locals.dia_source, NULL, NULL, NULL);
+   entry = o = e_widget_entry_add(cfdata->locals.dia->win, &cfdata->locals.dia_source, NULL, NULL, NULL);
    e_widget_framelist_object_append(ol, o);
    e_widget_list_object_append(obg, ol, 1, 0, 0.5);
    
    ol = e_widget_framelist_add(evas, _("Signal:"), 0);
-   o = e_widget_entry_add(evas, &cfdata->locals.dia_signal, NULL, NULL, NULL);
+   o = e_widget_entry_add(cfdata->locals.dia->win, &cfdata->locals.dia_signal, NULL, NULL, NULL);
    e_widget_framelist_object_append(ol, o);
    e_widget_list_object_append(obg, ol, 1, 0, 0.5);
 
@@ -770,7 +770,7 @@ _restore_signal_binding_defaults_cb(void *data, void *data2 __UNUSED__)
 }
 
 static Evas_Object *
-_basic_create_widgets(E_Config_Dialog *cfd EINA_UNUSED, Evas *evas, E_Config_Dialog_Data *cfdata)
+_basic_create_widgets(E_Config_Dialog *cfd, Evas *evas, E_Config_Dialog_Data *cfdata)
 {
    Evas_Object *o, *ol, *ot, *of, *ob;
 
@@ -807,7 +807,7 @@ _basic_create_widgets(E_Config_Dialog *cfd EINA_UNUSED, Evas *evas, E_Config_Dia
    e_widget_table_object_append(ot, of, 0, 0, 1, 1, 1, 1, 1, 1);
 
    of = e_widget_framelist_add(evas, _("Action Params"), 0);
-   ob = e_widget_entry_add(evas, &(cfdata->locals.params), NULL, NULL, NULL);
+   ob = e_widget_entry_add(cfd->dia->win, &(cfdata->locals.params), NULL, NULL, NULL);
    cfdata->gui.o_params = ob;
    e_widget_disabled_set(ob, 1);
    e_widget_framelist_object_append(of, ob);

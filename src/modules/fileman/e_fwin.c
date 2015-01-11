@@ -2692,7 +2692,7 @@ _e_fwin_file_open_dialog(E_Fwin_Page *page,
 
    o = e_widget_label_add(evas, _("Custom Command"));
    e_widget_list_object_append(ol, o, 1, 0, 0.5);
-   fad->o_entry = e_widget_entry_add(evas, &(fad->exec_cmd),
+   fad->o_entry = e_widget_entry_add(dia->win, &(fad->exec_cmd),
                                      _e_fwin_cb_exec_cmd_changed, fad, NULL);
    e_widget_list_object_append(ol, fad->o_entry, 1, 0, 0.5);
 

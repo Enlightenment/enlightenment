@@ -161,7 +161,7 @@ _basic_apply(E_Config_Dialog *cfd __UNUSED__, E_Config_Dialog_Data *cfdata)
 }
 
 static Evas_Object *
-_basic_create(E_Config_Dialog *cfd EINA_UNUSED, Evas *evas, E_Config_Dialog_Data *cfdata)
+_basic_create(E_Config_Dialog *cfd, Evas *evas, E_Config_Dialog_Data *cfdata)
 {
    Evas_Object *o, *of, *ol, *ob;
    E_Zone *zone;
@@ -173,13 +173,13 @@ _basic_create(E_Config_Dialog *cfd EINA_UNUSED, Evas *evas, E_Config_Dialog_Data
    ol = e_widget_list_add(evas, 0, 1);
    ob = e_widget_label_add(evas, _("Name"));
    e_widget_list_object_append(ol, ob, 1, 0, 0.5);
-   ob = e_widget_entry_add(evas, &(cfdata->name), NULL, NULL, NULL);
+   ob = e_widget_entry_add(cfd->dia->win, &(cfdata->name), NULL, NULL, NULL);
    e_widget_list_object_append(ol, ob, 1, 1, 0.5);
    e_widget_list_object_append(o, ol, 1, 1, 0.5);
    of = e_widget_frametable_add(evas, _("Desktop Window Profile"), 0);
    ob = e_widget_label_add(evas, _("Profile name"));
    e_widget_frametable_object_append(of, ob, 0, 0, 1, 1, 1, 1, 0, 0);
-   ob = e_widget_entry_add(evas, &(cfdata->profile), NULL, NULL, NULL);
+   ob = e_widget_entry_add(cfd->dia->win, &(cfdata->profile), NULL, NULL, NULL);
    e_widget_disabled_set(ob, !(e_config->use_desktop_window_profile));
    e_widget_frametable_object_append(of, ob, 1, 0, 2, 1, 1, 1, 1, 0);
    e_widget_list_object_append(o, of, 1, 1, 0.5);

@@ -301,9 +301,10 @@ static void
 _e_wid_fprev_preview_video_widgets(E_Widget_Data *wd)
 {
    Evas *evas = evas_object_evas_get(wd->obj);
-   Evas_Object *o, *em;
+   Evas_Object *o, *em, *win;
    int mw, mh, y = 3;
 
+   win = e_win_evas_win_get(evas);
    _e_wid_fprev_clear_widgets(wd);
 
    o = e_widget_table_add(evas, 0);
@@ -316,7 +317,7 @@ _e_wid_fprev_preview_video_widgets(E_Widget_Data *wd)
        e_widget_table_object_align_append(wd->o_preview_properties_table,         \
                                           wd->labob,                              \
                                           0, y, 1, 1, 0, 1, 0, 0, 1.0, 0.0);      \
-       o = e_widget_entry_add(evas, &(wd->preview_extra_text), NULL, NULL, NULL); \
+       o = e_widget_entry_add(win, &(wd->preview_extra_text), NULL, NULL, NULL); \
        e_widget_entry_readonly_set(o, 1);                                         \
        wd->entob = o;                                                             \
        e_widget_size_min_set(o, entw, -1);                                        \
@@ -384,9 +385,10 @@ static void
 _e_wid_fprev_preview_fs_widgets(E_Widget_Data *wd, Eina_Bool mount_point)
 {
    Evas *evas = evas_object_evas_get(wd->obj);
-   Evas_Object *o;
+   Evas_Object *o, *win;
    int mw, mh, y = 0;
 
+   win = e_win_evas_win_get(evas);
    _e_wid_fprev_clear_widgets(wd);
 
    o = e_widget_table_add(evas, 0);
@@ -399,7 +401,7 @@ _e_wid_fprev_preview_fs_widgets(E_Widget_Data *wd, Eina_Bool mount_point)
        e_widget_table_object_align_append(wd->o_preview_properties_table,         \
                                           wd->labob,                              \
                                           0, y, 1, 1, 0, 1, 0, 0, 1.0, 0.0);      \
-       o = e_widget_entry_add(evas, &(wd->preview_extra_text), NULL, NULL, NULL); \
+       o = e_widget_entry_add(win, &(wd->preview_extra_text), NULL, NULL, NULL); \
        e_widget_entry_readonly_set(o, 1);                                         \
        wd->entob = o;                                                             \
        e_widget_size_min_set(o, entw, -1);                                        \
@@ -440,9 +442,10 @@ static void
 _e_wid_fprev_preview_file_widgets(E_Widget_Data *wd, Eina_Bool dir, Eina_Bool txt, Eina_Bool font)
 {
    Evas *evas = evas_object_evas_get(wd->obj);
-   Evas_Object *o;
+   Evas_Object *o, *win;
    int mw, mh, y = 0;
 
+   win = e_win_evas_win_get(evas);
    _e_wid_fprev_clear_widgets(wd);
 
    o = e_widget_table_add(evas, 0);
