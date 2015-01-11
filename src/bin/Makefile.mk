@@ -91,7 +91,6 @@ src/bin/e_fm_op_registry.h \
 src/bin/e_fm_prop.h \
 src/bin/e_fm_shared_codec.h \
 src/bin/e_fm_shared_device.h \
-src/bin/e_fm_shared_types.h \
 src/bin/e_focus.h \
 src/bin/e_font.h \
 src/bin/e_gadcon.h \
@@ -472,7 +471,7 @@ enlightenment-sys-install-data-hook:
 	@chmod $(setuid_root_mode) $(DESTDIR)$(libdir)/enlightenment/utils/enlightenment_sys$(EXEEXT) || true
 endif
 installed_headersdir = $(prefix)/include/enlightenment
-installed_headers_DATA = $(ENLIGHTENMENTHEADERS)
+installed_headers_DATA = $(ENLIGHTENMENTHEADERS) src/bin/e_fm_shared_types.h
 INSTALL_DATA_HOOKS += enlightenment-sys-install-data-hook
 
 PHONIES += e enlightenment install-e install-enlightenment
