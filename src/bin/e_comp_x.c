@@ -5069,6 +5069,7 @@ _e_comp_x_setup(E_Comp *c, Ecore_X_Window root, int w, int h)
    c->pointer->color = ecore_x_cursor_color_supported_get();
    e_pointer_type_push(c->pointer, c->pointer, "default");
    _e_comp_x_manage_windows(c);
+   ecore_x_icccm_state_set(ecore_evas_window_get(c->ee), ECORE_X_WINDOW_STATE_HINT_NORMAL);
 
    {
       E_Client *ec;
