@@ -265,8 +265,8 @@ e_shelf_zone_new(E_Zone *zone, const char *name, const char *style, E_Layer laye
    e_gadcon_zone_set(es->gadcon, zone);
    e_gadcon_ecore_evas_set(es->gadcon, es->ee);
    e_gadcon_shelf_set(es->gadcon, es);
-   e_gadcon_xdnd_window_set(es->gadcon, e_comp_get(es)->ee_win);
-   e_gadcon_dnd_window_set(es->gadcon, e_comp_get(es)->ee_win);
+   e_gadcon_xdnd_window_set(es->gadcon, e_comp->ee_win);
+   e_gadcon_dnd_window_set(es->gadcon, e_comp->ee_win);
    evas_object_clip_set(es->comp_object, es->zone->bg_clip_object);
    e_gadcon_util_menu_attach_func_set(es->gadcon,
                                       _e_shelf_cb_menu_items_append, es);
@@ -1364,7 +1364,7 @@ _e_shelf_toggle_client_fix(E_Shelf *es)
    if (es->cfg->overlap)
      return;
 
-   EINA_LIST_FOREACH(e_comp_get(es)->clients, l, ec)
+   EINA_LIST_FOREACH(e_comp->clients, l, ec)
      {
         if ((ec->maximized & E_MAXIMIZE_TYPE) == E_MAXIMIZE_NONE)
           {
@@ -1793,11 +1793,11 @@ _e_shelf_cb_mouse_in(void *data, int type, void *event)
          * mouse in/out events. in the future, when we remove systray, we should go
          * back to mouse in/out events
          */
-        inside = E_INSIDE(e_comp_canvas_x_root_adjust(e_comp_get(es), ev->root.x),
-                          e_comp_canvas_x_root_adjust(e_comp_get(es), ev->root.y),
+        inside = E_INSIDE(e_comp_canvas_x_root_adjust(e_comp, ev->root.x),
+                          e_comp_canvas_x_root_adjust(e_comp, ev->root.y),
                           es->zone->x, es->zone->y, es->zone->w + 4, es->zone->h + 4);
-        x = e_comp_canvas_x_root_adjust(e_comp_get(es), ev->root.x) - es->zone->x;
-        y = e_comp_canvas_x_root_adjust(e_comp_get(es), ev->root.y) - es->zone->y;
+        x = e_comp_canvas_x_root_adjust(e_comp, ev->root.x) - es->zone->x;
+        y = e_comp_canvas_x_root_adjust(e_comp, ev->root.y) - es->zone->y;
         if (inside)
           inside = (
               ((E_INSIDE(x, y, es->x, es->y, es->w, es->h)) ||
@@ -1852,7 +1852,7 @@ _e_shelf_cb_mouse_out(void *data, int type, void *event)
         Ecore_X_Event_Mouse_Out *ev = event;
         int x, y, w, h;
 
-        if (ev->win != e_comp_get(es)->ee_win) return ECORE_CALLBACK_PASS_ON;
+        if (ev->win != e_comp->ee_win) return ECORE_CALLBACK_PASS_ON;
 
         /*
          * ECORE_X_EVENT_DETAIL_INFERIOR means focus went to children windows
