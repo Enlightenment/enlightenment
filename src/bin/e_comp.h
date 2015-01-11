@@ -62,6 +62,7 @@ struct _E_Comp
    Ecore_Window  win; // input overlay
    Ecore_Evas     *ee;
    Ecore_Window  ee_win;
+   Evas_Object    *elm;
    Evas           *evas;
    Evas_Object    *bg_blank_object;
    Eina_List      *zones;

@@ -1061,6 +1061,8 @@ e_comp_init(void)
 #endif
    if (!e_comp) return EINA_FALSE;
 out:
+   e_comp->elm = elm_win_fake(e_comp->ee);
+   evas_object_show(e_comp->elm);
    e_util_env_set("HYBRIS_EGLPLATFORM", NULL);
    E_LIST_HANDLER_APPEND(handlers, E_EVENT_SCREENSAVER_ON, _e_comp_screensaver_on, NULL);
    E_LIST_HANDLER_APPEND(handlers, E_EVENT_SCREENSAVER_OFF, _e_comp_screensaver_off, NULL);
