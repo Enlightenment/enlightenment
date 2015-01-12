@@ -2009,6 +2009,8 @@ _e_comp_wl_client_cb_new(void *data EINA_UNUSED, E_Client *ec)
    eina_tiler_tile_size_set(ec->comp_data->pending.opaque, 1, 1);
 
    /* set initial client properties */
+   ec->argb = EINA_TRUE;
+   ec->no_shape_cut = EINA_TRUE;
    ec->ignored = e_comp_ignore_win_find(win);
    ec->border_size = 0;
    ec->placed |= ec->override;
