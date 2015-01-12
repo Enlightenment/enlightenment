@@ -129,14 +129,7 @@ _e_wid_cb_color_changed(void *data, Evas_Object *o)
 
    /* update the spectrum */
    if (o != wd->spectrum /* && changed != -1*/)
-     {
-        if (wd->mode == changed ||
-            (wd->mode >= E_COLOR_COMPONENT_H && changed <= E_COLOR_COMPONENT_B) ||
-            (wd->mode <= E_COLOR_COMPONENT_B && changed >= E_COLOR_COMPONENT_H))
-          e_widget_spectrum_update(wd->spectrum, 1);
-        else
-          e_widget_spectrum_update(wd->spectrum, 1);
-     }
+     e_widget_spectrum_update(wd->spectrum, 1);
 
    e_widget_color_well_update(wd->well);
 
