@@ -1747,7 +1747,7 @@ _pager_cb_event_bg_update(void *data __UNUSED__, int type __UNUSED__, void *even
    zone = eina_list_nth(e_comp->zones, ev->zone);
    if (!zone) return ECORE_CALLBACK_RENEW;
    desk = e_desk_at_xy_get(zone, ev->desk_x, ev->desk_y);
-   if (!zone) return ECORE_CALLBACK_RENEW;
+   if (!desk) return ECORE_CALLBACK_RENEW;
    EINA_LIST_FOREACH(pagers, l, p)
      {
         pd = _pager_desk_find(p, desk);
