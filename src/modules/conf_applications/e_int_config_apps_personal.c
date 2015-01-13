@@ -75,7 +75,7 @@ _basic_create(E_Config_Dialog *cfd, Evas *evas, E_Config_Dialog_Data *cfdata)
 
    e_dialog_resizable_set(cfd->dia, 1);
    
-   of = e_widget_table_add(evas, 0);
+   of = e_widget_table_add(e_win_evas_win_get(evas), 0);
 
    li = e_widget_ilist_add(evas, 24, 24, NULL);
    cfdata->obj.list = li;

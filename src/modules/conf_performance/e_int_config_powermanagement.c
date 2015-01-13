@@ -113,7 +113,7 @@ _basic_create(E_Config_Dialog *cfd __UNUSED__, Evas *evas, E_Config_Dialog_Data 
    rmin = e_widget_radio_group_new((int*) &(cfdata->powersave_min));
    rmax = e_widget_radio_group_new((int*) &(cfdata->powersave_max));
 
-   ol = e_widget_table_add(evas, 0);
+   ol = e_widget_table_add(e_win_evas_win_get(evas), 0);
    
    y = 0;
    ob = e_widget_label_add(evas,

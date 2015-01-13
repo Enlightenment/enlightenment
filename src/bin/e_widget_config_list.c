@@ -44,7 +44,7 @@ e_widget_config_list_add(Evas *evas, Evas_Object * (*func_entry_add)(Evas_Object
    wd = E_NEW(E_Widget_Data, 1);
    e_widget_data_set(obj, wd);
 
-   o = e_widget_table_add(evas, 0);
+   o = e_widget_table_add(e_win_evas_win_get(evas), 0);
    wd->gui.table = o;
    e_widget_sub_object_add(obj, o);
 

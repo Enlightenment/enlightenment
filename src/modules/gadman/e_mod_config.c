@@ -202,7 +202,7 @@ _basic_create_widgets(E_Config_Dialog *cfd EINA_UNUSED, Evas *evas, E_Config_Dia
 
    e_widget_toolbook_page_append(otb, NULL, _("Layers"), o, 1, 1, 1, 1, 0.5, 0.0);
    /////////////////////////////////////////////////////////////////////
-   ft = e_widget_table_add(evas, 0);
+   ft = e_widget_table_add(e_win_evas_win_get(evas), 0);
 
    //Background mode
    of = e_widget_frametable_add(evas, _("Mode"), 0);

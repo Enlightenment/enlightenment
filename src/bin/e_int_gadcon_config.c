@@ -681,7 +681,7 @@ _advanced_create(E_Config_Dialog *cfd, Evas *evas, E_Config_Dialog_Data *cfdata)
    cfdata->basic.o_list = NULL;
    otb = e_widget_toolbook_add(evas, 48 * e_scale, 48 * e_scale);
    ////////////////////////////////////////////////////////////
-   ot = e_widget_table_add(evas, EINA_FALSE);
+   ot = e_widget_table_add(e_win_evas_win_get(evas), EINA_FALSE);
 
    cfdata->advanced.o_list =
      e_widget_ilist_add(evas, (24 * e_scale), (24 * e_scale), &cfdata->sel);
@@ -701,7 +701,7 @@ _advanced_create(E_Config_Dialog *cfd, Evas *evas, E_Config_Dialog_Data *cfdata)
    e_widget_toolbook_page_append(otb, NULL, _("Loaded Gadgets"), ot, 1, 1, 1, 1, 0.5, 0.0);
    ////////////////////////////////////////////////////////////
 //   ot = e_widget_list_add(evas, 0, 0);
-   ot = e_widget_table_add(evas, EINA_FALSE);
+   ot = e_widget_table_add(e_win_evas_win_get(evas), EINA_FALSE);
 
    cfdata->class_list =
      e_widget_ilist_add(evas, (24 * e_scale), (24 * e_scale), NULL);
@@ -736,7 +736,7 @@ _basic_create(E_Config_Dialog *cfd, Evas *evas, E_Config_Dialog_Data *cfdata)
    int mw;
 
    cfdata->advanced.o_list = cfdata->class_list = NULL;
-   ot = e_widget_table_add(evas, 0);
+   ot = e_widget_table_add(e_win_evas_win_get(evas), 0);
 
    cfdata->basic.o_list = e_widget_ilist_add(evas, 24, 24, NULL);
    e_widget_ilist_multi_select_set(cfdata->basic.o_list, EINA_TRUE);

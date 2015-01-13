@@ -317,7 +317,7 @@ _clock_popup_new(Instance *inst)
    inst->popup = e_gadcon_popup_new(inst->gcc, 0);
    evas = e_comp_get(inst->popup)->evas;
 
-   inst->o_table = e_widget_table_add(evas, 0);
+   inst->o_table = e_widget_table_add(e_win_evas_win_get(evas), 0);
 
    oi = edje_object_add(evas);
    inst->o_popclock = oi;

@@ -357,9 +357,9 @@ _pager_new(Evas *evas, E_Zone *zone, E_Gadcon *gc)
    p = E_NEW(Pager, 1);
    p->inst = NULL;
    p->popup = NULL;
-   p->o_table = e_table_add(evas);
+   p->o_table = elm_table_add(e_win_evas_win_get(evas));
    evas_object_event_callback_add(p->o_table, EVAS_CALLBACK_RESIZE, _pager_resize, p);
-   e_table_homogenous_set(p->o_table, 1);
+   elm_table_homogeneous_set(p->o_table, 1);
    p->zone = zone;
    _pager_fill(p, gc);
    pagers = eina_list_append(pagers, p);
@@ -409,7 +409,6 @@ _pager_fill(Pager *p, E_Gadcon *gc)
      }
    e_zone_desk_count_get(p->zone, &(p->xnum), &(p->ynum));
    if (p->ynum != 1) p->invert = EINA_FALSE;
-   e_table_freeze(p->o_table);
    for (x = 0; x < p->xnum; x++)
      {
         for (y = 0; y < p->ynum; y++)
@@ -430,7 +429,6 @@ _pager_fill(Pager *p, E_Gadcon *gc)
                }
           }
      }
-   e_table_thaw(p->o_table);
 }
 
 static void
@@ -471,11 +469,13 @@ _pager_desk_new(Pager *p, E_Desk *desk, int xpos, int ypos, Eina_Bool invert)
      edje_object_signal_emit(o, "e,name,show", "e");
 
    edje_object_size_min_calc(o, &w, &h);
+   evas_object_size_hint_min_set(o, w, h);
+   E_EXPAND(o);
+   E_FILL(o);
    if (invert)
-     e_table_pack(p->o_table, o, ypos, xpos, 1, 1);
+     elm_table_pack(p->o_table, o, ypos, xpos, 1, 1);
    else
-     e_table_pack(p->o_table, o, xpos, ypos, 1, 1);
-   e_table_pack_options_set(o, 1, 1, 1, 1, 0.5, 0.5, w, h, -1, -1);
+     elm_table_pack(p->o_table, o, xpos, ypos, 1, 1);
 
    evo = (Evas_Object *)edje_object_part_object_get(o, "e.eventarea");
    if (!evo) evo = o;

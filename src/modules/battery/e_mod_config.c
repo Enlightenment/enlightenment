@@ -230,7 +230,7 @@ _advanced_create_widgets(E_Config_Dialog *cfd __UNUSED__, Evas *evas, E_Config_D
    otb = e_widget_toolbook_add(evas, (48 * e_scale), (48 * e_scale));
 
    /* Use Sliders for both cfg options */
-   o = e_widget_table_add(evas, 0);
+   o = e_widget_table_add(e_win_evas_win_get(evas), 0);
 
    ob = e_widget_label_add(evas, _("Check every:"));
    e_widget_table_object_append(o, ob, 0, 0, 1, 1, 1, 0, 1, 0);
@@ -255,7 +255,7 @@ _advanced_create_widgets(E_Config_Dialog *cfd __UNUSED__, Evas *evas, E_Config_D
    e_widget_toolbook_page_append(otb, NULL, _("Polling"), o, 1, 0, 1, 0,
                                  0.5, 0.0);
 
-   o = e_widget_table_add(evas, 0);
+   o = e_widget_table_add(e_win_evas_win_get(evas), 0);
    ob = e_widget_check_add(evas, _("Show low battery alert"),
                            &(cfdata->show_alert));
    e_widget_on_change_hook_set(ob, _cb_show_alert_changed, cfdata);

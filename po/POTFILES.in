@@ -90,7 +90,6 @@ src/bin/e_start_main.c
 src/bin/e_startup.c
 src/bin/e_sys.c
 src/bin/e_sys_main.c
-src/bin/e_table.c
 src/bin/e_test.c
 src/bin/e_theme.c
 src/bin/e_theme_about.c

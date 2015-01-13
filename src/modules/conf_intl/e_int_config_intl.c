@@ -1020,7 +1020,7 @@ _basic_create_widgets(E_Config_Dialog *cfd, Evas *evas, E_Config_Dialog_Data *cf
 
    cfdata->evas = evas;
    e_dialog_resizable_set(cfd->dia, 1);
-   o = e_widget_table_add(evas, 0);
+   o = e_widget_table_add(e_win_evas_win_get(evas), 0);
    of = e_widget_framelist_add(evas, _("Language Selector"), 0);
    ob = e_widget_ilist_add(evas, 16, 16, &(cfdata->cur_blang));
    e_widget_size_min_set(ob, 100, 80);
@@ -1110,7 +1110,7 @@ _advanced_create_widgets(E_Config_Dialog *cfd, Evas *evas, E_Config_Dialog_Data 
    e_dialog_resizable_set(cfd->dia, 1);
    _intl_current_locale_setup(cfdata);
 
-   o = e_widget_table_add(evas, 0);
+   o = e_widget_table_add(e_win_evas_win_get(evas), 0);
 
    of = e_widget_framelist_add(evas, _("Language Selector"), 1);
 
