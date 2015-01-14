@@ -173,6 +173,8 @@ _e_comp_wl_evas_cb_mouse_in(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj
    if (!(ec = data)) return;
    if (e_object_is_del(E_OBJECT(ec))) return;
 
+   if (!ec->comp_data->surface) return;
+
    wc = wl_resource_get_client(ec->comp_data->surface);
    serial = wl_display_next_serial(ec->comp->wl_comp_data->wl.disp);
    EINA_LIST_FOREACH(ec->comp->wl_comp_data->ptr.resources, l, res)
@@ -197,6 +199,8 @@ _e_comp_wl_evas_cb_mouse_out(void *data, Evas *evas EINA_UNUSED, Evas_Object *ob
    if (!(ec = data)) return;
    if (ec->cur_mouse_action) return;
    if (e_object_is_del(E_OBJECT(ec))) return;
+
+   if (!ec->comp_data->surface) return;
 
    wc = wl_resource_get_client(ec->comp_data->surface);
    serial = wl_display_next_serial(ec->comp->wl_comp_data->wl.disp);
@@ -227,6 +231,8 @@ _e_comp_wl_evas_cb_mouse_move(void *data, Evas *evas EINA_UNUSED, Evas_Object *o
      wl_fixed_from_int(ev->cur.canvas.x - ec->client.x);
    ec->comp->wl_comp_data->ptr.y = 
      wl_fixed_from_int(ev->cur.canvas.y - ec->client.y);
+
+   if (!ec->comp_data->surface) return;
 
    wc = wl_resource_get_client(ec->comp_data->surface);
    EINA_LIST_FOREACH(ec->comp->wl_comp_data->ptr.resources, l, res)
@@ -273,6 +279,8 @@ _e_comp_wl_evas_cb_mouse_down(void *data, Evas *evas EINA_UNUSED, Evas_Object *o
 
    ec->comp->wl_comp_data->ptr.button = btn;
 
+   if (!ec->comp_data->surface) return;
+
    wc = wl_resource_get_client(ec->comp_data->surface);
    serial = wl_display_next_serial(ec->comp->wl_comp_data->wl.disp);
    EINA_LIST_FOREACH(ec->comp->wl_comp_data->ptr.resources, l, res)
@@ -318,6 +326,8 @@ _e_comp_wl_evas_cb_mouse_up(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj
 
    ec->comp->wl_comp_data->ptr.button = btn;
 
+   if (!ec->comp_data->surface) return;
+
    wc = wl_resource_get_client(ec->comp_data->surface);
    serial = wl_display_next_serial(ec->comp->wl_comp_data->wl.disp);
    EINA_LIST_FOREACH(ec->comp->wl_comp_data->ptr.resources, l, res)
@@ -354,6 +364,8 @@ _e_comp_wl_evas_cb_mouse_wheel(void *data, Evas *evas EINA_UNUSED, Evas_Object *
      dir = -wl_fixed_from_int(abs(ev->z));
    else
      dir = wl_fixed_from_int(ev->z);
+
+   if (!ec->comp_data->surface) return;
 
    wc = wl_resource_get_client(ec->comp_data->surface);
    EINA_LIST_FOREACH(ec->comp->wl_comp_data->ptr.resources, l, res)
@@ -399,6 +411,8 @@ _e_comp_wl_evas_cb_key_down(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj
    /* update modifier state */
    e_comp_wl_input_keyboard_state_update(cdata, keycode, EINA_TRUE);
 
+   if (!ec->comp_data->surface) return;
+
    wc = wl_resource_get_client(ec->comp_data->surface);
    serial = wl_display_next_serial(ec->comp->wl_comp_data->wl.disp);
    EINA_LIST_FOREACH(ec->comp->wl_comp_data->kbd.resources, l, res)
@@ -434,6 +448,8 @@ _e_comp_wl_evas_cb_key_up(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj E
      if (*k == keycode) *k = *--end;
 
    cdata->kbd.keys.size = (const char *)end - (const char *)cdata->kbd.keys.data;
+
+   if (!ec->comp_data->surface) return;
 
    wc = wl_resource_get_client(ec->comp_data->surface);
    serial = wl_display_next_serial(cdata->wl.disp);
@@ -586,6 +602,8 @@ _e_comp_wl_evas_cb_focus_in(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj
    wl_array_for_each(k, &cdata->kbd.keys)
      e_comp_wl_input_keyboard_state_update(cdata, *k, EINA_TRUE);
 
+   if (!ec->comp_data->surface) return;
+
    /* send keyboard_enter to all keyboard resources */
    wc = wl_resource_get_client(ec->comp_data->surface);
    serial = wl_display_next_serial(cdata->wl.disp);
@@ -620,6 +638,8 @@ _e_comp_wl_evas_cb_focus_out(void *data, Evas *evas EINA_UNUSED, Evas_Object *ob
    /* update keyboard modifier state */
    wl_array_for_each(k, &cdata->kbd.keys)
      e_comp_wl_input_keyboard_state_update(cdata, *k, EINA_FALSE);
+
+   if (!ec->comp_data->surface) return;
 
    /* send keyboard_leave to all keyboard resources */
    wc = wl_resource_get_client(ec->comp_data->surface);
