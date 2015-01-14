@@ -811,24 +811,14 @@ _e_fwin_icon_popup_handler(void *data, int type, void *event)
    return ECORE_CALLBACK_RENEW;
 }
 
-static Eina_Bool
-_e_fwin_icon_popup(void *data)
+static void
+_e_fwin_icon_hints(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
-   E_Fwin *fwin = data;
-   Evas_Object *bg, *list, *o;
-   E_Zone *zone;
-   char buf[4096];
    int x, y, w, h, mw, mh, fx, fy, px, py;
+   E_Zone *zone;
+   Evas_Object *edje;
+   E_Fwin *fwin = data;
 
-   fwin->popup_timer = NULL;
-   if (!fwin->popup_icon) return EINA_FALSE;
-   snprintf(buf, sizeof(buf), "%s/%s", e_fm2_real_path_get(fwin->cur_page->fm_obj), fwin->popup_icon->file);
-   if (!ecore_file_can_read(buf)) return EINA_FALSE;
-   if (fwin->popup)
-     {
-        evas_object_hide(fwin->popup);
-        evas_object_del(fwin->popup);
-     }
    zone = fwin->zone ?: e_comp_object_util_zone_get(fwin->win);
    e_fm2_icon_geometry_get(fwin->popup_icon->ic, &x, &y, &w, &h);
    if (fwin->zone)
@@ -838,29 +828,11 @@ _e_fwin_icon_popup(void *data)
      }
    else
      evas_object_geometry_get(fwin->win, &fx, &fy, NULL, NULL);
-
-   bg = edje_object_add(e_comp_get(zone)->evas);
-   e_theme_edje_object_set(bg, "base/theme/fileman",
-                           "e/fileman/popup/default");
-   mw = zone->w * fileman_config->tooltip.size / 100.0;
-   mh = zone->h * fileman_config->tooltip.size / 100.0;
-
-   edje_object_part_text_set(bg, "e.text.title", 
-                             fwin->popup_icon->label ?
-                             fwin->popup_icon->label : fwin->popup_icon->file);
-   
-   list = e_widget_list_add(e_comp_get(zone)->evas, 0, 0);
-   
-   o = e_widget_filepreview_add(e_comp_get(zone)->evas, mw, mh, 0);
-   e_widget_filepreview_clamp_video_set(o, fileman_config->tooltip.clamp_size);
-   e_widget_filepreview_path_set(o, buf, fwin->popup_icon->mime);
-   e_widget_list_object_append(list, o, 1, 0, 0.5);
-   e_widget_size_min_get(list, &mw, &mh);
-   evas_object_size_hint_min_set(list, mw, mh);
-   edje_object_part_swallow(bg, "e.swallow.content", list);
-   
-   edje_object_size_min_calc(bg, &mw, &mh);
-
+   edje = evas_object_smart_parent_get(obj);
+   /* failing to unswallow here causes edje to fail its min size calculations */
+   edje_object_part_unswallow(edje, obj);
+   edje_object_part_swallow(edje, "e.swallow.content", obj);
+   edje_object_size_min_calc(edje, &mw, &mh);
    /* prefer tooltip left of icon */
    px = (fx + x) - mw - 3;
    /* if it's offscreen, try right of icon */
@@ -880,9 +852,51 @@ _e_fwin_icon_popup(void *data)
      py = (y + h / 2) - (mh / 2);
    /* give up */
    if (py < zone->y) py = zone->y;
+   evas_object_geometry_set(fwin->popup, px, py, mw, mh);
+}
+
+static Eina_Bool
+_e_fwin_icon_popup(void *data)
+{
+   E_Fwin *fwin = data;
+   Evas_Object *bg, *list, *o;
+   E_Zone *zone;
+   char buf[4096];
+   int mw, mh;
+
+   fwin->popup_timer = NULL;
+   if (!fwin->popup_icon) return EINA_FALSE;
+   snprintf(buf, sizeof(buf), "%s/%s", e_fm2_real_path_get(fwin->cur_page->fm_obj), fwin->popup_icon->file);
+   if (!ecore_file_can_read(buf)) return EINA_FALSE;
+   if (fwin->popup)
+     {
+        evas_object_hide(fwin->popup);
+        evas_object_del(fwin->popup);
+     }
+
+   zone = fwin->zone ?: e_comp_object_util_zone_get(fwin->win);
+   bg = edje_object_add(e_comp_get(zone)->evas);
+   e_theme_edje_object_set(bg, "base/theme/fileman",
+                           "e/fileman/popup/default");
+   mw = zone->w * fileman_config->tooltip.size / 100.0;
+   mh = zone->h * fileman_config->tooltip.size / 100.0;
+
+   edje_object_part_text_set(bg, "e.text.title", 
+                             fwin->popup_icon->label ?
+                             fwin->popup_icon->label : fwin->popup_icon->file);
+   
+   list = e_widget_list_add(e_comp_get(zone)->evas, 0, 0);
+   
+   o = e_widget_filepreview_add(e_comp_get(zone)->evas, mw, mh, 0);
+   e_widget_filepreview_clamp_video_set(o, fileman_config->tooltip.clamp_size);
+   e_widget_filepreview_path_set(o, buf, fwin->popup_icon->mime);
+   e_widget_list_object_append(list, o, 1, 0, 0.5);
+   edje_object_part_swallow(bg, "e.swallow.content", list);
+   
+   evas_object_event_callback_add(list, EVAS_CALLBACK_CHANGED_SIZE_HINTS, _e_fwin_icon_hints, fwin);
+
    fwin->popup = e_comp_object_util_add(bg, E_COMP_OBJECT_TYPE_POPUP);
    evas_object_layer_set(fwin->popup, E_LAYER_POPUP);
-   evas_object_geometry_set(fwin->popup, px, py, mw, mh);
    e_comp_object_util_del_list_append(fwin->popup, list);
    e_comp_object_util_del_list_append(fwin->popup, o);
    evas_object_pass_events_set(fwin->popup, 1);
