@@ -875,7 +875,7 @@ _e_fwin_icon_popup(void *data)
      }
 
    zone = fwin->zone ?: e_comp_object_util_zone_get(fwin->win);
-   bg = edje_object_add(e_comp_get(zone)->evas);
+   bg = edje_object_add(e_comp->evas);
    e_theme_edje_object_set(bg, "base/theme/fileman",
                            "e/fileman/popup/default");
    mw = zone->w * fileman_config->tooltip.size / 100.0;
@@ -885,9 +885,9 @@ _e_fwin_icon_popup(void *data)
                              fwin->popup_icon->label ?
                              fwin->popup_icon->label : fwin->popup_icon->file);
    
-   list = e_widget_list_add(e_comp_get(zone)->evas, 0, 0);
+   list = e_widget_list_add(e_comp->evas, 0, 0);
    
-   o = e_widget_filepreview_add(e_comp_get(zone)->evas, mw, mh, 0);
+   o = e_widget_filepreview_add(e_comp->evas, mw, mh, 0);
    e_widget_filepreview_clamp_video_set(o, fileman_config->tooltip.clamp_size);
    e_widget_filepreview_path_set(o, buf, fwin->popup_icon->mime);
    e_widget_list_object_append(list, o, 1, 0, 0.5);
