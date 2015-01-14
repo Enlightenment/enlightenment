@@ -277,6 +277,7 @@ e_sys_action_do(E_Sys_Action a, char *param)
         _e_sys_current_action();
         return 0;
      }
+   e_config_save_flush();
    switch (a)
      {
       case E_SYS_EXIT:
@@ -310,6 +311,7 @@ e_sys_action_raw_do(E_Sys_Action a, char *param)
 {
    int ret = 0;
 
+   e_config_save_flush();
    if (_e_sys_action_current != E_SYS_NONE)
      {
         _e_sys_current_action();
