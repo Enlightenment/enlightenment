@@ -41,6 +41,15 @@ static void _e_smart_clip_set(Evas_Object *obj, Evas_Object *clip);
 static void _e_smart_clip_unset(Evas_Object *obj);
 static void _e_smart_init(void);
 
+static void
+_e_widget_hint(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
+{
+   int w, h;
+
+   evas_object_size_hint_min_get(obj, &w, &h);
+   e_widget_size_min_set(data, w, h);
+}
+
 /* local subsystem globals */
 static Evas_Smart *_e_smart = NULL;
 
@@ -189,6 +198,7 @@ e_widget_resize_object_set(Evas_Object *obj, Evas_Object *sobj)
    API_ENTRY return;
    if (sd->resize_obj) evas_object_smart_member_del(sd->resize_obj);
    sd->resize_obj = sobj;
+   evas_object_event_callback_add(sobj, EVAS_CALLBACK_CHANGED_SIZE_HINTS, _e_widget_hint, obj);
    evas_object_smart_member_add(sobj, obj);
    _e_smart_reconfigure(sd);
 }
