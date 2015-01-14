@@ -58,7 +58,7 @@ e_widget_entry_add(Evas_Object *parent, char **text_location, void (*func)(void 
    elm_object_text_set(o, "test");
    elm_entry_scrollable_set(o, 1);
    elm_entry_single_line_set(o, 1);
-   elm_entry_scrollbar_policy_set(o, ELM_SCROLLER_POLICY_AUTO, ELM_SCROLLER_POLICY_OFF);
+   elm_scroller_policy_set(o, ELM_SCROLLER_POLICY_AUTO, ELM_SCROLLER_POLICY_OFF);
    wd->o_entry = o;
    evas_object_size_hint_min_get(wd->o_entry, &minw, &minh);
    e_widget_size_min_set(obj, minw, minh);
