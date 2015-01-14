@@ -746,7 +746,14 @@ _e_module_dialog_disable_show(const char *title, const char *body, E_Module *m)
    char buf[4096];
 
    printf("MODULE ERR:\n%s\n", body);
-   dia = e_dialog_new(NULL, "E", "_module_unload_dialog");
+
+   /* FIXME: Stupid hack for ELM_WIN_DIALOG_BASIC not working in wayland */
+#warning REMOVE STUPID ELM HACK FOR WAYLAND BEFORE RELEASE
+   if (e_comp->comp_type != E_PIXMAP_TYPE_WL)
+     dia = e_dialog_new(NULL, "E", "_module_unload_dialog");
+   else
+     dia = e_dialog_normal_win_new(NULL, "E", "_module_unload_dialog");
+
    EINA_SAFETY_ON_NULL_RETURN(dia);
 
    snprintf(buf, sizeof(buf), "%s<br>%s", body,
