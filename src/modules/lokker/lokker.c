@@ -211,7 +211,6 @@ _pin_click(void *data EINA_UNUSED, Evas_Object *obj, const char *sig EINA_UNUSED
 static void
 _pin_box_add(Lokker_Popup *lp)
 {
-   int mw, mh;
    Evas *evas;
    Evas_Object *table, *o, *o2;
    int x, a = 0, b = 0;
