@@ -69,15 +69,12 @@ EAPI void
 e_widget_framelist_object_append(Evas_Object *obj, Evas_Object *sobj)
 {
    E_Widget_Data *wd;
-   Evas_Coord mw = 0, mh = 0;
 
    wd = e_widget_data_get(obj);
 
    elm_box_pack_end(wd->o_box, sobj);
-   e_widget_size_min_get(sobj, &mw, &mh);
    E_EXPAND(sobj);
    E_FILL(sobj);
-   evas_object_size_hint_min_set(sobj, mw, mh);
    elm_box_recalculate(wd->o_box);
    e_widget_sub_object_add(obj, sobj);
    evas_object_show(sobj);
