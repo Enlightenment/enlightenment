@@ -2,6 +2,9 @@
 
 /* local subsystem functions */
 
+static void _e_gadcon_popup_changed_size_hints_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__);
+static void _e_gadcon_popup_del_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__);
+
 static Eina_Bool
 _e_popup_autoclose_deskafter_show_cb(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
 {
@@ -51,6 +54,14 @@ _e_gadcon_popup_delay_del(void *obj)
 static void
 _e_gadcon_popup_free(E_Gadcon_Popup *pop)
 {
+   if (pop->content)
+     {
+        evas_object_event_callback_del_full(pop->content, EVAS_CALLBACK_DEL,
+                                            _e_gadcon_popup_del_cb, pop);
+        evas_object_event_callback_del_full(pop->content, EVAS_CALLBACK_CHANGED_SIZE_HINTS,
+                                            _e_gadcon_popup_changed_size_hints_cb, pop);
+        pop->content = NULL;
+     }
    E_FREE_FUNC(pop->autoclose_handlers[0], ecore_event_handler_del);
    E_FREE_FUNC(pop->autoclose_handlers[1], ecore_event_handler_del);
 
@@ -173,6 +184,18 @@ _e_gadcon_popup_changed_size_hints_cb(void *data, Evas *e __UNUSED__, Evas_Objec
    _e_gadcon_popup_size_recalc(data, obj);
 }
 
+static void
+_e_gadcon_popup_del_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
+{
+   E_Gadcon_Popup *pop = data;
+
+   evas_object_event_callback_del_full(obj, EVAS_CALLBACK_DEL,
+                                       _e_gadcon_popup_del_cb, pop);
+   evas_object_event_callback_del_full(obj, EVAS_CALLBACK_CHANGED_SIZE_HINTS,
+                                       _e_gadcon_popup_changed_size_hints_cb, pop);
+   pop->content = NULL;
+}
+
 /* externally accessible functions */
 
 EAPI E_Gadcon_Popup *
@@ -220,6 +243,8 @@ e_gadcon_popup_content_set(E_Gadcon_Popup *pop, Evas_Object *o)
              evas_object_del(old_o);
           }
         edje_object_part_swallow(pop->o_bg, "e.swallow.content", o);
+        evas_object_event_callback_add(o, EVAS_CALLBACK_DEL,
+                                       _e_gadcon_popup_del_cb, pop);
         evas_object_event_callback_add(o, EVAS_CALLBACK_CHANGED_SIZE_HINTS,
                                        _e_gadcon_popup_changed_size_hints_cb, pop);
      }
