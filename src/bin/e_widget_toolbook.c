@@ -23,7 +23,7 @@ e_widget_toolbook_add(Evas *evas, int icon_w, int icon_h)
    e_widget_data_set(obj, wd);
    wd->o_widget = obj;
 
-   o = e_widget_table_add(evas, 0);
+   o = e_widget_table_add(e_win_evas_win_get(evas), 0);
    e_widget_resize_object_set(obj, o);
    evas_object_show(o);
    e_widget_sub_object_add(obj, o);

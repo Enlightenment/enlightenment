@@ -204,11 +204,11 @@ e_widget_csel_add(Evas *evas, E_Color *color, Eina_Bool alpha_enabled)
    wd->obj = obj;
    e_widget_data_set(obj, wd);
 
-   table = e_widget_table_add(evas, 0);
+   table = e_widget_table_add(e_win_evas_win_get(evas), 0);
    e_widget_sub_object_add(obj, table);
    e_widget_resize_object_set(obj, table);
 
-   frame = e_widget_table_add(evas, 0);
+   frame = e_widget_table_add(e_win_evas_win_get(evas), 0);
    e_widget_sub_object_add(obj, frame);
    grp = e_widget_radio_group_new(&wd->mode);
 

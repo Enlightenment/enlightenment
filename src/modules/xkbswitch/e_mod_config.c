@@ -297,7 +297,7 @@ _basic_create(E_Config_Dialog *cfd EINA_UNUSED, Evas *evas, E_Config_Dialog_Data
    cfdata->used_list = configs;
 
    /* Holds the buttons */
-   buttons = e_widget_table_add(evas, 1);
+   buttons = e_widget_table_add(e_win_evas_win_get(evas), 1);
    cfdata->btn_up = e_widget_button_add(evas, _("Up"), "go-up", _cb_up, cfdata, NULL);
    e_widget_disabled_set(cfdata->btn_up, EINA_TRUE);
    e_widget_table_object_append(buttons, cfdata->btn_up, 0, 0, 1, 1, 1, 1, 1, 0);

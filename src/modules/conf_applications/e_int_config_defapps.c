@@ -292,7 +292,7 @@ _basic_create(E_Config_Dialog *cfd, Evas *evas, E_Config_Dialog_Data *cfdata)
    e_dialog_resizable_set(cfd->dia, 1);
    otb = e_widget_toolbook_add(evas, 24, 24);
 
-   ot = e_widget_table_add(evas, EINA_FALSE);
+   ot = e_widget_table_add(e_win_evas_win_get(evas), EINA_FALSE);
 
    ob = e_widget_label_add(evas, _("Custom Browser Command"));
    e_widget_table_object_append(ot, ob, 0, 0, 1, 1, 1, 1, 0, 0);
@@ -330,7 +330,7 @@ _basic_create(E_Config_Dialog *cfd, Evas *evas, E_Config_Dialog_Data *cfdata)
    e_widget_toolbook_page_append(otb, NULL, _("Core"), ot,
                                  1, 1, 1, 1, 0.5, 0.0);
 
-   ot = e_widget_table_add(evas, EINA_FALSE);
+   ot = e_widget_table_add(e_win_evas_win_get(evas), EINA_FALSE);
 
    of = e_widget_framelist_add(evas, _("Types"), 0);
    il = e_widget_ilist_add(evas, 24, 24, &(cfdata->selmime));

@@ -358,7 +358,7 @@ _create_plugin_page(E_Config_Dialog_Data *cfdata __UNUSED__, Evas *e, Plugin_Pag
    Evas_Object *o, *of, *ob;
    E_Radio_Group *rg;
 
-   ob = e_widget_table_add(e, 0);
+   ob = e_widget_table_add(e_win_evas_win_get(e), 0);
    of = e_widget_frametable_add(e, _("Available Plugins"), 0);
    page->list = e_widget_ilist_add(e, 24, 24, NULL);
    e_widget_on_change_hook_set(page->list, _list_select_cb, page);
@@ -450,7 +450,7 @@ _basic_create_widgets(E_Config_Dialog *cfd EINA_UNUSED, Evas *e, E_Config_Dialog
 
    otb = e_widget_toolbook_add(e, 48 * e_scale, 48 * e_scale);
 
-   o = e_widget_table_add(e, 0);
+   o = e_widget_table_add(e_win_evas_win_get(e), 0);
 
    /// GENERAL SETTNGS ///
    of = e_widget_framelist_add(e, _("Default View"), 0);

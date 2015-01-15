@@ -69,7 +69,7 @@ _basic_create_widgets(E_Config_Dialog *cfd EINA_UNUSED,
 {
    Evas_Object *ob, *ol, *otb, *tab, *oc;
 
-   tab = e_widget_table_add(evas, 0);
+   tab = e_widget_table_add(e_win_evas_win_get(evas), 0);
 
    otb = e_widget_toolbook_add(evas, 48 * e_scale, 48 * e_scale);
 

@@ -423,7 +423,7 @@ _basic_create_widgets(E_Config_Dialog *cfd EINA_UNUSED, Evas *evas, E_Config_Dia
    cfdata->evas = evas;
 
    e_dialog_resizable_set(cfd->dia, 1);
-   ot = e_widget_table_add(evas, 0);
+   ot = e_widget_table_add(e_win_evas_win_get(evas), 0);
 
    cfdata->gui.class_list = NULL;
 
@@ -638,7 +638,7 @@ _advanced_create_widgets(E_Config_Dialog *cfd EINA_UNUSED, Evas *evas, E_Config_
 
    otb = e_widget_toolbook_add(evas, 48 * e_scale, 48 * e_scale);
 
-   ot = e_widget_table_add(evas, 0);
+   ot = e_widget_table_add(e_win_evas_win_get(evas), 0);
    of = e_widget_frametable_add(evas, _("Font Classes"), 0);
    ob = e_widget_ilist_add(evas, 16, 16, NULL);
    cfdata->gui.class_list = ob;
@@ -688,7 +688,7 @@ _advanced_create_widgets(E_Config_Dialog *cfd EINA_UNUSED, Evas *evas, E_Config_
    e_widget_toolbook_page_append(otb, NULL, _("General Settings"),
                                  ot, 1, 1, 1, 1, 0.5, 0.0);
 
-   ot = e_widget_table_add(evas, 0);
+   ot = e_widget_table_add(e_win_evas_win_get(evas), 0);
    of = e_widget_frametable_add(evas, _("Hinting"), 0);
    rg = e_widget_radio_group_new(&(cfdata->hinting));
    option_enable = evas_font_hinting_can_hint(evas, EVAS_FONT_HINTING_BYTECODE);

@@ -62,7 +62,6 @@ e_widget_entry_add(Evas_Object *parent, char **text_location, void (*func)(void 
    wd->o_entry = o;
    evas_object_size_hint_min_get(wd->o_entry, &minw, &minh);
    e_widget_size_min_set(obj, minw, minh);
-   evas_object_size_hint_min_set(obj, minw, minh);
    elm_object_text_set(o, NULL);
 
    e_widget_sub_object_add(obj, o);

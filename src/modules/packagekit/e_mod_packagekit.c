@@ -180,7 +180,7 @@ packagekit_popup_new(E_PackageKit_Instance *inst)
    inst->popup = e_gadcon_popup_new(inst->gcc, EINA_FALSE);
    evas = e_comp_get(inst->popup)->evas;
 
-   table = e_widget_table_add(evas, 0);
+   table = e_widget_table_add(e_win_evas_win_get(evas), 0);
 
    inst->popup_label = e_widget_label_add(evas, NULL);
    e_widget_table_object_append(table, inst->popup_label, 0,0, 1,1, 1,0,1,0);

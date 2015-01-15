@@ -1076,7 +1076,7 @@ _advanced_create_widgets(E_Config_Dialog *cfd __UNUSED__, Evas *evas, E_Config_D
    _fill_data(cfdata);
 
    o = e_widget_list_add(evas, 0, 0);
-   ot = e_widget_table_add(evas, 0);
+   ot = e_widget_table_add(e_win_evas_win_get(evas), 0);
 
    ob = e_widget_label_add(evas, cfdata->label);
    e_widget_list_object_append(o, ob, 1, 1, 0.5);
