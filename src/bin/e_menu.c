@@ -357,7 +357,7 @@ e_menu_activate_mouse(E_Menu *m, E_Zone *zone, int x, int y, int w, int h, int d
      }
    pmi = _e_menu_item_active_get();
    if (pmi) e_menu_item_active_set(pmi, 0);
-   _mouse_up_feed(e_comp_get(m)->evas, activate_time);
+   _mouse_up_feed(e_comp->evas, activate_time);
 }
 
 EAPI void
@@ -1195,11 +1195,7 @@ e_menu_idler_before(void)
      {
         if (_e_menu_win)
           {
-             E_Comp *c;
-
-             c = e_comp_find_by_window(_e_menu_win);
-             if (!c) c = e_comp_get(NULL);
-             e_comp_ungrab_input(c, 1, 1);
+             e_comp_ungrab_input(e_comp, 1, 1);
              _e_menu_win = 0;
           }
      }
@@ -1625,7 +1621,7 @@ _e_menu_realize(E_Menu *m)
    if (m->parent_item && m->parent_item->menu)
      m->zone = m->parent_item->menu->zone;
    if (!m->zone) return; //menu not ready!
-   m->evas = e_comp_get(m)->evas;
+   m->evas = e_comp->evas;
    evas_event_freeze(m->evas);
 
    o = edje_object_add(m->evas);
@@ -2770,8 +2766,8 @@ _e_menu_cb_mouse_up(void *data __UNUSED__, int type __UNUSED__, void *event)
 
         mi = _e_menu_item_active_get();
         if ((!mi) ||
-            (E_INSIDE(e_comp_canvas_x_root_adjust(e_comp_get(mi), ev->root.x),
-                      e_comp_canvas_y_root_adjust(e_comp_get(mi), ev->root.y),
+            (E_INSIDE(e_comp_canvas_x_root_adjust(e_comp, ev->root.x),
+                      e_comp_canvas_y_root_adjust(e_comp, ev->root.y),
                       mi->x, mi->y, mi->w, mi->h))
            )
           ret = _e_menu_active_call();
