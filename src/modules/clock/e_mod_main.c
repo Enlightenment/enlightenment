@@ -331,19 +331,19 @@ _clock_popup_new(Instance *inst)
      e_theme_edje_object_set(oi, "base/theme/modules/clock",
                              "e/modules/clock/main");
    if (inst->cfg->show_date)
-     edje_object_signal_emit(oi, "e,state,date,on", "e");
+     elm_object_signal_emit(oi, "e,state,date,on", "e");
    else
-     edje_object_signal_emit(oi, "e,state,date,off", "e");
+     elm_object_signal_emit(oi, "e,state,date,off", "e");
    if (inst->cfg->digital_24h)
-     edje_object_signal_emit(oi, "e,state,24h,on", "e");
+     elm_object_signal_emit(oi, "e,state,24h,on", "e");
    else
-     edje_object_signal_emit(oi, "e,state,24h,off", "e");
+     elm_object_signal_emit(oi, "e,state,24h,off", "e");
    if (inst->cfg->show_seconds)
-     edje_object_signal_emit(oi, "e,state,seconds,on", "e");
+     elm_object_signal_emit(oi, "e,state,seconds,on", "e");
    else
-     edje_object_signal_emit(oi, "e,state,seconds,off", "e");
+     elm_object_signal_emit(oi, "e,state,seconds,off", "e");
 
-   edje_object_part_text_set(oi, "e.text.today", todaystr);
+   elm_object_part_text_set(oi, "e.text.today", todaystr);
 
    elm_layout_sizing_eval(oi);
    elm_table_pack(inst->o_table, oi, 0, 0, 1, 1);
@@ -364,9 +364,9 @@ _clock_popup_new(Instance *inst)
                            "e/modules/clock/calendar");
    _clock_month_update(inst);
 
-   edje_object_signal_callback_add(oi, "e,action,prev", "*",
+   elm_object_signal_callback_add(oi, "e,action,prev", "*",
                                    _clock_month_prev_cb, inst);
-   edje_object_signal_callback_add(oi, "e,action,next", "*",
+   elm_object_signal_callback_add(oi, "e,action,next", "*",
                                    _clock_month_next_cb, inst);
    edje_object_message_signal_process(elm_layout_edje_get(oi));
    elm_layout_sizing_eval(oi);
