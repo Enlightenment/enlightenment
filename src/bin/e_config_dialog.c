@@ -173,15 +173,6 @@ _e_config_dialog_free(E_Config_Dialog *cfd)
 }
 
 static void
-_e_config_hints(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
-{
-   int w, h;
-
-   edje_object_size_min_calc(data, &w, &h);
-   evas_object_size_hint_min_set(data, w, h);
-}
-
-static void
 _e_config_dialog_go(E_Config_Dialog *cfd, E_Config_Dialog_CFData_Type type)
 {
    Evas *evas;
@@ -278,7 +269,6 @@ _e_config_dialog_go(E_Config_Dialog *cfd, E_Config_Dialog_CFData_Type type)
           }
      }
 
-   evas_object_event_callback_add(o, EVAS_CALLBACK_CHANGED_SIZE_HINTS, _e_config_hints, cfd->dia->bg_object);
    e_widget_on_change_hook_set(o, _e_config_dialog_cb_changed, cfd);
    e_widget_size_min_get(o, &mw, &mh);
    e_dialog_content_set(cfd->dia, o, mw, mh);

@@ -35,7 +35,7 @@ _e_dialog_internal_new(Evas_Object *parent, const char *name, const char *class,
    e = evas_object_evas_get(dia->win);
    evas_object_event_callback_add(dia->win, EVAS_CALLBACK_DEL, _e_dialog_cb_delete, dia);
    ecore_evas_name_class_set(ecore_evas_ecore_evas_get(e), name, class);
-   dia->bg_object = o = edje_object_add(evas_object_evas_get(dia->win));
+   dia->bg_object = o = elm_layout_add(dia->win);
    E_EXPAND(o);
    E_FILL(o);
    elm_win_resize_object_add(dia->win, o);
@@ -46,8 +46,8 @@ _e_dialog_internal_new(Evas_Object *parent, const char *name, const char *class,
    o = e_widget_list_add(evas_object_evas_get(dia->win), 1, 1);
    e_widget_on_focus_hook_set(o, _e_dialog_cb_wid_on_focus, dia);
    dia->box_object = o;
-   edje_object_part_swallow(dia->bg_object, "e.swallow.buttons", o);
-   edje_object_signal_emit(dia->bg_object, "e,state,no_resizable", "e");
+   elm_object_part_content_set(dia->bg_object, "e.swallow.buttons", o);
+   elm_layout_signal_emit(dia->bg_object, "e,state,no_resizable", "e");
 
    o = evas_object_rectangle_add(e);
    dia->event_object = o;
@@ -148,10 +148,10 @@ e_dialog_text_set(E_Dialog *dia, const char *text)
         dia->text_object = o;
         e_theme_edje_object_set(o, "base/theme/dialog",
                                 "e/widgets/dialog/text");
-        edje_object_part_swallow(dia->bg_object, "e.swallow.content", o);
+        elm_object_part_content_set(dia->bg_object, "e.swallow.content", o);
         evas_object_show(o);
      }
-   edje_object_part_text_set(dia->text_object, "e.textblock.message", text);
+   elm_object_part_text_set(dia->text_object, "e.textblock.message", text);
 }
 
 EAPI void
@@ -161,26 +161,25 @@ e_dialog_icon_set(E_Dialog *dia, const char *icon, Evas_Coord size)
      {
         if (dia->icon_object)
           {
-             edje_object_part_unswallow(dia->bg_object, dia->icon_object);
              evas_object_del(dia->icon_object);
              dia->icon_object = NULL;
           }
-        edje_object_signal_emit(dia->bg_object, "e,state,icon", "e");
-        edje_object_signal_emit(dia->bg_object, "e,icon,disabled", "e");
+        elm_layout_signal_emit(dia->bg_object, "e,state,icon", "e");
+        elm_layout_signal_emit(dia->bg_object, "e,icon,disabled", "e");
      }
    else
      {
         if (!dia->icon_object)
           {
              dia->icon_object = e_icon_add(evas_object_evas_get(dia->win));
-             edje_object_part_swallow(dia->bg_object, "e.swallow.icon", dia->icon_object);
+             elm_object_part_content_set(dia->bg_object, "e.swallow.icon", dia->icon_object);
              evas_object_show(dia->icon_object);
           }
         if (!e_util_icon_theme_set(dia->icon_object, icon))
           e_icon_file_edje_set(dia->icon_object, icon, "icon");
         evas_object_size_hint_min_set(dia->icon_object, size * e_scale, size * e_scale);
-        edje_object_signal_emit(dia->bg_object, "e,state,icon", "e");
-        edje_object_signal_emit(dia->bg_object, "e,icon,enabled", "e");
+        elm_layout_signal_emit(dia->bg_object, "e,state,icon", "e");
+        elm_layout_signal_emit(dia->bg_object, "e,icon,enabled", "e");
      }
    edje_object_message_signal_process(dia->bg_object);
 }
@@ -202,10 +201,9 @@ e_dialog_content_set(E_Dialog *dia, Evas_Object *obj, Evas_Coord minw, Evas_Coor
    dia->content_object = obj;
    e_widget_on_focus_hook_set(obj, _e_dialog_cb_wid_on_focus, dia);
    evas_object_size_hint_min_set(obj, minw, minh);
-   edje_object_part_swallow(dia->bg_object, "e.swallow.content", obj);
-   edje_object_size_min_calc(dia->bg_object, &mw, &mh);
+   elm_object_part_content_set(dia->bg_object, "e.swallow.content", obj);
+   evas_object_size_hint_min_get(dia->bg_object, &mw, &mh);
    evas_object_resize(dia->win, mw, mh);
-   evas_object_size_hint_min_set(dia->bg_object, mw, mh);
    dia->min_w = mw;
    dia->min_h = mh;
    evas_object_show(obj);
@@ -222,14 +220,14 @@ e_dialog_resizable_set(E_Dialog *dia, int resizable)
              evas_object_size_hint_max_set(dia->bg_object, 99999, 99999);
              evas_object_size_hint_weight_set(dia->bg_object, 1, 1);
              e_util_win_auto_resize_fill(dia->win);
-             edje_object_signal_emit(dia->bg_object, "e,state,resizable", "e");
+             elm_layout_signal_emit(dia->bg_object, "e,state,resizable", "e");
           }
         else
           {
              evas_object_resize(dia->win, dia->min_w, dia->min_h);
              evas_object_size_hint_weight_set(dia->bg_object, 0, 0);
              evas_object_size_hint_max_set(dia->bg_object, dia->min_w, dia->min_h);
-             edje_object_signal_emit(dia->bg_object, "e,state,no_resizable", "e");
+             elm_layout_signal_emit(dia->bg_object, "e,state,no_resizable", "e");
           }
      }
 }
@@ -245,16 +243,14 @@ e_dialog_show(E_Dialog *dia)
      {
         edje_object_size_min_calc(o, &mw, &mh);
         evas_object_size_hint_min_set(o, mw, mh);
-        edje_object_part_swallow(dia->bg_object, "e.swallow.content", o);
+        elm_object_part_content_set(dia->bg_object, "e.swallow.content", o);
      }
 
    o = dia->box_object;
    e_widget_size_min_get(o, &mw, &mh);
    evas_object_size_hint_min_set(o, mw, mh);
-   edje_object_part_swallow(dia->bg_object, "e.swallow.buttons", o);
+   elm_object_part_content_set(dia->bg_object, "e.swallow.buttons", o);
 
-   edje_object_size_min_calc(dia->bg_object, &mw, &mh);
-   evas_object_size_hint_min_set(dia->bg_object, mw, mh);
    evas_object_resize(dia->win, mw, mh);
    dia->min_w = mw;
    dia->min_h = mh;
