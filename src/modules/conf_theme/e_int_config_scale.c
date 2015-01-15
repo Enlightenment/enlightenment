@@ -223,7 +223,7 @@ _basic_create(E_Config_Dialog *cfd __UNUSED__, Evas *evas, E_Config_Dialog_Data 
    int dpi = 0, x = 0, y = 0;
 
    _fill_data(cfdata);
-   o = e_widget_table_add(e_win_evas_win_get(evas), 1);
+   o = e_widget_table_add(evas, 1);
 
 #ifndef HAVE_WAYLAND_ONLY
    dpi = ecore_x_dpi_get();

@@ -737,7 +737,8 @@ _advanced_create_widgets(E_Config_Dialog *cfd, Evas *evas, E_Config_Dialog_Data 
      }
    e_widget_toolbook_page_append(o, NULL, _("Identifiers"), of, 1, 1, 1, 1, 0.5, 0.0);
 
-   of = e_widget_table_add(e_win_evas_win_get(evas), 0);
+   of = e_widget_table_add(evas, 0);
+   e_widget_table_freeze(of);
    ob = e_widget_check_add(evas, _("Position"),
                            &(cfdata->remember.apply_pos));
    e_widget_table_object_append(of, ob, 0, 0, 1, 1, 1, 0, 1, 0);
@@ -794,7 +795,7 @@ _advanced_create_widgets(E_Config_Dialog *cfd, Evas *evas, E_Config_Dialog_Data 
    e_widget_table_object_append(of, ob, 0, 9, 2, 1, 1, 0, 1, 0);
    e_widget_toolbook_page_append(o, NULL, _("Properties"), of, 1, 1, 1, 1, 0.5, 0.0);
 
-   of = e_widget_table_add(e_win_evas_win_get(evas), 0);
+   of = e_widget_table_add(evas, 0);
    ob = e_widget_check_add(evas, _("Match only one window"),
                            &(cfdata->remember.apply_first_only));
    e_widget_table_object_append(of, ob, 0, 0, 1, 1, 1, 0, 1, 0);
@@ -813,6 +814,7 @@ _advanced_create_widgets(E_Config_Dialog *cfd, Evas *evas, E_Config_Dialog_Data 
                                 &(cfdata->remember.apply_run));
         e_widget_table_object_append(of, ob, 0, 3, 1, 1, 1, 0, 1, 0);
      }
+   e_widget_table_thaw(of);
    e_widget_toolbook_page_append(o, NULL, _("Options"), of, 1, 1, 1, 1, 0.5, 0.0);
    e_widget_toolbook_page_show(o, 0);
 

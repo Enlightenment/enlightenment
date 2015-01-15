@@ -211,6 +211,7 @@ _pin_click(void *data EINA_UNUSED, Evas_Object *obj, const char *sig EINA_UNUSED
 static void
 _pin_box_add(Lokker_Popup *lp)
 {
+   int mw, mh;
    Evas *evas;
    Evas_Object *table, *o, *o2;
    int x, a = 0, b = 0;
@@ -223,9 +224,10 @@ _pin_box_add(Lokker_Popup *lp)
                            "e/desklock/pin_box");
    edje_object_part_text_set(lp->login_box, "e.text.title",
                              _("Please enter your PIN"));
-   table = elm_table_add(e_win_evas_win_get(evas));
+   table = e_table_add(evas);
    e_comp_object_util_del_list_append(lp->login_box, table);
-   elm_table_homogeneous_set(table, 1);
+   e_table_homogenous_set(table, 1);
+   e_table_freeze(table);
    for (x = 1; x < 11; x++)
      {
         char buf[8];
@@ -238,10 +240,9 @@ _pin_box_add(Lokker_Popup *lp)
         evas_object_show(o);
         edje_object_signal_callback_add(o, "e,action,click", "*", _pin_click, lp);
         if (x == 10) a = 1;
-        evas_object_size_hint_min_set(o, 48 * e_scale, 48 * e_scale);
-        evas_object_size_hint_max_set(o, 48 * e_scale, 48 * e_scale);
-        E_FILL(o);
-        elm_table_pack(table, o, a, b, 1, 1);
+        e_table_pack(table, o, a, b, 1, 1);
+        e_table_pack_options_set(o, 1, 1, 0, 0, 0.5, 0.5,
+          48 * e_scale, 48 * e_scale, 48 * e_scale, 48 * e_scale);
         if (++a >= 3)
           {
              a = 0;
@@ -261,10 +262,9 @@ _pin_box_add(Lokker_Popup *lp)
    evas_object_show(o2);
    evas_object_show(o);
    edje_object_signal_callback_add(o, "e,action,click", "*", _pin_click, lp);
-   evas_object_size_hint_min_set(o, 48 * e_scale, 48 * e_scale);
-   evas_object_size_hint_max_set(o, 48 * e_scale, 48 * e_scale);
-   E_FILL(o);
-   elm_table_pack(table, o, 0, 3, 1, 1);
+   e_table_pack(table, o, 0, 3, 1, 1);
+   e_table_pack_options_set(o, 1, 1, 0, 0, 0.5, 0.5,
+     48 * e_scale, 48 * e_scale, 48 * e_scale, 48 * e_scale);
 
    /* login */
    o = edje_object_add(evas);
@@ -278,13 +278,19 @@ _pin_box_add(Lokker_Popup *lp)
    evas_object_show(o2);
    evas_object_show(o);
    edje_object_signal_callback_add(o, "e,action,click", "*", _pin_click, lp);
-   evas_object_size_hint_min_set(o, 48 * e_scale, 48 * e_scale);
-   evas_object_size_hint_max_set(o, 48 * e_scale, 48 * e_scale);
-   E_FILL(o);
-   elm_table_pack(table, o, 2, 3, 1, 1);
+   e_table_pack(table, o, 2, 3, 1, 1);
+   e_table_pack_options_set(o, 1, 1, 0, 0, 0.5, 0.5,
+     48 * e_scale, 48 * e_scale, 48 * e_scale, 48 * e_scale);
 
+   e_table_thaw(table);
    evas_object_show(table);
+   e_table_size_min_get(table, &mw, &mh);
+   evas_object_size_hint_min_set(table, mw, mh);
+   evas_object_size_hint_max_set(table, mw, mh);
    edje_object_part_swallow(lp->login_box, "e.swallow.buttons", table);
+   edje_object_size_min_calc(lp->login_box, &mw, &mh);
+   evas_object_size_hint_min_set(lp->login_box, mw, mh);
+   evas_object_size_hint_max_set(lp->login_box, mw, mh);
 }
 
 static void

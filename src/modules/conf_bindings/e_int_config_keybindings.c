@@ -253,7 +253,7 @@ _basic_create_widgets(E_Config_Dialog *cfd, Evas *evas, E_Config_Dialog_Data *cf
    e_widget_frametable_object_append(of, ob, 0, 3, 2, 1, 1, 0, 1, 0);
    e_widget_list_object_append(o, of, 1, 1, 0.5);
 
-   ot = e_widget_table_add(e_win_evas_win_get(evas), 0);
+   ot = e_widget_table_add(evas, 0);
    of = e_widget_framelist_add(evas, _("Action"), 0);
    ob = e_widget_ilist_add(evas, 24, 24, &(cfdata->locals.action));
    cfdata->gui.o_action_list = ob;

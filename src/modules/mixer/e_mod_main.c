@@ -548,7 +548,7 @@ _mixer_popup_new(E_Mixer_Instance *inst)
    inst->popup = e_gadcon_popup_new(inst->gcc, 0);
    evas = e_comp_get(inst->gcc)->evas;
 
-   inst->ui.table = e_widget_table_add(e_win_evas_win_get(evas), 0);
+   inst->ui.table = e_widget_table_add(evas, 0);
 
    inst->ui.label = e_widget_label_add(evas, inst->conf->channel_name);
    e_widget_table_object_append(inst->ui.table, inst->ui.label,

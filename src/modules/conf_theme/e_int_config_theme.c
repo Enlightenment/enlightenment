@@ -668,9 +668,9 @@ _basic_create_widgets(E_Config_Dialog *cfd EINA_UNUSED, Evas *evas, E_Config_Dia
    z = e_zone_current_get(e_comp_get(NULL));
    e_dialog_resizable_set(cfd->dia, 1);
 
-   ot = e_widget_table_add(e_win_evas_win_get(evas), 0);
-   ol = e_widget_table_add(e_win_evas_win_get(evas), 0);
-   il = e_widget_table_add(e_win_evas_win_get(evas), 1);
+   ot = e_widget_table_add(evas, 0);
+   ol = e_widget_table_add(evas, 0);
+   il = e_widget_table_add(evas, 1);
 
    rg = e_widget_radio_group_new(&(cfdata->fmdir));
    o = e_widget_radio_add(evas, _("Personal"), 0, rg);

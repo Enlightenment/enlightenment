@@ -254,7 +254,7 @@ _basic_create(E_Config_Dialog *cfd, Evas *evas, E_Config_Dialog_Data *cfdata)
    if (cfdata->data->show_autostart)
      {
         /* XDG autostart page */
-        ot = e_widget_table_add(e_win_evas_win_get(evas), EINA_FALSE);
+        ot = e_widget_table_add(evas, EINA_FALSE);
         cfdata->apps_xdg.o_list = e_widget_ilist_add(evas, 24, 24, NULL);
         e_widget_ilist_multi_select_set(cfdata->apps_xdg.o_list, EINA_TRUE);
         e_widget_size_min_get(cfdata->apps_xdg.o_list, &mw, NULL);
@@ -280,7 +280,7 @@ _basic_create(E_Config_Dialog *cfd, Evas *evas, E_Config_Dialog_Data *cfdata)
      }
 
    /* Selection page */
-   ot = e_widget_table_add(e_win_evas_win_get(evas), EINA_FALSE);
+   ot = e_widget_table_add(evas, EINA_FALSE);
    cfdata->apps_user.o_list = e_widget_ilist_add(evas, 24, 24, NULL);
    e_widget_ilist_multi_select_set(cfdata->apps_user.o_list, EINA_TRUE);
    e_widget_size_min_get(cfdata->apps_user.o_list, &mw, NULL);
@@ -299,7 +299,7 @@ _basic_create(E_Config_Dialog *cfd, Evas *evas, E_Config_Dialog_Data *cfdata)
                                  1, 1, 1, 1, 0.5, 0.0);
 
    /* Order page */
-   ot = e_widget_table_add(e_win_evas_win_get(evas), EINA_FALSE);
+   ot = e_widget_table_add(evas, EINA_FALSE);
    cfdata->o_list = e_widget_ilist_add(evas, 24, 24, NULL);
    _fill_order_list(cfdata);
    e_widget_table_object_append(ot, cfdata->o_list, 0, 0, 3, 1, 1, 1, 1, 1);

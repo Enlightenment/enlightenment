@@ -90,8 +90,8 @@ _basic_create(E_Config_Dialog *cfd __UNUSED__, Evas *evas, E_Config_Dialog_Data 
      cfdata->bg = NULL;
 
    rg = e_widget_radio_group_new(&(cfdata->fmdir));
-   ot = e_widget_table_add(e_win_evas_win_get(evas), 0);
-   rt = e_widget_table_add(e_win_evas_win_get(evas), 1);
+   ot = e_widget_table_add(evas, 0);
+   rt = e_widget_table_add(evas, 1);
 
    ow = e_widget_radio_add(evas, _("Personal"), 0, rg);
    evas_object_smart_callback_add(ow, "changed", _cb_radio_changed, cfdata);

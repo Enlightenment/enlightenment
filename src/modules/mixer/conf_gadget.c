@@ -345,7 +345,7 @@ _basic_create(E_Config_Dialog *cfd EINA_UNUSED, Evas *evas, E_Config_Dialog_Data
 
    e_dialog_resizable_set(cfd->dia, 1);
 
-   cfdata->ui.table = e_widget_table_add(e_win_evas_win_get(evas), 0);
+   cfdata->ui.table = e_widget_table_add(evas, 0);
    _basic_create_general(evas, cfdata);
    _basic_create_cards(evas, cfdata);
    _basic_create_channels(evas, cfdata);

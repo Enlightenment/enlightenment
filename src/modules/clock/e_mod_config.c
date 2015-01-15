@@ -78,7 +78,7 @@ _basic_create_widgets(E_Config_Dialog *cfd __UNUSED__,
         strftime(daynames[i], sizeof(daynames[i]), "%A", &tm);
      }
 
-   tab = e_widget_table_add(e_win_evas_win_get(evas), 0);
+   tab = e_widget_table_add(evas, 0);
 
    of = e_widget_frametable_add(evas, _("Clock"), 0);
 

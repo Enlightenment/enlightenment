@@ -177,7 +177,7 @@ _basic_create(E_Config_Dialog *cfd, Evas *evas, E_Config_Dialog_Data *cfdata)
 
    cfdata->evas = evas_object_evas_get(cfd->dia->win);
 
-   of = e_widget_table_add(e_win_evas_win_get(evas), 0);
+   of = e_widget_table_add(evas, 0);
 
    cfdata->o_toolbar = e_widget_toolbar_add(evas, 32 * e_scale, 32 * e_scale);
    e_widget_toolbar_scrollable_set(cfdata->o_toolbar, 1);

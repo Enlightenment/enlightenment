@@ -342,7 +342,7 @@ _create_edit_frame(E_Config_Dialog *cfd, Evas *evas, E_Config_Dialog_Data *cfdat
 
    tb = e_widget_toolbook_add(evas, 48 * e_scale, 48 * e_scale);
 
-   tab2 = e_widget_table_add(e_win_evas_win_get(evas), 0);
+   tab2 = e_widget_table_add(evas, 0);
    if (cfdata->edit_il == cfdata->borders_il)
      {
         if (m->match.title) m->title = strdup(m->match.title);
@@ -439,7 +439,7 @@ _create_edit_frame(E_Config_Dialog *cfd, Evas *evas, E_Config_Dialog_Data *cfdat
    m->modal = m->match.modal;
 
    row = 0;
-   tab2 = e_widget_table_add(e_win_evas_win_get(evas), 0);
+   tab2 = e_widget_table_add(evas, 0);
    lb = e_widget_label_add(evas, _("Unused"));
    e_widget_table_object_append(tab2, lb, 1, row, 1, 1, 0, 0, 0, 0);
    lb = e_widget_label_add(evas, _("On"));
@@ -678,7 +678,7 @@ _create_match_editor(E_Config_Dialog *cfd, Evas *evas, E_Config_Dialog_Data *cfd
    Match_Config *m;
    Eina_List *l;
 
-   tab = e_widget_table_add(e_win_evas_win_get(evas), 0);
+   tab = e_widget_table_add(evas, 0);
 
    il = e_widget_ilist_add(evas, 16, 16, NULL);
    e_widget_size_min_set(il, 160, 100);

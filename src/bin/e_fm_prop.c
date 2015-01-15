@@ -384,9 +384,9 @@ _basic_create_widgets(E_Config_Dialog *cfd, Evas *evas, E_Config_Dialog_Data *cf
    win = cfd->dia->win;
    snprintf(buf, sizeof(buf), "%s/%s",
             cfdata->location, cfdata->fi->file);
-   o = e_widget_table_add(e_win_evas_win_get(evas), 0);
+   o = e_widget_table_add(evas, 0);
 
-   ot = e_widget_table_add(e_win_evas_win_get(evas), 0);
+   ot = e_widget_table_add(evas, 0);
 
    ob = e_widget_label_add(evas, _("Name:"));
    e_widget_table_object_append(ot, ob, 0, 0, 1, 1, 1, 0, 1, 0);
@@ -480,7 +480,7 @@ _basic_create_widgets(E_Config_Dialog *cfd, Evas *evas, E_Config_Dialog_Data *cf
 
    of = e_widget_frametable_add(evas, _("Preview"), 0);
 
-   ot = e_widget_table_add(e_win_evas_win_get(evas), 0);
+   ot = e_widget_table_add(evas, 0);
    ob = e_widget_preview_add(evas, 128, 128);
    cfdata->gui.preview = ob;
    cfdata->gui.preview_table = ot;
@@ -572,7 +572,7 @@ _advanced_create_widgets(E_Config_Dialog *cfd, Evas *evas, E_Config_Dialog_Data 
    /* generate the core widget layout for an advanced dialog */
    Evas_Object *o;
 
-   o = e_widget_table_add(e_win_evas_win_get(evas), 0);
+   o = e_widget_table_add(evas, 0);
    return o;
 }
 

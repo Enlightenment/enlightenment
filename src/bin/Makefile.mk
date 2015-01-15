@@ -153,6 +153,7 @@ src/bin/e_slidesel.h \
 src/bin/e_spectrum.h \
 src/bin/e_startup.h \
 src/bin/e_sys.h \
+src/bin/e_table.h \
 src/bin/e_test.h \
 src/bin/e_theme_about.h \
 src/bin/e_theme.h \
@@ -317,6 +318,7 @@ src/bin/e_slidesel.c \
 src/bin/e_spectrum.c \
 src/bin/e_startup.c \
 src/bin/e_sys.c \
+src/bin/e_table.c \
 src/bin/e_test.c \
 src/bin/e_theme_about.c \
 src/bin/e_theme.c \

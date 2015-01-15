@@ -237,7 +237,7 @@ _advanced_create_widgets(E_Config_Dialog *cfd EINA_UNUSED, Evas *evas, E_Config_
    int w, h;
 
    e_dialog_resizable_set(cfd->dia, 1);
-   tab = e_widget_table_add(e_win_evas_win_get(evas), 0);
+   tab = e_widget_table_add(evas, 0);
    evas_object_name_set(tab, "dia_table");
 
    otb = e_widget_toolbook_add(evas, 48 * e_scale, 48 * e_scale);
@@ -252,7 +252,8 @@ _advanced_create_widgets(E_Config_Dialog *cfd EINA_UNUSED, Evas *evas, E_Config_
    e_widget_toolbook_page_append(otb, NULL, _("Behavior"), ol, 1, 1, 1, 1, 0.5, 0.5);
 
 /////////////////////////////////////////////////////////////////
-   ol = e_widget_table_add(e_win_evas_win_get(evas), 0);
+   ol = e_widget_table_add(evas, 0);
+   e_widget_table_freeze(ol);
 
    cfdata->o_list_entry = ob = e_widget_ilist_add(evas, 0, 0, &cfdata->entry);
    evas_event_freeze(evas_object_evas_get(ob));
@@ -277,10 +278,12 @@ _advanced_create_widgets(E_Config_Dialog *cfd EINA_UNUSED, Evas *evas, E_Config_
    e_widget_table_object_append(ol, ob, 1, 1, 1, 1, 1, 1, 0, 0);
 
 
+   e_widget_table_thaw(ol);
 
    e_widget_toolbook_page_append(otb, NULL, _("Entries"), ol, 1, 1, 1, 1, 0.5, 0.5);
 /////////////////////////////////////////////////////////////////
-   ol = e_widget_table_add(e_win_evas_win_get(evas), 0);
+   ol = e_widget_table_add(evas, 0);
+   e_widget_table_freeze(ol);
 
    cfdata->o_list_transient = ob = e_widget_ilist_add(evas, 0, 0, &cfdata->entry);
    evas_event_freeze(evas_object_evas_get(ob));
@@ -304,6 +307,7 @@ _advanced_create_widgets(E_Config_Dialog *cfd EINA_UNUSED, Evas *evas, E_Config_
    ob = e_widget_button_add(evas, _("Delete"), "edit-delete", _list_delete, cfdata, cfdata->o_list_transient);
    e_widget_table_object_append(ol, ob, 1, 1, 1, 1, 1, 1, 0, 0);
 
+   e_widget_table_thaw(ol);
 
    e_widget_toolbook_page_append(otb, NULL, _("Transients"), ol, 1, 1, 1, 1, 0.5, 0.5);
 /////////////////////////////////////////////////////////////////
@@ -322,7 +326,7 @@ _basic_create_widgets(E_Config_Dialog *cfd EINA_UNUSED, Evas *evas, E_Config_Dia
    e_dialog_resizable_set(cfd->dia, 1);
    cfdata->o_list_entry = cfdata->o_list_transient = NULL;
 
-   tab = e_widget_table_add(e_win_evas_win_get(evas), 0);
+   tab = e_widget_table_add(evas, 0);
    evas_object_name_set(tab, "dia_table");
 
    otb = e_widget_toolbook_add(evas, 48 * e_scale, 48 * e_scale);

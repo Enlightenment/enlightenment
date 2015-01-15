@@ -444,7 +444,7 @@ _ec_icccm_create(E_Dialog *dia, void *data __UNUSED__)
    evas = evas_object_evas_get(dia->win);
    otb = e_widget_toolbook_add(evas, 48 * e_scale, 48 * e_scale);
 
-   o = e_widget_table_add(e_win_evas_win_get(evas), 0);
+   o = e_widget_table_add(evas, 0);
    STR_ENTRY(_("Title"), 0, 0, icccm.title);
    STR_ENTRY(_("Name"), 0, 1, icccm.name);
    STR_ENTRY(_("Class"), 0, 2, icccm.class);
@@ -453,14 +453,14 @@ _ec_icccm_create(E_Dialog *dia, void *data __UNUSED__)
    STR_ENTRY(_("Role"), 0, 5, icccm.role);
    e_widget_toolbook_page_append(otb, NULL, _("General"), o, 1, 1, 1, 1, 0.5, 0.0);
 
-   o = e_widget_table_add(e_win_evas_win_get(evas), 0);
+   o = e_widget_table_add(evas, 0);
    STR_ENTRY(_("Minimum Size"), 0, 6, icccm.min);
    STR_ENTRY(_("Maximum Size"), 0, 7, icccm.max);
    STR_ENTRY(_("Base Size"), 0, 8, icccm.base);
    STR_ENTRY(_("Resize Steps"), 0, 9, icccm.step);
    e_widget_toolbook_page_append(otb, NULL, _("Sizing"), o, 1, 1, 1, 1, 0.5, 0.0);
 
-   o = e_widget_table_add(e_win_evas_win_get(evas), 0);
+   o = e_widget_table_add(evas, 0);
    STR_ENTRY(_("Aspect Ratio"), 2, 0, icccm.aspect);
    STR_ENTRY(_("Initial State"), 2, 1, icccm.initial_state);
    STR_ENTRY(_("State"), 2, 2, icccm.state);
@@ -472,7 +472,7 @@ _ec_icccm_create(E_Dialog *dia, void *data __UNUSED__)
    STR_ENTRY(_("Command"), 2, 8, icccm.command);
    e_widget_toolbook_page_append(otb, NULL, _("States"), o, 1, 1, 1, 1, 0.5, 0.0);
 
-   o = e_widget_table_add(e_win_evas_win_get(evas), 0);
+   o = e_widget_table_add(evas, 0);
    CHK_ENTRY(_("Take Focus"), 0, 11, icccm.take_focus);
    CHK_ENTRY(_("Accepts Focus"), 0, 12, icccm.accepts_focus);
    CHK_ENTRY(_("Urgent"), 0, 13, icccm.urgent);
@@ -499,13 +499,13 @@ _ec_netwm_create(E_Dialog *dia, void *data __UNUSED__)
 
    evas = evas_object_evas_get(dia->win);
    otb = e_widget_toolbook_add(evas, 48 * e_scale, 48 * e_scale);
-   o = e_widget_table_add(e_win_evas_win_get(evas), 0);
+   o = e_widget_table_add(evas, 0);
    STR_ENTRY(_("Name"), 0, 1, netwm.name);
    STR_ENTRY(_("Icon Name"), 0, 2, netwm.icon_name);
    STR_ENTRY(_("Stacking"), 0, 3, netwm.stacking);
    e_widget_toolbook_page_append(otb, NULL, _("General"), o, 1, 1, 1, 1, 0.5, 0.0);
 
-   o = e_widget_table_add(e_win_evas_win_get(evas), 0);
+   o = e_widget_table_add(evas, 0);
    CHK_ENTRY(_("Modal"), 0, 4, netwm.modal);
    CHK_ENTRY(_("Sticky"), 0, 5, netwm.sticky);
    CHK_ENTRY(_("Shaded"), 0, 6, netwm.shaded);

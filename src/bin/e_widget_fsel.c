@@ -323,12 +323,12 @@ e_widget_fsel_add(Evas *evas, const char *dev, const char *path, char *selected,
    wd->chg_data = chg_data;
    wd->preview = preview;
 
-   o = e_widget_table_add(e_win_evas_win_get(evas), 0);
+   o = e_widget_table_add(evas, 0);
    wd->o_table = o;
    e_widget_sub_object_add(obj, o);
    e_widget_resize_object_set(obj, o);
 
-   o = e_widget_table_add(e_win_evas_win_get(evas), 0);
+   o = e_widget_table_add(evas, 0);
    wd->o_table2 = o;
 
    o = e_widget_button_add(evas, _("Add to Favorites"), "bookmark-new",

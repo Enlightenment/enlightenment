@@ -133,7 +133,6 @@ e_widget_size_min_set(Evas_Object *obj, Evas_Coord minw, Evas_Coord minh)
    API_ENTRY return;
    if (minw >= 0) sd->minw = minw;
    if (minh >= 0) sd->minh = minh;
-   evas_object_size_hint_min_set(obj, minw, minh);
 }
 
 EAPI void
@@ -195,13 +194,10 @@ e_widget_sub_object_del(Evas_Object *obj, Evas_Object *sobj)
 EAPI void
 e_widget_resize_object_set(Evas_Object *obj, Evas_Object *sobj)
 {
-   int w, h;
    API_ENTRY return;
    if (sd->resize_obj) evas_object_smart_member_del(sd->resize_obj);
    sd->resize_obj = sobj;
    evas_object_event_callback_add(sobj, EVAS_CALLBACK_CHANGED_SIZE_HINTS, _e_widget_hint, obj);
-   evas_object_size_hint_min_get(sobj, &w, &h);
-   evas_object_size_hint_min_set(obj, w, h);
    evas_object_smart_member_add(sobj, obj);
    _e_smart_reconfigure(sd);
 }

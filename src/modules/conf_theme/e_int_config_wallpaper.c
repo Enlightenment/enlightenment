@@ -416,8 +416,8 @@ _basic_create(E_Config_Dialog *cfd EINA_UNUSED, Evas *evas, E_Config_Dialog_Data
    o = e_widget_list_add(evas, 0, 1);
 
    rg = e_widget_radio_group_new(&(cfdata->fmdir));
-   ot = e_widget_table_add(e_win_evas_win_get(evas), 0);
-   rt = e_widget_table_add(e_win_evas_win_get(evas), 1);
+   ot = e_widget_table_add(evas, 0);
+   rt = e_widget_table_add(evas, 1);
 
    /* create dir radios */
    ow = e_widget_radio_add(evas, _("Personal"), 0, rg);
@@ -461,7 +461,7 @@ _basic_create(E_Config_Dialog *cfd EINA_UNUSED, Evas *evas, E_Config_Dialog_Data
    e_widget_table_object_append(ot, ow, 0, 2, 1, 1, 1, 1, 1, 1);
    e_widget_list_object_append(o, ot, 1, 1, 0.0);
 
-   ot = e_widget_table_add(e_win_evas_win_get(evas), 0);
+   ot = e_widget_table_add(evas, 0);
    ow = e_widget_check_add(evas, _("Use Theme Wallpaper"),
                            &cfdata->use_theme_bg);
    cfdata->o_theme_bg = ow;
@@ -570,8 +570,8 @@ _adv_create(E_Config_Dialog *cfd EINA_UNUSED, Evas *evas, E_Config_Dialog_Data *
    o = e_widget_list_add(evas, 0, 1);
 
    rg = e_widget_radio_group_new(&(cfdata->fmdir));
-   ot = e_widget_table_add(e_win_evas_win_get(evas), 0);
-   rt = e_widget_table_add(e_win_evas_win_get(evas), 1);
+   ot = e_widget_table_add(evas, 0);
+   rt = e_widget_table_add(evas, 1);
 
    /* create dir radios */
    ow = e_widget_radio_add(evas, _("Personal"), 0, rg);
@@ -608,7 +608,7 @@ _adv_create(E_Config_Dialog *cfd EINA_UNUSED, Evas *evas, E_Config_Dialog_Data *
    e_widget_table_object_append(ot, ow, 0, 2, 1, 1, 1, 1, 1, 1);
    e_widget_list_object_append(o, ot, 1, 1, 0.0);
 
-   ot = e_widget_table_add(e_win_evas_win_get(evas), 0);
+   ot = e_widget_table_add(evas, 0);
    ow = e_widget_check_add(evas, _("Use Theme Wallpaper"),
                            &cfdata->use_theme_bg);
    cfdata->o_theme_bg = ow;

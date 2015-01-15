@@ -198,7 +198,7 @@ _backlight_popup_new(Instance *inst)
    inst->popup = e_gadcon_popup_new(inst->gcc, 0);
    evas = e_comp_get(inst->popup)->evas;
    
-   inst->o_table = e_widget_table_add(e_win_evas_win_get(evas), 0);
+   inst->o_table = e_widget_table_add(evas, 0);
 
    o = e_widget_slider_add(evas, 0, 0, NULL, 0.1, 1.0, 0.05, 0, &(inst->val), NULL, 100);
    evas_object_smart_callback_add(o, "changed", _slider_cb, inst);
