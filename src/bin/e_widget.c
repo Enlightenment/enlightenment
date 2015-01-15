@@ -553,6 +553,7 @@ _e_smart_del(Evas_Object *obj)
          * BORKER CERTIFICATION: GOLD
          * -discomfitor, 7/4/2012
          */
+        evas_object_event_callback_del(sobj, EVAS_CALLBACK_DEL, _sub_obj_del);
         sd->subobjs = eina_list_remove_list(sd->subobjs, sd->subobjs);
         evas_object_del(sobj);
      }
