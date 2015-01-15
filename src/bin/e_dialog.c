@@ -181,7 +181,7 @@ e_dialog_icon_set(E_Dialog *dia, const char *icon, Evas_Coord size)
         elm_layout_signal_emit(dia->bg_object, "e,state,icon", "e");
         elm_layout_signal_emit(dia->bg_object, "e,icon,enabled", "e");
      }
-   edje_object_message_signal_process(dia->bg_object);
+   edje_object_message_signal_process(elm_layout_edje_get(dia->bg_object));
 }
 
 EAPI void
@@ -240,15 +240,10 @@ e_dialog_show(E_Dialog *dia)
 
    o = dia->text_object;
    if (o)
-     {
-        edje_object_size_min_calc(o, &mw, &mh);
-        evas_object_size_hint_min_set(o, mw, mh);
-        elm_object_part_content_set(dia->bg_object, "e.swallow.content", o);
-     }
+     elm_object_part_content_set(dia->bg_object, "e.swallow.content", o);
 
    o = dia->box_object;
-   e_widget_size_min_get(o, &mw, &mh);
-   evas_object_size_hint_min_set(o, mw, mh);
+   evas_object_size_hint_min_get(o, &mw, &mh);
    elm_object_part_content_set(dia->bg_object, "e.swallow.buttons", o);
 
    evas_object_resize(dia->win, mw, mh);
