@@ -496,7 +496,6 @@ _e_wid_fprev_preview_file(E_Widget_Data *wd)
 {
    char *size, *owner, *perms, *mtime;
    struct stat st;
-   int mw, mh;
    Eina_Bool is_fs = EINA_FALSE;
 
    if (stat(wd->path, &st) < 0) return;
@@ -725,8 +724,6 @@ _e_wid_fprev_preview_file(E_Widget_Data *wd)
    _e_wid_fprev_preview_font(wd);
    _e_wid_fprev_img_update(wd, wd->path, NULL);
 
-   e_widget_size_min_get(wd->o_preview_list, &mw, &mh);
-   e_widget_size_min_set(wd->obj, mw, mh);
    if (!wd->is_dir)
      {
         if (!wd->is_txt)
@@ -1181,14 +1178,6 @@ _e_wid_fprev_cb_mod(E_Widget_Data *wd, int type __UNUSED__, Eio_Monitor_Event *e
    return ECORE_CALLBACK_RENEW;
 }
 
-static void
-_fileprev_hints(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
-{
-   int w, h;
-   evas_object_size_hint_min_get(obj, &w, &h);
-   e_widget_size_min_set(data, w, h);
-}
-
 EAPI Evas_Object *
 e_widget_filepreview_add(Evas *evas, int w, int h, int horiz)
 {
@@ -1207,7 +1196,6 @@ e_widget_filepreview_add(Evas *evas, int w, int h, int horiz)
 
    o = e_widget_list_add(evas, 0, horiz);
    wd->o_preview_list = o;
-   evas_object_event_callback_add(o, EVAS_CALLBACK_CHANGED_SIZE_HINTS, _fileprev_hints, obj);
    e_widget_resize_object_set(obj, o);
    e_widget_sub_object_add(obj, o);
 
