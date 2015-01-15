@@ -161,26 +161,32 @@ _e_gadcon_popup_position(E_Gadcon_Popup *pop)
 static void
 _e_gadcon_popup_size_recalc(E_Gadcon_Popup *pop, Evas_Object *obj)
 {
-   Evas_Coord w = 0, h = 0;
+   Evas_Coord pw, ph, w = 0, h = 0;
 
-   e_widget_size_min_get(obj, &w, &h);
-   if ((!w) || (!h)) evas_object_size_hint_min_get(obj, &w, &h);
-   if ((!w) || (!h))
+   if (!isedje(obj))
+     evas_object_size_hint_min_get(obj, &w, &h);
+   else
      {
         edje_object_size_min_get(obj, &w, &h);
         edje_object_size_min_restricted_calc(obj, &w, &h, w, h);
+        evas_object_size_hint_min_set(obj, w, h);
      }
-   evas_object_size_hint_min_set(obj, w, h);
-   edje_object_size_min_calc(pop->o_bg, &pop->w, &pop->h);
+   edje_object_size_min_calc(pop->o_bg, &pw, &ph);
+   pop->w = MAX(pw, pop->w);
+   pop->h = MAX(ph, pop->h);
    evas_object_resize(pop->comp_object, pop->w, pop->h);
 
-   if (pop->visible)
-     _e_gadcon_popup_position(pop);
+   _e_gadcon_popup_position(pop);
 }
 
 static void
 _e_gadcon_popup_changed_size_hints_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
 {
+   E_Gadcon_Popup *pop = data;
+
+   /* edje calc bug: hint updates on child are not updated for min_calc unless this happens first */
+   edje_object_part_unswallow(pop->o_bg, obj);
+   edje_object_part_swallow(pop->o_bg, "e.swallow.content", obj);
    _e_gadcon_popup_size_recalc(data, obj);
 }
 
