@@ -400,6 +400,8 @@ _e_wid_fprev_preview_fs_widgets(E_Widget_Data *wd, Eina_Bool mount_point)
                                           wd->labob,                              \
                                           0, y, 1, 1, 0, 1, 0, 0, 1.0, 0.0);      \
        o = e_widget_entry_add(win, &(wd->preview_extra_text), NULL, NULL, NULL); \
+       evas_object_size_hint_min_get(o, &mw, &mh); \
+       e_widget_size_min_set(o, 100, mh); \
        e_widget_entry_readonly_set(o, 1);                                         \
        wd->entob = o;                                                             \
        e_widget_table_object_align_append(wd->o_preview_properties_table,         \
