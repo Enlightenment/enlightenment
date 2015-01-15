@@ -319,7 +319,6 @@ _e_wid_fprev_preview_video_widgets(E_Widget_Data *wd)
        o = e_widget_entry_add(win, &(wd->preview_extra_text), NULL, NULL, NULL); \
        e_widget_entry_readonly_set(o, 1);                                         \
        wd->entob = o;                                                             \
-       e_widget_size_min_set(o, entw, -1);                                        \
        e_widget_table_object_align_append(wd->o_preview_properties_table,         \
                                           wd->entob,                              \
                                           1, y, 1, 1, 1, 1, 1, 0, 0.0, 0.0);      \
@@ -403,7 +402,6 @@ _e_wid_fprev_preview_fs_widgets(E_Widget_Data *wd, Eina_Bool mount_point)
        o = e_widget_entry_add(win, &(wd->preview_extra_text), NULL, NULL, NULL); \
        e_widget_entry_readonly_set(o, 1);                                         \
        wd->entob = o;                                                             \
-       e_widget_size_min_set(o, entw, -1);                                        \
        e_widget_table_object_align_append(wd->o_preview_properties_table,         \
                                           wd->entob,                              \
                                           1, y, 1, 1, 1, 1, 1, 0, 0.0, 0.0);      \
