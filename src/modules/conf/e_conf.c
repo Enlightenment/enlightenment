@@ -64,6 +64,7 @@ void
 e_configure_show(E_Comp *comp, const char *params)
 {
    E_Configure *eco;
+   Evas_Coord ew, eh, mw, mh;
    Evas_Object *o;
    Evas_Modifier_Mask mask;
    Eina_Bool kg;
@@ -128,16 +129,14 @@ e_configure_show(E_Comp *comp, const char *params)
    evas_object_event_callback_add(eco->win, EVAS_CALLBACK_DEL, _e_configure_cb_del_req, eco);
    elm_win_center(eco->win, 1, 1);
 
-   eco->edje = elm_layout_add(e_win_evas_win_get(eco->evas));
-   E_EXPAND(eco->edje);
-   E_FILL(eco->edje);
+   eco->edje = edje_object_add(eco->evas);
    elm_win_resize_object_add(eco->win, eco->edje);
    e_theme_edje_object_set(eco->edje, "base/theme/configure",
                            "e/widgets/configure/main");
-   elm_object_part_text_set(eco->edje, "e.text.title", _("Settings"));
+   edje_object_part_text_set(eco->edje, "e.text.title", _("Settings"));
 
    eco->o_list = e_widget_list_add(eco->evas, 0, 0);
-   elm_object_part_content_set(eco->edje, "e.swallow.content", eco->o_list);
+   edje_object_part_swallow(eco->edje, "e.swallow.content", eco->o_list);
 
    /* Event Obj for keydown */
    o = evas_object_rectangle_add(eco->evas);
@@ -170,7 +169,11 @@ e_configure_show(E_Comp *comp, const char *params)
    eco->close = e_widget_button_add(eco->evas, _("Close"), NULL,
                                     _e_configure_cb_close, eco, NULL);
    e_widget_on_focus_hook_set(eco->close, _e_configure_focus_cb, eco);
-   elm_object_part_content_set(eco->edje, "e.swallow.button", eco->close);
+   e_widget_size_min_get(eco->close, &mw, &mh);
+   evas_object_size_hint_min_set(eco->close, mw, mh);
+   edje_object_part_swallow(eco->edje, "e.swallow.button", eco->close);
+   edje_object_size_min_calc(eco->edje, &ew, &eh);
+   evas_object_size_hint_min_set(eco->win, ew, eh);
    e_util_win_auto_resize_fill(eco->win);
 
    evas_object_show(eco->edje);
@@ -487,6 +490,9 @@ _e_configure_fill_cat_list(void *data, const char *sel)
    e_widget_size_min_set(eco->item_list, mw, mh);
    e_widget_list_object_append(eco->o_list, eco->item_list, 1, 1, 0.5);
    if (num != -1) e_widget_toolbar_item_select(eco->cat_list, num);
+
+   e_widget_size_min_get(eco->o_list, &mw, &mh);
+   evas_object_size_hint_min_set(eco->o_list, mw, mh);
 }
 
 static Eina_Bool
