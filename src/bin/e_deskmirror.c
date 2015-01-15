@@ -102,6 +102,7 @@ _mirror_scale_set(Mirror *m, float sc)
 
    if (!m->mirror) return;
    mb = evas_object_smart_data_get(m->mirror);
+   if (!mb) return;
    msg.val = sc;
    edje_object_message_send(mb->frame, EDJE_MESSAGE_FLOAT, 0, &msg);
 }
