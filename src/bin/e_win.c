@@ -86,9 +86,12 @@ _e_elm_win_trap_show(void *data, Evas_Object *o)
         else
           {
              E_Pixmap *cp;
-             const char *title;
+             const char *title, *name, *clas;
 
-             ecore_evas_name_class_set(ee, "E", "_e_internal_window");
+             ecore_evas_name_class_get(ee, &name, &clas);
+             if (!name) name = "E";
+             if (!clas) clas = "_e_internal_window";
+             ecore_evas_name_class_set(ee, name, clas);
              title = elm_win_title_get(o);
              if ((!title) || (!title[0]))
                title = "E";
