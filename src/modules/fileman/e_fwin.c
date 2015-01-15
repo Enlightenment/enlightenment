@@ -819,6 +819,7 @@ _e_fwin_icon_hints(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *even
    Evas_Object *edje;
    E_Fwin *fwin = data;
 
+   if (!fwin->popup_icon) return;
    zone = fwin->zone ?: e_comp_object_util_zone_get(fwin->win);
    e_fm2_icon_geometry_get(fwin->popup_icon->ic, &x, &y, &w, &h);
    if (fwin->zone)
