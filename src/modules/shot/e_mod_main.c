@@ -685,7 +685,7 @@ _shot_now(E_Zone *zone, E_Client *ec, const char *params)
    elm_win_center(win, 1, 1);
    ecore_evas_name_class_set(e_win_ee_get(win), "E", "_shot_dialog");
 
-   o = edje_object_add(evas);
+   o = elm_layout_add(e_win_evas_win_get(evas));
    elm_win_resize_object_add(win, o);
    o_bg = o;;
    e_theme_edje_object_set(o, "base/theme/dialog", "e/widgets/dialog/main");
@@ -693,9 +693,7 @@ _shot_now(E_Zone *zone, E_Client *ec, const char *params)
 
    o = e_widget_list_add(evas, 0, 0);
    o_content = o;
-   e_widget_size_min_get(o, &w, &h);
-   evas_object_size_hint_min_set(o, w, h);
-   edje_object_part_swallow(o_bg, "e.swallow.content", o);
+   elm_object_part_content_set(o_bg, "e.swallow.content", o);
    evas_object_show(o);
 
    w = sw / 4;
@@ -799,7 +797,7 @@ _shot_now(E_Zone *zone, E_Client *ec, const char *params)
    o = o_content;
    e_widget_size_min_get(o, &w, &h);
    evas_object_size_hint_min_set(o, w, h);
-   edje_object_part_swallow(o_bg, "e.swallow.content", o);
+   elm_object_part_content_set(o_bg, "e.swallow.content", o);
    evas_object_show(o);
 
    ///////////////////////////////////////////////////////////////////////
@@ -807,7 +805,7 @@ _shot_now(E_Zone *zone, E_Client *ec, const char *params)
    o = e_widget_list_add(evas, 1, 1);
    o_box = o;
    e_widget_on_focus_hook_set(o, _on_focus_cb, NULL);
-   edje_object_part_swallow(o_bg, "e.swallow.buttons", o);
+   elm_object_part_content_set(o_bg, "e.swallow.buttons", o);
 
    o = e_widget_button_add(evas, _("Save"), NULL, _win_save_cb, win, NULL);
    e_widget_list_object_append(o_box, o, 1, 0, 0.5);
@@ -819,7 +817,7 @@ _shot_now(E_Zone *zone, E_Client *ec, const char *params)
    o = o_box;
    e_widget_size_min_get(o, &w, &h);
    evas_object_size_hint_min_set(o, w, h);
-   edje_object_part_swallow(o_bg, "e.swallow.buttons", o);
+   elm_object_part_content_set(o_bg, "e.swallow.buttons", o);
 
    o = evas_object_rectangle_add(evas);
    o_event = o;
@@ -837,7 +835,7 @@ _shot_now(E_Zone *zone, E_Client *ec, const char *params)
    if (!evas_object_key_grab(o, "Escape", mask, ~mask, 0)) printf("grab err\n");
    evas_object_event_callback_add(o, EVAS_CALLBACK_KEY_DOWN, _key_down_cb, NULL);
 
-   edje_object_size_min_calc(o_bg, &w, &h);
+   evas_object_size_hint_min_get(o_bg, &w, &h);
    evas_object_resize(o_bg, w, h);
    evas_object_resize(win, w, h);
    evas_object_size_hint_min_set(win, w, h);
