@@ -15,10 +15,10 @@ static void _e_wid_disable_hook(Evas_Object *obj);
 EAPI Evas_Object *
 e_widget_framelist_add(Evas *evas, const char *label, int horiz)
 {
-   Evas_Object *obj, *o;
+   Evas_Object *obj, *o, *win;
    E_Widget_Data *wd;
-   Evas_Coord mw = 0, mh = 0;
 
+   win = e_win_evas_win_get(evas);
    obj = e_widget_add(evas);
 
    e_widget_del_hook_set(obj, _e_wid_del_hook);
@@ -26,25 +26,20 @@ e_widget_framelist_add(Evas *evas, const char *label, int horiz)
    wd = calloc(1, sizeof(E_Widget_Data));
    e_widget_data_set(obj, wd);
 
-   o = edje_object_add(evas);
+   o = elm_frame_add(win);
    wd->o_frame = o;
-   e_theme_edje_object_set(o, "base/theme/widgets",
-                           "e/widgets/frame");
-   edje_object_part_text_set(o, "e.text.label", label);
+   elm_object_text_set(o, label);
    evas_object_show(o);
    e_widget_sub_object_add(obj, o);
    e_widget_resize_object_set(obj, o);
 
-   o = elm_box_add(obj);
+   o = elm_box_add(win);
    wd->o_box = o;
    elm_box_horizontal_set(o, horiz);
    elm_box_homogeneous_set(o, 0);
-   edje_object_part_swallow(wd->o_frame, "e.swallow.content", o);
+   elm_object_content_set(wd->o_frame, o);
    e_widget_sub_object_add(obj, o);
    evas_object_show(o);
-
-   edje_object_size_min_calc(wd->o_frame, &mw, &mh);
-   e_widget_size_min_set(obj, mw, mh);
 
    return obj;
 }
@@ -66,9 +61,6 @@ e_widget_framelist_object_append_full(Evas_Object *obj, Evas_Object *sobj, int f
    evas_object_size_hint_min_set(sobj, min_w, min_h);
    evas_object_size_hint_max_set(sobj, max_w, max_h);
    elm_box_recalculate(wd->o_box);
-   edje_object_part_swallow(wd->o_frame, "e.swallow.content", wd->o_box);
-   edje_object_size_min_calc(wd->o_frame, &mw, &mh);
-   e_widget_size_min_set(obj, mw, mh);
    e_widget_sub_object_add(obj, sobj);
    evas_object_show(sobj);
 }
@@ -87,9 +79,6 @@ e_widget_framelist_object_append(Evas_Object *obj, Evas_Object *sobj)
    E_FILL(sobj);
    evas_object_size_hint_min_set(sobj, mw, mh);
    elm_box_recalculate(wd->o_box);
-   edje_object_part_swallow(wd->o_frame, "e.swallow.content", wd->o_box);
-   edje_object_size_min_calc(wd->o_frame, &mw, &mh);
-   e_widget_size_min_set(obj, mw, mh);
    e_widget_sub_object_add(obj, sobj);
    evas_object_show(sobj);
 }
