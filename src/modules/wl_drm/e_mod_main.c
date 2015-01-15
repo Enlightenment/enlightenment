@@ -76,8 +76,8 @@ e_modapi_init(E_Module *m)
    if ((e_comp_gl_get()) &&
        (e_comp_config_get()->engine == E_COMP_ENGINE_GL))
      {
-        comp->ee == ecore_evas_gl_drm_new(NULL, 0, 0, 0, 1, 1);
-        if(!comp->ee)
+        comp->ee = ecore_evas_gl_drm_new(NULL, 0, 0, 0, 1, 1);
+        if (!comp->ee)
           e_comp_gl_set(EINA_FALSE);
      }
 
