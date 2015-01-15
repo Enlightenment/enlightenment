@@ -144,7 +144,7 @@ e_dialog_text_set(E_Dialog *dia, const char *text)
      {
         Evas_Object *o;
 
-        o = edje_object_add(evas_object_evas_get(dia->win));
+        o = elm_layout_add(dia->win);
         dia->text_object = o;
         e_theme_edje_object_set(o, "base/theme/dialog",
                                 "e/widgets/dialog/text");
