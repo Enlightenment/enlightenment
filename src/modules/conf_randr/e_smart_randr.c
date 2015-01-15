@@ -132,6 +132,7 @@ e_smart_randr_virtual_size_calc(Evas_Object *obj)
 
    /* set the grid size */
    evas_object_grid_size_set(sd->o_grid, vw, vh);
+   evas_object_size_hint_min_set(obj, sd->vw / 10, sd->vh / 10);
 }
 
 void 
