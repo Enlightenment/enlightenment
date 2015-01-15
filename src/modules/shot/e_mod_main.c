@@ -295,6 +295,7 @@ _share_done(void)
    o_label = NULL;
    E_FREE(url_ret);
    E_FREE_FUNC(url_up, ecore_con_url_free);
+   url_up = NULL;
 }
 
 static void
@@ -595,6 +596,7 @@ _shot_now(E_Zone *zone, E_Client *ec, const char *params)
    Ecore_X_Colormap colormap;
    int depth;
 
+   if ((win) || (url_up)) return;
    if ((!zone) && (!ec)) return;
    if (zone)
      {
@@ -676,7 +678,6 @@ _shot_now(E_Zone *zone, E_Client *ec, const char *params)
                                  0, 0, sw, sh,
                                  dst, (sw * sizeof(int)), 0, 0);
 
-   if (win) e_object_del(E_OBJECT(win));
    win = elm_win_add(NULL, NULL, ELM_WIN_BASIC);
 
    evas = evas_object_evas_get(win);
@@ -1012,7 +1013,7 @@ e_modapi_init(E_Module *m)
         act->func.go = _e_mod_action_cb;
         e_action_predef_name_set(N_("Screen"), N_("Take Screenshot"),
                                  "shot", NULL,
-                                 "syntax: [share|save] [perfect|high|medium|low|QUALITY] [current|all|SCREEN-NUM]", 1);
+                                 "syntax: [share|save [perfect|high|medium|low|QUALITY current|all|SCREEN-NUM]", 1);
      }
    border_act = e_action_add("border_shot");
    if (border_act)
@@ -1020,7 +1021,7 @@ e_modapi_init(E_Module *m)
         border_act->func.go = _e_mod_action_border_cb;
         e_action_predef_name_set(N_("Window : Actions"), N_("Take Shot"),
                                  "border_shot", NULL,
-                                 "syntax: [share|save] [perfect|high|medium|low|QUALITY] all", 1);
+                                 "syntax: [share|save perfect|high|medium|low|QUALITY all|current]", 1);
      }
    maug = e_int_menus_menu_augmentation_add_sorted
      ("main/2",  _("Take Screenshot"), _e_mod_menu_add, NULL, NULL, NULL);
