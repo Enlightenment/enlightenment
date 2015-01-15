@@ -200,10 +200,12 @@ e_widget_resize_object_set(Evas_Object *obj, Evas_Object *sobj)
    if (sd->resize_obj) evas_object_smart_member_del(sd->resize_obj);
    sd->resize_obj = sobj;
    evas_object_event_callback_add(sobj, EVAS_CALLBACK_CHANGED_SIZE_HINTS, _e_widget_hint, obj);
-   evas_object_size_hint_min_get(sobj, &w, &h);
-   evas_object_size_hint_min_set(obj, w, h);
    evas_object_smart_member_add(sobj, obj);
    _e_smart_reconfigure(sd);
+   evas_object_size_hint_min_get(obj, &w, &h);
+   if ((w > 0) || (h > 0)) return; //already set
+   evas_object_size_hint_min_get(sobj, &w, &h);
+   evas_object_size_hint_min_set(obj, w, h);
 }
 
 EAPI void
