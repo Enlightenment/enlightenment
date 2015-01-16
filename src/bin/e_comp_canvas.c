@@ -125,7 +125,7 @@ e_comp_canvas_init(E_Comp *c)
    evas_object_layer_set(o, E_LAYER_BOTTOM);
    evas_object_move(o, 0, 0);
    evas_object_resize(o, c->man->w, c->man->h);
-   evas_object_color_set(o, 255, 255, 255, 255);
+   evas_object_color_set(o, 0, 0, 0, 255);
    evas_object_name_set(o, "comp->bg_blank_object");
    evas_object_data_set(o, "e_comp", c);
    evas_object_event_callback_add(o, EVAS_CALLBACK_MOUSE_DOWN, (Evas_Object_Event_Cb)_e_comp_canvas_cb_mouse_down, c);
