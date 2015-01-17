@@ -32,6 +32,8 @@ OPTIONS:
   -default-profile-get Get the default configuration profile
   -default-profile-set OPT1 Set the default configuration profile to OPT1
 
+  Options in the following section are just available if the module msgbus is loaded.
+
   -desktops-get Get the number of virtual desktops
   -desktop-show OPT1 OPT2 Show the desk at position OPT1 (x) and OPT2 (y), see -desktops-get for current count.
   -desktop-show-by-name OPT1 Show the desk named OPT1
