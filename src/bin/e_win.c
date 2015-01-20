@@ -120,6 +120,8 @@ _e_elm_win_trap_show(void *data, Evas_Object *o)
         ctx->visible = 1;
         evas_object_show(ctx->client->frame);
      }
+   e_comp_object_frame_xy_adjust(ctx->client->frame, ctx->client->client.x, ctx->client->client.y, &ctx->client->x, &ctx->client->y);
+   e_comp_object_frame_wh_adjust(ctx->client->frame, ctx->client->client.w, ctx->client->client.h, &ctx->client->w, &ctx->client->h);
    if (ctx->centered) e_comp_object_util_center(ctx->client->frame);
    return EINA_TRUE;
 }
