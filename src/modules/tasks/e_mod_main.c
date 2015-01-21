@@ -363,7 +363,7 @@ _tasks_new(Evas_Object *parent, E_Zone *zone, const char *id)
 
    tasks = E_NEW(Tasks, 1);
    tasks->config = _tasks_config_item_get(id);
-   tasks->o_items = elm_box_add(parent);
+   tasks->o_items = elm_box_add(e_win_evas_object_win_get(parent));
    tasks->horizontal = 1;
    EINA_LIST_FOREACH(zone->comp->clients, l, ec)
      {

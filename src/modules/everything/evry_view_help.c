@@ -86,7 +86,7 @@ _view_create(Evry_View *v, const Evry_State *s __UNUSED__, Evas_Object *swallow)
 
    if (v->active) return v;
 
-   o = elm_box_add(swallow);
+   o = elm_box_add(e_win_evas_object_win_get(swallow));
    elm_box_horizontal_set(o, 0);
    elm_box_align_set(o, 0.5, 1.0);
    v->o_list = o;

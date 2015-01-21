@@ -319,7 +319,7 @@ _ibox_new(Evas_Object *parent, E_Zone *zone)
    IBox *b;
 
    b = E_NEW(IBox, 1);
-   b->o_box = elm_box_add(parent);
+   b->o_box = elm_box_add(e_win_evas_object_win_get(parent));
    elm_box_homogeneous_set(b->o_box, 1);
    elm_box_horizontal_set(b->o_box, 1);
    elm_box_align_set(b->o_box, 0.5, 0.5);

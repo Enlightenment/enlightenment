@@ -31,7 +31,7 @@ e_widget_list_add(Evas *evas, int homogenous, int horiz)
    wd = calloc(1, sizeof(E_Widget_Data));
    e_widget_data_set(obj, wd);
 
-   o = elm_box_add(obj);
+   o = elm_box_add(e_win_evas_win_get(evas));
    wd->o_box = o;
    elm_box_horizontal_set(o, horiz);
    elm_box_homogeneous_set(o, homogenous);

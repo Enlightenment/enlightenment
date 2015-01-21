@@ -1067,7 +1067,7 @@ e_gadcon_client_new(E_Gadcon *gc, const char *name, const char *id __UNUSED__, c
         if (gcc->o_frame)
           {
              edje_object_size_min_calc(gcc->o_frame, &(gcc->pad.w), &(gcc->pad.h));
-             gcc->o_box = elm_box_add(gcc->gadcon->o_container);
+             gcc->o_box = elm_box_add(e_win_evas_object_win_get(gcc->gadcon->o_container));
              evas_object_event_callback_add(gcc->o_box, EVAS_CALLBACK_DEL, _e_gadcon_client_box_del, gcc);
              evas_object_event_callback_add(gcc->o_box, EVAS_CALLBACK_CHANGED_SIZE_HINTS, _e_gadcon_client_box_hints_changed, gcc);
              switch (gcc->gadcon->orient)

@@ -776,7 +776,7 @@ _e_smart_add(Evas_Object *obj)
    sd->typebuf.size = 0;
    sd->typebuf.timer = NULL;
 
-   sd->o_box = elm_box_add(obj);
+   sd->o_box = elm_box_add(e_win_evas_win_get(e));
    elm_box_align_set(sd->o_box, 0.0, 0.0);
    elm_box_homogeneous_set(sd->o_box, 0);
    evas_object_smart_member_add(sd->o_box, obj);

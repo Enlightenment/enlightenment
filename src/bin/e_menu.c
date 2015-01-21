@@ -1392,7 +1392,7 @@ no_submenu_item:
           }
         evas_object_show(o);
 
-        o = elm_box_add(o);
+        o = elm_box_add(e_comp->elm);
         evas_object_name_set(o, "mi->container_object");
         elm_box_homogeneous_set(o, 0);
         mi->container_object = o;
@@ -1644,7 +1644,7 @@ _e_menu_realize(E_Menu *m)
    evas_object_move(m->comp_object, m->cur.x, m->cur.y);
    evas_object_resize(m->comp_object, m->cur.w, m->cur.h);
 
-   o = elm_box_add(m->comp_object);
+   o = elm_box_add(e_comp->elm);
    evas_object_name_set(o, "menu->container_object");
    m->container_object = o;
    evas_object_intercept_move_callback_add(o, _e_menu_cb_intercept_container_move, m);

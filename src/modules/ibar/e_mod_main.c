@@ -402,10 +402,10 @@ _ibar_new(Evas_Object *parent, Instance *inst)
    inst->ibar = b;
    b->inst = inst;
    b->icon_hash = eina_hash_string_superfast_new(NULL);
-   b->o_outerbox = elm_box_add(parent);
+   b->o_outerbox = elm_box_add(e_win_evas_object_win_get(parent));
    elm_box_horizontal_set(b->o_outerbox, 1);
    elm_box_align_set(b->o_outerbox, 0.5, 0.5);
-   b->o_box = elm_box_add(parent);
+   b->o_box = elm_box_add(e_win_evas_object_win_get(parent));
    E_EXPAND(b->o_box);
    E_FILL(b->o_box);
    elm_box_homogeneous_set(b->o_box, 1);

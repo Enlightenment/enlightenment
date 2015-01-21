@@ -367,7 +367,7 @@ _gc_init(E_Gadcon *gc, const char *name, const char *id, const char *style)
      }
 
    // main object
-   inst->o_box = elm_box_add(gc->o_container);
+   inst->o_box = elm_box_add(e_win_evas_object_win_get(gc->o_container));
    elm_box_homogeneous_set(inst->o_box, 0);
    elm_box_horizontal_set(inst->o_box, 0);
    elm_box_align_set(inst->o_box, 0, 0);

@@ -365,7 +365,7 @@ evry_tab_view_new(Evry_View *view, const Evry_State *s, Evas_Object *parent)
    v->state = s;
 
    v->evas = evas_object_evas_get(parent);
-   o = elm_box_add(parent);
+   o = elm_box_add(e_win_evas_object_win_get(parent));
    elm_box_horizontal_set(o, 1);
    elm_box_homogeneous_set(o, 1);
    evas_object_event_callback_add(o, EVAS_CALLBACK_MOUSE_WHEEL,

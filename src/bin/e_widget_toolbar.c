@@ -55,7 +55,7 @@ e_widget_toolbar_add(Evas *evas, int icon_w, int icon_h)
 
    o = e_scrollframe_add(evas);
    wd->o_base = o;
-   o = elm_box_add(o);
+   o = elm_box_add(e_win_evas_win_get(evas));
    wd->o_box = o;
    o = wd->o_base;
    e_scrollframe_custom_theme_set(o, "base/theme/widgets", "e/widgets/toolbar");

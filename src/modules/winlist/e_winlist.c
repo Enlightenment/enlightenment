@@ -155,7 +155,7 @@ e_winlist_show(E_Zone *zone, E_Winlist_Filter filter)
    e_theme_edje_object_set(o, "base/theme/winlist",
                            "e/widgets/winlist/main");
 
-   o = elm_box_add(o);
+   o = elm_box_add(e_comp->elm);
    _list_object = o;
    elm_box_homogeneous_set(o, 1);
    e_comp_object_util_del_list_append(_winlist, o);
