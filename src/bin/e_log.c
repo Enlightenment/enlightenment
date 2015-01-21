@@ -29,7 +29,6 @@ e_log_init(void)
 {
    e_log_dom = eina_log_domain_register("e", EINA_COLOR_WHITE);
    eina_log_print_cb_set(_e_log_cb, NULL);
-   eina_log_domain_level_set("elementary", EINA_LOG_LEVEL_CRITICAL);
    return e_log_dom != -1;
 }
 
