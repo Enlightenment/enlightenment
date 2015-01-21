@@ -1,3 +1,37 @@
+Release 0.19.3:
+---------------------
+
+Carsten Haitzler (2):
+      e - force a config flush before sys actions that could kill e
+      comp base - make base black. makes for better screenshots of blank areas
+
+Christopher Michael (8):
+      Fix e_msgbus file having missing initializers for Eldbus     Messages & Signals
+      Fix e_notification file having missing initializers for Eldbus     Messages & Signals
+      Cleanup appmenu module having missing field initializers for     Eldbus Messages & Signals
+      Cleanup bluex module having missing initializers for services     & icons
+      Cleanup fileman module from having missing initializers for     Eldbus Messages & Signals
+      Cleanup msgbus module from having missing field initializers     for Eldbus Messages & Signals
+      Cleanup systray module having missing initializers for Eldbus     Message & Signals
+      Cleanup teamwork module from having missing initializerss for Eldbus     Messages & Signals
+
+Mike Blumenkrantz (11):
+      don't recalc winlist on client add event if client is not added to winlist
+      don't show mixer popup during nocomp
+      comp pending resizes should not require both w+h to change
+      don't set gravity on client windows during X move/resize
+      completely block border changes on MWM borderless windows
+      disable client stack debugging
+      add E_VERSION_MAJOR define for external module usage
+      check focus after X nocomp end
+      don't change shade.x/y during unshade or after shade
+      fix build from tarball when configured mount backend is different from origin
+      don't set deskmirror scale for non-mb objects
+
+Tom Hacohen (1):
+      Tiling: don't try to change the border of borderless windows.
+
+
 Release 0.19.2:
 ---------------------
 
