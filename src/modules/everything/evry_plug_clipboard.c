@@ -1,18 +1,18 @@
 #include "e_mod_main.h"
 
+#ifndef HAVE_WAYLAND_ONLY
 static Evry_Action *act;
-static Ecore_X_Window clipboard_win = 0;
+static Ecore_Window clipboard_win = 0;
 
 static int
 _action(Evry_Action *action)
 {
-   const Evry_Item *it = action->it1.item;
+   const Evry_Item *it;
 
-   if (e_comp_get(NULL)->comp_type != E_PIXMAP_TYPE_X) return 0;
-
+   if (e_comp->comp_type != E_PIXMAP_TYPE_X) return 0;
+   it = action->it1.item;
    ecore_x_selection_primary_set(clipboard_win, it->label, strlen(it->label));
    ecore_x_selection_clipboard_set(clipboard_win, it->label, strlen(it->label));
-
    return 1;
 }
 
@@ -21,17 +21,18 @@ _check_item(Evry_Action *action __UNUSED__, const Evry_Item *it)
 {
    return it && it->label && (strlen(it->label) > 0);
 }
-
+#endif
 Eina_Bool
 evry_plug_clipboard_init(void)
 {
-   Ecore_X_Window win;
+   Ecore_Window win;
 
    if (!evry_api_version_check(EVRY_API_VERSION))
      return EINA_FALSE;
 
-   if (e_comp_get(NULL)->comp_type != E_PIXMAP_TYPE_X)
+   if (e_comp->comp_type != E_PIXMAP_TYPE_X)
      return EINA_FALSE;
+#ifndef HAVE_WAYLAND_ONLY
    win = ecore_x_window_input_new(0, 0, 0, 1, 1);
    if (!win) return EINA_FALSE;
    ecore_x_icccm_name_class_set(win, "evry", "clipboard");
@@ -48,13 +49,16 @@ evry_plug_clipboard_init(void)
    clipboard_win = win;
 
    return EINA_TRUE;
+#endif
 }
 
 void
 evry_plug_clipboard_shutdown(void)
 {
-   if (e_comp_get(NULL)->comp_type != E_PIXMAP_TYPE_X) return;
+   if (e_comp->comp_type != E_PIXMAP_TYPE_X) return;
+#ifndef HAVE_WAYLAND_ONLY
    ecore_x_window_free(clipboard_win);
    evry_action_free(act);
+#endif
 }
 

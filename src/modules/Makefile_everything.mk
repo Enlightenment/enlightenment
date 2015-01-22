@@ -31,6 +31,7 @@ src_modules_everything_module_la_SOURCES = $(EVRYHEADERS) \
 			       src/modules/everything/evry_view_tabs.c \
 			       src/modules/everything/evry_view_help.c \
 			       src/modules/everything/evry_plug_text.c \
+			       src/modules/everything/evry_plug_clipboard.c
 			       src/modules/everything/evry_plug_collection.c \
 			       src/modules/everything/evry_gadget.c \
 			       src/modules/everything/md5.c \
@@ -40,10 +41,6 @@ src_modules_everything_module_la_SOURCES = $(EVRYHEADERS) \
 			       src/modules/everything/evry_plug_windows.c \
 			       src/modules/everything/evry_plug_settings.c \
 			       src/modules/everything/evry_plug_calc.c
-
-if ! HAVE_WAYLAND_ONLY
-src_modules_everything_module_la_SOURCES += src/modules/everything/evry_plug_clipboard.c
-endif
 
 everything_headersdir = $(pkgincludedir)
 dist_everything_headers_DATA = $(EVRYHEADERS)
