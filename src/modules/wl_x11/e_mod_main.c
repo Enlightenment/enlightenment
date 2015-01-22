@@ -1,9 +1,6 @@
 #include "e.h"
 #include <Ecore_X.h>
 
-#define SCREEN_W 1024
-#define SCREEN_H 768
-
 EAPI E_Module_Api e_modapi = { E_MODULE_API_VERSION, "Wl_X11" };
 
 static Ecore_Event_Handler *kbd_hdlr;
@@ -71,10 +68,11 @@ e_modapi_init(E_Module *m)
    Ecore_Evas *ee;
    E_Screen *screen;
    E_Comp *comp;
+   int w = 0, h = 0;
 
    printf("LOAD WL_X11 MODULE\n");
 
-   ee = ecore_evas_software_x11_new(NULL, 0, 0, 0, SCREEN_W, SCREEN_H);
+   ee = ecore_evas_software_x11_new(NULL, 0, 0, 0, 1, 1);
    ecore_evas_callback_delete_request_set(ee, _cb_delete_request);
 
    if (!(comp = e_comp))
@@ -84,6 +82,14 @@ e_modapi_init(E_Module *m)
      }
 
    comp->ee = ee;
+   if (!comp->ee)
+     {
+        ERR("Could not create ecore_evas canvas");
+        return NULL;
+     }
+
+   ecore_evas_screen_geometry_get(comp->ee, NULL, NULL, &w, &h);
+   ecore_evas_resize(comp->ee, w, h);
 
    if (!e_xinerama_fake_screens_exist())
      {
@@ -91,12 +97,12 @@ e_modapi_init(E_Module *m)
         screen->escreen = screen->screen = 0;
         screen->x = 0;
         screen->y = 0;
-        screen->w = SCREEN_W;
-        screen->h = SCREEN_H;
+        screen->w = w;
+        screen->h = h;
         e_xinerama_screens_set(eina_list_append(NULL, screen));
      }
 
-   comp->man = e_manager_new(0, comp, SCREEN_W, SCREEN_H);
+   comp->man = e_manager_new(0, comp, w, h);
    if (!e_comp_canvas_init(comp)) return NULL;
    e_comp_canvas_fake_layers_init(comp);
 
