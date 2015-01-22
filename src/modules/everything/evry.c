@@ -213,7 +213,7 @@ evry_show(E_Zone *zone, E_Zone_Edge edge, const char *params, Eina_Bool popup)
 
    E_LIST_HANDLER_APPEND(win->handlers, ECORE_EVENT_KEY_DOWN, _evry_cb_key_down, win);
 #ifndef HAVE_WAYLAND_ONLY
-   if (e_comp_get(NULL)->comp_type == E_PIXMAP_TYPE_X)
+   if (e_comp->comp_type == E_PIXMAP_TYPE_X)
      E_LIST_HANDLER_APPEND(win->handlers, ECORE_X_EVENT_SELECTION_NOTIFY, _evry_cb_selection_notify, win);
 #endif
    evas_object_event_callback_add(e_win_client_get(win->ewin)->frame, EVAS_CALLBACK_SHOW, (Evas_Object_Event_Cb)_evry_cb_show, win);
@@ -953,8 +953,8 @@ _evry_cb_mouse(void *data, int type, void *event)
      {
         win->mouse_out = 0;
 
-        if (!E_INSIDE(e_comp_canvas_x_root_adjust(e_comp_get(NULL), ev->root.x),
-                      e_comp_canvas_y_root_adjust(e_comp_get(NULL), ev->root.y), x, y, w, h))
+        if (!E_INSIDE(e_comp_canvas_x_root_adjust(e_comp, ev->root.x),
+                      e_comp_canvas_y_root_adjust(e_comp, ev->root.y), x, y, w, h))
           {
              win->mouse_out = 1;
              return ECORE_CALLBACK_PASS_ON;
@@ -967,8 +967,8 @@ _evry_cb_mouse(void *data, int type, void *event)
         win->mouse_button = 0;
 
         if (win->mouse_out &&
-            (!E_INSIDE(e_comp_canvas_x_root_adjust(e_comp_get(NULL), ev->root.x),
-                      e_comp_canvas_y_root_adjust(e_comp_get(NULL), ev->root.y), x, y, w, h)))
+            (!E_INSIDE(e_comp_canvas_x_root_adjust(e_comp, ev->root.x),
+                      e_comp_canvas_y_root_adjust(e_comp, ev->root.y), x, y, w, h)))
           {
              evry_hide(win, 0);
              return ECORE_CALLBACK_PASS_ON;
@@ -2120,7 +2120,7 @@ _evry_cb_key_down(void *data, int type __UNUSED__, void *event)
         else if (!strcmp(ev->key, "v"))
           {
 #ifndef HAVE_WAYLAND_ONLY
-             if (e_comp_get(NULL)->comp_type == E_PIXMAP_TYPE_X)
+             if (e_comp->comp_type == E_PIXMAP_TYPE_X)
                {
                   win->request_selection = EINA_TRUE;
                   ecore_x_selection_primary_request
