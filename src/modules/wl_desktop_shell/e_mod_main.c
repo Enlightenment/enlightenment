@@ -1066,7 +1066,7 @@ _e_xdg_shell_surface_configure(struct wl_resource *resource, Evas_Coord x, Evas_
         ec->changes.pos = EINA_TRUE;
      }
 
-   if ((ec->client.w != w) || (ec->client.h != h))
+//   if ((ec->client.w != w) || (ec->client.h != h))
      {
         ec->client.w = w;
         ec->client.h = h;
