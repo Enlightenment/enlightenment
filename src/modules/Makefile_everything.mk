@@ -31,7 +31,7 @@ src_modules_everything_module_la_SOURCES = $(EVRYHEADERS) \
 			       src/modules/everything/evry_view_tabs.c \
 			       src/modules/everything/evry_view_help.c \
 			       src/modules/everything/evry_plug_text.c \
-			       src/modules/everything/evry_plug_clipboard.c
+			       src/modules/everything/evry_plug_clipboard.c \
 			       src/modules/everything/evry_plug_collection.c \
 			       src/modules/everything/evry_gadget.c \
 			       src/modules/everything/md5.c \
