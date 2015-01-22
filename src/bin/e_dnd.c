@@ -108,7 +108,7 @@ e_dnd_init(void)
    _type_text_x_moz_url = eina_stringshare_add("text/x-moz-url");
    _type_enlightenment_x_file = eina_stringshare_add("enlightenment/x-file");
 #ifndef HAVE_WAYLAND_ONLY
-   if (e_comp_get(NULL)->comp_type == E_PIXMAP_TYPE_X)
+   if (e_comp->comp_type == E_PIXMAP_TYPE_X)
      _text_atom = ecore_x_atom_get("text/plain");
 #endif
 
@@ -119,7 +119,7 @@ e_dnd_init(void)
    E_LIST_HANDLER_APPEND(_event_handlers, ECORE_EVENT_MOUSE_MOVE, _e_dnd_cb_mouse_move, NULL);
    E_LIST_HANDLER_APPEND(_event_handlers, ECORE_EVENT_KEY_DOWN, _e_dnd_cb_key_down, NULL);
    E_LIST_HANDLER_APPEND(_event_handlers, ECORE_EVENT_KEY_UP, _e_dnd_cb_key_up, NULL);
-   if (e_comp_get(NULL)->comp_type != E_PIXMAP_TYPE_X) return 1;
+   if (e_comp->comp_type != E_PIXMAP_TYPE_X) return 1;
 #ifndef HAVE_WAYLAND_ONLY
    E_LIST_HANDLER_APPEND(_event_handlers, ECORE_X_EVENT_XDND_ENTER, _e_dnd_cb_event_dnd_enter, NULL);
    E_LIST_HANDLER_APPEND(_event_handlers, ECORE_X_EVENT_XDND_LEAVE, _e_dnd_cb_event_dnd_leave, NULL);
@@ -341,7 +341,7 @@ e_drag_xdnd_start(E_Drag *drag, int x, int y)
 
    if (_drag_win) return 0;
 #ifndef HAVE_WAYLAND_ONLY
-   if (e_comp_get(drag)->comp_type != E_PIXMAP_TYPE_X) return 0;
+   if (e_comp->comp_type != E_PIXMAP_TYPE_X) return 0;
    _drag_win = ecore_x_window_input_new(drag->comp->win,
                                         drag->comp->man->x, drag->comp->man->y,
                                         drag->comp->man->w, drag->comp->man->h);
@@ -413,7 +413,7 @@ e_drop_xds_update(Eina_Bool enable, const char *value)
    int size;
    size_t len;
 
-   if (e_comp_get(NULL)->comp_type != E_PIXMAP_TYPE_X) return;
+   if (e_comp->comp_type != E_PIXMAP_TYPE_X) return;
    enable = !!enable;
 
    xwin = ecore_x_selection_owner_get(ECORE_X_ATOM_SELECTION_XDND);
@@ -525,7 +525,7 @@ e_drop_handler_del(E_Drop_Handler *handler)
 EAPI int
 e_drop_xdnd_register_set(Ecore_Window win, int reg)
 {
-   if (e_comp_get(NULL)->comp_type != E_PIXMAP_TYPE_X) return 0;
+   if (e_comp->comp_type != E_PIXMAP_TYPE_X) return 0;
    if (reg)
      {
         if (!eina_hash_find(_drop_win_hash, &win))
@@ -752,7 +752,7 @@ _e_drag_win_get(const E_Drop_Handler *h, int xdnd)
 
            case E_CLIENT_TYPE:
            case E_ZONE_TYPE:
-             hwin = e_comp_get(h->obj)->ee_win;
+             hwin = e_comp->ee_win;
              break;
 
            /* FIXME: add more types as needed */
@@ -865,7 +865,7 @@ _e_drag_update(Ecore_X_Window root, int x, int y, Ecore_X_Atom action)
 
 //   double t1 = ecore_time_get(); ////
    if (_drag_current && !_xdnd)
-     win = e_comp_top_window_at_xy_get(e_comp_get(_drag_current), x, y);
+     win = e_comp_top_window_at_xy_get(e_comp, x, y);
    else
      win = root;
 
@@ -989,8 +989,8 @@ _e_drag_end(int x, int y)
    int dropped = 0;
 
    if (!_drag_current) return;
-   win = e_comp_top_window_at_xy_get(e_comp_get(_drag_current), x, y);
-   zone = e_comp_zone_xy_get(_drag_current->comp, x, y);
+   win = e_comp_top_window_at_xy_get(e_comp, x, y);
+   zone = e_comp_zone_xy_get(e_comp, x, y);
    /* Pass -1, -1, so that it is possible to drop at the edge. */
    if (zone) e_zone_flip_coords_handle(zone, -1, -1);
 
@@ -1002,7 +1002,7 @@ _e_drag_end(int x, int y)
 #ifndef HAVE_WAYLAND_ONLY
         if (!(dropped = ecore_x_dnd_drop()))
           {
-             if (win == e_comp_get(NULL)->ee_win) break;
+             if (win == e_comp->ee_win) break;
           }
 #endif
         if (_drag_current->cb.finished)
