@@ -346,7 +346,9 @@ e_comp_wl_input_shutdown(E_Comp_Data *cdata)
    EINA_LIST_FREE(cdata->kbd.resources, res)
      wl_resource_destroy(res);
 
-   /* TODO: destroy touch resources */
+   /* destroy touch resources */
+   EINA_LIST_FREE(cdata->touch.resources, res)
+     wl_resource_destroy(res);
 
    /* destroy cdata->kbd.keys array */
    wl_array_release(&cdata->kbd.keys);
