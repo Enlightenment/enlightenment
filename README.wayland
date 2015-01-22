@@ -77,7 +77,6 @@ option:
   --disable-shot
   --disable-xkbswitch
   --disable-conf-randr
-  --disable-everything (don't worry, this is just the everything module)
   --disable-wl-x11
 
 
