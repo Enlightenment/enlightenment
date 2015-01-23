@@ -29,7 +29,7 @@ e_dpms_update(void)
      {
         _e_dpms_enabled = enabled;
 #ifndef HAVE_WAYLAND_ONLY
-        if (e_comp_get(NULL)->comp_type == E_PIXMAP_TYPE_X)
+        if (e_comp->comp_type == E_PIXMAP_TYPE_X)
           ecore_x_dpms_enabled_set(enabled);
 #endif
      }
@@ -58,7 +58,7 @@ e_dpms_update(void)
         changed = EINA_TRUE;
      }
 #ifndef HAVE_WAYLAND_ONLY
-   if (e_comp_get(NULL)->comp_type == E_PIXMAP_TYPE_X)
+   if (e_comp->comp_type == E_PIXMAP_TYPE_X)
      {
         if (changed) ecore_x_dpms_timeouts_set(standby, suspend, off);
      }
@@ -74,7 +74,7 @@ e_dpms_force_update(void)
    enabled = ((e_config->screensaver_enable) &&
               (!e_config->mode.presentation));
 #ifndef HAVE_WAYLAND_ONLY
-   if (e_comp_get(NULL)->comp_type == E_PIXMAP_TYPE_X)
+   if (e_comp->comp_type == E_PIXMAP_TYPE_X)
      ecore_x_dpms_enabled_set(enabled);
 #endif
    if (!enabled) return;
@@ -87,7 +87,7 @@ e_dpms_force_update(void)
         off += 7;
      }
 #ifndef HAVE_WAYLAND_ONLY
-   if (e_comp_get(NULL)->comp_type != E_PIXMAP_TYPE_X) return;
+   if (e_comp->comp_type != E_PIXMAP_TYPE_X) return;
    ecore_x_dpms_timeouts_set(standby + 10, suspend + 10, off + 10);
    ecore_x_dpms_timeouts_set(standby, suspend, off);
 #endif
@@ -149,7 +149,7 @@ e_dpms_init(void)
        (E_EVENT_DESK_SHOW, _e_dpms_handler_desk_show_cb, NULL);
 
 #ifndef HAVE_WAYLAND_ONLY
-   if (e_comp_get(NULL)->comp_type == E_PIXMAP_TYPE_X)
+   if (e_comp->comp_type == E_PIXMAP_TYPE_X)
      {
         _e_dpms_enabled = ecore_x_dpms_enabled_get();
         ecore_x_dpms_timeouts_get
