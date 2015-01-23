@@ -534,8 +534,8 @@ _e_shell_surface_map(struct wl_resource *resource)
    if ((!ec->comp_data->mapped) && (e_pixmap_usable_get(ec->pixmap)))
      {
         ec->visible = EINA_TRUE;
-        evas_object_show(ec->frame);
         evas_object_geometry_set(ec->frame, ec->x, ec->y, ec->w, ec->h);
+        evas_object_show(ec->frame);
         ec->comp_data->mapped = EINA_TRUE;
      }
 }
@@ -1121,8 +1121,8 @@ _e_xdg_shell_surface_map(struct wl_resource *resource)
      {
         /* map this surface if needed */
         ec->visible = EINA_TRUE;
-        evas_object_show(ec->frame);
         evas_object_geometry_set(ec->frame, ec->x, ec->y, ec->w, ec->h);
+        evas_object_show(ec->frame);
         ec->comp_data->mapped = EINA_TRUE;
 
         /* FIXME: sometimes popup surfaces Do Not raise above their 
