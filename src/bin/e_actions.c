@@ -2443,7 +2443,7 @@ ACT_FN_GO(pointer_resize_push, )
         if ((ec->lock_user_size) || (ec->shaded) || (ec->shading) ||
             (ec->fullscreen) || ((ec->maximized) && (!e_config->allow_manip)))
           return;
-        e_pointer_type_push(e_comp_get(ec)->pointer, ec, params);
+        e_pointer_type_push(e_comp->pointer, ec, params);
      }
 }
 
@@ -2459,7 +2459,7 @@ ACT_FN_GO(pointer_resize_pop, )
         if ((ec->lock_user_size) || (ec->shaded) || (ec->shading) ||
             (ec->fullscreen) || ((ec->maximized) && (!e_config->allow_manip)))
           return;
-        e_pointer_type_pop(e_comp_get(ec)->pointer, ec, params);
+        e_pointer_type_pop(e_comp->pointer, ec, params);
      }
 }
 
