@@ -475,26 +475,7 @@ _e_shell_surface_configure(struct wl_resource *resource, Evas_Coord x, Evas_Coor
           }
      }
 
-   if ((ec->client.x != x) || (ec->client.y != y))
-     {
-        ec->client.x = x;
-        ec->client.y = y;
-        if (ec->frame)
-          e_comp_object_frame_xy_adjust(ec->frame, x, y, &ec->x, &ec->y);
-        ec->changes.pos = EINA_TRUE;
-     }
-
-//   if ((ec->client.w != w) || (ec->client.h != h))
-     {
-        ec->client.w = w;
-        ec->client.h = h;
-        if (ec->frame)
-          e_comp_object_frame_wh_adjust(ec->frame, w, h, &ec->w, &ec->h);
-        ec->changes.size = EINA_TRUE;
-     }
-
-   if ((ec->changes.size) || (ec->changes.pos))
-     EC_CHANGED(ec);
+   e_client_util_move_resize_without_frame(ec, x, y, w, h);
 }
 
 static void 
@@ -1057,28 +1038,9 @@ _e_xdg_shell_surface_configure(struct wl_resource *resource, Evas_Coord x, Evas_
           }
      }
 
-   if ((ec->client.x != x) || (ec->client.y != y))
-     {
-        ec->client.x = x;
-        ec->client.y = y;
-        if (ec->frame)
-          e_comp_object_frame_xy_adjust(ec->frame, x, y, &ec->x, &ec->y);
-        ec->changes.pos = EINA_TRUE;
-     }
-
-//   if ((ec->client.w != w) || (ec->client.h != h))
-     {
-        ec->client.w = w;
-        ec->client.h = h;
-        if (ec->frame)
-          e_comp_object_frame_wh_adjust(ec->frame, w, h, &ec->w, &ec->h);
-        ec->changes.size = EINA_TRUE;
-     }
+   e_client_util_move_resize_without_frame(ec, x, y, w, h);
 
    /* TODO: ack configure ?? */
-
-   if ((ec->changes.pos) || (ec->changes.size))
-     EC_CHANGED(ec);
 }
 
 static void 
