@@ -241,7 +241,7 @@ e_module_all_load(void)
         if (!em) continue;
 
         if ((!e_util_strcmp(em->name, "comp")) || (!e_util_strcmp(em->name, "conf_comp")) ||
-            (e_comp_get(NULL) && (!strcmp(em->name, "wl_x11"))) //block wl_x11 if we've already created a compositor
+            (e_comp && (!strcmp(em->name, "wl_x11"))) //block wl_x11 if we've already created a compositor
            )
           {
              eina_stringshare_del(em->name);
@@ -986,7 +986,7 @@ _e_module_whitelist_check(void)
 
       state = badl ? "YES" : "NO";
 
-      if (e_comp_get(NULL)->comp_type == E_PIXMAP_TYPE_X)
+      if (e_comp->comp_type == E_PIXMAP_TYPE_X)
         {
            Ecore_X_Atom _x_tainted;
            unsigned int _e_tainted = badl ? 1 : 0;
