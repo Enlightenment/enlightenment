@@ -685,7 +685,7 @@ e_deskmirror_add(E_Desk *desk, Eina_Bool pager, Eina_Bool taskbar)
    Evas_Object *o, *l;
    Evas *e;
 
-   e = e_comp_get(desk)->evas;
+   e = e_comp->evas;
    _e_deskmirror_smart_init();
    o = evas_object_smart_add(e, _e_deskmirror_smart);
    e_object_ref(E_OBJECT(desk));
@@ -710,7 +710,7 @@ e_deskmirror_add(E_Desk *desk, Eina_Bool pager, Eina_Bool taskbar)
 
    e_layout_freeze(sd->layout);
 
-   l = evas_object_bottom_get(e_comp_get(desk)->evas);
+   l = evas_object_bottom_get(e_comp->evas);
    do
      {
         if (evas_object_data_get(l, "comp_object"))
