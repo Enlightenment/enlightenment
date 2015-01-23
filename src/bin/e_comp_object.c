@@ -1396,7 +1396,12 @@ _e_comp_intercept_show(void *data, Evas_Object *obj EINA_UNUSED)
 
         if ((!cw->ec->input_only) && (!cw->ec->ignored))
           {
-             cw->updates = eina_tiler_new(cw->ec->client.w, cw->ec->client.h);
+             int w, h;
+
+             w = cw->ec->client.w, h = cw->ec->client.h;
+             if ((!w) || (!h))
+               e_pixmap_size_get(cw->ec->pixmap, &w, &h);
+             cw->updates = eina_tiler_new(w, h);
              eina_tiler_tile_size_set(cw->updates, 1, 1);
           }
      }
