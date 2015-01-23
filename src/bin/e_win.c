@@ -60,8 +60,10 @@ _e_elm_win_trap_show(void *data, Evas_Object *o)
    Elm_Win_Trap_Ctx *ctx = data;
    Evas *e = evas_object_evas_get(o);
    Ecore_Evas *ee = ecore_evas_ecore_evas_get(e);
+   Eina_Bool borderless;
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(ctx, EINA_TRUE);
+   borderless = elm_win_borderless_get(o);
    if (!ctx->client)
      {
         E_Client *ec;
@@ -121,6 +123,7 @@ _e_elm_win_trap_show(void *data, Evas_Object *o)
         ctx->visible = 1;
         evas_object_show(ctx->client->frame);
      }
+   ctx->client->borderless |= borderless;
    e_comp_object_frame_xy_adjust(ctx->client->frame, ctx->client->client.x, ctx->client->client.y, &ctx->client->x, &ctx->client->y);
    e_comp_object_frame_wh_adjust(ctx->client->frame, ctx->client->client.w, ctx->client->client.h, &ctx->client->w, &ctx->client->h);
    if (ctx->centered) e_comp_object_util_center(ctx->client->frame);
