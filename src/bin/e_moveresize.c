@@ -97,7 +97,7 @@ _e_resize_begin(void *data __UNUSED__, E_Client *ec)
 
    e_moveresize_client_extents(ec, &w, &h);
 
-   _disp_content = o = edje_object_add(e_comp_get(ec)->evas);
+   _disp_content = o = edje_object_add(e_comp->evas);
    evas_object_name_set(o, "resizeinfo->_disp_content");
    e_theme_edje_object_set(o, "base/theme/borders",
                            "e/widgets/border/default/resize");
@@ -171,7 +171,7 @@ _e_move_begin(void *data __UNUSED__, E_Client *ec)
    if ((!e_config->move_info_visible) || (!_e_moveresize_enabled))
      return;
 
-   _disp_content = o = edje_object_add(e_comp_get(ec)->evas);
+   _disp_content = o = edje_object_add(e_comp->evas);
    evas_object_name_set(o, "moveinfo->_disp_content");
    e_theme_edje_object_set(o, "base/theme/borders",
                            "e/widgets/border/default/move");
