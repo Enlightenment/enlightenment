@@ -1406,11 +1406,6 @@ _e_client_cb_evas_resize(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_
    Evas_Coord x, y, w, h;
 
    ec->pre_res_change.valid = 0;
-   if (ec->internal_elm_win || (!ec->netwm.sync.request))
-     {
-        EC_CHANGED(ec);
-        ec->changes.size = 1;
-     }
 
    _e_client_event_simple(ec, E_EVENT_CLIENT_RESIZE);
 
