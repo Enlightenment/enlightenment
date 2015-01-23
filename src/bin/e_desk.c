@@ -852,7 +852,7 @@ _e_desk_show_begin(E_Desk *desk, int dx, int dy)
         else
           ec->hidden = 0;
 
-        e_client_comp_hidden_set(ec, ec->hidden);
+        e_client_comp_hidden_set(ec, ec->hidden || ec->shaded);
         evas_object_show(ec->frame);
      }
    if ((!e_config->desk_flip_animate_type) || (!desk->animate_count))
