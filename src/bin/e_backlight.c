@@ -49,7 +49,7 @@ e_backlight_init(void)
 #endif
 
 #ifndef HAVE_WAYLAND_ONLY
-   if (e_comp_get(NULL)->comp_type == E_PIXMAP_TYPE_X)
+   if (e_comp->comp_type == E_PIXMAP_TYPE_X)
      xbl_avail = ecore_x_randr_output_backlight_available();
 #endif
    e_backlight_update();
