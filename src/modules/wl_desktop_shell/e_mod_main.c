@@ -274,8 +274,6 @@ _e_shell_surface_cb_toplevel_set(struct wl_client *client EINA_UNUSED, struct wl
    ec->no_shape_cut = EINA_TRUE;
 
    ec->borderless = !ec->internal;
-   if ((ec->internal_elm_win) || (ec->override))
-     ec->borderless = EINA_TRUE;
 
    ec->lock_border = EINA_TRUE;
    ec->border.changed = ec->changes.border = !ec->borderless;
@@ -342,7 +340,7 @@ _e_shell_surface_cb_popup_set(struct wl_client *client EINA_UNUSED, struct wl_re
 
    ec->argb = EINA_TRUE;
    ec->no_shape_cut = EINA_TRUE;
-   ec->borderless = EINA_TRUE;
+   ec->borderless = !ec->internal_elm_win;
    ec->lock_border = EINA_TRUE;
    ec->border.changed = ec->changes.border = !ec->borderless;
    ec->changes.icon = !!ec->icccm.class;
@@ -1198,9 +1196,7 @@ _e_xdg_shell_cb_surface_get(struct wl_client *client, struct wl_resource *resour
    /* set toplevel client properties */
    ec->argb = EINA_TRUE;
    ec->no_shape_cut = EINA_TRUE;
-   ec->borderless = !ec->internal;
-   if ((ec->internal_elm_win) || (ec->override))
-     ec->borderless = EINA_TRUE;
+   ec->borderless = !ec->internal_elm_win;
    ec->lock_border = EINA_TRUE;
    ec->border.changed = ec->changes.border = !ec->borderless;
    ec->netwm.type = E_WINDOW_TYPE_NORMAL;
@@ -1312,7 +1308,7 @@ _e_xdg_shell_cb_popup_get(struct wl_client *client, struct wl_resource *resource
 
    ec->argb = EINA_TRUE;
    ec->no_shape_cut = EINA_TRUE;
-   ec->borderless = EINA_TRUE;
+   ec->borderless = !ec->internal_elm_win;
    ec->lock_border = EINA_TRUE;
    ec->border.changed = ec->changes.border = !ec->borderless;
    ec->changes.icon = !!ec->icccm.class;
