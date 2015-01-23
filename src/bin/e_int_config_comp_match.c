@@ -798,6 +798,7 @@ _basic_create_widgets(E_Config_Dialog *cfd, Evas *evas, E_Config_Dialog_Data *cf
 
    orec0 = evas_object_rectangle_add(evas);
    evas_object_name_set(orec0, "style_shadows");
+   elm_win_center(cfd->dia->win, 1, 1);
 
    return _create_styles_toolbook(cfd, evas, cfdata);
 }
