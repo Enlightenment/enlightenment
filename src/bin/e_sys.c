@@ -392,7 +392,7 @@ _e_sys_systemd_check_cb(void *data, const Eldbus_Message *m, Eldbus_Pending *p _
    if (!eldbus_message_arguments_get(m, "s", &s)) return;
    if (!s) return;
    if (!strcmp(s, "yes")) *dest = 1;
-   else *dest = 1;
+   else *dest = 0;
 }
 
 static void
