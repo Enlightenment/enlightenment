@@ -111,7 +111,7 @@ e_desk_client_top_visible_get(const E_Desk *desk)
    E_OBJECT_CHECK_RETURN(desk, NULL);
    E_OBJECT_TYPE_CHECK_RETURN(desk, E_DESK_TYPE, NULL);
 
-   E_CLIENT_REVERSE_FOREACH(e_comp_get(desk), ec)
+   E_CLIENT_REVERSE_FOREACH(e_comp, ec)
      if (e_client_util_desk_visible(ec, desk) && evas_object_visible_get(ec->frame)) return ec;
    return NULL;
 }
@@ -673,7 +673,7 @@ e_desk_flip_end(E_Desk *desk)
    ecore_event_add(E_EVENT_DESK_AFTER_SHOW, ev,
                    _e_desk_event_desk_after_show_free, NULL);
 
-   e_comp_shape_queue(e_comp_get(desk));
+   e_comp_shape_queue(e_comp);
    if (!e_config->focus_last_focused_per_desktop) return;
    if ((e_config->focus_policy == E_FOCUS_MOUSE) ||
        (e_config->focus_policy == E_FOCUS_SLOPPY))
@@ -693,7 +693,7 @@ e_desk_flip_end(E_Desk *desk)
          * user has flipped to this desk. let's be helpful and
          * focus a random window!
          */
-         E_CLIENT_REVERSE_FOREACH(e_comp_get(desk), ec)
+         E_CLIENT_REVERSE_FOREACH(e_comp, ec)
            {
               /* start with top and go down... */
               if (e_client_util_ignored_get(ec)) continue;
