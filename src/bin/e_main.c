@@ -1740,7 +1740,7 @@ _e_main_cb_x_flusher(void *data __UNUSED__)
 {
    eet_clearcache();
 #ifndef HAVE_WAYLAND_ONLY
-   if (e_comp_get(NULL)->comp_type == E_PIXMAP_TYPE_X)
+   if (e_comp->comp_type == E_PIXMAP_TYPE_X)
      ecore_x_flush();
 #endif
    return ECORE_CALLBACK_RENEW;
