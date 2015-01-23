@@ -7,7 +7,7 @@ e_mouse_update(void)
    int n;
 
 #ifndef HAVE_WAYLAND_ONLY
-   if (e_comp_get(NULL)->comp_type == E_PIXMAP_TYPE_X)
+   if (e_comp->comp_type == E_PIXMAP_TYPE_X)
      {
         if (!ecore_x_pointer_control_set(e_config->mouse_accel_numerator,
                                          e_config->mouse_accel_denominator,
@@ -41,7 +41,7 @@ e_mouse_update(void)
      }
 
 #ifndef HAVE_WAYLAND_ONLY
-   if (e_comp_get(NULL)->comp_type == E_PIXMAP_TYPE_X)
+   if (e_comp->comp_type == E_PIXMAP_TYPE_X)
      if (!ecore_x_pointer_mapping_set(map, n)) return 0;
 #endif
 
