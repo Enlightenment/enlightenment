@@ -131,7 +131,6 @@ _e_elm_win_trap_move(void *data, Evas_Object *o __UNUSED__, int x, int y)
 {
    Elm_Win_Trap_Ctx *ctx = data;
    EINA_SAFETY_ON_NULL_RETURN_VAL(ctx, EINA_TRUE);
-   ctx->centered = 0;
    ctx->placed = 1;
    if (!ctx->client) return EINA_TRUE;
    if ((ctx->client->client.x != x) || (ctx->client->client.y != y))
