@@ -982,7 +982,7 @@ _e_client_menu_cb_align_cb(Evas *e, Evas_Object *obj, Evas_Event_Mouse_Down *ev)
 {
    evas_object_hide(obj);
    evas_object_del(obj);
-   e_comp_shape_queue(e_comp_util_evas_object_comp_get(obj));
+   e_comp_shape_queue(e_comp);
    return evas_object_top_at_xy_get(e, ev->output.x, ev->output.y, 0, 0);
 }
 
