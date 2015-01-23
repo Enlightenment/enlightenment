@@ -72,7 +72,7 @@ _e_elm_win_trap_show(void *data, Evas_Object *o)
         if (!strncmp(ecore_evas_engine_name_get(ee), "wayland", 7))
           {
              type = E_PIXMAP_TYPE_WL;
-             ctx->pointer = e_comp_get(NULL)->pointer;
+             ctx->pointer = e_comp->pointer;
           }
         else
           {
