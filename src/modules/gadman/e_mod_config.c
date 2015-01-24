@@ -189,7 +189,7 @@ _basic_create_widgets(E_Config_Dialog *cfd EINA_UNUSED, Evas *evas, E_Config_Dia
    ob = e_widget_button_add(evas, _("Configure Layer"), NULL, _cb_config, cfdata, NULL);
    e_widget_disabled_set(ob, 1);
    cfdata->o_config = ob;
-   e_widget_size_min_get(ob, &mw, &mh);
+   evas_object_size_hint_min_get(ob, &mw, &mh);
    e_widget_framelist_object_append_full(of, ob,
                                          1, 1, /* fill */
                                          1, 0, /* expand */
