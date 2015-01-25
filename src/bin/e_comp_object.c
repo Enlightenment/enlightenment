@@ -657,7 +657,7 @@ static void
 _e_comp_object_setup(E_Comp_Object *cw)
 {
    cw->clip = evas_object_rectangle_add(cw->comp->evas);
-   evas_object_resize(cw->clip, cw->comp->man->w, cw->comp->man->h);
+   evas_object_resize(cw->clip, 999999, 999999);
    evas_object_smart_member_add(cw->clip, cw->smart_obj);
    cw->effect_obj = edje_object_add(cw->comp->evas);
    evas_object_move(cw->effect_obj, cw->x, cw->y);

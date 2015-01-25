@@ -64,7 +64,6 @@ e_init_show(void)
              evas_object_name_set(o, "_e_init_extra_screen");
           }
         evas_object_clip_set(o, zone->bg_clip_object);
-        fprintf(stderr, "zone %p: %i %i   %ix%i\n", zone, zone->x, zone->y, zone->w, zone->h);
         evas_object_move(o, zone->x, zone->y);
         evas_object_resize(o, zone->w, zone->h);
         evas_object_layer_set(o, E_LAYER_MAX);

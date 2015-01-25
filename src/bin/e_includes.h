@@ -10,7 +10,7 @@
 #include "e_auth.h"
 #ifdef NEED_X
 # include "e_comp_x.h"
-# include "e_randr.h"
+# include "e_randr2.h"
 #endif
 #include "e_pixmap.h"
 #include "e_comp_object.h"

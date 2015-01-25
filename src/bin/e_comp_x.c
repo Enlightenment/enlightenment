@@ -1334,7 +1334,8 @@ _e_comp_x_configure(void *data EINA_UNUSED, int type EINA_UNUSED, Ecore_X_Event_
    c = e_comp_find_by_window(ev->win);
    if (c)
      {
-        e_manager_resize(c->man, ev->w, ev->h);
+        // do not handle this here - use randr events
+        //e_manager_resize(c->man, ev->w, ev->h);
         return ECORE_CALLBACK_RENEW;
      }
    ec = _e_comp_x_client_find_by_window(ev->win);
@@ -4565,14 +4566,32 @@ _e_comp_x_pre_swap(void *data, Evas *e EINA_UNUSED)
 static Eina_Bool
 _e_comp_x_xinerama_setup(int rw, int rh)
 {
-   int n, i;
+   int i;
    E_Screen *screen;
    Eina_List *all_screens = NULL;
+   Eina_List *l;
+   E_Randr2_Screen *s;
 
-   /* first (and only) root window */
-   /* get number of xinerama screens */
-   n = ecore_x_xinerama_screen_count_get();
-   if (n < 2)
+   i = 0;
+   EINA_LIST_FOREACH(e_randr2->screens, l, s)
+     {
+        if ((s->config.enabled) &&
+            (s->config.geom.w > 0) &&
+            (s->config.geom.h > 0))
+          {
+             screen = E_NEW(E_Screen, 1);
+             screen->escreen = screen->screen = i;
+             screen->x = s->config.geom.x;
+             screen->y = s->config.geom.y;
+             screen->w = s->config.geom.w;
+             screen->h = s->config.geom.h;
+             all_screens = eina_list_append(all_screens, screen);
+             INF("E INIT: XINERAMA SCREEN: [%i][%i], %ix%i+%i+%i",
+                 i, i, screen->w, screen->h, screen->x, screen->y);
+             i++;
+          }
+     }
+   if (i == 0)
      {
         screen = E_NEW(E_Screen, 1);
         screen->escreen = screen->screen = 0;
@@ -4582,30 +4601,33 @@ _e_comp_x_xinerama_setup(int rw, int rh)
         screen->h = rh;
         all_screens = eina_list_append(all_screens, screen);
      }
-   else
-     {
-        for (i = 0; i < n; i++)
-          {
-             int x, y, w, h;
-
-             /* get each xinerama screen geometry */
-             if (ecore_x_xinerama_screen_geometry_get(i, &x, &y, &w, &h))
-               {
-                  INF("E INIT: XINERAMA SCREEN: [%i][%i], %ix%i+%i+%i",
-                      i, i, w, h, x, y);
-                  /* add it to our list */
-                  screen = E_NEW(E_Screen, 1);
-                  screen->escreen = screen->screen = i;
-                  screen->x = x;
-                  screen->y = y;
-                  screen->w = w;
-                  screen->h = h;
-                  all_screens = eina_list_append(all_screens, screen);
-               }
-          }
-     }
    e_xinerama_screens_set(all_screens);
    return EINA_TRUE;
+}
+
+static Eina_Bool
+_e_comp_x_randr_change(void *data EINA_UNUSED, int ev_type EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   if ((e_comp->man->w != e_randr2->w) ||
+       (e_comp->man->h != e_randr2->h))
+     {
+        e_manager_resize(e_comp->man, e_randr2->w, e_randr2->h);
+     }
+   else
+     {
+        E_Client *ec;
+
+        ecore_x_netwm_desk_size_set(e_comp->man->root, e_comp->man->w, e_comp->man->h);
+        _e_comp_x_xinerama_setup(e_comp->man->w, e_comp->man->h);
+
+        e_comp_canvas_update();
+        E_CLIENT_FOREACH(e_comp, ec)
+          {
+             if (!e_client_util_ignored_get(ec))
+               _e_comp_x_client_zone_geometry_set(ec);
+          }
+     }
+   return ECORE_CALLBACK_RENEW;
 }
 
 static void
@@ -5251,7 +5273,10 @@ e_comp_x_init(void)
 
    e_desklock_show_hook_add(_e_comp_x_desklock_show);
    e_desklock_hide_hook_add(_e_comp_x_desklock_hide);
-   if (!e_randr_init()) return 0;
+
+   if (!e_randr2_init()) return 0;
+   E_LIST_HANDLER_APPEND(handlers, E_EVENT_RANDR_CHANGE, _e_comp_x_randr_change, NULL);
+
    if (!e_atoms_init()) return 0;
    if (!_e_comp_x_screens_setup()) return EINA_FALSE;
    if (!e_xsettings_init())
@@ -5274,7 +5299,7 @@ e_comp_x_shutdown(void)
    ecore_x_screensaver_custom_blanking_disable();
    if (x_fatal) return;
    e_atoms_shutdown();
-   e_randr_shutdown();
+   e_randr2_shutdown();
    /* ecore_x_ungrab(); */
    ecore_x_focus_reset();
    ecore_x_events_allow_all();

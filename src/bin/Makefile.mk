@@ -138,7 +138,7 @@ src/bin/e_place.h \
 src/bin/e_pointer.h \
 src/bin/e_powersave.h \
 src/bin/e_prefix.h \
-src/bin/e_randr.h \
+src/bin/e_randr2.h \
 src/bin/e_remember.h \
 src/bin/e_resist.h \
 src/bin/e_scale.h \
@@ -364,7 +364,7 @@ $(ENLIGHTENMENTHEADERS)
 if ! HAVE_WAYLAND_ONLY
 enlightenment_src += \
 src/bin/e_comp_x.c \
-src/bin/e_randr.c \
+src/bin/e_randr2.c \
 src/bin/e_xsettings.c
 endif
 

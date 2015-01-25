@@ -1,6 +1,7 @@
 #ifndef E_MOD_MAIN_H
 # define E_MOD_MAIN_H
 
+#if 0
 //# define LOGFNS 1
 
 # ifdef LOGFNS
@@ -28,4 +29,5 @@ EAPI int e_modapi_save(E_Module *m);
  * @}
  */
 
+#endif
 #endif

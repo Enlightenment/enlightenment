@@ -2899,6 +2899,13 @@ ACT_FN_GO(module_toggle, )
    else e_module_enable(m);
 }
 
+ACT_FN_GO(screen_redo, __UNUSED__)
+{
+   printf("REDOOOOOOOOOOOOOOOOOOOOOOOOOOO\n");
+   e_randr2_screeninfo_update();
+   e_randr2_config_apply();
+}
+
 /* local subsystem globals */
 static Eina_Hash *actions = NULL;
 static Eina_List *action_list = NULL;
@@ -3240,6 +3247,12 @@ e_actions_init(void)
    e_action_predef_name_set(N_("Screen"), N_("Backlight Down"), "backlight_adjust",
                             "-10", NULL, 0);
 
+   /* screen setup */
+   ACT_GO(screen_redo);
+   e_action_predef_name_set(N_("Screen"),
+                            N_("Update and re-apply screen setup"),
+                            "screen_redo", NULL, NULL, 0);
+
    /* window_move_to_center */
    ACT_GO(window_move_to_center);
    e_action_predef_name_set(N_("Window : Actions"), N_("Move To Center"),
@@ -3426,6 +3439,7 @@ e_actions_init(void)
    e_action_predef_name_set(N_("Keyboard Layouts"),
                             N_("Previous keyboard layout"), "kbd_layout_prev",
                             NULL, NULL, 0);
+
    return 1;
 }
 

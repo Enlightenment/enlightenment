@@ -14,12 +14,8 @@ src_modules_conf_randr_module_la_CPPFLAGS = $(MOD_CPPFLAGS) -DNEED_X=1
 src_modules_conf_randr_module_la_LDFLAGS = $(MOD_LDFLAGS)
 src_modules_conf_randr_module_la_SOURCES = src/modules/conf_randr/e_mod_main.c \
 			       src/modules/conf_randr/e_mod_main.h \
-			       src/modules/conf_randr/e_int_config_randr.c \
-			       src/modules/conf_randr/e_int_config_randr.h \
-                               src/modules/conf_randr/e_smart_randr.c \
-                               src/modules/conf_randr/e_smart_randr.h \
-                               src/modules/conf_randr/e_smart_monitor.c \
-                               src/modules/conf_randr/e_smart_monitor.h
+			       src/modules/conf_randr/e_int_config_randr2.c \
+			       src/modules/conf_randr/e_int_config_randr2.h
 
 PHONIES += conf_randr install-conf_randr
 conf_randr: $(conf_randrpkg_LTLIBRARIES) $(conf_randr_DATA)
