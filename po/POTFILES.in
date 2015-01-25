@@ -76,7 +76,6 @@ src/bin/e_path.c
 src/bin/e_place.c
 src/bin/e_pointer.c
 src/bin/e_prefix.c
-src/bin/e_randr.c
 src/bin/e_remember.c
 src/bin/e_resist.c
 src/bin/e_screensaver.c
