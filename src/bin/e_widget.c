@@ -130,18 +130,13 @@ e_widget_data_get(Evas_Object *obj)
 EAPI void
 e_widget_size_min_set(Evas_Object *obj, Evas_Coord minw, Evas_Coord minh)
 {
-   API_ENTRY return;
-   if (minw >= 0) sd->minw = minw;
-   if (minh >= 0) sd->minh = minh;
    evas_object_size_hint_min_set(obj, minw, minh);
 }
 
 EAPI void
 e_widget_size_min_get(Evas_Object *obj, Evas_Coord *minw, Evas_Coord *minh)
 {
-   API_ENTRY return;
-   if (minw) *minw = sd->minw;
-   if (minh) *minh = sd->minh;
+   evas_object_size_hint_min_get(obj, minw, minh);
 }
 
 static void
@@ -508,8 +503,9 @@ e_widget_pointer_get(Evas_Object *obj)
 EAPI void
 e_widget_size_min_resize(Evas_Object *obj)
 {
-   API_ENTRY return;
-   evas_object_resize(obj, sd->minw, sd->minh);
+   Evas_Coord minw, minh;
+   evas_object_size_hint_min_get(obj, &minw, &minh);
+   evas_object_resize(obj, minw, minh);
 }
 
 /* local subsystem functions */
