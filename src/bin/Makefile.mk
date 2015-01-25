@@ -60,6 +60,7 @@ src/bin/e_comp_x.h \
 src/bin/e_config_data.h \
 src/bin/e_config_dialog.h \
 src/bin/e_config.h \
+src/bin/e_configure2.h \
 src/bin/e_configure.h \
 src/bin/e_confirm_dialog.h \
 src/bin/e_datastore.h \
@@ -228,6 +229,7 @@ src/bin/e_config.c \
 src/bin/e_config_data.c \
 src/bin/e_config_dialog.c \
 src/bin/e_configure.c \
+src/bin/e_configure2.c \
 src/bin/e_confirm_dialog.c \
 src/bin/e_datastore.c \
 src/bin/e_dbusmenu.c \
@@ -470,4 +472,4 @@ PHONIES += e enlightenment install-e install-enlightenment
 e: $(bin_PROGRAMS)
 enlightenment: e
 install-e: install-binPROGRAMS
-install-enlightenment: install-e 
+install-enlightenment: install-e

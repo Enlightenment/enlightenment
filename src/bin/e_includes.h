@@ -54,6 +54,7 @@
 #include "e_pan.h"
 #include "e_zoomap.h"
 #include "e_dialog.h"
+#include "e_configure2.h"
 #include "e_configure.h"
 #include "e_about.h"
 #include "e_theme_about.h"
