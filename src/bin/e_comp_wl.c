@@ -827,7 +827,7 @@ _e_comp_wl_cb_comp_object_add(void *data EINA_UNUSED, int type EINA_UNUSED, E_Ev
 }
 
 static Eina_Bool 
-_e_comp_wl_cb_input_event(void *data EINA_UNUSED, int type EINA_UNUSED, void *ev)
+_e_comp_wl_cb_input_event(void *data EINA_UNUSED, int type EINA_UNUSED, void *ev EINA_UNUSED)
 {
    _last_event_time = ecore_loop_time_get();
    return ECORE_CALLBACK_RENEW;
