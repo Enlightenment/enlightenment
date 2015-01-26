@@ -425,12 +425,9 @@ _e_desklock_cb_idle_poller(void *data __UNUSED__)
 
 #ifndef HAVE_WAYLAND_ONLY
         idle = ecore_x_screensaver_idle_time_get();
+#else
+        idle = e_comp_wl_idle_time_get();
 #endif
-        /* FIXME: We need to get the idle time from ecore_wayland or 
-         * ecore_drm here. The problem is, we do not link to ecore_drm library 
-         * other than the wl_drm module, and idle_time from ecore_wayland 
-         * library will only work if the comp->ee is created using 
-         * ecore_evas_wayland */
 
         max = e_config->desklock_autolock_idle_timeout;
         if (_e_desklock_ask_presentation_count > 0)
