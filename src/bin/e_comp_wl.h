@@ -277,11 +277,5 @@ EINTERN void e_comp_wl_buffer_reference(E_Comp_Wl_Buffer_Ref *ref, E_Comp_Wl_Buf
 
 EAPI struct wl_signal e_comp_wl_surface_create_signal_get(E_Comp *comp);
 
-static inline uint64_t
-e_comp_wl_id_get(uint32_t client, uint32_t surface)
-{
-   return ((uint64_t)surface << 32) + (uint64_t)client;
-}
-
 # endif
 #endif
