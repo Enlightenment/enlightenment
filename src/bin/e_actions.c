@@ -2902,8 +2902,10 @@ ACT_FN_GO(module_toggle, )
 ACT_FN_GO(screen_redo, __UNUSED__)
 {
    printf("REDOOOOOOOOOOOOOOOOOOOOOOOOOOO\n");
+#ifndef HAVE_WAYLAND_ONLY
    e_randr2_screeninfo_update();
    e_randr2_config_apply();
+#endif
 }
 
 /* local subsystem globals */
