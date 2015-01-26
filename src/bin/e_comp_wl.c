@@ -26,6 +26,7 @@ static void _e_comp_wl_client_idler_add(E_Client *ec);
 static Eina_List *handlers = NULL;
 static Eina_List *_idle_clients = NULL;
 static Ecore_Idle_Enterer *_client_idler = NULL;
+static double _last_event_time = 0.0;
 
 /* local functions */
 static void 
@@ -825,6 +826,13 @@ _e_comp_wl_cb_comp_object_add(void *data EINA_UNUSED, int type EINA_UNUSED, E_Ev
    return ECORE_CALLBACK_RENEW;
 }
 
+static Eina_Bool 
+_e_comp_wl_cb_input_event(void *data EINA_UNUSED, int type EINA_UNUSED, void *ev)
+{
+   _last_event_time = ecore_loop_time_get();
+   return ECORE_CALLBACK_RENEW;
+}
+
 static void 
 _e_comp_wl_surface_cb_destroy(struct wl_client *client EINA_UNUSED, struct wl_resource *resource)
 {
@@ -876,7 +884,7 @@ _e_comp_wl_surface_cb_attach(struct wl_client *client EINA_UNUSED, struct wl_res
         return;
      }
 
-   DBG("Surface Attach: %d", wl_resource_get_id(resource));
+   /* DBG("Surface Attach: %d", wl_resource_get_id(resource)); */
 
    /* reset client pending information */
    ec->comp_data->pending.x = sx;
@@ -926,8 +934,8 @@ _e_comp_wl_surface_cb_damage(struct wl_client *client EINA_UNUSED, struct wl_res
    if (e_object_is_del(E_OBJECT(ec))) return;
    if (!ec->comp_data) return;
 
-   DBG("Surface Cb Damage: %d", wl_resource_get_id(resource));
-   DBG("\tGeom: %d %d %d %d", x, y, w, h);
+   /* DBG("Surface Cb Damage: %d", wl_resource_get_id(resource)); */
+   /* DBG("\tGeom: %d %d %d %d", x, y, w, h); */
 
    /* create new damage rectangle */
    if (!(dmg = eina_rectangle_new(x, y, w, h))) return;
@@ -1100,7 +1108,7 @@ _e_comp_wl_surface_cb_commit(struct wl_client *client EINA_UNUSED, struct wl_res
    /* trap for clients which are being deleted */
    if (e_object_is_del(E_OBJECT(ec))) return;
 
-   DBG("Surface Commit: %d", wl_resource_get_id(resource));
+   /* DBG("Surface Commit: %d", wl_resource_get_id(resource)); */
 
    /* call the subsurface commit function
     * 
@@ -2501,6 +2509,19 @@ e_comp_wl_init(void)
    E_LIST_HANDLER_APPEND(handlers, E_EVENT_COMP_OBJECT_ADD, 
                          _e_comp_wl_cb_comp_object_add, NULL);
 
+   E_LIST_HANDLER_APPEND(handlers, ECORE_EVENT_KEY_DOWN, 
+                         _e_comp_wl_cb_input_event, NULL);
+   E_LIST_HANDLER_APPEND(handlers, ECORE_EVENT_KEY_UP, 
+                         _e_comp_wl_cb_input_event, NULL);
+   E_LIST_HANDLER_APPEND(handlers, ECORE_EVENT_MOUSE_BUTTON_DOWN, 
+                         _e_comp_wl_cb_input_event, NULL);
+   E_LIST_HANDLER_APPEND(handlers, ECORE_EVENT_MOUSE_BUTTON_UP, 
+                         _e_comp_wl_cb_input_event, NULL);
+   E_LIST_HANDLER_APPEND(handlers, ECORE_EVENT_MOUSE_MOVE, 
+                         _e_comp_wl_cb_input_event, NULL);
+   E_LIST_HANDLER_APPEND(handlers, ECORE_EVENT_MOUSE_WHEEL, 
+                         _e_comp_wl_cb_input_event, NULL);
+
    /* add hooks to catch e_client events */
    e_client_hook_add(E_CLIENT_HOOK_NEW_CLIENT, _e_comp_wl_client_cb_new, NULL);
    e_client_hook_add(E_CLIENT_HOOK_DEL, _e_comp_wl_client_cb_del, NULL);
@@ -2519,6 +2540,8 @@ e_comp_wl_init(void)
                      _e_comp_wl_client_cb_resize_begin, NULL);
    e_client_hook_add(E_CLIENT_HOOK_RESIZE_END, 
                      _e_comp_wl_client_cb_resize_end, NULL);
+
+   _last_event_time = ecore_loop_time_get();
 
    return EINA_TRUE;
 }
@@ -2778,4 +2801,10 @@ e_comp_wl_subsurface_commit(E_Client *ec)
      }
 
    return EINA_TRUE;
+}
+
+EAPI double 
+e_comp_wl_idle_time_get(void)
+{
+   return (ecore_loop_time_get() - _last_event_time);
 }
