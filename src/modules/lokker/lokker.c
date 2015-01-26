@@ -354,7 +354,7 @@ _lokker_popup_add(E_Zone *zone)
    bg = cbg ? cbg->file : NULL;
 
    lp->zone = zone;
-   evas = e_comp_get(zone)->evas;
+   evas = e_comp->evas;
    evas_event_freeze(evas);
    lp->bg_object = edje_object_add(evas);
    evas_object_name_set(lp->bg_object, "desklock->bg_object");
