@@ -276,6 +276,7 @@ EINTERN Eina_Bool e_comp_wl_subsurface_commit(E_Client *ec);
 EINTERN void e_comp_wl_buffer_reference(E_Comp_Wl_Buffer_Ref *ref, E_Comp_Wl_Buffer *buffer);
 
 EAPI struct wl_signal e_comp_wl_surface_create_signal_get(E_Comp *comp);
+EAPI double e_comp_wl_idle_time_get(void);
 
 # endif
 #endif
