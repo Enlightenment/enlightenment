@@ -2548,7 +2548,7 @@ _e_gadcon_client_move_start(E_Gadcon_Client *gcc)
      evas_pointer_canvas_xy_get(gcc->gadcon->evas, &gcc->dx, &gcc->dy);
    else
      {
-        ecore_evas_pointer_xy_get(e_comp_get(gcc)->ee, &gcc->dx, &gcc->dy);
+        ecore_evas_pointer_xy_get(e_comp->ee, &gcc->dx, &gcc->dy);
         gcc->dx -= gx;
         gcc->dy -= gy;
      }
@@ -2592,7 +2592,7 @@ _e_gadcon_client_move_go(E_Gadcon_Client *gcc)
    if (gcc->gadcon->toolbar)
      evas_pointer_canvas_xy_get(gcc->gadcon->evas, &cx, &cy);
    else
-     ecore_evas_pointer_xy_get(e_comp_get(gcc)->ee, &cx, &cy);
+     ecore_evas_pointer_xy_get(e_comp->ee, &cx, &cy);
 
    evas_object_geometry_get(gcc->gadcon->o_container, &gx, &gy, &gw, &gh);
 
