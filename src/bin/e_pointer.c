@@ -481,11 +481,8 @@ e_pointer_window_new(Ecore_Window win, Eina_Bool filled)
    ptr->e_cursor = e_config->use_e_cursor;
    ptr->win = win;
    ptr->color = EINA_FALSE;
-   if ((comp = e_comp_get(NULL)))
-     {
-        if (comp->pointer)
-          ptr->color = comp->pointer->color;
-     }
+   if (e_comp->pointer)
+     ptr->color = comp->pointer->color;
 
    /* set pointer default type */
    if (filled) e_pointer_type_push(ptr, ptr, "default");
@@ -631,39 +628,39 @@ e_pointer_mode_push(void *obj, E_Pointer_Mode mode)
    switch (mode)
      {
       case E_POINTER_RESIZE_TL:
-        e_pointer_type_push(e_comp_get(obj)->pointer, obj, "resize_tl");
+        e_pointer_type_push(e_comp->pointer, obj, "resize_tl");
         break;
 
       case E_POINTER_RESIZE_T:
-        e_pointer_type_push(e_comp_get(obj)->pointer, obj, "resize_t");
+        e_pointer_type_push(e_comp->pointer, obj, "resize_t");
         break;
 
       case E_POINTER_RESIZE_TR:
-        e_pointer_type_push(e_comp_get(obj)->pointer, obj, "resize_tr");
+        e_pointer_type_push(e_comp->pointer, obj, "resize_tr");
         break;
 
       case E_POINTER_RESIZE_R:
-        e_pointer_type_push(e_comp_get(obj)->pointer, obj, "resize_r");
+        e_pointer_type_push(e_comp->pointer, obj, "resize_r");
         break;
 
       case E_POINTER_RESIZE_BR:
-        e_pointer_type_push(e_comp_get(obj)->pointer, obj, "resize_br");
+        e_pointer_type_push(e_comp->pointer, obj, "resize_br");
         break;
 
       case E_POINTER_RESIZE_B:
-        e_pointer_type_push(e_comp_get(obj)->pointer, obj, "resize_b");
+        e_pointer_type_push(e_comp->pointer, obj, "resize_b");
         break;
 
       case E_POINTER_RESIZE_BL:
-        e_pointer_type_push(e_comp_get(obj)->pointer, obj, "resize_bl");
+        e_pointer_type_push(e_comp->pointer, obj, "resize_bl");
         break;
 
       case E_POINTER_RESIZE_L:
-        e_pointer_type_push(e_comp_get(obj)->pointer, obj, "resize_l");
+        e_pointer_type_push(e_comp->pointer, obj, "resize_l");
         break;
 
       case E_POINTER_MOVE:
-        e_pointer_type_push(e_comp_get(obj)->pointer, obj, "move");
+        e_pointer_type_push(e_comp->pointer, obj, "move");
         break;
 
       default: break;
@@ -676,39 +673,39 @@ e_pointer_mode_pop(void *obj, E_Pointer_Mode mode)
    switch (mode)
      {
       case E_POINTER_RESIZE_TL:
-        e_pointer_type_pop(e_comp_get(obj)->pointer, obj, "resize_tl");
+        e_pointer_type_pop(e_comp->pointer, obj, "resize_tl");
         break;
 
       case E_POINTER_RESIZE_T:
-        e_pointer_type_pop(e_comp_get(obj)->pointer, obj, "resize_t");
+        e_pointer_type_pop(e_comp->pointer, obj, "resize_t");
         break;
 
       case E_POINTER_RESIZE_TR:
-        e_pointer_type_pop(e_comp_get(obj)->pointer, obj, "resize_tr");
+        e_pointer_type_pop(e_comp->pointer, obj, "resize_tr");
         break;
 
       case E_POINTER_RESIZE_R:
-        e_pointer_type_pop(e_comp_get(obj)->pointer, obj, "resize_r");
+        e_pointer_type_pop(e_comp->pointer, obj, "resize_r");
         break;
 
       case E_POINTER_RESIZE_BR:
-        e_pointer_type_pop(e_comp_get(obj)->pointer, obj, "resize_br");
+        e_pointer_type_pop(e_comp->pointer, obj, "resize_br");
         break;
 
       case E_POINTER_RESIZE_B:
-        e_pointer_type_pop(e_comp_get(obj)->pointer, obj, "resize_b");
+        e_pointer_type_pop(e_comp->pointer, obj, "resize_b");
         break;
 
       case E_POINTER_RESIZE_BL:
-        e_pointer_type_pop(e_comp_get(obj)->pointer, obj, "resize_bl");
+        e_pointer_type_pop(e_comp->pointer, obj, "resize_bl");
         break;
 
       case E_POINTER_RESIZE_L:
-        e_pointer_type_pop(e_comp_get(obj)->pointer, obj, "resize_l");
+        e_pointer_type_pop(e_comp->pointer, obj, "resize_l");
         break;
 
       case E_POINTER_MOVE:
-        e_pointer_type_pop(e_comp_get(obj)->pointer, obj, "move");
+        e_pointer_type_pop(e_comp->pointer, obj, "move");
         break;
 
       default: break;
