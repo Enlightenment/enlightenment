@@ -244,7 +244,7 @@ _animated_apply(void)
    if (_applying) return;
    _applying = EINA_TRUE;
    _start_time = ecore_loop_time_get();
-   e = e_comp_get(NULL)->evas;
+   e = e_comp->evas;
    _fade_obj = evas_object_rectangle_add(e);
    evas_object_pass_events_set(_fade_obj, EINA_TRUE);
    evas_object_color_set(_fade_obj, 0, 0, 0, 0);
