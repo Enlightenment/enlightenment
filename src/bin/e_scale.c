@@ -23,7 +23,7 @@ e_scale_update(void)
    if (e_config->scale.use_dpi)
      {
 #ifndef HAVE_WAYLAND_ONLY
-        if (e_comp_get(NULL)->comp_type == E_PIXMAP_TYPE_X)
+        if (e_comp->comp_type == E_PIXMAP_TYPE_X)
           e_scale = (double)ecore_x_dpi_get() / (double)e_config->scale.base_dpi;
 #endif
         if (e_scale > e_config->scale.max) e_scale = e_config->scale.max;
