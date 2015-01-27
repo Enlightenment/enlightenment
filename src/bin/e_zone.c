@@ -86,8 +86,8 @@ _e_zone_cb_mouse_in(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *eve
    zev->x = ev->output.x;
    zev->y = ev->output.y;
    zev->modifiers = e_bindings_evas_modifiers_convert(ev->modifiers);
-   zev->drag = !!evas_pointer_button_down_mask_get(e_comp_get(zone)->evas);
-   
+   zev->drag = !!evas_pointer_button_down_mask_get(e_comp->evas);
+
    ecore_event_add(E_EVENT_ZONE_EDGE_IN, zev, NULL, NULL);
    e_bindings_edge_in_event_handle(E_BINDING_CONTEXT_ZONE, E_OBJECT(zone), zev);
 }
@@ -109,7 +109,7 @@ _e_zone_cb_mouse_out(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *ev
    zev->x = ev->output.x;
    zev->y = ev->output.y;
    zev->modifiers = e_bindings_evas_modifiers_convert(ev->modifiers);
-   zev->drag = !!evas_pointer_button_down_mask_get(e_comp_get(zone)->evas);
+   zev->drag = !!evas_pointer_button_down_mask_get(e_comp->evas);
 
    ecore_event_add(E_EVENT_ZONE_EDGE_OUT, zev, NULL, NULL);
    e_bindings_edge_out_event_handle(E_BINDING_CONTEXT_ZONE, E_OBJECT(zone), zev);
