@@ -214,12 +214,12 @@ e_gadcon_popup_new(E_Gadcon_Client *gcc, Eina_Bool noshadow)
    if (!pop) return NULL;
    e_object_delay_del_set(E_OBJECT(pop), _e_gadcon_popup_delay_del);
 
-   o = edje_object_add(e_comp_get(gcc)->evas);
+   o = edje_object_add(e_comp->evas);
    e_theme_edje_object_set(o, "base/theme/gadman", "e/gadman/popup");
    pop->o_bg = o;
 
    pop->comp_object = e_comp_object_util_add(o, noshadow ? E_COMP_OBJECT_TYPE_NONE : E_COMP_OBJECT_TYPE_POPUP);
-   if (e_comp_get(gcc)->nocomp)
+   if (e_comp->nocomp)
      evas_object_layer_set(pop->comp_object, E_LAYER_CLIENT_NORMAL);
    else
      evas_object_layer_set(pop->comp_object, E_LAYER_POPUP);
