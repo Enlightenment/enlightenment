@@ -1174,6 +1174,8 @@ _e_comp_wl_compositor_cb_surface_create(struct wl_client *client, struct wl_reso
    E_Comp *comp;
    struct wl_resource *res;
    E_Pixmap *ep;
+   uint64_t win;
+   pid_t pid;
 
    if (!(comp = wl_resource_get_user_data(resource))) return;
 
@@ -1194,11 +1196,13 @@ _e_comp_wl_compositor_cb_surface_create(struct wl_client *client, struct wl_reso
    wl_resource_set_implementation(res, &_e_surface_interface, NULL, 
                                   _e_comp_wl_surface_destroy);
 
+   wl_client_get_credentials(client, &pid, NULL, NULL);
+   win = ((uint64_t)id << 32) + pid;
    /* check for existing pixmap */
-   if (!(ep = e_pixmap_find(E_PIXMAP_TYPE_WL, id)))
+   if (!(ep = e_pixmap_find(E_PIXMAP_TYPE_WL, win)))
      {
         /* try to create new pixmap */
-        if (!(ep = e_pixmap_new(E_PIXMAP_TYPE_WL, id)))
+        if (!(ep = e_pixmap_new(E_PIXMAP_TYPE_WL, win)))
           {
              ERR("Could not create new pixmap");
              wl_resource_destroy(res);
