@@ -1169,7 +1169,7 @@ _e_xdg_shell_cb_surface_get(struct wl_client *client, struct wl_resource *resour
      {
         wl_resource_post_error(surface_resource, 
                                WL_DISPLAY_ERROR_INVALID_OBJECT, 
-                               "Client already has shell surface");
+                               "Client already has XDG shell surface");
         return;
      }
 
@@ -1271,7 +1271,7 @@ _e_xdg_shell_cb_popup_get(struct wl_client *client, struct wl_resource *resource
      {
         wl_resource_post_error(surface_resource, 
                                WL_DISPLAY_ERROR_INVALID_OBJECT, 
-                               "Client already has shell surface");
+                               "Client already has shell popup surface");
         return;
      }
 
