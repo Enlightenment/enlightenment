@@ -1194,24 +1194,6 @@ _e_comp_wl_compositor_cb_surface_create(struct wl_client *client, struct wl_reso
    wl_resource_set_implementation(res, &_e_surface_interface, NULL, 
                                   _e_comp_wl_surface_destroy);
 
-   /* check for existing pixmap */
-   if (!(ep = e_pixmap_find(E_PIXMAP_TYPE_WL, id)))
-     {
-        /* try to create new pixmap */
-        if (!(ep = e_pixmap_new(E_PIXMAP_TYPE_WL, id)))
-          {
-             ERR("Could not create new pixmap");
-             wl_resource_destroy(res);
-             wl_client_post_no_memory(client);
-             return;
-          }
-     }
-
-   DBG("\tUsing Pixmap: %d", id);
-
-   /* set reference to pixmap so we can fetch it later */
-   wl_resource_set_user_data(res, ep);
-
    /* emit surface create signal */
    wl_signal_emit(&comp->wl_comp_data->signals.surface.create, res);
 }

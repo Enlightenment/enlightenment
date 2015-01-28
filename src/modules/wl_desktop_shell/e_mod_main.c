@@ -4,6 +4,39 @@
 
 #define XDG_SERVER_VERSION 4
 
+static E_Client *
+_client_create(struct wl_client *client, uint32_t id, struct wl_resource *surface_resource)
+{
+   E_Pixmap *ep;
+   E_Client *ec;
+   uint64_t win;
+   pid_t pid;
+
+   wl_client_get_credentials(client, &pid, NULL, NULL);
+   win = ((uint64_t)id << 32) + pid;
+   /* check for existing pixmap */
+   if (!(ec = e_pixmap_find_client(E_PIXMAP_TYPE_WL, win)))
+     {
+        /* try to create new pixmap */
+        ep = e_pixmap_new(E_PIXMAP_TYPE_WL, win);
+     }
+
+   DBG("\tUsing Pixmap: %d", id);
+
+   /* set reference to pixmap so we can fetch it later */
+   wl_resource_set_user_data(surface_resource, ep);
+
+   if (!ec)
+     {
+        /* no client found. not internal window. maybe external client app ? */
+        ec = e_client_new(e_util_comp_current_get(), ep, 1, 0);
+        if (!ec)
+          wl_resource_post_error(surface_resource, WL_DISPLAY_ERROR_INVALID_OBJECT,
+                       "No Client For Pixmap");
+     }
+   return ec;
+}
+
 static void 
 _e_shell_surface_parent_set(E_Client *ec, struct wl_resource *parent_resource)
 {
@@ -544,39 +577,12 @@ _e_shell_surface_unmap(struct wl_resource *resource)
 static void 
 _e_shell_cb_shell_surface_get(struct wl_client *client, struct wl_resource *resource EINA_UNUSED, uint32_t id, struct wl_resource *surface_resource)
 {
-   E_Pixmap *ep;
    E_Client *ec;
    E_Comp_Client_Data *cdata;
 
-   /* get the pixmap from this surface so we can find the client */
-   if (!(ep = wl_resource_get_user_data(surface_resource)))
-     {
-        wl_resource_post_error(surface_resource, 
-                               WL_DISPLAY_ERROR_INVALID_OBJECT, 
-                               "No Pixmap Set On Surface");
-        return;
-     }
-
-   /* make sure it's a wayland pixmap */
-   if (e_pixmap_type_get(ep) != E_PIXMAP_TYPE_WL) return;
-
-   /* find the client for this pixmap */
-   if (!(ec = e_pixmap_client_get(ep)))
-     ec = e_pixmap_find_client(E_PIXMAP_TYPE_WL, e_pixmap_window_get(ep));
-
-   if (!ec)
-     {
-        /* no client found. not internal window. maybe external client app ? */
-        if (!(ec = e_client_new(e_util_comp_current_get(), ep, 1, 0)))
-          {
-             wl_resource_post_error(surface_resource, 
-                                    WL_DISPLAY_ERROR_INVALID_OBJECT, 
-                                    "No Client For Pixmap");
-             return;
-          }
-
-        ec->netwm.ping = EINA_TRUE;
-     }
+   ec = _client_create(client, id, surface_resource);
+   if (!ec) return;
+   ec->netwm.ping = EINA_TRUE;
 
    /* get the client data */
    if (!(cdata = ec->comp_data))
@@ -1119,39 +1125,13 @@ _e_xdg_shell_surface_unmap(struct wl_resource *resource)
 static void 
 _e_xdg_shell_cb_surface_get(struct wl_client *client, struct wl_resource *resource EINA_UNUSED, uint32_t id, struct wl_resource *surface_resource)
 {
-   E_Pixmap *ep;
    E_Client *ec;
    E_Comp_Client_Data *cdata;
 
    /* DBG("XDG_SHELL: Surface Get %d", wl_resource_get_id(surface_resource)); */
 
-   /* get the pixmap from this surface so we can find the client */
-   if (!(ep = wl_resource_get_user_data(surface_resource)))
-     {
-        wl_resource_post_error(surface_resource, 
-                               WL_DISPLAY_ERROR_INVALID_OBJECT, 
-                               "No Pixmap Set On Surface");
-        return;
-     }
-
-   /* make sure it's a wayland pixmap */
-   if (e_pixmap_type_get(ep) != E_PIXMAP_TYPE_WL) return;
-
-   /* find the client for this pixmap */
-   if (!(ec = e_pixmap_client_get(ep)))
-     ec = e_pixmap_find_client(E_PIXMAP_TYPE_WL, e_pixmap_window_get(ep));
-
-   if (!ec)
-     {
-        /* no client found. not internal window. maybe external client app ? */
-        if (!(ec = e_client_new(e_util_comp_current_get(), ep, 1, 0)))
-          {
-             wl_resource_post_error(surface_resource, 
-                                    WL_DISPLAY_ERROR_INVALID_OBJECT, 
-                                    "No Client For Pixmap");
-             return;
-          }
-     }
+   ec = _client_create(client, id, surface_resource);
+   if (!ec) return;
 
    ec->netwm.ping = EINA_TRUE;
 
@@ -1218,7 +1198,6 @@ static const struct xdg_popup_interface _e_xdg_popup_interface =
 static void 
 _e_xdg_shell_cb_popup_get(struct wl_client *client, struct wl_resource *resource EINA_UNUSED, uint32_t id, struct wl_resource *surface_resource, struct wl_resource *parent_resource, struct wl_resource *seat_resource EINA_UNUSED, uint32_t serial EINA_UNUSED, int32_t x, int32_t y, uint32_t flags EINA_UNUSED)
 {
-   E_Pixmap *ep;
    E_Client *ec;
    E_Comp_Client_Data *cdata;
 
@@ -1227,35 +1206,8 @@ _e_xdg_shell_cb_popup_get(struct wl_client *client, struct wl_resource *resource
    /* DBG("\tParent Surface: %d", wl_resource_get_id(parent_resource)); */
    /* DBG("\tLocation: %d %d", x, y); */
 
-   /* get the pixmap from this surface so we can find the client */
-   if (!(ep = wl_resource_get_user_data(surface_resource)))
-     {
-        wl_resource_post_error(surface_resource, 
-                               WL_DISPLAY_ERROR_INVALID_OBJECT, 
-                               "No Pixmap Set On Surface");
-        return;
-     }
-
-   /* make sure it's a wayland pixmap */
-   if (e_pixmap_type_get(ep) != E_PIXMAP_TYPE_WL) return;
-
-   /* find the client for this pixmap */
-   if (!(ec = e_pixmap_client_get(ep)))
-     ec = e_pixmap_find_client(E_PIXMAP_TYPE_WL, e_pixmap_window_get(ep));
-
-   if (!ec)
-     {
-        /* no client found. create one */
-        if (!(ec = e_client_new(e_util_comp_current_get(), ep, 1, 1)))
-          {
-             wl_resource_post_error(surface_resource, 
-                                    WL_DISPLAY_ERROR_INVALID_OBJECT, 
-                                    "No Client For Pixmap");
-             return;
-          }
-
-        /* e_pixmap_ref(ep); */
-     }
+   ec = _client_create(client, id, surface_resource);
+   if (!ec) return;
 
    /* get the client data */
    if (!(cdata = ec->comp_data))
