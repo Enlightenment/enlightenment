@@ -78,7 +78,7 @@ e_grabinput_get(Ecore_Window mouse_win, int confine_mouse, Ecore_Window key_win)
              Ecore_Wl_Window *wl_win;
 
              if ((wl_win = ecore_wl_window_find(mouse_win)))
-               ecore_wl_input_grab(ecore_wl_input_get(), mouse_win, 0);
+               ecore_wl_input_grab(ecore_wl_input_get(), wl_win, 0);
           }
 #endif
         grab_mouse_win = mouse_win;
@@ -107,7 +107,7 @@ e_grabinput_get(Ecore_Window mouse_win, int confine_mouse, Ecore_Window key_win)
              Ecore_Wl_Window *wl_win;
 
              if ((wl_win = ecore_wl_window_find(key_win)))
-               ecore_wl_input_grab(ecore_wl_input_get(), key_win, 0);
+               ecore_wl_input_grab(ecore_wl_input_get(), wl_win, 0);
           }
 #endif
         grab_key_win = key_win;
