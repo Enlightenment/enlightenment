@@ -220,7 +220,7 @@ _e_grabinput_focus_do(Ecore_Window win, E_Focus_Method method)
         ecore_x_window_focus_at_time(win, ecore_x_current_time_get());
         ecore_x_icccm_take_focus_send(win, ecore_x_current_time_get());
 #else
-        if ((wl_win = ecore_wl_window_find(key_win)))
+        if ((wl_win = ecore_wl_window_find(win)))
           {
              /* FIXME: Need to add an ecore_wl_window_focus function */
           }
@@ -231,7 +231,7 @@ _e_grabinput_focus_do(Ecore_Window win, E_Focus_Method method)
 #ifndef HAVE_WAYLAND_ONLY
         ecore_x_icccm_take_focus_send(win, ecore_x_current_time_get());
 #else
-        if ((wl_win = ecore_wl_window_find(key_win)))
+        if ((wl_win = ecore_wl_window_find(win)))
           {
              /* FIXME: Need to add an ecore_wl_window_focus function */
           }
@@ -242,7 +242,7 @@ _e_grabinput_focus_do(Ecore_Window win, E_Focus_Method method)
 #ifndef HAVE_WAYLAND_ONLY
         ecore_x_window_focus_at_time(win, ecore_x_current_time_get());
 #else
-        if ((wl_win = ecore_wl_window_find(key_win)))
+        if ((wl_win = ecore_wl_window_find(win)))
           {
              /* FIXME: Need to add an ecore_wl_window_focus function */
           }
