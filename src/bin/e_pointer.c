@@ -468,7 +468,6 @@ EAPI E_Pointer *
 e_pointer_window_new(Ecore_Window win, Eina_Bool filled)
 {
    E_Pointer *ptr = NULL;
-   E_Comp *comp;
 
    EINA_SAFETY_ON_FALSE_RETURN_VAL(win, NULL);
 
@@ -482,7 +481,7 @@ e_pointer_window_new(Ecore_Window win, Eina_Bool filled)
    ptr->win = win;
    ptr->color = EINA_FALSE;
    if (e_comp->pointer)
-     ptr->color = comp->pointer->color;
+     ptr->color = e_comp->pointer->color;
 
    /* set pointer default type */
    if (filled) e_pointer_type_push(ptr, ptr, "default");
