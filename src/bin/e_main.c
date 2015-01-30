@@ -509,6 +509,11 @@ main(int argc, char **argv)
    e_configure_init();
    TS("E_Configure Init Done");
 
+   TS("E_Configure2 Init");
+   e_config_panel_init();
+   TS("E_Configure2 Init Done");
+
+
    TS("E Directories Init");
    /* setup directories we will be using for configurations storage etc. */
    if (!_e_main_dirs_init())

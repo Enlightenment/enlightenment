@@ -1118,12 +1118,24 @@ _e_e_int_menus_conf_comp_cb(void *data EINA_UNUSED, E_Menu *m EINA_UNUSED, E_Men
 }
 
 static void
+_e_e_int_menus_conf_cb(void *data EINA_UNUSED, E_Menu *m EINA_UNUSED, E_Menu_Item *mi EINA_UNUSED)
+{
+   e_config_panel_show(NULL);
+}
+
+static void
 _e_int_menus_config_pre_cb(void *data __UNUSED__, E_Menu *m)
 {
    E_Menu_Item *mi;
    Eina_List *l = NULL;
 
    e_menu_pre_activate_callback_set(m, NULL, NULL);
+
+   mi = e_menu_item_new(m);
+   e_menu_item_label_set(mi, "Config 2");
+   e_util_menu_item_theme_icon_set(mi, "preferences");
+   e_menu_item_callback_set(mi, _e_e_int_menus_conf_cb, NULL);
+
 
    l = _e_int_menus_augmentation_find("config/0");
    if (l)
