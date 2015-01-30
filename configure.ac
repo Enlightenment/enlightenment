@@ -8,7 +8,7 @@ m4_define([v_rev], m4_esyscmd([(git rev-list --count HEAD 2>/dev/null || echo 0)
 dnl m4_undefine([v_rev])
 m4_define([relname], [0.20.0])
 ##--   When doing snapshots - change soname. remove dnl on below line
-m4_define([relname], [ver-serious-0.20])
+m4_define([relname], [ver-autocannoli-0.20])
 dnl m4_define([v_rel], [-release relname])
 ##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##
 m4_ifdef([v_rev], [m4_define([v_ver], [v_maj.v_min.v_mic.v_rev])], [m4_define([v_ver], [v_maj.v_min.v_mic])])
