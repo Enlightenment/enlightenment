@@ -749,7 +749,7 @@ _e_module_dialog_disable_show(const char *title, const char *body, E_Module *m)
 
    /* FIXME: Stupid hack for ELM_WIN_DIALOG_BASIC not working in wayland */
 #warning REMOVE STUPID ELM HACK FOR WAYLAND BEFORE RELEASE
-   if (e_comp->comp_type != E_PIXMAP_TYPE_WL)
+   if (e_comp && e_comp->comp_type != E_PIXMAP_TYPE_WL)
      dia = e_dialog_new(NULL, "E", "_module_unload_dialog");
    else
      dia = e_dialog_normal_win_new(NULL, "E", "_module_unload_dialog");
