@@ -27,7 +27,7 @@ EINTERN void
 e_configure_init(void)
 {
    e_configure_registry_category_add("extensions", 90, _("Extensions"), NULL, "preferences-extensions");
-   e_configure_registry_item_add("extensions/modules", 10, _("Modules"), NULL, "preferences-plugin", e_int_config_modules);
+   //e_configure_registry_item_add("extensions/modules", 10, _("Modules"), NULL, "preferences-plugin", e_int_config_modules);
    e_configure_registry_category_add("appearance", 10, _("Look"), NULL,
                                      "preferences-look");
    e_configure_registry_item_add("appearance/comp", 120, _("Compositor"), NULL, "preferences-composite", e_int_config_comp);
@@ -273,7 +273,7 @@ e_configure_registry_exists(const char *path)
 static void
 _e_configure_menu_module_item_cb(void *data __UNUSED__, E_Menu *m EINA_UNUSED, E_Menu_Item *mi __UNUSED__)
 {
-   e_int_config_modules(NULL, NULL);
+  /* e_int_config_modules(NULL, NULL); */ //need to find a way to port the menus etc. at the end ...
 }
 
 static void

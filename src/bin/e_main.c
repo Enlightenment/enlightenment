@@ -1671,7 +1671,7 @@ _e_main_efreet_paths_init(void)
 static Eina_Bool
 _e_main_modules_load_after(void *d EINA_UNUSED, int type EINA_UNUSED, void *ev EINA_UNUSED)
 {
-   e_int_config_modules(NULL, NULL);
+   e_config_panel_show("modules");
    E_FREE_FUNC(mod_init_end, ecore_event_handler_del);
    return ECORE_CALLBACK_RENEW;
 }
