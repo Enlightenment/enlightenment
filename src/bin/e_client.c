@@ -2385,7 +2385,7 @@ e_client_shutdown(void)
 }
 
 EAPI E_Client *
-e_client_new(E_Comp *c, E_Pixmap *cp, int first_map, int internal)
+e_client_new(E_Comp *c EINA_UNUSED, E_Pixmap *cp, int first_map, int internal)
 {
    E_Client *ec;
 
@@ -2403,7 +2403,7 @@ e_client_new(E_Comp *c, E_Pixmap *cp, int first_map, int internal)
    ec->w = 1;
    ec->h = 1;
    ec->internal = internal;
-   ec->comp = c;
+   ec->comp = e_comp;
 
    ec->pixmap = cp;
    e_pixmap_client_set(cp, ec);
@@ -2438,7 +2438,7 @@ e_client_new(E_Comp *c, E_Pixmap *cp, int first_map, int internal)
    if (ec->override)
      _e_client_zone_update(ec);
    else
-     e_client_desk_set(ec, e_desk_current_get(e_zone_current_get(c)));
+     e_client_desk_set(ec, e_desk_current_get(e_zone_current_get(e_comp)));
 
    ec->icccm.title = NULL;
    ec->icccm.name = NULL;
@@ -2484,7 +2484,7 @@ e_client_new(E_Comp *c, E_Pixmap *cp, int first_map, int internal)
 
    EC_CHANGED(ec);
 
-   c->clients = eina_list_append(c->clients, ec);
+   e_comp->clients = eina_list_append(e_comp->clients, ec);
    eina_hash_add(clients_hash, &ec->pixmap, ec);
 
    _e_client_event_simple(ec, E_EVENT_CLIENT_ADD);
