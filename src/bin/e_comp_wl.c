@@ -674,27 +674,9 @@ _e_comp_wl_evas_cb_delete_request(void *data, Evas_Object *obj EINA_UNUSED, void
    if (!(ec = data)) return;
    if (ec->netwm.ping) e_client_ping(ec);
 
-   /* FIXME !!!
-    * 
-    * This is a HUGE problem for internal windows...
-    * 
-    * IF we delete the client here, then we cannot reopen some internal 
-    * dialogs (configure, etc, etc) ...
-    * 
-    * BUT, if we don't handle delete_request Somehow, then the close button on 
-    * the frame does Nothing
-    */
-
    e_comp_ignore_win_del(E_PIXMAP_TYPE_WL, e_pixmap_window_get(ec->pixmap));
-   if (ec->comp_data)
-     {
-        if (ec->comp_data->reparented)
-          e_client_comp_hidden_set(ec, EINA_TRUE);
-     }
 
-   evas_object_pass_events_set(ec->frame, EINA_TRUE);
-   if (ec->visible) evas_object_hide(ec->frame);
-   if (!ec->internal) e_object_del(E_OBJECT(ec));
+   e_object_del(E_OBJECT(ec));
 
    _e_comp_wl_focus_check(ec->comp);
 
