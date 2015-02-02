@@ -631,20 +631,24 @@ static void
 _e_comp_object_done_defer(void *data, Evas_Object *obj EINA_UNUSED, const char *emission, const char *source EINA_UNUSED)
 {
    E_Comp_Object *cw = data;
+   Eina_Bool hiding;
 
    //INF("DONE DEFER %p: %dx%d - %s", cw->ec, cw->w, cw->h, emission);
    /* visible clients which have never been sized are a bug */
    if ((!cw->ec->new_client) && (!cw->ec->changes.size) && ((cw->w < 0) || (cw->h < 0)) && (!strcmp(emission, "e,action,show,done")))
      CRI("ACK!");
+   hiding = !strcmp(emission, "e,action,hide,done");
    if (cw->animating)
      {
         cw->animating--;
         cw->comp->animating--;
+        if (hiding)
+          e_pixmap_free(cw->ec->pixmap);
         /* remove ref from animation start, account for possibility of deletion from unref */
         if (!e_object_unref(E_OBJECT(cw->ec))) return;
      }
    /* hide only after animation finishes to guarantee a full run of the animation */
-   if (cw->defer_hide && (!strcmp(emission, "e,action,hide,done")))
+   if (cw->defer_hide && hiding)
      evas_object_hide(cw->smart_obj);
    else if (!cw->animating)
      e_comp_shape_queue(cw->comp);
@@ -1275,6 +1279,7 @@ _e_comp_intercept_hide(void *data, Evas_Object *obj)
                   cw->comp->animating++;
                   cw->animating++;
                   e_object_ref(E_OBJECT(cw->ec));
+                  e_pixmap_ref(cw->ec->pixmap);
                }
              cw->defer_hide = !!cw->animating;
              if (!cw->animating)
