@@ -202,7 +202,17 @@ _e_comp_wl_input_keymap_fd_get(off_t size)
    if ((fd = mkstemp(tmp)) < 0) return -1;
 
    flags = fcntl(fd, F_GETFD);
-   fcntl(fd, F_SETFD, (flags | FD_CLOEXEC));
+   if (flags < 0)
+     {
+        close(fd);
+        return -1;
+     }
+
+   if (fcntl(fd, F_SETFD, (flags | FD_CLOEXEC)) == -1)
+     {
+        close(fd);
+        return -1;
+     }
 
    if (ftruncate(fd, size) < 0)
      {
@@ -310,6 +320,8 @@ e_comp_wl_input_init(E_Comp_Data *cdata)
    /* set default seat name */
    if (!cdata->seat.name) cdata->seat.name = "default";
 
+   cdata->xkb.fd = -1;
+
    /* create the global resource for input seat */
    cdata->seat.global = 
      wl_global_create(cdata->wl.disp, &wl_seat_interface, 4, 
@@ -328,7 +340,6 @@ e_comp_wl_input_init(E_Comp_Data *cdata)
 EINTERN void 
 e_comp_wl_input_shutdown(E_Comp_Data *cdata)
 {
-   /* Eina_List *l; */
    struct wl_resource *res;
 
    /* check for valid compositor data */
@@ -352,6 +363,19 @@ e_comp_wl_input_shutdown(E_Comp_Data *cdata)
 
    /* destroy cdata->kbd.keys array */
    wl_array_release(&cdata->kbd.keys);
+
+   /* unreference any existing keymap */
+   if (cdata->xkb.keymap) xkb_map_unref(cdata->xkb.keymap);
+
+   /* unmap any existing keyboard area */
+   if (cdata->xkb.area) munmap(cdata->xkb.area, cdata->xkb.size);
+   if (cdata->xkb.fd >= 0) close(cdata->xkb.fd);
+
+   /* unreference any existing keyboard state */
+   if (cdata->xkb.state) xkb_state_unref(cdata->xkb.state);
+
+   /* unreference any existing context */
+   if (cdata->xkb.context) xkb_context_unref(cdata->xkb.context);
 
    /* destroy the global seat resource */
    if (cdata->seat.global) wl_global_destroy(cdata->seat.global);
