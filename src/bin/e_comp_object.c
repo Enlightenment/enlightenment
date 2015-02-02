@@ -2184,13 +2184,11 @@ _e_comp_object_util_del(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object
    if (comp_object)
      {
         Evas_Object *o;
-        E_Comp *comp;
 
         o = edje_object_part_swallow_get(obj, "e.swallow.content");
         evas_object_del(o);
-        comp = e_comp_util_evas_object_comp_get(obj);
-        e_comp_render_queue(comp);
-        e_comp_shape_queue(comp);
+        e_comp_render_queue(e_comp);
+        e_comp_shape_queue(e_comp);
      }
    l = evas_object_data_get(obj, "comp_object-to_del");
    E_FREE_LIST(l, evas_object_del);
@@ -2203,7 +2201,7 @@ _e_comp_object_util_restack(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Ob
        (!evas_object_data_get(obj, "comp_override")))
      {
         evas_object_data_set(obj, "comp_override", (void*)1);
-        e_comp_override_add(e_comp_util_evas_object_comp_get(obj));
+        e_comp_override_add(e_comp);
      }
 }
 
@@ -2224,7 +2222,7 @@ _e_comp_object_util_show(void *data EINA_UNUSED, Evas_Object *obj)
           return;
      }
    else
-     e_comp_shape_queue(e_comp_util_evas_object_comp_get(obj));
+     e_comp_shape_queue(e_comp);
    
    evas_object_show(obj);
    if (ref)
@@ -2237,7 +2235,7 @@ _e_comp_object_util_show(void *data EINA_UNUSED, Evas_Object *obj)
    if (e_comp_util_object_is_above_nocomp(obj))
      {
         evas_object_data_set(obj, "comp_override", (void*)1);
-        e_comp_override_add(e_comp_util_evas_object_comp_get(obj));
+        e_comp_override_add(e_comp);
      }
 }
 
@@ -2256,7 +2254,7 @@ _e_comp_object_util_hide(void *data EINA_UNUSED, Evas_Object *obj)
    evas_object_data_set(obj, "comp_hiding", (void*)1);
 
    if (evas_object_data_del(obj, "comp_override"))
-     e_comp_override_timed_pop(e_comp_util_evas_object_comp_get(obj));
+     e_comp_override_timed_pop(e_comp);
 }
 
 static void
@@ -2267,7 +2265,7 @@ _e_comp_object_util_done_defer(void *data, Evas_Object *obj, const char *emissio
         if (!evas_object_data_del(obj, "comp_hiding")) return;
         evas_object_intercept_hide_callback_del(obj, _e_comp_object_util_hide);
         evas_object_hide(obj);
-        e_comp_shape_queue(e_comp_util_evas_object_comp_get(obj));
+        e_comp_shape_queue(e_comp);
         evas_object_intercept_hide_callback_add(obj, _e_comp_object_util_hide, data);
      }
    else
@@ -2288,14 +2286,13 @@ _e_comp_object_util_moveresize(void *data, Evas *e EINA_UNUSED, Evas_Object *obj
      }
      
    if (evas_object_visible_get(obj))
-     e_comp_shape_queue(e_comp_util_evas_object_comp_get(obj));
+     e_comp_shape_queue(e_comp);
 }
 
 EAPI Evas_Object *
 e_comp_object_util_add(Evas_Object *obj, E_Comp_Object_Type type)
 {
    Evas_Object *o, *z = NULL;
-   E_Comp *c;
    const char *name;
    Eina_List *l, *list = NULL;
    E_Comp_Config *conf = e_comp_config_get();
@@ -2328,8 +2325,7 @@ e_comp_object_util_add(Evas_Object *obj, E_Comp_Object_Type type)
      }
    name = evas_object_name_get(obj);
    vis = evas_object_visible_get(obj);
-   c = e_comp_util_evas_object_comp_get(obj);
-   o = edje_object_add(c->evas);
+   o = edje_object_add(e_comp->evas);
    evas_object_data_set(o, "comp_object", (void*)1);
    if (name && (!skip))
      skip = (!strncmp(name, "noshadow", 8));
@@ -2398,7 +2394,7 @@ e_comp_object_util_add(Evas_Object *obj, E_Comp_Object_Type type)
 
    if (list)
      {
-        z = e_zoomap_add(c->evas);
+        z = e_zoomap_add(e_comp->evas);
         e_zoomap_child_edje_solid_setup(z);
         e_zoomap_smooth_set(z, conf->smooth_windows);
         e_zoomap_child_set(z, obj);
@@ -2573,21 +2569,11 @@ e_comp_object_util_zone_get(Evas_Object *obj)
    else
      {
         int x, y;
-        E_Comp *c;
 
         if (e_win_client_get(obj))
           return e_win_client_get(obj)->zone;
-        c = e_comp_util_evas_object_comp_get(obj);
-        if (c)
-          {
-             evas_object_geometry_get(obj, &x, &y, NULL, NULL);
-             zone = e_comp_zone_xy_get(c, x, y);
-          }
-        else
-          {
-             evas_object_geometry_get(obj, &x, &y, NULL, NULL);
-             zone = e_comp_zone_xy_get(NULL, x, y);
-          }
+        evas_object_geometry_get(obj, &x, &y, NULL, NULL);
+        zone = e_comp_zone_xy_get(e_comp, x, y);
      }
    return zone;
 }
@@ -2636,11 +2622,8 @@ e_comp_object_util_fullscreen(Evas_Object *obj)
      e_client_fullscreen(cw->ec, E_FULLSCREEN_RESIZE);
    else
      {
-        E_Comp *c = e_comp_util_evas_object_comp_get(obj);
-
-        EINA_SAFETY_ON_NULL_RETURN(c);
         evas_object_move(obj, 0, 0);
-        evas_object_resize(obj, c->man->w, c->man->h);
+        evas_object_resize(obj, e_comp->man->w, e_comp->man->h);
      }
 }
 
@@ -3659,24 +3642,22 @@ _e_comp_object_autoclose_mouse_up_cb(void *data, Evas *e EINA_UNUSED, Evas_Objec
 static void
 _e_comp_object_autoclose_setup(Evas_Object *obj)
 {
-   E_Comp *c = e_comp_util_evas_object_comp_get(obj);
-
-   if (!c->autoclose.rect)
+   if (!e_comp->autoclose.rect)
      {
         /* create rect just below autoclose object to catch mouse events */
-        c->autoclose.rect = evas_object_rectangle_add(c->evas);
-        evas_object_move(c->autoclose.rect, 0, 0);
-        evas_object_resize(c->autoclose.rect, c->man->w, c->man->h);
-        evas_object_show(c->autoclose.rect);
-        evas_object_name_set(c->autoclose.rect, "c->autoclose.rect");
-        evas_object_color_set(c->autoclose.rect, 0, 0, 0, 0);
-        evas_object_event_callback_add(c->autoclose.rect, EVAS_CALLBACK_MOUSE_UP, _e_comp_object_autoclose_mouse_up_cb, c);
-        e_comp_grab_input(c, 0, 1);
+        e_comp->autoclose.rect = evas_object_rectangle_add(e_comp->evas);
+        evas_object_move(e_comp->autoclose.rect, 0, 0);
+        evas_object_resize(e_comp->autoclose.rect, e_comp->man->w, e_comp->man->h);
+        evas_object_show(e_comp->autoclose.rect);
+        evas_object_name_set(e_comp->autoclose.rect, "e_comp->autoclose.rect");
+        evas_object_color_set(e_comp->autoclose.rect, 0, 0, 0, 0);
+        evas_object_event_callback_add(e_comp->autoclose.rect, EVAS_CALLBACK_MOUSE_UP, _e_comp_object_autoclose_mouse_up_cb, e_comp);
+        e_comp_grab_input(e_comp, 0, 1);
      }
-   evas_object_layer_set(c->autoclose.rect, evas_object_layer_get(obj) - 1);
-   e_comp_shape_queue(c);
-   if (!c->autoclose.key_handler)
-     c->autoclose.key_handler = ecore_event_handler_add(ECORE_EVENT_KEY_DOWN, _e_comp_object_autoclose_key_down_cb, c);
+   evas_object_layer_set(e_comp->autoclose.rect, evas_object_layer_get(obj) - 1);
+   e_comp_shape_queue(e_comp);
+   if (!e_comp->autoclose.key_handler)
+     e_comp->autoclose.key_handler = ecore_event_handler_add(ECORE_EVENT_KEY_DOWN, _e_comp_object_autoclose_key_down_cb, e_comp);
 }
 
 static void
@@ -3698,34 +3679,30 @@ _e_comp_object_autoclose_del(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, 
 EAPI void
 e_comp_object_util_autoclose(Evas_Object *obj, E_Comp_Object_Autoclose_Cb del_cb, E_Comp_Object_Key_Cb cb, const void *data)
 {
-   E_Comp *c;
-
    SOFT_ENTRY();
 
-   c = e_comp_util_evas_object_comp_get(obj);
-   EINA_SAFETY_ON_NULL_RETURN(c);
-   if (c->autoclose.obj)
+   if (e_comp->autoclose.obj)
      {
-        if (c->autoclose.obj == obj) return;
-        evas_object_event_callback_del_full(c->autoclose.obj, EVAS_CALLBACK_DEL, _e_comp_object_autoclose_del, c);
-        c->autoclose.obj = obj;
-        c->autoclose.del_cb = del_cb;
-        c->autoclose.key_cb = cb;
-        c->autoclose.data = (void*)data;
+        if (e_comp->autoclose.obj == obj) return;
+        evas_object_event_callback_del_full(e_comp->autoclose.obj, EVAS_CALLBACK_DEL, _e_comp_object_autoclose_del, e_comp);
+        e_comp->autoclose.obj = obj;
+        e_comp->autoclose.del_cb = del_cb;
+        e_comp->autoclose.key_cb = cb;
+        e_comp->autoclose.data = (void*)data;
         if (evas_object_visible_get(obj))
           _e_comp_object_autoclose_setup(obj);
         else
-          evas_object_event_callback_add(obj, EVAS_CALLBACK_SHOW, _e_comp_object_autoclose_show, c);
-        evas_object_event_callback_add(obj, EVAS_CALLBACK_DEL, _e_comp_object_autoclose_del, c);
+          evas_object_event_callback_add(obj, EVAS_CALLBACK_SHOW, _e_comp_object_autoclose_show, e_comp);
+        evas_object_event_callback_add(obj, EVAS_CALLBACK_DEL, _e_comp_object_autoclose_del, e_comp);
         return;
      }
-   c->autoclose.obj = obj;
-   c->autoclose.del_cb = del_cb;
-   c->autoclose.key_cb = cb;
-   c->autoclose.data = (void*)data;
+   e_comp->autoclose.obj = obj;
+   e_comp->autoclose.del_cb = del_cb;
+   e_comp->autoclose.key_cb = cb;
+   e_comp->autoclose.data = (void*)data;
    if (evas_object_visible_get(obj))
      _e_comp_object_autoclose_setup(obj);
    else
-     evas_object_event_callback_add(obj, EVAS_CALLBACK_SHOW, _e_comp_object_autoclose_show, c);
-   evas_object_event_callback_add(obj, EVAS_CALLBACK_DEL, _e_comp_object_autoclose_del, c);
+     evas_object_event_callback_add(obj, EVAS_CALLBACK_SHOW, _e_comp_object_autoclose_show, e_comp);
+   evas_object_event_callback_add(obj, EVAS_CALLBACK_DEL, _e_comp_object_autoclose_del, e_comp);
 }
