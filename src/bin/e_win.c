@@ -31,7 +31,6 @@ _e_elm_win_trap_del(void *data, Evas_Object *o)
    EINA_SAFETY_ON_NULL_RETURN(ctx);
    if (ctx->client)
      {
-        evas_object_hide(ctx->client->frame);
         e_object_del(E_OBJECT(ctx->client));
         evas_object_data_set(o, "E_Client", NULL);
         ctx->client->internal_elm_win = NULL;
