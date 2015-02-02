@@ -2580,7 +2580,11 @@ e_comp_wl_surface_commit(E_Client *ec)
    e_pixmap_dirty(ep);
 
    /* refresh pixmap */
-   e_pixmap_refresh(ep);
+   if (e_pixmap_refresh(ep))
+     {
+        e_comp->post_updates = eina_list_append(e_comp->post_updates, ec);
+        e_object_ref(E_OBJECT(ec));
+     }
 
    /* check for any pending attachments */
    if (ec->comp_data->pending.new_attach)

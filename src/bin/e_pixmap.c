@@ -464,10 +464,9 @@ e_pixmap_refresh(E_Pixmap *cp)
              if (success)
                {
                   /* if (cp->resource) _e_pixmap_resource_free(cp->resource); */
-                  e_pixmap_image_clear(cp, EINA_TRUE);
+                  e_pixmap_image_clear(cp, EINA_FALSE);
                   cp->resource = res;
                   _e_pixmap_update_wl(cp);
-                  e_pixmap_image_clear(cp, EINA_FALSE);
                }
              else
                {
@@ -683,6 +682,7 @@ e_pixmap_image_clear(E_Pixmap *cp, Eina_Bool cache)
                {
                   cp->resource_cache = 
                     eina_list_append(cp->resource_cache, cp->resource);
+                  cp->resource = NULL;
                }
           }
 #endif
