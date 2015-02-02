@@ -1917,7 +1917,7 @@ _e_comp_wl_subcompositor_cb_subsurface_get(struct wl_client *client EINA_UNUSED,
    if (!ec)
      {
         /* no client exists for this pixmap yet */
-        if (!(ec = e_client_new(e_util_comp_current_get(), ep, 1, 0)))
+        if (!(ec = e_client_new(NULL, ep, 0, 0)))
           {
              ERR("Failed to create new client");
              wl_resource_post_no_memory(resource);
