@@ -336,8 +336,9 @@ _cb_screen_select(void *data, Evas_Object *obj, void *event)
      {
         if (it == event)
           {
-             E_Config_Randr2_Screen *cs = _config_screen_find(cfdata);
+             E_Config_Randr2_Screen *cs;
              cfdata->screen = i;
+             cs = _config_screen_find(cfdata);
              if (cs)
                {
                   E_Randr2_Screen *s = _screen_config_find(cs);
