@@ -2065,8 +2065,6 @@ _e_comp_wl_client_cb_del(void *data EINA_UNUSED, E_Client *ec)
    /* win = e_pixmap_window_get(ec->pixmap); */
    /* eina_hash_del_by_key(clients_win_hash, &win); */
 
-   e_comp_wl_input_keyboard_modifiers_update(e_comp->wl_comp_data);
-
    if ((!ec->already_unparented) && (ec->comp_data->reparented))
      _e_comp_wl_focus_down_set(ec);
 
