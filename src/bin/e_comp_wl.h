@@ -142,6 +142,7 @@ struct _E_Comp_Wl_Data
         xkb_layout_index_t mod_group;
         struct wl_array keys;
         struct wl_resource *focus;
+        int mod_changed;
      } kbd;
 
    struct 
