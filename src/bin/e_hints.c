@@ -1,11 +1,9 @@
 #include "e.h"
 
-
-static void e_hints_openoffice_gnome_fake(Ecore_Window root);
-//static void e_hints_openoffice_kde_fake(Ecore_Window root);
-
 #ifndef HAVE_WAYLAND_ONLY
 static void e_hints_e16_comms_pretend(Ecore_X_Window root, Ecore_X_Window propwin);
+static void e_hints_openoffice_gnome_fake(Ecore_Window root);
+//static void e_hints_openoffice_kde_fake(Ecore_Window root);
 
 EAPI Ecore_X_Atom ATM__QTOPIA_SOFT_MENU = 0;
 EAPI Ecore_X_Atom ATM__QTOPIA_SOFT_MENUS = 0;
@@ -22,6 +20,8 @@ EINTERN void
 e_hints_init(Ecore_Window root, Ecore_Window propwin)
 {
 #ifdef HAVE_WAYLAND_ONLY
+   (void)root;
+   (void)propwin;
 #else
    const char *atom_names[] = {
       "_QTOPIA_SOFT_MENU",
@@ -392,6 +392,8 @@ e_hints_active_window_set(E_Manager *man,
                           E_Client *ec)
 {
 #ifdef HAVE_WAYLAND_ONLY
+   (void)man;
+   (void)ec;
 #else
    E_OBJECT_CHECK(man);
    if (e_comp->comp_type != E_PIXMAP_TYPE_X) return;
@@ -406,6 +408,7 @@ EINTERN void
 e_hints_window_init(E_Client *ec)
 {
 #ifdef HAVE_WAYLAND_ONLY
+   (void)ec;
 #else
    E_Remember *rem = NULL;
 
@@ -582,6 +585,7 @@ EAPI void
 e_hints_window_state_set(E_Client *ec)
 {
 #ifdef HAVE_WAYLAND_ONLY
+   (void)ec;
 #else
    Ecore_X_Window_State state[10];
    int num = 0;
@@ -641,6 +645,7 @@ EAPI void
 e_hints_allowed_action_set(E_Client *ec)
 {
 #ifdef HAVE_WAYLAND_ONLY
+   (void)ec;
 #else
    Ecore_X_Action action[10];
    int num = 0;
@@ -675,6 +680,7 @@ EAPI void
 e_hints_window_type_set(E_Client *ec)
 {
 #ifdef HAVE_WAYLAND_ONLY
+   (void)ec;
 #else
    if (!e_pixmap_is_x(ec->pixmap)) return;
    ecore_x_netwm_window_type_set(e_client_util_win_get(ec), ec->netwm.type);
@@ -685,6 +691,7 @@ EAPI void
 e_hints_window_type_get(E_Client *ec)
 {
 #ifdef HAVE_WAYLAND_ONLY
+   (void)ec;
 #else
    Ecore_X_Window_Type *types = NULL;
    int num, i, j;
@@ -999,6 +1006,7 @@ EAPI void
 e_hints_window_state_get(E_Client *ec)
 {
 #ifdef HAVE_WAYLAND_ONLY
+   (void)ec;
 #else
    unsigned int i, num;
    Ecore_X_Window_State *state;
@@ -1088,6 +1096,8 @@ EAPI void
 e_hints_allowed_action_update(E_Client *ec, int action)
 {
 #ifdef HAVE_WAYLAND_ONLY
+   (void)ec;
+   (void)action;
 #else
    if (!e_pixmap_is_x(ec->pixmap)) return;
    switch (action)
@@ -1135,6 +1145,7 @@ EAPI void
 e_hints_allowed_action_get(E_Client *ec)
 {
 #ifdef HAVE_WAYLAND_ONLY
+   (void)ec;
 #else
    Ecore_X_Action *action;
    unsigned int i;
@@ -1211,6 +1222,7 @@ e_hints_allowed_action_get(E_Client *ec)
 #endif
 }
 
+#ifndef HAVE_WAYLAND_ONLY
 static void
 _e_hints_process_wakeup(E_Client *ec)
 {
@@ -1218,15 +1230,17 @@ _e_hints_process_wakeup(E_Client *ec)
    // a fake sigchild to wake things up os just fine
    if (!ec->vkbd.have_property) return;
    if (ec->netwm.pid <= 0) return;
-#ifdef SIGCHLD
+# ifdef SIGCHLD
    kill(ec->netwm.pid, SIGCHLD);
-#endif
+# endif
 }
+#endif
 
 EAPI void
 e_hints_window_visible_set(E_Client *ec)
 {
 #ifdef HAVE_WAYLAND_ONLY
+   (void)ec;
 #else
    if (!e_pixmap_is_x(ec->pixmap)) return;
    if (ec->icccm.state != ECORE_X_WINDOW_STATE_HINT_NORMAL)
@@ -1246,6 +1260,7 @@ EAPI void
 e_hints_window_iconic_set(E_Client *ec)
 {
 #ifdef HAVE_WAYLAND_ONLY
+   (void)ec;
 #else
    if (!e_pixmap_is_x(ec->pixmap)) return;
    if (ec->icccm.state != ECORE_X_WINDOW_STATE_HINT_ICONIC)
@@ -1265,6 +1280,7 @@ EAPI void
 e_hints_window_hidden_set(E_Client *ec)
 {
 #ifdef HAVE_WAYLAND_ONLY
+   (void)ec;
 #else
    if (!e_pixmap_is_x(ec->pixmap)) return;
    if (ec->icccm.state != ECORE_X_WINDOW_STATE_HINT_WITHDRAWN)
@@ -1284,6 +1300,8 @@ EAPI void
 e_hints_window_shaded_set(E_Client *ec, int on)
 {
 #ifdef HAVE_WAYLAND_ONLY
+   (void)ec;
+   (void)on;
 #else
    if (!e_pixmap_is_x(ec->pixmap)) return;
    if ((!ec->netwm.state.shaded) && (on))
@@ -1310,6 +1328,8 @@ EAPI void
 e_hints_window_shade_direction_set(E_Client *ec, E_Direction dir)
 {
 #ifdef HAVE_WAYLAND_ONLY
+   (void)ec;
+   (void)dir;
 #else
    if (!e_pixmap_is_x(ec->pixmap)) return;
    ecore_x_window_prop_card32_set(e_client_util_win_get(ec), E_ATOM_SHADE_DIRECTION, &dir, 1);
@@ -1320,6 +1340,7 @@ EAPI E_Direction
 e_hints_window_shade_direction_get(E_Client *ec)
 {
 #ifdef HAVE_WAYLAND_ONLY
+   (void)ec;
 #else
    int ret;
    E_Direction dir;
@@ -1338,6 +1359,7 @@ EAPI void
 e_hints_window_size_set(E_Client *ec)
 {
 #ifdef HAVE_WAYLAND_ONLY
+   (void)ec;
 #else
    unsigned int sizes[4];
 
@@ -1354,6 +1376,7 @@ EAPI void
 e_hints_window_size_unset(E_Client *ec)
 {
 #ifdef HAVE_WAYLAND_ONLY
+   (void)ec;
 #else
    if (!e_pixmap_is_x(ec->pixmap)) return;
    ecore_x_window_prop_property_del(e_client_util_win_get(ec), E_ATOM_BORDER_SIZE);
@@ -1364,6 +1387,7 @@ EAPI int
 e_hints_window_size_get(E_Client *ec)
 {
 #ifdef HAVE_WAYLAND_ONLY
+   (void)ec;
 #else
    int ret;
    unsigned int sizes[4];
@@ -1388,6 +1412,9 @@ EAPI void
 e_hints_window_maximized_set(E_Client *ec, int horizontal, int vertical)
 {
 #ifdef HAVE_WAYLAND_ONLY
+   (void)ec;
+   (void)horizontal;
+   (void)vertical;
 #else
    if (!e_pixmap_is_x(ec->pixmap)) return;
    if ((horizontal) && (!ec->netwm.state.maximized_h))
@@ -1422,6 +1449,8 @@ e_hints_window_fullscreen_set(E_Client *ec,
                               int on)
 {
 #ifdef HAVE_WAYLAND_ONLY
+   (void)ec;
+   (void)on;
 #else
    if (!e_pixmap_is_x(ec->pixmap)) return;
    if ((!ec->netwm.state.fullscreen) && (on))
@@ -1443,6 +1472,8 @@ EAPI void
 e_hints_window_sticky_set(E_Client *ec, int on)
 {
 #ifdef HAVE_WAYLAND_ONLY
+   (void)ec;
+   (void)on;
 #else
    if (!e_pixmap_is_x(ec->pixmap)) return;
    if ((!ec->netwm.state.sticky) && (on))
@@ -1464,6 +1495,8 @@ EAPI void
 e_hints_window_stacking_set(E_Client *ec, E_Stacking stacking)
 {
 #ifdef HAVE_WAYLAND_ONLY
+   (void)ec;
+   (void)stacking;
 #else
    if (!e_pixmap_is_x(ec->pixmap)) return;
    if (ec->netwm.state.stacking == stacking) return;
@@ -1477,6 +1510,7 @@ EAPI void
 e_hints_window_desktop_set(E_Client *ec)
 {
 #ifdef HAVE_WAYLAND_ONLY
+   (void)ec;
 #else
    /* This function is only called when really changing desktop,
     * so just set the property and don't care about the roundtrip.
@@ -1504,6 +1538,7 @@ EAPI void
 e_hints_window_e_state_get(E_Client *ec)
 {
 #ifdef HAVE_WAYLAND_ONLY
+   (void)ec;
 #else
    /* Remember to update the count if we add more states! */
    Ecore_X_Atom state[1];
@@ -1539,6 +1574,7 @@ EAPI void
 e_hints_window_qtopia_soft_menu_get(E_Client *ec)
 {
 #ifdef HAVE_WAYLAND_ONLY
+   (void)ec;
 #else
    unsigned int val;
 
@@ -1554,6 +1590,7 @@ EAPI void
 e_hints_window_qtopia_soft_menus_get(E_Client *ec)
 {
 #ifdef HAVE_WAYLAND_ONLY
+   (void)ec;
 #else
    unsigned int val;
 
@@ -1569,6 +1606,7 @@ EAPI void
 e_hints_window_virtual_keyboard_state_get(E_Client *ec)
 {
 #ifdef HAVE_WAYLAND_ONLY
+   (void)ec;
 #else
    Ecore_X_Atom atom = 0;
 
@@ -1587,6 +1625,7 @@ EAPI void
 e_hints_window_virtual_keyboard_get(E_Client *ec)
 {
 #ifdef HAVE_WAYLAND_ONLY
+   (void)ec;
 #else
    if (!e_pixmap_is_x(ec->pixmap)) return;
    ec->vkbd.vkbd = ecore_x_e_virtual_keyboard_get(e_client_util_win_get(ec));
@@ -1597,6 +1636,7 @@ static void
 e_hints_openoffice_gnome_fake(Ecore_Window root)
 {
 #ifdef HAVE_WAYLAND_ONLY
+   (void)root;
 #else
    const char *string = "ATM_GNOME_SM_PROXY";
 
@@ -1610,6 +1650,7 @@ static void
 e_hints_openoffice_kde_fake(Ecore_Window root)
 {
 #ifdef HAVE_WAYLAND_ONLY
+   (void)root;
 #else
    Ecore_X_Window win2;
 
