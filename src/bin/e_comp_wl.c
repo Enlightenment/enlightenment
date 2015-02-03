@@ -378,94 +378,6 @@ _e_comp_wl_evas_cb_mouse_wheel(void *data, Evas *evas EINA_UNUSED, Evas_Object *
 }
 
 static void 
-_e_comp_wl_evas_cb_key_down(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event)
-{
-   E_Client *ec;
-   E_Comp_Data *cdata;
-   Evas_Event_Key_Down *ev;
-   uint32_t serial, *end, *k, keycode;
-   struct wl_resource *res;
-   struct wl_client *wc;
-   Eina_List *l;
-
-   ev = event;
-   if (!(ec = data)) return;
-   if (e_object_is_del(E_OBJECT(ec))) return;
-
-   if (!ec->focused) return;
-
-   keycode = (ev->keycode - 8);
-   if (!(cdata = ec->comp->wl_comp_data)) return;
-
-   end = (uint32_t *)cdata->kbd.keys.data + (cdata->kbd.keys.size / sizeof(*k));
-
-   for (k = cdata->kbd.keys.data; k < end; k++)
-     {
-        /* ignore server-generated key repeats */
-        if (*k == keycode) return;
-     }
-
-   cdata->kbd.keys.size = (const char *)end - (const char *)cdata->kbd.keys.data;
-   k = wl_array_add(&cdata->kbd.keys, sizeof(*k));
-   *k = keycode;
-
-   /* update modifier state */
-   e_comp_wl_input_keyboard_state_update(cdata, keycode, EINA_TRUE);
-
-   if (!ec->comp_data->surface) return;
-
-   wc = wl_resource_get_client(ec->comp_data->surface);
-   serial = wl_display_next_serial(ec->comp->wl_comp_data->wl.disp);
-   EINA_LIST_FOREACH(ec->comp->wl_comp_data->kbd.resources, l, res)
-     {
-        if (wl_resource_get_client(res) != wc) continue;
-        wl_keyboard_send_key(res, serial, ev->timestamp, 
-                             keycode, WL_KEYBOARD_KEY_STATE_PRESSED);
-     }
-}
-
-static void 
-_e_comp_wl_evas_cb_key_up(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event)
-{
-   E_Client *ec;
-   E_Comp_Data *cdata;
-   Evas_Event_Key_Up *ev;
-   uint32_t serial, *end, *k, keycode;
-   struct wl_resource *res;
-   struct wl_client *wc;
-   Eina_List *l;
-
-   ev = event;
-   if (!(ec = data)) return;
-   if (e_object_is_del(E_OBJECT(ec))) return;
-
-   if (!ec->focused) return;
-
-   keycode = (ev->keycode - 8);
-   if (!(cdata = ec->comp->wl_comp_data)) return;
-
-   end = (uint32_t *)cdata->kbd.keys.data + (cdata->kbd.keys.size / sizeof(*k));
-   for (k = cdata->kbd.keys.data; k < end; k++)
-     if (*k == keycode) *k = *--end;
-
-   cdata->kbd.keys.size = (const char *)end - (const char *)cdata->kbd.keys.data;
-
-   if (!ec->comp_data->surface) return;
-
-   wc = wl_resource_get_client(ec->comp_data->surface);
-   serial = wl_display_next_serial(cdata->wl.disp);
-   EINA_LIST_FOREACH(cdata->kbd.resources, l, res)
-     {
-        if (wl_resource_get_client(res) != wc) continue;
-        wl_keyboard_send_key(res, serial, ev->timestamp, 
-                             keycode, WL_KEYBOARD_KEY_STATE_RELEASED);
-     }
-
-   /* update modifier state */
-   e_comp_wl_input_keyboard_state_update(cdata, keycode, EINA_FALSE);
-}
-
-static void 
 _e_comp_wl_client_priority_adjust(int pid, int set, int adj, Eina_Bool use_adj, Eina_Bool adj_child, Eina_Bool do_child)
 {
    int n;
@@ -754,11 +666,6 @@ _e_comp_wl_client_evas_init(E_Client *ec)
                                   _e_comp_wl_evas_cb_mouse_up, ec);
    evas_object_event_callback_add(ec->frame, EVAS_CALLBACK_MOUSE_WHEEL, 
                                   _e_comp_wl_evas_cb_mouse_wheel, ec);
-   evas_object_event_callback_add(ec->frame, EVAS_CALLBACK_KEY_DOWN, 
-                                  _e_comp_wl_evas_cb_key_down, ec);
-   evas_object_event_callback_add(ec->frame, EVAS_CALLBACK_KEY_UP, 
-                                  _e_comp_wl_evas_cb_key_up, ec);
-
 
    evas_object_event_callback_add(ec->frame, EVAS_CALLBACK_FOCUS_IN, 
                                   _e_comp_wl_evas_cb_focus_in, ec);
@@ -808,10 +715,97 @@ _e_comp_wl_cb_comp_object_add(void *data EINA_UNUSED, int type EINA_UNUSED, E_Ev
    return ECORE_CALLBACK_RENEW;
 }
 
+static void 
+_e_comp_wl_cb_key_down(void *event)
+{
+   E_Comp_Data *cdata;
+   Ecore_Event_Key *ev;
+   uint32_t serial, *end, *k, keycode;
+   struct wl_resource *res;
+   struct wl_client *wc;
+   Eina_List *l;
+
+   ev = event;
+   keycode = (ev->keycode - 8);
+   if (!(cdata = e_comp->wl_comp_data)) return;
+
+   end = (uint32_t *)cdata->kbd.keys.data + (cdata->kbd.keys.size / sizeof(*k));
+
+   for (k = cdata->kbd.keys.data; k < end; k++)
+     {
+        /* ignore server-generated key repeats */
+        if (*k == keycode) return;
+     }
+
+   cdata->kbd.keys.size = (const char *)end - (const char *)cdata->kbd.keys.data;
+   k = wl_array_add(&cdata->kbd.keys, sizeof(*k));
+   *k = keycode;
+
+   /* update modifier state */
+   e_comp_wl_input_keyboard_state_update(cdata, keycode, EINA_TRUE);
+
+   serial = wl_display_next_serial(cdata->wl.disp);
+   EINA_LIST_FOREACH(cdata->kbd.resources, l, res)
+     {
+        wl_keyboard_send_key(res, serial, ev->timestamp, 
+                             keycode, WL_KEYBOARD_KEY_STATE_PRESSED);
+     }
+
+   if (cdata->kbd.mod_changed)
+     {
+        e_comp_wl_input_keyboard_modifiers_update(cdata);
+        cdata->kbd.mod_changed = 0;
+     }
+}
+
+static void 
+_e_comp_wl_cb_key_up(void *event)
+{
+   E_Client *ec;
+   E_Comp_Data *cdata;
+   Ecore_Event_Key *ev;
+   uint32_t serial, *end, *k, keycode;
+   struct wl_resource *res;
+   struct wl_client *wc;
+   Eina_List *l;
+
+   ev = event;
+   keycode = (ev->keycode - 8);
+   if (!(cdata = e_comp->wl_comp_data)) return;
+
+   end = (uint32_t *)cdata->kbd.keys.data + (cdata->kbd.keys.size / sizeof(*k));
+   for (k = cdata->kbd.keys.data; k < end; k++)
+     if (*k == keycode) *k = *--end;
+
+   cdata->kbd.keys.size = (const char *)end - (const char *)cdata->kbd.keys.data;
+
+   /* update modifier state */
+   e_comp_wl_input_keyboard_state_update(cdata, keycode, EINA_FALSE);
+
+   serial = wl_display_next_serial(cdata->wl.disp);
+   EINA_LIST_FOREACH(cdata->kbd.resources, l, res)
+     {
+        wl_keyboard_send_key(res, serial, ev->timestamp, 
+                             keycode, WL_KEYBOARD_KEY_STATE_RELEASED);
+     }
+
+   if (cdata->kbd.mod_changed)
+     {
+        e_comp_wl_input_keyboard_modifiers_update(cdata);
+        cdata->kbd.mod_changed = 0;
+     }
+}
+
 static Eina_Bool 
-_e_comp_wl_cb_input_event(void *data EINA_UNUSED, int type EINA_UNUSED, void *ev EINA_UNUSED)
+_e_comp_wl_cb_input_event(void *data EINA_UNUSED, int type, void *ev)
 {
    _last_event_time = ecore_loop_time_get();
+
+   if (type == ECORE_EVENT_KEY_DOWN)
+     _e_comp_wl_cb_key_down(ev);
+   else if (type == ECORE_EVENT_KEY_UP)
+     _e_comp_wl_cb_key_up(ev);
+
    return ECORE_CALLBACK_RENEW;
 }
 
