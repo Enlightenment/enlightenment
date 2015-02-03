@@ -835,7 +835,7 @@ e_util_win_auto_resize_fill(Evas_Object *win)
    if (ec)
      zone = ec->zone;
    if (!zone)
-     zone = e_zone_current_get(e_comp_get(NULL));
+     zone = e_zone_current_get(e_comp);
 
    if (zone)
      {
