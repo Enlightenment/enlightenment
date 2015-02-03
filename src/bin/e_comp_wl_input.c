@@ -228,7 +228,7 @@ static void
 _e_comp_wl_input_keymap_update(E_Comp_Data *cdata, struct xkb_keymap *keymap)
 {
    char *tmp;
-   xkb_mod_mask_t latched, locked;
+   xkb_mod_mask_t latched = 0, locked = 0, group = 0;
    struct wl_resource *res;
    Eina_List *l;
    uint32_t serial;
@@ -241,17 +241,23 @@ _e_comp_wl_input_keymap_update(E_Comp_Data *cdata, struct xkb_keymap *keymap)
    if (cdata->xkb.fd >= 0) close(cdata->xkb.fd);
 
    /* unreference any existing keyboard state */
-   if (cdata->xkb.state) xkb_state_unref(cdata->xkb.state);
+   if (cdata->xkb.state) 
+     {
+        latched = 
+          xkb_state_serialize_mods(cdata->xkb.state, XKB_STATE_MODS_LATCHED);
+        locked = 
+          xkb_state_serialize_mods(cdata->xkb.state, XKB_STATE_MODS_LOCKED);
+        group = 
+          xkb_state_serialize_layout(cdata->xkb.state, 
+                                     XKB_STATE_LAYOUT_EFFECTIVE);
+        xkb_state_unref(cdata->xkb.state);
+     }
 
    /* create a new xkb state */
    cdata->xkb.state = xkb_state_new(keymap);
 
-   latched = 
-     xkb_state_serialize_mods(cdata->xkb.state, XKB_STATE_MODS_LATCHED);
-   locked = 
-     xkb_state_serialize_mods(cdata->xkb.state, XKB_STATE_MODS_LOCKED);
-
-   xkb_state_update_mask(cdata->xkb.state, 0, latched, locked, 0, 0, 0);
+   if ((latched) || (locked) || (group))
+     xkb_state_update_mask(cdata->xkb.state, 0, latched, locked, 0, 0, group);
 
    /* increment keymap reference */
    cdata->xkb.keymap = xkb_map_ref(keymap);
@@ -399,37 +405,26 @@ e_comp_wl_input_keyboard_check(struct wl_resource *res)
 EINTERN void 
 e_comp_wl_input_keyboard_modifiers_update(E_Comp_Data *cdata)
 {
-   xkb_mod_mask_t depressed, latched, locked;
-   xkb_layout_index_t group;
+   uint32_t serial;
+   struct wl_resource *res;
+   Eina_List *l;
 
-   depressed = 
+   cdata->kbd.mod_depressed = 
      xkb_state_serialize_mods(cdata->xkb.state, XKB_STATE_DEPRESSED);
-   latched = 
+   cdata->kbd.mod_latched = 
      xkb_state_serialize_mods(cdata->xkb.state, XKB_STATE_MODS_LATCHED);
-   locked = 
+   cdata->kbd.mod_locked = 
      xkb_state_serialize_mods(cdata->xkb.state, XKB_STATE_MODS_LOCKED);
-   group = 
-     xkb_state_serialize_group(cdata->xkb.state, XKB_STATE_EFFECTIVE);
+   cdata->kbd.mod_group = 
+     xkb_state_serialize_layout(cdata->xkb.state, XKB_STATE_LAYOUT_EFFECTIVE);
 
-   if ((cdata->kbd.mod_depressed != depressed) || 
-       (cdata->kbd.mod_latched != latched) || 
-       (cdata->kbd.mod_locked != locked) || 
-       (cdata->kbd.mod_group != group))
-     {
-        uint32_t serial;
-        struct wl_resource *res;
-        Eina_List *l;
-
-        cdata->kbd.mod_depressed = depressed;
-        cdata->kbd.mod_latched = latched;
-        cdata->kbd.mod_locked = locked;
-        cdata->kbd.mod_group = group;
-
-        serial = wl_display_get_serial(cdata->wl.disp);
-        EINA_LIST_FOREACH(cdata->kbd.resources, l, res)
-          wl_keyboard_send_modifiers(res, serial, 
-                                     depressed, latched, locked, group);
-     }
+   serial = wl_display_next_serial(cdata->wl.disp);
+   EINA_LIST_FOREACH(cdata->kbd.resources, l, res)
+     wl_keyboard_send_modifiers(res, serial, 
+                                cdata->kbd.mod_depressed, 
+                                cdata->kbd.mod_latched, 
+                                cdata->kbd.mod_locked, 
+                                cdata->kbd.mod_group);
 }
 
 EINTERN void 
@@ -442,9 +437,8 @@ e_comp_wl_input_keyboard_state_update(E_Comp_Data *cdata, uint32_t keycode, Eina
    if (pressed) dir = XKB_KEY_DOWN;
    else dir = XKB_KEY_UP;
 
-   xkb_state_update_key(cdata->xkb.state, keycode + 8, dir);
-
-   e_comp_wl_input_keyboard_modifiers_update(cdata);
+   cdata->kbd.mod_changed = 
+     xkb_state_update_key(cdata->xkb.state, keycode + 8, dir);
 }
 
 EAPI void 
