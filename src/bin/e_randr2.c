@@ -3,6 +3,7 @@
 #define E_RANDR_CONFIG_VERSION 1
 
 /////////////////////////////////////////////////////////////////////////
+static Eina_Bool               _screen_closed(E_Randr2_Screen *s);
 static void                    _animated_apply_abort(void);
 static Eina_Bool               _cb_delay_timer(void *data);
 static Eina_Bool               _cb_fade_animator(void *data);
@@ -115,7 +116,6 @@ e_randr2_init(void)
    if ((e_randr2_cfg->restore) &&
        (_config_screen_match_count(e_randr2, e_randr2_cfg) > 0))
      {
-//        _config_update(e_randr2, e_randr2_cfg);
         _do_apply();
      }
    else
@@ -182,6 +182,14 @@ Eina_Bool _applying = EINA_FALSE;
 static int _target_from = 0;
 static int _target_to = 0;
 static Evas_Object *_fade_obj = NULL;
+
+static Eina_Bool
+_screen_closed(E_Randr2_Screen *s)
+{
+   if (!_lid_is_closed) return EINA_FALSE;
+   if (s->info.is_lid) return EINA_TRUE;
+   return EINA_FALSE;
+}
 
 static void
 _animated_apply_abort(void)
@@ -357,7 +365,7 @@ _config_update(E_Randr2 *r, E_Config_Randr2 *cfg)
    EINA_LIST_FOREACH(r->screens, l, s)
      {
         printf("RRR: out id=%s:  connected=%i\n", s->id, s->info.connected);
-        if ((!s->id) || (!s->info.connected)) continue;
+        if ((!s->id) || (!s->info.connected) || (_screen_closed(s))) continue;
         cs = _config_screen_find(s, cfg);
         if (!cs)
           {
@@ -397,7 +405,8 @@ _config_apply(E_Randr2 *r, E_Config_Randr2 *cfg)
      {
         printf("RRR: apply '%s'...\n", s->info.name);
         cs = NULL;
-        if (s->info.connected) cs = _config_screen_find(s, cfg);
+        if ((!_screen_closed(s)) && (s->info.connected))
+          cs = _config_screen_find(s, cfg);
         printf("RRR: connected =  %i\n", s->info.connected);
         if ((cs) && (cs->enabled))
           {
@@ -467,7 +476,8 @@ _config_screen_match_count(E_Randr2 *r, E_Config_Randr2 *cfg)
         if (!cs->id) continue;
         EINA_LIST_FOREACH(r->screens, ll, s)
           {
-             if ((!s->id) || (!s->info.connected)) continue;
+             if ((!s->id) || (!s->info.connected) ||
+                 (_screen_closed(s))) continue;
              if (!strcmp(cs->id, s->id)) count++;
           }
      }
@@ -1367,35 +1377,7 @@ _mode_screen_find(Ecore_X_Window root, E_Randr2_Screen *s, Ecore_X_Randr_Output 
    double refresh;
 
    modes = ecore_x_randr_output_modes_get(root, out, &modes_num, &modes_pref);
-   if (!modes)
-     {
-        printf("RRR: modes for '%s' FETCH FAILED!!!\n", s->info.name);
-/*        
-        for (i = 0; i < 500; i++)
-          {
-             printf("RRR:    try %i\n", i);
-//             if (ecore_x_randr_output_connection_status_get(root, out) !=
-//                 ECORE_X_RANDR_CONNECTION_STATUS_CONNECTED) break;
-             ecore_x_sync();
-             int n;
-             Ecore_X_Randr_Crtc *crtcs = ecore_x_randr_output_possible_crtcs_get(root, out, &n);
-             free(crtcs);
-             char *name = ecore_x_randr_output_name_get(root, out, &n);
-             free(name);
-             printf("RRR:       conn: %i\n", ecore_x_randr_output_connection_status_get(root, out));
-             int mw, mh;
-             ecore_x_randr_output_size_mm_get(root, out, &mw, &mh);
-             printf("RRR:       bl: %1.2f\n", ecore_x_randr_output_backlight_level_get(root, out));
-             ecore_x_randr_config_timestamp_get(root);
-             ecore_x_sync();
-             ecore_x_randr_screen_current_size_get(root, NULL, NULL, NULL, NULL);
-             ecore_x_sync();
-             modes = ecore_x_randr_output_modes_get(root, out, &modes_num, &modes_pref);
-             if (modes) break;
-             usleep(1000);
-          }
- */
-     }
+   if (!modes) printf("RRR: modes for '%s' FETCH FAILED!!!\n", s->info.name);
    printf("RRR: modes for '%s' are %p [%i]\n", s->info.name, modes, modes_num);
    if (modes)
      {
