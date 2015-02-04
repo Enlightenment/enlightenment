@@ -1306,6 +1306,7 @@ _e_xdg_shell_cb_popup_get(struct wl_client *client, struct wl_resource *resource
    cdata->shell.map = _e_xdg_shell_surface_map;
    cdata->shell.unmap = _e_xdg_shell_surface_unmap;
 
+   ec->override = 1;
    ec->argb = EINA_TRUE;
    ec->no_shape_cut = EINA_TRUE;
    ec->borderless = !ec->internal_elm_win;
