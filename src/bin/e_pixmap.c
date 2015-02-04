@@ -71,8 +71,6 @@ _e_pixmap_clear(E_Pixmap *cp, Eina_Bool cache)
 #if defined(HAVE_WAYLAND_CLIENTS) || defined(HAVE_WAYLAND_ONLY)
         if (cp->resource)
           {
-             _e_pixmap_resource_free(cp->resource);
-             cp->resource = NULL;
              e_pixmap_image_clear(cp, cache);
           }
 #endif
@@ -405,7 +403,6 @@ e_pixmap_refresh(E_Pixmap *cp)
            if (cp->client)
              {
                 cd = (E_Comp_X_Client_Data*)cp->client->comp_data;
-                e_comp_object_native_surface_set(cp->client->frame, 0);
              }
            success = !!pixmap;
            if (!success) break;
@@ -445,7 +442,6 @@ e_pixmap_refresh(E_Pixmap *cp)
              if (cp->client)
                {
                   cd = (E_Comp_Wl_Client_Data *)cp->client->comp_data;
-                  e_comp_object_native_surface_set(cp->client->frame, 0);
                   res = cd->pending.buffer;
                   /* pw = cp->client->client.w; */
                   /* ph = cp->client->client.h; */
