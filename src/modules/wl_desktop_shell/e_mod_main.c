@@ -1205,7 +1205,6 @@ _e_xdg_shell_cb_surface_get(struct wl_client *client, struct wl_resource *resour
    ec->border.changed = ec->changes.border = !ec->borderless;
    ec->netwm.type = E_WINDOW_TYPE_NORMAL;
    ec->comp_data->set_win_type = EINA_TRUE;
-   EC_CHANGED(ec);
 }
 
 static void 
@@ -1332,7 +1331,6 @@ _e_xdg_shell_cb_popup_get(struct wl_client *client, struct wl_resource *resource
         cdata->popup.y = y;
      }
 
-   EC_CHANGED(ec);
 }
 
 static void 
