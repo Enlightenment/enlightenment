@@ -42,7 +42,7 @@ e_modapi_init(E_Module *m)
         screen->h = h;
         e_xinerama_screens_set(eina_list_append(NULL, screen));
      }
-   comp->man = e_manager_new(0, comp, w, h);
+   comp->man = e_manager_new(ecore_evas_window_get(comp->ee), comp, w, h);
    e_comp_wl_init();
    e_comp_canvas_init(comp);
    e_comp_canvas_fake_layers_init(comp);
