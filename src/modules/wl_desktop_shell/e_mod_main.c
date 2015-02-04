@@ -468,8 +468,12 @@ _e_shell_surface_configure(struct wl_resource *resource, Evas_Coord x, Evas_Coor
             (ec->netwm.type == E_WINDOW_TYPE_POPUP_MENU) || 
             (ec->netwm.type == E_WINDOW_TYPE_DROPDOWN_MENU))
           {
-             x = ec->parent->client.x + ec->comp_data->popup.x;
-             y = ec->parent->client.y + ec->comp_data->popup.y;
+             x = E_CLAMP(ec->parent->client.x + ec->comp_data->popup.x,
+               ec->parent->client.x,
+               ec->parent->client.x + ec->parent->client.w - ec->client.w);
+             y = E_CLAMP(ec->parent->client.y + ec->comp_data->popup.y,
+             ec->parent->client.y,
+             ec->parent->client.y + ec->parent->client.h - ec->client.h);
           }
      }
 
@@ -1296,9 +1300,6 @@ _e_xdg_shell_cb_popup_get(struct wl_client *client, struct wl_resource *resource
    wl_resource_set_implementation(cdata->shell.surface, 
                                   &_e_xdg_popup_interface, ec, NULL);
 
-   cdata->popup.x = x;
-   cdata->popup.y = y;
-
    cdata->surface = surface_resource;
    cdata->shell.configure_send = _e_xdg_shell_surface_configure_send;
    cdata->shell.configure = _e_xdg_shell_surface_configure;
@@ -1319,6 +1320,17 @@ _e_xdg_shell_cb_popup_get(struct wl_client *client, struct wl_resource *resource
 
    /* set this client as a transient for parent */
    _e_shell_surface_parent_set(ec, parent_resource);
+
+   if (ec->parent)
+     {
+        cdata->popup.x = E_CLAMP(x, 0, ec->parent->client.w);
+        cdata->popup.y = E_CLAMP(y, 0, ec->parent->client.y);
+     }
+   else
+     {
+        cdata->popup.x = x;
+        cdata->popup.y = y;
+     }
 
    EC_CHANGED(ec);
 }
