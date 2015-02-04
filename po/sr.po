@@ -7,11 +7,12 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: enlightenment\n"
-"Report-Msgid-Bugs-To: $MSGID_BUGS_ADDRESS\n"
-"POT-Creation-Date: 2015-01-18 20:51+0100\n"
+"Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
+"POT-Creation-Date: 2015-02-04 18:12+0900\n"
 "PO-Revision-Date: 2015-02-03 10:47+0100\n"
 "Last-Translator: Саша Петровић <salepetronije@gmail.com>\n"
 "Language-Team: српски <xfce4@xfce4.org>\n"
+"Language: sr\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -19,13 +20,12 @@ msgstr ""
 "%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
 "X-Launchpad-Export-Date: 2015-01-20 06:15+0000\n"
 "X-Generator: Poedit 1.5.4\n"
-"Language: sr\n"
 
 #: src/bin/e_about.c:17
 msgid "About Enlightenment"
 msgstr "О Просвећењу"
 
-#: src/bin/e_about.c:20 src/bin/e_actions.c:1978 src/bin/e_actions.c:2957
+#: src/bin/e_about.c:20 src/bin/e_actions.c:1978 src/bin/e_actions.c:2966
 #: src/bin/e_config_dialog.c:290 src/bin/e_fm.c:1072
 #: src/bin/e_int_client_menu.c:238 src/bin/e_int_client_prop.c:81
 #: src/bin/e_startup.c:88 src/bin/e_theme_about.c:22
@@ -36,8 +36,8 @@ msgstr "О Просвећењу"
 msgid "Close"
 msgstr "Затвори"
 
-#: src/bin/e_about.c:21 src/bin/e_actions.c:3329 src/bin/e_actions.c:3333
-#: src/bin/e_actions.c:3337 src/bin/e_init.c:79 src/bin/e_int_menus.c:224
+#: src/bin/e_about.c:21 src/bin/e_actions.c:3344 src/bin/e_actions.c:3348
+#: src/bin/e_actions.c:3352 src/bin/e_init.c:78 src/bin/e_int_menus.c:224
 #: src/modules/conf_interaction/e_int_config_mouse.c:167
 #: src/modules/conf_window_remembers/e_int_config_remembers.c:242
 #: src/modules/wizard/page_000.c:34
@@ -75,7 +75,7 @@ msgstr ""
 msgid "Are you sure you want to kill this window?"
 msgstr "Да ли сте сигурни да желите да убијете овај прозор?"
 
-#: src/bin/e_actions.c:370 src/bin/e_actions.c:2962
+#: src/bin/e_actions.c:370 src/bin/e_actions.c:2971
 #: src/bin/e_int_client_menu.c:798
 msgid "Kill"
 msgstr "Убиј"
@@ -83,7 +83,7 @@ msgstr "Убиј"
 #: src/bin/e_actions.c:372 src/bin/e_actions.c:2095 src/bin/e_actions.c:2186
 #: src/bin/e_actions.c:2246 src/bin/e_actions.c:2303 src/bin/e_actions.c:2365
 #: src/bin/e_actions.c:2427 src/bin/e_confirm_dialog.c:53
-#: src/bin/e_desklock.c:547 src/bin/e_fm.c:10575 src/bin/e_fm.c:10928
+#: src/bin/e_desklock.c:544 src/bin/e_fm.c:10575 src/bin/e_fm.c:10928
 #: src/bin/e_screensaver.c:196
 #: src/modules/quickaccess/e_mod_quickaccess.c:1305
 msgid "No"
@@ -93,7 +93,7 @@ msgstr "Не"
 msgid "Action Params Syntax Error"
 msgstr "Значењска грешка одредница радње"
 
-#: src/bin/e_actions.c:2090 src/bin/e_actions.c:3333 src/bin/e_int_menus.c:253
+#: src/bin/e_actions.c:2090 src/bin/e_actions.c:3348 src/bin/e_int_menus.c:253
 msgid "Exit"
 msgstr "Напусти"
 
@@ -103,7 +103,7 @@ msgstr "Да ли сте сигурни да сада желите да напу
 
 #: src/bin/e_actions.c:2093 src/bin/e_actions.c:2184 src/bin/e_actions.c:2244
 #: src/bin/e_actions.c:2301 src/bin/e_actions.c:2363 src/bin/e_actions.c:2425
-#: src/bin/e_confirm_dialog.c:52 src/bin/e_desklock.c:545 src/bin/e_fm.c:10578
+#: src/bin/e_confirm_dialog.c:52 src/bin/e_desklock.c:542 src/bin/e_fm.c:10578
 #: src/bin/e_screensaver.c:194
 #: src/modules/quickaccess/e_mod_quickaccess.c:1305
 msgid "Yes"
@@ -125,7 +125,7 @@ msgstr "Искључи"
 msgid "Are you sure you want to power off your computer?"
 msgstr "Да ли сте сигурни да желите да искључите рачунар?"
 
-#: src/bin/e_actions.c:2298 src/bin/e_actions.c:3376
+#: src/bin/e_actions.c:2298 src/bin/e_actions.c:3391
 msgid "Reboot"
 msgstr "Поново покрени"
 
@@ -133,7 +133,7 @@ msgstr "Поново покрени"
 msgid "Are you sure you want to reboot your computer?"
 msgstr "Да ли сте сигурни да желите поново покренути рачунар?"
 
-#: src/bin/e_actions.c:2360 src/bin/e_actions.c:3384
+#: src/bin/e_actions.c:2360 src/bin/e_actions.c:3399
 msgid "Suspend"
 msgstr "Обустави"
 
@@ -141,7 +141,7 @@ msgstr "Обустави"
 msgid "Are you sure you want to suspend your computer?"
 msgstr "Да ли сте сигурни да желите да обуставите рачунар?"
 
-#: src/bin/e_actions.c:2422 src/bin/e_actions.c:3388
+#: src/bin/e_actions.c:2422 src/bin/e_actions.c:3403
 #: src/modules/conf_bindings/e_int_config_acpibindings.c:379
 msgid "Hibernate"
 msgstr "Замрзни"
@@ -150,361 +150,361 @@ msgstr "Замрзни"
 msgid "Are you sure you want to hibernate your computer?"
 msgstr "Да ли сте сигурни да желите замрзнути систем?"
 
-#: src/bin/e_actions.c:2917 src/bin/e_actions.c:2928 src/bin/e_actions.c:2947
-#: src/bin/e_actions.c:2952 src/bin/e_actions.c:2957 src/bin/e_actions.c:2962
-#: src/bin/e_actions.c:3245 src/bin/e_actions.c:3249 src/bin/e_actions.c:3254
-#: src/bin/e_actions.c:3260 src/bin/e_actions.c:3266 src/bin/e_actions.c:3272
+#: src/bin/e_actions.c:2926 src/bin/e_actions.c:2937 src/bin/e_actions.c:2956
+#: src/bin/e_actions.c:2961 src/bin/e_actions.c:2966 src/bin/e_actions.c:2971
+#: src/bin/e_actions.c:3260 src/bin/e_actions.c:3264 src/bin/e_actions.c:3269
+#: src/bin/e_actions.c:3275 src/bin/e_actions.c:3281 src/bin/e_actions.c:3287
 #: src/modules/shot/e_mod_main.c:1022
 msgid "Window : Actions"
 msgstr "Прозор : радње"
 
-#: src/bin/e_actions.c:2917 src/bin/e_fm.c:11704
+#: src/bin/e_actions.c:2926 src/bin/e_fm.c:11704
 #: src/bin/e_int_client_menu.c:718
 msgid "Move"
 msgstr "Премести"
 
-#: src/bin/e_actions.c:2928 src/bin/e_int_client_menu.c:732
+#: src/bin/e_actions.c:2937 src/bin/e_int_client_menu.c:732
 msgid "Resize"
 msgstr "Промени величину"
 
-#: src/bin/e_actions.c:2939 src/bin/e_actions.c:3300 src/bin/e_actions.c:3302
-#: src/bin/e_actions.c:3304 src/bin/e_actions.c:3306 src/bin/e_actions.c:3308
+#: src/bin/e_actions.c:2948 src/bin/e_actions.c:3315 src/bin/e_actions.c:3317
+#: src/bin/e_actions.c:3319 src/bin/e_actions.c:3321 src/bin/e_actions.c:3323
 #: src/bin/e_int_config_comp_match.c:86 src/bin/e_int_config_comp_match.c:407
 #: src/modules/conf_bindings/e_int_config_mousebindings.c:336
 msgid "Menu"
 msgstr "Изборник"
 
-#: src/bin/e_actions.c:2939
+#: src/bin/e_actions.c:2948
 msgid "Window Menu"
 msgstr "Изборник прозора"
 
-#: src/bin/e_actions.c:2947 src/bin/e_int_client_menu.c:1340
+#: src/bin/e_actions.c:2956 src/bin/e_int_client_menu.c:1340
 #: src/modules/winlist/e_int_config_winlist.c:208
 msgid "Raise"
 msgstr "Издигни"
 
-#: src/bin/e_actions.c:2952 src/bin/e_int_client_menu.c:1348
+#: src/bin/e_actions.c:2961 src/bin/e_int_client_menu.c:1348
 msgid "Lower"
 msgstr "Спусти"
 
-#: src/bin/e_actions.c:2967 src/bin/e_actions.c:2971 src/bin/e_actions.c:2976
-#: src/bin/e_actions.c:2980 src/bin/e_actions.c:2985 src/bin/e_actions.c:2989
-#: src/bin/e_actions.c:2994 src/bin/e_actions.c:2996 src/bin/e_actions.c:2999
-#: src/bin/e_actions.c:3002 src/bin/e_actions.c:3005 src/bin/e_actions.c:3008
-#: src/bin/e_actions.c:3010 src/bin/e_actions.c:3012 src/bin/e_actions.c:3014
-#: src/bin/e_actions.c:3021 src/bin/e_actions.c:3023 src/bin/e_actions.c:3025
-#: src/bin/e_actions.c:3027 src/bin/e_actions.c:3029 src/bin/e_actions.c:3033
-#: src/bin/e_actions.c:3038 src/bin/e_actions.c:3043 src/bin/e_actions.c:3049
-#: src/bin/e_actions.c:3055
+#: src/bin/e_actions.c:2976 src/bin/e_actions.c:2980 src/bin/e_actions.c:2985
+#: src/bin/e_actions.c:2989 src/bin/e_actions.c:2994 src/bin/e_actions.c:2998
+#: src/bin/e_actions.c:3003 src/bin/e_actions.c:3005 src/bin/e_actions.c:3008
+#: src/bin/e_actions.c:3011 src/bin/e_actions.c:3014 src/bin/e_actions.c:3017
+#: src/bin/e_actions.c:3019 src/bin/e_actions.c:3021 src/bin/e_actions.c:3023
+#: src/bin/e_actions.c:3030 src/bin/e_actions.c:3032 src/bin/e_actions.c:3034
+#: src/bin/e_actions.c:3036 src/bin/e_actions.c:3038 src/bin/e_actions.c:3042
+#: src/bin/e_actions.c:3047 src/bin/e_actions.c:3052 src/bin/e_actions.c:3058
+#: src/bin/e_actions.c:3064
 msgid "Window : State"
 msgstr "Прозор : стање"
 
-#: src/bin/e_actions.c:2967
+#: src/bin/e_actions.c:2976
 msgid "Sticky Mode Toggle"
 msgstr "Мења стање лепљивости прозора"
 
-#: src/bin/e_actions.c:2971
+#: src/bin/e_actions.c:2980
 msgid "Sticky Mode Enable"
 msgstr "Омогући лепљивост"
 
-#: src/bin/e_actions.c:2976
+#: src/bin/e_actions.c:2985
 msgid "Iconic Mode Toggle"
 msgstr "Мења стање умањености"
 
-#: src/bin/e_actions.c:2980
+#: src/bin/e_actions.c:2989
 msgid "Iconic Mode Enable"
 msgstr "Омогући стање умањености"
 
-#: src/bin/e_actions.c:2985
+#: src/bin/e_actions.c:2994
 msgid "Fullscreen Mode Toggle"
 msgstr "Преко целог екрана"
 
-#: src/bin/e_actions.c:2989
+#: src/bin/e_actions.c:2998
 msgid "Fullscreen Mode Enable"
 msgstr "Омогући приказ преко целог екрана"
 
-#: src/bin/e_actions.c:2994 src/bin/e_int_client_menu.c:433
+#: src/bin/e_actions.c:3003 src/bin/e_int_client_menu.c:433
 #: src/bin/e_int_client_menu.c:693
 msgid "Maximize"
 msgstr "Увећај"
 
-#: src/bin/e_actions.c:2996 src/bin/e_int_client_menu.c:444
+#: src/bin/e_actions.c:3005 src/bin/e_int_client_menu.c:444
 msgid "Maximize Vertically"
 msgstr "Увећај усправно"
 
-#: src/bin/e_actions.c:2999 src/bin/e_int_client_menu.c:455
+#: src/bin/e_actions.c:3008 src/bin/e_int_client_menu.c:455
 msgid "Maximize Horizontally"
 msgstr "Увећај водоравно"
 
-#: src/bin/e_actions.c:3002 src/bin/e_int_client_menu.c:466
+#: src/bin/e_actions.c:3011 src/bin/e_int_client_menu.c:466
 msgid "Maximize Left"
 msgstr "Увећај лево"
 
-#: src/bin/e_actions.c:3005 src/bin/e_int_client_menu.c:477
+#: src/bin/e_actions.c:3014 src/bin/e_int_client_menu.c:477
 msgid "Maximize Right"
 msgstr "Увећај десно"
 
-#: src/bin/e_actions.c:3008
+#: src/bin/e_actions.c:3017
 msgid "Maximize Fullscreen"
 msgstr "Увећај преко целог екрана"
 
-#: src/bin/e_actions.c:3010
+#: src/bin/e_actions.c:3019
 msgid "Maximize Mode \"Smart\""
 msgstr "„Паметно“ увећавање"
 
-#: src/bin/e_actions.c:3012
+#: src/bin/e_actions.c:3021
 msgid "Maximize Mode \"Expand\""
 msgstr "„Прошири“ увећање"
 
-#: src/bin/e_actions.c:3014
+#: src/bin/e_actions.c:3023
 msgid "Maximize Mode \"Fill\""
 msgstr "„Попуни“ увећање"
 
-#: src/bin/e_actions.c:3021
+#: src/bin/e_actions.c:3030
 msgid "Shade Up Mode Toggle"
 msgstr "Мења стање смотавања навише"
 
-#: src/bin/e_actions.c:3023
+#: src/bin/e_actions.c:3032
 msgid "Shade Down Mode Toggle"
 msgstr "Мења стање смотавања наниже"
 
-#: src/bin/e_actions.c:3025
+#: src/bin/e_actions.c:3034
 msgid "Shade Left Mode Toggle"
 msgstr "Мења стање смотавања лево"
 
-#: src/bin/e_actions.c:3027
+#: src/bin/e_actions.c:3036
 msgid "Shade Right Mode Toggle"
 msgstr "Мења стање смотавања десно"
 
-#: src/bin/e_actions.c:3029
+#: src/bin/e_actions.c:3038
 msgid "Shade Mode Toggle"
 msgstr "Мења стање смотавања"
 
-#: src/bin/e_actions.c:3033
+#: src/bin/e_actions.c:3042
 msgid "Set Shaded State"
 msgstr "Постави стање смотавања"
 
-#: src/bin/e_actions.c:3034
+#: src/bin/e_actions.c:3043
 msgid "syntax: \"(0|1) (up|down|left|right)\""
 msgstr "ниска: „(0|1) (up|down|left|right)“"
 
-#: src/bin/e_actions.c:3038
+#: src/bin/e_actions.c:3047
 msgid "Toggle Borderless State"
 msgstr "Мења стање приказа без оквира"
 
-#: src/bin/e_actions.c:3043
+#: src/bin/e_actions.c:3052
 msgid "Set Border"
 msgstr "Постави оквир"
 
-#: src/bin/e_actions.c:3049
+#: src/bin/e_actions.c:3058
 msgid "Cycle between Borders"
 msgstr "Кружи између оквира"
 
-#: src/bin/e_actions.c:3055
+#: src/bin/e_actions.c:3064
 msgid "Toggle Pinned State"
 msgstr "Мења стање причвршћености прозора"
 
-#: src/bin/e_actions.c:3060 src/bin/e_actions.c:3062 src/bin/e_actions.c:3064
-#: src/bin/e_actions.c:3066 src/bin/e_actions.c:3068 src/bin/e_actions.c:3074
-#: src/bin/e_actions.c:3079 src/bin/e_actions.c:3085 src/bin/e_actions.c:3090
-#: src/bin/e_actions.c:3096 src/bin/e_actions.c:3102 src/bin/e_actions.c:3104
-#: src/bin/e_actions.c:3106 src/bin/e_actions.c:3108 src/bin/e_actions.c:3110
-#: src/bin/e_actions.c:3112 src/bin/e_actions.c:3114 src/bin/e_actions.c:3116
-#: src/bin/e_actions.c:3118 src/bin/e_actions.c:3120 src/bin/e_actions.c:3122
-#: src/bin/e_actions.c:3124 src/bin/e_actions.c:3126 src/bin/e_actions.c:3132
-#: src/bin/e_actions.c:3134 src/bin/e_actions.c:3136 src/bin/e_actions.c:3138
-#: src/bin/e_actions.c:3140 src/bin/e_actions.c:3146 src/bin/e_actions.c:3152
-#: src/bin/e_actions.c:3158 src/bin/e_actions.c:3163 src/bin/e_actions.c:3165
-#: src/bin/e_actions.c:3167 src/bin/e_actions.c:3169 src/bin/e_actions.c:3171
-#: src/bin/e_actions.c:3173 src/bin/e_actions.c:3175 src/bin/e_actions.c:3177
-#: src/bin/e_actions.c:3179 src/bin/e_actions.c:3181 src/bin/e_actions.c:3183
-#: src/bin/e_actions.c:3185 src/bin/e_actions.c:3187 src/bin/e_actions.c:3400
-#: src/bin/e_actions.c:3405 src/bin/e_int_config_comp_match.c:78
+#: src/bin/e_actions.c:3069 src/bin/e_actions.c:3071 src/bin/e_actions.c:3073
+#: src/bin/e_actions.c:3075 src/bin/e_actions.c:3077 src/bin/e_actions.c:3083
+#: src/bin/e_actions.c:3088 src/bin/e_actions.c:3094 src/bin/e_actions.c:3099
+#: src/bin/e_actions.c:3105 src/bin/e_actions.c:3111 src/bin/e_actions.c:3113
+#: src/bin/e_actions.c:3115 src/bin/e_actions.c:3117 src/bin/e_actions.c:3119
+#: src/bin/e_actions.c:3121 src/bin/e_actions.c:3123 src/bin/e_actions.c:3125
+#: src/bin/e_actions.c:3127 src/bin/e_actions.c:3129 src/bin/e_actions.c:3131
+#: src/bin/e_actions.c:3133 src/bin/e_actions.c:3135 src/bin/e_actions.c:3141
+#: src/bin/e_actions.c:3143 src/bin/e_actions.c:3145 src/bin/e_actions.c:3147
+#: src/bin/e_actions.c:3149 src/bin/e_actions.c:3155 src/bin/e_actions.c:3161
+#: src/bin/e_actions.c:3167 src/bin/e_actions.c:3172 src/bin/e_actions.c:3174
+#: src/bin/e_actions.c:3176 src/bin/e_actions.c:3178 src/bin/e_actions.c:3180
+#: src/bin/e_actions.c:3182 src/bin/e_actions.c:3184 src/bin/e_actions.c:3186
+#: src/bin/e_actions.c:3188 src/bin/e_actions.c:3190 src/bin/e_actions.c:3192
+#: src/bin/e_actions.c:3194 src/bin/e_actions.c:3196 src/bin/e_actions.c:3415
+#: src/bin/e_actions.c:3420 src/bin/e_int_config_comp_match.c:78
 #: src/bin/e_int_config_comp_match.c:399 src/bin/e_int_menus.c:186
 #: src/bin/e_int_shelf_config.c:283
 #: src/modules/conf_window_manipulation/e_int_config_clientlist.c:119
-#: src/modules/fileman/e_mod_menu.c:432 src/modules/gadman/e_mod_gadman.c:120
+#: src/modules/fileman/e_mod_menu.c:437 src/modules/gadman/e_mod_gadman.c:120
 #: src/modules/ibox/e_mod_config.c:151
 msgid "Desktop"
 msgstr "Радна површ"
 
-#: src/bin/e_actions.c:3060
+#: src/bin/e_actions.c:3069
 msgid "Flip Desktop Left"
 msgstr "Пребаци на радну радну површ лево"
 
-#: src/bin/e_actions.c:3062
+#: src/bin/e_actions.c:3071
 msgid "Flip Desktop Right"
 msgstr "Пребаци на радну површ десно"
 
-#: src/bin/e_actions.c:3064
+#: src/bin/e_actions.c:3073
 msgid "Flip Desktop Up"
 msgstr "Пребаци на радну површ горе"
 
-#: src/bin/e_actions.c:3066
+#: src/bin/e_actions.c:3075
 msgid "Flip Desktop Down"
 msgstr "Пребаци на радну површ доле"
 
-#: src/bin/e_actions.c:3068
+#: src/bin/e_actions.c:3077
 msgid "Flip Desktop By..."
 msgstr "Пребаци на радну површ за..."
 
-#: src/bin/e_actions.c:3074
+#: src/bin/e_actions.c:3083
 msgid "Flip To Previous Desktop"
 msgstr "Пребаци на претходну радну површ"
 
-#: src/bin/e_actions.c:3079
+#: src/bin/e_actions.c:3088
 msgid "Show The Desktop"
 msgstr "Приказује радну површ"
 
-#: src/bin/e_actions.c:3085
+#: src/bin/e_actions.c:3094
 msgid "Show The Shelf"
 msgstr "Приказује полицу"
 
-#: src/bin/e_actions.c:3090
+#: src/bin/e_actions.c:3099
 msgid "Flip Desktop To..."
 msgstr "Пребаци радни простор на..."
 
-#: src/bin/e_actions.c:3096
+#: src/bin/e_actions.c:3105
 msgid "Flip Desktop Linearly..."
 msgstr "Премешта редно радну површ..."
 
-#: src/bin/e_actions.c:3102
+#: src/bin/e_actions.c:3111
 msgid "Switch To Desktop 0"
 msgstr "Пређи на радну површ 0"
 
-#: src/bin/e_actions.c:3104
+#: src/bin/e_actions.c:3113
 msgid "Switch To Desktop 1"
 msgstr "Пређи на радну површ 1"
 
-#: src/bin/e_actions.c:3106
+#: src/bin/e_actions.c:3115
 msgid "Switch To Desktop 2"
 msgstr "Пређи на радну површ 2"
 
-#: src/bin/e_actions.c:3108
+#: src/bin/e_actions.c:3117
 msgid "Switch To Desktop 3"
 msgstr "Пређи на радну површ 3"
 
-#: src/bin/e_actions.c:3110
+#: src/bin/e_actions.c:3119
 msgid "Switch To Desktop 4"
 msgstr "Пређи на радну површ 4"
 
-#: src/bin/e_actions.c:3112
+#: src/bin/e_actions.c:3121
 msgid "Switch To Desktop 5"
 msgstr "Пређи на радну површ 5"
 
-#: src/bin/e_actions.c:3114
+#: src/bin/e_actions.c:3123
 msgid "Switch To Desktop 6"
 msgstr "Пређи на радну површ 6"
 
-#: src/bin/e_actions.c:3116
+#: src/bin/e_actions.c:3125
 msgid "Switch To Desktop 7"
 msgstr "Пређи на радну површ 7"
 
-#: src/bin/e_actions.c:3118
+#: src/bin/e_actions.c:3127
 msgid "Switch To Desktop 8"
 msgstr "Пређи на радну површ 8"
 
-#: src/bin/e_actions.c:3120
+#: src/bin/e_actions.c:3129
 msgid "Switch To Desktop 9"
 msgstr "Пређи на радну површ 9"
 
-#: src/bin/e_actions.c:3122
+#: src/bin/e_actions.c:3131
 msgid "Switch To Desktop 10"
 msgstr "Пређи на радну површ 10"
 
-#: src/bin/e_actions.c:3124
+#: src/bin/e_actions.c:3133
 msgid "Switch To Desktop 11"
 msgstr "Пређи на радну површ 11"
 
-#: src/bin/e_actions.c:3126
+#: src/bin/e_actions.c:3135
 msgid "Switch To Desktop..."
 msgstr "Пређи на радну површ..."
 
-#: src/bin/e_actions.c:3132
+#: src/bin/e_actions.c:3141
 msgid "Flip Desktop Left (All Screens)"
 msgstr "Пребаци на радну површ лево (свих екрана)"
 
-#: src/bin/e_actions.c:3134
+#: src/bin/e_actions.c:3143
 msgid "Flip Desktop Right (All Screens)"
 msgstr "Пребаци на радну површ десно (свих екрана)"
 
-#: src/bin/e_actions.c:3136
+#: src/bin/e_actions.c:3145
 msgid "Flip Desktop Up (All Screens)"
 msgstr "Пребаци на радну површ горе (свих екрана)"
 
-#: src/bin/e_actions.c:3138
+#: src/bin/e_actions.c:3147
 msgid "Flip Desktop Down (All Screens)"
 msgstr "Пребаци на радну површ доле (свих екрана)"
 
-#: src/bin/e_actions.c:3140
+#: src/bin/e_actions.c:3149
 msgid "Flip Desktop By... (All Screens)"
 msgstr "Пребаци радну површ за... (свих екрана)"
 
-#: src/bin/e_actions.c:3146
+#: src/bin/e_actions.c:3155
 msgid "Flip Desktop To... (All Screens)"
 msgstr "Пребаци радну површ на... (свих екрана)"
 
-#: src/bin/e_actions.c:3152
+#: src/bin/e_actions.c:3161
 msgid "Flip Desktop Linearly... (All Screens)"
 msgstr "Пребаци на радну површ редно... (сви екрани)"
 
-#: src/bin/e_actions.c:3158
+#: src/bin/e_actions.c:3167
 msgid "Flip Desktop In Direction..."
 msgstr "Пребаци радну површ у правцу..."
 
-#: src/bin/e_actions.c:3163
+#: src/bin/e_actions.c:3172
 msgid "Switch To Desktop 0 (All Screens)"
 msgstr "Пређи на радну површ 0 (сви екрани)"
 
-#: src/bin/e_actions.c:3165
+#: src/bin/e_actions.c:3174
 msgid "Switch To Desktop 1 (All Screens)"
 msgstr "Пређи на радну површ 1 (сви екрани)"
 
-#: src/bin/e_actions.c:3167
+#: src/bin/e_actions.c:3176
 msgid "Switch To Desktop 2 (All Screens)"
 msgstr "Пређи на радну површ 2 (сви екрани)"
 
-#: src/bin/e_actions.c:3169
+#: src/bin/e_actions.c:3178
 msgid "Switch To Desktop 3 (All Screens)"
 msgstr "Пређи на радну површ 3 (сви екрани)"
 
-#: src/bin/e_actions.c:3171
+#: src/bin/e_actions.c:3180
 msgid "Switch To Desktop 4 (All Screens)"
 msgstr "Пређи на радну површ 4 (сви екрани)"
 
-#: src/bin/e_actions.c:3173
+#: src/bin/e_actions.c:3182
 msgid "Switch To Desktop 5 (All Screens)"
 msgstr "Пређи на радну површ 5 (сви екрани)"
 
-#: src/bin/e_actions.c:3175
+#: src/bin/e_actions.c:3184
 msgid "Switch To Desktop 6 (All Screens)"
 msgstr "Пређи на простор 6 (сви екрани)"
 
-#: src/bin/e_actions.c:3177
+#: src/bin/e_actions.c:3186
 msgid "Switch To Desktop 7 (All Screens)"
 msgstr "Пређи на простор 7 (сви екрани)"
 
-#: src/bin/e_actions.c:3179
+#: src/bin/e_actions.c:3188
 msgid "Switch To Desktop 8 (All Screens)"
 msgstr "Пређи на простор 8 (сви екрани)"
 
-#: src/bin/e_actions.c:3181
+#: src/bin/e_actions.c:3190
 msgid "Switch To Desktop 9 (All Screens)"
 msgstr "Пређи на простор 9 (сви екрани)"
 
-#: src/bin/e_actions.c:3183
+#: src/bin/e_actions.c:3192
 msgid "Switch To Desktop 10 (All Screens)"
 msgstr "Пређи на простор 10 (сви екрани)"
 
-#: src/bin/e_actions.c:3185
+#: src/bin/e_actions.c:3194
 msgid "Switch To Desktop 11 (All Screens)"
 msgstr "Пређи на простор 11 (сви екрани)"
 
-#: src/bin/e_actions.c:3187
+#: src/bin/e_actions.c:3196
 msgid "Switch To Desktop... (All Screens)"
 msgstr "Пређи на простор 12 (сви екрани)"
 
-#: src/bin/e_actions.c:3193 src/bin/e_actions.c:3197
+#: src/bin/e_actions.c:3202 src/bin/e_actions.c:3206
 #: src/modules/winlist/e_mod_main.c:41 src/modules/winlist/e_mod_main.c:43
 #: src/modules/winlist/e_mod_main.c:45 src/modules/winlist/e_mod_main.c:48
 #: src/modules/winlist/e_mod_main.c:51 src/modules/winlist/e_mod_main.c:54
@@ -513,219 +513,223 @@ msgstr "Пређи на простор 12 (сви екрани)"
 msgid "Window : List"
 msgstr "Прозор : списак"
 
-#: src/bin/e_actions.c:3193
+#: src/bin/e_actions.c:3202
 msgid "Jump to window..."
 msgstr "Скочи на прозор..."
 
-#: src/bin/e_actions.c:3197
+#: src/bin/e_actions.c:3206
 msgid "Jump to window... or start..."
 msgstr "Скочи на прозор... или покрени..."
 
-#: src/bin/e_actions.c:3202 src/bin/e_actions.c:3204 src/bin/e_actions.c:3206
-#: src/bin/e_actions.c:3212 src/bin/e_actions.c:3214 src/bin/e_actions.c:3216
-#: src/bin/e_actions.c:3221 src/bin/e_actions.c:3224 src/bin/e_actions.c:3227
-#: src/bin/e_actions.c:3229 src/bin/e_actions.c:3231 src/bin/e_actions.c:3233
-#: src/bin/e_actions.c:3236 src/bin/e_actions.c:3238 src/bin/e_actions.c:3240
-#: src/modules/backlight/e_mod_main.c:483
+#: src/bin/e_actions.c:3211 src/bin/e_actions.c:3213 src/bin/e_actions.c:3215
+#: src/bin/e_actions.c:3221 src/bin/e_actions.c:3223 src/bin/e_actions.c:3225
+#: src/bin/e_actions.c:3230 src/bin/e_actions.c:3233 src/bin/e_actions.c:3236
+#: src/bin/e_actions.c:3238 src/bin/e_actions.c:3240 src/bin/e_actions.c:3242
+#: src/bin/e_actions.c:3245 src/bin/e_actions.c:3247 src/bin/e_actions.c:3249
+#: src/bin/e_actions.c:3254 src/modules/backlight/e_mod_main.c:483
 #: src/modules/conf_display/e_mod_main.c:17
 #: src/modules/conf_randr/e_mod_main.c:16 src/modules/ibox/e_mod_config.c:133
 #: src/modules/shot/e_mod_main.c:756 src/modules/shot/e_mod_main.c:1014
 msgid "Screen"
 msgstr "Екран"
 
-#: src/bin/e_actions.c:3202
+#: src/bin/e_actions.c:3211
 msgid "Send Mouse To Screen 0"
 msgstr "Пошаљи миша на екран 0"
 
-#: src/bin/e_actions.c:3204
+#: src/bin/e_actions.c:3213
 msgid "Send Mouse To Screen 1"
 msgstr "Пошаљи миша на екран 1"
 
-#: src/bin/e_actions.c:3206
+#: src/bin/e_actions.c:3215
 msgid "Send Mouse To Screen..."
 msgstr "Покажи миша на екран..."
 
-#: src/bin/e_actions.c:3212
+#: src/bin/e_actions.c:3221
 msgid "Send Mouse Forward 1 Screen"
 msgstr "Пошаљи миша на 1 екран унапред"
 
-#: src/bin/e_actions.c:3214
+#: src/bin/e_actions.c:3223
 msgid "Send Mouse Back 1 Screen"
 msgstr "Пошаљи миша на 1 екран уназад"
 
-#: src/bin/e_actions.c:3216
+#: src/bin/e_actions.c:3225
 msgid "Send Mouse Forward/Back Screens..."
 msgstr "Шаље миша на претходни/следећи екран..."
 
-#: src/bin/e_actions.c:3221
+#: src/bin/e_actions.c:3230
 msgid "Dim"
 msgstr "Затамни"
 
-#: src/bin/e_actions.c:3224
+#: src/bin/e_actions.c:3233
 msgid "Undim"
 msgstr "Искључи затамњење"
 
-#: src/bin/e_actions.c:3227
+#: src/bin/e_actions.c:3236
 msgid "Backlight Set"
 msgstr "Постави позадинско осветљење"
 
-#: src/bin/e_actions.c:3229
+#: src/bin/e_actions.c:3238
 msgid "Backlight Min"
 msgstr "Најмање позадинско осветљење"
 
-#: src/bin/e_actions.c:3231
+#: src/bin/e_actions.c:3240
 msgid "Backlight Mid"
 msgstr "Средње позадинско осветљење"
 
-#: src/bin/e_actions.c:3233
+#: src/bin/e_actions.c:3242
 msgid "Backlight Max"
 msgstr "Највише позадинско осветљење"
 
-#: src/bin/e_actions.c:3236
+#: src/bin/e_actions.c:3245
 msgid "Backlight Adjust"
 msgstr "Подеси позадинско осветљење"
 
-#: src/bin/e_actions.c:3238
+#: src/bin/e_actions.c:3247
 msgid "Backlight Up"
 msgstr "Појачај позадинско осветљење"
 
-#: src/bin/e_actions.c:3240
+#: src/bin/e_actions.c:3249
 msgid "Backlight Down"
 msgstr "Смањи позадинско осветљење"
 
-#: src/bin/e_actions.c:3245
+#: src/bin/e_actions.c:3255
+msgid "Update and re-apply screen setup"
+msgstr ""
+
+#: src/bin/e_actions.c:3260
 msgid "Move To Center"
 msgstr "Смести у средину"
 
-#: src/bin/e_actions.c:3249
+#: src/bin/e_actions.c:3264
 msgid "Move To Coordinates..."
 msgstr "Помери у положај..."
 
-#: src/bin/e_actions.c:3254
+#: src/bin/e_actions.c:3269
 msgid "Move By Coordinate Offset..."
 msgstr "Помери за померај положаја..."
 
-#: src/bin/e_actions.c:3260
+#: src/bin/e_actions.c:3275
 msgid "Resize By..."
 msgstr "Промени величину за..."
 
-#: src/bin/e_actions.c:3266
+#: src/bin/e_actions.c:3281
 msgid "Push in Direction..."
 msgstr "Помери у правцу..."
 
-#: src/bin/e_actions.c:3272
+#: src/bin/e_actions.c:3287
 msgid "Drag Icon..."
 msgstr "Вуци икону..."
 
-#: src/bin/e_actions.c:3277 src/bin/e_actions.c:3279 src/bin/e_actions.c:3281
-#: src/bin/e_actions.c:3287 src/bin/e_actions.c:3293 src/bin/e_actions.c:3295
+#: src/bin/e_actions.c:3292 src/bin/e_actions.c:3294 src/bin/e_actions.c:3296
+#: src/bin/e_actions.c:3302 src/bin/e_actions.c:3308 src/bin/e_actions.c:3310
 msgid "Window : Moving"
 msgstr "Прозор : померање"
 
-#: src/bin/e_actions.c:3277
+#: src/bin/e_actions.c:3292
 msgid "To Next Desktop"
 msgstr "На следећу радну површ"
 
-#: src/bin/e_actions.c:3279
+#: src/bin/e_actions.c:3294
 msgid "To Previous Desktop"
 msgstr "На претходну радну површ"
 
-#: src/bin/e_actions.c:3281
+#: src/bin/e_actions.c:3296
 msgid "By Desktop #..."
 msgstr "За радну површ #..."
 
-#: src/bin/e_actions.c:3287
+#: src/bin/e_actions.c:3302
 msgid "To Desktop..."
 msgstr "На радну површ..."
 
-#: src/bin/e_actions.c:3293
+#: src/bin/e_actions.c:3308
 msgid "To Next Screen"
 msgstr "На следећи екран"
 
-#: src/bin/e_actions.c:3295
+#: src/bin/e_actions.c:3310
 msgid "To Previous Screen"
 msgstr "На претходни екран"
 
-#: src/bin/e_actions.c:3300
+#: src/bin/e_actions.c:3315
 msgid "Show Main Menu"
 msgstr "Прикажи главни изборник"
 
-#: src/bin/e_actions.c:3302
+#: src/bin/e_actions.c:3317
 msgid "Show Favorites Menu"
 msgstr "Прикажи омиљени изборник"
 
-#: src/bin/e_actions.c:3304
+#: src/bin/e_actions.c:3319
 msgid "Show All Applications Menu"
 msgstr "Прикажи изборник свих програма"
 
-#: src/bin/e_actions.c:3306
+#: src/bin/e_actions.c:3321
 msgid "Show Clients Menu"
 msgstr "Приказује изборник клијента"
 
-#: src/bin/e_actions.c:3308
+#: src/bin/e_actions.c:3323
 msgid "Show Menu..."
 msgstr "Приказује изборник..."
 
-#: src/bin/e_actions.c:3315 src/bin/e_actions.c:3320 src/bin/e_actions.c:3325
+#: src/bin/e_actions.c:3330 src/bin/e_actions.c:3335 src/bin/e_actions.c:3340
 #: src/modules/conf/e_mod_main.c:273
 #: src/modules/everything/evry_plug_apps.c:1171
 #: src/modules/fileman/e_mod_main.c:55
 msgid "Launch"
 msgstr "Покрени"
 
-#: src/bin/e_actions.c:3315 src/bin/e_int_client_prop.c:472
+#: src/bin/e_actions.c:3330 src/bin/e_int_client_prop.c:472
 msgid "Command"
 msgstr "Наредба"
 
-#: src/bin/e_actions.c:3320 src/bin/e_desktop_editor.c:728
+#: src/bin/e_actions.c:3335 src/bin/e_desktop_editor.c:728
 #: src/bin/e_int_client_menu.c:121
 #, c-format
 msgid "Application"
 msgstr "Програм"
 
-#: src/bin/e_actions.c:3325
+#: src/bin/e_actions.c:3340
 msgid "New Instance of Focused App"
 msgstr "Нови примерак програма у жижи"
 
-#: src/bin/e_actions.c:3329 src/bin/e_int_menus.c:248
+#: src/bin/e_actions.c:3344 src/bin/e_int_menus.c:248
 msgid "Restart"
 msgstr "Поново покрени"
 
-#: src/bin/e_actions.c:3337
+#: src/bin/e_actions.c:3352
 msgid "Exit Now"
 msgstr "Изађи сада"
 
-#: src/bin/e_actions.c:3341 src/bin/e_actions.c:3346
+#: src/bin/e_actions.c:3356 src/bin/e_actions.c:3361
 msgid "Enlightenment : Mode"
 msgstr "Просвећење : начин"
 
-#: src/bin/e_actions.c:3342
+#: src/bin/e_actions.c:3357
 msgid "Presentation Mode Toggle"
 msgstr "Прекидач начина рада излагања"
 
-#: src/bin/e_actions.c:3347
+#: src/bin/e_actions.c:3362
 msgid "Offline Mode Toggle"
 msgstr "Прекидач рада ван мреже"
 
-#: src/bin/e_actions.c:3351 src/bin/e_actions.c:3355 src/bin/e_actions.c:3359
+#: src/bin/e_actions.c:3366 src/bin/e_actions.c:3370 src/bin/e_actions.c:3374
 msgid "Enlightenment : Module"
 msgstr "Просвећење : јединица"
 
-#: src/bin/e_actions.c:3352
+#: src/bin/e_actions.c:3367
 msgid "Enable the named module"
 msgstr "Омогући именовану јединицу"
 
-#: src/bin/e_actions.c:3356
+#: src/bin/e_actions.c:3371
 msgid "Disable the named module"
 msgstr "Онемогући именовану јединицу"
 
-#: src/bin/e_actions.c:3360
+#: src/bin/e_actions.c:3375
 msgid "Toggle the named module"
 msgstr "Мења стање именоване јединице"
 
-#: src/bin/e_actions.c:3364 src/bin/e_actions.c:3368 src/bin/e_actions.c:3372
-#: src/bin/e_actions.c:3376 src/bin/e_actions.c:3380 src/bin/e_actions.c:3384
-#: src/bin/e_actions.c:3388 src/bin/e_actions.c:3392 src/bin/e_configure.c:416
+#: src/bin/e_actions.c:3379 src/bin/e_actions.c:3383 src/bin/e_actions.c:3387
+#: src/bin/e_actions.c:3391 src/bin/e_actions.c:3395 src/bin/e_actions.c:3399
+#: src/bin/e_actions.c:3403 src/bin/e_actions.c:3407 src/bin/e_configure.c:416
 #: src/bin/e_int_config_modules.c:52
 #: src/modules/conf_applications/e_int_config_apps.c:278
 #: src/modules/conf_display/e_int_config_desklock_fsel.c:99
@@ -739,56 +743,56 @@ msgstr "Мења стање именоване јединице"
 msgid "System"
 msgstr "Систем"
 
-#: src/bin/e_actions.c:3364
+#: src/bin/e_actions.c:3379
 msgid "Log Out"
 msgstr "Одјава"
 
-#: src/bin/e_actions.c:3368
+#: src/bin/e_actions.c:3383
 msgid "Power Off Now"
 msgstr "Искључи сада"
 
-#: src/bin/e_actions.c:3372
+#: src/bin/e_actions.c:3387
 msgid "Power Off"
 msgstr "Искључи"
 
-#: src/bin/e_actions.c:3380
+#: src/bin/e_actions.c:3395
 msgid "Suspend Now"
 msgstr "Обустави сада"
 
-#: src/bin/e_actions.c:3392
+#: src/bin/e_actions.c:3407
 msgid "Hibernate Now"
 msgstr "Замрзни сада"
 
-#: src/bin/e_actions.c:3400
+#: src/bin/e_actions.c:3415
 msgid "Lock"
 msgstr "Закључај"
 
-#: src/bin/e_actions.c:3405 src/bin/e_int_menus.c:1475
+#: src/bin/e_actions.c:3420 src/bin/e_int_menus.c:1475
 msgid "Cleanup Windows"
 msgstr "Очисти прозоре"
 
 # сродно, прегледај прво
-#: src/bin/e_actions.c:3410
+#: src/bin/e_actions.c:3425
 msgid "Generic : Actions"
 msgstr "Опште : радње"
 
-#: src/bin/e_actions.c:3410
+#: src/bin/e_actions.c:3425
 msgid "Delayed Action"
 msgstr "Одложене радње"
 
-#: src/bin/e_actions.c:3418 src/bin/e_actions.c:3422 src/bin/e_actions.c:3426
+#: src/bin/e_actions.c:3433 src/bin/e_actions.c:3437 src/bin/e_actions.c:3441
 msgid "Keyboard Layouts"
 msgstr "Распореди тастатуре"
 
-#: src/bin/e_actions.c:3419
+#: src/bin/e_actions.c:3434
 msgid "Use keyboard layout"
 msgstr "Користи распоред тастатуре"
 
-#: src/bin/e_actions.c:3423
+#: src/bin/e_actions.c:3438
 msgid "Next keyboard layout"
 msgstr "Наредни распоред тастатуре"
 
-#: src/bin/e_actions.c:3427
+#: src/bin/e_actions.c:3442
 msgid "Previous keyboard layout"
 msgstr "Претходни распоред тастатуре"
 
@@ -796,11 +800,11 @@ msgstr "Претходни распоред тастатуре"
 msgid "Set As Background"
 msgstr "Постави као позадину"
 
-#: src/bin/e_client.c:4072
+#: src/bin/e_client.c:4067
 msgid "Client Error!"
 msgstr "Грешка клијента!"
 
-#: src/bin/e_client.c:4072
+#: src/bin/e_client.c:4067
 msgid "Something has attempted to set a border when it shouldn't! Report this!"
 msgstr "Нешто је покушало да постави оквир где му није место! Пријавите ово!"
 
@@ -885,11 +889,11 @@ msgstr ""
 "нзад на софтверски погон.<br><br>Потребан је ОпенГЛ 2.0 (или ОпенГЛ ЕС 2.0) "
 "ГПУза употребу ОпенГЛ-а са слагањем приказа."
 
-#: src/bin/e_comp_x.c:4900
+#: src/bin/e_comp_x.c:4922
 msgid "Lock Failed"
 msgstr "Закључавање није успело"
 
-#: src/bin/e_comp_x.c:4901
+#: src/bin/e_comp_x.c:4923
 msgid ""
 "Locking the desktop failed because some application<br>has grabbed either "
 "the keyboard or the mouse or both<br>and their grab is unable to be broken."
@@ -898,15 +902,15 @@ msgstr ""
 "<br>захватио тастатуру, миша, или обоје,<br>и његово захват не може бити "
 "отклоњен."
 
-#: src/bin/e_comp_x.c:4917 src/bin/e_comp_x.c:4938
+#: src/bin/e_comp_x.c:4939 src/bin/e_comp_x.c:4960
 msgid "Compositor Error"
 msgstr "Грешка управника слагања приказа"
 
-#: src/bin/e_comp_x.c:4918
+#: src/bin/e_comp_x.c:4940
 msgid "Another compositor is already running<br>on your display server."
 msgstr "Други управник слагања је већ покренут<br>на вашем служитељу приказа."
 
-#: src/bin/e_comp_x.c:4939
+#: src/bin/e_comp_x.c:4961
 msgid ""
 "Your display server does not support the<br>compositor overlay window. This "
 "is needed<br>for it to function."
@@ -914,13 +918,13 @@ msgstr ""
 "Ваш служитељ приказа не подржава<br>слагање заклањање прозора. То је "
 "неопходно<br>да би слагање радило."
 
-#: src/bin/e_comp_x.c:5131
+#: src/bin/e_comp_x.c:5153
 msgid "Enlightenment cannot initialize Ecore_X!\n"
 msgstr ""
 "Просвећење није успело подесити\n"
 "Ecore_X!\n"
 
-#: src/bin/e_comp_x.c:5142
+#: src/bin/e_comp_x.c:5164
 msgid ""
 "Your display server does not support XComposite, or Ecore-X was built "
 "without XComposite support. Note that for composite support you will also "
@@ -930,7 +934,7 @@ msgstr ""
 "подршке Икс слагања. Знајте да вам за подршку слагања такође треба XRender и "
 "XFixes подршка у Икс11 и Екору."
 
-#: src/bin/e_comp_x.c:5151
+#: src/bin/e_comp_x.c:5173
 msgid ""
 "Your display server does not support XDamage or Ecore was built without "
 "XDamage support."
@@ -938,11 +942,11 @@ msgstr ""
 "Ваш служитељ приказа не подржава XDamage или је Ecore грађено без XDamage "
 "подршке."
 
-#: src/bin/e_comp_x.c:5258
+#: src/bin/e_comp_x.c:5283
 msgid "Enlightenment cannot initialize the XSettings system.\n"
 msgstr "Просвећење није успело да покрене систем поставки Икса.\n"
 
-#: src/bin/e_config.c:971 src/bin/e_randr.c:245
+#: src/bin/e_config.c:971
 msgid ""
 "Settings data needed upgrading. Your old settings have<br>been wiped and a "
 "new set of defaults initialized. This<br>will happen regularly during "
@@ -960,7 +964,7 @@ msgstr ""
 "задатих поставки ће то<br>поправити њиховим додавањем. Сада можете подесити "
 "ствари по својој<br>вољи. Извините због зачкољица у вашим поставкама.<br>"
 
-#: src/bin/e_config.c:988 src/bin/e_randr.c:260
+#: src/bin/e_config.c:988
 msgid ""
 "Your settings are NEWER than Enlightenment. This is very<br>strange. This "
 "should not happen unless you downgraded<br>Enlightenment or copied the "
@@ -1183,11 +1187,11 @@ msgstr ""
 "Није уграђена ПАМ подршка у Просвећење,<br>тако да ће закључавање радног "
 "простора онемогућено."
 
-#: src/bin/e_desklock.c:536 src/bin/e_screensaver.c:185
+#: src/bin/e_desklock.c:533 src/bin/e_screensaver.c:185
 msgid "Activate Presentation Mode?"
 msgstr "Покренути начин рада излагања?"
 
-#: src/bin/e_desklock.c:539
+#: src/bin/e_desklock.c:536
 msgid ""
 "You unlocked your desktop too fast.<br><br>Would you like to enable "
 "<b>presentation</b> mode and temporarily disable screen saver, lock and "
@@ -1197,11 +1201,11 @@ msgstr ""
 "рада <br>излагања<br> и привремено онемогућите чувара екрана, закључавање и "
 "штедњу снаге?"
 
-#: src/bin/e_desklock.c:549 src/bin/e_screensaver.c:198
+#: src/bin/e_desklock.c:546 src/bin/e_screensaver.c:198
 msgid "No, but increase timeout"
 msgstr "Не, али повећај време истека"
 
-#: src/bin/e_desklock.c:551 src/bin/e_screensaver.c:200
+#: src/bin/e_desklock.c:548 src/bin/e_screensaver.c:200
 msgid "No, and stop asking"
 msgstr "Не, и престани да ме питаш"
 
@@ -1270,7 +1274,7 @@ msgid "Desktop file"
 msgstr "Датотека радне површи"
 
 #: src/bin/e_desktop_editor.c:811 src/bin/e_int_client_prop.c:454
-#: src/bin/e_int_client_prop.c:506 src/bin/e_int_config_comp.c:579
+#: src/bin/e_int_client_prop.c:506 src/bin/e_int_config_comp.c:582
 #: src/modules/conf_applications/e_int_config_defapps.c:358
 #: src/modules/conf_performance/e_int_config_performance.c:123
 #: src/modules/everything/evry_config.c:376
@@ -2844,240 +2848,240 @@ msgstr ""
 "<br>Немојте да пријављујете грешке у вези било које појаве ако је ово "
 "укључено.<br>Упозорени сте."
 
-#: src/bin/e_int_config_comp.c:195
+#: src/bin/e_int_config_comp.c:196
 msgid "Edit window matches"
 msgstr "Уреди поклапање прозора"
 
-#: src/bin/e_int_config_comp.c:198 src/bin/e_int_config_comp.c:571
+#: src/bin/e_int_config_comp.c:199 src/bin/e_int_config_comp.c:574
 msgid "Select default style"
 msgstr "Одредите подразумевани начин"
 
-#: src/bin/e_int_config_comp.c:204
+#: src/bin/e_int_config_comp.c:205
 msgid "Styles"
 msgstr "Начини"
 
-#: src/bin/e_int_config_comp.c:212
+#: src/bin/e_int_config_comp.c:213
 msgid "Fast Effects"
 msgstr "Брза дејства"
 
-#: src/bin/e_int_config_comp.c:213
+#: src/bin/e_int_config_comp.c:214
 msgid "Enable fast composite effects for windows"
 msgstr "Омогућите брза дејства слагања прозорима"
 
-#: src/bin/e_int_config_comp.c:216
+#: src/bin/e_int_config_comp.c:217
 msgid "Enable fast composite effects for menus"
 msgstr "Омогућите брза дејства слагања изборницима"
 
-#: src/bin/e_int_config_comp.c:219
+#: src/bin/e_int_config_comp.c:220
 msgid "Enable fast composite effects for popups"
 msgstr "Омогућите брза дејства слагања искачућим порукама"
 
-#: src/bin/e_int_config_comp.c:222
+#: src/bin/e_int_config_comp.c:223
 msgid "Enable fast composite effects for objects"
 msgstr "Омогући дејства брзог слагања предметима"
 
-#: src/bin/e_int_config_comp.c:225
+#: src/bin/e_int_config_comp.c:226
 msgid "Enable fast composite effects for overrides"
 msgstr "Омогући брза дејства слагања заменама"
 
-#: src/bin/e_int_config_comp.c:230
+#: src/bin/e_int_config_comp.c:231
 msgid "Disable Effects"
 msgstr "Онемогући дејства"
 
-#: src/bin/e_int_config_comp.c:231
+#: src/bin/e_int_config_comp.c:232
 msgid "Disable composite effects for windows"
 msgstr "Онемогући дејства слагања прозорима"
 
-#: src/bin/e_int_config_comp.c:234
+#: src/bin/e_int_config_comp.c:235
 msgid "Disable composite effects for menus"
 msgstr "Онемогући дејства слагања изборницима"
 
-#: src/bin/e_int_config_comp.c:237
+#: src/bin/e_int_config_comp.c:238
 msgid "Disable composite effects for popups"
 msgstr "Онемогући дејства слагања искачућим прозорима"
 
-#: src/bin/e_int_config_comp.c:240
+#: src/bin/e_int_config_comp.c:241
 msgid "Disable composite effects for objects"
 msgstr "Онемогући дејства брзог слагања предметима"
 
-#: src/bin/e_int_config_comp.c:243
+#: src/bin/e_int_config_comp.c:244
 msgid "Disable composite effects for overrides"
 msgstr "Онемогући дејства слагања заменама"
 
-#: src/bin/e_int_config_comp.c:246
+#: src/bin/e_int_config_comp.c:247
 msgid "Disable composite effects for screen"
 msgstr "Онемогући дејства слагања екрана"
 
-#: src/bin/e_int_config_comp.c:251
+#: src/bin/e_int_config_comp.c:252
 msgid "Effects"
 msgstr "Дејства слагања"
 
-#: src/bin/e_int_config_comp.c:255 src/bin/e_int_config_comp.c:584
+#: src/bin/e_int_config_comp.c:256 src/bin/e_int_config_comp.c:587
 #: src/modules/fileman/e_mod_config.c:425
 #: src/modules/quickaccess/e_mod_config.c:252
 #: src/modules/quickaccess/e_mod_config.c:344
 msgid "Behavior"
 msgstr "Понашање"
 
-#: src/bin/e_int_config_comp.c:256
+#: src/bin/e_int_config_comp.c:257
 msgid "Smooth scaling"
 msgstr "Глатко размеравање"
 
-#: src/bin/e_int_config_comp.c:258 src/bin/e_int_config_comp.c:592
+#: src/bin/e_int_config_comp.c:259 src/bin/e_int_config_comp.c:595
 msgid "Don't composite fullscreen windows"
 msgstr "Немој слагати прозоре преко целог екрана"
 
-#: src/bin/e_int_config_comp.c:260 src/bin/e_int_config_comp.c:553
+#: src/bin/e_int_config_comp.c:261 src/bin/e_int_config_comp.c:556
 msgid "Don't fade backlight"
 msgstr "Не изблеђуј позадинско светло"
 
-#: src/bin/e_int_config_comp.c:264 src/bin/e_int_config_comp.c:597
+#: src/bin/e_int_config_comp.c:265 src/bin/e_int_config_comp.c:600
 msgid "Engine"
 msgstr "Погон"
 
-#: src/bin/e_int_config_comp.c:266 src/bin/e_int_config_comp.c:599
+#: src/bin/e_int_config_comp.c:267 src/bin/e_int_config_comp.c:602
 msgid "Software"
 msgstr "Мекотворина"
 
-#: src/bin/e_int_config_comp.c:272 src/bin/e_int_config_comp.c:605
+#: src/bin/e_int_config_comp.c:273 src/bin/e_int_config_comp.c:608
 msgid "OpenGL"
 msgstr "ОпенГЛ"
 
-#: src/bin/e_int_config_comp.c:275
+#: src/bin/e_int_config_comp.c:276
 msgid "OpenGL options:"
 msgstr "Могућности ОпенГЛ"
 
-#: src/bin/e_int_config_comp.c:277 src/bin/e_int_config_comp.c:586
+#: src/bin/e_int_config_comp.c:278 src/bin/e_int_config_comp.c:589
 msgid "Tear-free updates (VSynced)"
 msgstr "Надоградње приказа без цепања (VSynced)"
 
-#: src/bin/e_int_config_comp.c:279
+#: src/bin/e_int_config_comp.c:280
 msgid "Texture from pixmap"
 msgstr "Текстура из мапе тачака"
 
-#: src/bin/e_int_config_comp.c:281
+#: src/bin/e_int_config_comp.c:282
 msgid "Assume swapping method:"
 msgstr "Претпостави начин замене меморије:"
 
-#: src/bin/e_int_config_comp.c:284
+#: src/bin/e_int_config_comp.c:285
 msgid "Auto"
 msgstr "Самостално"
 
-#: src/bin/e_int_config_comp.c:286
+#: src/bin/e_int_config_comp.c:287
 msgid "Invalidate (full redraw)"
 msgstr "Поништавање (потпуно прекрајање)"
 
-#: src/bin/e_int_config_comp.c:288
+#: src/bin/e_int_config_comp.c:289
 msgid "Copy from back to front"
 msgstr "Умножи одстрага напред"
 
-#: src/bin/e_int_config_comp.c:290
+#: src/bin/e_int_config_comp.c:291
 msgid "Double buffered swaps"
 msgstr "Двоструко међумеморисана заменска меморија"
 
-#: src/bin/e_int_config_comp.c:292
+#: src/bin/e_int_config_comp.c:293
 msgid "Triple buffered swaps"
 msgstr "Троструко међумеморисана заменска меморија"
 
-#: src/bin/e_int_config_comp.c:300 src/bin/e_int_config_comp.c:616
+#: src/bin/e_int_config_comp.c:301 src/bin/e_int_config_comp.c:619
 msgid "Rendering"
 msgstr "Приказ"
 
-#: src/bin/e_int_config_comp.c:304
+#: src/bin/e_int_config_comp.c:305
 msgid "X Messages"
 msgstr "Иксове поруке"
 
-#: src/bin/e_int_config_comp.c:305
+#: src/bin/e_int_config_comp.c:306
 msgid "Send flush"
 msgstr "Пошаљи испирање (flush)"
 
-#: src/bin/e_int_config_comp.c:307
+#: src/bin/e_int_config_comp.c:308
 msgid "Send dump"
 msgstr "Пошаљи одбацивање (dump)"
 
-#: src/bin/e_int_config_comp.c:337
+#: src/bin/e_int_config_comp.c:338
 msgid "Sync"
 msgstr "Усклађивање"
 
-#: src/bin/e_int_config_comp.c:338
+#: src/bin/e_int_config_comp.c:339
 msgid "Grab Server during draw"
 msgstr "Захвати служитеља приликом исцртавања"
 
-#: src/bin/e_int_config_comp.c:340
+#: src/bin/e_int_config_comp.c:341
 msgid "Initial draw timeout for newly mapped windows"
 msgstr "Време истека почетка исцртавања за нове мапиране прозоре"
 
-#: src/bin/e_int_config_comp.c:342
+#: src/bin/e_int_config_comp.c:343
 #, c-format
 msgid "%1.2f Seconds"
 msgstr "%1.2f секунди"
 
-#: src/bin/e_int_config_comp.c:345
+#: src/bin/e_int_config_comp.c:346
 msgid "DANGEROUS"
 msgstr "ОПАСНО"
 
-#: src/bin/e_int_config_comp.c:346
+#: src/bin/e_int_config_comp.c:347
 msgid "Enable advanced compositing features"
 msgstr "Омогући напредно слагање приказа"
 
-#: src/bin/e_int_config_comp.c:349 src/modules/ibar/e_mod_config.c:148
+#: src/bin/e_int_config_comp.c:350 src/modules/ibar/e_mod_config.c:148
 msgid "Misc"
 msgstr "Разно"
 
-#: src/bin/e_int_config_comp.c:397
+#: src/bin/e_int_config_comp.c:398
 msgid "Show Framerate"
 msgstr "Прикажи брзину сличица"
 
-#: src/bin/e_int_config_comp.c:399
+#: src/bin/e_int_config_comp.c:400
 msgid "Rolling average frame count"
 msgstr "Измењива просечна брзина сличица"
 
-#: src/bin/e_int_config_comp.c:401
+#: src/bin/e_int_config_comp.c:402
 #, c-format
 msgid "%1.0f Frames"
 msgstr "%1.0f сличица"
 
-#: src/bin/e_int_config_comp.c:405
+#: src/bin/e_int_config_comp.c:406
 msgid "Corner"
 msgstr "Угао"
 
-#: src/bin/e_int_config_comp.c:408
+#: src/bin/e_int_config_comp.c:409
 msgid "Top Left"
 msgstr "Горе лево"
 
-#: src/bin/e_int_config_comp.c:411
+#: src/bin/e_int_config_comp.c:412
 msgid "Top Right"
 msgstr "Горе десно"
 
-#: src/bin/e_int_config_comp.c:414
+#: src/bin/e_int_config_comp.c:415
 msgid "Bottom Left"
 msgstr "Доле лево"
 
-#: src/bin/e_int_config_comp.c:417
+#: src/bin/e_int_config_comp.c:418
 msgid "Bottom Right"
 msgstr "Доле десно"
 
-#: src/bin/e_int_config_comp.c:422
+#: src/bin/e_int_config_comp.c:423
 msgid "Debug"
 msgstr "Налажење грешака"
 
-#: src/bin/e_int_config_comp.c:558
+#: src/bin/e_int_config_comp.c:561
 msgid "Enable \"fast\" composite effects"
 msgstr "Омогући „брза“ дејства слагања"
 
-#: src/bin/e_int_config_comp.c:567 src/modules/wizard/page_150.c:93
+#: src/bin/e_int_config_comp.c:570 src/modules/wizard/page_150.c:93
 msgid "Disable composite effects"
 msgstr "Онемогући дејства слагања"
 
-#: src/bin/e_int_config_comp.c:589
+#: src/bin/e_int_config_comp.c:592
 msgid "Smooth scaling of window content"
 msgstr "Глатко размеравање садржаја прозора"
 
-#: src/bin/e_int_config_comp.c:609
+#: src/bin/e_int_config_comp.c:612
 msgid "To reset compositor:"
 msgstr "За враћање управника слагања на задато:"
 
-#: src/bin/e_int_config_comp.c:611
+#: src/bin/e_int_config_comp.c:614
 msgid "Ctrl+Alt+Shift+Home"
 msgstr "Ктрл+Мења+Више+Лична"
 
@@ -3276,7 +3280,7 @@ msgstr "Изборници"
 msgid "Objects"
 msgstr "Предмети"
 
-#: src/bin/e_int_config_comp_match.c:884
+#: src/bin/e_int_config_comp_match.c:885
 msgid "Composite Match Settings"
 msgstr "Поставке поклапања слагања"
 
@@ -3530,27 +3534,27 @@ msgstr ""
 "да ли су ваше поставке<br>оквира начина уноса исправне, и<br>да је ваша "
 "извршна датотека на вашој путањи (PATH)<br>"
 
-#: src/bin/e_main.c:263
+#: src/bin/e_main.c:286
 msgid "Enlightenment cannot initialize Eina!\n"
 msgstr "Просвећење није успело да покрене Eina!\n"
 
-#: src/bin/e_main.c:269
+#: src/bin/e_main.c:292
 msgid "Enlightenment could not create a logging domain!\n"
 msgstr "Просвећење није успело да направи област пријаве!\n"
 
-#: src/bin/e_main.c:316
+#: src/bin/e_main.c:339
 msgid "Enlightenment cannot initialize Eet!\n"
 msgstr "Просвећење није успело да покрене Eet!\n"
 
-#: src/bin/e_main.c:325
+#: src/bin/e_main.c:348
 msgid "Enlightenment cannot initialize Ecore!\n"
 msgstr "Просвећење није успело да покрене Ecore!\n"
 
-#: src/bin/e_main.c:340
+#: src/bin/e_main.c:363
 msgid "Enlightenment cannot initialize EIO!\n"
 msgstr "Просвећење није успело да покрене EIO!\n"
 
-#: src/bin/e_main.c:352
+#: src/bin/e_main.c:375
 msgid ""
 "Enlightenment cannot set up an exit signal handler.\n"
 "Perhaps you are out of memory?"
@@ -3558,7 +3562,7 @@ msgstr ""
 "Просвећење није успело да подеси руковаоца знака излаза.\n"
 "Можда немате више меморије?"
 
-#: src/bin/e_main.c:359
+#: src/bin/e_main.c:382
 msgid ""
 "Enlightenment cannot set up a HUP signal handler.\n"
 "Perhaps you are out of memory?"
@@ -3566,7 +3570,7 @@ msgstr ""
 "Просвећење није успело да подеси руковаоца знака ХУП убице.\n"
 "Можда немате више меморије?"
 
-#: src/bin/e_main.c:366
+#: src/bin/e_main.c:389
 msgid ""
 "Enlightenment cannot set up a USER signal handler.\n"
 "Perhaps you are out of memory?"
@@ -3574,31 +3578,31 @@ msgstr ""
 "Просвећење није успело да подеси руковаоца знака корисника.\n"
 "Можда немате више меморије?"
 
-#: src/bin/e_main.c:375
+#: src/bin/e_main.c:398
 msgid "Enlightenment cannot initialize Ecore_File!\n"
 msgstr "Просвећење није успело покренути Ecore_File!\n"
 
-#: src/bin/e_main.c:384
+#: src/bin/e_main.c:407
 msgid "Enlightenment cannot initialize Ecore_Con!\n"
 msgstr "Просвећење није успело покренути систем Ecore_Con!\n"
 
-#: src/bin/e_main.c:393
+#: src/bin/e_main.c:416
 msgid "Enlightenment cannot initialize Ecore_Ipc!\n"
 msgstr "Просвећење није успело покренути систем Ecore_Ipc!\n"
 
-#: src/bin/e_main.c:406
+#: src/bin/e_main.c:429
 msgid "Enlightenment cannot initialize Ecore_Evas!\n"
 msgstr "Просвећење није успело покренути Ecore_Evas!\n"
 
-#: src/bin/e_main.c:415
+#: src/bin/e_main.c:438
 msgid "Enlightenment cannot initialize Elementary!\n"
 msgstr "Просвећење није успело да покрене Eлементари!\n"
 
-#: src/bin/e_main.c:424
+#: src/bin/e_main.c:447
 msgid "Enlightenment cannot initialize Emotion!\n"
 msgstr "Просвећење није успело да покрене Emotion!\n"
 
-#: src/bin/e_main.c:438
+#: src/bin/e_main.c:461
 msgid ""
 "Enlightenment found ecore_evas doesn't support the Software X11\n"
 "rendering in Evas. Please check your installation of Evas and\n"
@@ -3608,7 +3612,7 @@ msgstr ""
 "софтверски приказ у Евасу. Молим, проверите вашу уградњу програма\n"
 "Евас и Екор и њихову подршку погона Икс11 софтверског приказа."
 
-#: src/bin/e_main.c:446
+#: src/bin/e_main.c:469
 msgid ""
 "Enlightenment found ecore_evas doesn't support the Software Buffer\n"
 "rendering in Evas. Please check your installation of Evas and\n"
@@ -3620,15 +3624,15 @@ msgstr ""
 "Евас и Екор и њихову подршку погона Икс11 софтверског међумеморисања "
 "исцртавања."
 
-#: src/bin/e_main.c:456
+#: src/bin/e_main.c:479
 msgid "Enlightenment cannot initialize Edje!\n"
 msgstr "Просвећење није успело да покрене Едје!\n"
 
-#: src/bin/e_main.c:468
+#: src/bin/e_main.c:491
 msgid "Enlightenment cannot initialize E_Intl!\n"
 msgstr "Просвећење није успело покренути E_Intl!\n"
 
-#: src/bin/e_main.c:478
+#: src/bin/e_main.c:501
 msgid ""
 "Enlightenment cannot initialize its emergency alert system.\n"
 "Have you set your DISPLAY variable?"
@@ -3636,7 +3640,7 @@ msgstr ""
 "Просвећење није успело да покрене свој систем важних узбуна.\n"
 "Да ли сте подесили вашу  DISPLAY променљиву?"
 
-#: src/bin/e_main.c:493
+#: src/bin/e_main.c:516
 msgid ""
 "Enlightenment cannot create directories in your home directory.\n"
 "Perhaps you have no home directory or the disk is full?"
@@ -3644,19 +3648,19 @@ msgstr ""
 "Просвећење није успело да направи фасцикле у вашој личној фасцикли.\n"
 "Можда немате личну фасциклу, или је диск препун?"
 
-#: src/bin/e_main.c:503
+#: src/bin/e_main.c:526
 msgid "Enlightenment cannot set up its file registry system.\n"
 msgstr "Просвећење није успело да постави свој систем завођења датотека.\n"
 
-#: src/bin/e_main.c:512
+#: src/bin/e_main.c:535
 msgid "Enlightenment cannot set up its config system.\n"
 msgstr "Просвећење није успело подесити свој систем поставки.\n"
 
-#: src/bin/e_main.c:521
+#: src/bin/e_main.c:544
 msgid "Enlightenment cannot set up its environment.\n"
 msgstr "Просвећење није успело подесити своје окружење.\n"
 
-#: src/bin/e_main.c:538
+#: src/bin/e_main.c:561
 msgid ""
 "Enlightenment cannot set up paths for finding files.\n"
 "Perhaps you are out of memory?"
@@ -3664,19 +3668,19 @@ msgstr ""
 "Просвећење није успело да подеси путање за налажење датотека.\n"
 "Можда немате више меморије?"
 
-#: src/bin/e_main.c:555
+#: src/bin/e_main.c:578
 msgid "Enlightenment cannot set up its font system.\n"
 msgstr "Просвећење није успело подесити свој систем словног лика.\n"
 
-#: src/bin/e_main.c:568
+#: src/bin/e_main.c:591
 msgid "Enlightenment cannot set up its theme system.\n"
 msgstr "Просвећење није успело да постави свој систем тема.\n"
 
-#: src/bin/e_main.c:580
+#: src/bin/e_main.c:603
 msgid "Setup Message Bus"
 msgstr "Подеси сабирницу порука"
 
-#: src/bin/e_main.c:589
+#: src/bin/e_main.c:612
 msgid ""
 "Enlightenment cannot initialize the FDO desktop system.\n"
 "Perhaps you lack permissions on ~/.cache/efreet or are\n"
@@ -3686,44 +3690,44 @@ msgstr ""
 "Можда немате овлашћења над ~/.cache/efreet или немате\n"
 "меморије или слободног простора."
 
-#: src/bin/e_main.c:598
+#: src/bin/e_main.c:621
 msgid "Starting International Support"
 msgstr "Покретање међународне подршке"
 
-#: src/bin/e_main.c:602
+#: src/bin/e_main.c:625
 msgid "Enlightenment cannot set up its intl system.\n"
 msgstr ""
 "Просвећење није успело подесити свој систем управљања прозорима intl.\n"
 
-#: src/bin/e_main.c:611
+#: src/bin/e_main.c:634
 msgid "Setup Actions"
 msgstr "Подесите радње"
 
-#: src/bin/e_main.c:615
+#: src/bin/e_main.c:638
 msgid "Enlightenment cannot set up its actions system.\n"
 msgstr "Просвећење не може подесити свој систем радњи.\n"
 
-#: src/bin/e_main.c:629
+#: src/bin/e_main.c:652
 msgid "Setup Powersave Modes"
 msgstr "Подеси начин управљања напајањем"
 
-#: src/bin/e_main.c:633
+#: src/bin/e_main.c:656
 msgid "Enlightenment cannot set up its powersave modes.\n"
 msgstr "Просвећење не може подесити свој начин штедње енергије.\n"
 
-#: src/bin/e_main.c:640
+#: src/bin/e_main.c:663
 msgid "Setup Screensaver"
 msgstr "Подеси чувар екрана"
 
-#: src/bin/e_main.c:644
+#: src/bin/e_main.c:667
 msgid "Enlightenment cannot configure the X screensaver.\n"
 msgstr "Просвећење није успело подесити Икс чувара екрана.\n"
 
-#: src/bin/e_main.c:651
+#: src/bin/e_main.c:674
 msgid "Setup Screens"
 msgstr "Подеси екране"
 
-#: src/bin/e_main.c:655
+#: src/bin/e_main.c:678
 msgid ""
 "Enlightenment set up window management for all the screens on your system\n"
 "failed. Perhaps another window manager is running?\n"
@@ -3731,201 +3735,201 @@ msgstr ""
 "Просвећење није успело да подеси управљање прозорима за све екране.\n"
 "Можда је покренут други управник прозора?\n"
 
-#: src/bin/e_main.c:666
+#: src/bin/e_main.c:689
 msgid "Enlightenment cannot set up its pointer system.\n"
 msgstr "Просвећење није успело подесити свој систем показивача.\n"
 
-#: src/bin/e_main.c:676
+#: src/bin/e_main.c:699
 msgid "Enlightenment cannot set up its scale system.\n"
 msgstr "Просвећење није успело подесити свој систем размеравања.\n"
 
-#: src/bin/e_main.c:687
+#: src/bin/e_main.c:710
 msgid "Enlightenment cannot set up its init screen.\n"
 msgstr "Просвећење није успело да постави свој почетни екран.\n"
 
-#: src/bin/e_main.c:711
+#: src/bin/e_main.c:734
 msgid "Setup ACPI"
 msgstr "Подеси АЦПИ"
 
-#: src/bin/e_main.c:718
+#: src/bin/e_main.c:741
 msgid "Setup Backlight"
 msgstr "Подеси позадинско светло"
 
-#: src/bin/e_main.c:722
+#: src/bin/e_main.c:745
 msgid "Enlightenment cannot configure the backlight.\n"
 msgstr "Просвећење није успело подесити позадинско светло.\n"
 
-#: src/bin/e_main.c:728
+#: src/bin/e_main.c:751
 msgid "Setup DPMS"
 msgstr "Подеси ДПМС"
 
-#: src/bin/e_main.c:732
+#: src/bin/e_main.c:755
 msgid "Enlightenment cannot configure the DPMS settings.\n"
 msgstr "Просвећење није успело подесити ДПМС поставке.\n"
 
-#: src/bin/e_main.c:739
+#: src/bin/e_main.c:762
 msgid "Setup Desklock"
 msgstr "Подесите сат радне површи"
 
-#: src/bin/e_main.c:743
+#: src/bin/e_main.c:766
 msgid "Enlightenment cannot set up its desk locking system.\n"
 msgstr ""
 "Просвећење није успело да подеси свој систем закључавања радног простора.\n"
 
-#: src/bin/e_main.c:753
+#: src/bin/e_main.c:776
 msgid "Setup Paths"
 msgstr "Подесите путање"
 
-#: src/bin/e_main.c:759
+#: src/bin/e_main.c:782
 msgid "Setup System Controls"
 msgstr "Подесите управљање системом"
 
-#: src/bin/e_main.c:763
+#: src/bin/e_main.c:786
 msgid "Enlightenment cannot initialize the System Command system.\n"
 msgstr "Просвећење није успело покренути систем наредби.\n"
 
-#: src/bin/e_main.c:770
+#: src/bin/e_main.c:793
 msgid "Setup Execution System"
 msgstr "Подесите извршни систем"
 
-#: src/bin/e_main.c:774
+#: src/bin/e_main.c:797
 msgid "Enlightenment cannot set up its exec system.\n"
 msgstr "Просвећење није успело да постави свој извршни систем.\n"
 
-#: src/bin/e_main.c:784
+#: src/bin/e_main.c:807
 msgid "Setup Filemanager"
 msgstr "Подесите управника датотекама"
 
-#: src/bin/e_main.c:788
+#: src/bin/e_main.c:811
 msgid "Enlightenment cannot initialize the File manager.\n"
 msgstr "Просвећење не може покренути управника датотека.\n"
 
-#: src/bin/e_main.c:795
+#: src/bin/e_main.c:818
 msgid "Setup Message System"
 msgstr "Подесите систем порука"
 
-#: src/bin/e_main.c:799
+#: src/bin/e_main.c:822
 msgid "Enlightenment cannot set up its msg system.\n"
 msgstr "Просвећење није успело да покрене свој систем порука.\n"
 
-#: src/bin/e_main.c:806
+#: src/bin/e_main.c:829
 msgid "Setup Grab Input Handling"
 msgstr "Подеси управљање хватањем улаза"
 
-#: src/bin/e_main.c:810
+#: src/bin/e_main.c:833
 msgid "Enlightenment cannot set up its grab input handling system.\n"
 msgstr ""
 "Просвећење није успело да подеси прихватног руковаоца улазних знакова.\n"
 
-#: src/bin/e_main.c:817
+#: src/bin/e_main.c:840
 msgid "Setup Modules"
 msgstr "Подесите јединице"
 
-#: src/bin/e_main.c:821 src/bin/e_main.c:994
+#: src/bin/e_main.c:844 src/bin/e_main.c:1017
 msgid "Enlightenment cannot set up its module system.\n"
 msgstr "Просвећење не може подесити свој систем јединица.\n"
 
-#: src/bin/e_main.c:828
+#: src/bin/e_main.c:851
 msgid "Setup Remembers"
 msgstr "Подесите памћења"
 
-#: src/bin/e_main.c:832
+#: src/bin/e_main.c:855
 msgid "Enlightenment cannot setup remember settings.\n"
 msgstr "Просвећење не може подесити поставке памћења.\n"
 
-#: src/bin/e_main.c:839
+#: src/bin/e_main.c:862
 msgid "Setup Color Classes"
 msgstr "Подеси разред боја"
 
-#: src/bin/e_main.c:843
+#: src/bin/e_main.c:866
 msgid "Enlightenment cannot set up its color class system.\n"
 msgstr "Просвећење није успело да постави свој систем разреда боја.\n"
 
-#: src/bin/e_main.c:850
+#: src/bin/e_main.c:873
 msgid "Setup Gadcon"
 msgstr "Подеси управљање справицама (gadcon)"
 
-#: src/bin/e_main.c:854
+#: src/bin/e_main.c:877
 msgid "Enlightenment cannot set up its gadget control system.\n"
 msgstr "Просвећење није успело поставити свој систем управљања справицама.\n"
 
-#: src/bin/e_main.c:861
+#: src/bin/e_main.c:884
 msgid "Setup Toolbars"
 msgstr "Подесите траке алата"
 
-#: src/bin/e_main.c:865
+#: src/bin/e_main.c:888
 msgid "Enlightenment cannot set up its toolbars.\n"
 msgstr "Просвећење није успело да постави своје траке алата.\n"
 
-#: src/bin/e_main.c:872
+#: src/bin/e_main.c:895
 msgid "Setup Wallpaper"
 msgstr "Подесите слику позадине"
 
-#: src/bin/e_main.c:876
+#: src/bin/e_main.c:899
 msgid "Enlightenment cannot set up its desktop background system.\n"
 msgstr "Просвећење није успело да постави свој систем управљања позадином.\n"
 
-#: src/bin/e_main.c:883
+#: src/bin/e_main.c:906
 msgid "Setup Mouse"
 msgstr "Подесите миша"
 
-#: src/bin/e_main.c:887
+#: src/bin/e_main.c:910
 msgid "Enlightenment cannot configure the mouse settings.\n"
 msgstr "Просвећење није успело да подеси поставке миша.\n"
 
-#: src/bin/e_main.c:893
+#: src/bin/e_main.c:916
 msgid "Setup Bindings"
 msgstr "Подесите пречице"
 
-#: src/bin/e_main.c:897
+#: src/bin/e_main.c:920
 msgid "Enlightenment cannot set up its bindings system.\n"
 msgstr "Просвећење није успело да постави свој систем пречица.\n"
 
-#: src/bin/e_main.c:904
+#: src/bin/e_main.c:927
 msgid "Setup Thumbnailer"
 msgstr "Подесите приказивача умањених сличица"
 
-#: src/bin/e_main.c:908
+#: src/bin/e_main.c:931
 msgid "Enlightenment cannot initialize the Thumbnailing system.\n"
 msgstr "Просвећење није успело да покрене систем приказа умањених сличица.\n"
 
-#: src/bin/e_main.c:917
+#: src/bin/e_main.c:940
 msgid "Enlightenment cannot initialize the Icon Cache system.\n"
 msgstr "Просвећење није успело да покрене систем прихватне меморије икона.\n"
 
-#: src/bin/e_main.c:926
+#: src/bin/e_main.c:949
 msgid "Enlightenment cannot initialize the Update system.\n"
 msgstr "Просвећење није успело да покрене систем надградњи.\n"
 
-#: src/bin/e_main.c:933
+#: src/bin/e_main.c:956
 msgid "Setup Desktop Environment"
 msgstr "Подесите радно окружење"
 
-#: src/bin/e_main.c:937
+#: src/bin/e_main.c:960
 msgid "Enlightenment cannot initialize its desktop environment.\n"
 msgstr "Просвећење није успело да покрене своје радно окружење.\n"
 
-#: src/bin/e_main.c:944
+#: src/bin/e_main.c:967
 msgid "Setup File Ordering"
 msgstr "Подесите распоред датотека"
 
-#: src/bin/e_main.c:948
+#: src/bin/e_main.c:971
 msgid "Enlightenment cannot set up its order file system.\n"
 msgstr "Просвећење није успело да постави свој систем уређења датотека.\n"
 
-#: src/bin/e_main.c:963
+#: src/bin/e_main.c:986
 msgid "Load Modules"
 msgstr "Учитај јединице"
 
-#: src/bin/e_main.c:990
+#: src/bin/e_main.c:1013
 msgid "Setup Shelves"
 msgstr "Подесите полице"
 
-#: src/bin/e_main.c:1004
+#: src/bin/e_main.c:1027
 msgid "Almost Done"
 msgstr "Скоро је готово"
 
-#: src/bin/e_main.c:1153
+#: src/bin/e_main.c:1176
 #, c-format
 msgid ""
 "Options:\n"
@@ -3978,7 +3982,7 @@ msgstr ""
 "\t-ја-стварно-знам-шта-радим-и-прихватам-потпуну-одговорност-за-то\n"
 "\t\tАко Вам је портребнаа ова помоћ, ова могућност Вам није потребна.\n"
 
-#: src/bin/e_main.c:1206
+#: src/bin/e_main.c:1229
 msgid ""
 "You are executing enlightenment directly. This is\n"
 "bad. Please do not execute the \"enlightenment\"\n"
@@ -3994,11 +3998,11 @@ msgstr ""
 "путањама и покретањем било које потребне услуге, итд.\n"
 "пре покретања самог Просвећења.\n"
 
-#: src/bin/e_main.c:1459
+#: src/bin/e_main.c:1482
 msgid "Testing Format Support"
 msgstr "Проба подршке за облике"
 
-#: src/bin/e_main.c:1463
+#: src/bin/e_main.c:1486
 msgid ""
 "Enlightenment found Evas can't create a buffer canvas. Please check\n"
 "Evas has Software Buffer engine support.\n"
@@ -4006,7 +4010,7 @@ msgstr ""
 "Просвећење је открило да Евас није успео да направи међумеморију исцртавања. "
 "Молим, проверите да ли Евас има подршку погона софтверског међумеморисања.\n"
 
-#: src/bin/e_main.c:1474
+#: src/bin/e_main.c:1497
 msgid ""
 "Enlightenment found Evas can't load SVG files. Check Evas has SVG loader "
 "support.\n"
@@ -4014,7 +4018,7 @@ msgstr ""
 "Просвећење је открило да Евас не може учитати СВГ датотеке. Проверите да ли "
 "Евас има подршку учитавања СВГ датотека.\n"
 
-#: src/bin/e_main.c:1484
+#: src/bin/e_main.c:1507
 msgid ""
 "Enlightenment found Evas can't load JPEG files. Check Evas has JPEG loader "
 "support.\n"
@@ -4022,7 +4026,7 @@ msgstr ""
 "Просвећење је открило да Евас не може учитати ЈПЕГ датотеке. Проверите да ли "
 "Евас има подршку учитавања ЈПЕГ датотека.\n"
 
-#: src/bin/e_main.c:1494
+#: src/bin/e_main.c:1517
 msgid ""
 "Enlightenment found Evas can't load PNG files. Check Evas has PNG loader "
 "support.\n"
@@ -4030,7 +4034,7 @@ msgstr ""
 "Просвећење је открило да Евас не може учитати ПНГ датотеке. Проверите да ли "
 "Евас има подршку учитавања ПНГ датотека.\n"
 
-#: src/bin/e_main.c:1504
+#: src/bin/e_main.c:1527
 msgid ""
 "Enlightenment found Evas can't load EET files. Check Evas has EET loader "
 "support.\n"
@@ -4038,7 +4042,7 @@ msgstr ""
 "Просвећење је открило да Евас не може учитати ЕЕТ датотеке. Проверите да ли "
 "Евас има подршку учитавања ЕЕТ датотека.\n"
 
-#: src/bin/e_main.c:1518
+#: src/bin/e_main.c:1541
 msgid ""
 "Enlightenment found Evas can't load the 'Sans' font. Check Evas has "
 "fontconfig\n"
@@ -4048,23 +4052,23 @@ msgstr ""
 "Проверите да ли Евас има подршку поставки словних ликова\n"
 "и да ли системске поставке описују словни лик „Sans“.\n"
 
-#: src/bin/e_main.c:1540
+#: src/bin/e_main.c:1563
 msgid "Enlightenment cannot setup XKB Keyboard layouts.\n"
 msgstr "Просвећење није успело да постави ИксКБ распоред тастатуре.\n"
 
-#: src/bin/e_main.c:1549
+#: src/bin/e_main.c:1572
 msgid "Enlightenment cannot create a compositor.\n"
 msgstr "Просвећење није успело да образује управника слагање приказа.\n"
 
-#: src/bin/e_main.c:1557
+#: src/bin/e_main.c:1580
 msgid "Setup DND"
 msgstr "Подеси систем превлачења и спуштања"
 
-#: src/bin/e_main.c:1561
+#: src/bin/e_main.c:1584
 msgid "Enlightenment cannot set up its dnd system.\n"
 msgstr "Просвећење није успело да подеси свој систем превлачења и спуштања.\n"
 
-#: src/bin/e_main.c:1670
+#: src/bin/e_main.c:1693
 #, c-format
 msgid ""
 "Enlightenment crashed early on start and has<br>been restarted. There was an "
@@ -4075,11 +4079,11 @@ msgstr ""
 "грешка приликом учитавања<br>јединице назива: %s. Ова јединица је "
 "онемогућена<br>и неће бити учитана."
 
-#: src/bin/e_main.c:1675 src/bin/e_main.c:1691
+#: src/bin/e_main.c:1698 src/bin/e_main.c:1714
 msgid "Enlightenment crashed early on start and has been restarted"
 msgstr "Просвећење се срушило одмах по покретању и опет је покренуто"
 
-#: src/bin/e_main.c:1676
+#: src/bin/e_main.c:1699
 #, c-format
 msgid ""
 "Enlightenment crashed early on start and has been restarted.<br>There was an "
@@ -4090,7 +4094,7 @@ msgstr ""
 "се грешка приликом учитавања јединице назива: %s<br><br>. Ова јединица је "
 "онемогућена<br>и неће бити учитана."
 
-#: src/bin/e_main.c:1684
+#: src/bin/e_main.c:1707
 msgid ""
 "Enlightenment crashed early on start and has<br>been restarted. All modules "
 "have been disabled<br>and will not be loaded to help remove any "
@@ -4102,7 +4106,7 @@ msgstr ""
 "уклањање<br>јединица са потешкоћама из ваших поставки. Прозорче "
 "поставки<br>јединица ће вам омогућити поновни одабир ваших<br> јединица.\n"
 
-#: src/bin/e_main.c:1692
+#: src/bin/e_main.c:1715
 msgid ""
 "Enlightenment crashed early on start and has been restarted.<br>All modules "
 "have been disabled and will not be loaded to help<br>remove any problem "
@@ -4187,10 +4191,6 @@ msgstr "Загађење непостојане јединице"
 #: src/bin/e_module.c:1040
 msgid "I know"
 msgstr "Знам"
-
-#: src/bin/e_randr.c:376
-msgid "Randr Settings Upgraded"
-msgstr "Поставке Рандра су надграђене"
 
 #: src/bin/e_screensaver.c:188
 msgid ""
@@ -6485,7 +6485,7 @@ msgid "Main Menu"
 msgstr "Главни изборник"
 
 #: src/modules/conf_menus/e_int_config_menus.c:260
-#: src/modules/fileman/e_mod_menu.c:440
+#: src/modules/fileman/e_mod_menu.c:445
 msgid "Favorites"
 msgstr "Омиљено"
 
@@ -6773,18 +6773,10 @@ msgstr "Учинак"
 msgid "Power Management"
 msgstr "Управљање потрошњом"
 
-#: src/modules/conf_randr/e_int_config_randr.c:49
+#: src/modules/conf_randr/e_int_config_randr2.c:67
 #: src/modules/conf_randr/e_mod_main.c:21
 msgid "Screen Setup"
 msgstr "Поставке екрана"
-
-#: src/modules/conf_randr/e_int_config_randr.c:124
-msgid "Primary Output"
-msgstr "Главни излаз"
-
-#: src/modules/conf_randr/e_int_config_randr.c:142
-msgid "Restore On Startup"
-msgstr "Поврати по покретању"
 
 #: src/modules/conf_shelves/e_int_config_shelf.c:129
 #, c-format
@@ -8489,7 +8481,7 @@ msgstr "Прикључак свега"
 msgid "Calculator"
 msgstr "Рачунар"
 
-#: src/modules/everything/evry_plug_clipboard.c:41
+#: src/modules/everything/evry_plug_clipboard.c:42
 msgid "Copy to Clipboard"
 msgstr "Умножи у оставу исечака"
 
@@ -8929,23 +8921,23 @@ msgstr "Датотекар"
 msgid "No listable items"
 msgstr "Нема ставки за листање"
 
-#: src/modules/fileman/e_mod_menu.c:324
+#: src/modules/fileman/e_mod_menu.c:329
 msgid "GTK Bookmarks"
 msgstr "ГТК обележивачи"
 
-#: src/modules/fileman/e_mod_menu.c:418
+#: src/modules/fileman/e_mod_menu.c:423
 msgid "Current Directory"
 msgstr "Садашња фасцикла"
 
-#: src/modules/fileman/e_mod_menu.c:424
+#: src/modules/fileman/e_mod_menu.c:429
 msgid "Home"
 msgstr "Лична фасцикла"
 
-#: src/modules/fileman/e_mod_menu.c:454
+#: src/modules/fileman/e_mod_menu.c:459
 msgid "Root"
 msgstr "Корен"
 
-#: src/modules/fileman/e_mod_menu.c:501
+#: src/modules/fileman/e_mod_menu.c:506
 msgid "Navigate..."
 msgstr "Управљајте..."
 
@@ -10763,6 +10755,15 @@ msgstr "Подврста"
 #: src/modules/xkbswitch/e_mod_main.c:195
 msgid "NONE"
 msgstr "НИШТА"
+
+#~ msgid "Randr Settings Upgraded"
+#~ msgstr "Поставке Рандра су надграђене"
+
+#~ msgid "Primary Output"
+#~ msgstr "Главни излаз"
+
+#~ msgid "Restore On Startup"
+#~ msgstr "Поврати по покретању"
 
 #~ msgid "Container %d"
 #~ msgstr "Садржалац %d"
