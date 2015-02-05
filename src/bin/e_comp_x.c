@@ -4591,6 +4591,9 @@ _e_comp_x_xinerama_setup(int rw, int rh)
              i++;
           }
      }
+   // XXX: what if we have zero screens? all unplugged? need to flag this
+   // keep all screens as-is for now and mark comp to hide everything
+   // and wait for a screen to come back
    if (i == 0)
      {
         screen = E_NEW(E_Screen, 1);
