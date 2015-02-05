@@ -19,7 +19,7 @@ struct _CFModule
 struct _CFType
 {
    const char *key, *name, *icon;
-   Elm_Object_Item *gindex;
+   Elm_Object_Item *gindex, *tbitem;
    Eina_Hash  *modules_hash; /* just used before constructing list */
    Eina_List  *modules; /* sorted and ready to be used */
 };
@@ -75,7 +75,7 @@ static void e_int_config_modules_free_cb(const char *path, const char *part, voi
 EAPI void
 e_int_config_modules_init(void)
 {
-   e_config_panel_item_add("modules", "preferences-plugin", _("Modules100"), "Extensions to extend Enlightenments functions", 0, "modules");
+   e_config_panel_item_add("modules", "preferences-plugin", _("Modules"), "Extensions to extend Enlightenments functions", 0, "modules");
    e_config_panel_part_add("modules", "modules", _("Modules"), _("Mark a module as loaded to load them on startup"), 1, "extensions",
                            e_int_config_modules_create_cb, e_int_config_modules_apply_cb, e_int_config_modules_data_cb, e_int_config_modules_free_cb, NULL);
 }
@@ -344,10 +344,7 @@ _toolbar_selected_cb(void *data, Evas_Object *obj, void *event)
 static void
 toolbar_item(Evas_Object *obj, CFType *cft)
 {
-   Elm_Object_Item *it;
-   Evas_Object *ic;
-
-   it = elm_toolbar_item_append(obj, cft->icon, cft->name, _toolbar_selected_cb, cft);
+  cft->tbitem = elm_toolbar_item_append(obj, cft->icon, cft->name, _toolbar_selected_cb, cft);
 }
 
 static char *
@@ -481,54 +478,99 @@ _unload_cb(void *data, Evas_Object *obj, void *event)
    elm_object_disabled_set(obj,  EINA_TRUE);
 }
 
+static void
+_list_scroll_start_cb(void *data, Evas_Object *obj, void *event)
+{
+   evas_object_data_set(obj, "__anim", (void*) 1);
+}
+
+static void
+_list_scroll_stop_cb(void *data, Evas_Object *obj, void *event)
+{
+  evas_object_data_del(obj, "__anim");
+}
+
+static void
+_list_scroll_cb(void *data, Evas_Object *obj, void *event)
+{
+   int x, y, w, h;
+   Elm_Object_Item *it, *gi;
+   CFType *cft;
+
+   if (evas_object_data_get(obj, "__anim")) return;
+
+   evas_object_geometry_get(obj, &x, &y, &w ,&h);
+   it = elm_genlist_at_xy_item_get(obj, x + 3, y + 3, NULL);
+
+   if(!it) return; //something went wrong ...
+
+   if (elm_genlist_item_type_get(it) == ELM_GENLIST_ITEM_GROUP)
+     gi = it;
+   else
+     gi = elm_genlist_item_parent_get(it);
+
+   cft = elm_object_item_data_get(gi);
+
+   elm_toolbar_item_selected_set(cft->tbitem, EINA_TRUE);
+
+}
+
 static Evas_Object*
 e_int_config_modules_create_cb(const char *path, const char *part, Evas_Object *parent, void *cbdata, void *data)
 {
-   Evas_Object *bx, *bx2, *tb, *list, *lb, *load, *unload;
+   Evas_Object *tab, *bx, *tb, *list, *lb, *load, *unload;
 
-   bx = elm_box_add(parent);
-   evas_object_size_hint_align_set(bx, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   evas_object_size_hint_weight_set(bx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   evas_object_show(bx);
+
+   tab = elm_table_add(parent);
+   evas_object_size_hint_align_set(tab, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   evas_object_size_hint_weight_set(tab, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_show(tab);
 
    tb = elm_toolbar_add(parent);
+   elm_toolbar_select_mode_set(tb, ELM_OBJECT_SELECT_MODE_ALWAYS);
+   elm_toolbar_horizontal_set(tb, EINA_FALSE);
+   elm_toolbar_shrink_mode_set(tb, ELM_TOOLBAR_SHRINK_NONE);
    elm_toolbar_icon_order_lookup_set(tb, ELM_ICON_LOOKUP_THEME_FDO);
-   evas_object_size_hint_align_set(tb, EVAS_HINT_FILL, 0.0);
-   evas_object_size_hint_weight_set(tb, EVAS_HINT_EXPAND, 0.0);
-   elm_box_pack_end(bx, tb);
+   evas_object_size_hint_align_set(tb, 0.0, EVAS_HINT_FILL);
+   evas_object_size_hint_weight_set(tb, 0.0, EVAS_HINT_EXPAND);
+   elm_table_pack(tab, tb, 0, 0, 1, 1);
    evas_object_show(tb);
 
    list = elm_genlist_add(parent);
    evas_object_size_hint_align_set(list, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_size_hint_weight_set(list, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   elm_box_pack_end(bx, list);
+   evas_object_smart_callback_add(list, "scroll", _list_scroll_cb, list);
+   evas_object_smart_callback_add(list, "scroll,anim,start", _list_scroll_start_cb, list);
+   evas_object_smart_callback_add(list, "scroll,anim,stop", _list_scroll_stop_cb, list);
+   evas_object_data_set(list, "__toolbar", tb);
+   elm_table_pack(tab, list, 1, 0, 1, 1);
    evas_object_show(list);
 
-   bx2 = elm_box_add(parent);
-   evas_object_size_hint_align_set(bx2, EVAS_HINT_FILL, 0.0);
-   evas_object_size_hint_weight_set(bx2, EVAS_HINT_EXPAND, 0.0);
-   elm_box_horizontal_set(bx2, EINA_TRUE);
-   elm_box_pack_end(bx, bx2);
-   evas_object_show(bx2);
+   bx = elm_box_add(parent);
+   evas_object_size_hint_align_set(bx, EVAS_HINT_FILL, 0.0);
+   evas_object_size_hint_weight_set(bx, EVAS_HINT_EXPAND, 0.0);
+   elm_box_horizontal_set(bx, EINA_TRUE);
+   elm_table_pack(tab, bx, 0, 1, 2, 1);
+   evas_object_show(bx);
 
    load = elm_button_add(parent);
    elm_object_text_set(load, _("load"));
    elm_object_disabled_set(load, EINA_TRUE);
-   evas_object_data_set(bx, "__load_btn", load);
+   evas_object_data_set(tab, "__load_btn", load);
    evas_object_smart_callback_add(load, "clicked", _load_cb, list);
    evas_object_size_hint_align_set(load, EVAS_HINT_FILL, 0.0);
    evas_object_size_hint_weight_set(load, EVAS_HINT_EXPAND, 0.0);
-   elm_box_pack_end(bx2, load);
+   elm_box_pack_end(bx, load);
    evas_object_show(load);
 
    unload = elm_button_add(parent);
    elm_object_text_set(unload, _("unload"));
    elm_object_disabled_set(unload, EINA_TRUE);
-   evas_object_data_set(bx, "__unload_btn", unload);
+   evas_object_data_set(tab, "__unload_btn", unload);
    evas_object_smart_callback_add(unload, "clicked", _unload_cb, list);
    evas_object_size_hint_align_set(unload, EVAS_HINT_FILL, 0.0);
    evas_object_size_hint_weight_set(unload, EVAS_HINT_EXPAND, 0.0);
-   elm_box_pack_end(bx2, unload);
+   elm_box_pack_end(bx, unload);
    evas_object_show(unload);
 
    {
@@ -573,7 +615,7 @@ e_int_config_modules_create_cb(const char *path, const char *part, Evas_Object *
         }
    }
 
-   return bx;
+   return tab;
 }
 
 static Eina_Bool
