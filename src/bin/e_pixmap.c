@@ -87,14 +87,6 @@ _e_pixmap_image_clear_x(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_U
 }
 #endif
 
-#if defined(HAVE_WAYLAND_CLIENTS) || defined(HAVE_WAYLAND_ONLY)
-static void
-_e_pixmap_image_clear_wl(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
-{
-   E_FREE_LIST(data, _e_pixmap_resource_free);
-}
-#endif
-
 static void
 _e_pixmap_free(E_Pixmap *cp)
 {
@@ -119,7 +111,7 @@ _e_pixmap_free(E_Pixmap *cp)
 #if defined(HAVE_WAYLAND_CLIENTS) || defined(HAVE_WAYLAND_ONLY)
         if (!cp->resource_cache) break;
         if (cp->client)
-          evas_object_event_callback_add(cp->client->frame, EVAS_CALLBACK_FREE, _e_pixmap_image_clear_wl, cp->resource_cache);
+          eina_list_free(cp->resource_cache);
         else
           {
              void *i;
