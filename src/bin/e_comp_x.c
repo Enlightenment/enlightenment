@@ -517,9 +517,9 @@ _e_comp_x_post_client_idler_cb(void *d EINA_UNUSED)
                                         ec->client.w,
                                         ec->client.h);
              if (ec->comp_data->reparented)
-               ecore_x_window_resize(e_client_util_win_get(ec),
-                                     ec->client.w,
-                                     ec->client.h);
+               ecore_x_window_move_resize(e_client_util_win_get(ec), 0, 0,
+                                          ec->client.w,
+                                          ec->client.h);
           }
         else if (ec->post_move)
           {
@@ -532,8 +532,8 @@ _e_comp_x_post_client_idler_cb(void *d EINA_UNUSED)
              ecore_x_window_resize(win,
                                    ec->client.w, ec->client.h);
              if (ec->comp_data->reparented)
-               ecore_x_window_resize(e_client_util_win_get(ec),
-                                     ec->client.w, ec->client.h);
+               ecore_x_window_move_resize(e_client_util_win_get(ec), 0, 0,
+                                          ec->client.w, ec->client.h);
           }
         if ((!ec->shading) && (!ec->shaded))
           {
