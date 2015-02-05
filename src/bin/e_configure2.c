@@ -266,23 +266,30 @@ content_cb(Evas_Object *par, Eo *item, void *data)
    E_Config_Panel_Part *part;
    Eina_List *node;
    Evas_Object *box, *res;
+   Eina_Bool single = EINA_FALSE;
 
    it = data;
    box = elm_box_add(par);
    evas_object_size_hint_align_set(box, 0.5, 0.0);
    evas_object_size_hint_weight_set(box, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
 
+   if (eina_list_count(it->parts) == 1)
+     single = EINA_TRUE;
+
    EINA_LIST_FOREACH(it->parts, node, part)
      {
         Evas_Object *content, *result;
-
         if (part->data_func)
           part->cbdata = part->data_func(it->path, part->name, part->data);
         if (part->create_func) //WTF - what does a part should do if there is nor create_func ?
           part->tmp = content = part->create_func(it->path, part->name, par, part->cbdata, part->data);
+        part->realized = EINA_TRUE;
 
         evas_object_show(content);
-        result = settingswidget_part_gen(par, content, it->label, it->help);
+        if (!single)
+          result = settingswidget_part_gen(par, content, it->label, it->help);
+        else
+          result = content;
         elm_box_pack_end(box, result);
      }
 
@@ -373,6 +380,7 @@ settingswidget_fill(Evas_Object *obj)
           eina_hash_add(table, it->path, item);
 
     }
+  eina_hash_free(table);
 }
 
 static void
@@ -382,15 +390,18 @@ _e_config_panel_close(void *data, Evas_Object *obj, void *event)
    E_Config_Panel_Item *it;
    E_Config_Panel_Part *p;
 
+   if (!win) return; /* check is needed because close cb is called twice when close button is doubleclicked */
+
    EINA_LIST_FOREACH(items, node, it)
      {
         EINA_LIST_FOREACH(it->parts, node2, p)
           {
+            if (!p->realized) continue;
             if (p->free_func)
               p->free_func(it->path, p->name, p->cbdata, p->data);
-            else
-              if (p->cbdata)
-                free(p->cbdata);
+            else if (p->cbdata)
+              free(p->cbdata);
+            p->realized = EINA_FALSE;
             p->cbdata = NULL;
           }
      }

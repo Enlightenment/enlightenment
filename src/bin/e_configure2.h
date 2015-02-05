@@ -51,6 +51,7 @@ typedef struct
    void *cbdata;
 
    Eina_Bool changed;
+   Eina_Bool realized;
    Evas_Object *tmp;
 } E_Config_Panel_Part;
 /*
