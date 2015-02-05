@@ -436,18 +436,16 @@ e_pixmap_refresh(E_Pixmap *cp)
 #if defined(HAVE_WAYLAND_CLIENTS) || defined(HAVE_WAYLAND_ONLY)
           {
              E_Comp_Wl_Client_Data *cd = NULL;
-             struct wl_resource *res = NULL;
              int pw = 0, ph = 0;
 
              if (cp->client)
                {
                   cd = (E_Comp_Wl_Client_Data *)cp->client->comp_data;
-                  res = cd->pending.buffer;
                   /* pw = cp->client->client.w; */
                   /* ph = cp->client->client.h; */
                }
 
-             success = (res != NULL);
+             success = !!cp->resource;
              if (!success) break;
 
              if ((cd) && (cd->pending.w) && (cd->pending.h))
@@ -458,16 +456,7 @@ e_pixmap_refresh(E_Pixmap *cp)
 
              success = ((pw > 0) && (ph > 0));
              if (success)
-               {
-                  /* if (cp->resource) _e_pixmap_resource_free(cp->resource); */
-                  e_pixmap_image_clear(cp, EINA_FALSE);
-                  cp->resource = res;
-                  _e_pixmap_update_wl(cp);
-               }
-             else
-               {
-                  if (res) _e_pixmap_resource_free(res);
-               }
+               _e_pixmap_update_wl(cp);
           }
 #endif
         break;

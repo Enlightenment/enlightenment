@@ -1466,9 +1466,6 @@ _e_comp_wl_subsurface_commit_from_cache(E_Client *ec)
 
    if (sdata->cached.buffer)
      {
-        /* set pixmap resource */
-        e_pixmap_resource_set(ep, sdata->cached.buffer);
-
         /* mark the pixmap as usable or not */
         e_pixmap_usable_set(ep, (sdata->cached.buffer != NULL));
      }
@@ -1476,7 +1473,15 @@ _e_comp_wl_subsurface_commit_from_cache(E_Client *ec)
    /* mark the pixmap as dirty */
    e_pixmap_dirty(ep);
 
-   e_pixmap_refresh(ep);
+   e_pixmap_image_clear(ep, EINA_FALSE);
+   e_pixmap_resource_set(ep, sdata->cached.buffer);
+
+   /* refresh pixmap */
+   if (e_pixmap_refresh(ep))
+     {
+        e_comp->post_updates = eina_list_append(e_comp->post_updates, ec);
+        e_object_ref(E_OBJECT(ec));
+     }
 
    /* check for any pending attachments */
    if (sdata->cached.new_attach)
@@ -2591,6 +2596,9 @@ e_comp_wl_surface_commit(E_Client *ec)
 
    /* mark the pixmap as dirty */
    e_pixmap_dirty(ep);
+
+   e_pixmap_image_clear(ep, EINA_FALSE);
+   e_pixmap_resource_set(ep, ec->comp_data->pending.buffer);
 
    /* refresh pixmap */
    if (e_pixmap_refresh(ep))
