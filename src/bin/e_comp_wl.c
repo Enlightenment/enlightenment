@@ -2612,10 +2612,7 @@ e_comp_wl_surface_commit(E_Client *ec)
      {
         int nw, nh;
 
-        nw = ec->client.w;
-        nh = ec->client.h;
-        if (nw == 0) nw = ec->comp_data->pending.w;
-        if (nh == 0) nh = ec->comp_data->pending.h;
+        e_pixmap_size_get(ec->pixmap, &nw, &nh);
 
         /* if the client has a shell configure, call it */
         if ((ec->comp_data->shell.surface) && 
