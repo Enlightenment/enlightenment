@@ -199,6 +199,18 @@ _e_comp_wl_evas_cb_mouse_out(void *data, Evas *evas EINA_UNUSED, Evas_Object *ob
 
    if (!(ec = data)) return;
    if (ec->cur_mouse_action) return;
+   /* FIXME? this is a hack to just reset the cursor whenever we mouse out. not sure if accurate */
+   {
+      Evas_Object *o;
+
+      ecore_evas_cursor_get(e_comp->ee, &o, NULL, NULL, NULL);
+      if (e_comp->pointer->o_ptr != o)
+        {
+           ecore_evas_cursor_unset(e_comp->ee);
+           ecore_evas_object_cursor_set(e_comp->ee, e_comp->pointer->o_ptr,
+             EVAS_LAYER_MAX, e_comp->pointer->hot.x, e_comp->pointer->hot.y);
+        }
+   }
    if (e_object_is_del(E_OBJECT(ec))) return;
 
    if (!ec->comp_data->surface) return;
