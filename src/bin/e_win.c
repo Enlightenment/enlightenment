@@ -75,7 +75,7 @@ _e_elm_win_trap_show(void *data, Evas_Object *o)
              type = E_PIXMAP_TYPE_WL;
              ctx->pointer = e_comp->pointer;
              elm_win_borderless_set(o, 1);
-             win = ((uint64_t)win << 32) + getpid();
+             win = e_comp_wl_id_get(win, getpid());
           }
         else
           {

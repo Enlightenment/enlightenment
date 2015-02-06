@@ -1193,7 +1193,7 @@ _e_comp_wl_compositor_cb_surface_create(struct wl_client *client, struct wl_reso
                                   _e_comp_wl_surface_destroy);
 
    wl_client_get_credentials(client, &pid, NULL, NULL);
-   win = ((uint64_t)id << 32) + pid;
+   win = e_comp_wl_id_get(id, pid);
    /* check for existing pixmap */
    if (!(ep = e_pixmap_find(E_PIXMAP_TYPE_WL, win)))
      {

@@ -279,5 +279,11 @@ EINTERN void e_comp_wl_buffer_reference(E_Comp_Wl_Buffer_Ref *ref, E_Comp_Wl_Buf
 EAPI struct wl_signal e_comp_wl_surface_create_signal_get(E_Comp *comp);
 EAPI double e_comp_wl_idle_time_get(void);
 
+static inline uint64_t
+e_comp_wl_id_get(uint32_t id, pid_t pid)
+{
+   return ((uint64_t)id << 32) + pid;
+}
+
 # endif
 #endif
