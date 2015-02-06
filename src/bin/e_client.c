@@ -2510,6 +2510,7 @@ e_client_new(E_Comp *c EINA_UNUSED, E_Pixmap *cp, int first_map, int internal)
           focus_stack = eina_list_append(focus_stack, ec);
      }
 
+   e_hints_client_list_set();
    return ec;
 }
 
