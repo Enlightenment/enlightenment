@@ -2620,6 +2620,8 @@ e_comp_wl_surface_commit(E_Client *ec)
           ec->comp_data->shell.configure(ec->comp_data->shell.surface, 
                                          ec->client.x, ec->client.y,
                                          nw, nh);
+        else
+          e_client_util_move_resize_without_frame(ec, ec->client.x, ec->client.y, nw, nh);
      }
 
    /* check if we need to map this surface */
@@ -2631,6 +2633,11 @@ e_comp_wl_surface_commit(E_Client *ec)
              /* if the client has a shell map, call it */
              if ((ec->comp_data->shell.surface) && (ec->comp_data->shell.map))
                ec->comp_data->shell.map(ec->comp_data->shell.surface);
+             else
+               {
+                  evas_object_show(ec->frame);
+                  ec->comp_data->mapped = evas_object_visible_get(ec->frame);
+               }
           }
      }
    else
@@ -2641,6 +2648,11 @@ e_comp_wl_surface_commit(E_Client *ec)
              /* if the client has a shell map, call it */
              if ((ec->comp_data->shell.surface) && (ec->comp_data->shell.unmap))
                ec->comp_data->shell.unmap(ec->comp_data->shell.surface);
+             else
+               {
+                  evas_object_hide(ec->frame);
+                  ec->comp_data->mapped = evas_object_visible_get(ec->frame);
+               }
           }
      }
 
