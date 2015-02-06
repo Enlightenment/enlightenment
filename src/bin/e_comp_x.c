@@ -4073,7 +4073,6 @@ _e_comp_x_hook_client_new(void *d EINA_UNUSED, E_Client *ec)
    ec->comp_data->first_damage = ec->internal;
 
    eina_hash_add(clients_win_hash, &win, ec);
-   e_hints_client_list_set();
    ec->comp_data->first_draw_delay = ecore_timer_add(e_comp_config_get()->first_draw_delay, _e_comp_x_first_draw_delay_cb, ec);
 }
 
