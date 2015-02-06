@@ -155,11 +155,12 @@ _e_elm_win_trap_resize(void *data, Evas_Object *o __UNUSED__, int w, int h)
 }
 
 static Eina_Bool
-_e_elm_win_trap_center(void *data, Evas_Object *o __UNUSED__)
+_e_elm_win_trap_center(void *data, Evas_Object *o __UNUSED__, Eina_Bool h, Eina_Bool v)
 {
    Elm_Win_Trap_Ctx *ctx = data;
    EINA_SAFETY_ON_NULL_RETURN_VAL(ctx, EINA_TRUE);
-   ctx->centered = ctx->placed = 1;
+   ctx->centered = h | v;
+   ctx->placed = 1;
    if (!ctx->client) return EINA_FALSE;
    if (ctx->centered) e_comp_object_util_center(ctx->client->frame);
    return EINA_FALSE;
