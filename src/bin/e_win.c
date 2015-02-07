@@ -70,6 +70,7 @@ _e_elm_win_trap_show(void *data, Evas_Object *o)
         E_Pixmap_Type type;
 
         win = elm_win_window_id_get(o);
+#ifdef HAVE_WAYLAND_CLIENTS
         if (!strncmp(ecore_evas_engine_name_get(ee), "wayland", 7))
           {
              type = E_PIXMAP_TYPE_WL;
@@ -77,12 +78,16 @@ _e_elm_win_trap_show(void *data, Evas_Object *o)
              elm_win_borderless_set(o, 1);
              win = e_comp_wl_id_get(win, getpid());
           }
+#endif
+#ifndef HAVE_WAYLAND_ONLY
+# ifdef HAVE_WAYLAND_CLIENT
         else
+# endif
           {
              type = E_PIXMAP_TYPE_X;
              ctx->pointer = e_pointer_window_new(win, EINA_TRUE);
           }
-
+#endif
         ec = e_pixmap_find_client(type, win);
         if (ec)
           ctx->client = ec;
