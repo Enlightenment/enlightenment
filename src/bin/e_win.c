@@ -67,7 +67,7 @@ _e_elm_win_trap_show(void *data, Evas_Object *o)
      {
         E_Client *ec;
         Ecore_Window win;
-        E_Pixmap_Type type;
+        E_Pixmap_Type type = E_PIXMAP_TYPE_X;
 
         win = elm_win_window_id_get(o);
 #ifdef HAVE_WAYLAND_CLIENTS
