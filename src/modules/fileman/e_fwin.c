@@ -2792,7 +2792,7 @@ _e_fwin_cb_open(void *data,
           }
      }
 
-   if ((desktop) || (strcmp(fad->exec_cmd, "")))
+   if ((fad->exec_cmd) && (strcmp(fad->exec_cmd, "")))
      _e_fwin_desktop_run(desktop, fad->fwin->cur_page, EINA_FALSE);
 
    efreet_desktop_free(desktop);
