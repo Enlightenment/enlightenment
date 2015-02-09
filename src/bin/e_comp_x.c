@@ -4585,15 +4585,21 @@ _e_comp_x_xinerama_setup(int rw, int rh)
              screen->w = s->config.geom.w;
              screen->h = s->config.geom.h;
              all_screens = eina_list_append(all_screens, screen);
+             printf("xinerama screen %i %i %ix%i\n", screen->x, screen->y, screen->w, screen->h);
              INF("E INIT: XINERAMA SCREEN: [%i][%i], %ix%i+%i+%i",
                  i, i, screen->w, screen->h, screen->x, screen->y);
              i++;
           }
      }
-   // XXX: what if we have zero screens? all unplugged? need to flag this
-   // keep all screens as-is for now and mark comp to hide everything
-   // and wait for a screen to come back
-   if (i == 0)
+   // if we have NO screens at all (above - i will be 0) AND we have no
+   // existing screens set up in xinerama - then just say root window size
+   // is the entire screen. this should handle the case where you unplug ALL
+   // screens from an existing setup (unplug external monitors and/or close
+   // laptop lid), in which case as long as at least one screen is configured
+   // in xinerama, it will be left-as is until next time we re-eval screen
+   // setup and have at least one screen
+   printf("xinerama setup............... %i %p\n", i, e_xinerama_screens_all_get());
+   if ((i == 0) && (!e_xinerama_screens_all_get()))
      {
         screen = E_NEW(E_Screen, 1);
         screen->escreen = screen->screen = 0;

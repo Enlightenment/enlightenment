@@ -59,6 +59,7 @@ struct _E_Randr2_Screen
       char                 *edid; // full edid data
       E_Randr2_Connector    connector; // the connector type
       Eina_Bool             is_lid : 1; // is an internal screen
+      Eina_Bool             lid_closed : 1; // is lid closed when screen qury'd
       Eina_Bool             connected : 1; // some screen is plugged in or not
       Eina_Bool             backlight : 1; // does it have backlight controls?
       Eina_Bool             can_rot_0 : 1; // can it do this rotation?

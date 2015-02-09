@@ -378,6 +378,7 @@ _cb_rel_to_set(void *data, Evas_Object *obj, void *event)
                   E_Randr2_Screen *s = _screen_config_id_find(cs2->id);
                   if (s)
                     {
+                       printf("SEt to %p [%s]\n", cs, cs->id);
                        printf("find s = %p\n", s);
                        printf("s id = %s\n", s->id);
                        elm_object_text_set(obj, s->info.name);
@@ -710,9 +711,11 @@ _basic_apply(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfdata)
    E_Config_Randr2_Screen *cs, *cs2;
 
    e_randr2_cfg->restore = cfdata->restore;
+   printf("APPLY....................\n");
    EINA_LIST_FOREACH(cfdata->screens, l, cs2)
      {
         if (!cs2->id) continue;
+        printf("APPLY .... %p\n", cs2);
         cs = _screen_config_randr_id_find(cs2->id);
         if (!cs)
           {
@@ -722,6 +725,7 @@ _basic_apply(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfdata)
           }
         if (cs->rel_to) eina_stringshare_del(cs->rel_to);
         cs->rel_to = NULL;
+        printf("APPLY %s .... rel to %s\n", cs->id, cs2->rel_to);
         if (cs2->rel_to) cs->rel_to = eina_stringshare_add(cs2->rel_to);
         cs->rel_align = cs2->rel_align;
         cs->mode_refresh = cs2->mode_refresh;
@@ -731,6 +735,7 @@ _basic_apply(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfdata)
         cs->rotation = cs2->rotation;
         cs->priority = cs2->priority;
         cs->rel_mode = cs2->rel_mode;
+        printf("APPLY %s .... rel mode %i\n", cs->id, cs->rel_mode);
         cs->enabled = cs2->enabled;
      }
    e_randr2_config_save();

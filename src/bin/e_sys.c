@@ -114,6 +114,7 @@ _e_sys_comp_emit_cb_wait(E_Sys_Action a, const char *sig, const char *rep, Eina_
 
    if (nocomp_push) e_comp_override_add(e_comp);
    else e_comp_override_timed_pop(e_comp);
+   printf("_e_sys_comp_emit_cb_wait - [%x] %s %s\n", a, sig, rep);
    EINA_LIST_FOREACH(e_comp->zones, l, zone)
      {
         e_zone_fade_handle(zone, nocomp_push, 0.5);

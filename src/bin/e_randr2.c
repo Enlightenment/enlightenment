@@ -186,8 +186,13 @@ static Evas_Object *_fade_obj = NULL;
 static Eina_Bool
 _screen_closed(E_Randr2_Screen *s)
 {
+   printf("RRR: check lid for %s...\n", s->info.name);
    if (!_lid_is_closed) return EINA_FALSE;
-   if (s->info.is_lid) return EINA_TRUE;
+   if (s->info.is_lid)
+     {
+        printf("RRR:   is closed lid\n");
+        return EINA_TRUE;
+     }
    return EINA_FALSE;
 }
 
@@ -510,6 +515,8 @@ _screens_fingerprint(E_Randr2 *r)
              eina_strbuf_append(buf, ":");
              eina_strbuf_append(buf, s->id);
              eina_strbuf_append(buf, ":");
+             if (s->info.lid_closed) eina_strbuf_append(buf, ":LC:");
+             else eina_strbuf_append(buf, ":LO:");
           }
      }
    str = eina_strbuf_string_steal(buf);
@@ -529,7 +536,9 @@ _screens_differ(E_Randr2 *r1, E_Randr2 *r2)
    s1 = _screens_fingerprint(r1);
    s2 = _screens_fingerprint(r2);
    if ((!s1) && (!s2)) return EINA_FALSE;
+   printf("RRR: check fingerprint...\n");
    if ((s1) && (s2) && (strcmp(s1, s2))) changed = EINA_TRUE;
+   printf("RRR: ... fingerprint says %i\n", changed);
    free(s1);
    free(s2);
    // check screen config
@@ -549,9 +558,11 @@ _screens_differ(E_Randr2 *r1, E_Randr2 *r2)
                  (s->config.mode.w != ss->config.mode.w) ||
                  (s->config.mode.h != ss->config.mode.h) ||
                  (s->config.enabled != ss->config.enabled) ||
-                 (s->config.rotation != ss->config.rotation))
+                 (s->config.rotation != ss->config.rotation) ||
+                 (s->info.lid_closed != ss->info.lid_closed))
           changed = EINA_TRUE;
      }
+   printf("RRR: changed = %i\n", changed);
    return changed;
 }
 
@@ -559,6 +570,7 @@ static Eina_Bool
 _cb_screen_change_delay(void *data EINA_UNUSED)
 {
    _screen_delay_timer = NULL;
+   printf("RRR: ... %i %i\n", event_screen, event_ignore);
    // if we had a screen plug/unplug etc. event and we shouldnt ignore it...
    if ((event_screen) && (!event_ignore))
      {
@@ -572,6 +584,7 @@ _cb_screen_change_delay(void *data EINA_UNUSED)
              if (_screens_differ(e_randr2, rtemp)) change = EINA_TRUE;
              _info_free(rtemp);
           }
+        printf("RRR: change = %i\n", change);
         // we plugged or unplugged some monitor - re-apply config so
         // known screens can be coonfigured
         if (change) e_randr2_config_apply();
@@ -600,10 +613,13 @@ _cb_acpi(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
    E_Event_Acpi *ev = event;
    Eina_Bool lid_closed;
 
+   printf("RRR: acpi event\n");
    if (ev->type != E_ACPI_TYPE_LID) return EINA_TRUE;
    lid_closed = (ev->status == E_ACPI_LID_CLOSED);
    if (lid_closed == _lid_is_closed) return EINA_TRUE;
+   printf("RRR: lid event for lid %i\n", lid_closed);
    _lid_is_closed = lid_closed;
+   event_screen = EINA_TRUE;
    _screen_change_delay();
    return EINA_TRUE;
 }
@@ -650,12 +666,13 @@ _screen_config_do(E_Randr2_Screen *s)
 {
    E_Randr2_Screen *s2 = NULL;
 
-   _config_do_recurse++;
-   if (_config_do_recurse > 20)
+   printf("RRR: screen do '%s'\n", s->info.name);
+   if (_config_do_recurse > 10)
      {
         ERR("screen config loop!");
         return;
      }
+   _config_do_recurse++;
    // if screen has a dependency...
    if ((s->config.relative.mode != E_RANDR2_RELATIVE_UNKNOWN) &&
        (s->config.relative.mode != E_RANDR2_RELATIVE_NONE) &&
@@ -737,6 +754,7 @@ _screen_config_do(E_Randr2_Screen *s)
              s->config.geom.y = s2->config.geom.y + s2->config.geom.h;
           }
      }
+   _config_do_recurse--;
 }
 
 static void
@@ -1159,6 +1177,8 @@ _info_get(void)
         else if (conn == ECORE_X_RANDR_EDID_DISPLAY_INTERFACE_DISPLAY_PORT)
           s->info.connector = E_RANDR2_CONNECTOR_DISPLAY_PORT;
         s->info.is_lid = _is_lid_name(s->info.name);
+        s->info.lid_closed = s->info.is_lid && _lid_is_closed;
+        printf("RRR: .... lid_closed = %i (%i && %i)\n", s->info.lid_closed, s->info.is_lid, _lid_is_closed);
         if (ecore_x_randr_output_connection_status_get(root, outputs[i]) ==
             ECORE_X_RANDR_CONNECTION_STATUS_CONNECTED)
           s->info.connected = EINA_TRUE;
@@ -1413,7 +1433,7 @@ _screen_config_apply(void)
    Ecore_X_Randr_Crtc *crtcs = NULL;
    Ecore_X_Randr_Output *outputs = NULL, out, *outconf;
    E_Randr2_Screen **screenconf;
-   int crtcs_num = 0, outputs_num = 0, i;
+   int crtcs_num = 0, outputs_num = 0, i, numout;
    Ecore_X_Randr_Crtc_Info *info;
    int top_priority = 0;
 
@@ -1492,6 +1512,13 @@ _screen_config_apply(void)
                     }
                }
           }
+        numout = 0;
+        for (i = 0; i < crtcs_num; i++)
+          {
+             if (outconf[i]) numout++;
+          }
+        if (numout)
+          {
         // set up a crtc to drive each output (or not)
         for (i = 0; i < crtcs_num; i++)
           {
@@ -1544,20 +1571,34 @@ _screen_config_apply(void)
                      ECORE_X_RANDR_ORIENTATION_ROT_0);
                }
           }
+          }
+        else
+          {
+             printf("RRR: EERRRRRROOOORRRRRRR no outputs to configure!\n");
+          }
      }
    free(outputs);
    free(crtcs);
 
+   printf("RRR: set vsize: %ix%i\n", nw, nh);
    ecore_x_randr_screen_current_size_set(root, nw, nh, -1, -1);
      {
         int ww = 0, hh = 0, ww2 = 0, hh2 = 0;
         ecore_x_randr_screen_current_size_get(root, &ww, &hh, &ww2, &hh2);
         printf("RRR: cur size: %ix%i\n", ww, hh);
+//        ecore_x_randr_screen_reset(root);
+//        ecore_x_randr_screen_current_size_set(root, nw, nh, -1, -1);
+//        ecore_x_sync();
+//        ecore_x_randr_screen_current_size_get(root, &ww, &hh, &ww2, &hh2);
+//        printf("RRR: cur size: %ix%i\n", ww, hh);
      }
    ecore_x_randr_screen_size_range_get(root, NULL, NULL, NULL, NULL);
    ecore_x_ungrab();
    ecore_x_sync();
 
    // ignore the next batch of randr events - we caused them ourselves
-   event_ignore = EINA_TRUE;
+   // XXX: a problem. thew first time we configure the screen we may not
+   // get any events back to clear the ignore flag below, so only apply
+   // here if the randr config now doesnt match what we want to set up.
+//   event_ignore = EINA_TRUE;
 }

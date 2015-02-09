@@ -346,17 +346,24 @@ e_comp_canvas_update(void)
      {
         zones = e_comp->zones;
         e_comp->zones = NULL;
+        printf("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@\n");
         EINA_LIST_FOREACH(screens, l, scr)
           {
              zone = NULL;
 
+             printf("@ match screens %p[%i] = %i %i %ix%i -- %i\n", 
+                    scr, scr->escreen, scr->x, scr->y, scr->w, scr->h, scr->escreen);
              EINA_LIST_FOREACH(zones, ll, zone)
                {
                   if (zone->id == scr->escreen) break;
                   zone = NULL;
                }
+             printf("@ matches existing zone %p\n", zone);
              if (zone)
                {
+                  printf("   move resize %i %i %ix%i -> %i %i %ix%i\n",
+                         zone->x, zone->y, zone->w, zone->h,
+                         scr->x, scr->y, scr->w, scr->h);
                   changed |= e_zone_move_resize(zone, scr->x, scr->y, scr->w, scr->h);
                   if (changed)
                     printf("@@@ FOUND ZONE %i %i [%p]\n", zone->num, zone->id, zone);
@@ -380,6 +387,7 @@ e_comp_canvas_update(void)
           {
              E_Zone *spare_zone;
 
+             printf("@zones have been deleted....\n");
              changed = EINA_TRUE;
              spare_zone = eina_list_data_get(e_comp->zones);
 
@@ -387,6 +395,7 @@ e_comp_canvas_update(void)
                {
                   E_Client *ec;
 
+                  printf("reassign all clients from deleted zone %p\n", zone);
                   E_CLIENT_FOREACH(e_comp, ec)
                     {
                        if (ec->zone == zone)
