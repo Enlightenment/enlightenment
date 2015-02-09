@@ -205,11 +205,7 @@ _e_comp_wl_evas_cb_mouse_out(void *data, Evas *evas EINA_UNUSED, Evas_Object *ob
 
       ecore_evas_cursor_get(e_comp->ee, &o, NULL, NULL, NULL);
       if (e_comp->pointer->o_ptr != o)
-        {
-           ecore_evas_cursor_unset(e_comp->ee);
-           ecore_evas_object_cursor_set(e_comp->ee, e_comp->pointer->o_ptr,
-             EVAS_LAYER_MAX, e_comp->pointer->hot.x, e_comp->pointer->hot.y);
-        }
+        e_pointer_object_set(e_comp->pointer, NULL, 0, 0);
    }
    if (e_object_is_del(E_OBJECT(ec))) return;
 

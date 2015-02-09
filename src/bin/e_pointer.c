@@ -386,8 +386,7 @@ _e_pointer_type_set(E_Pointer *ptr, const char *type)
         _e_pointer_hot_update(ptr, x, y);
 
         if (ptr->canvas)
-          ecore_evas_object_cursor_set(ptr->ee, ptr->o_ptr, EVAS_LAYER_MAX, 
-                                       ptr->hot.x, ptr->hot.y);
+          e_pointer_object_set(ptr, NULL, 0, 0);
         else
           evas_object_show(ptr->o_ptr);
 

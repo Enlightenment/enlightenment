@@ -49,8 +49,7 @@ _e_comp_wl_input_pointer_cb_cursor_set(struct wl_client *client, struct wl_resou
      }
    /* ignore cursor changes during resize/move I guess */
    if (e_client_action_get()) return;
-   ecore_evas_cursor_unset(e_comp->ee);
-   ecore_evas_object_cursor_set(e_comp->ee, ec->frame, EVAS_LAYER_MAX, x, y);
+   e_pointer_object_set(e_comp->pointer, ec->frame, x, y);
 }
 
 static const struct wl_pointer_interface _e_pointer_interface = 
