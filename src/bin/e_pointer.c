@@ -747,3 +747,13 @@ e_pointer_idler_before(void)
         ptr->hot.update = EINA_FALSE;
      }
 }
+
+EAPI void
+e_pointer_object_set(E_Pointer *ptr, Evas_Object *obj, int x, int y)
+{
+   ecore_evas_cursor_unset(ptr->ee);
+   if (obj)
+     ecore_evas_object_cursor_set(ptr->ee, obj, EVAS_LAYER_MAX, x, y);
+   else
+     ecore_evas_object_cursor_set(ptr->ee, ptr->o_ptr, EVAS_LAYER_MAX, ptr->hot.x, ptr->hot.y);
+}

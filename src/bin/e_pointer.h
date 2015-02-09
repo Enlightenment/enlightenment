@@ -69,6 +69,6 @@ EAPI void e_pointer_type_pop(E_Pointer *ptr, void *obj, const char *type);
 EAPI void e_pointer_mode_push(void *obj, E_Pointer_Mode mode);
 EAPI void e_pointer_mode_pop(void *obj, E_Pointer_Mode mode);
 EAPI void e_pointer_idler_before(void);
-
+EAPI void e_pointer_object_set(E_Pointer *ptr, Evas_Object *obj, int x, int y);
 # endif
 #endif
