@@ -874,7 +874,7 @@ e_pixmap_image_draw(E_Pixmap *cp, const Eina_Rectangle *r)
              cd = (E_Comp_Wl_Client_Data*)cp->client->comp_data;
              EINA_LIST_FREE(cd->frames, cb)
                {
-                  wl_callback_send_done(cb, (ecore_loop_time_get() * 1000));
+                  wl_callback_send_done(cb, ecore_time_unix_get());
                   wl_resource_destroy(cb);
                }
           }
