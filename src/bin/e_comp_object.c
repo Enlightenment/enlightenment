@@ -3198,11 +3198,11 @@ EAPI void
 e_comp_object_dirty(Evas_Object *obj)
 {
    Eina_Iterator *it;
-   Eina_Rectangle *r;
-   Eina_List *l;
+   Eina_Rectangle *rect;
+   Eina_List *ll;
    Evas_Object *o;
-   int w, h;
-   Eina_Bool dirty, visible;
+   int w, h, t, b, l, r;
+   Eina_Bool dirty, visible, border;
 
    API_ENTRY;
    /* only actually dirty if pixmap is available */
@@ -3213,11 +3213,18 @@ e_comp_object_dirty(Evas_Object *obj)
    if (!dirty)
      evas_object_image_data_set(cw->obj, NULL);
    evas_object_image_size_set(cw->obj, w, h);
+
+   e_pixmap_image_border_get(cw->ec->pixmap, &l, &r, &t, &b);
+   border = (t || b || l || r);
+   if (border)
+     evas_object_image_border_set(cw->obj, l, r, t, b);
    RENDER_DEBUG("SIZE [%p]: %dx%d", cw->ec, w, h);
    if (cw->pending_updates)
      eina_tiler_area_size_set(cw->pending_updates, w, h);
-   EINA_LIST_FOREACH(cw->obj_mirror, l, o)
+   EINA_LIST_FOREACH(cw->obj_mirror, ll, o)
      {
+        if (border)
+          evas_object_image_border_set(o, l, r, t, b);
         evas_object_image_pixels_dirty_set(o, dirty);
         if (!dirty)
           evas_object_image_data_set(o, NULL);
@@ -3230,17 +3237,17 @@ e_comp_object_dirty(Evas_Object *obj)
      }
    e_comp_object_native_surface_set(obj, e_comp_gl_get());
    it = eina_tiler_iterator_new(cw->updates);
-   EINA_ITERATOR_FOREACH(it, r)
+   EINA_ITERATOR_FOREACH(it, rect)
      {
-        RENDER_DEBUG("UPDATE ADD [%p]: %d %d %dx%d", cw->ec, r->x, r->y, r->w, r->h);
-        evas_object_image_data_update_add(cw->obj, r->x, r->y, r->w, r->h);
-        EINA_LIST_FOREACH(cw->obj_mirror, l, o)
+        RENDER_DEBUG("UPDATE ADD [%p]: %d %d %dx%d", cw->ec, rect->x, rect->y, rect->w, rect->h);
+        evas_object_image_data_update_add(cw->obj, rect->x, rect->y, rect->w, rect->h);
+        EINA_LIST_FOREACH(cw->obj_mirror, ll, o)
           {
-             evas_object_image_data_update_add(o, r->x, r->y, r->w, r->h);
+             evas_object_image_data_update_add(o, rect->x, rect->y, rect->w, rect->h);
              visible |= evas_object_visible_get(o);
           }
         if (cw->pending_updates)
-          eina_tiler_rect_add(cw->pending_updates, r);
+          eina_tiler_rect_add(cw->pending_updates, rect);
      }
    eina_iterator_free(it);
    if (cw->pending_updates)
