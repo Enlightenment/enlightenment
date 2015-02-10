@@ -34,6 +34,7 @@ struct _E_Pixmap
 #if defined(HAVE_WAYLAND_CLIENTS) || defined(HAVE_WAYLAND_ONLY)
    struct wl_resource *resource;
    Eina_List *resource_cache;
+   Eina_Rectangle border;
 #endif
 
    Eina_Bool usable : 1;
@@ -885,4 +886,21 @@ e_pixmap_image_draw(E_Pixmap *cp, const Eina_Rectangle *r)
         break;
      }
    return EINA_FALSE;
+}
+
+EAPI void
+e_pixmap_image_border_set(E_Pixmap *cp, int l, int r, int t, int b)
+{
+   EINA_SAFETY_ON_NULL_RETURN(cp);
+   EINA_RECTANGLE_SET(&cp->border, t, b, l, r);
+}
+
+EAPI void
+e_pixmap_image_border_get(E_Pixmap *cp, int *l, int *r, int *t, int *b)
+{
+   EINA_SAFETY_ON_NULL_RETURN(cp);
+   if (t) *t = cp->border.x;
+   if (b) *b = cp->border.y;
+   if (l) *l = cp->border.w;
+   if (r) *r = cp->border.h;
 }

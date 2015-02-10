@@ -45,6 +45,9 @@ EAPI void *e_pixmap_image_data_get(E_Pixmap *cp);
 EAPI Eina_Bool e_pixmap_image_data_argb_convert(E_Pixmap *cp, void *pix, void *ipix, Eina_Rectangle *r, int stride);
 EAPI Eina_Bool e_pixmap_image_draw(E_Pixmap *cp, const Eina_Rectangle *r);
 
+EAPI void e_pixmap_image_border_set(E_Pixmap *cp, int l, int r, int t, int b);
+EAPI void e_pixmap_image_border_get(E_Pixmap *cp, int *l, int *r, int *t, int *b);
+
 static inline Eina_Bool
 e_pixmap_is_x(const E_Pixmap *cp)
 {
