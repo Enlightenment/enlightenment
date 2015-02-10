@@ -1068,6 +1068,7 @@ _e_comp_wl_surface_cb_input_region_set(struct wl_client *client EINA_UNUSED, str
    /* trap for clients which are being deleted */
    if (e_object_is_del(E_OBJECT(ec))) return;
 
+   eina_tiler_clear(ec->comp_data->pending.input);
    if (region_resource)
      {
         Eina_Tiler *tmp;
@@ -1080,7 +1081,6 @@ _e_comp_wl_surface_cb_input_region_set(struct wl_client *client EINA_UNUSED, str
      }
    else
      {
-        eina_tiler_clear(ec->comp_data->pending.input);
         eina_tiler_rect_add(ec->comp_data->pending.input, 
                             &(Eina_Rectangle){0, 0, ec->client.w, ec->client.h});
      }
@@ -2710,39 +2710,17 @@ e_comp_wl_surface_commit(E_Client *ec)
           {
              Eina_Rectangle *rect;
              Eina_Iterator *itr;
-             int i = 0;
-
-             ec->shape_input_rects_num = 0;
 
              itr = eina_tiler_iterator_new(src);
+             /* this should be exactly 1 rect */
              EINA_ITERATOR_FOREACH(itr, rect)
-               ec->shape_input_rects_num += 1;
-
-             ec->shape_input_rects = 
-               malloc(sizeof(Eina_Rectangle) * ec->shape_input_rects_num);
-
-             if (ec->shape_input_rects)
-               {
-                  EINA_ITERATOR_FOREACH(itr, rect)
-                    {
-                       E_RECTS_CLIP_TO_RECT(rect->x, rect->y, rect->w, rect->h, 
-                                            0, 0, ec->client.w, ec->client.h);
-
-                       ec->shape_input_rects[i] = 
-                         *(Eina_Rectangle *)((char *)rect);
-
-                       ec->shape_input_rects[i].x = rect->x;
-                       ec->shape_input_rects[i].y = rect->y;
-                       ec->shape_input_rects[i].w = rect->w;
-                       ec->shape_input_rects[i].h = rect->h;
-
-                       i++;
-                    }
-               }
+               e_comp_object_input_area_set(ec->frame, rect->x, rect->y, rect->w, rect->h);
 
              eina_iterator_free(itr);
              eina_tiler_free(src);
           }
+        else
+          e_comp_object_input_area_set(ec->frame, 0, 0, ec->w, ec->h);
 
         eina_tiler_free(tmp);
         eina_tiler_clear(ec->comp_data->pending.input);
