@@ -1030,17 +1030,28 @@ _e_comp_wl_surface_cb_opaque_region_set(struct wl_client *client EINA_UNUSED, st
    /* trap for clients which are being deleted */
    if (e_object_is_del(E_OBJECT(ec))) return;
 
-   eina_tiler_clear(ec->comp_data->pending.opaque);
    if (region_resource)
      {
         Eina_Tiler *tmp;
+        Eina_Iterator *it;
+        Eina_Rectangle *rect;
 
         /* try to get the tiler from the region resource */
         if (!(tmp = wl_resource_get_user_data(region_resource)))
           return;
 
-        eina_tiler_union(ec->comp_data->pending.opaque, tmp);
+        it = eina_tiler_iterator_new(tmp);
+        EINA_ITERATOR_FOREACH(it, rect)
+          {
+             e_pixmap_image_border_set(ec->pixmap, rect->x, ec->client.w - rect->x,
+               rect->y, ec->client.h - rect->y);
+             break;
+          }
+
+        eina_iterator_free(it);
      }
+   else
+     e_pixmap_image_border_set(ec->pixmap, 0, 0, 0, 0);
 }
 
 static void 
@@ -1401,9 +1412,6 @@ _e_comp_wl_subsurface_destroy(struct wl_resource *resource)
     * freed. We need to unset the surface user data */
    /* wl_resource_set_user_data(ec->comp_data->surface, NULL); */
 
-   if (sdata->cached.opaque)
-     eina_tiler_free(sdata->cached.opaque);
-
    EINA_LIST_FREE(sdata->cached.damages, dmg)
      eina_rectangle_free(dmg);
 
@@ -1452,7 +1460,6 @@ _e_comp_wl_subsurface_commit_to_cache(E_Client *ec)
    sdata->cached.buffer = cdata->pending.buffer;
    sdata->cached.new_attach = cdata->pending.new_attach;
 
-   eina_tiler_union(sdata->cached.opaque, cdata->pending.opaque);
    eina_tiler_union(sdata->cached.input, cdata->pending.input);
 
    sdata->cached.has_data = EINA_TRUE;
@@ -1536,52 +1543,6 @@ _e_comp_wl_subsurface_commit_from_cache(E_Client *ec)
         goto unmap;
      }
 
-   /* handle pending opaque */
-   if (sdata->cached.opaque)
-     {
-        tmp = eina_tiler_new(ec->w, ec->h);
-        eina_tiler_tile_size_set(tmp, 1, 1);
-        eina_tiler_rect_add(tmp, 
-                            &(Eina_Rectangle){0, 0, ec->client.w, ec->client.h});
-
-        if ((src = eina_tiler_intersection(sdata->cached.opaque, tmp)))
-          {
-             Eina_Rectangle *rect;
-             Eina_Iterator *itr;
-             int i = 0;
-
-             ec->shape_rects_num = 0;
-
-             itr = eina_tiler_iterator_new(src);
-             EINA_ITERATOR_FOREACH(itr, rect)
-               ec->shape_rects_num += 1;
-
-             ec->shape_rects = 
-               malloc(sizeof(Eina_Rectangle) * ec->shape_rects_num);
-
-             if (ec->shape_rects)
-               {
-                  EINA_ITERATOR_FOREACH(itr, rect)
-                    {
-                       ec->shape_rects[i] = *(Eina_Rectangle *)((char *)rect);
-
-                       ec->shape_rects[i].x = rect->x;
-                       ec->shape_rects[i].y = rect->y;
-                       ec->shape_rects[i].w = rect->w;
-                       ec->shape_rects[i].h = rect->h;
-
-                       i++;
-                    }
-               }
-
-             eina_iterator_free(itr);
-             eina_tiler_free(src);
-          }
-
-        eina_tiler_free(tmp);
-        eina_tiler_clear(sdata->cached.opaque);
-     }
-
    /* commit any pending damages */
    if ((!ec->comp->nocomp) && (ec->frame))
      {
@@ -1642,9 +1603,6 @@ _e_comp_wl_subsurface_commit_from_cache(E_Client *ec)
    return;
 
 unmap:
-   /* clear pending opaque regions */
-   if (sdata->cached.opaque)
-     eina_tiler_clear(sdata->cached.opaque);
 
    /* surface is not visible, clear damages */
    EINA_LIST_FREE(sdata->cached.damages, dmg)
@@ -1854,9 +1812,6 @@ _e_comp_wl_subsurface_create(E_Client *ec, E_Client *epc, uint32_t id, struct wl
    sdata->cached.input = eina_tiler_new(ec->w, ec->h);
    eina_tiler_tile_size_set(sdata->cached.input, 1, 1);
 
-   sdata->cached.opaque = eina_tiler_new(ec->w, ec->h);
-   eina_tiler_tile_size_set(sdata->cached.opaque, 1, 1);
-
    /* set subsurface client properties */
    ec->borderless = EINA_TRUE;
    ec->argb = EINA_TRUE;
@@ -2047,9 +2002,6 @@ _e_comp_wl_client_cb_new(void *data EINA_UNUSED, E_Client *ec)
    ec->comp_data->pending.input = eina_tiler_new(ec->w, ec->h);
    eina_tiler_tile_size_set(ec->comp_data->pending.input, 1, 1);
 
-   ec->comp_data->pending.opaque = eina_tiler_new(ec->w, ec->h);
-   eina_tiler_tile_size_set(ec->comp_data->pending.opaque, 1, 1);
-
    /* set initial client properties */
    ec->argb = EINA_TRUE;
    ec->no_shape_cut = EINA_TRUE;
@@ -2119,9 +2071,6 @@ _e_comp_wl_client_cb_del(void *data EINA_UNUSED, E_Client *ec)
     * freed. We need to unset the surface user data */
    if (ec->comp_data->surface)
      wl_resource_set_user_data(ec->comp_data->surface, NULL);
-
-   if (ec->comp_data->pending.opaque)
-     eina_tiler_free(ec->comp_data->pending.opaque);
 
    EINA_LIST_FREE(ec->comp_data->pending.damages, dmg)
      eina_rectangle_free(dmg);
@@ -2671,38 +2620,6 @@ e_comp_wl_surface_commit(E_Client *ec)
         goto unmap;
      }
 
-   /* handle pending opaque */
-   if (ec->comp_data->pending.opaque)
-     {
-        tmp = eina_tiler_new(ec->w, ec->h);
-        eina_tiler_tile_size_set(tmp, 1, 1);
-        eina_tiler_rect_add(tmp, 
-                            &(Eina_Rectangle){0, 0, ec->client.w, ec->client.h});
-
-        if ((src = eina_tiler_intersection(ec->comp_data->pending.opaque, tmp)))
-          {
-             Eina_Rectangle *rect;
-             Eina_Iterator *itr;
-
-             itr = eina_tiler_iterator_new(src);
-             /* this must be exactly 1 rect */
-             EINA_ITERATOR_FOREACH(itr, rect)
-               {
-                  e_pixmap_image_border_set(ec->pixmap, rect->x, ec->client.w - rect->x,
-                    rect->y, ec->client.h - rect->y);
-                  break;
-               }
-
-             eina_iterator_free(itr);
-             eina_tiler_free(src);
-          }
-        else
-          e_pixmap_image_border_set(ec->pixmap, 0, 0, 0, 0);
-
-        eina_tiler_free(tmp);
-        eina_tiler_clear(ec->comp_data->pending.opaque);
-     }
-
    /* commit any pending damages */
    if ((!ec->comp->nocomp) && (ec->frame))
      {
@@ -2744,9 +2661,6 @@ e_comp_wl_surface_commit(E_Client *ec)
    return EINA_TRUE;
 
 unmap:
-   /* clear pending opaque regions */
-   if (ec->comp_data->pending.opaque)
-     eina_tiler_clear(ec->comp_data->pending.opaque);
 
    /* surface is not visible, clear damages */
    EINA_LIST_FREE(ec->comp_data->pending.damages, dmg)

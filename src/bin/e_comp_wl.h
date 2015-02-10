@@ -87,7 +87,6 @@ struct _E_Comp_Wl_Subsurf_Data
 
         Eina_List *damages;
         Eina_Tiler *input;
-        Eina_Tiler *opaque;
      } cached;
 
    Eina_Bool synchronized;
@@ -247,7 +246,6 @@ struct _E_Comp_Wl_Client_Data
         Eina_Bool new_attach : 1;
         Eina_List *damages;
         Eina_Tiler *input;
-        Eina_Tiler *opaque;
      } pending;
 
    struct 
