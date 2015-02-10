@@ -2681,8 +2681,23 @@ e_comp_wl_surface_commit(E_Client *ec)
 
         if ((src = eina_tiler_intersection(ec->comp_data->pending.opaque, tmp)))
           {
+             Eina_Rectangle *rect;
+             Eina_Iterator *itr;
+
+             itr = eina_tiler_iterator_new(src);
+             /* this must be exactly 1 rect */
+             EINA_ITERATOR_FOREACH(itr, rect)
+               {
+                  e_pixmap_image_border_set(ec->pixmap, rect->x, ec->client.w - rect->x,
+                    rect->y, ec->client.h - rect->y);
+                  break;
+               }
+
+             eina_iterator_free(itr);
              eina_tiler_free(src);
           }
+        else
+          e_pixmap_image_border_set(ec->pixmap, 0, 0, 0, 0);
 
         eina_tiler_free(tmp);
         eina_tiler_clear(ec->comp_data->pending.opaque);
