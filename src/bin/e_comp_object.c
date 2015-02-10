@@ -3201,7 +3201,7 @@ e_comp_object_dirty(Evas_Object *obj)
    Eina_Rectangle *rect;
    Eina_List *ll;
    Evas_Object *o;
-   int w, h, t, b, l, r;
+   int w, h, bx, by, bxx, byy;
    Eina_Bool dirty, visible;
 
    API_ENTRY;
@@ -3214,14 +3214,18 @@ e_comp_object_dirty(Evas_Object *obj)
      evas_object_image_data_set(cw->obj, NULL);
    evas_object_image_size_set(cw->obj, w, h);
 
-   e_pixmap_image_border_get(cw->ec->pixmap, &l, &r, &t, &b);
-   evas_object_image_border_set(cw->obj, l, r, t, b);
+   e_pixmap_image_opaque_get(cw->ec->pixmap, &bx, &by, &bxx, &byy);
+   if (bxx && byy)
+     bxx = cw->ec->client.w - (bx + bxx), byy = cw->ec->client.h - (by + byy);
+   else
+     bx = by = bxx = byy = 0;
+   evas_object_image_border_set(cw->obj, bx, by, bxx, byy);
    RENDER_DEBUG("SIZE [%p]: %dx%d", cw->ec, w, h);
    if (cw->pending_updates)
      eina_tiler_area_size_set(cw->pending_updates, w, h);
    EINA_LIST_FOREACH(cw->obj_mirror, ll, o)
      {
-        evas_object_image_border_set(o, l, r, t, b);
+        evas_object_image_border_set(o, bx, by, bxx, byy);
         evas_object_image_pixels_dirty_set(o, dirty);
         if (!dirty)
           evas_object_image_data_set(o, NULL);

@@ -1043,15 +1043,14 @@ _e_comp_wl_surface_cb_opaque_region_set(struct wl_client *client EINA_UNUSED, st
         it = eina_tiler_iterator_new(tmp);
         EINA_ITERATOR_FOREACH(it, rect)
           {
-             e_pixmap_image_border_set(ec->pixmap, rect->x, ec->client.w - rect->x,
-               rect->y, ec->client.h - rect->y);
+             e_pixmap_image_opaque_set(ec->pixmap, rect->x, rect->y, rect->w, rect->h);
              break;
           }
 
         eina_iterator_free(it);
      }
    else
-     e_pixmap_image_border_set(ec->pixmap, 0, 0, 0, 0);
+     e_pixmap_image_opaque_set(ec->pixmap, 0, 0, 0, 0);
 }
 
 static void 

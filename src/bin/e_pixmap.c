@@ -34,7 +34,7 @@ struct _E_Pixmap
 #if defined(HAVE_WAYLAND_CLIENTS) || defined(HAVE_WAYLAND_ONLY)
    struct wl_resource *resource;
    Eina_List *resource_cache;
-   Eina_Rectangle border;
+   Eina_Rectangle opaque;
 #endif
 
    Eina_Bool usable : 1;
@@ -889,11 +889,11 @@ e_pixmap_image_draw(E_Pixmap *cp, const Eina_Rectangle *r)
 }
 
 EAPI void
-e_pixmap_image_border_set(E_Pixmap *cp, int l, int r, int t, int b)
+e_pixmap_image_opaque_set(E_Pixmap *cp, int x, int y, int w, int h)
 {
    EINA_SAFETY_ON_NULL_RETURN(cp);
 #if defined(HAVE_WAYLAND_CLIENTS) || defined(HAVE_WAYLAND_ONLY)
-   EINA_RECTANGLE_SET(&cp->border, t, b, l, r);
+   EINA_RECTANGLE_SET(&cp->opaque, x, y, w, h);
 #else
    (void)l;
    (void)r;
@@ -903,18 +903,18 @@ e_pixmap_image_border_set(E_Pixmap *cp, int l, int r, int t, int b)
 }
 
 EAPI void
-e_pixmap_image_border_get(E_Pixmap *cp, int *l, int *r, int *t, int *b)
+e_pixmap_image_opaque_get(E_Pixmap *cp, int *x, int *y, int *w, int *h)
 {
    EINA_SAFETY_ON_NULL_RETURN(cp);
 #if defined(HAVE_WAYLAND_CLIENTS) || defined(HAVE_WAYLAND_ONLY)
-   if (t) *t = cp->border.x;
-   if (b) *b = cp->border.y;
-   if (l) *l = cp->border.w;
-   if (r) *r = cp->border.h;
+   if (x) *x = cp->opaque.x;
+   if (y) *y = cp->opaque.y;
+   if (w) *w = cp->opaque.w;
+   if (h) *h = cp->opaque.h;
 #else
-   if (t) *t = 0;
-   if (b) *b = 0;
-   if (l) *l = 0;
-   if (r) *r = 0;
+   if (x) *x = 0;
+   if (y) *y = 0;
+   if (w) *w = 0;
+   if (h) *h = 0;
 #endif
 }
