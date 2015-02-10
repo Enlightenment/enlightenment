@@ -3220,6 +3220,21 @@ e_comp_object_dirty(Evas_Object *obj)
    else
      bx = by = bxx = byy = 0;
    evas_object_image_border_set(cw->obj, bx, by, bxx, byy);
+   {
+      Edje_Message_Int_Set *msg;
+      Edje_Message_Int msg2;
+      Eina_Bool id = (bx || by || bxx || byy);
+
+      msg = alloca(sizeof(Edje_Message_Int_Set) + (sizeof(int) * 3));
+      msg->count = 4;
+      msg->val[0] = bx;
+      msg->val[1] = by;
+      msg->val[2] = bxx;
+      msg->val[3] = byy;
+      edje_object_message_send(cw->shobj, EDJE_MESSAGE_INT_SET, 1, msg);
+      msg2.val = id;
+      edje_object_message_send(cw->shobj, EDJE_MESSAGE_INT, 0, &msg2);
+   }
    RENDER_DEBUG("SIZE [%p]: %dx%d", cw->ec, w, h);
    if (cw->pending_updates)
      eina_tiler_area_size_set(cw->pending_updates, w, h);
