@@ -1030,6 +1030,7 @@ _e_comp_wl_surface_cb_opaque_region_set(struct wl_client *client EINA_UNUSED, st
    /* trap for clients which are being deleted */
    if (e_object_is_del(E_OBJECT(ec))) return;
 
+   eina_tiler_clear(ec->comp_data->pending.opaque);
    if (region_resource)
      {
         Eina_Tiler *tmp;
@@ -1039,12 +1040,6 @@ _e_comp_wl_surface_cb_opaque_region_set(struct wl_client *client EINA_UNUSED, st
           return;
 
         eina_tiler_union(ec->comp_data->pending.opaque, tmp);
-     }
-   else
-     {
-        eina_tiler_clear(ec->comp_data->pending.opaque);
-        eina_tiler_rect_add(ec->comp_data->pending.opaque, 
-                            &(Eina_Rectangle){0, 0, ec->client.w, ec->client.h});
      }
 }
 
