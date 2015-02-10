@@ -892,15 +892,29 @@ EAPI void
 e_pixmap_image_border_set(E_Pixmap *cp, int l, int r, int t, int b)
 {
    EINA_SAFETY_ON_NULL_RETURN(cp);
+#if defined(HAVE_WAYLAND_CLIENTS) || defined(HAVE_WAYLAND_ONLY)
    EINA_RECTANGLE_SET(&cp->border, t, b, l, r);
+#else
+   (void)l;
+   (void)r;
+   (void)t;
+   (void)b;
+#endif
 }
 
 EAPI void
 e_pixmap_image_border_get(E_Pixmap *cp, int *l, int *r, int *t, int *b)
 {
    EINA_SAFETY_ON_NULL_RETURN(cp);
+#if defined(HAVE_WAYLAND_CLIENTS) || defined(HAVE_WAYLAND_ONLY)
    if (t) *t = cp->border.x;
    if (b) *b = cp->border.y;
    if (l) *l = cp->border.w;
    if (r) *r = cp->border.h;
+#else
+   if (t) *t = 0;
+   if (b) *b = 0;
+   if (l) *l = 0;
+   if (r) *r = 0;
+#endif
 }
