@@ -1328,10 +1328,6 @@ _e_comp_wl_compositor_cb_region_create(struct wl_client *client, struct wl_resou
    /* set tiler size */
    eina_tiler_tile_size_set(tiler, 1, 1);
 
-   /* add rectangle to tiler */
-   eina_tiler_rect_add(tiler, 
-                       &(Eina_Rectangle){0, 0, comp->man->w, comp->man->h});
-
    if (!(res = wl_resource_create(client, &wl_region_interface, 1, id)))
      {
         ERR("\tFailed to create region resource");
