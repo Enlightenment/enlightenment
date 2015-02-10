@@ -580,6 +580,7 @@ _e_shell_cb_shell_surface_get(struct wl_client *client, struct wl_resource *reso
           }
 
         ec->netwm.ping = EINA_TRUE;
+        ec->new_client = 0;
      }
 
    /* get the client data */
@@ -1198,6 +1199,7 @@ _e_xdg_shell_cb_surface_get(struct wl_client *client, struct wl_resource *resour
    cdata->shell.unmap = _e_xdg_shell_surface_unmap;
 
    /* set toplevel client properties */
+   ec->new_client = 0;
    ec->argb = EINA_TRUE;
    ec->no_shape_cut = EINA_TRUE;
    ec->borderless = !ec->internal_elm_win;
@@ -1307,6 +1309,7 @@ _e_xdg_shell_cb_popup_get(struct wl_client *client, struct wl_resource *resource
    cdata->shell.unmap = _e_xdg_shell_surface_unmap;
 
    ec->override = 1;
+   ec->new_client = 0;
    ec->argb = EINA_TRUE;
    ec->no_shape_cut = EINA_TRUE;
    ec->borderless = !ec->internal_elm_win;
