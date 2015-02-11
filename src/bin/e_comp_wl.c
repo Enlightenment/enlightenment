@@ -1495,11 +1495,10 @@ _e_comp_wl_subsurface_commit_from_cache(E_Client *ec)
         e_pixmap_size_get(ec->pixmap, &nw, &nh);
         if (ec->changes.pos)
           e_comp_object_frame_xy_adjust(ec->frame, ec->x, ec->y, &x, &y);
-        else if (ec->new_client)
-          placed = ec->placed;
         else
           x = ec->client.x, y = ec->client.y;
-
+        if (ec->new_client)
+          placed = ec->placed;
         /* if the client has a shell configure, call it */
         if ((cdata->shell.surface) && (cdata->shell.configure))
           cdata->shell.configure(cdata->shell.surface, x, y, nw, nh);
@@ -2566,11 +2565,10 @@ e_comp_wl_surface_commit(E_Client *ec)
         e_pixmap_size_get(ec->pixmap, &nw, &nh);
         if (ec->changes.pos)
           e_comp_object_frame_xy_adjust(ec->frame, ec->x, ec->y, &x, &y);
-        else if (ec->new_client)
-          placed = ec->placed;
         else
           x = ec->client.x, y = ec->client.y;
-
+        if (ec->new_client)
+          placed = ec->placed;
         /* if the client has a shell configure, call it */
         if ((ec->comp_data->shell.surface) && (ec->comp_data->shell.configure))
           ec->comp_data->shell.configure(ec->comp_data->shell.surface, x, y, nw, nh);
