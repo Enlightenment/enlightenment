@@ -877,14 +877,8 @@ _e_comp_wl_surface_cb_attach(struct wl_client *client EINA_UNUSED, struct wl_res
    /* try to find the associated e_client */
    if (!(ec = e_pixmap_client_get(ep)))
      {
-        uint64_t pixid;
-
-        pixid = e_pixmap_window_get(ep);
-        if (!(ec = e_pixmap_find_client(E_PIXMAP_TYPE_WL, pixid)))
-          {
-             ERR("\t\tCould not find client from pixmap %"PRIu64"", pixid);
-             return;
-          }
+        ERR("\t\tCould not find client from pixmap %p", ep);
+        return;
      }
 
    /* check if client is being deleted */
@@ -938,14 +932,8 @@ _e_comp_wl_surface_cb_damage(struct wl_client *client EINA_UNUSED, struct wl_res
    /* try to find the associated e_client */
    if (!(ec = e_pixmap_client_get(ep)))
      {
-        uint64_t pixid;
-
-        pixid = e_pixmap_window_get(ep);
-        if (!(ec = e_pixmap_find_client(E_PIXMAP_TYPE_WL, pixid)))
-          {
-             ERR("\tCould not find client from pixmap %"PRIu64"", pixid);
-             return;
-          }
+        ERR("\tCould not find client from pixmap %p", ep);
+        return;
      }
 
    if (e_object_is_del(E_OBJECT(ec))) return;
@@ -987,14 +975,8 @@ _e_comp_wl_surface_cb_frame(struct wl_client *client, struct wl_resource *resour
    /* try to find the associated e_client */
    if (!(ec = e_pixmap_client_get(ep)))
      {
-        uint64_t pixid;
-
-        pixid = e_pixmap_window_get(ep);
-        if (!(ec = e_pixmap_find_client(E_PIXMAP_TYPE_WL, pixid)))
-          {
-             ERR("\tCould not find client from pixmap %"PRIu64"", pixid);
-             return;
-          }
+        ERR("\tCould not find client from pixmap %p", ep);
+        return;
      }
 
    if (e_object_is_del(E_OBJECT(ec))) return;
@@ -1025,14 +1007,8 @@ _e_comp_wl_surface_cb_opaque_region_set(struct wl_client *client EINA_UNUSED, st
    /* try to find the associated e_client */
    if (!(ec = e_pixmap_client_get(ep)))
      {
-        uint64_t pixid;
-
-        pixid = e_pixmap_window_get(ep);
-        if (!(ec = e_pixmap_find_client(E_PIXMAP_TYPE_WL, pixid)))
-          {
-             ERR("\tCould not find client from pixmap %"PRIu64"", pixid);
-             return;
-          }
+        ERR("\tCould not find client from pixmap %p", ep);
+        return;
      }
 
    /* trap for clients which are being deleted */
@@ -1073,14 +1049,8 @@ _e_comp_wl_surface_cb_input_region_set(struct wl_client *client EINA_UNUSED, str
    /* try to find the associated e_client */
    if (!(ec = e_pixmap_client_get(ep)))
      {
-        uint64_t pixid;
-
-        pixid = e_pixmap_window_get(ep);
-        if (!(ec = e_pixmap_find_client(E_PIXMAP_TYPE_WL, pixid)))
-          {
-             ERR("\tCould not find client from pixmap %"PRIu64, pixid);
-             return;
-          }
+        ERR("\tCould not find client from pixmap %p", ep);
+        return;
      }
 
    /* trap for clients which are being deleted */
@@ -1117,14 +1087,8 @@ _e_comp_wl_surface_cb_commit(struct wl_client *client EINA_UNUSED, struct wl_res
    /* try to find the associated e_client */
    if (!(ec = e_pixmap_client_get(ep)))
      {
-        uint64_t pixid;
-
-        pixid = e_pixmap_window_get(ep);
-        if (!(ec = e_pixmap_find_client(E_PIXMAP_TYPE_WL, pixid)))
-          {
-             ERR("\tCould not find client from pixmap %"PRIu64, pixid);
-             return;
-          }
+        ERR("\tCould not find client from pixmap %p", ep);
+        return;
      }
 
    /* trap for clients which are being deleted */
@@ -1183,9 +1147,7 @@ _e_comp_wl_surface_destroy(struct wl_resource *resource)
 
    /* try to get the e_client from this pixmap */
    if (!(ec = e_pixmap_client_get(ep)))
-     ec = e_pixmap_find_client(E_PIXMAP_TYPE_WL, e_pixmap_window_get(ep));
-
-   if (!ec) return;
+     return;
 
    evas_object_hide(ec->frame);
    e_object_del(E_OBJECT(ec));
@@ -1892,13 +1854,7 @@ _e_comp_wl_subcompositor_cb_subsurface_get(struct wl_client *client EINA_UNUSED,
 
    /* try to find the associated e_client */
    if (!(ec = e_pixmap_client_get(ep)))
-     {
-        uint64_t pixid;
-
-        pixid = e_pixmap_window_get(ep);
-        if (!(ec = e_pixmap_find_client(E_PIXMAP_TYPE_WL, pixid)))
-          ERR("\tCould not find client from pixmap %"PRIu64, pixid);
-     }
+     ERR("\tCould not find client from pixmap %p", ep);
 
    if (!ec)
      {
@@ -1921,13 +1877,7 @@ _e_comp_wl_subcompositor_cb_subsurface_get(struct wl_client *client EINA_UNUSED,
 
    /* try to find the parents associated e_client */
    if (!(epc = e_pixmap_client_get(epp)))
-     {
-        uint64_t pixid;
-
-        pixid = e_pixmap_window_get(epp);
-        if (!(epc = e_pixmap_find_client(E_PIXMAP_TYPE_WL, pixid)))
-          ERR("\tCould not find client from pixmap %"PRIu64, pixid);
-     }
+     ERR("\tCould not find client from pixmap %p", epp);
 
    /* trap for clients which are being deleted */
    if ((epc) && (e_object_is_del(E_OBJECT(epc)))) return;
