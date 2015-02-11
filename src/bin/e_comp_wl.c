@@ -1491,10 +1491,7 @@ _e_comp_wl_subsurface_commit_from_cache(E_Client *ec)
      {
         int x, y, nw, nh;
 
-        nw = ec->client.w;
-        nh = ec->client.h;
-        if (nw == 0) nw = cdata->pending.w;
-        if (nh == 0) nh = cdata->pending.h;
+        e_pixmap_size_get(ec->pixmap, &nw, &nh);
         if (ec->changes.pos)
           e_comp_object_frame_xy_adjust(ec->frame, ec->x, ec->y, &x, &y);
         else
