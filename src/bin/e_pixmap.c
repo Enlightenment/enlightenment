@@ -895,10 +895,10 @@ e_pixmap_image_opaque_set(E_Pixmap *cp, int x, int y, int w, int h)
 #if defined(HAVE_WAYLAND_CLIENTS) || defined(HAVE_WAYLAND_ONLY)
    EINA_RECTANGLE_SET(&cp->opaque, x, y, w, h);
 #else
-   (void)l;
-   (void)r;
-   (void)t;
-   (void)b;
+   (void)x;
+   (void)y;
+   (void)w;
+   (void)h;
 #endif
 }
 
