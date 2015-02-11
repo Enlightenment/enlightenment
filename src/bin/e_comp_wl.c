@@ -1490,16 +1490,21 @@ _e_comp_wl_subsurface_commit_from_cache(E_Client *ec)
    if (sdata->cached.new_attach)
      {
         int x, y, nw, nh;
+        Eina_Bool placed = EINA_TRUE;
 
         e_pixmap_size_get(ec->pixmap, &nw, &nh);
         if (ec->changes.pos)
           e_comp_object_frame_xy_adjust(ec->frame, ec->x, ec->y, &x, &y);
+        else if (ec->new_client)
+          placed = ec->placed;
         else
           x = ec->client.x, y = ec->client.y;
 
         /* if the client has a shell configure, call it */
         if ((cdata->shell.surface) && (cdata->shell.configure))
           cdata->shell.configure(cdata->shell.surface, x, y, nw, nh);
+        if (ec->new_client)
+          ec->placed = placed;
      }
 
    if (!cdata->mapped) 
@@ -2556,10 +2561,13 @@ e_comp_wl_surface_commit(E_Client *ec)
    if (ec->comp_data->pending.new_attach)
      {
         int x, y, nw, nh;
+        Eina_Bool placed = EINA_TRUE;;
 
         e_pixmap_size_get(ec->pixmap, &nw, &nh);
         if (ec->changes.pos)
           e_comp_object_frame_xy_adjust(ec->frame, ec->x, ec->y, &x, &y);
+        else if (ec->new_client)
+          placed = ec->placed;
         else
           x = ec->client.x, y = ec->client.y;
 
@@ -2568,6 +2576,8 @@ e_comp_wl_surface_commit(E_Client *ec)
           ec->comp_data->shell.configure(ec->comp_data->shell.surface, x, y, nw, nh);
         else
           e_client_util_move_resize_without_frame(ec, x, y, nw, nh);
+        if (ec->new_client)
+          ec->placed = placed;
      }
 
    if (!ec->comp_data->mapped) 
