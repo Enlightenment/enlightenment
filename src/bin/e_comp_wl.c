@@ -2503,12 +2503,14 @@ e_comp_wl_surface_commit(E_Client *ec)
    E_Pixmap *ep;
    Eina_Rectangle *dmg;
    Eina_Tiler *src, *tmp;
+   Eina_Bool first;
 
    if (!(ep = ec->pixmap)) return EINA_FALSE;
    _e_comp_wl_client_evas_init(ec);
    if (ec->focused && ec->comp_data->focus_update)
      _e_comp_wl_client_focus(ec);
 
+   first = !e_pixmap_usable_get(ep);
    /* mark the pixmap as usable or not */
    e_pixmap_usable_set(ep, (ec->comp_data->pending.buffer != NULL));
 
@@ -2577,6 +2579,12 @@ e_comp_wl_surface_commit(E_Client *ec)
           e_client_util_move_resize_without_frame(ec, x, y, nw, nh);
         if (ec->new_client)
           ec->placed = placed;
+        else if (first && ec->placed)
+          {
+             ec->x = ec->y = 0;
+             ec->placed = 0;
+             ec->new_client = 1;
+          }
      }
 
    if (!ec->comp_data->mapped) 
