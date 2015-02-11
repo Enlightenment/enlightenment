@@ -1089,7 +1089,6 @@ _e_xdg_shell_surface_map(struct wl_resource *resource)
      {
         /* map this surface if needed */
         ec->visible = EINA_TRUE;
-        evas_object_geometry_set(ec->frame, ec->x, ec->y, ec->w, ec->h);
         evas_object_show(ec->frame);
         ec->comp_data->mapped = EINA_TRUE;
 
