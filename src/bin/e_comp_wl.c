@@ -2545,6 +2545,7 @@ e_comp_wl_surface_commit(E_Client *ec)
    Eina_Tiler *src, *tmp;
 
    if (!(ep = ec->pixmap)) return EINA_FALSE;
+   _e_comp_wl_client_evas_init(ec);
 
    /* mark the pixmap as usable or not */
    e_pixmap_usable_set(ep, (ec->comp_data->pending.buffer != NULL));
