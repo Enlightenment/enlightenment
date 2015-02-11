@@ -1446,7 +1446,7 @@ _screen_config_apply(void)
      {
         int dww = 0, dhh = 0, dww2 = 0, dhh2 = 0;
         ecore_x_randr_screen_current_size_get(root, &dww, &dhh, &dww2, &dhh2);
-        printf("RRR: cur size: %ix%i\n", ww, hh);
+        printf("RRR: cur size: %ix%i\n", dww, dhh);
      }
    printf("RRR: size range: %ix%i -> %ix%i\n", minw, minh, maxw, maxh);
    if (nw > maxw) nw = maxw;
@@ -1459,7 +1459,7 @@ _screen_config_apply(void)
      {
         int dww = 0, dhh = 0, dww2 = 0, dhh2 = 0;
         ecore_x_randr_screen_current_size_get(root, &dww, &dhh, &dww2, &dhh2);
-        printf("RRR: cur size: %ix%i\n", ww, hh);
+        printf("RRR: cur size: %ix%i\n", dww, dhh);
      }
    printf("RRR: set vsize: %ix%i\n", nw, nh);
 
@@ -1589,8 +1589,8 @@ _screen_config_apply(void)
 //        ecore_x_randr_screen_reset(root);
 //        ecore_x_randr_screen_current_size_set(root, nw, nh, -1, -1);
 //        ecore_x_sync();
-//        ecore_x_randr_screen_current_size_get(root, &ww, &hh, &ww2, &hh2);
-//        printf("RRR: cur size: %ix%i\n", ww, hh);
+//        ecore_x_randr_screen_current_size_get(root, &dww, &dhh, &dww2, &dhh2);
+//        printf("RRR: cur size: %ix%i\n", dww,d hh);
      }
    ecore_x_randr_screen_size_range_get(root, NULL, NULL, NULL, NULL);
    ecore_x_ungrab();
