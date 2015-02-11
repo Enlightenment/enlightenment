@@ -122,7 +122,10 @@ _e_comp_wl_evas_cb_show(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj EIN
      {
         ec->comp_data->need_reparent = EINA_TRUE;
         ec->visible = EINA_TRUE;
-        if (ec->internal_elm_win) ec->take_focus = EINA_TRUE;
+     }
+   if (!e_client_util_ignored_get(ec))
+     {
+        ec->take_focus = !starting;
         EC_CHANGED(ec);
      }
 
@@ -2019,7 +2022,6 @@ _e_comp_wl_client_cb_new(void *data EINA_UNUSED, E_Client *ec)
    if ((!e_client_util_ignored_get(ec)) && (!ec->internal))
      {
         ec->comp_data->need_reparent = EINA_TRUE;
-        ec->take_focus = !starting;
      }
 
    /* add this client to the hash */
