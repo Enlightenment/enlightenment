@@ -670,6 +670,7 @@ _e_comp_wl_evas_cb_color_set(void *data, Evas_Object *obj, void *event EINA_UNUS
 static void 
 _e_comp_wl_client_evas_init(E_Client *ec)
 {
+   if (ec->comp_data->evas_init) return;
    evas_object_event_callback_add(ec->frame, EVAS_CALLBACK_SHOW, 
                                   _e_comp_wl_evas_cb_show, ec);
    evas_object_event_callback_add(ec->frame, EVAS_CALLBACK_HIDE, 
