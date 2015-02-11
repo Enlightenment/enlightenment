@@ -36,6 +36,11 @@ _e_comp_wl_input_pointer_cb_cursor_set(struct wl_client *client, struct wl_resou
 
    /* get compositor data */
    if (!(cdata = wl_resource_get_user_data(resource))) return;
+   if (!surface_resource)
+     {
+        e_pointer_object_set(e_comp->pointer, NULL, x, y);
+        return;
+     }
    wl_client_get_credentials(client, &pid, NULL, NULL);
    sid = e_comp_wl_id_get(wl_resource_get_id(surface_resource), pid);
    if (!(ec = e_pixmap_find_client(E_PIXMAP_TYPE_WL, sid)))
