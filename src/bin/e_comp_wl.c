@@ -503,6 +503,31 @@ _e_comp_wl_client_idler_add(E_Client *ec)
      _idle_clients = eina_list_append(_idle_clients, ec);
 }
 
+static void
+_e_comp_wl_client_focus(E_Client *ec)
+{
+   struct wl_resource *res;
+   struct wl_client *wc;
+   uint32_t serial, *k;
+   Eina_List *l;
+
+   /* update keyboard modifier state */
+   wl_array_for_each(k, &e_comp->wl_comp_data->kbd.keys)
+     e_comp_wl_input_keyboard_state_update(e_comp->wl_comp_data, *k, EINA_TRUE);
+
+   /* send keyboard_enter to all keyboard resources */
+   wc = wl_resource_get_client(ec->comp_data->surface);
+   serial = wl_display_next_serial(e_comp->wl_comp_data->wl.disp);
+   ec->comp_data->focus_update = 1;
+   EINA_LIST_FOREACH(e_comp->wl_comp_data->kbd.resources, l, res)
+     {
+        if (wl_resource_get_client(res) != wc) continue;
+        wl_keyboard_send_enter(res, serial, ec->comp_data->surface,
+                               &e_comp->wl_comp_data->kbd.keys);
+        ec->comp_data->focus_update = 0;
+     }
+}
+
 static void 
 _e_comp_wl_evas_cb_focus_in(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
 {
@@ -520,7 +545,8 @@ _e_comp_wl_evas_cb_focus_in(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj
 
    /* raise client priority */
    _e_comp_wl_client_priority_raise(ec);
-   ec->comp_data->focus_update = 1;
+
+   _e_comp_wl_client_focus(ec);
 }
 
 static void 
@@ -2526,27 +2552,7 @@ e_comp_wl_surface_commit(E_Client *ec)
    if (!(ep = ec->pixmap)) return EINA_FALSE;
    _e_comp_wl_client_evas_init(ec);
    if (ec->focused && ec->comp_data->focus_update)
-     {
-        struct wl_resource *res;
-        struct wl_client *wc;
-        uint32_t serial, *k;
-        Eina_List *l;
-
-        /* update keyboard modifier state */
-        wl_array_for_each(k, &e_comp->wl_comp_data->kbd.keys)
-          e_comp_wl_input_keyboard_state_update(e_comp->wl_comp_data, *k, EINA_TRUE);
-
-        /* send keyboard_enter to all keyboard resources */
-        wc = wl_resource_get_client(ec->comp_data->surface);
-        serial = wl_display_next_serial(e_comp->wl_comp_data->wl.disp);
-        EINA_LIST_FOREACH(e_comp->wl_comp_data->kbd.resources, l, res)
-          {
-             if (wl_resource_get_client(res) != wc) continue;
-             wl_keyboard_send_enter(res, serial, ec->comp_data->surface,
-                                    &e_comp->wl_comp_data->kbd.keys);
-          }
-        ec->comp_data->focus_update = 0;
-     }
+     _e_comp_wl_client_focus(ec);
 
    /* mark the pixmap as usable or not */
    e_pixmap_usable_set(ep, (ec->comp_data->pending.buffer != NULL));
