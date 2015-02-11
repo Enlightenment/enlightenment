@@ -1467,17 +1467,20 @@ _e_comp_wl_subsurface_commit_from_cache(E_Client *ec)
    /* check for any pending attachments */
    if (sdata->cached.new_attach)
      {
-        int nw, nh;
+        int x, y, nw, nh;
 
         nw = ec->client.w;
         nh = ec->client.h;
         if (nw == 0) nw = cdata->pending.w;
         if (nh == 0) nh = cdata->pending.h;
+        if (ec->changes.pos)
+          e_comp_object_frame_xy_adjust(ec->frame, ec->x, ec->y, &x, &y);
+        else
+          x = ec->client.x, y = ec->client.y;
 
         /* if the client has a shell configure, call it */
         if ((cdata->shell.surface) && (cdata->shell.configure))
-          cdata->shell.configure(cdata->shell.surface, 
-                                 ec->client.x, ec->client.y, nw, nh);
+          cdata->shell.configure(cdata->shell.surface, x, y, nw, nh);
      }
 
    /* check if we need to map this surface */
@@ -2523,18 +2526,20 @@ e_comp_wl_surface_commit(E_Client *ec)
    /* check for any pending attachments */
    if (ec->comp_data->pending.new_attach)
      {
-        int nw, nh;
+        int x, y, nw, nh;
 
         e_pixmap_size_get(ec->pixmap, &nw, &nh);
+        if (ec->changes.pos)
+          e_comp_object_frame_xy_adjust(ec->frame, ec->x, ec->y, &x, &y);
+        else
+          x = ec->client.x, y = ec->client.y;
 
         /* if the client has a shell configure, call it */
         if ((ec->comp_data->shell.surface) && 
             (ec->comp_data->shell.configure))
-          ec->comp_data->shell.configure(ec->comp_data->shell.surface, 
-                                         ec->client.x, ec->client.y,
-                                         nw, nh);
+          ec->comp_data->shell.configure(ec->comp_data->shell.surface, x, y, nw, nh);
         else
-          e_client_util_move_resize_without_frame(ec, ec->client.x, ec->client.y, nw, nh);
+          e_client_util_move_resize_without_frame(ec, x, y, nw, nh);
      }
 
    /* check if we need to map this surface */
