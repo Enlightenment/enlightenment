@@ -2035,7 +2035,6 @@ _e_comp_x_mouse_in(void *data EINA_UNUSED, int type EINA_UNUSED, Ecore_X_Event_M
    ec = _e_comp_x_client_find_by_window(ev->win);
    if (!ec) return ECORE_CALLBACK_RENEW;
    if (ec->comp_data->deleted) return ECORE_CALLBACK_RENEW;
-   if (ec->input_object) return ECORE_CALLBACK_RENEW;
    e_client_mouse_in(ec, e_comp_canvas_x_root_adjust(ec->comp, ev->root.x), e_comp_canvas_x_root_adjust(ec->comp, ev->root.y));
    return ECORE_CALLBACK_RENEW;
 }
@@ -2056,7 +2055,6 @@ _e_comp_x_mouse_out(void *data EINA_UNUSED, int type EINA_UNUSED, Ecore_X_Event_
    ec = _e_comp_x_client_find_by_window(ev->win);
    if (!ec) return ECORE_CALLBACK_RENEW;
    if (ec->comp_data->deleted) return ECORE_CALLBACK_RENEW;
-   if (ec->input_object) return ECORE_CALLBACK_RENEW;
    e_client_mouse_out(ec, e_comp_canvas_x_root_adjust(ec->comp, ev->root.x), e_comp_canvas_x_root_adjust(ec->comp, ev->root.y));
    return ECORE_CALLBACK_RENEW;
 }

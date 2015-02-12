@@ -259,8 +259,6 @@ struct E_Client
 
    E_Comp_Client_Data       *comp_data;
 
-   Evas_Object *input_object; //for running wayland clients in X
-
    E_Action                  *cur_mouse_action;
 
    int               border_size; //size of client's border
