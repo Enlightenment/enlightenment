@@ -272,6 +272,7 @@ struct E_Client
          int x, y, w, h;
          int mx, my;
       } current, last_down[3], last_up[3];
+      Eina_Bool in : 1;
    } mouse;
 
    struct
