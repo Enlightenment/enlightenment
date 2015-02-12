@@ -2691,6 +2691,7 @@ e_client_mouse_in(E_Client *ec, int x, int y)
    if (ec->desk && ec->desk->animate_count) return;
    ec->mouse.current.mx = x;
    ec->mouse.current.my = y;
+   ec->mouse.in = 1;
    if (!ec->iconic)
      e_focus_event_mouse_in(ec);
 }
@@ -2706,6 +2707,7 @@ e_client_mouse_out(E_Client *ec, int x, int y)
 
    ec->mouse.current.mx = x;
    ec->mouse.current.my = y;
+   ec->mouse.in = 0;
    if (!ec->iconic)
      e_focus_event_mouse_out(ec);
 }
