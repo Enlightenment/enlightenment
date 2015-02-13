@@ -1959,9 +1959,6 @@ _e_comp_wl_client_cb_new(void *data EINA_UNUSED, E_Client *ec)
    ec->no_shape_cut = EINA_TRUE;
    ec->ignored = e_comp_ignore_win_find(win);
    ec->border_size = 0;
-   ec->placed |= ec->override;
-   ec->new_client ^= ec->override;
-   ec->icccm.accepts_focus = ((!ec->override) && (!ec->input_only));
 
    /* NB: could not find a better place to do this, BUT for internal windows, 
     * we need to set delete_request else the close buttons on the frames do 
@@ -1971,12 +1968,9 @@ _e_comp_wl_client_cb_new(void *data EINA_UNUSED, E_Client *ec)
 
    /* set initial client data properties */
    ec->comp_data->mapped = EINA_FALSE;
-   ec->comp_data->first_damage = ((ec->internal) || (ec->override));
+   ec->comp_data->first_damage = ec->internal;
 
-   if ((!e_client_util_ignored_get(ec)) && (!ec->internal))
-     {
-        ec->comp_data->need_reparent = EINA_TRUE;
-     }
+   ec->comp_data->need_reparent = !ec->internal;
 
    /* add this client to the hash */
    /* eina_hash_add(clients_win_hash, &win, ec); */
