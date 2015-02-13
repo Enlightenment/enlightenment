@@ -3494,6 +3494,12 @@ e_client_focus_stack_get(void)
    return focus_stack;
 }
 
+YOLO EAPI void
+e_client_focus_stack_set(Eina_List *l)
+{
+   focus_stack = l;
+}
+
 EAPI Eina_List *
 e_client_raise_stack_get(void)
 {
