@@ -58,7 +58,7 @@ _e_comp_wl_input_pointer_cb_cursor_set(struct wl_client *client, struct wl_resou
    if (!(ec = e_pixmap_find_client(E_PIXMAP_TYPE_WL, sid)))
      {
         ec = e_client_new(NULL, e_pixmap_new(E_PIXMAP_TYPE_WL, sid), 1, 0);
-        ec->layer_block = ec->visible = ec->override = 1;
+        ec->lock_focus_out = ec->layer_block = ec->visible = ec->override = 1;
         ec->new_client = 0;
         ec->icccm.title = eina_stringshare_add("noshadow");
         evas_object_pass_events_set(ec->frame, 1);
