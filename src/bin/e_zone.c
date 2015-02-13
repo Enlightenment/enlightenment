@@ -270,17 +270,40 @@ e_zone_name_set(E_Zone *zone,
    zone->name = eina_stringshare_add(name);
 }
 
+static void
+e_zone_reconfigure_clients(E_Zone *zone, int dx, int dy, int dw, int dh)
+{
+   E_Client *ec;
+
+   E_CLIENT_FOREACH(zone->comp, ec)
+     {
+        if (ec->zone != zone) continue;
+
+        if ((dx != 0) || (dy != 0))
+          evas_object_move(ec->frame, ec->x + dx, ec->y + dy);
+        // we shrank the zone - adjust windows more
+        if ((dw < 0) || (dh < 0))
+          {
+             e_client_res_change_geometry_save(ec);
+             e_client_res_change_geometry_restore(ec);
+          }
+     }
+}
+
 EAPI void
 e_zone_move(E_Zone *zone,
             int x,
             int y)
 {
    E_Event_Zone_Move_Resize *ev;
+   int dx, dy;
 
    E_OBJECT_CHECK(zone);
    E_OBJECT_TYPE_CHECK(zone, E_ZONE_TYPE);
 
    if ((x == zone->x) && (y == zone->y)) return;
+   dx = x - zone->x;
+   dy = y - zone->y;
    zone->x = x;
    zone->y = y;
    evas_object_move(zone->bg_object, x, y);
@@ -294,6 +317,7 @@ e_zone_move(E_Zone *zone,
 
    _e_zone_edge_move_resize(zone);
    e_zone_bg_reconfigure(zone);
+   e_zone_reconfigure_clients(zone, dx, dy, 0, 0);
 }
 
 EAPI void
@@ -302,11 +326,15 @@ e_zone_resize(E_Zone *zone,
               int h)
 {
    E_Event_Zone_Move_Resize *ev;
+   int dw, dh;
 
    E_OBJECT_CHECK(zone);
    E_OBJECT_TYPE_CHECK(zone, E_ZONE_TYPE);
 
    if ((w == zone->w) && (h == zone->h)) return;
+
+   dw = w - zone->w;
+   dh = h - zone->h;
    zone->w = w;
    zone->h = h;
    evas_object_resize(zone->bg_object, w, h);
@@ -321,6 +349,7 @@ e_zone_resize(E_Zone *zone,
 
    _e_zone_edge_move_resize(zone);
    e_zone_bg_reconfigure(zone);
+   e_zone_reconfigure_clients(zone, 0, 0, dw, dh);
 }
 
 EAPI Eina_Bool
@@ -331,6 +360,7 @@ e_zone_move_resize(E_Zone *zone,
                    int h)
 {
    E_Event_Zone_Move_Resize *ev;
+   int dx, dy, dw, dh;
 
    E_OBJECT_CHECK_RETURN(zone, EINA_FALSE);
    E_OBJECT_TYPE_CHECK_RETURN(zone, E_ZONE_TYPE, EINA_FALSE);
@@ -338,6 +368,10 @@ e_zone_move_resize(E_Zone *zone,
    if ((x == zone->x) && (y == zone->y) && (w == zone->w) && (h == zone->h))
      return EINA_FALSE;
 
+   dx = x - zone->x;
+   dy = y - zone->y;
+   dw = w - zone->w;
+   dh = h - zone->h;
    zone->x = x;
    zone->y = y;
    zone->w = w;
@@ -357,8 +391,8 @@ e_zone_move_resize(E_Zone *zone,
                    _e_zone_event_generic_free, NULL);
 
    _e_zone_edge_move_resize(zone);
-
    e_zone_bg_reconfigure(zone);
+   e_zone_reconfigure_clients(zone, dx, dy, dw, dh);
    return EINA_TRUE;
 }
 

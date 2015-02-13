@@ -4560,35 +4560,114 @@ _e_comp_x_pre_swap(void *data, Evas *e EINA_UNUSED)
    c->grabbed = 0;
 }
 
+static int
+_e_comp_x_cinerama_screen_sort_cb(const void *data1, const void *data2)
+{
+   const E_Randr2_Screen *s1 = data1, *s2 = data2;
+   int dif;
+
+   dif = -(s1->config.priority - s2->config.priority);
+   if (dif == 0)
+     {
+        dif = s1->config.geom.x - s2->config.geom.x;
+        if (dif == 0)
+          dif = s1->config.geom.y - s2->config.geom.y;
+     }
+   return dif;
+}
+
 static Eina_Bool
 _e_comp_x_xinerama_setup(int rw, int rh)
 {
    int i;
    E_Screen *screen;
+   Eina_List *screens = NULL, *screens_rem;
    Eina_List *all_screens = NULL;
-   Eina_List *l;
-   E_Randr2_Screen *s;
+   Eina_List *l, *ll;
+   E_Randr2_Screen *s, *s2, *s_chosen;
+   Eina_Bool removed;
 
-   i = 0;
+   // put screens in tmp list
    EINA_LIST_FOREACH(e_randr2->screens, l, s)
      {
         if ((s->config.enabled) &&
             (s->config.geom.w > 0) &&
             (s->config.geom.h > 0))
           {
-             screen = E_NEW(E_Screen, 1);
-             screen->escreen = screen->screen = i;
-             screen->x = s->config.geom.x;
-             screen->y = s->config.geom.y;
-             screen->w = s->config.geom.w;
-             screen->h = s->config.geom.h;
-             all_screens = eina_list_append(all_screens, screen);
-             printf("xinerama screen %i %i %ix%i\n", screen->x, screen->y, screen->w, screen->h);
-             INF("E INIT: XINERAMA SCREEN: [%i][%i], %ix%i+%i+%i",
-                 i, i, screen->w, screen->h, screen->x, screen->y);
-             i++;
+             screens = eina_list_append(screens, s);
           }
      }
+   // remove overlapping screens - if a set of screens overlap, keep the
+   // smallest/lowest res
+   do
+     {
+        removed = EINA_FALSE;
+
+        EINA_LIST_FOREACH(screens, l, s)
+          {
+             screens_rem = NULL;
+
+             EINA_LIST_FOREACH(l->next, ll, s2)
+               {
+                  if (E_INTERSECTS(s->config.geom.x, s->config.geom.y,
+                                   s->config.geom.w, s->config.geom.h,
+                                   s2->config.geom.x, s2->config.geom.y,
+                                   s2->config.geom.w, s2->config.geom.h))
+                    {
+                       if (!screens_rem)
+                         screens_rem = eina_list_append(screens_rem, s);
+                       screens_rem = eina_list_append(screens_rem, s2);
+                    }
+               }
+             // we have intersecting screens - choose the lowest res one
+             if (screens_rem)
+               {
+                  removed = EINA_TRUE;
+                  // find the smallest screen (chosen one)
+                  s_chosen = NULL;
+                  EINA_LIST_FOREACH(screens_rem, ll, s2)
+                    {
+                       if (!s_chosen) s_chosen = s2;
+                       else
+                         {
+                            if ((s_chosen->config.geom.w *
+                                 s_chosen->config.geom.h) >
+                                (s2->config.geom.w *
+                                 s2->config.geom.h))
+                              s_chosen = s2;
+                         }
+                    }
+                  // remove all from screens but the chosen one
+                  EINA_LIST_FREE(screens_rem, s2)
+                    {
+                       if (s2 != s_chosen)
+                         screens = eina_list_remove_list(screens, l);
+                    }
+                  // break our list walk and try again
+                  break;
+               }
+          }
+     }
+   while (removed);
+   // sort screens by priority etc.
+   screens = eina_list_sort(screens, eina_list_count(screens),
+                            _e_comp_x_cinerama_screen_sort_cb);
+   i = 0;
+   EINA_LIST_FOREACH(screens, l, s)
+     {
+        screen = E_NEW(E_Screen, 1);
+        screen->escreen = screen->screen = i;
+        screen->x = s->config.geom.x;
+        screen->y = s->config.geom.y;
+        screen->w = s->config.geom.w;
+        screen->h = s->config.geom.h;
+        all_screens = eina_list_append(all_screens, screen);
+        printf("xinerama screen %i %i %ix%i\n", screen->x, screen->y, screen->w, screen->h);
+        INF("E INIT: XINERAMA SCREEN: [%i][%i], %ix%i+%i+%i",
+            i, i, screen->w, screen->h, screen->x, screen->y);
+        i++;
+     }
+   eina_list_free(screens);
    // if we have NO screens at all (above - i will be 0) AND we have no
    // existing screens set up in xinerama - then just say root window size
    // is the entire screen. this should handle the case where you unplug ALL

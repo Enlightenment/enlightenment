@@ -423,6 +423,7 @@ _config_apply(E_Randr2 *r, E_Config_Randr2 *cfg)
              s->config.mode.preferred = EINA_FALSE;
              s->config.rotation = cs->rotation;
              s->config.priority = cs->priority;
+             printf("RRR: ... priority = %i\n", cs->priority);
              free(s->config.relative.to);
              if (cs->rel_to) s->config.relative.to = strdup(cs->rel_to);
              else s->config.relative.to = NULL;
@@ -659,6 +660,49 @@ _screen_config_takeover(void)
      }
 }
 
+static E_Config_Randr2_Screen *_config_screen_string_find(E_Config_Randr2 *cfg, const char *id);
+static E_Randr2_Screen *_screen_fuzzy_fallback_find(E_Config_Randr2 *cfg, const char *id);
+
+static E_Config_Randr2_Screen *
+_config_screen_string_find(E_Config_Randr2 *cfg, const char *id)
+{
+   Eina_List *l;
+   E_Config_Randr2_Screen *cs;
+
+   if ((!id) || (!cfg)) return NULL;
+   EINA_LIST_FOREACH(cfg->screens, l, cs)
+     {
+        if (!cs->id) continue;
+        if (!strcmp(cs->id, id)) return cs;
+     }
+   return NULL;
+}
+
+static E_Randr2_Screen *
+_screen_fuzzy_fallback_find(E_Config_Randr2 *cfg, const char *id)
+{
+   E_Randr2_Screen *s = NULL;
+   char *p, *name;
+
+   // strip out everythng in the string from / on as that is edid
+   // and fall back to finding just the output name in the rel
+   // to identifier, rather than the specific screen id
+   name = alloca(strlen(id) + 1);
+   strcpy(name, id);
+   if ((p = strchr(name, '/'))) *p = 0;
+
+   s = _screen_id_find(id);
+   if (!s) s = _screen_id_find(name);
+   if (!s)
+     {
+        E_Config_Randr2_Screen *cs;
+
+        cs = _config_screen_string_find(cfg, id);
+        if ((cs) && (cs->id)) return _screen_fuzzy_fallback_find(cfg, cs->id);
+     }
+   return s;
+}
+
 static int _config_do_recurse = 0;
 
 static void
@@ -680,18 +724,7 @@ _screen_config_do(E_Randr2_Screen *s)
      {
         // if this screen is relative TO something (clone or left/right etc.
         // then calculate what it is relative to first
-        s2 = _screen_id_find(s->config.relative.to);
-        printf("RRR: '%s' is relative to %p\n", s->info.name, s2);
-        if (!s2)
-          {
-             // strip out everythng in the string from / on as that is edid
-             // and fall back to finding just the output name in the rel
-             // to identifier, rather than the specific screen id
-             char *p, *str = alloca(strlen(s->config.relative.to) + 1);
-             strcpy(str, s->config.relative.to);
-             if ((p = strchr(str, '/'))) *p = 0;
-             s2 = _screen_output_find(str);
-          }
+        s2 = _screen_fuzzy_fallback_find(e_randr2_cfg, s->config.relative.to);
         printf("RRR: '%s' is relative to %p\n", s->info.name, s2);
         if (s2) _screen_config_do(s2);
      }
@@ -1137,9 +1170,11 @@ _info_get(void)
      {
         Ecore_X_Randr_Mode *modes;
         Ecore_X_Randr_Edid_Display_Interface_Type conn;
-        int modes_num = 0, modes_pref = 0;
+        int modes_num = 0, modes_pref = 0, priority;
+        E_Config_Randr2_Screen *cs;
         E_Randr2_Screen *s = calloc(1, sizeof(E_Randr2_Screen));
         if (!s) continue;
+
         s->info.name = _output_name_get(root, outputs[i]);
         printf("RRR: ...... out %s\n", s->info.name);
         if (!s->info.name)
@@ -1215,8 +1250,14 @@ _info_get(void)
                }
              free(modes);
           }
-        if (ecore_x_randr_primary_output_get(root) == outputs[i])
-          s->config.priority = 100;
+        cs = NULL;
+        priority = 0;
+        if (e_randr2_cfg) cs = _config_screen_find(s, e_randr2_cfg);
+        if (cs)
+          priority = cs->priority;
+        else if (ecore_x_randr_primary_output_get(root) == outputs[i])
+          priority = 100;
+        s->config.priority = priority;
         for (j = 0; j < crtcs_num; j++)
           {
              Eina_Bool ok, possible;
