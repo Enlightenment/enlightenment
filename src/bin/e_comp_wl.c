@@ -208,12 +208,7 @@ _e_comp_wl_evas_cb_mouse_out(void *data, Evas *evas EINA_UNUSED, Evas_Object *ob
 
       ecore_evas_cursor_get(e_comp->ee, &o, NULL, NULL, NULL);
       if (e_comp->pointer->o_ptr != o)
-        {
-           E_Client *pec;
-
-           pec = e_comp_object_client_get(o);
-           e_pointer_object_set(e_comp->pointer, NULL, 0, 0);
-        }
+        e_pointer_object_set(e_comp->pointer, NULL, 0, 0);
    }
    if (e_object_is_del(E_OBJECT(ec))) return;
 
