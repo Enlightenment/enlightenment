@@ -1,4 +1,4 @@
-Wayland support in Enlightenment 0.19.0
+Wayland support in Enlightenmen
 
 Caution: Support for running Enlightenment in a Wayland-Only
 configuration is considered Highly Experimental !! Use at your own
@@ -54,6 +54,7 @@ own separate prefix so that you can still safely fallback to the X11 version.
 This can be done by passing:
 
   --prefix=<some_other_install_location>
+  --with-systemdunitdir=<some_other_install_location>/some/path
 
 Now, on to the magic bits ;)
 
