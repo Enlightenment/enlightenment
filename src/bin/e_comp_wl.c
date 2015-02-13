@@ -2628,7 +2628,6 @@ e_comp_wl_surface_commit(E_Client *ec)
           e_comp_object_input_area_set(ec->frame, 0, 0, ec->w, ec->h);
 
         eina_tiler_free(tmp);
-        eina_tiler_clear(ec->comp_data->pending.input);
      }
 
    return EINA_TRUE;
