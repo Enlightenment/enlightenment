@@ -744,6 +744,16 @@ _e_comp_wl_cb_key_down(void *event)
    keycode = (ev->keycode - 8);
    if (!(cdata = e_comp->wl_comp_data)) return;
 
+#ifdef HAVE_WAYLAND_ONLY
+ #ifndef E_RELEASE_BUILD
+   if ((ev->modifiers & ECORE_EVENT_MODIFIER_CTRL) &&
+       ((ev->modifiers & ECORE_EVENT_MODIFIER_ALT) ||
+       (ev->modifiers & ECORE_EVENT_MODIFIER_ALTGR)) &&
+       eina_streq(ev->key, "BackSpace"))
+     exit(0);
+ #endif
+#endif
+
    end = (uint32_t *)cdata->kbd.keys.data + (cdata->kbd.keys.size / sizeof(*k));
 
    for (k = cdata->kbd.keys.data; k < end; k++)
