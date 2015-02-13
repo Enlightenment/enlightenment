@@ -54,7 +54,6 @@ _e_comp_wl_input_pointer_cb_cursor_set(struct wl_client *client, struct wl_resou
      }
    /* ignore cursor changes during resize/move I guess */
    if (e_client_action_get()) return;
-   ec->hidden = 0;
    e_pointer_object_set(e_comp->pointer, ec->frame, x, y);
 }
 

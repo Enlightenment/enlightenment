@@ -750,9 +750,25 @@ e_pointer_idler_before(void)
 EAPI void
 e_pointer_object_set(E_Pointer *ptr, Evas_Object *obj, int x, int y)
 {
+   Evas_Object *o;
+   E_Client *ec;
+
+   ecore_evas_cursor_get(ptr->ee, &o, NULL, NULL, NULL);
+   if (o)
+     {
+        ec = e_comp_object_client_get(o);
+        if (ec)
+          ec->hidden = 1;
+     }
    ecore_evas_cursor_unset(ptr->ee);
+
    if (obj)
-     ecore_evas_object_cursor_set(ptr->ee, obj, EVAS_LAYER_MAX, x, y);
+     {
+        ec = e_comp_object_client_get(obj);
+        if (ec)
+          ec->hidden = 1;
+        ecore_evas_object_cursor_set(ptr->ee, obj, EVAS_LAYER_MAX, x, y);
+     }
    else
      ecore_evas_object_cursor_set(ptr->ee, ptr->o_ptr, EVAS_LAYER_MAX, ptr->hot.x, ptr->hot.y);
 }
