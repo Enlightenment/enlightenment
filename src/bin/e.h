@@ -277,6 +277,16 @@ typedef struct _E_Rect         E_Rect;
 # define E_ENUM           5
 # define E_LIB_IN         6
 
+
+/* if you see a deprecated warning for a YOLO function,
+ * you are attempting to use an extremely dangerous function.
+ */
+#ifdef EXECUTIVE_MODE_ENABLED
+ #define YOLO
+#else
+ #define YOLO EINA_DEPRECATED
+#endif
+
 # define E_TYPEDEFS       1
 # include "e_includes.h"
 # undef E_TYPEDEFS
