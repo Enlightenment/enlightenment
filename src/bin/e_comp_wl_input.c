@@ -33,9 +33,21 @@ _e_comp_wl_input_pointer_cb_cursor_set(struct wl_client *client, struct wl_resou
    pid_t pid;
    E_Client *ec;
    uint64_t sid;
+   Eina_Bool got_mouse = EINA_FALSE;
 
    /* get compositor data */
    if (!(cdata = wl_resource_get_user_data(resource))) return;
+   E_CLIENT_FOREACH(e_comp, ec)
+     {
+       if (!ec->comp_data->surface) continue;
+       if (client != wl_resource_get_client(ec->comp_data->surface)) continue;
+       if (ec->mouse.in)
+         {
+           got_mouse = EINA_TRUE;
+           break;
+         }
+     }
+   if (!got_mouse) return;
    if (!surface_resource)
      {
         e_pointer_object_set(e_comp->pointer, NULL, x, y);
