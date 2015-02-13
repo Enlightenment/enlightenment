@@ -22,6 +22,9 @@ Firstly, you MUST have EFL built with the following options:
   --enable-wayland
   --enable-systemd
 
+Note that the drm engine will not be functional unless the target system
+has libsystemd-login installed.
+
 This Readme does not address the dependencies needed to enable Wayland
 in EFL. If you require any information for that, please see:
 
