@@ -1,3 +1,4 @@
+#define EXECUTIVE_MODE_ENABLED
 #define E_COMP_WL
 #include "e.h"
 #include "e_desktop_shell_protocol.h"
@@ -1311,6 +1312,7 @@ _e_xdg_shell_cb_popup_get(struct wl_client *client, struct wl_resource *resource
    ec->netwm.type = E_WINDOW_TYPE_POPUP_MENU;
    ec->comp_data->set_win_type = EINA_TRUE;
    evas_object_layer_set(ec->frame, E_LAYER_CLIENT_POPUP);
+   e_client_focus_stack_set(eina_list_remove(e_client_focus_stack_get(), ec));
 
    /* set this client as a transient for parent */
    _e_shell_surface_parent_set(ec, parent_resource);
