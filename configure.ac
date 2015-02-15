@@ -397,7 +397,7 @@ AM_CONDITIONAL([HAVE_EEZE], [test "x${device_backend}" = "xeeze"])
 
 if test "x${device_backend}" != "xeeze"; then
   device_backend=hal
-  device_libs=edbus
+  device_libs=eldbus
   AC_DEFINE_UNQUOTED([HAVE_HAL],[1],[enable HAL support])
 fi
 
