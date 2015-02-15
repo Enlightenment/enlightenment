@@ -692,7 +692,7 @@ _screen_fuzzy_fallback_find(E_Config_Randr2 *cfg, const char *id)
    if ((p = strchr(name, '/'))) *p = 0;
 
    s = _screen_id_find(id);
-   if (!s) s = _screen_id_find(name);
+   if (!s) s = _screen_output_find(name);
    if (!s)
      {
         E_Config_Randr2_Screen *cs;
@@ -701,6 +701,34 @@ _screen_fuzzy_fallback_find(E_Config_Randr2 *cfg, const char *id)
         if ((cs) && (cs->id)) return _screen_fuzzy_fallback_find(cfg, cs->id);
      }
    return s;
+}
+
+static E_Config_Randr2_Screen *
+_config_screen_clone_resolve(E_Config_Randr2 *cfg, const char *id, int *x, int *y)
+{
+   E_Config_Randr2_Screen *cs;
+   E_Randr2_Screen *s;
+   char *p, *name;
+
+   cs = _config_screen_string_find(cfg, id);
+   if (!cs) return NULL;
+
+   name = alloca(strlen(cs->id) + 1);
+   strcpy(name, cs->id);
+   if ((p = strchr(name, '/'))) *p = 0;
+
+   s = _screen_id_find(cs->id);
+   if (!s) s = _screen_output_find(name);
+   if (!s)
+     {
+        if ((cs->rel_mode == E_RANDR2_RELATIVE_CLONE) && (cs->rel_to))
+          return _config_screen_clone_resolve(cfg, cs->rel_to, x, y);
+        return NULL;
+     }
+   _screen_config_do(s);
+   *x = s->config.geom.x;
+   *y = s->config.geom.y;
+   return cs;
 }
 
 static int _config_do_recurse = 0;
@@ -725,8 +753,12 @@ _screen_config_do(E_Randr2_Screen *s)
         // if this screen is relative TO something (clone or left/right etc.
         // then calculate what it is relative to first
         s2 = _screen_fuzzy_fallback_find(e_randr2_cfg, s->config.relative.to);
-        printf("RRR: '%s' is relative to %p\n", s->info.name, s2);
-        if (s2) _screen_config_do(s2);
+        printf("RRR: '%s' is relative to '%s'\n", s->info.name, s2 ? s2->info.name : "NONE");
+        if (s2)
+          {
+             _screen_config_do(s2);
+             if (!s2->config.enabled) s2 = NULL;
+          }
      }
    s->config.geom.x = 0;
    s->config.geom.y = 0;
@@ -785,6 +817,38 @@ _screen_config_do(E_Randr2_Screen *s)
              ((s2->config.geom.w - s->config.geom.w) *
               s->config.relative.align);
              s->config.geom.y = s2->config.geom.y + s2->config.geom.h;
+          }
+     }
+   else
+     {
+        if ((s->config.relative.mode == E_RANDR2_RELATIVE_CLONE) &&
+            (s->config.relative.to))
+          {
+             E_Config_Randr2_Screen *cs;
+             int x = 0, y = 0;
+
+             cs = _config_screen_clone_resolve(e_randr2_cfg,
+                                               s->config.relative.to, &x, &y);
+             printf("RRR: clone relative - config %p\n", cs);
+             if (cs)
+               {
+                  s->config.geom.x = x;
+                  s->config.geom.y = y;
+                  s->config.mode.w = cs->mode_w;
+                  s->config.mode.h = cs->mode_h;
+                  s->config.rotation = cs->rotation;
+                  s->config.mode.refresh = cs->mode_refresh;
+                  if ((cs->rotation == 0) || (cs->rotation == 180))
+                    {
+                       s->config.geom.w = s->config.mode.w;
+                       s->config.geom.h = s->config.mode.h;
+                    }
+                  else
+                    {
+                       s->config.geom.w = s->config.mode.h;
+                       s->config.geom.h = s->config.mode.w;
+                    }
+               }
           }
      }
    _config_do_recurse--;
@@ -1138,7 +1202,6 @@ _info_relative_fixup(E_Randr2 *r)
                {
                   s->config.relative.mode = E_RANDR2_RELATIVE_CLONE;
                }
-             // XXXL detect clone
              if (s->config.relative.align < 0.0)
                s->config.relative.align = 0.0;
              else if (s->config.relative.align > 1.0)
@@ -1176,7 +1239,7 @@ _info_get(void)
         if (!s) continue;
 
         s->info.name = _output_name_get(root, outputs[i]);
-        printf("RRR: ...... out %s\n", s->info.name);
+        printf("RRR: .... out %s\n", s->info.name);
         if (!s->info.name)
           {
              free(s);
@@ -1213,7 +1276,7 @@ _info_get(void)
           s->info.connector = E_RANDR2_CONNECTOR_DISPLAY_PORT;
         s->info.is_lid = _is_lid_name(s->info.name);
         s->info.lid_closed = s->info.is_lid && _lid_is_closed;
-        printf("RRR: .... lid_closed = %i (%i && %i)\n", s->info.lid_closed, s->info.is_lid, _lid_is_closed);
+        printf("RRR: ...... lid_closed = %i (%i && %i)\n", s->info.lid_closed, s->info.is_lid, _lid_is_closed);
         if (ecore_x_randr_output_connection_status_get(root, outputs[i]) ==
             ECORE_X_RANDR_CONNECTION_STATUS_CONNECTED)
           s->info.connected = EINA_TRUE;
