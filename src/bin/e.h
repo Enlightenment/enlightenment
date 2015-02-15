@@ -184,6 +184,10 @@ typedef struct _E_Rect         E_Rect;
 # define MAX(x, y) (((x) > (y)) ? (x) : (y))
 #endif
 
+#ifndef MIN
+# define MIN(x, y) (((x) < (y)) ? (x) : (y))
+#endif
+
 # define E_FREE_FUNC(_h, _fn) do { if (_h) { _fn((void*)_h); _h = NULL; } } while (0)
 # define E_INTERSECTS(x, y, w, h, xx, yy, ww, hh) \
   (((x) < ((xx) + (ww))) && ((y) < ((yy) + (hh))) && (((x) + (w)) > (xx)) && (((y) + (h)) > (yy)))
