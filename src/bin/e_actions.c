@@ -2369,6 +2369,32 @@ ACT_FN_GO(suspend, )
    e_dialog_show(suspend_dialog);
 }
 
+static Eina_Bool
+_have_lid_and_external_screens_on(void)
+{
+   Eina_List *l;
+   E_Randr2_Screen *s;
+   int lids = 0;
+   int ext_screens = 0;
+
+   EINA_LIST_FOREACH(e_randr2->screens, l, s)
+     {
+        if (s->info.is_lid) lids++;
+        else if ((s->config.enabled) &&
+                 (s->config.geom.w > 0) &&
+                 (s->config.geom.h > 0))
+          ext_screens++;
+     }
+   if ((lids > 0) && (ext_screens > 0)) return EINA_TRUE;
+   return EINA_FALSE;
+}
+
+ACT_FN_GO(suspend_smart, __UNUSED__)
+{
+   if (!_have_lid_and_external_screens_on())
+     e_sys_action_do(E_SYS_SUSPEND, NULL);
+}
+
 /***************************************************************************/
 static E_Dialog *hibernate_dialog = NULL;
 
@@ -2429,6 +2455,12 @@ ACT_FN_GO(hibernate, )
    e_dialog_button_focus_num(hibernate_dialog, 1);
    elm_win_center(hibernate_dialog->win, 1, 1);
    e_dialog_show(hibernate_dialog);
+}
+
+ACT_FN_GO(hibernate_smart, __UNUSED__)
+{
+   if (!_have_lid_and_external_screens_on())
+     e_sys_action_do(E_SYS_HIBERNATE, NULL);
 }
 
 /***************************************************************************/
@@ -3399,12 +3431,20 @@ e_actions_init(void)
    e_action_predef_name_set(N_("System"), N_("Suspend"), "suspend",
                             NULL, NULL, 0);
 
+   ACT_GO(suspend_smart);
+   e_action_predef_name_set(N_("System"), N_("Suspend Intelligently"), "suspend_smart",
+                            NULL, NULL, 0);
+
    ACT_GO(hibernate);
    e_action_predef_name_set(N_("System"), N_("Hibernate"), "hibernate",
                             NULL, NULL, 0);
 
    ACT_GO(hibernate_now);
    e_action_predef_name_set(N_("System"), N_("Hibernate Now"), "hibernate_now",
+                            NULL, NULL, 0);
+
+   ACT_GO(hibernate_smart);
+   e_action_predef_name_set(N_("System"), N_("Hibernate Intelligently"), "hibernate_smart",
                             NULL, NULL, 0);
 
    ACT_GO(pointer_resize_push);
