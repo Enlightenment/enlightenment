@@ -41,7 +41,7 @@
 #define INTERNAL_ENTRY E_Comp_Object *cw; cw = evas_object_smart_data_get(obj);
 
 /* enable for lots of client size info in console output */
-#if 1
+#if 0
 # define e_util_size_debug_set(x, y)
 #endif
 
@@ -2655,7 +2655,7 @@ e_comp_object_input_area_set(Evas_Object *obj, int x, int y, int w, int h)
         if (!cw->input_obj)
           {
              cw->input_obj = evas_object_rectangle_add(cw->comp->evas);
-             //e_util_size_debug_set(cw->input_obj, 1);
+             e_util_size_debug_set(cw->input_obj, 1);
              evas_object_name_set(cw->input_obj, "cw->input_obj");
              evas_object_color_set(cw->input_obj, 0, 0, 0, 0);
              evas_object_pass_events_set(cw->obj, 1);
