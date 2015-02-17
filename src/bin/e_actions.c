@@ -2372,6 +2372,7 @@ ACT_FN_GO(suspend, )
 static Eina_Bool
 _have_lid_and_external_screens_on(void)
 {
+#ifndef HAVE_WAYLAND_ONLY
    Eina_List *l;
    E_Randr2_Screen *s;
    int lids = 0;
@@ -2386,6 +2387,7 @@ _have_lid_and_external_screens_on(void)
           ext_screens++;
      }
    if ((lids > 0) && (ext_screens > 0)) return EINA_TRUE;
+#endif
    return EINA_FALSE;
 }
 
