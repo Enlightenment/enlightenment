@@ -102,6 +102,7 @@ static void         _ibar_resize_handle(IBar *b);
 static void         _ibar_instance_drop_zone_recalc(Instance *inst);
 static Config_Item *_ibar_config_item_get(const char *id);
 static IBar_Icon   *_ibar_icon_at_coord(IBar *b, Evas_Coord x, Evas_Coord y);
+static void         _ibar_icon_origin_update(IBar_Icon *ic, Instance *inst);
 static IBar_Icon   *_ibar_icon_new(IBar *b, Efreet_Desktop *desktop, Eina_Bool notinorder);
 static IBar_Icon   *_ibar_icon_notinorder_new(IBar *b, E_Exec_Instance *exe);
 static void         _ibar_icon_free(IBar_Icon *ic);
@@ -299,50 +300,65 @@ _gc_shutdown(E_Gadcon_Client *gcc)
    E_FREE(inst);
 }
 
-static Eina_Bool
-_gc_vertical(Instance *inst)
+static int
+_convert_theme_ids(Instance *inst)
 {
    switch (inst->orient)
      {
       case E_GADCON_ORIENT_FLOAT:
       case E_GADCON_ORIENT_HORIZ:
-      case E_GADCON_ORIENT_TOP:
+      case E_GADCON_ORIENT_VERT:
+        return -1;
       case E_GADCON_ORIENT_BOTTOM:
-      case E_GADCON_ORIENT_CORNER_TL:
-      case E_GADCON_ORIENT_CORNER_TR:
       case E_GADCON_ORIENT_CORNER_BL:
       case E_GADCON_ORIENT_CORNER_BR:
-        return EINA_FALSE;
-        break;
-
-      case E_GADCON_ORIENT_VERT:
+        return 0;
+      case E_GADCON_ORIENT_TOP:
+      case E_GADCON_ORIENT_CORNER_TL:
+      case E_GADCON_ORIENT_CORNER_TR:
+        return 1;
       case E_GADCON_ORIENT_LEFT:
-      case E_GADCON_ORIENT_RIGHT:
       case E_GADCON_ORIENT_CORNER_LT:
-      case E_GADCON_ORIENT_CORNER_RT:
       case E_GADCON_ORIENT_CORNER_LB:
+        return 2;
+      case E_GADCON_ORIENT_RIGHT:
+      case E_GADCON_ORIENT_CORNER_RT:
       case E_GADCON_ORIENT_CORNER_RB:
+        return 3;
       default:
         break;
      }
-   return EINA_TRUE;
+   return -1;
+}
+
+static Eina_Bool
+_is_vertical(Instance *inst)
+{
+  int pos = _convert_theme_ids(inst);
+  return (pos == 3 || pos == 2);
 }
 
 static void
 _gc_orient(E_Gadcon_Client *gcc, E_Gadcon_Orient orient)
 {
    Instance *inst;
+   IBar_Icon *ic;
 
    inst = gcc->data;
    if ((int)orient != -1) inst->orient = orient;
 
-   if (_gc_vertical(inst))
+   if (_is_vertical(inst))
      {
         _ibar_orient_set(inst->ibar, 0);
      }
    else
      {
         _ibar_orient_set(inst->ibar, 1);
+     }
+
+   EINA_INLIST_FOREACH(inst->ibar->icons, ic)
+     {
+        _ibar_icon_origin_update(ic, inst);
      }
 }
 
@@ -645,7 +661,7 @@ _ibar_resize_handle(IBar *b)
      }
    if (b->o_sep)
      {
-        if (_gc_vertical(b->inst))
+        if (_is_vertical(b->inst))
           h = 16 * e_scale;
         else
           w = 16 * e_scale;
@@ -743,7 +759,7 @@ _ibar_sep_create(IBar *b)
 
    b->o_sep = edje_object_add(evas_object_evas_get(b->o_box));
    E_FILL(b->o_sep);
-   if (_gc_vertical(b->inst))
+   if (_is_vertical(b->inst))
      e_theme_edje_object_set(b->o_sep, "base/theme/modules/ibar", "e/modules/ibar/separator/horizontal");
    else
      e_theme_edje_object_set(b->o_sep, "base/theme/modules/ibar", "e/modules/ibar/separator/default");
@@ -774,6 +790,19 @@ _ibar_icon_at_coord(IBar *b, Evas_Coord x, Evas_Coord y)
           }
      }
    return NULL;
+}
+
+static void
+_ibar_icon_origin_update(IBar_Icon *ic, Instance *inst)
+{
+   char buf[PATH_MAX];
+   char *pos[4] = {"bottom", "top", "right", "left"};
+   int position = _convert_theme_ids(inst);
+   if (position >= 0)
+     {
+        snprintf(buf, sizeof(buf), "e,origin,%s", pos[position]);
+        _ibar_icon_signal_emit(ic, buf, "e");
+     }
 }
 
 static IBar_Icon *
