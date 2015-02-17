@@ -80,7 +80,7 @@ _e_comp_x_focus_check(E_Comp *comp)
 {
    E_Client *focused;
 
-   if (stopping) return;
+   if (stopping || e_comp->nocomp) return;
    focused = e_client_focused_get();
    /* if there is no new focused or it is a non-X client,
     * focus comp canvas on focus-out */
