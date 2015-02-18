@@ -973,6 +973,11 @@ _e_client_resize_handle(E_Client *ec)
 
    w = new_w;
    h = new_h;
+   if (e_config->screen_limits == E_SCREEN_LIMITS_WITHIN)
+     {
+        w = MIN(w, ec->zone->w);
+        h = MIN(h, ec->zone->h);
+     }
    e_client_resize_limit(ec, &new_w, &new_h);
    if ((ec->resize_mode == E_POINTER_RESIZE_TL) ||
        (ec->resize_mode == E_POINTER_RESIZE_L) ||
@@ -1071,7 +1076,11 @@ _e_client_resize_key_down(void *data EINA_UNUSED, int type EINA_UNUSED, void *ev
    else if ((strncmp(ev->key, "Control", sizeof("Control") - 1) != 0) &&
             (strncmp(ev->key, "Alt", sizeof("Alt") - 1) != 0))
      goto stop;
-
+   if (e_config->screen_limits == E_SCREEN_LIMITS_WITHIN)
+     {
+        w = MIN(w, action_client->zone->w);
+        h = MIN(h, action_client->zone->h);
+     }
    e_client_resize_limit(action_client, &w, &h);
    evas_object_resize(action_client->frame, w, h);
    _e_client_action_resize_timeout_add();
@@ -1700,6 +1709,11 @@ _e_client_eval(E_Client *ec)
 
         e_zone_useful_geometry_get(ec->zone, &zx, &zy, &zw, &zh);
         /* enforce wm size hints for initial sizing */
+        if (e_config->screen_limits == E_SCREEN_LIMITS_WITHIN)
+          {
+             ec->w = MIN(ec->w, ec->zone->w);
+             ec->h = MIN(ec->h, ec->zone->h);
+          }
         e_client_resize_limit(ec, &ec->w, &ec->h);
 
         if (ec->re_manage)
