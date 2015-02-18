@@ -352,7 +352,7 @@ _e_ptrace_detach(int child, int back, Eina_Bool really_know)
 #else
    (void)child;
    (void)back;
-   (void)really_know);
+   (void)really_know;
 #endif
 }
 
@@ -389,7 +389,7 @@ _e_ptrace_continue(int child, int back, Eina_Bool really_know)
 #else
    (void)child;
    (void)back;
-   (void)really_know);
+   (void)really_know;
 #endif
 }
 
