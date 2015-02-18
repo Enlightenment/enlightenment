@@ -57,9 +57,8 @@ main(int argc, char *argv[])
 #elif defined __FreeBSD__
    if (!strcmp(argv[1], "frequency"))
      {
-        int new_frequency = atoi(argv[2]);
-        size_t len = sizeof(new_frequency);
-        if (sysctlbyname("dev.cpu.0.freq", NULL, 0, &new_frequency, &len) == -1)
+        int newfreq = atoi(argv[2]);
+        if (sysctlbyname("dev.cpu.0.freq", NULL, NULL, &newfreq, sizeof(newfreq)) == -1)
           {
              fprintf(stderr, "Unable to open frequency interface for writing.\n");
              return 1;
@@ -70,6 +69,11 @@ main(int argc, char *argv[])
    else if (!strcmp(argv[1], "governor"))
      {
         fprintf(stderr, "Governors not (yet) implemented on FreeBSD.\n");
+        return 0;
+     }
+   else if (!strcmp(argv[1], "pstate"))
+     {
+        fprintf(stderr, "Pstates not (yet) implemented on FreeBSD.\n");
         return 0;
      }
    else
