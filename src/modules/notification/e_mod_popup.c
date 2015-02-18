@@ -532,14 +532,14 @@ _notification_format_message(Popup_Data *popup)
 {
    Evas_Object *o = popup->theme;
    Eina_Strbuf *buf = eina_strbuf_new();
-   edje_object_part_text_set(o, "notification.text.title",
+   edje_object_part_text_unescaped_set(o, "notification.text.title",
                              popup->notif->summary);
    /* FIXME: Filter to only include allowed markup? */
    /* We need to replace \n with <br>. FIXME: We need to handle all the
    * newline kinds, and paragraph separator. ATM this will suffice. */
    eina_strbuf_append(buf, popup->notif->body);
    eina_strbuf_replace_all(buf, "\n", "<br/>");
-   edje_object_part_text_set(o, "notification.textblock.message",
+   edje_object_part_text_unescaped_set(o, "notification.textblock.message",
                              eina_strbuf_string_get(buf));
    eina_strbuf_free(buf);
 }
