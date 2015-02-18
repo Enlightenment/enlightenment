@@ -433,9 +433,13 @@ _basic_apply(E_Config_Dialog *cfd __UNUSED__, E_Config_Dialog_Data *cfdata)
    e_config->desklock_auth_method = cfdata->desklock_auth_method;
    if (e_config->desklock_auth_method == E_DESKLOCK_AUTH_METHOD_PERSONAL)
      {
-        e_config->desklock_passwd =
-          e_auth_hash_djb2(cfdata->desklock_personal_passwd,
-          strlen(cfdata->desklock_personal_passwd));
+        if ((!e_config->desklock_passwd) &&
+            cfdata->desklock_personal_passwd && cfdata->desklock_personal_passwd[0])
+          {
+             e_config->desklock_passwd =
+               e_auth_hash_djb2(cfdata->desklock_personal_passwd,
+               strlen(cfdata->desklock_personal_passwd));
+          }
      }
    else if (cfdata->desklock_auth_method == E_DESKLOCK_AUTH_METHOD_PIN)
      {
@@ -531,17 +535,25 @@ _basic_check_changed(E_Config_Dialog *cfd __UNUSED__, E_Config_Dialog_Data *cfda
      return 1;
    if (e_config->desklock_auth_method == E_DESKLOCK_AUTH_METHOD_PERSONAL)
      {
-        if (e_config->desklock_passwd !=
-          e_auth_hash_djb2(cfdata->desklock_personal_passwd,
-          strlen(cfdata->desklock_personal_passwd)))
-          return 1;
+        if ((!e_config->desklock_passwd) &&
+            cfdata->desklock_personal_passwd && cfdata->desklock_personal_passwd[0])
+          {
+             if (e_config->desklock_passwd !=
+               e_auth_hash_djb2(cfdata->desklock_personal_passwd,
+               strlen(cfdata->desklock_personal_passwd)))
+               return 1;
+          }
      }
    if (e_config->desklock_auth_method == E_DESKLOCK_AUTH_METHOD_PIN)
      {
-        if (e_config->desklock_pin !=
-          e_auth_hash_djb2(cfdata->pin_str,
-          strlen(cfdata->pin_str)))
-          return 1;
+        if ((!e_config->desklock_pin) &&
+            cfdata->pin_str && cfdata->pin_str[0])
+          {
+             if (e_config->desklock_pin !=
+               e_auth_hash_djb2(cfdata->pin_str,
+               strlen(cfdata->pin_str)))
+               return 1;
+          }
      }
 
    if (e_config->desklock_autolock_screensaver != cfdata->screensaver_lock)
