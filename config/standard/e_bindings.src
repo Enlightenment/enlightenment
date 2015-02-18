@@ -934,7 +934,7 @@ group "E_Config_Bindings" struct {
             value "modifiers" int: 0;
             value "key" string: "XF86MonBrightnessUp";
             value "action" string: "backlight_adjust";
-            value "params" string: "0.1";
+            value "params" string: "10";
             value "any_mod" uchar: 0;
         }
         group "E_Config_Binding_Key" struct {
@@ -942,7 +942,7 @@ group "E_Config_Bindings" struct {
             value "modifiers" int: 0;
             value "key" string: "XF86MonBrightnessDown";
             value "action" string: "backlight_adjust";
-            value "params" string: "-0.1";
+            value "params" string: "-10";
             value "any_mod" uchar: 0;
         }
         group "E_Config_Binding_Key" struct {
