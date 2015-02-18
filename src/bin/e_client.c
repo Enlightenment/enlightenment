@@ -961,7 +961,7 @@ _e_client_resize_handle(E_Client *ec)
 
    w = new_w;
    h = new_h;
-   if (e_config->screen_limits == E_SCREEN_LIMITS_WITHIN)
+   if (e_config->screen_limits == E_CLIENT_OFFSCREEN_LIMIT_ALLOW_NONE)
      {
         w = MIN(w, ec->zone->w);
         h = MIN(h, ec->zone->h);
@@ -1064,7 +1064,7 @@ _e_client_resize_key_down(void *data EINA_UNUSED, int type EINA_UNUSED, void *ev
    else if ((strncmp(ev->key, "Control", sizeof("Control") - 1) != 0) &&
             (strncmp(ev->key, "Alt", sizeof("Alt") - 1) != 0))
      goto stop;
-   if (e_config->screen_limits == E_SCREEN_LIMITS_WITHIN)
+   if (e_config->screen_limits == E_CLIENT_OFFSCREEN_LIMIT_ALLOW_NONE)
      {
         w = MIN(w, action_client->zone->w);
         h = MIN(h, action_client->zone->h);
@@ -1692,7 +1692,7 @@ _e_client_eval(E_Client *ec)
 
         e_zone_useful_geometry_get(ec->zone, &zx, &zy, &zw, &zh);
         /* enforce wm size hints for initial sizing */
-        if (e_config->screen_limits == E_SCREEN_LIMITS_WITHIN)
+        if (e_config->screen_limits == E_CLIENT_OFFSCREEN_LIMIT_ALLOW_NONE)
           {
              ec->w = MIN(ec->w, ec->zone->w);
              ec->h = MIN(ec->h, ec->zone->h);
@@ -2316,7 +2316,7 @@ e_client_idler_before(void)
             (!E_INSIDE(ec->x, ec->y, 0 - ec->w + 5, 0 - ec->h + 5, ec->comp->man->w - 5, ec->comp->man->h - 5))
             )
           {
-             if (e_config->screen_limits != E_SCREEN_LIMITS_COMPLETELY)
+             if (e_config->screen_limits != E_CLIENT_OFFSCREEN_LIMIT_ALLOW_FULL)
                _e_client_move_lost_window_to_center(ec);
           }
      }
@@ -2873,7 +2873,7 @@ e_client_mouse_move(E_Client *ec, Evas_Point *output)
                                  &new_x, &new_y, &new_w, &new_h);
         eina_list_free(skiplist);
 
-        if (e_config->screen_limits == E_SCREEN_LIMITS_WITHIN)
+        if (e_config->screen_limits == E_CLIENT_OFFSCREEN_LIMIT_ALLOW_NONE)
           _e_client_stay_within_canvas(ec, x, y, &new_x, &new_y);
 
         ec->shelf_fix.x = 0;

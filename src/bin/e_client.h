@@ -1,10 +1,10 @@
 #ifdef E_TYPEDEFS
-typedef enum _E_Screen_Limits
+typedef enum _E_Client_Screen_Limit
 {
-    E_SCREEN_LIMITS_PARTLY = 0,
-    E_SCREEN_LIMITS_COMPLETELY = 1,
-    E_SCREEN_LIMITS_WITHIN = 2
-} E_Screen_Limits;
+    E_CLIENT_OFFSCREEN_LIMIT_ALLOW_PARTIAL = 0,
+    E_CLIENT_OFFSCREEN_LIMIT_ALLOW_FULL = 1,
+    E_CLIENT_OFFSCREEN_LIMIT_ALLOW_NONE = 2
+} E_Client_Screen_Limit;
 
 typedef enum _E_Icon_Preference
 {
