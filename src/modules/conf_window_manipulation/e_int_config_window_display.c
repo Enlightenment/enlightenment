@@ -242,13 +242,13 @@ _basic_create(E_Config_Dialog *cfd __UNUSED__, Evas *evas, E_Config_Dialog_Data 
 
    rg = e_widget_radio_group_new(&(cfdata->screen_limits));
 
-   ow = e_widget_radio_add(evas, _("Keep windows within the visual screen limits"), E_SCREEN_LIMITS_WITHIN, rg);
+   ow = e_widget_radio_add(evas, _("Keep windows within the visual screen limits"), E_CLIENT_OFFSCREEN_LIMIT_ALLOW_NONE, rg);
    e_widget_list_object_append(ol, ow, 1, 1, 0.5);
 
-   ow = e_widget_radio_add(evas, _("Allow windows partly out of the visual screen limits"), E_SCREEN_LIMITS_PARTLY, rg);
+   ow = e_widget_radio_add(evas, _("Allow windows partly out of the visual screen limits"), E_CLIENT_OFFSCREEN_LIMIT_ALLOW_PARTIAL, rg);
    e_widget_list_object_append(ol, ow, 1, 1, 0.5);
 
-   ow = e_widget_radio_add(evas, _("Allow windows completely out of visual screen limits"), E_SCREEN_LIMITS_COMPLETELY, rg);
+   ow = e_widget_radio_add(evas, _("Allow windows completely out of visual screen limits"), E_CLIENT_OFFSCREEN_LIMIT_ALLOW_FULL, rg);
    e_widget_list_object_append(ol, ow, 1, 1, 0.5);
 
    e_widget_toolbook_page_append(otb, NULL, _("Screen Limits"), ol,

@@ -1450,7 +1450,7 @@ _e_comp_x_configure_request(void *data  EINA_UNUSED, int type EINA_UNUSED, Ecore
         if (ev->value_mask & ECORE_X_WINDOW_CONFIGURE_MASK_X)
           {
              ec->comp_data->initial_attributes.x = ev->x;
-             if (e_config->screen_limits == E_SCREEN_LIMITS_WITHIN)
+             if (e_config->screen_limits == E_CLIENT_OFFSCREEN_LIMIT_ALLOW_NONE)
                x = E_CLAMP(ev->x, zx, zx + zw - ec->w);
              else
                x = ev->x;
@@ -1458,7 +1458,7 @@ _e_comp_x_configure_request(void *data  EINA_UNUSED, int type EINA_UNUSED, Ecore
         if (ev->value_mask & ECORE_X_WINDOW_CONFIGURE_MASK_Y)
           {
              ec->comp_data->initial_attributes.y = ev->y;
-             if (e_config->screen_limits == E_SCREEN_LIMITS_WITHIN)
+             if (e_config->screen_limits == E_CLIENT_OFFSCREEN_LIMIT_ALLOW_NONE)
                y = E_CLAMP(ev->y, zy, zy + zh - ec->h);
              else
                y = ev->y;
@@ -1499,13 +1499,13 @@ _e_comp_x_configure_request(void *data  EINA_UNUSED, int type EINA_UNUSED, Ecore
           {
              /* client is completely outside the screen, policy does not allow */
              if (((!E_INTERSECTS(x, y, ec->w, ec->h, ec->comp->man->x, ec->comp->man->y, ec->comp->man->w - 5, ec->comp->man->h - 5)) &&
-                 (e_config->screen_limits != E_SCREEN_LIMITS_COMPLETELY)) ||
+                 (e_config->screen_limits != E_CLIENT_OFFSCREEN_LIMIT_ALLOW_FULL)) ||
                  /* client is partly outside the zone, policy does not allow */
                  (((!E_INSIDE(x, y, ec->comp->man->x, ec->comp->man->y, ec->comp->man->w - 5, ec->comp->man->h - 5)) &&
                   (!E_INSIDE(x + ec->w, y, ec->comp->man->x, ec->comp->man->y, ec->comp->man->w - 5, ec->comp->man->h - 5)) &&
                   (!E_INSIDE(x, y + ec->h, ec->comp->man->x, ec->comp->man->y, ec->comp->man->w - 5, ec->comp->man->h - 5)) &&
                   (!E_INSIDE(x + ec->w, y + ec->h, ec->comp->man->x, ec->comp->man->y, ec->comp->man->w - 5, ec->comp->man->h - 5))) &&
-                  (e_config->screen_limits == E_SCREEN_LIMITS_WITHIN))
+                  (e_config->screen_limits == E_CLIENT_OFFSCREEN_LIMIT_ALLOW_NONE))
                 )
                e_comp_object_util_center(ec->frame);
              else

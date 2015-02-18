@@ -2852,7 +2852,7 @@ _e_comp_wl_cb_hook_client_eval_fetch(void *data EINA_UNUSED, E_Client *ec)
 
         e_zone_useful_geometry_get(ec->zone, &zx, &zy, &zw, &zh);
 
-        if (e_config->screen_limits == E_SCREEN_LIMITS_WITHIN)
+        if (e_config->screen_limits == E_CLIENT_OFFSCREEN_LIMIT_ALLOW_NONE)
           {
              x = E_CLAMP(ec->x, zx, zx + zw - ec->w);
              y = E_CLAMP(ec->y, zy, zy + zh - ec->h);
@@ -2883,13 +2883,13 @@ _e_comp_wl_cb_hook_client_eval_fetch(void *data EINA_UNUSED, E_Client *ec)
           {
              /* client is completely outside the screen, policy does not allow */
              if (((!E_INTERSECTS(x, y, ec->w, ec->h, ec->comp->man->x, ec->comp->man->y, ec->comp->man->w - 5, ec->comp->man->h - 5)) &&
-                  (e_config->screen_limits != E_SCREEN_LIMITS_COMPLETELY)) ||
+                  (e_config->screen_limits != E_CLIENT_OFFSCREEN_LIMIT_ALLOW_FULL)) ||
                  /* client is partly outside the zone, policy does not allow */
                  (((!E_INSIDE(x, y, ec->comp->man->x, ec->comp->man->y, ec->comp->man->w - 5, ec->comp->man->h - 5)) &&
                    (!E_INSIDE(x + ec->w, y, ec->comp->man->x, ec->comp->man->y, ec->comp->man->w - 5, ec->comp->man->h - 5)) &&
                    (!E_INSIDE(x, y + ec->h, ec->comp->man->x, ec->comp->man->y, ec->comp->man->w - 5, ec->comp->man->h - 5)) &&
                    (!E_INSIDE(x + ec->w, y + ec->h, ec->comp->man->x, ec->comp->man->y, ec->comp->man->w - 5, ec->comp->man->h - 5))) &&
-                     (e_config->screen_limits == E_SCREEN_LIMITS_WITHIN))
+                     (e_config->screen_limits == E_CLIENT_OFFSCREEN_LIMIT_ALLOW_NONE))
                 )
                e_comp_object_util_center(ec->frame);
              else
