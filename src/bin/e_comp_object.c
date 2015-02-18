@@ -566,7 +566,7 @@ _e_comp_object_shadow_setup(E_Comp_Object *cw)
           _e_comp_object_shadow(cw);
      }
 
-   if (focus || cw->ec->focused)
+   if (focus || cw->ec->focused || cw->ec->override)
      e_comp_object_signal_emit(cw->smart_obj, "e,state,focused", "e");
    else
      e_comp_object_signal_emit(cw->smart_obj, "e,state,unfocused", "e");
