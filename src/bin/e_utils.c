@@ -296,6 +296,10 @@ _e_util_icon_fdo_set(Evas_Object *obj, const char *icon)
 EAPI int
 e_util_icon_theme_set(Evas_Object *obj, const char *icon)
 {
+   if (icon && (icon[0] == '/'))
+     {
+        if (e_icon_file_set(obj, icon)) return 1;
+     }
    if (e_config->icon_theme_overrides)
      {
         if (_e_util_icon_fdo_set(obj, icon))
