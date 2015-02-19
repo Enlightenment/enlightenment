@@ -2256,7 +2256,7 @@ _e_comp_wl_cb_output_unbind(struct wl_resource *resource)
 }
 
 static void
-_e_comp_wl_output_bind(struct wl_client *client, void *data, uint32_t version, uint32_t id)
+_e_comp_wl_cb_output_bind(struct wl_client *client, void *data, uint32_t version, uint32_t id)
 {
    E_Comp_Data *cdata = data;
    Evas_Engine_Info_Drm *einfo;
@@ -2368,7 +2368,7 @@ _e_comp_wl_compositor_create(void)
         goto comp_global_err;
      }
    if (!wl_global_create(cdata->wl.disp, &wl_output_interface, 2,
-                         cdata, _e_comp_wl_output_bind))
+                         cdata, _e_comp_wl_cb_output_bind))
      {
         ERR("Could not add output to wayland globals: %m");
         goto comp_global_err;
