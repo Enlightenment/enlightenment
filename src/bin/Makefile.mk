@@ -382,7 +382,7 @@ src/bin/e_main.c \
 $(enlightenment_src)
 
 src_bin_enlightenment_LDFLAGS = -export-dynamic
-src_bin_enlightenment_LDADD = @e_libs@ @dlopen_libs@ @cf_libs@ @VALGRIND_LIBS@ @WAYLAND_LIBS@ @WAYLAND_EGL_LIBS@ -lm @ECORE_X_LIBS@ @SHM_OPEN_LIBS@
+src_bin_enlightenment_LDADD = @e_libs@ @dlopen_libs@ @cf_libs@ @VALGRIND_LIBS@ @WAYLAND_LIBS@ @WL_DRM_LIBS@ @WAYLAND_EGL_LIBS@ -lm @ECORE_X_LIBS@ @SHM_OPEN_LIBS@
 
 src_bin_enlightenment_imc_SOURCES = \
 src/bin/e.h \

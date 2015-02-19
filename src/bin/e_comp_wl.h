@@ -203,6 +203,11 @@ struct _E_Comp_Wl_Data
         char *area;
      } xkb;
 
+   struct
+     {
+        Eina_List *resources;
+     } output;
+
    Ecore_Fd_Handler *fd_hdlr;
    Ecore_Idler *idler;
 

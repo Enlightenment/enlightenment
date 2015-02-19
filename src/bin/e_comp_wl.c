@@ -1,6 +1,9 @@
 #define E_COMP_WL
 #include "e.h"
 
+#include <Evas_Engine_Drm.h>
+#include <Ecore_Drm.h>
+
 /* handle include for printing uint64_t */
 #define __STDC_FORMAT_MACROS
 #include <inttypes.h>
@@ -1350,6 +1353,8 @@ _e_comp_wl_compositor_cb_del(E_Comp *comp)
    /* delete fd handler */
    if (cdata->fd_hdlr) ecore_main_fd_handler_del(cdata->fd_hdlr);
 
+   eina_list_free(cdata->output.resources);
+
    /* free allocated data structure */
    free(cdata);
 }
@@ -2241,6 +2246,65 @@ _e_comp_wl_client_cb_resize_end(void *data EINA_UNUSED, E_Client *ec)
    E_FREE_LIST(ec->pending_resize, free);
 }
 
+static void
+_e_comp_wl_cb_output_unbind(struct wl_resource *resource)
+{
+   E_Comp_Data *cdata = wl_resource_get_user_data(resource);
+
+   cdata->output.resources = eina_list_remove(cdata->output.resources,
+                                              resource);
+}
+
+static void
+_e_comp_wl_output_bind(struct wl_client *client, void *data, uint32_t version, uint32_t id)
+{
+   E_Comp_Data *cdata = data;
+   Evas_Engine_Info_Drm *einfo;
+   Ecore_Drm_Device *dev;
+   Eina_List *l;
+   Ecore_Drm_Output *output;
+   struct wl_resource *resource;
+
+   einfo = (Evas_Engine_Info_Drm *)evas_engine_info_get(e_comp->evas);
+   dev = einfo->info.dev;
+   resource = wl_resource_create(client, &wl_output_interface,
+                                 MIN(version, 2), id);
+   if (resource == NULL)
+     {
+        wl_client_post_no_memory(client);
+        return;
+     }
+
+   cdata->output.resources = eina_list_append(cdata->output.resources,
+                                              resource);
+   wl_resource_set_implementation(resource, NULL, data, NULL);
+   wl_resource_set_user_data(resource, cdata);
+   EINA_LIST_FOREACH(dev->outputs, l, output)
+     {
+        int ox, oy, rw, rh, rr, pw, ph;
+        unsigned int spo;
+        const char *make, *model;
+
+        ecore_drm_output_position_get(output, &ox, &oy);
+        ecore_drm_output_current_resolution_get(output, &rw, &rh, &rr);
+        ecore_drm_output_physical_size_get(output, &pw, &ph);
+        spo = ecore_drm_output_subpixel_order_get(output);
+        make = ecore_drm_output_model_get(output);
+        model = ecore_drm_output_make_get(output);
+
+        wl_output_send_geometry(resource, ox, oy, pw, ph, spo, make, model,
+                                0/* output transform*/);
+
+        if (version >= WL_OUTPUT_SCALE_SINCE_VERSION)
+          wl_output_send_scale(resource, 1/* current scale */);
+
+        wl_output_send_mode(resource, 3/*preferred + current */, rw, rh, rr);
+     }
+
+   if (version >= WL_OUTPUT_DONE_SINCE_VERSION)
+     wl_output_send_done(resource);
+}
+
 static Eina_Bool 
 _e_comp_wl_compositor_create(void)
 {
@@ -2299,6 +2363,12 @@ _e_comp_wl_compositor_create(void)
                          comp, _e_comp_wl_subcompositor_cb_bind))
      {
         ERR("Could not add subcompositor to wayland globals: %m");
+        goto comp_global_err;
+     }
+   if (!wl_global_create(cdata->wl.disp, &wl_output_interface, 2,
+                         cdata, _e_comp_wl_output_bind))
+     {
+        ERR("Could not add output to wayland globals: %m");
         goto comp_global_err;
      }
 
