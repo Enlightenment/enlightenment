@@ -2281,8 +2281,8 @@ _e_comp_wl_output_bind(struct wl_client *client, void *data, uint32_t version, u
    wl_resource_set_user_data(resource, cdata);
    EINA_LIST_FOREACH(dev->outputs, l, output)
      {
-        int ox, oy, rw, rh, rr, pw, ph;
-        unsigned int spo;
+        int ox, oy, rw, rh, pw, ph;
+        unsigned int spo, rr;
         const char *make, *model;
 
         ecore_drm_output_position_get(output, &ox, &oy);
