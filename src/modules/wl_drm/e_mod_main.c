@@ -1,9 +1,11 @@
+#define E_COMP_WL
 #include "e.h"
 #include <Ecore_Drm.h>
 
 EAPI E_Module_Api e_modapi = { E_MODULE_API_VERSION, "Wl_Drm" };
 
 static Ecore_Event_Handler *activate_handler;
+static Ecore_Event_Handler *output_handler;
 static Eina_Bool session_state = EINA_FALSE;
 
 static Eina_Bool
@@ -48,6 +50,33 @@ _e_mod_drm_cb_activate(void *data, int type EINA_UNUSED, void *event)
         ecore_event_add(E_EVENT_COMPOSITOR_DISABLE, NULL, NULL, NULL);
      }
 
+end:
+   return ECORE_CALLBACK_PASS_ON;
+}
+
+static Eina_Bool
+_e_mod_drm_cb_output(void *data, int type EINA_UNUSED, void *event)
+{
+   Ecore_Drm_Event_Output *e;
+   Eina_List *l;
+   E_Comp *c;
+   struct wl_resource *resource;
+
+   if ((!event) || (!data)) goto end;
+   e = event;
+   c = data;
+
+   if (!e->plug) goto end;
+
+   EINA_LIST_FOREACH(c->wl_comp_data->output.resources, l, resource)
+     {
+        wl_output_send_geometry(resource, e->x, e->y, e->phys_width,
+                                e->phys_height, e->subpixel_order,
+                                e->make, e->model, e->transform);
+        wl_output_send_scale(resource, 1);
+        if (wl_resource_get_version(resource) >= WL_OUTPUT_DONE_SINCE_VERSION)
+          wl_output_send_done(resource);
+     }
 end:
    return ECORE_CALLBACK_PASS_ON;
 }
@@ -142,8 +171,9 @@ e_modapi_init(E_Module *m)
    activate_handler =
       ecore_event_handler_add(ECORE_DRM_EVENT_ACTIVATE,
                               _e_mod_drm_cb_activate, comp);
-
-
+   output_handler =
+      ecore_event_handler_add(ECORE_DRM_EVENT_OUTPUT,
+                              _e_mod_drm_cb_output, comp);
    return m;
 }
 
