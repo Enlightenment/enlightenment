@@ -65,13 +65,8 @@ In order for Enlightenment to be compiled without X11, using Wayland
 only, you will need to pass a few more options to the configure stage
 of Enlightenment:
 
-  --enable-wayland-clients
-  --enable-wl-drm
-
-If you wish to test the experimental Wayland-Only compositor, then
-also pass to configure:
-
   --enable-wayland-only
+  --enable-wl-drm
 
 Since this is all still a work-in-progress, there are a few
 Enlightenment modules that have not been "fixed" to work without X11
