@@ -39,6 +39,7 @@
 typedef struct _E_Comp_Wl_Buffer E_Comp_Wl_Buffer;
 typedef struct _E_Comp_Wl_Buffer_Ref E_Comp_Wl_Buffer_Ref;
 typedef struct _E_Comp_Wl_Subsurf_Data E_Comp_Wl_Subsurf_Data;
+typedef struct _E_Comp_Wl_Surface_State E_Comp_Wl_Surface_State;
 typedef struct _E_Comp_Wl_Client_Data E_Comp_Wl_Client_Data;
 typedef struct _E_Comp_Wl_Data E_Comp_Wl_Data;
 typedef struct _E_Comp_Wl_Output E_Comp_Wl_Output;
@@ -214,6 +215,17 @@ struct _E_Comp_Wl_Data
    Eina_Bool restack : 1;
 };
 
+struct _E_Comp_Wl_Surface_State
+{
+   int sx, sy;
+   int bw, bh;
+   Eina_Bool new_attach : 1;
+   E_Comp_Wl_Buffer *buffer;
+   struct wl_listener buffer_destroy_listener;
+   Eina_List *damages, *frames;
+   Eina_Tiler *input, *opaque;
+};
+
 struct _E_Comp_Wl_Client_Data
 {
    Ecore_Timer *first_draw_tmr;
@@ -227,6 +239,7 @@ struct _E_Comp_Wl_Client_Data
 
    /* regular surface resource (wl_compositor_create_surface) */
    struct wl_resource *surface;
+   struct wl_signal destroy_signal;
 
    struct
      {
@@ -241,23 +254,16 @@ struct _E_Comp_Wl_Client_Data
      } shell;
 
    E_Comp_Wl_Buffer_Ref buffer_ref;
+   E_Comp_Wl_Surface_State pending;
 
-   struct
-     {
-        int32_t x, y, w, h;
-        struct wl_resource *buffer;
-        Eina_Bool new_attach : 1;
-        Eina_List *damages;
-        Eina_Tiler *input;
-     } pending;
+   Eina_List *frames;
 
    struct
      {
         int32_t x, y;
      } popup;
 
-   Eina_List *frames;
-
+   Eina_Bool keep_buffer : 1;
    Eina_Bool mapped : 1;
    Eina_Bool change_icon : 1;
    Eina_Bool need_reparent : 1;
@@ -286,9 +292,11 @@ EINTERN void e_comp_wl_shutdown(void);
 
 EINTERN struct wl_resource *e_comp_wl_surface_create(struct wl_client *client, int version, uint32_t id);
 EINTERN void e_comp_wl_surface_destroy(struct wl_resource *resource);
+EINTERN void e_comp_wl_surface_attach(E_Client *ec, E_Comp_Wl_Buffer *buffer);
 EINTERN Eina_Bool e_comp_wl_surface_commit(E_Client *ec);
 EINTERN Eina_Bool e_comp_wl_subsurface_commit(E_Client *ec);
 EINTERN void e_comp_wl_buffer_reference(E_Comp_Wl_Buffer_Ref *ref, E_Comp_Wl_Buffer *buffer);
+EAPI E_Comp_Wl_Buffer *e_comp_wl_buffer_get(struct wl_resource *resource);
 
 EAPI struct wl_signal e_comp_wl_surface_create_signal_get(E_Comp *comp);
 EAPI double e_comp_wl_idle_time_get(void);
