@@ -2251,8 +2251,8 @@ _e_comp_wl_cb_output_unbind(struct wl_resource *resource)
 {
    E_Comp_Data *cdata = wl_resource_get_user_data(resource);
 
-   cdata->output.resources = eina_list_remove(cdata->output.resources,
-                                              resource);
+   cdata->output.resources = 
+     eina_list_remove(cdata->output.resources, resource);
 }
 
 static void
@@ -2267,16 +2267,18 @@ _e_comp_wl_output_bind(struct wl_client *client, void *data, uint32_t version, u
 
    einfo = (Evas_Engine_Info_Drm *)evas_engine_info_get(e_comp->evas);
    dev = einfo->info.dev;
-   resource = wl_resource_create(client, &wl_output_interface,
-                                 MIN(version, 2), id);
+
+   resource = 
+     wl_resource_create(client, &wl_output_interface, MIN(version, 2), id);
    if (resource == NULL)
      {
         wl_client_post_no_memory(client);
         return;
      }
 
-   cdata->output.resources = eina_list_append(cdata->output.resources,
-                                              resource);
+   cdata->output.resources = 
+     eina_list_append(cdata->output.resources, resource);
+
    wl_resource_set_implementation(resource, NULL, data, NULL);
    wl_resource_set_user_data(resource, cdata);
    EINA_LIST_FOREACH(dev->outputs, l, output)
