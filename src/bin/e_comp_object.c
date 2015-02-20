@@ -3696,7 +3696,8 @@ _e_comp_object_autoclose_del(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, 
    evas_object_event_callback_del(obj, EVAS_CALLBACK_SHOW, _e_comp_object_autoclose_show);
    _e_comp_object_autoclose_cleanup(data, 1);
    if (e_client_focused_get()) return;
-   e_client_refocus();
+   if (e_config->focus_policy != E_FOCUS_MOUSE)
+     e_client_refocus();
 }
 
 EAPI void
