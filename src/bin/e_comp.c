@@ -1721,7 +1721,8 @@ e_comp_ungrab_input(E_Comp *c, Eina_Bool mouse, Eina_Bool kbd)
    evas_event_feed_mouse_out(c->evas, 0, NULL);
    evas_event_feed_mouse_in(c->evas, 0, NULL);
    if (e_client_focused_get()) return;
-   e_client_refocus();
+   if (e_config->focus_policy != E_FOCUS_MOUSE)
+     e_client_refocus();
 }
 
 EAPI void
