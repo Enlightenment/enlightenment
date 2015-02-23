@@ -176,7 +176,11 @@ e_dialog_icon_set(E_Dialog *dia, const char *icon, Evas_Coord size)
              evas_object_show(dia->icon_object);
           }
         if (!e_util_icon_theme_set(dia->icon_object, icon))
-          e_icon_file_edje_set(dia->icon_object, icon, "icon");
+          if (!e_icon_file_edje_set(dia->icon_object, icon, "icon"))
+            {
+               E_FREE_FUNC(dia->icon_object, evas_object_del);
+               return;
+            }
         evas_object_size_hint_min_set(dia->icon_object, size * e_scale, size * e_scale);
         elm_layout_signal_emit(dia->bg_object, "e,state,icon", "e");
         elm_layout_signal_emit(dia->bg_object, "e,icon,enabled", "e");
