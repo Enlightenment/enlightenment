@@ -868,7 +868,6 @@ _edge_grab_wnd_show(E_Config_Dialog_Data *cfdata)
    cfdata->locals.dia = e_dialog_normal_win_new(cfdata->cfd->dia->win, "E", "_edgebind_getedge_dialog");
    if (!cfdata->locals.dia) return;
    e_dialog_title_set(cfdata->locals.dia, _("Edge Binding Sequence"));
-   e_dialog_icon_set(cfdata->locals.dia, "enlightenment/edges", 48);
    e_dialog_button_add(cfdata->locals.dia, _("Apply"), NULL, _edge_grab_wnd_cb_apply, cfdata);
    e_dialog_button_add(cfdata->locals.dia, _("Close"), NULL, _edge_grab_wnd_cb_close, cfdata);
    e_object_data_set(E_OBJECT(cfdata->locals.dia), cfdata);
@@ -924,6 +923,7 @@ _edge_grab_wnd_show(E_Config_Dialog_Data *cfdata)
    eina_stringshare_del(bgfile);
    edje_object_part_geometry_get(o, "e.swallow.background", NULL, NULL, &tw, &th);
    e_thumb_icon_size_set(obg, tw, th);
+   evas_object_size_hint_max_set(obg, tw, th);
    edje_object_part_swallow(o, "e.swallow.background", obg);
    e_thumb_icon_begin(obg);
    evas_object_show(obg);
