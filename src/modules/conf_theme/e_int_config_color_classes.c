@@ -77,8 +77,8 @@ static const CFColor_Class_Description _color_classes_wm[] =
 {
    CCDESC_T("border_title", N_("Border Title")),
    CCDESC_T("border_title_active", N_("Border Title Active")),
-   CCDESC_T("border_frame", N_("Border Frame")),
-   CCDESC_T("border_frame_active", N_("Border Frame Active")),
+   CCDESC_S("border_frame", N_("Border Frame")),
+   CCDESC_S("border_frame_active", N_("Border Frame Active")),
    CCDESC_S("comp_focus_color", N_("Composite Focus Color")),
    CCDESC_S("comp_focus-out_color", N_("Composite Focus-out Color")),
    CCDESC_S("menu_base", N_("Menu Background Base")),
