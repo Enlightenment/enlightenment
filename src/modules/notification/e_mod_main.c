@@ -46,15 +46,15 @@ _notification_show_presentation(Eina_Bool enabled)
 
    if (enabled)
      {
-        summary = _("Enter Presentation Mode");
-        body = _("Enlightenment is in <b>presentation</b> mode."
+        summary = _("Entered Presentation Mode");
+        body = _("Enlightenment has now entered <b>presentation</b> mode."
                  "<br>During presentation mode, screen saver, lock and "
                  "power saving will be disabled so you are not interrupted.");
      }
    else
      {
         summary = _("Exited Presentation Mode");
-        body = _("Presentation mode is over."
+        body = _("Presentation mode has been exited."
                  "<br>Now screen saver, lock and "
                  "power saving settings will be restored.");
      }
