@@ -66,7 +66,7 @@ systray_notifier_item_free(Notifier_Item *item)
 static void
 image_load(const char *name, const char *path, Evas_Object *image)
 {
-   const char *exts[] =
+   const char **ext, *exts[] =
    {
       ".png",
       ".jpg",
@@ -75,16 +75,24 @@ image_load(const char *name, const char *path, Evas_Object *image)
    if (path && path[0])
      {
         char buf[PATH_MAX];
+        const char **theme, *themes[] = { e_config->icon_theme, "hicolor", NULL };
 
-        snprintf(buf, sizeof(buf), "%s/%s", path, name);
-        if (!e_icon_file_set(image, buf))
+        for (theme = themes; *theme; theme++)
           {
-             const char **ext;
+             struct stat st;
+             unsigned int *i, sizes[] = { 24, 32, 48, 64, 128, 256, 0 };
 
-             for (ext = exts; *ext; ext++)
+             snprintf(buf, sizeof(buf), "%s/%s", path, *theme);
+             if (stat(buf, &st)) continue;
+             for (i = sizes; *i; i++)
                {
-                  snprintf(buf, sizeof(buf), "%s/%s%s", path, name, *ext);
-                  if (e_icon_file_set(image, buf)) return;
+                  snprintf(buf, sizeof(buf), "%s/%s/%ux%u", path, *theme, *i, *i);
+                  if (stat(buf, &st)) continue;
+                  for (ext = exts; *ext; ext++)
+                    {
+                       snprintf(buf, sizeof(buf), "%s/%s/%ux%u/apps/%s%s", path, *theme, *i, *i, name, *ext);
+                       if (e_icon_file_set(image, buf)) return;
+                    }
                }
           }
      }
