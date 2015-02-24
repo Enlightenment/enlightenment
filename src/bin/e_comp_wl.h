@@ -272,7 +272,7 @@ struct _E_Comp_Wl_Client_Data
 struct _E_Comp_Wl_Output
 {
    struct wl_global *global;
-   struct wl_resource *resource;
+   Eina_List *resources;
    const char *id, *make, *model;
    int x, y, w, h;
    int phys_width, phys_height;

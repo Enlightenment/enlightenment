@@ -2292,12 +2292,16 @@ _e_comp_wl_cb_output_unbind(struct wl_resource *resource)
    if (!(output = wl_resource_get_user_data(resource))) return;
    if (!(cdata = e_comp->wl_comp_data)) return;
 
-   cdata->outputs = eina_list_remove(cdata->outputs, output);
+   output->resources = eina_list_remove(output->resources, resource);
+   if (!eina_list_count(output->resources))
+     {
+        cdata->outputs = eina_list_remove(cdata->outputs, output);
 
-   if (output->id) eina_stringshare_del(output->id);
-   if (output->make) eina_stringshare_del(output->make);
-   if (output->model) eina_stringshare_del(output->model);
-   free(output);
+        if (output->id) eina_stringshare_del(output->id);
+        if (output->make) eina_stringshare_del(output->make);
+        if (output->model) eina_stringshare_del(output->model);
+        free(output);
+     }
 }
 
 static void
@@ -2318,8 +2322,8 @@ _e_comp_wl_cb_output_bind(struct wl_client *client, void *data, uint32_t version
         return;
      }
 
-   output->resource = resource;
    cdata->outputs = eina_list_append(cdata->outputs, output);
+   output->resources = eina_list_append(output->resources, resource);
 
    wl_resource_set_implementation(resource, NULL, output, 
                                   _e_comp_wl_cb_output_unbind);
@@ -2799,7 +2803,8 @@ e_comp_wl_output_init(const char *id, const char *make, const char *model, int x
 {
    E_Comp_Data *cdata;
    E_Comp_Wl_Output *output;
-   Eina_List *l;
+   Eina_List *l, *l2;
+   struct wl_resource *resource;
 
    if (!(cdata = e_comp->wl_comp_data)) return;
 
@@ -2817,24 +2822,29 @@ e_comp_wl_output_init(const char *id, const char *make, const char *model, int x
              output->subpixel = subpixel;
              output->transform = transform;
 
-             wl_output_send_geometry(output->resource, output->x, output->y, 
-                                     output->phys_width, output->phys_height, 
-                                     output->subpixel, 
-                                     output->make, output->model, 
-                                     output->transform);
+             /* if we have bound resources, send updates */
+             EINA_LIST_FOREACH(output->resources, l2, resource)
+               {
+                 wl_output_send_geometry(resource, output->x, output->y,
+                                         output->phys_width,
+                                         output->phys_height,
+                                         output->subpixel,
+                                         output->make, output->model,
+                                         output->transform);
 
-             if (wl_resource_get_version(output->resource) >= 
-                 WL_OUTPUT_SCALE_SINCE_VERSION)
-               wl_output_send_scale(output->resource, e_scale);
+                 if (wl_resource_get_version(resource) >=
+                     WL_OUTPUT_SCALE_SINCE_VERSION)
+                   wl_output_send_scale(resource, e_scale);
 
-             /* 3 == preferred + current */
-             wl_output_send_mode(output->resource, 3, output->w, output->h, 
-                                 output->refresh);
+                 /* 3 == preferred + current */
+                 wl_output_send_mode(resource, 3, output->w, output->h,
+                                     output->refresh);
 
-             if (wl_resource_get_version(output->resource) >= 
-                 WL_OUTPUT_DONE_SINCE_VERSION)
-               wl_output_send_done(output->resource);
+                 if (wl_resource_get_version(resource) >=
+                     WL_OUTPUT_DONE_SINCE_VERSION)
+                   wl_output_send_done(resource);
 
+               }
              return;
           }
      }
