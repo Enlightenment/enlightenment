@@ -39,7 +39,7 @@ struct xdg_shell_interface
 # define XDG_SHELL_PING 0
 # define XDG_SHELL_PING_SINCE_VERSION 1
 
-static inline void 
+static inline void
 xdg_shell_send_ping(struct wl_resource *resource_, uint32_t serial)
 {
    wl_resource_post_event(resource_, XDG_SHELL_PING, serial);
@@ -95,13 +95,13 @@ struct xdg_surface_interface
 # define XDG_SURFACE_CONFIGURE_SINCE_VERSION 1
 # define XDG_SURFACE_CLOSE_SINCE_VERSION 1
 
-static inline void 
+static inline void
 xdg_surface_send_configure(struct wl_resource *resource_, int32_t w, int32_t h, struct wl_array *states, uint32_t serial)
 {
    wl_resource_post_event(resource_, XDG_SURFACE_CONFIGURE, w, h, states, serial);
 }
 
-static inline void 
+static inline void
 xdg_surface_send_close(struct wl_resource *resource_)
 {
    wl_resource_post_event(resource_, XDG_SURFACE_CLOSE);
@@ -115,7 +115,7 @@ struct xdg_popup_interface
 # define XDG_POPUP_POPUP_DONE 0
 # define XDG_POPUP_POPUP_DONE_SINCE_VERSION 1
 
-static inline void 
+static inline void
 xdg_popup_send_popup_done(struct wl_resource *resource_, uint32_t serial)
 {
    wl_resource_post_event(resource_, XDG_POPUP_POPUP_DONE, serial);

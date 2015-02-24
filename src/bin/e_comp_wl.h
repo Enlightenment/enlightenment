@@ -43,7 +43,7 @@ typedef struct _E_Comp_Wl_Client_Data E_Comp_Wl_Client_Data;
 typedef struct _E_Comp_Wl_Data E_Comp_Wl_Data;
 typedef struct _E_Comp_Wl_Output E_Comp_Wl_Output;
 
-struct _E_Comp_Wl_Buffer 
+struct _E_Comp_Wl_Buffer
 {
    struct wl_resource *resource;
    struct wl_signal destroy_signal;
@@ -95,15 +95,15 @@ struct _E_Comp_Wl_Subsurf_Data
 
 struct _E_Comp_Wl_Data
 {
-   struct 
+   struct
      {
         struct wl_display *disp;
         struct wl_event_loop *loop;
      } wl;
 
-   struct 
+   struct
      {
-        struct 
+        struct
           {
              struct wl_signal create;
              struct wl_signal activate;
@@ -125,13 +125,13 @@ struct _E_Comp_Wl_Data
         /*        } seat, output; */
      } signals;
 
-   struct 
+   struct
      {
         struct wl_resource *shell;
         struct wl_resource *xdg_shell;
      } shell_interface;
 
-   struct 
+   struct
      {
         Eina_List *resources;
         Eina_Bool enabled : 1;
@@ -145,7 +145,7 @@ struct _E_Comp_Wl_Data
         int mod_changed;
      } kbd;
 
-   struct 
+   struct
      {
         Eina_List *resources;
         Eina_Bool enabled : 1;
@@ -154,13 +154,13 @@ struct _E_Comp_Wl_Data
         uint32_t button;
      } ptr;
 
-   struct 
+   struct
      {
         Eina_List *resources;
         Eina_Bool enabled : 1;
      } touch;
 
-   struct 
+   struct
      {
         struct wl_global *global;
         Eina_List *resources;
@@ -168,7 +168,7 @@ struct _E_Comp_Wl_Data
         char *name;
      } seat;
 
-   struct 
+   struct
      {
         struct wl_global *global;
         Eina_List *data_resources;
@@ -194,7 +194,7 @@ struct _E_Comp_Wl_Data
         uint32_t edges;
      } resize;
 
-   struct 
+   struct
      {
         struct xkb_keymap *keymap;
         struct xkb_context *context;
@@ -228,7 +228,7 @@ struct _E_Comp_Wl_Client_Data
    /* regular surface resource (wl_compositor_create_surface) */
    struct wl_resource *surface;
 
-   struct 
+   struct
      {
         /* shell surface resource */
         struct wl_resource *surface;
@@ -242,7 +242,7 @@ struct _E_Comp_Wl_Client_Data
 
    E_Comp_Wl_Buffer_Ref buffer_ref;
 
-   struct 
+   struct
      {
         int32_t x, y, w, h;
         struct wl_resource *buffer;
@@ -251,7 +251,7 @@ struct _E_Comp_Wl_Client_Data
         Eina_Tiler *input;
      } pending;
 
-   struct 
+   struct
      {
         int32_t x, y;
      } popup;
