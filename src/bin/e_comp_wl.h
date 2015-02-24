@@ -41,6 +41,7 @@ typedef struct _E_Comp_Wl_Buffer_Ref E_Comp_Wl_Buffer_Ref;
 typedef struct _E_Comp_Wl_Subsurf_Data E_Comp_Wl_Subsurf_Data;
 typedef struct _E_Comp_Wl_Client_Data E_Comp_Wl_Client_Data;
 typedef struct _E_Comp_Wl_Data E_Comp_Wl_Data;
+typedef struct _E_Comp_Wl_Output E_Comp_Wl_Output;
 
 struct _E_Comp_Wl_Buffer 
 {
@@ -203,10 +204,7 @@ struct _E_Comp_Wl_Data
         char *area;
      } xkb;
 
-   struct
-     {
-        Eina_List *resources;
-     } output;
+   Eina_List *outputs;
 
    Ecore_Fd_Handler *fd_hdlr;
    Ecore_Idler *idler;
@@ -271,6 +269,18 @@ struct _E_Comp_Wl_Client_Data
    Eina_Bool focus_update : 1;
 };
 
+struct _E_Comp_Wl_Output
+{
+   struct wl_global *global;
+   struct wl_resource *resource;
+   const char *id, *make, *model;
+   int x, y, w, h;
+   int phys_width, phys_height;
+   unsigned int refresh;
+   unsigned int subpixel;
+   unsigned int transform;
+};
+
 EAPI Eina_Bool e_comp_wl_init(void);
 EINTERN void e_comp_wl_shutdown(void);
 
@@ -282,6 +292,7 @@ EINTERN void e_comp_wl_buffer_reference(E_Comp_Wl_Buffer_Ref *ref, E_Comp_Wl_Buf
 
 EAPI struct wl_signal e_comp_wl_surface_create_signal_get(E_Comp *comp);
 EAPI double e_comp_wl_idle_time_get(void);
+EAPI void e_comp_wl_output_init(const char *id, const char *make, const char *model, int x, int y, int w, int h, int pw, int ph, unsigned int refresh, unsigned int subpixel, unsigned int transform);
 
 static inline uint64_t
 e_comp_wl_id_get(uint32_t id, pid_t pid)
