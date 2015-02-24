@@ -26,7 +26,7 @@ typedef enum _E_Fm_Op_Type
    E_FM_OP_MKDIR,
    E_FM_OP_TRASH,
    E_FM_OP_MONITOR_START,
-   E_FM_OP_MONITOR_SYNC,
+   E_FM_OP_MONITOR_SYNC, // not used anymore
    E_FM_OP_MONITOR_END,
    E_FM_OP_MOUNT,
    E_FM_OP_UNMOUNT,
