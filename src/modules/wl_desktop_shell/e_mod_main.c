@@ -617,6 +617,19 @@ _e_shell_cb_shell_surface_get(struct wl_client *client, struct wl_resource *reso
 }
 
 static void 
+_e_xdg_surface_state_add(struct wl_resource *resource, struct wl_array *states, uint32_t state)
+{
+  uint32_t *s;
+  s = wl_array_add(states, sizeof(*s));
+  if (s)
+    *s = state;
+  else
+    wl_resource_post_no_memory(resource);
+
+  return;
+}
+
+static void 
 _e_xdg_shell_surface_configure_send(struct wl_resource *resource, uint32_t edges, int32_t width, int32_t height)
 {
    E_Client *ec;
@@ -639,27 +652,13 @@ _e_xdg_shell_surface_configure_send(struct wl_resource *resource, uint32_t edges
    wl_array_init(&states);
 
    if (ec->fullscreen)
-     {
-        s = wl_array_add(&states, sizeof(*s));
-        *s = XDG_SURFACE_STATE_FULLSCREEN;
-     }
+     _e_xdg_surface_state_add(resource, &states, XDG_SURFACE_STATE_FULLSCREEN);
    else if (ec->maximized)
-     {
-        s = wl_array_add(&states, sizeof(*s));
-        *s = XDG_SURFACE_STATE_MAXIMIZED;
-     }
-
+     _e_xdg_surface_state_add(resource, &states, XDG_SURFACE_STATE_MAXIMIZED);
    if (edges != 0)
-     {
-        s = wl_array_add(&states, sizeof(*s));
-        *s = XDG_SURFACE_STATE_RESIZING;
-     }
-
+     _e_xdg_surface_state_add(resource, &states, XDG_SURFACE_STATE_RESIZING);
    if (ec->focused)
-     {
-        s = wl_array_add(&states, sizeof(*s));
-        *s = XDG_SURFACE_STATE_ACTIVATED;
-     }
+     _e_xdg_surface_state_add(resource, &states, XDG_SURFACE_STATE_ACTIVATED);
 
    serial = wl_display_next_serial(ec->comp->wl_comp_data->wl.disp);
    if (ec->netwm.type != E_WINDOW_TYPE_POPUP_MENU)
@@ -1418,8 +1417,7 @@ _e_shell_cb_bind(struct wl_client *client, void *data, uint32_t version, uint32_
         return;
      }
 
-   res = wl_resource_create(client, &wl_shell_interface, MIN(version, 1), id);
-   if (!res)
+   if (!(res = wl_resource_create(client, &wl_shell_interface, MIN(version, 1), id)))
      {
         wl_client_post_no_memory(client);
         return;
@@ -1442,8 +1440,7 @@ _e_xdg_shell_cb_bind(struct wl_client *client, void *data, uint32_t version, uin
         return;
      }
 
-   res = wl_resource_create(client, &xdg_shell_interface, MIN(version, 1), id);
-   if (!res)
+   if (!(res = wl_resource_create(client, &xdg_shell_interface, MIN(version, 1), id)))
      {
         wl_client_post_no_memory(client);
         return;
