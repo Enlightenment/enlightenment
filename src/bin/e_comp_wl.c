@@ -2297,11 +2297,9 @@ static void
 _e_comp_wl_cb_output_bind(struct wl_client *client, void *data, uint32_t version, uint32_t id)
 {
    E_Comp_Wl_Output *output;
-   E_Comp_Data *cdata;
    struct wl_resource *resource;
 
    if (!(output = data)) return;
-   if (!(cdata = e_comp->wl_comp_data)) return;
 
    resource = 
      wl_resource_create(client, &wl_output_interface, MIN(version, 2), id);
@@ -2311,7 +2309,6 @@ _e_comp_wl_cb_output_bind(struct wl_client *client, void *data, uint32_t version
         return;
      }
 
-   cdata->outputs = eina_list_append(cdata->outputs, output);
    output->resources = eina_list_append(output->resources, resource);
 
    wl_resource_set_implementation(resource, NULL, output, 
@@ -2852,6 +2849,8 @@ e_comp_wl_output_init(const char *id, const char *make, const char *model, int x
    if (id) output->id = eina_stringshare_add(id);
    if (make) output->make = eina_stringshare_add(make);
    if (model) output->model = eina_stringshare_add(model);
+
+   cdata->outputs = eina_list_append(cdata->outputs, output);
 
    output->global = 
      wl_global_create(cdata->wl.disp, &wl_output_interface, 2, 
