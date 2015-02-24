@@ -55,28 +55,20 @@ end:
 }
 
 static Eina_Bool
-_e_mod_drm_cb_output(void *data, int type EINA_UNUSED, void *event)
+_e_mod_drm_cb_output(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
 {
    Ecore_Drm_Event_Output *e;
-   Eina_List *l;
-   E_Comp *c;
-   struct wl_resource *resource;
+   char buff[PATH_MAX];
 
-   if ((!event) || (!data)) goto end;
-   e = event;
-   c = data;
+   if (!(e = event)) goto end;
 
    if (!e->plug) goto end;
 
-   EINA_LIST_FOREACH(c->wl_comp_data->output.resources, l, resource)
-     {
-        wl_output_send_geometry(resource, e->x, e->y, e->phys_width,
-                                e->phys_height, e->subpixel_order,
-                                e->make, e->model, e->transform);
-        wl_output_send_scale(resource, 1);
-        if (wl_resource_get_version(resource) >= WL_OUTPUT_DONE_SINCE_VERSION)
-          wl_output_send_done(resource);
-     }
+   snprintf(buff, sizeof(buff), "%d", e->id);
+   e_comp_wl_output_init(buff, e->make, e->model, e->x, e->y, e->w, e->h, 
+                         e->phys_width, e->phys_height, e->refresh, 
+                         e->subpixel_order, e->transform);
+
 end:
    return ECORE_CALLBACK_PASS_ON;
 }
@@ -171,9 +163,11 @@ e_modapi_init(E_Module *m)
    activate_handler =
       ecore_event_handler_add(ECORE_DRM_EVENT_ACTIVATE,
                               _e_mod_drm_cb_activate, comp);
+
    output_handler =
       ecore_event_handler_add(ECORE_DRM_EVENT_OUTPUT,
                               _e_mod_drm_cb_output, comp);
+
    return m;
 }
 
