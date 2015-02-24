@@ -1,9 +1,6 @@
 #define E_COMP_WL
 #include "e.h"
 
-#include <Evas_Engine_Drm.h>
-#include <Ecore_Drm.h>
-
 /* handle include for printing uint64_t */
 #define __STDC_FORMAT_MACROS
 #include <inttypes.h>
@@ -714,6 +711,46 @@ _e_comp_wl_client_evas_init(E_Client *ec)
    ec->comp_data->evas_init = EINA_TRUE;
 }
 
+#ifndef HAVE_WAYLAND_ONLY
+static Eina_Bool 
+_e_comp_wl_cb_randr_change(void *data EINA_UNUSED, int type EINA_UNUSED, void *event EINA_UNUSED)
+{
+   Eina_List *l;
+   E_Randr2_Screen *screen;
+   unsigned int transform = WL_OUTPUT_TRANSFORM_NORMAL;
+
+   EINA_LIST_FOREACH(e_randr2->screens, l, screen)
+     {
+        if (!screen->config.enabled) continue;
+        switch (screen->config.rotation)
+          {
+           case 90:
+             transform = WL_OUTPUT_TRANSFORM_90;
+             break;
+           case 180:
+             transform = WL_OUTPUT_TRANSFORM_180;
+             break;
+           case 270:
+             transform = WL_OUTPUT_TRANSFORM_270;
+             break;
+           case 0:
+           default:
+             transform = WL_OUTPUT_TRANSFORM_NORMAL;
+             break;
+          }
+
+        e_comp_wl_output_init(screen->id, screen->info.screen, 
+                              screen->info.name,
+                              screen->config.geom.x, screen->config.geom.y, 
+                              screen->config.geom.w, screen->config.geom.h, 
+                              screen->info.size.w, screen->info.size.h, 
+                              screen->config.mode.refresh, 0, transform);
+     }
+
+   return ECORE_CALLBACK_RENEW;
+}
+#endif
+
 static Eina_Bool 
 _e_comp_wl_cb_comp_object_add(void *data EINA_UNUSED, int type EINA_UNUSED, E_Event_Comp_Object *ev)
 {
@@ -1346,14 +1383,21 @@ static void
 _e_comp_wl_compositor_cb_del(E_Comp *comp)
 {
    E_Comp_Data *cdata;
+   E_Comp_Wl_Output *output;
 
    /* get existing compositor data */
    if (!(cdata = comp->wl_comp_data)) return;
 
+   EINA_LIST_FREE(cdata->outputs, output)
+     {
+        if (output->id) eina_stringshare_del(output->id);
+        if (output->make) eina_stringshare_del(output->make);
+        if (output->model) eina_stringshare_del(output->model);
+        free(output);
+     }
+
    /* delete fd handler */
    if (cdata->fd_hdlr) ecore_main_fd_handler_del(cdata->fd_hdlr);
-
-   eina_list_free(cdata->output.resources);
 
    /* free allocated data structure */
    free(cdata);
@@ -2249,59 +2293,55 @@ _e_comp_wl_client_cb_resize_end(void *data EINA_UNUSED, E_Client *ec)
 static void
 _e_comp_wl_cb_output_unbind(struct wl_resource *resource)
 {
-   E_Comp_Data *cdata = wl_resource_get_user_data(resource);
+   E_Comp_Wl_Output *output;
+   E_Comp_Data *cdata;
 
-   cdata->output.resources = 
-     eina_list_remove(cdata->output.resources, resource);
+   if (!(output = wl_resource_get_user_data(resource))) return;
+   if (!(cdata = e_comp->wl_comp_data)) return;
+
+   cdata->outputs = eina_list_remove(cdata->outputs, output);
+
+   if (output->id) eina_stringshare_del(output->id);
+   if (output->make) eina_stringshare_del(output->make);
+   if (output->model) eina_stringshare_del(output->model);
+   free(output);
 }
 
 static void
 _e_comp_wl_cb_output_bind(struct wl_client *client, void *data, uint32_t version, uint32_t id)
 {
-   E_Comp_Data *cdata = data;
-   Evas_Engine_Info_Drm *einfo;
-   Ecore_Drm_Device *dev;
-   Eina_List *l;
-   Ecore_Drm_Output *output;
+   E_Comp_Wl_Output *output;
+   E_Comp_Data *cdata;
    struct wl_resource *resource;
 
-   einfo = (Evas_Engine_Info_Drm *)evas_engine_info_get(e_comp->evas);
-   dev = einfo->info.dev;
+   if (!(output = data)) return;
+   if (!(cdata = e_comp->wl_comp_data)) return;
 
    resource = 
      wl_resource_create(client, &wl_output_interface, MIN(version, 2), id);
-   if (resource == NULL)
+   if (!resource)
      {
         wl_client_post_no_memory(client);
         return;
      }
 
-   cdata->output.resources = 
-     eina_list_append(cdata->output.resources, resource);
+   output->resource = resource;
+   cdata->outputs = eina_list_append(cdata->outputs, output);
 
-   wl_resource_set_implementation(resource, NULL, data, NULL);
-   wl_resource_set_user_data(resource, cdata);
-   EINA_LIST_FOREACH(dev->outputs, l, output)
-     {
-        int ox, oy, rw, rh, pw, ph;
-        unsigned int spo, rr;
-        const char *make, *model;
+   wl_resource_set_implementation(resource, NULL, output, 
+                                  _e_comp_wl_cb_output_unbind);
+   wl_resource_set_user_data(resource, output);
 
-        ecore_drm_output_position_get(output, &ox, &oy);
-        ecore_drm_output_current_resolution_get(output, &rw, &rh, &rr);
-        ecore_drm_output_physical_size_get(output, &pw, &ph);
-        spo = ecore_drm_output_subpixel_order_get(output);
-        make = ecore_drm_output_model_get(output);
-        model = ecore_drm_output_make_get(output);
+   wl_output_send_geometry(resource, output->x, output->y, 
+                           output->phys_width, output->phys_height, 
+                           output->subpixel, output->make, output->model, 
+                           output->transform);
 
-        wl_output_send_geometry(resource, ox, oy, pw, ph, spo, make, model,
-                                0/* output transform*/);
+   if (version >= WL_OUTPUT_SCALE_SINCE_VERSION)
+     wl_output_send_scale(resource, e_scale);
 
-        if (version >= WL_OUTPUT_SCALE_SINCE_VERSION)
-          wl_output_send_scale(resource, 1/* current scale */);
-
-        wl_output_send_mode(resource, 3/*preferred + current */, rw, rh, rr);
-     }
+   /* 3 == preferred + current */
+   wl_output_send_mode(resource, 3, output->w, output->h, output->refresh);
 
    if (version >= WL_OUTPUT_DONE_SINCE_VERSION)
      wl_output_send_done(resource);
@@ -2325,6 +2365,9 @@ _e_comp_wl_compositor_create(void)
 
    /* create new compositor data */
    cdata = E_NEW(E_Comp_Data, 1);
+
+   /* set compositor wayland data */
+   comp->wl_comp_data = cdata;
 
    /* set wayland log handler */
    wl_log_set_handler_server(_e_comp_wl_log_cb_print);
@@ -2367,12 +2410,10 @@ _e_comp_wl_compositor_create(void)
         ERR("Could not add subcompositor to wayland globals: %m");
         goto comp_global_err;
      }
-   if (!wl_global_create(cdata->wl.disp, &wl_output_interface, 2,
-                         cdata, _e_comp_wl_cb_output_bind))
-     {
-        ERR("Could not add output to wayland globals: %m");
-        goto comp_global_err;
-     }
+
+#ifndef HAVE_WAYLAND_ONLY
+   _e_comp_wl_cb_randr_change(NULL, 0, NULL);
+#endif
 
    /* try to init data manager */
    if (!e_comp_wl_data_manager_init(cdata))
@@ -2452,9 +2493,6 @@ _e_comp_wl_compositor_create(void)
         e_comp_wl_input_keyboard_enabled_set(cdata, EINA_TRUE);
      }
 
-   /* set compositor wayland data */
-   comp->wl_comp_data = cdata;
-
    return EINA_TRUE;
 
 input_err:
@@ -2496,6 +2534,11 @@ e_comp_wl_init(void)
    /* clients_win_hash = eina_hash_int64_new(NULL); */
 
    /* add event handlers to catch E events */
+#ifndef HAVE_WAYLAND_ONLY
+   E_LIST_HANDLER_APPEND(handlers, E_EVENT_RANDR_CHANGE, 
+                         _e_comp_wl_cb_randr_change, NULL);
+#endif
+
    E_LIST_HANDLER_APPEND(handlers, E_EVENT_COMP_OBJECT_ADD, 
                          _e_comp_wl_cb_comp_object_add, NULL);
 
@@ -2546,6 +2589,10 @@ e_comp_wl_surface_create_signal_get(E_Comp *comp)
 EINTERN void 
 e_comp_wl_shutdown(void)
 {
+#ifndef HAVE_WAYLAND_ONLY
+   _e_comp_wl_compositor_cb_del(e_comp);
+#endif
+
    /* free handlers */
    E_FREE_LIST(handlers, ecore_event_handler_del);
 
@@ -2752,4 +2799,69 @@ EAPI double
 e_comp_wl_idle_time_get(void)
 {
    return (ecore_loop_time_get() - _last_event_time);
+}
+
+EAPI void 
+e_comp_wl_output_init(const char *id, const char *make, const char *model, int x, int y, int w, int h, int pw, int ph, unsigned int refresh, unsigned int subpixel, unsigned int transform)
+{
+   E_Comp_Data *cdata;
+   E_Comp_Wl_Output *output;
+   Eina_List *l;
+
+   if (!(cdata = e_comp->wl_comp_data)) return;
+
+   EINA_LIST_FOREACH(cdata->outputs, l, output)
+     {
+        if (!strcmp(output->id, id))
+          {
+             output->x = x;
+             output->y = y;
+             output->w = w;
+             output->h = h;
+             output->phys_width = pw;
+             output->phys_height = ph;
+             output->refresh = refresh * 1000;
+             output->subpixel = subpixel;
+             output->transform = transform;
+
+             wl_output_send_geometry(output->resource, output->x, output->y, 
+                                     output->phys_width, output->phys_height, 
+                                     output->subpixel, 
+                                     output->make, output->model, 
+                                     output->transform);
+
+             if (wl_resource_get_version(output->resource) >= 
+                 WL_OUTPUT_SCALE_SINCE_VERSION)
+               wl_output_send_scale(output->resource, e_scale);
+
+             /* 3 == preferred + current */
+             wl_output_send_mode(output->resource, 3, output->w, output->h, 
+                                 output->refresh);
+
+             if (wl_resource_get_version(output->resource) >= 
+                 WL_OUTPUT_DONE_SINCE_VERSION)
+               wl_output_send_done(output->resource);
+
+             return;
+          }
+     }
+
+   if (!(output = E_NEW(E_Comp_Wl_Output, 1))) return;
+
+   output->x = x;
+   output->y = y;
+   output->w = w;
+   output->h = h;
+   output->phys_width = pw;
+   output->phys_height = ph;
+   output->refresh = refresh * 1000;
+   output->subpixel = subpixel;
+   output->transform = transform;
+   if (id) output->id = eina_stringshare_add(id);
+   if (make) output->make = eina_stringshare_add(make);
+   if (model) output->model = eina_stringshare_add(model);
+
+   output->global = 
+     wl_global_create(cdata->wl.disp, &wl_output_interface, 2, 
+                      output, _e_comp_wl_cb_output_bind);
 }
