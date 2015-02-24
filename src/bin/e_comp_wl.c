@@ -2287,21 +2287,10 @@ static void
 _e_comp_wl_cb_output_unbind(struct wl_resource *resource)
 {
    E_Comp_Wl_Output *output;
-   E_Comp_Data *cdata;
 
    if (!(output = wl_resource_get_user_data(resource))) return;
-   if (!(cdata = e_comp->wl_comp_data)) return;
 
    output->resources = eina_list_remove(output->resources, resource);
-   if (!eina_list_count(output->resources))
-     {
-        cdata->outputs = eina_list_remove(cdata->outputs, output);
-
-        if (output->id) eina_stringshare_del(output->id);
-        if (output->make) eina_stringshare_del(output->make);
-        if (output->model) eina_stringshare_del(output->model);
-        free(output);
-     }
 }
 
 static void
