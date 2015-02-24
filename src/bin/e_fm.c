@@ -4584,6 +4584,15 @@ _e_fm2_icon_geom_adjust(E_Fm2_Icon *ic, int saved_x, int saved_y, int saved_w __
    ic->y = y;
 }
 
+static const char *
+_mime_get(const char *path)
+{
+   const char *mime = efreet_mime_special_type_get(path);
+   if (!mime) mime = efreet_mime_globs_type_get(path);
+   if (!mime) mime = efreet_mime_fallback_type_get(path);
+   return mime;
+}
+
 static int
 _e_fm2_icon_fill(E_Fm2_Icon *ic, E_Fm2_Finfo *finf)
 {
@@ -4614,7 +4623,7 @@ _e_fm2_icon_fill(E_Fm2_Icon *ic, E_Fm2_Finfo *finf)
      }
    else if (ic->info.real_link)
      {
-        mime = efreet_mime_type_get(ic->info.real_link);
+        mime = _mime_get(ic->info.real_link);
         if (!mime)
           /* XXX REMOVE/DEPRECATE ME LATER */
           mime = e_fm_mime_filename_get(ic->info.file);
@@ -4623,7 +4632,7 @@ _e_fm2_icon_fill(E_Fm2_Icon *ic, E_Fm2_Finfo *finf)
 
    if (!ic->info.mime)
      {
-        mime = efreet_mime_type_get(buf);
+        mime = _mime_get(buf);
         if (!mime)
           /* XXX REMOVE/DEPRECATE ME LATER */
           mime = e_fm_mime_filename_get(ic->info.file);
