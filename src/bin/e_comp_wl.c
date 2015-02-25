@@ -892,7 +892,7 @@ static void
 _e_comp_wl_surface_state_size_update(E_Client *ec, E_Comp_Wl_Surface_State *state)
 {
    int w = 0, h = 0;
-   double scale = 0.0;
+   /* double scale = 0.0; */
 
    if (!ec->comp_data->buffer_ref.buffer)
      {
@@ -901,21 +901,24 @@ _e_comp_wl_surface_state_size_update(E_Client *ec, E_Comp_Wl_Surface_State *stat
         return;
      }
 
-   scale = e_comp->wl_comp_data->output.scale;
-   switch (e_comp->wl_comp_data->output.transform)
-     {
-      case WL_OUTPUT_TRANSFORM_90:
-      case WL_OUTPUT_TRANSFORM_270:
-      case WL_OUTPUT_TRANSFORM_FLIPPED_90:
-      case WL_OUTPUT_TRANSFORM_FLIPPED_270:
-        w = ec->comp_data->buffer_ref.buffer->h / scale;
-        h = ec->comp_data->buffer_ref.buffer->w / scale;
-        break;
-      default:
-        w = ec->comp_data->buffer_ref.buffer->w / scale;
-        h = ec->comp_data->buffer_ref.buffer->h / scale;
-        break;
-     }
+   /* scale = e_comp->wl_comp_data->output.scale; */
+   /* switch (e_comp->wl_comp_data->output.transform) */
+   /*   { */
+   /*    case WL_OUTPUT_TRANSFORM_90: */
+   /*    case WL_OUTPUT_TRANSFORM_270: */
+   /*    case WL_OUTPUT_TRANSFORM_FLIPPED_90: */
+   /*    case WL_OUTPUT_TRANSFORM_FLIPPED_270: */
+   /*      w = ec->comp_data->buffer_ref.buffer->h / scale; */
+   /*      h = ec->comp_data->buffer_ref.buffer->w / scale; */
+   /*      break; */
+   /*    default: */
+   /*      w = ec->comp_data->buffer_ref.buffer->w / scale; */
+   /*      h = ec->comp_data->buffer_ref.buffer->h / scale; */
+   /*      break; */
+   /*   } */
+
+   w = ec->comp_data->buffer_ref.buffer->w;
+   h = ec->comp_data->buffer_ref.buffer->h;
 
    state->bw = w;
    state->bh = h;
@@ -1281,15 +1284,22 @@ static void
 _e_comp_wl_surface_cb_commit(struct wl_client *client EINA_UNUSED, struct wl_resource *resource)
 {
    E_Pixmap *ep;
-   E_Client *ec;
+   E_Client *ec, *subc;
+   Eina_List *l;
 
    if (!(ep = wl_resource_get_user_data(resource))) return;
    if (!(ec = e_pixmap_client_get(ep))) return;
    if (e_object_is_del(E_OBJECT(ec))) return;
 
+   if (e_comp_wl_subsurface_commit(ec)) return;
+
    e_comp_wl_surface_commit(ec);
 
-   /* TODO: subsurface parent commit ? */
+   EINA_LIST_FOREACH(ec->comp_data->sub.list, l, subc)
+     {
+        if (ec != subc)
+          _e_comp_wl_subsurface_parent_commit(subc, EINA_FALSE);
+     }
 }
 
 static void
@@ -1538,12 +1548,11 @@ _e_comp_wl_compositor_cb_del(E_Comp *comp)
    free(cdata);
 }
 
-static void
+static void 
 _e_comp_wl_subsurface_destroy(struct wl_resource *resource)
 {
    E_Client *ec;
    E_Comp_Wl_Subsurf_Data *sdata;
-   Eina_Rectangle *dmg;
 
    /* try to get the client from resource data */
    if (!(ec = wl_resource_get_user_data(resource))) return;
@@ -1559,25 +1568,19 @@ _e_comp_wl_subsurface_destroy(struct wl_resource *resource)
           eina_list_remove(sdata->parent->comp_data->sub.list, ec);
      }
 
-   /* release buffer */
-   if (sdata->cached.buffer) wl_buffer_send_release(sdata->cached.buffer);
+   _e_comp_wl_surface_state_finish(&sdata->cached);
+   e_comp_wl_buffer_reference(&sdata->cached_buffer_ref, NULL);
 
    /* the client is getting deleted, which means the pixmap will be getting
     * freed. We need to unset the surface user data */
    /* wl_resource_set_user_data(ec->comp_data->surface, NULL); */
-
-   EINA_LIST_FREE(sdata->cached.damages, dmg)
-     eina_rectangle_free(dmg);
-
-   if (sdata->cached.input)
-     eina_tiler_free(sdata->cached.input);
 
    E_FREE(sdata);
 
    ec->comp_data->sub.data = NULL;
 }
 
-static Eina_Bool
+static Eina_Bool 
 _e_comp_wl_subsurface_synchronized_get(E_Comp_Wl_Subsurf_Data *sdata)
 {
    while (sdata)
@@ -1590,13 +1593,15 @@ _e_comp_wl_subsurface_synchronized_get(E_Comp_Wl_Subsurf_Data *sdata)
    return EINA_FALSE;
 }
 
-static void
+static void 
 _e_comp_wl_subsurface_commit_to_cache(E_Client *ec)
 {
    E_Comp_Client_Data *cdata;
    E_Comp_Wl_Subsurf_Data *sdata;
-   Eina_Rectangle *dmg;
+   struct wl_resource *cb;
    Eina_List *l;
+   Eina_Iterator *itr;
+   Eina_Rectangle *rect;
 
    if (!(cdata = ec->comp_data)) return;
    if (!(sdata = cdata->sub.data)) return;
@@ -1604,228 +1609,213 @@ _e_comp_wl_subsurface_commit_to_cache(E_Client *ec)
    DBG("Subsurface Commit to Cache");
 
    /* move pending damage to cached */
-   EINA_LIST_FOREACH(cdata->pending.damages, l, dmg)
-     eina_list_move(&sdata->cached.damages, &cdata->pending.damages, dmg);
+   EINA_LIST_FOREACH(cdata->pending.damages, l, rect)
+     eina_list_move(&sdata->cached.damages, &cdata->pending.damages, rect);
 
-   DBG("\tList Count After Move: %d", eina_list_count(cdata->pending.damages));
+   if (cdata->pending.new_attach)
+     {
+        sdata->cached.new_attach = EINA_TRUE;
+        _e_comp_wl_surface_state_buffer_set(&sdata->cached, 
+                                            cdata->pending.buffer);
+        e_comp_wl_buffer_reference(&sdata->cached_buffer_ref, 
+                                   cdata->pending.buffer);
+     }
 
-   sdata->cached.x = cdata->pending.x;
-   sdata->cached.y = cdata->pending.y;
-   sdata->cached.buffer = cdata->pending.buffer;
+   sdata->cached.sx = cdata->pending.sx;
+   sdata->cached.sy = cdata->pending.sy;
+   /* sdata->cached.buffer = cdata->pending.buffer; */
    sdata->cached.new_attach = cdata->pending.new_attach;
 
-   eina_tiler_union(sdata->cached.input, cdata->pending.input);
+   /* _e_comp_wl_surface_state_buffer_set(&cdata->pending, NULL); */
+   /* cdata->pending.sx = 0; */
+   /* cdata->pending.sy = 0; */
+   /* cdata->pending.new_attach = EINA_FALSE; */
+
+   /* copy cdata->pending.opaque into sdata->cached.opaque */
+   itr = eina_tiler_iterator_new(cdata->pending.opaque);
+   EINA_ITERATOR_FOREACH(itr, rect)
+     eina_tiler_rect_add(sdata->cached.opaque, rect);
+   eina_iterator_free(itr);
+
+   /* repeat for input */
+   itr = eina_tiler_iterator_new(cdata->pending.input);
+   EINA_ITERATOR_FOREACH(itr, rect)
+     eina_tiler_rect_add(sdata->cached.input, rect);
+   eina_iterator_free(itr);
+
+   EINA_LIST_FOREACH(cdata->pending.frames, l, cb)
+     eina_list_move(&sdata->cached.frames, &cdata->pending.frames, cb);
 
    sdata->cached.has_data = EINA_TRUE;
 }
 
-static void
+static void 
 _e_comp_wl_subsurface_commit_from_cache(E_Client *ec)
 {
    E_Comp_Client_Data *cdata;
    E_Comp_Wl_Subsurf_Data *sdata;
-   E_Pixmap *ep;
-   Eina_Rectangle *dmg;
-   Eina_Tiler *src, *tmp;
 
    if (!(cdata = ec->comp_data)) return;
    if (!(sdata = cdata->sub.data)) return;
-   if (!(ep = ec->pixmap)) return;
 
    DBG("Subsurface Commit from Cache");
 
-   if (sdata->cached.buffer)
-     {
-        /* mark the pixmap as usable or not */
-        e_pixmap_usable_set(ep, (sdata->cached.buffer != NULL));
-     }
+   _e_comp_wl_surface_state_commit(ec, &sdata->cached);
 
-   /* mark the pixmap as dirty */
-   e_pixmap_dirty(ep);
+   e_comp_wl_buffer_reference(&sdata->cached_buffer_ref, NULL);
 
-   e_pixmap_image_clear(ep, EINA_FALSE);
-   e_pixmap_resource_set(ep, sdata->cached.buffer);
-
-   /* refresh pixmap */
-   if (e_pixmap_refresh(ep))
+   /* schedule repaint */
+   if (e_pixmap_refresh(ec->pixmap))
      {
         e_comp->post_updates = eina_list_append(e_comp->post_updates, ec);
         e_object_ref(E_OBJECT(ec));
      }
-
-   /* check if we need to map this surface */
-   if (sdata->cached.buffer)
-     {
-        /* if this surface is not mapped yet, map it */
-        if (!cdata->mapped)
-          {
-             /* if the client has a shell map, call it */
-             if ((cdata->shell.surface) && (cdata->shell.map))
-               cdata->shell.map(cdata->shell.surface);
-          }
-     }
-   else
-     {
-        /* no pending buffer to attach. unmap the surface */
-        if (cdata->mapped)
-          {
-             /* if the client has a shell map, call it */
-             if ((cdata->shell.surface) && (cdata->shell.unmap))
-               cdata->shell.unmap(cdata->shell.surface);
-          }
-     }
-
-   /* check for any pending attachments */
-   if (sdata->cached.new_attach)
-     {
-        int x, y, nw, nh;
-        Eina_Bool placed = EINA_TRUE;
-
-        e_pixmap_size_get(ec->pixmap, &nw, &nh);
-        if (ec->changes.pos)
-          e_comp_object_frame_xy_adjust(ec->frame, ec->x, ec->y, &x, &y);
-        else
-          x = ec->client.x, y = ec->client.y;
-        if (ec->new_client)
-          placed = ec->placed;
-        /* if the client has a shell configure, call it */
-        if ((cdata->shell.surface) && (cdata->shell.configure))
-          cdata->shell.configure(cdata->shell.surface, x, y, nw, nh);
-        if (ec->new_client)
-          ec->placed = placed;
-     }
-
-   if (!cdata->mapped)
-     {
-        DBG("\tSurface Not Mapped. Skip to Unmapped");
-        goto unmap;
-     }
-
-   /* commit any pending damages */
-   if ((!ec->comp->nocomp) && (ec->frame))
-     {
-        EINA_LIST_FREE(sdata->cached.damages, dmg)
-          {
-             e_comp_object_damage(ec->frame, dmg->x, dmg->y, dmg->w, dmg->h);
-             eina_rectangle_free(dmg);
-          }
-     }
-
-   /* handle pending input */
-   if (sdata->cached.input)
-     {
-        tmp = eina_tiler_new(ec->w, ec->h);
-        eina_tiler_tile_size_set(tmp, 1, 1);
-        eina_tiler_rect_add(tmp,
-                            &(Eina_Rectangle){0, 0, ec->client.w, ec->client.h});
-
-        if ((src = eina_tiler_intersection(sdata->cached.input, tmp)))
-          {
-             Eina_Rectangle *rect;
-             Eina_Iterator *itr;
-             int i = 0;
-
-             ec->shape_input_rects_num = 0;
-
-             itr = eina_tiler_iterator_new(src);
-             EINA_ITERATOR_FOREACH(itr, rect)
-               ec->shape_input_rects_num += 1;
-
-             ec->shape_input_rects =
-               malloc(sizeof(Eina_Rectangle) * ec->shape_input_rects_num);
-
-             if (ec->shape_input_rects)
-               {
-                  EINA_ITERATOR_FOREACH(itr, rect)
-                    {
-                       ec->shape_input_rects[i] =
-                         *(Eina_Rectangle *)((char *)rect);
-
-                       ec->shape_input_rects[i].x = rect->x;
-                       ec->shape_input_rects[i].y = rect->y;
-                       ec->shape_input_rects[i].w = rect->w;
-                       ec->shape_input_rects[i].h = rect->h;
-
-                       i++;
-                    }
-               }
-=======
->>>>>>> start work on fixing resize issue
-
-   wl_resource_set_implementation(res, &_e_comp_interface, comp, NULL);
-}
-
-static void 
-_e_comp_wl_compositor_cb_del(E_Comp *comp)
-{
-   E_Comp_Data *cdata;
-
-   /* get existing compositor data */
-   if (!(cdata = comp->wl_comp_data)) return;
-
-   /* delete fd handler */
-   if (cdata->fd_hdlr) ecore_main_fd_handler_del(cdata->fd_hdlr);
-
-   eina_list_free(cdata->output.resources);
-
-   /* free allocated data structure */
-   free(cdata);
-}
-
-static void 
-_e_comp_wl_subsurface_destroy(struct wl_resource *resource)
-{
-}
-
-static Eina_Bool 
-_e_comp_wl_subsurface_synchronized_get(E_Comp_Wl_Subsurf_Data *sdata)
-{
-   return EINA_FALSE;
-}
-
-static void 
-_e_comp_wl_subsurface_commit_to_cache(E_Client *ec)
-{
-}
-
-static void 
-_e_comp_wl_subsurface_commit_from_cache(E_Client *ec)
-{
 }
 
 static void 
 _e_comp_wl_subsurface_parent_commit(E_Client *ec, Eina_Bool parent_synchronized)
 {
+   E_Client *parent;
+   E_Comp_Wl_Subsurf_Data *sdata;
+
+   if (!(sdata = ec->comp_data->sub.data)) return;
+   if (!(parent = sdata->parent)) return;
+
+   if (sdata->position.set)
+     {
+        evas_object_move(ec->frame, parent->x + sdata->position.x,
+                         parent->y + sdata->position.y);
+        sdata->position.set = EINA_FALSE;
+     }
+
+   if ((parent_synchronized) || (sdata->synchronized))
+     {
+        E_Client *subc;
+        Eina_List *l;
+
+        if (sdata->cached.has_data)
+          _e_comp_wl_subsurface_commit_from_cache(ec);
+
+        EINA_LIST_FOREACH(ec->comp_data->sub.list, l, subc)
+          {
+             if (ec != subc)
+               _e_comp_wl_subsurface_parent_commit(subc, EINA_TRUE);
+          }
+     }
 }
 
 static void
 _e_comp_wl_subsurface_cb_destroy(struct wl_client *client EINA_UNUSED, struct wl_resource *resource)
 {
+   wl_resource_destroy(resource);
 }
 
 static void
 _e_comp_wl_subsurface_cb_position_set(struct wl_client *client EINA_UNUSED, struct wl_resource *resource, int32_t x, int32_t y)
 {
+   E_Client *ec;
+   E_Comp_Wl_Subsurf_Data *sdata;
+
+   DBG("Subsurface Cb Position Set: %d", wl_resource_get_id(resource));
+
+   /* try to get the client from resource data */
+   if (!(ec = wl_resource_get_user_data(resource))) return;
+
+   if (!(sdata = ec->comp_data->sub.data)) return;
+
+   sdata->position.x = x;
+   sdata->position.y = y;
+   sdata->position.set = EINA_TRUE;
 }
 
 static void
 _e_comp_wl_subsurface_cb_place_above(struct wl_client *client EINA_UNUSED, struct wl_resource *resource, struct wl_resource *sibling_resource)
 {
+   E_Client *ec, *ecs;
+   E_Client *parent;
+
+   DBG("Subsurface Cb Place Above: %d", wl_resource_get_id(resource));
+
+   /* try to get the client from resource data */
+   if (!(ec = wl_resource_get_user_data(resource))) return;
+
+   if (!ec->comp_data->sub.data) return;
+
+   /* try to get the client from the sibling resource */
+   if (!(ecs = wl_resource_get_user_data(sibling_resource))) return;
+
+   if (!ecs->comp_data->sub.data) return;
+
+   if (!(parent = ec->comp_data->sub.data->parent)) return;
+
+   parent->comp_data->sub.list =
+     eina_list_remove(parent->comp_data->sub.list, ec);
+
+   parent->comp_data->sub.list =
+     eina_list_append_relative(parent->comp_data->sub.list, ec, ecs);
+
+   parent->comp_data->sub.restack_target = parent;
 }
 
 static void
 _e_comp_wl_subsurface_cb_place_below(struct wl_client *client EINA_UNUSED, struct wl_resource *resource, struct wl_resource *sibling_resource)
 {
+   E_Client *ec, *ecs;
+   E_Client *parent;
+
+   DBG("Subsurface Cb Place Below: %d", wl_resource_get_id(resource));
+
+   /* try to get the client from resource data */
+   if (!(ec = wl_resource_get_user_data(resource))) return;
+
+   if (!ec->comp_data->sub.data) return;
+
+   /* try to get the client from the sibling resource */
+   if (!(ecs = wl_resource_get_user_data(sibling_resource))) return;
+
+   if (!ecs->comp_data->sub.data) return;
+
+   if (!(parent = ec->comp_data->sub.data->parent)) return;
+
+   parent->comp_data->sub.list =
+     eina_list_remove(parent->comp_data->sub.list, ec);
+
+   parent->comp_data->sub.list =
+     eina_list_prepend_relative(parent->comp_data->sub.list, ec, ecs);
+
+   parent->comp_data->sub.restack_target = parent;
 }
 
 static void
 _e_comp_wl_subsurface_cb_sync_set(struct wl_client *client EINA_UNUSED, struct wl_resource *resource)
 {
+   E_Client *ec;
+   E_Comp_Wl_Subsurf_Data *sdata;
+
+   DBG("Subsurface Cb Sync Set: %d", wl_resource_get_id(resource));
+
+   /* try to get the client from resource data */
+   if (!(ec = wl_resource_get_user_data(resource))) return;
+
+   if (!(sdata = ec->comp_data->sub.data)) return;
+
+   sdata->synchronized = EINA_TRUE;
 }
 
 static void
 _e_comp_wl_subsurface_cb_desync_set(struct wl_client *client EINA_UNUSED, struct wl_resource *resource)
 {
+   E_Client *ec;
+   E_Comp_Wl_Subsurf_Data *sdata;
+
+   DBG("Subsurface Cb Desync Set: %d", wl_resource_get_id(resource));
+
+   /* try to get the client from resource data */
+   if (!(ec = wl_resource_get_user_data(resource))) return;
+
+   if (!(sdata = ec->comp_data->sub.data)) return;
+
+   sdata->synchronized = EINA_FALSE;
 }
 
 static const struct wl_subsurface_interface _e_subsurface_interface =
@@ -1841,16 +1831,135 @@ static const struct wl_subsurface_interface _e_subsurface_interface =
 static Eina_Bool
 _e_comp_wl_subsurface_create(E_Client *ec, E_Client *epc, uint32_t id, struct wl_resource *surface_resource)
 {
+   struct wl_client *client;
+   struct wl_resource *res;
+   E_Comp_Wl_Subsurf_Data *sdata;
+
+   /* try to get the wayland client from the surface resource */
+   if (!(client = wl_resource_get_client(surface_resource)))
+     {
+        ERR("Could not get client from resource %d",
+            wl_resource_get_id(surface_resource));
+        return EINA_FALSE;
+     }
+
+   /* try to allocate subsurface data */
+   if (!(sdata = E_NEW(E_Comp_Wl_Subsurf_Data, 1)))
+     {
+        ERR("Could not allocate space for subsurface data");
+        goto dat_err;
+     }
+
+   /* try to create the subsurface resource */
+   if (!(res = wl_resource_create(client, &wl_subsurface_interface, 1, id)))
+     {
+        ERR("Failed to create subsurface resource");
+        wl_resource_post_no_memory(surface_resource);
+        goto res_err;
+     }
+
+   /* set resource implementation */
+   wl_resource_set_implementation(res, &_e_subsurface_interface, ec,
+                                  _e_comp_wl_subsurface_destroy);
+
+   _e_comp_wl_surface_state_init(&sdata->cached, ec->w, ec->h);
+
+   /* set subsurface data properties */
+   sdata->cached_buffer_ref.buffer = NULL;
+   sdata->resource = res;
+   sdata->synchronized = EINA_TRUE;
+   sdata->parent = epc;
+
+   /* set subsurface client properties */
+   ec->borderless = EINA_TRUE;
+   ec->argb = EINA_TRUE;
+   ec->lock_border = EINA_TRUE;
+   ec->lock_focus_in = ec->lock_focus_out = EINA_TRUE;
+   ec->netwm.state.skip_taskbar = EINA_TRUE;
+   ec->netwm.state.skip_pager = EINA_TRUE;
+   ec->no_shape_cut = EINA_TRUE;
+   ec->border_size = 0;
+
+   if (epc)
+     {
+        if (epc->comp_data)
+          {
+             /* append this client to the parents subsurface list */
+             epc->comp_data->sub.list =
+               eina_list_append(epc->comp_data->sub.list, ec);
+          }
+
+        /* TODO: add callbacks ?? */
+     }
+
+   ec->comp_data->surface = surface_resource;
+   ec->comp_data->sub.data = sdata;
+
+   return EINA_TRUE;
+
+res_err:
+   free(sdata);
+dat_err:
+   return EINA_FALSE;
 }
 
 static void
 _e_comp_wl_subcompositor_cb_destroy(struct wl_client *client EINA_UNUSED, struct wl_resource *resource)
 {
+   wl_resource_destroy(resource);
 }
 
 static void
 _e_comp_wl_subcompositor_cb_subsurface_get(struct wl_client *client EINA_UNUSED, struct wl_resource *resource, uint32_t id, struct wl_resource *surface_resource, struct wl_resource *parent_resource)
 {
+   E_Pixmap *ep, *epp;
+   E_Client *ec, *epc = NULL;
+   static const char where[] = "get_subsurface: wl_subsurface@";
+
+   if (!(ep = wl_resource_get_user_data(surface_resource))) return;
+   if (!(epp = wl_resource_get_user_data(parent_resource))) return;
+
+   if (ep == epp)
+     {
+        wl_resource_post_error(resource, WL_SUBCOMPOSITOR_ERROR_BAD_SURFACE,
+                               "%s%d: wl_surface@%d cannot be its own parent",
+                               where, id, wl_resource_get_id(surface_resource));
+        return;
+     }
+
+   if (!(ec = e_pixmap_client_get(ep)))
+     {
+        if (!(ec = e_client_new(NULL, ep, 0, 0)))
+          {
+             wl_resource_post_no_memory(resource);
+             return;
+          }
+
+        if (ec->comp_data)
+          ec->comp_data->surface = surface_resource;
+     }
+
+   if (e_object_is_del(E_OBJECT(ec))) return;
+
+   if ((epc = e_pixmap_client_get(epp)))
+     {
+        if (e_object_is_del(E_OBJECT(epc))) return;
+     }
+
+   /* check if this surface is already a sub-surface */
+   if ((ec->comp_data) && (ec->comp_data->sub.data))
+     {
+        wl_resource_post_error(resource,
+                               WL_SUBCOMPOSITOR_ERROR_BAD_SURFACE,
+                               "%s%d: wl_surface@%d is already a sub-surface",
+                               where, id, wl_resource_get_id(surface_resource));
+        return;
+     }
+
+   /* try to create a new subsurface */
+   if (!_e_comp_wl_subsurface_create(ec, epc, id, surface_resource))
+     ERR("Failed to create subsurface for surface %d",
+         wl_resource_get_id(surface_resource));
 }
 
 static const struct wl_subcompositor_interface _e_subcomp_interface =
@@ -1963,12 +2072,6 @@ _e_comp_wl_client_cb_del(void *data EINA_UNUSED, E_Client *ec)
    _e_comp_wl_surface_state_finish(&ec->comp_data->pending);
 
    e_comp_wl_buffer_reference(&ec->comp_data->buffer_ref, NULL);
-
-   /* EINA_LIST_FREE(ec->comp_data->damages, dmg) */
-   /*   eina_rectangle_free(dmg); */
-
-   /* if (ec->comp_data->opaque) eina_tiler_free(ec->comp_data->opaque); */
-   /* if (ec->comp_data->input) eina_tiler_free(ec->comp_data->input); */
 
    EINA_LIST_FREE(ec->comp_data->frames, cb)
      wl_resource_destroy(cb);
@@ -2278,8 +2381,8 @@ _e_comp_wl_compositor_create(void)
    wl_signal_init(&cdata->signals.surface.activate);
    wl_signal_init(&cdata->signals.surface.kill);
 
-   cdata->output.transform = WL_OUTPUT_TRANSFORM_NORMAL;
-   cdata->output.scale = e_scale;
+   /* cdata->output.transform = WL_OUTPUT_TRANSFORM_NORMAL; */
+   /* cdata->output.scale = e_scale; */
 
    /* try to add compositor to wayland globals */
    if (!wl_global_create(cdata->wl.disp, &wl_compositor_interface,
@@ -2508,8 +2611,6 @@ e_comp_wl_surface_attach(E_Client *ec, E_Comp_Wl_Buffer *buffer)
    e_pixmap_resource_set(ec->pixmap, buffer);
    e_pixmap_dirty(ec->pixmap);
 
-   /* e_pixmap_image_clear(ec->pixmap, EINA_FALSE); */
-
    _e_comp_wl_surface_state_size_update(ec, &ec->comp_data->pending);
 }
 
@@ -2517,8 +2618,6 @@ EINTERN Eina_Bool
 e_comp_wl_surface_commit(E_Client *ec)
 {
    _e_comp_wl_surface_state_commit(ec, &ec->comp_data->pending);
-
-   /* TODO: commit_subsurface_order */
 
    /* schedule repaint */
    if (e_pixmap_refresh(ec->pixmap))
@@ -2560,7 +2659,34 @@ e_comp_wl_surface_commit(E_Client *ec)
 EINTERN Eina_Bool 
 e_comp_wl_subsurface_commit(E_Client *ec)
 {
-   return EINA_FALSE;
+   E_Comp_Wl_Subsurf_Data *sdata;
+
+   /* check for valid subcompositor data */
+   if (!(sdata = ec->comp_data->sub.data)) return EINA_FALSE;
+
+   if (_e_comp_wl_subsurface_synchronized_get(sdata))
+     _e_comp_wl_subsurface_commit_to_cache(ec);
+   else
+     {
+        E_Client *subc;
+        Eina_List *l;
+
+        if (sdata->cached.has_data)
+          {
+             _e_comp_wl_subsurface_commit_to_cache(ec);
+             _e_comp_wl_subsurface_commit_from_cache(ec);
+          }
+        else
+          e_comp_wl_surface_commit(ec);
+
+        EINA_LIST_FOREACH(ec->comp_data->sub.list, l, subc)
+          {
+             if (ec != subc)
+               _e_comp_wl_subsurface_parent_commit(subc, EINA_FALSE);
+          }
+     }
+
+   return EINA_TRUE;
 }
 
 EINTERN void 

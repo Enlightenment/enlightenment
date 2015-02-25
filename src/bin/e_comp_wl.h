@@ -64,6 +64,18 @@ struct _E_Comp_Wl_Buffer_Ref
    struct wl_listener destroy_listener;
 };
 
+struct _E_Comp_Wl_Surface_State
+{
+   int sx, sy;
+   int bw, bh;
+   E_Comp_Wl_Buffer *buffer;
+   struct wl_listener buffer_destroy_listener;
+   Eina_List *damages, *frames;
+   Eina_Tiler *input, *opaque;
+   Eina_Bool new_attach : 1;
+   Eina_Bool has_data : 1;
+};
+
 struct _E_Comp_Wl_Subsurf_Data
 {
    struct wl_resource *resource;
@@ -76,20 +88,8 @@ struct _E_Comp_Wl_Subsurf_Data
         Eina_Bool set;
      } position;
 
-   struct
-     {
-        int x, y;
-
-        Eina_Bool has_data;
-        Eina_Bool new_attach : 1;
-
-        struct wl_resource *buffer;
-
-        E_Comp_Wl_Buffer_Ref buffer_ref;
-
-        Eina_List *damages;
-        Eina_Tiler *input;
-     } cached;
+   E_Comp_Wl_Surface_State cached;
+   E_Comp_Wl_Buffer_Ref cached_buffer_ref;
 
    Eina_Bool synchronized;
 };
@@ -213,17 +213,6 @@ struct _E_Comp_Wl_Data
    /* Eina_List *retry_clients; */
    /* Ecore_Timer *retry_timer; */
    Eina_Bool restack : 1;
-};
-
-struct _E_Comp_Wl_Surface_State
-{
-   int sx, sy;
-   int bw, bh;
-   Eina_Bool new_attach : 1;
-   E_Comp_Wl_Buffer *buffer;
-   struct wl_listener buffer_destroy_listener;
-   Eina_List *damages, *frames;
-   Eina_Tiler *input, *opaque;
 };
 
 struct _E_Comp_Wl_Client_Data
