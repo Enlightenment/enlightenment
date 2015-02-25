@@ -1665,7 +1665,12 @@ EAPI void
 e_hints_scale_update(void)
 {
 #ifdef HAVE_WAYLAND_ONLY
-   e_comp->wl_comp_data->output.scale = e_scale;
+   Eina_List *l;
+   E_Comp_Wl_Output *output;
+
+   EINA_LIST_FOREACH(e_comp->wl_comp_data->outputs, l, output)
+     output->scale = e_scale;
+
 #else
    unsigned int scale = e_scale * 1000;
 
