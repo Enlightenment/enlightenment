@@ -2,11 +2,11 @@
 ##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##
 m4_define([v_maj], [0])
 m4_define([v_min], [19])
-m4_define([v_mic], [3])
+m4_define([v_mic], [4])
 m4_define([v_rev], m4_esyscmd([(git rev-list --count HEAD 2>/dev/null || echo 0) | tr -d '\n']))dnl
 ##--   When released, remove the dnl on the below line
 m4_undefine([v_rev])
-m4_define([relname], [0.19.3])
+m4_define([relname], [0.19.4])
 ##--   When doing snapshots - change soname. remove dnl on below line
 m4_define([relname], [ver-serious-0.19])
 m4_define([v_rel], [-release relname])
