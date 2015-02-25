@@ -285,6 +285,7 @@ struct _E_Comp_Wl_Output
    unsigned int refresh;
    unsigned int subpixel;
    unsigned int transform;
+   double scale;
 };
 
 EAPI Eina_Bool e_comp_wl_init(void);
