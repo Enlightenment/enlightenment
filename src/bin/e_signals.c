@@ -71,8 +71,8 @@ e_sigseg_act(int x __UNUSED__, siginfo_t *info __UNUSED__, void *data __UNUSED__
    ecore_x_keyboard_ungrab();
    ecore_x_ungrab();
    ecore_x_sync();
-#endif
    e_alert_show();
+#endif
 }
 
 EAPI void
@@ -102,8 +102,8 @@ e_sigfpe_act(int x __UNUSED__, siginfo_t *info __UNUSED__, void *data __UNUSED__
    ecore_x_keyboard_ungrab();
    ecore_x_ungrab();
    ecore_x_sync();
-#endif
    e_alert_show();
+#endif
 }
 
 EAPI void
@@ -115,8 +115,8 @@ e_sigbus_act(int x __UNUSED__, siginfo_t *info __UNUSED__, void *data __UNUSED__
    ecore_x_keyboard_ungrab();
    ecore_x_ungrab();
    ecore_x_sync();
-#endif
    e_alert_show();
+#endif
 }
 
 EAPI void
@@ -128,6 +128,6 @@ e_sigabrt_act(int x __UNUSED__, siginfo_t *info __UNUSED__, void *data __UNUSED_
    ecore_x_keyboard_ungrab();
    ecore_x_ungrab();
    ecore_x_sync();
-#endif
    e_alert_show();
+#endif
 }

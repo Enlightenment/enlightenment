@@ -444,6 +444,16 @@ test -n "$dbus_mount" && AC_DEFINE_UNQUOTED([HAVE_UDISKS_MOUNT], [1], [enable Ud
 AM_CONDITIONAL([HAVE_UDISKS_MOUNT], [test -n "$dbus_mount"])
 AM_CONDITIONAL([HAVE_EEZE_MOUNT], [test -n "$eeze_mount"])
 
+# verify "wayland-only" early to adapt dependencies
+
+have_wayland_only=no
+AC_ARG_ENABLE([wayland-only],
+  AS_HELP_STRING([--enable-wayland-only],[enable wayland-only version of enlightenment @<:@default=disabled@:>@]),
+  [e_cv_want_wayland_only=$enableval],
+  [e_cv_want_wayland_only=no])
+AC_MSG_CHECKING([whether wayland-only version is enabled])
+AC_MSG_RESULT([${e_cv_want_wayland_only}])
+
 # doxygen program for documentation building
 
 EFL_CHECK_DOXYGEN([build_doc="yes"], [build_doc="no"])
@@ -523,40 +533,45 @@ PKG_CHECK_MODULES(E_SYS, [
   ecore >= ${efl_version}
 ])
 
-PKG_CHECK_MODULES(E_ALERT, [
-  xcb
-  xcb-shape
-  xcb-keysyms
-  eina >= ${efl_version}
-  ecore >= ${efl_version}
-  ecore-ipc >= ${efl_version}
-])
+if test "x${e_cv_want_wayland_only}" != "xyes"; then
+  PKG_CHECK_MODULES(E_ALERT, [
+    xcb
+    xcb-shape
+    xcb-keysyms
+    eina >= ${efl_version}
+    ecore >= ${efl_version}
+    ecore-ipc >= ${efl_version}
+  ])
+fi
 
-PKG_CHECK_MODULES(E, [
-  evas >= ${efl_version}
-  ecore >= ${efl_version}
-  ecore-x >= ${efl_version}
-  ecore-evas >= ${efl_version}
-  ecore-input >= ${efl_version}
-  ecore-input-evas >= ${efl_version}
-  ecore-con >= ${efl_version}
-  ecore-ipc >= ${efl_version}
-  ecore-file >= ${efl_version}
-  eet >= ${efl_version}
-  edje >= ${efl_version}
-  efreet >= ${efl_version}
-  efreet-mime >= ${efl_version}
-  efreet-trash >= ${efl_version}
-  eina >= ${efl_version}
-  eldbus >= ${efl_version}
-  eio >= ${efl_version}
-  eo >= ${efl_version}
-  elementary >= ${efl_version}
-  emotion >= ${efl_version}
-  $eeze_mount
-  $udisks_mount
-  $device_libs
-])
+e_requires="\
+  evas >= $efl_version \
+  ecore >= $efl_version \
+  ecore-evas >= $efl_version \
+  ecore-input >= $efl_version \
+  ecore-input-evas >= $efl_version \
+  ecore-con >= $efl_version \
+  ecore-ipc >= $efl_version \
+  ecore-file >= $efl_version \
+  eet >= $efl_version \
+  edje >= $efl_version \
+  efreet >= $efl_version \
+  efreet-mime >= $efl_version \
+  efreet-trash >= $efl_version \
+  eina >= $efl_version \
+  eldbus >= $efl_version \
+  eio >= $efl_version \
+  eo >= $efl_version \
+  elementary >= $efl_version \
+  emotion >= $efl_version \
+  $eeze_mount \
+  $udisks_mount \
+  $device_libs"
+if test "x${e_cv_want_wayland_only}" != "xyes"; then
+  e_requires="$e_requires ecore-x >= $efl_version"
+fi
+
+PKG_CHECK_MODULES(E, [$e_requires])
 requirements_e="\
 evas >= ${efl_version} \
 ecore >= ${efl_version} \
@@ -797,14 +812,6 @@ define([CHECK_MODULE_BLUEZ4],
 AC_SUBST([EBLUEZ4_CFLAGS])
 AC_SUBST([EBLUEZ4_LIBS])
 
-have_wayland_only=no
-AC_ARG_ENABLE([wayland-only],
-  AS_HELP_STRING([--enable-wayland-only],[enable wayland-only version of enlightenment @<:@default=disabled@:>@]),
-  [e_cv_want_wayland_only=$enableval],
-  [e_cv_want_wayland_only=no])
-AC_MSG_CHECKING([whether wayland-only version is enabled])
-AC_MSG_RESULT([${e_cv_want_wayland_only}])
-
 have_wayland_clients=no
 AC_ARG_ENABLE([wayland-clients],
   AS_HELP_STRING([--enable-wayland-clients],[enable wayland clients in composite module @<:@default=disabled@:>@]),
@@ -857,11 +864,15 @@ AM_CONDITIONAL([HAVE_WAYLAND_ONLY], [test "x${have_wayland_only}" = "xyes"])
 AM_CONDITIONAL([HAVE_WAYLAND_CLIENTS], [test "x${have_wayland_clients}" = "xyes"])
 AM_CONDITIONAL([HAVE_WAYLAND_EGL], [test "x${have_wayland_egl}" = "xyes"])
 
-PKG_CHECK_MODULES([ECORE_X], [ecore-x >= ${efl_version}])
-if test -n "$ECORE_X_CFLAGS" ; then
-   ecore_x=true
+if test "x${have_wayland_only}" != "xyes"; then
+  PKG_CHECK_MODULES([ECORE_X], [ecore-x >= ${efl_version}])
+  if test -n "$ECORE_X_CFLAGS" ; then
+     ecore_x=true
+  else
+     ecore_x=false
+  fi
 else
-   ecore_x=false
+  ecore_x=false
 fi
 
 if test "x${ecore_x}" = "xtrue" && test -n "$WAYLAND_CFLAGS" ; then

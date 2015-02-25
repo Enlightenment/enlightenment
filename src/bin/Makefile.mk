@@ -30,8 +30,11 @@ internal_bin_PROGRAMS = \
 src/bin/enlightenment_fm_op \
 src/bin/enlightenment_sys \
 src/bin/enlightenment_thumb \
-src/bin/enlightenment_alert \
 src/bin/enlightenment_static_grabber
+
+if ! HAVE_WAYLAND_ONLY
+internal_bin_PROGRAMS += src/bin/enlightenment_alert
+endif
 
 if HAVE_EEZE
 internal_bin_PROGRAMS += src/bin/enlightenment_backlight
@@ -210,7 +213,6 @@ enlightenment_src = \
 src/bin/e_about.c \
 src/bin/e_acpi.c \
 src/bin/e_actions.c \
-src/bin/e_alert.c \
 src/bin/e_atoms.c \
 src/bin/e_auth.c \
 src/bin/e_backlight.c \
@@ -364,6 +366,7 @@ $(ENLIGHTENMENTHEADERS)
 if ! HAVE_WAYLAND_ONLY
 enlightenment_src += \
 src/bin/e_comp_x.c \
+src/bin/e_alert.c \
 src/bin/e_randr2.c \
 src/bin/e_xsettings.c
 endif
@@ -376,13 +379,19 @@ src/bin/e_comp_wl_input.c \
 src/bin/e_comp_wl.c
 endif
 
-src_bin_enlightenment_CPPFLAGS = $(E_CPPFLAGS) -DEFL_BETA_API_SUPPORT -DEFL_EO_API_SUPPORT -DE_LOGGING=1 @WAYLAND_CFLAGS@ @WAYLAND_EGL_CFLAGS@ @ECORE_X_CFLAGS@ -DNEED_X=1 -DNEED_WL
+src_bin_enlightenment_CPPFLAGS = $(E_CPPFLAGS) -DEFL_BETA_API_SUPPORT -DEFL_EO_API_SUPPORT -DE_LOGGING=1 @WAYLAND_CFLAGS@ @WAYLAND_EGL_CFLAGS@ -DNEED_WL
+if ! HAVE_WAYLAND_ONLY
+src_bin_enlightenment_CPPFLAGS += @ECORE_X_CFLAGS@ -DNEED_X=1
+endif
 src_bin_enlightenment_SOURCES = \
 src/bin/e_main.c \
 $(enlightenment_src)
 
 src_bin_enlightenment_LDFLAGS = -export-dynamic
-src_bin_enlightenment_LDADD = @e_libs@ @dlopen_libs@ @cf_libs@ @VALGRIND_LIBS@ @WAYLAND_LIBS@ @WL_DRM_LIBS@ @WAYLAND_EGL_LIBS@ -lm @ECORE_X_LIBS@ @SHM_OPEN_LIBS@
+src_bin_enlightenment_LDADD = @e_libs@ @dlopen_libs@ @cf_libs@ @VALGRIND_LIBS@ @WAYLAND_LIBS@ @WL_DRM_LIBS@ @WAYLAND_EGL_LIBS@ -lm @SHM_OPEN_LIBS@
+if ! HAVE_WAYLAND_ONLY
+src_bin_enlightenment_LDADD += @ECORE_X_LIBS@
+endif
 
 src_bin_enlightenment_imc_SOURCES = \
 src/bin/e.h \

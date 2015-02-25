@@ -454,6 +454,15 @@ main(int argc, char **argv)
    ecore_evas_app_comp_sync_set(0);
 
    TS("Ecore_Evas Engine Check");
+#ifdef HAVE_WAYLAND_ONLY
+   if (!ecore_evas_engine_type_supported_get(ECORE_EVAS_ENGINE_WAYLAND_SHM))
+     {
+        e_error_message_show(_("Enlightenment found ecore_evas doesn't support the Wayland SHM\n"
+                               "rendering in Evas. Please check your installation of Evas and\n"
+                                "Ecore and check they support the Wayland SHM rendering engine."));
+        _e_main_shutdown(-1);
+     }
+#else
    if (!ecore_evas_engine_type_supported_get(ECORE_EVAS_ENGINE_SOFTWARE_XCB))
      {
         if (!ecore_evas_engine_type_supported_get(ECORE_EVAS_ENGINE_SOFTWARE_XLIB))
@@ -464,6 +473,7 @@ main(int argc, char **argv)
              _e_main_shutdown(-1);
           }
      }
+#endif
    if (!ecore_evas_engine_type_supported_get(ECORE_EVAS_ENGINE_SOFTWARE_BUFFER))
      {
         e_error_message_show(_("Enlightenment found ecore_evas doesn't support the Software Buffer\n"
@@ -494,6 +504,7 @@ main(int argc, char **argv)
    TS("E Intl Init Done");
    _e_main_shutdown_push(e_intl_shutdown);
 
+#ifndef HAVE_WAYLAND_ONLY
    /* init white box of death alert */
    TS("E_Alert Init");
    if (!e_alert_init())
@@ -504,6 +515,7 @@ main(int argc, char **argv)
      }
    TS("E_Alert Init Done");
    _e_main_shutdown_push(e_alert_shutdown);
+#endif
 
    TS("E_Configure Init");
    e_configure_init();
