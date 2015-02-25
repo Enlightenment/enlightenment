@@ -812,14 +812,6 @@ define([CHECK_MODULE_BLUEZ4],
 AC_SUBST([EBLUEZ4_CFLAGS])
 AC_SUBST([EBLUEZ4_LIBS])
 
-have_wayland_only=no
-AC_ARG_ENABLE([wayland-only],
-  AS_HELP_STRING([--enable-wayland-only],[enable wayland-only version of enlightenment @<:@default=disabled@:>@]),
-  [e_cv_want_wayland_only=$enableval],
-  [e_cv_want_wayland_only=no])
-AC_MSG_CHECKING([whether wayland-only version is enabled])
-AC_MSG_RESULT([${e_cv_want_wayland_only}])
-
 have_wayland_clients=no
 AC_ARG_ENABLE([wayland-clients],
   AS_HELP_STRING([--enable-wayland-clients],[enable wayland clients in composite module @<:@default=disabled@:>@]),
@@ -836,7 +828,7 @@ AC_ARG_ENABLE([wayland-egl],
 AC_MSG_CHECKING([whether wayland EGL support is enabled])
 AC_MSG_RESULT([${e_cv_want_wayland_egl}])
 
-if test "x${e_cv_want_wayland_only}" != "xno" || test "x${e_cv_want_wayland_clients}" != "xno";then
+if test "x${e_cv_want_wayland_clients}" != "xno";then
   PKG_CHECK_MODULES([WAYLAND], [ecore-wayland wayland-server xkbcommon uuid],
     [
       have_wayland=yes
@@ -861,14 +853,10 @@ if test "x${have_wayland}" = "xyes"; then
   else
     have_wayland_egl=no
   fi
-  if test "x${e_cv_want_wayland_only}" != "xno"; then
-    have_wayland_only=yes
-    AC_DEFINE_UNQUOTED([HAVE_WAYLAND_ONLY],[1],[enable wayland-only version of enlightenment])
-  fi
 fi
 
 AM_CONDITIONAL([HAVE_WAYLAND], [test "x${have_wayland}" = "xyes"])
-AM_CONDITIONAL([HAVE_WAYLAND_ONLY], [test "x${have_wayland_only}" = "xyes"])
+AM_CONDITIONAL([HAVE_WAYLAND_ONLY], [false])
 AM_CONDITIONAL([HAVE_WAYLAND_CLIENTS], [test "x${have_wayland_clients}" = "xyes"])
 AM_CONDITIONAL([HAVE_WAYLAND_EGL], [test "x${have_wayland_egl}" = "xyes"])
 
@@ -887,7 +875,7 @@ fi
 
 define([CHECK_MODULE_WL_DESKTOP_SHELL],
 [
-  if test "x${have_wayland_clients}" = "xyes" || test "x${e_cv_want_wayland_only}" = "xyes"; then
+  if test "x${have_wayland_clients}" = "xyes" ; then
     AC_E_CHECK_PKG(WL_DESKTOP_SHELL, [ ecore >= $efl_version eina >= $efl_version ], [WL_DESKTOP_SHELL=true], [WL_DESKTOP_SHELL=false])
   else
     WL_DESKTOP_SHELL=false
