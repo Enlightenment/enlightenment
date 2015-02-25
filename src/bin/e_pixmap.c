@@ -50,6 +50,7 @@ _e_pixmap_cb_buffer_destroy(struct wl_listener *listener, void *data EINA_UNUSED
    E_Pixmap *cp;
 
    cp = container_of(listener, E_Pixmap, buffer_destroy_listener);
+   cp->data = NULL;
    cp->buffer_destroy_listener.notify = NULL;
 }
 #endif
