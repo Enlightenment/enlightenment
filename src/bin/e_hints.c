@@ -1,3 +1,4 @@
+#define E_COMP_WL
 #include "e.h"
 
 #ifndef HAVE_WAYLAND_ONLY
@@ -1664,6 +1665,7 @@ EAPI void
 e_hints_scale_update(void)
 {
 #ifdef HAVE_WAYLAND_ONLY
+   e_comp->wl_comp_data->output.scale = e_scale;
 #else
    unsigned int scale = e_scale * 1000;
 
