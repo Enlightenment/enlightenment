@@ -1,3 +1,43 @@
+Release 0.19.4:
+---------------------
+
+Carsten Haitzler (5):
+      maximization bug affecting libreoffice and others - fix
+      e - client list update after adding to client list - fix netwm bug
+      efm - make dir listing far faster - no file magic content and dont sync
+      e - menus - fix autoscroll on zones not at 0 y...
+      e - menus - fix submenu popup direction when zones are not at 0 y
+
+Chidambar Zinnoury (1):
+      e backlight: use saner default values.
+
+Dmitry Luhtionov (1):
+      cpufreq: freebsd fixes
+
+Mike Blumenkrantz (21):
+      continue to hide window input regions on desk flip if they are shaded
+      ensure no duplicate XDG paths are prepended during startup
+      check for eldbus instead of edbus in device backend libs
+      block linear desk flips that would wrap if desk flip wrapping is disabled
+      use direct path for setting icons in util theme set function when icon is a path
+      don't send unfocused signal to override clients
+      escape notification popup text...always
+      fix crashing when changing desklock settings and using pin/personal auth
+      clamp client size to screen when client limit policy does not allow offscreen
+      rename extremely frustratingly-named E_Screen_Limits enum and members
+      do not reapply focus on canvas object ungrab/close for pointer-focus enthusiasts
+      remove unnecessary icon setting and fix sizing in edgebindings
+      fix dialog sizing when icon setting fails
+      set default text for edgebindings caption when no bindings exist
+      fix appindicator icon loading when using IconThemePath key
+      don't clamp bgpreview vsize if bgpreview is a fullscreen overlay
+      fix border frame color classes to be configured as solids, not text
+      remove wayland-only support
+
+Vincent Torri (1):
+      add MIN define for non-linux systems
+
+
 Release 0.19.3:
 ---------------------
 
