@@ -257,23 +257,15 @@ _e_comp_wl_evas_cb_mouse_move(void *data, Evas *evas EINA_UNUSED, Evas_Object *o
      }
 }
 
-static void
-_e_comp_wl_evas_cb_mouse_down(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event)
+static Eina_Bool
+_e_comp_wl_evas_handle_mouse_button(E_Client *ec, uint32_t timestamp, uint32_t button_id, uint32_t state)
 {
-   E_Client *ec;
-   Evas_Event_Mouse_Down *ev;
-   struct wl_resource *res;
-   struct wl_client *wc;
    Eina_List *l;
+   struct wl_client *wc;
    uint32_t serial, btn;
+   struct wl_resource *res;
 
-   ev = event;
-   if (!(ec = data)) return;
-   if (ec->cur_mouse_action) return;
-   if (e_object_is_del(E_OBJECT(ec))) return;
-   if (e_client_util_ignored_get(ec)) return;
-
-   switch (ev->button)
+   switch (button_id)
      {
       case 1:
         btn = BTN_LEFT;
@@ -285,23 +277,40 @@ _e_comp_wl_evas_cb_mouse_down(void *data, Evas *evas EINA_UNUSED, Evas_Object *o
         btn = BTN_RIGHT;
         break;
       default:
-        btn = ev->button;
+        btn = button_id;
         break;
      }
 
    ec->comp->wl_comp_data->ptr.button = btn;
 
-   if (!ec->comp_data->surface) return;
+   if (!ec->comp_data->surface) return EINA_FALSE;
 
    wc = wl_resource_get_client(ec->comp_data->surface);
    serial = wl_display_next_serial(ec->comp->wl_comp_data->wl.disp);
+
    EINA_LIST_FOREACH(ec->comp->wl_comp_data->ptr.resources, l, res)
      {
-        if (!e_comp_wl_input_pointer_check(res)) continue;
         if (wl_resource_get_client(res) != wc) continue;
-        wl_pointer_send_button(res, serial, ev->timestamp, btn,
-                               WL_POINTER_BUTTON_STATE_PRESSED);
+        if (!e_comp_wl_input_pointer_check(res)) continue;
+        wl_pointer_send_button(res, serial, timestamp, btn, state);
      }
+   return EINA_TRUE;
+}
+
+static void
+_e_comp_wl_evas_cb_mouse_down(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event)
+{
+   E_Client *ec;
+   Evas_Event_Mouse_Down *ev;
+
+   ev = event;
+   if (!(ec = data)) return;
+   if (ec->cur_mouse_action) return;
+   if (e_object_is_del(E_OBJECT(ec))) return;
+   if (e_client_util_ignored_get(ec)) return;
+
+   _e_comp_wl_evas_handle_mouse_button(ec, ev->timestamp, ev->button,
+                                       WL_POINTER_BUTTON_STATE_PRESSED);
 }
 
 static void
@@ -309,10 +318,6 @@ _e_comp_wl_evas_cb_mouse_up(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj
 {
    E_Client *ec;
    Evas_Event_Mouse_Up *ev;
-   struct wl_resource *res;
-   struct wl_client *wc;
-   Eina_List *l;
-   uint32_t serial, btn;
 
    ev = event;
    if (!(ec = data)) return;
@@ -320,35 +325,8 @@ _e_comp_wl_evas_cb_mouse_up(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj
    if (e_object_is_del(E_OBJECT(ec))) return;
    if (e_client_util_ignored_get(ec)) return;
 
-   switch (ev->button)
-     {
-      case 1:
-        btn = BTN_LEFT;
-        break;
-      case 2:
-        btn = BTN_MIDDLE;
-        break;
-      case 3:
-        btn = BTN_RIGHT;
-        break;
-      default:
-        btn = ev->button;
-        break;
-     }
-
-   ec->comp->wl_comp_data->ptr.button = btn;
-
-   if (!ec->comp_data->surface) return;
-
-   wc = wl_resource_get_client(ec->comp_data->surface);
-   serial = wl_display_next_serial(ec->comp->wl_comp_data->wl.disp);
-   EINA_LIST_FOREACH(ec->comp->wl_comp_data->ptr.resources, l, res)
-     {
-        if (!e_comp_wl_input_pointer_check(res)) continue;
-        if (wl_resource_get_client(res) != wc) continue;
-        wl_pointer_send_button(res, serial, ev->timestamp, btn,
-                               WL_POINTER_BUTTON_STATE_RELEASED);
-     }
+   _e_comp_wl_evas_handle_mouse_button(ec, ev->timestamp, ev->button,
+                                       WL_POINTER_BUTTON_STATE_RELEASED);
 }
 
 static void
