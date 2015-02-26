@@ -1318,7 +1318,7 @@ _e_xdg_shell_cb_popup_get(struct wl_client *client, struct wl_resource *resource
    if (ec->parent)
      {
         cdata->popup.x = E_CLAMP(x, 0, ec->parent->client.w);
-        cdata->popup.y = E_CLAMP(y, 0, ec->parent->client.y);
+        cdata->popup.y = E_CLAMP(y, 0, ec->parent->client.h);
      }
    else
      {
