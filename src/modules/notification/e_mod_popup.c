@@ -12,6 +12,45 @@ static void        _notification_popup_del(unsigned int                 id,
 static void        _notification_popdown(Popup_Data                  *popup,
                                          E_Notification_Notify_Closed_Reason reason);
 
+/* this function should be external in edje for use in cases such as this module.
+ *
+ * happily, it was decided that the function would not be external so that it could
+ * be duplicated into the module in full.
+ */
+char *
+_nedje_text_escape(const char *text)
+{
+   Eina_Strbuf *txt;
+   char *ret;
+   const char *text_end;
+   size_t text_len;
+
+   if (!text) return NULL;
+
+   txt = eina_strbuf_new();
+   text_len = strlen(text);
+
+   text_end = text + text_len;
+   while (text < text_end)
+     {
+        int advance;
+        const char *escaped = evas_textblock_string_escape_get(text, &advance);
+        if (!escaped)
+          {
+             eina_strbuf_append_char(txt, text[0]);
+             advance = 1;
+          }
+        else
+          eina_strbuf_append(txt, escaped);
+
+        text += advance;
+     }
+
+   ret = eina_strbuf_string_steal(txt);
+   eina_strbuf_free(txt);
+   return ret;
+}
+
 #define POPUP_GAP 10
 #define POPUP_TO_EDGE 15
 static int popups_displayed = 0;
@@ -84,6 +123,7 @@ notification_popup_notify(E_Notification_Notify *n,
                           unsigned int id)
 {
    Popup_Data *popup = NULL;
+   char *esc;
 
    switch (n->urgency)
      {
@@ -101,6 +141,10 @@ notification_popup_notify(E_Notification_Notify *n,
      }
    if (notification_cfg->ignore_replacement)
      n->replaces_id = 0;
+
+   esc = _nedje_text_escape(n->body);
+   eina_stringshare_replace(&n->body, esc);
+   free(esc);
 
    if (n->replaces_id && (popup = _notification_popup_find(n->replaces_id)))
      {
@@ -594,7 +638,7 @@ _notification_format_message(Popup_Data *popup)
    * newline kinds, and paragraph separator. ATM this will suffice. */
    eina_strbuf_append(buf, popup->notif->body);
    eina_strbuf_replace_all(buf, "\n", "<br/>");
-   edje_object_part_text_unescaped_set(o, "notification.textblock.message",
+   edje_object_part_text_set(o, "notification.textblock.message",
                              eina_strbuf_string_get(buf));
    eina_strbuf_free(buf);
 }
