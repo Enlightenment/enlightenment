@@ -2706,7 +2706,7 @@ e_client_mouse_in(E_Client *ec, int x, int y)
    ec->mouse.current.mx = x;
    ec->mouse.current.my = y;
    ec->mouse.in = 1;
-   if (!ec->iconic)
+   if ((!ec->iconic) && (!e_client_util_ignored_get(ec)))
      e_focus_event_mouse_in(ec);
 }
 
@@ -2722,7 +2722,7 @@ e_client_mouse_out(E_Client *ec, int x, int y)
    ec->mouse.current.mx = x;
    ec->mouse.current.my = y;
    ec->mouse.in = 0;
-   if (!ec->iconic)
+   if ((!ec->iconic) && (!e_client_util_ignored_get(ec)))
      e_focus_event_mouse_out(ec);
 }
 
@@ -2733,7 +2733,7 @@ e_client_mouse_wheel(E_Client *ec, Evas_Point *output, E_Binding_Event_Wheel *ev
    if (action_client) return;
    ec->mouse.current.mx = output->x;
    ec->mouse.current.my = output->y;
-   if (!ec->cur_mouse_action)
+   if ((!ec->cur_mouse_action) && (!e_client_util_ignored_get(ec)))
      e_bindings_wheel_event_handle(E_BINDING_CONTEXT_WINDOW, E_OBJECT(ec), ev);
 }
 
@@ -2741,7 +2741,7 @@ EAPI void
 e_client_mouse_down(E_Client *ec, int button, Evas_Point *output, E_Binding_Event_Mouse_Button *ev)
 {
    EINA_SAFETY_ON_NULL_RETURN(ec);
-   if (action_client || ec->iconic) return;
+   if (action_client || ec->iconic || e_client_util_ignored_get(ec)) return;
    if ((button >= 1) && (button <= 3))
      {
         ec->mouse.last_down[button - 1].mx = output->x;
@@ -2799,7 +2799,7 @@ EAPI void
 e_client_mouse_up(E_Client *ec, int button, Evas_Point *output, E_Binding_Event_Mouse_Button* ev)
 {
    EINA_SAFETY_ON_NULL_RETURN(ec);
-   if (ec->iconic) return;
+   if (ec->iconic || e_client_util_ignored_get(ec)) return;
    if ((button >= 1) && (button <= 3))
      {
         ec->mouse.last_up[button - 1].mx = output->x;
@@ -2840,7 +2840,7 @@ EAPI void
 e_client_mouse_move(E_Client *ec, Evas_Point *output)
 {
    EINA_SAFETY_ON_NULL_RETURN(ec);
-   if (ec->iconic) return;
+   if (ec->iconic || e_client_util_ignored_get(ec)) return;
    ec->mouse.current.mx = output->x;
    ec->mouse.current.my = output->y;
    if (ec->moving)
