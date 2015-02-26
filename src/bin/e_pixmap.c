@@ -632,6 +632,19 @@ e_pixmap_image_clear(E_Pixmap *cp, Eina_Bool cache)
         break;
       case E_PIXMAP_TYPE_WL:
 #if defined(HAVE_WAYLAND_CLIENTS) || defined(HAVE_WAYLAND_ONLY)
+        if (cache)
+          {
+             E_Comp_Wl_Client_Data *cd;
+             struct wl_resource *cb;
+
+             if ((!cp->client) || (!cp->client->comp_data)) return;
+             cd = (E_Comp_Wl_Client_Data *)cp->client->comp_data;
+             EINA_LIST_FREE(cd->frames, cb)
+               {
+                  wl_callback_send_done(cb, ecore_time_unix_get());
+                  wl_resource_destroy(cb);
+               }
+          }
 #endif
         break;
       default:
