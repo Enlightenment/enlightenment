@@ -634,7 +634,7 @@ _e_comp_wl_evas_cb_color_set(void *data, Evas_Object *obj, void *event EINA_UNUS
    ec->netwm.opacity_changed = EINA_TRUE;
 }
 
-static void 
+static void
 _e_comp_wl_buffer_reference_cb_destroy(struct wl_listener *listener, void *data)
 {
    E_Comp_Wl_Buffer_Ref *ref;
@@ -644,7 +644,7 @@ _e_comp_wl_buffer_reference_cb_destroy(struct wl_listener *listener, void *data)
    ref->buffer = NULL;
 }
 
-static void 
+static void
 _e_comp_wl_buffer_cb_destroy(struct wl_listener *listener, void *data EINA_UNUSED)
 {
    E_Comp_Wl_Buffer *buffer;
@@ -654,7 +654,7 @@ _e_comp_wl_buffer_cb_destroy(struct wl_listener *listener, void *data EINA_UNUSE
    free(buffer);
 }
 
-static void 
+static void
 _e_comp_wl_client_evas_init(E_Client *ec)
 {
    if (ec->comp_data->evas_init) return;
@@ -888,7 +888,7 @@ _e_comp_wl_cb_input_event(void *data EINA_UNUSED, int type, void *ev)
    return ECORE_CALLBACK_RENEW;
 }
 
-static void 
+static void
 _e_comp_wl_surface_state_size_update(E_Client *ec, E_Comp_Wl_Surface_State *state)
 {
    int w = 0, h = 0;
@@ -924,22 +924,22 @@ _e_comp_wl_surface_state_size_update(E_Client *ec, E_Comp_Wl_Surface_State *stat
    state->bh = h;
 }
 
-static void 
+static void
 _e_comp_wl_surface_state_cb_buffer_destroy(struct wl_listener *listener, void *data EINA_UNUSED)
 {
    E_Comp_Wl_Surface_State *state;
 
-   state = 
+   state =
      container_of(listener, E_Comp_Wl_Surface_State, buffer_destroy_listener);
    state->buffer = NULL;
 }
 
-static void 
+static void
 _e_comp_wl_surface_state_init(E_Comp_Wl_Surface_State *state, int w, int h)
 {
    state->new_attach = EINA_FALSE;
    state->buffer = NULL;
-   state->buffer_destroy_listener.notify = 
+   state->buffer_destroy_listener.notify =
      _e_comp_wl_surface_state_cb_buffer_destroy;
    state->sx = state->sy = 0;
 
@@ -950,7 +950,7 @@ _e_comp_wl_surface_state_init(E_Comp_Wl_Surface_State *state, int w, int h)
    eina_tiler_tile_size_set(state->opaque, 1, 1);
 }
 
-static void 
+static void
 _e_comp_wl_surface_state_finish(E_Comp_Wl_Surface_State *state)
 {
    struct wl_resource *cb;
@@ -972,19 +972,19 @@ _e_comp_wl_surface_state_finish(E_Comp_Wl_Surface_State *state)
    state->buffer = NULL;
 }
 
-static void 
+static void
 _e_comp_wl_surface_state_buffer_set(E_Comp_Wl_Surface_State *state, E_Comp_Wl_Buffer *buffer)
 {
    if (state->buffer == buffer) return;
-   if (state->buffer) 
+   if (state->buffer)
      wl_list_remove(&state->buffer_destroy_listener.link);
    state->buffer = buffer;
-   if (state->buffer) 
-     wl_signal_add(&state->buffer->destroy_signal, 
+   if (state->buffer)
+     wl_signal_add(&state->buffer->destroy_signal,
                    &state->buffer_destroy_listener);
 }
 
-static void 
+static void
 _e_comp_wl_surface_state_commit(E_Client *ec, E_Comp_Wl_Surface_State *state)
 {
    Eina_Bool first = EINA_FALSE;
@@ -1041,12 +1041,12 @@ _e_comp_wl_surface_state_commit(E_Client *ec, E_Comp_Wl_Surface_State *state)
         if (ec->new_client) placed = ec->placed;
 
         if ((ec->comp_data->shell.surface) && (ec->comp_data->shell.configure))
-          ec->comp_data->shell.configure(ec->comp_data->shell.surface, 
+          ec->comp_data->shell.configure(ec->comp_data->shell.surface,
                                          x, y, state->bw, state->bh);
         else
           e_client_util_move_resize_without_frame(ec, x, y, state->bw, state->bh);
 
-        if (ec->new_client) 
+        if (ec->new_client)
           ec->placed = placed;
         else if ((first) && (ec->placed))
           {
@@ -1081,7 +1081,7 @@ _e_comp_wl_surface_state_commit(E_Client *ec, E_Comp_Wl_Surface_State *state)
         itr = eina_tiler_iterator_new(state->opaque);
         EINA_ITERATOR_FOREACH(itr, rect)
           {
-             e_pixmap_image_opaque_set(ec->pixmap, rect->x, rect->y, 
+             e_pixmap_image_opaque_set(ec->pixmap, rect->x, rect->y,
                                        rect->w, rect->h);
              break;
           }
@@ -1098,7 +1098,7 @@ _e_comp_wl_surface_state_commit(E_Client *ec, E_Comp_Wl_Surface_State *state)
 
         tmp = eina_tiler_new(state->bw, state->bh);
         eina_tiler_tile_size_set(tmp, 1, 1);
-        eina_tiler_rect_add(tmp, 
+        eina_tiler_rect_add(tmp,
                             &(Eina_Rectangle){0, 0, state->bw, state->bh});
         if ((src = eina_tiler_intersection(state->input, tmp)))
           {
@@ -1107,7 +1107,7 @@ _e_comp_wl_surface_state_commit(E_Client *ec, E_Comp_Wl_Surface_State *state)
 
              itr = eina_tiler_iterator_new(src);
              EINA_ITERATOR_FOREACH(itr, rect)
-               e_comp_object_input_area_set(ec->frame, rect->x, rect->y, 
+               e_comp_object_input_area_set(ec->frame, rect->x, rect->y,
                                             rect->w, rect->h);
 
              eina_iterator_free(itr);
@@ -1136,14 +1136,14 @@ unmapped:
      eina_tiler_clear(state->input);
 }
 
-static void 
+static void
 _e_comp_wl_surface_cb_destroy(struct wl_client *client EINA_UNUSED, struct wl_resource *resource)
 {
    DBG("Surface Cb Destroy: %d", wl_resource_get_id(resource));
    wl_resource_destroy(resource);
 }
 
-static void 
+static void
 _e_comp_wl_surface_cb_attach(struct wl_client *client EINA_UNUSED, struct wl_resource *resource, struct wl_resource *buffer_resource, int32_t sx, int32_t sy)
 {
    E_Pixmap *ep;
@@ -1171,7 +1171,7 @@ _e_comp_wl_surface_cb_attach(struct wl_client *client EINA_UNUSED, struct wl_res
    ec->comp_data->pending.new_attach = EINA_TRUE;
 }
 
-static void 
+static void
 _e_comp_wl_surface_cb_damage(struct wl_client *client EINA_UNUSED, struct wl_resource *resource, int32_t x, int32_t y, int32_t w, int32_t h)
 {
    E_Pixmap *ep;
@@ -1196,7 +1196,7 @@ _e_comp_wl_frame_cb_destroy(struct wl_resource *resource)
    if (!(ec = wl_resource_get_user_data(resource))) return;
    if (e_object_is_del(E_OBJECT(ec))) return;
 
-   ec->comp_data->frames = 
+   ec->comp_data->frames =
      eina_list_remove(ec->comp_data->frames, resource);
 }
 
@@ -1221,7 +1221,7 @@ _e_comp_wl_surface_cb_frame(struct wl_client *client, struct wl_resource *resour
 
    wl_resource_set_implementation(res, NULL, ec, _e_comp_wl_frame_cb_destroy);
 
-   ec->comp_data->pending.frames = 
+   ec->comp_data->pending.frames =
      eina_list_prepend(ec->comp_data->pending.frames, res);
 }
 
@@ -1548,7 +1548,7 @@ _e_comp_wl_compositor_cb_del(E_Comp *comp)
    free(cdata);
 }
 
-static void 
+static void
 _e_comp_wl_subsurface_destroy(struct wl_resource *resource)
 {
    E_Client *ec;
@@ -1580,7 +1580,7 @@ _e_comp_wl_subsurface_destroy(struct wl_resource *resource)
    ec->comp_data->sub.data = NULL;
 }
 
-static Eina_Bool 
+static Eina_Bool
 _e_comp_wl_subsurface_synchronized_get(E_Comp_Wl_Subsurf_Data *sdata)
 {
    while (sdata)
@@ -1593,7 +1593,7 @@ _e_comp_wl_subsurface_synchronized_get(E_Comp_Wl_Subsurf_Data *sdata)
    return EINA_FALSE;
 }
 
-static void 
+static void
 _e_comp_wl_subsurface_commit_to_cache(E_Client *ec)
 {
    E_Comp_Client_Data *cdata;
@@ -1615,9 +1615,9 @@ _e_comp_wl_subsurface_commit_to_cache(E_Client *ec)
    if (cdata->pending.new_attach)
      {
         sdata->cached.new_attach = EINA_TRUE;
-        _e_comp_wl_surface_state_buffer_set(&sdata->cached, 
+        _e_comp_wl_surface_state_buffer_set(&sdata->cached,
                                             cdata->pending.buffer);
-        e_comp_wl_buffer_reference(&sdata->cached_buffer_ref, 
+        e_comp_wl_buffer_reference(&sdata->cached_buffer_ref,
                                    cdata->pending.buffer);
      }
 
@@ -1649,7 +1649,7 @@ _e_comp_wl_subsurface_commit_to_cache(E_Client *ec)
    sdata->cached.has_data = EINA_TRUE;
 }
 
-static void 
+static void
 _e_comp_wl_subsurface_commit_from_cache(E_Client *ec)
 {
    E_Comp_Client_Data *cdata;
@@ -1672,7 +1672,7 @@ _e_comp_wl_subsurface_commit_from_cache(E_Client *ec)
      }
 }
 
-static void 
+static void
 _e_comp_wl_subsurface_parent_commit(E_Client *ec, Eina_Bool parent_synchronized)
 {
    E_Client *parent;
@@ -2601,7 +2601,7 @@ e_comp_wl_surface_create(struct wl_client *client, int version, uint32_t id)
    return ret;
 }
 
-EINTERN void 
+EINTERN void
 e_comp_wl_surface_attach(E_Client *ec, E_Comp_Wl_Buffer *buffer)
 {
    e_comp_wl_buffer_reference(&ec->comp_data->buffer_ref, buffer);
@@ -2614,7 +2614,7 @@ e_comp_wl_surface_attach(E_Client *ec, E_Comp_Wl_Buffer *buffer)
    _e_comp_wl_surface_state_size_update(ec, &ec->comp_data->pending);
 }
 
-EINTERN Eina_Bool 
+EINTERN Eina_Bool
 e_comp_wl_surface_commit(E_Client *ec)
 {
    _e_comp_wl_surface_state_commit(ec, &ec->comp_data->pending);
@@ -2656,7 +2656,7 @@ e_comp_wl_surface_commit(E_Client *ec)
    return EINA_TRUE;
 }
 
-EINTERN Eina_Bool 
+EINTERN Eina_Bool
 e_comp_wl_subsurface_commit(E_Client *ec)
 {
    E_Comp_Wl_Subsurf_Data *sdata;
@@ -2689,7 +2689,7 @@ e_comp_wl_subsurface_commit(E_Client *ec)
    return EINA_TRUE;
 }
 
-EINTERN void 
+EINTERN void
 e_comp_wl_buffer_reference(E_Comp_Wl_Buffer_Ref *ref, E_Comp_Wl_Buffer *buffer)
 {
    if ((ref->buffer) && (buffer != ref->buffer))
@@ -2720,7 +2720,7 @@ e_comp_wl_buffer_get(struct wl_resource *resource)
    struct wl_listener *listener;
    struct wl_shm_buffer *shmbuff;
 
-   listener = 
+   listener =
      wl_resource_get_destroy_listener(resource, _e_comp_wl_buffer_cb_destroy);
    if (listener)
      return container_of(listener, E_Comp_Wl_Buffer, destroy_listener);
