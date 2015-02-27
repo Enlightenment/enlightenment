@@ -338,6 +338,9 @@ static void
 _toolbar_selected_cb(void *data, Evas_Object *obj, void *event)
 {
   CFType *cft = data;
+
+  if (evas_object_data_get(obj, "__anim")) return;
+
   elm_genlist_item_bring_in(cft->gindex, ELM_GENLIST_ITEM_SCROLLTO_TOP);
 }
 
@@ -481,13 +484,13 @@ _unload_cb(void *data, Evas_Object *obj, void *event)
 static void
 _list_scroll_start_cb(void *data, Evas_Object *obj, void *event)
 {
-   evas_object_data_set(obj, "__anim", (void*) 1);
+  evas_object_data_set(data, "__anim", (void*) 1);
 }
 
 static void
 _list_scroll_stop_cb(void *data, Evas_Object *obj, void *event)
 {
-  evas_object_data_del(obj, "__anim");
+  evas_object_data_del(data, "__anim");
 }
 
 static void
@@ -497,7 +500,7 @@ _list_scroll_cb(void *data, Evas_Object *obj, void *event)
    Elm_Object_Item *it, *gi;
    CFType *cft;
 
-   if (evas_object_data_get(obj, "__anim")) return;
+
 
    evas_object_geometry_get(obj, &x, &y, &w ,&h);
    it = elm_genlist_at_xy_item_get(obj, x + 3, y + 3, NULL);
@@ -539,9 +542,9 @@ e_int_config_modules_create_cb(const char *path, const char *part, Evas_Object *
    list = elm_genlist_add(parent);
    evas_object_size_hint_align_set(list, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_size_hint_weight_set(list, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   evas_object_smart_callback_add(list, "scroll", _list_scroll_cb, list);
-   evas_object_smart_callback_add(list, "scroll,anim,start", _list_scroll_start_cb, list);
-   evas_object_smart_callback_add(list, "scroll,anim,stop", _list_scroll_stop_cb, list);
+   evas_object_smart_callback_add(list, "scroll", _list_scroll_cb, tb);
+   evas_object_smart_callback_add(list, "scroll,anim,start", _list_scroll_start_cb, tb);
+   evas_object_smart_callback_add(list, "scroll,anim,stop", _list_scroll_stop_cb, tb);
    evas_object_data_set(list, "__toolbar", tb);
    elm_table_pack(tab, list, 1, 0, 1, 1);
    evas_object_show(list);
