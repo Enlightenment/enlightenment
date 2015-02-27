@@ -562,7 +562,9 @@ _e_comp_wl_evas_cb_state_update(void *data, Evas_Object *obj EINA_UNUSED, void *
 
    if (e_object_is_del(E_OBJECT(ec))) return;
 
-   E_COMP_WL_PIXMAP_CHECK;
+   /* check for wayland pixmap */
+   if (e_pixmap_type_get(ec->pixmap) != E_PIXMAP_TYPE_WL) return;
+
    if (ec->comp_data->shell.configure_send)
      ec->comp_data->shell.configure_send(ec->comp_data->shell.surface, 0, 0, 0);
 }
