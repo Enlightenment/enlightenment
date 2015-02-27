@@ -562,6 +562,18 @@ _e_comp_wl_evas_cb_resize(void *data, Evas_Object *obj EINA_UNUSED, void *event 
 }
 
 static void
+_e_comp_wl_evas_cb_state_update(void *data, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
+{
+   E_Client *ec = data;
+
+   if (e_object_is_del(E_OBJECT(ec))) return;
+
+   E_COMP_WL_PIXMAP_CHECK;
+   if (ec->comp_data->shell.configure_send)
+     ec->comp_data->shell.configure_send(ec->comp_data->shell.surface, 0, 0, 0);
+}
+
+static void
 _e_comp_wl_evas_cb_delete_request(void *data, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
 {
    E_Client *ec;
@@ -678,6 +690,14 @@ _e_comp_wl_client_evas_init(E_Client *ec)
      {
         evas_object_smart_callback_add(ec->frame, "client_resize",
                                        _e_comp_wl_evas_cb_resize, ec);
+        evas_object_smart_callback_add(ec->frame, "maximize_done",
+                                       _e_comp_wl_evas_cb_state_update, ec);
+        evas_object_smart_callback_add(ec->frame, "unmaximize_done",
+                                       _e_comp_wl_evas_cb_state_update, ec);
+        evas_object_smart_callback_add(ec->frame, "fullscreen",
+                                       _e_comp_wl_evas_cb_state_update, ec);
+        evas_object_smart_callback_add(ec->frame, "unfullscreen",
+                                       _e_comp_wl_evas_cb_state_update, ec);
      }
 
    /* setup delete/kill callbacks */
