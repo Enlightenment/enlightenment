@@ -756,6 +756,7 @@ e_pointer_object_set(E_Pointer *ptr, Evas_Object *obj, int x, int y)
    ecore_evas_cursor_get(ptr->ee, &o, NULL, NULL, NULL);
    if (o)
      {
+        if (o == obj) return;
         ec = e_comp_object_client_get(o);
         if (ec)
           ec->hidden = 1;
