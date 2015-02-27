@@ -941,6 +941,10 @@ _e_fwin_icon_mouse_in(void *data, Evas_Object *obj __UNUSED__, void *event_info)
    if (fwin->popup_timer) ecore_timer_del(fwin->popup_timer);
    fwin->popup_timer = NULL;
    if (!fileman_config->tooltip.enable) return;
+#ifdef HAVE_WAYLAND_ONLY
+   return;
+#warning REMOVE FOR WL RELEASE
+#endif
    fwin->popup_timer = ecore_timer_add(fileman_config->tooltip.delay, _e_fwin_icon_popup, fwin);
    fwin->popup_icon = ici;
 #ifndef HAVE_WAYLAND_ONLY
