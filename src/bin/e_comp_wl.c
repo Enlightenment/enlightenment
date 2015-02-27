@@ -265,6 +265,10 @@ _e_comp_wl_evas_handle_mouse_button(E_Client *ec, uint32_t timestamp, uint32_t b
    uint32_t serial, btn;
    struct wl_resource *res;
 
+   if (ec->cur_mouse_action) return EINA_FALSE;
+   if (e_object_is_del(E_OBJECT(ec))) return EINA_FALSE;
+   if (e_client_util_ignored_get(ec)) return EINA_FALSE;
+
    switch (button_id)
      {
       case 1:
@@ -300,14 +304,8 @@ _e_comp_wl_evas_handle_mouse_button(E_Client *ec, uint32_t timestamp, uint32_t b
 static void
 _e_comp_wl_evas_cb_mouse_down(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event)
 {
-   E_Client *ec;
-   Evas_Event_Mouse_Down *ev;
-
-   ev = event;
-   if (!(ec = data)) return;
-   if (ec->cur_mouse_action) return;
-   if (e_object_is_del(E_OBJECT(ec))) return;
-   if (e_client_util_ignored_get(ec)) return;
+   E_Client *ec = data;
+   Evas_Event_Mouse_Down *ev = event;
 
    _e_comp_wl_evas_handle_mouse_button(ec, ev->timestamp, ev->button,
                                        WL_POINTER_BUTTON_STATE_PRESSED);
@@ -316,14 +314,8 @@ _e_comp_wl_evas_cb_mouse_down(void *data, Evas *evas EINA_UNUSED, Evas_Object *o
 static void
 _e_comp_wl_evas_cb_mouse_up(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event)
 {
-   E_Client *ec;
-   Evas_Event_Mouse_Up *ev;
-
-   ev = event;
-   if (!(ec = data)) return;
-   if (ec->cur_mouse_action) return;
-   if (e_object_is_del(E_OBJECT(ec))) return;
-   if (e_client_util_ignored_get(ec)) return;
+   E_Client *ec = data;
+   Evas_Event_Mouse_Up *ev = event;
 
    _e_comp_wl_evas_handle_mouse_button(ec, ev->timestamp, ev->button,
                                        WL_POINTER_BUTTON_STATE_RELEASED);
