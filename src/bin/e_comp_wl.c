@@ -16,13 +16,10 @@
  */
 
 static void _e_comp_wl_subsurface_parent_commit(E_Client *ec, Eina_Bool parent_synchronized);
-static void _e_comp_wl_client_idler_add(E_Client *ec);
 
 /* local variables */
 /* static Eina_Hash *clients_win_hash = NULL; */
 static Eina_List *handlers = NULL;
-static Eina_List *_idle_clients = NULL;
-static Ecore_Idle_Enterer *_client_idler = NULL;
 static double _last_event_time = 0.0;
 
 /* local functions */
@@ -135,13 +132,6 @@ _e_comp_wl_evas_cb_show(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj EIN
           }
         else if (!ec->internal_elm_win)
           evas_object_show(ec->frame);
-
-        if (ec->internal_elm_win)
-          {
-             _e_comp_wl_client_idler_add(ec);
-             ec->post_move = EINA_TRUE;
-             ec->post_resize = EINA_TRUE;
-          }
      }
 
    EINA_LIST_FOREACH(ec->e.state.video_child, l, tmp)
@@ -419,46 +409,6 @@ _e_comp_wl_client_priority_normal(E_Client *ec)
                                      EINA_FALSE, EINA_TRUE, EINA_FALSE);
 }
 
-static Eina_Bool
-_e_comp_wl_client_cb_idle(void *data EINA_UNUSED)
-{
-   E_Client *ec;
-   E_Comp_Client_Data *cdata;
-
-   EINA_LIST_FREE(_idle_clients, ec)
-     {
-        if (e_object_is_del(E_OBJECT(ec))) continue;
-
-        if (!(cdata = ec->comp_data)) continue;
-
-        if ((ec->post_resize) && (!ec->maximized))
-          {
-             if (cdata->shell.configure_send)
-               cdata->shell.configure_send(cdata->shell.surface,
-                                           ec->comp->wl_comp_data->resize.edges,
-                                           ec->client.w, ec->client.h);
-          }
-
-        ec->post_move = EINA_FALSE;
-        ec->post_resize = EINA_FALSE;
-     }
-
-   _client_idler = NULL;
-   return EINA_FALSE;
-}
-
-static void
-_e_comp_wl_client_idler_add(E_Client *ec)
-{
-   if (!ec) return;
-
-   if (!_client_idler)
-     _client_idler = ecore_idle_enterer_add(_e_comp_wl_client_cb_idle, NULL);
-
-   if (!eina_list_data_find(_idle_clients, ec))
-     _idle_clients = eina_list_append(_idle_clients, ec);
-}
-
 static void
 _e_comp_wl_client_focus(E_Client *ec)
 {
@@ -551,8 +501,10 @@ _e_comp_wl_evas_cb_resize(void *data, Evas_Object *obj EINA_UNUSED, void *event 
    if (e_pixmap_type_get(ec->pixmap) != E_PIXMAP_TYPE_WL) return;
 
    if ((ec->shading) || (ec->shaded)) return;
-   ec->post_resize = EINA_TRUE;
-   _e_comp_wl_client_idler_add(ec);
+   if (ec->comp_data->shell.configure_send)
+     ec->comp_data->shell.configure_send(ec->comp_data->shell.surface,
+                                 ec->comp->wl_comp_data->resize.edges,
+                                 ec->w, ec->h);
 }
 
 static void
