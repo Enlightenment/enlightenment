@@ -2505,6 +2505,14 @@ disp_err:
 }
 
 /* public functions */
+
+/**
+ * Creates and initializes a Wayland compositor with ecore.
+ * Registers callback handlers for keyboard and mouse activity
+ * and other client events.
+ *
+ * @returns true on success, false if initialization failed.
+ */
 EAPI Eina_Bool
 e_comp_wl_init(void)
 {
@@ -2576,6 +2584,11 @@ e_comp_wl_init(void)
    return EINA_TRUE;
 }
 
+/**
+ * Get the signal that is fired for the creation of a Wayland surface.
+ *
+ * @returns the corresponding Wayland signal
+ */
 EAPI struct wl_signal
 e_comp_wl_surface_create_signal_get(E_Comp *comp)
 {
@@ -2720,6 +2733,16 @@ e_comp_wl_buffer_reference(E_Comp_Wl_Buffer_Ref *ref, E_Comp_Wl_Buffer *buffer)
    ref->destroy_listener.notify = _e_comp_wl_buffer_reference_cb_destroy;
 }
 
+/**
+ * Get the buffer for a given resource.
+ *
+ * Retrieves the Wayland SHM buffer for the resource and
+ * uses it to create a new E_Comp_Wl_Buffer object.  This
+ * buffer will be freed when the resource is destroyed.
+ *
+ * @param resource that owns the desired buffer
+ * @returns a new E_Comp_Wl_Buffer object
+ */
 EAPI E_Comp_Wl_Buffer *
 e_comp_wl_buffer_get(struct wl_resource *resource)
 {
@@ -2746,12 +2769,36 @@ e_comp_wl_buffer_get(struct wl_resource *resource)
    return buffer;
 }
 
+/**
+ * Computes the time since the last input event.
+ *
+ * @returns time in seconds.
+ */
 EAPI double
 e_comp_wl_idle_time_get(void)
 {
    return (ecore_loop_time_get() - _last_event_time);
 }
 
+/**
+ * Initializes information about one display output.
+ *
+ * Adds or updates the given data about a single display output,
+ * with an id matching the provided id.
+ *
+ * @param id         identification of output to be added or changed
+ * @param make       manufacturer name of the display output
+ * @param model      model name of the display output
+ * @param x          output's top left corner x coordinate
+ * @param y          output's top left corner y coordinate
+ * @param w          output's width in pixels
+ * @param h          output's height in pixels
+ * @param pw         output's physical width in millimeters
+ * @param ph         output's physical height in millimeters
+ * @param refresh    output's refresh rate in Hz
+ * @param subpixel   output's subpixel layout
+ * @param transform  output's rotation and/or mirror transformation
+ */
 EAPI void
 e_comp_wl_output_init(const char *id, const char *make, const char *model, int x, int y, int w, int h, int pw, int ph, unsigned int refresh, unsigned int subpixel, unsigned int transform)
 {
