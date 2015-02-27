@@ -7,9 +7,6 @@
 
 #define COMPOSITOR_VERSION 3
 
-#define E_COMP_WL_PIXMAP_CHECK \
-   if (e_pixmap_type_get(ec->pixmap) != E_PIXMAP_TYPE_WL) return
-
 /* Resource Data Mapping: (wl_resource_get_user_data)
  *
  * wl_surface == e_pixmap
@@ -497,8 +494,7 @@ _e_comp_wl_evas_cb_focus_in(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj
    if (!(ec = data)) return;
    if (e_object_is_del(E_OBJECT(ec))) return;
    if (ec->iconic) return;
-
-   E_COMP_WL_PIXMAP_CHECK;
+   if (e_pixmap_type_get(ec->pixmap) != E_PIXMAP_TYPE_WL) return;
 
    /* block spurious focus events */
    focused = e_client_focused_get();
@@ -522,8 +518,7 @@ _e_comp_wl_evas_cb_focus_out(void *data, Evas *evas EINA_UNUSED, Evas_Object *ob
 
    if (!(ec = data)) return;
    if (e_object_is_del(E_OBJECT(ec))) return;
-
-   E_COMP_WL_PIXMAP_CHECK;
+   if (e_pixmap_type_get(ec->pixmap) != E_PIXMAP_TYPE_WL) return;
 
    /* lower client priority */
    _e_comp_wl_client_priority_normal(ec);
@@ -553,8 +548,7 @@ _e_comp_wl_evas_cb_resize(void *data, Evas_Object *obj EINA_UNUSED, void *event 
    E_Client *ec;
 
    if (!(ec = data)) return;
-
-   E_COMP_WL_PIXMAP_CHECK;
+   if (e_pixmap_type_get(ec->pixmap) != E_PIXMAP_TYPE_WL) return;
 
    if ((ec->shading) || (ec->shaded)) return;
    ec->post_resize = EINA_TRUE;
@@ -769,7 +763,7 @@ _e_comp_wl_cb_comp_object_add(void *data EINA_UNUSED, int type EINA_UNUSED, E_Ev
    if (e_object_is_del(E_OBJECT(ec))) return ECORE_CALLBACK_RENEW;
 
    /* check for wayland pixmap */
-   E_COMP_WL_PIXMAP_CHECK ECORE_CALLBACK_RENEW;
+   if (e_pixmap_type_get(ec->pixmap) != E_PIXMAP_TYPE_WL) return ECORE_CALLBACK_RENEW;
 
    /* if we have not setup evas callbacks for this client, do it */
    if (!ec->comp_data->evas_init) _e_comp_wl_client_evas_init(ec);
@@ -2008,7 +2002,7 @@ _e_comp_wl_client_cb_new(void *data EINA_UNUSED, E_Client *ec)
    uint64_t win;
 
    /* make sure this is a wayland client */
-   E_COMP_WL_PIXMAP_CHECK;
+   if (e_pixmap_type_get(ec->pixmap) != E_PIXMAP_TYPE_WL) return;
 
    /* get window id from pixmap */
    win = e_pixmap_window_get(ec->pixmap);
@@ -2061,7 +2055,7 @@ _e_comp_wl_client_cb_del(void *data EINA_UNUSED, E_Client *ec)
    struct wl_resource *cb;
 
    /* make sure this is a wayland client */
-   E_COMP_WL_PIXMAP_CHECK;
+   if (e_pixmap_type_get(ec->pixmap) != E_PIXMAP_TYPE_WL) return;
 
    if ((!ec->already_unparented) && (ec->comp_data->reparented))
      _e_comp_wl_focus_down_set(ec);
@@ -2099,8 +2093,7 @@ _e_comp_wl_client_cb_del(void *data EINA_UNUSED, E_Client *ec)
 static void
 _e_comp_wl_client_cb_post_new(void *data EINA_UNUSED, E_Client *ec)
 {
-   E_COMP_WL_PIXMAP_CHECK;
-
+   if (e_pixmap_type_get(ec->pixmap) != E_PIXMAP_TYPE_WL) return;
    if (e_object_is_del(E_OBJECT(ec))) return;
 
    ec->need_shape_merge = EINA_FALSE;
@@ -2118,8 +2111,7 @@ _e_comp_wl_client_cb_pre_frame(void *data EINA_UNUSED, E_Client *ec)
 {
    uint64_t parent;
 
-   E_COMP_WL_PIXMAP_CHECK;
-
+   if (e_pixmap_type_get(ec->pixmap) != E_PIXMAP_TYPE_WL) return;
    if (!ec->comp_data->need_reparent) return;
 
    DBG("Client Pre Frame: %d", wl_resource_get_id(ec->comp_data->surface));
@@ -2196,7 +2188,7 @@ _e_comp_wl_client_cb_pre_frame(void *data EINA_UNUSED, E_Client *ec)
 static void
 _e_comp_wl_client_cb_focus_set(void *data EINA_UNUSED, E_Client *ec)
 {
-   E_COMP_WL_PIXMAP_CHECK;
+   if (e_pixmap_type_get(ec->pixmap) != E_PIXMAP_TYPE_WL) return;
 
    /* send configure */
    if (ec->comp_data->shell.configure_send)
@@ -2225,7 +2217,7 @@ _e_comp_wl_client_cb_focus_set(void *data EINA_UNUSED, E_Client *ec)
 static void
 _e_comp_wl_client_cb_focus_unset(void *data EINA_UNUSED, E_Client *ec)
 {
-   E_COMP_WL_PIXMAP_CHECK;
+   if (e_pixmap_type_get(ec->pixmap) != E_PIXMAP_TYPE_WL) return;
 
    /* send configure */
    if (ec->comp_data->shell.configure_send)
@@ -2244,7 +2236,7 @@ _e_comp_wl_client_cb_focus_unset(void *data EINA_UNUSED, E_Client *ec)
 static void
 _e_comp_wl_client_cb_resize_begin(void *data EINA_UNUSED, E_Client *ec)
 {
-   E_COMP_WL_PIXMAP_CHECK;
+   if (e_pixmap_type_get(ec->pixmap) != E_PIXMAP_TYPE_WL) return;
 
    switch (ec->resize_mode)
      {
@@ -2282,8 +2274,7 @@ static void
 _e_comp_wl_client_cb_resize_end(void *data EINA_UNUSED, E_Client *ec)
 {
    if (e_object_is_del(E_OBJECT(ec))) return;
-
-   E_COMP_WL_PIXMAP_CHECK;
+   if (e_pixmap_type_get(ec->pixmap) != E_PIXMAP_TYPE_WL) return;
 
    ec->comp->wl_comp_data->resize.edges = 0;
    ec->comp->wl_comp_data->resize.resource = NULL;
