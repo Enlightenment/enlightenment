@@ -2363,7 +2363,11 @@ _e_comp_wl_compositor_create(void)
      }
 
    /* create new compositor data */
-   cdata = E_NEW(E_Comp_Data, 1);
+   if (!(cdata = E_NEW(E_Comp_Data, 1)))
+     {
+       ERR("Could not create compositor data: %m");
+       return EINA_FALSE;
+     }
 
    /* set compositor wayland data */
    comp->wl_comp_data = cdata;
@@ -2738,9 +2742,7 @@ e_comp_wl_buffer_get(struct wl_resource *resource)
      return container_of(listener, E_Comp_Wl_Buffer, destroy_listener);
 
    if (!(shmbuff = wl_shm_buffer_get(resource))) return NULL;
-
-   buffer = E_NEW(E_Comp_Wl_Buffer, 1);
-   if (!buffer) return NULL;
+   if (!(buffer = E_NEW(E_Comp_Wl_Buffer, 1))) return NULL;
 
    buffer->w = wl_shm_buffer_get_width(shmbuff);
    buffer->h = wl_shm_buffer_get_height(shmbuff);
