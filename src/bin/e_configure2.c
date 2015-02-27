@@ -333,7 +333,6 @@ settingswidget_fill(Evas_Object *obj)
      {
         const char *file;
         char *path;
-        Evas_Object *icon;
         char buf[PATH_MAX], tmp[PATH_MAX];
 
         string_path_item_split(it->path, &path, &file);
@@ -349,12 +348,9 @@ settingswidget_fill(Evas_Object *obj)
                  continue;
                }
           }
-        icon = elm_icon_add(obj);
-        elm_icon_standard_set(icon, it->icon);
-        evas_object_show(icon);
 
         it->item = item = elm_settingspane_item_append(obj, it, it->label, it->help,
-                                                       icon, item);
+                                                       NULL, it->icon, item);
         snprintf(buf, sizeof(buf), "%s", it->keywords);
 
         if (it->parts)
