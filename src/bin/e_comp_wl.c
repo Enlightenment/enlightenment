@@ -2734,6 +2734,21 @@ e_comp_wl_idle_time_get(void)
    return (ecore_loop_time_get() - _last_event_time);
 }
 
+static E_Comp_Wl_Output *
+_e_comp_wl_output_get(Eina_List *outputs, const char *id)
+{
+   Eina_List *l;
+   E_Comp_Wl_Output *output;
+
+   EINA_LIST_FOREACH(outputs, l, output)
+     {
+       if (!strcmp(output->id, id))
+         return output;
+     }
+
+   return NULL;
+}
+
 /**
  * Initializes information about one display output.
  *
@@ -2758,54 +2773,29 @@ e_comp_wl_output_init(const char *id, const char *make, const char *model, int x
 {
    E_Comp_Data *cdata;
    E_Comp_Wl_Output *output;
-   Eina_List *l, *l2;
+   Eina_List *l2;
    struct wl_resource *resource;
 
    if (!(cdata = e_comp->wl_comp_data)) return;
 
-   EINA_LIST_FOREACH(cdata->outputs, l, output)
+   /* retrieve named output; or create it if it doesn't exist */
+   output = _e_comp_wl_output_get(cdata->outputs, id);
+   if (!output)
      {
-        if (!strcmp(output->id, id))
-          {
-             output->x = x;
-             output->y = y;
-             output->w = w;
-             output->h = h;
-             output->phys_width = pw;
-             output->phys_height = ph;
-             output->refresh = refresh * 1000;
-             output->subpixel = subpixel;
-             output->transform = transform;
+        if (!(output = E_NEW(E_Comp_Wl_Output, 1))) return;
 
-             /* if we have bound resources, send updates */
-             EINA_LIST_FOREACH(output->resources, l2, resource)
-               {
-                 wl_output_send_geometry(resource, output->x, output->y,
-                                         output->phys_width,
-                                         output->phys_height,
-                                         output->subpixel,
-                                         output->make, output->model,
-                                         output->transform);
+        if (id) output->id = eina_stringshare_add(id);
+        if (make) output->make = eina_stringshare_add(make);
+        if (model) output->model = eina_stringshare_add(model);
 
-                 if (wl_resource_get_version(resource) >=
-                     WL_OUTPUT_SCALE_SINCE_VERSION)
-                   wl_output_send_scale(resource, e_scale);
+        cdata->outputs = eina_list_append(cdata->outputs, output);
 
-                 /* 3 == preferred + current */
-                 wl_output_send_mode(resource, 3, output->w, output->h,
-                                     output->refresh);
-
-                 if (wl_resource_get_version(resource) >=
-                     WL_OUTPUT_DONE_SINCE_VERSION)
-                   wl_output_send_done(resource);
-
-               }
-             return;
-          }
+        output->global = wl_global_create(cdata->wl.disp, &wl_output_interface,
+                                          2, output, _e_comp_wl_cb_output_bind);
+        output->resources = NULL;
      }
 
-   if (!(output = E_NEW(E_Comp_Wl_Output, 1))) return;
-
+   /* update the output details */
    output->x = x;
    output->y = y;
    output->w = w;
@@ -2815,13 +2805,25 @@ e_comp_wl_output_init(const char *id, const char *make, const char *model, int x
    output->refresh = refresh * 1000;
    output->subpixel = subpixel;
    output->transform = transform;
-   if (id) output->id = eina_stringshare_add(id);
-   if (make) output->make = eina_stringshare_add(make);
-   if (model) output->model = eina_stringshare_add(model);
 
-   cdata->outputs = eina_list_append(cdata->outputs, output);
+   /* if we have bound resources, send updates */
+   EINA_LIST_FOREACH(output->resources, l2, resource)
+     {
+        wl_output_send_geometry(resource,
+                                output->x, output->y,
+                                output->phys_width,
+                                output->phys_height,
+                                output->subpixel,
+                                output->make, output->model,
+                                output->transform);
 
-   output->global =
-     wl_global_create(cdata->wl.disp, &wl_output_interface, 2,
-                      output, _e_comp_wl_cb_output_bind);
+        if (wl_resource_get_version(resource) >= WL_OUTPUT_SCALE_SINCE_VERSION)
+          wl_output_send_scale(resource, e_scale);
+
+        /* 3 == preferred + current */
+        wl_output_send_mode(resource, 3, output->w, output->h, output->refresh);
+
+        if (wl_resource_get_version(resource) >= WL_OUTPUT_DONE_SINCE_VERSION)
+          wl_output_send_done(resource);
+     }
 }
