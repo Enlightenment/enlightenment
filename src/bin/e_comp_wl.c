@@ -2282,7 +2282,7 @@ _e_comp_wl_cb_output_bind(struct wl_client *client, void *data, uint32_t version
                            output->transform);
 
    if (version >= WL_OUTPUT_SCALE_SINCE_VERSION)
-     wl_output_send_scale(resource, e_scale);
+     wl_output_send_scale(resource, output->scale);
 
    /* 3 == preferred + current */
    wl_output_send_mode(resource, 3, output->w, output->h, output->refresh);
@@ -2793,7 +2793,7 @@ e_comp_wl_output_init(const char *id, const char *make, const char *model, int x
         output->global = wl_global_create(cdata->wl.disp, &wl_output_interface,
                                           2, output, _e_comp_wl_cb_output_bind);
         output->resources = NULL;
-        output->scale = 1.0;
+        output->scale = e_scale;
      }
 
    /* update the output details */
@@ -2808,7 +2808,7 @@ e_comp_wl_output_init(const char *id, const char *make, const char *model, int x
    output->transform = transform;
 
    if (output->scale <= 0)
-     output->scale = 1.0;
+     output->scale = e_scale;
 
    /* if we have bound resources, send updates */
    EINA_LIST_FOREACH(output->resources, l2, resource)
@@ -2822,7 +2822,7 @@ e_comp_wl_output_init(const char *id, const char *make, const char *model, int x
                                 output->transform);
 
         if (wl_resource_get_version(resource) >= WL_OUTPUT_SCALE_SINCE_VERSION)
-          wl_output_send_scale(resource, e_scale);
+          wl_output_send_scale(resource, output->scale);
 
         /* 3 == preferred + current */
         wl_output_send_mode(resource, 3, output->w, output->h, output->refresh);
