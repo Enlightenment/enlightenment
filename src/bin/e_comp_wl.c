@@ -957,6 +957,8 @@ _e_comp_wl_surface_state_commit(E_Client *ec, E_Comp_Wl_Surface_State *state)
    Eina_Rectangle *dmg;
    Eina_List *l;
    struct wl_resource *cb;
+   Eina_Bool placed = EINA_TRUE;
+   int x = 0, y = 0;
 
    first = !e_pixmap_usable_get(ec->pixmap);
 
@@ -965,6 +967,20 @@ _e_comp_wl_surface_state_commit(E_Client *ec, E_Comp_Wl_Surface_State *state)
 
    _e_comp_wl_surface_state_buffer_set(state, NULL);
 
+   if (state->new_attach)
+     {
+        _e_comp_wl_surface_state_size_update(ec, &ec->comp_data->pending);
+
+        if (ec->changes.pos)
+          e_comp_object_frame_xy_adjust(ec->frame, ec->x, ec->y, &x, &y);
+        else
+          x = ec->client.x, y = ec->client.y;
+
+        if (ec->new_client) placed = ec->placed;
+
+        ec->w = ec->client.w = state->bw;
+        ec->h = ec->client.h = state->bh;
+     }
    if (!e_pixmap_usable_get(ec->pixmap))
      {
         if (ec->comp_data->mapped)
@@ -994,18 +1010,6 @@ _e_comp_wl_surface_state_commit(E_Client *ec, E_Comp_Wl_Surface_State *state)
 
    if (state->new_attach)
      {
-        Eina_Bool placed = EINA_TRUE;
-        int x = 0, y = 0;
-
-        _e_comp_wl_surface_state_size_update(ec, &ec->comp_data->pending);
-
-        if (ec->changes.pos)
-          e_comp_object_frame_xy_adjust(ec->frame, ec->x, ec->y, &x, &y);
-        else
-          x = ec->client.x, y = ec->client.y;
-
-        if (ec->new_client) placed = ec->placed;
-
         if ((ec->comp_data->shell.surface) && (ec->comp_data->shell.configure))
           ec->comp_data->shell.configure(ec->comp_data->shell.surface,
                                          x, y, state->bw, state->bh);
