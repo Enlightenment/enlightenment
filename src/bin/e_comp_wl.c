@@ -2793,6 +2793,7 @@ e_comp_wl_output_init(const char *id, const char *make, const char *model, int x
         output->global = wl_global_create(cdata->wl.disp, &wl_output_interface,
                                           2, output, _e_comp_wl_cb_output_bind);
         output->resources = NULL;
+        output->scale = 1.0;
      }
 
    /* update the output details */
@@ -2805,6 +2806,9 @@ e_comp_wl_output_init(const char *id, const char *make, const char *model, int x
    output->refresh = refresh * 1000;
    output->subpixel = subpixel;
    output->transform = transform;
+
+   if (output->scale <= 0)
+     output->scale = 1.0;
 
    /* if we have bound resources, send updates */
    EINA_LIST_FOREACH(output->resources, l2, resource)
