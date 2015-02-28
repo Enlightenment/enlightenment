@@ -501,10 +501,16 @@ _e_comp_wl_evas_cb_resize(void *data, Evas_Object *obj EINA_UNUSED, void *event 
    if (e_pixmap_type_get(ec->pixmap) != E_PIXMAP_TYPE_WL) return;
 
    if ((ec->shading) || (ec->shaded)) return;
-   if (ec->comp_data->shell.configure_send)
+   if (!ec->comp_data->shell.configure_send) return;
+   if (e_client_util_resizing_get(ec))
      ec->comp_data->shell.configure_send(ec->comp_data->shell.surface,
                                  ec->comp->wl_comp_data->resize.edges,
-                                 ec->w, ec->h);
+                                 ec->mouse.current.mx - ec->client.x,
+                                 ec->mouse.current.my - ec->client.y);
+   else
+     ec->comp_data->shell.configure_send(ec->comp_data->shell.surface,
+                                 ec->comp->wl_comp_data->resize.edges,
+                                 ec->client.w, ec->client.h);
 }
 
 static void
