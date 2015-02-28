@@ -503,10 +503,44 @@ _e_comp_wl_evas_cb_resize(void *data, Evas_Object *obj EINA_UNUSED, void *event 
    if ((ec->shading) || (ec->shaded)) return;
    if (!ec->comp_data->shell.configure_send) return;
    if (e_client_util_resizing_get(ec))
-     ec->comp_data->shell.configure_send(ec->comp_data->shell.surface,
+     {
+        int x, y;
+
+        x = ec->mouse.last_down[ec->moveinfo.down.button - 1].w;
+        y = ec->mouse.last_down[ec->moveinfo.down.button - 1].h;
+
+        switch (ec->resize_mode)
+          {
+           case E_POINTER_RESIZE_TL:
+           case E_POINTER_RESIZE_L:
+           case E_POINTER_RESIZE_BL:
+             x += ec->mouse.last_down[ec->moveinfo.down.button - 1].mx - ec->mouse.current.mx;
+             break;
+           case E_POINTER_RESIZE_TR:
+           case E_POINTER_RESIZE_R:
+           case E_POINTER_RESIZE_BR:
+             x += ec->mouse.current.mx - ec->mouse.last_down[ec->moveinfo.down.button - 1].mx;
+             break;
+           default: break;
+          }
+        switch (ec->resize_mode)
+          {
+           case E_POINTER_RESIZE_TL:
+           case E_POINTER_RESIZE_T:
+           case E_POINTER_RESIZE_TR:
+             y += ec->mouse.last_down[ec->moveinfo.down.button - 1].my - ec->mouse.current.my;
+             break;
+           case E_POINTER_RESIZE_BL:
+           case E_POINTER_RESIZE_B:
+           case E_POINTER_RESIZE_BR:
+             y += ec->mouse.current.my - ec->mouse.last_down[ec->moveinfo.down.button - 1].my;
+             break;
+           default: break;
+          }
+        ec->comp_data->shell.configure_send(ec->comp_data->shell.surface,
                                  ec->comp->wl_comp_data->resize.edges,
-                                 ec->mouse.current.mx - ec->client.x,
-                                 ec->mouse.current.my - ec->client.y);
+                                 x, y);
+     }
    else
      ec->comp_data->shell.configure_send(ec->comp_data->shell.surface,
                                  ec->comp->wl_comp_data->resize.edges,
