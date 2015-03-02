@@ -572,7 +572,6 @@ struct E_Client
 
    unsigned int       visible : 1; // client is set to be visible by display server (never use this)
    unsigned int       hidden : 1; // set when window has been hidden by api and should not be shown
-   unsigned int       await_hide_event;
    unsigned int       moving : 1;
    unsigned int       focused : 1;
    unsigned int       new_client : 1;

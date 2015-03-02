@@ -1278,18 +1278,11 @@ _e_comp_x_hide(void *data EINA_UNUSED, int type EINA_UNUSED, Ecore_X_Event_Windo
         return ECORE_CALLBACK_PASS_ON;
      }
    /* Don't delete hidden or iconified windows */
-   if ((ec->iconic) || (ec->await_hide_event > 0))
+   if (ec->iconic)
      {
-        if (ec->await_hide_event > 0)
-          {
-             ec->await_hide_event--;
-          }
-        else
-          {
-             /* Only hide the border if it is visible */
-             hid = EINA_TRUE;
-             evas_object_hide(ec->frame);
-          }
+        /* Only hide the border if it is visible */
+        hid = EINA_TRUE;
+        evas_object_hide(ec->frame);
      }
    else
      {
