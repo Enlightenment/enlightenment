@@ -252,6 +252,7 @@ struct _E_Comp_Wl_Client_Data
         int32_t x, y;
      } popup;
 
+   Eina_Bool delete_me : 1;
    Eina_Bool keep_buffer : 1;
    Eina_Bool mapped : 1;
    Eina_Bool change_icon : 1;
