@@ -507,38 +507,51 @@ _e_comp_wl_evas_cb_resize(void *data, Evas_Object *obj EINA_UNUSED, void *event 
    if (!ec->comp_data->shell.configure_send) return;
    if (e_client_util_resizing_get(ec))
      {
-        int x, y;
+        int x, y, ax, ay;
 
         x = ec->mouse.last_down[ec->moveinfo.down.button - 1].w;
         y = ec->mouse.last_down[ec->moveinfo.down.button - 1].h;
+        if (ec->comp_data->shell.window.w && ec->comp_data->shell.window.h)
+          {
+             ax = ec->client.w - ec->comp_data->shell.window.w;
+             ay = ec->client.h - ec->comp_data->shell.window.h;
+          }
+        else
+          ax = ay = 0;
 
         switch (ec->resize_mode)
           {
            case E_POINTER_RESIZE_TL:
            case E_POINTER_RESIZE_L:
            case E_POINTER_RESIZE_BL:
-             x += ec->mouse.last_down[ec->moveinfo.down.button - 1].mx - ec->mouse.current.mx;
+             x += ec->mouse.last_down[ec->moveinfo.down.button - 1].mx -
+               ec->mouse.current.mx - ec->comp_data->shell.window.x;
              break;
            case E_POINTER_RESIZE_TR:
            case E_POINTER_RESIZE_R:
            case E_POINTER_RESIZE_BR:
-             x += ec->mouse.current.mx - ec->mouse.last_down[ec->moveinfo.down.button - 1].mx;
+             x += ec->mouse.current.mx - ec->mouse.last_down[ec->moveinfo.down.button - 1].mx -
+               ec->comp_data->shell.window.x;
              break;
-           default: break;
+           default:
+             x -= ax;
           }
         switch (ec->resize_mode)
           {
            case E_POINTER_RESIZE_TL:
            case E_POINTER_RESIZE_T:
            case E_POINTER_RESIZE_TR:
-             y += ec->mouse.last_down[ec->moveinfo.down.button - 1].my - ec->mouse.current.my;
+             y += ec->mouse.last_down[ec->moveinfo.down.button - 1].my -
+               ec->mouse.current.my - ec->comp_data->shell.window.y;
              break;
            case E_POINTER_RESIZE_BL:
            case E_POINTER_RESIZE_B:
            case E_POINTER_RESIZE_BR:
-             y += ec->mouse.current.my - ec->mouse.last_down[ec->moveinfo.down.button - 1].my;
+             y += ec->mouse.current.my - ec->mouse.last_down[ec->moveinfo.down.button - 1].my -
+               ec->comp_data->shell.window.y;
              break;
-           default: break;
+           default:
+             y -= ay;
           }
         ec->comp_data->shell.configure_send(ec->comp_data->shell.surface,
                                  ec->comp->wl_comp_data->resize.edges,
@@ -1062,7 +1075,6 @@ _e_comp_wl_surface_state_commit(E_Client *ec, E_Comp_Wl_Surface_State *state)
              ec->new_client = EINA_TRUE;
           }
      }
-
    state->sx = 0;
    state->sy = 0;
    state->new_attach = EINA_FALSE;

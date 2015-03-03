@@ -870,21 +870,19 @@ _e_xdg_shell_surface_cb_ack_configure(struct wl_client *client EINA_UNUSED, stru
 }
 
 static void
-_e_xdg_shell_surface_cb_window_geometry_set(struct wl_client *client EINA_UNUSED, struct wl_resource *resource EINA_UNUSED, int32_t x EINA_UNUSED, int32_t y EINA_UNUSED, int32_t w EINA_UNUSED, int32_t h EINA_UNUSED)
+_e_xdg_shell_surface_cb_window_geometry_set(struct wl_client *client EINA_UNUSED, struct wl_resource *resource, int32_t x, int32_t y, int32_t w, int32_t h)
 {
-   /* E_Client *ec; */
+   E_Client *ec;
 
-   /* get the client for this resource */
-   /* if (!(ec = wl_resource_get_user_data(resource))) */
-   /*   { */
-   /*      wl_resource_post_error(resource,  */
-   /*                             WL_DISPLAY_ERROR_INVALID_OBJECT,  */
-   /*                             "No Client For Shell Surface"); */
-   /*      return; */
-   /*   } */
-
-   /* DBG("XDG_SHELL: Window Geom Set: %d \t%d %d, %d %d",  */
-   /*     wl_resource_get_id(resource), x, y, w, h); */
+   ec = wl_resource_get_user_data(resource);
+   if (!ec)
+     {
+        wl_resource_post_error(resource, WL_DISPLAY_ERROR_INVALID_OBJECT,
+                                "No Client For Shell Surface");
+        return;
+     }
+   EINA_RECTANGLE_SET(&ec->comp_data->shell.window, x, y, w, h);
+   //DBG("XDG_SHELL: Window Geom Set: %d \t%d %d, %d %d", wl_resource_get_id(resource), x, y, w, h);
 }
 
 static void

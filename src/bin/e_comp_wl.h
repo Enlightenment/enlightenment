@@ -240,6 +240,7 @@ struct _E_Comp_Wl_Client_Data
         void (*ping)(struct wl_resource *resource);
         void (*map)(struct wl_resource *resource);
         void (*unmap)(struct wl_resource *resource);
+        Eina_Rectangle window;
      } shell;
 
    E_Comp_Wl_Buffer_Ref buffer_ref;
