@@ -335,10 +335,17 @@ _e_comp_wl_data_device_cb_selection_set(struct wl_client *client EINA_UNUSED, st
    _e_comp_wl_data_device_selection_set(cdata, source, serial);
 }
 
+static void 
+_e_comp_wl_data_device_cb_release(struct wl_client *client EINA_UNUSED, struct wl_resource *resource)
+{
+   wl_resource_destroy(resource);
+}
+
 static const struct wl_data_device_interface _e_data_device_interface =
 {
    _e_comp_wl_data_device_cb_drag_start,
    _e_comp_wl_data_device_cb_selection_set,
+   _e_comp_wl_data_device_cb_release
 };
 
 static void
