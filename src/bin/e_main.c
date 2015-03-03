@@ -255,10 +255,12 @@ main(int argc, char **argv)
 	sigemptyset(&action.sa_mask);
 	sigaction(SIGFPE, &action, NULL);
 
+#ifndef HAVE_WAYLAND_ONLY
 	action.sa_sigaction = e_sigbus_act;
 	action.sa_flags = SA_NODEFER | SA_RESETHAND | SA_SIGINFO;
 	sigemptyset(&action.sa_mask);
 	sigaction(SIGBUS, &action, NULL);
+#endif
 
 	action.sa_sigaction = e_sigabrt_act;
 	action.sa_flags = SA_NODEFER | SA_RESETHAND | SA_SIGINFO;
