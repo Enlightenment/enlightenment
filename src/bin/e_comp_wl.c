@@ -2697,6 +2697,8 @@ e_comp_wl_surface_commit(E_Client *ec)
                }
           }
      }
+   if (ec->comp_data->focus_update)
+     _e_comp_wl_client_focus(ec);
 
    return EINA_TRUE;
 }
