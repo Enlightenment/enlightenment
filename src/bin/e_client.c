@@ -3861,6 +3861,7 @@ e_client_fullscreen(E_Client *ec, E_Fullscreen policy)
    else if (e_config->mode.presentation)
      evas_object_layer_set(ec->frame, E_LAYER_CLIENT_TOP);
 
+   ec->fullscreen = 1;
 #ifndef HAVE_WAYLAND_ONLY
    if ((eina_list_count(ec->comp->zones) > 1) ||
        (policy == E_FULLSCREEN_RESIZE) || (!ecore_x_randr_query()))
@@ -3876,7 +3877,6 @@ e_client_fullscreen(E_Client *ec, E_Fullscreen policy)
         /* compositor backends! */
         evas_object_smart_callback_call(ec->frame, "fullscreen_zoom", NULL);
      }
-   ec->fullscreen = 1;
 
    e_hints_window_fullscreen_set(ec, 1);
    e_hints_window_size_unset(ec);
