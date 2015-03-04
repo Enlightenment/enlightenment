@@ -2059,7 +2059,6 @@ _e_comp_smart_resize(Evas_Object *obj, int w, int h)
    if (!cw->effect_obj) CRI("ACK!");
    first = ((cw->w < 1) || (cw->h < 1));
    cw->w = w, cw->h = h;
-   evas_object_resize(cw->clip, cw->comp->man->w, cw->comp->man->h);
    if ((!cw->ec->shading) && (!cw->ec->shaded))
      {
         int ww, hh, pw, ph;
