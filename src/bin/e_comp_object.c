@@ -1936,6 +1936,7 @@ _e_comp_smart_hide(Evas_Object *obj)
    evas_object_hide(cw->clip);
    if (cw->input_obj) evas_object_hide(cw->input_obj);
    evas_object_hide(cw->effect_obj);
+   evas_object_hide(cw->obj);
    if (stopping) return;
    /* ensure focus-out */
    if (cw->ec->focused)
