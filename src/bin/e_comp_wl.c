@@ -1356,7 +1356,7 @@ _e_comp_wl_surface_destroy(struct wl_resource *resource)
      return;
 
    if ((!ec->internal) && (!e_comp_gl_get()))
-     ec->hidden = 1;
+     ec->dead = ec->hidden = 1;
    evas_object_hide(ec->frame);
    e_object_del(E_OBJECT(ec));
 }

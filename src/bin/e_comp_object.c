@@ -1947,6 +1947,18 @@ _e_comp_smart_hide(Evas_Object *obj)
    if (cw->input_obj) evas_object_hide(cw->input_obj);
    evas_object_hide(cw->effect_obj);
    evas_object_hide(cw->obj);
+   if (cw->ec->dead && cw->obj_mirror)
+     {
+        Evas_Object *o;
+
+        EINA_LIST_FREE(cw->obj_mirror, o)
+          {
+             evas_object_image_data_set(o, NULL);
+             evas_object_freeze_events_set(o, 1);
+             evas_object_event_callback_del_full(o, EVAS_CALLBACK_DEL, _e_comp_object_cb_mirror_del, cw);
+             evas_object_del(o);
+          }
+     }
    if (stopping) return;
    /* ensure focus-out */
    if (cw->ec->focused)
