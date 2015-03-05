@@ -1946,7 +1946,7 @@ _e_comp_smart_hide(Evas_Object *obj)
    evas_object_hide(cw->clip);
    if (cw->input_obj) evas_object_hide(cw->input_obj);
    evas_object_hide(cw->effect_obj);
-   if (cw->ec->dead && cw->obj_mirror)
+   if (cw->ec->dead)
      {
         Evas_Object *o;
 
