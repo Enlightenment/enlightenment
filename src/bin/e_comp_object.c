@@ -166,6 +166,16 @@ _e_comp_object_event_add(Evas_Object *obj)
 
 /////////////////////////////////////
 
+static void
+_e_comp_object_cb_mirror_del(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
+{
+   E_Comp_Object *cw = data;
+
+   cw->obj_mirror = eina_list_remove(cw->obj_mirror, obj);
+}
+
+/////////////////////////////////////
+
 static inline Eina_Bool
 _e_comp_shaped_check(int w, int h, const Eina_Rectangle *rects, int num)
 {
@@ -1988,14 +1998,6 @@ _e_comp_smart_show(Evas_Object *obj)
         e_comp_object_effect_set(obj, NULL);
         e_comp_shape_queue(cw->comp);
      }
-}
-
-static void
-_e_comp_object_cb_mirror_del(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
-{
-   E_Comp_Object *cw = data;
-
-   cw->obj_mirror = eina_list_remove(cw->obj_mirror, obj);
 }
 
 static void
