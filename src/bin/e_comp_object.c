@@ -1946,11 +1946,11 @@ _e_comp_smart_hide(Evas_Object *obj)
    evas_object_hide(cw->clip);
    if (cw->input_obj) evas_object_hide(cw->input_obj);
    evas_object_hide(cw->effect_obj);
-   evas_object_hide(cw->obj);
    if (cw->ec->dead && cw->obj_mirror)
      {
         Evas_Object *o;
 
+        evas_object_hide(cw->obj);
         EINA_LIST_FREE(cw->obj_mirror, o)
           {
              evas_object_image_data_set(o, NULL);
