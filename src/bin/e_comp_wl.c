@@ -148,9 +148,6 @@ _e_comp_wl_evas_cb_hide(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj EIN
 
    EINA_LIST_FOREACH(ec->e.state.video_child, l, tmp)
      evas_object_hide(tmp->frame);
-
-   if ((ec->comp_data) && (ec->comp_data->delete_me))
-     wl_resource_destroy(ec->comp_data->surface);
 }
 
 static void
@@ -1158,21 +1155,8 @@ unmapped:
 static void
 _e_comp_wl_surface_cb_destroy(struct wl_client *client EINA_UNUSED, struct wl_resource *resource)
 {
-   E_Pixmap *ep;
-   E_Client *ec;
-
    DBG("Surface Cb Destroy: %d", wl_resource_get_id(resource));
-
-   if (!(ep = wl_resource_get_user_data(resource))) return;
-   if (!(ec = e_pixmap_client_get(ep))) return;
-
-   if (ec->comp_data)
-     {
-        ec->comp_data->delete_me = EINA_TRUE;
-        evas_object_hide(ec->frame);
-     }
-   else
-     wl_resource_destroy(resource);
+   wl_resource_destroy(resource);
 }
 
 static void
@@ -1371,6 +1355,7 @@ _e_comp_wl_surface_destroy(struct wl_resource *resource)
    if (!(ec = e_pixmap_client_get(ep)))
      return;
 
+   evas_object_hide(ec->frame);
    e_object_del(E_OBJECT(ec));
 }
 
