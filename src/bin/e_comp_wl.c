@@ -467,17 +467,18 @@ _e_comp_wl_evas_cb_focus_out(void *data, Evas *evas EINA_UNUSED, Evas_Object *ob
    Eina_List *l;
 
    if (!(ec = data)) return;
-   if (e_object_is_del(E_OBJECT(ec))) return;
-   if (e_pixmap_type_get(ec->pixmap) != E_PIXMAP_TYPE_WL) return;
-
-   /* lower client priority */
-   _e_comp_wl_client_priority_normal(ec);
 
    cdata = ec->comp->wl_comp_data;
 
    /* update keyboard modifier state */
    wl_array_for_each(k, &cdata->kbd.keys)
      e_comp_wl_input_keyboard_state_update(cdata, *k, EINA_FALSE);
+
+   if (e_object_is_del(E_OBJECT(ec))) return;
+   if (e_pixmap_type_get(ec->pixmap) != E_PIXMAP_TYPE_WL) return;
+
+   /* lower client priority */
+   _e_comp_wl_client_priority_normal(ec);
 
    if (!ec->comp_data->surface) return;
 
