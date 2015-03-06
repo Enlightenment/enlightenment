@@ -102,14 +102,13 @@ static void         _ibar_resize_handle(IBar *b);
 static void         _ibar_instance_drop_zone_recalc(Instance *inst);
 static Config_Item *_ibar_config_item_get(const char *id);
 static IBar_Icon   *_ibar_icon_at_coord(IBar *b, Evas_Coord x, Evas_Coord y);
-static void         _ibar_icon_origin_update(IBar_Icon *ic, Instance *inst);
 static IBar_Icon   *_ibar_icon_new(IBar *b, Efreet_Desktop *desktop, Eina_Bool notinorder);
 static IBar_Icon   *_ibar_icon_notinorder_new(IBar *b, E_Exec_Instance *exe);
 static void         _ibar_icon_free(IBar_Icon *ic);
 static void         _ibar_icon_fill(IBar_Icon *ic);
 static void         _ibar_icon_empty(IBar_Icon *ic);
 static void         _ibar_sep_create(IBar *b);
-static void         _ibar_icon_signal_emit(IBar_Icon *ic, char *sig, char *src);
+static void         _ibar_icon_signal_emit(IBar_Icon *ic, const char *sig, const char *src);
 static void         _ibar_cb_app_change(void *data, E_Order *eo);
 static void         _ibar_cb_obj_moveresize(void *data, Evas *e, Evas_Object *obj, void *event_info);
 static void         _ibar_cb_menu_icon_action_exec(void *data, E_Menu *m, E_Menu_Item *mi);
@@ -342,7 +341,6 @@ static void
 _gc_orient(E_Gadcon_Client *gcc, E_Gadcon_Orient orient)
 {
    Instance *inst;
-   IBar_Icon *ic;
 
    inst = gcc->data;
    if ((int)orient != -1) inst->orient = orient;
@@ -354,11 +352,6 @@ _gc_orient(E_Gadcon_Client *gcc, E_Gadcon_Orient orient)
    else
      {
         _ibar_orient_set(inst->ibar, 1);
-     }
-
-   EINA_INLIST_FOREACH(inst->ibar->icons, ic)
-     {
-        _ibar_icon_origin_update(ic, inst);
      }
 }
 
@@ -792,19 +785,6 @@ _ibar_icon_at_coord(IBar *b, Evas_Coord x, Evas_Coord y)
    return NULL;
 }
 
-static void
-_ibar_icon_origin_update(IBar_Icon *ic, Instance *inst)
-{
-   char buf[PATH_MAX];
-   char *pos[4] = {"bottom", "top", "right", "left"};
-   int position = _convert_theme_ids(inst);
-   if (position >= 0)
-     {
-        snprintf(buf, sizeof(buf), "e,origin,%s", pos[position]);
-        _ibar_icon_signal_emit(ic, buf, "e");
-     }
-}
-
 static IBar_Icon *
 _ibar_icon_new(IBar *b, Efreet_Desktop *desktop, Eina_Bool notinorder)
 {
@@ -980,7 +960,7 @@ _ibar_icon_empty(IBar_Icon *ic)
 }
 
 static void
-_ibar_icon_signal_emit(IBar_Icon *ic, char *sig, char *src)
+_ibar_icon_signal_emit(IBar_Icon *ic, const char *sig, const char *src)
 {
    if (ic->o_holder)
      edje_object_signal_emit(ic->o_holder, sig, src);
@@ -1875,14 +1855,35 @@ _ibar_cb_icon_mouse_move(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUS
 }
 
 static void
-_ibar_cb_icon_move(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_ibar_cb_icon_move(void *data, Evas *e, Evas_Object *obj, void *event_info __UNUSED__)
 {
    IBar_Icon *ic;
-   Evas_Coord x, y;
+   int x, y, w, h, cw, chx, len = 0;
+   const char *sig = "e,origin,center";
+   E_Zone *zone;
 
    ic = data;
-   evas_object_geometry_get(ic->o_holder, &x, &y, NULL, NULL);
+   evas_object_geometry_get(ic->o_holder, &x, &y, &w, &h);
    evas_object_move(ic->o_holder2, x, y);
+   evas_output_size_get(e, &cw, NULL);
+
+   edje_object_part_geometry_get(ic->o_holder2, "e.text.label", NULL, NULL, &len, NULL);
+   chx = x + (w / 2);
+   zone = e_comp_object_util_zone_get(obj);
+   if (!zone)
+     {
+        if (x < 1)
+          zone = e_comp_zone_xy_get(e_comp, 0, y);
+        else
+          zone = e_comp_zone_xy_get(e_comp, e_comp->man->w - 5, y);
+        if (!zone)
+          zone = eina_list_data_get(e_comp->zones);
+     }
+   if (chx - (len / 2) < zone->x)
+     sig = "e,origin,left";
+   else if ((chx + (len / 2) > cw) || ((chx + (len / 2) > zone->x + zone->w)))
+     sig = "e,origin,right";
+   _ibar_icon_signal_emit(ic, sig, "e");
 }
 
 static void
