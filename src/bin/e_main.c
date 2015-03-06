@@ -1172,7 +1172,8 @@ _e_main_parse_arguments(int argc, char **argv)
           e_nopause = EINA_TRUE;
         else if ((!strcmp(argv[i], "-h")) ||
                  (!strcmp(argv[i], "-help")) ||
-                 (!strcmp(argv[i], "--help")))
+                 (!strcmp(argv[i], "--help")) ||
+                 argv[i][0])
           {
              printf
                (_(
