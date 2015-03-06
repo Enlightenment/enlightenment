@@ -1600,11 +1600,11 @@ _e_client_maximize(E_Client *ec, E_Maximize max)
              break;
 
            case E_MAXIMIZE_VERTICAL:
-             evas_object_geometry_set(ec->frame, x1, zy, w, zh);
+             evas_object_geometry_set(ec->frame, ec->x, zy, ec->w, zh);
              break;
 
            case E_MAXIMIZE_HORIZONTAL:
-             evas_object_geometry_set(ec->frame, zx, yy1, zw, h);
+             evas_object_geometry_set(ec->frame, zx, ec->y, zw, ec->h);
              break;
 
            case E_MAXIMIZE_LEFT:
