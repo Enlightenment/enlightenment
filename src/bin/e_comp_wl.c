@@ -444,7 +444,6 @@ _e_comp_wl_evas_cb_focus_in(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj
    if (!(ec = data)) return;
    if (e_object_is_del(E_OBJECT(ec))) return;
    if (ec->iconic) return;
-   if (e_pixmap_type_get(ec->pixmap) != E_PIXMAP_TYPE_WL) return;
 
    /* block spurious focus events */
    focused = e_client_focused_get();
@@ -475,7 +474,6 @@ _e_comp_wl_evas_cb_focus_out(void *data, Evas *evas EINA_UNUSED, Evas_Object *ob
      e_comp_wl_input_keyboard_state_update(cdata, *k, EINA_FALSE);
 
    if (e_object_is_del(E_OBJECT(ec))) return;
-   if (e_pixmap_type_get(ec->pixmap) != E_PIXMAP_TYPE_WL) return;
 
    /* lower client priority */
    _e_comp_wl_client_priority_normal(ec);
@@ -499,7 +497,6 @@ _e_comp_wl_evas_cb_resize(void *data, Evas_Object *obj EINA_UNUSED, void *event 
    E_Client *ec;
 
    if (!(ec = data)) return;
-   if (e_pixmap_type_get(ec->pixmap) != E_PIXMAP_TYPE_WL) return;
 
    if ((ec->shading) || (ec->shaded)) return;
    if (!ec->comp_data->shell.configure_send) return;
@@ -569,7 +566,6 @@ _e_comp_wl_evas_cb_state_update(void *data, Evas_Object *obj EINA_UNUSED, void *
    if (e_object_is_del(E_OBJECT(ec))) return;
 
    /* check for wayland pixmap */
-   if (e_pixmap_type_get(ec->pixmap) != E_PIXMAP_TYPE_WL) return;
 
    if (ec->comp_data->shell.configure_send)
      ec->comp_data->shell.configure_send(ec->comp_data->shell.surface, 0, 0, 0);
