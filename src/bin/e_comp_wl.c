@@ -809,11 +809,11 @@ _e_comp_wl_cb_key_down(void *event)
    k = wl_array_add(&cdata->kbd.keys, sizeof(*k));
    *k = keycode;
 
-   /* update modifier state */
-   e_comp_wl_input_keyboard_state_update(cdata, keycode, EINA_TRUE);
-
    if ((ec = e_client_focused_get()))
      {
+        /* update modifier state */
+        e_comp_wl_input_keyboard_state_update(cdata, keycode, EINA_TRUE);
+
         if (ec->comp_data->surface)
           {
              struct wl_client *wc;
