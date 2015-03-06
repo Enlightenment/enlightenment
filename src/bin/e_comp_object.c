@@ -2660,12 +2660,17 @@ e_comp_object_util_center_pos_get(Evas_Object *obj, int *x, int *y)
 {
    E_Zone *zone;
    int zx, zy, zw, zh;
+   int ow, oh;
    SOFT_ENTRY();
 
+   if (cw)
+     ow = cw->w, oh = cw->h;
+   else
+     evas_object_geometry_get(obj, NULL, NULL, &ow, &oh);
    zone = e_comp_object_util_zone_get(obj);
    e_zone_useful_geometry_get(zone, &zx, &zy, &zw, &zh);
-   if (x) *x = zx + (zw - cw->w) / 2;
-   if (y) *y = zy + (zh - cw->h) / 2;
+   if (x) *x = zx + (zw - ow) / 2;
+   if (y) *y = zy + (zh - oh) / 2;
 }
 
 EAPI void
