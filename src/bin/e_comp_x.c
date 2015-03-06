@@ -5014,9 +5014,7 @@ _e_comp_x_setup(E_Comp *c, Ecore_X_Window root, int w, int h)
    res = ecore_x_screen_is_composited(c->num);
    if (res)
      {
-        e_util_dialog_internal(_("Compositor Error"),
-          _("Another compositor is already running<br>"
-            "on your display server."));
+        ERR(_("Another compositor is already running on your display server."));
         return EINA_FALSE;
      }
    if (!ecore_x_window_manage(root)) return EINA_FALSE;
@@ -5035,10 +5033,8 @@ _e_comp_x_setup(E_Comp *c, Ecore_X_Window root, int w, int h)
    c->win = ecore_x_composite_render_window_enable(root);
    if (!c->win)
      {
-        e_util_dialog_internal(_("Compositor Error"),
-          _("Your display server does not support the<br>"
-            "compositor overlay window. This is needed<br>"
-            "for it to function."));
+        ERR(_("Your display server does not support the compositor overlay window.\n"
+              "This is needed for Enlightenment to function."));
         return EINA_FALSE;
      }
    c->man = e_manager_new(root, c, w, h);
