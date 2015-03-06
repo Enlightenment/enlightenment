@@ -1058,9 +1058,9 @@ e_comp_init(void)
           }
         return EINA_FALSE;
      }
-#if defined(HAVE_WAYLAND_CLIENTS) || defined(HAVE_WAYLAND_ONLY)
-   e_comp_wl_init();
-#endif
+//#ifdef HAVE_WAYLAND_CLIENTS
+   //e_comp_wl_init();
+//#endif
    if (!e_comp) return EINA_FALSE;
 out:
    e_comp->elm = elm_win_fake_add(e_comp->ee);
