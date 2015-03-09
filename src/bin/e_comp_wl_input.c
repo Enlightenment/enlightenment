@@ -441,6 +441,19 @@ e_comp_wl_input_keyboard_check(struct wl_resource *res)
                                   &_e_keyboard_interface);
 }
 
+EINTERN void
+e_comp_wl_input_keyboard_modifiers_serialize(E_Comp_Data *cdata)
+{
+   cdata->kbd.mod_depressed =
+     xkb_state_serialize_mods(cdata->xkb.state, XKB_STATE_DEPRESSED);
+   cdata->kbd.mod_latched =
+     xkb_state_serialize_mods(cdata->xkb.state, XKB_STATE_MODS_LATCHED);
+   cdata->kbd.mod_locked =
+     xkb_state_serialize_mods(cdata->xkb.state, XKB_STATE_MODS_LOCKED);
+   cdata->kbd.mod_group =
+     xkb_state_serialize_layout(cdata->xkb.state, XKB_STATE_LAYOUT_EFFECTIVE);
+}
+
 EINTERN void 
 e_comp_wl_input_keyboard_modifiers_update(E_Comp_Data *cdata)
 {
@@ -448,14 +461,7 @@ e_comp_wl_input_keyboard_modifiers_update(E_Comp_Data *cdata)
    struct wl_resource *res;
    Eina_List *l;
 
-   cdata->kbd.mod_depressed = 
-     xkb_state_serialize_mods(cdata->xkb.state, XKB_STATE_DEPRESSED);
-   cdata->kbd.mod_latched = 
-     xkb_state_serialize_mods(cdata->xkb.state, XKB_STATE_MODS_LATCHED);
-   cdata->kbd.mod_locked = 
-     xkb_state_serialize_mods(cdata->xkb.state, XKB_STATE_MODS_LOCKED);
-   cdata->kbd.mod_group = 
-     xkb_state_serialize_layout(cdata->xkb.state, XKB_STATE_LAYOUT_EFFECTIVE);
+   e_comp_wl_input_keyboard_modifiers_serialize(cdata);
 
    serial = wl_display_next_serial(cdata->wl.disp);
    EINA_LIST_FOREACH(cdata->kbd.resources, l, res)

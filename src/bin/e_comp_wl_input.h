@@ -8,6 +8,7 @@ EINTERN void e_comp_wl_input_shutdown(E_Comp_Data *cdata);
 EINTERN Eina_Bool e_comp_wl_input_pointer_check(struct wl_resource *res);
 EINTERN Eina_Bool e_comp_wl_input_keyboard_check(struct wl_resource *res);
 
+EINTERN void e_comp_wl_input_keyboard_modifiers_serialize(E_Comp_Data *cdata);
 EINTERN void e_comp_wl_input_keyboard_modifiers_update(E_Comp_Data *cdata);
 EINTERN void e_comp_wl_input_keyboard_state_update(E_Comp_Data *cdata, uint32_t keycode, Eina_Bool pressed);
 
