@@ -427,11 +427,20 @@ _e_comp_wl_client_focus(E_Client *ec)
    /* send keyboard_enter to all keyboard resources */
    wc = wl_resource_get_client(ec->comp_data->surface);
    serial = wl_display_next_serial(e_comp->wl_comp_data->wl.disp);
+
+   e_comp_wl_input_keyboard_modifiers_serialize(e_comp->wl_comp_data);
+
    EINA_LIST_FOREACH(e_comp->wl_comp_data->kbd.resources, l, res)
      {
         if (wl_resource_get_client(res) != wc) continue;
         wl_keyboard_send_enter(res, serial, ec->comp_data->surface,
                                &e_comp->wl_comp_data->kbd.keys);
+        wl_keyboard_send_modifiers(res, serial,
+                                   e_comp->wl_comp_data->kbd.mod_depressed,
+                                   e_comp->wl_comp_data->kbd.mod_latched,
+                                   e_comp->wl_comp_data->kbd.mod_locked,
+                                   e_comp->wl_comp_data->kbd.mod_group);
+
         ec->comp_data->focus_update = 0;
      }
 }
