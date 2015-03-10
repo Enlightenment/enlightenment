@@ -179,7 +179,6 @@ e_pixmap_free(E_Pixmap *cp)
    if (!cp) return 0;
    if (--cp->refcount) return cp->refcount;
    e_pixmap_image_clear(cp, EINA_FALSE);
-   if (cp->parent) eina_hash_set(pixmaps[cp->type], &cp->parent, NULL);
    eina_hash_del_by_key(pixmaps[cp->type], &cp->win);
    return 0;
 }
@@ -267,10 +266,7 @@ e_pixmap_parent_window_set(E_Pixmap *cp, Ecore_Window win)
    e_pixmap_usable_set(cp, 0);
    e_pixmap_clear(cp);
 
-   if (cp->parent)
-     eina_hash_set(pixmaps[cp->type], &cp->parent, NULL);
    cp->parent = win;
-   if (win) eina_hash_add(pixmaps[cp->type], &win, cp);
 }
 
 EAPI void
