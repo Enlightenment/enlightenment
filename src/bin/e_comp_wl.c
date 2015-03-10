@@ -166,6 +166,8 @@ _e_comp_wl_evas_cb_mouse_in(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj
 
    if (!ec->comp_data->surface) return;
 
+   if (!eina_list_count(ec->comp->wl_comp_data->ptr.resources)) return;
+
    wc = wl_resource_get_client(ec->comp_data->surface);
    serial = wl_display_next_serial(ec->comp->wl_comp_data->wl.disp);
    EINA_LIST_FOREACH(ec->comp->wl_comp_data->ptr.resources, l, res)
@@ -200,6 +202,8 @@ _e_comp_wl_evas_cb_mouse_out(void *data, Evas *evas EINA_UNUSED, Evas_Object *ob
    if (e_object_is_del(E_OBJECT(ec))) return;
 
    if (!ec->comp_data->surface) return;
+
+   if (!eina_list_count(ec->comp->wl_comp_data->ptr.resources)) return;
 
    wc = wl_resource_get_client(ec->comp_data->surface);
    serial = wl_display_next_serial(ec->comp->wl_comp_data->wl.disp);
@@ -275,6 +279,9 @@ _e_comp_wl_evas_handle_mouse_button(E_Client *ec, uint32_t timestamp, uint32_t b
    ec->comp->wl_comp_data->ptr.button = btn;
 
    if (!ec->comp_data->surface) return EINA_FALSE;
+
+   if (!eina_list_count(ec->comp->wl_comp_data->ptr.resources))
+     return EINA_TRUE;
 
    wc = wl_resource_get_client(ec->comp_data->surface);
    serial = wl_display_next_serial(ec->comp->wl_comp_data->wl.disp);
@@ -424,6 +431,8 @@ _e_comp_wl_client_focus(E_Client *ec)
    ec->comp_data->focus_update = 1;
    if (!ec->comp_data->surface) return;
 
+   if (!eina_list_count(ec->comp->wl_comp_data->kbd.resources)) return;
+
    /* send keyboard_enter to all keyboard resources */
    wc = wl_resource_get_client(ec->comp_data->surface);
    serial = wl_display_next_serial(e_comp->wl_comp_data->wl.disp);
@@ -489,6 +498,10 @@ _e_comp_wl_evas_cb_focus_out(void *data, Evas *evas EINA_UNUSED, Evas_Object *ob
 
    if (!ec->comp_data->surface) return;
 
+   ec->comp_data->focus_update = 0;
+
+   if (!eina_list_count(cdata->kbd.resources)) return;
+
    /* send keyboard_leave to all keyboard resources */
    wc = wl_resource_get_client(ec->comp_data->surface);
    serial = wl_display_next_serial(cdata->wl.disp);
@@ -497,7 +510,6 @@ _e_comp_wl_evas_cb_focus_out(void *data, Evas *evas EINA_UNUSED, Evas_Object *ob
         if (wl_resource_get_client(res) != wc) continue;
         wl_keyboard_send_leave(res, serial, ec->comp_data->surface);
      }
-   ec->comp_data->focus_update = 0;
 }
 
 static void
@@ -833,13 +845,16 @@ _e_comp_wl_cb_key_down(void *event)
              struct wl_resource *res;
              Eina_List *l;
 
-             wc = wl_resource_get_client(ec->comp_data->surface);
-             serial = wl_display_next_serial(cdata->wl.disp);
-             EINA_LIST_FOREACH(cdata->kbd.resources, l, res)
+             if (eina_list_count(cdata->kbd.resources))
                {
-                  if (wl_resource_get_client(res) != wc) continue;
-                  wl_keyboard_send_key(res, serial, ev->timestamp,
+                  wc = wl_resource_get_client(ec->comp_data->surface);
+                  serial = wl_display_next_serial(cdata->wl.disp);
+                  EINA_LIST_FOREACH(cdata->kbd.resources, l, res)
+                    {
+                       if (wl_resource_get_client(res) != wc) continue;
+                        wl_keyboard_send_key(res, serial, ev->timestamp,
                                        keycode, WL_KEYBOARD_KEY_STATE_PRESSED);
+                    }
                }
           }
      }
@@ -880,14 +895,17 @@ _e_comp_wl_cb_key_up(void *event)
              struct wl_resource *res;
              Eina_List *l;
 
-             wc = wl_resource_get_client(ec->comp_data->surface);
-             serial = wl_display_next_serial(cdata->wl.disp);
-             EINA_LIST_FOREACH(cdata->kbd.resources, l, res)
+             if (eina_list_count(cdata->kbd.resources))
                {
-                  if (wl_resource_get_client(res) != wc) continue;
-                  wl_keyboard_send_key(res, serial, ev->timestamp,
+                  wc = wl_resource_get_client(ec->comp_data->surface);
+                  serial = wl_display_next_serial(cdata->wl.disp);
+                  EINA_LIST_FOREACH(cdata->kbd.resources, l, res)
+                    {
+                       if (wl_resource_get_client(res) != wc) continue;
+                       wl_keyboard_send_key(res, serial, ev->timestamp,
                                        keycode, WL_KEYBOARD_KEY_STATE_RELEASED);
-               }
+                    }
+              }
           }
      }
 

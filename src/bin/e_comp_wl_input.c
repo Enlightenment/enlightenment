@@ -463,6 +463,8 @@ e_comp_wl_input_keyboard_modifiers_update(E_Comp_Data *cdata)
 
    e_comp_wl_input_keyboard_modifiers_serialize(cdata);
 
+   if (!eina_list_count(cdata->kbd.resources)) return;
+
    serial = wl_display_next_serial(cdata->wl.disp);
    EINA_LIST_FOREACH(cdata->kbd.resources, l, res)
      wl_keyboard_send_modifiers(res, serial, 
