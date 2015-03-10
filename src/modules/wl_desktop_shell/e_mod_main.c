@@ -659,10 +659,11 @@ _e_xdg_shell_surface_configure_send(struct wl_resource *resource, uint32_t edges
    if (ec->focused)
      _e_xdg_surface_state_add(resource, &states, XDG_SURFACE_STATE_ACTIVATED);
 
-   serial = wl_display_next_serial(ec->comp->wl_comp_data->wl.disp);
    if (ec->netwm.type != E_WINDOW_TYPE_POPUP_MENU)
-     xdg_surface_send_configure(resource, width, height, &states, serial);
-
+     {
+       serial = wl_display_next_serial(ec->comp->wl_comp_data->wl.disp);
+       xdg_surface_send_configure(resource, width, height, &states, serial);
+     }
    wl_array_release(&states);
 }
 
@@ -1056,9 +1057,11 @@ _e_xdg_shell_surface_ping(struct wl_resource *resource)
         return;
      }
 
-   serial = wl_display_next_serial(ec->comp->wl_comp_data->wl.disp);
    if (ec->comp->wl_comp_data->shell_interface.xdg_shell)
-     xdg_shell_send_ping(ec->comp->wl_comp_data->shell_interface.xdg_shell, serial);
+     {
+       serial = wl_display_next_serial(ec->comp->wl_comp_data->wl.disp);
+       xdg_shell_send_ping(ec->comp->wl_comp_data->shell_interface.xdg_shell, serial);
+     }
 }
 
 static void
