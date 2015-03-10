@@ -34,8 +34,7 @@ _e_shell_surface_parent_set(E_Client *ec, struct wl_resource *parent_resource)
    pwin = e_pixmap_window_get(pp);
 
    /* find the parent client */
-   if (!(pc = e_pixmap_client_get(pp)))
-     pc = e_pixmap_find_client(E_PIXMAP_TYPE_WL, pwin);
+   pc = e_pixmap_client_get(pp);
 
    e_pixmap_parent_window_set(ec->pixmap, pwin);
 
@@ -561,8 +560,7 @@ _e_shell_cb_shell_surface_get(struct wl_client *client, struct wl_resource *reso
    if (e_pixmap_type_get(ep) != E_PIXMAP_TYPE_WL) return;
 
    /* find the client for this pixmap */
-   if (!(ec = e_pixmap_client_get(ep)))
-     ec = e_pixmap_find_client(E_PIXMAP_TYPE_WL, e_pixmap_window_get(ep));
+   ec = e_pixmap_client_get(ep);
 
    if (!ec)
      {
@@ -1140,8 +1138,7 @@ _e_xdg_shell_cb_surface_get(struct wl_client *client, struct wl_resource *resour
    if (e_pixmap_type_get(ep) != E_PIXMAP_TYPE_WL) return;
 
    /* find the client for this pixmap */
-   if (!(ec = e_pixmap_client_get(ep)))
-     ec = e_pixmap_find_client(E_PIXMAP_TYPE_WL, e_pixmap_window_get(ep));
+   ec = e_pixmap_client_get(ep);
 
    if (!ec)
      {
@@ -1240,8 +1237,7 @@ _e_xdg_shell_cb_popup_get(struct wl_client *client, struct wl_resource *resource
    if (e_pixmap_type_get(ep) != E_PIXMAP_TYPE_WL) return;
 
    /* find the client for this pixmap */
-   if (!(ec = e_pixmap_client_get(ep)))
-     ec = e_pixmap_find_client(E_PIXMAP_TYPE_WL, e_pixmap_window_get(ep));
+   ec = e_pixmap_client_get(ep);
 
    if (!ec)
      {
