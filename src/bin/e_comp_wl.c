@@ -1147,8 +1147,8 @@ _e_comp_wl_surface_state_commit(E_Client *ec, E_Comp_Wl_Surface_State *state)
 
    /* insert state frame callbacks into comp_data->frames
     * NB: This clears state->frames list */
-   EINA_LIST_FOREACH(state->frames, l, cb)
-     eina_list_move(&ec->comp_data->frames, &state->frames, cb);
+   ec->comp_data->frames = eina_list_merge(ec->comp_data->frames, state->frames);
+   state->frames = NULL;
 
    return;
 
