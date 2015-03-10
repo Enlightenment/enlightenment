@@ -438,6 +438,7 @@ EAPI void
 e_pixmap_client_set(E_Pixmap *cp, E_Client *ec)
 {
    EINA_SAFETY_ON_NULL_RETURN(cp);
+   if (cp->client && ec) CRI("ACK!");
    cp->client = ec;
 }
 
