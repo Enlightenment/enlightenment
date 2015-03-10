@@ -815,7 +815,11 @@ _e_comp_wl_cb_key_down(void *event)
      }
 
    cdata->kbd.keys.size = (const char *)end - (const char *)cdata->kbd.keys.data;
-   k = wl_array_add(&cdata->kbd.keys, sizeof(*k));
+   if (!(k = wl_array_add(&cdata->kbd.keys, sizeof(*k))))
+     {
+        DBG("wl_array_add: Out of memory\n");
+        return;
+     }
    *k = keycode;
 
    if ((ec = e_client_focused_get()))
