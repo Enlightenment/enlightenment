@@ -1419,20 +1419,16 @@ _e_comp_wl_compositor_cb_surface_create(struct wl_client *client, struct wl_reso
 
    wl_client_get_credentials(client, &pid, NULL, NULL);
    win = e_comp_wl_id_get(id, pid);
-   /* check for existing pixmap */
-   if (!(ep = e_pixmap_find(E_PIXMAP_TYPE_WL, win)))
+   /* try to create new pixmap */
+   if (!(ep = e_pixmap_new(E_PIXMAP_TYPE_WL, win)))
      {
-        /* try to create new pixmap */
-        if (!(ep = e_pixmap_new(E_PIXMAP_TYPE_WL, win)))
-          {
-             ERR("Could not create new pixmap");
-             wl_resource_destroy(res);
-             wl_client_post_no_memory(client);
-             return;
-          }
+        ERR("Could not create new pixmap");
+        wl_resource_destroy(res);
+        wl_client_post_no_memory(client);
+        return;
      }
 
-   DBG("\tUsing Pixmap: %d", id);
+   DBG("\tUsing Pixmap: %p", ep);
 
    /* set reference to pixmap so we can fetch it later */
    wl_resource_set_user_data(res, ep);
