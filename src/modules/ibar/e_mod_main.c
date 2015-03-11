@@ -1939,8 +1939,18 @@ _ibar_drop_position_update(Instance *inst, Evas_Coord x, Evas_Coord y)
    inst->ibar->dnd_x = x;
    inst->ibar->dnd_y = y;
 
-   if (inst->ibar->o_drop) e_box_unpack(inst->ibar->o_drop);
    ic = _ibar_icon_at_coord(inst->ibar, x, y);
+   if (ic && (ic == inst->ibar->ic_drop_before)) return;
+
+   if (inst->ibar->o_drop)
+     {
+        int ox, oy, ow, oh;
+
+        evas_object_geometry_get(inst->ibar->o_drop, &ox, &oy, &ow, &oh);
+        /* if cursor is still inside last drop area, do nothing */
+        if (E_INSIDE(x, y, ox, oy, ow, oh)) return;
+        e_box_unpack(inst->ibar->o_drop);
+     }
 
    inst->ibar->ic_drop_before = ic;
    if (ic)
