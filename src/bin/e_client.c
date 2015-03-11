@@ -409,6 +409,7 @@ _e_client_revert_focus(E_Client *ec)
 
    if (stopping) return;
    if (!ec->focused) return;
+   if (!ec->zone) return;
    desk = e_desk_current_get(ec->zone);
    if (ec->desk == desk)
      evas_object_focus_set(ec->frame, 0);
@@ -975,8 +976,11 @@ _e_client_resize_handle(E_Client *ec)
    h = new_h;
    if (e_config->screen_limits == E_CLIENT_OFFSCREEN_LIMIT_ALLOW_NONE)
      {
-        w = MIN(w, ec->zone->w);
-        h = MIN(h, ec->zone->h);
+        if (ec->zone)
+          {
+             w = MIN(w, ec->zone->w);
+             h = MIN(h, ec->zone->h);
+          }
      }
    e_client_resize_limit(ec, &new_w, &new_h);
    if ((ec->resize_mode == E_POINTER_RESIZE_TL) ||
@@ -1078,8 +1082,11 @@ _e_client_resize_key_down(void *data EINA_UNUSED, int type EINA_UNUSED, void *ev
      goto stop;
    if (e_config->screen_limits == E_CLIENT_OFFSCREEN_LIMIT_ALLOW_NONE)
      {
-        w = MIN(w, action_client->zone->w);
-        h = MIN(h, action_client->zone->h);
+        if (action_client->zone)
+          {
+             w = MIN(w, action_client->zone->w);
+             h = MIN(h, action_client->zone->h);
+          }
      }
    e_client_resize_limit(action_client, &w, &h);
    evas_object_resize(action_client->frame, w, h);
@@ -1137,6 +1144,7 @@ _e_client_zones_layout_calc(E_Client *ec, int *zx, int *zy, int *zw, int *zh)
    int x, y, w, h;
    E_Zone *zone_above, *zone_below, *zone_left, *zone_right;
 
+   if (!ec->zone) return;
    x = ec->zone->x;
    y = ec->zone->y;
    w = ec->zone->w;
@@ -1520,6 +1528,7 @@ _e_client_maximize(E_Client *ec, E_Maximize max)
    int ecx, ecy, ecw, ech;
    Eina_Bool override = ec->maximize_override;
 
+   if (!ec->zone) return;
    zx = zy = zw = zh = 0;
    ec->maximize_override = 1;
 
@@ -1703,7 +1712,7 @@ _e_client_eval(E_Client *ec)
 
    if (!_e_client_hook_call(E_CLIENT_HOOK_EVAL_PRE_NEW_CLIENT, ec)) return;
 
-   if (ec->new_client && (!e_client_util_ignored_get(ec)))
+   if ((ec->new_client) && (!e_client_util_ignored_get(ec)) && (ec->zone))
      {
         int zx = 0, zy = 0, zw = 0, zh = 0;
 
@@ -2915,7 +2924,7 @@ e_client_mouse_move(E_Client *ec, Evas_Point *output)
         ec->shelf_fix.y = 0;
         ec->shelf_fix.modified = 0;
         evas_object_move(ec->frame, new_x, new_y);
-        e_zone_flip_coords_handle(ec->zone, output->x, output->y);
+        if (ec->zone) e_zone_flip_coords_handle(ec->zone, output->x, output->y);
      }
    else if (e_client_util_resizing_get(ec))
      {
@@ -2929,7 +2938,7 @@ e_client_mouse_move(E_Client *ec, Evas_Point *output)
              ec->drag.x = output->x;
              ec->drag.y = output->y;
           }
-        else
+        else if (ec->zone)
           {
              int dx, dy;
 
@@ -3011,6 +3020,7 @@ e_client_res_change_geometry_restore(E_Client *ec)
    E_OBJECT_TYPE_CHECK(ec, E_CLIENT_TYPE);
    if (!ec->pre_res_change.valid) return;
    if (ec->new_client) return;
+   if (!ec->zone) return;
 
    memcpy(&pre_res_change, &ec->pre_res_change, sizeof(pre_res_change));
 
@@ -3412,7 +3422,7 @@ e_client_focused_set(E_Client *ec)
 
    if (ec == focused) return;
    focused = ec;
-   if (ec)
+   if ((ec) && (ec->zone))
      {
         ec->focused = 1;
         e_client_urgent_set(ec, 0);
@@ -3439,7 +3449,7 @@ e_client_focused_set(E_Client *ec)
           }
      }
 
-   while (ec_unfocus)
+   while ((ec_unfocus) && (ec_unfocus->zone))
      {
         ec_unfocus->want_focus = ec_unfocus->focused = 0;
         if (!e_object_is_del(E_OBJECT(ec_unfocus)))
@@ -3647,6 +3657,7 @@ e_client_maximize(E_Client *ec, E_Maximize max)
    E_OBJECT_CHECK(ec);
    E_OBJECT_TYPE_CHECK(ec, E_CLIENT_TYPE);
 
+   if (!ec->zone) return;
    if (!(max & E_MAXIMIZE_DIRECTION)) max |= E_MAXIMIZE_BOTH;
 
    if ((ec->shaded) || (ec->shading)) return;
@@ -3707,6 +3718,7 @@ e_client_unmaximize(E_Client *ec, E_Maximize max)
 {
    E_OBJECT_CHECK(ec);
    E_OBJECT_TYPE_CHECK(ec, E_CLIENT_TYPE);
+   if (!ec->zone) return;
    if (!(max & E_MAXIMIZE_DIRECTION))
      {
         CRI("BUG: Unmaximize call without direction!");
@@ -3818,6 +3830,7 @@ e_client_fullscreen(E_Client *ec, E_Fullscreen policy)
 
    E_OBJECT_CHECK(ec);
    E_OBJECT_TYPE_CHECK(ec, E_CLIENT_TYPE);
+   if (!ec->zone) return;
 
    if ((ec->shaded) || (ec->shading) || ec->fullscreen) return;
    if (ec->new_client)
@@ -3895,6 +3908,7 @@ e_client_unfullscreen(E_Client *ec)
 {
    E_OBJECT_CHECK(ec);
    E_OBJECT_TYPE_CHECK(ec, E_CLIENT_TYPE);
+   if (!ec->zone) return;
    if ((ec->shaded) || (ec->shading)) return;
    if (!ec->fullscreen) return;
    ec->pre_res_change.valid = 0;
@@ -3935,6 +3949,7 @@ e_client_iconify(E_Client *ec)
 {
    E_OBJECT_CHECK(ec);
    E_OBJECT_TYPE_CHECK(ec, E_CLIENT_TYPE);
+   if (!ec->zone) return;
    if (ec->shading || ec->iconic) return;
    ec->iconic = 1;
    ec->want_focus = ec->take_focus = 0;
@@ -3970,6 +3985,7 @@ e_client_uniconify(E_Client *ec)
 
    E_OBJECT_CHECK(ec);
    E_OBJECT_TYPE_CHECK(ec, E_CLIENT_TYPE);
+   if (!ec->zone) return;
    if (ec->shading || (!ec->iconic)) return;
    desk = e_desk_current_get(ec->desk->zone);
    e_client_desk_set(ec, desk);
@@ -3999,6 +4015,7 @@ e_client_urgent_set(E_Client *ec, Eina_Bool urgent)
 {
    E_OBJECT_CHECK(ec);
    E_OBJECT_TYPE_CHECK(ec, E_CLIENT_TYPE);
+   if (!ec->zone) return;
 
    urgent = !!urgent;
    if (urgent == ec->urgent) return;
@@ -4030,6 +4047,7 @@ e_client_stick(E_Client *ec)
 
    E_OBJECT_CHECK(ec);
    E_OBJECT_TYPE_CHECK(ec, E_CLIENT_TYPE);
+   if (!ec->zone) return;
    if (ec->sticky) return;
    desk = ec->desk;
    ec->desk = NULL;
@@ -4063,6 +4081,7 @@ e_client_unstick(E_Client *ec)
 
    E_OBJECT_CHECK(ec);
    E_OBJECT_TYPE_CHECK(ec, E_CLIENT_TYPE);
+   if (!ec->zone) return;
    /* Set the desk before we unstick the client */
    if (!ec->sticky) return;
    desk = e_desk_current_get(ec->zone);
@@ -4146,6 +4165,7 @@ e_client_comp_hidden_set(E_Client *ec, Eina_Bool hidden)
 {
    E_OBJECT_CHECK(ec);
    E_OBJECT_TYPE_CHECK(ec, E_CLIENT_TYPE);
+   if (!ec->zone) return;
 
    hidden = !!hidden;
    if (ec->comp_hidden == hidden) return;
@@ -4159,6 +4179,7 @@ EAPI void
 e_client_act_move_keyboard(E_Client *ec)
 {
    EINA_SAFETY_ON_NULL_RETURN(ec);
+   if (!ec->zone) return;
 
    if (!_e_client_move_begin(ec))
      return;
@@ -4178,6 +4199,7 @@ EAPI void
 e_client_act_resize_keyboard(E_Client *ec)
 {
    EINA_SAFETY_ON_NULL_RETURN(ec);
+   if (!ec->zone) return;
 
    ec->resize_mode = E_POINTER_RESIZE_TL;
    if (!e_client_resize_begin(ec))
@@ -4198,6 +4220,7 @@ e_client_act_move_begin(E_Client *ec, E_Binding_Event_Mouse_Button *ev)
 {
    E_OBJECT_CHECK(ec);
    E_OBJECT_TYPE_CHECK(ec, E_CLIENT_TYPE);
+   if (!ec->zone) return;
    if (e_client_util_resizing_get(ec) || (ec->moving)) return;
    if (!_e_client_move_begin(ec))
      return;
@@ -4219,6 +4242,7 @@ e_client_act_move_end(E_Client *ec, E_Binding_Event_Mouse_Button *ev EINA_UNUSED
 {
    E_OBJECT_CHECK(ec);
    E_OBJECT_TYPE_CHECK(ec, E_CLIENT_TYPE);
+   if (!ec->zone) return;
    if (!ec->moving) return;
    e_zone_edge_enable();
    _e_client_move_end(ec);
@@ -4231,6 +4255,7 @@ e_client_act_resize_begin(E_Client *ec, E_Binding_Event_Mouse_Button *ev)
 {
    E_OBJECT_CHECK(ec);
    E_OBJECT_TYPE_CHECK(ec, E_CLIENT_TYPE);
+   if (!ec->zone) return;
    if (ec->lock_user_size || ec->shaded || ec->shading) return;
    if (e_client_util_resizing_get(ec) || (ec->moving)) return;
    if (ev)
@@ -4295,6 +4320,7 @@ e_client_act_resize_end(E_Client *ec, E_Binding_Event_Mouse_Button *ev EINA_UNUS
 {
    E_OBJECT_CHECK(ec);
    E_OBJECT_TYPE_CHECK(ec, E_CLIENT_TYPE);
+   if (!ec->zone) return;
    if (e_client_util_resizing_get(ec))
      {
         _e_client_resize_end(ec);
@@ -4310,6 +4336,7 @@ e_client_act_menu_begin(E_Client *ec, E_Binding_Event_Mouse_Button *ev, int key)
 {
    E_OBJECT_CHECK(ec);
    E_OBJECT_TYPE_CHECK(ec, E_CLIENT_TYPE);
+   if (!ec->zone) return;
    if (ec->border_menu) return;
    if (ev)
      e_int_client_menu_show(ec, ev->canvas.x, ev->canvas.y, key, ev->timestamp);
@@ -4327,6 +4354,7 @@ e_client_act_close_begin(E_Client *ec)
 {
    E_OBJECT_CHECK(ec);
    E_OBJECT_TYPE_CHECK(ec, E_CLIENT_TYPE);
+   if (!ec->zone) return;
    if (ec->lock_close) return;
    if (ec->icccm.delete_request)
      {
@@ -4344,6 +4372,7 @@ e_client_act_kill_begin(E_Client *ec)
 {
    E_OBJECT_CHECK(ec);
    E_OBJECT_TYPE_CHECK(ec, E_CLIENT_TYPE);
+   if (!ec->zone) return;
    if (ec->internal) return;
    if (ec->lock_close) return;
    if ((ec->netwm.pid > 1) && (e_config->kill_process))
@@ -4555,6 +4584,7 @@ e_client_signal_move_begin(E_Client *ec, const char *sig, const char *src EINA_U
 {
    E_OBJECT_CHECK(ec);
    E_OBJECT_TYPE_CHECK(ec, E_CLIENT_TYPE);
+   if (!ec->zone) return;
 
    if (e_client_util_resizing_get(ec) || (ec->moving)) return;
    if (!_e_client_move_begin(ec)) return;
@@ -4568,6 +4598,7 @@ e_client_signal_move_end(E_Client *ec, const char *sig EINA_UNUSED, const char *
 {
    E_OBJECT_CHECK(ec);
    E_OBJECT_TYPE_CHECK(ec, E_CLIENT_TYPE);
+   if (!ec->zone) return;
    if (!ec->moving) return;
    _e_client_move_end(ec);
    e_zone_edge_enable();
@@ -4789,6 +4820,7 @@ e_client_pointer_warp_to_center(E_Client *ec)
    int x, y;
    E_Client *cec = NULL;
 
+   if (!ec->zone) return 0;
    if (e_config->disable_all_pointer_warps) return 0;
    /* Only warp the pointer if it is not already in the area of
     * the given border */
