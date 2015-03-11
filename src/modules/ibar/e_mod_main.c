@@ -771,16 +771,11 @@ _ibar_icon_at_coord(IBar *b, Evas_Coord x, Evas_Coord y)
      {
         Evas_Coord dx, dy, dw, dh;
 
+        /* block drops in the non-order section */
+        if (ic->not_in_order) continue;
         evas_object_geometry_get(ic->o_holder, &dx, &dy, &dw, &dh);
         if (E_INSIDE(x, y, dx, dy, dw, dh))
-          {
-             if (ic->not_in_order)
-               {
-                  /* block drops in the non-order section */
-                  return NULL;
-               }
-             return ic;
-          }
+          return ic;
      }
    return NULL;
 }
