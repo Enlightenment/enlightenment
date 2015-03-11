@@ -1462,8 +1462,8 @@ _e_comp_intercept_focus(void *data, Evas_Object *obj, Eina_Bool focus)
           }
         /* FIXME: hack for deskflip animation:
          * dont update focus when sliding previous desk */
-        if ((!ec->sticky) &&
-                 (ec->desk != e_desk_current_get(ec->desk->zone)))
+        if ((!ec->sticky) && (ec->desk) &&
+            (ec->desk != e_desk_current_get(ec->desk->zone)))
           {
              return;
           }
