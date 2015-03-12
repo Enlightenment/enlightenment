@@ -270,10 +270,12 @@ _e_shell_surface_cb_toplevel_set(struct wl_client *client EINA_UNUSED, struct wl
      }
 
    /* set toplevel client properties */
-   ec->borderless = !ec->internal;
+   if (!ec->internal)
+     ec->borderless = !ec->internal;
 
    ec->lock_border = EINA_TRUE;
-   ec->border.changed = ec->changes.border = !ec->borderless;
+   if (!ec->internal)
+     ec->border.changed = ec->changes.border = !ec->borderless;
    ec->netwm.type = E_WINDOW_TYPE_NORMAL;
    ec->comp_data->set_win_type = EINA_TRUE;
    if ((!ec->lock_user_maximize) && (ec->maximized))
@@ -335,9 +337,11 @@ _e_shell_surface_cb_popup_set(struct wl_client *client EINA_UNUSED, struct wl_re
         ec->comp_data->popup.y = y;
      }
 
-   ec->borderless = !ec->internal_elm_win;
+   if (!ec->internal)
+     ec->borderless = !ec->internal_elm_win;
    ec->lock_border = EINA_TRUE;
-   ec->border.changed = ec->changes.border = !ec->borderless;
+   if (!ec->internal)
+     ec->border.changed = ec->changes.border = !ec->borderless;
    ec->changes.icon = !!ec->icccm.class;
    ec->netwm.type = E_WINDOW_TYPE_POPUP_MENU;
    ec->comp_data->set_win_type = EINA_TRUE;
@@ -1189,9 +1193,11 @@ _e_xdg_shell_cb_surface_get(struct wl_client *client, struct wl_resource *resour
 
    /* set toplevel client properties */
    ec->icccm.accepts_focus = 1;
-   ec->borderless = !ec->internal_elm_win;
+   if (!ec->internal)
+     ec->borderless = !ec->internal_elm_win;
    ec->lock_border = EINA_TRUE;
-   ec->border.changed = ec->changes.border = !ec->borderless;
+   if (!ec->internal)
+     ec->border.changed = ec->changes.border = !ec->borderless;
    ec->netwm.type = E_WINDOW_TYPE_NORMAL;
    ec->comp_data->set_win_type = EINA_TRUE;
 }
@@ -1291,9 +1297,11 @@ _e_xdg_shell_cb_popup_get(struct wl_client *client, struct wl_resource *resource
    cdata->shell.unmap = _e_xdg_shell_surface_unmap;
 
    ec->override = 1;
-   ec->borderless = !ec->internal_elm_win;
+   if (!ec->internal)
+     ec->borderless = !ec->internal_elm_win;
    ec->lock_border = EINA_TRUE;
-   ec->border.changed = ec->changes.border = !ec->borderless;
+   if (!ec->internal)
+     ec->border.changed = ec->changes.border = !ec->borderless;
    ec->changes.icon = !!ec->icccm.class;
    ec->netwm.type = E_WINDOW_TYPE_POPUP_MENU;
    ec->comp_data->set_win_type = EINA_TRUE;
