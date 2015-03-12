@@ -1383,7 +1383,9 @@ _e_comp_wl_surface_destroy(struct wl_resource *resource)
    if (!(ec = e_pixmap_client_get(ep)))
      return;
 
-   if ((!ec->internal) && (!e_comp_gl_get()))
+   /* FIXME: this should be fine after e_pixmap can create textures for wl clients */
+   //if ((!ec->internal) && (!e_comp_gl_get()))
+   if (!ec->internal)
      ec->dead = ec->hidden = 1;
    evas_object_hide(ec->frame);
    e_object_del(E_OBJECT(ec));
