@@ -563,7 +563,7 @@ _e_shell_cb_shell_surface_get(struct wl_client *client, struct wl_resource *reso
    ec = e_pixmap_client_get(ep);
 
    if (ec) e_pixmap_ref(ec->pixmap);
-   if (!(ec = e_client_new(NULL, ep, 0, 1)))
+   if (!(ec = e_client_new(NULL, ep, 0, 0)))
      {
         wl_resource_post_error(surface_resource,
                                WL_DISPLAY_ERROR_INVALID_OBJECT,
@@ -1137,7 +1137,7 @@ _e_xdg_shell_cb_surface_get(struct wl_client *client, struct wl_resource *resour
    ec = e_pixmap_client_get(ep);
 
    if (ec) e_pixmap_ref(ec->pixmap);
-   if (!(ec = e_client_new(NULL, ep, 0, 1)))
+   if (!(ec = e_client_new(NULL, ep, 0, 0)))
      {
         wl_resource_post_error(surface_resource,
                                WL_DISPLAY_ERROR_INVALID_OBJECT,
@@ -1233,7 +1233,7 @@ _e_xdg_shell_cb_popup_get(struct wl_client *client, struct wl_resource *resource
    ec = e_pixmap_client_get(ep);
 
    if (ec) e_pixmap_ref(ec->pixmap);
-   if (!(ec = e_client_new(NULL, ep, 0, 1)))
+   if (!(ec = e_client_new(NULL, ep, 0, 0)))
      {
         wl_resource_post_error(surface_resource,
                                WL_DISPLAY_ERROR_INVALID_OBJECT,
