@@ -1093,7 +1093,7 @@ _e_comp_wl_surface_state_commit(E_Client *ec, E_Comp_Wl_Surface_State *state)
 
         if (ec->new_client)
           ec->placed = placed;
-        else if ((first) && (ec->placed))
+        else if ((first) && (ec->placed) && (!ec->internal))
           {
              ec->x = ec->y = 0;
              ec->placed = EINA_FALSE;
