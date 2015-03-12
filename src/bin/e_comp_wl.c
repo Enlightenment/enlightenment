@@ -589,7 +589,7 @@ _e_comp_wl_evas_cb_state_update(void *data, Evas_Object *obj EINA_UNUSED, void *
    /* check for wayland pixmap */
 
    if (ec->comp_data->shell.configure_send)
-     ec->comp_data->shell.configure_send(ec->comp_data->shell.surface, 0, 0, 0);
+     ec->comp_data->shell.configure_send(ec->comp_data->shell.surface, 0, ec->client.w, ec->client.h);
 }
 
 static void
