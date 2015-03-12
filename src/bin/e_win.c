@@ -70,6 +70,7 @@ _e_elm_win_trap_show(void *data, Evas_Object *o)
         E_Pixmap_Type type = E_PIXMAP_TYPE_X;
 
         win = elm_win_window_id_get(o);
+#ifdef HAVE_WAYLAND
         if (!strncmp(ecore_evas_engine_name_get(ee), "wayland", 7))
           {
              type = E_PIXMAP_TYPE_WL;
@@ -78,6 +79,7 @@ _e_elm_win_trap_show(void *data, Evas_Object *o)
              win = e_comp_wl_id_get(win, getpid());
           }
         else
+#endif
           {
              type = E_PIXMAP_TYPE_X;
              ctx->pointer = e_pointer_window_new(win, EINA_TRUE);
