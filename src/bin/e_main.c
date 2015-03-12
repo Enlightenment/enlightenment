@@ -326,7 +326,7 @@ main(int argc, char **argv)
      e_util_env_set("DESKTOP_STARTUP_ID", NULL);
    e_util_env_set("E_RESTART_OK", NULL);
    e_util_env_set("PANTS", "ON");
-   e_util_env_set("DESKTOP", "Enlightenment-0.17.0");
+   e_util_env_set("DESKTOP", "Enlightenment");
    TS("Environment Variables Done");
 
    TS("Parse Arguments");
