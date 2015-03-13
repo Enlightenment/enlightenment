@@ -353,7 +353,7 @@ _gadman_gadget_add(const E_Gadcon_Client_Class *cc, Gadman_Layer_Type layer, E_C
    E_Gadcon *gc;
    int w, h;
 
-   gc = gadman_gadcon_get(e_util_zone_current_get(e_manager_current_get()),
+   gc = gadman_gadcon_get(e_zone_current_get(),
                           layer);
 
    /* Create Config_Gadcon_Client */
@@ -1261,7 +1261,7 @@ on_frame_click(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void
         gcc->menu = m;
         e_gadcon_canvas_zone_geometry_get(gcc->gadcon, &cx, &cy, &cw, &ch);
         e_menu_activate_mouse(m,
-                              e_util_zone_current_get(e_manager_current_get()),
+                              e_zone_current_get(),
                               cx + ev->output.x, cy + ev->output.y, 1, 1,
                               E_MENU_POP_DIRECTION_DOWN, ev->timestamp);
         evas_event_feed_mouse_up(gcc->gadcon->evas, ev->button,

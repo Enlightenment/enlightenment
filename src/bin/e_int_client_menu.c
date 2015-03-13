@@ -1615,7 +1615,7 @@ _e_client_menu_cb_kbdshrtct_add(void *data, E_Menu *m __UNUSED__, E_Menu_Item *m
    E_Zone *zone;
 
    if (!(ec = data)) return;
-   zone = e_util_zone_current_get(e_manager_current_get());
+   zone = e_zone_current_get();
    if (!zone) return;
    e_configure_registry_call("keyboard_and_mouse/key_bindings",
                              NULL, ec->desktop->exec);

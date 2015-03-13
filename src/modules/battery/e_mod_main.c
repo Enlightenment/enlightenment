@@ -201,7 +201,7 @@ _button_cb_mouse_down(void *data, Evas *e, Evas_Object *obj, void *event_info)
         e_gadcon_canvas_zone_geometry_get(inst->gcc->gadcon,
                                           &cx, &cy, NULL, NULL);
         e_menu_activate_mouse(m,
-                              e_util_zone_current_get(e_manager_current_get()),
+                              e_zone_current_get(),
                               cx + ev->output.x, cy + ev->output.y, 1, 1,
                               E_MENU_POP_DIRECTION_DOWN, ev->timestamp);
         evas_event_feed_mouse_up(inst->gcc->gadcon->evas, ev->button,

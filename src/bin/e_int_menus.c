@@ -1835,7 +1835,7 @@ _e_int_menus_shelves_add_cb(void *data __UNUSED__, E_Menu *m __UNUSED__, E_Menu_
 {
    E_Zone *zone;
 
-   zone = e_util_zone_current_get(e_manager_current_get());
+   zone = e_zone_current_get();
    e_shelf_new_dialog(zone);
 }
 

@@ -37,7 +37,7 @@ _mouse_down_cb(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
      {
         E_Menu *m;
         E_Menu_Item *mi;
-        E_Zone *zone = e_util_zone_current_get(e_manager_current_get());
+        E_Zone *zone = e_zone_current_get();
         int x, y;
 
         if (inst->popup)

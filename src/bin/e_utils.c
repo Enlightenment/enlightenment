@@ -985,8 +985,7 @@ e_util_module_config_check(const char *module_name, int loaded, int current)
 EAPI Eina_Bool
 e_util_fullscreen_current_any(void)
 {
-   E_Manager *man = e_manager_current_get();
-   E_Zone *zone = e_util_zone_current_get(man);
+   E_Zone *zone = e_zone_current_get();
    E_Desk *desk;
 
    if ((zone) && (zone->fullscreen > 0)) return EINA_TRUE;

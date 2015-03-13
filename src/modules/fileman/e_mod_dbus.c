@@ -73,7 +73,7 @@ _e_fileman_dbus_daemon_open_directory_cb(const Eldbus_Service_Interface *iface _
    if ((!directory) || (directory[0] == '\0'))
      return _e_fileman_dbus_daemon_error(msg, "no directory provided.");
 
-   zone = e_util_zone_current_get(e_manager_current_get());
+   zone = e_zone_current_get();
    if (!zone)
      return _e_fileman_dbus_daemon_error(msg, "could not find a zone.");
 
@@ -168,7 +168,7 @@ _e_fileman_dbus_daemon_open_file_cb(const Eldbus_Service_Interface *iface __UNUS
    if ((!param_file) || (param_file[0] == '\0'))
      return _e_fileman_dbus_daemon_error(msg, "no file provided.");
 
-   zone = e_util_zone_current_get(e_manager_current_get());
+   zone = e_zone_current_get();
    if (!zone)
      return _e_fileman_dbus_daemon_error(msg, "could not find a zone.");
 

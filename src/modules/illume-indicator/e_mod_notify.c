@@ -177,7 +177,7 @@ _e_mod_notify_new(E_Notification_Notify *n, unsigned id)
    nwin->notify = n;
    nwin->id = id;
 
-   zone = e_util_zone_current_get(e_manager_current_get());
+   zone = e_zone_current_get();
    nwin->zone = zone;
 
    nwin->win = e_win_new(e_comp);

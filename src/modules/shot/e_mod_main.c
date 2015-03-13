@@ -938,15 +938,15 @@ _e_mod_action_cb(E_Object *obj, const char *params)
    if (obj)
      {
         if (obj->type == E_MANAGER_TYPE)
-          zone = e_util_zone_current_get((E_Manager *)obj);
+          zone = e_zone_current_get();
         else if (obj->type == E_COMP_TYPE)
           zone = e_zone_current_get();
         else if (obj->type == E_ZONE_TYPE)
           zone = ((E_Zone *)obj);
         else
-          zone = e_util_zone_current_get(e_manager_current_get());
+          zone = e_zone_current_get();
      }
-   if (!zone) zone = e_util_zone_current_get(e_manager_current_get());
+   if (!zone) zone = e_zone_current_get();
    if (!zone) return;
    E_FREE_FUNC(timer, ecore_timer_del);
    _shot_now(zone, NULL, params);

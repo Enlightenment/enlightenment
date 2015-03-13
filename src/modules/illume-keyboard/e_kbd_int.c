@@ -1724,7 +1724,7 @@ e_kbd_int_new(const char *themedir, const char *syskbds, const char *sysdicts)
    if (themedir) ki->themedir = eina_stringshare_add(themedir);
    if (syskbds) ki->syskbds = eina_stringshare_add(syskbds);
    if (sysdicts) ki->sysdicts = eina_stringshare_add(sysdicts);
-   zone = e_util_zone_current_get(e_manager_current_get());
+   zone = e_zone_current_get();
    ki->win = e_win_new(e_comp);
    states[0] = ECORE_X_WINDOW_STATE_SKIP_TASKBAR;
    states[1] = ECORE_X_WINDOW_STATE_SKIP_PAGER;

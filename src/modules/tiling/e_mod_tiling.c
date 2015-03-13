@@ -1685,7 +1685,7 @@ _gadget_mouse_down_cb(void *data, Evas *e, Evas_Object *obj EINA_UNUSED, void *e
         E_Menu_Item *mi;
         int x, y;
 
-        zone = e_util_zone_current_get(e_manager_current_get());
+        zone = e_zone_current_get();
 
         m = e_menu_new();
         mi = e_menu_item_new(m);

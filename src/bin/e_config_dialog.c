@@ -106,7 +106,7 @@ e_config_dialog_find(const char *name, const char *class)
              E_Zone *z;
              E_Client *ec;
 
-             z = e_util_zone_current_get(e_manager_current_get());
+             z = e_zone_current_get();
              ec = e_win_client_get(cfd->dia->win);
              e_client_uniconify(ec);
              elm_win_raise(cfd->dia->win);

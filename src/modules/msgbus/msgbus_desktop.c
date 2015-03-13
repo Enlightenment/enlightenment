@@ -37,7 +37,7 @@ cb_desktop_show(const Eldbus_Service_Interface *iface __UNUSED__,
         return reply;
      }
 
-   zone = e_util_zone_current_get(e_manager_current_get());
+   zone = e_zone_current_get();
    DBG("show desktop %d,%d from zone %p.", x, y, zone);
    e_zone_desk_flip_to(zone, x, y);
 
@@ -59,7 +59,7 @@ cb_desktop_show_by_name(const Eldbus_Service_Interface *iface __UNUSED__,
         return reply;
      }
 
-   zone = e_util_zone_current_get(e_manager_current_get());
+   zone = e_zone_current_get();
    DBG("show desktop %s from zone %p.", name, zone);
    count = zone->desk_x_count * zone->desk_y_count;
    for (i = 0; i < count; i++)

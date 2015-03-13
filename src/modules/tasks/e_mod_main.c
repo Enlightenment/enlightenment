@@ -757,7 +757,7 @@ _tasks_cb_item_mouse_down(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNU
         e_gadcon_client_menu_set(item->tasks->gcc, item->client->border_menu);
 
         e_menu_activate_mouse(item->client->border_menu,
-                              e_util_zone_current_get(e_manager_current_get()),
+                              e_zone_current_get(),
                               cx + ev->output.x, cy + ev->output.y, 1, 1,
                               E_MENU_POP_DIRECTION_DOWN, ev->timestamp);
         evas_event_feed_mouse_up(item->tasks->gcc->gadcon->evas, ev->button,

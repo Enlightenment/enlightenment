@@ -1144,7 +1144,7 @@ window_jump_to(const char *params)
         if (strcmp(ec->icccm.name, params)) continue;
         /* Jump to the screen the window is on if it isn't on the current screen but
          * only if we don't have to warp the pointer anyway */
-        current_zone = e_util_zone_current_get(e_manager_current_get());
+        current_zone = e_zone_current_get();
 
         /* Change the virtual desktop if the window isn't on the current virtual desktop */
         e_desk_show(ec->desk);
@@ -1352,7 +1352,7 @@ _e_actions_zone_get(E_Object *obj)
    if (obj)
      {
         if (obj->type == (int)E_MANAGER_TYPE)
-          return e_util_zone_current_get((E_Manager *)obj);
+          return e_zone_current_get();
         else if (obj->type == (int)E_COMP_TYPE)
           return e_zone_current_get();
         else if (obj->type == (int)E_ZONE_TYPE)
@@ -1364,7 +1364,7 @@ _e_actions_zone_get(E_Object *obj)
         else if (e_obj_is_win(obj))
           return e_win_client_get((void*)obj)->zone;
      }
-   return e_util_zone_current_get(e_manager_current_get());
+   return e_zone_current_get();
 }
 
 ACT_FN_GO(desk_flip_by, )
@@ -1642,7 +1642,7 @@ ACT_FN_GO(screen_send_to, )
    int scr;
 
    zone = _e_actions_zone_get(obj);
-   if (!zone) zone = e_util_zone_current_get(e_manager_current_get());
+   if (!zone) zone = e_zone_current_get();
    if (!zone) return;
    if (!params) return;
 
@@ -1679,7 +1679,7 @@ ACT_FN_GO(screen_send_by, )
    int scr = 0;
 
    zone = _e_actions_zone_get(obj);
-   if (!zone) zone = e_util_zone_current_get(e_manager_current_get());
+   if (!zone) zone = e_zone_current_get();
    if (!zone) return;
    if (!params) return;
 
@@ -2008,7 +2008,7 @@ ACT_FN_GO(app_new_instance, __UNUSED__)
 
    zone = _e_actions_zone_get(obj);
    if (!zone)
-     zone = e_util_zone_current_get(e_manager_current_get());
+     zone = e_zone_current_get();
 
    if (!obj) obj = E_OBJECT(e_client_focused_get());
    if ((!obj) || (!zone)) return;
@@ -2029,7 +2029,7 @@ ACT_FN_GO(desk_deskshow_toggle, __UNUSED__)
    E_Zone *zone;
 
    zone = _e_actions_zone_get(obj);
-   if (!zone) zone = e_util_zone_current_get(e_manager_current_get());
+   if (!zone) zone = e_zone_current_get();
    if (zone) e_desk_deskshow(zone);
 }
 
@@ -2038,7 +2038,7 @@ ACT_FN_GO(cleanup_windows, __UNUSED__)
    E_Zone *zone;
 
    zone = _e_actions_zone_get(obj);
-   if (!zone) zone = e_util_zone_current_get(e_manager_current_get());
+   if (!zone) zone = e_zone_current_get();
    if (zone) e_place_zone_region_smart_cleanup(zone);
 }
 

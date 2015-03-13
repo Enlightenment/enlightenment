@@ -98,7 +98,7 @@ _systray_menu_new(Instance *inst, Evas_Event_Mouse_Down *ev)
    //E_Menu_Item *mi;
    int x, y;
 
-   zone = e_util_zone_current_get(e_manager_current_get());
+   zone = e_zone_current_get();
 
    m = e_menu_new();
    //mi = e_menu_item_new(m);

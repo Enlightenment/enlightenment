@@ -60,7 +60,7 @@ _e_mod_illume_config_select_window_create(E_Config_Dialog *cfd __UNUSED__, Evas 
    E_Zone *zone;
    int i, sel = -1;
 
-   zone = e_util_zone_current_get(e_manager_current_get());
+   zone = e_zone_current_get();
    list = e_widget_list_add(evas, 0, 0);
    ow = e_widget_ilist_add(evas, 24, 24, NULL);
    e_widget_ilist_selector_set(ow, 1);

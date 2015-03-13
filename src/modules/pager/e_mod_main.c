@@ -866,7 +866,7 @@ _button_cb_mouse_down(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED_
 
    e_gadcon_canvas_zone_geometry_get(inst->gcc->gadcon, &cx, &cy,
                                      NULL, NULL);
-   e_menu_activate_mouse(m, e_util_zone_current_get(e_manager_current_get()),
+   e_menu_activate_mouse(m, e_zone_current_get(),
                          cx + ev->output.x, cy + ev->output.y, 1, 1,
                          E_MENU_POP_DIRECTION_DOWN, ev->timestamp);
    evas_event_feed_mouse_up(inst->gcc->gadcon->evas, ev->button,
@@ -1588,7 +1588,7 @@ _pager_desk_cb_drag_finished(E_Drag *drag, int dropped)
      {
         /* wasn't dropped on pager, switch with current desktop */
         if (!pd->desk) return;
-        zone = e_util_zone_current_get(e_manager_current_get());
+        zone = e_zone_current_get();
         desk = e_desk_current_get(zone);
         EINA_LIST_FOREACH(pagers, l, p)
           {
@@ -1668,7 +1668,7 @@ _pager_popup_show(void)
 
    if ((act_popup) || (input_window)) return 0;
 
-   zone = e_util_zone_current_get(e_manager_current_get());
+   zone = e_zone_current_get();
 
    pp = _pager_popup_find(zone);
    if (pp) _pager_popup_free(pp);

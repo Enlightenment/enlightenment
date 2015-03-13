@@ -467,7 +467,7 @@ _ebluez4_cb_mouse_down(void *data, Evas *evas EINA_UNUSED,
 
    e_gadcon_canvas_zone_geometry_get(inst->gcc->gadcon, &x, &y, NULL, NULL);
    e_menu_activate_mouse(inst->menu, 
-                         e_util_zone_current_get(e_manager_current_get()), 
+                         e_zone_current_get(), 
                          x + ev->output.x, y + ev->output.y, 1, 1, 
                          E_MENU_POP_DIRECTION_AUTO, ev->timestamp);
    evas_event_feed_mouse_up(inst->gcc->gadcon->evas, ev->button, 

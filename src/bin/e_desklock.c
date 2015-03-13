@@ -249,7 +249,7 @@ e_desklock_show(Eina_Bool suspend)
           {
              E_Zone *zone;
 
-             zone = e_util_zone_current_get(e_manager_current_get());
+             zone = e_zone_current_get();
              if (zone)
                e_configure_registry_call("screen/screen_lock", NULL, NULL);
              return 0;

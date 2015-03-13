@@ -718,7 +718,7 @@ _e_fwin_new(const char *dev,
 
    evas_object_size_hint_min_set(fwin->win, MINIMUM_WIDTH, MINIMUM_HEIGHT);
 
-   zone = e_util_zone_current_get(e_manager_current_get());
+   zone = e_zone_current_get();
    if ((zone) && (zone->w < DEFAULT_WIDTH))
      {
         int w, h;
@@ -2030,7 +2030,7 @@ _e_fwin_cb_dir_handler(void *data __UNUSED__, Evas_Object *obj, const char *path
    if (rp && (rp != path) && (evas_object_data_del(obj, "fileman_terminal_realpath"))) //icon menu; use rp
      path = rp;
    if (chdir(path) < 0) perror("chdir");
-   e_exec(e_util_zone_current_get(e_manager_current_get()), tdesktop, NULL, NULL, "fileman");
+   e_exec(e_zone_current_get(), tdesktop, NULL, NULL, "fileman");
    if (chdir(buf) < 0) perror("chdir");
    /* FIXME: if info != null then check mime type and offer options based
     * on that

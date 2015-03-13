@@ -304,7 +304,7 @@ _notification_popup_new(E_Notification_Notify *n, unsigned id)
         break;
       case POPUP_DISPLAY_POLICY_CURRENT:
       case POPUP_DISPLAY_POLICY_ALL:
-        zone = e_util_zone_current_get(e_manager_current_get());
+        zone = e_zone_current_get();
         break;
       case POPUP_DISPLAY_POLICY_MULTI:
         if ((notification_cfg->corner == CORNER_BR) ||

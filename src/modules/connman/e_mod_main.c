@@ -196,7 +196,7 @@ _econnman_app_launch(E_Connman_Instance *inst)
 
    zone = e_gadcon_client_zone_get(inst->gcc);
    if (!zone)
-     zone = e_util_zone_current_get(e_manager_current_get());
+     zone = e_zone_current_get();
 
    e_exec(zone, desktop, NULL, NULL, "econnman/app");
    efreet_desktop_free(desktop);
@@ -434,7 +434,7 @@ _econnman_menu_new(E_Connman_Instance *inst, Evas_Event_Mouse_Down *ev)
    m = e_gadcon_client_util_menu_items_append(inst->gcc, m, 0);
    e_gadcon_canvas_zone_geometry_get(inst->gcc->gadcon, &x, &y, NULL, NULL);
    e_menu_activate_mouse(m,
-                         e_util_zone_current_get(e_manager_current_get()),
+                         e_zone_current_get(),
                          x + ev->output.x, y + ev->output.y, 1, 1,
                          E_MENU_POP_DIRECTION_DOWN, ev->timestamp);
 }

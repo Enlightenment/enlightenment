@@ -521,7 +521,7 @@ _cb_mouse_down(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void
    inst = data;
    ev = event_info;
    if ((ev->button != 3) || (inst->gcc->menu)) return;
-   zone = e_util_zone_current_get(e_manager_current_get());
+   zone = e_zone_current_get();
 
    m = e_menu_new();
    m = e_gadcon_client_util_menu_items_append(inst->gcc, m, 0);

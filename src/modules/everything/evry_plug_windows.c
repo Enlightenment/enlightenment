@@ -287,7 +287,7 @@ _check_border(Evry_Action *act, const Evry_Item *it)
 
    int action = EVRY_ITEM_DATA_INT_GET(act);
    E_Client *ec = bi->client;
-   E_Zone *zone = e_util_zone_current_get(e_manager_current_get());
+   E_Zone *zone = e_zone_current_get();
 
    if (!ec)
      {
@@ -333,7 +333,7 @@ _act_border(Evry_Action *act)
 
    int action = EVRY_ITEM_DATA_INT_GET(act);
    E_Client *ec = bi->client;
-   E_Zone *zone = e_util_zone_current_get(e_manager_current_get());
+   E_Zone *zone = e_zone_current_get();
    int focus = 0;
 
    if (!ec)

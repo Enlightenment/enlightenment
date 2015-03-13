@@ -494,7 +494,7 @@ _ibar_cb_empty_mouse_down(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNU
    e_gadcon_canvas_zone_geometry_get(b->inst->gcc->gadcon,
                                      &cx, &cy, &cw, &ch);
    e_menu_activate_mouse(m,
-                         e_util_zone_current_get(e_manager_current_get()),
+                         e_zone_current_get(),
                          cx + ev->output.x, cy + ev->output.y, 1, 1,
                          E_MENU_POP_DIRECTION_DOWN, ev->timestamp);
    evas_event_feed_mouse_up(b->inst->gcc->gadcon->evas, ev->button,
@@ -1615,7 +1615,7 @@ _ibar_cb_icon_mouse_down(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUS
         e_gadcon_canvas_zone_geometry_get(ic->ibar->inst->gcc->gadcon,
                                           &cx, &cy, NULL, NULL);
         e_menu_activate_mouse(m,
-                              e_util_zone_current_get(e_manager_current_get()),
+                              e_zone_current_get(),
                               cx + ev->output.x, cy + ev->output.y, 1, 1,
                               E_MENU_POP_DIRECTION_DOWN, ev->timestamp);
      }
@@ -2133,9 +2133,9 @@ static Ecore_Event_Handler *_ibar_key_down_handler = NULL;
 static void _ibar_go_unfocus(void);
 
 static IBar *
-_ibar_manager_find(E_Manager *man)
+_ibar_manager_find(void)
 {
-   E_Zone *z = e_util_zone_current_get(man);
+   E_Zone *z = e_zone_current_get();
    IBar *b;
    Eina_List *l;
    
@@ -2534,7 +2534,7 @@ _ibar_go_focus(void)
    _ibar_key_down_handler = ecore_event_handler_add
      (ECORE_EVENT_KEY_DOWN, _ibar_focus_cb_key_down, NULL);
    if (!_ibar_key_down_handler) goto err;
-   b = _ibar_manager_find(man);
+   b = _ibar_manager_find();
    if (!b) goto err;
    _ibar_focus(b);
    return;

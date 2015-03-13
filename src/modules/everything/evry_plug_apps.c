@@ -1066,7 +1066,7 @@ _run_executable(Evry_Action *act)
 {
    GET_FILE(file, act->it1.item);
 
-   e_exec(e_util_zone_current_get(e_manager_current_get()), NULL, file->path, NULL, NULL);
+   e_exec(e_zone_current_get(), NULL, file->path, NULL, NULL);
 
    return 1;
 }

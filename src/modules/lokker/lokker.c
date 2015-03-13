@@ -293,7 +293,7 @@ _text_login_box_add(Lokker_Popup *lp)
    Evas *evas;
 
    zone = lp->zone;
-   last_active_zone = current_zone = e_util_zone_current_get(e_manager_current_get());
+   last_active_zone = current_zone = e_zone_current_get();
    total_zone_num = eina_list_count(e_comp->zones);
    if (total_zone_num > 1)
      {
@@ -401,7 +401,7 @@ _lokker_popup_add(E_Zone *zone)
    evas_object_layer_set(lp->comp_object, E_LAYER_DESKLOCK);
    evas_object_clip_set(lp->comp_object, lp->zone->bg_clip_object);
 
-   last_active_zone = current_zone = e_util_zone_current_get(e_manager_current_get());
+   last_active_zone = current_zone = e_zone_current_get();
    total_zone_num = eina_list_count(e_comp->zones);
    if (total_zone_num > 1)
      {
@@ -481,7 +481,7 @@ _lokker_cb_mouse_move(void *data EINA_UNUSED, int type EINA_UNUSED, void *event 
    E_Zone *current_zone;
    Eina_List *l;
 
-   current_zone = e_util_zone_current_get(e_manager_current_get());
+   current_zone = e_zone_current_get();
 
    if (current_zone == last_active_zone)
      return ECORE_CALLBACK_PASS_ON;

@@ -1653,7 +1653,7 @@ _e_shelf_cb_mouse_down(void *data, Evas *evas __UNUSED__, Evas_Object *obj __UNU
 
         e_gadcon_canvas_zone_geometry_get(es->gadcon, &cx, &cy, NULL, NULL);
         e_menu_activate_mouse(mn,
-                              e_util_zone_current_get(e_manager_current_get()),
+                              e_zone_current_get(),
                               cx + ev->output.x,
                               cy + ev->output.y, 1, 1,
                               E_MENU_POP_DIRECTION_AUTO, ev->timestamp);

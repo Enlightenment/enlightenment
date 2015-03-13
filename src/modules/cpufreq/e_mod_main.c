@@ -425,7 +425,7 @@ _button_cb_mouse_down(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED_
         e_gadcon_locked_set(inst->gcc->gadcon, 1);
 
         e_menu_activate_mouse(mg,
-                              e_util_zone_current_get(e_manager_current_get()),
+                              e_zone_current_get(),
                               cx + ev->output.x, cy + ev->output.y, 1, 1,
                               E_MENU_POP_DIRECTION_AUTO, ev->timestamp);
         evas_event_feed_mouse_up(inst->gcc->gadcon->evas, ev->button,
@@ -450,7 +450,7 @@ _button_cb_mouse_down(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED_
                                           &cx, &cy, NULL, NULL);
 
         e_menu_activate_mouse(m,
-                              e_util_zone_current_get(e_manager_current_get()),
+                              e_zone_current_get(),
                               cx + ev->output.x, cy + ev->output.y, 1, 1,
                               E_MENU_POP_DIRECTION_AUTO, ev->timestamp);
         evas_event_feed_mouse_up(inst->gcc->gadcon->evas, ev->button,

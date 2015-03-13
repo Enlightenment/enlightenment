@@ -164,7 +164,7 @@ cb_mixer_call(void *data, void *data2 __UNUSED__)
 
    if (ctxt->conf->external_mixer_enabled)
      {
-        E_Zone *zone = e_util_zone_current_get(e_manager_current_get());
+        E_Zone *zone = e_zone_current_get();
         e_exec (zone, NULL, ctxt->conf->external_mixer_command, NULL, NULL);
         return;
      }

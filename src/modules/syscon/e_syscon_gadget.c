@@ -65,7 +65,7 @@ _cb_mouse_down(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void
    inst = data;
    ev = event_info;
    if (ev->button != 3) return;
-   zone = e_util_zone_current_get(e_manager_current_get());
+   zone = e_zone_current_get();
 
    m = e_menu_new();
    mi = e_menu_item_new(m);
@@ -171,7 +171,7 @@ _cb_shutdown_show(void *data, Evas_Object *obj __UNUSED__, const char *emission 
    Evas_Coord x, y, w, h, cx, cy;
 
    if (!(inst = data)) return;
-   zone = e_util_zone_current_get(e_manager_current_get());
+   zone = e_zone_current_get();
    if (!syscon_config->menu)
      {
         e_syscon_show(zone, NULL);

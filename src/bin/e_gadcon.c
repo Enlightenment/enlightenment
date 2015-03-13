@@ -2457,7 +2457,7 @@ _e_gadcon_cb_client_mouse_down(void *data, Evas *evas __UNUSED__, Evas_Object *o
         E_Menu_Item *mi;
         int cx, cy;
 
-        zone = e_util_zone_current_get(e_manager_current_get());
+        zone = e_zone_current_get();
 
         e_gadcon_locked_set(gcc->gadcon, 1);
         mn = e_menu_new();
@@ -3175,7 +3175,7 @@ _e_gadcon_client_cb_mouse_down(void *data, Evas *e __UNUSED__, Evas_Object *obj 
 
         e_gadcon_canvas_zone_geometry_get(gcc->gadcon, &cx, &cy, &cw, &ch);
         zone = gcc->gadcon->zone;
-        if (!zone) zone = e_util_zone_current_get(e_manager_current_get());
+        if (!zone) zone = e_zone_current_get();
         e_menu_activate_mouse(m, zone,
                               cx + ev->output.x,
                               cy + ev->output.y, 1, 1,

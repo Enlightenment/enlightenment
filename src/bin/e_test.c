@@ -10,7 +10,7 @@ deskmirror_test(void *d EINA_UNUSED)
    E_Zone *zone;
    Evas_Object *o;
 
-   zone = e_util_zone_current_get(e_manager_current_get());
+   zone = e_zone_current_get();
    o = e_deskmirror_add(e_desk_current_get(zone), 0, 0);
    evas_object_move(o, zone->x + zone->w - (zone->w / 4), zone->y + zone->h / 2);
    evas_object_resize(o, zone->w / 4, zone->h / 4);

@@ -331,7 +331,7 @@ _e_xkb_cb_mouse_down(void *data, Evas *evas __UNUSED__, Evas_Object *obj __UNUSE
                                           NULL, NULL);
         /* Activate - we show the menu relative to the gadget */
         e_menu_activate_mouse(m,
-                              e_util_zone_current_get(e_manager_current_get()),
+                              e_zone_current_get(),
                               (x + ev->output.x), (y + ev->output.y), 1, 1,
                               E_MENU_POP_DIRECTION_AUTO, ev->timestamp);
         evas_event_feed_mouse_up(inst->gcc->gadcon->evas, ev->button,
@@ -458,8 +458,7 @@ _e_xkb_cb_mouse_down(void *data, Evas *evas __UNUSED__, Evas_Object *obj __UNUSE
          * the start menu - thus the need for direction etc.
          */
         e_menu_activate_mouse(inst->lmenu,
-                              e_util_zone_current_get
-                                (e_manager_current_get()),
+                              e_zone_current_get(),
                               x, y, w, h, dir, ev->timestamp);
      }
    else if (ev->button == 2) /* Middle click */

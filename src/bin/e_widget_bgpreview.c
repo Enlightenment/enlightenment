@@ -191,7 +191,7 @@ _e_wid_reconfigure(E_Widget_Data *wd)
    E_Widget_Desk_Data *dd;
    double zone_ratio, desk_ratio;
 
-   zone = e_util_zone_current_get(e_manager_current_get());
+   zone = e_zone_current_get();
 
    evas_object_geometry_get(wd->table, NULL, NULL, &tw, &th);
    if ((tw == 0) || (th == 0))

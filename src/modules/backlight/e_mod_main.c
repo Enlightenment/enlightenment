@@ -252,7 +252,7 @@ _backlight_cb_mouse_down(void *data, Evas *evas __UNUSED__, Evas_Object *obj __U
         E_Menu_Item *mi;
         int x, y;
         
-        zone = e_util_zone_current_get(e_manager_current_get());
+        zone = e_zone_current_get();
         
         m = e_menu_new();
         

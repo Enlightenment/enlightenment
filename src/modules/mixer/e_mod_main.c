@@ -513,7 +513,7 @@ _mixer_popup_cb_mixer(void *data, void *data2 __UNUSED__)
 
    if (ctxt->conf->external_mixer_enabled)
      {
-        E_Zone *zone = e_util_zone_current_get(e_manager_current_get());
+        E_Zone *zone = e_zone_current_get();
         e_exec (zone, NULL, ctxt->conf->external_mixer_command, NULL, NULL);
         return;
      }
@@ -664,7 +664,7 @@ _mixer_menu_new(E_Mixer_Instance *inst, Evas_Event_Mouse_Down *ev)
    E_Menu_Item *mi;
    int x, y;
 
-   zone = e_util_zone_current_get(e_manager_current_get());
+   zone = e_zone_current_get();
 
    m = e_menu_new();
 

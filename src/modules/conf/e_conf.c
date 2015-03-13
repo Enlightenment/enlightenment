@@ -78,7 +78,7 @@ e_configure_show(E_Comp *comp, const char *params)
 
         eco = _e_configure;
         ec = e_win_client_get(eco->win);
-        z = e_util_zone_current_get(e_manager_current_get());
+        z = e_zone_current_get();
         z2 = ec->zone;
         evas_object_show(eco->win);
         elm_win_raise(eco->win);

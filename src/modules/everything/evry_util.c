@@ -568,7 +568,7 @@ evry_util_exec_app(const Evry_Item *it_app, const Evry_Item *it_file)
    GET_APP(app, it_app);
    GET_FILE(file, it_file);
 
-   zone = e_util_zone_current_get(e_manager_current_get());
+   zone = e_zone_current_get();
 
    if (app->desktop)
      {
