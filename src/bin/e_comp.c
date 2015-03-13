@@ -1596,13 +1596,6 @@ e_comp_gl_get(void)
    return gl_avail;
 }
 
-EAPI E_Comp *
-e_comp_evas_find(const Evas *e)
-{
-   if (e_comp->evas == e) return e_comp;
-   return NULL;
-}
-
 EAPI void
 e_comp_button_bindings_ungrab_all(void)
 {

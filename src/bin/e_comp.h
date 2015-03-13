@@ -182,7 +182,6 @@ EAPI Eina_Bool e_comp_grab_input(E_Comp *c, Eina_Bool mouse, Eina_Bool kbd);
 EAPI void e_comp_ungrab_input(E_Comp *c, Eina_Bool mouse, Eina_Bool kbd);
 EAPI void e_comp_gl_set(Eina_Bool set);
 EAPI Eina_Bool e_comp_gl_get(void);
-EAPI E_Comp *e_comp_evas_find(const Evas *e);
 
 EAPI void e_comp_button_bindings_grab_all(void);
 EAPI void e_comp_button_bindings_ungrab_all(void);
