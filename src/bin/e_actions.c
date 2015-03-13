@@ -1305,7 +1305,7 @@ ACT_FN_GO(window_zone_move_by, )
      move = eina_list_count(ec->zone->comp->zones) - 1;
    else if ((unsigned int)move >= eina_list_count(ec->zone->comp->zones))
      move = 0;
-   zone = e_comp_zone_number_get(e_comp, move);
+   zone = e_comp_zone_number_get(move);
    if (!zone) return;
    max = ec->maximized;
    fs = ec->fullscreen_policy;
@@ -1655,14 +1655,14 @@ ACT_FN_GO(screen_send_to, )
         if (scr != -1)
           scr = scr % eina_list_count(e_manager_list());
         if (scr < 0) scr += eina_list_count(e_manager_list());
-        zone2 = e_comp_zone_number_get(e_comp, 0);
+        zone2 = e_comp_zone_number_get(0);
      }
    else
      {
         if (scr != -1)
           scr = scr % eina_list_count(zone->comp->zones);
         if (scr < 0) scr += eina_list_count(zone->comp->zones);
-        zone2 = e_comp_zone_number_get(e_comp, scr);
+        zone2 = e_comp_zone_number_get(scr);
      }
    if ((zone2) && (zone != zone2))
      {
@@ -1692,7 +1692,7 @@ ACT_FN_GO(screen_send_by, )
         if (scr != -1)
           scr = scr % eina_list_count(e_manager_list());
         if (scr < 0) scr += eina_list_count(e_manager_list());
-        zone2 = e_comp_zone_number_get(e_comp, 0);
+        zone2 = e_comp_zone_number_get(0);
      }
    else
      {
@@ -1700,7 +1700,7 @@ ACT_FN_GO(screen_send_by, )
         if (scr != -1)
           scr = scr % eina_list_count(zone->comp->zones);
         if (scr < 0) scr += eina_list_count(zone->comp->zones);
-        zone2 = e_comp_zone_number_get(e_comp, scr);
+        zone2 = e_comp_zone_number_get(scr);
      }
    if ((zone2) && (zone != zone2))
      {
@@ -1720,7 +1720,7 @@ ACT_FN_GO(screen_send_by, )
                  act;                                                     \
               } }                                                         \
        else if ((con_num < 0) && (zone_num >= 0)) /* c=all zone=1 */ {  \
-              zone = e_comp_zone_number_get(c, zone_num);  \
+              zone = e_comp_zone_number_get(zone_num);  \
               if (zone)                                           \
                 act;                                              \
                     }                                                  \
@@ -1729,7 +1729,7 @@ ACT_FN_GO(screen_send_by, )
                    act;                                           \
                 } } }                                         \
   else {                                                                  \
-       zone = e_comp_zone_number_get(e_comp, zone_num);        \
+       zone = e_comp_zone_number_get(zone_num);        \
        if (zone) act;                                                     \
     }
 

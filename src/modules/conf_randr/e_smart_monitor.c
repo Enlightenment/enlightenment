@@ -334,7 +334,7 @@ e_smart_monitor_background_set(Evas_Object *obj, Evas_Coord dx, Evas_Coord dy)
    sd->man_num = man->num;
 
    /* get the zone number */
-   if (!(zone = e_comp_zone_xy_get(man->comp, dx, dy)))
+   if (!(zone = e_comp_zone_xy_get(dx, dy)))
      zone = e_util_zone_current_get(man);
    sd->zone_num = zone->num;
 

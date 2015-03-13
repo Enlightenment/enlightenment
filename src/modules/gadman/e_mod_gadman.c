@@ -774,7 +774,7 @@ _gadman_gadcon_dnd_drop_cb(E_Gadcon *gc, E_Gadcon_Client *gcc)
    /* checking if zone was changed for dragged gadget */
    mover = _get_mover(gcc);
    evas_object_geometry_get(mover, &gx, &gy, NULL, NULL);
-   dst_zone = e_comp_zone_xy_get(e_util_comp_current_get(), gx, gy);
+   dst_zone = e_comp_zone_xy_get(gx, gy);
    if (dst_zone && (gcc->gadcon->zone != dst_zone))
      {
         unsigned int layer = gcc->gadcon->id - ID_GADMAN_LAYER_BASE;

@@ -1868,9 +1868,9 @@ _ibar_cb_icon_move(void *data, Evas *e, Evas_Object *obj, void *event_info __UNU
    if (!zone)
      {
         if (x < 1)
-          zone = e_comp_zone_xy_get(e_comp, 0, y);
+          zone = e_comp_zone_xy_get(0, y);
         else
-          zone = e_comp_zone_xy_get(e_comp, e_comp->man->w - 5, y);
+          zone = e_comp_zone_xy_get(e_comp->man->w - 5, y);
         if (!zone)
           zone = eina_list_data_get(e_comp->zones);
      }

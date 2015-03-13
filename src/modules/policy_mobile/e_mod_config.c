@@ -132,7 +132,7 @@ _pol_cfd_data_basic_apply(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data
 
    EINA_LIST_FOREACH(cfdata->conf->desks, l, d)
      {
-        zone = e_comp_zone_number_get(e_comp, d->zone_num);
+        zone = e_comp_zone_number_get(d->zone_num);
         desk = e_desk_at_xy_get(zone, d->x, d->y);
         if (!desk) continue;
 

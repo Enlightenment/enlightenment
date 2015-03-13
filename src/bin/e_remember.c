@@ -686,7 +686,7 @@ _e_remember_cb_hook_pre_post_fetch(void *data __UNUSED__, E_Client *ec)
      {
         E_Zone *zone;
 
-        zone = e_comp_zone_number_get(ec->zone->comp, rem->prop.zone);
+        zone = e_comp_zone_number_get(rem->prop.zone);
         if (zone)
           e_client_zone_set(ec, zone);
      }

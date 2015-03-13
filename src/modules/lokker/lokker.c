@@ -152,25 +152,22 @@ _lokker_delete(void)
 }
 
 static Eina_Bool
-_pin_mouse_button_down(Lokker_Popup *lp, int t EINA_UNUSED, Ecore_Event_Mouse_Button *ev)
+_pin_mouse_button_down(Lokker_Popup *lp EINA_UNUSED, int t EINA_UNUSED, Ecore_Event_Mouse_Button *ev)
 {
-   Evas *e;
-
    if (ev->buttons != 1) return ECORE_CALLBACK_DONE;
-   e = e_comp->evas;
-   evas_event_feed_mouse_move(e,
-     e_comp_canvas_x_root_adjust(lp->zone->comp, ev->root.x),
-     e_comp_canvas_y_root_adjust(lp->zone->comp, ev->root.y),
+   evas_event_feed_mouse_move(e_comp->evas,
+     e_comp_canvas_x_root_adjust(ev->root.x),
+     e_comp_canvas_y_root_adjust(ev->root.y),
      0, NULL);
-   evas_event_feed_mouse_down(e, 1, 0, 0, NULL);
+   evas_event_feed_mouse_down(e_comp->evas, 1, 0, 0, NULL);
    return ECORE_CALLBACK_RENEW;
 }
 
 static Eina_Bool
-_pin_mouse_button_up(Lokker_Popup *lp, int t EINA_UNUSED, Ecore_Event_Mouse_Button *ev)
+_pin_mouse_button_up(Lokker_Popup *lp EINA_UNUSED, int t EINA_UNUSED, Ecore_Event_Mouse_Button *ev)
 {
    if (ev->buttons != 1) return ECORE_CALLBACK_DONE;
-   evas_event_feed_mouse_up(evas_object_evas_get(lp->comp_object), 1, 0, 0, NULL);
+   evas_event_feed_mouse_up(e_comp->evas, 1, 0, 0, NULL);
    return ECORE_CALLBACK_RENEW;
 }
 

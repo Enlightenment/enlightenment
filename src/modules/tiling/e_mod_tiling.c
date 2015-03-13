@@ -467,17 +467,11 @@ _restore_free_client(void *_item)
 void
 change_desk_conf(struct _Config_vdesk *newconf)
 {
-   E_Manager *m;
-   E_Comp *c;
    E_Zone *z;
    E_Desk *d;
    int old_nb_stacks, new_nb_stacks = newconf->nb_stacks;
 
-   m = e_manager_current_get();
-   if (!m)
-     return;
-   c = m->comp;
-   z = e_comp_zone_number_get(c, newconf->zone_num);
+   z = e_comp_zone_number_get(newconf->zone_num);
    if (!z)
      return;
    d = e_desk_at_xy_get(z, newconf->x, newconf->y);

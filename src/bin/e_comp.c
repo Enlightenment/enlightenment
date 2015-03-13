@@ -810,7 +810,7 @@ _e_comp_free(E_Comp *c)
 {
    E_FREE_LIST(c->zones, e_object_del);
 
-   e_comp_canvas_clear(c);
+   e_comp_canvas_init();
 
    ecore_evas_free(c->ee);
    eina_stringshare_del(c->name);

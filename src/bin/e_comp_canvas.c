@@ -125,38 +125,38 @@ _e_comp_canvas_cb_zone_sort(const void *data1, const void *data2)
 
 
 EAPI Eina_Bool
-e_comp_canvas_init(E_Comp *c)
+e_comp_canvas_init()
 {
    Evas_Object *o;
    Eina_List *screens;
 
-   c->evas = ecore_evas_get(c->ee);
+   e_comp->evas = ecore_evas_get(e_comp->ee);
 
    if (e_first_frame)
-     evas_event_callback_add(c->evas, EVAS_CALLBACK_RENDER_POST, _e_comp_canvas_cb_first_frame, c);
-   ecore_evas_data_set(c->ee, "comp", c);
-   o = evas_object_rectangle_add(c->evas);
-   c->bg_blank_object = o;
+     evas_event_callback_add(e_comp->evas, EVAS_CALLBACK_RENDER_POST, _e_comp_canvas_cb_first_frame, e_comp);
+   ecore_evas_data_set(e_comp->ee, "comp", e_comp);
+   o = evas_object_rectangle_add(e_comp->evas);
+   e_comp->bg_blank_object = o;
    evas_object_layer_set(o, E_LAYER_BOTTOM);
    evas_object_move(o, 0, 0);
-   evas_object_resize(o, c->man->w, c->man->h);
+   evas_object_resize(o, e_comp->man->w, e_comp->man->h);
    evas_object_color_set(o, 0, 0, 0, 255);
    evas_object_name_set(o, "comp->bg_blank_object");
-   evas_object_data_set(o, "e_comp", c);
-   evas_object_event_callback_add(o, EVAS_CALLBACK_MOUSE_DOWN, (Evas_Object_Event_Cb)_e_comp_canvas_cb_mouse_down, c);
-   evas_object_event_callback_add(o, EVAS_CALLBACK_MOUSE_UP, (Evas_Object_Event_Cb)_e_comp_canvas_cb_mouse_up, c);
-   evas_object_event_callback_add(o, EVAS_CALLBACK_MOUSE_IN, (Evas_Object_Event_Cb)_e_comp_canvas_cb_mouse_in, c);
-   evas_object_event_callback_add(o, EVAS_CALLBACK_MOUSE_WHEEL, (Evas_Object_Event_Cb)_e_comp_canvas_cb_mouse_wheel, c);
+   evas_object_data_set(o, "e_comp", e_comp);
+   evas_object_event_callback_add(o, EVAS_CALLBACK_MOUSE_DOWN, (Evas_Object_Event_Cb)_e_comp_canvas_cb_mouse_down, e_comp);
+   evas_object_event_callback_add(o, EVAS_CALLBACK_MOUSE_UP, (Evas_Object_Event_Cb)_e_comp_canvas_cb_mouse_up, e_comp);
+   evas_object_event_callback_add(o, EVAS_CALLBACK_MOUSE_IN, (Evas_Object_Event_Cb)_e_comp_canvas_cb_mouse_in, e_comp);
+   evas_object_event_callback_add(o, EVAS_CALLBACK_MOUSE_WHEEL, (Evas_Object_Event_Cb)_e_comp_canvas_cb_mouse_wheel, e_comp);
    evas_object_event_callback_add(o, EVAS_CALLBACK_DEL, _e_comp_canvas_cb_del, NULL);
    evas_object_show(o);
 
-   ecore_evas_name_class_set(c->ee, "E", "Comp_EE");
-   //   ecore_evas_manual_render_set(c->ee, conf->lock_fps);
-   ecore_evas_show(c->ee);
+   ecore_evas_name_class_set(e_comp->ee, "E", "Comp_EE");
+   //   ecore_evas_manual_render_set(e_comp->ee, conf->lock_fps);
+   ecore_evas_show(e_comp->ee);
 
-   evas_event_callback_add(c->evas, EVAS_CALLBACK_RENDER_POST, _e_comp_canvas_render_post, c);
+   evas_event_callback_add(e_comp->evas, EVAS_CALLBACK_RENDER_POST, _e_comp_canvas_render_post, e_comp);
 
-   c->ee_win = ecore_evas_window_get(c->ee);
+   e_comp->ee_win = ecore_evas_window_get(e_comp->ee);
 
    screens = (Eina_List *)e_xinerama_screens_get();
    if (screens)
@@ -166,11 +166,11 @@ e_comp_canvas_init(E_Comp *c)
 
         EINA_LIST_FOREACH(screens, l, scr)
           {
-             e_zone_new(c, scr->screen, scr->escreen, scr->x, scr->y, scr->w, scr->h);
+             e_zone_new(e_comp, scr->screen, scr->escreen, scr->x, scr->y, scr->w, scr->h);
           }
      }
    else
-     e_zone_new(c, 0, 0, 0, 0, c->man->w, c->man->h);
+     e_zone_new(e_comp, 0, 0, 0, 0, e_comp->man->w, e_comp->man->h);
    E_LIST_HANDLER_APPEND(handlers, E_EVENT_ZONE_MOVE_RESIZE, _e_comp_cb_zone_change, NULL);
    E_LIST_HANDLER_APPEND(handlers, E_EVENT_ZONE_ADD, _e_comp_cb_zone_change, NULL);
    E_LIST_HANDLER_APPEND(handlers, E_EVENT_ZONE_DEL, _e_comp_cb_zone_change, NULL);
@@ -179,16 +179,16 @@ e_comp_canvas_init(E_Comp *c)
 }
 
 EINTERN void
-e_comp_canvas_clear(E_Comp *c)
+e_comp_canvas_clear(void)
 {
-   evas_event_freeze(c->evas);
+   evas_event_freeze(e_comp->evas);
    edje_freeze();
 
-   E_FREE_FUNC(c->fps_fg, evas_object_del);
-   E_FREE_FUNC(c->fps_bg, evas_object_del);
-   E_FREE_FUNC(c->autoclose.rect, evas_object_del);
-   E_FREE_FUNC(c->shape_job, ecore_job_del);
-   E_FREE_FUNC(c->pointer, e_object_del);
+   E_FREE_FUNC(e_comp->fps_fg, evas_object_del);
+   E_FREE_FUNC(e_comp->fps_bg, evas_object_del);
+   E_FREE_FUNC(e_comp->autoclose.rect, evas_object_del);
+   E_FREE_FUNC(e_comp->shape_job, ecore_job_del);
+   E_FREE_FUNC(e_comp->pointer, e_object_del);
 }
 
 //////////////////////////////////////////////
@@ -214,7 +214,7 @@ e_comp_all_thaw(void)
 }
 
 EAPI E_Zone *
-e_comp_zone_xy_get(const E_Comp *c EINA_UNUSED, Evas_Coord x, Evas_Coord y)
+e_comp_zone_xy_get(Evas_Coord x, Evas_Coord y)
 {
    const Eina_List *l;
    E_Zone *zone;
@@ -225,7 +225,7 @@ e_comp_zone_xy_get(const E_Comp *c EINA_UNUSED, Evas_Coord x, Evas_Coord y)
 }
 
 EAPI E_Zone *
-e_comp_zone_number_get(E_Comp *c EINA_UNUSED, int num)
+e_comp_zone_number_get(int num)
 {
    Eina_List *l = NULL;
    E_Zone *zone = NULL;
@@ -238,7 +238,7 @@ e_comp_zone_number_get(E_Comp *c EINA_UNUSED, int num)
 }
 
 EAPI E_Zone *
-e_comp_zone_id_get(E_Comp *c EINA_UNUSED, int id)
+e_comp_zone_id_get(int id)
 {
    Eina_List *l = NULL;
    E_Zone *zone = NULL;
@@ -251,7 +251,7 @@ e_comp_zone_id_get(E_Comp *c EINA_UNUSED, int id)
 }
 
 EAPI E_Desk *
-e_comp_desk_window_profile_get(E_Comp *c EINA_UNUSED, const char *profile)
+e_comp_desk_window_profile_get(const char *profile)
 {
    Eina_List *l = NULL;
    E_Zone *zone = NULL;
@@ -417,7 +417,7 @@ e_comp_canvas_update(void)
      {
         E_Zone *z;
 
-        z = e_comp_zone_number_get(e_comp, 0);
+        z = e_comp_zone_number_get(0);
         if (z)
           {
              changed |= e_zone_move_resize(z, 0, 0, e_comp->man->w, e_comp->man->h);
@@ -473,7 +473,7 @@ e_comp_canvas_update(void)
 }
 
 EAPI void
-e_comp_canvas_fake_layers_init(E_Comp *comp)
+e_comp_canvas_fake_layers_init(void)
 {
    unsigned int layer;
 
@@ -482,7 +482,7 @@ e_comp_canvas_fake_layers_init(E_Comp *comp)
      {
         Evas_Object *o2;
 
-        o2 = comp->layers[layer].obj = evas_object_rectangle_add(comp->evas);
+        o2 = e_comp->layers[layer].obj = evas_object_rectangle_add(e_comp->evas);
         evas_object_layer_set(o2, e_comp_canvas_layer_map_to(layer));
         evas_object_name_set(o2, "layer_obj");
      }

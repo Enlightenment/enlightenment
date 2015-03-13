@@ -2776,8 +2776,8 @@ _e_menu_cb_mouse_up(void *data __UNUSED__, int type __UNUSED__, void *event)
 
         mi = _e_menu_item_active_get();
         if ((!mi) ||
-            (E_INSIDE(e_comp_canvas_x_root_adjust(e_comp, ev->root.x),
-                      e_comp_canvas_y_root_adjust(e_comp, ev->root.y),
+            (E_INSIDE(e_comp_canvas_x_root_adjust(ev->root.x),
+                      e_comp_canvas_y_root_adjust(ev->root.y),
                       mi->x, mi->y, mi->w, mi->h))
            )
           ret = _e_menu_active_call();

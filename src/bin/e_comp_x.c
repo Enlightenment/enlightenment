@@ -1466,7 +1466,7 @@ _e_comp_x_configure_request(void *data  EINA_UNUSED, int type EINA_UNUSED, Ecore
              ec->saved.x = x;
              ec->saved.y = y;
 
-             zone = e_comp_zone_xy_get(e_comp, x, y);
+             zone = e_comp_zone_xy_get(x, y);
              if (zone && (zone->x || zone->y))
                {
                   ec->saved.x -= zone->x;
@@ -1858,7 +1858,7 @@ _e_comp_x_message(void *data EINA_UNUSED, int type EINA_UNUSED, Ecore_X_Event_Cl
                {
                   if (e_util_strcmp(p, ec->desk->window_profile))
                     {
-                       E_Desk *desk = e_comp_desk_window_profile_get(e_comp, p);
+                       E_Desk *desk = e_comp_desk_window_profile_get(p);
                        if (desk) e_client_desk_set(ec, desk);
                     }
                }
@@ -1940,8 +1940,8 @@ _e_comp_x_message(void *data EINA_UNUSED, int type EINA_UNUSED, Ecore_X_Event_Cl
         x = ev->data.l[1];
         y = ev->data.l[2];
         e_int_client_menu_show(ec,
-          e_comp_canvas_x_root_adjust(e_comp, x),
-          e_comp_canvas_y_root_adjust(e_comp, y),
+          e_comp_canvas_x_root_adjust(x),
+          e_comp_canvas_y_root_adjust(y),
           0, 0);
      }
    else if (ev->message_type == ATM_NETWM_PERFORM_BUTTON_ACTION)
@@ -2026,7 +2026,7 @@ _e_comp_x_mouse_in(void *data EINA_UNUSED, int type EINA_UNUSED, Ecore_X_Event_M
    ec = _e_comp_x_client_find_by_window(ev->win);
    if (!ec) return ECORE_CALLBACK_RENEW;
    if (ec->comp_data->deleted) return ECORE_CALLBACK_RENEW;
-   e_client_mouse_in(ec, e_comp_canvas_x_root_adjust(e_comp, ev->root.x), e_comp_canvas_x_root_adjust(e_comp, ev->root.y));
+   e_client_mouse_in(ec, e_comp_canvas_x_root_adjust(ev->root.x), e_comp_canvas_x_root_adjust(ev->root.y));
    return ECORE_CALLBACK_RENEW;
 }
 
@@ -2046,7 +2046,7 @@ _e_comp_x_mouse_out(void *data EINA_UNUSED, int type EINA_UNUSED, Ecore_X_Event_
    ec = _e_comp_x_client_find_by_window(ev->win);
    if (!ec) return ECORE_CALLBACK_RENEW;
    if (ec->comp_data->deleted) return ECORE_CALLBACK_RENEW;
-   e_client_mouse_out(ec, e_comp_canvas_x_root_adjust(e_comp, ev->root.x), e_comp_canvas_x_root_adjust(e_comp, ev->root.y));
+   e_client_mouse_out(ec, e_comp_canvas_x_root_adjust(ev->root.x), e_comp_canvas_x_root_adjust(ev->root.y));
    return ECORE_CALLBACK_RENEW;
 }
 
@@ -3220,7 +3220,7 @@ _e_comp_x_hook_client_fetch(void *d EINA_UNUSED, E_Client *ec)
                          ec->y = zy + zh - ec->h;
 
                        // <--
-                       if (e_comp_zone_xy_get(e_comp, ec->x, ec->y))
+                       if (e_comp_zone_xy_get(ec->x, ec->y))
                          {
                             if (!E_INSIDE(ec->x, ec->y, ec->zone->x, ec->zone->y, ec->zone->w, ec->zone->h))
                               {
@@ -3897,7 +3897,7 @@ _e_comp_x_hook_client_fetch(void *d EINA_UNUSED, E_Client *ec)
                             E_Zone *zone;
                             E_Desk *desk;
 
-                            zone = e_comp_zone_number_get(e_comp, inst->screen);
+                            zone = e_comp_zone_number_get(inst->screen);
                             if (zone) e_client_zone_set(ec, zone);
                             desk = e_desk_at_xy_get(ec->zone, inst->desk_x,
                                                     inst->desk_y);
@@ -3976,7 +3976,7 @@ _e_comp_x_hook_client_fetch(void *d EINA_UNUSED, E_Client *ec)
                }
              else
                {
-                  desk = e_comp_desk_window_profile_get(e_comp, p);
+                  desk = e_comp_desk_window_profile_get(p);
                   if (desk)
                     {
                        e_client_desk_set(ec, desk);
@@ -4004,7 +4004,7 @@ _e_comp_x_hook_client_fetch(void *d EINA_UNUSED, E_Client *ec)
                   for (i = 0; i < ec->e.state.profile.num; i++)
                     {
                        p2 = ec->e.state.profile.available_list[i];
-                       desk = e_comp_desk_window_profile_get(e_comp, p2);
+                       desk = e_comp_desk_window_profile_get(p2);
                        if (desk)
                          {
                             e_client_desk_set(ec, desk);
@@ -4832,7 +4832,7 @@ _e_comp_x_manage_windows(E_Comp *c)
                                                   E_ATOM_ZONE,
                                                   &id, 1);
              if (ret == 1)
-               zone = e_comp_zone_number_get(c, id);
+               zone = e_comp_zone_number_get(id);
              if (!zone)
                zone = e_zone_current_get(c);
              ret = ecore_x_window_prop_card32_get(windows[i],
@@ -5128,7 +5128,7 @@ _e_comp_x_setup(E_Comp *c, Ecore_X_Window root, int w, int h)
    c->bindings_grab_cb = (Ecore_Cb)_e_comp_x_bindings_grab_cb;
    c->bindings_ungrab_cb = (Ecore_Cb)_e_comp_x_bindings_ungrab_cb;
 
-   if (!e_comp_canvas_init(c)) return EINA_FALSE;
+   if (!e_comp_canvas_init()) return EINA_FALSE;
 
    e_grabinput_focus(c->ee_win, E_FOCUS_METHOD_PASSIVE);
 

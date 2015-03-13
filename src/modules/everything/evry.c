@@ -953,8 +953,8 @@ _evry_cb_mouse(void *data, int type, void *event)
      {
         win->mouse_out = 0;
 
-        if (!E_INSIDE(e_comp_canvas_x_root_adjust(e_comp, ev->root.x),
-                      e_comp_canvas_y_root_adjust(e_comp, ev->root.y), x, y, w, h))
+        if (!E_INSIDE(e_comp_canvas_x_root_adjust(ev->root.x),
+                      e_comp_canvas_y_root_adjust(ev->root.y), x, y, w, h))
           {
              win->mouse_out = 1;
              return ECORE_CALLBACK_PASS_ON;
@@ -967,8 +967,8 @@ _evry_cb_mouse(void *data, int type, void *event)
         win->mouse_button = 0;
 
         if (win->mouse_out &&
-            (!E_INSIDE(e_comp_canvas_x_root_adjust(e_comp, ev->root.x),
-                      e_comp_canvas_y_root_adjust(e_comp, ev->root.y), x, y, w, h)))
+            (!E_INSIDE(e_comp_canvas_x_root_adjust(ev->root.x),
+                      e_comp_canvas_y_root_adjust(ev->root.y), x, y, w, h)))
           {
              evry_hide(win, 0);
              return ECORE_CALLBACK_PASS_ON;

@@ -44,7 +44,7 @@ e_modapi_init(E_Module *m)
      }
    comp->man = e_manager_new(ecore_evas_window_get(comp->ee), comp, w, h);
    e_comp_wl_init();
-   e_comp_canvas_init(comp);
+   e_comp_canvas_init();
    e_comp_canvas_fake_layers_init(comp);
    comp->pointer = e_pointer_canvas_new(comp->ee, EINA_TRUE);
 

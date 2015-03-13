@@ -138,7 +138,7 @@ e_shelf_config_update(void)
         E_Zone *zone;
 
         if (cf_es->id <= 0) cf_es->id = id + 1;
-        zone = e_comp_zone_number_get(e_comp, cf_es->zone);
+        zone = e_comp_zone_number_get(cf_es->zone);
         if (zone)
           e_shelf_config_new(zone, cf_es);
         id = cf_es->id;
@@ -1669,8 +1669,8 @@ _e_shelf_cb_mouse_move_autohide_fuck_systray(E_Shelf *es)
 
    memset(&ev, 0, sizeof(Ecore_Event_Mouse_Move));
    ecore_evas_pointer_xy_get(es->zone->comp->ee, &x, &y);
-   ev.root.x = e_comp_canvas_x_root_unadjust(es->zone->comp, x);
-   ev.root.y = e_comp_canvas_y_root_unadjust(es->zone->comp, y);
+   ev.root.x = e_comp_canvas_x_root_unadjust(x);
+   ev.root.y = e_comp_canvas_y_root_unadjust(y);
    _e_shelf_cb_mouse_in(es, ECORE_EVENT_MOUSE_MOVE, &ev);
    return EINA_TRUE;
 }
@@ -1793,11 +1793,11 @@ _e_shelf_cb_mouse_in(void *data, int type, void *event)
          * mouse in/out events. in the future, when we remove systray, we should go
          * back to mouse in/out events
          */
-        inside = E_INSIDE(e_comp_canvas_x_root_adjust(e_comp, ev->root.x),
-                          e_comp_canvas_x_root_adjust(e_comp, ev->root.y),
+        inside = E_INSIDE(e_comp_canvas_x_root_adjust(ev->root.x),
+                          e_comp_canvas_x_root_adjust(ev->root.y),
                           es->zone->x, es->zone->y, es->zone->w + 4, es->zone->h + 4);
-        x = e_comp_canvas_x_root_adjust(e_comp, ev->root.x) - es->zone->x;
-        y = e_comp_canvas_x_root_adjust(e_comp, ev->root.y) - es->zone->y;
+        x = e_comp_canvas_x_root_adjust(ev->root.x) - es->zone->x;
+        y = e_comp_canvas_x_root_adjust(ev->root.y) - es->zone->y;
         if (inside)
           inside = (
               ((E_INSIDE(x, y, es->x, es->y, es->w, es->h)) ||

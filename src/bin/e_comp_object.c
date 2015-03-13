@@ -2585,7 +2585,7 @@ e_comp_object_util_zone_get(Evas_Object *obj)
         if (e_win_client_get(obj))
           return e_win_client_get(obj)->zone;
         evas_object_geometry_get(obj, &x, &y, NULL, NULL);
-        zone = e_comp_zone_xy_get(e_comp, x, y);
+        zone = e_comp_zone_xy_get(x, y);
      }
    return zone;
 }

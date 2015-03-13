@@ -196,7 +196,7 @@ _e_client_desk_window_profile_wait_desk_delfn(void *data, void *obj)
 
    if (!ec->e.state.profile.use) return;
 
-   new_desk = e_comp_desk_window_profile_get(e_comp, desk->window_profile);
+   new_desk = e_comp_desk_window_profile_get(desk->window_profile);
    if (new_desk)
      e_client_desk_set(ec, new_desk);
    else
@@ -204,7 +204,7 @@ _e_client_desk_window_profile_wait_desk_delfn(void *data, void *obj)
         for (i = 0; i < ec->e.state.profile.num; i++)
           {
              p = ec->e.state.profile.available_list[i];
-             new_desk = e_comp_desk_window_profile_get(e_comp, p);
+             new_desk = e_comp_desk_window_profile_get(p);
              if (new_desk)
                {
                   e_client_desk_set(ec, new_desk);
@@ -1147,16 +1147,16 @@ _e_client_zones_layout_calc(E_Client *ec, int *zx, int *zy, int *zw, int *zh)
         return;
      }
 
-   zone_left = e_comp_zone_xy_get(e_comp, (x - w + 5), y);
-   zone_right = e_comp_zone_xy_get(e_comp, (x + w + 5), y);
-   zone_above = e_comp_zone_xy_get(e_comp, x, (y - h + 5));
-   zone_below = e_comp_zone_xy_get(e_comp, x, (y + h + 5));
+   zone_left = e_comp_zone_xy_get((x - w + 5), y);
+   zone_right = e_comp_zone_xy_get((x + w + 5), y);
+   zone_above = e_comp_zone_xy_get(x, (y - h + 5));
+   zone_below = e_comp_zone_xy_get(x, (y + h + 5));
 
    if (!(zone_above) && (y))
-     zone_above = e_comp_zone_xy_get(e_comp, x, (h - 5));
+     zone_above = e_comp_zone_xy_get(x, (h - 5));
 
    if (!(zone_left) && (x))
-     zone_left = e_comp_zone_xy_get(e_comp, (x - 5), y);
+     zone_left = e_comp_zone_xy_get((x - 5), y);
 
    if (zone_right)
      w = zone_right->x + zone_right->w;
@@ -1867,14 +1867,14 @@ _e_client_eval(E_Client *ec)
            x = MAX(ec->x, 0);
            y = MAX(ec->y, 0);
            if ((!ec->re_manage) && ((ec->x != x) || (ec->y != y)))
-             zone = e_comp_zone_xy_get(e_comp, x, y);
+             zone = e_comp_zone_xy_get(x, y);
 
            if (!zone)
              {
-                zone = e_comp_zone_xy_get(e_comp, ec->x + (ec->w / 2), ec->y + (ec->h / 2));
+                zone = e_comp_zone_xy_get(ec->x + (ec->w / 2), ec->y + (ec->h / 2));
                 if (zone)
                   {
-                     E_Zone *z2 = e_comp_zone_xy_get(e_comp, ec->x, ec->y);
+                     E_Zone *z2 = e_comp_zone_xy_get(ec->x, ec->y);
 
                      if (z2 && (z2 != zone))
                        {
@@ -1905,13 +1905,13 @@ _e_client_eval(E_Client *ec)
                   }
              }
            if (!zone)
-             zone = e_comp_zone_xy_get(e_comp, ec->x, ec->y);
+             zone = e_comp_zone_xy_get(ec->x, ec->y);
            if (!zone)
-             zone = e_comp_zone_xy_get(e_comp, ec->x + ec->w - 1, ec->y);
+             zone = e_comp_zone_xy_get(ec->x + ec->w - 1, ec->y);
            if (!zone)
-             zone = e_comp_zone_xy_get(e_comp, ec->x + ec->w - 1, ec->y + ec->h - 1);
+             zone = e_comp_zone_xy_get(ec->x + ec->w - 1, ec->y + ec->h - 1);
            if (!zone)
-             zone = e_comp_zone_xy_get(e_comp, ec->x, ec->y + ec->h - 1);
+             zone = e_comp_zone_xy_get(ec->x, ec->y + ec->h - 1);
            if ((zone) && (zone != ec->zone))
              e_client_zone_set(ec, zone);
         }

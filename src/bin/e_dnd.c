@@ -654,7 +654,7 @@ _e_drag_move(E_Drag *drag, int x, int y)
 
    if (((drag->x + drag->dx) == x) && ((drag->y + drag->dy) == y)) return;
 
-   zone = e_comp_zone_xy_get(drag->comp, x, y);
+   zone = e_comp_zone_xy_get(x, y);
    if (zone) e_zone_flip_coords_handle(zone, x, y);
 
    drag->x = x - drag->dx;
@@ -990,7 +990,7 @@ _e_drag_end(int x, int y)
 
    if (!_drag_current) return;
    win = e_comp_top_window_at_xy_get(e_comp, x, y);
-   zone = e_comp_zone_xy_get(e_comp, x, y);
+   zone = e_comp_zone_xy_get(x, y);
    /* Pass -1, -1, so that it is possible to drop at the edge. */
    if (zone) e_zone_flip_coords_handle(zone, -1, -1);
 
