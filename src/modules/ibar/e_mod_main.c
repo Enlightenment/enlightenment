@@ -1829,8 +1829,7 @@ _ibar_cb_icon_mouse_move(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUS
         if (ic->ibar->inst->ci->lock_move) return;
 
         evas_object_geometry_get(ic->o_icon, &x, &y, &w, &h);
-        d = e_drag_new(ic->ibar->inst->gcc->gadcon->zone->comp,
-                       x, y, drag_types, 1,
+        d = e_drag_new(x, y, drag_types, 1,
                        ic->app, -1, NULL, _ibar_cb_drag_finished);
         efreet_desktop_ref(ic->app);
         size = MAX(w, h);

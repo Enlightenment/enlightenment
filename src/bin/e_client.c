@@ -2922,8 +2922,7 @@ e_client_mouse_move(E_Client *ec, Evas_Point *output)
                        e_object_ref(E_OBJECT(ec));
                        e_comp_object_frame_icon_geometry_get(ec->frame, &x, &y, &w, &h);
 
-                       client_drag = e_drag_new(e_comp,
-                                                output->x, output->y,
+                       client_drag = e_drag_new(output->x, output->y,
                                                 drag_types, 1, ec, -1,
                                                 NULL,
                                                 _e_client_cb_drag_finished);

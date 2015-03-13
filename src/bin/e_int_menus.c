@@ -985,7 +985,7 @@ _e_int_menus_apps_run(void *data, E_Menu *m, E_Menu_Item *mi __UNUSED__)
  */
 
 static void
-_e_int_menus_apps_drag(void *data, E_Menu *m, E_Menu_Item *mi)
+_e_int_menus_apps_drag(void *data, E_Menu *m EINA_UNUSED, E_Menu_Item *mi)
 {
    Efreet_Desktop *desktop;
 
@@ -1002,7 +1002,7 @@ _e_int_menus_apps_drag(void *data, E_Menu *m, E_Menu_Item *mi)
 
         evas_object_geometry_get(mi->icon_object, &x, &y, &w, &h);
         efreet_desktop_ref(desktop);
-        drag = e_drag_new(m->zone->comp, x, y, drag_types, 1, desktop, -1,
+        drag = e_drag_new(x, y, drag_types, 1, desktop, -1,
                           NULL, NULL);
 
         size = MIN(w, h);

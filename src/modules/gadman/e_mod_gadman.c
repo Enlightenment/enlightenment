@@ -1534,7 +1534,7 @@ on_move(void *data, Evas_Object *o __UNUSED__, const char *em __UNUSED__, const 
    drag_gcc->dx = mx - ox;
    drag_gcc->dy = my - oy;
 
-   drag_gcc->drag.drag = drag = e_drag_new(gc->zone->comp, mx, my,
+   drag_gcc->drag.drag = drag = e_drag_new(mx, my,
                      drag_types, 1, drag_gcc, -1, NULL,
                      e_gadcon_drag_finished_cb);
    if (!drag) return;

@@ -1156,8 +1156,7 @@ _pager_window_cb_mouse_move(void *data, Evas *e __UNUSED__, Evas_Object *obj __U
    evas_object_geometry_get(pw->o_mirror, &x, &y, &w, &h);
    evas_object_hide(pw->o_mirror);
 
-   drag = e_drag_new(e_comp,
-                     x, y, drag_types, 2, pw->desk->pager, -1,
+   drag = e_drag_new(x, y, drag_types, 2, pw->desk->pager, -1,
                      _pager_window_cb_drag_convert,
                      _pager_window_cb_drag_finished);
 
@@ -1557,8 +1556,7 @@ _pager_desk_cb_mouse_move(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNU
    if (pd->drag.in_pager && pd->pager)
      {
         evas_object_geometry_get(pd->o_desk, &x, &y, &w, &h);
-        drag = e_drag_new(pd->pager->zone->comp,
-                          x, y, drag_types, 1, pd, -1,
+        drag = e_drag_new(x, y, drag_types, 1, pd, -1,
                           NULL, _pager_desk_cb_drag_finished);
         
         /* redraw the desktop theme above */

@@ -7671,7 +7671,7 @@ _e_fm2_cb_icon_mouse_move(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNU
              sel = (char*)eina_binbuf_string_steal(sbuf);
              eina_binbuf_free(sbuf);
 
-             d = e_drag_new(e_comp, 0, 0, drag_types, 1,
+             d = e_drag_new(0, 0, drag_types, 1,
                             sel, sel_length, NULL, _e_fm2_cb_drag_finished);
              if (layout)
                d->x = ic->sd->x, d->y = ic->sd->y;

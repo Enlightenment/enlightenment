@@ -38,7 +38,6 @@ struct _E_Drag
       void  (*key_up)(E_Drag *drag, Ecore_Event_Key *e);
    } cb;
 
-   E_Comp           *comp;
    Evas              *evas;
    Evas_Object       *comp_object;
    Evas_Object       *object;
@@ -115,7 +114,7 @@ EAPI int             e_dnd_active(void);
 
 EAPI E_Drag         *e_drag_current_get(void);
 /* x and y are the top left coords of the object that is to be dragged */
-EAPI E_Drag         *e_drag_new(E_Comp *comp, int x, int y,
+EAPI E_Drag         *e_drag_new(int x, int y,
                                 const char **types, unsigned int num_types,
                                 void *data, int size,
                                 void *(*convert_cb)(E_Drag * drag, const char *type),

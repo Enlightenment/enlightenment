@@ -2292,7 +2292,7 @@ _e_gadcon_client_drag_begin(E_Gadcon_Client *gcc, int x, int y)
 
    ecore_evas_pointer_xy_get(zone->comp->ee, &x, &y);
 
-   gcc->drag.drag = drag = e_drag_new(zone->comp, x, y,
+   gcc->drag.drag = drag = e_drag_new(x, y,
                                       drag_types, 1, gcc, -1, NULL,
                                       e_gadcon_drag_finished_cb);
    if (!drag) return;
