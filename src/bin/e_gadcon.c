@@ -2290,7 +2290,7 @@ _e_gadcon_client_drag_begin(E_Gadcon_Client *gcc, int x, int y)
    if (!e_drop_inside(gcc->gadcon->drop_handler, x, y))
      e_gadcon_client_hide(gcc);
 
-   ecore_evas_pointer_xy_get(zone->comp->ee, &x, &y);
+   ecore_evas_pointer_xy_get(e_comp->ee, &x, &y);
 
    gcc->drag.drag = drag = e_drag_new(x, y,
                                       drag_types, 1, gcc, -1, NULL,
@@ -2481,7 +2481,7 @@ _e_gadcon_cb_client_mouse_down(void *data, Evas *evas __UNUSED__, Evas_Object *o
           }
 
         if (gcc->gadcon->toolbar)
-          ecore_evas_pointer_xy_get(zone->comp->ee, &cx, &cy);
+          ecore_evas_pointer_xy_get(e_comp->ee, &cx, &cy);
         else
           {
              e_gadcon_canvas_zone_geometry_get(gcc->gadcon, &cx, &cy, NULL, NULL);

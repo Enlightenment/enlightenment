@@ -106,7 +106,7 @@ e_winlist_show(E_Zone *zone, E_Winlist_Filter filter)
 #ifndef HAVE_WAYLAND_ONLY
    if (e_comp->comp_type == E_PIXMAP_TYPE_X)
      {
-        _input_window = ecore_x_window_input_new(zone->comp->man->root, 0, 0, 1, 1);
+        _input_window = ecore_x_window_input_new(e_comp->man->root, 0, 0, 1, 1);
         ecore_x_window_show(_input_window);
         if (!e_grabinput_get(_input_window, 0, _input_window))
           {
@@ -142,12 +142,12 @@ e_winlist_show(E_Zone *zone, E_Winlist_Filter filter)
    e_client_focus_track_freeze();
 
 #ifndef HAVE_WAYLAND_ONLY
-   evas_event_feed_mouse_in(zone->comp->evas, 0, NULL);
-   evas_event_feed_mouse_move(zone->comp->evas, -1000000, -1000000, 0, NULL);
+   evas_event_feed_mouse_in(e_comp->evas, 0, NULL);
+   evas_event_feed_mouse_move(e_comp->evas, -1000000, -1000000, 0, NULL);
 #endif
 
-   evas_event_freeze(zone->comp->evas);
-   o = edje_object_add(zone->comp->evas);
+   evas_event_freeze(e_comp->evas);
+   o = edje_object_add(e_comp->evas);
    _winlist = e_comp_object_util_add(o, E_COMP_OBJECT_TYPE_POPUP);
    evas_object_layer_set(_winlist, E_LAYER_CLIENT_POPUP);
    evas_object_move(_winlist, x, y);
@@ -193,7 +193,7 @@ e_winlist_show(E_Zone *zone, E_Winlist_Filter filter)
    if (!_wins)
      {
         e_winlist_hide();
-        evas_event_thaw(zone->comp->evas);
+        evas_event_thaw(e_comp->evas);
         return 1;
      }
 
@@ -201,7 +201,7 @@ e_winlist_show(E_Zone *zone, E_Winlist_Filter filter)
        e_config->winlist_list_show_other_screen_windows)
      _last_desk = e_desk_current_get(_winlist_zone);
    if (e_config->winlist_warp_while_selecting)
-     ecore_evas_pointer_xy_get(_winlist_zone->comp->ee,
+     ecore_evas_pointer_xy_get(e_comp->ee,
                             &_last_pointer_x, &_last_pointer_y);
 
    _e_winlist_activate_nth(1);
@@ -214,7 +214,7 @@ e_winlist_show(E_Zone *zone, E_Winlist_Filter filter)
         if (ww && (ww->client == _last_client))
           e_winlist_next();
      }
-   evas_event_thaw(zone->comp->evas);
+   evas_event_thaw(e_comp->evas);
    _e_winlist_size_adjust();
 
    E_LIST_HANDLER_APPEND(_handlers, E_EVENT_CLIENT_ADD, _e_winlist_cb_event_border_add, NULL);
@@ -1060,7 +1060,7 @@ _e_winlist_restore_desktop(void)
         e_config->winlist_list_show_other_screen_windows))
      e_desk_show(_last_desk);
    if (e_config->winlist_warp_while_selecting)
-     ecore_evas_pointer_warp(_winlist_zone->comp->ee,
+     ecore_evas_pointer_warp(e_comp->ee,
                           _last_pointer_x, _last_pointer_y);
    _e_winlist_deactivate();
    _win_selected = NULL;

@@ -2203,8 +2203,8 @@ _ibar_cb_sort(IBar *b1, IBar *b2)
      {
         int id1, id2;
         
-        id1 = z1->id + (z1->comp->num * 100) + (z1->comp->num * 10000);
-        id2 = z2->id + (z2->comp->num * 100) + (z2->comp->num * 10000);
+        id1 = z1->id + (e_comp->num * 100) + (e_comp->num * 10000);
+        id2 = z2->id + (e_comp->num * 100) + (e_comp->num * 10000);
         return id2 - id1;
      }
    return 0;

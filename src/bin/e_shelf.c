@@ -213,8 +213,8 @@ e_shelf_zone_new(E_Zone *zone, const char *name, const char *style, E_Layer laye
    e_zone_useful_geometry_dirty(zone);
 
 
-   es->ee = zone->comp->ee;
-   es->evas = zone->comp->evas;
+   es->ee = e_comp->ee;
+   es->evas = e_comp->evas;
    es->fit_along = 1;
    es->layer = layer;
 
@@ -518,7 +518,7 @@ e_shelf_save(E_Shelf *es)
 
         cf_es = E_NEW(E_Config_Shelf, 1);
         cf_es->name = eina_stringshare_add(es->name);
-        cf_es->manager = es->zone->comp->num;
+        cf_es->manager = e_comp->num;
         cf_es->zone = es->zone->num;
         cf_es->layer = es->layer;
         e_config->shelves = eina_list_append(e_config->shelves, cf_es);
@@ -997,7 +997,7 @@ _e_shelf_new_dialog_ok(void *data, char *text)
 
    cfg = E_NEW(E_Config_Shelf, 1);
    cfg->name = eina_stringshare_add(text);
-   cfg->manager = zone->comp->num;
+   cfg->manager = e_comp->num;
    cfg->zone = zone->num;
    cfg->layer = E_LAYER_CLIENT_ABOVE;
    EINA_LIST_FOREACH(e_config->shelves, l, es_cf)
@@ -1668,7 +1668,7 @@ _e_shelf_cb_mouse_move_autohide_fuck_systray(E_Shelf *es)
    Ecore_Event_Mouse_Move ev;
 
    memset(&ev, 0, sizeof(Ecore_Event_Mouse_Move));
-   ecore_evas_pointer_xy_get(es->zone->comp->ee, &x, &y);
+   ecore_evas_pointer_xy_get(e_comp->ee, &x, &y);
    ev.root.x = e_comp_canvas_x_root_unadjust(x);
    ev.root.y = e_comp_canvas_y_root_unadjust(y);
    _e_shelf_cb_mouse_in(es, ECORE_EVENT_MOUSE_MOVE, &ev);

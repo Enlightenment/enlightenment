@@ -407,7 +407,7 @@ _act_border(Evry_Action *act)
              else if (warp_to_y >= (ec->zone->y + ec->zone->h - 1))
                warp_to_y = (ec->zone->y + ec->zone->h + ec->y) / 2;
 
-             ecore_evas_pointer_warp(ec->zone->comp->ee, warp_to_x, warp_to_y);
+             ecore_evas_pointer_warp(e_comp->ee, warp_to_x, warp_to_y);
           }
         /* e_client_focus_set_with_pointer(ec); */
      }

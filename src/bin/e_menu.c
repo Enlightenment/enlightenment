@@ -1886,14 +1886,14 @@ _e_menu_activate_internal(E_Menu *m, E_Zone *zone)
    m->pending_new_submenu = 0;
    if (!_e_menu_win)
      {
-        _e_menu_win = zone->comp->ee_win;
+        _e_menu_win = e_comp->ee_win;
         if (!e_comp_grab_input(1, 1))
           {
              _e_menu_win = 0;
              return;
           }
      }
-   if ((m->zone) && (m->zone->comp != zone->comp))
+   if ((m->zone) && (e_comp != e_comp))
      {
         return;
      }

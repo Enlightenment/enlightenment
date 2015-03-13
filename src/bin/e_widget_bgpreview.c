@@ -71,10 +71,10 @@ e_widget_bgpreview_desk_add(Evas *e, E_Zone *zone, int x, int y)
    E_Widget_Desk_Data *dd;
    const char *bgfile;
 
-   bgfile = e_bg_file_get(zone->comp->num, zone->num, x, y);
+   bgfile = e_bg_file_get(e_comp->num, zone->num, x, y);
 
    dd = E_NEW(E_Widget_Desk_Data, 1);
-   dd->manager = zone->comp->num;
+   dd->manager = e_comp->num;
    dd->zone = zone->num;
    dd->x = x;
    dd->y = y;

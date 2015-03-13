@@ -613,7 +613,7 @@ _e_mod_quickpanel_clickwin_show(E_Illume_Quickpanel *qp)
 
    if (qp->clickwin) ecore_x_window_free(qp->clickwin);
    qp->clickwin = 0;
-   qp->clickwin = ecore_x_window_input_new(qp->zone->comp->win, 
+   qp->clickwin = ecore_x_window_input_new(qp->e_comp->win, 
                                            qp->zone->x, qp->zone->y, 
                                            qp->zone->w, qp->zone->h);
 

@@ -68,7 +68,7 @@ e_desk_new(E_Zone *zone, int x, int y)
    EINA_LIST_FOREACH(e_config->desktop_names, l, cfname)
      {
         if ((cfname->manager >= 0) &&
-            ((int)zone->comp->num != cfname->manager)) continue;
+            ((int)e_comp->num != cfname->manager)) continue;
         if ((cfname->zone >= 0) &&
             ((int)zone->num != cfname->zone)) continue;
         if ((cfname->desk_x != desk->x) || (cfname->desk_y != desk->y))
@@ -88,7 +88,7 @@ e_desk_new(E_Zone *zone, int x, int y)
    EINA_LIST_FOREACH(e_config->desktop_window_profiles, l, cfprof)
      {
         if ((cfprof->manager >= 0) &&
-            ((int)zone->comp->num != cfprof->manager)) continue;
+            ((int)e_comp->num != cfprof->manager)) continue;
         if ((cfprof->zone >= 0) &&
             ((int)zone->num != cfprof->zone)) continue;
         if ((cfprof->desk_x != desk->x) || (cfprof->desk_y != desk->y))

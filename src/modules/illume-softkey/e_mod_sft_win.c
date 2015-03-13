@@ -45,7 +45,7 @@ e_mod_sft_win_new(E_Zone *zone)
                                               swin));
 
    /* create new window */
-   swin->win = e_win_new(zone->comp);
+   swin->win = e_win_new(e_comp);
    swin->win->data = swin;
 
    /* set some properties on the window */
@@ -448,7 +448,7 @@ _e_mod_sft_win_border_get(E_Zone *zone, int x, int y)
    E_Client *ec;
 
    if (!zone) return NULL;
-   EINA_LIST_REVERSE_FOREACH(zone->comp->clients, l, ec)
+   EINA_LIST_REVERSE_FOREACH(e_comp->clients, l, ec)
      {
         if (e_client_util_ignored_get(ec)) continue;
         if (ec->zone != zone) continue;

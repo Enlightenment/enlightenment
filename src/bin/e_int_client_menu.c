@@ -602,12 +602,12 @@ _e_client_menu_cb_resistance(void *data, E_Menu *m __UNUSED__, E_Menu_Item *mi _
 }
 
 static void
-_e_client_menu_cb_icon_edit(void *data, E_Menu *m, E_Menu_Item *mi __UNUSED__)
+_e_client_menu_cb_icon_edit(void *data, E_Menu *m EINA_UNUSED, E_Menu_Item *mi __UNUSED__)
 {
    E_Client *ec;
 
    ec = data;
-   e_desktop_border_edit(m->zone->comp, ec);
+   e_desktop_border_edit(e_comp, ec);
 }
 
 static void
@@ -944,7 +944,7 @@ _e_client_menu_cb_sendto_icon_pre(void *data, E_Menu *m, E_Menu_Item *mi)
 
    tw = 50;
    th = (tw * desk->zone->h) / desk->zone->w;
-   bgfile = e_bg_file_get(desk->zone->comp->num, desk->zone->num,
+   bgfile = e_bg_file_get(e_comp->num, desk->zone->num,
                           desk->x, desk->y);
    o = e_thumb_icon_add(m->evas);
    e_thumb_icon_file_set(o, bgfile, "e/desktop/background");
@@ -1195,7 +1195,7 @@ _e_client_menu_cb_sendto_pre(void *data, E_Menu *m __UNUSED__, E_Menu_Item *mi)
    int zones, i;
 
    ec = data;
-   zones = eina_list_count(ec->zone->comp->zones);
+   zones = eina_list_count(e_comp->zones);
 
    subm = e_menu_new();
    e_object_data_set(E_OBJECT(subm), ec);

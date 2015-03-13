@@ -1296,14 +1296,14 @@ ACT_FN_GO(window_zone_move_by, )
    /* bad */
    if (!ec->zone) return;
    /* only one screen */
-   if (eina_list_count(ec->zone->comp->zones) < 2) return;
+   if (eina_list_count(e_comp->zones) < 2) return;
    errno = 0;
    move = strtol(params, &end, 10);
    if ((!end) || end[0] || errno) return;
    move += ec->zone->num;
    if (move < 0)
-     move = eina_list_count(ec->zone->comp->zones) - 1;
-   else if ((unsigned int)move >= eina_list_count(ec->zone->comp->zones))
+     move = eina_list_count(e_comp->zones) - 1;
+   else if ((unsigned int)move >= eina_list_count(e_comp->zones))
      move = 0;
    zone = e_comp_zone_number_get(move);
    if (!zone) return;
@@ -1434,7 +1434,7 @@ ACT_FN_GO_EDGE(desk_flip_in_direction, )
    if (!zone) return;
    wev = E_NEW(E_Event_Pointer_Warp, 1);
    if (!wev) return;
-   ecore_evas_pointer_xy_get(zone->comp->ee, &x, &y);
+   ecore_evas_pointer_xy_get(e_comp->ee, &x, &y);
    wev->prev.x = x;
    wev->prev.y = y;
    if (params)
@@ -1448,7 +1448,7 @@ ACT_FN_GO_EDGE(desk_flip_in_direction, )
         if (ACT_FLIP_LEFT(zone))
           {
              e_zone_desk_flip_by(zone, -1, 0);
-             ecore_evas_pointer_warp(zone->comp->ee, zone->x + zone->w - offset, y);
+             ecore_evas_pointer_warp(e_comp->ee, zone->x + zone->w - offset, y);
              wev->curr.y = y;
              wev->curr.x = zone->w - offset;
           }
@@ -1458,7 +1458,7 @@ ACT_FN_GO_EDGE(desk_flip_in_direction, )
         if (ACT_FLIP_RIGHT(zone))
           {
              e_zone_desk_flip_by(zone, 1, 0);
-             ecore_evas_pointer_warp(zone->comp->ee, zone->x + offset, y);
+             ecore_evas_pointer_warp(e_comp->ee, zone->x + offset, y);
              wev->curr.y = y;
              wev->curr.x = offset;
           }
@@ -1468,7 +1468,7 @@ ACT_FN_GO_EDGE(desk_flip_in_direction, )
         if (ACT_FLIP_UP(zone))
           {
              e_zone_desk_flip_by(zone, 0, -1);
-             ecore_evas_pointer_warp(zone->comp->ee, x, zone->y + zone->h - offset);
+             ecore_evas_pointer_warp(e_comp->ee, x, zone->y + zone->h - offset);
              wev->curr.x = x;
              wev->curr.y = zone->h - offset;
           }
@@ -1478,7 +1478,7 @@ ACT_FN_GO_EDGE(desk_flip_in_direction, )
         if (ACT_FLIP_DOWN(zone))
           {
              e_zone_desk_flip_by(zone, 0, 1);
-             ecore_evas_pointer_warp(zone->comp->ee, x, zone->y + offset);
+             ecore_evas_pointer_warp(e_comp->ee, x, zone->y + offset);
              wev->curr.x = x;
              wev->curr.y = offset;
           }
@@ -1488,7 +1488,7 @@ ACT_FN_GO_EDGE(desk_flip_in_direction, )
         if (ACT_FLIP_UP_LEFT(zone))
           {
              e_zone_desk_flip_by(zone, -1, -1);
-             ecore_evas_pointer_warp(zone->comp->ee, zone->x + zone->w - offset, zone->y + zone->h - offset);
+             ecore_evas_pointer_warp(e_comp->ee, zone->x + zone->w - offset, zone->y + zone->h - offset);
              wev->curr.x = zone->w - offset;
              wev->curr.y = zone->h - offset;
           }
@@ -1498,7 +1498,7 @@ ACT_FN_GO_EDGE(desk_flip_in_direction, )
         if (ACT_FLIP_UP_RIGHT(zone))
           {
              e_zone_desk_flip_by(zone, 1, -1);
-             ecore_evas_pointer_warp(zone->comp->ee, zone->x + offset, zone->y + zone->h - offset);
+             ecore_evas_pointer_warp(e_comp->ee, zone->x + offset, zone->y + zone->h - offset);
              wev->curr.x = offset;
              wev->curr.y = zone->h - offset;
           }
@@ -1508,7 +1508,7 @@ ACT_FN_GO_EDGE(desk_flip_in_direction, )
         if (ACT_FLIP_DOWN_LEFT(zone))
           {
              e_zone_desk_flip_by(zone, -1, 1);
-             ecore_evas_pointer_warp(zone->comp->ee, zone->x + zone->w - offset, zone->y + offset);
+             ecore_evas_pointer_warp(e_comp->ee, zone->x + zone->w - offset, zone->y + offset);
              wev->curr.y = offset;
              wev->curr.x = zone->w - offset;
           }
@@ -1518,7 +1518,7 @@ ACT_FN_GO_EDGE(desk_flip_in_direction, )
         if (ACT_FLIP_DOWN_RIGHT(zone))
           {
              e_zone_desk_flip_by(zone, 1, 1);
-             ecore_evas_pointer_warp(zone->comp->ee, zone->x + offset, zone->y + offset);
+             ecore_evas_pointer_warp(e_comp->ee, zone->x + offset, zone->y + offset);
              wev->curr.y = offset;
              wev->curr.x = offset;
           }
@@ -1660,13 +1660,13 @@ ACT_FN_GO(screen_send_to, )
    else
      {
         if (scr != -1)
-          scr = scr % eina_list_count(zone->comp->zones);
-        if (scr < 0) scr += eina_list_count(zone->comp->zones);
+          scr = scr % eina_list_count(e_comp->zones);
+        if (scr < 0) scr += eina_list_count(e_comp->zones);
         zone2 = e_comp_zone_number_get(scr);
      }
    if ((zone2) && (zone != zone2))
      {
-        ecore_evas_pointer_warp(zone2->comp->ee,
+        ecore_evas_pointer_warp(e_comp->ee,
                                 zone2->x + (zone2->w / 2),
                                 zone2->y + (zone2->h / 2));
         e_desk_last_focused_focus(e_desk_current_get(zone2));
@@ -1688,7 +1688,7 @@ ACT_FN_GO(screen_send_by, )
    if (errno) return;
    if (eina_list_count(e_manager_list()) > 1)
      {
-        scr += zone->comp->num;
+        scr += e_comp->num;
         if (scr != -1)
           scr = scr % eina_list_count(e_manager_list());
         if (scr < 0) scr += eina_list_count(e_manager_list());
@@ -1698,13 +1698,13 @@ ACT_FN_GO(screen_send_by, )
      {
         scr += zone->num;
         if (scr != -1)
-          scr = scr % eina_list_count(zone->comp->zones);
-        if (scr < 0) scr += eina_list_count(zone->comp->zones);
+          scr = scr % eina_list_count(e_comp->zones);
+        if (scr < 0) scr += eina_list_count(e_comp->zones);
         zone2 = e_comp_zone_number_get(scr);
      }
    if ((zone2) && (zone != zone2))
      {
-        ecore_evas_pointer_warp(zone2->comp->ee,
+        ecore_evas_pointer_warp(e_comp->ee,
                              zone2->x + (zone2->w / 2),
                              zone2->y + (zone2->h / 2));
         e_desk_last_focused_focus(e_desk_current_get(zone2));
@@ -1842,7 +1842,7 @@ ACT_FN_GO(menu_show, )
 
                   /* FIXME: this is a bit of a hack... setting m->c - bad hack */
                   m->zone = zone;
-                  ecore_evas_pointer_xy_get(zone->comp->ee, &x, &y);
+                  ecore_evas_pointer_xy_get(e_comp->ee, &x, &y);
                   e_menu_post_deactivate_callback_set(m, _e_actions_cb_menu_end, NULL);
                   e_menu_activate_mouse(m, zone, x, y, 1, 1,
                                         E_MENU_POP_DIRECTION_DOWN, 0);
@@ -1873,8 +1873,8 @@ ACT_FN_GO_MOUSE(menu_show, )
                   m->zone = zone;
                   x = ev->canvas.x;
                   y = ev->canvas.y;
-                  x -= zone->comp->man->x;
-                  y -= zone->comp->man->y;
+                  x -= e_comp->man->x;
+                  y -= e_comp->man->y;
                   e_menu_post_deactivate_callback_set(m, _e_actions_cb_menu_end, NULL);
                   e_menu_activate_mouse(m, zone, x, y, 1, 1,
                                         E_MENU_POP_DIRECTION_DOWN, ev->timestamp);
@@ -1903,7 +1903,7 @@ ACT_FN_GO_KEY(menu_show, , __UNUSED__)
 
                   /* FIXME: this is a bit of a hack... setting m->con - bad hack */
                   m->zone = zone;
-                  ecore_evas_pointer_xy_get(zone->comp->ee, &x, &y);
+                  ecore_evas_pointer_xy_get(e_comp->ee, &x, &y);
                   e_menu_post_deactivate_callback_set(m, _e_actions_cb_menu_end, NULL);
                   e_menu_activate_key(m, zone, x, y, 1, 1,
                                       E_MENU_POP_DIRECTION_DOWN);

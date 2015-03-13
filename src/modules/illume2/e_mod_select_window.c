@@ -70,7 +70,7 @@ _e_mod_illume_config_select_window_create(E_Config_Dialog *cfd __UNUSED__, Evas 
    e_widget_ilist_clear(ow);
    e_widget_ilist_go(ow);
 
-   if ((ecs = zone->comp->clients))
+   if ((ecs = e_comp->clients))
      {
         for (i = 0, l = ecs; l; l = l->next, i++) 
           {

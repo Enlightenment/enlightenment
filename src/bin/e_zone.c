@@ -511,13 +511,13 @@ e_zone_flip_coords_handle(E_Zone *zone,
 
    if (!e_config->edge_flip_dragging) return;
    /* if we have only 1 row we can flip up/down even if we have xinerama */
-   if (eina_list_count(zone->comp->zones) > 1)
+   if (eina_list_count(e_comp->zones) > 1)
      {
         Eina_List *zones;
         E_Zone *next_zone;
         int cx, cy;
 
-        zones = zone->comp->zones;
+        zones = e_comp->zones;
         next_zone = (E_Zone *)eina_list_data_get(zones);
         cx = next_zone->x;
         cy = next_zone->y;
@@ -939,7 +939,7 @@ e_zone_exists_direction(E_Zone *zone, E_Zone_Edge edge)
    Eina_List *l;
    E_Zone *z2;
 
-   EINA_LIST_FOREACH(zone->comp->zones, l, z2)
+   EINA_LIST_FOREACH(e_comp->zones, l, z2)
      {
         if (zone == z2) continue;
 
@@ -1165,7 +1165,7 @@ e_zone_edge_win_layer_set(E_Zone *zone, E_Layer layer)
    if (zone->EDGE) \
      { \
        evas_object_layer_set(zone->EDGE, layer); \
-       evas_object_stack_below(zone->EDGE, zone->comp->layers[e_comp_canvas_layer_map(layer)].obj); \
+       evas_object_stack_below(zone->EDGE, e_comp->layers[e_comp_canvas_layer_map(layer)].obj); \
      } \
    } while (0)
 
@@ -1462,7 +1462,7 @@ _e_zone_free(E_Zone *zone)
    E_FREE_LIST(zone->handlers, ecore_event_handler_del);
 
    if (zone->name) eina_stringshare_del(zone->name);
-   zone->comp->zones = eina_list_remove(zone->comp->zones, zone);
+   e_comp->zones = eina_list_remove(e_comp->zones, zone);
    evas_object_del(zone->bg_event_object);
    evas_object_del(zone->bg_clip_object);
    evas_object_del(zone->bg_object);

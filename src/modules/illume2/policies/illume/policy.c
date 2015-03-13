@@ -263,7 +263,7 @@ _policy_zone_layout_update(E_Zone *zone)
 
    if (!zone) return;
 
-   EINA_LIST_FOREACH(zone->comp->clients, l, ec)
+   EINA_LIST_FOREACH(e_comp->clients, l, ec)
      {
         if (e_client_util_ignored_get(ec)) continue;
         /* skip borders not on this zone */
@@ -1343,7 +1343,7 @@ _policy_zone_layout(E_Zone *zone)
    cz = e_illume_zone_config_get(zone->num);
 
    /* loop through border list and update layout */
-   EINA_LIST_FOREACH(zone->comp->clients, l, ec)
+   EINA_LIST_FOREACH(e_comp->clients, l, ec)
      {
         if (e_client_util_ignored_get(ec)) continue;
         /* skip borders that are being deleted */
@@ -1473,7 +1473,7 @@ _policy_zone_move_resize(E_Zone *zone)
 
    if (!zone) return;
 
-   EINA_LIST_FOREACH(zone->comp->clients, l, ec)
+   EINA_LIST_FOREACH(e_comp->clients, l, ec)
      {
         if (e_client_util_ignored_get(ec)) continue;
         /* skip borders not on this zone */
@@ -1789,7 +1789,7 @@ _policy_property_change(Ecore_X_Event_Window_Property *event)
         h = ec->h;
 
         /* look for conformant borders */
-        EINA_LIST_FOREACH(zone->comp->clients, l, ec)
+        EINA_LIST_FOREACH(e_comp->clients, l, ec)
           {
              if (e_client_util_ignored_get(ec)) continue;
              if (ec->zone != zone) continue;
@@ -1818,7 +1818,7 @@ _policy_property_change(Ecore_X_Event_Window_Property *event)
         h = ec->h;
 
         /* look for conformant borders */
-        EINA_LIST_FOREACH(zone->comp->clients, l, ec)
+        EINA_LIST_FOREACH(e_comp->clients, l, ec)
           {
              if (e_client_util_ignored_get(ec)) continue;
              if (ec->zone != zone) continue;
@@ -1858,7 +1858,7 @@ _policy_property_change(Ecore_X_Event_Window_Property *event)
           //y = kbd->client->y;
 
         /* look for conformant borders */
-        EINA_LIST_FOREACH(zone->comp->clients, l, ec)
+        EINA_LIST_FOREACH(e_comp->clients, l, ec)
           {
              if (e_client_util_ignored_get(ec)) continue;
              if (ec->zone != zone) continue;

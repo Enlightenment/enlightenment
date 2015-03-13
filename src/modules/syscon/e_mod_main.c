@@ -69,7 +69,7 @@ e_modapi_shutdown(E_Module *m __UNUSED__)
 
 /* action callback */
 static void
-_e_mod_action_syscon_cb(E_Object *obj, const char *params)
+_e_mod_action_syscon_cb(E_Object *obj EINA_UNUSED, const char *params)
 {
    E_Zone *zone = NULL;
 
@@ -80,18 +80,7 @@ _e_mod_action_syscon_cb(E_Object *obj, const char *params)
    // reboot
    // suspend
    // hibernate
-   if (obj)
-     {
-        if (obj->type == E_MANAGER_TYPE)
-          zone = e_util_zone_current_get((E_Manager *)obj);
-        else if (obj->type == E_COMP_TYPE)
-          zone = e_zone_current_get();
-        else if (obj->type == E_ZONE_TYPE)
-          zone = e_util_zone_current_get(((E_Zone *)obj)->comp->man);
-        else
-          zone = e_util_zone_current_get(e_manager_current_get());
-     }
-   if (!zone) zone = e_util_zone_current_get(e_manager_current_get());
+   zone = e_zone_current_get();
    if (zone) e_syscon_show(zone, params);
 }
 

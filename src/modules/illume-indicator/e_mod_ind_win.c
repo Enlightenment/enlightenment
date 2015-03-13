@@ -36,7 +36,7 @@ e_mod_ind_win_new(E_Zone *zone)
    iwin->zone = zone;
 
    /* create new window */
-   iwin->win = e_win_new(zone->comp);
+   iwin->win = e_win_new(e_comp);
    iwin->win->data = iwin;
 
    /* set some properties on the window */

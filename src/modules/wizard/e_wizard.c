@@ -251,7 +251,7 @@ _e_wizard_next_eval(void)
 static Evas_Object *
 _e_wizard_main_new(E_Zone *zone)
 {
-   o_bg = edje_object_add(zone->comp->evas);
+   o_bg = edje_object_add(e_comp->evas);
 
    e_theme_edje_object_set(o_bg, "base/theme/wizard", "e/wizard/main");
    edje_object_part_text_set(o_bg, "e.text.title", _("Welcome to Enlightenment"));
@@ -273,7 +273,7 @@ _e_wizard_extra_new(E_Zone *zone)
 {
    Evas_Object *o;
 
-   o = edje_object_add(zone->comp->evas);
+   o = edje_object_add(e_comp->evas);
    e_theme_edje_object_set(o, "base/theme/wizard", "e/wizard/extra");
    evas_object_geometry_set(o, zone->x, zone->y, zone->w, zone->h);
    evas_object_layer_set(o, E_LAYER_POPUP);

@@ -600,8 +600,8 @@ _shot_now(E_Zone *zone, E_Client *ec, const char *params)
    if ((!zone) && (!ec)) return;
    if (zone)
      {
-        sman = zone->comp->man;
-        scomp = zone->comp;
+        sman = e_comp->man;
+        scomp = e_comp;
         xwin = sman->root;
         w = sw = sman->w;
         h = sh = sman->h;

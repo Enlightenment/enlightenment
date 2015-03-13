@@ -451,7 +451,7 @@ _e_remember_update(E_Client *ec, E_Remember *rem)
    if (rem->apply & E_REMEMBER_APPLY_ZONE)
      {
         rem->prop.zone = ec->zone->num;
-        rem->prop.head = ec->zone->comp->num;
+        rem->prop.head = e_comp->num;
      }
    if (rem->apply & E_REMEMBER_APPLY_SKIP_WINLIST)
      rem->prop.skip_winlist = ec->user_skip_winlist;

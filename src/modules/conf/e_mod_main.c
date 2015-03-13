@@ -198,10 +198,10 @@ _config_pre_activate_cb(void *data, E_Menu *m)
 }
 
 static void
-_config_item_activate_cb(void *data, E_Menu *m, E_Menu_Item *mi __UNUSED__)
+_config_item_activate_cb(void *data, E_Menu *m EINA_UNUSED, E_Menu_Item *mi __UNUSED__)
 {
    E_Configure_Cat *ecat = data;
-   e_configure_show(m->zone->comp, ecat ? ecat->cat : NULL);
+   e_configure_show(e_comp, ecat ? ecat->cat : NULL);
 }
 
 static void
@@ -383,14 +383,14 @@ _e_mod_action_conf_cb(E_Object *obj, const char *params)
    if ((zone) && (params))
      e_configure_registry_call(params, NULL, params);
    else if (zone)
-     e_configure_show(zone->comp, params);
+     e_configure_show(e_comp, params);
 }
 
 /* menu item callback(s) */
 static void
-_e_mod_conf_cb(void *data __UNUSED__, E_Menu *m, E_Menu_Item *mi __UNUSED__)
+_e_mod_conf_cb(void *data __UNUSED__, E_Menu *m EINA_UNUSED, E_Menu_Item *mi __UNUSED__)
 {
-   e_configure_show(m->zone->comp, NULL);
+   e_configure_show(e_comp, NULL);
 }
 
 static void

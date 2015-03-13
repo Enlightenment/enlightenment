@@ -314,7 +314,7 @@ _e_toolbar_cb_mouse_down(void *data, Evas *evas __UNUSED__, Evas_Object *obj __U
    tbar->menu = mn;
    _e_toolbar_menu_append(tbar, mn);
    zone = e_util_zone_current_get(e_manager_current_get());
-   ecore_evas_pointer_xy_get(zone->comp->ee, &x, &y);
+   ecore_evas_pointer_xy_get(e_comp->ee, &x, &y);
    e_menu_activate_mouse(mn, zone, x, y, 1, 1,
                          E_MENU_POP_DIRECTION_DOWN, ev->timestamp);
 }

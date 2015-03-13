@@ -82,13 +82,13 @@ e_configure_show(E_Comp *comp, const char *params)
         z2 = ec->zone;
         evas_object_show(eco->win);
         elm_win_raise(eco->win);
-        if (z->comp == z2->comp)
+        if (e_comp == e_comp)
           e_client_desk_set(ec, e_desk_current_get(z));
         else
           {
              if (!ec->sticky)
                e_desk_show(ec->desk);
-             ecore_evas_pointer_warp(z2->comp->ee,
+             ecore_evas_pointer_warp(e_comp->ee,
                                   z2->x + (z2->w / 2), z2->y + (z2->h / 2));
           }
         e_client_unshade(ec, ec->shade_dir);

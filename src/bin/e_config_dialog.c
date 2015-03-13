@@ -110,14 +110,7 @@ e_config_dialog_find(const char *name, const char *class)
              ec = e_win_client_get(cfd->dia->win);
              e_client_uniconify(ec);
              elm_win_raise(cfd->dia->win);
-             if (z->comp == ec->zone->comp)
-               e_client_desk_set(ec, e_desk_current_get(z));
-             else
-               {
-                  if (!ec->sticky)
-                    e_desk_show(ec->desk);
-                  e_util_pointer_center(ec);
-               }
+             e_client_desk_set(ec, e_desk_current_get(z));
              if (ec->shaded || ec->shading)
                e_client_unshade(ec, ec->shade_dir);
              if ((e_config->focus_setting == E_FOCUS_NEW_DIALOG) ||

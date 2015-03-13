@@ -304,7 +304,7 @@ e_comp_canvas_zone_update(E_Zone *zone)
      }
    E_FREE_FUNC(zone->base, evas_object_del);
    E_FREE_FUNC(zone->over, evas_object_del);
-   zone->base = o = edje_object_add(zone->comp->evas);
+   zone->base = o = edje_object_add(e_comp->evas);
    evas_object_repeat_events_set(o, 1);
    evas_object_name_set(zone->base, "zone->base");
    e_theme_edje_object_set(o, "base/theme/comp", under_styles[conf->disable_screen_effects]);
@@ -314,7 +314,7 @@ e_comp_canvas_zone_update(E_Zone *zone)
    evas_object_layer_set(o, E_LAYER_BG);
    evas_object_show(o);
 
-   zone->over = o = edje_object_add(zone->comp->evas);
+   zone->over = o = edje_object_add(e_comp->evas);
    edje_object_signal_callback_add(o, "e,state,screensaver,active", "e", _e_comp_canvas_screensaver_active, NULL);
    evas_object_layer_set(o, E_LAYER_MAX);
    evas_object_raise(o);

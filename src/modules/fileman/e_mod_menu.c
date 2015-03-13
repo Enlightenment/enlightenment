@@ -27,7 +27,7 @@ _e_mod_menu_gtk_cb(void           *data,
    if (fm && ((fileman_config->view.open_dirs_in_place && evas_object_data_get(fm, "page_is_window")) ||
        (fileman_config->view.desktop_navigation && evas_object_data_get(fm, "page_is_zone"))))
      e_fm2_path_set(fm, NULL, data);
-   else if (m->zone) e_fwin_new(m->zone->comp, NULL, data);
+   else if (m->zone) e_fwin_new(e_comp, NULL, data);
 }
 
 static void
@@ -43,7 +43,7 @@ _e_mod_menu_virtual_cb(void           *data,
    if (fm && ((fileman_config->view.open_dirs_in_place && evas_object_data_get(fm, "page_is_window")) ||
        (fileman_config->view.desktop_navigation && evas_object_data_get(fm, "page_is_zone"))))
      e_fm2_path_set(fm, data, path ?: "/");
-   else if (m->zone) e_fwin_new(m->zone->comp, data, path ?: "/");
+   else if (m->zone) e_fwin_new(e_comp, data, path ?: "/");
 }
 
 static void
@@ -62,7 +62,7 @@ _e_mod_menu_volume_cb(void           *data,
            (fileman_config->view.desktop_navigation && evas_object_data_get(fm, "page_is_zone"))))
          e_fm2_path_set(fm, NULL, vol->mount_point);
         else if (m->zone)
-          e_fwin_new(m->zone->comp, NULL, vol->mount_point);
+          e_fwin_new(e_comp, NULL, vol->mount_point);
      }
    else
      {
@@ -73,7 +73,7 @@ _e_mod_menu_volume_cb(void           *data,
             (fileman_config->view.desktop_navigation && evas_object_data_get(fm, "page_is_zone"))))
           e_fm2_path_set(fm, buf, "/");
         else if (m->zone)
-          e_fwin_new(m->zone->comp, buf, "/");
+          e_fwin_new(e_comp, buf, "/");
      }
 }
 
@@ -94,7 +94,7 @@ _e_mod_menu_populate_cb(void      *data,
        (fileman_config->view.desktop_navigation && evas_object_data_get(fm, "page_is_zone"))))
      e_fm2_path_set(fm, data, path ?: "/");
    else if (m->zone)
-     e_fwin_new(m->zone->comp, data, path ?: "/");
+     e_fwin_new(e_comp, data, path ?: "/");
 }
 
 static void
@@ -491,7 +491,7 @@ static void
 _e_mod_menu_navigate_cb(void *d EINA_UNUSED, E_Menu *m, E_Menu_Item *mi EINA_UNUSED)
 {
    if (m->zone)
-     e_fwin_new(m->zone->comp, "~/", "/");
+     e_fwin_new(e_comp, "~/", "/");
 }
 
 /* returns submenu so we can add Go to Parent */

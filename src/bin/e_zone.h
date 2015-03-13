@@ -40,7 +40,6 @@ struct _E_Zone
    /* num matches the id of the xinerama screen
     * this zone belongs to. */
    unsigned int num;
-   E_Comp *comp;
    int          fullscreen;
 
    Evas_Object *bg_object;

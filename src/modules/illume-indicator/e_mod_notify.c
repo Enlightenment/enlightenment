@@ -180,7 +180,7 @@ _e_mod_notify_new(E_Notification_Notify *n, unsigned id)
    zone = e_util_zone_current_get(e_manager_current_get());
    nwin->zone = zone;
 
-   nwin->win = e_win_new(zone->comp);
+   nwin->win = e_win_new(e_comp);
    nwin->win->data = nwin;
 
    e_win_name_class_set(nwin->win, "Illume-Notify", "Illume-Notify");

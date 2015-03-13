@@ -109,7 +109,7 @@ _TEST(void *d __UNUSED__, E_Menu *m, E_Menu_Item *mi __UNUSED__)
    Evas_Object *o_list;
    Evas *e;
 
-   dia = e_dialog_normal_win_new(m->zone->comp, "E", "_widget_playground_dialog");
+   dia = e_dialog_normal_win_new(e_comp, "E", "_widget_playground_dialog");
    e = evas_object_evas_get(dia->win);
    o_list = e_widget_ilist_add(e, 32, 32, NULL);
    e_dialog_button_add(dia, "Add", NULL, _TEST_ADD, o_list);
@@ -604,7 +604,7 @@ _e_int_menus_themes_about(void *data __UNUSED__, E_Menu *m __UNUSED__, E_Menu_It
    static void
    _e_int_menus_fwin_favorites_item_cb(void *data, E_Menu *m, E_Menu_Item *mi)
    {
-   e_fwin_new(m->zone->comp, "favorites", "/");
+   e_fwin_new(e_comp, "favorites", "/");
    }
  */
 
@@ -1102,7 +1102,7 @@ _e_int_menus_virtuals_icon_cb(void *data, E_Menu *m, E_Menu_Item *mi)
    tw = 50;
    th = (tw * desk->zone->h) / desk->zone->w;
 
-   bgfile = e_bg_file_get(desk->zone->comp->num, desk->zone->num, desk->x, desk->y);
+   bgfile = e_bg_file_get(e_comp->num, desk->zone->num, desk->x, desk->y);
    o = e_thumb_icon_add(m->evas);
    e_thumb_icon_file_set(o, bgfile, "e/desktop/background");
    eina_stringshare_del(bgfile);
@@ -1420,7 +1420,7 @@ _e_int_menus_clients_pre_cb(void *data __UNUSED__, E_Menu *m)
    if (e_config->clientlist_sort_by == E_CLIENTLIST_SORT_MOST_RECENT)
      l = e_client_focus_stack_get();
    else
-     l = zone->comp->clients;
+     l = e_comp->clients;
    EINA_LIST_FOREACH(l, l, ec)
      {
         if (ec->user_skip_winlist || e_client_util_ignored_get(ec)) continue;

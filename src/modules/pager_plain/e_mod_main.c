@@ -409,7 +409,7 @@ _pager_desk_livethumb_setup(Pager_Desk *pd)
 
    o = e_livethumb_thumb_get(pd->o_bg);
    if (!o) o = edje_object_add(e_livethumb_evas_get(pd->o_bg));
-   bgfile = e_bg_file_get(pd->desk->zone->comp->num, pd->desk->zone->num, pd->desk->x, pd->desk->y);
+   bgfile = e_bg_file_get(e_comp->num, pd->desk->zone->num, pd->desk->x, pd->desk->y);
    edje_object_file_set(o, bgfile, "e/desktop/background");
    e_livethumb_thumb_set(pd->o_bg, o);
    eina_stringshare_del(bgfile);
@@ -777,7 +777,7 @@ _pager_popup_new(E_Zone *zone, int keyaction)
    if (!pp) return NULL;
 
    /* Show popup */
-   pp->pager = _pager_new(zone->comp->evas, zone, NULL);
+   pp->pager = _pager_new(e_comp->evas, zone, NULL);
 
    pp->pager->popup = pp;
    pp->urgent = 0;
@@ -794,7 +794,7 @@ _pager_popup_new(E_Zone *zone, int keyaction)
    evas_object_move(pp->pager->o_table, 0, 0);
    evas_object_resize(pp->pager->o_table, width, height);
 
-   pp->o_bg = edje_object_add(zone->comp->evas);
+   pp->o_bg = edje_object_add(e_comp->evas);
    evas_object_name_set(pp->o_bg, "pager_popup");
    e_theme_edje_object_set(pp->o_bg, "base/theme/modules/pager",
                            "e/modules/pager/popup");
@@ -2448,7 +2448,7 @@ _pager_popup_show(void)
    if (pp) _pager_popup_free(pp);
 
 #ifndef HAVE_WAYLAND_ONLY
-   input_window = ecore_x_window_input_new(zone->comp->win, 0, 0, 1, 1);
+   input_window = ecore_x_window_input_new(e_comp->win, 0, 0, 1, 1);
    ecore_x_window_show(input_window);
    if (!e_grabinput_get(input_window, 0, input_window))
      {

@@ -17,7 +17,7 @@ _pol_conf_desk_add(Config *conf, E_Desk *desk)
    Config_Desk *d;
 
    d = E_NEW(Config_Desk, 1);
-   d->comp_num = desk->zone->comp->num;
+   d->comp_num = e_comp->num;
    d->zone_num = desk->zone->num;
    d->x = desk->x;
    d->y = desk->y;
@@ -189,7 +189,7 @@ _pol_cfd_desk_list_update(E_Config_Dialog_Data *cfdata, E_Zone *zone)
         desk = zone->desks[i];
 
         d = E_NEW(Config_Desk, 1);
-        d->comp_num = zone->comp->num;
+        d->comp_num = e_comp->num;
         d->zone_num = zone->num;
         d->x = desk->x;
         d->y = desk->y;

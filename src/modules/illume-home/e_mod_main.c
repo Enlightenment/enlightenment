@@ -344,7 +344,7 @@ _il_home_desktop_find_border(E_Zone *zone, Efreet_Desktop *desktop)
         if (p) strcpy(exe, p + 1);
      }
 
-   EINA_LIST_FOREACH(zone->comp->clients, l, ec)
+   EINA_LIST_FOREACH(e_comp->clients, l, ec)
      {
         if (e_client_util_ignored_get(ec)) continue;
         if (ec->zone != zone) continue;
@@ -393,7 +393,7 @@ _il_home_win_new(E_Zone *zone)
    if (!hwin) return;
 
    hwin->zone = zone;
-   hwin->win = e_win_new(zone->comp);
+   hwin->win = e_win_new(e_comp);
    if (!hwin->win) 
      {
         e_object_del(E_OBJECT(hwin));
@@ -412,9 +412,9 @@ _il_home_win_new(E_Zone *zone)
 
    desk = e_desk_current_get(zone);
    if (desk)
-     bgfile = e_bg_file_get(zone->comp->num, zone->num, desk->x, desk->y);
+     bgfile = e_bg_file_get(e_comp->num, zone->num, desk->x, desk->y);
    else
-     bgfile = e_bg_file_get(zone->comp->num, zone->num, -1, -1);
+     bgfile = e_bg_file_get(e_comp->num, zone->num, -1, -1);
 
    hwin->o_bg = edje_object_add(evas);
    edje_object_file_set(hwin->o_bg, bgfile, "e/desktop/background");
@@ -742,9 +742,9 @@ _il_home_cb_bg_change(void *data __UNUSED__, int type, void *event __UNUSED__)
         zone = hwin->zone;
         desk = e_desk_current_get(zone);
         if (desk)
-          bgfile = e_bg_file_get(zone->comp->num, zone->num, desk->x, desk->y);
+          bgfile = e_bg_file_get(e_comp->num, zone->num, desk->x, desk->y);
         else
-          bgfile = e_bg_file_get(zone->comp->num, zone->num, -1, -1);
+          bgfile = e_bg_file_get(e_comp->num, zone->num, -1, -1);
         edje_object_file_set(hwin->o_bg, bgfile, "e/desktop/background");
         eina_stringshare_del(bgfile);
      }

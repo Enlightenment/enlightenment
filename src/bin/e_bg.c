@@ -208,9 +208,9 @@ e_bg_zone_update(E_Zone *zone, E_Bg_Transition transition)
 
    desk = e_desk_current_get(zone);
    if (desk)
-     bgfile = e_bg_file_get(zone->comp->num, zone->num, desk->x, desk->y);
+     bgfile = e_bg_file_get(e_comp->num, zone->num, desk->x, desk->y);
    else
-     bgfile = e_bg_file_get(zone->comp->num, zone->num, -1, -1);
+     bgfile = e_bg_file_get(e_comp->num, zone->num, -1, -1);
 
    if (zone->bg_object)
      {
@@ -233,7 +233,7 @@ e_bg_zone_update(E_Zone *zone, E_Bg_Transition transition)
              zone->bg_object = NULL;
              E_FREE_FUNC(zone->transition_object, evas_object_del);
           }
-        o = edje_object_add(zone->comp->evas);
+        o = edje_object_add(e_comp->evas);
         evas_object_repeat_events_set(o, 1);
         zone->transition_object = o;
         evas_object_name_set(zone->transition_object, "zone->transition_object");
@@ -250,14 +250,14 @@ e_bg_zone_update(E_Zone *zone, E_Bg_Transition transition)
      }
    if (eina_str_has_extension(bgfile, ".edj"))
      {
-        o = edje_object_add(zone->comp->evas);
+        o = edje_object_add(e_comp->evas);
         edje_object_file_set(o, bgfile, "e/desktop/background");
         if (edje_object_data_get(o, "noanimation"))
           edje_object_animation_set(o, EINA_FALSE);
      }
    else
      {
-        o = e_icon_add(zone->comp->evas);
+        o = e_icon_add(e_comp->evas);
         e_icon_file_key_set(o, bgfile, NULL);
         e_icon_fill_inside_set(o, 0);
      }

@@ -1661,12 +1661,9 @@ _e_gadman_cb_zone_change(void *data __UNUSED__, int type, void *event)
                   break;
                }
           }
-        if (ev->zone->comp == Man->comp)
-          {
-             evas_object_hide(Man->overlay);
-             E_FREE_FUNC(Man->overlay, evas_object_del);
-             _gadman_overlay_create();
-          }
+        evas_object_hide(Man->overlay);
+        E_FREE_FUNC(Man->overlay, evas_object_del);
+        _gadman_overlay_create();
         return ECORE_CALLBACK_RENEW;
      }
 

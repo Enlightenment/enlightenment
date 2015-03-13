@@ -449,7 +449,7 @@ e_fwin_zone_new(E_Zone *zone, void *p)
 
    fwins = eina_list_append(fwins, fwin);
 
-   o = e_fm2_add(zone->comp->evas);
+   o = e_fm2_add(e_comp->evas);
    evas_object_event_callback_add(o, EVAS_CALLBACK_DEL, _e_fwin_zone_shutdown, fwin);
    page->fm_obj = o;
    _e_fwin_config_set(page);
@@ -480,7 +480,7 @@ e_fwin_zone_new(E_Zone *zone, void *p)
    evas_object_focus_set(o, !e_client_focused_get());
    evas_object_show(o);
 
-   o = e_scrollframe_add(zone->comp->evas);
+   o = e_scrollframe_add(e_comp->evas);
    e_scrollframe_custom_theme_set(o, "base/theme/fileman",
                                   "e/fileman/desktop/scrollframe");
    /* FIXME: this theme object will have more versions and options later
@@ -793,7 +793,7 @@ _e_fwin_icon_popup_handler(void *data, int type, void *event)
      {
         if (fwin->zone)
           {
-             if (ev->event_window == fwin->zone->comp->ee_win) return ECORE_CALLBACK_RENEW;
+             if (ev->event_window == e_comp->ee_win) return ECORE_CALLBACK_RENEW;
           }
         else
           {
@@ -2114,7 +2114,7 @@ _e_fwin_path(void *data, E_Menu *m __UNUSED__, E_Menu_Item *mi __UNUSED__)
    if (page->fwin->win)
      xwin = elm_win_window_id_get(page->fwin->win);
    else
-     xwin = page->fwin->zone->comp->ee_win;
+     xwin = e_comp->ee_win;
 #ifndef HAVE_WAYLAND_ONLY
    ecore_x_selection_clipboard_set(xwin, path, strlen(path) + 1);
 #endif

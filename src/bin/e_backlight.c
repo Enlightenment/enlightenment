@@ -18,8 +18,8 @@ static int sysmode = MODE_NONE;
 static Ecore_Animator *bl_anim = NULL;
 static Eina_List *bl_devs = NULL;
 
-static void      _e_backlight_update(E_Zone *zone);
-static void      _e_backlight_set(E_Zone *zone, double val);
+static void      _e_backlight_update(void);
+static void      _e_backlight_set(double val);
 static Eina_Bool _bl_anim(void *data, double pos);
 static Eina_Bool bl_avail = EINA_TRUE;
 #ifndef HAVE_WAYLAND_ONLY
@@ -100,13 +100,9 @@ e_backlight_exists(void)
 EAPI void
 e_backlight_update(void)
 {
-   const Eina_List *l;
-   E_Zone *zone;
-
    if (bl_avail == EINA_FALSE) return;
 
-   EINA_LIST_FOREACH(e_comp->zones, l, zone)
-     _e_backlight_update(zone);
+   _e_backlight_update();
 }
 
 EAPI void
@@ -130,7 +126,7 @@ e_backlight_level_set(E_Zone *zone, double val, double tim)
 
    if (fabs(tim) < DBL_EPSILON)
      {
-        _e_backlight_set(zone, val);
+        _e_backlight_set(val);
         e_backlight_update();
         return;
      }
@@ -198,7 +194,7 @@ e_backlight_devices_get(void)
 /* local subsystem functions */
 
 static void
-_e_backlight_update(E_Zone *zone)
+_e_backlight_update(void)
 {
 #ifndef HAVE_WAYLAND_ONLY
    double x_bl = -1.0;
@@ -206,7 +202,7 @@ _e_backlight_update(E_Zone *zone)
    Ecore_X_Randr_Output *out;
    int i, num = 0;
 
-   root = zone->comp->man->root;
+   root = e_comp->man->root;
    // try randr
    if (root && xbl_avail)
      {
@@ -243,8 +239,6 @@ _e_backlight_update(E_Zone *zone)
         sysmode = MODE_RANDR;
         return;
      }
-#else
-   (void)zone;
 #endif
 #ifdef HAVE_EEZE
    _bl_sys_find();
@@ -258,12 +252,11 @@ _e_backlight_update(E_Zone *zone)
 }
 
 static void
-_e_backlight_set(E_Zone *zone, double val)
+_e_backlight_set(double val)
 {
 #ifdef HAVE_WAYLAND_ONLY
    if (0)
      {
-        (void)zone;
         (void)val;
         return;
      }
@@ -276,7 +269,7 @@ _e_backlight_set(E_Zone *zone, double val)
         int num = 0, i;
         char *name;
 
-        root = zone->comp->man->root;
+        root = e_comp->man->root;
         out = ecore_x_randr_window_outputs_get(root, &num);
         if ((out) && (num > 0))
           {
@@ -318,15 +311,14 @@ _e_backlight_set(E_Zone *zone, double val)
 }
 
 static Eina_Bool
-_bl_anim(void *data, double pos)
+_bl_anim(void *data EINA_UNUSED, double pos)
 {
-   E_Zone *zone = data;
    double v;
 
    // FIXME: if zone is deleted while anim going... bad things.
    pos = ecore_animator_pos_map(pos, ECORE_POS_MAP_DECELERATE, 0.0, 0.0);
    v = (bl_animval * (1.0 - pos)) + (bl_anim_toval * pos);
-   _e_backlight_set(zone, v);
+   _e_backlight_set(v);
    if (pos >= 1.0)
      {
         bl_anim = NULL;

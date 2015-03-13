@@ -436,7 +436,7 @@ _e_exec_cb_exec(void *data, Efreet_Desktop *desktop, char *exec, int remaining)
         int head_length;
         int penv_display_length;
 
-        head = launch->zone->comp->num;
+        head = e_comp->num;
 
         penv_display_length = strlen(penv_display);
         /* Check for insane length for DISPLAY env */

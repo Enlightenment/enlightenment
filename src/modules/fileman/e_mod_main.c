@@ -166,21 +166,21 @@ _e_mod_action_fileman_cb(E_Object   *obj EINA_UNUSED,
    if (zone)
      {
         if (params && params[0] == '/')
-          e_fwin_new(zone->comp, "/", params);
+          e_fwin_new(e_comp, "/", params);
         else if (params && params[0] == '~')
-          e_fwin_new(zone->comp, "~/", params + 1);
+          e_fwin_new(e_comp, "~/", params + 1);
         else if (params && strcmp(params, "(none)")) /* avoid matching paths that no longer exist */
           {
              char *path;
              path = e_util_shell_env_path_eval(params);
              if (path)
                {
-                  e_fwin_new(zone->comp, path, "/");
+                  e_fwin_new(e_comp, path, "/");
                   free(path);
                }
           }
         else
-          e_fwin_new(zone->comp, "favorites", "/");
+          e_fwin_new(e_comp, "favorites", "/");
      }
 }
 
@@ -340,7 +340,7 @@ e_mod_fileman_path_find(E_Zone *zone)
    Fileman_Path *path;
 
    EINA_LIST_FOREACH(fileman_config->paths, l, path)
-     if (path->zone == zone->comp->num + zone->num) break;
+     if (path->zone == e_comp->num + zone->num) break;
    if (l && fileman_config->view.desktop_navigation) return path;
    if (l)
      {
@@ -350,14 +350,14 @@ e_mod_fileman_path_find(E_Zone *zone)
    else
      {
         path = E_NEW(Fileman_Path, 1);
-        path->zone = zone->comp->num + zone->num;
+        path->zone = e_comp->num + zone->num;
         path->dev = eina_stringshare_add("desktop");
         fileman_config->paths = eina_list_append(fileman_config->paths, path);
         path->desktop_mode = E_FM2_VIEW_MODE_CUSTOM_ICONS;
      }
-   if ((zone->comp->num == 0) && (zone->num == 0))
+   if ((e_comp->num == 0) && (zone->num == 0))
      path->path = eina_stringshare_add("/");
    else
-     path->path = eina_stringshare_printf("%d", (zone->comp->num + zone->num));
+     path->path = eina_stringshare_printf("%d", (e_comp->num + zone->num));
    return path;
 }

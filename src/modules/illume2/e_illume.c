@@ -522,7 +522,7 @@ e_illume_client_at_xy_get(E_Zone *zone, int x, int y)
 
    /* loop the border client list */
     /* This is done in reverse order so we get the most recent border first */
-   EINA_LIST_REVERSE_FOREACH(zone->comp->clients, l, ec) 
+   EINA_LIST_REVERSE_FOREACH(e_comp->clients, l, ec) 
      {
         if (e_client_util_ignored_get(ec)) continue;
         /* check zone and skip borders not on this zone */
@@ -675,7 +675,7 @@ e_illume_client_indicator_get(E_Zone *zone)
    if (!zone) return NULL;
 
    /* loop the client list */
-   EINA_LIST_FOREACH(zone->comp->clients, l, ec) 
+   EINA_LIST_FOREACH(e_comp->clients, l, ec) 
      {
         if (e_client_util_ignored_get(ec)) continue;
         /* check zone and skip borders not on this zone */
@@ -746,7 +746,7 @@ e_illume_client_softkey_get(E_Zone *zone)
    if (!zone) return NULL;
 
    /* loop the border client list */
-   EINA_LIST_FOREACH(zone->comp->clients, l, ec) 
+   EINA_LIST_FOREACH(e_comp->clients, l, ec) 
      {
         if (e_client_util_ignored_get(ec)) continue;
         /* check zone and skip borders not on this zone */
@@ -888,7 +888,7 @@ e_illume_client_home_get(E_Zone *zone)
    if (!zone) return NULL;
 
    /* loop the border client list */
-   EINA_LIST_FOREACH(zone->comp->clients, l, ec) 
+   EINA_LIST_FOREACH(e_comp->clients, l, ec) 
      {
         if (e_client_util_ignored_get(ec)) continue;
         /* check zone and skip borders not on this zone */
@@ -925,7 +925,7 @@ e_illume_client_home_borders_get(E_Zone *zone)
    if (!zone) return NULL;
 
    /* loop the border client list */
-   EINA_LIST_FOREACH(zone->comp->clients, l, ec) 
+   EINA_LIST_FOREACH(e_comp->clients, l, ec) 
      {
         if (e_client_util_ignored_get(ec)) continue;
         /* check zone and skip borders not on this zone */
