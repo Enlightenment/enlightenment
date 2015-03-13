@@ -226,11 +226,8 @@ static Evas_Object *
 _pol_cfd_data_basic_widgets_create(E_Config_Dialog *cfd EINA_UNUSED, Evas *evas, E_Config_Dialog_Data *cfdata)
 {
    Evas_Object *base, *fl, *lb, *lo, *o;
-   E_Comp *comp;
    E_Zone *zone;
    Eina_List *l;
-
-   comp = e_comp;
 
    base = e_widget_list_add(evas, 0, 0);
 
@@ -255,14 +252,14 @@ _pol_cfd_data_basic_widgets_create(E_Config_Dialog *cfd EINA_UNUSED, Evas *evas,
    e_widget_ilist_multi_select_set(o, EINA_FALSE);
    e_widget_size_min_set(o, 100, 100);
    e_widget_on_change_hook_set(o, _pol_cfd_hook_zone_change, cfdata);
-   EINA_LIST_REVERSE_FOREACH(comp->zones, l, zone)
+   EINA_LIST_REVERSE_FOREACH(e_comp->zones, l, zone)
      e_widget_ilist_append(o, NULL, zone->name, NULL, zone, NULL);
    e_widget_ilist_go(o);
    e_widget_ilist_selected_set(o, 0);
    e_widget_list_object_append(lo, o, 1, 1, 0.5);
 
    /* update virtual desktops of first zone */
-   zone = eina_list_data_get(comp->zones);
+   zone = eina_list_data_get(e_comp->zones);
    _pol_cfd_desk_list_update(cfdata, zone);
 
    e_widget_framelist_object_append(fl, lo);
@@ -274,7 +271,6 @@ _pol_cfd_data_basic_widgets_create(E_Config_Dialog *cfd EINA_UNUSED, Evas *evas,
 void
 e_mod_pol_conf_init(Mod *mod)
 {
-   E_Comp *comp;
    E_Zone *zone;
    E_Desk *desk;
    Config *conf;
@@ -316,8 +312,7 @@ e_mod_pol_conf_init(Mod *mod)
         conf->use_softkey = 1;
         conf->softkey_size = 42;
 
-        comp = e_comp;
-        zone = e_zone_current_get(comp);
+        zone = e_zone_current_get();
         desk = e_desk_current_get(zone);
         _pol_conf_desk_add(conf, desk);
      }

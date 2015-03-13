@@ -65,7 +65,7 @@ e_resist_client_position(E_Comp *c, Eina_List *skiplist,
           }
      }
 
-   desk = e_desk_current_get(e_zone_current_get(c));
+   desk = e_desk_current_get(e_zone_current_get());
    l = e_shelf_list_all();
    EINA_LIST_FREE(l, es)
      {

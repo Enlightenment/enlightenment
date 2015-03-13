@@ -118,9 +118,7 @@ static const E_Gadcon_Client_Class _gc_class =
 static E_Desk *
 get_current_desk(void)
 {
-   E_Manager *m = e_manager_current_get();
-   E_Comp *c = m->comp;
-   E_Zone *z = e_zone_current_get(c);
+   E_Zone *z = e_zone_current_get();
 
    return e_desk_current_get(z);
 }

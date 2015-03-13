@@ -343,7 +343,7 @@ _fill_data(E_Config_Dialog_Data *cfdata)
         E_Desk *desk;
 
         comp = e_manager_current_get()->comp;
-        zone = e_zone_current_get(comp);
+        zone = e_zone_current_get();
         desk = e_desk_current_get(zone);
 
         cfbg = e_bg_config_get(comp->num, zone->num, desk->x, desk->y);
@@ -412,7 +412,7 @@ _basic_create(E_Config_Dialog *cfd EINA_UNUSED, Evas *evas, E_Config_Dialog_Data
 
    e_dialog_resizable_set(cfd->dia, 1);
 
-   zone = e_zone_current_get(e_comp);
+   zone = e_zone_current_get();
    o = e_widget_list_add(evas, 0, 1);
 
    rg = e_widget_radio_group_new(&(cfdata->fmdir));
@@ -566,7 +566,7 @@ _adv_create(E_Config_Dialog *cfd EINA_UNUSED, Evas *evas, E_Config_Dialog_Data *
 
    e_dialog_resizable_set(cfd->dia, 1);
 
-   zone = e_zone_current_get(e_comp);
+   zone = e_zone_current_get();
    o = e_widget_list_add(evas, 0, 1);
 
    rg = e_widget_radio_group_new(&(cfdata->fmdir));
@@ -655,7 +655,7 @@ _adv_apply(E_Config_Dialog *cfd __UNUSED__, E_Config_Dialog_Data *cfdata)
    E_Zone *z;
    E_Desk *d;
 
-   if (!(z = e_zone_current_get(e_comp))) return 0;
+   if (!(z = e_zone_current_get())) return 0;
    if (!(d = e_desk_current_get(z))) return 0;
    if (cfdata->use_theme_bg)
      {

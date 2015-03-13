@@ -163,11 +163,11 @@ e_comp_canvas_init()
 
         EINA_LIST_FOREACH(screens, l, scr)
           {
-             e_zone_new(e_comp, scr->screen, scr->escreen, scr->x, scr->y, scr->w, scr->h);
+             e_zone_new(scr->screen, scr->escreen, scr->x, scr->y, scr->w, scr->h);
           }
      }
    else
-     e_zone_new(e_comp, 0, 0, 0, 0, e_comp->man->w, e_comp->man->h);
+     e_zone_new(0, 0, 0, 0, e_comp->man->w, e_comp->man->h);
    E_LIST_HANDLER_APPEND(handlers, E_EVENT_ZONE_MOVE_RESIZE, _e_comp_cb_zone_change, NULL);
    E_LIST_HANDLER_APPEND(handlers, E_EVENT_ZONE_ADD, _e_comp_cb_zone_change, NULL);
    E_LIST_HANDLER_APPEND(handlers, E_EVENT_ZONE_DEL, _e_comp_cb_zone_change, NULL);
@@ -369,7 +369,7 @@ e_comp_canvas_update(void)
                }
              else
                {
-                  zone = e_zone_new(e_comp, scr->screen, scr->escreen,
+                  zone = e_zone_new(scr->screen, scr->escreen,
                                     scr->x, scr->y, scr->w, scr->h);
                   printf("@@@ NEW ZONE = %p\n", zone);
                   changed = EINA_TRUE;

@@ -1961,7 +1961,6 @@ static void
 _pager_window_cb_drag_finished(E_Drag *drag, int dropped)
 {
    Pager_Win *pw;
-   E_Comp *comp;
    E_Zone *zone;
    E_Desk *desk;
    int x = 0, y = 0, dx, dy;
@@ -1974,8 +1973,7 @@ _pager_window_cb_drag_finished(E_Drag *drag, int dropped)
         int zx, zy, zw, zh;
 
         /* wasn't dropped (on pager). move it to position of mouse on screen */
-        comp = e_comp;
-        zone = e_zone_current_get(comp);
+        zone = e_zone_current_get();
         desk = e_desk_current_get(zone);
 
         e_client_zone_set(pw->client, zone);

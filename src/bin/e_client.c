@@ -1721,7 +1721,7 @@ _e_client_eval(E_Client *ec)
           {
              if (ec->parent)
                {
-                  if (ec->parent->zone != e_zone_current_get(e_comp))
+                  if (ec->parent->zone != e_zone_current_get())
                     {
                        e_client_zone_set(ec, ec->parent->zone);
                        e_zone_useful_geometry_get(ec->zone, &zx, &zy, &zw, &zh);
@@ -2461,7 +2461,7 @@ e_client_new(E_Pixmap *cp, int first_map, int internal)
    if (ec->override)
      _e_client_zone_update(ec);
    else
-     e_client_desk_set(ec, e_desk_current_get(e_zone_current_get(e_comp)));
+     e_client_desk_set(ec, e_desk_current_get(e_zone_current_get()));
 
    ec->icccm.title = NULL;
    ec->icccm.name = NULL;
@@ -3418,7 +3418,7 @@ e_client_focused_set(E_Client *ec)
         /* if there unfocus client is fullscreen and visible */
         if ((!e_config->allow_above_fullscreen) &&
             (ec_unfocus->fullscreen) && (!ec_unfocus->iconic) && (!ec_unfocus->hidden) &&
-            (ec_unfocus->zone == e_zone_current_get(e_comp)) &&
+            (ec_unfocus->zone == e_zone_current_get()) &&
             ((ec_unfocus->desk == e_desk_current_get(ec_unfocus->zone)) || (ec_unfocus->sticky)))
           {
              Eina_Bool have_vis_child = EINA_FALSE;
@@ -4745,7 +4745,7 @@ e_client_under_pointer_get(E_Desk *desk, E_Client *exclude)
              if (exclude->zone)
                desk = e_desk_current_get(exclude->zone);
              else
-               desk = e_desk_current_get(e_zone_current_get(e_comp));
+               desk = e_desk_current_get(e_zone_current_get());
           }
      }
 

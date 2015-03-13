@@ -779,7 +779,7 @@ tw_show_helper(Evas_Object *o, int w, int h)
    int px, py, pw, ph;
    double ratio = tw_config->popup_size / 100.;
    E_Client *ec = NULL;
-   E_Zone *zone = e_zone_current_get(e_comp);
+   E_Zone *zone = e_zone_current_get();
 
    evas_object_hide(tw_mod->pop);
    evas_object_del(tw_mod->pop);
@@ -885,7 +885,7 @@ tw_video_opened_cb(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
         return;
      }
 
-   zone = e_zone_current_get(e_comp);
+   zone = e_zone_current_get();
    w = MIN(zone->w, (ratio * (double)zone->w));
    ratio = emotion_object_ratio_get(obj);
    if (ratio > 0.0) iw = (ih * ratio) + 0.5;

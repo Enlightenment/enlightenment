@@ -121,12 +121,12 @@ struct _E_Event_Zone_Edge
 
 EINTERN int    e_zone_init(void);
 EINTERN int    e_zone_shutdown(void);
-EAPI E_Zone   *e_zone_new(E_Comp *con, int num, int id, int x, int y, int w, int h);
+EAPI E_Zone   *e_zone_new(int num, int id, int x, int y, int w, int h);
 EAPI void      e_zone_name_set(E_Zone *zone, const char *name);
 EAPI void      e_zone_move(E_Zone *zone, int x, int y);
 EAPI void      e_zone_resize(E_Zone *zone, int w, int h);
 EAPI Eina_Bool  e_zone_move_resize(E_Zone *zone, int x, int y, int w, int h);
-EAPI E_Zone   *e_zone_current_get(E_Comp *c);
+EAPI E_Zone   *e_zone_current_get(void);
 EAPI void      e_zone_bg_reconfigure(E_Zone *zone);
 EAPI void      e_zone_flip_coords_handle(E_Zone *zone, int x, int y);
 EAPI void      e_zone_desk_count_set(E_Zone *zone, int x_count, int y_count);

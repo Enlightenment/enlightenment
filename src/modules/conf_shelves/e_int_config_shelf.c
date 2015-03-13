@@ -125,7 +125,7 @@ _basic_create(E_Config_Dialog *cfd __UNUSED__, Evas *evas, E_Config_Dialog_Data 
    e_dialog_resizable_set(cfd->dia, 1);
    
    ol = e_widget_list_add(evas, 0, 0);
-   zone = e_zone_current_get(e_comp);
+   zone = e_zone_current_get();
    snprintf(buf, sizeof(buf), _("Configured Shelves: Display %d"), zone->num);
    of = e_widget_framelist_add(evas, buf, 0);
    cfdata->o_list = e_widget_ilist_add(evas, 24, 24, &(cfdata->cur_shelf));

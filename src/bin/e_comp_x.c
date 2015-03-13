@@ -4834,7 +4834,7 @@ _e_comp_x_manage_windows(E_Comp *c)
              if (ret == 1)
                zone = e_comp_zone_number_get(id);
              if (!zone)
-               zone = e_zone_current_get(c);
+               zone = e_zone_current_get();
              ret = ecore_x_window_prop_card32_get(windows[i],
                                                   E_ATOM_DESK,
                                                   deskxy, 2);

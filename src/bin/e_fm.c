@@ -8971,7 +8971,7 @@ _e_fm2_menu(Evas_Object *obj, unsigned int timestamp)
      }
 
    ecore_evas_pointer_xy_get(e_comp->ee, &x, &y);
-   zone = e_zone_current_get(e_comp);
+   zone = e_zone_current_get();
    if (!zone)
      {
         e_object_del(E_OBJECT(mn));
@@ -9304,7 +9304,7 @@ _e_fm2_icon_menu(E_Fm2_Icon *ic, Evas_Object *obj, unsigned int timestamp)
      }
 
    ecore_evas_pointer_xy_get(e_comp->ee, &x, &y);
-   zone = e_zone_current_get(e_comp);
+   zone = e_zone_current_get();
    if (!zone)
      {
         e_object_del(E_OBJECT(mn));
@@ -11734,7 +11734,7 @@ e_fm2_drop_menu(Evas_Object *obj, char *args)
                              "e/fileman/default/button/abort");
 
    ecore_evas_pointer_xy_get(e_comp->ee, &x, &y);
-   zone = e_zone_current_get(e_comp);
+   zone = e_zone_current_get();
    if (!zone) goto error;
    e_menu_activate_mouse(menu, zone, x, y, 1, 1, E_MENU_POP_DIRECTION_DOWN, 0);
    return;

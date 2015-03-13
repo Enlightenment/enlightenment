@@ -166,7 +166,7 @@ _basic_create_widgets(E_Config_Dialog *cfd EINA_UNUSED, Evas *evas, E_Config_Dia
    Eina_List *l;
    char *t;
 
-   zone = e_zone_current_get(e_comp);
+   zone = e_zone_current_get();
 
    o = e_widget_table_add(e_win_evas_win_get(evas), 0);
 

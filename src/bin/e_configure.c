@@ -78,7 +78,7 @@ e_configure_registry_call(const char *path, Evas_Object *parent, const char *par
                         custom_desktop_exec.func(custom_desktop_exec.data,
                                                  e_comp, params, eci->desktop);
                       else
-                        e_exec(e_zone_current_get(e_comp),
+                        e_exec(e_zone_current_get(),
                                eci->desktop, NULL, NULL, "config");
                    }
                  break;

@@ -85,7 +85,7 @@ _e_mod_action_syscon_cb(E_Object *obj, const char *params)
         if (obj->type == E_MANAGER_TYPE)
           zone = e_util_zone_current_get((E_Manager *)obj);
         else if (obj->type == E_COMP_TYPE)
-          zone = e_zone_current_get((E_Comp *)obj);
+          zone = e_zone_current_get();
         else if (obj->type == E_ZONE_TYPE)
           zone = e_util_zone_current_get(((E_Zone *)obj)->comp->man);
         else

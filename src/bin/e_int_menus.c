@@ -1414,7 +1414,7 @@ _e_int_menus_clients_pre_cb(void *data __UNUSED__, E_Menu *m)
 
    e_menu_pre_activate_callback_set(m, NULL, NULL);
    /* get the current clients */
-   zone = e_zone_current_get(e_comp);
+   zone = e_zone_current_get();
    desk = e_desk_current_get(zone);
 
    if (e_config->clientlist_sort_by == E_CLIENTLIST_SORT_MOST_RECENT)
@@ -1722,7 +1722,7 @@ _e_int_menus_shelves_pre_cb(void *data __UNUSED__, E_Menu *m)
 
    e_menu_pre_activate_callback_set(m, NULL, NULL);
    c = e_comp;
-   zone = e_zone_current_get(c);
+   zone = e_zone_current_get();
 
    /* get the current clients */
    shelves = e_shelf_list();

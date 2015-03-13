@@ -180,7 +180,7 @@ _e_zone_cb_mouse_move(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *e
 }
 
 EAPI E_Zone *
-e_zone_new(E_Comp *c, int num, int id, int x, int y, int w, int h)
+e_zone_new(int num, int id, int x, int y, int w, int h)
 {
    E_Zone *zone;
    Evas_Object *o;
@@ -189,8 +189,6 @@ e_zone_new(E_Comp *c, int num, int id, int x, int y, int w, int h)
 
    zone = E_OBJECT_ALLOC(E_Zone, E_ZONE_TYPE, _e_zone_free);
    if (!zone) return NULL;
-
-   zone->comp = c;
 
    zone->x = x;
    zone->y = y;
@@ -210,9 +208,9 @@ e_zone_new(E_Comp *c, int num, int id, int x, int y, int w, int h)
    snprintf(name, sizeof(name), "Zone %d", zone->num);
    zone->name = eina_stringshare_add(name);
 
-   c->zones = eina_list_append(c->zones, zone);
+   e_comp->zones = eina_list_append(e_comp->zones, zone);
 
-   o = evas_object_rectangle_add(c->evas);
+   o = evas_object_rectangle_add(e_comp->evas);
    zone->bg_clip_object = o;
    evas_object_repeat_events_set(o, 1);
    evas_object_layer_set(o, E_LAYER_BG);
@@ -222,7 +220,7 @@ e_zone_new(E_Comp *c, int num, int id, int x, int y, int w, int h)
    evas_object_color_set(o, 255, 255, 255, 255);
    evas_object_show(o);
 
-   o = evas_object_rectangle_add(c->evas);
+   o = evas_object_rectangle_add(e_comp->evas);
    zone->bg_event_object = o;
    evas_object_name_set(o, "zone->bg_event_object");
    evas_object_clip_set(o, zone->bg_clip_object);
@@ -397,25 +395,24 @@ e_zone_move_resize(E_Zone *zone,
 }
 
 EAPI E_Zone *
-e_zone_current_get(E_Comp *c)
+e_zone_current_get(void)
 {
    Eina_List *l = NULL;
    E_Zone *zone;
 
-   E_OBJECT_CHECK_RETURN(c, NULL);
    if (!starting)
      {
         int x, y;
 
-        ecore_evas_pointer_xy_get(c->ee, &x, &y);
-        EINA_LIST_FOREACH(c->zones, l, zone)
+        ecore_evas_pointer_xy_get(e_comp->ee, &x, &y);
+        EINA_LIST_FOREACH(e_comp->zones, l, zone)
           {
              if (E_INSIDE(x, y, zone->x, zone->y, zone->w, zone->h))
                return zone;
           }
      }
-   if (!c->zones) return NULL;
-   return eina_list_data_get(c->zones);
+   if (!e_comp->zones) return NULL;
+   return eina_list_data_get(e_comp->zones);
 }
 
 EAPI void

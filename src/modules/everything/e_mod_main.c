@@ -541,23 +541,11 @@ _e_mod_run_defer_cb(void *data)
 }
 
 static void
-_e_mod_action_cb(E_Object *obj, const char *params)
+_e_mod_action_cb(E_Object *obj EINA_UNUSED, const char *params)
 {
    E_Zone *zone = NULL;
 
-   if (obj)
-     {
-        if (obj->type == E_MANAGER_TYPE)
-          zone = e_util_zone_current_get((E_Manager *)obj);
-        else if (obj->type == E_COMP_TYPE)
-          zone = e_zone_current_get((E_Comp *)obj);
-        else if (obj->type == E_ZONE_TYPE)
-          zone = e_zone_current_get(((E_Zone *)obj)->comp);
-        else
-          zone = e_util_zone_current_get(e_manager_current_get());
-     }
-   if (!zone) zone = e_util_zone_current_get(e_manager_current_get());
-
+   zone = e_zone_current_get();
    if (!zone) return;
 
    IF_RELEASE(_params);

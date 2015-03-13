@@ -1354,7 +1354,7 @@ _e_actions_zone_get(E_Object *obj)
         if (obj->type == (int)E_MANAGER_TYPE)
           return e_util_zone_current_get((E_Manager *)obj);
         else if (obj->type == (int)E_COMP_TYPE)
-          return e_zone_current_get((E_Comp *)obj);
+          return e_zone_current_get();
         else if (obj->type == (int)E_ZONE_TYPE)
           return (E_Zone *)obj;
         else if (obj->type == (int)E_CLIENT_TYPE)

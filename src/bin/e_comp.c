@@ -410,7 +410,7 @@ _e_comp_cb_update(E_Comp *c)
         evas_object_geometry_get(c->fps_fg, NULL, NULL, &w, &h);
         w += 8;
         h += 8;
-        z = e_zone_current_get(c);
+        z = e_zone_current_get();
         if (z)
           {
              switch (conf->fps_corner)

@@ -56,7 +56,7 @@ e_util_zone_current_get(E_Manager *man)
 {
    E_OBJECT_CHECK_RETURN(man, NULL);
    E_OBJECT_TYPE_CHECK_RETURN(man, E_MANAGER_TYPE, NULL);
-   return e_zone_current_get(man->comp);
+   return e_zone_current_get();
 }
 
 EAPI int
@@ -826,7 +826,7 @@ e_util_win_auto_resize_fill(Evas_Object *win)
    if (ec)
      zone = ec->zone;
    if (!zone)
-     zone = e_zone_current_get(e_comp);
+     zone = e_zone_current_get();
 
    if (zone)
      {
