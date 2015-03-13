@@ -637,8 +637,8 @@ _adv_create(E_Config_Dialog *cfd EINA_UNUSED, Evas *evas, E_Config_Dialog_Data *
    ow = e_widget_radio_add(evas, _("This Desktop"), E_CONFIG_WALLPAPER_DESK, rg);
    e_widget_frametable_object_append(of, ow, 0, 1, 1, 1, 1, 0, 1, 0);
    ow = e_widget_radio_add(evas, _("This Screen"), E_CONFIG_WALLPAPER_SCREEN, rg);
-   if (!(e_util_comp_zone_number_get(0, 1) ||
-         (e_util_comp_zone_number_get(1, 0))))
+   if (!(e_comp_zone_number_get(e_comp, 1) ||
+         (e_comp_zone_number_get(e_comp, 0))))
      e_widget_disabled_set(ow, 1);
    e_widget_frametable_object_append(of, ow, 0, 2, 1, 1, 1, 0, 1, 0);
    e_widget_table_object_append(ot, of, 0, 3, 2, 1, 1, 0, 1, 0);
