@@ -665,7 +665,7 @@ _e_comp_x_client_stack(E_Client *ec)
 }
 
 static E_Client *
-_e_comp_x_client_new(E_Comp *c, Ecore_X_Window win, Eina_Bool first)
+_e_comp_x_client_new(Ecore_X_Window win, Eina_Bool first)
 {
    E_Pixmap *cp;
    E_Client *ec;
@@ -673,7 +673,7 @@ _e_comp_x_client_new(E_Comp *c, Ecore_X_Window win, Eina_Bool first)
    cp = e_pixmap_new(E_PIXMAP_TYPE_X, win);
    EINA_SAFETY_ON_NULL_RETURN_VAL(cp, NULL);
 
-   ec = e_client_new(c, cp, first, 0);
+   ec = e_client_new(cp, first, 0);
    return ec;
 }
 
@@ -1116,7 +1116,7 @@ _e_comp_x_show_request(void *data EINA_UNUSED, int type EINA_UNUSED, Ecore_X_Eve
         return ECORE_CALLBACK_RENEW;
      }
    if (!ec)
-     ec = _e_comp_x_client_new(c, ev->win, 0);
+     ec = _e_comp_x_client_new(ev->win, 0);
    if (!ec)
      {
         ecore_x_window_show(ev->win);
@@ -1200,7 +1200,7 @@ _e_comp_x_show_retry(void *data)
      {
         E_Client *ec;
 
-        ec = _e_comp_x_client_new(c, (Ecore_X_Window)(uintptr_t)win, 0);
+        ec = _e_comp_x_client_new((Ecore_X_Window)(uintptr_t)win, 0);
         if (ec) _e_comp_x_show_helper(ec);
      }
 
@@ -1225,7 +1225,7 @@ _e_comp_x_show(void *data EINA_UNUSED, int type EINA_UNUSED, Ecore_X_Event_Windo
         if ((c->win == ev->win) || (c->ee_win == ev->win) ||
             (c->man->root == ev->win) || (c->cm_selection == ev->win)) return ECORE_CALLBACK_RENEW;
         /* some window which we haven't made a client for yet but need to */
-        ec = _e_comp_x_client_new(c, ev->win, 0);
+        ec = _e_comp_x_client_new(ev->win, 0);
         if (!ec)
           {
              if (c->x_comp_data->retry_timer)
@@ -3928,7 +3928,7 @@ _e_comp_x_hook_client_fetch(void *d EINA_UNUSED, E_Client *ec)
                     ecl = ec->leader;
                   if (!ecl)
                     {
-                       E_Client *child = e_client_bottom_get(e_comp);
+                       E_Client *child = e_client_bottom_get();
 
                        do
                          {
@@ -4852,7 +4852,7 @@ _e_comp_x_manage_windows(E_Comp *c)
                }
 
              {
-                ec = _e_comp_x_client_new(c, windows[i], 1);
+                ec = _e_comp_x_client_new(windows[i], 1);
                 if (ec)
                   {
                      if (desk) e_client_desk_set(ec, desk);
@@ -4864,7 +4864,7 @@ _e_comp_x_manage_windows(E_Comp *c)
           {
              /* We have not seen this window, and X tells us it
               * should be seen */
-             ec = _e_comp_x_client_new(c, windows[i], 1);
+             ec = _e_comp_x_client_new(windows[i], 1);
           }
         if (ec && (!ec->comp_data->initial_attributes.visible))
           E_FREE_FUNC(ec, e_object_del);
@@ -5145,7 +5145,7 @@ _e_comp_x_setup(E_Comp *c, Ecore_X_Window root, int w, int h)
 
         if (i >= e_comp_canvas_layer_map(E_LAYER_CLIENT_ABOVE))
           ecore_x_window_raise(c->layers[i].win);
-        ec = _e_comp_x_client_new(c, c->layers[i].win, 0);
+        ec = _e_comp_x_client_new(c->layers[i].win, 0);
         evas_object_name_set(ec->frame, "layer_obj");
         ec->lock_client_stacking = 1;
         ec->internal = 1;

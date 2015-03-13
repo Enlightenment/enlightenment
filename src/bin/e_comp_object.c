@@ -1130,7 +1130,7 @@ _e_comp_intercept_stack_helper(E_Comp_Object *cw, Evas_Object *stack, E_Comp_Obj
           {
              E_Client *ec;
 
-             ec = e_client_top_get(e_comp);
+             ec = e_client_top_get();
              if (ec)
                o = ec->frame;
              //else //wat
@@ -3641,7 +3641,7 @@ _e_comp_object_autoclose_cleanup(Eina_Bool already_del)
 {
    if (e_comp->autoclose.obj)
      {
-        e_comp_ungrab_input(e_comp, 0, 1);
+        e_comp_ungrab_input(0, 1);
         if (e_comp->autoclose.del_cb)
           e_comp->autoclose.del_cb(e_comp->autoclose.data, e_comp->autoclose.obj);
         else if (!already_del)
@@ -3691,7 +3691,7 @@ _e_comp_object_autoclose_setup(Evas_Object *obj)
         evas_object_name_set(e_comp->autoclose.rect, "e_comp->autoclose.rect");
         evas_object_color_set(e_comp->autoclose.rect, 0, 0, 0, 0);
         evas_object_event_callback_add(e_comp->autoclose.rect, EVAS_CALLBACK_MOUSE_UP, _e_comp_object_autoclose_mouse_up_cb, e_comp);
-        e_comp_grab_input(e_comp, 0, 1);
+        e_comp_grab_input(0, 1);
      }
    evas_object_layer_set(e_comp->autoclose.rect, evas_object_layer_get(obj) - 1);
    e_comp_shape_queue();

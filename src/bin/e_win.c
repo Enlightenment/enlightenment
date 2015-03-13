@@ -104,7 +104,7 @@ _e_elm_win_trap_show(void *data, Evas_Object *o)
              cp = e_pixmap_new(type, win);
              EINA_SAFETY_ON_NULL_RETURN_VAL(cp, EINA_TRUE);
 
-             ctx->client = e_client_new(e_comp, cp, 0, 1);
+             ctx->client = e_client_new(cp, 0, 1);
              EINA_SAFETY_ON_NULL_RETURN_VAL(ctx->client, EINA_TRUE);
           }
         ctx->client->placed = ctx->placed | ctx->centered;

@@ -10361,7 +10361,7 @@ _e_fm2_icon_entry_widget_add(E_Fm2_Icon *ic)
    evas_event_feed_mouse_out(evas_object_evas_get(ic->obj), ecore_x_current_time_get(), NULL);
 #endif
    if (e_comp->evas == e)
-     e_comp_grab_input(e_comp, 0, 1);
+     e_comp_grab_input(0, 1);
    ic->keygrab = (e_comp->evas == e);
    edje_object_part_swallow(ic->obj, "e.swallow.entry", ic->entry_widget);
    evas_object_show(ic->entry_widget);
@@ -10390,7 +10390,7 @@ _e_fm2_icon_entry_widget_del(E_Fm2_Icon *ic)
    if (ic->keygrab)
      {
         if (evas_object_evas_get(ic->obj) == e_comp->evas)
-          e_comp_ungrab_input(e_comp, 0, 1);
+          e_comp_ungrab_input(0, 1);
      }
    ic->keygrab = 0;
    _e_fm2_icon_select(ic);

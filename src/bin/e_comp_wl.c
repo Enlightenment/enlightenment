@@ -1971,7 +1971,7 @@ _e_comp_wl_subcompositor_cb_subsurface_get(struct wl_client *client EINA_UNUSED,
 
    if (!(ec = e_pixmap_client_get(ep)))
      {
-        if (!(ec = e_client_new(NULL, ep, 0, 0)))
+        if (!(ec = e_client_new(ep, 0, 0)))
           {
              wl_resource_post_no_memory(resource);
              return;

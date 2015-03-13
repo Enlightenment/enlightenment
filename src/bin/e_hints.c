@@ -314,7 +314,7 @@ e_hints_client_list_set(void)
              E_Client *ec;
              const Eina_List *ll;
 
-             clients = calloc(e_clients_count(man->comp), sizeof(Ecore_X_Window));
+             clients = calloc(e_clients_count(), sizeof(Ecore_X_Window));
              EINA_LIST_FOREACH(man->comp->clients, ll, ec)
                {
                   if (e_pixmap_type_get(ec->pixmap) != E_PIXMAP_TYPE_X) continue;
@@ -339,7 +339,7 @@ e_hints_client_stacking_set(void)
 
 //#define CLIENT_STACK_DEBUG
    /* Get client count */
-   c = e_clients_count(e_comp);
+   c = e_clients_count();
    if (c)
      {
         E_Client *ec;

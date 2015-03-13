@@ -1195,7 +1195,7 @@ e_menu_idler_before(void)
      {
         if (_e_menu_win)
           {
-             e_comp_ungrab_input(e_comp, 1, 1);
+             e_comp_ungrab_input(1, 1);
              _e_menu_win = 0;
           }
      }
@@ -1887,7 +1887,7 @@ _e_menu_activate_internal(E_Menu *m, E_Zone *zone)
    if (!_e_menu_win)
      {
         _e_menu_win = zone->comp->ee_win;
-        if (!e_comp_grab_input(zone->comp, 1, 1))
+        if (!e_comp_grab_input(1, 1))
           {
              _e_menu_win = 0;
              return;

@@ -713,10 +713,10 @@ struct E_Client
 #endif
 
 #define E_CLIENT_FOREACH(EC) \
-  for (EC = e_client_bottom_get(e_comp); EC; EC = e_client_above_get(EC))
+  for (EC = e_client_bottom_get(); EC; EC = e_client_above_get(EC))
 
 #define E_CLIENT_REVERSE_FOREACH(EC) \
-  for (EC = e_client_top_get(e_comp); EC; EC = e_client_below_get(EC))
+  for (EC = e_client_top_get(); EC; EC = e_client_below_get(EC))
 
 
 EAPI extern int E_EVENT_CLIENT_ADD;
@@ -740,7 +740,7 @@ EAPI extern int E_EVENT_CLIENT_UNFULLSCREEN;
 EINTERN void e_client_idler_before(void);
 EINTERN Eina_Bool e_client_init(void);
 EINTERN void e_client_shutdown(void);
-EAPI E_Client *e_client_new(E_Comp *c, E_Pixmap *cp, int first_map, int internal);
+EAPI E_Client *e_client_new(E_Pixmap *cp, int first_map, int internal);
 EAPI void e_client_desk_set(E_Client *ec, E_Desk *desk);
 EAPI Eina_Bool e_client_comp_grabbed_get(void);
 EAPI E_Client *e_client_action_get(void);
@@ -758,9 +758,9 @@ EAPI void e_client_zone_set(E_Client *ec, E_Zone *zone);
 EAPI void e_client_geometry_get(E_Client *ec, int *x, int *y, int *w, int *h);
 EAPI E_Client *e_client_above_get(const E_Client *ec);
 EAPI E_Client *e_client_below_get(const E_Client *ec);
-EAPI E_Client *e_client_bottom_get(const E_Comp *c);
-EAPI E_Client *e_client_top_get(const E_Comp *c);
-EAPI unsigned int e_clients_count(E_Comp *c);
+EAPI E_Client *e_client_bottom_get(void);
+EAPI E_Client *e_client_top_get(void);
+EAPI unsigned int e_clients_count(void);
 EAPI void e_client_move_intercept_cb_set(E_Client *ec, E_Client_Move_Intercept_Cb cb);
 EAPI E_Client_Hook *e_client_hook_add(E_Client_Hook_Point hookpoint, E_Client_Hook_Cb func, const void *data);
 EAPI void e_client_hook_del(E_Client_Hook *ch);

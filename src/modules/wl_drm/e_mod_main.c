@@ -32,7 +32,7 @@ _e_mod_drm_cb_activate(void *data, int type EINA_UNUSED, void *event)
                e_comp_object_damage(ec->frame, 0, 0, ec->w, ec->h);
           }
         e_comp_render_queue();
-        e_comp_shape_queue_block(c, 0);
+        e_comp_shape_queue_block(0);
         ecore_event_add(E_EVENT_COMPOSITOR_ENABLE, NULL, NULL, NULL);
      }
    else
@@ -46,7 +46,7 @@ _e_mod_drm_cb_activate(void *data, int type EINA_UNUSED, void *event)
         evas_render_dump(c->evas);
 
         e_comp_render_queue();
-        e_comp_shape_queue_block(c, 1);
+        e_comp_shape_queue_block(1);
         ecore_event_add(E_EVENT_COMPOSITOR_DISABLE, NULL, NULL, NULL);
      }
 

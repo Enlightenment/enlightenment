@@ -254,7 +254,7 @@ _e_comp_cb_nocomp_begin(E_Comp *c)
 
    DBG("JOB2...");
    e_comp_render_queue();
-   e_comp_shape_queue_block(c, 1);
+   e_comp_shape_queue_block(1);
    ecore_event_add(E_EVENT_COMPOSITOR_DISABLE, NULL, NULL, NULL);
 }
 
@@ -278,7 +278,7 @@ _e_comp_cb_nocomp_end(E_Comp *c)
    e_comp_x_nocomp_end(c);
 #endif
    e_comp_render_queue();
-   e_comp_shape_queue_block(c, 0);
+   e_comp_shape_queue_block(0);
    ecore_event_add(E_EVENT_COMPOSITOR_ENABLE, NULL, NULL, NULL);
 }
 
@@ -485,7 +485,7 @@ nocomp:
              if (c->nocomp && c->nocomp_ec)
                {
                   E_Client *nec = NULL;
-                  for (ec = e_client_top_get(c), nec = e_client_below_get(ec);
+                  for (ec = e_client_top_get(), nec = e_client_below_get(ec);
                        (ec && nec) && (ec != nec); ec = nec, nec = e_client_below_get(ec))
                     {
                        if (ec == c->nocomp_ec) break;
@@ -713,7 +713,7 @@ _e_comp_shapes_update_job(E_Comp *c)
    /* background */
    eina_tiler_rect_add(tb, &(Eina_Rectangle){0, 0, c->man->w, c->man->h});
 
-   ec = e_client_bottom_get(c);
+   ec = e_client_bottom_get();
    if (ec) o = ec->frame;
    for (; o; o = evas_object_above_get(o))
      {
@@ -1384,7 +1384,7 @@ e_comp_top_window_at_xy_get(Evas_Coord x, Evas_Coord y)
 }
 
 EAPI void
-e_comp_util_wins_print()
+e_comp_util_wins_print(void)
 {
    Evas_Object *o;
 

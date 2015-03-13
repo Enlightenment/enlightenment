@@ -372,11 +372,11 @@ _e_client_event_zone_set_free(void *d EINA_UNUSED, E_Event_Client_Zone_Set *ev)
 ////////////////////////////////////////////////
 
 static int
-_e_client_action_input_win_del(E_Comp *c)
+_e_client_action_input_win_del(void)
 {
    if (!comp_grabbed) return 0;
 
-   e_comp_ungrab_input(c, 1, 1);
+   e_comp_ungrab_input(1, 1);
    comp_grabbed = 0;
    return 1;
 }
@@ -385,7 +385,7 @@ static void
 _e_client_action_finish(void)
 {
    if (comp_grabbed)
-     _e_client_action_input_win_del(e_comp);
+     _e_client_action_input_win_del();
 
    E_FREE_FUNC(action_timer, ecore_timer_del);
    E_FREE_FUNC(action_handler_key,  ecore_event_handler_del);
@@ -693,8 +693,8 @@ _e_client_action_input_win_new(void)
         CRI("DOUBLE COMP GRAB! ACK!!!!");
         return 1;
      }
-   comp_grabbed = e_comp_grab_input(e_comp, 1, 1);
-   if (!comp_grabbed) _e_client_action_input_win_del(e_comp);
+   comp_grabbed = e_comp_grab_input(1, 1);
+   if (!comp_grabbed) _e_client_action_input_win_del();
    return comp_grabbed;
 }
 
@@ -756,7 +756,7 @@ _e_client_move_begin(E_Client *ec)
    if (!ec->moving)
      {
         if (ecmove == ec) ecmove = NULL;
-        _e_client_action_input_win_del(e_comp);
+        _e_client_action_input_win_del();
         return 0;
      }
    if (!ec->lock_user_stacking)
@@ -775,7 +775,7 @@ _e_client_move_end(E_Client *ec)
         //e_grabinput_release(e_client_util_pwin_get(ec), e_client_util_pwin_get(ec));
         //client_grabbed = 0;
      //}
-   _e_client_action_input_win_del(e_comp);
+   _e_client_action_input_win_del();
    e_pointer_mode_pop(ec, E_POINTER_MOVE);
    ec->moving = 0;
    _e_client_hook_call(E_CLIENT_HOOK_MOVE_END, ec);
@@ -986,7 +986,7 @@ _e_client_resize_handle(E_Client *ec)
 static int
 _e_client_resize_end(E_Client *ec)
 {
-   _e_client_action_input_win_del(e_comp);
+   _e_client_action_input_win_del();
    e_pointer_mode_pop(ec, ec->resize_mode);
    ec->resize_mode = E_POINTER_RESIZE_NONE;
 
@@ -2408,7 +2408,7 @@ e_client_shutdown(void)
 }
 
 EAPI E_Client *
-e_client_new(E_Comp *c EINA_UNUSED, E_Pixmap *cp, int first_map, int internal)
+e_client_new(E_Pixmap *cp, int first_map, int internal)
 {
    E_Client *ec;
 
@@ -3180,18 +3180,16 @@ e_client_below_get(const E_Client *ec)
 }
 
 EAPI E_Client *
-e_client_bottom_get(const E_Comp *c)
+e_client_bottom_get(void)
 {
    unsigned int x;
-
-   EINA_SAFETY_ON_NULL_RETURN_VAL(c, NULL);
 
    for (x = e_comp_canvas_layer_map(E_LAYER_CLIENT_DESKTOP); x <= e_comp_canvas_layer_map(E_LAYER_CLIENT_PRIO); x++)
      {
         E_Client *ec2;
 
-        if (!c->layers[x].clients) continue;
-        EINA_INLIST_FOREACH(c->layers[x].clients, ec2)
+        if (!e_comp->layers[x].clients) continue;
+        EINA_INLIST_FOREACH(e_comp->layers[x].clients, ec2)
           if (!e_object_is_del(E_OBJECT(ec2)))
             return ec2;
      }
@@ -3199,18 +3197,16 @@ e_client_bottom_get(const E_Comp *c)
 }
 
 EAPI E_Client *
-e_client_top_get(const E_Comp *c)
+e_client_top_get(void)
 {
    unsigned int x;
-
-   EINA_SAFETY_ON_NULL_RETURN_VAL(c, NULL);
 
    for (x = e_comp_canvas_layer_map(E_LAYER_CLIENT_PRIO); x >= e_comp_canvas_layer_map(E_LAYER_CLIENT_DESKTOP); x--)
      {
         E_Client *ec2;
 
-        if (!c->layers[x].clients) continue;
-        EINA_INLIST_REVERSE_FOREACH(c->layers[x].clients, ec2)
+        if (!e_comp->layers[x].clients) continue;
+        EINA_INLIST_REVERSE_FOREACH(e_comp->layers[x].clients, ec2)
           if (!e_object_is_del(E_OBJECT(ec2)))
             return ec2;
      }
@@ -3218,10 +3214,9 @@ e_client_top_get(const E_Comp *c)
 }
 
 EAPI unsigned int
-e_clients_count(E_Comp *c)
+e_clients_count(void)
 {
-   if (!c) return eina_hash_population(clients_hash);
-   return eina_list_count(c->clients);
+   return eina_list_count(e_comp->clients);
 }
 
 
@@ -4515,7 +4510,7 @@ e_client_resize_begin(E_Client *ec)
    if (!e_client_util_resizing_get(ec))
      {
         if (ecresize == ec) ecresize = NULL;
-        _e_client_action_input_win_del(e_comp);
+        _e_client_action_input_win_del();
         return EINA_FALSE;
      }
    if (!ec->lock_user_stacking)

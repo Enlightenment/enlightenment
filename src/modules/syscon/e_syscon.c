@@ -80,7 +80,7 @@ e_syscon_show(E_Zone *zone, const char *defact)
         return 0;
      }
 
-   if (!e_comp_grab_input(e_comp, 1, 1)) return 0;
+   if (!e_comp_grab_input(1, 1)) return 0;
    evas = e_comp->evas;
    evas_event_freeze(evas);
 
@@ -292,7 +292,7 @@ e_syscon_hide(void)
    E_FREE_FUNC(deftimer, ecore_timer_del);
    eina_stringshare_replace(&do_defact, NULL);
    E_FREE_LIST(handlers, ecore_event_handler_del);
-   e_comp_ungrab_input(e_comp, 1, 1);
+   e_comp_ungrab_input(1, 1);
    evas_object_hide(popup);
    E_FREE_FUNC(popup, evas_object_del);
    o_selected_flow = o_selected = o_flow_extra = o_flow_main = o_flow_secondary = NULL;

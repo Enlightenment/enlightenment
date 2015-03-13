@@ -118,7 +118,7 @@ e_winlist_show(E_Zone *zone, E_Winlist_Filter filter)
 #endif
    if (e_comp->comp_type != E_PIXMAP_TYPE_X)
      {
-        if (!e_comp_grab_input(e_comp, 1, 1))
+        if (!e_comp_grab_input(1, 1))
           return 0;
      }
 
@@ -274,7 +274,7 @@ e_winlist_hide(void)
      }
    else
 #endif
-     e_comp_ungrab_input(e_comp, 1, 1);
+     e_comp_ungrab_input(1, 1);
    if (ec)
      {
         if (ec->shaded)
