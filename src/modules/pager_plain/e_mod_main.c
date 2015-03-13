@@ -1759,9 +1759,8 @@ _pager_cb_event_bg_update(void *data __UNUSED__, int type __UNUSED__, void *even
 }
 
 static Eina_Bool
-_pager_cb_event_compositor_resize(void *data __UNUSED__, int type __UNUSED__, void *event)
+_pager_cb_event_compositor_resize(void *data __UNUSED__, int type __UNUSED__, void *event EINA_UNUSED)
 {
-   E_Event_Compositor_Resize *ev = event;
    Eina_List *l;
    Pager *p;
 
@@ -1769,8 +1768,6 @@ _pager_cb_event_compositor_resize(void *data __UNUSED__, int type __UNUSED__, vo
      {
         Eina_List *l2;
         Pager_Desk *pd;
-
-        if (p->zone->comp != ev->comp) continue;
 
         EINA_LIST_FOREACH(p->desks, l2, pd)
           e_layout_virtual_size_set(pd->o_layout, pd->desk->zone->w,

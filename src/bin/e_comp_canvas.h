@@ -2,16 +2,9 @@
 
 
 
-typedef struct _E_Event_Compositor_Resize   E_Event_Compositor_Resize;
-
 #else
 #ifndef E_COMP_CANVAS_H
 #define E_COMP_CANVAS_H
-
-struct _E_Event_Compositor_Resize
-{
-   E_Comp *comp;
-};
 
 extern EAPI int E_EVENT_COMPOSITOR_RESIZE;
 

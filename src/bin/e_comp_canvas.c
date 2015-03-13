@@ -9,12 +9,9 @@ _e_comp_canvas_cb_del()
 }
 
 static void
-_e_comp_canvas_event_compositor_resize_free(void *data EINA_UNUSED, void *event)
+_e_comp_canvas_event_compositor_resize_free(void *data EINA_UNUSED, void *event EINA_UNUSED)
 {
-   E_Event_Compositor_Resize *ev = event;
-
-   e_object_unref(E_OBJECT(ev->comp));
-   free(ev);
+   e_object_unref(E_OBJECT(e_comp));
 }
 
 ///////////////////////////////////
@@ -333,7 +330,6 @@ e_comp_canvas_zone_update(E_Zone *zone)
 EAPI void
 e_comp_canvas_update(void)
 {
-   E_Event_Compositor_Resize *ev;
    Eina_List *l, *screens, *zones = NULL, *ll;
    E_Zone *zone;
    E_Screen *scr;
@@ -428,10 +424,8 @@ e_comp_canvas_update(void)
    if (!changed) return;
    if (!starting)
      {
-        ev = calloc(1, sizeof(E_Event_Compositor_Resize));
-        ev->comp = e_comp;
         e_object_ref(E_OBJECT(e_comp));
-        ecore_event_add(E_EVENT_COMPOSITOR_RESIZE, ev, _e_comp_canvas_event_compositor_resize_free, NULL);
+        ecore_event_add(E_EVENT_COMPOSITOR_RESIZE, NULL, _e_comp_canvas_event_compositor_resize_free, NULL);
      }
 
    EINA_LIST_FOREACH(e_comp->zones, l, zone)

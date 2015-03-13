@@ -1297,7 +1297,7 @@ _compositor_resize_hook_desk_reapply(E_Desk *desk)
 
 static bool
 _compositor_resize_hook(void *data EINA_UNUSED, int type EINA_UNUSED,
-                        E_Event_Compositor_Resize *ev EINA_UNUSED)
+                        void *ev EINA_UNUSED)
 {
    _foreach_desk(_compositor_resize_hook_desk_reapply);
 
