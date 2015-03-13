@@ -191,11 +191,6 @@ EINTERN Evas_Object *e_comp_style_selector_create(Evas *evas, const char **sourc
 EAPI E_Config_Dialog *e_int_config_comp(Evas_Object *parent, const char *params);
 EAPI E_Config_Dialog *e_int_config_comp_match(Evas_Object *parent, const char *params);
 
-EINA_DEPRECATED static inline E_Comp *
-e_comp_util_evas_object_comp_get(Evas_Object *obj)
-{
-   return ecore_evas_data_get(ecore_evas_ecore_evas_get(evas_object_evas_get(obj)), "comp");
-}
 
 static inline Eina_Bool
 e_comp_util_client_is_fullscreen(const E_Client *ec)
