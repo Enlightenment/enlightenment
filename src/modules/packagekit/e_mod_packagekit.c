@@ -89,7 +89,7 @@ packagekit_popup_update(E_PackageKit_Instance *inst)
    unsigned num_updates = 0;
    const char *emblem_name;
    Efreet_Desktop *desktop;
-   Evas *evas = e_comp_get(inst->popup)->evas;
+   Evas *evas = e_comp->evas;
    Evas_Object *icon, *end;
    char buf[PATH_MAX];
 
@@ -178,7 +178,7 @@ packagekit_popup_new(E_PackageKit_Instance *inst)
    Evas *evas;
 
    inst->popup = e_gadcon_popup_new(inst->gcc, EINA_FALSE);
-   evas = e_comp_get(inst->popup)->evas;
+   evas = e_comp->evas;
 
    table = e_widget_table_add(e_win_evas_win_get(evas), 0);
 

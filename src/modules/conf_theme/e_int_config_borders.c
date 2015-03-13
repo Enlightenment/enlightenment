@@ -79,7 +79,7 @@ _create_data(E_Config_Dialog *cfd)
    cfdata->comp = NULL;
    cfdata->client = NULL;
    if (!cfd->data)
-     cfdata->comp = e_comp_get(NULL);
+     cfdata->comp = e_comp;
    else
      cfdata->client = cfd->data;
 

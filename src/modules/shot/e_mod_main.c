@@ -612,7 +612,7 @@ _shot_now(E_Zone *zone, E_Client *ec, const char *params)
      }
    else
      {
-        xwin = e_comp_get(ec)->ee_win;
+        xwin = e_comp->ee_win;
         x = ec->x, y = ec->y, sw = ec->w, sh = ec->h;
         w = sw;
         h = sh;

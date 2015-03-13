@@ -314,7 +314,7 @@ _clock_popup_new(Instance *inst)
    _time_eval(inst);
 
    inst->popup = e_gadcon_popup_new(inst->gcc, 0);
-   evas = e_comp_get(inst->popup)->evas;
+   evas = e_comp->evas;
 
    inst->o_table = elm_table_add(inst->popup->comp_object);
 

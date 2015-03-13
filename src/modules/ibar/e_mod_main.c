@@ -1034,7 +1034,7 @@ _ibar_cb_menu_icon_properties(void *data, E_Menu *m __UNUSED__, E_Menu_Item *mi 
    IBar_Icon *ic;
 
    ic = data;
-   e_desktop_edit(e_comp_get(ic->ibar->inst->gcc), ic->app);
+   e_desktop_edit(e_comp, ic->app);
 }
 
 static void
@@ -1277,7 +1277,7 @@ _ibar_icon_menu_client_add(IBar_Icon *ic, E_Client *ec)
 
    if (ec->netwm.state.skip_taskbar) return EINA_FALSE;
    o = ic->menu->o_bg;
-   it = edje_object_add(e_comp_get(ec)->evas);
+   it = edje_object_add(e_comp->evas);
    e_comp_object_util_del_list_append(ic->menu->comp_object, it);
    e_theme_edje_object_set(it, "base/theme/modules/ibar",
                            "e/modules/ibar/menu/item");
@@ -1329,7 +1329,7 @@ _ibar_icon_menu(IBar_Icon *ic, Eina_Bool grab)
    ic->menu = e_gadcon_popup_new(ic->ibar->inst->gcc, 1);
    e_object_data_set(E_OBJECT(ic->menu), ic);
    E_OBJECT_DEL_SET(ic->menu, _ibar_cb_icon_menu_del);
-   e = e_comp_get(ic->menu)->evas;
+   e = e_comp->evas;
    o = edje_object_add(e);
    e_theme_edje_object_set(o, "base/theme/modules/ibar",
                            "e/modules/ibar/menu");
@@ -2526,7 +2526,7 @@ _ibar_go_focus(void)
    if (_ibar_focus_win) return;
    man = e_manager_current_get();
    if (!man) return;
-   _ibar_focus_win = e_comp_get(man)->ee_win;
+   _ibar_focus_win = e_comp->ee_win;
    if (!e_grabinput_get(0, 0, _ibar_focus_win))
      {
         _ibar_focus_win = 0;

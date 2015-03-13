@@ -507,7 +507,7 @@ _desk_config_apply(E_Desk *d, int old_nb_stacks, int new_nb_stacks)
      {
         E_Client *ec;
 
-        E_CLIENT_FOREACH(e_comp_get(NULL), ec)
+        E_CLIENT_FOREACH(e_comp, ec)
           {
              _client_apply_settings(ec, NULL);
           }
@@ -519,7 +519,7 @@ _desk_config_apply(E_Desk *d, int old_nb_stacks, int new_nb_stacks)
         /* Add all the existing windows. */
         E_Client *ec;
 
-        E_CLIENT_FOREACH(e_comp_get(NULL), ec)
+        E_CLIENT_FOREACH(e_comp, ec)
           {
              _add_client(ec);
           }
@@ -868,7 +868,7 @@ _tiling_split_type_changed_popup(void)
    /* If this is not NULL, the rest isn't either. */
    if (!o)
      {
-        _G.split_popup.obj = o = edje_object_add(e_comp_get(NULL)->evas);
+        _G.split_popup.obj = o = edje_object_add(e_comp->evas);
         if (!e_theme_edje_object_set(o, "base/theme/modules/tiling",
                  "modules/tiling/main"))
            edje_object_file_set(o, _G.edj_path, "modules/tiling/main");
@@ -1503,7 +1503,7 @@ e_modapi_init(E_Module *m)
    {
       E_Client *ec;
 
-      E_CLIENT_FOREACH(e_comp_get(NULL), ec)
+      E_CLIENT_FOREACH(e_comp, ec)
       {
          _add_client(ec);
       }

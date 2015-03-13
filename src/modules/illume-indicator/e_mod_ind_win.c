@@ -322,7 +322,7 @@ _e_mod_ind_win_cb_mouse_up(void *data, Evas *evas __UNUSED__, Evas_Object *obj _
         ec = iwin->win->client;
 
         /* reset mouse pointer */
-        e_pointer_type_pop(e_comp_get(ec)->pointer, ec, "move");
+        e_pointer_type_pop(e_comp->pointer, ec, "move");
 
         /* tell edj we are done moving */
         edje_object_signal_emit(iwin->o_base, "e,action,move,stop", "e");
@@ -362,7 +362,7 @@ _e_mod_ind_win_cb_mouse_move(void *data, Evas *evas __UNUSED__, Evas_Object *obj
         iwin->drag.start = 0;
 
         /* change mouse pointer to indicate we are dragging */
-        e_pointer_type_push(e_comp_get(iwin->win)->pointer, 
+        e_pointer_type_push(e_comp->pointer, 
                             iwin->win->client, "move");
 
         /* tell edj we are going to start moving */

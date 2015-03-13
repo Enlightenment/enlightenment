@@ -196,7 +196,7 @@ _backlight_popup_new(Instance *inst)
    _backlight_gadget_update(inst);
    
    inst->popup = e_gadcon_popup_new(inst->gcc, 0);
-   evas = e_comp_get(inst->popup)->evas;
+   evas = e_comp->evas;
    
    inst->o_table = e_widget_table_add(e_win_evas_win_get(evas), 0);
 

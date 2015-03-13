@@ -378,7 +378,7 @@ _mixer_popup_cb_mute_change(void *data, Evas_Object *obj, void *event __UNUSED__
 static Evas_Object *
 _mixer_popup_add_slider(E_Mixer_Instance *inst, int value, void (*cb)(void *data, Evas_Object *obj, void *event_info))
 {
-   Evas_Object *slider = e_slider_add(e_comp_get(inst->popup)->evas);
+   Evas_Object *slider = e_slider_add(e_comp->evas);
    evas_object_show(slider);
    e_slider_orientation_set(slider, 0);
    e_slider_value_set(slider, value);
@@ -546,7 +546,7 @@ _mixer_popup_new(E_Mixer_Instance *inst)
      colspan = 2;
 
    inst->popup = e_gadcon_popup_new(inst->gcc, 0);
-   evas = e_comp_get(inst->gcc)->evas;
+   evas = e_comp->evas;
 
    inst->ui.table = e_widget_table_add(e_win_evas_win_get(evas), 0);
 
@@ -1123,7 +1123,7 @@ _mixer_cb_volume_modify(Eina_Bool up)
 
    ctxt->last_act_time = ecore_loop_time_get();
 
-   if (ctxt->default_instance->conf->keybindings_popup && (!e_comp_get(NULL)->nocomp))
+   if (ctxt->default_instance->conf->keybindings_popup && (!e_comp->nocomp))
      _mixer_popup_timer_new(ctxt->default_instance);
    _mixer_volume_change(ctxt->default_instance, up, EINA_TRUE);
 }
@@ -1160,7 +1160,7 @@ _mixer_cb_volume_mute(E_Object *obj __UNUSED__, const char *params __UNUSED__)
 
    ctxt->last_act_time = ecore_loop_time_get();
 
-   if (ctxt->default_instance->conf->keybindings_popup && (!e_comp_get(NULL)->nocomp))
+   if (ctxt->default_instance->conf->keybindings_popup && (!e_comp->nocomp))
      _mixer_popup_timer_new(ctxt->default_instance);
    _mixer_toggle_mute(ctxt->default_instance, EINA_TRUE);
 }

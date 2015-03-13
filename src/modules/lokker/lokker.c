@@ -157,7 +157,7 @@ _pin_mouse_button_down(Lokker_Popup *lp, int t EINA_UNUSED, Ecore_Event_Mouse_Bu
    Evas *e;
 
    if (ev->buttons != 1) return ECORE_CALLBACK_DONE;
-   e = e_comp_get(lp->zone)->evas;
+   e = e_comp->evas;
    evas_event_feed_mouse_move(e,
      e_comp_canvas_x_root_adjust(lp->zone->comp, ev->root.x),
      e_comp_canvas_y_root_adjust(lp->zone->comp, ev->root.y),

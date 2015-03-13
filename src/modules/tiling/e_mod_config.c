@@ -172,7 +172,7 @@ _basic_create_widgets(E_Config_Dialog *cfd EINA_UNUSED, Evas *evas,
    E_Zone *zone;
    Eina_List *l;
 
-   comp = e_comp_get(NULL);
+   comp = e_comp;
 
    o = e_widget_list_add(evas, 0, 0);
 

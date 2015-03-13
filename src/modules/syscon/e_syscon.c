@@ -80,8 +80,8 @@ e_syscon_show(E_Zone *zone, const char *defact)
         return 0;
      }
 
-   if (!e_comp_grab_input(e_comp_get(zone), 1, 1)) return 0;
-   evas = e_comp_get(zone)->evas;
+   if (!e_comp_grab_input(e_comp, 1, 1)) return 0;
+   evas = e_comp->evas;
    evas_event_freeze(evas);
 
    o = edje_object_add(evas);

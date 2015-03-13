@@ -230,7 +230,7 @@ _pol_cfd_data_basic_widgets_create(E_Config_Dialog *cfd EINA_UNUSED, Evas *evas,
    E_Zone *zone;
    Eina_List *l;
 
-   comp = e_comp_get(NULL);
+   comp = e_comp;
 
    base = e_widget_list_add(evas, 0, 0);
 
@@ -316,7 +316,7 @@ e_mod_pol_conf_init(Mod *mod)
         conf->use_softkey = 1;
         conf->softkey_size = 42;
 
-        comp = e_comp_get(NULL);
+        comp = e_comp;
         zone = e_zone_current_get(comp);
         desk = e_desk_current_get(zone);
         _pol_conf_desk_add(conf, desk);

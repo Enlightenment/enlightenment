@@ -171,7 +171,7 @@ _e_mod_action_fileman_cb(E_Object   *obj,
         else if (obj->type == E_ZONE_TYPE)
           zone = e_zone_current_get(((E_Zone *)obj)->comp);
         else
-          zone = e_zone_current_get(e_comp_get(NULL));
+          zone = e_zone_current_get(e_comp);
      }
    if (!zone) zone = e_util_zone_current_get(e_manager_current_get());
    if (zone)

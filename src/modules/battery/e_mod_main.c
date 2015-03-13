@@ -463,7 +463,7 @@ _battery_warning_popup(Instance *inst, int t, double percent)
    inst->warning = e_gadcon_popup_new(inst->gcc, 0);
    if (!inst->warning) return;
 
-   e = e_comp_get(inst->warning)->evas;
+   e = e_comp->evas;
 
    popup_bg = edje_object_add(e);
    inst->popup_battery = edje_object_add(e);

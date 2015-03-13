@@ -529,11 +529,11 @@ _e_kbd_int_zoomkey_up(E_Kbd_Int *ki)
 
    if (ki->zoomkey.popup) return;
 
-   o = _theme_obj_new(e_comp_get(ki->win)->evas, ki->themedir,
+   o = _theme_obj_new(e_comp->evas, ki->themedir,
                       "e/modules/kbd/zoom/default");
    ki->zoomkey.base_obj = o;
 
-   o = e_layout_add(e_comp_get(ki->win)->evas);
+   o = e_layout_add(e_comp->evas);
    e_layout_virtual_size_set(o, 100, 100);
    edje_object_part_swallow(ki->zoomkey.base_obj, "e.swallow.content", o);
    evas_object_show(o);
@@ -541,7 +541,7 @@ _e_kbd_int_zoomkey_up(E_Kbd_Int *ki)
 
    e_layout_virtual_size_get(ki->layout_obj, &vw, &vh);
 
-   o = e_layout_add(e_comp_get(ki->win)->evas);
+   o = e_layout_add(e_comp->evas);
    e_layout_virtual_size_set(o, vw, vh);
    e_layout_pack(ki->zoomkey.layout_obj, o);
    e_layout_child_move(o, 0, 0);
@@ -559,7 +559,7 @@ _e_kbd_int_zoomkey_up(E_Kbd_Int *ki)
         int selected;
 
         ky = l->data;
-        o = _theme_obj_new(e_comp_get(ki->win)->evas, ki->themedir,
+        o = _theme_obj_new(e_comp->evas, ki->themedir,
                            "e/modules/kbd/zoomkey/default");
         label = "";
         icon = NULL;
@@ -572,7 +572,7 @@ _e_kbd_int_zoomkey_up(E_Kbd_Int *ki)
 
         edje_object_part_text_set(o, "e.text.label", label);
 
-        o2 = e_icon_add(e_comp_get(ki->win)->evas);
+        o2 = e_icon_add(e_comp->evas);
         e_icon_fill_inside_set(o2, 1);
 //        e_icon_scale_up_set(o2, 0);
         edje_object_part_swallow(o, "e.swallow.content", o2);
@@ -1448,11 +1448,11 @@ _e_kbd_int_dictlist_up(E_Kbd_Int *ki)
 
    if (ki->dictlist.popup) return;
 
-   o = _theme_obj_new(e_comp_get(ki->win)->evas, ki->themedir,
+   o = _theme_obj_new(e_comp->evas, ki->themedir,
                       "e/modules/kbd/match/default");
    ki->dictlist.base_obj = o;
 
-   o = e_widget_ilist_add(e_comp_get(ki->win)->evas, 
+   o = e_widget_ilist_add(e_comp->evas, 
                           (32 * e_scale), (32 * e_scale), NULL);
    e_widget_ilist_selector_set(o, 1);
    e_widget_ilist_freeze(o);
@@ -1593,11 +1593,11 @@ _e_kbd_int_matchlist_up(E_Kbd_Int *ki)
    if (!e_kbd_buf_string_matches_get(ki->kbuf)) return;
    if (ki->matchlist.popup) return;
 
-   o = _theme_obj_new(e_comp_get(ki->win)->evas, ki->themedir,
+   o = _theme_obj_new(e_comp->evas, ki->themedir,
                       "e/modules/kbd/match/default");
    ki->matchlist.base_obj = o;
 
-   o = e_widget_ilist_add(e_comp_get(ki->win)->evas, 
+   o = e_widget_ilist_add(e_comp->evas, 
                           (32 * e_scale), (32 * e_scale), NULL);
    e_widget_ilist_selector_set(o, 1);
    ki->matchlist.ilist_obj = o;

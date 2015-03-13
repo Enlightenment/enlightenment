@@ -299,7 +299,7 @@ _notification_popup_new(E_Notification_Notify *n, unsigned id)
    switch (notification_cfg->dual_screen)
      {
       case POPUP_DISPLAY_POLICY_FIRST:
-        comp = e_comp_get(NULL);
+        comp = e_comp;
         zone = eina_list_data_get(comp->zones);
         break;
       case POPUP_DISPLAY_POLICY_CURRENT:
@@ -323,7 +323,7 @@ _notification_popup_new(E_Notification_Notify *n, unsigned id)
    EINA_SAFETY_ON_NULL_RETURN_VAL(popup, NULL);
    popup->notif = n;
    popup->id = id;
-   popup->e = e_comp_get(zone)->evas;
+   popup->e = e_comp->evas;
 
    /* Setup the theme */
    snprintf(buf, sizeof(buf), "%s/e-module-notification.edj",
@@ -623,7 +623,7 @@ _notification_popdown(Popup_Data                  *popup,
    if (popup->pending) return;
    popups_displayed--;
    free(popup);
-   e_comp_shape_queue(e_comp_get(NULL));
+   e_comp_shape_queue(e_comp);
 }
 
 static void

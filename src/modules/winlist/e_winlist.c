@@ -104,7 +104,7 @@ e_winlist_show(E_Zone *zone, E_Winlist_Filter filter)
    if (_winlist) return 0;
 
 #ifndef HAVE_WAYLAND_ONLY
-   if (e_comp_get(zone)->comp_type == E_PIXMAP_TYPE_X)
+   if (e_comp->comp_type == E_PIXMAP_TYPE_X)
      {
         _input_window = ecore_x_window_input_new(zone->comp->man->root, 0, 0, 1, 1);
         ecore_x_window_show(_input_window);
@@ -116,9 +116,9 @@ e_winlist_show(E_Zone *zone, E_Winlist_Filter filter)
           }
      }
 #endif
-   if (e_comp_get(zone)->comp_type != E_PIXMAP_TYPE_X)
+   if (e_comp->comp_type != E_PIXMAP_TYPE_X)
      {
-        if (!e_comp_grab_input(e_comp_get(zone), 1, 1))
+        if (!e_comp_grab_input(e_comp, 1, 1))
           return 0;
      }
 
@@ -274,7 +274,7 @@ e_winlist_hide(void)
      }
    else
 #endif
-     e_comp_ungrab_input(e_comp_get(NULL), 1, 1);
+     e_comp_ungrab_input(e_comp, 1, 1);
    if (ec)
      {
         if (ec->shaded)

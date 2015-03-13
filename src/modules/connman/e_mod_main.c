@@ -272,7 +272,7 @@ _econnman_popup_new(E_Connman_Instance *inst)
      return;
 
    inst->popup = e_gadcon_popup_new(inst->gcc, 0);
-   evas = e_comp_get(inst->gcc)->evas;
+   evas = e_comp->evas;
 
    list = e_widget_list_add(evas, 0, 0);
    inst->ui.popup.list = e_widget_ilist_add(evas, 24, 24, NULL);

@@ -33,7 +33,7 @@ _pol_softkey_iconify(E_Zone *zone, Eina_Bool all)
    desk = e_desk_current_get(zone);
    launcher = e_mod_pol_client_launcher_get(zone);
 
-   E_CLIENT_REVERSE_FOREACH(e_comp_get(desk), ec)
+   E_CLIENT_REVERSE_FOREACH(e_comp, ec)
      {
         if (e_client_util_ignored_get(ec)) continue;
         if (!e_client_util_desk_visible(ec, desk)) continue;
@@ -54,7 +54,7 @@ _pol_softkey_icon_add(E_Zone *zone, const char *name)
    Evas_Object *obj, *comp_obj;
    char path[PATH_MAX], group[PATH_MAX];
 
-   obj = edje_object_add(e_comp_get(NULL)->evas);
+   obj = edje_object_add(e_comp->evas);
 
    snprintf(group, sizeof(group), "e/modules/policy-mobile/softkey/%s", name);
    snprintf(path, sizeof(path), "%s/e-module-policy-mobile.edj",
