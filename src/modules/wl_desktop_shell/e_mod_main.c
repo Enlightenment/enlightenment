@@ -1194,9 +1194,9 @@ _e_xdg_shell_cb_surface_get(struct wl_client *client, struct wl_resource *resour
    /* set toplevel client properties */
    ec->icccm.accepts_focus = 1;
    if (!ec->internal)
-     ec->borderless = !ec->internal_elm_win;
+     ec->borderless = 1;
    ec->lock_border = EINA_TRUE;
-   if (!ec->internal)
+   if ((!ec->internal) || (!ec->borderless))
      ec->border.changed = ec->changes.border = !ec->borderless;
    ec->netwm.type = E_WINDOW_TYPE_NORMAL;
    ec->comp_data->set_win_type = EINA_TRUE;
