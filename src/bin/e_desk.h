@@ -93,6 +93,8 @@ EAPI void         e_desk_window_profile_update(void);
 EAPI void         e_desk_flip_cb_set(E_Desk_Flip_Cb cb, const void *data);
 EAPI void         e_desk_flip_end(E_Desk *desk);
 
+EAPI unsigned int e_desks_count(void);
+
 extern EAPI int E_EVENT_DESK_SHOW;
 extern EAPI int E_EVENT_DESK_BEFORE_SHOW;
 extern EAPI int E_EVENT_DESK_AFTER_SHOW;

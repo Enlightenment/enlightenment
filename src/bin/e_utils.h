@@ -47,7 +47,6 @@ EAPI void         e_util_win_auto_resize_fill(Evas_Object *win);
    dialog warning if loaded version is older or newer than current */
 EAPI Eina_Bool    e_util_module_config_check(const char *module_name, int loaded, int current);
 
-EAPI int e_util_comp_desk_count_get(E_Comp *con);
 EAPI E_Config_Binding_Key *e_util_binding_match(const Eina_List *bindlist, Ecore_Event_Key *ev, unsigned int *num, const E_Config_Binding_Key *skip);
 EAPI Eina_Bool e_util_fullscreen_current_any(void);
 EAPI Eina_Bool e_util_fullscreen_any(void);

@@ -707,6 +707,23 @@ e_desk_flip_end(E_Desk *desk)
      }
 }
 
+EAPI unsigned int
+e_desks_count(void)
+{
+   Eina_List *l;
+   E_Zone *zone;
+   unsigned int count = 0;
+
+   EINA_LIST_FOREACH(e_comp->zones, l, zone)
+     {
+        int cx = 0, cy = 0;
+
+        e_zone_desk_count_get(zone, &cx, &cy);
+        count += cx * cy;
+     }
+   return count;
+}
+
 static void
 _e_desk_free(E_Desk *desk)
 {

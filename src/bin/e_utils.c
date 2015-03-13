@@ -833,30 +833,6 @@ e_util_win_auto_resize_fill(Evas_Object *win)
      }
 }
 
-EAPI int
-e_util_comp_desk_count_get(E_Comp *c)
-{
-   Eina_List *zl;
-   E_Zone *zone;
-   int count = 0;
-
-   E_OBJECT_CHECK_RETURN(c, 0);
-   E_OBJECT_TYPE_CHECK_RETURN(c, E_COMP_TYPE, 0);
-   EINA_LIST_FOREACH(c->zones, zl, zone)
-     {
-        int x, y;
-        int cx = 0, cy = 0;
-
-        e_zone_desk_count_get(zone, &cx, &cy);
-        for (x = 0; x < cx; x++)
-          {
-             for (y = 0; y < cy; y++)
-               count += 1;
-          }
-     }
-   return count;
-}
-
 /* local subsystem functions */
 
 static Evas_Object *
