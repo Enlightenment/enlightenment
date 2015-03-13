@@ -3637,46 +3637,45 @@ e_comp_object_effect_mover_del(E_Comp_Object_Mover *prov)
 ////////////////////////////////////
 
 static void
-_e_comp_object_autoclose_cleanup(E_Comp *c, Eina_Bool already_del)
+_e_comp_object_autoclose_cleanup(Eina_Bool already_del)
 {
-   if (c->autoclose.obj)
+   if (e_comp->autoclose.obj)
      {
-        e_comp_ungrab_input(c, 0, 1);
-        if (c->autoclose.del_cb)
-          c->autoclose.del_cb(c->autoclose.data, c->autoclose.obj);
+        e_comp_ungrab_input(e_comp, 0, 1);
+        if (e_comp->autoclose.del_cb)
+          e_comp->autoclose.del_cb(e_comp->autoclose.data, e_comp->autoclose.obj);
         else if (!already_del)
           {
-             evas_object_hide(c->autoclose.obj);
-             E_FREE_FUNC(c->autoclose.obj, evas_object_del);
+             evas_object_hide(e_comp->autoclose.obj);
+             E_FREE_FUNC(e_comp->autoclose.obj, evas_object_del);
           }
-        E_FREE_FUNC(c->autoclose.rect, evas_object_del);
+        E_FREE_FUNC(e_comp->autoclose.rect, evas_object_del);
      }
-   c->autoclose.obj = NULL;
-   c->autoclose.data = NULL;
-   c->autoclose.del_cb = NULL;
-   c->autoclose.key_cb = NULL;
-   E_FREE_FUNC(c->autoclose.key_handler, ecore_event_handler_del);
-   e_comp_shape_queue(c);
+   e_comp->autoclose.obj = NULL;
+   e_comp->autoclose.data = NULL;
+   e_comp->autoclose.del_cb = NULL;
+   e_comp->autoclose.key_cb = NULL;
+   E_FREE_FUNC(e_comp->autoclose.key_handler, ecore_event_handler_del);
+   e_comp_shape_queue(e_comp);
 }
 
 static Eina_Bool
-_e_comp_object_autoclose_key_down_cb(void *data, int type EINA_UNUSED, void *event)
+_e_comp_object_autoclose_key_down_cb(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
 {
    Ecore_Event_Key *ev = event;
    Eina_Bool del = EINA_TRUE;
-   E_Comp *c = data;
 
    /* returning false in key_cb means delete the object */
-   if (c->autoclose.key_cb)
-     del = !c->autoclose.key_cb(c->autoclose.data, ev);
-   if (del) _e_comp_object_autoclose_cleanup(data, 0);
+   if (e_comp->autoclose.key_cb)
+     del = !e_comp->autoclose.key_cb(e_comp->autoclose.data, ev);
+   if (del) _e_comp_object_autoclose_cleanup(0);
    return ECORE_CALLBACK_RENEW;
 }
 
 static void
-_e_comp_object_autoclose_mouse_up_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+_e_comp_object_autoclose_mouse_up_cb(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
-   _e_comp_object_autoclose_cleanup(data, 0);
+   _e_comp_object_autoclose_cleanup(0);
 }
 
 static void
@@ -3708,10 +3707,10 @@ _e_comp_object_autoclose_show(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_
 }
 
 static void
-_e_comp_object_autoclose_del(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
+_e_comp_object_autoclose_del(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
    evas_object_event_callback_del(obj, EVAS_CALLBACK_SHOW, _e_comp_object_autoclose_show);
-   _e_comp_object_autoclose_cleanup(data, 1);
+   _e_comp_object_autoclose_cleanup(1);
    if (e_client_focused_get()) return;
    if (e_config->focus_policy != E_FOCUS_MOUSE)
      e_client_refocus();
