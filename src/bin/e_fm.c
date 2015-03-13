@@ -10389,7 +10389,7 @@ _e_fm2_icon_entry_widget_del(E_Fm2_Icon *ic)
    ic->sd->typebuf.disabled = EINA_FALSE;
    if (ic->keygrab)
      {
-        if (e_comp_evas_find(evas_object_evas_get(ic->obj)))
+        if (evas_object_evas_get(ic->obj) == e_comp->evas)
           e_comp_ungrab_input(e_comp, 0, 1);
      }
    ic->keygrab = 0;

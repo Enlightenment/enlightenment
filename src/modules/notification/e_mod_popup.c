@@ -355,7 +355,7 @@ _notification_popup_new(E_Notification_Notify *n, unsigned id)
    evas_object_show(popup->win);
    if (notification_cfg->dual_screen == POPUP_DISPLAY_POLICY_ALL)
      {
-        EINA_LIST_FOREACH(e_comp_evas_find(evas_object_evas_get(popup->win))->zones, l, zone)
+        EINA_LIST_FOREACH(e_comp->zones, l, zone)
           {
              Evas_Object *o;
              int x, y, w, h;
