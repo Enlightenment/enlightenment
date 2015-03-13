@@ -14,7 +14,6 @@
 
 EAPI void         e_util_wakeup(void);
 EAPI void         e_util_env_set(const char *var, const char *val);
-EAPI E_Zone      *e_util_zone_current_get(E_Manager *man);
 EAPI int          e_util_glob_match(const char *str, const char *glob);
 EAPI int          e_util_glob_case_match(const char *str, const char *glob);
 EAPI int          e_util_head_exec(int head, const char *cmd);

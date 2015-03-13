@@ -51,14 +51,6 @@ e_util_env_set(const char *var, const char *val)
      }
 }
 
-EAPI E_Zone *
-e_util_zone_current_get(E_Manager *man)
-{
-   E_OBJECT_CHECK_RETURN(man, NULL);
-   E_OBJECT_TYPE_CHECK_RETURN(man, E_MANAGER_TYPE, NULL);
-   return e_zone_current_get();
-}
-
 EAPI int
 e_util_glob_match(const char *str, const char *pattern)
 {
