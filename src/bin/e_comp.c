@@ -1632,18 +1632,16 @@ e_comp_client_redirect_toggle(E_Client *ec)
 EAPI Eina_Bool
 e_comp_util_object_is_above_nocomp(Evas_Object *obj)
 {
-   E_Comp *comp;
    Evas_Object *o;
    int cl, ol;
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(obj, EINA_FALSE);
    if (!evas_object_visible_get(obj)) return EINA_FALSE;
-   comp = e_comp_util_evas_object_comp_get(obj);
-   if (!comp->nocomp_ec) return EINA_FALSE;
-   cl = evas_object_layer_get(comp->nocomp_ec->frame);
+   if (!e_comp->nocomp_ec) return EINA_FALSE;
+   cl = evas_object_layer_get(e_comp->nocomp_ec->frame);
    ol = evas_object_layer_get(obj);
    if (cl > ol) return EINA_FALSE;
-   o = evas_object_above_get(comp->nocomp_ec->frame);
+   o = evas_object_above_get(e_comp->nocomp_ec->frame);
    if ((cl == ol) && (evas_object_layer_get(o) == cl))
      {
         do {
