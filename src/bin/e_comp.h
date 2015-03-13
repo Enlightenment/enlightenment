@@ -164,7 +164,6 @@ EAPI void e_comp_shape_queue_block(E_Comp *c, Eina_Bool block);
 EAPI E_Comp_Config *e_comp_config_get(void);
 EAPI const Eina_List *e_comp_list(void);
 EAPI void e_comp_shadows_reset(void);
-EINA_DEPRECATED EAPI E_Comp *e_comp_get(const void *o);
 EAPI Ecore_Window e_comp_top_window_at_xy_get(E_Comp *c, Evas_Coord x, Evas_Coord y);
 EAPI void e_comp_util_wins_print(const E_Comp *c);
 EAPI void e_comp_ignore_win_add(E_Pixmap_Type type, Ecore_Window win);

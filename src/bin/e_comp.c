@@ -1369,13 +1369,6 @@ e_comp_shadows_reset(void)
      e_comp_object_frame_theme_set(ec->frame, E_COMP_OBJECT_FRAME_RESHADOW);
 }
 
-EAPI E_Comp *
-e_comp_get(const void *o EINA_UNUSED)
-{
-   return e_comp;
-}
-
-
 EAPI Ecore_Window
 e_comp_top_window_at_xy_get(E_Comp *c, Evas_Coord x, Evas_Coord y)
 {
