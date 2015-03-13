@@ -171,7 +171,7 @@ _e_comp_fullscreen_check(E_Comp *c)
 {
    E_Client *ec;
 
-   E_CLIENT_REVERSE_FOREACH(c, ec)
+   E_CLIENT_REVERSE_FOREACH(ec)
      {
         Evas_Object *o = ec->frame;
 
@@ -235,7 +235,7 @@ _e_comp_cb_nocomp_begin(E_Comp *c)
    ecf = _e_comp_fullscreen_check(c);
    if (!ecf) return;
    c->nocomp_ec = ecf;
-   E_CLIENT_FOREACH(c, ec)
+   E_CLIENT_FOREACH(ec)
      if (ec != ecf) e_client_redirected_set(ec, 0);
 
    INF("NOCOMP %p: frame %p", ecf, ecf->frame);
@@ -268,7 +268,7 @@ _e_comp_cb_nocomp_end(E_Comp *c)
    INF("COMP RESUME!");
    //ecore_evas_manual_render_set(c->ee, EINA_FALSE);
    ecore_evas_show(c->ee);
-   E_CLIENT_FOREACH(c, ec)
+   E_CLIENT_FOREACH(ec)
      {
         e_client_redirected_set(ec, 1);
         if (ec->visible && (!ec->input_only))
@@ -888,7 +888,7 @@ _e_comp_screensaver_off(void *data EINA_UNUSED, int type EINA_UNUSED, void *even
         edje_object_signal_emit(zone->over, "e,state,screensaver,off", "e");
         e_zone_fade_handle(zone, 0, 0.5);
      }
-   E_CLIENT_FOREACH(e_comp, ec)
+   E_CLIENT_FOREACH(ec)
      if (e_comp_object_damage_exists(ec->frame))
        e_comp_object_render_update_add(ec->frame);
 
@@ -1365,7 +1365,7 @@ e_comp_shadows_reset(void)
 
    _e_comp_fps_update(e_comp);
    E_LIST_FOREACH(e_comp->zones, e_comp_canvas_zone_update);
-   E_CLIENT_FOREACH(e_comp, ec)
+   E_CLIENT_FOREACH(ec)
      e_comp_object_frame_theme_set(ec->frame, E_COMP_OBJECT_FRAME_RESHADOW);
 }
 

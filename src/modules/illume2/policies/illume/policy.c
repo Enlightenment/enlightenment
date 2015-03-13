@@ -129,7 +129,7 @@ _policy_border_hide_above(E_Client *ec)
 
    if (!ec) return;
 
-   E_CLIENT_REVERSE_FOREACH(e_comp, b)
+   E_CLIENT_REVERSE_FOREACH(b)
      {
         if (e_client_util_ignored_get(b)) continue;
         if (b->layer <= ec->layer) break;
@@ -157,7 +157,7 @@ _policy_border_hide_below(E_Client *ec)
 
    if (!ec) return;
 
-   E_CLIENT_FOREACH(e_comp, b)
+   E_CLIENT_FOREACH(b)
      {
         if (e_client_util_ignored_get(b)) continue;
         /* break if it's the same client */
@@ -209,7 +209,7 @@ _policy_border_show_below(E_Client *ec)
           }
      }
 
-    E_CLIENT_FOREACH(e_comp, b)
+    E_CLIENT_FOREACH(b)
      {
         if (e_client_util_ignored_get(b)) continue;
         /* break if it's the same border */

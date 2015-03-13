@@ -435,7 +435,7 @@ e_mod_pol_desk_add(E_Desk *desk)
    eina_hash_add(hash_pol_desks, &desk, pd);
 
    /* add clients */
-   E_CLIENT_FOREACH(e_comp, ec)
+   E_CLIENT_FOREACH(ec)
      {
         if (pd->desk == ec->desk)
           _pol_client_add(ec);

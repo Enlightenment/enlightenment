@@ -507,7 +507,7 @@ _desk_config_apply(E_Desk *d, int old_nb_stacks, int new_nb_stacks)
      {
         E_Client *ec;
 
-        E_CLIENT_FOREACH(e_comp, ec)
+        E_CLIENT_FOREACH(ec)
           {
              _client_apply_settings(ec, NULL);
           }
@@ -519,7 +519,7 @@ _desk_config_apply(E_Desk *d, int old_nb_stacks, int new_nb_stacks)
         /* Add all the existing windows. */
         E_Client *ec;
 
-        E_CLIENT_FOREACH(e_comp, ec)
+        E_CLIENT_FOREACH(ec)
           {
              _add_client(ec);
           }
@@ -1503,7 +1503,7 @@ e_modapi_init(E_Module *m)
    {
       E_Client *ec;
 
-      E_CLIENT_FOREACH(e_comp, ec)
+      E_CLIENT_FOREACH(ec)
       {
          _add_client(ec);
       }

@@ -1108,7 +1108,7 @@ _e_client_under_pointer_helper(E_Desk *desk, E_Client *exclude, int x, int y)
 {
    E_Client *ec = NULL, *cec;
 
-   E_CLIENT_REVERSE_FOREACH(e_comp, cec)
+   E_CLIENT_REVERSE_FOREACH(cec)
      {
         /* If a border was specified which should be excluded from the list
          * (because it will be closed shortly for example), skip */
@@ -2309,7 +2309,7 @@ e_client_idler_before(void)
         _e_client_hook_call(E_CLIENT_HOOK_EVAL_POST_FRAME_ASSIGN, ec);
      }
 
-   E_CLIENT_FOREACH(e_comp, ec)
+   E_CLIENT_FOREACH(ec)
      {
         // pass 2 - show windows needing show
         if ((ec->changes.visible) && (ec->visible) &&
@@ -2334,7 +2334,7 @@ e_client_idler_before(void)
      _e_client_layout_cb(e_comp);
 
    // pass 3 - hide windows needing hide and eval (main eval)
-   E_CLIENT_FOREACH(e_comp, ec)
+   E_CLIENT_FOREACH(ec)
      {
         if (e_object_is_del(E_OBJECT(ec))) continue;
 

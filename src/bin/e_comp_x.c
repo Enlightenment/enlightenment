@@ -4697,7 +4697,7 @@ _e_comp_x_randr_change(void *data EINA_UNUSED, int ev_type EINA_UNUSED, void *ev
         _e_comp_x_xinerama_setup(e_comp->man->w, e_comp->man->h);
 
         e_comp_canvas_update();
-        E_CLIENT_FOREACH(e_comp, ec)
+        E_CLIENT_FOREACH(ec)
           {
              if (!e_client_util_ignored_get(ec))
                _e_comp_x_client_zone_geometry_set(ec);
@@ -4715,7 +4715,7 @@ _e_comp_x_ee_resize(Ecore_Evas *ee EINA_UNUSED)
    _e_comp_x_xinerama_setup(e_comp->man->w, e_comp->man->h);
 
    e_comp_canvas_update();
-   E_CLIENT_FOREACH(e_comp, ec)
+   E_CLIENT_FOREACH(ec)
      {
         if (!e_client_util_ignored_get(ec))
           _e_comp_x_client_zone_geometry_set(ec);
@@ -5168,7 +5168,7 @@ _e_comp_x_setup(E_Comp *c, Ecore_X_Window root, int w, int h)
    {
       E_Client *ec;
 
-      E_CLIENT_REVERSE_FOREACH(c, ec)
+      E_CLIENT_REVERSE_FOREACH(ec)
         if (!e_client_util_ignored_get(ec))
           {
              ec->want_focus = ec->take_focus = 1;

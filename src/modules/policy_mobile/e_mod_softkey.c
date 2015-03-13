@@ -33,7 +33,7 @@ _pol_softkey_iconify(E_Zone *zone, Eina_Bool all)
    desk = e_desk_current_get(zone);
    launcher = e_mod_pol_client_launcher_get(zone);
 
-   E_CLIENT_REVERSE_FOREACH(e_comp, ec)
+   E_CLIENT_REVERSE_FOREACH(ec)
      {
         if (e_client_util_ignored_get(ec)) continue;
         if (!e_client_util_desk_visible(ec, desk)) continue;

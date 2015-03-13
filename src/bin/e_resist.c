@@ -56,7 +56,7 @@ e_resist_client_position(E_Comp *c, Eina_List *skiplist,
    /* FIXME: need to add resist or complete BLOCKS for things like ibar */
    /* can add code here to add more fake obstacles with custom resist values */
    /* here if need be - ie xinerama middle between screens and panels etc. */
-   E_CLIENT_FOREACH(c, ec)
+   E_CLIENT_FOREACH(ec)
      {
         if (e_client_util_ignored_get(ec) || (!evas_object_visible_get(ec->frame))) continue;
         if (ec->offer_resistance && (!eina_list_data_find(skiplist, ec)))

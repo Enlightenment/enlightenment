@@ -111,7 +111,7 @@ e_desk_client_top_visible_get(const E_Desk *desk)
    E_OBJECT_CHECK_RETURN(desk, NULL);
    E_OBJECT_TYPE_CHECK_RETURN(desk, E_DESK_TYPE, NULL);
 
-   E_CLIENT_REVERSE_FOREACH(e_comp, ec)
+   E_CLIENT_REVERSE_FOREACH(ec)
      if (e_client_util_desk_visible(ec, desk) && evas_object_visible_get(ec->frame)) return ec;
    return NULL;
 }
@@ -342,7 +342,7 @@ e_desk_deskshow(E_Zone *zone)
         /* uniconify raises windows and changes stacking order
          * go top-down to avoid skipping windows
          */
-        E_CLIENT_REVERSE_FOREACH(zone->comp, ec)
+        E_CLIENT_REVERSE_FOREACH(ec)
           {
              if (e_client_util_ignored_get(ec)) continue;
              if (ec->desk != desk) continue;
@@ -358,7 +358,7 @@ e_desk_deskshow(E_Zone *zone)
         /*
          * iconify raises, so we ahve to start from the bottom so we are going forward
          */
-        E_CLIENT_FOREACH(zone->comp, ec)
+        E_CLIENT_FOREACH(ec)
           {
              if (e_client_util_ignored_get(ec)) continue;
              if (ec->desk != desk) continue;
@@ -693,7 +693,7 @@ e_desk_flip_end(E_Desk *desk)
          * user has flipped to this desk. let's be helpful and
          * focus a random window!
          */
-         E_CLIENT_REVERSE_FOREACH(e_comp, ec)
+         E_CLIENT_REVERSE_FOREACH(ec)
            {
               /* start with top and go down... */
               if (e_client_util_ignored_get(ec)) continue;
@@ -825,7 +825,7 @@ _e_desk_show_begin(E_Desk *desk, int dx, int dy)
         _e_desk_flip_cb(_e_desk_flip_data, desk, dx, dy, 1);
         return;
      }
-   E_CLIENT_FOREACH(desk->zone->comp, ec)
+   E_CLIENT_FOREACH(ec)
      {
         if (e_client_util_ignored_get(ec) || (ec->desk->zone != desk->zone) || (ec->iconic)) continue;
         if (ec->moving)
@@ -867,7 +867,7 @@ _e_desk_hide_begin(E_Desk *desk, int dx, int dy)
         _e_desk_flip_cb(_e_desk_flip_data, desk, dx, dy, 0);
         return;
      }
-   E_CLIENT_FOREACH(desk->zone->comp, ec)
+   E_CLIENT_FOREACH(ec)
      {
         if (e_client_util_ignored_get(ec) || (ec->desk->zone != desk->zone) || (ec->iconic)) continue;
         if (ec->moving) continue;

@@ -26,7 +26,7 @@ _e_mod_drm_cb_activate(void *data, int type EINA_UNUSED, void *event)
         session_state = EINA_TRUE;
 
         ecore_evas_show(c->ee);
-        E_CLIENT_FOREACH(c, ec)
+        E_CLIENT_FOREACH(ec)
           {
              if (ec->visible && (!ec->input_only))
                e_comp_object_damage(ec->frame, 0, 0, ec->w, ec->h);

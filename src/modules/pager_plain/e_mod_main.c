@@ -481,7 +481,7 @@ _pager_desk_new(Pager *p, E_Desk *desk, int xpos, int ypos, Eina_Bool invert)
    edje_object_part_swallow(pd->o_desk, "e.swallow.content", pd->o_layout);
    evas_object_show(o);
 
-   E_CLIENT_FOREACH(desk->zone->comp, ec)
+   E_CLIENT_FOREACH(ec)
      {
         Pager_Win *pw;
 

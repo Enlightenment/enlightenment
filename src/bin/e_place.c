@@ -9,7 +9,7 @@ e_place_zone_region_smart_cleanup(E_Zone *zone)
 
    E_OBJECT_CHECK(zone);
    desk = e_desk_current_get(zone);
-   E_CLIENT_FOREACH(zone->comp, ec)
+   E_CLIENT_FOREACH(ec)
      {
         /* Build a list of windows on this desktop and not iconified. */
         if ((ec->desk == desk) && (!ec->iconic) &&
@@ -63,7 +63,7 @@ _e_place_coverage_client_add(E_Desk *desk, Eina_List *skiplist, int ar, int x, i
    int iw, ih;
    int x0, x00, yy0, y00;
 
-   E_CLIENT_FOREACH(desk->zone->comp, ec)
+   E_CLIENT_FOREACH(ec)
      {
         if (eina_list_data_find(skiplist, ec)) continue;
         if (e_client_util_ignored_get(ec)) continue;
@@ -247,7 +247,7 @@ e_place_desk_region_smart(E_Desk *desk, Eina_List *skiplist, int x, int y, int w
           }
      }
 
-   E_CLIENT_FOREACH(desk->zone->comp, ec)
+   E_CLIENT_FOREACH(ec)
      {
         int bx, by, bw, bh;
 

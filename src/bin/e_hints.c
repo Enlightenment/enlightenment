@@ -347,7 +347,7 @@ e_hints_client_stacking_set(void)
         Eina_List *ll = NULL;
 #endif
         clients = calloc(c, sizeof(Ecore_X_Window));
-        E_CLIENT_FOREACH(e_comp, ec)
+        E_CLIENT_FOREACH(ec)
           {
              if (e_pixmap_type_get(ec->pixmap) != E_PIXMAP_TYPE_X)
                {

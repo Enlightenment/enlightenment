@@ -712,11 +712,11 @@ struct E_Client
 # define EC_CHANGED(EC) EC->changed = 1
 #endif
 
-#define E_CLIENT_FOREACH(COMP, EC) \
-  for (EC = e_client_bottom_get(COMP); EC; EC = e_client_above_get(EC))
+#define E_CLIENT_FOREACH(EC) \
+  for (EC = e_client_bottom_get(e_comp); EC; EC = e_client_above_get(EC))
 
-#define E_CLIENT_REVERSE_FOREACH(COMP, EC) \
-  for (EC = e_client_top_get(COMP); EC; EC = e_client_below_get(EC))
+#define E_CLIENT_REVERSE_FOREACH(EC) \
+  for (EC = e_client_top_get(e_comp); EC; EC = e_client_below_get(EC))
 
 
 EAPI extern int E_EVENT_CLIENT_ADD;

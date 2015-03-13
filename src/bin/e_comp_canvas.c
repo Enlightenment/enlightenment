@@ -396,7 +396,7 @@ e_comp_canvas_update(void)
                   E_Client *ec;
 
                   printf("reassign all clients from deleted zone %p\n", zone);
-                  E_CLIENT_FOREACH(e_comp, ec)
+                  E_CLIENT_FOREACH(ec)
                     {
                        if (ec->zone == zone)
                          {

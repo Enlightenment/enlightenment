@@ -660,7 +660,7 @@ _e_sys_cb_logout_timer(void *data __UNUSED__)
    E_Client *ec;
    int pending = 0;
 
-   E_CLIENT_FOREACH(e_comp, ec)
+   E_CLIENT_FOREACH(ec)
      {
         if (e_client_util_ignored_get(ec)) continue;
         if (!ec->internal) pending++;

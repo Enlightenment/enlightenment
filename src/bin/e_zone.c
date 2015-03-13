@@ -275,7 +275,7 @@ e_zone_reconfigure_clients(E_Zone *zone, int dx, int dy, int dw, int dh)
 {
    E_Client *ec;
 
-   E_CLIENT_FOREACH(zone->comp, ec)
+   E_CLIENT_FOREACH(ec)
      {
         if (ec->zone != zone) continue;
 
@@ -688,7 +688,7 @@ e_zone_desk_count_set(E_Zone *zone,
                {
                   desk = zone->desks[x + (y * zone->desk_x_count)];
 
-                  E_CLIENT_FOREACH(zone->comp, ec)
+                  E_CLIENT_FOREACH(ec)
                     {
                        if (ec->desk == desk)
                          e_client_desk_set(ec, new_desk);
@@ -706,7 +706,7 @@ e_zone_desk_count_set(E_Zone *zone,
                {
                   desk = zone->desks[x + (y * zone->desk_x_count)];
 
-                  E_CLIENT_FOREACH(zone->comp, ec)
+                  E_CLIENT_FOREACH(ec)
                     {
                        if (ec->desk == desk)
                          e_client_desk_set(ec, new_desk);

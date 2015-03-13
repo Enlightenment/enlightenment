@@ -408,7 +408,7 @@ _ibox_fill(IBox *b)
    int ok;
    int mw, mh, h;
 
-   E_CLIENT_FOREACH(b->zone->comp, ec)
+   E_CLIENT_FOREACH(ec)
      {
         if (e_client_util_ignored_get(ec)) continue;
         ok = 0;
