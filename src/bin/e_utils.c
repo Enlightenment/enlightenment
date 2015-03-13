@@ -99,19 +99,6 @@ e_util_glob_case_match(const char *str, const char *pattern)
    return 0;
 }
 
-
-EAPI E_Zone *
-e_util_comp_zone_number_get(int c_num, int zone_num)
-{
-   return e_comp_zone_number_get(e_comp, zone_num);
-}
-
-EAPI E_Zone *
-e_util_comp_zone_id_get(int c_num, int id)
-{
-   return e_comp_zone_id_get(e_comp, id);
-}
-
 EAPI int
 e_util_head_exec(int head, const char *cmd)
 {

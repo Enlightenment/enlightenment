@@ -17,8 +17,6 @@ EAPI void         e_util_env_set(const char *var, const char *val);
 EAPI E_Zone      *e_util_zone_current_get(E_Manager *man);
 EAPI int          e_util_glob_match(const char *str, const char *glob);
 EAPI int          e_util_glob_case_match(const char *str, const char *glob);
-EINA_DEPRECATED EAPI E_Zone      *e_util_comp_zone_id_get(int con_num, int id);
-EINA_DEPRECATED EAPI E_Zone      *e_util_comp_zone_number_get(int con_num, int zone_num);
 EAPI int          e_util_head_exec(int head, const char *cmd);
 EAPI int          e_util_strcasecmp(const char *s1, const char *s2);
 EAPI int          e_util_strcmp(const char *s1, const char *s2);
