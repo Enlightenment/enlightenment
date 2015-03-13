@@ -309,9 +309,9 @@ _notification_popup_new(E_Notification_Notify *n, unsigned id)
       case POPUP_DISPLAY_POLICY_MULTI:
         if ((notification_cfg->corner == CORNER_BR) ||
             (notification_cfg->corner == CORNER_TR))
-          zone = eina_list_last_data_get(e_util_comp_current_get()->zones);
+          zone = eina_list_last_data_get(e_comp->zones);
         else
-          zone = eina_list_data_get(e_util_comp_current_get()->zones);
+          zone = eina_list_data_get(e_comp->zones);
         break;
      }
 

@@ -249,7 +249,7 @@ _e_mod_quickpanel_cb_border_add(void *data __UNUSED__, int type __UNUSED__, void
         int zn = 0;
 
         /* find this zone */
-        if (!(comp = e_util_comp_current_get()))
+        if (!(comp = e_comp))
           return ECORE_CALLBACK_PASS_ON;
         zn = ev->ec->illume.quickpanel.zone;
         zone = e_comp_zone_number_get(zn);
@@ -300,7 +300,7 @@ _e_mod_quickpanel_cb_border_remove(void *data __UNUSED__, int type __UNUSED__, v
         int zn = 0;
 
         /* find this zone */
-        if (!(comp = e_util_comp_current_get()))
+        if (!(comp = e_comp))
           return ECORE_CALLBACK_PASS_ON;
         zn = ev->ec->illume.quickpanel.zone;
         zone = e_comp_zone_number_get(zn);

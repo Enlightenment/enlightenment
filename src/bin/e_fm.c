@@ -7588,7 +7588,7 @@ _e_fm2_cb_icon_mouse_move(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNU
              sl = e_fm2_selected_list_get(ic->sd->obj);
              if (eina_list_count(sl) > 1)
                {
-                  layout = e_layout_add(e_util_comp_current_get()->evas);
+                  layout = e_layout_add(e_comp->evas);
                   e_layout_freeze(layout);
                   e_layout_virtual_size_set(layout, ic->sd->w, ic->sd->h);
                }
@@ -7611,7 +7611,7 @@ _e_fm2_cb_icon_mouse_move(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNU
                   if (ici->ic->obj) evas_object_hide(ici->ic->obj);
                   if (ici->ic->obj_icon) evas_object_hide(ici->ic->obj_icon);
 
-                  o = edje_object_add(e_util_comp_current_get()->evas);
+                  o = edje_object_add(e_comp->evas);
                   if (_e_fm2_view_mode_get(ici->ic->sd) == E_FM2_VIEW_MODE_LIST)
                     {
                        if (ici->ic->sd->config->icon.fixed.w)
@@ -8970,8 +8970,8 @@ _e_fm2_menu(Evas_Object *obj, unsigned int timestamp)
           sd->icon_menu.end.func(sd->icon_menu.end.data, sd->obj, mn, NULL);
      }
 
-   ecore_evas_pointer_xy_get(e_util_comp_current_get()->ee, &x, &y);
-   zone = e_zone_current_get(e_util_comp_current_get());
+   ecore_evas_pointer_xy_get(e_comp->ee, &x, &y);
+   zone = e_zone_current_get(e_comp);
    if (!zone)
      {
         e_object_del(E_OBJECT(mn));
@@ -9303,8 +9303,8 @@ _e_fm2_icon_menu(E_Fm2_Icon *ic, Evas_Object *obj, unsigned int timestamp)
           sd->icon_menu.end.func(sd->icon_menu.end.data, sd->obj, mn, &(ic->info));
      }
 
-   ecore_evas_pointer_xy_get(e_util_comp_current_get()->ee, &x, &y);
-   zone = e_zone_current_get(e_util_comp_current_get());
+   ecore_evas_pointer_xy_get(e_comp->ee, &x, &y);
+   zone = e_zone_current_get(e_comp);
    if (!zone)
      {
         e_object_del(E_OBJECT(mn));
@@ -11733,8 +11733,8 @@ e_fm2_drop_menu(Evas_Object *obj, char *args)
                                                    "e/fileman/default/button/abort"),
                              "e/fileman/default/button/abort");
 
-   ecore_evas_pointer_xy_get(e_util_comp_current_get()->ee, &x, &y);
-   zone = e_zone_current_get(e_util_comp_current_get());
+   ecore_evas_pointer_xy_get(e_comp->ee, &x, &y);
+   zone = e_zone_current_get(e_comp);
    if (!zone) goto error;
    e_menu_activate_mouse(menu, zone, x, y, 1, 1, E_MENU_POP_DIRECTION_DOWN, 0);
    return;

@@ -1916,7 +1916,7 @@ _e_fwin_cb_key_down(void *data,
              E_Comp *comp;
              const char *dev, *path;
 
-             comp = e_util_comp_current_get();
+             comp = e_comp;
              e_fm2_path_get(page->fm_obj, &dev, &path);
              e_fwin_new(comp, dev, path);
              return;

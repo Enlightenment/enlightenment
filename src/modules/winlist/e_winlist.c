@@ -284,7 +284,7 @@ e_winlist_hide(void)
           }
         if (e_config->winlist_list_move_after_select)
           {
-             e_client_zone_set(ec, e_zone_current_get(e_util_comp_current_get()));
+             e_client_zone_set(ec, e_zone_current_get(e_comp));
              e_client_desk_set(ec, e_desk_current_get(ec->zone));
           }
         else if (ec->desk)

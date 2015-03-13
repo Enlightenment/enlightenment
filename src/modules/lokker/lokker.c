@@ -564,7 +564,7 @@ _lokker_cb_zone_del(void *data EINA_UNUSED,
    E_Event_Zone_Del *ev = event;
    Eina_List *l;
    if (!edd) return ECORE_CALLBACK_PASS_ON;
-   if ((eina_list_count(e_util_comp_current_get()->zones) == 1) && (e_config->desklock_login_box_zone == -2))
+   if ((eina_list_count(e_comp->zones) == 1) && (e_config->desklock_login_box_zone == -2))
      edd->move_handler = ecore_event_handler_del(edd->move_handler);
 
    l = _lokker_popup_find(ev->zone);

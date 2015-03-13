@@ -86,7 +86,7 @@ e_font_available_list(void)
    const char *evas_font;
    E_Comp *c;
 
-   c = e_util_comp_current_get();
+   c = e_comp;
 
    evas_fonts = evas_font_available_list(c->evas);
 

@@ -766,7 +766,7 @@ _e_sys_logout_begin(E_Sys_Action a_after, Eina_Bool raw)
    /* start logout - at end do the a_after action */
    if (!raw)
      {
-        od = e_obj_dialog_new(e_util_comp_current_get(),
+        od = e_obj_dialog_new(e_comp,
                               _("Logout in progress"), "E", "_sys_logout");
         e_obj_dialog_obj_theme_set(od, "base/theme/sys", "e/sys/logout");
         e_obj_dialog_obj_part_text_set(od, "e.textblock.message",

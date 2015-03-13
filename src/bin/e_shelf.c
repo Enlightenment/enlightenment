@@ -831,7 +831,7 @@ e_shelf_desk_visible(const E_Shelf *es, const E_Desk *desk)
    EINA_SAFETY_ON_NULL_RETURN_VAL(es, EINA_FALSE);
    if (!desk)
      {
-        EINA_LIST_FOREACH(e_util_comp_current_get()->zones, ll, zone)
+        EINA_LIST_FOREACH(e_comp->zones, ll, zone)
           {
              desk = e_desk_current_get(zone);
              if (e_shelf_desk_visible(es, desk)) return EINA_TRUE;

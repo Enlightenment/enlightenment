@@ -929,7 +929,7 @@ _evry_cb_mouse(void *data, int type, void *event)
              memcpy(sel + sel_length + s_len, "\r\n", 2);
              sel_length += s_len + 2;
 
-             d = e_drag_new(e_util_comp_current_get()),
+             d = e_drag_new(e_comp),
                             ev->x, ev->y,
                             drag_types, 1, sel, sel_length, NULL,
                             _evry_cb_drag_finished);
