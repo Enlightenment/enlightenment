@@ -2418,7 +2418,7 @@ e_client_new(E_Pixmap *cp, int first_map, int internal)
    if (!ec) return NULL;
    e_object_del_func_set(E_OBJECT(ec), E_OBJECT_CLEANUP_FUNC(_e_client_del));
 
-#ifdef HAVE_WAYLAND_CLIENTS
+#ifdef HAVE_WAYLAND
    uuid_generate(ec->uuid);
 #endif
 
