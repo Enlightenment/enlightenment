@@ -308,7 +308,7 @@ _e_comp_client_update(E_Client *ec)
 
    e_pixmap_size_get(ec->pixmap, &pw, &ph);
 
-   if (e_pixmap_dirty_get(ec->pixmap) && (!ec->comp->nocomp))
+   if (e_pixmap_dirty_get(ec->pixmap) && (!e_comp->nocomp))
      {
         int w, h;
 
@@ -328,7 +328,7 @@ _e_comp_client_update(E_Client *ec)
                e_comp_object_render_update_add(ec->frame);
           }
      }
-   if ((!ec->comp->saver) && e_pixmap_size_get(ec->pixmap, &pw, &ph))
+   if ((!e_comp->saver) && e_pixmap_size_get(ec->pixmap, &pw, &ph))
      {
         //INF("PX DIRTY: PX(%dx%d) CLI(%dx%d)", pw, ph, ec->client.w, ec->client.h);
         e_pixmap_image_refresh(ec->pixmap);
@@ -635,7 +635,7 @@ _e_comp_shapes_update_comp_client_shape_comp_helper(E_Client *ec, Eina_Tiler *tb
           {
              x = rect->x, y = rect->y, w = rect->w, h = rect->h;
              x += ec->client.x, y += ec->client.y;
-             E_RECTS_CLIP_TO_RECT(x, y, w, h, ec->comp->man->x, ec->comp->man->y, ec->comp->man->w, ec->comp->man->h);
+             E_RECTS_CLIP_TO_RECT(x, y, w, h, e_comp->man->x, e_comp->man->y, e_comp->man->w, e_comp->man->h);
              if ((w < 1) || (h < 1)) continue;
    //#ifdef SHAPE_DEBUG not sure we can shape check these?
              //r = E_NEW(Eina_Rectangle, 1);
@@ -1626,7 +1626,7 @@ e_comp_client_redirect_toggle(E_Client *ec)
    ec->unredirected_single = !ec->unredirected_single;
    e_client_redirected_set(ec, !ec->redirected);
    ec->no_shape_cut = !ec->redirected;
-   e_comp_shape_queue(ec->comp);
+   e_comp_shape_queue(e_comp);
 }
 
 EAPI Eina_Bool

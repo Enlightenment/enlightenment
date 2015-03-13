@@ -2472,7 +2472,7 @@ e_comp_object_client_add(E_Client *ec)
    EINA_SAFETY_ON_NULL_RETURN_VAL(ec, NULL);
    if (ec->frame) return NULL;
    _e_comp_smart_init();
-   o = evas_object_smart_add(ec->comp->evas, _e_comp_smart);
+   o = evas_object_smart_add(e_comp->evas, _e_comp_smart);
    cw = evas_object_smart_data_get(o);
    evas_object_data_set(o, "E_Client", ec);
    cw->ec = ec;
@@ -3199,7 +3199,7 @@ e_comp_object_native_surface_set(Evas_Object *obj, Eina_Bool set)
    if (set)
      {
         /* native requires gl enabled, texture from pixmap enabled, and a non-shaped client */
-        set = (cw->ec->comp->gl && e_comp_config_get()->texture_from_pixmap && (!cw->ec->shaped));
+        set = (e_comp->gl && e_comp_config_get()->texture_from_pixmap && (!cw->ec->shaped));
         if (set)
           set = e_pixmap_native_surface_init(cw->ec->pixmap, &ns);
      }

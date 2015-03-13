@@ -651,7 +651,7 @@ _e_comp_x_client_stack(E_Client *ec)
    /* just layer stack */
    if (!win)
      {
-        win = ec->comp->layers[e_comp_canvas_layer_map(ec->layer)].win;
+        win = e_comp->layers[e_comp_canvas_layer_map(ec->layer)].win;
         mode = ECORE_X_WINDOW_STACK_BELOW;
      }
    ecore_x_window_configure(_e_comp_x_client_window_get(ec),
@@ -659,7 +659,7 @@ _e_comp_x_client_stack(E_Client *ec)
                             ECORE_X_WINDOW_CONFIGURE_MASK_STACK_MODE,
                             0, 0, 0, 0, 0, win, mode);
    _e_comp_x_post_client_idler_add(ec);
-   ec->comp->x_comp_data->restack = 1;
+   e_comp->x_comp_data->restack = 1;
    EINA_LIST_FOREACH(ec->e.state.video_child, l, ec2)
      evas_object_stack_below(ec2->frame, ec->frame);
 }
@@ -940,13 +940,11 @@ _e_comp_x_evas_stack_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void 
 }
 
 static void
-_e_comp_x_evas_unfullscreen_zoom_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+_e_comp_x_evas_unfullscreen_zoom_cb(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
-   E_Client *ec = data;
-
    if ((screen_size.width != -1) && (screen_size.height != -1))
      {
-        ecore_x_randr_screen_primary_output_size_set(ec->comp->man->root,
+        ecore_x_randr_screen_primary_output_size_set(e_comp->man->root,
                                                      screen_size_index);
         screen_size.width = -1;
         screen_size.height = -1;
@@ -960,11 +958,11 @@ _e_comp_x_evas_fullscreen_zoom_cb(void *data, Evas_Object *obj EINA_UNUSED, void
    Ecore_X_Randr_Screen_Size_MM *sizes;
    int num_sizes, i, best_size_index = 0;
 
-   ecore_x_randr_screen_primary_output_current_size_get(ec->comp->man->root,
+   ecore_x_randr_screen_primary_output_current_size_get(e_comp->man->root,
                                                         &screen_size.width,
                                                         &screen_size.height,
                                                         NULL, NULL, NULL);
-   sizes = ecore_x_randr_screen_primary_output_sizes_get(ec->comp->man->root,
+   sizes = ecore_x_randr_screen_primary_output_sizes_get(e_comp->man->root,
                                                          &num_sizes);
    if (sizes)
      {
@@ -989,7 +987,7 @@ _e_comp_x_evas_fullscreen_zoom_cb(void *data, Evas_Object *obj EINA_UNUSED, void
             ((best_size.width != screen_size.width) ||
              (best_size.height != screen_size.height)))
           {
-             if (ecore_x_randr_screen_primary_output_size_set(ec->comp->man->root,
+             if (ecore_x_randr_screen_primary_output_size_set(e_comp->man->root,
                                                               best_size_index))
                screen_size_index = best_size_index;
              evas_object_geometry_set(ec->frame, 0, 0, best_size.width, best_size.height);
@@ -1187,7 +1185,7 @@ _e_comp_x_show_helper(E_Client *ec)
              _e_comp_x_post_client_idler_add(ec);
              ec->post_move = 1;
              ec->post_resize = 1;
-             ec->comp->x_comp_data->restack = 1;
+             e_comp->x_comp_data->restack = 1;
           }
      }
 }
@@ -1296,7 +1294,7 @@ _e_comp_x_hide(void *data EINA_UNUSED, int type EINA_UNUSED, Ecore_X_Event_Windo
           }
      }
    if (hid)
-     _e_comp_x_focus_check(ec->comp);
+     _e_comp_x_focus_check(e_comp);
    return ECORE_CALLBACK_PASS_ON;
 }
 
@@ -1468,7 +1466,7 @@ _e_comp_x_configure_request(void *data  EINA_UNUSED, int type EINA_UNUSED, Ecore
              ec->saved.x = x;
              ec->saved.y = y;
 
-             zone = e_comp_zone_xy_get(ec->comp, x, y);
+             zone = e_comp_zone_xy_get(e_comp, x, y);
              if (zone && (zone->x || zone->y))
                {
                   ec->saved.x -= zone->x;
@@ -1478,13 +1476,13 @@ _e_comp_x_configure_request(void *data  EINA_UNUSED, int type EINA_UNUSED, Ecore
         else
           {
              /* client is completely outside the screen, policy does not allow */
-             if (((!E_INTERSECTS(x, y, ec->w, ec->h, ec->comp->man->x, ec->comp->man->y, ec->comp->man->w - 5, ec->comp->man->h - 5)) &&
+             if (((!E_INTERSECTS(x, y, ec->w, ec->h, e_comp->man->x, e_comp->man->y, e_comp->man->w - 5, e_comp->man->h - 5)) &&
                  (e_config->screen_limits != E_CLIENT_OFFSCREEN_LIMIT_ALLOW_FULL)) ||
                  /* client is partly outside the zone, policy does not allow */
-                 (((!E_INSIDE(x, y, ec->comp->man->x, ec->comp->man->y, ec->comp->man->w - 5, ec->comp->man->h - 5)) &&
-                  (!E_INSIDE(x + ec->w, y, ec->comp->man->x, ec->comp->man->y, ec->comp->man->w - 5, ec->comp->man->h - 5)) &&
-                  (!E_INSIDE(x, y + ec->h, ec->comp->man->x, ec->comp->man->y, ec->comp->man->w - 5, ec->comp->man->h - 5)) &&
-                  (!E_INSIDE(x + ec->w, y + ec->h, ec->comp->man->x, ec->comp->man->y, ec->comp->man->w - 5, ec->comp->man->h - 5))) &&
+                 (((!E_INSIDE(x, y, e_comp->man->x, e_comp->man->y, e_comp->man->w - 5, e_comp->man->h - 5)) &&
+                  (!E_INSIDE(x + ec->w, y, e_comp->man->x, e_comp->man->y, e_comp->man->w - 5, e_comp->man->h - 5)) &&
+                  (!E_INSIDE(x, y + ec->h, e_comp->man->x, e_comp->man->y, e_comp->man->w - 5, e_comp->man->h - 5)) &&
+                  (!E_INSIDE(x + ec->w, y + ec->h, e_comp->man->x, e_comp->man->y, e_comp->man->w - 5, e_comp->man->h - 5))) &&
                   (e_config->screen_limits == E_CLIENT_OFFSCREEN_LIMIT_ALLOW_NONE))
                 )
                e_comp_object_util_center(ec->frame);
@@ -1860,7 +1858,7 @@ _e_comp_x_message(void *data EINA_UNUSED, int type EINA_UNUSED, Ecore_X_Event_Cl
                {
                   if (e_util_strcmp(p, ec->desk->window_profile))
                     {
-                       E_Desk *desk = e_comp_desk_window_profile_get(ec->comp, p);
+                       E_Desk *desk = e_comp_desk_window_profile_get(e_comp, p);
                        if (desk) e_client_desk_set(ec, desk);
                     }
                }
@@ -1885,7 +1883,7 @@ _e_comp_x_message(void *data EINA_UNUSED, int type EINA_UNUSED, Ecore_X_Event_Cl
              break;
 
            default:
-             if (e_client_action_get() || ec->comp->nocomp)
+             if (e_client_action_get() || e_comp->nocomp)
                {
                   /* be helpful and ignore activates during window actions, but still set urgent */
                   e_client_urgent_set(ec, 1);
@@ -1942,8 +1940,8 @@ _e_comp_x_message(void *data EINA_UNUSED, int type EINA_UNUSED, Ecore_X_Event_Cl
         x = ev->data.l[1];
         y = ev->data.l[2];
         e_int_client_menu_show(ec,
-          e_comp_canvas_x_root_adjust(ec->comp, x),
-          e_comp_canvas_y_root_adjust(ec->comp, y),
+          e_comp_canvas_x_root_adjust(e_comp, x),
+          e_comp_canvas_y_root_adjust(e_comp, y),
           0, 0);
      }
    else if (ev->message_type == ATM_NETWM_PERFORM_BUTTON_ACTION)
@@ -2028,7 +2026,7 @@ _e_comp_x_mouse_in(void *data EINA_UNUSED, int type EINA_UNUSED, Ecore_X_Event_M
    ec = _e_comp_x_client_find_by_window(ev->win);
    if (!ec) return ECORE_CALLBACK_RENEW;
    if (ec->comp_data->deleted) return ECORE_CALLBACK_RENEW;
-   e_client_mouse_in(ec, e_comp_canvas_x_root_adjust(ec->comp, ev->root.x), e_comp_canvas_x_root_adjust(ec->comp, ev->root.y));
+   e_client_mouse_in(ec, e_comp_canvas_x_root_adjust(e_comp, ev->root.x), e_comp_canvas_x_root_adjust(e_comp, ev->root.y));
    return ECORE_CALLBACK_RENEW;
 }
 
@@ -2048,7 +2046,7 @@ _e_comp_x_mouse_out(void *data EINA_UNUSED, int type EINA_UNUSED, Ecore_X_Event_
    ec = _e_comp_x_client_find_by_window(ev->win);
    if (!ec) return ECORE_CALLBACK_RENEW;
    if (ec->comp_data->deleted) return ECORE_CALLBACK_RENEW;
-   e_client_mouse_out(ec, e_comp_canvas_x_root_adjust(ec->comp, ev->root.x), e_comp_canvas_x_root_adjust(ec->comp, ev->root.y));
+   e_client_mouse_out(ec, e_comp_canvas_x_root_adjust(e_comp, ev->root.x), e_comp_canvas_x_root_adjust(e_comp, ev->root.y));
    return ECORE_CALLBACK_RENEW;
 }
 
@@ -2282,7 +2280,7 @@ _e_comp_x_sync_alarm(void *data EINA_UNUSED, int type EINA_UNUSED, Ecore_X_Event
           evas_object_resize(ec->internal_elm_win, ec->client.w, ec->client.h);
      }
 
-   ecore_x_pointer_xy_get(ec->comp->man->root,
+   ecore_x_pointer_xy_get(e_comp->man->root,
                           &ec->mouse.current.mx,
                           &ec->mouse.current.my);
 
@@ -2544,7 +2542,7 @@ _e_comp_x_damage(void *data EINA_UNUSED, int type EINA_UNUSED, Ecore_X_Event_Dam
      }
    //WRN("DAMAGE %p: %dx%d", ec, ev->area.width, ev->area.height);
 
-   if (ec->comp->nocomp)
+   if (e_comp->nocomp)
      e_pixmap_dirty(ec->pixmap);
    /* discard unwanted xy position of first damage
     * to avoid wrong composition for override redirect window */
@@ -2595,10 +2593,10 @@ static void
 _e_comp_x_hook_client_eval_end(void *d EINA_UNUSED, E_Client *ec)
 {
    E_COMP_X_PIXMAP_CHECK;
-   if (ec->comp->x_comp_data->restack && (!ec->comp->new_clients))
+   if (e_comp->x_comp_data->restack && (!e_comp->new_clients))
      {
         e_hints_client_stacking_set();
-        ec->comp->x_comp_data->restack = 0;
+        e_comp->x_comp_data->restack = 0;
      }
 }
 
@@ -2635,7 +2633,7 @@ _e_comp_x_client_shape_rects_check(E_Client *ec, Ecore_X_Rectangle *rects, int n
         ec->shape_rects = (Eina_Rectangle*)rects;
         ec->shape_rects_num = num;
         ec->shape_changed = 1;
-        e_comp_shape_queue(ec->comp);
+        e_comp_shape_queue(e_comp);
      }
    else
      free(rects);
@@ -2704,10 +2702,10 @@ _e_comp_x_hook_client_pre_frame_assign(void *d EINA_UNUSED, E_Client *ec)
    h = MAX(ec->client.h, 1);
    /* match ec parent argbness */
    if (ec->argb)
-     pwin = ecore_x_window_manager_argb_new(ec->comp->man->root, ec->client.x, ec->client.y, w, h);
+     pwin = ecore_x_window_manager_argb_new(e_comp->man->root, ec->client.x, ec->client.y, w, h);
    else
      {
-        pwin = ecore_x_window_override_new(ec->comp->man->root, ec->client.x, ec->client.y, w, h);
+        pwin = ecore_x_window_override_new(e_comp->man->root, ec->client.x, ec->client.y, w, h);
         ecore_x_window_shape_events_select(pwin, !ec->internal); //let's just agree never to do this with our own windows...
      }
 
@@ -3222,7 +3220,7 @@ _e_comp_x_hook_client_fetch(void *d EINA_UNUSED, E_Client *ec)
                          ec->y = zy + zh - ec->h;
 
                        // <--
-                       if (e_comp_zone_xy_get(ec->comp, ec->x, ec->y))
+                       if (e_comp_zone_xy_get(e_comp, ec->x, ec->y))
                          {
                             if (!E_INSIDE(ec->x, ec->y, ec->zone->x, ec->zone->y, ec->zone->w, ec->zone->h))
                               {
@@ -3230,11 +3228,11 @@ _e_comp_x_hook_client_fetch(void *d EINA_UNUSED, E_Client *ec)
                                  ec->y = E_CLAMP(ec->y, ec->zone->y, ec->zone->y + ec->zone->h);
                               }
                             /* some application failing to correctly center a window */
-                            if (eina_list_count(ec->comp->zones) > 1)
+                            if (eina_list_count(e_comp->zones) > 1)
                               {
-                                 if (abs((ec->comp->man->w / 2) - ec->x - (ec->w / 2)) < 3)
+                                 if (abs((e_comp->man->w / 2) - ec->x - (ec->w / 2)) < 3)
                                    ec->x = ((ec->zone->x + ec->zone->w) / 2) - (ec->w / 2);
-                                 if (abs((ec->comp->man->h / 2) - ec->y - (ec->h / 2)) < 3)
+                                 if (abs((e_comp->man->h / 2) - ec->y - (ec->h / 2)) < 3)
                                    ec->y = ((ec->zone->y + ec->zone->h) / 2) - (ec->h / 2);
                               }
                             ec->changes.pos = 1;
@@ -3715,7 +3713,7 @@ _e_comp_x_hook_client_fetch(void *d EINA_UNUSED, E_Client *ec)
         if (changed || (pshaped != ec->shaped_input))
           {
              ec->need_shape_merge = 1;
-             e_comp_shape_queue(ec->comp);
+             e_comp_shape_queue(e_comp);
           }
      }
    if (ec->changes.prop || ec->mwm.fetch.hints)
@@ -3899,7 +3897,7 @@ _e_comp_x_hook_client_fetch(void *d EINA_UNUSED, E_Client *ec)
                             E_Zone *zone;
                             E_Desk *desk;
 
-                            zone = e_comp_zone_number_get(ec->comp, inst->screen);
+                            zone = e_comp_zone_number_get(e_comp, inst->screen);
                             if (zone) e_client_zone_set(ec, zone);
                             desk = e_desk_at_xy_get(ec->zone, inst->desk_x,
                                                     inst->desk_y);
@@ -3930,7 +3928,7 @@ _e_comp_x_hook_client_fetch(void *d EINA_UNUSED, E_Client *ec)
                     ecl = ec->leader;
                   if (!ecl)
                     {
-                       E_Client *child = e_client_bottom_get(ec->comp);
+                       E_Client *child = e_client_bottom_get(e_comp);
 
                        do
                          {
@@ -3978,7 +3976,7 @@ _e_comp_x_hook_client_fetch(void *d EINA_UNUSED, E_Client *ec)
                }
              else
                {
-                  desk = e_comp_desk_window_profile_get(ec->comp, p);
+                  desk = e_comp_desk_window_profile_get(e_comp, p);
                   if (desk)
                     {
                        e_client_desk_set(ec, desk);
@@ -4006,7 +4004,7 @@ _e_comp_x_hook_client_fetch(void *d EINA_UNUSED, E_Client *ec)
                   for (i = 0; i < ec->e.state.profile.num; i++)
                     {
                        p2 = ec->e.state.profile.available_list[i];
-                       desk = e_comp_desk_window_profile_get(ec->comp, p2);
+                       desk = e_comp_desk_window_profile_get(e_comp, p2);
                        if (desk)
                          {
                             e_client_desk_set(ec, desk);
@@ -4086,7 +4084,7 @@ static void
 _e_comp_x_hook_client_focus_unset(void *d EINA_UNUSED, E_Client *ec)
 {
    E_COMP_X_PIXMAP_CHECK;
-   _e_comp_x_focus_check(ec->comp);
+   _e_comp_x_focus_check(e_comp);
 }
 
 static void
@@ -4095,7 +4093,7 @@ _e_comp_x_hook_client_focus_set(void *d EINA_UNUSED, E_Client *ec)
    focus_time = ecore_x_current_time_get();
    if ((e_pixmap_type_get(ec->pixmap) != E_PIXMAP_TYPE_X))
      {
-        e_grabinput_focus(ec->comp->ee_win, E_FOCUS_METHOD_PASSIVE);
+        e_grabinput_focus(e_comp->ee_win, E_FOCUS_METHOD_PASSIVE);
         return;
      }
 
@@ -4123,11 +4121,11 @@ _e_comp_x_hook_client_redirect(void *d EINA_UNUSED, E_Client *ec)
         ecore_x_composite_redirect_window(_e_comp_x_client_window_get(ec), ECORE_X_COMPOSITE_UPDATE_MANUAL);
         ec->comp_data->unredirected_single = 0;
      }
-   else if (ec->comp->nocomp)
+   else if (e_comp->nocomp)
      {
         /* first window */
-        e_comp_x_nocomp_end(ec->comp);
-        ecore_x_window_reparent(_e_comp_x_client_window_get(ec), ec->comp->man->root, ec->client.x, ec->client.y);
+        e_comp_x_nocomp_end(e_comp);
+        ecore_x_window_reparent(_e_comp_x_client_window_get(ec), e_comp->man->root, ec->client.x, ec->client.y);
         _e_comp_x_client_stack(ec);
      }
    if (!ec->comp_data->damage)
@@ -4150,13 +4148,13 @@ _e_comp_x_hook_client_unredirect(void *d EINA_UNUSED, E_Client *ec)
    if (ec->unredirected_single && (!ec->comp_data->unredirected_single))
      {
         ecore_x_composite_unredirect_window(_e_comp_x_client_window_get(ec), ECORE_X_COMPOSITE_UPDATE_MANUAL);
-        ecore_x_window_reparent(_e_comp_x_client_window_get(ec), ec->comp->win, ec->client.x, ec->client.y);
+        ecore_x_window_reparent(_e_comp_x_client_window_get(ec), e_comp->win, ec->client.x, ec->client.y);
         ecore_x_window_raise(_e_comp_x_client_window_get(ec));
         ec->comp_data->unredirected_single = 1;
      }
-   if (!ec->comp->nocomp) return; //wait for it...
-   ecore_x_composite_unredirect_subwindows(ec->comp->man->root, ECORE_X_COMPOSITE_UPDATE_MANUAL);
-   ecore_x_window_hide(ec->comp->win);
+   if (!e_comp->nocomp) return; //wait for it...
+   ecore_x_composite_unredirect_subwindows(e_comp->man->root, ECORE_X_COMPOSITE_UPDATE_MANUAL);
+   ecore_x_window_hide(e_comp->win);
 }
 
 static void
@@ -4179,7 +4177,7 @@ _e_comp_x_hook_client_del(void *d EINA_UNUSED, E_Client *ec)
           {
              if (stopping)
                {
-                  ecore_x_window_reparent(win, ec->comp->man->root,
+                  ecore_x_window_reparent(win, e_comp->man->root,
                                           ec->client.x, ec->client.y);
                   ecore_x_window_configure(win,
                                            ECORE_X_WINDOW_CONFIGURE_MASK_SIBLING |
@@ -4190,7 +4188,7 @@ _e_comp_x_hook_client_del(void *d EINA_UNUSED, E_Client *ec)
 
              else
                /* put the window back where we found it to prevent annoying dancing windows */
-               ecore_x_window_reparent(win, ec->comp->man->root,
+               ecore_x_window_reparent(win, e_comp->man->root,
                                        ec->comp_data->initial_attributes.x,
                                        ec->comp_data->initial_attributes.y);
              if (!ec->internal)
@@ -4232,7 +4230,7 @@ _e_comp_x_hook_client_del(void *d EINA_UNUSED, E_Client *ec)
    if (post_clients)
      post_clients = eina_list_remove(post_clients, ec);
 
-   _e_comp_x_focus_check(ec->comp);
+   _e_comp_x_focus_check(e_comp);
 }
 
 static void
@@ -5152,7 +5150,7 @@ _e_comp_x_setup(E_Comp *c, Ecore_X_Window root, int w, int h)
         ec->lock_client_stacking = 1;
         ec->internal = 1;
         ec->visible = 1;
-        ec->comp->layers[i].obj = ec->frame;
+        e_comp->layers[i].obj = ec->frame;
         evas_object_layer_set(ec->frame, e_comp_canvas_layer_map_to(i));
         evas_object_pass_events_set(ec->frame, 1);
         evas_object_show(ec->frame);

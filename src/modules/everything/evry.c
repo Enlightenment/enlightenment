@@ -188,7 +188,7 @@ evry_show(E_Zone *zone, E_Zone_Edge edge, const char *params, Eina_Bool popup)
         if (ec)
           {
 #ifndef HAVE_WAYLAND_ONLY
-             if (ec->comp->comp_type == E_PIXMAP_TYPE_X)
+             if (e_comp->comp_type == E_PIXMAP_TYPE_X)
                ecore_x_netwm_window_type_set(elm_win_window_id_get(win->ewin),
                                              ECORE_X_WINDOW_TYPE_UTILITY);
 #endif
@@ -1929,7 +1929,7 @@ _evry_cb_key_down(void *data, int type __UNUSED__, void *event)
         ec = e_win_client_get(ewin);
         elm_win_borderless_set(ewin, 0);
 #ifndef HAVE_WAYLAND_ONLY
-        if (ec->comp->comp_type == E_PIXMAP_TYPE_X)
+        if (e_comp->comp_type == E_PIXMAP_TYPE_X)
           ecore_x_netwm_window_type_set(elm_win_window_id_get(ewin),
                                         ECORE_X_WINDOW_TYPE_DIALOG);
 #endif

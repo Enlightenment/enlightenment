@@ -825,7 +825,7 @@ _e_winlist_client_add(E_Client *ec, E_Zone *zone, E_Desk *desk)
    if (!ww) return EINA_FALSE;
    ww->client = ec;
    _wins = eina_list_append(_wins, ww);
-   o = edje_object_add(ec->comp->evas);
+   o = edje_object_add(e_comp->evas);
    E_FILL(o);
    e_comp_object_util_del_list_append(_winlist, o);
    ww->bg_object = o;
@@ -835,7 +835,7 @@ _e_winlist_client_add(E_Client *ec, E_Zone *zone, E_Desk *desk)
    evas_object_show(o);
    if (edje_object_part_exists(ww->bg_object, "e.swallow.icon"))
      {
-        o = e_client_icon_add(ec, ec->comp->evas);
+        o = e_client_icon_add(ec, e_comp->evas);
         ww->icon_object = o;
         e_comp_object_util_del_list_append(_winlist, o);
         edje_object_part_swallow(ww->bg_object, "e.swallow.icon", o);

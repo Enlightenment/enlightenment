@@ -117,7 +117,7 @@ _policy_border_hide_below(E_Client *ec)
    if (!ec) return;
 
    /* Find the windows below this one */
-   E_CLIENT_FOREACH(ec->comp, b)
+   E_CLIENT_FOREACH(e_comp, b)
      {
         if (e_client_util_ignored_get(b)) continue;
         if (b->layer < E_LAYER_CLIENT_BELOW) continue;
@@ -172,7 +172,7 @@ _policy_border_show_below(E_Client *ec)
      }
 
    /* Find the windows below this one */
-   E_CLIENT_FOREACH(ec->comp, b)
+   E_CLIENT_FOREACH(e_comp, b)
      {
         if (e_client_util_ignored_get(b)) continue;
         if (b->layer < E_LAYER_CLIENT_BELOW) continue;

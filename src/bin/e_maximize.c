@@ -43,7 +43,7 @@ e_maximize_client_dock_fit(E_Client *ec, int *x1, int *yy1, int *x2, int *y2)
    cy2 = ec->zone->y + ec->zone->h;
    if (y2) cy2 = *y2;
 
-   E_CLIENT_FOREACH(ec->comp, ec2)
+   E_CLIENT_FOREACH(e_comp, ec2)
      {
         enum
         {
@@ -152,7 +152,7 @@ e_maximize_client_client_fill(E_Client *ec, int *x1, int *yy1, int *x2, int *y2,
    E_Maximize_Rect *r;
    E_Client *ec2;
 
-   E_CLIENT_FOREACH(ec->comp, ec2)
+   E_CLIENT_FOREACH(e_comp, ec2)
      {
         if ((ec2->zone != ec->zone) || (ec == ec2) || (ec2->desk != ec->desk && !ec2->sticky) || (ec2->iconic))
           continue;

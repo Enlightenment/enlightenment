@@ -138,7 +138,7 @@ e_int_client_menu_create(E_Client *ec)
    mi = e_menu_item_new(m);
    e_menu_item_separator_set(mi, 1);
 
-   if ((!ec->sticky) && ((eina_list_count(ec->comp->zones) > 1) || (ec->zone->desk_x_count > 1) || (ec->zone->desk_y_count > 1)))
+   if ((!ec->sticky) && ((eina_list_count(e_comp->zones) > 1) || (ec->zone->desk_x_count > 1) || (ec->zone->desk_y_count > 1)))
      {
         mi = e_menu_item_new(m);
         e_menu_item_label_set(mi, _("Move to"));
@@ -218,7 +218,7 @@ e_int_client_menu_create(E_Client *ec)
         subm = e_menu_new();
         e_menu_item_submenu_set(mi, subm);
         e_object_unref(E_OBJECT(subm));
-        e_object_data_set(E_OBJECT(subm), ec->comp);
+        e_object_data_set(E_OBJECT(subm), e_comp);
         if (e_pixmap_type_get(ec->pixmap) == E_PIXMAP_TYPE_X)
           {
              mi = e_menu_item_new(subm);
@@ -968,13 +968,13 @@ _e_client_menu_cb_align_setup(E_Client *ec, Evas_Object_Event_Cb cb)
    n.urgency = E_NOTIFICATION_NOTIFY_URGENCY_NORMAL;
    e_notification_client_send(&n, NULL, NULL);
 
-   o = evas_object_rectangle_add(ec->comp->evas);
-   evas_object_resize(o, ec->comp->man->w, ec->comp->man->h);
+   o = evas_object_rectangle_add(e_comp->evas);
+   evas_object_resize(o, e_comp->man->w, e_comp->man->h);
    evas_object_color_set(o, 0, 0, 0, 0);
    evas_object_layer_set(o, E_LAYER_POPUP);
    evas_object_show(o);
    evas_object_event_callback_add(o, EVAS_CALLBACK_MOUSE_DOWN, cb, ec);
-   e_comp_shape_queue(ec->comp);
+   e_comp_shape_queue(e_comp);
 }
 
 static Evas_Object *
@@ -1202,7 +1202,7 @@ _e_client_menu_cb_sendto_pre(void *data, E_Menu *m __UNUSED__, E_Menu_Item *mi)
    e_menu_item_submenu_set(mi, subm);
    e_object_unref(E_OBJECT(subm));
 
-   EINA_LIST_FOREACH(ec->comp->zones, l, zone)
+   EINA_LIST_FOREACH(e_comp->zones, l, zone)
      {
         if (zones > 1)
           {

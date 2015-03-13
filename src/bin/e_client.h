@@ -222,7 +222,6 @@ struct E_Client
    EINA_INLIST;
 
    E_Pixmap *pixmap;
-   E_Comp *comp;
    int depth;
    int x, y, w, h; //frame+client geom
    struct {

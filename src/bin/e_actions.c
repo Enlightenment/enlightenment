@@ -1085,7 +1085,7 @@ ACT_FN_GO(window_push, )
 
         desk_current = e_desk_current_get(ec->zone);
 
-        E_CLIENT_FOREACH(ec->comp, cur)
+        E_CLIENT_FOREACH(e_comp, cur)
           {
              if (((cur->desk == desk_current) || (cur->sticky)) && (ec != cur) && (!cur->iconic))
                {

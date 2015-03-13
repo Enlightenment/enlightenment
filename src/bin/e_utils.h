@@ -80,7 +80,7 @@ e_util_pointer_center(const E_Client *ec)
    if (ec->zone)
      x = ec->zone->x, y = ec->zone->y;
    if ((e_config->focus_policy != E_FOCUS_CLICK) && (!e_config->disable_all_pointer_warps))
-     ecore_evas_pointer_warp(ec->comp->ee,
+     ecore_evas_pointer_warp(e_comp->ee,
                              x + ec->x + (ec->w / 2),
                              y + ec->y + (ec->h / 2));
 }

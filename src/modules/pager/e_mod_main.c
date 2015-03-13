@@ -1159,7 +1159,7 @@ _pager_window_cb_mouse_move(void *data, Evas *e __UNUSED__, Evas_Object *obj __U
    evas_object_geometry_get(pw->o_mirror, &x, &y, &w, &h);
    evas_object_hide(pw->o_mirror);
 
-   drag = e_drag_new(pw->client->comp,
+   drag = e_drag_new(e_comp,
                      x, y, drag_types, 2, pw->desk->pager, -1,
                      _pager_window_cb_drag_convert,
                      _pager_window_cb_drag_finished);
