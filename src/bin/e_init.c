@@ -83,7 +83,7 @@ EAPI void
 e_init_hide(void)
 {
    E_FREE_LIST(splash_objs, evas_object_del);
-   e_comp_shape_queue(e_comp);
+   e_comp_shape_queue();
    _e_init_object = NULL;
    E_FREE_FUNC(_e_init_timeout_timer, ecore_timer_del);
 }

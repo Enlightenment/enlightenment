@@ -2564,7 +2564,7 @@ _e_comp_x_damage_win(void *data EINA_UNUSED, int type EINA_UNUSED, Ecore_X_Event
    E_Comp *c;
 
    c = e_comp_find_by_window(ev->win);
-   if (c) e_comp_render_queue(c);
+   if (c) e_comp_render_queue();
    return ECORE_CALLBACK_PASS_ON;
 }
 
@@ -2633,7 +2633,7 @@ _e_comp_x_client_shape_rects_check(E_Client *ec, Ecore_X_Rectangle *rects, int n
         ec->shape_rects = (Eina_Rectangle*)rects;
         ec->shape_rects_num = num;
         ec->shape_changed = 1;
-        e_comp_shape_queue(e_comp);
+        e_comp_shape_queue();
      }
    else
      free(rects);
@@ -3713,7 +3713,7 @@ _e_comp_x_hook_client_fetch(void *d EINA_UNUSED, E_Client *ec)
         if (changed || (pshaped != ec->shaped_input))
           {
              ec->need_shape_merge = 1;
-             e_comp_shape_queue(e_comp);
+             e_comp_shape_queue();
           }
      }
    if (ec->changes.prop || ec->mwm.fetch.hints)
@@ -4948,7 +4948,7 @@ _e_comp_x_desklock_hide(void)
      ecore_x_window_show(e_comp->x_comp_data->lock_grab_break_wnd);
    e_comp->x_comp_data->lock_grab_break_wnd = 0;
    E_FREE_FUNC(e_comp->x_comp_data->lock_key_handler, ecore_event_handler_del);
-   e_comp_override_del(e_comp);
+   e_comp_override_del();
 }
 
 static Eina_Bool
@@ -4987,7 +4987,7 @@ _e_comp_x_desklock_show(void)
         free(windows);
      }
 works:
-   e_comp_override_add(e_comp);
+   e_comp_override_add();
    e_comp_ignore_win_add(E_PIXMAP_TYPE_X, e_comp->x_comp_data->lock_win);
    e_comp->x_comp_data->lock_key_handler =
      ecore_event_handler_add(ECORE_EVENT_KEY_DOWN, (Ecore_Event_Handler_Cb)_e_comp_x_desklock_key_down, e_comp);

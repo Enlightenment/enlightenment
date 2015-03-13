@@ -31,7 +31,7 @@ _e_mod_drm_cb_activate(void *data, int type EINA_UNUSED, void *event)
              if (ec->visible && (!ec->input_only))
                e_comp_object_damage(ec->frame, 0, 0, ec->w, ec->h);
           }
-        e_comp_render_queue(c);
+        e_comp_render_queue();
         e_comp_shape_queue_block(c, 0);
         ecore_event_add(E_EVENT_COMPOSITOR_ENABLE, NULL, NULL, NULL);
      }
@@ -45,7 +45,7 @@ _e_mod_drm_cb_activate(void *data, int type EINA_UNUSED, void *event)
         evas_font_cache_flush(c->evas);
         evas_render_dump(c->evas);
 
-        e_comp_render_queue(c);
+        e_comp_render_queue();
         e_comp_shape_queue_block(c, 1);
         ecore_event_add(E_EVENT_COMPOSITOR_DISABLE, NULL, NULL, NULL);
      }

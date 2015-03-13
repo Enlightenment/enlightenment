@@ -656,7 +656,7 @@ _e_comp_object_done_defer(void *data, Evas_Object *obj EINA_UNUSED, const char *
    if (cw->defer_hide && (!strcmp(emission, "e,action,hide,done")))
      evas_object_hide(cw->smart_obj);
    else if (!cw->animating)
-     e_comp_shape_queue(e_comp);
+     e_comp_shape_queue();
 }
 
 /////////////////////////////////////////////
@@ -987,8 +987,8 @@ _e_comp_intercept_layer_set(void *data, Evas_Object *obj, int layer)
 
              if (cw->visible)
                {
-                  e_comp_shape_queue(e_comp);
-                  e_comp_render_queue(e_comp);
+                  e_comp_shape_queue();
+                  e_comp_render_queue();
                }
              ec = e_client_above_get(cw->ec);
              if (ec && (evas_object_layer_get(ec->frame) != evas_object_layer_get(obj)))
@@ -1060,8 +1060,8 @@ _e_comp_intercept_layer_set(void *data, Evas_Object *obj, int layer)
         CRI("STACKING ERROR!!!");
      }
    if (!cw->visible) return;
-   e_comp_render_queue(e_comp);
-   e_comp_shape_queue(e_comp);
+   e_comp_render_queue();
+   e_comp_shape_queue();
 }
 
 typedef void (*E_Comp_Object_Stack_Func)(Evas_Object *obj, Evas_Object *stack);
@@ -1164,8 +1164,8 @@ _e_comp_intercept_stack_helper(E_Comp_Object *cw, Evas_Object *stack, E_Comp_Obj
    if (cw->ec->new_client || (!ecstack) || (ecstack->frame != o))
      evas_object_data_del(cw->smart_obj, "client_restack");
    if (!cw->visible) return;
-   e_comp_render_queue(e_comp);
-   e_comp_shape_queue(e_comp);
+   e_comp_render_queue();
+   e_comp_shape_queue();
 }
 
 static void
@@ -1206,8 +1206,8 @@ _e_comp_intercept_lower(void *data, Evas_Object *obj)
    evas_object_lower(obj);
    evas_object_data_del(obj, "client_restack");
    if (!cw->visible) return;
-   e_comp_render_queue(e_comp);
-   e_comp_shape_queue(e_comp);
+   e_comp_render_queue();
+   e_comp_shape_queue();
 }
 
 static void
@@ -1239,8 +1239,8 @@ _e_comp_intercept_raise(void *data, Evas_Object *obj)
           e_client_raise_latest_set(cw->ec); //modify raise list if necessary
      }
    if (!cw->visible) return;
-   e_comp_render_queue(e_comp);
-   e_comp_shape_queue(e_comp);
+   e_comp_render_queue();
+   e_comp_shape_queue();
 }
 
 static void
@@ -1962,8 +1962,8 @@ _e_comp_smart_hide(Evas_Object *obj)
    /* ensure focus-out */
    if (cw->ec->focused)
      evas_object_focus_set(cw->ec->frame, 0);
-   e_comp_render_queue(e_comp); //force nocomp recheck
-   e_comp_shape_queue(e_comp);
+   e_comp_render_queue(); //force nocomp recheck
+   e_comp_shape_queue();
 }
 
 static void
@@ -1988,10 +1988,10 @@ _e_comp_smart_show(Evas_Object *obj)
    evas_object_show(cw->effect_obj);
    if (cw->ec->internal_elm_win && (!evas_object_visible_get(cw->ec->internal_elm_win)))
      evas_object_show(cw->ec->internal_elm_win);
-   e_comp_render_queue(e_comp);
+   e_comp_render_queue();
    if (cw->ec->input_only)
      {
-        e_comp_shape_queue(e_comp);
+        e_comp_shape_queue();
         return;
      }
    if (cw->ec->iconic && (!cw->ec->new_client))
@@ -2007,7 +2007,7 @@ _e_comp_smart_show(Evas_Object *obj)
    if (!cw->animating)
      {
         e_comp_object_effect_set(obj, NULL);
-        e_comp_shape_queue(e_comp);
+        e_comp_shape_queue();
      }
 }
 
@@ -2051,7 +2051,7 @@ _e_comp_smart_del(Evas_Object *obj)
    evas_object_del(cw->zoomobj);
    evas_object_del(cw->input_obj);
    evas_object_del(cw->obj);
-   e_comp_shape_queue(e_comp);
+   e_comp_shape_queue();
    eina_stringshare_del(cw->frame_theme);
    eina_stringshare_del(cw->frame_name);
    free(cw);
@@ -2069,7 +2069,7 @@ _e_comp_smart_move(Evas_Object *obj, int x, int y)
      evas_object_geometry_set(cw->input_obj, cw->x + cw->input_rect.x, cw->y + cw->input_rect.y, cw->input_rect.w, cw->input_rect.h);
    /* this gets called once during setup to init coords offscreen and guarantee first move */
    if (e_comp && cw->visible)
-     e_comp_shape_queue(e_comp);
+     e_comp_shape_queue();
 }
 
 static void
@@ -2121,9 +2121,9 @@ _e_comp_smart_resize(Evas_Object *obj, int w, int h)
         evas_object_resize(cw->effect_obj, w, h);
      }
    if (!cw->visible) return;
-   e_comp_render_queue(e_comp);
+   e_comp_render_queue();
    if (!cw->animating)
-     e_comp_shape_queue(e_comp);
+     e_comp_shape_queue();
 }
 
 static void
@@ -2200,8 +2200,8 @@ _e_comp_object_util_del(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object
 
         o = edje_object_part_swallow_get(obj, "e.swallow.content");
         evas_object_del(o);
-        e_comp_render_queue(e_comp);
-        e_comp_shape_queue(e_comp);
+        e_comp_render_queue();
+        e_comp_shape_queue();
      }
    l = evas_object_data_get(obj, "comp_object-to_del");
    E_FREE_LIST(l, evas_object_del);
@@ -2214,7 +2214,7 @@ _e_comp_object_util_restack(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Ob
        (!evas_object_data_get(obj, "comp_override")))
      {
         evas_object_data_set(obj, "comp_override", (void*)1);
-        e_comp_override_add(e_comp);
+        e_comp_override_add();
      }
 }
 
@@ -2235,7 +2235,7 @@ _e_comp_object_util_show(void *data EINA_UNUSED, Evas_Object *obj)
           return;
      }
    else
-     e_comp_shape_queue(e_comp);
+     e_comp_shape_queue();
    
    evas_object_show(obj);
    if (ref)
@@ -2248,7 +2248,7 @@ _e_comp_object_util_show(void *data EINA_UNUSED, Evas_Object *obj)
    if (e_comp_util_object_is_above_nocomp(obj))
      {
         evas_object_data_set(obj, "comp_override", (void*)1);
-        e_comp_override_add(e_comp);
+        e_comp_override_add();
      }
 }
 
@@ -2267,7 +2267,7 @@ _e_comp_object_util_hide(void *data EINA_UNUSED, Evas_Object *obj)
    evas_object_data_set(obj, "comp_hiding", (void*)1);
 
    if (evas_object_data_del(obj, "comp_override"))
-     e_comp_override_timed_pop(e_comp);
+     e_comp_override_timed_pop();
 }
 
 static void
@@ -2278,7 +2278,7 @@ _e_comp_object_util_done_defer(void *data, Evas_Object *obj, const char *emissio
         if (!evas_object_data_del(obj, "comp_hiding")) return;
         evas_object_intercept_hide_callback_del(obj, _e_comp_object_util_hide);
         evas_object_hide(obj);
-        e_comp_shape_queue(e_comp);
+        e_comp_shape_queue();
         evas_object_intercept_hide_callback_add(obj, _e_comp_object_util_hide, data);
      }
    else
@@ -2299,7 +2299,7 @@ _e_comp_object_util_moveresize(void *data, Evas *e EINA_UNUSED, Evas_Object *obj
      }
      
    if (evas_object_visible_get(obj))
-     e_comp_shape_queue(e_comp);
+     e_comp_shape_queue();
 }
 
 EAPI Evas_Object *
@@ -3020,7 +3020,7 @@ e_comp_object_render_update_add(Evas_Object *obj)
         cw->update = 1;
         e_comp->updates = eina_list_append(e_comp->updates, cw->ec);
      }
-   e_comp_render_queue(e_comp);
+   e_comp_render_queue();
 }
 
 EAPI void
@@ -3530,7 +3530,7 @@ _e_comp_object_effect_end_cb(void *data, Evas_Object *obj, const char *emission,
         e_comp->animating--;
         cw->animating--;
         if (e_object_unref(E_OBJECT(cw->ec)))
-          e_comp_shape_queue(e_comp);
+          e_comp_shape_queue();
      }
 
    end_cb = evas_object_data_get(obj, "_e_comp.end_cb");
@@ -3656,7 +3656,7 @@ _e_comp_object_autoclose_cleanup(Eina_Bool already_del)
    e_comp->autoclose.del_cb = NULL;
    e_comp->autoclose.key_cb = NULL;
    E_FREE_FUNC(e_comp->autoclose.key_handler, ecore_event_handler_del);
-   e_comp_shape_queue(e_comp);
+   e_comp_shape_queue();
 }
 
 static Eina_Bool
@@ -3694,7 +3694,7 @@ _e_comp_object_autoclose_setup(Evas_Object *obj)
         e_comp_grab_input(e_comp, 0, 1);
      }
    evas_object_layer_set(e_comp->autoclose.rect, evas_object_layer_get(obj) - 1);
-   e_comp_shape_queue(e_comp);
+   e_comp_shape_queue();
    if (!e_comp->autoclose.key_handler)
      e_comp->autoclose.key_handler = ecore_event_handler_add(ECORE_EVENT_KEY_DOWN, _e_comp_object_autoclose_key_down_cb, e_comp);
 }

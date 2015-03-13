@@ -623,7 +623,7 @@ _notification_popdown(Popup_Data                  *popup,
    if (popup->pending) return;
    popups_displayed--;
    free(popup);
-   e_comp_shape_queue(e_comp);
+   e_comp_shape_queue();
 }
 
 static void

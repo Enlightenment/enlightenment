@@ -974,7 +974,7 @@ _e_client_menu_cb_align_setup(E_Client *ec, Evas_Object_Event_Cb cb)
    evas_object_layer_set(o, E_LAYER_POPUP);
    evas_object_show(o);
    evas_object_event_callback_add(o, EVAS_CALLBACK_MOUSE_DOWN, cb, ec);
-   e_comp_shape_queue(e_comp);
+   e_comp_shape_queue();
 }
 
 static Evas_Object *
@@ -982,7 +982,7 @@ _e_client_menu_cb_align_cb(Evas *e, Evas_Object *obj, Evas_Event_Mouse_Down *ev)
 {
    evas_object_hide(obj);
    evas_object_del(obj);
-   e_comp_shape_queue(e_comp);
+   e_comp_shape_queue();
    return evas_object_top_at_xy_get(e, ev->output.x, ev->output.y, 0, 0);
 }
 

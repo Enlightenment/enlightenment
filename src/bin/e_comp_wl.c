@@ -2137,7 +2137,7 @@ _e_comp_wl_client_cb_post_new(void *data EINA_UNUSED, E_Client *ec)
    if (ec->need_shape_export)
      {
 //        ec->shape_changed = EINA_TRUE;
-        e_comp_shape_queue(e_comp);
+        e_comp_shape_queue();
         ec->need_shape_export = EINA_FALSE;
      }
 }

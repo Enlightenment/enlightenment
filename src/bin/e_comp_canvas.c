@@ -489,7 +489,7 @@ e_comp_canvas_fps_toggle(void)
 
    conf->fps_show = !conf->fps_show;
    e_comp_internal_save();
-   e_comp_render_queue(e_comp);
+   e_comp_render_queue();
 }
 
 EAPI E_Layer

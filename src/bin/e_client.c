@@ -439,7 +439,7 @@ _e_client_free(E_Client *ec)
      {
         ec->desk->fullscreen_clients = eina_list_remove(ec->desk->fullscreen_clients, ec);
         if (!ec->desk->fullscreen_clients)
-          e_comp_render_queue(e_comp);
+          e_comp_render_queue();
      }
    if (ec->new_client)
      e_comp->new_clients--;
@@ -3901,7 +3901,7 @@ e_client_unfullscreen(E_Client *ec)
 
    e_remember_update(ec);
    if (!ec->desk->fullscreen_clients)
-     e_comp_render_queue(e_comp);
+     e_comp_render_queue();
 }
 
 ///////////////////////////////////////

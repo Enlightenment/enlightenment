@@ -253,7 +253,7 @@ _e_comp_cb_nocomp_begin(E_Comp *c)
    evas_render_dump(c->evas);
 
    DBG("JOB2...");
-   e_comp_render_queue(c);
+   e_comp_render_queue();
    e_comp_shape_queue_block(c, 1);
    ecore_event_add(E_EVENT_COMPOSITOR_DISABLE, NULL, NULL, NULL);
 }
@@ -277,7 +277,7 @@ _e_comp_cb_nocomp_end(E_Comp *c)
 #ifndef HAVE_WAYLAND_ONLY
    e_comp_x_nocomp_end(c);
 #endif
-   e_comp_render_queue(c);
+   e_comp_render_queue();
    e_comp_shape_queue_block(c, 0);
    ecore_event_add(E_EVENT_COMPOSITOR_ENABLE, NULL, NULL, NULL);
 }
@@ -854,7 +854,7 @@ _e_comp_screensaver_on(void *data EINA_UNUSED, int type EINA_UNUSED, void *event
    printf("_e_comp_screensaver_on\n");
    ecore_frametime = ecore_animator_frametime_get();
    if (e_comp->saver) return ECORE_CALLBACK_RENEW;
-   e_comp_override_add(e_comp);
+   e_comp_override_add();
    e_comp->saver = EINA_TRUE;
    if (e_comp->render_animator)
      ecore_animator_freeze(e_comp->render_animator);
@@ -878,7 +878,7 @@ _e_comp_screensaver_off(void *data EINA_UNUSED, int type EINA_UNUSED, void *even
    printf("_e_comp_screensaver_off\n");
    ecore_animator_frametime_set(ecore_frametime);
    if (!e_comp->saver) return ECORE_CALLBACK_RENEW;
-   e_comp_override_del(e_comp);
+   e_comp_override_del();
    e_comp->saver = EINA_FALSE;
    if (!e_comp->nocomp)
      ecore_evas_manual_render_set(e_comp->ee, EINA_FALSE);
@@ -1309,47 +1309,47 @@ e_comp_shutdown(void)
 }
 
 EAPI void
-e_comp_render_queue(E_Comp *c)
+e_comp_render_queue()
 {
-   E_OBJECT_CHECK(c);
-   E_OBJECT_TYPE_CHECK(c, E_COMP_TYPE);
+   E_OBJECT_CHECK(e_comp);
+   E_OBJECT_TYPE_CHECK(e_comp, E_COMP_TYPE);
 
    if (conf->lock_fps)
      {
-        ecore_animator_thaw(c->render_animator);
+        ecore_animator_thaw(e_comp->render_animator);
      }
    else
      {
-        if (c->update_job)
+        if (e_comp->update_job)
           {
              DBG("UPDATE JOB DEL...");
-             E_FREE_FUNC(c->update_job, ecore_job_del);
+             E_FREE_FUNC(e_comp->update_job, ecore_job_del);
           }
         DBG("UPDATE JOB ADD...");
-        c->update_job = ecore_job_add(_e_comp_cb_job, c);
+        e_comp->update_job = ecore_job_add(_e_comp_cb_job, e_comp);
      }
 }
 
 EAPI void
-e_comp_shape_queue(E_Comp *c)
+e_comp_shape_queue()
 {
-   EINA_SAFETY_ON_NULL_RETURN(c);
+   EINA_SAFETY_ON_NULL_RETURN(e_comp);
 
-   if (c->comp_type != E_PIXMAP_TYPE_X) return;
-   if (!c->shape_job)
-     c->shape_job = ecore_job_add((Ecore_Cb)_e_comp_shapes_update_job, c);
+   if (e_comp->comp_type != E_PIXMAP_TYPE_X) return;
+   if (!e_comp->shape_job)
+     e_comp->shape_job = ecore_job_add((Ecore_Cb)_e_comp_shapes_update_job, e_comp);
 }
 
 EAPI void
-e_comp_shape_queue_block(E_Comp *c, Eina_Bool block)
+e_comp_shape_queue_block(Eina_Bool block)
 {
-   EINA_SAFETY_ON_NULL_RETURN(c);
+   EINA_SAFETY_ON_NULL_RETURN(e_comp);
 
-   c->shape_queue_blocked = !!block;
+   e_comp->shape_queue_blocked = !!block;
    if (block)
-     E_FREE_FUNC(c->shape_job, ecore_job_del);
+     E_FREE_FUNC(e_comp->shape_job, ecore_job_del);
    else
-     e_comp_shape_queue(c);
+     e_comp_shape_queue();
 }
 
 EAPI E_Comp_Config *
@@ -1370,21 +1370,21 @@ e_comp_shadows_reset(void)
 }
 
 EAPI Ecore_Window
-e_comp_top_window_at_xy_get(E_Comp *c, Evas_Coord x, Evas_Coord y)
+e_comp_top_window_at_xy_get(Evas_Coord x, Evas_Coord y)
 {
    E_Client *ec;
    Evas_Object *o;
 
-   EINA_SAFETY_ON_NULL_RETURN_VAL(c, 0);
-   o = evas_object_top_at_xy_get(c->evas, x, y, 0, 0);
-   if (!o) return c->ee_win;
+   EINA_SAFETY_ON_NULL_RETURN_VAL(e_comp, 0);
+   o = evas_object_top_at_xy_get(e_comp->evas, x, y, 0, 0);
+   if (!o) return e_comp->ee_win;
    ec = evas_object_data_get(o, "E_Client");
    if (ec) return e_client_util_pwin_get(ec);
-   return c->ee_win;
+   return e_comp->ee_win;
 }
 
 EAPI void
-e_comp_util_wins_print(const E_Comp *c EINA_UNUSED)
+e_comp_util_wins_print()
 {
    Evas_Object *o;
 
@@ -1439,21 +1439,21 @@ e_comp_ignore_win_find(Ecore_Window win)
 }
 
 EAPI void
-e_comp_override_del(E_Comp *c)
+e_comp_override_del()
 {
-   c->nocomp_override--;
-   if (c->nocomp_override <= 0)
+   e_comp->nocomp_override--;
+   if (e_comp->nocomp_override <= 0)
      {
-        c->nocomp_override = 0;
-        if (c->nocomp_want) _e_comp_cb_nocomp_begin(c);
+        e_comp->nocomp_override = 0;
+        if (e_comp->nocomp_want) _e_comp_cb_nocomp_begin(e_comp);
      }
 }
 
 EAPI void
-e_comp_override_add(E_Comp *c)
+e_comp_override_add()
 {
-   c->nocomp_override++;
-   if ((c->nocomp_override > 0) && (c->nocomp)) _e_comp_cb_nocomp_end(c);
+   e_comp->nocomp_override++;
+   if ((e_comp->nocomp_override > 0) && (e_comp->nocomp)) _e_comp_cb_nocomp_end(e_comp);
 }
 
 #if 0
@@ -1492,14 +1492,14 @@ e_comp_find_by_window(Ecore_Window win)
 }
 
 EAPI void
-e_comp_override_timed_pop(E_Comp *c)
+e_comp_override_timed_pop()
 {
-   EINA_SAFETY_ON_NULL_RETURN(c);
-   if (c->nocomp_override <= 0) return;
-   if (c->nocomp_override_timer)
-     c->nocomp_override--;
+   EINA_SAFETY_ON_NULL_RETURN(e_comp);
+   if (e_comp->nocomp_override <= 0) return;
+   if (e_comp->nocomp_override_timer)
+     e_comp->nocomp_override--;
    else
-     c->nocomp_override_timer = ecore_timer_add(1.0, _e_comp_override_expire, c);
+     e_comp->nocomp_override_timer = ecore_timer_add(1.0, _e_comp_override_expire, e_comp);
 }
 
 EAPI unsigned int
@@ -1537,48 +1537,48 @@ e_comp_e_object_layer_get(const E_Object *obj)
 }
 
 EAPI Eina_Bool
-e_comp_grab_input(E_Comp *c, Eina_Bool mouse, Eina_Bool kbd)
+e_comp_grab_input(Eina_Bool mouse, Eina_Bool kbd)
 {
    Eina_Bool ret = EINA_FALSE;
    Ecore_Window mwin = 0, kwin = 0;
 
    mouse = !!mouse;
    kbd = !!kbd;
-   if (mouse || c->input_mouse_grabs)
-     mwin = c->ee_win;
-   if (kbd || c->input_mouse_grabs)
-     kwin = c->ee_win;
-   e_comp_override_add(c);
-   if ((c->input_mouse_grabs && c->input_key_grabs) ||
+   if (mouse || e_comp->input_mouse_grabs)
+     mwin = e_comp->ee_win;
+   if (kbd || e_comp->input_mouse_grabs)
+     kwin = e_comp->ee_win;
+   e_comp_override_add();
+   if ((e_comp->input_mouse_grabs && e_comp->input_key_grabs) ||
        e_grabinput_get(mwin, 0, kwin))
      {
         ret = EINA_TRUE;
-        c->input_mouse_grabs += mouse;
-        c->input_key_grabs += kbd;
+        e_comp->input_mouse_grabs += mouse;
+        e_comp->input_key_grabs += kbd;
      }
    return ret;
 }
 
 EAPI void
-e_comp_ungrab_input(E_Comp *c, Eina_Bool mouse, Eina_Bool kbd)
+e_comp_ungrab_input(Eina_Bool mouse, Eina_Bool kbd)
 {
    Ecore_Window mwin = 0, kwin = 0;
 
    mouse = !!mouse;
    kbd = !!kbd;
-   if (mouse && (c->input_mouse_grabs == 1))
-     mwin = c->ee_win;
-   if (kbd && (c->input_key_grabs == 1))
-     kwin = c->ee_win;
-   if (c->input_mouse_grabs)
-     c->input_mouse_grabs -= mouse;
-   if (c->input_key_grabs)
-     c->input_key_grabs -= kbd;
-   e_comp_override_timed_pop(c);
+   if (mouse && (e_comp->input_mouse_grabs == 1))
+     mwin = e_comp->ee_win;
+   if (kbd && (e_comp->input_key_grabs == 1))
+     kwin = e_comp->ee_win;
+   if (e_comp->input_mouse_grabs)
+     e_comp->input_mouse_grabs -= mouse;
+   if (e_comp->input_key_grabs)
+     e_comp->input_key_grabs -= kbd;
+   e_comp_override_timed_pop();
    if ((!mwin) && (!kwin)) return;
    e_grabinput_release(mwin, kwin);
-   evas_event_feed_mouse_out(c->evas, 0, NULL);
-   evas_event_feed_mouse_in(c->evas, 0, NULL);
+   evas_event_feed_mouse_out(e_comp->evas, 0, NULL);
+   evas_event_feed_mouse_in(e_comp->evas, 0, NULL);
    if (e_client_focused_get()) return;
    if (e_config->focus_policy != E_FOCUS_MOUSE)
      e_client_refocus();
@@ -1619,7 +1619,7 @@ e_comp_client_redirect_toggle(E_Client *ec)
    ec->unredirected_single = !ec->unredirected_single;
    e_client_redirected_set(ec, !ec->redirected);
    ec->no_shape_cut = !ec->redirected;
-   e_comp_shape_queue(e_comp);
+   e_comp_shape_queue();
 }
 
 EAPI Eina_Bool

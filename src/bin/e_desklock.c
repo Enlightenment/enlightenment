@@ -333,8 +333,8 @@ e_desklock_hide(void)
 
    if ((!_e_desklock_state) && (!_e_custom_desklock_exe)) return;
 
-   e_comp_override_del(e_comp);
-   e_comp_shape_queue(e_comp);
+   e_comp_override_del();
+   e_comp_shape_queue();
    E_FREE_LIST(block_rects, evas_object_del);
    //e_comp_block_window_del();
    if (e_config->desklock_language)
