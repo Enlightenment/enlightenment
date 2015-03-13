@@ -62,7 +62,6 @@ typedef struct _E_Comp_Object
    Eina_Rectangle       input_rect;
 
    E_Client *ec;
-   E_Comp *comp;
 
    E_Comp_Object_Frame client_inset;
    struct
@@ -197,45 +196,45 @@ _e_comp_object_layers_add(E_Comp_Object *cw, E_Comp_Object *above, E_Comp_Object
    /* try to get the internal data for the layer;
     * will return NULL for fake layers (eg. wayland)
     */
-   if (cw->comp->layers[cw->layer].obj)
-     layer_cw = evas_object_smart_data_get(cw->comp->layers[cw->layer].obj);
+   if (e_comp->layers[cw->layer].obj)
+     layer_cw = evas_object_smart_data_get(e_comp->layers[cw->layer].obj);
    if (layer_cw == cw) layer_cw = NULL;
 /*
    if (above)
-     cw->comp->layers[cw->layer].objs = eina_inlist_append_relative(cw->comp->layers[cw->layer].objs, EINA_INLIST_GET(cw), EINA_INLIST_GET(cw2));
+     e_comp->layers[cw->layer].objs = eina_inlist_append_relative(e_comp->layers[cw->layer].objs, EINA_INLIST_GET(cw), EINA_INLIST_GET(cw2));
    else if (below)
-     cw->comp->layers[cw->layer].objs = eina_inlist_prepend_relative(cw->comp->layers[cw->layer].objs, EINA_INLIST_GET(cw), EINA_INLIST_GET(cw2));
+     e_comp->layers[cw->layer].objs = eina_inlist_prepend_relative(e_comp->layers[cw->layer].objs, EINA_INLIST_GET(cw), EINA_INLIST_GET(cw2));
    else
      {
         if (prepend)
-          cw->comp->layers[cw->layer].objs = eina_inlist_prepend(cw->comp->layers[cw->layer].objs, EINA_INLIST_GET(cw));
+          e_comp->layers[cw->layer].objs = eina_inlist_prepend(e_comp->layers[cw->layer].objs, EINA_INLIST_GET(cw));
         else
-          cw->comp->layers[cw->layer].objs = eina_inlist_append(cw->comp->layers[cw->layer].objs, EINA_INLIST_GET(cw));
+          e_comp->layers[cw->layer].objs = eina_inlist_append(e_comp->layers[cw->layer].objs, EINA_INLIST_GET(cw));
      }
-   cw->comp->layers[cw->layer].objs_count++;
+   e_comp->layers[cw->layer].objs_count++;
    if (!cw->ec) return;
 */
    if (above)
-    cw->comp->layers[above->layer].clients = eina_inlist_append_relative(cw->comp->layers[above->layer].clients, EINA_INLIST_GET(cw->ec), EINA_INLIST_GET(above->ec));
+    e_comp->layers[above->layer].clients = eina_inlist_append_relative(e_comp->layers[above->layer].clients, EINA_INLIST_GET(cw->ec), EINA_INLIST_GET(above->ec));
    else if (below)
-     cw->comp->layers[below->layer].clients = eina_inlist_prepend_relative(cw->comp->layers[below->layer].clients, EINA_INLIST_GET(cw->ec), EINA_INLIST_GET(below->ec));
+     e_comp->layers[below->layer].clients = eina_inlist_prepend_relative(e_comp->layers[below->layer].clients, EINA_INLIST_GET(cw->ec), EINA_INLIST_GET(below->ec));
    if ((!above) && (!below))
      {
         if (prepend)
-          cw->comp->layers[cw->layer].clients = eina_inlist_prepend(cw->comp->layers[cw->layer].clients, EINA_INLIST_GET(cw->ec));
+          e_comp->layers[cw->layer].clients = eina_inlist_prepend(e_comp->layers[cw->layer].clients, EINA_INLIST_GET(cw->ec));
         else if (layer_cw)
-          cw->comp->layers[cw->layer].clients = eina_inlist_prepend_relative(cw->comp->layers[cw->layer].clients, EINA_INLIST_GET(cw->ec), EINA_INLIST_GET(layer_cw->ec));
+          e_comp->layers[cw->layer].clients = eina_inlist_prepend_relative(e_comp->layers[cw->layer].clients, EINA_INLIST_GET(cw->ec), EINA_INLIST_GET(layer_cw->ec));
         else //this is either the layer object or a tough actin tinactin^W^W^Wfast stacking client
-          cw->comp->layers[cw->layer].clients = eina_inlist_append(cw->comp->layers[cw->layer].clients, EINA_INLIST_GET(cw->ec));
+          e_comp->layers[cw->layer].clients = eina_inlist_append(e_comp->layers[cw->layer].clients, EINA_INLIST_GET(cw->ec));
      }
-   cw->comp->layers[cw->layer].clients_count++;
+   e_comp->layers[cw->layer].clients_count++;
 #ifndef E_RELEASE_BUILD
    if (layer_cw)
      {
         E_Client *below_ec = e_client_below_get(cw->ec);
         if (below_ec)
           {
-             if (cw->comp->layers[cw->layer].obj == below_ec->frame)
+             if (e_comp->layers[cw->layer].obj == below_ec->frame)
                CRI("ACK!");
           }
      }
@@ -245,14 +244,14 @@ _e_comp_object_layers_add(E_Comp_Object *cw, E_Comp_Object *above, E_Comp_Object
 static void
 _e_comp_object_layers_remove(E_Comp_Object *cw)
 {
-   if (cw->ec && cw->comp->layers[cw->layer].clients)
+   if (cw->ec && e_comp->layers[cw->layer].clients)
      {
-        cw->comp->layers[cw->layer].clients = eina_inlist_remove(cw->comp->layers[cw->layer].clients, EINA_INLIST_GET(cw->ec));
-        cw->comp->layers[cw->layer].clients_count--;
+        e_comp->layers[cw->layer].clients = eina_inlist_remove(e_comp->layers[cw->layer].clients, EINA_INLIST_GET(cw->ec));
+        e_comp->layers[cw->layer].clients_count--;
      }
 /*
-   cw->comp->layers[cw->layer].objs = eina_inlist_remove(cw->comp->layers[cw->layer].objs, EINA_INLIST_GET(cw));
-   cw->comp->layers[cw->layer].objs_count--;
+   e_comp->layers[cw->layer].objs = eina_inlist_remove(e_comp->layers[cw->layer].objs, EINA_INLIST_GET(cw));
+   e_comp->layers[cw->layer].objs_count--;
 */
 }
 
@@ -649,7 +648,7 @@ _e_comp_object_done_defer(void *data, Evas_Object *obj EINA_UNUSED, const char *
    if (cw->animating)
      {
         cw->animating--;
-        cw->comp->animating--;
+        e_comp->animating--;
         /* remove ref from animation start, account for possibility of deletion from unref */
         if (!e_object_unref(E_OBJECT(cw->ec))) return;
      }
@@ -657,7 +656,7 @@ _e_comp_object_done_defer(void *data, Evas_Object *obj EINA_UNUSED, const char *
    if (cw->defer_hide && (!strcmp(emission, "e,action,hide,done")))
      evas_object_hide(cw->smart_obj);
    else if (!cw->animating)
-     e_comp_shape_queue(cw->comp);
+     e_comp_shape_queue(e_comp);
 }
 
 /////////////////////////////////////////////
@@ -666,15 +665,15 @@ _e_comp_object_done_defer(void *data, Evas_Object *obj EINA_UNUSED, const char *
 static void
 _e_comp_object_setup(E_Comp_Object *cw)
 {
-   cw->clip = evas_object_rectangle_add(cw->comp->evas);
+   cw->clip = evas_object_rectangle_add(e_comp->evas);
    evas_object_resize(cw->clip, 999999, 999999);
    evas_object_smart_member_add(cw->clip, cw->smart_obj);
-   cw->effect_obj = edje_object_add(cw->comp->evas);
+   cw->effect_obj = edje_object_add(e_comp->evas);
    evas_object_move(cw->effect_obj, cw->x, cw->y);
    evas_object_clip_set(cw->effect_obj, cw->clip);
    evas_object_smart_member_add(cw->effect_obj, cw->smart_obj);
    e_theme_edje_object_set(cw->effect_obj, "base/theme/comp", "e/comp/effects/none");
-   cw->shobj = edje_object_add(cw->comp->evas);
+   cw->shobj = edje_object_add(e_comp->evas);
    evas_object_data_set(cw->shobj, "comp_smart_obj", cw->smart_obj);
    edje_object_part_swallow(cw->effect_obj, "e.swallow.content", cw->shobj);
    edje_object_signal_callback_add(cw->shobj, "e,action,*,done", "e", _e_comp_object_done_defer, cw);
@@ -988,8 +987,8 @@ _e_comp_intercept_layer_set(void *data, Evas_Object *obj, int layer)
 
              if (cw->visible)
                {
-                  e_comp_shape_queue(cw->comp);
-                  e_comp_render_queue(cw->comp);
+                  e_comp_shape_queue(e_comp);
+                  e_comp_render_queue(e_comp);
                }
              ec = e_client_above_get(cw->ec);
              if (ec && (evas_object_layer_get(ec->frame) != evas_object_layer_get(obj)))
@@ -1005,7 +1004,7 @@ _e_comp_intercept_layer_set(void *data, Evas_Object *obj, int layer)
              if (ec && (cw->ec->parent == ec))
                evas_object_stack_above(obj, ec->frame);
              else
-               evas_object_stack_below(obj, ec ? ec->frame : cw->comp->layers[cw->layer].obj);
+               evas_object_stack_below(obj, ec ? ec->frame : e_comp->layers[cw->layer].obj);
           }
         return;
      }
@@ -1053,16 +1052,16 @@ _e_comp_intercept_layer_set(void *data, Evas_Object *obj, int layer)
    //if (cw->ec->new_client)
      //INF("CLIENT STACKED %p: %u", cw->ec, layer);
    evas_object_layer_set(obj, layer);
-   if (!cw->comp->layers[cw->layer].obj) return; //this is a layer marker
-   evas_object_stack_below(obj, cw->comp->layers[cw->layer].obj);
-   if (evas_object_below_get(obj) == cw->comp->layers[cw->layer].obj)
+   if (!e_comp->layers[cw->layer].obj) return; //this is a layer marker
+   evas_object_stack_below(obj, e_comp->layers[cw->layer].obj);
+   if (evas_object_below_get(obj) == e_comp->layers[cw->layer].obj)
      {
         /* can't stack a client above its own layer marker */
         CRI("STACKING ERROR!!!");
      }
    if (!cw->visible) return;
-   e_comp_render_queue(cw->comp);
-   e_comp_shape_queue(cw->comp);
+   e_comp_render_queue(e_comp);
+   e_comp_shape_queue(e_comp);
 }
 
 typedef void (*E_Comp_Object_Stack_Func)(Evas_Object *obj, Evas_Object *stack);
@@ -1095,7 +1094,7 @@ _e_comp_intercept_stack_helper(E_Comp_Object *cw, Evas_Object *stack, E_Comp_Obj
    if (layer != e_comp_canvas_layer_map_to(cw->layer))
      {
         /* some FOOL is trying to restack a layer marker */
-        if (cw->smart_obj == cw->comp->layers[cw->layer].obj) return;
+        if (cw->smart_obj == e_comp->layers[cw->layer].obj) return;
         evas_object_layer_set(cw->smart_obj, layer);
         /* we got our layer wrangled, return now! */
         if (layer != e_comp_canvas_layer_map_to(cw->layer)) return;
@@ -1122,7 +1121,7 @@ _e_comp_intercept_stack_helper(E_Comp_Object *cw, Evas_Object *stack, E_Comp_Obj
              /* reached the top client layer somehow
               * use top client object
               */
-             o = cw->comp->layers[e_comp_canvas_layer_map(E_LAYER_CLIENT_PRIO)].obj;
+             o = e_comp->layers[e_comp_canvas_layer_map(E_LAYER_CLIENT_PRIO)].obj;
           }
         if (!o)
           /* top client layer window hasn't been stacked yet. this probably shouldn't happen?
@@ -1131,7 +1130,7 @@ _e_comp_intercept_stack_helper(E_Comp_Object *cw, Evas_Object *stack, E_Comp_Obj
           {
              E_Client *ec;
 
-             ec = e_client_top_get(cw->comp);
+             ec = e_client_top_get(e_comp);
              if (ec)
                o = ec->frame;
              //else //wat
@@ -1157,16 +1156,16 @@ _e_comp_intercept_stack_helper(E_Comp_Object *cw, Evas_Object *stack, E_Comp_Obj
    if (cw->ec->new_client || (!ecstack) || (ecstack->frame != o))
      evas_object_data_set(cw->smart_obj, "client_restack", (void*)1);
    stack_cb(cw->smart_obj, stack);
-   if (cw->comp->layers[cw->layer].obj)
-     if (evas_object_below_get(cw->smart_obj) == cw->comp->layers[cw->layer].obj)
+   if (e_comp->layers[cw->layer].obj)
+     if (evas_object_below_get(cw->smart_obj) == e_comp->layers[cw->layer].obj)
        {
           CRI("STACKING ERROR!!!");
        }
    if (cw->ec->new_client || (!ecstack) || (ecstack->frame != o))
      evas_object_data_del(cw->smart_obj, "client_restack");
    if (!cw->visible) return;
-   e_comp_render_queue(cw->comp);
-   e_comp_shape_queue(cw->comp);
+   e_comp_render_queue(e_comp);
+   e_comp_shape_queue(e_comp);
 }
 
 static void
@@ -1202,13 +1201,13 @@ _e_comp_intercept_lower(void *data, Evas_Object *obj)
    /* prepend to client list since this client should be the first item now */
    _e_comp_object_layers_add(cw, NULL, NULL, 1);
    if (evas_object_layer_get(o) != evas_object_layer_get(obj)) return; //already at bottom!
-   if (obj == cw->comp->layers[cw->layer].obj) return; //never lower a layer marker!
+   if (obj == e_comp->layers[cw->layer].obj) return; //never lower a layer marker!
    evas_object_data_set(obj, "client_restack", (void*)1);
    evas_object_lower(obj);
    evas_object_data_del(obj, "client_restack");
    if (!cw->visible) return;
-   e_comp_render_queue(cw->comp);
-   e_comp_shape_queue(cw->comp);
+   e_comp_render_queue(e_comp);
+   e_comp_shape_queue(e_comp);
 }
 
 static void
@@ -1226,22 +1225,22 @@ _e_comp_intercept_raise(void *data, Evas_Object *obj)
    o = evas_object_above_get(obj);
    {
       E_Client *ecabove = e_client_above_get(cw->ec);
-      if (ecabove && (ecabove->frame == cw->comp->layers[cw->layer].obj) &&
+      if (ecabove && (ecabove->frame == e_comp->layers[cw->layer].obj) &&
           (ecabove->frame == o)) return; //highest below marker
    }
    if (evas_object_layer_get(o) != evas_object_layer_get(obj)) return; //already at top!
-   if (obj == cw->comp->layers[cw->layer].obj) //never raise a non-layer marker!
+   if (obj == e_comp->layers[cw->layer].obj) //never raise a non-layer marker!
      evas_object_raise(obj);
    else
      {
         /* still stack below layer marker */
-        evas_object_stack_below(obj, cw->comp->layers[cw->layer].obj);
+        evas_object_stack_below(obj, e_comp->layers[cw->layer].obj);
         if (e_client_focus_track_enabled())
           e_client_raise_latest_set(cw->ec); //modify raise list if necessary
      }
    if (!cw->visible) return;
-   e_comp_render_queue(cw->comp);
-   e_comp_shape_queue(cw->comp);
+   e_comp_render_queue(e_comp);
+   e_comp_shape_queue(e_comp);
 }
 
 static void
@@ -1282,7 +1281,7 @@ _e_comp_intercept_hide(void *data, Evas_Object *obj)
              else
                {
                   e_comp_object_signal_emit(obj, "e,state,hidden", "e");
-                  cw->comp->animating++;
+                  e_comp->animating++;
                   cw->animating++;
                   e_object_ref(E_OBJECT(cw->ec));
                }
@@ -1382,14 +1381,14 @@ _e_comp_intercept_show(void *data, Evas_Object *obj EINA_UNUSED)
    //INF("SHOW %p", ec);
    if (ec->input_only)
      {
-        cw->effect_obj = evas_object_rectangle_add(cw->comp->evas);
+        cw->effect_obj = evas_object_rectangle_add(e_comp->evas);
         evas_object_color_set(cw->effect_obj, 0, 0, 0, 0);
         evas_object_smart_member_add(cw->effect_obj, cw->smart_obj);
      }
    else
      {
         _e_comp_object_setup(cw);
-        cw->obj = evas_object_image_filled_add(cw->comp->evas);
+        cw->obj = evas_object_image_filled_add(e_comp->evas);
         e_util_size_debug_set(cw->obj, 1);
         evas_object_image_pixels_get_callback_set(cw->obj, _e_comp_object_pixels_get, cw);
         evas_object_image_smooth_scale_set(cw->obj, e_comp_config_get()->smooth_windows);
@@ -1963,8 +1962,8 @@ _e_comp_smart_hide(Evas_Object *obj)
    /* ensure focus-out */
    if (cw->ec->focused)
      evas_object_focus_set(cw->ec->frame, 0);
-   e_comp_render_queue(cw->comp); //force nocomp recheck
-   e_comp_shape_queue(cw->comp);
+   e_comp_render_queue(e_comp); //force nocomp recheck
+   e_comp_shape_queue(e_comp);
 }
 
 static void
@@ -1989,10 +1988,10 @@ _e_comp_smart_show(Evas_Object *obj)
    evas_object_show(cw->effect_obj);
    if (cw->ec->internal_elm_win && (!evas_object_visible_get(cw->ec->internal_elm_win)))
      evas_object_show(cw->ec->internal_elm_win);
-   e_comp_render_queue(cw->comp);
+   e_comp_render_queue(e_comp);
    if (cw->ec->input_only)
      {
-        e_comp_shape_queue(cw->comp);
+        e_comp_shape_queue(e_comp);
         return;
      }
    if (cw->ec->iconic && (!cw->ec->new_client))
@@ -2000,7 +1999,7 @@ _e_comp_smart_show(Evas_Object *obj)
    else
      {
         e_comp_object_signal_emit(cw->smart_obj, "e,state,visible", "e");
-        cw->comp->animating++;
+        e_comp->animating++;
         cw->animating++;
         e_object_ref(E_OBJECT(cw->ec));
      }
@@ -2008,7 +2007,7 @@ _e_comp_smart_show(Evas_Object *obj)
    if (!cw->animating)
      {
         e_comp_object_effect_set(obj, NULL);
-        e_comp_shape_queue(cw->comp);
+        e_comp_shape_queue(e_comp);
      }
 }
 
@@ -2021,7 +2020,7 @@ _e_comp_smart_del(Evas_Object *obj)
 
    if (cw->animating)
      {
-        cw->comp->animating--;
+        e_comp->animating--;
      }
    cw->animating = 0;
    E_FREE_FUNC(cw->updates, eina_tiler_free);
@@ -2052,7 +2051,7 @@ _e_comp_smart_del(Evas_Object *obj)
    evas_object_del(cw->zoomobj);
    evas_object_del(cw->input_obj);
    evas_object_del(cw->obj);
-   e_comp_shape_queue(cw->comp);
+   e_comp_shape_queue(e_comp);
    eina_stringshare_del(cw->frame_theme);
    eina_stringshare_del(cw->frame_name);
    free(cw);
@@ -2069,8 +2068,8 @@ _e_comp_smart_move(Evas_Object *obj, int x, int y)
    if (cw->input_obj)
      evas_object_geometry_set(cw->input_obj, cw->x + cw->input_rect.x, cw->y + cw->input_rect.y, cw->input_rect.w, cw->input_rect.h);
    /* this gets called once during setup to init coords offscreen and guarantee first move */
-   if (cw->comp && cw->visible)
-     e_comp_shape_queue(cw->comp);
+   if (e_comp && cw->visible)
+     e_comp_shape_queue(e_comp);
 }
 
 static void
@@ -2122,9 +2121,9 @@ _e_comp_smart_resize(Evas_Object *obj, int w, int h)
         evas_object_resize(cw->effect_obj, w, h);
      }
    if (!cw->visible) return;
-   e_comp_render_queue(cw->comp);
+   e_comp_render_queue(e_comp);
    if (!cw->animating)
-     e_comp_shape_queue(cw->comp);
+     e_comp_shape_queue(e_comp);
 }
 
 static void
@@ -2167,7 +2166,7 @@ e_comp_object_zoomap_set(Evas_Object *obj, Eina_Bool enabled)
    if (cw->zoomap_disabled == enabled) return;
    if (enabled)
      {
-        cw->zoomobj = e_zoomap_add(cw->comp->evas);
+        cw->zoomobj = e_zoomap_add(e_comp->evas);
         e_zoomap_smooth_set(cw->zoomobj, e_comp_config_get()->smooth_windows);
         e_zoomap_child_set(cw->zoomobj, cw->ec ? cw->frame_object : cw->obj);
         edje_object_part_swallow(cw->shobj, "e.swallow.content", cw->zoomobj);
@@ -2475,7 +2474,6 @@ e_comp_object_client_add(E_Client *ec)
    _e_comp_smart_init();
    o = evas_object_smart_add(ec->comp->evas, _e_comp_smart);
    cw = evas_object_smart_data_get(o);
-   cw->comp = ec->comp;
    evas_object_data_set(o, "E_Client", ec);
    cw->ec = ec;
    ec->frame = o;
@@ -2673,7 +2671,7 @@ e_comp_object_input_area_set(Evas_Object *obj, int x, int y, int w, int h)
      {
         if (!cw->input_obj)
           {
-             cw->input_obj = evas_object_rectangle_add(cw->comp->evas);
+             cw->input_obj = evas_object_rectangle_add(e_comp->evas);
              //e_util_size_debug_set(cw->input_obj, 1);
              evas_object_name_set(cw->input_obj, "cw->input_obj");
              evas_object_color_set(cw->input_obj, 0, 0, 0, 0);
@@ -2742,7 +2740,7 @@ e_comp_object_frame_icon_update(Evas_Object *obj)
    E_FREE_FUNC(cw->frame_icon, evas_object_del);
    if (!edje_object_part_exists(cw->frame_object, "e.swallow.icon"))
      return;
-   cw->frame_icon = e_client_icon_add(cw->ec, cw->comp->evas);
+   cw->frame_icon = e_client_icon_add(cw->ec, e_comp->evas);
    if (!cw->frame_icon) return;
    if (!edje_object_part_swallow(cw->frame_object, "e.swallow.icon", cw->frame_icon))
      E_FREE_FUNC(cw->frame_icon, evas_object_del);
@@ -2779,7 +2777,7 @@ e_comp_object_frame_theme_set(Evas_Object *obj, const char *name)
         E_FREE_FUNC(cw->frame_object, evas_object_del);
         if (!name) goto reshadow;
      }
-   o = edje_object_add(cw->comp->evas);
+   o = edje_object_add(e_comp->evas);
    snprintf(buf, sizeof(buf), "e/widgets/border/%s/border", name);
    ok = e_theme_edje_object_set(o, "base/theme/border", buf);
    if ((!ok) && (!e_util_strcmp(name, "borderless")))
@@ -2947,7 +2945,7 @@ e_comp_object_damage(Evas_Object *obj, int x, int y, int w, int h)
 
    if (cw->ec->input_only || (!cw->updates)) return;
    if (cw->nocomp) return;
-   if (cw->comp->nocomp)
+   if (e_comp->nocomp)
      {
         cw->nocomp_need_update = EINA_TRUE;
         return;
@@ -3020,9 +3018,9 @@ e_comp_object_render_update_add(Evas_Object *obj)
    if (!cw->update)
      {
         cw->update = 1;
-        cw->comp->updates = eina_list_append(cw->comp->updates, cw->ec);
+        e_comp->updates = eina_list_append(e_comp->updates, cw->ec);
      }
-   e_comp_render_queue(cw->comp);
+   e_comp_render_queue(e_comp);
 }
 
 EAPI void
@@ -3034,13 +3032,13 @@ e_comp_object_render_update_del(Evas_Object *obj)
    if (!cw->update) return;
    cw->update = 0;
    /* this gets called during comp animating to clear the update flag */
-   if (cw->comp->grabbed) return;
-   cw->comp->updates = eina_list_remove(cw->comp->updates, cw->ec);
-   if (!cw->comp->updates)
+   if (e_comp->grabbed) return;
+   e_comp->updates = eina_list_remove(e_comp->updates, cw->ec);
+   if (!e_comp->updates)
      {
-        E_FREE_FUNC(cw->comp->update_job, ecore_job_del);
-        if (cw->comp->render_animator)
-          ecore_animator_freeze(cw->comp->render_animator);
+        E_FREE_FUNC(e_comp->update_job, ecore_job_del);
+        if (e_comp->render_animator)
+          ecore_animator_freeze(e_comp->render_animator);
      }
 }
 
@@ -3529,10 +3527,10 @@ _e_comp_object_effect_end_cb(void *data, Evas_Object *obj, const char *emission,
    edje_object_signal_callback_del_full(obj, "e,action,done", "e", _e_comp_object_effect_end_cb, NULL);
    if (cw->animating)
      {
-        cw->comp->animating--;
+        e_comp->animating--;
         cw->animating--;
         if (e_object_unref(E_OBJECT(cw->ec)))
-          e_comp_shape_queue(cw->comp);
+          e_comp_shape_queue(e_comp);
      }
 
    end_cb = evas_object_data_get(obj, "_e_comp.end_cb");
@@ -3579,7 +3577,7 @@ e_comp_object_effect_start(Evas_Object *obj, Edje_Signal_Cb end_cb, const void *
 
    edje_object_signal_emit(cw->effect_obj, "e,action,go", "e");
    if (cw->animating) return;
-   cw->comp->animating++;
+   e_comp->animating++;
    cw->animating++;
    e_object_ref(E_OBJECT(cw->ec));
 }
@@ -3601,7 +3599,7 @@ e_comp_object_effect_stop(Evas_Object *obj, Edje_Signal_Cb end_cb)
    if (cw->animating)
      {
         cw->animating--;
-        cw->comp->animating--;
+        e_comp->animating--;
         e_object_unref(E_OBJECT(cw->ec));
      }
 }
