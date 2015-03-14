@@ -763,12 +763,13 @@ _e_comp_wl_cb_randr_change(void *data EINA_UNUSED, int type EINA_UNUSED, void *e
              break;
           }
 
-        e_comp_wl_output_init(screen->id, screen->info.screen,
-                              screen->info.name,
-                              screen->config.geom.x, screen->config.geom.y,
-                              screen->config.geom.w, screen->config.geom.h,
-                              screen->info.size.w, screen->info.size.h,
-                              screen->config.mode.refresh, 0, transform);
+        if (!e_comp_wl_output_init(screen->id, screen->info.screen,
+                                   screen->info.name,
+                                   screen->config.geom.x, screen->config.geom.y,
+                                   screen->config.geom.w, screen->config.geom.h,
+                                   screen->info.size.w, screen->info.size.h,
+                                   screen->config.mode.refresh, 0, transform))
+          ERR("Could not initialize screen %s");
      }
 
    return ECORE_CALLBACK_RENEW;
@@ -2851,22 +2852,27 @@ _e_comp_wl_output_get(Eina_List *outputs, const char *id)
  * @param refresh    output's refresh rate in Hz
  * @param subpixel   output's subpixel layout
  * @param transform  output's rotation and/or mirror transformation
+ *
+ * @returns True if a display output object could be added or updated
  */
-EAPI void
-e_comp_wl_output_init(const char *id, const char *make, const char *model, int x, int y, int w, int h, int pw, int ph, unsigned int refresh, unsigned int subpixel, unsigned int transform)
+EAPI Eina_Bool
+e_comp_wl_output_init(const char *id, const char *make, const char *model,
+                      int x, int y, int w, int h, int pw, int ph,
+                      unsigned int refresh, unsigned int subpixel,
+                      unsigned int transform)
 {
    E_Comp_Data *cdata;
    E_Comp_Wl_Output *output;
    Eina_List *l2;
    struct wl_resource *resource;
 
-   if (!(cdata = e_comp->wl_comp_data)) return;
+   if (!(cdata = e_comp->wl_comp_data)) return EINA_FALSE;
 
    /* retrieve named output; or create it if it doesn't exist */
    output = _e_comp_wl_output_get(cdata->outputs, id);
    if (!output)
      {
-        if (!(output = E_NEW(E_Comp_Wl_Output, 1))) return;
+        if (!(output = E_NEW(E_Comp_Wl_Output, 1))) return EINA_FALSE;
 
         if (id) output->id = eina_stringshare_add(id);
         if (make) output->make = eina_stringshare_add(make);
@@ -2914,4 +2920,5 @@ e_comp_wl_output_init(const char *id, const char *make, const char *model, int x
         if (wl_resource_get_version(resource) >= WL_OUTPUT_DONE_SINCE_VERSION)
           wl_output_send_done(resource);
      }
+   return EINA_TRUE;
 }
