@@ -44,6 +44,11 @@ e_uuid_dump(void)
     }
  }
 
+/**
+ * Initialize the UUID store
+ *
+ * @returns 1 if init was successful, 0 on failure
+ */
 EINTERN int
 e_uuid_store_init(void)
  {
@@ -68,7 +73,11 @@ e_uuid_store_init(void)
 
    /* Adjust in memory blob to our given table size */
    /* FIXME: How can we make sure we have the right size for our given table? */
-   ftruncate(store->shmfd, TABLE_SIZE);
+   if (ftruncate(store->shmfd, TABLE_SIZE) < 0)
+     {
+        ERR("ftruncate failed: %s", strerror(errno));
+        return 0;
+     }
 
    store->table = (struct uuid_table *)mmap(NULL, TABLE_SIZE, PROT_READ | PROT_WRITE, MAP_SHARED, store->shmfd, 0);
    if (store->table == NULL)
