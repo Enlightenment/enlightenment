@@ -104,21 +104,21 @@ _e_shell_surface_destroy(struct wl_resource *resource)
      {
         if (e_object_is_del(E_OBJECT(ec))) return;
 
-        if (e_comp_data)
+        if (ec->comp_data)
           {
-             if (e_comp_data->mapped)
+             if (ec->comp_data->mapped)
                {
-                  if ((e_comp_data->shell.surface) &&
-                      (e_comp_data->shell.unmap))
-                    e_comp_data->shell.unmap(e_comp_data->shell.surface);
+                  if ((ec->comp_data->shell.surface) &&
+                      (ec->comp_data->shell.unmap))
+                    ec->comp_data->shell.unmap(ec->comp_data->shell.surface);
                }
              if (ec->parent)
                {
                   ec->parent->transients =
                     eina_list_remove(ec->parent->transients, ec);
                }
-             /* wl_resource_destroy(e_comp_data->shell.surface); */
-             e_comp_data->shell.surface = NULL;
+             /* wl_resource_destroy(ec->comp_data->shell.surface); */
+             ec->comp_data->shell.surface = NULL;
           }
      }
 }
@@ -277,7 +277,7 @@ _e_shell_surface_cb_toplevel_set(struct wl_client *client EINA_UNUSED, struct wl
    if (!ec->internal)
      ec->border.changed = ec->changes.border = !ec->borderless;
    ec->netwm.type = E_WINDOW_TYPE_NORMAL;
-   e_comp_data->set_win_type = EINA_TRUE;
+   ec->comp_data->set_win_type = EINA_TRUE;
    if ((!ec->lock_user_maximize) && (ec->maximized))
      e_client_unmaximize(ec, E_MAXIMIZE_BOTH);
    if ((!ec->lock_user_fullscreen) && (ec->fullscreen))
@@ -331,10 +331,10 @@ _e_shell_surface_cb_popup_set(struct wl_client *client EINA_UNUSED, struct wl_re
         return;
      }
 
-   if (e_comp_data)
+   if (ec->comp_data)
      {
-        e_comp_data->popup.x = x;
-        e_comp_data->popup.y = y;
+        ec->comp_data->popup.x = x;
+        ec->comp_data->popup.y = y;
      }
 
    if (!ec->internal)
@@ -344,7 +344,7 @@ _e_shell_surface_cb_popup_set(struct wl_client *client EINA_UNUSED, struct wl_re
      ec->border.changed = ec->changes.border = !ec->borderless;
    ec->changes.icon = !!ec->icccm.class;
    ec->netwm.type = E_WINDOW_TYPE_POPUP_MENU;
-   e_comp_data->set_win_type = EINA_TRUE;
+   ec->comp_data->set_win_type = EINA_TRUE;
    ec->layer = E_LAYER_CLIENT_POPUP;
 
    /* set this client as a transient for parent */
@@ -467,10 +467,10 @@ _e_shell_surface_configure(struct wl_resource *resource, Evas_Coord x, Evas_Coor
             (ec->netwm.type == E_WINDOW_TYPE_POPUP_MENU) ||
             (ec->netwm.type == E_WINDOW_TYPE_DROPDOWN_MENU))
           {
-             x = E_CLAMP(ec->parent->client.x + e_comp_data->popup.x,
+             x = E_CLAMP(ec->parent->client.x + ec->comp_data->popup.x,
                ec->parent->client.x,
                ec->parent->client.x + ec->parent->client.w - ec->client.w);
-             y = E_CLAMP(ec->parent->client.y + e_comp_data->popup.y,
+             y = E_CLAMP(ec->parent->client.y + ec->comp_data->popup.y,
              ec->parent->client.y,
              ec->parent->client.y + ec->parent->client.h - ec->client.h);
           }
@@ -495,7 +495,7 @@ _e_shell_surface_ping(struct wl_resource *resource)
      }
 
    serial = wl_display_next_serial(e_comp->wl_comp_data->wl.disp);
-   wl_shell_surface_send_ping(e_comp_data->shell.surface, serial);
+   wl_shell_surface_send_ping(ec->comp_data->shell.surface, serial);
 }
 
 static void
@@ -513,12 +513,12 @@ _e_shell_surface_map(struct wl_resource *resource)
      }
 
    /* map this surface if needed */
-   if ((!e_comp_data->mapped) && (e_pixmap_usable_get(ec->pixmap)))
+   if ((!ec->comp_data->mapped) && (e_pixmap_usable_get(ec->pixmap)))
      {
         ec->visible = EINA_TRUE;
         evas_object_geometry_set(ec->frame, ec->x, ec->y, ec->w, ec->h);
         evas_object_show(ec->frame);
-        e_comp_data->mapped = EINA_TRUE;
+        ec->comp_data->mapped = EINA_TRUE;
      }
 }
 
@@ -536,11 +536,11 @@ _e_shell_surface_unmap(struct wl_resource *resource)
         return;
      }
 
-   if (e_comp_data->mapped)
+   if (ec->comp_data->mapped)
      {
         ec->visible = EINA_FALSE;
         evas_object_hide(ec->frame);
-        e_comp_data->mapped = EINA_FALSE;
+        ec->comp_data->mapped = EINA_FALSE;
      }
 }
 
@@ -578,7 +578,7 @@ _e_shell_cb_shell_surface_get(struct wl_client *client, struct wl_resource *reso
    ec->netwm.ping = EINA_TRUE;
 
    /* get the client data */
-   if (!(cdata = e_comp_data))
+   if (!(cdata = ec->comp_data))
      {
         wl_resource_post_error(surface_resource,
                                WL_DISPLAY_ERROR_INVALID_OBJECT,
@@ -881,7 +881,7 @@ _e_xdg_shell_surface_cb_window_geometry_set(struct wl_client *client EINA_UNUSED
                                 "No Client For Shell Surface");
         return;
      }
-   EINA_RECTANGLE_SET(&e_comp_data->shell.window, x, y, w, h);
+   EINA_RECTANGLE_SET(&ec->comp_data->shell.window, x, y, w, h);
    //DBG("XDG_SHELL: Window Geom Set: %d \t%d %d, %d %d", wl_resource_get_id(resource), x, y, w, h);
 }
 
@@ -1028,8 +1028,8 @@ _e_xdg_shell_surface_configure(struct wl_resource *resource, Evas_Coord x, Evas_
             (ec->netwm.type == E_WINDOW_TYPE_POPUP_MENU) ||
             (ec->netwm.type == E_WINDOW_TYPE_DROPDOWN_MENU))
           {
-             x = ec->parent->client.x + e_comp_data->popup.x;
-             y = ec->parent->client.y + e_comp_data->popup.y;
+             x = ec->parent->client.x + ec->comp_data->popup.x;
+             y = ec->parent->client.y + ec->comp_data->popup.y;
           }
      }
 
@@ -1079,12 +1079,12 @@ _e_xdg_shell_surface_map(struct wl_resource *resource)
         return;
      }
 
-   if ((!e_comp_data->mapped) && (e_pixmap_usable_get(ec->pixmap)))
+   if ((!ec->comp_data->mapped) && (e_pixmap_usable_get(ec->pixmap)))
      {
         /* map this surface if needed */
         ec->visible = EINA_TRUE;
         evas_object_show(ec->frame);
-        e_comp_data->mapped = EINA_TRUE;
+        ec->comp_data->mapped = EINA_TRUE;
 
         /* FIXME: sometimes popup surfaces Do Not raise above their
          * respective parents... */
@@ -1109,11 +1109,11 @@ _e_xdg_shell_surface_unmap(struct wl_resource *resource)
         return;
      }
 
-   if (e_comp_data->mapped)
+   if (ec->comp_data->mapped)
      {
         ec->visible = EINA_FALSE;
         evas_object_hide(ec->frame);
-        e_comp_data->mapped = EINA_FALSE;
+        ec->comp_data->mapped = EINA_FALSE;
      }
 }
 
@@ -1154,7 +1154,7 @@ _e_xdg_shell_cb_surface_get(struct wl_client *client, struct wl_resource *resour
    ec->netwm.ping = EINA_TRUE;
 
    /* get the client data */
-   if (!(cdata = e_comp_data))
+   if (!(cdata = ec->comp_data))
      {
         wl_resource_post_error(surface_resource,
                                WL_DISPLAY_ERROR_INVALID_OBJECT,
@@ -1199,7 +1199,7 @@ _e_xdg_shell_cb_surface_get(struct wl_client *client, struct wl_resource *resour
    if ((!ec->internal) || (!ec->borderless))
      ec->border.changed = ec->changes.border = !ec->borderless;
    ec->netwm.type = E_WINDOW_TYPE_NORMAL;
-   e_comp_data->set_win_type = EINA_TRUE;
+   ec->comp_data->set_win_type = EINA_TRUE;
 }
 
 static void
@@ -1251,7 +1251,7 @@ _e_xdg_shell_cb_popup_get(struct wl_client *client, struct wl_resource *resource
      }
 
    /* get the client data */
-   if (!(cdata = e_comp_data))
+   if (!(cdata = ec->comp_data))
      {
         wl_resource_post_error(surface_resource,
                                WL_DISPLAY_ERROR_INVALID_OBJECT,
@@ -1304,7 +1304,7 @@ _e_xdg_shell_cb_popup_get(struct wl_client *client, struct wl_resource *resource
      ec->border.changed = ec->changes.border = !ec->borderless;
    ec->changes.icon = !!ec->icccm.class;
    ec->netwm.type = E_WINDOW_TYPE_POPUP_MENU;
-   e_comp_data->set_win_type = EINA_TRUE;
+   ec->comp_data->set_win_type = EINA_TRUE;
    evas_object_layer_set(ec->frame, E_LAYER_CLIENT_POPUP);
    e_client_focus_stack_set(eina_list_remove(e_client_focus_stack_get(), ec));
 

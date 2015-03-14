@@ -135,7 +135,7 @@ e_modapi_init(E_Module *m)
 
    comp->man = e_manager_new(ecore_evas_window_get(comp->ee), comp, w, h);
    if (!e_comp_canvas_init()) return NULL;
-   e_comp_canvas_fake_layers_init(comp);
+   e_comp_canvas_fake_layers_init();
 
    /* NB: This needs to be called AFTER the comp canvas has been setup */
    if (!e_comp_wl_init()) return NULL;
