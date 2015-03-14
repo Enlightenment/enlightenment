@@ -319,6 +319,7 @@ _e_comp_wl_input_keymap_update(E_Comp_Data *cdata, struct xkb_keymap *keymap)
    if (cdata->xkb.fd < 0)
      {
         ERR("Could not create keymap file");
+        free(tmp);
         return;
      }
 
@@ -328,6 +329,7 @@ _e_comp_wl_input_keymap_update(E_Comp_Data *cdata, struct xkb_keymap *keymap)
    if (cdata->xkb.area == MAP_FAILED)
      {
         ERR("Failed to mmap keymap area: %m");
+        free(tmp);
         return;
      }
 
