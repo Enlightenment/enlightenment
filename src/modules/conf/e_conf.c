@@ -71,26 +71,15 @@ e_configure_show(E_Comp *comp, const char *params)
 
    if (_e_configure)
      {
-        E_Zone *z, *z2;
         const Eina_List *l;
         void *it;
         int x = 0;
 
         eco = _e_configure;
         ec = e_win_client_get(eco->win);
-        z = e_zone_current_get();
-        z2 = ec->zone;
         evas_object_show(eco->win);
         elm_win_raise(eco->win);
-        if (e_comp == e_comp)
-          e_client_desk_set(ec, e_desk_current_get(z));
-        else
-          {
-             if (!ec->sticky)
-               e_desk_show(ec->desk);
-             ecore_evas_pointer_warp(e_comp->ee,
-                                  z2->x + (z2->w / 2), z2->y + (z2->h / 2));
-          }
+        e_client_desk_set(ec, e_desk_current_get(ec->zone));
         e_client_unshade(ec, ec->shade_dir);
         if ((e_config->focus_setting == E_FOCUS_NEW_DIALOG) ||
             (e_config->focus_setting == E_FOCUS_NEW_WINDOW))
