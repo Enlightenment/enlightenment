@@ -638,7 +638,7 @@ e_pixmap_image_clear(E_Pixmap *cp, Eina_Bool cache)
              cd = (E_Comp_Wl_Client_Data *)cp->client->comp_data;
              EINA_LIST_FREE(cd->frames, cb)
                {
-                  wl_callback_send_done(cb, ecore_time_unix_get());
+                  wl_callback_send_done(cb, ecore_time_unix_get() * 1000);
                   wl_resource_destroy(cb);
                }
           }
