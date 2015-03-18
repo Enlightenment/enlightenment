@@ -168,11 +168,8 @@ _basic_create_widgets(E_Config_Dialog *cfd EINA_UNUSED, Evas *evas,
                       E_Config_Dialog_Data *cfdata)
 {
    Evas_Object *o, *oc, *of, *slider;
-   E_Comp *comp;
    E_Zone *zone;
    Eina_List *l;
-
-   comp = e_comp;
 
    o = e_widget_list_add(evas, 0, 0);
 
@@ -198,7 +195,7 @@ _basic_create_widgets(E_Config_Dialog *cfd EINA_UNUSED, Evas *evas,
    e_widget_ilist_multi_select_set(cfdata->o_zonelist, false);
    e_widget_size_min_set(cfdata->o_zonelist, 100, 100);
    e_widget_on_change_hook_set(cfdata->o_zonelist, _cb_zone_change, cfdata);
-   for (l = comp->zones; l; l = l->next)
+   for (l = e_comp->zones; l; l = l->next)
      {
         if (!(zone = l->data))
           continue;
@@ -213,7 +210,7 @@ _basic_create_widgets(E_Config_Dialog *cfd EINA_UNUSED, Evas *evas,
    /* List of individual tiling modes */
    cfdata->evas = evas;
 
-   _fill_zone_config(eina_list_data_get(comp->zones), cfdata);
+   _fill_zone_config(eina_list_data_get(e_comp->zones), cfdata);
 
    e_widget_ilist_selected_set(cfdata->o_zonelist, 0);
 
