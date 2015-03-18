@@ -184,7 +184,7 @@ e_desktop_client_create(E_Client *ec)
 }
 
 EAPI E_Desktop_Edit *
-e_desktop_border_edit(E_Client *ec)
+e_desktop_client_edit(E_Client *ec)
 {
    E_Desktop_Edit *editor;
    int new_desktop = 0;
@@ -194,8 +194,8 @@ e_desktop_border_edit(E_Client *ec)
    if (ec->desktop)
      editor->desktop = ec->desktop;
 
-   /* the border does not yet have a desktop entry. add one and pre-populate
-      it with values from the border */
+   /* the client does not yet have a desktop entry. add one and pre-populate
+      it with values from the client */
    if (!editor->desktop)
      {
         editor->desktop = e_desktop_client_create(ec);
