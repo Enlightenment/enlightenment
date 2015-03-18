@@ -32,10 +32,10 @@ struct _E_Config_Dialog_Data
 static void *_create_data(E_Config_Dialog *cfd);
 static void _fill_data_tempget(E_Config_Dialog_Data *cfdata);
 static void _fill_sensors(E_Config_Dialog_Data *cfdata, const char *name);
-static void _free_data(E_Config_Dialog *cfd __UNUSED__, E_Config_Dialog_Data *cfdata);
+static void _free_data(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfdata);
 static Evas_Object *_basic_create(E_Config_Dialog *cfd, Evas *evas, E_Config_Dialog_Data *cfdata);
 static int _basic_apply(E_Config_Dialog *cfd, E_Config_Dialog_Data *cfdata);
-static void _cb_display_changed(void *data, Evas_Object *obj __UNUSED__);
+static void _cb_display_changed(void *data, Evas_Object *obj EINA_UNUSED);
 
 void 
 config_temperature_module(Config_Face *inst) 
@@ -182,7 +182,7 @@ _fill_sensors(E_Config_Dialog_Data *cfdata, const char *name)
 }
 
 static void 
-_free_data(E_Config_Dialog *cfd __UNUSED__, E_Config_Dialog_Data *cfdata) 
+_free_data(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfdata) 
 {
    char *sensor;
 
@@ -193,7 +193,7 @@ _free_data(E_Config_Dialog *cfd __UNUSED__, E_Config_Dialog_Data *cfdata)
 }
 
 static Evas_Object *
-_basic_create(E_Config_Dialog *cfd __UNUSED__, Evas *evas, E_Config_Dialog_Data *cfdata) 
+_basic_create(E_Config_Dialog *cfd EINA_UNUSED, Evas *evas, E_Config_Dialog_Data *cfdata) 
 {
    Evas_Object *otb, *ol, *ow;
    E_Radio_Group *rg;
@@ -278,7 +278,7 @@ _basic_create(E_Config_Dialog *cfd __UNUSED__, Evas *evas, E_Config_Dialog_Data 
 }
 
 static int 
-_basic_apply(E_Config_Dialog *cfd __UNUSED__, E_Config_Dialog_Data *cfdata) 
+_basic_apply(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfdata) 
 {
    cfdata->inst->poll_interval = cfdata->poll.interval;
    cfdata->inst->units = cfdata->unit_method;
@@ -297,7 +297,7 @@ _basic_apply(E_Config_Dialog *cfd __UNUSED__, E_Config_Dialog_Data *cfdata)
 }
 
 static void 
-_cb_display_changed(void *data, Evas_Object *obj __UNUSED__) 
+_cb_display_changed(void *data, Evas_Object *obj EINA_UNUSED) 
 {
    E_Config_Dialog_Data *cfdata;
    int val;

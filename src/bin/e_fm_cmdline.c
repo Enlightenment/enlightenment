@@ -17,8 +17,8 @@ static int retval = EXIT_SUCCESS;
 static int pending = 0;
 
 static void
-fm_open_reply(void *data __UNUSED__, const Eldbus_Message *msg,
-              Eldbus_Pending *dbus_pending __UNUSED__)
+fm_open_reply(void *data EINA_UNUSED, const Eldbus_Message *msg,
+              Eldbus_Pending *dbus_pending EINA_UNUSED)
 {
    const char *name, *txt;
    if (eldbus_message_error_get(msg, &name, &txt))
@@ -32,7 +32,7 @@ fm_open_reply(void *data __UNUSED__, const Eldbus_Message *msg,
 }
 
 static Eina_Bool
-fm_error_quit_last(void *data __UNUSED__)
+fm_error_quit_last(void *data EINA_UNUSED)
 {
    if (!pending) ecore_main_loop_quit();
    return EINA_FALSE;

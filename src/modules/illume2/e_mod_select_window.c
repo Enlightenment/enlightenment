@@ -40,20 +40,20 @@ e_mod_illume_config_select_window(E_Illume_Select_Window_Type type)
 }
 
 static void *
-_e_mod_illume_config_select_window_create_data(E_Config_Dialog *cfd __UNUSED__) 
+_e_mod_illume_config_select_window_create_data(E_Config_Dialog *cfd EINA_UNUSED) 
 {
    return NULL;
 }
 
 static void 
-_e_mod_illume_config_select_window_free_data(E_Config_Dialog *cfd __UNUSED__, E_Config_Dialog_Data *cfdata __UNUSED__) 
+_e_mod_illume_config_select_window_free_data(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfdata EINA_UNUSED) 
 {
    if (_sw_change_timer) ecore_timer_del(_sw_change_timer);
    _sw_change_timer = NULL;
 }
 
 static Evas_Object *
-_e_mod_illume_config_select_window_create(E_Config_Dialog *cfd __UNUSED__, Evas *evas, E_Config_Dialog_Data *cfdata __UNUSED__) 
+_e_mod_illume_config_select_window_create(E_Config_Dialog *cfd EINA_UNUSED, Evas *evas, E_Config_Dialog_Data *cfdata EINA_UNUSED) 
 {
    Evas_Object *list, *ow;
    Eina_List *ecs, *l;
@@ -145,7 +145,7 @@ _e_mod_illume_config_select_window_list_changed(void *data)
 }
 
 static Eina_Bool
-_e_mod_illume_config_select_window_change_timeout(__UNUSED__ void *data)
+_e_mod_illume_config_select_window_change_timeout(EINA_UNUSED void *data)
 {
    e_config_save_queue();
    _sw_change_timer = NULL;

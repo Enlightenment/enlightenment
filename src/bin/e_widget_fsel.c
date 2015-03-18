@@ -33,7 +33,7 @@ static void _e_wid_del_hook(Evas_Object *obj);
 
 /* local subsystem functions */
 static void
-_e_wid_fsel_button_up(void *data1, void *data2 __UNUSED__)
+_e_wid_fsel_button_up(void *data1, void *data2 EINA_UNUSED)
 {
    E_Widget_Data *wd;
 
@@ -45,7 +45,7 @@ _e_wid_fsel_button_up(void *data1, void *data2 __UNUSED__)
 }
 
 static void
-_e_wid_fsel_favorites_add(void *data1, void *data2 __UNUSED__)
+_e_wid_fsel_favorites_add(void *data1, void *data2 EINA_UNUSED)
 {
    E_Widget_Data *wd;
    const char *current_path, *fn;
@@ -100,7 +100,7 @@ _e_wid_fsel_favorites_add(void *data1, void *data2 __UNUSED__)
 }
 
 static void
-_e_wid_fsel_favorites_files_changed(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_e_wid_fsel_favorites_files_changed(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    E_Widget_Data *wd;
    Eina_List *icons, *l;
@@ -139,7 +139,7 @@ done:
 }
 
 static void
-_e_wid_fsel_favorites_selected(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_e_wid_fsel_favorites_selected(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    E_Widget_Data *wd;
    Eina_List *selected;
@@ -160,7 +160,7 @@ _e_wid_fsel_favorites_selected(void *data, Evas_Object *obj __UNUSED__, void *ev
 }
 
 static void
-_e_wid_fsel_files_changed(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_e_wid_fsel_files_changed(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    E_Widget_Data *wd;
 
@@ -173,7 +173,7 @@ _e_wid_fsel_files_changed(void *data, Evas_Object *obj __UNUSED__, void *event_i
 }
 
 static void
-_e_wid_fsel_files_dir_changed(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_e_wid_fsel_files_dir_changed(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    E_Widget_Data *wd;
 
@@ -196,7 +196,7 @@ _e_wid_fsel_files_dir_changed(void *data, Evas_Object *obj __UNUSED__, void *eve
 }
 
 static void
-_e_wid_fsel_typebuf_change(E_Widget_Data *wd, Evas_Object *obj __UNUSED__, const char *str)
+_e_wid_fsel_typebuf_change(E_Widget_Data *wd, Evas_Object *obj EINA_UNUSED, const char *str)
 {
    e_widget_entry_text_set(wd->o_entry, str);
 }
@@ -241,19 +241,19 @@ _e_wid_fsel_sel_chg(E_Widget_Data *wd, Evas_Object *fm)
 }
 
 static void
-_e_wid_fsel_fprev_selection_change(void *data, Evas_Object *obj __UNUSED__, void *event_info)
+_e_wid_fsel_fprev_selection_change(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
 {
    _e_wid_fsel_sel_chg(data, event_info);
 }
 
 static void
-_e_wid_fsel_files_selection_change(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_e_wid_fsel_files_selection_change(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    _e_wid_fsel_sel_chg(data, NULL);
 }
 
 static void
-_e_wid_fsel_preview_file_selected(void *data, Evas_Object *obj __UNUSED__, void *event_info)
+_e_wid_fsel_preview_file_selected(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
 {
    E_Widget_Data *wd;
    Eina_List *l;
@@ -276,7 +276,7 @@ _e_wid_fsel_preview_file_selected(void *data, Evas_Object *obj __UNUSED__, void 
 }
 
 static void
-_e_wid_fsel_files_selected(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_e_wid_fsel_files_selected(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    E_Widget_Data *wd;
 
@@ -288,7 +288,7 @@ _e_wid_fsel_files_selected(void *data, Evas_Object *obj __UNUSED__, void *event_
 }
 
 static void
-_e_wid_fsel_moveresize(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_e_wid_fsel_moveresize(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    E_Widget_Data *wd = data;
    int x, y, w, h;
@@ -300,7 +300,7 @@ _e_wid_fsel_moveresize(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED
 
 /* externally accessible functions */
 EAPI Evas_Object *
-e_widget_fsel_add(Evas *evas, const char *dev, const char *path, char *selected, char *filter __UNUSED__,
+e_widget_fsel_add(Evas *evas, const char *dev, const char *path, char *selected, char *filter EINA_UNUSED,
                   void (*sel_func)(void *data, Evas_Object *obj), void *sel_data,
                   void (*chg_func)(void *data, Evas_Object *obj), void *chg_data,
                   int preview)

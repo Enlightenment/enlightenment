@@ -13,17 +13,17 @@ struct _E_Config_Dialog_Data
 
 /* local function prototypes */
 static void        *_create_data(E_Config_Dialog *cfd);
-static void         _free_data(E_Config_Dialog *cfd __UNUSED__, E_Config_Dialog_Data *cfdata);
-static Evas_Object *_basic_create(E_Config_Dialog *cfd __UNUSED__, Evas *evas, E_Config_Dialog_Data *cfdata);
-static Eina_Bool    _desks_update(void *data, int ev_type __UNUSED__, void *ev __UNUSED__);
+static void         _free_data(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfdata);
+static Evas_Object *_basic_create(E_Config_Dialog *cfd EINA_UNUSED, Evas *evas, E_Config_Dialog_Data *cfdata);
+static Eina_Bool    _desks_update(void *data, int ev_type EINA_UNUSED, void *ev EINA_UNUSED);
 static int          _cb_desks_sort(const void *data1, const void *data2);
 static void         _fill_apps_list(E_Config_Dialog_Data *cfdata, Evas_Object *il);
 static void         _btn_cb_add(void *data, void *data2);
 static void         _btn_cb_del(void *data, void *data2);
-static void         _widget_list_selection_changed(void *data, Evas_Object *obj __UNUSED__);
+static void         _widget_list_selection_changed(void *data, Evas_Object *obj EINA_UNUSED);
 
 E_Config_Dialog *
-e_int_config_apps_personal(Evas_Object *parent EINA_UNUSED, const char *params __UNUSED__)
+e_int_config_apps_personal(Evas_Object *parent EINA_UNUSED, const char *params EINA_UNUSED)
 {
    E_Config_Dialog *cfd;
    E_Config_Dialog_View *v;
@@ -44,7 +44,7 @@ e_int_config_apps_personal(Evas_Object *parent EINA_UNUSED, const char *params _
 
 /* local function prototypes */
 static void *
-_create_data(E_Config_Dialog *cfd __UNUSED__)
+_create_data(E_Config_Dialog *cfd EINA_UNUSED)
 {
    E_Config_Dialog_Data *cfdata;
 
@@ -56,7 +56,7 @@ _create_data(E_Config_Dialog *cfd __UNUSED__)
 }
 
 static void
-_free_data(E_Config_Dialog *cfd __UNUSED__, E_Config_Dialog_Data *cfdata)
+_free_data(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfdata)
 {
    Efreet_Desktop *desk;
 
@@ -104,7 +104,7 @@ _basic_create(E_Config_Dialog *cfd, Evas *evas, E_Config_Dialog_Data *cfdata)
 }
 
 static Eina_Bool
-_desks_update(void *data, int ev_type __UNUSED__, void *ev __UNUSED__)
+_desks_update(void *data, int ev_type EINA_UNUSED, void *ev EINA_UNUSED)
 {
    E_Config_Dialog_Data *cfdata = data;
    Efreet_Desktop *desk;
@@ -180,13 +180,13 @@ _fill_apps_list(E_Config_Dialog_Data *cfdata, Evas_Object *il)
 }
 
 static void
-_btn_cb_add(void *data __UNUSED__, void *data2 __UNUSED__)
+_btn_cb_add(void *data EINA_UNUSED, void *data2 EINA_UNUSED)
 {
    e_desktop_edit(NULL);   
 }
 
 static void
-_btn_cb_del(void *data, void *data2 __UNUSED__)
+_btn_cb_del(void *data, void *data2 EINA_UNUSED)
 {
    E_Config_Dialog_Data *cfdata = data;
    const Eina_List *l;
@@ -207,7 +207,7 @@ _btn_cb_del(void *data, void *data2 __UNUSED__)
 }
 
 static void
-_widget_list_selection_changed(void *data, Evas_Object *obj __UNUSED__)
+_widget_list_selection_changed(void *data, Evas_Object *obj EINA_UNUSED)
 {
    E_Config_Dialog_Data *cfdata = data;
 

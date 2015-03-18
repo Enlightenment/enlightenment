@@ -40,9 +40,9 @@ int e_mod_illume_config_init(void);
 int e_mod_illume_config_shutdown(void);
 int e_mod_illume_config_save(void);
 
-void e_mod_illume_config_animation_show(E_Comp *comp, const char *params __UNUSED__);
-void e_mod_illume_config_policy_show(E_Comp *comp, const char *params __UNUSED__);
-void e_mod_illume_config_windows_show(E_Comp *comp, const char *params __UNUSED__);
+void e_mod_illume_config_animation_show(E_Comp *comp, const char *params EINA_UNUSED);
+void e_mod_illume_config_policy_show(E_Comp *comp, const char *params EINA_UNUSED);
+void e_mod_illume_config_windows_show(E_Comp *comp, const char *params EINA_UNUSED);
 void e_mod_kbd_device_init(void);
 void e_mod_kbd_device_shutdown(void);
 int e_mod_policy_init(void);

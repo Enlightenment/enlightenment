@@ -893,7 +893,7 @@ evry_file_url_get(Evry_Item_File *file)
 }
 
 static void
-_cb_free_item_changed(void *data __UNUSED__, void *event)
+_cb_free_item_changed(void *data EINA_UNUSED, void *event)
 {
    Evry_Event_Item_Changed *ev = event;
 

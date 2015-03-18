@@ -152,8 +152,8 @@ _e_ipc_init(void)
 }
 
 static Eina_Bool
-_e_ipc_cb_server_add(void *data __UNUSED__,
-                     int type   __UNUSED__,
+_e_ipc_cb_server_add(void *data EINA_UNUSED,
+                     int type   EINA_UNUSED,
                      void *event)
 {
    Ecore_Ipc_Event_Server_Add *e;
@@ -167,9 +167,9 @@ _e_ipc_cb_server_add(void *data __UNUSED__,
 }
 
 static Eina_Bool
-_e_ipc_cb_server_del(void *data  __UNUSED__,
-                     int type    __UNUSED__,
-                     void *event __UNUSED__)
+_e_ipc_cb_server_del(void *data  EINA_UNUSED,
+                     int type    EINA_UNUSED,
+                     void *event EINA_UNUSED)
 {
    /* quit now */
    ecore_main_loop_quit();
@@ -177,8 +177,8 @@ _e_ipc_cb_server_del(void *data  __UNUSED__,
 }
 
 static Eina_Bool
-_e_ipc_cb_server_data(void *data __UNUSED__,
-                      int type   __UNUSED__,
+_e_ipc_cb_server_data(void *data EINA_UNUSED,
+                      int type   EINA_UNUSED,
                       void *event)
 {
    Ecore_Ipc_Event_Server_Data *e;
@@ -243,7 +243,7 @@ _e_ipc_cb_server_data(void *data __UNUSED__,
 }
 
 static Eina_Bool
-_e_cb_timer(void *data __UNUSED__)
+_e_cb_timer(void *data EINA_UNUSED)
 {
    E_Thumb *eth;
    /*

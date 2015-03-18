@@ -141,9 +141,9 @@ e_widget_size_min_get(Evas_Object *obj, Evas_Coord *minw, Evas_Coord *minh)
 
 static void
 _sub_obj_del(void *data,
-             Evas *e __UNUSED__,
+             Evas *e EINA_UNUSED,
              Evas_Object *obj,
-             void *event_info __UNUSED__)
+             void *event_info EINA_UNUSED)
 {
    E_Smart_Data *sd = data;
 

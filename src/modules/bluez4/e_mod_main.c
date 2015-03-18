@@ -148,19 +148,19 @@ _ebluez4_check_changed(void *data, Evas_Object *obj, const char *prop_name)
 }
 
 static void
-_ebluez4_powered_changed(void *data, Evas_Object *obj, void *info __UNUSED__)
+_ebluez4_powered_changed(void *data, Evas_Object *obj, void *info EINA_UNUSED)
 {
    _ebluez4_check_changed(data, obj, "Powered");
 }
 
 static void
-_ebluez4_visible_changed(void *data, Evas_Object *obj, void *info __UNUSED__)
+_ebluez4_visible_changed(void *data, Evas_Object *obj, void *info EINA_UNUSED)
 {
    _ebluez4_check_changed(data, obj, "Discoverable");
 }
 
 static void
-_ebluez4_pairable_changed(void *data, Evas_Object *obj, void *info __UNUSED__)
+_ebluez4_pairable_changed(void *data, Evas_Object *obj, void *info EINA_UNUSED)
 {
    _ebluez4_check_changed(data, obj, "Pairable");
 }
@@ -291,7 +291,7 @@ _ebluez4_cb_forget(void *data, E_Menu *m EINA_UNUSED, E_Menu_Item *mi EINA_UNUSE
 #ifdef HAVE_BLUETOOTH
 static void
 _ebluez4_cb_lock(void *data,
-		 E_Menu *m __UNUSED__,
+		 E_Menu *m EINA_UNUSED,
 		 E_Menu_Item *mi)
 {
    Device *dev = data;
@@ -311,7 +311,7 @@ _ebluez4_cb_lock(void *data,
 
 static void
 _ebluez4_cb_unlock(void *data,
-		   E_Menu *m __UNUSED__,
+		   E_Menu *m EINA_UNUSED,
 		   E_Menu_Item *mi)
 {
    Device *dev = data;
@@ -331,7 +331,7 @@ _ebluez4_cb_unlock(void *data,
 #endif
 
 static void
-_menu_post_deactivate(void *data __UNUSED__, E_Menu *m)
+_menu_post_deactivate(void *data EINA_UNUSED, E_Menu *m)
 {
    Eina_List *iter;
    E_Menu_Item *mi;

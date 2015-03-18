@@ -1165,7 +1165,7 @@ _e_drag_free(E_Drag *drag)
 }
 
 static Eina_Bool
-_e_dnd_cb_key_down(void *data __UNUSED__, int type __UNUSED__, void *event)
+_e_dnd_cb_key_down(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
 {
    Ecore_Event_Key *ev = event;
 
@@ -1180,7 +1180,7 @@ _e_dnd_cb_key_down(void *data __UNUSED__, int type __UNUSED__, void *event)
 }
 
 static Eina_Bool
-_e_dnd_cb_key_up(void *data __UNUSED__, int type __UNUSED__, void *event)
+_e_dnd_cb_key_up(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
 {
    Ecore_Event_Key *ev = event;
 
@@ -1195,7 +1195,7 @@ _e_dnd_cb_key_up(void *data __UNUSED__, int type __UNUSED__, void *event)
 }
 
 static Eina_Bool
-_e_dnd_cb_mouse_up(void *data __UNUSED__, int type __UNUSED__, void *event)
+_e_dnd_cb_mouse_up(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
 {
    Ecore_Event_Mouse_Button *ev = event;
 
@@ -1207,7 +1207,7 @@ _e_dnd_cb_mouse_up(void *data __UNUSED__, int type __UNUSED__, void *event)
 }
 
 static Eina_Bool
-_e_dnd_cb_mouse_move(void *data __UNUSED__, int type __UNUSED__, void *event)
+_e_dnd_cb_mouse_move(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
 {
    Ecore_Event_Mouse_Move *ev = event;
 
@@ -1224,7 +1224,7 @@ _e_dnd_cb_mouse_move(void *data __UNUSED__, int type __UNUSED__, void *event)
 
 #ifndef HAVE_WAYLAND_ONLY
 static Eina_Bool
-_e_dnd_cb_event_dnd_enter(void *data __UNUSED__, int type __UNUSED__, void *event)
+_e_dnd_cb_event_dnd_enter(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
 {
    Ecore_X_Event_Xdnd_Enter *ev = event;
    E_Drop_Handler *h;
@@ -1260,7 +1260,7 @@ _e_dnd_cb_event_dnd_enter(void *data __UNUSED__, int type __UNUSED__, void *even
 }
 
 static Eina_Bool
-_e_dnd_cb_event_dnd_leave(void *data __UNUSED__, int type __UNUSED__, void *event)
+_e_dnd_cb_event_dnd_leave(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
 {
    Ecore_X_Event_Xdnd_Leave *ev = event;
    E_Event_Dnd_Leave leave_ev;
@@ -1292,7 +1292,7 @@ _e_dnd_cb_event_dnd_leave(void *data __UNUSED__, int type __UNUSED__, void *even
 }
 
 static Eina_Bool
-_e_dnd_cb_event_hide(void *data __UNUSED__, int type __UNUSED__, Ecore_X_Event_Window_Hide *ev)
+_e_dnd_cb_event_hide(void *data EINA_UNUSED, int type EINA_UNUSED, Ecore_X_Event_Window_Hide *ev)
 {
    E_Event_Dnd_Leave leave_ev;
    const char *id;
@@ -1329,7 +1329,7 @@ _e_dnd_cb_event_hide(void *data __UNUSED__, int type __UNUSED__, Ecore_X_Event_W
 }
 
 static Eina_Bool
-_e_dnd_cb_event_dnd_position(void *data __UNUSED__, int type __UNUSED__, void *event)
+_e_dnd_cb_event_dnd_position(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
 {
    Ecore_X_Event_Xdnd_Position *ev = event;
    Ecore_X_Rectangle rect;
@@ -1364,7 +1364,7 @@ _e_dnd_cb_event_dnd_position(void *data __UNUSED__, int type __UNUSED__, void *e
 }
 
 static Eina_Bool
-_e_dnd_cb_event_dnd_status(void *data __UNUSED__, int type __UNUSED__, void *event)
+_e_dnd_cb_event_dnd_status(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
 {
    Ecore_X_Event_Xdnd_Status *ev = event;
 
@@ -1373,7 +1373,7 @@ _e_dnd_cb_event_dnd_status(void *data __UNUSED__, int type __UNUSED__, void *eve
 }
 
 static Eina_Bool
-_e_dnd_cb_event_dnd_finished(void *data __UNUSED__, int type __UNUSED__, void *event __UNUSED__)
+_e_dnd_cb_event_dnd_finished(void *data EINA_UNUSED, int type EINA_UNUSED, void *event EINA_UNUSED)
 {
 /*
  * this is broken since the completed flag doesn't tell us anything with current
@@ -1394,7 +1394,7 @@ _e_dnd_cb_event_dnd_finished(void *data __UNUSED__, int type __UNUSED__, void *e
 }
 
 static Eina_Bool
-_e_dnd_cb_event_dnd_drop(void *data __UNUSED__, int type __UNUSED__, void *event)
+_e_dnd_cb_event_dnd_drop(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
 {
    Ecore_X_Event_Xdnd_Drop *ev = event;
 
@@ -1429,7 +1429,7 @@ _e_dnd_cb_event_dnd_drop(void *data __UNUSED__, int type __UNUSED__, void *event
 }
 
 static Eina_Bool
-_e_dnd_cb_event_dnd_selection(void *data __UNUSED__, int type __UNUSED__, void *event)
+_e_dnd_cb_event_dnd_selection(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
 {
    Ecore_X_Event_Selection_Notify *ev = event;
    int i;

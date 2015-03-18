@@ -91,7 +91,7 @@ _e_entry_dialog_free(E_Entry_Dialog *ed)
 }
 
 static void
-_e_entry_dialog_ok(void *data, E_Dialog *dia __UNUSED__)
+_e_entry_dialog_ok(void *data, E_Dialog *dia EINA_UNUSED)
 {
    E_Entry_Dialog *ed;
 
@@ -103,7 +103,7 @@ _e_entry_dialog_ok(void *data, E_Dialog *dia __UNUSED__)
 }
 
 static void
-_e_entry_dialog_cancel(void *data, E_Dialog *dia __UNUSED__)
+_e_entry_dialog_cancel(void *data, E_Dialog *dia EINA_UNUSED)
 {
    E_Entry_Dialog *ed;
 
@@ -121,7 +121,7 @@ _e_entry_dialog_delete(E_Dialog *dia, Evas *e EINA_UNUSED, Evas_Object *obj EINA
 }
 
 static void
-_e_entry_cb_key_down(void *data, Evas_Object *obj __UNUSED__, void *event_info)
+_e_entry_cb_key_down(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
 {
    Evas_Event_Key_Down *ev;
    E_Entry_Dialog *ed;

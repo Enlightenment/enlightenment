@@ -164,7 +164,7 @@ _create_data(E_Config_Dialog *cfd)
 }
 
 static void
-_free_data(E_Config_Dialog *cfd __UNUSED__, E_Config_Dialog_Data *cfdata)
+_free_data(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfdata)
 {
    E_Config_Binding_Edge *bi;
 
@@ -185,7 +185,7 @@ _free_data(E_Config_Dialog *cfd __UNUSED__, E_Config_Dialog_Data *cfdata)
 }
 
 static int
-_basic_apply_data(E_Config_Dialog *cfd __UNUSED__, E_Config_Dialog_Data *cfdata)
+_basic_apply_data(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfdata)
 {
    const Eina_List *l;
    E_Zone *zone;
@@ -352,7 +352,7 @@ _fill_actions_list(E_Config_Dialog_Data *cfdata)
 /**************** Callbacks *********/
 
 static void
-_add_edge_binding_cb(void *data, void *data2 __UNUSED__)
+_add_edge_binding_cb(void *data, void *data2 EINA_UNUSED)
 {
    E_Config_Dialog_Data *cfdata;
 
@@ -365,7 +365,7 @@ _add_edge_binding_cb(void *data, void *data2 __UNUSED__)
 }
 
 static void
-_modify_edge_binding_cb(void *data, void *data2 __UNUSED__)
+_modify_edge_binding_cb(void *data, void *data2 EINA_UNUSED)
 {
    E_Config_Dialog_Data *cfdata;
 
@@ -423,7 +423,7 @@ _action_change_cb(void *data)
 }
 
 static void
-_delete_all_edge_binding_cb(void *data, void *data2 __UNUSED__)
+_delete_all_edge_binding_cb(void *data, void *data2 EINA_UNUSED)
 {
    E_Config_Binding_Edge *bi;
    E_Config_Dialog_Data *cfdata;
@@ -451,7 +451,7 @@ _delete_all_edge_binding_cb(void *data, void *data2 __UNUSED__)
 }
 
 static void
-_delete_edge_binding_cb(void *data, void *data2 __UNUSED__)
+_delete_edge_binding_cb(void *data, void *data2 EINA_UNUSED)
 {
    Eina_List *l = NULL;
    int sel, n;
@@ -499,7 +499,7 @@ _delete_edge_binding_cb(void *data, void *data2 __UNUSED__)
 }
 
 static void
-_restore_edge_binding_defaults_cb(void *data, void *data2 __UNUSED__)
+_restore_edge_binding_defaults_cb(void *data, void *data2 EINA_UNUSED)
 {
    E_Config_Bindings *ecb;
    Eina_Stringshare *prof;
@@ -950,7 +950,7 @@ _edge_grab_wnd_hide(E_Config_Dialog_Data *cfdata)
 }
 
 static void
-_edge_grab_wnd_cb_apply(void *data, E_Dialog *dia __UNUSED__)
+_edge_grab_wnd_cb_apply(void *data, E_Dialog *dia EINA_UNUSED)
 {
    E_Config_Dialog_Data *cfdata;
 
@@ -961,7 +961,7 @@ _edge_grab_wnd_cb_apply(void *data, E_Dialog *dia __UNUSED__)
 }
 
 static void
-_edge_grab_wnd_cb_close(void *data, E_Dialog *dia __UNUSED__)
+_edge_grab_wnd_cb_close(void *data, E_Dialog *dia EINA_UNUSED)
 {
    E_Config_Dialog_Data *cfdata;
 
@@ -970,7 +970,7 @@ _edge_grab_wnd_cb_close(void *data, E_Dialog *dia __UNUSED__)
 }
 
 static void
-_edge_grab_wnd_slider_changed_cb(void *data, Evas_Object *obj __UNUSED__)
+_edge_grab_wnd_slider_changed_cb(void *data, Evas_Object *obj EINA_UNUSED)
 {
    E_Config_Dialog_Data *cfdata = data;
    char *label = NULL;
@@ -984,7 +984,7 @@ _edge_grab_wnd_slider_changed_cb(void *data, Evas_Object *obj __UNUSED__)
 }
 
 static void
-_edge_grab_wnd_check_changed_cb(void *data, Evas_Object *obj __UNUSED__)
+_edge_grab_wnd_check_changed_cb(void *data, Evas_Object *obj EINA_UNUSED)
 {
    E_Config_Dialog_Data *cfdata = data;
    char *label = NULL;
@@ -1009,7 +1009,7 @@ _edge_grab_wnd_check_changed_cb(void *data, Evas_Object *obj __UNUSED__)
 }
 
 static void
-_edge_grab_wnd_selected_edge_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
+_edge_grab_wnd_selected_edge_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info)
 {
    Evas_Event_Mouse_Down *event;
    E_Config_Dialog_Data *cfdata;

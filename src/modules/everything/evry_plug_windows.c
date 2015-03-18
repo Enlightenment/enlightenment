@@ -75,7 +75,7 @@ _client_item_add(Plugin *p, E_Client *ec)
 }
 
 static Eina_Bool
-_cb_border_remove(void *data, __UNUSED__ int type, void *event)
+_cb_border_remove(void *data, EINA_UNUSED int type, void *event)
 {
    E_Event_Client *ev = event;
    Client_Item *bi;
@@ -101,7 +101,7 @@ _cb_border_remove(void *data, __UNUSED__ int type, void *event)
 }
 
 static Eina_Bool
-_cb_client_add(void *data, __UNUSED__ int type, void *event)
+_cb_client_add(void *data, EINA_UNUSED int type, void *event)
 {
    E_Event_Client *ev = event;
    Plugin *p = data;
@@ -120,7 +120,7 @@ _cb_client_add(void *data, __UNUSED__ int type, void *event)
 }
 
 static Evry_Plugin *
-_begin(Evry_Plugin *plugin, const Evry_Item *item __UNUSED__)
+_begin(Evry_Plugin *plugin, const Evry_Item *item EINA_UNUSED)
 {
    Plugin *p;
    E_Client *ec;
@@ -483,7 +483,7 @@ _plugins_shutdown(void)
 /***************************************************************************/
 
 Eina_Bool
-evry_plug_windows_init(E_Module *m __UNUSED__)
+evry_plug_windows_init(E_Module *m EINA_UNUSED)
 {
    EVRY_MODULE_NEW(evry_module, evry, _plugins_init, _plugins_shutdown);
 

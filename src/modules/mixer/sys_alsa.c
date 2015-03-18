@@ -131,7 +131,7 @@ _mixer_callback_del(const E_Mixer_System *self,
 }
 
 static int
-_mixer_callback_replace(const E_Mixer_System *self __UNUSED__,
+_mixer_callback_replace(const E_Mixer_System *self EINA_UNUSED,
                         struct e_mixer_callback_desc *desc,
                         int (*func)(void *data, E_Mixer_System *self),
                         void *data)

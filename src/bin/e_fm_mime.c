@@ -9,8 +9,8 @@ struct _E_Fm2_Mime_Handler_Tuple
 };
 
 /* local subsystem functions */
-static Eina_Bool _e_fm2_mime_handler_glob_match_foreach(const Eina_Hash *hash __UNUSED__, const void *key, void *data, void *fdata);
-static Eina_Bool _e_fm_mime_icon_foreach(const Eina_Hash *hash __UNUSED__, const void *key __UNUSED__, void *data, void *fdata);
+static Eina_Bool _e_fm2_mime_handler_glob_match_foreach(const Eina_Hash *hash EINA_UNUSED, const void *key, void *data, void *fdata);
+static Eina_Bool _e_fm_mime_icon_foreach(const Eina_Hash *hash EINA_UNUSED, const void *key EINA_UNUSED, void *data, void *fdata);
 
 static Eina_Hash *icon_map = NULL;
 static Eina_Hash *_mime_handlers = NULL;
@@ -371,7 +371,7 @@ e_fm2_mime_handler_test(E_Fm2_Mime_Handler *handler, Evas_Object *obj, const cha
 /* local subsystem functions */
 /* used to loop a glob hash and determine if the glob handler matches the filename */
 static Eina_Bool
-_e_fm2_mime_handler_glob_match_foreach(const Eina_Hash *hash __UNUSED__, const void *key, void *data, void *fdata)
+_e_fm2_mime_handler_glob_match_foreach(const Eina_Hash *hash EINA_UNUSED, const void *key, void *data, void *fdata)
 {
    E_Fm2_Mime_Handler_Tuple *tuple;
    Eina_List *handlers = NULL;
@@ -393,7 +393,7 @@ _e_fm2_mime_handler_glob_match_foreach(const Eina_Hash *hash __UNUSED__, const v
 }
 
 static Eina_Bool
-_e_fm_mime_icon_foreach(const Eina_Hash *hash __UNUSED__, const void *key __UNUSED__, void *data, void *fdata)
+_e_fm_mime_icon_foreach(const Eina_Hash *hash EINA_UNUSED, const void *key EINA_UNUSED, void *data, void *fdata)
 {
    Eina_List **freelist;
 

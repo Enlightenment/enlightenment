@@ -474,7 +474,7 @@ _mouse_move(Cover *cov, Ecore_Event_Mouse_Move *ev)
 }
 
 static void
-_mouse_wheel(Cover *cov __UNUSED__, Ecore_Event_Mouse_Wheel *ev __UNUSED__)
+_mouse_wheel(Cover *cov EINA_UNUSED, Ecore_Event_Mouse_Wheel *ev EINA_UNUSED)
 {
    if (ev->z == -1) // up
      {
@@ -487,8 +487,8 @@ _mouse_wheel(Cover *cov __UNUSED__, Ecore_Event_Mouse_Wheel *ev __UNUSED__)
 }
 
 static Eina_Bool
-_cb_mouse_down(void    *data __UNUSED__,
-               int      type __UNUSED__,
+_cb_mouse_down(void    *data EINA_UNUSED,
+               int      type EINA_UNUSED,
                void    *event)
 {
    Ecore_Event_Mouse_Button *ev = event;
@@ -546,8 +546,8 @@ _cb_mouse_down(void    *data __UNUSED__,
 }
 
 static Eina_Bool
-_cb_mouse_up(void    *data __UNUSED__,
-             int      type __UNUSED__,
+_cb_mouse_up(void    *data EINA_UNUSED,
+             int      type EINA_UNUSED,
              void    *event)
 {
    Ecore_Event_Mouse_Button *ev = event;
@@ -567,8 +567,8 @@ _cb_mouse_up(void    *data __UNUSED__,
 }
 
 static Eina_Bool
-_cb_mouse_move(void    *data __UNUSED__,
-               int      type __UNUSED__,
+_cb_mouse_move(void    *data EINA_UNUSED,
+               int      type EINA_UNUSED,
                void    *event)
 {
    Ecore_Event_Mouse_Move *ev = event;
@@ -698,8 +698,8 @@ _cb_mouse_move(void    *data __UNUSED__,
 }
 
 static Eina_Bool
-_cb_mouse_wheel(void    *data __UNUSED__,
-                int      type __UNUSED__,
+_cb_mouse_wheel(void    *data EINA_UNUSED,
+                int      type EINA_UNUSED,
                 void    *event)
 {
    Ecore_Event_Mouse_Wheel *ev = event;
@@ -839,9 +839,9 @@ _covers_shutdown(void)
 }
 
 static Eina_Bool
-_cb_zone_add(void    *data __UNUSED__,
-             int      type __UNUSED__,
-             void    *event __UNUSED__)
+_cb_zone_add(void    *data EINA_UNUSED,
+             int      type EINA_UNUSED,
+             void    *event EINA_UNUSED)
 {
    _covers_shutdown();
    _covers_init();
@@ -849,9 +849,9 @@ _cb_zone_add(void    *data __UNUSED__,
 }
 
 static Eina_Bool
-_cb_zone_del(void    *data __UNUSED__,
-             int      type __UNUSED__,
-             void    *event __UNUSED__)
+_cb_zone_del(void    *data EINA_UNUSED,
+             int      type EINA_UNUSED,
+             void    *event EINA_UNUSED)
 {
    _covers_shutdown();
    _covers_init();
@@ -859,9 +859,9 @@ _cb_zone_del(void    *data __UNUSED__,
 }
 
 static Eina_Bool
-_cb_zone_move_resize(void    *data __UNUSED__,
-                     int      type __UNUSED__,
-                     void    *event __UNUSED__)
+_cb_zone_move_resize(void    *data EINA_UNUSED,
+                     int      type EINA_UNUSED,
+                     void    *event EINA_UNUSED)
 {
    _covers_shutdown();
    _covers_init();
@@ -905,8 +905,8 @@ _events_shutdown(void)
 }
 
 static Eina_Bool
-_cb_property_change(void *data __UNUSED__,
-                   int   type __UNUSED__,
+_cb_property_change(void *data EINA_UNUSED,
+                   int   type EINA_UNUSED,
                    void *ev)
 {
    E_Client *ec;
@@ -922,8 +922,8 @@ _cb_property_change(void *data __UNUSED__,
 }
 
 static Eina_Bool
-_cb_client_message(void *data __UNUSED__,
-                   int   type __UNUSED__,
+_cb_client_message(void *data EINA_UNUSED,
+                   int   type EINA_UNUSED,
                    void *ev)
 {
    int block;
@@ -1008,7 +1008,7 @@ e_modapi_init(E_Module *m)
 }
 
 EAPI int
-e_modapi_shutdown(E_Module *m __UNUSED__)
+e_modapi_shutdown(E_Module *m EINA_UNUSED)
 {
    EINA_LOG_INFO("[access module] module shutdown");
    if (client_message_handler) ecore_event_handler_del(client_message_handler);
@@ -1021,7 +1021,7 @@ e_modapi_shutdown(E_Module *m __UNUSED__)
 }
 
 EAPI int
-e_modapi_save(E_Module *m __UNUSED__)
+e_modapi_save(E_Module *m EINA_UNUSED)
 {
    e_config_domain_save("module.access", conf_edd, access_config);
    return 1;

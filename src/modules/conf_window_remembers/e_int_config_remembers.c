@@ -3,11 +3,11 @@
 /* function protos */
 static void        *_create_data(E_Config_Dialog *cfd);
 static void         _free_data(E_Config_Dialog *cfd, E_Config_Dialog_Data *cfdata);
-static int          _basic_check_changed(E_Config_Dialog *cfd __UNUSED__, E_Config_Dialog_Data *cfdata);
+static int          _basic_check_changed(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfdata);
 static int          _basic_apply_data(E_Config_Dialog *cfd, E_Config_Dialog_Data *cfdata);
 static Evas_Object *_basic_create(E_Config_Dialog *cfd, Evas *evas, E_Config_Dialog_Data *cfdata);
 static void         _fill_remembers(E_Config_Dialog_Data *cfdata);
-static void         _cb_edit(void *data, void *data2 __UNUSED__);
+static void         _cb_edit(void *data, void *data2 EINA_UNUSED);
 static void         _cb_delete(void *data, void *data2);
 static void         _cb_list_change(void *data, Evas_Object *obj);
 
@@ -21,7 +21,7 @@ struct _E_Config_Dialog_Data
 };
 
 E_Config_Dialog *
-e_int_config_remembers(Evas_Object *parent EINA_UNUSED, const char *params __UNUSED__)
+e_int_config_remembers(Evas_Object *parent EINA_UNUSED, const char *params EINA_UNUSED)
 {
    E_Config_Dialog *cfd;
    E_Config_Dialog_View *v;
@@ -78,7 +78,7 @@ _cb_sort(const void *data1, const void *data2)
 }
 
 static void *
-_create_data(E_Config_Dialog *cfd __UNUSED__)
+_create_data(E_Config_Dialog *cfd EINA_UNUSED)
 {
    E_Config_Dialog_Data *cfdata;
 
@@ -99,7 +99,7 @@ _free_data(E_Config_Dialog *cfd, E_Config_Dialog_Data *cfdata)
 }
 
 static int
-_basic_check_changed(E_Config_Dialog *cfd __UNUSED__, E_Config_Dialog_Data *cfdata)
+_basic_check_changed(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfdata)
 {
    return (cfdata->remember_dialogs != e_config->remember_internal_windows) ||
           (cfdata->remember_fm_wins != e_config->remember_internal_fm_windows) ||
@@ -107,7 +107,7 @@ _basic_check_changed(E_Config_Dialog *cfd __UNUSED__, E_Config_Dialog_Data *cfda
 }
 
 static int
-_basic_apply_data(E_Config_Dialog *cfd __UNUSED__, E_Config_Dialog_Data *cfdata)
+_basic_apply_data(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfdata)
 {
    e_config->remember_internal_windows = cfdata->remember_dialogs;
    e_config->remember_internal_fm_windows = cfdata->remember_fm_wins;
@@ -294,7 +294,7 @@ _cb_edit_del(void *obj)
 }
 
 static void
-_cb_edit(void *data, void *data2 __UNUSED__)
+_cb_edit(void *data, void *data2 EINA_UNUSED)
 {
    E_Config_Dialog_Data *cfdata = data;
    const Eina_List *l;
@@ -314,7 +314,7 @@ _cb_edit(void *data, void *data2 __UNUSED__)
 }
 
 static void
-_cb_delete(void *data, void *data2 __UNUSED__)
+_cb_delete(void *data, void *data2 EINA_UNUSED)
 {
    E_Config_Dialog_Data *cfdata;
    const Eina_List *l = NULL;
@@ -348,7 +348,7 @@ _cb_delete(void *data, void *data2 __UNUSED__)
 }
 
 static void
-_cb_list_change(void *data, Evas_Object *obj __UNUSED__)
+_cb_list_change(void *data, Evas_Object *obj EINA_UNUSED)
 {
    E_Config_Dialog_Data *cfdata;
    E_Remember *rem = NULL;

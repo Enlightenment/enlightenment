@@ -108,7 +108,7 @@ e_widget_cslider_add(Evas *evas, E_Color_Component mode, E_Color *color, int ver
 }
 
 static void
-_e_wid_move(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_e_wid_move(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    E_Widget_Data *wd;
    Evas_Coord x, y;
@@ -120,7 +120,7 @@ _e_wid_move(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *e
 }
 
 static void
-_e_wid_resize(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_e_wid_resize(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    E_Widget_Data *wd;
    Evas_Coord w, h;
@@ -507,13 +507,13 @@ _e_wid_disable_hook(Evas_Object *obj)
 }
 
 static void
-_e_wid_focus_steal(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_e_wid_focus_steal(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    e_widget_focus_steal(data);
 }
 
 static void
-_e_wid_cb_drag_start(void *data, Evas_Object *obj __UNUSED__, const char *emission __UNUSED__, const char *source __UNUSED__)
+_e_wid_cb_drag_start(void *data, Evas_Object *obj EINA_UNUSED, const char *emission EINA_UNUSED, const char *source EINA_UNUSED)
 {
    Evas_Object *o_wid;
    E_Widget_Data *wd;
@@ -533,7 +533,7 @@ _e_wid_cb_drag_start(void *data, Evas_Object *obj __UNUSED__, const char *emissi
 }
 
 static void
-_e_wid_cb_drag_stop(void *data, Evas_Object *obj __UNUSED__, const char *emission __UNUSED__, const char *source __UNUSED__)
+_e_wid_cb_drag_stop(void *data, Evas_Object *obj EINA_UNUSED, const char *emission EINA_UNUSED, const char *source EINA_UNUSED)
 {
    Evas_Object *o_wid;
    E_Widget_Data *wd;
@@ -544,7 +544,7 @@ _e_wid_cb_drag_stop(void *data, Evas_Object *obj __UNUSED__, const char *emissio
 }
 
 static void
-_e_wid_cb_drag(void *data, Evas_Object *obj __UNUSED__, const char *emission __UNUSED__, const char *source __UNUSED__)
+_e_wid_cb_drag(void *data, Evas_Object *obj EINA_UNUSED, const char *emission EINA_UNUSED, const char *source EINA_UNUSED)
 {
    Evas_Object *o_wid;
    E_Widget_Data *wd;
@@ -597,7 +597,7 @@ _e_wid_mouse_handle(Evas_Object *obj, int mx, int my)
 }
 
 static void
-_e_wid_cb_down(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
+_e_wid_cb_down(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info)
 {
    Evas_Event_Mouse_Down *ev;
    Evas_Object *o_wid;
@@ -612,7 +612,7 @@ _e_wid_cb_down(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void
 }
 
 static void
-_e_wid_cb_up(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_e_wid_cb_up(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Evas_Object *o_wid;
    E_Widget_Data *wd;
@@ -623,7 +623,7 @@ _e_wid_cb_up(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *
 }
 
 static void
-_e_wid_cb_move(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
+_e_wid_cb_move(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info)
 {
    Evas_Event_Mouse_Move *ev;
    Evas_Object *o_wid;

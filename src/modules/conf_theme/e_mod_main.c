@@ -14,13 +14,13 @@ EAPI E_Module_Api e_modapi =
 
 /* menu item add hook */
 static void
-_e_mod_run_wallpaper_cb(void *data __UNUSED__, E_Menu *m EINA_UNUSED, E_Menu_Item *mi __UNUSED__)
+_e_mod_run_wallpaper_cb(void *data EINA_UNUSED, E_Menu *m EINA_UNUSED, E_Menu_Item *mi EINA_UNUSED)
 {
    e_configure_registry_call("appearance/wallpaper", NULL, NULL);
 }
 
 static void
-_e_mod_menu_wallpaper_add(void *data __UNUSED__, E_Menu *m)
+_e_mod_menu_wallpaper_add(void *data EINA_UNUSED, E_Menu *m)
 {
    E_Menu_Item *mi;
 
@@ -31,13 +31,13 @@ _e_mod_menu_wallpaper_add(void *data __UNUSED__, E_Menu *m)
 }
 
 static void
-_e_mod_run_theme_cb(void *data __UNUSED__, E_Menu *m EINA_UNUSED, E_Menu_Item *mi __UNUSED__)
+_e_mod_run_theme_cb(void *data EINA_UNUSED, E_Menu *m EINA_UNUSED, E_Menu_Item *mi EINA_UNUSED)
 {
    e_configure_registry_call("appearance/theme", NULL, NULL);
 }
 
 static void
-_e_mod_menu_theme_add(void *data __UNUSED__, E_Menu *m)
+_e_mod_menu_theme_add(void *data EINA_UNUSED, E_Menu *m)
 {
    E_Menu_Item *mi;
 
@@ -98,7 +98,7 @@ e_modapi_init(E_Module *m)
 }
 
 EAPI int
-e_modapi_shutdown(E_Module *m __UNUSED__)
+e_modapi_shutdown(E_Module *m EINA_UNUSED)
 {
    E_Config_Dialog *cfd;
 

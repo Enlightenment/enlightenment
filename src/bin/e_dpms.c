@@ -94,28 +94,28 @@ e_dpms_force_update(void)
 }
 
 static Eina_Bool
-_e_dpms_handler_config_mode_cb(void *data __UNUSED__, int type __UNUSED__, void *event __UNUSED__)
+_e_dpms_handler_config_mode_cb(void *data EINA_UNUSED, int type EINA_UNUSED, void *event EINA_UNUSED)
 {
    e_dpms_update();
    return ECORE_CALLBACK_PASS_ON;
 }
 
 static Eina_Bool
-_e_dpms_handler_border_fullscreen_check_cb(void *data __UNUSED__, int type __UNUSED__, void *event __UNUSED__)
+_e_dpms_handler_border_fullscreen_check_cb(void *data EINA_UNUSED, int type EINA_UNUSED, void *event EINA_UNUSED)
 {
    if (e_config->no_dpms_on_fullscreen) e_dpms_update();
    return ECORE_CALLBACK_PASS_ON;
 }
 
 static Eina_Bool
-_e_dpms_handler_border_desk_set_cb(void *data __UNUSED__, int type __UNUSED__, void *event __UNUSED__)
+_e_dpms_handler_border_desk_set_cb(void *data EINA_UNUSED, int type EINA_UNUSED, void *event EINA_UNUSED)
 {
    if (e_config->no_dpms_on_fullscreen) e_dpms_update();
    return ECORE_CALLBACK_PASS_ON;
 }
 
 static Eina_Bool
-_e_dpms_handler_desk_show_cb(void *data __UNUSED__, int type __UNUSED__, void *event __UNUSED__)
+_e_dpms_handler_desk_show_cb(void *data EINA_UNUSED, int type EINA_UNUSED, void *event EINA_UNUSED)
 {
    if (e_config->no_dpms_on_fullscreen) e_dpms_update();
    return ECORE_CALLBACK_PASS_ON;

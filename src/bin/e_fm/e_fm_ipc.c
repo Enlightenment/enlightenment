@@ -190,7 +190,7 @@ _e_fm_ipc_init(void)
 }
 
 static Eina_Bool
-_e_fm_ipc_cb_server_add(void *data __UNUSED__, int type __UNUSED__, void *event)
+_e_fm_ipc_cb_server_add(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
 {
    Ecore_Ipc_Event_Server_Add *e;
 
@@ -203,7 +203,7 @@ _e_fm_ipc_cb_server_add(void *data __UNUSED__, int type __UNUSED__, void *event)
 }
 
 static Eina_Bool
-_e_fm_ipc_cb_server_del(void *data __UNUSED__, int type __UNUSED__, void *event __UNUSED__)
+_e_fm_ipc_cb_server_del(void *data EINA_UNUSED, int type EINA_UNUSED, void *event EINA_UNUSED)
 {
    /* quit now */
    ecore_main_loop_quit();
@@ -485,7 +485,7 @@ _e_fm_ipc_mkdir_try(E_Fm_Task *task)
 }
 
 static void
-_e_fm_ipc_mkdir(int id, const char *src, const char *rel, int rel_to __UNUSED__, int x, int y)
+_e_fm_ipc_mkdir(int id, const char *src, const char *rel, int rel_to EINA_UNUSED, int x, int y)
 {
    E_Fm_Task *task;
 
@@ -540,7 +540,7 @@ _e_fm_ipc_handle_error_response(int id, E_Fm_Op_Type type)
 }
 
 static Eina_Bool
-_e_fm_ipc_cb_server_data(void *data __UNUSED__, int type __UNUSED__, void *event)
+_e_fm_ipc_cb_server_data(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
 {
    Ecore_Ipc_Event_Server_Data *e;
 
@@ -821,7 +821,7 @@ _e_fm_ipc_slave_send(E_Fm_Slave *slave, E_Fm_Op_Type type, void *data, int size)
 }
 
 Eina_Bool
-_e_fm_ipc_slave_data_cb(void *data, int type __UNUSED__, void *event)
+_e_fm_ipc_slave_data_cb(void *data, int type EINA_UNUSED, void *event)
 {
    Ecore_Exe_Event_Data *e = event;
    E_Fm_Slave *slave;
@@ -876,7 +876,7 @@ _e_fm_ipc_slave_data_cb(void *data, int type __UNUSED__, void *event)
 }
 
 Eina_Bool
-_e_fm_ipc_slave_error_cb(void *data, int type __UNUSED__, void *event)
+_e_fm_ipc_slave_error_cb(void *data, int type EINA_UNUSED, void *event)
 {
    Ecore_Exe_Event_Data *e = event;
    E_Fm_Slave *slave;
@@ -894,7 +894,7 @@ _e_fm_ipc_slave_error_cb(void *data, int type __UNUSED__, void *event)
 }
 
 Eina_Bool
-_e_fm_ipc_slave_del_cb(void *data, int type __UNUSED__, void *event)
+_e_fm_ipc_slave_del_cb(void *data, int type EINA_UNUSED, void *event)
 {
    Ecore_Exe_Event_Del *e = event;
    E_Fm_Slave *slave;
@@ -916,7 +916,7 @@ _e_fm_ipc_slave_del_cb(void *data, int type __UNUSED__, void *event)
 }
 
 static void
-_e_fm_ipc_cb_file_monitor(void *data __UNUSED__, Ecore_File_Monitor *em __UNUSED__, Ecore_File_Event event, const char *path)
+_e_fm_ipc_cb_file_monitor(void *data EINA_UNUSED, Ecore_File_Monitor *em EINA_UNUSED, Ecore_File_Event event, const char *path)
 {
    E_Dir *ed;
    char *dir, *rp, *drp;
@@ -1368,7 +1368,7 @@ _e_fm_ipc_prepare_command(E_Fm_Op_Type type, const char *args)
 }
 
 static Eina_Bool
-_e_fm_ipc_timer_cb(void *d __UNUSED__)
+_e_fm_ipc_timer_cb(void *d EINA_UNUSED)
 {
    ecore_ipc_server_send(_e_fm_ipc_server,
                          6 /*E_IPC_DOMAIN_FM*/,

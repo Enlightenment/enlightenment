@@ -806,7 +806,7 @@ _e_icon_smart_init(void)
 }
 
 static void
-_e_icon_preloaded(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_e_icon_preloaded(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    E_Smart_Data *sd;
 
@@ -1157,7 +1157,7 @@ __try_next:
 }
 
 static void
-_e_icon_obj_del(void *data, Evas *e __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
+_e_icon_obj_del(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
    E_Smart_Data *sd;
 

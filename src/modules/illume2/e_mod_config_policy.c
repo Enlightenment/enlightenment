@@ -14,7 +14,7 @@ Ecore_Timer *_policy_change_timer = NULL;
 const char *_policy_name = NULL;
 
 void 
-e_mod_illume_config_policy_show(E_Comp *comp, const char *params __UNUSED__) 
+e_mod_illume_config_policy_show(E_Comp *comp, const char *params EINA_UNUSED) 
 {
    E_Config_Dialog *cfd;
    E_Config_Dialog_View *v;
@@ -37,20 +37,20 @@ e_mod_illume_config_policy_show(E_Comp *comp, const char *params __UNUSED__)
 
 /* local functions */
 static void *
-_e_mod_illume_config_policy_create(E_Config_Dialog *cfd __UNUSED__) 
+_e_mod_illume_config_policy_create(E_Config_Dialog *cfd EINA_UNUSED) 
 {
    return NULL;
 }
 
 static void 
-_e_mod_illume_config_policy_free(E_Config_Dialog *cfd __UNUSED__, E_Config_Dialog_Data *cfdata __UNUSED__) 
+_e_mod_illume_config_policy_free(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfdata EINA_UNUSED) 
 {
    if (_policy_change_timer) ecore_timer_del(_policy_change_timer);
    _policy_change_timer = NULL;
 }
 
 static Evas_Object *
-_e_mod_illume_config_policy_ui(E_Config_Dialog *cfd __UNUSED__, Evas *evas, E_Config_Dialog_Data *cfdata __UNUSED__) 
+_e_mod_illume_config_policy_ui(E_Config_Dialog *cfd EINA_UNUSED, Evas *evas, E_Config_Dialog_Data *cfdata EINA_UNUSED) 
 {
    Evas_Object *list, *ow;
    Eina_List *policies;
@@ -107,7 +107,7 @@ _e_mod_illume_config_policy_list_changed(void *data)
 }
 
 static Eina_Bool
-_e_mod_illume_config_policy_change_timeout(void *data __UNUSED__) 
+_e_mod_illume_config_policy_change_timeout(void *data EINA_UNUSED) 
 {
    e_config_save_queue();
    _policy_change_timer = NULL;

@@ -52,7 +52,7 @@ typedef struct E_Mixer_App_Dialog_Data
 } E_Mixer_App_Dialog_Data;
 
 static void
-_cb_changed_left(void *data, Evas_Object *obj __UNUSED__)
+_cb_changed_left(void *data, Evas_Object *obj EINA_UNUSED)
 {
    E_Mixer_App_Dialog_Data *app = data;
    E_Mixer_Channel_State *state;
@@ -70,7 +70,7 @@ _cb_changed_left(void *data, Evas_Object *obj __UNUSED__)
 }
 
 static void
-_cb_changed_right(void *data, Evas_Object *obj __UNUSED__)
+_cb_changed_right(void *data, Evas_Object *obj EINA_UNUSED)
 {
    E_Mixer_App_Dialog_Data *app = data;
    E_Mixer_Channel_State *state;
@@ -88,7 +88,7 @@ _cb_changed_right(void *data, Evas_Object *obj __UNUSED__)
 }
 
 static void
-_cb_changed_mute(void *data, Evas_Object *obj __UNUSED__)
+_cb_changed_mute(void *data, Evas_Object *obj EINA_UNUSED)
 {
    E_Mixer_App_Dialog_Data *app = data;
 
@@ -96,7 +96,7 @@ _cb_changed_mute(void *data, Evas_Object *obj __UNUSED__)
 }
 
 static void
-_cb_changed_lock_sliders(void *data, Evas_Object *obj __UNUSED__)
+_cb_changed_lock_sliders(void *data, Evas_Object *obj EINA_UNUSED)
 {
    E_Mixer_App_Dialog_Data *app = data;
    E_Mixer_Channel_State *state;
@@ -232,7 +232,7 @@ _cb_channel_selected(void *data)
 }
 
 static int
-_cb_system_update(void *data, E_Mixer_System *sys __UNUSED__)
+_cb_system_update(void *data, E_Mixer_System *sys EINA_UNUSED)
 {
    E_Mixer_App_Dialog_Data *app = data;
    E_Mixer_Channel_State state;
@@ -319,7 +319,7 @@ _cb_card_selected(void *data)
 }
 
 static void
-_create_cards(E_Dialog *dialog __UNUSED__, Evas *evas, E_Mixer_App_Dialog_Data *app)
+_create_cards(E_Dialog *dialog EINA_UNUSED, Evas *evas, E_Mixer_App_Dialog_Data *app)
 {
    struct e_mixer_app_ui_cards *ui = &app->ui.cards;
    const char *card;
@@ -353,7 +353,7 @@ _create_cards(E_Dialog *dialog __UNUSED__, Evas *evas, E_Mixer_App_Dialog_Data *
 }
 
 static void
-_create_channels(E_Dialog *dialog __UNUSED__, Evas *evas, E_Mixer_App_Dialog_Data *app)
+_create_channels(E_Dialog *dialog EINA_UNUSED, Evas *evas, E_Mixer_App_Dialog_Data *app)
 {
    struct e_mixer_app_ui_channels *ui = &app->ui.channels;
    ui->list = e_widget_ilist_add(evas, 24, 24, &app->channel_name);

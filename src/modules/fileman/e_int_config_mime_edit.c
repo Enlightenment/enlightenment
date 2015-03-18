@@ -78,7 +78,7 @@ _create_data(E_Config_Dialog *cfd)
 }
 
 static void
-_fill_data(E_Config_Dialog *cfd __UNUSED__, E_Config_Dialog_Data *cfdata) 
+_fill_data(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfdata) 
 {
    E_Config_Mime_Icon *mi;
 
@@ -110,7 +110,7 @@ _fill_data(E_Config_Dialog *cfd __UNUSED__, E_Config_Dialog_Data *cfdata)
 }
 
 static void
-_free_data(E_Config_Dialog *cfd __UNUSED__, E_Config_Dialog_Data *cfdata) 
+_free_data(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfdata) 
 {
    if (cfdata->gui.fsel) 
      e_object_del(E_OBJECT(cfdata->gui.fsel));
@@ -185,7 +185,7 @@ _basic_create(E_Config_Dialog *cfd, Evas *evas, E_Config_Dialog_Data *cfdata)
 }
 
 static int
-_basic_check(E_Config_Dialog *cfd __UNUSED__, E_Config_Dialog_Data *cfdata)
+_basic_check(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfdata)
 {
    E_Config_Mime_Icon *mi;
 
@@ -203,7 +203,7 @@ _basic_check(E_Config_Dialog *cfd __UNUSED__, E_Config_Dialog_Data *cfdata)
 }
 
 static int
-_basic_apply(E_Config_Dialog *cfd __UNUSED__, E_Config_Dialog_Data *cfdata) 
+_basic_apply(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfdata) 
 {
    Eina_List *l;
    E_Config_Mime_Icon *mi;
@@ -368,7 +368,7 @@ _get_icon(void *data)
 }
 
 static void 
-_cb_type(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__) 
+_cb_type(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED) 
 {
    E_Config_Dialog_Data *cfdata;
    
@@ -387,7 +387,7 @@ _cb_type(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 }
 
 static void 
-_cb_fsel_sel(void *data, Evas_Object *obj __UNUSED__) 
+_cb_fsel_sel(void *data, Evas_Object *obj EINA_UNUSED) 
 {
    E_Config_Dialog_Data *cfdata;
    

@@ -26,11 +26,11 @@ static int _basic_apply(E_Config_Dialog      *cfd,
 static int _basic_check_changed(E_Config_Dialog      *cfd,
                                 E_Config_Dialog_Data *cfdata);
 static void _force_timeout_changed(void        *data,
-                                   Evas_Object *obj __UNUSED__);
+                                   Evas_Object *obj EINA_UNUSED);
 
 E_Config_Dialog *
 e_int_config_notification_module(Evas_Object *parent EINA_UNUSED,
-                                 const char  *params __UNUSED__)
+                                 const char  *params EINA_UNUSED)
 {
    E_Config_Dialog *cfd = NULL;
    E_Config_Dialog_View *v = NULL;
@@ -56,7 +56,7 @@ e_int_config_notification_module(Evas_Object *parent EINA_UNUSED,
 
 /* local functions */
 static void *
-_create_data(E_Config_Dialog *cfd __UNUSED__)
+_create_data(E_Config_Dialog *cfd EINA_UNUSED)
 {
    E_Config_Dialog_Data *cfdata = NULL;
 
@@ -66,7 +66,7 @@ _create_data(E_Config_Dialog *cfd __UNUSED__)
 }
 
 static void
-_free_data(E_Config_Dialog      *cfd __UNUSED__,
+_free_data(E_Config_Dialog      *cfd EINA_UNUSED,
            E_Config_Dialog_Data *cfdata)
 {
    notification_cfg->cfd = NULL;
@@ -87,7 +87,7 @@ _fill_data(E_Config_Dialog_Data *cfdata)
 }
 
 static Evas_Object *
-_basic_create(E_Config_Dialog      *cfd __UNUSED__,
+_basic_create(E_Config_Dialog      *cfd EINA_UNUSED,
               Evas                 *evas,
               E_Config_Dialog_Data *cfdata)
 {
@@ -168,7 +168,7 @@ _basic_create(E_Config_Dialog      *cfd __UNUSED__,
 }
 
 static int
-_basic_apply(E_Config_Dialog      *cfd __UNUSED__,
+_basic_apply(E_Config_Dialog      *cfd EINA_UNUSED,
              E_Config_Dialog_Data *cfdata)
 {
    notification_cfg->show_low = cfdata->show_low;
@@ -185,7 +185,7 @@ _basic_apply(E_Config_Dialog      *cfd __UNUSED__,
 }
 
 static int
-_basic_check_changed(E_Config_Dialog      *cfd __UNUSED__,
+_basic_check_changed(E_Config_Dialog      *cfd EINA_UNUSED,
                      E_Config_Dialog_Data *cfdata)
 {
    return 
@@ -201,7 +201,7 @@ _basic_check_changed(E_Config_Dialog      *cfd __UNUSED__,
 
 static void
 _force_timeout_changed(void        *data,
-                       Evas_Object *obj __UNUSED__)
+                       Evas_Object *obj EINA_UNUSED)
 {
    E_Config_Dialog_Data *cfdata = data;
 

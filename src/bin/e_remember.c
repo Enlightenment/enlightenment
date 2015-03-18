@@ -129,7 +129,7 @@ e_remember_internal_save(void)
 }
 
 static Eina_Bool
-_e_remember_restore_idler_cb(void *d __UNUSED__)
+_e_remember_restore_idler_cb(void *d EINA_UNUSED)
 {
    E_Remember *rem;
    E_Action *act_fm = NULL, *act;
@@ -190,7 +190,7 @@ _e_remember_restore_idler_cb(void *d __UNUSED__)
 }
 
 static Eina_Bool
-_e_remember_restore_cb(void *data __UNUSED__, int type __UNUSED__, void *event __UNUSED__)
+_e_remember_restore_cb(void *data EINA_UNUSED, int type EINA_UNUSED, void *event EINA_UNUSED)
 {
    handlers = eina_list_free(handlers);
    if (!remembers->list) return ECORE_CALLBACK_PASS_ON;
@@ -606,7 +606,7 @@ _e_remember_free(E_Remember *rem)
 }
 
 static void
-_e_remember_cb_hook_eval_post_new_client(void *data __UNUSED__, E_Client *ec)
+_e_remember_cb_hook_eval_post_new_client(void *data EINA_UNUSED, E_Client *ec)
 {
    // remember only when window was modified
    // if (!ec->new_client) return;
@@ -642,7 +642,7 @@ _e_remember_cb_hook_eval_post_new_client(void *data __UNUSED__, E_Client *ec)
 }
 
 static void
-_e_remember_cb_hook_pre_post_fetch(void *data __UNUSED__, E_Client *ec)
+_e_remember_cb_hook_pre_post_fetch(void *data EINA_UNUSED, E_Client *ec)
 {
    E_Remember *rem = NULL;
    int temporary = 0;

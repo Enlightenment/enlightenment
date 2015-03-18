@@ -60,7 +60,7 @@ struct _E_Config_Dialog_Data
 };
 
 E_Config_Dialog *
-e_int_config_desklock(Evas_Object *parent EINA_UNUSED, const char *params __UNUSED__)
+e_int_config_desklock(Evas_Object *parent EINA_UNUSED, const char *params EINA_UNUSED)
 {
    E_Config_Dialog *cfd;
    E_Config_Dialog_View *v;
@@ -193,7 +193,7 @@ _create_data(E_Config_Dialog *cfd)
 }
 
 static void
-_free_data(E_Config_Dialog *cfd __UNUSED__, E_Config_Dialog_Data *cfdata)
+_free_data(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfdata)
 {
    E_Config_Desklock_Background *bg;
    if (cfdata->bg_fsel)
@@ -425,7 +425,7 @@ _basic_create(E_Config_Dialog *cfd, Evas *evas, E_Config_Dialog_Data *cfdata)
 }
 
 static int
-_basic_apply(E_Config_Dialog *cfd __UNUSED__, E_Config_Dialog_Data *cfdata)
+_basic_apply(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfdata)
 {
    const Eina_List *l;
    E_Config_Desklock_Background *cbg;
@@ -514,7 +514,7 @@ _basic_apply(E_Config_Dialog *cfd __UNUSED__, E_Config_Dialog_Data *cfdata)
 }
 
 static int
-_basic_check_changed(E_Config_Dialog *cfd __UNUSED__, E_Config_Dialog_Data *cfdata)
+_basic_check_changed(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfdata)
 {
    Eina_List *l, *ll;
    E_Config_Desklock_Background *cbg;
@@ -601,7 +601,7 @@ _basic_check_changed(E_Config_Dialog *cfd __UNUSED__, E_Config_Dialog_Data *cfda
 }
 
 static void
-_cb_method_change(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_cb_method_change(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    E_Config_Dialog_Data *cfdata;
    Eina_List *l;
@@ -749,7 +749,7 @@ _login_method_change(void *data, Evas_Object *obj EINA_UNUSED, void *event_info 
 }
 
 static void
-_cb_login_change(void *data, Evas_Object *obj __UNUSED__)
+_cb_login_change(void *data, Evas_Object *obj EINA_UNUSED)
 {
    E_Config_Dialog_Data *cfdata;
 
@@ -758,7 +758,7 @@ _cb_login_change(void *data, Evas_Object *obj __UNUSED__)
 }
 
 static void
-_cb_bg_mouse_down(void *data, Evas *evas __UNUSED__, Evas_Object *obj, void *event __UNUSED__)
+_cb_bg_mouse_down(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj, void *event EINA_UNUSED)
 {
    E_Config_Dialog_Data *cfdata;
 

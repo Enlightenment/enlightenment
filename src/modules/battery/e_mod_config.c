@@ -40,10 +40,10 @@ static int          _basic_check_changed(E_Config_Dialog *cfd, E_Config_Dialog_D
 static Evas_Object *_advanced_create_widgets(E_Config_Dialog *cfd, Evas *evas, E_Config_Dialog_Data *cfdata);
 static int          _advanced_apply_data(E_Config_Dialog *cfd, E_Config_Dialog_Data *cfdata);
 static int          _advanced_check_changed(E_Config_Dialog *cfd, E_Config_Dialog_Data *cfdata);
-static void         _cb_radio_changed(void *data, Evas_Object *obj __UNUSED__);
+static void         _cb_radio_changed(void *data, Evas_Object *obj EINA_UNUSED);
 
 E_Config_Dialog *
-e_int_config_battery_module(Evas_Object *parent EINA_UNUSED, const char *params __UNUSED__)
+e_int_config_battery_module(Evas_Object *parent EINA_UNUSED, const char *params EINA_UNUSED)
 {
    E_Config_Dialog *cfd;
    E_Config_Dialog_View *v;
@@ -108,7 +108,7 @@ _ensure_alert_time(E_Config_Dialog_Data *cfdata)
 }
 
 static void *
-_create_data(E_Config_Dialog *cfd __UNUSED__)
+_create_data(E_Config_Dialog *cfd EINA_UNUSED)
 {
    E_Config_Dialog_Data *cfdata;
 
@@ -118,7 +118,7 @@ _create_data(E_Config_Dialog *cfd __UNUSED__)
 }
 
 static void
-_free_data(E_Config_Dialog *cfd __UNUSED__, E_Config_Dialog_Data *cfdata)
+_free_data(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfdata)
 {
    if (!battery_config) return;
    battery_config->config_dialog = NULL;
@@ -126,7 +126,7 @@ _free_data(E_Config_Dialog *cfd __UNUSED__, E_Config_Dialog_Data *cfdata)
 }
 
 static Evas_Object *
-_basic_create_widgets(E_Config_Dialog *cfd __UNUSED__, Evas *evas, E_Config_Dialog_Data *cfdata)
+_basic_create_widgets(E_Config_Dialog *cfd EINA_UNUSED, Evas *evas, E_Config_Dialog_Data *cfdata)
 {
    Evas_Object *o, *ob;
 
@@ -143,7 +143,7 @@ _basic_create_widgets(E_Config_Dialog *cfd __UNUSED__, Evas *evas, E_Config_Dial
 }
 
 static int
-_basic_apply_data(E_Config_Dialog *cfd __UNUSED__, E_Config_Dialog_Data *cfdata)
+_basic_apply_data(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfdata)
 {
    if (!battery_config) return 0;
 
@@ -171,7 +171,7 @@ _basic_apply_data(E_Config_Dialog *cfd __UNUSED__, E_Config_Dialog_Data *cfdata)
 }
 
 static int
-_basic_check_changed(E_Config_Dialog *cfd __UNUSED__, E_Config_Dialog_Data *cfdata)
+_basic_check_changed(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfdata)
 {
    Eina_Bool ret;
    int old_show_alert = ((battery_config->alert > 0) ||
@@ -185,7 +185,7 @@ _basic_check_changed(E_Config_Dialog *cfd __UNUSED__, E_Config_Dialog_Data *cfda
 }
 
 static void
-_cb_show_alert_changed(void *data, Evas_Object *obj __UNUSED__)
+_cb_show_alert_changed(void *data, Evas_Object *obj EINA_UNUSED)
 {
    E_Config_Dialog_Data *cfdata = data;
    Eina_Bool show_alert = cfdata->show_alert;
@@ -200,7 +200,7 @@ _cb_show_alert_changed(void *data, Evas_Object *obj __UNUSED__)
 }
 
 static void
-_cb_dismiss_alert_changed(void *data, Evas_Object *obj __UNUSED__)
+_cb_dismiss_alert_changed(void *data, Evas_Object *obj EINA_UNUSED)
 {
    E_Config_Dialog_Data *cfdata = data;
    Eina_Bool dismiss_alert = cfdata->show_alert && cfdata->dismiss_alert;
@@ -209,7 +209,7 @@ _cb_dismiss_alert_changed(void *data, Evas_Object *obj __UNUSED__)
 }
 
 static void
-_cb_radio_changed(void *data, Evas_Object *obj __UNUSED__)
+_cb_radio_changed(void *data, Evas_Object *obj EINA_UNUSED)
 {
    E_Config_Dialog_Data *cfdata;
    Eina_Bool fuzzy;
@@ -222,7 +222,7 @@ _cb_radio_changed(void *data, Evas_Object *obj __UNUSED__)
 }
 
 static Evas_Object *
-_advanced_create_widgets(E_Config_Dialog *cfd __UNUSED__, Evas *evas, E_Config_Dialog_Data *cfdata)
+_advanced_create_widgets(E_Config_Dialog *cfd EINA_UNUSED, Evas *evas, E_Config_Dialog_Data *cfdata)
 {
    Evas_Object *o, *ob, *otb;
    E_Radio_Group *rg;
@@ -316,7 +316,7 @@ _advanced_create_widgets(E_Config_Dialog *cfd __UNUSED__, Evas *evas, E_Config_D
 }
 
 static int
-_advanced_apply_data(E_Config_Dialog *cfd __UNUSED__, E_Config_Dialog_Data *cfdata)
+_advanced_apply_data(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfdata)
 {
    if (!battery_config) return 0;
 
@@ -352,7 +352,7 @@ _advanced_apply_data(E_Config_Dialog *cfd __UNUSED__, E_Config_Dialog_Data *cfda
 }
 
 static int
-_advanced_check_changed(E_Config_Dialog *cfd __UNUSED__, E_Config_Dialog_Data *cfdata)
+_advanced_check_changed(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfdata)
 {
    int old_show_alert = ((battery_config->alert > 0) ||
                          (battery_config->alert_p > 0));

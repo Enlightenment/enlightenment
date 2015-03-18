@@ -54,7 +54,7 @@ static void        _e_exec_cb_exec_new_free(void *data, void *event);
 static void _e_exec_cb_exec_new_client_free(void *data, void *ev);
 static void        _e_exec_cb_exec_del_free(void *data, void *event);
 static void _e_exe_instance_watchers_call(E_Exec_Instance *inst, E_Exec_Watch_Type type);
-static Eina_Bool        _e_exec_startup_id_pid_find(const Eina_Hash *hash __UNUSED__, const void *key __UNUSED__, void *value, void *data);
+static Eina_Bool        _e_exec_startup_id_pid_find(const Eina_Hash *hash EINA_UNUSED, const void *key EINA_UNUSED, void *value, void *data);
 
 static void             _e_exec_error_dialog(Efreet_Desktop *desktop, const char *exec, Ecore_Exe_Event_Del *event, Ecore_Exe_Event_Data *error, Ecore_Exe_Event_Data *read);
 static void             _fill_data(E_Config_Dialog_Data *cfdata);
@@ -719,7 +719,7 @@ _e_exec_cb_exec_del_free(void *data, void *ev EINA_UNUSED)
 }
 
 static Eina_Bool
-_e_exec_cb_exit(void *data __UNUSED__, int type __UNUSED__, void *event)
+_e_exec_cb_exit(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
 {
    Ecore_Exe_Event_Del *ev;
    E_Exec_Instance *inst;
@@ -810,7 +810,7 @@ _e_exec_cb_exit(void *data __UNUSED__, int type __UNUSED__, void *event)
 }
 
 static Eina_Bool
-_e_exec_startup_id_pid_find(const Eina_Hash *hash __UNUSED__, const void *key __UNUSED__, void *value, void *data)
+_e_exec_startup_id_pid_find(const Eina_Hash *hash EINA_UNUSED, const void *key EINA_UNUSED, void *value, void *data)
 {
    E_Exec_Search *search;
    E_Exec_Instance *inst;
@@ -961,7 +961,7 @@ _create_data(E_Config_Dialog *cfd)
 }
 
 static void
-_free_data(E_Config_Dialog *cfd __UNUSED__, E_Config_Dialog_Data *cfdata)
+_free_data(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfdata)
 {
    if (cfdata->error) ecore_exe_event_data_free(cfdata->error);
    if (cfdata->read) ecore_exe_event_data_free(cfdata->read);
@@ -1023,7 +1023,7 @@ _dialog_scrolltext_create(Evas *evas, char *title, Ecore_Exe_Event_Data_Line *li
 }
 
 static Evas_Object *
-_basic_create_widgets(E_Config_Dialog *cfd __UNUSED__, Evas *evas, E_Config_Dialog_Data *cfdata)
+_basic_create_widgets(E_Config_Dialog *cfd EINA_UNUSED, Evas *evas, E_Config_Dialog_Data *cfdata)
 {
    char buf[4096];
    int error_length = 0;
@@ -1066,7 +1066,7 @@ _basic_create_widgets(E_Config_Dialog *cfd __UNUSED__, Evas *evas, E_Config_Dial
 }
 
 static Evas_Object *
-_advanced_create_widgets(E_Config_Dialog *cfd __UNUSED__, Evas *evas, E_Config_Dialog_Data *cfdata)
+_advanced_create_widgets(E_Config_Dialog *cfd EINA_UNUSED, Evas *evas, E_Config_Dialog_Data *cfdata)
 {
    char buf[4096];
    int read_length = 0;
@@ -1149,7 +1149,7 @@ _advanced_create_widgets(E_Config_Dialog *cfd __UNUSED__, Evas *evas, E_Config_D
 }
 
 static void
-_dialog_save_cb(void *data __UNUSED__, void *data2)
+_dialog_save_cb(void *data EINA_UNUSED, void *data2)
 {
    E_Config_Dialog_Data *cfdata;
    FILE *f;

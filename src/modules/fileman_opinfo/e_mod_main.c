@@ -238,7 +238,7 @@ _opinfo_op_registry_free_data_delayed(void *data)
 }
 
 static void 
-_opinfo_op_registry_abort_cb(void *data, Evas_Object *obj __UNUSED__, const char *emission __UNUSED__, const char *source __UNUSED__)
+_opinfo_op_registry_abort_cb(void *data, Evas_Object *obj EINA_UNUSED, const char *emission EINA_UNUSED, const char *source EINA_UNUSED)
 {
    int id;
    
@@ -249,7 +249,7 @@ _opinfo_op_registry_abort_cb(void *data, Evas_Object *obj __UNUSED__, const char
 }
 
 static void 
-_opinfo_op_registry_window_jump_cb(void *data, Evas_Object *obj __UNUSED__, const char *emission __UNUSED__, const char *source __UNUSED__)
+_opinfo_op_registry_window_jump_cb(void *data, Evas_Object *obj EINA_UNUSED, const char *emission EINA_UNUSED, const char *source EINA_UNUSED)
 {
    int id = (long)data;
    E_Fm2_Op_Registry_Entry *ere;
@@ -274,7 +274,7 @@ _opinfo_op_registry_window_jump_cb(void *data, Evas_Object *obj __UNUSED__, cons
 }
 
 static Eina_Bool
-_opinfo_op_registry_entry_add_cb(void *data, __UNUSED__ int type, void *event)
+_opinfo_op_registry_entry_add_cb(void *data, EINA_UNUSED int type, void *event)
 {
    E_Fm2_Op_Registry_Entry *ere = event;
    Instance *inst = data;
@@ -303,7 +303,7 @@ _opinfo_op_registry_entry_add_cb(void *data, __UNUSED__ int type, void *event)
 }
 
 static Eina_Bool
-_opinfo_op_registry_entry_del_cb(void *data, __UNUSED__ int type, __UNUSED__ void *event)
+_opinfo_op_registry_entry_del_cb(void *data, EINA_UNUSED int type, EINA_UNUSED void *event)
 {
    Instance *inst = data;
    
@@ -419,7 +419,7 @@ _gc_shutdown(E_Gadcon_Client *gcc)
 }
 
 static void
-_gc_orient(E_Gadcon_Client *gcc, E_Gadcon_Orient orient __UNUSED__)
+_gc_orient(E_Gadcon_Client *gcc, E_Gadcon_Orient orient EINA_UNUSED)
 {
    Instance *inst = gcc->data;
    Evas_Coord mw = 200, mh = 100;
@@ -430,13 +430,13 @@ _gc_orient(E_Gadcon_Client *gcc, E_Gadcon_Orient orient __UNUSED__)
 }
 
 static const char *
-_gc_label(const E_Gadcon_Client_Class *client_class __UNUSED__)
+_gc_label(const E_Gadcon_Client_Class *client_class EINA_UNUSED)
 {
    return _("EFM Operation Info");
 }
 
 static Evas_Object *
-_gc_icon(const E_Gadcon_Client_Class *client_class __UNUSED__, Evas *evas)
+_gc_icon(const E_Gadcon_Client_Class *client_class EINA_UNUSED, Evas *evas)
 {
    Evas_Object *o;
    char buf[PATH_MAX];
@@ -450,7 +450,7 @@ _gc_icon(const E_Gadcon_Client_Class *client_class __UNUSED__, Evas *evas)
 }
 
 static const char *
-_gc_id_new(const E_Gadcon_Client_Class *client_class __UNUSED__)
+_gc_id_new(const E_Gadcon_Client_Class *client_class EINA_UNUSED)
 {
    return _gadcon_class.name;
 }
@@ -472,7 +472,7 @@ e_modapi_init(E_Module *m)
 }
 
 EAPI int
-e_modapi_shutdown(E_Module *m __UNUSED__)
+e_modapi_shutdown(E_Module *m EINA_UNUSED)
 {
    opinfo_module = NULL;
    e_gadcon_provider_unregister(&_gadcon_class);
@@ -480,7 +480,7 @@ e_modapi_shutdown(E_Module *m __UNUSED__)
 }
 
 EAPI int
-e_modapi_save(E_Module *m __UNUSED__)
+e_modapi_save(E_Module *m EINA_UNUSED)
 {
    return 1;
 }

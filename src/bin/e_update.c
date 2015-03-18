@@ -17,13 +17,13 @@ _update_done(void)
 }
 
 static void
-_delete_cb(void *obj __UNUSED__)
+_delete_cb(void *obj EINA_UNUSED)
 {
    dialog = NULL;
 }
 
 static void
-_ok_cb(void *data __UNUSED__, E_Dialog *dia __UNUSED__)
+_ok_cb(void *data EINA_UNUSED, E_Dialog *dia EINA_UNUSED)
 {
    e_object_del(E_OBJECT(dialog));
    if (e_config->update.later > 0)
@@ -34,7 +34,7 @@ _ok_cb(void *data __UNUSED__, E_Dialog *dia __UNUSED__)
 }
 
 static void
-_bother_me_later_cb(void *data __UNUSED__, E_Dialog *dia __UNUSED__)
+_bother_me_later_cb(void *data EINA_UNUSED, E_Dialog *dia EINA_UNUSED)
 {
    e_object_del(E_OBJECT(dialog));
    // 5 * 5 * 1hr === about 1 day limit, so bother-me later will wait
@@ -47,7 +47,7 @@ _bother_me_later_cb(void *data __UNUSED__, E_Dialog *dia __UNUSED__)
 }
 
 static void
-_never_tell_me_cb(void *data __UNUSED__, E_Dialog *dia __UNUSED__)
+_never_tell_me_cb(void *data EINA_UNUSED, E_Dialog *dia EINA_UNUSED)
 {
    if (update_timer) ecore_timer_del(update_timer);
    update_timer = NULL;
@@ -93,7 +93,7 @@ _new_version(const char *ver)
 }
 
 static Eina_Bool
-_upload_data_cb(void *data __UNUSED__, int ev_type __UNUSED__, void *event)
+_upload_data_cb(void *data EINA_UNUSED, int ev_type EINA_UNUSED, void *event)
 {
    Ecore_Con_Event_Url_Data *ev = event;
    if (ev->url_con != url_up) return EINA_TRUE;
@@ -121,7 +121,7 @@ _upload_data_cb(void *data __UNUSED__, int ev_type __UNUSED__, void *event)
 }
 
 static Eina_Bool
-_upload_progress_cb(void *data __UNUSED__, int ev_type __UNUSED__, void *event)
+_upload_progress_cb(void *data EINA_UNUSED, int ev_type EINA_UNUSED, void *event)
 {
    Ecore_Con_Event_Url_Progress *ev = event;
    if (ev->url_con != url_up) return EINA_TRUE;
@@ -129,7 +129,7 @@ _upload_progress_cb(void *data __UNUSED__, int ev_type __UNUSED__, void *event)
 }
 
 static Eina_Bool
-_upload_complete_cb(void *data __UNUSED__, int ev_type __UNUSED__, void *event)
+_upload_complete_cb(void *data EINA_UNUSED, int ev_type EINA_UNUSED, void *event)
 {
    Ecore_Con_Event_Url_Complete *ev = event;
    if (ev->url_con != url_up) return EINA_TRUE;

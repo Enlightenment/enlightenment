@@ -87,8 +87,8 @@ _notification_show_offline(Eina_Bool enabled)
 
 static Eina_Bool
 _notification_cb_config_mode_changed(Config *m_cfg,
-                                     int   type __UNUSED__,
-                                     void *event __UNUSED__)
+                                     int   type EINA_UNUSED,
+                                     void *event EINA_UNUSED)
 {
    if (m_cfg->last_config_mode.presentation != e_config->mode.presentation)
      {
@@ -214,7 +214,7 @@ e_modapi_init(E_Module *m)
 }
 
 EAPI int
-e_modapi_shutdown(E_Module *m __UNUSED__)
+e_modapi_shutdown(E_Module *m EINA_UNUSED)
 {
    if (notification_cfg->initial_mode_timer)
      ecore_timer_del(notification_cfg->initial_mode_timer);
@@ -238,7 +238,7 @@ e_modapi_shutdown(E_Module *m __UNUSED__)
 }
 
 EAPI int
-e_modapi_save(E_Module *m __UNUSED__)
+e_modapi_save(E_Module *m EINA_UNUSED)
 {
    return e_config_domain_save("module.notification", conf_edd, notification_cfg);
 }

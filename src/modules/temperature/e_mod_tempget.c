@@ -2,7 +2,7 @@
 #include "e_mod_main.h"
 
 Eina_Bool
-_temperature_cb_exe_data(void *data, __UNUSED__ int type, void *event)
+_temperature_cb_exe_data(void *data, EINA_UNUSED int type, void *event)
 {
    Ecore_Exe_Event_Data *ev;
    Config_Face *inst;
@@ -63,7 +63,7 @@ _temperature_cb_exe_data(void *data, __UNUSED__ int type, void *event)
 }
 
 Eina_Bool
-_temperature_cb_exe_del(void *data, __UNUSED__ int type, void *event)
+_temperature_cb_exe_del(void *data, EINA_UNUSED int type, void *event)
 {
    Ecore_Exe_Event_Del *ev;
    Config_Face *inst;

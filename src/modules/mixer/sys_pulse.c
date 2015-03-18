@@ -53,7 +53,7 @@ _pulse_not_started(void *data EINA_UNUSED, int type EINA_UNUSED, Ecore_Exe_Event
 }
 
 static void
-_pulse_info_get(Pulse *d __UNUSED__, int type __UNUSED__, Pulse_Server_Info *ev)
+_pulse_info_get(Pulse *d EINA_UNUSED, int type EINA_UNUSED, Pulse_Server_Info *ev)
 {
    Eina_List *l;
    Pulse_Sink *sink;
@@ -80,7 +80,7 @@ _pulse_update_timer(void *d EINA_UNUSED)
 }
 
 static Eina_Bool
-_pulse_update(Pulse *d __UNUSED__, int type __UNUSED__, Pulse_Sink *ev __UNUSED__)
+_pulse_update(Pulse *d EINA_UNUSED, int type EINA_UNUSED, Pulse_Sink *ev EINA_UNUSED)
 {
    Pulse_Tag_Id id;
 
@@ -93,7 +93,7 @@ _pulse_update(Pulse *d __UNUSED__, int type __UNUSED__, Pulse_Sink *ev __UNUSED_
 }
 
 static void
-_pulse_sinks_get(Pulse *p __UNUSED__, Pulse_Tag_Id id __UNUSED__, Eina_List *ev)
+_pulse_sinks_get(Pulse *p EINA_UNUSED, Pulse_Tag_Id id EINA_UNUSED, Eina_List *ev)
 {
    Eina_List *l;
    Pulse_Sink *sink;
@@ -128,7 +128,7 @@ _pulse_sinks_get(Pulse *p __UNUSED__, Pulse_Tag_Id id __UNUSED__, Eina_List *ev)
 }
 
 static void
-_pulse_sources_get(Pulse *p __UNUSED__, Pulse_Tag_Id id __UNUSED__, Eina_List *ev)
+_pulse_sources_get(Pulse *p EINA_UNUSED, Pulse_Tag_Id id EINA_UNUSED, Eina_List *ev)
 {
    eina_list_free(sources);
    sources = ev;
@@ -152,7 +152,7 @@ _pulse_sources_get(Pulse *p __UNUSED__, Pulse_Tag_Id id __UNUSED__, Eina_List *e
 }
 
 static Eina_Bool
-_pulse_connected(Pulse *d, int type __UNUSED__, Pulse *ev)
+_pulse_connected(Pulse *d, int type EINA_UNUSED, Pulse *ev)
 {
    Pulse_Tag_Id id;
    if (d != ev) return ECORE_CALLBACK_PASS_ON;
@@ -176,7 +176,7 @@ _pulse_connected(Pulse *d, int type __UNUSED__, Pulse *ev)
 }
 
 static Eina_Bool
-_pulse_disc_timer(void *d __UNUSED__)
+_pulse_disc_timer(void *d EINA_UNUSED)
 {
    disc_timer = NULL;
    if (disc_count < 5)
@@ -191,7 +191,7 @@ _pulse_disc_timer(void *d __UNUSED__)
 }
 
 static Eina_Bool
-_pulse_disconnected(Pulse *d, int type __UNUSED__, Pulse *ev)
+_pulse_disconnected(Pulse *d, int type EINA_UNUSED, Pulse *ev)
 {
    Pulse_Sink *sink;
 
@@ -290,7 +290,7 @@ _pulse_queue_process(const Eina_Hash *h EINA_UNUSED, const char *key,
 }
 
 static void
-_pulse_result_cb(Pulse *p __UNUSED__, Pulse_Tag_Id id, void *ev)
+_pulse_result_cb(Pulse *p EINA_UNUSED, Pulse_Tag_Id id, void *ev)
 {
    if (!ev) fprintf(stderr, "Command %u failed!\n", id);
    if (!update_count) return;
@@ -369,7 +369,7 @@ e_mixer_pulse_new(const char *name)
 }
 
 void
-e_mixer_pulse_del(E_Mixer_System *self __UNUSED__)
+e_mixer_pulse_del(E_Mixer_System *self EINA_UNUSED)
 {
 }
 
@@ -510,7 +510,7 @@ e_mixer_pulse_set_volume(const E_Mixer_System *self,
 
 int
 e_mixer_pulse_get_mute(const E_Mixer_System *self,
-                       const E_Mixer_Channel_Info *channel __UNUSED__, int *mute)
+                       const E_Mixer_Channel_Info *channel EINA_UNUSED, int *mute)
 {
    if (mute) *mute = pulse_sink_muted_get((void *)self);
    return 1;
@@ -518,7 +518,7 @@ e_mixer_pulse_get_mute(const E_Mixer_System *self,
 
 int
 e_mixer_pulse_set_mute(const E_Mixer_System *self,
-                       const E_Mixer_Channel_Info *channel __UNUSED__, int mute)
+                       const E_Mixer_Channel_Info *channel EINA_UNUSED, int mute)
 {
    uint32_t id;
    Eina_Bool source = EINA_FALSE;

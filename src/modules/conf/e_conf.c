@@ -228,7 +228,7 @@ _e_configure_cb_del_req(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_U
 }
 
 static void
-_e_configure_cb_close(void *data, void *data2 __UNUSED__)
+_e_configure_cb_close(void *data, void *data2 EINA_UNUSED)
 {
    E_Configure *eco;
 
@@ -267,7 +267,7 @@ _e_configure_category_add(E_Configure *eco, const char *label, const char *icon_
 }
 
 static void
-_e_configure_category_cb(void *data, void *data2 __UNUSED__)
+_e_configure_category_cb(void *data, void *data2 EINA_UNUSED)
 {
    E_Configure_Category *cat;
    E_Configure *eco;
@@ -365,7 +365,7 @@ _e_configure_focus_cb(void *data, Evas_Object *obj)
 }
 
 static void
-_e_configure_keydown_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event)
+_e_configure_keydown_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event)
 {
    Evas_Event_Key_Down *ev;
    E_Configure *eco = data;
@@ -477,7 +477,7 @@ _e_configure_fill_cat_list(void *data, const char *sel)
 }
 
 static Eina_Bool
-_e_configure_module_update_cb(void *data, int type __UNUSED__, void *event __UNUSED__)
+_e_configure_module_update_cb(void *data, int type EINA_UNUSED, void *event EINA_UNUSED)
 {
    E_Configure *eco;
    int sel = 0;

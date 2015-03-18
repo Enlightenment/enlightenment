@@ -10,7 +10,7 @@ static Eina_List *splash_objs = NULL;
 static Ecore_Timer *_e_init_timeout_timer = NULL;
 
 static Eina_Bool
-_e_init_cb_timeout(void *data __UNUSED__)
+_e_init_cb_timeout(void *data EINA_UNUSED)
 {
    _e_init_timeout_timer = NULL;
    e_init_hide();
@@ -18,7 +18,7 @@ _e_init_cb_timeout(void *data __UNUSED__)
 }
 
 static void
-_e_init_cb_signal_done_ok(void *data __UNUSED__, Evas_Object *obj __UNUSED__, const char *emission __UNUSED__, const char *source __UNUSED__)
+_e_init_cb_signal_done_ok(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, const char *emission EINA_UNUSED, const char *source EINA_UNUSED)
 {
    e_init_hide();
 }

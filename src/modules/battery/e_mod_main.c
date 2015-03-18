@@ -122,7 +122,7 @@ _gc_shutdown(E_Gadcon_Client *gcc)
 }
 
 static void
-_gc_orient(E_Gadcon_Client *gcc, E_Gadcon_Orient orient __UNUSED__)
+_gc_orient(E_Gadcon_Client *gcc, E_Gadcon_Orient orient EINA_UNUSED)
 {
    Instance *inst;
    Evas_Coord mw, mh, mxw, mxh;
@@ -141,13 +141,13 @@ _gc_orient(E_Gadcon_Client *gcc, E_Gadcon_Orient orient __UNUSED__)
 }
 
 static const char *
-_gc_label(const E_Gadcon_Client_Class *client_class __UNUSED__)
+_gc_label(const E_Gadcon_Client_Class *client_class EINA_UNUSED)
 {
    return _("Battery");
 }
 
 static Evas_Object *
-_gc_icon(const E_Gadcon_Client_Class *client_class __UNUSED__, Evas *evas)
+_gc_icon(const E_Gadcon_Client_Class *client_class EINA_UNUSED, Evas *evas)
 {
    Evas_Object *o;
    char buf[4096];
@@ -243,13 +243,13 @@ _battery_face_time_set(Evas_Object *battery, int t)
 }
 
 static void
-_battery_face_cb_menu_powermanagement(void *data __UNUSED__, E_Menu *m EINA_UNUSED, E_Menu_Item *mi __UNUSED__)
+_battery_face_cb_menu_powermanagement(void *data EINA_UNUSED, E_Menu *m EINA_UNUSED, E_Menu_Item *mi EINA_UNUSED)
 {
    e_configure_registry_call("advanced/powermanagement", NULL, NULL);
 }
 
 static void
-_battery_face_cb_menu_configure(void *data __UNUSED__, E_Menu *m EINA_UNUSED, E_Menu_Item *mi __UNUSED__)
+_battery_face_cb_menu_configure(void *data EINA_UNUSED, E_Menu *m EINA_UNUSED, E_Menu_Item *mi EINA_UNUSED)
 {
    if (!battery_config) return;
    if (battery_config->config_dialog) return;
@@ -404,7 +404,7 @@ _battery_cb_warning_popup_timeout(void *data)
 }
 
 static void
-_battery_cb_warning_popup_hide(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event __UNUSED__)
+_battery_cb_warning_popup_hide(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
 {
    Instance *inst = NULL;
 
@@ -510,7 +510,7 @@ _battery_warning_popup(Instance *inst, int t, double percent)
 }
 
 static Eina_Bool
-_powersave_cb_config_update(void *data __UNUSED__, int type __UNUSED__, void *event __UNUSED__)
+_powersave_cb_config_update(void *data EINA_UNUSED, int type EINA_UNUSED, void *event EINA_UNUSED)
 {
    if (!battery_config->have_battery)
      e_powersave_mode_set(E_POWERSAVE_MODE_LOW);
@@ -656,7 +656,7 @@ _battery_update(int full, int time_left, int time_full, Eina_Bool have_battery, 
 }
 
 static Eina_Bool
-_battery_cb_exe_data(void *data __UNUSED__, int type __UNUSED__, void *event)
+_battery_cb_exe_data(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
 {
    Ecore_Exe_Event_Data *ev;
    Instance *inst;
@@ -710,7 +710,7 @@ _battery_cb_exe_data(void *data __UNUSED__, int type __UNUSED__, void *event)
 }
 
 static Eina_Bool
-_battery_cb_exe_del(void *data __UNUSED__, int type __UNUSED__, void *event)
+_battery_cb_exe_del(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
 {
    Ecore_Exe_Event_Del *ev;
 
@@ -804,7 +804,7 @@ e_modapi_init(E_Module *m)
 }
 
 EAPI int
-e_modapi_shutdown(E_Module *m __UNUSED__)
+e_modapi_shutdown(E_Module *m EINA_UNUSED)
 {
    e_configure_registry_item_del("advanced/battery");
    e_configure_registry_category_del("advanced");
@@ -849,7 +849,7 @@ e_modapi_shutdown(E_Module *m __UNUSED__)
 }
 
 EAPI int
-e_modapi_save(E_Module *m __UNUSED__)
+e_modapi_save(E_Module *m EINA_UNUSED)
 {
    e_config_domain_save("module.battery", conf_edd, battery_config);
    return 1;

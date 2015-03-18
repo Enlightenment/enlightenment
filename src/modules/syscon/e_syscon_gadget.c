@@ -19,12 +19,12 @@ typedef struct Syscon_Config
 static E_Gadcon_Client        *_gc_init(E_Gadcon *gc, const char *name, const char *id, const char *style);
 static void                    _gc_shutdown(E_Gadcon_Client *gcc);
 static void                    _gc_orient(E_Gadcon_Client *gcc, E_Gadcon_Orient orient);
-static const char             *_gc_label(const E_Gadcon_Client_Class *cc __UNUSED__);
+static const char             *_gc_label(const E_Gadcon_Client_Class *cc EINA_UNUSED);
 static Evas_Object            *_gc_icon(const E_Gadcon_Client_Class *cc, Evas *evas);
 static const char             *_gc_id_new(const E_Gadcon_Client_Class *cc);
-static void                    _cb_shutdown_show(void *data, Evas_Object *obj __UNUSED__, const char *emission __UNUSED__, const char *source __UNUSED__);
-static void                    _cb_menu_post(void *data, E_Menu *m __UNUSED__);
-static void                    _cb_menu_sel(void *data, E_Menu *m, E_Menu_Item *mi __UNUSED__);
+static void                    _cb_shutdown_show(void *data, Evas_Object *obj EINA_UNUSED, const char *emission EINA_UNUSED, const char *source EINA_UNUSED);
+static void                    _cb_menu_post(void *data, E_Menu *m EINA_UNUSED);
+static void                    _cb_menu_sel(void *data, E_Menu *m, E_Menu_Item *mi EINA_UNUSED);
 static E_Config_Syscon_Action *_find_action(const char *name);
 static void                    _create_menu(Instance *inst);
 
@@ -46,14 +46,14 @@ static const E_Gadcon_Client_Class _gc_class =
 
 /* local functions */
 static void
-_cb_menu_change(void *data __UNUSED__, E_Menu *m __UNUSED__, E_Menu_Item *mi __UNUSED__)
+_cb_menu_change(void *data EINA_UNUSED, E_Menu *m EINA_UNUSED, E_Menu_Item *mi EINA_UNUSED)
 {
    syscon_config->menu = !syscon_config->menu;
 }
 
 
 static void
-_cb_mouse_down(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
+_cb_mouse_down(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info)
 {
    Instance *inst;
    Evas_Event_Mouse_Down *ev;
@@ -129,20 +129,20 @@ _gc_shutdown(E_Gadcon_Client *gcc)
 }
 
 static void
-_gc_orient(E_Gadcon_Client *gcc, E_Gadcon_Orient orient __UNUSED__)
+_gc_orient(E_Gadcon_Client *gcc, E_Gadcon_Orient orient EINA_UNUSED)
 {
    e_gadcon_client_aspect_set(gcc, 16, 16);
    e_gadcon_client_min_size_set(gcc, 16, 16);
 }
 
 static const char *
-_gc_label(const E_Gadcon_Client_Class *cc __UNUSED__)
+_gc_label(const E_Gadcon_Client_Class *cc EINA_UNUSED)
 {
    return _("System");
 }
 
 static Evas_Object *
-_gc_icon(const E_Gadcon_Client_Class *cc __UNUSED__, Evas *evas)
+_gc_icon(const E_Gadcon_Client_Class *cc EINA_UNUSED, Evas *evas)
 {
    Evas_Object *obj;
    char buff[PATH_MAX];
@@ -164,7 +164,7 @@ _gc_id_new(const E_Gadcon_Client_Class *cc)
 }
 
 static void
-_cb_shutdown_show(void *data, Evas_Object *obj __UNUSED__, const char *emission __UNUSED__, const char *source __UNUSED__)
+_cb_shutdown_show(void *data, Evas_Object *obj EINA_UNUSED, const char *emission EINA_UNUSED, const char *source EINA_UNUSED)
 {
    Instance *inst;
    E_Zone *zone;
@@ -240,7 +240,7 @@ _cb_menu_post(void *data, E_Menu *m)
 }
 
 static void
-_cb_menu_sel(void *data, E_Menu *m __UNUSED__, E_Menu_Item *mi __UNUSED__)
+_cb_menu_sel(void *data, E_Menu *m EINA_UNUSED, E_Menu_Item *mi EINA_UNUSED)
 {
    E_Config_Syscon_Action *sca;
    E_Action *act;
@@ -394,7 +394,7 @@ e_syscon_menu_fill(E_Menu *m)
 
 
 EAPI int
-e_modapi_save(E_Module *m __UNUSED__)
+e_modapi_save(E_Module *m EINA_UNUSED)
 {
    e_config_domain_save("module.syscon", conf_edd, syscon_config);
    return 1;

@@ -70,9 +70,9 @@ static double t0, t1, t2;
 static void      _e_main_shutdown(int errcode);
 static void      _e_main_shutdown_push(int (*func)(void));
 static void      _e_main_parse_arguments(int argc, char **argv);
-static Eina_Bool _e_main_cb_signal_exit(void *data __UNUSED__, int ev_type __UNUSED__, void *ev __UNUSED__);
-static Eina_Bool _e_main_cb_signal_hup(void *data __UNUSED__, int ev_type __UNUSED__, void *ev __UNUSED__);
-static Eina_Bool _e_main_cb_signal_user(void *data __UNUSED__, int ev_type __UNUSED__, void *ev);
+static Eina_Bool _e_main_cb_signal_exit(void *data EINA_UNUSED, int ev_type EINA_UNUSED, void *ev EINA_UNUSED);
+static Eina_Bool _e_main_cb_signal_hup(void *data EINA_UNUSED, int ev_type EINA_UNUSED, void *ev EINA_UNUSED);
+static Eina_Bool _e_main_cb_signal_user(void *data EINA_UNUSED, int ev_type EINA_UNUSED, void *ev);
 static int       _e_main_dirs_init(void);
 static int       _e_main_dirs_shutdown(void);
 static int       _e_main_path_init(void);
@@ -84,10 +84,10 @@ static void      _e_main_desk_save(void);
 static void      _e_main_desk_restore(void);
 static void      _e_main_efreet_paths_init(void);
 static void      _e_main_modules_load(Eina_Bool safe_mode);
-static Eina_Bool _e_main_cb_x_flusher(void *data __UNUSED__);
-static Eina_Bool _e_main_cb_idle_before(void *data __UNUSED__);
-static Eina_Bool _e_main_cb_idle_after(void *data __UNUSED__);
-static Eina_Bool _e_main_cb_startup_fake_end(void *data __UNUSED__);
+static Eina_Bool _e_main_cb_x_flusher(void *data EINA_UNUSED);
+static Eina_Bool _e_main_cb_idle_before(void *data EINA_UNUSED);
+static Eina_Bool _e_main_cb_idle_after(void *data EINA_UNUSED);
+static Eina_Bool _e_main_cb_startup_fake_end(void *data EINA_UNUSED);
 
 /* local variables */
 static Eina_Bool really_know = EINA_FALSE;
@@ -1252,7 +1252,7 @@ _e_main_parse_arguments(int argc, char **argv)
 }
 
 EINTERN void
-_e_main_cb_x_fatal(void *data __UNUSED__)
+_e_main_cb_x_fatal(void *data EINA_UNUSED)
 {
    e_error_message_show("Lost X Connection.\n");
    ecore_main_loop_quit();
@@ -1264,7 +1264,7 @@ _e_main_cb_x_fatal(void *data __UNUSED__)
 }
 
 static Eina_Bool
-_e_main_cb_signal_exit(void *data __UNUSED__, int ev_type __UNUSED__, void *ev __UNUSED__)
+_e_main_cb_signal_exit(void *data EINA_UNUSED, int ev_type EINA_UNUSED, void *ev EINA_UNUSED)
 {
    /* called on ctrl-c, kill (pid) (also SIGINT, SIGTERM and SIGQIT) */
    e_sys_action_do(E_SYS_EXIT, NULL);
@@ -1272,14 +1272,14 @@ _e_main_cb_signal_exit(void *data __UNUSED__, int ev_type __UNUSED__, void *ev _
 }
 
 static Eina_Bool
-_e_main_cb_signal_hup(void *data __UNUSED__, int ev_type __UNUSED__, void *ev __UNUSED__)
+_e_main_cb_signal_hup(void *data EINA_UNUSED, int ev_type EINA_UNUSED, void *ev EINA_UNUSED)
 {
    e_sys_action_do(E_SYS_RESTART, NULL);
    return ECORE_CALLBACK_RENEW;
 }
 
 static Eina_Bool
-_e_main_cb_signal_user(void *data __UNUSED__, int ev_type __UNUSED__, void *ev)
+_e_main_cb_signal_user(void *data EINA_UNUSED, int ev_type EINA_UNUSED, void *ev)
 {
    Ecore_Event_Signal_User *e = ev;
 
@@ -1738,7 +1738,7 @@ _e_main_modules_load(Eina_Bool safe_mode)
 }
 
 static Eina_Bool
-_e_main_cb_idle_before(void *data __UNUSED__)
+_e_main_cb_idle_before(void *data EINA_UNUSED)
 {
    e_menu_idler_before();
    e_client_idler_before();
@@ -1748,7 +1748,7 @@ _e_main_cb_idle_before(void *data __UNUSED__)
 }
 
 static Eina_Bool
-_e_main_cb_idle_after(void *data __UNUSED__)
+_e_main_cb_idle_after(void *data EINA_UNUSED)
 {
    static int first_idle = 1;
 
@@ -1774,7 +1774,7 @@ _e_main_cb_idle_after(void *data __UNUSED__)
 }
 
 static Eina_Bool
-_e_main_cb_x_flusher(void *data __UNUSED__)
+_e_main_cb_x_flusher(void *data EINA_UNUSED)
 {
    eet_clearcache();
 #ifndef HAVE_WAYLAND_ONLY
@@ -1785,7 +1785,7 @@ _e_main_cb_x_flusher(void *data __UNUSED__)
 }
 
 static Eina_Bool
-_e_main_cb_startup_fake_end(void *data __UNUSED__)
+_e_main_cb_startup_fake_end(void *data EINA_UNUSED)
 {
    e_init_hide();
    return ECORE_CALLBACK_CANCEL;

@@ -10,7 +10,7 @@ struct _Plugin
 static Evry_Plugin *p1, *p2;
 
 static Evry_Plugin *
-_begin(Evry_Plugin *plugin, const Evry_Item *it __UNUSED__)
+_begin(Evry_Plugin *plugin, const Evry_Item *it EINA_UNUSED)
 {
    Plugin *p;
 

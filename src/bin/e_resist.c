@@ -88,7 +88,7 @@ e_resist_client_position(Eina_List *skiplist,
 }
 
 EAPI int
-e_resist_gadman_position(Eina_List *skiplist __UNUSED__,
+e_resist_gadman_position(Eina_List *skiplist EINA_UNUSED,
                                    int px, int py, int pw, int ph,
                                    int x, int y, int w, int h,
                                    int *rx, int *ry)

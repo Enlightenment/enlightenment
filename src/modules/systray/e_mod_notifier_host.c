@@ -101,7 +101,7 @@ image_load(const char *name, const char *path, Evas_Object *image)
 }
 
 static void
-_sub_item_clicked_cb(void *data, E_Menu *m __UNUSED__, E_Menu_Item *mi __UNUSED__)
+_sub_item_clicked_cb(void *data, E_Menu *m EINA_UNUSED, E_Menu_Item *mi EINA_UNUSED)
 {
    E_DBusMenu_Item *item = data;
    e_dbusmenu_event_send(item, E_DBUSMENU_ITEM_EVENT_CLICKED);
@@ -162,7 +162,7 @@ _item_submenu_new(E_DBusMenu_Item *item, E_Menu_Item *mi)
 }
 
 void
-_clicked_item_cb(void *data, Evas *evas, Evas_Object *obj __UNUSED__, void *event)
+_clicked_item_cb(void *data, Evas *evas, Evas_Object *obj EINA_UNUSED, void *event)
 {
    Notifier_Item_Icon *ii = data;
    Evas_Event_Mouse_Down *ev = event;

@@ -650,7 +650,7 @@ _e_fm2_device_unmount_fail(E_Fm2_Mount *m)
 }
 
 static void
-_e_fm2_device_check_desktop_icons_cb_end(void *data __UNUSED__, Ecore_Thread *eth __UNUSED__)
+_e_fm2_device_check_desktop_icons_cb_end(void *data EINA_UNUSED, Ecore_Thread *eth EINA_UNUSED)
 {
    _check_vols = NULL;
    if (_check_run_show)
@@ -681,7 +681,7 @@ _e_fm2_device_check_desktop_icons_list_cb(const char *name, const char *path, vo
 }
 
 static void
-_e_fm2_device_check_desktop_icons_cb(void *data, Ecore_Thread *eth __UNUSED__)
+_e_fm2_device_check_desktop_icons_cb(void *data, Ecore_Thread *eth EINA_UNUSED)
 {
    eina_file_dir_list(efreet_desktop_dir_get(), EINA_FALSE, _e_fm2_device_check_desktop_icons_list_cb, data);
 

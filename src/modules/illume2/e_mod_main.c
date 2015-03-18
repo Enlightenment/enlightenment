@@ -117,7 +117,7 @@ e_modapi_init(E_Module *m)
 }
 
 EAPI int 
-e_modapi_shutdown(E_Module *m __UNUSED__) 
+e_modapi_shutdown(E_Module *m EINA_UNUSED) 
 {
    E_Illume_Quickpanel *qp;
 
@@ -149,7 +149,7 @@ e_modapi_shutdown(E_Module *m __UNUSED__)
 }
 
 EAPI int 
-e_modapi_save(E_Module *m __UNUSED__) 
+e_modapi_save(E_Module *m EINA_UNUSED) 
 {
    return e_mod_illume_config_save();
 }

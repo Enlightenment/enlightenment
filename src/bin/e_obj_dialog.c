@@ -10,7 +10,7 @@ static void _e_obj_dialog_cb_close(void *data, Evas_Object *obj, const char *emi
 /* externally accessible functions */
 
 static void
-_key_down_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event)
+_key_down_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event)
 {
    Evas_Event_Key_Down *ev = event;
 
@@ -135,7 +135,7 @@ _e_obj_dialog_cb_delete(E_Obj_Dialog *od, Evas *e EINA_UNUSED, Evas_Object *obj 
 }
 
 static void
-_e_obj_dialog_cb_close(void *data, Evas_Object *obj __UNUSED__, const char *emission __UNUSED__, const char *source __UNUSED__)
+_e_obj_dialog_cb_close(void *data, Evas_Object *obj EINA_UNUSED, const char *emission EINA_UNUSED, const char *source EINA_UNUSED)
 {
    E_Obj_Dialog *od;
 

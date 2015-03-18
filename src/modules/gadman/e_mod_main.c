@@ -4,7 +4,7 @@
 static void _gadman_maug_cb(void *data, E_Menu *m, E_Menu_Item *mi);
 static void _gadman_maug_add(void *data, E_Menu *m);
 static void _gadman_action_cb(E_Object *obj, const char *params);
-static void _gadman_desktop_menu(void *d __UNUSED__, E_Menu *m, void *icon);
+static void _gadman_desktop_menu(void *d EINA_UNUSED, E_Menu *m, void *icon);
 
 /* public module routines. all modules must have these */
 EAPI E_Module_Api e_modapi =
@@ -90,7 +90,7 @@ e_modapi_init(E_Module *m)
 }
 
 EAPI int
-e_modapi_shutdown(E_Module *m __UNUSED__)
+e_modapi_shutdown(E_Module *m EINA_UNUSED)
 {
    if (Man->maug)
      e_int_menus_menu_augmentation_del("config/1", Man->maug);
@@ -125,7 +125,7 @@ e_modapi_shutdown(E_Module *m __UNUSED__)
 }
 
 EAPI int
-e_modapi_save(E_Module *m __UNUSED__)
+e_modapi_save(E_Module *m EINA_UNUSED)
 {
    e_config_domain_save("module.gadman", Man->conf_edd, Man->conf);
    return 1;
@@ -151,7 +151,7 @@ _cb_config_del(void *data)
 }
 
 static void
-_gadman_desktop_menu_cb(void *data __UNUSED__, E_Menu *m, E_Menu_Item *mi __UNUSED__)
+_gadman_desktop_menu_cb(void *data EINA_UNUSED, E_Menu *m, E_Menu_Item *mi EINA_UNUSED)
 {
    Eina_List *l;
    E_Gadcon *gc;
@@ -171,7 +171,7 @@ _gadman_desktop_menu_cb(void *data __UNUSED__, E_Menu *m, E_Menu_Item *mi __UNUS
 }
 
 static void
-_gadman_desktop_menu(void *d __UNUSED__, E_Menu *m, void *icon)
+_gadman_desktop_menu(void *d EINA_UNUSED, E_Menu *m, void *icon)
 {
    E_Menu_Item *mi;
 
@@ -189,7 +189,7 @@ _gadman_desktop_menu(void *d __UNUSED__, E_Menu *m, void *icon)
 }
 
 static void
-_gadman_maug_cb(void *data __UNUSED__, E_Menu *m EINA_UNUSED, E_Menu_Item *mi __UNUSED__)
+_gadman_maug_cb(void *data EINA_UNUSED, E_Menu *m EINA_UNUSED, E_Menu_Item *mi EINA_UNUSED)
 {
    e_configure_registry_call("extensions/gadman", NULL, NULL);
 }
@@ -206,13 +206,13 @@ _gadman_maug_add(void *data, E_Menu *m)
 }
 
 static void
-_gadman_action_cb(E_Object *obj __UNUSED__, const char *params __UNUSED__)
+_gadman_action_cb(E_Object *obj EINA_UNUSED, const char *params EINA_UNUSED)
 {
    gadman_gadgets_toggle();
 }
 
 Eina_Bool
-gadman_gadget_add_handler(void *d __UNUSED__, int type __UNUSED__, E_Event_Gadcon_Client_Add *ev)
+gadman_gadget_add_handler(void *d EINA_UNUSED, int type EINA_UNUSED, E_Event_Gadcon_Client_Add *ev)
 {
    Eina_List *l;
    if (!Man->waiting) return ECORE_CALLBACK_RENEW;

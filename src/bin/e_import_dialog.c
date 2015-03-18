@@ -15,7 +15,7 @@ _fsel_path_save(E_Import_Dialog *id)
 }
 
 static void
-_fsel_cb_close(void *data, E_Dialog *dia __UNUSED__)
+_fsel_cb_close(void *data, E_Dialog *dia EINA_UNUSED)
 {
    E_Import_Dialog *id = data;
 
@@ -38,7 +38,7 @@ _import_ok(void *data, void *data2)
 }
 
 static void
-_fsel_cb_ok(void *data, E_Dialog *dia __UNUSED__)
+_fsel_cb_ok(void *data, E_Dialog *dia EINA_UNUSED)
 {
    E_Import_Dialog *id;
    const char *path, *p;

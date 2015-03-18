@@ -2,17 +2,17 @@
 #include "e_mod_main.h"
 
 /* local function prototypes */
-static Eina_Bool _e_mod_kbd_cb_client_message(void *data __UNUSED__, int type __UNUSED__, void *event);
-static Eina_Bool _e_mod_kbd_cb_border_remove(void *data __UNUSED__, int type __UNUSED__, void *event);
-static Eina_Bool _e_mod_kbd_cb_border_focus_in(void *data __UNUSED__, int type __UNUSED__, void *event);
-static Eina_Bool _e_mod_kbd_cb_border_focus_out(void *data __UNUSED__, int type __UNUSED__, void *event);
-static Eina_Bool _e_mod_kbd_cb_border_property(void *data __UNUSED__, int type __UNUSED__, void *event);
-static void _e_mod_kbd_cb_border_pre_post_fetch(void *data __UNUSED__, E_Client *ec);
+static Eina_Bool _e_mod_kbd_cb_client_message(void *data EINA_UNUSED, int type EINA_UNUSED, void *event);
+static Eina_Bool _e_mod_kbd_cb_border_remove(void *data EINA_UNUSED, int type EINA_UNUSED, void *event);
+static Eina_Bool _e_mod_kbd_cb_border_focus_in(void *data EINA_UNUSED, int type EINA_UNUSED, void *event);
+static Eina_Bool _e_mod_kbd_cb_border_focus_out(void *data EINA_UNUSED, int type EINA_UNUSED, void *event);
+static Eina_Bool _e_mod_kbd_cb_border_property(void *data EINA_UNUSED, int type EINA_UNUSED, void *event);
+static void _e_mod_kbd_cb_border_pre_post_fetch(void *data EINA_UNUSED, E_Client *ec);
 static void _e_mod_kbd_cb_free(E_Illume_Keyboard *kbd);
-static Eina_Bool _e_mod_kbd_cb_delay_hide(void *data __UNUSED__);
+static Eina_Bool _e_mod_kbd_cb_delay_hide(void *data EINA_UNUSED);
 static void _e_mod_kbd_hide(void);
 static void _e_mod_kbd_slide(int visible, double len);
-static Eina_Bool _e_mod_kbd_cb_animate(void *data __UNUSED__);
+static Eina_Bool _e_mod_kbd_cb_animate(void *data EINA_UNUSED);
 static E_Illume_Keyboard *_e_mod_kbd_by_border_get(E_Client *ec);
 static void _e_mod_kbd_border_adopt(E_Client *ec);
 static void _e_mod_kbd_layout_send(void);
@@ -223,7 +223,7 @@ e_mod_kbd_layout_set(E_Illume_Keyboard_Layout layout)
 
 /* local functions */
 static Eina_Bool
-_e_mod_kbd_cb_client_message(void *data __UNUSED__, int type __UNUSED__, void *event) 
+_e_mod_kbd_cb_client_message(void *data EINA_UNUSED, int type EINA_UNUSED, void *event) 
 {
    Ecore_X_Event_Client_Message *ev;
 
@@ -243,7 +243,7 @@ _e_mod_kbd_cb_client_message(void *data __UNUSED__, int type __UNUSED__, void *e
 }
 
 static Eina_Bool
-_e_mod_kbd_cb_border_remove(void *data __UNUSED__, int type __UNUSED__, void *event) 
+_e_mod_kbd_cb_border_remove(void *data EINA_UNUSED, int type EINA_UNUSED, void *event) 
 {
    E_Event_Client *ev;
    E_Illume_Keyboard *kbd;
@@ -291,7 +291,7 @@ _e_mod_kbd_cb_border_remove(void *data __UNUSED__, int type __UNUSED__, void *ev
 }
 
 static Eina_Bool
-_e_mod_kbd_cb_border_focus_in(void *data __UNUSED__, int type __UNUSED__, void *event) 
+_e_mod_kbd_cb_border_focus_in(void *data EINA_UNUSED, int type EINA_UNUSED, void *event) 
 {
    E_Event_Client *ev;
 
@@ -311,7 +311,7 @@ _e_mod_kbd_cb_border_focus_in(void *data __UNUSED__, int type __UNUSED__, void *
 }
 
 static Eina_Bool
-_e_mod_kbd_cb_border_focus_out(void *data __UNUSED__, int type __UNUSED__, void *event) 
+_e_mod_kbd_cb_border_focus_out(void *data EINA_UNUSED, int type EINA_UNUSED, void *event) 
 {
    E_Event_Client *ev;
 
@@ -341,7 +341,7 @@ _e_mod_kbd_cb_border_focus_out(void *data __UNUSED__, int type __UNUSED__, void 
 }
 
 static Eina_Bool
-_e_mod_kbd_cb_border_property(void *data __UNUSED__, int type __UNUSED__, void *event) 
+_e_mod_kbd_cb_border_property(void *data EINA_UNUSED, int type EINA_UNUSED, void *event) 
 {
    Ecore_X_Event_Window_Property *ev;
    E_Client *ec;
@@ -394,7 +394,7 @@ _e_mod_kbd_cb_border_property(void *data __UNUSED__, int type __UNUSED__, void *
 }
 
 static void 
-_e_mod_kbd_cb_border_pre_post_fetch(void *data __UNUSED__, E_Client *ec) 
+_e_mod_kbd_cb_border_pre_post_fetch(void *data EINA_UNUSED, E_Client *ec) 
 {
    if (!ec->new_client) return;
    if (_e_mod_kbd_by_border_get(ec)) return;
@@ -433,7 +433,7 @@ _e_mod_kbd_cb_free(E_Illume_Keyboard *kbd)
 }
 
 static Eina_Bool
-_e_mod_kbd_cb_delay_hide(void *data __UNUSED__) 
+_e_mod_kbd_cb_delay_hide(void *data EINA_UNUSED) 
 {
    _e_mod_kbd_hide();
    return ECORE_CALLBACK_CANCEL;
@@ -492,7 +492,7 @@ _e_mod_kbd_slide(int visible, double len)
 }
 
 static Eina_Bool
-_e_mod_kbd_cb_animate(void *data __UNUSED__) 
+_e_mod_kbd_cb_animate(void *data EINA_UNUSED) 
 {
    double t, v;
 

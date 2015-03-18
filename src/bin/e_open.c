@@ -116,7 +116,7 @@ handler_find(const char *mime)
 }
 
 static void *
-get_command(void *data, Efreet_Desktop *desktop __UNUSED__, char *command, int remaining __UNUSED__)
+get_command(void *data, Efreet_Desktop *desktop EINA_UNUSED, char *command, int remaining EINA_UNUSED)
 {
    Eina_List **p_cmd = data;
    *p_cmd = eina_list_append(*p_cmd, command);

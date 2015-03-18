@@ -57,7 +57,7 @@ _e_fileman_dbus_daemon_free(E_Fileman_DBus_Daemon *d)
 }
 
 static Eldbus_Message *
-_e_fileman_dbus_daemon_open_directory_cb(const Eldbus_Service_Interface *iface __UNUSED__,
+_e_fileman_dbus_daemon_open_directory_cb(const Eldbus_Service_Interface *iface EINA_UNUSED,
                                          const Eldbus_Message *msg)
 {
    const char *directory = NULL, *p;
@@ -151,7 +151,7 @@ _mime_shell_script_check(const char *mime)
 }
 
 static Eldbus_Message*
-_e_fileman_dbus_daemon_open_file_cb(const Eldbus_Service_Interface *iface __UNUSED__,
+_e_fileman_dbus_daemon_open_file_cb(const Eldbus_Service_Interface *iface EINA_UNUSED,
                                     const Eldbus_Message *msg)
 {
    Eina_List *handlers;

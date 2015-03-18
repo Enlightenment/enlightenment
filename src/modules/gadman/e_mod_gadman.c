@@ -5,7 +5,7 @@ static void             _attach_menu(void *data, E_Gadcon_Client *gcc, E_Menu *m
 static void             _save_widget_position(E_Gadcon_Client *gcc);
 static void             _apply_widget_position(E_Gadcon_Client *gcc);
 static E_Gadcon_Client *_gadman_gadget_add(const E_Gadcon_Client_Class *cc, Gadman_Layer_Type layer, E_Config_Gadcon_Client *src_cf);
-static Eina_Bool _gadman_module_init_end_cb(void *d __UNUSED__, int type __UNUSED__, void *event __UNUSED__);
+static Eina_Bool _gadman_module_init_end_cb(void *d EINA_UNUSED, int type EINA_UNUSED, void *event EINA_UNUSED);
 static Evas_Object     *_create_mover(E_Gadcon *gc);
 static Evas_Object     *_get_mover(E_Gadcon_Client *gcc);
 static E_Gadcon        *_gadman_gadcon_new(const char *name, Gadman_Layer_Type layer, E_Zone *zone, E_Gadcon_Location *loc);
@@ -18,8 +18,8 @@ static void             on_move(void *data, Evas_Object *o, const char *em, cons
 
 static void             on_frame_click(void *data, Evas *e, Evas_Object *obj, void *event_info);
 static void             on_bg_click(void *data, Evas_Object *o, const char *em, const char *src);
-static void             on_hide_stop(void *data __UNUSED__, Evas_Object *o __UNUSED__,
-                                     const char *em __UNUSED__, const char *src __UNUSED__);
+static void             on_hide_stop(void *data EINA_UNUSED, Evas_Object *o EINA_UNUSED,
+                                     const char *em EINA_UNUSED, const char *src EINA_UNUSED);
 
 static void             on_menu_style_plain(void *data, E_Menu *m, E_Menu_Item *mi);
 static void             on_menu_style_inset(void *data, E_Menu *m, E_Menu_Item *mi);
@@ -30,13 +30,13 @@ static void             on_menu_delete(void *data, E_Menu *m, E_Menu_Item *mi);
 static void             on_menu_edit(void *data, E_Menu *m, E_Menu_Item *mi);
 static void             on_menu_add(void *data, E_Menu *m, E_Menu_Item *mi);
 
-static Eina_Bool       _gadman_module_cb(void *d __UNUSED__, int type __UNUSED__, E_Event_Module_Update *ev);
-static int              _e_gadman_client_add(void *data __UNUSED__, E_Gadcon_Client *, const E_Gadcon_Client_Class *cc);
-static void             _e_gadman_client_remove(void *data __UNUSED__, E_Gadcon_Client *gcc);
+static Eina_Bool       _gadman_module_cb(void *d EINA_UNUSED, int type EINA_UNUSED, E_Event_Module_Update *ev);
+static int              _e_gadman_client_add(void *data EINA_UNUSED, E_Gadcon_Client *, const E_Gadcon_Client_Class *cc);
+static void             _e_gadman_client_remove(void *data EINA_UNUSED, E_Gadcon_Client *gcc);
 
 static void             _e_gadman_handlers_add(void);
 static void             _e_gadman_handler_del(void);
-static Eina_Bool        _e_gadman_cb_zone_change(void *data __UNUSED__, int type __UNUSED__, void *event);
+static Eina_Bool        _e_gadman_cb_zone_change(void *data EINA_UNUSED, int type EINA_UNUSED, void *event);
 static E_Gadcon_Client *gadman_gadget_place(E_Gadcon_Client *gcc, const E_Gadcon_Client_Class *cc, E_Config_Gadcon_Client *cf, Gadman_Layer_Type layer, E_Zone *zone);
 
 static E_Gadcon        *gadman_gadcon_get(const E_Zone *zone, Gadman_Layer_Type layer);
@@ -212,7 +212,7 @@ gadman_gadcon_place_job(E_Gadcon_Client *gcc)
 }
 
 static void
-_gadman_gadget_free(void *data __UNUSED__, void *obj)
+_gadman_gadget_free(void *data EINA_UNUSED, void *obj)
 {
    E_Gadcon_Client *gcc = obj;
    Eina_List *l;
@@ -400,7 +400,7 @@ _gadman_gadget_add(const E_Gadcon_Client_Class *cc, Gadman_Layer_Type layer, E_C
 }
 
 static void
-gadman_edit(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+gadman_edit(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    _apply_widget_position(data);
 }
@@ -460,7 +460,7 @@ gadman_gadget_edit_start(E_Gadcon_Client *gcc)
 }
 
 void
-gadman_gadget_edit_end(void *data __UNUSED__, Evas_Object *obj __UNUSED__, const char *emission __UNUSED__, const char *source __UNUSED__)
+gadman_gadget_edit_end(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, const char *emission EINA_UNUSED, const char *source EINA_UNUSED)
 {
    unsigned int layer;
    E_Gadcon_Client *drag_gcc = NULL;
@@ -1041,7 +1041,7 @@ _apply_widget_position(E_Gadcon_Client *gcc)
 }
 
 static void
-_attach_menu(void *data __UNUSED__, E_Gadcon_Client *gcc, E_Menu *menu)
+_attach_menu(void *data EINA_UNUSED, E_Gadcon_Client *gcc, E_Menu *menu)
 {
    E_Menu *mn;
    E_Menu_Item *mi;
@@ -1144,7 +1144,7 @@ _attach_menu(void *data __UNUSED__, E_Gadcon_Client *gcc, E_Menu *menu)
 }
 
 static void
-on_menu_style_plain(void *data, E_Menu *m __UNUSED__, E_Menu_Item *mi __UNUSED__)
+on_menu_style_plain(void *data, E_Menu *m EINA_UNUSED, E_Menu_Item *mi EINA_UNUSED)
 {
    E_Gadcon_Client *gcc = data;
 
@@ -1157,7 +1157,7 @@ on_menu_style_plain(void *data, E_Menu *m __UNUSED__, E_Menu_Item *mi __UNUSED__
 }
 
 static void
-on_menu_style_inset(void *data, E_Menu *m __UNUSED__, E_Menu_Item *mi __UNUSED__)
+on_menu_style_inset(void *data, E_Menu *m EINA_UNUSED, E_Menu_Item *mi EINA_UNUSED)
 {
    E_Gadcon_Client *gcc = data;
 
@@ -1201,31 +1201,31 @@ _menu_style_orient(E_Gadcon_Client *gcc, E_Gadcon_Orient orient)
 }
 
 static void
-on_menu_style_float(void *data, E_Menu *m __UNUSED__, E_Menu_Item *mi __UNUSED__)
+on_menu_style_float(void *data, E_Menu *m EINA_UNUSED, E_Menu_Item *mi EINA_UNUSED)
 {
    _menu_style_orient(data, E_GADCON_ORIENT_FLOAT);
 }
 
 static void
-on_menu_style_horiz(void *data, E_Menu *m __UNUSED__, E_Menu_Item *mi __UNUSED__)
+on_menu_style_horiz(void *data, E_Menu *m EINA_UNUSED, E_Menu_Item *mi EINA_UNUSED)
 {
    _menu_style_orient(data, E_GADCON_ORIENT_HORIZ);
 }
 
 static void
-on_menu_style_vert(void *data, E_Menu *m __UNUSED__, E_Menu_Item *mi __UNUSED__)
+on_menu_style_vert(void *data, E_Menu *m EINA_UNUSED, E_Menu_Item *mi EINA_UNUSED)
 {
    _menu_style_orient(data, E_GADCON_ORIENT_VERT);
 }
 
 static void
-on_menu_edit(void *data, E_Menu *m __UNUSED__, E_Menu_Item *mi __UNUSED__)
+on_menu_edit(void *data, E_Menu *m EINA_UNUSED, E_Menu_Item *mi EINA_UNUSED)
 {
    gadman_gadget_edit_start(data);
 }
 
 static void
-on_menu_add(void *data __UNUSED__, E_Menu *m EINA_UNUSED, E_Menu_Item *mi __UNUSED__)
+on_menu_add(void *data EINA_UNUSED, E_Menu *m EINA_UNUSED, E_Menu_Item *mi EINA_UNUSED)
 {
    if (Man->visible)
      gadman_gadgets_hide();
@@ -1233,7 +1233,7 @@ on_menu_add(void *data __UNUSED__, E_Menu *m EINA_UNUSED, E_Menu_Item *mi __UNUS
 }
 
 static void
-on_menu_delete(void *data, E_Menu *m __UNUSED__, E_Menu_Item *mi __UNUSED__)
+on_menu_delete(void *data, E_Menu *m EINA_UNUSED, E_Menu_Item *mi EINA_UNUSED)
 {
    E_Gadcon_Client *gcc = data;
    e_gadcon_client_config_del(gcc->gadcon->cf, gcc->cf);
@@ -1242,7 +1242,7 @@ on_menu_delete(void *data, E_Menu *m __UNUSED__, E_Menu_Item *mi __UNUSED__)
 }
 
 static void
-on_frame_click(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
+on_frame_click(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info)
 {
    Evas_Event_Mouse_Down *ev;
    E_Gadcon_Client *gcc;
@@ -1270,7 +1270,7 @@ on_frame_click(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void
 }
 
 static void
-on_top(void *data, Evas_Object *o __UNUSED__, const char *em __UNUSED__, const char *src __UNUSED__)
+on_top(void *data, Evas_Object *o EINA_UNUSED, const char *em EINA_UNUSED, const char *src EINA_UNUSED)
 {
    static int ox, oy, ow, oh; //Object coord
    int mx, my; //Mouse coord
@@ -1336,7 +1336,7 @@ on_top(void *data, Evas_Object *o __UNUSED__, const char *em __UNUSED__, const c
 }
 
 static void
-on_right(void *data, Evas_Object *o __UNUSED__, const char *em __UNUSED__, const char *src __UNUSED__)
+on_right(void *data, Evas_Object *o EINA_UNUSED, const char *em EINA_UNUSED, const char *src EINA_UNUSED)
 {
    Evas_Object *mover;
    static int ox, oy, ow, oh; //Object coord
@@ -1390,7 +1390,7 @@ on_right(void *data, Evas_Object *o __UNUSED__, const char *em __UNUSED__, const
 }
 
 static void
-on_down(void *data, Evas_Object *o __UNUSED__, const char *em __UNUSED__, const char *src __UNUSED__)
+on_down(void *data, Evas_Object *o EINA_UNUSED, const char *em EINA_UNUSED, const char *src EINA_UNUSED)
 {
    Evas_Object *mover;
    static int ox, oy, ow, oh; //Object coord
@@ -1442,7 +1442,7 @@ on_down(void *data, Evas_Object *o __UNUSED__, const char *em __UNUSED__, const 
 }
 
 static void
-on_left(void *data, Evas_Object *o __UNUSED__, const char *em __UNUSED__, const char *src __UNUSED__)
+on_left(void *data, Evas_Object *o EINA_UNUSED, const char *em EINA_UNUSED, const char *src EINA_UNUSED)
 {
    Evas_Object *mover;
    static int ox, oy, ow, oh; //Object coord
@@ -1505,7 +1505,7 @@ on_left(void *data, Evas_Object *o __UNUSED__, const char *em __UNUSED__, const 
 }
 
 static void
-on_move(void *data, Evas_Object *o __UNUSED__, const char *em __UNUSED__, const char *src __UNUSED__)
+on_move(void *data, Evas_Object *o EINA_UNUSED, const char *em EINA_UNUSED, const char *src EINA_UNUSED)
 {
    Evas_Object *mover;
    static int ox, oy;  //Starting object position
@@ -1555,13 +1555,13 @@ on_move(void *data, Evas_Object *o __UNUSED__, const char *em __UNUSED__, const 
 }
 
 static void
-on_bg_click(void *data __UNUSED__, Evas_Object *o __UNUSED__, const char *em __UNUSED__, const char *src __UNUSED__)
+on_bg_click(void *data EINA_UNUSED, Evas_Object *o EINA_UNUSED, const char *em EINA_UNUSED, const char *src EINA_UNUSED)
 {
    gadman_gadgets_hide();
 }
 
 static void
-on_hide_stop(void *data __UNUSED__, Evas_Object *o __UNUSED__, const char *em __UNUSED__, const char *src __UNUSED__)
+on_hide_stop(void *data EINA_UNUSED, Evas_Object *o EINA_UNUSED, const char *em EINA_UNUSED, const char *src EINA_UNUSED)
 {
    evas_object_hide(Man->overlay);
 }
@@ -1573,7 +1573,7 @@ _e_gadman_client_add(void *data, E_Gadcon_Client *gcc, const E_Gadcon_Client_Cla
 }
 
 static void
-_e_gadman_client_remove(void *data __UNUSED__, E_Gadcon_Client *gcc)
+_e_gadman_client_remove(void *data EINA_UNUSED, E_Gadcon_Client *gcc)
 {
    if (gcc->cf)
      gcc->gadcon->cf->clients = eina_list_remove(gcc->gadcon->cf->clients, gcc->cf);
@@ -1597,7 +1597,7 @@ _e_gadman_handler_del(void)
 }
 
 static Eina_Bool
-_gadman_module_init_end_cb(void *d __UNUSED__, int type __UNUSED__, void *event __UNUSED__)
+_gadman_module_init_end_cb(void *d EINA_UNUSED, int type EINA_UNUSED, void *event EINA_UNUSED)
 {
    gadman_locked = EINA_FALSE;
    gadman_reset(NULL);
@@ -1605,7 +1605,7 @@ _gadman_module_init_end_cb(void *d __UNUSED__, int type __UNUSED__, void *event 
 }
 
 static Eina_Bool
-_gadman_module_cb(void *d __UNUSED__, int type __UNUSED__, E_Event_Module_Update *ev)
+_gadman_module_cb(void *d EINA_UNUSED, int type EINA_UNUSED, E_Event_Module_Update *ev)
 {
    if (!ev->enabled)
      {
@@ -1626,7 +1626,7 @@ _gadman_module_cb(void *d __UNUSED__, int type __UNUSED__, E_Event_Module_Update
 }
 
 static Eina_Bool
-_e_gadman_cb_zone_change(void *data __UNUSED__, int type, void *event)
+_e_gadman_cb_zone_change(void *data EINA_UNUSED, int type, void *event)
 {
    E_Gadcon *gc;
    Eina_List *l, *ll;

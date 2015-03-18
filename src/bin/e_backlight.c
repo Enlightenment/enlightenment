@@ -35,7 +35,7 @@ static Eina_Bool bl_sys_set_exe_ready = EINA_TRUE;
 
 static void      _bl_sys_find(void);
 static void      _bl_sys_level_get(void);
-static Eina_Bool _e_bl_cb_exit(void *data __UNUSED__, int type __UNUSED__, void *event);
+static Eina_Bool _e_bl_cb_exit(void *data EINA_UNUSED, int type EINA_UNUSED, void *event);
 static void      _bl_sys_level_set(double val);
 #endif
 
@@ -144,7 +144,7 @@ e_backlight_level_set(E_Zone *zone, double val, double tim)
 }
 
 EAPI double
-e_backlight_level_get(E_Zone *zone __UNUSED__)
+e_backlight_level_get(E_Zone *zone EINA_UNUSED)
 {
    // zone == NULL == everything
    return e_bl_val;
@@ -179,7 +179,7 @@ e_backlight_mode_set(E_Zone *zone, E_Backlight_Mode mode)
 }
 
 EAPI E_Backlight_Mode
-e_backlight_mode_get(E_Zone *zone __UNUSED__)
+e_backlight_mode_get(E_Zone *zone EINA_UNUSED)
 {
    // zone == NULL == everything
    return e_config->backlight.mode;
@@ -447,7 +447,7 @@ _bl_sys_level_get(void)
 }
 
 static Eina_Bool
-_e_bl_cb_ext_delay(void *data __UNUSED__)
+_e_bl_cb_ext_delay(void *data EINA_UNUSED)
 {
    bl_sys_set_exe_ready = EINA_TRUE;
    if (bl_sys_pending_set)
@@ -460,7 +460,7 @@ _e_bl_cb_ext_delay(void *data __UNUSED__)
 }
 
 static Eina_Bool
-_e_bl_cb_exit(void *data __UNUSED__, int type __UNUSED__, void *event)
+_e_bl_cb_exit(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
 {
    Ecore_Exe_Event_Del *ev;
 

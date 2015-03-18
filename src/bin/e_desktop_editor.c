@@ -379,7 +379,7 @@ _e_desktop_edit_create_data(E_Config_Dialog *cfd)
  * Frees the config dialog data
  */
 static void
-_e_desktop_edit_free_data(E_Config_Dialog *cfd __UNUSED__, E_Config_Dialog_Data *cfdata)
+_e_desktop_edit_free_data(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfdata)
 {
    if (cfdata->editor->tmp_image_path)
      {
@@ -477,7 +477,7 @@ _e_desktop_edit_update_orig_path(E_Config_Dialog_Data *cfdata)
  * Apply the basic config dialog
  */
 static int
-_e_desktop_edit_basic_apply_data(E_Config_Dialog *cfd __UNUSED__, E_Config_Dialog_Data *cfdata)
+_e_desktop_edit_basic_apply_data(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfdata)
 {
    E_FREE(cfdata->desktop->name);
    IFDUP(cfdata->name, cfdata->desktop->name);
@@ -532,7 +532,7 @@ _e_desktop_edit_basic_apply_data(E_Config_Dialog *cfd __UNUSED__, E_Config_Dialo
 }
 
 static int
-_e_desktop_edit_basic_check_changed(E_Config_Dialog *cfd __UNUSED__, E_Config_Dialog_Data *cfdata)
+_e_desktop_edit_basic_check_changed(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfdata)
 {
    int ret;
 
@@ -662,35 +662,35 @@ _e_desktop_edit_basic_check_changed(E_Config_Dialog *cfd __UNUSED__, E_Config_Di
 }
 
 static void
-_e_desktop_editor_name_changed(void *data, Evas_Object *obj __UNUSED__)
+_e_desktop_editor_name_changed(void *data, Evas_Object *obj EINA_UNUSED)
 {
    E_Config_Dialog_Data *cfdata = data;
    _e_desktop_edit_update_orig_path(cfdata);
 }
 
 static void
-_e_desktop_editor_categories_changed(void *data, Evas_Object *obj __UNUSED__)
+_e_desktop_editor_categories_changed(void *data, Evas_Object *obj EINA_UNUSED)
 {
    E_Config_Dialog_Data *cfdata = data;
    cfdata->edited_categories = EINA_TRUE;
 }
 
 static void
-_e_desktop_editor_icon_entry_changed(void *data, Evas_Object *obj __UNUSED__)
+_e_desktop_editor_icon_entry_changed(void *data, Evas_Object *obj EINA_UNUSED)
 {
    E_Config_Dialog_Data *cfdata = data;
    _e_desktop_editor_icon_update(cfdata);
 }
 
 static void
-_e_desktop_editor_mimes_changed(void *data, Evas_Object *obj __UNUSED__)
+_e_desktop_editor_mimes_changed(void *data, Evas_Object *obj EINA_UNUSED)
 {
    E_Config_Dialog_Data *cfdata = data;
    cfdata->edited_mimes = EINA_TRUE;
 }
 
 static Evas_Object *
-_e_desktop_edit_basic_create_widgets(E_Config_Dialog *cfd __UNUSED__, Evas *evas, E_Config_Dialog_Data *cfdata)
+_e_desktop_edit_basic_create_widgets(E_Config_Dialog *cfd EINA_UNUSED, Evas *evas, E_Config_Dialog_Data *cfdata)
 {
    E_Desktop_Edit *editor = cfdata->editor;
    E_Radio_Group *rg;
@@ -960,7 +960,7 @@ _e_desktop_editor_cb_exec_select(void *data1, void *data2)
 }
 
 static void
-_e_desktop_edit_select_cb(void *data __UNUSED__, Evas_Object *obj __UNUSED__)
+_e_desktop_edit_select_cb(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED)
 {
 }
 

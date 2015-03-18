@@ -733,7 +733,7 @@ _e_desk_free(E_Desk *desk)
 }
 
 static void
-_e_desk_event_desk_show_free(void *data __UNUSED__, void *event)
+_e_desk_event_desk_show_free(void *data EINA_UNUSED, void *event)
 {
    E_Event_Desk_Show *ev;
 
@@ -743,7 +743,7 @@ _e_desk_event_desk_show_free(void *data __UNUSED__, void *event)
 }
 
 static void
-_e_desk_event_desk_before_show_free(void *data __UNUSED__, void *event)
+_e_desk_event_desk_before_show_free(void *data EINA_UNUSED, void *event)
 {
    E_Event_Desk_Before_Show *ev;
 
@@ -753,7 +753,7 @@ _e_desk_event_desk_before_show_free(void *data __UNUSED__, void *event)
 }
 
 static void
-_e_desk_event_desk_after_show_free(void *data __UNUSED__, void *event)
+_e_desk_event_desk_after_show_free(void *data EINA_UNUSED, void *event)
 {
    E_Event_Desk_After_Show *ev;
 
@@ -763,7 +763,7 @@ _e_desk_event_desk_after_show_free(void *data __UNUSED__, void *event)
 }
 
 static void
-_e_desk_event_desk_deskshow_free(void *data __UNUSED__, void *event)
+_e_desk_event_desk_deskshow_free(void *data EINA_UNUSED, void *event)
 {
    E_Event_Desk_Show *ev;
 
@@ -773,7 +773,7 @@ _e_desk_event_desk_deskshow_free(void *data __UNUSED__, void *event)
 }
 
 static void
-_e_desk_event_desk_name_change_free(void *data __UNUSED__, void *event)
+_e_desk_event_desk_name_change_free(void *data EINA_UNUSED, void *event)
 {
    E_Event_Desk_Name_Change *ev = event;
    e_object_unref(E_OBJECT(ev->desk));
@@ -781,7 +781,7 @@ _e_desk_event_desk_name_change_free(void *data __UNUSED__, void *event)
 }
 
 static void
-_e_desk_event_desk_window_profile_change_free(void *data __UNUSED__, void *event)
+_e_desk_event_desk_window_profile_change_free(void *data EINA_UNUSED, void *event)
 {
    E_Event_Desk_Window_Profile_Change *ev = event;
    e_object_unref(E_OBJECT(ev->desk));

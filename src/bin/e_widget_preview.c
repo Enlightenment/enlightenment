@@ -149,7 +149,7 @@ e_widget_preview_vsize_set(Evas_Object *obj, Evas_Coord w, Evas_Coord h)
 }
 
 static void
-_e_wid_preview_thumb_gen(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_e_wid_preview_thumb_gen(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    E_Widget_Data *wd;
 

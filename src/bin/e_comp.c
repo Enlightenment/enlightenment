@@ -930,7 +930,7 @@ _e_comp_act_opacity_change_go(E_Object *obj, const char *params)
 }
 
 static void
-_e_comp_act_opacity_set_go(E_Object * obj __UNUSED__, const char *params)
+_e_comp_act_opacity_set_go(E_Object * obj EINA_UNUSED, const char *params)
 {
    int opacity;
    Evas_Object *o;
@@ -1121,10 +1121,10 @@ _style_demo(void *data)
 }
 
 static void
-_style_selector_del(void *data       __UNUSED__,
+_style_selector_del(void *data       EINA_UNUSED,
                     Evas *e,
                     Evas_Object *o,
-                    void *event_info __UNUSED__)
+                    void *event_info EINA_UNUSED)
 {
    Eina_List *style_shadows, *style_list;
    Ecore_Timer *timer;

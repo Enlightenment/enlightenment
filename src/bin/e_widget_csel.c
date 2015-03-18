@@ -34,7 +34,7 @@ _e_wid_del_hook(Evas_Object *obj)
 }
 
 static void
-_e_wid_cb_radio_changed(void *data, Evas_Object *o __UNUSED__)
+_e_wid_cb_radio_changed(void *data, Evas_Object *o EINA_UNUSED)
 {
    E_Widget_Data *wd = data;
 
@@ -179,7 +179,7 @@ _e_wid_cb_color_changed(void *data, Evas_Object *o)
 }
 
 static void
-_e_wid_cb_alpha_changed(void *data, Evas_Object *o __UNUSED__)
+_e_wid_cb_alpha_changed(void *data, Evas_Object *o EINA_UNUSED)
 {
    _e_wid_cb_color_changed(data, NULL);
 }

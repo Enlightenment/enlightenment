@@ -896,7 +896,7 @@ static int event_fd = -1;
 static Ecore_Fd_Handler *event_fd_handler = NULL;
 
 static Eina_Bool
-linux_acpi_cb_delay_check(void *data __UNUSED__)
+linux_acpi_cb_delay_check(void *data EINA_UNUSED)
 {
    linux_acpi_init();
    poll_cb(NULL);
@@ -905,17 +905,17 @@ linux_acpi_cb_delay_check(void *data __UNUSED__)
 }
 
 static Eina_Bool
-linux_acpi_cb_acpid_add(void *data  __UNUSED__,
-                        int type    __UNUSED__,
-                        void *event __UNUSED__)
+linux_acpi_cb_acpid_add(void *data  EINA_UNUSED,
+                        int type    EINA_UNUSED,
+                        void *event EINA_UNUSED)
 {
    return ECORE_CALLBACK_PASS_ON;
 }
 
 static Eina_Bool
-linux_acpi_cb_acpid_del(void *data  __UNUSED__,
-                        int type    __UNUSED__,
-                        void *event __UNUSED__)
+linux_acpi_cb_acpid_del(void *data  EINA_UNUSED,
+                        int type    EINA_UNUSED,
+                        void *event EINA_UNUSED)
 {
    ecore_con_server_del(acpid);
    acpid = NULL;
@@ -929,9 +929,9 @@ linux_acpi_cb_acpid_del(void *data  __UNUSED__,
 }
 
 static Eina_Bool
-linux_acpi_cb_acpid_data(void *data  __UNUSED__,
-                         int type    __UNUSED__,
-                         void *event __UNUSED__)
+linux_acpi_cb_acpid_data(void *data  EINA_UNUSED,
+                         int type    EINA_UNUSED,
+                         void *event EINA_UNUSED)
 {
    if (delay_check) ecore_timer_del(delay_check);
    delay_check = ecore_timer_add(0.2, linux_acpi_cb_delay_check, NULL);
@@ -939,7 +939,7 @@ linux_acpi_cb_acpid_data(void *data  __UNUSED__,
 }
 
 static Eina_Bool
-linux_acpi_cb_event_fd_active(void *data        __UNUSED__,
+linux_acpi_cb_event_fd_active(void *data        EINA_UNUSED,
                               Ecore_Fd_Handler *fd_handler)
 {
    if (ecore_main_fd_handler_active_get(fd_handler, ECORE_FD_READ))
@@ -1460,7 +1460,7 @@ init(void)
 }
 
 static Eina_Bool
-poll_cb(void *data __UNUSED__)
+poll_cb(void *data EINA_UNUSED)
 {
    int ptime_left;
    int pbattery_full;

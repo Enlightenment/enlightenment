@@ -82,7 +82,7 @@ static void      _animator_del(Evas_Object *obj);
 static Eina_Bool _animator(void *data);
 
 static void
-_cb_thumb_gen(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_cb_thumb_gen(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Evas_Coord w, h;
    Item *it = data;
@@ -105,7 +105,7 @@ _cb_thumb_gen(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED
 }
 
 static void
-_cb_preload(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_cb_preload(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Item *it = data;
 
@@ -136,7 +136,7 @@ _check_item(const Evry_Item *it)
 }
 
 static void
-_item_down(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
+_item_down(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info)
 {
    Evas_Event_Mouse_Down *ev = event_info;
    Item *it = data;
@@ -171,7 +171,7 @@ _item_down(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *ev
 }
 
 static void
-_item_up(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
+_item_up(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info)
 {
    Evas_Event_Mouse_Up *ev = event_info;
    Item *it = data;
@@ -605,19 +605,19 @@ _e_smart_resize(Evas_Object *obj, Evas_Coord w, Evas_Coord h)
 }
 
 static void
-_e_smart_show(Evas_Object *obj __UNUSED__){}
+_e_smart_show(Evas_Object *obj EINA_UNUSED){}
 
 static void
-_e_smart_hide(Evas_Object *obj __UNUSED__){}
+_e_smart_hide(Evas_Object *obj EINA_UNUSED){}
 
 static void
-_e_smart_color_set(Evas_Object *obj __UNUSED__, int r __UNUSED__, int g __UNUSED__, int b __UNUSED__, int a __UNUSED__){}
+_e_smart_color_set(Evas_Object *obj EINA_UNUSED, int r EINA_UNUSED, int g EINA_UNUSED, int b EINA_UNUSED, int a EINA_UNUSED){}
 
 static void
-_e_smart_clip_set(Evas_Object *obj __UNUSED__, Evas_Object *clip __UNUSED__){}
+_e_smart_clip_set(Evas_Object *obj EINA_UNUSED, Evas_Object *clip EINA_UNUSED){}
 
 static void
-_e_smart_clip_unset(Evas_Object *obj __UNUSED__){}
+_e_smart_clip_unset(Evas_Object *obj EINA_UNUSED){}
 
 static Evas_Object *
 _pan_add(Evas *evas)
@@ -1385,7 +1385,7 @@ end:
 }
 
 static Eina_Bool
-_cb_item_changed(void *data, int type __UNUSED__, void *event)
+_cb_item_changed(void *data, int type EINA_UNUSED, void *event)
 {
    Evry_Event_Item_Changed *ev = event;
    View *v = data;
@@ -1429,7 +1429,7 @@ _cb_item_changed(void *data, int type __UNUSED__, void *event)
 }
 
 static Eina_Bool
-_cb_action_performed(void *data, int type __UNUSED__, void *event)
+_cb_action_performed(void *data, int type EINA_UNUSED, void *event)
 {
    Evry_Event_Action_Performed *ev = event;
    View *v = data;
@@ -1457,7 +1457,7 @@ _cb_action_performed(void *data, int type __UNUSED__, void *event)
 }
 
 static void
-_view_cb_mouse_wheel(void *data __UNUSED__, Evas *e __UNUSED__, Evas_Object *obj, void *event_info)
+_view_cb_mouse_wheel(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj, void *event_info)
 {
    Evas_Event_Mouse_Wheel *ev = event_info;
    Smart_Data *sd = evas_object_smart_data_get(obj);
@@ -1473,7 +1473,7 @@ _view_cb_mouse_wheel(void *data __UNUSED__, Evas *e __UNUSED__, Evas_Object *obj
 // FIXME: 'drag into' make mouse input hang after some trials 
 #if 0
 static void
-_view_cb_mouse_down(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
+_view_cb_mouse_down(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info)
 {
    Evas_Event_Mouse_Down *ev = event_info;
    Smart_Data *sd = evas_object_smart_data_get(data);
@@ -1485,7 +1485,7 @@ _view_cb_mouse_down(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__,
 }
 
 static void
-_view_cb_mouse_up(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_view_cb_mouse_up(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    /* Evas_Event_Mouse_Up *ev = event_info; */
    Smart_Data *sd = evas_object_smart_data_get(data);
@@ -1500,7 +1500,7 @@ _view_cb_mouse_up(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, v
 #define SLIDE_RESISTANCE 80
 
 static void
-_view_cb_mouse_move(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
+_view_cb_mouse_move(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info)
 {
    Evas_Event_Mouse_Move *ev = event_info;
    Smart_Data *sd = evas_object_smart_data_get(data);
@@ -1583,7 +1583,7 @@ end:
 #endif
 
 static void
-_cb_list_hide(void *data, Evas_Object *obj __UNUSED__, const char *emission __UNUSED__, const char *source __UNUSED__)
+_cb_list_hide(void *data, Evas_Object *obj EINA_UNUSED, const char *emission EINA_UNUSED, const char *source EINA_UNUSED)
 {
    View *v = data;
 
@@ -1591,7 +1591,7 @@ _cb_list_hide(void *data, Evas_Object *obj __UNUSED__, const char *emission __UN
 }
 
 static void
-_cb_list_show(void *data, Evas_Object *obj __UNUSED__, const char *emission __UNUSED__, const char *source __UNUSED__)
+_cb_list_show(void *data, Evas_Object *obj EINA_UNUSED, const char *emission EINA_UNUSED, const char *source EINA_UNUSED)
 {
    View *v = data;
 

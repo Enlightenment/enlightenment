@@ -39,7 +39,7 @@ struct _E_Config_Dialog_Data
 static E_Config_Dialog_Data *_cfdata;
 
 E_Config_Dialog *
-e_int_config_shelf(Evas_Object *parent EINA_UNUSED, const char *params __UNUSED__)
+e_int_config_shelf(Evas_Object *parent EINA_UNUSED, const char *params EINA_UNUSED)
 {
    E_Config_Dialog *cfd;
    E_Config_Dialog_View *v;
@@ -59,7 +59,7 @@ e_int_config_shelf(Evas_Object *parent EINA_UNUSED, const char *params __UNUSED_
 }
 
 static Eina_Bool
-_shelf_handler_rename_cb(E_Config_Dialog_Data *cfdata, int type __UNUSED__, E_Event_Shelf *ev)
+_shelf_handler_rename_cb(E_Config_Dialog_Data *cfdata, int type EINA_UNUSED, E_Event_Shelf *ev)
 {
    const Eina_List *l;
    E_Ilist_Item *ili;
@@ -74,7 +74,7 @@ _shelf_handler_rename_cb(E_Config_Dialog_Data *cfdata, int type __UNUSED__, E_Ev
 }
 
 static Eina_Bool
-_shelf_handler_cb(E_Config_Dialog_Data *cfdata, int type __UNUSED__, E_Event_Shelf_Add *ev)
+_shelf_handler_cb(E_Config_Dialog_Data *cfdata, int type EINA_UNUSED, E_Event_Shelf_Add *ev)
 {
    E_Zone *zone;
 
@@ -101,7 +101,7 @@ _create_data(E_Config_Dialog *cfd)
 }
 
 static void
-_free_data(E_Config_Dialog *cfd __UNUSED__, E_Config_Dialog_Data *cfdata)
+_free_data(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfdata)
 {
    E_Shelf *es;
    EINA_LIST_FREE(cfdata->shelves, es)
@@ -116,7 +116,7 @@ _free_data(E_Config_Dialog *cfd __UNUSED__, E_Config_Dialog_Data *cfdata)
 }
 
 static Evas_Object *
-_basic_create(E_Config_Dialog *cfd __UNUSED__, Evas *evas, E_Config_Dialog_Data *cfdata)
+_basic_create(E_Config_Dialog *cfd EINA_UNUSED, Evas *evas, E_Config_Dialog_Data *cfdata)
 {
    Evas_Object *ol, *ow, *ot, *of;
    char buf[64];
@@ -161,7 +161,7 @@ _basic_create(E_Config_Dialog *cfd __UNUSED__, Evas *evas, E_Config_Dialog_Data 
 
 /* private functions */
 static void
-_ilist_refresh(E_Shelf *es __UNUSED__)
+_ilist_refresh(E_Shelf *es EINA_UNUSED)
 {
    _ilist_empty(_cfdata);
    _ilist_fill(_cfdata);
@@ -316,7 +316,7 @@ _ilist_fill(E_Config_Dialog_Data *cfdata)
 }
 
 static void
-_ilist_cb_selected(void *data __UNUSED__)
+_ilist_cb_selected(void *data EINA_UNUSED)
 {
    _widgets_disable(_cfdata, 0, EINA_TRUE);
 }
@@ -338,7 +338,7 @@ _new_shelf_cb_close(void *data)
 }
 
 static void
-_cb_add(void *data, void *data2 __UNUSED__)
+_cb_add(void *data, void *data2 EINA_UNUSED)
 {
    E_Config_Dialog_Data *cfdata;
    E_Zone *zone;
@@ -355,7 +355,7 @@ _cb_add(void *data, void *data2 __UNUSED__)
 }
 
 static void
-_cb_rename(void *data, void *d __UNUSED__)
+_cb_rename(void *data, void *d EINA_UNUSED)
 {
    E_Config_Dialog_Data *cfdata = data;
    E_Shelf *es;
@@ -364,7 +364,7 @@ _cb_rename(void *data, void *d __UNUSED__)
 }
 
 static void
-_cb_delete(void *data, void *data2 __UNUSED__)
+_cb_delete(void *data, void *data2 EINA_UNUSED)
 {
    char buf[1024];
    E_Config_Dialog_Data *cfdata = data;
@@ -424,13 +424,13 @@ _cb_dialog_destroy(void *data)
 }
 
 static void
-_cb_config_end(void *data __UNUSED__)
+_cb_config_end(void *data EINA_UNUSED)
 {
    e_widget_disabled_set(_cfdata->o_list, 0);
 }
 
 static void
-_cb_config(void *data, void *data2 __UNUSED__)
+_cb_config(void *data, void *data2 EINA_UNUSED)
 {
    E_Config_Dialog_Data *cfdata;
    E_Shelf *es;
@@ -446,13 +446,13 @@ _cb_config(void *data, void *data2 __UNUSED__)
 }
 
 static void
-_cb_contents_end(void *data __UNUSED__)
+_cb_contents_end(void *data EINA_UNUSED)
 {
    e_widget_disabled_set(_cfdata->o_list, 0);
 }
 
 static void
-_cb_contents(void *data, void *data2 __UNUSED__)
+_cb_contents(void *data, void *data2 EINA_UNUSED)
 {
    E_Config_Dialog_Data *cfdata;
    E_Shelf *es;

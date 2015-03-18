@@ -44,7 +44,7 @@ static const char *_icon_previews[4] =
 #define PREVIEW_SIZE (48)
 
 E_Config_Dialog *
-e_int_config_xsettings(Evas_Object *parent EINA_UNUSED, const char *params __UNUSED__)
+e_int_config_xsettings(Evas_Object *parent EINA_UNUSED, const char *params EINA_UNUSED)
 {
    E_Config_Dialog *cfd;
    E_Config_Dialog_View *v;
@@ -82,7 +82,7 @@ _create_data(E_Config_Dialog *cfd)
 }
 
 static void
-_free_data(E_Config_Dialog *cfd __UNUSED__, E_Config_Dialog_Data *cfdata)
+_free_data(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfdata)
 {
    if (cfdata->fill_icon_themes_delayed)
      free(ecore_idler_del(cfdata->fill_icon_themes_delayed));
@@ -94,7 +94,7 @@ _free_data(E_Config_Dialog *cfd __UNUSED__, E_Config_Dialog_Data *cfdata)
 }
 
 static int
-_basic_check_changed(E_Config_Dialog *cfd __UNUSED__, E_Config_Dialog_Data *cfdata)
+_basic_check_changed(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfdata)
 {
    if (cfdata->match_e17_icon_theme != e_config->xsettings.match_e17_icon_theme)
      return 1;
@@ -443,7 +443,7 @@ _fill_icon_themes(void *data)
 }
 
 static void
-_icon_theme_changed(void *data, Evas_Object *o __UNUSED__)
+_icon_theme_changed(void *data, Evas_Object *o EINA_UNUSED)
 {
    E_Config_Dialog_Data *cfdata;
 

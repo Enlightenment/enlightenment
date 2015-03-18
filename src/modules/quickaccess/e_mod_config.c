@@ -102,7 +102,7 @@ _create_data(E_Config_Dialog *cfd)
 }
 
 static void
-_free_data(E_Config_Dialog *cfd  __UNUSED__, E_Config_Dialog_Data *cfdata)
+_free_data(E_Config_Dialog *cfd  EINA_UNUSED, E_Config_Dialog_Data *cfdata)
 {
    Eina_Inlist *l;
    Config_Entry *ce;
@@ -115,7 +115,7 @@ _free_data(E_Config_Dialog *cfd  __UNUSED__, E_Config_Dialog_Data *cfdata)
 }
 
 static int
-_advanced_check_changed(E_Config_Dialog *cfd __UNUSED__, E_Config_Dialog_Data *cfdata)
+_advanced_check_changed(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfdata)
 {
    Config_Entry *ce;
 #define CHECK(X) \
@@ -134,7 +134,7 @@ _advanced_check_changed(E_Config_Dialog *cfd __UNUSED__, E_Config_Dialog_Data *c
 }
 
 static int
-_basic_check_changed(E_Config_Dialog *cfd __UNUSED__, E_Config_Dialog_Data *cfdata)
+_basic_check_changed(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfdata)
 {
 #define CHECK(X) \
    if (cfdata->X != qa_config->X) return 1
@@ -200,7 +200,7 @@ _rename_ok(void *data, char *text)
 }
 
 static void
-_list_delete(void *data __UNUSED__, void *list)
+_list_delete(void *data EINA_UNUSED, void *list)
 {
    Config_Entry *ce;
 
@@ -352,7 +352,7 @@ _basic_create_widgets(E_Config_Dialog *cfd EINA_UNUSED, Evas *evas, E_Config_Dia
 
 
 static int
-_advanced_apply_data(E_Config_Dialog *cfd  __UNUSED__, E_Config_Dialog_Data *cfdata)
+_advanced_apply_data(E_Config_Dialog *cfd  EINA_UNUSED, E_Config_Dialog_Data *cfdata)
 {
    Config_Entry *ce;
    Eina_Bool entry_changed = EINA_FALSE, transient_changed = EINA_FALSE;
@@ -390,7 +390,7 @@ _advanced_apply_data(E_Config_Dialog *cfd  __UNUSED__, E_Config_Dialog_Data *cfd
 }
 
 static int
-_basic_apply_data(E_Config_Dialog *cfd  __UNUSED__, E_Config_Dialog_Data *cfdata)
+_basic_apply_data(E_Config_Dialog *cfd  EINA_UNUSED, E_Config_Dialog_Data *cfdata)
 {
 #define SET(X) qa_config->X = cfdata->X
    SET(autohide);
@@ -538,7 +538,7 @@ e_qa_config_entry_add(E_Quick_Access_Entry *entry)
 }
 
 E_Config_Dialog *
-e_int_config_qa_module(Evas_Object *parent EINA_UNUSED, const char *params __UNUSED__)
+e_int_config_qa_module(Evas_Object *parent EINA_UNUSED, const char *params EINA_UNUSED)
 {
    E_Config_Dialog *cfd;
    E_Config_Dialog_View *v;

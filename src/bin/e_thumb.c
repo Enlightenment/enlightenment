@@ -66,7 +66,7 @@ e_thumb_shutdown(void)
 }
 
 static void
-_thumb_preloaded(void *data, Evas_Object *obj __UNUSED__, void *event __UNUSED__)
+_thumb_preloaded(void *data, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
 {
    evas_object_smart_callback_call(data, "e_thumb_gen", NULL);
 }
@@ -324,7 +324,7 @@ _e_thumb_gen_end(int objid)
 }
 
 static void
-_e_thumb_del_hook(void *data __UNUSED__, Evas *e __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
+_e_thumb_del_hook(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
    E_Thumb *eth;
 
@@ -390,7 +390,7 @@ _e_thumb_thumbnailers_kill_cancel(void)
 }
 
 static Eina_Bool
-_e_thumb_cb_kill(void *data __UNUSED__)
+_e_thumb_cb_kill(void *data EINA_UNUSED)
 {
    Eina_List *l;
    Ecore_Exe *exe;
@@ -402,7 +402,7 @@ _e_thumb_cb_kill(void *data __UNUSED__)
 }
 
 static Eina_Bool
-_e_thumb_cb_exe_event_del(void *data __UNUSED__, int type __UNUSED__, void *event)
+_e_thumb_cb_exe_event_del(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
 {
    Ecore_Exe_Event_Del *ev;
    Ecore_Exe *exe;

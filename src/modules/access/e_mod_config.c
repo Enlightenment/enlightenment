@@ -9,9 +9,9 @@ struct _E_Config_Dialog_Data
 /* local function prototypes */
 static void        *_create_data (E_Config_Dialog *cfd);
 static void         _fill_data   (E_Config_Dialog_Data *cfdata);
-static void         _free_data   (E_Config_Dialog *cfd __UNUSED__, E_Config_Dialog_Data *cfdata);
-static Evas_Object *_basic_create(E_Config_Dialog *cfd __UNUSED__, Evas *evas, E_Config_Dialog_Data *cfdata);
-static int          _basic_apply (E_Config_Dialog *cfd __UNUSED__, E_Config_Dialog_Data *cfdata);
+static void         _free_data   (E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfdata);
+static Evas_Object *_basic_create(E_Config_Dialog *cfd EINA_UNUSED, Evas *evas, E_Config_Dialog_Data *cfdata);
+static int          _basic_apply (E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfdata);
 
 void
 _config_pager_module(void)
@@ -35,7 +35,7 @@ _config_pager_module(void)
 
 /* local function prototypes */
 static void *
-_create_data(E_Config_Dialog *cfd __UNUSED__)
+_create_data(E_Config_Dialog *cfd EINA_UNUSED)
 {
    E_Config_Dialog_Data *cfdata;
 
@@ -51,13 +51,13 @@ _fill_data(E_Config_Dialog_Data *cfdata)
 }
 
 static void
-_free_data(E_Config_Dialog *cfd __UNUSED__, E_Config_Dialog_Data *cfdata)
+_free_data(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfdata)
 {
    E_FREE(cfdata);
 }
 
 static Evas_Object *
-_basic_create(E_Config_Dialog *cfd __UNUSED__, Evas *evas, E_Config_Dialog_Data *cfdata __UNUSED__) 
+_basic_create(E_Config_Dialog *cfd EINA_UNUSED, Evas *evas, E_Config_Dialog_Data *cfdata EINA_UNUSED) 
 {
    Evas_Object *ol, *of;
 
@@ -70,7 +70,7 @@ _basic_create(E_Config_Dialog *cfd __UNUSED__, Evas *evas, E_Config_Dialog_Data 
 }
 
 static int
-_basic_apply(E_Config_Dialog *cfd __UNUSED__, E_Config_Dialog_Data *cfdata __UNUSED__) 
+_basic_apply(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfdata EINA_UNUSED) 
 {
    e_config_save_queue();
    return 1;

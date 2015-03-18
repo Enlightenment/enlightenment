@@ -197,7 +197,7 @@ tag_simple_init(Pulse *conn, Pulse_Tag *tag, uint32_t val, PA_Tag type)
 }
 
 static Eina_Bool
-tag_proplist_foreach(const Eina_Hash *h __UNUSED__, const char *key, const char *val, Pulse_Tag *tag)
+tag_proplist_foreach(const Eina_Hash *h EINA_UNUSED, const char *key, const char *val, Pulse_Tag *tag)
 {
    size_t size;
 

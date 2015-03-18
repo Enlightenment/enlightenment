@@ -67,7 +67,7 @@ _e_write_safe_int(int fd, const char *buf, size_t size)
  * with the -rdynamic flag to GCC for any sort of decent output.
  */
 EAPI void
-e_sigseg_act(int x __UNUSED__, siginfo_t *info __UNUSED__, void *data __UNUSED__)
+e_sigseg_act(int x EINA_UNUSED, siginfo_t *info EINA_UNUSED, void *data EINA_UNUSED)
 {
 #ifdef HAVE_WAYLAND_ONLY
    Eina_List *list, *l, *ll;
@@ -95,7 +95,7 @@ e_sigseg_act(int x __UNUSED__, siginfo_t *info __UNUSED__, void *data __UNUSED__
 }
 
 EAPI void
-e_sigill_act(int x __UNUSED__, siginfo_t *info __UNUSED__, void *data __UNUSED__)
+e_sigill_act(int x EINA_UNUSED, siginfo_t *info EINA_UNUSED, void *data EINA_UNUSED)
 {
    // In case of a sigill in Enlightenment, Enlightenment start will catch the sigill and continue,
    // because evas cpu detection use that behaviour. But if we get a SIGILL after that, we endup in
@@ -113,7 +113,7 @@ e_sigill_act(int x __UNUSED__, siginfo_t *info __UNUSED__, void *data __UNUSED__
 }
 
 EAPI void
-e_sigfpe_act(int x __UNUSED__, siginfo_t *info __UNUSED__, void *data __UNUSED__)
+e_sigfpe_act(int x EINA_UNUSED, siginfo_t *info EINA_UNUSED, void *data EINA_UNUSED)
 {
 #ifdef HAVE_WAYLAND_ONLY
    Eina_List *list, *l, *ll;
@@ -141,7 +141,7 @@ e_sigfpe_act(int x __UNUSED__, siginfo_t *info __UNUSED__, void *data __UNUSED__
 }
 
 EAPI void
-e_sigbus_act(int x __UNUSED__, siginfo_t *info __UNUSED__, void *data __UNUSED__)
+e_sigbus_act(int x EINA_UNUSED, siginfo_t *info EINA_UNUSED, void *data EINA_UNUSED)
 {
 #ifdef HAVE_WAYLAND_ONLY
    Eina_List *list, *l, *ll;
@@ -169,7 +169,7 @@ e_sigbus_act(int x __UNUSED__, siginfo_t *info __UNUSED__, void *data __UNUSED__
 }
 
 EAPI void
-e_sigabrt_act(int x __UNUSED__, siginfo_t *info __UNUSED__, void *data __UNUSED__)
+e_sigabrt_act(int x EINA_UNUSED, siginfo_t *info EINA_UNUSED, void *data EINA_UNUSED)
 {
 #ifdef HAVE_WAYLAND_ONLY
    Eina_List *list, *l, *ll;

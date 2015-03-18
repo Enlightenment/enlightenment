@@ -26,10 +26,10 @@ static int          _basic_lang_list_sort(const void *data1, const void *data2);
 /* Fill the clear lists, fill with language, select */
 /* Update lanague */
 static void         _cfdata_language_go(const char *lang, const char *region, const char *codeset, const char *modifier, E_Config_Dialog_Data *cfdata);
-static Eina_Bool    _lang_hash_cb(const Eina_Hash *hash __UNUSED__, const void *key __UNUSED__, void *data, void *fdata);
-static Eina_Bool    _region_hash_cb(const Eina_Hash *hash __UNUSED__, const void *key __UNUSED__, void *data, void *fdata);
-static Eina_Bool    _language_hash_free_cb(const Eina_Hash *hash __UNUSED__, const void *key __UNUSED__, void *data, void *fdata __UNUSED__);
-static Eina_Bool    _region_hash_free_cb(const Eina_Hash *hash __UNUSED__, const void *key __UNUSED__, void *data, void *fdata __UNUSED__);
+static Eina_Bool    _lang_hash_cb(const Eina_Hash *hash EINA_UNUSED, const void *key EINA_UNUSED, void *data, void *fdata);
+static Eina_Bool    _region_hash_cb(const Eina_Hash *hash EINA_UNUSED, const void *key EINA_UNUSED, void *data, void *fdata);
+static Eina_Bool    _language_hash_free_cb(const Eina_Hash *hash EINA_UNUSED, const void *key EINA_UNUSED, void *data, void *fdata EINA_UNUSED);
+static Eina_Bool    _region_hash_free_cb(const Eina_Hash *hash EINA_UNUSED, const void *key EINA_UNUSED, void *data, void *fdata EINA_UNUSED);
 static void         _intl_current_locale_setup(E_Config_Dialog_Data *cfdata);
 static const char  *_intl_charset_upper_get(const char *charset);
 
@@ -579,7 +579,7 @@ const E_Intl_Pair charset_predefined_pairs[] = {
 };
 
 E_Config_Dialog *
-e_int_config_intl(Evas_Object *parent EINA_UNUSED, const char *params __UNUSED__)
+e_int_config_intl(Evas_Object *parent EINA_UNUSED, const char *params EINA_UNUSED)
 {
    E_Config_Dialog *cfd;
    E_Config_Dialog_View *v;
@@ -604,7 +604,7 @@ e_int_config_intl(Evas_Object *parent EINA_UNUSED, const char *params __UNUSED__
 }
 
 E_Config_Dialog *
-e_int_config_desklock_intl(Evas_Object *parent EINA_UNUSED, const char *params __UNUSED__)
+e_int_config_desklock_intl(Evas_Object *parent EINA_UNUSED, const char *params EINA_UNUSED)
 {
    E_Config_Dialog *cfd;
    E_Config_Dialog_View *v;
@@ -859,7 +859,7 @@ _create_desklock_data(E_Config_Dialog *cfd)
 }
 
 static void
-_free_data(E_Config_Dialog *cfd __UNUSED__, E_Config_Dialog_Data *cfdata)
+_free_data(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfdata)
 {
    E_FREE(cfdata->cur_language);
 
@@ -880,7 +880,7 @@ _free_data(E_Config_Dialog *cfd __UNUSED__, E_Config_Dialog_Data *cfdata)
 }
 
 static Eina_Bool
-_language_hash_free_cb(const Eina_Hash *hash __UNUSED__, const void *key __UNUSED__, void *data, void *fdata __UNUSED__)
+_language_hash_free_cb(const Eina_Hash *hash EINA_UNUSED, const void *key EINA_UNUSED, void *data, void *fdata EINA_UNUSED)
 {
    E_Intl_Language_Node *node;
 
@@ -894,7 +894,7 @@ _language_hash_free_cb(const Eina_Hash *hash __UNUSED__, const void *key __UNUSE
 }
 
 static Eina_Bool
-_region_hash_free_cb(const Eina_Hash *hash __UNUSED__, const void *key __UNUSED__, void *data, void *fdata __UNUSED__)
+_region_hash_free_cb(const Eina_Hash *hash EINA_UNUSED, const void *key EINA_UNUSED, void *data, void *fdata EINA_UNUSED)
 {
    E_Intl_Region_Node *node;
 
@@ -925,7 +925,7 @@ _region_hash_free_cb(const Eina_Hash *hash __UNUSED__, const void *key __UNUSED_
 }
 
 static void
-_lc_check_del(void *data __UNUSED__)
+_lc_check_del(void *data EINA_UNUSED)
 {
    E_Action *a;
    a = e_action_find("restart");
@@ -968,7 +968,7 @@ _lc_check(void)
 }
 
 static int
-_basic_advanced_check_changed(E_Config_Dialog *cfd __UNUSED__, E_Config_Dialog_Data *cfdata)
+_basic_advanced_check_changed(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfdata)
 {
    const char *previous;
 
@@ -983,7 +983,7 @@ _basic_advanced_check_changed(E_Config_Dialog *cfd __UNUSED__, E_Config_Dialog_D
 }
 
 static int
-_basic_advanced_apply_data(E_Config_Dialog *cfd __UNUSED__, E_Config_Dialog_Data *cfdata)
+_basic_advanced_apply_data(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfdata)
 {
    if (cfdata->cur_language)
      {
@@ -1198,7 +1198,7 @@ _advanced_create_widgets(E_Config_Dialog *cfd, Evas *evas, E_Config_Dialog_Data 
 }
 
 static void
-_ilist_basic_language_cb_change(void *data, Evas_Object *obj __UNUSED__)
+_ilist_basic_language_cb_change(void *data, Evas_Object *obj EINA_UNUSED)
 {
    E_Config_Dialog_Data *cfdata;
 
@@ -1207,7 +1207,7 @@ _ilist_basic_language_cb_change(void *data, Evas_Object *obj __UNUSED__)
 }
 
 static void
-_ilist_language_cb_change(void *data, Evas_Object *obj __UNUSED__)
+_ilist_language_cb_change(void *data, Evas_Object *obj EINA_UNUSED)
 {
    E_Config_Dialog_Data *cfdata;
 
@@ -1221,7 +1221,7 @@ _ilist_language_cb_change(void *data, Evas_Object *obj __UNUSED__)
 }
 
 static void
-_ilist_region_cb_change(void *data, Evas_Object *obj __UNUSED__)
+_ilist_region_cb_change(void *data, Evas_Object *obj EINA_UNUSED)
 {
    E_Config_Dialog_Data *cfdata;
    char locale[32];
@@ -1244,7 +1244,7 @@ _ilist_region_cb_change(void *data, Evas_Object *obj __UNUSED__)
 }
 
 static void
-_ilist_codeset_cb_change(void *data, Evas_Object *obj __UNUSED__)
+_ilist_codeset_cb_change(void *data, Evas_Object *obj EINA_UNUSED)
 {
    E_Config_Dialog_Data *cfdata;
    char locale[32];
@@ -1264,7 +1264,7 @@ _ilist_codeset_cb_change(void *data, Evas_Object *obj __UNUSED__)
 }
 
 static void
-_ilist_modifier_cb_change(void *data, Evas_Object *obj __UNUSED__)
+_ilist_modifier_cb_change(void *data, Evas_Object *obj EINA_UNUSED)
 {
    E_Config_Dialog_Data *cfdata;
    char locale[32];
@@ -1395,7 +1395,7 @@ _cfdata_language_go(const char *lang, const char *region, const char *codeset, c
 }
 
 static Eina_Bool
-_lang_hash_cb(const Eina_Hash *hash __UNUSED__, const void *key __UNUSED__, void *data, void *fdata)
+_lang_hash_cb(const Eina_Hash *hash EINA_UNUSED, const void *key EINA_UNUSED, void *data, void *fdata)
 {
    E_Config_Dialog_Data *cfdata;
    E_Intl_Language_Node *lang_node;
@@ -1408,7 +1408,7 @@ _lang_hash_cb(const Eina_Hash *hash __UNUSED__, const void *key __UNUSED__, void
 }
 
 static Eina_Bool
-_region_hash_cb(const Eina_Hash *hash __UNUSED__, const void *key __UNUSED__, void *data, void *fdata)
+_region_hash_cb(const Eina_Hash *hash EINA_UNUSED, const void *key EINA_UNUSED, void *data, void *fdata)
 {
    E_Config_Dialog_Data *cfdata;
    E_Intl_Region_Node *reg_node;

@@ -17,7 +17,7 @@ _action(Evry_Action *action)
 }
 
 static int
-_check_item(Evry_Action *action __UNUSED__, const Evry_Item *it)
+_check_item(Evry_Action *action EINA_UNUSED, const Evry_Item *it)
 {
    return it && it->label && (strlen(it->label) > 0);
 }

@@ -28,13 +28,13 @@ _timer_cb(void *data)
 }
 
 static void
-_tab_cb_down(void *data __UNUSED__, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_tab_cb_down(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    /* Evas_Event_Mouse_Down *ev = event_info; */
 }
 
 static void
-_tab_cb_up(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
+_tab_cb_up(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info)
 {
    Evas_Event_Mouse_Up *ev = event_info;
    Tab *tab = data;
@@ -55,7 +55,7 @@ _tab_cb_up(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *ev
 }
 
 static void
-_tabs_cb_wheel(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
+_tabs_cb_wheel(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info)
 {
    Evas_Event_Mouse_Wheel *ev = event_info;
    Tab_View *v = data;

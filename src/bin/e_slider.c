@@ -44,7 +44,7 @@ static void      _e_smart_signal_cb_drag(void *data, Evas_Object *obj, const cha
 static void      _e_smart_signal_cb_drag_start(void *data, Evas_Object *obj, const char *emission, const char *source);
 static void      _e_smart_signal_cb_drag_stop(void *data, Evas_Object *obj, const char *emission, const char *source);
 static void      _e_smart_event_key_down(void *data, Evas *e, Evas_Object *obj, void *event_info);
-static void      _e_smart_event_mouse_down(void *data, Evas *e, Evas_Object *obj __UNUSED__, void *event_info);
+static void      _e_smart_event_mouse_down(void *data, Evas *e, Evas_Object *obj EINA_UNUSED, void *event_info);
 static void      _e_smart_reconfigure(E_Smart_Data *sd);
 static void      _e_smart_add(Evas_Object *obj);
 static void      _e_smart_del(Evas_Object *obj);
@@ -365,7 +365,7 @@ _e_smart_format_update(E_Smart_Data *sd)
 }
 
 static void
-_e_smart_signal_cb_drag(void *data, Evas_Object *obj __UNUSED__, const char *emission __UNUSED__, const char *source __UNUSED__)
+_e_smart_signal_cb_drag(void *data, Evas_Object *obj EINA_UNUSED, const char *emission EINA_UNUSED, const char *source EINA_UNUSED)
 {
    E_Smart_Data *sd = data;
    double pval = sd->val;
@@ -379,7 +379,7 @@ _e_smart_signal_cb_drag(void *data, Evas_Object *obj __UNUSED__, const char *emi
 }
 
 static void
-_e_smart_signal_cb_drag_start(void *data, Evas_Object *obj __UNUSED__, const char *emission __UNUSED__, const char *source __UNUSED__)
+_e_smart_signal_cb_drag_start(void *data, Evas_Object *obj EINA_UNUSED, const char *emission EINA_UNUSED, const char *source EINA_UNUSED)
 {
    E_Smart_Data *sd = data;
    double pval = sd->val;
@@ -393,7 +393,7 @@ _e_smart_signal_cb_drag_start(void *data, Evas_Object *obj __UNUSED__, const cha
 }
 
 static void
-_e_smart_signal_cb_drag_stop(void *data, Evas_Object *obj __UNUSED__, const char *emission __UNUSED__, const char *source __UNUSED__)
+_e_smart_signal_cb_drag_stop(void *data, Evas_Object *obj EINA_UNUSED, const char *emission EINA_UNUSED, const char *source EINA_UNUSED)
 {
    E_Smart_Data *sd = data;
    double pval = sd->val;
@@ -408,7 +408,7 @@ _e_smart_signal_cb_drag_stop(void *data, Evas_Object *obj __UNUSED__, const char
 }
 
 static void
-_e_smart_signal_cb_wheel_up(void *data, Evas_Object *obj __UNUSED__, const char *emission __UNUSED__, const char *source __UNUSED__)
+_e_smart_signal_cb_wheel_up(void *data, Evas_Object *obj EINA_UNUSED, const char *emission EINA_UNUSED, const char *source EINA_UNUSED)
 {
    E_Smart_Data *sd = data;
 
@@ -418,7 +418,7 @@ _e_smart_signal_cb_wheel_up(void *data, Evas_Object *obj __UNUSED__, const char 
 }
 
 static void
-_e_smart_signal_cb_wheel_down(void *data, Evas_Object *obj __UNUSED__, const char *emission __UNUSED__, const char *source __UNUSED__)
+_e_smart_signal_cb_wheel_down(void *data, Evas_Object *obj EINA_UNUSED, const char *emission EINA_UNUSED, const char *source EINA_UNUSED)
 {
    E_Smart_Data *sd = data;
 
@@ -428,7 +428,7 @@ _e_smart_signal_cb_wheel_down(void *data, Evas_Object *obj __UNUSED__, const cha
 }
 
 static void
-_e_smart_event_key_down(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
+_e_smart_event_key_down(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info)
 {
    Evas_Event_Key_Down *ev = event_info;
    E_Smart_Data *sd = data;
@@ -477,7 +477,7 @@ _e_smart_event_key_down(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSE
 }
 
 static void
-_e_smart_event_mouse_down(void *data, Evas *e, Evas_Object *obj __UNUSED__, void *event_info)
+_e_smart_event_mouse_down(void *data, Evas *e, Evas_Object *obj EINA_UNUSED, void *event_info)
 {
    Evas_Event_Mouse_Down *ev = event_info;
    Evas_Coord x, y, w, h;

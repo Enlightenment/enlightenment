@@ -28,7 +28,7 @@ static void         _size_list_load(E_Config_Dialog_Data *cfdata, Eina_List *siz
 static void         _class_list_load(E_Config_Dialog_Data *cfdata);
 static void         _font_preview_update(E_Config_Dialog_Data *cfdata);
 
-static Eina_Bool    _font_hash_cb(const Eina_Hash *hash __UNUSED__, const void *key __UNUSED__, void *data, void *fdata);
+static Eina_Bool    _font_hash_cb(const Eina_Hash *hash EINA_UNUSED, const void *key EINA_UNUSED, void *data, void *fdata);
 
 struct _E_Font_Size_Data
 {
@@ -149,7 +149,7 @@ struct _E_Config_Dialog_Data
 };
 
 E_Config_Dialog *
-e_int_config_fonts(Evas_Object *parent EINA_UNUSED, const char *params __UNUSED__)
+e_int_config_fonts(Evas_Object *parent EINA_UNUSED, const char *params EINA_UNUSED)
 {
    E_Config_Dialog *cfd;
    E_Config_Dialog_View *v;
@@ -310,7 +310,7 @@ _create_data(E_Config_Dialog *cfd)
 }
 
 static void
-_free_data(E_Config_Dialog *cfd __UNUSED__, E_Config_Dialog_Data *cfdata)
+_free_data(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfdata)
 {
    E_Font_Size_Data *size_data;
    CFText_Class *tc;
@@ -343,7 +343,7 @@ _free_data(E_Config_Dialog *cfd __UNUSED__, E_Config_Dialog_Data *cfdata)
 }
 
 static int
-_basic_apply_data(E_Config_Dialog *cfd __UNUSED__, E_Config_Dialog_Data *cfdata)
+_basic_apply_data(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfdata)
 {
    CFText_Class *tc;
    Eina_List *next;
@@ -403,7 +403,7 @@ _basic_apply_data(E_Config_Dialog *cfd __UNUSED__, E_Config_Dialog_Data *cfdata)
 }
 
 static Eina_Bool
-_font_hash_cb(const Eina_Hash *hash __UNUSED__, const void *key __UNUSED__, void *data, void *fdata)
+_font_hash_cb(const Eina_Hash *hash EINA_UNUSED, const void *key EINA_UNUSED, void *data, void *fdata)
 {
    E_Config_Dialog_Data *cfdata;
    E_Font_Properties *efp;
@@ -462,7 +462,7 @@ _basic_create_widgets(E_Config_Dialog *cfd EINA_UNUSED, Evas *evas, E_Config_Dia
 }
 
 static void
-_basic_font_cb_change(void *data, Evas_Object *obj __UNUSED__)
+_basic_font_cb_change(void *data, Evas_Object *obj EINA_UNUSED)
 {
    E_Config_Dialog_Data *cfdata;
 
@@ -472,7 +472,7 @@ _basic_font_cb_change(void *data, Evas_Object *obj __UNUSED__)
 }
 
 static void
-_basic_enable_cb_change(void *data, Evas_Object *obj __UNUSED__)
+_basic_enable_cb_change(void *data, Evas_Object *obj EINA_UNUSED)
 {
    E_Config_Dialog_Data *cfdata;
 
@@ -537,7 +537,7 @@ _basic_init_data_fill(E_Config_Dialog_Data *cfdata)
 }
 
 static int
-_advanced_apply_data(E_Config_Dialog *cfd __UNUSED__, E_Config_Dialog_Data *cfdata)
+_advanced_apply_data(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfdata)
 {
    int i;
    const Eina_List *l;
@@ -776,7 +776,7 @@ _class_list_load(E_Config_Dialog_Data *cfdata)
 
 /* Called whenever class list selection changes */
 static void
-_adv_class_cb_change(void *data, Evas_Object *obj __UNUSED__)
+_adv_class_cb_change(void *data, Evas_Object *obj EINA_UNUSED)
 {
    int indx;
    E_Config_Dialog_Data *cfdata;
@@ -847,7 +847,7 @@ _adv_class_cb_change(void *data, Evas_Object *obj __UNUSED__)
 }
 
 static void
-_adv_enabled_font_cb_change(void *data, Evas_Object *obj __UNUSED__)
+_adv_enabled_font_cb_change(void *data, Evas_Object *obj EINA_UNUSED)
 {
    E_Config_Dialog_Data *cfdata;
    CFText_Class *tc;
@@ -917,7 +917,7 @@ _size_cb_change(void *data)
 }
 
 static void
-_adv_font_cb_change(void *data, Evas_Object *obj __UNUSED__)
+_adv_font_cb_change(void *data, Evas_Object *obj EINA_UNUSED)
 {
    E_Config_Dialog_Data *cfdata;
    CFText_Class *tc;
@@ -1095,7 +1095,7 @@ _font_list_load(E_Config_Dialog_Data *cfdata, const char *cur_font)
 }
 
 static void
-_adv_style_cb_change(void *data, Evas_Object *obj __UNUSED__)
+_adv_style_cb_change(void *data, Evas_Object *obj EINA_UNUSED)
 {
    E_Config_Dialog_Data *cfdata;
    E_Ilist_Item *i;
@@ -1124,7 +1124,7 @@ _adv_style_cb_change(void *data, Evas_Object *obj __UNUSED__)
 
 /* Private Font Fallback Functions */
 static void
-_adv_enabled_fallback_cb_change(void *data, Evas_Object *obj __UNUSED__)
+_adv_enabled_fallback_cb_change(void *data, Evas_Object *obj EINA_UNUSED)
 {
    E_Config_Dialog_Data *cfdata;
 

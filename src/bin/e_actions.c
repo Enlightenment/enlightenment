@@ -7,7 +7,7 @@
      if (act) act->func.go = _e_actions_act_##name##_go;  \
   }
 #define ACT_FN_GO(act, use) \
-  static void _e_actions_act_##act##_go(E_Object * obj __UNUSED__, const char *params use)
+  static void _e_actions_act_##act##_go(E_Object * obj EINA_UNUSED, const char *params use)
 
 #define ACT_GO_MOUSE(name)                                            \
   {                                                                   \
@@ -15,7 +15,7 @@
      if (act) act->func.go_mouse = _e_actions_act_##name##_go_mouse;  \
   }
 #define ACT_FN_GO_MOUSE(act, use) \
-  static void _e_actions_act_##act##_go_mouse(E_Object * obj __UNUSED__, const char *params use, E_Binding_Event_Mouse_Button * ev __UNUSED__)
+  static void _e_actions_act_##act##_go_mouse(E_Object * obj EINA_UNUSED, const char *params use, E_Binding_Event_Mouse_Button * ev EINA_UNUSED)
 
 #define ACT_GO_WHEEL(name)                                            \
   {                                                                   \
@@ -23,7 +23,7 @@
      if (act) act->func.go_wheel = _e_actions_act_##name##_go_wheel;  \
   }
 #define ACT_FN_GO_WHEEL(act, use) \
-  static void _e_actions_act_##act##_go_wheel(E_Object * obj __UNUSED__, const char *params use, E_Binding_Event_Wheel * ev __UNUSED__)
+  static void _e_actions_act_##act##_go_wheel(E_Object * obj EINA_UNUSED, const char *params use, E_Binding_Event_Wheel * ev EINA_UNUSED)
 
 #define ACT_GO_EDGE(name)                                           \
   {                                                                 \
@@ -31,7 +31,7 @@
      if (act) act->func.go_edge = _e_actions_act_##name##_go_edge;  \
   }
 #define ACT_FN_GO_EDGE(act, use) \
-  static void _e_actions_act_##act##_go_edge(E_Object * obj __UNUSED__, const char *params use, E_Event_Zone_Edge * ev __UNUSED__)
+  static void _e_actions_act_##act##_go_edge(E_Object * obj EINA_UNUSED, const char *params use, E_Event_Zone_Edge * ev EINA_UNUSED)
 
 #define ACT_GO_SIGNAL(name)                                             \
   {                                                                     \
@@ -39,7 +39,7 @@
      if (act) act->func.go_signal = _e_actions_act_##name##_go_signal;  \
   }
 #define ACT_FN_GO_SIGNAL(act, use) \
-  static void _e_actions_act_##act##_go_signal(E_Object * obj __UNUSED__, const char *params use, const char *sig, const char *src)
+  static void _e_actions_act_##act##_go_signal(E_Object * obj EINA_UNUSED, const char *params use, const char *sig, const char *src)
 
 #define ACT_GO_KEY(name)                                          \
   {                                                               \
@@ -47,7 +47,7 @@
      if (act) act->func.go_key = _e_actions_act_##name##_go_key;  \
   }
 #define ACT_FN_GO_KEY(act, use1, use2) \
-  static void _e_actions_act_##act##_go_key(E_Object * obj __UNUSED__, const char *params use1, Ecore_Event_Key * ev use2)
+  static void _e_actions_act_##act##_go_key(E_Object * obj EINA_UNUSED, const char *params use1, Ecore_Event_Key * ev use2)
 
 #define ACT_END(name)                                       \
   {                                                         \
@@ -55,7 +55,7 @@
      if (act) act->func.end = _e_actions_act_##name##_end;  \
   }
 #define ACT_FN_END(act, use) \
-  static void _e_actions_act_##act##_end(E_Object * obj __UNUSED__, const char *params use)
+  static void _e_actions_act_##act##_end(E_Object * obj EINA_UNUSED, const char *params use)
 
 #define ACT_END_MOUSE(name)                                             \
   {                                                                     \
@@ -63,7 +63,7 @@
      if (act) act->func.end_mouse = _e_actions_act_##name##_end_mouse;  \
   }
 #define ACT_FN_END_MOUSE(act, use) \
-  static void _e_actions_act_##act##_end_mouse(E_Object * obj __UNUSED__, const char *params use, E_Binding_Event_Mouse_Button * ev __UNUSED__)
+  static void _e_actions_act_##act##_end_mouse(E_Object * obj EINA_UNUSED, const char *params use, E_Binding_Event_Mouse_Button * ev EINA_UNUSED)
 
 #define ACT_END_KEY(name)                                           \
   {                                                                 \
@@ -71,7 +71,7 @@
      if (act) act->func.end_key = _e_actions_act_##name##_end_key;  \
   }
 #define ACT_FN_END_KEY(act, use) \
-  static void _e_actions_act_##act##_end_key(E_Object * obj __UNUSED__, const char *params use, Ecore_Event_Key * ev __UNUSED__)
+  static void _e_actions_act_##act##_end_key(E_Object * obj EINA_UNUSED, const char *params use, Ecore_Event_Key * ev EINA_UNUSED)
 
 #define ACT_GO_ACPI(name)                                           \
   {                                                                 \
@@ -79,7 +79,7 @@
      if (act) act->func.go_acpi = _e_actions_act_##name##_go_acpi;  \
   }
 #define ACT_FN_GO_ACPI(act, use) \
-  static void _e_actions_act_##act##_go_acpi(E_Object * obj __UNUSED__, const char *params use, E_Event_Acpi * ev __UNUSED__)
+  static void _e_actions_act_##act##_go_acpi(E_Object * obj EINA_UNUSED, const char *params use, E_Event_Acpi * ev EINA_UNUSED)
 
 /* local functions forward declarations (window_jump_to needs the definition of exec) */
 ACT_FN_GO(exec, );
@@ -91,7 +91,7 @@ static int        _action_groups_sort_cb(const void *d1, const void *d2);
 
 /* to save writing this in N places - the sections are defined here */
 /***************************************************************************/
-ACT_FN_GO(window_move, __UNUSED__)
+ACT_FN_GO(window_move, EINA_UNUSED)
 {
    if (!obj) obj = E_OBJECT(e_client_focused_get());
    if (!obj) return;
@@ -100,7 +100,7 @@ ACT_FN_GO(window_move, __UNUSED__)
      e_client_act_move_begin((E_Client *)obj, NULL);
 }
 
-ACT_FN_GO_MOUSE(window_move, __UNUSED__)
+ACT_FN_GO_MOUSE(window_move, EINA_UNUSED)
 {
    if (!obj) obj = E_OBJECT(e_client_focused_get());
    if (!obj) return;
@@ -125,7 +125,7 @@ ACT_FN_GO_SIGNAL(window_move, )
      }
 }
 
-ACT_FN_END(window_move, __UNUSED__)
+ACT_FN_END(window_move, EINA_UNUSED)
 {
    if (!obj) obj = E_OBJECT(e_client_focused_get());
    if (!obj) return;
@@ -133,7 +133,7 @@ ACT_FN_END(window_move, __UNUSED__)
    e_client_act_move_end((E_Client *)obj, NULL);
 }
 
-ACT_FN_END_MOUSE(window_move, __UNUSED__)
+ACT_FN_END_MOUSE(window_move, EINA_UNUSED)
 {
    if (!obj) obj = E_OBJECT(e_client_focused_get());
    if (!obj) return;
@@ -141,7 +141,7 @@ ACT_FN_END_MOUSE(window_move, __UNUSED__)
    e_client_act_move_end((E_Client *)obj, ev);
 }
 
-ACT_FN_GO_KEY(window_move, __UNUSED__, __UNUSED__)
+ACT_FN_GO_KEY(window_move, EINA_UNUSED, EINA_UNUSED)
 {
    if (!obj) obj = E_OBJECT(e_client_focused_get());
    if (!obj) return;
@@ -155,7 +155,7 @@ ACT_FN_GO_KEY(window_move, __UNUSED__, __UNUSED__)
 }
 
 /***************************************************************************/
-ACT_FN_GO(window_resize, __UNUSED__)
+ACT_FN_GO(window_resize, EINA_UNUSED)
 {
    if (!obj) obj = E_OBJECT(e_client_focused_get());
    if (!obj) return;
@@ -164,7 +164,7 @@ ACT_FN_GO(window_resize, __UNUSED__)
      e_client_act_resize_begin((E_Client *)obj, NULL);
 }
 
-ACT_FN_GO_MOUSE(window_resize, __UNUSED__)
+ACT_FN_GO_MOUSE(window_resize, EINA_UNUSED)
 {
    if (!obj) obj = E_OBJECT(e_client_focused_get());
    if (!obj) return;
@@ -193,7 +193,7 @@ ACT_FN_GO_SIGNAL(window_resize, )
      }
 }
 
-ACT_FN_END(window_resize, __UNUSED__)
+ACT_FN_END(window_resize, EINA_UNUSED)
 {
    if (!obj) obj = E_OBJECT(e_client_focused_get());
    if (!obj) return;
@@ -201,7 +201,7 @@ ACT_FN_END(window_resize, __UNUSED__)
    e_client_act_resize_end((E_Client *)obj, NULL);
 }
 
-ACT_FN_END_MOUSE(window_resize, __UNUSED__)
+ACT_FN_END_MOUSE(window_resize, EINA_UNUSED)
 {
    if (!obj) obj = E_OBJECT(e_client_focused_get());
    if (!obj) return;
@@ -209,7 +209,7 @@ ACT_FN_END_MOUSE(window_resize, __UNUSED__)
    e_client_act_resize_end((E_Client *)obj, ev);
 }
 
-ACT_FN_GO_KEY(window_resize, __UNUSED__, __UNUSED__)
+ACT_FN_GO_KEY(window_resize, EINA_UNUSED, EINA_UNUSED)
 {
    if (!obj) obj = E_OBJECT(e_client_focused_get());
    if (!obj) return;
@@ -223,7 +223,7 @@ ACT_FN_GO_KEY(window_resize, __UNUSED__, __UNUSED__)
 }
 
 /***************************************************************************/
-ACT_FN_GO(window_menu, __UNUSED__)
+ACT_FN_GO(window_menu, EINA_UNUSED)
 {
    if (!obj) obj = E_OBJECT(e_client_focused_get());
    if (!obj) return;
@@ -235,7 +235,7 @@ ACT_FN_GO(window_menu, __UNUSED__)
    e_client_act_menu_begin((E_Client *)obj, NULL, 0);
 }
 
-ACT_FN_GO_MOUSE(window_menu, __UNUSED__)
+ACT_FN_GO_MOUSE(window_menu, EINA_UNUSED)
 {
    if (!obj) obj = E_OBJECT(e_client_focused_get());
    if (!obj) return;
@@ -247,7 +247,7 @@ ACT_FN_GO_MOUSE(window_menu, __UNUSED__)
    e_client_act_menu_begin((E_Client *)obj, ev, 0);
 }
 
-ACT_FN_GO_KEY(window_menu, __UNUSED__, __UNUSED__)
+ACT_FN_GO_KEY(window_menu, EINA_UNUSED, EINA_UNUSED)
 {
    if (!obj) obj = E_OBJECT(e_client_focused_get());
    if (!obj) return;
@@ -260,7 +260,7 @@ ACT_FN_GO_KEY(window_menu, __UNUSED__, __UNUSED__)
 }
 
 /***************************************************************************/
-ACT_FN_GO(window_raise, __UNUSED__)
+ACT_FN_GO(window_raise, EINA_UNUSED)
 {
    if (!obj) obj = E_OBJECT(e_client_focused_get());
    if (!obj) return;
@@ -274,7 +274,7 @@ ACT_FN_GO(window_raise, __UNUSED__)
 }
 
 /***************************************************************************/
-ACT_FN_GO(window_lower, __UNUSED__)
+ACT_FN_GO(window_lower, EINA_UNUSED)
 {
    if (!obj) obj = E_OBJECT(e_client_focused_get());
    if (!obj) return;
@@ -288,7 +288,7 @@ ACT_FN_GO(window_lower, __UNUSED__)
 }
 
 /***************************************************************************/
-ACT_FN_GO(window_close, __UNUSED__)
+ACT_FN_GO(window_close, EINA_UNUSED)
 {
    if (!obj) obj = E_OBJECT(e_client_focused_get());
    if (!obj) return;
@@ -320,7 +320,7 @@ _e_actions_cb_kill_dialog_ok(void *data, E_Dialog *dia)
 }
 
 static void
-_e_actions_cb_kill_dialog_cancel(void *data __UNUSED__, E_Dialog *dia __UNUSED__)
+_e_actions_cb_kill_dialog_cancel(void *data EINA_UNUSED, E_Dialog *dia EINA_UNUSED)
 {
    e_object_del(E_OBJECT(kill_dialog));
    kill_dialog = NULL;
@@ -332,7 +332,7 @@ _e_actions_cb_kill_dialog_delete(void *data, Evas *e EINA_UNUSED, Evas_Object *o
    _e_actions_cb_kill_dialog_cancel(NULL, data);
 }
 
-ACT_FN_GO(window_kill, __UNUSED__)
+ACT_FN_GO(window_kill, EINA_UNUSED)
 {
    E_Client *ec;
    char dialog_text[1024];
@@ -377,7 +377,7 @@ ACT_FN_GO(window_kill, __UNUSED__)
 }
 
 /***************************************************************************/
-ACT_FN_GO(window_sticky_toggle, __UNUSED__)
+ACT_FN_GO(window_sticky_toggle, EINA_UNUSED)
 {
    if (!obj) obj = E_OBJECT(e_client_focused_get());
    if (!obj) return;
@@ -422,7 +422,7 @@ ACT_FN_GO(window_sticky, )
 }
 
 /***************************************************************************/
-ACT_FN_GO(window_iconic_toggle, __UNUSED__)
+ACT_FN_GO(window_iconic_toggle, EINA_UNUSED)
 {
    E_Client *ec;
 
@@ -767,7 +767,7 @@ ACT_FN_GO(window_shaded, )
 }
 
 /***************************************************************************/
-ACT_FN_GO(window_borderless_toggle, __UNUSED__)
+ACT_FN_GO(window_borderless_toggle, EINA_UNUSED)
 {
    if ((!obj) || (obj->type != E_CLIENT_TYPE))
      obj = E_OBJECT(e_client_focused_get());
@@ -785,7 +785,7 @@ ACT_FN_GO(window_borderless_toggle, __UNUSED__)
 }
 
 /***************************************************************************/
-ACT_FN_GO(window_border_set, __UNUSED__)
+ACT_FN_GO(window_border_set, EINA_UNUSED)
 {
    if ((!obj) || (obj->type != E_CLIENT_TYPE))
      obj = E_OBJECT(e_client_focused_get());
@@ -805,7 +805,7 @@ ACT_FN_GO(window_border_set, __UNUSED__)
 }
 
 /***************************************************************************/
-ACT_FN_GO(window_border_cycle, __UNUSED__)
+ACT_FN_GO(window_border_cycle, EINA_UNUSED)
 {
    if ((!obj) || (obj->type != E_CLIENT_TYPE))
      obj = E_OBJECT(e_client_focused_get());
@@ -863,7 +863,7 @@ ACT_FN_GO(window_border_cycle, __UNUSED__)
 }
 
 /***************************************************************************/
-ACT_FN_GO(window_pinned_toggle, __UNUSED__)
+ACT_FN_GO(window_pinned_toggle, EINA_UNUSED)
 {
    if ((!obj) || (obj->type != E_CLIENT_TYPE))
      obj = E_OBJECT(e_client_focused_get());
@@ -960,7 +960,7 @@ ACT_FN_GO(window_move_to, )
 }
 
 /***************************************************************************/
-ACT_FN_GO(window_move_to_center, __UNUSED__)
+ACT_FN_GO(window_move_to_center, EINA_UNUSED)
 {
    E_Client *ec;
 
@@ -1194,7 +1194,7 @@ ACT_FN_GO(window_jump_to_or_start, )
 }
 
 /***************************************************************************/
-ACT_FN_GO(window_drag_icon, __UNUSED__)
+ACT_FN_GO(window_drag_icon, EINA_UNUSED)
 {
    if (!obj) obj = E_OBJECT(e_client_focused_get());
    if (!obj) return;
@@ -1403,7 +1403,7 @@ ACT_FN_GO(desk_flip_to, )
 }
 
 /***************************************************************************/
-ACT_FN_GO(desk_flip_prev, __UNUSED__)
+ACT_FN_GO(desk_flip_prev, EINA_UNUSED)
 {
    E_Zone *zone;
 
@@ -1799,7 +1799,7 @@ ACT_FN_GO(zone_desk_linear_flip_to, )
 
 /***************************************************************************/
 static void
-_e_actions_cb_menu_end(void *data __UNUSED__, E_Menu *m)
+_e_actions_cb_menu_end(void *data EINA_UNUSED, E_Menu *m)
 {
    e_object_del(E_OBJECT(m));
 }
@@ -1883,7 +1883,7 @@ ACT_FN_GO_MOUSE(menu_show, )
      }
 }
 
-ACT_FN_GO_KEY(menu_show, , __UNUSED__)
+ACT_FN_GO_KEY(menu_show, , EINA_UNUSED)
 {
    E_Zone *zone;
 
@@ -2001,7 +2001,7 @@ ACT_FN_GO(app, )
 }
 
 /***************************************************************************/
-ACT_FN_GO(app_new_instance, __UNUSED__)
+ACT_FN_GO(app_new_instance, EINA_UNUSED)
 {
    E_Client *ec;
    E_Zone *zone;
@@ -2024,7 +2024,7 @@ ACT_FN_GO(app_new_instance, __UNUSED__)
 }
 
 /***************************************************************************/
-ACT_FN_GO(desk_deskshow_toggle, __UNUSED__)
+ACT_FN_GO(desk_deskshow_toggle, EINA_UNUSED)
 {
    E_Zone *zone;
 
@@ -2033,7 +2033,7 @@ ACT_FN_GO(desk_deskshow_toggle, __UNUSED__)
    if (zone) e_desk_deskshow(zone);
 }
 
-ACT_FN_GO(cleanup_windows, __UNUSED__)
+ACT_FN_GO(cleanup_windows, EINA_UNUSED)
 {
    E_Zone *zone;
 
@@ -2046,7 +2046,7 @@ ACT_FN_GO(cleanup_windows, __UNUSED__)
 static E_Dialog *exit_dialog = NULL;
 
 static void
-_e_actions_cb_exit_dialog_ok(void *data __UNUSED__, E_Dialog *dia)
+_e_actions_cb_exit_dialog_ok(void *data EINA_UNUSED, E_Dialog *dia)
 {
    if (dia)
      {
@@ -2057,7 +2057,7 @@ _e_actions_cb_exit_dialog_ok(void *data __UNUSED__, E_Dialog *dia)
 }
 
 static void
-_e_actions_cb_exit_dialog_cancel(void *data __UNUSED__, E_Dialog *dia __UNUSED__)
+_e_actions_cb_exit_dialog_cancel(void *data EINA_UNUSED, E_Dialog *dia EINA_UNUSED)
 {
    e_object_del(E_OBJECT(exit_dialog));
    exit_dialog = NULL;
@@ -2100,25 +2100,25 @@ ACT_FN_GO(exit, )
 }
 
 /***************************************************************************/
-ACT_FN_GO(restart, __UNUSED__)
+ACT_FN_GO(restart, EINA_UNUSED)
 {
    e_sys_action_do(E_SYS_RESTART, NULL);
 }
 
 /***************************************************************************/
-ACT_FN_GO(exit_now, __UNUSED__)
+ACT_FN_GO(exit_now, EINA_UNUSED)
 {
    e_sys_action_do(E_SYS_EXIT_NOW, NULL);
 }
 
 /***************************************************************************/
-ACT_FN_GO(halt_now, __UNUSED__)
+ACT_FN_GO(halt_now, EINA_UNUSED)
 {
    e_sys_action_do(E_SYS_HALT_NOW, NULL);
 }
 
 /***************************************************************************/
-ACT_FN_GO(mode_presentation_toggle, __UNUSED__)
+ACT_FN_GO(mode_presentation_toggle, EINA_UNUSED)
 {
    e_config->mode.presentation = !e_config->mode.presentation;
    e_config_mode_changed();
@@ -2126,7 +2126,7 @@ ACT_FN_GO(mode_presentation_toggle, __UNUSED__)
 }
 
 /***************************************************************************/
-ACT_FN_GO(mode_offline_toggle, __UNUSED__)
+ACT_FN_GO(mode_offline_toggle, EINA_UNUSED)
 {
    e_config->mode.offline = !e_config->mode.offline;
    e_config_mode_changed();
@@ -2137,7 +2137,7 @@ ACT_FN_GO(mode_offline_toggle, __UNUSED__)
 static E_Dialog *logout_dialog = NULL;
 
 static void
-_e_actions_cb_logout_dialog_ok(void *data __UNUSED__, E_Dialog *dia)
+_e_actions_cb_logout_dialog_ok(void *data EINA_UNUSED, E_Dialog *dia)
 {
    if (dia)
      {
@@ -2148,7 +2148,7 @@ _e_actions_cb_logout_dialog_ok(void *data __UNUSED__, E_Dialog *dia)
 }
 
 static void
-_e_actions_cb_logout_dialog_cancel(void *data __UNUSED__, E_Dialog *dia __UNUSED__)
+_e_actions_cb_logout_dialog_cancel(void *data EINA_UNUSED, E_Dialog *dia EINA_UNUSED)
 {
    e_object_del(E_OBJECT(logout_dialog));
    logout_dialog = NULL;
@@ -2194,7 +2194,7 @@ ACT_FN_GO(logout, )
 static E_Dialog *halt_dialog = NULL;
 
 static void
-_e_actions_cb_halt_dialog_ok(void *data __UNUSED__, E_Dialog *dia)
+_e_actions_cb_halt_dialog_ok(void *data EINA_UNUSED, E_Dialog *dia)
 {
    if (dia)
      {
@@ -2205,7 +2205,7 @@ _e_actions_cb_halt_dialog_ok(void *data __UNUSED__, E_Dialog *dia)
 }
 
 static void
-_e_actions_cb_halt_dialog_cancel(void *data __UNUSED__, E_Dialog *dia __UNUSED__)
+_e_actions_cb_halt_dialog_cancel(void *data EINA_UNUSED, E_Dialog *dia EINA_UNUSED)
 {
    e_object_del(E_OBJECT(halt_dialog));
    halt_dialog = NULL;
@@ -2254,7 +2254,7 @@ ACT_FN_GO(halt, )
 static E_Dialog *reboot_dialog = NULL;
 
 static void
-_e_actions_cb_reboot_dialog_ok(void *data __UNUSED__, E_Dialog *dia)
+_e_actions_cb_reboot_dialog_ok(void *data EINA_UNUSED, E_Dialog *dia)
 {
    if (dia)
      {
@@ -2265,7 +2265,7 @@ _e_actions_cb_reboot_dialog_ok(void *data __UNUSED__, E_Dialog *dia)
 }
 
 static void
-_e_actions_cb_reboot_dialog_cancel(void *data __UNUSED__, E_Dialog *dia __UNUSED__)
+_e_actions_cb_reboot_dialog_cancel(void *data EINA_UNUSED, E_Dialog *dia EINA_UNUSED)
 {
    e_object_del(E_OBJECT(reboot_dialog));
    reboot_dialog = NULL;
@@ -2311,7 +2311,7 @@ ACT_FN_GO(reboot, )
 static E_Dialog *suspend_dialog = NULL;
 
 static void
-_e_actions_cb_suspend_dialog_ok(void *data __UNUSED__, E_Dialog *dia)
+_e_actions_cb_suspend_dialog_ok(void *data EINA_UNUSED, E_Dialog *dia)
 {
    if (dia)
      {
@@ -2322,7 +2322,7 @@ _e_actions_cb_suspend_dialog_ok(void *data __UNUSED__, E_Dialog *dia)
 }
 
 static void
-_e_actions_cb_suspend_dialog_cancel(void *data __UNUSED__, E_Dialog *dia __UNUSED__)
+_e_actions_cb_suspend_dialog_cancel(void *data EINA_UNUSED, E_Dialog *dia EINA_UNUSED)
 {
    e_object_del(E_OBJECT(suspend_dialog));
    suspend_dialog = NULL;
@@ -2334,7 +2334,7 @@ _e_actions_cb_suspend_dialog_delete(void *data, Evas *e EINA_UNUSED, Evas_Object
    _e_actions_cb_suspend_dialog_cancel(NULL, data);
 }
 
-ACT_FN_GO(suspend_now, __UNUSED__)
+ACT_FN_GO(suspend_now, EINA_UNUSED)
 {
    e_sys_action_do(E_SYS_SUSPEND, NULL);
 }
@@ -2391,7 +2391,7 @@ _have_lid_and_external_screens_on(void)
    return EINA_FALSE;
 }
 
-ACT_FN_GO(suspend_smart, __UNUSED__)
+ACT_FN_GO(suspend_smart, EINA_UNUSED)
 {
    if ((!_have_lid_and_external_screens_on()) &&
        (ecore_power_state_get() != ECORE_POWER_STATE_MAINS))
@@ -2402,7 +2402,7 @@ ACT_FN_GO(suspend_smart, __UNUSED__)
 static E_Dialog *hibernate_dialog = NULL;
 
 static void
-_e_actions_cb_hibernate_dialog_ok(void *data __UNUSED__, E_Dialog *dia)
+_e_actions_cb_hibernate_dialog_ok(void *data EINA_UNUSED, E_Dialog *dia)
 {
    if (dia)
      {
@@ -2413,7 +2413,7 @@ _e_actions_cb_hibernate_dialog_ok(void *data __UNUSED__, E_Dialog *dia)
 }
 
 static void
-_e_actions_cb_hibernate_dialog_cancel(void *data __UNUSED__, E_Dialog *dia __UNUSED__)
+_e_actions_cb_hibernate_dialog_cancel(void *data EINA_UNUSED, E_Dialog *dia EINA_UNUSED)
 {
    e_object_del(E_OBJECT(hibernate_dialog));
    hibernate_dialog = NULL;
@@ -2425,7 +2425,7 @@ _e_actions_cb_hibernate_dialog_delete(void *data, Evas *e EINA_UNUSED, Evas_Obje
    _e_actions_cb_hibernate_dialog_cancel(NULL, data);
 }
 
-ACT_FN_GO(hibernate_now, __UNUSED__)
+ACT_FN_GO(hibernate_now, EINA_UNUSED)
 {
    e_sys_action_do(E_SYS_HIBERNATE, NULL);
 }
@@ -2460,7 +2460,7 @@ ACT_FN_GO(hibernate, )
    e_dialog_show(hibernate_dialog);
 }
 
-ACT_FN_GO(hibernate_smart, __UNUSED__)
+ACT_FN_GO(hibernate_smart, EINA_UNUSED)
 {
    if ((!_have_lid_and_external_screens_on()) &&
        (ecore_power_state_get() != ECORE_POWER_STATE_MAINS))
@@ -2500,7 +2500,7 @@ ACT_FN_GO(pointer_resize_pop, )
 }
 
 /***************************************************************************/
-ACT_FN_GO(desk_lock, __UNUSED__)
+ACT_FN_GO(desk_lock, EINA_UNUSED)
 {
 /*  E_Zone *zone;
 
@@ -2747,7 +2747,7 @@ _delayed_action_key_add(E_Object *obj, const char *params, Ecore_Event_Key *ev)
 }
 
 static void
-_delayed_action_key_del(E_Object *obj, const char *params __UNUSED__, Ecore_Event_Key *ev)
+_delayed_action_key_del(E_Object *obj, const char *params EINA_UNUSED, Ecore_Event_Key *ev)
 {
    Eina_List *l;
    Delayed_Action *da;
@@ -2784,7 +2784,7 @@ _delayed_action_mouse_add(E_Object *obj, const char *params, E_Binding_Event_Mou
 }
 
 static void
-_delayed_action_mouse_del(E_Object *obj, const char *params __UNUSED__, E_Binding_Event_Mouse_Button *ev)
+_delayed_action_mouse_del(E_Object *obj, const char *params EINA_UNUSED, E_Binding_Event_Mouse_Button *ev)
 {
    Eina_List *l;
    Delayed_Action *da;
@@ -2823,13 +2823,13 @@ ACT_FN_END_MOUSE(delayed_action, )
    _delayed_action_mouse_del(obj, params, ev);
 }
 
-ACT_FN_GO(dim_screen, __UNUSED__)
+ACT_FN_GO(dim_screen, EINA_UNUSED)
 {
    E_Zone *zone = _e_actions_zone_get(obj);
    e_backlight_mode_set(zone, E_BACKLIGHT_MODE_DIM);
 }
 
-ACT_FN_GO(undim_screen, __UNUSED__)
+ACT_FN_GO(undim_screen, EINA_UNUSED)
 {
    E_Zone *zone = _e_actions_zone_get(obj);
    e_backlight_mode_set(zone, E_BACKLIGHT_MODE_NORMAL);
@@ -2878,14 +2878,14 @@ ACT_FN_GO(kbd_layout, )
 #endif
 }
 
-ACT_FN_GO(kbd_layout_next, __UNUSED__)
+ACT_FN_GO(kbd_layout_next, EINA_UNUSED)
 {
 #ifndef HAVE_WAYLAND_ONLY
    e_xkb_layout_next();
 #endif
 }
 
-ACT_FN_GO(kbd_layout_prev, __UNUSED__)
+ACT_FN_GO(kbd_layout_prev, EINA_UNUSED)
 {
 #ifndef HAVE_WAYLAND_ONLY
    e_xkb_layout_prev();
@@ -2935,7 +2935,7 @@ ACT_FN_GO(module_toggle, )
    else e_module_enable(m);
 }
 
-ACT_FN_GO(screen_redo, __UNUSED__)
+ACT_FN_GO(screen_redo, EINA_UNUSED)
 {
    printf("REDOOOOOOOOOOOOOOOOOOOOOOOOOOO\n");
 #ifndef HAVE_WAYLAND_ONLY

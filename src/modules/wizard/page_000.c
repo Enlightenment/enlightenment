@@ -6,19 +6,19 @@ static Ecore_Timer *_next_timer = NULL;
 
 /*
 EAPI int
-wizard_page_init(E_Wizard_Page *pg __UNUSED__, Eina_Bool *need_xdg_desktops __UNUSED__, Eina_Bool *need_xdg_icons __UNUSED__)
+wizard_page_init(E_Wizard_Page *pg EINA_UNUSED, Eina_Bool *need_xdg_desktops EINA_UNUSED, Eina_Bool *need_xdg_icons EINA_UNUSED)
 {
    return 1;
 }
 
 EAPI int
-wizard_page_shutdown(E_Wizard_Page *pg __UNUSED__)
+wizard_page_shutdown(E_Wizard_Page *pg EINA_UNUSED)
 {
    return 1;
 }
 */
 static Eina_Bool
-_next_page(void *data __UNUSED__)
+_next_page(void *data EINA_UNUSED)
 {
    _next_timer = NULL;
    e_wizard_button_next_enable_set(1);
@@ -27,7 +27,7 @@ _next_page(void *data __UNUSED__)
 }
 
 EAPI int
-wizard_page_show(E_Wizard_Page *pg __UNUSED__)
+wizard_page_show(E_Wizard_Page *pg EINA_UNUSED)
 {
    Evas_Object *o;
 
@@ -44,7 +44,7 @@ wizard_page_show(E_Wizard_Page *pg __UNUSED__)
 }
 
 EAPI int
-wizard_page_hide(E_Wizard_Page *pg __UNUSED__)
+wizard_page_hide(E_Wizard_Page *pg EINA_UNUSED)
 {
    if (_next_timer) ecore_timer_del(_next_timer);
    _next_timer = NULL;
@@ -52,7 +52,7 @@ wizard_page_hide(E_Wizard_Page *pg __UNUSED__)
 }
 /*
 EAPI int
-wizard_page_apply(E_Wizard_Page *pg __UNUSED__)
+wizard_page_apply(E_Wizard_Page *pg EINA_UNUSED)
 {
    return 1;
 }

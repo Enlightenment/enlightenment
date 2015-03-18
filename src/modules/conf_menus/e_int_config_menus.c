@@ -21,7 +21,7 @@ static int _basic_apply(E_Config_Dialog *cfd, E_Config_Dialog_Data *cfdata);
 static int _basic_check_changed(E_Config_Dialog *cfd, E_Config_Dialog_Data *cfdata);
 
 E_Config_Dialog *
-e_int_config_menus(Evas_Object *parent EINA_UNUSED, const char *params __UNUSED__) 
+e_int_config_menus(Evas_Object *parent EINA_UNUSED, const char *params EINA_UNUSED) 
 {
    E_Config_Dialog *cfd;
    E_Config_Dialog_View *v;
@@ -42,7 +42,7 @@ e_int_config_menus(Evas_Object *parent EINA_UNUSED, const char *params __UNUSED_
 
 /* local functions */
 static void *
-_create_data(E_Config_Dialog *cfd __UNUSED__)
+_create_data(E_Config_Dialog *cfd EINA_UNUSED)
 {
    E_Config_Dialog_Data *cfdata;
 
@@ -52,7 +52,7 @@ _create_data(E_Config_Dialog *cfd __UNUSED__)
 }
 
 static void
-_fill_data(E_Config_Dialog_Data *cfdata __UNUSED__)
+_fill_data(E_Config_Dialog_Data *cfdata EINA_UNUSED)
 {
    if (e_config->default_system_menu)
      cfdata->default_system_menu = 
@@ -75,7 +75,7 @@ _fill_data(E_Config_Dialog_Data *cfdata __UNUSED__)
 }
 
 static void
-_free_data(E_Config_Dialog *cfd __UNUSED__, E_Config_Dialog_Data *cfdata)
+_free_data(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfdata)
 {
    if (cfdata->default_system_menu) 
      eina_stringshare_del(cfdata->default_system_menu);
@@ -248,7 +248,7 @@ _create_menus_list(Evas *evas, E_Config_Dialog_Data *cfdata)
 }
 
 static Evas_Object *
-_basic_create(E_Config_Dialog *cfd __UNUSED__, Evas *evas, E_Config_Dialog_Data *cfdata)
+_basic_create(E_Config_Dialog *cfd EINA_UNUSED, Evas *evas, E_Config_Dialog_Data *cfdata)
 {
    Evas_Object *otb, *ol, *of, *ow;
 
@@ -325,7 +325,7 @@ _basic_create(E_Config_Dialog *cfd __UNUSED__, Evas *evas, E_Config_Dialog_Data 
 }
 
 static int
-_basic_apply(E_Config_Dialog *cfd __UNUSED__, E_Config_Dialog_Data *cfdata)
+_basic_apply(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfdata)
 {
    e_config->menu_favorites_show = cfdata->show_favs;
    e_config->menu_apps_show = cfdata->show_apps;
@@ -366,7 +366,7 @@ _basic_apply(E_Config_Dialog *cfd __UNUSED__, E_Config_Dialog_Data *cfdata)
 }
 
 static int
-_basic_check_changed(E_Config_Dialog *cfd __UNUSED__, E_Config_Dialog_Data *cfdata)
+_basic_check_changed(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfdata)
 {
    double scroll_speed, move_threshold;
 

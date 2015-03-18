@@ -276,7 +276,7 @@ _import_edj_gen(E_Import_Config_Dialog *import)
 }
 
 static Eina_Bool
-_import_cb_edje_cc_exit(void *data, __UNUSED__ int type, void *event)
+_import_cb_edje_cc_exit(void *data, EINA_UNUSED int type, void *event)
 {
    E_Import_Config_Dialog *import;
    Ecore_Exe_Event_Del *ev;
@@ -308,7 +308,7 @@ _import_cb_edje_cc_exit(void *data, __UNUSED__ int type, void *event)
 }
 
 static void
-_import_cb_close(void *data, E_Dialog *dia __UNUSED__)
+_import_cb_close(void *data, E_Dialog *dia EINA_UNUSED)
 {
    E_Import_Config_Dialog *import = data;
 
@@ -319,7 +319,7 @@ _import_cb_close(void *data, E_Dialog *dia __UNUSED__)
 }
 
 static void
-_import_cb_ok(void *data, E_Dialog *dia __UNUSED__)
+_import_cb_ok(void *data, E_Dialog *dia EINA_UNUSED)
 {
    E_Import_Config_Dialog *import = data;
    const char *file;

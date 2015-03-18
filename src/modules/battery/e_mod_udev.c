@@ -65,7 +65,7 @@ _battery_udev_stop(void)
 }
 
 static void
-_battery_udev_event_battery(const char *syspath, Eeze_Udev_Event event, void *data, Eeze_Udev_Watch *watch __UNUSED__)
+_battery_udev_event_battery(const char *syspath, Eeze_Udev_Event event, void *data, Eeze_Udev_Watch *watch EINA_UNUSED)
 {
    if ((event & EEZE_UDEV_EVENT_ADD) ||
        (event & EEZE_UDEV_EVENT_ONLINE))
@@ -78,7 +78,7 @@ _battery_udev_event_battery(const char *syspath, Eeze_Udev_Event event, void *da
 }
 
 static void
-_battery_udev_event_ac(const char *syspath, Eeze_Udev_Event event, void *data, Eeze_Udev_Watch *watch __UNUSED__)
+_battery_udev_event_ac(const char *syspath, Eeze_Udev_Event event, void *data, Eeze_Udev_Watch *watch EINA_UNUSED)
 {
    if ((event & EEZE_UDEV_EVENT_ADD) ||
        (event & EEZE_UDEV_EVENT_ONLINE))

@@ -26,9 +26,9 @@ static Edgehandler *_handler_find(E_Edges_Event event);
 static Evas_Object *_input_obj(Edgeset *es, int x, int y, int w, int h);
 static Edgeset *_edgeset_new(E_Zone *zone);
 static void _edgeset_free(Edgeset *es);
-static void _cb_down(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event);
-static void _cb_up(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event);
-static void _cb_move(void *data, Evas *e __UNUSED__, Evas_Object *obj, void *event);
+static void _cb_down(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event);
+static void _cb_up(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event);
+static void _cb_move(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *event);
 
 static Eina_List *edges = NULL;
 static Eina_List *handlers = NULL;
@@ -142,7 +142,7 @@ _edgeset_free(Edgeset *es)
 }
 
 static void
-_cb_down(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event)
+_cb_down(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event)
 {
    Edgeset *es = data;
    Evas_Event_Mouse_Down *ev = event;
@@ -154,7 +154,7 @@ _cb_down(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *even
 }
 
 static void
-_cb_up(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event)
+_cb_up(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event)
 {
    Edgeset *es = data;
    Evas_Event_Mouse_Up *ev = event;
@@ -163,7 +163,7 @@ _cb_up(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event)
 }
 
 static void
-_cb_move(void *data, Evas *e __UNUSED__, Evas_Object *obj, void *event)
+_cb_move(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *event)
 {
    Edgeset *es = data;
    Evas_Event_Mouse_Move *ev = event;

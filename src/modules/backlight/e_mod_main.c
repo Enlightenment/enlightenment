@@ -156,7 +156,7 @@ _backlight_win_key_down_cb(void *data, Ecore_Event_Key *ev)
 }
 
 static void
-_backlight_settings_cb(void *d1, void *d2 __UNUSED__)
+_backlight_settings_cb(void *d1, void *d2 EINA_UNUSED)
 {
    Instance *inst = d1;
    e_configure_registry_call("screen/power_management", NULL, NULL);
@@ -164,7 +164,7 @@ _backlight_settings_cb(void *d1, void *d2 __UNUSED__)
 }
 
 static void
-_slider_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_slider_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Instance *inst = data;
    _backlight_level_set(inst, inst->val, EINA_FALSE);
@@ -226,7 +226,7 @@ _backlight_popup_free(Instance *inst)
 }
 
 static void
-_backlight_menu_cb_cfg(void *data, E_Menu *menu __UNUSED__, E_Menu_Item *mi __UNUSED__)
+_backlight_menu_cb_cfg(void *data, E_Menu *menu EINA_UNUSED, E_Menu_Item *mi EINA_UNUSED)
 {
    Instance *inst = data;
 
@@ -235,7 +235,7 @@ _backlight_menu_cb_cfg(void *data, E_Menu *menu __UNUSED__, E_Menu_Item *mi __UN
 }
 
 static void
-_backlight_cb_mouse_down(void *data, Evas *evas __UNUSED__, Evas_Object *obj __UNUSED__, void *event)
+_backlight_cb_mouse_down(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event)
 {
    Instance *inst = data;
    Evas_Event_Mouse_Down *ev = event;
@@ -272,7 +272,7 @@ _backlight_cb_mouse_down(void *data, Evas *evas __UNUSED__, Evas_Object *obj __U
 }
 
 static void
-_backlight_cb_mouse_wheel(void *data, Evas *evas __UNUSED__, Evas_Object *obj __UNUSED__, void *event)
+_backlight_cb_mouse_wheel(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event)
 {
    Evas_Event_Mouse_Wheel *ev = event;
    Instance *inst = data;
@@ -334,7 +334,7 @@ _gc_shutdown(E_Gadcon_Client *gcc)
 }
 
 static void
-_gc_orient(E_Gadcon_Client *gcc, E_Gadcon_Orient orient __UNUSED__)
+_gc_orient(E_Gadcon_Client *gcc, E_Gadcon_Orient orient EINA_UNUSED)
 {
    Instance *inst;
    Evas_Coord mw, mh;
@@ -351,13 +351,13 @@ _gc_orient(E_Gadcon_Client *gcc, E_Gadcon_Orient orient __UNUSED__)
 }
 
 static const char *
-_gc_label(const E_Gadcon_Client_Class *client_class __UNUSED__)
+_gc_label(const E_Gadcon_Client_Class *client_class EINA_UNUSED)
 {
    return _("Backlight");
 }
 
 static Evas_Object *
-_gc_icon(const E_Gadcon_Client_Class *client_class __UNUSED__, Evas *evas)
+_gc_icon(const E_Gadcon_Client_Class *client_class EINA_UNUSED, Evas *evas)
 {
    Evas_Object *o;
    char buf[4096];
@@ -412,7 +412,7 @@ _backlight_popup_timer_new(Instance *inst)
 }
 
 static void
-_e_mod_action_cb(E_Object *obj __UNUSED__,
+_e_mod_action_cb(E_Object *obj EINA_UNUSED,
                  const char *params)
 {
    Eina_List *l;
@@ -487,7 +487,7 @@ e_modapi_init(E_Module *m)
 }
 
 EAPI int
-e_modapi_shutdown(E_Module *m __UNUSED__)
+e_modapi_shutdown(E_Module *m EINA_UNUSED)
 {
    if (act)
      {
@@ -501,7 +501,7 @@ e_modapi_shutdown(E_Module *m __UNUSED__)
 }
 
 EAPI int
-e_modapi_save(E_Module *m __UNUSED__)
+e_modapi_save(E_Module *m EINA_UNUSED)
 {
    return 1;
 }

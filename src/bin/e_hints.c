@@ -1566,7 +1566,7 @@ e_hints_window_e_state_get(E_Client *ec)
 }
 
 EAPI void
-e_hints_window_e_state_set(E_Client *ec __UNUSED__)
+e_hints_window_e_state_set(E_Client *ec EINA_UNUSED)
 {
    /* TODO */
 }

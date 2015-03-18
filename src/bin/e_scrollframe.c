@@ -407,7 +407,7 @@ e_scrollframe_key_navigation_set(Evas_Object *obj, Eina_Bool enabled)
 
 /* local subsystem functions */
 static void
-_e_smart_edje_drag_v(void *data, Evas_Object *obj __UNUSED__, const char *emission __UNUSED__, const char *source __UNUSED__)
+_e_smart_edje_drag_v(void *data, Evas_Object *obj EINA_UNUSED, const char *emission EINA_UNUSED, const char *source EINA_UNUSED)
 {
    E_Smart_Data *sd;
 
@@ -416,7 +416,7 @@ _e_smart_edje_drag_v(void *data, Evas_Object *obj __UNUSED__, const char *emissi
 }
 
 static void
-_e_smart_edje_drag_h(void *data, Evas_Object *obj __UNUSED__, const char *emission __UNUSED__, const char *source __UNUSED__)
+_e_smart_edje_drag_h(void *data, Evas_Object *obj EINA_UNUSED, const char *emission EINA_UNUSED, const char *source EINA_UNUSED)
 {
    E_Smart_Data *sd;
 
@@ -425,7 +425,7 @@ _e_smart_edje_drag_h(void *data, Evas_Object *obj __UNUSED__, const char *emissi
 }
 
 static void
-_e_smart_child_del_hook(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_e_smart_child_del_hook(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    E_Smart_Data *sd;
 
@@ -436,7 +436,7 @@ _e_smart_child_del_hook(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSE
 }
 
 static void
-_e_smart_pan_changed_hook(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_e_smart_pan_changed_hook(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Evas_Coord w, h;
    E_Smart_Data *sd;
@@ -453,7 +453,7 @@ _e_smart_pan_changed_hook(void *data, Evas_Object *obj __UNUSED__, void *event_i
 }
 
 static void
-_e_smart_pan_pan_changed_hook(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_e_smart_pan_pan_changed_hook(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Evas_Coord x, y;
    E_Smart_Data *sd;
@@ -465,7 +465,7 @@ _e_smart_pan_pan_changed_hook(void *data, Evas_Object *obj __UNUSED__, void *eve
 }
 
 static void
-_e_smart_event_wheel(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
+_e_smart_event_wheel(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info)
 {
    Evas_Event_Mouse_Wheel *ev;
    E_Smart_Data *sd;
@@ -485,7 +485,7 @@ _e_smart_event_wheel(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__
 }
 
 static void
-_e_smart_event_mouse_down(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
+_e_smart_event_mouse_down(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info)
 {
    Evas_Event_Mouse_Down *ev;
    E_Smart_Data *sd;
@@ -548,7 +548,7 @@ _e_smart_momentum_animator(void *data)
 }
 
 static void
-_e_smart_event_mouse_up(void *data, Evas *e, Evas_Object *obj __UNUSED__, void *event_info)
+_e_smart_event_mouse_up(void *data, Evas *e, Evas_Object *obj EINA_UNUSED, void *event_info)
 {
    Evas_Event_Mouse_Down *ev;
    E_Smart_Data *sd;
@@ -613,7 +613,7 @@ _e_smart_event_mouse_up(void *data, Evas *e, Evas_Object *obj __UNUSED__, void *
 }
 
 static void
-_e_smart_event_mouse_move(void *data, Evas *e, Evas_Object *obj __UNUSED__, void *event_info)
+_e_smart_event_mouse_move(void *data, Evas *e, Evas_Object *obj EINA_UNUSED, void *event_info)
 {
    Evas_Event_Mouse_Move *ev;
    E_Smart_Data *sd;
@@ -688,7 +688,7 @@ _e_smart_event_mouse_move(void *data, Evas *e, Evas_Object *obj __UNUSED__, void
 }
 
 static void
-_e_smart_event_key_down(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
+_e_smart_event_key_down(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info)
 {
    Evas_Event_Key_Down *ev;
    E_Smart_Data *sd;

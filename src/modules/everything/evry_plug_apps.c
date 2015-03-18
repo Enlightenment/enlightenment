@@ -199,7 +199,7 @@ _item_exe_add(Plugin *p, const char *exe, int match)
 }
 
 static Eina_Bool
-_hist_exe_get_cb(const Eina_Hash *hash __UNUSED__, const void *key, void *data, void *fdata)
+_hist_exe_get_cb(const Eina_Hash *hash EINA_UNUSED, const void *key, void *data, void *fdata)
 {
    History_Entry *he = data;
    History_Item *hi;
@@ -478,7 +478,7 @@ _desktop_list_get(void)
 }
 
 static Eina_Bool
-_hist_items_get_cb(const Eina_Hash *hash __UNUSED__, const void *key, void *data, void *fdata)
+_hist_items_get_cb(const Eina_Hash *hash EINA_UNUSED, const void *key, void *data, void *fdata)
 {
    History_Entry *he = data;
    History_Item *hi;
@@ -806,7 +806,7 @@ _fetch_mime(Evry_Plugin *plugin, const char *input)
 }
 
 static int
-_complete(Evry_Plugin *plugin __UNUSED__, const Evry_Item *it, char **input)
+_complete(Evry_Plugin *plugin EINA_UNUSED, const Evry_Item *it, char **input)
 {
    GET_APP(app, it);
 
@@ -832,7 +832,7 @@ _complete(Evry_Plugin *plugin __UNUSED__, const Evry_Item *it, char **input)
 /***************************************************************************/
 
 static int
-_exec_app_check_item(Evry_Action *act __UNUSED__, const Evry_Item *it __UNUSED__)
+_exec_app_check_item(Evry_Action *act EINA_UNUSED, const Evry_Item *it EINA_UNUSED)
 {
    return 1;
 }
@@ -873,7 +873,7 @@ _exec_term_action(Evry_Action *act)
 }
 
 static int
-_exec_term_check_item(Evry_Action *act __UNUSED__, const Evry_Item *it)
+_exec_term_check_item(Evry_Action *act EINA_UNUSED, const Evry_Item *it)
 {
    GET_APP(app, it);
 
@@ -905,7 +905,7 @@ _exec_sudo_action(Evry_Action *act)
 }
 
 static int
-_edit_app_check_item(Evry_Action *act __UNUSED__, const Evry_Item *it)
+_edit_app_check_item(Evry_Action *act EINA_UNUSED, const Evry_Item *it)
 {
    GET_APP(app, it);
 
@@ -939,7 +939,7 @@ _edit_app_action(Evry_Action *act)
 }
 
 static int
-_new_app_check_item(Evry_Action *act __UNUSED__, const Evry_Item *it)
+_new_app_check_item(Evry_Action *act EINA_UNUSED, const Evry_Item *it)
 {
    GET_APP(app, it);
 
@@ -1054,7 +1054,7 @@ _open_term_action(Evry_Action *act)
 }
 
 static int
-_check_executable(Evry_Action *act __UNUSED__, const Evry_Item *it)
+_check_executable(Evry_Action *act EINA_UNUSED, const Evry_Item *it)
 {
    GET_FILE(file, it);
 
@@ -1073,7 +1073,7 @@ _run_executable(Evry_Action *act)
 
 /***************************************************************************/
 static Eina_Bool
-_desktop_cache_update(void *data __UNUSED__, int type __UNUSED__, void *event __UNUSED__)
+_desktop_cache_update(void *data EINA_UNUSED, int type EINA_UNUSED, void *event EINA_UNUSED)
 {
    Efreet_Desktop *d;
 
@@ -1083,7 +1083,7 @@ _desktop_cache_update(void *data __UNUSED__, int type __UNUSED__, void *event __
    return EINA_TRUE;
 }
 static void
-_dir_watcher(void *data  __UNUSED__, Ecore_File_Monitor *em, Ecore_File_Event event, const char *path  __UNUSED__)
+_dir_watcher(void *data  EINA_UNUSED, Ecore_File_Monitor *em, Ecore_File_Event event, const char *path  EINA_UNUSED)
 {
    //printf("exebuf path changed\n");
    switch (event)
@@ -1285,7 +1285,7 @@ static Evas_Object *_basic_create(E_Config_Dialog *cfd, Evas *evas, E_Config_Dia
 static int          _basic_apply(E_Config_Dialog *cfd, E_Config_Dialog_Data *cfdata);
 
 static E_Config_Dialog *
-_conf_dialog(Evas_Object *parent EINA_UNUSED, const char *params __UNUSED__)
+_conf_dialog(Evas_Object *parent EINA_UNUSED, const char *params EINA_UNUSED)
 {
    E_Config_Dialog *cfd = NULL;
    E_Config_Dialog_View *v = NULL;
@@ -1308,7 +1308,7 @@ _conf_dialog(Evas_Object *parent EINA_UNUSED, const char *params __UNUSED__)
 }
 
 static void *
-_create_data(E_Config_Dialog *cfd __UNUSED__)
+_create_data(E_Config_Dialog *cfd EINA_UNUSED)
 {
    E_Config_Dialog_Data *cfdata = NULL;
 
@@ -1318,7 +1318,7 @@ _create_data(E_Config_Dialog *cfd __UNUSED__)
 }
 
 static void
-_free_data(E_Config_Dialog *cfd __UNUSED__, E_Config_Dialog_Data *cfdata)
+_free_data(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfdata)
 {
    _conf->cfd = NULL;
    E_FREE(cfdata);
@@ -1359,7 +1359,7 @@ _fill_data(E_Config_Dialog_Data *cfdata)
 }
 
 static int
-_basic_apply(E_Config_Dialog *cfd __UNUSED__, E_Config_Dialog_Data *cfdata)
+_basic_apply(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfdata)
 {
 #define CP(_name)                        \
    eina_stringshare_replace(&(_conf->_name), cfdata->_name)
@@ -1493,7 +1493,7 @@ evry_plug_apps_save(void)
 
 /* taken from e_exebuf.c */
 static Eina_Bool
-_scan_idler(void *data __UNUSED__)
+_scan_idler(void *data EINA_UNUSED)
 {
    char *dir;
 

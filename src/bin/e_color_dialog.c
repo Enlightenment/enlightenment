@@ -88,7 +88,7 @@ e_color_dialog_change_callback_set(E_Color_Dialog *dia, void (*func)(E_Color_Dia
 }
 
 static void
-_e_color_dialog_cb_csel_change(void *data, Evas_Object *obj __UNUSED__)
+_e_color_dialog_cb_csel_change(void *data, Evas_Object *obj EINA_UNUSED)
 {
    E_Color_Dialog *dia;
 
@@ -98,7 +98,7 @@ _e_color_dialog_cb_csel_change(void *data, Evas_Object *obj __UNUSED__)
 }
 
 static void
-_e_color_dialog_button1_click(void *data, E_Dialog *edia __UNUSED__)
+_e_color_dialog_button1_click(void *data, E_Dialog *edia EINA_UNUSED)
 {
    E_Color_Dialog *dia;
 
@@ -109,7 +109,7 @@ _e_color_dialog_button1_click(void *data, E_Dialog *edia __UNUSED__)
 }
 
 static void
-_e_color_dialog_button2_click(void *data, E_Dialog *edia __UNUSED__)
+_e_color_dialog_button2_click(void *data, E_Dialog *edia EINA_UNUSED)
 {
    E_Color_Dialog *dia;
 

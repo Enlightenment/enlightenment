@@ -41,7 +41,7 @@ e_modapi_init(E_Module *m)
 }
 
 EAPI int
-e_modapi_shutdown(E_Module *m __UNUSED__)
+e_modapi_shutdown(E_Module *m EINA_UNUSED)
 {
    E_Config_Dialog *cfd;
    while ((cfd = e_config_dialog_get("E", "advanced/conf_syscon")))
@@ -96,20 +96,20 @@ _e_mod_syscon_defer_cb(void *data)
 }
 
 static void
-_e_mod_syscon_cb(void *data __UNUSED__, E_Menu *m, E_Menu_Item *mi __UNUSED__)
+_e_mod_syscon_cb(void *data EINA_UNUSED, E_Menu *m, E_Menu_Item *mi EINA_UNUSED)
 {
    ecore_idle_enterer_add(_e_mod_syscon_defer_cb, m->zone);
 }
 
 static void
-_e_mod_menu_generate(void *data __UNUSED__, E_Menu *m)
+_e_mod_menu_generate(void *data EINA_UNUSED, E_Menu *m)
 {
    e_syscon_menu_fill(m);
 }
 
 /* menu item add hook */
 static void
-_e_mod_menu_add(void *data __UNUSED__, E_Menu *m)
+_e_mod_menu_add(void *data EINA_UNUSED, E_Menu *m)
 {
    E_Menu *sub;
    E_Menu_Item *mi;

@@ -107,7 +107,7 @@ static Evas_Object *_basic_create(E_Config_Dialog      *cfd,
                                   E_Config_Dialog_Data *cfdata);
 
 E_Config_Dialog *
-e_int_config_fileman(Evas_Object *parent EINA_UNUSED, const char *params __UNUSED__)
+e_int_config_fileman(Evas_Object *parent EINA_UNUSED, const char *params EINA_UNUSED)
 {
    E_Config_Dialog *cfd;
    E_Config_Dialog_View *v;
@@ -182,7 +182,7 @@ _free_data(E_Config_Dialog      *cfd,
 }
 
 static int
-_basic_apply(E_Config_Dialog *cfd  __UNUSED__,
+_basic_apply(E_Config_Dialog *cfd  EINA_UNUSED,
              E_Config_Dialog_Data *cfdata)
 {
    fileman_config->view.mode = cfdata->view.mode;
@@ -230,7 +230,7 @@ _basic_apply(E_Config_Dialog *cfd  __UNUSED__,
 }
 
 static int
-_basic_check_changed(E_Config_Dialog *cfd  __UNUSED__,
+_basic_check_changed(E_Config_Dialog *cfd  EINA_UNUSED,
                      E_Config_Dialog_Data *cfdata)
 {
    return
@@ -267,7 +267,7 @@ _basic_check_changed(E_Config_Dialog *cfd  __UNUSED__,
 }
 
 static void
-_dir_sort_first_changed(void *data, Evas_Object *obj __UNUSED__)
+_dir_sort_first_changed(void *data, Evas_Object *obj EINA_UNUSED)
 {
    E_Config_Dialog_Data *cfdata = data;
 
@@ -276,7 +276,7 @@ _dir_sort_first_changed(void *data, Evas_Object *obj __UNUSED__)
 }
 
 static void
-_dir_sort_last_changed(void *data, Evas_Object *obj __UNUSED__)
+_dir_sort_last_changed(void *data, Evas_Object *obj EINA_UNUSED)
 {
    E_Config_Dialog_Data *cfdata = data;
 
@@ -285,7 +285,7 @@ _dir_sort_last_changed(void *data, Evas_Object *obj __UNUSED__)
 }
 
 static void
-_tooltip_changed(void *data, Evas_Object *obj __UNUSED__)
+_tooltip_changed(void *data, Evas_Object *obj EINA_UNUSED)
 {
    E_Config_Dialog_Data *cfdata = data;
 
@@ -297,7 +297,7 @@ _tooltip_changed(void *data, Evas_Object *obj __UNUSED__)
 }
 
 static Evas_Object *
-_basic_create(E_Config_Dialog *cfd  __UNUSED__,
+_basic_create(E_Config_Dialog *cfd  EINA_UNUSED,
               Evas                 *evas,
               E_Config_Dialog_Data *cfdata)
 {

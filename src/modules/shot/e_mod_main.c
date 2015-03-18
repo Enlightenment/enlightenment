@@ -37,11 +37,11 @@ static char *url_ret = NULL;
 static E_Dialog *fsel_dia = NULL;
 static E_Client_Menu_Hook *border_hook = NULL;
 
-static void _file_select_ok_cb(void *data __UNUSED__, E_Dialog *dia);
-static void _file_select_cancel_cb(void *data __UNUSED__, E_Dialog *dia);
+static void _file_select_ok_cb(void *data EINA_UNUSED, E_Dialog *dia);
+static void _file_select_cancel_cb(void *data EINA_UNUSED, E_Dialog *dia);
 
 static void
-_win_cancel_cb(void *data __UNUSED__, void *data2 __UNUSED__)
+_win_cancel_cb(void *data EINA_UNUSED, void *data2 EINA_UNUSED)
 {
    E_FREE_FUNC(win, evas_object_del);
 }
@@ -53,14 +53,14 @@ _win_delete_cb()
 }
 
 static void
-_on_focus_cb(void *data __UNUSED__, Evas_Object *obj)
+_on_focus_cb(void *data EINA_UNUSED, Evas_Object *obj)
 {
    if (obj == o_content) e_widget_focused_object_clear(o_box);
    else if (o_content) e_widget_focused_object_clear(o_content);
 }
 
 static void
-_key_down_cb(void *data __UNUSED__, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event)
+_key_down_cb(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event)
 {
    Evas_Event_Key_Down *ev = event;
 
@@ -118,7 +118,7 @@ _key_down_cb(void *data __UNUSED__, Evas *e __UNUSED__, Evas_Object *obj __UNUSE
 }
 
 static void
-_save_key_down_cb(void *data __UNUSED__, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event)
+_save_key_down_cb(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event)
 {
    Evas_Event_Key_Down *ev = event;
    if ((!strcmp(ev->key, "Return")) || (!strcmp(ev->key, "KP_Enter")))
@@ -128,7 +128,7 @@ _save_key_down_cb(void *data __UNUSED__, Evas *e __UNUSED__, Evas_Object *obj __
 }
 
 static void
-_screen_change_cb(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_screen_change_cb(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Eina_List *l;
    E_Zone *z;
@@ -206,7 +206,7 @@ _save_to(const char *file)
 }
 
 static void
-_file_select_ok_cb(void *data __UNUSED__, E_Dialog *dia)
+_file_select_ok_cb(void *data EINA_UNUSED, E_Dialog *dia)
 {
    const char *file;
 
@@ -229,20 +229,20 @@ _file_select_ok_cb(void *data __UNUSED__, E_Dialog *dia)
 }
 
 static void
-_file_select_cancel_cb(void *data __UNUSED__, E_Dialog *dia)
+_file_select_cancel_cb(void *data EINA_UNUSED, E_Dialog *dia)
 {
    if (dia) e_util_defer_object_del(E_OBJECT(dia));
    fsel_dia = NULL;
 }
 
 static void
-_file_select_del_cb(void *d __UNUSED__)
+_file_select_del_cb(void *d EINA_UNUSED)
 {
    fsel_dia = NULL;
 }
 
 static void
-_win_save_cb(void *data __UNUSED__, void *data2 __UNUSED__)
+_win_save_cb(void *data EINA_UNUSED, void *data2 EINA_UNUSED)
 { 
    E_Dialog *dia;
    Evas_Object *o;
@@ -298,7 +298,7 @@ _share_done(void)
 }
 
 static void
-_upload_ok_cb(void *data __UNUSED__, E_Dialog *dia)
+_upload_ok_cb(void *data EINA_UNUSED, E_Dialog *dia)
 {
    // ok just hides dialog and does background upload
    o_label = NULL;
@@ -308,7 +308,7 @@ _upload_ok_cb(void *data __UNUSED__, E_Dialog *dia)
 }
 
 static void
-_upload_cancel_cb(void *data __UNUSED__, E_Dialog *dia)
+_upload_cancel_cb(void *data EINA_UNUSED, E_Dialog *dia)
 {
    o_label = NULL;
    if (dia) e_util_defer_object_del(E_OBJECT(dia));
@@ -317,7 +317,7 @@ _upload_cancel_cb(void *data __UNUSED__, E_Dialog *dia)
 }
 
 static Eina_Bool
-_upload_data_cb(void *data __UNUSED__, int ev_type __UNUSED__, void *event)
+_upload_data_cb(void *data EINA_UNUSED, int ev_type EINA_UNUSED, void *event)
 {
    Ecore_Con_Event_Url_Data *ev = event;
    if (ev->url_con != url_up) return EINA_TRUE;
@@ -352,7 +352,7 @@ _upload_data_cb(void *data __UNUSED__, int ev_type __UNUSED__, void *event)
 }
 
 static Eina_Bool
-_upload_progress_cb(void *data __UNUSED__, int ev_type __UNUSED__, void *event)
+_upload_progress_cb(void *data EINA_UNUSED, int ev_type EINA_UNUSED, void *event)
 {
    size_t total, current;
    Ecore_Con_Event_Url_Progress *ev = event;
@@ -377,7 +377,7 @@ _upload_progress_cb(void *data __UNUSED__, int ev_type __UNUSED__, void *event)
 }
 
 static Eina_Bool
-_upload_complete_cb(void *data, int ev_type __UNUSED__, void *event)
+_upload_complete_cb(void *data, int ev_type EINA_UNUSED, void *event)
 {
    int status;
    Ecore_Con_Event_Url_Complete *ev = event;
@@ -401,7 +401,7 @@ _upload_complete_cb(void *data, int ev_type __UNUSED__, void *event)
 }
 
 static void
-_win_share_del(void *data __UNUSED__)
+_win_share_del(void *data EINA_UNUSED)
 {
    if (handlers) ecore_event_handler_data_set(eina_list_last_data_get(handlers), NULL);
    _upload_cancel_cb(NULL, NULL);
@@ -409,7 +409,7 @@ _win_share_del(void *data __UNUSED__)
 }
 
 static void
-_win_share_cb(void *data __UNUSED__, void *data2 __UNUSED__)
+_win_share_cb(void *data EINA_UNUSED, void *data2 EINA_UNUSED)
 {
    E_Dialog *dia;
    Evas_Object *o, *ol;
@@ -544,7 +544,7 @@ _win_share_confirm_cb(void *d EINA_UNUSED, void *d2 EINA_UNUSED)
 }
 
 static void
-_rect_down_cb(void *data __UNUSED__, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
+_rect_down_cb(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info)
 {
    Evas_Event_Mouse_Down *ev = event_info;
    Eina_List *l;
@@ -903,19 +903,19 @@ _shot(E_Zone *zone)
 }
 
 static void
-_e_mod_menu_border_cb(void *data, E_Menu *m __UNUSED__, E_Menu_Item *mi __UNUSED__)
+_e_mod_menu_border_cb(void *data, E_Menu *m EINA_UNUSED, E_Menu_Item *mi EINA_UNUSED)
 {
    _shot_border(data);
 }
 
 static void
-_e_mod_menu_cb(void *data __UNUSED__, E_Menu *m, E_Menu_Item *mi __UNUSED__)
+_e_mod_menu_cb(void *data EINA_UNUSED, E_Menu *m, E_Menu_Item *mi EINA_UNUSED)
 {
    if (m->zone) _shot(m->zone);
 }
 
 static void
-_e_mod_action_border_cb(E_Object *obj __UNUSED__, const char *params __UNUSED__)
+_e_mod_action_border_cb(E_Object *obj EINA_UNUSED, const char *params EINA_UNUSED)
 {
    E_Client *ec;
    ec = e_client_focused_get();
@@ -951,7 +951,7 @@ _e_mod_action_cb(E_Object *obj, const char *params)
 }
 
 static void
-_bd_hook(void *d __UNUSED__, E_Client *ec)
+_bd_hook(void *d EINA_UNUSED, E_Client *ec)
 {
    E_Menu_Item *mi;
    E_Menu *m;
@@ -975,7 +975,7 @@ _bd_hook(void *d __UNUSED__, E_Client *ec)
 }
 
 static void
-_e_mod_menu_add(void *data __UNUSED__, E_Menu *m)
+_e_mod_menu_add(void *data EINA_UNUSED, E_Menu *m)
 {
    E_Menu_Item *mi;
 
@@ -1028,7 +1028,7 @@ e_modapi_init(E_Module *m)
 }
 
 EAPI int
-e_modapi_shutdown(E_Module *m __UNUSED__)
+e_modapi_shutdown(E_Module *m EINA_UNUSED)
 {
    _share_done();
    E_FREE_FUNC(win, evas_object_del);
@@ -1056,7 +1056,7 @@ e_modapi_shutdown(E_Module *m __UNUSED__)
 }
 
 EAPI int
-e_modapi_save(E_Module *m __UNUSED__)
+e_modapi_save(E_Module *m EINA_UNUSED)
 {
    return 1;
 }

@@ -30,8 +30,8 @@ static void         _e_imc_change_enqueue(E_Config_Dialog_Data *cfdata);
 static void         _e_imc_entry_change_cb(void *data, Evas_Object *obj);
 static void         _e_imc_form_fill(E_Config_Dialog_Data *cfdata);
 static const char  *_e_imc_file_name_new_get(void);
-static Eina_Bool    _change_hash_free_cb(const Eina_Hash *hash __UNUSED__, const void *key __UNUSED__, void *data, void *fdata __UNUSED__);
-static Eina_Bool    _change_hash_apply_cb(const Eina_Hash *hash __UNUSED__, const void *key, void *data, void *fdata __UNUSED__);
+static Eina_Bool    _change_hash_free_cb(const Eina_Hash *hash EINA_UNUSED, const void *key EINA_UNUSED, void *data, void *fdata EINA_UNUSED);
+static Eina_Bool    _change_hash_apply_cb(const Eina_Hash *hash EINA_UNUSED, const void *key, void *data, void *fdata EINA_UNUSED);
 
 struct _E_Config_Dialog_Data
 {
@@ -84,7 +84,7 @@ struct _E_Config_Dialog_Data
 };
 
 E_Config_Dialog *
-e_int_config_imc(Evas_Object *parent, const char *params __UNUSED__)
+e_int_config_imc(Evas_Object *parent, const char *params EINA_UNUSED)
 {
    E_Config_Dialog *cfd;
    E_Config_Dialog_View *v;
@@ -134,7 +134,7 @@ _create_data(E_Config_Dialog *cfd)
 }
 
 static Eina_Bool
-_change_hash_free_cb(const Eina_Hash *hash __UNUSED__, const void *key __UNUSED__, void *data, void *fdata __UNUSED__)
+_change_hash_free_cb(const Eina_Hash *hash EINA_UNUSED, const void *key EINA_UNUSED, void *data, void *fdata EINA_UNUSED)
 {
    E_Input_Method_Config *imc;
 
@@ -144,7 +144,7 @@ _change_hash_free_cb(const Eina_Hash *hash __UNUSED__, const void *key __UNUSED_
 }
 
 static void
-_free_data(E_Config_Dialog *cfd __UNUSED__, E_Config_Dialog_Data *cfdata)
+_free_data(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfdata)
 {
    if (cfdata->win_import)
      e_int_config_imc_import_del(cfdata->win_import);
@@ -174,7 +174,7 @@ _free_data(E_Config_Dialog *cfd __UNUSED__, E_Config_Dialog_Data *cfdata)
 
 /*** Start Basic Dialog Logic ***/
 static int
-_basic_apply_data(E_Config_Dialog *cfd __UNUSED__, E_Config_Dialog_Data *cfdata)
+_basic_apply_data(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfdata)
 {
    eina_stringshare_replace(&e_config->input_method, NULL);
    if (!cfdata->imc_disable)
@@ -210,7 +210,7 @@ _e_imc_setup_button_toggle(Evas_Object *button, E_Input_Method_Config *imc)
 }
 
 static void
-_e_imc_list_change_cb(void *data, Evas_Object *obj __UNUSED__)
+_e_imc_list_change_cb(void *data, Evas_Object *obj EINA_UNUSED)
 {
    E_Config_Dialog_Data *cfdata;
    E_Input_Method_Config *imc;
@@ -226,7 +226,7 @@ _e_imc_list_change_cb(void *data, Evas_Object *obj __UNUSED__)
 }
 
 static void
-_e_imc_imc_toggle(void *data, Evas_Object *obj __UNUSED__)
+_e_imc_imc_toggle(void *data, Evas_Object *obj EINA_UNUSED)
 {
    E_Config_Dialog_Data *cfdata;
 
@@ -246,7 +246,7 @@ _e_imc_imc_toggle(void *data, Evas_Object *obj __UNUSED__)
 }
 
 static void
-_e_imc_setup_cb(void *data, void *data2 __UNUSED__)
+_e_imc_setup_cb(void *data, void *data2 EINA_UNUSED)
 {
    E_Config_Dialog_Data *cfdata;
 
@@ -391,7 +391,7 @@ _basic_create_widgets(E_Config_Dialog *cfd EINA_UNUSED, Evas *evas, E_Config_Dia
 
 /*** Start Advanced Dialog Logic ***/
 static Eina_Bool
-_change_hash_apply_cb(const Eina_Hash *hash __UNUSED__, const void *key, void *data, void *fdata __UNUSED__)
+_change_hash_apply_cb(const Eina_Hash *hash EINA_UNUSED, const void *key, void *data, void *fdata EINA_UNUSED)
 {
    E_Input_Method_Config *imc;
    Eet_File *ef;
@@ -436,7 +436,7 @@ _advanced_apply_data(E_Config_Dialog *cfd, E_Config_Dialog_Data *cfdata)
 
 /* Radio Toggled */
 static void
-_cb_dir(void *data, Evas_Object *obj __UNUSED__)
+_cb_dir(void *data, Evas_Object *obj EINA_UNUSED)
 {
    E_Config_Dialog_Data *cfdata;
    const char *path;
@@ -451,7 +451,7 @@ _cb_dir(void *data, Evas_Object *obj __UNUSED__)
 
 /* Directory Navigator */
 static void
-_cb_button_up(void *data, void *data2 __UNUSED__)
+_cb_button_up(void *data, void *data2 EINA_UNUSED)
 {
    E_Config_Dialog_Data *cfdata;
 
@@ -464,7 +464,7 @@ _cb_button_up(void *data, void *data2 __UNUSED__)
 
 /* Entry chagned */
 static void
-_e_imc_entry_change_cb(void *data, Evas_Object *obj __UNUSED__)
+_e_imc_entry_change_cb(void *data, Evas_Object *obj EINA_UNUSED)
 {
    E_Config_Dialog_Data *cfdata;
 
@@ -474,7 +474,7 @@ _e_imc_entry_change_cb(void *data, Evas_Object *obj __UNUSED__)
 
 /* Creating a new IMC */
 static void
-_cb_new(void *data, void *data2 __UNUSED__)
+_cb_new(void *data, void *data2 EINA_UNUSED)
 {
    E_Input_Method_Config *imc_new;
    Eet_File *ef;
@@ -501,7 +501,7 @@ _cb_new(void *data, void *data2 __UNUSED__)
 }
 
 static void
-_e_imc_adv_setup_cb(void *data, void *data2 __UNUSED__)
+_e_imc_adv_setup_cb(void *data, void *data2 EINA_UNUSED)
 {
    E_Config_Dialog_Data *cfdata;
 
@@ -528,7 +528,7 @@ _e_imc_adv_setup_cb(void *data, void *data2 __UNUSED__)
 
 /** Start IMC FM2 Callbacks **/
 static void
-_cb_files_changed(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_cb_files_changed(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    E_Config_Dialog_Data *cfdata;
 
@@ -549,7 +549,7 @@ _cb_files_changed(void *data, Evas_Object *obj __UNUSED__, void *event_info __UN
 }
 
 static void
-_cb_files_selection_change(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_cb_files_selection_change(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    E_Config_Dialog_Data *cfdata;
    Eina_List *selected;
@@ -583,7 +583,7 @@ _cb_files_selection_change(void *data, Evas_Object *obj __UNUSED__, void *event_
 }
 
 static void
-_cb_files_files_changed(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_cb_files_files_changed(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    const char *buf;
    const char *p;
@@ -613,7 +613,7 @@ _cb_files_files_changed(void *data, Evas_Object *obj __UNUSED__, void *event_inf
 }
 
 static void
-_cb_files_files_deleted(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_cb_files_files_deleted(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    E_Config_Dialog_Data *cfdata;
    Eina_List *sel, *all, *n;
@@ -766,7 +766,7 @@ e_int_config_imc_import_done(E_Config_Dialog *dia)
 }
 
 static void
-_cb_import(void *data1, void *data2 __UNUSED__)
+_cb_import(void *data1, void *data2 EINA_UNUSED)
 {
    E_Config_Dialog_Data *cfdata;
 

@@ -163,8 +163,8 @@ e_msgbus_interface_attach(const Eldbus_Service_Interface_Desc *desc)
 }
 
 static void
-_e_msgbus_request_name_cb(void *data __UNUSED__, const Eldbus_Message *msg,
-                          Eldbus_Pending *pending __UNUSED__)
+_e_msgbus_request_name_cb(void *data EINA_UNUSED, const Eldbus_Message *msg,
+                          Eldbus_Pending *pending EINA_UNUSED)
 {
    unsigned int flag;
 
@@ -186,7 +186,7 @@ _e_msgbus_request_name_cb(void *data __UNUSED__, const Eldbus_Message *msg,
 
 /* Core Handlers */
 static Eldbus_Message *
-_e_msgbus_core_version_cb(const Eldbus_Service_Interface *iface __UNUSED__,
+_e_msgbus_core_version_cb(const Eldbus_Service_Interface *iface EINA_UNUSED,
                           const Eldbus_Message *msg)
 {
    Eldbus_Message *reply = eldbus_message_method_return_new(msg);
@@ -196,7 +196,7 @@ _e_msgbus_core_version_cb(const Eldbus_Service_Interface *iface __UNUSED__,
 }
 
 static Eldbus_Message *
-_e_msgbus_core_restart_cb(const Eldbus_Service_Interface *iface __UNUSED__,
+_e_msgbus_core_restart_cb(const Eldbus_Service_Interface *iface EINA_UNUSED,
                           const Eldbus_Message *msg)
 {
    e_sys_action_do(E_SYS_RESTART, NULL);
@@ -204,7 +204,7 @@ _e_msgbus_core_restart_cb(const Eldbus_Service_Interface *iface __UNUSED__,
 }
 
 static Eldbus_Message *
-_e_msgbus_core_shutdown_cb(const Eldbus_Service_Interface *iface __UNUSED__,
+_e_msgbus_core_shutdown_cb(const Eldbus_Service_Interface *iface EINA_UNUSED,
                            const Eldbus_Message *msg)
 {
    e_sys_action_do(E_SYS_EXIT, NULL);
@@ -213,7 +213,7 @@ _e_msgbus_core_shutdown_cb(const Eldbus_Service_Interface *iface __UNUSED__,
 
 /* Modules Handlers */
 static Eldbus_Message *
-_e_msgbus_module_load_cb(const Eldbus_Service_Interface *iface __UNUSED__,
+_e_msgbus_module_load_cb(const Eldbus_Service_Interface *iface EINA_UNUSED,
                          const Eldbus_Message *msg)
 {
    char *module;
@@ -232,7 +232,7 @@ _e_msgbus_module_load_cb(const Eldbus_Service_Interface *iface __UNUSED__,
 }
 
 static Eldbus_Message *
-_e_msgbus_module_unload_cb(const Eldbus_Service_Interface *iface __UNUSED__,
+_e_msgbus_module_unload_cb(const Eldbus_Service_Interface *iface EINA_UNUSED,
                            const Eldbus_Message *msg)
 {
    char *module;
@@ -253,7 +253,7 @@ _e_msgbus_module_unload_cb(const Eldbus_Service_Interface *iface __UNUSED__,
 }
 
 static Eldbus_Message *
-_e_msgbus_module_enable_cb(const Eldbus_Service_Interface *iface __UNUSED__,
+_e_msgbus_module_enable_cb(const Eldbus_Service_Interface *iface EINA_UNUSED,
                            const Eldbus_Message *msg)
 {
    char *module;
@@ -273,7 +273,7 @@ _e_msgbus_module_enable_cb(const Eldbus_Service_Interface *iface __UNUSED__,
 }
 
 static Eldbus_Message *
-_e_msgbus_module_disable_cb(const Eldbus_Service_Interface *iface __UNUSED__,
+_e_msgbus_module_disable_cb(const Eldbus_Service_Interface *iface EINA_UNUSED,
                             const Eldbus_Message *msg)
 {
    char *module;
@@ -293,7 +293,7 @@ _e_msgbus_module_disable_cb(const Eldbus_Service_Interface *iface __UNUSED__,
 }
 
 static Eldbus_Message *
-_e_msgbus_module_list_cb(const Eldbus_Service_Interface *iface __UNUSED__,
+_e_msgbus_module_list_cb(const Eldbus_Service_Interface *iface EINA_UNUSED,
                          const Eldbus_Message *msg)
 {
    Eina_List *l;
@@ -329,7 +329,7 @@ _e_msgbus_module_list_cb(const Eldbus_Service_Interface *iface __UNUSED__,
 
 /* Profile Handlers */
 static Eldbus_Message *
-_e_msgbus_profile_set_cb(const Eldbus_Service_Interface *iface __UNUSED__,
+_e_msgbus_profile_set_cb(const Eldbus_Service_Interface *iface EINA_UNUSED,
                          const Eldbus_Message *msg)
 {
    char *profile;
@@ -348,7 +348,7 @@ _e_msgbus_profile_set_cb(const Eldbus_Service_Interface *iface __UNUSED__,
 }
 
 static Eldbus_Message *
-_e_msgbus_profile_get_cb(const Eldbus_Service_Interface *iface __UNUSED__,
+_e_msgbus_profile_get_cb(const Eldbus_Service_Interface *iface EINA_UNUSED,
                          const Eldbus_Message *msg)
 {
    Eldbus_Message *reply = eldbus_message_method_return_new(msg);
@@ -361,7 +361,7 @@ _e_msgbus_profile_get_cb(const Eldbus_Service_Interface *iface __UNUSED__,
 }
 
 static Eldbus_Message *
-_e_msgbus_profile_list_cb(const Eldbus_Service_Interface *iface __UNUSED__,
+_e_msgbus_profile_list_cb(const Eldbus_Service_Interface *iface EINA_UNUSED,
                           const Eldbus_Message *msg)
 {
    Eina_List *l;
@@ -390,7 +390,7 @@ _e_msgbus_profile_list_cb(const Eldbus_Service_Interface *iface __UNUSED__,
 }
 
 static Eldbus_Message *
-_e_msgbus_profile_add_cb(const Eldbus_Service_Interface *iface __UNUSED__,
+_e_msgbus_profile_add_cb(const Eldbus_Service_Interface *iface EINA_UNUSED,
                          const Eldbus_Message *msg)
 {
    char *profile;
@@ -404,7 +404,7 @@ _e_msgbus_profile_add_cb(const Eldbus_Service_Interface *iface __UNUSED__,
 }
 
 static Eldbus_Message *
-_e_msgbus_profile_delete_cb(const Eldbus_Service_Interface *iface __UNUSED__,
+_e_msgbus_profile_delete_cb(const Eldbus_Service_Interface *iface EINA_UNUSED,
                             const Eldbus_Message *msg)
 {
    char *profile;
@@ -421,7 +421,7 @@ _e_msgbus_profile_delete_cb(const Eldbus_Service_Interface *iface __UNUSED__,
 
 /* Window handlers */
 static Eldbus_Message *
-_e_msgbus_window_list_cb(const Eldbus_Service_Interface *iface __UNUSED__,
+_e_msgbus_window_list_cb(const Eldbus_Service_Interface *iface EINA_UNUSED,
                          const Eldbus_Message *msg)
 {
    const Eina_List *l;
@@ -457,7 +457,7 @@ _e_msgbus_window_list_cb(const Eldbus_Service_Interface *iface __UNUSED__,
 
 #define E_MSGBUS_WIN_ACTION_CB_BEGIN(NAME)                                       \
   static Eldbus_Message *                                                         \
-  _e_msgbus_window_##NAME##_cb(const Eldbus_Service_Interface * iface __UNUSED__, \
+  _e_msgbus_window_##NAME##_cb(const Eldbus_Service_Interface * iface EINA_UNUSED, \
                                const Eldbus_Message * msg)                        \
   {                                                                              \
      E_Client *ec;                                                               \

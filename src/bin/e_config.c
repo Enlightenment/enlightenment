@@ -2114,7 +2114,7 @@ e_config_bindings_free(E_Config_Bindings *ecb)
 
 /* local subsystem functions */
 static void
-_e_config_save_cb(void *data __UNUSED__)
+_e_config_save_cb(void *data EINA_UNUSED)
 {
    e_config_profile_save();
    e_module_save_all();

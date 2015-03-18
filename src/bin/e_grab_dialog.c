@@ -8,7 +8,7 @@
                                              "<br>Press <hilight>Escape</hilight> to abort.")
 
 static Eina_Bool
-_e_grab_dialog_key_handler(void *data, int type __UNUSED__, Ecore_Event_Key *ev)
+_e_grab_dialog_key_handler(void *data, int type EINA_UNUSED, Ecore_Event_Key *ev)
 {
    E_Grab_Dialog *eg = data;
 
@@ -33,7 +33,7 @@ _e_grab_dialog_key_handler(void *data, int type __UNUSED__, Ecore_Event_Key *ev)
 }
 
 static Eina_Bool
-_e_grab_dialog_wheel_handler(void *data, int type __UNUSED__, Ecore_Event_Mouse_Wheel *ev)
+_e_grab_dialog_wheel_handler(void *data, int type EINA_UNUSED, Ecore_Event_Mouse_Wheel *ev)
 {
    E_Grab_Dialog *eg = data;
 
@@ -49,7 +49,7 @@ _e_grab_dialog_wheel_handler(void *data, int type __UNUSED__, Ecore_Event_Mouse_
 }
 
 static Eina_Bool
-_e_grab_dialog_mouse_handler(void *data, int type __UNUSED__, Ecore_Event_Mouse_Button *ev)
+_e_grab_dialog_mouse_handler(void *data, int type EINA_UNUSED, Ecore_Event_Mouse_Button *ev)
 {
    E_Grab_Dialog *eg = data;
 

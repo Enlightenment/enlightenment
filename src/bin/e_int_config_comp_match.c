@@ -869,7 +869,7 @@ _create_data(E_Config_Dialog *cfd)
 }
 
 EAPI E_Config_Dialog *
-e_int_config_comp_match(Evas_Object *parent, const char *params __UNUSED__)
+e_int_config_comp_match(Evas_Object *parent, const char *params EINA_UNUSED)
 {
    E_Config_Dialog *cfd;
    E_Config_Dialog_View *v;

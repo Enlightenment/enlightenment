@@ -484,7 +484,7 @@ e_menu_title_set(E_Menu *m, const char *title)
 }
 
 EAPI void
-e_menu_icon_file_set(E_Menu *m __UNUSED__, const char *icon __UNUSED__)
+e_menu_icon_file_set(E_Menu *m EINA_UNUSED, const char *icon EINA_UNUSED)
 {
    /* FIXME: support menu icons
       E_OBJECT_CHECK(m);
@@ -2643,7 +2643,7 @@ _e_menu_auto_place(E_Menu *m, int x, int y, int w, int h)
 }
 
 static void
-_e_menu_cb_item_in(void *data, Evas *evas __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_e_menu_cb_item_in(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    E_Menu_Item *mi = data;
 
@@ -2654,7 +2654,7 @@ _e_menu_cb_item_in(void *data, Evas *evas __UNUSED__, Evas_Object *obj __UNUSED_
 }
 
 static void
-_e_menu_cb_item_out(void *data, Evas *evas __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info EINA_UNUSED)
+_e_menu_cb_item_out(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    E_Menu_Item *mi = data;
    /* this can be triggered when creating menus if the new menu is on top of its parent */
@@ -2723,7 +2723,7 @@ _e_menu_cb_mouse_evas_down(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED)
 }
 
 static Eina_Bool
-_e_menu_cb_mouse_down(void *data __UNUSED__, int type __UNUSED__, void *event)
+_e_menu_cb_mouse_down(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
 {
    Ecore_Event_Mouse_Button *ev;
 
@@ -2747,7 +2747,7 @@ _e_menu_cb_mouse_down(void *data __UNUSED__, int type __UNUSED__, void *event)
 }
 
 static Eina_Bool
-_e_menu_cb_mouse_up(void *data __UNUSED__, int type __UNUSED__, void *event)
+_e_menu_cb_mouse_up(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
 {
    Ecore_Event_Mouse_Button *ev;
    unsigned int t;
@@ -2798,7 +2798,7 @@ _e_menu_cb_mouse_up(void *data __UNUSED__, int type __UNUSED__, void *event)
 }
 
 static Eina_Bool
-_e_menu_cb_mouse_move(void *data __UNUSED__, int type __UNUSED__, void *event)
+_e_menu_cb_mouse_move(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
 {
    Ecore_Event_Mouse_Move *ev;
    Eina_List *l, *tmp;
@@ -2872,7 +2872,7 @@ _e_menu_cb_mouse_move(void *data __UNUSED__, int type __UNUSED__, void *event)
 }
 
 static Eina_Bool
-_e_menu_cb_mouse_wheel(void *data __UNUSED__, int type __UNUSED__, void *event)
+_e_menu_cb_mouse_wheel(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
 {
    Ecore_Event_Mouse_Wheel *ev;
 
@@ -2896,7 +2896,7 @@ _e_menu_cb_mouse_wheel(void *data __UNUSED__, int type __UNUSED__, void *event)
 }
 
 static Eina_Bool
-_e_menu_cb_scroll_animator(void *data __UNUSED__)
+_e_menu_cb_scroll_animator(void *data EINA_UNUSED)
 {
    double t, dt;
    double dx, dy;
@@ -2946,7 +2946,7 @@ _e_menu_cb_scroll_animator(void *data __UNUSED__)
 }
 
 static void
-_e_menu_cb_item_submenu_post_default(void *data __UNUSED__, E_Menu *m __UNUSED__, E_Menu_Item *mi)
+_e_menu_cb_item_submenu_post_default(void *data EINA_UNUSED, E_Menu *m EINA_UNUSED, E_Menu_Item *mi)
 {
    E_Menu *subm;
 

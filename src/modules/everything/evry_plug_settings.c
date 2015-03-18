@@ -44,7 +44,7 @@ _finish(Evry_Plugin *plugin)
 }
 
 static Evas_Object *
-_icon_get(Evry_Item *item, Evas *e __UNUSED__)
+_icon_get(Evry_Item *item, Evas *e EINA_UNUSED)
 {
    Settings_Item *it = (Settings_Item *)item;
 
@@ -89,7 +89,7 @@ _browse(Evry_Plugin *plugin, const Evry_Item *item)
 }
 
 static Evry_Plugin *
-_begin(Evry_Plugin *plugin, const Evry_Item *item __UNUSED__)
+_begin(Evry_Plugin *plugin, const Evry_Item *item EINA_UNUSED)
 {
    Plugin *pl;
 
@@ -150,7 +150,7 @@ _fetch(Evry_Plugin *plugin, const char *input)
 }
 
 static int
-_action_check(Evry_Action *action __UNUSED__, const Evry_Item *item)
+_action_check(Evry_Action *action EINA_UNUSED, const Evry_Item *item)
 {
    return !!(((Settings_Item *)item)->eci);
 }

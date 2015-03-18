@@ -19,7 +19,7 @@ Eina_Hash *pulse_sinks = NULL;
 Eina_Hash *pulse_sources = NULL;
 
 void
-pulse_fake_free(void *d __UNUSED__, void *d2 __UNUSED__)
+pulse_fake_free(void *d EINA_UNUSED, void *d2 EINA_UNUSED)
 {}
 
 static void
@@ -343,7 +343,7 @@ fdh_func(Pulse *conn, Ecore_Fd_Handler *fdh)
 }
 
 static Eina_Bool
-con(Pulse *conn, int type __UNUSED__, Ecore_Con_Event_Server_Add *ev)
+con(Pulse *conn, int type EINA_UNUSED, Ecore_Con_Event_Server_Add *ev)
 {
    int on = 1;
    int fd;

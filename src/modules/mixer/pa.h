@@ -23,8 +23,8 @@
 # define STATEDIR "/var"
 #endif
 
-#ifndef __UNUSED__
-# define __UNUSED__ __attribute__((unused))
+#ifndef EINA_UNUSED
+# define EINA_UNUSED __attribute__((unused))
 #endif
 
 # ifdef EINTERN
@@ -552,7 +552,7 @@ void tag_finish(Pulse_Tag *tag);
 
 Eina_Bool deserialize_tag(Pulse *conn, PA_Commands command, Pulse_Tag *tag);
 
-void pulse_fake_free(void *d __UNUSED__, void *d2 __UNUSED__);
+void pulse_fake_free(void *d EINA_UNUSED, void *d2 EINA_UNUSED);
 void pulse_tag_free(Pulse_Tag *tag);
 
 void msg_recv_creds(Pulse *conn, Pulse_Tag *tag);

@@ -110,9 +110,9 @@ Fileman_Path *e_mod_fileman_path_find(E_Zone *zone);
 
 E_Menu *e_mod_menu_add(E_Menu *m, const char *path);
 
-E_Config_Dialog *e_int_config_fileman(Evas_Object *parent, const char *params __UNUSED__);
+E_Config_Dialog *e_int_config_fileman(Evas_Object *parent, const char *params EINA_UNUSED);
 E_Config_Dialog *e_int_config_mime_edit(E_Config_Mime_Icon *data, void *data2);
-E_Config_Dialog *e_int_config_mime(Evas_Object *parent, const char *params __UNUSED__);
+E_Config_Dialog *e_int_config_mime(Evas_Object *parent, const char *params EINA_UNUSED);
 void e_int_config_mime_edit_done(void *data);
 
 void e_fileman_dbus_init(void);

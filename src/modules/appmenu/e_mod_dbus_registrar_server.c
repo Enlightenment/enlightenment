@@ -13,7 +13,7 @@ enum
 };
 
 void
-appmenu_application_monitor(void *data, const char *bus EINA_UNUSED, const char *old __UNUSED__, const char *new __UNUSED__)
+appmenu_application_monitor(void *data, const char *bus EINA_UNUSED, const char *old EINA_UNUSED, const char *new EINA_UNUSED)
 {
    E_AppMenu_Window *window = data;
    eldbus_service_signal_emit(window->ctxt->iface, SIGNAL_WINDOW_UNREGISTERED,

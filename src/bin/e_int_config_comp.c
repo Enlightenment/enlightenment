@@ -68,7 +68,7 @@ static int          _advanced_apply_data(E_Config_Dialog *cfd,
                                       E_Config_Dialog_Data *cfdata);
 
 EAPI E_Config_Dialog *
-e_int_config_comp(Evas_Object *parent EINA_UNUSED, const char *params __UNUSED__)
+e_int_config_comp(Evas_Object *parent EINA_UNUSED, const char *params EINA_UNUSED)
 {
    E_Config_Dialog *cfd;
    E_Config_Dialog_View *v;
@@ -157,7 +157,7 @@ _advanced_features_changed(E_Comp_Config *conf)
 }
 
 static void
-_free_data(E_Config_Dialog *cfd  __UNUSED__,
+_free_data(E_Config_Dialog *cfd  EINA_UNUSED,
            E_Config_Dialog_Data *cfdata)
 {
    eina_stringshare_del(cfdata->shadow_style);
@@ -428,7 +428,7 @@ _advanced_create_widgets(E_Config_Dialog *cfd, Evas *evas, E_Config_Dialog_Data 
 }
 
 static int
-_advanced_apply_data(E_Config_Dialog *cfd  __UNUSED__,
+_advanced_apply_data(E_Config_Dialog *cfd  EINA_UNUSED,
                      E_Config_Dialog_Data *cfdata)
 {
    E_Comp_Config *conf = e_comp_config_get();
@@ -626,7 +626,7 @@ _basic_create_widgets(E_Config_Dialog *cfd,
 }
 
 static int
-_basic_apply_data(E_Config_Dialog *cfd  __UNUSED__,
+_basic_apply_data(E_Config_Dialog *cfd  EINA_UNUSED,
                   E_Config_Dialog_Data *cfdata)
 {
    E_Comp_Config *conf = e_comp_config_get();

@@ -55,7 +55,7 @@ e_focus_event_mouse_down(E_Client *ec)
 }
 
 EAPI void
-e_focus_event_mouse_up(E_Client *ec __UNUSED__)
+e_focus_event_mouse_up(E_Client *ec EINA_UNUSED)
 {
 }
 

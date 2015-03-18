@@ -140,7 +140,7 @@ _e_qa_entry_find_match(const E_Client *ec, Eina_Bool nontrans)
 }
 
 static Eina_Bool
-_e_qa_event_exe_del_cb(void *data, int type __UNUSED__, Ecore_Exe_Event_Del *ev)
+_e_qa_event_exe_del_cb(void *data, int type EINA_UNUSED, Ecore_Exe_Event_Del *ev)
 {
    E_Quick_Access_Entry *entry;
 
@@ -156,7 +156,7 @@ _e_qa_event_exe_del_cb(void *data, int type __UNUSED__, Ecore_Exe_Event_Del *ev)
 }
 
 static void
-_e_qa_entry_border_props_restore(E_Quick_Access_Entry *entry __UNUSED__, E_Client *ec)
+_e_qa_entry_border_props_restore(E_Quick_Access_Entry *entry EINA_UNUSED, E_Client *ec)
 {
 #undef SET
 #define SET(X) \
@@ -469,19 +469,19 @@ _e_qa_border_new(E_Quick_Access_Entry *entry)
 }
 
 static void
-_e_qa_del_cb(E_Object *obj __UNUSED__, const char *params __UNUSED__)
+_e_qa_del_cb(E_Object *obj EINA_UNUSED, const char *params EINA_UNUSED)
 {
    _e_qa_bd_menu_del(_e_qa_entry_find_border(e_client_focused_get()), NULL, NULL);
 }
 
 static void
-_e_qa_add_cb(E_Object *obj __UNUSED__, const char *params __UNUSED__)
+_e_qa_add_cb(E_Object *obj EINA_UNUSED, const char *params EINA_UNUSED)
 {
    _e_qa_bd_menu_del(e_client_focused_get(), NULL, NULL);
 }
 
 static void
-_e_qa_toggle_cb(E_Object *obj __UNUSED__, const char *params)
+_e_qa_toggle_cb(E_Object *obj EINA_UNUSED, const char *params)
 {
    E_Quick_Access_Entry *entry;
 
@@ -533,7 +533,7 @@ _e_qa_client_is_valid(const E_Client *ec)
 }
 
 static void
-_e_qa_border_eval_pre_post_fetch_cb(void *data __UNUSED__, E_Client *ec)
+_e_qa_border_eval_pre_post_fetch_cb(void *data EINA_UNUSED, E_Client *ec)
 {
    E_Quick_Access_Entry *entry;
 
@@ -546,7 +546,7 @@ _e_qa_border_eval_pre_post_fetch_cb(void *data __UNUSED__, E_Client *ec)
 }
 
 static Eina_Bool
-_e_qa_event_border_focus_out_cb(void *data __UNUSED__, int type __UNUSED__, E_Event_Client *ev)
+_e_qa_event_border_focus_out_cb(void *data EINA_UNUSED, int type EINA_UNUSED, E_Event_Client *ev)
 {
    E_Quick_Access_Entry *entry;
 
@@ -609,7 +609,7 @@ _e_qa_begin(void)
 }
 
 static Eina_Bool
-_e_qa_event_border_remove_cb(void *data __UNUSED__, int type __UNUSED__, E_Event_Client *ev)
+_e_qa_event_border_remove_cb(void *data EINA_UNUSED, int type EINA_UNUSED, E_Event_Client *ev)
 {
    E_Quick_Access_Entry *entry;
 
@@ -664,7 +664,7 @@ _e_qa_entry_transient_new(E_Client *ec)
 }
 
 static Eina_Bool
-_grab_key_down_cb(void *data, int type __UNUSED__, void *event)
+_grab_key_down_cb(void *data, int type EINA_UNUSED, void *event)
 {
    Ecore_Event_Key *ev = event;
    E_Client *ec = data;
@@ -713,20 +713,20 @@ _grab_key_down_cb(void *data, int type __UNUSED__, void *event)
 }
 
 static void
-_grab_wnd_hide(void *data __UNUSED__)
+_grab_wnd_hide(void *data EINA_UNUSED)
 {
    eg = NULL;
 }
 
 static void
-_e_qa_bd_menu_transient(void *data, E_Menu *m __UNUSED__, E_Menu_Item *mi __UNUSED__)
+_e_qa_bd_menu_transient(void *data, E_Menu *m EINA_UNUSED, E_Menu_Item *mi EINA_UNUSED)
 {
    E_Quick_Access_Entry *entry = data;
    _e_qa_entry_transient_convert(entry);
 }
 
 static void
-_e_qa_bd_menu_relaunch(void *data, E_Menu *m __UNUSED__, E_Menu_Item *mi __UNUSED__)
+_e_qa_bd_menu_relaunch(void *data, E_Menu *m EINA_UNUSED, E_Menu_Item *mi EINA_UNUSED)
 {
    E_Quick_Access_Entry *entry = data;
 
@@ -739,7 +739,7 @@ _e_qa_bd_menu_relaunch(void *data, E_Menu *m __UNUSED__, E_Menu_Item *mi __UNUSE
 }
 
 static void
-_e_qa_bd_menu_jump(void *data, E_Menu *m __UNUSED__, E_Menu_Item *mi __UNUSED__)
+_e_qa_bd_menu_jump(void *data, E_Menu *m EINA_UNUSED, E_Menu_Item *mi EINA_UNUSED)
 {
    E_Quick_Access_Entry *entry = data;
 
@@ -754,7 +754,7 @@ _e_qa_bd_menu_jump(void *data, E_Menu *m __UNUSED__, E_Menu_Item *mi __UNUSED__)
 }
 
 static void
-_e_qa_bd_menu_hideraise(void *data, E_Menu *m __UNUSED__, E_Menu_Item *mi __UNUSED__)
+_e_qa_bd_menu_hideraise(void *data, E_Menu *m EINA_UNUSED, E_Menu_Item *mi EINA_UNUSED)
 {
    E_Quick_Access_Entry *entry = data;
 
@@ -762,7 +762,7 @@ _e_qa_bd_menu_hideraise(void *data, E_Menu *m __UNUSED__, E_Menu_Item *mi __UNUS
 }
 
 static void
-_e_qa_bd_menu_autohide(void *data, E_Menu *m __UNUSED__, E_Menu_Item *mi __UNUSED__)
+_e_qa_bd_menu_autohide(void *data, E_Menu *m EINA_UNUSED, E_Menu_Item *mi EINA_UNUSED)
 {
    E_Quick_Access_Entry *entry = data;
 
@@ -771,13 +771,13 @@ _e_qa_bd_menu_autohide(void *data, E_Menu *m __UNUSED__, E_Menu_Item *mi __UNUSE
 }
 
 static void
-_e_qa_bd_menu_help(void *data __UNUSED__, E_Menu *m __UNUSED__, E_Menu_Item *mi __UNUSED__)
+_e_qa_bd_menu_help(void *data EINA_UNUSED, E_Menu *m EINA_UNUSED, E_Menu_Item *mi EINA_UNUSED)
 {
    e_qa_help();
 }
 
 static void
-_e_qa_bd_menu_del(void *data, E_Menu *m __UNUSED__, E_Menu_Item *mi __UNUSED__)
+_e_qa_bd_menu_del(void *data, E_Menu *m EINA_UNUSED, E_Menu_Item *mi EINA_UNUSED)
 {
    E_Quick_Access_Entry *entry = data;
 
@@ -787,13 +787,13 @@ _e_qa_bd_menu_del(void *data, E_Menu *m __UNUSED__, E_Menu_Item *mi __UNUSED__)
 }
 
 static void
-_e_qa_bd_menu_config(void *data __UNUSED__, E_Menu *m __UNUSED__, E_Menu_Item *mi __UNUSED__)
+_e_qa_bd_menu_config(void *data EINA_UNUSED, E_Menu *m EINA_UNUSED, E_Menu_Item *mi EINA_UNUSED)
 {
    e_configure_registry_call("launcher/quickaccess", NULL, NULL);
 }
 
 static void
-_e_qa_bd_menu_add(void *data, E_Menu *m __UNUSED__, E_Menu_Item *mi __UNUSED__)
+_e_qa_bd_menu_add(void *data, E_Menu *m EINA_UNUSED, E_Menu_Item *mi EINA_UNUSED)
 {
    E_Client *ec = data;
    if (!ec) return;
@@ -804,13 +804,13 @@ _e_qa_bd_menu_add(void *data, E_Menu *m __UNUSED__, E_Menu_Item *mi __UNUSED__)
 }
 
 static void
-_e_qa_bd_menu_free(void *data __UNUSED__)
+_e_qa_bd_menu_free(void *data EINA_UNUSED)
 {
    qa_mod->menu = NULL;
 }
 
 static void
-_e_qa_bd_menu_pre(void *data, E_Menu *m __UNUSED__, E_Menu_Item *mi)
+_e_qa_bd_menu_pre(void *data, E_Menu *m EINA_UNUSED, E_Menu_Item *mi)
 {
    E_Quick_Access_Entry *entry = data;
    E_Menu *subm;
@@ -875,7 +875,7 @@ _e_qa_bd_menu_pre(void *data, E_Menu *m __UNUSED__, E_Menu_Item *mi)
 }
 
 static void
-_e_qa_bd_menu_hook(void *d __UNUSED__, E_Client *ec)
+_e_qa_bd_menu_hook(void *d EINA_UNUSED, E_Client *ec)
 {
    E_Menu_Item *mi;
    E_Menu *m;
@@ -914,7 +914,7 @@ _e_qa_entry_config_apply(E_Quick_Access_Entry *entry)
 }
 
 static Eina_Bool
-_e_qa_help_timeout(void *data __UNUSED__)
+_e_qa_help_timeout(void *data EINA_UNUSED)
 {
    if (qa_mod->help_dia) e_object_del(qa_mod->help_dia);
    if (qa_mod->demo_dia)
@@ -932,7 +932,7 @@ _e_qa_help_timeout(void *data __UNUSED__)
 }
 
 static void
-_e_qa_dia_end_del(void *data __UNUSED__)
+_e_qa_dia_end_del(void *data EINA_UNUSED)
 {
    qa_mod->help_dia = NULL;
    _e_qa_help_timeout(NULL);
@@ -940,7 +940,7 @@ _e_qa_dia_end_del(void *data __UNUSED__)
 }
 
 static void
-_e_qa_dia_del(void *data __UNUSED__)
+_e_qa_dia_del(void *data EINA_UNUSED)
 {
    qa_mod->help_dia = NULL;
    if (qa_mod->help_timeout)
@@ -950,14 +950,14 @@ _e_qa_dia_del(void *data __UNUSED__)
 }
 
 static void
-_e_qa_demo_dia_del(void *data __UNUSED__)
+_e_qa_demo_dia_del(void *data EINA_UNUSED)
 {
    qa_mod->demo_dia = NULL;
    _e_qa_help_timeout(NULL);
 }
 
 static void
-_e_qa_help_cancel(void *data __UNUSED__)
+_e_qa_help_cancel(void *data EINA_UNUSED)
 {
    qa_config->first_run = EINA_TRUE;
    _e_qa_help_timeout(NULL);
@@ -982,7 +982,7 @@ e_qa_help(void)
 }
 
 static void
-_e_qa_help6(void *data __UNUSED__)
+_e_qa_help6(void *data EINA_UNUSED)
 {
    if (qa_mod->help_dia)
      {
@@ -993,7 +993,7 @@ _e_qa_help6(void *data __UNUSED__)
 }
 
 static void
-_e_qa_help5(void *data __UNUSED__)
+_e_qa_help5(void *data EINA_UNUSED)
 {
    char buf[PATH_MAX];
 
@@ -1061,7 +1061,7 @@ _e_qa_help_activate_hook(E_Quick_Access_Entry *entry)
 }
 
 static void
-_e_qa_help4(void *data __UNUSED__)
+_e_qa_help4(void *data EINA_UNUSED)
 {
    char buf[PATH_MAX];
 
@@ -1073,7 +1073,7 @@ _e_qa_help4(void *data __UNUSED__)
 }
 
 static void
-_e_qa_help_qa_added_cb(void *data __UNUSED__)
+_e_qa_help_qa_added_cb(void *data EINA_UNUSED)
 {
    E_Quick_Access_Entry *entry;
 
@@ -1090,7 +1090,7 @@ _e_qa_help_qa_added_cb(void *data __UNUSED__)
 }
 
 static void
-_e_qa_help_bd_menu_del(void *data __UNUSED__)
+_e_qa_help_bd_menu_del(void *data EINA_UNUSED)
 {
    if (qa_mod->help_timer) ecore_timer_del(qa_mod->help_timer);
    qa_mod->demo_state = 0;
@@ -1104,7 +1104,7 @@ _e_qa_help_bd_menu_del(void *data __UNUSED__)
 }
 
 static void
-_e_qa_help_bd_menu2_del(void *data __UNUSED__)
+_e_qa_help_bd_menu2_del(void *data EINA_UNUSED)
 {
    if (qa_mod->help_timer) ecore_timer_del(qa_mod->help_timer);
    qa_mod->demo_state = 0;
@@ -1171,7 +1171,7 @@ _e_qa_help_timer_helper(void)
 }
 
 static Eina_Bool
-_e_qa_help_timer2_cb(void *data __UNUSED__)
+_e_qa_help_timer2_cb(void *data EINA_UNUSED)
 {
    E_Client *ec;
 
@@ -1195,7 +1195,7 @@ _e_qa_help_timer2_cb(void *data __UNUSED__)
 }
 
 static Eina_Bool
-_e_qa_help_timer_cb(void *data __UNUSED__)
+_e_qa_help_timer_cb(void *data EINA_UNUSED)
 {
    E_Client *ec;
 
@@ -1219,7 +1219,7 @@ _e_qa_help_timer_cb(void *data __UNUSED__)
 }
 
 static void
-_e_qa_help3(void *data __UNUSED__)
+_e_qa_help3(void *data EINA_UNUSED)
 {
    char buf[PATH_MAX];
    E_Dialog *dia;
@@ -1251,7 +1251,7 @@ _e_qa_help3(void *data __UNUSED__)
 }
 
 static void
-_e_qa_help2(void *data __UNUSED__)
+_e_qa_help2(void *data EINA_UNUSED)
 {
    char buf[PATH_MAX];
 

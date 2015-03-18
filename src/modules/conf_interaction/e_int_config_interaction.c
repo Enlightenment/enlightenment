@@ -17,7 +17,7 @@ struct _E_Config_Dialog_Data
 };
 
 E_Config_Dialog *
-e_int_config_interaction(Evas_Object *parent EINA_UNUSED, const char *params __UNUSED__) 
+e_int_config_interaction(Evas_Object *parent EINA_UNUSED, const char *params EINA_UNUSED) 
 {
    E_Config_Dialog *cfd;
    E_Config_Dialog_View *v;
@@ -50,7 +50,7 @@ _fill_data(E_Config_Dialog_Data *cfdata)
 }
 
 static void *
-_create_data(E_Config_Dialog *cfd __UNUSED__) 
+_create_data(E_Config_Dialog *cfd EINA_UNUSED) 
 {
    E_Config_Dialog_Data *cfdata;
    
@@ -60,13 +60,13 @@ _create_data(E_Config_Dialog *cfd __UNUSED__)
 }
 
 static void
-_free_data(E_Config_Dialog *cfd __UNUSED__, E_Config_Dialog_Data *cfdata) 
+_free_data(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfdata) 
 {
    E_FREE(cfdata);
 }
 
 static int
-_basic_check_changed(E_Config_Dialog *cfd __UNUSED__, E_Config_Dialog_Data *cfdata) 
+_basic_check_changed(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfdata) 
 {
    return ((cfdata->thumbscroll_enable != e_config->thumbscroll_enable) ||
 	   (cfdata->thumbscroll_threshhold != e_config->thumbscroll_threshhold) ||
@@ -75,7 +75,7 @@ _basic_check_changed(E_Config_Dialog *cfd __UNUSED__, E_Config_Dialog_Data *cfda
 }
 
 static int
-_basic_apply(E_Config_Dialog *cfd __UNUSED__, E_Config_Dialog_Data *cfdata) 
+_basic_apply(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfdata) 
 {
    e_config->thumbscroll_enable = cfdata->thumbscroll_enable;
    e_config->thumbscroll_threshhold = cfdata->thumbscroll_threshhold;
@@ -87,7 +87,7 @@ _basic_apply(E_Config_Dialog *cfd __UNUSED__, E_Config_Dialog_Data *cfdata)
 }
 
 static Evas_Object *
-_basic_create(E_Config_Dialog *cfd __UNUSED__, Evas *evas, E_Config_Dialog_Data *cfdata) 
+_basic_create(E_Config_Dialog *cfd EINA_UNUSED, Evas *evas, E_Config_Dialog_Data *cfdata) 
 {
    Evas_Object *o, *of, *ob;
 
@@ -140,7 +140,7 @@ _basic_create(E_Config_Dialog *cfd __UNUSED__, Evas *evas, E_Config_Dialog_Data 
 }
 
 static void
-_enabled_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_enabled_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    E_Config_Dialog_Data *cfdata;
 

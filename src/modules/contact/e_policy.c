@@ -2,12 +2,12 @@
 
 #include "e_mod_main.h"
 
-static Eina_Bool _cb_event_add(void *data __UNUSED__, int type __UNUSED__, void *event);
-static Eina_Bool _cb_event_del(void *data __UNUSED__, int type __UNUSED__, void *event);
-static Eina_Bool _cb_event_focus_in(void *data __UNUSED__, int type __UNUSED__, void *event);
-static Eina_Bool _cb_event_focus_out(void *data __UNUSED__, int type __UNUSED__, void *event);
-static void _cb_hook_post_fetch(void *data __UNUSED__, E_Client *ec);
-static void _cb_hook_post_assign(void *data __UNUSED__, E_Client *ec);
+static Eina_Bool _cb_event_add(void *data EINA_UNUSED, int type EINA_UNUSED, void *event);
+static Eina_Bool _cb_event_del(void *data EINA_UNUSED, int type EINA_UNUSED, void *event);
+static Eina_Bool _cb_event_focus_in(void *data EINA_UNUSED, int type EINA_UNUSED, void *event);
+static Eina_Bool _cb_event_focus_out(void *data EINA_UNUSED, int type EINA_UNUSED, void *event);
+static void _cb_hook_post_fetch(void *data EINA_UNUSED, E_Client *ec);
+static void _cb_hook_post_assign(void *data EINA_UNUSED, E_Client *ec);
 static void _cb_hook_layout(void);
 
 static Eina_List *hooks = NULL;
@@ -86,7 +86,7 @@ e_policy_client_active_get(void)
 }
 
 static Eina_Bool
-_cb_event_add(void *data __UNUSED__, int type __UNUSED__, void *event)
+_cb_event_add(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
 {
    E_Event_Client *ev = event;
    E_Client *ec = ev->ec;
@@ -97,7 +97,7 @@ _cb_event_add(void *data __UNUSED__, int type __UNUSED__, void *event)
 }
 
 static Eina_Bool
-_cb_event_del(void *data __UNUSED__, int type __UNUSED__, void *event)
+_cb_event_del(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
 {
    E_Event_Client *ev = event;
    E_Client *ec = ev->ec;
@@ -108,7 +108,7 @@ _cb_event_del(void *data __UNUSED__, int type __UNUSED__, void *event)
 }
 
 static Eina_Bool
-_cb_event_focus_in(void *data __UNUSED__, int type __UNUSED__, void *event)
+_cb_event_focus_in(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
 {
    E_Event_Client *ev = event;
    E_Client *ec = ev->ec;
@@ -118,7 +118,7 @@ _cb_event_focus_in(void *data __UNUSED__, int type __UNUSED__, void *event)
 }
 
 static Eina_Bool
-_cb_event_focus_out(void *data __UNUSED__, int type __UNUSED__, void *event)
+_cb_event_focus_out(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
 {
    E_Event_Client *ev = event;
    E_Client *ec = ev->ec;
@@ -129,7 +129,7 @@ _cb_event_focus_out(void *data __UNUSED__, int type __UNUSED__, void *event)
 }
 
 static void
-_cb_hook_post_fetch(void *data __UNUSED__, E_Client *ec)
+_cb_hook_post_fetch(void *data EINA_UNUSED, E_Client *ec)
 {
    /* NB: for this policy we disable all remembers set on a client */
    if (ec->remember) e_remember_del(ec->remember);
@@ -141,7 +141,7 @@ _cb_hook_post_fetch(void *data __UNUSED__, E_Client *ec)
 }
 
 static void
-_cb_hook_post_assign(void *data __UNUSED__, E_Client *ec)
+_cb_hook_post_assign(void *data EINA_UNUSED, E_Client *ec)
 {
    ec->internal_no_remember = 1;
 

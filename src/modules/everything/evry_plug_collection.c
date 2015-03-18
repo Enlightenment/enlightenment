@@ -66,7 +66,7 @@ _add_item(Plugin *p, Plugin_Config *pc)
 }
 
 static Evry_Plugin *
-_begin(Evry_Plugin *plugin, const Evry_Item *item __UNUSED__)
+_begin(Evry_Plugin *plugin, const Evry_Item *item EINA_UNUSED)
 {
    Plugin_Config *pc;
    Eina_List *l;
@@ -81,7 +81,7 @@ _begin(Evry_Plugin *plugin, const Evry_Item *item __UNUSED__)
 }
 
 static Evry_Plugin *
-_begin_all(Evry_Plugin *plugin, const Evry_Item *item __UNUSED__)
+_begin_all(Evry_Plugin *plugin, const Evry_Item *item EINA_UNUSED)
 {
    Plugin_Config *pc;
    Eina_List *l;

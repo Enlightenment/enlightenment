@@ -19,7 +19,7 @@
 #define DBG(...)
 #endif
 
-static Eina_Bool     _evry_cb_desklock(Evry_Window *win, int type __UNUSED__, E_Event_Desklock *ev);
+static Eina_Bool     _evry_cb_desklock(Evry_Window *win, int type EINA_UNUSED, E_Event_Desklock *ev);
 static void           _evry_matches_update(Evry_Selector *sel, int async);
 static void           _evry_plugin_action(Evry_Selector *sel, int finished);
 static void           _evry_plugin_select(Evry_State *s, Evry_Plugin *p);
@@ -132,7 +132,7 @@ _evry_aggregator_fetch(Evry_State *s)
 }
 
 static Eina_Bool
-_evry_cb_item_changed(__UNUSED__ void *data, __UNUSED__ int type, void *event)
+_evry_cb_item_changed(EINA_UNUSED void *data, EINA_UNUSED int type, void *event)
 {
    Evry_Event_Item_Changed *ev = event;
    Evry_Selector *sel;
@@ -871,7 +871,7 @@ _evry_cb_drag_finished(E_Drag *drag, int dropped)
 #endif
 
 static Eina_Bool
-_evry_cb_desklock(Evry_Window *win, int type __UNUSED__, E_Event_Desklock *ev)
+_evry_cb_desklock(Evry_Window *win, int type EINA_UNUSED, E_Event_Desklock *ev)
 {
    if (ev->on) evry_hide(win, 0);
    return ECORE_CALLBACK_RENEW;
@@ -987,7 +987,7 @@ _evry_window_free(Evry_Window *win)
 }
 
 static void
-_evry_selector_cb_down(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
+_evry_selector_cb_down(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info)
 {
    Evas_Event_Mouse_Down *ev = event_info;
    Evry_Selector *sel = data;
@@ -1000,7 +1000,7 @@ _evry_selector_cb_down(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED
 }
 
 static void
-_evry_selector_cb_wheel(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
+_evry_selector_cb_wheel(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info)
 {
    Evas_Event_Mouse_Wheel *ev = event_info;
    Evry_Selector *sel = data;
@@ -1019,7 +1019,7 @@ _evry_selector_cb_wheel(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSE
 }
 
 static void
-_evry_selector_cb_up(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
+_evry_selector_cb_up(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info)
 {
    Evas_Event_Mouse_Up *ev = event_info;
    Evry_Selector *sel = data;
@@ -1211,7 +1211,7 @@ _evry_selector_activate(Evry_Selector *sel, int slide)
 }
 
 static void
-_evry_selector_thumb_gen(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_evry_selector_thumb_gen(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Evas_Coord w, h;
    Evry_Selector *sel = data;
@@ -1902,7 +1902,7 @@ _evry_cheat_history(Evry_State *s, int promote, int delete)
 }
 
 static Eina_Bool
-_evry_cb_key_down(void *data, int type __UNUSED__, void *event)
+_evry_cb_key_down(void *data, int type EINA_UNUSED, void *event)
 {
    Ecore_Event_Key *ev = event;
    Evry_State *s;
@@ -2307,7 +2307,7 @@ _evry_clear(Evry_Selector *sel)
 }
 
 static void
-_evry_cb_free_action_performed(void *data __UNUSED__, void *event)
+_evry_cb_free_action_performed(void *data EINA_UNUSED, void *event)
 {
    Evry_Event_Action_Performed *ev = event;
 
@@ -2980,7 +2980,7 @@ _evry_plugin_select(Evry_State *s, Evry_Plugin *p)
 }
 
 static void
-_evry_cb_free_plugin_selected(void *data __UNUSED__, void *event)
+_evry_cb_free_plugin_selected(void *data EINA_UNUSED, void *event)
 {
    Evry_Event_Item_Selected *ev = event;
 
@@ -3041,7 +3041,7 @@ _evry_cb_show(Evry_Window *win, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSE
 
 #ifndef HAVE_WAYLAND_ONLY
 static Eina_Bool
-_evry_cb_selection_notify(void *data, int type __UNUSED__, void *event)
+_evry_cb_selection_notify(void *data, int type EINA_UNUSED, void *event)
 {
    Ecore_X_Event_Selection_Notify *ev;
    Evry_Window *win = data;

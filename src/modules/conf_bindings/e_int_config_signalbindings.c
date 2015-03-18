@@ -158,7 +158,7 @@ _create_data(E_Config_Dialog *cfd)
 }
 
 static void
-_free_data(E_Config_Dialog *cfd __UNUSED__, E_Config_Dialog_Data *cfdata)
+_free_data(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfdata)
 {
    E_FREE_LIST(cfdata->binding.signal, _signal_binding_free);
 
@@ -448,7 +448,7 @@ _binding_change_cb(void *data)
 
 
 static int
-_basic_apply_data(E_Config_Dialog *cfd __UNUSED__, E_Config_Dialog_Data *cfdata)
+_basic_apply_data(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfdata)
 {
    Eina_List *l;
    E_Config_Binding_Signal *bi, *bi2;
@@ -589,7 +589,7 @@ _signal_add_cb_ok(void *data, E_Dialog *dia)
 }
 
 static void
-_signal_add_cb_cancel(void *data __UNUSED__, E_Dialog *dia)
+_signal_add_cb_cancel(void *data EINA_UNUSED, E_Dialog *dia)
 {
    e_object_del(E_OBJECT(dia));
 }
@@ -647,7 +647,7 @@ _signal_add_show(E_Config_Dialog_Data *cfdata)
 }
 
 static void
-_add_signal_binding_cb(void *data, void *data2 __UNUSED__)
+_add_signal_binding_cb(void *data, void *data2 EINA_UNUSED)
 {
    E_Config_Dialog_Data *cfdata = data;
    
@@ -656,7 +656,7 @@ _add_signal_binding_cb(void *data, void *data2 __UNUSED__)
 }
 
 static void
-_delete_signal_binding_cb(void *data, void *data2 __UNUSED__)
+_delete_signal_binding_cb(void *data, void *data2 EINA_UNUSED)
 {
    Eina_List *l = NULL;
    int sel, n;
@@ -699,7 +699,7 @@ _delete_signal_binding_cb(void *data, void *data2 __UNUSED__)
 
 
 static void
-_delete_all_signal_binding_cb(void *data, void *data2 __UNUSED__)
+_delete_all_signal_binding_cb(void *data, void *data2 EINA_UNUSED)
 {
    E_Config_Binding_Signal *bi;
    E_Config_Dialog_Data *cfdata;
@@ -723,7 +723,7 @@ _delete_all_signal_binding_cb(void *data, void *data2 __UNUSED__)
 
 
 static void
-_restore_signal_binding_defaults_cb(void *data, void *data2 __UNUSED__)
+_restore_signal_binding_defaults_cb(void *data, void *data2 EINA_UNUSED)
 {
    E_Config_Bindings *ecb;
    Eina_Stringshare *prof;

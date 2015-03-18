@@ -8,7 +8,7 @@ static void _e_mod_kbd_device_kbd_add(const char *udi);
 static void _e_mod_kbd_device_kbd_del(const char *udi);
 static void _e_mod_kbd_device_kbd_eval(void);
 # include <Eeze.h>
-static void _e_mod_kbd_device_udev_event(const char *device, Eeze_Udev_Event event, void *data __UNUSED__, Eeze_Udev_Watch *watch __UNUSED__);
+static void _e_mod_kbd_device_udev_event(const char *device, Eeze_Udev_Event event, void *data EINA_UNUSED, Eeze_Udev_Watch *watch EINA_UNUSED);
 
 /* local variables */
 static int have_real_kbd = 0;
@@ -92,7 +92,7 @@ _e_mod_kbd_device_ignore_load_file(const char *file)
 }
 
 static void 
-_e_mod_kbd_device_udev_event(const char *device, Eeze_Udev_Event event, void *data __UNUSED__, Eeze_Udev_Watch *w __UNUSED__)
+_e_mod_kbd_device_udev_event(const char *device, Eeze_Udev_Event event, void *data EINA_UNUSED, Eeze_Udev_Watch *w EINA_UNUSED)
 {
    if ((!device) || (!event)) return;
 

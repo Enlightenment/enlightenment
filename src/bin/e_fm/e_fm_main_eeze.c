@@ -162,8 +162,8 @@ _e_fm_main_eeze_vol_mount_timeout(E_Volume *v)
 }
 
 static Eina_Bool
-_e_fm_main_eeze_cb_vol_mounted(void *user_data __UNUSED__,
-                               int type __UNUSED__,
+_e_fm_main_eeze_cb_vol_mounted(void *user_data EINA_UNUSED,
+                               int type EINA_UNUSED,
                                Eeze_Event_Disk_Mount *ev)
 {
    E_Volume *v;
@@ -214,8 +214,8 @@ _e_fm_main_eeze_vol_unmount_timeout(E_Volume *v)
 }
 
 static Eina_Bool
-_e_fm_main_eeze_cb_vol_error(void *user_data __UNUSED__,
-                             int type __UNUSED__,
+_e_fm_main_eeze_cb_vol_error(void *user_data EINA_UNUSED,
+                             int type EINA_UNUSED,
                              Eeze_Event_Disk_Error *ev)
 {
    E_Volume *v;
@@ -242,8 +242,8 @@ _e_fm_main_eeze_cb_vol_error(void *user_data __UNUSED__,
 }
 
 static Eina_Bool
-_e_fm_main_eeze_cb_vol_unmounted(void *user_data __UNUSED__,
-                                 int type __UNUSED__,
+_e_fm_main_eeze_cb_vol_unmounted(void *user_data EINA_UNUSED,
+                                 int type EINA_UNUSED,
                                  Eeze_Event_Disk_Unmount *ev)
 {
    char *buf;
@@ -291,8 +291,8 @@ _e_fm_main_eeze_vol_eject_timeout(E_Volume *v)
 }
 
 static Eina_Bool
-_e_fm_main_eeze_cb_vol_ejected(void *user_data __UNUSED__,
-                               int type __UNUSED__,
+_e_fm_main_eeze_cb_vol_ejected(void *user_data EINA_UNUSED,
+                               int type EINA_UNUSED,
                                Eeze_Event_Disk_Eject *ev)
 {
    E_Volume *v;
@@ -594,7 +594,7 @@ eet_setup(void)
    EEZE_SCANNER_EDD_SETUP(es_edd);
 }
 static Eina_Bool
-_scanner_poll(void *data __UNUSED__)
+_scanner_poll(void *data EINA_UNUSED)
 {
    if (svr) return EINA_FALSE;
    svr = ecore_con_server_connect(ECORE_CON_LOCAL_SYSTEM, "eeze_scanner", 0, NULL);
@@ -603,7 +603,7 @@ _scanner_poll(void *data __UNUSED__)
 }
 
 static Eina_Bool
-_scanner_add(void *data, int type __UNUSED__, Ecore_Exe_Event_Add *ev)
+_scanner_add(void *data, int type EINA_UNUSED, Ecore_Exe_Event_Add *ev)
 {
    if (data != ecore_exe_data_get(ev->exe)) return ECORE_CALLBACK_PASS_ON;
    INF("Scanner started");
@@ -613,7 +613,7 @@ _scanner_add(void *data, int type __UNUSED__, Ecore_Exe_Event_Add *ev)
 }
 
 static Eina_Bool
-_scanner_del(void *data, int type __UNUSED__, Ecore_Exe_Event_Del *ev)
+_scanner_del(void *data, int type EINA_UNUSED, Ecore_Exe_Event_Del *ev)
 {
    if (data != ecore_exe_data_get(ev->exe)) return ECORE_CALLBACK_PASS_ON;
    if (!svr)
@@ -633,7 +633,7 @@ _scanner_del(void *data, int type __UNUSED__, Ecore_Exe_Event_Del *ev)
 }
 
 static Eina_Bool
-_scanner_read(const void *data, size_t size, void *d __UNUSED__)
+_scanner_read(const void *data, size_t size, void *d EINA_UNUSED)
 {
    Eeze_Scanner_Event *ev = NULL;
 
@@ -660,7 +660,7 @@ _scanner_read(const void *data, size_t size, void *d __UNUSED__)
 }
 
 static Eina_Bool
-_scanner_write(const void *eet_data __UNUSED__, size_t size __UNUSED__, void *user_data __UNUSED__)
+_scanner_write(const void *eet_data EINA_UNUSED, size_t size EINA_UNUSED, void *user_data EINA_UNUSED)
 {
    return EINA_TRUE;
 }
@@ -678,7 +678,7 @@ _scanner_run(void)
 
 
 static Eina_Bool
-_scanner_con(void *data __UNUSED__, int type __UNUSED__, Ecore_Con_Event_Server_Del *ev __UNUSED__)
+_scanner_con(void *data EINA_UNUSED, int type EINA_UNUSED, Ecore_Con_Event_Server_Del *ev EINA_UNUSED)
 {
    _e_fm_main_catch(EFM_MODE_USING_EEZE_MOUNT);
    E_FREE_FUNC(scanner_poller, ecore_poller_del);
@@ -688,7 +688,7 @@ _scanner_con(void *data __UNUSED__, int type __UNUSED__, Ecore_Con_Event_Server_
 }
 
 static Eina_Bool
-_scanner_disc(void *data __UNUSED__, int type __UNUSED__, Ecore_Con_Event_Server_Del *ev __UNUSED__)
+_scanner_disc(void *data EINA_UNUSED, int type EINA_UNUSED, Ecore_Con_Event_Server_Del *ev EINA_UNUSED)
 {
    INF("Scanner disconnected");
    if (!_scanner_poll(NULL))
@@ -697,14 +697,14 @@ _scanner_disc(void *data __UNUSED__, int type __UNUSED__, Ecore_Con_Event_Server
 }
 
 static Eina_Bool
-_scanner_err(void *data __UNUSED__, int type __UNUSED__, Ecore_Con_Event_Server_Error *ev __UNUSED__)
+_scanner_err(void *data EINA_UNUSED, int type EINA_UNUSED, Ecore_Con_Event_Server_Error *ev EINA_UNUSED)
 {
    INF("Scanner connection error");
    return ECORE_CALLBACK_RENEW;
 }
 
 static Eina_Bool
-_scanner_data(void *data __UNUSED__, int type __UNUSED__, Ecore_Con_Event_Server_Data *ev)
+_scanner_data(void *data EINA_UNUSED, int type EINA_UNUSED, Ecore_Con_Event_Server_Data *ev)
 {
    eet_connection_received(es_con, ev->data, ev->size);
    return ECORE_CALLBACK_RENEW;

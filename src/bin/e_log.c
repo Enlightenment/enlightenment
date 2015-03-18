@@ -11,7 +11,7 @@ static const char *_names[] = {
 };
 
 static void
-_e_log_cb(const Eina_Log_Domain *d, Eina_Log_Level level, const char *file, const char *fnc __UNUSED__, int line, const char *fmt, void *data __UNUSED__, va_list args)
+_e_log_cb(const Eina_Log_Domain *d, Eina_Log_Level level, const char *file, const char *fnc EINA_UNUSED, int line, const char *fmt, void *data EINA_UNUSED, va_list args)
 {
    const char *color;
 

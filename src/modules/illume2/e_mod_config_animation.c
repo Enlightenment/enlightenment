@@ -11,7 +11,7 @@ static Eina_Bool _e_mod_illume_config_animation_timeout(void *data);
 Ecore_Timer *_anim_change_timer = NULL;
 
 void 
-e_mod_illume_config_animation_show(E_Comp *comp, const char *params __UNUSED__) 
+e_mod_illume_config_animation_show(E_Comp *comp, const char *params EINA_UNUSED) 
 {
    E_Config_Dialog *cfd;
    E_Config_Dialog_View *v;
@@ -37,20 +37,20 @@ e_mod_illume_config_animation_show(E_Comp *comp, const char *params __UNUSED__)
 
 /* local function prototypes */
 static void *
-_e_mod_illume_config_animation_create(E_Config_Dialog *cfd __UNUSED__) 
+_e_mod_illume_config_animation_create(E_Config_Dialog *cfd EINA_UNUSED) 
 {
    return NULL;
 }
 
 static void 
-_e_mod_illume_config_animation_free(E_Config_Dialog *cfd __UNUSED__, E_Config_Dialog_Data *cfdata __UNUSED__) 
+_e_mod_illume_config_animation_free(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfdata EINA_UNUSED) 
 {
    if (_anim_change_timer) ecore_timer_del(_anim_change_timer);
    _anim_change_timer = NULL;
 }
 
 static Evas_Object *
-_e_mod_illume_config_animation_ui(E_Config_Dialog *cfd __UNUSED__, Evas *evas, E_Config_Dialog_Data *cfdata __UNUSED__) 
+_e_mod_illume_config_animation_ui(E_Config_Dialog *cfd EINA_UNUSED, Evas *evas, E_Config_Dialog_Data *cfdata EINA_UNUSED) 
 {
    Evas_Object *list, *of, *ow;
    E_Radio_Group *rg;
@@ -120,7 +120,7 @@ _e_mod_illume_config_animation_ui(E_Config_Dialog *cfd __UNUSED__, Evas *evas, E
 }
 
 static void 
-_e_mod_illume_config_animation_change(void *data, Evas_Object *obj __UNUSED__, void *event __UNUSED__) 
+_e_mod_illume_config_animation_change(void *data, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED) 
 {
    if (_anim_change_timer) ecore_timer_del(_anim_change_timer);
    _anim_change_timer = 
@@ -128,7 +128,7 @@ _e_mod_illume_config_animation_change(void *data, Evas_Object *obj __UNUSED__, v
 }
 
 static Eina_Bool
-_e_mod_illume_config_animation_timeout(void *data __UNUSED__) 
+_e_mod_illume_config_animation_timeout(void *data EINA_UNUSED) 
 {
    e_config_save_queue();
    _anim_change_timer = NULL;

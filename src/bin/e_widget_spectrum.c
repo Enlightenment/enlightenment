@@ -146,7 +146,7 @@ e_widget_spectrum_mode_set(Evas_Object *obj, E_Color_Component mode)
 }
 
 static void
-_e_wid_move(void *data, Evas_Object *o __UNUSED__, Evas_Coord x, Evas_Coord y)
+_e_wid_move(void *data, Evas_Object *o EINA_UNUSED, Evas_Coord x, Evas_Coord y)
 {
    E_Widget_Data *wd;
 
@@ -156,7 +156,7 @@ _e_wid_move(void *data, Evas_Object *o __UNUSED__, Evas_Coord x, Evas_Coord y)
 }
 
 static void
-_e_wid_resize(void *data, Evas_Object *o __UNUSED__, Evas_Coord w, Evas_Coord h)
+_e_wid_resize(void *data, Evas_Object *o EINA_UNUSED, Evas_Coord w, Evas_Coord h)
 {
    E_Widget_Data *wd;
 
@@ -205,7 +205,7 @@ _e_wid_disable_hook(Evas_Object *obj)
 }
 
 static void
-_e_wid_focus_steal(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_e_wid_focus_steal(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    e_widget_focus_steal(data);
 }
@@ -274,7 +274,7 @@ _e_wid_mouse_handle(Evas_Object *obj, int mx, int my)
 }
 
 static void
-_e_wid_cb_down(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
+_e_wid_cb_down(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info)
 {
    Evas_Event_Mouse_Down *ev;
    Evas_Object *o_wid;
@@ -289,7 +289,7 @@ _e_wid_cb_down(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void
 }
 
 static void
-_e_wid_cb_up(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_e_wid_cb_up(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Evas_Object *o_wid;
    E_Widget_Data *wd;
@@ -300,7 +300,7 @@ _e_wid_cb_up(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *
 }
 
 static void
-_e_wid_cb_move(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
+_e_wid_cb_move(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info)
 {
    Evas_Event_Mouse_Move *ev;
    Evas_Object *o_wid;

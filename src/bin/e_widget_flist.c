@@ -207,31 +207,31 @@ _e_wid_focus_hook(Evas_Object *obj)
 }
 
 static void
-_e_wid_focus_steal(void *data, Evas *evas __UNUSED__, Evas_Object *obj __UNUSED__, void *event __UNUSED__)
+_e_wid_focus_steal(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
 {
    e_widget_focus_steal(data);
 }
 
 static void
-_e_wid_cb_selected(void *data, Evas_Object *obj __UNUSED__, void *event)
+_e_wid_cb_selected(void *data, Evas_Object *obj EINA_UNUSED, void *event)
 {
    evas_object_smart_callback_call(data, "selection_change", event);
 }
 
 static void
-_e_wid_cb_dir_changed(void *data, Evas_Object *obj __UNUSED__, void *event)
+_e_wid_cb_dir_changed(void *data, Evas_Object *obj EINA_UNUSED, void *event)
 {
    evas_object_smart_callback_call(data, "dir_changed", event);
 }
 
 static void
-_e_wid_cb_changed(void *data, Evas_Object *obj __UNUSED__, void *event)
+_e_wid_cb_changed(void *data, Evas_Object *obj EINA_UNUSED, void *event)
 {
    evas_object_smart_callback_call(data, "changed", event);
 }
 
 static void
-_e_wid_cb_file_deleted(void *data, Evas_Object *obj __UNUSED__, void *event)
+_e_wid_cb_file_deleted(void *data, Evas_Object *obj EINA_UNUSED, void *event)
 {
    evas_object_smart_callback_call(data, "files_deleted", event);
 }

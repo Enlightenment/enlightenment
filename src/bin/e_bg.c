@@ -3,8 +3,8 @@
 /* local subsystem functions */
 static void _e_bg_signal(void *data, Evas_Object *obj, const char *emission, const char *source);
 static void _e_bg_event_bg_update_free(void *data, void *event);
-static void e_bg_handler_set(void *data __UNUSED__, Evas_Object *obj __UNUSED__, const char *path);
-static int  e_bg_handler_test(void *data __UNUSED__, Evas_Object *obj __UNUSED__, const char *path);
+static void e_bg_handler_set(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, const char *path);
+static int  e_bg_handler_test(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, const char *path);
 static void _e_bg_handler_image_imported(const char *image_path, void *data);
 
 /* local subsystem globals */
@@ -416,7 +416,7 @@ e_bg_update(void)
  * Set background to image, as required in e_fm2_mime_handler_new()
  */
 static void
-e_bg_handler_set(void *data __UNUSED__, Evas_Object *obj __UNUSED__, const char *path)
+e_bg_handler_set(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, const char *path)
 {
    char buf[4096];
    int copy = 1;
@@ -478,7 +478,7 @@ e_bg_handler_set(void *data __UNUSED__, Evas_Object *obj __UNUSED__, const char 
  * Just edje files with "e/desktop/background" group are used.
  */
 static int
-e_bg_handler_test(void *data __UNUSED__, Evas_Object *obj __UNUSED__, const char *path)
+e_bg_handler_test(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, const char *path)
 {
    if (!path) return 0;
 
@@ -493,7 +493,7 @@ e_bg_handler_test(void *data __UNUSED__, Evas_Object *obj __UNUSED__, const char
 }
 
 static void
-_e_bg_signal(void *data, Evas_Object *obj __UNUSED__, const char *emission __UNUSED__, const char *source __UNUSED__)
+_e_bg_signal(void *data, Evas_Object *obj EINA_UNUSED, const char *emission EINA_UNUSED, const char *source EINA_UNUSED)
 {
    E_Zone *zone = data;
 
@@ -507,13 +507,13 @@ _e_bg_signal(void *data, Evas_Object *obj __UNUSED__, const char *emission __UNU
 }
 
 static void
-_e_bg_event_bg_update_free(void *data __UNUSED__, void *event)
+_e_bg_event_bg_update_free(void *data EINA_UNUSED, void *event)
 {
    free(event);
 }
 
 static void
-_e_bg_handler_image_imported(const char *image_path, void *data __UNUSED__)
+_e_bg_handler_image_imported(const char *image_path, void *data EINA_UNUSED)
 {
    e_bg_default_set(image_path);
    e_bg_update();

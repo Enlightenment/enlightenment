@@ -35,11 +35,11 @@ static Evas_Object *_basic_create(E_Config_Dialog *cfd, Evas *evas, E_Config_Dia
 static int          _basic_apply(E_Config_Dialog *cfd, E_Config_Dialog_Data *cfdata);
 static int          _basic_check_changed(E_Config_Dialog *cfd, E_Config_Dialog_Data *cfdata);
 
-static void         _cb_add(void *data, void *data2 __UNUSED__);
-static void         _cb_del(void *data, void *data2 __UNUSED__);
+static void         _cb_add(void *data, void *data2 EINA_UNUSED);
+static void         _cb_del(void *data, void *data2 EINA_UNUSED);
 
-static void         _cb_up(void *data, void *data2 __UNUSED__);
-static void         _cb_dn(void *data, void *data2 __UNUSED__);
+static void         _cb_up(void *data, void *data2 EINA_UNUSED);
+static void         _cb_dn(void *data, void *data2 EINA_UNUSED);
 
 static void         _dlg_add_cb_ok(void *data, E_Dialog *dlg);
 static void         _dlg_add_cb_cancel(void *data, E_Dialog *dlg);
@@ -58,7 +58,7 @@ static Eina_Bool    _cb_fill_delay(void *data);
 /* Externals */
 
 E_Config_Dialog *
-_xkb_cfg_dialog(Evas_Object *parent EINA_UNUSED, const char *params __UNUSED__)
+_xkb_cfg_dialog(Evas_Object *parent EINA_UNUSED, const char *params EINA_UNUSED)
 {
    E_Config_Dialog *cfd;
    E_Config_Dialog_View *v;
@@ -84,7 +84,7 @@ _xkb_cfg_dialog(Evas_Object *parent EINA_UNUSED, const char *params __UNUSED__)
 /* Locals */
 
 static void *
-_create_data(E_Config_Dialog *cfd __UNUSED__)
+_create_data(E_Config_Dialog *cfd EINA_UNUSED)
 {
    E_Config_Dialog_Data *cfdata;
    Eina_List *l, *ll, *lll;
@@ -138,7 +138,7 @@ _create_data(E_Config_Dialog *cfd __UNUSED__)
 }
 
 static void
-_free_data(E_Config_Dialog *cfd __UNUSED__, E_Config_Dialog_Data *cfdata)
+_free_data(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfdata)
 {
    E_Config_XKB_Layout *cl;
    E_XKB_Dialog_Option *od;
@@ -165,7 +165,7 @@ _free_data(E_Config_Dialog *cfd __UNUSED__, E_Config_Dialog_Data *cfdata)
 }
 
 static int
-_basic_check_changed(E_Config_Dialog *cfd __UNUSED__, E_Config_Dialog_Data *cfdata)
+_basic_check_changed(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfdata)
 {
    Eina_List *l, *l2, *l3;
    E_Config_XKB_Layout *cl, *nl;
@@ -217,7 +217,7 @@ _basic_check_changed(E_Config_Dialog *cfd __UNUSED__, E_Config_Dialog_Data *cfda
 }
 
 static int
-_basic_apply(E_Config_Dialog *cfd __UNUSED__, E_Config_Dialog_Data *cfdata)
+_basic_apply(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfdata)
 {
    Eina_List *l;
    E_Config_XKB_Layout *cl, *nl;
@@ -391,7 +391,7 @@ _basic_create(E_Config_Dialog *cfd EINA_UNUSED, Evas *evas, E_Config_Dialog_Data
 }
 
 static void
-_cb_add(void *data, void *data2 __UNUSED__)
+_cb_add(void *data, void *data2 EINA_UNUSED)
 {
    E_Config_Dialog_Data *cfdata;
    if (!(cfdata = data)) return;
@@ -401,7 +401,7 @@ _cb_add(void *data, void *data2 __UNUSED__)
 }
 
 static void
-_cb_del(void *data, void *data2 __UNUSED__)
+_cb_del(void *data, void *data2 EINA_UNUSED)
 {
    E_Config_Dialog_Data *cfdata;
    int n = 0;
@@ -423,7 +423,7 @@ _cb_del(void *data, void *data2 __UNUSED__)
 }
 
 static void
-_cb_up(void *data, void *data2 __UNUSED__)
+_cb_up(void *data, void *data2 EINA_UNUSED)
 {
    E_Config_Dialog_Data *cfdata;
    void *nddata;
@@ -463,7 +463,7 @@ _cb_up(void *data, void *data2 __UNUSED__)
 }
 
 static void
-_cb_dn(void *data, void *data2 __UNUSED__)
+_cb_dn(void *data, void *data2 EINA_UNUSED)
 {
    E_Config_Dialog_Data *cfdata;
    void *nddata;
@@ -566,7 +566,7 @@ _dlg_add_new(E_Config_Dialog_Data *cfdata)
 }
 
 static void
-_dlg_add_cb_ok(void *data __UNUSED__, E_Dialog *dlg)
+_dlg_add_cb_ok(void *data EINA_UNUSED, E_Dialog *dlg)
 {
    E_Config_Dialog_Data *cfdata = dlg->data;
    E_Config_XKB_Layout *cl;
@@ -610,7 +610,7 @@ _dlg_add_cb_ok(void *data __UNUSED__, E_Dialog *dlg)
 }
 
 static void
-_dlg_add_cb_cancel(void *data __UNUSED__, E_Dialog *dlg)
+_dlg_add_cb_cancel(void *data EINA_UNUSED, E_Dialog *dlg)
 {
    E_Config_Dialog_Data *cfdata = dlg->data;
    cfdata->dlg_add_new = NULL;

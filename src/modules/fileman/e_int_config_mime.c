@@ -45,7 +45,7 @@ static void         _cb_config(void *data, void *data2);
 Eina_List *types = NULL;
 
 E_Config_Dialog *
-e_int_config_mime(Evas_Object *parent EINA_UNUSED, const char *params __UNUSED__)
+e_int_config_mime(Evas_Object *parent EINA_UNUSED, const char *params EINA_UNUSED)
 {
    E_Config_Dialog *cfd;
    E_Config_Dialog_View *v;
@@ -117,7 +117,7 @@ _create_data(E_Config_Dialog *cfd)
 }
 
 static void
-_free_data(E_Config_Dialog *cfd __UNUSED__, E_Config_Dialog_Data *cfdata)
+_free_data(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfdata)
 {
    Config_Type *t;
    Config_Mime *m;
@@ -528,7 +528,7 @@ _find_glob(Config_Mime *mime, char *globing)
 }
 
 static void
-_cb_config(void *data, void *data2 __UNUSED__)
+_cb_config(void *data, void *data2 EINA_UNUSED)
 {
    Eina_List *l;
    E_Config_Dialog_Data *cfdata;

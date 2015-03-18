@@ -69,7 +69,7 @@ _e_startup(void)
 }
 
 static void
-_e_startup_next_cb(void *data __UNUSED__)
+_e_startup_next_cb(void *data EINA_UNUSED)
 {
    _e_startup();
 }
@@ -92,7 +92,7 @@ _e_startup_error_dialog(const char *msg)
 }
 
 static Eina_Bool
-_e_startup_event_cb(void *data, int ev_type __UNUSED__, void *ev)
+_e_startup_event_cb(void *data, int ev_type EINA_UNUSED, void *ev)
 {
    char *buf;
    Efreet_Event_Cache_Update *e;

@@ -550,7 +550,7 @@ error:
 }
 
 static Eina_Bool
-poll_cb(void *data __UNUSED__)
+poll_cb(void *data EINA_UNUSED)
 {
    int t, pp;
 

@@ -369,7 +369,7 @@ _e_layout_smart_disown(Evas_Object *obj)
 }
 
 static void
-_e_layout_smart_item_del_hook(void *data __UNUSED__, Evas *e __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
+_e_layout_smart_item_del_hook(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
    e_layout_unpack(obj);
 }

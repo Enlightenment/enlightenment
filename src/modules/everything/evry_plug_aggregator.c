@@ -292,7 +292,7 @@ _finish(Evry_Plugin *plugin)
 }
 
 static Evry_Plugin *
-_begin(Evry_Plugin *plugin, const Evry_Item *it __UNUSED__)
+_begin(Evry_Plugin *plugin, const Evry_Item *it EINA_UNUSED)
 {
    Plugin *p;
 

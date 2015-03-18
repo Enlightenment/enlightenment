@@ -1073,7 +1073,7 @@ _e_winlist_restore_desktop(void)
 }
 
 static Eina_Bool
-_e_winlist_cb_event_border_add(void *data __UNUSED__, int type __UNUSED__,
+_e_winlist_cb_event_border_add(void *data EINA_UNUSED, int type EINA_UNUSED,
                                void *event)
 {
    E_Event_Client *ev = event;
@@ -1085,7 +1085,7 @@ _e_winlist_cb_event_border_add(void *data __UNUSED__, int type __UNUSED__,
 }
 
 static Eina_Bool
-_e_winlist_cb_event_border_remove(void *data __UNUSED__, int type __UNUSED__,
+_e_winlist_cb_event_border_remove(void *data EINA_UNUSED, int type EINA_UNUSED,
                                   void *event)
 {
    E_Event_Client *ev = event;
@@ -1096,7 +1096,7 @@ _e_winlist_cb_event_border_remove(void *data __UNUSED__, int type __UNUSED__,
 }
 
 static Eina_Bool
-_e_winlist_cb_key_down(void *data __UNUSED__, int type __UNUSED__, void *event)
+_e_winlist_cb_key_down(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
 {
    Ecore_Event_Key *ev;
 
@@ -1172,7 +1172,7 @@ _e_winlist_cb_key_down(void *data __UNUSED__, int type __UNUSED__, void *event)
 }
 
 static Eina_Bool
-_e_winlist_cb_key_up(void *data __UNUSED__, int type __UNUSED__, void *event)
+_e_winlist_cb_key_up(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
 {
    Ecore_Event_Key *ev;
    Eina_List *l;
@@ -1238,7 +1238,7 @@ _e_winlist_cb_key_up(void *data __UNUSED__, int type __UNUSED__, void *event)
 }
 
 static Eina_Bool
-_e_winlist_cb_mouse_down(void *data __UNUSED__, int type __UNUSED__, void *event)
+_e_winlist_cb_mouse_down(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
 {
    Ecore_Event_Mouse_Button *ev;
 
@@ -1250,7 +1250,7 @@ _e_winlist_cb_mouse_down(void *data __UNUSED__, int type __UNUSED__, void *event
 }
 
 static Eina_Bool
-_e_winlist_cb_mouse_up(void *data __UNUSED__, int type __UNUSED__, void *event)
+_e_winlist_cb_mouse_up(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
 {
    Ecore_Event_Mouse_Button *ev;
 
@@ -1264,7 +1264,7 @@ _e_winlist_cb_mouse_up(void *data __UNUSED__, int type __UNUSED__, void *event)
 }
 
 static Eina_Bool
-_e_winlist_cb_mouse_wheel(void *data __UNUSED__, int type __UNUSED__, void *event)
+_e_winlist_cb_mouse_wheel(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
 {
    Ecore_Event_Mouse_Wheel *ev;
    int i;
@@ -1287,7 +1287,7 @@ _e_winlist_cb_mouse_wheel(void *data __UNUSED__, int type __UNUSED__, void *even
 }
 
 static Eina_Bool
-_e_winlist_cb_mouse_move(void *data __UNUSED__, int type __UNUSED__, void *event)
+_e_winlist_cb_mouse_move(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
 {
    Ecore_Event_Mouse_Move *ev;
    int x, y, w, h;
@@ -1303,7 +1303,7 @@ _e_winlist_cb_mouse_move(void *data __UNUSED__, int type __UNUSED__, void *event
 }
 
 static Eina_Bool
-_e_winlist_scroll_timer(void *data __UNUSED__)
+_e_winlist_scroll_timer(void *data EINA_UNUSED)
 {
    if (_scroll_to)
      {
@@ -1319,7 +1319,7 @@ _e_winlist_scroll_timer(void *data __UNUSED__)
 }
 
 static Eina_Bool
-_e_winlist_animator(void *data __UNUSED__)
+_e_winlist_animator(void *data EINA_UNUSED)
 {
    if (_scroll_to)
      {

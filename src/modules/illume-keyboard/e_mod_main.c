@@ -25,7 +25,7 @@ e_modapi_init(E_Module *m)
 }
 
 EAPI int 
-e_modapi_shutdown(E_Module *m __UNUSED__) 
+e_modapi_shutdown(E_Module *m EINA_UNUSED) 
 {
    _il_kbd_stop();
    il_kbd_config_shutdown();
@@ -33,7 +33,7 @@ e_modapi_shutdown(E_Module *m __UNUSED__)
 }
 
 EAPI int 
-e_modapi_save(E_Module *m __UNUSED__) 
+e_modapi_save(E_Module *m EINA_UNUSED) 
 {
    return il_kbd_config_save();
 }
@@ -116,7 +116,7 @@ _il_kbd_start(void)
 }
 
 static Eina_Bool
-_il_kbd_cb_exit(void *data __UNUSED__, int type __UNUSED__, void *event) 
+_il_kbd_cb_exit(void *data EINA_UNUSED, int type EINA_UNUSED, void *event) 
 {
    Ecore_Exe_Event_Del *ev;
 

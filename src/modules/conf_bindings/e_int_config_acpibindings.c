@@ -20,9 +20,9 @@ struct _E_Config_Dialog_Data
 /* local function prototypes */
 static void                  *_create_data(E_Config_Dialog *cfd);
 static void                   _fill_data(E_Config_Dialog_Data *cfdata);
-static void                   _free_data(E_Config_Dialog *cfd  __UNUSED__,
+static void                   _free_data(E_Config_Dialog *cfd  EINA_UNUSED,
                                          E_Config_Dialog_Data *cfdata);
-static int                    _basic_apply(E_Config_Dialog *cfd  __UNUSED__,
+static int                    _basic_apply(E_Config_Dialog *cfd  EINA_UNUSED,
                                            E_Config_Dialog_Data *cfdata);
 static Evas_Object           *_basic_create(E_Config_Dialog *cfd,
                                             Evas *evas,
@@ -35,13 +35,13 @@ static const char            *_binding_label_get(E_Config_Binding_Acpi *bind);
 static void                   _cb_bindings_changed(void *data);
 static void                   _cb_actions_changed(void *data);
 static void                   _cb_entry_changed(void *data,
-                                                void *data2 __UNUSED__);
+                                                void *data2 EINA_UNUSED);
 static void                   _cb_add_binding(void *data,
-                                              void *data2 __UNUSED__);
+                                              void *data2 EINA_UNUSED);
 static void                   _cb_del_binding(void *data,
-                                              void *data2 __UNUSED__);
+                                              void *data2 EINA_UNUSED);
 static Eina_Bool              _cb_grab_key_down(void *data,
-                                                int type __UNUSED__,
+                                                int type EINA_UNUSED,
                                                 void *event);
 static Eina_Bool              _cb_acpi_event(void *data,
                                              int type,
@@ -54,7 +54,7 @@ static Eina_List *grab_hdls = NULL;
 
 E_Config_Dialog *
 e_int_config_acpibindings(Evas_Object *parent EINA_UNUSED,
-                          const char *params __UNUSED__)
+                          const char *params EINA_UNUSED)
 {
    E_Config_Dialog *cfd;
    E_Config_Dialog_View *v;
@@ -109,7 +109,7 @@ _fill_data(E_Config_Dialog_Data *cfdata)
 }
 
 static void
-_free_data(E_Config_Dialog *cfd  __UNUSED__,
+_free_data(E_Config_Dialog *cfd  EINA_UNUSED,
            E_Config_Dialog_Data *cfdata)
 {
    E_Config_Binding_Acpi *binding;
@@ -146,7 +146,7 @@ _free_data(E_Config_Dialog *cfd  __UNUSED__,
 }
 
 static int
-_basic_apply(E_Config_Dialog *cfd  __UNUSED__,
+_basic_apply(E_Config_Dialog *cfd  EINA_UNUSED,
              E_Config_Dialog_Data *cfdata)
 {
    E_Config_Binding_Acpi *binding, *b2;
@@ -493,7 +493,7 @@ _cb_actions_changed(void *data)
 
 static void
 _cb_entry_changed(void *data,
-                  void *data2 __UNUSED__)
+                  void *data2 EINA_UNUSED)
 {
    E_Config_Dialog_Data *cfdata;
    E_Config_Binding_Acpi *binding;
@@ -509,7 +509,7 @@ _cb_entry_changed(void *data,
 
 static void
 _cb_add_binding(void *data,
-                void *data2 __UNUSED__)
+                void *data2 EINA_UNUSED)
 {
    E_Config_Dialog_Data *cfdata;
 
@@ -552,7 +552,7 @@ _cb_add_binding(void *data,
 
 static void
 _cb_del_binding(void *data,
-                void *data2 __UNUSED__)
+                void *data2 EINA_UNUSED)
 {
    E_Config_Dialog_Data *cfdata;
    E_Config_Binding_Acpi *binding, *bind2;
@@ -615,7 +615,7 @@ _cb_del_binding(void *data,
 
 static Eina_Bool
 _cb_grab_key_down(void *data,
-                  int type __UNUSED__,
+                  int type EINA_UNUSED,
                   void *event)
 {
    E_Config_Dialog_Data *cfdata;
@@ -649,7 +649,7 @@ _cb_grab_key_down(void *data,
 
 static Eina_Bool
 _cb_acpi_event(void *data,
-               __UNUSED__ int type,
+               EINA_UNUSED int type,
                void *event)
 {
    E_Event_Acpi *ev;

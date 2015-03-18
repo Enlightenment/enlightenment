@@ -247,7 +247,7 @@ _e_order_cb_monitor_delay(void *data)
 }
 
 static void
-_e_order_cb_monitor(void *data, Ecore_File_Monitor *em __UNUSED__, Ecore_File_Event event __UNUSED__, const char *path __UNUSED__)
+_e_order_cb_monitor(void *data, Ecore_File_Monitor *em EINA_UNUSED, Ecore_File_Event event EINA_UNUSED, const char *path EINA_UNUSED)
 {
    E_Order *eo = data;
 
@@ -328,7 +328,7 @@ _e_order_save(E_Order *eo)
 }
 
 static Eina_Bool
-_e_order_cb_efreet_cache_update(void *data __UNUSED__, int ev_type __UNUSED__, void *ev __UNUSED__)
+_e_order_cb_efreet_cache_update(void *data EINA_UNUSED, int ev_type EINA_UNUSED, void *ev EINA_UNUSED)
 {
    Eina_List *l;
    E_Order *eo;

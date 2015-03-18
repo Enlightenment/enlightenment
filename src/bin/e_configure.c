@@ -271,13 +271,13 @@ e_configure_registry_exists(const char *path)
 }
 
 static void
-_e_configure_menu_module_item_cb(void *data __UNUSED__, E_Menu *m EINA_UNUSED, E_Menu_Item *mi __UNUSED__)
+_e_configure_menu_module_item_cb(void *data EINA_UNUSED, E_Menu *m EINA_UNUSED, E_Menu_Item *mi EINA_UNUSED)
 {
    e_int_config_modules(NULL, NULL);
 }
 
 static void
-_e_configure_menu_add(void *data __UNUSED__, E_Menu *m)
+_e_configure_menu_add(void *data EINA_UNUSED, E_Menu *m)
 {
    E_Menu_Item *mi;
 
@@ -288,14 +288,14 @@ _e_configure_menu_add(void *data __UNUSED__, E_Menu *m)
 }
 
 static void
-_configure_job(void *data __UNUSED__)
+_configure_job(void *data EINA_UNUSED)
 {
    _e_configure_efreet_desktop_update();
    update_job = NULL;
 }
 
 static Eina_Bool
-_configure_init_timer(void *data __UNUSED__)
+_configure_init_timer(void *data EINA_UNUSED)
 {
    handlers = eina_list_append
        (handlers, ecore_event_handler_add
@@ -443,7 +443,7 @@ _e_configure_efreet_desktop_update(void)
 }
 
 static Eina_Bool
-_e_configure_cb_efreet_desktop_cache_update(void *data __UNUSED__, int type __UNUSED__, void *event __UNUSED__)
+_e_configure_cb_efreet_desktop_cache_update(void *data EINA_UNUSED, int type EINA_UNUSED, void *event EINA_UNUSED)
 {
    _e_configure_efreet_desktop_cleanup();
    if (update_job) ecore_job_del(update_job);

@@ -27,7 +27,7 @@ struct _E_Fm2_Op_Registry_Entry_Internal
 };
 
 static void
-_e_fm2_op_registry_entry_e_fm_deleted(void *data, Evas *evas __UNUSED__, Evas_Object *e_fm __UNUSED__, void *event __UNUSED__)
+_e_fm2_op_registry_entry_e_fm_deleted(void *data, Evas *evas EINA_UNUSED, Evas_Object *e_fm EINA_UNUSED, void *event EINA_UNUSED)
 {
    E_Fm2_Op_Registry_Entry *entry = data;
 
@@ -112,7 +112,7 @@ _e_fm2_op_registry_entry_listeners_call(const E_Fm2_Op_Registry_Entry_Internal *
 }
 
 static void
-_e_fm2_op_registry_entry_internal_unref_on_event(void *data, void *event __UNUSED__)
+_e_fm2_op_registry_entry_internal_unref_on_event(void *data, void *event EINA_UNUSED)
 {
    E_Fm2_Op_Registry_Entry_Internal *e = data;
    _e_fm2_op_registry_entry_internal_unref(e);
@@ -170,7 +170,7 @@ e_fm2_op_registry_entry_del(int id)
 }
 
 static void
-_e_fm2_op_registry_entry_internal_unref_on_changed_event(void *data, void *event __UNUSED__)
+_e_fm2_op_registry_entry_internal_unref_on_changed_event(void *data, void *event EINA_UNUSED)
 {
    E_Fm2_Op_Registry_Entry_Internal *e = data;
    e->changed_event = NULL;

@@ -73,7 +73,7 @@ music_control_metadata_update_all(E_Music_Control_Module_Context *ctxt)
 }
 
 static void
-_btn_clicked(void *data, Evas_Object *obj __UNUSED__, const char *emission __UNUSED__, const char *source)
+_btn_clicked(void *data, Evas_Object *obj EINA_UNUSED, const char *emission EINA_UNUSED, const char *source)
 {
    E_Music_Control_Instance *inst = data;
    if (!strcmp(source, "play"))
@@ -85,7 +85,7 @@ _btn_clicked(void *data, Evas_Object *obj __UNUSED__, const char *emission __UNU
 }
 
 static void
-_label_clicked(void *data, Evas_Object *obj __UNUSED__, const char *emission __UNUSED__, const char *source __UNUSED__)
+_label_clicked(void *data, Evas_Object *obj EINA_UNUSED, const char *emission EINA_UNUSED, const char *source EINA_UNUSED)
 {
    E_Music_Control_Instance *inst = data;
    music_control_popup_del(inst);
@@ -193,7 +193,7 @@ _cfg_data_create(E_Config_Dialog *cfd)
 }
 
 static void
-_cfg_data_free(E_Config_Dialog *cfd __UNUSED__, E_Config_Dialog_Data *cfdata)
+_cfg_data_free(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfdata)
 {
    free(cfdata);
 }
@@ -233,7 +233,7 @@ _cfg_data_apply(E_Config_Dialog *cfd, E_Config_Dialog_Data *cfdata)
 }
 
 static void
-_cb_menu_cfg(void *data, E_Menu *m, E_Menu_Item *mi __UNUSED__)
+_cb_menu_cfg(void *data, E_Menu *m, E_Menu_Item *mi EINA_UNUSED)
 {
    E_Config_Dialog_View *v;
 
@@ -250,7 +250,7 @@ _cb_menu_cfg(void *data, E_Menu *m, E_Menu_Item *mi __UNUSED__)
 }
 
 void
-music_control_mouse_down_cb(void *data, Evas *evas __UNUSED__, Evas_Object *obj __UNUSED__, void *event)
+music_control_mouse_down_cb(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event)
 {
    E_Music_Control_Instance *inst = data;
    Evas_Event_Mouse_Down *ev = event;

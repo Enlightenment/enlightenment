@@ -83,7 +83,7 @@ e_modapi_init(E_Module *m)
 }
 
 EAPI int
-e_modapi_shutdown(E_Module *m __UNUSED__)
+e_modapi_shutdown(E_Module *m EINA_UNUSED)
 {
    const Eina_List *l;
    E_Zone *zone;
@@ -143,7 +143,7 @@ e_modapi_shutdown(E_Module *m __UNUSED__)
 }
 
 EAPI int
-e_modapi_save(E_Module *m __UNUSED__)
+e_modapi_save(E_Module *m EINA_UNUSED)
 {
    e_config_domain_save("module.fileman", conf_edd, fileman_config);
    return 1;
@@ -185,7 +185,7 @@ _e_mod_action_fileman_cb(E_Object   *obj EINA_UNUSED,
 }
 
 void
-_e_mod_menu_add(void *data __UNUSED__, E_Menu *m)
+_e_mod_menu_add(void *data EINA_UNUSED, E_Menu *m)
 {
    e_mod_menu_add(m, NULL);
 }
@@ -317,7 +317,7 @@ _e_mod_fileman_config_free(void)
 }
 
 static Eina_Bool
-_e_mod_zone_add(__UNUSED__ void *data,
+_e_mod_zone_add(EINA_UNUSED void *data,
                 int              type,
                 void            *event)
 {

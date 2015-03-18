@@ -78,7 +78,7 @@ _page_next_call(void *data EINA_UNUSED)
 
 static void
 _check_connman_owner(void *data, const Eldbus_Message *msg,
-                     Eldbus_Pending *pending __UNUSED__)
+                     Eldbus_Pending *pending EINA_UNUSED)
 {
    const char *id;
    pending_connman = NULL;
@@ -108,13 +108,13 @@ fail:
 /*
 
 EAPI int
-wizard_page_init(E_Wizard_Page *pg __UNUSED__, Eina_Bool *need_xdg_desktops __UNUSED__, Eina_Bool *need_xdg_icons __UNUSED__)
+wizard_page_init(E_Wizard_Page *pg EINA_UNUSED, Eina_Bool *need_xdg_desktops EINA_UNUSED, Eina_Bool *need_xdg_icons EINA_UNUSED)
 {
    return 1;
 }
 
 EAPI int
-wizard_page_shutdown(E_Wizard_Page *pg __UNUSED__)
+wizard_page_shutdown(E_Wizard_Page *pg EINA_UNUSED)
 {
    return 1;
 }
@@ -165,7 +165,7 @@ wizard_page_show(E_Wizard_Page *pg)
 }
 
 EAPI int
-wizard_page_hide(E_Wizard_Page *pg __UNUSED__)
+wizard_page_hide(E_Wizard_Page *pg EINA_UNUSED)
 {
    if (pending_connman)
      {
@@ -189,7 +189,7 @@ wizard_page_hide(E_Wizard_Page *pg __UNUSED__)
 }
 /*
 EAPI int
-wizard_page_apply(E_Wizard_Page *pg __UNUSED__)
+wizard_page_apply(E_Wizard_Page *pg EINA_UNUSED)
 {
    return 1;
 }

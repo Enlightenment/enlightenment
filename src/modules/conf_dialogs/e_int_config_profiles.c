@@ -37,7 +37,7 @@ struct _Del_Profile_Confirm_Data
 };
 
 E_Config_Dialog *
-e_int_config_profiles(Evas_Object *parent EINA_UNUSED, const char *params __UNUSED__)
+e_int_config_profiles(Evas_Object *parent EINA_UNUSED, const char *params EINA_UNUSED)
 {
    E_Config_Dialog *cfd;
    E_Config_Dialog_View *v;
@@ -68,13 +68,13 @@ _create_data(E_Config_Dialog *cfd)
 }
 
 static void
-_free_data(E_Config_Dialog *cfd __UNUSED__, E_Config_Dialog_Data *cfdata)
+_free_data(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfdata)
 {
    E_FREE(cfdata);
 }
 
 static int
-_apply_cfdata(E_Config_Dialog *cfd __UNUSED__, E_Config_Dialog_Data *cfdata)
+_apply_cfdata(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfdata)
 {
    const char *cur_profile;
    E_Action *a;
@@ -301,7 +301,7 @@ _ilist_cb_selected(void *data)
 }
 
 static void
-_cb_add(void *data, void *data2 __UNUSED__)
+_cb_add(void *data, void *data2 EINA_UNUSED)
 {
    E_Config_Dialog_Data *cfdata;
 
@@ -322,7 +322,7 @@ _cb_add(void *data, void *data2 __UNUSED__)
 }
 
 static void
-_cb_delete(void *data, void *data2 __UNUSED__)
+_cb_delete(void *data, void *data2 EINA_UNUSED)
 {
    Del_Profile_Confirm_Data *d;
    char buf[4096];
@@ -342,7 +342,7 @@ _cb_delete(void *data, void *data2 __UNUSED__)
 }
 
 static void
-_cb_scratch(void *data __UNUSED__, void *data2 __UNUSED__)
+_cb_scratch(void *data EINA_UNUSED, void *data2 EINA_UNUSED)
 {
    E_Action *a;
    char *pdir;
@@ -362,7 +362,7 @@ _cb_scratch(void *data __UNUSED__, void *data2 __UNUSED__)
 }
 
 static void
-_cb_reset(void *data __UNUSED__, void *data2 __UNUSED__)
+_cb_reset(void *data EINA_UNUSED, void *data2 EINA_UNUSED)
 {
    E_Action *a;
    char *pdir;

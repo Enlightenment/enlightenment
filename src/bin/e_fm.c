@@ -345,7 +345,7 @@ static void          _e_fm2_cb_resize_job(void *data);
 static int           _e_fm2_cb_icon_sort(const void *data1, const void *data2);
 static Eina_Bool     _e_fm2_cb_scan_timer(void *data);
 static Eina_Bool     _e_fm2_cb_sort_idler(void *data);
-static Eina_Bool     _e_fm2_cb_theme(void *data, int type __UNUSED__, void *event __UNUSED__);
+static Eina_Bool     _e_fm2_cb_theme(void *data, int type EINA_UNUSED, void *event EINA_UNUSED);
 
 static void          _e_fm2_obj_icons_place(E_Fm2_Smart_Data *sd);
 
@@ -388,7 +388,7 @@ static void          _e_fm2_file_rename(void *data, E_Menu *m, E_Menu_Item *mi);
 static void          _e_fm2_file_rename_delete_cb(void *obj);
 static void          _e_fm2_file_rename_yes_cb(void *data, char *text);
 static void          _e_fm2_file_rename_no_cb(void *data);
-static void          _e_fm2_file_application_properties(void *data, E_Menu *m __UNUSED__, E_Menu_Item *mi __UNUSED__);
+static void          _e_fm2_file_application_properties(void *data, E_Menu *m EINA_UNUSED, E_Menu_Item *mi EINA_UNUSED);
 static void          _e_fm2_file_properties(void *data, E_Menu *m, E_Menu_Item *mi);
 static void          _e_fm2_file_properties_delete_cb(void *obj);
 static int           _e_fm2_file_do_rename(const char *text, E_Fm2_Icon *ic);
@@ -666,14 +666,14 @@ _e_fm2_icon_mime_size_normalize(const E_Fm2_Icon *ic)
 }
 
 static Eina_Bool
-_e_fm2_mime_flush_cb(void *data __UNUSED__)
+_e_fm2_mime_flush_cb(void *data EINA_UNUSED)
 {
    efreet_mime_type_cache_flush();
    return ECORE_CALLBACK_RENEW;
 }
 
 static Eina_Bool
-_e_fm2_mime_clear_cb(void *data __UNUSED__)
+_e_fm2_mime_clear_cb(void *data EINA_UNUSED)
 {
    efreet_mime_type_cache_clear();
    return ECORE_CALLBACK_RENEW;
@@ -750,7 +750,7 @@ _e_fm2_op_registry_entry_print(const E_Fm2_Op_Registry_Entry *ere)
 }
 
 static Eina_Bool
-_e_fm2_op_registry_entry_add_cb(void *data __UNUSED__, int type __UNUSED__, void *event)
+_e_fm2_op_registry_entry_add_cb(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
 {
    const E_Fm2_Op_Registry_Entry *ere = event;
    DBG("E FM OPERATION STARTED: id=%d, op=%d", ere->id, ere->op);
@@ -758,7 +758,7 @@ _e_fm2_op_registry_entry_add_cb(void *data __UNUSED__, int type __UNUSED__, void
 }
 
 static Eina_Bool
-_e_fm2_op_registry_entry_del_cb(void *data __UNUSED__, int type __UNUSED__, void *event)
+_e_fm2_op_registry_entry_del_cb(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
 {
    const E_Fm2_Op_Registry_Entry *ere = event;
    puts("E FM OPERATION FINISHED:");
@@ -768,7 +768,7 @@ _e_fm2_op_registry_entry_del_cb(void *data __UNUSED__, int type __UNUSED__, void
 }
 
 static Eina_Bool
-_e_fm2_op_registry_entry_changed_cb(void *data __UNUSED__, int type __UNUSED__, void *event)
+_e_fm2_op_registry_entry_changed_cb(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
 {
    const E_Fm2_Op_Registry_Entry *ere = event;
    puts("E FM OPERATION CHANGED:");
@@ -1009,13 +1009,13 @@ _e_fm2_path_parent_set(Evas_Object *obj, const char *path)
 }
 
 static void
-_e_fm2_favorites_thread_cb(void *d __UNUSED__, Ecore_Thread *et __UNUSED__)
+_e_fm2_favorites_thread_cb(void *d EINA_UNUSED, Ecore_Thread *et EINA_UNUSED)
 {
    e_fm2_favorites_init();
 }
 
 static void
-_e_fm2_thread_cleanup_cb(void *d __UNUSED__, Ecore_Thread *et __UNUSED__)
+_e_fm2_thread_cleanup_cb(void *d EINA_UNUSED, Ecore_Thread *et EINA_UNUSED)
 {
    _e_fm2_favorites_thread = NULL;
 }
@@ -1832,7 +1832,7 @@ _e_fm2_path_join(char *buf, int buflen, const char *base, const char *component)
  * @see _e_fm2_icon_explicit_get()
  */
 static Evas_Object *
-_e_fm2_icon_explicit_edje_get(Evas *evas, const E_Fm2_Icon *ic __UNUSED__, const char *iconpath, const char **type_ret)
+_e_fm2_icon_explicit_edje_get(Evas *evas, const E_Fm2_Icon *ic EINA_UNUSED, const char *iconpath, const char **type_ret)
 {
    Evas_Object *o = edje_object_add(evas);
    if (!o)
@@ -1857,7 +1857,7 @@ _e_fm2_icon_explicit_edje_get(Evas *evas, const E_Fm2_Icon *ic __UNUSED__, const
  * @see _e_fm2_icon_explicit_get()
  */
 static Evas_Object *
-_e_fm2_icon_explicit_theme_icon_get(Evas *evas, const E_Fm2_Icon *ic __UNUSED__, const char *name, const char **type_ret)
+_e_fm2_icon_explicit_theme_icon_get(Evas *evas, const E_Fm2_Icon *ic EINA_UNUSED, const char *name, const char **type_ret)
 {
    Evas_Object *o = e_icon_add(evas);
 
@@ -2023,7 +2023,7 @@ _e_fm2_icon_thumb_edje_get(Evas *evas, const E_Fm2_Icon *ic, Evas_Smart_Cb cb, v
 }
 
 static Eina_Bool
-_e_fm2_icon_cache_update(void *data, int type __UNUSED__, void *event __UNUSED__)
+_e_fm2_icon_cache_update(void *data, int type EINA_UNUSED, void *event EINA_UNUSED)
 {
    _e_fm2_icons_update_helper(data, EINA_TRUE);
    return ECORE_CALLBACK_RENEW;
@@ -2103,7 +2103,7 @@ _e_fm2_icon_mime_fdo_get(Evas *evas, const E_Fm2_Icon *ic, const char **type_ret
 }
 
 static Evas_Object *
-_e_fm2_icon_mime_theme_get(Evas *evas, const E_Fm2_Icon *ic, const char **type_ret __UNUSED__)
+_e_fm2_icon_mime_theme_get(Evas *evas, const E_Fm2_Icon *ic, const char **type_ret EINA_UNUSED)
 {
    char buf[1024];
    const char *file;
@@ -2132,7 +2132,7 @@ _e_fm2_icon_mime_theme_get(Evas *evas, const E_Fm2_Icon *ic, const char **type_r
  * Use mime type information to set icon.
  */
 static Evas_Object *
-_e_fm2_icon_mime_get(Evas *evas, const E_Fm2_Icon *ic, Evas_Smart_Cb gen_func __UNUSED__, void *data __UNUSED__, int force_gen __UNUSED__, const char **type_ret)
+_e_fm2_icon_mime_get(Evas *evas, const E_Fm2_Icon *ic, Evas_Smart_Cb gen_func EINA_UNUSED, void *data EINA_UNUSED, int force_gen EINA_UNUSED, const char **type_ret)
 {
    Evas_Object *o = NULL;
 
@@ -2521,7 +2521,7 @@ _e_fm2_client_file_trash(const char *path, Evas_Object *e_fm)
 }
 
 static int
-_e_fm2_client_file_mkdir(const char *path, const char *rel, int rel_to, int x, int y, int res_w __UNUSED__, int res_h __UNUSED__, Evas_Object *e_fm)
+_e_fm2_client_file_mkdir(const char *path, const char *rel, int rel_to, int x, int y, int res_w EINA_UNUSED, int res_h EINA_UNUSED, Evas_Object *e_fm)
 {
    char *d;
    int l1, l2, l, id;
@@ -3695,7 +3695,7 @@ _e_fm2_file_symlink(Evas_Object *obj)
 }
 
 static void
-_e_fm2_file_cut_menu(void *data, E_Menu *m __UNUSED__, E_Menu_Item *mi __UNUSED__)
+_e_fm2_file_cut_menu(void *data, E_Menu *m EINA_UNUSED, E_Menu_Item *mi EINA_UNUSED)
 {
    E_Fm2_Smart_Data *sd = data;
    if (!sd) return;
@@ -3703,7 +3703,7 @@ _e_fm2_file_cut_menu(void *data, E_Menu *m __UNUSED__, E_Menu_Item *mi __UNUSED_
 }
 
 static void
-_e_fm2_file_copy_menu(void *data, E_Menu *m __UNUSED__, E_Menu_Item *mi __UNUSED__)
+_e_fm2_file_copy_menu(void *data, E_Menu *m EINA_UNUSED, E_Menu_Item *mi EINA_UNUSED)
 {
    E_Fm2_Smart_Data *sd = data;
    if (!sd) return;
@@ -3711,7 +3711,7 @@ _e_fm2_file_copy_menu(void *data, E_Menu *m __UNUSED__, E_Menu_Item *mi __UNUSED
 }
 
 static void
-_e_fm2_file_paste_menu(void *data, E_Menu *m __UNUSED__, E_Menu_Item *mi __UNUSED__)
+_e_fm2_file_paste_menu(void *data, E_Menu *m EINA_UNUSED, E_Menu_Item *mi EINA_UNUSED)
 {
    E_Fm2_Smart_Data *sd = data;
    if (!sd) return;
@@ -3719,7 +3719,7 @@ _e_fm2_file_paste_menu(void *data, E_Menu *m __UNUSED__, E_Menu_Item *mi __UNUSE
 }
 
 static void
-_e_fm2_file_symlink_menu(void *data, E_Menu *m __UNUSED__, E_Menu_Item *mi __UNUSED__)
+_e_fm2_file_symlink_menu(void *data, E_Menu *m EINA_UNUSED, E_Menu_Item *mi EINA_UNUSED)
 {
    E_Fm2_Smart_Data *sd = data;
    if (!sd) return;
@@ -4562,7 +4562,7 @@ _e_fm2_icon_unfill(E_Fm2_Icon *ic)
 }
 
 static void
-_e_fm2_icon_geom_adjust(E_Fm2_Icon *ic, int saved_x, int saved_y, int saved_w __UNUSED__, int saved_h __UNUSED__, int saved_res_w, int saved_res_h)
+_e_fm2_icon_geom_adjust(E_Fm2_Icon *ic, int saved_x, int saved_y, int saved_w EINA_UNUSED, int saved_h EINA_UNUSED, int saved_res_w, int saved_res_h)
 {
    int qx, qy, rx, ry, x, y;
 
@@ -4820,7 +4820,7 @@ _e_fm2_icon_free(E_Fm2_Icon *ic)
 }
 
 static void
-_e_fm2_icon_label_click(void *data, Evas_Object *obj __UNUSED__, const char *emission __UNUSED__, const char *source __UNUSED__)
+_e_fm2_icon_label_click(void *data, Evas_Object *obj EINA_UNUSED, const char *emission EINA_UNUSED, const char *source EINA_UNUSED)
 {
    E_Fm2_Icon *ic = data;
    if (ic->entry_widget || ic->entry_dialog) return;
@@ -5139,7 +5139,7 @@ e_fm2_desktop_url_eval(const char *val)
 }
 
 static void
-_e_fm2_cb_eio_stat(void *data, Eio_File *handler __UNUSED__, const Eina_Stat *st)
+_e_fm2_cb_eio_stat(void *data, Eio_File *handler EINA_UNUSED, const Eina_Stat *st)
 {
    E_Fm2_Icon *ic = data;
    ic->eio = NULL;
@@ -5162,7 +5162,7 @@ _e_fm2_cb_eio_stat(void *data, Eio_File *handler __UNUSED__, const Eina_Stat *st
 }
 
 static void
-_e_fm2_cb_eio_err(void *data, Eio_File *handler __UNUSED__, int error __UNUSED__)
+_e_fm2_cb_eio_err(void *data, Eio_File *handler EINA_UNUSED, int error EINA_UNUSED)
 {
    E_Fm2_Icon *ic = data;
    ic->eio = NULL;
@@ -6451,7 +6451,7 @@ _e_fm2_cb_dnd_move(void *data, const char *type, void *event)
 }
 
 static void
-_e_fm2_cb_dnd_leave(void *data, const char *type, void *event __UNUSED__)
+_e_fm2_cb_dnd_leave(void *data, const char *type, void *event EINA_UNUSED)
 {
    E_Fm2_Smart_Data *sd;
 
@@ -6564,7 +6564,7 @@ _e_fm_drop_menu_queue(Evas_Object *e_fm, void *args, int op)
 }
 
 static void
-_e_fm_drop_menu_copy_cb(void *data, E_Menu *m __UNUSED__, E_Menu_Item *mi __UNUSED__)
+_e_fm_drop_menu_copy_cb(void *data, E_Menu *m EINA_UNUSED, E_Menu_Item *mi EINA_UNUSED)
 {
    char *args;
 
@@ -6575,7 +6575,7 @@ _e_fm_drop_menu_copy_cb(void *data, E_Menu *m __UNUSED__, E_Menu_Item *mi __UNUS
 }
 
 static void
-_e_fm_drop_menu_move_cb(void *data, E_Menu *m __UNUSED__, E_Menu_Item *mi __UNUSED__)
+_e_fm_drop_menu_move_cb(void *data, E_Menu *m EINA_UNUSED, E_Menu_Item *mi EINA_UNUSED)
 {
    char *args;
 
@@ -6586,7 +6586,7 @@ _e_fm_drop_menu_move_cb(void *data, E_Menu *m __UNUSED__, E_Menu_Item *mi __UNUS
 }
 
 static void
-_e_fm_drop_menu_symlink_cb(void *data, E_Menu *m __UNUSED__, E_Menu_Item *mi __UNUSED__)
+_e_fm_drop_menu_symlink_cb(void *data, E_Menu *m EINA_UNUSED, E_Menu_Item *mi EINA_UNUSED)
 {
    char *args;
 
@@ -6597,7 +6597,7 @@ _e_fm_drop_menu_symlink_cb(void *data, E_Menu *m __UNUSED__, E_Menu_Item *mi __U
 }
 
 static void
-_e_fm_drop_menu_abort_cb(void *data, E_Menu *m __UNUSED__, E_Menu_Item *mi __UNUSED__)
+_e_fm_drop_menu_abort_cb(void *data, E_Menu *m EINA_UNUSED, E_Menu_Item *mi EINA_UNUSED)
 {
    free(evas_object_data_del(data, "drop_menu_data"));
 }
@@ -7290,7 +7290,7 @@ _e_fm2_mouse_1_handler(E_Fm2_Icon *ic, int up, void *evas_event)
 }
 
 static void
-_e_fm2_cb_icon_mouse_down(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
+_e_fm2_cb_icon_mouse_down(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info)
 {
    Evas_Event_Mouse_Down *ev;
    E_Fm2_Icon *ic;
@@ -7347,7 +7347,7 @@ _e_fm2_cb_icon_mouse_down(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNU
 }
 
 static void
-_e_fm2_cb_icon_mouse_up(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
+_e_fm2_cb_icon_mouse_up(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info)
 {
    Evas_Event_Mouse_Up *ev = event_info;
    E_Fm2_Icon *ic = data;
@@ -7384,7 +7384,7 @@ _e_fm2_cb_drag_finished_show(E_Fm2_Icon *ic)
 }
 
 static void
-_e_fm2_cb_drag_finished(E_Drag *drag, int dropped __UNUSED__)
+_e_fm2_cb_drag_finished(E_Drag *drag, int dropped EINA_UNUSED)
 {
    E_Fm2_Uri *uri;
    const char *p;
@@ -7509,7 +7509,7 @@ _e_fm_drag_key_up_cb(E_Drag *drag, Ecore_Event_Key *e)
 }
 
 static void
-_e_fm2_cb_icon_mouse_in(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
+_e_fm2_cb_icon_mouse_in(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info)
 {
    Evas_Event_Mouse_In *ev;
    E_Fm2_Icon *ic;
@@ -7523,7 +7523,7 @@ _e_fm2_cb_icon_mouse_in(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSE
 }
 
 static void
-_e_fm2_cb_icon_mouse_out(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
+_e_fm2_cb_icon_mouse_out(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info)
 {
    Evas_Event_Mouse_Out *ev;
    E_Fm2_Icon *ic;
@@ -7536,7 +7536,7 @@ _e_fm2_cb_icon_mouse_out(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUS
 }
 
 static void
-_e_fm2_cb_icon_mouse_move(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
+_e_fm2_cb_icon_mouse_move(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info)
 {
    Evas_Event_Mouse_Move *ev;
    E_Fm2_Icon *ic;
@@ -7706,7 +7706,7 @@ _e_fm2_cb_icon_mouse_move(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNU
 }
 
 static void
-_e_fm2_cb_icon_thumb_dnd_gen(void *data, Evas_Object *obj, void *event_info __UNUSED__)
+_e_fm2_cb_icon_thumb_dnd_gen(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
    Evas_Object *o;
    Evas_Coord w = 0, h = 0;
@@ -7728,7 +7728,7 @@ _e_fm2_cb_icon_thumb_dnd_gen(void *data, Evas_Object *obj, void *event_info __UN
 }
 
 static void
-_e_fm2_cb_icon_thumb_gen(void *data, Evas_Object *obj, void *event_info __UNUSED__)
+_e_fm2_cb_icon_thumb_gen(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
    E_Fm2_Icon *ic;
    const char *file;
@@ -7768,7 +7768,7 @@ _e_fm2_cb_icon_thumb_gen(void *data, Evas_Object *obj, void *event_info __UNUSED
 }
 
 static void
-_e_fm2_cb_key_down(void *data, Evas *e __UNUSED__, Evas_Object *obj, void *event_info)
+_e_fm2_cb_key_down(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *event_info)
 {
    Evas_Event_Key_Down *ev = event_info;
    E_Fm2_Smart_Data *sd = data;
@@ -7972,7 +7972,7 @@ _e_fm2_cb_key_down(void *data, Evas *e __UNUSED__, Evas_Object *obj, void *event
 }
 
 static void
-_e_fm2_cb_mouse_down(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
+_e_fm2_cb_mouse_down(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info)
 {
    Evas_Event_Mouse_Down *ev;
    E_Fm2_Smart_Data *sd;
@@ -8040,7 +8040,7 @@ _e_fm2_cb_mouse_down(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__
 }
 
 static void
-_e_fm2_cb_mouse_up(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_e_fm2_cb_mouse_up(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    E_Fm2_Smart_Data *sd;
 
@@ -8053,7 +8053,7 @@ _e_fm2_cb_mouse_up(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, 
 }
 
 static void
-_e_fm2_cb_mouse_move(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
+_e_fm2_cb_mouse_move(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info)
 {
    Evas_Event_Mouse_Move *ev;
    E_Fm2_Smart_Data *sd;
@@ -8390,7 +8390,7 @@ _e_fm2_cb_sort_idler(void *data)
 }
 
 static Eina_Bool
-_e_fm2_cb_theme(void *data, int type __UNUSED__, void *event __UNUSED__)
+_e_fm2_cb_theme(void *data, int type EINA_UNUSED, void *event EINA_UNUSED)
 {
    e_fm2_refresh(data);
    return ECORE_CALLBACK_RENEW;
@@ -8724,7 +8724,7 @@ _e_fm2_smart_clip_unset(Evas_Object *obj)
 }
 
 static void
-_e_fm2_overlay_clip_resize(void *data, Evas *e __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
+_e_fm2_overlay_clip_resize(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
    E_Fm2_Smart_Data *sd = data;
    int w, h;
@@ -8734,7 +8734,7 @@ _e_fm2_overlay_clip_resize(void *data, Evas *e __UNUSED__, Evas_Object *obj, voi
 }
 
 static void
-_e_fm2_overlay_clip_move(void *data, Evas *e __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
+_e_fm2_overlay_clip_move(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
    E_Fm2_Smart_Data *sd = data;
    int x, y;
@@ -8744,7 +8744,7 @@ _e_fm2_overlay_clip_move(void *data, Evas *e __UNUSED__, Evas_Object *obj, void 
 }
 
 static void
-_e_fm2_view_menu_sorting_change_case(void *data, E_Menu *m __UNUSED__, E_Menu_Item *mi)
+_e_fm2_view_menu_sorting_change_case(void *data, E_Menu *m EINA_UNUSED, E_Menu_Item *mi)
 {
    E_Fm2_Smart_Data *sd = data;
 
@@ -8753,7 +8753,7 @@ _e_fm2_view_menu_sorting_change_case(void *data, E_Menu *m __UNUSED__, E_Menu_It
 }
 
 static void
-_e_fm2_view_menu_sorting_change_size(void *data, E_Menu *m __UNUSED__, E_Menu_Item *mi)
+_e_fm2_view_menu_sorting_change_size(void *data, E_Menu *m EINA_UNUSED, E_Menu_Item *mi)
 {
    E_Fm2_Smart_Data *sd = data;
 
@@ -8762,7 +8762,7 @@ _e_fm2_view_menu_sorting_change_size(void *data, E_Menu *m __UNUSED__, E_Menu_It
 }
 
 static void
-_e_fm2_view_menu_sorting_change_mtime(void *data, E_Menu *m __UNUSED__, E_Menu_Item *mi)
+_e_fm2_view_menu_sorting_change_mtime(void *data, E_Menu *m EINA_UNUSED, E_Menu_Item *mi)
 {
    E_Fm2_Smart_Data *sd = data;
 
@@ -8771,7 +8771,7 @@ _e_fm2_view_menu_sorting_change_mtime(void *data, E_Menu *m __UNUSED__, E_Menu_I
 }
 
 static void
-_e_fm2_view_menu_sorting_change_extension(void *data, E_Menu *m __UNUSED__, E_Menu_Item *mi)
+_e_fm2_view_menu_sorting_change_extension(void *data, E_Menu *m EINA_UNUSED, E_Menu_Item *mi)
 {
    E_Fm2_Smart_Data *sd = data;
 
@@ -8780,7 +8780,7 @@ _e_fm2_view_menu_sorting_change_extension(void *data, E_Menu *m __UNUSED__, E_Me
 }
 
 static void
-_e_fm2_view_menu_sorting_change_dirs_first(void *data, E_Menu *m __UNUSED__, E_Menu_Item *mi)
+_e_fm2_view_menu_sorting_change_dirs_first(void *data, E_Menu *m EINA_UNUSED, E_Menu_Item *mi)
 {
    E_Fm2_Smart_Data *sd = data;
 
@@ -8791,7 +8791,7 @@ _e_fm2_view_menu_sorting_change_dirs_first(void *data, E_Menu *m __UNUSED__, E_M
 }
 
 static void
-_e_fm2_view_menu_sorting_change_dirs_last(void *data, E_Menu *m __UNUSED__, E_Menu_Item *mi)
+_e_fm2_view_menu_sorting_change_dirs_last(void *data, E_Menu *m EINA_UNUSED, E_Menu_Item *mi)
 {
    E_Fm2_Smart_Data *sd = data;
 
@@ -8802,7 +8802,7 @@ _e_fm2_view_menu_sorting_change_dirs_last(void *data, E_Menu *m __UNUSED__, E_Me
 }
 
 static void
-_e_fm2_view_menu_sorting_pre(void *data, E_Menu *m __UNUSED__, E_Menu_Item *mi)
+_e_fm2_view_menu_sorting_pre(void *data, E_Menu *m EINA_UNUSED, E_Menu_Item *mi)
 {
    E_Fm2_Smart_Data *sd = data;
    E_Menu *subm;
@@ -8985,7 +8985,7 @@ _e_fm2_menu(Evas_Object *obj, unsigned int timestamp)
 }
 
 static void
-_e_fm2_menu_post_cb(void *data, E_Menu *m __UNUSED__)
+_e_fm2_menu_post_cb(void *data, E_Menu *m EINA_UNUSED)
 {
    E_Fm2_Smart_Data *sd;
 
@@ -9371,7 +9371,7 @@ _e_fm2_context_list_sort(const void *data1, const void *data2)
 }
 
 static void
-_e_fm2_icon_menu_post_cb(void *data, E_Menu *m __UNUSED__)
+_e_fm2_icon_menu_post_cb(void *data, E_Menu *m EINA_UNUSED)
 {
    E_Fm2_Context_Menu_Data *md;
    E_Fm2_Icon *ic;
@@ -9383,7 +9383,7 @@ _e_fm2_icon_menu_post_cb(void *data, E_Menu *m __UNUSED__)
 }
 
 static void
-_e_fm2_icon_menu_item_cb(void *data, E_Menu *m __UNUSED__, E_Menu_Item *mi __UNUSED__)
+_e_fm2_icon_menu_item_cb(void *data, E_Menu *m EINA_UNUSED, E_Menu_Item *mi EINA_UNUSED)
 {
    E_Fm2_Context_Menu_Data *md = NULL;
    Evas_Object *obj = NULL;
@@ -9451,7 +9451,7 @@ _e_fm2_view_menu_icon_size_use_default(void *data, E_Menu *m, E_Menu_Item *mi)
 }
 
 static void
-_e_fm2_view_menu_icon_size_pre(void *data, E_Menu *m __UNUSED__, E_Menu_Item *mi)
+_e_fm2_view_menu_icon_size_pre(void *data, E_Menu *m EINA_UNUSED, E_Menu_Item *mi)
 {
    E_Fm2_Smart_Data *sd = data;
    E_Menu *subm;
@@ -9591,7 +9591,7 @@ _e_fm2_icon_view_menu_pre(void *data, E_Menu *subm)
 }
 
 static void
-_e_fm2_new_dir_notify(void *data, Ecore_Thread *eth __UNUSED__, char *filename)
+_e_fm2_new_dir_notify(void *data, Ecore_Thread *eth EINA_UNUSED, char *filename)
 {
    E_Fm2_Smart_Data *sd = data;
 
@@ -9606,7 +9606,7 @@ _e_fm2_new_dir_notify(void *data, Ecore_Thread *eth __UNUSED__, char *filename)
 }
 
 static void
-_e_fm2_new_file_notify(void *data, Ecore_Thread *eth __UNUSED__, char *filename)
+_e_fm2_new_file_notify(void *data, Ecore_Thread *eth EINA_UNUSED, char *filename)
 {
    E_Fm2_Smart_Data *sd = data;
 
@@ -9711,19 +9711,19 @@ error:
 }
 
 static void
-_e_fm2_new_file_thread(void *data __UNUSED__, Ecore_Thread *eth)
+_e_fm2_new_file_thread(void *data EINA_UNUSED, Ecore_Thread *eth)
 {
    _e_fm2_new_thread_helper(eth, EINA_FALSE);
 }
 
 static void
-_e_fm2_new_dir_thread(void *data __UNUSED__, Ecore_Thread *eth)
+_e_fm2_new_dir_thread(void *data EINA_UNUSED, Ecore_Thread *eth)
 {
    _e_fm2_new_thread_helper(eth, EINA_TRUE);
 }
 
 static void
-_e_fm2_new_file_end(void *data, Ecore_Thread *eth __UNUSED__)
+_e_fm2_new_file_end(void *data, Ecore_Thread *eth EINA_UNUSED)
 {
    E_Fm2_Smart_Data *sd = data;
    sd->new_file.thread = NULL;
@@ -9734,7 +9734,7 @@ _e_fm2_new_file_end(void *data, Ecore_Thread *eth __UNUSED__)
 }
 
 static void
-_e_fm2_new_file_cancel(void *data, Ecore_Thread *eth __UNUSED__)
+_e_fm2_new_file_cancel(void *data, Ecore_Thread *eth EINA_UNUSED)
 {
    E_Fm2_Smart_Data *sd = data;
    sd->new_file.thread = NULL;
@@ -9744,7 +9744,7 @@ _e_fm2_new_file_cancel(void *data, Ecore_Thread *eth __UNUSED__)
 }
 
 static void
-_e_fm2_new_file(void *data, E_Menu *m __UNUSED__, E_Menu_Item *mi __UNUSED__)
+_e_fm2_new_file(void *data, E_Menu *m EINA_UNUSED, E_Menu_Item *mi EINA_UNUSED)
 {
    E_Fm2_Smart_Data *sd = data;
 
@@ -9765,7 +9765,7 @@ _e_fm2_new_file(void *data, E_Menu *m __UNUSED__, E_Menu_Item *mi __UNUSED__)
 }
 
 static void
-_e_fm2_new_directory(void *data, E_Menu *m __UNUSED__, E_Menu_Item *mi __UNUSED__)
+_e_fm2_new_directory(void *data, E_Menu *m EINA_UNUSED, E_Menu_Item *mi EINA_UNUSED)
 {
    E_Fm2_Smart_Data *sd = data;
 
@@ -9806,13 +9806,13 @@ _e_fm2_add_menu_pre(void *data, E_Menu *subm)
 }
 
 static void
-_e_fm2_settings_icon_item(void *data __UNUSED__, E_Menu *m __UNUSED__, E_Menu_Item *mi __UNUSED__)
+_e_fm2_settings_icon_item(void *data EINA_UNUSED, E_Menu *m EINA_UNUSED, E_Menu_Item *mi EINA_UNUSED)
 {
    e_configure_registry_call("fileman/file_icons", NULL, NULL);
 }
 
 static void
-_e_fm2_settings_item(void *data __UNUSED__, E_Menu *m __UNUSED__, E_Menu_Item *mi __UNUSED__)
+_e_fm2_settings_item(void *data EINA_UNUSED, E_Menu *m EINA_UNUSED, E_Menu_Item *mi EINA_UNUSED)
 {
    e_configure_registry_call("fileman/fileman", NULL, NULL);
 }
@@ -9936,7 +9936,7 @@ _e_fm2_view_menu_del(void *data)
 }
 
 static void
-_clear_background_cb(void *data, E_Menu *m __UNUSED__, E_Menu_Item *mi __UNUSED__)
+_clear_background_cb(void *data, E_Menu *m EINA_UNUSED, E_Menu_Item *mi EINA_UNUSED)
 {
    E_Fm2_Smart_Data *sd;
 
@@ -9948,7 +9948,7 @@ _clear_background_cb(void *data, E_Menu *m __UNUSED__, E_Menu_Item *mi __UNUSED_
 }
 
 static void
-_clear_overlay_cb(void *data, E_Menu *m __UNUSED__, E_Menu_Item *mi __UNUSED__)
+_clear_overlay_cb(void *data, E_Menu *m EINA_UNUSED, E_Menu_Item *mi EINA_UNUSED)
 {
    E_Fm2_Smart_Data *sd = data;
 
@@ -10190,7 +10190,7 @@ _set_background_cb(void *data, E_Dialog *dia)
 }
 
 static void
-_e_fm2_view_menu_set_background_cb(void *data, E_Menu *m __UNUSED__, E_Menu_Item *mi __UNUSED__)
+_e_fm2_view_menu_set_background_cb(void *data, E_Menu *m EINA_UNUSED, E_Menu_Item *mi EINA_UNUSED)
 {
    E_Fm2_Smart_Data *sd = data;
 
@@ -10218,7 +10218,7 @@ _set_overlay_cb(void *data, E_Dialog *dia)
 }
 
 static void
-_e_fm2_view_menu_set_overlay_cb(void *data, E_Menu *m __UNUSED__, E_Menu_Item *mi __UNUSED__)
+_e_fm2_view_menu_set_overlay_cb(void *data, E_Menu *m EINA_UNUSED, E_Menu_Item *mi EINA_UNUSED)
 {
    E_Fm2_Smart_Data *sd = data;
 
@@ -10228,7 +10228,7 @@ _e_fm2_view_menu_set_overlay_cb(void *data, E_Menu *m __UNUSED__, E_Menu_Item *m
 }
 
 static void
-_e_fm2_refresh(void *data, E_Menu *m __UNUSED__, E_Menu_Item *mi __UNUSED__)
+_e_fm2_refresh(void *data, E_Menu *m EINA_UNUSED, E_Menu_Item *mi EINA_UNUSED)
 {
    E_Fm2_Smart_Data *sd;
 
@@ -10253,7 +10253,7 @@ _e_fm2_toggle_hidden_files(void *data, E_Menu *m, E_Menu_Item *mi)
 }
 
 static void
-_e_fm2_toggle_secure_rm(void *data, E_Menu *m __UNUSED__, E_Menu_Item *mi __UNUSED__)
+_e_fm2_toggle_secure_rm(void *data, E_Menu *m EINA_UNUSED, E_Menu_Item *mi EINA_UNUSED)
 {
    E_Fm2_Smart_Data *sd = data;
 
@@ -10261,7 +10261,7 @@ _e_fm2_toggle_secure_rm(void *data, E_Menu *m __UNUSED__, E_Menu_Item *mi __UNUS
 }
 
 static void
-_e_fm2_toggle_single_click(void *data, E_Menu *m __UNUSED__, E_Menu_Item *mi __UNUSED__)
+_e_fm2_toggle_single_click(void *data, E_Menu *m EINA_UNUSED, E_Menu_Item *mi EINA_UNUSED)
 {
    E_Fm2_Smart_Data *sd;
 
@@ -10306,7 +10306,7 @@ _e_fm2_sort(void *data, E_Menu *m, E_Menu_Item *mi)
 }
 
 static void
-_e_fm2_file_rename(void *data, E_Menu *m __UNUSED__, E_Menu_Item *mi __UNUSED__)
+_e_fm2_file_rename(void *data, E_Menu *m EINA_UNUSED, E_Menu_Item *mi EINA_UNUSED)
 {
    E_Fm2_Icon *ic;
    char text[PATH_MAX + 256];
@@ -10398,7 +10398,7 @@ _e_fm2_icon_entry_widget_del(E_Fm2_Icon *ic)
 }
 
 static void
-_e_fm2_icon_entry_widget_cb_key_down(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
+_e_fm2_icon_entry_widget_cb_key_down(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info)
 {
    Evas_Event_Key_Down *ev;
    E_Fm2_Icon *ic;
@@ -10538,7 +10538,7 @@ _e_fm_retry_abort_dialog(int pid, const char *str)
 }
 
 static void
-_e_fm_retry_abort_retry_cb(void *data __UNUSED__, E_Dialog *dialog)
+_e_fm_retry_abort_retry_cb(void *data EINA_UNUSED, E_Dialog *dialog)
 {
    int id = (int)(intptr_t)E_OBJECT(dialog)->data;
    _e_fm2_op_registry_go_on(id);
@@ -10547,7 +10547,7 @@ _e_fm_retry_abort_retry_cb(void *data __UNUSED__, E_Dialog *dialog)
 }
 
 static void
-_e_fm_retry_abort_abort_cb(void *data __UNUSED__, E_Dialog *dialog)
+_e_fm_retry_abort_abort_cb(void *data EINA_UNUSED, E_Dialog *dialog)
 {
    int id = (int)(intptr_t)E_OBJECT(dialog)->data;
    _e_fm2_op_registry_aborted(id);
@@ -10600,7 +10600,7 @@ _e_fm_overwrite_dialog(int pid, const char *str)
 }
 
 static void
-_e_fm_overwrite_no_cb(void *data __UNUSED__, E_Dialog *dialog)
+_e_fm_overwrite_no_cb(void *data EINA_UNUSED, E_Dialog *dialog)
 {
    int id = (int)(intptr_t)E_OBJECT(dialog)->data;
    _e_fm2_op_registry_go_on(id);
@@ -10609,7 +10609,7 @@ _e_fm_overwrite_no_cb(void *data __UNUSED__, E_Dialog *dialog)
 }
 
 static void
-_e_fm_overwrite_no_all_cb(void *data __UNUSED__, E_Dialog *dialog)
+_e_fm_overwrite_no_all_cb(void *data EINA_UNUSED, E_Dialog *dialog)
 {
    int id = (int)(intptr_t)E_OBJECT(dialog)->data;
    _e_fm2_op_registry_go_on(id);
@@ -10666,7 +10666,7 @@ _e_fm_overwrite_rename_yes_cb(void *data, char *text)
 }
 
 static void
-_e_fm_overwrite_rename(void *data __UNUSED__, E_Dialog *dialog)
+_e_fm_overwrite_rename(void *data EINA_UNUSED, E_Dialog *dialog)
 {
    char text[PATH_MAX + 256];
    int id = (int)(intptr_t)E_OBJECT(dialog)->data;
@@ -10693,7 +10693,7 @@ _e_fm_overwrite_rename(void *data __UNUSED__, E_Dialog *dialog)
 }
 
 static void
-_e_fm_overwrite_yes_cb(void *data __UNUSED__, E_Dialog *dialog)
+_e_fm_overwrite_yes_cb(void *data EINA_UNUSED, E_Dialog *dialog)
 {
    int id = (int)(intptr_t)E_OBJECT(dialog)->data;
    _e_fm2_op_registry_go_on(id);
@@ -10702,7 +10702,7 @@ _e_fm_overwrite_yes_cb(void *data __UNUSED__, E_Dialog *dialog)
 }
 
 static void
-_e_fm_overwrite_yes_all_cb(void *data __UNUSED__, E_Dialog *dialog)
+_e_fm_overwrite_yes_all_cb(void *data EINA_UNUSED, E_Dialog *dialog)
 {
    int id = (int)(intptr_t)E_OBJECT(dialog)->data;
    _e_fm2_op_registry_go_on(id);
@@ -10768,7 +10768,7 @@ _e_fm_error_dialog(int pid, const char *str)
 }
 
 static void
-_e_fm_error_retry_cb(void *data __UNUSED__, E_Dialog *dialog)
+_e_fm_error_retry_cb(void *data EINA_UNUSED, E_Dialog *dialog)
 {
    int id = (int)(intptr_t)E_OBJECT(dialog)->data;
    _e_fm2_op_registry_go_on(id);
@@ -10777,7 +10777,7 @@ _e_fm_error_retry_cb(void *data __UNUSED__, E_Dialog *dialog)
 }
 
 static void
-_e_fm_error_abort_cb(void *data __UNUSED__, E_Dialog *dialog)
+_e_fm_error_abort_cb(void *data EINA_UNUSED, E_Dialog *dialog)
 {
    int id = (int)(intptr_t)E_OBJECT(dialog)->data;
    _e_fm2_op_registry_aborted(id);
@@ -10827,7 +10827,7 @@ _e_fm_error_link_source(void *data, E_Dialog *dialog)
 }
 
 static void
-_e_fm_error_ignore_this_cb(void *data __UNUSED__, E_Dialog *dialog)
+_e_fm_error_ignore_this_cb(void *data EINA_UNUSED, E_Dialog *dialog)
 {
    int id = (int)(intptr_t)E_OBJECT(dialog)->data;
    _e_fm2_op_registry_go_on(id);
@@ -10836,7 +10836,7 @@ _e_fm_error_ignore_this_cb(void *data __UNUSED__, E_Dialog *dialog)
 }
 
 static void
-_e_fm_error_ignore_all_cb(void *data __UNUSED__, E_Dialog *dialog)
+_e_fm_error_ignore_all_cb(void *data EINA_UNUSED, E_Dialog *dialog)
 {
    int id = (int)(intptr_t)E_OBJECT(dialog)->data;
    _e_fm2_op_registry_go_on(id);
@@ -10872,7 +10872,7 @@ _e_fm_device_error_dialog(const char *title, const char *msg, const char *pstr)
 }
 
 static void
-_e_fm2_file_application_properties(void *data, E_Menu *m __UNUSED__, E_Menu_Item *mi __UNUSED__)
+_e_fm2_file_application_properties(void *data, E_Menu *m EINA_UNUSED, E_Menu_Item *mi EINA_UNUSED)
 {
    Efreet_Desktop *desktop;
    E_Fm2_Icon *ic;
@@ -10887,7 +10887,7 @@ _e_fm2_file_application_properties(void *data, E_Menu *m __UNUSED__, E_Menu_Item
 }
 
 static void
-_e_fm2_file_properties(void *data, E_Menu *m __UNUSED__, E_Menu_Item *mi __UNUSED__)
+_e_fm2_file_properties(void *data, E_Menu *m EINA_UNUSED, E_Menu_Item *mi EINA_UNUSED)
 {
    E_Fm2_Icon *ic;
 
@@ -10910,7 +10910,7 @@ _e_fm2_file_properties_delete_cb(void *obj)
 }
 
 static void
-_e_fm2_file_delete_menu(void *data, E_Menu *m __UNUSED__, E_Menu_Item *mi __UNUSED__)
+_e_fm2_file_delete_menu(void *data, E_Menu *m EINA_UNUSED, E_Menu_Item *mi EINA_UNUSED)
 {
    E_Fm2_Icon *ic = data;
    if ((!ic) || (!ic->sd)) return;
@@ -11062,7 +11062,7 @@ _e_fm2_file_delete_no_cb(void *data, E_Dialog *dialog)
 }
 
 static Eina_Bool
-_e_fm2_sys_suspend_hibernate(void *d __UNUSED__, int type __UNUSED__, void *ev __UNUSED__)
+_e_fm2_sys_suspend_hibernate(void *d EINA_UNUSED, int type EINA_UNUSED, void *ev EINA_UNUSED)
 {
    Eina_List *l, *ll, *lll;
    E_Volume *v;
@@ -11388,7 +11388,7 @@ _e_fm2_theme_edje_icon_object_set(E_Fm2_Smart_Data *sd, Evas_Object *o, const ch
 }
 
 static void
-_e_fm2_volume_mount(void *data, E_Menu *m __UNUSED__, E_Menu_Item *mi __UNUSED__)
+_e_fm2_volume_mount(void *data, E_Menu *m EINA_UNUSED, E_Menu_Item *mi EINA_UNUSED)
 {
    E_Volume *v;
    const char *mp;
@@ -11402,7 +11402,7 @@ _e_fm2_volume_mount(void *data, E_Menu *m __UNUSED__, E_Menu_Item *mi __UNUSED__
 }
 
 static void
-_e_fm2_volume_unmount(void *data, E_Menu *m __UNUSED__, E_Menu_Item *mi __UNUSED__)
+_e_fm2_volume_unmount(void *data, E_Menu *m EINA_UNUSED, E_Menu_Item *mi EINA_UNUSED)
 {
    E_Volume *v;
 
@@ -11414,7 +11414,7 @@ _e_fm2_volume_unmount(void *data, E_Menu *m __UNUSED__, E_Menu_Item *mi __UNUSED
 }
 
 static void
-_e_fm2_volume_eject(void *data, E_Menu *m __UNUSED__, E_Menu_Item *mi __UNUSED__)
+_e_fm2_volume_eject(void *data, E_Menu *m EINA_UNUSED, E_Menu_Item *mi EINA_UNUSED)
 {
    E_Volume *v;
 

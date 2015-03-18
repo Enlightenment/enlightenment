@@ -645,7 +645,7 @@ _policy_zone_layout_splash(E_Client *ec, E_Illume_Config_Zone *cz)
 }
 
 static void
-_policy_zone_layout_conformant_single(E_Client *ec, E_Illume_Config_Zone *cz __UNUSED__)
+_policy_zone_layout_conformant_single(E_Client *ec, E_Illume_Config_Zone *cz EINA_UNUSED)
 {
    if (!_policy_layout_app_check(ec)) return;
 
@@ -825,7 +825,7 @@ _policy_border_del(E_Client *ec)
 }
 
 void
-_policy_border_focus_in(E_Client *ec __UNUSED__)
+_policy_border_focus_in(E_Client *ec EINA_UNUSED)
 {
    E_Client *ind;
 

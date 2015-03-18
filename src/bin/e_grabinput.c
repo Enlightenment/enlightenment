@@ -190,7 +190,7 @@ e_grabinput_key_win_get(void)
 
 #ifndef HAVE_WAYLAND_ONLY
 static Eina_Bool
-_e_grabinput_focus_check(void *data __UNUSED__)
+_e_grabinput_focus_check(void *data EINA_UNUSED)
 {
    if (ecore_x_window_focus_get() != focus_fix_win)
      {

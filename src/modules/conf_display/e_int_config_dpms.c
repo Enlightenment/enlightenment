@@ -37,7 +37,7 @@ struct _E_Config_Dialog_Data
 };
 
 E_Config_Dialog *
-e_int_config_dpms(Evas_Object *parent EINA_UNUSED, const char *params __UNUSED__)
+e_int_config_dpms(Evas_Object *parent EINA_UNUSED, const char *params EINA_UNUSED)
 {
    E_Config_Dialog *cfd;
    E_Config_Dialog_View *v;
@@ -85,13 +85,13 @@ _create_data(E_Config_Dialog *cfd)
 }
 
 static void
-_free_data(E_Config_Dialog *cfd __UNUSED__, E_Config_Dialog_Data *cfdata)
+_free_data(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfdata)
 {
    E_FREE(cfdata);
 }
 
 static int
-_apply_data(E_Config_Dialog *cfd __UNUSED__, E_Config_Dialog_Data *cfdata)
+_apply_data(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfdata)
 {
    e_config->backlight.normal = cfdata->backlight_normal / 100.0;
    e_config->backlight.dim = cfdata->backlight_dim / 100.0;
@@ -121,7 +121,7 @@ _apply_data(E_Config_Dialog *cfd __UNUSED__, E_Config_Dialog_Data *cfdata)
 
 /* advanced window */
 static int
-_advanced_check_changed(E_Config_Dialog *cfd __UNUSED__, E_Config_Dialog_Data *cfdata)
+_advanced_check_changed(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfdata)
 {
    // set state from saved config
    e_widget_disabled_set(cfdata->backlight_slider_idle, !cfdata->enable_idle_dim);
@@ -144,7 +144,7 @@ _advanced_apply_data(E_Config_Dialog *cfd, E_Config_Dialog_Data *cfdata)
 }
 
 static Evas_Object *
-_advanced_create_widgets(E_Config_Dialog *cfd __UNUSED__, Evas *evas, E_Config_Dialog_Data *cfdata)
+_advanced_create_widgets(E_Config_Dialog *cfd EINA_UNUSED, Evas *evas, E_Config_Dialog_Data *cfdata)
 {
    Evas_Object *otb, *o, *ob;
    Eina_List *devs, *l;
@@ -255,7 +255,7 @@ _advanced_create_widgets(E_Config_Dialog *cfd __UNUSED__, Evas *evas, E_Config_D
 }
 
 static void
-_cb_disable(void *data, Evas_Object *obj __UNUSED__)
+_cb_disable(void *data, Evas_Object *obj EINA_UNUSED)
 {
    E_Config_Dialog_Data *cfdata;
    const Eina_List *l;
@@ -269,7 +269,7 @@ _cb_disable(void *data, Evas_Object *obj __UNUSED__)
 }
 
 static void
-_cb_ask_presentation_changed(void *data, Evas_Object *obj __UNUSED__)
+_cb_ask_presentation_changed(void *data, Evas_Object *obj EINA_UNUSED)
 {
    E_Config_Dialog_Data *cfdata;
    Eina_Bool disable;

@@ -73,7 +73,7 @@ static Config_Item *_tasks_config_item_get(const char *id);
 static void         _tasks_cb_menu_configure(void *data, E_Menu *m, E_Menu_Item *mi);
 static void         _tasks_cb_item_mouse_down(void *data, Evas *e, Evas_Object *obj, void *event_info);
 static void         _tasks_cb_item_mouse_up(void *data, Evas *e, Evas_Object *obj, void *event_info);
-static void         _tasks_cb_item_mouse_wheel(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info);
+static void         _tasks_cb_item_mouse_wheel(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info);
 
 static Eina_Bool    _tasks_cb_event_client_add(void *data, int type, void *event);
 static Eina_Bool    _tasks_cb_event_client_remove(void *data, int type, void *event);
@@ -159,7 +159,7 @@ e_modapi_init(E_Module *m)
 }
 
 EAPI int
-e_modapi_shutdown(E_Module *m __UNUSED__)
+e_modapi_shutdown(E_Module *m EINA_UNUSED)
 {
    Ecore_Event_Handler *eh;
    Tasks *tasks;
@@ -194,7 +194,7 @@ e_modapi_shutdown(E_Module *m __UNUSED__)
 }
 
 EAPI int
-e_modapi_save(E_Module *m __UNUSED__)
+e_modapi_save(E_Module *m EINA_UNUSED)
 {
    e_config_domain_save("module.tasks", conf_edd, tasks_config);
    return 1;
@@ -287,13 +287,13 @@ _gc_orient(E_Gadcon_Client *gcc, E_Gadcon_Orient orient)
 }
 
 static const char *
-_gc_label(const E_Gadcon_Client_Class *client_class __UNUSED__)
+_gc_label(const E_Gadcon_Client_Class *client_class EINA_UNUSED)
 {
    return _("Tasks");
 }
 
 static Evas_Object *
-_gc_icon(const E_Gadcon_Client_Class *client_class __UNUSED__, Evas *evas)
+_gc_icon(const E_Gadcon_Client_Class *client_class EINA_UNUSED, Evas *evas)
 {
    Evas_Object *o;
    char buf[4096];
@@ -306,7 +306,7 @@ _gc_icon(const E_Gadcon_Client_Class *client_class __UNUSED__, Evas *evas)
 }
 
 static const char *
-_gc_id_new(const E_Gadcon_Client_Class *client_class __UNUSED__)
+_gc_id_new(const E_Gadcon_Client_Class *client_class EINA_UNUSED)
 {
    Config_Item *config;
 
@@ -712,7 +712,7 @@ _tasks_config_updated(Config_Item *config)
 }
 
 static void
-_tasks_cb_menu_configure(void *data, E_Menu *m __UNUSED__, E_Menu_Item *mi __UNUSED__)
+_tasks_cb_menu_configure(void *data, E_Menu *m EINA_UNUSED, E_Menu_Item *mi EINA_UNUSED)
 {
    Tasks *tasks;
 
@@ -721,7 +721,7 @@ _tasks_cb_menu_configure(void *data, E_Menu *m __UNUSED__, E_Menu_Item *mi __UNU
 }
 
 static void
-_tasks_cb_item_mouse_down(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
+_tasks_cb_item_mouse_down(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info)
 {
    Evas_Event_Mouse_Down *ev;
    Tasks_Item *item;
@@ -768,7 +768,7 @@ _tasks_cb_item_mouse_down(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNU
 }
 
 static void
-_tasks_cb_item_mouse_wheel(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
+_tasks_cb_item_mouse_wheel(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info)
 {
    Evas_Event_Mouse_Wheel *ev;
    Tasks_Item *item;
@@ -789,7 +789,7 @@ _tasks_cb_item_mouse_wheel(void *data, Evas *e __UNUSED__, Evas_Object *obj __UN
 }
 
 static void
-_tasks_cb_item_mouse_up(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
+_tasks_cb_item_mouse_up(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info)
 {
    Evas_Event_Mouse_Up *ev;
    Tasks_Item *item;
@@ -862,7 +862,7 @@ _tasks_cb_item_mouse_up(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSE
 /************ BORDER CALLBACKS *********************/
 
 static Eina_Bool
-_tasks_cb_event_client_add(void *data __UNUSED__, int type __UNUSED__, void *event)
+_tasks_cb_event_client_add(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
 {
    E_Event_Client *ev = event;
    Tasks *tasks;
@@ -879,7 +879,7 @@ _tasks_cb_event_client_add(void *data __UNUSED__, int type __UNUSED__, void *eve
 }
 
 static Eina_Bool
-_tasks_cb_event_client_remove(void *data __UNUSED__, int type __UNUSED__, void *event)
+_tasks_cb_event_client_remove(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
 {
    E_Event_Client *ev = event;
    Tasks *tasks;
@@ -895,7 +895,7 @@ _tasks_cb_event_client_remove(void *data __UNUSED__, int type __UNUSED__, void *
 }
 
 static Eina_Bool
-_tasks_cb_event_client_iconify(void *data __UNUSED__, int type __UNUSED__, void *event)
+_tasks_cb_event_client_iconify(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
 {
    E_Event_Client *ev = event;
    _tasks_signal_emit(ev->ec, "e,state,iconified", "e");
@@ -903,7 +903,7 @@ _tasks_cb_event_client_iconify(void *data __UNUSED__, int type __UNUSED__, void 
 }
 
 static Eina_Bool
-_tasks_cb_event_client_uniconify(void *data __UNUSED__, int type __UNUSED__, void *event)
+_tasks_cb_event_client_uniconify(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
 {
    E_Event_Client *ev = event;
    _tasks_signal_emit(ev->ec, "e,state,uniconified", "e");
@@ -911,7 +911,7 @@ _tasks_cb_event_client_uniconify(void *data __UNUSED__, int type __UNUSED__, voi
 }
 
 static Eina_Bool
-_tasks_cb_window_focus_in(void *data __UNUSED__, int type __UNUSED__, void *event)
+_tasks_cb_window_focus_in(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
 {
    E_Event_Client *ev = event;
    _tasks_signal_emit(ev->ec, "e,state,focused", "e");
@@ -919,7 +919,7 @@ _tasks_cb_window_focus_in(void *data __UNUSED__, int type __UNUSED__, void *even
 }
 
 static Eina_Bool
-_tasks_cb_window_focus_out(void *data __UNUSED__, int type __UNUSED__, void *event)
+_tasks_cb_window_focus_out(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
 {
    E_Event_Client *ev = event;
    _tasks_signal_emit(ev->ec, "e,state,unfocused", "e");
@@ -927,7 +927,7 @@ _tasks_cb_window_focus_out(void *data __UNUSED__, int type __UNUSED__, void *eve
 }
 
 static Eina_Bool
-_tasks_cb_event_client_urgent_change(void *data __UNUSED__, int type __UNUSED__, void *event)
+_tasks_cb_event_client_urgent_change(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
 {
    E_Event_Client_Property *ev = event;
 
@@ -940,7 +940,7 @@ _tasks_cb_event_client_urgent_change(void *data __UNUSED__, int type __UNUSED__,
 }
 
 static Eina_Bool
-_tasks_cb_event_client_title_change(void *data __UNUSED__, int type __UNUSED__, void *event)
+_tasks_cb_event_client_title_change(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
 {
    E_Event_Client_Property *ev = event;
 
@@ -950,7 +950,7 @@ _tasks_cb_event_client_title_change(void *data __UNUSED__, int type __UNUSED__, 
 }
 
 static Eina_Bool
-_tasks_cb_event_client_icon_change(void *data __UNUSED__, int type __UNUSED__, void *event)
+_tasks_cb_event_client_icon_change(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
 {
    E_Event_Client_Property *ev = event;
 
@@ -960,21 +960,21 @@ _tasks_cb_event_client_icon_change(void *data __UNUSED__, int type __UNUSED__, v
 }
 
 static Eina_Bool
-_tasks_cb_event_client_zone_set(void *data __UNUSED__, int type __UNUSED__, void *event __UNUSED__)
+_tasks_cb_event_client_zone_set(void *data EINA_UNUSED, int type EINA_UNUSED, void *event EINA_UNUSED)
 {
    _tasks_refill_all();
    return EINA_TRUE;
 }
 
 static Eina_Bool
-_tasks_cb_event_client_desk_set(void *data __UNUSED__, int type __UNUSED__, void *event __UNUSED__)
+_tasks_cb_event_client_desk_set(void *data EINA_UNUSED, int type EINA_UNUSED, void *event EINA_UNUSED)
 {
    _tasks_refill_all();
    return EINA_TRUE;
 }
 
 static Eina_Bool
-_tasks_cb_event_desk_show(void *data __UNUSED__, int type __UNUSED__, void *event __UNUSED__)
+_tasks_cb_event_desk_show(void *data EINA_UNUSED, int type EINA_UNUSED, void *event EINA_UNUSED)
 {
    _tasks_refill_all();
    return EINA_TRUE;

@@ -121,7 +121,7 @@ implement_layout(void)
 }
 
 EAPI int
-wizard_page_init(E_Wizard_Page *pg __UNUSED__, Eina_Bool *need_xdg_desktops __UNUSED__, Eina_Bool *need_xdg_icons __UNUSED__)
+wizard_page_init(E_Wizard_Page *pg EINA_UNUSED, Eina_Bool *need_xdg_desktops EINA_UNUSED, Eina_Bool *need_xdg_icons EINA_UNUSED)
 {
    // parse kbd rules here
    find_rules();
@@ -130,7 +130,7 @@ wizard_page_init(E_Wizard_Page *pg __UNUSED__, Eina_Bool *need_xdg_desktops __UN
 }
 /*
 EAPI int
-wizard_page_shutdown(E_Wizard_Page *pg __UNUSED__)
+wizard_page_shutdown(E_Wizard_Page *pg EINA_UNUSED)
 {
    return 1;
 }
@@ -186,7 +186,7 @@ wizard_page_show(E_Wizard_Page *pg)
 }
 
 EAPI int
-wizard_page_hide(E_Wizard_Page *pg __UNUSED__)
+wizard_page_hide(E_Wizard_Page *pg EINA_UNUSED)
 {
    /* special - key layout inits its stuff the moment it goes away */
    implement_layout();
@@ -194,7 +194,7 @@ wizard_page_hide(E_Wizard_Page *pg __UNUSED__)
 }
 
 EAPI int
-wizard_page_apply(E_Wizard_Page *pg __UNUSED__)
+wizard_page_apply(E_Wizard_Page *pg EINA_UNUSED)
 {
    // do this again as we want it to apply to the new profile
    implement_layout();

@@ -5,21 +5,21 @@
 
 /* local function prototypes */
 static void _e_mod_ind_win_cb_free(Ind_Win *iwin);
-static Eina_Bool _e_mod_ind_win_cb_win_prop(void *data, int type __UNUSED__, void *event);
-static Eina_Bool _e_mod_ind_win_cb_zone_resize(void *data, int type __UNUSED__, void *event);
+static Eina_Bool _e_mod_ind_win_cb_win_prop(void *data, int type EINA_UNUSED, void *event);
+static Eina_Bool _e_mod_ind_win_cb_zone_resize(void *data, int type EINA_UNUSED, void *event);
 static void _e_mod_ind_win_cb_resize(E_Win *win);
-static void _e_mod_ind_win_cb_mouse_down(void *data, Evas *evas __UNUSED__, Evas_Object *obj __UNUSED__, void *event);
-static void _e_mod_ind_win_cb_mouse_up(void *data, Evas *evas __UNUSED__, Evas_Object *obj __UNUSED__, void *event);
-static void _e_mod_ind_win_cb_mouse_move(void *data, Evas *evas __UNUSED__, Evas_Object *obj __UNUSED__, void *event);
-static void _e_mod_ind_win_cb_min_size_request(void *data, E_Gadcon *gc, Evas_Coord w __UNUSED__, Evas_Coord h);
-/* static void _e_mod_ind_win_cb_size_request(void *data __UNUSED__, E_Gadcon *gc __UNUSED__, Evas_Coord w __UNUSED__, Evas_Coord h __UNUSED__); */
-static Evas_Object *_e_mod_ind_win_cb_frame_request(void *data __UNUSED__, E_Gadcon_Client *gcc __UNUSED__, const char *style __UNUSED__);
-static void _e_mod_ind_win_cb_menu_items_append(void *data, E_Gadcon_Client *gcc __UNUSED__, E_Menu *mn);
+static void _e_mod_ind_win_cb_mouse_down(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event);
+static void _e_mod_ind_win_cb_mouse_up(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event);
+static void _e_mod_ind_win_cb_mouse_move(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event);
+static void _e_mod_ind_win_cb_min_size_request(void *data, E_Gadcon *gc, Evas_Coord w EINA_UNUSED, Evas_Coord h);
+/* static void _e_mod_ind_win_cb_size_request(void *data EINA_UNUSED, E_Gadcon *gc EINA_UNUSED, Evas_Coord w EINA_UNUSED, Evas_Coord h EINA_UNUSED); */
+static Evas_Object *_e_mod_ind_win_cb_frame_request(void *data EINA_UNUSED, E_Gadcon_Client *gcc EINA_UNUSED, const char *style EINA_UNUSED);
+static void _e_mod_ind_win_cb_menu_items_append(void *data, E_Gadcon_Client *gcc EINA_UNUSED, E_Menu *mn);
 static void _e_mod_ind_win_cb_menu_append(Ind_Win *iwin, E_Menu *mn);
 static void _e_mod_ind_win_cb_menu_pre(void *data, E_Menu *mn);
-static void _e_mod_ind_win_cb_menu_post(void *data, E_Menu *mn __UNUSED__);
-static void _e_mod_ind_win_cb_menu_contents(void *data, E_Menu *mn __UNUSED__, E_Menu_Item *mi __UNUSED__);
-static void _e_mod_ind_win_cb_menu_edit(void *data, E_Menu *mn __UNUSED__, E_Menu_Item *mi __UNUSED__);
+static void _e_mod_ind_win_cb_menu_post(void *data, E_Menu *mn EINA_UNUSED);
+static void _e_mod_ind_win_cb_menu_contents(void *data, E_Menu *mn EINA_UNUSED, E_Menu_Item *mi EINA_UNUSED);
+static void _e_mod_ind_win_cb_menu_edit(void *data, E_Menu *mn EINA_UNUSED, E_Menu_Item *mi EINA_UNUSED);
 
 Ind_Win *
 e_mod_ind_win_new(E_Zone *zone) 
@@ -186,7 +186,7 @@ _e_mod_ind_win_cb_free(Ind_Win *iwin)
 }
 
 static Eina_Bool
-_e_mod_ind_win_cb_win_prop(void *data, int type __UNUSED__, void *event) 
+_e_mod_ind_win_cb_win_prop(void *data, int type EINA_UNUSED, void *event) 
 {
    Ind_Win *iwin;
    Ecore_X_Event_Window_Property *ev;
@@ -222,7 +222,7 @@ _e_mod_ind_win_cb_win_prop(void *data, int type __UNUSED__, void *event)
 }
 
 static Eina_Bool
-_e_mod_ind_win_cb_zone_resize(void *data, int type __UNUSED__, void *event) 
+_e_mod_ind_win_cb_zone_resize(void *data, int type EINA_UNUSED, void *event) 
 {
    Ind_Win *iwin;
    E_Event_Zone_Move_Resize *ev;
@@ -257,7 +257,7 @@ _e_mod_ind_win_cb_resize(E_Win *win)
 }
 
 static void 
-_e_mod_ind_win_cb_mouse_down(void *data, Evas *evas __UNUSED__, Evas_Object *obj __UNUSED__, void *event) 
+_e_mod_ind_win_cb_mouse_down(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event) 
 {
    Ind_Win *iwin;
    Evas_Event_Mouse_Down *ev;
@@ -297,7 +297,7 @@ _e_mod_ind_win_cb_mouse_down(void *data, Evas *evas __UNUSED__, Evas_Object *obj
 }
 
 static void 
-_e_mod_ind_win_cb_mouse_up(void *data, Evas *evas __UNUSED__, Evas_Object *obj __UNUSED__, void *event) 
+_e_mod_ind_win_cb_mouse_up(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event) 
 {
    Ind_Win *iwin;
    Evas_Event_Mouse_Up *ev;
@@ -347,7 +347,7 @@ _e_mod_ind_win_cb_mouse_up(void *data, Evas *evas __UNUSED__, Evas_Object *obj _
 }
 
 static void 
-_e_mod_ind_win_cb_mouse_move(void *data, Evas *evas __UNUSED__, Evas_Object *obj __UNUSED__, void *event) 
+_e_mod_ind_win_cb_mouse_move(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event) 
 {
    Ind_Win *iwin;
    Evas_Event_Mouse_Move *ev;
@@ -424,7 +424,7 @@ _e_mod_ind_win_cb_mouse_move(void *data, Evas *evas __UNUSED__, Evas_Object *obj
 }
 
 static void 
-_e_mod_ind_win_cb_min_size_request(void *data, E_Gadcon *gc, Evas_Coord w __UNUSED__, Evas_Coord h) 
+_e_mod_ind_win_cb_min_size_request(void *data, E_Gadcon *gc, Evas_Coord w EINA_UNUSED, Evas_Coord h) 
 {
    Ind_Win *iwin;
 
@@ -435,19 +435,19 @@ _e_mod_ind_win_cb_min_size_request(void *data, E_Gadcon *gc, Evas_Coord w __UNUS
 }
 
 /* static void  */
-/* _e_mod_ind_win_cb_size_request(void *data __UNUSED__, E_Gadcon *gc __UNUSED__, Evas_Coord w __UNUSED__, Evas_Coord h __UNUSED__)  */
+/* _e_mod_ind_win_cb_size_request(void *data EINA_UNUSED, E_Gadcon *gc EINA_UNUSED, Evas_Coord w EINA_UNUSED, Evas_Coord h EINA_UNUSED)  */
 /* { */
 /*    return; */
 /* } */
 
 static Evas_Object *
-_e_mod_ind_win_cb_frame_request(void *data __UNUSED__, E_Gadcon_Client *gcc __UNUSED__, const char *style __UNUSED__) 
+_e_mod_ind_win_cb_frame_request(void *data EINA_UNUSED, E_Gadcon_Client *gcc EINA_UNUSED, const char *style EINA_UNUSED) 
 {
    return NULL;
 }
 
 static void 
-_e_mod_ind_win_cb_menu_items_append(void *data, E_Gadcon_Client *gcc __UNUSED__, E_Menu *mn) 
+_e_mod_ind_win_cb_menu_items_append(void *data, E_Gadcon_Client *gcc EINA_UNUSED, E_Menu *mn) 
 {
    Ind_Win *iwin;
 
@@ -499,7 +499,7 @@ _e_mod_ind_win_cb_menu_pre(void *data, E_Menu *mn)
 }
 
 static void 
-_e_mod_ind_win_cb_menu_post(void *data, E_Menu *mn __UNUSED__) 
+_e_mod_ind_win_cb_menu_post(void *data, E_Menu *mn EINA_UNUSED) 
 {
    Ind_Win *iwin;
 
@@ -510,7 +510,7 @@ _e_mod_ind_win_cb_menu_post(void *data, E_Menu *mn __UNUSED__)
 }
 
 static void 
-_e_mod_ind_win_cb_menu_contents(void *data, E_Menu *mn __UNUSED__, E_Menu_Item *mi __UNUSED__) 
+_e_mod_ind_win_cb_menu_contents(void *data, E_Menu *mn EINA_UNUSED, E_Menu_Item *mi EINA_UNUSED) 
 {
    Ind_Win *iwin;
 
@@ -525,7 +525,7 @@ _e_mod_ind_win_cb_menu_contents(void *data, E_Menu *mn __UNUSED__, E_Menu_Item *
 }
 
 static void 
-_e_mod_ind_win_cb_menu_edit(void *data, E_Menu *mn __UNUSED__, E_Menu_Item *mi __UNUSED__) 
+_e_mod_ind_win_cb_menu_edit(void *data, E_Menu *mn EINA_UNUSED, E_Menu_Item *mi EINA_UNUSED) 
 {
    Ind_Win *iwin;
 

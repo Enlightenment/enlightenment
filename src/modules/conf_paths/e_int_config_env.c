@@ -20,7 +20,7 @@ struct _E_Config_Dialog_Data
 };
 
 E_Config_Dialog *
-e_int_config_env(Evas_Object *parent EINA_UNUSED, const char *params __UNUSED__)
+e_int_config_env(Evas_Object *parent EINA_UNUSED, const char *params EINA_UNUSED)
 {
    E_Config_Dialog *cfd;
    E_Config_Dialog_View *v;
@@ -67,7 +67,7 @@ _create_data(E_Config_Dialog *cfd)
 }
 
 static void
-_free_data(E_Config_Dialog *cfd __UNUSED__, E_Config_Dialog_Data *cfdata)
+_free_data(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfdata)
 {
    E_Config_Env_Var *evr;
    
@@ -83,7 +83,7 @@ _free_data(E_Config_Dialog *cfd __UNUSED__, E_Config_Dialog_Data *cfdata)
 }
 
 static int
-_basic_apply_data(E_Config_Dialog *cfd __UNUSED__, E_Config_Dialog_Data *cfdata)
+_basic_apply_data(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfdata)
 {
    Eina_List *l, *l2;
    E_Config_Env_Var *evr, *evr2;
@@ -148,7 +148,7 @@ _sel_cb(void *data)
 }
 
 static void
-_add_cb(void *data, void *data2 __UNUSED__)
+_add_cb(void *data, void *data2 EINA_UNUSED)
 {
    E_Config_Dialog_Data *cfdata = data;
    Eina_List *l;
@@ -212,7 +212,7 @@ _add_cb(void *data, void *data2 __UNUSED__)
 }
 
 static void
-_del_cb(void *data, void *data2 __UNUSED__)
+_del_cb(void *data, void *data2 EINA_UNUSED)
 {
    E_Config_Dialog_Data *cfdata = data;
    Eina_List *l;
@@ -258,13 +258,13 @@ _del_cb(void *data, void *data2 __UNUSED__)
 }
 
 static void
-_mod_cb(void *data, void *data2 __UNUSED__)
+_mod_cb(void *data, void *data2 EINA_UNUSED)
 {
    _add_cb(data, data2);
 }
 
 static void
-_unset_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_unset_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    E_Config_Dialog_Data *cfdata = data;
    if (cfdata->unset) e_widget_entry_text_set(cfdata->gui.val_en, "");

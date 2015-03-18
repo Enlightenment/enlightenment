@@ -2,7 +2,7 @@
 #include "e_mod_main.h"
 
 /* local subsystem functions */
-static Eina_Bool _cb_key_down(__UNUSED__ void *data, Ecore_Event_Key *ev);
+static Eina_Bool _cb_key_down(EINA_UNUSED void *data, Ecore_Event_Key *ev);
 static void      _cb_signal_close(void *data, Evas_Object *obj, const char *emission, const char *source);
 static void      _cb_signal_syscon(void *data, Evas_Object *obj, const char *emission, const char *source);
 static void      _cb_signal_action(void *data, Evas_Object *obj, const char *emission, const char *source);
@@ -300,7 +300,7 @@ e_syscon_hide(void)
 
 /* local subsystem functions */
 static Eina_Bool
-_cb_key_down(__UNUSED__ void *data, Ecore_Event_Key *ev)
+_cb_key_down(EINA_UNUSED void *data, Ecore_Event_Key *ev)
 {
    if (!strcmp(ev->key, "Escape"))
      e_syscon_hide();
@@ -430,7 +430,7 @@ _cb_key_down(__UNUSED__ void *data, Ecore_Event_Key *ev)
 }
 
 static void
-_cb_signal_close(void *data __UNUSED__, Evas_Object *obj __UNUSED__, const char *emission __UNUSED__, const char *source __UNUSED__)
+_cb_signal_close(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, const char *emission EINA_UNUSED, const char *source EINA_UNUSED)
 {
    e_syscon_hide();
 }
@@ -458,14 +458,14 @@ _do_action_name(const char *action)
 }
 
 static void
-_cb_signal_syscon(void *data __UNUSED__, Evas_Object *obj __UNUSED__, const char *emission __UNUSED__, const char *source)
+_cb_signal_syscon(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, const char *emission EINA_UNUSED, const char *source)
 {
    e_syscon_hide();
    _do_action_name(source);
 }
 
 static void
-_cb_signal_action(void *data, Evas_Object *obj __UNUSED__, const char *emission __UNUSED__, const char *source __UNUSED__)
+_cb_signal_action(void *data, Evas_Object *obj EINA_UNUSED, const char *emission EINA_UNUSED, const char *source EINA_UNUSED)
 {
    E_Config_Syscon_Action *sca;
    E_Action *a;
@@ -479,7 +479,7 @@ _cb_signal_action(void *data, Evas_Object *obj __UNUSED__, const char *emission 
 }
 
 static void
-_cb_signal_action_extra(void *data, Evas_Object *obj __UNUSED__, const char *emission __UNUSED__, const char *source __UNUSED__)
+_cb_signal_action_extra(void *data, Evas_Object *obj EINA_UNUSED, const char *emission EINA_UNUSED, const char *source EINA_UNUSED)
 {
    E_Sys_Con_Action *sca;
 
@@ -490,7 +490,7 @@ _cb_signal_action_extra(void *data, Evas_Object *obj __UNUSED__, const char *emi
 }
 
 static Eina_Bool
-_cb_timeout_defaction(void *data __UNUSED__)
+_cb_timeout_defaction(void *data EINA_UNUSED)
 {
    const char *defact = NULL;
    deftimer = NULL;

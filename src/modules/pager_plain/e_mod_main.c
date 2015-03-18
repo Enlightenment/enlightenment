@@ -4,10 +4,10 @@
 /* gadcon requirements */
 static E_Gadcon_Client *_gc_init(E_Gadcon *gc, const char *name, const char *id, const char *style);
 static void             _gc_shutdown(E_Gadcon_Client *gcc);
-static void             _gc_orient(E_Gadcon_Client *gcc, E_Gadcon_Orient orient __UNUSED__);
-static const char      *_gc_label(const E_Gadcon_Client_Class *client_class __UNUSED__);
-static Evas_Object     *_gc_icon(const E_Gadcon_Client_Class *client_class __UNUSED__, Evas *evas);
-static const char      *_gc_id_new(const E_Gadcon_Client_Class *client_class __UNUSED__);
+static void             _gc_orient(E_Gadcon_Client *gcc, E_Gadcon_Orient orient EINA_UNUSED);
+static const char      *_gc_label(const E_Gadcon_Client_Class *client_class EINA_UNUSED);
+static Evas_Object     *_gc_icon(const E_Gadcon_Client_Class *client_class EINA_UNUSED, Evas *evas);
+static const char      *_gc_id_new(const E_Gadcon_Client_Class *client_class EINA_UNUSED);
 
 /* and actually define the gadcon class that this module provides (just 1) */
 static const E_Gadcon_Client_Class _gadcon_class =
@@ -98,47 +98,47 @@ struct _Pager_Popup
 };
 
 static void             _pager_desk_livethumb_setup(Pager_Desk *pd);
-static void             _pager_cb_obj_moveresize(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__);
-static void             _button_cb_mouse_down(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info);
-static void             _pager_inst_cb_menu_configure(void *data __UNUSED__, E_Menu *m __UNUSED__, E_Menu_Item *mi __UNUSED__);
-static void             _pager_inst_cb_menu_virtual_desktops_dialog(void *data, E_Menu *m __UNUSED__, E_Menu_Item *mi __UNUSED__);
+static void             _pager_cb_obj_moveresize(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED);
+static void             _button_cb_mouse_down(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info);
+static void             _pager_inst_cb_menu_configure(void *data EINA_UNUSED, E_Menu *m EINA_UNUSED, E_Menu_Item *mi EINA_UNUSED);
+static void             _pager_inst_cb_menu_virtual_desktops_dialog(void *data, E_Menu *m EINA_UNUSED, E_Menu_Item *mi EINA_UNUSED);
 static void             _pager_instance_drop_zone_recalc(Instance *inst);
-static Eina_Bool        _pager_cb_event_bg_update(void *data __UNUSED__, int type __UNUSED__, void *event);
-static Eina_Bool        _pager_cb_event_client_resize(void *data __UNUSED__, int type __UNUSED__, void *event);
-static Eina_Bool        _pager_cb_event_client_move(void *data __UNUSED__, int type __UNUSED__, void *event);
-static Eina_Bool        _pager_cb_event_client_add(void *data __UNUSED__, int type __UNUSED__, void *event);
-static Eina_Bool        _pager_cb_event_client_remove(void *data __UNUSED__, int type __UNUSED__, void *event);
-static Eina_Bool        _pager_cb_event_client_iconify(void *data __UNUSED__, int type __UNUSED__, void *event);
-static Eina_Bool        _pager_cb_event_client_uniconify(void *data __UNUSED__, int type __UNUSED__, void *event);
-static Eina_Bool        _pager_cb_event_client_stick(void *data __UNUSED__, int type __UNUSED__, void *event);
-static Eina_Bool        _pager_cb_event_client_unstick(void *data __UNUSED__, int type __UNUSED__, void *event);
-static Eina_Bool        _pager_cb_event_client_desk_set(void *data __UNUSED__, int type __UNUSED__, void *event);
-static Eina_Bool        _pager_cb_event_client_stack(void *data __UNUSED__, int type __UNUSED__, void *event);
-static Eina_Bool        _pager_cb_event_client_icon_change(void *data __UNUSED__, int type __UNUSED__, void *event);
-static Eina_Bool        _pager_cb_event_client_urgent_change(void *data __UNUSED__, int type __UNUSED__, void *event);
-static Eina_Bool        _pager_cb_event_client_focus_in(void *data __UNUSED__, int type __UNUSED__, void *event);
-static Eina_Bool        _pager_cb_event_client_focus_out(void *data __UNUSED__, int type __UNUSED__, void *event);
-static Eina_Bool        _pager_cb_event_client_property(void *data __UNUSED__, int type __UNUSED__, void *event);
-static Eina_Bool        _pager_cb_event_zone_desk_count_set(void *data __UNUSED__, int type __UNUSED__, void *event);
-static Eina_Bool        _pager_cb_event_desk_show(void *data __UNUSED__, int type __UNUSED__, void *event);
-static Eina_Bool        _pager_cb_event_desk_name_change(void *data __UNUSED__, int type __UNUSED__, void *event);
-static Eina_Bool        _pager_cb_event_compositor_resize(void *data __UNUSED__, int type __UNUSED__, void *event);
-static void             _pager_window_cb_mouse_down(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info);
-static void             _pager_window_cb_mouse_up(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info);
-static void             _pager_window_cb_mouse_move(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info);
+static Eina_Bool        _pager_cb_event_bg_update(void *data EINA_UNUSED, int type EINA_UNUSED, void *event);
+static Eina_Bool        _pager_cb_event_client_resize(void *data EINA_UNUSED, int type EINA_UNUSED, void *event);
+static Eina_Bool        _pager_cb_event_client_move(void *data EINA_UNUSED, int type EINA_UNUSED, void *event);
+static Eina_Bool        _pager_cb_event_client_add(void *data EINA_UNUSED, int type EINA_UNUSED, void *event);
+static Eina_Bool        _pager_cb_event_client_remove(void *data EINA_UNUSED, int type EINA_UNUSED, void *event);
+static Eina_Bool        _pager_cb_event_client_iconify(void *data EINA_UNUSED, int type EINA_UNUSED, void *event);
+static Eina_Bool        _pager_cb_event_client_uniconify(void *data EINA_UNUSED, int type EINA_UNUSED, void *event);
+static Eina_Bool        _pager_cb_event_client_stick(void *data EINA_UNUSED, int type EINA_UNUSED, void *event);
+static Eina_Bool        _pager_cb_event_client_unstick(void *data EINA_UNUSED, int type EINA_UNUSED, void *event);
+static Eina_Bool        _pager_cb_event_client_desk_set(void *data EINA_UNUSED, int type EINA_UNUSED, void *event);
+static Eina_Bool        _pager_cb_event_client_stack(void *data EINA_UNUSED, int type EINA_UNUSED, void *event);
+static Eina_Bool        _pager_cb_event_client_icon_change(void *data EINA_UNUSED, int type EINA_UNUSED, void *event);
+static Eina_Bool        _pager_cb_event_client_urgent_change(void *data EINA_UNUSED, int type EINA_UNUSED, void *event);
+static Eina_Bool        _pager_cb_event_client_focus_in(void *data EINA_UNUSED, int type EINA_UNUSED, void *event);
+static Eina_Bool        _pager_cb_event_client_focus_out(void *data EINA_UNUSED, int type EINA_UNUSED, void *event);
+static Eina_Bool        _pager_cb_event_client_property(void *data EINA_UNUSED, int type EINA_UNUSED, void *event);
+static Eina_Bool        _pager_cb_event_zone_desk_count_set(void *data EINA_UNUSED, int type EINA_UNUSED, void *event);
+static Eina_Bool        _pager_cb_event_desk_show(void *data EINA_UNUSED, int type EINA_UNUSED, void *event);
+static Eina_Bool        _pager_cb_event_desk_name_change(void *data EINA_UNUSED, int type EINA_UNUSED, void *event);
+static Eina_Bool        _pager_cb_event_compositor_resize(void *data EINA_UNUSED, int type EINA_UNUSED, void *event);
+static void             _pager_window_cb_mouse_down(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info);
+static void             _pager_window_cb_mouse_up(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info);
+static void             _pager_window_cb_mouse_move(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info);
 static void            *_pager_window_cb_drag_convert(E_Drag *drag, const char *type);
 static void             _pager_window_cb_drag_finished(E_Drag *drag, int dropped);
-static void             _pager_drop_cb_enter(void *data, const char *type __UNUSED__, void *event_info);
-static void             _pager_drop_cb_move(void *data, const char *type __UNUSED__, void *event_info);
-static void             _pager_drop_cb_leave(void *data, const char *type __UNUSED__, void *event_info __UNUSED__);
+static void             _pager_drop_cb_enter(void *data, const char *type EINA_UNUSED, void *event_info);
+static void             _pager_drop_cb_move(void *data, const char *type EINA_UNUSED, void *event_info);
+static void             _pager_drop_cb_leave(void *data, const char *type EINA_UNUSED, void *event_info EINA_UNUSED);
 static void             _pager_drop_cb_drop(void *data, const char *type, void *event_info);
 static void             _pager_inst_cb_scroll(void *data);
 static void             _pager_update_drop_position(Pager *p, Evas_Coord x, Evas_Coord y);
-static void             _pager_desk_cb_mouse_down(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info);
-static void             _pager_desk_cb_mouse_up(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info);
-static void             _pager_desk_cb_mouse_move(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info);
+static void             _pager_desk_cb_mouse_down(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info);
+static void             _pager_desk_cb_mouse_up(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info);
+static void             _pager_desk_cb_mouse_move(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info);
 static void             _pager_desk_cb_drag_finished(E_Drag *drag, int dropped);
-static void             _pager_desk_cb_mouse_wheel(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info);
+static void             _pager_desk_cb_mouse_wheel(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info);
 static Eina_Bool        _pager_popup_cb_timeout(void *data);
 static Pager           *_pager_new(Evas *evas, E_Zone *zone, E_Gadcon *gc);
 static void             _pager_free(Pager *p);
@@ -162,16 +162,16 @@ static Pager_Popup     *_pager_popup_find(E_Zone *zone);
 /* functions for pager popup on key actions */
 static int              _pager_popup_show(void);
 static void             _pager_popup_hide(int switch_desk);
-static Eina_Bool        _pager_popup_cb_mouse_down(void *data __UNUSED__, int type __UNUSED__, void *event);
-static Eina_Bool        _pager_popup_cb_mouse_up(void *data __UNUSED__, int type __UNUSED__, void *event);
-static Eina_Bool        _pager_popup_cb_mouse_move(void *data __UNUSED__, int type __UNUSED__, void *event);
-static Eina_Bool        _pager_popup_cb_mouse_wheel(void *data __UNUSED__, int type __UNUSED__, void *event);
+static Eina_Bool        _pager_popup_cb_mouse_down(void *data EINA_UNUSED, int type EINA_UNUSED, void *event);
+static Eina_Bool        _pager_popup_cb_mouse_up(void *data EINA_UNUSED, int type EINA_UNUSED, void *event);
+static Eina_Bool        _pager_popup_cb_mouse_move(void *data EINA_UNUSED, int type EINA_UNUSED, void *event);
+static Eina_Bool        _pager_popup_cb_mouse_wheel(void *data EINA_UNUSED, int type EINA_UNUSED, void *event);
 static void             _pager_popup_desk_switch(int x, int y);
 static void             _pager_popup_modifiers_set(int mod);
-static Eina_Bool        _pager_popup_cb_key_down(void *data __UNUSED__, int type __UNUSED__, void *event);
-static Eina_Bool        _pager_popup_cb_key_up(void *data __UNUSED__, int type __UNUSED__, void *event);
-static void             _pager_popup_cb_action_show(E_Object *obj __UNUSED__, const char *params __UNUSED__, Ecore_Event_Key *ev __UNUSED__);
-static void             _pager_popup_cb_action_switch(E_Object *obj __UNUSED__, const char *params, Ecore_Event_Key *ev);
+static Eina_Bool        _pager_popup_cb_key_down(void *data EINA_UNUSED, int type EINA_UNUSED, void *event);
+static Eina_Bool        _pager_popup_cb_key_up(void *data EINA_UNUSED, int type EINA_UNUSED, void *event);
+static void             _pager_popup_cb_action_show(E_Object *obj EINA_UNUSED, const char *params EINA_UNUSED, Ecore_Event_Key *ev EINA_UNUSED);
+static void             _pager_popup_cb_action_switch(E_Object *obj EINA_UNUSED, const char *params, Ecore_Event_Key *ev);
 
 /* variables for pager popup on key actions */
 static E_Action *act_popup_show = NULL;
@@ -242,7 +242,7 @@ _gc_shutdown(E_Gadcon_Client *gcc)
 }
 
 static void
-_gc_orient(E_Gadcon_Client *gcc, E_Gadcon_Orient orient __UNUSED__)
+_gc_orient(E_Gadcon_Client *gcc, E_Gadcon_Orient orient EINA_UNUSED)
 {
    Instance *inst;
    int aspect_w, aspect_h;
@@ -270,13 +270,13 @@ _gc_orient(E_Gadcon_Client *gcc, E_Gadcon_Orient orient __UNUSED__)
 }
 
 static const char *
-_gc_label(const E_Gadcon_Client_Class *client_class __UNUSED__)
+_gc_label(const E_Gadcon_Client_Class *client_class EINA_UNUSED)
 {
    return _("Pager");
 }
 
 static Evas_Object *
-_gc_icon(const E_Gadcon_Client_Class *client_class __UNUSED__, Evas *evas)
+_gc_icon(const E_Gadcon_Client_Class *client_class EINA_UNUSED, Evas *evas)
 {
    Evas_Object *o;
    char buf[PATH_MAX];
@@ -842,7 +842,7 @@ _pager_popup_find(E_Zone *zone)
 }
 
 static void
-_pager_cb_obj_moveresize(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_pager_cb_obj_moveresize(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Instance *inst;
 
@@ -851,7 +851,7 @@ _pager_cb_obj_moveresize(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUS
 }
 
 static void
-_button_cb_mouse_down(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
+_button_cb_mouse_down(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info)
 {
    Instance *inst;
    Evas_Event_Mouse_Down *ev;
@@ -889,7 +889,7 @@ _button_cb_mouse_down(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED_
 }
 
 static void
-_pager_inst_cb_menu_configure(void *data __UNUSED__, E_Menu *m __UNUSED__, E_Menu_Item *mi __UNUSED__)
+_pager_inst_cb_menu_configure(void *data EINA_UNUSED, E_Menu *m EINA_UNUSED, E_Menu_Item *mi EINA_UNUSED)
 {
    if (!pager_config) return;
    if (pager_config->config_dialog) return;
@@ -898,7 +898,7 @@ _pager_inst_cb_menu_configure(void *data __UNUSED__, E_Menu *m __UNUSED__, E_Men
 }
 
 static E_Config_Dialog *
-_pager_config_dialog(Evas_Object *parent __UNUSED__, const char *params __UNUSED__)
+_pager_config_dialog(Evas_Object *parent EINA_UNUSED, const char *params EINA_UNUSED)
 {
    if (!pager_config) return NULL;
    if (pager_config->config_dialog) return NULL;
@@ -908,7 +908,7 @@ _pager_config_dialog(Evas_Object *parent __UNUSED__, const char *params __UNUSED
 }
 
 static void
-_pager_inst_cb_menu_virtual_desktops_dialog(void *data EINA_UNUSED, E_Menu *m __UNUSED__, E_Menu_Item *mi __UNUSED__)
+_pager_inst_cb_menu_virtual_desktops_dialog(void *data EINA_UNUSED, E_Menu *m EINA_UNUSED, E_Menu_Item *mi EINA_UNUSED)
 {
    e_configure_registry_call("screen/virtual_desktops", NULL, NULL);
 }
@@ -955,7 +955,7 @@ _pager_cb_config_updated(void)
 }
 
 static Eina_Bool
-_pager_cb_event_client_resize(void *data __UNUSED__, int type __UNUSED__, void *event)
+_pager_cb_event_client_resize(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
 {
    E_Event_Client *ev = event;
    Eina_List *l, *l2;
@@ -978,7 +978,7 @@ _pager_cb_event_client_resize(void *data __UNUSED__, int type __UNUSED__, void *
 }
 
 static Eina_Bool
-_pager_cb_event_client_move(void *data __UNUSED__, int type __UNUSED__, void *event)
+_pager_cb_event_client_move(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
 {
    E_Event_Client *ev = event;
    Eina_List *l;
@@ -1011,7 +1011,7 @@ _pager_cb_event_client_move(void *data __UNUSED__, int type __UNUSED__, void *ev
 }
 
 static Eina_Bool
-_pager_cb_event_client_add(void *data __UNUSED__, int type __UNUSED__, void *event)
+_pager_cb_event_client_add(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
 {
    E_Event_Client *ev = event;
    Eina_List *l;
@@ -1035,7 +1035,7 @@ _pager_cb_event_client_add(void *data __UNUSED__, int type __UNUSED__, void *eve
 }
 
 static Eina_Bool
-_pager_cb_event_client_remove(void *data __UNUSED__, int type __UNUSED__, void *event)
+_pager_cb_event_client_remove(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
 {
    E_Event_Client *ev = event;
    Eina_List *l;
@@ -1062,7 +1062,7 @@ _pager_cb_event_client_remove(void *data __UNUSED__, int type __UNUSED__, void *
 }
 
 static Eina_Bool
-_pager_cb_event_client_iconify(void *data __UNUSED__, int type __UNUSED__, void *event)
+_pager_cb_event_client_iconify(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
 {
    E_Event_Client *ev = event;
    Eina_List *l;
@@ -1091,7 +1091,7 @@ _pager_cb_event_client_iconify(void *data __UNUSED__, int type __UNUSED__, void 
 }
 
 static Eina_Bool
-_pager_cb_event_client_uniconify(void *data __UNUSED__, int type __UNUSED__, void *event)
+_pager_cb_event_client_uniconify(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
 {
    E_Event_Client *ev = event;
    Eina_List *l;
@@ -1117,7 +1117,7 @@ _pager_cb_event_client_uniconify(void *data __UNUSED__, int type __UNUSED__, voi
 }
 
 static Eina_Bool
-_pager_cb_event_client_stick(void *data __UNUSED__, int type __UNUSED__, void *event)
+_pager_cb_event_client_stick(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
 {
    E_Event_Client_Property *ev = event;
    Eina_List *l;
@@ -1146,7 +1146,7 @@ _pager_cb_event_client_stick(void *data __UNUSED__, int type __UNUSED__, void *e
 }
 
 static Eina_Bool
-_pager_cb_event_client_unstick(void *data __UNUSED__, int type __UNUSED__, void *event)
+_pager_cb_event_client_unstick(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
 {
    E_Event_Client_Property *ev = event;
    Eina_List *l;
@@ -1296,7 +1296,7 @@ _pager_window_desk_change(Pager *pager, E_Client *ec)
 }
 
 static Eina_Bool
-_pager_cb_event_client_desk_set(void *data __UNUSED__, int type __UNUSED__, void *event)
+_pager_cb_event_client_desk_set(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
 {
    E_Event_Client_Desk_Set *ev = event;
    Eina_List *l;
@@ -1309,7 +1309,7 @@ _pager_cb_event_client_desk_set(void *data __UNUSED__, int type __UNUSED__, void
 }
 
 static Eina_Bool
-_pager_cb_event_client_stack(void *data __UNUSED__, int type __UNUSED__, void *event)
+_pager_cb_event_client_stack(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
 {
    E_Event_Client *ev = event;
    Eina_List *l;
@@ -1352,7 +1352,7 @@ _pager_cb_event_client_stack(void *data __UNUSED__, int type __UNUSED__, void *e
 }
 
 static Eina_Bool
-_pager_cb_event_client_icon_change(void *data __UNUSED__, int type __UNUSED__, void *event)
+_pager_cb_event_client_icon_change(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
 {
    E_Event_Client_Property *ev = event;
    Eina_List *l;
@@ -1396,7 +1396,7 @@ _pager_cb_event_client_icon_change(void *data __UNUSED__, int type __UNUSED__, v
 }
 
 static Eina_Bool
-_pager_cb_event_client_urgent_change(void *data __UNUSED__, int type __UNUSED__, void *event)
+_pager_cb_event_client_urgent_change(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
 {
    E_Event_Client_Property *ev = event;
    Eina_List *l, *l2;
@@ -1465,7 +1465,7 @@ _pager_cb_event_client_urgent_change(void *data __UNUSED__, int type __UNUSED__,
 }
 
 static Eina_Bool
-_pager_cb_event_client_focus_in(void *data __UNUSED__, int type __UNUSED__, void *event)
+_pager_cb_event_client_focus_in(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
 {
    E_Event_Client *ev = event;
    Instance *inst;
@@ -1511,7 +1511,7 @@ _pager_cb_event_client_focus_in(void *data __UNUSED__, int type __UNUSED__, void
 }
 
 static Eina_Bool
-_pager_cb_event_client_focus_out(void *data __UNUSED__, int type __UNUSED__, void *event)
+_pager_cb_event_client_focus_out(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
 {
    E_Event_Client *ev = event;
    Eina_List *l;
@@ -1559,7 +1559,7 @@ _pager_cb_event_client_focus_out(void *data __UNUSED__, int type __UNUSED__, voi
 }
 
 static Eina_Bool
-_pager_cb_event_client_property(void *data __UNUSED__, int type __UNUSED__, void *event)
+_pager_cb_event_client_property(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
 {
    E_Event_Client_Property *ev = event;
    Eina_List *l, *l2;
@@ -1648,7 +1648,7 @@ _pager_cb_event_client_property(void *data __UNUSED__, int type __UNUSED__, void
 }
 
 static Eina_Bool
-_pager_cb_event_zone_desk_count_set(void *data __UNUSED__, int type __UNUSED__, void *event __UNUSED__)
+_pager_cb_event_zone_desk_count_set(void *data EINA_UNUSED, int type EINA_UNUSED, void *event EINA_UNUSED)
 {
    Eina_List *l;
    Pager *p;
@@ -1664,7 +1664,7 @@ _pager_cb_event_zone_desk_count_set(void *data __UNUSED__, int type __UNUSED__, 
 }
 
 static Eina_Bool
-_pager_cb_event_desk_show(void *data __UNUSED__, int type __UNUSED__, void *event)
+_pager_cb_event_desk_show(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
 {
    E_Event_Desk_Show *ev = event;
    Eina_List *l;
@@ -1699,7 +1699,7 @@ _pager_cb_event_desk_show(void *data __UNUSED__, int type __UNUSED__, void *even
 }
 
 static Eina_Bool
-_pager_cb_event_desk_name_change(void *data __UNUSED__, int type __UNUSED__, void *event)
+_pager_cb_event_desk_name_change(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
 {
    E_Event_Desk_Name_Change *ev = event;
    Eina_List *l;
@@ -1728,7 +1728,7 @@ _pager_cb_event_desk_name_change(void *data __UNUSED__, int type __UNUSED__, voi
 }
 
 static Eina_Bool
-_pager_cb_event_bg_update(void *data __UNUSED__, int type __UNUSED__, void *event)
+_pager_cb_event_bg_update(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
 {
    E_Event_Bg_Update *ev = event;
    Eina_List *l, *ll;
@@ -1759,7 +1759,7 @@ _pager_cb_event_bg_update(void *data __UNUSED__, int type __UNUSED__, void *even
 }
 
 static Eina_Bool
-_pager_cb_event_compositor_resize(void *data __UNUSED__, int type __UNUSED__, void *event EINA_UNUSED)
+_pager_cb_event_compositor_resize(void *data EINA_UNUSED, int type EINA_UNUSED, void *event EINA_UNUSED)
 {
    Eina_List *l;
    Pager *p;
@@ -1781,7 +1781,7 @@ _pager_cb_event_compositor_resize(void *data __UNUSED__, int type __UNUSED__, vo
 }
 
 static void
-_pager_window_cb_mouse_down(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
+_pager_window_cb_mouse_down(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info)
 {
    Evas_Event_Mouse_Down *ev;
    Pager_Win *pw;
@@ -1810,7 +1810,7 @@ _pager_window_cb_mouse_down(void *data, Evas *e __UNUSED__, Evas_Object *obj __U
 }
 
 static void
-_pager_window_cb_mouse_up(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
+_pager_window_cb_mouse_up(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info)
 {
    Evas_Event_Mouse_Up *ev;
    Pager_Win *pw;
@@ -1840,7 +1840,7 @@ _pager_window_cb_mouse_up(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNU
 }
 
 static void
-_pager_window_cb_mouse_move(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
+_pager_window_cb_mouse_move(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info)
 {
    Evas_Event_Mouse_Move *ev;
    Pager_Win *pw;
@@ -2056,7 +2056,7 @@ _pager_update_drop_position(Pager *p, Evas_Coord x, Evas_Coord y)
 }
 
 static void
-_pager_drop_cb_enter(void *data, const char *type __UNUSED__, void *event_info EINA_UNUSED)
+_pager_drop_cb_enter(void *data, const char *type EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Pager *p = data;
 
@@ -2072,7 +2072,7 @@ _pager_drop_cb_enter(void *data, const char *type __UNUSED__, void *event_info E
 }
 
 static void
-_pager_drop_cb_move(void *data, const char *type __UNUSED__, void *event_info)
+_pager_drop_cb_move(void *data, const char *type EINA_UNUSED, void *event_info)
 {
    E_Event_Dnd_Move *ev;
    Pager *p;
@@ -2089,7 +2089,7 @@ _pager_drop_cb_move(void *data, const char *type __UNUSED__, void *event_info)
 }
 
 static void
-_pager_drop_cb_leave(void *data, const char *type __UNUSED__, void *event_info __UNUSED__)
+_pager_drop_cb_leave(void *data, const char *type EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Pager *p = data;
 
@@ -2202,7 +2202,7 @@ _pager_drop_cb_drop(void *data, const char *type, void *event_info)
 }
 
 static void
-_pager_desk_cb_mouse_down(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
+_pager_desk_cb_mouse_down(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info)
 {
    Evas_Event_Mouse_Down *ev;
    Pager_Desk *pd;
@@ -2231,7 +2231,7 @@ _pager_desk_cb_mouse_down(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNU
 }
 
 static void
-_pager_desk_cb_mouse_up(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
+_pager_desk_cb_mouse_up(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info)
 {
    Evas_Event_Mouse_Up *ev;
    Pager_Desk *pd;
@@ -2258,7 +2258,7 @@ _pager_desk_cb_mouse_up(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSE
 }
 
 static void
-_pager_desk_cb_mouse_move(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
+_pager_desk_cb_mouse_move(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info)
 {
    Evas_Event_Mouse_Move *ev;
    Pager_Desk *pd;
@@ -2391,7 +2391,7 @@ _pager_desk_cb_drag_finished(E_Drag *drag, int dropped)
 }
 
 static void
-_pager_desk_cb_mouse_wheel(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
+_pager_desk_cb_mouse_wheel(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info)
 {
    Evas_Event_Mouse_Wheel *ev;
    Pager_Desk *pd;
@@ -2547,14 +2547,14 @@ _pager_popup_desk_switch(int x, int y)
 }
 
 static void
-_pager_popup_cb_action_show(E_Object *obj __UNUSED__, const char *params __UNUSED__, Ecore_Event_Key *ev __UNUSED__)
+_pager_popup_cb_action_show(E_Object *obj EINA_UNUSED, const char *params EINA_UNUSED, Ecore_Event_Key *ev EINA_UNUSED)
 {
    if (_pager_popup_show())
      _pager_popup_modifiers_set(ev->modifiers);
 }
 
 static void
-_pager_popup_cb_action_switch(E_Object *obj __UNUSED__, const char *params, Ecore_Event_Key *ev)
+_pager_popup_cb_action_switch(E_Object *obj EINA_UNUSED, const char *params, Ecore_Event_Key *ev)
 {
    int max_x, max_y, desk_x;
    int x = 0, y = 0;
@@ -2595,7 +2595,7 @@ _pager_popup_cb_action_switch(E_Object *obj __UNUSED__, const char *params, Ecor
 }
 
 static Eina_Bool
-_pager_popup_cb_mouse_down(void *data __UNUSED__, int type __UNUSED__, void *event)
+_pager_popup_cb_mouse_down(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
 {
    Ecore_Event_Mouse_Button *ev;
    Pager_Popup *pp = act_popup;
@@ -2609,7 +2609,7 @@ _pager_popup_cb_mouse_down(void *data __UNUSED__, int type __UNUSED__, void *eve
 }
 
 static Eina_Bool
-_pager_popup_cb_mouse_up(void *data __UNUSED__, int type __UNUSED__, void *event)
+_pager_popup_cb_mouse_up(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
 {
    Ecore_Event_Mouse_Button *ev;
    Pager_Popup *pp = act_popup;
@@ -2623,7 +2623,7 @@ _pager_popup_cb_mouse_up(void *data __UNUSED__, int type __UNUSED__, void *event
 }
 
 static Eina_Bool
-_pager_popup_cb_mouse_move(void *data __UNUSED__, int type __UNUSED__, void *event)
+_pager_popup_cb_mouse_move(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
 {
    Ecore_Event_Mouse_Move *ev;
    Pager_Popup *pp = act_popup;
@@ -2641,7 +2641,7 @@ _pager_popup_cb_mouse_move(void *data __UNUSED__, int type __UNUSED__, void *eve
 }
 
 static Eina_Bool
-_pager_popup_cb_mouse_wheel(void *data __UNUSED__, int type __UNUSED__, void *event)
+_pager_popup_cb_mouse_wheel(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
 {
    Ecore_Event_Mouse_Wheel *ev = event;
    Pager_Popup *pp = act_popup;
@@ -2660,7 +2660,7 @@ _pager_popup_cb_mouse_wheel(void *data __UNUSED__, int type __UNUSED__, void *ev
 }
 
 static Eina_Bool
-_pager_popup_cb_key_down(void *data __UNUSED__, int type __UNUSED__, void *event)
+_pager_popup_cb_key_down(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
 {
    Ecore_Event_Key *ev;
 
@@ -2731,7 +2731,7 @@ _pager_popup_cb_key_down(void *data __UNUSED__, int type __UNUSED__, void *event
 }
 
 static Eina_Bool
-_pager_popup_cb_key_up(void *data __UNUSED__, int type __UNUSED__, void *event)
+_pager_popup_cb_key_up(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
 {
    Ecore_Event_Key *ev;
 
@@ -2924,7 +2924,7 @@ e_modapi_init(E_Module *m)
 }
 
 EAPI int
-e_modapi_shutdown(E_Module *m __UNUSED__)
+e_modapi_shutdown(E_Module *m EINA_UNUSED)
 {
    e_gadcon_provider_unregister(&_gadcon_class);
 
@@ -2950,7 +2950,7 @@ e_modapi_shutdown(E_Module *m __UNUSED__)
 }
 
 EAPI int
-e_modapi_save(E_Module *m __UNUSED__)
+e_modapi_save(E_Module *m EINA_UNUSED)
 {
    e_config_domain_save("module.pager_plain", conf_edd, pager_config);
    return 1;

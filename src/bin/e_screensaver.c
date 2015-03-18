@@ -114,7 +114,7 @@ e_screensaver_force_update(void)
 }
 
 static Eina_Bool
-_e_screensaver_handler_config_mode_cb(void *data __UNUSED__, int type __UNUSED__, void *event __UNUSED__)
+_e_screensaver_handler_config_mode_cb(void *data EINA_UNUSED, int type EINA_UNUSED, void *event EINA_UNUSED)
 {
    e_screensaver_update();
    return ECORE_CALLBACK_PASS_ON;
@@ -128,7 +128,7 @@ _e_screensaver_ask_presentation_del(void *data)
 }
 
 static void
-_e_screensaver_ask_presentation_yes(void *data __UNUSED__, E_Dialog *dia)
+_e_screensaver_ask_presentation_yes(void *data EINA_UNUSED, E_Dialog *dia)
 {
    e_config->mode.presentation = 1;
    e_config_mode_changed();
@@ -138,14 +138,14 @@ _e_screensaver_ask_presentation_yes(void *data __UNUSED__, E_Dialog *dia)
 }
 
 static void
-_e_screensaver_ask_presentation_no(void *data __UNUSED__, E_Dialog *dia)
+_e_screensaver_ask_presentation_no(void *data EINA_UNUSED, E_Dialog *dia)
 {
    e_object_del(E_OBJECT(dia));
    _e_screensaver_ask_presentation_count = 0;
 }
 
 static void
-_e_screensaver_ask_presentation_no_increase(void *data __UNUSED__, E_Dialog *dia)
+_e_screensaver_ask_presentation_no_increase(void *data EINA_UNUSED, E_Dialog *dia)
 {
    _e_screensaver_ask_presentation_count++;
    e_screensaver_update();
@@ -153,7 +153,7 @@ _e_screensaver_ask_presentation_no_increase(void *data __UNUSED__, E_Dialog *dia
 }
 
 static void
-_e_screensaver_ask_presentation_no_forever(void *data __UNUSED__, E_Dialog *dia)
+_e_screensaver_ask_presentation_no_forever(void *data EINA_UNUSED, E_Dialog *dia)
 {
    e_config->screensaver_ask_presentation = 0;
    e_config_save_queue();
@@ -162,7 +162,7 @@ _e_screensaver_ask_presentation_no_forever(void *data __UNUSED__, E_Dialog *dia)
 }
 
 static void
-_e_screensaver_ask_presentation_key_down(void *data, Evas *e __UNUSED__, Evas_Object *o __UNUSED__, void *event)
+_e_screensaver_ask_presentation_key_down(void *data, Evas *e EINA_UNUSED, Evas_Object *o EINA_UNUSED, void *event)
 {
    Evas_Event_Key_Down *ev = event;
    E_Dialog *dia = data;
@@ -212,7 +212,7 @@ _e_screensaver_ask_presentation_mode(void)
 }
 
 static Eina_Bool
-_e_screensaver_suspend_cb(void *data __UNUSED__)
+_e_screensaver_suspend_cb(void *data EINA_UNUSED)
 {
    _e_screensaver_suspend_timer = NULL;
    if (e_config->screensaver_suspend)
@@ -225,7 +225,7 @@ _e_screensaver_suspend_cb(void *data __UNUSED__)
 }
 
 static Eina_Bool
-_e_screensaver_handler_powersave_cb(void *data __UNUSED__, int type __UNUSED__, void *event __UNUSED__)
+_e_screensaver_handler_powersave_cb(void *data EINA_UNUSED, int type EINA_UNUSED, void *event EINA_UNUSED)
 {
    if ((e_config->screensaver_suspend) && (_e_screensaver_on))
      {
@@ -241,7 +241,7 @@ _e_screensaver_handler_powersave_cb(void *data __UNUSED__, int type __UNUSED__, 
 static double last_start = 0.0;
 
 static Eina_Bool
-_e_screensaver_handler_screensaver_on_cb(void *data __UNUSED__, int type __UNUSED__, void *event __UNUSED__)
+_e_screensaver_handler_screensaver_on_cb(void *data EINA_UNUSED, int type EINA_UNUSED, void *event EINA_UNUSED)
 {
    _e_screensaver_on = EINA_TRUE;
    if (_e_screensaver_suspend_timer)
@@ -259,7 +259,7 @@ _e_screensaver_handler_screensaver_on_cb(void *data __UNUSED__, int type __UNUSE
 }
 
 static Eina_Bool
-_e_screensaver_handler_screensaver_off_cb(void *data __UNUSED__, int type __UNUSED__, void *event __UNUSED__)
+_e_screensaver_handler_screensaver_off_cb(void *data EINA_UNUSED, int type EINA_UNUSED, void *event EINA_UNUSED)
 {
 //   e_screensaver_force_update();
 //   e_dpms_force_update();
@@ -285,21 +285,21 @@ _e_screensaver_handler_screensaver_off_cb(void *data __UNUSED__, int type __UNUS
 }
 
 static Eina_Bool
-_e_screensaver_handler_border_fullscreen_check_cb(void *data __UNUSED__, int type __UNUSED__, void *event __UNUSED__)
+_e_screensaver_handler_border_fullscreen_check_cb(void *data EINA_UNUSED, int type EINA_UNUSED, void *event EINA_UNUSED)
 {
    e_screensaver_update();
    return ECORE_CALLBACK_PASS_ON;
 }
 
 static Eina_Bool
-_e_screensaver_handler_border_desk_set_cb(void *data __UNUSED__, int type __UNUSED__, void *event __UNUSED__)
+_e_screensaver_handler_border_desk_set_cb(void *data EINA_UNUSED, int type EINA_UNUSED, void *event EINA_UNUSED)
 {
    e_screensaver_update();
    return ECORE_CALLBACK_PASS_ON;
 }
 
 static Eina_Bool
-_e_screensaver_handler_desk_show_cb(void *data __UNUSED__, int type __UNUSED__, void *event __UNUSED__)
+_e_screensaver_handler_desk_show_cb(void *data EINA_UNUSED, int type EINA_UNUSED, void *event EINA_UNUSED)
 {
    e_screensaver_update();
    return ECORE_CALLBACK_PASS_ON;

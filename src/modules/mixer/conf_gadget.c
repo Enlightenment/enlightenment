@@ -186,7 +186,7 @@ _basic_apply(E_Config_Dialog *dialog, E_Config_Dialog_Data *cfdata)
 }
 
 static void
-_lock_change(void *data, Evas_Object *obj __UNUSED__, void *event __UNUSED__)
+_lock_change(void *data, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
 {
    E_Config_Dialog_Data *cfdata = data;
    e_widget_disabled_set(cfdata->ui.general.show_locked, !cfdata->lock_sliders);
@@ -293,7 +293,7 @@ _basic_create_channels(Evas *evas, E_Config_Dialog_Data *cfdata)
 }
 
 static void
-_card_change(void *data, Evas_Object *obj, void *event __UNUSED__)
+_card_change(void *data, Evas_Object *obj, void *event EINA_UNUSED)
 {
    E_Config_Dialog_Data *cfdata = data;
    Evas *evas;

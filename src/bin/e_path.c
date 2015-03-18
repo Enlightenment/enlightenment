@@ -368,7 +368,7 @@ _e_path_cache_free(E_Path *ep)
 }
 
 static Eina_Bool
-_e_path_cache_free_cb(const Eina_Hash *hash __UNUSED__, const void *key __UNUSED__, void *data, void *fdata __UNUSED__)
+_e_path_cache_free_cb(const Eina_Hash *hash EINA_UNUSED, const void *key EINA_UNUSED, void *data, void *fdata EINA_UNUSED)
 {
    eina_stringshare_del(data);
    return 1;

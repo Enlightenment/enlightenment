@@ -28,7 +28,7 @@ struct _Instance
 
 /* static void _button_cb_mouse_up(void *data, Evas *e, Evas_Object *obj, void *event_info); */
 static void             _button_cb_mouse_down(void *data, Evas *e, Evas_Object *obj, void *event_info);
-static Eina_Bool        _cb_focus_out(void *data, int type __UNUSED__, void *event);
+static Eina_Bool        _cb_focus_out(void *data, int type EINA_UNUSED, void *event);
 static void _del_func(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED);
 
 /* gadcon requirements */
@@ -147,7 +147,7 @@ _gc_shutdown(E_Gadcon_Client *gcc)
 }
 
 static void
-_gc_orient(E_Gadcon_Client *gcc, E_Gadcon_Orient orient __UNUSED__)
+_gc_orient(E_Gadcon_Client *gcc, E_Gadcon_Orient orient EINA_UNUSED)
 {
    Instance *inst;
    Evas_Coord mw, mh;
@@ -164,13 +164,13 @@ _gc_orient(E_Gadcon_Client *gcc, E_Gadcon_Orient orient __UNUSED__)
 }
 
 static const char *
-_gc_label(const E_Gadcon_Client_Class *client_class __UNUSED__)
+_gc_label(const E_Gadcon_Client_Class *client_class EINA_UNUSED)
 {
    return _("Everything Starter");
 }
 
 static Evas_Object *
-_gc_icon(const E_Gadcon_Client_Class *client_class __UNUSED__, Evas *evas __UNUSED__)
+_gc_icon(const E_Gadcon_Client_Class *client_class EINA_UNUSED, Evas *evas EINA_UNUSED)
 {
    Evas_Object *o;
    char buf[PATH_MAX];
@@ -200,7 +200,7 @@ _conf_item_get(const char *id)
 }
 
 static const char *
-_gc_id_new(const E_Gadcon_Client_Class *client_class __UNUSED__)
+_gc_id_new(const E_Gadcon_Client_Class *client_class EINA_UNUSED)
 {
    Gadget_Config *ci = NULL;
 
@@ -222,7 +222,7 @@ _del_func(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *e
 }
 
 static void
-_cb_menu_configure(void *data, E_Menu *m __UNUSED__, E_Menu_Item *mi __UNUSED__)
+_cb_menu_configure(void *data, E_Menu *m EINA_UNUSED, E_Menu_Item *mi EINA_UNUSED)
 {
    _conf_dialog(data);
 }
@@ -244,7 +244,7 @@ _hide_done(void *data, Evas_Object *obj EINA_UNUSED, const char *s EINA_UNUSED, 
 }
 
 static void
-_evry_hide_func(Evry_Window *win, int finished __UNUSED__)
+_evry_hide_func(Evry_Window *win, int finished EINA_UNUSED)
 {
    Instance *inst = win->data;
    E_Client *ec;
@@ -264,7 +264,7 @@ _evry_hide_func(Evry_Window *win, int finished __UNUSED__)
 }
 
 static Eina_Bool
-_cb_focus_out(void *data, int type __UNUSED__, void *event)
+_cb_focus_out(void *data, int type EINA_UNUSED, void *event)
 {
    E_Event_Client *ev;
    Instance *inst;
@@ -426,7 +426,7 @@ _gadget_window_show(Instance *inst)
 }
 
 static void
-_button_cb_mouse_down(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
+_button_cb_mouse_down(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info)
 {
    Instance *inst;
    Evas_Event_Mouse_Down *ev;
@@ -512,7 +512,7 @@ _button_cb_mouse_down(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED_
 }
 
 /* static void
- * _button_cb_mouse_down(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
+ * _button_cb_mouse_down(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info)
  * {
  *    Instance *inst;
  *    Evas_Event_Mouse_Down *ev;
@@ -605,7 +605,7 @@ _free_data(E_Config_Dialog *cfd, E_Config_Dialog_Data *cfdata)
 }
 
 static void
-_cb_button_settings(void *data __UNUSED__, void *data2 __UNUSED__)
+_cb_button_settings(void *data EINA_UNUSED, void *data2 EINA_UNUSED)
 {
    /* evry_collection_conf_dialog(NULL, "Start"); */
 }
@@ -649,7 +649,7 @@ _fill_list(Eina_List *plugins, Evas_Object *obj, E_Config_Dialog_Data *cfdata)
 
 #if 0
 static void
-_list_select_cb(void *data __UNUSED__, Evas_Object *obj)
+_list_select_cb(void *data EINA_UNUSED, Evas_Object *obj)
 {
    int sel = e_widget_ilist_selected_get(obj);
 

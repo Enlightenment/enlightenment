@@ -410,7 +410,7 @@ e_intl_imc_system_path_get(void)
 }
 
 static Eina_Bool
-_e_intl_cb_exit(void *data __UNUSED__, int type __UNUSED__, void *event)
+_e_intl_cb_exit(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
 {
    Ecore_Exe_Event_Del *ev;
 
@@ -430,7 +430,7 @@ _e_intl_locale_hash_free(Eina_Hash *locale_hash)
 }
 
 static Eina_Bool
-_e_intl_locale_hash_free_cb(const Eina_Hash *hash __UNUSED__, const void *key __UNUSED__, void *data, void *fdata __UNUSED__)
+_e_intl_locale_hash_free_cb(const Eina_Hash *hash EINA_UNUSED, const void *key EINA_UNUSED, void *data, void *fdata EINA_UNUSED)
 {
    free(data);
    return 1;

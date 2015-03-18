@@ -103,7 +103,7 @@ _dialog_cancel_cb(void *data, E_Dialog *dialog)
 }
 
 static void
-_dialog_key_down_cb(void *data, Evas *e __UNUSED__, Evas_Object *o __UNUSED__,
+_dialog_key_down_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *o EINA_UNUSED,
                     void *event)
 {
    Evas_Event_Key_Down *ev = event;
@@ -141,7 +141,7 @@ _dialog_del_cb(void *data)
 }
 
 static void
-_page_del(void *data __UNUSED__, Evas *e __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
+_page_del(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
    E_Connman_Agent_Input *input;
    Eina_List *input_list;
@@ -155,7 +155,7 @@ _page_del(void *data __UNUSED__, Evas *e __UNUSED__, Evas_Object *obj, void *eve
 }
 
 static void
-_show_password_cb(void *data, Evas_Object *obj, void *event  __UNUSED__)
+_show_password_cb(void *data, Evas_Object *obj, void *event  EINA_UNUSED)
 {
    Evas_Object *entry = data;
    int hidden;

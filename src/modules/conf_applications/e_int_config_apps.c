@@ -27,9 +27,9 @@ struct _E_Config_Dialog_Data
 /* local function prototypes */
 static E_Config_Dialog *_create_dialog(E_Config_Data *data);
 static void            *_create_data(E_Config_Dialog *cfd);
-static void             _free_data(E_Config_Dialog *cfd __UNUSED__, E_Config_Dialog_Data *cfdata);
-static Evas_Object     *_basic_create(E_Config_Dialog *cfd __UNUSED__, Evas *evas, E_Config_Dialog_Data *cfdata);
-static int              _basic_apply(E_Config_Dialog *cfd __UNUSED__, E_Config_Dialog_Data *cfdata);
+static void             _free_data(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfdata);
+static Evas_Object     *_basic_create(E_Config_Dialog *cfd EINA_UNUSED, Evas *evas, E_Config_Dialog_Data *cfdata);
+static int              _basic_apply(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfdata);
 static Eina_List       *_load_menu(const char *path);
 static Eina_List       *_load_order(const char *path);
 static int              _save_menu(E_Config_Dialog_Data *cfdata);
@@ -41,15 +41,15 @@ static void             _cb_apps_list_selected(void *data);
 static void             _cb_order_list_selected(void *data);
 static int              _cb_desks_name(const void *data1, const void *data2);
 static int              _cb_desks_sort(const void *data1, const void *data2);
-static void             _cb_add(void *data, void *data2 __UNUSED__);
-static void             _cb_del(void *data, void *data2 __UNUSED__);
-static void             _cb_up(void *data, void *data2 __UNUSED__);
-static void             _cb_down(void *data, void *data2 __UNUSED__);
-static void             _cb_order_del(void *data, void *data2 __UNUSED__);
+static void             _cb_add(void *data, void *data2 EINA_UNUSED);
+static void             _cb_del(void *data, void *data2 EINA_UNUSED);
+static void             _cb_up(void *data, void *data2 EINA_UNUSED);
+static void             _cb_down(void *data, void *data2 EINA_UNUSED);
+static void             _cb_order_del(void *data, void *data2 EINA_UNUSED);
 static Eina_Bool        _cb_fill_delay(void *data);
 
 E_Config_Dialog *
-e_int_config_apps_add(Evas_Object *parent EINA_UNUSED, const char *params __UNUSED__)
+e_int_config_apps_add(Evas_Object *parent EINA_UNUSED, const char *params EINA_UNUSED)
 {
    E_Desktop_Edit *ed;
 
@@ -58,7 +58,7 @@ e_int_config_apps_add(Evas_Object *parent EINA_UNUSED, const char *params __UNUS
 }
 
 E_Config_Dialog *
-e_int_config_apps_favs(Evas_Object *parent EINA_UNUSED, const char *params __UNUSED__)
+e_int_config_apps_favs(Evas_Object *parent EINA_UNUSED, const char *params EINA_UNUSED)
 {
    E_Config_Data *data;
    char buff[PATH_MAX];
@@ -73,7 +73,7 @@ e_int_config_apps_favs(Evas_Object *parent EINA_UNUSED, const char *params __UNU
 }
 
 E_Config_Dialog *
-e_int_config_apps_ibar(Evas_Object *parent EINA_UNUSED, const char *params __UNUSED__)
+e_int_config_apps_ibar(Evas_Object *parent EINA_UNUSED, const char *params EINA_UNUSED)
 {
    E_Config_Data *data;
    char buff[PATH_MAX];
@@ -102,7 +102,7 @@ e_int_config_apps_ibar_other(Evas_Object *parent EINA_UNUSED, const char *path)
 }
 
 E_Config_Dialog *
-e_int_config_apps_startup(Evas_Object *parent EINA_UNUSED, const char *params __UNUSED__)
+e_int_config_apps_startup(Evas_Object *parent EINA_UNUSED, const char *params EINA_UNUSED)
 {
    E_Config_Data *data;
    char buff[PATH_MAX];
@@ -118,7 +118,7 @@ e_int_config_apps_startup(Evas_Object *parent EINA_UNUSED, const char *params __
 }
 
 E_Config_Dialog *
-e_int_config_apps_restart(Evas_Object *parent EINA_UNUSED, const char *params __UNUSED__)
+e_int_config_apps_restart(Evas_Object *parent EINA_UNUSED, const char *params EINA_UNUSED)
 {
    E_Config_Data *data;
    char buff[PATH_MAX];
@@ -133,7 +133,7 @@ e_int_config_apps_restart(Evas_Object *parent EINA_UNUSED, const char *params __
 }
 
 E_Config_Dialog *
-e_int_config_apps_desk_lock(Evas_Object *parent EINA_UNUSED, const char *params __UNUSED__)
+e_int_config_apps_desk_lock(Evas_Object *parent EINA_UNUSED, const char *params EINA_UNUSED)
 {
    E_Config_Data *data;
    char buff[PATH_MAX];
@@ -148,7 +148,7 @@ e_int_config_apps_desk_lock(Evas_Object *parent EINA_UNUSED, const char *params 
 }
 
 E_Config_Dialog *
-e_int_config_apps_desk_unlock(Evas_Object *parent EINA_UNUSED, const char *params __UNUSED__)
+e_int_config_apps_desk_unlock(Evas_Object *parent EINA_UNUSED, const char *params EINA_UNUSED)
 {
    E_Config_Data *data;
    char buff[PATH_MAX];
@@ -328,7 +328,7 @@ _basic_create(E_Config_Dialog *cfd, Evas *evas, E_Config_Dialog_Data *cfdata)
 }
 
 static int
-_basic_apply(E_Config_Dialog *cfd __UNUSED__, E_Config_Dialog_Data *cfdata)
+_basic_apply(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfdata)
 {
    const char *ext;
 
@@ -709,7 +709,7 @@ _cb_desks_sort(const void *data1, const void *data2)
 }
 
 static void
-_cb_add(void *data, void *data2 __UNUSED__)
+_cb_add(void *data, void *data2 EINA_UNUSED)
 {
    E_Config_App_List *apps;
    const E_Ilist_Item *it;
@@ -739,7 +739,7 @@ _cb_add(void *data, void *data2 __UNUSED__)
 }
 
 static void
-_cb_del(void *data, void *data2 __UNUSED__)
+_cb_del(void *data, void *data2 EINA_UNUSED)
 {
    E_Config_App_List *apps;
    const E_Ilist_Item *it;
@@ -769,7 +769,7 @@ _cb_del(void *data, void *data2 __UNUSED__)
 }
 
 static void
-_cb_order_del(void *data, void *data2 __UNUSED__)
+_cb_order_del(void *data, void *data2 EINA_UNUSED)
 {
    E_Config_Dialog_Data *cfdata;
    const E_Ilist_Item *it;
@@ -798,7 +798,7 @@ _cb_order_del(void *data, void *data2 __UNUSED__)
 }
 
 static void
-_cb_up(void *data, void *data2 __UNUSED__)
+_cb_up(void *data, void *data2 EINA_UNUSED)
 {
    E_Config_Dialog_Data *cfdata;
    Eina_List *l;
@@ -845,7 +845,7 @@ _cb_up(void *data, void *data2 __UNUSED__)
 }
 
 static void
-_cb_down(void *data, void *data2 __UNUSED__)
+_cb_down(void *data, void *data2 EINA_UNUSED)
 {
    E_Config_Dialog_Data *cfdata;
    Eina_List *l;

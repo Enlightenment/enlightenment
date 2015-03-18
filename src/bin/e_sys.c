@@ -357,7 +357,7 @@ e_sys_con_extra_action_list_get(void)
 }
 
 static void
-_e_sys_systemd_inhibit_cb(void *data __UNUSED__, const Eldbus_Message *m, Eldbus_Pending *p __UNUSED__)
+_e_sys_systemd_inhibit_cb(void *data EINA_UNUSED, const Eldbus_Message *m, Eldbus_Pending *p EINA_UNUSED)
 {
    int fd = -1;
    if (eldbus_message_error_get(m, NULL, NULL)) return;
@@ -386,7 +386,7 @@ _e_sys_systemd_handle_inhibit(void)
 }
 
 static void
-_e_sys_systemd_check_cb(void *data, const Eldbus_Message *m, Eldbus_Pending *p __UNUSED__)
+_e_sys_systemd_check_cb(void *data, const Eldbus_Message *m, Eldbus_Pending *p EINA_UNUSED)
 {
    int *dest = data;
    char *s = NULL;
@@ -415,7 +415,7 @@ _e_sys_systemd_check(void)
 }
 
 static void
-_e_sys_systemd_exists_cb(void *data __UNUSED__, const Eldbus_Message *m, Eldbus_Pending *p __UNUSED__)
+_e_sys_systemd_exists_cb(void *data EINA_UNUSED, const Eldbus_Message *m, Eldbus_Pending *p EINA_UNUSED)
 {
    const char *id = NULL;
    
@@ -463,7 +463,7 @@ _e_sys_resume_job(void *d EINA_UNUSED)
 }
 
 static Eina_Bool
-_e_sys_susp_hib_check_timer_cb(void *data __UNUSED__)
+_e_sys_susp_hib_check_timer_cb(void *data EINA_UNUSED)
 {
    double t = ecore_time_unix_get();
 
@@ -494,7 +494,7 @@ _e_sys_susp_hib_check(void)
 
 /* local subsystem functions */
 static Eina_Bool
-_e_sys_cb_timer(void *data __UNUSED__)
+_e_sys_cb_timer(void *data EINA_UNUSED)
 {
    /* exec out sys helper and ask it to test if we are allowed to do these
     * things
@@ -522,7 +522,7 @@ _e_sys_cb_timer(void *data __UNUSED__)
 }
 
 static Eina_Bool
-_e_sys_cb_exit(void *data __UNUSED__, int type __UNUSED__, void *event)
+_e_sys_cb_exit(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
 {
    Ecore_Exe_Event_Del *ev;
 
@@ -587,7 +587,7 @@ _e_sys_cb_exit(void *data __UNUSED__, int type __UNUSED__, void *event)
 }
 
 static void
-_e_sys_cb_logout_logout(void *data __UNUSED__, E_Dialog *dia)
+_e_sys_cb_logout_logout(void *data EINA_UNUSED, E_Dialog *dia)
 {
    if (_e_sys_logout_timer)
      {
@@ -601,7 +601,7 @@ _e_sys_cb_logout_logout(void *data __UNUSED__, E_Dialog *dia)
 }
 
 static void
-_e_sys_cb_logout_wait(void *data __UNUSED__, E_Dialog *dia)
+_e_sys_cb_logout_wait(void *data EINA_UNUSED, E_Dialog *dia)
 {
    if (_e_sys_logout_timer) ecore_timer_del(_e_sys_logout_timer);
    _e_sys_logout_timer = ecore_timer_add(0.5, _e_sys_cb_logout_timer, NULL);
@@ -611,7 +611,7 @@ _e_sys_cb_logout_wait(void *data __UNUSED__, E_Dialog *dia)
 }
 
 static void
-_e_sys_cb_logout_abort(void *data __UNUSED__, E_Dialog *dia)
+_e_sys_cb_logout_abort(void *data EINA_UNUSED, E_Dialog *dia)
 {
    if (_e_sys_logout_timer)
      {
@@ -655,7 +655,7 @@ _e_sys_logout_confirm_dialog_update(int remaining)
 }
 
 static Eina_Bool
-_e_sys_cb_logout_timer(void *data __UNUSED__)
+_e_sys_cb_logout_timer(void *data EINA_UNUSED)
 {
    E_Client *ec;
    int pending = 0;
@@ -885,7 +885,7 @@ _e_sys_action_failed(void)
 }
 
 static int
-_e_sys_action_do(E_Sys_Action a, char *param __UNUSED__, Eina_Bool raw)
+_e_sys_action_do(E_Sys_Action a, char *param EINA_UNUSED, Eina_Bool raw)
 {
    char buf[PATH_MAX];
    E_Obj_Dialog *od;
@@ -1102,7 +1102,7 @@ _e_sys_action_do(E_Sys_Action a, char *param __UNUSED__, Eina_Bool raw)
 }
 
 static void
-_e_sys_dialog_cb_delete(E_Obj_Dialog *od __UNUSED__)
+_e_sys_dialog_cb_delete(E_Obj_Dialog *od EINA_UNUSED)
 {
    /* If we don't NULL out the _e_sys_dialog, then the
     * ECORE_EXE_EVENT_DEL callback will trigger and segv if the window

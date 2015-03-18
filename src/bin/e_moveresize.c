@@ -82,7 +82,7 @@ e_moveresize_client_extents(const E_Client *ec, int *w, int *h)
 }
 
 static void
-_e_resize_begin(void *data __UNUSED__, E_Client *ec)
+_e_resize_begin(void *data EINA_UNUSED, E_Client *ec)
 {
    Evas_Object *o;
    Evas_Coord ew, eh;
@@ -122,7 +122,7 @@ _e_resize_begin(void *data __UNUSED__, E_Client *ec)
 }
 
 static void
-_e_resize_end(void *data __UNUSED__, E_Client *ec __UNUSED__)
+_e_resize_end(void *data EINA_UNUSED, E_Client *ec EINA_UNUSED)
 {
    if (e_config->resize_info_visible)
      {
@@ -138,7 +138,7 @@ _e_resize_end(void *data __UNUSED__, E_Client *ec __UNUSED__)
 }
 
 static void
-_e_resize_update(void *data __UNUSED__, E_Client *ec)
+_e_resize_update(void *data EINA_UNUSED, E_Client *ec)
 {
    char buf[40];
    int w, h;
@@ -155,7 +155,7 @@ _e_resize_update(void *data __UNUSED__, E_Client *ec)
 }
 
 static void
-_e_move_begin(void *data __UNUSED__, E_Client *ec)
+_e_move_begin(void *data EINA_UNUSED, E_Client *ec)
 {
    Evas_Object *o;
    Evas_Coord ew, eh;
@@ -196,7 +196,7 @@ _e_move_begin(void *data __UNUSED__, E_Client *ec)
 }
 
 static void
-_e_move_end(void *data __UNUSED__, E_Client *ec __UNUSED__)
+_e_move_end(void *data EINA_UNUSED, E_Client *ec EINA_UNUSED)
 {
    if (e_config->move_info_visible)
      {
@@ -210,7 +210,7 @@ _e_move_end(void *data __UNUSED__, E_Client *ec __UNUSED__)
 }
 
 static void
-_e_move_update(void *data __UNUSED__, E_Client *ec)
+_e_move_update(void *data EINA_UNUSED, E_Client *ec)
 {
    char buf[40];
 

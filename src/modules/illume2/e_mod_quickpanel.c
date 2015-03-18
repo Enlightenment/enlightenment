@@ -2,13 +2,13 @@
 #include "e_mod_main.h"
 
 /* local function prototypes */
-static Eina_Bool _e_mod_quickpanel_cb_client_message(void *data __UNUSED__, int type __UNUSED__, void *event);
-static Eina_Bool _e_mod_quickpanel_cb_mouse_up(void *data, int type __UNUSED__, void *event);
-static Eina_Bool _e_mod_quickpanel_cb_border_add(void *data __UNUSED__, int type __UNUSED__, void *event);
-static Eina_Bool _e_mod_quickpanel_cb_border_remove(void *data __UNUSED__, int type __UNUSED__, void *event);
-static Eina_Bool _e_mod_quickpanel_cb_border_resize(void *data __UNUSED__, int type __UNUSED__, void *event);
-static Eina_Bool _e_mod_quickpanel_cb_border_uniconify(void *data __UNUSED__, int type __UNUSED__, void *event);
-static void _e_mod_quickpanel_cb_post_fetch(void *data __UNUSED__, E_Client *ec);
+static Eina_Bool _e_mod_quickpanel_cb_client_message(void *data EINA_UNUSED, int type EINA_UNUSED, void *event);
+static Eina_Bool _e_mod_quickpanel_cb_mouse_up(void *data, int type EINA_UNUSED, void *event);
+static Eina_Bool _e_mod_quickpanel_cb_border_add(void *data EINA_UNUSED, int type EINA_UNUSED, void *event);
+static Eina_Bool _e_mod_quickpanel_cb_border_remove(void *data EINA_UNUSED, int type EINA_UNUSED, void *event);
+static Eina_Bool _e_mod_quickpanel_cb_border_resize(void *data EINA_UNUSED, int type EINA_UNUSED, void *event);
+static Eina_Bool _e_mod_quickpanel_cb_border_uniconify(void *data EINA_UNUSED, int type EINA_UNUSED, void *event);
+static void _e_mod_quickpanel_cb_post_fetch(void *data EINA_UNUSED, E_Client *ec);
 static void _e_mod_quickpanel_cb_free(E_Illume_Quickpanel *qp);
 static Eina_Bool _e_mod_quickpanel_cb_delay_hide(void *data);
 static void _e_mod_quickpanel_slide(E_Illume_Quickpanel *qp, int visible, double len);
@@ -161,7 +161,7 @@ e_mod_quickpanel_hide(E_Illume_Quickpanel *qp)
 
 /* local functions */
 static Eina_Bool
-_e_mod_quickpanel_cb_client_message(void *data __UNUSED__, int type __UNUSED__, void *event) 
+_e_mod_quickpanel_cb_client_message(void *data EINA_UNUSED, int type EINA_UNUSED, void *event) 
 {
    Ecore_X_Event_Client_Message *ev;
 
@@ -216,7 +216,7 @@ _e_mod_quickpanel_cb_client_message(void *data __UNUSED__, int type __UNUSED__, 
 }
 
 static Eina_Bool
-_e_mod_quickpanel_cb_mouse_up(void *data, int type __UNUSED__, void *event) 
+_e_mod_quickpanel_cb_mouse_up(void *data, int type EINA_UNUSED, void *event) 
 {
    Ecore_Event_Mouse_Button *ev;
    E_Illume_Quickpanel *qp;
@@ -229,7 +229,7 @@ _e_mod_quickpanel_cb_mouse_up(void *data, int type __UNUSED__, void *event)
 }
 
 static Eina_Bool
-_e_mod_quickpanel_cb_border_add(void *data __UNUSED__, int type __UNUSED__, void *event) 
+_e_mod_quickpanel_cb_border_add(void *data EINA_UNUSED, int type EINA_UNUSED, void *event) 
 {
    E_Event_Client *ev;
    E_Illume_Quickpanel *qp;
@@ -279,7 +279,7 @@ _e_mod_quickpanel_cb_border_add(void *data __UNUSED__, int type __UNUSED__, void
 }
 
 static Eina_Bool
-_e_mod_quickpanel_cb_border_remove(void *data __UNUSED__, int type __UNUSED__, void *event) 
+_e_mod_quickpanel_cb_border_remove(void *data EINA_UNUSED, int type EINA_UNUSED, void *event) 
 {
    E_Event_Client *ev;
    E_Illume_Quickpanel *qp;
@@ -323,7 +323,7 @@ _e_mod_quickpanel_cb_border_remove(void *data __UNUSED__, int type __UNUSED__, v
 }
 
 static Eina_Bool
-_e_mod_quickpanel_cb_border_resize(void *data __UNUSED__, int type __UNUSED__, void *event) 
+_e_mod_quickpanel_cb_border_resize(void *data EINA_UNUSED, int type EINA_UNUSED, void *event) 
 {
    E_Event_Client *ev;
    E_Illume_Quickpanel *qp;
@@ -344,7 +344,7 @@ _e_mod_quickpanel_cb_border_resize(void *data __UNUSED__, int type __UNUSED__, v
 }
 
 static Eina_Bool 
-_e_mod_quickpanel_cb_border_uniconify(void *data __UNUSED__, int type __UNUSED__, void *event) 
+_e_mod_quickpanel_cb_border_uniconify(void *data EINA_UNUSED, int type EINA_UNUSED, void *event) 
 {
    E_Event_Client *ev;
    E_Illume_Quickpanel *qp;
@@ -359,7 +359,7 @@ _e_mod_quickpanel_cb_border_uniconify(void *data __UNUSED__, int type __UNUSED__
 }
 
 static void 
-_e_mod_quickpanel_cb_post_fetch(void *data __UNUSED__, E_Client *ec) 
+_e_mod_quickpanel_cb_post_fetch(void *data EINA_UNUSED, E_Client *ec) 
 {
    if (!ec->illume.quickpanel.quickpanel) return;
    ec->stolen = 1;

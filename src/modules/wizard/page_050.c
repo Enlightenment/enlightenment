@@ -5,13 +5,13 @@ static double scale = 1.0;
 static Eina_List *obs = NULL;
 /*
 EAPI int
-wizard_page_init(E_Wizard_Page *pg __UNUSED__, Eina_Bool *need_xdg_desktops __UNUSED__, Eina_Bool *need_xdg_icons __UNUSED__)
+wizard_page_init(E_Wizard_Page *pg EINA_UNUSED, Eina_Bool *need_xdg_desktops EINA_UNUSED, Eina_Bool *need_xdg_icons EINA_UNUSED)
 {
    return 1;
 }
 
 EAPI int
-wizard_page_shutdown(E_Wizard_Page *pg __UNUSED__)
+wizard_page_shutdown(E_Wizard_Page *pg EINA_UNUSED)
 {
    return 1;
 }
@@ -42,7 +42,7 @@ _scale_preview_sel_set(Evas_Object *ob, int sel)
 }
 
 static void
-_scale_down(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_scale_down(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Evas_Object *ob = data;
 
@@ -173,7 +173,7 @@ wizard_page_show(E_Wizard_Page *pg)
 }
 
 EAPI int
-wizard_page_hide(E_Wizard_Page *pg __UNUSED__)
+wizard_page_hide(E_Wizard_Page *pg EINA_UNUSED)
 {
    obs = eina_list_free(obs);
 //   evas_object_del(pg->data);
@@ -186,7 +186,7 @@ wizard_page_hide(E_Wizard_Page *pg __UNUSED__)
 }
 /*
 EAPI int
-wizard_page_apply(E_Wizard_Page *pg __UNUSED__)
+wizard_page_apply(E_Wizard_Page *pg EINA_UNUSED)
 {
    return 1;
 }

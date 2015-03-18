@@ -236,7 +236,7 @@ _env_path_append(const char *env, const char *path)
 }
 
 static void
-_sigusr1(int x __UNUSED__, siginfo_t *info __UNUSED__, void *data __UNUSED__)
+_sigusr1(int x EINA_UNUSED, siginfo_t *info EINA_UNUSED, void *data EINA_UNUSED)
 {
    struct sigaction action;
 

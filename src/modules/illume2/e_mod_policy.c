@@ -7,17 +7,17 @@ static int _e_mod_policy_load(char *file);
 static void _e_mod_policy_handlers_add(void);
 static void _e_mod_policy_hooks_add(void);
 static void _e_mod_policy_cb_free(E_Illume_Policy *p);
-static Eina_Bool _e_mod_policy_cb_border_add(void *data __UNUSED__, int type __UNUSED__, void *event);
-static Eina_Bool _e_mod_policy_cb_border_del(void *data __UNUSED__, int type __UNUSED__, void *event);
-static Eina_Bool _e_mod_policy_cb_border_focus_in(void *data __UNUSED__, int type __UNUSED__, void *event);
-static Eina_Bool _e_mod_policy_cb_border_focus_out(void *data __UNUSED__, int type __UNUSED__, void *event);
-static Eina_Bool _e_mod_policy_cb_border_show(void *data __UNUSED__, int type __UNUSED__, void *event);
-static Eina_Bool _e_mod_policy_cb_zone_move_resize(void *data __UNUSED__, int type __UNUSED__, void *event);
-static Eina_Bool _e_mod_policy_cb_client_message(void *data __UNUSED__, int type __UNUSED__, void *event);
-static Eina_Bool _e_mod_policy_cb_window_property(void *data __UNUSED__, int type __UNUSED__, void *event);
-static Eina_Bool _e_mod_policy_cb_policy_change(void *data __UNUSED__, int type, void *event __UNUSED__);
-static void _e_mod_policy_cb_hook_post_fetch(void *data __UNUSED__, E_Client *ec);
-static void _e_mod_policy_cb_hook_post_assign(void *data __UNUSED__, E_Client *ec);
+static Eina_Bool _e_mod_policy_cb_border_add(void *data EINA_UNUSED, int type EINA_UNUSED, void *event);
+static Eina_Bool _e_mod_policy_cb_border_del(void *data EINA_UNUSED, int type EINA_UNUSED, void *event);
+static Eina_Bool _e_mod_policy_cb_border_focus_in(void *data EINA_UNUSED, int type EINA_UNUSED, void *event);
+static Eina_Bool _e_mod_policy_cb_border_focus_out(void *data EINA_UNUSED, int type EINA_UNUSED, void *event);
+static Eina_Bool _e_mod_policy_cb_border_show(void *data EINA_UNUSED, int type EINA_UNUSED, void *event);
+static Eina_Bool _e_mod_policy_cb_zone_move_resize(void *data EINA_UNUSED, int type EINA_UNUSED, void *event);
+static Eina_Bool _e_mod_policy_cb_client_message(void *data EINA_UNUSED, int type EINA_UNUSED, void *event);
+static Eina_Bool _e_mod_policy_cb_window_property(void *data EINA_UNUSED, int type EINA_UNUSED, void *event);
+static Eina_Bool _e_mod_policy_cb_policy_change(void *data EINA_UNUSED, int type, void *event EINA_UNUSED);
+static void _e_mod_policy_cb_hook_post_fetch(void *data EINA_UNUSED, E_Client *ec);
+static void _e_mod_policy_cb_hook_post_assign(void *data EINA_UNUSED, E_Client *ec);
 static void _e_mod_policy_cb_hook_layout(E_Comp *comp);
 
 /* local variables */
@@ -300,7 +300,7 @@ _e_mod_policy_cb_free(E_Illume_Policy *p)
 }
 
 static Eina_Bool
-_e_mod_policy_cb_border_add(void *data __UNUSED__, int type __UNUSED__, void *event) 
+_e_mod_policy_cb_border_add(void *data EINA_UNUSED, int type EINA_UNUSED, void *event) 
 {
    E_Event_Client *ev;
 
@@ -312,7 +312,7 @@ _e_mod_policy_cb_border_add(void *data __UNUSED__, int type __UNUSED__, void *ev
 }
 
 static Eina_Bool
-_e_mod_policy_cb_border_del(void *data __UNUSED__, int type __UNUSED__, void *event) 
+_e_mod_policy_cb_border_del(void *data EINA_UNUSED, int type EINA_UNUSED, void *event) 
 {
    E_Event_Client *ev;
 
@@ -324,7 +324,7 @@ _e_mod_policy_cb_border_del(void *data __UNUSED__, int type __UNUSED__, void *ev
 }
 
 static Eina_Bool
-_e_mod_policy_cb_border_focus_in(void *data __UNUSED__, int type __UNUSED__, void *event) 
+_e_mod_policy_cb_border_focus_in(void *data EINA_UNUSED, int type EINA_UNUSED, void *event) 
 {
    E_Event_Client *ev;
 
@@ -336,7 +336,7 @@ _e_mod_policy_cb_border_focus_in(void *data __UNUSED__, int type __UNUSED__, voi
 }
 
 static Eina_Bool
-_e_mod_policy_cb_border_focus_out(void *data __UNUSED__, int type __UNUSED__, void *event) 
+_e_mod_policy_cb_border_focus_out(void *data EINA_UNUSED, int type EINA_UNUSED, void *event) 
 {
    E_Event_Client *ev;
 
@@ -348,7 +348,7 @@ _e_mod_policy_cb_border_focus_out(void *data __UNUSED__, int type __UNUSED__, vo
 }
 
 static Eina_Bool
-_e_mod_policy_cb_border_show(void *data __UNUSED__, int type __UNUSED__, void *event) 
+_e_mod_policy_cb_border_show(void *data EINA_UNUSED, int type EINA_UNUSED, void *event) 
 {
    E_Event_Client *ev;
 
@@ -360,7 +360,7 @@ _e_mod_policy_cb_border_show(void *data __UNUSED__, int type __UNUSED__, void *e
 }
 
 static Eina_Bool
-_e_mod_policy_cb_zone_move_resize(void *data __UNUSED__, int type __UNUSED__, void *event) 
+_e_mod_policy_cb_zone_move_resize(void *data EINA_UNUSED, int type EINA_UNUSED, void *event) 
 {
    E_Event_Zone_Move_Resize *ev;
 
@@ -386,7 +386,7 @@ _e_mod_zone_win_get(Ecore_X_Window win)
 }
 
 static Eina_Bool
-_e_mod_policy_cb_client_message(void *data __UNUSED__, int type __UNUSED__, void *event) 
+_e_mod_policy_cb_client_message(void *data EINA_UNUSED, int type EINA_UNUSED, void *event) 
 {
    Ecore_X_Event_Client_Message *ev;
 
@@ -460,7 +460,7 @@ _e_mod_policy_cb_client_message(void *data __UNUSED__, int type __UNUSED__, void
 }
 
 static Eina_Bool
-_e_mod_policy_cb_window_property(void *data __UNUSED__, int type __UNUSED__, void *event) 
+_e_mod_policy_cb_window_property(void *data EINA_UNUSED, int type EINA_UNUSED, void *event) 
 {
    Ecore_X_Event_Window_Property *ev;
 
@@ -472,7 +472,7 @@ _e_mod_policy_cb_window_property(void *data __UNUSED__, int type __UNUSED__, voi
 }
 
 static Eina_Bool
-_e_mod_policy_cb_policy_change(void *data __UNUSED__, int type, void *event __UNUSED__) 
+_e_mod_policy_cb_policy_change(void *data EINA_UNUSED, int type, void *event EINA_UNUSED) 
 {
    char *file;
 
@@ -490,14 +490,14 @@ _e_mod_policy_cb_policy_change(void *data __UNUSED__, int type, void *event __UN
 }
 
 static void 
-_e_mod_policy_cb_hook_post_fetch(void *data __UNUSED__, E_Client *ec) 
+_e_mod_policy_cb_hook_post_fetch(void *data EINA_UNUSED, E_Client *ec) 
 {
    if ((_policy) && (_policy->funcs.border_post_fetch))
      _policy->funcs.border_post_fetch(ec);
 }
 
 static void 
-_e_mod_policy_cb_hook_post_assign(void *data __UNUSED__, E_Client *ec) 
+_e_mod_policy_cb_hook_post_assign(void *data EINA_UNUSED, E_Client *ec) 
 {
    if ((_policy) && (_policy->funcs.border_post_assign))
      _policy->funcs.border_post_assign(ec);

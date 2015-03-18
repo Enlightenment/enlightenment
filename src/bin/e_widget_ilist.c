@@ -1084,7 +1084,7 @@ _e_wid_focus_hook(Evas_Object *obj)
 }
 
 static void
-_e_wid_cb_scrollframe_resize(void *data, Evas *e __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
+_e_wid_cb_scrollframe_resize(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
    Evas_Coord mw, mh, vw, vh, w, h;
 
@@ -1125,7 +1125,7 @@ _e_wid_cb_item_sel(void *data, void *data2)
 }
 
 static void
-_e_wid_cb_item_hilight(void *data, void *data2 __UNUSED__)
+_e_wid_cb_item_hilight(void *data, void *data2 EINA_UNUSED)
 {
    E_Widget_Data *wd;
    Evas_Coord x, y, w, h;
@@ -1136,13 +1136,13 @@ _e_wid_cb_item_hilight(void *data, void *data2 __UNUSED__)
 }
 
 static void
-_e_wid_cb_selected(void *data, Evas_Object *obj __UNUSED__, void *event_info)
+_e_wid_cb_selected(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
 {
    evas_object_smart_callback_call(data, "selected", event_info);
 }
 
 static void
-_e_wid_focus_steal(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_e_wid_focus_steal(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    e_widget_focus_steal(data);
 }

@@ -144,14 +144,14 @@ _basic_create_general(E_Config_Dialog *dialog, Evas *evas, E_Config_Dialog_Data 
 }
 
 static void
-cb_mixer_app_del(E_Dialog *dialog __UNUSED__, void *data)
+cb_mixer_app_del(E_Dialog *dialog EINA_UNUSED, void *data)
 {
    E_Mixer_Module_Context *ctxt = data;
    ctxt->mixer_dialog = NULL;
 }
 
 static void
-cb_mixer_call(void *data, void *data2 __UNUSED__)
+cb_mixer_call(void *data, void *data2 EINA_UNUSED)
 {
    Eina_List *l;
    E_Mixer_Module_Context *ctxt = data;

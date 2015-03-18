@@ -415,7 +415,7 @@ _e_xsettings_icon_theme_set(void)
 }
 
 static void
-_e_xsettings_error_cb(void *data, Eio_File *handler __UNUSED__, int error __UNUSED__)
+_e_xsettings_error_cb(void *data, Eio_File *handler EINA_UNUSED, int error EINA_UNUSED)
 {
    Eina_List *l = data;
    if (reset || setting)
@@ -447,7 +447,7 @@ _e_xsettings_error_cb(void *data, Eio_File *handler __UNUSED__, int error __UNUS
 }
 
 static void
-_e_xsettings_done_cb(void *data __UNUSED__, Eio_File *handler __UNUSED__, const Eina_Stat *estat __UNUSED__)
+_e_xsettings_done_cb(void *data EINA_UNUSED, Eio_File *handler EINA_UNUSED, const Eina_Stat *estat EINA_UNUSED)
 {
    if (reset)
      {

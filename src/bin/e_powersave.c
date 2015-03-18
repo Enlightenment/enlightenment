@@ -10,7 +10,7 @@ struct _E_Powersave_Deferred_Action
 /* local subsystem functions */
 static Eina_Bool _e_powersave_cb_deferred_timer(void *data);
 static void      _e_powersave_mode_eval(void);
-static void      _e_powersave_event_update_free(void *data __UNUSED__, void *event);
+static void      _e_powersave_event_update_free(void *data EINA_UNUSED, void *event);
 
 /* local subsystem globals */
 EAPI int E_EVENT_POWERSAVE_UPDATE = 0;
@@ -116,7 +116,7 @@ e_powersave_mode_max_get(void)
 /* local subsystem functions */
 
 static Eina_Bool
-_e_powersave_cb_deferred_timer(void *data __UNUSED__)
+_e_powersave_cb_deferred_timer(void *data EINA_UNUSED)
 {
    E_Powersave_Deferred_Action *pa;
 
@@ -173,7 +173,7 @@ _e_powersave_mode_eval(void)
 }
 
 static void
-_e_powersave_event_update_free(void *data __UNUSED__, void *event)
+_e_powersave_event_update_free(void *data EINA_UNUSED, void *event)
 {
    free(event);
 }

@@ -139,7 +139,7 @@ EAPI void *e_modapi_init     (E_Module *m);
 EAPI int   e_modapi_shutdown (E_Module *m);
 EAPI int   e_modapi_save     (E_Module *m);
 
-E_Config_Dialog *e_int_config_battery_module(Evas_Object *parent, const char *params __UNUSED__);
+E_Config_Dialog *e_int_config_battery_module(Evas_Object *parent, const char *params EINA_UNUSED);
     
 void _battery_config_updated(void);
 extern Config *battery_config;

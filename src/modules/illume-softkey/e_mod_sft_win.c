@@ -5,15 +5,15 @@
 
 /* local function prototypes */
 static void _e_mod_sft_win_cb_free(Sft_Win *swin);
-static Eina_Bool _e_mod_sft_win_cb_win_prop(void *data, int type __UNUSED__, void *event);
-static Eina_Bool _e_mod_sft_win_cb_zone_resize(void *data, int type __UNUSED__, void *event);
+static Eina_Bool _e_mod_sft_win_cb_win_prop(void *data, int type EINA_UNUSED, void *event);
+static Eina_Bool _e_mod_sft_win_cb_zone_resize(void *data, int type EINA_UNUSED, void *event);
 static void _e_mod_sft_win_cb_resize(E_Win *win);
 static void _e_mod_sft_win_create_default_buttons(Sft_Win *swin);
 static void _e_mod_sft_win_create_extra_buttons(Sft_Win *swin);
-static void _e_mod_sft_win_cb_close(void *data, void *data2 __UNUSED__);
-static void _e_mod_sft_win_cb_back(void *data, void *data2 __UNUSED__);
-static void _e_mod_sft_win_cb_forward(void *data, void *data2 __UNUSED__);
-static void _e_mod_sft_win_cb_win_pos(void *data, void *data2 __UNUSED__);
+static void _e_mod_sft_win_cb_close(void *data, void *data2 EINA_UNUSED);
+static void _e_mod_sft_win_cb_back(void *data, void *data2 EINA_UNUSED);
+static void _e_mod_sft_win_cb_forward(void *data, void *data2 EINA_UNUSED);
+static void _e_mod_sft_win_cb_win_pos(void *data, void *data2 EINA_UNUSED);
 static void _e_mod_sft_win_pos_toggle_top(Sft_Win *swin);
 static void _e_mod_sft_win_pos_toggle_left(Sft_Win *swin);
 static E_Client *_e_mod_sft_win_border_get(E_Zone *zone, int x, int y);
@@ -171,7 +171,7 @@ _e_mod_sft_win_cb_free(Sft_Win *swin)
 }
 
 static Eina_Bool
-_e_mod_sft_win_cb_win_prop(void *data, int type __UNUSED__, void *event) 
+_e_mod_sft_win_cb_win_prop(void *data, int type EINA_UNUSED, void *event) 
 {
    Sft_Win *swin;
    Ecore_X_Event_Window_Property *ev;
@@ -203,7 +203,7 @@ _e_mod_sft_win_cb_win_prop(void *data, int type __UNUSED__, void *event)
 }
 
 static Eina_Bool
-_e_mod_sft_win_cb_zone_resize(void *data, int type __UNUSED__, void *event) 
+_e_mod_sft_win_cb_zone_resize(void *data, int type EINA_UNUSED, void *event) 
 {
    Sft_Win *swin;
    E_Event_Zone_Move_Resize *ev;
@@ -342,7 +342,7 @@ _e_mod_sft_win_create_extra_buttons(Sft_Win *swin)
 }
 
 static void 
-_e_mod_sft_win_cb_close(void *data, void *data2 __UNUSED__) 
+_e_mod_sft_win_cb_close(void *data, void *data2 EINA_UNUSED) 
 {
    Sft_Win *swin;
 
@@ -351,7 +351,7 @@ _e_mod_sft_win_cb_close(void *data, void *data2 __UNUSED__)
 }
 
 static void 
-_e_mod_sft_win_cb_back(void *data, void *data2 __UNUSED__) 
+_e_mod_sft_win_cb_back(void *data, void *data2 EINA_UNUSED) 
 {
    Sft_Win *swin;
 
@@ -360,7 +360,7 @@ _e_mod_sft_win_cb_back(void *data, void *data2 __UNUSED__)
 }
 
 static void 
-_e_mod_sft_win_cb_forward(void *data, void *data2 __UNUSED__) 
+_e_mod_sft_win_cb_forward(void *data, void *data2 EINA_UNUSED) 
 {
    Sft_Win *swin;
 
@@ -369,7 +369,7 @@ _e_mod_sft_win_cb_forward(void *data, void *data2 __UNUSED__)
 }
 
 static void 
-_e_mod_sft_win_cb_win_pos(void *data, void *data2 __UNUSED__) 
+_e_mod_sft_win_cb_win_pos(void *data, void *data2 EINA_UNUSED) 
 {
    Sft_Win *swin;
    Ecore_X_Illume_Mode mode;

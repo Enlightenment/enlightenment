@@ -225,7 +225,7 @@ _e_kbd_int_buf_send(E_Kbd_Int *ki)
 }
 
 static void
-_e_kbd_int_cb_match_select(void *data, Evas_Object *obj __UNUSED__, const char *emission __UNUSED__, const char *source __UNUSED__)
+_e_kbd_int_cb_match_select(void *data, Evas_Object *obj EINA_UNUSED, const char *emission EINA_UNUSED, const char *source EINA_UNUSED)
 {
    E_Kbd_Int_Match *km;
 
@@ -687,7 +687,7 @@ _e_kbd_int_cb_hold_timeout(void *data)
 }
 
 static void
-_e_kbd_int_cb_mouse_down(void *data, Evas *evas __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
+_e_kbd_int_cb_mouse_down(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info)
 {
    Evas_Event_Mouse_Down *ev;
    E_Kbd_Int *ki;
@@ -731,7 +731,7 @@ _e_kbd_int_cb_mouse_down(void *data, Evas *evas __UNUSED__, Evas_Object *obj __U
 }
 
 static void
-_e_kbd_int_cb_mouse_move(void *data, Evas *evas __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
+_e_kbd_int_cb_mouse_move(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info)
 {
    Evas_Event_Mouse_Move *ev;
    E_Kbd_Int *ki;
@@ -777,7 +777,7 @@ _e_kbd_int_cb_mouse_move(void *data, Evas *evas __UNUSED__, Evas_Object *obj __U
 }
 
 static void
-_e_kbd_int_cb_mouse_up(void *data, Evas *evas __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
+_e_kbd_int_cb_mouse_up(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info)
 {
    Evas_Event_Mouse_Up *ev;
    E_Kbd_Int *ki;
@@ -1345,7 +1345,7 @@ _e_kbd_int_layout_next(E_Kbd_Int *ki)
 }
 
 static Eina_Bool
-_e_kbd_int_cb_client_message(void *data, __UNUSED__ int type, void *event)
+_e_kbd_int_cb_client_message(void *data, EINA_UNUSED int type, void *event)
 {
    Ecore_X_Event_Client_Message *ev;
    E_Kbd_Int *ki;
@@ -1653,7 +1653,7 @@ _e_kbd_int_matchlist_up(E_Kbd_Int *ki)
 }
 
 static void
-_e_kbd_int_cb_matches(void *data, Evas_Object *obj __UNUSED__, const char *emission __UNUSED__, const char *source __UNUSED__)
+_e_kbd_int_cb_matches(void *data, Evas_Object *obj EINA_UNUSED, const char *emission EINA_UNUSED, const char *source EINA_UNUSED)
 {
    E_Kbd_Int *ki;
 
@@ -1670,7 +1670,7 @@ _e_kbd_int_cb_matches(void *data, Evas_Object *obj __UNUSED__, const char *emiss
 }
 
 static void
-_e_kbd_int_cb_dicts(void *data, Evas_Object *obj __UNUSED__, const char *emission __UNUSED__, const char *source __UNUSED__)
+_e_kbd_int_cb_dicts(void *data, Evas_Object *obj EINA_UNUSED, const char *emission EINA_UNUSED, const char *source EINA_UNUSED)
 {
    E_Kbd_Int *ki;
 
@@ -1680,7 +1680,7 @@ _e_kbd_int_cb_dicts(void *data, Evas_Object *obj __UNUSED__, const char *emissio
 }
 
 static void
-_e_kbd_int_cb_layouts(void *data, Evas_Object *obj __UNUSED__, const char *emission __UNUSED__, const char *source __UNUSED__)
+_e_kbd_int_cb_layouts(void *data, Evas_Object *obj EINA_UNUSED, const char *emission EINA_UNUSED, const char *source EINA_UNUSED)
 {
    E_Kbd_Int *ki;
 
@@ -1853,7 +1853,7 @@ _theme_obj_new(Evas *e, const char *custom_dir, const char *group)
 }
 
 static Eina_Bool
-_e_kbd_int_cb_border_move(void *data, int type __UNUSED__, void *event) 
+_e_kbd_int_cb_border_move(void *data, int type EINA_UNUSED, void *event) 
 {
    E_Event_Client *ev;
    E_Kbd_Int *ki;

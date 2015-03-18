@@ -57,7 +57,7 @@ _e_kbd_buf_actual_string_clear(E_Kbd_Buf *kb)
 }
 
 static E_Kbd_Buf_Key *
-_e_kbd_buf_at_coord_get(E_Kbd_Buf *kb __UNUSED__, E_Kbd_Buf_Layout *kbl, int x, int y)
+_e_kbd_buf_at_coord_get(E_Kbd_Buf *kb EINA_UNUSED, E_Kbd_Buf_Layout *kbl, int x, int y)
 {
    Eina_List *l;
    
@@ -77,7 +77,7 @@ _e_kbd_buf_at_coord_get(E_Kbd_Buf *kb __UNUSED__, E_Kbd_Buf_Layout *kbl, int x, 
 }
 
 static E_Kbd_Buf_Key *
-_e_kbd_buf_closest_get(E_Kbd_Buf *kb __UNUSED__, E_Kbd_Buf_Layout *kbl, int x, int y)
+_e_kbd_buf_closest_get(E_Kbd_Buf *kb EINA_UNUSED, E_Kbd_Buf_Layout *kbl, int x, int y)
 {
    Eina_List *l;
    E_Kbd_Buf_Key *ky_closest = NULL;
@@ -105,7 +105,7 @@ _e_kbd_buf_closest_get(E_Kbd_Buf *kb __UNUSED__, E_Kbd_Buf_Layout *kbl, int x, i
 }
 
 static const char *
-_e_kbd_buf_keystroke_key_string_get(E_Kbd_Buf *kb __UNUSED__, E_Kbd_Buf_Keystroke *ks, E_Kbd_Buf_Key *ky)
+_e_kbd_buf_keystroke_key_string_get(E_Kbd_Buf *kb EINA_UNUSED, E_Kbd_Buf_Keystroke *ks, E_Kbd_Buf_Key *ky)
 {
    const char *str = NULL;
    
@@ -228,7 +228,7 @@ _e_kbd_buf_cb_data_dict_reload(void *data)
 }
 
 static void
-_e_kbd_buf_cb_data_dict_change(void *data, Ecore_File_Monitor *em __UNUSED__, Ecore_File_Event event __UNUSED__, const char *path __UNUSED__)
+_e_kbd_buf_cb_data_dict_change(void *data, Ecore_File_Monitor *em EINA_UNUSED, Ecore_File_Event event EINA_UNUSED, const char *path EINA_UNUSED)
 {
    E_Kbd_Buf *kb;
    

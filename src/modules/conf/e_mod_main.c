@@ -82,7 +82,7 @@ _gc_shutdown(E_Gadcon_Client *gcc)
 }
 
 static void
-_gc_orient(E_Gadcon_Client *gcc, E_Gadcon_Orient orient __UNUSED__)
+_gc_orient(E_Gadcon_Client *gcc, E_Gadcon_Orient orient EINA_UNUSED)
 {
    Evas_Coord mw, mh;
 
@@ -96,13 +96,13 @@ _gc_orient(E_Gadcon_Client *gcc, E_Gadcon_Orient orient __UNUSED__)
 }
 
 static const char *
-_gc_label(const E_Gadcon_Client_Class *client_class __UNUSED__)
+_gc_label(const E_Gadcon_Client_Class *client_class EINA_UNUSED)
 {
    return _("Settings");
 }
 
 static Evas_Object *
-_gc_icon(const E_Gadcon_Client_Class *client_class __UNUSED__, Evas *evas)
+_gc_icon(const E_Gadcon_Client_Class *client_class EINA_UNUSED, Evas *evas)
 {
    Evas_Object *o;
    char buf[PATH_MAX];
@@ -115,14 +115,14 @@ _gc_icon(const E_Gadcon_Client_Class *client_class __UNUSED__, Evas *evas)
 }
 
 static const char *
-_gc_id_new(const E_Gadcon_Client_Class *client_class __UNUSED__)
+_gc_id_new(const E_Gadcon_Client_Class *client_class EINA_UNUSED)
 {
    return _gadcon_class.name;
 }
 
 /*
    static void
-   _cb_button_click(void *data __UNUSED__, void *data2 __UNUSED__)
+   _cb_button_click(void *data EINA_UNUSED, void *data2 EINA_UNUSED)
    {
    E_Action *a;
 
@@ -132,7 +132,7 @@ _gc_id_new(const E_Gadcon_Client_Class *client_class __UNUSED__)
  */
 
 static void
-_cb_action_conf(void *data, Evas_Object *obj __UNUSED__, const char *emission __UNUSED__, const char *source __UNUSED__)
+_cb_action_conf(void *data, Evas_Object *obj EINA_UNUSED, const char *emission EINA_UNUSED, const char *source EINA_UNUSED)
 {
    Instance *inst;
    E_Action *a;
@@ -143,7 +143,7 @@ _cb_action_conf(void *data, Evas_Object *obj __UNUSED__, const char *emission __
 }
 
 static void
-_e_mod_run_cb(void *data, E_Menu *m EINA_UNUSED, E_Menu_Item *mi __UNUSED__)
+_e_mod_run_cb(void *data, E_Menu *m EINA_UNUSED, E_Menu_Item *mi EINA_UNUSED)
 {
    Eina_List *l;
    E_Configure_Cat *ecat;
@@ -198,14 +198,14 @@ _config_pre_activate_cb(void *data, E_Menu *m)
 }
 
 static void
-_config_item_activate_cb(void *data, E_Menu *m EINA_UNUSED, E_Menu_Item *mi __UNUSED__)
+_config_item_activate_cb(void *data, E_Menu *m EINA_UNUSED, E_Menu_Item *mi EINA_UNUSED)
 {
    E_Configure_Cat *ecat = data;
    e_configure_show(ecat ? ecat->cat : NULL);
 }
 
 static void
-_config_all_pre_activate_cb(void *data __UNUSED__, E_Menu *m)
+_config_all_pre_activate_cb(void *data EINA_UNUSED, E_Menu *m)
 {
    const Eina_List *l;
    E_Configure_Cat *ecat;
@@ -238,7 +238,7 @@ _config_all_pre_activate_cb(void *data __UNUSED__, E_Menu *m)
 
 /* menu item add hook */
 void
-e_mod_config_menu_add(void *data __UNUSED__, E_Menu *m)
+e_mod_config_menu_add(void *data EINA_UNUSED, E_Menu *m)
 {
    E_Menu_Item *mi;
    E_Menu *sub;
@@ -316,7 +316,7 @@ e_modapi_init(E_Module *m)
 }
 
 EAPI int
-e_modapi_shutdown(E_Module *m __UNUSED__)
+e_modapi_shutdown(E_Module *m EINA_UNUSED)
 {
    e_configure_del();
 
@@ -356,7 +356,7 @@ e_modapi_shutdown(E_Module *m __UNUSED__)
 }
 
 EAPI int
-e_modapi_save(E_Module *m __UNUSED__)
+e_modapi_save(E_Module *m EINA_UNUSED)
 {
    e_config_domain_save("module.conf", conf_edd, conf);
    return 1;
@@ -388,13 +388,13 @@ _e_mod_action_conf_cb(E_Object *obj, const char *params)
 
 /* menu item callback(s) */
 static void
-_e_mod_conf_cb(void *data __UNUSED__, E_Menu *m EINA_UNUSED, E_Menu_Item *mi __UNUSED__)
+_e_mod_conf_cb(void *data EINA_UNUSED, E_Menu *m EINA_UNUSED, E_Menu_Item *mi EINA_UNUSED)
 {
    e_configure_show(NULL);
 }
 
 static void
-_e_mod_mode_presentation_toggle(void *data __UNUSED__, E_Menu *m __UNUSED__, E_Menu_Item *mi)
+_e_mod_mode_presentation_toggle(void *data EINA_UNUSED, E_Menu *m EINA_UNUSED, E_Menu_Item *mi)
 {
    e_config->mode.presentation = !e_config->mode.presentation;
    e_menu_item_toggle_set(mi, e_config->mode.presentation);
@@ -403,7 +403,7 @@ _e_mod_mode_presentation_toggle(void *data __UNUSED__, E_Menu *m __UNUSED__, E_M
 }
 
 static void
-_e_mod_mode_offline_toggle(void *data __UNUSED__, E_Menu *m __UNUSED__, E_Menu_Item *mi)
+_e_mod_mode_offline_toggle(void *data EINA_UNUSED, E_Menu *m EINA_UNUSED, E_Menu_Item *mi)
 {
    e_config->mode.offline = !e_config->mode.offline;
    e_menu_item_toggle_set(mi, e_config->mode.offline);
@@ -412,7 +412,7 @@ _e_mod_mode_offline_toggle(void *data __UNUSED__, E_Menu *m __UNUSED__, E_Menu_I
 }
 
 static void
-_e_mod_submenu_modes_fill(void *data __UNUSED__, E_Menu *m)
+_e_mod_submenu_modes_fill(void *data EINA_UNUSED, E_Menu *m)
 {
    E_Menu_Item *mi;
 
@@ -445,7 +445,7 @@ _e_mod_submenu_modes_get(void)
 
 /* menu item add hook */
 static void
-_e_mod_menu_add(void *data __UNUSED__, E_Menu *m)
+_e_mod_menu_add(void *data EINA_UNUSED, E_Menu *m)
 {
    E_Menu_Item *mi;
 

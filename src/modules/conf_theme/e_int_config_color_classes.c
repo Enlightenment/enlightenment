@@ -146,7 +146,7 @@ static Eina_Bool    _fill_data_delayed(void *data);
 static Eina_Bool    _color_changed_delay(void *data);
 
 E_Config_Dialog *
-e_int_config_color_classes(Evas_Object *parent EINA_UNUSED, const char *params __UNUSED__)
+e_int_config_color_classes(Evas_Object *parent EINA_UNUSED, const char *params EINA_UNUSED)
 {
    E_Config_Dialog *cfd;
    E_Config_Dialog_View *v;
@@ -166,7 +166,7 @@ e_int_config_color_classes(Evas_Object *parent EINA_UNUSED, const char *params _
 }
 
 static void *
-_create_data(E_Config_Dialog *cfd __UNUSED__)
+_create_data(E_Config_Dialog *cfd EINA_UNUSED)
 {
    E_Config_Dialog_Data *cfdata = E_NEW(E_Config_Dialog_Data, 1);
    if (!cfdata) return NULL;
@@ -174,7 +174,7 @@ _create_data(E_Config_Dialog *cfd __UNUSED__)
 }
 
 static void
-_free_data(E_Config_Dialog *cfd __UNUSED__, E_Config_Dialog_Data *cfdata)
+_free_data(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfdata)
 {
    CFColor_Class *ccc;
 
@@ -322,7 +322,7 @@ _color_class_list_selection_idler(void *data)
 }
 
 static void
-_color_class_list_selection_changed(void *data, Evas_Object *obj __UNUSED__)
+_color_class_list_selection_changed(void *data, Evas_Object *obj EINA_UNUSED)
 {
    E_Config_Dialog_Data *cfdata = data;
 
@@ -369,7 +369,7 @@ _config_color_class_color_reset(CFColor_Class *ccc)
 }
 
 static int
-_basic_apply_data(E_Config_Dialog *cfd __UNUSED__, E_Config_Dialog_Data *cfdata)
+_basic_apply_data(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfdata)
 {
    CFColor_Class *ccc;
 

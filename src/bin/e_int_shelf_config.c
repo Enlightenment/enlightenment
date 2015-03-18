@@ -21,12 +21,12 @@ struct _E_Config_Dialog_Data
 /* local function prototypes */
 static void        *_create_data(E_Config_Dialog *cfd);
 static void         _fill_data(E_Config_Dialog_Data *cfdata);
-static int          _basic_check_changed(E_Config_Dialog *cfd __UNUSED__, E_Config_Dialog_Data *cfdata);
-static void         _free_data(E_Config_Dialog *cfd __UNUSED__, E_Config_Dialog_Data *cfdata);
-static Evas_Object *_basic_create(E_Config_Dialog *cfd __UNUSED__, Evas *evas, E_Config_Dialog_Data *cfdata);
+static int          _basic_check_changed(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfdata);
+static void         _free_data(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfdata);
+static Evas_Object *_basic_create(E_Config_Dialog *cfd EINA_UNUSED, Evas *evas, E_Config_Dialog_Data *cfdata);
 static int          _basic_apply(E_Config_Dialog *cfd, E_Config_Dialog_Data *cfdata);
 static void         _fill_styles(E_Config_Dialog_Data *cfdata, Evas_Object *obj);
-static void         _cb_autohide_change(void *data, Evas_Object *obj __UNUSED__);
+static void         _cb_autohide_change(void *data, Evas_Object *obj EINA_UNUSED);
 static void         _fill_desks(E_Config_Dialog_Data *cfdata);
 
 EAPI void
@@ -51,7 +51,7 @@ e_int_shelf_config(E_Shelf *es)
 
 /* local functions */
 static Eina_Bool
-_shelf_event_add(E_Config_Dialog_Data *cfdata, int type __UNUSED__, E_Event_Shelf *ev)
+_shelf_event_add(E_Config_Dialog_Data *cfdata, int type EINA_UNUSED, E_Event_Shelf *ev)
 {
    if (ev->shelf->cfg == cfdata->escfg)
      cfdata->es = ev->shelf;
@@ -59,7 +59,7 @@ _shelf_event_add(E_Config_Dialog_Data *cfdata, int type __UNUSED__, E_Event_Shel
 }
 
 static Eina_Bool
-_shelf_event_del(E_Config_Dialog_Data *cfdata, int type __UNUSED__, E_Event_Shelf *ev)
+_shelf_event_del(E_Config_Dialog_Data *cfdata, int type EINA_UNUSED, E_Event_Shelf *ev)
 {
    if (ev->shelf == cfdata->es)
      cfdata->es = NULL;
@@ -112,7 +112,7 @@ _fill_data(E_Config_Dialog_Data *cfdata)
 }
 
 static int
-_basic_check_changed(E_Config_Dialog *cfd __UNUSED__, E_Config_Dialog_Data *cfdata)
+_basic_check_changed(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfdata)
 {
 #define CHECK(X) if (cfdata->X != cfdata->escfg->X) return 1
    CHECK(layer);
@@ -131,7 +131,7 @@ _basic_check_changed(E_Config_Dialog *cfd __UNUSED__, E_Config_Dialog_Data *cfda
 }
 
 static void
-_free_data(E_Config_Dialog *cfd __UNUSED__, E_Config_Dialog_Data *cfdata)
+_free_data(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfdata)
 {
    eina_list_free(cfdata->autohide_list);
 
@@ -144,7 +144,7 @@ _free_data(E_Config_Dialog *cfd __UNUSED__, E_Config_Dialog_Data *cfdata)
 }
 
 static Evas_Object *
-_basic_create(E_Config_Dialog *cfd __UNUSED__, Evas *evas, E_Config_Dialog_Data *cfdata)
+_basic_create(E_Config_Dialog *cfd EINA_UNUSED, Evas *evas, E_Config_Dialog_Data *cfdata)
 {
    Evas_Object *otb, *ol, *ow;
    E_Radio_Group *rg;
@@ -454,7 +454,7 @@ _fill_styles(E_Config_Dialog_Data *cfdata, Evas_Object *obj)
 }
 
 static void
-_cb_autohide_change(void *data, Evas_Object *obj __UNUSED__)
+_cb_autohide_change(void *data, Evas_Object *obj EINA_UNUSED)
 {
    E_Config_Dialog_Data *cfdata;
    Eina_List *l;

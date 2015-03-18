@@ -3,7 +3,7 @@
 EAPI E_Module_Api e_modapi = { E_MODULE_API_VERSION, "Contact" };
 
 static void
-_cb_in_left(void *data __UNUSED__, int d __UNUSED__, double v __UNUSED__)
+_cb_in_left(void *data EINA_UNUSED, int d EINA_UNUSED, double v EINA_UNUSED)
 {
    // show PREV window in list from urrent focused window on top of current
    // window but in an inital "off to the right" state in comp
@@ -32,14 +32,14 @@ _cb_in_left(void *data __UNUSED__, int d __UNUSED__, double v __UNUSED__)
 }
 
 static void
-_cb_in_left_go(void *data __UNUSED__, int d __UNUSED__, double v __UNUSED__)
+_cb_in_left_go(void *data EINA_UNUSED, int d EINA_UNUSED, double v EINA_UNUSED)
 {
    // as v > 0 (and heads towards 1.0) flip/slide new window in unbtil v > 1.0
    // and   once over 1.0 just do transition until end
 }
 
 static void
-_cb_in_right(void *data __UNUSED__, int d __UNUSED__, double v __UNUSED__)
+_cb_in_right(void *data EINA_UNUSED, int d EINA_UNUSED, double v EINA_UNUSED)
 {
    // show NEXT window in list from urrent focused window on top of current
    // window but in an inital "off to the right" state in comp
@@ -68,27 +68,27 @@ _cb_in_right(void *data __UNUSED__, int d __UNUSED__, double v __UNUSED__)
 }
 
 static void
-_cb_in_right_go(void *data __UNUSED__, int d __UNUSED__, double v __UNUSED__)
+_cb_in_right_go(void *data EINA_UNUSED, int d EINA_UNUSED, double v EINA_UNUSED)
 {
    // as v > 0 (and heads towards 1.0) flip/slide new window in unbtil v > 1.0
    // and   once over 1.0 just do transition until end
 }
 
 static void
-_cb_in_top(void *data __UNUSED__, int d __UNUSED__, double v __UNUSED__)
+_cb_in_top(void *data EINA_UNUSED, int d EINA_UNUSED, double v EINA_UNUSED)
 {
    // show/populate top controls if not already there and start in offscreen
    // state and beign slide in anim and place controls at final spot
 }
 
 static void
-_cb_in_top_go(void *data __UNUSED__, int d __UNUSED__, double v __UNUSED__)
+_cb_in_top_go(void *data EINA_UNUSED, int d EINA_UNUSED, double v EINA_UNUSED)
 {
    // for now nothing - but animation would be nice for top controls
 }
 
 static void
-_cb_in_bottom(void *data __UNUSED__, int d __UNUSED__, double v __UNUSED__)
+_cb_in_bottom(void *data EINA_UNUSED, int d EINA_UNUSED, double v EINA_UNUSED)
 {
    // force kbd activation if no kbd
    e_policy_kbd_override_set(EINA_TRUE);
@@ -96,13 +96,13 @@ _cb_in_bottom(void *data __UNUSED__, int d __UNUSED__, double v __UNUSED__)
 }
 
 static void
-_cb_in_bottom_go(void *data __UNUSED__, int d __UNUSED__, double v __UNUSED__)
+_cb_in_bottom_go(void *data EINA_UNUSED, int d EINA_UNUSED, double v EINA_UNUSED)
 {
    // for now nothing - but slide animation is nice
 }
 
 EAPI void *
-e_modapi_init(E_Module *m __UNUSED__) 
+e_modapi_init(E_Module *m EINA_UNUSED) 
 {
    e_policy_init();
    e_edges_init();
@@ -119,7 +119,7 @@ e_modapi_init(E_Module *m __UNUSED__)
 }
 
 EAPI int 
-e_modapi_shutdown(E_Module *m __UNUSED__) 
+e_modapi_shutdown(E_Module *m EINA_UNUSED) 
 {
    e_edges_shutdown();
    e_policy_shutdown();
@@ -127,7 +127,7 @@ e_modapi_shutdown(E_Module *m __UNUSED__)
 }
 
 EAPI int 
-e_modapi_save(E_Module *m __UNUSED__) 
+e_modapi_save(E_Module *m EINA_UNUSED) 
 {
    return 1;
 }

@@ -36,13 +36,13 @@ struct _E_Config_Dialog_Data
 /* local function prototypes */
 static void        *_create_data(E_Config_Dialog *cfd);
 static void         _fill_data(E_Config_Dialog_Data *cfdata);
-static void         _free_data(E_Config_Dialog *cfd __UNUSED__, E_Config_Dialog_Data *cfdata);
-static Evas_Object *_basic_create(E_Config_Dialog *cfd __UNUSED__, Evas *evas, E_Config_Dialog_Data *cfdata);
-static int          _basic_apply(E_Config_Dialog *cfd __UNUSED__, E_Config_Dialog_Data *cfdata);
-static int          _basic_check_changed(E_Config_Dialog *cfd __UNUSED__, E_Config_Dialog_Data *cfdata);
-static Evas_Object *_adv_create(E_Config_Dialog *cfd __UNUSED__, Evas *evas, E_Config_Dialog_Data *cfdata);
-static int          _adv_apply(E_Config_Dialog *cfd __UNUSED__, E_Config_Dialog_Data *cfdata);
-static int          _adv_check_changed(E_Config_Dialog *cfd __UNUSED__, E_Config_Dialog_Data *cfdata);
+static void         _free_data(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfdata);
+static Evas_Object *_basic_create(E_Config_Dialog *cfd EINA_UNUSED, Evas *evas, E_Config_Dialog_Data *cfdata);
+static int          _basic_apply(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfdata);
+static int          _basic_check_changed(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfdata);
+static Evas_Object *_adv_create(E_Config_Dialog *cfd EINA_UNUSED, Evas *evas, E_Config_Dialog_Data *cfdata);
+static int          _adv_apply(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfdata);
+static int          _adv_check_changed(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfdata);
 static void         _update_btns(E_Config_Dialog_Data *cfdata);
 static void         _update_btn(E_Config_Dialog_Data *cfdata, Evas_Object *button, const int mouse_button);
 static void         _grab_window_show(void *data1, void *data2);
@@ -78,7 +78,7 @@ _config_pager_module(Config_Item *ci)
 
 /* local function prototypes */
 static void *
-_create_data(E_Config_Dialog *cfd __UNUSED__)
+_create_data(E_Config_Dialog *cfd EINA_UNUSED)
 {
    E_Config_Dialog_Data *cfdata;
 
@@ -107,7 +107,7 @@ _fill_data(E_Config_Dialog_Data *cfdata)
 }
 
 static void
-_free_data(E_Config_Dialog *cfd __UNUSED__, E_Config_Dialog_Data *cfdata)
+_free_data(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfdata)
 {
    cfdata->gui.popup_list = eina_list_free(cfdata->gui.popup_list);
    cfdata->gui.urgent_list = eina_list_free(cfdata->gui.urgent_list);
@@ -146,7 +146,7 @@ _basic_create(E_Config_Dialog *cfd, Evas *evas, E_Config_Dialog_Data *cfdata)
 }
 
 static int
-_basic_apply(E_Config_Dialog *cfd __UNUSED__, E_Config_Dialog_Data *cfdata)
+_basic_apply(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfdata)
 {
    pager_config->popup = cfdata->popup.show;
    pager_config->flip_desk = cfdata->flip_desk;
@@ -158,7 +158,7 @@ _basic_apply(E_Config_Dialog *cfd __UNUSED__, E_Config_Dialog_Data *cfdata)
 }
 
 static int
-_basic_check_changed(E_Config_Dialog *cfd __UNUSED__, E_Config_Dialog_Data *cfdata)
+_basic_check_changed(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfdata)
 {
    if ((int)pager_config->popup != cfdata->popup.show) return 1;
    if ((int)pager_config->flip_desk != cfdata->flip_desk) return 1;
@@ -289,7 +289,7 @@ _adv_create(E_Config_Dialog *cfd, Evas *evas, E_Config_Dialog_Data *cfdata)
 }
 
 static int
-_adv_apply(E_Config_Dialog *cfd __UNUSED__, E_Config_Dialog_Data *cfdata)
+_adv_apply(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfdata)
 {
    pager_config->popup = cfdata->popup.show;
    pager_config->popup_speed = cfdata->popup.speed;
@@ -311,7 +311,7 @@ _adv_apply(E_Config_Dialog *cfd __UNUSED__, E_Config_Dialog_Data *cfdata)
 }
 
 static int
-_adv_check_changed(E_Config_Dialog *cfd __UNUSED__, E_Config_Dialog_Data *cfdata)
+_adv_check_changed(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfdata)
 {
    if ((int)pager_config->popup != cfdata->popup.show) return 1;
    if (pager_config->popup_speed != cfdata->popup.speed) return 1;
@@ -439,7 +439,7 @@ _grab_window_show(void *data1, void *data2)
 }
 
 static Eina_Bool
-_grab_cb_mouse_down(void *data, __UNUSED__ int type, void *event)
+_grab_cb_mouse_down(void *data, EINA_UNUSED int type, void *event)
 {
    E_Config_Dialog_Data *cfdata = NULL;
    Ecore_Event_Mouse_Button *ev;
@@ -476,7 +476,7 @@ _grab_cb_mouse_down(void *data, __UNUSED__ int type, void *event)
 }
 
 static Eina_Bool
-_grab_cb_key_down(void *data, __UNUSED__ int type, void *event)
+_grab_cb_key_down(void *data, EINA_UNUSED int type, void *event)
 {
    E_Config_Dialog_Data *cfdata = NULL;
    Ecore_Event_Key *ev;

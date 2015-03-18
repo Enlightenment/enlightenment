@@ -171,7 +171,7 @@ _create_data(E_Config_Dialog *cfd)
 }
 
 static void
-_free_data(E_Config_Dialog *cfd __UNUSED__, E_Config_Dialog_Data *cfdata)
+_free_data(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfdata)
 {
    if (cfdata->gui.fsel)
      e_object_del(E_OBJECT(cfdata->gui.fsel));
@@ -192,7 +192,7 @@ _free_data(E_Config_Dialog *cfd __UNUSED__, E_Config_Dialog_Data *cfdata)
 
 /**--APPLY--**/
 static int
-_basic_apply_data(E_Config_Dialog *cfd __UNUSED__, E_Config_Dialog_Data *cfdata)
+_basic_apply_data(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfdata)
 {
    char buf[PATH_MAX];
    Eina_Bool fperm = EINA_FALSE;
@@ -633,7 +633,7 @@ _cb_icon_sel(void *data, void *data2)
 }
 
 static void
-_cb_type(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_cb_type(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    E_Config_Dialog_Data *cfdata;
 
@@ -645,7 +645,7 @@ _cb_type(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 }
 
 static void
-_cb_preview_update(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_cb_preview_update(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    E_Config_Dialog_Data *cfdata;
 
@@ -656,7 +656,7 @@ _cb_preview_update(void *data, Evas_Object *obj __UNUSED__, void *event_info __U
 }
 
 static void
-_cb_fsel_sel(void *data, Evas_Object *obj __UNUSED__)
+_cb_fsel_sel(void *data, Evas_Object *obj EINA_UNUSED)
 {
    E_Config_Dialog_Data *cfdata;
 

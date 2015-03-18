@@ -1494,8 +1494,8 @@ _e_zone_free(E_Zone *zone)
 
 static void
 _e_zone_cb_bg_mouse_down(void *data,
-                         Evas *evas       __UNUSED__,
-                         Evas_Object *obj __UNUSED__,
+                         Evas *evas       EINA_UNUSED,
+                         Evas_Object *obj EINA_UNUSED,
                          void *event_info)
 {
    E_Zone *zone;
@@ -1521,8 +1521,8 @@ _e_zone_cb_bg_mouse_down(void *data,
 
 static void
 _e_zone_cb_bg_mouse_up(void *data,
-                       Evas *evas       __UNUSED__,
-                       Evas_Object *obj __UNUSED__,
+                       Evas *evas       EINA_UNUSED,
+                       Evas_Object *obj EINA_UNUSED,
                        void *event_info)
 {
    E_Zone *zone;
@@ -1577,7 +1577,7 @@ _e_zone_cb_edge_timer(void *data)
 }
 
 static void
-_e_zone_event_generic_free(void *data __UNUSED__, void *ev)
+_e_zone_event_generic_free(void *data EINA_UNUSED, void *ev)
 {
    struct _E_Event_Zone_Generic *e;
    // also handes E_Event_Zone_Add, E_Event_Zone_Del, E_Event_Zone_Stow,

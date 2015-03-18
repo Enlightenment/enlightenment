@@ -180,7 +180,7 @@ _imc_import_cb_wid_focus(void *data, Evas_Object *obj)
 }
 
 static void
-_imc_import_cb_selected(void *data, Evas_Object *obj __UNUSED__)
+_imc_import_cb_selected(void *data, Evas_Object *obj EINA_UNUSED)
 {
    Import *import;
 
@@ -189,7 +189,7 @@ _imc_import_cb_selected(void *data, Evas_Object *obj __UNUSED__)
 }
 
 static void
-_imc_import_cb_changed(void *data, Evas_Object *obj __UNUSED__)
+_imc_import_cb_changed(void *data, Evas_Object *obj EINA_UNUSED)
 {
    Import *import;
    const char *path;
@@ -229,7 +229,7 @@ _imc_import_cb_changed(void *data, Evas_Object *obj __UNUSED__)
 }
 
 static void
-_imc_import_cb_ok(void *data, void *data2 __UNUSED__)
+_imc_import_cb_ok(void *data, void *data2 EINA_UNUSED)
 {
    Import *import;
    Evas_Object *win;
@@ -298,13 +298,13 @@ _imc_import_cb_ok(void *data, void *data2 __UNUSED__)
 }
 
 static void
-_imc_import_cb_close(void *data, void *data2 __UNUSED__)
+_imc_import_cb_close(void *data, void *data2 EINA_UNUSED)
 {
    e_int_config_imc_import_del(data);
 }
 
 static void
-_imc_import_cb_key_down(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event)
+_imc_import_cb_key_down(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event)
 {
    Evas_Event_Key_Down *ev;
    Import *import;

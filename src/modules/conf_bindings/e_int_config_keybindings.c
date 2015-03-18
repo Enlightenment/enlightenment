@@ -155,7 +155,7 @@ _create_data(E_Config_Dialog *cfd)
 }
 
 static void
-_free_data(E_Config_Dialog *cfd  __UNUSED__,
+_free_data(E_Config_Dialog *cfd  EINA_UNUSED,
            E_Config_Dialog_Data *cfdata)
 {
    E_Config_Binding_Key *bi;
@@ -178,7 +178,7 @@ _free_data(E_Config_Dialog *cfd  __UNUSED__,
 }
 
 static int
-_basic_apply_data(E_Config_Dialog *cfd  __UNUSED__,
+_basic_apply_data(E_Config_Dialog *cfd  EINA_UNUSED,
                   E_Config_Dialog_Data *cfdata)
 {
    Eina_List *l = NULL;
@@ -317,7 +317,7 @@ _fill_actions_list(E_Config_Dialog_Data *cfdata)
 
 static void
 _add_key_binding_cb(void *data,
-                    void *data2 __UNUSED__)
+                    void *data2 EINA_UNUSED)
 {
    E_Config_Dialog_Data *cfdata;
 
@@ -331,7 +331,7 @@ _add_key_binding_cb(void *data,
 
 static void
 _modify_key_binding_cb(void *data,
-                       void *data2 __UNUSED__)
+                       void *data2 EINA_UNUSED)
 {
    E_Config_Dialog_Data *cfdata;
 
@@ -377,7 +377,7 @@ _action_change_cb(void *data)
 
 static void
 _delete_all_key_binding_cb(void *data,
-                           void *data2 __UNUSED__)
+                           void *data2 EINA_UNUSED)
 {
    E_Config_Binding_Key *bi;
    E_Config_Dialog_Data *cfdata;
@@ -407,7 +407,7 @@ _delete_all_key_binding_cb(void *data,
 
 static void
 _delete_key_binding_cb(void *data,
-                       void *data2 __UNUSED__)
+                       void *data2 EINA_UNUSED)
 {
    Eina_List *l = NULL;
    const char *n;
@@ -460,7 +460,7 @@ _delete_key_binding_cb(void *data,
 
 static void
 _restore_key_binding_defaults_cb(void *data,
-                                 void *data2 __UNUSED__)
+                                 void *data2 EINA_UNUSED)
 {
    E_Config_Bindings *ecb;
    Eina_Stringshare *prof;
@@ -832,7 +832,7 @@ _grab_wnd_show(E_Config_Dialog_Data *cfdata)
 
 static Eina_Bool
 _grab_key_down_cb(void *data,
-                  __UNUSED__ int type,
+                  EINA_UNUSED int type,
                   void *event)
 {
    E_Config_Dialog_Data *cfdata;

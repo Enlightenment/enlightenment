@@ -67,7 +67,7 @@ evry_history_init(void)
 }
 
 static Eina_Bool
-_hist_entry_free_cb(const Eina_Hash *hash __UNUSED__, const void *key __UNUSED__, void *data, void *fdata __UNUSED__)
+_hist_entry_free_cb(const Eina_Hash *hash EINA_UNUSED, const void *key EINA_UNUSED, void *data, void *fdata EINA_UNUSED)
 {
    History_Entry *he = data;
    History_Item *hi;
@@ -91,7 +91,7 @@ _hist_entry_free_cb(const Eina_Hash *hash __UNUSED__, const void *key __UNUSED__
 }
 
 static Eina_Bool
-_hist_free_cb(const Eina_Hash *hash __UNUSED__, const void *key __UNUSED__, void *data, void *fdata __UNUSED__)
+_hist_free_cb(const Eina_Hash *hash EINA_UNUSED, const void *key EINA_UNUSED, void *data, void *fdata EINA_UNUSED)
 {
    History_Types *ht = data;
 
@@ -107,7 +107,7 @@ _hist_free_cb(const Eina_Hash *hash __UNUSED__, const void *key __UNUSED__, void
 }
 
 static Eina_Bool
-_hist_entry_cleanup_cb(const Eina_Hash *hash __UNUSED__, const void *key, void *data, void *fdata)
+_hist_entry_cleanup_cb(const Eina_Hash *hash EINA_UNUSED, const void *key, void *data, void *fdata)
 {
    History_Entry *he = data;
    Cleanup_Data *d = fdata;
@@ -149,7 +149,7 @@ _hist_entry_cleanup_cb(const Eina_Hash *hash __UNUSED__, const void *key, void *
 }
 
 static Eina_Bool
-_hist_cleanup_cb(const Eina_Hash *hash __UNUSED__, const void *key, void *data, void *fdata)
+_hist_cleanup_cb(const Eina_Hash *hash EINA_UNUSED, const void *key, void *data, void *fdata)
 {
    History_Types *ht = data;
    Cleanup_Data *d = fdata;

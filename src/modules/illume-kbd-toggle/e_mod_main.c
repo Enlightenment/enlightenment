@@ -18,9 +18,9 @@ static Evas_Object *_gc_icon(const E_Gadcon_Client_Class *cc, Evas *evas);
 static const char *_gc_id_new(const E_Gadcon_Client_Class *cc);
 static void _cb_action_vkbd_enable(void *data, Evas_Object *obj, const char *emission, const char *source);
 static void _cb_action_vkbd_disable(void *data, Evas_Object *obj, const char *emission, const char *source);
-static Eina_Bool _cb_border_focus_in(void *data, int type __UNUSED__, void *event);
-static Eina_Bool _cb_border_remove(void *data, int type __UNUSED__, void *event);
-static Eina_Bool _cb_border_property(void *data, int type __UNUSED__, void *event);
+static Eina_Bool _cb_border_focus_in(void *data, int type EINA_UNUSED, void *event);
+static Eina_Bool _cb_border_remove(void *data, int type EINA_UNUSED, void *event);
+static Eina_Bool _cb_border_property(void *data, int type EINA_UNUSED, void *event);
 static void _set_btn_icon(Evas_Object *obj, Ecore_X_Virtual_Keyboard_State state);
 
 /* local variables */
@@ -47,7 +47,7 @@ e_modapi_init(E_Module *m)
 }
 
 EAPI int 
-e_modapi_shutdown(E_Module *m __UNUSED__) 
+e_modapi_shutdown(E_Module *m EINA_UNUSED) 
 {
    e_gadcon_provider_unregister(&_gc_class);
    if (mod_dir) eina_stringshare_del(mod_dir);
@@ -56,7 +56,7 @@ e_modapi_shutdown(E_Module *m __UNUSED__)
 }
 
 EAPI int 
-e_modapi_save(E_Module *m __UNUSED__) 
+e_modapi_save(E_Module *m EINA_UNUSED) 
 {
    return 1;
 }
@@ -113,20 +113,20 @@ _gc_shutdown(E_Gadcon_Client *gcc)
 }
 
 static void 
-_gc_orient(E_Gadcon_Client *gcc, E_Gadcon_Orient orient __UNUSED__) 
+_gc_orient(E_Gadcon_Client *gcc, E_Gadcon_Orient orient EINA_UNUSED) 
 {
    e_gadcon_client_aspect_set(gcc, 16, 16);
    e_gadcon_client_min_size_set(gcc, 16, 16);
 }
 
 static const char *
-_gc_label(const E_Gadcon_Client_Class *cc __UNUSED__) 
+_gc_label(const E_Gadcon_Client_Class *cc EINA_UNUSED) 
 {
    return _("Illume-Keyboard-Toggle");
 }
 
 static Evas_Object *
-_gc_icon(const E_Gadcon_Client_Class *cc __UNUSED__, Evas *evas) 
+_gc_icon(const E_Gadcon_Client_Class *cc EINA_UNUSED, Evas *evas) 
 {
    Evas_Object *o;
    char buff[PATH_MAX];
@@ -138,7 +138,7 @@ _gc_icon(const E_Gadcon_Client_Class *cc __UNUSED__, Evas *evas)
 }
 
 static const char *
-_gc_id_new(const E_Gadcon_Client_Class *cc __UNUSED__) 
+_gc_id_new(const E_Gadcon_Client_Class *cc EINA_UNUSED) 
 {
    static char buff[32];
 
@@ -148,7 +148,7 @@ _gc_id_new(const E_Gadcon_Client_Class *cc __UNUSED__)
 }
 
 static void
-_cb_action_vkbd_enable(void *data, Evas_Object *obj __UNUSED__, const char *emission __UNUSED__, const char *source __UNUSED__)
+_cb_action_vkbd_enable(void *data, Evas_Object *obj EINA_UNUSED, const char *emission EINA_UNUSED, const char *source EINA_UNUSED)
 {
    Instance *inst;
    E_Client *ec;
@@ -163,7 +163,7 @@ _cb_action_vkbd_enable(void *data, Evas_Object *obj __UNUSED__, const char *emis
 }
 
 static void
-_cb_action_vkbd_disable(void *data, Evas_Object *obj __UNUSED__, const char *emission __UNUSED__, const char *source __UNUSED__)
+_cb_action_vkbd_disable(void *data, Evas_Object *obj EINA_UNUSED, const char *emission EINA_UNUSED, const char *source EINA_UNUSED)
 {
    Instance *inst;
    E_Client *ec;
@@ -178,7 +178,7 @@ _cb_action_vkbd_disable(void *data, Evas_Object *obj __UNUSED__, const char *emi
 }
 
 static Eina_Bool
-_cb_border_focus_in(void *data, int type __UNUSED__, void *event) 
+_cb_border_focus_in(void *data, int type EINA_UNUSED, void *event) 
 {
    Instance *inst;
    E_Event_Client *ev;
@@ -194,7 +194,7 @@ _cb_border_focus_in(void *data, int type __UNUSED__, void *event)
 }
 
 static Eina_Bool
-_cb_border_remove(void *data, int type __UNUSED__, void *event __UNUSED__) 
+_cb_border_remove(void *data, int type EINA_UNUSED, void *event EINA_UNUSED) 
 {
    Instance *inst;
 
@@ -204,7 +204,7 @@ _cb_border_remove(void *data, int type __UNUSED__, void *event __UNUSED__)
 }
 
 static Eina_Bool
-_cb_border_property(void *data, int type __UNUSED__, void *event) 
+_cb_border_property(void *data, int type EINA_UNUSED, void *event) 
 {
    Instance *inst;
    Ecore_X_Event_Window_Property *ev;

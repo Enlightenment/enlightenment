@@ -2,7 +2,7 @@
 
 #define E_TOK_STYLE ":style="
 
-static Eina_Bool          _font_hash_free_cb(const Eina_Hash *hash __UNUSED__, const void *key __UNUSED__, void *data, void *fdata __UNUSED__);
+static Eina_Bool          _font_hash_free_cb(const Eina_Hash *hash EINA_UNUSED, const void *key EINA_UNUSED, void *data, void *fdata EINA_UNUSED);
 static Eina_Hash         *_e_font_available_hash_add(Eina_Hash *font_hash, const char *full_name);
 static E_Font_Properties *_e_font_fontconfig_name_parse(Eina_Hash **font_hash, E_Font_Properties *efp, const char *font);
 static char _fn_buf[1024];
@@ -128,7 +128,7 @@ e_font_properties_free(E_Font_Properties *efp)
 }
 
 static Eina_Bool
-_font_hash_free_cb(const Eina_Hash *hash __UNUSED__, const void *key __UNUSED__, void *data, void *fdata __UNUSED__)
+_font_hash_free_cb(const Eina_Hash *hash EINA_UNUSED, const void *key EINA_UNUSED, void *data, void *fdata EINA_UNUSED)
 {
    E_Font_Properties *efp;
 

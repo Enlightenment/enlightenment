@@ -42,20 +42,20 @@ static void _il_home_win_new(E_Zone *zone);
 static void _il_home_win_cb_free(Il_Home_Win *hwin);
 static void _il_home_win_cb_resize(E_Win *win);
 static void _il_home_fmc_set(Evas_Object *obj);
-static Eina_Bool _il_home_update_deferred(void *data __UNUSED__);
+static Eina_Bool _il_home_update_deferred(void *data EINA_UNUSED);
 static void _il_home_pan_set(Evas_Object *obj, Evas_Coord x, Evas_Coord y);
 static void _il_home_pan_get(Evas_Object *obj, Evas_Coord *x, Evas_Coord *y);
 static void _il_home_pan_max_get(Evas_Object *obj, Evas_Coord *x, Evas_Coord *y);
 static void _il_home_pan_child_size_get(Evas_Object *obj, Evas_Coord *w, Evas_Coord *h);
-static void _il_home_cb_selected(void *data, Evas_Object *obj __UNUSED__, void *event __UNUSED__);
-static Eina_Bool _il_home_desktop_cache_update(void *data __UNUSED__, int type __UNUSED__, void *event __UNUSED__);
-static Eina_Bool _il_home_cb_border_add(void *data __UNUSED__, int type __UNUSED__, void *event);
-static Eina_Bool _il_home_cb_border_del(void *data __UNUSED__, int type __UNUSED__, void *event);
-static Eina_Bool _il_home_cb_exe_del(void *data __UNUSED__, int type __UNUSED__, void *event);
+static void _il_home_cb_selected(void *data, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED);
+static Eina_Bool _il_home_desktop_cache_update(void *data EINA_UNUSED, int type EINA_UNUSED, void *event EINA_UNUSED);
+static Eina_Bool _il_home_cb_border_add(void *data EINA_UNUSED, int type EINA_UNUSED, void *event);
+static Eina_Bool _il_home_cb_border_del(void *data EINA_UNUSED, int type EINA_UNUSED, void *event);
+static Eina_Bool _il_home_cb_exe_del(void *data EINA_UNUSED, int type EINA_UNUSED, void *event);
 static Eina_Bool _il_home_cb_exe_timeout(void *data);
-static Eina_Bool _il_home_cb_client_message(void *data __UNUSED__, int type __UNUSED__, void *event);
-static Eina_Bool _il_home_cb_prop_change(void *data __UNUSED__, int type __UNUSED__, void *event);
-static Eina_Bool _il_home_cb_bg_change(void *data __UNUSED__, int type __UNUSED__, void *event);
+static Eina_Bool _il_home_cb_client_message(void *data EINA_UNUSED, int type EINA_UNUSED, void *event);
+static Eina_Bool _il_home_cb_prop_change(void *data EINA_UNUSED, int type EINA_UNUSED, void *event);
+static Eina_Bool _il_home_cb_bg_change(void *data EINA_UNUSED, int type EINA_UNUSED, void *event);
 
 /* local variables */
 static Eina_List *hwins = NULL;
@@ -131,7 +131,7 @@ e_modapi_init(E_Module *m)
 }
 
 EAPI int 
-e_modapi_shutdown(E_Module *m __UNUSED__) 
+e_modapi_shutdown(E_Module *m EINA_UNUSED) 
 {
    Ecore_Event_Handler *hdl;
    Il_Home_Win *hwin;
@@ -163,7 +163,7 @@ e_modapi_shutdown(E_Module *m __UNUSED__)
 }
 
 EAPI int 
-e_modapi_save(E_Module *m __UNUSED__) 
+e_modapi_save(E_Module *m EINA_UNUSED) 
 {
    return il_home_config_save();
 }
@@ -505,7 +505,7 @@ _il_home_fmc_set(Evas_Object *obj)
 }
 
 static Eina_Bool
-_il_home_update_deferred(void *data __UNUSED__) 
+_il_home_update_deferred(void *data EINA_UNUSED) 
 {
    _il_home_apps_unpopulate();
    _il_home_apps_populate();
@@ -538,7 +538,7 @@ _il_home_pan_child_size_get(Evas_Object *obj, Evas_Coord *w, Evas_Coord *h)
 }
 
 static void 
-_il_home_cb_selected(void *data, Evas_Object *obj __UNUSED__, void *event __UNUSED__) 
+_il_home_cb_selected(void *data, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED) 
 {
    Il_Home_Win *hwin;
    Eina_List *selected;
@@ -557,7 +557,7 @@ _il_home_cb_selected(void *data, Evas_Object *obj __UNUSED__, void *event __UNUS
 }
 
 static Eina_Bool
-_il_home_desktop_cache_update(void *data __UNUSED__, int type __UNUSED__, void *event __UNUSED__) 
+_il_home_desktop_cache_update(void *data EINA_UNUSED, int type EINA_UNUSED, void *event EINA_UNUSED) 
 {
    if (defer) ecore_timer_del(defer);
    defer = ecore_timer_add(0.5, _il_home_update_deferred, NULL);
@@ -565,7 +565,7 @@ _il_home_desktop_cache_update(void *data __UNUSED__, int type __UNUSED__, void *
 }
 
 static Eina_Bool
-_il_home_cb_border_add(void *data __UNUSED__, int type __UNUSED__, void *event) 
+_il_home_cb_border_add(void *data EINA_UNUSED, int type EINA_UNUSED, void *event) 
 {
    E_Event_Client *ev;
    Il_Home_Exec *exe;
@@ -603,7 +603,7 @@ _il_home_cb_border_add(void *data __UNUSED__, int type __UNUSED__, void *event)
 }
 
 static Eina_Bool
-_il_home_cb_border_del(void *data __UNUSED__, int type __UNUSED__, void *event) 
+_il_home_cb_border_del(void *data EINA_UNUSED, int type EINA_UNUSED, void *event) 
 {
    E_Event_Client *ev;
    Il_Home_Exec *exe;
@@ -627,7 +627,7 @@ _il_home_cb_border_del(void *data __UNUSED__, int type __UNUSED__, void *event)
 }
 
 static Eina_Bool
-_il_home_cb_exe_del(void *data __UNUSED__, int type __UNUSED__, void *event) 
+_il_home_cb_exe_del(void *data EINA_UNUSED, int type EINA_UNUSED, void *event) 
 {
    Il_Home_Exec *exe;
    Ecore_Exe_Event_Del *ev;
@@ -673,7 +673,7 @@ _il_home_cb_exe_timeout(void *data)
 }
 
 static Eina_Bool
-_il_home_cb_client_message(void *data __UNUSED__, int type __UNUSED__, void *event) 
+_il_home_cb_client_message(void *data EINA_UNUSED, int type EINA_UNUSED, void *event) 
 {
    Ecore_X_Event_Client_Message *ev;
 
@@ -707,7 +707,7 @@ _il_home_cb_client_message(void *data __UNUSED__, int type __UNUSED__, void *eve
 }
 
 static Eina_Bool
-_il_home_cb_prop_change(void *data __UNUSED__, int type __UNUSED__, void *event) 
+_il_home_cb_prop_change(void *data EINA_UNUSED, int type EINA_UNUSED, void *event) 
 {
    Ecore_X_Event_Window_Property *ev;
    Il_Home_Win *hwin;
@@ -726,7 +726,7 @@ _il_home_cb_prop_change(void *data __UNUSED__, int type __UNUSED__, void *event)
 }
 
 static Eina_Bool
-_il_home_cb_bg_change(void *data __UNUSED__, int type, void *event __UNUSED__) 
+_il_home_cb_bg_change(void *data EINA_UNUSED, int type, void *event EINA_UNUSED) 
 {
    Il_Home_Win *hwin;
    Eina_List *l;

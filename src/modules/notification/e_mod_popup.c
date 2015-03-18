@@ -202,9 +202,9 @@ notification_popup_close(unsigned int id)
 
 static void
 _notification_theme_cb_deleted(Popup_Data *popup,
-                               Evas_Object *obj __UNUSED__,
-                               const char  *emission __UNUSED__,
-                               const char  *source __UNUSED__)
+                               Evas_Object *obj EINA_UNUSED,
+                               const char  *emission EINA_UNUSED,
+                               const char  *source EINA_UNUSED)
 {
    _notification_popup_refresh(popup);
    edje_object_signal_emit(popup->theme, "notification,new", "notification");
@@ -212,18 +212,18 @@ _notification_theme_cb_deleted(Popup_Data *popup,
 
 static void
 _notification_theme_cb_close(Popup_Data *popup,
-                             Evas_Object *obj __UNUSED__,
-                             const char  *emission __UNUSED__,
-                             const char  *source __UNUSED__)
+                             Evas_Object *obj EINA_UNUSED,
+                             const char  *emission EINA_UNUSED,
+                             const char  *source EINA_UNUSED)
 {
    _notification_popup_del(popup->id, E_NOTIFICATION_NOTIFY_CLOSED_REASON_DISMISSED);
 }
 
 static void
 _notification_theme_cb_find(Popup_Data *popup,
-                            Evas_Object *obj __UNUSED__,
-                            const char  *emission __UNUSED__,
-                            const char  *source __UNUSED__)
+                            Evas_Object *obj EINA_UNUSED,
+                            const char  *emission EINA_UNUSED,
+                            const char  *source EINA_UNUSED)
 {
    const Eina_List *l;
    E_Client *ec;

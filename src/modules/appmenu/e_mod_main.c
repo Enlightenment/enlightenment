@@ -116,7 +116,7 @@ _gc_id_new(const E_Gadcon_Client_Class *client_class EINA_UNUSED)
 EAPI E_Module_Api e_modapi = { E_MODULE_API_VERSION, "AppMenu" };
 
 static Eina_Bool
-cb_focus_in(void *data, int type __UNUSED__, void *event)
+cb_focus_in(void *data, int type EINA_UNUSED, void *event)
 {
    E_AppMenu_Context *ctxt = data;
    E_Event_Client *ev = event;
@@ -137,7 +137,7 @@ cb_focus_in(void *data, int type __UNUSED__, void *event)
 }
 
 static Eina_Bool
-cb_focus_out(void *data, int type __UNUSED__, void *event EINA_UNUSED)
+cb_focus_out(void *data, int type EINA_UNUSED, void *event EINA_UNUSED)
 {
    E_AppMenu_Context *ctxt = data;
    appmenu_menu_render(ctxt, NULL);

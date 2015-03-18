@@ -128,8 +128,8 @@ _util_fuckyouglib_convert(Eldbus_Message_Iter *fuckyouglib)
 }
 
 static void
-_e_fm_main_udisks2_name_start(void *data __UNUSED__, const Eldbus_Message *msg,
-                             Eldbus_Pending *pending __UNUSED__)
+_e_fm_main_udisks2_name_start(void *data EINA_UNUSED, const Eldbus_Message *msg,
+                             Eldbus_Pending *pending EINA_UNUSED)
 {
    unsigned flag = 0;
    Eldbus_Object *obj;
@@ -410,8 +410,8 @@ out:
 }
 
 static void
-_e_fm_main_udisks2_cb_dev_all(void *data __UNUSED__, const Eldbus_Message *msg,
-                             Eldbus_Pending *pending __UNUSED__)
+_e_fm_main_udisks2_cb_dev_all(void *data EINA_UNUSED, const Eldbus_Message *msg,
+                             Eldbus_Pending *pending EINA_UNUSED)
 {
    const char *name, *txt;
    Eldbus_Message_Iter *arr1, *dict1;
@@ -461,7 +461,7 @@ _e_fm_main_udisks2_cb_vol_props(void *data, const Eldbus_Message *msg, Eldbus_Pe
 }
 
 static void
-_e_fm_main_udisks2_cb_dev_add(void *data __UNUSED__, const Eldbus_Message *msg)
+_e_fm_main_udisks2_cb_dev_add(void *data EINA_UNUSED, const Eldbus_Message *msg)
 {
    const char *interface;
 
@@ -539,7 +539,7 @@ _e_fm_main_udisks2_cb_dev_add(void *data __UNUSED__, const Eldbus_Message *msg)
 }
 
 static void
-_e_fm_main_udisks2_cb_dev_del(void *data __UNUSED__, const Eldbus_Message *msg)
+_e_fm_main_udisks2_cb_dev_del(void *data EINA_UNUSED, const Eldbus_Message *msg)
 {
    char *path, *interface;
    Eldbus_Message_Iter *arr;

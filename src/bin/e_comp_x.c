@@ -4300,7 +4300,7 @@ _e_comp_x_cb_ping(void *data EINA_UNUSED, int ev_type EINA_UNUSED, Ecore_X_Event
 }
 
 static Eina_Bool
-_e_comp_x_screensaver_idle_timer_cb(void *d __UNUSED__)
+_e_comp_x_screensaver_idle_timer_cb(void *d EINA_UNUSED)
 {
    ecore_event_add(E_EVENT_SCREENSAVER_ON, NULL, NULL, NULL);
    screensaver_idle_timer = NULL;
@@ -4311,7 +4311,7 @@ static Ecore_Timer *screensaver_eval_timer = NULL;
 static Eina_Bool saver_on = EINA_FALSE;
 
 static Eina_Bool
-_e_comp_x_screensaver_eval_cb(void *d __UNUSED__)
+_e_comp_x_screensaver_eval_cb(void *d EINA_UNUSED)
 {
    if (saver_on)
      {
@@ -4365,7 +4365,7 @@ _e_comp_x_screensaver_eval_cb(void *d __UNUSED__)
 }
 
 static Eina_Bool
-_e_comp_x_screensaver_notify_cb(void *data __UNUSED__, int type __UNUSED__, Ecore_X_Event_Screensaver_Notify *ev)
+_e_comp_x_screensaver_notify_cb(void *data EINA_UNUSED, int type EINA_UNUSED, Ecore_X_Event_Screensaver_Notify *ev)
 {
    if ((ev->on) && (!saver_on))
      {

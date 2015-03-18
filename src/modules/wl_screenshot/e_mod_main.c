@@ -17,14 +17,14 @@ static void _gc_orient(E_Gadcon_Client *gcc, E_Gadcon_Orient orient);
 static const char *_gc_label(const E_Gadcon_Client_Class *cc);
 static Evas_Object *_gc_icon(const E_Gadcon_Client_Class *cc, Evas *evas);
 static const char *_gc_id_new(const E_Gadcon_Client_Class *cc);
-static void _cb_btn_down(void *data, Evas *evas __UNUSED__, Evas_Object *obj __UNUSED__, void *event);
+static void _cb_btn_down(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event);
 static void _cb_handle_global(void *data, struct wl_registry *registry, unsigned int name, const char *interface, unsigned int version);
-static void _cb_handle_global_remove(void *data __UNUSED__, struct wl_registry *registry __UNUSED__, unsigned int name __UNUSED__);
+static void _cb_handle_global_remove(void *data EINA_UNUSED, struct wl_registry *registry EINA_UNUSED, unsigned int name EINA_UNUSED);
 static struct wl_buffer *_create_shm_buffer(struct wl_shm *_shm, int width, int height, void **data_out);
-static void _cb_handle_geometry(void *data __UNUSED__, struct wl_output *wl_output __UNUSED__, int x __UNUSED__, int y __UNUSED__, int w __UNUSED__, int h __UNUSED__, int subpixel __UNUSED__, const char *make __UNUSED__, const char *model __UNUSED__, int transform __UNUSED__);
+static void _cb_handle_geometry(void *data EINA_UNUSED, struct wl_output *wl_output EINA_UNUSED, int x EINA_UNUSED, int y EINA_UNUSED, int w EINA_UNUSED, int h EINA_UNUSED, int subpixel EINA_UNUSED, const char *make EINA_UNUSED, const char *model EINA_UNUSED, int transform EINA_UNUSED);
 static void _cb_handle_mode(void *data, struct wl_output *wl_output, unsigned int flags, int w, int h, int refresh);
 static void _save_png(int w, int h, void *data);
-static Eina_Bool _cb_timer(void *data __UNUSED__);
+static Eina_Bool _cb_timer(void *data EINA_UNUSED);
 
 static const E_Gadcon_Client_Class _gc = 
 {
@@ -85,7 +85,7 @@ e_modapi_init(E_Module *m)
 }
 
 EAPI int 
-e_modapi_shutdown(E_Module *m __UNUSED__)
+e_modapi_shutdown(E_Module *m EINA_UNUSED)
 {
    _mod = NULL;
    e_gadcon_provider_unregister(&_gc);
@@ -94,7 +94,7 @@ e_modapi_shutdown(E_Module *m __UNUSED__)
 }
 
 EAPI int 
-e_modapi_save(E_Module *m __UNUSED__)
+e_modapi_save(E_Module *m EINA_UNUSED)
 {
    return 1;
 }
@@ -138,7 +138,7 @@ _gc_shutdown(E_Gadcon_Client *gcc)
 }
 
 static void 
-_gc_orient(E_Gadcon_Client *gcc, E_Gadcon_Orient orient __UNUSED__)
+_gc_orient(E_Gadcon_Client *gcc, E_Gadcon_Orient orient EINA_UNUSED)
 {
    Instance *inst;
    Evas_Coord mw, mh;
@@ -155,13 +155,13 @@ _gc_orient(E_Gadcon_Client *gcc, E_Gadcon_Orient orient __UNUSED__)
 }
 
 static const char *
-_gc_label(const E_Gadcon_Client_Class *cc __UNUSED__)
+_gc_label(const E_Gadcon_Client_Class *cc EINA_UNUSED)
 {
    return _("Screenshooter");
 }
 
 static Evas_Object *
-_gc_icon(const E_Gadcon_Client_Class *cc __UNUSED__, Evas *evas)
+_gc_icon(const E_Gadcon_Client_Class *cc EINA_UNUSED, Evas *evas)
 {
    Evas_Object *o;
    char buf[PATH_MAX];
@@ -173,13 +173,13 @@ _gc_icon(const E_Gadcon_Client_Class *cc __UNUSED__, Evas *evas)
 }
 
 static const char *
-_gc_id_new(const E_Gadcon_Client_Class *cc __UNUSED__)
+_gc_id_new(const E_Gadcon_Client_Class *cc EINA_UNUSED)
 {
    return _gc.name;
 }
 
 static void 
-_cb_btn_down(void *data __UNUSED__, Evas *evas __UNUSED__, Evas_Object *obj __UNUSED__, void *event)
+_cb_btn_down(void *data EINA_UNUSED, Evas *evas EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event)
 {
    Evas_Event_Mouse_Down *ev;
 
@@ -192,7 +192,7 @@ _cb_btn_down(void *data __UNUSED__, Evas *evas __UNUSED__, Evas_Object *obj __UN
 }
 
 static void 
-_cb_handle_global(void *data __UNUSED__, struct wl_registry *registry, unsigned int name, const char *interface, unsigned int version __UNUSED__)
+_cb_handle_global(void *data EINA_UNUSED, struct wl_registry *registry, unsigned int name, const char *interface, unsigned int version EINA_UNUSED)
 {
    if (!strcmp(interface, "screenshooter"))
      {
@@ -210,7 +210,7 @@ _cb_handle_global(void *data __UNUSED__, struct wl_registry *registry, unsigned 
 }
 
 static void 
-_cb_handle_global_remove(void *data __UNUSED__, struct wl_registry *registry __UNUSED__, unsigned int name __UNUSED__)
+_cb_handle_global_remove(void *data EINA_UNUSED, struct wl_registry *registry EINA_UNUSED, unsigned int name EINA_UNUSED)
 {
    /* no-op */
 }
@@ -266,13 +266,13 @@ _create_shm_buffer(struct wl_shm *_shm, int width, int height, void **data_out)
 }
 
 static void 
-_cb_handle_geometry(void *data __UNUSED__, struct wl_output *wl_output __UNUSED__, int x __UNUSED__, int y __UNUSED__, int w __UNUSED__, int h __UNUSED__, int subpixel __UNUSED__, const char *make __UNUSED__, const char *model __UNUSED__, int transform __UNUSED__)
+_cb_handle_geometry(void *data EINA_UNUSED, struct wl_output *wl_output EINA_UNUSED, int x EINA_UNUSED, int y EINA_UNUSED, int w EINA_UNUSED, int h EINA_UNUSED, int subpixel EINA_UNUSED, const char *make EINA_UNUSED, const char *model EINA_UNUSED, int transform EINA_UNUSED)
 {
    /* no-op */
 }
 
 static void 
-_cb_handle_mode(void *data __UNUSED__, struct wl_output *wl_output __UNUSED__, unsigned int flags __UNUSED__, int w, int h, int refresh __UNUSED__)
+_cb_handle_mode(void *data EINA_UNUSED, struct wl_output *wl_output EINA_UNUSED, unsigned int flags EINA_UNUSED, int w, int h, int refresh EINA_UNUSED)
 {
    if (ow == 0) ow = w;
    if (oh == 0) oh = h;
@@ -308,7 +308,7 @@ _save_png(int w, int h, void *data)
 }
 
 static Eina_Bool 
-_cb_timer(void *data __UNUSED__)
+_cb_timer(void *data EINA_UNUSED)
 {
    struct wl_buffer *buffer;
    void *d = NULL;

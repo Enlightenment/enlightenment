@@ -161,7 +161,7 @@ e_zoomap_child_edje_solid_setup(Evas_Object *obj)
 
 /* local subsystem functions */
 static void
-_e_zoomap_smart_child_del_hook(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_e_zoomap_smart_child_del_hook(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    E_Smart_Data *sd;
 
@@ -170,7 +170,7 @@ _e_zoomap_smart_child_del_hook(void *data, Evas *e __UNUSED__, Evas_Object *obj 
 }
 
 static void
-_e_zoomap_smart_child_resize_hook(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_e_zoomap_smart_child_resize_hook(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    E_Smart_Data *sd;
    Evas_Coord w, h;

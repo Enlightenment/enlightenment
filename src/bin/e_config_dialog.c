@@ -333,7 +333,7 @@ _e_config_dialog_cb_dialog_del(void *obj)
 }
 
 static void
-_e_config_dialog_cb_ok(void *data __UNUSED__, E_Dialog *dia)
+_e_config_dialog_cb_ok(void *data EINA_UNUSED, E_Dialog *dia)
 {
    E_Config_Dialog *cfd;
    int ok = 0;
@@ -354,7 +354,7 @@ _e_config_dialog_cb_ok(void *data __UNUSED__, E_Dialog *dia)
 }
 
 static void
-_e_config_dialog_cb_apply(void *data __UNUSED__, E_Dialog *dia)
+_e_config_dialog_cb_apply(void *data EINA_UNUSED, E_Dialog *dia)
 {
    E_Config_Dialog *cfd;
    int ok = 0;
@@ -379,7 +379,7 @@ _e_config_dialog_cb_apply(void *data __UNUSED__, E_Dialog *dia)
 }
 
 static void
-_e_config_dialog_cb_advanced(void *data, void *data2 __UNUSED__)
+_e_config_dialog_cb_advanced(void *data, void *data2 EINA_UNUSED)
 {
    E_Config_Dialog *cfd;
 
@@ -389,7 +389,7 @@ _e_config_dialog_cb_advanced(void *data, void *data2 __UNUSED__)
 }
 
 static void
-_e_config_dialog_cb_basic(void *data, void *data2 __UNUSED__)
+_e_config_dialog_cb_basic(void *data, void *data2 EINA_UNUSED)
 {
    E_Config_Dialog *cfd;
 
@@ -458,7 +458,7 @@ _e_config_dialog_check_changed(E_Config_Dialog *cfd, unsigned char def)
 }
 
 static void
-_e_config_dialog_cb_changed(void *data, Evas_Object *obj __UNUSED__)
+_e_config_dialog_cb_changed(void *data, Evas_Object *obj EINA_UNUSED)
 {
    E_Config_Dialog *cfd;
    int changed;
@@ -471,7 +471,7 @@ _e_config_dialog_cb_changed(void *data, Evas_Object *obj __UNUSED__)
 }
 
 static void
-_e_config_dialog_cb_close(void *data __UNUSED__, E_Dialog *dia)
+_e_config_dialog_cb_close(void *data EINA_UNUSED, E_Dialog *dia)
 {
    E_Config_Dialog *cfd;
    int ok = 1;

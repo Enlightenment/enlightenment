@@ -27,7 +27,7 @@ struct _E_Config_Dialog_Data
 };
 
 E_Config_Dialog *
-e_int_config_mouse(Evas_Object *parent EINA_UNUSED, const char *params __UNUSED__)
+e_int_config_mouse(Evas_Object *parent EINA_UNUSED, const char *params EINA_UNUSED)
 {
    E_Config_Dialog *cfd;
    E_Config_Dialog_View *v;
@@ -76,7 +76,7 @@ _create_data(E_Config_Dialog *cfd)
 }
 
 static int
-_basic_check_changed(E_Config_Dialog *cfd __UNUSED__, E_Config_Dialog_Data *cfdata)
+_basic_check_changed(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfdata)
 {
    return !((cfdata->show_cursor == e_config->show_cursor) &&
 	    (cfdata->idle_cursor == e_config->idle_cursor) &&
@@ -89,14 +89,14 @@ _basic_check_changed(E_Config_Dialog *cfd __UNUSED__, E_Config_Dialog_Data *cfda
 }
 
 static void
-_free_data(E_Config_Dialog *cfd __UNUSED__, E_Config_Dialog_Data *cfdata)
+_free_data(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfdata)
 {
    E_FREE(cfdata);
 }
 
 /* advanced window */
 static int
-_basic_apply_data(E_Config_Dialog *cfd __UNUSED__, E_Config_Dialog_Data *cfdata)
+_basic_apply_data(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfdata)
 {
    e_config->use_e_cursor = cfdata->use_e_cursor;
    e_config->show_cursor = cfdata->show_cursor;
@@ -122,7 +122,7 @@ _basic_apply_data(E_Config_Dialog *cfd __UNUSED__, E_Config_Dialog_Data *cfdata)
 
 
 static void
-_use_e_cursor_cb_change(void *data, Evas_Object *obj __UNUSED__)
+_use_e_cursor_cb_change(void *data, Evas_Object *obj EINA_UNUSED)
 {
    E_Config_Dialog_Data *cfdata = data;
    Eina_Bool disabled = ((!cfdata->use_e_cursor) || (!cfdata->show_cursor));
@@ -130,7 +130,7 @@ _use_e_cursor_cb_change(void *data, Evas_Object *obj __UNUSED__)
 }
 
 static Evas_Object *
-_basic_create_widgets(E_Config_Dialog *cfd __UNUSED__, Evas *evas, E_Config_Dialog_Data *cfdata)
+_basic_create_widgets(E_Config_Dialog *cfd EINA_UNUSED, Evas *evas, E_Config_Dialog_Data *cfdata)
 {
    Evas_Object *otb, *ol, *of, *ob, *oc;
    E_Radio_Group *rg;

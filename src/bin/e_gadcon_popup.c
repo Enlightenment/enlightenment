@@ -2,8 +2,8 @@
 
 /* local subsystem functions */
 
-static void _e_gadcon_popup_changed_size_hints_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__);
-static void _e_gadcon_popup_del_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__);
+static void _e_gadcon_popup_changed_size_hints_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED);
+static void _e_gadcon_popup_del_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED);
 
 static Eina_Bool
 _e_popup_autoclose_deskafter_show_cb(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
@@ -180,7 +180,7 @@ _e_gadcon_popup_size_recalc(E_Gadcon_Popup *pop, Evas_Object *obj)
 }
 
 static void
-_e_gadcon_popup_changed_size_hints_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
+_e_gadcon_popup_changed_size_hints_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
    E_Gadcon_Popup *pop = data;
 
@@ -191,7 +191,7 @@ _e_gadcon_popup_changed_size_hints_cb(void *data, Evas *e __UNUSED__, Evas_Objec
 }
 
 static void
-_e_gadcon_popup_del_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
+_e_gadcon_popup_del_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
    E_Gadcon_Popup *pop = data;
 

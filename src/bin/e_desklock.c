@@ -33,8 +33,8 @@ static Eina_List *desklock_ifaces = NULL;
 static E_Desklock_Interface *current_iface = NULL;
 
 /***********************************************************************/
-static Eina_Bool _e_desklock_cb_custom_desklock_exit(void *data __UNUSED__, int type __UNUSED__, void *event);
-static Eina_Bool _e_desklock_cb_idle_poller(void *data __UNUSED__);
+static Eina_Bool _e_desklock_cb_custom_desklock_exit(void *data EINA_UNUSED, int type EINA_UNUSED, void *event);
+static Eina_Bool _e_desklock_cb_idle_poller(void *data EINA_UNUSED);
 static Eina_Bool _e_desklock_cb_run(void *data, int type, void *event);
 
 static Eina_Bool _e_desklock_state = EINA_FALSE;
@@ -397,7 +397,7 @@ e_desklock_state_get(void)
 }
 
 static Eina_Bool
-_e_desklock_cb_custom_desklock_exit(void *data __UNUSED__, int type __UNUSED__, void *event)
+_e_desklock_cb_custom_desklock_exit(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
 {
    Ecore_Exe_Event_Del *ev = event;
 
@@ -414,7 +414,7 @@ _e_desklock_cb_custom_desklock_exit(void *data __UNUSED__, int type __UNUSED__, 
 }
 
 static Eina_Bool
-_e_desklock_cb_idle_poller(void *data __UNUSED__)
+_e_desklock_cb_idle_poller(void *data EINA_UNUSED)
 {
    if ((e_config->desklock_autolock_idle) && (!e_config->mode.presentation))
      {
@@ -467,7 +467,7 @@ _e_desklock_ask_presentation_del(void *data)
 }
 
 static void
-_e_desklock_ask_presentation_yes(void *data __UNUSED__, E_Dialog *dia)
+_e_desklock_ask_presentation_yes(void *data EINA_UNUSED, E_Dialog *dia)
 {
    e_config->mode.presentation = 1;
    e_config_mode_changed();
@@ -477,14 +477,14 @@ _e_desklock_ask_presentation_yes(void *data __UNUSED__, E_Dialog *dia)
 }
 
 static void
-_e_desklock_ask_presentation_no(void *data __UNUSED__, E_Dialog *dia)
+_e_desklock_ask_presentation_no(void *data EINA_UNUSED, E_Dialog *dia)
 {
    e_object_del(E_OBJECT(dia));
    _e_desklock_ask_presentation_count = 0;
 }
 
 static void
-_e_desklock_ask_presentation_no_increase(void *data __UNUSED__, E_Dialog *dia)
+_e_desklock_ask_presentation_no_increase(void *data EINA_UNUSED, E_Dialog *dia)
 {
 #ifndef HAVE_WAYLAND_ONLY
    int timeout, interval, blanking, expose;
@@ -501,7 +501,7 @@ _e_desklock_ask_presentation_no_increase(void *data __UNUSED__, E_Dialog *dia)
 }
 
 static void
-_e_desklock_ask_presentation_no_forever(void *data __UNUSED__, E_Dialog *dia)
+_e_desklock_ask_presentation_no_forever(void *data EINA_UNUSED, E_Dialog *dia)
 {
    e_config->desklock_ask_presentation = 0;
    e_config_save_queue();
@@ -510,7 +510,7 @@ _e_desklock_ask_presentation_no_forever(void *data __UNUSED__, E_Dialog *dia)
 }
 
 static void
-_e_desklock_ask_presentation_key_down(void *data, Evas *e __UNUSED__, Evas_Object *o __UNUSED__, void *event)
+_e_desklock_ask_presentation_key_down(void *data, Evas *e EINA_UNUSED, Evas_Object *o EINA_UNUSED, void *event)
 {
    Evas_Event_Key_Down *ev = event;
    E_Dialog *dia = data;
@@ -577,7 +577,7 @@ _e_desklock_run(E_Desklock_Run *task)
 }
 
 static void
-_e_desklock_job(void *data __UNUSED__)
+_e_desklock_job(void *data EINA_UNUSED)
 {
    E_Desklock_Run *task;
 
@@ -592,7 +592,7 @@ _e_desklock_job(void *data __UNUSED__)
 }
 
 static Eina_Bool
-_e_desklock_cb_run(void *data __UNUSED__, int type __UNUSED__, void *event)
+_e_desklock_cb_run(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
 {
    E_Desklock_Run *task;
    E_Event_Desklock *ev = event;

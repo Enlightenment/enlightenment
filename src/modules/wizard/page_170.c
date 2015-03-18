@@ -4,13 +4,13 @@
 static int do_up = 1;
 /*
 EAPI int
-wizard_page_init(E_Wizard_Page *pg __UNUSED__, Eina_Bool *need_xdg_desktops __UNUSED__, Eina_Bool *need_xdg_icons __UNUSED__)
+wizard_page_init(E_Wizard_Page *pg EINA_UNUSED, Eina_Bool *need_xdg_desktops EINA_UNUSED, Eina_Bool *need_xdg_icons EINA_UNUSED)
 {
    return 1;
 }
 
 EAPI int
-wizard_page_shutdown(E_Wizard_Page *pg __UNUSED__)
+wizard_page_shutdown(E_Wizard_Page *pg EINA_UNUSED)
 {
    return 1;
 }
@@ -62,7 +62,7 @@ wizard_page_show(E_Wizard_Page *pg)
 }
 
 EAPI int
-wizard_page_hide(E_Wizard_Page *pg __UNUSED__)
+wizard_page_hide(E_Wizard_Page *pg EINA_UNUSED)
 {
    e_config->update.check = do_up;
    e_config_save_queue();
@@ -70,7 +70,7 @@ wizard_page_hide(E_Wizard_Page *pg __UNUSED__)
 }
 /*
 EAPI int
-wizard_page_apply(E_Wizard_Page *pg __UNUSED__)
+wizard_page_apply(E_Wizard_Page *pg EINA_UNUSED)
 {
    return 1;
 }

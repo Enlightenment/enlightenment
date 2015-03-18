@@ -18,8 +18,8 @@ struct _E_Widget_Desk_Data
 };
 
 /* local function prototypes */
-static void      _e_wid_data_del(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__);
-static void      _e_wid_livethumb_resize(void *data, Evas *e __UNUSED__, Evas_Object *obj EINA_UNUSED, void *event_info __UNUSED__);
+static void      _e_wid_data_del(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED);
+static void      _e_wid_livethumb_resize(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED);
 static void      _e_wid_del_hook(Evas_Object *obj);
 static void      _e_wid_reconfigure(E_Widget_Data *wd);
 static void      _e_wid_desk_cb_config(void *data, Evas *evas, Evas_Object *obj, void *event);
@@ -147,7 +147,7 @@ _e_wid_livethumb_resize_job(void *data)
 }
 
 static void
-_e_wid_livethumb_resize(void *data, Evas *e __UNUSED__, Evas_Object *obj EINA_UNUSED, void *event_info __UNUSED__)
+_e_wid_livethumb_resize(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    E_Widget_Desk_Data *dd = data;
 
@@ -156,7 +156,7 @@ _e_wid_livethumb_resize(void *data, Evas *e __UNUSED__, Evas_Object *obj EINA_UN
 }
 
 static void
-_e_wid_data_del(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_e_wid_data_del(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    E_Widget_Desk_Data *dd;
    dd = data;
@@ -269,7 +269,7 @@ _e_wid_reconfigure(E_Widget_Data *wd)
 }
 
 static void
-_e_wid_desk_cb_config(void *data, Evas *evas __UNUSED__, Evas_Object *obj __UNUSED__, void *event)
+_e_wid_desk_cb_config(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event)
 {
    E_Widget_Desk_Data *dd;
    Evas_Event_Mouse_Down *ev;
@@ -287,7 +287,7 @@ _e_wid_desk_cb_config(void *data, Evas *evas __UNUSED__, Evas_Object *obj __UNUS
 }
 
 static void
-_e_wid_cb_resize(void *data __UNUSED__, Evas *evas __UNUSED__, Evas_Object *obj, void *event __UNUSED__)
+_e_wid_cb_resize(void *data EINA_UNUSED, Evas *evas EINA_UNUSED, Evas_Object *obj, void *event EINA_UNUSED)
 {
    E_Widget_Data *wd;
 

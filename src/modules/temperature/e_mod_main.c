@@ -37,8 +37,8 @@ static void _temperature_face_cb_mouse_down(void *data, Evas *e, Evas_Object *ob
 
 static void _temperature_face_cb_menu_configure(void *data, E_Menu *m, E_Menu_Item *mi);
 
-static Eina_Bool _temperature_face_shutdown(const Eina_Hash *hash __UNUSED__, const void *key __UNUSED__, void *hdata, void *fdata __UNUSED__);
-static Eina_Bool _temperature_face_id_max(const Eina_Hash *hash __UNUSED__, const void *key, void *hdata __UNUSED__, void *fdata);
+static Eina_Bool _temperature_face_shutdown(const Eina_Hash *hash EINA_UNUSED, const void *key EINA_UNUSED, void *hdata, void *fdata EINA_UNUSED);
+static Eina_Bool _temperature_face_id_max(const Eina_Hash *hash EINA_UNUSED, const void *key, void *hdata EINA_UNUSED, void *fdata);
 
 static E_Config_DD *conf_edd = NULL;
 static E_Config_DD *conf_face_edd = NULL;
@@ -161,20 +161,20 @@ _gc_shutdown(E_Gadcon_Client *gcc)
 }
 
 static void
-_gc_orient(E_Gadcon_Client *gcc, E_Gadcon_Orient orient __UNUSED__)
+_gc_orient(E_Gadcon_Client *gcc, E_Gadcon_Orient orient EINA_UNUSED)
 {
    e_gadcon_client_aspect_set(gcc, 16, 16);
    e_gadcon_client_min_size_set(gcc, 16, 16);
 }
 
 static const char *
-_gc_label(const E_Gadcon_Client_Class *client_class __UNUSED__)
+_gc_label(const E_Gadcon_Client_Class *client_class EINA_UNUSED)
 {
    return _("Temperature");
 }
 
 static Evas_Object *
-_gc_icon(const E_Gadcon_Client_Class *client_class __UNUSED__, Evas *evas)
+_gc_icon(const E_Gadcon_Client_Class *client_class EINA_UNUSED, Evas *evas)
 {
    Evas_Object *o;
    char buf[PATH_MAX];
@@ -187,7 +187,7 @@ _gc_icon(const E_Gadcon_Client_Class *client_class __UNUSED__, Evas *evas)
 }
 
 static const char *
-_gc_id_new(const E_Gadcon_Client_Class *client_class __UNUSED__)
+_gc_id_new(const E_Gadcon_Client_Class *client_class EINA_UNUSED)
 {
    Config_Face *inst;
    char id[128];
@@ -212,7 +212,7 @@ _gc_id_new(const E_Gadcon_Client_Class *client_class __UNUSED__)
 }
 
 static void
-_temperature_face_cb_mouse_down(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
+_temperature_face_cb_mouse_down(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info)
 {
    Config_Face *inst;
    Evas_Event_Mouse_Down *ev;
@@ -254,7 +254,7 @@ _temperature_face_level_set(Config_Face *inst, double level)
 }
 
 static void
-_temperature_face_cb_menu_configure(void *data, E_Menu *m __UNUSED__, E_Menu_Item *mi __UNUSED__)
+_temperature_face_cb_menu_configure(void *data, E_Menu *m EINA_UNUSED, E_Menu_Item *mi EINA_UNUSED)
 {
    Config_Face *inst;
 
@@ -264,7 +264,7 @@ _temperature_face_cb_menu_configure(void *data, E_Menu *m __UNUSED__, E_Menu_Ite
 }
 
 static Eina_Bool
-_temperature_face_shutdown(const Eina_Hash *hash __UNUSED__, const void *key __UNUSED__, void *hdata, void *fdata __UNUSED__)
+_temperature_face_shutdown(const Eina_Hash *hash EINA_UNUSED, const void *key EINA_UNUSED, void *hdata, void *fdata EINA_UNUSED)
 {
    Config_Face *inst;
 
@@ -285,7 +285,7 @@ _temperature_face_shutdown(const Eina_Hash *hash __UNUSED__, const void *key __U
 }
 
 static Eina_Bool
-_temperature_face_id_max(const Eina_Hash *hash __UNUSED__, const void *key, void *hdata __UNUSED__, void *fdata)
+_temperature_face_id_max(const Eina_Hash *hash EINA_UNUSED, const void *key, void *hdata EINA_UNUSED, void *fdata)
 {
    const char *p;
    int *max;
@@ -450,7 +450,7 @@ e_modapi_init(E_Module *m)
 }
 
 EAPI int
-e_modapi_shutdown(E_Module *m __UNUSED__)
+e_modapi_shutdown(E_Module *m EINA_UNUSED)
 {
    e_gadcon_provider_unregister(&_gadcon_class);
    if (temperature_config->faces)
@@ -464,7 +464,7 @@ e_modapi_shutdown(E_Module *m __UNUSED__)
 }
 
 EAPI int
-e_modapi_save(E_Module *m __UNUSED__)
+e_modapi_save(E_Module *m EINA_UNUSED)
 {
    e_config_domain_save("module.temperature", conf_edd, temperature_config);
    return 1;

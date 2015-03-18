@@ -870,7 +870,7 @@ _e_util_cb_delayed_del(void *data)
 }
 
 static void
-_e_util_cb_delayed_cancel(void *data, void *obj __UNUSED__)
+_e_util_cb_delayed_cancel(void *data, void *obj EINA_UNUSED)
 {
    Ecore_Idle_Enterer *idler = data;
 
@@ -878,7 +878,7 @@ _e_util_cb_delayed_cancel(void *data, void *obj __UNUSED__)
 }
 
 static Eina_Bool
-_e_util_wakeup_cb(void *data __UNUSED__)
+_e_util_wakeup_cb(void *data EINA_UNUSED)
 {
    _e_util_dummy_timer = NULL;
    return ECORE_CALLBACK_CANCEL;
@@ -1035,7 +1035,7 @@ e_util_time_str_get(long int seconds)
 }
 
 static void
-_e_util_size_debug_free(void *data __UNUSED__, Evas *e __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
+_e_util_size_debug_free(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
    int x, y, w, h;
    const char *name;
@@ -1046,7 +1046,7 @@ _e_util_size_debug_free(void *data __UNUSED__, Evas *e __UNUSED__, Evas_Object *
 }
 
 static void
-_e_util_size_debug_del(void *data __UNUSED__, Evas *e __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
+_e_util_size_debug_del(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
    int x, y, w, h;
    const char *name;
@@ -1057,7 +1057,7 @@ _e_util_size_debug_del(void *data __UNUSED__, Evas *e __UNUSED__, Evas_Object *o
 }
 
 static void
-_e_util_size_debug_stack(void *data __UNUSED__, Evas *e __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
+_e_util_size_debug_stack(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
    int x, y, w, h;
    const char *name;
@@ -1068,7 +1068,7 @@ _e_util_size_debug_stack(void *data __UNUSED__, Evas *e __UNUSED__, Evas_Object 
 }
 
 static void
-_e_util_size_debug(void *data __UNUSED__, Evas *e __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
+_e_util_size_debug(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
    int x, y, w, h;
    const char *name;

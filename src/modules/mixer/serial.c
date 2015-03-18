@@ -53,7 +53,7 @@ deserialize_sinks_watcher(Pulse *conn, Pulse_Tag *tag)
 }
 
 static Pulse_Sink *
-deserialize_sink(Pulse *conn __UNUSED__, Pulse_Tag *tag, Eina_Bool source)
+deserialize_sink(Pulse *conn EINA_UNUSED, Pulse_Tag *tag, Eina_Bool source)
 {
    Pulse_Sink *sink = NULL;
    Eina_Bool mute, exist;

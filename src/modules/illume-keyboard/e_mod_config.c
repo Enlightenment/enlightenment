@@ -110,7 +110,7 @@ il_kbd_config_save(void)
 }
 
 EAPI void 
-il_kbd_config_show(E_Comp *comp, const char *params __UNUSED__) 
+il_kbd_config_show(E_Comp *comp, const char *params EINA_UNUSED) 
 {
    E_Config_Dialog *cfd;
    E_Config_Dialog_View *v;
@@ -133,19 +133,19 @@ il_kbd_config_show(E_Comp *comp, const char *params __UNUSED__)
 
 /* local function prototypes */
 static void *
-_il_kbd_config_create(E_Config_Dialog *cfd __UNUSED__) 
+_il_kbd_config_create(E_Config_Dialog *cfd EINA_UNUSED) 
 {
    return NULL;
 }
 
 static void 
-_il_kbd_config_free(E_Config_Dialog *cfd __UNUSED__, E_Config_Dialog_Data *cfdata __UNUSED__) 
+_il_kbd_config_free(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfdata EINA_UNUSED) 
 {
    il_kbd_cfg->cfd = NULL;
 }
 
 static Evas_Object *
-_il_kbd_config_ui(E_Config_Dialog *cfd __UNUSED__, Evas *evas, E_Config_Dialog_Data *cfdata __UNUSED__) 
+_il_kbd_config_ui(E_Config_Dialog *cfd EINA_UNUSED, Evas *evas, E_Config_Dialog_Data *cfdata EINA_UNUSED) 
 {
    Evas_Object *list, *of, *ow, *sl, *ol;
    E_Radio_Group *rg;
@@ -256,7 +256,7 @@ _il_kbd_config_ui(E_Config_Dialog *cfd __UNUSED__, Evas *evas, E_Config_Dialog_D
 }
 
 static void 
-_il_kbd_config_changed(void *data, Evas_Object *obj __UNUSED__, void *event __UNUSED__) 
+_il_kbd_config_changed(void *data, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED) 
 {
    if (_il_kbd_config_change_timer) 
      ecore_timer_del(_il_kbd_config_change_timer);
@@ -265,7 +265,7 @@ _il_kbd_config_changed(void *data, Evas_Object *obj __UNUSED__, void *event __UN
 }
 
 static Eina_Bool
-_il_kbd_config_change_timeout(void *data __UNUSED__)
+_il_kbd_config_change_timeout(void *data EINA_UNUSED)
 {
    Eina_List *l;
 

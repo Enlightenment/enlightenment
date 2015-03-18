@@ -43,11 +43,11 @@ struct _E_Config_Dialog_Data
 
 /* local function prototypes */
 static void        *_create_data(E_Config_Dialog *cfd);
-static void         _free_data(E_Config_Dialog *cfd __UNUSED__, E_Config_Dialog_Data *cfdata);
-static Evas_Object *_basic_create(E_Config_Dialog *cfd __UNUSED__, Evas *evas, E_Config_Dialog_Data *cfdata);
-static int          _basic_apply(E_Config_Dialog *cfd __UNUSED__, E_Config_Dialog_Data *cfdata);
+static void         _free_data(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfdata);
+static Evas_Object *_basic_create(E_Config_Dialog *cfd EINA_UNUSED, Evas *evas, E_Config_Dialog_Data *cfdata);
+static int          _basic_apply(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfdata);
 
-static Eina_Bool    _desks_update(void *data, int ev_type __UNUSED__, void *ev __UNUSED__);
+static Eina_Bool    _desks_update(void *data, int ev_type EINA_UNUSED, void *ev EINA_UNUSED);
 static void         _load_mimes(E_Config_Dialog_Data *cfdata, char *file);
 static void         _load_globs(E_Config_Dialog_Data *cfdata, char *file);
 static int          _sort_mimes(const void *data1, const void *data2);
@@ -57,7 +57,7 @@ static int          _cb_desks_sort(const void *data1, const void *data2);
 static void         _fill_apps_list(E_Config_Dialog_Data *cfdata, Evas_Object *il, const char **desktop, int general);
 
 E_Config_Dialog *
-e_int_config_defapps(Evas_Object *parent EINA_UNUSED, const char *params __UNUSED__)
+e_int_config_defapps(Evas_Object *parent EINA_UNUSED, const char *params EINA_UNUSED)
 {
    E_Config_Dialog *cfd;
    E_Config_Dialog_View *v;
@@ -78,7 +78,7 @@ e_int_config_defapps(Evas_Object *parent EINA_UNUSED, const char *params __UNUSE
 }
 
 static void *
-_create_data(E_Config_Dialog *cfd __UNUSED__)
+_create_data(E_Config_Dialog *cfd EINA_UNUSED)
 {
    E_Config_Dialog_Data *cfdata;
    Efreet_Ini *ini, *myini;
@@ -173,7 +173,7 @@ _create_data(E_Config_Dialog *cfd __UNUSED__)
 }
 
 static void
-_free_data(E_Config_Dialog *cfd __UNUSED__, E_Config_Dialog_Data *cfdata)
+_free_data(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfdata)
 {
    Config_Mime *m;
    Efreet_Desktop *desk;
@@ -209,7 +209,7 @@ _free_data(E_Config_Dialog *cfd __UNUSED__, E_Config_Dialog_Data *cfdata)
 }
 
 static Eina_Bool
-_desks_update(void *data, int ev_type __UNUSED__, void *ev __UNUSED__)
+_desks_update(void *data, int ev_type EINA_UNUSED, void *ev EINA_UNUSED)
 {
    E_Config_Dialog_Data *cfdata = data;
    Efreet_Desktop *desk;
@@ -365,7 +365,7 @@ _basic_create(E_Config_Dialog *cfd, Evas *evas, E_Config_Dialog_Data *cfdata)
 }
 
 static int
-_basic_apply(E_Config_Dialog *cfd __UNUSED__, E_Config_Dialog_Data *cfdata)
+_basic_apply(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfdata)
 {
    Eina_List *l;
    E_Config_Env_Var *evr = NULL;

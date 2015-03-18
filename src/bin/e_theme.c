@@ -1,7 +1,7 @@
 #include "e.h"
 
-static void       e_theme_handler_set(void *data __UNUSED__, Evas_Object *obj __UNUSED__, const char *path);
-static int        e_theme_handler_test(void *data __UNUSED__, Evas_Object *obj __UNUSED__, const char *path);
+static void       e_theme_handler_set(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, const char *path);
+static int        e_theme_handler_test(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, const char *path);
 
 static E_Fm2_Mime_Handler *theme_hdl = NULL;
 
@@ -170,7 +170,7 @@ e_theme_comp_frame_list(void)
 
 /* local subsystem functions */
 static void
-e_theme_handler_set(void *data __UNUSED__, Evas_Object *obj __UNUSED__, const char *path)
+e_theme_handler_set(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, const char *path)
 {
    E_Action *a;
    char buf[PATH_MAX];
@@ -234,7 +234,7 @@ e_theme_handler_set(void *data __UNUSED__, Evas_Object *obj __UNUSED__, const ch
 }
 
 static int
-e_theme_handler_test(void *data __UNUSED__, Evas_Object *obj __UNUSED__, const char *path)
+e_theme_handler_test(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, const char *path)
 {
    if (!path) return 0;
    if (!edje_file_group_exists(path, "e/widgets/border/default/border"))

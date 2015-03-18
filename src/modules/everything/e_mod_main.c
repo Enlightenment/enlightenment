@@ -148,7 +148,7 @@ e_modapi_init(E_Module *m)
 }
 
 EAPI int
-e_modapi_shutdown(E_Module *m __UNUSED__)
+e_modapi_shutdown(E_Module *m EINA_UNUSED)
 {
    E_Config_Dialog *cfd;
    const char *t;
@@ -229,7 +229,7 @@ e_modapi_shutdown(E_Module *m __UNUSED__)
 }
 
 EAPI int
-e_modapi_save(E_Module *m __UNUSED__)
+e_modapi_save(E_Module *m EINA_UNUSED)
 {
    e_config_domain_save("module.everything", conf_edd, evry_conf);
 
@@ -331,7 +331,7 @@ evry_view_unregister(Evry_View *view)
 /***************************************************************************/
 
 static Eina_Bool
-_cleanup_history(void *data __UNUSED__)
+_cleanup_history(void *data EINA_UNUSED)
 {
    /* evrything is active */
    if (evry_hist)
@@ -558,7 +558,7 @@ _e_mod_action_cb(E_Object *obj EINA_UNUSED, const char *params)
 }
 
 static void
-_e_mod_action_cb_edge(E_Object *obj  __UNUSED__, const char *params, E_Event_Zone_Edge *ev)
+_e_mod_action_cb_edge(E_Object *obj  EINA_UNUSED, const char *params, E_Event_Zone_Edge *ev)
 {
    IF_RELEASE(_params);
    if (params && params[0])
@@ -571,7 +571,7 @@ _e_mod_action_cb_edge(E_Object *obj  __UNUSED__, const char *params, E_Event_Zon
 
 /* menu item callback(s) */
 static void
-_e_mod_run_cb(void *data __UNUSED__, E_Menu *m, E_Menu_Item *mi __UNUSED__)
+_e_mod_run_cb(void *data EINA_UNUSED, E_Menu *m, E_Menu_Item *mi EINA_UNUSED)
 {
    IF_RELEASE(_params);
    ecore_idle_enterer_add(_e_mod_run_defer_cb, m->zone);
@@ -579,7 +579,7 @@ _e_mod_run_cb(void *data __UNUSED__, E_Menu *m, E_Menu_Item *mi __UNUSED__)
 
 /* menu item add hook */
 static void
-_e_mod_menu_add(void *data __UNUSED__, E_Menu *m)
+_e_mod_menu_add(void *data EINA_UNUSED, E_Menu *m)
 {
    E_Menu_Item *mi;
 

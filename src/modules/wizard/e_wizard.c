@@ -310,7 +310,7 @@ _e_wizard_cb_key_down(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
 }
 
 static void
-_e_wizard_cb_next(void *data __UNUSED__, Evas_Object *obj __UNUSED__, const char *emission __UNUSED__, const char *source __UNUSED__)
+_e_wizard_cb_next(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, const char *emission EINA_UNUSED, const char *source EINA_UNUSED)
 {
    /* TODO: Disable button in theme */
    if (next_can)
@@ -379,7 +379,7 @@ _e_wizard_next_xdg(void)
 }
 
 static Eina_Bool
-_e_wizard_cb_next_page(void *data __UNUSED__)
+_e_wizard_cb_next_page(void *data EINA_UNUSED)
 {
    next_timer = NULL;
    _e_wizard_next_xdg();
@@ -388,7 +388,7 @@ _e_wizard_cb_next_page(void *data __UNUSED__)
 
 
 static Eina_Bool
-_e_wizard_cb_desktops_update(void *data __UNUSED__, int ev_type __UNUSED__, void *ev)
+_e_wizard_cb_desktops_update(void *data EINA_UNUSED, int ev_type EINA_UNUSED, void *ev)
 {
    Efreet_Event_Cache_Update *e;
 
@@ -403,7 +403,7 @@ _e_wizard_cb_desktops_update(void *data __UNUSED__, int ev_type __UNUSED__, void
 }
 
 static Eina_Bool
-_e_wizard_cb_icons_update(void *data __UNUSED__, int ev_type __UNUSED__, void *ev __UNUSED__)
+_e_wizard_cb_icons_update(void *data EINA_UNUSED, int ev_type EINA_UNUSED, void *ev EINA_UNUSED)
 {
    got_icons = EINA_TRUE;
    if (_e_wizard_check_xdg())

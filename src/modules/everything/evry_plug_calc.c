@@ -27,7 +27,7 @@ static char _module_icon[] = "accessories-calculator";
 static Evry_Item *cur_item = NULL;
 
 static Evry_Plugin *
-_begin(Evry_Plugin *plugin, const Evry_Item *item __UNUSED__)
+_begin(Evry_Plugin *plugin, const Evry_Item *item EINA_UNUSED)
 {
    Plugin *p;
 
@@ -104,7 +104,7 @@ _finish(Evry_Plugin *plugin)
 }
 
 static Eina_Bool
-_cb_action_performed(__UNUSED__ void *data, __UNUSED__ int type, void *event)
+_cb_action_performed(EINA_UNUSED void *data, EINA_UNUSED int type, void *event)
 {
    Eina_List *l;
    Evry_Item *it, *it2, *it_old;
@@ -197,7 +197,7 @@ _fetch(Evry_Plugin *plugin, const char *input)
 }
 
 static Eina_Bool
-_cb_data(void *data, int type __UNUSED__, void *event)
+_cb_data(void *data, int type EINA_UNUSED, void *event)
 {
    Ecore_Exe_Event_Data *ev = event;
    Evry_Plugin *p = data;
@@ -224,7 +224,7 @@ _cb_data(void *data, int type __UNUSED__, void *event)
 }
 
 static Eina_Bool
-_cb_error(void *data, int type __UNUSED__, void *event)
+_cb_error(void *data, int type EINA_UNUSED, void *event)
 {
    Ecore_Exe_Event_Data *ev = event;
    Evry_Plugin *p = data;
@@ -240,7 +240,7 @@ _cb_error(void *data, int type __UNUSED__, void *event)
 }
 
 static Eina_Bool
-_cb_del(void *data __UNUSED__, int type __UNUSED__, void *event)
+_cb_del(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
 {
    Ecore_Exe_Event_Del *e = event;
 
@@ -294,7 +294,7 @@ _plugins_shutdown(void)
 /***************************************************************************/
 
 Eina_Bool
-evry_plug_calc_init(E_Module *m __UNUSED__)
+evry_plug_calc_init(E_Module *m EINA_UNUSED)
 {
    EVRY_MODULE_NEW(evry_module, evry, _plugins_init, _plugins_shutdown);
 

@@ -49,7 +49,7 @@ static void          _e_typebuf_clean(Evas_Object *obj);
 
 static E_Ilist_Item *_e_ilist_item_new(E_Smart_Data *sd, Evas_Object *icon, Evas_Object *end, const char *label, int header, Ecore_End_Cb func, Ecore_End_Cb func_hilight, void *data, void *data2);
 static void          _e_ilist_item_theme_set(E_Ilist_Item *si, Eina_Bool custom, Eina_Bool header, Eina_Bool even);
-static void          _e_ilist_widget_hack_cb(E_Smart_Data *sd, Evas_Object *obj __UNUSED__, Evas_Object *scr);
+static void          _e_ilist_widget_hack_cb(E_Smart_Data *sd, Evas_Object *obj EINA_UNUSED, Evas_Object *scr);
 
 static void          _item_select(E_Ilist_Item *si);
 static void          _item_unselect(E_Ilist_Item *si);
@@ -875,7 +875,7 @@ _e_smart_reconfigure(E_Smart_Data *sd)
 }
 
 static void
-_e_smart_event_mouse_down(void *data, Evas *evas __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
+_e_smart_event_mouse_down(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info)
 {
    E_Smart_Data *sd;
    Evas_Event_Mouse_Down *ev;
@@ -896,7 +896,7 @@ _e_smart_event_mouse_down(void *data, Evas *evas __UNUSED__, Evas_Object *obj __
 }
 
 static void
-_e_smart_event_mouse_up(void *data, Evas *evas __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
+_e_smart_event_mouse_up(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info)
 {
    E_Smart_Data *sd;
    Evas_Event_Mouse_Up *ev;
@@ -949,7 +949,7 @@ _e_smart_event_mouse_up(void *data, Evas *evas __UNUSED__, Evas_Object *obj __UN
 }
 
 static void
-_e_smart_event_key_down(void *data, Evas *evas __UNUSED__, Evas_Object *obj, void *event_info)
+_e_smart_event_key_down(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj, void *event_info)
 {
    Evas_Event_Key_Down *ev;
    E_Smart_Data *sd;
@@ -1089,7 +1089,7 @@ _e_smart_event_key_down(void *data, Evas *evas __UNUSED__, Evas_Object *obj, voi
 }
 
 static void
-_e_ilist_widget_hack_cb(E_Smart_Data *sd, Evas_Object *obj __UNUSED__, Evas_Object *scr)
+_e_ilist_widget_hack_cb(E_Smart_Data *sd, Evas_Object *obj EINA_UNUSED, Evas_Object *scr)
 {
    int w, h;
    e_scrollframe_child_viewport_size_get(scr, &w, &h);

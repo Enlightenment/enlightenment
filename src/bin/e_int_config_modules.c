@@ -63,7 +63,7 @@ static const CFTypes _types[] =
 /* local function protos */
 static void         _cftype_free(CFType *cft);
 
-static void         _widget_list_selection_changed(void *data, Evas_Object *obj __UNUSED__);
+static void         _widget_list_selection_changed(void *data, Evas_Object *obj EINA_UNUSED);
 
 static void        *_create_data(E_Config_Dialog *cfd);
 static void         _free_data(E_Config_Dialog *cfd, E_Config_Dialog_Data *cfdata);
@@ -76,14 +76,14 @@ static void         _toolbar_select_cb(void *data, void *data2);
 static CFType      *_cftype_find(E_Config_Dialog_Data *cfdata, const char *key, const char *name, const char *icon);
 static CFType      *_cftype_new(const char *key, const char *name, const char *icon);
 static void         _load_module(E_Module_Desktop *md, Eina_Hash *types_hash);
-static Eina_Bool    _types_list_create_foreach_cb(const Eina_Hash *hash __UNUSED__, const void *key __UNUSED__, void *data, void *fdata);
+static Eina_Bool    _types_list_create_foreach_cb(const Eina_Hash *hash EINA_UNUSED, const void *key EINA_UNUSED, void *data, void *fdata);
 static int          _types_list_sort(const void *data1, const void *data2);
 
 static void         _btn_cb_unload(void *data, void *data2);
 static void         _btn_cb_load(void *data, void *data2);
 
 EAPI E_Config_Dialog *
-e_int_config_modules(Evas_Object *parent EINA_UNUSED, const char *params __UNUSED__)
+e_int_config_modules(Evas_Object *parent EINA_UNUSED, const char *params EINA_UNUSED)
 {
    E_Config_Dialog *cfd = NULL;
    E_Config_Dialog_View *v = NULL;
@@ -102,7 +102,7 @@ e_int_config_modules(Evas_Object *parent EINA_UNUSED, const char *params __UNUSE
 }
 
 static void *
-_create_data(E_Config_Dialog *cfd __UNUSED__)
+_create_data(E_Config_Dialog *cfd EINA_UNUSED)
 {
    Eina_Hash *types_hash;
    Eina_List *mods;
@@ -133,7 +133,7 @@ _create_data(E_Config_Dialog *cfd __UNUSED__)
 }
 
 static void
-_free_data(E_Config_Dialog *cfd __UNUSED__, E_Config_Dialog_Data *cfdata)
+_free_data(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfdata)
 {
    CFType *cft;
 
@@ -147,7 +147,7 @@ _free_data(E_Config_Dialog *cfd __UNUSED__, E_Config_Dialog_Data *cfdata)
 }
 
 static Eina_Bool
-_module_update(E_Config_Dialog_Data *cfdata, int type __UNUSED__, E_Event_Module_Update *ev)
+_module_update(E_Config_Dialog_Data *cfdata, int type EINA_UNUSED, E_Event_Module_Update *ev)
 {
    CFType *cft;
    Eina_List *l, *ll;
@@ -526,7 +526,7 @@ _modules_list_sort(const void *data1, const void *data2)
 }
 
 static Eina_Bool
-_types_list_create_foreach_cb(const Eina_Hash *hash __UNUSED__, const void *key __UNUSED__, void *data, void *fdata)
+_types_list_create_foreach_cb(const Eina_Hash *hash EINA_UNUSED, const void *key EINA_UNUSED, void *data, void *fdata)
 {
    E_Config_Dialog_Data *cfdata = fdata;
    CFType *cft = data;
@@ -552,7 +552,7 @@ _types_list_sort(const void *data1, const void *data2)
 }
 
 static void
-_widget_list_selection_changed(void *data, Evas_Object *obj __UNUSED__)
+_widget_list_selection_changed(void *data, Evas_Object *obj EINA_UNUSED)
 {
    E_Config_Dialog_Data *cfdata = data;
    const Eina_List *l;
@@ -594,7 +594,7 @@ _widget_list_selection_changed(void *data, Evas_Object *obj __UNUSED__)
 }
 
 static void
-_btn_cb_unload(void *data, void *data2 __UNUSED__)
+_btn_cb_unload(void *data, void *data2 EINA_UNUSED)
 {
    E_Config_Dialog_Data *cfdata = data;
    CFModule *cfm;
@@ -619,7 +619,7 @@ _btn_cb_unload(void *data, void *data2 __UNUSED__)
 }
 
 static void
-_btn_cb_load(void *data, void *data2 __UNUSED__)
+_btn_cb_load(void *data, void *data2 EINA_UNUSED)
 {
    E_Config_Dialog_Data *cfdata = data;
    CFModule *cfm;

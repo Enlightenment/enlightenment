@@ -42,11 +42,11 @@ struct _E_ACPI_Device_Multiplexed
 };
 
 /* local function prototypes */
-static Eina_Bool _e_acpi_cb_server_del(void *data __UNUSED__, int type __UNUSED__, void *event);
-static Eina_Bool _e_acpi_cb_server_data(void *data __UNUSED__, int type __UNUSED__, void *event);
-static void      _e_acpi_cb_event_free(void *data __UNUSED__, void *event);
+static Eina_Bool _e_acpi_cb_server_del(void *data EINA_UNUSED, int type EINA_UNUSED, void *event);
+static Eina_Bool _e_acpi_cb_server_data(void *data EINA_UNUSED, int type EINA_UNUSED, void *event);
+static void      _e_acpi_cb_event_free(void *data EINA_UNUSED, void *event);
 static int       _e_acpi_lid_status_get(const char *device, const char *bus);
-static Eina_Bool _e_acpi_cb_event(void *data __UNUSED__, int type __UNUSED__, void *event);
+static Eina_Bool _e_acpi_cb_event(void *data EINA_UNUSED, int type EINA_UNUSED, void *event);
 
 /* local variables */
 static int _e_acpi_events_frozen = 0;
@@ -206,7 +206,7 @@ e_acpi_events_thaw(void)
 
 /* local functions */
 static Eina_Bool
-_e_acpi_cb_server_del(void *data __UNUSED__, int type __UNUSED__, void *event)
+_e_acpi_cb_server_del(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
 {
    Ecore_Con_Event_Server_Del *ev;
    Ecore_Event_Handler *hdl;
@@ -228,7 +228,7 @@ _e_acpi_cb_server_del(void *data __UNUSED__, int type __UNUSED__, void *event)
 }
 
 static Eina_Bool
-_e_acpi_cb_server_data(void *data __UNUSED__, int type __UNUSED__, void *event)
+_e_acpi_cb_server_data(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
 {
    Ecore_Con_Event_Server_Data *ev;
    E_Event_Acpi *acpi_event;
@@ -366,7 +366,7 @@ done_event:
 }
 
 static void
-_e_acpi_cb_event_free(void *data __UNUSED__, void *event)
+_e_acpi_cb_event_free(void *data EINA_UNUSED, void *event)
 {
    E_Event_Acpi *ev;
 
@@ -437,7 +437,7 @@ _e_acpi_lid_status_get(const char *device, const char *bus)
 }
 
 static Eina_Bool
-_e_acpi_cb_event(void *data __UNUSED__, int type __UNUSED__, void *event)
+_e_acpi_cb_event(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
 {
    E_Event_Acpi *ev;
 

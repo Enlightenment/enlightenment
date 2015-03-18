@@ -1,7 +1,7 @@
 #include "e_mod_main.h"
 #include "e_fm_device.h"
 
-static void _e_mod_menu_populate(void *d, E_Menu *m __UNUSED__, E_Menu_Item *mi);
+static void _e_mod_menu_populate(void *d, E_Menu *m EINA_UNUSED, E_Menu_Item *mi);
 
 static E_Menu *
 _e_mod_menu_top_get(E_Menu *m)
@@ -18,7 +18,7 @@ _e_mod_menu_top_get(E_Menu *m)
 static void
 _e_mod_menu_gtk_cb(void           *data,
                    E_Menu         *m,
-                   E_Menu_Item *mi __UNUSED__)
+                   E_Menu_Item *mi EINA_UNUSED)
 {
    Evas_Object *fm;
 
@@ -49,7 +49,7 @@ _e_mod_menu_virtual_cb(void           *data,
 static void
 _e_mod_menu_volume_cb(void           *data,
                       E_Menu         *m,
-                      E_Menu_Item *mi __UNUSED__)
+                      E_Menu_Item *mi EINA_UNUSED)
 {
    E_Volume *vol = data;
    Evas_Object *fm;
@@ -104,7 +104,7 @@ _e_mod_menu_cleanup_cb(void *obj)
 }
 
 static Eina_Bool
-_e_mod_menu_populate_filter(void *data __UNUSED__, Eio_File *handler __UNUSED__, const Eina_File_Direct_Info *info)
+_e_mod_menu_populate_filter(void *data EINA_UNUSED, Eio_File *handler EINA_UNUSED, const Eina_File_Direct_Info *info)
 {
    struct stat st;
    /* don't show .dotfiles */
@@ -116,7 +116,7 @@ _e_mod_menu_populate_filter(void *data __UNUSED__, Eio_File *handler __UNUSED__,
 }
 
 static void
-_e_mod_menu_populate_item(void *data, Eio_File *handler __UNUSED__, const Eina_File_Direct_Info *info)
+_e_mod_menu_populate_item(void *data, Eio_File *handler EINA_UNUSED, const Eina_File_Direct_Info *info)
 {
    E_Menu *m = data;
    E_Menu_Item *mi;
@@ -215,7 +215,7 @@ _e_mod_menu_populate_item(void *data, Eio_File *handler __UNUSED__, const Eina_F
 }
 
 static void
-_e_mod_menu_populate_err(void *data, Eio_File *handler __UNUSED__, int error __UNUSED__)
+_e_mod_menu_populate_err(void *data, Eio_File *handler EINA_UNUSED, int error EINA_UNUSED)
 {
    if (!e_object_unref(data)) return;
    e_menu_thaw(data);
@@ -228,7 +228,7 @@ _e_mod_menu_populate_sort(E_Menu_Item *a, E_Menu_Item *b)
 }
 
 static void
-_e_mod_menu_populate_done(void *data, Eio_File *handler __UNUSED__)
+_e_mod_menu_populate_done(void *data, Eio_File *handler EINA_UNUSED)
 {
    E_Menu *m = data;
    if (!e_object_unref(data)) return;
@@ -253,7 +253,7 @@ _e_mod_menu_populate_done(void *data, Eio_File *handler __UNUSED__)
 }
 
 static void
-_e_mod_menu_populate(void *d, E_Menu *m __UNUSED__, E_Menu_Item *mi)
+_e_mod_menu_populate(void *d, E_Menu *m EINA_UNUSED, E_Menu_Item *mi)
 {
    E_Menu *subm;
    const char *dev, *path, *rp;
