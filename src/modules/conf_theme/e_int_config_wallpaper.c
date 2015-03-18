@@ -338,15 +338,13 @@ _fill_data(E_Config_Dialog_Data *cfdata)
    else
      {
         /* get current desk. advanced mode allows selecting all, screen or desk */
-        E_Comp *comp;
         E_Zone *zone;
         E_Desk *desk;
 
-        comp = e_manager_current_get()->comp;
         zone = e_zone_current_get();
         desk = e_desk_current_get(zone);
 
-        cfbg = e_bg_config_get(comp->num, zone->num, desk->x, desk->y);
+        cfbg = e_bg_config_get(e_comp->num, zone->num, desk->x, desk->y);
         /* if we have a config for this bg, use it. */
         if (cfbg)
           {

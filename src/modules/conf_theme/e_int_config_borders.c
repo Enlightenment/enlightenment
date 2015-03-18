@@ -13,7 +13,6 @@ static void                  _basic_apply_border(E_Config_Dialog_Data *cfdata);
 struct _E_Config_Dialog_Data
 {
    E_Client *client;
-   E_Comp *comp;
    const char  *bordername;
    int          remember_border;
 };
@@ -76,11 +75,8 @@ _create_data(E_Config_Dialog *cfd)
    E_Config_Dialog_Data *cfdata;
 
    cfdata = E_NEW(E_Config_Dialog_Data, 1);
-   cfdata->comp = NULL;
    cfdata->client = NULL;
-   if (!cfd->data)
-     cfdata->comp = e_comp;
-   else
+   if (cfd->data)
      cfdata->client = cfd->data;
 
    _fill_data(cfdata);
@@ -133,12 +129,12 @@ _basic_apply(E_Config_Dialog *cfd __UNUSED__, E_Config_Dialog_Data *cfdata)
 {
    if (cfdata->client)
      _basic_apply_border(cfdata);
-   else if (cfdata->comp)
+   else
      {
         Eina_List *l;
         E_Client *ec;
         eina_stringshare_replace(&e_config->theme_default_border_style, cfdata->bordername);
-        EINA_LIST_FOREACH(cfdata->comp->clients, l, ec)
+        EINA_LIST_FOREACH(e_comp->clients, l, ec)
           {
              if (e_client_util_ignored_get(ec)) continue;
              EC_CHANGED(ec);
