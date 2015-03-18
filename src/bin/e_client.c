@@ -954,7 +954,7 @@ _e_client_resize_handle(E_Client *ec)
      y += (th - h);
 
    skiplist = eina_list_append(skiplist, ec);
-   e_resist_client_position(e_comp, skiplist,
+   e_resist_client_position(skiplist,
                                       ec->x, ec->y, ec->w, ec->h,
                                       x, y, w, h,
                                       &new_x, &new_y, &new_w, &new_h);
@@ -2876,7 +2876,7 @@ e_client_mouse_move(E_Client *ec, Evas_Point *output)
         e_comp_object_frame_xy_adjust(ec->frame, x, y, &new_x, &new_y);
 
         skiplist = eina_list_append(skiplist, ec);
-        e_resist_client_position(e_comp, skiplist,
+        e_resist_client_position(skiplist,
                                  ec->x, ec->y, ec->w, ec->h,
                                  x, y, ec->w, ec->h,
                                  &new_x, &new_y, &new_w, &new_h);
