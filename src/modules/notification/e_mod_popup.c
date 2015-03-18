@@ -289,7 +289,6 @@ _notification_popup_del_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EIN
 static Popup_Data *
 _notification_popup_new(E_Notification_Notify *n, unsigned id)
 {
-   E_Comp *comp;
    Popup_Data *popup;
    char buf[PATH_MAX];
    Eina_List *l;
@@ -299,8 +298,7 @@ _notification_popup_new(E_Notification_Notify *n, unsigned id)
    switch (notification_cfg->dual_screen)
      {
       case POPUP_DISPLAY_POLICY_FIRST:
-        comp = e_comp;
-        zone = eina_list_data_get(comp->zones);
+        zone = eina_list_data_get(e_comp->zones);
         break;
       case POPUP_DISPLAY_POLICY_CURRENT:
       case POPUP_DISPLAY_POLICY_ALL:
