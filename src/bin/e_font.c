@@ -84,11 +84,8 @@ e_font_available_list(void)
    Eina_List *e_fonts;
    Eina_List *l;
    const char *evas_font;
-   E_Comp *c;
 
-   c = e_comp;
-
-   evas_fonts = evas_font_available_list(c->evas);
+   evas_fonts = evas_font_available_list(e_comp->evas);
 
    e_fonts = NULL;
    EINA_LIST_FOREACH(evas_fonts, l, evas_font)
@@ -100,7 +97,7 @@ e_font_available_list(void)
         e_fonts = eina_list_append(e_fonts, efa);
      }
 
-   evas_font_available_list_free(c->evas, evas_fonts);
+   evas_font_available_list_free(e_comp->evas, evas_fonts);
 
    return e_fonts;
 }
