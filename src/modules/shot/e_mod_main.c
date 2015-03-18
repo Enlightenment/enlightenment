@@ -20,7 +20,6 @@ E_Confirm_Dialog *cd = NULL;
 static Evas_Object *o_bg = NULL, *o_box = NULL, *o_content = NULL;
 static Evas_Object *o_event = NULL, *o_img = NULL, *o_hlist = NULL;
 static E_Manager *sman = NULL;
-static E_Comp *scomp = NULL;
 static int quality = 90;
 static int screen = -1;
 #define MAXZONES 64
@@ -134,7 +133,7 @@ _screen_change_cb(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *even
    Eina_List *l;
    E_Zone *z;
 
-   EINA_LIST_FOREACH(scomp->zones, l, z)
+   EINA_LIST_FOREACH(e_comp->zones, l, z)
      {
         if (screen == -1)
           evas_object_color_set(o_rectdim[z->num], 0, 0, 0, 0);
@@ -169,7 +168,7 @@ _save_to(const char *file)
         Eina_List *l;
         E_Zone *z = NULL;
 
-        EINA_LIST_FOREACH(scomp->zones, l, z)
+        EINA_LIST_FOREACH(e_comp->zones, l, z)
           {
              if (screen == (int)z->num) break;
              z = NULL;
@@ -554,7 +553,7 @@ _rect_down_cb(void *data __UNUSED__, Evas *e __UNUSED__, Evas_Object *obj __UNUS
    if (ev->button != 1) return;
 
    e_widget_radio_toggle_set(o_radio_all, 0);
-   EINA_LIST_FOREACH(scomp->zones, l, z)
+   EINA_LIST_FOREACH(e_comp->zones, l, z)
      {
         if (obj == o_rectdim[z->num])
           {
@@ -565,7 +564,7 @@ _rect_down_cb(void *data __UNUSED__, Evas *e __UNUSED__, Evas_Object *obj __UNUS
            e_widget_radio_toggle_set(o_radio[z->num], 0);
      }
 
-   EINA_LIST_FOREACH(scomp->zones, l, z)
+   EINA_LIST_FOREACH(e_comp->zones, l, z)
      {
         if (screen == -1)
            evas_object_color_set(o_rectdim[z->num], 0, 0, 0, 0);
@@ -601,7 +600,6 @@ _shot_now(E_Zone *zone, E_Client *ec, const char *params)
    if (zone)
      {
         sman = e_comp->man;
-        scomp = e_comp;
         xwin = sman->root;
         w = sw = sman->w;
         h = sh = sman->h;
@@ -747,7 +745,7 @@ _shot_now(E_Zone *zone, E_Client *ec, const char *params)
    if (zone)
      {
         screen = -1;
-        if (eina_list_count(scomp->zones) > 1)
+        if (eina_list_count(e_comp->zones) > 1)
           {
              Eina_List *l;
              E_Zone *z;
@@ -762,7 +760,7 @@ _shot_now(E_Zone *zone, E_Client *ec, const char *params)
              evas_object_smart_callback_add(o, "changed", _screen_change_cb, NULL);
              e_widget_framelist_object_append(ol, o);
              i = 0;
-             EINA_LIST_FOREACH(scomp->zones, l, z)
+             EINA_LIST_FOREACH(e_comp->zones, l, z)
                {
                   char buf[32];
 
