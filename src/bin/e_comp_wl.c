@@ -569,6 +569,8 @@ _e_comp_wl_evas_cb_resize(void *data, Evas_Object *obj EINA_UNUSED, void *event 
            default:
              y -= ay;
           }
+        x = E_CLAMP(x, 1, x);
+        y = E_CLAMP(y, 1, y);
         ec->comp_data->shell.configure_send(ec->comp_data->shell.surface,
                                  e_comp->wl_comp_data->resize.edges,
                                  x, y);
