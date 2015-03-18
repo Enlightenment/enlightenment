@@ -19,7 +19,7 @@ static Ecore_Job *update_job = NULL;
 
 static struct
 {
-   void        (*func)(const void *data, E_Comp *c, const char *params, Efreet_Desktop *desktop);
+   void        (*func)(const void *data, const char *params, Efreet_Desktop *desktop);
    const char *data;
 } custom_desktop_exec = { NULL, NULL };
 
@@ -76,7 +76,7 @@ e_configure_registry_call(const char *path, Evas_Object *parent, const char *par
                    {
                       if (custom_desktop_exec.func)
                         custom_desktop_exec.func(custom_desktop_exec.data,
-                                                 e_comp, params, eci->desktop);
+                                                 params, eci->desktop);
                       else
                         e_exec(e_zone_current_get(),
                                eci->desktop, NULL, NULL, "config");
@@ -227,7 +227,7 @@ e_configure_registry_category_del(const char *path)
  */
 
 EAPI void
-e_configure_registry_custom_desktop_exec_callback_set(void (*func)(const void *data, E_Comp *c, const char *params, Efreet_Desktop *desktop), const void *data)
+e_configure_registry_custom_desktop_exec_callback_set(void (*func)(const void *data, const char *params, Efreet_Desktop *desktop), const void *data)
 {
    custom_desktop_exec.func = func;
    custom_desktop_exec.data = data;
