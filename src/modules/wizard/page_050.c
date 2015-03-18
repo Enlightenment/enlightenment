@@ -63,7 +63,7 @@ _scale_preview_new(Evas *e, double sc, double *scp)
    e_widget_preview_vsize_set(ob, SZW, SZH);
 
    bg = edje_object_add(e_widget_preview_evas_get(ob));
-   file = e_bg_file_get(0, 0, 0, 0);
+   file = e_bg_file_get(0, 0, 0);
    edje_object_file_set(bg, file, "e/desktop/background");
    eina_stringshare_del(file);
    evas_object_move(bg, 0, 0);

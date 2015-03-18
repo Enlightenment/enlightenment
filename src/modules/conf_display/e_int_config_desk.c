@@ -61,7 +61,7 @@ _fill_data(E_Config_Dialog_Data *cfdata)
    char name[40];
    int ok = 0;
    E_Config_Desktop_Window_Profile *prof;
-   cfdata->bg = e_bg_file_get(cfdata->man_num, cfdata->zone_num, cfdata->desk_x, cfdata->desk_y);
+   cfdata->bg = e_bg_file_get(cfdata->zone_num, cfdata->desk_x, cfdata->desk_y);
 
    for (l = e_config->desktop_names; l; l = l->next)
      {
@@ -230,7 +230,7 @@ _cb_bg_change(void *data, int type, void *event)
    if (ev->desk_x != cfdata->desk_x) return ECORE_CALLBACK_PASS_ON;
    if (ev->desk_y != cfdata->desk_y) return ECORE_CALLBACK_PASS_ON;
 
-   file = e_bg_file_get(cfdata->man_num, cfdata->zone_num,
+   file = e_bg_file_get(cfdata->zone_num,
                         cfdata->desk_x, cfdata->desk_y);
    eina_stringshare_replace(&cfdata->bg, file);
    e_widget_preview_edje_set(cfdata->preview, cfdata->bg,

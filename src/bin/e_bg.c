@@ -76,7 +76,7 @@ e_bg_shutdown(void)
  * The most specific match will be returned
  */
 EAPI const E_Config_Desktop_Background *
-e_bg_config_get(int manager_num, int zone_num, int desk_x, int desk_y)
+e_bg_config_get(int zone_num, int desk_x, int desk_y)
 {
    Eina_List *l, *entries;
    E_Config_Desktop_Background *bg = NULL, *cfbg = NULL;
@@ -85,7 +85,7 @@ e_bg_config_get(int manager_num, int zone_num, int desk_x, int desk_y)
    int current_spec = 0; /* how specific the setting is - we want the least general one that applies */
 
    /* look for desk specific background. */
-   if (manager_num >= 0 || zone_num >= 0 || desk_x >= 0 || desk_y >= 0)
+   if (zone_num >= 0 || desk_x >= 0 || desk_y >= 0)
      {
         EINA_LIST_FOREACH(e_config->desktop_backgrounds, l, cfbg)
           {
@@ -93,9 +93,6 @@ e_bg_config_get(int manager_num, int zone_num, int desk_x, int desk_y)
 
              if (!cfbg) continue;
              spec = 0;
-             if (cfbg->manager == manager_num) spec++;
-             else if (cfbg->manager >= 0)
-               continue;
              if (cfbg->zone == zone_num) spec++;
              else if (cfbg->zone >= 0)
                continue;
@@ -144,13 +141,13 @@ e_bg_config_get(int manager_num, int zone_num, int desk_x, int desk_y)
 }
 
 EAPI Eina_Stringshare *
-e_bg_file_get(int manager_num, int zone_num, int desk_x, int desk_y)
+e_bg_file_get(int zone_num, int desk_x, int desk_y)
 {
    const E_Config_Desktop_Background *cfbg;
    const char *bgfile = NULL;
    int ok = 0;
 
-   cfbg = e_bg_config_get(manager_num, zone_num, desk_x, desk_y);
+   cfbg = e_bg_config_get(zone_num, desk_x, desk_y);
 
    /* fall back to default */
    if (cfbg)
@@ -208,9 +205,9 @@ e_bg_zone_update(E_Zone *zone, E_Bg_Transition transition)
 
    desk = e_desk_current_get(zone);
    if (desk)
-     bgfile = e_bg_file_get(e_comp->num, zone->num, desk->x, desk->y);
+     bgfile = e_bg_file_get(zone->num, desk->x, desk->y);
    else
-     bgfile = e_bg_file_get(e_comp->num, zone->num, -1, -1);
+     bgfile = e_bg_file_get(zone->num, -1, -1);
 
    if (zone->bg_object)
      {

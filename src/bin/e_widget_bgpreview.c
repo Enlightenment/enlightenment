@@ -71,7 +71,7 @@ e_widget_bgpreview_desk_add(Evas *e, E_Zone *zone, int x, int y)
    E_Widget_Desk_Data *dd;
    const char *bgfile;
 
-   bgfile = e_bg_file_get(e_comp->num, zone->num, x, y);
+   bgfile = e_bg_file_get(zone->num, x, y);
 
    dd = E_NEW(E_Widget_Desk_Data, 1);
    dd->manager = e_comp->num;
@@ -312,7 +312,7 @@ _e_wid_cb_bg_update(void *data, int type, void *event)
      {
         const char *bgfile;
 
-        bgfile = e_bg_file_get(dd->manager, dd->zone, dd->x, dd->y);
+        bgfile = e_bg_file_get(dd->zone, dd->x, dd->y);
         edje_object_file_set(dd->thumb, bgfile, "e/desktop/background");
         eina_stringshare_del(bgfile);
      }

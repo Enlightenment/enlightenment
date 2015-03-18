@@ -409,7 +409,7 @@ _pager_desk_livethumb_setup(Pager_Desk *pd)
 
    o = e_livethumb_thumb_get(pd->o_bg);
    if (!o) o = edje_object_add(e_livethumb_evas_get(pd->o_bg));
-   bgfile = e_bg_file_get(e_comp->num, pd->desk->zone->num, pd->desk->x, pd->desk->y);
+   bgfile = e_bg_file_get(pd->desk->zone->num, pd->desk->x, pd->desk->y);
    edje_object_file_set(o, bgfile, "e/desktop/background");
    e_livethumb_thumb_set(pd->o_bg, o);
    eina_stringshare_del(bgfile);

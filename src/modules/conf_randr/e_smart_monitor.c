@@ -881,7 +881,7 @@ _e_smart_monitor_background_set(E_Smart_Data *sd, int dx, int dy)
    if (!sd) return;
 
    /* try to get the background file for this desktop */
-   if ((bg = e_bg_file_get(sd->man_num, sd->zone_num, dx, dy)))
+   if ((bg = e_bg_file_get(sd->zone_num, dx, dy)))
      {
         Evas_Object *o;
 

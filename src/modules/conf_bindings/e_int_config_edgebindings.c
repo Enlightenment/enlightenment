@@ -916,7 +916,7 @@ _edge_grab_wnd_show(E_Config_Dialog_Data *cfdata)
 
    e_dialog_content_set(cfdata->locals.dia, o, minw, minh);
 
-   bgfile = e_bg_file_get(0, 0, 0, 0);
+   bgfile = e_bg_file_get(0, 0, 0);
    obg = e_thumb_icon_add(evas);
    e_icon_fill_inside_set(obg, 0);
    e_thumb_icon_file_set(obg, bgfile, "e/desktop/background");

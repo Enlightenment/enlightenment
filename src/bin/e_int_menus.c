@@ -1102,7 +1102,7 @@ _e_int_menus_virtuals_icon_cb(void *data, E_Menu *m, E_Menu_Item *mi)
    tw = 50;
    th = (tw * desk->zone->h) / desk->zone->w;
 
-   bgfile = e_bg_file_get(e_comp->num, desk->zone->num, desk->x, desk->y);
+   bgfile = e_bg_file_get(desk->zone->num, desk->x, desk->y);
    o = e_thumb_icon_add(m->evas);
    e_thumb_icon_file_set(o, bgfile, "e/desktop/background");
    eina_stringshare_del(bgfile);
