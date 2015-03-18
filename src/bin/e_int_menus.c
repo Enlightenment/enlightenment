@@ -604,7 +604,7 @@ _e_int_menus_themes_about(void *data __UNUSED__, E_Menu *m __UNUSED__, E_Menu_It
    static void
    _e_int_menus_fwin_favorites_item_cb(void *data, E_Menu *m, E_Menu_Item *mi)
    {
-   e_fwin_new(e_comp, "favorites", "/");
+   e_fwin_new("favorites", "/");
    }
  */
 

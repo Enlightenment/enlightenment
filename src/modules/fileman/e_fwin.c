@@ -291,8 +291,7 @@ e_fwin_shutdown(void)
  * "fwin" window
  */
 void
-e_fwin_new(E_Comp *comp EINA_UNUSED,
-           const char *dev,
+e_fwin_new(const char *dev,
            const char *path)
 {
    _e_fwin_new(dev, path);
@@ -1913,12 +1912,10 @@ _e_fwin_cb_key_down(void *data,
      {
         if (!strcmp(ev->key, "n"))
           {
-             E_Comp *comp;
              const char *dev, *path;
 
-             comp = e_comp;
              e_fm2_path_get(page->fm_obj, &dev, &path);
-             e_fwin_new(comp, dev, path);
+             e_fwin_new(dev, path);
              return;
           }
         if (!strcmp(ev->key, "w"))

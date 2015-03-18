@@ -120,7 +120,7 @@ _e_fileman_dbus_daemon_open_directory_cb(const Eldbus_Service_Interface *iface _
         directory = "/";
      }
 
-   e_fwin_new(e_comp, dev, directory);
+   e_fwin_new(dev, directory);
    free(dev);
    free(to_free);
    return eldbus_message_method_return_new(msg);

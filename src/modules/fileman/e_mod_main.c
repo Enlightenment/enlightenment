@@ -166,21 +166,21 @@ _e_mod_action_fileman_cb(E_Object   *obj EINA_UNUSED,
    if (zone)
      {
         if (params && params[0] == '/')
-          e_fwin_new(e_comp, "/", params);
+          e_fwin_new("/", params);
         else if (params && params[0] == '~')
-          e_fwin_new(e_comp, "~/", params + 1);
+          e_fwin_new("~/", params + 1);
         else if (params && strcmp(params, "(none)")) /* avoid matching paths that no longer exist */
           {
              char *path;
              path = e_util_shell_env_path_eval(params);
              if (path)
                {
-                  e_fwin_new(e_comp, path, "/");
+                  e_fwin_new(path, "/");
                   free(path);
                }
           }
         else
-          e_fwin_new(e_comp, "favorites", "/");
+          e_fwin_new("favorites", "/");
      }
 }
 
