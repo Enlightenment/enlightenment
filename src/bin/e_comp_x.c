@@ -76,7 +76,7 @@ _e_comp_x_client_damage_add(E_Client *ec)
 }
 
 static void
-_e_comp_x_focus_check(E_Comp *comp)
+_e_comp_x_focus_check(void)
 {
    E_Client *focused;
 
@@ -85,7 +85,7 @@ _e_comp_x_focus_check(E_Comp *comp)
    /* if there is no new focused or it is a non-X client,
     * focus comp canvas on focus-out */
    if ((!focused) || (e_pixmap_type_get(focused->pixmap) != E_PIXMAP_TYPE_X))
-     e_grabinput_focus(comp->ee_win, E_FOCUS_METHOD_PASSIVE);
+     e_grabinput_focus(e_comp->ee_win, E_FOCUS_METHOD_PASSIVE);
 }
 
 static void
@@ -1103,14 +1103,13 @@ static Eina_Bool
 _e_comp_x_show_request(void *data EINA_UNUSED, int type EINA_UNUSED, Ecore_X_Event_Window_Show_Request *ev)
 {
    E_Client *ec;
-   E_Comp *c;
 
    //INF("X SHOW REQ: %u", ev->win);
    ec = _e_comp_x_client_find_by_window(ev->win);
-   c = e_comp_find_by_window(ev->parent);
    if (e_comp_ignore_win_find(ev->win) ||
      (ec && (ec->ignored || ec->override)) ||
-     (!c) || (ev->parent != c->man->root))
+     (!e_comp_find_by_window(ev->parent)) ||
+     (ev->parent != e_comp->man->root))
      {
         ecore_x_window_show(ev->win);
         return ECORE_CALLBACK_RENEW;
@@ -1191,12 +1190,11 @@ _e_comp_x_show_helper(E_Client *ec)
 }
 
 static Eina_Bool
-_e_comp_x_show_retry(void *data)
+_e_comp_x_show_retry(void *data EINA_UNUSED)
 {
-   E_Comp *c = data;
    uintptr_t *win;
 
-   EINA_LIST_FREE(c->x_comp_data->retry_clients, win)
+   EINA_LIST_FREE(e_comp->x_comp_data->retry_clients, win)
      {
         E_Client *ec;
 
@@ -1204,7 +1202,7 @@ _e_comp_x_show_retry(void *data)
         if (ec) _e_comp_x_show_helper(ec);
      }
 
-   c->x_comp_data->retry_timer = NULL;
+   e_comp->x_comp_data->retry_timer = NULL;
    return EINA_FALSE;
 }
 
@@ -1212,12 +1210,13 @@ static Eina_Bool
 _e_comp_x_show(void *data EINA_UNUSED, int type EINA_UNUSED, Ecore_X_Event_Window_Show *ev)
 {
    E_Client *ec;
-   E_Comp *c;
 
    //INF("X SHOW: %u", ev->win);
    ec = _e_comp_x_client_find_by_window(ev->win);
    if (!ec)
      {
+        E_Comp *c;
+
         if (e_comp_ignore_win_find(ev->win)) return ECORE_CALLBACK_RENEW;
         c = e_comp_find_by_window(ev->event_win);
         if (!c) return ECORE_CALLBACK_RENEW;
@@ -1294,7 +1293,7 @@ _e_comp_x_hide(void *data EINA_UNUSED, int type EINA_UNUSED, Ecore_X_Event_Windo
           }
      }
    if (hid)
-     _e_comp_x_focus_check(e_comp);
+     _e_comp_x_focus_check();
    return ECORE_CALLBACK_PASS_ON;
 }
 
@@ -1319,11 +1318,9 @@ static Eina_Bool
 _e_comp_x_configure(void *data EINA_UNUSED, int type EINA_UNUSED, Ecore_X_Event_Window_Configure *ev)
 {
    E_Client *ec;
-   E_Comp *c;
    Eina_Bool move, resize;
 
-   c = e_comp_find_by_window(ev->win);
-   if (c)
+   if (e_comp_find_by_window(ev->win))
      {
         // do not handle this here - use randr events
         //e_manager_resize(c->man, ev->w, ev->h);
@@ -2561,10 +2558,7 @@ _e_comp_x_damage(void *data EINA_UNUSED, int type EINA_UNUSED, Ecore_X_Event_Dam
 static Eina_Bool
 _e_comp_x_damage_win(void *data EINA_UNUSED, int type EINA_UNUSED, Ecore_X_Event_Window_Damage *ev)
 {
-   E_Comp *c;
-
-   c = e_comp_find_by_window(ev->win);
-   if (c) e_comp_render_queue();
+   if (e_comp_find_by_window(ev->win)) e_comp_render_queue();
    return ECORE_CALLBACK_PASS_ON;
 }
 
@@ -4084,7 +4078,7 @@ static void
 _e_comp_x_hook_client_focus_unset(void *d EINA_UNUSED, E_Client *ec)
 {
    E_COMP_X_PIXMAP_CHECK;
-   _e_comp_x_focus_check(e_comp);
+   _e_comp_x_focus_check();
 }
 
 static void
@@ -4230,7 +4224,7 @@ _e_comp_x_hook_client_del(void *d EINA_UNUSED, E_Client *ec)
    if (post_clients)
      post_clients = eina_list_remove(post_clients, ec);
 
-   _e_comp_x_focus_check(e_comp);
+   _e_comp_x_focus_check();
 }
 
 static void
@@ -4541,14 +4535,12 @@ _e_comp_x_cb_frame_extents_request(void *data EINA_UNUSED, int ev_type EINA_UNUS
 }
 
 static void
-_e_comp_x_pre_swap(void *data, Evas *e EINA_UNUSED)
+_e_comp_x_pre_swap(void *data EINA_UNUSED, Evas *e EINA_UNUSED)
 {
-   E_Comp *c = data;
-
    if (!e_comp_config_get()->grab) return;
-   if (!c->grabbed) return;
+   if (!e_comp->grabbed) return;
    ecore_x_ungrab();
-   c->grabbed = 0;
+   e_comp->grabbed = 0;
 }
 
 static int
@@ -4757,9 +4749,9 @@ _e_comp_x_del(E_Comp *c)
 }
 
 static void
-_e_comp_x_manage_windows(E_Comp *c)
+_e_comp_x_manage_windows(void)
 {
-   E_Manager *man = c->man;
+   E_Manager *man = e_comp->man;
    Ecore_X_Window *windows;
    int wnum;
    int i;
@@ -4789,8 +4781,8 @@ _e_comp_x_manage_windows(E_Comp *c)
         int ret;
         E_Client *ec = NULL;
 
-        if ((c->win == windows[i]) || (c->ee_win == windows[i]) ||
-            (c->man->root == windows[i]) || (c->cm_selection == windows[i]))
+        if ((e_comp->win == windows[i]) || (e_comp->ee_win == windows[i]) ||
+            (e_comp->man->root == windows[i]) || (e_comp->cm_selection == windows[i]))
           continue;
         if (_e_comp_x_client_find_by_window(windows[i]))
           continue;
@@ -4929,9 +4921,9 @@ _e_comp_x_grab_cb(void)
 }
 
 static Eina_Bool
-_e_comp_x_desklock_key_down(E_Comp *comp, int t EINA_UNUSED, Ecore_Event_Key *ev)
+_e_comp_x_desklock_key_down(void *d EINA_UNUSED, int t EINA_UNUSED, Ecore_Event_Key *ev)
 {
-   return (ev->window == comp->x_comp_data->lock_win);
+   return (ev->window == e_comp->x_comp_data->lock_win);
 }
 
 static void
@@ -5003,13 +4995,13 @@ fail:
 }
 
 static Eina_Bool
-_e_comp_x_setup(E_Comp *c, Ecore_X_Window root, int w, int h)
+_e_comp_x_setup(Ecore_X_Window root, int w, int h)
 {
    Ecore_X_Window_Attributes att;
    Eina_Bool res;
    unsigned int i;
 
-   res = ecore_x_screen_is_composited(c->num);
+   res = ecore_x_screen_is_composited(e_comp->num);
    if (res)
      {
         ERR(_("Another compositor is already running on your display server."));
@@ -5017,28 +5009,28 @@ _e_comp_x_setup(E_Comp *c, Ecore_X_Window root, int w, int h)
      }
    if (!ecore_x_window_manage(root)) return EINA_FALSE;
 
-   E_OBJECT_DEL_SET(c, _e_comp_x_del);
-   c->x_comp_data = E_NEW(E_Comp_Data, 1);
+   E_OBJECT_DEL_SET(e_comp, _e_comp_x_del);
+   e_comp->x_comp_data = E_NEW(E_Comp_Data, 1);
    ecore_x_e_window_profile_supported_set(root, e_config->use_desktop_window_profile);
-   c->cm_selection = ecore_x_window_input_new(root, 0, 0, 1, 1);
-   if (!c->cm_selection) return EINA_FALSE;
-   ecore_x_icccm_name_class_set(c->cm_selection, "comp", "cm_selection");
-   e_comp_ignore_win_add(E_PIXMAP_TYPE_X, c->cm_selection);
-   e_hints_init(root, c->cm_selection);
+   e_comp->cm_selection = ecore_x_window_input_new(root, 0, 0, 1, 1);
+   if (!e_comp->cm_selection) return EINA_FALSE;
+   ecore_x_icccm_name_class_set(e_comp->cm_selection, "comp", "cm_selection");
+   e_comp_ignore_win_add(E_PIXMAP_TYPE_X, e_comp->cm_selection);
+   e_hints_init(root, e_comp->cm_selection);
    ecore_x_window_background_color_set(root, 0, 0, 0);
-   ecore_x_screen_is_composited_set(c->num, c->cm_selection);
+   ecore_x_screen_is_composited_set(e_comp->num, e_comp->cm_selection);
 
-   c->win = ecore_x_composite_render_window_enable(root);
-   if (!c->win)
+   e_comp->win = ecore_x_composite_render_window_enable(root);
+   if (!e_comp->win)
      {
         ERR(_("Your display server does not support the compositor overlay window.\n"
               "This is needed for Enlightenment to function."));
         return EINA_FALSE;
      }
-   c->man = e_manager_new(root, c, w, h);
+   e_comp->man = e_manager_new(root, e_comp, w, h);
 
    memset((&att), 0, sizeof(Ecore_X_Window_Attributes));
-   ecore_x_window_attributes_get(c->win, &att);
+   ecore_x_window_attributes_get(e_comp->win, &att);
 
    if ((att.depth != 24) && (att.depth != 32))
      {
@@ -5047,14 +5039,14 @@ _e_comp_x_setup(E_Comp *c, Ecore_X_Window root, int w, int h)
                   (_("Compositor Error"), _("Your screen is not in 24/32bit display mode.<br>"
                   "This is required to be your default depth<br>"
                   "setting for the compositor to work properly."));
-                  ecore_x_composite_render_window_disable(c->win);
-                  free(c);
+                  ecore_x_composite_render_window_disable(e_comp->win);
+                  free(e_comp);
                   return NULL;
          */
      }
-   c->depth = att.depth;
+   e_comp->depth = att.depth;
 
-   if (!c->num) e_alert_composite_win(root, c->win);
+   if (!e_comp->num) e_alert_composite_win(root, e_comp->win);
 
    if (e_comp_gl_get() && (e_comp_config_get()->engine == E_COMP_ENGINE_GL))
      {
@@ -5087,19 +5079,19 @@ _e_comp_x_setup(E_Comp *c, Ecore_X_Window root, int w, int h)
         if (opt_i > 0)
           {
              opt[opt_i] = ECORE_EVAS_GL_X11_OPT_NONE;
-             c->ee = ecore_evas_gl_x11_options_new(NULL, c->win, 0, 0, w, h, opt);
+             e_comp->ee = ecore_evas_gl_x11_options_new(NULL, e_comp->win, 0, 0, w, h, opt);
           }
-        if (!c->ee)
-          c->ee = ecore_evas_gl_x11_new(NULL, c->win, 0, 0, w, h);
-        if (c->ee)
+        if (!e_comp->ee)
+          e_comp->ee = ecore_evas_gl_x11_new(NULL, e_comp->win, 0, 0, w, h);
+        if (e_comp->ee)
           {
-             c->gl = 1;
-             ecore_evas_gl_x11_pre_post_swap_callback_set(c->ee, c, _e_comp_x_pre_swap, NULL);
+             e_comp->gl = 1;
+             ecore_evas_gl_x11_pre_post_swap_callback_set(e_comp->ee, e_comp, _e_comp_x_pre_swap, NULL);
           }
      }
-   if (!c->ee)
+   if (!e_comp->ee)
      {
-        c->ee = ecore_evas_software_x11_new(NULL, c->win, 0, 0, w, h);
+        e_comp->ee = ecore_evas_software_x11_new(NULL, e_comp->win, 0, 0, w, h);
         if (e_comp_config_get()->engine == E_COMP_ENGINE_GL)
           ecore_job_add(_e_comp_x_add_fail_job, NULL);
         e_comp_gl_set(0);
@@ -5122,15 +5114,15 @@ _e_comp_x_setup(E_Comp *c, Ecore_X_Window root, int w, int h)
                            ECORE_EVENT_MODIFIER_CTRL |
                            ECORE_EVENT_MODIFIER_ALT, 0);
 
-   ecore_evas_callback_resize_set(c->ee, _e_comp_x_ee_resize);
-   ecore_evas_data_set(c->ee, "comp", c);
-   c->grab_cb = _e_comp_x_grab_cb;
-   c->bindings_grab_cb = _e_comp_x_bindings_grab_cb;
-   c->bindings_ungrab_cb = _e_comp_x_bindings_ungrab_cb;
+   ecore_evas_callback_resize_set(e_comp->ee, _e_comp_x_ee_resize);
+   ecore_evas_data_set(e_comp->ee, "comp", e_comp);
+   e_comp->grab_cb = _e_comp_x_grab_cb;
+   e_comp->bindings_grab_cb = _e_comp_x_bindings_grab_cb;
+   e_comp->bindings_ungrab_cb = _e_comp_x_bindings_ungrab_cb;
 
    if (!e_comp_canvas_init()) return EINA_FALSE;
 
-   e_grabinput_focus(c->ee_win, E_FOCUS_METHOD_PASSIVE);
+   e_grabinput_focus(e_comp->ee_win, E_FOCUS_METHOD_PASSIVE);
 
    /* init layers */
    for (i = e_comp_canvas_layer_map(E_LAYER_CLIENT_DESKTOP); i <= e_comp_canvas_layer_map(E_LAYER_CLIENT_PRIO); i++)
@@ -5138,14 +5130,14 @@ _e_comp_x_setup(E_Comp *c, Ecore_X_Window root, int w, int h)
         char buf[64];
         E_Client *ec;
 
-        c->layers[i].win = ecore_x_window_input_new(root, 0, 0, 1, 1);
-        ecore_x_window_show(c->layers[i].win);
+        e_comp->layers[i].win = ecore_x_window_input_new(root, 0, 0, 1, 1);
+        ecore_x_window_show(e_comp->layers[i].win);
         snprintf(buf, sizeof(buf), "%d", e_comp_canvas_layer_map_to(i));
-        ecore_x_icccm_name_class_set(c->layers[i].win, buf, "e_layer_win");
+        ecore_x_icccm_name_class_set(e_comp->layers[i].win, buf, "e_layer_win");
 
         if (i >= e_comp_canvas_layer_map(E_LAYER_CLIENT_ABOVE))
-          ecore_x_window_raise(c->layers[i].win);
-        ec = _e_comp_x_client_new(c->layers[i].win, 0);
+          ecore_x_window_raise(e_comp->layers[i].win);
+        ec = _e_comp_x_client_new(e_comp->layers[i].win, 0);
         evas_object_name_set(ec->frame, "layer_obj");
         ec->lock_client_stacking = 1;
         ec->internal = 1;
@@ -5156,14 +5148,14 @@ _e_comp_x_setup(E_Comp *c, Ecore_X_Window root, int w, int h)
         evas_object_show(ec->frame);
      }
    for (i = e_comp_canvas_layer_map(E_LAYER_CLIENT_NORMAL); i < e_comp_canvas_layer_map(E_LAYER_CLIENT_ABOVE); i--)
-     ecore_x_window_lower(c->layers[i].win);
+     ecore_x_window_lower(e_comp->layers[i].win);
 
-   ecore_evas_lower(c->ee);
-   c->pointer = e_pointer_window_new(c->man->root, 0);
-   c->pointer->color = ecore_x_cursor_color_supported_get();
-   e_pointer_type_push(c->pointer, c->pointer, "default");
-   _e_comp_x_manage_windows(c);
-   ecore_x_icccm_state_set(ecore_evas_window_get(c->ee), ECORE_X_WINDOW_STATE_HINT_NORMAL);
+   ecore_evas_lower(e_comp->ee);
+   e_comp->pointer = e_pointer_window_new(e_comp->man->root, 0);
+   e_comp->pointer->color = ecore_x_cursor_color_supported_get();
+   e_pointer_type_push(e_comp->pointer, e_comp->pointer, "default");
+   _e_comp_x_manage_windows();
+   ecore_x_icccm_state_set(ecore_evas_window_get(e_comp->ee), ECORE_X_WINDOW_STATE_HINT_NORMAL);
 
    {
       E_Client *ec;
@@ -5176,7 +5168,7 @@ _e_comp_x_setup(E_Comp *c, Ecore_X_Window root, int w, int h)
           }
    }
 
-   return !!c->bg_blank_object;
+   return !!e_comp->bg_blank_object;
 }
 
 static Eina_Bool
@@ -5198,7 +5190,6 @@ _e_comp_x_screens_setup(void)
      {
         int rw, rh;
         Ecore_X_Window root = roots[i];
-        E_Comp *c;
 
         ecore_x_window_size_get(root, &rw, &rh);
         if (n == 1)
@@ -5208,9 +5199,9 @@ _e_comp_x_screens_setup(void)
              if (!success) break;
           }
         if (!success) break;
-        c = e_comp_new();
-        c->comp_type = E_PIXMAP_TYPE_X;
-        success = _e_comp_x_setup(c, root, rw, rh);
+        e_comp_new();
+        e_comp->comp_type = E_PIXMAP_TYPE_X;
+        success = _e_comp_x_setup(root, rw, rh);
         if (!success) break;
      }
    free(roots);
@@ -5384,5 +5375,5 @@ e_comp_x_nocomp_end(void)
    e_comp->nocomp = 0;
    ecore_x_window_show(e_comp->win);
    ecore_x_composite_redirect_subwindows(e_comp->man->root, ECORE_X_COMPOSITE_UPDATE_MANUAL);
-   _e_comp_x_focus_check(e_comp);
+   _e_comp_x_focus_check();
 }
