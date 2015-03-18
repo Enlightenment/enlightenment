@@ -766,8 +766,7 @@ _e_sys_logout_begin(E_Sys_Action a_after, Eina_Bool raw)
    /* start logout - at end do the a_after action */
    if (!raw)
      {
-        od = e_obj_dialog_new(e_comp,
-                              _("Logout in progress"), "E", "_sys_logout");
+        od = e_obj_dialog_new(_("Logout in progress"), "E", "_sys_logout");
         e_obj_dialog_obj_theme_set(od, "base/theme/sys", "e/sys/logout");
         e_obj_dialog_obj_part_text_set(od, "e.textblock.message",
                                        _("Logout in progress.<br>"
@@ -961,8 +960,7 @@ _e_sys_action_do(E_Sys_Action a, char *param __UNUSED__, Eina_Bool raw)
                   ret = 0;
                   _e_sys_begin_time = ecore_time_get();
 
-                  od = e_obj_dialog_new(NULL,
-                                        _("Power off"), "E", "_sys_halt");
+                  od = e_obj_dialog_new(_("Power off"), "E", "_sys_halt");
                   e_obj_dialog_obj_theme_set(od, "base/theme/sys", "e/sys/halt");
                   e_obj_dialog_obj_part_text_set(od, "e.textblock.message",
                                                  _("Power off.<br>"
@@ -1007,8 +1005,7 @@ _e_sys_action_do(E_Sys_Action a, char *param __UNUSED__, Eina_Bool raw)
                {
                   ret = 0;
                   _e_sys_begin_time = ecore_time_get();
-                  od = e_obj_dialog_new(NULL,
-                                        _("Resetting"), "E", "_sys_reboot");
+                  od = e_obj_dialog_new(_("Resetting"), "E", "_sys_reboot");
                   e_obj_dialog_obj_theme_set(od, "base/theme/sys", "e/sys/reboot");
                   e_obj_dialog_obj_part_text_set(od, "e.textblock.message",
                                                  _("Resetting.<br>"

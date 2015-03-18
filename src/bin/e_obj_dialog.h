@@ -18,7 +18,7 @@ struct _E_Obj_Dialog
    void		       (*cb_delete)(E_Obj_Dialog *od);
 };
 
-EAPI E_Obj_Dialog   *e_obj_dialog_new(E_Comp *c, char *title, char *class_name, char *class_class);
+EAPI E_Obj_Dialog   *e_obj_dialog_new(char *title, char *class_name, char *class_class);
 EAPI void            e_obj_dialog_icon_set(E_Obj_Dialog *od, char *icon);
 EAPI void            e_obj_dialog_show(E_Obj_Dialog *od);
 EAPI void            e_obj_dialog_obj_part_text_set(E_Obj_Dialog *od, const char *part, const char *text);

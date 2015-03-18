@@ -12,11 +12,11 @@ _cb_settings_theme(void *data EINA_UNUSED, Evas_Object *obj __UNUSED__, const ch
 /* externally accessible functions */
 
 EAPI E_Theme_About *
-e_theme_about_new(E_Comp *c)
+e_theme_about_new(void)
 {
    E_Obj_Dialog *od;
 
-   od = e_obj_dialog_new(c, _("About Theme"), "E", "_theme_about");
+   od = e_obj_dialog_new(_("About Theme"), "E", "_theme_about");
    if (!od) return NULL;
    e_obj_dialog_obj_theme_set(od, "base/theme", "e/theme/about");
    e_obj_dialog_obj_part_text_set(od, "e.text.label", _("Close"));

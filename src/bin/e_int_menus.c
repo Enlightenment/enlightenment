@@ -587,7 +587,7 @@ _e_int_menus_main_about(void *data __UNUSED__, E_Menu *m __UNUSED__, E_Menu_Item
 {
    E_About *about;
 
-   about = e_about_new(e_comp);
+   about = e_about_new();
    if (about) e_about_show(about);
 }
 
@@ -596,7 +596,7 @@ _e_int_menus_themes_about(void *data __UNUSED__, E_Menu *m __UNUSED__, E_Menu_It
 {
    E_Theme_About *about;
 
-   about = e_theme_about_new(e_comp);
+   about = e_theme_about_new();
    if (about) e_theme_about_show(about);
 }
 

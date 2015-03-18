@@ -7,14 +7,14 @@
 /* externally accessible functions */
 
 EAPI E_About *
-e_about_new(E_Comp *c)
+e_about_new(void)
 {
    E_Obj_Dialog *od;
    char buf[16384];
    FILE *f;
    Eina_Strbuf *tbuf;
 
-   od = e_obj_dialog_new(c, _("About Enlightenment"), "E", "_about");
+   od = e_obj_dialog_new(_("About Enlightenment"), "E", "_about");
    if (!od) return NULL;
    e_obj_dialog_obj_theme_set(od, "base/theme/about", "e/widgets/about/main");
    e_obj_dialog_obj_part_text_set(od, "e.text.label", _("Close"));

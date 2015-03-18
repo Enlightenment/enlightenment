@@ -19,7 +19,7 @@ _key_down_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *
 }
 
 EAPI E_Obj_Dialog *
-e_obj_dialog_new(E_Comp *c EINA_UNUSED, char *title, char *class_name, char *class_class)
+e_obj_dialog_new(char *title, char *class_name, char *class_class)
 {
    E_Obj_Dialog *od;
    Evas_Object *o;
