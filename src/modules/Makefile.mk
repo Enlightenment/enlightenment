@@ -119,8 +119,6 @@ include src/modules/Makefile_music_control.mk
 
 include src/modules/Makefile_packagekit.mk
 
-include src/modules/Makefile_contact.mk
-
 include src/modules/Makefile_wl_drm.mk
 
 include src/modules/Makefile_wl_desktop_shell.mk
