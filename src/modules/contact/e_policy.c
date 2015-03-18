@@ -8,7 +8,7 @@ static Eina_Bool _cb_event_focus_in(void *data __UNUSED__, int type __UNUSED__, 
 static Eina_Bool _cb_event_focus_out(void *data __UNUSED__, int type __UNUSED__, void *event);
 static void _cb_hook_post_fetch(void *data __UNUSED__, E_Client *ec);
 static void _cb_hook_post_assign(void *data __UNUSED__, E_Client *ec);
-static void _cb_hook_layout(E_Comp *comp);
+static void _cb_hook_layout(void);
 
 static Eina_List *hooks = NULL;
 static Eina_List *handlers = NULL;
@@ -166,7 +166,7 @@ _cb_hook_post_assign(void *data __UNUSED__, E_Client *ec)
 }
 
 static void
-_cb_hook_layout(E_Comp *comp)
+_cb_hook_layout(void)
 {
    Eina_List *l;
    E_Client *ec, *kbd = NULL;;
@@ -174,7 +174,7 @@ _cb_hook_layout(E_Comp *comp)
    Eina_Bool have_focused = EINA_FALSE;
    int kx = 0, ky = 0, kw = 0, kh = 0;
    
-   EINA_LIST_FOREACH(comp->clients, l, ec)
+   EINA_LIST_FOREACH(e_comp->clients, l, ec)
      {
         if (e_client_util_ignored_get(ec)) continue;
         if (ec->focused) have_focused = EINA_TRUE;
@@ -195,7 +195,7 @@ _cb_hook_layout(E_Comp *comp)
         kx = kbd->zone->x;
         ky = kbd->zone->y + kbd->zone->h - kh;
      }
-   EINA_LIST_FOREACH(comp->clients, l, ec)
+   EINA_LIST_FOREACH(e_comp->clients, l, ec)
      {
         int x, y, w, h;
         
@@ -237,7 +237,7 @@ _cb_hook_layout(E_Comp *comp)
         else
           {
 #warning X ONLY! SPANK! SPANK! SPANK!!!
-             if (e_comp_data->illume.conformant.conformant)
+             if (ec->comp_data->illume.conformant.conformant)
                {
                   if (kbd_on != want_kbd)
                     {

@@ -104,8 +104,7 @@ _handler_call(E_Edges_Event event, int d, double v)
 static Evas_Object *
 _input_obj(Edgeset *es, int x, int y, int w, int h)
 {
-   E_Comp *c = e_comp;
-   Evas_Object *o = evas_object_rectangle_add(c->evas);
+   Evas_Object *o = evas_object_rectangle_add(e_comp->evas);
    evas_object_color_set(o, 0, 0, 0, 0);
    evas_object_move(o, x, y);
    evas_object_resize(o, w, h);
