@@ -17,7 +17,7 @@ struct _Config
    int menu_augmentation;
 };
 
-void e_configure_show(E_Comp *comp, const char *params);
+void e_configure_show(const char *params);
 void e_configure_del(void);
 
 E_Config_Dialog *e_int_config_conf_module(Evas_Object *parent, const char *params);

@@ -11,7 +11,6 @@ struct _E_Configure
 {
    E_Object             e_obj_inherit;
 
-   E_Comp              *comp;
    Evas_Object         *win;
    Evas                *evas;
    Evas_Object         *edje;
@@ -61,7 +60,7 @@ static Eina_Bool             _e_configure_module_update_cb(void *data, int type,
 static E_Configure *_e_configure = NULL;
 
 void
-e_configure_show(E_Comp *comp, const char *params)
+e_configure_show(const char *params)
 {
    E_Configure *eco;
    Evas_Object *o;
@@ -105,7 +104,6 @@ e_configure_show(E_Comp *comp, const char *params)
         return;
      }
    evas_object_data_set(eco->win, "e_conf_win", eco);
-   eco->comp = comp;
    eco->evas = evas_object_evas_get(eco->win);
 
    /* Event Handler for Module Updates */
