@@ -34,14 +34,14 @@ _e_comp_wl_focus_down_set(E_Client *ec)
 }
 
 static void
-_e_comp_wl_focus_check(E_Comp *comp)
+_e_comp_wl_focus_check(void)
 {
    E_Client *ec;
 
    if (stopping) return;
    ec = e_client_focused_get();
    if ((!ec) || (e_pixmap_type_get(ec->pixmap) != E_PIXMAP_TYPE_WL))
-     e_grabinput_focus(comp->ee_win, E_FOCUS_METHOD_PASSIVE);
+     e_grabinput_focus(e_comp->ee_win, E_FOCUS_METHOD_PASSIVE);
 }
 
 static void
@@ -606,7 +606,7 @@ _e_comp_wl_evas_cb_delete_request(void *data, Evas_Object *obj EINA_UNUSED, void
 
    e_object_del(E_OBJECT(ec));
 
-   _e_comp_wl_focus_check(e_comp);
+   _e_comp_wl_focus_check();
 
    /* TODO: Delete request send ??
     * NB: No such animal wrt wayland */
@@ -631,7 +631,7 @@ _e_comp_wl_evas_cb_kill_request(void *data, Evas_Object *obj EINA_UNUSED, void *
    if (ec->visible) evas_object_hide(ec->frame);
    if (!ec->internal) e_object_del(E_OBJECT(ec));
 
-   _e_comp_wl_focus_check(e_comp);
+   _e_comp_wl_focus_check();
 }
 
 static void
@@ -1395,13 +1395,10 @@ _e_comp_wl_surface_destroy(struct wl_resource *resource)
 static void
 _e_comp_wl_compositor_cb_surface_create(struct wl_client *client, struct wl_resource *resource, uint32_t id)
 {
-   E_Comp *comp;
    struct wl_resource *res;
    E_Pixmap *ep;
    uint64_t win;
    pid_t pid;
-
-   if (!(comp = wl_resource_get_user_data(resource))) return;
 
    DBG("Compositor Cb Surface Create: %d", id);
 
@@ -1437,7 +1434,7 @@ _e_comp_wl_compositor_cb_surface_create(struct wl_client *client, struct wl_reso
    wl_resource_set_user_data(res, ep);
 
    /* emit surface create signal */
-   wl_signal_emit(&comp->wl_comp_data->signals.surface.create, res);
+   wl_signal_emit(&e_comp->wl_comp_data->signals.surface.create, res);
 }
 
 static void
@@ -1512,17 +1509,13 @@ _e_comp_wl_compositor_cb_region_destroy(struct wl_resource *resource)
 static void
 _e_comp_wl_compositor_cb_region_create(struct wl_client *client, struct wl_resource *resource, uint32_t id)
 {
-   E_Comp *comp;
    Eina_Tiler *tiler;
    struct wl_resource *res;
-
-   /* get the compositor from the resource */
-   if (!(comp = wl_resource_get_user_data(resource))) return;
 
    DBG("Region Create: %d", wl_resource_get_id(resource));
 
    /* try to create new tiler */
-   if (!(tiler = eina_tiler_new(comp->man->w, comp->man->h)))
+   if (!(tiler = eina_tiler_new(e_comp->man->w, e_comp->man->h)))
      {
         ERR("Could not create Eina_Tiler");
         wl_resource_post_no_memory(resource);
@@ -1550,12 +1543,9 @@ static const struct wl_compositor_interface _e_comp_interface =
 };
 
 static void
-_e_comp_wl_compositor_cb_bind(struct wl_client *client, void *data, uint32_t version, uint32_t id)
+_e_comp_wl_compositor_cb_bind(struct wl_client *client, void *data EINA_UNUSED, uint32_t version, uint32_t id)
 {
-   E_Comp *comp;
    struct wl_resource *res;
-
-   if (!(comp = data)) return;
 
    if (!(res =
          wl_resource_create(client, &wl_compositor_interface,
@@ -1566,7 +1556,7 @@ _e_comp_wl_compositor_cb_bind(struct wl_client *client, void *data, uint32_t ver
         return;
      }
 
-   wl_resource_set_implementation(res, &_e_comp_interface, comp, NULL);
+   wl_resource_set_implementation(res, &_e_comp_interface, e_comp, NULL);
 }
 
 static void
@@ -2014,12 +2004,9 @@ static const struct wl_subcompositor_interface _e_subcomp_interface =
 };
 
 static void
-_e_comp_wl_subcompositor_cb_bind(struct wl_client *client, void *data, uint32_t version, uint32_t id)
+_e_comp_wl_subcompositor_cb_bind(struct wl_client *client, void *data EINA_UNUSED, uint32_t version, uint32_t id)
 {
-   E_Comp *comp;
    struct wl_resource *res;
-
-   if (!(comp = data)) return;
 
    if (!(res =
          wl_resource_create(client, &wl_subcompositor_interface,
@@ -2030,7 +2017,7 @@ _e_comp_wl_subcompositor_cb_bind(struct wl_client *client, void *data, uint32_t 
         return;
      }
 
-   wl_resource_set_implementation(res, &_e_subcomp_interface, comp, NULL);
+   wl_resource_set_implementation(res, &_e_subcomp_interface, e_comp, NULL);
 
    /* TODO: add handlers for client iconify/uniconify */
 }
@@ -2126,7 +2113,7 @@ _e_comp_wl_client_cb_del(void *data EINA_UNUSED, E_Client *ec)
 
    E_FREE(ec->comp_data);
 
-   _e_comp_wl_focus_check(e_comp);
+   _e_comp_wl_focus_check();
 }
 
 static void
@@ -2266,7 +2253,7 @@ _e_comp_wl_client_cb_focus_unset(void *data EINA_UNUSED, E_Client *ec)
                                               0, 0, 0);
      }
 
-   _e_comp_wl_focus_check(e_comp);
+   _e_comp_wl_focus_check();
 
    if (e_comp->wl_comp_data->kbd.focus == ec->comp_data->surface)
      e_comp->wl_comp_data->kbd.focus = NULL;
@@ -2379,17 +2366,16 @@ _e_comp_wl_cb_output_bind(struct wl_client *client, void *data, uint32_t version
 static Eina_Bool
 _e_comp_wl_compositor_create(void)
 {
-   E_Comp *comp;
    E_Comp_Data *cdata;
    const char *name;
    int fd = 0;
 
    /* check for existing compositor. create if needed */
-   if (!(comp = e_comp))
+   if (!e_comp)
      {
-        comp = e_comp_new();
-        comp->comp_type = E_PIXMAP_TYPE_WL;
-        E_OBJECT_DEL_SET(comp, _e_comp_wl_compositor_cb_del);
+        e_comp_new();
+        e_comp->comp_type = E_PIXMAP_TYPE_WL;
+        E_OBJECT_DEL_SET(e_comp, _e_comp_wl_compositor_cb_del);
      }
 
    /* create new compositor data */
@@ -2400,7 +2386,7 @@ _e_comp_wl_compositor_create(void)
      }
 
    /* set compositor wayland data */
-   comp->wl_comp_data = cdata;
+   e_comp->wl_comp_data = cdata;
 
    /* set wayland log handler */
    wl_log_set_handler_server(_e_comp_wl_log_cb_print);
@@ -2432,7 +2418,7 @@ _e_comp_wl_compositor_create(void)
 
    /* try to add compositor to wayland globals */
    if (!wl_global_create(cdata->wl.disp, &wl_compositor_interface,
-                         COMPOSITOR_VERSION, comp,
+                         COMPOSITOR_VERSION, e_comp,
                          _e_comp_wl_compositor_cb_bind))
      {
         ERR("Could not add compositor to wayland globals: %m");
@@ -2441,7 +2427,7 @@ _e_comp_wl_compositor_create(void)
 
    /* try to add subcompositor to wayland globals */
    if (!wl_global_create(cdata->wl.disp, &wl_subcompositor_interface, 1,
-                         comp, _e_comp_wl_subcompositor_cb_bind))
+                         e_comp, _e_comp_wl_subcompositor_cb_bind))
      {
         ERR("Could not add subcompositor to wayland globals: %m");
         goto comp_global_err;
@@ -2523,7 +2509,7 @@ _e_comp_wl_compositor_create(void)
    /* setup module idler to load shell mmodule */
    ecore_idler_add(_e_comp_wl_cb_module_idle, cdata);
 
-   if (comp->comp_type == E_PIXMAP_TYPE_X)
+   if (e_comp->comp_type == E_PIXMAP_TYPE_X)
      {
         e_comp_wl_input_pointer_enabled_set(cdata, EINA_TRUE);
         e_comp_wl_input_keyboard_enabled_set(cdata, EINA_TRUE);
@@ -2629,9 +2615,9 @@ e_comp_wl_init(void)
  * @returns the corresponding Wayland signal
  */
 EAPI struct wl_signal
-e_comp_wl_surface_create_signal_get(E_Comp *comp)
+e_comp_wl_surface_create_signal_get(void)
 {
-   return comp->wl_comp_data->signals.surface.create;
+   return e_comp->wl_comp_data->signals.surface.create;
 }
 
 /* internal functions */
