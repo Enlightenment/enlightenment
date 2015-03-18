@@ -10895,7 +10895,7 @@ _e_fm2_file_properties(void *data, E_Menu *m __UNUSED__, E_Menu_Item *mi __UNUSE
    if ((ic->entry_dialog) || (ic->entry_widget)) return;
 
    if (ic->prop_dialog) e_object_del(E_OBJECT(ic->prop_dialog));
-   ic->prop_dialog = e_fm_prop_file(NULL, ic);
+   ic->prop_dialog = e_fm_prop_file(ic);
    E_OBJECT(ic->prop_dialog)->data = ic;
    e_object_del_attach_func_set(E_OBJECT(ic->prop_dialog), _e_fm2_file_properties_delete_cb);
 }

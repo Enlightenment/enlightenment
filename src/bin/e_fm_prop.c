@@ -94,7 +94,7 @@ struct _E_Config_Dialog_Data
 
 /* a nice easy setup function that does the dirty work */
 EAPI E_Config_Dialog *
-e_fm_prop_file(E_Comp *c EINA_UNUSED, E_Fm2_Icon *ic)
+e_fm_prop_file(E_Fm2_Icon *ic)
 {
    E_Config_Dialog *cfd;
    E_Config_Dialog_View *v;
