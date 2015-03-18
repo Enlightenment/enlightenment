@@ -45,7 +45,7 @@ _e_wid_signal_cb1(void *data, Evas_Object *obj __UNUSED__, const char *emission 
    if (!wd->show_color_dialog) return;
    if (!wd->dia)
      {
-        wd->dia = e_color_dialog_new(NULL, wd->color, wd->alpha_enabled);
+        wd->dia = e_color_dialog_new(wd->color, wd->alpha_enabled);
         e_color_dialog_select_callback_set(wd->dia, _e_wid_color_select_cb, wd);
         e_color_dialog_cancel_callback_set(wd->dia, _e_wid_color_cancel_cb, wd);
         e_color_dialog_change_callback_set(wd->dia, _e_wid_color_change_cb, wd);

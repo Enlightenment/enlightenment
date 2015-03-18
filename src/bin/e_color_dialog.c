@@ -14,7 +14,7 @@ static void _e_color_dialog_cb_csel_change(void *data, Evas_Object *obj);
  * @param alpha_enabled if set, uses alpha and let user edit it.
  */
 E_Color_Dialog *
-e_color_dialog_new(E_Comp *c EINA_UNUSED, const E_Color *color, Eina_Bool alpha_enabled)
+e_color_dialog_new(const E_Color *color, Eina_Bool alpha_enabled)
 {
    E_Color_Dialog *dia;
    Evas_Object *o;

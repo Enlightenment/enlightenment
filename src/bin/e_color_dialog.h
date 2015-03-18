@@ -24,7 +24,7 @@ struct _E_Color_Dialog
    void  *change_data;
 };
 
-EAPI E_Color_Dialog  *e_color_dialog_new                (E_Comp *c, const E_Color *initial_color, Eina_Bool alpha_enabled);
+EAPI E_Color_Dialog  *e_color_dialog_new                (const E_Color *initial_color, Eina_Bool alpha_enabled);
 EAPI void             e_color_dialog_show               (E_Color_Dialog *dia);
 EAPI void             e_color_dialog_title_set          (E_Color_Dialog *dia, const char *title);
 

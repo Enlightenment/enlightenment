@@ -678,7 +678,7 @@ _e_test_internal(void)
 {
    E_Color_Dialog *d;
 
-   d = e_color_dialog_new(c, NULL, EINA_FALSE);
+   d = e_color_dialog_new(NULL, EINA_FALSE);
    e_color_dialog_show(d);
    e_color_dialog_select_callback_set(d, _e_test_cb_ok, NULL);
 }
