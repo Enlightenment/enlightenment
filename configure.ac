@@ -943,7 +943,6 @@ AC_E_OPTIONAL_MODULE([gadman], true)
 AC_E_OPTIONAL_MODULE([mixer], true, [CHECK_MODULE_MIXER])
 AC_E_OPTIONAL_MODULE([connman], true, [CHECK_MODULE_CONNMAN])
 AC_E_OPTIONAL_MODULE([bluez4], true, [CHECK_MODULE_BLUEZ4])
-#AC_E_OPTIONAL_MODULE([illume2], true)
 AC_E_OPTIONAL_MODULE([syscon], true)
 AC_E_OPTIONAL_MODULE([everything], true)
 AC_E_OPTIONAL_MODULE([systray], true)
@@ -1102,17 +1101,6 @@ doc/Doxyfile
 doc/e.dox
 $po_makefile_in
 ])
-#src/modules/access/module.desktop
-#src/modules/illume2/doc/illume.dox
-#src/modules/illume2/module.desktop
-#src/modules/illume-home/module.desktop
-#src/modules/illume-home-toggle/module.desktop
-#src/modules/illume-softkey/module.desktop
-#src/modules/illume-keyboard/module.desktop
-#src/modules/illume-indicator/module.desktop
-#src/modules/illume-kbd-toggle/module.desktop
-#src/modules/illume-mode-toggle/module.desktop
-#src/modules/illume-bluetooth/module.desktop
 
 # report
 txt_strip() {
