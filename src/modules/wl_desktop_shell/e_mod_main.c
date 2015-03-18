@@ -1450,17 +1450,16 @@ EAPI E_Module_Api e_modapi = { E_MODULE_API_VERSION, "Wl_Desktop_Shell" };
 EAPI void *
 e_modapi_init(E_Module *m)
 {
-   E_Comp *comp;
    E_Comp_Data *cdata;
 
    /* try to get the current compositor */
-   if (!(comp = e_comp)) return NULL;
+   if (!e_comp) return NULL;
 
    /* make sure it's a wayland compositor */
-   /* if (comp->comp_type != E_PIXMAP_TYPE_WL) return NULL; */
+   /* if (e_comp->comp_type != E_PIXMAP_TYPE_WL) return NULL; */
 
    /* try to get the compositor data */
-   if (!(cdata = comp->wl_comp_data)) return NULL;
+   if (!(cdata = e_comp->wl_comp_data)) return NULL;
 
    /* try to create global shell interface */
    if (!wl_global_create(cdata->wl.disp, &wl_shell_interface, 1,
