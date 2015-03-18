@@ -53,7 +53,7 @@ e_int_config_apps_add(Evas_Object *parent EINA_UNUSED, const char *params __UNUS
 {
    E_Desktop_Edit *ed;
 
-   if (!(ed = e_desktop_edit(NULL, NULL))) return NULL;
+   if (!(ed = e_desktop_edit(NULL))) return NULL;
    return ed->cfd;
 }
 

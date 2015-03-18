@@ -182,7 +182,7 @@ _fill_apps_list(E_Config_Dialog_Data *cfdata, Evas_Object *il)
 static void
 _btn_cb_add(void *data __UNUSED__, void *data2 __UNUSED__)
 {
-   e_desktop_edit(NULL, NULL);   
+   e_desktop_edit(NULL);   
 }
 
 static void

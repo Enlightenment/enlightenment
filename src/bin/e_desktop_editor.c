@@ -38,7 +38,7 @@ struct _E_Config_Dialog_Data
 
 /* local subsystem functions */
 
-static int          _e_desktop_edit_view_create(E_Desktop_Edit *editor, E_Comp *c);
+static int          _e_desktop_edit_view_create(E_Desktop_Edit *editor);
 static void         _e_desktop_edit_free(E_Desktop_Edit *editor);
 static void        *_e_desktop_edit_create_data(E_Config_Dialog *cfd);
 static void         _e_desktop_edit_free_data(E_Config_Dialog *cfd, E_Config_Dialog_Data *data);
@@ -184,7 +184,7 @@ e_desktop_client_create(E_Client *ec)
 }
 
 EAPI E_Desktop_Edit *
-e_desktop_border_edit(E_Comp *c, E_Client *ec)
+e_desktop_border_edit(E_Client *ec)
 {
    E_Desktop_Edit *editor;
    int new_desktop = 0;
@@ -217,7 +217,7 @@ e_desktop_border_edit(E_Comp *c, E_Client *ec)
                              "change."));
      }
 #endif
-   if (!_e_desktop_edit_view_create(editor, c))
+   if (!_e_desktop_edit_view_create(editor))
      {
         e_object_del(E_OBJECT(editor));
         editor = NULL;
@@ -229,14 +229,14 @@ e_desktop_border_edit(E_Comp *c, E_Client *ec)
 }
 
 EAPI E_Desktop_Edit *
-e_desktop_edit(E_Comp *c, Efreet_Desktop *desktop)
+e_desktop_edit(Efreet_Desktop *desktop)
 {
    E_Desktop_Edit *editor;
 
    editor = E_OBJECT_ALLOC(E_Desktop_Edit, E_DESKTOP_EDIT_TYPE, _e_desktop_edit_free);
    if (!editor) return NULL;
    if (desktop) editor->desktop = desktop;
-   if (!_e_desktop_edit_view_create(editor, c))
+   if (!_e_desktop_edit_view_create(editor))
      {
         e_object_del(E_OBJECT(editor));
         editor = NULL;
@@ -245,7 +245,7 @@ e_desktop_edit(E_Comp *c, Efreet_Desktop *desktop)
 }
 
 static int
-_e_desktop_edit_view_create(E_Desktop_Edit *editor, E_Comp *c EINA_UNUSED)
+_e_desktop_edit_view_create(E_Desktop_Edit *editor)
 {
    E_Config_Dialog_View *v;
 

@@ -10883,7 +10883,7 @@ _e_fm2_file_application_properties(void *data, E_Menu *m __UNUSED__, E_Menu_Item
      return;
    desktop = efreet_desktop_get(buf);
 
-   e_desktop_edit(NULL, desktop);
+   e_desktop_edit(desktop);
 }
 
 static void

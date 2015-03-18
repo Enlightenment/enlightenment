@@ -607,7 +607,7 @@ _e_client_menu_cb_icon_edit(void *data, E_Menu *m EINA_UNUSED, E_Menu_Item *mi _
    E_Client *ec;
 
    ec = data;
-   e_desktop_border_edit(e_comp, ec);
+   e_desktop_border_edit(ec);
 }
 
 static void

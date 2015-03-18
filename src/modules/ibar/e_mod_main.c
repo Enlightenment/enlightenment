@@ -1034,7 +1034,7 @@ _ibar_cb_menu_icon_properties(void *data, E_Menu *m __UNUSED__, E_Menu_Item *mi 
    IBar_Icon *ic;
 
    ic = data;
-   e_desktop_edit(e_comp, ic->app);
+   e_desktop_edit(ic->app);
 }
 
 static void
@@ -2073,7 +2073,7 @@ _ibar_inst_cb_drop(void *data, const char *type, void *event_info)
           {
              app = e_desktop_client_create(ec);
              efreet_desktop_save(app);
-             e_desktop_edit(NULL, app);
+             e_desktop_edit(app);
           }
      }
    else if (!strcmp(type, "text/uri-list"))

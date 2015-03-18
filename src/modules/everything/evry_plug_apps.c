@@ -933,7 +933,7 @@ _edit_app_action(Evry_Action *act)
         desktop->exec = strdup(app->file);
      }
 
-   e_desktop_edit(NULL, desktop);
+   e_desktop_edit(desktop);
 
    return 1;
 }
@@ -1010,7 +1010,7 @@ _new_app_action(Evry_Action *act)
           desktop->mime_types = eina_list_clone(app->desktop->mime_types);
      }
    if (desktop)
-     e_desktop_edit(NULL, desktop);
+     e_desktop_edit(desktop);
 
    return 1;
 }
