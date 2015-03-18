@@ -2331,7 +2331,7 @@ e_client_idler_before(void)
      }
 
    if (_e_client_layout_cb)
-     _e_client_layout_cb(e_comp);
+     _e_client_layout_cb();
 
    // pass 3 - hide windows needing hide and eval (main eval)
    E_CLIENT_FOREACH(ec)

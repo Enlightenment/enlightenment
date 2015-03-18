@@ -169,7 +169,7 @@ typedef enum _E_Client_Hook_Point
 
 typedef void (*E_Client_Move_Intercept_Cb)(E_Client *, int x, int y);
 typedef void (*E_Client_Hook_Cb)(void *data, E_Client *ec);
-typedef void (*E_Client_Layout_Cb)(void * /* E_Comp */); //< can't use real type because of include order
+typedef void (*E_Client_Layout_Cb)(void);
 #else
 
 #ifndef HAVE_WAYLAND_ONLY
