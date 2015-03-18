@@ -4124,7 +4124,7 @@ _e_comp_x_hook_client_redirect(void *d EINA_UNUSED, E_Client *ec)
    else if (e_comp->nocomp)
      {
         /* first window */
-        e_comp_x_nocomp_end(e_comp);
+        e_comp_x_nocomp_end();
         ecore_x_window_reparent(_e_comp_x_client_window_get(ec), e_comp->man->root, ec->client.x, ec->client.y);
         _e_comp_x_client_stack(ec);
      }
@@ -4887,12 +4887,12 @@ _e_comp_x_manage_windows(E_Comp *c)
 }
 
 static void
-_e_comp_x_bindings_grab_cb(E_Comp *c)
+_e_comp_x_bindings_grab_cb(void)
 {
    Eina_List *l;
    E_Client *ec;
 
-   EINA_LIST_FOREACH(c->clients, l, ec)
+   EINA_LIST_FOREACH(e_comp->clients, l, ec)
      {
         if (e_client_util_ignored_get(ec)) continue;
         _e_comp_x_focus_setup(ec);
@@ -4902,12 +4902,12 @@ _e_comp_x_bindings_grab_cb(E_Comp *c)
 }
 
 static void
-_e_comp_x_bindings_ungrab_cb(E_Comp *c)
+_e_comp_x_bindings_ungrab_cb(void)
 {
    Eina_List *l;
    E_Client *ec;
 
-   EINA_LIST_FOREACH(c->clients, l, ec)
+   EINA_LIST_FOREACH(e_comp->clients, l, ec)
      {
         if (e_client_util_ignored_get(ec)) continue;
         _e_comp_x_focus_setdown(ec);
@@ -4917,9 +4917,9 @@ _e_comp_x_bindings_ungrab_cb(E_Comp *c)
 }
 
 static void
-_e_comp_x_grab_cb(E_Comp *c)
+_e_comp_x_grab_cb(void)
 {
-   if (!c->grabbed)
+   if (!e_comp->grabbed)
      {
         ecore_x_grab();
         ecore_x_sync();
@@ -5124,9 +5124,9 @@ _e_comp_x_setup(E_Comp *c, Ecore_X_Window root, int w, int h)
 
    ecore_evas_callback_resize_set(c->ee, _e_comp_x_ee_resize);
    ecore_evas_data_set(c->ee, "comp", c);
-   c->grab_cb = (Ecore_Cb)_e_comp_x_grab_cb;
-   c->bindings_grab_cb = (Ecore_Cb)_e_comp_x_bindings_grab_cb;
-   c->bindings_ungrab_cb = (Ecore_Cb)_e_comp_x_bindings_ungrab_cb;
+   c->grab_cb = _e_comp_x_grab_cb;
+   c->bindings_grab_cb = _e_comp_x_bindings_grab_cb;
+   c->bindings_ungrab_cb = _e_comp_x_bindings_ungrab_cb;
 
    if (!e_comp_canvas_init()) return EINA_FALSE;
 
@@ -5379,10 +5379,10 @@ e_comp_x_shutdown(void)
 }
 
 EINTERN void
-e_comp_x_nocomp_end(E_Comp *comp)
+e_comp_x_nocomp_end(void)
 {
-   comp->nocomp = 0;
-   ecore_x_window_show(comp->win);
-   ecore_x_composite_redirect_subwindows(comp->man->root, ECORE_X_COMPOSITE_UPDATE_MANUAL);
-   _e_comp_x_focus_check(comp);
+   e_comp->nocomp = 0;
+   ecore_x_window_show(e_comp->win);
+   ecore_x_composite_redirect_subwindows(e_comp->man->root, ECORE_X_COMPOSITE_UPDATE_MANUAL);
+   _e_comp_x_focus_check(e_comp);
 }

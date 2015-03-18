@@ -167,7 +167,7 @@ _e_comp_visible_object_is_above(Evas_Object *obj, Evas_Coord x, Evas_Coord y, Ev
 }
 
 static E_Client *
-_e_comp_fullscreen_check(E_Comp *c)
+_e_comp_fullscreen_check(void)
 {
    E_Client *ec;
 
@@ -185,7 +185,7 @@ _e_comp_fullscreen_check(E_Comp *c)
         while (o)
           {
              if (_e_comp_visible_object_is_above
-                 (o, 0, 0, c->man->w, c->man->h)) return NULL;
+                 (o, 0, 0, e_comp->man->w, e_comp->man->h)) return NULL;
              o = evas_object_smart_parent_get(o);
           }
         return ec;
@@ -194,63 +194,63 @@ _e_comp_fullscreen_check(E_Comp *c)
 }
 
 static void
-_e_comp_fps_update(E_Comp *c)
+_e_comp_fps_update(void)
 {
    if (conf->fps_show)
      {
-        if (c->fps_bg) return;
+        if (e_comp->fps_bg) return;
 
-        c->fps_bg = evas_object_rectangle_add(c->evas);
-        evas_object_color_set(c->fps_bg, 0, 0, 0, 128);
-        evas_object_layer_set(c->fps_bg, E_LAYER_MAX);
-        evas_object_name_set(c->fps_bg, "c->fps_bg");
-        evas_object_lower(c->fps_bg);
-        evas_object_show(c->fps_bg);
+        e_comp->fps_bg = evas_object_rectangle_add(e_comp->evas);
+        evas_object_color_set(e_comp->fps_bg, 0, 0, 0, 128);
+        evas_object_layer_set(e_comp->fps_bg, E_LAYER_MAX);
+        evas_object_name_set(e_comp->fps_bg, "e_comp->fps_bg");
+        evas_object_lower(e_comp->fps_bg);
+        evas_object_show(e_comp->fps_bg);
 
-        c->fps_fg = evas_object_text_add(c->evas);
-        evas_object_text_font_set(c->fps_fg, "Sans", 10);
-        evas_object_text_text_set(c->fps_fg, "???");
-        evas_object_color_set(c->fps_fg, 255, 255, 255, 255);
-        evas_object_layer_set(c->fps_fg, E_LAYER_MAX);
-        evas_object_name_set(c->fps_bg, "c->fps_fg");
-        evas_object_stack_above(c->fps_fg, c->fps_bg);
-        evas_object_show(c->fps_fg);
+        e_comp->fps_fg = evas_object_text_add(e_comp->evas);
+        evas_object_text_font_set(e_comp->fps_fg, "Sans", 10);
+        evas_object_text_text_set(e_comp->fps_fg, "???");
+        evas_object_color_set(e_comp->fps_fg, 255, 255, 255, 255);
+        evas_object_layer_set(e_comp->fps_fg, E_LAYER_MAX);
+        evas_object_name_set(e_comp->fps_bg, "e_comp->fps_fg");
+        evas_object_stack_above(e_comp->fps_fg, e_comp->fps_bg);
+        evas_object_show(e_comp->fps_fg);
      }
    else
      {
-        E_FREE_FUNC(c->fps_fg, evas_object_del);
-        E_FREE_FUNC(c->fps_bg, evas_object_del);
+        E_FREE_FUNC(e_comp->fps_fg, evas_object_del);
+        E_FREE_FUNC(e_comp->fps_bg, evas_object_del);
      }
 }
 
 static void
-_e_comp_cb_nocomp_begin(E_Comp *c)
+_e_comp_cb_nocomp_begin(void)
 {
    E_Client *ec, *ecf;
 
-   if (c->nocomp) return;
+   if (e_comp->nocomp) return;
 
-   E_FREE_FUNC(c->nocomp_delay_timer, ecore_timer_del);
+   E_FREE_FUNC(e_comp->nocomp_delay_timer, ecore_timer_del);
 
-   ecf = _e_comp_fullscreen_check(c);
+   ecf = _e_comp_fullscreen_check();
    if (!ecf) return;
-   c->nocomp_ec = ecf;
+   e_comp->nocomp_ec = ecf;
    E_CLIENT_FOREACH(ec)
      if (ec != ecf) e_client_redirected_set(ec, 0);
 
    INF("NOCOMP %p: frame %p", ecf, ecf->frame);
-   c->nocomp = 1;
+   e_comp->nocomp = 1;
 
    evas_object_raise(ecf->frame);
    e_client_redirected_set(ecf, 0);
 
-   //ecore_evas_manual_render_set(c->ee, EINA_TRUE);
-   ecore_evas_hide(c->ee);
+   //ecore_evas_manual_render_set(e_comp->ee, EINA_TRUE);
+   ecore_evas_hide(e_comp->ee);
    edje_file_cache_flush();
    edje_collection_cache_flush();
-   evas_image_cache_flush(c->evas);
-   evas_font_cache_flush(c->evas);
-   evas_render_dump(c->evas);
+   evas_image_cache_flush(e_comp->evas);
+   evas_font_cache_flush(e_comp->evas);
+   evas_render_dump(e_comp->evas);
 
    DBG("JOB2...");
    e_comp_render_queue();
@@ -259,15 +259,15 @@ _e_comp_cb_nocomp_begin(E_Comp *c)
 }
 
 static void
-_e_comp_cb_nocomp_end(E_Comp *c)
+_e_comp_cb_nocomp_end(void)
 {
    E_Client *ec;
 
-   if (!c->nocomp) return;
+   if (!e_comp->nocomp) return;
 
    INF("COMP RESUME!");
-   //ecore_evas_manual_render_set(c->ee, EINA_FALSE);
-   ecore_evas_show(c->ee);
+   //ecore_evas_manual_render_set(e_comp->ee, EINA_FALSE);
+   ecore_evas_show(e_comp->ee);
    E_CLIENT_FOREACH(ec)
      {
         e_client_redirected_set(ec, 1);
@@ -275,7 +275,7 @@ _e_comp_cb_nocomp_end(E_Comp *c)
           e_comp_object_damage(ec->frame, 0, 0, ec->w, ec->h);
      }
 #ifndef HAVE_WAYLAND_ONLY
-   e_comp_x_nocomp_end(c);
+   e_comp_x_nocomp_end();
 #endif
    e_comp_render_queue();
    e_comp_shape_queue_block(0);
@@ -283,15 +283,13 @@ _e_comp_cb_nocomp_end(E_Comp *c)
 }
 
 static Eina_Bool
-_e_comp_cb_nocomp_begin_timeout(void *data)
+_e_comp_cb_nocomp_begin_timeout(void *data EINA_UNUSED)
 {
-   E_Comp *c = data;
-
-   c->nocomp_delay_timer = NULL;
-   if (c->nocomp_override == 0)
+   e_comp->nocomp_delay_timer = NULL;
+   if (e_comp->nocomp_override == 0)
      {
-        if (_e_comp_fullscreen_check(c)) c->nocomp_want = 1;
-        _e_comp_cb_nocomp_begin(c);
+        if (_e_comp_fullscreen_check()) e_comp->nocomp_want = 1;
+        _e_comp_cb_nocomp_begin();
      }
    return EINA_FALSE;
 }
@@ -340,46 +338,46 @@ _e_comp_client_update(E_Client *ec)
 }
 
 static void
-_e_comp_nocomp_end(E_Comp *c)
+_e_comp_nocomp_end(void)
 {
-   c->nocomp_want = 0;
-   E_FREE_FUNC(c->nocomp_delay_timer, ecore_timer_del);
-   _e_comp_cb_nocomp_end(c);
-   c->nocomp_ec = NULL;
+   e_comp->nocomp_want = 0;
+   E_FREE_FUNC(e_comp->nocomp_delay_timer, ecore_timer_del);
+   _e_comp_cb_nocomp_end();
+   e_comp->nocomp_ec = NULL;
 }
 
 static Eina_Bool
-_e_comp_cb_update(E_Comp *c)
+_e_comp_cb_update(void)
 {
    E_Client *ec;
    Eina_List *l;
    //   static int doframeinfo = -1;
 
-   if (!c) return EINA_FALSE;
-   if (c->update_job)
-     c->update_job = NULL;
+   if (!e_comp) return EINA_FALSE;
+   if (e_comp->update_job)
+     e_comp->update_job = NULL;
    else
-     ecore_animator_freeze(c->render_animator);
+     ecore_animator_freeze(e_comp->render_animator);
    DBG("UPDATE ALL");
-   if (c->nocomp) goto nocomp;
-   if (conf->grab && (!c->grabbed))
+   if (e_comp->nocomp) goto nocomp;
+   if (conf->grab && (!e_comp->grabbed))
      {
-        if (c->grab_cb) c->grab_cb(c);
-        c->grabbed = 1;
+        if (e_comp->grab_cb) e_comp->grab_cb();
+        e_comp->grabbed = 1;
      }
-   l = c->updates;
-   c->updates = NULL;
+   l = e_comp->updates;
+   e_comp->updates = NULL;
    EINA_LIST_FREE(l, ec)
      {
         /* clear update flag */
         e_comp_object_render_update_del(ec->frame);
         if (_e_comp_client_update(ec))
           {
-             c->post_updates = eina_list_append(c->post_updates, ec);
+             e_comp->post_updates = eina_list_append(e_comp->post_updates, ec);
              e_object_ref(E_OBJECT(ec));
           }
      }
-   _e_comp_fps_update(c);
+   _e_comp_fps_update();
    if (conf->fps_show)
      {
         char buf[128];
@@ -393,21 +391,21 @@ _e_comp_cb_update(E_Comp *c)
           conf->fps_average_range = 30;
         else if (conf->fps_average_range > 120)
           conf->fps_average_range = 120;
-        dt = t - c->frametimes[conf->fps_average_range - 1];
+        dt = t - e_comp->frametimes[conf->fps_average_range - 1];
         if (dt > 0.0) fps = (double)conf->fps_average_range / dt;
         else fps = 0.0;
         if (fps > 0.0) snprintf(buf, sizeof(buf), "FPS: %1.1f", fps);
         else snprintf(buf, sizeof(buf), "N/A");
         for (i = 121; i >= 1; i--)
-          c->frametimes[i] = c->frametimes[i - 1];
-        c->frametimes[0] = t;
-        c->frameskip++;
-        if (c->frameskip >= conf->fps_average_range)
+          e_comp->frametimes[i] = e_comp->frametimes[i - 1];
+        e_comp->frametimes[0] = t;
+        e_comp->frameskip++;
+        if (e_comp->frameskip >= conf->fps_average_range)
           {
-             c->frameskip = 0;
-             evas_object_text_text_set(c->fps_fg, buf);
+             e_comp->frameskip = 0;
+             evas_object_text_text_set(e_comp->fps_fg, buf);
           }
-        evas_object_geometry_get(c->fps_fg, NULL, NULL, &w, &h);
+        evas_object_geometry_get(e_comp->fps_fg, NULL, NULL, &w, &h);
         w += 8;
         h += 8;
         z = e_zone_current_get();
@@ -435,23 +433,23 @@ _e_comp_cb_update(E_Comp *c)
                   break;
                }
           }
-        evas_object_move(c->fps_bg, x, y);
-        evas_object_resize(c->fps_bg, w, h);
-        evas_object_move(c->fps_fg, x + 4, y + 4);
+        evas_object_move(e_comp->fps_bg, x, y);
+        evas_object_resize(e_comp->fps_bg, w, h);
+        evas_object_move(e_comp->fps_fg, x + 4, y + 4);
      }
    if (conf->lock_fps)
      {
         DBG("MANUAL RENDER...");
-        //        if (!c->nocomp) ecore_evas_manual_render(c->ee);
+        //        if (!e_comp->nocomp) ecore_evas_manual_render(e_comp->ee);
      }
 
-   if (conf->grab && c->grabbed)
+   if (conf->grab && e_comp->grabbed)
      {
-        if (c->grab_cb) c->grab_cb(c);
-        c->grabbed = 0;
+        if (e_comp->grab_cb) e_comp->grab_cb();
+        e_comp->grabbed = 0;
      }
-   if (c->updates && (!c->update_job))
-     ecore_animator_thaw(c->render_animator);
+   if (e_comp->updates && (!e_comp->update_job))
+     ecore_animator_thaw(e_comp->render_animator);
    /*
       if (doframeinfo == -1)
       {
@@ -477,56 +475,56 @@ _e_comp_cb_update(E_Comp *c)
       }
     */
 nocomp:
-   ec = _e_comp_fullscreen_check(c);
+   ec = _e_comp_fullscreen_check();
    if (ec)
      {
         if (conf->nocomp_fs)
           {
-             if (c->nocomp && c->nocomp_ec)
+             if (e_comp->nocomp && e_comp->nocomp_ec)
                {
                   E_Client *nec = NULL;
                   for (ec = e_client_top_get(), nec = e_client_below_get(ec);
                        (ec && nec) && (ec != nec); ec = nec, nec = e_client_below_get(ec))
                     {
-                       if (ec == c->nocomp_ec) break;
-                       if (evas_object_layer_get(ec->frame) < evas_object_layer_get(c->nocomp_ec->frame)) break;
+                       if (ec == e_comp->nocomp_ec) break;
+                       if (evas_object_layer_get(ec->frame) < evas_object_layer_get(e_comp->nocomp_ec->frame)) break;
                        if (e_client_is_stacking(ec)) continue;
                        if (!ec->visible) continue;
                        if (evas_object_data_get(ec->frame, "comp_skip")) continue;
                        if (e_object_is_del(E_OBJECT(ec)) || (!e_client_util_desk_visible(ec, e_desk_current_get(ec->zone)))) continue;
                        if (ec->override || (e_config->allow_above_fullscreen && (!e_config->mode.presentation)))
                          {
-                            _e_comp_nocomp_end(c);
+                            _e_comp_nocomp_end();
                             break;
                          }
                        else
-                         evas_object_stack_below(ec->frame, c->nocomp_ec->frame);
+                         evas_object_stack_below(ec->frame, e_comp->nocomp_ec->frame);
                     }
                }
-             else if ((!c->nocomp) && (!c->nocomp_override > 0))
+             else if ((!e_comp->nocomp) && (!e_comp->nocomp_override > 0))
                {
-                  if (!c->nocomp_delay_timer)
-                    c->nocomp_delay_timer = ecore_timer_add(1.0, _e_comp_cb_nocomp_begin_timeout, c);
+                  if (!e_comp->nocomp_delay_timer)
+                    e_comp->nocomp_delay_timer = ecore_timer_add(1.0, _e_comp_cb_nocomp_begin_timeout, NULL);
                }
           }
      }
    else
-     _e_comp_nocomp_end(c);
+     _e_comp_nocomp_end();
 
    return ECORE_CALLBACK_RENEW;
 }
 
 static void
-_e_comp_cb_job(void *data)
+_e_comp_cb_job(void *data EINA_UNUSED)
 {
    DBG("UPDATE ALL JOB...");
-   _e_comp_cb_update(data);
+   _e_comp_cb_update();
 }
 
 static Eina_Bool
-_e_comp_cb_animator(void *data)
+_e_comp_cb_animator(void *data EINA_UNUSED)
 {
-   return _e_comp_cb_update(data);
+   return _e_comp_cb_update();
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -534,12 +532,12 @@ _e_comp_cb_animator(void *data)
 
 #ifdef SHAPE_DEBUG
 static void
-_e_comp_shape_debug_rect(E_Comp *c, Eina_Rectangle *rect, E_Color *color)
+_e_comp_shape_debug_rect(Eina_Rectangle *rect, E_Color *color)
 {
    Evas_Object *o;
 
 #define COLOR_INCREMENT 30
-   o = evas_object_rectangle_add(c->evas);
+   o = evas_object_rectangle_add(e_comp->evas);
    if (color->r < 256 - COLOR_INCREMENT)
      evas_object_color_set(o, (color->r += COLOR_INCREMENT), 0, 0, 255);
    else if (color->g < 256 - COLOR_INCREMENT)
@@ -550,19 +548,19 @@ _e_comp_shape_debug_rect(E_Comp *c, Eina_Rectangle *rect, E_Color *color)
    evas_object_layer_set(o, E_LAYER_MENU - 1);
    evas_object_move(o, rect->x, rect->y);
    evas_object_resize(o, rect->w, rect->h);
-   c->debug_rects = eina_list_append(c->debug_rects, o);
+   e_comp->debug_rects = eina_list_append(e_comp->debug_rects, o);
    evas_object_show(o);
 }
 #endif
 
 static Eina_Bool
-_e_comp_shapes_update_object_checker_function_thingy(E_Comp *c, Evas_Object *o)
+_e_comp_shapes_update_object_checker_function_thingy(Evas_Object *o)
 {
    Eina_List *l;
    E_Zone *zone;
 
-   if (o == c->bg_blank_object) return EINA_TRUE;
-   EINA_LIST_FOREACH(c->zones, l, zone)
+   if (o == e_comp->bg_blank_object) return EINA_TRUE;
+   EINA_LIST_FOREACH(e_comp->zones, l, zone)
      {
         if ((o == zone->over) || (o == zone->base)) return EINA_TRUE;
         if ((o == zone->bg_object) || (o == zone->bg_event_object) ||
@@ -675,14 +673,14 @@ _e_comp_shapes_update_comp_client_shape_comp_helper(E_Client *ec, Eina_Tiler *tb
 }
 
 static void
-_e_comp_shapes_update_object_shape_comp_helper(E_Comp *c, Evas_Object *o, Eina_Tiler *tb)
+_e_comp_shapes_update_object_shape_comp_helper(Evas_Object *o, Eina_Tiler *tb)
 {
    int x, y, w, h;
 
    /* ignore hidden and pass-event objects */
    if ((!evas_object_visible_get(o)) || evas_object_pass_events_get(o) || evas_object_repeat_events_get(o)) return;
    /* ignore canvas objects */
-   if (_e_comp_shapes_update_object_checker_function_thingy(c, o)) return;
+   if (_e_comp_shapes_update_object_checker_function_thingy(o)) return;
    SHAPE_INF("OBJ: %p:%s", o, evas_object_name_get(o));
    evas_object_geometry_get(o, &x, &y, &w, &h);
    eina_tiler_rect_add(tb, &(Eina_Rectangle){x, y, w, h});
@@ -690,7 +688,7 @@ _e_comp_shapes_update_object_shape_comp_helper(E_Comp *c, Evas_Object *o, Eina_T
 }
 
 static void
-_e_comp_shapes_update_job(E_Comp *c)
+_e_comp_shapes_update_job(void *d EINA_UNUSED)
 {
    Eina_Tiler *tb;
    E_Client *ec;
@@ -707,11 +705,11 @@ _e_comp_shapes_update_job(E_Comp *c)
    INF("---------------------");
 #endif
 
-   E_FREE_LIST(c->debug_rects, evas_object_del);
-   tb = eina_tiler_new(c->man->w, c->man->h);
+   E_FREE_LIST(e_comp->debug_rects, evas_object_del);
+   tb = eina_tiler_new(e_comp->man->w, e_comp->man->h);
    eina_tiler_tile_size_set(tb, 1, 1);
    /* background */
-   eina_tiler_rect_add(tb, &(Eina_Rectangle){0, 0, c->man->w, c->man->h});
+   eina_tiler_rect_add(tb, &(Eina_Rectangle){0, 0, e_comp->man->w, e_comp->man->h});
 
    ec = e_client_bottom_get();
    if (ec) o = ec->frame;
@@ -722,7 +720,7 @@ _e_comp_shapes_update_job(E_Comp *c)
         layer = evas_object_layer_get(o);
         if (e_comp_canvas_client_layer_map(layer) == 9999) //not a client layer
           {
-             _e_comp_shapes_update_object_shape_comp_helper(c, o, tb);
+             _e_comp_shapes_update_object_shape_comp_helper(o, tb);
              continue;
           }
         ec = e_comp_object_client_get(o);
@@ -734,7 +732,7 @@ _e_comp_shapes_update_job(E_Comp *c)
                                                           );
 
         else
-          _e_comp_shapes_update_object_shape_comp_helper(c, o, tb);
+          _e_comp_shapes_update_object_shape_comp_helper(o, tb);
      }
 
    ti = eina_tiler_iterator_new(tb);
@@ -749,7 +747,7 @@ _e_comp_shapes_update_job(E_Comp *c)
 #ifdef SHAPE_DEBUG
         Eina_List *l;
 
-        _e_comp_shape_debug_rect(c, &exr[i - 1], &color);
+        _e_comp_shape_debug_rect(&exr[i - 1], &color);
         INF("%d,%d @ %dx%d", exr[i - 1].x, exr[i - 1].y, exr[i - 1].w, exr[i - 1].h);
         EINA_LIST_FOREACH(rl, l, r)
           {
@@ -760,7 +758,7 @@ _e_comp_shapes_update_job(E_Comp *c)
      }
 
 #ifndef HAVE_WAYLAND_ONLY
-   ecore_x_window_shape_input_rectangles_set(c->win, (Ecore_X_Rectangle*)exr, i);
+   ecore_x_window_shape_input_rectangles_set(e_comp->win, (Ecore_X_Rectangle*)exr, i);
 #endif
 
 #ifdef SHAPE_DEBUG
@@ -770,7 +768,7 @@ _e_comp_shapes_update_job(E_Comp *c)
    free(exr);
    eina_iterator_free(ti);
    eina_tiler_free(tb);
-   c->shape_job = NULL;
+   e_comp->shape_job = NULL;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -828,17 +826,15 @@ _e_comp_free(E_Comp *c)
 //////////////////////////////////////////////////////////////////////////
 
 static Eina_Bool
-_e_comp_override_expire(void *data)
+_e_comp_override_expire(void *data EINA_UNUSED)
 {
-   E_Comp *c = data;
+   e_comp->nocomp_override_timer = NULL;
+   e_comp->nocomp_override--;
 
-   c->nocomp_override_timer = NULL;
-   c->nocomp_override--;
-
-   if (c->nocomp_override <= 0)
+   if (e_comp->nocomp_override <= 0)
      {
-        c->nocomp_override = 0;
-        if (c->nocomp_want) _e_comp_cb_nocomp_begin(c);
+        e_comp->nocomp_override = 0;
+        if (e_comp->nocomp_want) _e_comp_cb_nocomp_begin();
      }
    return EINA_FALSE;
 }
@@ -1261,18 +1257,15 @@ e_comp_style_selector_create(Evas *evas, const char **source)
 EAPI E_Comp *
 e_comp_new(void)
 {
-   E_Comp *c;
-
    if (e_comp)
      CRI("CANNOT REPLACE EXISTING COMPOSITOR");
-   c = E_OBJECT_ALLOC(E_Comp, E_COMP_TYPE, _e_comp_free);
-   if (!c) return NULL;
+   e_comp = E_OBJECT_ALLOC(E_Comp, E_COMP_TYPE, _e_comp_free);
+   if (!e_comp) return NULL;
 
-   c->name = eina_stringshare_add(_("Compositor"));
-   c->render_animator = ecore_animator_add(_e_comp_cb_animator, c);
-   ecore_animator_freeze(c->render_animator);
-   e_comp = c;
-   return c;
+   e_comp->name = eina_stringshare_add(_("Compositor"));
+   e_comp->render_animator = ecore_animator_add(_e_comp_cb_animator, NULL);
+   ecore_animator_freeze(e_comp->render_animator);
+   return e_comp;
 }
 
 EAPI int
@@ -1310,11 +1303,8 @@ e_comp_shutdown(void)
 }
 
 EAPI void
-e_comp_render_queue()
+e_comp_render_queue(void)
 {
-   E_OBJECT_CHECK(e_comp);
-   E_OBJECT_TYPE_CHECK(e_comp, E_COMP_TYPE);
-
    if (conf->lock_fps)
      {
         ecore_animator_thaw(e_comp->render_animator);
@@ -1332,20 +1322,16 @@ e_comp_render_queue()
 }
 
 EAPI void
-e_comp_shape_queue()
+e_comp_shape_queue(void)
 {
-   EINA_SAFETY_ON_NULL_RETURN(e_comp);
-
    if (e_comp->comp_type != E_PIXMAP_TYPE_X) return;
    if (!e_comp->shape_job)
-     e_comp->shape_job = ecore_job_add((Ecore_Cb)_e_comp_shapes_update_job, e_comp);
+     e_comp->shape_job = ecore_job_add(_e_comp_shapes_update_job, NULL);
 }
 
 EAPI void
 e_comp_shape_queue_block(Eina_Bool block)
 {
-   EINA_SAFETY_ON_NULL_RETURN(e_comp);
-
    e_comp->shape_queue_blocked = !!block;
    if (block)
      E_FREE_FUNC(e_comp->shape_job, ecore_job_del);
@@ -1364,7 +1350,7 @@ e_comp_shadows_reset(void)
 {
    E_Client *ec;
 
-   _e_comp_fps_update(e_comp);
+   _e_comp_fps_update();
    E_LIST_FOREACH(e_comp->zones, e_comp_canvas_zone_update);
    E_CLIENT_FOREACH(ec)
      e_comp_object_frame_theme_set(ec->frame, E_COMP_OBJECT_FRAME_RESHADOW);
@@ -1446,7 +1432,7 @@ e_comp_override_del()
    if (e_comp->nocomp_override <= 0)
      {
         e_comp->nocomp_override = 0;
-        if (e_comp->nocomp_want) _e_comp_cb_nocomp_begin(e_comp);
+        if (e_comp->nocomp_want) _e_comp_cb_nocomp_begin();
      }
 }
 
@@ -1454,7 +1440,7 @@ EAPI void
 e_comp_override_add()
 {
    e_comp->nocomp_override++;
-   if ((e_comp->nocomp_override > 0) && (e_comp->nocomp)) _e_comp_cb_nocomp_end(e_comp);
+   if ((e_comp->nocomp_override > 0) && (e_comp->nocomp)) _e_comp_cb_nocomp_end();
 }
 
 #if 0
@@ -1493,14 +1479,13 @@ e_comp_find_by_window(Ecore_Window win)
 }
 
 EAPI void
-e_comp_override_timed_pop()
+e_comp_override_timed_pop(void)
 {
-   EINA_SAFETY_ON_NULL_RETURN(e_comp);
    if (e_comp->nocomp_override <= 0) return;
    if (e_comp->nocomp_override_timer)
      e_comp->nocomp_override--;
    else
-     e_comp->nocomp_override_timer = ecore_timer_add(1.0, _e_comp_override_expire, e_comp);
+     e_comp->nocomp_override_timer = ecore_timer_add(1.0, _e_comp_override_expire, NULL);
 }
 
 EAPI unsigned int
@@ -1601,14 +1586,14 @@ EAPI void
 e_comp_button_bindings_ungrab_all(void)
 {
    if (e_comp->bindings_ungrab_cb)
-     e_comp->bindings_ungrab_cb(e_comp);
+     e_comp->bindings_ungrab_cb();
 }
 
 EAPI void
 e_comp_button_bindings_grab_all(void)
 {
    if (e_comp->bindings_grab_cb)
-     e_comp->bindings_grab_cb(e_comp);
+     e_comp->bindings_grab_cb();
 }
 
 EAPI void
