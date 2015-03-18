@@ -17,9 +17,8 @@ _e_comp_canvas_event_compositor_resize_free(void *data EINA_UNUSED, void *event 
 ///////////////////////////////////
 
 static void
-_e_comp_canvas_cb_first_frame(void *data, Evas *e, void *event_info EINA_UNUSED)
+_e_comp_canvas_cb_first_frame(void *data EINA_UNUSED, Evas *e, void *event_info EINA_UNUSED)
 {
-   E_Comp *c = data;
    double now = ecore_time_get();
 
    switch (e_first_frame[0])
@@ -31,13 +30,12 @@ _e_comp_canvas_cb_first_frame(void *data, Evas *e, void *event_info EINA_UNUSED)
          break;
      }
 
-   evas_event_callback_del_full(e, EVAS_CALLBACK_RENDER_POST, _e_comp_canvas_cb_first_frame, c);
+   evas_event_callback_del_full(e, EVAS_CALLBACK_RENDER_POST, _e_comp_canvas_cb_first_frame, NULL);
 }
 
 static void
-_e_comp_canvas_render_post(void *data, Evas *e EINA_UNUSED, void *event_info EINA_UNUSED)
+_e_comp_canvas_render_post(void *data EINA_UNUSED, Evas *e EINA_UNUSED, void *event_info EINA_UNUSED)
 {
-   E_Comp *c = data;
    E_Client *ec;
    //Evas_Event_Render_Post *ev = event_info;
    //Eina_List *l;
@@ -48,7 +46,7 @@ _e_comp_canvas_render_post(void *data, Evas *e EINA_UNUSED, void *event_info EIN
         //EINA_LIST_FOREACH(ev->updated_area, l, r)
           //INF("POST RENDER: %d,%d %dx%d", r->x, r->y, r->w, r->h);
      //}
-   EINA_LIST_FREE(c->post_updates, ec)
+   EINA_LIST_FREE(e_comp->post_updates, ec)
      {
         //INF("POST %p", ec);
         if (!e_object_is_del(E_OBJECT(ec)))
@@ -60,7 +58,7 @@ _e_comp_canvas_render_post(void *data, Evas *e EINA_UNUSED, void *event_info EIN
 ///////////////////////////////////
 
 static void
-_e_comp_canvas_cb_mouse_in(E_Comp *c EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+_e_comp_canvas_cb_mouse_in(void *d EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    E_Client *ec;
 
@@ -70,21 +68,21 @@ _e_comp_canvas_cb_mouse_in(E_Comp *c EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Obje
 }
 
 static void
-_e_comp_canvas_cb_mouse_down(E_Comp *c EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info)
+_e_comp_canvas_cb_mouse_down(void *d EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info)
 {
    if (e_client_action_get()) return;
    e_bindings_mouse_down_evas_event_handle(E_BINDING_CONTEXT_COMPOSITOR, E_OBJECT(e_comp), event_info);
 }
 
 static void
-_e_comp_canvas_cb_mouse_up(E_Comp *c EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info)
+_e_comp_canvas_cb_mouse_up(void *d EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info)
 {
    if (e_client_action_get()) return;
    e_bindings_mouse_up_evas_event_handle(E_BINDING_CONTEXT_COMPOSITOR, E_OBJECT(e_comp), event_info);
 }
 
 static void
-_e_comp_canvas_cb_mouse_wheel(E_Comp *c EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info)
+_e_comp_canvas_cb_mouse_wheel(void *d EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info)
 {
    if (e_client_action_get()) return;
    e_bindings_wheel_evas_event_handle(E_BINDING_CONTEXT_COMPOSITOR, E_OBJECT(e_comp), event_info);
@@ -122,7 +120,7 @@ _e_comp_canvas_cb_zone_sort(const void *data1, const void *data2)
 
 
 EAPI Eina_Bool
-e_comp_canvas_init()
+e_comp_canvas_init(void)
 {
    Evas_Object *o;
    Eina_List *screens;
@@ -130,8 +128,7 @@ e_comp_canvas_init()
    e_comp->evas = ecore_evas_get(e_comp->ee);
 
    if (e_first_frame)
-     evas_event_callback_add(e_comp->evas, EVAS_CALLBACK_RENDER_POST, _e_comp_canvas_cb_first_frame, e_comp);
-   ecore_evas_data_set(e_comp->ee, "comp", e_comp);
+     evas_event_callback_add(e_comp->evas, EVAS_CALLBACK_RENDER_POST, _e_comp_canvas_cb_first_frame, NULL);
    o = evas_object_rectangle_add(e_comp->evas);
    e_comp->bg_blank_object = o;
    evas_object_layer_set(o, E_LAYER_BOTTOM);
@@ -139,11 +136,10 @@ e_comp_canvas_init()
    evas_object_resize(o, e_comp->man->w, e_comp->man->h);
    evas_object_color_set(o, 0, 0, 0, 255);
    evas_object_name_set(o, "comp->bg_blank_object");
-   evas_object_data_set(o, "e_comp", e_comp);
-   evas_object_event_callback_add(o, EVAS_CALLBACK_MOUSE_DOWN, (Evas_Object_Event_Cb)_e_comp_canvas_cb_mouse_down, e_comp);
-   evas_object_event_callback_add(o, EVAS_CALLBACK_MOUSE_UP, (Evas_Object_Event_Cb)_e_comp_canvas_cb_mouse_up, e_comp);
-   evas_object_event_callback_add(o, EVAS_CALLBACK_MOUSE_IN, (Evas_Object_Event_Cb)_e_comp_canvas_cb_mouse_in, e_comp);
-   evas_object_event_callback_add(o, EVAS_CALLBACK_MOUSE_WHEEL, (Evas_Object_Event_Cb)_e_comp_canvas_cb_mouse_wheel, e_comp);
+   evas_object_event_callback_add(o, EVAS_CALLBACK_MOUSE_DOWN, (Evas_Object_Event_Cb)_e_comp_canvas_cb_mouse_down, NULL);
+   evas_object_event_callback_add(o, EVAS_CALLBACK_MOUSE_UP, (Evas_Object_Event_Cb)_e_comp_canvas_cb_mouse_up, NULL);
+   evas_object_event_callback_add(o, EVAS_CALLBACK_MOUSE_IN, (Evas_Object_Event_Cb)_e_comp_canvas_cb_mouse_in, NULL);
+   evas_object_event_callback_add(o, EVAS_CALLBACK_MOUSE_WHEEL, (Evas_Object_Event_Cb)_e_comp_canvas_cb_mouse_wheel, NULL);
    evas_object_event_callback_add(o, EVAS_CALLBACK_DEL, _e_comp_canvas_cb_del, NULL);
    evas_object_show(o);
 
@@ -151,7 +147,7 @@ e_comp_canvas_init()
    //   ecore_evas_manual_render_set(e_comp->ee, conf->lock_fps);
    ecore_evas_show(e_comp->ee);
 
-   evas_event_callback_add(e_comp->evas, EVAS_CALLBACK_RENDER_POST, _e_comp_canvas_render_post, e_comp);
+   evas_event_callback_add(e_comp->evas, EVAS_CALLBACK_RENDER_POST, _e_comp_canvas_render_post, NULL);
 
    e_comp->ee_win = ecore_evas_window_get(e_comp->ee);
 
