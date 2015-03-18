@@ -1718,10 +1718,8 @@ _e_int_menus_shelves_pre_cb(void *data __UNUSED__, E_Menu *m)
    Eina_List *l, *shelves = NULL;
    E_Shelf *es;
    E_Zone *zone;
-   E_Comp *c;
 
    e_menu_pre_activate_callback_set(m, NULL, NULL);
-   c = e_comp;
    zone = e_zone_current_get();
 
    /* get the current clients */
@@ -1733,7 +1731,6 @@ _e_int_menus_shelves_pre_cb(void *data __UNUSED__, E_Menu *m)
 
         if (!es) continue;
         if (es->zone->num != zone->num) continue;
-        if (es->cfg->manager != (int)c->num) continue;
 
         if (es->name)
           name = es->name;
