@@ -349,7 +349,7 @@ _basic_create_widgets(E_Config_Dialog *cfd EINA_UNUSED, Evas *evas, E_Config_Dia
    cfdata->gui.context.o_zone = ob;
    e_widget_disabled_set(ob, 1);
    e_widget_frametable_object_append(of, ob, 1, 2, 1, 1, 1, 1, 1, 1);
-   ob = e_widget_radio_add(evas, _("Container"), E_BINDING_CONTEXT_COMPOSITOR, rg);
+   ob = e_widget_radio_add(evas, _("Compositor"), E_BINDING_CONTEXT_COMPOSITOR, rg);
    cfdata->gui.context.o_container = ob;
    e_widget_disabled_set(ob, 1);
    e_widget_frametable_object_append(of, ob, 2, 0, 1, 1, 1, 1, 1, 1);
