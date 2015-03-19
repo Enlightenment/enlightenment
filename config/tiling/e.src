@@ -603,7 +603,6 @@ group "E_Config" struct {
             }
             value "name" string: "shelf";
             value "id" int: 1;
-            value "manager" int: 0;
             value "zone" int: 0;
             value "layer" int: 250;
             value "orient" int: 6;
