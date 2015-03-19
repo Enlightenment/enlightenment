@@ -703,10 +703,10 @@ _grab_key_down_cb(void *data, int type EINA_UNUSED, void *event)
    bi->action = eina_stringshare_ref(_act_toggle);
    bi->params = eina_stringshare_ref(entry->id);
 
-   e_managers_keys_ungrab();
+   e_comp_canvas_keys_ungrab();
    e_bindings->key_bindings = eina_list_append(e_bindings->key_bindings, bi);
    e_bindings_key_add(bi->context, bi->key, bi->modifiers, bi->any_mod, bi->action, bi->params);
-   e_managers_keys_grab();
+   e_comp_canvas_keys_grab();
    e_config_save_queue();
    e_object_del(E_OBJECT(eg));
    return ECORE_CALLBACK_RENEW;

@@ -1351,9 +1351,7 @@ _e_actions_zone_get(E_Object *obj)
 {
    if (obj)
      {
-        if (obj->type == (int)E_MANAGER_TYPE)
-          return e_zone_current_get();
-        else if (obj->type == (int)E_COMP_TYPE)
+        if (obj->type == (int)E_COMP_TYPE)
           return e_zone_current_get();
         else if (obj->type == (int)E_ZONE_TYPE)
           return (E_Zone *)obj;
@@ -1650,20 +1648,10 @@ ACT_FN_GO(screen_send_to, )
    scr = strtol(params, NULL, 10);
    if (errno) return;
 
-   if (eina_list_count(e_manager_list()) > 1)
-     {
-        if (scr != -1)
-          scr = scr % eina_list_count(e_manager_list());
-        if (scr < 0) scr += eina_list_count(e_manager_list());
-        zone2 = e_comp_zone_number_get(0);
-     }
-   else
-     {
-        if (scr != -1)
-          scr = scr % eina_list_count(e_comp->zones);
-        if (scr < 0) scr += eina_list_count(e_comp->zones);
-        zone2 = e_comp_zone_number_get(scr);
-     }
+   if (scr != -1)
+     scr = scr % eina_list_count(e_comp->zones);
+   if (scr < 0) scr += eina_list_count(e_comp->zones);
+   zone2 = e_comp_zone_number_get(scr);
    if ((zone2) && (zone != zone2))
      {
         ecore_evas_pointer_warp(e_comp->ee,
@@ -1686,22 +1674,11 @@ ACT_FN_GO(screen_send_by, )
    errno = 0;
    scr = strtol(params, NULL, 10);
    if (errno) return;
-   if (eina_list_count(e_manager_list()) > 1)
-     {
-        scr += e_comp->num;
-        if (scr != -1)
-          scr = scr % eina_list_count(e_manager_list());
-        if (scr < 0) scr += eina_list_count(e_manager_list());
-        zone2 = e_comp_zone_number_get(0);
-     }
-   else
-     {
-        scr += zone->num;
-        if (scr != -1)
-          scr = scr % eina_list_count(e_comp->zones);
-        if (scr < 0) scr += eina_list_count(e_comp->zones);
-        zone2 = e_comp_zone_number_get(scr);
-     }
+   scr += zone->num;
+   if (scr != -1)
+     scr = scr % eina_list_count(e_comp->zones);
+   if (scr < 0) scr += eina_list_count(e_comp->zones);
+   zone2 = e_comp_zone_number_get(scr);
    if ((zone2) && (zone != zone2))
      {
         ecore_evas_pointer_warp(e_comp->ee,
@@ -1873,8 +1850,8 @@ ACT_FN_GO_MOUSE(menu_show, )
                   m->zone = zone;
                   x = ev->canvas.x;
                   y = ev->canvas.y;
-                  x -= e_comp->man->x;
-                  y -= e_comp->man->y;
+                  x -= e_comp->x;
+                  y -= e_comp->y;
                   e_menu_post_deactivate_callback_set(m, _e_actions_cb_menu_end, NULL);
                   e_menu_activate_mouse(m, zone, x, y, 1, 1,
                                         E_MENU_POP_DIRECTION_DOWN, ev->timestamp);

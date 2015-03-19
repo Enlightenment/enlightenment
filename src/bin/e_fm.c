@@ -3039,18 +3039,17 @@ e_fm2_client_data(Ecore_Ipc_Event_Client_Data *e)
                   if (e_config->device_auto_open && !eina_list_count(v->mounts))
                     {
                        E_Action *a;
-                       Eina_List *m;
                        unsigned int count;
 
                        a = e_action_find("fileman");
-                       m = e_manager_list();
                        count = eina_list_count(_e_fm2_list);
-                       if (a && a->func.go && m && eina_list_data_get(m) && mountpoint)
+                       if (a && a->func.go && mountpoint)
                          {
                             Evas_Object *fm;
+                            Eina_List *m;
                             Eina_Bool auto_unmount = v->auto_unmount;
 
-                            a->func.go(E_OBJECT(eina_list_data_get(m)), mountpoint);
+                            a->func.go(E_OBJECT(e_comp), mountpoint);
                             if (count == eina_list_count(_e_fm2_list)) break;
                             EINA_LIST_REVERSE_FOREACH(_e_fm2_list, m, fm)
                               {

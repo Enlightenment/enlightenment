@@ -299,31 +299,25 @@ e_hints_client_list_set(void)
 {
 #ifdef HAVE_WAYLAND_ONLY
 #else
-   E_Manager *man;
-   const Eina_List *l;
-
    /* Get client count by adding client lists on all containers */
-   EINA_LIST_FOREACH(e_manager_list(), l, man)
+   unsigned int i = 0;
+   Ecore_X_Window *clients = NULL;
+
+   if (e_comp->comp_type != E_PIXMAP_TYPE_X) return;
+   if (e_comp->clients)
      {
-        unsigned int i = 0;
-        Ecore_X_Window *clients = NULL;
+        E_Client *ec;
+        const Eina_List *ll;
 
-        if (man->comp->comp_type != E_PIXMAP_TYPE_X) continue;
-        if (man->comp->clients)
+        clients = calloc(e_clients_count(), sizeof(Ecore_X_Window));
+        EINA_LIST_FOREACH(e_comp->clients, ll, ec)
           {
-             E_Client *ec;
-             const Eina_List *ll;
-
-             clients = calloc(e_clients_count(), sizeof(Ecore_X_Window));
-             EINA_LIST_FOREACH(man->comp->clients, ll, ec)
-               {
-                  if (e_pixmap_type_get(ec->pixmap) != E_PIXMAP_TYPE_X) continue;
-                  clients[i++] = e_client_util_win_get(ec);
-               }
+             if (e_pixmap_type_get(ec->pixmap) != E_PIXMAP_TYPE_X) continue;
+             clients[i++] = e_client_util_win_get(ec);
           }
-        ecore_x_netwm_client_list_set(man->root, clients, i);
-        free(clients);
      }
+   ecore_x_netwm_client_list_set(e_comp->root, clients, i);
+   free(clients);
 #endif
 }
 
@@ -383,25 +377,22 @@ e_hints_client_stacking_set(void)
     * to be returned in the list
     */
    if (i <= c)
-     ecore_x_netwm_client_list_stacking_set(e_comp->man->root, clients, c);
+     ecore_x_netwm_client_list_stacking_set(e_comp->root, clients, c);
    free(clients);
 #endif
 }
 
 EAPI void
-e_hints_active_window_set(E_Manager *man,
-                          E_Client *ec)
+e_hints_active_window_set(E_Client *ec)
 {
 #ifdef HAVE_WAYLAND_ONLY
-   (void)man;
    (void)ec;
 #else
-   E_OBJECT_CHECK(man);
    if (e_comp->comp_type != E_PIXMAP_TYPE_X) return;
    if (ec && (e_pixmap_type_get(ec->pixmap) == E_PIXMAP_TYPE_X))
-     ecore_x_netwm_client_active_set(man->root, e_client_util_win_get(ec));
+     ecore_x_netwm_client_active_set(e_comp->root, e_client_util_win_get(ec));
    else
-     ecore_x_netwm_client_active_set(man->root, 0);
+     ecore_x_netwm_client_active_set(e_comp->root, 0);
 #endif
 }
 
@@ -1674,8 +1665,8 @@ e_hints_scale_update(void)
 #else
    unsigned int scale = e_scale * 1000;
 
-   if (e_comp->man->root)
-     ecore_x_window_prop_card32_set(e_comp->man->root, ATM_ENLIGHTENMENT_SCALE, &scale, 1);
+   if (e_comp->root)
+     ecore_x_window_prop_card32_set(e_comp->root, ATM_ENLIGHTENMENT_SCALE, &scale, 1);
 #endif
 }
 

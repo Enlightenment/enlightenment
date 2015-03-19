@@ -944,7 +944,7 @@ _e_comp_x_evas_unfullscreen_zoom_cb(void *data EINA_UNUSED, Evas_Object *obj EIN
 {
    if ((screen_size.width != -1) && (screen_size.height != -1))
      {
-        ecore_x_randr_screen_primary_output_size_set(e_comp->man->root,
+        ecore_x_randr_screen_primary_output_size_set(e_comp->root,
                                                      screen_size_index);
         screen_size.width = -1;
         screen_size.height = -1;
@@ -958,11 +958,11 @@ _e_comp_x_evas_fullscreen_zoom_cb(void *data, Evas_Object *obj EINA_UNUSED, void
    Ecore_X_Randr_Screen_Size_MM *sizes;
    int num_sizes, i, best_size_index = 0;
 
-   ecore_x_randr_screen_primary_output_current_size_get(e_comp->man->root,
+   ecore_x_randr_screen_primary_output_current_size_get(e_comp->root,
                                                         &screen_size.width,
                                                         &screen_size.height,
                                                         NULL, NULL, NULL);
-   sizes = ecore_x_randr_screen_primary_output_sizes_get(e_comp->man->root,
+   sizes = ecore_x_randr_screen_primary_output_sizes_get(e_comp->root,
                                                          &num_sizes);
    if (sizes)
      {
@@ -987,7 +987,7 @@ _e_comp_x_evas_fullscreen_zoom_cb(void *data, Evas_Object *obj EINA_UNUSED, void
             ((best_size.width != screen_size.width) ||
              (best_size.height != screen_size.height)))
           {
-             if (ecore_x_randr_screen_primary_output_size_set(e_comp->man->root,
+             if (ecore_x_randr_screen_primary_output_size_set(e_comp->root,
                                                               best_size_index))
                screen_size_index = best_size_index;
              evas_object_geometry_set(ec->frame, 0, 0, best_size.width, best_size.height);
@@ -1109,7 +1109,7 @@ _e_comp_x_show_request(void *data EINA_UNUSED, int type EINA_UNUSED, Ecore_X_Eve
    if (e_comp_ignore_win_find(ev->win) ||
      (ec && (ec->ignored || ec->override)) ||
      (!e_comp_find_by_window(ev->parent)) ||
-     (ev->parent != e_comp->man->root))
+     (ev->parent != e_comp->root))
      {
         ecore_x_window_show(ev->win);
         return ECORE_CALLBACK_RENEW;
@@ -1220,9 +1220,9 @@ _e_comp_x_show(void *data EINA_UNUSED, int type EINA_UNUSED, Ecore_X_Event_Windo
         if (e_comp_ignore_win_find(ev->win)) return ECORE_CALLBACK_RENEW;
         c = e_comp_find_by_window(ev->event_win);
         if (!c) return ECORE_CALLBACK_RENEW;
-        if (ev->event_win != c->man->root) return ECORE_CALLBACK_RENEW;
+        if (ev->event_win != e_comp->root) return ECORE_CALLBACK_RENEW;
         if ((c->win == ev->win) || (c->ee_win == ev->win) ||
-            (c->man->root == ev->win) || (c->cm_selection == ev->win)) return ECORE_CALLBACK_RENEW;
+            (c->root == ev->win) || (c->cm_selection == ev->win)) return ECORE_CALLBACK_RENEW;
         /* some window which we haven't made a client for yet but need to */
         ec = _e_comp_x_client_new(ev->win, 0);
         if (!ec)
@@ -1323,7 +1323,7 @@ _e_comp_x_configure(void *data EINA_UNUSED, int type EINA_UNUSED, Ecore_X_Event_
    if (e_comp_find_by_window(ev->win))
      {
         // do not handle this here - use randr events
-        //e_manager_resize(c->man, ev->w, ev->h);
+        //e_comp_canvas_resize(ev->w, ev->h);
         return ECORE_CALLBACK_RENEW;
      }
    ec = _e_comp_x_client_find_by_window(ev->win);
@@ -1473,13 +1473,13 @@ _e_comp_x_configure_request(void *data  EINA_UNUSED, int type EINA_UNUSED, Ecore
         else
           {
              /* client is completely outside the screen, policy does not allow */
-             if (((!E_INTERSECTS(x, y, ec->w, ec->h, e_comp->man->x, e_comp->man->y, e_comp->man->w - 5, e_comp->man->h - 5)) &&
+             if (((!E_INTERSECTS(x, y, ec->w, ec->h, e_comp->x, e_comp->y, e_comp->w - 5, e_comp->h - 5)) &&
                  (e_config->screen_limits != E_CLIENT_OFFSCREEN_LIMIT_ALLOW_FULL)) ||
                  /* client is partly outside the zone, policy does not allow */
-                 (((!E_INSIDE(x, y, e_comp->man->x, e_comp->man->y, e_comp->man->w - 5, e_comp->man->h - 5)) &&
-                  (!E_INSIDE(x + ec->w, y, e_comp->man->x, e_comp->man->y, e_comp->man->w - 5, e_comp->man->h - 5)) &&
-                  (!E_INSIDE(x, y + ec->h, e_comp->man->x, e_comp->man->y, e_comp->man->w - 5, e_comp->man->h - 5)) &&
-                  (!E_INSIDE(x + ec->w, y + ec->h, e_comp->man->x, e_comp->man->y, e_comp->man->w - 5, e_comp->man->h - 5))) &&
+                 (((!E_INSIDE(x, y, e_comp->x, e_comp->y, e_comp->w - 5, e_comp->h - 5)) &&
+                  (!E_INSIDE(x + ec->w, y, e_comp->x, e_comp->y, e_comp->w - 5, e_comp->h - 5)) &&
+                  (!E_INSIDE(x, y + ec->h, e_comp->x, e_comp->y, e_comp->w - 5, e_comp->h - 5)) &&
+                  (!E_INSIDE(x + ec->w, y + ec->h, e_comp->x, e_comp->y, e_comp->w - 5, e_comp->h - 5))) &&
                   (e_config->screen_limits == E_CLIENT_OFFSCREEN_LIMIT_ALLOW_NONE))
                 )
                e_comp_object_util_center(ec->frame);
@@ -1996,7 +1996,7 @@ _e_comp_x_mapping_change(void *data EINA_UNUSED, int type EINA_UNUSED, Ecore_X_E
    E_Client *ec;
 
    if (_e_comp_x_mapping_change_disabled) return ECORE_CALLBACK_RENEW;
-   e_managers_keys_ungrab();
+   e_comp_canvas_keys_ungrab();
    EINA_LIST_FOREACH(e_comp->clients, l, ec)
      {
         Ecore_X_Window win;
@@ -2011,7 +2011,7 @@ _e_comp_x_mapping_change(void *data EINA_UNUSED, int type EINA_UNUSED, Ecore_X_E
         e_bindings_wheel_grab(E_BINDING_CONTEXT_WINDOW, win);
         _e_comp_x_focus_setup(ec);
      }
-   e_managers_keys_grab();
+   e_comp_canvas_keys_grab();
    return ECORE_CALLBACK_PASS_ON;
 }
 
@@ -2277,7 +2277,7 @@ _e_comp_x_sync_alarm(void *data EINA_UNUSED, int type EINA_UNUSED, Ecore_X_Event
           evas_object_resize(ec->internal_elm_win, ec->client.w, ec->client.h);
      }
 
-   ecore_x_pointer_xy_get(e_comp->man->root,
+   ecore_x_pointer_xy_get(e_comp->root,
                           &ec->mouse.current.mx,
                           &ec->mouse.current.my);
 
@@ -2696,10 +2696,10 @@ _e_comp_x_hook_client_pre_frame_assign(void *d EINA_UNUSED, E_Client *ec)
    h = MAX(ec->client.h, 1);
    /* match ec parent argbness */
    if (ec->argb)
-     pwin = ecore_x_window_manager_argb_new(e_comp->man->root, ec->client.x, ec->client.y, w, h);
+     pwin = ecore_x_window_manager_argb_new(e_comp->root, ec->client.x, ec->client.y, w, h);
    else
      {
-        pwin = ecore_x_window_override_new(e_comp->man->root, ec->client.x, ec->client.y, w, h);
+        pwin = ecore_x_window_override_new(e_comp->root, ec->client.x, ec->client.y, w, h);
         ecore_x_window_shape_events_select(pwin, !ec->internal); //let's just agree never to do this with our own windows...
      }
 
@@ -3224,9 +3224,9 @@ _e_comp_x_hook_client_fetch(void *d EINA_UNUSED, E_Client *ec)
                             /* some application failing to correctly center a window */
                             if (eina_list_count(e_comp->zones) > 1)
                               {
-                                 if (abs((e_comp->man->w / 2) - ec->x - (ec->w / 2)) < 3)
+                                 if (abs((e_comp->w / 2) - ec->x - (ec->w / 2)) < 3)
                                    ec->x = ((ec->zone->x + ec->zone->w) / 2) - (ec->w / 2);
-                                 if (abs((e_comp->man->h / 2) - ec->y - (ec->h / 2)) < 3)
+                                 if (abs((e_comp->h / 2) - ec->y - (ec->h / 2)) < 3)
                                    ec->y = ((ec->zone->y + ec->zone->h) / 2) - (ec->h / 2);
                               }
                             ec->changes.pos = 1;
@@ -4119,7 +4119,7 @@ _e_comp_x_hook_client_redirect(void *d EINA_UNUSED, E_Client *ec)
      {
         /* first window */
         e_comp_x_nocomp_end();
-        ecore_x_window_reparent(_e_comp_x_client_window_get(ec), e_comp->man->root, ec->client.x, ec->client.y);
+        ecore_x_window_reparent(_e_comp_x_client_window_get(ec), e_comp->root, ec->client.x, ec->client.y);
         _e_comp_x_client_stack(ec);
      }
    if (!ec->comp_data->damage)
@@ -4147,7 +4147,7 @@ _e_comp_x_hook_client_unredirect(void *d EINA_UNUSED, E_Client *ec)
         ec->comp_data->unredirected_single = 1;
      }
    if (!e_comp->nocomp) return; //wait for it...
-   ecore_x_composite_unredirect_subwindows(e_comp->man->root, ECORE_X_COMPOSITE_UPDATE_MANUAL);
+   ecore_x_composite_unredirect_subwindows(e_comp->root, ECORE_X_COMPOSITE_UPDATE_MANUAL);
    ecore_x_window_hide(e_comp->win);
 }
 
@@ -4171,7 +4171,7 @@ _e_comp_x_hook_client_del(void *d EINA_UNUSED, E_Client *ec)
           {
              if (stopping)
                {
-                  ecore_x_window_reparent(win, e_comp->man->root,
+                  ecore_x_window_reparent(win, e_comp->root,
                                           ec->client.x, ec->client.y);
                   ecore_x_window_configure(win,
                                            ECORE_X_WINDOW_CONFIGURE_MASK_SIBLING |
@@ -4182,7 +4182,7 @@ _e_comp_x_hook_client_del(void *d EINA_UNUSED, E_Client *ec)
 
              else
                /* put the window back where we found it to prevent annoying dancing windows */
-               ecore_x_window_reparent(win, e_comp->man->root,
+               ecore_x_window_reparent(win, e_comp->root,
                                        ec->comp_data->initial_attributes.x,
                                        ec->comp_data->initial_attributes.y);
              if (!ec->internal)
@@ -4402,7 +4402,6 @@ _e_comp_x_backlight_notify_cb(void *data EINA_UNUSED, int t EINA_UNUSED, Ecore_X
 static Eina_Bool
 _e_comp_x_cb_frame_extents_request(void *data EINA_UNUSED, int ev_type EINA_UNUSED, Ecore_X_Event_Frame_Extents_Request *ev)
 {
-   E_Manager *man;
    Ecore_X_Window_Type type;
    Ecore_X_MWM_Hint_Decor decor;
    Ecore_X_Window_State *state;
@@ -4413,8 +4412,7 @@ _e_comp_x_cb_frame_extents_request(void *data EINA_UNUSED, int ev_type EINA_UNUS
    unsigned int i, num;
 
    win = ecore_x_window_parent_get(ev->win);
-   man = e_manager_find_by_root(win);
-   if (!man) return ECORE_CALLBACK_PASS_ON;
+   if (win != e_comp->root) return ECORE_CALLBACK_PASS_ON;
 
    /* TODO:
     * * We need to check if we remember this window, and border locking is set
@@ -4495,7 +4493,7 @@ _e_comp_x_cb_frame_extents_request(void *data EINA_UNUSED, int ev_type EINA_UNUS
         extents = E_NEW(Frame_Extents, 1);
         if (!extents) return ECORE_CALLBACK_RENEW;
 
-        o = edje_object_add(man->comp->evas);
+        o = edje_object_add(e_comp->evas);
         snprintf(buf, sizeof(buf), "ev/widgets/border/%s/border", border);
         ok = e_theme_edje_object_set(o, "base/theme/borders", buf);
         if (ok)
@@ -4676,17 +4674,17 @@ _e_comp_x_xinerama_setup(int rw, int rh)
 static Eina_Bool
 _e_comp_x_randr_change(void *data EINA_UNUSED, int ev_type EINA_UNUSED, void *event_info EINA_UNUSED)
 {
-   if ((e_comp->man->w != e_randr2->w) ||
-       (e_comp->man->h != e_randr2->h))
+   if ((e_comp->w != e_randr2->w) ||
+       (e_comp->h != e_randr2->h))
      {
-        e_manager_resize(e_comp->man, e_randr2->w, e_randr2->h);
+        e_comp_canvas_resize(e_randr2->w, e_randr2->h);
      }
    else
      {
         E_Client *ec;
 
-        ecore_x_netwm_desk_size_set(e_comp->man->root, e_comp->man->w, e_comp->man->h);
-        _e_comp_x_xinerama_setup(e_comp->man->w, e_comp->man->h);
+        ecore_x_netwm_desk_size_set(e_comp->root, e_comp->w, e_comp->h);
+        _e_comp_x_xinerama_setup(e_comp->w, e_comp->h);
 
         e_comp_canvas_update();
         E_CLIENT_FOREACH(ec)
@@ -4703,8 +4701,8 @@ _e_comp_x_ee_resize(Ecore_Evas *ee EINA_UNUSED)
 {
    E_Client *ec;
 
-   ecore_x_netwm_desk_size_set(e_comp->man->root, e_comp->man->w, e_comp->man->h);
-   _e_comp_x_xinerama_setup(e_comp->man->w, e_comp->man->h);
+   ecore_x_netwm_desk_size_set(e_comp->root, e_comp->w, e_comp->h);
+   _e_comp_x_xinerama_setup(e_comp->w, e_comp->h);
 
    e_comp_canvas_update();
    E_CLIENT_FOREACH(ec)
@@ -4719,10 +4717,10 @@ _e_comp_x_del(E_Comp *c)
 {
    unsigned int i;
 
-   ecore_x_window_key_ungrab(c->man->root, "F", ECORE_EVENT_MODIFIER_SHIFT |
+   ecore_x_window_key_ungrab(c->root, "F", ECORE_EVENT_MODIFIER_SHIFT |
                              ECORE_EVENT_MODIFIER_CTRL |
                              ECORE_EVENT_MODIFIER_ALT, 0);
-   ecore_x_window_key_ungrab(c->man->root, "Home", ECORE_EVENT_MODIFIER_SHIFT |
+   ecore_x_window_key_ungrab(c->root, "Home", ECORE_EVENT_MODIFIER_SHIFT |
                              ECORE_EVENT_MODIFIER_CTRL |
                              ECORE_EVENT_MODIFIER_ALT, 0);
    if (c->grabbed)
@@ -4735,13 +4733,13 @@ _e_comp_x_del(E_Comp *c)
      ecore_x_window_free(c->layers[i].win);
 
    ecore_x_composite_unredirect_subwindows
-     (c->man->root, ECORE_X_COMPOSITE_UPDATE_MANUAL);
+     (c->root, ECORE_X_COMPOSITE_UPDATE_MANUAL);
    if (c->block_win) ecore_x_window_free(c->block_win);
    ecore_x_composite_render_window_disable(c->win);
-   if (c->man->num == 0) e_alert_composite_win(c->man->root, 0);
+   e_alert_composite_win(c->root, 0);
 
    ecore_x_window_free(c->cm_selection);
-   ecore_x_screen_is_composited_set(c->man->num, 0);
+   ecore_x_screen_is_composited_set(c->num, 0);
 
    eina_list_free(c->x_comp_data->retry_clients);
    ecore_timer_del(c->x_comp_data->retry_timer);
@@ -4751,7 +4749,6 @@ _e_comp_x_del(E_Comp *c)
 static void
 _e_comp_x_manage_windows(void)
 {
-   E_Manager *man = e_comp->man;
    Ecore_X_Window *windows;
    int wnum;
    int i;
@@ -4767,7 +4764,7 @@ _e_comp_x_manage_windows(void)
 
    /* a manager is designated for each root. lets get all the windows in
       the managers root */
-   windows = ecore_x_window_children_get(man->root, &wnum);
+   windows = ecore_x_window_children_get(e_comp->root, &wnum);
    if (!windows) return;
 
    ecore_x_atoms_get(atom_names, 3, atoms);
@@ -4782,7 +4779,7 @@ _e_comp_x_manage_windows(void)
         E_Client *ec = NULL;
 
         if ((e_comp->win == windows[i]) || (e_comp->ee_win == windows[i]) ||
-            (e_comp->man->root == windows[i]) || (e_comp->cm_selection == windows[i]))
+            (e_comp->root == windows[i]) || (e_comp->cm_selection == windows[i]))
           continue;
         if (_e_comp_x_client_find_by_window(windows[i]))
           continue;
@@ -4949,14 +4946,14 @@ _e_comp_x_desklock_show(void)
    Ecore_X_Window win;
 
    win = e_comp->x_comp_data->lock_win =
-     ecore_x_window_input_new(e_comp->man->root, 0, 0, 1, 1);
+     ecore_x_window_input_new(e_comp->root, 0, 0, 1, 1);
    ecore_x_window_show(win);
    if (!e_grabinput_get(win, 0, win))
      {
         Ecore_X_Window *windows;
         int wnum, i;
 
-        windows = ecore_x_window_children_get(e_comp->man->root, &wnum);
+        windows = ecore_x_window_children_get(e_comp->root, &wnum);
         if (!windows) goto fail;
         for (i = 0; i < wnum; i++)
           {
@@ -5027,7 +5024,7 @@ _e_comp_x_setup(Ecore_X_Window root, int w, int h)
               "This is needed for Enlightenment to function."));
         return EINA_FALSE;
      }
-   e_comp->man = e_manager_new(root, e_comp, w, h);
+   e_comp->root = root;
 
    memset((&att), 0, sizeof(Ecore_X_Window_Attributes));
    ecore_x_window_attributes_get(e_comp->win, &att);
@@ -5120,7 +5117,7 @@ _e_comp_x_setup(Ecore_X_Window root, int w, int h)
    e_comp->bindings_grab_cb = _e_comp_x_bindings_grab_cb;
    e_comp->bindings_ungrab_cb = _e_comp_x_bindings_ungrab_cb;
 
-   if (!e_comp_canvas_init()) return EINA_FALSE;
+   if (!e_comp_canvas_init(w, h)) return EINA_FALSE;
 
    e_grabinput_focus(e_comp->ee_win, E_FOCUS_METHOD_PASSIVE);
 
@@ -5151,7 +5148,7 @@ _e_comp_x_setup(Ecore_X_Window root, int w, int h)
      ecore_x_window_lower(e_comp->layers[i].win);
 
    ecore_evas_lower(e_comp->ee);
-   e_comp->pointer = e_pointer_window_new(e_comp->man->root, 0);
+   e_comp->pointer = e_pointer_window_new(e_comp->root, 0);
    e_comp->pointer->color = ecore_x_cursor_color_supported_get();
    e_pointer_type_push(e_comp->pointer, e_comp->pointer, "default");
    _e_comp_x_manage_windows();
@@ -5374,6 +5371,6 @@ e_comp_x_nocomp_end(void)
 {
    e_comp->nocomp = 0;
    ecore_x_window_show(e_comp->win);
-   ecore_x_composite_redirect_subwindows(e_comp->man->root, ECORE_X_COMPOSITE_UPDATE_MANUAL);
+   ecore_x_composite_redirect_subwindows(e_comp->root, ECORE_X_COMPOSITE_UPDATE_MANUAL);
    _e_comp_x_focus_check();
 }

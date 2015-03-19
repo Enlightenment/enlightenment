@@ -57,9 +57,6 @@ struct _E_Smart_Data
         Evas_Coord vw, vh;
      } grid;
 
-   /* manager number */
-   unsigned int man_num;
-
    /* zone number */
    unsigned int zone_num;
 
@@ -320,7 +317,6 @@ void
 e_smart_monitor_background_set(Evas_Object *obj, Evas_Coord dx, Evas_Coord dy)
 {
    E_Smart_Data *sd;
-   E_Manager *man;
    E_Zone *zone;
    E_Desk *desk;
 
@@ -328,10 +324,6 @@ e_smart_monitor_background_set(Evas_Object *obj, Evas_Coord dx, Evas_Coord dy)
 
    /* try to get the objects smart data */
    if (!(sd = evas_object_smart_data_get(obj))) return;
-
-   /* get the current manager */
-   man = e_manager_current_get();
-   sd->man_num = man->num;
 
    /* get the zone number */
    if (!(zone = e_comp_zone_xy_get(dx, dy)))
@@ -910,9 +902,8 @@ _e_smart_monitor_background_update(void *data, int type EINA_UNUSED, void *event
 
    ev = event;
 
-   /* check this bg event happened on our manager */
-   if (((ev->manager < 0) || (ev->manager == (int)sd->man_num)) && 
-       ((ev->zone < 0) || (ev->zone == (int)sd->zone_num)))
+   /* check this bg event happened on our zone */
+   if ((ev->zone < 0) || (ev->zone == (int)sd->zone_num))
      {
         /* check this bg event happened on our desktop */
         if (((ev->desk_x < 0) || (ev->desk_x == sd->current.x)) && 

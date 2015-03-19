@@ -205,7 +205,7 @@ _basic_apply_data(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfdata
    _auto_apply_changes(cfdata);
 
    e_comp_button_bindings_ungrab_all();
-   e_managers_keys_ungrab();
+   e_comp_canvas_keys_ungrab();
 
    EINA_LIST_FREE(e_bindings->mouse_bindings, eb)
      {
@@ -269,7 +269,7 @@ _basic_apply_data(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfdata
                              bw2->any_mod, bw2->action, bw2->params);
      }
    e_comp_button_bindings_grab_all();
-   e_managers_keys_grab();
+   e_comp_canvas_keys_grab();
 
    e_config_save_queue();
    return 1;

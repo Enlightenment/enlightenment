@@ -1113,7 +1113,6 @@ static int
 _open_folder_action(Evry_Action *act)
 {
    E_Action *action;
-   Eina_List *m;
    char *dir;
 
    if (!(action = e_action_find("fileman")))
@@ -1124,18 +1123,16 @@ _open_folder_action(Evry_Action *act)
    if (!(evry->file_path_get(file)))
      return 0;
 
-   m = e_manager_list();
-
    if (!IS_BROWSEABLE(file))
      {
         dir = ecore_file_dir_get(file->path);
         if (!dir) return 0;
-        action->func.go(E_OBJECT(m->data), dir);
+        action->func.go(E_OBJECT(e_comp), dir);
         free(dir);
      }
    else
      {
-        action->func.go(E_OBJECT(m->data), file->path);
+        action->func.go(E_OBJECT(e_comp), file->path);
      }
 
    return 1;

@@ -202,7 +202,7 @@ _e_backlight_update(void)
    Ecore_X_Randr_Output *out;
    int i, num = 0;
 
-   root = e_comp->man->root;
+   root = e_comp->root;
    // try randr
    if (root && xbl_avail)
      {
@@ -269,7 +269,7 @@ _e_backlight_set(double val)
         int num = 0, i;
         char *name;
 
-        root = e_comp->man->root;
+        root = e_comp->root;
         out = ecore_x_randr_window_outputs_get(root, &num);
         if ((out) && (num > 0))
           {

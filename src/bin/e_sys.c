@@ -164,7 +164,7 @@ _e_sys_comp_logout(void)
 static void
 _e_sys_comp_resume(void)
 {
-   evas_damage_rectangle_add(e_comp->evas, 0, 0, e_comp->man->w, e_comp->man->h);
+   evas_damage_rectangle_add(e_comp->evas, 0, 0, e_comp->w, e_comp->h);
    _e_sys_comp_emit_cb_wait(E_SYS_SUSPEND, "e,state,sys,resume", NULL, EINA_FALSE);
    e_screensaver_deactivate();
 }

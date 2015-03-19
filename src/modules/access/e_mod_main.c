@@ -88,7 +88,7 @@ _mouse_in_win_get(Cover *cov, int x, int y)
       then previous target window which has the highlight object
       should get the message. how? */
    target_win = ecore_x_window_shadow_tree_at_xy_with_skip_get
-     (cov->e_comp->man->root, x, y, skip, i);
+     (cov->e_comp->root, x, y, skip, i);
 }
 
 static unsigned int
@@ -756,7 +756,7 @@ _cover_new(E_Zone *zone)
    evas_object_show(cov->text);
 
 #else
-   cov->win = ecore_x_window_input_new(e_comp->manager->root,
+   cov->win = ecore_x_window_input_new(e_compager->root,
                                        e_comp->x + zone->x,
                                        e_comp->y + zone->y,
                                        zone->w, zone->h);

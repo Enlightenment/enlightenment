@@ -42,8 +42,6 @@ static int
 _e_test_timer(void *data)
 {
    E_Menu *m;
-   Eina_List *managers, *l;
-   E_Manager *man;
 
    m = data;
    if (m)
@@ -53,16 +51,11 @@ _e_test_timer(void *data)
         ecore_timer_add(0.05, _e_test_timer, NULL);
         return 0;
      }
-   managers = e_manager_list();
-   EINA_LIST_FOREACH(managers, l, man)
-     {
-        m = e_int_menus_main_new();
-        e_menu_activate_mouse(m,
-                              eina_list_data_get(man->comp->zones),
-                              0, 0, 1, 1, E_MENU_POP_DIRECTION_DOWN, 0);
-        ecore_timer_add(0.05, _e_test_timer, m);
-        return 0;
-     }
+   m = e_int_menus_main_new();
+   e_menu_activate_mouse(m,
+                         eina_list_data_get(e_comp->zones),
+                         0, 0, 1, 1, E_MENU_POP_DIRECTION_DOWN, 0);
+   ecore_timer_add(0.05, _e_test_timer, m);
    return 0;
 }
 
@@ -133,17 +126,12 @@ static void
 _e_test_internal(void)
 {
    E_Menu *m;
-   Eina_List *l;
-   E_Manager *man;
 
-   EINA_LIST_FOREACH(e_manager_list(), l, man)
-     {
-        m = e_int_menus_main_new();
-        e_menu_activate_mouse(m,
-                              eina_list_data_get(man->comp->zones),
-                              0, 0, 1, 1, E_MENU_POP_DIRECTION_DOWN, 0);
-        ecore_timer_add(0.02, _e_test_timer, m);
-     }
+   m = e_int_menus_main_new();
+   e_menu_activate_mouse(m,
+                         eina_list_data_get(e_comp->zones),
+                         0, 0, 1, 1, E_MENU_POP_DIRECTION_DOWN, 0);
+   ecore_timer_add(0.02, _e_test_timer, m);
 }
 
 #elif 0

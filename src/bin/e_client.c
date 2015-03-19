@@ -2321,8 +2321,8 @@ e_client_idler_before(void)
           }
 
         if ((!ec->new_client) && (!e_client_util_ignored_get(ec)) &&
-            (!E_INSIDE(ec->x, ec->y, 0, 0, e_comp->man->w - 5, e_comp->man->h - 5)) &&
-            (!E_INSIDE(ec->x, ec->y, 0 - ec->w + 5, 0 - ec->h + 5, e_comp->man->w - 5, e_comp->man->h - 5))
+            (!E_INSIDE(ec->x, ec->y, 0, 0, e_comp->w - 5, e_comp->h - 5)) &&
+            (!E_INSIDE(ec->x, ec->y, 0 - ec->w + 5, 0 - ec->h + 5, e_comp->w - 5, e_comp->h - 5))
             )
           {
              if (e_config->screen_limits != E_CLIENT_OFFSCREEN_LIMIT_ALLOW_FULL)
@@ -3457,7 +3457,7 @@ e_client_focused_set(E_Client *ec)
    if (!focus_track_frozen)
      e_client_focus_latest_set(ec);
 
-   e_hints_active_window_set(e_comp->man, ec);
+   e_hints_active_window_set(ec);
    _e_client_event_simple(ec, E_EVENT_CLIENT_FOCUS_IN);
 }
 

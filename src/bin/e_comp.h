@@ -60,15 +60,16 @@ typedef void (*E_Comp_Grab_Cb)(void);
 struct _E_Comp
 {
    E_Object e_obj_inherit;
+   int x, y, w, h;
 
    Ecore_Window  win; // input overlay
+   Ecore_Window  root;
    Ecore_Evas     *ee;
    Ecore_Window  ee_win;
    Evas_Object    *elm;
    Evas           *evas;
    Evas_Object    *bg_blank_object;
    Eina_List      *zones;
-   E_Manager      *man;
    E_Pointer      *pointer;
    Eina_List *clients;
    unsigned int new_clients;
@@ -201,8 +202,8 @@ e_comp_util_client_is_fullscreen(const E_Client *ec)
    if ((!ec->visible) || (ec->input_only))
      return EINA_FALSE;
    return ((ec->client.x == 0) && (ec->client.y == 0) &&
-       ((ec->client.w) >= e_comp->man->w) &&
-       ((ec->client.h) >= e_comp->man->h) &&
+       ((ec->client.w) >= e_comp->w) &&
+       ((ec->client.h) >= e_comp->h) &&
        (!ec->argb) && (!ec->shaped)
        );
 }

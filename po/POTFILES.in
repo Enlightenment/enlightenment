@@ -61,7 +61,6 @@ src/bin/e_ipc_codec.c
 src/bin/e_layout.c
 src/bin/e_livethumb.c
 src/bin/e_main.c
-src/bin/e_manager.c
 src/bin/e_maximize.c
 src/bin/e_menu.c
 src/bin/e_module.c

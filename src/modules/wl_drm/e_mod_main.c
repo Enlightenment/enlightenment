@@ -133,8 +133,8 @@ e_modapi_init(E_Module *m)
         e_xinerama_screens_set(eina_list_append(NULL, screen));
      }
 
-   comp->man = e_manager_new(ecore_evas_window_get(comp->ee), comp, w, h);
-   if (!e_comp_canvas_init()) return NULL;
+   comp->root = ecore_evas_window_get(comp->ee);
+   if (!e_comp_canvas_init(w, h)) return NULL;
    e_comp_canvas_fake_layers_init();
 
    /* NB: This needs to be called AFTER the comp canvas has been setup */

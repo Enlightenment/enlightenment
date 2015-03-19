@@ -106,7 +106,7 @@ e_winlist_show(E_Zone *zone, E_Winlist_Filter filter)
 #ifndef HAVE_WAYLAND_ONLY
    if (e_comp->comp_type == E_PIXMAP_TYPE_X)
      {
-        _input_window = ecore_x_window_input_new(e_comp->man->root, 0, 0, 1, 1);
+        _input_window = ecore_x_window_input_new(e_comp->root, 0, 0, 1, 1);
         ecore_x_window_show(_input_window);
         if (!e_grabinput_get(_input_window, 0, _input_window))
           {

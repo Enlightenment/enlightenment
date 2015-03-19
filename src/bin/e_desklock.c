@@ -268,7 +268,7 @@ e_desklock_show(Eina_Bool suspend)
       o = evas_object_rectangle_add(e_comp->evas);
       block_rects = eina_list_append(block_rects, o);
       evas_object_color_set(o, 0, 0, 0, 255);
-      evas_object_resize(o, e_comp->man->w, e_comp->man->h);
+      evas_object_resize(o, e_comp->w, e_comp->h);
       evas_object_layer_set(o, E_LAYER_DESKLOCK);
       evas_object_show(o);
    }

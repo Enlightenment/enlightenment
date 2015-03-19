@@ -969,7 +969,7 @@ _e_client_menu_cb_align_setup(E_Client *ec, Evas_Object_Event_Cb cb)
    e_notification_client_send(&n, NULL, NULL);
 
    o = evas_object_rectangle_add(e_comp->evas);
-   evas_object_resize(o, e_comp->man->w, e_comp->man->h);
+   evas_object_resize(o, e_comp->w, e_comp->h);
    evas_object_color_set(o, 0, 0, 0, 0);
    evas_object_layer_set(o, E_LAYER_POPUP);
    evas_object_show(o);

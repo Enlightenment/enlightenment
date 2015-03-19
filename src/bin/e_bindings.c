@@ -313,13 +313,13 @@ e_bindings_key_reset(void)
    E_Config_Binding_Key *ebk;
    Eina_List *l;
 
-   e_managers_keys_ungrab();
+   e_comp_canvas_keys_ungrab();
    E_FREE_LIST(key_bindings, _e_bindings_key_free);
 
    EINA_LIST_FOREACH(e_bindings->key_bindings, l, ebk)
      e_bindings_key_add(ebk->context, ebk->key, ebk->modifiers,
                         ebk->any_mod, ebk->action, ebk->params);
-   e_managers_keys_grab();
+   e_comp_canvas_keys_grab();
 }
 
 EAPI void

@@ -992,9 +992,9 @@ main(int argc, char **argv)
    _idle_flush = ecore_idle_enterer_add(_e_main_cb_x_flusher, NULL);
    TS("Add Idler For X Flush Done");
 
-   TS("E_Manager Keys Grab");
-   e_managers_keys_grab();
-   TS("E_Manager Keys Grab Done");
+   TS("E_Comp_Canvas Keys Grab");
+   e_comp_canvas_keys_grab();
+   TS("E_Comp_Canvas Keys Grab Done");
 
    if (e_config->show_splash)
      e_init_status_set(_("Load Modules"));
@@ -1564,9 +1564,6 @@ _e_main_test_formats(void)
 static int
 _e_main_screens_init(void)
 {
-   TS("\tscreens: manager");
-   if (!e_manager_init()) return 0;
-
    TS("\tscreens: client");
    if (!e_client_init()) return 0;
    TS("\tscreens: win");
@@ -1620,7 +1617,6 @@ _e_main_screens_shutdown(void)
 
    e_desk_shutdown();
    e_zone_shutdown();
-   e_manager_shutdown();
    return 1;
 }
 

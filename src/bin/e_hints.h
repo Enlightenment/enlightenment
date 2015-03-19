@@ -4,11 +4,11 @@
 #define E_HINTS_H
 
 EINTERN void e_hints_init(Ecore_Window win, Ecore_Window propwin);
-EINTERN void e_hints_manager_init(E_Manager *man);
+//EINTERN void e_hints_manager_init(E_Manager *man);
 EAPI void e_hints_client_list_set(void);
 EAPI void e_hints_client_stacking_set(void);
 
-EAPI void e_hints_active_window_set(E_Manager *man, E_Client *ec);
+EAPI void e_hints_active_window_set(E_Client *ec);
 
 EINTERN void e_hints_window_init(E_Client *ec);
 EAPI void e_hints_window_state_set(E_Client *ec);

@@ -1,7 +1,6 @@
 #include "e_mmx.h"
 #include "e_object.h"
 #include "e_user.h"
-#include "e_manager.h"
 #include "e_path.h"
 #include "e_ipc.h"
 #include "e_error.h"

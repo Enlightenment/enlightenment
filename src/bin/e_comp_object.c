@@ -2636,7 +2636,7 @@ e_comp_object_util_fullscreen(Evas_Object *obj)
    else
      {
         evas_object_move(obj, 0, 0);
-        evas_object_resize(obj, e_comp->man->w, e_comp->man->h);
+        evas_object_resize(obj, e_comp->w, e_comp->h);
      }
 }
 
@@ -3687,7 +3687,7 @@ _e_comp_object_autoclose_setup(Evas_Object *obj)
         /* create rect just below autoclose object to catch mouse events */
         e_comp->autoclose.rect = evas_object_rectangle_add(e_comp->evas);
         evas_object_move(e_comp->autoclose.rect, 0, 0);
-        evas_object_resize(e_comp->autoclose.rect, e_comp->man->w, e_comp->man->h);
+        evas_object_resize(e_comp->autoclose.rect, e_comp->w, e_comp->h);
         evas_object_show(e_comp->autoclose.rect);
         evas_object_name_set(e_comp->autoclose.rect, "e_comp->autoclose.rect");
         evas_object_color_set(e_comp->autoclose.rect, 0, 0, 0, 0);

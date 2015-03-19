@@ -19,7 +19,6 @@ static Evas_Object *win = NULL;
 E_Confirm_Dialog *cd = NULL;
 static Evas_Object *o_bg = NULL, *o_box = NULL, *o_content = NULL;
 static Evas_Object *o_event = NULL, *o_img = NULL, *o_hlist = NULL;
-static E_Manager *sman = NULL;
 static int quality = 90;
 static int screen = -1;
 #define MAXZONES 64
@@ -599,10 +598,9 @@ _shot_now(E_Zone *zone, E_Client *ec, const char *params)
    if ((!zone) && (!ec)) return;
    if (zone)
      {
-        sman = e_comp->man;
-        xwin = sman->root;
-        w = sw = sman->w;
-        h = sh = sman->h;
+        xwin = e_comp->root;
+        w = sw = e_comp->w;
+        h = sh = e_comp->h;
         x = y = 0;
         if (!ecore_x_window_attributes_get(xwin, &watt)) return;
         visual = watt.visual;
@@ -935,9 +933,7 @@ _e_mod_action_cb(E_Object *obj, const char *params)
 
    if (obj)
      {
-        if (obj->type == E_MANAGER_TYPE)
-          zone = e_zone_current_get();
-        else if (obj->type == E_COMP_TYPE)
+        if (obj->type == E_COMP_TYPE)
           zone = e_zone_current_get();
         else if (obj->type == E_ZONE_TYPE)
           zone = ((E_Zone *)obj);

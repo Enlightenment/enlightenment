@@ -190,24 +190,15 @@ _e_ipc_cb_client_data(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
 
               if (e_ipc_codec_2str_dec(e->data, e->size, &req))
                 {
-                   Eina_List *m = e_manager_list();
                    int len, ok = 0;
                    void *d;
 
-                   if (m)
+                   E_Action *act = e_action_find(req->str1);
+
+                   if ((act) && (act->func.go))
                      {
-                        E_Manager *man = eina_list_data_get(m);
-
-                        if (man)
-                          {
-                             E_Action *act = e_action_find(req->str1);
-
-                             if ((act) && (act->func.go))
-                               {
-                                  act->func.go(E_OBJECT(man), req->str2);
-                                  ok = 1;
-                               }
-                          }
+                        act->func.go(E_OBJECT(e_comp), req->str2);
+                        ok = 1;
                      }
 
                    d = e_ipc_codec_int_enc(ok, &len);

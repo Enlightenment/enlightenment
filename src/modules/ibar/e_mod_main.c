@@ -1869,7 +1869,7 @@ _ibar_cb_icon_move(void *data, Evas *e, Evas_Object *obj, void *event_info EINA_
         if (x < 1)
           zone = e_comp_zone_xy_get(0, y);
         else
-          zone = e_comp_zone_xy_get(e_comp->man->w - 5, y);
+          zone = e_comp_zone_xy_get(e_comp->w - 5, y);
         if (!zone)
           zone = eina_list_data_get(e_comp->zones);
      }
@@ -2519,12 +2519,9 @@ _ibar_focus_cb_key_down(void *data EINA_UNUSED, int type EINA_UNUSED, void *even
 static void
 _ibar_go_focus(void)
 {
-   E_Manager *man;
    IBar *b;
    
    if (_ibar_focus_win) return;
-   man = e_manager_current_get();
-   if (!man) return;
    _ibar_focus_win = e_comp->ee_win;
    if (!e_grabinput_get(0, 0, _ibar_focus_win))
      {

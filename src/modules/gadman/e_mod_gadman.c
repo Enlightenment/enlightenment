@@ -113,8 +113,8 @@ gadman_init(E_Module *m)
    Man->module = m;
    gadman_locked = e_module_loading_get();
    Man->comp = e_comp;
-   Man->width = Man->comp->man->w;
-   Man->height = Man->comp->man->h;
+   Man->width = e_comp->w;
+   Man->height = e_comp->h;
 
    /* create and register "desktop" location */
    location = Man->location[GADMAN_LAYER_BG] = e_gadcon_location_new(_("Desktop"), E_GADCON_SITE_DESKTOP,
@@ -649,8 +649,7 @@ gadman_update_bg(void)
              //THIS IS FOR A NORMAL IMAGE
              obj = evas_object_image_add(Man->comp->evas);
              evas_object_image_file_set(obj, Man->conf->custom_bg, NULL);
-             evas_object_image_fill_set(obj, 0, 0, Man->comp->man->w,
-                                        Man->comp->man->h);
+             evas_object_image_fill_set(obj, 0, 0, e_comp->w, e_comp->h);
           }
         edje_object_part_swallow(Man->full_bg, "e.swallow.bg", obj);
         break;
@@ -798,7 +797,7 @@ _gadman_overlay_create(void)
 
    /* create full background object */
    Man->full_bg = edje_object_add(Man->comp->evas);
-   evas_object_geometry_set(Man->full_bg, 0, 0, Man->comp->man->w, Man->comp->man->h);
+   evas_object_geometry_set(Man->full_bg, 0, 0, e_comp->w, e_comp->h);
    e_theme_edje_object_set(Man->full_bg, "base/theme/gadman",
                            "e/gadman/full_bg");
    edje_object_signal_callback_add(Man->full_bg, "mouse,down,*",

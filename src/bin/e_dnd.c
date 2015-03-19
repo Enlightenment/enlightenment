@@ -210,7 +210,7 @@ e_drag_new(int x, int y,
    ecore_x_window_shadow_tree_flush();
 #endif
 
-   _drag_win_root = e_comp->man->root;
+   _drag_win_root = e_comp->root;
 
    drag->cb.key_down = NULL;
    drag->cb.key_up = NULL;
@@ -275,13 +275,13 @@ e_drag_start(E_Drag *drag, int x, int y)
    if (_drag_win) return 0;
 #ifndef HAVE_WAYLAND_ONLY
    _drag_win = ecore_x_window_input_new(e_comp->win,
-                                        e_comp->man->x, e_comp->man->y,
-                                        e_comp->man->w, e_comp->man->h);
+                                        e_comp->x, e_comp->y,
+                                        e_comp->w, e_comp->h);
    ecore_event_window_register(_drag_win, e_comp->ee, e_comp->evas,
                                  NULL, NULL, NULL, NULL);
    ecore_x_window_show(_drag_win);
 #endif
-   _drag_win_root = e_comp->man->root;
+   _drag_win_root = e_comp->root;
    if (!e_grabinput_get(_drag_win, 1, _drag_win))
      {
 #ifndef HAVE_WAYLAND_ONLY
@@ -341,8 +341,8 @@ e_drag_xdnd_start(E_Drag *drag, int x, int y)
 #ifndef HAVE_WAYLAND_ONLY
    if (e_comp->comp_type != E_PIXMAP_TYPE_X) return 0;
    _drag_win = ecore_x_window_input_new(e_comp->win,
-                                        e_comp->man->x, e_comp->man->y,
-                                        e_comp->man->w, e_comp->man->h);
+                                        e_comp->x, e_comp->y,
+                                        e_comp->w, e_comp->h);
 
    ecore_x_window_show(_drag_win);
 #endif

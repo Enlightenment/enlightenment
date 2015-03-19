@@ -527,10 +527,7 @@ _cb_add_binding(void *data,
    elm_win_borderless_set(grab_dlg->win, EINA_TRUE);
 
 #ifndef HAVE_WAYLAND_ONLY
-   E_Manager *man;
-
-   man = e_manager_current_get();
-   grab_win = ecore_x_window_input_new(man->root, 0, 0, 1, 1);
+   grab_win = ecore_x_window_input_new(e_comp->root, 0, 0, 1, 1);
    ecore_x_window_show(grab_win);
    e_grabinput_get(grab_win, 0, grab_win);
 #endif

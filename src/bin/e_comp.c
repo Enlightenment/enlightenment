@@ -185,7 +185,7 @@ _e_comp_fullscreen_check(void)
         while (o)
           {
              if (_e_comp_visible_object_is_above
-                 (o, 0, 0, e_comp->man->w, e_comp->man->h)) return NULL;
+                 (o, 0, 0, e_comp->w, e_comp->h)) return NULL;
              o = evas_object_smart_parent_get(o);
           }
         return ec;
@@ -633,7 +633,7 @@ _e_comp_shapes_update_comp_client_shape_comp_helper(E_Client *ec, Eina_Tiler *tb
           {
              x = rect->x, y = rect->y, w = rect->w, h = rect->h;
              x += ec->client.x, y += ec->client.y;
-             E_RECTS_CLIP_TO_RECT(x, y, w, h, e_comp->man->x, e_comp->man->y, e_comp->man->w, e_comp->man->h);
+             E_RECTS_CLIP_TO_RECT(x, y, w, h, e_comp->x, e_comp->y, e_comp->w, e_comp->h);
              if ((w < 1) || (h < 1)) continue;
    //#ifdef SHAPE_DEBUG not sure we can shape check these?
              //r = E_NEW(Eina_Rectangle, 1);
@@ -706,10 +706,10 @@ _e_comp_shapes_update_job(void *d EINA_UNUSED)
 #endif
 
    E_FREE_LIST(e_comp->debug_rects, evas_object_del);
-   tb = eina_tiler_new(e_comp->man->w, e_comp->man->h);
+   tb = eina_tiler_new(e_comp->w, e_comp->h);
    eina_tiler_tile_size_set(tb, 1, 1);
    /* background */
-   eina_tiler_rect_add(tb, &(Eina_Rectangle){0, 0, e_comp->man->w, e_comp->man->h});
+   eina_tiler_rect_add(tb, &(Eina_Rectangle){0, 0, e_comp->w, e_comp->h});
 
    ec = e_client_bottom_get();
    if (ec) o = ec->frame;
@@ -808,7 +808,7 @@ _e_comp_free(E_Comp *c)
 {
    E_FREE_LIST(c->zones, e_object_del);
 
-   e_comp_canvas_init();
+   e_comp_canvas_clear();
 
    ecore_evas_free(c->ee);
    eina_stringshare_del(c->name);
@@ -901,7 +901,7 @@ _e_comp_act_opacity_obj_finder(E_Object *obj)
       case E_CLIENT_TYPE:
         return ((E_Client*)obj)->frame;
       case E_ZONE_TYPE:
-      case E_MANAGER_TYPE:
+      case E_COMP_TYPE:
       case E_MENU_TYPE:
         ec = e_client_focused_get();
         return ec ? ec->frame : NULL;
@@ -1450,7 +1450,7 @@ e_comp_block_window_add(void)
 {
    e_comp->block_count++;
    if (e_comp->block_win) return;
-   e_comp->block_win = ecore_x_window_new(e_comp->man->root, e_comp->man->x, e_comp->man->y, e_comp->man->w, e_comp->man->h);
+   e_comp->block_win = ecore_x_window_new(e_comp->root, e_comp->x, e_comp->y, e_comp->w, e_comp->h);
    INF("BLOCK WIN: %x", e_comp->block_win);
    ecore_x_window_background_color_set(e_comp->block_win, 0, 0, 0);
    e_comp_ignore_win_add(e_comp->block_win);
@@ -1474,7 +1474,7 @@ e_comp_block_window_del(void)
 EAPI E_Comp *
 e_comp_find_by_window(Ecore_Window win)
 {
-   if ((e_comp->win == win) || (e_comp->ee_win == win) || (e_comp->man->root == win)) return e_comp;
+   if ((e_comp->win == win) || (e_comp->ee_win == win) || (e_comp->root == win)) return e_comp;
    return NULL;
 }
 

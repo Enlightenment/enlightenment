@@ -121,7 +121,6 @@ src/bin/e_ipc.h \
 src/bin/e_layout.h \
 src/bin/e_livethumb.h \
 src/bin/e_log.h \
-src/bin/e_manager.h \
 src/bin/e_maximize.h \
 src/bin/e_menu.h \
 src/bin/e_mmx.h \
@@ -286,7 +285,6 @@ src/bin/e_ipc_codec.c \
 src/bin/e_layout.c \
 src/bin/e_livethumb.c \
 src/bin/e_log.c \
-src/bin/e_manager.c \
 src/bin/e_maximize.c \
 src/bin/e_menu.c \
 src/bin/e_module.c \

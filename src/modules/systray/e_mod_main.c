@@ -511,7 +511,7 @@ Ecore_X_Window
 systray_root_get(const Instance *inst)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(inst, 0);
-   return inst->comp->man->root;
+   return e_comp->root;
 }
 
 static void

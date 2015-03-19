@@ -8,8 +8,9 @@
 
 extern EAPI int E_EVENT_COMPOSITOR_RESIZE;
 
-EAPI Eina_Bool e_comp_canvas_init(void);
+EAPI Eina_Bool e_comp_canvas_init(int w, int h);
 EINTERN void e_comp_canvas_clear(void);
+EAPI void e_comp_canvas_resize(int w, int h);
 EAPI void e_comp_all_freeze(void);
 EAPI void e_comp_all_thaw(void);
 EAPI E_Zone * e_comp_zone_xy_get(Evas_Coord x, Evas_Coord y);
@@ -24,7 +25,8 @@ EAPI E_Layer e_comp_canvas_layer_map_to(unsigned int layer);
 EAPI unsigned int e_comp_canvas_layer_map(E_Layer layer);
 EAPI unsigned int e_comp_canvas_client_layer_map(E_Layer layer);
 EAPI E_Layer e_comp_canvas_client_layer_map_nearest(int layer);
-
+EAPI void e_comp_canvas_keys_grab(void);
+EAPI void e_comp_canvas_keys_ungrab(void);
 
 /* the following functions are used for adjusting root window coordinates
  * to/from canvas coordinates.

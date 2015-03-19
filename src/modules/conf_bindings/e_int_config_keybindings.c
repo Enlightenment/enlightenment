@@ -186,7 +186,7 @@ _basic_apply_data(E_Config_Dialog *cfd  EINA_UNUSED,
 
    _auto_apply_changes(cfdata);
 
-   e_managers_keys_ungrab();
+   e_comp_canvas_keys_ungrab();
    EINA_LIST_FREE(e_bindings->key_bindings, bi)
      {
         e_bindings_key_del(bi->context, bi->key, bi->modifiers, bi->any_mod,
@@ -215,7 +215,7 @@ _basic_apply_data(E_Config_Dialog *cfd  EINA_UNUSED,
         e_bindings_key_add(bi->context, bi->key, bi->modifiers, bi->any_mod,
                            bi->action, bi->params);
      }
-   e_managers_keys_grab();
+   e_comp_canvas_keys_grab();
    e_config_save_queue();
 
    return 1;
