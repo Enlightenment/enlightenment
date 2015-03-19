@@ -60,7 +60,7 @@ typedef void (*E_Comp_Grab_Cb)(void);
 struct _E_Comp
 {
    E_Object e_obj_inherit;
-   int x, y, w, h;
+   int w, h;
 
    Ecore_Window  win; // input overlay
    Ecore_Window  root;

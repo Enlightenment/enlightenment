@@ -633,7 +633,7 @@ _e_comp_shapes_update_comp_client_shape_comp_helper(E_Client *ec, Eina_Tiler *tb
           {
              x = rect->x, y = rect->y, w = rect->w, h = rect->h;
              x += ec->client.x, y += ec->client.y;
-             E_RECTS_CLIP_TO_RECT(x, y, w, h, e_comp->x, e_comp->y, e_comp->w, e_comp->h);
+             E_RECTS_CLIP_TO_RECT(x, y, w, h, 0, 0, e_comp->w, e_comp->h);
              if ((w < 1) || (h < 1)) continue;
    //#ifdef SHAPE_DEBUG not sure we can shape check these?
              //r = E_NEW(Eina_Rectangle, 1);
@@ -1450,7 +1450,7 @@ e_comp_block_window_add(void)
 {
    e_comp->block_count++;
    if (e_comp->block_win) return;
-   e_comp->block_win = ecore_x_window_new(e_comp->root, e_comp->x, e_comp->y, e_comp->w, e_comp->h);
+   e_comp->block_win = ecore_x_window_new(e_comp->root, 0, 0, e_comp->w, e_comp->h);
    INF("BLOCK WIN: %x", e_comp->block_win);
    ecore_x_window_background_color_set(e_comp->block_win, 0, 0, 0);
    e_comp_ignore_win_add(e_comp->block_win);

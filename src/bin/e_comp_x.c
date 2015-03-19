@@ -1473,13 +1473,13 @@ _e_comp_x_configure_request(void *data  EINA_UNUSED, int type EINA_UNUSED, Ecore
         else
           {
              /* client is completely outside the screen, policy does not allow */
-             if (((!E_INTERSECTS(x, y, ec->w, ec->h, e_comp->x, e_comp->y, e_comp->w - 5, e_comp->h - 5)) &&
+             if (((!E_INTERSECTS(x, y, ec->w, ec->h, 0, 0, e_comp->w - 5, e_comp->h - 5)) &&
                  (e_config->screen_limits != E_CLIENT_OFFSCREEN_LIMIT_ALLOW_FULL)) ||
                  /* client is partly outside the zone, policy does not allow */
-                 (((!E_INSIDE(x, y, e_comp->x, e_comp->y, e_comp->w - 5, e_comp->h - 5)) &&
-                  (!E_INSIDE(x + ec->w, y, e_comp->x, e_comp->y, e_comp->w - 5, e_comp->h - 5)) &&
-                  (!E_INSIDE(x, y + ec->h, e_comp->x, e_comp->y, e_comp->w - 5, e_comp->h - 5)) &&
-                  (!E_INSIDE(x + ec->w, y + ec->h, e_comp->x, e_comp->y, e_comp->w - 5, e_comp->h - 5))) &&
+                 (((!E_INSIDE(x, y, 0, 0, e_comp->w - 5, e_comp->h - 5)) &&
+                  (!E_INSIDE(x + ec->w, y, 0, 0, e_comp->w - 5, e_comp->h - 5)) &&
+                  (!E_INSIDE(x, y + ec->h, 0, 0, e_comp->w - 5, e_comp->h - 5)) &&
+                  (!E_INSIDE(x + ec->w, y + ec->h, 0, 0, e_comp->w - 5, e_comp->h - 5))) &&
                   (e_config->screen_limits == E_CLIENT_OFFSCREEN_LIMIT_ALLOW_NONE))
                 )
                e_comp_object_util_center(ec->frame);

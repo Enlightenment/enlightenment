@@ -756,9 +756,8 @@ _cover_new(E_Zone *zone)
    evas_object_show(cov->text);
 
 #else
-   cov->win = ecore_x_window_input_new(e_compager->root,
-                                       e_comp->x + zone->x,
-                                       e_comp->y + zone->y,
+   cov->win = ecore_x_window_input_new(e_comp->root,
+                                       zone->x, zone->y,
                                        zone->w, zone->h);
 #endif
 

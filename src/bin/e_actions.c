@@ -1850,8 +1850,6 @@ ACT_FN_GO_MOUSE(menu_show, )
                   m->zone = zone;
                   x = ev->canvas.x;
                   y = ev->canvas.y;
-                  x -= e_comp->x;
-                  y -= e_comp->y;
                   e_menu_post_deactivate_callback_set(m, _e_actions_cb_menu_end, NULL);
                   e_menu_activate_mouse(m, zone, x, y, 1, 1,
                                         E_MENU_POP_DIRECTION_DOWN, ev->timestamp);
