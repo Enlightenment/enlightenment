@@ -518,7 +518,6 @@ e_shelf_save(E_Shelf *es)
 
         cf_es = E_NEW(E_Config_Shelf, 1);
         cf_es->name = eina_stringshare_add(es->name);
-        cf_es->manager = e_comp->num;
         cf_es->zone = es->zone->num;
         cf_es->layer = es->layer;
         e_config->shelves = eina_list_append(e_config->shelves, cf_es);
@@ -997,7 +996,6 @@ _e_shelf_new_dialog_ok(void *data, char *text)
 
    cfg = E_NEW(E_Config_Shelf, 1);
    cfg->name = eina_stringshare_add(text);
-   cfg->manager = e_comp->num;
    cfg->zone = zone->num;
    cfg->layer = E_LAYER_CLIENT_ABOVE;
    EINA_LIST_FOREACH(e_config->shelves, l, es_cf)

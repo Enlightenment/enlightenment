@@ -598,7 +598,7 @@ struct _E_Config_Shelf
 {
    const char   *name;
    int           id;
-   int           manager, zone;
+   int           zone;
    int           layer; //E_Layer
    unsigned char popup; //DEAD
    int           orient;

@@ -172,8 +172,6 @@ _e_config_edd_init(Eina_Bool old)
 #define D _e_config_shelf_edd
    E_CONFIG_VAL(D, T, name, STR);
    E_CONFIG_VAL(D, T, id, INT);
-   EET_DATA_DESCRIPTOR_ADD_BASIC(D, T, "container", manager, EET_T_INT);
-   E_CONFIG_VAL(D, T, manager /*container */, INT);
    E_CONFIG_VAL(D, T, zone, INT);
    E_CONFIG_VAL(D, T, layer, INT);
    E_CONFIG_VAL(D, T, popup, UCHAR);
