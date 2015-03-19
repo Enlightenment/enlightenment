@@ -211,8 +211,6 @@ _e_config_edd_init(Eina_Bool old)
 #undef D
 #define T E_Config_Desktop_Name
 #define D _e_config_desktop_name_edd
-   EET_DATA_DESCRIPTOR_ADD_BASIC(D, T, "container", manager, EET_T_INT);
-   E_CONFIG_VAL(D, T, manager /*container */, INT);
    E_CONFIG_VAL(D, T, zone, INT);
    E_CONFIG_VAL(D, T, desk_x, INT);
    E_CONFIG_VAL(D, T, desk_y, INT);
@@ -223,7 +221,6 @@ _e_config_edd_init(Eina_Bool old)
 #undef D
 #define T E_Config_Desktop_Window_Profile
 #define D _e_config_desktop_window_profile_edd
-   E_CONFIG_VAL(D, T, manager, INT);
    E_CONFIG_VAL(D, T, zone, INT);
    E_CONFIG_VAL(D, T, desk_x, INT);
    E_CONFIG_VAL(D, T, desk_y, INT);

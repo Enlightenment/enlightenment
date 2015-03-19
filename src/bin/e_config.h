@@ -550,7 +550,6 @@ struct _E_Config_Desktop_Background
 
 struct _E_Config_Desktop_Name
 {
-   int         manager;
    int         zone;
    int         desk_x;
    int         desk_y;
@@ -559,7 +558,6 @@ struct _E_Config_Desktop_Name
 
 struct _E_Config_Desktop_Window_Profile
 {
-   int         manager;
    int         zone;
    int         desk_x;
    int         desk_y;

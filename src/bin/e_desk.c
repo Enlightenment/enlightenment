@@ -67,8 +67,6 @@ e_desk_new(E_Zone *zone, int x, int y)
    /* Get current desktop's name */
    EINA_LIST_FOREACH(e_config->desktop_names, l, cfname)
      {
-        if ((cfname->manager >= 0) &&
-            ((int)e_comp->num != cfname->manager)) continue;
         if ((cfname->zone >= 0) &&
             ((int)zone->num != cfname->zone)) continue;
         if ((cfname->desk_x != desk->x) || (cfname->desk_y != desk->y))
@@ -87,8 +85,6 @@ e_desk_new(E_Zone *zone, int x, int y)
    ok = 0;
    EINA_LIST_FOREACH(e_config->desktop_window_profiles, l, cfprof)
      {
-        if ((cfprof->manager >= 0) &&
-            ((int)e_comp->num != cfprof->manager)) continue;
         if ((cfprof->zone >= 0) &&
             ((int)zone->num != cfprof->zone)) continue;
         if ((cfprof->desk_x != desk->x) || (cfprof->desk_y != desk->y))
@@ -134,14 +130,13 @@ e_desk_name_set(E_Desk *desk, const char *name)
 }
 
 EAPI void
-e_desk_name_add(int manager, int zone, int desk_x, int desk_y, const char *name)
+e_desk_name_add(int zone, int desk_x, int desk_y, const char *name)
 {
    E_Config_Desktop_Name *cfname;
 
-   e_desk_name_del(manager, zone, desk_x, desk_y);
+   e_desk_name_del(zone, desk_x, desk_y);
 
    cfname = E_NEW(E_Config_Desktop_Name, 1);
-   cfname->manager = manager;
    cfname->zone = zone;
    cfname->desk_x = desk_x;
    cfname->desk_y = desk_y;
@@ -151,14 +146,14 @@ e_desk_name_add(int manager, int zone, int desk_x, int desk_y, const char *name)
 }
 
 EAPI void
-e_desk_name_del(int manager, int zone, int desk_x, int desk_y)
+e_desk_name_del(int zone, int desk_x, int desk_y)
 {
    Eina_List *l = NULL;
    E_Config_Desktop_Name *cfname = NULL;
 
    EINA_LIST_FOREACH(e_config->desktop_names, l, cfname)
      {
-        if ((cfname->manager == manager) && (cfname->zone == zone) &&
+        if ((cfname->zone == zone) &&
             (cfname->desk_x == desk_x) && (cfname->desk_y == desk_y))
           {
              e_config->desktop_names =
@@ -191,8 +186,6 @@ e_desk_name_update(void)
 
                   EINA_LIST_FOREACH(e_config->desktop_names, l, cfname)
                     {
-                       if ((cfname->manager >= 0) &&
-                           ((int)e_comp->num != cfname->manager)) continue;
                        if ((cfname->zone >= 0) &&
                            ((int)zone->num != cfname->zone)) continue;
                        if ((cfname->desk_x != d_x) ||
@@ -564,18 +557,16 @@ e_desk_window_profile_set(E_Desk *desk,
 }
 
 EAPI void
-e_desk_window_profile_add(int manager,
-                          int zone,
+e_desk_window_profile_add(int zone,
                           int desk_x,
                           int desk_y,
                           const char *profile)
 {
    E_Config_Desktop_Window_Profile *cfprof;
 
-   e_desk_window_profile_del(manager, zone, desk_x, desk_y);
+   e_desk_window_profile_del(zone, desk_x, desk_y);
 
    cfprof = E_NEW(E_Config_Desktop_Window_Profile, 1);
-   cfprof->manager = manager;
    cfprof->zone = zone;
    cfprof->desk_x = desk_x;
    cfprof->desk_y = desk_y;
@@ -584,8 +575,7 @@ e_desk_window_profile_add(int manager,
 }
 
 EAPI void
-e_desk_window_profile_del(int manager,
-                          int zone,
+e_desk_window_profile_del(int zone,
                           int desk_x,
                           int desk_y)
 {
@@ -594,8 +584,7 @@ e_desk_window_profile_del(int manager,
 
    EINA_LIST_FOREACH(e_config->desktop_window_profiles, l, cfprof)
      {
-        if (!((cfprof->manager == manager) &&
-              (cfprof->zone == zone) &&
+        if (!((cfprof->zone == zone) &&
               (cfprof->desk_x == desk_x) &&
               (cfprof->desk_y == desk_y)))
           continue;
@@ -633,8 +622,6 @@ e_desk_window_profile_update(void)
 
                   EINA_LIST_FOREACH(e_config->desktop_window_profiles, l, cfprof)
                     {
-                       if ((cfprof->manager >= 0) &&
-                           ((int)e_comp->num != cfprof->manager)) continue;
                        if ((cfprof->zone >= 0) &&
                            ((int)zone->num != cfprof->zone)) continue;
                        if ((cfprof->desk_x != d_x) ||
