@@ -9,7 +9,7 @@ static Evas_Object     *_basic_create(E_Config_Dialog *cfd, Evas *evas, E_Config
 static int              _adv_apply(E_Config_Dialog *cfd, E_Config_Dialog_Data *cfdata);
 static Evas_Object     *_adv_create(E_Config_Dialog *cfd, Evas *evas, E_Config_Dialog_Data *cfdata);
 
-static E_Config_Dialog *_e_int_config_wallpaper_desk(Evas_Object *parent EINA_UNUSED, int man_num, int zone_num, int desk_x, int desk_y);
+static E_Config_Dialog *_e_int_config_wallpaper_desk(Evas_Object *parent EINA_UNUSED, int zone_num, int desk_x, int desk_y);
 
 static void             _cb_button_up(void *data1, void *data2);
 static void             _cb_files_changed(void *data, Evas_Object *obj, void *event_info);
@@ -27,7 +27,7 @@ static void             _cb_import(void *data1, void *data2);
 struct _E_Config_Wallpaper
 {
    int specific_config;
-   int man_num, zone_num;
+   int zone_num;
    int desk_x, desk_y;
 };
 
@@ -54,23 +54,23 @@ struct _E_Config_Dialog_Data
 E_Config_Dialog *
 e_int_config_wallpaper(Evas_Object *parent EINA_UNUSED, const char *params EINA_UNUSED)
 {
-   return _e_int_config_wallpaper_desk(NULL, -1, -1, -1, -1);
+   return _e_int_config_wallpaper_desk(NULL, -1, -1, -1);
 }
 
 E_Config_Dialog *
 e_int_config_wallpaper_desk(Evas_Object *parent EINA_UNUSED, const char *params)
 {
-   int man_num, zone_num, desk_x, desk_y;
+   int zone_num, desk_x, desk_y;
 
    if (!params) return NULL;
-   man_num = zone_num = desk_x = desk_y = -1;
-   if (sscanf(params, "%i %i %i %i", &man_num, &zone_num, &desk_x, &desk_y) != 4)
+   zone_num = desk_x = desk_y = -1;
+   if (sscanf(params, "%i %i %i", &zone_num, &desk_x, &desk_y) != 4)
      return NULL;
-   return _e_int_config_wallpaper_desk(NULL, man_num, zone_num, desk_x, desk_y);
+   return _e_int_config_wallpaper_desk(NULL, zone_num, desk_x, desk_y);
 }
 
 static E_Config_Dialog *
-_e_int_config_wallpaper_desk(Evas_Object *parent EINA_UNUSED, int man_num, int zone_num, int desk_x, int desk_y)
+_e_int_config_wallpaper_desk(Evas_Object *parent EINA_UNUSED, int zone_num, int desk_x, int desk_y)
 {
    E_Config_Dialog *cfd;
    E_Config_Dialog_View *v;
@@ -85,7 +85,7 @@ _e_int_config_wallpaper_desk(Evas_Object *parent EINA_UNUSED, int man_num, int z
    v->basic.apply_cfdata = _basic_apply;
    v->basic.create_widgets = _basic_create;
 
-   if (!(man_num == -1 && zone_num == -1 && desk_x == -1 && desk_y == -1))
+   if (!(zone_num == -1 && desk_x == -1 && desk_y == -1))
      cw->specific_config = 1;
    else
      {
@@ -95,7 +95,6 @@ _e_int_config_wallpaper_desk(Evas_Object *parent EINA_UNUSED, int man_num, int z
 
    v->override_auto_apply = 1;
 
-   cw->man_num = man_num;
    cw->zone_num = zone_num;
    cw->desk_x = desk_x;
    cw->desk_y = desk_y;
@@ -348,7 +347,7 @@ _fill_data(E_Config_Dialog_Data *cfdata)
         /* if we have a config for this bg, use it. */
         if (cfbg)
           {
-             if (cfbg->manager >= 0 && cfbg->zone >= 0)
+             if (cfbg->zone >= 0)
                {
                   if (cfbg->desk_x >= 0 && cfbg->desk_y >= 0)
                     cfdata->all_this_desk_screen = E_CONFIG_WALLPAPER_DESK;
@@ -526,8 +525,8 @@ _basic_apply(E_Config_Dialog *cfd, E_Config_Dialog_Data *cfdata)
    if (cw->specific_config)
      {
         /* update a specific config */
-        e_bg_del(cw->man_num, cw->zone_num, cw->desk_x, cw->desk_y);
-        e_bg_add(cw->man_num, cw->zone_num, cw->desk_x, cw->desk_y, cfdata->bg);
+        e_bg_del(cw->zone_num, cw->desk_x, cw->desk_y);
+        e_bg_add(cw->zone_num, cw->desk_x, cw->desk_y, cfdata->bg);
      }
    else
      {
@@ -537,7 +536,7 @@ _basic_apply(E_Config_Dialog *cfd, E_Config_Dialog_Data *cfdata)
              E_Config_Desktop_Background *cfbg;
 
              cfbg = e_config->desktop_backgrounds->data;
-             e_bg_del(cfbg->manager, cfbg->zone, cfbg->desk_x, cfbg->desk_y);
+             e_bg_del(cfbg->zone, cfbg->desk_x, cfbg->desk_y);
           }
         if ((cfdata->use_theme_bg) || (!cfdata->bg))
           e_bg_default_set(NULL);
@@ -662,7 +661,7 @@ _adv_apply(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfdata)
              E_Config_Desktop_Background *cfbg;
 
              cfbg = e_config->desktop_backgrounds->data;
-             e_bg_del(cfbg->manager, cfbg->zone, cfbg->desk_x, cfbg->desk_y);
+             e_bg_del(cfbg->zone, cfbg->desk_x, cfbg->desk_y);
           }
         e_bg_default_set(NULL);
      }
@@ -675,17 +674,17 @@ _adv_apply(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfdata)
                   E_Config_Desktop_Background *cfbg;
 
                   cfbg = e_config->desktop_backgrounds->data;
-                  e_bg_del(cfbg->manager, cfbg->zone, cfbg->desk_x, cfbg->desk_y);
+                  e_bg_del(cfbg->zone, cfbg->desk_x, cfbg->desk_y);
                }
              e_bg_default_set(cfdata->bg);
           }
         else if (cfdata->all_this_desk_screen == E_CONFIG_WALLPAPER_DESK)
           {
-             e_bg_del(e_comp->num, z->num, d->x, d->y);
-             e_bg_del(e_comp->num, -1, d->x, d->y);
-             e_bg_del(-1, z->num, d->x, d->y);
-             e_bg_del(-1, -1, d->x, d->y);
-             e_bg_add(e_comp->num, z->num, d->x, d->y, cfdata->bg);
+             e_bg_del(z->num, d->x, d->y);
+             e_bg_del(-1, d->x, d->y);
+             e_bg_del(z->num, d->x, d->y);
+             e_bg_del(-1, d->x, d->y);
+             e_bg_add(z->num, d->x, d->y, cfdata->bg);
           }
         else if (cfdata->all_this_desk_screen == E_CONFIG_WALLPAPER_SCREEN)
           {
@@ -694,8 +693,7 @@ _adv_apply(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfdata)
                   E_Config_Desktop_Background *cfbg;
 
                   cfbg = l->data;
-                  if ((cfbg->manager == (int)e_comp->num) &&
-                      (cfbg->zone == (int)z->num))
+                  if (cfbg->zone == (int)z->num)
                     fl = eina_list_append(fl, cfbg);
                }
              while (fl)
@@ -703,11 +701,11 @@ _adv_apply(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfdata)
                   E_Config_Desktop_Background *cfbg;
 
                   cfbg = fl->data;
-                  e_bg_del(cfbg->manager, cfbg->zone, cfbg->desk_x,
+                  e_bg_del(cfbg->zone, cfbg->desk_x,
                            cfbg->desk_y);
                   fl = eina_list_remove_list(fl, fl);
                }
-             e_bg_add(e_comp->num, z->num, -1, -1, cfdata->bg);
+             e_bg_add(z->num, -1, -1, cfdata->bg);
           }
      }
    e_bg_update();

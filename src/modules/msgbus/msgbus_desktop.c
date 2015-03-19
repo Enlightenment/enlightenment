@@ -100,20 +100,20 @@ static Eldbus_Message *
 cb_desktop_bgadd(const Eldbus_Service_Interface *iface EINA_UNUSED,
                  const Eldbus_Message *msg)
 {
-   int manager, zone, desk_x, desk_y;
+   int zone, desk_x, desk_y;
    const char *path;
    Eldbus_Message *reply = eldbus_message_method_return_new(msg);
 
-   if (!eldbus_message_arguments_get(msg, "iiiis", &manager, &zone, &desk_x,
+   if (!eldbus_message_arguments_get(msg, "iiis", &zone, &desk_x,
                                     &desk_y, &path))
      {
         ERR("could not get Add arguments");
         return reply;
      }
 
-   DBG("add bg manager=%d, zone=%d, pos=%d,%d path=%s",
-       manager, zone, desk_x, desk_y, path);
-   e_bg_add(manager, zone, desk_x, desk_y, path);
+   DBG("add bg zone=%d, pos=%d,%d path=%s",
+       zone, desk_x, desk_y, path);
+   e_bg_add(zone, desk_x, desk_y, path);
    e_bg_update();
    e_config_save_queue();
 
@@ -124,19 +124,19 @@ static Eldbus_Message *
 cb_desktop_bgdel(const Eldbus_Service_Interface *iface EINA_UNUSED,
                  const Eldbus_Message *msg)
 {
-   int manager, zone, desk_x, desk_y;
+   int zone, desk_x, desk_y;
    Eldbus_Message *reply = eldbus_message_method_return_new(msg);
 
-   if (!eldbus_message_arguments_get(msg, "iiii", &manager, &zone, &desk_x,
+   if (!eldbus_message_arguments_get(msg, "iii", &zone, &desk_x,
                                     &desk_y))
      {
         ERR("could not get Del arguments");
         return reply;
      }
 
-   DBG("del bg manager=%d, zone=%d, pos=%d,%d",
-       manager, zone, desk_x, desk_y);
-   e_bg_del(manager, zone, desk_x, desk_y);
+   DBG("del bg zone=%d, pos=%d,%d",
+       zone, desk_x, desk_y);
+   e_bg_del(zone, desk_x, desk_y);
    e_bg_update();
    e_config_save_queue();
 
@@ -170,11 +170,11 @@ cb_desktop_bglist(const Eldbus_Service_Interface *iface EINA_UNUSED,
           {
              continue;
           }
-        DBG("Background manager=%d zone=%d pos=%d,%d path=%s",
-            bg->manager, bg->zone, bg->desk_x, bg->desk_y, bg->file);
+        DBG("Background zone=%d pos=%d,%d path=%s",
+            bg->zone, bg->desk_x, bg->desk_y, bg->file);
         eldbus_message_iter_arguments_append(array, "(iiiis)", &s);
         if (!s) continue;
-        eldbus_message_iter_arguments_append(s, "iiiis", bg->manager, bg->zone,
+        eldbus_message_iter_arguments_append(s, "iiiis", bg->zone,
                                             bg->desk_x, bg->desk_y, bg->file);
         eldbus_message_iter_container_close(array, s);
      }
@@ -197,11 +197,11 @@ static const Eldbus_Method desktop_methods[] = {
 
 static const Eldbus_Method background_methods[] = {
    { "Add",
-      ELDBUS_ARGS({"i", "manager"}, {"i", "zone"}, {"i", "desk_x"}, {"i", "desk_y"}, {"s", "path"}),
+      ELDBUS_ARGS({"i", "zone"}, {"i", "desk_x"}, {"i", "desk_y"}, {"s", "path"}),
       NULL, cb_desktop_bgadd, 0 },
-   { "Del", ELDBUS_ARGS({"i", "manager"}, {"i", "zone"}, {"i", "desk_x"}, {"i", "desk_y"}),
+   { "Del", ELDBUS_ARGS({"i", "zone"}, {"i", "desk_x"}, {"i", "desk_y"}),
       NULL, cb_desktop_bgdel, 0 },
-   { "List", ELDBUS_ARGS({"a(iiiis)", "array_of_bg"}), NULL, cb_desktop_bglist, 0 },
+   { "List", ELDBUS_ARGS({"a(iiis)", "array_of_bg"}), NULL, cb_desktop_bglist, 0 },
    { NULL, NULL, NULL, NULL, 0 }
 };
 

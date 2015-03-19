@@ -203,8 +203,6 @@ _e_config_edd_init(Eina_Bool old)
 #undef D
 #define T E_Config_Desktop_Background
 #define D _e_config_desktop_bg_edd
-   EET_DATA_DESCRIPTOR_ADD_BASIC(D, T, "container", manager, EET_T_INT);
-   E_CONFIG_VAL(D, T, manager /*container */, INT);
    E_CONFIG_VAL(D, T, zone, INT);
    E_CONFIG_VAL(D, T, desk_x, INT);
    E_CONFIG_VAL(D, T, desk_y, INT);

@@ -105,7 +105,6 @@ e_desklock_user_wallpaper_get(E_Zone *zone)
    desk = e_desk_current_get(zone);
    EINA_LIST_FOREACH(e_config->desktop_backgrounds, l, cdbg)
      {
-        if ((cdbg->manager > -1) && (cdbg->manager != (int)e_comp->num)) continue;
         if ((cdbg->zone > -1) && (cdbg->zone != (int)zone->num)) continue;
         if ((cdbg->desk_x > -1) && (cdbg->desk_x != desk->x)) continue;
         if ((cdbg->desk_y > -1) && (cdbg->desk_y != desk->y)) continue;

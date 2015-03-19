@@ -30,7 +30,7 @@ e_int_config_desk(Evas_Object *parent EINA_UNUSED, const char *params)
 
    if (!params) return NULL;
    man_num = zone_num = dx = dy = -1;
-   if (sscanf(params, "%i %i %i %i", &man_num, &zone_num, &dx, &dy) != 4)
+   if (sscanf(params, "%i %i %i", &zone_num, &dx, &dy) != 4)
      return NULL;
 
    if (e_config_dialog_find("E", "internal/desk")) return NULL;
@@ -151,8 +151,8 @@ _basic_apply(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfdata)
    e_desk_window_profile_add(cfdata->man_num, cfdata->zone_num,
                              cfdata->desk_x, cfdata->desk_y, cfdata->profile);
    e_desk_window_profile_update();
-   e_bg_del(cfdata->man_num, cfdata->zone_num, cfdata->desk_x, cfdata->desk_y);
-   e_bg_add(cfdata->man_num, cfdata->zone_num,
+   e_bg_del(cfdata->zone_num, cfdata->desk_x, cfdata->desk_y);
+   e_bg_add(cfdata->zone_num,
             cfdata->desk_x, cfdata->desk_y, cfdata->bg);
    e_bg_update();
 
@@ -209,8 +209,8 @@ _cb_config(void *data, void *data2 EINA_UNUSED)
 
    cfdata = data;
    if (!cfdata) return;
-   snprintf(buf, sizeof(buf), "%i %i %i %i",
-            cfdata->man_num, cfdata->zone_num, cfdata->desk_x, cfdata->desk_y);
+   snprintf(buf, sizeof(buf), "%i %i %i",
+            cfdata->zone_num, cfdata->desk_x, cfdata->desk_y);
    e_configure_registry_call("internal/wallpaper_desk", NULL, buf);
 }
 
@@ -225,7 +225,6 @@ _cb_bg_change(void *data, int type, void *event)
 
    cfdata = data;
    ev = event;
-   if (ev->manager != cfdata->man_num) return ECORE_CALLBACK_PASS_ON;
    if (ev->zone != cfdata->zone_num) return ECORE_CALLBACK_PASS_ON;
    if (ev->desk_x != cfdata->desk_x) return ECORE_CALLBACK_PASS_ON;
    if (ev->desk_y != cfdata->desk_y) return ECORE_CALLBACK_PASS_ON;

@@ -11,7 +11,7 @@ typedef struct _E_Widget_Desk_Data E_Widget_Desk_Data;
 struct _E_Widget_Desk_Data
 {
    Evas_Object         *icon, *thumb, *live;
-   int                  zone, manager, x, y;
+   int                  zone, x, y;
    Ecore_Event_Handler *bg_upd_hdl;
    Ecore_Job           *resize_job;
    Eina_Bool            configurable : 1;
@@ -74,7 +74,6 @@ e_widget_bgpreview_desk_add(Evas *e, E_Zone *zone, int x, int y)
    bgfile = e_bg_file_get(zone->num, x, y);
 
    dd = E_NEW(E_Widget_Desk_Data, 1);
-   dd->manager = e_comp->num;
    dd->zone = zone->num;
    dd->x = x;
    dd->y = y;
@@ -280,8 +279,8 @@ _e_wid_desk_cb_config(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj EINA_
      {
         char buff[256];
 
-        snprintf(buff, sizeof(buff), "%i %i %i %i",
-                 dd->manager, dd->zone, dd->x, dd->y);
+        snprintf(buff, sizeof(buff), "%i %i %i",
+                 dd->zone, dd->x, dd->y);
         e_configure_registry_call("internal/desk", NULL, buff);
      }
 }
@@ -305,8 +304,7 @@ _e_wid_cb_bg_update(void *data, int type, void *event)
    if (!(dd = data)) return ECORE_CALLBACK_PASS_ON;
    ev = event;
 
-   if (((ev->manager < 0) || (dd->manager == ev->manager)) &&
-       ((ev->zone < 0) || (dd->zone == ev->zone)) &&
+   if (((ev->zone < 0) || (dd->zone == ev->zone)) &&
        ((ev->desk_x < 0) || (dd->x == ev->desk_x)) &&
        ((ev->desk_y < 0) || (dd->y == ev->desk_y)))
      {

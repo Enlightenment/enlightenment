@@ -342,14 +342,14 @@ er_desktop_show_by_name(){
 #   E Desktop background add
 #-------------------------------------------------------------------------------
 er_desktop_bg_add(){
-   ERCIIIIS org.enlightenment.wm.Desktop.Background.Add "$2" "$3" "$4" "$5" "$6"
+   ERCIIIIS org.enlightenment.wm.Desktop.Background.Add "$2" "$3" "$4" "$5"
 }
 
 #-------------------------------------------------------------------------------
 #   E Desktop background del
 #-------------------------------------------------------------------------------
 er_desktop_bg_del(){
-   ERCIIII org.enlightenment.wm.Desktop.Background.Del "$2" "$3" "$4" "$5"
+   ERCIIII org.enlightenment.wm.Desktop.Background.Del "$2" "$3" "$4"
 }
 
 #-------------------------------------------------------------------------------

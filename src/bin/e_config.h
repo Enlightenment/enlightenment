@@ -542,7 +542,6 @@ struct _E_Config_Binding_Acpi
 
 struct _E_Config_Desktop_Background
 {
-   int         manager;
    int         zone;
    int         desk_x;
    int         desk_y;
