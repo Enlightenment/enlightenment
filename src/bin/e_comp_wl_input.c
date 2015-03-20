@@ -131,9 +131,40 @@ _e_comp_wl_input_cb_keyboard_unbind(struct wl_resource *resource)
    cdata->kbd.resources = eina_list_remove(cdata->kbd.resources, resource);
 }
 
+void
+e_comp_wl_input_keyboard_enter_send(E_Client *ec)
+{
+   struct wl_resource *res;
+   struct wl_client *wc;
+   Eina_List *l;
+   uint32_t serial;
+
+   if (!ec->comp_data->surface) return;
+
+   if (!eina_list_count(e_comp->wl_comp_data->kbd.resources)) return;
+
+   e_comp_wl_input_keyboard_modifiers_serialize(e_comp->wl_comp_data);
+
+   wc = wl_resource_get_client(ec->comp_data->surface);
+   serial = wl_display_next_serial(e_comp->wl_comp_data->wl.disp);
+
+   EINA_LIST_FOREACH(e_comp->wl_comp_data->kbd.resources, l, res)
+     {
+        if (wl_resource_get_client(res) != wc) continue;
+        wl_keyboard_send_enter(res, serial, ec->comp_data->surface,
+                               &e_comp->wl_comp_data->kbd.keys);
+        wl_keyboard_send_modifiers(res, serial,
+                                   e_comp->wl_comp_data->kbd.mod_depressed,
+                                   e_comp->wl_comp_data->kbd.mod_latched,
+                                   e_comp->wl_comp_data->kbd.mod_locked,
+                                   e_comp->wl_comp_data->kbd.mod_group);
+     }
+}
+
 static void
 _e_comp_wl_input_cb_keyboard_get(struct wl_client *client, struct wl_resource *resource, uint32_t id)
 {
+   E_Client *focused;
    E_Comp_Data *cdata;
    struct wl_resource *res;
 
@@ -157,6 +188,13 @@ _e_comp_wl_input_cb_keyboard_get(struct wl_client *client, struct wl_resource *r
    /* send current keymap */
    wl_keyboard_send_keymap(res, WL_KEYBOARD_KEYMAP_FORMAT_XKB_V1,
                            cdata->xkb.fd, cdata->xkb.size);
+
+   /* if the client owns the focused surface, we need to send an enter */
+   focused = e_client_focused_get();
+   if (!focused)
+     return;
+
+   e_comp_wl_input_keyboard_enter_send(focused);
 }
 
 static void
