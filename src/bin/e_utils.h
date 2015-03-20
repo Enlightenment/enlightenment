@@ -16,7 +16,6 @@ EAPI void         e_util_wakeup(void);
 EAPI void         e_util_env_set(const char *var, const char *val);
 EAPI int          e_util_glob_match(const char *str, const char *glob);
 EAPI int          e_util_glob_case_match(const char *str, const char *glob);
-EAPI int          e_util_head_exec(int head, const char *cmd);
 EAPI int          e_util_strcasecmp(const char *s1, const char *s2);
 EAPI int          e_util_strcmp(const char *s1, const char *s2);
 EAPI int          e_util_both_str_empty(const char *s1, const char *s2);

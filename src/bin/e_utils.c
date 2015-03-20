@@ -92,51 +92,6 @@ e_util_glob_case_match(const char *str, const char *pattern)
 }
 
 EAPI int
-e_util_head_exec(int head, const char *cmd)
-{
-   char *penv_display;
-   char *p1, *p2;
-   char buf[4096];
-   int ok = 0;
-   Ecore_Exe *exe;
-
-   penv_display = getenv("DISPLAY");
-   if (!penv_display) return 0;
-   penv_display = strdup(penv_display);
-   if (!penv_display) return 0;
-   /* set env vars */
-   p1 = strrchr(penv_display, ':');
-   p2 = strrchr(penv_display, '.');
-   if ((p1) && (p2) && (p2 > p1)) /* "blah:x.y" */
-     {
-        *p2 = 0;
-        snprintf(buf, sizeof(buf), "%s.%i", penv_display, head);
-        *p2 = '.';
-     }
-   else if (p1) /* "blah:x */
-     snprintf(buf, sizeof(buf), "%s.%i", penv_display, head);
-   else
-     eina_strlcpy(buf, penv_display, sizeof(buf));
-
-   ok = 1;
-   exe = ecore_exe_run(cmd, NULL);
-   if (!exe)
-     {
-        e_util_dialog_show(_("Run Error"),
-                           _("Enlightenment was unable to fork a child process:<br>"
-                             "<br>"
-                             "%s<br>"),
-                           cmd);
-        ok = 0;
-     }
-
-   /* reset env vars */
-   e_util_env_set("DISPLAY", penv_display);
-   free(penv_display);
-   return ok;
-}
-
-EAPI int
 e_util_strcmp(const char *s1, const char *s2)
 {
    if ((s1) && (s2))
