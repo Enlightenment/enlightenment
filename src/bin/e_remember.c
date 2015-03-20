@@ -45,7 +45,16 @@ e_remember_init(E_Startup_Mode mode)
         EINA_LIST_FOREACH(e_config->remembers, l, rem)
           {
              if ((rem->apply & E_REMEMBER_APPLY_RUN) && (rem->prop.command))
-               e_util_head_exec(rem->prop.head, rem->prop.command);
+               {
+                  if (!ecore_exe_run(rem->prop.command, NULL))
+                    {
+                       e_util_dialog_show(_("Run Error"),
+                                          _("Enlightenment was unable to fork a child process:<br>"
+                                            "<br>"
+                                            "%s<br>"),
+                                          rem->prop.command);
+                    }
+               }
           }
      }
    E_EVENT_REMEMBER_UPDATE = ecore_event_type_new();

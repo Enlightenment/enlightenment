@@ -105,7 +105,6 @@ struct _E_Remember
 
       int           desk_x, desk_y;
       int           zone;
-      int           head;
       const char   *command;
       const char   *desktop_file;
       unsigned char opacity;

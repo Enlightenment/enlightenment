@@ -333,7 +333,6 @@ _e_config_edd_init(Eina_Bool old)
    E_CONFIG_VAL(D, T, prop.desk_x, INT);
    E_CONFIG_VAL(D, T, prop.desk_y, INT);
    E_CONFIG_VAL(D, T, prop.zone, INT);
-   E_CONFIG_VAL(D, T, prop.head, INT);
    E_CONFIG_VAL(D, T, prop.command, STR);
    E_CONFIG_VAL(D, T, prop.icon_preference, UCHAR);
    E_CONFIG_VAL(D, T, prop.desktop_file, STR);
