@@ -262,7 +262,6 @@ struct _E_Comp_Wl_Client_Data
    Eina_Bool first_damage : 1;
    Eina_Bool set_win_type : 1;
    Eina_Bool frame_update : 1;
-   Eina_Bool focus_update : 1;
 };
 
 struct _E_Comp_Wl_Output

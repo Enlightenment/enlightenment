@@ -428,7 +428,6 @@ _e_comp_wl_client_focus(E_Client *ec)
    wl_array_for_each(k, &e_comp->wl_comp_data->kbd.keys)
      e_comp_wl_input_keyboard_state_update(e_comp->wl_comp_data, *k, EINA_TRUE);
 
-   ec->comp_data->focus_update = 1;
    if (!ec->comp_data->surface) return;
 
    if (!eina_list_count(e_comp->wl_comp_data->kbd.resources)) return;
@@ -450,7 +449,6 @@ _e_comp_wl_client_focus(E_Client *ec)
                                    e_comp->wl_comp_data->kbd.mod_locked,
                                    e_comp->wl_comp_data->kbd.mod_group);
 
-        ec->comp_data->focus_update = 0;
      }
 }
 
@@ -497,8 +495,6 @@ _e_comp_wl_evas_cb_focus_out(void *data, Evas *evas EINA_UNUSED, Evas_Object *ob
    _e_comp_wl_client_priority_normal(ec);
 
    if (!ec->comp_data->surface) return;
-
-   ec->comp_data->focus_update = 0;
 
    if (!eina_list_count(cdata->kbd.resources)) return;
 
@@ -2699,9 +2695,6 @@ e_comp_wl_surface_commit(E_Client *ec)
                }
           }
      }
-   if (ec->comp_data->focus_update)
-     _e_comp_wl_client_focus(ec);
-
    return EINA_TRUE;
 }
 
