@@ -417,45 +417,10 @@ _e_comp_wl_client_priority_normal(E_Client *ec)
 }
 
 static void
-_e_comp_wl_client_focus(E_Client *ec)
-{
-   struct wl_resource *res;
-   struct wl_client *wc;
-   uint32_t serial, *k;
-   Eina_List *l;
-
-   /* update keyboard modifier state */
-   wl_array_for_each(k, &e_comp->wl_comp_data->kbd.keys)
-     e_comp_wl_input_keyboard_state_update(e_comp->wl_comp_data, *k, EINA_TRUE);
-
-   if (!ec->comp_data->surface) return;
-
-   if (!eina_list_count(e_comp->wl_comp_data->kbd.resources)) return;
-
-   /* send keyboard_enter to all keyboard resources */
-   wc = wl_resource_get_client(ec->comp_data->surface);
-   serial = wl_display_next_serial(e_comp->wl_comp_data->wl.disp);
-
-   e_comp_wl_input_keyboard_modifiers_serialize(e_comp->wl_comp_data);
-
-   EINA_LIST_FOREACH(e_comp->wl_comp_data->kbd.resources, l, res)
-     {
-        if (wl_resource_get_client(res) != wc) continue;
-        wl_keyboard_send_enter(res, serial, ec->comp_data->surface,
-                               &e_comp->wl_comp_data->kbd.keys);
-        wl_keyboard_send_modifiers(res, serial,
-                                   e_comp->wl_comp_data->kbd.mod_depressed,
-                                   e_comp->wl_comp_data->kbd.mod_latched,
-                                   e_comp->wl_comp_data->kbd.mod_locked,
-                                   e_comp->wl_comp_data->kbd.mod_group);
-
-     }
-}
-
-static void
 _e_comp_wl_evas_cb_focus_in(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
 {
    E_Client *ec, *focused;
+   uint32_t *k;
 
    if (!(ec = data)) return;
    if (e_object_is_del(E_OBJECT(ec))) return;
@@ -468,7 +433,11 @@ _e_comp_wl_evas_cb_focus_in(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj
    /* raise client priority */
    _e_comp_wl_client_priority_raise(ec);
 
-   _e_comp_wl_client_focus(ec);
+   /* update keyboard modifier state */
+   wl_array_for_each(k, &e_comp->wl_comp_data->kbd.keys)
+     e_comp_wl_input_keyboard_state_update(e_comp->wl_comp_data, *k, EINA_TRUE);
+
+   e_comp_wl_input_keyboard_enter_send(ec);
 }
 
 static void
