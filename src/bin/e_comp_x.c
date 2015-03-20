@@ -4739,7 +4739,7 @@ _e_comp_x_del(E_Comp *c)
    e_alert_composite_win(c->root, 0);
 
    ecore_x_window_free(c->cm_selection);
-   ecore_x_screen_is_composited_set(c->num, 0);
+   ecore_x_screen_is_composited_set(0, 0);
 
    eina_list_free(c->x_comp_data->retry_clients);
    ecore_timer_del(c->x_comp_data->retry_timer);
@@ -4998,7 +4998,7 @@ _e_comp_x_setup(Ecore_X_Window root, int w, int h)
    Eina_Bool res;
    unsigned int i;
 
-   res = ecore_x_screen_is_composited(e_comp->num);
+   res = ecore_x_screen_is_composited(0);
    if (res)
      {
         ERR(_("Another compositor is already running on your display server."));
@@ -5015,7 +5015,7 @@ _e_comp_x_setup(Ecore_X_Window root, int w, int h)
    e_comp_ignore_win_add(E_PIXMAP_TYPE_X, e_comp->cm_selection);
    e_hints_init(root, e_comp->cm_selection);
    ecore_x_window_background_color_set(root, 0, 0, 0);
-   ecore_x_screen_is_composited_set(e_comp->num, e_comp->cm_selection);
+   ecore_x_screen_is_composited_set(0, e_comp->cm_selection);
 
    e_comp->win = ecore_x_composite_render_window_enable(root);
    if (!e_comp->win)
@@ -5043,7 +5043,7 @@ _e_comp_x_setup(Ecore_X_Window root, int w, int h)
      }
    e_comp->depth = att.depth;
 
-   if (!e_comp->num) e_alert_composite_win(root, e_comp->win);
+   e_alert_composite_win(root, e_comp->win);
 
    if (e_comp_gl_get() && (e_comp_config_get()->engine == E_COMP_ENGINE_GL))
      {

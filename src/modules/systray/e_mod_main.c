@@ -500,13 +500,6 @@ systray_edje_box_remove(const Instance *inst, Evas_Object *child)
    edje_object_part_box_remove(inst->ui.gadget, "box", child);
 }
 
-int
-systray_manager_number_get(const Instance *inst)
-{
-   EINA_SAFETY_ON_NULL_RETURN_VAL(inst, 0);
-   return inst->comp->num;
-}
-
 Ecore_X_Window
 systray_root_get(const Instance *inst)
 {

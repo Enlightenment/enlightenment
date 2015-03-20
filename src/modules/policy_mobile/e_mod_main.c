@@ -278,7 +278,6 @@ _pol_cb_zone_add(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
    for (i = 0; i < n; i++)
      {
         d = e_mod_pol_conf_desk_get_by_nums(_pol_mod->conf,
-                                            e_comp->num,
                                             zone->num,
                                             zone->desks[i]->x,
                                             zone->desks[i]->y);
@@ -373,7 +372,6 @@ _pol_cb_zone_desk_count_set(void *data EINA_UNUSED, int type EINA_UNUSED, void *
    for (i = 0; i < n; i++)
      {
         d = e_mod_pol_conf_desk_get_by_nums(_pol_mod->conf,
-                                            e_comp->num,
                                             zone->num,
                                             zone->desks[i]->x,
                                             zone->desks[i]->y);
@@ -563,7 +561,6 @@ e_modapi_init(E_Module *m)
         for (i = 0; i < n; i++)
           {
              d = e_mod_pol_conf_desk_get_by_nums(_pol_mod->conf,
-                                                 e_comp->num,
                                                  zone->num,
                                                  zone->desks[i]->x,
                                                  zone->desks[i]->y);

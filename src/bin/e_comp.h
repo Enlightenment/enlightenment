@@ -79,7 +79,6 @@ struct _E_Comp
 
    E_Pixmap_Type comp_type; //for determining X/Wayland/
 
-   unsigned int num;
    Eina_Stringshare *name;
    struct {
       Ecore_Window win;

@@ -17,7 +17,6 @@ _pol_conf_desk_add(Config *conf, E_Desk *desk)
    Config_Desk *d;
 
    d = E_NEW(Config_Desk, 1);
-   d->comp_num = e_comp->num;
    d->zone_num = desk->zone->num;
    d->x = desk->x;
    d->y = desk->y;
@@ -41,8 +40,7 @@ _pol_conf_desk_get(Config *conf, Config_Desk *d)
 
    EINA_LIST_FOREACH(conf->desks, l, d2)
      {
-        if ((d2->comp_num == d->comp_num) &&
-            (d2->zone_num == d->zone_num) &&
+        if ((d2->zone_num == d->zone_num) &&
             (d2->x == d->x) && (d2->y == d->y))
           {
              return d2;
@@ -189,7 +187,6 @@ _pol_cfd_desk_list_update(E_Config_Dialog_Data *cfdata, E_Zone *zone)
         desk = zone->desks[i];
 
         d = E_NEW(Config_Desk, 1);
-        d->comp_num = e_comp->num;
         d->zone_num = zone->num;
         d->x = desk->x;
         d->y = desk->y;
@@ -280,7 +277,6 @@ e_mod_pol_conf_init(Mod *mod)
 #undef D
 #define T Config_Desk
 #define D mod->conf_desk_edd
-   E_CONFIG_VAL(D, T, comp_num, INT);
    E_CONFIG_VAL(D, T, zone_num, UINT);
    E_CONFIG_VAL(D, T, x, INT);
    E_CONFIG_VAL(D, T, y, INT);
@@ -337,15 +333,14 @@ e_mod_pol_conf_shutdown(Mod *mod)
 }
 
 Config_Desk *
-e_mod_pol_conf_desk_get_by_nums(Config *conf, unsigned int comp_num, unsigned int zone_num, int x, int y)
+e_mod_pol_conf_desk_get_by_nums(Config *conf, unsigned int zone_num, int x, int y)
 {
    Eina_List *l;
    Config_Desk *d2;
 
    EINA_LIST_FOREACH(conf->desks, l, d2)
      {
-        if ((d2->comp_num == comp_num) &&
-            (d2->zone_num == zone_num) &&
+        if ((d2->zone_num == zone_num) &&
             (d2->x == x) && (d2->y == y))
           {
              return d2;

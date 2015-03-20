@@ -54,7 +54,6 @@ void systray_edje_box_append(const Instance *inst, Evas_Object *child);
 void systray_edje_box_remove(const Instance *inst, Evas_Object *child);
 void systray_edje_box_prepend(const Instance *inst, Evas_Object *child);
 
-int systray_manager_number_get(const Instance *inst);
 Ecore_X_Window systray_root_get(const Instance *inst);
 
 Instance_Notifier_Host *systray_notifier_host_new(Instance *inst, E_Gadcon *gadcon);

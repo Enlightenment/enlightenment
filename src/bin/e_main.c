@@ -1629,7 +1629,7 @@ _e_main_desk_save(void)
 
    EINA_LIST_FOREACH(e_comp->zones, l, zone)
      {
-        snprintf(name, sizeof(name), "DESK_%d_%d", e_comp->num, zone->num);
+        snprintf(name, sizeof(name), "DESK_%d_%d", 0, zone->num);
         snprintf(env, sizeof(env), "%d,%d", zone->desk_x_current, zone->desk_y_current);
         e_util_env_set(name, env);
      }
@@ -1648,7 +1648,7 @@ _e_main_desk_restore(void)
         E_Desk *desk;
         int desk_x, desk_y;
 
-        snprintf(name, sizeof(name), "DESK_%d_%d", e_comp->num, zone->num);
+        snprintf(name, sizeof(name), "DESK_%d_%d", 0, zone->num);
         env = getenv(name);
         if (!env) continue;
         if (!sscanf(env, "%d,%d", &desk_x, &desk_y)) continue;

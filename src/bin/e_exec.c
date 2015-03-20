@@ -432,11 +432,8 @@ _e_exec_cb_exec(void *data, Efreet_Desktop *desktop, char *exec, int remaining)
         const char *p1, *p2;
         char buf2[32];
         char *buf3 = NULL;
-        int head;
         int head_length;
         int penv_display_length;
-
-        head = e_comp->num;
 
         penv_display_length = strlen(penv_display);
         /* Check for insane length for DISPLAY env */
@@ -448,7 +445,7 @@ _e_exec_cb_exec(void *data, Efreet_Desktop *desktop, char *exec, int remaining)
 
         /* buf2 = '.%i' */
         *buf2 = '.';
-        head_length = eina_convert_itoa(head, buf2 + 1) + 2;
+        head_length = eina_convert_itoa(0, buf2 + 1) + 2;
 
         /* set env vars */
         p1 = strrchr(penv_display, ':');
