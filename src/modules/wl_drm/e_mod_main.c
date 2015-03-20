@@ -134,7 +134,6 @@ e_modapi_init(E_Module *m)
      }
 
    if (!e_comp_canvas_init(w, h)) return NULL;
-   e_comp_canvas_fake_layers_init();
 
    /* NB: This needs to be called AFTER the comp canvas has been setup */
    if (!e_comp_wl_init()) return NULL;

@@ -233,6 +233,9 @@ e_comp_canvas_init(int w, int h)
    E_LIST_HANDLER_APPEND(handlers, E_EVENT_SCREENSAVER_ON, _e_comp_cb_screensaver_on, NULL);
    E_LIST_HANDLER_APPEND(handlers, E_EVENT_SCREENSAVER_OFF, _e_comp_cb_screensaver_off, NULL);
 
+   if (e_comp->comp_type == E_PIXMAP_TYPE_WL)
+     e_comp_canvas_fake_layers_init();
+
    return EINA_TRUE;
 }
 

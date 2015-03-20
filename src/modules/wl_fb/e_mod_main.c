@@ -44,7 +44,6 @@ e_modapi_init(E_Module *m)
      }
    e_comp_canvas_init(w, h);
    e_comp_wl_init();
-   e_comp_canvas_fake_layers_init();
    comp->pointer = e_pointer_canvas_new(comp->ee, EINA_TRUE);
 
    ecore_wl_init(NULL);
