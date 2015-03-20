@@ -60,7 +60,6 @@ struct _Manager
    
    int             visible;
    Evas_Object     *overlay;
-   E_Comp    *comp;
 
    int  width, height;
    

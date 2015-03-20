@@ -60,7 +60,7 @@ gadman_reset(void *d EINA_UNUSED)
 
    E_FREE_FUNC(gadman_reset_job, ecore_job_del);
    if (gadman_locked) return;
-   evas_event_freeze(Man->comp->evas);
+   evas_event_freeze(e_comp->evas);
    for (layer = 0; layer < GADMAN_LAYER_COUNT; layer++)
      {
         E_FREE_LIST(Man->gadcons[layer], e_object_del);
@@ -76,7 +76,7 @@ gadman_reset(void *d EINA_UNUSED)
         eina_hash_free(_gadman_gadgets);
      }
    /* iterating through zones - and making gadmans on each */
-   EINA_LIST_FOREACH(Man->comp->zones, l, zone)
+   EINA_LIST_FOREACH(e_comp->zones, l, zone)
      {
         const char *layer_name[] = {"gadman", "gadman_top"};
 
@@ -98,7 +98,7 @@ gadman_reset(void *d EINA_UNUSED)
       Man->conf->anim_bg = prev;
    }
    edje_object_message_signal_process(Man->full_bg);
-   evas_event_thaw(Man->comp->evas);
+   evas_event_thaw(e_comp->evas);
 }
 
 void
@@ -112,7 +112,7 @@ gadman_init(E_Module *m)
 
    Man->module = m;
    gadman_locked = e_module_loading_get();
-   Man->comp = e_comp;
+   e_comp = e_comp;
    Man->width = e_comp->w;
    Man->height = e_comp->h;
 
@@ -630,7 +630,7 @@ gadman_update_bg(void)
            r = (double)Man->conf->color_r * (200. / 255.);
            g = (double)Man->conf->color_g * (200. / 255.);
            b = (double)Man->conf->color_b * (200. / 255.);
-           obj = evas_object_rectangle_add(Man->comp->evas);
+           obj = evas_object_rectangle_add(e_comp->evas);
            evas_object_color_set(obj, lround(r), lround(g), lround(b), 200);
            edje_object_part_swallow(Man->full_bg, "e.swallow.bg", obj);
         }
@@ -640,14 +640,14 @@ gadman_update_bg(void)
         if (eina_str_has_extension(Man->conf->custom_bg, ".edj"))
           {
              //THIS IS FOR E backgrounds
-             obj = edje_object_add(Man->comp->evas);
+             obj = edje_object_add(e_comp->evas);
              edje_object_file_set(obj, Man->conf->custom_bg,
                                   "e/desktop/background");
           }
         else
           {
              //THIS IS FOR A NORMAL IMAGE
-             obj = evas_object_image_add(Man->comp->evas);
+             obj = evas_object_image_add(e_comp->evas);
              evas_object_image_file_set(obj, Man->conf->custom_bg, NULL);
              evas_object_image_fill_set(obj, 0, 0, e_comp->w, e_comp->h);
           }
@@ -796,7 +796,7 @@ _gadman_overlay_create(void)
    E_Gadcon *gc;
 
    /* create full background object */
-   Man->full_bg = edje_object_add(Man->comp->evas);
+   Man->full_bg = edje_object_add(e_comp->evas);
    evas_object_geometry_set(Man->full_bg, 0, 0, e_comp->w, e_comp->h);
    e_theme_edje_object_set(Man->full_bg, "base/theme/gadman",
                            "e/gadman/full_bg");
@@ -832,10 +832,10 @@ _gadman_gadcon_new(const char *name, Gadman_Layer_Type layer, E_Zone *zone, E_Ga
    gc->orient = E_GADCON_ORIENT_FLOAT;
    gc->location = loc;
 
-   gc->evas = Man->comp->evas;
-   e_gadcon_ecore_evas_set(gc, Man->comp->ee);
-   e_gadcon_xdnd_window_set(gc, Man->comp->ee_win);
-   e_gadcon_dnd_window_set(gc, Man->comp->ee_win);
+   gc->evas = e_comp->evas;
+   e_gadcon_ecore_evas_set(gc, e_comp->ee);
+   e_gadcon_xdnd_window_set(gc, e_comp->ee_win);
+   e_gadcon_dnd_window_set(gc, e_comp->ee_win);
 
    e_gadcon_drop_handler_add(gc, _gadman_gadcon_dnd_enter_cb, _gadman_gadcon_dnd_leave_cb,
                              _gadman_gadcon_dnd_move_cb, _gadman_gadcon_dnd_drop_cb,

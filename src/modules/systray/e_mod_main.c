@@ -216,8 +216,8 @@ _gc_init(E_Gadcon *gc, const char *name, const char *id, const char *style)
    if (!inst)
      return NULL;
    inst->evas = gc->evas;
-   inst->comp = e_comp;
-   if (!inst->comp)
+   e_comp = e_comp;
+   if (!e_comp)
      {
         E_FREE(inst);
         return NULL;

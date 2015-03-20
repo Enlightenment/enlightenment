@@ -29,7 +29,6 @@ struct _Systray_Context
 struct _Instance
 {
    E_Gadcon_Client *gcc;
-   E_Comp     *comp;
    Evas            *evas;
    Instance_Notifier_Host *notifier;
    struct
