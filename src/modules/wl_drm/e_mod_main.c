@@ -62,12 +62,21 @@ _e_mod_drm_cb_output(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
 
    if (!(e = event)) goto end;
 
-   if (!e->plug) goto end;
+   if (!e->plug)
+     {
+        DBG("Caught Drm Output Unplug Event");
+        /* FIXME: This needs to remove output from e_comp_wl */
+        goto end;
+     }
 
    snprintf(buff, sizeof(buff), "%d", e->id);
-   e_comp_wl_output_init(buff, e->make, e->model, e->x, e->y, e->w, e->h, 
-                         e->phys_width, e->phys_height, e->refresh, 
-                         e->subpixel_order, e->transform);
+
+   if (!e_comp_wl_output_init(buff, e->make, e->model, e->x, e->y, e->w, e->h, 
+                              e->phys_width, e->phys_height, e->refresh, 
+                              e->subpixel_order, e->transform))
+     {
+        ERR("Could not setup new output: %s", buff);
+     }
 
 end:
    return ECORE_CALLBACK_PASS_ON;
