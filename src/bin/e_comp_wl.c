@@ -2307,6 +2307,9 @@ _e_comp_wl_cb_output_bind(struct wl_client *client, void *data, uint32_t version
         return;
      }
 
+   DBG("Bound Output: %s", output->id);
+   DBG("\tGeom: %d %d %d %d", output->x, output->w, output->w, output->h);
+
    output->resources = eina_list_append(output->resources, resource);
 
    wl_resource_set_implementation(resource, NULL, output,
@@ -2832,8 +2835,10 @@ e_comp_wl_output_init(const char *id, const char *make, const char *model,
 
         cdata->outputs = eina_list_append(cdata->outputs, output);
 
-        output->global = wl_global_create(cdata->wl.disp, &wl_output_interface,
-                                          2, output, _e_comp_wl_cb_output_bind);
+        output->global = 
+          wl_global_create(cdata->wl.disp, &wl_output_interface,
+                           2, output, _e_comp_wl_cb_output_bind);
+
         output->resources = NULL;
         output->scale = e_scale;
      }
