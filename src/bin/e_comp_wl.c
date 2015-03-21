@@ -2308,7 +2308,7 @@ _e_comp_wl_cb_output_bind(struct wl_client *client, void *data, uint32_t version
      }
 
    DBG("Bound Output: %s", output->id);
-   DBG("\tGeom: %d %d %d %d", output->x, output->w, output->w, output->h);
+   DBG("\tGeom: %d %d %d %d", output->x, output->y, output->w, output->h);
 
    output->resources = eina_list_append(output->resources, resource);
 
