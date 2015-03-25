@@ -242,6 +242,7 @@ _pol_hook_client_desk_set(void *d EINA_UNUSED, E_Client *ec)
 
    if (e_object_is_del(E_OBJECT(ec))) return;
    if (!_pol_client_normal_check(ec)) return;
+   if (ec->new_client) return;
 
    pc = eina_hash_find(hash_pol_clients, &ec);
    pd = eina_hash_find(hash_pol_desks, &ec->desk);
