@@ -176,23 +176,23 @@ ERGMST(){
 }
 
 #===  FUNCTION  ================================================================
-#          NAME:  ERCIIIIS
-#   DESCRIPTION:  eremote call with int, int, int, int, string parameter
-#    PARAMETERS:  interface/method call, int, int, int, int, string
+#          NAME:  ERCIIIS
+#   DESCRIPTION:  eremote call with int, int, int, string parameter
+#    PARAMETERS:  interface/method call, int, int, int, string
 #       RETURNS:  
 #===============================================================================
-ERCIIIIS(){
-   dbus-send --print-reply=literal --dest=org.enlightenment.wm.service /org/enlightenment/wm/RemoteObject "$1" int32:"$2" int32:"$3" int32:"$4" int32:"$5" string:"$6"
+ERCIIIS(){
+   dbus-send --print-reply=literal --dest=org.enlightenment.wm.service /org/enlightenment/wm/RemoteObject "$1" int32:"$2" int32:"$3" int32:"$4" string:"$5"
 }
 
 #===  FUNCTION  ================================================================
-#          NAME:  ERCIIII
-#   DESCRIPTION:  eremote call with int, int, int, int parameter
-#    PARAMETERS:  interface/method call, int, int, int, int
+#          NAME:  ERCIII
+#   DESCRIPTION:  eremote call with int, int, int parameter
+#    PARAMETERS:  interface/method call, int, int, int
 #       RETURNS:  
 #===============================================================================
-ERCIIII(){
-   dbus-send --print-reply=literal --dest=org.enlightenment.wm.service /org/enlightenment/wm/RemoteObject "$1" int32:"$2" int32:"$3" int32:"$4" int32:"$5"
+ERCIII(){
+   dbus-send --print-reply=literal --dest=org.enlightenment.wm.service /org/enlightenment/wm/RemoteObject "$1" int32:"$2" int32:"$3" int32:"$4"
 }
 
 #===  FUNCTION  ================================================================
@@ -342,14 +342,14 @@ er_desktop_show_by_name(){
 #   E Desktop background add
 #-------------------------------------------------------------------------------
 er_desktop_bg_add(){
-   ERCIIIIS org.enlightenment.wm.Desktop.Background.Add "$2" "$3" "$4" "$5"
+   ERCIIIS org.enlightenment.wm.Desktop.Background.Add "$2" "$3" "$4" "$5"
 }
 
 #-------------------------------------------------------------------------------
 #   E Desktop background del
 #-------------------------------------------------------------------------------
 er_desktop_bg_del(){
-   ERCIIII org.enlightenment.wm.Desktop.Background.Del "$2" "$3" "$4"
+   ERCIII org.enlightenment.wm.Desktop.Background.Del "$2" "$3" "$4"
 }
 
 #-------------------------------------------------------------------------------
