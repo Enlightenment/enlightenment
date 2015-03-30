@@ -2082,22 +2082,6 @@ _e_comp_wl_client_cb_del(void *data EINA_UNUSED, E_Client *ec)
 }
 
 static void
-_e_comp_wl_client_cb_post_new(void *data EINA_UNUSED, E_Client *ec)
-{
-   if (e_pixmap_type_get(ec->pixmap) != E_PIXMAP_TYPE_WL) return;
-   if (e_object_is_del(E_OBJECT(ec))) return;
-
-   ec->need_shape_merge = EINA_FALSE;
-
-   if (ec->need_shape_export)
-     {
-//        ec->shape_changed = EINA_TRUE;
-        e_comp_shape_queue();
-        ec->need_shape_export = EINA_FALSE;
-     }
-}
-
-static void
 _e_comp_wl_client_cb_pre_frame(void *data EINA_UNUSED, E_Client *ec)
 {
    uint64_t parent;
@@ -2559,8 +2543,6 @@ e_comp_wl_init(void)
    e_client_hook_add(E_CLIENT_HOOK_NEW_CLIENT, _e_comp_wl_client_cb_new, NULL);
    e_client_hook_add(E_CLIENT_HOOK_DEL, _e_comp_wl_client_cb_del, NULL);
 
-   e_client_hook_add(E_CLIENT_HOOK_EVAL_POST_NEW_CLIENT,
-                     _e_comp_wl_client_cb_post_new, NULL);
    /* e_client_hook_add(E_CLIENT_HOOK_EVAL_PRE_FRAME_ASSIGN,  */
    /*                   _e_comp_wl_client_cb_pre_frame, NULL); */
 
