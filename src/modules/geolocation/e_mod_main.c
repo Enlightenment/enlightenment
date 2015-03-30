@@ -100,7 +100,7 @@ popup_new(Instance *inst)
    char buf[PATH_MAX];
 
    inst->popup = e_gadcon_popup_new(inst->gcc, EINA_FALSE);
-   evas = e_comp_get(inst->popup)->evas;
+   evas = e_comp->evas;
 
    list = e_widget_list_add(evas, 0, 0);
 
@@ -157,7 +157,7 @@ cb_client_stop(Eldbus_Proxy *proxy EINA_UNUSED, void *data, Eldbus_Pending *pend
 }
 
 static void
-_geolocation_cb_mouse_down(void *data, Evas *evas __UNUSED__, Evas_Object *obj __UNUSED__, void *event)
+_geolocation_cb_mouse_down(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event)
 {
    Instance *inst = data;
    Evas_Event_Mouse_Down *ev = event;
@@ -184,7 +184,7 @@ _geolocation_cb_mouse_down(void *data, Evas *evas __UNUSED__, Evas_Object *obj _
         E_Menu_Item *mi;
         int x, y;
 
-        zone = e_util_zone_current_get(e_manager_current_get());
+        zone = e_zone_current_get();
 
         m = e_menu_new();
 
@@ -386,7 +386,7 @@ _gc_shutdown(E_Gadcon_Client *gcc)
 }
 
 static void
-_gc_orient(E_Gadcon_Client *gcc, E_Gadcon_Orient orient __UNUSED__)
+_gc_orient(E_Gadcon_Client *gcc, E_Gadcon_Orient orient EINA_UNUSED)
 {
    Instance *inst;
    Evas_Coord mw, mh;
@@ -403,13 +403,13 @@ _gc_orient(E_Gadcon_Client *gcc, E_Gadcon_Orient orient __UNUSED__)
 }
 
 static const char *
-_gc_label(const E_Gadcon_Client_Class *client_class __UNUSED__)
+_gc_label(const E_Gadcon_Client_Class *client_class EINA_UNUSED)
 {
    return _("Geolocation");
 }
 
 static Evas_Object *
-_gc_icon(const E_Gadcon_Client_Class *client_class __UNUSED__, Evas *evas)
+_gc_icon(const E_Gadcon_Client_Class *client_class EINA_UNUSED, Evas *evas)
 {
    Evas_Object *o;
    char buf[4096];
@@ -447,14 +447,14 @@ e_modapi_init(E_Module *m)
 }
 
 EAPI int
-e_modapi_shutdown(E_Module *m __UNUSED__)
+e_modapi_shutdown(E_Module *m EINA_UNUSED)
 {
    e_gadcon_provider_unregister(&_gadcon_class);
    return 1;
 }
 
 EAPI int
-e_modapi_save(E_Module *m __UNUSED__)
+e_modapi_save(E_Module *m EINA_UNUSED)
 {
    return 1;
 }
