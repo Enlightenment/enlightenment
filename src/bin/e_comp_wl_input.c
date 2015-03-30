@@ -34,6 +34,7 @@ _e_comp_wl_input_pointer_cb_cursor_set(struct wl_client *client, struct wl_resou
    pid_t pid;
    E_Client *ec;
    uint64_t sid;
+   Eina_List *l;
    Eina_Bool got_mouse = EINA_FALSE;
 
    /* get compositor data */
@@ -56,20 +57,19 @@ _e_comp_wl_input_pointer_cb_cursor_set(struct wl_client *client, struct wl_resou
      }
    wl_client_get_credentials(client, &pid, NULL, NULL);
    sid = e_comp_wl_id_get(wl_resource_get_id(surface_resource), pid);
-   if (!(ec = e_pixmap_find_client(E_PIXMAP_TYPE_WL, sid)))
+   ec = e_pixmap_find_client(E_PIXMAP_TYPE_WL, sid);
+   if (!ec->re_manage)
      {
-        Eina_List *l;
+        ec->re_manage = 1;
+        ec->ignored = 0;
 
-        ec = e_client_new(e_pixmap_new(E_PIXMAP_TYPE_WL, sid), 1, 0);
         ec->lock_focus_out = ec->layer_block = ec->visible = ec->override = 1;
-        ec->new_client = 0;
-        e_comp->new_clients--;
         ec->icccm.title = eina_stringshare_add("noshadow");
         evas_object_pass_events_set(ec->frame, 1);
-        ec->client.w = ec->client.h = 1;
-        l = e_client_focus_stack_get();
-        e_client_focus_stack_set(eina_list_remove(l, ec));
+        e_client_focus_stack_set(eina_list_remove(e_client_focus_stack_get(), ec));
+        EC_CHANGED(ec);
      }
+
    /* ignore cursor changes during resize/move I guess */
    if (e_client_action_get()) return;
    e_pointer_object_set(e_comp->pointer, ec->frame, x, y);

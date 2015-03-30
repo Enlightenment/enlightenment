@@ -566,16 +566,10 @@ _e_shell_cb_shell_surface_get(struct wl_client *client, struct wl_resource *reso
    /* find the client for this pixmap */
    ec = e_pixmap_client_get(ep);
 
-   if (ec && (!ec->internal))
-     e_pixmap_ref(ec->pixmap);
-   else if ((!ec) && (!(ec = e_client_new(ep, 0, 0))))
-     {
-        wl_resource_post_error(surface_resource,
-                               WL_DISPLAY_ERROR_INVALID_OBJECT,
-                               "No Client For Pixmap");
-        return;
-     }
-   ec->netwm.ping = EINA_TRUE;
+   EC_CHANGED(ec);
+   ec->new_client = ec->netwm.ping = EINA_TRUE;
+   e_comp->new_clients++;
+   ec->ignored = 0;
 
    /* get the client data */
    if (!(cdata = ec->comp_data))
@@ -1008,7 +1002,6 @@ static void
 _e_xdg_shell_surface_configure(struct wl_resource *resource, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_Coord h)
 {
    E_Client *ec;
-   Eina_Bool new_client;
 
    /* DBG("XDG_SHELL: Surface Configure: %d \t%d %d %d %d",  */
    /*     wl_resource_get_id(resource), x, y, w, h); */
@@ -1033,11 +1026,7 @@ _e_xdg_shell_surface_configure(struct wl_resource *resource, Evas_Coord x, Evas_
           }
      }
 
-   /* ensure resize succeeds */
-   new_client = ec->new_client;
-   ec->new_client = 0;
    e_client_util_move_resize_without_frame(ec, x, y, w, h);
-   ec->new_client = new_client;
    /* TODO: ack configure ?? */
 }
 
@@ -1141,17 +1130,10 @@ _e_xdg_shell_cb_surface_get(struct wl_client *client, struct wl_resource *resour
    /* find the client for this pixmap */
    ec = e_pixmap_client_get(ep);
 
-   if (ec && (!ec->internal))
-     e_pixmap_ref(ec->pixmap);
-   else if ((!ec) && (!(ec = e_client_new(ep, 0, 0))))
-     {
-        wl_resource_post_error(surface_resource,
-                               WL_DISPLAY_ERROR_INVALID_OBJECT,
-                               "No Client For Pixmap");
-        return;
-     }
-
-   ec->netwm.ping = EINA_TRUE;
+   EC_CHANGED(ec);
+   ec->new_client = ec->netwm.ping = EINA_TRUE;
+   e_comp->new_clients++;
+   ec->ignored = 0;
 
    /* get the client data */
    if (!(cdata = ec->comp_data))
@@ -1240,16 +1222,6 @@ _e_xdg_shell_cb_popup_get(struct wl_client *client, struct wl_resource *resource
    /* find the client for this pixmap */
    ec = e_pixmap_client_get(ep);
 
-   if (ec && (!ec->internal))
-     e_pixmap_ref(ec->pixmap);
-   else if ((!ec) && (!(ec = e_client_new(ep, 0, 0))))
-     {
-        wl_resource_post_error(surface_resource,
-                               WL_DISPLAY_ERROR_INVALID_OBJECT,
-                               "No Client For Pixmap");
-        return;
-     }
-
    /* get the client data */
    if (!(cdata = ec->comp_data))
      {
@@ -1296,7 +1268,11 @@ _e_xdg_shell_cb_popup_get(struct wl_client *client, struct wl_resource *resource
    cdata->shell.map = _e_xdg_shell_surface_map;
    cdata->shell.unmap = _e_xdg_shell_surface_unmap;
 
-   ec->override = 1;
+   EC_CHANGED(ec);
+   ec->new_client = ec->override = 1;
+   ec->ignored = 0;
+   e_comp->new_clients++;
+   e_client_focus_stack_set(eina_list_remove(e_client_focus_stack_get(), ec));
    if (!ec->internal)
      ec->borderless = !ec->internal_elm_win;
    ec->lock_border = EINA_TRUE;
