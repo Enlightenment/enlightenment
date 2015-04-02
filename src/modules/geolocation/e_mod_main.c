@@ -1,8 +1,8 @@
 #include "e.h"
 
-#include "gen/eldbus_geo_clue2_manager.h"
-#include "gen/eldbus_geo_clue2_client.h"
-#include "gen/eldbus_geo_clue2_location.h"
+#include "eldbus_geo_clue2_manager.h"
+#include "eldbus_geo_clue2_client.h"
+#include "eldbus_geo_clue2_location.h"
 
 /* gadcon requirements */
 static E_Gadcon_Client *_gc_init(E_Gadcon *gc, const char *name, const char *id, const char *style);
