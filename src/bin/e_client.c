@@ -3537,7 +3537,7 @@ e_client_lost_windows_get(E_Zone *zone)
    EINA_LIST_FOREACH(e_comp->clients, l, ec)
      {
         if (ec->zone != zone) continue;
-        if (!ec->zone) continue;
+        if (e_client_util_ignored_get(ec)) continue;
 
         if (!E_INTERSECTS(ec->zone->x + loss_overlap,
                           ec->zone->y + loss_overlap,
