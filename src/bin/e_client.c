@@ -582,6 +582,7 @@ _e_client_del(E_Client *ec)
    E_FREE_FUNC(ec->border_remember_dialog, e_object_del);
    E_FREE_FUNC(ec->border_border_dialog, e_object_del);
    E_FREE_FUNC(ec->border_prop_dialog, e_object_del);
+   E_FREE_FUNC(ec->color_editor, evas_object_del);
    e_int_client_menu_del(ec);
    E_FREE_FUNC(ec->raise_timer, ecore_timer_del);
 

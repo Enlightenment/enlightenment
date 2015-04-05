@@ -611,6 +611,32 @@ _e_client_menu_cb_icon_edit(void *data, E_Menu *m EINA_UNUSED, E_Menu_Item *mi E
 }
 
 static void
+_e_client_menu_cb_colors_edit_del(void *data, ...)
+{
+   E_Client *ec = data;
+
+   E_FREE_FUNC(ec->color_editor, evas_object_del);
+   e_comp_shape_queue();
+}
+
+static void
+_e_client_menu_cb_colors_edit(void *data, E_Menu *m EINA_UNUSED, E_Menu_Item *mi EINA_UNUSED)
+{
+   Evas_Object *o;
+   E_Client *ec = data;
+
+   ec->color_editor = o = elm_color_class_editor_add(e_comp->elm, e_client_util_win_get(data));
+   if (!o) return;
+   e_comp_shape_queue();
+   evas_object_geometry_set(o, ec->client.x, ec->client.y, ec->client.w, ec->client.h);
+   evas_object_layer_set(o, E_LAYER_POPUP);
+   evas_object_show(o);
+   evas_object_smart_callback_add(o, "application_closed", (Evas_Smart_Cb)_e_client_menu_cb_colors_edit_del, ec);
+   evas_object_smart_callback_add(o, "dismissed", (Evas_Smart_Cb)_e_client_menu_cb_colors_edit_del, ec);
+   evas_object_event_callback_add(o, EVAS_CALLBACK_DEL, (Evas_Object_Event_Cb)_e_client_menu_cb_colors_edit_del, ec);
+}
+
+static void
 _e_client_menu_cb_application_pre(void *data, E_Menu *m EINA_UNUSED, E_Menu_Item *mi)
 {
    E_Menu *subm;
@@ -660,6 +686,12 @@ _e_client_menu_cb_application_pre(void *data, E_Menu *m EINA_UNUSED, E_Menu_Item
         e_menu_item_callback_set(submi, _e_client_menu_cb_kbdshrtct_add, ec);
         e_util_menu_item_theme_icon_set(submi, "preferences-desktop-keyboard");
      }
+
+   if (ec->color_editor) return;
+   submi = e_menu_item_new(subm);
+   e_menu_item_label_set(submi, _("Edit Color Scheme"));
+   e_menu_item_callback_set(submi, _e_client_menu_cb_colors_edit, ec);
+   e_util_menu_item_theme_icon_set(submi, "preferences-desktop-color");
 }
 
 static void

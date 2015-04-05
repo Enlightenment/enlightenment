@@ -649,6 +649,7 @@ struct E_Client
 
    Eina_List       *stick_desks;
    E_Menu          *border_menu;
+   Evas_Object     *color_editor;
    E_Config_Dialog *border_locks_dialog;
    E_Config_Dialog *border_remember_dialog;
    E_Config_Dialog *border_border_dialog;
