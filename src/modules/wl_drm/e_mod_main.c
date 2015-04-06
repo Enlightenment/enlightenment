@@ -113,14 +113,20 @@ e_modapi_init(E_Module *m)
 
    /* fallback to framebuffer drm (non-accel) */
    if (!e_comp->ee)
-     e_comp->ee = ecore_evas_drm_new(NULL, 0, 0, 0, 1, 1);
-
-   if (e_comp->ee)
-     e_comp_gl_set(EINA_FALSE);
-   else
      {
-        fprintf(stderr, "Could not create ecore_evas_drm canvas");
-        return NULL;
+        if ((e_comp->ee = ecore_evas_drm_new(NULL, 0, 0, 0, 1, 1)))
+          {
+             e_comp_gl_set(EINA_FALSE);
+             elm_config_accel_preference_set("none");
+             elm_config_accel_preference_override_set(EINA_TRUE);
+             elm_config_all_flush();
+             elm_config_save();
+          }
+        else
+          {
+             fprintf(stderr, "Could not create ecore_evas_drm canvas");
+             return NULL;
+          }
      }
 
    ecore_evas_data_set(e_comp->ee, "comp", e_comp);
