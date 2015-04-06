@@ -52,7 +52,6 @@ src/bin/e_bg.h \
 src/bin/e_bindings.h \
 src/bin/e_client.h \
 src/bin/e_client.x \
-src/bin/e_color_class.h \
 src/bin/e_color_dialog.h  \
 src/bin/e_color.h \
 src/bin/e_comp.h \
@@ -219,7 +218,6 @@ src/bin/e_bg.c \
 src/bin/e_bindings.c \
 src/bin/e_client.c \
 src/bin/e_color.c \
-src/bin/e_color_class.c \
 src/bin/e_color_dialog.c \
 src/bin/e_comp.c \
 src/bin/e_comp_canvas.c \

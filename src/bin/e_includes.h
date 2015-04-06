@@ -85,7 +85,6 @@
 #include "e_dpms.h"
 #include "e_int_config_modules.h"
 #include "e_exehist.h"
-#include "e_color_class.h"
 #include "e_widget_textblock.h"
 #include "e_gadcon.h"
 #include "e_shelf.h"
