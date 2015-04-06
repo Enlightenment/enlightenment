@@ -47,7 +47,7 @@ typedef enum
 /* increment this whenever a new set of config values are added but the users
  * config doesn't need to be wiped - simply new values need to be put in
  */
-#define E_CONFIG_FILE_GENERATION 17
+#define E_CONFIG_FILE_GENERATION 18
 #define E_CONFIG_FILE_VERSION    ((E_CONFIG_FILE_EPOCH * 1000000) + E_CONFIG_FILE_GENERATION)
 
 #define E_CONFIG_BINDINGS_VERSION 0 // DO NOT INCREMENT UNLESS YOU WANT TO WIPE ALL BINDINGS!!!!!
@@ -192,7 +192,7 @@ struct _E_Config
    int                       menu_gadcon_client_toplevel; // GUI
    int                       fullscreen_policy; // GUI
    const char               *exebuf_term_cmd; // GUI
-   Eina_List                *color_classes; // GUI
+   Eina_List                *color_classes; // dead
    int                       use_app_icon; // GUI
    int                       cnfmdlg_disabled; // GUI
    int                       cfgdlg_auto_apply; // GUI

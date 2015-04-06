@@ -57,6 +57,14 @@ EAPI int E_EVENT_CONFIG_LOADED = 0;
 
 static E_Dialog *_e_config_error_dialog = NULL;
 
+typedef struct _E_Color_Class
+{
+   const char	 *name; /* stringshared name */
+   int		  r, g, b, a;
+   int		  r2, g2, b2, a2;
+   int		  r3, g3, b3, a3;
+} E_Color_Class;
+
 static void
 _e_config_error_dialog_cb_delete(void *dia)
 {
@@ -1310,6 +1318,18 @@ e_config_load(void)
                     eina_stringshare_replace(&em->name, "pager");
                     break;
                  }
+          }
+        CONFIG_VERSION_CHECK(18)
+          {
+             E_Color_Class *ecc;
+
+             CONFIG_VERSION_UPDATE_INFO(18);
+             EINA_LIST_FREE(e_config->color_classes, ecc)
+               {
+                  elm_config_color_overlay_set(ecc->name, ecc->r, ecc->g, ecc->b, ecc->a, ecc->r2, ecc->g2, ecc->b2, ecc->a2, ecc->r3, ecc->g3, ecc->b3, ecc->a3);
+                  eina_stringshare_del(ecc->name);
+                  free(ecc);
+               }
           }
      }
    if (!e_config->remember_internal_fm_windows)

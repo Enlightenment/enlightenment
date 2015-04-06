@@ -873,17 +873,6 @@ main(int argc, char **argv)
    _e_main_shutdown_push(e_remember_shutdown);
 
    if (e_config->show_splash)
-     e_init_status_set(_("Setup Color Classes"));
-   TS("E_Color_Class Init");
-   if (!e_color_class_init())
-     {
-        e_error_message_show(_("Enlightenment cannot set up its color class system.\n"));
-        _e_main_shutdown(-1);
-     }
-   TS("E_Color_Class Init Done");
-   _e_main_shutdown_push(e_color_class_shutdown);
-
-   if (e_config->show_splash)
      e_init_status_set(_("Setup Gadcon"));
    TS("E_Gadcon Init");
    if (!e_gadcon_init())
