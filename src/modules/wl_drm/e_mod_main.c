@@ -180,6 +180,9 @@ e_modapi_shutdown(E_Module *m EINA_UNUSED)
    /* shutdown ecore_drm */
    /* ecore_drm_shutdown(); */
 
+   if (output_handler) ecore_event_handler_del(output_handler);
+   output_handler = NULL;
+
    if (activate_handler) ecore_event_handler_del(activate_handler);
    activate_handler = NULL;
 
