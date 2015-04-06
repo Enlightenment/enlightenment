@@ -21,6 +21,7 @@ src/modules/geolocation/eldbus_utils.h
 
 MAINTAINERCLEANFILES += $(GEO_GEN)
 
+src/modules/geolocation/e_mod_main.c: $(GEO_GEN)
 $(GEO_GEN): src/modules/geolocation/org.freedesktop.GeoClue2.xml
 	@cd $(top_builddir)/src/modules/geolocation && \
 	eldbus-codegen $(abs_top_srcdir)/src/modules/geolocation/org.freedesktop.GeoClue2.xml
