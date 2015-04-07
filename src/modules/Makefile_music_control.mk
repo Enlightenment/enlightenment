@@ -15,6 +15,7 @@ src/modules/music-control/eldbus_utils.h
 
 MAINTAINERCLEANFILES += $(MUSIC_GEN)
 
+src/modules/music-control/e_mod_main.c: $(MUSIC_GEN)
 $(MUSIC_GEN): src/modules/music-control/introspect.xml
 	@cd $(top_builddir)/src/modules/music-control && \
 	eldbus-codegen $(abs_top_srcdir)/src/modules/music-control/introspect.xml
