@@ -377,7 +377,7 @@ con(Pulse *conn, int type EINA_UNUSED, Ecore_Con_Event_Server_Add *ev)
 
    flags = fcntl(conn->fd, F_GETFD);
    flags |= FD_CLOEXEC;
-   if (fcntl(conn->fd, F_SETFD, flags) < 0) ERR("Cannot set CLOEXEC on fd");
+   if (fcntl(conn->fd, F_SETFD, flags) < 0) { ERR("Cannot set CLOEXEC on fd"); }
 
    conn->fdh = ecore_main_fd_handler_add(conn->fd, ECORE_FD_WRITE, (Ecore_Fd_Cb)fdh_func, conn, NULL, NULL);
    ecore_con_server_del(conn->svr);

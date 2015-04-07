@@ -56,11 +56,16 @@
 #undef ERR
 #undef CRI
 
-#define DBG(...)            EINA_LOG_DOM_DBG(pa_log_dom, __VA_ARGS__)
-#define INF(...)            EINA_LOG_DOM_INFO(pa_log_dom, __VA_ARGS__)
-#define WRN(...)            EINA_LOG_DOM_WARN(pa_log_dom, __VA_ARGS__)
-#define ERR(...)            EINA_LOG_DOM_ERR(pa_log_dom, __VA_ARGS__)
-#define CRI(...)            EINA_LOG_DOM_CRIT(pa_log_dom, __VA_ARGS__)
+//#define DBG(...)            EINA_LOG_DOM_DBG(pa_log_dom, __VA_ARGS__)
+//#define INF(...)            EINA_LOG_DOM_INFO(pa_log_dom, __VA_ARGS__)
+//#define WRN(...)            EINA_LOG_DOM_WARN(pa_log_dom, __VA_ARGS__)
+//#define ERR(...)            EINA_LOG_DOM_ERR(pa_log_dom, __VA_ARGS__)
+//#define CRI(...)            EINA_LOG_DOM_CRIT(pa_log_dom, __VA_ARGS__)
+#define DBG(...)
+#define INF(...)
+#define WRN(...)
+#define ERR(...)
+#define CRI(...)
 
 
 typedef enum
