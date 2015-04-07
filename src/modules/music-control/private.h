@@ -2,8 +2,8 @@
 #define MUSIC_CONTROL_PRIVATE_H
 
 #include "e_mod_main.h"
-#include "gen/eldbus_media_player2_player.h"
-#include "gen/eldbus_mpris_media_player2.h"
+#include "eldbus_media_player2_player.h"
+#include "eldbus_mpris_media_player2.h"
 
 static Ecore_Event_Handler *desklock_handler = NULL;
 
