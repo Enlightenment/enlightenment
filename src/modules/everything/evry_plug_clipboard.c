@@ -25,7 +25,9 @@ _check_item(Evry_Action *action EINA_UNUSED, const Evry_Item *it)
 Eina_Bool
 evry_plug_clipboard_init(void)
 {
+#ifndef HAVE_WAYLAND_ONLY
    Ecore_Window win;
+#endif
 
    if (!evry_api_version_check(EVRY_API_VERSION))
      return EINA_FALSE;
