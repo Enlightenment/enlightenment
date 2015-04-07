@@ -27,7 +27,7 @@ $(GEO_GEN): src/modules/geolocation/org.freedesktop.GeoClue2.xml
 	eldbus-codegen $(abs_top_srcdir)/src/modules/geolocation/org.freedesktop.GeoClue2.xml
 
 src_modules_geolocation_module_la_LIBADD = $(MOD_LIBS)
-src_modules_geolocation_module_la_CPPFLAGS = $(MOD_CPPFLAGS)
+src_modules_geolocation_module_la_CPPFLAGS = -I$(top_builddir)/src/modules/geolocation $(MOD_CPPFLAGS)
 src_modules_geolocation_module_la_LDFLAGS = $(MOD_LDFLAGS)
 src_modules_geolocation_module_la_SOURCES = \
 src/modules/geolocation/e_mod_main.c \
