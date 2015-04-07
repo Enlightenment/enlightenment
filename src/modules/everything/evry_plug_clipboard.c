@@ -52,6 +52,8 @@ evry_plug_clipboard_init(void)
 
    return EINA_TRUE;
 #endif
+
+   return EINA_TRUE;
 }
 
 void
