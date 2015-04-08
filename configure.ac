@@ -626,28 +626,10 @@ EDJE_DEF="-DLOWRES_PDA=1 -DMEDIUMRES_PDA=2 -DHIRES_PDA=3 -DSLOW_PC=4 -DMEDIUM_PC
 EDJE_DEF=$EDJE_DEF" -DE_PROFILE"=$profile
 AC_SUBST([EDJE_DEF])
 
-AC_ARG_WITH(edje-cc,
-[  --with-edje-cc=PATH              specify a specific path to edje_cc],
-[
-  v=$withval;
-  edje_cc=$v
-  echo "  Enlightenment edje_cc explicitly set to "$edje_cc;
-],[
-  edje_cc=$(pkg-config --variable=prefix edje)/bin/edje_cc
-])
-AC_SUBST([edje_cc])
-
 PKG_CHECK_MODULES(EET, [eet >= ${efl_version}])
-AC_ARG_WITH(eet-eet,
-[  --with-eet-eet=PATH              specify a specific path to eet utility],
-[
-  v=$withval;
-  eet_eet=$v
-  echo "  Enlightenment eet explicitly set to "$eet_eet;
-],[
-  eet_eet=$(pkg-config --variable=prefix eet)/bin/eet
-])
-AC_SUBST([eet_eet])
+EFL_WITH_BIN([edje], [edje-cc], [edje_cc])
+EFL_WITH_BIN([eet], [eet-eet], [eet])
+EFL_WITH_BIN([eldbus], [eldbus_codegen], [eldbus-codegen])
 
 AC_DEFINE(E_INTERNAL, 1, "This define can be used to wrap internal E stuff, as config.h isn't exported")
 
@@ -910,8 +892,6 @@ define([CHECK_MODULE_WL_DRM],
 ])
 AM_CONDITIONAL([HAVE_WL_DRM], [test "x${WL_DRM}" = "xtrue"])
 
-EFL_WITH_BIN([eldbus], [eldbus_codegen], [eldbus-codegen])
-
 AC_E_OPTIONAL_MODULE([ibar], true)
 AC_E_OPTIONAL_MODULE([clock], true)
 AC_E_OPTIONAL_MODULE([pager], true)
@@ -1118,7 +1098,9 @@ Summary:
  * prefix..........: $(txt_strip $prefix)
  * CFLAGS..........: $(txt_strip $CFLAGS)
  * LDFLAGS.........: $(txt_strip $LDFLAGS)
- * eldbus_codegen..: ${eldbus_codegen}
+ * edje_cc.........: ${edje_cc}
+ * eet.............: ${eet_eet}
+ * eldbus-codegen..: ${eldbus_codegen}
 SUMMARY_EOF
 
 if test "$have_systemd_user_session" = "yes"; then
