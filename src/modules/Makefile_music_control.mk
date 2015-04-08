@@ -18,7 +18,7 @@ MAINTAINERCLEANFILES += $(MUSIC_GEN)
 src/modules/music-control/e_mod_main.c: $(MUSIC_GEN)
 $(MUSIC_GEN): src/modules/music-control/introspect.xml
 	@cd $(top_builddir)/src/modules/music-control && \
-	eldbus-codegen $(abs_top_srcdir)/src/modules/music-control/introspect.xml
+	@eldbus_codegen@ $(abs_top_srcdir)/src/modules/music-control/introspect.xml
 
 music_controlpkgdir = $(MDIR)/music-control/$(MODULE_ARCH)
 music_controlpkg_LTLIBRARIES = src/modules/music-control/module.la

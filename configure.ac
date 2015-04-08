@@ -910,6 +910,8 @@ define([CHECK_MODULE_WL_DRM],
 ])
 AM_CONDITIONAL([HAVE_WL_DRM], [test "x${WL_DRM}" = "xtrue"])
 
+EFL_WITH_BIN([eldbus], [eldbus_codegen], [eldbus-codegen])
+
 AC_E_OPTIONAL_MODULE([ibar], true)
 AC_E_OPTIONAL_MODULE([clock], true)
 AC_E_OPTIONAL_MODULE([pager], true)
@@ -1116,6 +1118,7 @@ Summary:
  * prefix..........: $(txt_strip $prefix)
  * CFLAGS..........: $(txt_strip $CFLAGS)
  * LDFLAGS.........: $(txt_strip $LDFLAGS)
+ * eldbus_codegen..: ${eldbus_codegen}
 SUMMARY_EOF
 
 if test "$have_systemd_user_session" = "yes"; then

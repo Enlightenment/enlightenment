@@ -24,7 +24,7 @@ MAINTAINERCLEANFILES += $(GEO_GEN)
 src/modules/geolocation/e_mod_main.c: $(GEO_GEN)
 $(GEO_GEN): src/modules/geolocation/org.freedesktop.GeoClue2.xml
 	@cd $(top_builddir)/src/modules/geolocation && \
-	eldbus-codegen $(abs_top_srcdir)/src/modules/geolocation/org.freedesktop.GeoClue2.xml
+	@eldbus_codegen@ $(abs_top_srcdir)/src/modules/geolocation/org.freedesktop.GeoClue2.xml
 
 src_modules_geolocation_module_la_LIBADD = $(MOD_LIBS)
 src_modules_geolocation_module_la_CPPFLAGS = -I$(top_builddir)/src/modules/geolocation $(MOD_CPPFLAGS)
