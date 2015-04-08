@@ -1277,8 +1277,6 @@ e_comp_internal_save(void)
 EINTERN int
 e_comp_shutdown(void)
 {
-   E_Pixmap_Type type = e_comp->comp_type;
-
    E_FREE_FUNC(action_timeout, ecore_timer_del);
    while (e_comp->clients)
      e_object_del(eina_list_data_get(e_comp->clients));
@@ -1288,6 +1286,8 @@ e_comp_shutdown(void)
    E_FREE_LIST(hooks, e_client_hook_del);
 
 #ifdef HAVE_WAYLAND
+   E_Pixmap_Type type = e_comp->comp_type;
+
    if (type == E_PIXMAP_TYPE_WL)
      e_comp_wl_shutdown();
 #endif
