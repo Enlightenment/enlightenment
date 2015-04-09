@@ -741,8 +741,8 @@ pulse_new(void)
                        buf = eina_stringshare_add(STATEDIR "/run/pulse/native");
                        if (stat(buf, &st))
                          {
-                            eina_stringshare_del(buf);
                             INF("could not locate local socket '%s'!", buf);
+                            eina_stringshare_del(buf);
                             free(conn);
                             return NULL;
                          }
