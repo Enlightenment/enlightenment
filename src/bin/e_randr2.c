@@ -97,6 +97,8 @@ e_randr2_init(void)
    E_CONFIG_VAL(D, T, version, INT);
    E_CONFIG_LIST(D, T, screens, _e_randr2_cfg_screen_edd);
    E_CONFIG_VAL(D, T, restore, UCHAR);
+   E_CONFIG_VAL(D, T, ignore_hotplug_events, UCHAR);
+   E_CONFIG_VAL(D, T, ignore_acpi_events, UCHAR);
 
    if (!E_EVENT_RANDR_CHANGE) E_EVENT_RANDR_CHANGE = ecore_event_type_new();
    // delay setting up acpi handler, as acpi is init'ed after randr
@@ -336,6 +338,8 @@ _config_load(void)
    cfg->version = E_RANDR_CONFIG_VERSION;
    cfg->screens = NULL;
    cfg->restore = 1;
+   cfg->ignore_hotplug_events = 0;
+   cfg->ignore_acpi_events = 0;
    printf("RRR: fresh config\n");
    return cfg;
 }
@@ -620,8 +624,11 @@ _cb_acpi(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
    if (lid_closed == _lid_is_closed) return EINA_TRUE;
    printf("RRR: lid event for lid %i\n", lid_closed);
    _lid_is_closed = lid_closed;
-   event_screen = EINA_TRUE;
-   _screen_change_delay();
+   if (!e_randr2_cfg->ignore_acpi_events)
+     {
+        event_screen = EINA_TRUE;
+        _screen_change_delay();
+     }
    return EINA_TRUE;
 }
 
@@ -1412,11 +1419,14 @@ _cb_screen_change(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
 {
    Ecore_X_Event_Screen_Change *ev = event;
    printf("RRR: CB screen change...\n");
-   event_screen = EINA_TRUE;
    ecore_x_randr_config_timestamp_get(ev->root);
    ecore_x_randr_screen_current_size_get(ev->root, NULL, NULL, NULL, NULL);
    ecore_x_sync();
-   _screen_change_delay();
+   if (!e_randr2_cfg->ignore_hotplug_events)
+     {
+        event_screen = EINA_TRUE;
+        _screen_change_delay();
+     }
    return EINA_TRUE;
 }
 
@@ -1428,7 +1438,10 @@ _cb_crtc_change(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
    ecore_x_randr_config_timestamp_get(ev->win);
    ecore_x_randr_screen_current_size_get(ev->win, NULL, NULL, NULL, NULL);
    ecore_x_sync();
-   _screen_change_delay();
+   if (!e_randr2_cfg->ignore_hotplug_events)
+     {
+        _screen_change_delay();
+     }
    return EINA_TRUE;
 }
 
@@ -1437,11 +1450,14 @@ _cb_output_change(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
 {
    Ecore_X_Event_Randr_Output_Change *ev = event;
    printf("RRR: CB output change...\n");
-   event_screen = EINA_TRUE;
    ecore_x_randr_config_timestamp_get(ev->win);
    ecore_x_randr_screen_current_size_get(ev->win, NULL, NULL, NULL, NULL);
    ecore_x_sync();
-   _screen_change_delay();
+   if (!e_randr2_cfg->ignore_hotplug_events)
+     {
+        event_screen = EINA_TRUE;
+        _screen_change_delay();
+     }
    return EINA_TRUE;
 }
 

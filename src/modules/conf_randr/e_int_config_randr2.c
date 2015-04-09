@@ -23,6 +23,8 @@ struct _E_Config_Dialog_Data
    Evas_Object *rel_to_obj;
    Evas_Object *rel_align_obj;
    int restore;
+   int hotplug;
+   int acpi;
    int screen;
 };
 
@@ -79,6 +81,8 @@ _create_data(E_Config_Dialog *cfd EINA_UNUSED)
 
    if (!(cfdata = E_NEW(E_Config_Dialog_Data, 1))) return NULL;
    cfdata->restore = e_randr2_cfg->restore;
+   cfdata->hotplug = !e_randr2_cfg->ignore_hotplug_events;
+   cfdata->acpi = !e_randr2_cfg->ignore_acpi_events;
    return cfdata;
 }
 
@@ -105,6 +109,22 @@ _cb_restore_changed(void *data EINA_UNUSED, Evas_Object *obj, void *event EINA_U
 {
    E_Config_Dialog_Data *cfdata = data;
    cfdata->restore = elm_check_state_get(obj);
+   e_config_dialog_changed_set(cfdata->cfd, EINA_TRUE);
+}
+
+static void
+_cb_hotplug_changed(void *data EINA_UNUSED, Evas_Object *obj, void *event EINA_UNUSED)
+{
+   E_Config_Dialog_Data *cfdata = data;
+   cfdata->hotplug = elm_check_state_get(obj);
+   e_config_dialog_changed_set(cfdata->cfd, EINA_TRUE);
+}
+
+static void
+_cb_acpi_changed(void *data EINA_UNUSED, Evas_Object *obj, void *event EINA_UNUSED)
+{
+   E_Config_Dialog_Data *cfdata = data;
+   cfdata->acpi = elm_check_state_get(obj);
    e_config_dialog_changed_set(cfdata->cfd, EINA_TRUE);
 }
 
@@ -493,7 +513,7 @@ static Evas_Object *
 _basic_create(E_Config_Dialog *cfd, Evas *evas EINA_UNUSED, E_Config_Dialog_Data *cfdata)
 {
    Evas_Object *win = cfd->dia->win;
-   Evas_Object *o, *bx, *tb;
+   Evas_Object *o, *bx, *tb, *bx2;
    Eina_List *l;
    E_Randr2_Screen *s, *first = NULL;
    E_Config_Randr2_Screen *first_cfg = NULL;
@@ -687,14 +707,40 @@ _basic_create(E_Config_Dialog *cfd, Evas *evas EINA_UNUSED, E_Config_Dialog_Data
 
    _basic_screen_info_fill(cfdata, first_cfg, first);
 
+   o = elm_box_add(win);
+   elm_box_horizontal_set(o, EINA_TRUE);
+   evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, 0.0);
+   evas_object_size_hint_align_set(o, 0.0, EVAS_HINT_FILL);
+   elm_box_pack_end(bx, o);
+   evas_object_show(o);
+   bx2 = o;
+
    o = elm_check_add(win);
    evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(o, EVAS_HINT_FILL, EVAS_HINT_FILL);
    elm_object_text_set(o, "Restore setup on start");
-   elm_check_state_set(o, e_randr2_cfg->restore);
-   elm_box_pack_end(bx, o);
+   elm_check_state_set(o, cfdata->restore);
+   elm_box_pack_end(bx2, o);
    evas_object_show(o);
    evas_object_smart_callback_add(o, "changed", _cb_restore_changed, cfdata);
+
+   o = elm_check_add(win);
+   evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, 0.0);
+   evas_object_size_hint_align_set(o, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   elm_object_text_set(o, "Monitor hotplug");
+   elm_check_state_set(o, cfdata->hotplug);
+   elm_box_pack_end(bx2, o);
+   evas_object_show(o);
+   evas_object_smart_callback_add(o, "changed", _cb_hotplug_changed, cfdata);
+
+   o = elm_check_add(win);
+   evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, 0.0);
+   evas_object_size_hint_align_set(o, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   elm_object_text_set(o, "Lid Events");
+   elm_check_state_set(o, cfdata->acpi);
+   elm_box_pack_end(bx2, o);
+   evas_object_show(o);
+   evas_object_smart_callback_add(o, "changed", _cb_acpi_changed, cfdata);
 
    evas_smart_objects_calculate(evas_object_evas_get(win));
 
@@ -711,6 +757,9 @@ _basic_apply(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfdata)
    E_Config_Randr2_Screen *cs, *cs2;
 
    e_randr2_cfg->restore = cfdata->restore;
+   e_randr2_cfg->ignore_hotplug_events = !cfdata->hotplug;
+   e_randr2_cfg->ignore_acpi_events = !cfdata->acpi;
+
    printf("APPLY....................\n");
    EINA_LIST_FOREACH(cfdata->screens, l, cs2)
      {

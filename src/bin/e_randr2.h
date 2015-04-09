@@ -91,6 +91,8 @@ struct _E_Config_Randr2
    int            version;
    Eina_List     *screens;
    unsigned char  restore;
+   unsigned char  ignore_hotplug_events;
+   unsigned char  ignore_acpi_events;
 };
 
 struct _E_Config_Randr2_Screen
