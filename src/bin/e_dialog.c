@@ -248,13 +248,12 @@ e_dialog_show(E_Dialog *dia)
    if (o)
      elm_object_part_content_set(dia->bg_object, "e.swallow.content", o);
 
-   o = dia->box_object;
-   evas_object_size_hint_min_get(o, &mw, &mh);
-   elm_object_part_content_set(dia->bg_object, "e.swallow.buttons", o);
+   if (dia->min_w && dia->min_h)
+     mw = dia->min_w, mh = dia->min_h;
+   else
+     evas_object_size_hint_min_get(dia->bg_object, &mw, &mh);
 
    evas_object_resize(dia->win, mw, mh);
-   dia->min_w = mw;
-   dia->min_h = mh;
    if (!dia->resizable)
      {
         evas_object_size_hint_weight_set(dia->bg_object, 0, 0);
