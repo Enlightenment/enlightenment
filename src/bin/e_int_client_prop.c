@@ -82,6 +82,7 @@ e_int_client_prop(E_Client *ec)
    elm_win_center(dia->win, 1, 1);
    e_dialog_show(dia);
    e_dialog_border_icon_set(dia, "preferences-system-windows");
+   evas_object_layer_set(e_win_client_get(dia->win)->frame, ec->layer);
 }
 
 static void

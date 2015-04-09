@@ -67,6 +67,7 @@ e_int_client_locks(E_Client *ec)
                                   "E", "_border_locks_dialog",
                                   NULL, 0, v, ec);
         ec->border_locks_dialog = cfd;
+        evas_object_layer_set(e_win_client_get(cfd->dia->win)->frame, ec->layer);
      }
 }
 

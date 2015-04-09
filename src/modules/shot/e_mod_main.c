@@ -867,6 +867,7 @@ _shot_now(E_Zone *zone, E_Client *ec, const char *params)
         e_win_client_icon_set(win, "screenshot");
 
         if (!e_widget_focus_get(o_bg)) e_widget_focus_set(o_box, 1);
+        evas_object_layer_set(e_win_client_get(win)->frame, ec->layer);
      }
 }
 

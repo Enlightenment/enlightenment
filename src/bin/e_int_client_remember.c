@@ -111,6 +111,7 @@ e_int_client_remember(E_Client *ec)
                                   "E", "_border_remember_dialog",
                                   NULL, 0, v, ec);
         ec->border_remember_dialog = cfd;
+        evas_object_layer_set(e_win_client_get(cfd->dia->win)->frame, ec->layer);
      }
 }
 

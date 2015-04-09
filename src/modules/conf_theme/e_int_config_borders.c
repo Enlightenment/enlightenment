@@ -50,6 +50,7 @@ e_int_config_borders_border(E_Comp *comp EINA_UNUSED, const char *params)
                              "E", "_config_border_border_style_dialog",
                              "preferences-system-windows", 0, v, ec);
    ec->border_border_dialog = cfd;
+   evas_object_layer_set(e_win_client_get(cfd->dia->win)->frame, ec->layer);
    return cfd;
 }
 
