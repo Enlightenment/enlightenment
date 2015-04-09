@@ -373,6 +373,7 @@ _basic_create(E_Config_Dialog *cfd EINA_UNUSED, Evas *evas, E_Config_Dialog_Data
    E_FILL(scroller);
    elm_scroller_bounce_set(scroller, 0, 0);
    elm_object_content_set(scroller, options);
+   e_widget_sub_object_add(mainn, options);
 
    e_widget_toolbook_page_append(mainn, NULL, _("Options"), scroller, 1, 1, 1, 1, 0.5, 0.0);
 
