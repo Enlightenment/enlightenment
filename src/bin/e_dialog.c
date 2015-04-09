@@ -206,6 +206,8 @@ e_dialog_content_set(E_Dialog *dia, Evas_Object *obj, Evas_Coord minw, Evas_Coor
    e_widget_on_focus_hook_set(obj, _e_dialog_cb_wid_on_focus, dia);
    evas_object_size_hint_min_set(obj, minw, minh);
    elm_object_part_content_set(dia->bg_object, "e.swallow.content", obj);
+   elm_layout_sizing_eval(dia->bg_object);
+   evas_object_smart_calculate(dia->bg_object);
    evas_object_size_hint_min_get(dia->bg_object, &mw, &mh);
    evas_object_resize(dia->win, mw, mh);
    dia->min_w = mw;
