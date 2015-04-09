@@ -104,7 +104,6 @@
 #include "e_color.h"
 #include "e_spectrum.h"
 #include "e_widget_spectrum.h"
-#include "e_widget_cslider.h"
 #include "e_widget_color_well.h"
 #include "e_color_dialog.h"
 #include "e_sys.h"
