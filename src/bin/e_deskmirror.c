@@ -501,6 +501,8 @@ _e_deskmirror_mirror_setup(Mirror *m)
         if (!m->added)
           evas_object_smart_callback_call(m->sd->obj, "mirror_add", m->mirror);
      }
+   else
+     e_layout_child_raise(m->mirror);
    m->added = 1;
 }
 
