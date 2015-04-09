@@ -35,7 +35,7 @@ endif
 src_modules_battery_batgetdir = $(batterypkgdir)
 src_modules_battery_batget_PROGRAMS = src/modules/battery/batget
 
-src_modules_battery_batget_CPPFLAGS = $(MOD_CPPFLAGS)
+src_modules_battery_batget_CPPFLAGS = $(MOD_CPPFLAGS) @BATTERY_CFLAGS@
 src_modules_battery_batget_SOURCES = src/modules/battery/batget.c
 src_modules_battery_batget_LDADD   = @BATTERY_LIBS@
 src_modules_battery_batget_LDFLAGS = @BATTERY_LDFLAGS@

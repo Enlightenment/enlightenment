@@ -644,7 +644,8 @@ have_freebsd="no"
 BATTERY_LDFLAGS=
 case "$host_os" in
   darwin*)
-    BATTERY_LDFLAGS="-framework Foundation -framework IOKit"
+    BATTERY_LDFLAGS="${cf_libs}"
+    BATTERY_CFLAGS="${BATTERY_CFLAGS} ${cf_cflags}"
   ;;
   openbsd*)
     have_openbsd="yes"
