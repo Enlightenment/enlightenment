@@ -19,6 +19,7 @@ struct _E_Config_Dialog_Data
    int          dont_touch_my_damn_keyboard;
 
    E_Dialog    *dlg_add_new;
+   E_Config_Dialog *cfd;
 };
 
 typedef struct _E_XKB_Dialog_Option
@@ -84,7 +85,7 @@ _xkb_cfg_dialog(Evas_Object *parent EINA_UNUSED, const char *params EINA_UNUSED)
 /* Locals */
 
 static void *
-_create_data(E_Config_Dialog *cfd EINA_UNUSED)
+_create_data(E_Config_Dialog *cfd)
 {
    E_Config_Dialog_Data *cfdata;
    Eina_List *l, *ll, *lll;
@@ -97,6 +98,7 @@ _create_data(E_Config_Dialog *cfd EINA_UNUSED)
    parse_rules(); /* XXX: handle in case nothing was found? */
 
    cfdata = E_NEW(E_Config_Dialog_Data, 1);
+   cfdata->cfd = cfd;
 
    cfdata->cfg_layouts = NULL;
    EINA_LIST_FOREACH(e_config->xkb.used_layouts, l, cl)
@@ -607,6 +609,7 @@ _dlg_add_cb_ok(void *data EINA_UNUSED, E_Dialog *dlg)
 
    cfdata->dlg_add_new = NULL;
    e_object_unref(E_OBJECT(dlg));
+   e_config_dialog_changed_set(cfdata->cfd, 1);
 }
 
 static void
