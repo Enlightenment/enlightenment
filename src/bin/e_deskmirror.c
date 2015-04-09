@@ -513,7 +513,6 @@ _comp_object_check(Mirror *m)
    if ((w < 2) || (h < 2)) return EINA_FALSE;
    m->mirror = e_comp_object_util_mirror_add(m->comp_object);
    evas_object_name_set(m->mirror, "m->mirror");
-   if (m->mirror) evas_object_layer_set(m->mirror, evas_object_layer_get(m->comp_object));
    _e_deskmirror_mirror_setup(m);
    return EINA_TRUE;
 }
@@ -615,7 +614,6 @@ _e_deskmirror_mirror_add(E_Smart_Data *sd, Evas_Object *obj)
    m->ec = ec;
    m->sd = sd;
    m->mirror = o;
-   if (o) evas_object_layer_set(o, evas_object_layer_get(obj));
    evas_object_event_callback_add(obj, EVAS_CALLBACK_SHOW, (Evas_Object_Event_Cb)_comp_object_show, m);
    evas_object_event_callback_add(obj, EVAS_CALLBACK_HIDE, (Evas_Object_Event_Cb)_comp_object_hide, m);
    evas_object_event_callback_add(obj, EVAS_CALLBACK_RESTACK, (Evas_Object_Event_Cb)_comp_object_stack, m);
