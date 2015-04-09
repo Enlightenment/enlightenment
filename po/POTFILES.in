@@ -103,7 +103,6 @@ src/bin/e_widget_button.c
 src/bin/e_widget_check.c
 src/bin/e_widget_color_well.c
 src/bin/e_widget_config_list.c
-src/bin/e_widget_csel.c
 src/bin/e_widget_cslider.c
 src/bin/e_widget_entry.c
 src/bin/e_widget_filepreview.c

@@ -167,7 +167,6 @@ src/bin/e_widget_button.h \
 src/bin/e_widget_check.h \
 src/bin/e_widget_color_well.h \
 src/bin/e_widget_config_list.h \
-src/bin/e_widget_csel.h \
 src/bin/e_widget_cslider.h \
 src/bin/e_widget_bgpreview.h \
 src/bin/e_widget_entry.h \
@@ -329,7 +328,6 @@ src/bin/e_widget.c \
 src/bin/e_widget_check.c \
 src/bin/e_widget_color_well.c \
 src/bin/e_widget_config_list.c \
-src/bin/e_widget_csel.c \
 src/bin/e_widget_cslider.c \
 src/bin/e_widget_bgpreview.c \
 src/bin/e_widget_entry.c \
