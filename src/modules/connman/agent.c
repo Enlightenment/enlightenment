@@ -230,6 +230,7 @@ _dialog_field_add(E_Connman_Agent *agent, struct Connman_Field *field)
         evas_object_smart_callback_add(check, "changed", _show_password_cb,
                                        entry);
      }
+   e_util_win_auto_resize_fill(agent->dialog->win);
 }
 
 static E_Dialog *
@@ -243,6 +244,7 @@ _dialog_new(E_Connman_Agent *agent)
    dialog = e_dialog_new(NULL, "E", "connman_request_input");
    if (!dialog)
      return NULL;
+   e_dialog_resizable_set(dialog, 1);
 
    e_dialog_title_set(dialog, _("Input requested"));
    e_dialog_border_icon_set(dialog, "dialog-ask");
