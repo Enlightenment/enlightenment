@@ -91,7 +91,7 @@ e_widget_entry_add(Evas_Object *parent, char **text_location, void (*func)(void 
    wd->func = func;
    wd->data = data;
    wd->data2 = data2;
-   evas_object_smart_callback_add(o, "changed,user", _e_wid_changed_cb, obj);
+   evas_object_smart_callback_add(o, "changed", _e_wid_changed_cb, obj);
 
    return obj;
 }
