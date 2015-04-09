@@ -948,6 +948,7 @@ _e_desktop_editor_cb_exec_select(void *data1, void *data2)
    editor->exec_fsel = o;
    e_widget_size_min_get(o, &mw, &mh);
    e_dialog_content_set(dia, o, mw, mh);
+   e_dialog_resizable_set(dia, 1);
 
    /* buttons at the bottom */
    e_dialog_button_add(dia, _("OK"), NULL,
