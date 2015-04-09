@@ -380,6 +380,7 @@ _basic_create_widgets(E_Config_Dialog *cfd, Evas *evas, E_Config_Dialog_Data *cf
    E_Radio_Group *rg;
    char buf[PATH_MAX];
    const char *itype = NULL;
+   int mh;
 
    win = cfd->dia->win;
    snprintf(buf, sizeof(buf), "%s/%s",
@@ -391,56 +392,64 @@ _basic_create_widgets(E_Config_Dialog *cfd, Evas *evas, E_Config_Dialog_Data *cf
    ob = e_widget_label_add(evas, _("Name:"));
    e_widget_table_object_append(ot, ob, 0, 0, 1, 1, 1, 0, 1, 0);
    ob = e_widget_entry_add(win, &(cfdata->file), NULL, NULL, NULL);
-   e_widget_size_min_set(ob, 140, -1);
+   e_widget_size_min_get(ob, NULL, &mh);
+   e_widget_size_min_set(ob, 140, mh);
    e_widget_entry_readonly_set(ob, 1);
    e_widget_table_object_append(ot, ob, 1, 0, 1, 1, 1, 0, 1, 0);
 
    ob = e_widget_label_add(evas, _("Location:"));
    e_widget_table_object_append(ot, ob, 0, 1, 1, 1, 1, 0, 1, 0);
    ob = e_widget_entry_add(win, &(cfdata->location), NULL, NULL, NULL);
-   e_widget_size_min_set(ob, 140, -1);
+   e_widget_size_min_get(ob, NULL, &mh);
+   e_widget_size_min_set(ob, 140, mh);
    e_widget_entry_readonly_set(ob, 1);
    e_widget_table_object_append(ot, ob, 1, 1, 1, 1, 1, 0, 1, 0);
 
    ob = e_widget_label_add(evas, _("Size:"));
    e_widget_table_object_append(ot, ob, 0, 2, 1, 1, 1, 0, 1, 0);
    ob = e_widget_entry_add(win, &(cfdata->size), NULL, NULL, NULL);
-   e_widget_size_min_set(ob, 140, -1);
+   e_widget_size_min_get(ob, NULL, &mh);
+   e_widget_size_min_set(ob, 140, mh);
    e_widget_entry_readonly_set(ob, 1);
    e_widget_table_object_append(ot, ob, 1, 2, 1, 1, 1, 0, 1, 0);
 
    ob = e_widget_label_add(evas, _("Occupied blocks on disk:"));
    e_widget_table_object_append(ot, ob, 0, 3, 1, 1, 1, 0, 1, 0);
    ob = e_widget_entry_add(win, &(cfdata->blocks), NULL, NULL, NULL);
-   e_widget_size_min_set(ob, 140, -1);
+   e_widget_size_min_get(ob, NULL, &mh);
+   e_widget_size_min_set(ob, 140, mh);
    e_widget_entry_readonly_set(ob, 1);
    e_widget_table_object_append(ot, ob, 1, 3, 1, 1, 1, 0, 1, 0);
 
    ob = e_widget_label_add(evas, _("Last Accessed:"));
    e_widget_table_object_append(ot, ob, 0, 4, 1, 1, 1, 0, 1, 0);
    ob = e_widget_entry_add(win, &(cfdata->acc_date), NULL, NULL, NULL);
-   e_widget_size_min_set(ob, 140, -1);
+   e_widget_size_min_get(ob, NULL, &mh);
+   e_widget_size_min_set(ob, 140, mh);
    e_widget_entry_readonly_set(ob, 1);
    e_widget_table_object_append(ot, ob, 1, 4, 1, 1, 1, 0, 1, 0);
 
    ob = e_widget_label_add(evas, _("Last Modified:"));
    e_widget_table_object_append(ot, ob, 0, 5, 1, 1, 1, 0, 1, 0);
    ob = e_widget_entry_add(win, &(cfdata->mod_date), NULL, NULL, NULL);
-   e_widget_size_min_set(ob, 140, -1);
+   e_widget_size_min_get(ob, NULL, &mh);
+   e_widget_size_min_set(ob, 140, mh);
    e_widget_entry_readonly_set(ob, 1);
    e_widget_table_object_append(ot, ob, 1, 5, 1, 1, 1, 0, 1, 0);
 
    ob = e_widget_label_add(evas, _("Last Modified Permissions:"));
    e_widget_table_object_append(ot, ob, 0, 6, 1, 1, 1, 0, 1, 0);
    ob = e_widget_entry_add(win, &(cfdata->pms_date), NULL, NULL, NULL);
-   e_widget_size_min_set(ob, 140, -1);
+   e_widget_size_min_get(ob, NULL, &mh);
+   e_widget_size_min_set(ob, 140, mh);
    e_widget_entry_readonly_set(ob, 1);
    e_widget_table_object_append(ot, ob, 1, 6, 1, 1, 1, 0, 1, 0);
 
    ob = e_widget_label_add(evas, _("File Type:"));
    e_widget_table_object_append(ot, ob, 0, 7, 1, 1, 1, 0, 1, 0);
    ob = e_widget_entry_add(win, &(cfdata->mime), NULL, NULL, NULL);
-   e_widget_size_min_set(ob, 140, -1);
+   e_widget_size_min_get(ob, NULL, &mh);
+   e_widget_size_min_set(ob, 140, mh);
    e_widget_entry_readonly_set(ob, 1);
    e_widget_table_object_append(ot, ob, 1, 7, 1, 1, 1, 0, 1, 0);
 
