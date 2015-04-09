@@ -138,6 +138,7 @@ e_layout_pack(Evas_Object *obj, Evas_Object *child)
    sd = evas_object_smart_data_get(obj);
    li = _e_layout_smart_adopt(sd, child);
    sd->items = eina_inlist_append(sd->items, EINA_INLIST_GET(li));
+   evas_object_lower(child);
    if (sd->frozen <= 0) _e_layout_smart_move_resize_item(li);
 }
 
