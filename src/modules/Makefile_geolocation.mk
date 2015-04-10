@@ -19,7 +19,7 @@ src/modules/geolocation/eldbus_geo_clue2_manager.c \
 src/modules/geolocation/eldbus_geo_clue2_manager.h \
 src/modules/geolocation/eldbus_utils.h
 
-MAINTAINERCLEANFILES += $(GEO_GEN)
+CLEANFILES += $(GEO_GEN)
 
 src/modules/geolocation/e_mod_main.c: $(GEO_GEN)
 $(GEO_GEN): src/modules/geolocation/org.freedesktop.GeoClue2.xml
