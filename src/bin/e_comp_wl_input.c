@@ -34,7 +34,6 @@ _e_comp_wl_input_pointer_cb_cursor_set(struct wl_client *client, struct wl_resou
    pid_t pid;
    E_Client *ec;
    uint64_t sid;
-   Eina_List *l;
    Eina_Bool got_mouse = EINA_FALSE;
 
    /* get compositor data */
