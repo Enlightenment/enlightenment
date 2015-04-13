@@ -29,7 +29,7 @@ e_int_config_desk(Evas_Object *parent EINA_UNUSED, const char *params)
 
    if (!params) return NULL;
    zone_num = dx = dy = -1;
-   if (sscanf(params, "%i %i %i", &zone_num, &dx, &dy) != 4)
+   if (sscanf(params, "%i %i %i", &zone_num, &dx, &dy) != 3)
      return NULL;
 
    if (e_config_dialog_find("E", "internal/desk")) return NULL;
