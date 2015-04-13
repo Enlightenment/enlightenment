@@ -729,7 +729,7 @@ _e_desktop_edit_basic_create_widgets(E_Config_Dialog *cfd EINA_UNUSED, Evas *eva
    e_widget_table_object_append(ot, o, 0, 2, 1, 1, 1, 1, 0, 0);
 
    editor->entry_widget_exec = e_widget_entry_add
-       (evas, &(cfdata->exec), NULL, NULL, NULL);
+       (win, &(cfdata->exec), NULL, NULL, NULL);
    e_widget_table_object_append(ot, editor->entry_widget_exec, 1, 2, 1, 1, 1, 1, 1, 0);
 
    o = e_widget_button_add
@@ -741,7 +741,7 @@ _e_desktop_edit_basic_create_widgets(E_Config_Dialog *cfd EINA_UNUSED, Evas *eva
    e_widget_table_object_append(ot, o, 0, 3, 1, 1, 1, 1, 0, 0);
 
    editor->entry_widget_url = e_widget_entry_add
-       (evas, &(cfdata->url), NULL, NULL, NULL);
+       (win, &(cfdata->url), NULL, NULL, NULL);
    e_widget_table_object_append(ot, editor->entry_widget_url, 1, 3, 1, 1, 1, 1, 1, 0);
    // FIXME: add url selection dialog (file:/etc/..)
 
