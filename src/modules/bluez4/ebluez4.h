@@ -70,7 +70,7 @@ typedef struct _Context
    Eina_List *adapters;
 } Context;
 
-Context *ctxt;
+extern Context *ctxt;
 
 void ebluez4_eldbus_init(void);
 void ebluez4_eldbus_shutdown(void);

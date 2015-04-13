@@ -4,6 +4,8 @@
 #include "e_mod_main.h"
 #include "ebluez4.h"
 
+Context *ctxt = NULL;
+
 typedef struct _Pair_Cb
 {
    void (*cb)(void *, Eina_Bool, const char *);
