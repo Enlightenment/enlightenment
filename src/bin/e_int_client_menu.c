@@ -625,6 +625,8 @@ _e_client_menu_cb_colors_edit_del(void *data, ...)
    E_FREE_FUNC(ec->color_editor, evas_object_del);
    evas_object_event_callback_del_full(ec->frame, EVAS_CALLBACK_MOVE, (Evas_Object_Event_Cb)_e_client_menu_cb_colors_edit_moveresize, ec);
    evas_object_event_callback_del_full(ec->frame, EVAS_CALLBACK_RESIZE, (Evas_Object_Event_Cb)_e_client_menu_cb_colors_edit_moveresize, ec);
+   e_client_comp_hidden_set(ec, 0);
+   e_comp_ungrab_input(1, 1);
    e_comp_shape_queue();
 }
 
@@ -640,6 +642,8 @@ _e_client_menu_cb_colors_edit(void *data, E_Menu *m EINA_UNUSED, E_Menu_Item *mi
    evas_object_geometry_set(o, ec->client.x, ec->client.y, ec->client.w, ec->client.h);
    evas_object_layer_set(o, E_LAYER_POPUP);
    evas_object_show(o);
+   e_client_comp_hidden_set(ec, 1);
+   e_comp_grab_input(1, 1);
    evas_object_smart_callback_add(o, "application_closed", (Evas_Smart_Cb)_e_client_menu_cb_colors_edit_del, ec);
    evas_object_smart_callback_add(o, "dismissed", (Evas_Smart_Cb)_e_client_menu_cb_colors_edit_del, ec);
    evas_object_event_callback_add(o, EVAS_CALLBACK_DEL, (Evas_Object_Event_Cb)_e_client_menu_cb_colors_edit_del, ec);
