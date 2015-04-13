@@ -2574,7 +2574,7 @@ _ibar_cb_client_prop(void *d EINA_UNUSED, int t EINA_UNUSED, E_Event_Client_Prop
 
    if (e_client_util_ignored_get(ev->ec) || (!ev->ec->exe_inst) || 
        (!ev->ec->exe_inst->desktop)) return ECORE_CALLBACK_RENEW;
-   if (!(ev->property & E_CLIENT_PROPERTY_NETWM_STATE)) 
+   if ((!(ev->property & E_CLIENT_PROPERTY_NETWM_STATE)) && (!(ev->property & E_CLIENT_PROPERTY_ICON)))
      return ECORE_CALLBACK_RENEW;
    EINA_LIST_FOREACH(ev->ec->exe_inst->clients, l, ec)
      if (!ec->netwm.state.skip_taskbar)
