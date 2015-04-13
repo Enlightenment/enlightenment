@@ -6,6 +6,7 @@
 #ifdef __FreeBSD__
 # include <sys/types.h>
 # include <sys/sysctl.h>
+# include <errno.h>
 #endif
 
 #ifdef __OpenBSD__
@@ -28,7 +29,17 @@ static int cur_poll_interval = 32;
 
 static char *sensor_path = NULL;
 #if defined (__FreeBSD__) || defined (__OpenBSD__)
-static int mib[5];
+static int mib[CTL_MAXNAME];
+#endif
+#ifdef __FreeBSD__
+static unsigned miblen;
+static const char *sources[] =
+  {
+     "hw.acpi.thermal.tz0.temperature",
+     "dev.cpu.0.temperature",
+     "dev.aibs.0.temp.0",
+     NULL
+  };
 #endif
 
 #ifdef __OpenBSD__
@@ -95,7 +106,9 @@ init(void)
    Eina_List *therms;
    char path[PATH_MAX];
 #ifdef __FreeBSD__
+   unsigned i;
    size_t len;
+   int rc;
 #endif
 
    if ((!sensor_type) || ((!sensor_name) || (sensor_name[0] == 0)))
@@ -103,9 +116,16 @@ init(void)
         E_FREE(sensor_name);
         E_FREE(sensor_path);
 #ifdef __FreeBSD__
-        /* TODO: FreeBSD can also have more temperature sensors! */
-        sensor_type = SENSOR_TYPE_FREEBSD;
-        sensor_name = strdup("tz0");
+        for (i = 0; sources[i]; i++)
+          {
+             rc = sysctlbyname(sources[i], NULL, NULL, NULL, 0);
+             if (rc == 0)
+               {
+                  sensor_type = SENSOR_TYPE_FREEBSD;
+                  sensor_name = strdup(sources[i]);
+                  break;
+               }
+          }
 #elif __OpenBSD__
         mib[0] = CTL_HW;
         mib[1] = HW_SENSORS;
@@ -270,11 +290,13 @@ init(void)
 
            case SENSOR_TYPE_FREEBSD:
 #ifdef __FreeBSD__
-             snprintf(path, sizeof(path), "hw.acpi.thermal.%s.temperature",
-                      sensor_name);
-             sensor_path = strdup(path);
-             len = 5;
-             sysctlnametomib(sensor_path, mib, &len);
+             len = sizeof(mib) / sizeof(mib[0]);
+             rc = sysctlnametomib(sensor_name, mib, &len);
+             if (rc == 0)
+               {
+                  miblen = len;
+                  sensor_path = strdup(sensor_name);
+               }
 #endif
              break;
 
@@ -394,8 +416,8 @@ check(void)
 
       case SENSOR_TYPE_FREEBSD:
 #ifdef __FreeBSD__
-        len = sizeof(temp);
-        if (sysctl(mib, 5, &ftemp, &len, NULL, 0) != -1)
+        len = sizeof(ftemp);
+        if (sysctl(mib, miblen, &ftemp, &len, NULL, 0) == 0)
           {
              temp = (ftemp - 2732) / 10;
              ret = 1;
