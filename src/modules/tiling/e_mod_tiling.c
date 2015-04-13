@@ -187,7 +187,7 @@ is_tilable(const E_Client *ec)
      return false;
 #endif
 
-   if (ec->e.state.centered)
+   if (ec->e.state.centered || e_win_centered_get(ec->internal_elm_win))
      return false;
 
    if (!tiling_g.config->tile_dialogs && ((ec->icccm.transient_for != 0) ||
@@ -1116,6 +1116,14 @@ _move_hook(void *data EINA_UNUSED, int type EINA_UNUSED, E_Event_Client *event)
 
    if (!extra || !extra->tiled)
      {
+        return true;
+     }
+
+   /* A hack because e doesn't trigger events for all property changes */
+   if (!is_tilable(ec))
+     {
+        toggle_floating(ec);
+
         return true;
      }
 
