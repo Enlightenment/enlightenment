@@ -38,6 +38,7 @@ static const char *sources[] =
      "hw.acpi.thermal.tz0.temperature",
      "dev.cpu.0.temperature",
      "dev.aibs.0.temp.0",
+     "dev.lm75.0.temperature",
      NULL
   };
 #endif
