@@ -27,6 +27,7 @@ src/bin/enlightenment_open
 
 internal_bindir = $(libdir)/enlightenment/utils
 internal_bin_PROGRAMS = \
+src/bin/enlightenment_backlight \
 src/bin/enlightenment_fm_op \
 src/bin/enlightenment_sys \
 src/bin/enlightenment_thumb \
@@ -34,10 +35,6 @@ src/bin/enlightenment_static_grabber
 
 if ! HAVE_WAYLAND_ONLY
 internal_bin_PROGRAMS += src/bin/enlightenment_alert
-endif
-
-if HAVE_EEZE
-internal_bin_PROGRAMS += src/bin/enlightenment_backlight
 endif
 
 ENLIGHTENMENTHEADERS = \
@@ -420,13 +417,11 @@ src/bin/e_sys_l2ping.c
 src_bin_enlightenment_sys_LDADD = @SUID_LDFLAGS@ @E_SYS_LIBS@ @BLUEZ_LIBS@
 src_bin_enlightenment_sys_CPPFLAGS = @SUID_CFLAGS@ @E_SYS_CFLAGS@ @BLUEZ_CFLAGS@ -DPACKAGE_SYSCONF_DIR=\"@PACKAGE_SYSCONF_DIR@\"
 
-if HAVE_EEZE
 src_bin_enlightenment_backlight_SOURCES = \
 src/bin/e_backlight_main.c
 
 src_bin_enlightenment_backlight_CPPFLAGS = @SUID_CFLAGS@ @EEZE_CFLAGS@
 src_bin_enlightenment_backlight_LDADD = @SUID_LDFLAGS@ @EEZE_LIBS@
-endif
 
 src_bin_enlightenment_alert_SOURCES = \
 src/bin/e_alert_main.c
@@ -455,14 +450,9 @@ include src/bin/e_fm/Makefile.mk
 # and before internal_bin_PROGRAMS are installed. install-data-hook is
 # run after both
 setuid_root_mode = a=rx,u+xs
-if HAVE_EEZE
 enlightenment-sys-install-data-hook:
 	@chmod $(setuid_root_mode) $(DESTDIR)$(libdir)/enlightenment/utils/enlightenment_sys$(EXEEXT) || true
 	@chmod $(setuid_root_mode) $(DESTDIR)$(libdir)/enlightenment/utils/enlightenment_backlight$(EXEEXT) || true
-else
-enlightenment-sys-install-data-hook:
-	@chmod $(setuid_root_mode) $(DESTDIR)$(libdir)/enlightenment/utils/enlightenment_sys$(EXEEXT) || true
-endif
 installed_headersdir = $(prefix)/include/enlightenment
 installed_headers_DATA = $(ENLIGHTENMENTHEADERS) src/bin/e_fm_shared_types.h
 INSTALL_DATA_HOOKS += enlightenment-sys-install-data-hook

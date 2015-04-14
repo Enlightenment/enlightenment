@@ -2,6 +2,12 @@
 #ifdef HAVE_EEZE
 # include <Eeze.h>
 #endif
+#include <sys/param.h>
+#ifdef __FreeBSD_kernel__
+# include <sys/sysctl.h>
+# include <errno.h>
+# include <string.h>
+#endif
 
 // FIXME: backlight should be tied per zone but this implementation is just
 // a signleton right now as thats 99% of use cases. but api supports
@@ -25,7 +31,7 @@ static Eina_Bool bl_avail = EINA_TRUE;
 #ifndef HAVE_WAYLAND_ONLY
 static Eina_Bool xbl_avail = EINA_FALSE;
 #endif
-#ifdef HAVE_EEZE
+#if defined(HAVE_EEZE) || defined(__FreeBSD_kernel__)
 static double bl_delayval = 1.0;
 static const char *bl_sysval = NULL;
 static Ecore_Event_Handler *bl_sys_exit_handler = NULL;
@@ -37,6 +43,11 @@ static void      _bl_sys_find(void);
 static void      _bl_sys_level_get(void);
 static Eina_Bool _e_bl_cb_exit(void *data EINA_UNUSED, int type EINA_UNUSED, void *event);
 static void      _bl_sys_level_set(double val);
+#endif
+#ifdef __FreeBSD_kernel__
+static const char *bl_acpi_sysctl = "hw.acpi.video.lcd0.brightness";
+static int bl_mib[CTL_MAXNAME];
+static int bl_mib_len = -1;
 #endif
 
 EAPI int E_EVENT_BACKLIGHT_CHANGE = -1;
@@ -240,7 +251,7 @@ _e_backlight_update(void)
         return;
      }
 #endif
-#ifdef HAVE_EEZE
+#if defined(HAVE_EEZE) || defined(__FreeBSD_kernel__)
    _bl_sys_find();
    if (bl_sysval)
      {
@@ -299,7 +310,7 @@ _e_backlight_set(double val)
         free(out);
      }
 #endif
-#ifdef HAVE_EEZE
+#if defined(HAVE_EEZE) || defined(__FreeBSD_kernel__)
    else if (sysmode == MODE_SYS)
      {
         if (bl_sysval)
@@ -445,7 +456,9 @@ _bl_sys_level_get(void)
      e_bl_val = (double)val / (double)maxval;
 //   fprintf(stderr, "GET: %i/%i (%1.3f)\n", val, maxval, e_bl_val);
 }
+#endif  // HAVE_EEZE
 
+#if defined(HAVE_EEZE) || defined(__FreeBSD_kernel__)
 static Eina_Bool
 _e_bl_cb_ext_delay(void *data EINA_UNUSED)
 {
@@ -494,5 +507,64 @@ _bl_sys_level_set(double val)
             e_prefix_lib_get(), (int)(val * 1000.0), bl_sysval);
    bl_sys_set_exe = ecore_exe_run(buf, NULL);
 }
+#endif  // HAVE_EEZE || __FreeBSD_kernel__
 
-#endif
+#ifdef __FreeBSD_kernel__
+static void
+_bl_sys_find(void)
+{
+   int rc;
+   size_t mlen;
+
+   if (!bl_avail) return;
+   if (bl_mib_len >= 0) return;
+
+   mlen = sizeof(bl_mib) / sizeof(bl_mib[0]);
+   rc = sysctlnametomib(bl_acpi_sysctl, bl_mib, &mlen);
+   if (rc < 0)
+     {
+        if (errno == ENOENT) ERR("ACPI brightness sysctl '%s' not found, consider 'kldload acpi_video'", bl_acpi_sysctl);
+        else ERR("sysctlnametomib(%s): %s(%d)", bl_acpi_sysctl, strerror(errno), errno);
+
+        bl_avail = EINA_FALSE;
+        return;
+     }
+   bl_mib_len = (int)mlen;
+   sysmode = MODE_SYS;
+   eina_stringshare_replace(&bl_sysval, bl_acpi_sysctl);
+}
+
+static void
+_bl_sys_level_get(void)
+{
+   int rc, brightness;
+   size_t oldlen;
+
+   if (!bl_avail) return;
+   if (bl_mib_len < 0) return;
+
+   oldlen = sizeof(brightness);
+   rc = sysctl(bl_mib, bl_mib_len, &brightness, &oldlen, NULL, 0);
+   if (rc < 0)
+     {
+        ERR("Could not retrieve ACPI brightness: %s(%d)", strerror(errno), errno);
+        bl_avail = EINA_FALSE;
+        return;
+     }
+   if (oldlen != sizeof(brightness))
+     {
+        // This really should not happen.
+        ERR("!!! Brightness sysctl changed size !!!");
+        bl_avail = EINA_FALSE;
+        return;
+     }
+   if (brightness < 0 || brightness > 100)
+     {
+        // This really should not happen either.
+        ERR("!!! Brightness sysctl out of range !!!");
+        bl_avail = EINA_FALSE;
+        return;
+     }
+   e_bl_val = (double)brightness / 100.;
+}
+#endif  // __FreeBSD_kernel__
