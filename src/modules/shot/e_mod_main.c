@@ -868,7 +868,11 @@ _shot_now(E_Zone *zone, E_Client *ec, const char *params)
 
         if (!e_widget_focus_get(o_bg)) e_widget_focus_set(o_box, 1);
         if (ec)
-          evas_object_layer_set(e_win_client_get(win)->frame, ec->layer);
+          {
+             E_Client *c = e_win_client_get(win);
+
+             if (c) evas_object_layer_set(c->frame, ec->layer);
+          }
      }
 }
 
