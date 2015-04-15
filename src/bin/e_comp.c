@@ -503,7 +503,7 @@ nocomp:
                          evas_object_stack_below(ec->frame, c->nocomp_ec->frame);
                     }
                }
-             else if ((!c->nocomp) && (!c->nocomp_override > 0))
+             else if ((!c->nocomp) && (!c->nocomp_override))
                {
                   if (!c->nocomp_delay_timer)
                     c->nocomp_delay_timer = ecore_timer_add(1.0, _e_comp_cb_nocomp_begin_timeout, c);
