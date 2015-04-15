@@ -92,6 +92,7 @@ _bl_set(const char *dev, int level)
 
    EINA_LIST_FREE(devs, f)
      eina_stringshare_del(f);
+   return -1;
 }
 #elif defined(__FreeBSD_kernel__)  // !HAVE_EEZE
 #include <sys/sysctl.h>
