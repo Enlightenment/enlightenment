@@ -601,10 +601,12 @@ e_pixmap_image_clear(E_Pixmap *cp, Eina_Bool cache)
    if (!cache)
      {
 #ifndef HAVE_WAYLAND_ONLY
-        if (!cp->image) return;
+        if (e_pixmap_is_x(cp))
+          if (!cp->image) return;
 #endif
-#if defined(HAVE_WAYLAND_CLIENTS) || defined(HAVE_WAYLAND_ONLY)
-        if (!cp->buffer_ref.buffer) return;
+#ifdef HAVE_WAYLAND
+        if (cp->type == E_PIXMAP_TYPE_WL)
+          if (!cp->buffer_ref.buffer) return;
 #endif
      }
 
