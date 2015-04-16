@@ -2432,7 +2432,6 @@ e_client_new(E_Pixmap *cp, int first_map, int internal)
    ec->w = 1;
    ec->h = 1;
    ec->internal = internal;
-   e_comp = e_comp;
 
    ec->pixmap = cp;
    e_pixmap_client_set(cp, ec);
