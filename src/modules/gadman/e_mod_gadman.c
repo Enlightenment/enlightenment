@@ -112,7 +112,6 @@ gadman_init(E_Module *m)
 
    Man->module = m;
    gadman_locked = e_module_loading_get();
-   e_comp = e_comp;
    Man->width = e_comp->w;
    Man->height = e_comp->h;
 
