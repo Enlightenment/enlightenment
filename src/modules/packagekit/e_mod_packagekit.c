@@ -220,6 +220,7 @@ static void
 _store_error(E_PackageKit_Module_Context *ctxt, const char *err)
 {
    ERR("PKGKIT: ERROR: %s", err);
+   if (!ctxt) return; // see packagekit_get_updates()
    if (ctxt->error)
       eina_stringshare_replace(&ctxt->error, err);
    else
