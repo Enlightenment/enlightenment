@@ -220,7 +220,6 @@ static void
 _store_error(E_PackageKit_Module_Context *ctxt, const char *err)
 {
    ERR("PKGKIT: ERROR: %s", err);
-   if (!ctxt) return; // see packagekit_get_updates()
    if (ctxt->error)
       eina_stringshare_replace(&ctxt->error, err);
    else
@@ -396,9 +395,9 @@ packagekit_get_updates(E_PackageKit_Module_Context *ctxt, const char *transactio
    obj = eldbus_object_get(ctxt->conn, "org.freedesktop.PackageKit", transaction);
    proxy = eldbus_proxy_get(obj, "org.freedesktop.PackageKit.Transaction");
    if (PKITV07)
-     pending = eldbus_proxy_call(proxy, "GetUpdates", null_cb, NULL, -1, "s", "none");
+     pending = eldbus_proxy_call(proxy, "GetUpdates", null_cb, ctxt, -1, "s", "none");
    else
-     pending = eldbus_proxy_call(proxy, "GetUpdates", null_cb, NULL, -1, "t", 1);
+     pending = eldbus_proxy_call(proxy, "GetUpdates", null_cb, ctxt, -1, "t", 1);
    if (!pending)
      {
         _store_error(ctxt, "could not call GetUpdates()");
