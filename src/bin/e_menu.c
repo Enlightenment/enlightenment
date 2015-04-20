@@ -1175,7 +1175,7 @@ e_menu_idler_before(void)
      {
         if (m->frozen) continue;
         if (!m->realized) continue;
-        if ((m->cur.visible) && (!m->prev.visible))
+        if (m->cur.visible)
           {
              m->prev.visible = m->cur.visible;
              evas_object_pass_events_set(m->comp_object, 0);
