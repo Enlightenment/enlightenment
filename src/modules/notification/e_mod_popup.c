@@ -404,7 +404,6 @@ _notification_popup_place(Popup_Data *popup, int pos)
 static void
 _notification_popup_refresh(Popup_Data *popup)
 {
-   const char *icon_path;
    const char *app_icon_max;
    int w, h, width = 80, height = 80;
    E_Zone *zone;
@@ -451,13 +450,18 @@ _notification_popup_refresh(Popup_Data *popup)
    /* Check if the app specify an icon either by a path or by a hint */
    if (!popup->notif->icon.raw.data)
      {
+        const char *icon_path;
+
         icon_path = popup->notif->icon.icon_path;
         if ((!icon_path) || (!icon_path[0]))
           icon_path = popup->notif->icon.icon;
-        if (icon_path)
+        if (icon_path && icon_path[0])
           {
-             if (!strncmp(icon_path, "file://", 7)) icon_path += 7;
-             if (!ecore_file_exists(icon_path))
+             Efreet_Uri *uri = NULL;
+
+             if (icon_path[0] == '/')
+               uri = efreet_uri_decode(icon_path);
+             if ((!uri) || strcmp(uri->protocol, "file") || (uri->path[0] != '/'))
                {
                   const char *new_path;
                   unsigned int size;
@@ -484,13 +488,14 @@ _notification_popup_refresh(Popup_Data *popup)
              if (!popup->app_icon)
                {
                   popup->app_icon = e_icon_add(popup->e);
-                  if (!e_icon_file_set(popup->app_icon, icon_path))
+                  if (!e_icon_file_set(popup->app_icon, uri ? uri->path : icon_path))
                     {
                        evas_object_del(popup->app_icon);
                        popup->app_icon = NULL;
                     }
                   else e_icon_size_get(popup->app_icon, &w, &h);
                }
+             efreet_uri_free(uri);
           }
      }
    else
