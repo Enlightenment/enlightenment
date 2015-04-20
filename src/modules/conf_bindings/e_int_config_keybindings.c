@@ -859,6 +859,7 @@ _grab_key_down_cb(void *data,
         const Eina_List *l = NULL;
         unsigned int mod = E_BINDING_MODIFIER_NONE;
         unsigned int n, found = 0;
+        const char *key = ev->key;
 
         if (!e_bindings_key_allowed(ev->key))
           return ECORE_CALLBACK_PASS_ON;
@@ -872,6 +873,10 @@ _grab_key_down_cb(void *data,
         if (ev->modifiers & ECORE_EVENT_MODIFIER_WIN)
           mod |= E_BINDING_MODIFIER_WIN;
 
+        /* swap for un-shifted key; binding '(' or ')' is impossible */
+        if ((ev->modifiers & ECORE_EVENT_MODIFIER_SHIFT) &&
+            (eina_streq(ev->key, "parenleft") || eina_streq(ev->key, "parenright")))
+          ev->key = ev->keyname;
         if (cfdata->locals.add)
           found = !!e_util_binding_match(cfdata->binding.key, ev, &n, NULL);
         else if (cfdata->locals.cur && cfdata->locals.cur[0])
@@ -988,6 +993,7 @@ _grab_key_down_cb(void *data,
              e_widget_ilist_selected_set(cfdata->gui.o_binding_list, n);
           }
         e_object_del(E_OBJECT(cfdata->locals.eg));
+        ev->key = key;
      }
    return ECORE_CALLBACK_PASS_ON;
 }
