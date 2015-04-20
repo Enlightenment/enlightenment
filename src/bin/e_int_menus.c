@@ -501,6 +501,13 @@ e_int_menus_menu_augmentation_del(const char *menu, E_Int_Menu_Augmentation *mau
 }
 
 EAPI void
+e_int_menus_cache_clear(void)
+{
+   if (_e_int_menus_app_menus)
+     eina_hash_free_buckets(_e_int_menus_app_menus);
+}
+
+EAPI void
 e_int_menus_menu_augmentation_point_disabled_set(const char *menu, Eina_Bool disabled)
 {
    if (!menu) return;
