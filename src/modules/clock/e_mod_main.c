@@ -316,9 +316,9 @@ _clock_popup_new(Instance *inst)
    inst->popup = e_gadcon_popup_new(inst->gcc, 0);
    evas = e_comp->evas;
 
-   inst->o_table = elm_table_add(inst->popup->comp_object);
+   inst->o_table = elm_table_add(e_comp->elm);
 
-   oi = elm_layout_add(inst->popup->comp_object);
+   oi = elm_layout_add(inst->o_table);
    inst->o_popclock = oi;
    evas_object_size_hint_weight_set(oi, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(oi, EVAS_HINT_FILL, EVAS_HINT_FILL);
@@ -358,7 +358,7 @@ _clock_popup_new(Instance *inst)
    elm_table_pack(inst->o_table, o, 0, 2, 1, 1);
    evas_object_show(o);
 
-   oi = elm_layout_add(inst->popup->comp_object);
+   oi = elm_layout_add(inst->o_table);
    inst->o_cal = oi;
    e_theme_edje_object_set(oi, "base/theme/modules/clock",
                            "e/modules/clock/calendar");
