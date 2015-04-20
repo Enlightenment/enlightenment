@@ -875,7 +875,7 @@ _grab_key_down_cb(void *data,
 
         /* swap for un-shifted key; binding '(' or ')' is impossible */
         if ((ev->modifiers & ECORE_EVENT_MODIFIER_SHIFT) &&
-            (eina_streq(ev->key, "parenleft") || eina_streq(ev->key, "parenright")))
+            ((!strcmp(ev->key, "parenleft")) || (!strcmp(ev->key, "parenright"))))
           ev->key = ev->keyname;
         if (cfdata->locals.add)
           found = !!e_util_binding_match(cfdata->binding.key, ev, &n, NULL);
