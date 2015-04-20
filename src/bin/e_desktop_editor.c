@@ -528,6 +528,7 @@ _e_desktop_edit_basic_apply_data(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dial
         cfdata->editor->saved = efreet_desktop_save_as
             (cfdata->desktop, cfdata->orig_path);
      }
+   e_int_menus_cache_clear();
    return 1;
 }
 
