@@ -30,6 +30,10 @@ wizard_page_show(E_Wizard_Page *pg EINA_UNUSED)
       "ubuntu-mono-dark",
       "ubuntu-mono-light",
       "unity-icon-theme",
+      "Oxygen",            /* KDE 4 */
+      "Adwaita",           /* Gnome 3 */
+      "Breeze",            /* KDE 5 */
+      "HighContrast",
       NULL
    };
 
