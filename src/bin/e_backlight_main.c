@@ -170,7 +170,7 @@ main(int argc, char **argv)
 }
 #else  // !HAVE_EEZE && !__FreeBSD_kernel__
 int
-main(int argc EINA_UNUSED, char **argv EINA_UNUSED)
+main(void)
 {
    return -1;
 }
