@@ -443,7 +443,6 @@ test -n "$dbus_mount" && AC_DEFINE_UNQUOTED([HAVE_UDISKS_MOUNT], [1], [enable Ud
 AM_CONDITIONAL([HAVE_UDISKS_MOUNT], [test -n "$dbus_mount"])
 AM_CONDITIONAL([HAVE_EEZE_MOUNT], [test -n "$eeze_mount"])
 
-AC_CHECK_SIZEOF([void*])
 # verify "wayland-only" early to adapt dependencies
 
 have_wayland_only=no
@@ -840,10 +839,6 @@ if test "x${have_wayland}" = "xyes"; then
     have_wayland_only=yes
     AC_DEFINE_UNQUOTED([HAVE_WAYLAND_ONLY],[1],[enable wayland-only version of enlightenment])
   fi
-fi
-
-if test "x${have_wayland}" = "xyes" && test "$ac_cv_sizeof_voidp" -ne 8 ; then
-   AC_MSG_ERROR([wayland support is only available for 64bit architectures])
 fi
 
 AM_CONDITIONAL([HAVE_WAYLAND], [test "x${have_wayland}" = "xyes"])
