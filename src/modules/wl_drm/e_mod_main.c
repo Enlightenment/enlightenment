@@ -107,14 +107,14 @@ e_modapi_init(E_Module *m)
 
    if (e_comp_config_get()->engine == E_COMP_ENGINE_GL)
      {
-        e_comp->ee = ecore_evas_gl_drm_new(NULL, 0, 0, 0, 1, 1);
+        e_comp->ee = ecore_evas_new("gl_drm", 0, 0, 1, 1, NULL);
         e_comp_gl_set(!!e_comp->ee);
      }
 
    /* fallback to framebuffer drm (non-accel) */
    if (!e_comp->ee)
      {
-        if ((e_comp->ee = ecore_evas_drm_new(NULL, 0, 0, 0, 1, 1)))
+        if ((e_comp->ee = ecore_evas_new("drm", 0, 0, 1, 1, NULL)))
           {
              e_comp_gl_set(EINA_FALSE);
              elm_config_accel_preference_set("none");
