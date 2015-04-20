@@ -3729,10 +3729,10 @@ e_client_unmaximize(E_Client *ec, E_Maximize max)
              int w, h, x, y;
              Eina_Bool horiz = EINA_FALSE, vert = EINA_FALSE;
 
-             w = ec->w;
-             h = ec->h;
-             x = ec->x;
-             y = ec->y;
+             w = ec->client.w;
+             h = ec->client.h;
+             x = ec->client.x;
+             y = ec->client.y;
 
              if (((ec->maximized & E_MAXIMIZE_TYPE) == E_MAXIMIZE_SMART) ||
                  ((ec->maximized & E_MAXIMIZE_TYPE) == E_MAXIMIZE_EXPAND))
