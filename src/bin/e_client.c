@@ -187,7 +187,6 @@ _e_client_desk_window_profile_wait_desk_delfn(void *data, void *obj)
    const char *p;
    int i;
 
-   printf("DELFN %p\n", ec);
    if (e_object_is_del(E_OBJECT(ec))) return;
 
    ec->e.state.profile.wait_desk_delfn = NULL;
@@ -2598,7 +2597,6 @@ e_client_desk_window_profile_wait_desk_set(E_Client *ec, E_Desk *desk)
 
    if (desk)
      {
-        printf("ADD DELFN to %p\n", desk);
         ec->e.state.profile.wait_desk_delfn =
            e_object_delfn_add(E_OBJECT(desk),
                               _e_client_desk_window_profile_wait_desk_delfn,
