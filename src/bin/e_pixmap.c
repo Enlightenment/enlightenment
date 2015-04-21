@@ -239,7 +239,7 @@ e_pixmap_new(E_Pixmap_Type type, ...)
                }
           }
         else
-          pixmaps[type] = eina_hash_int64_new((Eina_Free_Cb)_e_pixmap_free);
+          pixmaps[type] = eina_hash_pointer_new((Eina_Free_Cb)_e_pixmap_free);
         cp = _e_pixmap_new(type);
         cp->win = id;
         eina_hash_add(pixmaps[type], &id, cp);
