@@ -14,7 +14,7 @@ src/modules/music-control/eldbus_mpris_media_player2.c \
 src/modules/music-control/eldbus_mpris_media_player2.h \
 src/modules/music-control/eldbus_utils.h
 
-CLEANFILES += $(MUSIC_GEN)
+MAINTAINERCLEANFILES += $(MUSIC_GEN)
 
 src/modules/music-control/e_mod_main.c: $(MUSIC_GEN)
 $(MUSIC_GEN): src/modules/music-control/introspect.xml
