@@ -63,6 +63,8 @@ EAPI void e_util_evas_objects_above_print_smart(Evas_Object *o);
 
 EAPI void e_util_string_list_free(Eina_List *l);
 
+EAPI void e_util_memclear(void *s, size_t n);
+
 static inline void
 e_util_pointer_center(const E_Client *ec)
 {

@@ -96,10 +96,8 @@ _text_passwd_update(void)
 static void
 _lokker_null(void)
 {
-   memset(edd->passwd, 0, sizeof(char) * PASSWD_LEN);
-   /* break compiler optimization */
-   if (edd->passwd[0] || edd->passwd[3])
-     fprintf(stderr, "ACK!\n");
+   e_util_memclear(edd->passwd, PASSWD_LEN);
+
    _text_passwd_update();
 }
 

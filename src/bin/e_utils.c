@@ -1423,3 +1423,19 @@ e_util_evas_objects_above_print_smart(Evas_Object *o)
           fprintf(stderr, "[%p] - %s(%s) %s\n", a, evas_object_type_get(a), evas_object_name_get(a), evas_object_visible_get(a) ? "VISIBLE" : "HIDDEN");
      }
 }
+
+/*
+ * NOTICE: This function should not be used by external modules!!!
+ *
+ * This function is just a hack to allow us to "securely" clear sensitive
+ * info until memset_s() is readily available, or at least we move this hack
+ * to Eina.
+ *
+ * This is going to work until link time optimizations are good enough.
+ * Hopefully by then, we'll be able to properly use memset_s().
+ */
+EAPI void
+e_util_memclear(void *s, size_t n)
+{
+   memset(s, 0, n);
+}

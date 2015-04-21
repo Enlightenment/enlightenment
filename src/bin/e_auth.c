@@ -138,7 +138,7 @@ e_auth_begin(char *passwd)
    /* child */
    int pamerr;
    E_Auth da;
-   char *current_user, *p;
+   char *current_user;
    struct sigaction action;
 
    _e_auth_child_pid = fork();
@@ -158,8 +158,8 @@ e_auth_begin(char *passwd)
    eina_strlcpy(da.user, current_user, sizeof(da.user));
    eina_strlcpy(da.passwd, passwd, sizeof(da.passwd));
    /* security - null out passwd string once we are done with it */
-   for (p = passwd; *p; p++)
-     *p = 0;
+   e_util_memclear(passwd, strlen(passwd));
+
    da.pam.handle = NULL;
    da.pam.conv.conv = NULL;
    da.pam.conv.appdata_ptr = NULL;
@@ -173,10 +173,8 @@ e_auth_begin(char *passwd)
    pamerr = pam_authenticate(da.pam.handle, 0);
    pam_end(da.pam.handle, pamerr);
    /* security - null out passwd string once we are done with it */
-   memset(da.passwd, 0, sizeof(da.passwd));
-   /* break compiler optimization */
-   if (da.passwd[0] || da.passwd[3])
-     fprintf(stderr, "ACK!\n");
+   e_util_memclear(da.passwd, sizeof(da.passwd));
+
    if (pamerr == PAM_SUCCESS)
      {
         free(current_user);
