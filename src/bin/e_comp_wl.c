@@ -654,22 +654,22 @@ _e_comp_wl_client_evas_init(E_Client *ec)
                                   _e_comp_wl_evas_cb_hide, ec);
 
    /* setup input callbacks */
-   evas_object_event_callback_add(ec->frame, EVAS_CALLBACK_MOUSE_IN,
+   evas_object_event_callback_priority_add(ec->frame, EVAS_CALLBACK_MOUSE_IN, EVAS_CALLBACK_PRIORITY_AFTER,
                                   _e_comp_wl_evas_cb_mouse_in, ec);
-   evas_object_event_callback_add(ec->frame, EVAS_CALLBACK_MOUSE_OUT,
+   evas_object_event_callback_priority_add(ec->frame, EVAS_CALLBACK_MOUSE_OUT, EVAS_CALLBACK_PRIORITY_AFTER,
                                   _e_comp_wl_evas_cb_mouse_out, ec);
-   evas_object_event_callback_add(ec->frame, EVAS_CALLBACK_MOUSE_MOVE,
+   evas_object_event_callback_priority_add(ec->frame, EVAS_CALLBACK_MOUSE_MOVE, EVAS_CALLBACK_PRIORITY_AFTER,
                                   _e_comp_wl_evas_cb_mouse_move, ec);
-   evas_object_event_callback_add(ec->frame, EVAS_CALLBACK_MOUSE_DOWN,
+   evas_object_event_callback_priority_add(ec->frame, EVAS_CALLBACK_MOUSE_DOWN, EVAS_CALLBACK_PRIORITY_AFTER,
                                   _e_comp_wl_evas_cb_mouse_down, ec);
-   evas_object_event_callback_add(ec->frame, EVAS_CALLBACK_MOUSE_UP,
+   evas_object_event_callback_priority_add(ec->frame, EVAS_CALLBACK_MOUSE_UP, EVAS_CALLBACK_PRIORITY_AFTER,
                                   _e_comp_wl_evas_cb_mouse_up, ec);
-   evas_object_event_callback_add(ec->frame, EVAS_CALLBACK_MOUSE_WHEEL,
+   evas_object_event_callback_priority_add(ec->frame, EVAS_CALLBACK_MOUSE_WHEEL, EVAS_CALLBACK_PRIORITY_AFTER,
                                   _e_comp_wl_evas_cb_mouse_wheel, ec);
 
-   evas_object_event_callback_add(ec->frame, EVAS_CALLBACK_FOCUS_IN,
+   evas_object_event_callback_priority_add(ec->frame, EVAS_CALLBACK_FOCUS_IN, EVAS_CALLBACK_PRIORITY_AFTER,
                                   _e_comp_wl_evas_cb_focus_in, ec);
-   evas_object_event_callback_add(ec->frame, EVAS_CALLBACK_FOCUS_OUT,
+   evas_object_event_callback_priority_add(ec->frame, EVAS_CALLBACK_FOCUS_OUT, EVAS_CALLBACK_PRIORITY_AFTER,
                                   _e_comp_wl_evas_cb_focus_out, ec);
 
    if (!ec->override)
