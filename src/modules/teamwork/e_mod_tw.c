@@ -727,7 +727,7 @@ tw_media_get(const char *url, unsigned long long timestamp, Eina_Bool *video)
 
         img = eet_read(media[*video], url, &size);
         alias = eet_alias_get(media[*video], url);
-        buf = eina_binbuf_manage_new_length(img, size);
+        buf = eina_binbuf_manage_new(img, size, EINA_FALSE);
         media_cache_update(alias, timestamp, *video);
 
         eina_stringshare_del(alias);
