@@ -1434,8 +1434,10 @@ e_util_evas_objects_above_print_smart(Evas_Object *o)
  * This is going to work until link time optimizations are good enough.
  * Hopefully by then, we'll be able to properly use memset_s().
  */
+static void *(* const volatile memset_ptr)(void *, int, size_t) = memset;
+
 EAPI void
 e_util_memclear(void *s, size_t n)
 {
-   memset(s, 0, n);
+   memset_ptr(s, 0, n);
 }
