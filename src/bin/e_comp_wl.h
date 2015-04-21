@@ -292,11 +292,5 @@ EAPI struct wl_signal e_comp_wl_surface_create_signal_get(void);
 EAPI double e_comp_wl_idle_time_get(void);
 EAPI Eina_Bool e_comp_wl_output_init(const char *id, const char *make, const char *model, int x, int y, int w, int h, int pw, int ph, unsigned int refresh, unsigned int subpixel, unsigned int transform);
 
-static inline uint64_t
-e_comp_wl_id_get(uint32_t id, pid_t pid)
-{
-   return ((uint64_t)id << 32) + pid;
-}
-
 # endif
 #endif

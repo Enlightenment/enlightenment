@@ -31,9 +31,7 @@ static void
 _e_comp_wl_input_pointer_cb_cursor_set(struct wl_client *client, struct wl_resource *resource EINA_UNUSED, uint32_t serial EINA_UNUSED, struct wl_resource *surface_resource, int32_t x, int32_t y)
 {
    E_Comp_Data *cdata;
-   pid_t pid;
    E_Client *ec;
-   uint64_t sid;
    Eina_Bool got_mouse = EINA_FALSE;
 
    /* get compositor data */
@@ -54,9 +52,7 @@ _e_comp_wl_input_pointer_cb_cursor_set(struct wl_client *client, struct wl_resou
         e_pointer_object_set(e_comp->pointer, NULL, x, y);
         return;
      }
-   wl_client_get_credentials(client, &pid, NULL, NULL);
-   sid = e_comp_wl_id_get(wl_resource_get_id(surface_resource), pid);
-   ec = e_pixmap_find_client(E_PIXMAP_TYPE_WL, sid);
+   ec = wl_resource_get_user_data(surface_resource);
    if (!ec->re_manage)
      {
         ec->re_manage = 1;

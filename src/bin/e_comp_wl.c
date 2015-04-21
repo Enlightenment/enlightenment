@@ -1156,12 +1156,10 @@ _e_comp_wl_surface_cb_destroy(struct wl_client *client EINA_UNUSED, struct wl_re
 static void
 _e_comp_wl_surface_cb_attach(struct wl_client *client EINA_UNUSED, struct wl_resource *resource, struct wl_resource *buffer_resource, int32_t sx, int32_t sy)
 {
-   E_Pixmap *ep;
    E_Client *ec;
    E_Comp_Wl_Buffer *buffer = NULL;
 
-   if (!(ep = wl_resource_get_user_data(resource))) return;
-   if (!(ec = e_pixmap_client_get(ep))) return;
+   if (!(ec = wl_resource_get_user_data(resource))) return;
    if (e_object_is_del(E_OBJECT(ec))) return;
 
    if (buffer_resource)
@@ -1184,12 +1182,10 @@ _e_comp_wl_surface_cb_attach(struct wl_client *client EINA_UNUSED, struct wl_res
 static void
 _e_comp_wl_surface_cb_damage(struct wl_client *client EINA_UNUSED, struct wl_resource *resource, int32_t x, int32_t y, int32_t w, int32_t h)
 {
-   E_Pixmap *ep;
    E_Client *ec;
    Eina_Rectangle *dmg = NULL;
 
-   if (!(ep = wl_resource_get_user_data(resource))) return;
-   if (!(ec = e_pixmap_client_get(ep))) return;
+   if (!(ec = wl_resource_get_user_data(resource))) return;
    if (e_object_is_del(E_OBJECT(ec))) return;
 
    if (!(dmg = eina_rectangle_new(x, y, w, h))) return;
@@ -1213,12 +1209,10 @@ _e_comp_wl_frame_cb_destroy(struct wl_resource *resource)
 static void
 _e_comp_wl_surface_cb_frame(struct wl_client *client, struct wl_resource *resource, uint32_t callback)
 {
-   E_Pixmap *ep;
    E_Client *ec;
    struct wl_resource *res;
 
-   if (!(ep = wl_resource_get_user_data(resource))) return;
-   if (!(ec = e_pixmap_client_get(ep))) return;
+   if (!(ec = wl_resource_get_user_data(resource))) return;
    if (e_object_is_del(E_OBJECT(ec))) return;
 
    /* create frame callback */
@@ -1238,11 +1232,9 @@ _e_comp_wl_surface_cb_frame(struct wl_client *client, struct wl_resource *resour
 static void
 _e_comp_wl_surface_cb_opaque_region_set(struct wl_client *client EINA_UNUSED, struct wl_resource *resource, struct wl_resource *region_resource)
 {
-   E_Pixmap *ep;
    E_Client *ec;
 
-   if (!(ep = wl_resource_get_user_data(resource))) return;
-   if (!(ec = e_pixmap_client_get(ep))) return;
+   if (!(ec = wl_resource_get_user_data(resource))) return;
    if (e_object_is_del(E_OBJECT(ec))) return;
 
    if (region_resource)
@@ -1267,11 +1259,9 @@ _e_comp_wl_surface_cb_opaque_region_set(struct wl_client *client EINA_UNUSED, st
 static void
 _e_comp_wl_surface_cb_input_region_set(struct wl_client *client EINA_UNUSED, struct wl_resource *resource, struct wl_resource *region_resource)
 {
-   E_Pixmap *ep;
    E_Client *ec;
 
-   if (!(ep = wl_resource_get_user_data(resource))) return;
-   if (!(ec = e_pixmap_client_get(ep))) return;
+   if (!(ec = wl_resource_get_user_data(resource))) return;
    if (e_object_is_del(E_OBJECT(ec))) return;
 
    if (region_resource)
@@ -1293,12 +1283,10 @@ _e_comp_wl_surface_cb_input_region_set(struct wl_client *client EINA_UNUSED, str
 static void
 _e_comp_wl_surface_cb_commit(struct wl_client *client EINA_UNUSED, struct wl_resource *resource)
 {
-   E_Pixmap *ep;
    E_Client *ec, *subc;
    Eina_List *l;
 
-   if (!(ep = wl_resource_get_user_data(resource))) return;
-   if (!(ec = e_pixmap_client_get(ep))) return;
+   if (!(ec = wl_resource_get_user_data(resource))) return;
    if (e_object_is_del(E_OBJECT(ec))) return;
 
    if (e_comp_wl_subsurface_commit(ec)) return;
@@ -1338,22 +1326,22 @@ static const struct wl_surface_interface _e_surface_interface =
 };
 
 static void
-_e_comp_wl_surface_destroy(struct wl_resource *resource)
+_e_comp_wl_surface_render_stop(E_Client *ec)
 {
-   E_Pixmap *ep;
-   E_Client *ec;
-
-   if (!(ep = wl_resource_get_user_data(resource))) return;
-
-   /* try to get the e_client from this pixmap */
-   if (!(ec = e_pixmap_client_get(ep)))
-     return;
-
-   /* FIXME: this should be fine after e_pixmap can create textures for wl clients */
+   /* FIXME: this may be fine after e_pixmap can create textures for wl clients? */
    //if ((!ec->internal) && (!e_comp_gl_get()))
-   if (!ec->internal)
      ec->dead = ec->hidden = 1;
    evas_object_hide(ec->frame);
+}
+
+static void
+_e_comp_wl_surface_destroy(struct wl_resource *resource)
+{
+   E_Client *ec;
+
+   if (!(ec = wl_resource_get_user_data(resource))) return;
+
+   _e_comp_wl_surface_render_stop(ec);
    e_object_del(E_OBJECT(ec));
 }
 
@@ -1361,9 +1349,7 @@ static void
 _e_comp_wl_compositor_cb_surface_create(struct wl_client *client, struct wl_resource *resource, uint32_t id)
 {
    struct wl_resource *res;
-   E_Pixmap *ep;
-   E_Client *ec;
-   uint64_t win;
+   E_Client *ec = NULL;
    pid_t pid;
 
    DBG("Compositor Cb Surface Create: %d", id);
@@ -1384,27 +1370,33 @@ _e_comp_wl_compositor_cb_surface_create(struct wl_client *client, struct wl_reso
                                   _e_comp_wl_surface_destroy);
 
    wl_client_get_credentials(client, &pid, NULL, NULL);
-   win = e_comp_wl_id_get(id, pid);
-   /* try to create new pixmap */
-   if (!(ep = e_pixmap_new(E_PIXMAP_TYPE_WL, win)))
+   if (pid == getpid()) //internal!
+     ec = e_pixmap_find_client(E_PIXMAP_TYPE_WL, (uintptr_t)id);
+   if (!ec)
      {
-        ERR("Could not create new pixmap");
-        wl_resource_destroy(res);
-        wl_client_post_no_memory(client);
-        return;
-     }
-   DBG("\tUsing Pixmap: %p", ep);
+        E_Pixmap *ep;
 
-   if ((ec = e_client_new(ep, 0, 0)))
-     {
-        ec->new_client = 0;
-        e_comp->new_clients--;
-        ec->client.w = ec->client.h = 1;
-        ec->ignored = 1;
+        /* try to create new pixmap */
+        if (!(ep = e_pixmap_new(E_PIXMAP_TYPE_WL, resource)))
+          {
+             ERR("Could not create new pixmap");
+             wl_resource_destroy(res);
+             wl_client_post_no_memory(client);
+             return;
+          }
+        DBG("\tUsing Pixmap: %p", ep);
+
+        if ((ec = e_client_new(ep, 0, 0)))
+          {
+             ec->new_client = 0;
+             e_comp->new_clients--;
+             ec->client.w = ec->client.h = 1;
+             ec->ignored = 1;
+          }
      }
 
    /* set reference to pixmap so we can fetch it later */
-   wl_resource_set_user_data(res, ep);
+   wl_resource_set_user_data(res, ec);
 
    /* emit surface create signal */
    wl_signal_emit(&e_comp->wl_comp_data->signals.surface.create, res);
@@ -1920,14 +1912,13 @@ _e_comp_wl_subcompositor_cb_destroy(struct wl_client *client EINA_UNUSED, struct
 static void
 _e_comp_wl_subcompositor_cb_subsurface_get(struct wl_client *client EINA_UNUSED, struct wl_resource *resource, uint32_t id, struct wl_resource *surface_resource, struct wl_resource *parent_resource)
 {
-   E_Pixmap *ep, *epp;
    E_Client *ec, *epc = NULL;
    static const char where[] = "get_subsurface: wl_subsurface@";
 
-   if (!(ep = wl_resource_get_user_data(surface_resource))) return;
-   if (!(epp = wl_resource_get_user_data(parent_resource))) return;
+   if (!(ec = wl_resource_get_user_data(surface_resource))) return;
+   if (!(epc = wl_resource_get_user_data(parent_resource))) return;
 
-   if (ep == epp)
+   if (ec == epc)
      {
         wl_resource_post_error(resource, WL_SUBCOMPOSITOR_ERROR_BAD_SURFACE,
                                "%s%d: wl_surface@%d cannot be its own parent",
@@ -1935,24 +1926,8 @@ _e_comp_wl_subcompositor_cb_subsurface_get(struct wl_client *client EINA_UNUSED,
         return;
      }
 
-   if (!(ec = e_pixmap_client_get(ep)))
-     {
-        if (!(ec = e_client_new(ep, 0, 0)))
-          {
-             wl_resource_post_no_memory(resource);
-             return;
-          }
-
-        if (ec->comp_data)
-          ec->comp_data->surface = surface_resource;
-     }
-
    if (e_object_is_del(E_OBJECT(ec))) return;
-
-   if ((epc = e_pixmap_client_get(epp)))
-     {
-        if (e_object_is_del(E_OBJECT(epc))) return;
-     }
+   if (e_object_is_del(E_OBJECT(epc))) return;
 
    /* check if this surface is already a sub-surface */
    if ((ec->comp_data) && (ec->comp_data->sub.data))
@@ -2085,7 +2060,8 @@ _e_comp_wl_client_cb_del(void *data EINA_UNUSED, E_Client *ec)
      wl_resource_set_user_data(ec->comp_data->surface, NULL);
 
    E_FREE(ec->comp_data);
-
+   if (ec->internal_elm_win)
+     _e_comp_wl_surface_render_stop(ec);
    _e_comp_wl_focus_check();
 }
 
