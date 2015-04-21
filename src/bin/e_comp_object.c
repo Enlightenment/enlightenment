@@ -2614,7 +2614,7 @@ e_comp_object_util_center(Evas_Object *obj)
    zone = e_comp_object_util_zone_get(obj);
    EINA_SAFETY_ON_NULL_RETURN(zone);
    e_zone_useful_geometry_get(zone, &x, &y, &w, &h);
-   if (cw && cw->ec->changes.size)
+   if (cw && (cw->ec->changes.size || cw->ec->new_client))
      ow = cw->ec->w, oh = cw->ec->h;
    else
      evas_object_geometry_get(obj, NULL, NULL, &ow, &oh);
@@ -2631,7 +2631,7 @@ e_comp_object_util_center_on(Evas_Object *obj, Evas_Object *on)
    SOFT_ENTRY();
    EINA_SAFETY_ON_NULL_RETURN(on);
    evas_object_geometry_get(on, &x, &y, &w, &h);
-   if (cw && cw->ec->changes.size)
+   if (cw && (cw->ec->changes.size || cw->ec->new_client))
      ow = cw->ec->w, oh = cw->ec->h;
    else
      evas_object_geometry_get(obj, NULL, NULL, &ow, &oh);
