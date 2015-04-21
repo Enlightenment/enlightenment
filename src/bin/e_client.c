@@ -187,10 +187,13 @@ _e_client_desk_window_profile_wait_desk_delfn(void *data, void *obj)
    const char *p;
    int i;
 
+   printf("DELFN %p\n", ec);
    if (e_object_is_del(E_OBJECT(ec))) return;
 
    ec->e.state.profile.wait_desk_delfn = NULL;
    eina_stringshare_replace(&ec->e.state.profile.wait, NULL);
+   if (ec->e.state.profile.wait_desk)
+     e_object_unref(E_OBJECT(ec->e.state.profile.wait_desk));
    ec->e.state.profile.wait_desk = NULL;
    ec->e.state.profile.wait_for_done = 0;
 
@@ -528,6 +531,14 @@ _e_client_free(E_Client *ec)
 
    e_hints_client_list_set();
    evas_object_del(ec->frame);
+   if (ec->e.state.profile.wait_desk)
+     {
+        e_object_delfn_del(E_OBJECT(ec->e.state.profile.wait_desk),
+                           ec->e.state.profile.wait_desk_delfn);
+        ec->e.state.profile.wait_desk_delfn = NULL;
+        e_object_unref(E_OBJECT(ec->e.state.profile.wait_desk));
+     }
+   ec->e.state.profile.wait_desk = NULL;
    free(ec);
 }
 
@@ -2581,15 +2592,21 @@ e_client_desk_window_profile_wait_desk_set(E_Client *ec, E_Desk *desk)
         ec->e.state.profile.wait_desk_delfn = NULL;
      }
 
+   if (ec->e.state.profile.wait_desk)
+     e_object_unref(E_OBJECT(ec->e.state.profile.wait_desk));
+   ec->e.state.profile.wait_desk = NULL;
+
    if (desk)
      {
+        printf("ADD DELFN to %p\n", desk);
         ec->e.state.profile.wait_desk_delfn =
            e_object_delfn_add(E_OBJECT(desk),
                               _e_client_desk_window_profile_wait_desk_delfn,
                               ec);
      }
-
    ec->e.state.profile.wait_desk = desk;
+   if (ec->e.state.profile.wait_desk)
+     e_object_ref(E_OBJECT(ec->e.state.profile.wait_desk));
 }
 
 EAPI void
