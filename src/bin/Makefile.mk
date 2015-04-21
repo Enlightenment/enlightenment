@@ -36,6 +36,9 @@ src/bin/enlightenment_static_grabber
 if ! HAVE_WAYLAND_ONLY
 internal_bin_PROGRAMS += src/bin/enlightenment_alert
 endif
+if HAVE_FREEBSD
+internal_bin_PROGRAMS += src/bin/enlightenment_ckpasswd
+endif
 
 ENLIGHTENMENTHEADERS = \
 src/bin/e_about.h \
@@ -423,6 +426,14 @@ src/bin/e_backlight_main.c
 src_bin_enlightenment_backlight_CPPFLAGS = @SUID_CFLAGS@ @EEZE_CFLAGS@
 src_bin_enlightenment_backlight_LDADD = @SUID_LDFLAGS@ @EEZE_LIBS@
 
+if HAVE_FREEBSD
+src_bin_enlightenment_ckpasswd_SOURCES = \
+src/bin/e_ckpasswd_main.c
+
+src_bin_enlightenment_ckpasswd_CPPFLAGS = @SUID_CFLAGS@
+src_bin_enlightenment_ckpasswd_LDADD = @SUID_LDFLAGS@ -lcrypt
+endif
+
 src_bin_enlightenment_alert_SOURCES = \
 src/bin/e_alert_main.c
 
@@ -453,6 +464,9 @@ setuid_root_mode = a=rx,u+xs
 enlightenment-sys-install-data-hook:
 	@chmod $(setuid_root_mode) $(DESTDIR)$(libdir)/enlightenment/utils/enlightenment_sys$(EXEEXT) || true
 	@chmod $(setuid_root_mode) $(DESTDIR)$(libdir)/enlightenment/utils/enlightenment_backlight$(EXEEXT) || true
+if HAVE_FREEBSD
+	@chmod $(setuid_root_mode) $(DESTDIR)$(libdir)/enlightenment/utils/enlightenment_ckpasswd$(EXEEXT) || true
+endif
 installed_headersdir = $(prefix)/include/enlightenment
 installed_headers_DATA = $(ENLIGHTENMENTHEADERS) src/bin/e_fm_shared_types.h
 INSTALL_DATA_HOOKS += enlightenment-sys-install-data-hook
