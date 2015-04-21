@@ -702,7 +702,7 @@ _e_client_menu_cb_application_pre(void *data, E_Menu *m EINA_UNUSED, E_Menu_Item
         e_util_menu_item_theme_icon_set(submi, "preferences-desktop-keyboard");
      }
 
-   if (ec->color_editor) return;
+   if (ec->color_editor || (!e_pixmap_is_x(ec->pixmap))) return;
    submi = e_menu_item_new(subm);
    e_menu_item_label_set(submi, _("Edit Color Scheme"));
    e_menu_item_callback_set(submi, _e_client_menu_cb_colors_edit, ec);
