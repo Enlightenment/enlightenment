@@ -1,4 +1,6 @@
 #include "e.h"
+#define EFL_BETA_API_SUPPORT
+#include <elm_color_class.h>
 
 static char *
 _translate(char *str)
