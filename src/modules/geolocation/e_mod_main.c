@@ -52,6 +52,8 @@ struct _Instance
    const char *description;
 };
 
+#define GCLUE_ACCURACY_LEVEL_EXACT 8;
+
 static Eina_List *geolocation_instances = NULL;
 static E_Module *geolocation_module = NULL;
 
@@ -278,6 +280,14 @@ cb_location_prop_description_get(void *data EINA_UNUSED, Eldbus_Pending *p EINA_
 }
 
 void
+cb_client_prop_set(void *data EINA_UNUSED, const char *propname EINA_UNUSED,
+                              Eldbus_Proxy *proxy EINA_UNUSED, Eldbus_Pending *p EINA_UNUSED,
+                              Eldbus_Error_Info *error_info EINA_UNUSED)
+{
+   DBG("Client %s property set callback received", propname);
+}
+
+void
 cb_client_location_updated_signal(void *data, const Eldbus_Message *msg)
 {
    const char *new_path, *old_path;
@@ -312,6 +322,8 @@ cb_client_object_get(Eldbus_Proxy *proxy EINA_UNUSED, void *data, Eldbus_Pending
 		     Eldbus_Error_Info *error EINA_UNUSED, const char *client_path)
 {
    Instance *inst = data;
+   int accuracy;
+   const char *desktopid;
 
    DBG("Client object path: %s", client_path);
    inst->client = geo_clue2_client_proxy_get(inst->conn, "org.freedesktop.GeoClue2", client_path);
@@ -320,6 +332,11 @@ cb_client_object_get(Eldbus_Proxy *proxy EINA_UNUSED, void *data, Eldbus_Pending
         ERR("Error: could not connect to GeoClue2 client proxy");
         return;
      }
+
+   desktopid = "Enlightenment-module";
+   geo_clue2_client_desktop_id_propset(inst->client, cb_client_prop_set, inst, desktopid);
+   accuracy = GCLUE_ACCURACY_LEVEL_EXACT;
+   geo_clue2_client_requested_accuracy_level_propset(inst->client, cb_client_prop_set, inst, (void*)(intptr_t)accuracy);
 
    eldbus_proxy_signal_handler_add(inst->client, "LocationUpdated", cb_client_location_updated_signal, inst);
 }
