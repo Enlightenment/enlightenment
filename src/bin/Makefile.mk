@@ -300,6 +300,7 @@ src/bin/e_place.c \
 src/bin/e_pointer.c \
 src/bin/e_powersave.c \
 src/bin/e_prefix.c \
+src/bin/e_randr2.c \
 src/bin/e_remember.c \
 src/bin/e_resist.c \
 src/bin/e_scale.c \
@@ -361,7 +362,6 @@ enlightenment_src += \
 src/bin/e_comp_x.c \
 src/bin/e_comp_x_randr.c \
 src/bin/e_alert.c \
-src/bin/e_randr2.c \
 src/bin/e_xsettings.c
 endif
 
