@@ -9,7 +9,6 @@ e_modapi_init(E_Module *m)
 {
    Ecore_Evas *ee;
    E_Screen *screen;
-   E_Comp *comp;
    int w, h;
 
    printf("LOAD WL_FB MODULE\n");
@@ -24,13 +23,7 @@ e_modapi_init(E_Module *m)
    ecore_fb_size_get(&w, &h);
    ee = ecore_evas_fb_new(NULL, 0, w, h);
 
-   if (!(comp = e_comp))
-     {
-        comp = e_comp_new();
-        comp->comp_type = E_PIXMAP_TYPE_WL;
-     }
-
-   comp->ee = ee;
+   e_comp->ee = ee;
 
    if (!e_xinerama_fake_screens_exist())
      {
@@ -44,7 +37,7 @@ e_modapi_init(E_Module *m)
      }
    e_comp_canvas_init(w, h);
    e_comp_wl_init();
-   comp->pointer = e_pointer_canvas_new(comp->ee, EINA_TRUE);
+   e_comp->pointer = e_pointer_canvas_new(e_comp->ee, EINA_TRUE);
 
    ecore_wl_init(NULL);
    ecore_wl_server_mode_set(1);

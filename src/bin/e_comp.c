@@ -1016,6 +1016,8 @@ e_comp_init(void)
       actions = eina_list_append(actions, act);
    }
 
+   e_comp_new();
+   e_comp->comp_type = E_PIXMAP_TYPE_NONE;
    {
       const char *eng;
       
@@ -1026,12 +1028,17 @@ e_comp_init(void)
 
            snprintf(buf, sizeof(buf), "wl_%s", eng);
            if (e_module_enable(e_module_new(buf)))
-             goto out;
+             {
+                e_comp->comp_type = E_PIXMAP_TYPE_WL;
+                goto out;
+             }
         }
    }
 
 #ifndef HAVE_WAYLAND_ONLY
-   if (!e_comp_x_init())
+   if (e_comp_x_init())
+     e_comp->comp_type = E_PIXMAP_TYPE_X;
+   else
 #endif
      {
         const char **test, *eng[] =
@@ -1050,7 +1057,10 @@ e_comp_init(void)
         for (test = eng; *test; test++)
           {
              if (e_module_enable(e_module_new(*test)))
-               goto out;
+               {
+                  e_comp->comp_type = E_PIXMAP_TYPE_WL;
+                  goto out;
+               }
           }
         return EINA_FALSE;
      }

@@ -2309,12 +2309,8 @@ _e_comp_wl_compositor_create(void)
    int fd = 0;
 
    /* check for existing compositor. create if needed */
-   if (!e_comp)
-     {
-        e_comp_new();
-        e_comp->comp_type = E_PIXMAP_TYPE_WL;
-        E_OBJECT_DEL_SET(e_comp, _e_comp_wl_compositor_cb_del);
-     }
+   if (e_comp->comp_type == E_PIXMAP_TYPE_NONE)
+     E_OBJECT_DEL_SET(e_comp, _e_comp_wl_compositor_cb_del);
 
    /* create new compositor data */
    if (!(cdata = E_NEW(E_Comp_Data, 1)))

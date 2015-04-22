@@ -5196,8 +5196,6 @@ _e_comp_x_screens_setup(void)
              if (!success) break;
           }
         if (!success) break;
-        e_comp_new();
-        e_comp->comp_type = E_PIXMAP_TYPE_X;
         success = _e_comp_x_setup(root, rw, rh);
         if (!success) break;
      }

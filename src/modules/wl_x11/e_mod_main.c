@@ -67,7 +67,6 @@ e_modapi_init(E_Module *m)
 {
    Ecore_Evas *ee;
    E_Screen *screen;
-   E_Comp *comp;
    int w = 0, h = 0;
 
    printf("LOAD WL_X11 MODULE\n");
@@ -75,20 +74,14 @@ e_modapi_init(E_Module *m)
    ee = ecore_evas_software_x11_new(NULL, 0, 0, 0, 1, 1);
    ecore_evas_callback_delete_request_set(ee, _cb_delete_request);
 
-   if (!(comp = e_comp))
-     {
-        comp = e_comp_new();
-        comp->comp_type = E_PIXMAP_TYPE_WL;
-     }
-
-   comp->ee = ee;
-   if (!comp->ee)
+   e_comp->ee = ee;
+   if (!e_comp->ee)
      {
         ERR("Could not create ecore_evas canvas");
         return NULL;
      }
 
-   ecore_evas_screen_geometry_get(comp->ee, NULL, NULL, &w, &h);
+   ecore_evas_screen_geometry_get(e_comp->ee, NULL, NULL, &w, &h);
 
    if (!e_xinerama_fake_screens_exist())
      {
@@ -104,24 +97,24 @@ e_modapi_init(E_Module *m)
    if (!e_comp_canvas_init(w, h)) return NULL;
 
    /* NB: This needs to be called AFTER comp_canvas has been setup as it 
-    * makes reference to the comp->evas */
+    * makes reference to the e_comp->evas */
    if (!e_comp_wl_init()) return NULL;
 
-   e_comp_wl_input_pointer_enabled_set(comp->wl_comp_data, EINA_TRUE);
-   e_comp_wl_input_keyboard_enabled_set(comp->wl_comp_data, EINA_TRUE);
+   e_comp_wl_input_pointer_enabled_set(e_comp->wl_comp_data, EINA_TRUE);
+   e_comp_wl_input_keyboard_enabled_set(e_comp->wl_comp_data, EINA_TRUE);
 
-   /* comp->pointer =  */
-   /*   e_pointer_window_new(ecore_evas_window_get(comp->ee), EINA_TRUE); */
-   comp->pointer = e_pointer_canvas_new(comp->ee, EINA_TRUE);
-   comp->pointer->color = EINA_TRUE;
+   /* e_comp->pointer =  */
+   /*   e_pointer_window_new(ecore_evas_window_get(e_comp->ee), EINA_TRUE); */
+   e_comp->pointer = e_pointer_canvas_new(e_comp->ee, EINA_TRUE);
+   e_comp->pointer->color = EINA_TRUE;
 
    /* force a keymap update so compositor keyboard gets setup */
-   _cb_keymap_changed(comp->wl_comp_data, 0, NULL);
+   _cb_keymap_changed(e_comp->wl_comp_data, 0, NULL);
 
    /* setup keymap_change event handler */
    kbd_hdlr = 
      ecore_event_handler_add(ECORE_X_EVENT_XKB_STATE_NOTIFY, 
-                             _cb_keymap_changed, comp->wl_comp_data);
+                             _cb_keymap_changed, e_comp->wl_comp_data);
 
    return m;
 }

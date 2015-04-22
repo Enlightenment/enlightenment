@@ -99,12 +99,6 @@ e_modapi_init(E_Module *m)
    /*      return NULL; */
    /*   } */
 
-   if (!e_comp)
-     {
-        e_comp_new();
-        e_comp->comp_type = E_PIXMAP_TYPE_WL;
-     }
-
    if (e_comp_config_get()->engine == E_COMP_ENGINE_GL)
      {
         e_comp->ee = ecore_evas_new("gl_drm", 0, 0, 1, 1, NULL);
