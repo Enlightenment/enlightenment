@@ -15,7 +15,6 @@ static void                    _config_free(E_Config_Randr2 *cfg);
 static Eina_Bool               _config_save(E_Randr2 *r, E_Config_Randr2 *cfg);
 static void                    _config_update(E_Randr2 *r, E_Config_Randr2 *cfg);
 static void                    _config_apply(E_Randr2 *r, E_Config_Randr2 *cfg);
-static E_Config_Randr2_Screen *_config_screen_find(E_Randr2_Screen *s, E_Config_Randr2 *cfg);
 static int                     _config_screen_match_count(E_Randr2 *r, E_Config_Randr2 *cfg);
 static char                   *_screens_fingerprint(E_Randr2 *r);
 static Eina_Bool               _screens_differ(E_Randr2 *r1, E_Randr2 *r2);
@@ -363,7 +362,7 @@ _config_update(E_Randr2 *r, E_Config_Randr2 *cfg)
      {
         printf("RRR: out id=%s:  connected=%i\n", s->id, s->info.connected);
         if ((!s->id) || (!s->info.connected) || (_screen_closed(s))) continue;
-        cs = _config_screen_find(s, cfg);
+        cs = e_randr2_config_screen_find(s, cfg);
         if (!cs)
           {
              cs = calloc(1, sizeof(E_Config_Randr2_Screen));
@@ -403,7 +402,7 @@ _config_apply(E_Randr2 *r, E_Config_Randr2 *cfg)
         printf("RRR: apply '%s'...\n", s->info.name);
         cs = NULL;
         if ((!_screen_closed(s)) && (s->info.connected))
-          cs = _config_screen_find(s, cfg);
+          cs = e_randr2_config_screen_find(s, cfg);
         printf("RRR: connected =  %i\n", s->info.connected);
         if ((cs) && (cs->enabled))
           {
@@ -443,22 +442,6 @@ _config_apply(E_Randr2 *r, E_Config_Randr2 *cfg)
           }
         s->config.configured = EINA_TRUE;
      }
-}
-
-static E_Config_Randr2_Screen *
-_config_screen_find(E_Randr2_Screen *s, E_Config_Randr2 *cfg)
-{
-   Eina_List *l;
-   E_Config_Randr2_Screen *cs;
-
-   if ((!s) || (!cfg)) return NULL;
-   if (!s->id) return NULL;
-   EINA_LIST_FOREACH(cfg->screens, l, cs)
-     {
-        if (!cs->id) continue;
-        if (!strcmp(cs->id, s->id)) return cs;
-     }
-   return NULL;
 }
 
 static int
@@ -1273,7 +1256,7 @@ _info_get(void)
           }
         cs = NULL;
         priority = 0;
-        if (e_randr2_cfg) cs = _config_screen_find(s, e_randr2_cfg);
+        if (e_randr2_cfg) cs = e_randr2_config_screen_find(s, e_randr2_cfg);
         if (cs)
           priority = cs->priority;
         else if (ecore_x_randr_primary_output_get(root) == outputs[i])
@@ -1676,4 +1659,20 @@ e_randr2_screen_refresh_queue(Eina_Bool lid_event)
    else
      _screen_delay_timer = ecore_timer_add(1.0, _cb_screen_change_delay, NULL);
    event_screen = !!lid_event;
+}
+
+EAPI E_Config_Randr2_Screen *
+e_randr2_config_screen_find(E_Randr2_Screen *s, E_Config_Randr2 *cfg)
+{
+   Eina_List *l;
+   E_Config_Randr2_Screen *cs;
+
+   if ((!s) || (!cfg)) return NULL;
+   if (!s->id) return NULL;
+   EINA_LIST_FOREACH(cfg->screens, l, cs)
+     {
+        if (!cs->id) continue;
+        if (!strcmp(cs->id, s->id)) return cs;
+     }
+   return NULL;
 }

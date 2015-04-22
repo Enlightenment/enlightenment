@@ -121,5 +121,6 @@ EAPI    void      e_randr2_config_apply(void);
 EAPI    void      e_randr2_screeninfo_update(void);
 
 EAPI void e_randr2_screen_refresh_queue(Eina_Bool lid_event);
+EAPI E_Config_Randr2_Screen *e_randr2_config_screen_find(E_Randr2_Screen *s, E_Config_Randr2 *cfg);
 #endif
 #endif
