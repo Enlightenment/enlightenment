@@ -187,6 +187,7 @@ e_comp_canvas_init(int w, int h)
    e_comp->evas = ecore_evas_get(e_comp->ee);
    e_comp->w = w;
    e_comp->h = h;
+   ecore_evas_resize(e_comp->ee, w, h);
 
    if (e_first_frame)
      evas_event_callback_add(e_comp->evas, EVAS_CALLBACK_RENDER_POST, _e_comp_canvas_cb_first_frame, NULL);

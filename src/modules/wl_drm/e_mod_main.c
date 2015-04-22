@@ -128,9 +128,6 @@ e_modapi_init(E_Module *m)
    /* get the current screen geometry */
    ecore_evas_screen_geometry_get(e_comp->ee, NULL, NULL, &w, &h);
 
-   /* resize the canvas */
-   ecore_evas_resize(e_comp->ee, w, h);
-
    ecore_evas_callback_resize_set(e_comp->ee, _e_mod_drm_cb_ee_resize);
 
    if (!e_xinerama_fake_screens_exist())
