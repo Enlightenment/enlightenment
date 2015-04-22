@@ -65,21 +65,19 @@ _cb_keymap_changed(void *data, int type EINA_UNUSED, void *event EINA_UNUSED)
 EAPI void *
 e_modapi_init(E_Module *m)
 {
-   Ecore_Evas *ee;
    E_Screen *screen;
    int w = 0, h = 0;
 
    printf("LOAD WL_X11 MODULE\n");
 
-   ee = ecore_evas_software_x11_new(NULL, 0, 0, 0, 1, 1);
-   ecore_evas_callback_delete_request_set(ee, _cb_delete_request);
+   e_comp_x_randr_canvas_new(ecore_x_window_root_first_get(), 1, 1);
 
-   e_comp->ee = ee;
    if (!e_comp->ee)
      {
         ERR("Could not create ecore_evas canvas");
         return NULL;
      }
+   ecore_evas_callback_delete_request_set(e_comp->ee, _cb_delete_request);
 
    ecore_evas_screen_geometry_get(e_comp->ee, NULL, NULL, &w, &h);
 
