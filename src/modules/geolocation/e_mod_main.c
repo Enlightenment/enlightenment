@@ -4,6 +4,8 @@
 #include "eldbus_geo_clue2_client.h"
 #include "eldbus_geo_clue2_location.h"
 
+#include <float.h>
+
 /* gadcon requirements */
 static E_Gadcon_Client *_gc_init(E_Gadcon *gc, const char *name, const char *id, const char *style);
 static void _gc_shutdown(E_Gadcon_Client *gcc);
@@ -67,7 +69,11 @@ popup_update(Instance *inst)
    snprintf(buf, sizeof(buf), _("Longitude:  %f"), inst->longitude);
    e_widget_label_text_set(inst->popup_longitude, buf);
 
-   snprintf(buf, sizeof(buf), _("Altitude:  %f"), inst->altitude);
+   if (inst->altitude != -DBL_MAX)
+        snprintf(buf, sizeof(buf), _("Altitude:  %f"), inst->altitude);
+   else
+        snprintf(buf, sizeof(buf), _("Altitude:  N/A"));
+
    e_widget_label_text_set(inst->popup_altitude, buf);
 
    snprintf(buf, sizeof(buf), _("Accuracy:  %f"), inst->accuracy);
@@ -115,7 +121,11 @@ popup_new(Instance *inst)
    inst->popup_longitude = e_widget_label_add(evas, buf);
    e_widget_list_object_append(list, inst->popup_longitude, 1, 1, 0.5);
 
-   snprintf(buf, sizeof(buf), _("Altitude:  %f"), inst->altitude);
+   if (inst->altitude != -DBL_MAX)
+        snprintf(buf, sizeof(buf), _("Altitude:  %f"), inst->altitude);
+   else
+        snprintf(buf, sizeof(buf), _("Altitude:  N/A"));
+
    inst->popup_altitude = e_widget_label_add(evas, buf);
    e_widget_list_object_append(list, inst->popup_altitude, 1, 1, 0.5);
 
