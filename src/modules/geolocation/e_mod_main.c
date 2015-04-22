@@ -147,25 +147,17 @@ popup_new(Instance *inst)
 }
 
 void
-cb_client_start(Eldbus_Proxy *proxy EINA_UNUSED, void *data, Eldbus_Pending *pending EINA_UNUSED,
-		Eldbus_Error_Info *error EINA_UNUSED)
+cb_client_start(Eldbus_Proxy *proxy EINA_UNUSED, void *data EINA_UNUSED,
+		Eldbus_Pending *pending EINA_UNUSED, Eldbus_Error_Info *error EINA_UNUSED)
 {
-   Instance *inst = data;
-
    DBG("Client proxy start callback received");
-
-   edje_object_signal_emit(inst->icon, "e,state,location_on", "e");
 }
 
 void
-cb_client_stop(Eldbus_Proxy *proxy EINA_UNUSED, void *data, Eldbus_Pending *pending EINA_UNUSED,
-		Eldbus_Error_Info *error EINA_UNUSED)
+cb_client_stop(Eldbus_Proxy *proxy EINA_UNUSED, void *data EINA_UNUSED,
+		Eldbus_Pending *pending EINA_UNUSED, Eldbus_Error_Info *error EINA_UNUSED)
 {
-   Instance *inst = data;
-
    DBG("Client proxy stop callback received");
-
-   edje_object_signal_emit(inst->icon, "e,state,location_off", "e");
 }
 
 static void
