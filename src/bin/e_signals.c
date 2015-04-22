@@ -70,7 +70,7 @@ EAPI void
 e_sigseg_act(int x EINA_UNUSED, siginfo_t *info EINA_UNUSED, void *data EINA_UNUSED)
 {
 #ifdef HAVE_WAYLAND_ONLY
-   Eina_List *list, *l, *ll;
+   const Eina_List *list, *l, *ll;
    Ecore_Drm_Device *dev;
 
    list = ecore_drm_devices_get();
@@ -116,7 +116,7 @@ EAPI void
 e_sigfpe_act(int x EINA_UNUSED, siginfo_t *info EINA_UNUSED, void *data EINA_UNUSED)
 {
 #ifdef HAVE_WAYLAND_ONLY
-   Eina_List *list, *l, *ll;
+   const Eina_List *list, *l, *ll;
    Ecore_Drm_Device *dev;
 
    list = ecore_drm_devices_get();
@@ -144,7 +144,7 @@ EAPI void
 e_sigbus_act(int x EINA_UNUSED, siginfo_t *info EINA_UNUSED, void *data EINA_UNUSED)
 {
 #ifdef HAVE_WAYLAND_ONLY
-   Eina_List *list, *l, *ll;
+   const Eina_List *list, *l, *ll;
    Ecore_Drm_Device *dev;
 
    list = ecore_drm_devices_get();
@@ -172,7 +172,7 @@ EAPI void
 e_sigabrt_act(int x EINA_UNUSED, siginfo_t *info EINA_UNUSED, void *data EINA_UNUSED)
 {
 #ifdef HAVE_WAYLAND_ONLY
-   Eina_List *list, *l, *ll;
+   const Eina_List *list, *l, *ll;
    Ecore_Drm_Device *dev;
 
    list = ecore_drm_devices_get();
