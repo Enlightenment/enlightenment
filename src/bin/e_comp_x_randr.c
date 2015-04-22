@@ -1,4 +1,5 @@
 #include "e.h"
+#include <Ecore_X.h>
 
 static char *_output_screen_get(Ecore_X_Window root, Ecore_X_Randr_Output o);
 static Ecore_X_Randr_Edid_Display_Interface_Type _output_conn_type_get(Ecore_X_Window root, Ecore_X_Randr_Output o);
@@ -14,6 +15,27 @@ static Ecore_X_Randr_Mode _mode_screen_find(Ecore_X_Window root, E_Randr2_Screen
 
 static Eina_List *handlers;
 
+
+static void
+_e_comp_x_randr_pre_swap(void *data EINA_UNUSED, Evas *e EINA_UNUSED)
+{
+   if (!e_comp_config_get()->grab) return;
+   if (!e_comp->grabbed) return;
+   ecore_x_ungrab();
+   e_comp->grabbed = 0;
+}
+
+static void
+_e_comp_x_randr_grab_cb(void)
+{
+   if (!e_comp->grabbed)
+     {
+        ecore_x_grab();
+        ecore_x_sync();
+     }
+   else
+     ecore_x_ungrab();
+}
 
 static char *
 _output_screen_get(Ecore_X_Window root, Ecore_X_Randr_Output o)
@@ -794,4 +816,73 @@ e_comp_x_randr_create(void)
 
    _info_relative_fixup(r);
    return r;
+}
+
+EAPI Eina_Bool
+e_comp_x_randr_canvas_new(Ecore_Window parent, int w, int h)
+{
+   Eina_Bool ret = EINA_TRUE;
+
+   if (!getenv("ECORE_X_NO_XLIB"))
+     {
+        if (ecore_evas_engine_type_supported_get(ECORE_EVAS_ENGINE_OPENGL_X11))
+          e_comp_gl_set(EINA_TRUE);
+     }
+   if (e_comp_gl_get() && (e_comp_config_get()->engine == E_COMP_ENGINE_GL))
+     {
+        int opt[20];
+        int opt_i = 0;
+
+        if (e_comp_config_get()->indirect)
+          {
+             opt[opt_i] = ECORE_EVAS_GL_X11_OPT_INDIRECT;
+             opt_i++;
+             opt[opt_i] = 1;
+             opt_i++;
+          }
+        if (e_comp_config_get()->vsync)
+          {
+             opt[opt_i] = ECORE_EVAS_GL_X11_OPT_VSYNC;
+             opt_i++;
+             opt[opt_i] = 1;
+             opt_i++;
+          }
+        if (e_comp_config_get()->swap_mode)
+          {
+             opt[opt_i] = ECORE_EVAS_GL_X11_OPT_SWAP_MODE;
+             opt_i++;
+             opt[opt_i] = e_comp_config_get()->swap_mode;
+             opt_i++;
+          }
+        if (opt_i > 0)
+          {
+             opt[opt_i] = ECORE_EVAS_GL_X11_OPT_NONE;
+             e_comp->ee = ecore_evas_gl_x11_options_new(NULL, parent, 0, 0, w, h, opt);
+          }
+        if (!e_comp->ee)
+          e_comp->ee = ecore_evas_gl_x11_new(NULL, parent, 0, 0, w, h);
+        if (e_comp->ee)
+          {
+             e_comp->gl = 1;
+             ecore_evas_gl_x11_pre_post_swap_callback_set(e_comp->ee, e_comp, _e_comp_x_randr_pre_swap, NULL);
+          }
+     }
+   if (!e_comp->ee)
+     {
+        e_comp->ee = ecore_evas_software_x11_new(NULL, parent, 0, 0, w, h);
+        if (e_comp_config_get()->engine == E_COMP_ENGINE_GL)
+          ret = EINA_FALSE;
+        e_comp_gl_set(0);
+        // tell elm and all elm apps to not allow acceleration since comp
+        // can't do it (or doesn't want to), so this may cause issues in
+        // gl drivers etc. - this addresses a vbox crash bug with vm
+        // opengl acceleration
+        elm_config_accel_preference_set("none");
+        elm_config_accel_preference_override_set(EINA_TRUE);
+        elm_config_all_flush();
+        elm_config_save();
+     }
+   if (ret)
+     e_comp->grab_cb = _e_comp_x_randr_grab_cb;
+   return ret;
 }

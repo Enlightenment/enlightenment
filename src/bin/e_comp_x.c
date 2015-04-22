@@ -4532,15 +4532,6 @@ _e_comp_x_cb_frame_extents_request(void *data EINA_UNUSED, int ev_type EINA_UNUS
    return ECORE_CALLBACK_RENEW;
 }
 
-static void
-_e_comp_x_pre_swap(void *data EINA_UNUSED, Evas *e EINA_UNUSED)
-{
-   if (!e_comp_config_get()->grab) return;
-   if (!e_comp->grabbed) return;
-   ecore_x_ungrab();
-   e_comp->grabbed = 0;
-}
-
 static int
 _e_comp_x_cinerama_screen_sort_cb(const void *data1, const void *data2)
 {
@@ -4907,18 +4898,6 @@ _e_comp_x_bindings_ungrab_cb(void)
      }
 }
 
-static void
-_e_comp_x_grab_cb(void)
-{
-   if (!e_comp->grabbed)
-     {
-        ecore_x_grab();
-        ecore_x_sync();
-     }
-   else
-     ecore_x_ungrab();
-}
-
 static Eina_Bool
 _e_comp_x_desklock_key_down(void *d EINA_UNUSED, int t EINA_UNUSED, Ecore_Event_Key *ev)
 {
@@ -5047,62 +5026,8 @@ _e_comp_x_setup(Ecore_X_Window root, int w, int h)
 
    e_alert_composite_win(root, e_comp->win);
 
-   if (e_comp_gl_get() && (e_comp_config_get()->engine == E_COMP_ENGINE_GL))
-     {
-        int opt[20];
-        int opt_i = 0;
-
-        if (e_comp_config_get()->indirect)
-          {
-             opt[opt_i] = ECORE_EVAS_GL_X11_OPT_INDIRECT;
-             opt_i++;
-             opt[opt_i] = 1;
-             opt_i++;
-          }
-        if (e_comp_config_get()->vsync)
-          {
-             opt[opt_i] = ECORE_EVAS_GL_X11_OPT_VSYNC;
-             opt_i++;
-             opt[opt_i] = 1;
-             opt_i++;
-          }
-#ifdef ECORE_EVAS_GL_X11_OPT_SWAP_MODE
-        if (e_comp_config_get()->swap_mode)
-          {
-             opt[opt_i] = ECORE_EVAS_GL_X11_OPT_SWAP_MODE;
-             opt_i++;
-             opt[opt_i] = e_comp_config_get()->swap_mode;
-             opt_i++;
-          }
-#endif
-        if (opt_i > 0)
-          {
-             opt[opt_i] = ECORE_EVAS_GL_X11_OPT_NONE;
-             e_comp->ee = ecore_evas_gl_x11_options_new(NULL, e_comp->win, 0, 0, w, h, opt);
-          }
-        if (!e_comp->ee)
-          e_comp->ee = ecore_evas_gl_x11_new(NULL, e_comp->win, 0, 0, w, h);
-        if (e_comp->ee)
-          {
-             e_comp->gl = 1;
-             ecore_evas_gl_x11_pre_post_swap_callback_set(e_comp->ee, e_comp, _e_comp_x_pre_swap, NULL);
-          }
-     }
-   if (!e_comp->ee)
-     {
-        e_comp->ee = ecore_evas_software_x11_new(NULL, e_comp->win, 0, 0, w, h);
-        if (e_comp_config_get()->engine == E_COMP_ENGINE_GL)
-          ecore_job_add(_e_comp_x_add_fail_job, NULL);
-        e_comp_gl_set(0);
-        // tell elm and all elm apps to not allow acceleration since comp
-        // can't do it (or doesn't want to), so this may cause issues in
-        // gl drivers etc. - this addresses a vbox crash bug with vm
-        // opengl acceleration
-        elm_config_accel_preference_set("none");
-        elm_config_accel_preference_override_set(EINA_TRUE);
-        elm_config_all_flush();
-        elm_config_save();
-     }
+   if (!e_comp_x_randr_canvas_new(e_comp->win, w, h))
+     ecore_job_add(_e_comp_x_add_fail_job, NULL);
 
    ecore_x_composite_redirect_subwindows(root, ECORE_X_COMPOSITE_UPDATE_MANUAL);
 
@@ -5115,7 +5040,6 @@ _e_comp_x_setup(Ecore_X_Window root, int w, int h)
 
    ecore_evas_callback_resize_set(e_comp->ee, _e_comp_x_ee_resize);
    ecore_evas_data_set(e_comp->ee, "comp", e_comp);
-   e_comp->grab_cb = _e_comp_x_grab_cb;
    e_comp->bindings_grab_cb = _e_comp_x_bindings_grab_cb;
    e_comp->bindings_ungrab_cb = _e_comp_x_bindings_ungrab_cb;
 
@@ -5235,11 +5159,6 @@ e_comp_x_init(void)
         return EINA_FALSE;
      }
 
-   if (!getenv("ECORE_X_NO_XLIB"))
-     {
-        if (ecore_evas_engine_type_supported_get(ECORE_EVAS_ENGINE_OPENGL_X11))
-          e_comp_gl_set(EINA_TRUE);
-     }
    ecore_x_screensaver_event_listen_set(1);
 
    clients_win_hash = eina_hash_int32_new(NULL);
