@@ -238,23 +238,23 @@ _basic_create(E_Config_Dialog *cfd, Evas *evas, E_Config_Dialog_Data *cfdata)
    ow = e_widget_radio_add(evas, _("Use System Authentication"), E_DESKLOCK_AUTH_METHOD_SYSTEM, rg);
    evas_object_smart_callback_add(ow, "changed", _login_method_change, cfdata);
    e_widget_list_object_append(ol, ow, 1, 1, 0.5);
-   ow = e_widget_radio_add(evas, _("Use Personal Screenlock Password"), E_DESKLOCK_AUTH_METHOD_PERSONAL, rg);
+   ow = e_widget_radio_add(evas, _("Use Personal Screenlock Password (insecure)"), E_DESKLOCK_AUTH_METHOD_PERSONAL, rg);
    evas_object_smart_callback_add(ow, "changed", _login_method_change, cfdata);
    e_widget_list_object_append(ol, ow, 1, 1, 0.5);
-   ow = e_widget_radio_add(evas, _("Use PIN"), E_DESKLOCK_AUTH_METHOD_PIN, rg);
+   ow = e_widget_radio_add(evas, _("Use PIN (insecure)"), E_DESKLOCK_AUTH_METHOD_PIN, rg);
    evas_object_smart_callback_add(ow, "changed", _login_method_change, cfdata);
    e_widget_list_object_append(ol, ow, 1, 1, 0.5);
    ow = e_widget_radio_add(evas, _("Use External Screenlock Command"), E_DESKLOCK_AUTH_METHOD_EXTERNAL, rg);
    evas_object_smart_callback_add(ow, "changed", _login_method_change, cfdata);
    e_widget_list_object_append(ol, ow, 1, 1, 0.5);
 
-   of = e_widget_framelist_add(evas, _("Personal Screenlock Password"), 0);
+   of = e_widget_framelist_add(evas, _("Personal Screenlock Password (insecure)"), 0);
    cfdata->passwd_entry = ow = e_widget_entry_add(cfd->dia->win, &(cfdata->desklock_personal_passwd), NULL, NULL, NULL);
    e_widget_entry_password_set(ow, 1);
    e_widget_framelist_object_append(of, ow);
    e_widget_list_object_append(ol, of, 1, 1, 0.5);
 
-   of = e_widget_framelist_add(evas, _("PIN Entry"), 0);
+   of = e_widget_framelist_add(evas, _("PIN Entry (insecure)"), 0);
    cfdata->pin_entry = ow = e_widget_entry_add(cfd->dia->win, &(cfdata->pin_str), NULL, NULL, NULL);
    e_widget_entry_password_set(ow, 1);
    e_widget_framelist_object_append(of, ow);
