@@ -4568,6 +4568,8 @@ _e_comp_x_xinerama_setup(int rw, int rh)
    E_Randr2_Screen *s, *s2, *s_chosen;
    Eina_Bool removed;
 
+   if (!e_randr2_init()) return 0;
+
    // put screens in tmp list
    EINA_LIST_FOREACH(e_randr2->screens, l, s)
      {
@@ -5332,13 +5334,11 @@ e_comp_x_init(void)
    e_desklock_show_hook_add(_e_comp_x_desklock_show);
    e_desklock_hide_hook_add(_e_comp_x_desklock_hide);
 
-   if (!e_randr2_init()) return 0;
-   E_LIST_HANDLER_APPEND(handlers, E_EVENT_RANDR_CHANGE, _e_comp_x_randr_change, NULL);
-
    if (!e_atoms_init()) return 0;
    if (!_e_comp_x_screens_setup()) return EINA_FALSE;
    if (!e_xsettings_init())
      e_error_message_show(_("Enlightenment cannot initialize the XSettings system.\n"));
+   E_LIST_HANDLER_APPEND(handlers, E_EVENT_RANDR_CHANGE, _e_comp_x_randr_change, NULL);
 
    ecore_x_sync();
 
