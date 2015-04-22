@@ -53,6 +53,7 @@ static int _e_acpi_events_frozen = 0;
 static Ecore_Con_Server *_e_acpid = NULL;
 static Eina_List *_e_acpid_hdls = NULL;
 static Eina_Strbuf *acpibuf = NULL;
+static int lid_is_closed = -1;
 
 static E_ACPI_Device_Simple _devices_simple[] =
 {
@@ -189,6 +190,14 @@ e_acpi_lid_status_get(void)
      }
 
    return E_ACPI_LID_UNKNOWN;
+}
+
+EINTERN Eina_Bool
+e_acpi_lid_is_closed(void)
+{
+   if (lid_is_closed == -1)
+     lid_is_closed = (e_acpi_lid_status_get() == E_ACPI_LID_CLOSED);
+   return lid_is_closed;
 }
 
 EAPI void
@@ -335,6 +344,9 @@ _e_acpi_cb_server_data(void *data EINA_UNUSED, int type EINA_UNUSED, void *event
                 case E_ACPI_TYPE_LID:
                   acpi_event->status =
                     _e_acpi_lid_status_get(device, bus);
+                  /* no change in lid state */
+                  if (lid_is_closed == (acpi_event->status == E_ACPI_LID_CLOSED)) break;
+                  lid_is_closed = (acpi_event->status == E_ACPI_LID_CLOSED);
                   break;
 
                 default:
