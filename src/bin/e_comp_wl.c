@@ -2475,7 +2475,7 @@ disp_err:
 EAPI Eina_Bool
 e_comp_wl_init(void)
 {
-   if (e_comp->comp_type == E_PIXMAP_TYPE_WL)
+   if (e_comp->comp_type != E_PIXMAP_TYPE_X)
      e_comp->root = ecore_evas_window_get(e_comp->ee);
    /* set gl available if we have ecore_evas support */
    if (ecore_evas_engine_type_supported_get(ECORE_EVAS_ENGINE_WAYLAND_EGL) ||
