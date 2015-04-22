@@ -65,7 +65,6 @@ _cb_keymap_changed(void *data, int type EINA_UNUSED, void *event EINA_UNUSED)
 EAPI void *
 e_modapi_init(E_Module *m)
 {
-   E_Screen *screen;
    int w = 0, h = 0;
 
    printf("LOAD WL_X11 MODULE\n");
@@ -81,19 +80,9 @@ e_modapi_init(E_Module *m)
 
    ecore_evas_screen_geometry_get(e_comp->ee, NULL, NULL, &w, &h);
 
-   if (!e_xinerama_fake_screens_exist())
-     {
-        screen = E_NEW(E_Screen, 1);
-        screen->escreen = screen->screen = 0;
-        screen->x = 0;
-        screen->y = 0;
-        screen->w = w;
-        screen->h = h;
-        e_xinerama_screens_set(eina_list_append(NULL, screen));
-     }
-
    if (!e_comp_canvas_init(w, h)) return NULL;
 
+   e_comp_x_randr_screen_iface_set();
    /* NB: This needs to be called AFTER comp_canvas has been setup as it 
     * makes reference to the e_comp->evas */
    if (!e_comp_wl_init()) return NULL;

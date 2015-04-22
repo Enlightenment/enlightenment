@@ -363,6 +363,11 @@ src/bin/e_comp_x.c \
 src/bin/e_comp_x_randr.c \
 src/bin/e_alert.c \
 src/bin/e_xsettings.c
+else
+if USE_MODULE_WL_X11
+enlightenment_src += \
+src/bin/e_comp_x_randr.c
+endif
 endif
 
 if HAVE_WAYLAND
