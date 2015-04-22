@@ -21,7 +21,6 @@ static char                   *_screens_fingerprint(E_Randr2 *r);
 static Eina_Bool               _screens_differ(E_Randr2 *r1, E_Randr2 *r2);
 static void                    _cb_acpi_handler_add(void *data);
 static Eina_Bool               _cb_screen_change_delay(void *data);
-static void                    _screen_change_delay(void);
 static Eina_Bool               _cb_acpi(void *data, int type, void *event);
 static E_Randr2_Screen        *_screen_output_find(const char *out);
 static E_Randr2_Screen        *_screen_id_find(const char *id);
@@ -603,15 +602,6 @@ _cb_screen_change_delay(void *data EINA_UNUSED)
    return EINA_FALSE;
 }
 
-static void
-_screen_change_delay(void)
-{
-   // delay handling of screen shances as they can come in in a series over
-   // time and thus we can batch up responding to them by waiting 1.0 sec
-   if (_screen_delay_timer) ecore_timer_del(_screen_delay_timer);
-   _screen_delay_timer = ecore_timer_add(1.0, _cb_screen_change_delay, NULL);
-}
-
 static Eina_Bool
 _cb_acpi(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
 {
@@ -625,10 +615,7 @@ _cb_acpi(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
    printf("RRR: lid event for lid %i\n", lid_closed);
    _lid_is_closed = lid_closed;
    if (!e_randr2_cfg->ignore_acpi_events)
-     {
-        event_screen = EINA_TRUE;
-        _screen_change_delay();
-     }
+     e_randr2_screen_refresh_queue(EINA_TRUE);
    return EINA_TRUE;
 }
 
@@ -1423,10 +1410,7 @@ _cb_screen_change(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
    ecore_x_randr_screen_current_size_get(ev->root, NULL, NULL, NULL, NULL);
    ecore_x_sync();
    if (!e_randr2_cfg->ignore_hotplug_events)
-     {
-        event_screen = EINA_TRUE;
-        _screen_change_delay();
-     }
+     e_randr2_screen_refresh_queue(EINA_TRUE);
    return EINA_TRUE;
 }
 
@@ -1439,9 +1423,7 @@ _cb_crtc_change(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
    ecore_x_randr_screen_current_size_get(ev->win, NULL, NULL, NULL, NULL);
    ecore_x_sync();
    if (!e_randr2_cfg->ignore_hotplug_events)
-     {
-        _screen_change_delay();
-     }
+     e_randr2_screen_refresh_queue(EINA_FALSE);
    return EINA_TRUE;
 }
 
@@ -1454,10 +1436,7 @@ _cb_output_change(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
    ecore_x_randr_screen_current_size_get(ev->win, NULL, NULL, NULL, NULL);
    ecore_x_sync();
    if (!e_randr2_cfg->ignore_hotplug_events)
-     {
-        event_screen = EINA_TRUE;
-        _screen_change_delay();
-     }
+     e_randr2_screen_refresh_queue(EINA_TRUE);
    return EINA_TRUE;
 }
 
@@ -1721,4 +1700,16 @@ _screen_config_apply(void)
    // get any events back to clear the ignore flag below, so only apply
    // here if the randr config now doesnt match what we want to set up.
 //   event_ignore = EINA_TRUE;
+}
+
+EAPI void
+e_randr2_screen_refresh_queue(Eina_Bool lid_event)
+{
+   // delay handling of screen shances as they can come in in a series over
+   // time and thus we can batch up responding to them by waiting 1.0 sec
+   if (_screen_delay_timer)
+     ecore_timer_reset(_screen_delay_timer);
+   else
+     _screen_delay_timer = ecore_timer_add(1.0, _cb_screen_change_delay, NULL);
+   event_screen = !!lid_event;
 }

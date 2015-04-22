@@ -120,5 +120,6 @@ EAPI    Eina_Bool e_randr2_config_save(void);
 EAPI    void      e_randr2_config_apply(void);
 EAPI    void      e_randr2_screeninfo_update(void);
 
+EAPI void e_randr2_screen_refresh_queue(Eina_Bool lid_event);
 #endif
 #endif
