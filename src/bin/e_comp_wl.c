@@ -2288,7 +2288,7 @@ _e_comp_wl_cb_output_bind(struct wl_client *client, void *data, uint32_t version
 
    wl_output_send_geometry(resource, output->x, output->y,
                            output->phys_width, output->phys_height,
-                           output->subpixel, output->make, output->model,
+                           output->subpixel, output->make ?: "", output->model ?: "",
                            output->transform);
 
    if (version >= WL_OUTPUT_SCALE_SINCE_VERSION)
@@ -2831,7 +2831,7 @@ e_comp_wl_output_init(const char *id, const char *make, const char *model,
                                 output->phys_width,
                                 output->phys_height,
                                 output->subpixel,
-                                output->make, output->model,
+                                output->make ?: "", output->model ?: "",
                                 output->transform);
 
         if (wl_resource_get_version(resource) >= WL_OUTPUT_SCALE_SINCE_VERSION)
