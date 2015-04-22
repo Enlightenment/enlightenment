@@ -19,9 +19,7 @@ static E_Config_Randr2_Screen *_config_screen_find(E_Randr2_Screen *s, E_Config_
 static int                     _config_screen_match_count(E_Randr2 *r, E_Config_Randr2 *cfg);
 static char                   *_screens_fingerprint(E_Randr2 *r);
 static Eina_Bool               _screens_differ(E_Randr2 *r1, E_Randr2 *r2);
-static void                    _cb_acpi_handler_add(void *data);
 static Eina_Bool               _cb_screen_change_delay(void *data);
-static Eina_Bool               _cb_acpi(void *data, int type, void *event);
 static E_Randr2_Screen        *_screen_output_find(const char *out);
 static E_Randr2_Screen        *_screen_id_find(const char *id);
 static void                    _screen_config_takeover(void);
@@ -33,8 +31,6 @@ static void                    _screen_config_maxsize(void);
 static E_Config_DD   *_e_randr2_cfg_edd = NULL;
 static E_Config_DD   *_e_randr2_cfg_screen_edd = NULL;
 static Eina_List     *_ev_handlers = NULL;
-static Eina_Bool      _lid_is_closed = EINA_FALSE;
-static Ecore_Job     *_acpi_handler_add_job = NULL;
 static Ecore_Timer   *_screen_delay_timer = NULL;
 static Eina_Bool      event_screen = EINA_FALSE;
 static Eina_Bool      event_ignore = EINA_FALSE;
@@ -100,10 +96,6 @@ e_randr2_init(void)
    E_CONFIG_VAL(D, T, ignore_acpi_events, UCHAR);
 
    if (!E_EVENT_RANDR_CHANGE) E_EVENT_RANDR_CHANGE = ecore_event_type_new();
-   // delay setting up acpi handler, as acpi is init'ed after randr
-   _acpi_handler_add_job = ecore_job_add(_cb_acpi_handler_add, NULL);
-   // get current lid status of a laptop
-   _lid_is_closed = (e_acpi_lid_status_get() == E_ACPI_LID_CLOSED);
    // set up events from the driver
    _output_events_listen();
    // get current screen info
@@ -136,9 +128,6 @@ e_randr2_shutdown(void)
    _screen_delay_timer = NULL;
    // stop listening to driver info
    _output_events_unlisten();
-   // clean up acpi stuff
-   if (_acpi_handler_add_job) ecore_job_del(_acpi_handler_add_job);
-   _acpi_handler_add_job = NULL;
    // clear up all event handlers
    E_FREE_LIST(_ev_handlers, ecore_event_handler_del);
    // free up screen info
@@ -188,7 +177,7 @@ static Eina_Bool
 _screen_closed(E_Randr2_Screen *s)
 {
    printf("RRR: check lid for %s...\n", s->info.name);
-   if (!_lid_is_closed) return EINA_FALSE;
+   if (!e_acpi_lid_is_closed()) return EINA_FALSE;
    if (s->info.is_lid)
      {
         printf("RRR:   is closed lid\n");
@@ -493,14 +482,6 @@ _config_screen_match_count(E_Randr2 *r, E_Config_Randr2 *cfg)
    return count;
 }
 
-static void
-_cb_acpi_handler_add(void *data EINA_UNUSED)
-{
-   // add acpi handler in delayed job
-   E_LIST_HANDLER_APPEND(_ev_handlers, E_EVENT_ACPI, _cb_acpi, NULL);
-   _acpi_handler_add_job = NULL;
-}
-
 static char *
 _screens_fingerprint(E_Randr2 *r)
 {
@@ -600,23 +581,6 @@ _cb_screen_change_delay(void *data EINA_UNUSED)
    event_screen = EINA_FALSE;
    event_ignore = EINA_FALSE;
    return EINA_FALSE;
-}
-
-static Eina_Bool
-_cb_acpi(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
-{
-   E_Event_Acpi *ev = event;
-   Eina_Bool lid_closed;
-
-   printf("RRR: acpi event\n");
-   if (ev->type != E_ACPI_TYPE_LID) return EINA_TRUE;
-   lid_closed = (ev->status == E_ACPI_LID_CLOSED);
-   if (lid_closed == _lid_is_closed) return EINA_TRUE;
-   printf("RRR: lid event for lid %i\n", lid_closed);
-   _lid_is_closed = lid_closed;
-   if (!e_randr2_cfg->ignore_acpi_events)
-     e_randr2_screen_refresh_queue(EINA_TRUE);
-   return EINA_TRUE;
 }
 
 static E_Randr2_Screen *
@@ -1269,8 +1233,8 @@ _info_get(void)
         else if (conn == ECORE_X_RANDR_EDID_DISPLAY_INTERFACE_DISPLAY_PORT)
           s->info.connector = E_RANDR2_CONNECTOR_DISPLAY_PORT;
         s->info.is_lid = _is_lid_name(s->info.name);
-        s->info.lid_closed = s->info.is_lid && _lid_is_closed;
-        printf("RRR: ...... lid_closed = %i (%i && %i)\n", s->info.lid_closed, s->info.is_lid, _lid_is_closed);
+        s->info.lid_closed = s->info.is_lid && e_acpi_lid_is_closed();
+        printf("RRR: ...... lid_closed = %i (%i && %i)\n", s->info.lid_closed, s->info.is_lid, e_acpi_lid_is_closed());
         if (ecore_x_randr_output_connection_status_get(root, outputs[i]) ==
             ECORE_X_RANDR_CONNECTION_STATUS_CONNECTED)
           s->info.connected = EINA_TRUE;
