@@ -39,7 +39,7 @@ struct _Instance
    Evas_Object     *popup_altitude;
    Evas_Object     *popup_accuracy;
    Evas_Object     *popup_description;
-   Eina_Bool       in_use;
+   int             in_use;
    Eldbus_Connection *conn;
    Eldbus_Service_Interface *iface;
    Eldbus_Proxy *manager;
@@ -341,6 +341,32 @@ cb_client_object_get(Eldbus_Proxy *proxy EINA_UNUSED, void *data, Eldbus_Pending
    eldbus_proxy_signal_handler_add(inst->client, "LocationUpdated", cb_client_location_updated_signal, inst);
 }
 
+static void
+cb_manager_props_changed(void *data, Eldbus_Proxy *proxy EINA_UNUSED, void *event)
+{
+   Eldbus_Proxy_Event_Property_Changed *ev;
+   int val;
+   Eina_Value v;
+   Instance *inst = data;
+
+   ev = event;
+   DBG("Manager property changed: %s", ev->name);
+
+   if (strcmp(ev->name, "InUse") == 0)
+     {
+        eina_value_setup(&v, EINA_VALUE_TYPE_INT);
+        eina_value_convert(ev->value, &v);
+        eina_value_get(&v, &val);
+        inst->in_use = val;
+        DBG("Manager InUse property changed to %i", inst->in_use);
+
+        if (inst->in_use)
+          edje_object_signal_emit(inst->icon, "e,state,location_on", "e");
+	else
+          edje_object_signal_emit(inst->icon, "e,state,location_off", "e");
+     }
+}
+
 static E_Gadcon_Client *
 _gc_init(E_Gadcon *gc, const char *name, const char *id, const char *style)
 {
@@ -368,7 +394,7 @@ _gc_init(E_Gadcon *gc, const char *name, const char *id, const char *style)
    inst->accuracy = 0.0;
    inst->altitude= 0.0 ;
    inst->description = NULL;
-   inst->in_use = EINA_FALSE;
+   inst->in_use = 0;
    edje_object_signal_emit(inst->icon, "e,state,location_off", "e");
 
    evas_object_event_callback_add(inst->icon,
@@ -391,6 +417,8 @@ _gc_init(E_Gadcon *gc, const char *name, const char *id, const char *style)
         ERR("Error: could not connect to GeoClue2 manager proxy");
         return NULL;
      }
+
+   eldbus_proxy_event_callback_add(inst->manager, ELDBUS_PROXY_EVENT_PROPERTY_CHANGED, cb_manager_props_changed, inst);
 
    geo_clue2_manager_get_client_call(inst->manager, cb_client_object_get, inst);
 
