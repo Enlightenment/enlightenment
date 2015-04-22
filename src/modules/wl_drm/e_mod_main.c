@@ -157,6 +157,9 @@ e_modapi_init(E_Module *m)
    /* NB: This needs to be called AFTER the comp canvas has been setup */
    if (!e_comp_wl_init()) return NULL;
 
+   ecore_evas_pointer_xy_get(e_comp->ee, &e_comp->wl_comp_data->ptr.x,
+                             &e_comp->wl_comp_data->ptr.y);
+
    e_comp_wl_input_pointer_enabled_set(e_comp->wl_comp_data, EINA_TRUE);
    e_comp_wl_input_keyboard_enabled_set(e_comp->wl_comp_data, EINA_TRUE);
 
