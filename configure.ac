@@ -857,11 +857,18 @@ else
   ecore_x=false
 fi
 
-if test "x${ecore_x}" = "xtrue" && test -n "$WAYLAND_CFLAGS" ; then
-   wl_x11=true
-else
-   wl_x11=false
-fi
+define([CHECK_MODULE_WL_X11],
+[
+  if test "x${have_wayland_only}" = "xyes" ; then
+    PKG_CHECK_MODULES([ECORE_X], [ecore-x >= ${efl_version}])
+  fi
+  if test "x${have_wayland_clients}" = "xyes" || test "x${have_wayland_only}" = "xyes"; then
+    AC_E_CHECK_PKG(WL_X11, [ ecore-x >= $efl_version ], [WL_X11=true], [WL_X11=false])
+  else
+    WL_X11=false
+  fi
+])
+AM_CONDITIONAL([HAVE_WL_X11], [test "x${WL_X11}" = "xtrue"])
 
 define([CHECK_MODULE_WL_DESKTOP_SHELL],
 [
@@ -943,7 +950,7 @@ AC_E_OPTIONAL_MODULE([tiling], true)
 AC_E_OPTIONAL_MODULE([music_control], true, [CHECK_MODULE_MUSIC_CONTROL])
 AC_E_OPTIONAL_MODULE([packagekit], true)
 AC_E_OPTIONAL_MODULE([wl_desktop_shell], $have_wayland, [CHECK_MODULE_WL_DESKTOP_SHELL])
-AC_E_OPTIONAL_MODULE([wl_x11], $have_wayland, $wl_x11)
+AC_E_OPTIONAL_MODULE([wl_x11], $have_wayland, [CHECK_MODULE_WL_X11])
 AC_E_OPTIONAL_MODULE([wl_fb], $have_wayland, [CHECK_MODULE_WL_FB])
 AC_E_OPTIONAL_MODULE([wl_drm], $have_wayland, [CHECK_MODULE_WL_DRM])
 #AC_E_OPTIONAL_MODULE([wl_screenshot], true, [CHECK_MODULE_WL_SCREENSHOT])
