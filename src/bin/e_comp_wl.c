@@ -710,6 +710,8 @@ _e_comp_wl_cb_randr_change(void *data EINA_UNUSED, int type EINA_UNUSED, void *e
    E_Randr2_Screen *screen;
    unsigned int transform = WL_OUTPUT_TRANSFORM_NORMAL;
 
+   if (!e_randr2) return ECORE_CALLBACK_RENEW;
+
    EINA_LIST_FOREACH(e_randr2->screens, l, screen)
      {
         if (!screen->config.enabled) continue;
@@ -2503,6 +2505,8 @@ e_comp_wl_init(void)
 
    /* add event handlers to catch E events */
 #ifndef HAVE_WAYLAND_ONLY
+   if (!e_randr2_init()) return EINA_FALSE;
+
    E_LIST_HANDLER_APPEND(handlers, E_EVENT_RANDR_CHANGE,
                          _e_comp_wl_cb_randr_change, NULL);
 #endif
