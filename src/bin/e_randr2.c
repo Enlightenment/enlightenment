@@ -45,7 +45,7 @@ EINTERN Eina_Bool
 e_randr2_init(void)
 {
    if (!E_EVENT_RANDR_CHANGE) E_EVENT_RANDR_CHANGE = ecore_event_type_new();
-   if (!e_comp_x_randr_available()) return EINA_FALSE;
+   if ((!e_comp->screen) || (!e_comp->screen->available) || (!e_comp->screen->available())) return EINA_FALSE;
    // create data descriptors for config storage
    _e_randr2_cfg_screen_edd =
      E_CONFIG_DD_NEW("E_Config_Randr2_Screen", E_Config_Randr2_Screen);
@@ -76,9 +76,10 @@ e_randr2_init(void)
    E_CONFIG_VAL(D, T, ignore_acpi_events, UCHAR);
 
    // set up events from the driver
-   e_comp_x_randr_init();
+   if (e_comp->screen->init)
+     e_comp->screen->init();
    // get current screen info
-   e_randr2 = e_comp_x_randr_create();
+   e_randr2 = e_comp->screen->create();
    // from screen info calculate screen max dimensions
    _screen_config_maxsize();
    // load config and apply it
@@ -106,7 +107,8 @@ e_randr2_shutdown(void)
    if (_screen_delay_timer) ecore_timer_del(_screen_delay_timer);
    _screen_delay_timer = NULL;
    // stop listening to driver info
-   e_comp_x_randr_shutdown();
+   if (e_comp->screen->shutdown)
+     e_comp->screen->shutdown();
    // clear up all event handlers
    E_FREE_LIST(_ev_handlers, ecore_event_handler_del);
    // free up screen info
@@ -138,7 +140,7 @@ e_randr2_screeninfo_update(void)
 {
    // re-fetch/update current screen info
    _info_free(e_randr2);
-   e_randr2 = e_comp_x_randr_create();
+   e_randr2 = e_comp->screen->create();
    _screen_config_maxsize();
 }
 
@@ -244,7 +246,7 @@ _do_apply(void)
    // take current screen config and apply it to the driver
    printf("RRR: re-get info before applying..\n");
    _info_free(e_randr2);
-   e_randr2 = e_comp_x_randr_create();
+   e_randr2 = e_comp->screen->create();
    _screen_config_maxsize();
    printf("RRR: apply config...\n");
    _config_apply(e_randr2, e_randr2_cfg);
@@ -253,7 +255,7 @@ _do_apply(void)
    printf("RRR: eval config...\n");
    _screen_config_eval();
    printf("RRR: really apply config...\n");
-   e_comp_x_randr_config_apply();
+   e_comp->screen->apply();
    printf("RRR: done config...\n");
 }
 
@@ -525,7 +527,7 @@ _cb_screen_change_delay(void *data EINA_UNUSED)
         Eina_Bool change = EINA_FALSE;
 
         printf("RRR: reconfigure screens due to event...\n");
-        rtemp = e_comp_x_randr_create();
+        rtemp = e_comp->screen->create();
         if (rtemp)
           {
              if (_screens_differ(e_randr2, rtemp)) change = EINA_TRUE;

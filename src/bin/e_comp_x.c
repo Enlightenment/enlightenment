@@ -4559,6 +4559,7 @@ _e_comp_x_xinerama_setup(int rw, int rh)
    E_Randr2_Screen *s, *s2, *s_chosen;
    Eina_Bool removed;
 
+   e_comp_x_randr_screen_iface_set();
    if (!e_randr2_init()) return 0;
 
    // put screens in tmp list

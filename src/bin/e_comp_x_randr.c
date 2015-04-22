@@ -15,6 +15,14 @@ static Ecore_X_Randr_Mode _mode_screen_find(Ecore_X_Window root, E_Randr2_Screen
 
 static Eina_List *handlers;
 
+E_Comp_Screen_Iface xiface =
+{
+   .available = e_comp_x_randr_available,
+   .init = e_comp_x_randr_init,
+   .shutdown = e_comp_x_randr_shutdown,
+   .create = e_comp_x_randr_create,
+   .apply = e_comp_x_randr_config_apply
+};
 
 static void
 _e_comp_x_randr_pre_swap(void *data EINA_UNUSED, Evas *e EINA_UNUSED)
@@ -816,6 +824,14 @@ e_comp_x_randr_create(void)
 
    _info_relative_fixup(r);
    return r;
+}
+
+EAPI void
+e_comp_x_randr_screen_iface_set(void)
+{
+   if (e_comp->screen)
+     CRI("CANNOT SET XIFACE; IFACE ALREADY EXISTS!");
+   e_comp->screen = &xiface;
 }
 
 EAPI Eina_Bool

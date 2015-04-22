@@ -57,6 +57,20 @@ extern EAPI int E_EVENT_COMPOSITOR_ENABLE;
 
 typedef void (*E_Comp_Grab_Cb)(void);
 
+typedef struct E_Comp_Screen_Iface
+{
+   /* can screen changes be made at all */
+   Eina_Bool (*available)(void);
+   /* begin listening for screen events */
+   void (*init)(void);
+   /* stop listening for screen events */
+   void (*shutdown)(void);
+   /* gather screen info */
+   E_Randr2 *(*create)(void);
+   /* apply current config */
+   void (*apply)(void);
+} E_Comp_Screen_Iface;
+
 struct _E_Comp
 {
    E_Object e_obj_inherit;
@@ -97,6 +111,8 @@ struct _E_Comp
       E_Comp_Object_Key_Cb key_cb;
       void *data;
    } autoclose;
+
+   E_Comp_Screen_Iface *screen;
 
    Eina_List *debug_rects;
    Eina_List *ignore_wins;

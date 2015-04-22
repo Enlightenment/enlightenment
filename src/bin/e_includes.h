@@ -7,10 +7,9 @@
 #include "e_zone.h"
 #include "e_desk.h"
 #include "e_auth.h"
+#include "e_randr2.h"
 #ifdef NEED_X
 # include "e_comp_x.h"
-# include "e_randr2.h"
-# include "e_comp_x_randr.h"
 #endif
 #include "e_pixmap.h"
 #include "e_comp_object.h"
@@ -149,6 +148,7 @@
 #include "e_comp_canvas.h"
 #include "e_utils.h"
 #include "e_hints.h"
+#include "e_comp_x_randr.h"
 
 #if defined(HAVE_WAYLAND_CLIENTS) || defined(HAVE_WAYLAND_ONLY)
 # include "e_comp_wl.h"
