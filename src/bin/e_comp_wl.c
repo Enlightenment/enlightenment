@@ -702,7 +702,6 @@ _e_comp_wl_client_evas_init(E_Client *ec)
    ec->comp_data->evas_init = EINA_TRUE;
 }
 
-#ifndef HAVE_WAYLAND_ONLY
 static Eina_Bool
 _e_comp_wl_cb_randr_change(void *data EINA_UNUSED, int type EINA_UNUSED, void *event EINA_UNUSED)
 {
@@ -743,7 +742,6 @@ _e_comp_wl_cb_randr_change(void *data EINA_UNUSED, int type EINA_UNUSED, void *e
 
    return ECORE_CALLBACK_RENEW;
 }
-#endif
 
 static Eina_Bool
 _e_comp_wl_cb_comp_object_add(void *data EINA_UNUSED, int type EINA_UNUSED, E_Event_Comp_Object *ev)
@@ -2367,9 +2365,7 @@ _e_comp_wl_compositor_create(void)
         goto comp_global_err;
      }
 
-#ifndef HAVE_WAYLAND_ONLY
    _e_comp_wl_cb_randr_change(NULL, 0, NULL);
-#endif
 
    /* try to init data manager */
    if (!e_comp_wl_data_manager_init(cdata))
@@ -2500,12 +2496,11 @@ e_comp_wl_init(void)
    /* clients_win_hash = eina_hash_int64_new(NULL); */
 
    /* add event handlers to catch E events */
-#ifndef HAVE_WAYLAND_ONLY
-   if (!e_randr2_init()) return EINA_FALSE;
+   if (e_comp->comp_type != E_PIXMAP_TYPE_X)
+     e_randr2_init();
 
    E_LIST_HANDLER_APPEND(handlers, E_EVENT_RANDR_CHANGE,
-                         _e_comp_wl_cb_randr_change, NULL);
-#endif
+                                _e_comp_wl_cb_randr_change, NULL);
 
    E_LIST_HANDLER_APPEND(handlers, E_EVENT_COMP_OBJECT_ADD,
                          _e_comp_wl_cb_comp_object_add, NULL);
