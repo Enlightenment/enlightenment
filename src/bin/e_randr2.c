@@ -44,6 +44,7 @@ EAPI int              E_EVENT_RANDR_CHANGE = 0;
 EINTERN Eina_Bool
 e_randr2_init(void)
 {
+   if (!E_EVENT_RANDR_CHANGE) E_EVENT_RANDR_CHANGE = ecore_event_type_new();
    if (!e_comp_x_randr_available()) return EINA_FALSE;
    // create data descriptors for config storage
    _e_randr2_cfg_screen_edd =
@@ -74,7 +75,6 @@ e_randr2_init(void)
    E_CONFIG_VAL(D, T, ignore_hotplug_events, UCHAR);
    E_CONFIG_VAL(D, T, ignore_acpi_events, UCHAR);
 
-   if (!E_EVENT_RANDR_CHANGE) E_EVENT_RANDR_CHANGE = ecore_event_type_new();
    // set up events from the driver
    e_comp_x_randr_init();
    // get current screen info
