@@ -6,6 +6,7 @@ typedef enum
 {
    E_PIXMAP_TYPE_X,
    E_PIXMAP_TYPE_WL,
+   E_PIXMAP_TYPE_NONE,
 } E_Pixmap_Type;
 
 #else

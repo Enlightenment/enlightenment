@@ -245,6 +245,7 @@ e_pixmap_new(E_Pixmap_Type type, ...)
         eina_hash_add(pixmaps[type], &id, cp);
 #endif
         break;
+      default: break;
      }
    va_end(l);
    return cp;
