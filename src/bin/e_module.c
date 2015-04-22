@@ -241,7 +241,7 @@ e_module_all_load(void)
         if (!em) continue;
 
         if ((!e_util_strcmp(em->name, "comp")) || (!e_util_strcmp(em->name, "conf_comp")) ||
-            (e_comp && (!strcmp(em->name, "wl_x11"))) //block wl_x11 if we've already created a compositor
+            (!strncmp(em->name, "wl_", 3)) //block wl_* modules from being saved
            )
           {
              eina_stringshare_del(em->name);
