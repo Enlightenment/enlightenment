@@ -59,6 +59,7 @@ src/bin/e_comp_canvas.h \
 src/bin/e_comp_cfdata.h \
 src/bin/e_comp_object.h \
 src/bin/e_comp_x.h \
+src/bin/e_comp_x_randr.h \
 src/bin/e_config_data.h \
 src/bin/e_config_dialog.h \
 src/bin/e_config.h \
@@ -358,6 +359,7 @@ $(ENLIGHTENMENTHEADERS)
 if ! HAVE_WAYLAND_ONLY
 enlightenment_src += \
 src/bin/e_comp_x.c \
+src/bin/e_comp_x_randr.c \
 src/bin/e_alert.c \
 src/bin/e_randr2.c \
 src/bin/e_xsettings.c
