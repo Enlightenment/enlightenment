@@ -8,7 +8,6 @@
 static void
 _e_shell_surface_parent_set(E_Client *ec, struct wl_resource *parent_resource)
 {
-   E_Pixmap *pp;
    E_Client *pc;
    uint64_t pwin = 0;
 
@@ -25,16 +24,13 @@ _e_shell_surface_parent_set(E_Client *ec, struct wl_resource *parent_resource)
           }
         return;
      }
-   else if (!(pp = wl_resource_get_user_data(parent_resource)))
+   else if (!(pc = wl_resource_get_user_data(parent_resource)))
      {
-        ERR("Could not get parent resource pixmap");
+        ERR("Could not get parent resource client");
         return;
      }
 
-   pwin = e_pixmap_window_get(pp);
-
-   /* find the parent client */
-   pc = e_pixmap_client_get(pp);
+   pwin = e_pixmap_window_get(pc->pixmap);
 
    e_pixmap_parent_window_set(ec->pixmap, pwin);
 
@@ -52,7 +48,7 @@ _e_shell_surface_parent_set(E_Client *ec, struct wl_resource *parent_resource)
           pc = NULL;
      }
 
-   if ((pc) && (pc != ec) &&
+   if ((pc != ec) &&
        (eina_list_data_find(pc->transients, ec) != ec))
      {
         pc->transients = eina_list_append(pc->transients, ec);
