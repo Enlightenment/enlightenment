@@ -139,6 +139,9 @@ e_modapi_init(E_Module *m)
 
    ecore_evas_callback_resize_set(e_comp->ee, _e_mod_drm_cb_ee_resize);
 
+   ecore_evas_pointer_xy_get(e_comp->ee, &e_comp->wl_comp_data->ptr.x, 
+                             &e_comp->wl_comp_data->ptr.y);
+
    if (!e_xinerama_fake_screens_exist())
      {
         E_Screen *screen;
