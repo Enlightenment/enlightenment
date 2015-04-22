@@ -80,12 +80,9 @@ e_modapi_init(E_Module *m)
 
    ecore_evas_screen_geometry_get(e_comp->ee, NULL, NULL, &w, &h);
 
-   if (!e_comp_canvas_init(w, h)) return NULL;
-
    e_comp_x_randr_screen_iface_set();
-   /* NB: This needs to be called AFTER comp_canvas has been setup as it 
-    * makes reference to the e_comp->evas */
    if (!e_comp_wl_init()) return NULL;
+   if (!e_comp_canvas_init(w, h)) return NULL;
 
    e_comp_wl_input_pointer_enabled_set(e_comp->wl_comp_data, EINA_TRUE);
    e_comp_wl_input_keyboard_enabled_set(e_comp->wl_comp_data, EINA_TRUE);

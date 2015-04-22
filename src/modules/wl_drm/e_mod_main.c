@@ -143,10 +143,8 @@ e_modapi_init(E_Module *m)
         e_xinerama_screens_set(eina_list_append(NULL, screen));
      }
 
-   if (!e_comp_canvas_init(w, h)) return NULL;
-
-   /* NB: This needs to be called AFTER the comp canvas has been setup */
    if (!e_comp_wl_init()) return NULL;
+   if (!e_comp_canvas_init(w, h)) return NULL;
 
    ecore_evas_pointer_xy_get(e_comp->ee, &e_comp->wl_comp_data->ptr.x,
                              &e_comp->wl_comp_data->ptr.y);
