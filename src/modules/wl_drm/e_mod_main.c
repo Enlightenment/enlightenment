@@ -8,56 +8,6 @@ static Ecore_Event_Handler *activate_handler;
 static Ecore_Event_Handler *output_handler;
 static Eina_Bool session_state = EINA_FALSE;
 
-#if EFL_VERSION_MINOR == 14
-/* keeping this here temporarily to make the check for backlight device
- * 1 line instead of 50-100
- */
-struct _Ecore_Drm_Output
-{
-   Ecore_Drm_Device *dev;
-   unsigned int crtc_id;
-   unsigned int conn_id;
-   drmModeCrtcPtr crtc;
-   drmModePropertyPtr dpms;
-
-   int x, y, phys_width, phys_height;
-
-   int pipe;
-   const char *make, *model, *name;
-   unsigned int subpixel;
-   uint16_t gamma;
-
-   Ecore_Drm_Output_Mode *current_mode;
-   Eina_List *modes;
-
-   struct
-     {
-        char eisa[13];
-        char monitor[13];
-        char pnp[5];
-        char serial[13];
-     } edid;
-
-   void *backlight;
-
-   Eina_Bool enabled : 1;
-   Eina_Bool cloned : 1;
-   Eina_Bool need_repaint : 1;
-   Eina_Bool repaint_scheduled : 1;
-   Eina_Bool pending_destroy : 1;
-   Eina_Bool pending_flip : 1;
-   Eina_Bool pending_vblank : 1;
-};
-
-struct _Ecore_Drm_Output_Mode
-{
-   unsigned int flags;
-   int width, height;
-   unsigned int refresh;
-   drmModeModeInfo info;
-};
-#endif
-
 static Eina_Bool
 _e_mod_drm_cb_activate(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
 {
@@ -184,9 +134,36 @@ _get_edid(Ecore_Drm_Device *dev, drmModeConnector *conn)
           }
         drmModeFreeProperty(prop);
      }
+   if (!blob) return NULL;
    ret = (char*)eina_memdup(blob->data, blob->length, 1);
    drmModeFreePropertyBlob(blob);
    return ret;
+}
+
+static Eina_Bool
+_backlight_get(const char *devpath, uint32_t conn_type)
+{
+   Eina_List *devs, *l;
+   const char *device;
+   Eina_Bool found;
+
+   if (!(devs = eeze_udev_find_by_filter("backlight", NULL, devpath)))
+     devs = eeze_udev_find_by_filter("leds", NULL, devpath);
+
+   if (!devs) return EINA_FALSE;
+
+   EINA_LIST_FOREACH(devs, l, device)
+     {
+        if ((conn_type == DRM_MODE_CONNECTOR_LVDS) ||
+            (conn_type == DRM_MODE_CONNECTOR_eDP) ||
+            eeze_udev_syspath_check_sysattr(device, "type", "raw"))
+          found = EINA_TRUE;
+        if (found) break;
+     }
+
+   E_FREE_LIST(devs, eina_stringshare_del);
+
+   return found;
 }
 
 static E_Randr2 *
@@ -199,13 +176,15 @@ _drm_randr_create(void)
    r = E_NEW(E_Randr2, 1);
    EINA_LIST_FOREACH(ecore_drm_devices_get(), l, dev)
      {
-        Ecore_Drm_Output *output;
-        const Eina_List *ll;
+        drmModeRes *res;
+        int o;
 
-        EINA_LIST_FOREACH(dev->outputs, ll, output)
+        res = drmModeGetResources(dev->drm.fd);
+        if (!res) continue;
+        for (o = 0; o < res->count_connectors; o++)
           {
              E_Randr2_Screen *s;
-             size_t n, e;
+             size_t n, e = 0;
              int i;
              drmModeConnector *conn;
              const char *conn_types[] =
@@ -240,25 +219,26 @@ _drm_randr_create(void)
              unsigned int type;
 
              /* FIXME: it's insane to have this code here instead of in ecore-drm. */
-             conn = drmModeGetConnector(dev->drm.fd, ecore_drm_output_connector_id_get(output));
+             conn = drmModeGetConnector(dev->drm.fd, res->connectors[o]);
              if (!conn) continue;
              s = E_NEW(E_Randr2_Screen, 1);
              type = MIN(conn->connector_type, EINA_C_ARRAY_LENGTH(conn_types) - 1);
 
              snprintf(buf, sizeof(buf), "%s-%d", conn_types[type], conn->connector_type_id);
              s->info.name = strdup(buf);
-             s->info.edid = _get_edid(dev, conn);
+             s->info.connected = conn->connection == DRM_MODE_CONNECTED;
+             if (s->info.connected)
+               {
+                  s->info.edid = _get_edid(dev, conn);
+                  e = strlen(s->info.edid ?: "");
+               }
              n = strlen(s->info.name);
-             e = strlen(s->info.edid);
              s->id = malloc(n + e + 2);
-             eina_str_join_len(s->id, n + e + 2, '/', s->info.name, n, s->info.edid, e);
+             eina_str_join_len(s->id, n + e + 2, '/', s->info.name, n, s->info.edid ?: "", e);
              s->id[n + e + 1] = 0;
              s->info.connector = rtype[type];
-             s->info.connected = 1;
-             s->info.is_lid = type == DRM_MODE_CONNECTOR_LVDS;
-#if EFL_VERSION_MINOR == 14
-             s->info.backlight = !!output->backlight;
-#endif
+             s->info.is_lid = (type == DRM_MODE_CONNECTOR_LVDS) || (type == DRM_MODE_CONNECTOR_eDP);
+             s->info.backlight = _backlight_get(dev->drm.path, conn->connector_type);
              for (i = 0; i < conn->count_modes; i++)
                {
                   E_Randr2_Mode *mode;
@@ -267,12 +247,14 @@ _drm_randr_create(void)
                   if (mode)
                     s->info.modes = eina_list_append(s->info.modes, mode);
                }
-             ecore_drm_output_physical_size_get(output, &s->info.size.w, &s->info.size.h);
+             s->info.size.w = conn->mmWidth;
+             s->info.size.h = conn->mmHeight;
 
              r->screens = eina_list_append(r->screens, s);
 
              drmModeFreeConnector(conn);
           }
+        drmModeFreeResources(res);
      }
    return r;
 }
