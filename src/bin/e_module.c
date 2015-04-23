@@ -238,7 +238,7 @@ e_module_all_load(void)
 
    EINA_LIST_FOREACH_SAFE(e_config->modules, l, ll, em)
      {
-        if (!em) continue;
+        if ((!em) || (!em->name)) continue;
 
         if ((!e_util_strcmp(em->name, "comp")) || (!e_util_strcmp(em->name, "conf_comp")) ||
             (!strncmp(em->name, "wl_", 3)) //block wl_* modules from being saved
@@ -261,7 +261,6 @@ e_module_all_load(void)
           {
              E_Module *m;
 
-             if (!em->name) continue;
              if (eina_hash_find(_e_modules_hash, em->name)) continue;
 
              e_util_env_set("E_MODULE_LOAD", em->name);
