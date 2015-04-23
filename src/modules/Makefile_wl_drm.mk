@@ -10,8 +10,7 @@ src_modules_wl_drm_module_la_LIBADD   = $(LIBS) @WL_DRM_LIBS@ @WAYLAND_LIBS@
 src_modules_wl_drm_module_la_LDFLAGS = $(MOD_LDFLAGS)
 src_modules_wl_drm_module_la_SOURCES = src/modules/wl_drm/e_mod_main.c
 
-# TODO: incomplete
-#.PHONY: wl_drm install-wl_drm
-#wl_drm: $(wl_drmpkg_LTLIBRARIES) $(wl_drm_DATA)
-#install-wl_drm: install-wl_drmDATA install-wl_drmpkgLTLIBRARIES
+PHONIES += wl_drm install-wl_drm
+wl_drm: $(wl_drmpkg_LTLIBRARIES) $(wl_drm_DATA)
+install-wl_drm: install-wl_drmDATA install-wl_drmpkgLTLIBRARIES
 endif
