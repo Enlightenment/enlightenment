@@ -4965,33 +4965,20 @@ _e_comp_x_setup(Ecore_X_Window root, int w, int h)
 static Eina_Bool
 _e_comp_x_screens_setup(void)
 {
-   int n, i;
-   Ecore_X_Window *roots;
-   Eina_Bool success = EINA_FALSE;
+   Ecore_X_Window root;
+   int rw, rh;
 
    e_comp_x_randr_screen_iface_set();
    if (!e_randr2_init()) return 0;
-   roots = ecore_x_window_root_list(&n);
-   if ((!roots) || (n <= 0))
+   root = ecore_x_window_root_first_get();
+   if (!root)
      {
-        free(roots);
-        e_error_message_show("X reports there are no root windows and %i screens!\n",
-                             n);
+        e_error_message_show("X reports there are no root windows!\n");
         return 0;
      }
-   for (i = 0; i < 1; i++)
-     {
-        int rw, rh;
-        Ecore_X_Window root = roots[i];
-
-        ecore_x_window_size_get(root, &rw, &rh);
-
-        e_randr2_screens_setup(rw, rh);
-        success = _e_comp_x_setup(root, rw, rh);
-        if (!success) break;
-     }
-   free(roots);
-   return success;
+   ecore_x_window_size_get(root, &rw, &rh);
+   e_randr2_screens_setup(rw, rh);
+   return _e_comp_x_setup(root, rw, rh);
 }
 
 EINTERN Eina_Bool
