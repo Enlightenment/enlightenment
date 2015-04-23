@@ -12,5 +12,5 @@ src_modules_wl_drm_module_la_SOURCES = src/modules/wl_drm/e_mod_main.c
 
 PHONIES += wl_drm install-wl_drm
 wl_drm: $(wl_drmpkg_LTLIBRARIES) $(wl_drm_DATA)
-install-wl_drm: install-wl_drmDATA install-wl_drmpkgLTLIBRARIES
+install-wl_drm: install-wl_drmpkgLTLIBRARIES
 endif
