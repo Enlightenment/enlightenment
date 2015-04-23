@@ -50,7 +50,7 @@ struct _Tasks_Item
    Eina_Bool skip_taskbar : 1;
 };
 
-static Tasks       *_tasks_new(Evas_Object *parent, E_Zone *zone, const char *id);
+static Tasks       *_tasks_new(Evas *e, E_Zone *zone, const char *id);
 static void         _tasks_free(Tasks *tasks);
 static void         _tasks_refill(Tasks *tasks);
 static void         _tasks_refill_all();
@@ -211,7 +211,7 @@ _gc_init(E_Gadcon *gc, const char *name, const char *id, const char *style)
    /* Evas_Coord x, y, w, h; */
    /* int cx, cy, cw, ch; */
 
-   tasks = _tasks_new(gc->o_container, gc->zone, id);
+   tasks = _tasks_new(gc->evas, gc->zone, id);
 
    o = tasks->o_items;
    gcc = e_gadcon_client_new(gc, name, id, style, o);
@@ -355,7 +355,7 @@ _tasks_cb_iconify_provider(void *data, Evas_Object *obj, const char *signal)
 }
 
 static Tasks *
-_tasks_new(Evas_Object *parent, E_Zone *zone, const char *id)
+_tasks_new(Evas *e, E_Zone *zone, const char *id)
 {
    Tasks *tasks;
    Eina_List *l;
@@ -363,7 +363,7 @@ _tasks_new(Evas_Object *parent, E_Zone *zone, const char *id)
 
    tasks = E_NEW(Tasks, 1);
    tasks->config = _tasks_config_item_get(id);
-   tasks->o_items = elm_box_add(e_win_evas_object_win_get(parent));
+   tasks->o_items = elm_box_add(e_win_evas_win_get(e));
    tasks->horizontal = 1;
    EINA_LIST_FOREACH(e_comp->clients, l, ec)
      {
