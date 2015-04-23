@@ -868,7 +868,7 @@ e_randr2_screen_refresh_queue(Eina_Bool lid_event)
      ecore_timer_reset(_screen_delay_timer);
    else
      _screen_delay_timer = ecore_timer_add(1.0, _cb_screen_change_delay, NULL);
-   event_screen = !!lid_event;
+   event_screen |= !!lid_event;
 }
 
 EAPI E_Config_Randr2_Screen *
