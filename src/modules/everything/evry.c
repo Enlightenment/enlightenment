@@ -1910,7 +1910,8 @@ _evry_cb_key_down(void *data, int type EINA_UNUSED, void *event)
    Evry_Window *win = data;
    const char *old;
 
-   if (ev->event_window != elm_win_window_id_get(win->ewin))
+   if ((win->grab && (ev->event_window != ecore_evas_window_get(e_comp->ee))) &&
+       (ev->event_window != elm_win_window_id_get(win->ewin)))
      return ECORE_CALLBACK_PASS_ON;
 
    if (!strcmp(ev->key, "Escape"))
