@@ -1069,6 +1069,8 @@ e_comp_init(void)
 //#endif
    if (!e_comp) return EINA_FALSE;
 out:
+   if (e_comp->comp_type == E_PIXMAP_TYPE_WL)
+     e_comp_canvas_fake_layers_init();
    e_comp->elm = elm_win_fake_add(e_comp->ee);
    elm_win_fullscreen_set(e_comp->elm, 1);
    evas_object_show(e_comp->elm);

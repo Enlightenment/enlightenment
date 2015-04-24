@@ -9,6 +9,7 @@ static Eina_Bool _e_focus_raise_timer(void *data);
 EAPI void
 e_focus_event_mouse_in(E_Client *ec)
 {
+   
    if ((e_config->focus_policy == E_FOCUS_MOUSE) ||
        (e_config->focus_policy == E_FOCUS_SLOPPY))
      {
