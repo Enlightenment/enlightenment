@@ -1067,7 +1067,7 @@ e_comp_init(void)
 //#ifdef HAVE_WAYLAND_CLIENTS
    //e_comp_wl_init();
 //#endif
-   if (!e_comp) return EINA_FALSE;
+   if (e_comp->comp_type == E_PIXMAP_TYPE_NONE) return EINA_FALSE;
 out:
    if (e_comp->comp_type == E_PIXMAP_TYPE_WL)
      e_comp_canvas_fake_layers_init();
