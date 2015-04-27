@@ -7773,7 +7773,7 @@ _e_fm2_cb_key_down(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *even
    E_Fm2_Smart_Data *sd = data;
    E_Fm2_Icon *ic;
 
-   if (e_menu_grab_window_get()) return;
+   if (e_comp_util_kbd_grabbed()) return;
    if (sd->iop_icon) return;
 
    if (evas_key_modifier_is_set(ev->modifiers, "Control"))
