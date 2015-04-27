@@ -662,6 +662,14 @@ _e_fwin_bg_mouse_down(E_Fwin *fwin, Evas_Object *obj EINA_UNUSED, void *event EI
    evas_object_resize(fwin->win, MAX(w, MINIMUM_WIDTH), MAX(h, MINIMUM_HEIGHT));
 }
 
+static void
+_e_fwin_cb_focus(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   E_Fwin *fwin = data;
+
+   evas_object_focus_set(fwin->cur_page->fm_obj, 1);
+}
+
 static E_Fwin *
 _e_fwin_new(const char *dev,
             const char *path)
@@ -680,6 +688,7 @@ _e_fwin_new(const char *dev,
         return NULL;
      }
    fwins = eina_list_append(fwins, fwin);
+   evas_object_event_callback_add(fwin->win, EVAS_CALLBACK_FOCUS_IN, _e_fwin_cb_focus, fwin);
    evas_object_event_callback_add(fwin->win, EVAS_CALLBACK_DEL, _e_fwin_cb_delete, fwin);
    evas_object_event_callback_add(fwin->win, EVAS_CALLBACK_RESIZE, _e_fwin_cb_resize, fwin);
 
