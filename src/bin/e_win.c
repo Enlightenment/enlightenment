@@ -12,8 +12,11 @@ typedef struct _Elm_Win_Trap_Ctx
    Eina_Bool      internal_no_remember : 1;
    Eina_Bool      internal_no_reopen : 1;
    Eina_Bool      visible : 1;
+   Eina_Bool      override : 1;
 } Elm_Win_Trap_Ctx;
 
+
+static Elm_Win_Trap_Ctx *current_win = NULL;
 
 static void *
 _e_elm_win_trap_add(Evas_Object *o)
@@ -118,7 +121,9 @@ _e_elm_win_trap_show(void *data, Evas_Object *o)
                cp = e_pixmap_new(type, win);
              EINA_SAFETY_ON_NULL_RETURN_VAL(cp, EINA_TRUE);
 
+             current_win = ctx;
              ctx->client = e_client_new(cp, 0, 1);
+             current_win = NULL;
              EINA_SAFETY_ON_NULL_RETURN_VAL(ctx->client, EINA_TRUE);
              eina_stringshare_replace(&ctx->client->icccm.name, name);
              eina_stringshare_replace(&ctx->client->icccm.class, clas);
@@ -289,6 +294,18 @@ _e_elm_win_trap_borderless_set(void *data, Evas_Object *o EINA_UNUSED, Eina_Bool
    return EINA_TRUE;
 }
 
+static Eina_Bool
+_e_elm_win_trap_override_set(void *data, Evas_Object *o EINA_UNUSED, Eina_Bool override)
+{
+   Elm_Win_Trap_Ctx *ctx = data;
+   EINA_SAFETY_ON_NULL_RETURN_VAL(ctx, EINA_TRUE);
+
+   if (ctx->client)
+     CRI("Override being set too late on internal client!");
+   ctx->override = !!override;
+   return EINA_TRUE;
+}
+
 static const Elm_Win_Trap _e_elm_win_trap = {
    ELM_WIN_TRAP_VERSION,
    _e_elm_win_trap_add,
@@ -315,7 +332,7 @@ static const Elm_Win_Trap _e_elm_win_trap = {
    /* modal_set */ NULL,
    /* name_class_set */ NULL,
    /* object_cursor_set */ NULL,
-   /* override_set */ NULL,
+   _e_elm_win_trap_override_set,
    /* rotation_set */ NULL,
    /* rotation_with_resize_set */ NULL,
    /* shaped_set */ NULL,
@@ -329,11 +346,20 @@ static const Elm_Win_Trap _e_elm_win_trap = {
    /* withdrawn_set */ NULL
 };
 
+static void
+_e_win_client_hook_new(void *d EINA_UNUSED, E_Client *ec)
+{
+   if (!ec->internal) return;
+   if (current_win)
+     ec->override = current_win->override;
+}
+
 /* externally accessible functions */
 EINTERN int
 e_win_init(void)
 {
    if (!elm_win_trap_set(&_e_elm_win_trap)) return 0;
+   e_client_hook_add(E_CLIENT_HOOK_NEW_CLIENT, _e_win_client_hook_new, NULL);
    return 1;
 }
 
