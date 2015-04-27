@@ -179,7 +179,6 @@ e_place_desk_region_smart(E_Desk *desk, Eina_List *skiplist, int x, int y, int w
              int bx, by, bw, bh;
 
              if (!e_shelf_desk_visible(es, desk)) continue;
-             if (es->zone != desk->zone) continue;
 
              bx = es->x;
              by = es->y;
