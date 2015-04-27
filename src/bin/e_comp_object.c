@@ -3671,7 +3671,7 @@ _e_comp_object_autoclose_key_down_cb(void *data EINA_UNUSED, int type EINA_UNUSE
    if (e_comp->autoclose.key_cb)
      del = !e_comp->autoclose.key_cb(e_comp->autoclose.data, ev);
    if (del) _e_comp_object_autoclose_cleanup(0);
-   return ECORE_CALLBACK_RENEW;
+   return ECORE_CALLBACK_DONE;
 }
 
 static void
