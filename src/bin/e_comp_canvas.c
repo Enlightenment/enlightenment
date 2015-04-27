@@ -93,19 +93,18 @@ _e_comp_canvas_cb_mouse_wheel(void *d EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Obj
 static Eina_Bool
 _e_comp_cb_key_down(void *data EINA_UNUSED, int ev_type EINA_UNUSED, Ecore_Event_Key *ev)
 {
-   if (ev->event_window != e_comp->root)
+   if (e_menu_grab_window_get()) return ECORE_CALLBACK_RENEW;
+   if (e_comp->root && (ev->event_window != e_comp->root))
      {
         E_Client *ec;
 
         ec = e_client_focused_get();
         /* *block actions when no client is focused (probably something else did a grab here so we'll play nice)
-         * *block actions when client menu is up
+         * *block actions when menu is up
          * *block actions when event (grab) window isn't comp window
          * *other cases?
          */
-        if (!ec) return ECORE_CALLBACK_RENEW;
-        if ((ec->border_menu) || (ev->event_window != e_comp->ee_win))
-          return ECORE_CALLBACK_PASS_ON;
+        if ((!ec) || (ev->event_window != e_comp->ee_win)) return ECORE_CALLBACK_RENEW;
      }
    return !e_bindings_key_down_event_handle(E_BINDING_CONTEXT_MANAGER, E_OBJECT(e_comp), ev);
 }
@@ -113,7 +112,8 @@ _e_comp_cb_key_down(void *data EINA_UNUSED, int ev_type EINA_UNUSED, Ecore_Event
 static Eina_Bool
 _e_comp_cb_key_up(void *data EINA_UNUSED, int ev_type EINA_UNUSED, Ecore_Event_Key *ev)
 {
-   if (ev->event_window != e_comp->root) return ECORE_CALLBACK_PASS_ON;
+   if (e_menu_grab_window_get()) return ECORE_CALLBACK_RENEW;
+   if (e_comp->root && (ev->event_window != e_comp->root)) return ECORE_CALLBACK_PASS_ON;
    return !e_bindings_key_up_event_handle(E_BINDING_CONTEXT_MANAGER, E_OBJECT(e_comp), ev);
 }
 
