@@ -890,7 +890,8 @@ _evry_cb_mouse(void *data, int type, void *event)
    if (!win->grab)
      return ECORE_CALLBACK_PASS_ON;
 
-   if (ev->event_window != elm_win_window_id_get(win->ewin))
+   if ((win->grab && (ev->event_window != ecore_evas_window_get(e_comp->ee))) &&
+       (ev->event_window != elm_win_window_id_get(win->ewin)))
      return ECORE_CALLBACK_PASS_ON;
 
    ewin = win->ewin;
