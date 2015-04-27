@@ -3696,6 +3696,7 @@ _e_comp_object_autoclose_setup(Evas_Object *obj)
         e_comp_grab_input(0, 1);
      }
    evas_object_layer_set(e_comp->autoclose.rect, evas_object_layer_get(obj) - 1);
+   evas_object_focus_set(obj, 1);
    e_comp_shape_queue();
    if (!e_comp->autoclose.key_handler)
      e_comp->autoclose.key_handler = ecore_event_handler_add(ECORE_EVENT_KEY_DOWN, _e_comp_object_autoclose_key_down_cb, e_comp);
