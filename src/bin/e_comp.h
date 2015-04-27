@@ -211,6 +211,8 @@ EAPI E_Config_Dialog *e_int_config_comp(Evas_Object *parent, const char *params)
 EAPI E_Config_Dialog *e_int_config_comp_match(Evas_Object *parent, const char *params);
 
 
+EAPI Eina_Bool e_comp_util_kbd_grabbed(void);
+
 static inline Eina_Bool
 e_comp_util_client_is_fullscreen(const E_Client *ec)
 {

@@ -1586,6 +1586,12 @@ e_comp_ungrab_input(Eina_Bool mouse, Eina_Bool kbd)
      e_client_refocus();
 }
 
+EAPI Eina_Bool
+e_comp_util_kbd_grabbed(void)
+{
+   return e_menu_grab_window_get() || e_client_action_get() || e_grabinput_key_win_get();
+}
+
 EAPI void
 e_comp_gl_set(Eina_Bool set)
 {
