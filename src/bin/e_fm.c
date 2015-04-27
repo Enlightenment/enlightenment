@@ -7517,7 +7517,7 @@ _e_fm2_cb_icon_mouse_in(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_U
    ev = event_info;
 
    if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return;
-   if (e_menu_grab_window_get()) return;
+   if (e_comp_util_mouse_grabbed()) return;
    evas_object_smart_callback_call(ic->sd->obj, "icon_mouse_in", &ic->info);
 }
 

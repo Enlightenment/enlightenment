@@ -1804,7 +1804,7 @@ ACT_FN_GO(menu_show, )
    E_Zone *zone;
 
    /* menu is active - abort */
-   if (e_menu_grab_window_get()) return;
+   if (e_comp_util_kbd_grabbed() || e_comp_util_mouse_grabbed()) return;
    zone = _e_actions_zone_get(obj);
    if (zone)
      {
@@ -1833,7 +1833,7 @@ ACT_FN_GO_MOUSE(menu_show, )
    E_Zone *zone;
 
    /* menu is active - abort */
-   if (e_menu_grab_window_get()) return;
+   if (e_comp_util_kbd_grabbed() || e_comp_util_mouse_grabbed()) return;
    zone = _e_actions_zone_get(obj);
    if (zone)
      {
@@ -1863,7 +1863,7 @@ ACT_FN_GO_KEY(menu_show, , EINA_UNUSED)
    E_Zone *zone;
 
    /* menu is active - abort */
-   if (e_menu_grab_window_get()) return;
+   if (e_comp_util_kbd_grabbed() || e_comp_util_mouse_grabbed()) return;
    zone = _e_actions_zone_get(obj);
    if (zone)
      {

@@ -1501,7 +1501,7 @@ _e_zone_cb_bg_mouse_down(void *data,
    E_Zone *zone;
 
    zone = data;
-   if (e_menu_grab_window_get()) return;
+   if (e_comp_util_mouse_grabbed()) return;
 
    if (!zone->cur_mouse_action)
      {
