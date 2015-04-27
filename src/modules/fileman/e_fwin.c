@@ -1003,7 +1003,7 @@ _e_fwin_page_favorites_add(E_Fwin_Page *page)
                                   "e/fileman/default/scrollframe");
    evas_object_propagate_events_set(page->flist, 0);
    e_widget_can_focus_set(o, EINA_FALSE);
-   e_fm2_window_object_set(page->flist, E_OBJECT(page->fwin->win));
+   e_fm2_window_set(page->flist, page->fwin->win);
    e_widget_scrollframe_focus_object_set(o, page->flist);
 
    page->flist_frame = o;
@@ -1054,7 +1054,7 @@ _e_fwin_page_create(E_Fwin *fwin)
    evas_object_smart_callback_add(o, "icon_mouse_in", (Evas_Smart_Cb)_e_fwin_icon_mouse_in, fwin);
    evas_object_smart_callback_add(o, "icon_mouse_out", (Evas_Smart_Cb)_e_fwin_icon_mouse_out, fwin);
    e_fm2_icon_menu_start_extend_callback_set(o, _e_fwin_cb_menu_extend_start, page);
-   e_fm2_window_object_set(o, E_OBJECT(fwin->win));
+   e_fm2_window_set(o, fwin->win);
    evas_object_focus_set(o, 1);
    _e_fwin_config_set(page);
 

@@ -146,6 +146,7 @@ struct _E_Fm2_Smart_Data
    int                  busy_count;
 
    E_Object            *eobj;
+   Evas_Object         *win;
    E_Drop_Handler      *drop_handler;
    E_Fm2_Icon          *drop_icon;
    Ecore_Animator      *dnd_scroller;
@@ -1624,8 +1625,30 @@ e_fm2_window_object_set(Evas_Object *obj, E_Object *eobj)
 
    EFM_SMART_CHECK();
    sd->eobj = eobj;
+   sd->win = NULL;
    if (sd->drop_handler) e_drop_handler_del(sd->drop_handler);
-   sd->drop_handler = e_drop_handler_add(sd->eobj,
+   sd->drop_handler = e_drop_handler_add(sd->eobj, NULL,
+                                         sd,
+                                         _e_fm2_cb_dnd_enter,
+                                         _e_fm2_cb_dnd_move,
+                                         _e_fm2_cb_dnd_leave,
+                                         _e_fm2_cb_dnd_selection_notify,
+                                         drop, 3,
+                                         sd->x, sd->y, sd->w, sd->h);
+   e_drop_handler_responsive_set(sd->drop_handler);
+   e_drop_handler_xds_set(sd->drop_handler, _e_fm2_cb_dnd_drop);
+}
+
+EAPI void
+e_fm2_window_set(Evas_Object *obj, Evas_Object *win)
+{
+   const char *drop[] = {"text/uri-list", "text/x-moz-url", "XdndDirectSave0"};
+
+   EFM_SMART_CHECK();
+   sd->win = win;
+   sd->eobj = NULL;
+   if (sd->drop_handler) e_drop_handler_del(sd->drop_handler);
+   sd->drop_handler = e_drop_handler_add(NULL, win,
                                          sd,
                                          _e_fm2_cb_dnd_enter,
                                          _e_fm2_cb_dnd_move,
@@ -7321,7 +7344,7 @@ _e_fm2_cb_icon_mouse_down(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA
      {
         if (ev->button == 1)
           {
-             if ((ic->sd->eobj))
+             if ((ic->sd->eobj || ic->sd->win))
                {
                   ic->drag.x = ev->output.x - ic->x - ic->sd->x + ic->sd->pos.x;
                   ic->drag.y = ev->output.y - ic->y - ic->sd->y + ic->sd->pos.y;
@@ -7554,7 +7577,7 @@ _e_fm2_cb_icon_mouse_move(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA
         ic->drag.start = ic->drag.dnd = ic->drag.src = EINA_FALSE;
         return;
      }
-   if ((ic->drag.start) && (ic->sd->eobj))
+   if ((ic->drag.start) && (ic->sd->eobj || ic->sd->win))
      {
         int dx, dy;
 

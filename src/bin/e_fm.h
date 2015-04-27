@@ -181,6 +181,7 @@ EAPI void             e_fm2_view_flags_set(Evas_Object *obj, E_Fm2_View_Flags fl
 EAPI E_Fm2_View_Flags e_fm2_view_flags_get(Evas_Object *obj);
 EAPI E_Object         *e_fm2_window_object_get(Evas_Object *obj);
 EAPI void             e_fm2_window_object_set(Evas_Object *obj, E_Object *eobj);
+EAPI void             e_fm2_window_set(Evas_Object *obj, Evas_Object *win);
 EAPI void             e_fm2_icons_update(Evas_Object *obj);
 
 EAPI void             e_fm2_pan_set(Evas_Object *obj, Evas_Coord x, Evas_Coord y);

@@ -427,7 +427,7 @@ e_gadcon_drop_handler_add(E_Gadcon *gc, E_Gadcon_DND_Cb enter, E_Gadcon_DND_Cb l
    E_OBJECT_TYPE_CHECK(gc, E_GADCON_TYPE);
    if (gc->drop_handler) return;
    gc->drop_handler =
-     e_drop_handler_add(E_OBJECT(gc), gc,
+     e_drop_handler_add(E_OBJECT(gc), NULL, gc,
                         _e_gadcon_cb_dnd_enter, _e_gadcon_cb_dnd_move,
                         _e_gadcon_cb_dnd_leave, _e_gadcon_cb_dnd_drop,
                         drop_types, 1, x, y, w, h);

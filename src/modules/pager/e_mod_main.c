@@ -224,7 +224,7 @@ _gc_init(E_Gadcon *gc, const char *name, const char *id, const char *style)
 
    evas_object_geometry_get(o, &x, &y, &w, &h);
    p->drop_handler =
-     e_drop_handler_add(E_OBJECT(inst->gcc), p,
+     e_drop_handler_add(E_OBJECT(inst->gcc), NULL, p,
                         _pager_drop_cb_enter, _pager_drop_cb_move,
                         _pager_drop_cb_leave, _pager_drop_cb_drop,
                         drop, 3, x, y, w, h);

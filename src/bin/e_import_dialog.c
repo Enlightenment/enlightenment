@@ -188,7 +188,7 @@ e_import_dialog_show(Evas_Object *parent EINA_UNUSED, const char *dev, const cha
     */
    ofm = e_widget_fsel_add(evas, fdev, fpath, NULL, NULL, (void *)_fsel_cb_ok, id,
                            NULL, NULL, 1);
-   e_widget_fsel_window_object_set(ofm, E_OBJECT(dia->win));
+   e_widget_fsel_window_set(ofm, dia->win);
    id->fsel_obj = ofm;
    e_widget_size_min_get(ofm, &w, &h);
    e_dialog_content_set(dia, ofm, w, h);

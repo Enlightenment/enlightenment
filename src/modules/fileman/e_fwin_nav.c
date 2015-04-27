@@ -376,7 +376,7 @@ _gc_init(E_Gadcon *gc, const char *name, const char *id, const char *style)
    edje_object_message_signal_process(inst->o_base);
 
    evas_object_geometry_get(inst->o_scroll, &x, &y, &w, &h);
-   inst->dnd_handler = e_drop_handler_add(E_OBJECT(inst->gcc),
+   inst->dnd_handler = e_drop_handler_add(E_OBJECT(inst->gcc), NULL,
                                          inst,
                                          _box_button_cb_dnd_enter,
                                          _box_button_cb_dnd_move,

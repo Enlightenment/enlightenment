@@ -439,7 +439,7 @@ e_drop_xds_update(Eina_Bool enable, const char *value)
 }
 
 EAPI E_Drop_Handler *
-e_drop_handler_add(E_Object *obj,
+e_drop_handler_add(E_Object *obj, Evas_Object *win,
                    void *data,
                    void (*enter_cb)(void *data, const char *type, void *event),
                    void (*move_cb)(void *data, const char *type, void *event),
@@ -467,6 +467,7 @@ e_drop_handler_add(E_Object *obj,
    handler->h = h;
 
    handler->obj = obj;
+   handler->win = win;
    handler->entered = 0;
 
    _drop_handlers = eina_list_append(_drop_handlers, handler);
@@ -667,11 +668,11 @@ _e_drag_coords_update(const E_Drop_Handler *h, int *dx, int *dy)
 
    *dx = 0;
    *dy = 0;
-   if (e_obj_is_win(h->obj))
+   if (h->win)
      {
         E_Client *ec;
 
-        ec = e_win_client_get((void*)h->obj);
+        ec = e_win_client_get(h->win);
         px = ec->x;
         py = ec->y;
      }
@@ -725,8 +726,8 @@ _e_drag_win_get(const E_Drop_Handler *h, int xdnd)
 {
    Ecore_X_Window hwin = 0;
 
-   if (e_obj_is_win(h->obj))
-     return elm_win_window_id_get((Evas_Object*)h->obj);
+   if (h->win)
+     return elm_win_window_id_get(h->win);
    if (h->obj)
      {
         E_Gadcon *gc = NULL;
@@ -776,9 +777,9 @@ _e_drag_win_show(E_Drop_Handler *h)
 {
    E_Shelf *shelf;
 
+   if (h->win) return;
    if (h->obj)
      {
-        if (e_obj_is_win(h->obj)) return;
         switch (h->obj->type)
           {
            case E_GADCON_TYPE:
@@ -803,9 +804,9 @@ _e_drag_win_hide(E_Drop_Handler *h)
 {
    E_Shelf *shelf;
 
+   if (h->win) return;
    if (h->obj)
      {
-        if (e_obj_is_win(h->obj)) return;
         switch (h->obj->type)
           {
            case E_GADCON_TYPE:
@@ -833,8 +834,8 @@ _e_dnd_object_layer_get(E_Drop_Handler *h)
 
    if (h->base) return evas_object_layer_get(h->base);
    if (!obj) return 0;
-   if (e_obj_is_win(obj))
-     obj = (E_Object*)e_win_client_get((Evas_Object*)obj);
+   if (h->win)
+     obj = (E_Object*)e_win_client_get(h->win);
    switch (obj->type)
      {
       case E_GADCON_CLIENT_TYPE:

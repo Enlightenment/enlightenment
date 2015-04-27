@@ -532,14 +532,14 @@ e_widget_fsel_selection_path_get(Evas_Object *obj)
 }
 
 EAPI void
-e_widget_fsel_window_object_set(Evas_Object *obj, E_Object *eobj)
+e_widget_fsel_window_set(Evas_Object *obj, Evas_Object *win)
 {
    E_Widget_Data *wd;
 
    if (!obj) return;
    if (!(wd = e_widget_data_get(obj))) return;
-   e_fm2_window_object_set(wd->o_favorites_fm, eobj);
-   e_fm2_window_object_set(wd->o_files_fm, eobj);
+   e_fm2_window_set(wd->o_favorites_fm, win);
+   e_fm2_window_set(wd->o_files_fm, win);
 }
 
 EAPI Eina_Bool

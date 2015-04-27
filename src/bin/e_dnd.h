@@ -66,6 +66,7 @@ struct _E_Drop_Handler
    } cb;
 
    E_Object     *obj;
+   Evas_Object *win;
    Evas_Object *base;
    int           x, y, w, h;
 
@@ -132,7 +133,7 @@ EAPI int             e_drag_xdnd_start(E_Drag *drag, int x, int y);
 
 EAPI void e_drop_xds_update(Eina_Bool enable, const char *value);
 EAPI void e_drop_handler_xds_set(E_Drop_Handler *handler, Eina_Bool (*cb)(void *data, const char *type));
-EAPI E_Drop_Handler *e_drop_handler_add(E_Object *obj,
+EAPI E_Drop_Handler *e_drop_handler_add(E_Object *obj, Evas_Object *win,
                                         void *data,
                                         void (*enter_cb)(void *data, const char *type, void *event),
                                         void (*move_cb)(void *data, const char *type, void *event),

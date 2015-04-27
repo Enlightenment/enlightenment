@@ -273,7 +273,7 @@ _gc_init(E_Gadcon *gc, const char *name, const char *id, const char *style)
 
    evas_object_geometry_get(b->o_box, &x, &y, &w, &h);
    inst->drop_handler =
-     e_drop_handler_add(E_OBJECT(inst->gcc), inst,
+     e_drop_handler_add(E_OBJECT(inst->gcc), NULL, inst,
                         _ibar_inst_cb_enter, _ibar_inst_cb_move,
                         _ibar_inst_cb_leave, _ibar_inst_cb_drop,
                         drop, 3, x, y, w, h);

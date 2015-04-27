@@ -266,7 +266,7 @@ _win_save_cb(void *data EINA_UNUSED, void *data2 EINA_UNUSED)
                          NULL, NULL,
                          NULL, NULL, 1);
    e_object_del_attach_func_set(E_OBJECT(dia), _file_select_del_cb);
-   e_widget_fsel_window_object_set(o, E_OBJECT(dia->win));
+   e_widget_fsel_window_set(o, dia->win);
    o_fsel = o;
    evas_object_show(o);
    e_widget_size_min_get(o, &mw, &mh);
