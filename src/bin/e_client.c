@@ -4727,10 +4727,10 @@ e_client_resize_limit(E_Client *ec, int *w, int *h)
    if (*h < 1) *h = 1;
    if (*w < 1) *w = 1;
 
-   if (*w > ec->icccm.max_w) *w = ec->icccm.max_w;
+   if ((ec->icccm.max_w > 0) && (*w > ec->icccm.max_w)) *w = ec->icccm.max_w;
    else if (*w < ec->icccm.min_w)
      *w = ec->icccm.min_w;
-   if (*h > ec->icccm.max_h) *h = ec->icccm.max_h;
+   if ((ec->icccm.max_h > 0) && (*h > ec->icccm.max_h)) *h = ec->icccm.max_h;
    else if (*h < ec->icccm.min_h)
      *h = ec->icccm.min_h;
 
