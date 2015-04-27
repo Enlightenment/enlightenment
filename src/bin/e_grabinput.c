@@ -188,6 +188,12 @@ e_grabinput_key_win_get(void)
    return grab_key_win;
 }
 
+EAPI Ecore_Window
+e_grabinput_mouse_win_get(void)
+{
+   return grab_mouse_win;
+}
+
 #ifndef HAVE_WAYLAND_ONLY
 static Eina_Bool
 _e_grabinput_focus_check(void *data EINA_UNUSED)
