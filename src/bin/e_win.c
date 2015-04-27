@@ -120,6 +120,9 @@ _e_elm_win_trap_show(void *data, Evas_Object *o)
 
              ctx->client = e_client_new(cp, 0, 1);
              EINA_SAFETY_ON_NULL_RETURN_VAL(ctx->client, EINA_TRUE);
+             eina_stringshare_replace(&ctx->client->icccm.name, name);
+             eina_stringshare_replace(&ctx->client->icccm.class, clas);
+             eina_stringshare_replace(&ctx->client->icccm.title, title);
           }
         ctx->client->placed = ctx->placed | ctx->centered;
         ctx->client->internal_no_remember = ctx->internal_no_remember;
