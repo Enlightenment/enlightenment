@@ -192,17 +192,21 @@ _cb_xserver_event(void *data EINA_UNUSED, Ecore_Fd_Handler *hdlr EINA_UNUSED)
      {
       case 0:
         /* dup will unset CLOEXEC on the client as cloexec closes both ends */
-        if ((fd = dup(socks[1]) < 0)) goto fail;
+        fd = dup(socks[1]);
+        if (fd < 0) goto fail;
         snprintf(s, sizeof(s), "%d", fd);
         setenv("WAYLAND_SOCKET", s, 1);
 
-        if ((fd = dup(exs->abs_fd)) < 0) goto fail;
+        fd = dup(exs->abs_fd);
+        if (fd < 0) goto fail;
         snprintf(abs_fd, sizeof(abs_fd), "%d", fd);
 
-        if ((fd = dup(exs->unx_fd)) < 0) goto fail;
+        fd = dup(exs->unx_fd);
+        if (fd < 0) goto fail;
         snprintf(unx_fd, sizeof(unx_fd), "%d", fd);
 
-        if ((fd = dup(wms[1])) < 0) goto fail;
+        fd = dup(wms[1]);
+        if (fd < 0) goto fail;
         snprintf(wm_fd, sizeof(wm_fd), "%d", fd);
 
         /* ignore usr1 and have X send it to the parent process */
