@@ -70,24 +70,31 @@ static Eina_Bool
 _e_comp_wl_cb_module_idle(void *data EINA_UNUSED)
 {
    E_Module  *mod = NULL;
+   const char **m, *mods[] =
+   {
+      "wl_desktop_shell",
+      "xwayland",
+      NULL
+   };
 
    /* check if we are still loading modules */
    if (e_module_loading_get()) return ECORE_CALLBACK_RENEW;
 
-   if (!(mod = e_module_find("wl_desktop_shell")))
-     mod = e_module_new("wl_desktop_shell");
-
-   if (mod)
+   for (m = mods; *m; m++)
      {
-        e_module_enable(mod);
+        E_Module *mod = e_module_find(*m);
 
-        /* FIXME: NB:
-         * Do we need to dispatch pending wl events here ?? */
+        if (!mod)
+          mod = e_module_new(*m);
 
-        return ECORE_CALLBACK_CANCEL;
+        if (mod)
+          e_module_enable(mod);
      }
 
-   return ECORE_CALLBACK_RENEW;
+   /* FIXME: NB:
+    * Do we need to dispatch pending wl events here ?? */
+
+   return ECORE_CALLBACK_CANCEL;
 }
 
 static void
