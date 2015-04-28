@@ -273,23 +273,19 @@ EAPI E_Module_Api e_modapi = { E_MODULE_API_VERSION, "XWayland" };
 EAPI void *
 e_modapi_init(E_Module *m)
 {
-   E_Comp *comp;
    char disp[8];
 
    DBG("LOAD XWAYLAND MODULE");
 
-   /* try to get the running compositor */
-   if (!(comp = e_comp_get(NULL))) return NULL;
-
    /* make sure it's a wayland compositor */
-   if (comp->comp_type != E_PIXMAP_TYPE_WL) return NULL;
+   if (e_comp->comp_type != E_PIXMAP_TYPE_WL) return NULL;
 
    /* alloc space for server struct */
    if (!(exs = calloc(1, sizeof(E_XWayland_Server))))
      return NULL;
 
    /* record wayland display */
-   exs->wl_disp = comp->wl_comp_data->wl.disp;
+   exs->wl_disp = e_comp->wl_comp_data->wl.disp;
 
    /* default display to zero */
    exs->disp = 0;
