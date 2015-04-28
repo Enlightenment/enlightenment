@@ -1084,7 +1084,6 @@ src/modules/music-control/module.desktop
 src/modules/packagekit/module.desktop
 src/modules/wl_desktop_shell/module.desktop
 src/modules/wl_screenshot/module.desktop
-src/modules/xwayland/module.desktop
 data/xsession/enlightenment.desktop
 data/etc/sysactions.conf
 data/units/enlightenment.service
