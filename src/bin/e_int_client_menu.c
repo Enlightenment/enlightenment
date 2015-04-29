@@ -762,7 +762,7 @@ _e_client_menu_cb_window_pre(void *data, E_Menu *m EINA_UNUSED, E_Menu_Item *mi)
        (((ec->maximized & E_MAXIMIZE_DIRECTION) != E_MAXIMIZE_BOTH) || e_config->allow_manip))
      {
         submi = e_menu_item_new(subm);
-        e_menu_item_label_set(submi, _("Move"));
+        e_menu_item_label_set(submi, _("Move with keyboard"));
         e_menu_item_callback_set(submi, _e_client_menu_cb_move, ec);
         e_menu_item_icon_edje_set(submi,
                                   e_theme_edje_file_get("base/theme/borders",
@@ -776,7 +776,7 @@ _e_client_menu_cb_window_pre(void *data, E_Menu *m EINA_UNUSED, E_Menu_Item *mi)
         (ec->netwm.type == E_WINDOW_TYPE_UNKNOWN)))
      {
         submi = e_menu_item_new(subm);
-        e_menu_item_label_set(submi, _("Resize"));
+        e_menu_item_label_set(submi, _("Resize with keyboard"));
         e_menu_item_callback_set(submi, _e_client_menu_cb_resize, ec);
         e_menu_item_icon_edje_set(submi,
                                   e_theme_edje_file_get("base/theme/borders",
