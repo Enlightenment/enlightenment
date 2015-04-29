@@ -398,6 +398,8 @@ _e_client_action_finish(void)
    if (comp_grabbed)
      _e_client_action_input_win_del(action_client ? action_client->comp : e_comp_get(NULL));
 
+   if (action_handler_key && action_client)
+     evas_object_freeze_events_set(action_client->frame, 0);
    E_FREE_FUNC(action_timer, ecore_timer_del);
    E_FREE_FUNC(action_handler_key,  ecore_event_handler_del);
    E_FREE_FUNC(action_handler_mouse, ecore_event_handler_del);
@@ -4209,6 +4211,7 @@ e_client_act_move_keyboard(E_Client *ec)
    _e_client_action_init(ec);
    _e_client_action_move_timeout_add();
    if (!_e_client_hook_call(E_CLIENT_HOOK_MOVE_UPDATE, ec)) return;
+   evas_object_freeze_events_set(ec->frame, 1);
 
    if (!action_handler_key)
      action_handler_key = ecore_event_handler_add(ECORE_EVENT_KEY_DOWN, _e_client_move_key_down, NULL);
@@ -4229,6 +4232,7 @@ e_client_act_resize_keyboard(E_Client *ec)
 
    _e_client_action_init(ec);
    _e_client_action_resize_timeout_add();
+   evas_object_freeze_events_set(ec->frame, 1);
 
    if (!action_handler_key)
      action_handler_key = ecore_event_handler_add(ECORE_EVENT_KEY_DOWN, _e_client_resize_key_down, NULL);
