@@ -885,6 +885,7 @@ _e_desk_hide_begin(E_Desk *desk, int dx, int dy)
         else
           {
              ec->hidden = 1;
+             evas_object_show(ec->frame);
              evas_object_hide(ec->frame);
           }
         e_client_comp_hidden_set(ec, EINA_TRUE);
