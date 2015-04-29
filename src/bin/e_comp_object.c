@@ -1961,6 +1961,8 @@ _e_comp_smart_hide(Evas_Object *obj)
           }
      }
    if (stopping) return;
+   edje_object_freeze(cw->effect_obj);
+   edje_object_freeze(cw->shobj);
    /* ensure focus-out */
    if (cw->ec->focused)
      evas_object_focus_set(cw->ec->frame, 0);
@@ -1987,6 +1989,8 @@ _e_comp_smart_show(Evas_Object *obj)
 
    evas_object_show(cw->clip);
    if (cw->input_obj) evas_object_show(cw->input_obj);
+   edje_object_thaw(cw->effect_obj);
+   edje_object_thaw(cw->shobj);
    evas_object_show(cw->effect_obj);
    if (cw->ec->internal_elm_win && (!evas_object_visible_get(cw->ec->internal_elm_win)))
      evas_object_show(cw->ec->internal_elm_win);
