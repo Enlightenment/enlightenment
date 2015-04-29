@@ -2808,6 +2808,8 @@ e_client_mouse_wheel(E_Client *ec, Evas_Point *output, E_Binding_Event_Wheel *ev
 EAPI void
 e_client_mouse_down(E_Client *ec, int button, Evas_Point *output, E_Binding_Event_Mouse_Button *ev)
 {
+   Eina_Bool did_act = EINA_FALSE;
+
    EINA_SAFETY_ON_NULL_RETURN(ec);
    if (action_client || ec->iconic) return;
    if ((button >= 1) && (button <= 3))
@@ -2835,6 +2837,7 @@ e_client_mouse_down(E_Client *ec, int button, Evas_Point *output, E_Binding_Even
                                              E_OBJECT(ec), ev);
         if (ec->cur_mouse_action)
           {
+             did_act = EINA_TRUE;
              if ((!ec->cur_mouse_action->func.end_mouse) &&
                  (!ec->cur_mouse_action->func.end))
                ec->cur_mouse_action = NULL;
@@ -2842,7 +2845,8 @@ e_client_mouse_down(E_Client *ec, int button, Evas_Point *output, E_Binding_Even
                e_object_ref(E_OBJECT(ec->cur_mouse_action));
           }
      }
-   e_focus_event_mouse_down(ec);
+   if (!did_act)
+     e_focus_event_mouse_down(ec);
    if ((button >= 1) && (button <= 3))
      {
         ec->mouse.last_down[button - 1].mx = output->x;
