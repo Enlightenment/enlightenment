@@ -11768,3 +11768,9 @@ error:
    sd->menu = NULL;
 }
 
+EAPI E_Fm2_Icon *
+e_fm2_icon_editing_get(Evas_Object *obj)
+{
+   EFM_SMART_CHECK(NULL);
+   return sd->iop_icon;
+}

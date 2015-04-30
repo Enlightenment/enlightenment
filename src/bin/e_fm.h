@@ -222,5 +222,6 @@ EAPI int              _e_fm2_client_mount(const char *udi, const char *mountpoin
 EAPI int              _e_fm2_client_unmount(const char *udi);
 EAPI void             _e_fm2_file_force_update(const char *path);
 
+EAPI E_Fm2_Icon      *e_fm2_icon_editing_get(Evas_Object *obj);
 #endif
 #endif
