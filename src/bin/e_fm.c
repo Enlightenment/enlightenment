@@ -7790,6 +7790,15 @@ _e_fm2_cb_icon_thumb_gen(void *data, Evas_Object *obj, void *event_info EINA_UNU
 }
 
 static void
+_e_fm2_cb_focus_in(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   E_Fm2_Smart_Data *sd = data;
+
+   if (sd->iop_icon && sd->iop_icon->entry_widget)
+     e_widget_focus_set(sd->iop_icon->entry_widget, 1);
+}
+
+static void
 _e_fm2_cb_key_down(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *event_info)
 {
    Evas_Event_Key_Down *ev = event_info;
@@ -8507,6 +8516,7 @@ _e_fm2_smart_add(Evas_Object *obj)
    evas_object_show(sd->underlay);
 
    evas_object_event_callback_add(obj, EVAS_CALLBACK_KEY_DOWN, _e_fm2_cb_key_down, sd);
+   //evas_object_event_callback_add(obj, EVAS_CALLBACK_FOCUS_IN, _e_fm2_cb_focus_in, sd);
    evas_object_event_callback_add(sd->underlay, EVAS_CALLBACK_MOUSE_DOWN, _e_fm2_cb_mouse_down, sd);
    evas_object_event_callback_add(sd->underlay, EVAS_CALLBACK_MOUSE_UP, _e_fm2_cb_mouse_up, sd);
    evas_object_event_callback_add(sd->underlay, EVAS_CALLBACK_MOUSE_MOVE, _e_fm2_cb_mouse_move, sd);

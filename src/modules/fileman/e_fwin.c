@@ -667,7 +667,8 @@ _e_fwin_cb_focus(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, 
 {
    E_Fwin *fwin = data;
 
-   evas_object_focus_set(fwin->cur_page->fm_obj, 1);
+   if (!e_fm2_icon_editing_get(fwin->cur_page->fm_obj))
+     evas_object_focus_set(fwin->cur_page->fm_obj, 1);
 }
 
 static E_Fwin *
