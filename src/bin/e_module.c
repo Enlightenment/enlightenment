@@ -298,7 +298,7 @@ e_module_new(const char *name)
    char body[4096], title[1024];
    const char *modpath = NULL;
    char *s;
-   Eina_List *l;
+   Eina_List *l, *ll;
    E_Config_Module *em;
    int in_list = 0;
 
@@ -427,13 +427,20 @@ init_done:
                }
           }
      }
-   EINA_LIST_FOREACH(e_config->modules, l, em)
+   EINA_LIST_FOREACH_SAFE(e_config->modules, l, ll, em)
      {
         if (!em) continue;
         if (em->name == m->name)
           {
-             in_list = 1;
-             break;
+             if (in_list)
+               {
+                  /* duplicate module config */
+                  e_config->modules = eina_list_remove_list(e_config->modules, l);
+                  eina_stringshare_del(em->name);
+                  free(em);
+               }
+             else
+               in_list = 1;
           }
      }
    if (!in_list)
