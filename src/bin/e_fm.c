@@ -10356,10 +10356,13 @@ _e_fm2_file_rename(void *data, E_Menu *m EINA_UNUSED, E_Menu_Item *mi EINA_UNUSE
  * from e_widget_entry.
  */
 static void
-_e_fm2_icon_entry_widget_focus_out(void *data, E_Client *ec EINA_UNUSED)
+_e_fm2_icon_entry_widget_focus_out(void *data, E_Client *ec)
 {
    E_Fm2_Icon *ic = data;
+   Evas_Object *win;
 
+   win = e_win_evas_win_get(evas_object_evas_get(ic->obj));
+   if ((win != e_comp->elm) && (ec == e_win_client_get(win))) return;
    if (ic->entry_widget)
      _e_fm2_icon_entry_widget_del(ic);
 }
