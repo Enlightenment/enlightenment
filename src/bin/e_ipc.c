@@ -17,7 +17,7 @@ EINTERN int
 e_ipc_init(void)
 {
    char buf[4096], buf2[128], buf3[4096];
-   char *tmp, *user, *disp, *base;
+   char *tmp, *user, *disp, *disp2, *base;
    int pid, trynum = 0, id1 = 0;
    struct stat st;
 
@@ -73,6 +73,12 @@ e_ipc_init(void)
 
    disp = getenv("DISPLAY");
    if (!disp) disp = ":0";
+   else
+     {
+        /* $DISPLAY may be a path (e.g. Xquartz), keep the basename. */
+        disp2 = strrchr(disp, '/');
+        if (disp2) disp = disp2 + 1;
+     }
 
    e_util_env_set("E_IPC_SOCKET", "");
 
