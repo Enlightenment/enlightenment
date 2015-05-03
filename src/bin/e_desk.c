@@ -349,7 +349,7 @@ e_desk_deskshow(E_Zone *zone)
    else
      {
         /*
-         * iconify raises, so we ahve to start from the bottom so we are going forward
+         * iconify raises, so we have to start from the bottom so we are going forward
          */
         E_CLIENT_FOREACH(ec)
           {
