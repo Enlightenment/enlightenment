@@ -80,6 +80,7 @@ _e_elm_win_trap_show(void *data, Evas_Object *o)
         if (!strncmp(ecore_evas_engine_name_get(ee), "wayland", 7))
           {
              type = E_PIXMAP_TYPE_WL;
+             ecore_evas_object_cursor_set(ee, NULL, 0, 0, 0);
              ctx->pointer = e_comp->pointer;
              elm_win_borderless_set(o, 1);
              wl_win_id = win;
