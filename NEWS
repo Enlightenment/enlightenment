@@ -1,3 +1,60 @@
+Release 0.19.5:
+---------------------
+
+Bertrand Jacquin (1):
+      MEDIUM: modules/shot: switch to https://
+
+Carsten Haitzler (4):
+      e clients - make sure we handle client with a NULL zone
+      e_shelf - check visiblity with zone and desk FIRST not later
+      e - xsettings - calloc buffer since we leave 3 of 4 bytes unset
+      e client - desk wait - ref it properly and clean up delfn
+
+Jean Guyomarc'h (2):
+      modules/bluez4: fix duplicated symbol
+      e_ipc: fix creation of IPC server when $DISPLAY is a path
+
+Mike Blumenkrantz (38):
+      pre-escape all notification body texts before display or merge
+      set ec->fullscreen before applying fullscreen geometry
+      never resize client clip object
+      exit immediately if any unrecognized arg is passed on startup
+      use stderr messages when failing to init X compositor
+      fix horizontal/vertical smart maximize
+      fix crash when using e_comp_object_util_center_pos_get() with non comp_objects
+      don't modify pixmap hash when changing pixmap parent window
+      slight ibar dnd optimization when checking taskbar apps for drop site
+      fix ibar drop calc to not unexpectedly trigger epileptic seizures in users
+      fix straggler container text in mousebindings config
+      remove layer setting from deskmirror
+      always lower e_layout children upon packing
+      raise deskmirror windows on startup
+      set xkb dialog as changed after adding a new layout
+      set E_Exec_Instance desktop during client idler if none present
+      allow client icon change events in ibar client prop handler
+      fix nocomp_override conditional which would inaccurately toggle nocomp
+      fix evry comparison macro to work as expected
+      use client geometry for starting unmaximize calculations
+      swap key -> keyname when attempting to bind lparen/rparen keys
+      remove contact module
+      add function for clearing app menu cache
+      clear app menu cache any time a desktop is edited internally
+      remove eina_streq usage
+      attempt to decode notification image uris with efreet before showing them
+      fix submenu visibility during scroll
+      ensure client max w/h props are set before applying them to client geom
+      use client geom for comp object centering functions if ec->new_client is set
+      rename client menu move/resize items to indicate real function
+      freeze evas events on clients during keyboard move/resize actions
+      only apply mouse down focus events if a binding did not run on the same event
+      force visibility on clients before attempting to hide them
+      change default icon theme to hicolor
+      try hicolor icon theme as fallback for fdo icon setting if user's theme fails
+      fix notification text to conform to spec and libnotify implementation
+      prune module config list when loading a module
+      fix infinite loop when changing ibar sources
+
+
 Release 0.19.4:
 ---------------------
 
