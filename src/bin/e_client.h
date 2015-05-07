@@ -106,7 +106,7 @@ typedef enum _E_Fullscreen
 {
    /* Resize window */
    E_FULLSCREEN_RESIZE,
-   /* Change screen resoultion and resize window */
+   /* Change screen resolution and resize window */
    E_FULLSCREEN_ZOOM
 } E_Fullscreen;
 
