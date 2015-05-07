@@ -535,7 +535,7 @@ _cb_screen_change_delay(void *data EINA_UNUSED)
           }
         printf("RRR: change = %i\n", change);
         // we plugged or unplugged some monitor - re-apply config so
-        // known screens can be coonfigured
+        // known screens can be configured
         if (change) e_randr2_config_apply();
      }
    // update screen info after the above apply or due to external changes
