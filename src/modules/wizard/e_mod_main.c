@@ -30,7 +30,7 @@ E_Module *wiz_module = NULL;
  */
 
 /* module setup */
-EAPI E_Module_Api e_modapi =
+E_API E_Module_Api e_modapi =
 {
    E_MODULE_API_VERSION,
    "Wizard"
@@ -42,7 +42,7 @@ _cb_sort_files(char *f1, char *f2)
    return strcmp(f1, f2);
 }
 
-EAPI void *
+E_API void *
 e_modapi_init(E_Module *m)
 {
    Eina_List *files;
@@ -90,7 +90,7 @@ e_modapi_init(E_Module *m)
    return m;
 }
 
-EAPI int
+E_API int
 e_modapi_shutdown(E_Module *m __UNUSED__)
 {
    e_wizard_shutdown();
@@ -101,7 +101,7 @@ e_modapi_shutdown(E_Module *m __UNUSED__)
    return 1;
 }
 
-EAPI int
+E_API int
 e_modapi_save(E_Module *m __UNUSED__)
 {
    return 1;

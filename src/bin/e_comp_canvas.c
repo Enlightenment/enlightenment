@@ -109,7 +109,7 @@ _e_comp_canvas_cb_zone_sort(const void *data1, const void *data2)
 }
 
 
-EAPI Eina_Bool
+E_API Eina_Bool
 e_comp_canvas_init(E_Comp *c)
 {
    Evas_Object *o;
@@ -174,7 +174,7 @@ e_comp_canvas_clear(E_Comp *c)
 
 //////////////////////////////////////////////
 
-EAPI void
+E_API void
 e_comp_all_freeze(void)
 {
    Eina_List *l;
@@ -184,7 +184,7 @@ e_comp_all_freeze(void)
      evas_event_freeze(man->comp->evas);
 }
 
-EAPI void
+E_API void
 e_comp_all_thaw(void)
 {
    Eina_List *l;
@@ -194,7 +194,7 @@ e_comp_all_thaw(void)
      evas_event_thaw(man->comp->evas);
 }
 
-EAPI E_Zone *
+E_API E_Zone *
 e_comp_zone_xy_get(const E_Comp *c, Evas_Coord x, Evas_Coord y)
 {
    const Eina_List *l;
@@ -206,7 +206,7 @@ e_comp_zone_xy_get(const E_Comp *c, Evas_Coord x, Evas_Coord y)
    return NULL;
 }
 
-EAPI E_Zone *
+E_API E_Zone *
 e_comp_zone_number_get(E_Comp *c, int num)
 {
    Eina_List *l = NULL;
@@ -221,7 +221,7 @@ e_comp_zone_number_get(E_Comp *c, int num)
    return NULL;
 }
 
-EAPI E_Zone *
+E_API E_Zone *
 e_comp_zone_id_get(E_Comp *c, int id)
 {
    Eina_List *l = NULL;
@@ -236,7 +236,7 @@ e_comp_zone_id_get(E_Comp *c, int id)
    return NULL;
 }
 
-EAPI E_Comp *
+E_API E_Comp *
 e_comp_number_get(unsigned int num)
 {
    const Eina_List *l;
@@ -247,7 +247,7 @@ e_comp_number_get(unsigned int num)
    return NULL;
 }
 
-EAPI E_Desk *
+E_API E_Desk *
 e_comp_desk_window_profile_get(E_Comp *c, const char *profile)
 {
    Eina_List *l = NULL;
@@ -278,7 +278,7 @@ e_comp_desk_window_profile_get(E_Comp *c, const char *profile)
    return NULL;
 }
 
-EAPI void
+E_API void
 e_comp_canvas_zone_update(E_Zone *zone)
 {
    Evas_Object *o;
@@ -329,7 +329,7 @@ e_comp_canvas_zone_update(E_Zone *zone)
    evas_object_show(o);
 }
 
-EAPI void
+E_API void
 e_comp_canvas_update(E_Comp *c)
 {
    E_Event_Compositor_Resize *ev;
@@ -462,7 +462,7 @@ e_comp_canvas_update(E_Comp *c)
      }
 }
 
-EAPI void
+E_API void
 e_comp_canvas_fake_layers_init(E_Comp *comp)
 {
    unsigned int layer;
@@ -478,7 +478,7 @@ e_comp_canvas_fake_layers_init(E_Comp *comp)
      }
 }
 
-EAPI void
+E_API void
 e_comp_canvas_fps_toggle(void)
 {
    E_Comp_Config *conf = e_comp_config_get();
@@ -488,7 +488,7 @@ e_comp_canvas_fps_toggle(void)
    E_LIST_FOREACH(e_comp_list(), e_comp_render_queue);
 }
 
-EAPI E_Layer
+E_API E_Layer
 e_comp_canvas_layer_map_to(unsigned int layer)
 {
    switch (layer)
@@ -517,7 +517,7 @@ e_comp_canvas_layer_map_to(unsigned int layer)
    return -INT_MAX;
 }
 
-EAPI unsigned int
+E_API unsigned int
 e_comp_canvas_layer_map(E_Layer layer)
 {
    switch (layer)
@@ -546,7 +546,7 @@ e_comp_canvas_layer_map(E_Layer layer)
    return 9999;
 }
 
-EAPI unsigned int
+E_API unsigned int
 e_comp_canvas_client_layer_map(E_Layer layer)
 {
    switch (layer)
@@ -567,7 +567,7 @@ e_comp_canvas_client_layer_map(E_Layer layer)
    return 9999;
 }
 
-EAPI E_Layer
+E_API E_Layer
 e_comp_canvas_client_layer_map_nearest(int layer)
 {
 #define LAYER_MAP(X) \

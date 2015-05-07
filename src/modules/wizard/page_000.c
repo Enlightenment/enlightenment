@@ -5,13 +5,13 @@
 static Ecore_Timer *_next_timer = NULL;
 
 /*
-EAPI int
+E_API int
 wizard_page_init(E_Wizard_Page *pg __UNUSED__, Eina_Bool *need_xdg_desktops __UNUSED__, Eina_Bool *need_xdg_icons __UNUSED__)
 {
    return 1;
 }
 
-EAPI int
+E_API int
 wizard_page_shutdown(E_Wizard_Page *pg __UNUSED__)
 {
    return 1;
@@ -26,7 +26,7 @@ _next_page(void *data __UNUSED__)
    return ECORE_CALLBACK_CANCEL;
 }
 
-EAPI int
+E_API int
 wizard_page_show(E_Wizard_Page *pg __UNUSED__)
 {
    Evas_Object *o;
@@ -43,7 +43,7 @@ wizard_page_show(E_Wizard_Page *pg __UNUSED__)
    return 1;
 }
 
-EAPI int
+E_API int
 wizard_page_hide(E_Wizard_Page *pg __UNUSED__)
 {
    if (_next_timer) ecore_timer_del(_next_timer);
@@ -51,7 +51,7 @@ wizard_page_hide(E_Wizard_Page *pg __UNUSED__)
    return 1;
 }
 /*
-EAPI int
+E_API int
 wizard_page_apply(E_Wizard_Page *pg __UNUSED__)
 {
    return 1;

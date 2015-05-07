@@ -9,7 +9,7 @@ typedef enum _Kbd_Mod
    KBD_MOD_WIN   = (1 << 3)
 } Kbd_Mod;
 
-EAPI void e_kbd_send_string_press(const char *str, Kbd_Mod mod);
-EAPI void e_kbd_send_keysym_press(const char *key, Kbd_Mod mod);
+E_API void e_kbd_send_string_press(const char *str, Kbd_Mod mod);
+E_API void e_kbd_send_keysym_press(const char *key, Kbd_Mod mod);
 
 #endif

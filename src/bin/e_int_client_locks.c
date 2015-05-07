@@ -44,7 +44,7 @@ struct _E_Config_Dialog_Data
 };
 
 /* a nice easy setup function that does the dirty work */
-EAPI void
+E_API void
 e_int_client_locks(E_Client *ec)
 {
    E_Config_Dialog *cfd;

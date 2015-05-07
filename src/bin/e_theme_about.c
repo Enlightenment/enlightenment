@@ -13,7 +13,7 @@ _cb_settings_theme(void *data, Evas_Object *obj __UNUSED__, const char *emission
 
 /* externally accessible functions */
 
-EAPI E_Theme_About *
+E_API E_Theme_About *
 e_theme_about_new(E_Comp *c)
 {
    E_Obj_Dialog *od;
@@ -29,7 +29,7 @@ e_theme_about_new(E_Comp *c)
    return (E_Theme_About *)od;
 }
 
-EAPI void
+E_API void
 e_theme_about_show(E_Theme_About *about)
 {
    e_obj_dialog_show((E_Obj_Dialog *)about);

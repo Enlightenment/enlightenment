@@ -334,46 +334,46 @@ struct _E_Illume_Quickpanel
 
 
 /* define function prototypes that policies can use */
-EAPI E_Illume_Config_Zone *e_illume_zone_config_get(int id);
+E_API E_Illume_Config_Zone *e_illume_zone_config_get(int id);
 
 /* general functions */
-EAPI Eina_Bool e_illume_client_is_indicator(E_Client *ec);
-EAPI Eina_Bool e_illume_client_is_softkey(E_Client *ec);
-EAPI Eina_Bool e_illume_client_is_keyboard(E_Client *ec);
-EAPI Eina_Bool e_illume_client_is_home(E_Client *ec);
-EAPI Eina_Bool e_illume_client_is_splash(E_Client *ec);
-EAPI Eina_Bool e_illume_client_is_dialog(E_Client *ec);
-EAPI Eina_Bool e_illume_client_is_qt_frame(E_Client *ec);
-EAPI Eina_Bool e_illume_client_is_fullscreen(E_Client *ec);
-EAPI Eina_Bool e_illume_client_is_conformant(E_Client *ec);
-EAPI Eina_Bool e_illume_client_is_quickpanel(E_Client *ec);
-EAPI Eina_Bool e_illume_client_is_fixed_size(E_Client *ec);
+E_API Eina_Bool e_illume_client_is_indicator(E_Client *ec);
+E_API Eina_Bool e_illume_client_is_softkey(E_Client *ec);
+E_API Eina_Bool e_illume_client_is_keyboard(E_Client *ec);
+E_API Eina_Bool e_illume_client_is_home(E_Client *ec);
+E_API Eina_Bool e_illume_client_is_splash(E_Client *ec);
+E_API Eina_Bool e_illume_client_is_dialog(E_Client *ec);
+E_API Eina_Bool e_illume_client_is_qt_frame(E_Client *ec);
+E_API Eina_Bool e_illume_client_is_fullscreen(E_Client *ec);
+E_API Eina_Bool e_illume_client_is_conformant(E_Client *ec);
+E_API Eina_Bool e_illume_client_is_quickpanel(E_Client *ec);
+E_API Eina_Bool e_illume_client_is_fixed_size(E_Client *ec);
 
-EAPI void e_illume_client_min_get(E_Client *ec, int *w, int *h);
-EAPI E_Client *e_illume_client_at_xy_get(E_Zone *zone, int x, int y);
-EAPI E_Client *e_illume_client_parent_get(E_Client *ec);
-EAPI void e_illume_client_show(E_Client *ec);
-EAPI void e_illume_client_hide(E_Client *ec);
+E_API void e_illume_client_min_get(E_Client *ec, int *w, int *h);
+E_API E_Client *e_illume_client_at_xy_get(E_Zone *zone, int x, int y);
+E_API E_Client *e_illume_client_parent_get(E_Client *ec);
+E_API void e_illume_client_show(E_Client *ec);
+E_API void e_illume_client_hide(E_Client *ec);
 
 /* indicator functions */
-EAPI E_Client *e_illume_client_indicator_get(E_Zone *zone);
-EAPI void e_illume_client_indicator_pos_get(E_Zone *zone, int *x, int *y);
+E_API E_Client *e_illume_client_indicator_get(E_Zone *zone);
+E_API void e_illume_client_indicator_pos_get(E_Zone *zone, int *x, int *y);
 
 /* softkey functions */
-EAPI E_Client *e_illume_client_softkey_get(E_Zone *zone);
-EAPI void e_illume_client_softkey_pos_get(E_Zone *zone, int *x, int *y);
+E_API E_Client *e_illume_client_softkey_get(E_Zone *zone);
+E_API void e_illume_client_softkey_pos_get(E_Zone *zone, int *x, int *y);
 
 /* keyboard functions */
-EAPI E_Illume_Keyboard *e_illume_keyboard_get(void);
-EAPI void e_illume_keyboard_safe_app_region_get(E_Zone *zone, int *x, int *y, int *w, int *h);
+E_API E_Illume_Keyboard *e_illume_keyboard_get(void);
+E_API void e_illume_keyboard_safe_app_region_get(E_Zone *zone, int *x, int *y, int *w, int *h);
 
 /* home functions */
-EAPI E_Client *e_illume_client_home_get(E_Zone *zone);
-EAPI Eina_List *e_illume_client_home_borders_get(E_Zone *zone);
+E_API E_Client *e_illume_client_home_get(E_Zone *zone);
+E_API Eina_List *e_illume_client_home_borders_get(E_Zone *zone);
 
 /* quickpanel functions */
-EAPI E_Illume_Quickpanel *e_illume_quickpanel_by_zone_get(E_Zone *zone);
-EAPI void e_illume_quickpanel_show(E_Zone *zone);
-EAPI void e_illume_quickpanel_hide(E_Zone *zone);
+E_API E_Illume_Quickpanel *e_illume_quickpanel_by_zone_get(E_Zone *zone);
+E_API void e_illume_quickpanel_show(E_Zone *zone);
+E_API void e_illume_quickpanel_hide(E_Zone *zone);
 
 #endif

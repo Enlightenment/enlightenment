@@ -25,7 +25,7 @@ struct _E_Entry_Dialog
    } cancel;
 };
 
-EAPI E_Entry_Dialog *e_entry_dialog_show(const char *title,
+E_API E_Entry_Dialog *e_entry_dialog_show(const char *title,
 					 const char *icon,
 					 const char *text,
 					 const char *initial_text,

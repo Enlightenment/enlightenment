@@ -111,29 +111,29 @@ struct E_Dnd_X_Moz_Url
 EINTERN int          e_dnd_init(void);
 EINTERN int          e_dnd_shutdown(void);
 
-EAPI int             e_dnd_active(void);
+E_API int             e_dnd_active(void);
 
-EAPI E_Drag         *e_drag_current_get(void);
+E_API E_Drag         *e_drag_current_get(void);
 /* x and y are the top left coords of the object that is to be dragged */
-EAPI E_Drag         *e_drag_new(E_Comp *comp, int x, int y,
+E_API E_Drag         *e_drag_new(E_Comp *comp, int x, int y,
                                 const char **types, unsigned int num_types,
                                 void *data, int size,
                                 void *(*convert_cb)(E_Drag * drag, const char *type),
                                 void (*finished_cb)(E_Drag *drag, int dropped));
-EAPI Evas           *e_drag_evas_get(const E_Drag *drag);
-EAPI void            e_drag_object_set(E_Drag *drag, Evas_Object *object);
-EAPI void            e_drag_move(E_Drag *drag, int x, int y);
-EAPI void            e_drag_resize(E_Drag *drag, int w, int h);
-EAPI void            e_drag_key_down_cb_set(E_Drag *drag, void (*func)(E_Drag *drag, Ecore_Event_Key *e));
-EAPI void            e_drag_key_up_cb_set(E_Drag *drag, void (*func)(E_Drag *drag, Ecore_Event_Key *e));
+E_API Evas           *e_drag_evas_get(const E_Drag *drag);
+E_API void            e_drag_object_set(E_Drag *drag, Evas_Object *object);
+E_API void            e_drag_move(E_Drag *drag, int x, int y);
+E_API void            e_drag_resize(E_Drag *drag, int w, int h);
+E_API void            e_drag_key_down_cb_set(E_Drag *drag, void (*func)(E_Drag *drag, Ecore_Event_Key *e));
+E_API void            e_drag_key_up_cb_set(E_Drag *drag, void (*func)(E_Drag *drag, Ecore_Event_Key *e));
 
 /* x and y are the coords where the mouse is when dragging starts */
-EAPI int             e_drag_start(E_Drag *drag, int x, int y);
-EAPI int             e_drag_xdnd_start(E_Drag *drag, int x, int y);
+E_API int             e_drag_start(E_Drag *drag, int x, int y);
+E_API int             e_drag_xdnd_start(E_Drag *drag, int x, int y);
 
-EAPI void e_drop_xds_update(Eina_Bool enable, const char *value);
-EAPI void e_drop_handler_xds_set(E_Drop_Handler *handler, Eina_Bool (*cb)(void *data, const char *type));
-EAPI E_Drop_Handler *e_drop_handler_add(E_Object *obj,
+E_API void e_drop_xds_update(Eina_Bool enable, const char *value);
+E_API void e_drop_handler_xds_set(E_Drop_Handler *handler, Eina_Bool (*cb)(void *data, const char *type));
+E_API E_Drop_Handler *e_drop_handler_add(E_Object *obj,
                                         void *data,
                                         void (*enter_cb)(void *data, const char *type, void *event),
                                         void (*move_cb)(void *data, const char *type, void *event),
@@ -141,15 +141,15 @@ EAPI E_Drop_Handler *e_drop_handler_add(E_Object *obj,
                                         void (*drop_cb)(void *data, const char *type, void *event),
                                         const char **types, unsigned int num_types,
                                         int x, int y, int w, int h);
-EAPI void         e_drop_handler_geometry_set(E_Drop_Handler *handler, int x, int y, int w, int h);
-EAPI int          e_drop_inside(const E_Drop_Handler *handler, int x, int y);
-EAPI void         e_drop_handler_del(E_Drop_Handler *handler);
-EAPI int          e_drop_xdnd_register_set(Ecore_Window win, int reg);
-EAPI void         e_drop_handler_responsive_set(E_Drop_Handler *handler);
-EAPI int          e_drop_handler_responsive_get(const E_Drop_Handler *handler);
-EAPI void         e_drop_handler_action_set(unsigned int action);
-EAPI unsigned int e_drop_handler_action_get(void);
-EAPI Eina_List *e_dnd_util_text_uri_list_convert(char *data, int size);
+E_API void         e_drop_handler_geometry_set(E_Drop_Handler *handler, int x, int y, int w, int h);
+E_API int          e_drop_inside(const E_Drop_Handler *handler, int x, int y);
+E_API void         e_drop_handler_del(E_Drop_Handler *handler);
+E_API int          e_drop_xdnd_register_set(Ecore_Window win, int reg);
+E_API void         e_drop_handler_responsive_set(E_Drop_Handler *handler);
+E_API int          e_drop_handler_responsive_get(const E_Drop_Handler *handler);
+E_API void         e_drop_handler_action_set(unsigned int action);
+E_API unsigned int e_drop_handler_action_get(void);
+E_API Eina_List *e_dnd_util_text_uri_list_convert(char *data, int size);
 
 
 static inline void

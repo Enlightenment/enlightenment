@@ -25,11 +25,11 @@ struct _Config_Item
    E_Gadcon_Client *gcc;
 };
 
-EAPI extern E_Module_Api e_modapi;
+E_API extern E_Module_Api e_modapi;
 
-EAPI void *e_modapi_init     (E_Module *m);
-EAPI int   e_modapi_shutdown (E_Module *m);
-EAPI int   e_modapi_save     (E_Module *m);
+E_API void *e_modapi_init     (E_Module *m);
+E_API int   e_modapi_shutdown (E_Module *m);
+E_API int   e_modapi_save     (E_Module *m);
 
 void _ibox_config_update(Config_Item *ci);
 void _config_ibox_module(Config_Item *ci);

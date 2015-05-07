@@ -71,7 +71,7 @@ _thumb_preloaded(void *data, Evas_Object *obj __UNUSED__, void *event __UNUSED__
    evas_object_smart_callback_call(data, "e_thumb_gen", NULL);
 }
 
-EAPI Evas_Object *
+E_API Evas_Object *
 e_thumb_icon_add(Evas *evas)
 {
    Evas_Object *obj;
@@ -91,7 +91,7 @@ e_thumb_icon_add(Evas *evas)
    return obj;
 }
 
-EAPI void
+E_API void
 e_thumb_icon_file_set(Evas_Object *obj, const char *file, const char *key)
 {
    E_Thumb *eth;
@@ -103,7 +103,7 @@ e_thumb_icon_file_set(Evas_Object *obj, const char *file, const char *key)
    E_FREE(eth->sort_id);
 }
 
-EAPI void
+E_API void
 e_thumb_icon_size_set(Evas_Object *obj, int w, int h)
 {
    E_Thumb *eth;
@@ -115,7 +115,7 @@ e_thumb_icon_size_set(Evas_Object *obj, int w, int h)
    eth->h = h;
 }
 
-EAPI void
+E_API void
 e_thumb_icon_begin(Evas_Object *obj)
 {
    E_Thumb *eth, *eth2;
@@ -156,7 +156,7 @@ e_thumb_icon_begin(Evas_Object *obj)
    _e_thumb_gen_begin(eth->objid, eth->file, eth->key, eth->w, eth->h);
 }
 
-EAPI void
+E_API void
 e_thumb_icon_end(Evas_Object *obj)
 {
    E_Thumb *eth;
@@ -177,7 +177,7 @@ e_thumb_icon_end(Evas_Object *obj)
      }
 }
 
-EAPI void
+E_API void
 e_thumb_icon_rethumb(Evas_Object *obj)
 {
    E_Thumb *eth;
@@ -218,7 +218,7 @@ _e_thumb_key_load(E_Thumb *eth, const char *icon)
    eet_close(ef);
 }
 
-EAPI const char *
+E_API const char *
 e_thumb_sort_id_get(Evas_Object *obj)
 {
    E_Thumb *eth;
@@ -228,7 +228,7 @@ e_thumb_sort_id_get(Evas_Object *obj)
    return eth->sort_id;
 }
 
-EAPI void
+E_API void
 e_thumb_client_data(Ecore_Ipc_Event_Client_Data *e)
 {
    int objid;
@@ -279,7 +279,7 @@ e_thumb_client_data(Ecore_Ipc_Event_Client_Data *e)
      }
 }
 
-EAPI void
+E_API void
 e_thumb_client_del(Ecore_Ipc_Event_Client_Del *e)
 {
    if (!eina_list_data_find(_thumbnailers, e->client)) return;

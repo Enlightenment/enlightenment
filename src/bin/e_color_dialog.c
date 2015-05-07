@@ -80,7 +80,7 @@ e_color_dialog_cancel_callback_set(E_Color_Dialog *dia, void (*func)(E_Color_Dia
    dia->cancel_data = data;
 }
 
-EAPI void
+E_API void
 e_color_dialog_change_callback_set(E_Color_Dialog *dia, void (*func)(E_Color_Dialog *dia, E_Color *color, void *data), void *data)
 {
    dia->change_func = func;

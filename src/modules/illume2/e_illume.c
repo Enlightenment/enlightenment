@@ -23,7 +23,7 @@
  * 
  * @ingroup E_Illume_Config_Group
  */
-EAPI E_Illume_Config_Zone *
+E_API E_Illume_Config_Zone *
 e_illume_zone_config_get(int id) 
 {
    Eina_List *l;
@@ -66,7 +66,7 @@ e_illume_zone_config_get(int id)
  * 
  * @ingroup E_Illume_Main_Group
  */
-EAPI Eina_Bool 
+E_API Eina_Bool 
 e_illume_client_is_indicator(E_Client *ec) 
 {
    /* make sure we have a border */
@@ -122,7 +122,7 @@ e_illume_client_is_indicator(E_Client *ec)
  * 
  * @ingroup E_Illume_Main_Group
  */
-EAPI Eina_Bool 
+E_API Eina_Bool 
 e_illume_client_is_softkey(E_Client *ec) 
 {
    /* make sure we have a border */
@@ -178,7 +178,7 @@ e_illume_client_is_softkey(E_Client *ec)
  * 
  * @ingroup E_Illume_Main_Group
  */
-EAPI Eina_Bool 
+E_API Eina_Bool 
 e_illume_client_is_keyboard(E_Client *ec) 
 {
    /* make sure we have a border */
@@ -236,7 +236,7 @@ e_illume_client_is_keyboard(E_Client *ec)
  * 
  * @ingroup E_Illume_Main_Group
  */
-EAPI Eina_Bool 
+E_API Eina_Bool 
 e_illume_client_is_home(E_Client *ec) 
 {
    /* make sure we have a border */
@@ -290,7 +290,7 @@ e_illume_client_is_home(E_Client *ec)
  * 
  * @ingroup E_Illume_Main_Group
  */
-EAPI Eina_Bool 
+E_API Eina_Bool 
 e_illume_client_is_splash(E_Client *ec) 
 {
    /* make sure we have a border */
@@ -321,7 +321,7 @@ e_illume_client_is_splash(E_Client *ec)
  * 
  * @ingroup E_Illume_Main_Group
  */
-EAPI Eina_Bool 
+E_API Eina_Bool 
 e_illume_client_is_dialog(E_Client *ec) 
 {
    /* make sure we have a border */
@@ -357,7 +357,7 @@ e_illume_client_is_dialog(E_Client *ec)
  * 
  * @ingroup E_Illume_Main_Group
  */
-EAPI Eina_Bool 
+E_API Eina_Bool 
 e_illume_client_is_qt_frame(E_Client *ec) 
 {
    /* make sure we have a border */
@@ -382,7 +382,7 @@ e_illume_client_is_qt_frame(E_Client *ec)
  * 
  * @ingroup E_Illume_Main_Group
  */
-EAPI Eina_Bool 
+E_API Eina_Bool 
 e_illume_client_is_fullscreen(E_Client *ec) 
 {
    /* make sure we have a border */
@@ -405,7 +405,7 @@ e_illume_client_is_fullscreen(E_Client *ec)
  * 
  * @ingroup E_Illume_Main_Group
  */
-EAPI Eina_Bool 
+E_API Eina_Bool 
 e_illume_client_is_conformant(E_Client *ec) 
 {
    /* make sure we have a border */
@@ -425,7 +425,7 @@ e_illume_client_is_conformant(E_Client *ec)
  * 
  * @ingroup E_Illume_Main_Group
  */
-EAPI Eina_Bool 
+E_API Eina_Bool 
 e_illume_client_is_quickpanel(E_Client *ec) 
 {
    /* make sure we have a border */
@@ -445,7 +445,7 @@ e_illume_client_is_quickpanel(E_Client *ec)
  *
  * @ingroup E_Illume_Main_Group
  */
-EAPI Eina_Bool 
+E_API Eina_Bool 
 e_illume_client_is_fixed_size(E_Client *ec)
 {
    /* make sure we have a border */
@@ -475,7 +475,7 @@ e_illume_client_is_fixed_size(E_Client *ec)
  * 
  * @ingroup E_Illume_Main_Group
  */
-EAPI void 
+E_API void 
 e_illume_client_min_get(E_Client *ec, int *w, int *h) 
 {
    if (w) *w = 0;
@@ -511,7 +511,7 @@ e_illume_client_min_get(E_Client *ec, int *w, int *h)
  * 
  * @ingroup E_Illume_Main_Group
  */
-EAPI E_Client *
+E_API E_Client *
 e_illume_client_at_xy_get(E_Zone *zone, int x, int y) 
 {
    Eina_List *l;
@@ -559,7 +559,7 @@ e_illume_client_at_xy_get(E_Zone *zone, int x, int y)
  * 
  * @ingroup E_Illume_Main_Group
  */
-EAPI E_Client *
+E_API E_Client *
 e_illume_client_parent_get(E_Client *ec) 
 {
    /* make sure we have a border */
@@ -597,7 +597,7 @@ e_illume_client_parent_get(E_Client *ec)
  * 
  * @ingroup E_Illume_Main_Group
  */
-EAPI void 
+E_API void 
 e_illume_client_show(E_Client *ec) 
 {
    /* make sure we have a border */
@@ -633,7 +633,7 @@ e_illume_client_show(E_Client *ec)
  * 
  * @ingroup E_Illume_Main_Group
  */
-EAPI void 
+E_API void 
 e_illume_client_hide(E_Client *ec) 
 {
    /* make sure we have a border */
@@ -665,7 +665,7 @@ e_illume_client_hide(E_Client *ec)
  * 
  * @ingroup E_Illume_Main_Group
  */
-EAPI E_Client *
+E_API E_Client *
 e_illume_client_indicator_get(E_Zone *zone) 
 {
    Eina_List *l;
@@ -703,7 +703,7 @@ e_illume_client_indicator_get(E_Zone *zone)
  * 
  * @ingroup E_Illume_Main_Group
  */
-EAPI void 
+E_API void 
 e_illume_client_indicator_pos_get(E_Zone *zone, int *x, int *y) 
 {
    E_Client *ind;
@@ -736,7 +736,7 @@ e_illume_client_indicator_pos_get(E_Zone *zone, int *x, int *y)
  * 
  * @ingroup E_Illume_Main_Group
  */
-EAPI E_Client *
+E_API E_Client *
 e_illume_client_softkey_get(E_Zone *zone) 
 {
    Eina_List *l;
@@ -774,7 +774,7 @@ e_illume_client_softkey_get(E_Zone *zone)
  * 
  * @ingroup E_Illume_Main_Group
  */
-EAPI void 
+E_API void 
 e_illume_client_softkey_pos_get(E_Zone *zone, int *x, int *y) 
 {
    E_Client *sft;
@@ -804,7 +804,7 @@ e_illume_client_softkey_pos_get(E_Zone *zone, int *x, int *y)
  * 
  * @ingroup E_Illume_Keyboard_Group
  */
-EAPI E_Illume_Keyboard *
+E_API E_Illume_Keyboard *
 e_illume_keyboard_get(void) 
 {
    /* make sure we have a keyboard */
@@ -830,7 +830,7 @@ e_illume_keyboard_get(void)
  * 
  * @ingroup E_Illume_Keyboard_Group
  */
-EAPI void 
+E_API void 
 e_illume_keyboard_safe_app_region_get(E_Zone *zone, int *x, int *y, int *w, int *h) 
 {
    if (x) *x = 0;
@@ -878,7 +878,7 @@ e_illume_keyboard_safe_app_region_get(E_Zone *zone, int *x, int *y, int *w, int 
  * 
  * @ingroup E_Illume_Main_Group
  */
-EAPI E_Client *
+E_API E_Client *
 e_illume_client_home_get(E_Zone *zone) 
 {
    E_Client *ec;
@@ -915,7 +915,7 @@ e_illume_client_home_get(E_Zone *zone)
  * 
  * @ingroup E_Illume_Main_Group
  */
-EAPI Eina_List *
+E_API Eina_List *
 e_illume_client_home_borders_get(E_Zone *zone) 
 {
    Eina_List *ret = NULL, *l;
@@ -952,7 +952,7 @@ e_illume_client_home_borders_get(E_Zone *zone)
  * 
  * @ingroup E_Illume_Quickpanel_Group
  */
-EAPI E_Illume_Quickpanel *
+E_API E_Illume_Quickpanel *
 e_illume_quickpanel_by_zone_get(E_Zone *zone) 
 {
    E_Illume_Quickpanel *qp;
@@ -978,7 +978,7 @@ e_illume_quickpanel_by_zone_get(E_Zone *zone)
  * 
  * @ingroup E_Illume_Quickpanel_Group
  */
-EAPI void 
+E_API void 
 e_illume_quickpanel_show(E_Zone *zone) 
 {
    if (!zone) return;
@@ -995,7 +995,7 @@ e_illume_quickpanel_show(E_Zone *zone)
  * 
  * @ingroup E_Illume_Quickpanel_Group
  */
-EAPI void 
+E_API void 
 e_illume_quickpanel_hide(E_Zone *zone) 
 {
    if (!zone) return;

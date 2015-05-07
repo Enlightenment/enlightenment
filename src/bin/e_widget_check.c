@@ -130,7 +130,7 @@ _e_wid_focus_steal(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, 
  * @param val pointer to int where changes are stored
  * @return the newly created evas object
  */
-EAPI Evas_Object *
+E_API Evas_Object *
 e_widget_check_add(Evas *evas, const char *label, int *val)
 {
    Evas_Object *obj, *o;
@@ -174,7 +174,7 @@ e_widget_check_add(Evas *evas, const char *label, int *val)
  * @param check the check box widget
  * @param checked the value to set the widget too
  */
-EAPI void
+E_API void
 e_widget_check_checked_set(Evas_Object *check, int checked)
 {
    E_Widget_Data *wd;
@@ -194,7 +194,7 @@ e_widget_check_checked_set(Evas_Object *check, int checked)
  * @param check the check box widget
  * @param val pointer to int where changes are stored
  */
-EAPI void
+E_API void
 e_widget_check_valptr_set(Evas_Object *check, int *val)
 {
    E_Widget_Data *wd;
@@ -216,7 +216,7 @@ e_widget_check_valptr_set(Evas_Object *check, int *val)
  * @param check the check box widget
  * @return the value of the check box
  */
-EAPI int
+E_API int
 e_widget_check_checked_get(Evas_Object *check)
 {
    E_Widget_Data *wd;
@@ -236,7 +236,7 @@ e_widget_check_checked_get(Evas_Object *check)
  * @param check the check box widget
  * @param obj the object to disable when @p check is checked
  */
-EAPI void
+E_API void
 e_widget_check_widget_disable_on_checked_add(Evas_Object *check, Evas_Object *obj)
 {
    E_Widget_Data *wd;
@@ -256,7 +256,7 @@ e_widget_check_widget_disable_on_checked_add(Evas_Object *check, Evas_Object *ob
  * @param check the check box widget
  * @param obj the object to disable when @p check is not unchecked
  */
-EAPI void
+E_API void
 e_widget_check_widget_disable_on_unchecked_add(Evas_Object *check, Evas_Object *obj)
 {
    E_Widget_Data *wd;
@@ -283,7 +283,7 @@ e_widget_check_widget_disable_on_unchecked_add(Evas_Object *check, Evas_Object *
  * @param val pointer to int where changes are stored
  * @return the newly created evas object
  */
-EAPI Evas_Object *
+E_API Evas_Object *
 e_widget_check_icon_add(Evas *evas, const char *label, const char *icon, int icon_w, int icon_h, int *val)
 {
    Evas_Object *obj, *o, *o2;

@@ -35,14 +35,14 @@ static void _e_zoomap_smart_init(void);
 static Evas_Smart *_e_smart = NULL;
 
 /* externally accessible functions */
-EAPI Evas_Object *
+E_API Evas_Object *
 e_zoomap_add(Evas *evas)
 {
    _e_zoomap_smart_init();
    return evas_object_smart_add(evas, _e_smart);
 }
 
-EAPI void
+E_API void
 e_zoomap_child_set(Evas_Object *obj, Evas_Object *child)
 {
    API_ENTRY return;
@@ -78,21 +78,21 @@ e_zoomap_child_set(Evas_Object *obj, Evas_Object *child)
      }
 }
 
-EAPI void
+E_API void
 e_zoomap_child_resize(Evas_Object *obj, int w, int h)
 {
    API_ENTRY return;
    evas_object_resize(sd->child_obj, w, h);
 }
 
-EAPI Evas_Object *
+E_API Evas_Object *
 e_zoomap_child_get(Evas_Object *obj)
 {
    API_ENTRY return NULL;
    return sd->child_obj;
 }
 
-EAPI void
+E_API void
 e_zoomap_smooth_set(Evas_Object *obj, Eina_Bool smooth)
 {
    API_ENTRY return;
@@ -102,14 +102,14 @@ e_zoomap_smooth_set(Evas_Object *obj, Eina_Bool smooth)
    _e_zoomap_smart_reconfigure(sd);
 }
 
-EAPI Eina_Bool
+E_API Eina_Bool
 e_zoomap_smooth_get(Evas_Object *obj)
 {
    API_ENTRY return EINA_FALSE;
    return sd->smooth;
 }
 
-EAPI void
+E_API void
 e_zoomap_solid_set(Evas_Object *obj, Eina_Bool solid)
 {
    API_ENTRY return;
@@ -119,14 +119,14 @@ e_zoomap_solid_set(Evas_Object *obj, Eina_Bool solid)
    _e_zoomap_smart_reconfigure(sd);
 }
 
-EAPI Eina_Bool
+E_API Eina_Bool
 e_zoomap_solid_get(Evas_Object *obj)
 {
    API_ENTRY return EINA_FALSE;
    return sd->solid;
 }
 
-EAPI void
+E_API void
 e_zoomap_always_set(Evas_Object *obj, Eina_Bool always)
 {
    API_ENTRY return;
@@ -136,14 +136,14 @@ e_zoomap_always_set(Evas_Object *obj, Eina_Bool always)
    _e_zoomap_smart_reconfigure(sd);
 }
 
-EAPI Eina_Bool
+E_API Eina_Bool
 e_zoomap_always_get(Evas_Object *obj)
 {
    API_ENTRY return EINA_FALSE;
    return sd->always;
 }
 
-EAPI void
+E_API void
 e_zoomap_child_edje_solid_setup(Evas_Object *obj)
 {
    const char *s;

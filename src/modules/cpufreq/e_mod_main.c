@@ -1312,12 +1312,12 @@ _cpufreq_poll_interval_update(void)
 }
 
 /* module setup */
-EAPI E_Module_Api e_modapi =
+E_API E_Module_Api e_modapi =
 {
    E_MODULE_API_VERSION, "Cpufreq"
 };
 
-EAPI void *
+E_API void *
 e_modapi_init(E_Module *m)
 {
    struct stat st;
@@ -1418,7 +1418,7 @@ e_modapi_init(E_Module *m)
    return m;
 }
 
-EAPI int
+E_API int
 e_modapi_shutdown(E_Module *m __UNUSED__)
 {
    e_configure_registry_item_del("advanced/cpufreq");
@@ -1472,7 +1472,7 @@ e_modapi_shutdown(E_Module *m __UNUSED__)
    return 1;
 }
 
-EAPI int
+E_API int
 e_modapi_save(E_Module *m __UNUSED__)
 {
    e_config_domain_save("module.cpufreq", conf_edd, cpufreq_config);

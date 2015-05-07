@@ -69,11 +69,11 @@ struct _E_Config_Dialog_Data
 
 E_Config_Dialog      *e_int_config_tiling_module(E_Comp *comp, const char *params);
 
-EAPI extern E_Module_Api e_modapi;
+E_API extern E_Module_Api e_modapi;
 
-EAPI void            *e_modapi_init(E_Module *m);
-EAPI int              e_modapi_shutdown(E_Module *m);
-EAPI int              e_modapi_save(E_Module *m);
+E_API void            *e_modapi_init(E_Module *m);
+E_API int              e_modapi_shutdown(E_Module *m);
+E_API int              e_modapi_save(E_Module *m);
 
 void                  change_desk_conf(struct _Config_vdesk *newconf);
 

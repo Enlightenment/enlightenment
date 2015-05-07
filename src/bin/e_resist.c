@@ -11,7 +11,7 @@ struct _E_Resist_Rect
 
 static void _e_resist_rects(Eina_List *rects, int px, int py, int pw, int ph, int x, int y, int w, int h, int *rx, int *ry, int *rw, int *rh);
 
-EAPI int
+E_API int
 e_resist_client_position(E_Comp *c, Eina_List *skiplist,
                                    int px, int py, int pw, int ph,
                                    int x, int y, int w, int h,
@@ -87,7 +87,7 @@ e_resist_client_position(E_Comp *c, Eina_List *skiplist,
    return 1;
 }
 
-EAPI int
+E_API int
 e_resist_gadman_position(E_Comp *c EINA_UNUSED, Eina_List *skiplist __UNUSED__,
                                    int px, int py, int pw, int ph,
                                    int x, int y, int w, int h,

@@ -192,7 +192,7 @@ e_menu_shutdown(void)
    return 1;
 }
 
-EAPI void
+E_API void
 e_menu_hide_all(void)
 {
    E_Menu *m;
@@ -208,7 +208,7 @@ e_menu_hide_all(void)
      }
 }
 
-EAPI E_Menu *
+E_API E_Menu *
 e_menu_new(void)
 {
    E_Menu *m;
@@ -221,7 +221,7 @@ e_menu_new(void)
    return m;
 }
 
-EAPI void
+E_API void
 e_menu_activate_key(E_Menu *m, E_Zone *zone, int x, int y, int w, int h, int dir)
 {
    E_OBJECT_CHECK(m);
@@ -294,7 +294,7 @@ e_menu_activate_key(E_Menu *m, E_Zone *zone, int x, int y, int w, int h, int dir
      }
 }
 
-EAPI void
+E_API void
 e_menu_activate_mouse(E_Menu *m, E_Zone *zone, int x, int y, int w, int h, int dir, unsigned int activate_time)
 {
    E_Menu_Item *pmi;
@@ -360,7 +360,7 @@ e_menu_activate_mouse(E_Menu *m, E_Zone *zone, int x, int y, int w, int h, int d
    _mouse_up_feed(e_comp_get(m)->evas, activate_time);
 }
 
-EAPI void
+E_API void
 e_menu_activate(E_Menu *m, E_Zone *zone, int x, int y, int w, int h, int dir)
 {
    E_Menu_Item *pmi;
@@ -429,7 +429,7 @@ e_menu_activate(E_Menu *m, E_Zone *zone, int x, int y, int w, int h, int dir)
    if (pmi) e_menu_item_active_set(pmi, 0);
 }
 
-EAPI void
+E_API void
 e_menu_deactivate(E_Menu *m)
 {
    E_OBJECT_CHECK(m);
@@ -441,7 +441,7 @@ e_menu_deactivate(E_Menu *m)
      m->post_deactivate_cb.func(m->post_deactivate_cb.data, m);
 }
 
-EAPI int
+E_API int
 e_menu_freeze(E_Menu *m)
 {
    E_OBJECT_CHECK_RETURN(m, 0);
@@ -450,7 +450,7 @@ e_menu_freeze(E_Menu *m)
    return m->frozen;
 }
 
-EAPI int
+E_API int
 e_menu_thaw(E_Menu *m)
 {
    E_OBJECT_CHECK_RETURN(m, 0);
@@ -460,7 +460,7 @@ e_menu_thaw(E_Menu *m)
    return m->frozen;
 }
 
-EAPI void
+E_API void
 e_menu_title_set(E_Menu *m, const char *title)
 {
    E_OBJECT_CHECK(m);
@@ -483,7 +483,7 @@ e_menu_title_set(E_Menu *m, const char *title)
    edje_object_message_signal_process(m->bg_object);
 }
 
-EAPI void
+E_API void
 e_menu_icon_file_set(E_Menu *m __UNUSED__, const char *icon __UNUSED__)
 {
    /* FIXME: support menu icons
@@ -492,7 +492,7 @@ e_menu_icon_file_set(E_Menu *m __UNUSED__, const char *icon __UNUSED__)
     */
 }
 
-EAPI void
+E_API void
 e_menu_category_set(E_Menu *m, const char *category)
 {
    E_OBJECT_CHECK(m);
@@ -509,7 +509,7 @@ e_menu_category_set(E_Menu *m, const char *category)
    m->changed = 1;
 }
 
-EAPI void
+E_API void
 e_menu_category_data_set(char *category, void *data)
 {
    E_Menu_Category *cat;
@@ -525,7 +525,7 @@ e_menu_category_data_set(char *category, void *data)
      }
 }
 
-EAPI E_Menu_Category_Callback *
+E_API E_Menu_Category_Callback *
 e_menu_category_callback_add(char *category, void (*create_cb)(void *data, E_Menu *m, void *category_data), Ecore_Cb free_cb, void *data)
 {
    E_Menu_Category *cat;
@@ -552,7 +552,7 @@ e_menu_category_callback_add(char *category, void (*create_cb)(void *data, E_Men
    return cb;
 }
 
-EAPI void
+E_API void
 e_menu_category_callback_del(E_Menu_Category_Callback *cb)
 {
    E_Menu_Category *cat;
@@ -567,7 +567,7 @@ e_menu_category_callback_del(E_Menu_Category_Callback *cb)
      }
 }
 
-EAPI void
+E_API void
 e_menu_pre_activate_callback_set(E_Menu *m, void (*func)(void *data, E_Menu *m), void *data)
 {
    E_OBJECT_CHECK(m);
@@ -576,7 +576,7 @@ e_menu_pre_activate_callback_set(E_Menu *m, void (*func)(void *data, E_Menu *m),
    m->pre_activate_cb.data = data;
 }
 
-EAPI void
+E_API void
 e_menu_post_deactivate_callback_set(E_Menu *m, void (*func)(void *data, E_Menu *m), void *data)
 {
    E_OBJECT_CHECK(m);
@@ -585,7 +585,7 @@ e_menu_post_deactivate_callback_set(E_Menu *m, void (*func)(void *data, E_Menu *
    m->post_deactivate_cb.data = data;
 }
 
-EAPI E_Menu *
+E_API E_Menu *
 e_menu_root_get(E_Menu *m)
 {
    E_Menu *ret;
@@ -599,7 +599,7 @@ e_menu_root_get(E_Menu *m)
    return ret;
 }
 
-EAPI E_Menu_Item *
+E_API E_Menu_Item *
 e_menu_item_new(E_Menu *m)
 {
    E_Menu_Item *mi;
@@ -613,7 +613,7 @@ e_menu_item_new(E_Menu *m)
    return mi;
 }
 
-EAPI E_Menu_Item *
+E_API E_Menu_Item *
 e_menu_item_new_relative(E_Menu *m, E_Menu_Item *rel)
 {
    E_Menu_Item *mi;
@@ -646,7 +646,7 @@ e_menu_item_new_relative(E_Menu *m, E_Menu_Item *rel)
    return mi;
 }
 
-EAPI E_Menu_Item *
+E_API E_Menu_Item *
 e_menu_item_nth(E_Menu *m, int n)
 {
    E_OBJECT_CHECK_RETURN(m, NULL);
@@ -654,7 +654,7 @@ e_menu_item_nth(E_Menu *m, int n)
    return (E_Menu_Item *)eina_list_nth(m->items, n);
 }
 
-EAPI int
+E_API int
 e_menu_item_num_get(const E_Menu_Item *mi)
 {
    const Eina_List *l;
@@ -672,7 +672,7 @@ e_menu_item_num_get(const E_Menu_Item *mi)
    return -1;
 }
 
-EAPI void
+E_API void
 e_menu_item_icon_file_set(E_Menu_Item *mi, const char *icon)
 {
    E_OBJECT_CHECK(mi);
@@ -694,7 +694,7 @@ e_menu_item_icon_file_set(E_Menu_Item *mi, const char *icon)
    mi->menu->changed = 1;
 }
 
-EAPI void
+E_API void
 e_menu_item_icon_edje_set(E_Menu_Item *mi, const char *icon, const char *key)
 {
    E_OBJECT_CHECK(mi);
@@ -709,7 +709,7 @@ e_menu_item_icon_edje_set(E_Menu_Item *mi, const char *icon, const char *key)
    mi->menu->changed = 1;
 }
 
-EAPI void
+E_API void
 e_menu_item_label_set(E_Menu_Item *mi, const char *label)
 {
    E_OBJECT_CHECK(mi);
@@ -724,7 +724,7 @@ e_menu_item_label_set(E_Menu_Item *mi, const char *label)
    mi->menu->changed = 1;
 }
 
-EAPI void
+E_API void
 e_menu_item_submenu_set(E_Menu_Item *mi, E_Menu *sub)
 {
    Eina_Bool submenu = EINA_FALSE;
@@ -822,7 +822,7 @@ out:
    _e_menu_list_free_unref(tmp);
 }
 
-EAPI void
+E_API void
 e_menu_item_separator_set(E_Menu_Item *mi, int sep)
 {
    E_OBJECT_CHECK(mi);
@@ -833,7 +833,7 @@ e_menu_item_separator_set(E_Menu_Item *mi, int sep)
    mi->menu->changed = 1;
 }
 
-EAPI void
+E_API void
 e_menu_item_check_set(E_Menu_Item *mi, int chk)
 {
    E_OBJECT_CHECK(mi);
@@ -844,7 +844,7 @@ e_menu_item_check_set(E_Menu_Item *mi, int chk)
    mi->menu->changed = 1;
 }
 
-EAPI void
+E_API void
 e_menu_item_radio_set(E_Menu_Item *mi, int rad)
 {
    E_OBJECT_CHECK(mi);
@@ -855,7 +855,7 @@ e_menu_item_radio_set(E_Menu_Item *mi, int rad)
    mi->menu->changed = 1;
 }
 
-EAPI void
+E_API void
 e_menu_item_radio_group_set(E_Menu_Item *mi, int radg)
 {
    E_OBJECT_CHECK(mi);
@@ -866,7 +866,7 @@ e_menu_item_radio_group_set(E_Menu_Item *mi, int radg)
    mi->menu->changed = 1;
 }
 
-EAPI void
+E_API void
 e_menu_item_toggle_set(E_Menu_Item *mi, int tog)
 {
    E_OBJECT_CHECK(mi);
@@ -921,7 +921,7 @@ e_menu_item_toggle_set(E_Menu_Item *mi, int tog)
      }
 }
 
-EAPI int
+E_API int
 e_menu_item_toggle_get(E_Menu_Item *mi)
 {
    E_OBJECT_CHECK_RETURN(mi, 0);
@@ -929,7 +929,7 @@ e_menu_item_toggle_get(E_Menu_Item *mi)
    return mi->toggle;
 }
 
-EAPI void
+E_API void
 e_menu_item_callback_set(E_Menu_Item *mi, void (*func)(void *data, E_Menu *m, E_Menu_Item *mi), const void *data)
 {
    E_OBJECT_CHECK(mi);
@@ -938,7 +938,7 @@ e_menu_item_callback_set(E_Menu_Item *mi, void (*func)(void *data, E_Menu *m, E_
    mi->cb.data = (void *)data;
 }
 
-EAPI void
+E_API void
 e_menu_item_realize_callback_set(E_Menu_Item *mi, void (*func)(void *data, E_Menu *m, E_Menu_Item *mi), void *data)
 {
    E_OBJECT_CHECK(mi);
@@ -947,7 +947,7 @@ e_menu_item_realize_callback_set(E_Menu_Item *mi, void (*func)(void *data, E_Men
    mi->realize_cb.data = data;
 }
 
-EAPI void
+E_API void
 e_menu_item_submenu_pre_callback_set(E_Menu_Item *mi, void (*func)(void *data, E_Menu *m, E_Menu_Item *mi), const void *data)
 {
    E_OBJECT_CHECK(mi);
@@ -958,7 +958,7 @@ e_menu_item_submenu_pre_callback_set(E_Menu_Item *mi, void (*func)(void *data, E
      mi->submenu_post_cb.func = _e_menu_cb_item_submenu_post_default;
 }
 
-EAPI void
+E_API void
 e_menu_item_submenu_post_callback_set(E_Menu_Item *mi, void (*func)(void *data, E_Menu *m, E_Menu_Item *mi), const void *data)
 {
    E_OBJECT_CHECK(mi);
@@ -967,7 +967,7 @@ e_menu_item_submenu_post_callback_set(E_Menu_Item *mi, void (*func)(void *data, 
    mi->submenu_post_cb.data = (void *)data;
 }
 
-EAPI void
+E_API void
 e_menu_item_drag_callback_set(E_Menu_Item *mi, void (*func)(void *data, E_Menu *m, E_Menu_Item *mi), void *data)
 {
    E_OBJECT_CHECK(mi);
@@ -976,7 +976,7 @@ e_menu_item_drag_callback_set(E_Menu_Item *mi, void (*func)(void *data, E_Menu *
    mi->drag_cb.data = data;
 }
 
-EAPI void
+E_API void
 e_menu_item_active_set(E_Menu_Item *mi, int active)
 {
    Eina_List *tmp = NULL;
@@ -1059,20 +1059,20 @@ e_menu_item_active_set(E_Menu_Item *mi, int active)
    _e_menu_list_free_unref(tmp);
 }
 
-EAPI E_Menu_Item *
+E_API E_Menu_Item *
 e_menu_item_active_get(void)
 {
    return _e_active_menu_item;
 }
 
-EAPI void
+E_API void
 e_menu_active_item_activate(void)
 {
    _e_menu_active_call();
    _e_menu_deactivate_all();
 }
 
-EAPI void
+E_API void
 e_menu_item_disabled_set(E_Menu_Item *mi, int disable)
 {
    E_OBJECT_CHECK(mi);
@@ -1101,7 +1101,7 @@ e_menu_item_disabled_set(E_Menu_Item *mi, int disable)
      }
 }
 
-EAPI void
+E_API void
 e_menu_idler_before(void)
 {
    /* when e goes "idle" this gets called so leave all our hard work till */
@@ -1217,7 +1217,7 @@ e_menu_idler_before(void)
      }
 }
 
-EAPI Ecore_Window
+E_API Ecore_Window
 e_menu_grab_window_get(void)
 {
    return _e_menu_win;

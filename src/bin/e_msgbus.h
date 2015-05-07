@@ -16,7 +16,7 @@ struct _E_Msgbus_Data
 
 EINTERN int e_msgbus_init(void);
 EINTERN int e_msgbus_shutdown(void);
-EAPI Eldbus_Service_Interface *e_msgbus_interface_attach(const Eldbus_Service_Interface_Desc *desc);
+E_API Eldbus_Service_Interface *e_msgbus_interface_attach(const Eldbus_Service_Interface_Desc *desc);
 
 #endif
 #endif

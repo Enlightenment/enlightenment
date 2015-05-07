@@ -31,7 +31,7 @@ static Eina_Bool need_xdg_icons = EINA_FALSE;
 
 static Ecore_Timer *next_timer = NULL;
 
-EAPI int
+E_API int
 e_wizard_init(void)
 {
    E_Comp *comp;
@@ -58,7 +58,7 @@ e_wizard_init(void)
    return 1;
 }
 
-EAPI int
+E_API int
 e_wizard_shutdown(void)
 {
    E_FREE_FUNC(pop, evas_object_del);
@@ -73,7 +73,7 @@ e_wizard_shutdown(void)
    return 1;
 }
 
-EAPI void
+E_API void
 e_wizard_go(void)
 {
    if (!curpage)
@@ -96,7 +96,7 @@ e_wizard_go(void)
      }
 }
 
-EAPI void
+E_API void
 e_wizard_apply(void)
 {
    E_Wizard_Page *pg;
@@ -105,7 +105,7 @@ e_wizard_apply(void)
      if (pg->apply) pg->apply(pg);
 }
 
-EAPI void
+E_API void
 e_wizard_next(void)
 {
    if (!curpage)
@@ -139,7 +139,7 @@ e_wizard_next(void)
    e_wizard_next();
 }
 
-EAPI void
+E_API void
 e_wizard_page_show(Evas_Object *obj)
 {
    if (o_content) evas_object_del(o_content);
@@ -157,7 +157,7 @@ e_wizard_page_show(Evas_Object *obj)
      }
 }
 
-EAPI E_Wizard_Page *
+E_API E_Wizard_Page *
 e_wizard_page_add(void *handle,
                   int (*init_cb)(E_Wizard_Page *pg, Eina_Bool *need_xdg_desktops, Eina_Bool *need_xdg_icons),
                   int (*shutdown_cb)(E_Wizard_Page *pg),
@@ -185,7 +185,7 @@ e_wizard_page_add(void *handle,
    return pg;
 }
 
-EAPI void
+E_API void
 e_wizard_page_del(E_Wizard_Page *pg)
 {
 // rare thing.. if we do e_wizard_next() from a page and we end up finishing
@@ -197,32 +197,32 @@ e_wizard_page_del(E_Wizard_Page *pg)
    free(pg);
 }
 
-EAPI void
+E_API void
 e_wizard_button_next_enable_set(int enable)
 {
    next_ok = enable;
    _e_wizard_next_eval();
 }
 
-EAPI void
+E_API void
 e_wizard_title_set(const char *title)
 {
    edje_object_part_text_set(o_bg, "e.text.title", title);
 }
 
-EAPI void
+E_API void
 e_wizard_labels_update(void)
 {
    edje_object_part_text_set(o_bg, "e.text.label", _("Next"));
 }
 
-EAPI const char *
+E_API const char *
 e_wizard_dir_get(void)
 {
    return e_module_dir_get(wiz_module);
 }
 
-EAPI void
+E_API void
 e_wizard_xdg_desktops_reset(void)
 {
    if (xdg_error) return;

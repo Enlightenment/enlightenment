@@ -37,7 +37,7 @@ e_color_class_node_find_stringshared(const char *name)
    return NULL;
 }
 
-EAPI E_Color_Class *
+E_API E_Color_Class *
 e_color_class_find_stringshared(const char *name)
 {
    Eina_List *l = e_color_class_node_find_stringshared(name);
@@ -45,7 +45,7 @@ e_color_class_find_stringshared(const char *name)
    return l->data;
 }
 
-EAPI E_Color_Class *
+E_API E_Color_Class *
 e_color_class_find(const char *name)
 {
    E_Color_Class *cc;
@@ -57,7 +57,7 @@ e_color_class_find(const char *name)
    return cc;
 }
 
-EAPI void
+E_API void
 e_color_class_instance_set(E_Color_Class *cc, int r, int g, int b, int a, int r2, int b2, int g2, int a2, int r3, int g3, int b3, int a3)
 {
    if (!cc) return;
@@ -82,7 +82,7 @@ e_color_class_instance_set(E_Color_Class *cc, int r, int g, int b, int a, int r2
    e_config_save_queue();
 }
 
-EAPI E_Color_Class *
+E_API E_Color_Class *
 e_color_class_set_stringshared(const char *color_class, int r, int g, int b, int a, int r2, int b2, int g2, int a2, int r3, int g3, int b3, int a3)
 {
    E_Color_Class *cc = e_color_class_find_stringshared(color_class);
@@ -104,7 +104,7 @@ e_color_class_set_stringshared(const char *color_class, int r, int g, int b, int
    return cc;
 }
 
-EAPI E_Color_Class *
+E_API E_Color_Class *
 e_color_class_set(const char *color_class, int r, int g, int b, int a, int r2, int b2, int g2, int a2, int r3, int g3, int b3, int a3)
 {
    E_Color_Class *cc;
@@ -131,7 +131,7 @@ e_color_class_node_del(Eina_List *n)
    e_config_save_queue();
 }
 
-EAPI void
+E_API void
 e_color_class_instance_del(E_Color_Class *cc)
 {
    Eina_List *n = eina_list_data_find_list(e_config->color_classes, cc);
@@ -139,7 +139,7 @@ e_color_class_instance_del(E_Color_Class *cc)
    e_color_class_node_del(n);
 }
 
-EAPI void
+E_API void
 e_color_class_del_stringshared(const char *name)
 {
    Eina_List *n = e_color_class_node_find_stringshared(name);
@@ -147,7 +147,7 @@ e_color_class_del_stringshared(const char *name)
    e_color_class_node_del(n);
 }
 
-EAPI void
+E_API void
 e_color_class_del(const char *name)
 {
    name = eina_stringshare_add(name);
@@ -155,7 +155,7 @@ e_color_class_del(const char *name)
    eina_stringshare_del(name);
 }
 
-EAPI Eina_List *
+E_API Eina_List *
 e_color_class_list(void)
 {
    return e_config->color_classes;

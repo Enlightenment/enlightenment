@@ -2,9 +2,9 @@
 #include <Ecore_Fb.h>
 #include <Ecore_Wayland.h>
 
-EAPI E_Module_Api e_modapi = { E_MODULE_API_VERSION, "Wl_FB" };
+E_API E_Module_Api e_modapi = { E_MODULE_API_VERSION, "Wl_FB" };
 
-EAPI void *
+E_API void *
 e_modapi_init(E_Module *m)
 {
    Ecore_Evas *ee;
@@ -47,7 +47,7 @@ e_modapi_init(E_Module *m)
    return m;
 }
 
-EAPI int 
+E_API int 
 e_modapi_shutdown(E_Module *m EINA_UNUSED)
 {
    /* shutdown ecore_x */

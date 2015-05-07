@@ -836,13 +836,13 @@ _clock_time_update(void *d __UNUSED__, int type __UNUSED__, void *event __UNUSED
 }
 
 /* module setup */
-EAPI E_Module_Api e_modapi =
+E_API E_Module_Api e_modapi =
 {
    E_MODULE_API_VERSION,
    "Clock"
 };
 
-EAPI void *
+E_API void *
 e_modapi_init(E_Module *m)
 {
    conf_item_edd = E_CONFIG_DD_NEW("Config_Item", Config_Item);
@@ -903,7 +903,7 @@ e_modapi_init(E_Module *m)
    return m;
 }
 
-EAPI int
+E_API int
 e_modapi_shutdown(E_Module *m __UNUSED__)
 {
    if (act)
@@ -950,7 +950,7 @@ e_modapi_shutdown(E_Module *m __UNUSED__)
    return 1;
 }
 
-EAPI int
+E_API int
 e_modapi_save(E_Module *m __UNUSED__)
 {
    e_config_domain_save("module.clock", conf_edd, clock_config);

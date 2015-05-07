@@ -434,7 +434,7 @@ _e_import_config_dialog_win_del(E_Win *win)
 
 ///////////////////////////////////////////////////////////////////////////////////
 
-EAPI E_Import_Config_Dialog *
+E_API E_Import_Config_Dialog *
 e_import_config_dialog_show(E_Comp *c, const char *path, Ecore_End_Cb ok, Ecore_Cb cancel)
 {
    Evas *evas;

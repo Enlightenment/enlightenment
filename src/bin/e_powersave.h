@@ -16,8 +16,8 @@ typedef struct _E_Event_Powersave_Update E_Event_Powersave_Update;
 #ifndef E_POWERSAVE_H
 #define E_POWERSAVE_H
 
-extern EAPI int E_EVENT_POWERSAVE_UPDATE;
-extern EAPI int E_EVENT_POWERSAVE_CONFIG_UPDATE;
+extern E_API int E_EVENT_POWERSAVE_UPDATE;
+extern E_API int E_EVENT_POWERSAVE_CONFIG_UPDATE;
 
 struct _E_Event_Powersave_Update
 {
@@ -27,10 +27,10 @@ struct _E_Event_Powersave_Update
 EINTERN int e_powersave_init(void);
 EINTERN int e_powersave_shutdown(void);
 
-EAPI E_Powersave_Deferred_Action *e_powersave_deferred_action_add(void (*func) (void *data), const void *data);
-EAPI void                         e_powersave_deferred_action_del(E_Powersave_Deferred_Action *pa);
-EAPI void                         e_powersave_mode_set(E_Powersave_Mode mode);
-EAPI E_Powersave_Mode             e_powersave_mode_get(void);
+E_API E_Powersave_Deferred_Action *e_powersave_deferred_action_add(void (*func) (void *data), const void *data);
+E_API void                         e_powersave_deferred_action_del(E_Powersave_Deferred_Action *pa);
+E_API void                         e_powersave_mode_set(E_Powersave_Mode mode);
+E_API E_Powersave_Mode             e_powersave_mode_get(void);
 
 /* FIXME: in the powersave system add things like pre-loading entire files
  * int memory for pre-caching to avoid disk spinup, when in an appropriate

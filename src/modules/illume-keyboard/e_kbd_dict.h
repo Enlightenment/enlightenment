@@ -44,18 +44,18 @@ struct _E_Kbd_Dict
 };
 
 
-EAPI E_Kbd_Dict *e_kbd_dict_new(const char *file);
-EAPI void e_kbd_dict_free(E_Kbd_Dict *kd);
-EAPI void e_kbd_dict_save(E_Kbd_Dict *kd);
-EAPI void e_kbd_dict_word_usage_adjust(E_Kbd_Dict *kd, const char *word, int adjust);
-EAPI void e_kbd_dict_word_delete(E_Kbd_Dict *kd, const char *word);
-EAPI void e_kbd_dict_word_letter_clear(E_Kbd_Dict *kd);
-EAPI void e_kbd_dict_word_letter_add(E_Kbd_Dict *kd, const char *letter, int dist);
-EAPI void e_kbd_dict_word_letter_advance(E_Kbd_Dict *kd);
-EAPI void e_kbd_dict_word_letter_delete(E_Kbd_Dict *kd);
-EAPI void e_kbd_dict_matches_lookup(E_Kbd_Dict *kd);
-EAPI void e_kbd_dict_matches_first(E_Kbd_Dict *kd);
-EAPI void e_kbd_dict_matches_next(E_Kbd_Dict *kd);
-EAPI const char *e_kbd_dict_matches_match_get(E_Kbd_Dict *kd, int *pri_ret);
+E_API E_Kbd_Dict *e_kbd_dict_new(const char *file);
+E_API void e_kbd_dict_free(E_Kbd_Dict *kd);
+E_API void e_kbd_dict_save(E_Kbd_Dict *kd);
+E_API void e_kbd_dict_word_usage_adjust(E_Kbd_Dict *kd, const char *word, int adjust);
+E_API void e_kbd_dict_word_delete(E_Kbd_Dict *kd, const char *word);
+E_API void e_kbd_dict_word_letter_clear(E_Kbd_Dict *kd);
+E_API void e_kbd_dict_word_letter_add(E_Kbd_Dict *kd, const char *letter, int dist);
+E_API void e_kbd_dict_word_letter_advance(E_Kbd_Dict *kd);
+E_API void e_kbd_dict_word_letter_delete(E_Kbd_Dict *kd);
+E_API void e_kbd_dict_matches_lookup(E_Kbd_Dict *kd);
+E_API void e_kbd_dict_matches_first(E_Kbd_Dict *kd);
+E_API void e_kbd_dict_matches_next(E_Kbd_Dict *kd);
+E_API const char *e_kbd_dict_matches_match_get(E_Kbd_Dict *kd, int *pri_ret);
 
 #endif

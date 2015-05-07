@@ -35,21 +35,21 @@ static void _e_smart_init(void);
 static Evas_Smart *_e_smart = NULL;
 
 /* externally accessible functions */
-EAPI Evas_Object *
+E_API Evas_Object *
 e_livethumb_add(Evas *e)
 {
    _e_smart_init();
    return evas_object_smart_add(e, _e_smart);
 }
 
-EAPI Evas *
+E_API Evas *
 e_livethumb_evas_get(Evas_Object *obj)
 {
    API_ENTRY return NULL;
    return sd->evas;
 }
 
-EAPI void
+E_API void
 e_livethumb_vsize_set(Evas_Object *obj, Evas_Coord w, Evas_Coord h)
 {
    API_ENTRY return;
@@ -60,7 +60,7 @@ e_livethumb_vsize_set(Evas_Object *obj, Evas_Coord w, Evas_Coord h)
    if (sd->thumb_obj) evas_object_resize(sd->thumb_obj, sd->vw, sd->vh);
 }
 
-EAPI void
+E_API void
 e_livethumb_vsize_get(Evas_Object *obj, Evas_Coord *w, Evas_Coord *h)
 {
    API_ENTRY return;
@@ -76,7 +76,7 @@ _e_livethumb_edje_preloaded(void *data EINA_UNUSED, Evas_Object *obj,
    evas_object_show(obj);
 }
 
-EAPI void
+E_API void
 e_livethumb_thumb_set(Evas_Object *obj, Evas_Object *thumb)
 {
    API_ENTRY return;
@@ -101,7 +101,7 @@ e_livethumb_thumb_set(Evas_Object *obj, Evas_Object *thumb)
    evas_object_resize(sd->thumb_obj, sd->vw, sd->vh);
 }
 
-EAPI Evas_Object *
+E_API Evas_Object *
 e_livethumb_thumb_get(Evas_Object *obj)
 {
    API_ENTRY return NULL;

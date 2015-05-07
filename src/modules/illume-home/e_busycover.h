@@ -18,9 +18,9 @@ struct _E_Busycover_Handle
    const char *msg, *icon;
 };
 
-EAPI E_Busycover *e_busycover_new(E_Win *win);
-EAPI E_Busycover_Handle *e_busycover_push(E_Busycover *cover, const char *msg, const char *icon);
-EAPI void e_busycover_pop(E_Busycover *cover, E_Busycover_Handle *handle);
-EAPI void e_busycover_resize(E_Busycover *cover, int w, int h);
+E_API E_Busycover *e_busycover_new(E_Win *win);
+E_API E_Busycover_Handle *e_busycover_push(E_Busycover *cover, const char *msg, const char *icon);
+E_API void e_busycover_pop(E_Busycover *cover, E_Busycover_Handle *handle);
+E_API void e_busycover_resize(E_Busycover *cover, int w, int h);
 
 #endif

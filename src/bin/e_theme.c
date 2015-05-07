@@ -29,7 +29,7 @@ e_theme_shutdown(void)
    return 1;
 }
 
-EAPI Eina_List *
+E_API Eina_List *
 e_theme_collection_items_find(const char *base EINA_UNUSED, const char *collname)
 {
    Eina_List *list, *list2 = NULL, *l;
@@ -58,7 +58,7 @@ e_theme_collection_items_find(const char *base EINA_UNUSED, const char *collname
    return list2;
 }
 
-EAPI int
+E_API int
 e_theme_edje_object_set(Evas_Object *o, const char *category EINA_UNUSED, const char *group)
 {
    const char *file;
@@ -69,7 +69,7 @@ e_theme_edje_object_set(Evas_Object *o, const char *category EINA_UNUSED, const 
    return 1;
 }
 
-EAPI const char *
+E_API const char *
 e_theme_edje_file_get(const char *category EINA_UNUSED, const char *group)
 {
    const char *file = elm_theme_group_path_find(NULL, group);
@@ -77,7 +77,7 @@ e_theme_edje_file_get(const char *category EINA_UNUSED, const char *group)
    return file;
 }
 
-EAPI const char *
+E_API const char *
 e_theme_edje_icon_fallback_file_get(const char *group)
 {
    const char *file;
@@ -88,7 +88,7 @@ e_theme_edje_icon_fallback_file_get(const char *group)
    return file;
 }
 
-EAPI int
+E_API int
 e_theme_transition_find(const char *transition)
 {
    Eina_List *trans = NULL;
@@ -102,13 +102,13 @@ e_theme_transition_find(const char *transition)
    return found;
 }
 
-EAPI Eina_List *
+E_API Eina_List *
 e_theme_transition_list(void)
 {
    return e_theme_collection_items_find(NULL, "e/transitions");
 }
 
-EAPI int
+E_API int
 e_theme_border_find(const char *border)
 {
    Eina_List *bds = NULL;
@@ -122,13 +122,13 @@ e_theme_border_find(const char *border)
    return found;
 }
 
-EAPI Eina_List *
+E_API Eina_List *
 e_theme_border_list(void)
 {
    return e_theme_collection_items_find(NULL, "e/widgets/border");
 }
 
-EAPI int
+E_API int
 e_theme_shelf_find(const char *shelf)
 {
    Eina_List *shelfs = NULL;
@@ -142,13 +142,13 @@ e_theme_shelf_find(const char *shelf)
    return found;
 }
 
-EAPI Eina_List *
+E_API Eina_List *
 e_theme_shelf_list(void)
 {
    return e_theme_collection_items_find(NULL, "e/shelf");
 }
 
-EAPI int
+E_API int
 e_theme_comp_frame_find(const char *comp)
 {
    Eina_List *comps = NULL;
@@ -162,7 +162,7 @@ e_theme_comp_frame_find(const char *comp)
    return found;
 }
 
-EAPI Eina_List *
+E_API Eina_List *
 e_theme_comp_frame_list(void)
 {
    return e_theme_collection_items_find(NULL, "e/comp/frame");

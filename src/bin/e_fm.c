@@ -886,7 +886,7 @@ e_fm2_shutdown(void)
    return 1;
 }
 
-EAPI Evas_Object *
+E_API Evas_Object *
 e_fm2_add(Evas *evas)
 {
    return evas_object_smart_add(evas, _e_fm2_smart);
@@ -1020,7 +1020,7 @@ _e_fm2_thread_cleanup_cb(void *d __UNUSED__, Ecore_Thread *et __UNUSED__)
    _e_fm2_favorites_thread = NULL;
 }
 
-EAPI void
+E_API void
 e_fm2_path_set(Evas_Object *obj, const char *dev, const char *path)
 {
    const char *real_path;
@@ -1162,49 +1162,49 @@ e_fm2_path_set(Evas_Object *obj, const char *dev, const char *path)
    sd->tmp.iter = EINA_FALSE;
 }
 
-EAPI void
+E_API void
 e_fm2_underlay_show(Evas_Object *obj)
 {
    EFM_SMART_CHECK();
    evas_object_show(sd->underlay);
 }
 
-EAPI void
+E_API void
 e_fm2_underlay_hide(Evas_Object *obj)
 {
    EFM_SMART_CHECK();
    evas_object_hide(sd->underlay);
 }
 
-EAPI void
+E_API void
 e_fm2_all_unsel(Evas_Object *obj)
 {
    EFM_SMART_CHECK();
    _e_fm2_icon_desel_any(obj);
 }
 
-EAPI void
+E_API void
 e_fm2_all_sel(Evas_Object *obj)
 {
    EFM_SMART_CHECK();
    _e_fm2_icon_sel_any(obj);
 }
 
-EAPI void
+E_API void
 e_fm2_first_sel(Evas_Object *obj)
 {
    EFM_SMART_CHECK();
    _e_fm2_icon_sel_first(obj, EINA_FALSE);
 }
 
-EAPI void
+E_API void
 e_fm2_last_sel(Evas_Object *obj)
 {
    EFM_SMART_CHECK();
    _e_fm2_icon_sel_last(obj, EINA_FALSE);
 }
 
-EAPI void
+E_API void
 e_fm2_custom_theme_set(Evas_Object *obj, const char *path)
 {
    EFM_SMART_CHECK();
@@ -1219,7 +1219,7 @@ e_fm2_custom_theme_set(Evas_Object *obj, const char *path)
                                 "rubberband");
 }
 
-EAPI void
+E_API void
 e_fm2_custom_theme_content_set(Evas_Object *obj, const char *content)
 {
    EFM_SMART_CHECK();
@@ -1232,7 +1232,7 @@ e_fm2_custom_theme_content_set(Evas_Object *obj, const char *content)
                                 "overlay");
 }
 
-EAPI void
+E_API void
 e_fm2_path_get(Evas_Object *obj, const char **dev, const char **path)
 {
    if (dev) *dev = NULL;
@@ -1399,7 +1399,7 @@ _e_fm2_dir_save_props(E_Fm2_Smart_Data *sd)
    e_fm2_custom_file_flush();
 }
 
-EAPI void
+E_API void
 e_fm2_refresh(Evas_Object *obj)
 {
    EFM_SMART_CHECK();
@@ -1425,7 +1425,7 @@ e_fm2_refresh(Evas_Object *obj)
    sd->tmp.iter = EINA_FALSE;
 }
 
-EAPI int
+E_API int
 e_fm2_has_parent_get(Evas_Object *obj)
 {
    EFM_SMART_CHECK(0);
@@ -1436,14 +1436,14 @@ e_fm2_has_parent_get(Evas_Object *obj)
    return 1;
 }
 
-EAPI const char *
+E_API const char *
 e_fm2_real_path_get(Evas_Object *obj)
 {
    EFM_SMART_CHECK(NULL);
    return sd->realpath;
 }
 
-EAPI void
+E_API void
 e_fm2_parent_go(Evas_Object *obj)
 {
    char *p, *path;
@@ -1461,7 +1461,7 @@ e_fm2_parent_go(Evas_Object *obj)
      }
 }
 
-EAPI void
+E_API void
 e_fm2_config_set(Evas_Object *obj, E_Fm2_Config *cfg)
 {
    EFM_SMART_CHECK();
@@ -1478,14 +1478,14 @@ e_fm2_config_set(Evas_Object *obj, E_Fm2_Config *cfg)
    sd->config->theme.icons = eina_stringshare_add(cfg->theme.icons);
 }
 
-EAPI E_Fm2_Config *
+E_API E_Fm2_Config *
 e_fm2_config_get(Evas_Object *obj)
 {
    EFM_SMART_CHECK(NULL);
    return sd->config;
 }
 
-EAPI Eina_List *
+E_API Eina_List *
 e_fm2_selected_list_get(Evas_Object *obj)
 {
    Eina_List *list = NULL, *l;
@@ -1497,7 +1497,7 @@ e_fm2_selected_list_get(Evas_Object *obj)
    return list;
 }
 
-EAPI Eina_List *
+E_API Eina_List *
 e_fm2_all_list_get(Evas_Object *obj)
 {
    Eina_List *list = NULL, *l;
@@ -1511,14 +1511,14 @@ e_fm2_all_list_get(Evas_Object *obj)
    return list;
 }
 
-EAPI void
+E_API void
 e_fm2_deselect_all(Evas_Object *obj)
 {
    EFM_SMART_CHECK();
    _e_fm2_icon_desel_any(obj);
 }
 
-EAPI void
+E_API void
 e_fm2_select_set(Evas_Object *obj, const char *file, int select_)
 {
    Eina_List *l;
@@ -1541,7 +1541,7 @@ e_fm2_select_set(Evas_Object *obj, const char *file, int select_)
      }
 }
 
-EAPI void
+E_API void
 e_fm2_file_show(Evas_Object *obj, const char *file)
 {
    Eina_List *l;
@@ -1558,7 +1558,7 @@ e_fm2_file_show(Evas_Object *obj, const char *file)
      }
 }
 
-EAPI void
+E_API void
 e_fm2_icon_menu_replace_callback_set(Evas_Object *obj, E_Fm_Cb func, void *data)
 {
    EFM_SMART_CHECK();
@@ -1566,7 +1566,7 @@ e_fm2_icon_menu_replace_callback_set(Evas_Object *obj, E_Fm_Cb func, void *data)
    sd->icon_menu.replace.data = data;
 }
 
-EAPI void
+E_API void
 e_fm2_icon_menu_start_extend_callback_set(Evas_Object *obj, E_Fm_Cb func, void *data)
 {
    EFM_SMART_CHECK();
@@ -1574,7 +1574,7 @@ e_fm2_icon_menu_start_extend_callback_set(Evas_Object *obj, E_Fm_Cb func, void *
    sd->icon_menu.start.data = data;
 }
 
-EAPI void
+E_API void
 e_fm2_icon_menu_end_extend_callback_set(Evas_Object *obj, E_Fm_Cb func, void *data)
 {
    EFM_SMART_CHECK();
@@ -1582,42 +1582,42 @@ e_fm2_icon_menu_end_extend_callback_set(Evas_Object *obj, E_Fm_Cb func, void *da
    sd->icon_menu.end.data = data;
 }
 
-EAPI void
+E_API void
 e_fm2_icon_menu_flags_set(Evas_Object *obj, E_Fm2_Menu_Flags flags)
 {
    EFM_SMART_CHECK();
    sd->icon_menu.flags = flags;
 }
 
-EAPI E_Fm2_Menu_Flags
+E_API E_Fm2_Menu_Flags
 e_fm2_icon_menu_flags_get(Evas_Object *obj)
 {
    EFM_SMART_CHECK(0);
    return sd->icon_menu.flags;
 }
 
-EAPI void
+E_API void
 e_fm2_view_flags_set(Evas_Object *obj, E_Fm2_View_Flags flags)
 {
    EFM_SMART_CHECK();
    sd->view_flags = flags;
 }
 
-EAPI E_Fm2_View_Flags
+E_API E_Fm2_View_Flags
 e_fm2_view_flags_get(Evas_Object *obj)
 {
    EFM_SMART_CHECK(0);
    return sd->view_flags;
 }
 
-EAPI E_Object *
+E_API E_Object *
 e_fm2_window_object_get(Evas_Object *obj)
 {
    EFM_SMART_CHECK(NULL);
    return sd->eobj;
 }
 
-EAPI void
+E_API void
 e_fm2_window_object_set(Evas_Object *obj, E_Object *eobj)
 {
    const char *drop[] = {"text/uri-list", "text/x-moz-url", "XdndDirectSave0"};
@@ -1698,14 +1698,14 @@ _e_fm2_icons_update_helper(E_Fm2_Smart_Data *sd, Eina_Bool icon_only)
    e_fm2_custom_file_flush();
 }
 
-EAPI void
+E_API void
 e_fm2_icons_update(Evas_Object *obj)
 {
    EFM_SMART_CHECK();
    _e_fm2_icons_update_helper(sd, EINA_FALSE);
 }
 
-EAPI void
+E_API void
 e_fm2_pan_set(Evas_Object *obj, Evas_Coord x, Evas_Coord y)
 {
    EFM_SMART_CHECK();
@@ -1720,7 +1720,7 @@ e_fm2_pan_set(Evas_Object *obj, Evas_Coord x, Evas_Coord y)
    sd->scroll_job = ecore_job_add(_e_fm2_cb_scroll_job, obj);
 }
 
-EAPI void
+E_API void
 e_fm2_pan_get(Evas_Object *obj, Evas_Coord *x, Evas_Coord *y)
 {
    EFM_SMART_CHECK();
@@ -1728,7 +1728,7 @@ e_fm2_pan_get(Evas_Object *obj, Evas_Coord *x, Evas_Coord *y)
    if (y) *y = sd->pos.y;
 }
 
-EAPI void
+E_API void
 e_fm2_pan_max_get(Evas_Object *obj, Evas_Coord *x, Evas_Coord *y)
 {
    Evas_Coord mx, my;
@@ -1741,7 +1741,7 @@ e_fm2_pan_max_get(Evas_Object *obj, Evas_Coord *x, Evas_Coord *y)
    if (y) *y = my;
 }
 
-EAPI void
+E_API void
 e_fm2_pan_child_size_get(Evas_Object *obj, Evas_Coord *w, Evas_Coord *h)
 {
    EFM_SMART_CHECK();
@@ -1749,7 +1749,7 @@ e_fm2_pan_child_size_get(Evas_Object *obj, Evas_Coord *w, Evas_Coord *h)
    if (h) *h = sd->max.h;
 }
 
-EAPI void
+E_API void
 e_fm2_all_icons_update(void)
 {
    Evas_Object *o;
@@ -2229,7 +2229,7 @@ _e_fm2_icon_discover_get(Evas *evas, const E_Fm2_Icon *ic, Evas_Smart_Cb gen_fun
  * @param force_gen force thumbnail generation.
  * @param type_ret string that identifies type of icon.
  */
-EAPI Evas_Object *
+E_API Evas_Object *
 e_fm2_icon_get(Evas *evas, E_Fm2_Icon *ic,
                Evas_Smart_Cb gen_func,
                void *data, int force_gen, const char **type_ret)
@@ -2315,14 +2315,14 @@ e_fm2_icon_get(Evas *evas, E_Fm2_Icon *ic,
    return _e_fm2_icon_explicit_theme_get(evas, ic, "text/plain", type_ret);
 }
 
-EAPI E_Fm2_Icon_Info *
+E_API E_Fm2_Icon_Info *
 e_fm2_icon_file_info_get(E_Fm2_Icon *ic)
 {
    if (!ic) return NULL;
    return &(ic->info);
 }
 
-EAPI void
+E_API void
 e_fm2_icon_geometry_get(E_Fm2_Icon *ic, int *x, int *y, int *w, int *h)
 {
    int xx, yy, ww, hh;
@@ -2543,7 +2543,7 @@ _e_fm2_client_file_mkdir(const char *path, const char *rel, int rel_to, int x, i
 
 #endif
 
-EAPI int
+E_API int
 e_fm2_client_file_move(Evas_Object *e_fm, const char *args)
 {
    int id;
@@ -2554,7 +2554,7 @@ e_fm2_client_file_move(Evas_Object *e_fm, const char *args)
    return id;
 }
 
-EAPI int
+E_API int
 e_fm2_client_file_copy(Evas_Object *e_fm, const char *args)
 {
    int id = _e_fm_client_send_new(E_FM_OP_COPY, (void *)args, strlen(args) + 1);
@@ -2562,7 +2562,7 @@ e_fm2_client_file_copy(Evas_Object *e_fm, const char *args)
    return id;
 }
 
-EAPI int
+E_API int
 e_fm2_client_file_symlink(Evas_Object *e_fm, const char *args)
 {
    int id = _e_fm_client_send_new(E_FM_OP_SYMLINK, (void *)args, strlen(args) + 1);
@@ -2570,7 +2570,7 @@ e_fm2_client_file_symlink(Evas_Object *e_fm, const char *args)
    return id;
 }
 
-EAPI int
+E_API int
 _e_fm2_client_mount(const char *udi, const char *mountpoint)
 {
    char *d;
@@ -2595,7 +2595,7 @@ _e_fm2_client_mount(const char *udi, const char *mountpoint)
    return _e_fm_client_send_new(E_FM_OP_MOUNT, (void *)d, l);
 }
 
-EAPI int
+E_API int
 _e_fm2_client_unmount(const char *udi)
 {
    char *d;
@@ -2614,7 +2614,7 @@ _e_fm2_client_unmount(const char *udi)
    return _e_fm_client_send_new(E_FM_OP_UNMOUNT, (void *)d, l);
 }
 
-EAPI int
+E_API int
 _e_fm2_client_eject(const char *udi)
 {
    char *data;
@@ -2668,7 +2668,7 @@ _e_fm2_client_monitor_list_end(Evas_Object *obj)
    _e_fm2_live_process_begin(obj);
 }
 
-EAPI void
+E_API void
 _e_fm2_file_force_update(const char *path)
 {
    Evas_Object *o;
@@ -2708,7 +2708,7 @@ _e_fm2_file_force_update(const char *path)
    free(dir);
 }
 
-EAPI void
+E_API void
 e_fm2_client_data(Ecore_Ipc_Event_Client_Data *e)
 {
    Evas_Object *obj;
@@ -3215,7 +3215,7 @@ e_fm2_client_data(Ecore_Ipc_Event_Client_Data *e)
      }
 }
 
-EAPI void
+E_API void
 e_fm2_client_del(Ecore_Ipc_Event_Client_Del *e)
 {
    Eina_List *l;
@@ -5132,7 +5132,7 @@ _e_fm2_icon_desktop_url_eval(const char *val)
    return s;
 }
 
-EAPI const char *
+E_API const char *
 e_fm2_desktop_url_eval(const char *val)
 {
    return _e_fm2_icon_desktop_url_eval(val);
@@ -11508,7 +11508,7 @@ _e_fm2_operation_abort_internal(E_Fm2_Op_Registry_Entry *ere)
    _e_fm_client_send(E_FM_OP_ABORT, ere->id, NULL, 0);
 }
 
-EAPI void
+E_API void
 e_fm2_operation_abort(int id)
 {
    E_Fm2_Op_Registry_Entry *ere;
@@ -11521,7 +11521,7 @@ e_fm2_operation_abort(int id)
    e_fm2_op_registry_entry_unref(ere);
 }
 
-EAPI Eina_Bool
+E_API Eina_Bool
 e_fm2_optimal_size_calc(Evas_Object *obj, int minw, int maxw, int maxh, int *w, int *h)
 {
    int x, y, step_w, step_h;
@@ -11559,28 +11559,28 @@ e_fm2_optimal_size_calc(Evas_Object *obj, int minw, int maxw, int maxh, int *w, 
    return EINA_TRUE;
 }
 
-EAPI E_Fm2_View_Mode
+E_API E_Fm2_View_Mode
 e_fm2_view_mode_get(Evas_Object *obj)
 {
    EFM_SMART_CHECK(0);
    return _e_fm2_view_mode_get(sd);
 }
 
-EAPI Eina_Bool
+E_API Eina_Bool
 e_fm2_typebuf_visible_get(Evas_Object *obj)
 {
    EFM_SMART_CHECK(EINA_FALSE);
    return sd->typebuf_visible;
 }
 
-EAPI void
+E_API void
 e_fm2_typebuf_clear(Evas_Object *obj)
 {
    EFM_SMART_CHECK();
    _e_fm2_typebuf_hide(obj);
 }
 
-EAPI void
+E_API void
 e_fm2_overlay_clip_to(Evas_Object *obj, Evas_Object *clip)
 {
    int x, y, w, h;
@@ -11608,13 +11608,13 @@ e_fm2_overlay_clip_to(Evas_Object *obj, Evas_Object *clip)
      }
 }
 
-EAPI const char *
+E_API const char *
 e_fm2_real_path_map(const char *dev, const char *path)
 {
    return _e_fm2_dev_path_map(NULL, dev, path);
 }
 
-EAPI void
+E_API void
 e_fm2_favorites_init(void)
 {
    Eina_List *files;
@@ -11637,21 +11637,21 @@ e_fm2_favorites_init(void)
      }
 }
 
-EAPI unsigned int
+E_API unsigned int
 e_fm2_selected_count(Evas_Object *obj)
 {
    EFM_SMART_CHECK(0);
    return eina_list_count(sd->selected_icons);
 }
 
-EAPI E_Fm2_Icon_Info *
+E_API E_Fm2_Icon_Info *
 e_fm2_drop_icon_get(Evas_Object *obj)
 {
    EFM_SMART_CHECK(NULL);
    return sd->drop_icon ? &sd->drop_icon->info : NULL;
 }
 
-EAPI Eina_List *
+E_API Eina_List *
 e_fm2_uri_path_list_get(const Eina_List *uri_list)
 {
    E_Fm2_Uri *uri;
@@ -11683,7 +11683,7 @@ e_fm2_uri_path_list_get(const Eina_List *uri_list)
    return path_list;
 }
 
-EAPI Efreet_Desktop *
+E_API Efreet_Desktop *
 e_fm2_desktop_get(Evas_Object *obj)
 {
    EFM_SMART_CHECK(NULL);
@@ -11691,7 +11691,7 @@ e_fm2_desktop_get(Evas_Object *obj)
    return sd->desktop;
 }
 
-EAPI void
+E_API void
 e_fm2_drop_menu(Evas_Object *obj, char *args)
 {
    E_Menu *menu;

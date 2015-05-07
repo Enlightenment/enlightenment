@@ -1,9 +1,9 @@
 #include "e.h"
 /* #include <Ecore_Drm.h> */
 
-EAPI E_Module_Api e_modapi = { E_MODULE_API_VERSION, "Wl_Drm" };
+E_API E_Module_Api e_modapi = { E_MODULE_API_VERSION, "Wl_Drm" };
 
-EAPI void *
+E_API void *
 e_modapi_init(E_Module *m)
 {
    E_Comp *comp;
@@ -89,7 +89,7 @@ e_modapi_init(E_Module *m)
    return m;
 }
 
-EAPI int 
+E_API int 
 e_modapi_shutdown(E_Module *m EINA_UNUSED)
 {
    /* shutdown ecore_drm */

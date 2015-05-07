@@ -32,13 +32,13 @@ e_env_shutdown(void)
    return 1;
 }
 
-EAPI void
+E_API void
 e_env_set(const char *var, const char *val)
 {
    e_util_env_set(var, val);
 }
 
-EAPI void
+E_API void
 e_env_unset(const char *var)
 {
    e_util_env_set(var, NULL);

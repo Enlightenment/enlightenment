@@ -101,7 +101,7 @@ _e_grab_dialog_dia_del(void *data)
    e_object_del(dia->data);
 }
 
-EAPI E_Grab_Dialog *
+E_API E_Grab_Dialog *
 e_grab_dialog_show(E_Win *parent, Eina_Bool is_mouse, Ecore_Event_Handler_Cb key, Ecore_Event_Handler_Cb mouse, Ecore_Event_Handler_Cb wheel, const void *data)
 {
    E_Comp *c = NULL;

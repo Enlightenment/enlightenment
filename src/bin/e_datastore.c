@@ -6,7 +6,7 @@
 static Eina_Hash *store = NULL;
 
 /* externally accessible functions */
-EAPI void
+E_API void
 e_datastore_set(char *key, void *data)
 {
    if (!store) store = eina_hash_string_superfast_new(NULL);
@@ -14,13 +14,13 @@ e_datastore_set(char *key, void *data)
    eina_hash_add(store, key, data);
 }
 
-EAPI void *
+E_API void *
 e_datastore_get(char *key)
 {
    return eina_hash_find(store, key);
 }
 
-EAPI void
+E_API void
 e_datastore_del(char *key)
 {
    eina_hash_del(store, key, NULL);

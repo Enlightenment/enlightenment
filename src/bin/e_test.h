@@ -3,7 +3,7 @@
 #ifndef E_TEST_H
 #define E_TEST_H
 
-EAPI void e_test(void);
+E_API void e_test(void);
 
 #endif
 #endif

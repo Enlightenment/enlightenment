@@ -77,12 +77,12 @@ struct _E_Randr
 EINTERN Eina_Bool e_randr_init(void);
 EINTERN int e_randr_shutdown(void);
 
-EAPI Eina_Bool e_randr_config_save(void);
-EAPI void      e_randr_config_apply(void);
-EAPI double    e_randr_mode_refresh_rate_get(Ecore_X_Randr_Mode_Info *mode);
+E_API Eina_Bool e_randr_config_save(void);
+E_API void      e_randr_config_apply(void);
+E_API double    e_randr_mode_refresh_rate_get(Ecore_X_Randr_Mode_Info *mode);
 
-extern EAPI E_Config_Randr *e_randr_cfg;
-extern EAPI E_Randr *e_randr;
+extern E_API E_Config_Randr *e_randr_cfg;
+extern E_API E_Randr *e_randr;
 
 # endif
 #endif

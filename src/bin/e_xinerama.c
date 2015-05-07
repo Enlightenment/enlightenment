@@ -21,28 +21,28 @@ e_xinerama_shutdown(void)
    return 1;
 }
 
-EAPI void
+E_API void
 e_xinerama_update(void)
 {
    _e_xinerama_clean();
    _e_xinerama_update();
 }
 
-EAPI const Eina_List *
+E_API const Eina_List *
 e_xinerama_screens_get(void)
 {
    if (fake_screens) return fake_screens;
    return chosen_screens;
 }
 
-EAPI const Eina_List *
+E_API const Eina_List *
 e_xinerama_screens_all_get(void)
 {
    if (fake_screens) return fake_screens;
    return all_screens;
 }
 
-EAPI void
+E_API void
 e_xinerama_screens_set(Eina_List *screens)
 {
    E_FREE_LIST(all_screens, free);
@@ -51,7 +51,7 @@ e_xinerama_screens_set(Eina_List *screens)
    _e_xinerama_update();
 }
 
-EAPI void
+E_API void
 e_xinerama_fake_screen_add(int x, int y, int w, int h)
 {
    E_Screen *scr;
@@ -66,7 +66,7 @@ e_xinerama_fake_screen_add(int x, int y, int w, int h)
    fake_screens = eina_list_append(fake_screens, scr);
 }
 
-EAPI Eina_Bool
+E_API Eina_Bool
 e_xinerama_fake_screens_exist(void)
 {
    return !!fake_screens;

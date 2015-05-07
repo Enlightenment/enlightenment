@@ -15,7 +15,7 @@ typedef struct _E_Bg_Image_Import_Handle E_Bg_Image_Import_Handle;
 #ifndef E_BG_H
 #define E_BG_H
 
-extern EAPI int E_EVENT_BG_UPDATE;
+extern E_API int E_EVENT_BG_UPDATE;
 
 struct _E_Event_Bg_Update
 {
@@ -28,16 +28,16 @@ struct _E_Event_Bg_Update
 EINTERN int e_bg_init(void);
 EINTERN int e_bg_shutdown(void);
 
-EAPI const E_Config_Desktop_Background *e_bg_config_get(int manager_num, int zone_num, int desk_x, int desk_y);
-EAPI Eina_Stringshare *e_bg_file_get(int manager_num, int zone_num,  int desk_x, int desk_y);
-EAPI void e_bg_zone_update(E_Zone *zone, E_Bg_Transition transition);
-EAPI void e_bg_add(int manager, int zone, int desk_x, int desk_y, const char *file);
-EAPI void e_bg_del(int manager, int zone, int desk_x, int desk_y);
-EAPI void e_bg_default_set(const char *file);
-EAPI void e_bg_update(void);
+E_API const E_Config_Desktop_Background *e_bg_config_get(int manager_num, int zone_num, int desk_x, int desk_y);
+E_API Eina_Stringshare *e_bg_file_get(int manager_num, int zone_num,  int desk_x, int desk_y);
+E_API void e_bg_zone_update(E_Zone *zone, E_Bg_Transition transition);
+E_API void e_bg_add(int manager, int zone, int desk_x, int desk_y, const char *file);
+E_API void e_bg_del(int manager, int zone, int desk_x, int desk_y);
+E_API void e_bg_default_set(const char *file);
+E_API void e_bg_update(void);
 
-EAPI E_Bg_Image_Import_Handle *e_bg_image_import_new(const char *image_file, void (*cb)(void *data, const char *edje_file), const void *data);
-EAPI void                      e_bg_image_import_cancel(E_Bg_Image_Import_Handle *handle);
+E_API E_Bg_Image_Import_Handle *e_bg_image_import_new(const char *image_file, void (*cb)(void *data, const char *edje_file), const void *data);
+E_API void                      e_bg_image_import_cancel(E_Bg_Image_Import_Handle *handle);
 
 #endif
 #endif

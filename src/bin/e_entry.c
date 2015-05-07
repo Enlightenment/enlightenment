@@ -61,7 +61,7 @@ static int _e_entry_smart_use = 0;
  * @param evas the evas where the entry object should be added
  * @return Returns the new entry object
  */
-EAPI Evas_Object *
+E_API Evas_Object *
 e_entry_add(Evas *evas)
 {
    if (!_e_entry_smart)
@@ -101,7 +101,7 @@ e_entry_add(Evas *evas)
  * @param entry an entry object
  * @param text the text to set
  */
-EAPI void
+E_API void
 e_entry_text_set(Evas_Object *entry, const char *_text)
 {
    E_Entry_Smart_Data *sd;
@@ -139,7 +139,7 @@ e_entry_text_set(Evas_Object *entry, const char *_text)
  * @param entry an entry object
  * @return Returns the text of the entry object
  */
-EAPI const char *
+E_API const char *
 e_entry_text_get(Evas_Object *entry)
 {
    E_Entry_Smart_Data *sd;
@@ -164,7 +164,7 @@ e_entry_text_get(Evas_Object *entry)
  *
  * @param entry an entry object
  */
-EAPI void
+E_API void
 e_entry_clear(Evas_Object *entry)
 {
    if (evas_object_smart_smart_get(entry) != _e_entry_smart) SMARTERRNR();
@@ -176,7 +176,7 @@ e_entry_clear(Evas_Object *entry)
  *
  * @param entry an entry object
  */
-EAPI void
+E_API void
 e_entry_select_all(Evas_Object *entry)
 {
    E_Entry_Smart_Data *sd;
@@ -195,7 +195,7 @@ e_entry_select_all(Evas_Object *entry)
  * @param entry an entry object
  * @param password_mode 1 to turn on password mode, 0 to turn it off
  */
-EAPI void
+E_API void
 e_entry_password_set(Evas_Object *entry, int password_mode)
 {
    E_Entry_Smart_Data *sd;
@@ -239,7 +239,7 @@ e_entry_password_set(Evas_Object *entry, int password_mode)
  * @param minw the location where to store the minimun width of the entry
  * @param minh the location where to store the minimun height of the entry
  */
-EAPI void
+E_API void
 e_entry_size_min_get(Evas_Object *entry, Evas_Coord *minw, Evas_Coord *minh)
 {
    E_Entry_Smart_Data *sd;
@@ -261,7 +261,7 @@ e_entry_size_min_get(Evas_Object *entry, Evas_Coord *minw, Evas_Coord *minh)
  *
  * @param entry the entry to focus
  */
-EAPI void
+E_API void
 e_entry_focus(Evas_Object *entry)
 {
    E_Entry_Smart_Data *sd;
@@ -290,7 +290,7 @@ e_entry_focus(Evas_Object *entry)
  *
  * @param entry the entry object to unfocus
  */
-EAPI void
+E_API void
 e_entry_unfocus(Evas_Object *entry)
 {
    E_Entry_Smart_Data *sd;
@@ -313,7 +313,7 @@ e_entry_unfocus(Evas_Object *entry)
  *
  * @param entry the entry object to enable
  */
-EAPI void
+E_API void
 e_entry_enable(Evas_Object *entry)
 {
    E_Entry_Smart_Data *sd;
@@ -338,7 +338,7 @@ e_entry_enable(Evas_Object *entry)
  *
  * @param entry the entry object to disable
  */
-EAPI void
+E_API void
 e_entry_disable(Evas_Object *entry)
 {
    E_Entry_Smart_Data *sd;
@@ -361,7 +361,7 @@ e_entry_disable(Evas_Object *entry)
  *
  * @param entry the entry object to enable
  */
-EAPI void
+E_API void
 e_entry_edit(Evas_Object *entry)
 {
    E_Entry_Smart_Data *sd;
@@ -389,7 +389,7 @@ e_entry_edit(Evas_Object *entry)
  *
  * @param entry the entry object to disable
  */
-EAPI void
+E_API void
 e_entry_noedit(Evas_Object *entry)
 {
    E_Entry_Smart_Data *sd;
@@ -410,7 +410,7 @@ e_entry_noedit(Evas_Object *entry)
 /**
  * Disable right click menu for an entry
  */
-EAPI void
+E_API void
 e_entry_nomenu(Evas_Object *entry)
 {
    if (evas_object_smart_smart_get(entry) != _e_entry_smart) SMARTERRNR();

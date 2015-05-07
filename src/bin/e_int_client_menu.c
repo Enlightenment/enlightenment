@@ -53,7 +53,7 @@ static void _e_client_menu_cb_netwm_icon(void *data, E_Menu *m, E_Menu_Item *mi)
 
 static Eina_List *menu_hooks = NULL;
 
-EAPI E_Client_Menu_Hook *
+E_API E_Client_Menu_Hook *
 e_int_client_menu_hook_add(E_Client_Menu_Hook_Cb cb, const void *data)
 {
    E_Client_Menu_Hook *h;
@@ -68,7 +68,7 @@ e_int_client_menu_hook_add(E_Client_Menu_Hook_Cb cb, const void *data)
    return h;
 }
 
-EAPI void
+E_API void
 e_int_client_menu_hook_del(E_Client_Menu_Hook *hook)
 {
    E_Client_Menu_Hook *h;
@@ -85,7 +85,7 @@ e_int_client_menu_hook_del(E_Client_Menu_Hook *hook)
        }
 }
 
-EAPI void
+E_API void
 e_int_client_menu_hooks_clear(void)
 {
    E_Client_Menu_Hook *h;
@@ -93,7 +93,7 @@ e_int_client_menu_hooks_clear(void)
      free(h);
 }
 
-EAPI void
+E_API void
 e_int_client_menu_create(E_Client *ec)
 {
    E_Menu *m;
@@ -238,7 +238,7 @@ e_int_client_menu_create(E_Client *ec)
      h->cb(h->data, ec);
 }
 
-EAPI void
+E_API void
 e_int_client_menu_show(E_Client *ec, Evas_Coord x, Evas_Coord y, int key, unsigned int timestamp)
 {
    e_int_client_menu_create(ec);
@@ -250,7 +250,7 @@ e_int_client_menu_show(E_Client *ec, Evas_Coord x, Evas_Coord y, int key, unsign
                            E_MENU_POP_DIRECTION_DOWN, timestamp);
 }
 
-EAPI void
+E_API void
 e_int_client_menu_del(E_Client *ec)
 {
    if (!ec->border_menu) return;

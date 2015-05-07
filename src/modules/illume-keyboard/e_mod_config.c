@@ -10,13 +10,13 @@ static Evas_Object *_il_kbd_config_ui(E_Config_Dialog *cfd, Evas *evas, E_Config
 static void _il_kbd_config_changed(void *data, Evas_Object *obj, void *event);
 static Eina_Bool _il_kbd_config_change_timeout(void *data);
 
-EAPI Il_Kbd_Config *il_kbd_cfg = NULL;
+E_API Il_Kbd_Config *il_kbd_cfg = NULL;
 static E_Config_DD *conf_edd = NULL;
 Ecore_Timer *_il_kbd_config_change_timer = NULL;
 int kbd_external = 0;
 
 /* public functions */
-EAPI int 
+E_API int 
 il_kbd_config_init(E_Module *m) 
 {
    char buff[PATH_MAX];
@@ -83,7 +83,7 @@ il_kbd_config_init(E_Module *m)
    return 1;
 }
 
-EAPI int 
+E_API int 
 il_kbd_config_shutdown(void) 
 {
    il_kbd_cfg->cfd = NULL;
@@ -102,14 +102,14 @@ il_kbd_config_shutdown(void)
    return 1;
 }
 
-EAPI int 
+E_API int 
 il_kbd_config_save(void) 
 {
    e_config_domain_save("module.illume-keyboard", conf_edd, il_kbd_cfg);
    return 1;
 }
 
-EAPI void 
+E_API void 
 il_kbd_config_show(E_Comp *comp, const char *params __UNUSED__) 
 {
    E_Config_Dialog *cfd;

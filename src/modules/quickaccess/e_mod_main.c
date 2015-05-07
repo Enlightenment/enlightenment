@@ -22,7 +22,7 @@ Config *qa_config = NULL;
  *       it here)
  */
 
-EAPI E_Module_Api e_modapi = {E_MODULE_API_VERSION, "Quickaccess"};
+E_API E_Module_Api e_modapi = {E_MODULE_API_VERSION, "Quickaccess"};
 
 //////////////////////////////
 static void
@@ -42,7 +42,7 @@ _e_modapi_shutdown(void)
    qa_config = NULL;
 }
 
-EAPI void *
+E_API void *
 e_modapi_init(E_Module *m)
 {
    char buf[PATH_MAX];
@@ -83,14 +83,14 @@ e_modapi_init(E_Module *m)
    return m;
 }
 
-EAPI int
+E_API int
 e_modapi_shutdown(E_Module *m __UNUSED__)
 {
    _e_modapi_shutdown();
    return 1;
 }
 
-EAPI int
+E_API int
 e_modapi_save(E_Module *m __UNUSED__)
 {
    e_config_domain_save("module.quickaccess", conf_edd, qa_config);

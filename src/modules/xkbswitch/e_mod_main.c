@@ -54,7 +54,7 @@ static const E_Gadcon_Client_Class _gc_class =
    E_GADCON_CLIENT_STYLE_PLAIN
 };
 
-EAPI E_Module_Api e_modapi =
+E_API E_Module_Api e_modapi =
 {
    E_MODULE_API_VERSION,
    "XKB Switcher"
@@ -64,7 +64,7 @@ EAPI E_Module_Api e_modapi =
  * Initializes the configuration file, checks its versions, populates
  * menus, finds the rules file, initializes gadget icon.
  */
-EAPI void *
+E_API void *
 e_modapi_init(E_Module *m)
 {
    /* Menus and dialogs */
@@ -87,7 +87,7 @@ e_modapi_init(E_Module *m)
  * Called when the module gets unloaded. Deregisters the menu state
  * and frees up the config.
  */
-EAPI int
+E_API int
 e_modapi_shutdown(E_Module *m __UNUSED__)
 {
    e_configure_registry_item_del("keyboard_and_mouse/xkbswitch");
@@ -105,7 +105,7 @@ e_modapi_shutdown(E_Module *m __UNUSED__)
 /* Module state save
  * Used to save the configuration file.
  */
-EAPI int
+E_API int
 e_modapi_save(E_Module *m __UNUSED__)
 {
    return 1;

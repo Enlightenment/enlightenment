@@ -420,7 +420,7 @@ e_comp_wl_input_keyboard_state_update(E_Comp_Data *cdata, uint32_t keycode, Eina
    e_comp_wl_input_keyboard_modifiers_update(cdata);
 }
 
-EAPI void 
+E_API void 
 e_comp_wl_input_pointer_enabled_set(E_Comp_Data *cdata, Eina_Bool enabled)
 {
    /* check for valid compositor data */
@@ -434,7 +434,7 @@ e_comp_wl_input_pointer_enabled_set(E_Comp_Data *cdata, Eina_Bool enabled)
    _e_comp_wl_input_update_seat_caps(cdata);
 }
 
-EAPI void 
+E_API void 
 e_comp_wl_input_keyboard_enabled_set(E_Comp_Data *cdata, Eina_Bool enabled)
 {
    /* check for valid compositor data */
@@ -448,7 +448,7 @@ e_comp_wl_input_keyboard_enabled_set(E_Comp_Data *cdata, Eina_Bool enabled)
    _e_comp_wl_input_update_seat_caps(cdata);
 }
 
-EAPI void 
+E_API void 
 e_comp_wl_input_keymap_set(E_Comp_Data *cdata, const char *rules, const char *model, const char *layout)
 {
    struct xkb_keymap *keymap;

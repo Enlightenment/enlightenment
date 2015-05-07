@@ -113,7 +113,7 @@ _gc_id_new(const E_Gadcon_Client_Class *client_class EINA_UNUSED)
    return tmpbuf;
 }
 
-EAPI E_Module_Api e_modapi = { E_MODULE_API_VERSION, "AppMenu" };
+E_API E_Module_Api e_modapi = { E_MODULE_API_VERSION, "AppMenu" };
 
 static Eina_Bool
 cb_focus_in(void *data, int type __UNUSED__, void *event)
@@ -154,7 +154,7 @@ static const E_Gadcon_Client_Class _gc_class =
    E_GADCON_CLIENT_STYLE_PLAIN
 };
 
-EAPI void *
+E_API void *
 e_modapi_init(E_Module *m)
 {
    E_AppMenu_Context *ctxt;
@@ -178,13 +178,13 @@ e_modapi_init(E_Module *m)
    return ctxt;
 }
 
-EAPI int
+E_API int
 e_modapi_save(E_Module *m EINA_UNUSED)
 {
    return 1;
 }
 
-EAPI int
+E_API int
 e_modapi_shutdown(E_Module *m)
 {
    E_AppMenu_Context *ctxt = m->data;

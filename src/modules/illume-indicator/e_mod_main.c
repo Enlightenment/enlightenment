@@ -13,9 +13,9 @@ static Eina_List *iwins = NULL;
 /* external variables */
 const char *_ind_mod_dir = NULL;
 
-EAPI E_Module_Api e_modapi = { E_MODULE_API_VERSION, "Illume-Indicator" };
+E_API E_Module_Api e_modapi = { E_MODULE_API_VERSION, "Illume-Indicator" };
 
-EAPI void *
+E_API void *
 e_modapi_init(E_Module *m) 
 {
    const Eina_List *l;
@@ -71,7 +71,7 @@ e_modapi_init(E_Module *m)
    return m;
 }
 
-EAPI int 
+E_API int 
 e_modapi_shutdown(E_Module *m __UNUSED__) 
 {
    Ind_Win *iwin;
@@ -98,7 +98,7 @@ e_modapi_shutdown(E_Module *m __UNUSED__)
    return 1;
 }
 
-EAPI int 
+E_API int 
 e_modapi_save(E_Module *m __UNUSED__) 
 {
    return il_ind_config_save();

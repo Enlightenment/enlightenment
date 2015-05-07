@@ -55,9 +55,9 @@ static Ecore_Timer *action_timeout = NULL;
 
 static Eldbus_Proxy *login1_manger_proxy = NULL;
 
-EAPI int E_EVENT_SYS_SUSPEND = -1;
-EAPI int E_EVENT_SYS_HIBERNATE = -1;
-EAPI int E_EVENT_SYS_RESUME = -1;
+E_API int E_EVENT_SYS_SUSPEND = -1;
+E_API int E_EVENT_SYS_HIBERNATE = -1;
+E_API int E_EVENT_SYS_RESUME = -1;
 
 static void
 _e_sys_comp_done_cb(void *data, Evas_Object *obj, const char *sig, const char *src)
@@ -235,7 +235,7 @@ e_sys_shutdown(void)
    return 1;
 }
 
-EAPI int
+E_API int
 e_sys_action_possible_get(E_Sys_Action a)
 {
    switch (a)
@@ -267,7 +267,7 @@ e_sys_action_possible_get(E_Sys_Action a)
    return 0;
 }
 
-EAPI int
+E_API int
 e_sys_action_do(E_Sys_Action a, char *param)
 {
    int ret = 0;
@@ -306,7 +306,7 @@ e_sys_action_do(E_Sys_Action a, char *param)
    return ret;
 }
 
-EAPI int
+E_API int
 e_sys_action_raw_do(E_Sys_Action a, char *param)
 {
    int ret = 0;
@@ -327,7 +327,7 @@ e_sys_action_raw_do(E_Sys_Action a, char *param)
 
 static Eina_List *extra_actions = NULL;
 
-EAPI E_Sys_Con_Action *
+E_API E_Sys_Con_Action *
 e_sys_con_extra_action_register(const char *label,
                                 const char *icon_group,
                                 const char *button_name,
@@ -349,7 +349,7 @@ e_sys_con_extra_action_register(const char *label,
    return sca;
 }
 
-EAPI void
+E_API void
 e_sys_con_extra_action_unregister(E_Sys_Con_Action *sca)
 {
    extra_actions = eina_list_remove(extra_actions, sca);
@@ -359,7 +359,7 @@ e_sys_con_extra_action_unregister(E_Sys_Con_Action *sca)
    free(sca);
 }
 
-EAPI const Eina_List *
+E_API const Eina_List *
 e_sys_con_extra_action_list_get(void)
 {
    return extra_actions;

@@ -154,7 +154,7 @@ e_msgbus_shutdown(void)
    return 1;
 }
 
-EAPI Eldbus_Service_Interface *
+E_API Eldbus_Service_Interface *
 e_msgbus_interface_attach(const Eldbus_Service_Interface_Desc *desc)
 {
    if (!_e_msgbus_data->iface)

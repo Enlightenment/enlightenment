@@ -64,7 +64,7 @@ struct _E_Config_Dialog_Data
    } netwm;
 };
 
-EAPI void
+E_API void
 e_int_client_prop(E_Client *ec)
 {
    E_Dialog *dia;

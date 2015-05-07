@@ -1710,7 +1710,7 @@ _e_kbd_int_cb_resize(E_Win *win)
    _e_kbd_int_layout_state_update(ki);
 }
 
-EAPI E_Kbd_Int *
+E_API E_Kbd_Int *
 e_kbd_int_new(const char *themedir, const char *syskbds, const char *sysdicts)
 {
    E_Kbd_Int *ki;
@@ -1814,7 +1814,7 @@ e_kbd_int_new(const char *themedir, const char *syskbds, const char *sysdicts)
    return ki;
 }
 
-EAPI void
+E_API void
 e_kbd_int_free(E_Kbd_Int *ki)
 {
    if (ki->themedir) eina_stringshare_del(ki->themedir);

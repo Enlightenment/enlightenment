@@ -1478,9 +1478,9 @@ _e_xdg_shell_cb_bind(struct wl_client *client, void *data, uint32_t version, uin
    wl_resource_set_dispatcher(res, _e_xdg_shell_cb_dispatch, NULL, cdata, NULL);
 }
 
-EAPI E_Module_Api e_modapi = { E_MODULE_API_VERSION, "Wl_Desktop_Shell" };
+E_API E_Module_Api e_modapi = { E_MODULE_API_VERSION, "Wl_Desktop_Shell" };
 
-EAPI void *
+E_API void *
 e_modapi_init(E_Module *m)
 {
    E_Comp *comp;
@@ -1514,7 +1514,7 @@ e_modapi_init(E_Module *m)
    return m;
 }
 
-EAPI int 
+E_API int 
 e_modapi_shutdown(E_Module *m EINA_UNUSED)
 {
    return 1;

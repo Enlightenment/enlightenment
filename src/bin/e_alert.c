@@ -2,7 +2,7 @@
 #include <sys/wait.h>
 
 /* public variables */
-EAPI unsigned long _e_alert_composite_win = 0;
+E_API unsigned long _e_alert_composite_win = 0;
 
 EINTERN int
 e_alert_init(void)
@@ -16,7 +16,7 @@ e_alert_shutdown(void)
    return 1;
 }
 
-EAPI void
+E_API void
 e_alert_composite_win(Ecore_X_Window root, Ecore_X_Window comp)
 {
 #ifndef HAVE_WAYLAND_ONLY
@@ -31,7 +31,7 @@ e_alert_composite_win(Ecore_X_Window root, Ecore_X_Window comp)
 #endif
 }
 
-EAPI void
+E_API void
 e_alert_show(void)
 {
    if (!e_nopause)

@@ -4,7 +4,7 @@ static const char *_e_user_homedir = NULL;
 static size_t _e_user_homedir_len = 0;
 
 /* externally accessible functions */
-EAPI const char *
+E_API const char *
 e_user_homedir_get(void)
 {
    char *d;
@@ -36,7 +36,7 @@ e_user_homedir_get(void)
  * @return similar to snprintf(), this returns the number of bytes written or
  *     that would be required to write if greater or equal than size.
  */
-EAPI size_t
+E_API size_t
 e_user_homedir_concat_len(char *dst, size_t size, const char *path, size_t path_len)
 {
    if (!_e_user_homedir)
@@ -45,7 +45,7 @@ e_user_homedir_concat_len(char *dst, size_t size, const char *path, size_t path_
    return eina_str_join_len(dst, size, '/', _e_user_homedir, _e_user_homedir_len, path, path_len);
 }
 
-EAPI size_t
+E_API size_t
 e_user_homedir_concat(char *dst, size_t size, const char *path)
 {
    return e_user_homedir_concat_len(dst, size, path, strlen(path));
@@ -54,7 +54,7 @@ e_user_homedir_concat(char *dst, size_t size, const char *path)
 /**
  * same as snprintf("~/"fmt, ...).
  */
-EAPI size_t
+E_API size_t
 e_user_homedir_snprintf(char *dst, size_t size, const char *fmt, ...)
 {
    size_t off, ret;
@@ -93,7 +93,7 @@ e_user_homedir_snprintf(char *dst, size_t size, const char *fmt, ...)
  * If the directory does not exist, it will be created. If it cannot be
  * created, a dialog will be displayed an NULL will be returned
  */
-EAPI const char *
+E_API const char *
 e_user_desktop_dir_get(void)
 {
    static char dir[PATH_MAX] = "";
@@ -109,7 +109,7 @@ e_user_desktop_dir_get(void)
  * If the directory does not exist, it will be created. If it cannot be
  * created, a dialog will be displayed an NULL will be returned
  */
-EAPI const char *
+E_API const char *
 e_user_icon_dir_get(void)
 {
    static char dir[PATH_MAX] = "";
@@ -126,7 +126,7 @@ static size_t _e_user_dir_len = 0;
 /**
  * Return ~/.e/e
  */
-EAPI const char *
+E_API const char *
 e_user_dir_get(void)
 {
    static char dir[PATH_MAX] = "";
@@ -171,7 +171,7 @@ e_user_dir_get(void)
  * @return similar to snprintf(), this returns the number of bytes written or
  *     that would be required to write if greater or equal than size.
  */
-EAPI size_t
+E_API size_t
 e_user_dir_concat_len(char *dst, size_t size, const char *path, size_t path_len)
 {
    if (!_e_user_dir)
@@ -180,7 +180,7 @@ e_user_dir_concat_len(char *dst, size_t size, const char *path, size_t path_len)
    return eina_str_join_len(dst, size, '/', _e_user_dir, _e_user_dir_len, path, path_len);
 }
 
-EAPI size_t
+E_API size_t
 e_user_dir_concat(char *dst, size_t size, const char *path)
 {
    return e_user_dir_concat_len(dst, size, path, strlen(path));
@@ -189,7 +189,7 @@ e_user_dir_concat(char *dst, size_t size, const char *path)
 /**
  * same as snprintf("~/.e/e/"fmt, ...).
  */
-EAPI size_t
+E_API size_t
 e_user_dir_snprintf(char *dst, size_t size, const char *fmt, ...)
 {
    size_t off, ret;

@@ -42,20 +42,20 @@ struct _E_Event_Desklock
 EINTERN int e_desklock_init(void);
 EINTERN int e_desklock_shutdown(void);
 
-EAPI int e_desklock_show(Eina_Bool suspend);
-EAPI int e_desklock_show_autolocked(void);
-EAPI void e_desklock_hide(void);
-EAPI Eina_Bool e_desklock_state_get(void);
+E_API int e_desklock_show(Eina_Bool suspend);
+E_API int e_desklock_show_autolocked(void);
+E_API void e_desklock_hide(void);
+E_API Eina_Bool e_desklock_state_get(void);
 
-EAPI void e_desklock_interface_append(E_Desklock_Interface *iface);
-EAPI void e_desklock_interface_remove(E_Desklock_Interface *iface);
-EAPI Eina_Stringshare *e_desklock_user_wallpaper_get(E_Zone *zone);
-EAPI void e_desklock_show_hook_add(E_Desklock_Show_Cb cb);
-EAPI void e_desklock_show_hook_del(E_Desklock_Show_Cb cb);
-EAPI void e_desklock_hide_hook_add(E_Desklock_Hide_Cb cb);
-EAPI void e_desklock_hide_hook_del(E_Desklock_Hide_Cb cb);
+E_API void e_desklock_interface_append(E_Desklock_Interface *iface);
+E_API void e_desklock_interface_remove(E_Desklock_Interface *iface);
+E_API Eina_Stringshare *e_desklock_user_wallpaper_get(E_Zone *zone);
+E_API void e_desklock_show_hook_add(E_Desklock_Show_Cb cb);
+E_API void e_desklock_show_hook_del(E_Desklock_Show_Cb cb);
+E_API void e_desklock_hide_hook_add(E_Desklock_Hide_Cb cb);
+E_API void e_desklock_hide_hook_del(E_Desklock_Hide_Cb cb);
 
-extern EAPI int E_EVENT_DESKLOCK;
+extern E_API int E_EVENT_DESKLOCK;
 
 static inline Eina_Bool
 e_desklock_is_external(void)

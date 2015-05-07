@@ -184,7 +184,7 @@ static const Eldbus_Service_Interface_Desc desc = {
    INTERFACE, methods, signals, NULL, NULL, NULL
 };
 
-EAPI Eina_Bool
+E_API Eina_Bool
 e_notification_server_register(const E_Notification_Server_Info *server_info, E_Notification_Notify_Cb n_cb, E_Notification_Close_Cb close_cb, const void *data)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(server_info, EINA_FALSE);
@@ -206,7 +206,7 @@ e_notification_server_register(const E_Notification_Server_Info *server_info, E_
    return EINA_TRUE;
 }
 
-EAPI void
+E_API void
 e_notification_server_unregister(void)
 {
    EINA_SAFETY_ON_NULL_RETURN(n_data);
@@ -217,7 +217,7 @@ e_notification_server_unregister(void)
    n_data = NULL;
 }
 
-EAPI void
+E_API void
 e_notification_notify_close(E_Notification_Notify *notify, E_Notification_Notify_Closed_Reason reason)
 {
    EINA_SAFETY_ON_NULL_RETURN(n_data);
@@ -227,7 +227,7 @@ e_notification_notify_close(E_Notification_Notify *notify, E_Notification_Notify
                              notify->id, reason);
 }
 
-EAPI Evas_Object *
+E_API Evas_Object *
 e_notification_notify_raw_image_get(E_Notification_Notify *notify, Evas *evas)
 {
    Evas_Object *o;
@@ -392,7 +392,7 @@ normalize_notify(E_Notification_Notify *notify)
      notify->timeout = -1;
 }
 
-EAPI Eina_Bool
+E_API Eina_Bool
 e_notification_client_send(E_Notification_Notify *notify, E_Notification_Client_Send_Cb cb, const void *data)
 {
    unsigned id;

@@ -35,7 +35,7 @@ static void _item_unselect(Item *it);
 /* local subsystem functions */
 
 /* externally accessible functions */
-EAPI Evas_Object *
+E_API Evas_Object *
 e_widget_toolbar_add(Evas *evas, int icon_w, int icon_h)
 {
    Evas_Object *obj, *o;
@@ -95,7 +95,7 @@ e_widget_toolbar_add(Evas *evas, int icon_w, int icon_h)
    return obj;
 }
 
-EAPI const Eina_List *
+E_API const Eina_List *
 e_widget_toolbar_items_get(Evas_Object *obj)
 {
    E_Widget_Data *wd;
@@ -104,7 +104,7 @@ e_widget_toolbar_items_get(Evas_Object *obj)
    return wd->items;
 }
 
-EAPI unsigned int
+E_API unsigned int
 e_widget_toolbar_items_count(Evas_Object *obj)
 {
    E_Widget_Data *wd;
@@ -113,7 +113,7 @@ e_widget_toolbar_items_count(Evas_Object *obj)
    return eina_list_count(wd->items);
 }
 
-EAPI const char *
+E_API const char *
 e_widget_toolbar_item_label_get(void *item)
 {
    Item *it = item;
@@ -121,7 +121,7 @@ e_widget_toolbar_item_label_get(void *item)
    return edje_object_part_text_get(it->o_base, "e.text.label");
 }
 
-EAPI void
+E_API void
 e_widget_toolbar_item_append(Evas_Object *obj, Evas_Object *icon, const char *label, void (*func)(void *data1, void *data2), const void *data1, const void *data2)
 {
    E_Widget_Data *wd;
@@ -178,7 +178,7 @@ e_widget_toolbar_item_append(Evas_Object *obj, Evas_Object *icon, const char *la
    evas_object_resize(wd->o_box, mw, mh);
 }
 
-EAPI void
+E_API void
 e_widget_toolbar_item_remove(Evas_Object *obj, int num)
 {
    E_Widget_Data *wd;
@@ -196,7 +196,7 @@ e_widget_toolbar_item_remove(Evas_Object *obj, int num)
      }
 }
 
-EAPI void
+E_API void
 e_widget_toolbar_item_select(Evas_Object *obj, int num)
 {
    E_Widget_Data *wd = NULL;
@@ -220,7 +220,7 @@ e_widget_toolbar_item_select(Evas_Object *obj, int num)
      }
 }
 
-EAPI void
+E_API void
 e_widget_toolbar_item_label_set(Evas_Object *obj, int num, const char *label)
 {
    E_Widget_Data *wd = NULL;
@@ -245,7 +245,7 @@ e_widget_toolbar_item_label_set(Evas_Object *obj, int num, const char *label)
      }
 }
 
-EAPI void
+E_API void
 e_widget_toolbar_scrollable_set(Evas_Object *obj, Eina_Bool scrollable)
 {
    E_Widget_Data *wd;
@@ -265,7 +265,7 @@ e_widget_toolbar_scrollable_set(Evas_Object *obj, Eina_Bool scrollable)
    evas_object_resize(wd->o_box, mw, mh);
 }
 
-EAPI void
+E_API void
 e_widget_toolbar_focus_steal_set(Evas_Object *obj, Eina_Bool steal)
 {
    E_Widget_Data *wd;
@@ -289,7 +289,7 @@ e_widget_toolbar_focus_steal_set(Evas_Object *obj, Eina_Bool steal)
      }
 }
 
-EAPI void
+E_API void
 e_widget_toolbar_clear(Evas_Object *obj)
 {
    E_Widget_Data *wd = NULL;
@@ -305,7 +305,7 @@ e_widget_toolbar_clear(Evas_Object *obj)
      }
 }
 
-EAPI int
+E_API int
 e_widget_toolbar_item_selected_get(Evas_Object *obj)
 {
    E_Widget_Data *wd = NULL;

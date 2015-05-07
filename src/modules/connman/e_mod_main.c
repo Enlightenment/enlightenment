@@ -575,7 +575,7 @@ static const E_Gadcon_Client_Class _gc_class =
    E_GADCON_CLIENT_STYLE_PLAIN
 };
 
-EAPI E_Module_Api e_modapi = { E_MODULE_API_VERSION, _e_connman_Name };
+E_API E_Module_Api e_modapi = { E_MODULE_API_VERSION, _e_connman_Name };
 
 static E_Config_Dialog *
 _econnman_config(E_Comp *comp, const char *params EINA_UNUSED)
@@ -615,7 +615,7 @@ _econnman_configure_registry_unregister(void)
    e_configure_registry_category_del(_reg_cat);
 }
 
-EAPI void *
+E_API void *
 e_modapi_init(E_Module *m)
 {
    E_Connman_Module_Context *ctxt;
@@ -673,7 +673,7 @@ _econnman_instances_free(E_Connman_Module_Context *ctxt)
      }
 }
 
-EAPI int
+E_API int
 e_modapi_shutdown(E_Module *m)
 {
    E_Connman_Module_Context *ctxt;
@@ -698,7 +698,7 @@ e_modapi_shutdown(E_Module *m)
    return 1;
 }
 
-EAPI int
+E_API int
 e_modapi_save(E_Module *m)
 {
    E_Connman_Module_Context *ctxt;

@@ -8,7 +8,7 @@ typedef struct _E_Manager             E_Manager;
 
 #define E_MANAGER_TYPE (int) 0xE0b01008
 
-extern EAPI int E_EVENT_MANAGER_KEYS_GRAB;
+extern E_API int E_EVENT_MANAGER_KEYS_GRAB;
 
 struct _E_Manager
 {
@@ -26,16 +26,16 @@ struct _E_Manager
 
 EINTERN int        e_manager_init(void);
 EINTERN int        e_manager_shutdown(void);
-EAPI Eina_List *e_manager_list(void);
+E_API Eina_List *e_manager_list(void);
 
-EAPI E_Manager      *e_manager_new(Ecore_Window root, E_Comp *c, int w, int h);
-EAPI void            e_manager_manage_windows(E_Manager *man);
-EAPI void            e_manager_resize(E_Manager *man, int w, int h);
-EAPI E_Manager      *e_manager_current_get(void);
-EAPI E_Manager      *e_manager_number_get(int num);
+E_API E_Manager      *e_manager_new(Ecore_Window root, E_Comp *c, int w, int h);
+E_API void            e_manager_manage_windows(E_Manager *man);
+E_API void            e_manager_resize(E_Manager *man, int w, int h);
+E_API E_Manager      *e_manager_current_get(void);
+E_API E_Manager      *e_manager_number_get(int num);
 
-EAPI void            e_managers_keys_grab(void);
-EAPI void            e_managers_keys_ungrab(void);
+E_API void            e_managers_keys_grab(void);
+E_API void            e_managers_keys_ungrab(void);
 
 static inline E_Manager *
 e_manager_find_by_root(Ecore_Window root)

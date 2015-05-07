@@ -15,6 +15,6 @@ int il_ind_config_init(void);
 int il_ind_config_shutdown(void);
 int il_ind_config_save(void);
 
-extern EAPI Il_Ind_Config *il_ind_cfg;
+extern E_API Il_Ind_Config *il_ind_cfg;
 
 #endif

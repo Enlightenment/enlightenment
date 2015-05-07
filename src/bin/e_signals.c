@@ -62,7 +62,7 @@ _e_write_safe_int(int fd, const char *buf, size_t size)
 /* a tricky little devil, requires e and it's libs to be built
  * with the -rdynamic flag to GCC for any sort of decent output.
  */
-EAPI void
+E_API void
 e_sigseg_act(int x __UNUSED__, siginfo_t *info __UNUSED__, void *data __UNUSED__)
 {
    _e_x_composite_shutdown();
@@ -75,7 +75,7 @@ e_sigseg_act(int x __UNUSED__, siginfo_t *info __UNUSED__, void *data __UNUSED__
    e_alert_show();
 }
 
-EAPI void
+E_API void
 e_sigill_act(int x __UNUSED__, siginfo_t *info __UNUSED__, void *data __UNUSED__)
 {
    // In case of a sigill in Enlightenment, Enlightenment start will catch the sigill and continue,
@@ -93,7 +93,7 @@ e_sigill_act(int x __UNUSED__, siginfo_t *info __UNUSED__, void *data __UNUSED__
    /* e_alert_show(); */
 }
 
-EAPI void
+E_API void
 e_sigfpe_act(int x __UNUSED__, siginfo_t *info __UNUSED__, void *data __UNUSED__)
 {
    _e_x_composite_shutdown();
@@ -106,7 +106,7 @@ e_sigfpe_act(int x __UNUSED__, siginfo_t *info __UNUSED__, void *data __UNUSED__
    e_alert_show();
 }
 
-EAPI void
+E_API void
 e_sigbus_act(int x __UNUSED__, siginfo_t *info __UNUSED__, void *data __UNUSED__)
 {
    _e_x_composite_shutdown();
@@ -119,7 +119,7 @@ e_sigbus_act(int x __UNUSED__, siginfo_t *info __UNUSED__, void *data __UNUSED__
    e_alert_show();
 }
 
-EAPI void
+E_API void
 e_sigabrt_act(int x __UNUSED__, siginfo_t *info __UNUSED__, void *data __UNUSED__)
 {
    _e_x_composite_shutdown();

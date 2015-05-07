@@ -47,13 +47,13 @@ e_moveresize_shutdown(void)
    return 1;
 }
 
-EAPI void
+E_API void
 e_moveresize_replace(Eina_Bool enable)
 {
    _e_moveresize_enabled = !enable;
 }
 
-EAPI void
+E_API void
 e_moveresize_client_extents(const E_Client *ec, int *w, int *h)
 {
    if ((ec->icccm.base_w >= 0) &&

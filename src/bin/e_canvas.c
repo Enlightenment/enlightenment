@@ -8,7 +8,7 @@ static Eina_List *_e_canvases = NULL;
 static Ecore_Poller *_e_canvas_cache_flush_poller = NULL;
 
 /* externally accessible functions */
-EAPI void
+E_API void
 e_canvas_add(Ecore_Evas *ee)
 {
    Evas *e;
@@ -38,13 +38,13 @@ e_canvas_add(Ecore_Evas *ee)
      evas_font_hinting_set(e, EVAS_FONT_HINTING_NONE);
 }
 
-EAPI void
+E_API void
 e_canvas_del(Ecore_Evas *ee)
 {
    _e_canvases = eina_list_remove(_e_canvases, ee);
 }
 
-EAPI void
+E_API void
 e_canvas_recache(void)
 {
    Eina_List *l;
@@ -74,7 +74,7 @@ e_canvas_recache(void)
      }
 }
 
-EAPI void
+E_API void
 e_canvas_cache_flush(void)
 {
    Eina_List *l;
@@ -92,7 +92,7 @@ e_canvas_cache_flush(void)
    edje_collection_cache_flush();
 }
 
-EAPI void
+E_API void
 e_canvas_cache_reload(void)
 {
    Eina_List *l;
@@ -107,7 +107,7 @@ e_canvas_cache_reload(void)
      }
 }
 
-EAPI void
+E_API void
 e_canvas_idle_flush(void)
 {
    Eina_List *l;
@@ -122,7 +122,7 @@ e_canvas_idle_flush(void)
      }
 }
 
-EAPI void
+E_API void
 e_canvas_rehint(void)
 {
    Eina_List *l;
@@ -142,7 +142,7 @@ e_canvas_rehint(void)
      }
 }
 
-EAPI Ecore_Evas *
+E_API Ecore_Evas *
 e_canvas_new(Ecore_Window win, int x, int y, int w, int h,
              int direct_resize, int override, Ecore_Window *win_ret)
 {
@@ -181,7 +181,7 @@ e_canvas_new(Ecore_Window win, int x, int y, int w, int h,
    return ee;
 }
 
-EAPI const Eina_List *
+E_API const Eina_List *
 e_canvas_list(void)
 {
    return _e_canvases;

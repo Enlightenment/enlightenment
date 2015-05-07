@@ -55,9 +55,9 @@ typedef Eet_Data_Descriptor                 E_Config_DD;
 #ifndef E_CONFIG_DATA_H
 #define E_CONFIG_DATA_H
 
-EAPI E_Config_DD *e_config_descriptor_new(const char *name, int size);
-EAPI void e_config_descriptor_free(E_Config_DD *edd);
-EAPI E_Config_DD *e_config_descriptor_find(const char *name);
+E_API E_Config_DD *e_config_descriptor_new(const char *name, int size);
+E_API void e_config_descriptor_free(E_Config_DD *edd);
+E_API E_Config_DD *e_config_descriptor_find(const char *name);
 
 #endif
 #endif

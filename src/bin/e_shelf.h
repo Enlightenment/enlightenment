@@ -60,38 +60,38 @@ typedef struct E_Event_Shelf E_Event_Shelf_Rename;
 typedef struct E_Event_Shelf E_Event_Shelf_Add;
 typedef struct E_Event_Shelf E_Event_Shelf_Del;
 
-EAPI extern int E_EVENT_SHELF_RENAME;
-EAPI extern int E_EVENT_SHELF_ADD;
-EAPI extern int E_EVENT_SHELF_DEL;
+E_API extern int E_EVENT_SHELF_RENAME;
+E_API extern int E_EVENT_SHELF_ADD;
+E_API extern int E_EVENT_SHELF_DEL;
 
 EINTERN int              e_shelf_init(void);
 EINTERN int              e_shelf_shutdown(void);
-EAPI void             e_shelf_config_update(void);
-EAPI E_Entry_Dialog *e_shelf_new_dialog(E_Zone *zone);
-EAPI Eina_List       *e_shelf_list(void);
-EAPI Eina_List       *e_shelf_list_all(void); // includes dummy shelves
-EAPI E_Shelf         *e_shelf_zone_new(E_Zone *zone, const char *name, const char *style, E_Layer layer, int id);
-EAPI E_Shelf         *e_shelf_zone_dummy_new(E_Zone *zone, Evas_Object *obj, int id);
-EAPI void             e_shelf_zone_move_resize_handle(E_Zone *zone);
-EAPI void             e_shelf_populate(E_Shelf *es);
-EAPI void             e_shelf_show(E_Shelf *es);
-EAPI void             e_shelf_hide(E_Shelf *es);
-EAPI void             e_shelf_locked_set(E_Shelf *es, int lock);
-EAPI void             e_shelf_toggle(E_Shelf *es, int show);
-EAPI void             e_shelf_urgent_show(E_Shelf *es);
-EAPI void             e_shelf_move(E_Shelf *es, int x, int y);
-EAPI void             e_shelf_resize(E_Shelf *es, int w, int h);
-EAPI void             e_shelf_move_resize(E_Shelf *es, int x, int y, int w, int h);
-EAPI void             e_shelf_save(E_Shelf *es);
-EAPI void             e_shelf_unsave(E_Shelf *es);
-EAPI void             e_shelf_orient(E_Shelf *es, E_Gadcon_Orient orient);
-EAPI const char      *e_shelf_orient_string_get(E_Shelf *es);
-EAPI void             e_shelf_position_calc(E_Shelf *es);
-EAPI void             e_shelf_style_set(E_Shelf *es, const char *style);
-EAPI E_Shelf         *e_shelf_config_new(E_Zone *zone, E_Config_Shelf *cf_es);
-EAPI void             e_shelf_name_set(E_Shelf *es, const char *name);
-EAPI void             e_shelf_rename_dialog(E_Shelf *es);
-EAPI void             e_shelf_autohide_set(E_Shelf *es, int autohide_type);
-EAPI Eina_Bool       e_shelf_desk_visible(const E_Shelf *es, const E_Desk *desk);
+E_API void             e_shelf_config_update(void);
+E_API E_Entry_Dialog *e_shelf_new_dialog(E_Zone *zone);
+E_API Eina_List       *e_shelf_list(void);
+E_API Eina_List       *e_shelf_list_all(void); // includes dummy shelves
+E_API E_Shelf         *e_shelf_zone_new(E_Zone *zone, const char *name, const char *style, E_Layer layer, int id);
+E_API E_Shelf         *e_shelf_zone_dummy_new(E_Zone *zone, Evas_Object *obj, int id);
+E_API void             e_shelf_zone_move_resize_handle(E_Zone *zone);
+E_API void             e_shelf_populate(E_Shelf *es);
+E_API void             e_shelf_show(E_Shelf *es);
+E_API void             e_shelf_hide(E_Shelf *es);
+E_API void             e_shelf_locked_set(E_Shelf *es, int lock);
+E_API void             e_shelf_toggle(E_Shelf *es, int show);
+E_API void             e_shelf_urgent_show(E_Shelf *es);
+E_API void             e_shelf_move(E_Shelf *es, int x, int y);
+E_API void             e_shelf_resize(E_Shelf *es, int w, int h);
+E_API void             e_shelf_move_resize(E_Shelf *es, int x, int y, int w, int h);
+E_API void             e_shelf_save(E_Shelf *es);
+E_API void             e_shelf_unsave(E_Shelf *es);
+E_API void             e_shelf_orient(E_Shelf *es, E_Gadcon_Orient orient);
+E_API const char      *e_shelf_orient_string_get(E_Shelf *es);
+E_API void             e_shelf_position_calc(E_Shelf *es);
+E_API void             e_shelf_style_set(E_Shelf *es, const char *style);
+E_API E_Shelf         *e_shelf_config_new(E_Zone *zone, E_Config_Shelf *cf_es);
+E_API void             e_shelf_name_set(E_Shelf *es, const char *name);
+E_API void             e_shelf_rename_dialog(E_Shelf *es);
+E_API void             e_shelf_autohide_set(E_Shelf *es, int autohide_type);
+E_API Eina_Bool       e_shelf_desk_visible(const E_Shelf *es, const E_Desk *desk);
 #endif
 #endif

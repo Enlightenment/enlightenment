@@ -1,7 +1,7 @@
 #include "e.h"
 #include <libgen.h>
 
-EAPI int E_EVENT_EXEHIST_UPDATE = 0;
+E_API int E_EVENT_EXEHIST_UPDATE = 0;
 
 /* local subsystem functions */
 typedef struct _E_Exehist      E_Exehist;
@@ -82,7 +82,7 @@ e_exehist_shutdown(void)
    return 1;
 }
 
-EAPI void
+E_API void
 e_exehist_startup_id_set(int id)
 {
    _e_exehist_load();
@@ -92,7 +92,7 @@ e_exehist_startup_id_set(int id)
    _e_exehist_unload_queue();
 }
 
-EAPI int
+E_API int
 e_exehist_startup_id_get(void)
 {
    int id;
@@ -103,7 +103,7 @@ e_exehist_startup_id_get(void)
    return id;
 }
 
-EAPI void
+E_API void
 e_exehist_add(const char *launch_method, const char *exe)
 {
    E_Exehist_Item *ei;
@@ -127,7 +127,7 @@ e_exehist_add(const char *launch_method, const char *exe)
    _e_exehist_unload_queue();
 }
 
-EAPI void
+E_API void
 e_exehist_del(const char *exe)
 {
    E_Exehist_Item *ei;
@@ -155,7 +155,7 @@ e_exehist_del(const char *exe)
      ecore_event_add(E_EVENT_EXEHIST_UPDATE, NULL, NULL, NULL);
 }
 
-EAPI void
+E_API void
 e_exehist_clear(void)
 {
    _e_exehist_load();
@@ -166,7 +166,7 @@ e_exehist_clear(void)
    _e_exehist_unload_queue();
 }
 
-EAPI int
+E_API int
 e_exehist_popularity_get(const char *exe)
 {
    Eina_List *l;
@@ -188,7 +188,7 @@ e_exehist_popularity_get(const char *exe)
    return count;
 }
 
-EAPI double
+E_API double
 e_exehist_newest_run_get(const char *exe)
 {
    Eina_List *l;
@@ -213,13 +213,13 @@ e_exehist_newest_run_get(const char *exe)
    return 0.0;
 }
 
-EAPI Eina_List *
+E_API Eina_List *
 e_exehist_list_get(void)
 {
    return e_exehist_sorted_list_get(E_EXEHIST_SORT_BY_DATE, 0);
 }
 
-EAPI Eina_List *
+E_API Eina_List *
 e_exehist_sorted_list_get(E_Exehist_Sort sort_type, int max)
 {
    Eina_List *list = NULL, *pop = NULL, *l = NULL, *m;
@@ -296,7 +296,7 @@ e_exehist_sorted_list_get(E_Exehist_Sort sort_type, int max)
    return list;
 }
 
-EAPI void
+E_API void
 e_exehist_mime_desktop_add(const char *mime, Efreet_Desktop *desktop)
 {
    const char *f;
@@ -363,7 +363,7 @@ e_exehist_mime_desktop_add(const char *mime, Efreet_Desktop *desktop)
    _e_exehist_unload_queue();
 }
 
-EAPI Efreet_Desktop *
+E_API Efreet_Desktop *
 e_exehist_mime_desktop_get(const char *mime)
 {
    Efreet_Desktop *desktop;

@@ -4,7 +4,7 @@
 #define SCREEN_W 1024
 #define SCREEN_H 768
 
-EAPI E_Module_Api e_modapi = { E_MODULE_API_VERSION, "Wl_X11" };
+E_API E_Module_Api e_modapi = { E_MODULE_API_VERSION, "Wl_X11" };
 
 static Ecore_Event_Handler *kbd_hdlr;
 
@@ -65,7 +65,7 @@ _cb_keymap_changed(void *data, int type EINA_UNUSED, void *event EINA_UNUSED)
    return ECORE_CALLBACK_PASS_ON;
 }
 
-EAPI void *
+E_API void *
 e_modapi_init(E_Module *m)
 {
    Ecore_Evas *ee;
@@ -118,7 +118,7 @@ e_modapi_init(E_Module *m)
    return m;
 }
 
-EAPI int 
+E_API int 
 e_modapi_shutdown(E_Module *m EINA_UNUSED)
 {
    /* delete handler for keymap change */

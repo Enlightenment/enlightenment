@@ -3,7 +3,7 @@
 #ifndef E_INT_CONFIG_MODULES_H
 #define E_INT_CONFIG_MODULES_H
 
-EAPI E_Config_Dialog *e_int_config_modules(E_Comp *c, const char *params);
+E_API E_Config_Dialog *e_int_config_modules(E_Comp *c, const char *params);
 
 #endif
 #endif

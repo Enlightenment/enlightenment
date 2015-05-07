@@ -53,13 +53,13 @@ struct _E_Fm2_Custom_File
 
 EINTERN int                   e_fm2_custom_file_init(void);
 EINTERN void                  e_fm2_custom_file_shutdown(void);
-EAPI E_Fm2_Custom_File    *e_fm2_custom_file_get(const char *path);
-EAPI void                  e_fm2_custom_file_set(const char *path, const E_Fm2_Custom_File *cf);
-EAPI void                  e_fm2_custom_file_del(const char *path);
-EAPI void                  e_fm2_custom_file_rename(const char *path, const char *new_path);
-EAPI void                  e_fm2_custom_file_flush(void);
+E_API E_Fm2_Custom_File    *e_fm2_custom_file_get(const char *path);
+E_API void                  e_fm2_custom_file_set(const char *path, const E_Fm2_Custom_File *cf);
+E_API void                  e_fm2_custom_file_del(const char *path);
+E_API void                  e_fm2_custom_file_rename(const char *path, const char *new_path);
+E_API void                  e_fm2_custom_file_flush(void);
 
-EAPI E_Fm2_Custom_File    *e_fm2_custom_file_dup(const E_Fm2_Custom_File *cf);
+E_API E_Fm2_Custom_File    *e_fm2_custom_file_dup(const E_Fm2_Custom_File *cf);
 
 #endif
 #endif

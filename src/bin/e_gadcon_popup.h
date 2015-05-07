@@ -25,12 +25,12 @@ struct _E_Gadcon_Popup
    Eina_Bool            visible : 1;
 };
 
-EAPI E_Gadcon_Popup *e_gadcon_popup_new(E_Gadcon_Client *gcc, Eina_Bool noshadow);
-EAPI void e_gadcon_popup_content_set(E_Gadcon_Popup *pop, Evas_Object *o);
-EAPI void e_gadcon_popup_show(E_Gadcon_Popup *pop);
-EAPI void e_gadcon_popup_hide(E_Gadcon_Popup *pop);
-EAPI void e_gadcon_popup_toggle_pinned(E_Gadcon_Popup *pop);
-EAPI void e_gadcon_popup_lock_set(E_Gadcon_Popup *pop, Eina_Bool setting);
+E_API E_Gadcon_Popup *e_gadcon_popup_new(E_Gadcon_Client *gcc, Eina_Bool noshadow);
+E_API void e_gadcon_popup_content_set(E_Gadcon_Popup *pop, Evas_Object *o);
+E_API void e_gadcon_popup_show(E_Gadcon_Popup *pop);
+E_API void e_gadcon_popup_hide(E_Gadcon_Popup *pop);
+E_API void e_gadcon_popup_toggle_pinned(E_Gadcon_Popup *pop);
+E_API void e_gadcon_popup_lock_set(E_Gadcon_Popup *pop, Eina_Bool setting);
 
 #endif
 #endif

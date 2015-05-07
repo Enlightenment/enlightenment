@@ -22,6 +22,6 @@ int il_home_config_shutdown(void);
 int il_home_config_save(void);
 void il_home_config_show(E_Comp *comp, const char *params);
 
-extern EAPI Il_Home_Config *il_home_cfg;
+extern E_API Il_Home_Config *il_home_cfg;
 
 #endif

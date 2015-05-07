@@ -53,21 +53,21 @@ struct _E_Kbd_Buf_Layout
    Eina_List *keys;
 };
 
-EAPI E_Kbd_Buf *e_kbd_buf_new(const char *sysdicts, const char *dicts);
-EAPI void e_kbd_buf_free(E_Kbd_Buf *kb);
-EAPI void e_kbd_buf_dict_set(E_Kbd_Buf *kb, const char *dict);
-EAPI void e_kbd_buf_clear(E_Kbd_Buf *kb);
-EAPI void e_kbd_buf_layout_clear(E_Kbd_Buf *kb);
-EAPI void e_kbd_buf_layout_size_set(E_Kbd_Buf *kb, int w, int h);
-EAPI void e_kbd_buf_layout_fuzz_set(E_Kbd_Buf *kb, int fuzz);
-EAPI void e_kbd_buf_layout_key_add(E_Kbd_Buf *kb, const char *key, const char *key_shift, const char *key_capslock, const char *key_altgr, int x, int y, int w, int h);
-EAPI void e_kbd_buf_pressed_key_add(E_Kbd_Buf *kb, const char *key, int shift, int capslock);
-EAPI void e_kbd_buf_pressed_point_add(E_Kbd_Buf *kb, int x, int y, int shift, int capslock);
-EAPI const char *e_kbd_buf_actual_string_get(E_Kbd_Buf *kb);
-EAPI const Eina_List *e_kbd_buf_string_matches_get(E_Kbd_Buf *kb);
-EAPI void e_kbd_buf_backspace(E_Kbd_Buf *kb);
-EAPI void e_kbd_buf_lookup(E_Kbd_Buf *kb, void (*func) (void *data), const void *data);
-EAPI void e_kbd_buf_lookup_cancel(E_Kbd_Buf *kb);
-EAPI void e_kbd_buf_word_use(E_Kbd_Buf *kb, const char *word);
+E_API E_Kbd_Buf *e_kbd_buf_new(const char *sysdicts, const char *dicts);
+E_API void e_kbd_buf_free(E_Kbd_Buf *kb);
+E_API void e_kbd_buf_dict_set(E_Kbd_Buf *kb, const char *dict);
+E_API void e_kbd_buf_clear(E_Kbd_Buf *kb);
+E_API void e_kbd_buf_layout_clear(E_Kbd_Buf *kb);
+E_API void e_kbd_buf_layout_size_set(E_Kbd_Buf *kb, int w, int h);
+E_API void e_kbd_buf_layout_fuzz_set(E_Kbd_Buf *kb, int fuzz);
+E_API void e_kbd_buf_layout_key_add(E_Kbd_Buf *kb, const char *key, const char *key_shift, const char *key_capslock, const char *key_altgr, int x, int y, int w, int h);
+E_API void e_kbd_buf_pressed_key_add(E_Kbd_Buf *kb, const char *key, int shift, int capslock);
+E_API void e_kbd_buf_pressed_point_add(E_Kbd_Buf *kb, int x, int y, int shift, int capslock);
+E_API const char *e_kbd_buf_actual_string_get(E_Kbd_Buf *kb);
+E_API const Eina_List *e_kbd_buf_string_matches_get(E_Kbd_Buf *kb);
+E_API void e_kbd_buf_backspace(E_Kbd_Buf *kb);
+E_API void e_kbd_buf_lookup(E_Kbd_Buf *kb, void (*func) (void *data), const void *data);
+E_API void e_kbd_buf_lookup_cancel(E_Kbd_Buf *kb);
+E_API void e_kbd_buf_word_use(E_Kbd_Buf *kb, const char *word);
     
 #endif

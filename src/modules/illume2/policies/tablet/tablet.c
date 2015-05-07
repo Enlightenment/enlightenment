@@ -2,13 +2,13 @@
 #include "tablet.h"
 #include "policy.h"
 
-EAPI E_Illume_Policy_Api e_illume_policy_api = 
+E_API E_Illume_Policy_Api e_illume_policy_api = 
 {
    /* version, name, label */
    E_ILLUME_POLICY_API_VERSION, "tablet", "Tablet"
 };
 
-EAPI int 
+E_API int 
 e_illume_policy_init(E_Illume_Policy *p) 
 {
    /* tell the policy what functions we support */
@@ -34,7 +34,7 @@ e_illume_policy_init(E_Illume_Policy *p)
    return 1;
 }
 
-EAPI int 
+E_API int 
 e_illume_policy_shutdown(E_Illume_Policy *p) 
 {
    p->funcs.border_add = NULL;

@@ -12,7 +12,7 @@ static void _il_home_config_click_changed(void *data, Evas_Object *obj, void *ev
 static Eina_Bool _il_home_config_change_timeout(void *data);
 
 /* local variables */
-EAPI Il_Home_Config *il_home_cfg = NULL;
+E_API Il_Home_Config *il_home_cfg = NULL;
 static E_Config_DD *conf_edd = NULL;
 Ecore_Timer *_il_home_config_change_timer = NULL;
 Evas_Object *delay_label, *delay_slider;

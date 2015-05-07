@@ -22,11 +22,11 @@ struct _Config
 
 extern Config *ebluez4_config;
 
-EAPI extern E_Module_Api e_modapi;
+E_API extern E_Module_Api e_modapi;
 
-EAPI void *e_modapi_init(E_Module *m);
-EAPI int e_modapi_shutdown(E_Module *m);
-EAPI int e_modapi_save(E_Module *m);
+E_API void *e_modapi_init(E_Module *m);
+E_API int e_modapi_shutdown(E_Module *m);
+E_API int e_modapi_save(E_Module *m);
 
 void ebluez4_update_inst(Evas_Object *dest, Eina_List *src, Instance *inst);
 void ebluez4_update_instances(Eina_List *src);

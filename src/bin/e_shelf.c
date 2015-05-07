@@ -79,9 +79,9 @@ static const char *orient_names[] =
    [E_GADCON_ORIENT_CORNER_RB] = N_("Right-bottom Corner")
 };
 
-EAPI int E_EVENT_SHELF_RENAME = -1;
-EAPI int E_EVENT_SHELF_ADD = -1;
-EAPI int E_EVENT_SHELF_DEL = -1;
+E_API int E_EVENT_SHELF_RENAME = -1;
+E_API int E_EVENT_SHELF_ADD = -1;
+E_API int E_EVENT_SHELF_DEL = -1;
 static Ecore_Event_Handler *_e_shelf_gadcon_populate_handler = NULL;
 static Ecore_Event_Handler *_e_shelf_module_init_end_handler = NULL;
 static Ecore_Event_Handler *_e_shelf_zone_moveresize_handler = NULL;
@@ -118,7 +118,7 @@ e_shelf_shutdown(void)
    return 1;
 }
 
-EAPI void
+E_API void
 e_shelf_config_update(void)
 {
    Eina_List *l;
@@ -145,7 +145,7 @@ e_shelf_config_update(void)
      }
 }
 
-EAPI Eina_List *
+E_API Eina_List *
 e_shelf_list_all(void)
 {
    Eina_List *d = NULL, *s = NULL, *ret = NULL;
@@ -161,14 +161,14 @@ e_shelf_list_all(void)
    return ret;
 }
 
-EAPI Eina_List *
+E_API Eina_List *
 e_shelf_list(void)
 {
    shelves = eina_list_sort(shelves, -1, _e_shelf_cb_id_sort);
    return shelves;
 }
 
-EAPI E_Shelf *
+E_API E_Shelf *
 e_shelf_zone_dummy_new(E_Zone *zone, Evas_Object *obj, int id)
 {
    E_Shelf *es;
@@ -194,7 +194,7 @@ e_shelf_zone_dummy_new(E_Zone *zone, Evas_Object *obj, int id)
    return es;
 }
 
-EAPI E_Shelf *
+E_API E_Shelf *
 e_shelf_zone_new(E_Zone *zone, const char *name, const char *style, E_Layer layer, int id)
 {
    E_Shelf *es;
@@ -295,7 +295,7 @@ e_shelf_zone_new(E_Zone *zone, const char *name, const char *style, E_Layer laye
    return es;
 }
 
-EAPI void
+E_API void
 e_shelf_rename_dialog(E_Shelf *es)
 {
    if (!es) return;
@@ -303,7 +303,7 @@ e_shelf_rename_dialog(E_Shelf *es)
    _e_shelf_cb_menu_rename(es, NULL, NULL);
 }
 
-EAPI void
+E_API void
 e_shelf_zone_move_resize_handle(E_Zone *zone)
 {
    Eina_List *l;
@@ -334,7 +334,7 @@ e_shelf_zone_move_resize_handle(E_Zone *zone)
      }
 }
 
-EAPI void
+E_API void
 e_shelf_populate(E_Shelf *es)
 {
    E_OBJECT_CHECK(es);
@@ -342,7 +342,7 @@ e_shelf_populate(E_Shelf *es)
    e_gadcon_populate(es->gadcon);
 }
 
-EAPI void
+E_API void
 e_shelf_show(E_Shelf *es)
 {
    E_OBJECT_CHECK(es);
@@ -350,7 +350,7 @@ e_shelf_show(E_Shelf *es)
    evas_object_show(es->comp_object);
 }
 
-EAPI void
+E_API void
 e_shelf_hide(E_Shelf *es)
 {
    E_OBJECT_CHECK(es);
@@ -358,7 +358,7 @@ e_shelf_hide(E_Shelf *es)
    evas_object_hide(es->comp_object);
 }
 
-EAPI void
+E_API void
 e_shelf_locked_set(E_Shelf *es, int lock)
 {
    if (lock)
@@ -375,7 +375,7 @@ e_shelf_locked_set(E_Shelf *es, int lock)
      }
 }
 
-EAPI void
+E_API void
 e_shelf_name_set(E_Shelf *es, const char *name)
 {
    E_Event_Shelf *ev;
@@ -393,7 +393,7 @@ e_shelf_name_set(E_Shelf *es, const char *name)
    e_gadcon_name_set(es->gadcon, name);
 }
 
-EAPI void
+E_API void
 e_shelf_toggle(E_Shelf *es, int show)
 {
    E_OBJECT_CHECK(es);
@@ -460,14 +460,14 @@ e_shelf_toggle(E_Shelf *es, int show)
      }
 }
 
-EAPI void
+E_API void
 e_shelf_urgent_show(E_Shelf *es)
 {
    e_shelf_toggle(es, 1);
    es->urgent_show = 1;
 }
 
-EAPI void
+E_API void
 e_shelf_move(E_Shelf *es, int x, int y)
 {
    E_OBJECT_CHECK(es);
@@ -477,7 +477,7 @@ e_shelf_move(E_Shelf *es, int x, int y)
    evas_object_move(es->comp_object, es->zone->x + es->x, es->zone->y + es->y);
 }
 
-EAPI void
+E_API void
 e_shelf_resize(E_Shelf *es, int w, int h)
 {
    E_OBJECT_CHECK(es);
@@ -487,7 +487,7 @@ e_shelf_resize(E_Shelf *es, int w, int h)
    evas_object_resize(es->comp_object, es->w, es->h);
 }
 
-EAPI void
+E_API void
 e_shelf_move_resize(E_Shelf *es, int x, int y, int w, int h)
 {
    E_OBJECT_CHECK(es);
@@ -500,7 +500,7 @@ e_shelf_move_resize(E_Shelf *es, int x, int y, int w, int h)
    evas_object_resize(es->comp_object, es->w, es->h);
 }
 
-EAPI void
+E_API void
 e_shelf_save(E_Shelf *es)
 {
    E_OBJECT_CHECK(es);
@@ -534,7 +534,7 @@ e_shelf_save(E_Shelf *es)
    e_config_save_queue();
 }
 
-EAPI void
+E_API void
 e_shelf_unsave(E_Shelf *es)
 {
    E_OBJECT_CHECK(es);
@@ -542,7 +542,7 @@ e_shelf_unsave(E_Shelf *es)
    es->cfg_delete = 1;
 }
 
-EAPI void
+E_API void
 e_shelf_orient(E_Shelf *es, E_Gadcon_Orient orient)
 {
    char buf[4096];
@@ -566,7 +566,7 @@ e_shelf_orient(E_Shelf *es, E_Gadcon_Orient orient)
    e_zone_useful_geometry_dirty(es->zone);
 }
 
-EAPI const char *
+E_API const char *
 e_shelf_orient_string_get(E_Shelf *es)
 {
    const char *sig = "";
@@ -639,7 +639,7 @@ e_shelf_orient_string_get(E_Shelf *es)
    return sig;
 }
 
-EAPI void
+E_API void
 e_shelf_position_calc(E_Shelf *es)
 {
    E_Gadcon_Orient orient = E_GADCON_ORIENT_FLOAT;
@@ -819,7 +819,7 @@ e_shelf_position_calc(E_Shelf *es)
      } while (0);
 }
 
-EAPI Eina_Bool
+E_API Eina_Bool
 e_shelf_desk_visible(const E_Shelf *es, const E_Desk *desk)
 {
    Eina_List *ll;
@@ -853,7 +853,7 @@ e_shelf_desk_visible(const E_Shelf *es, const E_Desk *desk)
    return EINA_FALSE;
 }
 
-EAPI void
+E_API void
 e_shelf_style_set(E_Shelf *es, const char *style)
 {
    const char *option;
@@ -887,7 +887,7 @@ e_shelf_style_set(E_Shelf *es, const char *style)
      es->instant_delay = -1.0;
 }
 
-EAPI void
+E_API void
 e_shelf_autohide_set(E_Shelf *es, int autohide_type)
 {
    E_OBJECT_CHECK(es);
@@ -930,7 +930,7 @@ e_shelf_autohide_set(E_Shelf *es, int autohide_type)
  */
 }
 
-EAPI E_Shelf *
+E_API E_Shelf *
 e_shelf_config_new(E_Zone *zone, E_Config_Shelf *cf_es)
 {
    E_Shelf *es;
@@ -963,7 +963,7 @@ e_shelf_config_new(E_Zone *zone, E_Config_Shelf *cf_es)
    return es;
 }
 
-EAPI E_Entry_Dialog *
+E_API E_Entry_Dialog *
 e_shelf_new_dialog(E_Zone *zone)
 {
    char buf[256];

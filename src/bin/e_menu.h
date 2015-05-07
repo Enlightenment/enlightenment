@@ -154,56 +154,56 @@ struct _E_Menu_Category_Callback
 EINTERN int          e_menu_init(void);
 EINTERN int          e_menu_shutdown(void);
 
-EAPI void         e_menu_hide_all(void);
-EAPI E_Menu      *e_menu_new(void);
-EAPI void         e_menu_activate_key(E_Menu *m, E_Zone *zone, int x, int y, int w, int h, int dir);
-EAPI void         e_menu_activate_mouse(E_Menu *m, E_Zone *zone, int x, int y, int w, int h, int dir, unsigned int activate_time);
-EAPI void         e_menu_activate(E_Menu *m, E_Zone *zone, int x, int y, int w, int h, int dir);
-EAPI void         e_menu_deactivate(E_Menu *m);
-EAPI int          e_menu_freeze(E_Menu *m);
-EAPI int          e_menu_thaw(E_Menu *m);
-EAPI void         e_menu_title_set(E_Menu *m, const char *title);
-EAPI void         e_menu_icon_file_set(E_Menu *m, const char *icon);
+E_API void         e_menu_hide_all(void);
+E_API E_Menu      *e_menu_new(void);
+E_API void         e_menu_activate_key(E_Menu *m, E_Zone *zone, int x, int y, int w, int h, int dir);
+E_API void         e_menu_activate_mouse(E_Menu *m, E_Zone *zone, int x, int y, int w, int h, int dir, unsigned int activate_time);
+E_API void         e_menu_activate(E_Menu *m, E_Zone *zone, int x, int y, int w, int h, int dir);
+E_API void         e_menu_deactivate(E_Menu *m);
+E_API int          e_menu_freeze(E_Menu *m);
+E_API int          e_menu_thaw(E_Menu *m);
+E_API void         e_menu_title_set(E_Menu *m, const char *title);
+E_API void         e_menu_icon_file_set(E_Menu *m, const char *icon);
 
 /* menu categories functions */
-EAPI void         e_menu_category_set(E_Menu *m, const char *category);
-EAPI void         e_menu_category_data_set(char *category, void *data);
-EAPI E_Menu_Category_Callback  *e_menu_category_callback_add(char *category, void (*create_cb) (void *data, E_Menu *m, void *category_data), Ecore_Cb free_cb, void *data);
-EAPI void         e_menu_category_callback_del(E_Menu_Category_Callback *cb);
+E_API void         e_menu_category_set(E_Menu *m, const char *category);
+E_API void         e_menu_category_data_set(char *category, void *data);
+E_API E_Menu_Category_Callback  *e_menu_category_callback_add(char *category, void (*create_cb) (void *data, E_Menu *m, void *category_data), Ecore_Cb free_cb, void *data);
+E_API void         e_menu_category_callback_del(E_Menu_Category_Callback *cb);
 
 
-EAPI void         e_menu_pre_activate_callback_set(E_Menu *m,  void (*func) (void *data, E_Menu *m), void *data);
-EAPI void         e_menu_post_deactivate_callback_set(E_Menu *m,  void (*func) (void *data, E_Menu *m), void *data);
+E_API void         e_menu_pre_activate_callback_set(E_Menu *m,  void (*func) (void *data, E_Menu *m), void *data);
+E_API void         e_menu_post_deactivate_callback_set(E_Menu *m,  void (*func) (void *data, E_Menu *m), void *data);
 
-EAPI E_Menu      *e_menu_root_get(E_Menu *m);
+E_API E_Menu      *e_menu_root_get(E_Menu *m);
 
-EAPI E_Menu_Item *e_menu_item_new(E_Menu *m);
-EAPI E_Menu_Item *e_menu_item_new_relative(E_Menu *m, E_Menu_Item *rel);
-EAPI E_Menu_Item *e_menu_item_nth(E_Menu *m, int n);
-EAPI int          e_menu_item_num_get(const E_Menu_Item *mi);
-EAPI void         e_menu_item_icon_file_set(E_Menu_Item *mi, const char *icon);
-EAPI void         e_menu_item_icon_edje_set(E_Menu_Item *mi, const char *icon, const char *key);
-EAPI void         e_menu_item_label_set(E_Menu_Item *mi, const char *label);
-EAPI void         e_menu_item_submenu_set(E_Menu_Item *mi, E_Menu *sub);
-EAPI void         e_menu_item_separator_set(E_Menu_Item *mi, int sep);
-EAPI void         e_menu_item_check_set(E_Menu_Item *mi, int chk);
-EAPI void         e_menu_item_radio_set(E_Menu_Item *mi, int rad);
-EAPI void         e_menu_item_radio_group_set(E_Menu_Item *mi, int radg);
-EAPI void         e_menu_item_toggle_set(E_Menu_Item *mi, int tog);
-EAPI int          e_menu_item_toggle_get(E_Menu_Item *mi);
-EAPI void         e_menu_item_callback_set(E_Menu_Item *mi,  E_Menu_Cb func, const void *data);
-EAPI void         e_menu_item_realize_callback_set(E_Menu_Item *mi,  E_Menu_Cb func, void *data);
-EAPI void         e_menu_item_submenu_pre_callback_set(E_Menu_Item *mi,  E_Menu_Cb func, const void *data);
-EAPI void         e_menu_item_submenu_post_callback_set(E_Menu_Item *mi,  E_Menu_Cb func, const void *data);
-EAPI void         e_menu_item_drag_callback_set(E_Menu_Item *mi,  E_Menu_Cb func, void *data);
-EAPI E_Menu_Item *e_menu_item_active_get(void);
-EAPI void         e_menu_active_item_activate(void);
-EAPI void         e_menu_item_active_set(E_Menu_Item *mi, int active);
-EAPI void         e_menu_item_disabled_set(E_Menu_Item *mi, int disable);
+E_API E_Menu_Item *e_menu_item_new(E_Menu *m);
+E_API E_Menu_Item *e_menu_item_new_relative(E_Menu *m, E_Menu_Item *rel);
+E_API E_Menu_Item *e_menu_item_nth(E_Menu *m, int n);
+E_API int          e_menu_item_num_get(const E_Menu_Item *mi);
+E_API void         e_menu_item_icon_file_set(E_Menu_Item *mi, const char *icon);
+E_API void         e_menu_item_icon_edje_set(E_Menu_Item *mi, const char *icon, const char *key);
+E_API void         e_menu_item_label_set(E_Menu_Item *mi, const char *label);
+E_API void         e_menu_item_submenu_set(E_Menu_Item *mi, E_Menu *sub);
+E_API void         e_menu_item_separator_set(E_Menu_Item *mi, int sep);
+E_API void         e_menu_item_check_set(E_Menu_Item *mi, int chk);
+E_API void         e_menu_item_radio_set(E_Menu_Item *mi, int rad);
+E_API void         e_menu_item_radio_group_set(E_Menu_Item *mi, int radg);
+E_API void         e_menu_item_toggle_set(E_Menu_Item *mi, int tog);
+E_API int          e_menu_item_toggle_get(E_Menu_Item *mi);
+E_API void         e_menu_item_callback_set(E_Menu_Item *mi,  E_Menu_Cb func, const void *data);
+E_API void         e_menu_item_realize_callback_set(E_Menu_Item *mi,  E_Menu_Cb func, void *data);
+E_API void         e_menu_item_submenu_pre_callback_set(E_Menu_Item *mi,  E_Menu_Cb func, const void *data);
+E_API void         e_menu_item_submenu_post_callback_set(E_Menu_Item *mi,  E_Menu_Cb func, const void *data);
+E_API void         e_menu_item_drag_callback_set(E_Menu_Item *mi,  E_Menu_Cb func, void *data);
+E_API E_Menu_Item *e_menu_item_active_get(void);
+E_API void         e_menu_active_item_activate(void);
+E_API void         e_menu_item_active_set(E_Menu_Item *mi, int active);
+E_API void         e_menu_item_disabled_set(E_Menu_Item *mi, int disable);
 
-EAPI void         e_menu_idler_before(void);
+E_API void         e_menu_idler_before(void);
 
-EAPI Ecore_Window e_menu_grab_window_get(void);
+E_API Ecore_Window e_menu_grab_window_get(void);
 
 #endif
 #endif

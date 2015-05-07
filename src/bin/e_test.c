@@ -27,7 +27,7 @@ deskmirror_test(void *d EINA_UNUSED)
 
 #endif
 
-EAPI void
+E_API void
 e_test(void)
 {
    E_LIST_FOREACH(e_comp_list(), _e_test_internal);

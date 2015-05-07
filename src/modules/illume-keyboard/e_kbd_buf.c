@@ -237,7 +237,7 @@ _e_kbd_buf_cb_data_dict_change(void *data, Ecore_File_Monitor *em __UNUSED__, Ec
    kb->dict.data_reload_delay = ecore_timer_add(2.0, _e_kbd_buf_cb_data_dict_reload, kb);
 }
     
-EAPI E_Kbd_Buf *
+E_API E_Kbd_Buf *
 e_kbd_buf_new(const char *sysdicts, const char *dict)
 {
    E_Kbd_Buf *kb;
@@ -282,7 +282,7 @@ e_kbd_buf_new(const char *sysdicts, const char *dict)
    return kb;
 }
 
-EAPI void
+E_API void
 e_kbd_buf_free(E_Kbd_Buf *kb)
 {
    e_kbd_buf_clear(kb);
@@ -297,7 +297,7 @@ e_kbd_buf_free(E_Kbd_Buf *kb)
    free(kb);
 }
 
-EAPI void
+E_API void
 e_kbd_buf_dict_set(E_Kbd_Buf *kb, const char *dict)
 {
    char buf[PATH_MAX];
@@ -318,7 +318,7 @@ e_kbd_buf_dict_set(E_Kbd_Buf *kb, const char *dict)
      }
 }
 
-EAPI void
+E_API void
 e_kbd_buf_clear(E_Kbd_Buf *kb)
 {
    e_kbd_buf_lookup_cancel(kb);
@@ -339,7 +339,7 @@ e_kbd_buf_clear(E_Kbd_Buf *kb)
    _e_kbd_buf_actual_string_clear(kb);
 }
 
-EAPI void
+E_API void
 e_kbd_buf_layout_clear(E_Kbd_Buf *kb)
 {
    if (kb->layout)
@@ -349,7 +349,7 @@ e_kbd_buf_layout_clear(E_Kbd_Buf *kb)
      }
 }
 
-EAPI void
+E_API void
 e_kbd_buf_layout_size_set(E_Kbd_Buf *kb, int w, int h)
 {
    if (!kb->layout) kb->layout = _e_kbd_buf_new();
@@ -358,7 +358,7 @@ e_kbd_buf_layout_size_set(E_Kbd_Buf *kb, int w, int h)
    kb->layout->h = h;
 }
 
-EAPI void
+E_API void
 e_kbd_buf_layout_fuzz_set(E_Kbd_Buf *kb, int fuzz)
 {
    if (!kb->layout) kb->layout = _e_kbd_buf_new();
@@ -366,7 +366,7 @@ e_kbd_buf_layout_fuzz_set(E_Kbd_Buf *kb, int fuzz)
    kb->layout->fuzz = fuzz;
 }
 
-EAPI void
+E_API void
 e_kbd_buf_layout_key_add(E_Kbd_Buf *kb, const char *key,  const char *key_shift, const char *key_capslock, const char *key_altgr, int x, int y, int w, int h)
 {
    E_Kbd_Buf_Key *ky;
@@ -401,7 +401,7 @@ _e_kbd_buf_keystroke_add(E_Kbd_Buf *kb, E_Kbd_Buf_Keystroke *ks)
      }
 }
 
-EAPI void
+E_API void
 e_kbd_buf_pressed_key_add(E_Kbd_Buf *kb, const char *key, int shift, int capslock)
 {
    E_Kbd_Buf_Keystroke *ks;
@@ -458,7 +458,7 @@ _e_kbd_buf_keystroke_point_add(E_Kbd_Buf *kb, E_Kbd_Buf_Keystroke *ks)
      }
 }
 
-EAPI void
+E_API void
 e_kbd_buf_pressed_point_add(E_Kbd_Buf *kb, int x, int y, int shift, int capslock)
 {
    E_Kbd_Buf_Keystroke *ks;
@@ -486,19 +486,19 @@ e_kbd_buf_pressed_point_add(E_Kbd_Buf *kb, int x, int y, int shift, int capslock
    _e_kbd_buf_matches_update(kb);
 }
 
-EAPI const char *
+E_API const char *
 e_kbd_buf_actual_string_get(E_Kbd_Buf *kb)
 {
    return kb->actual_string;
 }
 
-EAPI const Eina_List *
+E_API const Eina_List *
 e_kbd_buf_string_matches_get(E_Kbd_Buf *kb)
 {
    return kb->string_matches;
 }
 
-EAPI void
+E_API void
 e_kbd_buf_backspace(E_Kbd_Buf *kb)
 {
    Eina_List *l;
@@ -521,7 +521,7 @@ e_kbd_buf_backspace(E_Kbd_Buf *kb)
      }
 }
 
-EAPI void
+E_API void
 e_kbd_buf_word_use(E_Kbd_Buf *kb, const char *word)
 {
    if (kb->dict.personal)
@@ -542,7 +542,7 @@ _e_kbd_buf_cb_faket(void *data)
    return ECORE_CALLBACK_CANCEL;
 }
 
-EAPI void
+E_API void
 e_kbd_buf_lookup(E_Kbd_Buf *kb, void (*func) (void *data), const void *data)
 {
    e_kbd_buf_lookup_cancel(kb);
@@ -554,7 +554,7 @@ e_kbd_buf_lookup(E_Kbd_Buf *kb, void (*func) (void *data), const void *data)
    kb->lookup.faket = ecore_timer_add(0.1, _e_kbd_buf_cb_faket, kb);
 }
 
-EAPI void
+E_API void
 e_kbd_buf_lookup_cancel(E_Kbd_Buf *kb)
 {
    // FIXME: just faking delayed lookup with timer

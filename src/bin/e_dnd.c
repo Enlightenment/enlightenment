@@ -170,13 +170,13 @@ e_dnd_shutdown(void)
    return 1;
 }
 
-EAPI E_Drag *
+E_API E_Drag *
 e_drag_current_get(void)
 {
    return _drag_current;
 }
 
-EAPI E_Drag *
+E_API E_Drag *
 e_drag_new(E_Comp *comp, int x, int y,
            const char **types, unsigned int num_types,
            void *data, int size,
@@ -226,13 +226,13 @@ e_drag_new(E_Comp *comp, int x, int y,
    return drag;
 }
 
-EAPI Evas *
+E_API Evas *
 e_drag_evas_get(const E_Drag *drag)
 {
    return drag->evas;
 }
 
-EAPI void
+E_API void
 e_drag_object_set(E_Drag *drag, Evas_Object *object)
 {
    EINA_SAFETY_ON_NULL_RETURN(object);
@@ -248,7 +248,7 @@ e_drag_object_set(E_Drag *drag, Evas_Object *object)
    evas_object_pass_events_set(drag->comp_object, 1);
 }
 
-EAPI void
+E_API void
 e_drag_move(E_Drag *drag, int x, int y)
 {
    if ((drag->x == x) && (drag->y == y)) return;
@@ -258,7 +258,7 @@ e_drag_move(E_Drag *drag, int x, int y)
      evas_object_move(drag->comp_object, x, y);
 }
 
-EAPI void
+E_API void
 e_drag_resize(E_Drag *drag, int w, int h)
 {
    if ((drag->w == w) && (drag->h == h)) return;
@@ -268,13 +268,13 @@ e_drag_resize(E_Drag *drag, int w, int h)
      evas_object_resize(drag->comp_object, w, h);
 }
 
-EAPI int
+E_API int
 e_dnd_active(void)
 {
    return _drag_win != 0;
 }
 
-EAPI int
+E_API int
 e_drag_start(E_Drag *drag, int x, int y)
 {
    const Eina_List *l;
@@ -332,7 +332,7 @@ e_drag_start(E_Drag *drag, int x, int y)
    return 1;
 }
 
-EAPI int
+E_API int
 e_drag_xdnd_start(E_Drag *drag, int x, int y)
 {
 #ifndef HAVE_WAYLAND_ONLY
@@ -402,14 +402,14 @@ e_drag_xdnd_start(E_Drag *drag, int x, int y)
    return 1;
 }
 
-EAPI void
+E_API void
 e_drop_handler_xds_set(E_Drop_Handler *handler, Eina_Bool (*cb)(void *data, const char *type))
 {
    handler->cb.xds = cb;
 }
 
 /* should only be used for windows */
-EAPI void
+E_API void
 e_drop_xds_update(Eina_Bool enable, const char *value)
 {
 #ifndef HAVE_WAYLAND_ONLY
@@ -443,7 +443,7 @@ e_drop_xds_update(Eina_Bool enable, const char *value)
 #endif
 }
 
-EAPI E_Drop_Handler *
+E_API E_Drop_Handler *
 e_drop_handler_add(E_Object *obj,
                    void *data,
                    void (*enter_cb)(void *data, const char *type, void *event),
@@ -479,7 +479,7 @@ e_drop_handler_add(E_Object *obj,
    return handler;
 }
 
-EAPI void
+E_API void
 e_drop_handler_geometry_set(E_Drop_Handler *handler, int x, int y, int w, int h)
 {
    handler->x = x;
@@ -488,7 +488,7 @@ e_drop_handler_geometry_set(E_Drop_Handler *handler, int x, int y, int w, int h)
    handler->h = h;
 }
 
-EAPI int
+E_API int
 e_drop_inside(const E_Drop_Handler *handler, int x, int y)
 {
    int dx, dy;
@@ -499,7 +499,7 @@ e_drop_inside(const E_Drop_Handler *handler, int x, int y)
    return E_INSIDE(x, y, handler->x, handler->y, handler->w, handler->h);
 }
 
-EAPI void
+E_API void
 e_drop_handler_del(E_Drop_Handler *handler)
 {
    unsigned int i;
@@ -525,7 +525,7 @@ e_drop_handler_del(E_Drop_Handler *handler)
    free(handler);
 }
 
-EAPI int
+E_API int
 e_drop_xdnd_register_set(Ecore_Window win, int reg)
 {
    if (e_comp_get(NULL)->comp_type != E_PIXMAP_TYPE_X) return 0;
@@ -549,7 +549,7 @@ e_drop_xdnd_register_set(Ecore_Window win, int reg)
    return 1;
 }
 
-EAPI void
+E_API void
 e_drop_handler_responsive_set(E_Drop_Handler *handler)
 {
    Ecore_X_Window hwin = _e_drag_win_get(handler, 1);
@@ -559,7 +559,7 @@ e_drop_handler_responsive_set(E_Drop_Handler *handler)
    eina_hash_set(_drop_handlers_responsives, &hwin, eina_list_append(l, handler));
 }
 
-EAPI int
+E_API int
 e_drop_handler_responsive_get(const E_Drop_Handler *handler)
 {
    Ecore_X_Window hwin = _e_drag_win_get(handler, 1);
@@ -569,32 +569,32 @@ e_drop_handler_responsive_get(const E_Drop_Handler *handler)
    return l && eina_list_data_find(l, handler);
 }
 
-EAPI void
+E_API void
 e_drop_handler_action_set(unsigned int action)
 {
    _action = action;
 }
 
-EAPI unsigned int
+E_API unsigned int
 e_drop_handler_action_get(void)
 {
    return _action;
 }
 
-EAPI void
+E_API void
 e_drag_key_down_cb_set(E_Drag *drag, void (*func)(E_Drag *drag, Ecore_Event_Key *e))
 {
    drag->cb.key_down = func;
 }
 
-EAPI void
+E_API void
 e_drag_key_up_cb_set(E_Drag *drag, void (*func)(E_Drag *drag, Ecore_Event_Key *e))
 {
    drag->cb.key_up = func;
 }
 
 /* from ecore_x_selection.c */
-EAPI Eina_List *
+E_API Eina_List *
 e_dnd_util_text_uri_list_convert(char *data, int size)
 {
    char *tmp;

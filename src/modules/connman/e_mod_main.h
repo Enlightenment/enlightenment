@@ -50,10 +50,10 @@ struct E_Connman_Module_Context
    int powered;
 };
 
-EAPI extern E_Module_Api e_modapi;
-EAPI void *e_modapi_init(E_Module *m);
-EAPI int e_modapi_shutdown(E_Module *m);
-EAPI int e_modapi_save(E_Module *m);
+E_API extern E_Module_Api e_modapi;
+E_API void *e_modapi_init(E_Module *m);
+E_API int e_modapi_shutdown(E_Module *m);
+E_API int e_modapi_save(E_Module *m);
 
 void econnman_popup_del(E_Connman_Instance *inst);
 const char *e_connman_theme_path(void);

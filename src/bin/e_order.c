@@ -57,7 +57,7 @@ e_order_shutdown(void)
    return 1;
 }
 
-EAPI E_Order *
+E_API E_Order *
 e_order_new(const char *path)
 {
    E_Order *eo;
@@ -74,7 +74,7 @@ e_order_new(const char *path)
    return eo;
 }
 
-EAPI E_Order *
+E_API E_Order *
 e_order_clone(const E_Order *eo)
 {
    E_Order *eoc;
@@ -99,7 +99,7 @@ e_order_clone(const E_Order *eo)
    return eoc;
 }
 
-EAPI void
+E_API void
 e_order_update_callback_set(E_Order *eo, void (*cb)(void *data, E_Order *eo), void *data)
 {
    E_OBJECT_CHECK(eo);
@@ -109,7 +109,7 @@ e_order_update_callback_set(E_Order *eo, void (*cb)(void *data, E_Order *eo), vo
    eo->cb.data = data;
 }
 
-EAPI void
+E_API void
 e_order_remove(E_Order *eo, Efreet_Desktop *desktop)
 {
    Eina_List *tmp;
@@ -124,7 +124,7 @@ e_order_remove(E_Order *eo, Efreet_Desktop *desktop)
    _e_order_save(eo);
 }
 
-EAPI void
+E_API void
 e_order_append(E_Order *eo, Efreet_Desktop *desktop)
 {
    E_OBJECT_CHECK(eo);
@@ -135,7 +135,7 @@ e_order_append(E_Order *eo, Efreet_Desktop *desktop)
    _e_order_save(eo);
 }
 
-EAPI void
+E_API void
 e_order_prepend_relative(E_Order *eo, Efreet_Desktop *desktop, Efreet_Desktop *before)
 {
    E_OBJECT_CHECK(eo);
@@ -146,7 +146,7 @@ e_order_prepend_relative(E_Order *eo, Efreet_Desktop *desktop, Efreet_Desktop *b
    _e_order_save(eo);
 }
 
-EAPI void
+E_API void
 e_order_files_append(E_Order *eo, Eina_List *files)
 {
    Eina_List *l;
@@ -168,7 +168,7 @@ e_order_files_append(E_Order *eo, Eina_List *files)
    _e_order_save(eo);
 }
 
-EAPI void
+E_API void
 e_order_files_prepend_relative(E_Order *eo, Eina_List *files, Efreet_Desktop *before)
 {
    Eina_List *l;
@@ -190,7 +190,7 @@ e_order_files_prepend_relative(E_Order *eo, Eina_List *files, Efreet_Desktop *be
    _e_order_save(eo);
 }
 
-EAPI void
+E_API void
 e_order_clear(E_Order *eo)
 {
    E_OBJECT_CHECK(eo);

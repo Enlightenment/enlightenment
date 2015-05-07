@@ -48,7 +48,7 @@ e_deskenv_shutdown(void)
    return 1;
 }
 
-EAPI void
+E_API void
 e_deskenv_xmodmap_run(void)
 {
 #ifndef HAVE_WAYLAND_ONLY

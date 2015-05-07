@@ -15,7 +15,7 @@ _string_to_keysym(const char *str)
    return ecore_x_keysym_string_get(glyph);
 }
 
-EAPI void
+E_API void
 e_kbd_send_string_press(const char *str, Kbd_Mod mod)
 {
    const char *key = NULL;
@@ -25,7 +25,7 @@ e_kbd_send_string_press(const char *str, Kbd_Mod mod)
    e_kbd_send_keysym_press(key, mod);
 }
 
-EAPI void
+E_API void
 e_kbd_send_keysym_press(const char *key, Kbd_Mod mod)
 {
    if (mod & KBD_MOD_CTRL) ecore_x_test_fake_key_down("Control_L");

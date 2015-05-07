@@ -126,7 +126,7 @@ struct _E_Kbd_Int_Match
    Evas_Object *obj;
 };
 
-EAPI E_Kbd_Int *e_kbd_int_new(const char *themedir, const char *syskbds, const char *sysdicts);
-EAPI void e_kbd_int_free(E_Kbd_Int *ki);
+E_API E_Kbd_Int *e_kbd_int_new(const char *themedir, const char *syskbds, const char *sysdicts);
+E_API void e_kbd_int_free(E_Kbd_Int *ki);
 
 #endif

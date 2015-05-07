@@ -448,7 +448,7 @@ static const Ecore_Getopt options = {
    }
 };
 
-EAPI int
+E_API int
 main(int argc, char *argv[])
 {
    Eina_Bool quit_option = EINA_FALSE;

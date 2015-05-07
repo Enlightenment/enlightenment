@@ -46,6 +46,8 @@ void *alloca (size_t);
 #include <Ecore_File.h>
 #include <Eet.h>
 
+#include "e_fm_main.h"
+
 #define E_TYPEDEFS
 #include "e_config_data.h"
 #include "e_fm_op.h"
@@ -77,8 +79,8 @@ static Efm_Mode mode = EFM_MODE_USING_RASTER_MOUNT;
  *
  */
 
-#ifndef EAPI
-#define EAPI
+#ifndef E_API
+#define E_API
 #endif
 
 #include "e_fm_main.h"
@@ -217,7 +219,7 @@ _e_volume_free(E_Volume *v)
 
 /* API functions */
 
-EAPI void
+E_API void
 e_volume_mount(E_Volume *v)
 {
   switch (mode)
@@ -242,7 +244,7 @@ e_volume_mount(E_Volume *v)
 }
 
 
-EAPI void
+E_API void
 e_volume_unmount(E_Volume *v)
 {
   switch (mode)
@@ -266,7 +268,7 @@ e_volume_unmount(E_Volume *v)
     }
 }
 
-EAPI void
+E_API void
 e_volume_eject(E_Volume *v)
 {
   switch (mode)
@@ -290,7 +292,7 @@ e_volume_eject(E_Volume *v)
     }
 }
 
-EAPI E_Volume *
+E_API E_Volume *
 e_volume_find(const char *udi)
 {
    switch (mode)
@@ -312,7 +314,7 @@ e_volume_find(const char *udi)
    return NULL;
 }
 
-EAPI void
+E_API void
 e_storage_del(const char *udi)
 {
   switch (mode)
@@ -336,7 +338,7 @@ e_storage_del(const char *udi)
     }
 }
 
-EAPI E_Storage *
+E_API E_Storage *
 e_storage_find(const char *udi)
 {
   switch (mode)

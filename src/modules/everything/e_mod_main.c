@@ -24,13 +24,13 @@ int _evry_events[NUM_EVRY_EVENTS];
 E_Module *_mod_evry = NULL;
 
 /* module setup */
-EAPI E_Module_Api e_modapi =
+E_API E_Module_Api e_modapi =
 {
    E_MODULE_API_VERSION,
    "Everything"
 };
 
-EAPI void *
+E_API void *
 e_modapi_init(E_Module *m)
 {
    Eina_List *l;
@@ -147,7 +147,7 @@ e_modapi_init(E_Module *m)
    return m;
 }
 
-EAPI int
+E_API int
 e_modapi_shutdown(E_Module *m __UNUSED__)
 {
    E_Config_Dialog *cfd;
@@ -228,7 +228,7 @@ e_modapi_shutdown(E_Module *m __UNUSED__)
    return 1;
 }
 
-EAPI int
+E_API int
 e_modapi_save(E_Module *m __UNUSED__)
 {
    e_config_domain_save("module.everything", conf_edd, evry_conf);

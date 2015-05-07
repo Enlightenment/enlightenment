@@ -31,7 +31,7 @@ static Eina_List *_e_config_dialog_list = NULL;
  * @param data additional data to attach to the dialog, will be passed to the callbacks
  * @return returns the created dialog. Null on failure
  */
-EAPI E_Config_Dialog *
+E_API E_Config_Dialog *
 e_config_dialog_new(E_Comp *c, const char *title, const char *name, const char *class, const char *icon, int icon_size, E_Config_Dialog_View *view, void *data)
 {
    E_Config_Dialog *cfd;
@@ -92,7 +92,7 @@ e_config_dialog_new(E_Comp *c, const char *title, const char *name, const char *
    return cfd;
 }
 
-EAPI int
+E_API int
 e_config_dialog_find(const char *name, const char *class)
 {
    Eina_List *l;
@@ -127,7 +127,7 @@ e_config_dialog_find(const char *name, const char *class)
    return 0;
 }
 
-EAPI E_Config_Dialog *
+E_API E_Config_Dialog *
 e_config_dialog_get(const char *name, const char *class)
 {
    Eina_List *l;
@@ -488,14 +488,14 @@ _e_config_dialog_cb_close(void *data __UNUSED__, E_Dialog *dia)
    if (ok) e_util_defer_object_del(E_OBJECT(cfd));
 }
 
-EAPI void
+E_API void
 e_config_dialog_changed_auto_set(E_Config_Dialog *cfd, unsigned char value)
 {
    if (!cfd) return;
    cfd->cfg_changed_auto = !!value;
 }
 
-EAPI void
+E_API void
 e_config_dialog_changed_set(E_Config_Dialog *cfd, unsigned char value)
 {
    if (!cfd) return;

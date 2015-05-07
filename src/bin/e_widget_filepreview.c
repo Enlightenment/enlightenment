@@ -1179,7 +1179,7 @@ _e_wid_fprev_cb_mod(E_Widget_Data *wd, int type __UNUSED__, Eio_Monitor_Event *e
    return ECORE_CALLBACK_RENEW;
 }
 
-EAPI Evas_Object *
+E_API Evas_Object *
 e_widget_filepreview_add(Evas *evas, int w, int h, int horiz)
 {
    Evas_Object *obj, *o;
@@ -1218,7 +1218,7 @@ e_widget_filepreview_add(Evas *evas, int w, int h, int horiz)
    return obj;
 }
 
-EAPI void
+E_API void
 e_widget_filepreview_path_set(Evas_Object *obj, const char *path, const char *mime)
 {
    E_Widget_Data *wd;
@@ -1240,7 +1240,7 @@ e_widget_filepreview_path_set(Evas_Object *obj, const char *path, const char *mi
    _e_wid_fprev_preview_file(wd);
 }
 
-EAPI void
+E_API void
 e_widget_filepreview_filemode_force(Evas_Object *obj)
 {
    E_Widget_Data *wd;
@@ -1251,7 +1251,7 @@ e_widget_filepreview_filemode_force(Evas_Object *obj)
    _e_wid_fprev_preview_file_widgets(wd, 0, 0, 0);
 }
 
-EAPI void
+E_API void
 e_widget_filepreview_clamp_video_set(Evas_Object *obj, Eina_Bool clamp)
 {
    E_Widget_Data *wd;

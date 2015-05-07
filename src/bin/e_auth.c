@@ -131,7 +131,7 @@ _auth_pam_init(E_Auth *da)
 
 #endif
 
-EAPI int
+E_API int
 #ifdef HAVE_PAM
 e_auth_begin(char *passwd)
 {
@@ -194,7 +194,7 @@ e_auth_begin(char *passwd EINA_UNUSED)
 }
 #endif
 
-EAPI char *
+E_API char *
 e_auth_hostname_get(void)
 {
    return strdup("localhost");

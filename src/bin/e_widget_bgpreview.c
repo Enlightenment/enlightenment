@@ -26,7 +26,7 @@ static void      _e_wid_desk_cb_config(void *data, Evas *evas, Evas_Object *obj,
 static void      _e_wid_cb_resize(void *data, Evas *evas, Evas_Object *obj, void *event);
 static Eina_Bool _e_wid_cb_bg_update(void *data, int type, void *event);
 
-EAPI Evas_Object *
+E_API Evas_Object *
 e_widget_bgpreview_add(Evas *evas, int nx, int ny)
 {
    Evas_Object *obj;
@@ -54,7 +54,7 @@ e_widget_bgpreview_add(Evas *evas, int nx, int ny)
    return obj;
 }
 
-EAPI void
+E_API void
 e_widget_bgpreview_num_desks_set(Evas_Object *obj, int nx, int ny)
 {
    E_Widget_Data *wd;
@@ -65,7 +65,7 @@ e_widget_bgpreview_num_desks_set(Evas_Object *obj, int nx, int ny)
    _e_wid_reconfigure(wd);
 }
 
-EAPI Evas_Object *
+E_API Evas_Object *
 e_widget_bgpreview_desk_add(Evas *e, E_Zone *zone, int x, int y)
 {
    E_Widget_Desk_Data *dd;
@@ -97,7 +97,7 @@ e_widget_bgpreview_desk_add(Evas *e, E_Zone *zone, int x, int y)
    return dd->live;
 }
 
-EAPI void
+E_API void
 e_widget_bgpreview_desk_configurable_set(Evas_Object *obj, Eina_Bool enable)
 {
    E_Widget_Desk_Data *dd;

@@ -30,8 +30,8 @@ static Eina_List *_e_module_path_lists = NULL;
 static Eina_List *handlers = NULL;
 static Eina_Hash *_e_module_path_hash = NULL;
 
-EAPI int E_EVENT_MODULE_UPDATE = 0;
-EAPI int E_EVENT_MODULE_INIT_END = 0;
+E_API int E_EVENT_MODULE_UPDATE = 0;
+E_API int E_EVENT_MODULE_INIT_END = 0;
 
 static Eina_Stringshare *mod_src_path = NULL;
 
@@ -223,7 +223,7 @@ e_module_shutdown(void)
    return 1;
 }
 
-EAPI void
+E_API void
 e_module_all_load(void)
 {
    Eina_List *l, *ll;
@@ -284,13 +284,13 @@ e_module_all_load(void)
    unsetenv("E_MODULE_LOAD");
 }
 
-EAPI Eina_Bool
+E_API Eina_Bool
 e_module_loading_get(void)
 {
    return !_e_modules_init_end;
 }
 
-EAPI E_Module *
+E_API E_Module *
 e_module_new(const char *name)
 {
    E_Module *m;
@@ -457,7 +457,7 @@ init_done:
    return m;
 }
 
-EAPI int
+E_API int
 e_module_save(E_Module *m)
 {
    E_OBJECT_CHECK_RETURN(m, 0);
@@ -466,7 +466,7 @@ e_module_save(E_Module *m)
    return m->func.save ? m->func.save(m) : 1;
 }
 
-EAPI const char *
+E_API const char *
 e_module_dir_get(E_Module *m)
 {
    E_OBJECT_CHECK_RETURN(m, NULL);
@@ -474,7 +474,7 @@ e_module_dir_get(E_Module *m)
    return m->dir;
 }
 
-EAPI int
+E_API int
 e_module_enable(E_Module *m)
 {
    Eina_List *l;
@@ -511,7 +511,7 @@ e_module_enable(E_Module *m)
    return 0;
 }
 
-EAPI int
+E_API int
 e_module_disable(E_Module *m)
 {
    E_Event_Module_Update *ev;
@@ -544,7 +544,7 @@ e_module_disable(E_Module *m)
    return ret;
 }
 
-EAPI int
+E_API int
 e_module_enabled_get(E_Module *m)
 {
    E_OBJECT_CHECK_RETURN(m, 0);
@@ -552,7 +552,7 @@ e_module_enabled_get(E_Module *m)
    return m->enabled;
 }
 
-EAPI int
+E_API int
 e_module_save_all(void)
 {
    Eina_List *l;
@@ -571,20 +571,20 @@ e_module_save_all(void)
    return ret;
 }
 
-EAPI E_Module *
+E_API E_Module *
 e_module_find(const char *name)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(name, NULL);
    return eina_hash_find(_e_modules_hash, name);
 }
 
-EAPI Eina_List *
+E_API Eina_List *
 e_module_list(void)
 {
    return _e_modules;
 }
 
-EAPI void
+E_API void
 e_module_dialog_show(E_Module *m, const char *title, const char *body)
 {
    E_Dialog *dia;
@@ -633,7 +633,7 @@ e_module_dialog_show(E_Module *m, const char *title, const char *body)
      dia->win->client->internal_icon = eina_stringshare_add(icon);
 }
 
-EAPI void
+E_API void
 e_module_delayed_set(E_Module *m, int delayed)
 {
    Eina_List *l;
@@ -654,7 +654,7 @@ e_module_delayed_set(E_Module *m, int delayed)
      }
 }
 
-EAPI void
+E_API void
 e_module_priority_set(E_Module *m, int priority)
 {
    /* Set the loading order for a module.
@@ -677,7 +677,7 @@ e_module_priority_set(E_Module *m, int priority)
      }
 }
 
-EAPI Eina_List *
+E_API Eina_List *
 e_module_desktop_list(void)
 {
    Eina_List *l = NULL;
@@ -686,7 +686,7 @@ e_module_desktop_list(void)
    return l;
 }
 
-EAPI void
+E_API void
 e_module_desktop_free(E_Module_Desktop *md)
 {
    if (!md) return;

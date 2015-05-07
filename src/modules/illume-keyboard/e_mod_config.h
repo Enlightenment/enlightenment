@@ -24,12 +24,12 @@ struct _Il_Kbd_Config
    E_Config_Dialog *cfd;
 };
 
-EAPI int il_kbd_config_init(E_Module *m);
-EAPI int il_kbd_config_shutdown(void);
-EAPI int il_kbd_config_save(void);
+E_API int il_kbd_config_init(E_Module *m);
+E_API int il_kbd_config_shutdown(void);
+E_API int il_kbd_config_save(void);
 
-EAPI void il_kbd_config_show(E_Comp *comp, const char *params);
+E_API void il_kbd_config_show(E_Comp *comp, const char *params);
 
-extern EAPI Il_Kbd_Config *il_kbd_cfg;
+extern E_API Il_Kbd_Config *il_kbd_cfg;
 
 #endif

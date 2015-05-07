@@ -15,7 +15,7 @@ static void _e_wid_cb_changed(void *data, Evas_Object *obj, void *event_info);
 static void _e_wid_disable_hook(Evas_Object *obj);
 
 /* externally accessible functions */
-EAPI Evas_Object *
+E_API Evas_Object *
 e_widget_slider_add(Evas *evas, int horiz, int rev, const char *fmt, double min, double max, double step, int count, double *dval, int *ival, Evas_Coord size)
 {
    Evas_Object *obj, *o;
@@ -70,7 +70,7 @@ e_widget_slider_add(Evas *evas, int horiz, int rev, const char *fmt, double min,
  * @param dval the double value to set the slider to
  * @return 1 if value set, return 0 if value not set
  */
-EAPI int
+E_API int
 e_widget_slider_value_double_set(Evas_Object *slider, double dval)
 {
    E_Widget_Data *wd;
@@ -91,7 +91,7 @@ e_widget_slider_value_double_set(Evas_Object *slider, double dval)
  * @param ival the integer value to set the slider to
  * @return 1 if value set, return 0 if value not set
  */
-EAPI int
+E_API int
 e_widget_slider_value_int_set(Evas_Object *slider, int ival)
 {
    E_Widget_Data *wd;
@@ -111,7 +111,7 @@ e_widget_slider_value_int_set(Evas_Object *slider, int ival)
  * @param dval the pointer to the double value to be set with the value of the slider
  * @return 1 if value returned, return 0 if value not returned
  */
-EAPI int
+E_API int
 e_widget_slider_value_double_get(Evas_Object *slider, double *dval)
 {
    E_Widget_Data *wd;
@@ -132,7 +132,7 @@ e_widget_slider_value_double_get(Evas_Object *slider, double *dval)
  * @param ival the pointer to the integer value to be set with the value of the slider
  * @return 1 if value returned, return 0 if value not returned
  */
-EAPI int
+E_API int
 e_widget_slider_value_int_get(Evas_Object *slider, int *ival)
 {
    E_Widget_Data *wd;
@@ -145,7 +145,7 @@ e_widget_slider_value_int_get(Evas_Object *slider, int *ival)
    return 1;
 }
 
-EAPI void
+E_API void
 e_widget_slider_value_format_display_set(Evas_Object *slider, const char *format)
 {
    E_Widget_Data *wd;
@@ -154,7 +154,7 @@ e_widget_slider_value_format_display_set(Evas_Object *slider, const char *format
    e_slider_value_format_display_set(wd->o_slider, format);
 }
 
-EAPI void
+E_API void
 e_widget_slider_value_range_set(Evas_Object *slider, double min, double max)
 {
    E_Widget_Data *wd;
@@ -163,7 +163,7 @@ e_widget_slider_value_range_set(Evas_Object *slider, double min, double max)
    e_slider_value_range_set(wd->o_slider, min, max);
 }
 
-EAPI void
+E_API void
 e_widget_slider_value_step_size_set(Evas_Object *slider, double step_size)
 {
    E_Widget_Data *wd;
@@ -172,7 +172,7 @@ e_widget_slider_value_step_size_set(Evas_Object *slider, double step_size)
    e_slider_value_step_size_set(wd->o_slider, step_size);
 }
 
-EAPI void
+E_API void
 e_widget_slider_special_value_add(Evas_Object *obj, double value, double error, const char *label)
 {
    E_Widget_Data *wd;

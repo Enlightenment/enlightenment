@@ -2,14 +2,14 @@
 
 static Eina_Hash *config_hash = NULL;
 
-EAPI void
+E_API void
 e_config_descriptor_free(E_Config_DD *edd)
 {
    eina_hash_del_by_key(config_hash, eet_data_descriptor_name_get((Eet_Data_Descriptor*)edd));
    eet_data_descriptor_free((Eet_Data_Descriptor*)edd);
 }
 
-EAPI E_Config_DD *
+E_API E_Config_DD *
 e_config_descriptor_new(const char *name, int size)
 {
    Eet_Data_Descriptor_Class eddc;
@@ -29,7 +29,7 @@ e_config_descriptor_new(const char *name, int size)
    return edd;
 }
 
-EAPI E_Config_DD *
+E_API E_Config_DD *
 e_config_descriptor_find(const char *name)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(name, NULL);

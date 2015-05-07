@@ -93,7 +93,7 @@ struct _E_Config_Dialog_Data
 };
 
 /* a nice easy setup function that does the dirty work */
-EAPI E_Config_Dialog *
+E_API E_Config_Dialog *
 e_fm_prop_file(E_Comp *c, E_Fm2_Icon *ic)
 {
    E_Config_Dialog *cfd;

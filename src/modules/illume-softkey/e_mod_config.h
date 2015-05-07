@@ -15,6 +15,6 @@ int il_sft_config_init(void);
 int il_sft_config_shutdown(void);
 int il_sft_config_save(void);
 
-extern EAPI Il_Sft_Config *il_sft_cfg;
+extern E_API Il_Sft_Config *il_sft_cfg;
 
 #endif

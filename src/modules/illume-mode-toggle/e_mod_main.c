@@ -36,9 +36,9 @@ static const E_Gadcon_Client_Class _gc_class =
 };
 
 /* public functions */
-EAPI E_Module_Api e_modapi = { E_MODULE_API_VERSION, "Illume Mode Toggle" };
+E_API E_Module_Api e_modapi = { E_MODULE_API_VERSION, "Illume Mode Toggle" };
 
-EAPI void *
+E_API void *
 e_modapi_init(E_Module *m) 
 {
    mod_dir = eina_stringshare_add(m->dir);
@@ -46,7 +46,7 @@ e_modapi_init(E_Module *m)
    return m;
 }
 
-EAPI int 
+E_API int 
 e_modapi_shutdown(E_Module *m __UNUSED__) 
 {
    e_gadcon_provider_unregister(&_gc_class);
@@ -55,7 +55,7 @@ e_modapi_shutdown(E_Module *m __UNUSED__)
    return 1;
 }
 
-EAPI int 
+E_API int 
 e_modapi_save(E_Module *m __UNUSED__) 
 {
    return 1;

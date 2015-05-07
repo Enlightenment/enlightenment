@@ -4,12 +4,12 @@
 #ifndef E_SHA1_H
 #define E_SHA1_H
 
-#ifndef EAPI
+#ifndef E_API
 # ifdef WIN32
 #  ifdef BUILDING_DLL
-#   define EAPI __declspec(dllexport)
+#   define E_API __declspec(dllexport)
 #  else
-#   define EAPI __declspec(dllimport)
+#   define E_API __declspec(dllimport)
 #  endif
 # else
 #  ifdef __GNUC__
@@ -18,17 +18,17 @@
 #if 0
 #   pragma GCC visibility push(hidden)
 #endif
-#    define EAPI __attribute__ ((visibility("default")))
+#    define E_API __attribute__ ((visibility("default")))
 #   else
-#    define EAPI
+#    define E_API
 #   endif
 #  else
-#   define EAPI
+#   define E_API
 #  endif
 # endif
 #endif
 
-EAPI int e_sha1_sum(unsigned char *data, int size, unsigned char *dst);
+E_API int e_sha1_sum(unsigned char *data, int size, unsigned char *dst);
 
 #endif
 #endif

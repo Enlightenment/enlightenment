@@ -4,13 +4,13 @@
 static double scale = 1.0;
 static Eina_List *obs = NULL;
 /*
-EAPI int
+E_API int
 wizard_page_init(E_Wizard_Page *pg __UNUSED__, Eina_Bool *need_xdg_desktops __UNUSED__, Eina_Bool *need_xdg_icons __UNUSED__)
 {
    return 1;
 }
 
-EAPI int
+E_API int
 wizard_page_shutdown(E_Wizard_Page *pg __UNUSED__)
 {
    return 1;
@@ -118,7 +118,7 @@ _scale_preview_new(Evas *e, double sc, double *scp)
    return ob;
 }
 
-EAPI int
+E_API int
 wizard_page_show(E_Wizard_Page *pg)
 {
    Evas_Object *o, *of, *ob;
@@ -172,7 +172,7 @@ wizard_page_show(E_Wizard_Page *pg)
    return 1; /* 1 == show ui, and wait for user, 0 == just continue */
 }
 
-EAPI int
+E_API int
 wizard_page_hide(E_Wizard_Page *pg __UNUSED__)
 {
    obs = eina_list_free(obs);
@@ -185,7 +185,7 @@ wizard_page_hide(E_Wizard_Page *pg __UNUSED__)
    return 1;
 }
 /*
-EAPI int
+E_API int
 wizard_page_apply(E_Wizard_Page *pg __UNUSED__)
 {
    return 1;

@@ -31,7 +31,7 @@ e_intl_data_shutdown(void)
 }
 
 /* Get the input method configuration from the file */
-EAPI E_Input_Method_Config *
+E_API E_Input_Method_Config *
 e_intl_input_method_config_read(Eet_File *imc_file)
 {
    E_Input_Method_Config *imc;
@@ -45,7 +45,7 @@ e_intl_input_method_config_read(Eet_File *imc_file)
 }
 
 /* Write the input method configuration to the file */
-EAPI int
+E_API int
 e_intl_input_method_config_write(Eet_File *imc_file, E_Input_Method_Config *imc)
 {
    int ok = 0;
@@ -57,7 +57,7 @@ e_intl_input_method_config_write(Eet_File *imc_file, E_Input_Method_Config *imc)
    return ok;
 }
 
-EAPI void
+E_API void
 e_intl_input_method_config_free(E_Input_Method_Config *imc)
 {
    if (imc)

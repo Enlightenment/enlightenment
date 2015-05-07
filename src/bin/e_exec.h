@@ -33,25 +33,25 @@ typedef enum
 
 EINTERN int  e_exec_init(void);
 EINTERN int  e_exec_shutdown(void);
-EAPI void e_exec_executor_set(E_Exec_Instance *(*func) (void *data, E_Zone *zone, Efreet_Desktop *desktop, const char *exec, Eina_List *files, const char *launch_method), const void *data);
-EAPI E_Exec_Instance *e_exec(E_Zone *zone, Efreet_Desktop *desktop, const char *exec, Eina_List *files, const char *launch_method);
-EAPI E_Exec_Instance *e_exec_phony(E_Client *ec);
-EAPI void e_exec_phony_del(E_Exec_Instance *inst);
-EAPI E_Exec_Instance *e_exec_startup_id_pid_instance_find(int id, pid_t pid);
-EAPI Efreet_Desktop *e_exec_startup_id_pid_find(int startup_id, pid_t pid);
-EAPI E_Exec_Instance *e_exec_startup_desktop_instance_find(Efreet_Desktop *desktop);
-EAPI void e_exec_instance_found(E_Exec_Instance *inst);
-EAPI void e_exec_instance_watcher_add(E_Exec_Instance *inst, void (*func) (void *data, E_Exec_Instance *inst, E_Exec_Watch_Type type), const void *data);
-EAPI void e_exec_instance_watcher_del(E_Exec_Instance *inst, void (*func) (void *data, E_Exec_Instance *inst, E_Exec_Watch_Type type), const void *data);
-EAPI const Eina_List *e_exec_desktop_instances_find(const Efreet_Desktop *desktop);
+E_API void e_exec_executor_set(E_Exec_Instance *(*func) (void *data, E_Zone *zone, Efreet_Desktop *desktop, const char *exec, Eina_List *files, const char *launch_method), const void *data);
+E_API E_Exec_Instance *e_exec(E_Zone *zone, Efreet_Desktop *desktop, const char *exec, Eina_List *files, const char *launch_method);
+E_API E_Exec_Instance *e_exec_phony(E_Client *ec);
+E_API void e_exec_phony_del(E_Exec_Instance *inst);
+E_API E_Exec_Instance *e_exec_startup_id_pid_instance_find(int id, pid_t pid);
+E_API Efreet_Desktop *e_exec_startup_id_pid_find(int startup_id, pid_t pid);
+E_API E_Exec_Instance *e_exec_startup_desktop_instance_find(Efreet_Desktop *desktop);
+E_API void e_exec_instance_found(E_Exec_Instance *inst);
+E_API void e_exec_instance_watcher_add(E_Exec_Instance *inst, void (*func) (void *data, E_Exec_Instance *inst, E_Exec_Watch_Type type), const void *data);
+E_API void e_exec_instance_watcher_del(E_Exec_Instance *inst, void (*func) (void *data, E_Exec_Instance *inst, E_Exec_Watch_Type type), const void *data);
+E_API const Eina_List *e_exec_desktop_instances_find(const Efreet_Desktop *desktop);
 
-EAPI const Eina_Hash *e_exec_instances_get(void);
-EAPI void e_exec_instance_client_add(E_Exec_Instance *inst, E_Client *ec);
+E_API const Eina_Hash *e_exec_instances_get(void);
+E_API void e_exec_instance_client_add(E_Exec_Instance *inst, E_Client *ec);
 
 /* sends E_Exec_Instance */
-EAPI extern int E_EVENT_EXEC_NEW;
-EAPI extern int E_EVENT_EXEC_NEW_CLIENT;
-EAPI extern int E_EVENT_EXEC_DEL;
+E_API extern int E_EVENT_EXEC_NEW;
+E_API extern int E_EVENT_EXEC_NEW_CLIENT;
+E_API extern int E_EVENT_EXEC_DEL;
 
 #endif
 #endif

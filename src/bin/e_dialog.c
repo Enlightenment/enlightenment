@@ -75,19 +75,19 @@ _e_dialog_internal_new(E_Comp *c, const char *name, const char *class, int dialo
    return dia;
 }
 
-EAPI E_Dialog *
+E_API E_Dialog *
 e_dialog_new(E_Comp *c, const char *name, const char *class)
 {
    return _e_dialog_internal_new(c, name, class, 1);
 }
 
-EAPI E_Dialog *
+E_API E_Dialog *
 e_dialog_normal_win_new(E_Comp *c, const char *name, const char *class)
 {
    return _e_dialog_internal_new(c, name, class, 0);
 }
 
-EAPI void
+E_API void
 e_dialog_button_add(E_Dialog *dia, const char *label, const char *icon, E_Dialog_Cb func, void *data)
 {
    Evas_Object *o;
@@ -98,7 +98,7 @@ e_dialog_button_add(E_Dialog *dia, const char *label, const char *icon, E_Dialog
    dia->buttons = eina_list_append(dia->buttons, o);
 }
 
-EAPI int
+E_API int
 e_dialog_button_focus_num(E_Dialog *dia, int button)
 {
    Evas_Object *o;
@@ -108,7 +108,7 @@ e_dialog_button_focus_num(E_Dialog *dia, int button)
    return 1;
 }
 
-EAPI int
+E_API int
 e_dialog_button_disable_num_set(E_Dialog *dia, int button, int disabled)
 {
    Evas_Object *o;
@@ -118,7 +118,7 @@ e_dialog_button_disable_num_set(E_Dialog *dia, int button, int disabled)
    return 1;
 }
 
-EAPI int
+E_API int
 e_dialog_button_disable_num_get(E_Dialog *dia, int button)
 {
    Evas_Object *o;
@@ -129,13 +129,13 @@ e_dialog_button_disable_num_get(E_Dialog *dia, int button)
    return ret;
 }
 
-EAPI void
+E_API void
 e_dialog_title_set(E_Dialog *dia, const char *title)
 {
    e_win_title_set(dia->win, title);
 }
 
-EAPI void
+E_API void
 e_dialog_text_set(E_Dialog *dia, const char *text)
 {
    if (!dia->text_object)
@@ -152,7 +152,7 @@ e_dialog_text_set(E_Dialog *dia, const char *text)
    edje_object_part_text_set(dia->text_object, "e.textblock.message", text);
 }
 
-EAPI void
+E_API void
 e_dialog_icon_set(E_Dialog *dia, const char *icon, Evas_Coord size)
 {
    if (!icon)
@@ -187,7 +187,7 @@ e_dialog_icon_set(E_Dialog *dia, const char *icon, Evas_Coord size)
    edje_object_message_signal_process(dia->bg_object);
 }
 
-EAPI void
+E_API void
 e_dialog_border_icon_set(E_Dialog *dia, const char *icon)
 {
    E_Client *ec;
@@ -197,7 +197,7 @@ e_dialog_border_icon_set(E_Dialog *dia, const char *icon)
      eina_stringshare_replace(&ec->internal_icon, icon);
 }
 
-EAPI void
+E_API void
 e_dialog_content_set(E_Dialog *dia, Evas_Object *obj, Evas_Coord minw, Evas_Coord minh)
 {
    int mw, mh;
@@ -213,7 +213,7 @@ e_dialog_content_set(E_Dialog *dia, Evas_Object *obj, Evas_Coord minw, Evas_Coor
    evas_object_show(obj);
 }
 
-EAPI void
+E_API void
 e_dialog_resizable_set(E_Dialog *dia, int resizable)
 {
    dia->resizable = resizable;
@@ -234,7 +234,7 @@ e_dialog_resizable_set(E_Dialog *dia, int resizable)
      }
 }
 
-EAPI void
+E_API void
 e_dialog_parent_set(E_Dialog *dia, E_Win *win)
 {
    if (!dia) return;
@@ -247,7 +247,7 @@ e_dialog_parent_set(E_Dialog *dia, E_Win *win)
    ecore_evas_modal_set(dia->win->ecore_evas, !!win);
 }
 
-EAPI void
+E_API void
 e_dialog_show(E_Dialog *dia)
 {
    Evas_Coord mw, mh;

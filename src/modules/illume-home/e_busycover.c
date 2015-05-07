@@ -5,7 +5,7 @@
 /* local function prototypes */
 static void _e_busycover_cb_free(E_Busycover *cover);
 
-EAPI E_Busycover *
+E_API E_Busycover *
 e_busycover_new(E_Win *win) 
 {
    E_Busycover *cover;
@@ -28,7 +28,7 @@ e_busycover_new(E_Win *win)
    return cover;
 }
 
-EAPI E_Busycover_Handle *
+E_API E_Busycover_Handle *
 e_busycover_push(E_Busycover *cover, const char *msg, const char *icon) 
 {
    E_Busycover_Handle *handle;
@@ -46,7 +46,7 @@ e_busycover_push(E_Busycover *cover, const char *msg, const char *icon)
    return handle;
 }
 
-EAPI void 
+E_API void 
 e_busycover_pop(E_Busycover *cover, E_Busycover_Handle *handle) 
 {
    E_OBJECT_CHECK(cover);
@@ -65,7 +65,7 @@ e_busycover_pop(E_Busycover *cover, E_Busycover_Handle *handle)
      evas_object_hide(cover->o_base);
 }
 
-EAPI void 
+E_API void 
 e_busycover_resize(E_Busycover *cover, int w, int h) 
 {
    E_OBJECT_CHECK(cover);

@@ -110,7 +110,7 @@ struct _E_Comp_X_Client_Data
 EINTERN Eina_Bool e_comp_x_init(void);
 EINTERN void e_comp_x_shutdown(void);
 
-EAPI void e_alert_composite_win(Ecore_X_Window root, Ecore_X_Window win);
+E_API void e_alert_composite_win(Ecore_X_Window root, Ecore_X_Window win);
 EINTERN void e_comp_x_nocomp_end(E_Comp *comp);
 # endif
 #endif

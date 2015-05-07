@@ -81,32 +81,32 @@ struct _E_Object_Delfn
    Eina_Bool delete_me : 1;
 };
 
-EAPI void *e_object_alloc               (int size, int type, E_Object_Cleanup_Func cleanup_func);
-EAPI void  e_object_del                 (E_Object *obj);
-EAPI void  e_object_delay_del_set       (E_Object *obj, void *func);
-EAPI int   e_object_is_del              (E_Object *obj);
-EAPI void  e_object_del_func_set        (E_Object *obj, E_Object_Cleanup_Func del_func);
-EAPI void  e_object_type_set            (E_Object *obj, int type);
-EAPI void  e_object_free                (E_Object *obj);
-EAPI int   e_object_ref                 (E_Object *obj);
-EAPI int   e_object_unref               (E_Object *obj);
-EAPI int   e_object_ref_get             (E_Object *obj);
-EAPI int   e_object_error               (E_Object *obj);
-EAPI void  e_object_data_set            (E_Object *obj, const void *data);
-EAPI void *e_object_data_get            (E_Object *obj);
-EAPI void  e_object_free_attach_func_set(E_Object *obj, E_Object_Cleanup_Func func);
-EAPI void  e_object_del_attach_func_set (E_Object *obj, E_Object_Cleanup_Func func);
+E_API void *e_object_alloc               (int size, int type, E_Object_Cleanup_Func cleanup_func);
+E_API void  e_object_del                 (E_Object *obj);
+E_API void  e_object_delay_del_set       (E_Object *obj, void *func);
+E_API int   e_object_is_del              (E_Object *obj);
+E_API void  e_object_del_func_set        (E_Object *obj, E_Object_Cleanup_Func del_func);
+E_API void  e_object_type_set            (E_Object *obj, int type);
+E_API void  e_object_free                (E_Object *obj);
+E_API int   e_object_ref                 (E_Object *obj);
+E_API int   e_object_unref               (E_Object *obj);
+E_API int   e_object_ref_get             (E_Object *obj);
+E_API int   e_object_error               (E_Object *obj);
+E_API void  e_object_data_set            (E_Object *obj, const void *data);
+E_API void *e_object_data_get            (E_Object *obj);
+E_API void  e_object_free_attach_func_set(E_Object *obj, E_Object_Cleanup_Func func);
+E_API void  e_object_del_attach_func_set (E_Object *obj, E_Object_Cleanup_Func func);
 
-EAPI E_Object_Delfn *e_object_delfn_add (E_Object *obj, void (*func) (void *data, void *obj), void *data);
-EAPI void            e_object_delfn_del (E_Object *obj, E_Object_Delfn *dfn);
-EAPI void            e_object_delfn_clear(E_Object *obj);
+E_API E_Object_Delfn *e_object_delfn_add (E_Object *obj, void (*func) (void *data, void *obj), void *data);
+E_API void            e_object_delfn_del (E_Object *obj, E_Object_Delfn *dfn);
+E_API void            e_object_delfn_clear(E_Object *obj);
 
-EAPI void e_object_ref_debug_set(E_Object *obj, Eina_Bool set);
+E_API void e_object_ref_debug_set(E_Object *obj, Eina_Bool set);
 
 /*
-EAPI void  e_object_breadcrumb_add      (E_Object *obj, char *crumb);
-EAPI void  e_object_breadcrumb_del      (E_Object *obj, char *crumb);
-EAPI void  e_object_breadcrumb_debug    (E_Object *obj);
+E_API void  e_object_breadcrumb_add      (E_Object *obj, char *crumb);
+E_API void  e_object_breadcrumb_del      (E_Object *obj, char *crumb);
+E_API void  e_object_breadcrumb_debug    (E_Object *obj);
 */
 
 #endif

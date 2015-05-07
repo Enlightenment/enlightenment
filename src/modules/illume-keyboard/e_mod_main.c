@@ -13,9 +13,9 @@ static E_Kbd_Int *ki = NULL;
 static Ecore_Exe *_kbd_exe = NULL;
 static Ecore_Event_Handler *_kbd_exe_exit_handler = NULL;
 
-EAPI E_Module_Api e_modapi = { E_MODULE_API_VERSION, "Illume Keyboard" };
+E_API E_Module_Api e_modapi = { E_MODULE_API_VERSION, "Illume Keyboard" };
 
-EAPI void *
+E_API void *
 e_modapi_init(E_Module *m) 
 {
    if (!il_kbd_config_init(m)) return NULL;
@@ -24,7 +24,7 @@ e_modapi_init(E_Module *m)
    return m;
 }
 
-EAPI int 
+E_API int 
 e_modapi_shutdown(E_Module *m __UNUSED__) 
 {
    _il_kbd_stop();
@@ -32,13 +32,13 @@ e_modapi_shutdown(E_Module *m __UNUSED__)
    return 1;
 }
 
-EAPI int 
+E_API int 
 e_modapi_save(E_Module *m __UNUSED__) 
 {
    return il_kbd_config_save();
 }
 
-EAPI void 
+E_API void 
 il_kbd_cfg_update(void) 
 {
    _il_kbd_stop();

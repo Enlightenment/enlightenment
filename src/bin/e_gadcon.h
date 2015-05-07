@@ -61,11 +61,11 @@ typedef void (*E_Gadcon_DND_Cb)(E_Gadcon*, E_Gadcon_Client*);
 #define E_GADCON_DUMMY_TYPE  0xE0b01016
 #define E_GADCON_CLIENT_TYPE 0xE0b01007
 
-EAPI extern int E_EVENT_GADCON_CLIENT_ADD;
-EAPI extern int E_EVENT_GADCON_CLIENT_DEL;
-EAPI extern int E_EVENT_GADCON_CLIENT_CLASS_ADD;
-EAPI extern int E_EVENT_GADCON_CLIENT_CLASS_DEL;
-EAPI extern int E_EVENT_GADCON_POPULATE;
+E_API extern int E_EVENT_GADCON_CLIENT_ADD;
+E_API extern int E_EVENT_GADCON_CLIENT_DEL;
+E_API extern int E_EVENT_GADCON_CLIENT_CLASS_ADD;
+E_API extern int E_EVENT_GADCON_CLIENT_CLASS_DEL;
+E_API extern int E_EVENT_GADCON_POPULATE;
 
 struct _E_Gadcon
 {
@@ -274,99 +274,99 @@ struct _E_Gadcon_Location
 
 EINTERN int                  e_gadcon_init(void);
 EINTERN int                  e_gadcon_shutdown(void);
-EAPI void                    e_gadcon_provider_register(const E_Gadcon_Client_Class *cc);
-EAPI void                    e_gadcon_provider_unregister(const E_Gadcon_Client_Class *cc);
-EAPI Eina_List              *e_gadcon_provider_list(void);
-EAPI E_Gadcon               *e_gadcon_dummy_new(int id);
-EAPI void                    e_gadcon_drop_handler_add(E_Gadcon *gc, E_Gadcon_DND_Cb enter, E_Gadcon_DND_Cb leave, E_Gadcon_DND_Cb move, E_Gadcon_DND_Cb drop, int x, int y, int w, int h);
-EAPI void                    e_gadcon_config_del(E_Gadcon *gc);
-EAPI E_Gadcon               *e_gadcon_swallowed_new(const char *name, int id, Evas_Object *obj, const char *swallow_name);
-EAPI void                    e_gadcon_custom_new(E_Gadcon *gc);
-EAPI void                    e_gadcon_custom_del(E_Gadcon *gc);
-EAPI void                    e_gadcon_custom_populate_request(E_Gadcon *gc);
-EAPI void                    e_gadcon_swallowed_min_size_set(E_Gadcon *gc, Evas_Coord w, Evas_Coord h);
-EAPI void                    e_gadcon_min_size_request_callback_set(E_Gadcon *gc, void (*func)(void *data, E_Gadcon *gc, Evas_Coord w, Evas_Coord h), void *data);
-EAPI void                    e_gadcon_size_request_callback_set(E_Gadcon *gc, void (*func)(void *data, E_Gadcon *gc, Evas_Coord w, Evas_Coord h), void *data);
-EAPI void e_gadcon_frame_request_callback_set(E_Gadcon * gc, Evas_Object * (*func)(void *data, E_Gadcon_Client * gcc, const char *style), void *data);
-EAPI void                    e_gadcon_populate_callback_set(E_Gadcon *gc, void (*func)(void *data, E_Gadcon *gc, const E_Gadcon_Client_Class *cc), void *data);
-EAPI void                    e_gadcon_layout_policy_set(E_Gadcon *gc, E_Gadcon_Layout_Policy layout_policy);
-EAPI Eina_Bool               e_gadcon_populate(E_Gadcon *gc);
-EAPI void                    e_gadcon_unpopulate(E_Gadcon *gc);
-EAPI void                    e_gadcon_repopulate(E_Gadcon *gc);
-EAPI void                    e_gadcon_populate_class(E_Gadcon *gc, const E_Gadcon_Client_Class *cc);
-EAPI void                    e_gadcon_orient(E_Gadcon *gc, E_Gadcon_Orient orient);
-EAPI void                    e_gadcon_edit_begin(E_Gadcon *gc);
-EAPI void                    e_gadcon_edit_end(E_Gadcon *gc);
-EAPI void                    e_gadcon_all_edit_begin(void);
-EAPI void                    e_gadcon_all_edit_end(void);
-EAPI void                    e_gadcon_zone_set(E_Gadcon *gc, E_Zone *zone);
-EAPI E_Zone                 *e_gadcon_zone_get(E_Gadcon *gc);
-EAPI void                    e_gadcon_ecore_evas_set(E_Gadcon *gc, Ecore_Evas *ee);
-EAPI int                     e_gadcon_canvas_zone_geometry_get(E_Gadcon *gc, int *x, int *y, int *w, int *h);
-EAPI void                    e_gadcon_util_menu_attach_func_set(E_Gadcon *gc, void (*func)(void *data, E_Gadcon_Client *gcc, E_Menu *menu), void *data);
-EAPI void                    e_gadcon_util_lock_func_set(E_Gadcon *gc, void (*func)(void *data, int lock), void *data);
-EAPI void                    e_gadcon_util_urgent_show_func_set(E_Gadcon *gc, void (*func)(void *data), void *data);
-EAPI void                    e_gadcon_dnd_window_set(E_Gadcon *gc, Ecore_X_Window win);
-EAPI Ecore_X_Window          e_gadcon_dnd_window_get(E_Gadcon *gc);
-EAPI void                    e_gadcon_xdnd_window_set(E_Gadcon *gc, Ecore_X_Window win);
-EAPI Ecore_X_Window          e_gadcon_xdnd_window_get(E_Gadcon *gc);
-EAPI void                    e_gadcon_shelf_set(E_Gadcon *gc, E_Shelf *shelf);
-EAPI E_Shelf                *e_gadcon_shelf_get(E_Gadcon *gc);
-EAPI void                    e_gadcon_toolbar_set(E_Gadcon *gc, E_Toolbar *toolbar);
-EAPI E_Toolbar              *e_gadcon_toolbar_get(E_Gadcon *gc);
-EAPI E_Gadcon_Client      *e_gadcon_client_find(E_Gadcon *gc, E_Config_Gadcon_Client *cf_gcc);
-EAPI E_Config_Gadcon_Client *e_gadcon_client_config_new(E_Gadcon *gc, const char *name);
-EAPI void                    e_gadcon_client_config_del(E_Config_Gadcon *cf_gc, E_Config_Gadcon_Client *cf_gcc);
-EAPI E_Gadcon_Client        *e_gadcon_client_new(E_Gadcon *gc, const char *name, const char *id, const char *style, Evas_Object *base_obj);
-EAPI void                    e_gadcon_client_edit_begin(E_Gadcon_Client *gcc);
-EAPI void                    e_gadcon_client_edit_end(E_Gadcon_Client *gcc);
-EAPI void                    e_gadcon_client_queue(E_Gadcon *gc, E_Config_Gadcon_Client *cf_gcc);
-EAPI void                    e_gadcon_client_show(E_Gadcon_Client *gcc);
-EAPI void                    e_gadcon_client_hide(E_Gadcon_Client *gcc);
-EAPI void                    e_gadcon_client_size_request(E_Gadcon_Client *gcc, Evas_Coord w, Evas_Coord h);
-EAPI void                    e_gadcon_client_min_size_set(E_Gadcon_Client *gcc, Evas_Coord w, Evas_Coord h);
-EAPI void                    e_gadcon_client_aspect_set(E_Gadcon_Client *gcc, int w, int h);
-EAPI void                    e_gadcon_client_autoscroll_toggle_disabled_set(E_Gadcon_Client *gcc, Eina_Bool disable);
-EAPI void                    e_gadcon_client_autoscroll_set(E_Gadcon_Client *gcc, int autoscroll);
-EAPI void                    e_gadcon_client_autoscroll_update(E_Gadcon_Client *gcc, int mx, int my);
-EAPI void                    e_gadcon_client_autoscroll_cb_set(E_Gadcon_Client *gcc, void (*func)(void *data), void *data);
-EAPI void                    e_gadcon_client_resizable_set(E_Gadcon_Client *gcc, int resizable);
-EAPI int                     e_gadcon_client_geometry_get(E_Gadcon_Client *gcc, int *x, int *y, int *w, int *h);
-EAPI int                     e_gadcon_client_viewport_geometry_get(E_Gadcon_Client *gcc, int *x, int *y, int *w, int *h);
-EAPI E_Zone                 *e_gadcon_client_zone_get(E_Gadcon_Client *gcc);
-EAPI E_Menu                *e_gadcon_client_menu_set(E_Gadcon_Client *gcc, E_Menu *m);
-EAPI E_Menu                 *e_gadcon_client_util_menu_items_append(E_Gadcon_Client *gcc, E_Menu *menu_gadget, int flags);
-EAPI void                    e_gadcon_client_util_menu_attach(E_Gadcon_Client *gcc);
-EAPI void                    e_gadcon_locked_set(E_Gadcon *gc, int lock);
-EAPI void                    e_gadcon_urgent_show(E_Gadcon *gc);
-EAPI void                    e_gadcon_name_set(E_Gadcon *gc, const char *name);
+E_API void                    e_gadcon_provider_register(const E_Gadcon_Client_Class *cc);
+E_API void                    e_gadcon_provider_unregister(const E_Gadcon_Client_Class *cc);
+E_API Eina_List              *e_gadcon_provider_list(void);
+E_API E_Gadcon               *e_gadcon_dummy_new(int id);
+E_API void                    e_gadcon_drop_handler_add(E_Gadcon *gc, E_Gadcon_DND_Cb enter, E_Gadcon_DND_Cb leave, E_Gadcon_DND_Cb move, E_Gadcon_DND_Cb drop, int x, int y, int w, int h);
+E_API void                    e_gadcon_config_del(E_Gadcon *gc);
+E_API E_Gadcon               *e_gadcon_swallowed_new(const char *name, int id, Evas_Object *obj, const char *swallow_name);
+E_API void                    e_gadcon_custom_new(E_Gadcon *gc);
+E_API void                    e_gadcon_custom_del(E_Gadcon *gc);
+E_API void                    e_gadcon_custom_populate_request(E_Gadcon *gc);
+E_API void                    e_gadcon_swallowed_min_size_set(E_Gadcon *gc, Evas_Coord w, Evas_Coord h);
+E_API void                    e_gadcon_min_size_request_callback_set(E_Gadcon *gc, void (*func)(void *data, E_Gadcon *gc, Evas_Coord w, Evas_Coord h), void *data);
+E_API void                    e_gadcon_size_request_callback_set(E_Gadcon *gc, void (*func)(void *data, E_Gadcon *gc, Evas_Coord w, Evas_Coord h), void *data);
+E_API void e_gadcon_frame_request_callback_set(E_Gadcon * gc, Evas_Object * (*func)(void *data, E_Gadcon_Client * gcc, const char *style), void *data);
+E_API void                    e_gadcon_populate_callback_set(E_Gadcon *gc, void (*func)(void *data, E_Gadcon *gc, const E_Gadcon_Client_Class *cc), void *data);
+E_API void                    e_gadcon_layout_policy_set(E_Gadcon *gc, E_Gadcon_Layout_Policy layout_policy);
+E_API Eina_Bool               e_gadcon_populate(E_Gadcon *gc);
+E_API void                    e_gadcon_unpopulate(E_Gadcon *gc);
+E_API void                    e_gadcon_repopulate(E_Gadcon *gc);
+E_API void                    e_gadcon_populate_class(E_Gadcon *gc, const E_Gadcon_Client_Class *cc);
+E_API void                    e_gadcon_orient(E_Gadcon *gc, E_Gadcon_Orient orient);
+E_API void                    e_gadcon_edit_begin(E_Gadcon *gc);
+E_API void                    e_gadcon_edit_end(E_Gadcon *gc);
+E_API void                    e_gadcon_all_edit_begin(void);
+E_API void                    e_gadcon_all_edit_end(void);
+E_API void                    e_gadcon_zone_set(E_Gadcon *gc, E_Zone *zone);
+E_API E_Zone                 *e_gadcon_zone_get(E_Gadcon *gc);
+E_API void                    e_gadcon_ecore_evas_set(E_Gadcon *gc, Ecore_Evas *ee);
+E_API int                     e_gadcon_canvas_zone_geometry_get(E_Gadcon *gc, int *x, int *y, int *w, int *h);
+E_API void                    e_gadcon_util_menu_attach_func_set(E_Gadcon *gc, void (*func)(void *data, E_Gadcon_Client *gcc, E_Menu *menu), void *data);
+E_API void                    e_gadcon_util_lock_func_set(E_Gadcon *gc, void (*func)(void *data, int lock), void *data);
+E_API void                    e_gadcon_util_urgent_show_func_set(E_Gadcon *gc, void (*func)(void *data), void *data);
+E_API void                    e_gadcon_dnd_window_set(E_Gadcon *gc, Ecore_X_Window win);
+E_API Ecore_X_Window          e_gadcon_dnd_window_get(E_Gadcon *gc);
+E_API void                    e_gadcon_xdnd_window_set(E_Gadcon *gc, Ecore_X_Window win);
+E_API Ecore_X_Window          e_gadcon_xdnd_window_get(E_Gadcon *gc);
+E_API void                    e_gadcon_shelf_set(E_Gadcon *gc, E_Shelf *shelf);
+E_API E_Shelf                *e_gadcon_shelf_get(E_Gadcon *gc);
+E_API void                    e_gadcon_toolbar_set(E_Gadcon *gc, E_Toolbar *toolbar);
+E_API E_Toolbar              *e_gadcon_toolbar_get(E_Gadcon *gc);
+E_API E_Gadcon_Client      *e_gadcon_client_find(E_Gadcon *gc, E_Config_Gadcon_Client *cf_gcc);
+E_API E_Config_Gadcon_Client *e_gadcon_client_config_new(E_Gadcon *gc, const char *name);
+E_API void                    e_gadcon_client_config_del(E_Config_Gadcon *cf_gc, E_Config_Gadcon_Client *cf_gcc);
+E_API E_Gadcon_Client        *e_gadcon_client_new(E_Gadcon *gc, const char *name, const char *id, const char *style, Evas_Object *base_obj);
+E_API void                    e_gadcon_client_edit_begin(E_Gadcon_Client *gcc);
+E_API void                    e_gadcon_client_edit_end(E_Gadcon_Client *gcc);
+E_API void                    e_gadcon_client_queue(E_Gadcon *gc, E_Config_Gadcon_Client *cf_gcc);
+E_API void                    e_gadcon_client_show(E_Gadcon_Client *gcc);
+E_API void                    e_gadcon_client_hide(E_Gadcon_Client *gcc);
+E_API void                    e_gadcon_client_size_request(E_Gadcon_Client *gcc, Evas_Coord w, Evas_Coord h);
+E_API void                    e_gadcon_client_min_size_set(E_Gadcon_Client *gcc, Evas_Coord w, Evas_Coord h);
+E_API void                    e_gadcon_client_aspect_set(E_Gadcon_Client *gcc, int w, int h);
+E_API void                    e_gadcon_client_autoscroll_toggle_disabled_set(E_Gadcon_Client *gcc, Eina_Bool disable);
+E_API void                    e_gadcon_client_autoscroll_set(E_Gadcon_Client *gcc, int autoscroll);
+E_API void                    e_gadcon_client_autoscroll_update(E_Gadcon_Client *gcc, int mx, int my);
+E_API void                    e_gadcon_client_autoscroll_cb_set(E_Gadcon_Client *gcc, void (*func)(void *data), void *data);
+E_API void                    e_gadcon_client_resizable_set(E_Gadcon_Client *gcc, int resizable);
+E_API int                     e_gadcon_client_geometry_get(E_Gadcon_Client *gcc, int *x, int *y, int *w, int *h);
+E_API int                     e_gadcon_client_viewport_geometry_get(E_Gadcon_Client *gcc, int *x, int *y, int *w, int *h);
+E_API E_Zone                 *e_gadcon_client_zone_get(E_Gadcon_Client *gcc);
+E_API E_Menu                *e_gadcon_client_menu_set(E_Gadcon_Client *gcc, E_Menu *m);
+E_API E_Menu                 *e_gadcon_client_util_menu_items_append(E_Gadcon_Client *gcc, E_Menu *menu_gadget, int flags);
+E_API void                    e_gadcon_client_util_menu_attach(E_Gadcon_Client *gcc);
+E_API void                    e_gadcon_locked_set(E_Gadcon *gc, int lock);
+E_API void                    e_gadcon_urgent_show(E_Gadcon *gc);
+E_API void                    e_gadcon_name_set(E_Gadcon *gc, const char *name);
 
 /* site helpers */
 
-EAPI Eina_Bool               e_gadcon_site_is_shelf(E_Gadcon_Site site);
-EAPI Eina_Bool               e_gadcon_site_is_desktop(E_Gadcon_Site site);
-EAPI Eina_Bool               e_gadcon_site_is_efm_toolbar(E_Gadcon_Site site);
+E_API Eina_Bool               e_gadcon_site_is_shelf(E_Gadcon_Site site);
+E_API Eina_Bool               e_gadcon_site_is_desktop(E_Gadcon_Site site);
+E_API Eina_Bool               e_gadcon_site_is_efm_toolbar(E_Gadcon_Site site);
 
-EAPI Eina_Bool               e_gadcon_site_is_any_toolbar(E_Gadcon_Site site); // all toolbar sities
-EAPI Eina_Bool               e_gadcon_site_is_not_toolbar(E_Gadcon_Site site); // all non-toolbar sities
+E_API Eina_Bool               e_gadcon_site_is_any_toolbar(E_Gadcon_Site site); // all toolbar sities
+E_API Eina_Bool               e_gadcon_site_is_not_toolbar(E_Gadcon_Site site); // all non-toolbar sities
 
 /* location helpers */
 
-EAPI E_Gadcon_Location *
+E_API E_Gadcon_Location *
                              e_gadcon_location_new(const char *name, E_Gadcon_Site site,
                       int (*add_func)(void *data, E_Gadcon_Client *, const E_Gadcon_Client_Class *cc),
                       void *add_data,
                       void (*remove_func)(void *data, E_Gadcon_Client *cc),
                       void *remove_data);
-EAPI void                    e_gadcon_location_free(E_Gadcon_Location *loc);
-EAPI void                    e_gadcon_location_register(E_Gadcon_Location *loc);
-EAPI void                    e_gadcon_location_unregister(E_Gadcon_Location *loc);
-EAPI void                    e_gadcon_location_set_icon_name(E_Gadcon_Location *loc, const char *name);
-EAPI void                    e_gadcon_client_add_location_menu(E_Gadcon_Client *gcc, E_Menu *menu);
-EAPI void                    e_gadcon_drag_finished_cb(E_Drag *drag, int dropped);
-EAPI void                    e_gadcon_client_drag_set(E_Gadcon_Client *gcc);
+E_API void                    e_gadcon_location_free(E_Gadcon_Location *loc);
+E_API void                    e_gadcon_location_register(E_Gadcon_Location *loc);
+E_API void                    e_gadcon_location_unregister(E_Gadcon_Location *loc);
+E_API void                    e_gadcon_location_set_icon_name(E_Gadcon_Location *loc, const char *name);
+E_API void                    e_gadcon_client_add_location_menu(E_Gadcon_Client *gcc, E_Menu *menu);
+E_API void                    e_gadcon_drag_finished_cb(E_Drag *drag, int dropped);
+E_API void                    e_gadcon_client_drag_set(E_Gadcon_Client *gcc);
 
-EAPI Eina_Bool              e_gadcon_client_visible_get(const E_Gadcon_Client *gcc, const E_Desk *desk);
+E_API Eina_Bool              e_gadcon_client_visible_get(const E_Gadcon_Client *gcc, const E_Desk *desk);
 
 #define GADCON_CLIENT_CONFIG_GET(_type, _items, _gc_class, _id)                             \
   if (!_id)                                                                                 \

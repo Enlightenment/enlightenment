@@ -82,7 +82,7 @@ static int          _types_list_sort(const void *data1, const void *data2);
 static void         _btn_cb_unload(void *data, void *data2);
 static void         _btn_cb_load(void *data, void *data2);
 
-EAPI E_Config_Dialog *
+E_API E_Config_Dialog *
 e_int_config_modules(E_Comp *c, const char *params __UNUSED__)
 {
    E_Config_Dialog *cfd = NULL;

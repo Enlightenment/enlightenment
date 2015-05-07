@@ -10,9 +10,9 @@ const char *_e_illume_mod_dir = NULL;
 E_Illume_Keyboard *_e_illume_kbd = NULL;
 Eina_List *_e_illume_qps = NULL;
 
-EAPI E_Module_Api e_modapi = { E_MODULE_API_VERSION, "Illume2" };
+E_API E_Module_Api e_modapi = { E_MODULE_API_VERSION, "Illume2" };
 
-EAPI void *
+E_API void *
 e_modapi_init(E_Module *m) 
 {
    const Eina_List *cl, *zl;
@@ -123,7 +123,7 @@ e_modapi_init(E_Module *m)
    return m;
 }
 
-EAPI int 
+E_API int 
 e_modapi_shutdown(E_Module *m __UNUSED__) 
 {
    E_Illume_Quickpanel *qp;
@@ -155,7 +155,7 @@ e_modapi_shutdown(E_Module *m __UNUSED__)
    return 1;
 }
 
-EAPI int 
+E_API int 
 e_modapi_save(E_Module *m __UNUSED__) 
 {
    return e_mod_illume_config_save();

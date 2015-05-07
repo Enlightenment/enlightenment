@@ -50,14 +50,14 @@ static void      _e_smart_init(void);
 static Evas_Smart *_e_smart = NULL;
 
 /* externally accessible functions */
-EAPI Evas_Object *
+E_API Evas_Object *
 e_slidecore_add(Evas *evas)
 {
    _e_smart_init();
    return evas_object_smart_add(evas, _e_smart);
 }
 
-EAPI void
+E_API void
 e_slidecore_item_distance_set(Evas_Object *obj, Evas_Coord dist)
 {
    API_ENTRY return;
@@ -66,7 +66,7 @@ e_slidecore_item_distance_set(Evas_Object *obj, Evas_Coord dist)
    _e_smart_reconfigure(sd);
 }
 
-EAPI void
+E_API void
 e_slidecore_item_add(Evas_Object *obj, const char *label, const char *icon, void (*func)(void *data), void *data)
 {
    E_Smart_Item *it;
@@ -82,7 +82,7 @@ e_slidecore_item_add(Evas_Object *obj, const char *label, const char *icon, void
    _e_smart_reconfigure(sd);
 }
 
-EAPI void
+E_API void
 e_slidecore_jump(Evas_Object *obj, int num)
 {
    API_ENTRY return;
@@ -95,7 +95,7 @@ e_slidecore_jump(Evas_Object *obj, int num)
    sd->slide_start = ecore_loop_time_get();
 }
 
-EAPI void
+E_API void
 e_slidecore_slide_time_set(Evas_Object *obj, double t)
 {
    API_ENTRY return;

@@ -3142,7 +3142,7 @@ _e_comp_wl_cb_hook_client_focus_unset(void *data EINA_UNUSED, E_Client *ec)
      ec->comp->wl_comp_data->kbd.focus = NULL;
 }
 
-EAPI Eina_Bool 
+E_API Eina_Bool 
 e_comp_wl_init(void)
 {
    /* set gl available */

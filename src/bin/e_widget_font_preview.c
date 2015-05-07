@@ -13,7 +13,7 @@ static void _e_wid_del_hook(Evas_Object *obj);
 /* local subsystem functions */
 
 /* externally accessible functions */
-EAPI Evas_Object *
+E_API Evas_Object *
 e_widget_font_preview_add(Evas *evas, const char *text)
 {
    Evas_Object *obj, *o;
@@ -52,7 +52,7 @@ e_widget_font_preview_add(Evas *evas, const char *text)
    return obj;
 }
 
-EAPI void
+E_API void
 e_widget_font_preview_font_set(Evas_Object *obj, const char *font, Evas_Font_Size size)
 {
    E_Widget_Data *wd;

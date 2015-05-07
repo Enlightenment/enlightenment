@@ -54,9 +54,9 @@ static struct wl_output *_output;
 static int ow = 0, oh = 0;
 static Ecore_Timer *_timer = NULL;
 
-EAPI E_Module_Api e_modapi = { E_MODULE_API_VERSION, "Screenshooter" };
+E_API E_Module_Api e_modapi = { E_MODULE_API_VERSION, "Screenshooter" };
 
-EAPI void *
+E_API void *
 e_modapi_init(E_Module *m)
 {
    struct wl_display *disp;
@@ -84,7 +84,7 @@ e_modapi_init(E_Module *m)
    return m;
 }
 
-EAPI int 
+E_API int 
 e_modapi_shutdown(E_Module *m __UNUSED__)
 {
    _mod = NULL;
@@ -93,7 +93,7 @@ e_modapi_shutdown(E_Module *m __UNUSED__)
    return 1;
 }
 
-EAPI int 
+E_API int 
 e_modapi_save(E_Module *m __UNUSED__)
 {
    return 1;

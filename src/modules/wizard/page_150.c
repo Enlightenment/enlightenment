@@ -43,7 +43,7 @@ match_xorg_log(const char *globbing)
    return 0;
 }
 
-EAPI int
+E_API int
 wizard_page_show(E_Wizard_Page *pg)
 {
    Evas_Object *o, *of, *ob;
@@ -100,7 +100,7 @@ wizard_page_show(E_Wizard_Page *pg)
    return 1; /* 1 == show ui, and wait for user, 0 == just continue */
 }
 
-EAPI int
+E_API int
 wizard_page_hide(E_Wizard_Page *pg __UNUSED__)
 {
    E_Comp_Config *conf = NULL;

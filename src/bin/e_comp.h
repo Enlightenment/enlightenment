@@ -52,8 +52,8 @@ typedef enum _E_Layer
 
 # include "e_comp_cfdata.h"
 
-extern EAPI int E_EVENT_COMPOSITOR_DISABLE;
-extern EAPI int E_EVENT_COMPOSITOR_ENABLE;
+extern E_API int E_EVENT_COMPOSITOR_DISABLE;
+extern E_API int E_EVENT_COMPOSITOR_ENABLE;
 
 struct _E_Comp
 {
@@ -154,42 +154,42 @@ typedef enum
 } E_Comp_Engine;
 
 EINTERN Eina_Bool e_comp_init(void);
-EAPI E_Comp *e_comp_new(void);
-EAPI int e_comp_internal_save(void);
+E_API E_Comp *e_comp_new(void);
+E_API int e_comp_internal_save(void);
 EINTERN int e_comp_shutdown(void);
-EAPI void e_comp_render_queue(E_Comp *c);
-EAPI void e_comp_shape_queue(E_Comp *c);
-EAPI void e_comp_shape_queue_block(E_Comp *c, Eina_Bool block);
-EAPI E_Comp_Config *e_comp_config_get(void);
-EAPI const Eina_List *e_comp_list(void);
-EAPI void e_comp_shadows_reset(void);
-EAPI E_Comp *e_comp_get(const void *o);
-EAPI Ecore_Window e_comp_top_window_at_xy_get(E_Comp *c, Evas_Coord x, Evas_Coord y);
-EAPI void e_comp_util_wins_print(const E_Comp *c);
-EAPI void e_comp_ignore_win_add(E_Pixmap_Type type, Ecore_Window win);
-EAPI void e_comp_ignore_win_del(E_Pixmap_Type type, Ecore_Window win);
-EAPI Eina_Bool e_comp_ignore_win_find(Ecore_Window win);
-EAPI void e_comp_override_del(E_Comp *c);
-EAPI void e_comp_override_add(E_Comp *c);
-EAPI void e_comp_block_window_add(void);
-EAPI void e_comp_block_window_del(void);
-EAPI E_Comp *e_comp_find_by_window(Ecore_Window win);
-EAPI void e_comp_override_timed_pop(E_Comp *c);
-EAPI unsigned int e_comp_e_object_layer_get(const E_Object *obj);
-EAPI Eina_Bool e_comp_grab_input(E_Comp *c, Eina_Bool mouse, Eina_Bool kbd);
-EAPI void e_comp_ungrab_input(E_Comp *c, Eina_Bool mouse, Eina_Bool kbd);
-EAPI void e_comp_gl_set(Eina_Bool set);
-EAPI Eina_Bool e_comp_gl_get(void);
-EAPI E_Comp *e_comp_evas_find(const Evas *e);
+E_API void e_comp_render_queue(E_Comp *c);
+E_API void e_comp_shape_queue(E_Comp *c);
+E_API void e_comp_shape_queue_block(E_Comp *c, Eina_Bool block);
+E_API E_Comp_Config *e_comp_config_get(void);
+E_API const Eina_List *e_comp_list(void);
+E_API void e_comp_shadows_reset(void);
+E_API E_Comp *e_comp_get(const void *o);
+E_API Ecore_Window e_comp_top_window_at_xy_get(E_Comp *c, Evas_Coord x, Evas_Coord y);
+E_API void e_comp_util_wins_print(const E_Comp *c);
+E_API void e_comp_ignore_win_add(E_Pixmap_Type type, Ecore_Window win);
+E_API void e_comp_ignore_win_del(E_Pixmap_Type type, Ecore_Window win);
+E_API Eina_Bool e_comp_ignore_win_find(Ecore_Window win);
+E_API void e_comp_override_del(E_Comp *c);
+E_API void e_comp_override_add(E_Comp *c);
+E_API void e_comp_block_window_add(void);
+E_API void e_comp_block_window_del(void);
+E_API E_Comp *e_comp_find_by_window(Ecore_Window win);
+E_API void e_comp_override_timed_pop(E_Comp *c);
+E_API unsigned int e_comp_e_object_layer_get(const E_Object *obj);
+E_API Eina_Bool e_comp_grab_input(E_Comp *c, Eina_Bool mouse, Eina_Bool kbd);
+E_API void e_comp_ungrab_input(E_Comp *c, Eina_Bool mouse, Eina_Bool kbd);
+E_API void e_comp_gl_set(Eina_Bool set);
+E_API Eina_Bool e_comp_gl_get(void);
+E_API E_Comp *e_comp_evas_find(const Evas *e);
 
-EAPI void e_comp_button_bindings_grab_all(void);
-EAPI void e_comp_button_bindings_ungrab_all(void);
-EAPI void e_comp_client_redirect_toggle(E_Client *ec);
-EAPI Eina_Bool e_comp_util_object_is_above_nocomp(Evas_Object *obj);
+E_API void e_comp_button_bindings_grab_all(void);
+E_API void e_comp_button_bindings_ungrab_all(void);
+E_API void e_comp_client_redirect_toggle(E_Client *ec);
+E_API Eina_Bool e_comp_util_object_is_above_nocomp(Evas_Object *obj);
 
 EINTERN Evas_Object *e_comp_style_selector_create(Evas *evas, const char **source);
-EAPI E_Config_Dialog *e_int_config_comp(E_Comp *comp, const char *params);
-EAPI E_Config_Dialog *e_int_config_comp_match(E_Comp *comp, const char *params);
+E_API E_Config_Dialog *e_int_config_comp(E_Comp *comp, const char *params);
+E_API E_Config_Dialog *e_int_config_comp_match(E_Comp *comp, const char *params);
 
 static inline E_Comp *
 e_comp_util_evas_object_comp_get(Evas_Object *obj)

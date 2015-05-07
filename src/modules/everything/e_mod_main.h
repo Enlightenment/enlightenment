@@ -352,12 +352,12 @@ extern int  _evry_events[NUM_EVRY_EVENTS];
 extern E_Module *_mod_evry;
 
 /*** E Module ***/
-EAPI void *e_modapi_init     (E_Module *m);
-EAPI int   e_modapi_shutdown (E_Module *m);
-EAPI int   e_modapi_save     (E_Module *m);
-EAPI E_Config_Dialog *evry_config_dialog(E_Comp *comp, const char *params);
-EAPI E_Config_Dialog *evry_collection_conf_dialog(E_Comp *comp, const char *params);
-EAPI extern E_Module_Api e_modapi;
+E_API void *e_modapi_init     (E_Module *m);
+E_API int   e_modapi_shutdown (E_Module *m);
+E_API int   e_modapi_save     (E_Module *m);
+E_API E_Config_Dialog *evry_config_dialog(E_Comp *comp, const char *params);
+E_API E_Config_Dialog *evry_collection_conf_dialog(E_Comp *comp, const char *params);
+E_API extern E_Module_Api e_modapi;
 
 /* #define CHECK_REFS 1
  * #define PRINT_REFS 1

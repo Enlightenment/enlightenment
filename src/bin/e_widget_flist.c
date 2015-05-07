@@ -16,7 +16,7 @@ static void _e_wid_cb_dir_changed(void *data, Evas_Object *obj, void *event);
 static void _e_wid_cb_changed(void *data, Evas_Object *obj, void *event);
 static void _e_wid_cb_file_deleted(void *data, Evas_Object *obj, void *event);
 
-EAPI Evas_Object *
+E_API Evas_Object *
 e_widget_flist_add(Evas *evas)
 {
    Evas_Object *obj, *o;
@@ -84,7 +84,7 @@ e_widget_flist_add(Evas *evas)
    return obj;
 }
 
-EAPI E_Fm2_Config *
+E_API E_Fm2_Config *
 e_widget_flist_config_get(Evas_Object *obj)
 {
    E_Widget_Data *wd = NULL;
@@ -93,7 +93,7 @@ e_widget_flist_config_get(Evas_Object *obj)
    return e_fm2_config_get(wd->o_fm);
 }
 
-EAPI void
+E_API void
 e_widget_flist_path_set(Evas_Object *obj, const char *dev, const char *path)
 {
    E_Widget_Data *wd = NULL;
@@ -103,7 +103,7 @@ e_widget_flist_path_set(Evas_Object *obj, const char *dev, const char *path)
    e_scrollframe_child_pos_set(wd->o_scroll, 0, 0);
 }
 
-EAPI Eina_List *
+E_API Eina_List *
 e_widget_flist_all_list_get(Evas_Object *obj)
 {
    E_Widget_Data *wd = NULL;
@@ -112,7 +112,7 @@ e_widget_flist_all_list_get(Evas_Object *obj)
    return e_fm2_all_list_get(wd->o_fm);
 }
 
-EAPI Eina_List *
+E_API Eina_List *
 e_widget_flist_selected_list_get(Evas_Object *obj)
 {
    E_Widget_Data *wd = NULL;
@@ -121,7 +121,7 @@ e_widget_flist_selected_list_get(Evas_Object *obj)
    return e_fm2_selected_list_get(wd->o_fm);
 }
 
-EAPI const char *
+E_API const char *
 e_widget_flist_real_path_get(Evas_Object *obj)
 {
    E_Widget_Data *wd = NULL;
@@ -130,7 +130,7 @@ e_widget_flist_real_path_get(Evas_Object *obj)
    return e_fm2_real_path_get(wd->o_fm);
 }
 
-EAPI int
+E_API int
 e_widget_flist_has_parent_get(Evas_Object *obj)
 {
    E_Widget_Data *wd = NULL;
@@ -139,7 +139,7 @@ e_widget_flist_has_parent_get(Evas_Object *obj)
    return e_fm2_has_parent_get(wd->o_fm);
 }
 
-EAPI void
+E_API void
 e_widget_flist_select_set(Evas_Object *obj, const char *file, int s)
 {
    E_Widget_Data *wd = NULL;
@@ -148,7 +148,7 @@ e_widget_flist_select_set(Evas_Object *obj, const char *file, int s)
    e_fm2_select_set(wd->o_fm, file, s);
 }
 
-EAPI void
+E_API void
 e_widget_flist_file_show(Evas_Object *obj, const char *file)
 {
    E_Widget_Data *wd = NULL;
@@ -157,7 +157,7 @@ e_widget_flist_file_show(Evas_Object *obj, const char *file)
    e_fm2_file_show(wd->o_fm, file);
 }
 
-EAPI void
+E_API void
 e_widget_flist_parent_go(Evas_Object *obj)
 {
    E_Widget_Data *wd = NULL;
@@ -167,7 +167,7 @@ e_widget_flist_parent_go(Evas_Object *obj)
    e_scrollframe_child_pos_set(wd->o_scroll, 0, 0);
 }
 
-EAPI void
+E_API void
 e_widget_flist_refresh(Evas_Object *obj)
 {
    E_Widget_Data *wd = NULL;

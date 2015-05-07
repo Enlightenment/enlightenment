@@ -1,6 +1,6 @@
 #include "e.h"
 
-EAPI double e_scale = 1.0;
+E_API double e_scale = 1.0;
 
 EINTERN int
 e_scale_init(void)
@@ -15,7 +15,7 @@ e_scale_shutdown(void)
    return 1;
 }
 
-EAPI void
+E_API void
 e_scale_update(void)
 {
    char buf[128];

@@ -2,7 +2,7 @@
 
 EINTERN int _e_lokker_log_dom = -1;
 
-EAPI E_Module_Api e_modapi = {E_MODULE_API_VERSION, "Lokker"};
+E_API E_Module_Api e_modapi = {E_MODULE_API_VERSION, "Lokker"};
 static E_Desklock_Interface lokker_desklock_iface =
 {
    .name = "lokker",
@@ -10,7 +10,7 @@ static E_Desklock_Interface lokker_desklock_iface =
    .hide = lokker_unlock
 };
 
-EAPI void *
+E_API void *
 e_modapi_init(E_Module *m)
 {
    _e_lokker_log_dom = eina_log_domain_register("lokker", EINA_COLOR_ORANGE);
@@ -21,7 +21,7 @@ e_modapi_init(E_Module *m)
    return m;
 }
 
-EAPI int
+E_API int
 e_modapi_shutdown(E_Module *m EINA_UNUSED)
 {
    e_desklock_interface_remove(&lokker_desklock_iface);

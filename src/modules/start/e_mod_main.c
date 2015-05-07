@@ -311,13 +311,13 @@ _menu_cb_post(void *data, E_Menu *m)
 }
 
 /* module setup */
-EAPI E_Module_Api e_modapi =
+E_API E_Module_Api e_modapi =
 {
    E_MODULE_API_VERSION,
    "Start"
 };
 
-EAPI void *
+E_API void *
 e_modapi_init(E_Module *m)
 {
    start_module = m;
@@ -325,7 +325,7 @@ e_modapi_init(E_Module *m)
    return m;
 }
 
-EAPI int
+E_API int
 e_modapi_shutdown(E_Module *m __UNUSED__)
 {
    start_module = NULL;
@@ -333,7 +333,7 @@ e_modapi_shutdown(E_Module *m __UNUSED__)
    return 1;
 }
 
-EAPI int
+E_API int
 e_modapi_save(E_Module *m __UNUSED__)
 {
    return 1;

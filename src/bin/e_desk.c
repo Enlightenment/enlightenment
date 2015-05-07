@@ -19,12 +19,12 @@ static void      _e_desk_window_profile_change_protocol_set(void);
 static E_Desk_Flip_Cb _e_desk_flip_cb = NULL;
 static void *_e_desk_flip_data = NULL;
 
-EAPI int E_EVENT_DESK_SHOW = 0;
-EAPI int E_EVENT_DESK_BEFORE_SHOW = 0;
-EAPI int E_EVENT_DESK_AFTER_SHOW = 0;
-EAPI int E_EVENT_DESK_DESKSHOW = 0;
-EAPI int E_EVENT_DESK_NAME_CHANGE = 0;
-EAPI int E_EVENT_DESK_WINDOW_PROFILE_CHANGE = 0;
+E_API int E_EVENT_DESK_SHOW = 0;
+E_API int E_EVENT_DESK_BEFORE_SHOW = 0;
+E_API int E_EVENT_DESK_AFTER_SHOW = 0;
+E_API int E_EVENT_DESK_DESKSHOW = 0;
+E_API int E_EVENT_DESK_NAME_CHANGE = 0;
+E_API int E_EVENT_DESK_WINDOW_PROFILE_CHANGE = 0;
 
 EINTERN int
 e_desk_init(void)
@@ -44,7 +44,7 @@ e_desk_shutdown(void)
    return 1;
 }
 
-EAPI E_Desk *
+E_API E_Desk *
 e_desk_new(E_Zone *zone, int x, int y)
 {
    E_Desk *desk;
@@ -103,7 +103,7 @@ e_desk_new(E_Zone *zone, int x, int y)
    return desk;
 }
 
-EAPI E_Client *
+E_API E_Client *
 e_desk_client_top_visible_get(const E_Desk *desk)
 {
    E_Client *ec;
@@ -116,7 +116,7 @@ e_desk_client_top_visible_get(const E_Desk *desk)
    return NULL;
 }
 
-EAPI void
+E_API void
 e_desk_name_set(E_Desk *desk, const char *name)
 {
    E_Event_Desk_Name_Change *ev;
@@ -133,7 +133,7 @@ e_desk_name_set(E_Desk *desk, const char *name)
                    _e_desk_event_desk_name_change_free, NULL);
 }
 
-EAPI void
+E_API void
 e_desk_name_add(int manager, int zone, int desk_x, int desk_y, const char *name)
 {
    E_Config_Desktop_Name *cfname;
@@ -150,7 +150,7 @@ e_desk_name_add(int manager, int zone, int desk_x, int desk_y, const char *name)
    e_config->desktop_names = eina_list_append(e_config->desktop_names, cfname);
 }
 
-EAPI void
+E_API void
 e_desk_name_del(int manager, int zone, int desk_x, int desk_y)
 {
    Eina_List *l = NULL;
@@ -170,7 +170,7 @@ e_desk_name_del(int manager, int zone, int desk_x, int desk_y)
      }
 }
 
-EAPI void
+E_API void
 e_desk_name_update(void)
 {
    const Eina_List *z, *l, *ll;
@@ -218,7 +218,7 @@ e_desk_name_update(void)
      }
 }
 
-EAPI void
+E_API void
 e_desk_show(E_Desk *desk)
 {
    E_Event_Desk_Show *ev;
@@ -330,7 +330,7 @@ e_desk_show(E_Desk *desk)
    e_zone_edge_flip_eval(desk->zone);
 }
 
-EAPI void
+E_API void
 e_desk_deskshow(E_Zone *zone)
 {
    E_Client *ec;
@@ -381,7 +381,7 @@ e_desk_deskshow(E_Zone *zone)
                    _e_desk_event_desk_deskshow_free, NULL);
 }
 
-EAPI E_Client *
+E_API E_Client *
 e_desk_last_focused_focus(E_Desk *desk)
 {
    Eina_List *l = NULL;
@@ -425,31 +425,31 @@ e_desk_last_focused_focus(E_Desk *desk)
    return NULL;
 }
 
-EAPI void
+E_API void
 e_desk_row_add(E_Zone *zone)
 {
    e_zone_desk_count_set(zone, zone->desk_x_count, zone->desk_y_count + 1);
 }
 
-EAPI void
+E_API void
 e_desk_row_remove(E_Zone *zone)
 {
    e_zone_desk_count_set(zone, zone->desk_x_count, zone->desk_y_count - 1);
 }
 
-EAPI void
+E_API void
 e_desk_col_add(E_Zone *zone)
 {
    e_zone_desk_count_set(zone, zone->desk_x_count + 1, zone->desk_y_count);
 }
 
-EAPI void
+E_API void
 e_desk_col_remove(E_Zone *zone)
 {
    e_zone_desk_count_set(zone, zone->desk_x_count - 1, zone->desk_y_count);
 }
 
-EAPI E_Desk *
+E_API E_Desk *
 e_desk_current_get(E_Zone *zone)
 {
    E_OBJECT_CHECK_RETURN(zone, NULL);
@@ -458,7 +458,7 @@ e_desk_current_get(E_Zone *zone)
    return e_desk_at_xy_get(zone, zone->desk_x_current, zone->desk_y_current);
 }
 
-EAPI E_Desk *
+E_API E_Desk *
 e_desk_at_xy_get(E_Zone *zone, int x, int y)
 {
    E_OBJECT_CHECK_RETURN(zone, NULL);
@@ -473,7 +473,7 @@ e_desk_at_xy_get(E_Zone *zone, int x, int y)
    return zone->desks[x + (y * zone->desk_x_count)];
 }
 
-EAPI E_Desk *
+E_API E_Desk *
 e_desk_at_pos_get(E_Zone *zone, int pos)
 {
    int x, y;
@@ -490,7 +490,7 @@ e_desk_at_pos_get(E_Zone *zone, int pos)
    return zone->desks[x + (y * zone->desk_x_count)];
 }
 
-EAPI void
+E_API void
 e_desk_xy_get(E_Desk *desk, int *x, int *y)
 {
    E_OBJECT_CHECK(desk);
@@ -500,7 +500,7 @@ e_desk_xy_get(E_Desk *desk, int *x, int *y)
    if (y) *y = desk->y;
 }
 
-EAPI void
+E_API void
 e_desk_next(E_Zone *zone)
 {
    int x, y;
@@ -525,7 +525,7 @@ e_desk_next(E_Zone *zone)
    e_desk_show(e_desk_at_xy_get(zone, x, y));
 }
 
-EAPI void
+E_API void
 e_desk_prev(E_Zone *zone)
 {
    int x, y;
@@ -549,7 +549,7 @@ e_desk_prev(E_Zone *zone)
    e_desk_show(e_desk_at_xy_get(zone, x, y));
 }
 
-EAPI void
+E_API void
 e_desk_window_profile_set(E_Desk *desk,
                           const char *profile)
 {
@@ -567,7 +567,7 @@ e_desk_window_profile_set(E_Desk *desk,
                    _e_desk_event_desk_window_profile_change_free, NULL);
 }
 
-EAPI void
+E_API void
 e_desk_window_profile_add(int manager,
                           int zone,
                           int desk_x,
@@ -587,7 +587,7 @@ e_desk_window_profile_add(int manager,
    e_config->desktop_window_profiles = eina_list_append(e_config->desktop_window_profiles, cfprof);
 }
 
-EAPI void
+E_API void
 e_desk_window_profile_del(int manager,
                           int zone,
                           int desk_x,
@@ -612,7 +612,7 @@ e_desk_window_profile_del(int manager,
      }
 }
 
-EAPI void
+E_API void
 e_desk_window_profile_update(void)
 {
    const Eina_List *z, *l, *ll;
@@ -662,14 +662,14 @@ e_desk_window_profile_update(void)
      }
 }
 
-EAPI void
+E_API void
 e_desk_flip_cb_set(E_Desk_Flip_Cb cb, const void *data)
 {
    _e_desk_flip_cb = cb;
    _e_desk_flip_data = (void*)data;
 }
 
-EAPI void
+E_API void
 e_desk_flip_end(E_Desk *desk)
 {
    E_Event_Desk_After_Show *ev;

@@ -1,6 +1,6 @@
 #include "e_mod_main.h"
 
-EAPI E_Module_Api e_modapi = { E_MODULE_API_VERSION, "Policy-Mobile" };
+E_API E_Module_Api e_modapi = { E_MODULE_API_VERSION, "Policy-Mobile" };
 
 Mod *_pol_mod = NULL;
 Eina_Hash *hash_pol_desks = NULL;
@@ -530,7 +530,7 @@ e_mod_pol_client_launcher_get(E_Zone *zone)
     }                                     \
   while (0)
 
-EAPI void *
+E_API void *
 e_modapi_init(E_Module *m)
 {
    Mod *mod;
@@ -602,7 +602,7 @@ e_modapi_init(E_Module *m)
    return mod;
 }
 
-EAPI int
+E_API int
 e_modapi_shutdown(E_Module *m)
 {
    Mod *mod = m->data;
@@ -635,7 +635,7 @@ e_modapi_shutdown(E_Module *m)
    return 1;
 }
 
-EAPI int
+E_API int
 e_modapi_save(E_Module *m)
 {
    Mod *mod = m->data;

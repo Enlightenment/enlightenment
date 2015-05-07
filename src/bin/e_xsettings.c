@@ -671,7 +671,7 @@ e_xsettings_shutdown(void)
    return 1;
 }
 
-EAPI void
+E_API void
 e_xsettings_config_update(void)
 {
    setting = EINA_FALSE;

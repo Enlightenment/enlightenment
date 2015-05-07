@@ -13,8 +13,8 @@ static Eldbus_Connection *conn;
 static struct Connman_Manager *connman_manager;
 static E_Connman_Agent *agent;
 
-EAPI int E_CONNMAN_EVENT_MANAGER_IN;
-EAPI int E_CONNMAN_EVENT_MANAGER_OUT;
+E_API int E_CONNMAN_EVENT_MANAGER_IN;
+E_API int E_CONNMAN_EVENT_MANAGER_OUT;
 
 /* utility functions */
 

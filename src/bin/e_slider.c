@@ -61,14 +61,14 @@ static void      _e_smart_init(void);
 static Evas_Smart *_e_smart = NULL;
 
 /* externally accessible functions */
-EAPI Evas_Object *
+E_API Evas_Object *
 e_slider_add(Evas *evas)
 {
    _e_smart_init();
    return evas_object_smart_add(evas, _e_smart);
 }
 
-EAPI void
+E_API void
 e_slider_orientation_set(Evas_Object *obj, int horizontal)
 {
    API_ENTRY return;
@@ -84,14 +84,14 @@ e_slider_orientation_set(Evas_Object *obj, int horizontal)
    _e_smart_value_update(sd);
 }
 
-EAPI int
+E_API int
 e_slider_orientation_get(Evas_Object *obj)
 {
    API_ENTRY return 0;
    return sd->horizontal;
 }
 
-EAPI void
+E_API void
 e_slider_value_set(Evas_Object *obj, double val)
 {
    API_ENTRY return;
@@ -99,14 +99,14 @@ e_slider_value_set(Evas_Object *obj, double val)
    _e_smart_value_update_now(sd);
 }
 
-EAPI double
+E_API double
 e_slider_value_get(Evas_Object *obj)
 {
    API_ENTRY return 0.0;
    return sd->val;
 }
 
-EAPI void
+E_API void
 e_slider_value_range_set(Evas_Object *obj, double min, double max)
 {
    API_ENTRY return;
@@ -119,7 +119,7 @@ e_slider_value_range_set(Evas_Object *obj, double min, double max)
    _e_smart_value_update_now(sd);
 }
 
-EAPI void
+E_API void
 e_slider_value_range_get(Evas_Object *obj, double *min, double *max)
 {
    API_ENTRY return;
@@ -127,7 +127,7 @@ e_slider_value_range_get(Evas_Object *obj, double *min, double *max)
    if (max) *max = sd->val_max;
 }
 
-EAPI void
+E_API void
 e_slider_value_step_size_set(Evas_Object *obj, double step_size)
 {
    double step;
@@ -145,14 +145,14 @@ e_slider_value_step_size_set(Evas_Object *obj, double step_size)
    _e_smart_value_update_now(sd);
 }
 
-EAPI double
+E_API double
 e_slider_value_step_size_get(Evas_Object *obj)
 {
    API_ENTRY return 0.0;
    return sd->step_size;
 }
 
-EAPI void
+E_API void
 e_slider_value_step_count_set(Evas_Object *obj, int step_count)
 {
    API_ENTRY return;
@@ -162,14 +162,14 @@ e_slider_value_step_count_set(Evas_Object *obj, int step_count)
    _e_smart_value_update_now(sd);
 }
 
-EAPI int
+E_API int
 e_slider_value_step_count_get(Evas_Object *obj)
 {
    API_ENTRY return 0;
    return sd->step_count;
 }
 
-EAPI void
+E_API void
 e_slider_value_format_display_set(Evas_Object *obj, const char *format)
 {
    int changed = 0;
@@ -191,14 +191,14 @@ e_slider_value_format_display_set(Evas_Object *obj, const char *format)
    edje_object_size_min_calc(sd->edje_obj, &(sd->minw), &(sd->minh));
 }
 
-EAPI const char *
+E_API const char *
 e_slider_value_format_display_get(Evas_Object *obj)
 {
    API_ENTRY return NULL;
    return sd->format;
 }
 
-EAPI void
+E_API void
 e_slider_direction_set(Evas_Object *obj, int reversed)
 {
    API_ENTRY return;
@@ -206,7 +206,7 @@ e_slider_direction_set(Evas_Object *obj, int reversed)
    _e_smart_value_update_now(sd);
 }
 
-EAPI void
+E_API void
 e_slider_disabled_set(Evas_Object *obj, Eina_Bool disable)
 {
    API_ENTRY return;
@@ -220,14 +220,14 @@ e_slider_disabled_set(Evas_Object *obj, Eina_Bool disable)
      edje_object_signal_emit(sd->edje_obj, "e,state,enabled", "e");
 }
 
-EAPI int
+E_API int
 e_slider_direction_get(Evas_Object *obj)
 {
    API_ENTRY return 0;
    return sd->reversed;
 }
 
-EAPI void
+E_API void
 e_slider_size_min_get(Evas_Object *obj, Evas_Coord *minw, Evas_Coord *minh)
 {
    API_ENTRY return;
@@ -235,14 +235,14 @@ e_slider_size_min_get(Evas_Object *obj, Evas_Coord *minw, Evas_Coord *minh)
    if (minh) *minh = sd->minh;
 }
 
-EAPI Evas_Object *
+E_API Evas_Object *
 e_slider_edje_object_get(Evas_Object *obj)
 {
    API_ENTRY return NULL;
    return sd->edje_obj;
 }
 
-EAPI void
+E_API void
 e_slider_special_value_add(Evas_Object *obj, double value, double error, const char *label)
 {
    E_Slider_Special_Value *sv;

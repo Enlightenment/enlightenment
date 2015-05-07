@@ -151,7 +151,7 @@ e_icon_shutdown(void)
 }
 
 /* externally accessible functions */
-EAPI Evas_Object *
+E_API Evas_Object *
 e_icon_add(Evas *evas)
 {
    _e_icon_smart_init();
@@ -217,7 +217,7 @@ _handle_anim(E_Smart_Data *sd)
    return 1;
 }
 
-EAPI Eina_Bool
+E_API Eina_Bool
 e_icon_file_set(Evas_Object *obj, const char *file)
 {
    E_Smart_Data *sd;
@@ -297,7 +297,7 @@ e_icon_file_set(Evas_Object *obj, const char *file)
    return EINA_TRUE;
 }
 
-EAPI Eina_Bool
+E_API Eina_Bool
 e_icon_file_key_set(Evas_Object *obj, const char *file, const char *key)
 {
    E_Smart_Data *sd;
@@ -343,7 +343,7 @@ e_icon_file_key_set(Evas_Object *obj, const char *file, const char *key)
    return EINA_TRUE;
 }
 
-EAPI void
+E_API void
 e_icon_edje_object_set(Evas_Object *obj, Evas_Object *edje)
 {
    E_Smart_Data *sd;
@@ -374,7 +374,7 @@ e_icon_edje_object_set(Evas_Object *obj, Evas_Object *edje)
    _e_icon_smart_reconfigure(sd);
 }
 
-EAPI Evas_Object *
+E_API Evas_Object *
 e_icon_edje_get(Evas_Object *obj)
 {
    E_Smart_Data *sd;
@@ -385,7 +385,7 @@ e_icon_edje_get(Evas_Object *obj)
    return sd->edje ? sd->obj : NULL;
 }
 
-EAPI Eina_Bool
+E_API Eina_Bool
 e_icon_file_edje_set(Evas_Object *obj, const char *file, const char *part)
 {
    E_Smart_Data *sd;
@@ -421,7 +421,7 @@ e_icon_file_edje_set(Evas_Object *obj, const char *file, const char *part)
    return EINA_TRUE;
 }
 
-EAPI Eina_Bool
+E_API Eina_Bool
 e_icon_fdo_icon_set(Evas_Object *obj, const char *icon)
 {
    E_Smart_Data *sd;
@@ -478,7 +478,7 @@ e_icon_fdo_icon_set(Evas_Object *obj, const char *icon)
    return EINA_TRUE;
 }
 
-EAPI void
+E_API void
 e_icon_image_object_set(Evas_Object *obj, Evas_Object *o)
 {
    E_Smart_Data *sd;
@@ -508,7 +508,7 @@ e_icon_image_object_set(Evas_Object *obj, Evas_Object *o)
    _e_icon_smart_reconfigure(sd);
 }
 
-EAPI Eina_Bool
+E_API Eina_Bool
 e_icon_file_get(const Evas_Object *obj, const char **file, const char **group)
 {
    E_Smart_Data *sd;
@@ -534,7 +534,7 @@ e_icon_file_get(const Evas_Object *obj, const char **file, const char **group)
    return file || group;
 }
 
-EAPI void
+E_API void
 e_icon_smooth_scale_set(Evas_Object *obj, Eina_Bool smooth)
 {
    E_Smart_Data *sd;
@@ -545,7 +545,7 @@ e_icon_smooth_scale_set(Evas_Object *obj, Eina_Bool smooth)
    evas_object_image_smooth_scale_set(sd->obj, smooth);
 }
 
-EAPI Eina_Bool
+E_API Eina_Bool
 e_icon_smooth_scale_get(const Evas_Object *obj)
 {
    E_Smart_Data *sd;
@@ -557,7 +557,7 @@ e_icon_smooth_scale_get(const Evas_Object *obj)
    return evas_object_image_smooth_scale_get(sd->obj);
 }
 
-EAPI void
+E_API void
 e_icon_alpha_set(Evas_Object *obj, Eina_Bool alpha)
 {
    E_Smart_Data *sd;
@@ -568,7 +568,7 @@ e_icon_alpha_set(Evas_Object *obj, Eina_Bool alpha)
    evas_object_image_alpha_set(sd->obj, alpha);
 }
 
-EAPI Eina_Bool
+E_API Eina_Bool
 e_icon_alpha_get(const Evas_Object *obj)
 {
    E_Smart_Data *sd;
@@ -579,7 +579,7 @@ e_icon_alpha_get(const Evas_Object *obj)
    return evas_object_image_alpha_get(sd->obj);
 }
 
-EAPI void
+E_API void
 e_icon_preload_set(Evas_Object *obj, Eina_Bool preload)
 {
    E_Smart_Data *sd;
@@ -589,7 +589,7 @@ e_icon_preload_set(Evas_Object *obj, Eina_Bool preload)
    sd->preload = preload;
 }
 
-EAPI Eina_Bool
+E_API Eina_Bool
 e_icon_preload_get(const Evas_Object *obj)
 {
    E_Smart_Data *sd;
@@ -599,7 +599,7 @@ e_icon_preload_get(const Evas_Object *obj)
    return sd->preload;
 }
 
-EAPI void
+E_API void
 e_icon_size_get(const Evas_Object *obj, int *w, int *h)
 {
    E_Smart_Data *sd;
@@ -617,7 +617,7 @@ e_icon_size_get(const Evas_Object *obj, int *w, int *h)
      evas_object_image_size_get(sd->obj, w, h);
 }
 
-EAPI Eina_Bool
+E_API Eina_Bool
 e_icon_fill_inside_get(const Evas_Object *obj)
 {
    E_Smart_Data *sd;
@@ -627,7 +627,7 @@ e_icon_fill_inside_get(const Evas_Object *obj)
    return sd->fill_inside;
 }
 
-EAPI void
+E_API void
 e_icon_fill_inside_set(Evas_Object *obj, Eina_Bool fill_inside)
 {
    E_Smart_Data *sd;
@@ -640,7 +640,7 @@ e_icon_fill_inside_set(Evas_Object *obj, Eina_Bool fill_inside)
    _e_icon_smart_reconfigure(sd);
 }
 
-EAPI Eina_Bool
+E_API Eina_Bool
 e_icon_scale_up_get(const Evas_Object *obj)
 {
    E_Smart_Data *sd;
@@ -650,7 +650,7 @@ e_icon_scale_up_get(const Evas_Object *obj)
    return sd->scale_up;
 }
 
-EAPI void
+E_API void
 e_icon_scale_up_set(Evas_Object *obj, Eina_Bool scale_up)
 {
    E_Smart_Data *sd;
@@ -663,7 +663,7 @@ e_icon_scale_up_set(Evas_Object *obj, Eina_Bool scale_up)
    _e_icon_smart_reconfigure(sd);
 }
 
-EAPI void
+E_API void
 e_icon_data_set(Evas_Object *obj, void *data, int w, int h)
 {
    E_Smart_Data *sd;
@@ -675,7 +675,7 @@ e_icon_data_set(Evas_Object *obj, void *data, int w, int h)
    evas_object_image_data_copy_set(sd->obj, data);
 }
 
-EAPI void *
+E_API void *
 e_icon_data_get(const Evas_Object *obj, int *w, int *h)
 {
    E_Smart_Data *sd;
@@ -687,7 +687,7 @@ e_icon_data_get(const Evas_Object *obj, int *w, int *h)
    return evas_object_image_data_get(sd->obj, 0);
 }
 
-EAPI void
+E_API void
 e_icon_scale_size_set(Evas_Object *obj, int size)
 {
    E_Smart_Data *sd;
@@ -699,7 +699,7 @@ e_icon_scale_size_set(Evas_Object *obj, int size)
    evas_object_image_load_size_set(sd->obj, sd->size, sd->size);
 }
 
-EAPI int
+E_API int
 e_icon_scale_size_get(const Evas_Object *obj)
 {
    E_Smart_Data *sd;
@@ -709,7 +709,7 @@ e_icon_scale_size_get(const Evas_Object *obj)
    return sd->size;
 }
 
-EAPI void
+E_API void
 e_icon_selected_set(const Evas_Object *obj, Eina_Bool selected)
 {
    E_Smart_Data *sd;

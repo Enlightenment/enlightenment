@@ -407,9 +407,9 @@ static const E_Gadcon_Client_Class _gc_class =
    E_GADCON_CLIENT_STYLE_PLAIN
 };
 
-EAPI E_Module_Api e_modapi = {E_MODULE_API_VERSION, _Name};
+E_API E_Module_Api e_modapi = {E_MODULE_API_VERSION, _Name};
 
-EAPI void *
+E_API void *
 e_modapi_init(E_Module *m)
 {
    systray_mod = m;
@@ -434,7 +434,7 @@ e_modapi_init(E_Module *m)
    return ctx;
 }
 
-EAPI int
+E_API int
 e_modapi_shutdown(E_Module *m __UNUSED__)
 {
    e_gadcon_provider_unregister(&_gc_class);
@@ -450,7 +450,7 @@ e_modapi_shutdown(E_Module *m __UNUSED__)
    return 1;
 }
 
-EAPI int
+E_API int
 e_modapi_save(E_Module *m __UNUSED__)
 {
    e_config_domain_save(_name, ctx->conf_edd, ctx->config);

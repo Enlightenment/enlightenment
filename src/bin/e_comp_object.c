@@ -138,7 +138,7 @@ static Evas_Smart *_e_comp_smart = NULL;
 EINTERN void e_client_focused_set(E_Client *ec);
 
 /* emitted every time a new noteworthy comp object is added */
-EAPI int E_EVENT_COMP_OBJECT_ADD = -1;
+E_API int E_EVENT_COMP_OBJECT_ADD = -1;
 
 static void
 _e_comp_object_event_free(void *d EINA_UNUSED, void *event)
@@ -2131,7 +2131,7 @@ _e_comp_smart_init(void)
    }
 }
 
-EAPI void
+E_API void
 e_comp_object_zoomap_set(Evas_Object *obj, Eina_Bool enabled)
 {
    API_ENTRY;
@@ -2278,7 +2278,7 @@ _e_comp_object_util_moveresize(void *data, Evas *e EINA_UNUSED, Evas_Object *obj
      e_comp_shape_queue(e_comp_util_evas_object_comp_get(obj));
 }
 
-EAPI Evas_Object *
+E_API Evas_Object *
 e_comp_object_util_add(Evas_Object *obj, E_Comp_Object_Type type)
 {
    Evas_Object *o, *z = NULL;
@@ -2414,7 +2414,7 @@ e_comp_object_util_add(Evas_Object *obj, E_Comp_Object_Type type)
 }
 
 /* utility functions for deleting objects when their "owner" is deleted */
-EAPI void
+E_API void
 e_comp_object_util_del_list_append(Evas_Object *obj, Evas_Object *to_del)
 {
    Eina_List *l;
@@ -2427,7 +2427,7 @@ e_comp_object_util_del_list_append(Evas_Object *obj, Evas_Object *to_del)
    evas_object_event_callback_add(obj, EVAS_CALLBACK_DEL, _e_comp_object_util_del, NULL);
 }
 
-EAPI void
+E_API void
 e_comp_object_util_del_list_remove(Evas_Object *obj, Evas_Object *to_del)
 {
    Eina_List *l;
@@ -2441,7 +2441,7 @@ e_comp_object_util_del_list_remove(Evas_Object *obj, Evas_Object *to_del)
 
 /////////////////////////////////////////////////////////
 
-EAPI Evas_Object *
+E_API Evas_Object *
 e_comp_object_client_add(E_Client *ec)
 {
    Evas_Object *o;
@@ -2465,7 +2465,7 @@ e_comp_object_client_add(E_Client *ec)
 }
 
 /* utility functions for getting client inset */
-EAPI void
+E_API void
 e_comp_object_frame_xy_adjust(Evas_Object *obj, int x, int y, int *ax, int *ay)
 {
    API_ENTRY;
@@ -2479,7 +2479,7 @@ e_comp_object_frame_xy_adjust(Evas_Object *obj, int x, int y, int *ax, int *ay)
    if (ay) *ay = y - cw->client_inset.t;
 }
 
-EAPI void
+E_API void
 e_comp_object_frame_xy_unadjust(Evas_Object *obj, int x, int y, int *ax, int *ay)
 {
    API_ENTRY;
@@ -2493,7 +2493,7 @@ e_comp_object_frame_xy_unadjust(Evas_Object *obj, int x, int y, int *ax, int *ay
    if (ay) *ay = y + cw->client_inset.t;
 }
 
-EAPI void
+E_API void
 e_comp_object_frame_wh_adjust(Evas_Object *obj, int w, int h, int *aw, int *ah)
 {
    API_ENTRY;
@@ -2507,7 +2507,7 @@ e_comp_object_frame_wh_adjust(Evas_Object *obj, int w, int h, int *aw, int *ah)
    if (ah) *ah = h + cw->client_inset.t + cw->client_inset.b;
 }
 
-EAPI void
+E_API void
 e_comp_object_frame_wh_unadjust(Evas_Object *obj, int w, int h, int *aw, int *ah)
 {
    API_ENTRY;
@@ -2521,7 +2521,7 @@ e_comp_object_frame_wh_unadjust(Evas_Object *obj, int w, int h, int *aw, int *ah
    if (ah) *ah = h - cw->client_inset.t - cw->client_inset.b;
 }
 
-EAPI E_Client *
+E_API E_Client *
 e_comp_object_client_get(Evas_Object *obj)
 {
    Evas_Object *o;
@@ -2534,7 +2534,7 @@ e_comp_object_client_get(Evas_Object *obj)
    return cw ? cw->ec : NULL;
 }
 
-EAPI void
+E_API void
 e_comp_object_frame_extends_get(Evas_Object *obj, int *x, int *y, int *w, int *h)
 {
    API_ENTRY;
@@ -2549,7 +2549,7 @@ e_comp_object_frame_extends_get(Evas_Object *obj, int *x, int *y, int *w, int *h
      }
 }
 
-EAPI E_Zone *
+E_API E_Zone *
 e_comp_object_util_zone_get(Evas_Object *obj)
 {
    E_Zone *zone = NULL;
@@ -2601,7 +2601,7 @@ e_comp_object_util_zone_get(Evas_Object *obj)
    return zone;
 }
 
-EAPI void
+E_API void
 e_comp_object_util_center(Evas_Object *obj)
 {
    int x, y, w, h, ow, oh;
@@ -2621,7 +2621,7 @@ e_comp_object_util_center(Evas_Object *obj)
    evas_object_move(obj, x, y);
 }
 
-EAPI void
+E_API void
 e_comp_object_util_center_on(Evas_Object *obj, Evas_Object *on)
 {
    int x, y, w, h, ow, oh;
@@ -2636,7 +2636,7 @@ e_comp_object_util_center_on(Evas_Object *obj, Evas_Object *on)
    evas_object_move(obj, x + (w / 2) - (ow / 2), y + (h / 2) - (oh / 2));
 }
 
-EAPI void
+E_API void
 e_comp_object_util_fullscreen(Evas_Object *obj)
 {
    SOFT_ENTRY();
@@ -2653,7 +2653,7 @@ e_comp_object_util_fullscreen(Evas_Object *obj)
      }
 }
 
-EAPI void
+E_API void
 e_comp_object_util_center_pos_get(Evas_Object *obj, int *x, int *y)
 {
    E_Zone *zone;
@@ -2671,7 +2671,7 @@ e_comp_object_util_center_pos_get(Evas_Object *obj, int *x, int *y)
    if (y) *y = zy + (zh - oh) / 2;
 }
 
-EAPI void
+E_API void
 e_comp_object_input_area_set(Evas_Object *obj, int x, int y, int w, int h)
 {
    API_ENTRY;
@@ -2705,7 +2705,7 @@ e_comp_object_input_area_set(Evas_Object *obj, int x, int y, int w, int h)
      }
 }
 
-EAPI void
+E_API void
 e_comp_object_frame_geometry_get(Evas_Object *obj, int *l, int *r, int *t, int *b)
 {
    API_ENTRY;
@@ -2715,7 +2715,7 @@ e_comp_object_frame_geometry_get(Evas_Object *obj, int *l, int *r, int *t, int *
    if (b) *b = cw->client_inset.b;
 }
 
-EAPI void
+E_API void
 e_comp_object_frame_icon_geometry_get(Evas_Object *obj, int *x, int *y, int *w, int *h)
 {
    API_ENTRY;
@@ -2728,7 +2728,7 @@ e_comp_object_frame_icon_geometry_get(Evas_Object *obj, int *x, int *y, int *w, 
    evas_object_geometry_get(cw->frame_icon, x, y, w, h);
 }
 
-EAPI Eina_Bool
+E_API Eina_Bool
 e_comp_object_frame_title_set(Evas_Object *obj, const char *name)
 {
    API_ENTRY EINA_FALSE;
@@ -2739,14 +2739,14 @@ e_comp_object_frame_title_set(Evas_Object *obj, const char *name)
    return EINA_TRUE;
 }
 
-EAPI Eina_Bool
+E_API Eina_Bool
 e_comp_object_frame_exists(Evas_Object *obj)
 {
    API_ENTRY EINA_FALSE;
    return !!cw->frame_object;
 }
 
-EAPI void
+E_API void
 e_comp_object_frame_icon_update(Evas_Object *obj)
 {
    API_ENTRY;
@@ -2760,7 +2760,7 @@ e_comp_object_frame_icon_update(Evas_Object *obj)
      E_FREE_FUNC(cw->frame_icon, evas_object_del);
 }
 
-EAPI Eina_Bool
+E_API Eina_Bool
 e_comp_object_frame_theme_set(Evas_Object *obj, const char *name)
 {
    Evas_Object *o, *pbg;
@@ -2904,7 +2904,7 @@ reshadow:
    return EINA_TRUE;
 }
 
-EAPI void
+E_API void
 e_comp_object_signal_emit(Evas_Object *obj, const char *sig, const char *src)
 {
    E_Comp_Object_Mover *prov;
@@ -2926,7 +2926,7 @@ e_comp_object_signal_emit(Evas_Object *obj, const char *sig, const char *src)
      }
 }
 
-EAPI void
+E_API void
 e_comp_object_signal_callback_add(Evas_Object *obj, const char *sig, const char *src, Edje_Signal_Cb cb, const void *data)
 {
    /* FIXME: at some point I guess this should use eo to inherit
@@ -2937,21 +2937,21 @@ e_comp_object_signal_callback_add(Evas_Object *obj, const char *sig, const char 
    edje_object_signal_callback_add(cw->shobj, sig, src, cb, (void*)data);
 }
 
-EAPI void
+E_API void
 e_comp_object_signal_callback_del(Evas_Object *obj, const char *sig, const char *src, Edje_Signal_Cb cb)
 {
    API_ENTRY;
    edje_object_signal_callback_del(cw->shobj, sig, src, cb);
 }
 
-EAPI void
+E_API void
 e_comp_object_signal_callback_del_full(Evas_Object *obj, const char *sig, const char *src, Edje_Signal_Cb cb, const void *data)
 {
    API_ENTRY;
    edje_object_signal_callback_del_full(cw->shobj, sig, src, cb, (void*)data);
 }
 
-EAPI void
+E_API void
 e_comp_object_damage(Evas_Object *obj, int x, int y, int w, int h)
 {
    int tw, th;
@@ -3011,14 +3011,14 @@ e_comp_object_damage(Evas_Object *obj, int x, int y, int w, int h)
    e_comp_object_render_update_add(obj);
 }
 
-EAPI Eina_Bool
+E_API Eina_Bool
 e_comp_object_damage_exists(Evas_Object *obj)
 {
    API_ENTRY EINA_FALSE;
    return cw->updates_exist;
 }
 
-EAPI void
+E_API void
 e_comp_object_render_update_add(Evas_Object *obj)
 {
    API_ENTRY;
@@ -3037,7 +3037,7 @@ e_comp_object_render_update_add(Evas_Object *obj)
    e_comp_render_queue(cw->comp);
 }
 
-EAPI void
+E_API void
 e_comp_object_render_update_del(Evas_Object *obj)
 {
    API_ENTRY;
@@ -3056,7 +3056,7 @@ e_comp_object_render_update_del(Evas_Object *obj)
      }
 }
 
-EAPI void
+E_API void
 e_comp_object_shape_apply(Evas_Object *obj)
 {
    Eina_List *l;
@@ -3160,7 +3160,7 @@ e_comp_object_shape_apply(Evas_Object *obj)
 }
 
 /* helper function to simplify toggling of redirection for display servers which support it */
-EAPI void
+E_API void
 e_comp_object_redirected_set(Evas_Object *obj, Eina_Bool set)
 {
    API_ENTRY;
@@ -3198,7 +3198,7 @@ e_comp_object_redirected_set(Evas_Object *obj, Eina_Bool set)
      }
 }
 
-EAPI void
+E_API void
 e_comp_object_native_surface_set(Evas_Object *obj, Eina_Bool set)
 {
    Evas_Native_Surface ns;
@@ -3225,7 +3225,7 @@ e_comp_object_native_surface_set(Evas_Object *obj, Eina_Bool set)
 }
 
 /* mark an object as dirty and setup damages */
-EAPI void
+E_API void
 e_comp_object_dirty(Evas_Object *obj)
 {
    Eina_Iterator *it;
@@ -3288,7 +3288,7 @@ e_comp_object_dirty(Evas_Object *obj)
    e_comp_object_render(obj);
 }
 
-EAPI Eina_Bool
+E_API Eina_Bool
 e_comp_object_render(Evas_Object *obj)
 {
    Eina_Iterator *it;
@@ -3390,7 +3390,7 @@ e_comp_object_render(Evas_Object *obj)
 }
 
 /* create a duplicate of an evas object */
-EAPI Evas_Object *
+E_API Evas_Object *
 e_comp_object_util_mirror_add(Evas_Object *obj)
 {
    Evas_Object *o;
@@ -3461,7 +3461,7 @@ e_comp_object_util_mirror_add(Evas_Object *obj)
 //////////////////////////////////////////////////////
 
 /* setup an api effect for a client */
-EAPI void
+E_API void
 e_comp_object_effect_set(Evas_Object *obj, const char *effect)
 {
    char buf[4096];
@@ -3490,7 +3490,7 @@ e_comp_object_effect_set(Evas_Object *obj, const char *effect)
 }
 
 /* set params for embryo scripts in effect */
-EAPI void
+E_API void
 e_comp_object_effect_params_set(Evas_Object *obj, int id, int *params, unsigned int count)
 {
    Edje_Message_Int_Set *msg;
@@ -3532,7 +3532,7 @@ _e_comp_object_effect_end_cb(void *data, Evas_Object *obj, const char *emission,
 }
 
 /* clip effect to client's zone */
-EAPI void
+E_API void
 e_comp_object_effect_clip(Evas_Object *obj)
 {
    API_ENTRY;
@@ -3544,7 +3544,7 @@ e_comp_object_effect_clip(Evas_Object *obj)
 }
 
 /* unclip effect from client's zone */
-EAPI void
+E_API void
 e_comp_object_effect_unclip(Evas_Object *obj)
 {
    API_ENTRY;
@@ -3554,7 +3554,7 @@ e_comp_object_effect_unclip(Evas_Object *obj)
 }
 
 /* start effect, running end_cb after */
-EAPI void
+E_API void
 e_comp_object_effect_start(Evas_Object *obj, Edje_Signal_Cb end_cb, const void *end_data)
 {
    API_ENTRY;
@@ -3574,7 +3574,7 @@ e_comp_object_effect_start(Evas_Object *obj, Edje_Signal_Cb end_cb, const void *
 }
 
 /* stop a currently-running effect immediately */
-EAPI void
+E_API void
 e_comp_object_effect_stop(Evas_Object *obj, Edje_Signal_Cb end_cb)
 {
    API_ENTRY;
@@ -3602,7 +3602,7 @@ _e_comp_object_effect_mover_sort_cb(E_Comp_Object_Mover *a, E_Comp_Object_Mover 
 }
 
 /* add a function to trigger based on signal emissions for the purpose of modifying effects */
-EAPI E_Comp_Object_Mover *
+E_API E_Comp_Object_Mover *
 e_comp_object_effect_mover_add(int pri, const char *sig, E_Comp_Object_Mover_Cb provider, const void *data)
 {
    E_Comp_Object_Mover *prov;
@@ -3618,7 +3618,7 @@ e_comp_object_effect_mover_add(int pri, const char *sig, E_Comp_Object_Mover_Cb 
    return prov;
 }
 
-EAPI void
+E_API void
 e_comp_object_effect_mover_del(E_Comp_Object_Mover *prov)
 {
    EINA_SAFETY_ON_NULL_RETURN(prov);
@@ -3710,7 +3710,7 @@ _e_comp_object_autoclose_del(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, 
      e_client_refocus();
 }
 
-EAPI void
+E_API void
 e_comp_object_util_autoclose(Evas_Object *obj, E_Comp_Object_Autoclose_Cb del_cb, E_Comp_Object_Key_Cb cb, const void *data)
 {
    E_Comp *c;

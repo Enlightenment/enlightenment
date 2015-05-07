@@ -262,7 +262,7 @@ struct _E_Comp_Wl_Client_Data
    Eina_Bool frame_update : 1;
 };
 
-EAPI Eina_Bool e_comp_wl_init(void);
+E_API Eina_Bool e_comp_wl_init(void);
 EINTERN void e_comp_wl_shutdown(void);
 
 EINTERN struct wl_resource *e_comp_wl_surface_create(struct wl_client *client, int version, uint32_t id);

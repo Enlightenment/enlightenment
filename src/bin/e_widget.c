@@ -45,42 +45,42 @@ static void _e_smart_init(void);
 static Evas_Smart *_e_smart = NULL;
 
 /* externally accessible functions */
-EAPI Evas_Object *
+E_API Evas_Object *
 e_widget_add(Evas *evas)
 {
    _e_smart_init();
    return evas_object_smart_add(evas, _e_smart);
 }
 
-EAPI void
+E_API void
 e_widget_del_hook_set(Evas_Object *obj, void (*func)(Evas_Object *obj))
 {
    API_ENTRY return;
    sd->del_func = func;
 }
 
-EAPI void
+E_API void
 e_widget_focus_hook_set(Evas_Object *obj, void (*func)(Evas_Object *obj))
 {
    API_ENTRY return;
    sd->focus_func = func;
 }
 
-EAPI void
+E_API void
 e_widget_activate_hook_set(Evas_Object *obj, void (*func)(Evas_Object *obj))
 {
    API_ENTRY return;
    sd->activate_func = func;
 }
 
-EAPI void
+E_API void
 e_widget_disable_hook_set(Evas_Object *obj, void (*func)(Evas_Object *obj))
 {
    API_ENTRY return;
    sd->disable_func = func;
 }
 
-EAPI void
+E_API void
 e_widget_on_focus_hook_set(Evas_Object *obj, void (*func)(void *data, Evas_Object *obj), void *data)
 {
    API_ENTRY return;
@@ -88,7 +88,7 @@ e_widget_on_focus_hook_set(Evas_Object *obj, void (*func)(void *data, Evas_Objec
    sd->on_focus_data = data;
 }
 
-EAPI void
+E_API void
 e_widget_on_change_hook_set(Evas_Object *obj, void (*func)(void *data, Evas_Object *obj), void *data)
 {
    API_ENTRY return;
@@ -96,7 +96,7 @@ e_widget_on_change_hook_set(Evas_Object *obj, void (*func)(void *data, Evas_Obje
    sd->on_change_data = data;
 }
 
-EAPI void
+E_API void
 e_widget_on_disable_hook_set(Evas_Object *obj, void (*func)(void *data, Evas_Object *obj), void *data)
 {
    API_ENTRY return;
@@ -104,21 +104,21 @@ e_widget_on_disable_hook_set(Evas_Object *obj, void (*func)(void *data, Evas_Obj
    sd->on_disable_data = data;
 }
 
-EAPI void
+E_API void
 e_widget_data_set(Evas_Object *obj, void *data)
 {
    API_ENTRY return;
    sd->data = data;
 }
 
-EAPI void *
+E_API void *
 e_widget_data_get(Evas_Object *obj)
 {
    API_ENTRY return NULL;
    return sd->data;
 }
 
-EAPI void
+E_API void
 e_widget_size_min_set(Evas_Object *obj, Evas_Coord minw, Evas_Coord minh)
 {
    API_ENTRY return;
@@ -126,7 +126,7 @@ e_widget_size_min_set(Evas_Object *obj, Evas_Coord minw, Evas_Coord minh)
    if (minh >= 0) sd->minh = minh;
 }
 
-EAPI void
+E_API void
 e_widget_size_min_get(Evas_Object *obj, Evas_Coord *minw, Evas_Coord *minh)
 {
    API_ENTRY return;
@@ -146,7 +146,7 @@ _sub_obj_del(void *data,
    evas_object_event_callback_del(obj, EVAS_CALLBACK_DEL, _sub_obj_del);
 }
 
-EAPI void
+E_API void
 e_widget_sub_object_add(Evas_Object *obj, Evas_Object *sobj)
 {
    API_ENTRY return;
@@ -170,7 +170,7 @@ e_widget_sub_object_add(Evas_Object *obj, Evas_Object *sobj)
    evas_object_event_callback_del_full(sobj, EVAS_CALLBACK_DEL, _sub_obj_del, sd);
 }
 
-EAPI void
+E_API void
 e_widget_sub_object_del(Evas_Object *obj, Evas_Object *sobj)
 {
    API_ENTRY return;
@@ -182,7 +182,7 @@ e_widget_sub_object_del(Evas_Object *obj, Evas_Object *sobj)
      }
 }
 
-EAPI void
+E_API void
 e_widget_resize_object_set(Evas_Object *obj, Evas_Object *sobj)
 {
    API_ENTRY return;
@@ -192,14 +192,14 @@ e_widget_resize_object_set(Evas_Object *obj, Evas_Object *sobj)
    _e_smart_reconfigure(sd);
 }
 
-EAPI void
+E_API void
 e_widget_can_focus_set(Evas_Object *obj, int can_focus)
 {
    API_ENTRY return;
    sd->can_focus = can_focus;
 }
 
-EAPI int
+E_API int
 e_widget_can_focus_get(Evas_Object *obj)
 {
    API_ENTRY return 0;
@@ -209,14 +209,14 @@ e_widget_can_focus_get(Evas_Object *obj)
    return 0;
 }
 
-EAPI int
+E_API int
 e_widget_focus_get(Evas_Object *obj)
 {
    API_ENTRY return 0;
    return sd->focused;
 }
 
-EAPI Evas_Object *
+E_API Evas_Object *
 e_widget_focused_object_get(Evas_Object *obj)
 {
    Eina_List *l = NULL;
@@ -232,7 +232,7 @@ e_widget_focused_object_get(Evas_Object *obj)
    return obj;
 }
 
-EAPI int
+E_API int
 e_widget_focus_jump(Evas_Object *obj, int forward)
 {
    API_ENTRY return 0;
@@ -325,7 +325,7 @@ e_widget_focus_jump(Evas_Object *obj, int forward)
    return 0;
 }
 
-EAPI void
+E_API void
 e_widget_focus_set(Evas_Object *obj, int first)
 {
    API_ENTRY return;
@@ -371,14 +371,14 @@ e_widget_focus_set(Evas_Object *obj, int first)
      }
 }
 
-EAPI Evas_Object *
+E_API Evas_Object *
 e_widget_parent_get(Evas_Object *obj)
 {
    API_ENTRY return NULL;
    return sd->parent_obj;
 }
 
-EAPI void
+E_API void
 e_widget_focused_object_clear(Evas_Object *obj)
 {
    Eina_List *l = NULL;
@@ -398,7 +398,7 @@ e_widget_focused_object_clear(Evas_Object *obj)
    if (sd->focus_func) sd->focus_func(obj);
 }
 
-EAPI void
+E_API void
 e_widget_focus_steal(Evas_Object *obj)
 {
    Evas_Object *parent = NULL, *o = NULL;
@@ -427,7 +427,7 @@ e_widget_focus_steal(Evas_Object *obj)
    if (sd->focus_func) sd->focus_func(obj);
 }
 
-EAPI void
+E_API void
 e_widget_activate(Evas_Object *obj)
 {
    API_ENTRY return;
@@ -435,7 +435,7 @@ e_widget_activate(Evas_Object *obj)
    if (sd->activate_func) sd->activate_func(obj);
 }
 
-EAPI void
+E_API void
 e_widget_change(Evas_Object *obj)
 {
    API_ENTRY return;
@@ -443,7 +443,7 @@ e_widget_change(Evas_Object *obj)
    if (sd->on_change_func) sd->on_change_func(sd->on_change_data, obj);
 }
 
-EAPI void
+E_API void
 e_widget_disabled_set(Evas_Object *obj, int disabled)
 {
    API_ENTRY return;
@@ -471,14 +471,14 @@ e_widget_disabled_set(Evas_Object *obj, int disabled)
    if (sd->on_disable_func) sd->on_disable_func(sd->on_disable_data, obj);
 }
 
-EAPI int
+E_API int
 e_widget_disabled_get(Evas_Object *obj)
 {
    API_ENTRY return 0;
    return sd->disabled;
 }
 
-EAPI E_Pointer *
+E_API E_Pointer *
 e_widget_pointer_get(Evas_Object *obj)
 {
    E_Win *win = NULL;
@@ -489,7 +489,7 @@ e_widget_pointer_get(Evas_Object *obj)
    return NULL;
 }
 
-EAPI void
+E_API void
 e_widget_size_min_resize(Evas_Object *obj)
 {
    API_ENTRY return;

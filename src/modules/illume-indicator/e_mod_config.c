@@ -3,7 +3,7 @@
 #include "e_mod_config.h"
 
 /* local variables */
-EAPI Il_Ind_Config *il_ind_cfg = NULL;
+E_API Il_Ind_Config *il_ind_cfg = NULL;
 static E_Config_DD *conf_edd = NULL;
 
 int 

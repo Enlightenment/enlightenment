@@ -65,9 +65,9 @@ static Eina_List *exes = NULL;
 static Ecore_Timer *defer = NULL;
 
 /* public functions */
-EAPI E_Module_Api e_modapi = { E_MODULE_API_VERSION, "Illume Home" };
+E_API E_Module_Api e_modapi = { E_MODULE_API_VERSION, "Illume Home" };
 
-EAPI void *
+E_API void *
 e_modapi_init(E_Module *m) 
 {
    const Eina_List *l;
@@ -130,7 +130,7 @@ e_modapi_init(E_Module *m)
    return m;
 }
 
-EAPI int 
+E_API int 
 e_modapi_shutdown(E_Module *m __UNUSED__) 
 {
    Ecore_Event_Handler *hdl;
@@ -162,7 +162,7 @@ e_modapi_shutdown(E_Module *m __UNUSED__)
    return 1;
 }
 
-EAPI int 
+E_API int 
 e_modapi_save(E_Module *m __UNUSED__) 
 {
    return il_home_config_save();

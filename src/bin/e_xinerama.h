@@ -14,12 +14,12 @@ struct _E_Screen
 
 EINTERN int           e_xinerama_init(void);
 EINTERN int           e_xinerama_shutdown(void);
-EAPI void             e_xinerama_update(void);
-EAPI const Eina_List *e_xinerama_screens_get(void);
-EAPI const Eina_List *e_xinerama_screens_all_get(void);
-EAPI void e_xinerama_screens_set(Eina_List *screens);
-EAPI void             e_xinerama_fake_screen_add(int x, int y, int w, int h);
-EAPI Eina_Bool        e_xinerama_fake_screens_exist(void);
+E_API void             e_xinerama_update(void);
+E_API const Eina_List *e_xinerama_screens_get(void);
+E_API const Eina_List *e_xinerama_screens_all_get(void);
+E_API void e_xinerama_screens_set(Eina_List *screens);
+E_API void             e_xinerama_fake_screen_add(int x, int y, int w, int h);
+E_API Eina_Bool        e_xinerama_fake_screens_exist(void);
 
 #endif
 #endif

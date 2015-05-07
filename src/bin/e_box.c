@@ -100,14 +100,14 @@ _e_box_item_nth_get(E_Smart_Data *sd, unsigned int n)
 }
 
 /* externally accessible functions */
-EAPI Evas_Object *
+E_API Evas_Object *
 e_box_add(Evas *evas)
 {
    _e_box_smart_init();
    return evas_object_smart_add(evas, _e_smart);
 }
 
-EAPI int
+E_API int
 e_box_freeze(Evas_Object *obj)
 {
    E_Smart_Data *sd;
@@ -119,7 +119,7 @@ e_box_freeze(Evas_Object *obj)
    return sd->frozen;
 }
 
-EAPI int
+E_API int
 e_box_thaw(Evas_Object *obj)
 {
    E_Smart_Data *sd;
@@ -132,7 +132,7 @@ e_box_thaw(Evas_Object *obj)
    return sd->frozen;
 }
 
-EAPI void
+E_API void
 e_box_orientation_set(Evas_Object *obj, int horizontal)
 {
    E_Smart_Data *sd;
@@ -146,7 +146,7 @@ e_box_orientation_set(Evas_Object *obj, int horizontal)
    if (sd->frozen <= 0) _e_box_smart_reconfigure(sd);
 }
 
-EAPI int
+E_API int
 e_box_orientation_get(Evas_Object *obj)
 {
    E_Smart_Data *sd;
@@ -157,7 +157,7 @@ e_box_orientation_get(Evas_Object *obj)
    return sd->horizontal;
 }
 
-EAPI void
+E_API void
 e_box_homogenous_set(Evas_Object *obj, int homogenous)
 {
    E_Smart_Data *sd;
@@ -171,7 +171,7 @@ e_box_homogenous_set(Evas_Object *obj, int homogenous)
    if (sd->frozen <= 0) _e_box_smart_reconfigure(sd);
 }
 
-EAPI int
+E_API int
 e_box_pack_start(Evas_Object *obj, Evas_Object *child)
 {
    E_Smart_Data *sd;
@@ -192,7 +192,7 @@ e_box_pack_start(Evas_Object *obj, Evas_Object *child)
    return 0;
 }
 
-EAPI int
+E_API int
 e_box_pack_end(Evas_Object *obj, Evas_Object *child)
 {
    E_Smart_Data *sd;
@@ -213,7 +213,7 @@ e_box_pack_end(Evas_Object *obj, Evas_Object *child)
    return sd->item_count - 1;
 }
 
-EAPI int
+E_API int
 e_box_pack_before(Evas_Object *obj, Evas_Object *child, Evas_Object *before)
 {
    E_Smart_Data *sd;
@@ -240,7 +240,7 @@ e_box_pack_before(Evas_Object *obj, Evas_Object *child, Evas_Object *before)
    return i;
 }
 
-EAPI int
+E_API int
 e_box_pack_after(Evas_Object *obj, Evas_Object *child, Evas_Object *after)
 {
    E_Smart_Data *sd;
@@ -266,7 +266,7 @@ e_box_pack_after(Evas_Object *obj, Evas_Object *child, Evas_Object *after)
    return i;
 }
 
-EAPI int
+E_API int
 e_box_pack_count_get(Evas_Object *obj)
 {
    E_Smart_Data *sd;
@@ -277,7 +277,7 @@ e_box_pack_count_get(Evas_Object *obj)
    return sd->item_count;
 }
 
-EAPI Evas_Object *
+E_API Evas_Object *
 e_box_pack_object_nth(Evas_Object *obj, int n)
 {
    E_Smart_Data *sd;
@@ -288,7 +288,7 @@ e_box_pack_object_nth(Evas_Object *obj, int n)
    return _e_box_item_nth_get(sd, n);
 }
 
-EAPI Evas_Object *
+E_API Evas_Object *
 e_box_pack_object_first(Evas_Object *obj)
 {
    E_Smart_Data *sd;
@@ -299,7 +299,7 @@ e_box_pack_object_first(Evas_Object *obj)
    return sd->items ? sd->items->obj : NULL;
 }
 
-EAPI Evas_Object *
+E_API Evas_Object *
 e_box_pack_object_last(Evas_Object *obj)
 {
    E_Smart_Data *sd;
@@ -310,7 +310,7 @@ e_box_pack_object_last(Evas_Object *obj)
    return EINA_INLIST_CONTAINER_GET(EINA_INLIST_GET(sd->items)->last, E_Box_Item)->obj;
 }
 
-EAPI void
+E_API void
 e_box_pack_options_set(Evas_Object *obj, int fill_w, int fill_h, int expand_w, int expand_h, double align_x, double align_y, Evas_Coord min_w, Evas_Coord min_h, Evas_Coord max_w, Evas_Coord max_h)
 {
    E_Box_Item *bi;
@@ -331,7 +331,7 @@ e_box_pack_options_set(Evas_Object *obj, int fill_w, int fill_h, int expand_w, i
    if (bi->sd->frozen <= 0) _e_box_smart_reconfigure(bi->sd);
 }
 
-EAPI void
+E_API void
 e_box_unpack(Evas_Object *obj)
 {
    E_Box_Item *bi;
@@ -345,7 +345,7 @@ e_box_unpack(Evas_Object *obj)
    _e_box_unpack_internal(sd, bi);
 }
 
-EAPI void
+E_API void
 e_box_size_min_get(Evas_Object *obj, Evas_Coord *minw, Evas_Coord *minh)
 {
    E_Smart_Data *sd;
@@ -358,7 +358,7 @@ e_box_size_min_get(Evas_Object *obj, Evas_Coord *minw, Evas_Coord *minh)
    if (minh) *minh = sd->min.h;
 }
 
-EAPI void
+E_API void
 e_box_size_max_get(Evas_Object *obj, Evas_Coord *maxw, Evas_Coord *maxh)
 {
    E_Smart_Data *sd;
@@ -371,7 +371,7 @@ e_box_size_max_get(Evas_Object *obj, Evas_Coord *maxw, Evas_Coord *maxh)
    if (maxh) *maxh = sd->max.h;
 }
 
-EAPI void
+E_API void
 e_box_align_get(Evas_Object *obj, double *ax, double *ay)
 {
    E_Smart_Data *sd;
@@ -383,7 +383,7 @@ e_box_align_get(Evas_Object *obj, double *ax, double *ay)
    if (ay) *ay = sd->align.y;
 }
 
-EAPI void
+E_API void
 e_box_align_set(Evas_Object *obj, double ax, double ay)
 {
    E_Smart_Data *sd;
@@ -401,7 +401,7 @@ e_box_align_set(Evas_Object *obj, double ax, double ay)
 /*
  * Returns the number of pixels that are hidden on the left/top side.
  */
-EAPI void
+E_API void
 e_box_align_pixel_offset_get(Evas_Object *obj, int *x, int *y)
 {
    E_Smart_Data *sd;
@@ -413,7 +413,7 @@ e_box_align_pixel_offset_get(Evas_Object *obj, int *x, int *y)
    if (y) *y = (sd->min.h - sd->h) * (1.0 - sd->align.y);
 }
 
-EAPI Evas_Object *
+E_API Evas_Object *
 e_box_item_at_xy_get(Evas_Object *obj, Evas_Coord x, Evas_Coord y)
 {
    E_Smart_Data *sd;
@@ -454,7 +454,7 @@ e_box_item_at_xy_get(Evas_Object *obj, Evas_Coord x, Evas_Coord y)
    return NULL;
 }
 
-EAPI Eina_Bool
+E_API Eina_Bool
 e_box_item_size_get(Evas_Object *obj, int *w, int *h)
 {
    E_Box_Item *bi;

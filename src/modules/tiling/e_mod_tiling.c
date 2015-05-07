@@ -1369,12 +1369,12 @@ _clear_border_extras(void *data)
    E_FREE(extra);
 }
 
-EAPI E_Module_Api e_modapi = {
+E_API E_Module_Api e_modapi = {
    E_MODULE_API_VERSION,
    "Tiling"
 };
 
-EAPI void *
+E_API void *
 e_modapi_init(E_Module *m)
 {
    E_Desk *desk;
@@ -1558,7 +1558,7 @@ _foreach_desk(void (*func)(E_Desk *desk))
      }
 }
 
-EAPI int
+E_API int
 e_modapi_shutdown(E_Module *m EINA_UNUSED)
 {
    e_gadcon_provider_unregister(&_gc_class);
@@ -1632,7 +1632,7 @@ e_modapi_shutdown(E_Module *m EINA_UNUSED)
    return 1;
 }
 
-EAPI int
+E_API int
 e_modapi_save(E_Module *m EINA_UNUSED)
 {
    e_config_domain_save("module.tiling", _G.config_edd, tiling_g.config);

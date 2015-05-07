@@ -3450,13 +3450,13 @@ e_actions_shutdown(void)
    return 1;
 }
 
-EAPI Eina_List *
+E_API Eina_List *
 e_action_name_list(void)
 {
    return action_names;
 }
 
-EAPI E_Action *
+E_API E_Action *
 e_action_add(const char *name)
 {
    E_Action *act;
@@ -3474,7 +3474,7 @@ e_action_add(const char *name)
    return act;
 }
 
-EAPI void
+E_API void
 e_action_del(const char *name)
 {
    E_Action *act;
@@ -3483,7 +3483,7 @@ e_action_del(const char *name)
    if (act) _e_action_free(act);
 }
 
-EAPI E_Action *
+E_API E_Action *
 e_action_find(const char *name)
 {
    E_Action *act;
@@ -3492,7 +3492,7 @@ e_action_find(const char *name)
    return act;
 }
 
-EAPI const char *
+E_API const char *
 e_action_predef_label_get(const char *action, const char *params)
 {
    E_Action_Group *actg = NULL;
@@ -3518,7 +3518,7 @@ e_action_predef_label_get(const char *action, const char *params)
    return NULL;
 }
 
-EAPI void
+E_API void
 e_action_predef_name_set(const char *act_grp, const char *act_name, const char *act_cmd, const char *act_params, const char *param_example, int editable)
 {
    E_Action_Group *actg = NULL;
@@ -3564,7 +3564,7 @@ e_action_predef_name_set(const char *act_grp, const char *act_name, const char *
    actg->acts = eina_list_append(actg->acts, actd);
 }
 
-EAPI void
+E_API void
 e_action_predef_name_del(const char *act_grp, const char *act_name)
 {
    E_Action_Group *actg = NULL;
@@ -3603,7 +3603,7 @@ e_action_predef_name_del(const char *act_grp, const char *act_name)
      }
 }
 
-EAPI void
+E_API void
 e_action_predef_name_all_del(void)
 {
    E_Action_Group *actg = NULL;
@@ -3626,7 +3626,7 @@ e_action_predef_name_all_del(void)
    action_groups = NULL;
 }
 
-EAPI Eina_List *
+E_API Eina_List *
 e_action_groups_get(void)
 {
    return action_groups;

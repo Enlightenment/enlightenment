@@ -20,7 +20,7 @@ static char tmpbuf[1024];
 static E_Config_DD *conf_edd = NULL;
 Config *ebluez4_config = NULL;
 
-EAPI E_Module_Api e_modapi = {E_MODULE_API_VERSION, "Bluez4"};
+E_API E_Module_Api e_modapi = {E_MODULE_API_VERSION, "Bluez4"};
 
 /* Local Functions */
 static Eina_Bool
@@ -661,7 +661,7 @@ _ebluez_desklock(void *data EINA_UNUSED, int ev_type EINA_UNUSED,
 }
 
 /* Module Functions */
-EAPI void *
+E_API void *
 e_modapi_init(E_Module *m)
 {
    Eina_Strbuf *buf;
@@ -697,7 +697,7 @@ e_modapi_init(E_Module *m)
    return m;
 }
 
-EAPI int
+E_API int
 e_modapi_shutdown(E_Module *m EINA_UNUSED)
 {
    E_CONFIG_DD_FREE(conf_edd);
@@ -720,7 +720,7 @@ e_modapi_shutdown(E_Module *m EINA_UNUSED)
    return 1;
 }
 
-EAPI int
+E_API int
 e_modapi_save(E_Module *m EINA_UNUSED)
 {
    e_config_domain_save("module.ebluez4",

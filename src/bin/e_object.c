@@ -12,7 +12,7 @@ static sigjmp_buf _e_object_segv_buf;
 #endif
 
 /* externally accessible functions */
-EAPI void *
+E_API void *
 e_object_alloc(int size, int type, E_Object_Cleanup_Func cleanup_func)
 {
    E_Object *obj;
@@ -37,7 +37,7 @@ _delay_del(void *data)
    e_object_unref(obj);
 }
 
-EAPI void
+E_API void
 e_object_del(E_Object *obj)
 {
    E_OBJECT_CHECK(obj);
@@ -60,35 +60,35 @@ e_object_del(E_Object *obj)
    e_object_unref(obj);
 }
 
-EAPI void
+E_API void
 e_object_delay_del_set(E_Object *obj, void *func)
 {
    E_OBJECT_CHECK(obj);
    obj->del_delay_func = func;
 }
 
-EAPI int
+E_API int
 e_object_is_del(E_Object *obj)
 {
    E_OBJECT_CHECK_RETURN(obj, 1);
    return obj->deleted;
 }
 
-EAPI void
+E_API void
 e_object_del_func_set(E_Object *obj, E_Object_Cleanup_Func del_func)
 {
    E_OBJECT_CHECK(obj);
    obj->del_func = del_func;
 }
 
-EAPI void
+E_API void
 e_object_type_set(E_Object *obj, int type)
 {
    E_OBJECT_CHECK(obj);
    obj->type = type;
 }
 
-EAPI void
+E_API void
 e_object_free(E_Object *obj)
 {
    E_OBJECT_CHECK(obj);
@@ -119,7 +119,7 @@ e_object_free(E_Object *obj)
    obj->cleanup_func(obj);
 }
 
-EAPI int
+E_API int
 e_object_ref(E_Object *obj)
 {
    E_OBJECT_CHECK_RETURN(obj, -1);
@@ -129,7 +129,7 @@ e_object_ref(E_Object *obj)
    return obj->references;
 }
 
-EAPI int
+E_API int
 e_object_unref(E_Object *obj)
 {
    int ref;
@@ -153,7 +153,7 @@ e_object_unref(E_Object *obj)
    return ref;
 }
 
-EAPI int
+E_API int
 e_object_ref_get(E_Object *obj)
 {
    E_OBJECT_CHECK_RETURN(obj, 0);
@@ -161,7 +161,7 @@ e_object_ref_get(E_Object *obj)
 }
 
 #if 0
-EAPI void
+E_API void
 e_bt(void)
 {
    int i, trace_num;
@@ -185,7 +185,7 @@ e_bt(void)
 
 #endif
 
-EAPI int
+E_API int
 e_object_error(E_Object *obj)
 {
 #ifdef OBJECT_PARANOIA_CHECK
@@ -302,42 +302,42 @@ e_object_error(E_Object *obj)
 #endif
 }
 
-EAPI void
+E_API void
 e_object_data_set(E_Object *obj, const void *data)
 {
    E_OBJECT_CHECK(obj);
    obj->data = (void *)data;
 }
 
-EAPI void *
+E_API void *
 e_object_data_get(E_Object *obj)
 {
    E_OBJECT_CHECK_RETURN(obj, NULL);
    return obj->data;
 }
 
-EAPI void
+E_API void
 e_object_free_attach_func_set(E_Object *obj, E_Object_Cleanup_Func func)
 {
    E_OBJECT_CHECK(obj);
    obj->free_att_func = func;
 }
 
-EAPI void
+E_API void
 e_object_del_attach_func_set(E_Object *obj, E_Object_Cleanup_Func func)
 {
    E_OBJECT_CHECK(obj);
    obj->del_att_func = func;
 }
 
-EAPI void
+E_API void
 e_object_ref_debug_set(E_Object *obj, Eina_Bool set)
 {
    E_OBJECT_CHECK(obj);
    obj->ref_debug = !!set;
 }
 
-EAPI void
+E_API void
 e_object_delfn_clear(E_Object *obj)
 {
    E_Object_Delfn *dfn;
@@ -360,7 +360,7 @@ e_object_delfn_clear(E_Object *obj)
      }
 }
 
-EAPI E_Object_Delfn *
+E_API E_Object_Delfn *
 e_object_delfn_add(E_Object *obj, void (*func)(void *data, void *obj), void *data)
 {
    E_Object_Delfn *dfn;
@@ -373,7 +373,7 @@ e_object_delfn_add(E_Object *obj, void (*func)(void *data, void *obj), void *dat
    return dfn;
 }
 
-EAPI void
+E_API void
 e_object_delfn_del(E_Object *obj, E_Object_Delfn *dfn)
 {
    E_OBJECT_CHECK(obj);

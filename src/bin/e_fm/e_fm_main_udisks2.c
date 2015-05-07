@@ -919,7 +919,9 @@ _volume_eject_umount_cb(void *data, const Eldbus_Message *msg, Eldbus_Pending *p
    E_Volume *v = data;
 
    if (eldbus_message_error_get(msg, &name, &txt))
-     ERR("%s: %s", name, txt);
+     {
+        ERR("%s: %s", name, txt);
+     }
    else if (v->optype == E_VOLUME_OP_TYPE_EJECT)
      {
         vols_ejecting = eina_list_remove(vols_ejecting, v);

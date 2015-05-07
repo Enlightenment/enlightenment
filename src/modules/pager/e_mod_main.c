@@ -1977,12 +1977,12 @@ _pager_popup_cb_key_up(void *data __UNUSED__, int type __UNUSED__, void *event)
 
 /***************************************************************************/
 /* module setup */
-EAPI E_Module_Api e_modapi =
+E_API E_Module_Api e_modapi =
 {
    E_MODULE_API_VERSION, "Pager"
 };
 
-EAPI void *
+E_API void *
 e_modapi_init(E_Module *m)
 {
    E_Module *p;
@@ -2086,7 +2086,7 @@ e_modapi_init(E_Module *m)
    return m;
 }
 
-EAPI int
+E_API int
 e_modapi_shutdown(E_Module *m __UNUSED__)
 {
    e_gadcon_provider_unregister(&_gadcon_class);
@@ -2112,7 +2112,7 @@ e_modapi_shutdown(E_Module *m __UNUSED__)
    return 1;
 }
 
-EAPI int
+E_API int
 e_modapi_save(E_Module *m __UNUSED__)
 {
    e_config_domain_save("module.pager", conf_edd, pager_config);

@@ -27,7 +27,7 @@
 static Eina_Bool stop_ptrace = EINA_FALSE;
 
 static void env_set(const char *var, const char *val);
-EAPI int    prefix_determine(char *argv0);
+E_API int    prefix_determine(char *argv0);
 
 static void
 env_set(const char *var, const char *val)
@@ -60,7 +60,7 @@ env_set(const char *var, const char *val)
 static Eina_Prefix *pfx = NULL;
 
 /* externally accessible functions */
-EAPI int
+E_API int
 prefix_determine(char *argv0)
 {
    pfx = eina_prefix_new(argv0, prefix_determine,

@@ -2,17 +2,17 @@
 
 /* Atoms */
 #ifndef HAVE_WAYLAND_ONLY
-EAPI Ecore_X_Atom E_ATOM_MANAGED = 0;
-EAPI Ecore_X_Atom E_ATOM_ZONE = 0;
-EAPI Ecore_X_Atom E_ATOM_DESK = 0;
-EAPI Ecore_X_Atom E_ATOM_MAPPED = 0;
-EAPI Ecore_X_Atom E_ATOM_SHADE_DIRECTION = 0;
-EAPI Ecore_X_Atom E_ATOM_HIDDEN = 0;
-EAPI Ecore_X_Atom E_ATOM_BORDER_SIZE = 0;
-EAPI Ecore_X_Atom E_ATOM_WINDOW_STATE = 0;
-EAPI Ecore_X_Atom E_ATOM_WINDOW_STATE_CENTERED = 0;
-EAPI Ecore_X_Atom E_ATOM_DESKTOP_FILE = 0;
-EAPI Ecore_X_Atom E_ATOM_ZONE_GEOMETRY = 0;
+E_API Ecore_X_Atom E_ATOM_MANAGED = 0;
+E_API Ecore_X_Atom E_ATOM_ZONE = 0;
+E_API Ecore_X_Atom E_ATOM_DESK = 0;
+E_API Ecore_X_Atom E_ATOM_MAPPED = 0;
+E_API Ecore_X_Atom E_ATOM_SHADE_DIRECTION = 0;
+E_API Ecore_X_Atom E_ATOM_HIDDEN = 0;
+E_API Ecore_X_Atom E_ATOM_BORDER_SIZE = 0;
+E_API Ecore_X_Atom E_ATOM_WINDOW_STATE = 0;
+E_API Ecore_X_Atom E_ATOM_WINDOW_STATE_CENTERED = 0;
+E_API Ecore_X_Atom E_ATOM_DESKTOP_FILE = 0;
+E_API Ecore_X_Atom E_ATOM_ZONE_GEOMETRY = 0;
 #endif
 
 /* externally accessible functions */

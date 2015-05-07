@@ -862,7 +862,7 @@ _create_data(E_Config_Dialog *cfd)
    return cfdata;
 }
 
-EAPI E_Config_Dialog *
+E_API E_Config_Dialog *
 e_int_config_comp_match(E_Comp *comp, const char *params __UNUSED__)
 {
    E_Config_Dialog *cfd;

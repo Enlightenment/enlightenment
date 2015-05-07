@@ -36,7 +36,7 @@ e_filereg_shutdown(void)
    return 1;
 }
 
-EAPI int
+E_API int
 e_filereg_register(const char *path)
 {
    Filereg_Item *fi = NULL;
@@ -55,7 +55,7 @@ e_filereg_register(const char *path)
    return 1;
 }
 
-EAPI void
+E_API void
 e_filereg_deregister(const char *path)
 {
    Filereg_Item *fi = NULL;
@@ -73,7 +73,7 @@ e_filereg_deregister(const char *path)
      }
 }
 
-EAPI Eina_Bool
+E_API Eina_Bool
 e_filereg_file_protected(const char *path)
 {
    if (eina_hash_find(_e_filereg, path)) return EINA_TRUE;

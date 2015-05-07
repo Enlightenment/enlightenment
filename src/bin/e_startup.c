@@ -16,7 +16,7 @@ static int start_app_pos = -1;
 static Ecore_Event_Handler *desktop_cache_update_handler = NULL;
 
 /* externally accessible functions */
-EAPI void
+E_API void
 e_startup(E_Startup_Mode mode)
 {
    char buf[PATH_MAX];

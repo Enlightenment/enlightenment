@@ -393,7 +393,7 @@ e_syscon_menu_fill(E_Menu *m)
 }
 
 
-EAPI int
+E_API int
 e_modapi_save(E_Module *m __UNUSED__)
 {
    e_config_domain_save("module.syscon", conf_edd, syscon_config);

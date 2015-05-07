@@ -45,8 +45,8 @@ static E_Config_DD *_e_randr_output_edd = NULL;
 static int _e_randr_lid_is_closed = 0;
 
 /* external variables */
-EAPI E_Config_Randr *e_randr_cfg = NULL;
-EAPI E_Randr *e_randr = NULL;
+E_API E_Config_Randr *e_randr_cfg = NULL;
+E_API E_Randr *e_randr = NULL;
 
 /* private internal functions */
 EINTERN Eina_Bool
@@ -123,14 +123,14 @@ e_randr_shutdown(void)
 }
 
 /* public API functions */
-EAPI Eina_Bool
+E_API Eina_Bool
 e_randr_config_save(void)
 {
    /* save the new config */
    return e_config_domain_save("e_randr", _e_randr_edd, e_randr_cfg);
 }
 
-EAPI void
+E_API void
 e_randr_config_apply(void)
 {
    Eina_List *l;
@@ -180,7 +180,7 @@ e_randr_config_apply(void)
    _e_randr_config_primary_update();
 }
 
-EAPI double
+E_API double
 e_randr_mode_refresh_rate_get(Ecore_X_Randr_Mode_Info *mode)
 {
    double rate = 0.0;

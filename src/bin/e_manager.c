@@ -1,6 +1,6 @@
 #include "e.h"
 
-EAPI int E_EVENT_MANAGER_KEYS_GRAB = -1;
+E_API int E_EVENT_MANAGER_KEYS_GRAB = -1;
 
 static Eina_List *managers = NULL;
 
@@ -97,13 +97,13 @@ e_manager_shutdown(void)
    return 1;
 }
 
-EAPI Eina_List *
+E_API Eina_List *
 e_manager_list(void)
 {
    return managers;
 }
 
-EAPI E_Manager *
+E_API E_Manager *
 e_manager_new(Ecore_Window root, E_Comp *c, int w, int h)
 {
    E_Manager *man;
@@ -130,7 +130,7 @@ e_manager_new(Ecore_Window root, E_Comp *c, int w, int h)
    return man;
 }
 
-EAPI void
+E_API void
 e_manager_resize(E_Manager *man, int w, int h)
 {
    E_OBJECT_CHECK(man);
@@ -140,7 +140,7 @@ e_manager_resize(E_Manager *man, int w, int h)
    ecore_evas_resize(man->comp->ee, w, h);
 }
 
-EAPI E_Manager *
+E_API E_Manager *
 e_manager_current_get(void)
 {
    Eina_List *l;
@@ -161,7 +161,7 @@ e_manager_current_get(void)
    return eina_list_data_get(managers);
 }
 
-EAPI E_Manager *
+E_API E_Manager *
 e_manager_number_get(int num)
 {
    Eina_List *l;
@@ -176,7 +176,7 @@ e_manager_number_get(int num)
    return NULL;
 }
 
-EAPI void
+E_API void
 e_managers_keys_grab(void)
 {
    Eina_List *l;
@@ -190,7 +190,7 @@ e_managers_keys_grab(void)
    ecore_event_add(E_EVENT_MANAGER_KEYS_GRAB, NULL, NULL, NULL);
 }
 
-EAPI void
+E_API void
 e_managers_keys_ungrab(void)
 {
    Eina_List *l;

@@ -284,7 +284,7 @@ _e_kbd_dict_close(E_Kbd_Dict *kd)
    kd->file.size = 0;
 }
 
-EAPI E_Kbd_Dict *
+E_API E_Kbd_Dict *
 e_kbd_dict_new(const char *file)
 {
    // alloc and load new dict - build quick-lookup table. words MUST be sorted
@@ -310,7 +310,7 @@ e_kbd_dict_new(const char *file)
    return kd;
 }
 
-EAPI void
+E_API void
 e_kbd_dict_free(E_Kbd_Dict *kd)
 {
    // free dict and anything in it
@@ -335,7 +335,7 @@ _e_kbd_dict_changed_write_find(E_Kbd_Dict *kd, const char *word)
    return NULL;
 }
 
-EAPI void
+E_API void
 e_kbd_dict_save(E_Kbd_Dict *kd)
 {
    FILE *f;
@@ -559,7 +559,7 @@ _e_kbd_dict_find_full(E_Kbd_Dict *kd, const char *word)
    return NULL;
 }
 
-EAPI void
+E_API void
 e_kbd_dict_word_usage_adjust(E_Kbd_Dict *kd, const char *word, int adjust)
 {
    // add "adjust" to word usage count
@@ -592,7 +592,7 @@ e_kbd_dict_word_usage_adjust(E_Kbd_Dict *kd, const char *word, int adjust)
      }
 }
 
-EAPI void
+E_API void
 e_kbd_dict_word_delete(E_Kbd_Dict *kd, const char *word)
 {
    // delete a word from the dictionary
@@ -608,7 +608,7 @@ e_kbd_dict_word_delete(E_Kbd_Dict *kd, const char *word)
      }
 }
 
-EAPI void
+E_API void
 e_kbd_dict_word_letter_clear(E_Kbd_Dict *kd)
 {
    // clear the current word buffer
@@ -635,7 +635,7 @@ e_kbd_dict_word_letter_clear(E_Kbd_Dict *kd)
     }
 }
 
-EAPI void
+E_API void
 e_kbd_dict_word_letter_add(E_Kbd_Dict *kd, const char *letter, int dist)
 {
    // add a letter with a distance (0 == closest) as an option for the current
@@ -654,14 +654,14 @@ e_kbd_dict_word_letter_add(E_Kbd_Dict *kd, const char *letter, int dist)
    l->data = list;
 }
 
-EAPI void
+E_API void
 e_kbd_dict_word_letter_advance(E_Kbd_Dict *kd)
 {
    // start a new letter in the word
    kd->word.letters = eina_list_append(kd->word.letters, NULL);
 }
 
-EAPI void
+E_API void
 e_kbd_dict_word_letter_delete(E_Kbd_Dict *kd)
 {
    // delete the current letter completely
@@ -811,7 +811,7 @@ _e_kbd_dict_matches_lookup_iter(E_Kbd_Dict *kd, Eina_List *word,
    level--;
 }
 
-EAPI void
+E_API void
 e_kbd_dict_matches_lookup(E_Kbd_Dict *kd)
 {
    // find all matches and sort them
@@ -831,21 +831,21 @@ e_kbd_dict_matches_lookup(E_Kbd_Dict *kd)
                                      _e_kbd_dict_matches_lookup_cb_sort);
 }
 
-EAPI void
+E_API void
 e_kbd_dict_matches_first(E_Kbd_Dict *kd)
 {
    // jump to first match
    kd->matches.list_ptr = kd->matches.list;
 }
 
-EAPI void
+E_API void
 e_kbd_dict_matches_next(E_Kbd_Dict *kd)
 {
    // jump to next match
    kd->matches.list_ptr = kd->matches.list_ptr->next;
 }
 
-EAPI const char *
+E_API const char *
 e_kbd_dict_matches_match_get(E_Kbd_Dict *kd, int *pri_ret)
 {
    // return the word (string utf-8) for the current match

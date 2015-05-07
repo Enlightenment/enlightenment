@@ -297,13 +297,13 @@ e_win_shutdown(void)
    return 1;
 }
 
-EAPI Eina_Bool
+E_API Eina_Bool
 e_win_elm_available(void)
 {
    return EINA_TRUE;
 }
 
-EAPI E_Win *
+E_API E_Win *
 e_win_new(E_Comp *c)
 {
    E_Win *win;
@@ -354,7 +354,7 @@ e_win_new(E_Comp *c)
    return win;
 }
 
-EAPI void
+E_API void
 e_win_show(E_Win *win)
 {
    E_OBJECT_CHECK(win);
@@ -402,7 +402,7 @@ e_win_show(E_Win *win)
      e_comp_object_util_center(win->client->frame);
 }
 
-EAPI void
+E_API void
 e_win_hide(E_Win *win)
 {
    E_OBJECT_CHECK(win);
@@ -416,7 +416,7 @@ e_win_hide(E_Win *win)
  * @parm x horizontal position to place window.
  * @parm y vertical position to place window.
  */
-EAPI void
+E_API void
 e_win_move(E_Win *win, int x, int y)
 {
    E_OBJECT_CHECK(win);
@@ -437,7 +437,7 @@ e_win_move(E_Win *win, int x, int y)
  * @parm w horizontal window size.
  * @parm h vertical window size.
  */
-EAPI void
+E_API void
 e_win_resize(E_Win *win, int w, int h)
 {
    E_OBJECT_CHECK(win);
@@ -461,7 +461,7 @@ e_win_resize(E_Win *win, int w, int h)
  * @parm w horizontal window size.
  * @parm h vertical window size.
  */
-EAPI void
+E_API void
 e_win_move_resize(E_Win *win, int x, int y, int w, int h)
 {
    E_OBJECT_CHECK(win);
@@ -476,7 +476,7 @@ e_win_move_resize(E_Win *win, int x, int y, int w, int h)
      ecore_evas_move_resize(win->ecore_evas, x, y, w, h);
 }
 
-EAPI void
+E_API void
 e_win_raise(E_Win *win)
 {
    E_OBJECT_CHECK(win);
@@ -485,7 +485,7 @@ e_win_raise(E_Win *win)
      evas_object_raise(win->client->frame);
 }
 
-EAPI void
+E_API void
 e_win_lower(E_Win *win)
 {
    E_OBJECT_CHECK(win);
@@ -494,7 +494,7 @@ e_win_lower(E_Win *win)
      evas_object_lower(win->client->frame);
 }
 
-EAPI void
+E_API void
 e_win_placed_set(E_Win *win, int placed)
 {
    E_OBJECT_CHECK(win);
@@ -504,7 +504,7 @@ e_win_placed_set(E_Win *win, int placed)
      _e_win_prop_update(win);
 }
 
-EAPI Evas *
+E_API Evas *
 e_win_evas_get(E_Win *win)
 {
    E_OBJECT_CHECK_RETURN(win, NULL);
@@ -512,7 +512,7 @@ e_win_evas_get(E_Win *win)
    return win->evas;
 }
 
-EAPI void
+E_API void
 e_win_move_callback_set(E_Win *win, void (*func)(E_Win *win))
 {
    E_OBJECT_CHECK(win);
@@ -520,7 +520,7 @@ e_win_move_callback_set(E_Win *win, void (*func)(E_Win *win))
    win->cb_move = func;
 }
 
-EAPI void
+E_API void
 e_win_resize_callback_set(E_Win *win, void (*func)(E_Win *win))
 {
    E_OBJECT_CHECK(win);
@@ -528,7 +528,7 @@ e_win_resize_callback_set(E_Win *win, void (*func)(E_Win *win))
    win->cb_resize = func;
 }
 
-EAPI void
+E_API void
 e_win_delete_callback_set(E_Win *win, void (*func)(E_Win *win))
 {
    E_OBJECT_CHECK(win);
@@ -536,7 +536,7 @@ e_win_delete_callback_set(E_Win *win, void (*func)(E_Win *win))
    win->cb_delete = func;
 }
 
-EAPI void
+E_API void
 e_win_shaped_set(E_Win *win, int shaped)
 {
    E_OBJECT_CHECK(win);
@@ -544,7 +544,7 @@ e_win_shaped_set(E_Win *win, int shaped)
    ecore_evas_shaped_set(win->ecore_evas, shaped);
 }
 
-EAPI void
+E_API void
 e_win_avoid_damage_set(E_Win *win, int avoid)
 {
    E_OBJECT_CHECK(win);
@@ -552,7 +552,7 @@ e_win_avoid_damage_set(E_Win *win, int avoid)
    ecore_evas_avoid_damage_set(win->ecore_evas, avoid);
 }
 
-EAPI void
+E_API void
 e_win_borderless_set(E_Win *win, int borderless)
 {
    E_OBJECT_CHECK(win);
@@ -560,7 +560,7 @@ e_win_borderless_set(E_Win *win, int borderless)
    ecore_evas_borderless_set(win->ecore_evas, borderless);
 }
 
-EAPI void
+E_API void
 e_win_layer_set(E_Win *win, E_Win_Layer layer)
 {
    E_OBJECT_CHECK(win);
@@ -568,7 +568,7 @@ e_win_layer_set(E_Win *win, E_Win_Layer layer)
    ecore_evas_layer_set(win->ecore_evas, layer);
 }
 
-EAPI void
+E_API void
 e_win_sticky_set(E_Win *win, int sticky)
 {
    E_OBJECT_CHECK(win);
@@ -576,7 +576,7 @@ e_win_sticky_set(E_Win *win, int sticky)
    ecore_evas_sticky_set(win->ecore_evas, sticky);
 }
 
-EAPI void
+E_API void
 e_win_size_min_set(E_Win *win, int w, int h)
 {
    E_OBJECT_CHECK(win);
@@ -589,7 +589,7 @@ e_win_size_min_set(E_Win *win, int w, int h)
    _e_win_prop_update(win);
 }
 
-EAPI void
+E_API void
 e_win_size_max_set(E_Win *win, int w, int h)
 {
    E_OBJECT_CHECK(win);
@@ -602,7 +602,7 @@ e_win_size_max_set(E_Win *win, int w, int h)
    _e_win_prop_update(win);
 }
 
-EAPI void
+E_API void
 e_win_size_base_set(E_Win *win, int w, int h)
 {
    E_OBJECT_CHECK(win);
@@ -615,7 +615,7 @@ e_win_size_base_set(E_Win *win, int w, int h)
    _e_win_prop_update(win);
 }
 
-EAPI void
+E_API void
 e_win_step_set(E_Win *win, int x, int y)
 {
    E_OBJECT_CHECK(win);
@@ -626,7 +626,7 @@ e_win_step_set(E_Win *win, int x, int y)
    _e_win_prop_update(win);
 }
 
-EAPI void
+E_API void
 e_win_name_class_set(E_Win *win, const char *name, const char *class)
 {
    E_OBJECT_CHECK(win);
@@ -634,7 +634,7 @@ e_win_name_class_set(E_Win *win, const char *name, const char *class)
    ecore_evas_name_class_set(win->ecore_evas, name, class);
 }
 
-EAPI void
+E_API void
 e_win_title_set(E_Win *win, const char *title)
 {
    E_OBJECT_CHECK(win);
@@ -642,7 +642,7 @@ e_win_title_set(E_Win *win, const char *title)
    ecore_evas_title_set(win->ecore_evas, title);
 }
 
-EAPI void
+E_API void
 e_win_centered_set(E_Win *win, int centered)
 {
    E_OBJECT_CHECK(win);
@@ -659,7 +659,7 @@ e_win_centered_set(E_Win *win, int centered)
      }
 }
 
-EAPI void
+E_API void
 e_win_dialog_set(E_Win *win, int dialog)
 {
    E_OBJECT_CHECK(win);
@@ -676,7 +676,7 @@ e_win_dialog_set(E_Win *win, int dialog)
      }
 }
 
-EAPI void
+E_API void
 e_win_no_remember_set(E_Win *win, int no_remember)
 {
    E_OBJECT_CHECK(win);
@@ -684,7 +684,7 @@ e_win_no_remember_set(E_Win *win, int no_remember)
    win->state.no_remember = no_remember;
 }
 
-EAPI E_Win *
+E_API E_Win *
 e_win_evas_object_win_get(Evas_Object *obj)
 {
    Evas *evas;
@@ -699,14 +699,14 @@ e_win_evas_object_win_get(Evas_Object *obj)
    return win;
 }
 
-EAPI void
+E_API void
 e_win_client_icon_set(E_Win *win, const char *icon)
 {
    if (win->client)
      eina_stringshare_replace(&win->client->internal_icon, icon);
 }
 
-EAPI void
+E_API void
 e_win_client_icon_key_set(E_Win *win, const char *key)
 {
    if (win->client)
