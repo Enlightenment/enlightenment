@@ -192,7 +192,7 @@ e_acpi_lid_status_get(void)
    return E_ACPI_LID_UNKNOWN;
 }
 
-EINTERN Eina_Bool
+EAPI Eina_Bool
 e_acpi_lid_is_closed(void)
 {
    if (lid_is_closed == -1)
