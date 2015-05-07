@@ -6,27 +6,27 @@
 #ifndef E_COMP_CANVAS_H
 #define E_COMP_CANVAS_H
 
-extern EAPI int E_EVENT_COMPOSITOR_RESIZE;
+extern E_API int E_EVENT_COMPOSITOR_RESIZE;
 
-EAPI Eina_Bool e_comp_canvas_init(int w, int h);
+E_API Eina_Bool e_comp_canvas_init(int w, int h);
 EINTERN void e_comp_canvas_clear(void);
-EAPI void e_comp_canvas_resize(int w, int h);
-EAPI void e_comp_all_freeze(void);
-EAPI void e_comp_all_thaw(void);
-EAPI E_Zone * e_comp_zone_xy_get(Evas_Coord x, Evas_Coord y);
-EAPI E_Zone * e_comp_zone_number_get(int num);
-EAPI E_Zone * e_comp_zone_id_get(int id);
-EAPI E_Desk * e_comp_desk_window_profile_get(const char *profile);
-EAPI void e_comp_canvas_zone_update(E_Zone *zone);
-EAPI void e_comp_canvas_update(void);
-EAPI void e_comp_canvas_fake_layers_init(void);
-EAPI void e_comp_canvas_fps_toggle(void);
-EAPI E_Layer e_comp_canvas_layer_map_to(unsigned int layer);
-EAPI unsigned int e_comp_canvas_layer_map(E_Layer layer);
-EAPI unsigned int e_comp_canvas_client_layer_map(E_Layer layer);
-EAPI E_Layer e_comp_canvas_client_layer_map_nearest(int layer);
-EAPI void e_comp_canvas_keys_grab(void);
-EAPI void e_comp_canvas_keys_ungrab(void);
+E_API void e_comp_canvas_resize(int w, int h);
+E_API void e_comp_all_freeze(void);
+E_API void e_comp_all_thaw(void);
+E_API E_Zone * e_comp_zone_xy_get(Evas_Coord x, Evas_Coord y);
+E_API E_Zone * e_comp_zone_number_get(int num);
+E_API E_Zone * e_comp_zone_id_get(int id);
+E_API E_Desk * e_comp_desk_window_profile_get(const char *profile);
+E_API void e_comp_canvas_zone_update(E_Zone *zone);
+E_API void e_comp_canvas_update(void);
+E_API void e_comp_canvas_fake_layers_init(void);
+E_API void e_comp_canvas_fps_toggle(void);
+E_API E_Layer e_comp_canvas_layer_map_to(unsigned int layer);
+E_API unsigned int e_comp_canvas_layer_map(E_Layer layer);
+E_API unsigned int e_comp_canvas_client_layer_map(E_Layer layer);
+E_API E_Layer e_comp_canvas_client_layer_map_nearest(int layer);
+E_API void e_comp_canvas_keys_grab(void);
+E_API void e_comp_canvas_keys_ungrab(void);
 
 /* the following functions are used for adjusting root window coordinates
  * to/from canvas coordinates.

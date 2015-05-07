@@ -463,7 +463,7 @@ e_pointer_shutdown(void)
    return 1;
 }
 
-EAPI E_Pointer *
+E_API E_Pointer *
 e_pointer_window_new(Ecore_Window win, Eina_Bool filled)
 {
    E_Pointer *ptr = NULL;
@@ -491,7 +491,7 @@ e_pointer_window_new(Ecore_Window win, Eina_Bool filled)
    return ptr;
 }
 
-EAPI E_Pointer *
+E_API E_Pointer *
 e_pointer_canvas_new(Ecore_Evas *ee, Eina_Bool filled)
 {
    E_Pointer *ptr = NULL;
@@ -534,7 +534,7 @@ e_pointer_canvas_new(Ecore_Evas *ee, Eina_Bool filled)
    return ptr;
 }
 
-EAPI void 
+E_API void 
 e_pointers_size_set(int size)
 {
    Eina_List *l;
@@ -560,7 +560,7 @@ e_pointers_size_set(int size)
      }
 }
 
-EAPI void 
+E_API void 
 e_pointer_hide(E_Pointer *ptr)
 {
    if ((ptr->evas) && (!ptr->canvas)) 
@@ -572,7 +572,7 @@ e_pointer_hide(E_Pointer *ptr)
 #endif
 }
 
-EAPI void 
+E_API void 
 e_pointer_type_push(E_Pointer *ptr, void *obj, const char *type)
 {
    E_Pointer_Stack *stack;
@@ -587,7 +587,7 @@ e_pointer_type_push(E_Pointer *ptr, void *obj, const char *type)
    ptr->stack = eina_list_prepend(ptr->stack, stack);
 }
 
-EAPI void 
+E_API void 
 e_pointer_type_pop(E_Pointer *ptr, void *obj, const char *type)
 {
    Eina_List *l, *ll;
@@ -620,7 +620,7 @@ e_pointer_type_pop(E_Pointer *ptr, void *obj, const char *type)
    eina_stringshare_refplace(&ptr->type, stack->type);
 }
 
-EAPI void 
+E_API void 
 e_pointer_mode_push(void *obj, E_Pointer_Mode mode)
 {
    switch (mode)
@@ -665,7 +665,7 @@ e_pointer_mode_push(void *obj, E_Pointer_Mode mode)
      }
 }
 
-EAPI void 
+E_API void 
 e_pointer_mode_pop(void *obj, E_Pointer_Mode mode)
 {
    switch (mode)
@@ -710,7 +710,7 @@ e_pointer_mode_pop(void *obj, E_Pointer_Mode mode)
      }
 }
 
-EAPI void 
+E_API void 
 e_pointer_idler_before(void)
 {
    Eina_List *l;
@@ -747,7 +747,7 @@ e_pointer_idler_before(void)
      }
 }
 
-EAPI void
+E_API void
 e_pointer_object_set(E_Pointer *ptr, Evas_Object *obj, int x, int y)
 {
    Evas_Object *o;

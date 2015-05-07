@@ -109,19 +109,19 @@ struct _E_Config_Randr2_Screen
    unsigned char enabled;
 };
 
-extern EAPI E_Config_Randr2 *e_randr2_cfg;
-extern EAPI E_Randr2 *e_randr2;
+extern E_API E_Config_Randr2 *e_randr2_cfg;
+extern E_API E_Randr2 *e_randr2;
 
-extern EAPI int E_EVENT_RANDR_CHANGE;
+extern E_API int E_EVENT_RANDR_CHANGE;
 
 EINTERN Eina_Bool e_randr2_init(void);
 EINTERN int       e_randr2_shutdown(void);
-EAPI    Eina_Bool e_randr2_config_save(void);
-EAPI    void      e_randr2_config_apply(void);
-EAPI    void      e_randr2_screeninfo_update(void);
+E_API    Eina_Bool e_randr2_config_save(void);
+E_API    void      e_randr2_config_apply(void);
+E_API    void      e_randr2_screeninfo_update(void);
 
-EAPI void e_randr2_screen_refresh_queue(Eina_Bool lid_event);
-EAPI E_Config_Randr2_Screen *e_randr2_config_screen_find(E_Randr2_Screen *s, E_Config_Randr2 *cfg);
-EAPI void e_randr2_screens_setup(int rw, int rh);
+E_API void e_randr2_screen_refresh_queue(Eina_Bool lid_event);
+E_API E_Config_Randr2_Screen *e_randr2_config_screen_find(E_Randr2_Screen *s, E_Config_Randr2 *cfg);
+E_API void e_randr2_screens_setup(int rw, int rh);
 #endif
 #endif

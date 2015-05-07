@@ -118,7 +118,7 @@ _notification_cb_initial_mode_timer(Config *m_cfg)
 }
 
 /* Module Api Functions */
-EAPI E_Module_Api e_modapi = {E_MODULE_API_VERSION, "Notification"};
+E_API E_Module_Api e_modapi = {E_MODULE_API_VERSION, "Notification"};
 
 static const E_Notification_Server_Info server_info = {
    .name = "e17",
@@ -141,7 +141,7 @@ _notification_cb_close(void *data EINA_UNUSED, unsigned int id)
    notification_popup_close(id);
 }
 
-EAPI void *
+E_API void *
 e_modapi_init(E_Module *m)
 {
    char buf[PATH_MAX];
@@ -213,7 +213,7 @@ e_modapi_init(E_Module *m)
    return m;
 }
 
-EAPI int
+E_API int
 e_modapi_shutdown(E_Module *m EINA_UNUSED)
 {
    if (notification_cfg->initial_mode_timer)
@@ -237,7 +237,7 @@ e_modapi_shutdown(E_Module *m EINA_UNUSED)
    return 1;
 }
 
-EAPI int
+E_API int
 e_modapi_save(E_Module *m EINA_UNUSED)
 {
    return e_config_domain_save("module.notification", conf_edd, notification_cfg);

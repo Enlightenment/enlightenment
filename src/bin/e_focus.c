@@ -6,7 +6,7 @@ static Eina_Bool _e_focus_raise_timer(void *data);
 /* local subsystem globals */
 
 /* externally accessible functions */
-EAPI void
+E_API void
 e_focus_event_mouse_in(E_Client *ec)
 {
    
@@ -28,7 +28,7 @@ e_focus_event_mouse_in(E_Client *ec)
      }
 }
 
-EAPI void
+E_API void
 e_focus_event_mouse_out(E_Client *ec)
 {
    if (e_config->focus_policy == E_FOCUS_MOUSE)
@@ -42,7 +42,7 @@ e_focus_event_mouse_out(E_Client *ec)
    E_FREE_FUNC(ec->raise_timer, ecore_timer_del);
 }
 
-EAPI void
+E_API void
 e_focus_event_mouse_down(E_Client *ec)
 {
    if (e_client_focus_policy_click(ec) ||
@@ -55,12 +55,12 @@ e_focus_event_mouse_down(E_Client *ec)
      }
 }
 
-EAPI void
+E_API void
 e_focus_event_mouse_up(E_Client *ec EINA_UNUSED)
 {
 }
 
-EAPI void
+E_API void
 e_focus_event_focus_in(E_Client *ec)
 {
    if ((e_client_focus_policy_click(ec)) &&
@@ -81,7 +81,7 @@ e_focus_event_focus_in(E_Client *ec)
      }
 }
 
-EAPI void
+E_API void
 e_focus_event_focus_out(E_Client *ec)
 {
    if ((e_client_focus_policy_click(ec)) &&

@@ -13,8 +13,8 @@ static void      _e_powersave_mode_eval(void);
 static void      _e_powersave_event_update_free(void *data EINA_UNUSED, void *event);
 
 /* local subsystem globals */
-EAPI int E_EVENT_POWERSAVE_UPDATE = 0;
-EAPI int E_EVENT_POWERSAVE_CONFIG_UPDATE = 0;
+E_API int E_EVENT_POWERSAVE_UPDATE = 0;
+E_API int E_EVENT_POWERSAVE_CONFIG_UPDATE = 0;
 static int walking_deferred_actions = 0;
 static Eina_List *deferred_actions = NULL;
 static Ecore_Timer *deferred_timer = NULL;
@@ -37,7 +37,7 @@ e_powersave_shutdown(void)
    return 1;
 }
 
-EAPI E_Powersave_Deferred_Action *
+E_API E_Powersave_Deferred_Action *
 e_powersave_deferred_action_add(void (*func)(void *data), const void *data)
 {
    E_Powersave_Deferred_Action *pa;
@@ -54,7 +54,7 @@ e_powersave_deferred_action_add(void (*func)(void *data), const void *data)
    return pa;
 }
 
-EAPI void
+E_API void
 e_powersave_deferred_action_del(E_Powersave_Deferred_Action *pa)
 {
    if (walking_deferred_actions)
@@ -77,7 +77,7 @@ e_powersave_deferred_action_del(E_Powersave_Deferred_Action *pa)
      }
 }
 
-EAPI void
+E_API void
 e_powersave_mode_set(E_Powersave_Mode mode)
 {
    E_Event_Powersave_Update *ev;
@@ -95,19 +95,19 @@ e_powersave_mode_set(E_Powersave_Mode mode)
    _e_powersave_mode_eval();
 }
 
-EAPI E_Powersave_Mode
+E_API E_Powersave_Mode
 e_powersave_mode_get(void)
 {
    return powersave_mode;
 }
 
-EAPI E_Powersave_Mode
+E_API E_Powersave_Mode
 e_powersave_mode_min_get(void)
 {
    return e_config->powersave.min;
 }
 
-EAPI E_Powersave_Mode
+E_API E_Powersave_Mode
 e_powersave_mode_max_get(void)
 {
    return e_config->powersave.max;

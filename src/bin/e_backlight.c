@@ -50,7 +50,7 @@ static int bl_mib[CTL_MAXNAME];
 static int bl_mib_len = -1;
 #endif
 
-EAPI int E_EVENT_BACKLIGHT_CHANGE = -1;
+E_API int E_EVENT_BACKLIGHT_CHANGE = -1;
 
 EINTERN int
 e_backlight_init(void)
@@ -101,14 +101,14 @@ e_backlight_shutdown(void)
    return 1;
 }
 
-EAPI Eina_Bool
+E_API Eina_Bool
 e_backlight_exists(void)
 {
    if (sysmode == MODE_NONE) return EINA_FALSE;
    return EINA_TRUE;
 }
 
-EAPI void
+E_API void
 e_backlight_update(void)
 {
    if (bl_avail == EINA_FALSE) return;
@@ -116,7 +116,7 @@ e_backlight_update(void)
    _e_backlight_update();
 }
 
-EAPI void
+E_API void
 e_backlight_level_set(E_Zone *zone, double val, double tim)
 {
    double bl_now;
@@ -154,14 +154,14 @@ e_backlight_level_set(E_Zone *zone, double val, double tim)
    bl_anim_toval = val;
 }
 
-EAPI double
+E_API double
 e_backlight_level_get(E_Zone *zone EINA_UNUSED)
 {
    // zone == NULL == everything
    return e_bl_val;
 }
 
-EAPI void
+E_API void
 e_backlight_mode_set(E_Zone *zone, E_Backlight_Mode mode)
 {
    E_Backlight_Mode pmode;
@@ -189,14 +189,14 @@ e_backlight_mode_set(E_Zone *zone, E_Backlight_Mode mode)
      e_backlight_level_set(zone, 1.0, -1.0);
 }
 
-EAPI E_Backlight_Mode
+E_API E_Backlight_Mode
 e_backlight_mode_get(E_Zone *zone EINA_UNUSED)
 {
    // zone == NULL == everything
    return e_config->backlight.mode;
 }
 
-EAPI const Eina_List *
+E_API const Eina_List *
 e_backlight_devices_get(void)
 {
    return bl_devs;

@@ -6,7 +6,7 @@
 
 /* externally accessible functions */
 
-EAPI E_About *
+E_API E_About *
 e_about_new(void)
 {
    E_Obj_Dialog *od;
@@ -110,7 +110,7 @@ e_about_new(void)
    return (E_About *)od;
 }
 
-EAPI void
+E_API void
 e_about_show(E_About *about)
 {
    e_obj_dialog_show((E_Obj_Dialog *)about);

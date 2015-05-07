@@ -4,7 +4,7 @@ static void _e_xkb_update_event(int);
 
 static int _e_xkb_cur_group = -1;
 
-EAPI int E_EVENT_XKB_CHANGED = 0;
+E_API int E_EVENT_XKB_CHANGED = 0;
 
 static Eina_Bool
 _e_xkb_init_timer(void *data)
@@ -28,7 +28,7 @@ _e_xkb_init_timer(void *data)
 }
 
 /* externally accessible functions */
-EAPI int
+E_API int
 e_xkb_init(void)
 {
    E_EVENT_XKB_CHANGED = ecore_event_type_new();
@@ -43,13 +43,13 @@ e_xkb_init(void)
    return 1;
 }
 
-EAPI int
+E_API int
 e_xkb_shutdown(void)
 {
    return 1;
 }
 
-EAPI void
+E_API void
 e_xkb_update(int cur_group)
 {
    E_Config_XKB_Layout *cl;
@@ -152,7 +152,7 @@ e_xkb_update(int cur_group)
    eina_strbuf_free(buf);
 }
 
-EAPI void
+E_API void
 e_xkb_layout_next(void)
 {
    Eina_List *l;
@@ -174,7 +174,7 @@ e_xkb_layout_next(void)
    e_config_save_queue();
 }
 
-EAPI void
+E_API void
 e_xkb_layout_prev(void)
 {
    Eina_List *l;
@@ -200,7 +200,7 @@ e_xkb_layout_prev(void)
 /* always use this function to get the current layout's name
  * to ensure the most accurate results!!!
  */
-EAPI E_Config_XKB_Layout *
+E_API E_Config_XKB_Layout *
 e_xkb_layout_get(void)
 {
    unsigned int n = 0;
@@ -212,7 +212,7 @@ e_xkb_layout_get(void)
    return eina_list_nth(e_config->xkb.used_layouts, n);
 }
 
-EAPI void
+E_API void
 e_xkb_layout_set(const E_Config_XKB_Layout *cl)
 {
    Eina_List *l;
@@ -238,7 +238,7 @@ e_xkb_layout_set(const E_Config_XKB_Layout *cl)
    e_config_save_queue();
 }
 
-EAPI const char *
+E_API const char *
 e_xkb_layout_name_reduce(const char *name)
 {
    const char *s;
@@ -250,7 +250,7 @@ e_xkb_layout_name_reduce(const char *name)
    return s;
 }
 
-EAPI void
+E_API void
 e_xkb_e_icon_flag_setup(Evas_Object *eicon, const char *name)
 {
    int w, h;
@@ -262,7 +262,7 @@ e_xkb_e_icon_flag_setup(Evas_Object *eicon, const char *name)
    edje_extern_object_aspect_set(eicon, EDJE_ASPECT_CONTROL_BOTH, w, h);
 }
 
-EAPI void
+E_API void
 e_xkb_flag_file_get(char *buf, size_t bufsize, const char *name)
 {
    name = e_xkb_layout_name_reduce(name);
@@ -273,7 +273,7 @@ e_xkb_flag_file_get(char *buf, size_t bufsize, const char *name)
               e_prefix_data_get());
 }
 
-EAPI Eina_Bool
+E_API Eina_Bool
 e_config_xkb_layout_eq(const E_Config_XKB_Layout *a, const E_Config_XKB_Layout *b)
 {
    if (a == b) return EINA_TRUE;
@@ -281,7 +281,7 @@ e_config_xkb_layout_eq(const E_Config_XKB_Layout *a, const E_Config_XKB_Layout *
    return ((a->name == b->name) && (a->model == b->model) && (a->variant == b->variant));
 }
 
-EAPI void
+E_API void
 e_config_xkb_layout_free(E_Config_XKB_Layout *cl)
 {
    if (!cl) return;
@@ -292,7 +292,7 @@ e_config_xkb_layout_free(E_Config_XKB_Layout *cl)
    free(cl);
 }
 
-EAPI E_Config_XKB_Layout *
+E_API E_Config_XKB_Layout *
 e_config_xkb_layout_dup(const E_Config_XKB_Layout *cl)
 {
    E_Config_XKB_Layout *cl2;

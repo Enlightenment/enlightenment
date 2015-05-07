@@ -678,7 +678,7 @@ _client_property(E_Smart_Data *sd, int type EINA_UNUSED, E_Event_Client_Property
 }
 
 /* externally accessible functions */
-EAPI Evas_Object *
+E_API Evas_Object *
 e_deskmirror_add(E_Desk *desk, Eina_Bool pager, Eina_Bool taskbar)
 {
    E_Smart_Data *sd;
@@ -726,7 +726,7 @@ e_deskmirror_add(E_Desk *desk, Eina_Bool pager, Eina_Bool taskbar)
    return o;
 }
 
-EAPI Evas_Object *
+E_API Evas_Object *
 e_deskmirror_mirror_find(Evas_Object *deskmirror, Evas_Object *comp_object)
 {
    Mirror *m;
@@ -738,7 +738,7 @@ e_deskmirror_mirror_find(Evas_Object *deskmirror, Evas_Object *comp_object)
    return m ? m->mirror : NULL;
 }
 
-EAPI Eina_List *
+E_API Eina_List *
 e_deskmirror_mirror_list(Evas_Object *deskmirror)
 {
    Eina_List *l = NULL;
@@ -762,7 +762,7 @@ _mirror_copy_del(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *event_
    evas_object_smart_callback_del_full(data, "shadow_change", _mirror_client_shadow_change, obj);
 }
 
-EAPI Evas_Object *
+E_API Evas_Object *
 e_deskmirror_mirror_copy(Evas_Object *obj)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(obj, NULL);
@@ -798,7 +798,7 @@ e_deskmirror_mirror_copy(Evas_Object *obj)
    return NULL;
 }
 
-EAPI void
+E_API void
 e_deskmirror_coord_canvas_to_virtual(Evas_Object *obj, Evas_Coord cx, Evas_Coord cy, Evas_Coord *vx, Evas_Coord *vy)
 {
    API_ENTRY(obj);
@@ -806,7 +806,7 @@ e_deskmirror_coord_canvas_to_virtual(Evas_Object *obj, Evas_Coord cx, Evas_Coord
    e_layout_coord_canvas_to_virtual(sd->layout, cx, cy, vx, vy);
 }
 
-EAPI void
+E_API void
 e_deskmirror_coord_virtual_to_canvas(Evas_Object *obj, Evas_Coord vx, Evas_Coord vy, Evas_Coord *cx, Evas_Coord *cy)
 {
    API_ENTRY(obj);
@@ -814,14 +814,14 @@ e_deskmirror_coord_virtual_to_canvas(Evas_Object *obj, Evas_Coord vx, Evas_Coord
    e_layout_coord_virtual_to_canvas(sd->layout, vx, vy, cx, cy);
 }
 
-EAPI E_Desk *
+E_API E_Desk *
 e_deskmirror_desk_get(Evas_Object *obj)
 {
    API_ENTRY(obj) NULL;
    return sd->desk;
 }
 
-EAPI void
+E_API void
 e_deskmirror_util_wins_print(Evas_Object *obj)
 {
    E_Smart_Data *sd;

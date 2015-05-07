@@ -34,12 +34,37 @@
 #include <Eina.h>
 #include <Evas.h>
 
+# ifdef E_API
+#  undef E_API
+# endif
+# ifdef WIN32
+#  ifdef BUILDING_DLL
+#   define E_API __declspec(dllexport)
+#  else
+#   define E_API __declspec(dllimport)
+#  endif
+# else
+#  ifdef __GNUC__
+#   if __GNUC__ >= 4
+/* BROKEN in gcc 4 on amd64 */
+#    if 0
+#     pragma GCC visibility push(hidden)
+#    endif
+#    define E_API __attribute__ ((visibility("default")))
+#   else
+#    define E_API
+#   endif
+#  else
+#   define E_API
+#  endif
+# endif
+
 # define E_CSERVE
 
 static Eina_Bool stop_ptrace = EINA_FALSE;
 
 static void env_set(const char *var, const char *val);
-EAPI int    prefix_determine(char *argv0);
+E_API int    prefix_determine(char *argv0);
 
 static void
 env_set(const char *var, const char *val)
@@ -72,7 +97,7 @@ env_set(const char *var, const char *val)
 static Eina_Prefix *pfx = NULL;
 
 /* externally accessible functions */
-EAPI int
+E_API int
 prefix_determine(char *argv0)
 {
    pfx = eina_prefix_new(argv0, prefix_determine,

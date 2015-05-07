@@ -11,7 +11,7 @@ static void _e_wid_focus_hook(Evas_Object *obj);
 static void _e_wid_focus_steal(void *data, Evas *e, Evas_Object *obj, void *event_info);
 
 /* externally accessible functions */
-EAPI Evas_Object *
+E_API Evas_Object *
 e_widget_textblock_add(Evas *evas)
 {
    Evas_Object *obj, *o;
@@ -37,7 +37,7 @@ e_widget_textblock_add(Evas *evas)
    return obj;
 }
 
-EAPI void
+E_API void
 e_widget_textblock_markup_set(Evas_Object *obj, const char *text)
 {
    E_Widget_Data *wd;
@@ -46,7 +46,7 @@ e_widget_textblock_markup_set(Evas_Object *obj, const char *text)
    elm_entry_entry_set(wd->o_entry, text);
 }
 
-EAPI void
+E_API void
 e_widget_textblock_plain_set(Evas_Object *obj, const char *text)
 {
    char *markup;

@@ -1,6 +1,6 @@
 #include "e.h"
 
-EAPI void
+E_API void
 e_place_zone_region_smart_cleanup(E_Zone *zone)
 {
    E_Desk *desk;
@@ -122,7 +122,7 @@ _e_place_coverage_shelf_add(E_Desk *desk, int ar, int x, int y, int w, int h)
    return ar;
 }
 
-EAPI int
+E_API int
 e_place_desk_region_smart(E_Desk *desk, Eina_List *skiplist, int x, int y, int w, int h, int *rx, int *ry)
 {
    int a_w = 0, a_h = 0, a_alloc_w = 0, a_alloc_h = 0;
@@ -433,14 +433,14 @@ done:
    return 1;
 }
 
-EAPI int
+E_API int
 e_place_zone_region_smart(E_Zone *zone, Eina_List *skiplist, int x, int y, int w, int h, int *rx, int *ry)
 {
    return e_place_desk_region_smart(e_desk_current_get(zone), skiplist,
                                     x, y, w, h, rx, ry);
 }
 
-EAPI int
+E_API int
 e_place_zone_cursor(E_Zone *zone, int x EINA_UNUSED, int y EINA_UNUSED, int w, int h, int it, int *rx, int *ry)
 {
    int cursor_x = 0, cursor_y = 0;
@@ -470,7 +470,7 @@ e_place_zone_cursor(E_Zone *zone, int x EINA_UNUSED, int y EINA_UNUSED, int w, i
    return 1;
 }
 
-EAPI int
+E_API int
 e_place_zone_manual(E_Zone *zone, int w, int h, int *rx, int *ry)
 {
    int cursor_x = 0, cursor_y = 0;

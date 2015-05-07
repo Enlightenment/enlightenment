@@ -370,7 +370,7 @@ e_win_shutdown(void)
    return 1;
 }
 
-EAPI E_Client *
+E_API E_Client *
 e_win_client_get(Evas_Object *obj)
 {
    Elm_Win_Trap_Ctx *ctx;
@@ -381,13 +381,13 @@ e_win_client_get(Evas_Object *obj)
    return ctx ? ctx->client : NULL;
 }
 
-EAPI Ecore_Evas *
+E_API Ecore_Evas *
 e_win_ee_get(Evas_Object *obj)
 {
    return ecore_evas_ecore_evas_get(evas_object_evas_get(obj));
 }
 
-EAPI E_Pointer *
+E_API E_Pointer *
 e_win_pointer_get(Evas_Object *obj)
 {
    Elm_Win_Trap_Ctx *ctx = elm_win_trap_data_get(obj);
@@ -395,7 +395,7 @@ e_win_pointer_get(Evas_Object *obj)
    return ctx ? ctx->pointer : NULL;
 }
 
-EAPI Eina_Bool
+E_API Eina_Bool
 e_win_centered_get(Evas_Object *obj)
 {
    Elm_Win_Trap_Ctx *ctx = elm_win_trap_data_get(obj);
@@ -403,7 +403,7 @@ e_win_centered_get(Evas_Object *obj)
    return ctx ? ctx->centered : EINA_FALSE;
 }
 
-EAPI void
+E_API void
 e_win_client_icon_set(Evas_Object *obj, const char *icon)
 {
    Elm_Win_Trap_Ctx *ctx = elm_win_trap_data_get(obj);
@@ -412,7 +412,7 @@ e_win_client_icon_set(Evas_Object *obj, const char *icon)
      eina_stringshare_replace(&ctx->client->internal_icon, icon);
 }
 
-EAPI void
+E_API void
 e_win_client_icon_key_set(Evas_Object *obj, const char *key)
 {
    Elm_Win_Trap_Ctx *ctx = elm_win_trap_data_get(obj);
@@ -421,7 +421,7 @@ e_win_client_icon_key_set(Evas_Object *obj, const char *key)
      eina_stringshare_replace(&ctx->client->internal_icon_key, key);
 }
 
-EAPI void
+E_API void
 e_win_placed_set(Evas_Object *obj, Eina_Bool placed)
 {
    Elm_Win_Trap_Ctx *ctx = elm_win_trap_data_get(obj);
@@ -435,7 +435,7 @@ e_win_placed_set(Evas_Object *obj, Eina_Bool placed)
      }
 }
 
-EAPI void
+E_API void
 e_win_no_remember_set(Evas_Object *obj, Eina_Bool no_rem)
 {
    Elm_Win_Trap_Ctx *ctx = elm_win_trap_data_get(obj);
@@ -446,7 +446,7 @@ e_win_no_remember_set(Evas_Object *obj, Eina_Bool no_rem)
      ctx->client->internal_no_remember = !!no_rem;
 }
 
-EAPI void
+E_API void
 e_win_no_reopen_set(Evas_Object *obj, Eina_Bool no_reopen)
 {
    Elm_Win_Trap_Ctx *ctx = elm_win_trap_data_get(obj);
@@ -457,7 +457,7 @@ e_win_no_reopen_set(Evas_Object *obj, Eina_Bool no_reopen)
      ctx->client->internal_no_reopen = !!no_reopen;
 }
 
-EAPI Evas_Object *
+E_API Evas_Object *
 e_elm_win_add(Evas_Object *parent, const char *name, Elm_Win_Type type)
 {
    char *eng;

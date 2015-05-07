@@ -76,10 +76,10 @@ struct _E_Comp_Match
    char        no_shadow; // set whether shadow is disabled
 };
 
-EAPI void           e_comp_cfdata_edd_init(E_Config_DD **conf_edd, E_Config_DD **match_edd);
-EAPI E_Comp_Config *e_comp_cfdata_config_new(void);
-EAPI void           e_comp_cfdata_config_free(E_Comp_Config *cfg);
-EAPI void           e_comp_cfdata_match_free(E_Comp_Match *m);
+E_API void           e_comp_cfdata_edd_init(E_Config_DD **conf_edd, E_Config_DD **match_edd);
+E_API E_Comp_Config *e_comp_cfdata_config_new(void);
+E_API void           e_comp_cfdata_config_free(E_Comp_Config *cfg);
+E_API void           e_comp_cfdata_match_free(E_Comp_Match *m);
 
 #endif
 #endif

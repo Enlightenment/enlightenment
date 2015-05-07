@@ -6,7 +6,7 @@ static const char *_prefix_path_data = NULL;
 static unsigned int _prefix_path_data_len = 0;
 
 /* externally accessible functions */
-EAPI int
+E_API int
 e_prefix_determine(char *argv0)
 {
    if (pfx) return 1;
@@ -60,54 +60,54 @@ e_prefix_shutdown(void)
    pfx = NULL;
 }
 
-EAPI void
+E_API void
 e_prefix_fallback(void)
 {
 }
 
-EAPI const char *
+E_API const char *
 e_prefix_get(void)
 {
    return eina_prefix_get(pfx);
 }
 
-EAPI const char *
+E_API const char *
 e_prefix_locale_get(void)
 {
    return eina_prefix_locale_get(pfx);
 }
 
-EAPI const char *
+E_API const char *
 e_prefix_bin_get(void)
 {
    return eina_prefix_bin_get(pfx);
 }
 
-EAPI const char *
+E_API const char *
 e_prefix_data_get(void)
 {
    return eina_prefix_data_get(pfx);
 }
 
-EAPI const char *
+E_API const char *
 e_prefix_lib_get(void)
 {
    return eina_prefix_lib_get(pfx);
 }
 
-EAPI size_t
+E_API size_t
 e_prefix_data_concat_len(char *dst, size_t size, const char *path, size_t path_len)
 {
    return eina_str_join_len(dst, size, '/', _prefix_path_data, _prefix_path_data_len, path, path_len);
 }
 
-EAPI size_t
+E_API size_t
 e_prefix_data_concat(char *dst, size_t size, const char *path)
 {
    return e_prefix_data_concat_len(dst, size, path, strlen(path));
 }
 
-EAPI size_t
+E_API size_t
 e_prefix_data_snprintf(char *dst, size_t size, const char *fmt, ...)
 {
    size_t off, ret;

@@ -41,7 +41,7 @@ static Eina_Bool _e_desklock_state = EINA_FALSE;
 
 static void      _e_desklock_ask_presentation_mode(void);
 
-EAPI int E_EVENT_DESKLOCK = 0;
+E_API int E_EVENT_DESKLOCK = 0;
 
 EINTERN int
 e_desklock_init(void)
@@ -95,7 +95,7 @@ e_desklock_shutdown(void)
    return 1;
 }
 
-EAPI Eina_Stringshare *
+E_API Eina_Stringshare *
 e_desklock_user_wallpaper_get(E_Zone *zone)
 {
    const E_Config_Desktop_Background *cdbg;
@@ -117,7 +117,7 @@ e_desklock_user_wallpaper_get(E_Zone *zone)
    return e_theme_edje_file_get("base/theme/desklock", "e/desklock/background");
 }
 
-EAPI void
+E_API void
 e_desklock_interface_append(E_Desklock_Interface *iface)
 {
    EINA_SAFETY_ON_NULL_RETURN(iface);
@@ -139,7 +139,7 @@ e_desklock_interface_append(E_Desklock_Interface *iface)
      }
 }
 
-EAPI void
+E_API void
 e_desklock_interface_remove(E_Desklock_Interface *iface)
 {
    E_Desklock_Interface *diface;
@@ -168,35 +168,35 @@ e_desklock_interface_remove(E_Desklock_Interface *iface)
     */
 }
 
-EAPI void
+E_API void
 e_desklock_show_hook_add(E_Desklock_Show_Cb cb)
 {
    EINA_SAFETY_ON_NULL_RETURN(cb);
    show_hooks = eina_list_append(show_hooks, cb);
 }
 
-EAPI void
+E_API void
 e_desklock_show_hook_del(E_Desklock_Show_Cb cb)
 {
    EINA_SAFETY_ON_NULL_RETURN(cb);
    show_hooks = eina_list_remove(show_hooks, cb);
 }
 
-EAPI void
+E_API void
 e_desklock_hide_hook_add(E_Desklock_Hide_Cb cb)
 {
    EINA_SAFETY_ON_NULL_RETURN(cb);
    hide_hooks = eina_list_append(hide_hooks, cb);
 }
 
-EAPI void
+E_API void
 e_desklock_hide_hook_del(E_Desklock_Hide_Cb cb)
 {
    EINA_SAFETY_ON_NULL_RETURN(cb);
    hide_hooks = eina_list_remove(hide_hooks, cb);
 }
 
-EAPI int
+E_API int
 e_desklock_show_autolocked(void)
 {
    if (_e_desklock_autolock_time < 1.0)
@@ -204,7 +204,7 @@ e_desklock_show_autolocked(void)
    return e_desklock_show(EINA_FALSE);
 }
 
-EAPI int
+E_API int
 e_desklock_show(Eina_Bool suspend)
 {
    const Eina_List *l;
@@ -323,7 +323,7 @@ fail:
    return 0;
 }
 
-EAPI void
+E_API void
 e_desklock_hide(void)
 {
    Eina_List *l;
@@ -389,7 +389,7 @@ e_desklock_hide(void)
    e_util_env_set("E_DESKLOCK_UNLOCKED", "happened");
 }
 
-EAPI Eina_Bool
+E_API Eina_Bool
 e_desklock_state_get(void)
 {
    return _e_desklock_state;

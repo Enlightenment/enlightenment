@@ -1,7 +1,7 @@
 #include "e.h"
 #include "e_comp_cfdata.h"
 
-EAPI void
+E_API void
 e_comp_cfdata_edd_init(E_Config_DD **conf_edd, E_Config_DD **match_edd)
 {
    *match_edd = E_CONFIG_DD_NEW("Comp_Match", E_Comp_Match);
@@ -70,7 +70,7 @@ e_comp_cfdata_edd_init(E_Config_DD **conf_edd, E_Config_DD **match_edd)
    E_CONFIG_LIST(D, T, match.objects, *match_edd);
 }
 
-EAPI E_Comp_Config *
+E_API E_Comp_Config *
 e_comp_cfdata_config_new(void)
 {
    E_Comp_Config *cfg;
@@ -195,7 +195,7 @@ e_comp_cfdata_config_new(void)
    return cfg;
 }
 
-EAPI void
+E_API void
 e_comp_cfdata_match_free(E_Comp_Match *m)
 {
    if (!m) return;
@@ -207,7 +207,7 @@ e_comp_cfdata_match_free(E_Comp_Match *m)
    free(m);
 }
 
-EAPI void
+E_API void
 e_comp_cfdata_config_free(E_Comp_Config *cfg)
 {
    if (!cfg) return;

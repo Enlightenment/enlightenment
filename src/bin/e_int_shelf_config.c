@@ -29,7 +29,7 @@ static void         _fill_styles(E_Config_Dialog_Data *cfdata, Evas_Object *obj)
 static void         _cb_autohide_change(void *data, Evas_Object *obj EINA_UNUSED);
 static void         _fill_desks(E_Config_Dialog_Data *cfdata);
 
-EAPI void
+E_API void
 e_int_shelf_config(E_Shelf *es)
 {
    E_Config_Dialog_View *v;

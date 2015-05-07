@@ -406,13 +406,13 @@ temperature_get_bus_files(const char *bus)
 }
 
 /* module setup */
-EAPI E_Module_Api e_modapi = 
+E_API E_Module_Api e_modapi = 
 {
    E_MODULE_API_VERSION,
      "Temperature"
 };
 
-EAPI void *
+E_API void *
 e_modapi_init(E_Module *m)
 {
    conf_face_edd = E_CONFIG_DD_NEW("Temperature_Config_Face", Config_Face);
@@ -449,7 +449,7 @@ e_modapi_init(E_Module *m)
    return m;
 }
 
-EAPI int
+E_API int
 e_modapi_shutdown(E_Module *m EINA_UNUSED)
 {
    e_gadcon_provider_unregister(&_gadcon_class);
@@ -463,7 +463,7 @@ e_modapi_shutdown(E_Module *m EINA_UNUSED)
    return 1;
 }
 
-EAPI int
+E_API int
 e_modapi_save(E_Module *m EINA_UNUSED)
 {
    e_config_domain_save("module.temperature", conf_edd, temperature_config);

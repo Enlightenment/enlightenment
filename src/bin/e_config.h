@@ -644,50 +644,50 @@ struct _E_Config_XKB_Option
 EINTERN int                   e_config_init(void);
 EINTERN int                   e_config_shutdown(void);
 
-EAPI void                     e_config_load(void);
+E_API void                     e_config_load(void);
 
-EAPI int                      e_config_save(void);
-EAPI void                     e_config_save_flush(void);
-EAPI void                     e_config_save_queue(void);
+E_API int                      e_config_save(void);
+E_API void                     e_config_save_flush(void);
+E_API void                     e_config_save_queue(void);
 
-EAPI const char              *e_config_profile_get(void);
-EAPI char                    *e_config_profile_dir_get(const char *prof);
-EAPI void                     e_config_profile_set(const char *prof);
-EAPI Eina_List               *e_config_profile_list(void);
-EAPI void                     e_config_profile_add(const char *prof);
-EAPI void                     e_config_profile_del(const char *prof);
+E_API const char              *e_config_profile_get(void);
+E_API char                    *e_config_profile_dir_get(const char *prof);
+E_API void                     e_config_profile_set(const char *prof);
+E_API Eina_List               *e_config_profile_list(void);
+E_API void                     e_config_profile_add(const char *prof);
+E_API void                     e_config_profile_del(const char *prof);
 
-EAPI void                     e_config_save_block_set(int block);
-EAPI int                      e_config_save_block_get(void);
+E_API void                     e_config_save_block_set(int block);
+E_API int                      e_config_save_block_get(void);
 
-EAPI void                    *e_config_domain_load(const char *domain, E_Config_DD *edd);
-EAPI void                    *e_config_domain_system_load(const char *domain, E_Config_DD *edd);
-EAPI int                      e_config_profile_save(void);
-EAPI int                      e_config_domain_save(const char *domain, E_Config_DD *edd, const void *data);
+E_API void                    *e_config_domain_load(const char *domain, E_Config_DD *edd);
+E_API void                    *e_config_domain_system_load(const char *domain, E_Config_DD *edd);
+E_API int                      e_config_profile_save(void);
+E_API int                      e_config_domain_save(const char *domain, E_Config_DD *edd, const void *data);
 
-EAPI E_Config_Binding_Mouse  *e_config_binding_mouse_match(E_Config_Binding_Mouse *eb_in);
-EAPI E_Config_Binding_Key    *e_config_binding_key_match(E_Config_Binding_Key *eb_in);
-EAPI E_Config_Binding_Edge   *e_config_binding_edge_match(E_Config_Binding_Edge *eb_in);
-EAPI E_Config_Binding_Signal *e_config_binding_signal_match(E_Config_Binding_Signal *eb_in);
-EAPI E_Config_Binding_Wheel  *e_config_binding_wheel_match(E_Config_Binding_Wheel *eb_in);
-EAPI E_Config_Binding_Acpi   *e_config_binding_acpi_match(E_Config_Binding_Acpi *eb_in);
-EAPI void                     e_config_mode_changed(void);
+E_API E_Config_Binding_Mouse  *e_config_binding_mouse_match(E_Config_Binding_Mouse *eb_in);
+E_API E_Config_Binding_Key    *e_config_binding_key_match(E_Config_Binding_Key *eb_in);
+E_API E_Config_Binding_Edge   *e_config_binding_edge_match(E_Config_Binding_Edge *eb_in);
+E_API E_Config_Binding_Signal *e_config_binding_signal_match(E_Config_Binding_Signal *eb_in);
+E_API E_Config_Binding_Wheel  *e_config_binding_wheel_match(E_Config_Binding_Wheel *eb_in);
+E_API E_Config_Binding_Acpi   *e_config_binding_acpi_match(E_Config_Binding_Acpi *eb_in);
+E_API void                     e_config_mode_changed(void);
 
 
-EAPI void e_config_bindings_free(E_Config_Bindings *ecb);
-EAPI void e_config_binding_signal_free(E_Config_Binding_Signal *ebs);
-EAPI void e_config_binding_wheel_free(E_Config_Binding_Wheel *ebw);
-EAPI void e_config_binding_mouse_free(E_Config_Binding_Mouse *ebm);
-EAPI void e_config_binding_edge_free(E_Config_Binding_Edge *ebe);
-EAPI void e_config_binding_key_free(E_Config_Binding_Key *ebk);
-EAPI void e_config_binding_acpi_free(E_Config_Binding_Acpi *eba);
+E_API void e_config_bindings_free(E_Config_Bindings *ecb);
+E_API void e_config_binding_signal_free(E_Config_Binding_Signal *ebs);
+E_API void e_config_binding_wheel_free(E_Config_Binding_Wheel *ebw);
+E_API void e_config_binding_mouse_free(E_Config_Binding_Mouse *ebm);
+E_API void e_config_binding_edge_free(E_Config_Binding_Edge *ebe);
+E_API void e_config_binding_key_free(E_Config_Binding_Key *ebk);
+E_API void e_config_binding_acpi_free(E_Config_Binding_Acpi *eba);
 
-extern EAPI E_Config *e_config;
-extern EAPI E_Config_Bindings *e_bindings;
+extern E_API E_Config *e_config;
+extern E_API E_Config_Bindings *e_bindings;
 
-extern EAPI int E_EVENT_CONFIG_ICON_THEME;
-extern EAPI int E_EVENT_CONFIG_MODE_CHANGED;
-extern EAPI int E_EVENT_CONFIG_LOADED;
+extern E_API int E_EVENT_CONFIG_ICON_THEME;
+extern E_API int E_EVENT_CONFIG_MODE_CHANGED;
+extern E_API int E_EVENT_CONFIG_LOADED;
 
 #endif
 #endif

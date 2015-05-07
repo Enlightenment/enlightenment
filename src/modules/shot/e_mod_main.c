@@ -988,13 +988,13 @@ _e_mod_menu_add(void *data EINA_UNUSED, E_Menu *m)
 }
 
 /* module setup */
-EAPI E_Module_Api e_modapi =
+E_API E_Module_Api e_modapi =
 {
    E_MODULE_API_VERSION,
      "Shot"
 };
 
-EAPI void *
+E_API void *
 e_modapi_init(E_Module *m)
 {
    if (!ecore_con_url_init())
@@ -1029,7 +1029,7 @@ e_modapi_init(E_Module *m)
    return m;
 }
 
-EAPI int
+E_API int
 e_modapi_shutdown(E_Module *m EINA_UNUSED)
 {
    _share_done();
@@ -1057,7 +1057,7 @@ e_modapi_shutdown(E_Module *m EINA_UNUSED)
    return 1;
 }
 
-EAPI int
+E_API int
 e_modapi_save(E_Module *m EINA_UNUSED)
 {
    return 1;

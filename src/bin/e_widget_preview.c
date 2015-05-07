@@ -11,7 +11,7 @@ static void _e_wid_del_hook(Evas_Object *obj);
 static void _e_wid_preview_thumb_gen(void *data, Evas_Object *obj, void *event_info);
 
 /* externally accessible functions */
-EAPI Evas_Object *
+E_API Evas_Object *
 e_widget_preview_add(Evas *evas, int minw, int minh)
 {
    Evas_Object *obj;
@@ -50,7 +50,7 @@ e_widget_preview_add(Evas *evas, int minw, int minh)
    return obj;
 }
 
-EAPI void
+E_API void
 e_widget_preview_size_set(Evas_Object *obj, int minw, int minh)
 {
    E_Widget_Data *wd;
@@ -63,7 +63,7 @@ e_widget_preview_size_set(Evas_Object *obj, int minw, int minh)
    e_widget_size_min_set(obj, mw, mh);
 }
 
-EAPI Evas *
+E_API Evas *
 e_widget_preview_evas_get(Evas_Object *obj)
 {
    E_Widget_Data *wd;
@@ -72,7 +72,7 @@ e_widget_preview_evas_get(Evas_Object *obj)
    return e_livethumb_evas_get(wd->img);
 }
 
-EAPI void
+E_API void
 e_widget_preview_extern_object_set(Evas_Object *obj, Evas_Object *eobj)
 {
    E_Widget_Data *wd;
@@ -84,7 +84,7 @@ e_widget_preview_extern_object_set(Evas_Object *obj, Evas_Object *eobj)
    e_widget_change(obj);
 }
 
-EAPI int
+E_API int
 e_widget_preview_file_set(Evas_Object *obj, const char *file, const char *key)
 {
    E_Widget_Data *wd;
@@ -102,7 +102,7 @@ e_widget_preview_file_set(Evas_Object *obj, const char *file, const char *key)
    return 1;
 }
 
-EAPI int
+E_API int
 e_widget_preview_thumb_set(Evas_Object *obj, const char *file, const char *key, int w, int h)
 {
    E_Widget_Data *wd;
@@ -136,7 +136,7 @@ e_widget_preview_thumb_set(Evas_Object *obj, const char *file, const char *key, 
    return 1;
 }
 
-EAPI void
+E_API void
 e_widget_preview_vsize_set(Evas_Object *obj, Evas_Coord w, Evas_Coord h)
 {
    E_Widget_Data *wd;
@@ -159,7 +159,7 @@ _e_wid_preview_thumb_gen(void *data, Evas_Object *obj EINA_UNUSED, void *event_i
    e_widget_change(wd->obj);
 }
 
-EAPI void
+E_API void
 e_widget_preview_file_get(Evas_Object *obj, const char **file, const char **group)
 {
    E_Widget_Data *wd;
@@ -168,7 +168,7 @@ e_widget_preview_file_get(Evas_Object *obj, const char **file, const char **grou
    edje_object_file_get(wd->o_thumb, file, group);
 }
 
-EAPI int
+E_API int
 e_widget_preview_edje_set(Evas_Object *obj, const char *file, const char *group)
 {
    E_Widget_Data *wd;

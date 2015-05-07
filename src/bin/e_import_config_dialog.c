@@ -433,7 +433,7 @@ _e_import_config_dialog_win_del(void *data, Evas *e EINA_UNUSED, Evas_Object *ob
 
 ///////////////////////////////////////////////////////////////////////////////////
 
-EAPI E_Import_Config_Dialog *
+E_API E_Import_Config_Dialog *
 e_import_config_dialog_show(Evas_Object *parent, const char *path, Ecore_End_Cb ok, Ecore_Cb cancel)
 {
    Evas *evas;

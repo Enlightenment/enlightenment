@@ -4,13 +4,13 @@
 static Eina_Array* ifaces = NULL;
 
 /* module setup */
-EAPI E_Module_Api e_modapi =
+E_API E_Module_Api e_modapi =
 {
    E_MODULE_API_VERSION,
    "IPC Extension"
 };
 
-EAPI void *
+E_API void *
 e_modapi_init(E_Module *m)
 {
    ifaces = eina_array_new(5);
@@ -22,7 +22,7 @@ e_modapi_init(E_Module *m)
    return m;
 }
 
-EAPI int
+E_API int
 e_modapi_shutdown(E_Module *m EINA_UNUSED)
 {
    Eldbus_Service_Interface* iface;
@@ -35,7 +35,7 @@ e_modapi_shutdown(E_Module *m EINA_UNUSED)
    return 1;
 }
 
-EAPI int
+E_API int
 e_modapi_save(E_Module *m EINA_UNUSED)
 {
    return 1;

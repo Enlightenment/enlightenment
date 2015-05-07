@@ -33,7 +33,7 @@ e_grabinput_shutdown(void)
    return 1;
 }
 
-EAPI int
+E_API int
 e_grabinput_get(Ecore_Window mouse_win, int confine_mouse, Ecore_Window key_win)
 {
    if (grab_mouse_win)
@@ -118,7 +118,7 @@ e_grabinput_get(Ecore_Window mouse_win, int confine_mouse, Ecore_Window key_win)
    return 1;
 }
 
-EAPI void
+E_API void
 e_grabinput_release(Ecore_Window mouse_win, Ecore_Window key_win)
 {
    if (mouse_win == grab_mouse_win)
@@ -154,7 +154,7 @@ e_grabinput_release(Ecore_Window mouse_win, Ecore_Window key_win)
      }
 }
 
-EAPI void
+E_API void
 e_grabinput_focus(Ecore_Window win, E_Focus_Method method)
 {
    if (grab_key_win != 0)
@@ -170,25 +170,25 @@ e_grabinput_focus(Ecore_Window win, E_Focus_Method method)
      }
 }
 
-EAPI double
+E_API double
 e_grabinput_last_focus_time_get(void)
 {
    return last_focus_time;
 }
 
-EAPI Ecore_Window
+E_API Ecore_Window
 e_grabinput_last_focus_win_get(void)
 {
    return focus_fix_win;
 }
 
-EAPI Ecore_Window
+E_API Ecore_Window
 e_grabinput_key_win_get(void)
 {
    return grab_key_win;
 }
 
-EAPI Ecore_Window
+E_API Ecore_Window
 e_grabinput_mouse_win_get(void)
 {
    return grab_mouse_win;

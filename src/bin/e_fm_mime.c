@@ -17,7 +17,7 @@ static Eina_Hash *_mime_handlers = NULL;
 static Eina_Hash *_glob_handlers = NULL;
 
 /* externally accessible functions */
-EAPI const char *
+E_API const char *
 e_fm_mime_filename_get(const char *fname)
 {
    return efreet_mime_globs_type_get(fname);
@@ -30,7 +30,7 @@ e_fm_mime_filename_get(const char *fname)
  * "/path/to/file....edj" = explicit icon edje file
  * "/path/to/file..." = explicit image file to use
  */
-EAPI const char *
+E_API const char *
 e_fm_mime_icon_get(const char *mime)
 {
    char buf[4096], buf2[4096], *val;
@@ -125,7 +125,7 @@ ok:
    return val;
 }
 
-EAPI void
+E_API void
 e_fm_mime_icon_cache_flush(void)
 {
    Eina_List *freelist = NULL;
@@ -137,7 +137,7 @@ e_fm_mime_icon_cache_flush(void)
 }
 
 /* create (allocate), set properties, and return a new mime handler */
-EAPI E_Fm2_Mime_Handler *
+E_API E_Fm2_Mime_Handler *
 e_fm2_mime_handler_new(const char *label, const char *icon_group, void (*action_func)(void *data, Evas_Object *obj, const char *path), void *action_data, int(test_func) (void *data, Evas_Object * obj, const char *path), void *test_data)
 {
    E_Fm2_Mime_Handler *handler;
@@ -157,7 +157,7 @@ e_fm2_mime_handler_new(const char *label, const char *icon_group, void (*action_
    return handler;
 }
 
-EAPI void
+E_API void
 e_fm2_mime_handler_free(E_Fm2_Mime_Handler *handler)
 {
    if (!handler) return;
@@ -168,7 +168,7 @@ e_fm2_mime_handler_free(E_Fm2_Mime_Handler *handler)
 }
 
 /* associate a certain mime type with a handler */
-EAPI Eina_Bool
+E_API Eina_Bool
 e_fm2_mime_handler_mime_add(E_Fm2_Mime_Handler *handler, const char *mime)
 {
    Eina_List *handlers = NULL;
@@ -193,7 +193,7 @@ e_fm2_mime_handler_mime_add(E_Fm2_Mime_Handler *handler, const char *mime)
 }
 
 /* associate a certain glob with a handler */
-EAPI Eina_Bool
+E_API Eina_Bool
 e_fm2_mime_handler_glob_add(E_Fm2_Mime_Handler *handler, const char *glob_)
 {
    Eina_List *handlers = NULL;
@@ -218,7 +218,7 @@ e_fm2_mime_handler_glob_add(E_Fm2_Mime_Handler *handler, const char *glob_)
 }
 
 /* delete a certain handler for a certain mime */
-EAPI void
+E_API void
 e_fm2_mime_handler_mime_del(E_Fm2_Mime_Handler *handler, const char *mime)
 {
    Eina_List *handlers = NULL;
@@ -244,7 +244,7 @@ e_fm2_mime_handler_mime_del(E_Fm2_Mime_Handler *handler, const char *mime)
 }
 
 /* delete a certain handler for a certain glob */
-EAPI void
+E_API void
 e_fm2_mime_handler_glob_del(E_Fm2_Mime_Handler *handler, const char *glob_)
 {
    Eina_List *handlers = NULL;
@@ -269,7 +269,7 @@ e_fm2_mime_handler_glob_del(E_Fm2_Mime_Handler *handler, const char *glob_)
      }
 }
 
-EAPI const Eina_List *
+E_API const Eina_List *
 e_fm2_mime_handler_mime_handlers_get(const char *mime)
 {
    if ((!mime) || (!_mime_handlers)) return NULL;
@@ -278,7 +278,7 @@ e_fm2_mime_handler_mime_handlers_get(const char *mime)
 
 /* get the list of glob handlers for a glob.
    NOTE: the list should be free()'ed */
-EAPI Eina_List *
+E_API Eina_List *
 e_fm2_mime_handler_glob_handlers_get(const char *glob_)
 {
    E_Fm2_Mime_Handler_Tuple *tuple = NULL;
@@ -296,7 +296,7 @@ e_fm2_mime_handler_glob_handlers_get(const char *glob_)
 }
 
 /* call a certain handler */
-EAPI Eina_Bool
+E_API Eina_Bool
 e_fm2_mime_handler_call(E_Fm2_Mime_Handler *handler, Evas_Object *obj, const char *path)
 {
    if ((!handler) || (!obj) || (!path) || (!handler->action_func))
@@ -318,7 +318,7 @@ e_fm2_mime_handler_call(E_Fm2_Mime_Handler *handler, Evas_Object *obj, const cha
 }
 
 /* call all handlers related to a certain mime */
-EAPI void
+E_API void
 e_fm2_mime_handler_mime_handlers_call_all(Evas_Object *obj, const char *path, const char *mime)
 {
    const Eina_List *l, *handlers;
@@ -338,7 +338,7 @@ e_fm2_mime_handler_mime_handlers_call_all(Evas_Object *obj, const char *path, co
 }
 
 /* call all handlers related to a certain glob */
-EAPI void
+E_API void
 e_fm2_mime_handler_glob_handlers_call_all(Evas_Object *obj, const char *path, const char *glob_)
 {
    Eina_List *handlers = NULL;
@@ -359,7 +359,7 @@ e_fm2_mime_handler_glob_handlers_call_all(Evas_Object *obj, const char *path, co
 }
 
 /* run a handlers test function */
-EAPI Eina_Bool
+E_API Eina_Bool
 e_fm2_mime_handler_test(E_Fm2_Mime_Handler *handler, Evas_Object *obj, const char *path)
 {
    if ((!handler) || (!obj) || (!path)) return 0;

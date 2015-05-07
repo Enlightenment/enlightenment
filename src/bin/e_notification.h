@@ -68,19 +68,19 @@ typedef struct _E_Notification_Server_Info
  *
  * @return EINA_TRUE if server was registered, EINA_FALSE otherwise.
  */
-EAPI Eina_Bool e_notification_server_register(const E_Notification_Server_Info *server_info, E_Notification_Notify_Cb notify_cb, E_Notification_Close_Cb close_cb, const void *data);
+E_API Eina_Bool e_notification_server_register(const E_Notification_Server_Info *server_info, E_Notification_Notify_Cb notify_cb, E_Notification_Close_Cb close_cb, const void *data);
 
 /**
  * Unregister the sole notification server
  */
-EAPI void e_notification_server_unregister(void);
+E_API void e_notification_server_unregister(void);
 
-EAPI void e_notification_notify_close(E_Notification_Notify *notify, E_Notification_Notify_Closed_Reason reason);
-EAPI Evas_Object *e_notification_notify_raw_image_get(E_Notification_Notify *notify, Evas *evas);
+E_API void e_notification_notify_close(E_Notification_Notify *notify, E_Notification_Notify_Closed_Reason reason);
+E_API Evas_Object *e_notification_notify_raw_image_get(E_Notification_Notify *notify, Evas *evas);
 
 //client
 typedef void (*E_Notification_Client_Send_Cb)(void *data, unsigned int id);
-EAPI Eina_Bool e_notification_client_send(E_Notification_Notify *notify, E_Notification_Client_Send_Cb cb, const void *data);
+E_API Eina_Bool e_notification_client_send(E_Notification_Notify *notify, E_Notification_Client_Send_Cb cb, const void *data);
 
 #endif
 

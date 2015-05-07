@@ -1,6 +1,6 @@
 #include "e.h"
 
-EAPI int E_EVENT_INIT_DONE = 0;
+E_API int E_EVENT_INIT_DONE = 0;
 
 /* local variables */
 static int done = 0;
@@ -41,7 +41,7 @@ e_init_shutdown(void)
    return 1;
 }
 
-EAPI void
+E_API void
 e_init_show(void)
 {
    Evas_Object *o;
@@ -79,7 +79,7 @@ e_init_show(void)
    e_init_version_set(VERSION);
 }
 
-EAPI void
+E_API void
 e_init_hide(void)
 {
    E_FREE_LIST(splash_objs, evas_object_del);
@@ -88,28 +88,28 @@ e_init_hide(void)
    E_FREE_FUNC(_e_init_timeout_timer, ecore_timer_del);
 }
 
-EAPI void
+E_API void
 e_init_title_set(const char *str)
 {
    if (!_e_init_object) return;
    edje_object_part_text_set(_e_init_object, "e.text.title", str);
 }
 
-EAPI void
+E_API void
 e_init_version_set(const char *str)
 {
    if (!_e_init_object) return;
    edje_object_part_text_set(_e_init_object, "e.text.version", str);
 }
 
-EAPI void
+E_API void
 e_init_status_set(const char *str)
 {
    if (!_e_init_object) return;
    edje_object_part_text_set(_e_init_object, "e.text.status", str);
 }
 
-EAPI void
+E_API void
 e_init_done(void)
 {
    undone--;
@@ -120,13 +120,13 @@ e_init_done(void)
    edje_object_signal_emit(_e_init_object, "e,state,done", "e");
 }
 
-EAPI void
+E_API void
 e_init_undone(void)
 {
    undone++;
 }
 
-EAPI int
+E_API int
 e_init_count_get(void)
 {
    return undone;

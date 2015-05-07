@@ -17,7 +17,7 @@
  * when handling the last 64 bytes in a buffer to just keep it short. it
  * still generates decent hashes either way...
  */
-EAPI int
+E_API int
 e_sha1_sum(unsigned char *data, int size, unsigned char *dst)
 {
    unsigned int digest[5], word[80], wa, wb, wc, wd, we, t;

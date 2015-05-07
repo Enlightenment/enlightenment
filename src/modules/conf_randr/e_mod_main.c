@@ -2,12 +2,12 @@
 #include "e_mod_main.h"
 #include "e_int_config_randr2.h"
 
-EAPI E_Module_Api e_modapi =
+E_API E_Module_Api e_modapi =
 {
    E_MODULE_API_VERSION, "Settings - Screen Setup"
 };
 
-EAPI void *
+E_API void *
 e_modapi_init(E_Module *m)
 {
    /* create Screen configuration category
@@ -24,7 +24,7 @@ e_modapi_init(E_Module *m)
    return m;
 }
 
-EAPI int
+E_API int
 e_modapi_shutdown(E_Module *m EINA_UNUSED)
 {
    E_Config_Dialog *cfd;
@@ -37,7 +37,7 @@ e_modapi_shutdown(E_Module *m EINA_UNUSED)
    return 1;
 }
 
-EAPI int
+E_API int
 e_modapi_save(E_Module *m EINA_UNUSED)
 {
    return 1;

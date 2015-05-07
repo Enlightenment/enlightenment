@@ -18,7 +18,7 @@ _key_down_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void
      _e_obj_dialog_cb_delete(data, NULL, NULL, NULL);
 }
 
-EAPI E_Obj_Dialog *
+E_API E_Obj_Dialog *
 e_obj_dialog_new(char *title, char *class_name, char *class_class)
 {
    E_Obj_Dialog *od;
@@ -55,13 +55,13 @@ e_obj_dialog_new(char *title, char *class_name, char *class_class)
    return od;
 }
 
-EAPI void
+E_API void
 e_obj_dialog_cb_delete_set(E_Obj_Dialog *od, void (*func)(E_Obj_Dialog *od))
 {
    od->cb_delete = func;
 }
 
-EAPI void
+E_API void
 e_obj_dialog_icon_set(E_Obj_Dialog *od, char *icon)
 {
    E_OBJECT_CHECK(od);
@@ -69,7 +69,7 @@ e_obj_dialog_icon_set(E_Obj_Dialog *od, char *icon)
    e_win_client_icon_set(od->win, icon);
  }
 
-EAPI void
+E_API void
 e_obj_dialog_show(E_Obj_Dialog *od)
 {
    Evas_Coord w, h, mw, mh;
@@ -96,7 +96,7 @@ e_obj_dialog_show(E_Obj_Dialog *od)
    evas_object_show(od->win);
 }
 
-EAPI void
+E_API void
 e_obj_dialog_obj_part_text_set(E_Obj_Dialog *od, const char *part, const char *text)
 {
    E_OBJECT_CHECK(od);
@@ -104,7 +104,7 @@ e_obj_dialog_obj_part_text_set(E_Obj_Dialog *od, const char *part, const char *t
    edje_object_part_text_set(od->bg_object, part, text);
 }
 
-EAPI void
+E_API void
 e_obj_dialog_obj_theme_set(E_Obj_Dialog *od, char *theme_cat, char *theme_obj)
 {
    E_OBJECT_CHECK(od);

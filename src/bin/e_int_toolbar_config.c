@@ -13,7 +13,7 @@ struct _E_Config_Dialog_Data
    int        orient;
 };
 
-EAPI void
+E_API void
 e_int_toolbar_config(E_Toolbar *tbar)
 {
    E_Config_Dialog *cfd;

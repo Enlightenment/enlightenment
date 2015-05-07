@@ -82,7 +82,7 @@ static int          _types_list_sort(const void *data1, const void *data2);
 static void         _btn_cb_unload(void *data, void *data2);
 static void         _btn_cb_load(void *data, void *data2);
 
-EAPI E_Config_Dialog *
+E_API E_Config_Dialog *
 e_int_config_modules(Evas_Object *parent EINA_UNUSED, const char *params EINA_UNUSED)
 {
    E_Config_Dialog *cfd = NULL;

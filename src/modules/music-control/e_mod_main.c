@@ -213,7 +213,7 @@ static const E_Gadcon_Client_Class _gc_class =
    E_GADCON_CLIENT_STYLE_PLAIN
 };
 
-EAPI E_Module_Api e_modapi = { E_MODULE_API_VERSION, _e_music_control_Name };
+E_API E_Module_Api e_modapi = { E_MODULE_API_VERSION, _e_music_control_Name };
 
 static void
 parse_metadata(E_Music_Control_Module_Context *ctxt, Eina_Value *array)
@@ -371,7 +371,7 @@ music_control_dbus_init(E_Music_Control_Module_Context *ctxt, const char *bus)
    return EINA_TRUE;
 }
 
-EAPI void *
+E_API void *
 e_modapi_init(E_Module *m)
 {
    E_Music_Control_Module_Context *ctxt;
@@ -407,7 +407,7 @@ error_dbus_bus_get:
    return NULL;
 }
 
-EAPI int
+E_API int
 e_modapi_shutdown(E_Module *m EINA_UNUSED)
 {
    E_Music_Control_Module_Context *ctxt;
@@ -440,7 +440,7 @@ e_modapi_shutdown(E_Module *m EINA_UNUSED)
    return 1;
 }
 
-EAPI int
+E_API int
 e_modapi_save(E_Module *m)
 {
    E_Music_Control_Module_Context *ctxt = m->data;

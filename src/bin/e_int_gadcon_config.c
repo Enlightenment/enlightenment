@@ -777,19 +777,19 @@ _cb_load_timer(void *data)
    return ECORE_CALLBACK_CANCEL;
 }
 
-EAPI void
+E_API void
 e_int_gadcon_config_shelf(E_Gadcon *gc)
 {
    _create_dialog(gc, _("Shelf Contents"), 0);
 }
 
-EAPI void
+E_API void
 e_int_gadcon_config_toolbar(E_Gadcon *gc)
 {
    _create_dialog(gc, _("Toolbar Contents"), 0);
 }
 
-EAPI void
+E_API void
 e_int_gadcon_config_hook(E_Gadcon *gc, const char *name, E_Gadcon_Site site)
 {
    _create_dialog(gc, name, site);

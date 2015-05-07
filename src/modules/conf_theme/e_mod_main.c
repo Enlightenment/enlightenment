@@ -6,7 +6,7 @@ static E_Module *conf_module = NULL;
 static E_Int_Menu_Augmentation *maug[8] = {0};
 
 /* module setup */
-EAPI E_Module_Api e_modapi =
+E_API E_Module_Api e_modapi =
 {
    E_MODULE_API_VERSION,
    "Settings - Theme"
@@ -47,7 +47,7 @@ _e_mod_menu_theme_add(void *data EINA_UNUSED, E_Menu *m)
    e_menu_item_callback_set(mi, _e_mod_run_theme_cb, NULL);
 }
 
-EAPI void *
+E_API void *
 e_modapi_init(E_Module *m)
 {
    e_configure_registry_category_add("internal", -1, _("Internal"),
@@ -97,7 +97,7 @@ e_modapi_init(E_Module *m)
    return m;
 }
 
-EAPI int
+E_API int
 e_modapi_shutdown(E_Module *m EINA_UNUSED)
 {
    E_Config_Dialog *cfd;

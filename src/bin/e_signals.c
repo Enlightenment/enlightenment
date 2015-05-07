@@ -66,7 +66,7 @@ _e_write_safe_int(int fd, const char *buf, size_t size)
 /* a tricky little devil, requires e and it's libs to be built
  * with the -rdynamic flag to GCC for any sort of decent output.
  */
-EAPI void
+E_API void
 e_sigseg_act(int x EINA_UNUSED, siginfo_t *info EINA_UNUSED, void *data EINA_UNUSED)
 {
 #ifdef HAVE_WAYLAND_ONLY
@@ -94,7 +94,7 @@ e_sigseg_act(int x EINA_UNUSED, siginfo_t *info EINA_UNUSED, void *data EINA_UNU
 #endif
 }
 
-EAPI void
+E_API void
 e_sigill_act(int x EINA_UNUSED, siginfo_t *info EINA_UNUSED, void *data EINA_UNUSED)
 {
    // In case of a sigill in Enlightenment, Enlightenment start will catch the sigill and continue,
@@ -112,7 +112,7 @@ e_sigill_act(int x EINA_UNUSED, siginfo_t *info EINA_UNUSED, void *data EINA_UNU
    /* e_alert_show(); */
 }
 
-EAPI void
+E_API void
 e_sigfpe_act(int x EINA_UNUSED, siginfo_t *info EINA_UNUSED, void *data EINA_UNUSED)
 {
 #ifdef HAVE_WAYLAND_ONLY
@@ -140,7 +140,7 @@ e_sigfpe_act(int x EINA_UNUSED, siginfo_t *info EINA_UNUSED, void *data EINA_UNU
 #endif
 }
 
-EAPI void
+E_API void
 e_sigbus_act(int x EINA_UNUSED, siginfo_t *info EINA_UNUSED, void *data EINA_UNUSED)
 {
 #ifdef HAVE_WAYLAND_ONLY
@@ -168,7 +168,7 @@ e_sigbus_act(int x EINA_UNUSED, siginfo_t *info EINA_UNUSED, void *data EINA_UNU
 #endif
 }
 
-EAPI void
+E_API void
 e_sigabrt_act(int x EINA_UNUSED, siginfo_t *info EINA_UNUSED, void *data EINA_UNUSED)
 {
 #ifdef HAVE_WAYLAND_ONLY

@@ -61,11 +61,11 @@ struct _E_DBusMenu_Item
 typedef void (*E_DBusMenu_Pop_Request_Cb)(void *data, const E_DBusMenu_Item *item);
 typedef void (*E_DBusMenu_Update_Cb)(void *data, E_DBusMenu_Item *new_root_item);
 
-EAPI E_DBusMenu_Ctx * e_dbusmenu_load(Eldbus_Connection *conn, const char *bus, const char *path, const void *data);
-EAPI void e_dbusmenu_unload(E_DBusMenu_Ctx *ctx);
-EAPI void e_dbusmenu_update_cb_set(E_DBusMenu_Ctx *menu_data, E_DBusMenu_Update_Cb cb);
-EAPI void e_dbusmenu_pop_request_cb_set(E_DBusMenu_Ctx *menu_data, E_DBusMenu_Pop_Request_Cb cb);
+E_API E_DBusMenu_Ctx * e_dbusmenu_load(Eldbus_Connection *conn, const char *bus, const char *path, const void *data);
+E_API void e_dbusmenu_unload(E_DBusMenu_Ctx *ctx);
+E_API void e_dbusmenu_update_cb_set(E_DBusMenu_Ctx *menu_data, E_DBusMenu_Update_Cb cb);
+E_API void e_dbusmenu_pop_request_cb_set(E_DBusMenu_Ctx *menu_data, E_DBusMenu_Pop_Request_Cb cb);
 
-EAPI void e_dbusmenu_event_send(E_DBusMenu_Item *m, E_DBusMenu_Item_Event event);
+E_API void e_dbusmenu_event_send(E_DBusMenu_Item *m, E_DBusMenu_Item_Event event);
 
 #endif

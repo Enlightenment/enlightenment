@@ -131,14 +131,14 @@ void *alloca (size_t);
 #  include <uuid.h>
 # endif
 
-# ifdef EAPI
-#  undef EAPI
+# ifdef E_API
+#  undef E_API
 # endif
 # ifdef WIN32
 #  ifdef BUILDING_DLL
-#   define EAPI __declspec(dllexport)
+#   define E_API __declspec(dllexport)
 #  else
-#   define EAPI __declspec(dllimport)
+#   define E_API __declspec(dllimport)
 #  endif
 # else
 #  ifdef __GNUC__
@@ -147,12 +147,12 @@ void *alloca (size_t);
 #    if 0
 #     pragma GCC visibility push(hidden)
 #    endif
-#    define EAPI __attribute__ ((visibility("default")))
+#    define E_API __attribute__ ((visibility("default")))
 #   else
-#    define EAPI
+#    define E_API
 #   endif
 #  else
-#   define EAPI
+#   define E_API
 #  endif
 # endif
 
@@ -296,30 +296,30 @@ typedef struct _E_Rect         E_Rect;
 # undef E_TYPEDEFS
 # include "e_includes.h"
 
-EAPI double          e_main_ts(const char *str);
+E_API double          e_main_ts(const char *str);
 
 struct _E_Rect
 {
    int x, y, w, h;
 };
 
-extern EAPI E_Path *path_data;
-extern EAPI E_Path *path_images;
-extern EAPI E_Path *path_fonts;
-extern EAPI E_Path *path_themes;
-extern EAPI E_Path *path_icons;
-extern EAPI E_Path *path_modules;
-extern EAPI E_Path *path_backgrounds;
-extern EAPI E_Path *path_messages;
-extern EAPI Eina_Bool good;
-extern EAPI Eina_Bool evil;
-extern EAPI Eina_Bool starting;
-extern EAPI Eina_Bool stopping;
-extern EAPI Eina_Bool restart;
-extern EAPI Eina_Bool e_nopause;
+extern E_API E_Path *path_data;
+extern E_API E_Path *path_images;
+extern E_API E_Path *path_fonts;
+extern E_API E_Path *path_themes;
+extern E_API E_Path *path_icons;
+extern E_API E_Path *path_modules;
+extern E_API E_Path *path_backgrounds;
+extern E_API E_Path *path_messages;
+extern E_API Eina_Bool good;
+extern E_API Eina_Bool evil;
+extern E_API Eina_Bool starting;
+extern E_API Eina_Bool stopping;
+extern E_API Eina_Bool restart;
+extern E_API Eina_Bool e_nopause;
 
-extern EAPI Eina_Bool e_precache_end;
-extern EAPI Eina_Bool x_fatal;
+extern E_API Eina_Bool e_precache_end;
+extern E_API Eina_Bool x_fatal;
 
 extern EINTERN const char *e_first_frame;
 extern EINTERN double e_first_frame_start_time;

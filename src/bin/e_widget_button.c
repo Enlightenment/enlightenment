@@ -19,7 +19,7 @@ static void _e_wid_focus_steal(void *data, Evas *e, Evas_Object *obj, void *even
 /* local subsystem functions */
 
 /* externally accessible functions */
-EAPI Evas_Object *
+E_API Evas_Object *
 e_widget_button_add(Evas *evas, const char *label, const char *icon, void (*func)(void *data, void *data2), void *data, void *data2)
 {
    Evas_Object *obj, *o;
@@ -64,7 +64,7 @@ e_widget_button_add(Evas *evas, const char *label, const char *icon, void (*func
    return obj;
 }
 
-EAPI void
+E_API void
 e_widget_button_label_set(Evas_Object *obj, const char *label)
 {
    E_Widget_Data *wd;
@@ -73,7 +73,7 @@ e_widget_button_label_set(Evas_Object *obj, const char *label)
    elm_object_text_set(wd->o_button, label);
 }
 
-EAPI void
+E_API void
 e_widget_button_icon_set(Evas_Object *obj, Evas_Object *icon)
 {
    E_Widget_Data *wd;

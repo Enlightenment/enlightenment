@@ -51,7 +51,7 @@ e_msg_shutdown(void)
    return 1;
 }
 
-EAPI void
+E_API void
 e_msg_send(const char *name, const char *info, int val, E_Object *obj, void *msgdata, void (*afterfunc)(void *data, E_Object *obj, void *msgdata), void *afterdata)
 {
    unsigned int size, pos, name_len, info_len;
@@ -84,7 +84,7 @@ e_msg_send(const char *name, const char *info, int val, E_Object *obj, void *msg
    ecore_event_add(E_EVENT_MSG, ev, _e_msg_event_free, NULL);
 }
 
-EAPI E_Msg_Handler *
+E_API E_Msg_Handler *
 e_msg_handler_add(void (*func)(void *data, const char *name, const char *info, int val, E_Object *obj, void *msgdata), void *data)
 {
    E_Msg_Handler *emsgh;
@@ -97,7 +97,7 @@ e_msg_handler_add(void (*func)(void *data, const char *name, const char *info, i
    return emsgh;
 }
 
-EAPI void
+E_API void
 e_msg_handler_del(E_Msg_Handler *emsgh)
 {
    if (processing_handlers > 0)

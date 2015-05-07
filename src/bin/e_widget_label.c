@@ -18,7 +18,7 @@ static void _e_wid_disable_hook(Evas_Object *obj);
  * @param text to assign to the widget
  * @return the label widget
  */
-EAPI Evas_Object *
+E_API Evas_Object *
 e_widget_label_add(Evas *evas, const char *label)
 {
    Evas_Object *obj, *o;
@@ -47,7 +47,7 @@ e_widget_label_add(Evas *evas, const char *label)
  * @param the label widget
  * @param text to assign to the widget
  */
-EAPI void
+E_API void
 e_widget_label_text_set(Evas_Object *obj, const char *text)
 {
    E_Widget_Data *wd;

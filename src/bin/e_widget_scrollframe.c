@@ -13,7 +13,7 @@ static void _e_wid_cb_scrollframe_resize(void *data, Evas *e, Evas_Object *obj,
                                          void *event_info);
 
 /* externally accessible functions */
-EAPI Evas_Object *
+E_API Evas_Object *
 e_widget_scrollframe_simple_add(Evas *evas, Evas_Object *child)
 {
    E_Widget_Data *wd;
@@ -46,7 +46,7 @@ e_widget_scrollframe_simple_add(Evas *evas, Evas_Object *child)
    return obj;
 }
 
-EAPI Evas_Object *
+E_API Evas_Object *
 e_widget_scrollframe_pan_add(Evas *evas, Evas_Object *pan, void (*pan_set)(Evas_Object *obj, Evas_Coord x, Evas_Coord y), void (*pan_get)(Evas_Object *obj, Evas_Coord *x, Evas_Coord *y), void (*pan_max_get)(Evas_Object *obj, Evas_Coord *x, Evas_Coord *y), void (*pan_child_size_get)(Evas_Object *obj, Evas_Coord *x, Evas_Coord *y))
 {
    Evas_Object *obj, *o;
@@ -75,7 +75,7 @@ e_widget_scrollframe_pan_add(Evas *evas, Evas_Object *pan, void (*pan_set)(Evas_
    return obj;
 }
 
-EAPI void
+E_API void
 e_widget_scrollframe_child_pos_set(Evas_Object *obj, Evas_Coord x, Evas_Coord y)
 {
    E_Widget_Data *wd;
@@ -84,7 +84,7 @@ e_widget_scrollframe_child_pos_set(Evas_Object *obj, Evas_Coord x, Evas_Coord y)
    e_scrollframe_child_pos_set(wd->o_scrollframe, x, y);
 }
 
-EAPI void
+E_API void
 e_widget_scrollframe_child_pos_get(Evas_Object *obj, Evas_Coord *x, Evas_Coord *y)
 {
    E_Widget_Data *wd;
@@ -93,7 +93,7 @@ e_widget_scrollframe_child_pos_get(Evas_Object *obj, Evas_Coord *x, Evas_Coord *
    e_scrollframe_child_pos_get(wd->o_scrollframe, x, y);
 }
 
-EAPI void
+E_API void
 e_widget_scrollframe_child_region_show(Evas_Object *obj, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_Coord h)
 {
    E_Widget_Data *wd;
@@ -102,7 +102,7 @@ e_widget_scrollframe_child_region_show(Evas_Object *obj, Evas_Coord x, Evas_Coor
    e_scrollframe_child_region_show(wd->o_scrollframe, x, y, w, h);
 }
 
-EAPI void
+E_API void
 e_widget_scrollframe_focus_object_set(Evas_Object *obj, Evas_Object *fobj)
 {
    E_Widget_Data *wd;
@@ -111,7 +111,7 @@ e_widget_scrollframe_focus_object_set(Evas_Object *obj, Evas_Object *fobj)
    wd->o_fobj = fobj;
 }
 
-EAPI Evas_Object *
+E_API Evas_Object *
 e_widget_scrollframe_object_get(Evas_Object *obj)
 {
    E_Widget_Data *wd;

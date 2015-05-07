@@ -98,57 +98,57 @@ struct _E_Ipc_Str_4Int
 EINTERN int      e_ipc_codec_init(void);
 EINTERN void     e_ipc_codec_shutdown(void);
 
-EAPI int      e_ipc_codec_int_dec(char *data, int bytes, int *dest);
-EAPI void    *e_ipc_codec_int_enc(int val, int *size_ret);
-EAPI int      e_ipc_codec_double_dec(char *data, int bytes, double *dest);
-EAPI void    *e_ipc_codec_double_enc(double val, int *size_ret);
-EAPI int      e_ipc_codec_2int_dec(char *data, int bytes, int *dest, int *dest2x);
-EAPI void    *e_ipc_codec_2int_enc(int val1, int val2, int *size_ret);
+E_API int      e_ipc_codec_int_dec(char *data, int bytes, int *dest);
+E_API void    *e_ipc_codec_int_enc(int val, int *size_ret);
+E_API int      e_ipc_codec_double_dec(char *data, int bytes, double *dest);
+E_API void    *e_ipc_codec_double_enc(double val, int *size_ret);
+E_API int      e_ipc_codec_2int_dec(char *data, int bytes, int *dest, int *dest2x);
+E_API void    *e_ipc_codec_2int_enc(int val1, int val2, int *size_ret);
 
-EAPI int      e_ipc_codec_str_dec(char *data, int bytes, char **dest);
-EAPI void    *e_ipc_codec_str_enc(const char *str, int *size_ret);
-EAPI int      e_ipc_codec_str_list_dec(char *data, int bytes, Eina_List **dest);
-EAPI void    *e_ipc_codec_str_list_enc(Eina_List *list, int *size_ret);
+E_API int      e_ipc_codec_str_dec(char *data, int bytes, char **dest);
+E_API void    *e_ipc_codec_str_enc(const char *str, int *size_ret);
+E_API int      e_ipc_codec_str_list_dec(char *data, int bytes, Eina_List **dest);
+E_API void    *e_ipc_codec_str_list_enc(Eina_List *list, int *size_ret);
 
-EAPI int      e_ipc_codec_2str_dec(char *data, int bytes, E_Ipc_2Str **dest);
-EAPI void    *e_ipc_codec_2str_enc(const char *str1, const char *str2, int *size_ret);
-EAPI int      e_ipc_codec_2str_list_dec(char *data, int bytes, Eina_List **dest);
-EAPI void    *e_ipc_codec_2str_list_enc(Eina_List *list, int *size_ret);
+E_API int      e_ipc_codec_2str_dec(char *data, int bytes, E_Ipc_2Str **dest);
+E_API void    *e_ipc_codec_2str_enc(const char *str1, const char *str2, int *size_ret);
+E_API int      e_ipc_codec_2str_list_dec(char *data, int bytes, Eina_List **dest);
+E_API void    *e_ipc_codec_2str_list_enc(Eina_List *list, int *size_ret);
 
-EAPI int      e_ipc_codec_str_int_dec(char *data, int bytes, E_Ipc_Str_Int **dest);
-EAPI void    *e_ipc_codec_str_int_enc(const char *str, int val, int *size_ret);
-EAPI int      e_ipc_codec_str_int_list_dec(char *data, int bytes, Eina_List **dest);
-EAPI void    *e_ipc_codec_str_int_list_enc(Eina_List *list, int *size_ret);
+E_API int      e_ipc_codec_str_int_dec(char *data, int bytes, E_Ipc_Str_Int **dest);
+E_API void    *e_ipc_codec_str_int_enc(const char *str, int val, int *size_ret);
+E_API int      e_ipc_codec_str_int_list_dec(char *data, int bytes, Eina_List **dest);
+E_API void    *e_ipc_codec_str_int_list_enc(Eina_List *list, int *size_ret);
 
-EAPI int      e_ipc_codec_2str_int_dec(char *data, int bytes, E_Ipc_2Str_Int **dest);
-EAPI void    *e_ipc_codec_2str_int_enc(const char *str1, const char *str2, int val, int *size_ret);
-EAPI int      e_ipc_codec_2str_int_list_dec(char *data, int bytes, Eina_List **dest);
-EAPI void    *e_ipc_codec_2str_int_list_enc(Eina_List *list, int *size_ret);
+E_API int      e_ipc_codec_2str_int_dec(char *data, int bytes, E_Ipc_2Str_Int **dest);
+E_API void    *e_ipc_codec_2str_int_enc(const char *str1, const char *str2, int val, int *size_ret);
+E_API int      e_ipc_codec_2str_int_list_dec(char *data, int bytes, Eina_List **dest);
+E_API void    *e_ipc_codec_2str_int_list_enc(Eina_List *list, int *size_ret);
 
-EAPI int      e_ipc_codec_4int_2str_dec(char *data, int bytes, E_Ipc_4Int_2Str **dest);
-EAPI void    *e_ipc_codec_4int_2str_enc(int val1, int val2, int val3, int val4, const char *str1, const char *str2, int *size_ret);
-EAPI int      e_ipc_codec_4int_2str_list_dec(char *data, int bytes, Eina_List **dest);
-EAPI void    *e_ipc_codec_4int_2str_list_enc(Eina_List *list, int *size_ret);
+E_API int      e_ipc_codec_4int_2str_dec(char *data, int bytes, E_Ipc_4Int_2Str **dest);
+E_API void    *e_ipc_codec_4int_2str_enc(int val1, int val2, int val3, int val4, const char *str1, const char *str2, int *size_ret);
+E_API int      e_ipc_codec_4int_2str_list_dec(char *data, int bytes, Eina_List **dest);
+E_API void    *e_ipc_codec_4int_2str_list_enc(Eina_List *list, int *size_ret);
 
-EAPI int      e_ipc_codec_5int_2str_dec(char *data, int bytes, E_Ipc_5Int_2Str **dest);
-EAPI void    *e_ipc_codec_5int_2str_enc(int val1, int val2, int val3, int val4, int val5, const char *str1, const char *str2, int *size_ret);
-EAPI int      e_ipc_codec_5int_2str_list_dec(char *data, int bytes, Eina_List **dest);
-EAPI void    *e_ipc_codec_5int_2str_list_enc(Eina_List *list, int *size_ret);
+E_API int      e_ipc_codec_5int_2str_dec(char *data, int bytes, E_Ipc_5Int_2Str **dest);
+E_API void    *e_ipc_codec_5int_2str_enc(int val1, int val2, int val3, int val4, int val5, const char *str1, const char *str2, int *size_ret);
+E_API int      e_ipc_codec_5int_2str_list_dec(char *data, int bytes, Eina_List **dest);
+E_API void    *e_ipc_codec_5int_2str_list_enc(Eina_List *list, int *size_ret);
 
-EAPI int      e_ipc_codec_3int_4str_dec(char *data, int bytes, E_Ipc_3Int_4Str **dest);
-EAPI void    *e_ipc_codec_3int_4str_enc(int val1, int val2, int val3, const char *str1, const char *str2, const char *str3, const char *str4, int *size_ret);
-EAPI int      e_ipc_codec_3int_4str_list_dec(char *data, int bytes, Eina_List **dest);
-EAPI void    *e_ipc_codec_3int_4str_list_enc(Eina_List *list, int *size_ret);
+E_API int      e_ipc_codec_3int_4str_dec(char *data, int bytes, E_Ipc_3Int_4Str **dest);
+E_API void    *e_ipc_codec_3int_4str_enc(int val1, int val2, int val3, const char *str1, const char *str2, const char *str3, const char *str4, int *size_ret);
+E_API int      e_ipc_codec_3int_4str_list_dec(char *data, int bytes, Eina_List **dest);
+E_API void    *e_ipc_codec_3int_4str_list_enc(Eina_List *list, int *size_ret);
 
-EAPI int      e_ipc_codec_3int_3str_dec(char *data, int bytes, E_Ipc_3Int_3Str **dest);
-EAPI void    *e_ipc_codec_3int_3str_enc(int val1, int val2, int val3, const char *str1, const char *str2, const char *str3, int *size_ret);
-EAPI int      e_ipc_codec_3int_3str_list_dec(char *data, int bytes, Eina_List **dest);
-EAPI void    *e_ipc_codec_3int_3str_list_enc(Eina_List *list, int *size_ret);
+E_API int      e_ipc_codec_3int_3str_dec(char *data, int bytes, E_Ipc_3Int_3Str **dest);
+E_API void    *e_ipc_codec_3int_3str_enc(int val1, int val2, int val3, const char *str1, const char *str2, const char *str3, int *size_ret);
+E_API int      e_ipc_codec_3int_3str_list_dec(char *data, int bytes, Eina_List **dest);
+E_API void    *e_ipc_codec_3int_3str_list_enc(Eina_List *list, int *size_ret);
 
-EAPI int      e_ipc_codec_str_4int_dec(char *data, int bytes, E_Ipc_Str_4Int **dest);
-EAPI void    *e_ipc_codec_str_4int_enc(const char *str1, int val1, int val2, int val3, int val4, int *size_ret);
-EAPI int      e_ipc_codec_str_4int_list_dec(char *data, int bytes, Eina_List **dest);
-EAPI void    *e_ipc_codec_str_4int_list_enc(Eina_List *list, int *size_ret);
+E_API int      e_ipc_codec_str_4int_dec(char *data, int bytes, E_Ipc_Str_4Int **dest);
+E_API void    *e_ipc_codec_str_4int_enc(const char *str1, int val1, int val2, int val3, int val4, int *size_ret);
+E_API int      e_ipc_codec_str_4int_list_dec(char *data, int bytes, Eina_List **dest);
+E_API void    *e_ipc_codec_str_4int_list_enc(Eina_List *list, int *size_ret);
 #endif
 
 #endif

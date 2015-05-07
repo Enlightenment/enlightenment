@@ -1,19 +1,19 @@
 /* Menu setup */
 #include "e_wizard.h"
 /*
-EAPI int
+E_API int
 wizard_page_init(E_Wizard_Page *pg EINA_UNUSED, Eina_Bool *need_xdg_desktops EINA_UNUSED, Eina_Bool *need_xdg_icons EINA_UNUSED)
 {
    return 1;
 }
 
-EAPI int
+E_API int
 wizard_page_shutdown(E_Wizard_Page *pg EINA_UNUSED)
 {
    return 1;
 }
 */
-EAPI int
+E_API int
 wizard_page_show(E_Wizard_Page *pg EINA_UNUSED)
 {
    char buf[PATH_MAX];
@@ -24,13 +24,13 @@ wizard_page_show(E_Wizard_Page *pg EINA_UNUSED)
    return 0; /* 1 == show ui, and wait for user, 0 == just continue */
 }
 /*
-EAPI int
+E_API int
 wizard_page_hide(E_Wizard_Page *pg EINA_UNUSED)
 {
    return 1;
 }
 
-EAPI int
+E_API int
 wizard_page_apply(E_Wizard_Page *pg EINA_UNUSED)
 {
    return 1;

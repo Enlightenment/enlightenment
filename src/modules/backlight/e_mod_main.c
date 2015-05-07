@@ -463,13 +463,13 @@ _backlight_cb_changed(void *d EINA_UNUSED, int type EINA_UNUSED, void *ev EINA_U
 }
 
 /* module setup */
-EAPI E_Module_Api e_modapi =
+E_API E_Module_Api e_modapi =
 {
    E_MODULE_API_VERSION,
      "Backlight"
 };
 
-EAPI void *
+E_API void *
 e_modapi_init(E_Module *m)
 {
    backlight_module = m;
@@ -486,7 +486,7 @@ e_modapi_init(E_Module *m)
    return m;
 }
 
-EAPI int
+E_API int
 e_modapi_shutdown(E_Module *m EINA_UNUSED)
 {
    if (act)
@@ -500,7 +500,7 @@ e_modapi_shutdown(E_Module *m EINA_UNUSED)
    return 1;
 }
 
-EAPI int
+E_API int
 e_modapi_save(E_Module *m EINA_UNUSED)
 {
    return 1;

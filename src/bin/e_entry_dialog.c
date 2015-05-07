@@ -9,7 +9,7 @@ static void _e_entry_dialog_delete(E_Dialog *dia, Evas *e EINA_UNUSED, Evas_Obje
 static void _e_entry_cb_key_down(void *data, Evas_Object *obj, void *event_info);
 
 /* Externally accesible functions */
-EAPI E_Entry_Dialog *
+E_API E_Entry_Dialog *
 e_entry_dialog_show(const char *title, const char *icon, const char *text,
                     const char *initial_text,
                     const char *button_text, const char *button2_text,

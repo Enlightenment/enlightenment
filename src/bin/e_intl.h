@@ -45,22 +45,22 @@ EINTERN int		 e_intl_shutdown(void);
 EINTERN int		 e_intl_post_init(void);
 EINTERN int		 e_intl_post_shutdown(void);
 /* Setting & Getting Language */
-EAPI void		 e_intl_language_set(const char *lang);
-EAPI const char		*e_intl_language_get(void);
-EAPI const char		*e_intl_language_alias_get(void);
-EAPI Eina_List		*e_intl_language_list(void);
+E_API void		 e_intl_language_set(const char *lang);
+E_API const char		*e_intl_language_get(void);
+E_API const char		*e_intl_language_alias_get(void);
+E_API Eina_List		*e_intl_language_list(void);
 /* Setting & Getting Input Method */
-EAPI void                e_intl_input_method_set(const char *method);
-EAPI const char         *e_intl_input_method_get(void);
-EAPI Eina_List		*e_intl_input_method_list(void);
-EAPI const char		*e_intl_imc_personal_path_get(void);
-EAPI const char		*e_intl_imc_system_path_get(void);
+E_API void                e_intl_input_method_set(const char *method);
+E_API const char         *e_intl_input_method_get(void);
+E_API Eina_List		*e_intl_input_method_list(void);
+E_API const char		*e_intl_imc_personal_path_get(void);
+E_API const char		*e_intl_imc_system_path_get(void);
 
 /* Getting locale */
-EAPI E_Locale_Parts	*e_intl_locale_parts_get(const char *locale);
-EAPI void		 e_intl_locale_parts_free(E_Locale_Parts *locale_parts);
-EAPI char               *e_intl_locale_parts_combine(E_Locale_Parts *locale_parts, int mask);
-EAPI char		*e_intl_locale_charset_canonic_get(const char *charset);
+E_API E_Locale_Parts	*e_intl_locale_parts_get(const char *locale);
+E_API void		 e_intl_locale_parts_free(E_Locale_Parts *locale_parts);
+E_API char               *e_intl_locale_parts_combine(E_Locale_Parts *locale_parts, int mask);
+E_API char		*e_intl_locale_charset_canonic_get(const char *charset);
 
 # endif
 #endif

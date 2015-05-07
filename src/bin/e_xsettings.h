@@ -7,7 +7,7 @@
 EINTERN int e_xsettings_init(void);
 EINTERN int e_xsettings_shutdown(void);
 
-EAPI void e_xsettings_config_update(void);
+E_API void e_xsettings_config_update(void);
 
 # endif
 #endif

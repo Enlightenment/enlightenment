@@ -32,9 +32,9 @@ struct _E_Desktop_Edit
    E_Config_Dialog *cfd;
 };
 
-EAPI Efreet_Desktop *e_desktop_client_create(E_Client *ec);
-EAPI E_Desktop_Edit *e_desktop_client_edit(E_Client *ec);
-EAPI E_Desktop_Edit *e_desktop_edit(Efreet_Desktop *desktop);
+E_API Efreet_Desktop *e_desktop_client_create(E_Client *ec);
+E_API E_Desktop_Edit *e_desktop_client_edit(E_Client *ec);
+E_API E_Desktop_Edit *e_desktop_edit(Efreet_Desktop *desktop);
 
 #endif
 #endif

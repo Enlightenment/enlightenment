@@ -59,7 +59,7 @@ struct _E_Config_Dialog_Data
    Plugin_Page page[3];
 };
 
-EAPI E_Config_Dialog *
+E_API E_Config_Dialog *
 evry_config_dialog(Evas_Object *parent EINA_UNUSED, const char *params EINA_UNUSED)
 {
    E_Config_Dialog *cfd;
@@ -604,7 +604,7 @@ static Evas_Object *_cat_basic_create_widgets(E_Config_Dialog *cfd, Evas *evas,
                                               E_Config_Dialog_Data *cfdata);
 static int          _cat_basic_apply(E_Config_Dialog *cfd, E_Config_Dialog_Data *cfdata);
 
-EAPI E_Config_Dialog *
+E_API E_Config_Dialog *
 evry_collection_conf_dialog(Evas_Object *parent EINA_UNUSED, const char *params)
 {
    E_Config_Dialog *cfd = NULL;

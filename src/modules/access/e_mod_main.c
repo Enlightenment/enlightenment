@@ -958,12 +958,12 @@ _cb_client_message(void *data EINA_UNUSED,
 
 /***************************************************************************/
 /* module setup */
-EAPI E_Module_Api e_modapi =
+E_API E_Module_Api e_modapi =
 {
    E_MODULE_API_VERSION, "Access"
 };
 
-EAPI void *
+E_API void *
 e_modapi_init(E_Module *m)
 {
    if (!_atom_access)
@@ -1006,7 +1006,7 @@ e_modapi_init(E_Module *m)
    return m;
 }
 
-EAPI int
+E_API int
 e_modapi_shutdown(E_Module *m EINA_UNUSED)
 {
    EINA_LOG_INFO("[access module] module shutdown");
@@ -1019,7 +1019,7 @@ e_modapi_shutdown(E_Module *m EINA_UNUSED)
    return 1;
 }
 
-EAPI int
+E_API int
 e_modapi_save(E_Module *m EINA_UNUSED)
 {
    e_config_domain_save("module.access", conf_edd, access_config);

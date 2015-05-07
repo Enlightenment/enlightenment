@@ -6,7 +6,7 @@ static void      _e_path_cache_free(E_Path *ep);
 static Eina_Bool _e_path_cache_free_cb(const Eina_Hash *hash, const void *key, void *data, void *fdata);
 
 /* externally accessible functions */
-EAPI E_Path *
+E_API E_Path *
 e_path_new(void)
 {
    E_Path *ep;
@@ -15,7 +15,7 @@ e_path_new(void)
    return ep;
 }
 
-EAPI void
+E_API void
 e_path_default_path_append(E_Path *ep, const char *path)
 {
    E_OBJECT_CHECK(ep);
@@ -58,7 +58,7 @@ e_path_default_path_append(E_Path *ep, const char *path)
    _e_path_cache_free(ep);
 }
 
-EAPI void
+E_API void
 e_path_user_path_set(E_Path *ep, Eina_List **user_dir_list)
 {
    E_OBJECT_CHECK(ep);
@@ -68,7 +68,7 @@ e_path_user_path_set(E_Path *ep, Eina_List **user_dir_list)
    _e_path_cache_free(ep);
 }
 
-EAPI void
+E_API void
 e_path_user_path_append(E_Path *ep, const char *path)
 {
    E_OBJECT_CHECK(ep);
@@ -111,7 +111,7 @@ e_path_user_path_append(E_Path *ep, const char *path)
    _e_path_cache_free(ep);
 }
 
-EAPI void
+E_API void
 e_path_user_path_prepend(E_Path *ep, const char *path)
 {
    E_OBJECT_CHECK(ep);
@@ -154,7 +154,7 @@ e_path_user_path_prepend(E_Path *ep, const char *path)
    _e_path_cache_free(ep);
 }
 
-EAPI void
+E_API void
 e_path_user_path_remove(E_Path *ep, const char *path)
 {
    Eina_List *l;
@@ -214,7 +214,7 @@ e_path_user_path_remove(E_Path *ep, const char *path)
      }
 }
 
-EAPI void
+E_API void
 e_path_user_path_clear(E_Path *ep)
 {
    E_Path_Dir *epd;
@@ -226,7 +226,7 @@ e_path_user_path_clear(E_Path *ep)
    _e_path_cache_free(ep);
 }
 
-EAPI Eina_Stringshare *
+E_API Eina_Stringshare *
 e_path_find(E_Path *ep, const char *file)
 {
    Eina_List *l;
@@ -280,7 +280,7 @@ e_path_find(E_Path *ep, const char *file)
    return NULL;
 }
 
-EAPI void
+E_API void
 e_path_evas_append(E_Path *ep, Evas *evas)
 {
    Eina_List *dir_list;
@@ -301,7 +301,7 @@ e_path_evas_append(E_Path *ep, Evas *evas)
 }
 
 /* combine default_list and and user_list in and easy to use list */
-EAPI Eina_List *
+E_API Eina_List *
 e_path_dir_list_get(E_Path *ep)
 {
    Eina_List *dir_list;
@@ -331,7 +331,7 @@ e_path_dir_list_get(E_Path *ep)
    return dir_list;
 }
 
-EAPI void
+E_API void
 e_path_dir_list_free(Eina_List *dir_list)
 {
    E_Path_Dir *epd;

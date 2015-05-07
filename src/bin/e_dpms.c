@@ -14,7 +14,7 @@ static unsigned int _e_dpms_timeout_suspend = 0;
 static unsigned int _e_dpms_timeout_off = 0;
 static int _e_dpms_enabled = EINA_FALSE;
 
-EAPI void
+E_API void
 e_dpms_update(void)
 {
    unsigned int standby = 0, suspend = 0, off = 0;
@@ -65,7 +65,7 @@ e_dpms_update(void)
 #endif
 }
 
-EAPI void
+E_API void
 e_dpms_force_update(void)
 {
    unsigned int standby = 0, suspend = 0, off = 0;

@@ -48,17 +48,17 @@ struct _E_Action_Group
 EINTERN int      e_actions_init(void);
 EINTERN int      e_actions_shutdown(void);
 
-EAPI Eina_List  *e_action_name_list(void);
-EAPI E_Action   *e_action_add(const char *name);
+E_API Eina_List  *e_action_name_list(void);
+E_API E_Action   *e_action_add(const char *name);
 /* e_action_del allows, for example, modules to define their own actions dynamically. */
-EAPI void        e_action_del(const char *name);
-EAPI E_Action   *e_action_find(const char *name);
+E_API void        e_action_del(const char *name);
+E_API E_Action   *e_action_find(const char *name);
 
-EAPI const char *e_action_predef_label_get(const char *action, const char *params);
-EAPI void        e_action_predef_name_set(const char *act_grp, const char *act_name, const char *act_cmd, const char *act_params, const char *param_example, int editable);
-EAPI void        e_action_predef_name_del(const char *act_grp, const char *act_name);
-EAPI void        e_action_predef_name_all_del(void);
-EAPI Eina_List  *e_action_groups_get(void);
+E_API const char *e_action_predef_label_get(const char *action, const char *params);
+E_API void        e_action_predef_name_set(const char *act_grp, const char *act_name, const char *act_cmd, const char *act_params, const char *param_example, int editable);
+E_API void        e_action_predef_name_del(const char *act_grp, const char *act_name);
+E_API void        e_action_predef_name_all_del(void);
+E_API Eina_List  *e_action_groups_get(void);
 
 #endif
 #endif

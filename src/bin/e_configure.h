@@ -30,18 +30,18 @@ struct _E_Configure_It
    Efreet_Desktop    *desktop;
 };
 
-EAPI void e_configure_registry_item_add(const char *path, int pri, const char *label, const char *icon_file, const char *icon, E_Config_Dialog *(*func) (Evas_Object *parent, const char *params));
-EAPI void e_configure_registry_item_params_add(const char *path, int pri, const char *label, const char *icon_file, const char *icon, E_Config_Dialog *(*func) (Evas_Object *parent, const char *params), const char *params);
-EAPI void e_configure_registry_generic_item_add(const char *path, int pri, const char *label, const char *icon_file, const char *icon, void (*generic_func) (Evas_Object *parent, const char *params));
-EAPI void e_configure_registry_item_del(const char *path);
-EAPI void e_configure_registry_category_add(const char *path, int pri, const char *label, const char *icon_file, const char *icon);
-EAPI void e_configure_registry_category_del(const char *path);
-EAPI void e_configure_registry_call(const char *path, Evas_Object *parent, const char *params);
-EAPI int  e_configure_registry_exists(const char *path);
-EAPI void e_configure_registry_custom_desktop_exec_callback_set(void (*func) (const void *data, const char *params, Efreet_Desktop *desktop), const void *data);
+E_API void e_configure_registry_item_add(const char *path, int pri, const char *label, const char *icon_file, const char *icon, E_Config_Dialog *(*func) (Evas_Object *parent, const char *params));
+E_API void e_configure_registry_item_params_add(const char *path, int pri, const char *label, const char *icon_file, const char *icon, E_Config_Dialog *(*func) (Evas_Object *parent, const char *params), const char *params);
+E_API void e_configure_registry_generic_item_add(const char *path, int pri, const char *label, const char *icon_file, const char *icon, void (*generic_func) (Evas_Object *parent, const char *params));
+E_API void e_configure_registry_item_del(const char *path);
+E_API void e_configure_registry_category_add(const char *path, int pri, const char *label, const char *icon_file, const char *icon);
+E_API void e_configure_registry_category_del(const char *path);
+E_API void e_configure_registry_call(const char *path, Evas_Object *parent, const char *params);
+E_API int  e_configure_registry_exists(const char *path);
+E_API void e_configure_registry_custom_desktop_exec_callback_set(void (*func) (const void *data, const char *params, Efreet_Desktop *desktop), const void *data);
 EINTERN void e_configure_init(void);
 
-extern EAPI Eina_List *e_configure_registry;
+extern E_API Eina_List *e_configure_registry;
 
 #endif
 #endif

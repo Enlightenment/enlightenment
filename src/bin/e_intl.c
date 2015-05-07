@@ -133,7 +133,7 @@ e_intl_post_shutdown(void)
  * - Add support of compound locales i.e. (en_US;zh_CN;C) ==Defer==
  * - Add Configuration for to-be-set environment variables
  */
-EAPI void
+E_API void
 e_intl_language_set(const char *lang)
 {
    int set_envars;
@@ -253,19 +253,19 @@ e_intl_language_set(const char *lang)
      }
 }
 
-EAPI const char *
+E_API const char *
 e_intl_language_get(void)
 {
    return _e_intl_language;
 }
 
-EAPI const char *
+E_API const char *
 e_intl_language_alias_get(void)
 {
    return _e_intl_language_alias;
 }
 
-EAPI Eina_List *
+E_API Eina_List *
 e_intl_language_list(void)
 {
    Eina_List *next;
@@ -311,7 +311,7 @@ _e_intl_language_list_find(Eina_List *language_list, char *language)
    return 0;
 }
 
-EAPI void
+E_API void
 e_intl_input_method_set(const char *imc_path)
 {
    if (!imc_path)
@@ -365,7 +365,7 @@ e_intl_input_method_set(const char *imc_path)
      }
 }
 
-EAPI Eina_List *
+E_API Eina_List *
 e_intl_input_method_list(void)
 {
    Eina_List *input_methods;
@@ -613,7 +613,7 @@ _e_intl_locale_alias_hash_get(void)
 /*
  * Not canonic, just gets the parts
  */
-EAPI E_Locale_Parts *
+E_API E_Locale_Parts *
 e_intl_locale_parts_get(const char *locale)
 {
    /* Parse Results */
@@ -756,7 +756,7 @@ e_intl_locale_parts_get(const char *locale)
    return locale_parts;
 }
 
-EAPI void
+E_API void
 e_intl_locale_parts_free(E_Locale_Parts *locale_parts)
 {
    if (locale_parts)
@@ -769,7 +769,7 @@ e_intl_locale_parts_free(E_Locale_Parts *locale_parts)
      }
 }
 
-EAPI char *
+E_API char *
 e_intl_locale_parts_combine(E_Locale_Parts *locale_parts, int mask)
 {
    int locale_size;
@@ -825,7 +825,7 @@ e_intl_locale_parts_combine(E_Locale_Parts *locale_parts, int mask)
    return locale;
 }
 
-EAPI char *
+E_API char *
 e_intl_locale_charset_canonic_get(const char *charset)
 {
    char charset_canonic[32];

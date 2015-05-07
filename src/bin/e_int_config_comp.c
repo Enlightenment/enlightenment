@@ -67,7 +67,7 @@ static Evas_Object *_advanced_create_widgets(E_Config_Dialog *cfd,
 static int          _advanced_apply_data(E_Config_Dialog *cfd,
                                       E_Config_Dialog_Data *cfdata);
 
-EAPI E_Config_Dialog *
+E_API E_Config_Dialog *
 e_int_config_comp(Evas_Object *parent EINA_UNUSED, const char *params EINA_UNUSED)
 {
    E_Config_Dialog *cfd;

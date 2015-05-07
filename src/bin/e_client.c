@@ -3,22 +3,22 @@
 static int _e_client_hooks_delete = 0;
 static int _e_client_hooks_walking = 0;
 
-EAPI int E_EVENT_CLIENT_ADD = -1;
-EAPI int E_EVENT_CLIENT_REMOVE = -1;
-EAPI int E_EVENT_CLIENT_ZONE_SET = -1;
-EAPI int E_EVENT_CLIENT_DESK_SET = -1;
-EAPI int E_EVENT_CLIENT_RESIZE = -1;
-EAPI int E_EVENT_CLIENT_MOVE = -1;
-EAPI int E_EVENT_CLIENT_SHOW = -1;
-EAPI int E_EVENT_CLIENT_HIDE = -1;
-EAPI int E_EVENT_CLIENT_ICONIFY = -1;
-EAPI int E_EVENT_CLIENT_UNICONIFY = -1;
-EAPI int E_EVENT_CLIENT_STACK = -1;
-EAPI int E_EVENT_CLIENT_FOCUS_IN = -1;
-EAPI int E_EVENT_CLIENT_FOCUS_OUT = -1;
-EAPI int E_EVENT_CLIENT_PROPERTY = -1;
-EAPI int E_EVENT_CLIENT_FULLSCREEN = -1;
-EAPI int E_EVENT_CLIENT_UNFULLSCREEN = -1;
+E_API int E_EVENT_CLIENT_ADD = -1;
+E_API int E_EVENT_CLIENT_REMOVE = -1;
+E_API int E_EVENT_CLIENT_ZONE_SET = -1;
+E_API int E_EVENT_CLIENT_DESK_SET = -1;
+E_API int E_EVENT_CLIENT_RESIZE = -1;
+E_API int E_EVENT_CLIENT_MOVE = -1;
+E_API int E_EVENT_CLIENT_SHOW = -1;
+E_API int E_EVENT_CLIENT_HIDE = -1;
+E_API int E_EVENT_CLIENT_ICONIFY = -1;
+E_API int E_EVENT_CLIENT_UNICONIFY = -1;
+E_API int E_EVENT_CLIENT_STACK = -1;
+E_API int E_EVENT_CLIENT_FOCUS_IN = -1;
+E_API int E_EVENT_CLIENT_FOCUS_OUT = -1;
+E_API int E_EVENT_CLIENT_PROPERTY = -1;
+E_API int E_EVENT_CLIENT_FULLSCREEN = -1;
+E_API int E_EVENT_CLIENT_UNFULLSCREEN = -1;
 
 static Eina_Hash *clients_hash = NULL; // pixmap->client
 
@@ -2425,7 +2425,7 @@ e_client_shutdown(void)
    warp_client = NULL;
 }
 
-EAPI E_Client *
+E_API E_Client *
 e_client_new(E_Pixmap *cp, int first_map, int internal)
 {
    E_Client *ec;
@@ -2554,7 +2554,7 @@ e_client_new(E_Pixmap *cp, int first_map, int internal)
    return ec;
 }
 
-EAPI Eina_Bool
+E_API Eina_Bool
 e_client_desk_window_profile_available_check(E_Client *ec, const char *profile)
 {
    int i;
@@ -2575,7 +2575,7 @@ e_client_desk_window_profile_available_check(E_Client *ec, const char *profile)
    return EINA_FALSE;
 }
 
-EAPI void
+E_API void
 e_client_desk_window_profile_wait_desk_set(E_Client *ec, E_Desk *desk)
 {
    E_OBJECT_CHECK(ec);
@@ -2609,7 +2609,7 @@ e_client_desk_window_profile_wait_desk_set(E_Client *ec, E_Desk *desk)
      e_object_ref(E_OBJECT(ec->e.state.profile.wait_desk));
 }
 
-EAPI void
+E_API void
 e_client_desk_set(E_Client *ec, E_Desk *desk)
 {
    E_Event_Client_Desk_Set *ev;
@@ -2691,26 +2691,26 @@ e_client_desk_set(E_Client *ec, E_Desk *desk)
    evas_object_smart_callback_call(ec->frame, "desk_change", ec);
 }
 
-EAPI Eina_Bool
+E_API Eina_Bool
 e_client_comp_grabbed_get(void)
 {
    return comp_grabbed;
 }
 
-EAPI E_Client *
+E_API E_Client *
 e_client_action_get(void)
 {
    return action_client;
 }
 
-EAPI E_Client *
+E_API E_Client *
 e_client_warping_get(void)
 {
    return warp_client;
 }
 
 
-EAPI Eina_List *
+E_API Eina_List *
 e_clients_immortal_list(void)
 {
    const Eina_List *l;
@@ -2727,7 +2727,7 @@ e_clients_immortal_list(void)
 
 //////////////////////////////////////////////////////////
 
-EAPI void
+E_API void
 e_client_mouse_in(E_Client *ec, int x, int y)
 {
    if (comp_grabbed) return;
@@ -2741,7 +2741,7 @@ e_client_mouse_in(E_Client *ec, int x, int y)
      e_focus_event_mouse_in(ec);
 }
 
-EAPI void
+E_API void
 e_client_mouse_out(E_Client *ec, int x, int y)
 {
    if (comp_grabbed) return;
@@ -2757,7 +2757,7 @@ e_client_mouse_out(E_Client *ec, int x, int y)
      e_focus_event_mouse_out(ec);
 }
 
-EAPI void
+E_API void
 e_client_mouse_wheel(E_Client *ec, Evas_Point *output, E_Binding_Event_Wheel *ev)
 {
    EINA_SAFETY_ON_NULL_RETURN(ec);
@@ -2768,7 +2768,7 @@ e_client_mouse_wheel(E_Client *ec, Evas_Point *output, E_Binding_Event_Wheel *ev
      e_bindings_wheel_event_handle(E_BINDING_CONTEXT_WINDOW, E_OBJECT(ec), ev);
 }
 
-EAPI void
+E_API void
 e_client_mouse_down(E_Client *ec, int button, Evas_Point *output, E_Binding_Event_Mouse_Button *ev)
 {
    Eina_Bool did_act = EINA_FALSE;
@@ -2830,7 +2830,7 @@ e_client_mouse_down(E_Client *ec, int button, Evas_Point *output, E_Binding_Even
    ec->mouse.current.my = output->y;
 }
 
-EAPI void
+E_API void
 e_client_mouse_up(E_Client *ec, int button, Evas_Point *output, E_Binding_Event_Mouse_Button* ev)
 {
    EINA_SAFETY_ON_NULL_RETURN(ec);
@@ -2871,7 +2871,7 @@ e_client_mouse_up(E_Client *ec, int button, Evas_Point *output, E_Binding_Event_
    ec->drag.start = 0;
 }
 
-EAPI void
+E_API void
 e_client_mouse_move(E_Client *ec, Evas_Point *output)
 {
    EINA_SAFETY_ON_NULL_RETURN(ec);
@@ -2974,7 +2974,7 @@ e_client_mouse_move(E_Client *ec, Evas_Point *output)
 }
 ///////////////////////////////////////////////////////
 
-EAPI void
+E_API void
 e_client_res_change_geometry_save(E_Client *ec)
 {
    E_OBJECT_CHECK(ec);
@@ -2992,7 +2992,7 @@ e_client_res_change_geometry_save(E_Client *ec)
    ec->pre_res_change.saved.h = ec->saved.h;
 }
 
-EAPI void
+E_API void
 e_client_res_change_geometry_restore(E_Client *ec)
 {
    struct
@@ -3064,7 +3064,7 @@ e_client_res_change_geometry_restore(E_Client *ec)
    memcpy(&ec->pre_res_change, &pre_res_change, sizeof(pre_res_change));
 }
 
-EAPI void
+E_API void
 e_client_zone_set(E_Client *ec, E_Zone *zone)
 {
    E_Event_Client_Zone_Set *ev;
@@ -3127,7 +3127,7 @@ e_client_zone_set(E_Client *ec, E_Zone *zone)
    ec->pre_res_change.valid = 0;
 }
 
-EAPI void
+E_API void
 e_client_geometry_get(E_Client *ec, int *x, int *y, int *w, int *h)
 {
    E_OBJECT_CHECK(ec);
@@ -3144,7 +3144,7 @@ e_client_geometry_get(E_Client *ec, int *x, int *y, int *w, int *h)
      }
 }
 
-EAPI E_Client *
+E_API E_Client *
 e_client_above_get(const E_Client *ec)
 {
    unsigned int x;
@@ -3171,7 +3171,7 @@ e_client_above_get(const E_Client *ec)
    return NULL;
 }
 
-EAPI E_Client *
+E_API E_Client *
 e_client_below_get(const E_Client *ec)
 {
    unsigned int x;
@@ -3205,7 +3205,7 @@ e_client_below_get(const E_Client *ec)
    return NULL;
 }
 
-EAPI E_Client *
+E_API E_Client *
 e_client_bottom_get(void)
 {
    unsigned int x;
@@ -3222,7 +3222,7 @@ e_client_bottom_get(void)
    return NULL;
 }
 
-EAPI E_Client *
+E_API E_Client *
 e_client_top_get(void)
 {
    unsigned int x;
@@ -3239,7 +3239,7 @@ e_client_top_get(void)
    return NULL;
 }
 
-EAPI unsigned int
+E_API unsigned int
 e_clients_count(void)
 {
    return eina_list_count(e_comp->clients);
@@ -3250,7 +3250,7 @@ e_clients_count(void)
  * Set a callback which will be called just prior to updating the
  * move coordinates for a border
  */
-EAPI void
+E_API void
 e_client_move_intercept_cb_set(E_Client *ec, E_Client_Move_Intercept_Cb cb)
 {
    ec->move_intercept_cb = cb;
@@ -3258,7 +3258,7 @@ e_client_move_intercept_cb_set(E_Client *ec, E_Client_Move_Intercept_Cb cb)
 
 ///////////////////////////////////////
 
-EAPI E_Client_Hook *
+E_API E_Client_Hook *
 e_client_hook_add(E_Client_Hook_Point hookpoint, E_Client_Hook_Cb func, const void *data)
 {
    E_Client_Hook *ch;
@@ -3273,7 +3273,7 @@ e_client_hook_add(E_Client_Hook_Point hookpoint, E_Client_Hook_Cb func, const vo
    return ch;
 }
 
-EAPI void
+E_API void
 e_client_hook_del(E_Client_Hook *ch)
 {
    ch->delete_me = 1;
@@ -3288,39 +3288,39 @@ e_client_hook_del(E_Client_Hook *ch)
 
 ///////////////////////////////////////
 
-EAPI void
+E_API void
 e_client_focus_latest_set(E_Client *ec)
 {
    focus_stack = eina_list_remove(focus_stack, ec);
    focus_stack = eina_list_prepend(focus_stack, ec);
 }
 
-EAPI void
+E_API void
 e_client_raise_latest_set(E_Client *ec)
 {
    raise_stack = eina_list_remove(raise_stack, ec);
    raise_stack = eina_list_prepend(raise_stack, ec);
 }
 
-EAPI Eina_Bool
+E_API Eina_Bool
 e_client_focus_track_enabled(void)
 {
    return !focus_track_frozen;
 }
 
-EAPI void
+E_API void
 e_client_focus_track_freeze(void)
 {
    focus_track_frozen++;
 }
 
-EAPI void
+E_API void
 e_client_focus_track_thaw(void)
 {
    focus_track_frozen--;
 }
 
-EAPI void
+E_API void
 e_client_refocus(void)
 {
    E_Client *ec;
@@ -3361,7 +3361,7 @@ e_client_refocus(void)
  * the last focused window should get focus).
  *
  */
-EAPI void
+E_API void
 e_client_focus_set_with_pointer(E_Client *ec)
 {
    E_OBJECT_CHECK(ec);
@@ -3487,7 +3487,7 @@ e_client_focused_set(E_Client *ec)
    _e_client_event_simple(ec, E_EVENT_CLIENT_FOCUS_IN);
 }
 
-EAPI void
+E_API void
 e_client_activate(E_Client *ec, Eina_Bool just_do_it)
 {
    E_OBJECT_CHECK(ec);
@@ -3526,31 +3526,31 @@ e_client_activate(E_Client *ec, Eina_Bool just_do_it)
      }
 }
 
-EAPI E_Client *
+E_API E_Client *
 e_client_focused_get(void)
 {
    return focused;
 }
 
-EAPI Eina_List *
+E_API Eina_List *
 e_client_focus_stack_get(void)
 {
    return focus_stack;
 }
 
-YOLO EAPI void
+YOLO E_API void
 e_client_focus_stack_set(Eina_List *l)
 {
    focus_stack = l;
 }
 
-EAPI Eina_List *
+E_API Eina_List *
 e_client_raise_stack_get(void)
 {
    return raise_stack;
 }
 
-EAPI Eina_List *
+E_API Eina_List *
 e_client_lost_windows_get(E_Zone *zone)
 {
    Eina_List *list = NULL;
@@ -3579,7 +3579,7 @@ e_client_lost_windows_get(E_Zone *zone)
 
 ///////////////////////////////////////
 
-EAPI void
+E_API void
 e_client_shade(E_Client *ec, E_Direction dir)
 {
    E_OBJECT_CHECK(ec);
@@ -3607,7 +3607,7 @@ e_client_shade(E_Client *ec, E_Direction dir)
    e_remember_update(ec);
 }
 
-EAPI void
+E_API void
 e_client_unshade(E_Client *ec, E_Direction dir)
 {
    E_OBJECT_CHECK(ec);
@@ -3635,7 +3635,7 @@ e_client_unshade(E_Client *ec, E_Direction dir)
 
 ///////////////////////////////////////
 
-EAPI void
+E_API void
 e_client_maximize(E_Client *ec, E_Maximize max)
 {
    E_OBJECT_CHECK(ec);
@@ -3697,7 +3697,7 @@ e_client_maximize(E_Client *ec, E_Maximize max)
    evas_object_smart_callback_call(ec->frame, "maximize_done", NULL);
 }
 
-EAPI void
+E_API void
 e_client_unmaximize(E_Client *ec, E_Maximize max)
 {
    E_OBJECT_CHECK(ec);
@@ -3807,7 +3807,7 @@ e_client_unmaximize(E_Client *ec, E_Maximize max)
    evas_object_smart_callback_call(ec->frame, "unmaximize_done", NULL);
 }
 
-EAPI void
+E_API void
 e_client_fullscreen(E_Client *ec, E_Fullscreen policy)
 {
    int x, y, w, h;
@@ -3887,7 +3887,7 @@ e_client_fullscreen(E_Client *ec, E_Fullscreen policy)
    e_remember_update(ec);
 }
 
-EAPI void
+E_API void
 e_client_unfullscreen(E_Client *ec)
 {
    E_OBJECT_CHECK(ec);
@@ -3928,7 +3928,7 @@ e_client_unfullscreen(E_Client *ec)
 ///////////////////////////////////////
 
 
-EAPI void
+E_API void
 e_client_iconify(E_Client *ec)
 {
    E_OBJECT_CHECK(ec);
@@ -3962,7 +3962,7 @@ e_client_iconify(E_Client *ec)
    e_remember_update(ec);
 }
 
-EAPI void
+E_API void
 e_client_uniconify(E_Client *ec)
 {
    E_Desk *desk;
@@ -3994,7 +3994,7 @@ e_client_uniconify(E_Client *ec)
 
 ///////////////////////////////////////
 
-EAPI void
+E_API void
 e_client_urgent_set(E_Client *ec, Eina_Bool urgent)
 {
    E_OBJECT_CHECK(ec);
@@ -4024,7 +4024,7 @@ e_client_urgent_set(E_Client *ec, Eina_Bool urgent)
 
 ///////////////////////////////////////
 
-EAPI void
+E_API void
 e_client_stick(E_Client *ec)
 {
    E_Desk *desk;
@@ -4058,7 +4058,7 @@ e_client_stick(E_Client *ec)
    e_remember_update(ec);
 }
 
-EAPI void
+E_API void
 e_client_unstick(E_Client *ec)
 {
    E_Desk *desk;
@@ -4093,7 +4093,7 @@ e_client_unstick(E_Client *ec)
    e_remember_update(ec);
 }
 
-EAPI void
+E_API void
 e_client_pinned_set(E_Client *ec, Eina_Bool set)
 {
    E_Layer layer;
@@ -4114,7 +4114,7 @@ e_client_pinned_set(E_Client *ec, Eina_Bool set)
 
 ///////////////////////////////////////
 
-EAPI Eina_Bool
+E_API Eina_Bool
 e_client_border_set(E_Client *ec, const char *name)
 {
    Eina_Stringshare *pborder;
@@ -4144,7 +4144,7 @@ e_client_border_set(E_Client *ec, const char *name)
 
 ///////////////////////////////////////
 
-EAPI void
+E_API void
 e_client_comp_hidden_set(E_Client *ec, Eina_Bool hidden)
 {
    E_OBJECT_CHECK(ec);
@@ -4159,7 +4159,7 @@ e_client_comp_hidden_set(E_Client *ec, Eina_Bool hidden)
 
 ///////////////////////////////////////
 
-EAPI void
+E_API void
 e_client_act_move_keyboard(E_Client *ec)
 {
    EINA_SAFETY_ON_NULL_RETURN(ec);
@@ -4180,7 +4180,7 @@ e_client_act_move_keyboard(E_Client *ec)
      action_handler_mouse = ecore_event_handler_add(ECORE_EVENT_MOUSE_BUTTON_DOWN, _e_client_move_mouse_down, NULL);
 }
 
-EAPI void
+E_API void
 e_client_act_resize_keyboard(E_Client *ec)
 {
    EINA_SAFETY_ON_NULL_RETURN(ec);
@@ -4201,7 +4201,7 @@ e_client_act_resize_keyboard(E_Client *ec)
      action_handler_mouse = ecore_event_handler_add(ECORE_EVENT_MOUSE_BUTTON_DOWN, _e_client_resize_mouse_down, NULL);
 }
 
-EAPI void
+E_API void
 e_client_act_move_begin(E_Client *ec, E_Binding_Event_Mouse_Button *ev)
 {
    E_OBJECT_CHECK(ec);
@@ -4223,7 +4223,7 @@ e_client_act_move_begin(E_Client *ec, E_Binding_Event_Mouse_Button *ev)
      }
 }
 
-EAPI void
+E_API void
 e_client_act_move_end(E_Client *ec, E_Binding_Event_Mouse_Button *ev EINA_UNUSED)
 {
    E_OBJECT_CHECK(ec);
@@ -4236,7 +4236,7 @@ e_client_act_move_end(E_Client *ec, E_Binding_Event_Mouse_Button *ev EINA_UNUSED
    _e_client_action_finish();
 }
 
-EAPI void
+E_API void
 e_client_act_resize_begin(E_Client *ec, E_Binding_Event_Mouse_Button *ev)
 {
    E_OBJECT_CHECK(ec);
@@ -4301,7 +4301,7 @@ e_client_act_resize_begin(E_Client *ec, E_Binding_Event_Mouse_Button *ev)
    e_pointer_mode_push(ec, ec->resize_mode);
 }
 
-EAPI void
+E_API void
 e_client_act_resize_end(E_Client *ec, E_Binding_Event_Mouse_Button *ev EINA_UNUSED)
 {
    E_OBJECT_CHECK(ec);
@@ -4317,7 +4317,7 @@ e_client_act_resize_end(E_Client *ec, E_Binding_Event_Mouse_Button *ev EINA_UNUS
    _e_client_action_finish();
 }
 
-EAPI void
+E_API void
 e_client_act_menu_begin(E_Client *ec, E_Binding_Event_Mouse_Button *ev, int key)
 {
    E_OBJECT_CHECK(ec);
@@ -4335,7 +4335,7 @@ e_client_act_menu_begin(E_Client *ec, E_Binding_Event_Mouse_Button *ev, int key)
      }
 }
 
-EAPI void
+E_API void
 e_client_act_close_begin(E_Client *ec)
 {
    E_OBJECT_CHECK(ec);
@@ -4353,7 +4353,7 @@ e_client_act_close_begin(E_Client *ec)
      }
 }
 
-EAPI void
+E_API void
 e_client_act_kill_begin(E_Client *ec)
 {
    E_OBJECT_CHECK(ec);
@@ -4374,7 +4374,7 @@ e_client_act_kill_begin(E_Client *ec)
 ////////////////////////////////////////////////
 
 
-EAPI Evas_Object *
+E_API Evas_Object *
 e_client_icon_add(E_Client *ec, Evas *evas)
 {
    Evas_Object *o;
@@ -4465,7 +4465,7 @@ e_client_icon_add(E_Client *ec, Evas *evas)
 
 ////////////////////////////////////////////
 
-EAPI void
+E_API void
 e_client_ping(E_Client *ec)
 {
    E_OBJECT_CHECK(ec);
@@ -4482,7 +4482,7 @@ e_client_ping(E_Client *ec)
 
 ////////////////////////////////////////////
 
-EAPI void
+E_API void
 e_client_move_cancel(void)
 {
    if (!ecmove) return;
@@ -4504,7 +4504,7 @@ e_client_move_cancel(void)
      _e_client_move_end(ecmove);
 }
 
-EAPI void
+E_API void
 e_client_resize_cancel(void)
 {
    if (!ecresize) return;
@@ -4526,7 +4526,7 @@ e_client_resize_cancel(void)
      _e_client_resize_end(ecresize);
 }
 
-EAPI Eina_Bool
+E_API Eina_Bool
 e_client_resize_begin(E_Client *ec)
 {
    if ((ec->shaded) || (ec->shading) ||
@@ -4555,7 +4555,7 @@ error:
 
 ////////////////////////////////////////////
 
-EAPI void
+E_API void
 e_client_frame_recalc(E_Client *ec)
 {
    EINA_SAFETY_ON_NULL_RETURN(ec);
@@ -4565,7 +4565,7 @@ e_client_frame_recalc(E_Client *ec)
 
 ////////////////////////////////////////////
 
-EAPI void
+E_API void
 e_client_signal_move_begin(E_Client *ec, const char *sig, const char *src EINA_UNUSED)
 {
    E_OBJECT_CHECK(ec);
@@ -4579,7 +4579,7 @@ e_client_signal_move_begin(E_Client *ec, const char *sig, const char *src EINA_U
    _e_client_moveinfo_gather(ec, sig);
 }
 
-EAPI void
+E_API void
 e_client_signal_move_end(E_Client *ec, const char *sig EINA_UNUSED, const char *src EINA_UNUSED)
 {
    E_OBJECT_CHECK(ec);
@@ -4591,7 +4591,7 @@ e_client_signal_move_end(E_Client *ec, const char *sig EINA_UNUSED, const char *
    e_zone_flip_coords_handle(ec->zone, -1, -1);
 }
 
-EAPI void
+E_API void
 e_client_signal_resize_begin(E_Client *ec, const char *dir, const char *sig, const char *src EINA_UNUSED)
 {
    int resize_mode = E_POINTER_RESIZE_BR;
@@ -4639,7 +4639,7 @@ e_client_signal_resize_begin(E_Client *ec, const char *dir, const char *sig, con
    e_pointer_mode_push(ec, ec->resize_mode);
 }
 
-EAPI void
+E_API void
 e_client_signal_resize_end(E_Client *ec, const char *dir EINA_UNUSED, const char *sig EINA_UNUSED, const char *src EINA_UNUSED)
 {
    E_OBJECT_CHECK(ec);
@@ -4653,7 +4653,7 @@ e_client_signal_resize_end(E_Client *ec, const char *dir EINA_UNUSED, const char
 
 ////////////////////////////////////////////
 
-EAPI void
+E_API void
 e_client_resize_limit(E_Client *ec, int *w, int *h)
 {
    double a;
@@ -4750,7 +4750,7 @@ e_client_resize_limit(E_Client *ec, int *w, int *h)
 
 
 
-EAPI E_Client *
+E_API E_Client *
 e_client_under_pointer_get(E_Desk *desk, E_Client *exclude)
 {
    int x, y;
@@ -4782,7 +4782,7 @@ e_client_under_pointer_get(E_Desk *desk, E_Client *exclude)
 
 ////////////////////////////////////////////
 
-EAPI int
+E_API int
 e_client_pointer_warp_to_center_now(E_Client *ec)
 {
    if (e_config->disable_all_pointer_warps) return 0;
@@ -4800,7 +4800,7 @@ e_client_pointer_warp_to_center_now(E_Client *ec)
    return 1;
 }
 
-EAPI int
+E_API int
 e_client_pointer_warp_to_center(E_Client *ec)
 {
    int x, y;
@@ -4849,7 +4849,7 @@ e_client_pointer_warp_to_center(E_Client *ec)
 
 ////////////////////////////////////////////
 
-EAPI void
+E_API void
 e_client_redirected_set(E_Client *ec, Eina_Bool set)
 {
    EINA_SAFETY_ON_NULL_RETURN(ec);
@@ -4871,7 +4871,7 @@ e_client_redirected_set(E_Client *ec, Eina_Bool set)
 
 ////////////////////////////////////////////
 
-EAPI Eina_Bool
+E_API Eina_Bool
 e_client_is_stacking(const E_Client *ec)
 {
    return e_comp->layers[e_comp_canvas_layer_map(ec->layer)].obj == ec->frame;
@@ -4879,7 +4879,7 @@ e_client_is_stacking(const E_Client *ec)
 
 ////////////////////////////////////////////
 
-EAPI void
+E_API void
 e_client_layout_cb_set(E_Client_Layout_Cb cb)
 {
    if (_e_client_layout_cb && cb)

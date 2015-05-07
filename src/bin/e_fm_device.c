@@ -119,7 +119,7 @@ _e_fm2_device_volume_setup(E_Volume *v)
    E_FREE(size);
 }
 
-EAPI void
+E_API void
 e_fm2_device_storage_add(E_Storage *s)
 {
    Eina_List *l;
@@ -185,7 +185,7 @@ e_fm2_device_storage_add(E_Storage *s)
      }
 }
 
-EAPI void
+E_API void
 e_fm2_device_storage_del(E_Storage *s)
 {
 //   printf("STO- %s\n", s->udi);
@@ -193,7 +193,7 @@ e_fm2_device_storage_del(E_Storage *s)
    _e_fm_shared_device_storage_free(s);
 }
 
-EAPI E_Storage *
+E_API E_Storage *
 e_fm2_device_storage_find(const char *udi)
 {
    Eina_List *l;
@@ -207,7 +207,7 @@ e_fm2_device_storage_find(const char *udi)
    return NULL;
 }
 
-EAPI void
+E_API void
 e_fm2_device_volume_add(E_Volume *v)
 {
    E_Storage *s;
@@ -280,7 +280,7 @@ e_fm2_device_volume_add(E_Volume *v)
    if (v->storage) _e_fm2_device_volume_setup(v);
 }
 
-EAPI void
+E_API void
 e_fm2_device_volume_del(E_Volume *v)
 {
    E_Fm2_Mount *m;
@@ -376,7 +376,7 @@ _e_fm2_volume_erase(E_Volume *v)
    _e_fm2_file_force_update(buf);
 }
 
-EAPI E_Volume *
+E_API E_Volume *
 e_fm2_device_volume_find(const char *udi)
 {
    Eina_List *l;
@@ -393,7 +393,7 @@ e_fm2_device_volume_find(const char *udi)
    return NULL;
 }
 
-EAPI E_Volume *
+E_API E_Volume *
 e_fm2_device_volume_find_fast(const char *udi)
 {
    Eina_List *l;
@@ -407,7 +407,7 @@ e_fm2_device_volume_find_fast(const char *udi)
    return NULL;
 }
 
-EAPI const char *
+E_API const char *
 e_fm2_device_volume_mountpoint_get(E_Volume *v)
 {
    char buf[PATH_MAX] = {0};
@@ -436,7 +436,7 @@ e_fm2_device_volume_mountpoint_get(E_Volume *v)
    return eina_stringshare_add(buf);
 }
 
-EAPI E_Fm2_Device_Mount_Op *
+E_API E_Fm2_Device_Mount_Op *
 e_fm2_device_mount_op_add(E_Fm2_Mount *m, char *args, size_t size, size_t length)
 {
    E_Fm2_Device_Mount_Op *mop;
@@ -446,7 +446,7 @@ e_fm2_device_mount_op_add(E_Fm2_Mount *m, char *args, size_t size, size_t length
    return mop;
 }
 
-EAPI void
+E_API void
 e_fm2_device_mount_add(E_Volume *v,
                        const char *mountpoint)
 {
@@ -458,7 +458,7 @@ e_fm2_device_mount_add(E_Volume *v,
 //   printf("MOUNT %s %s\n", v->udi, v->mount_point);
 }
 
-EAPI void
+E_API void
 e_fm2_device_mount_del(E_Volume *v)
 {
    E_Fm2_Mount *m;
@@ -477,7 +477,7 @@ e_fm2_device_mount_del(E_Volume *v)
      }
 }
 
-EAPI void
+E_API void
 e_fm2_device_mount_free(E_Fm2_Mount *m)
 {
    if (!m) return;
@@ -488,7 +488,7 @@ e_fm2_device_mount_free(E_Fm2_Mount *m)
    free(m);
 }
 
-EAPI E_Fm2_Mount *
+E_API E_Fm2_Mount *
 e_fm2_device_mount_find(const char *path)
 {
    Eina_List *l;
@@ -507,7 +507,7 @@ e_fm2_device_mount_find(const char *path)
    return NULL;
 }
 
-EAPI E_Fm2_Mount *
+E_API E_Fm2_Mount *
 e_fm2_device_mount(E_Volume *v,
                    Ecore_Cb mount_ok,
                    Ecore_Cb mount_fail,
@@ -547,7 +547,7 @@ e_fm2_device_mount(E_Volume *v,
    return m;
 }
 
-EAPI void
+E_API void
 e_fm2_device_mount_fail(E_Volume *v)
 {
    E_Fm2_Mount *m;
@@ -566,7 +566,7 @@ e_fm2_device_mount_fail(E_Volume *v)
      }
 }
 
-EAPI void
+E_API void
 e_fm2_device_unmount(E_Fm2_Mount *m)
 {
    E_Volume *v;
@@ -587,7 +587,7 @@ e_fm2_device_unmount(E_Fm2_Mount *m)
      }
 }
 
-EAPI void
+E_API void
 e_fm2_device_unmount_fail(E_Volume *v)
 {
    Eina_List *l;
@@ -688,7 +688,7 @@ _e_fm2_device_check_desktop_icons_cb(void *data, Ecore_Thread *eth EINA_UNUSED)
    E_FREE_LIST(data, free);
 }
 
-EAPI void
+E_API void
 e_fm2_device_show_desktop_icons(void)
 {
    Eina_List *l;
@@ -726,7 +726,7 @@ e_fm2_device_show_desktop_icons(void)
      }
 }
 
-EAPI void
+E_API void
 e_fm2_device_hide_desktop_icons(void)
 {
    Eina_List *l;
@@ -759,7 +759,7 @@ e_fm2_device_hide_desktop_icons(void)
      }
 }
 
-EAPI void
+E_API void
 e_fm2_device_check_desktop_icons(void)
 {
    Eina_List *l, *thd = NULL;
@@ -782,7 +782,7 @@ e_fm2_device_check_desktop_icons(void)
    _check_vols = ecore_thread_run(_e_fm2_device_check_desktop_icons_cb, _e_fm2_device_check_desktop_icons_cb_end, _e_fm2_device_check_desktop_icons_cb_end, thd);
 }
 
-EAPI Eina_List *
+E_API Eina_List *
 e_fm2_device_volume_list_get(void)
 {
    return _e_vols;

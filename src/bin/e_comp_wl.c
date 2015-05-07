@@ -2468,7 +2468,7 @@ disp_err:
  *
  * @returns true on success, false if initialization failed.
  */
-EAPI Eina_Bool
+E_API Eina_Bool
 e_comp_wl_init(void)
 {
    /* set gl available if we have ecore_evas support */
@@ -2544,7 +2544,7 @@ e_comp_wl_init(void)
  *
  * @returns the corresponding Wayland signal
  */
-EAPI struct wl_signal
+E_API struct wl_signal
 e_comp_wl_surface_create_signal_get(void)
 {
    return e_comp->wl_comp_data->signals.surface.create;
@@ -2697,7 +2697,7 @@ e_comp_wl_buffer_reference(E_Comp_Wl_Buffer_Ref *ref, E_Comp_Wl_Buffer *buffer)
  * @param resource that owns the desired buffer
  * @returns a new E_Comp_Wl_Buffer object
  */
-EAPI E_Comp_Wl_Buffer *
+E_API E_Comp_Wl_Buffer *
 e_comp_wl_buffer_get(struct wl_resource *resource)
 {
    E_Comp_Wl_Buffer *buffer;
@@ -2728,7 +2728,7 @@ e_comp_wl_buffer_get(struct wl_resource *resource)
  *
  * @returns time in seconds.
  */
-EAPI double
+E_API double
 e_comp_wl_idle_time_get(void)
 {
    return (ecore_loop_time_get() - _last_event_time);
@@ -2770,7 +2770,7 @@ _e_comp_wl_output_get(Eina_List *outputs, const char *id)
  *
  * @returns True if a display output object could be added or updated
  */
-EAPI Eina_Bool
+E_API Eina_Bool
 e_comp_wl_output_init(const char *id, const char *make, const char *model,
                       int x, int y, int w, int h, int pw, int ph,
                       unsigned int refresh, unsigned int subpixel,

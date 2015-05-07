@@ -15,7 +15,7 @@ struct _E_Import_Dialog
    E_Dialog             *dia;
 };
 
-EAPI E_Import_Dialog *e_import_dialog_show(Evas_Object *parent, const char *dev, const char *path, Ecore_End_Cb ok, Ecore_Cb cancel);
+E_API E_Import_Dialog *e_import_dialog_show(Evas_Object *parent, const char *dev, const char *path, Ecore_End_Cb ok, Ecore_Cb cancel);
 
 #endif
 #endif

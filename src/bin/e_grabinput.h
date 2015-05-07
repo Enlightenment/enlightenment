@@ -14,13 +14,13 @@ typedef enum _E_Focus_Method
 
 EINTERN int         e_grabinput_init(void);
 EINTERN int         e_grabinput_shutdown(void);
-EAPI int            e_grabinput_get(Ecore_Window mouse_win, int confine_mouse, Ecore_Window key_win);
-EAPI void           e_grabinput_release(Ecore_Window mouse_win, Ecore_Window key_win);
-EAPI void           e_grabinput_focus(Ecore_Window win, E_Focus_Method method);
-EAPI double         e_grabinput_last_focus_time_get(void);
-EAPI Ecore_Window e_grabinput_last_focus_win_get(void);
-EAPI Ecore_Window e_grabinput_key_win_get(void);
-EAPI Ecore_Window e_grabinput_mouse_win_get(void);
+E_API int            e_grabinput_get(Ecore_Window mouse_win, int confine_mouse, Ecore_Window key_win);
+E_API void           e_grabinput_release(Ecore_Window mouse_win, Ecore_Window key_win);
+E_API void           e_grabinput_focus(Ecore_Window win, E_Focus_Method method);
+E_API double         e_grabinput_last_focus_time_get(void);
+E_API Ecore_Window e_grabinput_last_focus_win_get(void);
+E_API Ecore_Window e_grabinput_key_win_get(void);
+E_API Ecore_Window e_grabinput_mouse_win_get(void);
 
 #endif
 #endif

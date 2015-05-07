@@ -337,7 +337,7 @@ layout_updated_cb(void *data, const Eldbus_Message *msg EINA_UNUSED)
    layout_update(ctx);
 }
 
-EAPI E_DBusMenu_Ctx *
+E_API E_DBusMenu_Ctx *
 e_dbusmenu_load(Eldbus_Connection *conn, const char *bus, const char *path, const void *data)
 {
    Eldbus_Object *obj;
@@ -371,7 +371,7 @@ e_dbusmenu_load(Eldbus_Connection *conn, const char *bus, const char *path, cons
    return ctx;
 }
 
-EAPI void
+E_API void
 e_dbusmenu_event_send(E_DBusMenu_Item *m, E_DBusMenu_Item_Event event)
 {
    Eldbus_Message *msg;
@@ -397,7 +397,7 @@ e_dbusmenu_event_send(E_DBusMenu_Item *m, E_DBusMenu_Item_Event event)
    eldbus_proxy_send(m->ctx->proxy, msg, NULL, NULL, -1);
 }
 
-EAPI void
+E_API void
 e_dbusmenu_unload(E_DBusMenu_Ctx *ctx)
 {
    Eldbus_Connection *conn;
@@ -414,13 +414,13 @@ e_dbusmenu_unload(E_DBusMenu_Ctx *ctx)
    free(ctx);
 }
 
-EAPI void
+E_API void
 e_dbusmenu_pop_request_cb_set(E_DBusMenu_Ctx *ctx, E_DBusMenu_Pop_Request_Cb cb)
 {
    ctx->pop_request_cb = cb;
 }
 
-EAPI void
+E_API void
 e_dbusmenu_update_cb_set(E_DBusMenu_Ctx *ctx, E_DBusMenu_Update_Cb cb)
 {
    ctx->update_cb = cb;

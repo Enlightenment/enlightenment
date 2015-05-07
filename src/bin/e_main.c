@@ -105,14 +105,14 @@ static Ecore_Idle_Enterer *_idle_flush = NULL;
 static Ecore_Event_Handler *mod_init_end = NULL;
 
 /* external variables */
-EAPI Eina_Bool e_precache_end = EINA_FALSE;
-EAPI Eina_Bool x_fatal = EINA_FALSE;
-EAPI Eina_Bool good = EINA_FALSE;
-EAPI Eina_Bool evil = EINA_FALSE;
-EAPI Eina_Bool starting = EINA_TRUE;
-EAPI Eina_Bool stopping = EINA_FALSE;
-EAPI Eina_Bool restart = EINA_FALSE;
-EAPI Eina_Bool e_nopause = EINA_FALSE;
+E_API Eina_Bool e_precache_end = EINA_FALSE;
+E_API Eina_Bool x_fatal = EINA_FALSE;
+E_API Eina_Bool good = EINA_FALSE;
+E_API Eina_Bool evil = EINA_FALSE;
+E_API Eina_Bool starting = EINA_TRUE;
+E_API Eina_Bool stopping = EINA_FALSE;
+E_API Eina_Bool restart = EINA_FALSE;
+E_API Eina_Bool e_nopause = EINA_FALSE;
 EINTERN const char *e_first_frame = NULL;
 EINTERN double e_first_frame_start_time = -1;
 
@@ -1065,7 +1065,7 @@ main(int argc, char **argv)
    return 0;
 }
 
-EAPI double
+E_API double
 e_main_ts(const char *str)
 {
    double ret;

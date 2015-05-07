@@ -100,7 +100,7 @@ e_bindings_shutdown(void)
    return 1;
 }
 
-EAPI int
+E_API int
 e_bindings_modifiers_to_ecore_convert(E_Binding_Modifier modifiers)
 {
    int mod = 0;
@@ -116,7 +116,7 @@ e_bindings_modifiers_to_ecore_convert(E_Binding_Modifier modifiers)
    return mod;
 }
 
-EAPI void
+E_API void
 e_bindings_ecore_event_mouse_wheel_convert(const Ecore_Event_Mouse_Wheel *ev, E_Binding_Event_Wheel *event)
 {
    memset(event, 0, sizeof(E_Binding_Event_Wheel));
@@ -128,7 +128,7 @@ e_bindings_ecore_event_mouse_wheel_convert(const Ecore_Event_Mouse_Wheel *ev, E_
    event->modifiers = _e_bindings_modifiers(ev->modifiers);
 }
 
-EAPI void
+E_API void
 e_bindings_ecore_event_mouse_button_convert(const Ecore_Event_Mouse_Button *ev, E_Binding_Event_Mouse_Button *event)
 {
    memset(event, 0, sizeof(E_Binding_Event_Mouse_Button));
@@ -142,7 +142,7 @@ e_bindings_ecore_event_mouse_button_convert(const Ecore_Event_Mouse_Button *ev, 
    event->triple_click = !!ev->triple_click;
 }
 
-EAPI void
+E_API void
 e_bindings_evas_event_mouse_wheel_convert(const Evas_Event_Mouse_Wheel *ev, E_Binding_Event_Wheel *event)
 {
    memset(event, 0, sizeof(E_Binding_Event_Wheel));
@@ -177,7 +177,7 @@ e_bindings_evas_event_mouse_wheel_convert(const Evas_Event_Mouse_Wheel *ev, E_Bi
 */
 }
 
-EAPI int
+E_API int
 e_bindings_evas_modifiers_convert(Evas_Modifier *modifiers)
 {
    int mod = 0;
@@ -191,7 +191,7 @@ e_bindings_evas_modifiers_convert(Evas_Modifier *modifiers)
    return mod;
 }
 
-EAPI void
+E_API void
 e_bindings_evas_event_mouse_button_convert(const Evas_Event_Mouse_Down *ev, E_Binding_Event_Mouse_Button *event)
 {
    memset(event, 0, sizeof(E_Binding_Event_Mouse_Button));
@@ -226,7 +226,7 @@ e_bindings_evas_event_mouse_button_convert(const Evas_Event_Mouse_Down *ev, E_Bi
 */
 }
 
-EAPI void
+E_API void
 e_bindings_signal_reset(void)
 {
    E_Config_Binding_Signal *ebs;
@@ -255,7 +255,7 @@ e_bindings_signal_reset(void)
      }
 }
 
-EAPI void
+E_API void
 e_bindings_acpi_reset(void)
 {
    E_Config_Binding_Acpi *eba;
@@ -268,7 +268,7 @@ e_bindings_acpi_reset(void)
                          eba->action, eba->params);
 }
 
-EAPI void
+E_API void
 e_bindings_wheel_reset(void)
 {
    E_Config_Binding_Wheel *ebw;
@@ -281,7 +281,7 @@ e_bindings_wheel_reset(void)
                           ebw->any_mod, ebw->action, ebw->params);
 }
 
-EAPI void
+E_API void
 e_bindings_edge_reset(void)
 {
    E_Config_Binding_Edge *ebe;
@@ -294,7 +294,7 @@ e_bindings_edge_reset(void)
                          ebe->any_mod, ebe->action, ebe->params, ebe->delay);
 }
 
-EAPI void
+E_API void
 e_bindings_mouse_reset(void)
 {
    E_Config_Binding_Mouse *ebm;
@@ -307,7 +307,7 @@ e_bindings_mouse_reset(void)
                           ebm->any_mod, ebm->action, ebm->params);
 }
 
-EAPI void
+E_API void
 e_bindings_key_reset(void)
 {
    E_Config_Binding_Key *ebk;
@@ -322,7 +322,7 @@ e_bindings_key_reset(void)
    e_comp_canvas_keys_grab();
 }
 
-EAPI void
+E_API void
 e_bindings_reset(void)
 {
    e_bindings_signal_reset();
@@ -332,7 +332,7 @@ e_bindings_reset(void)
    e_bindings_key_reset();
 }
 
-EAPI void
+E_API void
 e_bindings_mouse_add(E_Binding_Context ctxt, int button, E_Binding_Modifier mod, int any_mod, const char *action, const char *params)
 {
    E_Binding_Mouse *binding;
@@ -347,7 +347,7 @@ e_bindings_mouse_add(E_Binding_Context ctxt, int button, E_Binding_Modifier mod,
    mouse_bindings = eina_list_append(mouse_bindings, binding);
 }
 
-EAPI void
+E_API void
 e_bindings_mouse_del(E_Binding_Context ctxt, int button, E_Binding_Modifier mod, int any_mod, const char *action, const char *params)
 {
    E_Binding_Mouse *binding;
@@ -371,7 +371,7 @@ e_bindings_mouse_del(E_Binding_Context ctxt, int button, E_Binding_Modifier mod,
      }
 }
 
-EAPI void
+E_API void
 e_bindings_mouse_grab(E_Binding_Context ctxt, Ecore_X_Window win)
 {
    E_Binding_Mouse *binding;
@@ -396,7 +396,7 @@ e_bindings_mouse_grab(E_Binding_Context ctxt, Ecore_X_Window win)
 #endif
 }
 
-EAPI void
+E_API void
 e_bindings_mouse_ungrab(E_Binding_Context ctxt, Ecore_X_Window win)
 {
    E_Binding_Mouse *binding;
@@ -417,7 +417,7 @@ e_bindings_mouse_ungrab(E_Binding_Context ctxt, Ecore_X_Window win)
 #endif
 }
 
-EAPI E_Action *
+E_API E_Action *
 e_bindings_mouse_button_find(E_Binding_Context ctxt, E_Binding_Event_Mouse_Button *ev, E_Binding_Mouse **bind_ret)
 {
    E_Binding_Mouse *binding;
@@ -441,7 +441,7 @@ e_bindings_mouse_button_find(E_Binding_Context ctxt, E_Binding_Event_Mouse_Butto
    return NULL;
 }
 
-EAPI E_Action *
+E_API E_Action *
 e_bindings_mouse_down_event_handle(E_Binding_Context ctxt, E_Object *obj, E_Binding_Event_Mouse_Button *ev)
 {
    E_Action *act;
@@ -459,7 +459,7 @@ e_bindings_mouse_down_event_handle(E_Binding_Context ctxt, E_Object *obj, E_Bind
    return act;
 }
 
-EAPI E_Action *
+E_API E_Action *
 e_bindings_mouse_down_evas_event_handle(E_Binding_Context ctxt, E_Object *obj, Evas_Event_Mouse_Down *ev)
 {
    E_Binding_Event_Mouse_Button event;
@@ -469,7 +469,7 @@ e_bindings_mouse_down_evas_event_handle(E_Binding_Context ctxt, E_Object *obj, E
    return e_bindings_mouse_down_event_handle(ctxt, obj, &event);
 }
 
-EAPI E_Action *
+E_API E_Action *
 e_bindings_mouse_down_ecore_event_handle(E_Binding_Context ctxt, E_Object *obj, Ecore_Event_Mouse_Button *ev)
 {
    E_Binding_Event_Mouse_Button event;
@@ -479,7 +479,7 @@ e_bindings_mouse_down_ecore_event_handle(E_Binding_Context ctxt, E_Object *obj, 
    return e_bindings_mouse_down_event_handle(ctxt, obj, &event);
 }
 
-EAPI E_Action *
+E_API E_Action *
 e_bindings_mouse_up_event_handle(E_Binding_Context ctxt, E_Object *obj, E_Binding_Event_Mouse_Button *ev)
 {
    E_Action *act;
@@ -497,7 +497,7 @@ e_bindings_mouse_up_event_handle(E_Binding_Context ctxt, E_Object *obj, E_Bindin
    return act;
 }
 
-EAPI E_Action *
+E_API E_Action *
 e_bindings_mouse_up_evas_event_handle(E_Binding_Context ctxt, E_Object *obj, Evas_Event_Mouse_Up *ev)
 {
    E_Binding_Event_Mouse_Button event;
@@ -507,7 +507,7 @@ e_bindings_mouse_up_evas_event_handle(E_Binding_Context ctxt, E_Object *obj, Eva
    return e_bindings_mouse_up_event_handle(ctxt, obj, &event);
 }
 
-EAPI E_Action *
+E_API E_Action *
 e_bindings_mouse_up_ecore_event_handle(E_Binding_Context ctxt, E_Object *obj, Ecore_Event_Mouse_Button *ev)
 {
    E_Binding_Event_Mouse_Button event;
@@ -517,7 +517,7 @@ e_bindings_mouse_up_ecore_event_handle(E_Binding_Context ctxt, E_Object *obj, Ec
    return e_bindings_mouse_up_event_handle(ctxt, obj, &event);
 }
 
-EAPI void
+E_API void
 e_bindings_key_add(E_Binding_Context ctxt, const char *key, E_Binding_Modifier mod, int any_mod, const char *action, const char *params)
 {
    E_Binding_Key *binding;
@@ -532,7 +532,7 @@ e_bindings_key_add(E_Binding_Context ctxt, const char *key, E_Binding_Modifier m
    key_bindings = eina_list_append(key_bindings, binding);
 }
 
-EAPI E_Binding_Key *
+E_API E_Binding_Key *
 e_bindings_key_get(const char *action)
 {
    E_Binding_Key *binding;
@@ -546,7 +546,7 @@ e_bindings_key_get(const char *action)
    return NULL;
 }
 
-EAPI E_Binding_Key *
+E_API E_Binding_Key *
 e_bindings_key_find(const char *key, E_Binding_Modifier mod, int any_mod)
 {
    E_Binding_Key *binding;
@@ -564,7 +564,7 @@ e_bindings_key_find(const char *key, E_Binding_Modifier mod, int any_mod)
    return NULL;
 }
 
-EAPI void
+E_API void
 e_bindings_key_del(E_Binding_Context ctxt, const char *key, E_Binding_Modifier mod, int any_mod, const char *action, const char *params)
 {
    E_Binding_Key *binding;
@@ -588,7 +588,7 @@ e_bindings_key_del(E_Binding_Context ctxt, const char *key, E_Binding_Modifier m
      }
 }
 
-EAPI void
+E_API void
 e_bindings_key_grab(E_Binding_Context ctxt, Ecore_X_Window win)
 {
    E_Binding_Key *binding;
@@ -612,7 +612,7 @@ e_bindings_key_grab(E_Binding_Context ctxt, Ecore_X_Window win)
 #endif
 }
 
-EAPI void
+E_API void
 e_bindings_key_ungrab(E_Binding_Context ctxt, Ecore_X_Window win)
 {
    E_Binding_Key *binding;
@@ -636,7 +636,7 @@ e_bindings_key_ungrab(E_Binding_Context ctxt, Ecore_X_Window win)
 #endif
 }
 
-EAPI E_Action *
+E_API E_Action *
 e_bindings_key_down_event_handle(E_Binding_Context ctxt, E_Object *obj, Ecore_Event_Key *ev)
 {
    E_Binding_Modifier mod = 0;
@@ -669,7 +669,7 @@ e_bindings_key_down_event_handle(E_Binding_Context ctxt, E_Object *obj, Ecore_Ev
    return NULL;
 }
 
-EAPI E_Action *
+E_API E_Action *
 e_bindings_key_up_event_handle(E_Binding_Context ctxt, E_Object *obj, Ecore_Event_Key *ev)
 {
    E_Binding_Modifier mod = 0;
@@ -702,7 +702,7 @@ e_bindings_key_up_event_handle(E_Binding_Context ctxt, E_Object *obj, Ecore_Even
    return NULL;
 }
 
-EAPI E_Action *
+E_API E_Action *
 e_bindings_key_down_event_find(E_Binding_Context ctxt, Ecore_Event_Key *ev)
 {
    E_Binding_Modifier mod = 0;
@@ -727,7 +727,7 @@ e_bindings_key_down_event_find(E_Binding_Context ctxt, Ecore_Event_Key *ev)
    return NULL;
 }
 
-EAPI E_Action *
+E_API E_Action *
 e_bindings_key_up_event_find(E_Binding_Context ctxt, Ecore_Event_Key *ev)
 {
    E_Binding_Modifier mod = 0;
@@ -752,7 +752,7 @@ e_bindings_key_up_event_find(E_Binding_Context ctxt, Ecore_Event_Key *ev)
    return NULL;
 }
 
-EAPI Eina_Bool
+E_API Eina_Bool
 e_bindings_key_allowed(const char *key)
 {
    if (!key) return EINA_FALSE;
@@ -779,7 +779,7 @@ e_bindings_key_allowed(const char *key)
 }
 
 
-EAPI void
+E_API void
 e_bindings_edge_add(E_Binding_Context ctxt, E_Zone_Edge edge, Eina_Bool drag_only, E_Binding_Modifier mod, int any_mod, const char *action, const char *params, float delay)
 {
    E_Binding_Edge *binding;
@@ -798,7 +798,7 @@ e_bindings_edge_add(E_Binding_Context ctxt, E_Zone_Edge edge, Eina_Bool drag_onl
    e_zone_edge_new(edge);
 }
 
-EAPI Eina_Bool
+E_API Eina_Bool
 e_bindings_edge_flippable_get(E_Zone_Edge edge)
 {
    E_Binding_Edge *binding;
@@ -816,7 +816,7 @@ e_bindings_edge_flippable_get(E_Zone_Edge edge)
    return EINA_FALSE;
 }
 
-EAPI Eina_Bool
+E_API Eina_Bool
 e_bindings_edge_non_flippable_get(E_Zone_Edge edge)
 {
    E_Binding_Edge *binding;
@@ -835,7 +835,7 @@ e_bindings_edge_non_flippable_get(E_Zone_Edge edge)
    return EINA_FALSE;
 }
 
-EAPI E_Binding_Edge *
+E_API E_Binding_Edge *
 e_bindings_edge_get(const char *action, E_Zone_Edge edge, int click)
 {
    E_Binding_Edge *binding;
@@ -853,7 +853,7 @@ e_bindings_edge_get(const char *action, E_Zone_Edge edge, int click)
    return NULL;
 }
 
-EAPI void
+E_API void
 e_bindings_edge_del(E_Binding_Context ctxt, E_Zone_Edge edge, Eina_Bool drag_only, E_Binding_Modifier mod, int any_mod, const char *action, const char *params, float delay)
 {
    E_Binding_Edge *binding;
@@ -885,7 +885,7 @@ e_bindings_edge_del(E_Binding_Context ctxt, E_Zone_Edge edge, Eina_Bool drag_onl
      e_zone_edge_free(edge);
 }
 
-EAPI E_Action *
+E_API E_Action *
 e_bindings_edge_in_event_handle(E_Binding_Context ctxt, E_Object *obj, E_Event_Zone_Edge *ev)
 {
    E_Binding_Modifier mod = 0;
@@ -935,7 +935,7 @@ e_bindings_edge_in_event_handle(E_Binding_Context ctxt, E_Object *obj, E_Event_Z
    return act;
 }
 
-EAPI E_Action *
+E_API E_Action *
 e_bindings_edge_out_event_handle(E_Binding_Context ctxt, E_Object *obj, E_Event_Zone_Edge *ev)
 {
    E_Binding_Modifier mod = 0;
@@ -977,7 +977,7 @@ e_bindings_edge_out_event_handle(E_Binding_Context ctxt, E_Object *obj, E_Event_
    return act;
 }
 
-EAPI E_Action *
+E_API E_Action *
 e_bindings_edge_down_event_handle(E_Binding_Context ctxt, E_Object *obj, E_Event_Zone_Edge *ev)
 {
    E_Binding_Modifier mod = 0;
@@ -1014,7 +1014,7 @@ e_bindings_edge_down_event_handle(E_Binding_Context ctxt, E_Object *obj, E_Event
    return act;
 }
 
-EAPI E_Action *
+E_API E_Action *
 e_bindings_edge_up_event_handle(E_Binding_Context ctxt, E_Object *obj, E_Event_Zone_Edge *ev)
 {
    E_Binding_Modifier mod = 0;
@@ -1042,7 +1042,7 @@ e_bindings_edge_up_event_handle(E_Binding_Context ctxt, E_Object *obj, E_Event_Z
    return act;
 }
 
-EAPI void
+E_API void
 e_bindings_signal_add(E_Binding_Context ctxt, const char *sig, const char *src, E_Binding_Modifier mod, int any_mod, const char *action, const char *params)
 {
    E_Binding_Signal *binding;
@@ -1058,7 +1058,7 @@ e_bindings_signal_add(E_Binding_Context ctxt, const char *sig, const char *src, 
    signal_bindings = eina_list_append(signal_bindings, binding);
 }
 
-EAPI void
+E_API void
 e_bindings_signal_del(E_Binding_Context ctxt, const char *sig, const char *src, E_Binding_Modifier mod, int any_mod, const char *action, const char *params)
 {
    E_Binding_Signal *binding;
@@ -1085,7 +1085,7 @@ e_bindings_signal_del(E_Binding_Context ctxt, const char *sig, const char *src, 
      }
 }
 
-EAPI E_Action *
+E_API E_Action *
 e_bindings_signal_find(E_Binding_Context ctxt, const char *sig, const char *src, E_Binding_Signal **bind_ret)
 {
    E_Binding_Modifier mod = 0;
@@ -1115,7 +1115,7 @@ e_bindings_signal_find(E_Binding_Context ctxt, const char *sig, const char *src,
    return NULL;
 }
 
-EAPI E_Action *
+E_API E_Action *
 e_bindings_signal_handle(E_Binding_Context ctxt, E_Object *obj, const char *sig, const char *src)
 {
    E_Action *act;
@@ -1136,7 +1136,7 @@ e_bindings_signal_handle(E_Binding_Context ctxt, E_Object *obj, const char *sig,
    return act;
 }
 
-EAPI void
+E_API void
 e_bindings_wheel_add(E_Binding_Context ctxt, int direction, int z, E_Binding_Modifier mod, int any_mod, const char *action, const char *params)
 {
    E_Binding_Wheel *binding;
@@ -1152,7 +1152,7 @@ e_bindings_wheel_add(E_Binding_Context ctxt, int direction, int z, E_Binding_Mod
    wheel_bindings = eina_list_append(wheel_bindings, binding);
 }
 
-EAPI void
+E_API void
 e_bindings_wheel_del(E_Binding_Context ctxt, int direction, int z, E_Binding_Modifier mod, int any_mod, const char *action, const char *params)
 {
    E_Binding_Wheel *binding;
@@ -1177,7 +1177,7 @@ e_bindings_wheel_del(E_Binding_Context ctxt, int direction, int z, E_Binding_Mod
      }
 }
 
-EAPI void
+E_API void
 e_bindings_wheel_grab(E_Binding_Context ctxt, Ecore_X_Window win)
 {
    E_Binding_Wheel *binding;
@@ -1216,7 +1216,7 @@ e_bindings_wheel_grab(E_Binding_Context ctxt, Ecore_X_Window win)
 #endif
 }
 
-EAPI void
+E_API void
 e_bindings_wheel_ungrab(E_Binding_Context ctxt, Ecore_X_Window win)
 {
    E_Binding_Wheel *binding;
@@ -1254,7 +1254,7 @@ e_bindings_wheel_ungrab(E_Binding_Context ctxt, Ecore_X_Window win)
 #endif
 }
 
-EAPI E_Action *
+E_API E_Action *
 e_bindings_wheel_find(E_Binding_Context ctxt, E_Binding_Event_Wheel *ev, E_Binding_Wheel **bind_ret)
 {
    E_Binding_Wheel *binding;
@@ -1279,7 +1279,7 @@ e_bindings_wheel_find(E_Binding_Context ctxt, E_Binding_Event_Wheel *ev, E_Bindi
    return NULL;
 }
 
-EAPI E_Action *
+E_API E_Action *
 e_bindings_wheel_event_handle(E_Binding_Context ctxt, E_Object *obj, E_Binding_Event_Wheel *ev)
 {
    E_Action *act;
@@ -1297,7 +1297,7 @@ e_bindings_wheel_event_handle(E_Binding_Context ctxt, E_Object *obj, E_Binding_E
    return act;
 }
 
-EAPI E_Action *
+E_API E_Action *
 e_bindings_wheel_evas_event_handle(E_Binding_Context ctxt, E_Object *obj, Evas_Event_Mouse_Wheel *ev)
 {
    E_Binding_Event_Wheel event;
@@ -1307,7 +1307,7 @@ e_bindings_wheel_evas_event_handle(E_Binding_Context ctxt, E_Object *obj, Evas_E
    return e_bindings_wheel_event_handle(ctxt, obj, &event);
 }
 
-EAPI E_Action *
+E_API E_Action *
 e_bindings_wheel_ecore_event_handle(E_Binding_Context ctxt, E_Object *obj, Ecore_Event_Mouse_Wheel *ev)
 {
    E_Binding_Event_Wheel event;
@@ -1317,7 +1317,7 @@ e_bindings_wheel_ecore_event_handle(E_Binding_Context ctxt, E_Object *obj, Ecore
    return e_bindings_wheel_event_handle(ctxt, obj, &event);
 }
 
-EAPI void
+E_API void
 e_bindings_acpi_add(E_Binding_Context ctxt, int type, int status, const char *action, const char *params)
 {
    E_Binding_Acpi *binding;
@@ -1331,7 +1331,7 @@ e_bindings_acpi_add(E_Binding_Context ctxt, int type, int status, const char *ac
    acpi_bindings = eina_list_append(acpi_bindings, binding);
 }
 
-EAPI void
+E_API void
 e_bindings_acpi_del(E_Binding_Context ctxt, int type, int status, const char *action, const char *params)
 {
    E_Binding_Acpi *binding;
@@ -1353,7 +1353,7 @@ e_bindings_acpi_del(E_Binding_Context ctxt, int type, int status, const char *ac
      }
 }
 
-EAPI E_Action *
+E_API E_Action *
 e_bindings_acpi_find(E_Binding_Context ctxt, E_Event_Acpi *ev, E_Binding_Acpi **bind_ret)
 {
    E_Binding_Acpi *binding;
@@ -1382,7 +1382,7 @@ e_bindings_acpi_find(E_Binding_Context ctxt, E_Event_Acpi *ev, E_Binding_Acpi **
    return NULL;
 }
 
-EAPI E_Action *
+E_API E_Action *
 e_bindings_acpi_event_handle(E_Binding_Context ctxt, E_Object *obj, E_Event_Acpi *ev)
 {
    E_Action *act;

@@ -299,7 +299,7 @@ _e_wid_fsel_moveresize(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UN
 }
 
 /* externally accessible functions */
-EAPI Evas_Object *
+E_API Evas_Object *
 e_widget_fsel_add(Evas *evas, const char *dev, const char *path, char *selected, char *filter EINA_UNUSED,
                   void (*sel_func)(void *data, Evas_Object *obj), void *sel_data,
                   void (*chg_func)(void *data, Evas_Object *obj), void *chg_data,
@@ -493,7 +493,7 @@ e_widget_fsel_add(Evas *evas, const char *dev, const char *path, char *selected,
    return obj;
 }
 
-EAPI void
+E_API void
 e_widget_fsel_path_get(Evas_Object *obj, const char **dev, const char **path)
 {
    E_Widget_Data *wd;
@@ -503,7 +503,7 @@ e_widget_fsel_path_get(Evas_Object *obj, const char **dev, const char **path)
    e_fm2_path_get(wd->o_files_fm, dev, path);
 }
 
-EAPI const char *
+E_API const char *
 e_widget_fsel_selection_path_get(Evas_Object *obj)
 {
    E_Widget_Data *wd;
@@ -531,7 +531,7 @@ e_widget_fsel_selection_path_get(Evas_Object *obj)
    return wd->path;
 }
 
-EAPI void
+E_API void
 e_widget_fsel_window_set(Evas_Object *obj, Evas_Object *win)
 {
    E_Widget_Data *wd;
@@ -542,7 +542,7 @@ e_widget_fsel_window_set(Evas_Object *obj, Evas_Object *win)
    e_fm2_window_set(wd->o_files_fm, win);
 }
 
-EAPI Eina_Bool
+E_API Eina_Bool
 e_widget_fsel_typebuf_visible_get(Evas_Object *obj)
 {
    E_Widget_Data *wd;

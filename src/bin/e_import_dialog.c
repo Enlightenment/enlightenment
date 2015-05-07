@@ -132,7 +132,7 @@ _e_import_dialog_win_del(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_
 
 //////////////////////////////////////////////////////////////////////////////////
 
-EAPI E_Import_Dialog *
+E_API E_Import_Dialog *
 e_import_dialog_show(Evas_Object *parent EINA_UNUSED, const char *dev, const char *path, Ecore_End_Cb ok, Ecore_Cb cancel)
 {
    Evas *evas;

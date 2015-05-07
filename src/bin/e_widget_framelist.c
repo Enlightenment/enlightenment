@@ -12,7 +12,7 @@ static void _e_wid_disable_hook(Evas_Object *obj);
 /* local subsystem functions */
 
 /* externally accessible functions */
-EAPI Evas_Object *
+E_API Evas_Object *
 e_widget_framelist_add(Evas *evas, const char *label, int horiz)
 {
    Evas_Object *obj, *o, *win;
@@ -44,7 +44,7 @@ e_widget_framelist_add(Evas *evas, const char *label, int horiz)
    return obj;
 }
 
-EAPI void
+E_API void
 e_widget_framelist_object_append_full(Evas_Object *obj, Evas_Object *sobj, int fill_w, int fill_h, int expand_w, int expand_h, double align_x, double align_y, Evas_Coord min_w, Evas_Coord min_h, Evas_Coord max_w, Evas_Coord max_h)
 {
    E_Widget_Data *wd;
@@ -65,7 +65,7 @@ e_widget_framelist_object_append_full(Evas_Object *obj, Evas_Object *sobj, int f
    evas_object_show(sobj);
 }
 
-EAPI void
+E_API void
 e_widget_framelist_object_append(Evas_Object *obj, Evas_Object *sobj)
 {
    E_Widget_Data *wd;
@@ -80,7 +80,7 @@ e_widget_framelist_object_append(Evas_Object *obj, Evas_Object *sobj)
    evas_object_show(sobj);
 }
 
-EAPI void
+E_API void
 e_widget_framelist_content_align_set(Evas_Object *obj, double halign, double valign)
 {
    E_Widget_Data *wd;
@@ -89,7 +89,7 @@ e_widget_framelist_content_align_set(Evas_Object *obj, double halign, double val
    elm_box_align_set(wd->o_box, halign, valign);
 }
 
-EAPI void
+E_API void
 e_widget_framelist_label_set(Evas_Object *obj, const char *label)
 {
    E_Widget_Data *wd;

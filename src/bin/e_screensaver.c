@@ -22,10 +22,10 @@ static int _e_screensaver_expose = 0;
 static Ecore_Timer *_e_screensaver_suspend_timer = NULL;
 static Eina_Bool _e_screensaver_on = EINA_FALSE;
 
-EAPI int E_EVENT_SCREENSAVER_ON = -1;
-EAPI int E_EVENT_SCREENSAVER_OFF = -1;
+E_API int E_EVENT_SCREENSAVER_ON = -1;
+E_API int E_EVENT_SCREENSAVER_OFF = -1;
 
-EAPI int
+E_API int
 e_screensaver_timeout_get(Eina_Bool use_idle)
 {
    int timeout = 0, count = (1 + _e_screensaver_ask_presentation_count);
@@ -49,7 +49,7 @@ e_screensaver_timeout_get(Eina_Bool use_idle)
    return timeout;
 }
 
-EAPI void
+E_API void
 e_screensaver_update(void)
 {
 #ifndef HAVE_WAYLAND_ONLY
@@ -91,7 +91,7 @@ e_screensaver_update(void)
 #endif
 }
 
-EAPI void
+E_API void
 e_screensaver_force_update(void)
 {
 #ifndef HAVE_WAYLAND_ONLY
@@ -421,7 +421,7 @@ e_screensaver_shutdown(void)
    return 1;
 }
 
-EAPI void
+E_API void
 e_screensaver_attrs_set(int timeout, int blanking, int expose)
 {
    _e_screensaver_timeout = timeout;
@@ -430,13 +430,13 @@ e_screensaver_attrs_set(int timeout, int blanking, int expose)
    _e_screensaver_expose = expose;
 }
 
-EAPI Eina_Bool
+E_API Eina_Bool
 e_screensaver_on_get(void)
 {
    return _e_screensaver_on;
 }
 
-EAPI void
+E_API void
 e_screensaver_activate(void)
 {
 #ifndef HAVE_WAYLAND_ONLY
@@ -448,7 +448,7 @@ e_screensaver_activate(void)
 #endif
 }
 
-EAPI void
+E_API void
 e_screensaver_deactivate(void)
 {
 #ifndef HAVE_WAYLAND_ONLY

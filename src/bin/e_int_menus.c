@@ -121,7 +121,7 @@ _TEST(void *d EINA_UNUSED, E_Menu *m, E_Menu_Item *mi EINA_UNUSED)
 #endif
 
 /* externally accessible functions */
-EAPI E_Menu *
+E_API E_Menu *
 e_int_menus_main_new(void)
 {
    E_Menu *m, *subm;
@@ -298,7 +298,7 @@ e_int_menus_main_new(void)
    return m;
 }
 
-EAPI E_Menu *
+E_API E_Menu *
 e_int_menus_apps_new(const char *dir)
 {
    E_Menu *m;
@@ -309,7 +309,7 @@ e_int_menus_apps_new(const char *dir)
    return m;
 }
 
-EAPI E_Menu *
+E_API E_Menu *
 e_int_menus_desktops_new(void)
 {
    E_Menu *m, *subm;
@@ -344,7 +344,7 @@ e_int_menus_desktops_new(void)
    return m;
 }
 
-EAPI E_Menu *
+E_API E_Menu *
 e_int_menus_favorite_apps_new(void)
 {
    E_Menu *m = NULL;
@@ -356,7 +356,7 @@ e_int_menus_favorite_apps_new(void)
    return m;
 }
 
-EAPI E_Menu *
+E_API E_Menu *
 e_int_menus_all_apps_new(void)
 {
    E_Menu *m;
@@ -365,7 +365,7 @@ e_int_menus_all_apps_new(void)
    return m;
 }
 
-EAPI E_Menu *
+E_API E_Menu *
 e_int_menus_config_new(void)
 {
    E_Menu *m;
@@ -376,7 +376,7 @@ e_int_menus_config_new(void)
    return m;
 }
 
-EAPI E_Menu *
+E_API E_Menu *
 e_int_menus_clients_new(void)
 {
    E_Menu *m;
@@ -386,7 +386,7 @@ e_int_menus_clients_new(void)
    return m;
 }
 
-EAPI E_Menu *
+E_API E_Menu *
 e_int_menus_lost_clients_new(void)
 {
    E_Menu *m;
@@ -396,7 +396,7 @@ e_int_menus_lost_clients_new(void)
    return m;
 }
 
-EAPI E_Int_Menu_Augmentation *
+E_API E_Int_Menu_Augmentation *
 e_int_menus_menu_augmentation_add_sorted(const char *menu,
                                          const char *sort_key,
                                          void (*func_add)(void *data, E_Menu *m),
@@ -461,7 +461,7 @@ e_int_menus_menu_augmentation_add_sorted(const char *menu,
    return maug;
 }
 
-EAPI E_Int_Menu_Augmentation *
+E_API E_Int_Menu_Augmentation *
 e_int_menus_menu_augmentation_add(const char *menu,
                                   void (*func_add)(void *data, E_Menu *m),
                                   void *data_add,
@@ -472,7 +472,7 @@ e_int_menus_menu_augmentation_add(const char *menu,
             (menu, NULL, func_add, data_add, func_del, data_del);
 }
 
-EAPI void
+E_API void
 e_int_menus_menu_augmentation_del(const char *menu, E_Int_Menu_Augmentation *maug)
 {
    Eina_List *l;
@@ -498,14 +498,14 @@ e_int_menus_menu_augmentation_del(const char *menu, E_Int_Menu_Augmentation *mau
    free(maug);
 }
 
-EAPI void
+E_API void
 e_int_menus_cache_clear(void)
 {
    if (_e_int_menus_app_menus)
      eina_hash_free_buckets(_e_int_menus_app_menus);
 }
 
-EAPI void
+E_API void
 e_int_menus_menu_augmentation_point_disabled_set(const char *menu, Eina_Bool disabled)
 {
    if (!menu) return;

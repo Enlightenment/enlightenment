@@ -13,7 +13,7 @@ static void _e_wid_disable_hook(Evas_Object *obj);
 /* local subsystem functions */
 
 /* externally accessible functions */
-EAPI Evas_Object *
+E_API Evas_Object *
 e_widget_frametable_add(Evas *evas, const char *label, int homogenous)
 {
    Evas_Object *obj, *o;
@@ -44,13 +44,13 @@ e_widget_frametable_add(Evas *evas, const char *label, int homogenous)
    return obj;
 }
 
-EAPI void
+E_API void
 e_widget_frametable_object_append(Evas_Object *obj, Evas_Object *sobj, int col, int row, int colspan, int rowspan, int fill_w, int fill_h, int expand_w, int expand_h)
 {
    e_widget_frametable_object_append_full(obj, sobj, col, row, colspan, rowspan, fill_w, fill_h, expand_w, expand_h, 0.5, 0.5, -1, -1, -1, -1);
 }
 
-EAPI void
+E_API void
 e_widget_frametable_object_append_full(Evas_Object *obj, Evas_Object *sobj, int col, int row, int colspan, int rowspan, int fill_w, int fill_h, int expand_w, int expand_h, double align_x, double align_y, Evas_Coord min_w, Evas_Coord min_h, Evas_Coord max_w, Evas_Coord max_h)
 {
    E_Widget_Data *wd = e_widget_data_get(obj);
@@ -68,7 +68,7 @@ e_widget_frametable_object_append_full(Evas_Object *obj, Evas_Object *sobj, int 
    evas_object_show(sobj);
 }
 
-EAPI void
+E_API void
 e_widget_frametable_object_repack(Evas_Object *obj EINA_UNUSED, Evas_Object *sobj, int col, int row, int colspan, int rowspan, int fill_w, int fill_h, int expand_w, int expand_h)
 {
    if (fill_w || fill_h)
@@ -77,7 +77,7 @@ e_widget_frametable_object_repack(Evas_Object *obj EINA_UNUSED, Evas_Object *sob
    elm_table_pack_set(sobj, col, row, colspan, rowspan);
 }
 
-EAPI void
+E_API void
 e_widget_frametable_content_align_set(Evas_Object *obj, double halign, double valign)
 {
    E_Widget_Data *wd;
@@ -86,7 +86,7 @@ e_widget_frametable_content_align_set(Evas_Object *obj, double halign, double va
    elm_table_align_set(wd->o_table, halign, valign);
 }
 
-EAPI void
+E_API void
 e_widget_frametable_label_set(Evas_Object *obj, const char *label)
 {
    E_Widget_Data *wd;

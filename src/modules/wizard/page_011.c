@@ -120,7 +120,7 @@ implement_layout(void)
    e_xkb_layout_set(nl);
 }
 
-EAPI int
+E_API int
 wizard_page_init(E_Wizard_Page *pg EINA_UNUSED, Eina_Bool *need_xdg_desktops EINA_UNUSED, Eina_Bool *need_xdg_icons EINA_UNUSED)
 {
    // parse kbd rules here
@@ -129,13 +129,13 @@ wizard_page_init(E_Wizard_Page *pg EINA_UNUSED, Eina_Bool *need_xdg_desktops EIN
    return 1;
 }
 /*
-EAPI int
+E_API int
 wizard_page_shutdown(E_Wizard_Page *pg EINA_UNUSED)
 {
    return 1;
 }
 */
-EAPI int
+E_API int
 wizard_page_show(E_Wizard_Page *pg)
 {
    Evas_Object *o, *of, *ob, *ic;
@@ -185,7 +185,7 @@ wizard_page_show(E_Wizard_Page *pg)
    return 1; /* 1 == show ui, and wait for user, 0 == just continue */
 }
 
-EAPI int
+E_API int
 wizard_page_hide(E_Wizard_Page *pg EINA_UNUSED)
 {
    /* special - key layout inits its stuff the moment it goes away */
@@ -193,7 +193,7 @@ wizard_page_hide(E_Wizard_Page *pg EINA_UNUSED)
    return 1;
 }
 
-EAPI int
+E_API int
 wizard_page_apply(E_Wizard_Page *pg EINA_UNUSED)
 {
    // do this again as we want it to apply to the new profile

@@ -149,7 +149,7 @@ e_toolbar_shutdown(void)
    return 1;
 }
 
-EAPI E_Toolbar *
+E_API E_Toolbar *
 e_toolbar_new(Evas *evas, const char *name, Evas_Object *fwin, Evas_Object *fm2)
 {
    E_Toolbar *tbar = NULL;
@@ -211,7 +211,7 @@ e_toolbar_new(Evas *evas, const char *name, Evas_Object *fwin, Evas_Object *fm2)
    return tbar;
 }
 
-EAPI void
+E_API void
 e_toolbar_fwin_set(E_Toolbar *tbar, Evas_Object *fwin)
 {
    E_OBJECT_CHECK(tbar);
@@ -219,7 +219,7 @@ e_toolbar_fwin_set(E_Toolbar *tbar, Evas_Object *fwin)
    tbar->fwin = fwin;
 }
 
-EAPI Evas_Object *
+E_API Evas_Object *
 e_toolbar_fwin_get(E_Toolbar *tbar)
 {
    E_OBJECT_CHECK_RETURN(tbar, NULL);
@@ -227,7 +227,7 @@ e_toolbar_fwin_get(E_Toolbar *tbar)
    return tbar->fwin;
 }
 
-EAPI void
+E_API void
 e_toolbar_fm2_set(E_Toolbar *tbar, Evas_Object *fm2)
 {
    E_OBJECT_CHECK(tbar);
@@ -235,7 +235,7 @@ e_toolbar_fm2_set(E_Toolbar *tbar, Evas_Object *fm2)
    tbar->fm2 = fm2;
 }
 
-EAPI Evas_Object *
+E_API Evas_Object *
 e_toolbar_fm2_get(E_Toolbar *tbar)
 {
    E_OBJECT_CHECK_RETURN(tbar, NULL);
@@ -243,7 +243,7 @@ e_toolbar_fm2_get(E_Toolbar *tbar)
    return tbar->fm2;
 }
 
-EAPI void
+E_API void
 e_toolbar_orient(E_Toolbar *tbar, E_Gadcon_Orient orient)
 {
    char buf[4096];
@@ -257,7 +257,7 @@ e_toolbar_orient(E_Toolbar *tbar, E_Gadcon_Orient orient)
    edje_object_message_signal_process(tbar->o_base);
 }
 
-EAPI void
+E_API void
 e_toolbar_populate(E_Toolbar *tbar)
 {
    E_OBJECT_CHECK(tbar);

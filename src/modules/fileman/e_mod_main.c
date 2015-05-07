@@ -21,13 +21,13 @@ static E_Config_DD *paths_edd = NULL, *conf_edd = NULL;
 Config *fileman_config = NULL;
 
 /* module setup */
-EAPI E_Module_Api e_modapi =
+E_API E_Module_Api e_modapi =
 {
    E_MODULE_API_VERSION,
    "Fileman"
 };
 
-EAPI void *
+E_API void *
 e_modapi_init(E_Module *m)
 {
    const Eina_List *l;
@@ -82,7 +82,7 @@ e_modapi_init(E_Module *m)
    return m;
 }
 
-EAPI int
+E_API int
 e_modapi_shutdown(E_Module *m EINA_UNUSED)
 {
    const Eina_List *l;
@@ -142,7 +142,7 @@ e_modapi_shutdown(E_Module *m EINA_UNUSED)
    return 1;
 }
 
-EAPI int
+E_API int
 e_modapi_save(E_Module *m EINA_UNUSED)
 {
    e_config_domain_save("module.fileman", conf_edd, fileman_config);

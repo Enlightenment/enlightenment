@@ -12,6 +12,31 @@
 #include <Efreet.h>
 #include <Eldbus.h>
 
+# ifdef E_API
+#  undef E_API
+# endif
+# ifdef WIN32
+#  ifdef BUILDING_DLL
+#   define E_API __declspec(dllexport)
+#  else
+#   define E_API __declspec(dllimport)
+#  endif
+# else
+#  ifdef __GNUC__
+#   if __GNUC__ >= 4
+/* BROKEN in gcc 4 on amd64 */
+#    if 0
+#     pragma GCC visibility push(hidden)
+#    endif
+#    define E_API __attribute__ ((visibility("default")))
+#   else
+#    define E_API
+#   endif
+#  else
+#   define E_API
+#  endif
+# endif
+
 static Eldbus_Connection *conn = NULL;
 static int retval = EXIT_SUCCESS;
 static int pending = 0;
@@ -136,7 +161,7 @@ static const Ecore_Getopt options = {
    }
 };
 
-EAPI int
+E_API int
 main(int argc, char *argv[])
 {
    Eina_Bool quit_option = EINA_FALSE;

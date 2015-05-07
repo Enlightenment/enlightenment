@@ -8,7 +8,7 @@ static int  e_bg_handler_test(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUS
 static void _e_bg_handler_image_imported(const char *image_path, void *data);
 
 /* local subsystem globals */
-EAPI int E_EVENT_BG_UPDATE = 0;
+E_API int E_EVENT_BG_UPDATE = 0;
 static E_Fm2_Mime_Handler *bg_hdl = NULL;
 
 /* externally accessible functions */
@@ -75,7 +75,7 @@ e_bg_shutdown(void)
  * Use -1 as a wild card for each parameter.
  * The most specific match will be returned
  */
-EAPI const E_Config_Desktop_Background *
+E_API const E_Config_Desktop_Background *
 e_bg_config_get(int zone_num, int desk_x, int desk_y)
 {
    Eina_List *l, *entries;
@@ -140,7 +140,7 @@ e_bg_config_get(int zone_num, int desk_x, int desk_y)
    return bg;
 }
 
-EAPI Eina_Stringshare *
+E_API Eina_Stringshare *
 e_bg_file_get(int zone_num, int desk_x, int desk_y)
 {
    const E_Config_Desktop_Background *cfbg;
@@ -188,7 +188,7 @@ e_bg_file_get(int zone_num, int desk_x, int desk_y)
    return bgfile;
 }
 
-EAPI void
+E_API void
 e_bg_zone_update(E_Zone *zone, E_Bg_Transition transition)
 {
    Evas_Object *o;
@@ -289,7 +289,7 @@ end:
    eina_stringshare_del(bgfile);
 }
 
-EAPI void
+E_API void
 e_bg_default_set(const char *file)
 {
    E_Event_Bg_Update *ev;
@@ -325,7 +325,7 @@ e_bg_default_set(const char *file)
    ecore_event_add(E_EVENT_BG_UPDATE, ev, _e_bg_event_bg_update_free, NULL);
 }
 
-EAPI void
+E_API void
 e_bg_add(int zone, int desk_x, int desk_y, const char *file)
 {
    const Eina_List *l;
@@ -364,7 +364,7 @@ e_bg_add(int zone, int desk_x, int desk_y, const char *file)
    ecore_event_add(E_EVENT_BG_UPDATE, ev, _e_bg_event_bg_update_free, NULL);
 }
 
-EAPI void
+E_API void
 e_bg_del(int zone, int desk_x, int desk_y)
 {
    Eina_List *l;
@@ -391,7 +391,7 @@ e_bg_del(int zone, int desk_x, int desk_y)
    ecore_event_add(E_EVENT_BG_UPDATE, ev, _e_bg_event_bg_update_free, NULL);
 }
 
-EAPI void
+E_API void
 e_bg_update(void)
 {
    const Eina_List *l;

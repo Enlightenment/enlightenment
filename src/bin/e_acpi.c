@@ -123,7 +123,7 @@ static E_ACPI_Device_Multiplexed _devices_multiplexed[] =
 };
 
 /* public variables */
-EAPI int E_EVENT_ACPI = 0;
+E_API int E_EVENT_ACPI = 0;
 
 /* public functions */
 EINTERN int
@@ -200,13 +200,13 @@ e_acpi_lid_is_closed(void)
    return lid_is_closed;
 }
 
-EAPI void
+E_API void
 e_acpi_events_freeze(void)
 {
    _e_acpi_events_frozen++;
 }
 
-EAPI void
+E_API void
 e_acpi_events_thaw(void)
 {
    _e_acpi_events_frozen--;

@@ -7,13 +7,13 @@ static void _gadman_action_cb(E_Object *obj, const char *params);
 static void _gadman_desktop_menu(void *d EINA_UNUSED, E_Menu *m, void *icon);
 
 /* public module routines. all modules must have these */
-EAPI E_Module_Api e_modapi =
+E_API E_Module_Api e_modapi =
 {
    E_MODULE_API_VERSION,
    "Gadman"
 };
 
-EAPI void *
+E_API void *
 e_modapi_init(E_Module *m)
 {
    char buf[4096];
@@ -89,7 +89,7 @@ e_modapi_init(E_Module *m)
    return Man;
 }
 
-EAPI int
+E_API int
 e_modapi_shutdown(E_Module *m EINA_UNUSED)
 {
    if (Man->maug)
@@ -124,7 +124,7 @@ e_modapi_shutdown(E_Module *m EINA_UNUSED)
    return 1;
 }
 
-EAPI int
+E_API int
 e_modapi_save(E_Module *m EINA_UNUSED)
 {
    e_config_domain_save("module.gadman", Man->conf_edd, Man->conf);

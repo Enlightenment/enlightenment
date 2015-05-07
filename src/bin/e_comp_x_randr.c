@@ -412,7 +412,7 @@ _mode_screen_find(Ecore_X_Window root, E_Randr2_Screen *s, Ecore_X_Randr_Output 
    return mode;
 }
 
-EAPI void
+E_API void
 e_comp_x_randr_init(void)
 {
    // add handler for randr screen change events
@@ -430,7 +430,7 @@ e_comp_x_randr_init(void)
      }
 }
 
-EAPI void
+E_API void
 e_comp_x_randr_shutdown(void)
 {
    // clear up event listening
@@ -442,7 +442,7 @@ e_comp_x_randr_shutdown(void)
    E_FREE_LIST(handlers, ecore_event_handler_del);
 }
 
-EAPI void
+E_API void
 e_comp_x_randr_config_apply(void)
 {
    Eina_List *l;
@@ -622,14 +622,14 @@ e_comp_x_randr_config_apply(void)
 //   event_ignore = EINA_TRUE;
 }
 
-EAPI Eina_Bool
+E_API Eina_Bool
 e_comp_x_randr_available(void)
 {
    // is randr extn there?
    return ecore_x_randr_query();
 }
 
-EAPI E_Randr2 *
+E_API E_Randr2 *
 e_comp_x_randr_create(void)
 {
    Ecore_X_Randr_Crtc *crtcs = NULL;
@@ -826,7 +826,7 @@ e_comp_x_randr_create(void)
    return r;
 }
 
-EAPI void
+E_API void
 e_comp_x_randr_screen_iface_set(void)
 {
    if (e_comp->screen)
@@ -834,7 +834,7 @@ e_comp_x_randr_screen_iface_set(void)
    e_comp->screen = &xiface;
 }
 
-EAPI Eina_Bool
+E_API Eina_Bool
 e_comp_x_randr_canvas_new(Ecore_Window parent, int w, int h)
 {
    Eina_Bool ret = EINA_TRUE;

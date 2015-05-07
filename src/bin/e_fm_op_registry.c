@@ -1,8 +1,8 @@
 #include "e.h"
 
-EAPI int E_EVENT_FM_OP_REGISTRY_ADD = 0;
-EAPI int E_EVENT_FM_OP_REGISTRY_DEL = 0;
-EAPI int E_EVENT_FM_OP_REGISTRY_CHANGED = 0;
+E_API int E_EVENT_FM_OP_REGISTRY_ADD = 0;
+E_API int E_EVENT_FM_OP_REGISTRY_DEL = 0;
+E_API int E_EVENT_FM_OP_REGISTRY_CHANGED = 0;
 
 static Eina_Hash *_e_fm2_op_registry = NULL;
 static unsigned int _e_fm2_init_count = 0;
@@ -236,7 +236,7 @@ e_fm2_op_registry_entry_files_set(E_Fm2_Op_Registry_Entry *entry, const char *sr
  *
  * @return: new number of references after operation or -1 on error.
  */
-EAPI int
+E_API int
 e_fm2_op_registry_entry_ref(E_Fm2_Op_Registry_Entry *entry)
 {
    E_Fm2_Op_Registry_Entry_Internal *e;
@@ -253,7 +253,7 @@ e_fm2_op_registry_entry_ref(E_Fm2_Op_Registry_Entry *entry)
  * @return: new number of references after operation or -1 on error,
  *    if 0 the entry was freed and pointer is then invalid.
  */
-EAPI int
+E_API int
 e_fm2_op_registry_entry_unref(E_Fm2_Op_Registry_Entry *entry)
 {
    E_Fm2_Op_Registry_Entry_Internal *e;
@@ -272,7 +272,7 @@ e_fm2_op_registry_entry_unref(E_Fm2_Op_Registry_Entry *entry)
  *
  * @return: 0 if no window, window identifier otherwise.
  */
-EAPI Ecore_X_Window
+E_API Ecore_X_Window
 e_fm2_op_registry_entry_xwin_get(const E_Fm2_Op_Registry_Entry *entry)
 {
    Evas *e;
@@ -295,7 +295,7 @@ e_fm2_op_registry_entry_xwin_get(const E_Fm2_Op_Registry_Entry *entry)
  *
  * @note: does not increment reference.
  */
-EAPI E_Fm2_Op_Registry_Entry *
+E_API E_Fm2_Op_Registry_Entry *
 e_fm2_op_registry_entry_get(int id)
 {
    return eina_hash_find(_e_fm2_op_registry, &id);
@@ -316,7 +316,7 @@ e_fm2_op_registry_entry_get(int id)
  * @note: does not increment reference.
  * @note: on errors, @p free_data will be called.
  */
-EAPI void
+E_API void
 e_fm2_op_registry_entry_listener_add(E_Fm2_Op_Registry_Entry *entry, void (*cb)(void *data, const E_Fm2_Op_Registry_Entry *entry), const void *data, void (*free_data)(void *data))
 {
    E_Fm2_Op_Registry_Entry_Internal *e;
@@ -361,7 +361,7 @@ e_fm2_op_registry_entry_listener_add(E_Fm2_Op_Registry_Entry *entry, void (*cb)(
  * @note: does not decrement reference.
  * @see: e_fm2_op_registry_entry_listener_add()
  */
-EAPI void
+E_API void
 e_fm2_op_registry_entry_listener_del(E_Fm2_Op_Registry_Entry *entry, void (*cb)(void *data, const E_Fm2_Op_Registry_Entry *entry), const void *data)
 {
    E_Fm2_Op_Registry_Entry_Internal *e;
@@ -393,7 +393,7 @@ e_fm2_op_registry_entry_listener_del(E_Fm2_Op_Registry_Entry *entry, void (*cb)(
  *
  * @see e_fm2_op_registry_get_all()
  */
-EAPI Eina_Iterator *
+E_API Eina_Iterator *
 e_fm2_op_registry_iterator_new(void)
 {
    return eina_hash_iterator_data_new(_e_fm2_op_registry);
@@ -410,7 +410,7 @@ e_fm2_op_registry_iterator_new(void)
  * @note: if you need a simple, immediate walk, use
  *    e_fm2_op_registry_iterator_new()
  */
-EAPI Eina_List *
+E_API Eina_List *
 e_fm2_op_registry_get_all(void)
 {
    Eina_List *list;
@@ -429,7 +429,7 @@ e_fm2_op_registry_get_all(void)
    return list;
 }
 
-EAPI void
+E_API void
 e_fm2_op_registry_get_all_free(Eina_List *list)
 {
    E_Fm2_Op_Registry_Entry *entry;
@@ -437,13 +437,13 @@ e_fm2_op_registry_get_all_free(Eina_List *list)
      e_fm2_op_registry_entry_unref(entry);
 }
 
-EAPI Eina_Bool
+E_API Eina_Bool
 e_fm2_op_registry_is_empty(void)
 {
    return eina_hash_population(_e_fm2_op_registry) == 0;
 }
 
-EAPI int
+E_API int
 e_fm2_op_registry_count(void)
 {
    return eina_hash_population(_e_fm2_op_registry);
@@ -485,7 +485,7 @@ e_fm2_op_registry_shutdown(void)
    return 0;
 }
 
-EAPI void
+E_API void
 e_fm2_op_registry_entry_abort(E_Fm2_Op_Registry_Entry *entry)
 {
    if (!entry) return;

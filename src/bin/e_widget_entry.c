@@ -35,7 +35,7 @@ static void _e_wid_movresz(void *data, Evas *e, Evas_Object *obj, void *event_in
  * The current value will be used to initialize the entry
  * @return Returns the new entry widget
  */
-EAPI Evas_Object *
+E_API Evas_Object *
 e_widget_entry_add(Evas_Object *parent, char **text_location, void (*func)(void *data, void *data2), void *data, void *data2)
 {
    Evas_Object *obj, *o;
@@ -102,7 +102,7 @@ e_widget_entry_add(Evas_Object *parent, char **text_location, void (*func)(void 
  * @param entry an entry widget
  * @param text the text to set
  */
-EAPI void
+E_API void
 e_widget_entry_text_set(Evas_Object *entry, const char *text)
 {
    E_Widget_Data *wd;
@@ -118,7 +118,7 @@ e_widget_entry_text_set(Evas_Object *entry, const char *text)
  * @param entry an entry widget
  * @return Returns the text of the entry widget
  */
-EAPI const char *
+E_API const char *
 e_widget_entry_text_get(Evas_Object *entry)
 {
    E_Widget_Data *wd;
@@ -133,7 +133,7 @@ e_widget_entry_text_get(Evas_Object *entry)
  *
  * @param entry an entry widget
  */
-EAPI void
+E_API void
 e_widget_entry_clear(Evas_Object *entry)
 {
    E_Widget_Data *wd;
@@ -150,7 +150,7 @@ e_widget_entry_clear(Evas_Object *entry)
  * @param entry an entry widget
  * @param password_mode 1 to turn on password mode, 0 to turn it off
  */
-EAPI void
+E_API void
 e_widget_entry_password_set(Evas_Object *entry, int password_mode)
 {
    E_Widget_Data *wd;
@@ -167,7 +167,7 @@ e_widget_entry_password_set(Evas_Object *entry, int password_mode)
  * @param entry an entry widget
  * @param readonly_mode 1 to enable read-only mode, 0 to turn it off
  */
-EAPI void
+E_API void
 e_widget_entry_readonly_set(Evas_Object *entry, int readonly_mode)
 {
    E_Widget_Data *wd;
@@ -183,7 +183,7 @@ e_widget_entry_readonly_set(Evas_Object *entry, int readonly_mode)
  *
  * @param entry an entry widget
  */
-EAPI void
+E_API void
 e_widget_entry_select_all(Evas_Object *entry)
 {
    E_Widget_Data *wd;

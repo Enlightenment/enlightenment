@@ -30,23 +30,23 @@ struct _E_Sys_Con_Action
 #ifndef E_SYS_H
 #define E_SYS_H
 
-EAPI extern int E_EVENT_SYS_SUSPEND;
-EAPI extern int E_EVENT_SYS_HIBERNATE;
-EAPI extern int E_EVENT_SYS_RESUME;
+E_API extern int E_EVENT_SYS_SUSPEND;
+E_API extern int E_EVENT_SYS_HIBERNATE;
+E_API extern int E_EVENT_SYS_RESUME;
 
 EINTERN int e_sys_init(void);
 EINTERN int e_sys_shutdown(void);
-EAPI int e_sys_action_possible_get(E_Sys_Action a);
-EAPI int e_sys_action_do(E_Sys_Action a, char *param);
-EAPI int e_sys_action_raw_do(E_Sys_Action a, char *param);
+E_API int e_sys_action_possible_get(E_Sys_Action a);
+E_API int e_sys_action_do(E_Sys_Action a, char *param);
+E_API int e_sys_action_raw_do(E_Sys_Action a, char *param);
 
-EAPI E_Sys_Con_Action *e_sys_con_extra_action_register(const char *label,
+E_API E_Sys_Con_Action *e_sys_con_extra_action_register(const char *label,
                                                        const char *icon_group,
                                                        const char *button_name,
                                                        void (*func) (void *data),
                                                        const void *data);
-EAPI void e_sys_con_extra_action_unregister(E_Sys_Con_Action *sca);
-EAPI const Eina_List *e_sys_con_extra_action_list_get(void);
+E_API void e_sys_con_extra_action_unregister(E_Sys_Con_Action *sca);
+E_API const Eina_List *e_sys_con_extra_action_list_get(void);
 
 #endif
 #endif

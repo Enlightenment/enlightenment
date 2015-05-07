@@ -479,13 +479,13 @@ _gc_id_new(const E_Gadcon_Client_Class *client_class)
 }
 
 /* module setup */
-EAPI E_Module_Api e_modapi =
+E_API E_Module_Api e_modapi =
 {
    E_MODULE_API_VERSION,
      "Geolocation"
 };
 
-EAPI void *
+E_API void *
 e_modapi_init(E_Module *m)
 {
    geolocation_module = m;
@@ -493,14 +493,14 @@ e_modapi_init(E_Module *m)
    return m;
 }
 
-EAPI int
+E_API int
 e_modapi_shutdown(E_Module *m EINA_UNUSED)
 {
    e_gadcon_provider_unregister(&_gadcon_class);
    return 1;
 }
 
-EAPI int
+E_API int
 e_modapi_save(E_Module *m EINA_UNUSED)
 {
    return 1;

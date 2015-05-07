@@ -35,10 +35,10 @@ static Eina_Bool      event_screen = EINA_FALSE;
 static Eina_Bool      event_ignore = EINA_FALSE;
 
 /////////////////////////////////////////////////////////////////////////
-EAPI E_Config_Randr2 *e_randr2_cfg = NULL;
-EAPI E_Randr2        *e_randr2 = NULL;
+E_API E_Config_Randr2 *e_randr2_cfg = NULL;
+E_API E_Randr2        *e_randr2 = NULL;
 
-EAPI int              E_EVENT_RANDR_CHANGE = 0;
+E_API int              E_EVENT_RANDR_CHANGE = 0;
 
 /////////////////////////////////////////////////////////////////////////
 EINTERN Eina_Bool
@@ -122,20 +122,20 @@ e_randr2_shutdown(void)
    return 1;
 }
 
-EAPI Eina_Bool
+E_API Eina_Bool
 e_randr2_config_save(void)
 {
    // save our config
    return _config_save(e_randr2, e_randr2_cfg);
 }
 
-EAPI void
+E_API void
 e_randr2_config_apply(void)
 {
    _animated_apply();
 }
 
-EAPI void
+E_API void
 e_randr2_screeninfo_update(void)
 {
    // re-fetch/update current screen info
@@ -859,7 +859,7 @@ _screen_sort_cb(const void *data1, const void *data2)
    return dif;
 }
 
-EAPI void
+E_API void
 e_randr2_screen_refresh_queue(Eina_Bool lid_event)
 {
    // delay handling of screen shances as they can come in in a series over
@@ -871,7 +871,7 @@ e_randr2_screen_refresh_queue(Eina_Bool lid_event)
    event_screen |= !!lid_event;
 }
 
-EAPI E_Config_Randr2_Screen *
+E_API E_Config_Randr2_Screen *
 e_randr2_config_screen_find(E_Randr2_Screen *s, E_Config_Randr2 *cfg)
 {
    Eina_List *l;
@@ -887,7 +887,7 @@ e_randr2_config_screen_find(E_Randr2_Screen *s, E_Config_Randr2 *cfg)
    return NULL;
 }
 
-EAPI void
+E_API void
 e_randr2_screens_setup(int rw, int rh)
 {
    int i;

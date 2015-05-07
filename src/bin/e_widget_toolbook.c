@@ -11,7 +11,7 @@ static void _e_wid_del_hook(Evas_Object *obj);
 static void _item_sel(void *data1, void *data2);
 
 /* externally accessible functions */
-EAPI Evas_Object *
+E_API Evas_Object *
 e_widget_toolbook_add(Evas *evas, int icon_w, int icon_h)
 {
    Evas_Object *obj, *o;
@@ -38,7 +38,7 @@ e_widget_toolbook_add(Evas *evas, int icon_w, int icon_h)
    return obj;
 }
 
-EAPI void
+E_API void
 e_widget_toolbook_page_append(Evas_Object *toolbook, Evas_Object *icon, const char *label, Evas_Object *content, int expand_w, int expand_h, int fill_w, int fill_h, double ax, double ay)
 {
    E_Widget_Data *wd;
@@ -57,7 +57,7 @@ e_widget_toolbook_page_append(Evas_Object *toolbook, Evas_Object *icon, const ch
    e_widget_size_min_set(toolbook, minw, minh);
 }
 
-EAPI void
+E_API void
 e_widget_toolbook_page_show(Evas_Object *toolbook, int n)
 {
    E_Widget_Data *wd;

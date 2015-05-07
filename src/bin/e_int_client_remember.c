@@ -68,7 +68,7 @@ struct _E_Config_Dialog_Data
 };
 
 /* a nice easy setup function that does the dirty work */
-EAPI E_Config_Dialog *
+E_API E_Config_Dialog *
 e_int_client_remember_edit(E_Remember *rem)
 {
    E_Config_Dialog_View *v;
@@ -87,7 +87,7 @@ e_int_client_remember_edit(E_Remember *rem)
                              NULL, 0, v, rem);
 }
 
-EAPI void
+E_API void
 e_int_client_remember(E_Client *ec)
 {
    E_Config_Dialog *cfd;

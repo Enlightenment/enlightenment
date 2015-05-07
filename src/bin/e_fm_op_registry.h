@@ -41,27 +41,27 @@ struct _E_Fm2_Op_Registry_Entry
      } func;
 };
 
-extern EAPI int E_EVENT_FM_OP_REGISTRY_ADD;
-extern EAPI int E_EVENT_FM_OP_REGISTRY_DEL;
-extern EAPI int E_EVENT_FM_OP_REGISTRY_CHANGED;
+extern E_API int E_EVENT_FM_OP_REGISTRY_ADD;
+extern E_API int E_EVENT_FM_OP_REGISTRY_DEL;
+extern E_API int E_EVENT_FM_OP_REGISTRY_CHANGED;
 
-EAPI int e_fm2_op_registry_entry_ref(E_Fm2_Op_Registry_Entry *entry);
-EAPI int e_fm2_op_registry_entry_unref(E_Fm2_Op_Registry_Entry *entry);
+E_API int e_fm2_op_registry_entry_ref(E_Fm2_Op_Registry_Entry *entry);
+E_API int e_fm2_op_registry_entry_unref(E_Fm2_Op_Registry_Entry *entry);
 
-EAPI Ecore_X_Window e_fm2_op_registry_entry_xwin_get(const E_Fm2_Op_Registry_Entry *entry);
+E_API Ecore_X_Window e_fm2_op_registry_entry_xwin_get(const E_Fm2_Op_Registry_Entry *entry);
 
-EAPI E_Fm2_Op_Registry_Entry *e_fm2_op_registry_entry_get(int id);
+E_API E_Fm2_Op_Registry_Entry *e_fm2_op_registry_entry_get(int id);
 
-EAPI void e_fm2_op_registry_entry_listener_add(E_Fm2_Op_Registry_Entry *entry, void (*cb)(void *data, const E_Fm2_Op_Registry_Entry *entry), const void *data, void (*free_data)(void *data));
-EAPI void e_fm2_op_registry_entry_listener_del(E_Fm2_Op_Registry_Entry *entry, void (*cb)(void *data, const E_Fm2_Op_Registry_Entry *entry), const void *data);
+E_API void e_fm2_op_registry_entry_listener_add(E_Fm2_Op_Registry_Entry *entry, void (*cb)(void *data, const E_Fm2_Op_Registry_Entry *entry), const void *data, void (*free_data)(void *data));
+E_API void e_fm2_op_registry_entry_listener_del(E_Fm2_Op_Registry_Entry *entry, void (*cb)(void *data, const E_Fm2_Op_Registry_Entry *entry), const void *data);
 
-EAPI Eina_Iterator *e_fm2_op_registry_iterator_new(void);
-EAPI Eina_List     *e_fm2_op_registry_get_all(void);
-EAPI void           e_fm2_op_registry_get_all_free(Eina_List *list);
-EAPI Eina_Bool      e_fm2_op_registry_is_empty(void);
-EAPI int            e_fm2_op_registry_count(void);
+E_API Eina_Iterator *e_fm2_op_registry_iterator_new(void);
+E_API Eina_List     *e_fm2_op_registry_get_all(void);
+E_API void           e_fm2_op_registry_get_all_free(Eina_List *list);
+E_API Eina_Bool      e_fm2_op_registry_is_empty(void);
+E_API int            e_fm2_op_registry_count(void);
 
-EAPI void           e_fm2_op_registry_entry_abort(E_Fm2_Op_Registry_Entry *entry);
+E_API void           e_fm2_op_registry_entry_abort(E_Fm2_Op_Registry_Entry *entry);
 
 EINTERN unsigned int e_fm2_op_registry_init(void);
 EINTERN unsigned int e_fm2_op_registry_shutdown(void);

@@ -11,7 +11,7 @@ static void _e_wid_del_hook(Evas_Object *obj);
 /* local subsystem functions */
 
 /* externally accessible functions */
-EAPI Evas_Object *
+E_API Evas_Object *
 e_widget_table_add(Evas_Object *parent, int homogenous)
 {
    Evas_Object *obj, *o;
@@ -33,7 +33,7 @@ e_widget_table_add(Evas_Object *parent, int homogenous)
    return obj;
 }
 
-EAPI void
+E_API void
 e_widget_table_object_append(Evas_Object *obj, Evas_Object *sobj, int col, int row, int colspan, int rowspan, int fill_w, int fill_h, int expand_w, int expand_h)
 {
    e_widget_table_object_align_append(obj, sobj,
@@ -42,7 +42,7 @@ e_widget_table_object_append(Evas_Object *obj, Evas_Object *sobj, int col, int r
                                       0.5, 0.5);
 }
 
-EAPI void
+E_API void
 e_widget_table_object_align_append(Evas_Object *obj, Evas_Object *sobj, int col, int row, int colspan, int rowspan, int fill_w, int fill_h, int expand_w, int expand_h, double ax, double ay)
 {
    E_Widget_Data *wd;
@@ -58,7 +58,7 @@ e_widget_table_object_align_append(Evas_Object *obj, Evas_Object *sobj, int col,
    evas_object_show(sobj);
 }
 
-EAPI void
+E_API void
 e_widget_table_object_repack(Evas_Object *obj EINA_UNUSED, Evas_Object *sobj, int col, int row, int colspan, int rowspan, int fill_w, int fill_h, int expand_w, int expand_h)
 {
    if (fill_w || fill_h)
@@ -67,7 +67,7 @@ e_widget_table_object_repack(Evas_Object *obj EINA_UNUSED, Evas_Object *sobj, in
    elm_table_pack_set(sobj, col, row, colspan, rowspan);
 }
 
-EAPI void
+E_API void
 e_widget_table_unpack(Evas_Object *obj, Evas_Object *sobj)
 {
    E_Widget_Data *wd;

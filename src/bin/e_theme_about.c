@@ -11,7 +11,7 @@ _cb_settings_theme(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, const c
 
 /* externally accessible functions */
 
-EAPI E_Theme_About *
+E_API E_Theme_About *
 e_theme_about_new(void)
 {
    E_Obj_Dialog *od;
@@ -27,7 +27,7 @@ e_theme_about_new(void)
    return (E_Theme_About *)od;
 }
 
-EAPI void
+E_API void
 e_theme_about_show(E_Theme_About *about)
 {
    e_obj_dialog_show((E_Obj_Dialog *)about);

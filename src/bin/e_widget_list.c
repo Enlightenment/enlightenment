@@ -19,7 +19,7 @@ static void _e_wid_del_hook(Evas_Object *obj);
  * @param horiz the direction the list should be displayed
  * @return the new list wdiget
  */
-EAPI Evas_Object *
+E_API Evas_Object *
 e_widget_list_add(Evas *evas, int homogenous, int horiz)
 {
    Evas_Object *obj, *o;
@@ -52,7 +52,7 @@ e_widget_list_add(Evas *evas, int homogenous, int horiz)
  * @param align who the sub widget to be aligned, to wards the center or sides
  * @return the new list wdiget
  */
-EAPI void
+E_API void
 e_widget_list_object_prepend(Evas_Object *obj, Evas_Object *sobj, int fill, int expand, double align)
 {
    E_Widget_Data *wd;
@@ -90,7 +90,7 @@ e_widget_list_object_prepend(Evas_Object *obj, Evas_Object *sobj, int fill, int 
  * @param align who the sub widget to be aligned, to wards the center or sides
  * @return the new list wdiget
  */
-EAPI void
+E_API void
 e_widget_list_object_append(Evas_Object *obj, Evas_Object *sobj, int fill, int expand, double align)
 {
    E_Widget_Data *wd;
@@ -118,7 +118,7 @@ e_widget_list_object_append(Evas_Object *obj, Evas_Object *sobj, int fill, int e
    evas_object_show(sobj);
 }
 
-EAPI void
+E_API void
 e_widget_list_object_repack(Evas_Object *obj, Evas_Object *sobj, int fill, int expand, double align)
 {
    E_Widget_Data *wd;
@@ -143,7 +143,7 @@ e_widget_list_object_repack(Evas_Object *obj, Evas_Object *sobj, int fill, int e
    e_widget_size_min_set(obj, mw, mh);
 }
 
-EAPI void
+E_API void
 e_widget_list_homogeneous_set(Evas_Object *obj, int homogenous)
 {
    E_Widget_Data *wd = e_widget_data_get(obj);

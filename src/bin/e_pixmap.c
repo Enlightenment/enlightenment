@@ -173,7 +173,7 @@ _e_pixmap_find(E_Pixmap_Type type, va_list *l)
    return NULL;
 }
 
-EAPI int
+E_API int
 e_pixmap_free(E_Pixmap *cp)
 {
    if (!cp) return 0;
@@ -183,7 +183,7 @@ e_pixmap_free(E_Pixmap *cp)
    return 0;
 }
 
-EAPI E_Pixmap *
+E_API E_Pixmap *
 e_pixmap_ref(E_Pixmap *cp)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(cp, NULL);
@@ -191,7 +191,7 @@ e_pixmap_ref(E_Pixmap *cp)
    return cp;
 }
 
-EAPI E_Pixmap *
+E_API E_Pixmap *
 e_pixmap_new(E_Pixmap_Type type, ...)
 {
    E_Pixmap *cp = NULL;
@@ -251,14 +251,14 @@ e_pixmap_new(E_Pixmap_Type type, ...)
    return cp;
 }
 
-EAPI E_Pixmap_Type
+E_API E_Pixmap_Type
 e_pixmap_type_get(const E_Pixmap *cp)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(cp, 9999);
    return cp->type;
 }
 
-EAPI void
+E_API void
 e_pixmap_parent_window_set(E_Pixmap *cp, Ecore_Window win)
 {
    EINA_SAFETY_ON_NULL_RETURN(cp);
@@ -270,7 +270,7 @@ e_pixmap_parent_window_set(E_Pixmap *cp, Ecore_Window win)
    cp->parent = win;
 }
 
-EAPI void
+E_API void
 e_pixmap_visual_cmap_set(E_Pixmap *cp, void *visual, unsigned int cmap)
 {
    EINA_SAFETY_ON_NULL_RETURN(cp);
@@ -284,7 +284,7 @@ e_pixmap_visual_cmap_set(E_Pixmap *cp, void *visual, unsigned int cmap)
 #endif
 }
 
-EAPI void *
+E_API void *
 e_pixmap_visual_get(const E_Pixmap *cp)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(cp, NULL);
@@ -295,28 +295,28 @@ e_pixmap_visual_get(const E_Pixmap *cp)
    return NULL;
 }
 
-EAPI void
+E_API void
 e_pixmap_usable_set(E_Pixmap *cp, Eina_Bool set)
 {
    EINA_SAFETY_ON_NULL_RETURN(cp);
    cp->usable = !!set;
 }
 
-EAPI Eina_Bool
+E_API Eina_Bool
 e_pixmap_usable_get(const E_Pixmap *cp)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(cp, EINA_FALSE);
    return cp->usable;
 }
 
-EAPI Eina_Bool
+E_API Eina_Bool
 e_pixmap_dirty_get(E_Pixmap *cp)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(cp, EINA_FALSE);
    return cp->dirty;
 }
 
-EAPI void
+E_API void
 e_pixmap_clear(E_Pixmap *cp)
 {
    EINA_SAFETY_ON_NULL_RETURN(cp);
@@ -324,14 +324,14 @@ e_pixmap_clear(E_Pixmap *cp)
    cp->dirty = EINA_TRUE;
 }
 
-EAPI void
+E_API void
 e_pixmap_dirty(E_Pixmap *cp)
 {
    EINA_SAFETY_ON_NULL_RETURN(cp);
    cp->dirty = 1;
 }
 
-EAPI Eina_Bool
+E_API Eina_Bool
 e_pixmap_refresh(E_Pixmap *cp)
 {
    Eina_Bool success = EINA_FALSE;
@@ -405,7 +405,7 @@ e_pixmap_refresh(E_Pixmap *cp)
    return success;
 }
 
-EAPI Eina_Bool
+E_API Eina_Bool
 e_pixmap_size_changed(E_Pixmap *cp, int w, int h)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(cp, EINA_FALSE);
@@ -413,7 +413,7 @@ e_pixmap_size_changed(E_Pixmap *cp, int w, int h)
    return (w != cp->w) || (h != cp->h);
 }
 
-EAPI Eina_Bool
+E_API Eina_Bool
 e_pixmap_size_get(E_Pixmap *cp, int *w, int *h)
 {
    if (w) *w = 0;
@@ -424,14 +424,14 @@ e_pixmap_size_get(E_Pixmap *cp, int *w, int *h)
    return (cp->w > 0) && (cp->h > 0);
 }
 
-EAPI unsigned int
+E_API unsigned int
 e_pixmap_failures_get(const E_Pixmap *cp)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(cp, 0);
    return cp->failures;
 }
 
-EAPI void
+E_API void
 e_pixmap_client_set(E_Pixmap *cp, E_Client *ec)
 {
    EINA_SAFETY_ON_NULL_RETURN(cp);
@@ -439,14 +439,14 @@ e_pixmap_client_set(E_Pixmap *cp, E_Client *ec)
    cp->client = ec;
 }
 
-EAPI E_Client *
+E_API E_Client *
 e_pixmap_client_get(E_Pixmap *cp)
 {
    if (!cp) return NULL;
    return cp->client;
 }
 
-EAPI E_Pixmap *
+E_API E_Pixmap *
 e_pixmap_find(E_Pixmap_Type type, ...)
 {
    va_list l;
@@ -458,7 +458,7 @@ e_pixmap_find(E_Pixmap_Type type, ...)
    return cp;
 }
 
-EAPI E_Client *
+E_API E_Client *
 e_pixmap_find_client(E_Pixmap_Type type, ...)
 {
    va_list l;
@@ -470,14 +470,14 @@ e_pixmap_find_client(E_Pixmap_Type type, ...)
    return (!cp) ? NULL : cp->client;
 }
 
-EAPI uint64_t
+E_API uint64_t
 e_pixmap_window_get(E_Pixmap *cp)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(cp, 0);
    return cp->win;
 }
 
-EAPI void *
+E_API void *
 e_pixmap_resource_get(E_Pixmap *cp)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(cp, NULL);
@@ -492,7 +492,7 @@ e_pixmap_resource_get(E_Pixmap *cp)
    return NULL;
 }
 
-EAPI void
+E_API void
 e_pixmap_resource_set(E_Pixmap *cp, void *resource)
 {
    if ((!cp) || (cp->type != E_PIXMAP_TYPE_WL)) return;
@@ -548,14 +548,14 @@ e_pixmap_resource_set(E_Pixmap *cp, void *resource)
 #endif
 }
 
-EAPI Ecore_Window
+E_API Ecore_Window
 e_pixmap_parent_window_get(E_Pixmap *cp)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(cp, 0);
    return cp->parent;
 }
 
-EAPI Eina_Bool
+E_API Eina_Bool
 e_pixmap_native_surface_init(E_Pixmap *cp, Evas_Native_Surface *ns)
 {
    Eina_Bool ret = EINA_FALSE;
@@ -594,7 +594,7 @@ e_pixmap_native_surface_init(E_Pixmap *cp, Evas_Native_Surface *ns)
    return ret;
 }
 
-EAPI void
+E_API void
 e_pixmap_image_clear(E_Pixmap *cp, Eina_Bool cache)
 {
    EINA_SAFETY_ON_NULL_RETURN(cp);
@@ -652,7 +652,7 @@ e_pixmap_image_clear(E_Pixmap *cp, Eina_Bool cache)
      }
 }
 
-EAPI Eina_Bool
+E_API Eina_Bool
 e_pixmap_image_refresh(E_Pixmap *cp)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(cp, EINA_FALSE);
@@ -692,7 +692,7 @@ e_pixmap_image_refresh(E_Pixmap *cp)
    return EINA_FALSE;
 }
 
-EAPI Eina_Bool
+E_API Eina_Bool
 e_pixmap_image_exists(const E_Pixmap *cp)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(cp, EINA_FALSE);
@@ -708,7 +708,7 @@ e_pixmap_image_exists(const E_Pixmap *cp)
    return EINA_FALSE;
 }
 
-EAPI Eina_Bool
+E_API Eina_Bool
 e_pixmap_image_is_argb(const E_Pixmap *cp)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(cp, EINA_FALSE);
@@ -728,7 +728,7 @@ e_pixmap_image_is_argb(const E_Pixmap *cp)
    return EINA_FALSE;
 }
 
-EAPI void *
+E_API void *
 e_pixmap_image_data_get(E_Pixmap *cp)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(cp, NULL);
@@ -752,7 +752,7 @@ e_pixmap_image_data_get(E_Pixmap *cp)
    return NULL;
 }
 
-EAPI Eina_Bool
+E_API Eina_Bool
 e_pixmap_image_data_argb_convert(E_Pixmap *cp, void *pix, void *ipix, Eina_Rectangle *r, int stride)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(cp, EINA_FALSE);
@@ -808,7 +808,7 @@ e_pixmap_image_data_argb_convert(E_Pixmap *cp, void *pix, void *ipix, Eina_Recta
    return EINA_FALSE;
 }
 
-EAPI Eina_Bool
+E_API Eina_Bool
 e_pixmap_image_draw(E_Pixmap *cp, const Eina_Rectangle *r)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(cp, EINA_FALSE);
@@ -832,7 +832,7 @@ e_pixmap_image_draw(E_Pixmap *cp, const Eina_Rectangle *r)
    return EINA_FALSE;
 }
 
-EAPI void 
+E_API void 
 e_pixmap_image_draw_done(E_Pixmap *cp)
 {
    EINA_SAFETY_ON_NULL_RETURN(cp);
@@ -847,7 +847,7 @@ e_pixmap_image_draw_done(E_Pixmap *cp)
 #endif
 }
 
-EAPI void
+E_API void
 e_pixmap_image_opaque_set(E_Pixmap *cp, int x, int y, int w, int h)
 {
    EINA_SAFETY_ON_NULL_RETURN(cp);
@@ -861,7 +861,7 @@ e_pixmap_image_opaque_set(E_Pixmap *cp, int x, int y, int w, int h)
 #endif
 }
 
-EAPI void
+E_API void
 e_pixmap_image_opaque_get(E_Pixmap *cp, int *x, int *y, int *w, int *h)
 {
    EINA_SAFETY_ON_NULL_RETURN(cp);

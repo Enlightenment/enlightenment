@@ -12,13 +12,13 @@ static E_Action *act = NULL;
 static E_Int_Menu_Augmentation *maug = NULL;
 
 /* module setup */
-EAPI E_Module_Api e_modapi =
+E_API E_Module_Api e_modapi =
 {
    E_MODULE_API_VERSION,
    "Syscon"
 };
 
-EAPI void *
+E_API void *
 e_modapi_init(E_Module *m)
 {
    conf_module = m;
@@ -40,7 +40,7 @@ e_modapi_init(E_Module *m)
    return m;
 }
 
-EAPI int
+E_API int
 e_modapi_shutdown(E_Module *m EINA_UNUSED)
 {
    E_Config_Dialog *cfd;

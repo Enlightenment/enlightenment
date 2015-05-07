@@ -1,12 +1,12 @@
 #include "e.h"
 
-EAPI E_Path * path_data = NULL;
-EAPI E_Path * path_images = NULL;
-EAPI E_Path * path_fonts = NULL;
-EAPI E_Path * path_icons = NULL;
-EAPI E_Path * path_modules = NULL;
-EAPI E_Path * path_backgrounds = NULL;
-EAPI E_Path * path_messages = NULL;
+E_API E_Path * path_data = NULL;
+E_API E_Path * path_images = NULL;
+E_API E_Path * path_fonts = NULL;
+E_API E_Path * path_icons = NULL;
+E_API E_Path * path_modules = NULL;
+E_API E_Path * path_backgrounds = NULL;
+E_API E_Path * path_messages = NULL;
 
 /* local subsystem functions */
 static Eina_Bool    _e_util_cb_delayed_del(void *data);
@@ -20,14 +20,14 @@ static void         _e_util_cb_delayed_cancel(void *data, void *obj);
 static Ecore_Timer *_e_util_dummy_timer = NULL;
 
 /* externally accessible functions */
-EAPI void
+E_API void
 e_util_wakeup(void)
 {
    if (_e_util_dummy_timer) return;
    _e_util_dummy_timer = ecore_timer_add(0.0, _e_util_wakeup_cb, NULL);
 }
 
-EAPI void
+E_API void
 e_util_env_set(const char *var, const char *val)
 {
    if (val)
@@ -51,7 +51,7 @@ e_util_env_set(const char *var, const char *val)
      }
 }
 
-EAPI int
+E_API int
 e_util_glob_match(const char *str, const char *pattern)
 {
    if ((!str) || (!pattern)) return 0;
@@ -66,7 +66,7 @@ e_util_glob_match(const char *str, const char *pattern)
    return 0;
 }
 
-EAPI int
+E_API int
 e_util_glob_case_match(const char *str, const char *pattern)
 {
    const char *p;
@@ -91,7 +91,7 @@ e_util_glob_case_match(const char *str, const char *pattern)
    return 0;
 }
 
-EAPI int
+E_API int
 e_util_strcmp(const char *s1, const char *s2)
 {
    if ((s1) && (s2))
@@ -102,7 +102,7 @@ e_util_strcmp(const char *s1, const char *s2)
    return 0x7fffffff;
 }
 
-EAPI int
+E_API int
 e_util_strcasecmp(const char *s1, const char *s2)
 {
    if ((!s1) && (!s2)) return 0;
@@ -111,7 +111,7 @@ e_util_strcasecmp(const char *s1, const char *s2)
    return strcasecmp(s1, s2);
 }
 
-EAPI int
+E_API int
 e_util_both_str_empty(const char *s1, const char *s2)
 {
    int empty = 0;
@@ -123,7 +123,7 @@ e_util_both_str_empty(const char *s1, const char *s2)
    return 0;
 }
 
-EAPI int
+E_API int
 e_util_immortal_check(void)
 {
    Eina_List *wins;
@@ -144,7 +144,7 @@ e_util_immortal_check(void)
    return 0;
 }
 
-EAPI int
+E_API int
 e_util_edje_icon_check(const char *name)
 {
    const char *file;
@@ -160,7 +160,7 @@ e_util_edje_icon_check(const char *name)
 /* WARNING This function is deprecated,. must be made static.
  * You should use e_util_icon_theme_set instead
  */
-EAPI int
+E_API int
 e_util_edje_icon_set(Evas_Object *obj, const char *name)
 {
    const char *file;
@@ -219,7 +219,7 @@ _e_util_icon_fdo_set(Evas_Object *obj, const char *icon)
 }
 
 /* use e_icon_size_scale_set(obj, size) to set the preferred icon size */
-EAPI int
+E_API int
 e_util_icon_theme_set(Evas_Object *obj, const char *icon)
 {
    if (icon && (icon[0] == '/'))
@@ -272,7 +272,7 @@ _e_util_menu_item_edje_icon_set(E_Menu_Item *mi, const char *name, Eina_Bool fal
    return 0;
 }
 
-EAPI unsigned int
+E_API unsigned int
 e_util_icon_size_normalize(unsigned int desired)
 {
    const unsigned int *itr, known_sizes[] =
@@ -301,7 +301,7 @@ _e_util_menu_item_fdo_icon_set(E_Menu_Item *mi, const char *icon)
    return 1;
 }
 
-EAPI int
+E_API int
 e_util_menu_item_theme_icon_set(E_Menu_Item *mi, const char *icon)
 {
    if (e_config->icon_theme_overrides)
@@ -322,7 +322,7 @@ e_util_menu_item_theme_icon_set(E_Menu_Item *mi, const char *icon)
      }
 }
 
-EAPI const char *
+E_API const char *
 e_util_mime_icon_get(const char *mime, unsigned int size)
 {
    char buf[1024];
@@ -340,7 +340,7 @@ e_util_mime_icon_get(const char *mime, unsigned int size)
    return efreet_mime_type_icon_get(mime, e_config->icon_theme, e_util_icon_size_normalize(size));
 }
 
-EAPI E_Client *
+E_API E_Client *
 e_util_desk_client_above(E_Client *ec)
 {
    E_Client *ec2;
@@ -355,7 +355,7 @@ e_util_desk_client_above(E_Client *ec)
    return NULL;
 }
 
-EAPI E_Client *
+E_API E_Client *
 e_util_desk_client_below(E_Client *ec)
 {
    E_Client *ec2;
@@ -370,7 +370,7 @@ e_util_desk_client_below(E_Client *ec)
    return NULL;
 }
 
-EAPI int
+E_API int
 e_util_edje_collection_exists(const char *file, const char *coll)
 {
    Eina_List *clist;
@@ -387,7 +387,7 @@ e_util_edje_collection_exists(const char *file, const char *coll)
    return ret;
 }
 
-EAPI E_Dialog *
+E_API E_Dialog *
 e_util_dialog_internal(const char *title, const char *txt)
 {
    E_Dialog *dia;
@@ -404,7 +404,7 @@ e_util_dialog_internal(const char *title, const char *txt)
    return dia;
 }
 
-EAPI const char *
+E_API const char *
 e_util_filename_escape(const char *filename)
 {
    const char *p;
@@ -440,7 +440,7 @@ e_util_filename_escape(const char *filename)
 }
 
 
-EAPI char *
+E_API char *
 e_util_shell_env_path_eval(const char *path)
 {
    /* evaluate things like:
@@ -542,7 +542,7 @@ e_util_shell_env_path_eval(const char *path)
    return strdup(buf);
 }
 
-EAPI char *
+E_API char *
 e_util_size_string_get(off_t size)
 {
    double dsize;
@@ -573,7 +573,7 @@ e_util_size_string_get(off_t size)
    return strdup(buf);
 }
 
-EAPI char *
+E_API char *
 e_util_file_time_get(time_t ftime)
 {
    time_t diff, ltime, test;
@@ -628,20 +628,20 @@ e_util_file_time_get(time_t ftime)
    return s;
 }
 
-EAPI Evas_Object *
+E_API Evas_Object *
 e_util_icon_add(const char *path, Evas *evas)
 {
    return _e_util_icon_add(path, evas, 64);
 }
 
-EAPI Evas_Object *
+E_API Evas_Object *
 e_util_desktop_icon_add(Efreet_Desktop *desktop, unsigned int size, Evas *evas)
 {
    if ((!desktop) || (!desktop->icon)) return NULL;
    return e_util_icon_theme_icon_add(desktop->icon, size, evas);
 }
 
-EAPI Evas_Object *
+E_API Evas_Object *
 e_util_icon_theme_icon_add(const char *icon_name, unsigned int size, Evas *evas)
 {
    if (!icon_name) return NULL;
@@ -661,7 +661,7 @@ e_util_icon_theme_icon_add(const char *icon_name, unsigned int size, Evas *evas)
    return NULL;
 }
 
-EAPI void
+E_API void
 e_util_desktop_menu_item_icon_add(Efreet_Desktop *desktop, unsigned int size, E_Menu_Item *mi)
 {
    const char *path = NULL;
@@ -688,7 +688,7 @@ e_util_desktop_menu_item_icon_add(Efreet_Desktop *desktop, unsigned int size, E_
      }
 }
 
-EAPI int
+E_API int
 e_util_dir_check(const char *dir)
 {
    if (!ecore_file_exists(dir))
@@ -710,7 +710,7 @@ e_util_dir_check(const char *dir)
    return 1;
 }
 
-EAPI void
+E_API void
 e_util_defer_object_del(E_Object *obj)
 {
    if (stopping)
@@ -724,7 +724,7 @@ e_util_defer_object_del(E_Object *obj)
      }
 }
 
-EAPI const char *
+E_API const char *
 e_util_winid_str_get(Ecore_X_Window win)
 {
    const char *vals = "qWeRtYuIoP5-$&<~";
@@ -763,7 +763,7 @@ _win_auto_size_calc(int max, int min)
    return min;
 }
 
-EAPI void
+E_API void
 e_util_win_auto_resize_fill(Evas_Object *win)
 {
    E_Zone *zone = NULL;
@@ -884,7 +884,7 @@ _e_util_conf_timer_new(void *data)
    return ECORE_CALLBACK_CANCEL;
 }
 
-EAPI Eina_Bool
+E_API Eina_Bool
 e_util_module_config_check(const char *module_name, int loaded, int current)
 {
    if (loaded > current)
@@ -905,7 +905,7 @@ e_util_module_config_check(const char *module_name, int loaded, int current)
 /**
  * Checks whenever the current manager/comp/zone have fullscreen windows.
  */
-EAPI Eina_Bool
+E_API Eina_Bool
 e_util_fullscreen_current_any(void)
 {
    E_Zone *zone = e_zone_current_get();
@@ -920,7 +920,7 @@ e_util_fullscreen_current_any(void)
 /**
  * Checks whenever any manager/comp/zone have fullscreen windows.
  */
-EAPI Eina_Bool
+E_API Eina_Bool
 e_util_fullscreen_any(void)
 {
    E_Zone *zone;
@@ -943,7 +943,7 @@ e_util_fullscreen_any(void)
    return EINA_FALSE;
 }
 
-EAPI const char *
+E_API const char *
 e_util_time_str_get(long int seconds)
 {
    static char buf[1024];
@@ -1033,7 +1033,7 @@ _e_util_size_debug(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj
    fprintf(stderr, "%s %d OBJ[%s%s%p]: (%d,%d) - %dx%d\n", evas_object_visible_get(obj) ? "VIS" : "HID", evas_object_layer_get(obj), name ?: "", name ? "|" : "", obj, x, y, w, h);
 }
 
-EAPI void
+E_API void
 e_util_size_debug_set(Evas_Object *obj, Eina_Bool enable)
 {
    if (enable)
@@ -1070,7 +1070,7 @@ e_util_size_debug_set(Evas_Object *obj, Eina_Bool enable)
      }
 }
 
-EAPI void
+E_API void
 e_util_string_list_free(Eina_List *l)
 {
    char *s;
@@ -1098,7 +1098,7 @@ _e_util_default_terminal_get(const char *defaults_list)
    return tdesktop;
 }
 
-EAPI Efreet_Desktop *
+E_API Efreet_Desktop *
 e_util_terminal_desktop_get(void)
 {
    const char *terms[] =
@@ -1151,7 +1151,7 @@ e_util_terminal_desktop_get(void)
    return tdesktop;
 }
 
-EAPI E_Config_Binding_Key *
+E_API E_Config_Binding_Key *
 e_util_binding_match(const Eina_List *bindlist, Ecore_Event_Key *ev, unsigned int *num, const E_Config_Binding_Key *skip)
 {
    E_Config_Binding_Key *bi;
@@ -1185,7 +1185,7 @@ e_util_binding_match(const Eina_List *bindlist, Ecore_Event_Key *ev, unsigned in
    return NULL;
 }
 
-EAPI void
+E_API void
 e_util_gadcon_orient_icon_set(E_Gadcon_Orient orient, Evas_Object *obj)
 {
    switch (orient)
@@ -1244,7 +1244,7 @@ e_util_gadcon_orient_icon_set(E_Gadcon_Orient orient, Evas_Object *obj)
      }
 }
 
-EAPI void
+E_API void
 e_util_gadcon_orient_menu_item_icon_set(E_Gadcon_Orient orient, E_Menu_Item *mi)
 {
    switch (orient)
@@ -1303,7 +1303,7 @@ e_util_gadcon_orient_menu_item_icon_set(E_Gadcon_Orient orient, E_Menu_Item *mi)
      }
 }
 
-EAPI char *
+E_API char *
 e_util_string_append_char(char *str, size_t *size, size_t *len, char c)
 {
    if (!str)
@@ -1336,7 +1336,7 @@ e_util_string_append_char(char *str, size_t *size, size_t *len, char c)
    return str;
 }
 
-EAPI char *
+E_API char *
 e_util_string_append_quoted(char *str, size_t *size, size_t *len, const char *src)
 {
    str = e_util_string_append_char(str, size, len, '\'');
@@ -1370,7 +1370,7 @@ e_util_string_append_quoted(char *str, size_t *size, size_t *len, const char *sr
    return str;
 }
 
-EAPI void
+E_API void
 e_util_evas_objects_above_print(Evas_Object *o)
 {
    Evas_Object *a, *oo;
@@ -1393,7 +1393,7 @@ e_util_evas_objects_above_print(Evas_Object *o)
      }
 }
 
-EAPI void
+E_API void
 e_util_evas_objects_above_print_smart(Evas_Object *o)
 {
    Evas_Object *a, *oo;
@@ -1436,7 +1436,7 @@ e_util_evas_objects_above_print_smart(Evas_Object *o)
  */
 static void *(* const volatile memset_ptr)(void *, int, size_t) = memset;
 
-EAPI void
+E_API void
 e_util_memclear(void *s, size_t n)
 {
    memset_ptr(s, 0, n);

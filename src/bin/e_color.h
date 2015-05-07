@@ -25,8 +25,8 @@ struct _E_Color
    int a;
 };
 
-EAPI void e_color_update_rgb (E_Color *ec);
-EAPI void e_color_update_hsv (E_Color *ec);
-EAPI void e_color_copy       (const E_Color *from, E_Color *to);
+E_API void e_color_update_rgb (E_Color *ec);
+E_API void e_color_update_hsv (E_Color *ec);
+E_API void e_color_copy       (const E_Color *from, E_Color *to);
 #endif
 #endif

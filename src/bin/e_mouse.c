@@ -1,6 +1,6 @@
 #include "e.h"
 
-EAPI int
+E_API int
 e_mouse_update(void)
 {
    unsigned char map[256] = { 0 };

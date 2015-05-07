@@ -21,7 +21,7 @@
 
 static Eina_List *handlers = NULL;
 static Eina_List *hooks = NULL;
-EAPI E_Comp *e_comp = NULL;
+E_API E_Comp *e_comp = NULL;
 static Eina_Hash *ignores = NULL;
 static Eina_List *actions = NULL;
 
@@ -36,9 +36,9 @@ static double ecore_frametime = 0;
 
 static int _e_comp_log_dom = -1;
 
-EAPI int E_EVENT_COMPOSITOR_RESIZE = -1;
-EAPI int E_EVENT_COMPOSITOR_DISABLE = -1;
-EAPI int E_EVENT_COMPOSITOR_ENABLE = -1;
+E_API int E_EVENT_COMPOSITOR_RESIZE = -1;
+E_API int E_EVENT_COMPOSITOR_DISABLE = -1;
+E_API int E_EVENT_COMPOSITOR_ENABLE = -1;
 
 //////////////////////////////////////////////////////////////////////////
 #undef DBG
@@ -1266,7 +1266,7 @@ e_comp_style_selector_create(Evas *evas, const char **source)
    return oi;
 }
 
-EAPI E_Comp *
+E_API E_Comp *
 e_comp_new(void)
 {
    if (e_comp)
@@ -1280,7 +1280,7 @@ e_comp_new(void)
    return e_comp;
 }
 
-EAPI int
+E_API int
 e_comp_internal_save(void)
 {
    return e_config_domain_save("e_comp", conf_edd, conf);
@@ -1318,7 +1318,7 @@ e_comp_shutdown(void)
    return 1;
 }
 
-EAPI void
+E_API void
 e_comp_render_queue(void)
 {
    if (conf->lock_fps)
@@ -1337,7 +1337,7 @@ e_comp_render_queue(void)
      }
 }
 
-EAPI void
+E_API void
 e_comp_shape_queue(void)
 {
    if (e_comp->comp_type != E_PIXMAP_TYPE_X) return;
@@ -1345,7 +1345,7 @@ e_comp_shape_queue(void)
      e_comp->shape_job = ecore_job_add(_e_comp_shapes_update_job, NULL);
 }
 
-EAPI void
+E_API void
 e_comp_shape_queue_block(Eina_Bool block)
 {
    e_comp->shape_queue_blocked = !!block;
@@ -1355,13 +1355,13 @@ e_comp_shape_queue_block(Eina_Bool block)
      e_comp_shape_queue();
 }
 
-EAPI E_Comp_Config *
+E_API E_Comp_Config *
 e_comp_config_get(void)
 {
    return conf;
 }
 
-EAPI void
+E_API void
 e_comp_shadows_reset(void)
 {
    E_Client *ec;
@@ -1372,7 +1372,7 @@ e_comp_shadows_reset(void)
      e_comp_object_frame_theme_set(ec->frame, E_COMP_OBJECT_FRAME_RESHADOW);
 }
 
-EAPI Ecore_Window
+E_API Ecore_Window
 e_comp_top_window_at_xy_get(Evas_Coord x, Evas_Coord y)
 {
    E_Client *ec;
@@ -1386,7 +1386,7 @@ e_comp_top_window_at_xy_get(Evas_Coord x, Evas_Coord y)
    return e_comp->ee_win;
 }
 
-EAPI void
+E_API void
 e_comp_util_wins_print(void)
 {
    Evas_Object *o;
@@ -1411,7 +1411,7 @@ e_comp_util_wins_print(void)
    fputc('\n', stderr);
 }
 
-EAPI void
+E_API void
 e_comp_ignore_win_add(E_Pixmap_Type type, Ecore_Window win)
 {
    E_Client *ec;
@@ -1423,7 +1423,7 @@ e_comp_ignore_win_add(E_Pixmap_Type type, Ecore_Window win)
    if (ec->visible) evas_object_hide(ec->frame);
 }
 
-EAPI void
+E_API void
 e_comp_ignore_win_del(E_Pixmap_Type type, Ecore_Window win)
 {
    E_Client *ec;
@@ -1435,13 +1435,13 @@ e_comp_ignore_win_del(E_Pixmap_Type type, Ecore_Window win)
    if (ec->visible) evas_object_show(ec->frame);
 }
 
-EAPI Eina_Bool
+E_API Eina_Bool
 e_comp_ignore_win_find(Ecore_Window win)
 {
    return !!eina_hash_find(ignores, &win);
 }
 
-EAPI void
+E_API void
 e_comp_override_del()
 {
    e_comp->nocomp_override--;
@@ -1452,7 +1452,7 @@ e_comp_override_del()
      }
 }
 
-EAPI void
+E_API void
 e_comp_override_add()
 {
    e_comp->nocomp_override++;
@@ -1461,7 +1461,7 @@ e_comp_override_add()
 
 #if 0
 FIXME
-EAPI void
+E_API void
 e_comp_block_window_add(void)
 {
    e_comp->block_count++;
@@ -1476,7 +1476,7 @@ e_comp_block_window_add(void)
    ecore_x_window_show(e_comp->block_win);
 }
 
-EAPI void
+E_API void
 e_comp_block_window_del(void)
 {
    if (!e_comp->block_count) return;
@@ -1487,14 +1487,14 @@ e_comp_block_window_del(void)
 }
 #endif
 
-EAPI E_Comp *
+E_API E_Comp *
 e_comp_find_by_window(Ecore_Window win)
 {
    if ((e_comp->win == win) || (e_comp->ee_win == win) || (e_comp->root == win)) return e_comp;
    return NULL;
 }
 
-EAPI void
+E_API void
 e_comp_override_timed_pop(void)
 {
    if (e_comp->nocomp_override <= 0) return;
@@ -1504,7 +1504,7 @@ e_comp_override_timed_pop(void)
      e_comp->nocomp_override_timer = ecore_timer_add(1.0, _e_comp_override_expire, NULL);
 }
 
-EAPI unsigned int
+E_API unsigned int
 e_comp_e_object_layer_get(const E_Object *obj)
 {
    E_Gadcon *gc = NULL;
@@ -1538,7 +1538,7 @@ e_comp_e_object_layer_get(const E_Object *obj)
    return 0;
 }
 
-EAPI Eina_Bool
+E_API Eina_Bool
 e_comp_grab_input(Eina_Bool mouse, Eina_Bool kbd)
 {
    Eina_Bool ret = EINA_FALSE;
@@ -1561,7 +1561,7 @@ e_comp_grab_input(Eina_Bool mouse, Eina_Bool kbd)
    return ret;
 }
 
-EAPI void
+E_API void
 e_comp_ungrab_input(Eina_Bool mouse, Eina_Bool kbd)
 {
    Ecore_Window mwin = 0, kwin = 0;
@@ -1586,45 +1586,45 @@ e_comp_ungrab_input(Eina_Bool mouse, Eina_Bool kbd)
      e_client_refocus();
 }
 
-EAPI Eina_Bool
+E_API Eina_Bool
 e_comp_util_kbd_grabbed(void)
 {
    return e_menu_grab_window_get() || e_client_action_get() || e_grabinput_key_win_get();
 }
 
-EAPI Eina_Bool
+E_API Eina_Bool
 e_comp_util_mouse_grabbed(void)
 {
    return e_menu_grab_window_get() || e_client_action_get() || e_grabinput_mouse_win_get();
 }
 
-EAPI void
+E_API void
 e_comp_gl_set(Eina_Bool set)
 {
    gl_avail = !!set;
 }
 
-EAPI Eina_Bool
+E_API Eina_Bool
 e_comp_gl_get(void)
 {
    return gl_avail;
 }
 
-EAPI void
+E_API void
 e_comp_button_bindings_ungrab_all(void)
 {
    if (e_comp->bindings_ungrab_cb)
      e_comp->bindings_ungrab_cb();
 }
 
-EAPI void
+E_API void
 e_comp_button_bindings_grab_all(void)
 {
    if (e_comp->bindings_grab_cb)
      e_comp->bindings_grab_cb();
 }
 
-EAPI void
+E_API void
 e_comp_client_redirect_toggle(E_Client *ec)
 {
    EINA_SAFETY_ON_NULL_RETURN(ec);
@@ -1636,7 +1636,7 @@ e_comp_client_redirect_toggle(E_Client *ec)
    e_comp_shape_queue();
 }
 
-EAPI Eina_Bool
+E_API Eina_Bool
 e_comp_util_object_is_above_nocomp(Evas_Object *obj)
 {
    Evas_Object *o;

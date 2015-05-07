@@ -58,33 +58,33 @@ struct _E_Int_Menu_Augmentation
      } add, del;
 };
 
-EAPI E_Menu *e_int_menus_main_new(void);
-EAPI E_Menu *e_int_menus_desktops_new(void);
-EAPI E_Menu *e_int_menus_clients_new(void);
-EAPI E_Menu *e_int_menus_apps_new(const char *dir);
-EAPI E_Menu *e_int_menus_favorite_apps_new(void);
-EAPI E_Menu *e_int_menus_all_apps_new(void);
-EAPI E_Menu *e_int_menus_config_new(void);
-EAPI E_Menu *e_int_menus_lost_clients_new(void);
-EAPI E_Menu *e_int_menus_shelves_new(void);
+E_API E_Menu *e_int_menus_main_new(void);
+E_API E_Menu *e_int_menus_desktops_new(void);
+E_API E_Menu *e_int_menus_clients_new(void);
+E_API E_Menu *e_int_menus_apps_new(const char *dir);
+E_API E_Menu *e_int_menus_favorite_apps_new(void);
+E_API E_Menu *e_int_menus_all_apps_new(void);
+E_API E_Menu *e_int_menus_config_new(void);
+E_API E_Menu *e_int_menus_lost_clients_new(void);
+E_API E_Menu *e_int_menus_shelves_new(void);
 
-EAPI E_Int_Menu_Augmentation *e_int_menus_menu_augmentation_add(const char *menu,
+E_API E_Int_Menu_Augmentation *e_int_menus_menu_augmentation_add(const char *menu,
 								void (*func_add) (void *data, E_Menu *m),
 								void *data_add,
 								void (*func_del) (void *data, E_Menu *m),
 								void *data_del);
-EAPI E_Int_Menu_Augmentation *e_int_menus_menu_augmentation_add_sorted(const char *menu,
+E_API E_Int_Menu_Augmentation *e_int_menus_menu_augmentation_add_sorted(const char *menu,
 								       const char *sort_key,
 								       void (*func_add) (void *data, E_Menu *m),
 								       void *data_add,
 								       void (*func_del) (void *data, E_Menu *m),
 								       void *data_del);
-EAPI void                     e_int_menus_menu_augmentation_del(const char *menu,
+E_API void                     e_int_menus_menu_augmentation_del(const char *menu,
 								E_Int_Menu_Augmentation *maug);
 
-EAPI void                     e_int_menus_menu_augmentation_point_disabled_set(const char *menu,
+E_API void                     e_int_menus_menu_augmentation_point_disabled_set(const char *menu,
                                        Eina_Bool disabled);
-EAPI void e_int_menus_cache_clear(void);
+E_API void e_int_menus_cache_clear(void);
 EINTERN void e_int_menus_init(void);
 EINTERN void e_int_menus_shutdown(void);
 #endif

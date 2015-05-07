@@ -103,7 +103,7 @@ e_fm2_custom_file_shutdown(void)
    _e_fm2_custom_dir_edd = NULL;
 }
 
-EAPI E_Fm2_Custom_File *
+E_API E_Fm2_Custom_File *
 e_fm2_custom_file_get(const char *path)
 {
    E_Fm2_Custom_File *cf;
@@ -146,7 +146,7 @@ _e_fm2_custom_dir_dup(const E_Fm2_Custom_Dir *dir)
    return copy;
 }
 
-EAPI E_Fm2_Custom_File *
+E_API E_Fm2_Custom_File *
 e_fm2_custom_file_dup(const E_Fm2_Custom_File *cf)
 {
    E_Fm2_Custom_File *copy;
@@ -163,7 +163,7 @@ e_fm2_custom_file_dup(const E_Fm2_Custom_File *cf)
    return copy;
 }
 
-EAPI void
+E_API void
 e_fm2_custom_file_set(const char *path, const E_Fm2_Custom_File *cf)
 {
    E_Fm2_Custom_File *cf1;
@@ -189,7 +189,7 @@ e_fm2_custom_file_set(const char *path, const E_Fm2_Custom_File *cf)
    _e_fm2_custom_writes = 1;
 }
 
-EAPI void
+E_API void
 e_fm2_custom_file_del(const char *path)
 {
    Eina_List *list, *l;
@@ -217,7 +217,7 @@ e_fm2_custom_file_del(const char *path)
    _e_fm2_custom_writes = 1;
 }
 
-EAPI void
+E_API void
 e_fm2_custom_file_rename(const char *path, const char *new_path)
 {
    E_Fm2_Custom_File *cf, *cf2;
@@ -260,7 +260,7 @@ e_fm2_custom_file_rename(const char *path, const char *new_path)
    _e_fm2_custom_writes = 1;
 }
 
-EAPI void
+E_API void
 e_fm2_custom_file_flush(void)
 {
    if (!_e_fm2_custom_file) return;

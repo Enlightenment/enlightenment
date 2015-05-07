@@ -1278,13 +1278,13 @@ _ibox_cb_menu_configuration(void *data, E_Menu *m EINA_UNUSED, E_Menu_Item *mi E
 /***************************************************************************/
 /**/
 /* module setup */
-EAPI E_Module_Api e_modapi =
+E_API E_Module_Api e_modapi =
 {
    E_MODULE_API_VERSION,
    "IBox"
 };
 
-EAPI void *
+E_API void *
 e_modapi_init(E_Module *m)
 {
    conf_item_edd = E_CONFIG_DD_NEW("IBox_Config_Item", Config_Item);
@@ -1353,7 +1353,7 @@ e_modapi_init(E_Module *m)
    return m;
 }
 
-EAPI int
+E_API int
 e_modapi_shutdown(E_Module *m EINA_UNUSED)
 {
    Config_Item *ci;
@@ -1379,7 +1379,7 @@ e_modapi_shutdown(E_Module *m EINA_UNUSED)
    return 1;
 }
 
-EAPI int
+E_API int
 e_modapi_save(E_Module *m EINA_UNUSED)
 {
    e_config_domain_save("module.ibox", conf_edd, ibox_config);

@@ -3,8 +3,8 @@
 #define REMEMBER_HIERARCHY 1
 #define REMEMBER_SIMPLE    0
 
-EAPI int E_EVENT_REMEMBER_UPDATE = -1;
-EAPI E_Config_DD *e_remember_edd = NULL; //created in e_config.c
+E_API int E_EVENT_REMEMBER_UPDATE = -1;
+E_API E_Config_DD *e_remember_edd = NULL; //created in e_config.c
 
 typedef struct _E_Remember_List E_Remember_List;
 
@@ -95,7 +95,7 @@ e_remember_shutdown(void)
    return 1;
 }
 
-EAPI void
+E_API void
 e_remember_internal_save(void)
 {
    const Eina_List *l;
@@ -208,7 +208,7 @@ _e_remember_restore_cb(void *data EINA_UNUSED, int type EINA_UNUSED, void *event
    return ECORE_CALLBACK_PASS_ON;
 }
 
-EAPI E_Remember *
+E_API E_Remember *
 e_remember_new(void)
 {
    E_Remember *rem;
@@ -219,14 +219,14 @@ e_remember_new(void)
    return rem;
 }
 
-EAPI int
+E_API int
 e_remember_usable_get(E_Remember *rem)
 {
    if ((rem->apply_first_only) && (rem->used_count > 0)) return 0;
    return 1;
 }
 
-EAPI void
+E_API void
 e_remember_use(E_Remember *rem)
 {
    rem->used_count++;
@@ -245,13 +245,13 @@ e_remember_use(E_Remember *rem)
      }
 }
 
-EAPI void
+E_API void
 e_remember_unuse(E_Remember *rem)
 {
    rem->used_count--;
 }
 
-EAPI void
+E_API void
 e_remember_del(E_Remember *rem)
 {
    const Eina_List *l;
@@ -268,7 +268,7 @@ e_remember_del(E_Remember *rem)
    _e_remember_free(rem);
 }
 
-EAPI E_Remember *
+E_API E_Remember *
 e_remember_find_usable(E_Client *ec)
 {
    E_Remember *rem;
@@ -277,7 +277,7 @@ e_remember_find_usable(E_Client *ec)
    return rem;
 }
 
-EAPI E_Remember *
+E_API E_Remember *
 e_remember_find(E_Client *ec)
 {
    E_Remember *rem;
@@ -286,7 +286,7 @@ e_remember_find(E_Client *ec)
    return rem;
 }
 
-EAPI void
+E_API void
 e_remember_match_update(E_Remember *rem)
 {
    int max_count = 0;
@@ -322,7 +322,7 @@ e_remember_match_update(E_Remember *rem)
      }
 }
 
-EAPI int
+E_API int
 e_remember_default_match_set(E_Remember *rem, E_Client *ec)
 {
    const char *title, *clasz, *name, *role;
@@ -373,7 +373,7 @@ e_remember_default_match_set(E_Remember *rem, E_Client *ec)
    return match;
 }
 
-EAPI void
+E_API void
 e_remember_update(E_Client *ec)
 {
    if (ec->new_client) return;

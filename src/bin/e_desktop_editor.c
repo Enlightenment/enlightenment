@@ -95,7 +95,7 @@ _e_util_icon_save(Ecore_X_Icon *icon, const char *filename)
 }
 /* externally accessible functions */
 
-EAPI Efreet_Desktop *
+E_API Efreet_Desktop *
 e_desktop_client_create(E_Client *ec)
 {
    Efreet_Desktop *desktop = NULL;
@@ -183,7 +183,7 @@ e_desktop_client_create(E_Client *ec)
    return desktop;
 }
 
-EAPI E_Desktop_Edit *
+E_API E_Desktop_Edit *
 e_desktop_client_edit(E_Client *ec)
 {
    E_Desktop_Edit *editor;
@@ -228,7 +228,7 @@ e_desktop_client_edit(E_Client *ec)
    return editor;
 }
 
-EAPI E_Desktop_Edit *
+E_API E_Desktop_Edit *
 e_desktop_edit(Efreet_Desktop *desktop)
 {
    E_Desktop_Edit *editor;

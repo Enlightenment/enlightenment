@@ -1101,7 +1101,7 @@ static const E_Gadcon_Client_Class _gc_class =
    E_GADCON_CLIENT_STYLE_PLAIN
 };
 
-EAPI E_Module_Api e_modapi = {E_MODULE_API_VERSION, _e_mixer_Name};
+E_API E_Module_Api e_modapi = {E_MODULE_API_VERSION, _e_mixer_Name};
 
 static void
 _mixer_cb_volume_modify(Eina_Bool up)
@@ -1381,7 +1381,7 @@ _mixer_actions_unregister(E_Mixer_Module_Context *ctxt)
      }
 }
 
-EAPI void *
+E_API void *
 e_modapi_init(E_Module *m)
 {
    E_Mixer_Module_Context *ctxt;
@@ -1421,7 +1421,7 @@ _mixer_instances_free(E_Mixer_Module_Context *ctxt)
      }
 }
 
-EAPI int
+E_API int
 e_modapi_shutdown(E_Module *m)
 {
    E_Mixer_Module_Context *ctxt;
@@ -1456,7 +1456,7 @@ e_modapi_shutdown(E_Module *m)
    return 1;
 }
 
-EAPI int
+E_API int
 e_modapi_save(E_Module *m)
 {
    E_Mixer_Module_Context *ctxt;

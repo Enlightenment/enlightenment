@@ -120,47 +120,47 @@ struct _E_Event_Zone_Edge
 
 EINTERN int    e_zone_init(void);
 EINTERN int    e_zone_shutdown(void);
-EAPI E_Zone   *e_zone_new(int num, int id, int x, int y, int w, int h);
-EAPI void      e_zone_name_set(E_Zone *zone, const char *name);
-EAPI void      e_zone_move(E_Zone *zone, int x, int y);
-EAPI void      e_zone_resize(E_Zone *zone, int w, int h);
-EAPI Eina_Bool  e_zone_move_resize(E_Zone *zone, int x, int y, int w, int h);
-EAPI E_Zone   *e_zone_current_get(void);
-EAPI void      e_zone_bg_reconfigure(E_Zone *zone);
-EAPI void      e_zone_flip_coords_handle(E_Zone *zone, int x, int y);
-EAPI void      e_zone_desk_count_set(E_Zone *zone, int x_count, int y_count);
-EAPI void      e_zone_desk_count_get(E_Zone *zone, int *x_count, int *y_count);
-EAPI void      e_zone_desk_flip_by(E_Zone *zone, int dx, int dy);
-EAPI void      e_zone_desk_flip_to(E_Zone *zone, int x, int y);
-EAPI void      e_zone_desk_linear_flip_by(E_Zone *zone, int dx);
-EAPI void      e_zone_desk_linear_flip_to(E_Zone *zone, int x);
-EAPI void      e_zone_edge_flip_eval(E_Zone *zone);
-EAPI void      e_zone_edge_new(E_Zone_Edge edge);
-EAPI void      e_zone_edge_free(E_Zone_Edge edge);
-EAPI void      e_zone_edge_enable(void);
-EAPI void      e_zone_edge_disable(void);
-EAPI void      e_zone_edges_desk_flip_capable(E_Zone *zone, Eina_Bool l, Eina_Bool r, Eina_Bool t, Eina_Bool b);
-EAPI Eina_Bool e_zone_exists_direction(E_Zone *zone, E_Zone_Edge edge);
-EAPI void      e_zone_edge_win_layer_set(E_Zone *zone, E_Layer layer);
+E_API E_Zone   *e_zone_new(int num, int id, int x, int y, int w, int h);
+E_API void      e_zone_name_set(E_Zone *zone, const char *name);
+E_API void      e_zone_move(E_Zone *zone, int x, int y);
+E_API void      e_zone_resize(E_Zone *zone, int w, int h);
+E_API Eina_Bool  e_zone_move_resize(E_Zone *zone, int x, int y, int w, int h);
+E_API E_Zone   *e_zone_current_get(void);
+E_API void      e_zone_bg_reconfigure(E_Zone *zone);
+E_API void      e_zone_flip_coords_handle(E_Zone *zone, int x, int y);
+E_API void      e_zone_desk_count_set(E_Zone *zone, int x_count, int y_count);
+E_API void      e_zone_desk_count_get(E_Zone *zone, int *x_count, int *y_count);
+E_API void      e_zone_desk_flip_by(E_Zone *zone, int dx, int dy);
+E_API void      e_zone_desk_flip_to(E_Zone *zone, int x, int y);
+E_API void      e_zone_desk_linear_flip_by(E_Zone *zone, int dx);
+E_API void      e_zone_desk_linear_flip_to(E_Zone *zone, int x);
+E_API void      e_zone_edge_flip_eval(E_Zone *zone);
+E_API void      e_zone_edge_new(E_Zone_Edge edge);
+E_API void      e_zone_edge_free(E_Zone_Edge edge);
+E_API void      e_zone_edge_enable(void);
+E_API void      e_zone_edge_disable(void);
+E_API void      e_zone_edges_desk_flip_capable(E_Zone *zone, Eina_Bool l, Eina_Bool r, Eina_Bool t, Eina_Bool b);
+E_API Eina_Bool e_zone_exists_direction(E_Zone *zone, E_Zone_Edge edge);
+E_API void      e_zone_edge_win_layer_set(E_Zone *zone, E_Layer layer);
 
-EAPI void      e_zone_useful_geometry_dirty(E_Zone *zone);
-EAPI void      e_zone_useful_geometry_get(E_Zone *zone, int *x, int *y, int *w, int *h);
-EAPI void      e_zone_desk_useful_geometry_get(const E_Zone *zone, const E_Desk *desk, int *x, int *y, int *w, int *h);
-EAPI void      e_zone_stow(E_Zone *zone);
-EAPI void      e_zone_unstow(E_Zone *zone);
+E_API void      e_zone_useful_geometry_dirty(E_Zone *zone);
+E_API void      e_zone_useful_geometry_get(E_Zone *zone, int *x, int *y, int *w, int *h);
+E_API void      e_zone_desk_useful_geometry_get(const E_Zone *zone, const E_Desk *desk, int *x, int *y, int *w, int *h);
+E_API void      e_zone_stow(E_Zone *zone);
+E_API void      e_zone_unstow(E_Zone *zone);
 
-EAPI void      e_zone_fade_handle(E_Zone *zone, int out, double tim);
+E_API void      e_zone_fade_handle(E_Zone *zone, int out, double tim);
 
-extern EAPI int E_EVENT_ZONE_DESK_COUNT_SET;
-extern EAPI int E_EVENT_ZONE_MOVE_RESIZE;
-extern EAPI int E_EVENT_ZONE_ADD;
-extern EAPI int E_EVENT_ZONE_DEL;
-extern EAPI int E_EVENT_POINTER_WARP;
-extern EAPI int E_EVENT_ZONE_EDGE_IN;
-extern EAPI int E_EVENT_ZONE_EDGE_OUT;
-extern EAPI int E_EVENT_ZONE_EDGE_MOVE;
-extern EAPI int E_EVENT_ZONE_STOW;
-extern EAPI int E_EVENT_ZONE_UNSTOW;
+extern E_API int E_EVENT_ZONE_DESK_COUNT_SET;
+extern E_API int E_EVENT_ZONE_MOVE_RESIZE;
+extern E_API int E_EVENT_ZONE_ADD;
+extern E_API int E_EVENT_ZONE_DEL;
+extern E_API int E_EVENT_POINTER_WARP;
+extern E_API int E_EVENT_ZONE_EDGE_IN;
+extern E_API int E_EVENT_ZONE_EDGE_OUT;
+extern E_API int E_EVENT_ZONE_EDGE_MOVE;
+extern E_API int E_EVENT_ZONE_STOW;
+extern E_API int E_EVENT_ZONE_UNSTOW;
 
 #endif
 #endif

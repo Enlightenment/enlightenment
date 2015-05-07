@@ -721,12 +721,12 @@ _battery_cb_exe_del(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
 }
 
 /* module setup */
-EAPI E_Module_Api e_modapi =
+E_API E_Module_Api e_modapi =
 {
    E_MODULE_API_VERSION, "Battery"
 };
 
-EAPI void *
+E_API void *
 e_modapi_init(E_Module *m)
 {
    char buf[4096];
@@ -803,7 +803,7 @@ e_modapi_init(E_Module *m)
    return m;
 }
 
-EAPI int
+E_API int
 e_modapi_shutdown(E_Module *m EINA_UNUSED)
 {
    e_configure_registry_item_del("advanced/battery");
@@ -848,7 +848,7 @@ e_modapi_shutdown(E_Module *m EINA_UNUSED)
    return 1;
 }
 
-EAPI int
+E_API int
 e_modapi_save(E_Module *m EINA_UNUSED)
 {
    e_config_domain_save("module.battery", conf_edd, battery_config);

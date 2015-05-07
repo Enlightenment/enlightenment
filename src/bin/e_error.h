@@ -12,7 +12,7 @@
 #ifndef E_ERROR_H
 #define E_ERROR_H
 
-EAPI void e_error_message_show_internal(char *txt);
+E_API void e_error_message_show_internal(char *txt);
 
 #endif
 #endif
