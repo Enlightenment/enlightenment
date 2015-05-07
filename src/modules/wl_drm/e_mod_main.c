@@ -87,175 +87,185 @@ _e_mod_drm_cb_ee_resize(Ecore_Evas *ee EINA_UNUSED)
    e_comp_canvas_update();
 }
 
-static E_Randr2_Mode *
-_mode_get(drmModeModeInfo *info)
+static Ecore_Drm_Output_Mode *
+_e_mod_drm_mode_screen_find(E_Randr2_Screen *s, Ecore_Drm_Output *output)
 {
-   E_Randr2_Mode *mode;
-   uint64_t refresh;
+   Ecore_Drm_Output_Mode *mode, *m = NULL;
+   const Eina_List *l;
+   int diff, distance = 0x7fffffff;
 
-   mode = malloc(sizeof(E_Randr2_Mode));
-
-   mode->w = info->hdisplay;
-   mode->h = info->vdisplay;
-
-   refresh = (info->clock * 1000000LL / info->htotal + info->vtotal / 2) / info->vtotal;
-   if (info->flags & DRM_MODE_FLAG_INTERLACE)
-     refresh *= 2;
-   if (info->flags & DRM_MODE_FLAG_DBLSCAN)
-     refresh /= 2;
-   if (info->vscan > 1)
-     refresh /= info->vscan;
-
-   mode->refresh = refresh;
-   mode->preferred = (info->type & DRM_MODE_TYPE_PREFERRED);
-
-   return mode;
-}
-
-static char *
-_get_edid(Ecore_Drm_Device *dev, drmModeConnector *conn)
-{
-   int i;
-   drmModePropertyBlobPtr blob = NULL;
-   drmModePropertyPtr prop;
-   char *ret;
-
-   for (i = 0; i < conn->count_props; i++)
+   EINA_LIST_FOREACH(ecore_drm_output_modes_get(output), l, mode)
      {
-        if (!(prop = drmModeGetProperty(dev->drm.fd, conn->props[i])))
-          continue;
-        if ((prop->flags & DRM_MODE_PROP_BLOB) &&
-            (!strcmp(prop->name, "EDID")))
+        diff = (100 * abs(s->config.mode.w - mode->width)) + 
+          (100 * abs(s->config.mode.h - mode->height)) + 
+          abs((100 * s->config.mode.refresh) - (100 * mode->refresh));
+        if (diff < distance)
           {
-             blob = drmModeGetPropertyBlob(dev->drm.fd,
-                                           conn->prop_values[i]);
-             drmModeFreeProperty(prop);
-             break;
+             m = mode;
+             distance = diff;
           }
-        drmModeFreeProperty(prop);
-     }
-   if (!blob) return NULL;
-   ret = (char*)eina_memdup(blob->data, blob->length, 1);
-   drmModeFreePropertyBlob(blob);
-   return ret;
-}
-
-static Eina_Bool
-_backlight_get(const char *devpath, uint32_t conn_type)
-{
-   Eina_List *devs, *l;
-   const char *device;
-   Eina_Bool found;
-
-   if (!(devs = eeze_udev_find_by_filter("backlight", NULL, devpath)))
-     devs = eeze_udev_find_by_filter("leds", NULL, devpath);
-
-   if (!devs) return EINA_FALSE;
-
-   EINA_LIST_FOREACH(devs, l, device)
-     {
-        if ((conn_type == DRM_MODE_CONNECTOR_LVDS) ||
-            (conn_type == DRM_MODE_CONNECTOR_eDP) ||
-            eeze_udev_syspath_check_sysattr(device, "type", "raw"))
-          found = EINA_TRUE;
-        if (found) break;
      }
 
-   E_FREE_LIST(devs, eina_stringshare_del);
-
-   return found;
+   return m;
 }
 
 static E_Randr2 *
 _drm_randr_create(void)
 {
    Ecore_Drm_Device *dev;
-   const Eina_List *l;
-   E_Randr2 *r;
+   Ecore_Drm_Output *output;
+   const Eina_List *l, *ll;
+   E_Randr2 *r = NULL;
+   const char *conn_types[] =
+     {
+        "None", "VGA", "DVI-I", "DVI-D", "DVI-A",
+        "Composite", "S-Video", "LVDS", "Component", "DIN",
+        "DisplayPort", "HDMI-A", "HDMI-B", "TV", "eDP", "Virtual",
+        "DSI", "UNKNOWN"
+     };
+   E_Randr2_Connector rtype[] =
+     {
+        E_RANDR2_CONNECTOR_UNDEFINED,
+        E_RANDR2_CONNECTOR_UNDEFINED,
+        E_RANDR2_CONNECTOR_DVI,
+        E_RANDR2_CONNECTOR_DVI,
+        E_RANDR2_CONNECTOR_DVI,
+        E_RANDR2_CONNECTOR_UNDEFINED,
+        E_RANDR2_CONNECTOR_UNDEFINED,
+        E_RANDR2_CONNECTOR_UNDEFINED,
+        E_RANDR2_CONNECTOR_UNDEFINED,
+        E_RANDR2_CONNECTOR_UNDEFINED,
+        E_RANDR2_CONNECTOR_DISPLAY_PORT,
+        E_RANDR2_CONNECTOR_HDMI_A,
+        E_RANDR2_CONNECTOR_HDMI_B,
+        E_RANDR2_CONNECTOR_UNDEFINED,
+        E_RANDR2_CONNECTOR_DISPLAY_PORT,
+        E_RANDR2_CONNECTOR_UNDEFINED,
+        E_RANDR2_CONNECTOR_UNDEFINED,
+        E_RANDR2_CONNECTOR_UNDEFINED,
+     };
+   unsigned int type;
+
+   printf("DRM RRR: ................. info get!\n");
 
    r = E_NEW(E_Randr2, 1);
+   if (!r) return NULL;
+
    EINA_LIST_FOREACH(ecore_drm_devices_get(), l, dev)
      {
-        drmModeRes *res;
-        int o;
-
-        res = drmModeGetResources(dev->drm.fd);
-        if (!res) continue;
-        for (o = 0; o < res->count_connectors; o++)
+        EINA_LIST_FOREACH(dev->outputs, ll, output)
           {
              E_Randr2_Screen *s;
+             E_Config_Randr2_Screen *cs;
+             const Eina_List *m;
+             Ecore_Drm_Output_Mode *omode;
              size_t n, e = 0;
-             int i;
-             drmModeConnector *conn;
-             const char *conn_types[] =
-             {
-                "None", "VGA", "DVI-I", "DVI-D", "DVI-A",
-                "Composite", "S-Video", "LVDS", "Component", "DIN",
-                "DisplayPort", "HDMI-A", "HDMI-B", "TV", "eDP", "Virtual",
-                "DSI", "UNKNOWN"
-             };
-             E_Randr2_Connector rtype[] =
-             {
-                E_RANDR2_CONNECTOR_UNDEFINED,
-                E_RANDR2_CONNECTOR_UNDEFINED,
-                E_RANDR2_CONNECTOR_DVI,
-                E_RANDR2_CONNECTOR_DVI,
-                E_RANDR2_CONNECTOR_DVI,
-                E_RANDR2_CONNECTOR_UNDEFINED,
-                E_RANDR2_CONNECTOR_UNDEFINED,
-                E_RANDR2_CONNECTOR_UNDEFINED,
-                E_RANDR2_CONNECTOR_UNDEFINED,
-                E_RANDR2_CONNECTOR_UNDEFINED,
-                E_RANDR2_CONNECTOR_DISPLAY_PORT,
-                E_RANDR2_CONNECTOR_HDMI_A,
-                E_RANDR2_CONNECTOR_HDMI_B,
-                E_RANDR2_CONNECTOR_UNDEFINED,
-                E_RANDR2_CONNECTOR_DISPLAY_PORT,
-                E_RANDR2_CONNECTOR_UNDEFINED,
-                E_RANDR2_CONNECTOR_UNDEFINED,
-                E_RANDR2_CONNECTOR_UNDEFINED,
-             };
-             char buf[4096];
-             unsigned int type;
+             unsigned int j;
+             int priority;
+             Eina_Bool ok = EINA_FALSE;
+             Eina_Bool possible = EINA_FALSE;
 
-             /* FIXME: it's insane to have this code here instead of in ecore-drm. */
-             conn = drmModeGetConnector(dev->drm.fd, res->connectors[o]);
-             if (!conn) continue;
              s = E_NEW(E_Randr2_Screen, 1);
-             type = MIN(conn->connector_type, EINA_C_ARRAY_LENGTH(conn_types) - 1);
+             if (!s) continue;
 
-             snprintf(buf, sizeof(buf), "%s-%d", conn_types[type], conn->connector_type_id);
-             s->info.name = strdup(buf);
-             s->info.connected = conn->connection == DRM_MODE_CONNECTED;
+             s->info.name = ecore_drm_output_name_get(output);
+             printf("DRM RRR: .... out %s\n", s->info.name);
+
+             s->info.connected = ecore_drm_output_connected_get(output);
+             printf("DRM RRR: ...... connected %i\n", s->info.connected);
+
              if (s->info.connected)
                {
-                  s->info.edid = _get_edid(dev, conn);
+                  s->info.edid = ecore_drm_output_edid_get(output);
                   e = strlen(s->info.edid ?: "");
                }
              n = strlen(s->info.name);
              s->id = malloc(n + e + 2);
              eina_str_join_len(s->id, n + e + 2, '/', s->info.name, n, s->info.edid ?: "", e);
              s->id[n + e + 1] = 0;
-             s->info.connector = rtype[type];
-             s->info.is_lid = (type == DRM_MODE_CONNECTOR_LVDS) || (type == DRM_MODE_CONNECTOR_eDP);
-             s->info.backlight = _backlight_get(dev->drm.path, conn->connector_type);
-             for (i = 0; i < conn->count_modes; i++)
-               {
-                  E_Randr2_Mode *mode;
 
-                  mode = _mode_get(conn->modes + i);
-                  if (mode)
-                    s->info.modes = eina_list_append(s->info.modes, mode);
+             type = MIN(ecore_drm_output_connector_type_get(output),
+                        EINA_C_ARRAY_LENGTH(conn_types) - 1);
+             s->info.connector = rtype[type];
+             s->info.is_lid = ((type == DRM_MODE_CONNECTOR_LVDS) || 
+                               (type == DRM_MODE_CONNECTOR_eDP));
+             s->info.lid_closed = (s->info.is_lid && e_acpi_lid_is_closed());
+             printf("DRM RRR: ...... lid_closed = %i (%i && %i)\n",
+                    s->info.lid_closed, s->info.is_lid, e_acpi_lid_is_closed());
+
+             s->info.backlight = ecore_drm_output_backlight_get(output);
+
+             ecore_drm_output_physical_size_get(output, &s->info.size.w,
+                                                &s->info.size.h);
+
+             EINA_LIST_FOREACH(ecore_drm_output_modes_get(output), m, omode)
+               {
+                  E_Randr2_Mode *rmode;
+
+                  rmode = malloc(sizeof(E_Randr2_Mode));
+                  if (!rmode) continue;
+
+                  rmode->w = omode->width;
+                  rmode->h = omode->height;
+                  rmode->refresh = omode->refresh;
+                  rmode->preferred = (omode->flags & DRM_MODE_TYPE_PREFERRED);
+
+                  s->info.modes = eina_list_append(s->info.modes, rmode);
                }
-             s->info.size.w = conn->mmWidth;
-             s->info.size.h = conn->mmHeight;
+
+             /* TODO: this does NOT handle possibles yet */
+
+             cs = NULL;
+             priority = 0;
+             if (e_randr2_cfg)
+               cs = e_randr2_config_screen_find(s, e_randr2_cfg);
+             if (cs)
+               priority = cs->priority;
+             else if (ecore_drm_output_primary_get(dev) == output)
+               priority = 100;
+             s->config.priority = priority;
+
+             for (j = 0; j < dev->crtc_count; j++)
+               {
+                  if (dev->crtcs[j] == ecore_drm_output_crtc_id_get(output))
+                    {
+                       ok = EINA_TRUE;
+                       break;
+                    }
+               }
+
+             if (!ok)
+               {
+                  /* get possible crtcs, compare to output_crtc_id_get */
+                  WRN("GET POSSIBLE CRTCS");
+               }
+
+             if ((ok) && (!possible))
+               {
+                  unsigned int refresh;
+
+                  ecore_drm_output_position_get(output, &s->config.geom.x,
+                                                &s->config.geom.y);
+                  ecore_drm_output_crtc_size_get(output, &s->config.geom.w,
+                                                 &s->config.geom.h);
+
+                  ecore_drm_output_current_resolution_get(output,
+                                                          &s->config.mode.w,
+                                                          &s->config.mode.h,
+                                                          &refresh);
+                  s->config.mode.refresh = refresh;
+                  s->config.enabled = 
+                    ((s->config.mode.w != 0) && (s->config.mode.h != 0));
+
+                  printf("DRM RRR: '%s' %i %i %ix%i\n", s->info.name,
+                         s->config.geom.x, s->config.geom.y,
+                         s->config.geom.w, s->config.geom.h);
+               }
 
              r->screens = eina_list_append(r->screens, s);
-
-             drmModeFreeConnector(conn);
           }
-        drmModeFreeResources(res);
      }
+
    return r;
 }
 
@@ -272,7 +282,116 @@ _drm_randr_stub(void)
 static void
 _drm_randr_apply(void)
 {
+   Ecore_Drm_Device *dev;
+   Ecore_Drm_Output *out, **outconf;
+   E_Randr2_Screen *s, **screenconf;
+   const Eina_List *l, *ll;
+   int nw, nh, pw, ph, ww, hh;
+   int minw, minh, maxw, maxh;
+   int top_priority = 0, i, numout;
+
    /* TODO: what the actual fuck */
+
+   nw = e_randr2->w;
+   nh = e_randr2->h;
+   EINA_LIST_FOREACH(ecore_drm_devices_get(), l, dev)
+     {
+        int outputs_num, crtcs_num;
+
+        ecore_drm_screen_size_range_get(dev, &minw, &minh, &maxw, &maxh);
+        printf("DRM RRR: size range: %ix%i -> %ix%i\n", minw, minh, maxw, maxh);
+
+        ecore_drm_outputs_geometry_get(dev, NULL, NULL, &pw, &ph);
+        if (nw > maxw) nw = maxw;
+        if (nh > maxh) nh = maxh;
+        if (nw < minw) nw = minw;
+        if (nh < minh) nh = minh;
+        ww = nw;
+        hh = nh;
+        if (nw < pw) ww = pw;
+        if (nh < ph) hh = ph;
+
+        printf("DRM RRR: set vsize: %ix%i\n", ww, hh);
+
+        outputs_num = eina_list_count(dev->outputs);
+        crtcs_num = dev->crtc_count;
+
+        if ((crtcs_num > 0) && (outputs_num > 0))
+          {
+             outconf = calloc(crtcs_num, sizeof(Ecore_Drm_Output *));
+             screenconf = alloca(crtcs_num * sizeof(E_Randr2_Screen *));
+             memset(screenconf, 0, crtcs_num * sizeof(E_Randr2_Screen *));
+
+             EINA_LIST_FOREACH(e_randr2->screens, ll, s)
+               {
+                  printf("DRM RRR: find output for '%s'\n", s->info.name);
+
+                  if (s->config.configured)
+                    {
+                       out = ecore_drm_device_output_name_find(dev, s->info.name);
+                       if (out)
+                         {
+                            printf("DRM RRR:   enabled: %i\n", s->config.enabled);
+                            if (s->config.enabled)
+                              {
+                                 if (s->config.priority > top_priority)
+                                   top_priority = s->config.priority;
+
+                                 for (i = 0; i < crtcs_num; i++)
+                                   {
+                                      if (!outconf[i])
+                                        {
+                                           printf("DRM RRR:     crtc slot empty: %i\n", i);
+
+                                           /* TODO: get crtc info for dev->crtcs[i] */
+                                           /* check if this output can go on this crtc */
+
+                                           outconf[i] = out;
+                                           screenconf[i] = s;
+
+                                           break;
+                                        }
+                                   }
+                              }
+                         }
+                    }
+               }
+
+             numout = 0;
+             for (i = 0; i < crtcs_num; i++)
+               if (outconf[i]) numout++;
+
+             if (numout)
+               {
+                  for (i = 0; i < crtcs_num; i++)
+                    {
+                       /* TODO: find clones */
+                       if (outconf[i])
+                         {
+                            int orient = 0;
+                            Ecore_Drm_Output_Mode *mode;
+
+                            mode = _e_mod_drm_mode_screen_find(screenconf[i],
+                                                               outconf[i]);
+                            printf("DRM RRR: crtc on: %i = '%s'     @ %i %i    - %ix%i orient %i mode %s out %s\n",
+                                   i, screenconf[i]->info.name,
+                                   screenconf[i]->config.geom.x,
+                                   screenconf[i]->config.geom.y,
+                                   screenconf[i]->config.geom.w,
+                                   screenconf[i]->config.geom.h,
+                                   orient, mode->info.name,
+                                   ecore_drm_output_name_get(outconf[i]));
+                         }
+                    }
+               }
+             else
+               printf("DRM RRR: EERRRRRROOOORRRRRRR no outputs to configure!\n");
+
+             free(outconf);
+          }
+     }
+
+   printf("DRM RRR: set vsize: %ix%i\n", nw, nh);
 }
 
 static E_Comp_Screen_Iface drmiface =
