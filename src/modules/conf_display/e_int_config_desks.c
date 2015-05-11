@@ -227,10 +227,11 @@ _basic_create_widgets(E_Config_Dialog *cfd EINA_UNUSED, Evas *evas, E_Config_Dia
      {
         char *p;
         const char *pp;
+        char buf[PATH_MAX];
 
         pp = strchr(s, '/');
         pp = pp ? pp + 1 : s;
-        p = strdupa(pp);
+        p = memcpy(buf, pp, strlen(pp) + 1);
         p[0] = toupper(p[0]);
         ob = e_widget_radio_add(evas, _(p), mode, rg);
         e_widget_list_object_append(o, ob, 1, 0, 0.5);

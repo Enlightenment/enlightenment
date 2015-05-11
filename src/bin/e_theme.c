@@ -41,8 +41,10 @@ e_theme_collection_items_find(const char *base EINA_UNUSED, const char *collname
    EINA_LIST_FREE(list, s)
      {
         char *trans, *p, *p2;
+        size_t slen;
 
-        trans = strdupa(s);
+        slen = strlen(s);
+        trans = memcpy(alloca(slen + 1), s, slen + 1);
         p = trans + len + 1;
         if (*p)
           {

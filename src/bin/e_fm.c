@@ -1448,9 +1448,10 @@ E_API void
 e_fm2_parent_go(Evas_Object *obj)
 {
    char *p, *path;
+   char buf[PATH_MAX];
    EFM_SMART_CHECK();
    if (!sd->path) return;
-   path = strdupa(sd->path);
+   path = memcpy(buf, sd->path, strlen(sd->path + 1));
    if ((p = strrchr(path, '/'))) *p = 0;
    if (*path)
      e_fm2_path_set(obj, sd->dev, path);
@@ -5866,7 +5867,10 @@ _e_fm2_typebuf_match(Evas_Object *obj, int next)
         tb[tblen + 1] = '\0';
      }
    else
-     tb = strdupa(sd->typebuf.buf);
+     {
+        size_t blen = strlen(sd->typebuf.buf);
+        tb = memcpy(alloca(blen + 1), sd->typebuf.buf, blen + 1);
+     }
 
    if (!next)
      {

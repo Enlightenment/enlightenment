@@ -19,7 +19,7 @@ _import_edj_gen(E_Import_Config_Dialog *import)
    int fd, num = 1;
    int w = 0, h = 0;
    const char *file, *locale;
-   char buf[PATH_MAX], cmd[PATH_MAX], tmpn[PATH_MAX], ipart[PATH_MAX], enc[128];
+   char buf[PATH_MAX], fbuf[PATH_MAX], cmd[PATH_MAX], tmpn[PATH_MAX], ipart[PATH_MAX], enc[128];
    Eina_Tmpstr *path = NULL;
    char *imgdir = NULL, *fstrip;
    int cr, cg, cb, ca;
@@ -82,12 +82,14 @@ _import_edj_gen(E_Import_Config_Dialog *import)
 
    if (import->external)
      {
-        fstrip = strdupa(e_util_filename_escape(import->file));
+        const char *esc = e_util_filename_escape(import->file);
+        fstrip = memcpy(fbuf, esc, strlen(esc) + 1);
         snprintf(enc, sizeof(enc), "USER");
      }
    else
      {
-        fstrip = strdupa(e_util_filename_escape(file));
+        const char *esc = e_util_filename_escape(file);
+        fstrip = memcpy(fbuf, esc, strlen(esc) + 1);
         if (import->quality == 100)
           snprintf(enc, sizeof(enc), "COMP");
         else

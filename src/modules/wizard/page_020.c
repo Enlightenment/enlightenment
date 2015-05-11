@@ -7,13 +7,11 @@ static Evas_Object *textblock = NULL;
 static void
 _profile_change(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED)
 {
-   char buf[PATH_MAX];
-   char *dir;
+   char buf[PATH_MAX], buf2[PATH_MAX];
    Efreet_Desktop *desk = NULL;
 
-   e_prefix_data_snprintf(buf, sizeof(buf), "data/config/%s", profile);
-   dir = strdupa(buf);
-   snprintf(buf, sizeof(buf), "%s/profile.desktop", dir);
+   e_prefix_data_snprintf(buf2, sizeof(buf2), "data/config/%s", profile);
+   snprintf(buf, sizeof(buf), "%s/profile.desktop", buf2);
    desk = efreet_desktop_new(buf);
    if (desk)
      {
@@ -62,8 +60,8 @@ wizard_page_show(E_Wizard_Page *pg)
    for (i = 0, l = profiles; l; l = l->next)
      {
         Efreet_Desktop *desk = NULL;
-        char buf[PATH_MAX], *prof;
-        const char *label, *dir;
+        char buf[PATH_MAX], buf2[PATH_MAX], *prof;
+        const char *label;
         Evas_Object *ic;
 
         prof = l->data;
@@ -75,26 +73,25 @@ wizard_page_show(E_Wizard_Page *pg)
                   continue;
                }
           }
-        e_prefix_data_snprintf(buf, sizeof(buf), "data/config/%s", prof);
+        e_prefix_data_snprintf(buf2, sizeof(buf2), "data/config/%s", prof);
         // if it's not a system profile - don't offer it
-        if (!ecore_file_is_dir(buf))
+        if (!ecore_file_is_dir(buf2))
           {
              free(prof);
              continue;
           }
-        dir = strdupa(buf);
         if (!strcmp(prof, "standard")) sel = i;
-        snprintf(buf, sizeof(buf), "%s/profile.desktop", dir);
+        snprintf(buf, sizeof(buf), "%s/profile.desktop", buf2);
         desk = efreet_desktop_new(buf);
         label = prof;
         if ((desk) && (desk->name)) label = desk->name;
-        snprintf(buf, sizeof(buf), "%s/icon.edj", dir);
+        snprintf(buf, sizeof(buf), "%s/icon.edj", buf2);
         if ((desk) && (desk->icon))
           {
              if (eina_str_has_extension(desk->icon, "png"))
-               snprintf(buf, sizeof(buf), "%s/%s", dir, desk->icon);
+               snprintf(buf, sizeof(buf), "%s/%s", buf2, desk->icon);
              else
-               snprintf(buf, sizeof(buf), "%s/%s.png", dir, desk->icon);
+               snprintf(buf, sizeof(buf), "%s/%s.png", buf2, desk->icon);
           }
         else
           e_prefix_data_concat_static(buf, "data/images/enlightenment.png");

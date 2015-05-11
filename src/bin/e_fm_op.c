@@ -44,10 +44,6 @@ void *alloca(size_t);
 #undef E_TYPEDEFS
 #include "e_fm_op.h"
 
-#ifndef strdupa
-# define strdupa(str) strcpy(alloca(strlen(str) + 1), str)
-#endif
-
 #define READBUFSIZE     65536
 #define COPYBUFSIZE     16384
 #define REMOVECHUNKSIZE 4096
@@ -1282,12 +1278,15 @@ static int
 _e_fm_op_copy_link(E_Fm_Op_Task *task)
 {
    char *lnk_path;
+   size_t lnk_len;
 
    lnk_path = ecore_file_readlink(task->src.name);
    if (!lnk_path)
      {
         _E_FM_OP_ERROR_SEND_WORK(task, E_FM_OP_ERROR, "Cannot read link '%s'.", task->src.name);
      }
+
+   lnk_len = strlen(lnk_path);
 
    E_FM_OP_DEBUG("Creating link from '%s' to '%s'\n", lnk_path, task->dst.name);
    _e_fm_op_update_progress_report_simple(0, lnk_path, task->dst.name);
@@ -1305,14 +1304,14 @@ _e_fm_op_copy_link(E_Fm_Op_Task *task)
                }
              if (symlink(lnk_path, task->dst.name) == -1)
                {
-                  buf = strdupa(lnk_path);
+                  buf = memcpy(alloca(lnk_len + 1), lnk_path, lnk_len + 1);
                   free(lnk_path);
                   _E_FM_OP_ERROR_SEND_WORK(task, E_FM_OP_ERROR, "Cannot create link from '%s' to '%s': %s.", buf, task->dst.name);
                }
           }
         else
           {
-             buf = strdupa(lnk_path);
+             buf = memcpy(alloca(lnk_len + 1), lnk_path, lnk_len + 1);
              free(lnk_path);
              _E_FM_OP_ERROR_SEND_WORK(task, E_FM_OP_ERROR, "Cannot create link from '%s' to '%s': %s.", buf, task->dst.name);
           }

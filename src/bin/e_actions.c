@@ -1926,8 +1926,10 @@ ACT_FN_GO(app, )
           {
              Efreet_Desktop *desktop = NULL;
              char *p, *p2;
+             size_t plen;
 
-             p2 = strdupa(params);
+             plen = strlen(params);
+             p2 = memcpy(alloca(plen + 1), params, plen + 1);
              p = strchr(p2, ':');
              if (p)
                {
