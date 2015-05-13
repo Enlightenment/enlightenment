@@ -618,8 +618,8 @@ _e_xdg_shell_surface_configure_send(struct wl_resource *resource, uint32_t edges
    struct wl_array states;
    uint32_t serial;
 
-   DBG("XDG_SHELL: Surface Configure Send: %d \t%d %d\tEdges: %d",
-       wl_resource_get_id(resource), width, height, edges);
+   /* DBG("XDG_SHELL: Surface Configure Send: %d \t%d %d\tEdges: %d", */
+   /*     wl_resource_get_id(resource), width, height, edges); */
 
    /* get the client for this resource */
    if (!(ec = wl_resource_get_user_data(resource)))
