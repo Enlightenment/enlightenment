@@ -291,6 +291,7 @@ E_API E_Comp_Wl_Buffer *e_comp_wl_buffer_get(struct wl_resource *resource);
 E_API struct wl_signal e_comp_wl_surface_create_signal_get(void);
 E_API double e_comp_wl_idle_time_get(void);
 E_API Eina_Bool e_comp_wl_output_init(const char *id, const char *make, const char *model, int x, int y, int w, int h, int pw, int ph, unsigned int refresh, unsigned int subpixel, unsigned int transform);
+E_API void e_comp_wl_output_remove(const char *id);
 
 # endif
 #endif

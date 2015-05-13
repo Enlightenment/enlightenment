@@ -797,7 +797,12 @@ _e_comp_wl_cb_randr_change(void *data EINA_UNUSED, int type EINA_UNUSED, void *e
 
    EINA_LIST_FOREACH(e_randr2->screens, l, screen)
      {
-        if (!screen->config.enabled) continue;
+        if (!screen->config.enabled)
+          {
+             e_comp_wl_output_remove(screen->id);
+             continue;
+          }
+
         switch (screen->config.rotation)
           {
            case 90:
@@ -2454,7 +2459,7 @@ _e_comp_wl_compositor_create(void)
         goto comp_global_err;
      }
 
-   _e_comp_wl_cb_randr_change(NULL, 0, NULL);
+   /* _e_comp_wl_cb_randr_change(NULL, 0, NULL); */
 
    /* try to init data manager */
    if (!e_comp_wl_data_manager_init(cdata))
@@ -2927,5 +2932,29 @@ e_comp_wl_output_init(const char *id, const char *make, const char *model,
         if (wl_resource_get_version(resource) >= WL_OUTPUT_DONE_SINCE_VERSION)
           wl_output_send_done(resource);
      }
+
    return EINA_TRUE;
+}
+
+E_API void
+e_comp_wl_output_remove(const char *id)
+{
+   E_Comp_Data *cdata;
+   E_Comp_Wl_Output *output;
+
+   if (!(cdata = e_comp->wl_comp_data)) return;
+
+   output = _e_comp_wl_output_get(cdata->outputs, id);
+   if (output)
+     {
+        cdata->outputs = eina_list_remove(cdata->outputs, output);
+
+        /* wl_global_destroy(output->global); */
+
+        /* eina_stringshare_del(output->id); */
+        /* eina_stringshare_del(output->make); */
+        /* eina_stringshare_del(output->model); */
+
+        /* free(output); */
+     }
 }

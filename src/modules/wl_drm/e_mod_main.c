@@ -54,30 +54,41 @@ end:
 static Eina_Bool
 _e_mod_drm_cb_output(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
 {
+   const Eina_List *l;
+   E_Randr2_Screen *screen;
    Ecore_Drm_Event_Output *e;
-   char buff[PATH_MAX];
 
    if (!(e = event)) goto end;
 
-   if (!e->plug)
-     {
-        DBG("Caught Drm Output Unplug Event");
-        /* FIXME: This needs to remove output from e_comp_wl */
-        goto end;
-     }
+   DBG("WL_DRM OUTPUT CHANGE");
 
-   snprintf(buff, sizeof(buff), "%d", e->id);
-
-   if (!e_comp_wl_output_init(buff, e->make, e->model, e->x, e->y, e->w, e->h, 
-                              e->phys_width, e->phys_height, e->refresh, 
-                              e->subpixel_order, e->transform))
+   EINA_LIST_FOREACH(e_randr2->screens, l, screen)
      {
-        ERR("Could not setup new output: %s", buff);
+        if ((!strcmp(screen->info.name, e->name)) && 
+            (!strcmp(screen->info.screen, e->model)))
+          {
+             if (e->plug)
+               {
+                  if (!e_comp_wl_output_init(screen->id, e->make, e->model,
+                                             e->x, e->y, e->w, e->h, 
+                                             e->phys_width, e->phys_height,
+                                             e->refresh, e->subpixel_order,
+                                             e->transform))
+                    {
+                       ERR("Could not setup new output: %s", screen->id);
+                    }
+               }
+             else
+               e_comp_wl_output_remove(screen->id);
+
+             break;
+          }
      }
 
 end:
    if (!e_randr2_cfg->ignore_hotplug_events)
      e_randr2_screen_refresh_queue(EINA_TRUE);
+
    return ECORE_CALLBACK_PASS_ON;
 }
 
@@ -107,6 +118,190 @@ _e_mod_drm_mode_screen_find(E_Randr2_Screen *s, Ecore_Drm_Output *output)
      }
 
    return m;
+}
+
+static Eina_Bool
+_e_mod_drm_output_exists(Ecore_Drm_Output *output, unsigned int crtc)
+{
+   /* find out if this output can go into the 'possibles' */
+   return ecore_drm_output_possible_crtc_get(output, crtc);
+}
+
+static char *
+_e_mod_drm_output_screen_get(Ecore_Drm_Output *output)
+{
+   const char *model;
+
+   model = ecore_drm_output_model_get(output);
+   if (!model) return NULL;
+
+   return strdup(model);
+}
+
+static E_Randr2_Screen *
+_info_unconf_primary_find(E_Randr2 *r)
+{
+   Eina_List *l;
+   E_Randr2_Screen *s, *s_primary = NULL;
+   int priority = 0;
+
+   EINA_LIST_FOREACH(r->screens, l, s)
+     {
+        if (!((s->config.enabled) && 
+              (s->config.mode.w > 0) && (s->config.mode.h > 0) &&
+              (s->config.geom.w > 0) && (s->config.geom.h > 0)))
+          continue;
+        if (s->config.priority > priority)
+          {
+             s_primary = s;
+             priority = s->config.priority;
+          }
+     }
+
+   return s_primary;
+}
+
+static E_Randr2_Screen *
+_info_unconf_left_find(E_Randr2 *r)
+{
+   Eina_List *l;
+   E_Randr2_Screen *s, *s_left = NULL;
+   int left_x = 0x7fffffff;
+   int left_size = 0;
+
+   EINA_LIST_FOREACH(r->screens, l, s)
+     {
+        if (!((s->config.enabled) &&
+              (s->config.mode.w > 0) && (s->config.mode.h > 0) &&
+              (s->config.geom.w > 0) && (s->config.geom.h > 0)))
+          continue;
+        if ((s->config.geom.x <= left_x) &&
+            ((s->config.geom.w * s->config.geom.h) > left_size))
+          {
+             left_size = s->config.geom.w * s->config.geom.h;
+             left_x = s->config.geom.x;
+             s_left = s;
+          }
+     }
+   return s_left;
+}
+
+static E_Randr2_Screen *
+_info_unconf_closest_find(E_Randr2 *r, E_Randr2_Screen *s2, Eina_Bool configured)
+{
+   Eina_List *l;
+   E_Randr2_Screen *s, *s_sel = NULL;
+   int dist = 0x7fffffff;
+   int dx, dy;
+
+   EINA_LIST_FOREACH(r->screens, l, s)
+     {
+        if (s == s2) continue;
+        if (!((s->config.enabled) &&
+              (s->config.mode.w > 0) && (s->config.mode.h > 0) &&
+              (s->config.geom.w > 0) && (s->config.geom.h > 0)))
+          continue;
+        if ((!configured) &&
+            (s->config.relative.mode != E_RANDR2_RELATIVE_UNKNOWN))
+          continue;
+        else if ((configured) &&
+                 (s->config.relative.mode == E_RANDR2_RELATIVE_UNKNOWN))
+          continue;
+        dx = (s->config.geom.x + (s->config.geom.w / 2)) -
+          (s2->config.geom.x + (s2->config.geom.w / 2));
+        dy = (s->config.geom.y + (s->config.geom.h / 2)) -
+          (s2->config.geom.y + (s2->config.geom.h / 2));
+        dx = sqrt((dx * dx) + (dy * dy));
+        if (dx < dist)
+          {
+             s_sel = s;
+             dist = dx;
+          }
+     }
+   return s_sel;
+}
+
+static void
+_e_mod_drm_relative_fixup(E_Randr2 *r)
+{
+   E_Randr2_Screen *s, *s2;
+   int d, dx, dy;
+
+   s = _info_unconf_primary_find(r);
+   if (s)
+     s->config.relative.mode = E_RANDR2_RELATIVE_NONE;
+   else
+     {
+        s = _info_unconf_left_find(r);
+        if (!s) return;
+        s->config.relative.mode = E_RANDR2_RELATIVE_NONE;
+     }
+
+   for (;;)
+     {
+        // find the next screen that is closest to the last one we configured
+        /// that is still not configured yet
+        s = _info_unconf_closest_find(r, s, EINA_FALSE);
+        if (!s) break;
+        s2 = _info_unconf_closest_find(r, s, EINA_TRUE);
+        // fix up s->config.relative.mode, s->config.relative.to and
+        // s->config.relative.align to match (as closely as possible)
+        // the geometry given - config s relative to s2
+        if (!s2) s->config.relative.mode = E_RANDR2_RELATIVE_NONE;
+        else
+          {
+             s->config.relative.to = strdup(s2->id);
+             s->config.relative.align = 0.0;
+             s->config.relative.mode = E_RANDR2_RELATIVE_NONE;
+             if ((s->config.geom.x + s->config.geom.w) <=
+                 s2->config.geom.x)
+               {
+                  s->config.relative.mode = E_RANDR2_RELATIVE_TO_LEFT;
+                  d = s->config.geom.h - s2->config.geom.h;
+                  dy = s2->config.geom.y - s->config.geom.y;
+                  if (d != 0)
+                    s->config.relative.align = ((double)dy) / ((double)d);
+               }
+             else if (s->config.geom.x >=
+                      (s2->config.geom.x + s2->config.geom.w))
+               {
+                  s->config.relative.mode = E_RANDR2_RELATIVE_TO_RIGHT;
+                  d = s->config.geom.h - s2->config.geom.h;
+                  dy = s2->config.geom.y - s->config.geom.y;
+                  if (d != 0)
+                    s->config.relative.align = ((double)dy) / ((double)d);
+               }
+             else if ((s->config.geom.y + s->config.geom.h) <=
+                      s2->config.geom.y)
+               {
+                  s->config.relative.mode = E_RANDR2_RELATIVE_TO_ABOVE;
+                  d = s->config.geom.w - s2->config.geom.w;
+                  dx = s2->config.geom.x - s->config.geom.x;
+                  if (d != 0)
+                    s->config.relative.align = ((double)dx) / ((double)d);
+               }
+             else if (s->config.geom.y >=
+                      (s2->config.geom.y + s2->config.geom.h))
+               {
+                  s->config.relative.mode = E_RANDR2_RELATIVE_TO_BELOW;
+                  d = s->config.geom.w - s2->config.geom.w;
+                  dx = s2->config.geom.x - s->config.geom.x;
+                  if (d != 0)
+                    s->config.relative.align = ((double)dx) / ((double)d);
+               }
+             else if ((s->config.geom.x == s2->config.geom.x) &&
+                      (s->config.geom.y == s2->config.geom.y) &&
+                      (s->config.geom.w == s2->config.geom.w) &&
+                      (s->config.geom.h == s2->config.geom.h))
+               {
+                  s->config.relative.mode = E_RANDR2_RELATIVE_CLONE;
+               }
+             if (s->config.relative.align < 0.0)
+               s->config.relative.align = 0.0;
+             else if (s->config.relative.align > 1.0)
+               s->config.relative.align = 1.0;
+          }
+     }
 }
 
 static E_Randr2 *
@@ -159,7 +354,7 @@ _drm_randr_create(void)
              E_Config_Randr2_Screen *cs;
              const Eina_List *m;
              Ecore_Drm_Output_Mode *omode;
-             size_t n, e = 0;
+             // size_t n, e = 0;
              unsigned int j;
              int priority;
              Eina_Bool ok = EINA_FALSE;
@@ -174,15 +369,25 @@ _drm_randr_create(void)
              s->info.connected = ecore_drm_output_connected_get(output);
              printf("DRM RRR: ...... connected %i\n", s->info.connected);
 
-             if (s->info.connected)
+             s->info.screen = _e_mod_drm_output_screen_get(output);
+
+             s->info.edid = ecore_drm_output_edid_get(output);
+             if (s->info.edid)
+               s->id = malloc(strlen(s->info.name) + 1 + strlen(s->info.edid) + 1);
+             else
+               s->id = malloc(strlen(s->info.name) + 1 + 1);
+             if (!s->id)
                {
-                  s->info.edid = ecore_drm_output_edid_get(output);
-                  e = strlen(s->info.edid ?: "");
+                  free(s->info.screen);
+                  free(s->info.edid);
+                  free(s);
+                  continue;
                }
-             n = strlen(s->info.name);
-             s->id = malloc(n + e + 2);
-             eina_str_join_len(s->id, n + e + 2, '/', s->info.name, n, s->info.edid ?: "", e);
-             s->id[n + e + 1] = 0;
+             strcpy(s->id, s->info.name);
+             strcat(s->id, "/");
+             if (s->info.edid) strcat(s->id, s->info.edid);
+
+             printf("DRM RRR: Created Screen: %s\n", s->id);
 
              type = MIN(ecore_drm_output_connector_type_get(output),
                         EINA_C_ARRAY_LENGTH(conn_types) - 1);
@@ -213,8 +418,6 @@ _drm_randr_create(void)
                   s->info.modes = eina_list_append(s->info.modes, rmode);
                }
 
-             /* TODO: this does NOT handle possibles yet */
-
              cs = NULL;
              priority = 0;
              if (e_randr2_cfg)
@@ -237,34 +440,49 @@ _drm_randr_create(void)
              if (!ok)
                {
                   /* get possible crtcs, compare to output_crtc_id_get */
-                  WRN("GET POSSIBLE CRTCS");
+                  for (j = 0; j < dev->crtc_count; j++)
+                    {
+                       if (_e_mod_drm_output_exists(output, dev->crtcs[j]))
+                         {
+                            ok = EINA_TRUE;
+                            possible = EINA_TRUE;
+                            break;
+                         }
+                    }
                }
 
-             if ((ok) && (!possible))
+             if (ok)
                {
-                  unsigned int refresh;
+                  if (!possible)
+                    {
+                       unsigned int refresh;
 
-                  ecore_drm_output_position_get(output, &s->config.geom.x,
-                                                &s->config.geom.y);
-                  ecore_drm_output_crtc_size_get(output, &s->config.geom.w,
-                                                 &s->config.geom.h);
+                       ecore_drm_output_position_get(output, &s->config.geom.x,
+                                                     &s->config.geom.y);
+                       ecore_drm_output_crtc_size_get(output, &s->config.geom.w,
+                                                      &s->config.geom.h);
 
-                  ecore_drm_output_current_resolution_get(output,
-                                                          &s->config.mode.w,
-                                                          &s->config.mode.h,
-                                                          &refresh);
-                  s->config.mode.refresh = refresh;
-                  s->config.enabled = 
-                    ((s->config.mode.w != 0) && (s->config.mode.h != 0));
+                       ecore_drm_output_current_resolution_get(output,
+                                                               &s->config.mode.w,
+                                                               &s->config.mode.h,
+                                                               &refresh);
+                       s->config.mode.refresh = refresh;
+                       s->config.enabled = 
+                         ((s->config.mode.w != 0) && (s->config.mode.h != 0));
 
-                  printf("DRM RRR: '%s' %i %i %ix%i\n", s->info.name,
-                         s->config.geom.x, s->config.geom.y,
-                         s->config.geom.w, s->config.geom.h);
+                       printf("DRM RRR: '%s' %i %i %ix%i\n", s->info.name,
+                              s->config.geom.x, s->config.geom.y,
+                              s->config.geom.w, s->config.geom.h);
+                    }
+
+                  /* TODO: are rotations possible ?? */
                }
 
              r->screens = eina_list_append(r->screens, s);
           }
      }
+
+   _e_mod_drm_relative_fixup(r);
 
    return r;
 }
@@ -283,12 +501,12 @@ static void
 _drm_randr_apply(void)
 {
    Ecore_Drm_Device *dev;
-   Ecore_Drm_Output *out, **outconf;
-   E_Randr2_Screen *s, **screenconf;
+   Ecore_Drm_Output *out;
+   E_Randr2_Screen *s;
    const Eina_List *l, *ll;
    int nw, nh, pw, ph, ww, hh;
    int minw, minh, maxw, maxh;
-   int top_priority = 0, i, numout;
+   int top_priority = 0;
 
    /* TODO: what the actual fuck */
 
@@ -296,8 +514,6 @@ _drm_randr_apply(void)
    nh = e_randr2->h;
    EINA_LIST_FOREACH(ecore_drm_devices_get(), l, dev)
      {
-        int outputs_num, crtcs_num;
-
         ecore_drm_screen_size_range_get(dev, &minw, &minh, &maxw, &maxh);
         printf("DRM RRR: size range: %ix%i -> %ix%i\n", minw, minh, maxw, maxh);
 
@@ -313,85 +529,80 @@ _drm_randr_apply(void)
 
         printf("DRM RRR: set vsize: %ix%i\n", ww, hh);
 
-        outputs_num = eina_list_count(dev->outputs);
-        crtcs_num = dev->crtc_count;
-
-        if ((crtcs_num > 0) && (outputs_num > 0))
+        EINA_LIST_FOREACH(e_randr2->screens, ll, s)
           {
-             outconf = calloc(crtcs_num, sizeof(Ecore_Drm_Output *));
-             screenconf = alloca(crtcs_num * sizeof(E_Randr2_Screen *));
-             memset(screenconf, 0, crtcs_num * sizeof(E_Randr2_Screen *));
+             int orient = 0;
+             Ecore_Drm_Output_Mode *mode = NULL;
 
-             EINA_LIST_FOREACH(e_randr2->screens, ll, s)
+             printf("DRM RRR: find output for '%s'\n", s->info.name);
+
+             out = ecore_drm_device_output_name_find(dev, s->info.name);
+             if (!out) continue;
+
+             if (s->config.configured)
                {
-                  printf("DRM RRR: find output for '%s'\n", s->info.name);
+                  printf("\tDRM RRR: configured by E\n");
 
-                  if (s->config.configured)
+                  if (s->config.enabled)
                     {
-                       out = ecore_drm_device_output_name_find(dev, s->info.name);
-                       if (out)
-                         {
-                            printf("DRM RRR:   enabled: %i\n", s->config.enabled);
-                            if (s->config.enabled)
-                              {
-                                 if (s->config.priority > top_priority)
-                                   top_priority = s->config.priority;
-
-                                 for (i = 0; i < crtcs_num; i++)
-                                   {
-                                      if (!outconf[i])
-                                        {
-                                           printf("DRM RRR:     crtc slot empty: %i\n", i);
-
-                                           /* TODO: get crtc info for dev->crtcs[i] */
-                                           /* check if this output can go on this crtc */
-
-                                           outconf[i] = out;
-                                           screenconf[i] = s;
-
-                                           break;
-                                        }
-                                   }
-                              }
-                         }
+                       printf("\tDRM RRR: Enabled\n");
+                       ecore_drm_output_enable(out);
+                       mode = _e_mod_drm_mode_screen_find(s, out);
                     }
-               }
-
-             numout = 0;
-             for (i = 0; i < crtcs_num; i++)
-               if (outconf[i]) numout++;
-
-             if (numout)
-               {
-                  for (i = 0; i < crtcs_num; i++)
+                  else
                     {
-                       /* TODO: find clones */
-                       if (outconf[i])
-                         {
-                            int orient = 0;
-                            Ecore_Drm_Output_Mode *mode;
-
-                            mode = _e_mod_drm_mode_screen_find(screenconf[i],
-                                                               outconf[i]);
-                            printf("DRM RRR: crtc on: %i = '%s'     @ %i %i    - %ix%i orient %i mode %s out %s\n",
-                                   i, screenconf[i]->info.name,
-                                   screenconf[i]->config.geom.x,
-                                   screenconf[i]->config.geom.y,
-                                   screenconf[i]->config.geom.w,
-                                   screenconf[i]->config.geom.h,
-                                   orient, mode->info.name,
-                                   ecore_drm_output_name_get(outconf[i]));
-                         }
+                       printf("\tDRM RRR: Disabled\n");
+                       ecore_drm_output_disable(out);
                     }
-               }
-             else
-               printf("DRM RRR: EERRRRRROOOORRRRRRR no outputs to configure!\n");
 
-             free(outconf);
+                  if (s->config.priority > top_priority)
+                    top_priority = s->config.priority;
+
+                  printf("\tDRM RRR: Priority: %d\n", s->config.priority);
+
+                  printf("\tDRM RRR: Geom: %d %d %d %d\n", 
+                         s->config.geom.x, s->config.geom.y,
+                         s->config.geom.w, s->config.geom.h);
+
+                  if (mode)
+                    {
+                       printf("\tDRM RRR: Found Valid Drm Mode\n");
+                       printf("\t\tDRM RRR: %dx%d\n", mode->width, mode->height);
+                    }
+                  else
+                    printf("\tDRM RRR: No Valid Drm Mode Found\n");
+
+                  if (s->config.rotation == 0)
+                    orient = (1 << 0);
+                  else if (s->config.rotation == 90)
+                    orient = (1 << 1);
+                  else if (s->config.rotation == 180)
+                    orient = (1 << 2);
+                  else if (s->config.rotation == 270)
+                    orient = (1 << 3);
+
+                  ecore_drm_output_mode_set(out, mode,
+                                            s->config.geom.x, s->config.geom.y);
+                  if (s->config.priority == top_priority)
+                    ecore_drm_output_primary_set(out);
+
+                  printf("\tDRM RRR: Mode\n");
+                  printf("\t\tDRM RRR: Geom: %d %d\n",
+                         s->config.mode.w, s->config.mode.h);
+                  printf("\t\tDRM RRR: Refresh: %f\n", s->config.mode.refresh);
+                  printf("\t\tDRM RRR: Preferred: %d\n",
+                         s->config.mode.preferred);
+
+                  printf("\tDRM RRR: Rotation: %d\n", s->config.rotation);
+
+                  printf("\tDRM RRR: Relative Mode: %d\n",
+                         s->config.relative.mode);
+                  printf("\tDRM RRR: Relative To: %s\n",
+                         s->config.relative.to);
+                  printf("\tDRM RRR: Align: %f\n", s->config.relative.align);
+               }
           }
      }
-
-   printf("DRM RRR: set vsize: %ix%i\n", nw, nh);
 }
 
 static E_Comp_Screen_Iface drmiface =
