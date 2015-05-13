@@ -363,15 +363,15 @@ _e_comp_wl_evas_cb_multi_down(void *data, Evas *evas EINA_UNUSED, Evas_Object *o
    Evas_Event_Multi_Down *ev = event;
    wl_fixed_t x, y;
 
-   if (!ec->comp_data->surface) return EINA_FALSE;
+   if (!ec->comp_data->surface) return;
 
    wc = wl_resource_get_client(ec->comp_data->surface);
-   serial = wl_display_next_serial(ec->comp->wl_comp_data->wl.disp);
+   serial = wl_display_next_serial(e_comp->wl_comp_data->wl.disp);
 
    x = wl_fixed_from_int(ev->canvas.x - ec->client.x);
    y = wl_fixed_from_int(ev->canvas.y - ec->client.y);
 
-   EINA_LIST_FOREACH(ec->comp->wl_comp_data->touch.resources, l, res)
+   EINA_LIST_FOREACH(e_comp->wl_comp_data->touch.resources, l, res)
      {
         if (wl_resource_get_client(res) != wc) continue;
         if (!e_comp_wl_input_touch_check(res)) continue;
@@ -389,12 +389,12 @@ _e_comp_wl_evas_cb_multi_up(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj
    E_Client *ec = data;
    Evas_Event_Multi_Up *ev = event;
 
-   if (!ec->comp_data->surface) return EINA_FALSE;
+   if (!ec->comp_data->surface) return;
 
    wc = wl_resource_get_client(ec->comp_data->surface);
-   serial = wl_display_next_serial(ec->comp->wl_comp_data->wl.disp);
+   serial = wl_display_next_serial(e_comp->wl_comp_data->wl.disp);
 
-   EINA_LIST_FOREACH(ec->comp->wl_comp_data->touch.resources, l, res)
+   EINA_LIST_FOREACH(e_comp->wl_comp_data->touch.resources, l, res)
      {
         if (wl_resource_get_client(res) != wc) continue;
         if (!e_comp_wl_input_touch_check(res)) continue;
@@ -413,15 +413,15 @@ _e_comp_wl_evas_cb_multi_move(void *data, Evas *evas EINA_UNUSED, Evas_Object *o
    Evas_Event_Multi_Move *ev = event;
    wl_fixed_t x, y;
 
-   if (!ec->comp_data->surface) return EINA_FALSE;
+   if (!ec->comp_data->surface) return;
 
    wc = wl_resource_get_client(ec->comp_data->surface);
-   serial = wl_display_next_serial(ec->comp->wl_comp_data->wl.disp);
+   serial = wl_display_next_serial(e_comp->wl_comp_data->wl.disp);
 
    x = wl_fixed_from_int(ev->cur.canvas.x - ec->client.x);
    y = wl_fixed_from_int(ev->cur.canvas.y - ec->client.y);
 
-   EINA_LIST_FOREACH(ec->comp->wl_comp_data->touch.resources, l, res)
+   EINA_LIST_FOREACH(e_comp->wl_comp_data->touch.resources, l, res)
      {
         if (wl_resource_get_client(res) != wc) continue;
         if (!e_comp_wl_input_touch_check(res)) continue;
