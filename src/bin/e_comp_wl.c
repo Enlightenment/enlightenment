@@ -407,7 +407,6 @@ _e_comp_wl_evas_cb_multi_move(void *data, Evas *evas EINA_UNUSED, Evas_Object *o
 {
    Eina_List *l;
    struct wl_client *wc;
-   uint32_t serial;
    struct wl_resource *res;
    E_Client *ec = data;
    Evas_Event_Multi_Move *ev = event;
@@ -416,7 +415,6 @@ _e_comp_wl_evas_cb_multi_move(void *data, Evas *evas EINA_UNUSED, Evas_Object *o
    if (!ec->comp_data->surface) return;
 
    wc = wl_resource_get_client(ec->comp_data->surface);
-   serial = wl_display_next_serial(e_comp->wl_comp_data->wl.disp);
 
    x = wl_fixed_from_int(ev->cur.canvas.x - ec->client.x);
    y = wl_fixed_from_int(ev->cur.canvas.y - ec->client.y);
