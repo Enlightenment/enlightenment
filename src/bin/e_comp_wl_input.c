@@ -81,6 +81,12 @@ static const struct wl_keyboard_interface _e_keyboard_interface =
    _e_comp_wl_input_cb_resource_destroy
 };
 
+static const struct wl_touch_interface _e_touch_interface =
+{
+   _e_comp_wl_input_cb_resource_destroy
+};
+
+
 static void
 _e_comp_wl_input_cb_pointer_unbind(struct wl_resource *resource)
 {
@@ -194,16 +200,38 @@ _e_comp_wl_input_cb_keyboard_get(struct wl_client *client, struct wl_resource *r
 }
 
 static void
-_e_comp_wl_input_cb_touch_get(struct wl_client *client EINA_UNUSED, struct wl_resource *resource, uint32_t id EINA_UNUSED)
+_e_comp_wl_input_cb_touch_unbind(struct wl_resource *resource)
 {
    E_Comp_Data *cdata;
 
-   /* DBG("Input Touch Get"); */
-
-   /* NB: Needs new resource !! */
-
    /* get compositor data */
    if (!(cdata = wl_resource_get_user_data(resource))) return;
+
+   cdata->touch.resources = eina_list_remove(cdata->touch.resources, resource);
+}
+
+static void
+_e_comp_wl_input_cb_touch_get(struct wl_client *client EINA_UNUSED, struct wl_resource *resource, uint32_t id EINA_UNUSED)
+{
+    E_Comp_Data *cdata;
+    struct wl_resource *res;
+
+    /* get compositor data */
+    if (!(cdata = wl_resource_get_user_data(resource))) return;
+
+    /* try to create pointer resource */
+    res = wl_resource_create(client, &wl_touch_interface,
+                             wl_resource_get_version(resource), id);
+    if (!res)
+      {
+         ERR("Could not create touch on seat %s: %m", cdata->seat.name);
+         wl_client_post_no_memory(client);
+         return;
+      }
+
+    cdata->touch.resources = eina_list_append(cdata->touch.resources, res);
+    wl_resource_set_implementation(res, &_e_touch_interface, cdata,
+                                  _e_comp_wl_input_cb_touch_unbind);
 }
 
 static const struct wl_seat_interface _e_seat_interface =
@@ -525,31 +553,31 @@ e_comp_wl_input_keyboard_state_update(E_Comp_Data *cdata, uint32_t keycode, Eina
 }
 
 E_API void
-e_comp_wl_input_pointer_enabled_set(E_Comp_Data *cdata, Eina_Bool enabled)
+e_comp_wl_input_pointer_enabled_set(Eina_Bool enabled)
 {
    /* check for valid compositor data */
-   if (!cdata)
+   if (!e_comp->wl_comp_data)
      {
         ERR("No compositor data");
         return;
      }
 
-   cdata->ptr.enabled = enabled;
-   _e_comp_wl_input_update_seat_caps(cdata);
+   e_comp->wl_comp_data->ptr.enabled = !!enabled;
+   _e_comp_wl_input_update_seat_caps(e_comp->wl_comp_data);
 }
 
 E_API void
-e_comp_wl_input_keyboard_enabled_set(E_Comp_Data *cdata, Eina_Bool enabled)
+e_comp_wl_input_keyboard_enabled_set(Eina_Bool enabled)
 {
    /* check for valid compositor data */
-   if (!cdata)
+   if (!e_comp->wl_comp_data)
      {
         ERR("No compositor data");
         return;
      }
 
-   cdata->kbd.enabled = enabled;
-   _e_comp_wl_input_update_seat_caps(cdata);
+   e_comp->wl_comp_data->kbd.enabled = !!enabled;
+   _e_comp_wl_input_update_seat_caps(e_comp->wl_comp_data);
 }
 
 E_API void
@@ -589,4 +617,25 @@ e_comp_wl_input_keymap_set(E_Comp_Data *cdata, const char *rules, const char *mo
    free((char *)names.rules);
    free((char *)names.model);
    free((char *)names.layout);
+}
+
+EAPI void
+e_comp_wl_input_touch_enabled_set(Eina_Bool enabled)
+{
+   /* check for valid compositor data */
+   if (!e_comp->wl_comp_data)
+     {
+        ERR("No compositor data");
+        return;
+     }
+
+   e_comp->wl_comp_data->touch.enabled = !!enabled;
+   _e_comp_wl_input_update_seat_caps(e_comp->wl_comp_data);
+}
+
+EINTERN Eina_Bool
+e_comp_wl_input_touch_check(struct wl_resource *res)
+{
+   return wl_resource_instance_of(res, &wl_touch_interface,
+                                  &_e_touch_interface);
 }

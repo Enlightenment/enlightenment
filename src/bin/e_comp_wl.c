@@ -353,6 +353,84 @@ _e_comp_wl_evas_cb_mouse_wheel(void *data, Evas *evas EINA_UNUSED, Evas_Object *
 }
 
 static void
+_e_comp_wl_evas_cb_multi_down(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event)
+{
+   Eina_List *l;
+   struct wl_client *wc;
+   uint32_t serial;
+   struct wl_resource *res;
+   E_Client *ec = data;
+   Evas_Event_Multi_Down *ev = event;
+   wl_fixed_t x, y;
+
+   if (!ec->comp_data->surface) return EINA_FALSE;
+
+   wc = wl_resource_get_client(ec->comp_data->surface);
+   serial = wl_display_next_serial(ec->comp->wl_comp_data->wl.disp);
+
+   x = wl_fixed_from_int(ev->canvas.x - ec->client.x);
+   y = wl_fixed_from_int(ev->canvas.y - ec->client.y);
+
+   EINA_LIST_FOREACH(ec->comp->wl_comp_data->touch.resources, l, res)
+     {
+        if (wl_resource_get_client(res) != wc) continue;
+        if (!e_comp_wl_input_touch_check(res)) continue;
+        wl_touch_send_down(res, serial, ev->timestamp, ec->comp_data->surface, ev->device, x, y);
+     }
+}
+
+static void
+_e_comp_wl_evas_cb_multi_up(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event)
+{
+   Eina_List *l;
+   struct wl_client *wc;
+   uint32_t serial;
+   struct wl_resource *res;
+   E_Client *ec = data;
+   Evas_Event_Multi_Up *ev = event;
+
+   if (!ec->comp_data->surface) return EINA_FALSE;
+
+   wc = wl_resource_get_client(ec->comp_data->surface);
+   serial = wl_display_next_serial(ec->comp->wl_comp_data->wl.disp);
+
+   EINA_LIST_FOREACH(ec->comp->wl_comp_data->touch.resources, l, res)
+     {
+        if (wl_resource_get_client(res) != wc) continue;
+        if (!e_comp_wl_input_touch_check(res)) continue;
+        wl_touch_send_up(res, serial, ev->timestamp, ev->device);
+     }
+}
+
+static void
+_e_comp_wl_evas_cb_multi_move(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event)
+{
+   Eina_List *l;
+   struct wl_client *wc;
+   uint32_t serial;
+   struct wl_resource *res;
+   E_Client *ec = data;
+   Evas_Event_Multi_Move *ev = event;
+   wl_fixed_t x, y;
+
+   if (!ec->comp_data->surface) return EINA_FALSE;
+
+   wc = wl_resource_get_client(ec->comp_data->surface);
+   serial = wl_display_next_serial(ec->comp->wl_comp_data->wl.disp);
+
+   x = wl_fixed_from_int(ev->cur.canvas.x - ec->client.x);
+   y = wl_fixed_from_int(ev->cur.canvas.y - ec->client.y);
+
+   EINA_LIST_FOREACH(ec->comp->wl_comp_data->touch.resources, l, res)
+     {
+        if (wl_resource_get_client(res) != wc) continue;
+        if (!e_comp_wl_input_touch_check(res)) continue;
+        wl_touch_send_motion(res, ev->timestamp, ev->device, x, y);
+     }
+}
+
+
+static void
 _e_comp_wl_client_priority_adjust(int pid, int set, int adj, Eina_Bool use_adj, Eina_Bool adj_child, Eina_Bool do_child)
 {
    Eina_List *files;
@@ -666,6 +744,14 @@ _e_comp_wl_client_evas_init(E_Client *ec)
                                   _e_comp_wl_evas_cb_mouse_up, ec);
    evas_object_event_callback_priority_add(ec->frame, EVAS_CALLBACK_MOUSE_WHEEL, EVAS_CALLBACK_PRIORITY_AFTER,
                                   _e_comp_wl_evas_cb_mouse_wheel, ec);
+
+   evas_object_event_callback_priority_add(ec->frame, EVAS_CALLBACK_MULTI_DOWN, EVAS_CALLBACK_PRIORITY_AFTER,
+                                  _e_comp_wl_evas_cb_multi_down, ec);
+   evas_object_event_callback_priority_add(ec->frame, EVAS_CALLBACK_MULTI_UP, EVAS_CALLBACK_PRIORITY_AFTER,
+                                  _e_comp_wl_evas_cb_multi_up, ec);
+   evas_object_event_callback_priority_add(ec->frame, EVAS_CALLBACK_MULTI_MOVE, EVAS_CALLBACK_PRIORITY_AFTER,
+                                  _e_comp_wl_evas_cb_multi_move, ec);
+
 
    evas_object_event_callback_priority_add(ec->frame, EVAS_CALLBACK_FOCUS_IN, EVAS_CALLBACK_PRIORITY_AFTER,
                                   _e_comp_wl_evas_cb_focus_in, ec);
@@ -2446,8 +2532,9 @@ _e_comp_wl_compositor_create(void)
 
    if (e_comp->comp_type == E_PIXMAP_TYPE_X)
      {
-        e_comp_wl_input_pointer_enabled_set(cdata, EINA_TRUE);
-        e_comp_wl_input_keyboard_enabled_set(cdata, EINA_TRUE);
+        e_comp_wl_input_pointer_enabled_set(EINA_TRUE);
+        e_comp_wl_input_keyboard_enabled_set(EINA_TRUE);
+        e_comp_wl_input_touch_enabled_set(EINA_TRUE);
      }
 
    return EINA_TRUE;

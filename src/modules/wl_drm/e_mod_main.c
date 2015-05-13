@@ -456,8 +456,9 @@ e_modapi_init(E_Module *m)
    ecore_evas_pointer_xy_get(e_comp->ee, &e_comp->wl_comp_data->ptr.x,
                              &e_comp->wl_comp_data->ptr.y);
 
-   e_comp_wl_input_pointer_enabled_set(e_comp->wl_comp_data, EINA_TRUE);
-   e_comp_wl_input_keyboard_enabled_set(e_comp->wl_comp_data, EINA_TRUE);
+   e_comp_wl_input_pointer_enabled_set(EINA_TRUE);
+   e_comp_wl_input_keyboard_enabled_set(EINA_TRUE);
+   e_comp_wl_input_touch_enabled_set(EINA_TRUE);
 
    /* comp->pointer =  */
    /*   e_pointer_window_new(ecore_evas_window_get(comp->ee), 1); */
