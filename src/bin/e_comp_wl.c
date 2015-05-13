@@ -731,8 +731,8 @@ _e_comp_wl_cb_randr_change(void *data EINA_UNUSED, int type EINA_UNUSED, void *e
              break;
           }
 
-        if (!e_comp_wl_output_init(screen->id, screen->info.screen,
-                                   screen->info.name,
+        if (!e_comp_wl_output_init(screen->id, screen->info.name,
+                                   screen->info.screen,
                                    screen->config.geom.x, screen->config.geom.y,
                                    screen->config.geom.w, screen->config.geom.h,
                                    screen->info.size.w, screen->info.size.h,
