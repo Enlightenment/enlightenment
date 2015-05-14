@@ -546,13 +546,11 @@ _drm_randr_apply(void)
                   if (s->config.enabled)
                     {
                        printf("\tDRM RRR: Enabled\n");
-                       ecore_drm_output_enable(out);
                        mode = _e_mod_drm_mode_screen_find(s, out);
                     }
                   else
                     {
                        printf("\tDRM RRR: Disabled\n");
-                       ecore_drm_output_disable(out);
                     }
 
                   if (s->config.priority > top_priority)
@@ -585,6 +583,11 @@ _drm_randr_apply(void)
                                             s->config.geom.x, s->config.geom.y);
                   if (s->config.priority == top_priority)
                     ecore_drm_output_primary_set(out);
+
+                  if (s->config.enabled)
+                    ecore_drm_output_enable(out);
+                  else
+                    ecore_drm_output_disable(out);
 
                   printf("\tDRM RRR: Mode\n");
                   printf("\t\tDRM RRR: Geom: %d %d\n",
