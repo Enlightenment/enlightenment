@@ -2578,6 +2578,8 @@ e_comp_wl_init(void)
         return EINA_FALSE;
      }
 
+   ecore_wl_server_mode_set(1);
+
    /* try to init ecore_wayland */
    if (!ecore_wl_init(NULL))
      {
