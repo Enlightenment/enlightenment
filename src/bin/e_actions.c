@@ -1569,13 +1569,36 @@ ACT_FN_GO(desk_linear_flip_to, )
      }
 }
 
-#define DESK_ACTION_ALL(zone, act)                     \
-  E_Zone * zone;                                       \
-  const Eina_List *lz;                             \
-                                                       \
-    EINA_LIST_FOREACH(e_comp->zones, lz, zone) { \
-         act;                                  \
-              }                                        \
+#define DESK_ACTION_ALL(zone, act) \
+   E_Zone *zone; \
+   const Eina_List *lz; \
+   \
+   EINA_LIST_FOREACH(e_comp->zones, lz, zone) { \
+      act; \
+   }
+
+/***************************************************************************/
+ACT_FN_GO(desk_linear_flip_to_screen, )
+{
+   if (params)
+     {
+        int dx = 0, ds = 0;
+
+        if (sscanf(params, "%i %i", &dx, &ds) == 2)
+          {
+             int current_screen = 0;
+
+             DESK_ACTION_ALL(zone,
+                             if (current_screen == ds)
+                               {
+                                  e_zone_desk_linear_flip_to(zone, dx);
+                                  break;
+                               }
+                             else current_screen++;
+                            );
+          }
+     }
+}
 
 /***************************************************************************/
 ACT_FN_GO(desk_flip_by_all, )
@@ -3112,7 +3135,12 @@ e_actions_init(void)
    e_action_predef_name_set(N_("Desktop"), N_("Flip Desktop To..."),
                             "desk_flip_to", NULL,
                             "syntax: X Y, example: 1 2", 1);
-
+   /* desk_linear_flip_to_screen */
+   ACT_GO(desk_linear_flip_to_screen);
+   e_action_predef_name_set(N_("Desktop"), N_("Switch Desktop To... On Screen..."),
+                            "desk_linear_flip_to_screen", NULL,
+                            "syntax: D S, example: 0 1", 1);
+   
    /* desk_linear_flip_by */
    ACT_GO(desk_linear_flip_by);
    e_action_predef_name_set(N_("Desktop"), N_("Flip Desktop Linearly..."),
