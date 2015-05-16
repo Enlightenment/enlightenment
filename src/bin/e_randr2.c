@@ -653,20 +653,189 @@ _config_screen_clone_resolve(E_Config_Randr2 *cfg, const char *id, int *x, int *
    return cs;
 }
 
+static Eina_List *
+_screen_clones_find(Eina_List *screens, E_Randr2_Screen *s)
+{
+   Eina_List *clones = NULL, *l;
+   E_Randr2_Screen *s2, *sclone;
+   Eina_Bool added;
+
+   // go over all screens and as long as we have found another screen that is
+   // clones from something in the clone set, then keep looking.
+   clones = eina_list_append(clones, s);
+   added = EINA_TRUE;
+   while (added)
+     {
+        added = EINA_FALSE;
+        // og over all screens
+        EINA_LIST_FOREACH(screens, l, s2)
+          {
+             // skip looking at screens we already have in our set
+             if (eina_list_data_find(clones, s2)) continue;
+             // if this clones another screen... get that as sclone
+             if ((s2->config.relative.to) &&
+                 (s2->config.relative.mode == E_RANDR2_RELATIVE_CLONE))
+               {
+                  sclone = _screen_fuzzy_fallback_find(e_randr2_cfg,
+                                                       s2->config.relative.to);
+                  // if the screen s2 is relative to is in our list, add
+                  // s2 to our clones list as well
+                  if (eina_list_data_find(clones, sclone))
+                    {
+                       clones = eina_list_append(clones, s2);
+                       added = EINA_TRUE;
+                       // break our list walk, and iterate while again
+                       break;
+                    }
+               }
+          }
+        // we already found one to add - try the loop again
+        if (added) continue;
+        // we didn't find screens relative TO our clone list, so look for
+        // screens out clone list is relative to
+        EINA_LIST_FOREACH(clones, l, s2)
+          {
+             // if this screen clones another screen...
+             if ((s2->config.relative.to) &&
+                 (s2->config.relative.mode == E_RANDR2_RELATIVE_CLONE))
+               {
+                  sclone = _screen_fuzzy_fallback_find(e_randr2_cfg,
+                                                       s2->config.relative.to);
+                  // already in the list - so keep looking
+                  if (eina_list_data_find(clones, sclone)) continue;
+                  clones = eina_list_append(clones, s2);
+                  added = EINA_TRUE;
+                  // break our list walk, and iterate while again
+                  break;
+               }
+          }
+     }
+   return clones;
+}
+
+static void
+_screen_clones_common_sync(Eina_List *clones)
+{
+   E_Randr2_Screen *s, *sbase = NULL;
+   E_Randr2_Mode *m, *m2, *mcommon = NULL;
+   Eina_List *modes = NULL, *l, *l2, *l3;
+   Eina_Bool common;
+   int d, diff = 0x7fffffff;
+
+   // find the base/root/master screen for clones
+   EINA_LIST_FOREACH(clones, l, s)
+     {
+        // simple check - if it doesn't clone something else - then it's
+        // the master (doesn't handle missing screens)
+        if (s->config.relative.mode != E_RANDR2_RELATIVE_CLONE)
+          {
+             sbase = s;
+             break;
+          }
+     }
+   if (!sbase) return;
+   // store all modes that master/base screen has and we'll "weed them out"
+   EINA_LIST_FOREACH(sbase->info.modes, l, m)
+     {
+        modes = eina_list_append(modes, m);
+     }
+   // ensure it's configured
+   _screen_config_do(sbase);
+again:
+   // we took all modes in the "master"
+   EINA_LIST_FOREACH(modes, l, m)
+     {
+        // find all other screens in the clone list and...
+        EINA_LIST_FOREACH(clones, l2, s)
+          {
+             if (s == sbase) continue; // skip if its the base/master
+             // see if mode "m" is common to other clones
+             common = EINA_FALSE;
+             EINA_LIST_FOREACH(s->info.modes, l3, m2)
+               {
+                  /// only check res, not refresh
+                  if ((m->w == m2->w) && (m->w == m2->h))
+                    {
+                       common = EINA_TRUE;
+                       break;
+                    }
+               }
+             // m is not common with modes in screen s - so removed it
+             if (!common)
+               {
+                  modes = eina_list_remove_list(modes, l);
+                  // the list is no longer save to walk - so let's just
+                  // walk it again from scratch
+                  goto again;
+               }
+          }
+     }
+   // no modes in common :(
+   if (!modes) return;
+   common = EINA_FALSE;
+   EINA_LIST_FOREACH(modes, l, m)
+     {
+        // one of the common modes matches the base config - we are ok
+        if ((m->w == sbase->config.mode.w) && (m->h == sbase->config.mode.h))
+          return;
+     }
+   // find a common mode since current config doesn't match
+   EINA_LIST_FOREACH(modes, l, m)
+     {
+        // calculate a "difference" based on a combo of diff in area pixels
+        // actual resolutin pixels (squared) and refresh delta * 10 squared
+        d = abs((sbase->config.mode.w * sbase->config.mode.h) - (m->w * m->h));
+        d += (sbase->config.mode.w - m->w) * (sbase->config.mode.w - m->w);
+        d += (sbase->config.mode.h - m->h) * (sbase->config.mode.h - m->h);
+        d += ((sbase->config.mode.refresh - m->refresh) * 10) *
+             ((sbase->config.mode.refresh - m->refresh) * 10);
+        if (d < diff)
+          {
+             diff = d;
+             mcommon = m;
+          }
+     }
+   // no common mode with least difference found
+   if (!mcommon) return;
+   // we have a common mode - apply it to the base screen
+   s = sbase;
+   s->config.mode.w = mcommon->w;
+   s->config.mode.h = mcommon->h;
+   s->config.mode.refresh = mcommon->refresh;
+   if ((s->config.rotation == 0) || (s->config.rotation == 180))
+     {
+        s->config.geom.w = s->config.mode.w;
+        s->config.geom.h = s->config.mode.h;
+     }
+   else
+     {
+        s->config.geom.w = s->config.mode.h;
+        s->config.geom.h = s->config.mode.w;
+     }
+}
+
 static int _config_do_recurse = 0;
 
 static void
 _screen_config_do(E_Randr2_Screen *s)
 {
    E_Randr2_Screen *s2 = NULL;
+   Eina_List *cloneset;
 
    printf("RRR: screen do '%s'\n", s->info.name);
-   if (_config_do_recurse > 10)
+   if (_config_do_recurse > 20)
      {
         ERR("screen config loop!");
         return;
      }
    _config_do_recurse++;
+   // find dependent clones and find a common config res
+   cloneset = _screen_clones_find(e_randr2->screens, s);
+   if (cloneset)
+     {
+        _screen_clones_common_sync(cloneset);
+        eina_list_free(cloneset);
+     }
    // if screen has a dependency...
    if ((s->config.relative.mode != E_RANDR2_RELATIVE_UNKNOWN) &&
        (s->config.relative.mode != E_RANDR2_RELATIVE_NONE) &&
