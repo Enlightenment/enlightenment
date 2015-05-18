@@ -1576,8 +1576,8 @@ e_comp_ungrab_input(Eina_Bool mouse, Eina_Bool kbd)
      mwin = e_comp->ee_win;
    if (kbd && (!e_comp->input_key_grabs))
      kwin = e_comp->ee_win;
-   if ((!mwin) && (!kwin)) return;
    e_comp_override_timed_pop();
+   if ((!mwin) && (!kwin)) return;
    e_grabinput_release(mwin, kwin);
    evas_event_feed_mouse_out(e_comp->evas, 0, NULL);
    evas_event_feed_mouse_in(e_comp->evas, 0, NULL);
