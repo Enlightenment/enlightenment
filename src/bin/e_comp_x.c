@@ -619,17 +619,22 @@ _e_comp_x_client_stack(E_Client *ec)
    ecore_x_window_shadow_tree_flush();
 
    /* try stacking below */
-   ec2 = ec;
-   do
+   if (e_comp->nocomp_ec && (ec != e_comp->nocomp_ec))
+     win = _e_comp_x_client_window_get(e_comp->nocomp_ec);
+   else
      {
-        ec2 = e_client_above_get(ec2);
-        if (ec2 && (e_client_is_stacking(ec2) || ((!ec2->override) || ec2->internal)))
+        ec2 = ec;
+        do
           {
-             if (ec2->layer != ec->layer) break;
-             if (ec2->comp_data->need_reparent && (!ec2->comp_data->reparented)) continue;
-             win = _e_comp_x_client_window_get(ec2);
-          }
-     } while (ec2 && (!win));
+             ec2 = e_client_above_get(ec2);
+             if (ec2 && (e_client_is_stacking(ec2) || ((!ec2->override) || ec2->internal)))
+               {
+                  if (ec2->layer != ec->layer) break;
+                  if (ec2->comp_data->need_reparent && (!ec2->comp_data->reparented)) continue;
+                  win = _e_comp_x_client_window_get(ec2);
+               }
+          } while (ec2 && (!win));
+     }
 
    /* try stacking above */
    if (!win)
