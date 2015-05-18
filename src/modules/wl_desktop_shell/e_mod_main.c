@@ -1329,7 +1329,7 @@ _e_shell_cb_bind(struct wl_client *client, void *data EINA_UNUSED, uint32_t vers
 }
 
 static void
-_e_xdg_shell_cb_bind(struct wl_client *client, void *data, uint32_t version, uint32_t id)
+_e_xdg_shell_cb_bind(struct wl_client *client, void *data EINA_UNUSED, uint32_t version, uint32_t id)
 {
    struct wl_resource *res;
 
