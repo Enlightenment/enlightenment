@@ -3817,6 +3817,7 @@ e_client_fullscreen(E_Client *ec, E_Fullscreen policy)
    if (!ec->zone) return;
 
    if ((ec->shaded) || (ec->shading) || ec->fullscreen) return;
+   if ((!e_config->allow_above_fullscreen) && (!ec->desk->visible)) return;
    if (ec->new_client)
      {
         ec->need_fullscreen = 1;
