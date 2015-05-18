@@ -1893,10 +1893,6 @@ _e_menu_activate_internal(E_Menu *m, E_Zone *zone)
              return;
           }
      }
-   if ((m->zone) && (e_comp != e_comp))
-     {
-        return;
-     }
    m->zone = zone;
    if (!m->active)
      {
