@@ -140,7 +140,7 @@ _e_shell_surface_cb_pong(struct wl_client *client EINA_UNUSED, struct wl_resourc
 }
 
 static void
-_e_shell_surface_cb_move(struct wl_client *client EINA_UNUSED, struct wl_resource *resource, struct wl_resource *seat_resource, uint32_t serial EINA_UNUSED)
+_e_shell_surface_cb_move(struct wl_client *client EINA_UNUSED, struct wl_resource *resource, struct wl_resource *seat_resource EINA_UNUSED, uint32_t serial EINA_UNUSED)
 {
    E_Client *ec;
    E_Comp_Data *cdata;
@@ -157,15 +157,7 @@ _e_shell_surface_cb_move(struct wl_client *client EINA_UNUSED, struct wl_resourc
 
    if ((ec->maximized) || (ec->fullscreen)) return;
 
-   /* get compositor data from seat */
-   if (!(cdata = wl_resource_get_user_data(seat_resource)))
-     {
-        wl_resource_post_error(seat_resource,
-                               WL_DISPLAY_ERROR_INVALID_OBJECT,
-                               "No Comp_Data for Seat");
-        return;
-     }
-
+   cdata = e_comp->wl_comp_data;
    switch (cdata->ptr.button)
      {
       case BTN_LEFT:
@@ -191,7 +183,7 @@ _e_shell_surface_cb_move(struct wl_client *client EINA_UNUSED, struct wl_resourc
 }
 
 static void
-_e_shell_surface_cb_resize(struct wl_client *client EINA_UNUSED, struct wl_resource *resource, struct wl_resource *seat_resource, uint32_t serial EINA_UNUSED, uint32_t edges)
+_e_shell_surface_cb_resize(struct wl_client *client EINA_UNUSED, struct wl_resource *resource, struct wl_resource *seat_resource EINA_UNUSED, uint32_t serial EINA_UNUSED, uint32_t edges)
 {
    E_Client *ec;
    E_Comp_Data *cdata;
@@ -211,14 +203,7 @@ _e_shell_surface_cb_resize(struct wl_client *client EINA_UNUSED, struct wl_resou
 
    if ((ec->maximized) || (ec->fullscreen)) return;
 
-   /* get compositor data from seat */
-   if (!(cdata = wl_resource_get_user_data(seat_resource)))
-     {
-        wl_resource_post_error(seat_resource,
-                               WL_DISPLAY_ERROR_INVALID_OBJECT,
-                               "No Comp_Data for Seat");
-        return;
-     }
+   cdata = e_comp->wl_comp_data;
 
    DBG("Comp Resize Edges Set: %d", edges);
 
@@ -734,7 +719,7 @@ _e_xdg_shell_surface_cb_window_menu_show(struct wl_client *client EINA_UNUSED, s
 }
 
 static void
-_e_xdg_shell_surface_cb_move(struct wl_client *client EINA_UNUSED, struct wl_resource *resource, struct wl_resource *seat_resource, uint32_t serial EINA_UNUSED)
+_e_xdg_shell_surface_cb_move(struct wl_client *client EINA_UNUSED, struct wl_resource *resource, struct wl_resource *seat_resource EINA_UNUSED, uint32_t serial EINA_UNUSED)
 {
    E_Client *ec;
    E_Comp_Data *cdata;
@@ -751,15 +736,7 @@ _e_xdg_shell_surface_cb_move(struct wl_client *client EINA_UNUSED, struct wl_res
 
    if ((ec->maximized) || (ec->fullscreen)) return;
 
-   /* get compositor data from seat */
-   if (!(cdata = wl_resource_get_user_data(seat_resource)))
-     {
-        wl_resource_post_error(seat_resource,
-                               WL_DISPLAY_ERROR_INVALID_OBJECT,
-                               "No Comp_Data for Seat");
-        return;
-     }
-
+   cdata = e_comp->wl_comp_data;
    switch (cdata->ptr.button)
      {
       case BTN_LEFT:
@@ -785,7 +762,7 @@ _e_xdg_shell_surface_cb_move(struct wl_client *client EINA_UNUSED, struct wl_res
 }
 
 static void
-_e_xdg_shell_surface_cb_resize(struct wl_client *client EINA_UNUSED, struct wl_resource *resource, struct wl_resource *seat_resource, uint32_t serial EINA_UNUSED, uint32_t edges)
+_e_xdg_shell_surface_cb_resize(struct wl_client *client EINA_UNUSED, struct wl_resource *resource, struct wl_resource *seat_resource EINA_UNUSED, uint32_t serial EINA_UNUSED, uint32_t edges)
 {
    E_Client *ec;
    E_Comp_Data *cdata;
@@ -808,15 +785,7 @@ _e_xdg_shell_surface_cb_resize(struct wl_client *client EINA_UNUSED, struct wl_r
 
    if ((ec->maximized) || (ec->fullscreen)) return;
 
-   /* get compositor data from seat */
-   if (!(cdata = wl_resource_get_user_data(seat_resource)))
-     {
-        wl_resource_post_error(seat_resource,
-                               WL_DISPLAY_ERROR_INVALID_OBJECT,
-                               "No Comp_Data for Seat");
-        return;
-     }
-
+   cdata = e_comp->wl_comp_data;
    cdata->resize.resource = resource;
    cdata->resize.edges = edges;
    cdata->ptr.grab_x = cdata->ptr.x;
@@ -1301,23 +1270,17 @@ static const struct xdg_shell_interface _e_xdg_shell_interface =
 };
 
 static void
-_e_xdg_shell_cb_unbind(struct wl_resource *resource)
+_e_xdg_shell_cb_unbind(struct wl_resource *resource EINA_UNUSED)
 {
-   E_Comp_Data *cdata;
-
-   if (!(cdata = wl_resource_get_user_data(resource))) return;
-
-   cdata->shell_interface.xdg_shell = NULL;
+   e_comp->wl_comp_data->shell_interface.xdg_shell = NULL;
 }
 
 static int
 _e_xdg_shell_cb_dispatch(const void *implementation EINA_UNUSED, void *target, uint32_t opcode, const struct wl_message *message EINA_UNUSED, union wl_argument *args)
 {
-   E_Comp_Data *cdata;
    struct wl_resource *res;
 
    if (!(res = target)) return 0;
-   if (!(cdata = wl_resource_get_user_data(res))) return 0;
 
    if (opcode != 0)
      {
@@ -1335,33 +1298,23 @@ _e_xdg_shell_cb_dispatch(const void *implementation EINA_UNUSED, void *target, u
         return 0;
      }
 
-   wl_resource_set_implementation(res, &_e_xdg_shell_interface, cdata,
+   wl_resource_set_implementation(res, &_e_xdg_shell_interface,
+                                  e_comp->wl_comp_data,
                                   _e_xdg_shell_cb_unbind);
 
    return 1;
 }
 
 static void
-_e_shell_cb_unbind(struct wl_resource *resource)
+_e_shell_cb_unbind(struct wl_resource *resource EINA_UNUSED)
 {
-   E_Comp_Data *cdata;
-
-   if (!(cdata = wl_resource_get_user_data(resource))) return;
-
-   cdata->shell_interface.shell = NULL;
+   e_comp->wl_comp_data->shell_interface.shell = NULL;
 }
 
 static void
-_e_shell_cb_bind(struct wl_client *client, void *data, uint32_t version, uint32_t id)
+_e_shell_cb_bind(struct wl_client *client, void *data EINA_UNUSED, uint32_t version, uint32_t id)
 {
-   E_Comp_Data *cdata;
    struct wl_resource *res;
-
-   if (!(cdata = data))
-     {
-        wl_client_post_no_memory(client);
-        return;
-     }
 
    if (!(res = wl_resource_create(client, &wl_shell_interface, MIN(version, 1), id)))
      {
@@ -1369,22 +1322,16 @@ _e_shell_cb_bind(struct wl_client *client, void *data, uint32_t version, uint32_
         return;
      }
 
-   cdata->shell_interface.shell = res;
-   wl_resource_set_implementation(res, &_e_shell_interface, cdata,
+   e_comp->wl_comp_data->shell_interface.shell = res;
+   wl_resource_set_implementation(res, &_e_shell_interface,
+                                  e_comp->wl_comp_data,
                                   _e_shell_cb_unbind);
 }
 
 static void
 _e_xdg_shell_cb_bind(struct wl_client *client, void *data, uint32_t version, uint32_t id)
 {
-   E_Comp_Data *cdata;
    struct wl_resource *res;
-
-   if (!(cdata = data))
-     {
-        wl_client_post_no_memory(client);
-        return;
-     }
 
    if (!(res = wl_resource_create(client, &xdg_shell_interface, MIN(version, 1), id)))
      {
@@ -1392,8 +1339,9 @@ _e_xdg_shell_cb_bind(struct wl_client *client, void *data, uint32_t version, uin
         return;
      }
 
-   cdata->shell_interface.xdg_shell = res;
-   wl_resource_set_dispatcher(res, _e_xdg_shell_cb_dispatch, NULL, cdata, NULL);
+   e_comp->wl_comp_data->shell_interface.xdg_shell = res;
+   wl_resource_set_dispatcher(res, _e_xdg_shell_cb_dispatch, NULL,
+                              e_comp->wl_comp_data, NULL);
 }
 
 E_API E_Module_Api e_modapi = { E_MODULE_API_VERSION, "Wl_Desktop_Shell" };

@@ -51,9 +51,9 @@ struct _E_Comp_Wl_Clipboard_Offer
    size_t offset;
 };
 
-EINTERN void e_comp_wl_data_device_keyboard_focus_set(E_Comp_Data *cdata);
-EINTERN Eina_Bool e_comp_wl_data_manager_init(E_Comp_Data *cdata);
-EINTERN void e_comp_wl_data_manager_shutdown(E_Comp_Data *cdata);
+EINTERN void e_comp_wl_data_device_keyboard_focus_set(void);
+EINTERN Eina_Bool e_comp_wl_data_manager_init(void);
+EINTERN void e_comp_wl_data_manager_shutdown(void);
 
 # endif
 #endif

@@ -689,7 +689,7 @@ e_modapi_init(E_Module *m)
 
    /* FIXME: This is just for testing at the moment....
     * happens to jive with what drm does */
-   e_comp_wl_input_keymap_set(e_comp->wl_comp_data, NULL, NULL, NULL);
+   e_comp_wl_input_keymap_set(NULL, NULL, NULL);
 
    activate_handler =
       ecore_event_handler_add(ECORE_DRM_EVENT_ACTIVATE,

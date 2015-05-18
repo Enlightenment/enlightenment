@@ -166,10 +166,7 @@ _e_comp_wl_data_device_destroy_selection_data_source(struct wl_listener *listene
    if (!(source = (E_Comp_Wl_Data_Source*)data))
      return;
 
-   if (!(cdata = container_of(listener, E_Comp_Data, 
-                              selection.data_source_listener)))
-     return;
-
+   cdata = e_comp->wl_comp_data;
    cdata->selection.data_source = NULL;
 
    if (cdata->kbd.enabled)
@@ -226,11 +223,13 @@ _e_comp_wl_data_device_data_offer_create(E_Comp_Wl_Data_Source *source, struct w
 }
 
 static void
-_e_comp_wl_data_device_selection_set(E_Comp_Data *cdata, E_Comp_Wl_Data_Source *source, uint32_t serial)
+_e_comp_wl_data_device_selection_set(void *data EINA_UNUSED, E_Comp_Wl_Data_Source *source, uint32_t serial)
 {
    E_Comp_Wl_Data_Source *sel_source;
+   E_Comp_Data *cdata;
    struct wl_resource *offer_res, *data_device_res, *focus = NULL;
 
+   cdata = e_comp->wl_comp_data;
    sel_source = (E_Comp_Wl_Data_Source*)cdata->selection.data_source;
 
    if ((sel_source) &&
@@ -289,7 +288,7 @@ _e_comp_wl_data_device_selection_set(E_Comp_Data *cdata, E_Comp_Wl_Data_Source *
 }
 
 static void
-_e_comp_wl_data_device_cb_drag_start(struct wl_client *client, struct wl_resource *resource, struct wl_resource *source_resource, struct wl_resource *origin_resource, struct wl_resource *icon_resource, uint32_t serial)
+_e_comp_wl_data_device_cb_drag_start(struct wl_client *client, struct wl_resource *resource EINA_UNUSED, struct wl_resource *source_resource, struct wl_resource *origin_resource, struct wl_resource *icon_resource, uint32_t serial)
 {
    E_Comp_Data *cdata;
    E_Comp_Wl_Data_Source *source;
@@ -298,7 +297,7 @@ _e_comp_wl_data_device_cb_drag_start(struct wl_client *client, struct wl_resourc
 
    DBG("Data Device Drag Start");
 
-   if (!(cdata = wl_resource_get_user_data(resource))) return;
+   cdata = e_comp->wl_comp_data;
    if ((cdata->kbd.focus) && (cdata->kbd.focus != origin_resource)) return;
 
    if (!(source = wl_resource_get_user_data(source_resource))) return;
@@ -325,14 +324,12 @@ _e_comp_wl_data_device_cb_drag_start(struct wl_client *client, struct wl_resourc
 static void
 _e_comp_wl_data_device_cb_selection_set(struct wl_client *client EINA_UNUSED, struct wl_resource *resource EINA_UNUSED, struct wl_resource *source_resource, uint32_t serial)
 {
-   E_Comp_Data *cdata;
    E_Comp_Wl_Data_Source *source;
 
    if (!source_resource) return;
-   if (!(cdata = wl_resource_get_user_data(resource))) return;
    if (!(source = wl_resource_get_user_data(source_resource))) return;
 
-   _e_comp_wl_data_device_selection_set(cdata, source, serial);
+   _e_comp_wl_data_device_selection_set(e_comp->wl_comp_data, source, serial);
 }
 
 static void 
@@ -351,13 +348,8 @@ static const struct wl_data_device_interface _e_data_device_interface =
 static void
 _e_comp_wl_data_device_cb_unbind(struct wl_resource *resource)
 {
-   E_Comp_Data *cdata;
-
-   if(!(cdata = wl_resource_get_user_data(resource)))
-     return;
-
-   cdata->mgr.data_resources = 
-     eina_list_remove(cdata->mgr.data_resources, resource);
+   e_comp->wl_comp_data->mgr.data_resources =
+     eina_list_remove(e_comp->wl_comp_data->mgr.data_resources, resource);
 }
 
 static void
@@ -395,15 +387,14 @@ _e_comp_wl_data_manager_cb_source_create(struct wl_client *client EINA_UNUSED, s
 }
 
 static void 
-_e_comp_wl_data_manager_cb_device_get(struct wl_client *client, struct wl_resource *manager_resource, uint32_t id, struct wl_resource *seat_resource)
+_e_comp_wl_data_manager_cb_device_get(struct wl_client *client, struct wl_resource *manager_resource, uint32_t id, struct wl_resource *seat_resource EINA_UNUSED)
 {
    E_Comp_Data *cdata;
    struct wl_resource *res;
 
    /* DBG("Data Manager Device Get"); */
 
-   /* try to get the compositor data */
-   if (!(cdata = wl_resource_get_user_data(seat_resource))) return;
+   cdata = e_comp->wl_comp_data;
 
    /* try to create the data device resource */
    res = wl_resource_create(client, &wl_data_device_interface, 1, id);
@@ -439,12 +430,9 @@ static const struct wl_data_device_manager_interface _e_manager_interface =
 /* } */
 
 static void 
-_e_comp_wl_data_cb_bind_manager(struct wl_client *client, void *data, uint32_t version EINA_UNUSED, uint32_t id)
+_e_comp_wl_data_cb_bind_manager(struct wl_client *client, void *data EINA_UNUSED, uint32_t version EINA_UNUSED, uint32_t id)
 {
-   E_Comp_Data *cdata;
    struct wl_resource *res;
-
-   cdata = data;
 
    /* try to create data manager resource */
    res = wl_resource_create(client, &wl_data_device_manager_interface, 1, id);
@@ -455,7 +443,8 @@ _e_comp_wl_data_cb_bind_manager(struct wl_client *client, void *data, uint32_t v
         return;
      }
 
-   wl_resource_set_implementation(res, &_e_manager_interface, cdata, NULL);
+   wl_resource_set_implementation(res, &_e_manager_interface,
+                                  e_comp->wl_comp_data, NULL);
 }
 
 static void
@@ -527,14 +516,15 @@ _e_comp_wl_clipboard_offer_create(E_Comp_Wl_Clipboard_Source* source, int fd)
 }
 
 static Eina_Bool
-_e_comp_wl_clipboard_source_save(void *data, Ecore_Fd_Handler *handler)
+_e_comp_wl_clipboard_source_save(void *data EINA_UNUSED, Ecore_Fd_Handler *handler)
 {
    E_Comp_Data *cdata;
    E_Comp_Wl_Clipboard_Source *source;
    char *p;
    int len, size;
 
-   if (!(cdata = data)) return ECORE_CALLBACK_CANCEL;
+   cdata = e_comp->wl_comp_data;
+
    if (!(source = (E_Comp_Wl_Clipboard_Source*)cdata->clipboard.source))
      return ECORE_CALLBACK_CANCEL;
 
@@ -629,7 +619,7 @@ _e_comp_wl_clipboard_source_create(E_Comp_Data *cdata, const char *mime_type, ui
 }
 
 static void
-_e_comp_wl_clipboard_selection_set(struct wl_listener *listener EINA_UNUSED, void *data)
+_e_comp_wl_clipboard_selection_set(struct wl_listener *listener EINA_UNUSED, void *data EINA_UNUSED)
 {
    E_Comp_Data *cdata;
    E_Comp_Wl_Data_Source *sel_source;
@@ -637,7 +627,7 @@ _e_comp_wl_clipboard_selection_set(struct wl_listener *listener EINA_UNUSED, voi
    int p[2];
    char *mime_type;
 
-   cdata = data;
+   cdata = e_comp->wl_comp_data;
    sel_source = (E_Comp_Wl_Data_Source*) cdata->selection.data_source;
    clip_source = (E_Comp_Wl_Clipboard_Source*) cdata->clipboard.source;
 
@@ -678,17 +668,23 @@ _e_comp_wl_clipboard_destroy(E_Comp_Data *cdata)
 }
 
 static void
-_e_comp_wl_clipboard_create(E_Comp_Data *cdata)
+_e_comp_wl_clipboard_create(void)
 {
+   E_Comp_Data *cdata;
+
+   cdata = e_comp->wl_comp_data;
    cdata->clipboard.listener.notify = _e_comp_wl_clipboard_selection_set;
    wl_signal_add(&cdata->selection.signal, &cdata->clipboard.listener);
 }
 
 EINTERN void
-e_comp_wl_data_device_keyboard_focus_set(E_Comp_Data *cdata)
+e_comp_wl_data_device_keyboard_focus_set(void)
 {
+   E_Comp_Data *cdata;
    struct wl_resource *data_device_res, *offer_res, *focus;
    E_Comp_Wl_Data_Source *source;
+
+   cdata = e_comp->wl_comp_data;
 
    if (!cdata->kbd.enabled) 
      {
@@ -723,14 +719,11 @@ e_comp_wl_data_device_keyboard_focus_set(E_Comp_Data *cdata)
 }
 
 EINTERN Eina_Bool
-e_comp_wl_data_manager_init(E_Comp_Data *cdata)
+e_comp_wl_data_manager_init(void)
 {
-   /* check for valid compositor data */
-   if (!cdata) 
-     {
-        ERR("No Compositor Data");
-        return EINA_FALSE;
-     }
+   E_Comp_Data *cdata;
+
+   cdata = e_comp->wl_comp_data;
 
    /* try to create global data manager */
    cdata->mgr.global =
@@ -745,16 +738,16 @@ e_comp_wl_data_manager_init(E_Comp_Data *cdata)
    wl_signal_init(&cdata->selection.signal);
 
    /* create clipboard */
-   _e_comp_wl_clipboard_create(cdata);
+   _e_comp_wl_clipboard_create();
 
    return EINA_TRUE;
 }
 
 EINTERN void 
-e_comp_wl_data_manager_shutdown(E_Comp_Data *cdata)
+e_comp_wl_data_manager_shutdown(void)
 {
    /* destroy the global manager resource */
    /* if (cdata->mgr.global) wl_global_destroy(cdata->mgr.global); */
 
-   _e_comp_wl_clipboard_destroy(cdata);
+   _e_comp_wl_clipboard_destroy(e_comp->wl_comp_data);
 }

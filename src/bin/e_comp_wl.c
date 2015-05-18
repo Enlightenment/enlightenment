@@ -51,36 +51,25 @@ _e_comp_wl_log_cb_print(const char *format, va_list args)
 }
 
 static Eina_Bool
-_e_comp_wl_cb_read(void *data, Ecore_Fd_Handler *hdlr EINA_UNUSED)
+_e_comp_wl_cb_read(void *data EINA_UNUSED, Ecore_Fd_Handler *hdlr EINA_UNUSED)
 {
-   E_Comp_Data *cdata;
-
-   if (!(cdata = data)) return ECORE_CALLBACK_RENEW;
-
    /* dispatch pending wayland events */
-   wl_event_loop_dispatch(cdata->wl.loop, 0);
+   wl_event_loop_dispatch(e_comp->wl_comp_data->wl.loop, 0);
 
    return ECORE_CALLBACK_RENEW;
 }
 
 static void
-_e_comp_wl_cb_prepare(void *data, Ecore_Fd_Handler *hdlr EINA_UNUSED)
+_e_comp_wl_cb_prepare(void *data EINA_UNUSED, Ecore_Fd_Handler *hdlr EINA_UNUSED)
 {
-   E_Comp_Data *cdata;
-
-   if (!(cdata = data)) return;
-
    /* flush pending client events */
-   wl_display_flush_clients(cdata->wl.disp);
+   wl_display_flush_clients(e_comp->wl_comp_data->wl.disp);
 }
 
 static Eina_Bool
-_e_comp_wl_cb_module_idle(void *data)
+_e_comp_wl_cb_module_idle(void *data EINA_UNUSED)
 {
-   E_Comp_Data *cdata;
    E_Module  *mod = NULL;
-
-   if (!(cdata = data)) return ECORE_CALLBACK_RENEW;
 
    /* check if we are still loading modules */
    if (e_module_loading_get()) return ECORE_CALLBACK_RENEW;
@@ -511,7 +500,7 @@ _e_comp_wl_evas_cb_focus_in(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj
 
    /* update keyboard modifier state */
    wl_array_for_each(k, &e_comp->wl_comp_data->kbd.keys)
-     e_comp_wl_input_keyboard_state_update(e_comp->wl_comp_data, *k, EINA_TRUE);
+     e_comp_wl_input_keyboard_state_update(*k, EINA_TRUE);
 
    e_comp_wl_input_keyboard_enter_send(ec);
 }
@@ -532,7 +521,7 @@ _e_comp_wl_evas_cb_focus_out(void *data, Evas *evas EINA_UNUSED, Evas_Object *ob
 
    /* update keyboard modifier state */
    wl_array_for_each(k, &cdata->kbd.keys)
-     e_comp_wl_input_keyboard_state_update(cdata, *k, EINA_FALSE);
+     e_comp_wl_input_keyboard_state_update(*k, EINA_FALSE);
 
    if (e_object_is_del(E_OBJECT(ec))) return;
 
@@ -894,7 +883,7 @@ _e_comp_wl_cb_key_down(void *event)
    if ((ec = e_client_focused_get()))
      {
         /* update modifier state */
-        e_comp_wl_input_keyboard_state_update(cdata, keycode, EINA_TRUE);
+        e_comp_wl_input_keyboard_state_update(keycode, EINA_TRUE);
 
         if (ec->comp_data->surface)
           {
@@ -918,7 +907,7 @@ _e_comp_wl_cb_key_down(void *event)
 
    if (cdata->kbd.mod_changed)
      {
-        e_comp_wl_input_keyboard_modifiers_update(cdata);
+        e_comp_wl_input_keyboard_modifiers_update();
         cdata->kbd.mod_changed = 0;
      }
 }
@@ -942,7 +931,7 @@ _e_comp_wl_cb_key_up(void *event)
    cdata->kbd.keys.size = (const char *)end - (const char *)cdata->kbd.keys.data;
 
    /* update modifier state */
-   e_comp_wl_input_keyboard_state_update(cdata, keycode, EINA_FALSE);
+   e_comp_wl_input_keyboard_state_update(keycode, EINA_FALSE);
 
    if ((ec = e_client_focused_get()))
      {
@@ -968,7 +957,7 @@ _e_comp_wl_cb_key_up(void *event)
 
    if (cdata->kbd.mod_changed)
      {
-        e_comp_wl_input_keyboard_modifiers_update(cdata);
+        e_comp_wl_input_keyboard_modifiers_update();
         cdata->kbd.mod_changed = 0;
      }
 }
@@ -1614,13 +1603,12 @@ _e_comp_wl_compositor_cb_bind(struct wl_client *client, void *data EINA_UNUSED, 
 }
 
 static void
-_e_comp_wl_compositor_cb_del(E_Comp *comp)
+_e_comp_wl_compositor_cb_del(void *data EINA_UNUSED)
 {
    E_Comp_Data *cdata;
    E_Comp_Wl_Output *output;
 
-   /* get existing compositor data */
-   if (!(cdata = comp->wl_comp_data)) return;
+   cdata = e_comp->wl_comp_data;
 
    EINA_LIST_FREE(cdata->outputs, output)
      {
@@ -2263,7 +2251,7 @@ _e_comp_wl_client_cb_focus_set(void *data EINA_UNUSED, E_Client *ec)
    if (e_comp->wl_comp_data->kbd.focus != ec->comp_data->surface)
      {
         e_comp->wl_comp_data->kbd.focus = ec->comp_data->surface;
-        e_comp_wl_data_device_keyboard_focus_set(e_comp->wl_comp_data);
+        e_comp_wl_data_device_keyboard_focus_set();
      }
 }
 
@@ -2462,14 +2450,14 @@ _e_comp_wl_compositor_create(void)
    /* _e_comp_wl_cb_randr_change(NULL, 0, NULL); */
 
    /* try to init data manager */
-   if (!e_comp_wl_data_manager_init(cdata))
+   if (!e_comp_wl_data_manager_init())
      {
         ERR("Could not initialize data manager");
         goto data_err;
      }
 
    /* try to init input */
-   if (!e_comp_wl_input_init(cdata))
+   if (!e_comp_wl_input_init())
      {
         ERR("Could not initialize input");
         goto input_err;
@@ -2543,7 +2531,7 @@ _e_comp_wl_compositor_create(void)
    return EINA_TRUE;
 
 input_err:
-   e_comp_wl_data_manager_shutdown(cdata);
+   e_comp_wl_data_manager_shutdown();
 data_err:
 comp_global_err:
    e_env_unset("WAYLAND_DISPLAY");
