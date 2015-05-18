@@ -189,7 +189,7 @@ _e_config_dialog_go(E_Config_Dialog *cfd, E_Config_Dialog_CFData_Type type)
           cfd->dia = e_dialog_normal_win_new(cfd->parent, cfd->name, buf);
         else
           {
-#warning REMOVE STUPID ELM HACK FOR WAYLAND BEFORE RELEASE
+             /* FIXME: REMOVE HACK FOR WAYLAND BEFORE RELEASE */
              if (e_comp && e_comp->comp_type != E_PIXMAP_TYPE_WL)
                cfd->dia = e_dialog_new(cfd->parent, cfd->name, buf);
              else
