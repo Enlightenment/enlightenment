@@ -33,11 +33,9 @@ _e_comp_wl_input_cb_resource_destroy(struct wl_client *client EINA_UNUSED, struc
 static void
 _e_comp_wl_input_pointer_cb_cursor_set(struct wl_client *client, struct wl_resource *resource EINA_UNUSED, uint32_t serial EINA_UNUSED, struct wl_resource *surface_resource, int32_t x, int32_t y)
 {
-   E_Comp_Data *cdata;
    E_Client *ec;
    Eina_Bool got_mouse = EINA_FALSE;
 
-   cdata = e_comp->wl_comp_data;
    E_CLIENT_FOREACH(ec)
      {
        if (!ec->comp_data->surface) continue;
