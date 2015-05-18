@@ -53,7 +53,7 @@ _cb_keymap_changed(void *data, int type EINA_UNUSED, void *event EINA_UNUSED)
    if (!layout) layout = strdup("us");
 
    /* update compositor keymap */
-   e_comp_wl_input_keymap_set(cdata, rules, model, layout);
+   e_comp_wl_input_keymap_set(rules, model, layout);
 
    free(rules);
    free(model);
