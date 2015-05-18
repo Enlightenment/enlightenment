@@ -157,7 +157,7 @@ static const struct wl_data_source_interface _e_data_source_interface =
 };
 
 static void
-_e_comp_wl_data_device_destroy_selection_data_source(struct wl_listener *listener, void *data)
+_e_comp_wl_data_device_destroy_selection_data_source(struct wl_listener *listener EINA_UNUSED, void *data)
 {
    E_Comp_Data *cdata;
    E_Comp_Wl_Data_Source *source;
