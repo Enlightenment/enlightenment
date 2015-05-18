@@ -164,8 +164,8 @@ _e_comp_wl_evas_cb_mouse_in(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj
         if (!e_comp_wl_input_pointer_check(res)) continue;
         if (wl_resource_get_client(res) != wc) continue;
         wl_pointer_send_enter(res, serial, ec->comp_data->surface,
-                              wl_fixed_from_int(ev->canvas.x),
-                              wl_fixed_from_int(ev->canvas.y));
+                              wl_fixed_from_int(ev->canvas.x - ec->client.x),
+                              wl_fixed_from_int(ev->canvas.y - ec->client.y));
      }
 }
 
@@ -218,12 +218,6 @@ _e_comp_wl_evas_cb_mouse_move(void *data, Evas *evas EINA_UNUSED, Evas_Object *o
    if (ec->cur_mouse_action) return;
    if (e_object_is_del(E_OBJECT(ec))) return;
    if (e_client_util_ignored_get(ec)) return;
-
-   e_comp->wl_comp_data->ptr.x =
-     wl_fixed_from_int(ev->cur.canvas.x - ec->client.x);
-   e_comp->wl_comp_data->ptr.y =
-     wl_fixed_from_int(ev->cur.canvas.y - ec->client.y);
-
    if (!ec->comp_data->surface) return;
 
    wc = wl_resource_get_client(ec->comp_data->surface);
@@ -232,8 +226,8 @@ _e_comp_wl_evas_cb_mouse_move(void *data, Evas *evas EINA_UNUSED, Evas_Object *o
         if (!e_comp_wl_input_pointer_check(res)) continue;
         if (wl_resource_get_client(res) != wc) continue;
         wl_pointer_send_motion(res, ev->timestamp,
-                               e_comp->wl_comp_data->ptr.x,
-                               e_comp->wl_comp_data->ptr.y);
+                               wl_fixed_from_int(ev->cur.canvas.x - ec->client.x),
+                               wl_fixed_from_int(ev->cur.canvas.y - ec->client.y));
      }
 }
 
@@ -962,6 +956,19 @@ _e_comp_wl_cb_key_up(void *event)
      }
 }
 
+static void
+_e_comp_wl_cb_mouse_move(void *event)
+{
+   E_Comp_Data *cdata;
+   Ecore_Event_Mouse_Move *ev;
+
+   if (!(cdata = e_comp->wl_comp_data)) return;
+
+   ev = event;
+   cdata->ptr.x = wl_fixed_from_int(ev->x);
+   cdata->ptr.y = wl_fixed_from_int(ev->y);
+}
+
 static Eina_Bool
 _e_comp_wl_cb_input_event(void *data EINA_UNUSED, int type, void *ev)
 {
@@ -971,6 +978,8 @@ _e_comp_wl_cb_input_event(void *data EINA_UNUSED, int type, void *ev)
      _e_comp_wl_cb_key_down(ev);
    else if (type == ECORE_EVENT_KEY_UP)
      _e_comp_wl_cb_key_up(ev);
+   else if (type == ECORE_EVENT_MOUSE_MOVE)
+     _e_comp_wl_cb_mouse_move(ev);
 
    return ECORE_CALLBACK_RENEW;
 }

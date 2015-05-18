@@ -175,8 +175,8 @@ _e_shell_surface_cb_move(struct wl_client *client EINA_UNUSED, struct wl_resourc
      }
 
    e_comp_object_frame_xy_unadjust(ec->frame,
-                                   wl_fixed_to_int(cdata->ptr.x) + ec->client.x,
-                                   wl_fixed_to_int(cdata->ptr.y) + ec->client.y,
+                                   wl_fixed_to_int(cdata->ptr.x),
+                                   wl_fixed_to_int(cdata->ptr.y),
                                    &ev.canvas.x, &ev.canvas.y);
 
    _e_shell_surface_mouse_down_helper(ec, &ev, EINA_TRUE);
@@ -209,8 +209,8 @@ _e_shell_surface_cb_resize(struct wl_client *client EINA_UNUSED, struct wl_resou
 
    cdata->resize.resource = resource;
    cdata->resize.edges = edges;
-   cdata->ptr.grab_x = cdata->ptr.x;
-   cdata->ptr.grab_y = cdata->ptr.y;
+   cdata->ptr.grab_x = cdata->ptr.x - wl_fixed_from_int(ec->client.x);
+   cdata->ptr.grab_y = cdata->ptr.y - wl_fixed_from_int(ec->client.y);
 
    switch (cdata->ptr.button)
      {
@@ -229,8 +229,8 @@ _e_shell_surface_cb_resize(struct wl_client *client EINA_UNUSED, struct wl_resou
      }
 
    e_comp_object_frame_xy_unadjust(ec->frame,
-                                   wl_fixed_to_int(cdata->ptr.x) + ec->client.x,
-                                   wl_fixed_to_int(cdata->ptr.y) + ec->client.y,
+                                   wl_fixed_to_int(cdata->ptr.x),
+                                   wl_fixed_to_int(cdata->ptr.y),
                                    &ev.canvas.x, &ev.canvas.y);
 
    _e_shell_surface_mouse_down_helper(ec, &ev, EINA_FALSE);
@@ -754,8 +754,8 @@ _e_xdg_shell_surface_cb_move(struct wl_client *client EINA_UNUSED, struct wl_res
      }
 
    e_comp_object_frame_xy_unadjust(ec->frame,
-                                   wl_fixed_to_int(cdata->ptr.x) + ec->client.x,
-                                   wl_fixed_to_int(cdata->ptr.y) + ec->client.y,
+                                   wl_fixed_to_int(cdata->ptr.x),
+                                   wl_fixed_to_int(cdata->ptr.y),
                                    &ev.canvas.x, &ev.canvas.y);
 
    _e_shell_surface_mouse_down_helper(ec, &ev, EINA_TRUE);
@@ -788,8 +788,8 @@ _e_xdg_shell_surface_cb_resize(struct wl_client *client EINA_UNUSED, struct wl_r
    cdata = e_comp->wl_comp_data;
    cdata->resize.resource = resource;
    cdata->resize.edges = edges;
-   cdata->ptr.grab_x = cdata->ptr.x;
-   cdata->ptr.grab_y = cdata->ptr.y;
+   cdata->ptr.grab_x = cdata->ptr.x - wl_fixed_from_int(ec->client.x);
+   cdata->ptr.grab_y = cdata->ptr.y - wl_fixed_from_int(ec->client.y);
 
    switch (cdata->ptr.button)
      {
@@ -808,8 +808,8 @@ _e_xdg_shell_surface_cb_resize(struct wl_client *client EINA_UNUSED, struct wl_r
      }
 
    e_comp_object_frame_xy_unadjust(ec->frame,
-                                   wl_fixed_to_int(cdata->ptr.x) + ec->client.x,
-                                   wl_fixed_to_int(cdata->ptr.y) + ec->client.y,
+                                   wl_fixed_to_int(cdata->ptr.x),
+                                   wl_fixed_to_int(cdata->ptr.y),
                                    &ev.canvas.x, &ev.canvas.y);
 
    _e_shell_surface_mouse_down_helper(ec, &ev, EINA_FALSE);
