@@ -3867,6 +3867,8 @@ e_client_fullscreen(E_Client *ec, E_Fullscreen policy)
         ec->need_fullscreen = 1;
         return;
      }
+   if (e_comp_get(NULL)->nocomp_ec && (ec->desk == e_comp_get(NULL)->nocomp_ec->desk))
+     e_comp_get(NULL)->nocomp_ec = ec;
    ec->desk->fullscreen_clients = eina_list_append(ec->desk->fullscreen_clients, ec);
    ec->pre_res_change.valid = 0;
 
