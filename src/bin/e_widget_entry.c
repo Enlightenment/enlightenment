@@ -8,7 +8,6 @@ struct _E_Widget_Data
    void         (*func)(void *data, void *data2);
    void        *data;
    void        *data2;
-   Eina_Bool    have_pointer : 1;
 };
 
 /* local subsystem functions */
@@ -16,8 +15,6 @@ static void _e_wid_del_hook(Evas_Object *obj);
 static void _e_wid_focus_hook(Evas_Object *obj);
 static void _e_wid_disable_hook(Evas_Object *obj);
 static void _e_wid_focus_steal(void *data, Evas *e, Evas_Object *obj, void *event_info);
-static void _e_wid_in(void *data, Evas *e, Evas_Object *obj, void *event_info);
-static void _e_wid_out(void *data, Evas *e, Evas_Object *obj, void *event_info);
 static void _e_wid_changed_cb(void *data, Evas_Object *obj, void *event_info);
 static void _e_wid_keydown(void *data, Evas *e, Evas_Object *obj, void *event_info);
 static void _e_wid_movresz(void *data, Evas *e, Evas_Object *obj, void *event_info);
@@ -81,8 +78,6 @@ e_widget_entry_add(Evas_Object *parent, char **text_location, void (*func)(void 
    evas_object_show(o);
 
    evas_object_event_callback_add(o, EVAS_CALLBACK_MOUSE_DOWN, _e_wid_focus_steal, obj);
-   evas_object_event_callback_add(o, EVAS_CALLBACK_MOUSE_IN, _e_wid_in, obj);
-   evas_object_event_callback_add(o, EVAS_CALLBACK_MOUSE_OUT, _e_wid_out, obj);
 
    o = wd->o_entry;
    if ((text_location) && (*text_location))
@@ -199,14 +194,9 @@ static void
 _e_wid_del_hook(Evas_Object *obj)
 {
    E_Widget_Data *wd;
-   E_Pointer *p;
 
    if (!(obj) || (!(wd = e_widget_data_get(obj))))
      return;
-   evas_object_event_callback_del(wd->o_inout, EVAS_CALLBACK_MOUSE_IN, _e_wid_in);
-   evas_object_event_callback_del(wd->o_inout, EVAS_CALLBACK_MOUSE_OUT, _e_wid_out);
-   p = e_widget_pointer_get(obj);
-   if (p) e_pointer_type_pop(p, obj, NULL);
    evas_object_del(wd->o_entry);
    evas_object_del(wd->o_inout);
    wd->o_entry = NULL;
@@ -240,34 +230,6 @@ static void
 _e_wid_focus_steal(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    e_widget_focus_steal(data);
-}
-
-static void
-_e_wid_in(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
-{
-   E_Pointer *p;
-   E_Widget_Data *wd;
-
-   if (!(data) || (!(wd = e_widget_data_get(data))))
-     return;
-   if (wd->have_pointer) return;
-   p = e_widget_pointer_get(data);
-   if (p) e_pointer_type_push(p, data, "entry");
-   wd->have_pointer = EINA_TRUE;
-}
-
-static void
-_e_wid_out(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
-{
-   E_Pointer *p;
-   E_Widget_Data *wd;
-
-   if (!(data) || (!(wd = e_widget_data_get(data))))
-     return;
-   if (!wd->have_pointer) return;
-   p = e_widget_pointer_get(data);
-   if (p) e_pointer_type_pop(p, data, "entry");
-   wd->have_pointer = EINA_FALSE;
 }
 
 static void
