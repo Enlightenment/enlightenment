@@ -2772,6 +2772,8 @@ E_API void
 e_client_mouse_down(E_Client *ec, int button, Evas_Point *output, E_Binding_Event_Mouse_Button *ev)
 {
    Eina_Bool did_act = EINA_FALSE;
+   E_Client *pfocus;
+   int player;
 
    EINA_SAFETY_ON_NULL_RETURN(ec);
    if (action_client || ec->iconic || e_client_util_ignored_get(ec)) return;
@@ -2793,6 +2795,8 @@ e_client_mouse_down(E_Client *ec, int button, Evas_Point *output, E_Binding_Even
      }
    ec->mouse.current.mx = output->x;
    ec->mouse.current.my = output->y;
+   pfocus = e_client_focused_get();
+   player = ec->layer;
    if (!ec->cur_mouse_action)
      {
         ec->cur_mouse_action =
@@ -2808,7 +2812,7 @@ e_client_mouse_down(E_Client *ec, int button, Evas_Point *output, E_Binding_Even
                e_object_ref(E_OBJECT(ec->cur_mouse_action));
           }
      }
-   if (!did_act)
+   if ((!did_act) || (((pfocus == e_client_focused_get()) || (ec == e_client_focused_get())) && (ec->layer >= player)))
      e_focus_event_mouse_down(ec);
    if ((button >= 1) && (button <= 3))
      {
