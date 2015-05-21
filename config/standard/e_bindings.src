@@ -6,14 +6,14 @@ group "E_Config_Bindings" struct {
             value "type" int: 15;
             value "status" int: -1;
             value "action" string: "backlight_adjust";
-            value "params" string: "-0.1";
+            value "params" string: "-10";
         }
         group "E_Config_Binding_Acpi" struct {
             value "context" int: 0;
             value "type" int: 16;
             value "status" int: -1;
             value "action" string: "backlight_adjust";
-            value "params" string: "0.1";
+            value "params" string: "10";
         }
         group "E_Config_Binding_Acpi" struct {
             value "context" int: 0;
