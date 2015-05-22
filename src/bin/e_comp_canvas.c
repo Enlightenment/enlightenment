@@ -187,7 +187,6 @@ e_comp_canvas_init(int w, int h)
    e_comp->evas = ecore_evas_get(e_comp->ee);
    e_comp->w = w;
    e_comp->h = h;
-   ecore_evas_resize(e_comp->ee, w, h);
 
    if (e_first_frame)
      evas_event_callback_add(e_comp->evas, EVAS_CALLBACK_RENDER_POST, _e_comp_canvas_cb_first_frame, NULL);
@@ -233,6 +232,8 @@ e_comp_canvas_init(int w, int h)
    E_LIST_HANDLER_APPEND(handlers, ECORE_EVENT_KEY_UP, _e_comp_cb_key_up, NULL);
    E_LIST_HANDLER_APPEND(handlers, E_EVENT_SCREENSAVER_ON, _e_comp_cb_screensaver_on, NULL);
    E_LIST_HANDLER_APPEND(handlers, E_EVENT_SCREENSAVER_OFF, _e_comp_cb_screensaver_off, NULL);
+
+   ecore_evas_resize(e_comp->ee, w, h);
 
    return EINA_TRUE;
 }
