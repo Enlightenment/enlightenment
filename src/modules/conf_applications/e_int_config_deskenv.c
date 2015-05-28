@@ -55,7 +55,12 @@ _fill_data(E_Config_Dialog_Data *cfdata)
    cfdata->load_gnome = e_config->deskenv.load_gnome;
    cfdata->load_kde = e_config->deskenv.load_kde;
    cfdata->exe_always_single_instance = e_config->exe_always_single_instance;
-   cfdata->desktop_environments = efreet_util_desktop_environments_list();
+// can ask efreet, but don't - have a fixed "sensible" list
+//   cfdata->desktop_environments = efreet_util_desktop_environments_list();
+   cfdata->desktop_environments = eina_list_append(cfdata->desktop_environments, "Enlightenment");
+   cfdata->desktop_environments = eina_list_append(cfdata->desktop_environments, "GNOME");
+   cfdata->desktop_environments = eina_list_append(cfdata->desktop_environments, "KDE");
+   cfdata->desktop_environments = eina_list_append(cfdata->desktop_environments, "XFCE");
    eina_stringshare_replace(&(cfdata->desktop_environment), e_config->desktop_environment);
    if (e_config->desktop_environment)
      cfdata->desktop_environment_id = eina_list_count(cfdata->desktop_environments) + 1;
@@ -155,9 +160,9 @@ _basic_create(E_Config_Dialog *cfd EINA_UNUSED, Evas *evas, E_Config_Dialog_Data
    e_widget_framelist_object_append(fr, ob);
    e_widget_list_object_append(o, fr, 1, 0, 0.0);
 
-   fr = e_widget_framelist_add(evas, _("Prefer applications from Desktop Environment"), 0);
+   fr = e_widget_framelist_add(evas, _("Show applications only for Environment"), 0);
    rg = e_widget_radio_group_new(&(cfdata->desktop_environment_id));
-   ob = e_widget_radio_add(evas, _("All"), cde, rg);
+   ob = e_widget_radio_add(evas, _("Any"), cde, rg);
    e_widget_framelist_object_append(fr, ob);
    EINA_LIST_FOREACH(cfdata->desktop_environments, l, de)
      {
