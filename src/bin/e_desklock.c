@@ -21,6 +21,7 @@ static E_Dialog *_e_desklock_ask_presentation_dia = NULL;
 static int _e_desklock_ask_presentation_count = 0;
 
 static Ecore_Event_Handler *_e_desklock_run_handler = NULL;
+static Ecore_Event_Handler *_e_desklock_randr_handler = NULL;
 static Ecore_Job *job = NULL;
 static Eina_List *tasks = NULL;
 
@@ -36,6 +37,7 @@ static E_Desklock_Interface *current_iface = NULL;
 static Eina_Bool _e_desklock_cb_custom_desklock_exit(void *data EINA_UNUSED, int type EINA_UNUSED, void *event);
 static Eina_Bool _e_desklock_cb_idle_poller(void *data EINA_UNUSED);
 static Eina_Bool _e_desklock_cb_run(void *data, int type, void *event);
+static Eina_Bool _e_desklock_cb_randr(void *data, int type, void *event);
 
 static Eina_Bool _e_desklock_state = EINA_FALSE;
 
@@ -60,6 +62,8 @@ e_desklock_init(void)
    _e_desklock_run_handler = ecore_event_handler_add(E_EVENT_DESKLOCK,
                                                      _e_desklock_cb_run, NULL);
 
+   _e_desklock_randr_handler = ecore_event_handler_add(E_EVENT_RANDR_CHANGE,
+                                                       _e_desklock_cb_randr, NULL);
    return 1;
 }
 
@@ -79,6 +83,8 @@ e_desklock_shutdown(void)
 
    ecore_event_handler_del(_e_desklock_run_handler);
    _e_desklock_run_handler = NULL;
+   ecore_event_handler_del(_e_desklock_randr_handler);
+   _e_desklock_randr_handler = NULL;
 
    if (job) ecore_job_del(job);
    job = NULL;
@@ -267,7 +273,7 @@ e_desklock_show(Eina_Bool suspend)
       o = evas_object_rectangle_add(e_comp->evas);
       block_rects = eina_list_append(block_rects, o);
       evas_object_color_set(o, 0, 0, 0, 255);
-      evas_object_resize(o, e_comp->w, e_comp->h);
+      evas_object_resize(o, 99999, 99999);
       evas_object_layer_set(o, E_LAYER_DESKLOCK);
       evas_object_show(o);
    }
@@ -631,3 +637,11 @@ _e_desklock_cb_run(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
    return ECORE_CALLBACK_PASS_ON;
 }
 
+static Eina_Bool
+_e_desklock_cb_randr(void *data EINA_UNUSED, int type EINA_UNUSED, void *event EINA_UNUSED)
+{
+   if (!_e_desklock_state) return ECORE_CALLBACK_PASS_ON;
+   e_desklock_hide();
+   e_desklock_show(EINA_FALSE);
+   return ECORE_CALLBACK_PASS_ON;
+}
