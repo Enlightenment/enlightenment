@@ -431,7 +431,6 @@ e_shelf_toggle(E_Shelf *es, int show)
    else if ((!show) && (!es->hidden) && ((!es->gadcon) || (!es->gadcon->editing)) &&
             (es->cfg->autohide))
      {
-        edje_object_signal_emit(es->o_base, "e,state,hidden", "e");
         if (es->instant_delay >= 0.0)
           {
              if (es->hide_timer)
@@ -2022,11 +2021,12 @@ end:
      _e_shelf_toggle_client_fix(es);
    if ((!es->hidden) && es->cfg->autohide_show_action)
      {
-        edje_object_signal_emit(es->o_base, "e,state,hidden", "e");
         es->hidden = 1;
         if (!es->hide_timer)
           es->hide_timer = ecore_timer_add(es->cfg->hide_timeout, _e_shelf_cb_hide_animator_timer, es);
      }
+   if (es->hidden && (!es->hide_timer))
+     edje_object_signal_emit(es->o_base, "e,state,hidden", "e");
    return ECORE_CALLBACK_CANCEL;
 }
 
