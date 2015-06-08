@@ -5,41 +5,35 @@ mixerdir = $(MDIR)/mixer
 mixer_DATA = src/modules/mixer/e-module-mixer.edj \
 	     src/modules/mixer/module.desktop
 
-
 mixerpkgdir = $(MDIR)/mixer/$(MODULE_ARCH)
 mixerpkg_LTLIBRARIES = src/modules/mixer/module.la
 
-src_modules_mixer_module_la_CPPFLAGS = $(MOD_CPPFLAGS) @SOUND_CFLAGS@
+emixerlib = src/modules/mixer/lib/emix.c src/modules/mixer/lib/emix.h
 
+if HAVE_ALSA
+emixerlib += src/modules/mixer/lib/backends/alsa/alsa.c
+endif
+
+if HAVE_PULSE
+emixerlib += src/modules/mixer/lib/backends/pulseaudio/pulse_ml.c
+emixerlib += src/modules/mixer/lib/backends/pulseaudio/pulse.c
+endif
+
+src_modules_mixer_emixerdir = $(mixerpkgdir)
+src_modules_mixer_emixer_PROGRAMS = src/modules/mixer/emixer
+src_modules_mixer_emixer_SOURCES = src/modules/mixer/emixer.c \
+                          $(emixerlib)
+src_modules_mixer_emixer_CPPFLAGS = $(MOD_CPPFLAGS) @e_cflags@ -I$(top_srcdir)/src/modules/mixer/lib
+src_modules_mixer_emixer_LDADD = $(MOD_LIBS) @PULSE_LIBS@ @ALSA_LIBS@
+
+src_modules_mixer_module_la_CPPFLAGS = $(MOD_CPPFLAGS) @e_cflags@ @ALSA_CFLAGS@ @PULSE_CFLAGS@ -I$(top_srcdir)/src/modules/mixer/lib
 src_modules_mixer_module_la_LDFLAGS = $(MOD_LDFLAGS)
 src_modules_mixer_module_la_SOURCES = src/modules/mixer/e_mod_main.c \
 			  src/modules/mixer/e_mod_main.h \
-			  src/modules/mixer/e_mod_mixer.h \
-			  src/modules/mixer/e_mod_mixer.c \
-			  src/modules/mixer/app_mixer.c \
-			  src/modules/mixer/conf_gadget.c \
-			  src/modules/mixer/conf_module.c \
-			  src/modules/mixer/msg.c \
-			  src/modules/mixer/Pulse.h \
-			  src/modules/mixer/pa.h \
-			  src/modules/mixer/pa.c \
-			  src/modules/mixer/serial.c \
-			  src/modules/mixer/sink.c \
-			  src/modules/mixer/sys_pulse.c \
-			  src/modules/mixer/tag.c
-
-if HAVE_ALSA
-src_modules_mixer_module_la_SOURCES += src/modules/mixer/sys_alsa.c
-else
-src_modules_mixer_module_la_SOURCES += src/modules/mixer/sys_dummy.c
-endif
-
-src_modules_mixer_module_la_LIBADD = $(MOD_LIBS) @SOUND_LIBS@
-
-if HAVE_ENOTIFY
-src_modules_mixer_module_la_CPPFLAGS += @ENOTIFY_CFLAGS@
-src_modules_mixer_module_la_LIBADD += @ENOTIFY_LIBS@
-endif
+			  src/modules/mixer/e_mod_config.c \
+			  src/modules/mixer/e_mod_config.h \
+                          $(emixerlib)
+src_modules_mixer_module_la_LIBADD = $(MOD_LIBS) @PULSE_LIBS@ @ALSA_LIBS@
 
 PHONIES += mixer install-mixer
 mixer: $(mixerpkg_LTLIBRARIES) $(mixer_DATA)

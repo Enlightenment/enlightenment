@@ -722,28 +722,13 @@ define([CHECK_MODULE_NOTIFICATION],
 
 
 AM_CONDITIONAL(HAVE_ALSA, false)
+AM_CONDITIONAL(HAVE_PULSE, false)
 define([CHECK_MODULE_MIXER],
 [
-  if test "x$enable_alsa" = "x" || test "x$enable_alsa" = "xdefault" || test "x$enable_alsa" = "xyes"; then
-    AC_E_CHECK_PKG(ALSA, [alsa >= 1.0.8],
-    [ SOUND_CFLAGS="$ALSA_CFLAGS -DHAVE_ALSA $SOUND_CFLAGS"
-      SOUND_LIBS="$ALSA_LIBS $SOUND_LDFLAGS"
-    ],
-    [ if test "x$enable_alsa" = "xyes"; then
-        AC_MSG_ERROR([alsa library >= 1.0.8 not found])
-      else
-        AC_MSG_WARN([alsa library development files not present. no alsa support.])
-      fi
-    ])
-  else
-    have_alsa=no
-  fi
-
-  if test "$have_alsa" = "yes"; then
-    AC_DEFINE(HAVE_ALSA, 1, [Define if the ALSA output plugin should be built])
-  else
-    have_alsa=no
-  fi
+  AC_E_CHECK_PKG(ALSA, [alsa >= 1.0.8],
+    [ ], [ ])
+ AC_E_CHECK_PKG([PULSE], [libpulse-simple libpulse],
+    [ ], [ ])
 ])
 
 SHM_OPEN_LIBS=""
