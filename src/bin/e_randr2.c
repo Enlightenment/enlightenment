@@ -795,6 +795,7 @@ again:
              mcommon = m;
           }
      }
+   modes = eina_list_free(modes);
    // no common mode with least difference found
    if (!mcommon) return;
    // we have a common mode - apply it to the base screen
