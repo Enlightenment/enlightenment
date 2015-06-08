@@ -187,14 +187,40 @@ _e_deskmirror_smart_resize(Evas_Object *obj, Evas_Coord w, Evas_Coord h)
 static void
 _e_deskmirror_smart_show(Evas_Object *obj)
 {
+   Mirror *m;
+
    INTERNAL_ENTRY;
+   EINA_INLIST_FOREACH(sd->mirrors, m)
+     {
+        Mirror_Border *mb;
+
+        if ((!m->ec) || (!m->mirror)) continue;
+        mb = evas_object_smart_data_get(m->mirror);
+        if (!mb) continue;
+        edje_object_thaw(mb->frame);
+        edje_object_play_set(mb->frame, 1);
+        evas_object_show(mb->mirror);
+     }
    evas_object_show(sd->clip);
 }
 
 static void
 _e_deskmirror_smart_hide(Evas_Object *obj)
 {
+   Mirror *m;
+
    INTERNAL_ENTRY;
+   EINA_INLIST_FOREACH(sd->mirrors, m)
+     {
+        Mirror_Border *mb;
+
+        if ((!m->ec) || (!m->mirror)) continue;
+        mb = evas_object_smart_data_get(m->mirror);
+        if (!mb) continue;
+        edje_object_freeze(mb->frame);
+        edje_object_play_set(mb->frame, 0);
+        evas_object_hide(mb->mirror);
+     }
    evas_object_hide(sd->clip);
 }
 
