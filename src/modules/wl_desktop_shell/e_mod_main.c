@@ -3,7 +3,7 @@
 #include "e.h"
 #include "e_desktop_shell_protocol.h"
 
-#define XDG_SERVER_VERSION 4
+#define XDG_SERVER_VERSION 5
 
 static void
 _e_shell_surface_parent_set(E_Client *ec, struct wl_resource *parent_resource)
@@ -950,6 +950,12 @@ static const struct xdg_surface_interface _e_xdg_surface_interface =
 };
 
 static void
+_e_xdg_shell_cb_destroy(struct wl_client *client EINA_UNUSED, struct wl_resource *resource)
+{
+   wl_resource_destroy(resource);
+}
+
+static void
 _e_xdg_shell_cb_unstable_version(struct wl_client *client EINA_UNUSED, struct wl_resource *resource, int32_t version)
 {
    if (version > 1)
@@ -1147,7 +1153,7 @@ static const struct xdg_popup_interface _e_xdg_popup_interface =
 };
 
 static void
-_e_xdg_shell_cb_popup_get(struct wl_client *client, struct wl_resource *resource EINA_UNUSED, uint32_t id, struct wl_resource *surface_resource, struct wl_resource *parent_resource, struct wl_resource *seat_resource EINA_UNUSED, uint32_t serial EINA_UNUSED, int32_t x, int32_t y, uint32_t flags EINA_UNUSED)
+_e_xdg_shell_cb_popup_get(struct wl_client *client, struct wl_resource *resource EINA_UNUSED, uint32_t id, struct wl_resource *surface_resource, struct wl_resource *parent_resource, struct wl_resource *seat_resource EINA_UNUSED, uint32_t serial EINA_UNUSED, int32_t x, int32_t y)
 {
    E_Client *ec;
    E_Comp_Client_Data *cdata;
@@ -1263,6 +1269,7 @@ static const struct wl_shell_interface _e_shell_interface =
 
 static const struct xdg_shell_interface _e_xdg_shell_interface =
 {
+   _e_xdg_shell_cb_destroy,
    _e_xdg_shell_cb_unstable_version,
    _e_xdg_shell_cb_surface_get,
    _e_xdg_shell_cb_popup_get,
@@ -1282,7 +1289,7 @@ _e_xdg_shell_cb_dispatch(const void *implementation EINA_UNUSED, void *target, u
 
    if (!(res = target)) return 0;
 
-   if (opcode != 0)
+   if (opcode != 1)
      {
         wl_resource_post_error(res, WL_DISPLAY_ERROR_INVALID_OBJECT,
                                "Must call use_unstable_version first");
