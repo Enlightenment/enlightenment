@@ -100,6 +100,8 @@ struct _Pager_Popup
 
 static void             _pager_cb_mirror_add(Pager_Desk *pd, Evas_Object *obj, Evas_Object *mirror);
 
+static void             _pager_cb_obj_show(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED);
+static void             _pager_cb_obj_hide(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED);
 static void             _pager_cb_obj_moveresize(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED);
 static void             _button_cb_mouse_down(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info);
 static void             _pager_inst_cb_menu_configure(void *data EINA_UNUSED, E_Menu *m EINA_UNUSED, E_Menu_Item *mi EINA_UNUSED);
@@ -234,6 +236,10 @@ _gc_init(E_Gadcon *gc, const char *name, const char *id, const char *style)
                                   _pager_cb_obj_moveresize, inst);
    evas_object_event_callback_add(o, EVAS_CALLBACK_MOUSE_DOWN,
                                   _button_cb_mouse_down, inst);
+   evas_object_event_callback_add(o, EVAS_CALLBACK_SHOW,
+                                  _pager_cb_obj_show, inst);
+   evas_object_event_callback_add(o, EVAS_CALLBACK_HIDE,
+                                  _pager_cb_obj_hide, inst);
    pager_config->instances = eina_list_append(pager_config->instances, inst);
    return gcc;
 }
@@ -824,6 +830,28 @@ _pager_popup_find(E_Zone *zone)
        return p->popup;
 
    return NULL;
+}
+
+static void
+_pager_cb_obj_hide(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+    Instance *inst = data;
+    Eina_List *l;
+    Pager_Desk *pd;
+
+    EINA_LIST_FOREACH(inst->pager->desks, l, pd)
+       edje_object_signal_emit(pd->o_desk, "e,state,hidden", "e");
+}
+
+static void
+_pager_cb_obj_show(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+    Instance *inst = data;
+    Eina_List *l;
+    Pager_Desk *pd;
+
+    EINA_LIST_FOREACH(inst->pager->desks, l, pd)
+       edje_object_signal_emit(pd->o_desk, "e,state,visible", "e");
 }
 
 static void
