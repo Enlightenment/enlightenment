@@ -1263,7 +1263,7 @@ _item_unselect(E_Ilist_Item *si)
    edje_object_signal_emit(si->o_base, "e,state,unselected", "e");
    if (si->o_icon)
      {
-        if (strcmp(evas_object_type_get(si->o_icon), "e_icon"))
+        if (strcmp(evas_object_type_get(si->o_icon), "e_icon") && e_icon_edje_get(si->o_icon))
           edje_object_signal_emit(si->o_icon, "e,state,unselected", "e");
         else
           e_icon_selected_set(si->o_icon, EINA_FALSE);
