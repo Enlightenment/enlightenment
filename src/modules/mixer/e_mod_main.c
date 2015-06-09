@@ -697,6 +697,8 @@ _desklock_cb(void *data EINA_UNUSED, int type EINA_UNUSED, void *info)
 
    if (emix_config_desklock_mute_get() == EINA_FALSE)
      return ECORE_CALLBACK_PASS_ON;
+   if (!mixer_context)
+     return ECORE_CALLBACK_PASS_ON;
 
    if (ev->on)
      {
