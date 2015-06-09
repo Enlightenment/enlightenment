@@ -631,6 +631,7 @@ _e_xdg_shell_surface_configure_send(struct wl_resource *resource, uint32_t edges
        serial = wl_display_next_serial(e_comp->wl_comp_data->wl.disp);
        xdg_surface_send_configure(resource, width, height, &states, serial);
      }
+
    wl_array_release(&states);
 }
 
@@ -714,8 +715,8 @@ _e_xdg_shell_surface_cb_window_menu_show(struct wl_client *client EINA_UNUSED, s
         return;
      }
 
-     timestamp = ecore_loop_time_get();
-     e_int_client_menu_show(ec, x, y, 0, timestamp);
+   timestamp = ecore_loop_time_get();
+   e_int_client_menu_show(ec, x, y, 0, timestamp);
 }
 
 static void
@@ -985,8 +986,14 @@ _e_xdg_shell_surface_configure(struct wl_resource *resource, Evas_Coord x, Evas_
             (ec->netwm.type == E_WINDOW_TYPE_POPUP_MENU) ||
             (ec->netwm.type == E_WINDOW_TYPE_DROPDOWN_MENU))
           {
-             x = ec->parent->client.x + ec->comp_data->popup.x;
-             y = ec->parent->client.y + ec->comp_data->popup.y;
+             x = E_CLAMP(ec->parent->client.x + ec->comp_data->popup.x,
+                         ec->parent->client.x,
+                         ec->parent->client.x + 
+                         ec->parent->client.w - ec->client.w);
+             y = E_CLAMP(ec->parent->client.y + ec->comp_data->popup.y,
+                         ec->parent->client.y,
+                         ec->parent->client.y + 
+                         ec->parent->client.h - ec->client.h);
           }
      }
 
