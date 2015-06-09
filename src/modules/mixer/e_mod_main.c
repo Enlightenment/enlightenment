@@ -369,31 +369,6 @@ _slider_changed_cb(void *data EINA_UNUSED, Evas_Object *obj,
    emix_sink_volume_set(s, v);
 }
 
-static Evas_Object *
-_popup_add_slider(void)
-{
-   unsigned int volume, i;
-   unsigned int channels = mixer_context->sink_default->volume.channel_count;
-
-   Evas_Object *slider = elm_slider_add(e_comp->elm);
-   evas_object_size_hint_align_set(slider, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   evas_object_size_hint_weight_set(slider, EVAS_HINT_EXPAND, 0.0);
-
-   for (volume = 0, i = 0; i < channels; i++)
-     volume += mixer_context->sink_default->volume.volumes[i];
-
-   if (channels)
-     volume = volume / channels;
-
-   evas_object_show(slider);
-   elm_slider_min_max_set(slider, 0.0, (double) EMIX_VOLUME_MAX);
-   evas_object_smart_callback_add(slider, "changed", _slider_changed_cb,
-                                  NULL);
-
-   elm_slider_value_set(slider, volume);
-   return slider;
-}
-
 static void
 _sink_selected_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
@@ -406,9 +381,12 @@ _sink_selected_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EIN
 static void
 _popup_new(Instance *inst)
 {
-   Evas_Object *button, *list, *icon;
+   Evas_Object *button, *list, *slider, *bx;
    Emix_Sink *s;
    Eina_List *l;
+   int num = 0;
+   unsigned int volume = 0, i;
+   unsigned int channels = mixer_context->sink_default->volume.channel_count;
 
    EINA_SAFETY_ON_NULL_RETURN(mixer_context->sink_default);
 
@@ -428,30 +406,50 @@ _popup_new(Instance *inst)
         it = elm_list_item_append(inst->list, s->name, NULL, NULL, _sink_selected_cb, s);
         if (mixer_context->sink_default == s)
           elm_list_item_selected_set(it, EINA_TRUE);
+        num++;
      }
+   elm_list_go(inst->list);
    elm_box_pack_end(list, inst->list);
 
-   inst->slider = _popup_add_slider();
-   elm_box_pack_end(list, inst->slider);
-   evas_object_show(inst->slider);
+   for (volume = 0, i = 0; i < channels; i++)
+     volume += mixer_context->sink_default->volume.volumes[i];
+   if (channels) volume = volume / channels;
 
-   inst->mute = (int) mixer_context->sink_default->mute;
+   bx = elm_box_add(e_comp->elm);
+   elm_box_horizontal_set(bx, EINA_TRUE);
+   evas_object_size_hint_weight_set(bx, EVAS_HINT_EXPAND, 0.0);
+   evas_object_size_hint_align_set(bx, EVAS_HINT_FILL, 0.0);
+   elm_box_pack_end(list, bx);
+   evas_object_show(bx);
 
+   slider = elm_slider_add(e_comp->elm);
+   inst->slider = slider;
+   elm_slider_span_size_set(slider, 128 * elm_config_scale_get());
+   elm_slider_unit_format_set(slider, "%1.0f");
+   elm_slider_indicator_format_set(slider, "%1.0f");
+   evas_object_size_hint_align_set(slider, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   evas_object_size_hint_weight_set(slider, EVAS_HINT_EXPAND, 0.0);
+   evas_object_show(slider);
+   elm_slider_min_max_set(slider, 0.0, EMIX_VOLUME_MAX);
+   evas_object_smart_callback_add(slider, "changed", _slider_changed_cb, NULL);
+   elm_slider_value_set(slider, volume);
+   elm_box_pack_end(bx, slider);
+   evas_object_show(slider);
+
+   inst->mute = mixer_context->sink_default->mute;
    inst->check = elm_check_add(e_comp->elm);
+   evas_object_size_hint_align_set(inst->check, 0.5, EVAS_HINT_FILL);
    elm_object_text_set(inst->check, _("Mute"));
    elm_check_state_pointer_set(inst->check, &(inst->mute));
    evas_object_smart_callback_add(inst->check, "changed", _check_changed_cb,
                                   NULL);
-   elm_box_pack_end(list, inst->check);
+   elm_box_pack_end(bx, inst->check);
    evas_object_show(inst->check);
-
-   icon = elm_icon_add(e_comp->elm);
-   elm_icon_standard_set(icon, "preferences-system");
 
    button = elm_button_add(e_comp->elm);
    evas_object_size_hint_align_set(button, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_size_hint_weight_set(button, EVAS_HINT_EXPAND, 0.0);
-   elm_object_part_content_set(button, "icon", icon);
+   elm_object_text_set(button, _("Mixer"));
    evas_object_smart_callback_add(button, "clicked", _emixer_exec_cb, inst);
    elm_box_pack_end(list, button);
    evas_object_show(button);
