@@ -703,14 +703,20 @@ _desklock_cb(void *data EINA_UNUSED, int type EINA_UNUSED, void *info)
 
    if (ev->on)
      {
-        _was_mute = mixer_context->sink_default->mute;
-        if (!_was_mute)
-          emix_sink_mute_set((Emix_Sink *)mixer_context->sink_default, EINA_TRUE);
+        if (mixer_context->sink_default)
+          {
+             _was_mute = mixer_context->sink_default->mute;
+             if (!_was_mute)
+               emix_sink_mute_set((Emix_Sink *)mixer_context->sink_default, EINA_TRUE);
+          }
      }
    else
      {
-        if (!_was_mute)
-          emix_sink_mute_set((Emix_Sink *)mixer_context->sink_default, EINA_FALSE);
+        if (mixer_context->sink_default)
+          {
+             if (!_was_mute)
+               emix_sink_mute_set((Emix_Sink *)mixer_context->sink_default, EINA_FALSE);
+          }
      }
 
    return ECORE_CALLBACK_PASS_ON;
