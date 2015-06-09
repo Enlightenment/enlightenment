@@ -1615,13 +1615,13 @@ _e_shelf_cb_menu_delete(void *data, E_Menu *m __UNUSED__, E_Menu_Item *mi __UNUS
 }
 
 static void
-_e_shelf_cb_menu_post(void *data, E_Menu *m __UNUSED__)
+_e_shelf_cb_menu_post(void *data, E_Menu *m)
 {
    E_Shelf *es;
 
    es = data;
-   if (!es->menu) return;
-   e_object_del(E_OBJECT(es->menu));
+   e_object_del(E_OBJECT(m));
+   if (m != es->menu) return;
    es->menu = NULL;
 }
 
