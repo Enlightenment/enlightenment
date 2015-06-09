@@ -416,6 +416,7 @@ _popup_new(Instance *inst)
    list = elm_box_add(e_comp->elm);
 
    inst->list = elm_list_add(e_comp->elm);
+   elm_list_mode_set(inst->list, ELM_LIST_COMPRESS);
    evas_object_size_hint_align_set(inst->list, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_size_hint_weight_set(inst->list, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_show(inst->list);
