@@ -1957,7 +1957,6 @@ _e_menu_unrealize(E_Menu *m)
         evas_object_pass_events_set(m->comp_object, 1);
         evas_object_hide(m->comp_object);
         E_FREE_FUNC(m->comp_object, evas_object_del);
-        e_object_ref(E_OBJECT(m));
         return;
      }
    if (m->comp_object)
