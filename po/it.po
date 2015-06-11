@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Enlightenment\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2015-06-08 21:10+0900\n"
-"PO-Revision-Date: 2015-04-26 20:51+0200\n"
+"POT-Creation-Date: 2015-06-11 12:46+0200\n"
+"PO-Revision-Date: 2015-06-11 14:30+0200\n"
 "Last-Translator: Massimo Maiurana <maiurana@gmail.com>\n"
 "Language-Team: General\n"
 "Language: it\n"
@@ -359,9 +359,8 @@ msgid "Flip Desktop To..."
 msgstr "Cambia desktop a..."
 
 #: src/bin/e_actions.c:3140
-#, fuzzy
 msgid "Switch Desktop To... On Screen..."
-msgstr "Passa al desktop... (tutti gli schermi)"
+msgstr "Passa al desktop... Sullo schermo..."
 
 #: src/bin/e_actions.c:3146
 msgid "Flip Desktop Linearly..."
@@ -1141,7 +1140,7 @@ msgstr ""
 #: src/modules/conf/e_mod_main.c:284 src/modules/conf_bindings/e_mod_main.c:37
 #: src/modules/conf_paths/e_mod_main.c:17
 #: src/modules/conf_performance/e_mod_main.c:17
-#: src/modules/cpufreq/e_mod_main.c:1410 src/modules/mixer/e_mod_main.c:495
+#: src/modules/cpufreq/e_mod_main.c:1410 src/modules/mixer/e_mod_main.c:494
 #: src/modules/syscon/e_mod_main.c:36
 msgid "Advanced"
 msgstr "Avanzate"
@@ -1157,7 +1156,7 @@ msgstr "Applica"
 
 #: src/bin/e_configure.c:29 src/modules/conf_shelves/e_mod_main.c:21
 #: src/modules/connman/e_mod_main.c:604 src/modules/gadman/e_mod_main.c:23
-#: src/modules/mixer/e_mod_main.c:774
+#: src/modules/mixer/e_mod_main.c:781
 #: src/modules/notification/e_mod_main.c:151
 msgid "Extensions"
 msgstr "Estensioni"
@@ -1169,7 +1168,7 @@ msgstr "Estensioni"
 msgid "Modules"
 msgstr "Moduli"
 
-#: src/bin/e_configure.c:31 src/bin/e_gadcon.c:1792
+#: src/bin/e_configure.c:31 src/bin/e_gadcon.c:1798
 #: src/bin/e_int_config_modules.c:53 src/modules/conf_theme/e_mod_main.c:60
 msgid "Look"
 msgstr "Aspetto"
@@ -1518,7 +1517,7 @@ msgstr "Impossibile espellere il dispositivo"
 #: src/bin/e_fm.c:10465 src/bin/e_fm.c:10469 src/bin/e_fm.c:10473
 #: src/bin/e_fm.c:10501 src/bin/e_fm.c:10506 src/bin/e_fm.c:10510
 #: src/bin/e_fm.c:10569 src/bin/e_fm.c:10799 src/bin/e_fm_prop.c:254
-#: src/bin/e_shelf.c:2140 src/modules/pager/e_mod_main.c:1983
+#: src/bin/e_shelf.c:2140 src/modules/pager/e_mod_main.c:2011
 #: src/modules/pager_plain/e_mod_main.c:2812
 msgid "Error"
 msgstr "Errore"
@@ -1595,7 +1594,7 @@ msgstr "Taglia"
 msgid "Copy"
 msgstr "Copia"
 
-#: src/bin/e_fm.c:9269 src/bin/e_fm.c:10977 src/bin/e_shelf.c:1612
+#: src/bin/e_fm.c:9269 src/bin/e_fm.c:10977 src/bin/e_shelf.c:1611
 #: src/bin/e_shelf.c:2272
 #: src/modules/conf_bindings/e_int_config_acpibindings.c:201
 #: src/modules/conf_bindings/e_int_config_edgebindings.c:261
@@ -1885,7 +1884,7 @@ msgid "Cannot change permissions: %s"
 msgstr "Impossibile cambiare i permessi: %s"
 
 #: src/bin/e_fm_prop.c:392 src/bin/e_int_config_comp_match.c:127
-#: src/bin/e_shelf.c:973 src/bin/e_shelf.c:2160
+#: src/bin/e_shelf.c:972 src/bin/e_shelf.c:2160
 #: src/modules/conf_dialogs/e_int_config_profiles.c:316
 #: src/modules/conf_window_remembers/e_int_config_remembers.c:147
 msgid "Name:"
@@ -1981,32 +1980,32 @@ msgstr "Questo collegamento non funziona"
 msgid "Select an Image"
 msgstr "Seleziona un'immagine"
 
-#: src/bin/e_gadcon.c:1411
+#: src/bin/e_gadcon.c:1417
 msgid "Gadget error"
 msgstr "Errore del gadget"
 
-#: src/bin/e_gadcon.c:1411
+#: src/bin/e_gadcon.c:1417
 #, c-format
 msgid "%s does not support disabling autoscrolling"
 msgstr "%s non supporta la disabilitazione dello scorrimento automatico"
 
-#: src/bin/e_gadcon.c:1685 src/bin/e_int_client_menu.c:144
+#: src/bin/e_gadcon.c:1691 src/bin/e_int_client_menu.c:144
 msgid "Move to"
 msgstr "Sposta in"
 
-#: src/bin/e_gadcon.c:1753
+#: src/bin/e_gadcon.c:1759
 msgid "Automatically scroll contents"
 msgstr "Scorri automaticamente contenuto"
 
-#: src/bin/e_gadcon.c:1766 src/modules/gadman/e_mod_gadman.c:1070
+#: src/bin/e_gadcon.c:1772 src/modules/gadman/e_mod_gadman.c:1070
 msgid "Plain"
 msgstr "Liscio"
 
-#: src/bin/e_gadcon.c:1779 src/modules/gadman/e_mod_gadman.c:1078
+#: src/bin/e_gadcon.c:1785 src/modules/gadman/e_mod_gadman.c:1078
 msgid "Inset"
 msgstr "Incassato"
 
-#: src/bin/e_gadcon.c:1804 src/bin/e_int_gadcon_config.c:696
+#: src/bin/e_gadcon.c:1810 src/bin/e_int_gadcon_config.c:696
 #: src/bin/e_int_gadcon_config.c:754 src/bin/e_widget_config_list.c:66
 #: src/modules/conf_applications/e_int_config_apps.c:273
 #: src/modules/conf_applications/e_int_config_apps.c:294
@@ -2017,15 +2016,15 @@ msgstr "Incassato"
 msgid "Remove"
 msgstr "Elimina"
 
-#: src/bin/e_gadcon.c:2469
+#: src/bin/e_gadcon.c:2497
 msgid "Stop moving"
 msgstr "Ferma spostamento"
 
-#: src/bin/e_gadcon.c:3115
+#: src/bin/e_gadcon.c:3143
 msgid "Insufficent gadcon support"
 msgstr "Supporto gadcon insufficiente"
 
-#: src/bin/e_gadcon.c:3116
+#: src/bin/e_gadcon.c:3144
 #, c-format
 msgid "Module %s needs to support %s"
 msgstr "Il modulo %s ha bisogno del supporto %s"
@@ -2335,11 +2334,11 @@ msgstr "Iconifica"
 
 #: src/bin/e_int_client_menu.c:765
 msgid "Move with keyboard"
-msgstr ""
+msgstr "Sposta con la tastiera"
 
 #: src/bin/e_int_client_menu.c:779
 msgid "Resize with keyboard"
-msgstr ""
+msgstr "Ridimensiona con la tastiera"
 
 #: src/bin/e_int_client_menu.c:802
 msgid "Skip"
@@ -2448,11 +2447,11 @@ msgstr "Offri resistenza"
 msgid "Window List"
 msgstr "Lista finestre"
 
-#: src/bin/e_int_client_menu.c:1620 src/modules/pager/e_mod_main.c:285
-#: src/modules/pager/e_mod_main.c:2048 src/modules/pager/e_mod_main.c:2055
-#: src/modules/pager/e_mod_main.c:2062 src/modules/pager/e_mod_main.c:2064
-#: src/modules/pager/e_mod_main.c:2066 src/modules/pager/e_mod_main.c:2068
-#: src/modules/pager/e_mod_main.c:2070 src/modules/pager/e_mod_main.c:2072
+#: src/bin/e_int_client_menu.c:1620 src/modules/pager/e_mod_main.c:291
+#: src/modules/pager/e_mod_main.c:2076 src/modules/pager/e_mod_main.c:2083
+#: src/modules/pager/e_mod_main.c:2090 src/modules/pager/e_mod_main.c:2092
+#: src/modules/pager/e_mod_main.c:2094 src/modules/pager/e_mod_main.c:2096
+#: src/modules/pager/e_mod_main.c:2098 src/modules/pager/e_mod_main.c:2100
 #: src/modules/pager_plain/e_mod_main.c:275
 #: src/modules/pager_plain/e_mod_main.c:2895
 #: src/modules/pager_plain/e_mod_main.c:2902
@@ -2705,8 +2704,8 @@ msgstr "Richiede posizione"
 #: src/modules/everything/evry_plug_settings.c:183
 #: src/modules/ibar/e_mod_main.c:491 src/modules/ibar/e_mod_main.c:1568
 #: src/modules/ibox/e_mod_main.c:356 src/modules/ibox/e_mod_main.c:728
-#: src/modules/mixer/e_mod_main.c:500 src/modules/music-control/ui.c:277
-#: src/modules/packagekit/e_mod_main.c:48 src/modules/pager/e_mod_main.c:854
+#: src/modules/mixer/e_mod_main.c:499 src/modules/music-control/ui.c:277
+#: src/modules/packagekit/e_mod_main.c:48 src/modules/pager/e_mod_main.c:882
 #: src/modules/pager_plain/e_mod_main.c:869 src/modules/tasks/e_mod_main.c:746
 #: src/modules/temperature/e_mod_main.c:230
 #: src/modules/tiling/e_mod_tiling.c:1700 src/modules/wizard/page_150.c:69
@@ -3457,7 +3456,7 @@ msgstr "Nessuna finestra"
 msgid "Untitled window"
 msgstr "Finestra senza titolo"
 
-#: src/bin/e_int_menus.c:1745 src/bin/e_shelf.c:1456
+#: src/bin/e_int_menus.c:1745 src/bin/e_shelf.c:1455
 #: src/modules/conf_shelves/e_int_config_shelf.c:193
 #, c-format
 msgid "Shelf %s"
@@ -4027,12 +4026,12 @@ msgid "Almost Done"
 msgstr "Quasi fatto"
 
 #: src/bin/e_main.c:1176
-#, fuzzy, c-format
+#, c-format
 msgid "Version: %s\n"
-msgstr "Permessi"
+msgstr "Versione: %s\n"
 
 #: src/bin/e_main.c:1185
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Options:\n"
 "\t-display DISPLAY\n"
@@ -4073,7 +4072,7 @@ msgstr ""
 "\t\t-fake-xinerama-screen 800x600+0+0 -fake-xinerama-screen 800x600+800+0\n"
 "\t-profile CONF_PROFILE\n"
 "\t\tUsa il profilo di configurazione CONF_PROFILE invece di quello\n"
-"\t\tpredefinito selezionato dall'utente o dal sistema.\n"
+"\t\tpredefinito per l'utente o semplicemente \"default\".\n"
 "\t-good\n"
 "\t\tSii buono.\n"
 "\t-evil\n"
@@ -4084,6 +4083,7 @@ msgstr ""
 "\t\tAvvia con desklock attivato, così verrà richiesta una password.\n"
 "\t-i-really-know-what-i-am-doing-and-accept-full-responsibility-for-it\n"
 "\t\tSe hai bisogno di questo aiuto non hai bisogno di questa opzione.\n"
+"\t-versione\n"
 
 #: src/bin/e_main.c:1239
 msgid ""
@@ -4279,7 +4279,7 @@ msgstr "Modulo %s di Enlightenment"
 msgid "What action should be taken with this module?<br>"
 msgstr "Quale azione dovrebbe essere eseguita con questo modulo?<br>"
 
-#: src/bin/e_module.c:772 src/bin/e_shelf.c:1612
+#: src/bin/e_module.c:772 src/bin/e_shelf.c:1611
 #: src/modules/conf_dialogs/e_int_config_profiles.c:339
 #: src/modules/conf_shelves/e_int_config_shelf.c:394
 #: src/modules/ibar/e_mod_config.c:209
@@ -4371,16 +4371,16 @@ msgstr "A sinistra in basso"
 msgid "Right-bottom Corner"
 msgstr "A destra in basso"
 
-#: src/bin/e_shelf.c:245 src/bin/e_shelf.c:971
+#: src/bin/e_shelf.c:245 src/bin/e_shelf.c:970
 #, c-format
 msgid "Shelf #%d"
 msgstr "Mensola #%d"
 
-#: src/bin/e_shelf.c:815
+#: src/bin/e_shelf.c:814
 msgid "Shelf Autohide Error"
 msgstr "Errore scomparsa automatica mensola"
 
-#: src/bin/e_shelf.c:815
+#: src/bin/e_shelf.c:814
 msgid ""
 "Shelf autohiding will not work properly<br>with the current configuration; "
 "set your shelf to<br>\"Below Everything\" or disable autohiding."
@@ -4390,31 +4390,31 @@ msgstr ""
 "\" o di disabilitare<br>la scomparsa automatica nelle proprietà<br>della "
 "mensola."
 
-#: src/bin/e_shelf.c:972
+#: src/bin/e_shelf.c:971
 msgid "Add New Shelf"
 msgstr "Aggiungi mensola"
 
-#: src/bin/e_shelf.c:993
+#: src/bin/e_shelf.c:992
 msgid "Shelf Error"
 msgstr "Errore della mensola"
 
-#: src/bin/e_shelf.c:993
+#: src/bin/e_shelf.c:992
 msgid "A shelf with that name already exists!"
 msgstr "Esiste già una mensola con lo stesso nome!"
 
-#: src/bin/e_shelf.c:1477 src/bin/e_shelf.c:2283
+#: src/bin/e_shelf.c:1476 src/bin/e_shelf.c:2283
 msgid "Stop Moving Gadgets"
 msgstr "Fine spostamento gadget"
 
-#: src/bin/e_shelf.c:1479 src/bin/e_shelf.c:2285
+#: src/bin/e_shelf.c:1478 src/bin/e_shelf.c:2285
 msgid "Begin Moving Gadgets"
 msgstr "Inizio spostamento gadget"
 
-#: src/bin/e_shelf.c:1607
+#: src/bin/e_shelf.c:1606
 msgid "Are you sure you want to delete this shelf?"
 msgstr "Siete sicuri di voler eliminare questa mensola?"
 
-#: src/bin/e_shelf.c:1609
+#: src/bin/e_shelf.c:1608
 msgid ""
 "You requested to delete this shelf.<br><br>Are you sure you want to delete "
 "it?"
@@ -5400,9 +5400,8 @@ msgid "Start KDE services on login"
 msgstr "Avvia servizi KDE al login"
 
 #: src/modules/conf_applications/e_int_config_deskenv.c:163
-#, fuzzy
 msgid "Show applications only for Environment"
-msgstr "Preferisci le applicazioni dell'ambiente desktop"
+msgstr "Mostra solo le applicazioni per l'ambiente desktop"
 
 #: src/modules/conf_applications/e_int_config_deskenv.c:165
 #: src/modules/conf_bindings/e_int_config_mousebindings.c:328
@@ -5535,7 +5534,7 @@ msgid "Vaio"
 msgstr "Vaio"
 
 #: src/modules/conf_bindings/e_int_config_acpibindings.c:395
-#: src/modules/mixer/e_mod_main.c:440
+#: src/modules/mixer/e_mod_main.c:442
 msgid "Mute"
 msgstr "Muto"
 
@@ -6206,7 +6205,7 @@ msgid "Hide Logo"
 msgstr "Nascondi logo"
 
 #: src/modules/conf_display/e_int_config_desks.c:49
-#: src/modules/pager/e_mod_main.c:862 src/modules/pager_plain/e_mod_main.c:877
+#: src/modules/pager/e_mod_main.c:890 src/modules/pager_plain/e_mod_main.c:877
 msgid "Virtual Desktops Settings"
 msgstr "Desktop virtuali"
 
@@ -9116,7 +9115,7 @@ msgstr "Nuovo livello audio"
 
 #: src/modules/mixer/e_mod_main.c:112
 msgid "Emix"
-msgstr ""
+msgstr "Emix"
 
 #: src/modules/mixer/e_mod_main.c:115
 msgid "Volume changed"
@@ -9131,7 +9130,6 @@ msgid "Decrease Volume"
 msgstr "Diminuisce volume"
 
 #: src/modules/mixer/e_mod_main.c:252
-#, fuzzy
 msgid "Mute volume"
 msgstr "Silenzia audio"
 
@@ -9139,7 +9137,7 @@ msgstr "Silenzia audio"
 msgid "Mute Volume"
 msgstr "Silenzia audio"
 
-#: src/modules/mixer/e_mod_main.c:776
+#: src/modules/mixer/e_mod_main.c:452 src/modules/mixer/e_mod_main.c:783
 msgid "Mixer"
 msgstr "Mixer"
 
@@ -9500,43 +9498,43 @@ msgstr ""
 "usato dal codice<br>interno per il menù contestuale.<br>Questo tasto "
 "funziona solo nel popup."
 
-#: src/modules/pager/e_mod_main.c:1983
+#: src/modules/pager/e_mod_main.c:2011
 msgid "Pager module cannot be loaded at the same time as Pager Plain!"
 msgstr ""
 "Il modulo Pager non può essere caricato se è già caricato il modulo Pager "
 "Plain!"
 
-#: src/modules/pager/e_mod_main.c:2055
+#: src/modules/pager/e_mod_main.c:2083
 #: src/modules/pager_plain/e_mod_main.c:2902
 msgid "Show Pager Popup"
 msgstr "Mostra popup del pager"
 
-#: src/modules/pager/e_mod_main.c:2062
+#: src/modules/pager/e_mod_main.c:2090
 #: src/modules/pager_plain/e_mod_main.c:2909
 msgid "Popup Desk Right"
 msgstr "Desktop a destra nel popup"
 
-#: src/modules/pager/e_mod_main.c:2064
+#: src/modules/pager/e_mod_main.c:2092
 #: src/modules/pager_plain/e_mod_main.c:2911
 msgid "Popup Desk Left"
 msgstr "Desktop a sinistra nel popup"
 
-#: src/modules/pager/e_mod_main.c:2066
+#: src/modules/pager/e_mod_main.c:2094
 #: src/modules/pager_plain/e_mod_main.c:2913
 msgid "Popup Desk Up"
 msgstr "Desktop sopra nel popup"
 
-#: src/modules/pager/e_mod_main.c:2068
+#: src/modules/pager/e_mod_main.c:2096
 #: src/modules/pager_plain/e_mod_main.c:2915
 msgid "Popup Desk Down"
 msgstr "Desktop sotto nel popup"
 
-#: src/modules/pager/e_mod_main.c:2070
+#: src/modules/pager/e_mod_main.c:2098
 #: src/modules/pager_plain/e_mod_main.c:2917
 msgid "Popup Desk Next"
 msgstr "Desktop successivo nel popup"
 
-#: src/modules/pager/e_mod_main.c:2072
+#: src/modules/pager/e_mod_main.c:2100
 #: src/modules/pager_plain/e_mod_main.c:2919
 msgid "Popup Desk Previous"
 msgstr "Desktop precedente nel popup"
@@ -10590,72 +10588,3 @@ msgstr "Variante"
 #: src/modules/xkbswitch/e_mod_main.c:195
 msgid "NONE"
 msgstr "NESSUNA"
-
-#~ msgid "Boost"
-#~ msgstr "Amplificazione"
-
-#~ msgid "Playback"
-#~ msgstr "Riproduzione"
-
-#~ msgid "Capture"
-#~ msgstr "Cattura"
-
-#~ msgid "Switch"
-#~ msgstr "Commutatore"
-
-#~ msgid "Cards"
-#~ msgstr "Schede"
-
-#~ msgid "Channels"
-#~ msgstr "Canali"
-
-#~ msgid "Card:"
-#~ msgstr "Scheda:"
-
-#~ msgid "Channel:"
-#~ msgstr "Canale:"
-
-#~ msgid "Left:"
-#~ msgstr "Sinistro:"
-
-#~ msgid "Right:"
-#~ msgstr "Destro:"
-
-#~ msgid "Lock Sliders"
-#~ msgstr "Blocca cursori"
-
-#~ msgid "Show both sliders when locked"
-#~ msgstr "Mostra entrambi i cursori quando bloccati"
-
-#~ msgid "Show Popup on volume change via keybindings"
-#~ msgstr "Mostra popup volume al cambio da tastiera"
-
-#~ msgid "Sound Cards"
-#~ msgstr "Schede audio"
-
-#~ msgid "Mixer Settings"
-#~ msgstr "Impostazioni di Mixer"
-
-#~ msgid "Mixer to use for global actions:"
-#~ msgstr "Mixer da usare per le azioni globali:"
-
-#~ msgid "Display desktop notifications on volume change"
-#~ msgstr "Visualizza notifica al cambio di volume"
-
-#~ msgid "Disable PulseAudio"
-#~ msgstr "Disabilita PulseAudio"
-
-#~ msgid "Enable external Mixer Command"
-#~ msgstr "Abilita comando mixer esterno"
-
-#~ msgid "Launch mixer..."
-#~ msgstr "Lancia mixer..."
-
-#~ msgid "Mixer Module Settings"
-#~ msgstr "Impostazioni del modulo Mixer"
-
-#~ msgid "Mixer Settings Updated"
-#~ msgstr "Impostazioni di Mixer aggiornate"
-
-#~ msgid "Mixer Module"
-#~ msgstr "Modulo Mixer"
