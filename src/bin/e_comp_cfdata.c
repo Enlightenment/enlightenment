@@ -24,6 +24,7 @@ e_comp_cfdata_edd_init(E_Config_DD **conf_edd, E_Config_DD **match_edd)
    E_CONFIG_VAL(D, T, urgent, CHAR);
    E_CONFIG_VAL(D, T, no_shadow, CHAR);
    E_CONFIG_VAL(D, T, shadow_style, STR);
+   E_CONFIG_VAL(D, T, effect, STR);
 
    *conf_edd = E_CONFIG_DD_NEW("Comp_Config", E_Comp_Config);
 #undef T
@@ -204,6 +205,7 @@ e_comp_cfdata_match_free(E_Comp_Match *m)
    eina_stringshare_del(m->clas);
    eina_stringshare_del(m->role);
    eina_stringshare_del(m->shadow_style);
+   eina_stringshare_del(m->effect);
    free(m);
 }
 

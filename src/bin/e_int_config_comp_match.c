@@ -8,6 +8,7 @@ typedef struct _Match_Config
    char            *title, *name, *clas, *role;
    int              borderless, dialog, accepts_focus;
    int              argb, fullscreen, modal, primary_type;
+   int effect_type;
 } Match_Config;
 
 struct _E_Config_Dialog_Data
@@ -17,6 +18,7 @@ struct _E_Config_Dialog_Data
    Eina_List *overrides;    // used for client menus, tooltips etc.
    Eina_List *menus;    // used for e menus
    Eina_List *objects;    // used for e objects
+   Eina_List *comp_effects;    // list of visibility effects
    int        changed;
 
    Evas_Object *edit_il;
@@ -39,6 +41,7 @@ _match_dup(E_Comp_Match *m, Match_Config *m2)
    m2->primary_type = m2->match.primary_type;
 
    m2->match.shadow_style = eina_stringshare_ref(m2->match.shadow_style);
+   m2->match.effect = eina_stringshare_ref(m2->match.effect);
 }
 
 static void
@@ -49,6 +52,7 @@ _match_free(Match_Config *m)
    eina_stringshare_del(m->match.clas);
    eina_stringshare_del(m->match.role);
    eina_stringshare_del(m->match.shadow_style);
+   eina_stringshare_del(m->match.effect);
    free(m->title);
    free(m->name);
    free(m->clas);
@@ -65,6 +69,7 @@ _match_dup2(Match_Config *m2, E_Comp_Match *m)
    m->clas = eina_stringshare_add(m->clas);
    m->role = eina_stringshare_add(m->role);
    m->shadow_style = eina_stringshare_add(m->shadow_style);
+   m->effect = eina_stringshare_add(m->effect);
 }
 
 static const char *
@@ -146,6 +151,12 @@ _match_label_get(Match_Config *m)
      {
         eina_strbuf_append(buf, _("Style:"));
         eina_strbuf_append(buf, m->match.shadow_style);
+     }
+   if (m->match.effect)
+     {
+        eina_strbuf_append(buf, _(" / "));
+        eina_strbuf_append(buf, _("Effect:"));
+        eina_strbuf_append(buf, m->match.effect);
      }
 
    if (!eina_strbuf_length_get(buf))
@@ -236,7 +247,8 @@ _edit_ok(void *d1, void *d2)
    Evas_Object *dia, *bg, *of = d2;
    Evas_Object *il;
 
-   if (m->title || m->name || m->clas || m->role || (m->primary_type != m->match.primary_type))
+   if (m->title || m->name || m->clas || m->role || (m->primary_type != m->match.primary_type) ||
+       (eina_list_nth(m->cfd->cfdata->comp_effects, m->effect_type) != m->match.effect))
      {
         m->cfd->cfdata->changed = 1;
         e_config_dialog_changed_set(m->cfd, 1);
@@ -271,6 +283,9 @@ _edit_ok(void *d1, void *d2)
         m->match.fullscreen = m->fullscreen;
         m->match.modal = m->modal;
         m->match.primary_type = m->primary_type;
+        eina_stringshare_refplace(&m->match.effect, eina_list_nth(m->cfd->cfdata->comp_effects, m->effect_type));
+        if (eina_streq(m->match.effect, "none"))
+          eina_stringshare_replace(&m->match.effect, NULL);
         il = m->cfd->cfdata->edit_il;
         {
            const Eina_List *l;
@@ -322,7 +337,9 @@ _create_edit_frame(E_Config_Dialog *cfd, Evas *evas, E_Config_Dialog_Data *cfdat
 {
    Evas_Object *of, *oi, *lb, *en, *bt, *tb, *tab2, *o, *sf, *li;
    E_Radio_Group *rg;
-   int row;
+   Eina_List *l;
+   Eina_Stringshare *s;
+   int row, mode = 0;
    int x, y, w, h, mw, mh;
 
    o = edje_object_add(evas);
@@ -532,6 +549,32 @@ _create_edit_frame(E_Config_Dialog *cfd, Evas *evas, E_Config_Dialog_Data *cfdat
 
    oi = e_comp_style_selector_create(evas, &(m->match.shadow_style));
    e_widget_toolbook_page_append(tb, NULL, _("Style"), oi,
+                                 1, 1, 1, 1, 0.5, 0.0);
+
+   oi = e_widget_list_add(evas, 1, 0);
+   EINA_LIST_FOREACH(cfdata->comp_effects->next, l, s)
+     {
+        m->effect_type++;
+        if (s == m->match.effect)
+          break;
+     }
+   if (!s) m->effect_type = 0;
+   rg = e_widget_radio_group_new(&(m->effect_type));
+   EINA_LIST_FOREACH(cfdata->comp_effects, l, s)
+     {
+        char *p;
+        const char *pp;
+        char buf[PATH_MAX];
+
+        pp = strchr(s, '/');
+        pp = pp ? pp + 1 : s;
+        p = memcpy(buf, pp, strlen(pp) + 1);
+        p[0] = toupper(p[0]);
+        o = e_widget_radio_add(evas, _(p), mode, rg);
+        e_widget_list_object_append(oi, o, 1, 0, 0.5);
+        mode++;
+     }
+   e_widget_toolbook_page_append(tb, NULL, _("Effect"), oi,
                                  1, 1, 1, 1, 0.5, 0.0);
 
    e_widget_frametable_object_append(of, tb, 0, 0, 1, 1, 1, 1, 1, 1);
@@ -823,6 +866,7 @@ _create_data(E_Config_Dialog *cfd)
 {
    E_Config_Dialog_Data *cfdata;
    Eina_List *l;
+   Eina_Stringshare *grp;
    E_Comp_Match *m;
    Match_Config *m2;
    E_Comp_Config *conf = e_comp_config_get();
@@ -868,7 +912,19 @@ _create_data(E_Config_Dialog *cfd)
         m2->cfd = cfd;
         cfdata->objects = eina_list_append(cfdata->objects, m2);
      }
+   cfdata->comp_effects = e_theme_collection_items_find("base/theme/borders", "e/comp/effects/visibility");
+   /* comp effects must be prefixed with "visibility" or they won't work and things will break! */
+   EINA_LIST_FOREACH(cfdata->comp_effects, l, grp)
+     {
+        Eina_Stringshare *g;
+        char buf[1024];
 
+        snprintf(buf, sizeof(buf), "visibility/%s", grp);
+        g = eina_stringshare_add(buf);
+        eina_stringshare_del(grp);
+        eina_list_data_set(l, g);
+     }
+   cfdata->comp_effects = eina_list_prepend(cfdata->comp_effects, eina_stringshare_add("none"));
    return cfdata;
 }
 

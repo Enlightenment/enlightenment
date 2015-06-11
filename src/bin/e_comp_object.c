@@ -75,6 +75,7 @@ typedef struct _E_Comp_Object
 
    Eina_Stringshare   *frame_theme;
    Eina_Stringshare   *frame_name;
+   Eina_Stringshare   *effect; //effect when toggling visibility
 
    Evas_Object         *smart_obj;  // smart object
    Evas_Object         *clip; // clipper over effect object
@@ -503,6 +504,8 @@ _e_comp_object_shadow_setup(E_Comp_Object *cw)
                        if (!ok)
                          ok = e_theme_edje_object_set(cw->shobj, "base/theme/comp", buf);
                     }
+                  if (ok && m->effect)
+                    eina_stringshare_refplace(&cw->effect, m->effect);
                   if (ok) break;
                }
           }
@@ -654,14 +657,16 @@ _e_comp_object_done_defer(void *data, Evas_Object *obj EINA_UNUSED, const char *
    if (cw->animating)
      {
         cw->animating--;
-        e_comp->animating--;
+        if (!cw->animating)
+          e_comp->animating--;
         /* remove ref from animation start, account for possibility of deletion from unref */
         if (!e_object_unref(E_OBJECT(cw->ec))) return;
      }
+   if (cw->animating) return;
    /* hide only after animation finishes to guarantee a full run of the animation */
-   if (cw->defer_hide && (!strcmp(emission, "e,action,hide,done")))
+   if (cw->defer_hide && ((!strcmp(emission, "e,action,hide,done")) || (!strcmp(emission, "e,action,done"))))
      evas_object_hide(cw->smart_obj);
-   else if (!cw->animating)
+   else
      e_comp_shape_queue();
 }
 
@@ -1291,6 +1296,14 @@ _e_comp_intercept_hide(void *data, Evas_Object *obj)
                   e_comp->animating++;
                   cw->animating++;
                   e_object_ref(E_OBJECT(cw->ec));
+                  if (cw->effect)
+                    {
+                       cw->animating++;
+                       e_object_ref(E_OBJECT(cw->ec));
+                       e_comp_object_effect_set(obj, cw->effect);
+                       e_comp_object_effect_params_set(obj, 0, (int[]){0}, 1);
+                       e_comp_object_effect_start(obj, _e_comp_object_done_defer, cw);
+                    }
                }
              cw->defer_hide = !!cw->animating;
              if (!cw->animating)
@@ -2026,6 +2039,14 @@ _e_comp_smart_show(Evas_Object *obj)
         e_comp->animating++;
         cw->animating++;
         e_object_ref(E_OBJECT(cw->ec));
+        if (cw->effect)
+          {
+             cw->animating++;
+             e_object_ref(E_OBJECT(cw->ec));
+             e_comp_object_effect_set(obj, cw->effect);
+             e_comp_object_effect_params_set(obj, 0, (int[]){1}, 1);
+             e_comp_object_effect_start(obj, _e_comp_object_done_defer, cw);
+          }
      }
    /* ensure some random effect doesn't lock the client offscreen */
    if (!cw->animating)

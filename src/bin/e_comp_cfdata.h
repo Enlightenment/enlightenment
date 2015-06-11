@@ -62,6 +62,7 @@ struct _E_Comp_Match
    const char *role; // glob - used for borders
 
    const char *shadow_style; // shadow style to use
+   const char *effect; // effect to use when showing and hiding
 
    int         primary_type; // Ecore_X_Window_Type - used for borders, overrides, first one found - ECORE_X_WINDOW_TYPE_UNKNOWN if not to be used
    char        borderless; // used for borders, 0 == dont use, 1 == borderless, -1 == not borderless
