@@ -100,6 +100,8 @@ _match_type_label_get(int type)
      return _("Tooltip");
    if (E_WINDOW_TYPE_UTILITY == type)
      return _("Utility");
+   if (E_WINDOW_TYPE_REAL_UNKNOWN == type)
+     return _("Unknown");
 
    return _("Unused");
 }
@@ -421,6 +423,8 @@ _create_edit_frame(E_Config_Dialog *cfd, Evas *evas, E_Config_Dialog_Data *cfdat
         o = e_widget_radio_add(evas, _("Tooltip"), E_WINDOW_TYPE_TOOLTIP, rg);
         e_widget_list_object_append(li, o, 1, 0, 0.0);
         o = e_widget_radio_add(evas, _("Utility"), E_WINDOW_TYPE_UTILITY, rg);
+        e_widget_list_object_append(li, o, 1, 0, 0.0);
+        o = e_widget_radio_add(evas, _("Unknown"), E_WINDOW_TYPE_REAL_UNKNOWN, rg);
         e_widget_list_object_append(li, o, 1, 0, 0.0);
 
         e_widget_size_min_get(li, &mw, &mh);

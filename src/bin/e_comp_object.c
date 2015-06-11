@@ -373,10 +373,16 @@ _e_comp_object_shadow_client_match(const E_Client *ec, E_Comp_Match *m)
    if (((m->role) && (!ec->icccm.window_role)) ||
        ((ec->icccm.window_role) && (m->role) && (!e_util_glob_match(ec->icccm.window_role, m->role))))
      return EINA_FALSE;
-   if ((ec->netwm.type != E_WINDOW_TYPE_UNKNOWN) &&
-       (m->primary_type != E_WINDOW_TYPE_UNKNOWN) &&
-       ((int)ec->netwm.type != m->primary_type))
-     return EINA_FALSE;
+   if (m->primary_type)
+     {
+        if (ec->netwm.type)
+          {
+             if ((int)ec->netwm.type != m->primary_type)
+               return EINA_FALSE;
+          }
+        else if (m->primary_type != E_WINDOW_TYPE_REAL_UNKNOWN)
+          return EINA_FALSE;
+     }
   if (m->borderless != 0)
     {
        int borderless = 0;

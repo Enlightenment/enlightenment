@@ -66,7 +66,12 @@ typedef enum
    E_WINDOW_TYPE_TOOLTIP,
    E_WINDOW_TYPE_NOTIFICATION,
    E_WINDOW_TYPE_COMBO,
-   E_WINDOW_TYPE_DND
+   E_WINDOW_TYPE_DND,
+   /* since UNKNOWN was used improperly in comp matching,
+    * this value is a placeholder to indicate that we want
+    * only type UNKNOWN windows
+    */
+   E_WINDOW_TYPE_REAL_UNKNOWN = 999
 } E_Window_Type;
 
 typedef enum _E_Urgency_Policy
