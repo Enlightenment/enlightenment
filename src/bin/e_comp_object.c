@@ -75,7 +75,7 @@ typedef struct _E_Comp_Object
 
    Eina_Stringshare   *frame_theme;
    Eina_Stringshare   *frame_name;
-   Eina_Stringshare   *effect; //effect when toggling visibility
+   Eina_Stringshare   *visibility_effect; //effect when toggling visibility
 
    Evas_Object         *smart_obj;  // smart object
    Evas_Object         *clip; // clipper over effect object
@@ -504,8 +504,8 @@ _e_comp_object_shadow_setup(E_Comp_Object *cw)
                        if (!ok)
                          ok = e_theme_edje_object_set(cw->shobj, "base/theme/comp", buf);
                     }
-                  if (ok && m->effect)
-                    eina_stringshare_refplace(&cw->effect, m->effect);
+                  if (ok && m->visibility_effect)
+                    eina_stringshare_refplace(&cw->visibility_effect, m->visibility_effect);
                   if (ok) break;
                }
           }
@@ -1296,11 +1296,11 @@ _e_comp_intercept_hide(void *data, Evas_Object *obj)
                   e_comp->animating++;
                   cw->animating++;
                   e_object_ref(E_OBJECT(cw->ec));
-                  if (cw->effect)
+                  if (cw->visibility_effect)
                     {
                        cw->animating++;
                        e_object_ref(E_OBJECT(cw->ec));
-                       e_comp_object_effect_set(obj, cw->effect);
+                       e_comp_object_effect_set(obj, cw->visibility_effect);
                        e_comp_object_effect_params_set(obj, 0, (int[]){0}, 1);
                        e_comp_object_effect_start(obj, _e_comp_object_done_defer, cw);
                     }
@@ -2039,11 +2039,11 @@ _e_comp_smart_show(Evas_Object *obj)
         e_comp->animating++;
         cw->animating++;
         e_object_ref(E_OBJECT(cw->ec));
-        if (cw->effect)
+        if (cw->visibility_effect)
           {
              cw->animating++;
              e_object_ref(E_OBJECT(cw->ec));
-             e_comp_object_effect_set(obj, cw->effect);
+             e_comp_object_effect_set(obj, cw->visibility_effect);
              e_comp_object_effect_params_set(obj, 0, (int[]){1}, 1);
              e_comp_object_effect_start(obj, _e_comp_object_done_defer, cw);
           }

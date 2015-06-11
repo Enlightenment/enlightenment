@@ -41,7 +41,7 @@ _match_dup(E_Comp_Match *m, Match_Config *m2)
    m2->primary_type = m2->match.primary_type;
 
    m2->match.shadow_style = eina_stringshare_ref(m2->match.shadow_style);
-   m2->match.effect = eina_stringshare_ref(m2->match.effect);
+   m2->match.visibility_effect = eina_stringshare_ref(m2->match.visibility_effect);
 }
 
 static void
@@ -52,7 +52,7 @@ _match_free(Match_Config *m)
    eina_stringshare_del(m->match.clas);
    eina_stringshare_del(m->match.role);
    eina_stringshare_del(m->match.shadow_style);
-   eina_stringshare_del(m->match.effect);
+   eina_stringshare_del(m->match.visibility_effect);
    free(m->title);
    free(m->name);
    free(m->clas);
@@ -69,7 +69,7 @@ _match_dup2(Match_Config *m2, E_Comp_Match *m)
    m->clas = eina_stringshare_add(m->clas);
    m->role = eina_stringshare_add(m->role);
    m->shadow_style = eina_stringshare_add(m->shadow_style);
-   m->effect = eina_stringshare_add(m->effect);
+   m->visibility_effect = eina_stringshare_add(m->visibility_effect);
 }
 
 static const char *
@@ -152,11 +152,11 @@ _match_label_get(Match_Config *m)
         eina_strbuf_append(buf, _("Style:"));
         eina_strbuf_append(buf, m->match.shadow_style);
      }
-   if (m->match.effect)
+   if (m->match.visibility_effect)
      {
         eina_strbuf_append(buf, _(" / "));
         eina_strbuf_append(buf, _("Effect:"));
-        eina_strbuf_append(buf, m->match.effect);
+        eina_strbuf_append(buf, m->match.visibility_effect);
      }
 
    if (!eina_strbuf_length_get(buf))
@@ -248,7 +248,7 @@ _edit_ok(void *d1, void *d2)
    Evas_Object *il;
 
    if (m->title || m->name || m->clas || m->role || (m->primary_type != m->match.primary_type) ||
-       (eina_list_nth(m->cfd->cfdata->comp_effects, m->effect_type) != m->match.effect))
+       (eina_list_nth(m->cfd->cfdata->comp_effects, m->effect_type) != m->match.visibility_effect))
      {
         m->cfd->cfdata->changed = 1;
         e_config_dialog_changed_set(m->cfd, 1);
@@ -283,9 +283,9 @@ _edit_ok(void *d1, void *d2)
         m->match.fullscreen = m->fullscreen;
         m->match.modal = m->modal;
         m->match.primary_type = m->primary_type;
-        eina_stringshare_refplace(&m->match.effect, eina_list_nth(m->cfd->cfdata->comp_effects, m->effect_type));
-        if (eina_streq(m->match.effect, "none"))
-          eina_stringshare_replace(&m->match.effect, NULL);
+        eina_stringshare_refplace(&m->match.visibility_effect, eina_list_nth(m->cfd->cfdata->comp_effects, m->effect_type));
+        if (eina_streq(m->match.visibility_effect, "none"))
+          eina_stringshare_replace(&m->match.visibility_effect, NULL);
         il = m->cfd->cfdata->edit_il;
         {
            const Eina_List *l;
@@ -555,7 +555,7 @@ _create_edit_frame(E_Config_Dialog *cfd, Evas *evas, E_Config_Dialog_Data *cfdat
    EINA_LIST_FOREACH(cfdata->comp_effects->next, l, s)
      {
         m->effect_type++;
-        if (s == m->match.effect)
+        if (s == m->match.visibility_effect)
           break;
      }
    if (!s) m->effect_type = 0;
