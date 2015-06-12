@@ -1149,6 +1149,11 @@ window_jump_to(const char *params)
         /* Change the virtual desktop if the window isn't on the current virtual desktop */
         e_desk_show(ec->desk);
 
+        /* A minimized window wont be focusable for key input, un-minimize it */
+        if (!ec->lock_user_iconify)
+          e_client_uniconify(ec);
+
+
         evas_object_raise(ec->frame);
         if (ec->zone != current_zone)
           e_util_pointer_center(ec);
