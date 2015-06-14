@@ -2546,7 +2546,6 @@ e_comp_object_client_add(E_Client *ec)
    ec->frame = o;
    evas_object_data_set(o, "comp_object", (void*)1);
 
-   e_object_ref(E_OBJECT(ec));
    _e_comp_object_event_add(o);
 
    return o;
