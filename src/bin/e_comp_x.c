@@ -59,7 +59,7 @@ extern double e_bl_val;
 static inline Ecore_X_Window
 _e_comp_x_client_window_get(const E_Client *ec)
 {
-   if (ec->comp_data->reparented)
+   if ((ec->comp_data) && (ec->comp_data->reparented))
      return e_client_util_pwin_get(ec);
    return e_client_util_win_get(ec);
 }
