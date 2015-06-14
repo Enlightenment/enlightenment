@@ -89,12 +89,10 @@ _notify(const int val)
    char *icon, buf[56];
    int ret;
 
-   if (!emix_config_notify_get())
-     return;
+   if (!emix_config_notify_get()) return;
 
    memset(&n, 0, sizeof(E_Notification_Notify));
-   if (val > EMIX_VOLUME_MAX || val < 0)
-     return;
+   if (val < 0) return;
 
    ret = snprintf(buf, (sizeof(buf) - 1), "%s: %d%%", _("New volume"), val);
    if ((ret < 0) || ((unsigned int)ret > sizeof(buf)))
@@ -325,8 +323,7 @@ _emixer_exec_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_
    char buf[PATH_MAX];
 
    _popup_del(inst);
-   if (mixer_context->emixer)
-      return;
+   if (mixer_context->emixer) return;
 
    snprintf(buf, sizeof(buf), "%s/%s/emixer %s",
             e_module_dir_get(mixer_context->module),
@@ -355,18 +352,28 @@ static void
 _slider_changed_cb(void *data EINA_UNUSED, Evas_Object *obj,
                    void *event EINA_UNUSED)
 {
-   int val;
+   int val, pval;
    Emix_Volume v;
    unsigned int i;
    Emix_Sink *s = (Emix_Sink *)mixer_context->sink_default;
 
+   pval = s->volume.volumes[0];
    val = (int)elm_slider_value_get(obj);
+   if ((pval > 80) && (pval <= 100) && (val > 100) && (val < 120)) val = 100;
    v.volumes = calloc(s->volume.channel_count, sizeof(int));
    v.channel_count = s->volume.channel_count;
-   for (i = 0; i < s->volume.channel_count; i++)
-     v.volumes[i] = val;
-
+   for (i = 0; i < s->volume.channel_count; i++) v.volumes[i] = val;
    emix_sink_volume_set(s, v);
+   elm_slider_value_set(obj, val);
+}
+
+static void
+_slider_drag_stop_cb(void *data EINA_UNUSED, Evas_Object *obj,
+                     void *event EINA_UNUSED)
+{
+   Emix_Sink *s = (Emix_Sink *)mixer_context->sink_default;
+   int val = s->volume.volumes[0];
+   elm_slider_value_set(obj, val);
 }
 
 static void
@@ -430,8 +437,9 @@ _popup_new(Instance *inst)
    evas_object_size_hint_align_set(slider, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_size_hint_weight_set(slider, EVAS_HINT_EXPAND, 0.0);
    evas_object_show(slider);
-   elm_slider_min_max_set(slider, 0.0, EMIX_VOLUME_MAX);
+   elm_slider_min_max_set(slider, 0.0, EMIX_VOLUME_MAX + 50);
    evas_object_smart_callback_add(slider, "changed", _slider_changed_cb, NULL);
+   evas_object_smart_callback_add(slider, "slider,drag,stop", _slider_drag_stop_cb, NULL);
    elm_slider_value_set(slider, volume);
    elm_box_pack_end(bx, slider);
    evas_object_show(slider);

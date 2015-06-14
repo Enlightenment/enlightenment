@@ -9,9 +9,11 @@
 #define WRN(...)      EINA_LOG_WARN(__VA_ARGS__)
 
 #define PA_VOLUME_TO_INT(_vol) \
-   (((_vol+1)*EMIX_VOLUME_MAX+PA_VOLUME_NORM/2)/PA_VOLUME_NORM)
+   ((_vol * EMIX_VOLUME_MAX) / \
+    PA_VOLUME_NORM)
 #define INT_TO_PA_VOLUME(_vol) \
-   (!_vol) ? 0 : ((PA_VOLUME_NORM*(_vol+1)-PA_VOLUME_NORM/2)/EMIX_VOLUME_MAX)
+   ((PA_VOLUME_NORM * _vol) / \
+    EMIX_VOLUME_MAX)
 
 typedef struct _Context
 {
@@ -57,8 +59,7 @@ _emix_volume_convert(const Emix_Volume volume)
 
    vol.channels = volume.channel_count;
    for (i = 0; i < volume.channel_count; i++)
-      vol.values[i] = INT_TO_PA_VOLUME(volume.volumes[i]);
-
+     vol.values[i] = INT_TO_PA_VOLUME(volume.volumes[i]);
    return vol;
 }
 
@@ -79,7 +80,6 @@ _pa_cvolume_convert(const pa_cvolume volume)
    vol.channel_count = volume.channels;
    for (i = 0; i < volume.channels; i++)
      vol.volumes[i] = PA_VOLUME_TO_INT(volume.values[i]);
-
    return vol;
 }
 

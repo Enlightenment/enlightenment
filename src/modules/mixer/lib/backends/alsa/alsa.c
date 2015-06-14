@@ -90,7 +90,7 @@ _alsa_channel_volume_get(snd_mixer_elem_t *channel, int *v, Eina_Bool capture)
    else
      snd_mixer_selem_get_playback_volume(channel, 0, &vol);
 
-   *v = (((vol + min) * divide) - ((double) range / 2)) / range + 0.5;
+   *v = ((vol + min) * divide) / range;
 }
 
 static void
@@ -104,7 +104,7 @@ _alsa_channel_volume_set(snd_mixer_elem_t *channel, int v, Eina_Bool capture)
    if (range < 1)
      return;
 
-   vol = (((v * range) + (range / 2)) / divide) - min;
+   vol = ((v * range) / divide) - min;
    if (!capture)
      snd_mixer_selem_set_playback_volume_all(channel, vol);
    else
