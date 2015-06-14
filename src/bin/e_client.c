@@ -2185,7 +2185,7 @@ _e_client_eval(E_Client *ec)
         e_comp_object_frame_icon_update(ec->frame);
         if ((ec->new_client || ec->re_manage) && ec->desktop && (!ec->exe_inst))
           e_exec_phony(ec);
-        else if (ec->desktop && (!ec->exe_inst->desktop))
+        else if (ec->desktop && ec->exe_inst && (!ec->exe_inst->desktop))
           {
              efreet_desktop_ref(ec->desktop);
              ec->exe_inst->desktop = ec->desktop;
