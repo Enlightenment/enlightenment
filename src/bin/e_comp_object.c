@@ -706,6 +706,21 @@ _e_comp_object_done_defer(void *data, Evas_Object *obj EINA_UNUSED, const char *
      e_comp_shape_queue();
 }
 
+/* run a visibility compositor effect if available, return false if object is dead */
+static Eina_Bool
+_e_comp_object_effect_visibility_start(E_Comp_Object *cw, Eina_Bool state)
+{
+   int x, y;
+
+   if (!cw->visibility_effect) return EINA_TRUE;;
+   _e_comp_object_animating_begin(cw);
+   e_comp_object_effect_stop(cw->smart_obj, _e_comp_object_done_defer);
+   if (!e_comp_object_effect_set(cw->smart_obj, cw->visibility_effect))
+     return _e_comp_object_animating_end(cw);
+   e_comp_object_effect_params_set(cw->smart_obj, 0, (int[]){state}, 1);
+   e_comp_object_effect_start(cw->smart_obj, _e_comp_object_done_defer, cw);
+   return EINA_TRUE;
+}
 /////////////////////////////////////////////
 
 /* create necessary objects for clients that e manages */
@@ -1329,14 +1344,9 @@ _e_comp_intercept_hide(void *data, Evas_Object *obj)
              else
                {
                   e_comp_object_signal_emit(obj, "e,state,hidden", "e");
-                  _e_comp_object_animating_begin(cw);
-                  if (cw->visibility_effect)
-                    {
-                       _e_comp_object_animating_begin(cw);
-                       e_comp_object_effect_set(obj, cw->visibility_effect);
-                       e_comp_object_effect_params_set(obj, 0, (int[]){0}, 1);
-                       e_comp_object_effect_start(obj, _e_comp_object_done_defer, cw);
-                    }
+                  if (!cw->showing)
+                    _e_comp_object_animating_begin(cw);
+                  if (!_e_comp_object_effect_visibility_start(cw, 0)) return;
                }
              cw->defer_hide = !!cw->animating;
              if (!cw->animating)
@@ -2070,14 +2080,8 @@ _e_comp_smart_show(Evas_Object *obj)
      {
         e_comp_object_signal_emit(cw->smart_obj, "e,state,visible", "e");
         _e_comp_object_animating_begin(cw);
-        if (cw->visibility_effect)
-          {
-             _e_comp_object_animating_begin(cw);
-             e_comp_object_effect_set(obj, cw->visibility_effect);
-             e_comp_object_effect_params_set(obj, 0, (int[]){1}, 1);
-             e_comp_object_effect_start(obj, _e_comp_object_done_defer, cw);
-          }
         cw->showing = 1;
+        if (!_e_comp_object_effect_visibility_start(cw, 1)) return;
      }
    /* ensure some random effect doesn't lock the client offscreen */
    if (!cw->animating)
