@@ -3568,6 +3568,16 @@ e_comp_object_util_mirror_add(Evas_Object *obj)
 
 //////////////////////////////////////////////////////
 
+EAPI Eina_Bool
+e_comp_object_effect_allowed_get(Evas_Object *obj)
+{
+   API_ENTRY EINA_FALSE;
+
+   if (!cw->shobj) return EINA_FALSE;
+   if (cw->ec->override) return !e_comp_config_get()->match.disable_overrides;
+   return !e_comp_config_get()->match.disable_borders;
+}
+
 /* setup an api effect for a client */
 E_API Eina_Bool
 e_comp_object_effect_set(Evas_Object *obj, const char *effect)
