@@ -111,6 +111,7 @@ typedef struct _E_Comp_Object
    Eina_Bool            nocomp_need_update : 1;  // nocomp in effect, but this window updated while in nocomp mode
    Eina_Bool            real_hid : 1;  // last hide was a real window unmap
 
+   Eina_Bool            effect_set : 1; //effect_obj has a valid group
    Eina_Bool            effect_clip : 1; //effect_obj is clipped
    Eina_Bool            effect_clip_able : 1; //effect_obj will be clipped for effects
 
@@ -3552,24 +3553,29 @@ e_comp_object_util_mirror_add(Evas_Object *obj)
 //////////////////////////////////////////////////////
 
 /* setup an api effect for a client */
-E_API void
+E_API Eina_Bool
 e_comp_object_effect_set(Evas_Object *obj, const char *effect)
 {
    char buf[4096];
    Eina_Stringshare *grp;
 
-   API_ENTRY;
-   if (!cw->shobj) return; //input window
+   API_ENTRY EINA_FALSE;
+   if (!cw->shobj) return EINA_FALSE; //input window
 
    if (!effect) effect = "none";
    snprintf(buf, sizeof(buf), "e/comp/effects/%s", effect);
    edje_object_file_get(cw->effect_obj, NULL, &grp);
-   if (!e_util_strcmp(buf, grp)) return;
+   cw->effect_set = !eina_streq(effect, "none");
+   if (!e_util_strcmp(buf, grp)) return cw->effect_set;
    if (!e_theme_edje_object_set(cw->effect_obj, "base/theme/comp", buf))
      {
         snprintf(buf, sizeof(buf), "e/comp/effects/auto/%s", effect);
         if (!e_theme_edje_object_set(cw->effect_obj, "base/theme/comp", buf))
-          if (!e_theme_edje_object_set(cw->effect_obj, "base/theme/comp", "e/comp/effects/none")) return;
+          if (!e_theme_edje_object_set(cw->effect_obj, "base/theme/comp", "e/comp/effects/none"))
+            {
+               cw->effect_set = EINA_FALSE;
+               return cw->effect_set;
+            }
      }
    edje_object_part_swallow(cw->effect_obj, "e.swallow.content", cw->shobj);
    if (cw->effect_clip)
@@ -3578,6 +3584,7 @@ e_comp_object_effect_set(Evas_Object *obj, const char *effect)
         cw->effect_clip = 0;
      }
    cw->effect_clip_able = !edje_object_data_get(cw->effect_obj, "noclip");
+   return cw->effect_set;
 }
 
 /* set params for embryo scripts in effect */
@@ -3590,6 +3597,7 @@ e_comp_object_effect_params_set(Evas_Object *obj, int id, int *params, unsigned 
    API_ENTRY;
    EINA_SAFETY_ON_NULL_RETURN(params);
    EINA_SAFETY_ON_FALSE_RETURN(count);
+   if (!cw->effect_set) return;
 
    msg = alloca(sizeof(Edje_Message_Int_Set) + ((count - 1) * sizeof(int)));
    msg->count = (int)count;
@@ -3639,11 +3647,12 @@ e_comp_object_effect_unclip(Evas_Object *obj)
 }
 
 /* start effect, running end_cb after */
-E_API void
+E_API Eina_Bool
 e_comp_object_effect_start(Evas_Object *obj, Edje_Signal_Cb end_cb, const void *end_data)
 {
-   API_ENTRY;
-   EINA_SAFETY_ON_NULL_RETURN(cw->ec); //NYI
+   API_ENTRY EINA_FALSE;
+   EINA_SAFETY_ON_NULL_RETURN_VAL(cw->ec, EINA_FALSE); //NYI
+   if (!cw->effect_set) return EINA_FALSE;
    e_comp_object_effect_clip(obj);
    edje_object_signal_callback_del(cw->effect_obj, "e,action,done", "e", _e_comp_object_effect_end_cb);
 
@@ -3652,8 +3661,8 @@ e_comp_object_effect_start(Evas_Object *obj, Edje_Signal_Cb end_cb, const void *
    evas_object_data_set(cw->effect_obj, "_e_comp.end_data", end_data);
 
    edje_object_signal_emit(cw->effect_obj, "e,action,go", "e");
-   if (cw->animating) return;
    _e_comp_object_animating_begin(cw);
+   return EINA_TRUE;
 }
 
 /* stop a currently-running effect immediately */
