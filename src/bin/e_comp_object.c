@@ -99,6 +99,7 @@ typedef struct _E_Comp_Object
    unsigned int         failures; //number of consecutive e_pixmap_image_draw() failures
    Eina_Bool            delete_pending : 1;  // delete pendig
    Eina_Bool            defer_hide : 1;  // flag to get hide to work on deferred hide
+   Eina_Bool            showing : 1;  // object is currently in "show" animation
    Eina_Bool            visible : 1;  // is visible
 
    Eina_Bool            shaped : 1;  // is shaped
@@ -676,6 +677,7 @@ _e_comp_object_animating_end(E_Comp_Object *cw)
         if (!cw->animating)
           {
              e_comp->animating--;
+             cw->showing = 0;
              UNREFD(cw->ec, 2);
              /* remove ref from animation start, account for possibility of deletion from unref */
              return e_object_unref(E_OBJECT(cw->ec));
@@ -1307,7 +1309,7 @@ _e_comp_intercept_hide(void *data, Evas_Object *obj)
         return;
      }
    /* already hidden or currently animating */
-   if ((!cw->visible) || (cw->animating && (!cw->ec->iconic))) return;
+   if ((!cw->visible) || (cw->animating && (!cw->showing) && (!cw->ec->iconic))) return;
 
    /* don't try hiding during shutdown */
    cw->defer_hide |= stopping;
@@ -1319,7 +1321,7 @@ _e_comp_intercept_hide(void *data, Evas_Object *obj)
              cw->ec->delete_requested = 0;
              e_hints_window_hidden_set(cw->ec);
           }
-        if ((!cw->animating) || (cw->ec->iconic))
+        if ((!cw->animating) || cw->showing || cw->ec->iconic)
           {
              if (cw->ec->iconic)
                e_comp_object_signal_emit(obj, "e,action,iconify", "e");
@@ -2074,10 +2076,12 @@ _e_comp_smart_show(Evas_Object *obj)
              e_comp_object_effect_params_set(obj, 0, (int[]){1}, 1);
              e_comp_object_effect_start(obj, _e_comp_object_done_defer, cw);
           }
+        cw->showing = 1;
      }
    /* ensure some random effect doesn't lock the client offscreen */
    if (!cw->animating)
      {
+        cw->showing = 0;
         e_comp_object_effect_set(obj, NULL);
         e_comp_shape_queue();
      }
