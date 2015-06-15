@@ -175,6 +175,7 @@ _e_client_cb_drag_finished(E_Drag *drag, int dropped EINA_UNUSED)
    E_Client *ec;
 
    ec = drag->data;
+   UNREFD(ec, 1);
    e_object_unref(E_OBJECT(ec));
    client_drag = NULL;
 }
@@ -328,6 +329,7 @@ _e_client_hook_call(E_Client_Hook_Point hookpoint, E_Client *ec)
 static void
 _e_client_event_simple_free(void *d EINA_UNUSED, E_Event_Client *ev)
 {
+   UNREFD(ev->ec, 3);
    e_object_unref(E_OBJECT(ev->ec));
    free(ev);
 }
@@ -339,6 +341,7 @@ _e_client_event_simple(E_Client *ec, int type)
 
    ev = E_NEW(E_Event_Client, 1);
    ev->ec = ec;
+   REFD(ec, 3);
    e_object_ref(E_OBJECT(ec));
    ecore_event_add(type, ev, (Ecore_End_Cb)_e_client_event_simple_free, NULL);
 }
@@ -351,6 +354,7 @@ _e_client_event_property(E_Client *ec, int prop)
    ev = E_NEW(E_Event_Client_Property, 1);
    ev->ec = ec;
    ev->property = prop;
+   REFD(ec, 33);
    e_object_ref(E_OBJECT(ec));
    ecore_event_add(E_EVENT_CLIENT_PROPERTY, ev, (Ecore_End_Cb)_e_client_event_simple_free, NULL);
 }
@@ -358,6 +362,7 @@ _e_client_event_property(E_Client *ec, int prop)
 static void
 _e_client_event_desk_set_free(void *d EINA_UNUSED, E_Event_Client_Desk_Set *ev)
 {
+   UNREFD(ev->ec, 4);
    e_object_unref(E_OBJECT(ev->ec));
    e_object_unref(E_OBJECT(ev->desk));
    free(ev);
@@ -366,6 +371,7 @@ _e_client_event_desk_set_free(void *d EINA_UNUSED, E_Event_Client_Desk_Set *ev)
 static void
 _e_client_event_zone_set_free(void *d EINA_UNUSED, E_Event_Client_Zone_Set *ev)
 {
+   UNREFD(ev->ec, 5);
    e_object_unref(E_OBJECT(ev->ec));
    e_object_unref(E_OBJECT(ev->zone));
    free(ev);
@@ -439,6 +445,7 @@ _e_client_free(E_Client *ec)
    e_comp_object_redirected_set(ec->frame, 0);
    e_comp_object_render_update_del(ec->frame);
 
+   E_OBJECT(ec)->references++;
    if (ec->fullscreen)
      {
         ec->desk->fullscreen_clients = eina_list_remove(ec->desk->fullscreen_clients, ec);
@@ -531,7 +538,6 @@ _e_client_free(E_Client *ec)
    raise_stack = eina_list_remove(raise_stack, ec);
 
    e_hints_client_list_set();
-   evas_object_del(ec->frame);
    if (ec->e.state.profile.wait_desk)
      {
         e_object_delfn_del(E_OBJECT(ec->e.state.profile.wait_desk),
@@ -540,6 +546,8 @@ _e_client_free(E_Client *ec)
         e_object_unref(E_OBJECT(ec->e.state.profile.wait_desk));
      }
    ec->e.state.profile.wait_desk = NULL;
+   evas_object_del(ec->frame);
+   E_OBJECT(ec)->references--;
    free(ec);
 }
 
@@ -2664,6 +2672,7 @@ e_client_desk_set(E_Client *ec, E_Desk *desk)
      {
         ev = E_NEW(E_Event_Client_Desk_Set, 1);
         ev->ec = ec;
+        UNREFD(ec, 4);
         e_object_ref(E_OBJECT(ec));
         ev->desk = old_desk;
         e_object_ref(E_OBJECT(old_desk));
@@ -2949,6 +2958,7 @@ e_client_mouse_move(E_Client *ec, Evas_Point *output)
                        int x, y, w, h;
                        const char *drag_types[] = { "enlightenment/border" };
 
+                       REFD(ec, 1);
                        e_object_ref(E_OBJECT(ec));
                        e_comp_object_frame_icon_geometry_get(ec->frame, &x, &y, &w, &h);
 
@@ -3119,6 +3129,7 @@ e_client_zone_set(E_Client *ec, E_Zone *zone)
 
    ev = E_NEW(E_Event_Client_Zone_Set, 1);
    ev->ec = ec;
+   REFD(ec, 5);
    e_object_ref(E_OBJECT(ec));
    ev->zone = zone;
    e_object_ref(E_OBJECT(zone));

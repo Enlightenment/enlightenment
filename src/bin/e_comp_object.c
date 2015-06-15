@@ -147,7 +147,11 @@ _e_comp_object_event_free(void *d EINA_UNUSED, void *event)
    E_Client *ec;
 
    ec = evas_object_data_get(ev->comp_object, "E_Client");
-   if (ec) e_object_unref(E_OBJECT(ec));
+   if (ec)
+     {
+        UNREFD(ec, 1);
+        e_object_unref(E_OBJECT(ec));
+     }
    evas_object_unref(ev->comp_object);
    free(ev);
 }
@@ -163,7 +167,11 @@ _e_comp_object_event_add(Evas_Object *obj)
    evas_object_ref(obj);
    ev->comp_object = obj;
    ec = evas_object_data_get(ev->comp_object, "E_Client");
-   if (ec) e_object_ref(E_OBJECT(ec));
+   if (ec)
+     {
+        REFD(ec, 1);
+        e_object_ref(E_OBJECT(ec));
+     }
    ecore_event_add(E_EVENT_COMP_OBJECT_ADD, ev, _e_comp_object_event_free, NULL);
 }
 
@@ -647,6 +655,35 @@ _e_comp_object_shadow_setup(E_Comp_Object *cw)
 
 /////////////////////////////////////////////
 
+static void
+_e_comp_object_animating_begin(E_Comp_Object *cw)
+{
+   cw->animating++;
+   if (cw->animating == 1)
+     {
+        e_comp->animating++;
+        REFD(cw->ec, 2);
+        e_object_ref(E_OBJECT(cw->ec));
+     }
+}
+
+static Eina_Bool
+_e_comp_object_animating_end(E_Comp_Object *cw)
+{
+   if (cw->animating)
+     {
+        cw->animating--;
+        if (!cw->animating)
+          {
+             e_comp->animating--;
+             UNREFD(cw->ec, 2);
+             /* remove ref from animation start, account for possibility of deletion from unref */
+             return e_object_unref(E_OBJECT(cw->ec));
+          }
+     }
+   return EINA_TRUE;
+}
+
 /* handle the end of a compositor animation */
 static void
 _e_comp_object_done_defer(void *data, Evas_Object *obj EINA_UNUSED, const char *emission, const char *source EINA_UNUSED)
@@ -657,16 +694,7 @@ _e_comp_object_done_defer(void *data, Evas_Object *obj EINA_UNUSED, const char *
    /* visible clients which have never been sized are a bug */
    if ((!cw->ec->new_client) && (!cw->ec->changes.size) && ((cw->w < 0) || (cw->h < 0)) && (!strcmp(emission, "e,action,show,done")))
      CRI("ACK!");
-   if (cw->animating)
-     {
-        cw->animating--;
-        if (!cw->animating)
-          {
-             e_comp->animating--;
-             /* remove ref from animation start, account for possibility of deletion from unref */
-             if (!e_object_unref(E_OBJECT(cw->ec))) return;
-          }
-     }
+   if (!_e_comp_object_animating_end(cw)) return;
    if (cw->animating) return;
    /* hide only after animation finishes to guarantee a full run of the animation */
    if (cw->defer_hide && ((!strcmp(emission, "e,action,hide,done")) || (!strcmp(emission, "e,action,done"))))
@@ -1298,21 +1326,10 @@ _e_comp_intercept_hide(void *data, Evas_Object *obj)
              else
                {
                   e_comp_object_signal_emit(obj, "e,state,hidden", "e");
-                  cw->animating++;
-                  if (cw->animating == 1)
-                    {
-                       e_comp->animating++;
-                       e_object_ref(E_OBJECT(cw->ec));
-                    }
+                  _e_comp_object_animating_begin(cw);
                   if (cw->visibility_effect)
                     {
-                       cw->animating++;
-// same as above, but unreachable
-//                       if (cw->animating == 1)
-//                         {
-//                            e_comp->animating++;
-//                            e_object_ref(E_OBJECT(cw->ec));
-//                         }
+                       _e_comp_object_animating_begin(cw);
                        e_comp_object_effect_set(obj, cw->visibility_effect);
                        e_comp_object_effect_params_set(obj, 0, (int[]){0}, 1);
                        e_comp_object_effect_start(obj, _e_comp_object_done_defer, cw);
@@ -2049,21 +2066,10 @@ _e_comp_smart_show(Evas_Object *obj)
    else
      {
         e_comp_object_signal_emit(cw->smart_obj, "e,state,visible", "e");
-        cw->animating++;
-        if (cw->animating == 1)
-          {
-             e_comp->animating++;
-             e_object_ref(E_OBJECT(cw->ec));
-          }
+        _e_comp_object_animating_begin(cw);
         if (cw->visibility_effect)
           {
-             cw->animating++;
-// same logic as above but unreachable
-//             if (cw->animating == 1)
-//               {
-//                  e_comp->animating++;
-//                  e_object_ref(E_OBJECT(cw->ec));
-//               }
+             _e_comp_object_animating_begin(cw);
              e_comp_object_effect_set(obj, cw->visibility_effect);
              e_comp_object_effect_params_set(obj, 0, (int[]){1}, 1);
              e_comp_object_effect_start(obj, _e_comp_object_done_defer, cw);
@@ -2084,16 +2090,9 @@ _e_comp_smart_del(Evas_Object *obj)
 
    INTERNAL_ENTRY;
 
-   if (cw->animating)
-     {
-        e_comp->animating--;
-        e_object_unref(E_OBJECT(cw->ec));
-     }
-   cw->animating = 0;
+   e_comp_object_render_update_del(cw->smart_obj);
    E_FREE_FUNC(cw->updates, eina_tiler_free);
    E_FREE_FUNC(cw->pending_updates, eina_tiler_free);
-   DBG("  [%p] del", cw->ec);
-   e_comp_object_render_update_del(cw->smart_obj);
 
    if (cw->obj_mirror)
      {
@@ -2121,6 +2120,15 @@ _e_comp_smart_del(Evas_Object *obj)
    e_comp_shape_queue();
    eina_stringshare_del(cw->frame_theme);
    eina_stringshare_del(cw->frame_name);
+   if (cw->animating)
+     {
+        cw->animating = 0;
+        e_comp->animating--;
+        UNREFD(cw->ec, 2);
+        e_object_unref(E_OBJECT(cw->ec));
+     }
+//   UNREFD(cw->ec, 9);
+//   e_object_unref(E_OBJECT(cw->ec));
    free(cw);
 }
 
@@ -2542,6 +2550,8 @@ e_comp_object_client_add(E_Client *ec)
    o = evas_object_smart_add(e_comp->evas, _e_comp_smart);
    cw = evas_object_smart_data_get(o);
    evas_object_data_set(o, "E_Client", ec);
+//   REFD(ec, 9);
+//   e_object_ref(E_OBJECT(ec));
    cw->ec = ec;
    ec->frame = o;
    evas_object_data_set(o, "comp_object", (void*)1);
@@ -3411,6 +3421,7 @@ e_comp_object_render(Evas_Object *obj)
                     e_comp_object_damage(obj, 0, 0, pw, ph);
                   else
                     {
+                       DELD(cw->ec, 2);
                        e_object_del(E_OBJECT(cw->ec));
                        return EINA_FALSE;
                     }
@@ -3444,6 +3455,7 @@ e_comp_object_render(Evas_Object *obj)
                e_comp_object_damage(obj, 0, 0, pw, ph);
              else
                {
+                  DELD(cw->ec, 3);
                   e_object_del(E_OBJECT(cw->ec));
                   return EINA_FALSE;
                }
@@ -3591,16 +3603,8 @@ _e_comp_object_effect_end_cb(void *data, Evas_Object *obj, const char *emission,
    E_Comp_Object *cw = data;
 
    edje_object_signal_callback_del_full(obj, "e,action,done", "e", _e_comp_object_effect_end_cb, NULL);
-   if (cw->animating)
-     {
-        cw->animating--;
-        if (!cw->animating)
-          {
-             e_comp->animating--;
-             if (e_object_unref(E_OBJECT(cw->ec))) e_comp_shape_queue();
-          }
-     }
-
+   if (!_e_comp_object_animating_end(cw)) return;
+   e_comp_shape_queue();
    end_cb = evas_object_data_get(obj, "_e_comp.end_cb");
    if (!end_cb) return;
    end_data = evas_object_data_get(obj, "_e_comp.end_data");
@@ -3645,13 +3649,7 @@ e_comp_object_effect_start(Evas_Object *obj, Edje_Signal_Cb end_cb, const void *
 
    edje_object_signal_emit(cw->effect_obj, "e,action,go", "e");
    if (cw->animating) return;
-   cw->animating++;
-// same standard logic but useless here
-//   if (cw->animating == 1)
-//     {
-        e_comp->animating++;
-        e_object_ref(E_OBJECT(cw->ec));
-//     }
+   _e_comp_object_animating_begin(cw);
 }
 
 /* stop a currently-running effect immediately */
@@ -3668,15 +3666,7 @@ e_comp_object_effect_stop(Evas_Object *obj, Edje_Signal_Cb end_cb)
      }
    edje_object_signal_emit(cw->effect_obj, "e,action,stop", "e");
    edje_object_signal_callback_del_full(cw->effect_obj, "e,action,done", "e", _e_comp_object_effect_end_cb, cw);
-   if (cw->animating)
-     {
-        cw->animating--;
-        if (!cw->animating)
-          {
-             e_comp->animating--;
-             e_object_unref(E_OBJECT(cw->ec));
-          }
-     }
+   _e_comp_object_animating_end(cw);
 }
 
 static int

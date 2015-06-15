@@ -387,6 +387,7 @@ static void
 _e_remember_event_free(void *d EINA_UNUSED, void *event)
 {
    E_Event_Remember_Update *ev = event;
+   printf("unref10: %p\n", ev->ec);
    e_object_unref(E_OBJECT(ev->ec));
    free(ev);
 }
@@ -493,6 +494,7 @@ _e_remember_update(E_Client *ec, E_Remember *rem)
       ev = malloc(sizeof(E_Event_Remember_Update));
       if (!ev) return;
       ev->ec = ec;
+      printf("ref10: %p\n", ec);
       e_object_ref(E_OBJECT(ec));
       ecore_event_add(E_EVENT_REMEMBER_UPDATE, ev, _e_remember_event_free, NULL);
    }

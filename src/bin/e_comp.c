@@ -374,6 +374,7 @@ _e_comp_cb_update(void)
         if (_e_comp_client_update(ec))
           {
              e_comp->post_updates = eina_list_append(e_comp->post_updates, ec);
+             REFD(ec, 111);
              e_object_ref(E_OBJECT(ec));
           }
      }
@@ -1294,7 +1295,10 @@ e_comp_shutdown(void)
 #endif
    E_FREE_FUNC(action_timeout, ecore_timer_del);
    while (e_comp->clients)
-     e_object_del(eina_list_data_get(e_comp->clients));
+     {
+        DELD(eina_list_data_get(e_comp->clients), 99999);
+        e_object_del(eina_list_data_get(e_comp->clients));
+     }
    e_object_del(E_OBJECT(e_comp));
    E_FREE_LIST(handlers, ecore_event_handler_del);
    E_FREE_LIST(actions, e_object_del);

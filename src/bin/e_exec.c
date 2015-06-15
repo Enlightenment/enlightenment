@@ -359,8 +359,9 @@ e_exec_instance_found(E_Exec_Instance *inst)
 E_API void
 e_exec_instance_client_add(E_Exec_Instance *inst, E_Client *ec)
 {
-   e_object_ref(E_OBJECT(ec));
    inst->clients = eina_list_append(inst->clients, ec);
+   REFD(ec, 2);
+   e_object_ref(E_OBJECT(ec));
    ec->exe_inst = inst;
    inst->ref++;
    ecore_event_add(E_EVENT_EXEC_NEW_CLIENT, inst, _e_exec_cb_exec_new_client_free, ec);
@@ -660,7 +661,6 @@ _e_exec_instance_free(E_Exec_Instance *inst)
    if (!inst->deleted)
      {
         inst->deleted = 1;
-        E_LIST_FOREACH(inst->clients, e_object_ref);
         ecore_event_add(E_EVENT_EXEC_DEL, inst, _e_exec_cb_exec_del_free, inst);
         return;
      }
@@ -671,7 +671,6 @@ _e_exec_instance_free(E_Exec_Instance *inst)
    EINA_LIST_FREE(inst->clients, ec)
      {
         ec->exe_inst = NULL;
-        e_object_unref(E_OBJECT(ec));
      }
    if (inst->desktop) efreet_desktop_free(inst->desktop);
    if (!inst->phony)
@@ -694,10 +693,12 @@ static void
 _e_exec_cb_exec_new_client_free(void *data, void *ev)
 {
    E_Exec_Instance *inst = ev;
+   E_Client *ec = data;
 
    inst->ref--;
    _e_exec_instance_free(inst);
-   e_object_unref(data);
+   UNREFD(ec, 1);
+   e_object_unref(E_OBJECT(ec));
 }
 
 static void

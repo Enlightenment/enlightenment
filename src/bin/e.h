@@ -341,4 +341,31 @@ extern EINTERN double e_first_frame_start_time;
  * @}
  */
 
+#if 0
+#define REFD(obj, num) \
+   do { \
+      printf("%p <- %5i <- ref   | %s-%i\n", \
+             obj, E_OBJECT(obj)->references, \
+             __FILE__, num); \
+   } while (0)
+
+#define UNREFD(obj, num) \
+   do { \
+      printf("%p <- %5i <- unref | %s-%i\n", \
+             obj, E_OBJECT(obj)->references, \
+             __FILE__, num); \
+   } while (0)
+
+#define DELD(obj, num) \
+   do { \
+      printf("%p <- %5i <- del   | %s-%i\n", \
+             obj, E_OBJECT(obj)->references, \
+             __FILE__, num); \
+   } while (0)
+#else
+# define REFD(obj, num)
+# define UNREFD(obj, num)
+# define DELD(obj, num)
+#endif
+
 #endif

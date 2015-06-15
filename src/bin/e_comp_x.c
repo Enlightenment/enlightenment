@@ -101,6 +101,7 @@ _e_comp_x_client_event_free(void *d EINA_UNUSED, void *e)
 {
    E_Event_Client *ev = e;
 
+   UNREFD(ev->ec, 1);
    e_object_unref(E_OBJECT(ev->ec));
    free(ev);
 }
@@ -166,12 +167,14 @@ _e_comp_x_client_new_helper(E_Client *ec)
    if (!ecore_x_window_attributes_get(win, &ec->comp_data->initial_attributes))
      {
         //CRI("OUCH! FIX THIS!");
+        DELD(ec, 1);
         e_object_del(E_OBJECT(ec));
         return EINA_FALSE;
      }
    if (ec->re_manage && (!ec->comp_data->initial_attributes.visible))
      {
         /* ain't gonna be no hidden clients on my watch! */
+        DELD(ec, 1);
         e_object_del(E_OBJECT(ec));
         return EINA_FALSE;
      }
@@ -188,6 +191,7 @@ _e_comp_x_client_new_helper(E_Client *ec)
      {
         /* this is the ecore-x private window :/ */
         e_comp_ignore_win_add(E_PIXMAP_TYPE_X, win);
+        DELD(ec, 1);
         e_object_del(E_OBJECT(ec));
         return EINA_FALSE;
      }
@@ -1032,6 +1036,7 @@ _e_comp_x_destroy(void *data EINA_UNUSED, int type EINA_UNUSED, Ecore_X_Event_Wi
         evas_object_pass_events_set(ec->frame, 1);
         evas_object_hide(ec->frame);
         ec->comp_data->deleted = 1;
+        DELD(ec, 2);
         e_object_del(E_OBJECT(ec));
      }
    return ECORE_CALLBACK_PASS_ON;
@@ -1294,6 +1299,7 @@ _e_comp_x_hide(void *data EINA_UNUSED, int type EINA_UNUSED, Ecore_X_Event_Windo
           {
              if (ec->exe_inst && ec->exe_inst->exe)
                ec->exe_inst->phony = 0;
+             DELD(ec, 3);
              e_object_del(E_OBJECT(ec));
           }
      }
@@ -3040,6 +3046,7 @@ _e_comp_x_hook_client_fetch(void *d EINA_UNUSED, E_Client *ec)
 
            ev = E_NEW(E_Event_Client_Property, 1);
            ev->ec = ec;
+           REFD(ec, 1);
            e_object_ref(E_OBJECT(ec));
            ev->property = E_CLIENT_PROPERTY_NETWM_STATE;
            ecore_event_add(E_EVENT_CLIENT_PROPERTY, ev, _e_comp_x_client_event_free, NULL);
@@ -4722,7 +4729,10 @@ _e_comp_x_manage_windows(void)
              ec = _e_comp_x_client_new(windows[i], 1);
           }
         if (ec && (!ec->comp_data->initial_attributes.visible))
-          E_FREE_FUNC(ec, e_object_del);
+          {
+             DELD(ec, 3);
+             E_FREE_FUNC(ec, e_object_del);
+          }
         if (ec)
           {
              if (ec->override)
