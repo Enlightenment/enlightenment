@@ -712,7 +712,7 @@ _e_comp_object_effect_visibility_start(E_Comp_Object *cw, Eina_Bool state)
 {
    int x, y;
 
-   if (!cw->visibility_effect) return EINA_TRUE;;
+   if ((!cw->visibility_effect) || (!e_comp_object_effect_allowed_get(cw->smart_obj))) return EINA_TRUE;;
    _e_comp_object_animating_begin(cw);
    e_comp_object_effect_stop(cw->smart_obj, _e_comp_object_done_defer);
    if (!e_comp_object_effect_set(cw->smart_obj, cw->visibility_effect))
