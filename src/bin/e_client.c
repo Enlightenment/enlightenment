@@ -1866,6 +1866,13 @@ _e_client_eval(E_Client *ec)
              ec->placed = 1;
              ec->pre_cb.x = ec->x; ec->pre_cb.y = ec->y;
           }
+        else if (!E_INSIDE(ec->x, ec->y, zx, zy, zw, zh))
+          {
+             /* If an ec is placed out of bound, fix it! */
+             ec->x = zx + ((zw - ec->w) / 2);
+             ec->y = zy + ((zh - ec->h) / 2);
+             ec->changes.pos = 1;
+          }
 
         /* Recreate state */
         if (!ec->override)
