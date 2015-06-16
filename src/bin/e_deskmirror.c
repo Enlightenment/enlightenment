@@ -540,8 +540,6 @@ _comp_object_stack(Mirror *m, Evas *e EINA_UNUSED, Evas_Object *obj, void *event
 {
    Evas_Object *comp_object;
 
-   if (m->ec && m->ec->layer_block) return; //ignore layer blockers
-
    if (!m->mirror)
      {
         if (!_comp_object_check(m)) return;
