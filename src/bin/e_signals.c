@@ -97,9 +97,9 @@ e_sigseg_act(int x EINA_UNUSED, siginfo_t *info EINA_UNUSED, void *data EINA_UNU
 E_API void
 e_sigill_act(int x EINA_UNUSED, siginfo_t *info EINA_UNUSED, void *data EINA_UNUSED)
 {
-   // In case of a sigill in Enlightenment, Enlightenment start will catch the sigill and continue,
-   // because evas cpu detection use that behaviour. But if we get a SIGILL after that, we endup in
-   // this sig handler. So E start remember the SIGILL, and we will commit succide with a USR1, followed
+   // In case of a SIGILL in Enlightenment, Enlightenment start will catch the SIGILL and continue,
+   // because evas cpu detection use that behaviour. But if we get a SIGILL after that, we end up in
+   // this sig handler. So E start remember the SIGILL, and we will commit suicide with a USR1, followed
    // by a SEGV.
    kill(getpid(), SIGUSR1);
    kill(getpid(), SIGSEGV);

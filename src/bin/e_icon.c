@@ -1137,7 +1137,7 @@ _e_icon_cache_icon_try_next(Cache_Item *ci)
 
    if (!ci->objs)
      {
-        /* no more e_icon wait for this object to bet loaded */
+        /* no more e_icon wait for this object to be loaded */
         _cache->load_queue = eina_list_remove(_cache->load_queue, ci);
         _e_icon_cache_item_free(ci);
         return;

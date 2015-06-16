@@ -8,7 +8,7 @@ static int          _advanced_apply_data(E_Config_Dialog *cfd, E_Config_Dialog_D
 static Evas_Object *_basic_create_widgets(E_Config_Dialog *cfd, Evas *evas, E_Config_Dialog_Data *cfdata);
 static Evas_Object *_advanced_create_widgets(E_Config_Dialog *cfd, Evas *evas, E_Config_Dialog_Data *cfdata);
 
-/* Actual config data we will be playing with whil the dialog is active */
+/* Actual config data we will be playing with while the dialog is active */
 struct _E_Config_Dialog_Data
 {
    E_Client *client;

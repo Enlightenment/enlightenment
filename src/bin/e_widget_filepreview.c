@@ -499,14 +499,14 @@ _e_wid_fprev_preview_file(E_Widget_Data *wd)
    Eina_Bool is_fs = EINA_FALSE;
 
    if (stat(wd->path, &st) < 0) return;
-   // if its a desktop file treat is spcially
+   // if its a desktop file treat is specially
    if (((wd->mime) && (!strcasecmp(wd->mime, "application/x-desktop"))) ||
        (eina_str_has_extension(wd->path, "desktop")))
      {
         Efreet_Desktop *desktop;
         const char *type, *file;
 
-        // load it and if its a specual removable or mount point
+        // load it and if its a special removable or mount point
         // desktop file for e, then we want to do something special
         desktop = efreet_desktop_new(wd->path);
         if ((desktop) && (desktop->url) &&

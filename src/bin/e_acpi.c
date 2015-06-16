@@ -252,7 +252,7 @@ _e_acpi_cb_server_data(void *data EINA_UNUSED, int type EINA_UNUSED, void *event
    /* write out actual acpi received data to stdout for debugging
       res = fwrite(ev->data, ev->size, 1, stdout);
     */
-   /* data from a server isnt a string - its not 0 byte terminated. it's just
+   /* data from a server isn't a string - its not 0 byte terminated. it's just
     * a blob of data. copy to string and 0 byte terminate it so it can be
     * string-swizzled/parsed etc. */
    if (!acpibuf) acpibuf = eina_strbuf_new();

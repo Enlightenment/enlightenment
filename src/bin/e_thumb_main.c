@@ -195,10 +195,10 @@ _e_ipc_cb_server_data(void *data EINA_UNUSED,
         if (e->data)
           {
              /* begin thumb */
-             /* don't check stuff. since this connects TO e17 it is connecting */
+             /* don't check stuff. since this connects TO E it is connecting */
              /* TO a trusted process that WILL send this message properly */
              /* formatted. if the thumbnailer dies anyway - it's not a big loss */
-             /* but it is a sign of a bug in e formattign messages maybe */
+             /* but it is a sign of a bug in e formatting messages maybe */
              file = e->data;
              key = file + strlen(file) + 1;
              if (!key[0]) key = NULL;

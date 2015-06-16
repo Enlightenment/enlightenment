@@ -109,7 +109,7 @@ _e_xinerama_update(void)
                   /* calculate pixel area */
                   sz = scr->w * scr->h;
                   sz2 = scr2->w * scr2->h;
-                  /* if the one we already have is bigger, DONT add the new */
+                  /* if the one we already have is bigger, DON'T add the new */
                   if (sz > sz2)
                     removes = eina_list_append(removes, scr2);
                   /* add the old to a list to remove */

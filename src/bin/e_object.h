@@ -2,7 +2,7 @@
 
 /* Object safety/debugging checks */
 /* */
-/* OBJECT_PARANOIA_CHECK is paranoid and checkes pointers and traps segv's */
+/* OBJECT_PARANOIA_CHECK is paranoid and checks pointers and traps segv's */
 /* in case they dont work... very paranoid and slow. NB for backtrace to */
 /* work you need gcc, glibc and you need to compile with compile options of */
 /* -g -rdynamic and link with them too */

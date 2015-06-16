@@ -1055,7 +1055,7 @@ _e_desktop_editor_icon_update(E_Config_Dialog_Data *cfdata)
    if (!cfdata->editor->img_widget) return;
    o = e_util_icon_theme_icon_add(cfdata->icon, 128, cfdata->editor->evas);
 
-   /* NB this takes care of freeing any previous icon object */
+   /* NB: this takes care of freeing any previous icon object */
    e_widget_button_icon_set(cfdata->editor->img_widget, o);
    e_widget_change(cfdata->editor->img_widget);
 }

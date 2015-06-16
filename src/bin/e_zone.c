@@ -675,7 +675,7 @@ e_zone_desk_count_set(E_Zone *zone,
           }
      }
 
-   /* catch windoes that have fallen off the end if we got smaller */
+   /* catch windows that have fallen off the end if we got smaller */
    if (xx < zone->desk_x_count)
      {
         for (y = 0; y < zone->desk_y_count; y++)

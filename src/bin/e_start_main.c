@@ -201,7 +201,7 @@ _env_path_prepend(const char *env, const char *path)
    if (p)
      {
         len = strlen(p);
-        // path already there at the start. dont prepend. :)
+        // path already there at the start. don't prepend. :)
         if ((!strcmp(p, p2)) ||
             ((len > len2) &&
              (!strncmp(p, p2, len2)) &&
@@ -238,7 +238,7 @@ _env_path_append(const char *env, const char *path)
    if (p)
      {
         len = strlen(p);
-        // path already there at the end. dont append. :)
+        // path already there at the end. don't append. :)
         if ((!strcmp(p, p2)) ||
             ((len > len2) &&
              (!strcmp((p + len - len2), p2)) &&
@@ -426,7 +426,7 @@ _e_start_child(char **args, Eina_Bool really_know)
 {
    _e_ptrace_traceme(really_know);
    execv(args[0], args);
-   /* We failed, 0 mean normal exit from E with no restart or crash so let exit */
+   /* We failed, 0 mean normal exit from E with no restart or crash so let's exit */
    return 0;
 }
 

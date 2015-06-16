@@ -2785,7 +2785,7 @@ e_comp_wl_buffer_reference(E_Comp_Wl_Buffer_Ref *ref, E_Comp_Wl_Buffer *buffer)
  * Get the buffer for a given resource.
  *
  * Retrieves the Wayland SHM buffer for the resource and
- * uses it to create a new E_Comp_Wl_Buffer object.  This
+ * uses it to create a new E_Comp_Wl_Buffer object. This
  * buffer will be freed when the resource is destroyed.
  *
  * @param resource that owns the desired buffer

@@ -408,7 +408,7 @@ _pri_adj(int pid, int set, int adj, Eina_Bool use_adj, Eina_Bool adj_children, E
 
    if (use_adj) newpri = getpriority(PRIO_PROCESS, pid) + adj;
    setpriority(PRIO_PROCESS, pid, newpri);
-// shouldnt need to do this as default ionice class is "none" (0), and
+// shouldn't need to do this as default ionice class is "none" (0), and
 // this inherits io priority FROM nice level
 //        ioprio_set(IOPRIO_WHO_PROCESS, pid,
 //                   IOPRIO_PRIO_VALUE(2, 5));
@@ -1590,7 +1590,7 @@ _e_comp_x_configure_request(void *data  EINA_UNUSED, int type EINA_UNUSED, Ecore
           }
      }
 
-   /* FIXME: need to send synthetic stacking event too as well as move/resize */
+   /* FIXME: need to send synthetic stacking event to, as well as move/resize */
    if ((((ec->maximized & E_MAXIMIZE_TYPE) != E_MAXIMIZE_NONE) && (move || resize)) ||
        ((!move) && (!resize)))
      _e_comp_x_client_move_resize_send(ec);
@@ -2481,7 +2481,7 @@ _e_comp_x_focus_in(void *data EINA_UNUSED, int type EINA_UNUSED, Ecore_X_Event_W
    /* if (!ec->icccm.take_focus)
     *   return ECORE_CALLBACK_PASS_ON; */
 
-   /* should be equal, maybe some clients dont reply with the proper timestamp ? */
+   /* should be equal, maybe some clients don't reply with the proper timestamp ? */
    if (ev->time >= focus_time)
      evas_object_focus_set(ec->frame, 1);
    return ECORE_CALLBACK_PASS_ON;
@@ -3875,7 +3875,7 @@ _e_comp_x_hook_client_fetch(void *d EINA_UNUSED, E_Client *ec)
              }
         }
         /* It's ok not to have fetch flag, should only be set on startup
-         *     * and not changed. */
+         * and not changed. */
         if (!ecore_x_netwm_pid_get(win, &ec->netwm.pid))
           {
              if (ec->icccm.client_leader)

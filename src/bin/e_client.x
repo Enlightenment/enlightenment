@@ -26,12 +26,12 @@ e_client_util_move_without_frame(E_Client *ec, int x, int y)
 /**
  * Resize window to values that do not account client decorations yet.
  *
- * This call will consider given size does not account client
+ * This call will consider given size and does not for account client
  * decoration, so these values (e_comp_object_frame) will be
- * accounted automatically. This is specially useful when it is a new
- * client and has not be evaluated yet, in this case
+ * accounted for automatically. This is specially useful when it is a new
+ * client and has not been evaluated yet, in this case
  * e_comp_object_frame will be zeroed and no information is known. It
- * will mark pending requests so client will be accounted on
+ * will mark pending requests so the client will be accounted for on
  * evalutation phase.
  *
  * @parm w horizontal window size.
@@ -48,7 +48,7 @@ e_client_util_resize_without_frame(E_Client *ec, int w, int h)
 }
 
 /**
- * Move and resize window to values that do not account client decorations yet.
+ * Move and resize window to values that do not account for client decorations yet.
  *
  * This call will consider given values already accounts client
  * decorations, so it will not be considered later. This will just

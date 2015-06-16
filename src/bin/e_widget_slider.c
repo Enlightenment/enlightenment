@@ -63,7 +63,7 @@ e_widget_slider_add(Evas *evas, int horiz, int rev, const char *fmt, double min,
 
 /**
  * Set the double value for the slider. This will also move the slider to
- * the correct position and update the text indecator. Will not do anything
+ * the correct position and update the text indicator. Will not do anything
  * if the slider was not created with a double value.
  *
  * @param slider pointer to the slider to be modified
@@ -84,7 +84,7 @@ e_widget_slider_value_double_set(Evas_Object *slider, double dval)
 
 /**
  * Set the integer value for the slider. This will also move the slider to
- * the correct position and update the text indecator. Will not do anything
+ * the correct position and update the text indicator. Will not do anything
  * if the slider was not created with an integer value.
  *
  * @param slider pointer to the slider to be modified

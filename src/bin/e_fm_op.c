@@ -708,7 +708,7 @@ _e_fm_op_idler_handle_error(int *mark, Eina_List **queue, Eina_List **node, E_Fm
                   *node = NULL;
                   *mark = 0;
                   /* Do not clean out _e_fm_op_error_response. This way when another error
-                   * occures, it would be handled automatically. */
+                   * occurs, it would be handled automatically. */
                   return 1;
                }
           }
@@ -718,7 +718,7 @@ _e_fm_op_idler_handle_error(int *mark, Eina_List **queue, Eina_List **node, E_Fm
    return 0;
 }
 
-/* This works very simple. Take a task from queue and run appropriate _atom() on it.
+/* This works in a simple way. Take a task from queue and run appropriate _atom() on it.
  * If after _atom() is done, task->finished is 1 remove the task from queue. Otherwise,
  * run _atom() on the same task on next call.
  *
@@ -1878,7 +1878,7 @@ _e_fm_op_make_copy_name(const char *abs, char *buf, size_t buf_size)
    file_len = strlen(buf);
 
    /* TODO: need to make a policy regarding copy postfix:
-    * currently attach " (copy)" continuasly
+    * currently attach " (copy)" continuously.
     *
     * TODO: i18n */
    copy_str = "(copy)";

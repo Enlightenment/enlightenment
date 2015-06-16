@@ -107,7 +107,7 @@ e_configure_registry_item_params_add(const char *path, int pri, const char *labe
 }
 
 /**
- *Delete an item  in the configuration panel.
+ *Delete an item in the configuration panel.
  *
  *@param path location the item to delete
  */

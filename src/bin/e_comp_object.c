@@ -97,7 +97,7 @@ typedef struct _E_Comp_Object
 
    unsigned int         animating;  // it's busy animating
    unsigned int         failures; //number of consecutive e_pixmap_image_draw() failures
-   Eina_Bool            delete_pending : 1;  // delete pendig
+   Eina_Bool            delete_pending : 1;  // delete pending
    Eina_Bool            defer_hide : 1;  // flag to get hide to work on deferred hide
    Eina_Bool            showing : 1;  // object is currently in "show" animation
    Eina_Bool            visible : 1;  // is visible
@@ -1503,7 +1503,7 @@ _e_comp_intercept_focus(void *data, Evas_Object *obj, Eina_Bool focus)
    ec = cw->ec;
    /* note: this is here as it seems there are enough apps that do not even
     * expect us to emulate a look of focus but not actually set x input
-    * focus as we do - so simply abort any focuse set on such windows */
+    * focus as we do - so simply abort any focus set on such windows */
    /* be strict about accepting focus hint */
    if (e_pixmap_is_x(ec->pixmap))
      {
@@ -1525,7 +1525,7 @@ _e_comp_intercept_focus(void *data, Evas_Object *obj, Eina_Bool focus)
           }
         if ((ec->iconic) && (!ec->deskshow))
           {
-             /* dont focus an iconified window. that's silly! */
+             /* don't focus an iconified window. that's silly! */
              e_client_uniconify(ec);
              if (e_client_focus_track_enabled())
                e_client_focus_latest_set(ec);
@@ -1724,7 +1724,7 @@ _e_comp_object_shade_animator(void *data)
         if (!cw->ec->shaded) cw->shade.val = 1.0 - cw->shade.val;
      }
 
-   /* due to M_PI's innacuracy, cos(M_PI/2) != 0.0, so we need this */
+   /* due to M_PI's inaccuracy, cos(M_PI/2) != 0.0, so we need this */
    if (cw->shade.val < 0.001) cw->shade.val = 0.0;
    else if (cw->shade.val > .999)
      cw->shade.val = 1.0;
@@ -3237,7 +3237,7 @@ e_comp_object_shape_apply(Evas_Object *obj)
         evas_object_image_data_set(o, pix);
         evas_object_image_data_update_add(o, 0, 0, w, h);
      }
-// dont need to fix alpha chanel as blending
+// don't need to fix alpha chanel as blending
 // should be totally off here regardless of
 // alpha channel content
 }

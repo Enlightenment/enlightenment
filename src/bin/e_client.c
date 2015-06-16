@@ -1506,7 +1506,7 @@ _e_client_cb_evas_restack(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA
         E_LIST_REVERSE_FREE(list, child)
           {
              /* Don't stack iconic transients. If the user wants these shown,
-              * thats another option.
+              * that's another option.
               */
              if (child->iconic) continue;
              if (below)
@@ -2864,7 +2864,7 @@ e_client_mouse_up(E_Client *ec, int button, Evas_Point *output, E_Binding_Event_
      }
    ec->mouse.current.mx = output->x;
    ec->mouse.current.my = output->y;
-   /* also we dont pass the same params that went in - then again that */
+   /* also we don't pass the same params that went in - then again that */
    /* should be ok as we are just ending the action if it has an end */
    if (ec->cur_mouse_action)
      {

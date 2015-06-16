@@ -1041,7 +1041,7 @@ e_gadcon_drag_finished_cb(E_Drag *drag, int dropped)
  * @param gc gadcon pointer
  * @param name to use for gadget
  * @param id assigned to gadget
- * @param style to  for gadget
+ * @param style to for gadget
  * @param base_obj the evas object that will show up in the shelf or gadget module
  * @return returns pointer to created gadget, on failure returns null
  */

@@ -1027,7 +1027,7 @@ e_fm2_path_set(Evas_Object *obj, const char *dev, const char *path)
    const char *real_path;
    EFM_SMART_CHECK();
 
-   /* internal config for now - don't see a pont making this configurable */
+   /* internal config for now - don't see a point making this configurable */
    sd->regions.member_max = 64;
 
    if (!sd->config)
@@ -2383,7 +2383,7 @@ _e_fm2_client_get(void)
    E_Fm2_Client *cl, *cl_chosen = NULL;
    int min_req = 0x7fffffff;
 
-   /* if we don't have a slave - spane one */
+   /* if we don't have a slave - spawn one */
    if (!_e_fm2_client_list)
      {
         _e_fm2_client_spawn();
@@ -3299,7 +3299,7 @@ _e_fm2_dev_path_map(E_Fm2_Smart_Data *sd, const char *dev, const char *path)
              /* this is a virtual device - it's where your favorites list is
               * stored - a dir with
                 .desktop files or symlinks (in fact anything
-              * you like
+              * you like).
               */
              if (e_user_dir_concat_static(buf, "fileman/favorites") >= sizeof(buf))
                return NULL;
@@ -3311,7 +3311,7 @@ _e_fm2_dev_path_map(E_Fm2_Smart_Data *sd, const char *dev, const char *path)
              /* this is a virtual device - it's where your favorites list is
               * stored - a dir with
                 .desktop files or symlinks (in fact anything
-              * you like
+              * you like).
               */
              if ((!path) || (!path[0]) || (!strcmp(path, "/")))
                {
@@ -7237,7 +7237,7 @@ _e_fm2_mouse_1_handler(E_Fm2_Icon *ic, int up, void *evas_event)
      }
 
    /*
-    * On mouse up, check if we want to do inplace open
+    * On mouse up, check if we want to do in place open
     */
    if ((eu) &&
        (!multi_sel) &&

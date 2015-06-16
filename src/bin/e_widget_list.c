@@ -15,7 +15,7 @@ static void _e_wid_del_hook(Evas_Object *obj);
  * Creates a new list widget
  *
  * @param evas the evas pointer
- * @param  homogenous should widgets append to the list be evenly spaced out
+ * @param homogenous should widgets append to the list be evenly spaced out
  * @param horiz the direction the list should be displayed
  * @return the new list wdiget
  */

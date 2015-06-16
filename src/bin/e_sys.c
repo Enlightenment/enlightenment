@@ -811,26 +811,26 @@ _e_sys_current_action(void)
       case E_SYS_HALT:
       case E_SYS_HALT_NOW:
         e_dialog_text_set(dia, _("Powering off.<br>"
-                                 "You cannot do any other system actions<br>"
+                                 "You cannot perform any other system actions<br>"
                                  "once a shutdown has been started."));
         break;
 
       case E_SYS_REBOOT:
         e_dialog_text_set(dia, _("Resetting.<br>"
-                                 "You cannot do any other system actions<br>"
+                                 "You cannot perform any other system actions<br>"
                                  "once a reboot has begun."));
         break;
 
       case E_SYS_SUSPEND:
         e_dialog_text_set(dia, _("Suspending.<br>"
-                                 "Until suspend is complete you cannot perform<br>"
-                                 "any other system actions."));
+                                 "You cannot perform any other system actions<br>"
+                                 "until suspend is complete."));
         break;
 
       case E_SYS_HIBERNATE:
         e_dialog_text_set(dia, _("Hibernating.<br>"
                                  "You cannot perform any other system actions<br>"
-                                 "until this is complete."));
+                                 "until hibernation is complete."));
         break;
 
       default:
@@ -903,7 +903,7 @@ _e_sys_action_do(E_Sys_Action a, char *param EINA_UNUSED, Eina_Bool raw)
 
       case E_SYS_RESTART:
         // XXX TODO: check for e_fm_op_registry entries and confirm
-        // FIXME: we dont   share out immortal info to restarted e. :(
+        // FIXME: we don't share out immortal info to restarted e. :(
 //	if (!e_util_immortal_check())
       {
          restart = 1;

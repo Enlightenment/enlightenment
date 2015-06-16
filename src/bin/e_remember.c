@@ -303,7 +303,7 @@ e_remember_match_update(E_Remember *rem)
      {
         /* The number of matches for this remember has changed so we
          * need to remove from list and insert back into the appropriate
-         * loction. */
+         * location. */
         Eina_List *l = NULL;
         E_Remember *r;
 
