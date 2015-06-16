@@ -54,14 +54,15 @@ _e_int_theme_preview_set(Evas_Object *preview, const char *file)
    Evas *e;
    Evas_Coord w = 320, h = 240, mw = 0, mh = 0;
    Eina_List *objs = NULL;
-   Evas_Object *o, *po, *po2, *po3, *r;
-   
+   Evas_Object *o, *po, *po2, *po3, *win;
+
    _e_int_theme_preview_clear(preview);
    e = e_widget_preview_evas_get(preview);
+   win = e_win_evas_win_get(e);
+   if (!win)
+     win = elm_win_fake_add(ecore_evas_ecore_evas_get(e));
    evas_object_size_hint_min_get(preview, &w, &h);
    w *= 2; h *= 2;
-#warning REMOVE STUPID ELM HACK BEFORE RELEASE
-   r = evas_object_rectangle_add(e);
    
    o = edje_object_add(e);
    _e_int_theme_edje_file_set(o, file, "e/desktop/background");
@@ -89,7 +90,7 @@ _e_int_theme_preview_set(Evas_Object *preview, const char *file)
    po = o;
    po2 = po;
    
-   o = elm_box_add(r);
+   o = elm_box_add(win);
    elm_box_horizontal_set(o, 1);
    evas_object_show(o);
    edje_object_part_swallow(po, "e.swallow.content", o);
@@ -115,7 +116,7 @@ _e_int_theme_preview_set(Evas_Object *preview, const char *file)
    objs = eina_list_append(objs, o);
    po2 = o;
 
-   o = elm_box_add(r);
+   o = elm_box_add(win);
    elm_box_horizontal_set(o, 1);
    evas_object_show(o);
    edje_object_part_swallow(po2, "e.swallow.content", o);
@@ -265,7 +266,7 @@ _e_int_theme_preview_set(Evas_Object *preview, const char *file)
    edje_object_part_swallow(po, "e.swallow.icon", o);
    objs = eina_list_append(objs, o);
 
-   o = elm_box_add(r);
+   o = elm_box_add(win);
    elm_box_horizontal_set(o, 1);
    elm_box_homogeneous_set(o, 1);
    evas_object_show(o);
