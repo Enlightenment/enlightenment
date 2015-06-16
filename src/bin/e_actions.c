@@ -959,6 +959,52 @@ ACT_FN_GO(window_move_to, )
      }
 }
 
+
+/***************************************************************************/
+ACT_FN_GO(window_quick_tile_to_quadrant, )
+{
+   E_Client *ec;
+   int x, y, zx, zy, zw, zh;
+   if ((!obj) || (obj->type != E_CLIENT_TYPE))
+      obj = E_OBJECT(e_client_focused_get());
+
+   if (!obj) return;
+
+   ec = (E_Client *)obj;
+   if((ec->maximized & E_MAXIMIZE_TYPE) != E_MAXIMIZE_NONE)
+      e_client_unmaximize(ec, E_MAXIMIZE_BOTH);
+   e_zone_useful_geometry_get(ec->zone, &zx, &zy, &zw, &zh);
+
+   if (params)
+     {
+        if (strcmp(params, "upper_left") == 0)
+          {
+             x = zx;
+             y = zy;
+          }
+        else if (strcmp(params, "upper_right") == 0)
+          {
+             x = zx + (zw / 2);
+             y = zy;
+          }
+        else if (strcmp(params, "lower_left") == 0)
+          {
+             x = zx;
+             y = zy + (zh / 2);
+          }
+        else if (strcmp(params, "lower_right") == 0)
+          {
+             x = zx + (zw / 2);
+             y = zy + (zh / 2);
+          }
+        else
+          return;
+
+        evas_object_geometry_set(ec->frame, x, y, zw / 2, zh / 2);
+     }
+}
+
+
 /***************************************************************************/
 ACT_FN_GO(window_move_to_center, EINA_UNUSED)
 {
@@ -3305,6 +3351,27 @@ e_actions_init(void)
    ACT_GO(window_move_to_center);
    e_action_predef_name_set(N_("Window : Actions"), N_("Move To Center"),
                             "window_move_to_center", NULL, NULL, 0);
+
+   /* window_quick_tile_upper_left */
+   ACT_GO(window_quick_tile_to_quadrant);
+   e_action_predef_name_set(N_("Window : Actions"), N_("Move/resize to upper-left quadrant"),
+                            "window_quick_tile_to_quadrant", "upper_left", NULL, 0);
+
+   /* window_quick_tile_upper_right */
+   ACT_GO(window_quick_tile_to_quadrant);
+   e_action_predef_name_set(N_("Window : Actions"), N_("Move/resize to upper-right quadrant"),
+                            "window_quick_tile_to_quadrant", "upper_right", NULL, 0);
+
+   /* window_quick_tile_lower_left */
+   ACT_GO(window_quick_tile_to_quadrant);
+   e_action_predef_name_set(N_("Window : Actions"), N_("Move/resize to lower-left quadrant"),
+                            "window_quick_tile_to_quadrant", "lower_left", NULL, 0);
+
+   /* window_quick_tile_lower_right */
+   ACT_GO(window_quick_tile_to_quadrant);
+   e_action_predef_name_set(N_("Window : Actions"), N_("Move/resize to lower-right quadrant"),
+                            "window_quick_tile_to_quadrant", "lower_right", NULL, 0);
+
    /* window_move_to */
    ACT_GO(window_move_to);
    e_action_predef_name_set(N_("Window : Actions"), N_("Move To Coordinates..."),
