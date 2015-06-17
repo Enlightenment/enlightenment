@@ -2680,12 +2680,12 @@ e_comp_object_frame_extends_get(Evas_Object *obj, int *x, int *y, int *w, int *h
 E_API E_Zone *
 e_comp_object_util_zone_get(Evas_Object *obj)
 {
-   E_Zone *zone;
+   E_Zone *zone = NULL;
 
    SOFT_ENTRY(NULL);
    if (cw)
      zone = cw->ec->zone;
-   else
+   if (!zone)
      {
         int x, y;
 
