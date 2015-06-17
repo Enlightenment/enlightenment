@@ -710,7 +710,7 @@ _e_comp_object_done_defer(void *data, Evas_Object *obj EINA_UNUSED, const char *
 static Eina_Bool
 _e_comp_object_effect_visibility_start(E_Comp_Object *cw, Eina_Bool state)
 {
-   int x, y;
+   int x, y, zw, zh;
 
    if ((!cw->visibility_effect) || (!e_comp_object_effect_allowed_get(cw->smart_obj))) return EINA_TRUE;;
    _e_comp_object_animating_begin(cw);
@@ -727,8 +727,18 @@ _e_comp_object_effect_visibility_start(E_Comp_Object *cw, Eina_Bool state)
      evas_pointer_canvas_xy_get(e_comp->evas, &x, &y);
    x -= cw->x;
    y -= cw->y;
+   if (cw->ec->zone)
+     zw = cw->ec->zone->w, zh = cw->ec->zone->h;
+   else
+     {
+        E_Zone *zone;
+
+        zone = e_comp_object_util_zone_get(cw->smart_obj);
+        if (!zone) zone = e_zone_current_get();
+        zw = zone->w, zh = zone->h;
+     }
    e_comp_object_effect_params_set(cw->smart_obj, 1, (int[]){cw->x, cw->y,
-      cw->w, cw->h, cw->ec->zone->w, cw->ec->zone->h, x, y}, 8);
+      cw->w, cw->h, zw, zh, x, y}, 8);
    e_comp_object_effect_params_set(cw->smart_obj, 0, (int[]){state}, 1);
    e_comp_object_effect_start(cw->smart_obj, _e_comp_object_done_defer, cw);
    return EINA_TRUE;
