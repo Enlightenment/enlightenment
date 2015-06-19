@@ -3702,11 +3702,11 @@ e_comp_object_effect_start(Evas_Object *obj, Edje_Signal_Cb end_cb, const void *
 }
 
 /* stop a currently-running effect immediately */
-E_API void
+E_API Eina_Bool
 e_comp_object_effect_stop(Evas_Object *obj, Edje_Signal_Cb end_cb)
 {
-   API_ENTRY;
-   if (evas_object_data_get(cw->effect_obj, "_e_comp.end_cb") != end_cb) return;
+   API_ENTRY EINA_FALSE;
+   if (evas_object_data_get(cw->effect_obj, "_e_comp.end_cb") != end_cb) return EINA_TRUE;
    e_comp_object_effect_unclip(obj);
    if (cw->effect_clip)
      {
@@ -3715,7 +3715,7 @@ e_comp_object_effect_stop(Evas_Object *obj, Edje_Signal_Cb end_cb)
      }
    edje_object_signal_emit(cw->effect_obj, "e,action,stop", "e");
    edje_object_signal_callback_del_full(cw->effect_obj, "e,action,done", "e", _e_comp_object_effect_end_cb, cw);
-   _e_comp_object_animating_end(cw);
+   return _e_comp_object_animating_end(cw);
 }
 
 static int
