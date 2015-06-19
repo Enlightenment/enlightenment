@@ -112,6 +112,7 @@ typedef struct _E_Comp_Object
    Eina_Bool            real_hid : 1;  // last hide was a real window unmap
 
    Eina_Bool            effect_set : 1; //effect_obj has a valid group
+   Eina_Bool            effect_running : 1; //effect_obj is playing an animation
    Eina_Bool            effect_clip : 1; //effect_obj is clipped
    Eina_Bool            effect_clip_able : 1; //effect_obj will be clipped for effects
 
@@ -3651,6 +3652,7 @@ _e_comp_object_effect_end_cb(void *data, Evas_Object *obj, const char *emission,
    E_Comp_Object *cw = data;
 
    edje_object_signal_callback_del_full(obj, "e,action,done", "e", _e_comp_object_effect_end_cb, NULL);
+   cw->effect_running = 0;
    if (!_e_comp_object_animating_end(cw)) return;
    e_comp_shape_queue();
    end_cb = evas_object_data_get(obj, "_e_comp.end_cb");
@@ -3698,6 +3700,7 @@ e_comp_object_effect_start(Evas_Object *obj, Edje_Signal_Cb end_cb, const void *
 
    edje_object_signal_emit(cw->effect_obj, "e,action,go", "e");
    _e_comp_object_animating_begin(cw);
+   cw->effect_running = 1;
    return EINA_TRUE;
 }
 
@@ -3715,6 +3718,7 @@ e_comp_object_effect_stop(Evas_Object *obj, Edje_Signal_Cb end_cb)
      }
    edje_object_signal_emit(cw->effect_obj, "e,action,stop", "e");
    edje_object_signal_callback_del_full(cw->effect_obj, "e,action,done", "e", _e_comp_object_effect_end_cb, cw);
+   cw->effect_running = 0;
    return _e_comp_object_animating_end(cw);
 }
 
