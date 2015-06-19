@@ -714,8 +714,10 @@ _e_comp_object_effect_visibility_start(E_Comp_Object *cw, Eina_Bool state)
    int x, y, zw, zh;
 
    if ((!cw->visibility_effect) || (!e_comp_object_effect_allowed_get(cw->smart_obj))) return EINA_TRUE;;
-   _e_comp_object_animating_begin(cw);
-   e_comp_object_effect_stop(cw->smart_obj, _e_comp_object_done_defer);
+   if (!cw->effect_running)
+     _e_comp_object_animating_begin(cw);
+   if (!e_comp_object_effect_stop(cw->smart_obj, _e_comp_object_done_defer))
+     return _e_comp_object_animating_end(cw);
    if (!e_comp_object_effect_set(cw->smart_obj, cw->visibility_effect))
      return _e_comp_object_animating_end(cw);
    /* mouse position is not available for some windows under X11
