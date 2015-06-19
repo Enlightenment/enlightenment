@@ -681,7 +681,7 @@ _e_comp_object_animating_end(E_Comp_Object *cw)
              cw->showing = 0;
              UNREFD(cw->ec, 2);
              /* remove ref from animation start, account for possibility of deletion from unref */
-             return e_object_unref(E_OBJECT(cw->ec));
+             return !!e_object_unref(E_OBJECT(cw->ec));
           }
      }
    return EINA_TRUE;
