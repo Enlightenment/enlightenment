@@ -64,7 +64,7 @@ static Eina_Bool
 _e_deskmirror_visible_get(E_Smart_Data *sd, Mirror *m)
 {
    Eina_Bool visible = evas_object_visible_get(m->comp_object);
-   if (m->ec)
+   if (m->ec && (!e_object_is_del(E_OBJECT(m->ec))))
      {
         visible = m->ec->visible;
         /* all iconic visibility changes occur with iconic flag set:
