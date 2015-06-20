@@ -3612,9 +3612,19 @@ e_comp_object_effect_set(Evas_Object *obj, const char *effect)
         if (!e_theme_edje_object_set(cw->effect_obj, "base/theme/comp", buf))
           if (!e_theme_edje_object_set(cw->effect_obj, "base/theme/comp", "e/comp/effects/none"))
             {
+               if (cw->effect_running)
+                 {
+                    if (!e_comp_object_effect_stop(obj, evas_object_data_get(cw->effect_obj, "_e_comp.end_cb")))
+                      return EINA_FALSE;
+                 }
                cw->effect_set = EINA_FALSE;
                return cw->effect_set;
             }
+     }
+   if (cw->effect_running)
+     {
+        if (!e_comp_object_effect_stop(obj, evas_object_data_get(cw->effect_obj, "_e_comp.end_cb")))
+          return EINA_FALSE;
      }
    edje_object_part_swallow(cw->effect_obj, "e.swallow.content", cw->shobj);
    if (cw->effect_clip)
