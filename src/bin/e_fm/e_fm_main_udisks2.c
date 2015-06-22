@@ -588,8 +588,11 @@ _e_fm_main_udisks2_cb_storage_prop_modified(void *data, const Eldbus_Message *ms
      if (type[0] == 's')
        {
           char *txt;
+
           if (eldbus_message_arguments_get(msg, type, &txt))
-            ERR("%s", txt);
+            {
+               ERR("%s", txt);
+            }
        }
    }
    if (!eldbus_message_arguments_get(msg, "a{sv}", &arr))
