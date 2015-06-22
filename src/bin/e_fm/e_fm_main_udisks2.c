@@ -962,7 +962,9 @@ _volume_mount(Eldbus_Proxy *proxy, const char *fstype, const char *buf)
    if (fstype)
      {
         if (!eldbus_message_iter_arguments_append(array, "{sv}", &dict))
-          ERR("E");
+          {
+             ERR("E");
+          }
         eldbus_message_iter_basic_append(dict, 's', fs_txt);
 
         var = eldbus_message_iter_container_new(dict, 'v', "s");
@@ -974,7 +976,9 @@ _volume_mount(Eldbus_Proxy *proxy, const char *fstype, const char *buf)
    if (buf[0])
      {
         if (!eldbus_message_iter_arguments_append(array, "{sv}", &dict))
-          ERR("E");
+          {
+             ERR("E");
+          }
         eldbus_message_iter_basic_append(dict, 's', opt_txt);
 
         var = eldbus_message_iter_container_new(dict, 'v', "s");
