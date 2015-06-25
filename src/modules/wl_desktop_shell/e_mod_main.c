@@ -572,7 +572,6 @@ _e_shell_cb_shell_surface_get(struct wl_client *client, struct wl_resource *reso
                                   &_e_shell_surface_interface,
                                   ec, _e_shell_surface_cb_destroy);
 
-   cdata->surface = surface_resource;
    cdata->shell.configure_send = _e_shell_surface_configure_send;
    cdata->shell.configure = _e_shell_surface_configure;
    cdata->shell.ping = _e_shell_surface_ping;
@@ -1122,7 +1121,6 @@ _e_xdg_shell_cb_surface_get(struct wl_client *client, struct wl_resource *resour
                                   &_e_xdg_surface_interface, ec,
                                   _e_shell_surface_cb_destroy);
 
-   cdata->surface = surface_resource;
    cdata->shell.configure_send = _e_xdg_shell_surface_configure_send;
    cdata->shell.configure = _e_xdg_shell_surface_configure;
    cdata->shell.ping = _e_xdg_shell_surface_ping;
@@ -1210,7 +1208,6 @@ _e_xdg_shell_cb_popup_get(struct wl_client *client, struct wl_resource *resource
    wl_resource_set_implementation(cdata->shell.surface,
                                   &_e_xdg_popup_interface, ec, NULL);
 
-   cdata->surface = surface_resource;
    cdata->shell.configure_send = _e_xdg_shell_surface_configure_send;
    cdata->shell.configure = _e_xdg_shell_surface_configure;
    cdata->shell.ping = _e_xdg_shell_surface_ping;

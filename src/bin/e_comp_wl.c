@@ -1486,6 +1486,7 @@ _e_comp_wl_compositor_cb_surface_create(struct wl_client *client, struct wl_reso
              e_comp->new_clients--;
              ec->client.w = ec->client.h = 1;
              ec->ignored = 1;
+             ec->comp_data->surface = res;
           }
      }
 
