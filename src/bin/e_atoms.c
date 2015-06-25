@@ -33,9 +33,9 @@ e_atoms_init(void)
       "__E_ATOM_DESKTOP_FILE",
       "E_ZONE_GEOMETRY"
    };
-   Ecore_X_Atom atoms[11];
+   Ecore_X_Atom atoms[EINA_C_ARRAY_LENGTH(atom_names)];
 
-   ecore_x_atoms_get(atom_names, 11, atoms);
+   ecore_x_atoms_get(atom_names, EINA_C_ARRAY_LENGTH(atom_names), atoms);
    E_ATOM_MANAGED = atoms[0];
    E_ATOM_ZONE = atoms[1];
    E_ATOM_DESK = atoms[2];
