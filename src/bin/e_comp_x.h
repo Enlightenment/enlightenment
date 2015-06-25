@@ -1,7 +1,4 @@
 #ifdef E_TYPEDEFS
-# include <Ecore_X.h>
-# include "e_atoms.h"
-# include "e_hints.h"
 
 typedef struct _E_Comp_X_Client_Data E_Comp_X_Client_Data;
 
