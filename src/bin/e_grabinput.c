@@ -39,7 +39,7 @@ e_grabinput_get(Ecore_Window mouse_win, int confine_mouse, Ecore_Window key_win)
    if (grab_mouse_win)
      {
 #ifndef HAVE_WAYLAND_ONLY
-        if (e_comp->comp_type == E_PIXMAP_TYPE_X)
+        if (e_comp->root)
           ecore_x_pointer_ungrab();
 #else
         if (e_comp->comp_type == E_PIXMAP_TYPE_WL)
@@ -50,7 +50,7 @@ e_grabinput_get(Ecore_Window mouse_win, int confine_mouse, Ecore_Window key_win)
    if (grab_key_win)
      {
 #ifndef HAVE_WAYLAND_ONLY
-        if (e_comp->comp_type == E_PIXMAP_TYPE_X)
+        if (e_comp->root)
           ecore_x_keyboard_ungrab();
 #else
         if (e_comp->comp_type == E_PIXMAP_TYPE_WL)
@@ -63,7 +63,7 @@ e_grabinput_get(Ecore_Window mouse_win, int confine_mouse, Ecore_Window key_win)
    if (mouse_win)
      {
 #ifndef HAVE_WAYLAND_ONLY
-        if (e_comp->comp_type == E_PIXMAP_TYPE_X)
+        if (e_comp->root)
           {
              int ret = 0;
              if (confine_mouse)
@@ -86,7 +86,7 @@ e_grabinput_get(Ecore_Window mouse_win, int confine_mouse, Ecore_Window key_win)
    if (key_win)
      {
 #ifndef HAVE_WAYLAND_ONLY
-        if (e_comp->comp_type == E_PIXMAP_TYPE_X)
+        if (e_comp->root)
           {
              int ret = 0;
 
@@ -124,7 +124,7 @@ e_grabinput_release(Ecore_Window mouse_win, Ecore_Window key_win)
    if (mouse_win == grab_mouse_win)
      {
 #ifndef HAVE_WAYLAND_ONLY
-        if (e_comp->comp_type == E_PIXMAP_TYPE_X)
+        if (e_comp->root)
           ecore_x_pointer_ungrab();
 #else
         if (e_comp->comp_type == E_PIXMAP_TYPE_WL)
@@ -136,7 +136,7 @@ e_grabinput_release(Ecore_Window mouse_win, Ecore_Window key_win)
    if (key_win == grab_key_win)
      {
 #ifndef HAVE_WAYLAND_ONLY
-        if (e_comp->comp_type == E_PIXMAP_TYPE_X)
+        if (e_comp->root)
           ecore_x_keyboard_ungrab();
 #else
         if (e_comp->comp_type == E_PIXMAP_TYPE_WL)
@@ -211,7 +211,7 @@ _e_grabinput_focus_check(void *data EINA_UNUSED)
 static void
 _e_grabinput_focus_do(Ecore_Window win, E_Focus_Method method)
 {
-#ifdef HAVE_WAYLAND_ONLY
+#ifdef HAVE_WAYLAND
    Ecore_Wl_Window *wl_win;
 #endif
 
@@ -223,34 +223,49 @@ _e_grabinput_focus_do(Ecore_Window win, E_Focus_Method method)
 
       case E_FOCUS_METHOD_LOCALLY_ACTIVE:
 #ifndef HAVE_WAYLAND_ONLY
-        ecore_x_window_focus_at_time(win, ecore_x_current_time_get());
-        ecore_x_icccm_take_focus_send(win, ecore_x_current_time_get());
-#else
-        if ((wl_win = ecore_wl_window_find(win)))
+        if (e_comp->root)
           {
-             /* FIXME: Need to add an ecore_wl_window_focus function */
+             ecore_x_window_focus_at_time(win, ecore_x_current_time_get());
+             ecore_x_icccm_take_focus_send(win, ecore_x_current_time_get());
+          }
+#endif
+#ifdef HAVE_WAYLAND
+        if (e_comp->comp_type == E_PIXMAP_TYPE_WL)
+          {
+             if ((wl_win = ecore_wl_window_find(win)))
+               {
+                  /* FIXME: Need to add an ecore_wl_window_focus function */
+               }
           }
 #endif
         break;
 
       case E_FOCUS_METHOD_GLOBALLY_ACTIVE:
 #ifndef HAVE_WAYLAND_ONLY
-        ecore_x_icccm_take_focus_send(win, ecore_x_current_time_get());
+        if (e_comp->root)
+          ecore_x_icccm_take_focus_send(win, ecore_x_current_time_get());
 #else
-        if ((wl_win = ecore_wl_window_find(win)))
+        if (e_comp->comp_type == E_PIXMAP_TYPE_WL)
           {
-             /* FIXME: Need to add an ecore_wl_window_focus function */
+             if ((wl_win = ecore_wl_window_find(win)))
+               {
+                  /* FIXME: Need to add an ecore_wl_window_focus function */
+               }
           }
 #endif
         break;
 
       case E_FOCUS_METHOD_PASSIVE:
 #ifndef HAVE_WAYLAND_ONLY
-        ecore_x_window_focus_at_time(win, ecore_x_current_time_get());
+        if (e_comp->root)
+          ecore_x_window_focus_at_time(win, ecore_x_current_time_get());
 #else
-        if ((wl_win = ecore_wl_window_find(win)))
+        if (e_comp->comp_type == E_PIXMAP_TYPE_WL)
           {
-             /* FIXME: Need to add an ecore_wl_window_focus function */
+             if ((wl_win = ecore_wl_window_find(win)))
+               {
+                  /* FIXME: Need to add an ecore_wl_window_focus function */
+               }
           }
 #endif
         break;
@@ -269,7 +284,6 @@ _e_grabinput_focus(Ecore_Window win, E_Focus_Method method)
    _e_grabinput_focus_do(win, method);
    last_focus_time = ecore_loop_time_get();
 #ifndef HAVE_WAYLAND_ONLY
-   if (e_comp->comp_type != E_PIXMAP_TYPE_X) return;
    if (focus_fix_timer) ecore_timer_del(focus_fix_timer);
    focus_fix_timer = ecore_timer_add(0.2, _e_grabinput_focus_check, NULL);
 #endif
