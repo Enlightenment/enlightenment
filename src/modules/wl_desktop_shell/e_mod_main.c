@@ -449,11 +449,13 @@ _e_shell_surface_configure(struct wl_resource *resource, Evas_Coord x, Evas_Coor
             (ec->netwm.type == E_WINDOW_TYPE_DROPDOWN_MENU))
           {
              x = E_CLAMP(ec->parent->client.x + ec->comp_data->popup.x,
-               ec->parent->client.x,
-               ec->parent->client.x + ec->parent->client.w - ec->client.w);
+                         ec->parent->client.x,
+                         ec->parent->client.x +
+                         ec->parent->client.w - ec->client.w);
              y = E_CLAMP(ec->parent->client.y + ec->comp_data->popup.y,
-             ec->parent->client.y,
-             ec->parent->client.y + ec->parent->client.h - ec->client.h);
+                         ec->parent->client.y,
+                         ec->parent->client.y +
+                         ec->parent->client.h - ec->client.h);
           }
      }
 
@@ -628,8 +630,8 @@ _e_xdg_shell_surface_configure_send(struct wl_resource *resource, uint32_t edges
 
    if (ec->netwm.type != E_WINDOW_TYPE_POPUP_MENU)
      {
-       serial = wl_display_next_serial(e_comp->wl_comp_data->wl.disp);
-       xdg_surface_send_configure(resource, width, height, &states, serial);
+        serial = wl_display_next_serial(e_comp->wl_comp_data->wl.disp);
+        xdg_surface_send_configure(resource, width, height, &states, serial);
      }
 
    wl_array_release(&states);
