@@ -589,13 +589,12 @@ static void
 _e_xdg_surface_state_add(struct wl_resource *resource, struct wl_array *states, uint32_t state)
 {
   uint32_t *s;
-  s = wl_array_add(states, sizeof(*s));
+
+   s = wl_array_add(states, sizeof(*s));
   if (s)
     *s = state;
   else
     wl_resource_post_no_memory(resource);
-
-  return;
 }
 
 static void
