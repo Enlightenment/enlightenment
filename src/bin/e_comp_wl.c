@@ -69,7 +69,6 @@ _e_comp_wl_cb_prepare(void *data EINA_UNUSED, Ecore_Fd_Handler *hdlr EINA_UNUSED
 static Eina_Bool
 _e_comp_wl_cb_module_idle(void *data EINA_UNUSED)
 {
-   E_Module  *mod = NULL;
    const char **m, *mods[] =
    {
       "wl_desktop_shell",
