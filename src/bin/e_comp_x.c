@@ -1114,6 +1114,7 @@ _e_comp_x_object_add(void *d EINA_UNUSED, int t EINA_UNUSED, E_Event_Comp_Object
 
    ec = e_comp_object_client_get(ev->comp_object);
    if ((!ec) || e_object_is_del(E_OBJECT(ec)) || ec->re_manage) return ECORE_CALLBACK_RENEW;
+   E_COMP_X_PIXMAP_CHECK ECORE_CALLBACK_RENEW;
    _e_comp_x_client_evas_init(ec);
    _e_comp_x_client_stack(ec);
    return ECORE_CALLBACK_RENEW;
