@@ -210,6 +210,8 @@ _e_comp_x_client_new_helper(E_Client *ec)
         ec->take_focus = !starting;
      }
    ec->new_client ^= ec->override;
+   if (!ec->new_client)
+     e_comp->new_clients--;
 
    ec->w = ec->client.w = ec->comp_data->initial_attributes.w;
    ec->h = ec->client.h = ec->comp_data->initial_attributes.h;
