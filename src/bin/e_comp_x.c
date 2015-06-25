@@ -2266,6 +2266,7 @@ _e_comp_x_client_zone_geometry_set(E_Client *ec)
 {
    unsigned int zgeom[4];
 
+   E_COMP_X_PIXMAP_CHECK;
    zgeom[0] = ec->zone->x;
    zgeom[1] = ec->zone->y;
    zgeom[2] = ec->zone->w;
