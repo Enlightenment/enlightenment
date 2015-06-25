@@ -532,17 +532,6 @@ PKG_CHECK_MODULES(E_SYS, [
   ecore >= ${efl_version}
 ])
 
-if test "x${e_cv_want_wayland_only}" != "xyes"; then
-  PKG_CHECK_MODULES(E_ALERT, [
-    xcb
-    xcb-shape
-    xcb-keysyms
-    eina >= ${efl_version}
-    ecore >= ${efl_version}
-    ecore-ipc >= ${efl_version}
-  ])
-fi
-
 e_requires="\
   evas >= $efl_version \
   ecore >= $efl_version \
@@ -810,12 +799,10 @@ if test "x${have_wayland}" = "xyes"; then
   fi
   if test "x${e_cv_want_wayland_only}" != "xno"; then
     have_wayland_only=yes
-    AC_DEFINE_UNQUOTED([HAVE_WAYLAND_ONLY],[1],[enable wayland-only version of enlightenment])
   fi
 fi
 
 AM_CONDITIONAL([HAVE_WAYLAND], [test "x${have_wayland}" = "xyes"])
-AM_CONDITIONAL([HAVE_WAYLAND_ONLY], [test "x${have_wayland_only}" = "xyes"])
 AM_CONDITIONAL([HAVE_WAYLAND_EGL], [test "x${have_wayland_egl}" = "xyes"])
 
 if test "x${have_wayland_only}" != "xyes"; then
@@ -835,7 +822,7 @@ define([CHECK_MODULE_WL_X11],
     PKG_CHECK_MODULES([ECORE_X], [ecore-x >= ${efl_version}])
   fi
   if test "x${have_wayland_only}" = "xyes"; then
-    AC_E_CHECK_PKG(WL_X11, [ ecore-x >= $efl_version ], [WL_X11=true], [WL_X11=false])
+    AC_E_CHECK_PKG(WL_X11, [ ecore-x >= ${efl_version} ], [WL_X11=true], [WL_X11=false])
   else
     WL_X11=false
   fi
@@ -882,6 +869,25 @@ define([CHECK_MODULE_XWAYLAND],
   fi
 ])
 AM_CONDITIONAL([HAVE_XWAYLAND], [test "x${XWAYLAND_BIN}" != "xfalse"])
+
+if test "x${WL_X11}" = "xfalse" && test "x${have_wayland}" = "xyes" && test "x${HAVE_XWAYLAND_DEPS}" = "xfalse"; then
+  AC_DEFINE_UNQUOTED([HAVE_WAYLAND_ONLY],[1],[enable wayland-only version of enlightenment])
+else
+  have_wayland_only=no
+fi
+AM_CONDITIONAL([HAVE_WAYLAND_ONLY], [test "x${have_wayland_only}" = "xyes"])
+
+if test "x${have_wayland_only}" != "xyes"; then
+  PKG_CHECK_MODULES(E_ALERT, [
+    xcb
+    xcb-shape
+    xcb-keysyms
+    eina >= ${efl_version}
+    ecore >= ${efl_version}
+    ecore-ipc >= ${efl_version}
+  ])
+fi
+
 
 AC_E_OPTIONAL_MODULE([ibar], true)
 AC_E_OPTIONAL_MODULE([clock], true)
