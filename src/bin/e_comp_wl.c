@@ -2257,14 +2257,14 @@ _e_comp_wl_client_cb_focus_set(void *data EINA_UNUSED, E_Client *ec)
                                               0, 0, 0);
      }
 
-   if ((ec->icccm.take_focus) && (ec->icccm.accepts_focus))
-     e_grabinput_focus(e_client_util_win_get(ec),
-                       E_FOCUS_METHOD_LOCALLY_ACTIVE);
-   else if (!ec->icccm.accepts_focus)
-     e_grabinput_focus(e_client_util_win_get(ec),
-                       E_FOCUS_METHOD_GLOBALLY_ACTIVE);
-   else if (!ec->icccm.take_focus)
-     e_grabinput_focus(e_client_util_win_get(ec), E_FOCUS_METHOD_PASSIVE);
+   //if ((ec->icccm.take_focus) && (ec->icccm.accepts_focus))
+     //e_grabinput_focus(e_client_util_win_get(ec),
+                       //E_FOCUS_METHOD_LOCALLY_ACTIVE);
+   //else if (!ec->icccm.accepts_focus)
+     //e_grabinput_focus(e_client_util_win_get(ec),
+                       //E_FOCUS_METHOD_GLOBALLY_ACTIVE);
+   //else if (!ec->icccm.take_focus)
+     //e_grabinput_focus(e_client_util_win_get(ec), E_FOCUS_METHOD_PASSIVE);
 
    if (e_comp->wl_comp_data->kbd.focus != ec->comp_data->surface)
      {
