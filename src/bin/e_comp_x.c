@@ -43,6 +43,7 @@ static Eina_Hash *frame_extents = NULL;
 static Eina_Hash *alarm_hash = NULL;
 
 static Ecore_Idle_Enterer *_e_comp_x_post_client_idler = NULL;
+static Ecore_Idle_Enterer *_x_idle_flush = NULL;
 static Eina_List *post_clients = NULL;
 
 static int _e_comp_x_mapping_change_disabled = 0;
@@ -55,6 +56,13 @@ static Eina_Bool screensaver_dimmed = EINA_FALSE;
 
 static Ecore_X_Atom backlight_atom = 0;
 extern double e_bl_val;
+
+static Eina_Bool
+_e_comp_x_flusher(void *data EINA_UNUSED)
+{
+   ecore_x_flush();
+   return ECORE_CALLBACK_RENEW;
+}
 
 static inline Ecore_X_Window
 _e_comp_x_client_window_get(const E_Client *ec)
@@ -5127,6 +5135,7 @@ e_comp_x_init(void)
    E_LIST_HANDLER_APPEND(handlers, E_EVENT_RANDR_CHANGE, _e_comp_x_randr_change, NULL);
 
    ecore_x_sync();
+   _x_idle_flush = ecore_idle_enterer_add(_e_comp_x_flusher, NULL);
 
    return EINA_TRUE;
 }
