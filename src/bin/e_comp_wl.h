@@ -1,5 +1,7 @@
 #ifdef E_TYPEDEFS
-
+#  ifndef HAVE_WAYLAND_ONLY
+#   include "e_comp_x.h"
+#  endif
 #else
 # ifndef E_COMP_WL_H
 #  define E_COMP_WL_H
@@ -12,6 +14,10 @@
 #  pragma GCC diagnostic pop
 
 #  include <xkbcommon/xkbcommon.h>
+
+#  ifndef HAVE_WAYLAND_ONLY
+#   include "e_comp_x.h"
+#  endif
 
 /* #  ifdef HAVE_WAYLAND_EGL */
 /* #   include <EGL/egl.h> */
@@ -211,6 +217,7 @@ struct _E_Comp_Wl_Data
    Ecore_Idler *idler;
 
    struct wl_client *xwl_client;
+   Eina_List *xwl_pending;
 
    /* Eina_List *retry_clients; */
    /* Ecore_Timer *retry_timer; */
@@ -254,6 +261,10 @@ struct _E_Comp_Wl_Client_Data
      {
         int32_t x, y;
      } popup;
+#ifndef HAVE_WAYLAND_ONLY
+   E_Pixmap *xwayland_pixmap;
+   E_Comp_X_Client_Data *xwayland_data;
+#endif
 
    Eina_Bool keep_buffer : 1;
    Eina_Bool mapped : 1;
@@ -294,6 +305,27 @@ E_API struct wl_signal e_comp_wl_surface_create_signal_get(void);
 E_API double e_comp_wl_idle_time_get(void);
 E_API Eina_Bool e_comp_wl_output_init(const char *id, const char *make, const char *model, int x, int y, int w, int h, int pw, int ph, unsigned int refresh, unsigned int subpixel, unsigned int transform);
 E_API void e_comp_wl_output_remove(const char *id);
+# ifndef HAVE_WAYLAND_ONLY
+EINTERN void e_comp_wl_xwayland_client_queue(E_Client *ec);
+static inline E_Comp_X_Client_Data *
+e_comp_wl_client_xwayland_data(const E_Client *ec)
+{
+   return ec->comp_data ? ((E_Comp_Wl_Client_Data*)ec->comp_data)->xwayland_data : NULL;
+}
 
+static inline E_Pixmap *
+e_comp_wl_client_xwayland_pixmap(const E_Client *ec)
+{
+   return ((E_Comp_Wl_Client_Data*)ec->comp_data)->xwayland_pixmap;
+}
+
+static inline void
+e_comp_wl_client_xwayland_setup(E_Client *ec, E_Comp_X_Client_Data *cd, E_Pixmap *ep)
+{
+   ((E_Comp_Wl_Client_Data*)ec->comp_data)->xwayland_data = cd;
+   ((E_Comp_Wl_Client_Data*)ec->comp_data)->xwayland_pixmap = ep;
+   e_comp->wl_comp_data->xwl_pending = eina_list_remove(e_comp->wl_comp_data->xwl_pending, ec);
+}
+#  endif
 # endif
 #endif

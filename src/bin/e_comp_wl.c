@@ -40,7 +40,7 @@ _e_comp_wl_focus_check(void)
 
    if (stopping) return;
    ec = e_client_focused_get();
-   if ((!ec) || (e_pixmap_type_get(ec->pixmap) != E_PIXMAP_TYPE_WL))
+   if ((!ec) || e_pixmap_is_x(ec->pixmap))
      e_grabinput_focus(e_comp->ee_win, E_FOCUS_METHOD_PASSIVE);
 }
 
@@ -1442,7 +1442,8 @@ static void
 _e_comp_wl_compositor_cb_surface_create(struct wl_client *client, struct wl_resource *resource, uint32_t id)
 {
    struct wl_resource *res;
-   E_Client *ec = NULL;
+   E_Client *wc, *ec = NULL;
+   Eina_List *l;
    pid_t pid;
 
    DBG("Compositor Cb Surface Create: %d", id);
@@ -1491,7 +1492,15 @@ _e_comp_wl_compositor_cb_surface_create(struct wl_client *client, struct wl_reso
 
    /* set reference to pixmap so we can fetch it later */
    wl_resource_set_user_data(res, ec);
-
+#ifndef HAVE_WAYLAND_ONLY
+   EINA_LIST_FOREACH(e_comp->wl_comp_data->xwl_pending, l, wc)
+     {
+        if (!e_pixmap_is_x(wc->pixmap)) continue;
+        if (wl_resource_get_id(res) != ((E_Comp_X_Client_Data*)ec->comp_data)->surface_id) continue;
+        e_comp_x_xwayland_client_setup(wc, ec);
+        break;
+     }
+#endif
    /* emit surface create signal */
    wl_signal_emit(&e_comp->wl_comp_data->signals.surface.create, res);
 }
@@ -2963,4 +2972,10 @@ e_comp_wl_output_remove(const char *id)
 
         /* free(output); */
      }
+}
+
+EINTERN void
+e_comp_wl_xwayland_client_queue(E_Client *ec)
+{
+   e_comp->wl_comp_data->xwl_pending = eina_list_append(e_comp->wl_comp_data->xwl_pending, ec);
 }

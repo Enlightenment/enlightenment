@@ -87,6 +87,9 @@ struct _E_Comp_X_Client_Data
          Ecore_X_Illume_Window_State state;
       } win_state;
    } illume;
+#ifdef HAVE_WAYLAND
+   uint32_t surface_id;
+#endif
 
    Eina_Bool moving : 1;
    Eina_Bool first_map : 1;
@@ -102,10 +105,11 @@ struct _E_Comp_X_Client_Data
    Eina_Bool unredirected_single : 1;
 };
 
-EINTERN Eina_Bool e_comp_x_init(void);
-EINTERN void e_comp_x_shutdown(void);
+E_API Eina_Bool e_comp_x_init(void);
+E_API void e_comp_x_shutdown(void);
 
 E_API void e_alert_composite_win(Ecore_X_Window root, Ecore_X_Window win);
 EINTERN void e_comp_x_nocomp_end(void);
+EINTERN void e_comp_x_xwayland_client_setup(E_Client *ec, E_Client *wc);
 # endif
 #endif
