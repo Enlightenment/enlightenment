@@ -2322,7 +2322,7 @@ e_client_idler_before(void)
         Eina_Stringshare *title;
         // pass 1 - eval0. fetch properties on new or on change and
         // call hooks to decide what to do - maybe move/resize
-        if (!ec->changed) continue;
+        if (ec->ignored || (!ec->changed)) continue;
 
         if (!_e_client_hook_call(E_CLIENT_HOOK_EVAL_PRE_FETCH, ec)) continue;
         /* FETCH is hooked by the compositor to get client hints */
@@ -2345,6 +2345,7 @@ e_client_idler_before(void)
 
    E_CLIENT_FOREACH(ec)
      {
+        if (ec->ignored) continue;
         // pass 2 - show windows needing show
         if ((ec->changes.visible) && (ec->visible) &&
             (!ec->new_client) && (!ec->changes.pos) &&
@@ -2370,7 +2371,7 @@ e_client_idler_before(void)
    // pass 3 - hide windows needing hide and eval (main eval)
    E_CLIENT_FOREACH(ec)
      {
-        if (e_object_is_del(E_OBJECT(ec))) continue;
+        if (ec->ignored || e_object_is_del(E_OBJECT(ec))) continue;
 
         if ((ec->changes.visible) && (!ec->visible))
           {
