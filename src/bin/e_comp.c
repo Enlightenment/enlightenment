@@ -1,5 +1,5 @@
 #include "e.h"
-#if defined(HAVE_WAYLAND_CLIENTS) || defined(HAVE_WAYLAND_ONLY)
+#ifdef HAVE_WAYLAND
 # include "e_comp_wl.h"
 #endif
 

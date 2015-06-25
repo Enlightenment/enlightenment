@@ -150,7 +150,7 @@
 #include "e_hints.h"
 #include "e_comp_x_randr.h"
 
-#if defined(HAVE_WAYLAND_CLIENTS) || defined(HAVE_WAYLAND_ONLY)
+#ifdef HAVE_WAYLAND
 # include "e_comp_wl.h"
 # include "e_comp_wl_data.h"
 # include "e_comp_wl_input.h"

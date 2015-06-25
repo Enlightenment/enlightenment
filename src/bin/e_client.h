@@ -697,7 +697,7 @@ struct E_Client
    Eina_Bool no_shape_cut : 1; // client shape should not be cut
    Eina_Bool maximize_override : 1; // client is doing crazy stuff and should "just do it" when moving/resizing
 
-#if defined(HAVE_WAYLAND_CLIENTS) || defined(HAVE_WAYLAND_ONLY)
+#ifdef HAVE_WAYLAND
    uuid_t uuid;
 #endif
 };

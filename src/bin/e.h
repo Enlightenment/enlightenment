@@ -126,7 +126,7 @@ void *alloca (size_t);
 # include <Emotion.h>
 # include <Elementary.h>
 
-# if defined(HAVE_WAYLAND_CLIENTS) || defined(HAVE_WAYLAND_ONLY)
+# ifdef HAVE_WAYLAND
 #  include <Ecore_Wayland.h>
 #  include <uuid.h>
 # endif
