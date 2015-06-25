@@ -24,7 +24,9 @@ _e_shell_surface_parent_set(E_Client *ec, struct wl_resource *parent_resource)
           }
         return;
      }
-   else if (!(pc = wl_resource_get_user_data(parent_resource)))
+
+   pc = wl_resource_get_user_data(parent_resource);
+   if (!pc)
      {
         ERR("Could not get parent resource client");
         return;
@@ -44,8 +46,6 @@ _e_shell_surface_parent_set(E_Client *ec, struct wl_resource *parent_resource)
              if (ec->parent->modal == ec) ec->parent->modal = NULL;
              ec->parent = NULL;
           }
-        else
-          pc = NULL;
      }
 
    if ((pc != ec) &&
