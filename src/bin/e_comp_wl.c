@@ -510,7 +510,7 @@ static void
 _e_comp_wl_evas_cb_focus_out(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
 {
    E_Client *ec;
-   E_Comp_Data *cdata;
+   E_Comp_Wl_Data *cdata;
    struct wl_resource *res;
    struct wl_client *wc;
    uint32_t serial, *k;
@@ -846,7 +846,7 @@ _e_comp_wl_cb_comp_object_add(void *data EINA_UNUSED, int type EINA_UNUSED, E_Ev
 static void
 _e_comp_wl_cb_key_down(void *event)
 {
-   E_Comp_Data *cdata;
+   E_Comp_Wl_Data *cdata;
    E_Client *ec;
    Ecore_Event_Key *ev;
    uint32_t serial, *end, *k, keycode;
@@ -917,7 +917,7 @@ static void
 _e_comp_wl_cb_key_up(void *event)
 {
    E_Client *ec;
-   E_Comp_Data *cdata;
+   E_Comp_Wl_Data *cdata;
    Ecore_Event_Key *ev;
    uint32_t serial, *end, *k, keycode;
 
@@ -966,7 +966,7 @@ _e_comp_wl_cb_key_up(void *event)
 static void
 _e_comp_wl_cb_mouse_move(void *event)
 {
-   E_Comp_Data *cdata;
+   E_Comp_Wl_Data *cdata;
    Ecore_Event_Mouse_Move *ev;
 
    if (!(cdata = e_comp->wl_comp_data)) return;
@@ -1621,7 +1621,7 @@ _e_comp_wl_compositor_cb_bind(struct wl_client *client, void *data EINA_UNUSED, 
 static void
 _e_comp_wl_compositor_cb_del(void *data EINA_UNUSED)
 {
-   E_Comp_Data *cdata;
+   E_Comp_Wl_Data *cdata;
    E_Comp_Wl_Output *output;
 
    cdata = e_comp->wl_comp_data;
@@ -2402,7 +2402,7 @@ _e_comp_wl_cb_output_bind(struct wl_client *client, void *data, uint32_t version
 static Eina_Bool
 _e_comp_wl_compositor_create(void)
 {
-   E_Comp_Data *cdata;
+   E_Comp_Wl_Data *cdata;
    const char *name;
    int fd = 0;
 
@@ -2411,7 +2411,7 @@ _e_comp_wl_compositor_create(void)
      E_OBJECT_DEL_SET(e_comp, _e_comp_wl_compositor_cb_del);
 
    /* create new compositor data */
-   if (!(cdata = E_NEW(E_Comp_Data, 1)))
+   if (!(cdata = E_NEW(E_Comp_Wl_Data, 1)))
      {
        ERR("Could not create compositor data: %m");
        return EINA_FALSE;
@@ -2879,7 +2879,7 @@ e_comp_wl_output_init(const char *id, const char *make, const char *model,
                       unsigned int refresh, unsigned int subpixel,
                       unsigned int transform)
 {
-   E_Comp_Data *cdata;
+   E_Comp_Wl_Data *cdata;
    E_Comp_Wl_Output *output;
    Eina_List *l2;
    struct wl_resource *resource;
@@ -2947,7 +2947,7 @@ e_comp_wl_output_init(const char *id, const char *make, const char *model,
 E_API void
 e_comp_wl_output_remove(const char *id)
 {
-   E_Comp_Data *cdata;
+   E_Comp_Wl_Data *cdata;
    E_Comp_Wl_Output *output;
 
    if (!(cdata = e_comp->wl_comp_data)) return;

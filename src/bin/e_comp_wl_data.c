@@ -159,30 +159,28 @@ static const struct wl_data_source_interface _e_data_source_interface =
 static void
 _e_comp_wl_data_device_destroy_selection_data_source(struct wl_listener *listener EINA_UNUSED, void *data)
 {
-   E_Comp_Data *cdata;
    E_Comp_Wl_Data_Source *source;
    struct wl_resource *data_device_res, *focus = NULL;
 
    if (!(source = (E_Comp_Wl_Data_Source*)data))
      return;
 
-   cdata = e_comp->wl_comp_data;
-   cdata->selection.data_source = NULL;
+   e_comp->wl_comp_data->selection.data_source = NULL;
 
-   if (cdata->kbd.enabled)
-     focus = cdata->kbd.focus;
+   if (e_comp->wl_comp_data->kbd.enabled)
+     focus = e_comp->wl_comp_data->kbd.focus;
 
    if (focus)
      {
         data_device_res = 
-           _e_comp_wl_data_find_for_client(cdata->mgr.data_resources, 
+           _e_comp_wl_data_find_for_client(e_comp->wl_comp_data->mgr.data_resources,
                                            wl_resource_get_client(source->resource));
 
         if (data_device_res)
           wl_data_device_send_selection(data_device_res, NULL);
      }
 
-   wl_signal_emit(&cdata->selection.signal, cdata);
+   wl_signal_emit(&e_comp->wl_comp_data->selection.signal, e_comp->wl_comp_data);
 }
 
 static struct wl_resource*
@@ -226,21 +224,19 @@ static void
 _e_comp_wl_data_device_selection_set(void *data EINA_UNUSED, E_Comp_Wl_Data_Source *source, uint32_t serial)
 {
    E_Comp_Wl_Data_Source *sel_source;
-   E_Comp_Data *cdata;
    struct wl_resource *offer_res, *data_device_res, *focus = NULL;
 
-   cdata = e_comp->wl_comp_data;
-   sel_source = (E_Comp_Wl_Data_Source*)cdata->selection.data_source;
+   sel_source = (E_Comp_Wl_Data_Source*)e_comp->wl_comp_data->selection.data_source;
 
    if ((sel_source) &&
-       (cdata->selection.serial - serial < UINT32_MAX / 2))
+       (e_comp->wl_comp_data->selection.serial - serial < UINT32_MAX / 2))
      {
         /* TODO: elm_entry is sending too many request on now,
          * for those requests, selection.signal is being emitted also a lot.
          * when it completes to optimize the entry, it should be checked more.
          */
-        if (cdata->clipboard.source)
-          wl_signal_emit(&cdata->selection.signal, cdata);
+        if (e_comp->wl_comp_data->clipboard.source)
+          wl_signal_emit(&e_comp->wl_comp_data->selection.signal, e_comp->wl_comp_data);
 
         return;
      }
@@ -249,20 +245,20 @@ _e_comp_wl_data_device_selection_set(void *data EINA_UNUSED, E_Comp_Wl_Data_Sour
      {
         if (sel_source->cancelled)
           sel_source->cancelled(sel_source);
-        wl_list_remove(&cdata->selection.data_source_listener.link);
-        cdata->selection.data_source = NULL;
+        wl_list_remove(&e_comp->wl_comp_data->selection.data_source_listener.link);
+        e_comp->wl_comp_data->selection.data_source = NULL;
      }
 
-   cdata->selection.data_source = sel_source = source;
-   cdata->selection.serial = serial;
+   e_comp->wl_comp_data->selection.data_source = sel_source = source;
+   e_comp->wl_comp_data->selection.serial = serial;
 
-   if (cdata->kbd.enabled)
-     focus = cdata->kbd.focus;
+   if (e_comp->wl_comp_data->kbd.enabled)
+     focus = e_comp->wl_comp_data->kbd.focus;
 
    if (focus)
      {
         data_device_res =
-           _e_comp_wl_data_find_for_client(cdata->mgr.data_resources,
+           _e_comp_wl_data_find_for_client(e_comp->wl_comp_data->mgr.data_resources,
                                            wl_resource_get_client(focus));
         if ((data_device_res) && (source))
           {
@@ -276,29 +272,27 @@ _e_comp_wl_data_device_selection_set(void *data EINA_UNUSED, E_Comp_Wl_Data_Sour
           wl_data_device_send_selection(data_device_res, NULL);
      }
 
-   wl_signal_emit(&cdata->selection.signal, cdata);
+   wl_signal_emit(&e_comp->wl_comp_data->selection.signal, e_comp->wl_comp_data);
 
    if (source)
      {
-        cdata->selection.data_source_listener.notify = 
+        e_comp->wl_comp_data->selection.data_source_listener.notify = 
           _e_comp_wl_data_device_destroy_selection_data_source;
         wl_signal_add(&source->destroy_signal, 
-                      &cdata->selection.data_source_listener);
+                      &e_comp->wl_comp_data->selection.data_source_listener);
      }
 }
 
 static void
 _e_comp_wl_data_device_cb_drag_start(struct wl_client *client, struct wl_resource *resource EINA_UNUSED, struct wl_resource *source_resource, struct wl_resource *origin_resource, struct wl_resource *icon_resource, uint32_t serial)
 {
-   E_Comp_Data *cdata;
    E_Comp_Wl_Data_Source *source;
    Eina_List *l;
    struct wl_resource *res;
 
    DBG("Data Device Drag Start");
 
-   cdata = e_comp->wl_comp_data;
-   if ((cdata->kbd.focus) && (cdata->kbd.focus != origin_resource)) return;
+   if ((e_comp->wl_comp_data->kbd.focus) && (e_comp->wl_comp_data->kbd.focus != origin_resource)) return;
 
    if (!(source = wl_resource_get_user_data(source_resource))) return;
 
@@ -311,11 +305,11 @@ _e_comp_wl_data_device_cb_drag_start(struct wl_client *client, struct wl_resourc
         cp = wl_resource_get_user_data(icon_resource);
      }
 
-   EINA_LIST_FOREACH(cdata->ptr.resources, l, res)
+   EINA_LIST_FOREACH(e_comp->wl_comp_data->ptr.resources, l, res)
      {
         if (!e_comp_wl_input_pointer_check(res)) continue;
         if (wl_resource_get_client(res) != client) continue;
-        wl_pointer_send_leave(res, serial, cdata->kbd.focus);
+        wl_pointer_send_leave(res, serial, e_comp->wl_comp_data->kbd.focus);
      }
 
    /* TODO: pointer start drag */
@@ -389,12 +383,10 @@ _e_comp_wl_data_manager_cb_source_create(struct wl_client *client EINA_UNUSED, s
 static void 
 _e_comp_wl_data_manager_cb_device_get(struct wl_client *client, struct wl_resource *manager_resource, uint32_t id, struct wl_resource *seat_resource EINA_UNUSED)
 {
-   E_Comp_Data *cdata;
    struct wl_resource *res;
 
    /* DBG("Data Manager Device Get"); */
 
-   cdata = e_comp->wl_comp_data;
 
    /* try to create the data device resource */
    res = wl_resource_create(client, &wl_data_device_interface, 1, id);
@@ -405,9 +397,9 @@ _e_comp_wl_data_manager_cb_device_get(struct wl_client *client, struct wl_resour
         return;
      }
 
-   cdata->mgr.data_resources = 
-     eina_list_append(cdata->mgr.data_resources, res);
-   wl_resource_set_implementation(res, &_e_data_device_interface, cdata, 
+   e_comp->wl_comp_data->mgr.data_resources = 
+     eina_list_append(e_comp->wl_comp_data->mgr.data_resources, res);
+   wl_resource_set_implementation(res, &_e_data_device_interface, e_comp->wl_comp_data, 
                                   _e_comp_wl_data_device_cb_unbind);
 }
 
@@ -420,13 +412,13 @@ static const struct wl_data_device_manager_interface _e_manager_interface =
 /* static void  */
 /* _e_comp_wl_data_cb_unbind_manager(struct wl_resource *resource) */
 /* { */
-/*    E_Comp_Data *cdata; */
+/*    E_Comp_Data *e_comp->wl_comp_data; */
 
 /*    DBG("Comp_Wl_Data: Unbind Manager"); */
 
-/*    if (!(cdata = wl_resource_get_user_data(resource))) return; */
+/*    if (!(e_comp->wl_comp_data = wl_resource_get_user_data(resource))) return; */
 
-/*    cdata->mgr.resource = NULL; */
+/*    e_comp->wl_comp_data->mgr.resource = NULL; */
 /* } */
 
 static void 
@@ -518,14 +510,12 @@ _e_comp_wl_clipboard_offer_create(E_Comp_Wl_Clipboard_Source* source, int fd)
 static Eina_Bool
 _e_comp_wl_clipboard_source_save(void *data EINA_UNUSED, Ecore_Fd_Handler *handler)
 {
-   E_Comp_Data *cdata;
    E_Comp_Wl_Clipboard_Source *source;
    char *p;
    int len, size;
 
-   cdata = e_comp->wl_comp_data;
 
-   if (!(source = (E_Comp_Wl_Clipboard_Source*)cdata->clipboard.source))
+   if (!(source = (E_Comp_Wl_Clipboard_Source*)e_comp->wl_comp_data->clipboard.source))
      return ECORE_CALLBACK_CANCEL;
 
    /* extend contents buffer */
@@ -548,7 +538,7 @@ _e_comp_wl_clipboard_source_save(void *data EINA_UNUSED, Ecore_Fd_Handler *handl
    else if (len < 0)
      {
         _e_comp_wl_clipboard_source_unref(source);
-        cdata->clipboard.source = NULL;
+        e_comp->wl_comp_data->clipboard.source = NULL;
      }
    else
      {
@@ -585,7 +575,7 @@ _e_comp_wl_clipboard_source_cancelled_send(E_Comp_Wl_Data_Source *source EINA_UN
 }
 
 static E_Comp_Wl_Clipboard_Source*
-_e_comp_wl_clipboard_source_create(E_Comp_Data *cdata, const char *mime_type, uint32_t serial, int fd)
+_e_comp_wl_clipboard_source_create(const char *mime_type, uint32_t serial, int fd)
 {
    E_Comp_Wl_Clipboard_Source *source;
 
@@ -610,7 +600,7 @@ _e_comp_wl_clipboard_source_create(E_Comp_Data *cdata, const char *mime_type, ui
    source->fd_handler =
       ecore_main_fd_handler_add(fd, ECORE_FD_READ,
                                 _e_comp_wl_clipboard_source_save,
-                                cdata, NULL, NULL);
+                                e_comp->wl_comp_data, NULL, NULL);
    if (!source->fd_handler) return NULL;
 
    source->fd = fd;
@@ -621,20 +611,18 @@ _e_comp_wl_clipboard_source_create(E_Comp_Data *cdata, const char *mime_type, ui
 static void
 _e_comp_wl_clipboard_selection_set(struct wl_listener *listener EINA_UNUSED, void *data EINA_UNUSED)
 {
-   E_Comp_Data *cdata;
    E_Comp_Wl_Data_Source *sel_source;
    E_Comp_Wl_Clipboard_Source *clip_source;
    int p[2];
    char *mime_type;
 
-   cdata = e_comp->wl_comp_data;
-   sel_source = (E_Comp_Wl_Data_Source*) cdata->selection.data_source;
-   clip_source = (E_Comp_Wl_Clipboard_Source*) cdata->clipboard.source;
+   sel_source = (E_Comp_Wl_Data_Source*) e_comp->wl_comp_data->selection.data_source;
+   clip_source = (E_Comp_Wl_Clipboard_Source*) e_comp->wl_comp_data->clipboard.source;
 
    if (!sel_source)
      {
         if (clip_source)
-          _e_comp_wl_data_device_selection_set(cdata,
+          _e_comp_wl_data_device_selection_set(e_comp->wl_comp_data,
                                                &clip_source->data_source,
                                                clip_source->serial);
         return;
@@ -645,7 +633,7 @@ _e_comp_wl_clipboard_selection_set(struct wl_listener *listener EINA_UNUSED, voi
    if (clip_source)
      _e_comp_wl_clipboard_source_unref(clip_source);
 
-   cdata->clipboard.source = NULL;
+   e_comp->wl_comp_data->clipboard.source = NULL;
    mime_type = eina_list_nth(sel_source->mime_types, 0);
 
    if (pipe2(p, O_CLOEXEC) == -1)
@@ -653,67 +641,56 @@ _e_comp_wl_clipboard_selection_set(struct wl_listener *listener EINA_UNUSED, voi
 
    sel_source->send(sel_source, mime_type, p[1]);
 
-   cdata->clipboard.source =
-      _e_comp_wl_clipboard_source_create(cdata, mime_type,
-                                         cdata->selection.serial, p[0]);
+   e_comp->wl_comp_data->clipboard.source =
+      _e_comp_wl_clipboard_source_create(mime_type,
+                                         e_comp->wl_comp_data->selection.serial, p[0]);
 
-   if (!cdata->clipboard.source)
+   if (!e_comp->wl_comp_data->clipboard.source)
      close(p[0]);
-}
-
-static void
-_e_comp_wl_clipboard_destroy(E_Comp_Data *cdata)
-{
-   wl_list_remove(&cdata->clipboard.listener.link);
 }
 
 static void
 _e_comp_wl_clipboard_create(void)
 {
-   E_Comp_Data *cdata;
-
-   cdata = e_comp->wl_comp_data;
-   cdata->clipboard.listener.notify = _e_comp_wl_clipboard_selection_set;
-   wl_signal_add(&cdata->selection.signal, &cdata->clipboard.listener);
+   e_comp->wl_comp_data->clipboard.listener.notify = _e_comp_wl_clipboard_selection_set;
+   wl_signal_add(&e_comp->wl_comp_data->selection.signal, &e_comp->wl_comp_data->clipboard.listener);
 }
 
 EINTERN void
 e_comp_wl_data_device_keyboard_focus_set(void)
 {
-   E_Comp_Data *cdata;
    struct wl_resource *data_device_res, *offer_res, *focus;
    E_Comp_Wl_Data_Source *source;
 
-   cdata = e_comp->wl_comp_data;
 
-   if (!cdata->kbd.enabled) 
+   if (!e_comp->wl_comp_data->kbd.enabled)
      {
         ERR("Keyboard not enabled");
         return;
      }
 
-   if (!(focus = cdata->kbd.focus))
+   if (!(focus = e_comp->wl_comp_data->kbd.focus))
      {
         ERR("No focused resource");
         return;
      }
 
    data_device_res =
-      _e_comp_wl_data_find_for_client(cdata->mgr.data_resources,
+      _e_comp_wl_data_find_for_client(e_comp->wl_comp_data->mgr.data_resources,
                                       wl_resource_get_client(focus));
    if (!data_device_res) return;
 
-   source = (E_Comp_Wl_Data_Source*)cdata->selection.data_source;
+   source = (E_Comp_Wl_Data_Source*)e_comp->wl_comp_data->selection.data_source;
    if (source)
      {
         uint32_t serial;
 
-        serial = wl_display_next_serial(cdata->wl.disp);
+        serial = wl_display_next_serial(e_comp->wl_comp_data->wl.disp);
 
         offer_res = _e_comp_wl_data_device_data_offer_create(source,
                                                              data_device_res);
         wl_data_device_send_enter(data_device_res, serial, focus, 
-                                  cdata->ptr.x, cdata->ptr.y, offer_res);
+                                  e_comp->wl_comp_data->ptr.x, e_comp->wl_comp_data->ptr.y, offer_res);
         wl_data_device_send_selection(data_device_res, offer_res);
      }
 }
@@ -721,21 +698,17 @@ e_comp_wl_data_device_keyboard_focus_set(void)
 EINTERN Eina_Bool
 e_comp_wl_data_manager_init(void)
 {
-   E_Comp_Data *cdata;
-
-   cdata = e_comp->wl_comp_data;
-
    /* try to create global data manager */
-   cdata->mgr.global =
-     wl_global_create(cdata->wl.disp, &wl_data_device_manager_interface, 1,
-                      cdata, _e_comp_wl_data_cb_bind_manager);
-   if (!cdata->mgr.global)
+   e_comp->wl_comp_data->mgr.global =
+     wl_global_create(e_comp->wl_comp_data->wl.disp, &wl_data_device_manager_interface, 1,
+                      e_comp->wl_comp_data, _e_comp_wl_data_cb_bind_manager);
+   if (!e_comp->wl_comp_data->mgr.global)
      {
         ERR("Could not create global for data device manager: %m");
         return EINA_FALSE;
      }
 
-   wl_signal_init(&cdata->selection.signal);
+   wl_signal_init(&e_comp->wl_comp_data->selection.signal);
 
    /* create clipboard */
    _e_comp_wl_clipboard_create();
@@ -747,7 +720,7 @@ EINTERN void
 e_comp_wl_data_manager_shutdown(void)
 {
    /* destroy the global manager resource */
-   /* if (cdata->mgr.global) wl_global_destroy(cdata->mgr.global); */
+   /* if (e_comp->wl_comp_data->mgr.global) wl_global_destroy(e_comp->wl_comp_data->mgr.global); */
 
-   _e_comp_wl_clipboard_destroy(e_comp->wl_comp_data);
+   wl_list_remove(&e_comp->wl_comp_data->clipboard.listener.link);
 }

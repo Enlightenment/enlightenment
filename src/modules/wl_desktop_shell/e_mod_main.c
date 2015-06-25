@@ -143,7 +143,6 @@ static void
 _e_shell_surface_cb_move(struct wl_client *client EINA_UNUSED, struct wl_resource *resource, struct wl_resource *seat_resource EINA_UNUSED, uint32_t serial EINA_UNUSED)
 {
    E_Client *ec;
-   E_Comp_Data *cdata;
    E_Binding_Event_Mouse_Button ev;
 
    /* get the client for this resource */
@@ -157,8 +156,7 @@ _e_shell_surface_cb_move(struct wl_client *client EINA_UNUSED, struct wl_resourc
 
    if ((ec->maximized) || (ec->fullscreen)) return;
 
-   cdata = e_comp->wl_comp_data;
-   switch (cdata->ptr.button)
+   switch (e_comp->wl_comp_data->ptr.button)
      {
       case BTN_LEFT:
         ev.button = 1;
@@ -170,13 +168,13 @@ _e_shell_surface_cb_move(struct wl_client *client EINA_UNUSED, struct wl_resourc
         ev.button = 3;
         break;
       default:
-        ev.button = cdata->ptr.button;
+        ev.button = e_comp->wl_comp_data->ptr.button;
         break;
      }
 
    e_comp_object_frame_xy_unadjust(ec->frame,
-                                   wl_fixed_to_int(cdata->ptr.x),
-                                   wl_fixed_to_int(cdata->ptr.y),
+                                   wl_fixed_to_int(e_comp->wl_comp_data->ptr.x),
+                                   wl_fixed_to_int(e_comp->wl_comp_data->ptr.y),
                                    &ev.canvas.x, &ev.canvas.y);
 
    _e_shell_surface_mouse_down_helper(ec, &ev, EINA_TRUE);
@@ -186,7 +184,6 @@ static void
 _e_shell_surface_cb_resize(struct wl_client *client EINA_UNUSED, struct wl_resource *resource, struct wl_resource *seat_resource EINA_UNUSED, uint32_t serial EINA_UNUSED, uint32_t edges)
 {
    E_Client *ec;
-   E_Comp_Data *cdata;
    E_Binding_Event_Mouse_Button ev;
 
    /* get the client for this resource */
@@ -203,16 +200,14 @@ _e_shell_surface_cb_resize(struct wl_client *client EINA_UNUSED, struct wl_resou
 
    if ((ec->maximized) || (ec->fullscreen)) return;
 
-   cdata = e_comp->wl_comp_data;
-
    DBG("Comp Resize Edges Set: %d", edges);
 
-   cdata->resize.resource = resource;
-   cdata->resize.edges = edges;
-   cdata->ptr.grab_x = cdata->ptr.x - wl_fixed_from_int(ec->client.x);
-   cdata->ptr.grab_y = cdata->ptr.y - wl_fixed_from_int(ec->client.y);
+   e_comp->wl_comp_data->resize.resource = resource;
+   e_comp->wl_comp_data->resize.edges = edges;
+   e_comp->wl_comp_data->ptr.grab_x = e_comp->wl_comp_data->ptr.x - wl_fixed_from_int(ec->client.x);
+   e_comp->wl_comp_data->ptr.grab_y = e_comp->wl_comp_data->ptr.y - wl_fixed_from_int(ec->client.y);
 
-   switch (cdata->ptr.button)
+   switch (e_comp->wl_comp_data->ptr.button)
      {
       case BTN_LEFT:
         ev.button = 1;
@@ -224,13 +219,13 @@ _e_shell_surface_cb_resize(struct wl_client *client EINA_UNUSED, struct wl_resou
         ev.button = 3;
         break;
       default:
-        ev.button = cdata->ptr.button;
+        ev.button = e_comp->wl_comp_data->ptr.button;
         break;
      }
 
    e_comp_object_frame_xy_unadjust(ec->frame,
-                                   wl_fixed_to_int(cdata->ptr.x),
-                                   wl_fixed_to_int(cdata->ptr.y),
+                                   wl_fixed_to_int(e_comp->wl_comp_data->ptr.x),
+                                   wl_fixed_to_int(e_comp->wl_comp_data->ptr.y),
                                    &ev.canvas.x, &ev.canvas.y);
 
    _e_shell_surface_mouse_down_helper(ec, &ev, EINA_FALSE);
@@ -724,7 +719,6 @@ static void
 _e_xdg_shell_surface_cb_move(struct wl_client *client EINA_UNUSED, struct wl_resource *resource, struct wl_resource *seat_resource EINA_UNUSED, uint32_t serial EINA_UNUSED)
 {
    E_Client *ec;
-   E_Comp_Data *cdata;
    E_Binding_Event_Mouse_Button ev;
 
    /* get the client for this resource */
@@ -738,8 +732,7 @@ _e_xdg_shell_surface_cb_move(struct wl_client *client EINA_UNUSED, struct wl_res
 
    if ((ec->maximized) || (ec->fullscreen)) return;
 
-   cdata = e_comp->wl_comp_data;
-   switch (cdata->ptr.button)
+   switch (e_comp->wl_comp_data->ptr.button)
      {
       case BTN_LEFT:
         ev.button = 1;
@@ -751,13 +744,13 @@ _e_xdg_shell_surface_cb_move(struct wl_client *client EINA_UNUSED, struct wl_res
         ev.button = 3;
         break;
       default:
-        ev.button = cdata->ptr.button;
+        ev.button = e_comp->wl_comp_data->ptr.button;
         break;
      }
 
    e_comp_object_frame_xy_unadjust(ec->frame,
-                                   wl_fixed_to_int(cdata->ptr.x),
-                                   wl_fixed_to_int(cdata->ptr.y),
+                                   wl_fixed_to_int(e_comp->wl_comp_data->ptr.x),
+                                   wl_fixed_to_int(e_comp->wl_comp_data->ptr.y),
                                    &ev.canvas.x, &ev.canvas.y);
 
    _e_shell_surface_mouse_down_helper(ec, &ev, EINA_TRUE);
@@ -767,7 +760,6 @@ static void
 _e_xdg_shell_surface_cb_resize(struct wl_client *client EINA_UNUSED, struct wl_resource *resource, struct wl_resource *seat_resource EINA_UNUSED, uint32_t serial EINA_UNUSED, uint32_t edges)
 {
    E_Client *ec;
-   E_Comp_Data *cdata;
    E_Binding_Event_Mouse_Button ev;
 
    /* DBG("XDG_SHELL: Surface Resize: %d\tEdges: %d",  */
@@ -787,13 +779,12 @@ _e_xdg_shell_surface_cb_resize(struct wl_client *client EINA_UNUSED, struct wl_r
 
    if ((ec->maximized) || (ec->fullscreen)) return;
 
-   cdata = e_comp->wl_comp_data;
-   cdata->resize.resource = resource;
-   cdata->resize.edges = edges;
-   cdata->ptr.grab_x = cdata->ptr.x - wl_fixed_from_int(ec->client.x);
-   cdata->ptr.grab_y = cdata->ptr.y - wl_fixed_from_int(ec->client.y);
+   e_comp->wl_comp_data->resize.resource = resource;
+   e_comp->wl_comp_data->resize.edges = edges;
+   e_comp->wl_comp_data->ptr.grab_x = e_comp->wl_comp_data->ptr.x - wl_fixed_from_int(ec->client.x);
+   e_comp->wl_comp_data->ptr.grab_y = e_comp->wl_comp_data->ptr.y - wl_fixed_from_int(ec->client.y);
 
-   switch (cdata->ptr.button)
+   switch (e_comp->wl_comp_data->ptr.button)
      {
       case BTN_LEFT:
         ev.button = 1;
@@ -805,13 +796,13 @@ _e_xdg_shell_surface_cb_resize(struct wl_client *client EINA_UNUSED, struct wl_r
         ev.button = 3;
         break;
       default:
-        ev.button = cdata->ptr.button;
+        ev.button = e_comp->wl_comp_data->ptr.button;
         break;
      }
 
    e_comp_object_frame_xy_unadjust(ec->frame,
-                                   wl_fixed_to_int(cdata->ptr.x),
-                                   wl_fixed_to_int(cdata->ptr.y),
+                                   wl_fixed_to_int(e_comp->wl_comp_data->ptr.x),
+                                   wl_fixed_to_int(e_comp->wl_comp_data->ptr.y),
                                    &ev.canvas.x, &ev.canvas.y);
 
    _e_shell_surface_mouse_down_helper(ec, &ev, EINA_FALSE);
@@ -1364,8 +1355,6 @@ E_API E_Module_Api e_modapi = { E_MODULE_API_VERSION, "Wl_Desktop_Shell" };
 E_API void *
 e_modapi_init(E_Module *m)
 {
-   E_Comp_Data *cdata;
-
    /* try to get the current compositor */
    if (!e_comp) return NULL;
 
@@ -1373,19 +1362,19 @@ e_modapi_init(E_Module *m)
    /* if (e_comp->comp_type != E_PIXMAP_TYPE_WL) return NULL; */
 
    /* try to get the compositor data */
-   if (!(cdata = e_comp->wl_comp_data)) return NULL;
+   if (!e_comp->wl_comp_data) return NULL;
 
    /* try to create global shell interface */
-   if (!wl_global_create(cdata->wl.disp, &wl_shell_interface, 1,
-                         cdata, _e_shell_cb_bind))
+   if (!wl_global_create(e_comp->wl_comp_data->wl.disp, &wl_shell_interface, 1,
+                         e_comp->wl_comp_data, _e_shell_cb_bind))
      {
         ERR("Could not create shell global: %m");
         return NULL;
      }
 
    /* try to create global xdg_shell interface */
-   if (!wl_global_create(cdata->wl.disp, &xdg_shell_interface, 1,
-                         cdata, _e_xdg_shell_cb_bind))
+   if (!wl_global_create(e_comp->wl_comp_data->wl.disp, &xdg_shell_interface, 1,
+                         e_comp->wl_comp_data, _e_xdg_shell_cb_bind))
      {
         ERR("Could not create xdg_shell global: %m");
         return NULL;

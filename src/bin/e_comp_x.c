@@ -4871,7 +4871,7 @@ _e_comp_x_setup(Ecore_X_Window root, int w, int h)
    if (!ecore_x_window_manage(root)) return EINA_FALSE;
 
    E_OBJECT_DEL_SET(e_comp, _e_comp_x_del);
-   e_comp->x_comp_data = E_NEW(E_Comp_Data, 1);
+   e_comp->x_comp_data = E_NEW(E_Comp_X_Data, 1);
    ecore_x_e_window_profile_supported_set(root, e_config->use_desktop_window_profile);
    e_comp->cm_selection = ecore_x_window_input_new(root, 0, 0, 1, 1);
    if (!e_comp->cm_selection) return EINA_FALSE;
