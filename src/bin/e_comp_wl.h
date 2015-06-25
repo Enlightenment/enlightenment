@@ -210,6 +210,8 @@ struct _E_Comp_Wl_Data
    Ecore_Fd_Handler *fd_hdlr;
    Ecore_Idler *idler;
 
+   struct wl_client *xwl_client;
+
    /* Eina_List *retry_clients; */
    /* Ecore_Timer *retry_timer; */
    Eina_Bool restack : 1;

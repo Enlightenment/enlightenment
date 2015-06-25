@@ -13,7 +13,6 @@ struct _E_XWayland_Server
 
    struct wl_display *wl_disp;
    struct wl_event_loop *loop;
-   struct wl_client *client;
 
    Ecore_Fd_Handler *abs_hdlr, *unx_hdlr;
    Ecore_Event_Handler *sig_hdlr;
@@ -217,7 +216,7 @@ _cb_xserver_event(void *data EINA_UNUSED, Ecore_Fd_Handler *hdlr EINA_UNUSED)
         snprintf(xserver, sizeof(xserver), "%s", XWAYLAND_BIN);
         DBG("\tLaunching XWayland: %s: %s", xserver, disp);
         if (execl(xserver, xserver, disp, "-rootless", "-listen", abs_fd,
-                  "-listen", unx_fd, "-wm", wm_fd, "-terminate", "-shm", 
+                  "-listen", unx_fd, "-terminate", "-shm",
                   NULL) < 0)
           {
              ERR("Failed to exec XWayland: %m");
@@ -228,7 +227,7 @@ fail:
 
       default:
         close(socks[1]);
-        exs->client = wl_client_create(exs->wl_disp, socks[0]);
+        e_comp->wl_comp_data->xwl_client = wl_client_create(exs->wl_disp, socks[0]);
 
         close(wms[1]);
         exs->wm_fd = wms[0];
@@ -252,6 +251,7 @@ static Eina_Bool
 _cb_signal_event(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
 {
    Ecore_Event_Signal_User *ev;
+   char buf[128];
 
    ev = event;
    if (ev->number != 1) return ECORE_CALLBACK_RENEW;
@@ -260,13 +260,9 @@ _cb_signal_event(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
     * initialized. */
 
    DBG("XWayland Finished Init");
-
-   /* TODO: create "window manager" process */
-
-   /* TODO: NB: 
-    * 
-    * Weston creates a smaller window manager process here.
-    * We Maybe able to just do e_comp_x_init, but will have to test that */
+   snprintf(buf, sizeof(buf), ":%d", exs->disp);
+   assert(ecore_x_init(buf));
+   e_comp_x_init();
 
    return ECORE_CALLBACK_CANCEL;
 }
