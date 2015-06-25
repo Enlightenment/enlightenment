@@ -3,7 +3,6 @@
 # ifndef E_COMP_WL_DATA_H
 #  define E_COMP_WL_DATA_H
 
-#  undef NEED_X
 #  include "e_comp_wl.h"
 
 #  define CLIPBOARD_CHUNK 1024
