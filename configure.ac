@@ -779,14 +779,6 @@ define([CHECK_MODULE_BLUEZ4],
 AC_SUBST([EBLUEZ4_CFLAGS])
 AC_SUBST([EBLUEZ4_LIBS])
 
-have_wayland_clients=no
-AC_ARG_ENABLE([wayland-clients],
-  AS_HELP_STRING([--enable-wayland-clients],[enable wayland clients in composite module @<:@default=disabled@:>@]),
-  [e_cv_want_wayland_clients=$enableval],
-  [e_cv_want_wayland_clients=no])
-AC_MSG_CHECKING([whether wayland client support is enabled])
-AC_MSG_RESULT([${e_cv_want_wayland_clients}])
-
 have_wayland_egl=no
 AC_ARG_ENABLE([wayland-egl],
   AS_HELP_STRING([--enable-wayland-egl],[enable wayland to render using EGL @<:@default=disabled@:>@]),
@@ -795,7 +787,7 @@ AC_ARG_ENABLE([wayland-egl],
 AC_MSG_CHECKING([whether wayland EGL support is enabled])
 AC_MSG_RESULT([${e_cv_want_wayland_egl}])
 
-if test "x${e_cv_want_wayland_only}" != "xno" || test "x${e_cv_want_wayland_clients}" != "xno";then
+if test "x${e_cv_want_wayland_only}" != "xno" ;then
   PKG_CHECK_MODULES([WAYLAND], [ecore-wayland wayland-server >= 1.8.0 xkbcommon uuid],
     [
       have_wayland=yes
@@ -806,10 +798,6 @@ else
 fi
 
 if test "x${have_wayland}" = "xyes"; then
-  if test "x${e_cv_want_wayland_clients}" != "xno"; then
-    have_wayland_clients=yes
-    AC_DEFINE_UNQUOTED([HAVE_WAYLAND_CLIENTS],[1],[enable wayland clients in composite module])
-  fi
   if test "x${e_cv_want_wayland_egl}" != "xno";then
     PKG_CHECK_MODULES([WAYLAND_EGL], [egl >= 7.10],
       [
@@ -828,7 +816,6 @@ fi
 
 AM_CONDITIONAL([HAVE_WAYLAND], [test "x${have_wayland}" = "xyes"])
 AM_CONDITIONAL([HAVE_WAYLAND_ONLY], [test "x${have_wayland_only}" = "xyes"])
-AM_CONDITIONAL([HAVE_WAYLAND_CLIENTS], [test "x${have_wayland_clients}" = "xyes"])
 AM_CONDITIONAL([HAVE_WAYLAND_EGL], [test "x${have_wayland_egl}" = "xyes"])
 
 if test "x${have_wayland_only}" != "xyes"; then
@@ -847,7 +834,7 @@ define([CHECK_MODULE_WL_X11],
   if test "x${have_wayland_only}" = "xyes" ; then
     PKG_CHECK_MODULES([ECORE_X], [ecore-x >= ${efl_version}])
   fi
-  if test "x${have_wayland_clients}" = "xyes" || test "x${have_wayland_only}" = "xyes"; then
+  if test "x${have_wayland_only}" = "xyes"; then
     AC_E_CHECK_PKG(WL_X11, [ ecore-x >= $efl_version ], [WL_X11=true], [WL_X11=false])
   else
     WL_X11=false
@@ -857,7 +844,7 @@ AM_CONDITIONAL([HAVE_WL_X11], [test "x${WL_X11}" = "xtrue"])
 
 define([CHECK_MODULE_WL_DESKTOP_SHELL],
 [
-  if test "x${have_wayland_clients}" = "xyes" || test "x${e_cv_want_wayland_only}" = "xyes"; then
+  if test "x${e_cv_want_wayland_only}" = "xyes"; then
     AC_E_CHECK_PKG(WL_DESKTOP_SHELL, [ ecore >= $efl_version eina >= $efl_version ], [WL_DESKTOP_SHELL=true], [WL_DESKTOP_SHELL=false])
   else
     WL_DESKTOP_SHELL=false
@@ -867,7 +854,7 @@ AM_CONDITIONAL([HAVE_WL_DESKTOP_SHELL], [test "x${WL_DESKTOP_SHELL}" = "xtrue"])
 
 define([CHECK_MODULE_WL_FB],
 [
-  if test "x${have_wayland_clients}" = "xyes"; then
+  if test "x${e_cv_want_wayland_only}" = "xyes"; then
     AC_E_CHECK_PKG(WL_FB, [ ecore-fb >= $efl_version ecore >= $efl_version eina >= $efl_version ], [WL_FB=true], [WL_FB=false])
   else
     WL_FB=false
