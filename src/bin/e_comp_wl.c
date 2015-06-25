@@ -2657,10 +2657,6 @@ e_comp_wl_surface_create_signal_get(void)
 EINTERN void
 e_comp_wl_shutdown(void)
 {
-#ifndef HAVE_WAYLAND_ONLY
-   _e_comp_wl_compositor_cb_del(e_comp);
-#endif
-
    /* free handlers */
    E_FREE_LIST(handlers, ecore_event_handler_del);
 
