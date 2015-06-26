@@ -2828,7 +2828,7 @@ _e_comp_x_hook_client_pre_frame_assign(void *d EINA_UNUSED, E_Client *ec)
                             win, ECORE_X_WINDOW_STACK_ABOVE);
    ecore_x_event_mask_set(pwin, ECORE_X_EVENT_MASK_KEY_DOWN | ECORE_X_EVENT_MASK_KEY_UP |
                                 ECORE_X_EVENT_MASK_MOUSE_MOVE | ECORE_X_EVENT_MASK_MOUSE_DOWN |
-                                ECORE_X_EVENT_MASK_MOUSE_UP | ECORE_X_EVENT_MASK_MOUSE_WHEEL |
+                                ECORE_X_EVENT_MASK_MOUSE_UP |
                                 ECORE_X_EVENT_MASK_MOUSE_IN | ECORE_X_EVENT_MASK_MOUSE_OUT);
    ecore_x_window_border_width_set(win, 0);
    ec->border_size = 0;
