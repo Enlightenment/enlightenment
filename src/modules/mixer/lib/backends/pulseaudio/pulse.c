@@ -422,9 +422,6 @@ _source_cb(pa_context *c EINA_UNUSED, const pa_source_info *info,
    Source *source;
    EINA_SAFETY_ON_NULL_RETURN(ctx);
 
-   source = calloc(1, sizeof(Source));
-   EINA_SAFETY_ON_NULL_RETURN(source);
-
    if (eol < 0)
      {
         if (pa_context_errno(c) == PA_ERR_NOENTITY)
@@ -436,6 +433,9 @@ _source_cb(pa_context *c EINA_UNUSED, const pa_source_info *info,
 
    if (eol > 0)
       return;
+
+   source = calloc(1, sizeof(Source));
+   EINA_SAFETY_ON_NULL_RETURN(source);
 
    source->idx = info->index;
    source->base.name = eina_stringshare_add(info->name);
