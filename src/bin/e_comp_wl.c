@@ -2607,8 +2607,11 @@ e_comp_wl_init(void)
 
    /* add event handlers to catch E events */
    if (e_comp->comp_type != E_PIXMAP_TYPE_X)
-     if (e_randr2_init())
-       e_randr2_screens_setup(-1, -1);
+     {
+        if (e_randr2_init())
+          e_randr2_screens_setup(-1, -1);
+        elm_config_preferred_engine_set("wayland_shm");
+     }
 
    E_LIST_HANDLER_APPEND(handlers, E_EVENT_RANDR_CHANGE,
                                 _e_comp_wl_cb_randr_change, NULL);
