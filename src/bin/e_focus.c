@@ -70,9 +70,9 @@ e_focus_event_focus_in(E_Client *ec)
         e_bindings_mouse_ungrab(E_BINDING_CONTEXT_WINDOW, e_client_util_pwin_get(ec));
         e_bindings_wheel_ungrab(E_BINDING_CONTEXT_WINDOW, e_client_util_pwin_get(ec));
 #ifndef HAVE_WAYLAND_ONLY
-        ecore_x_window_button_ungrab(e_client_util_pwin_get(ec), 1, 0, 1);
-        ecore_x_window_button_ungrab(e_client_util_pwin_get(ec), 2, 0, 1);
-        ecore_x_window_button_ungrab(e_client_util_pwin_get(ec), 3, 0, 1);
+        ecore_x_window_button_ungrab(e_client_util_win_get(ec), 1, 0, 1);
+        ecore_x_window_button_ungrab(e_client_util_win_get(ec), 2, 0, 1);
+        ecore_x_window_button_ungrab(e_client_util_win_get(ec), 3, 0, 1);
 #endif
         e_bindings_mouse_grab(E_BINDING_CONTEXT_WINDOW, e_client_util_pwin_get(ec));
         e_bindings_wheel_grab(E_BINDING_CONTEXT_WINDOW, e_client_util_pwin_get(ec));
@@ -89,15 +89,15 @@ e_focus_event_focus_out(E_Client *ec)
      {
         if (ec->button_grabbed) return;
 #ifndef HAVE_WAYLAND_ONLY
-        ecore_x_window_button_grab(e_client_util_pwin_get(ec), 1,
+        ecore_x_window_button_grab(e_client_util_win_get(ec), 1,
                                    ECORE_X_EVENT_MASK_MOUSE_DOWN |
                                    ECORE_X_EVENT_MASK_MOUSE_UP |
                                    ECORE_X_EVENT_MASK_MOUSE_MOVE, 0, 1);
-        ecore_x_window_button_grab(e_client_util_pwin_get(ec), 2,
+        ecore_x_window_button_grab(e_client_util_win_get(ec), 2,
                                    ECORE_X_EVENT_MASK_MOUSE_DOWN |
                                    ECORE_X_EVENT_MASK_MOUSE_UP |
                                    ECORE_X_EVENT_MASK_MOUSE_MOVE, 0, 1);
-        ecore_x_window_button_grab(e_client_util_pwin_get(ec), 3,
+        ecore_x_window_button_grab(e_client_util_win_get(ec), 3,
                                    ECORE_X_EVENT_MASK_MOUSE_DOWN |
                                    ECORE_X_EVENT_MASK_MOUSE_UP |
                                    ECORE_X_EVENT_MASK_MOUSE_MOVE, 0, 1);

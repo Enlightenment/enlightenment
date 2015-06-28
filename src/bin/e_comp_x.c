@@ -124,15 +124,15 @@ _e_comp_x_focus_setup(E_Client *ec)
        (e_config->always_click_to_raise) ||
        (e_config->always_click_to_focus))) return;
         
-   ecore_x_window_button_grab(e_client_util_pwin_get(ec), 1,
+   ecore_x_window_button_grab(e_client_util_win_get(ec), 1,
                               ECORE_X_EVENT_MASK_MOUSE_DOWN |
                               ECORE_X_EVENT_MASK_MOUSE_UP |
                               ECORE_X_EVENT_MASK_MOUSE_MOVE, 0, 1);
-   ecore_x_window_button_grab(e_client_util_pwin_get(ec), 2,
+   ecore_x_window_button_grab(e_client_util_win_get(ec), 2,
                               ECORE_X_EVENT_MASK_MOUSE_DOWN |
                               ECORE_X_EVENT_MASK_MOUSE_UP |
                               ECORE_X_EVENT_MASK_MOUSE_MOVE, 0, 1);
-   ecore_x_window_button_grab(e_client_util_pwin_get(ec), 3,
+   ecore_x_window_button_grab(e_client_util_win_get(ec), 3,
                               ECORE_X_EVENT_MASK_MOUSE_DOWN |
                               ECORE_X_EVENT_MASK_MOUSE_UP |
                               ECORE_X_EVENT_MASK_MOUSE_MOVE, 0, 1);
