@@ -2183,6 +2183,8 @@ _e_comp_x_mouse_up(void *d EINA_UNUSED, int t EINA_UNUSED, Ecore_Event_Mouse_But
    //else
      {
         ec = _e_comp_x_client_find_by_window(ev->window);
+        if ((!ec) && (ev->window != ev->event_window))
+          ec = _e_comp_x_client_find_by_window(ev->event_window);
         if (!ec)
           {
              if (e_client_comp_grabbed_get())
@@ -2209,6 +2211,8 @@ _e_comp_x_mouse_down(void *d EINA_UNUSED, int t EINA_UNUSED, Ecore_Event_Mouse_B
    //else
      {
         ec = _e_comp_x_client_find_by_window(ev->window);
+        if ((!ec) && (ev->window != ev->event_window))
+          ec = _e_comp_x_client_find_by_window(ev->event_window);
         if ((!ec) || e_client_util_ignored_get(ec)) return ECORE_CALLBACK_RENEW;
      }
    if (_e_comp_x_client_data_get(ec)->deleted) return ECORE_CALLBACK_RENEW;
