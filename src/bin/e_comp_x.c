@@ -2227,7 +2227,16 @@ _e_comp_x_mouse_move(void *d EINA_UNUSED, int t EINA_UNUSED, Ecore_Event_Mouse_M
    E_Client *ec;
 
    ec = e_client_action_get();
-   if (!ec) return ECORE_CALLBACK_RENEW;
+   if (!ec)
+     {
+        ec = _e_comp_x_client_find_by_window(ev->window);
+        if ((!ec) && (ev->window != ev->event_window))
+          ec = _e_comp_x_client_find_by_window(ev->event_window);
+        if ((!ec) || e_client_util_ignored_get(ec)) return ECORE_CALLBACK_RENEW;
+        if (!ec->mouse.in)
+          e_client_mouse_in(ec, e_comp_canvas_x_root_adjust(ev->root.x), e_comp_canvas_x_root_adjust(ev->root.y));
+        return ECORE_CALLBACK_RENEW;
+     }
    E_COMP_X_PIXMAP_CHECK ECORE_CALLBACK_RENEW;
    if (_e_comp_x_client_data_get(ec)->deleted || e_client_util_ignored_get(ec)) return ECORE_CALLBACK_RENEW;
    if (e_client_util_resizing_get(ec) &&
