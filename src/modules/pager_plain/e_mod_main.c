@@ -307,6 +307,7 @@ _pager_new(Evas *evas, E_Zone *zone, E_Gadcon *gc)
    p->inst = NULL;
    p->popup = NULL;
    p->o_table = elm_table_add(e_win_evas_win_get(evas));
+   E_FILL(p->o_table);
    elm_table_homogeneous_set(p->o_table, 1);
    p->zone = zone;
    _pager_fill(p, gc);
