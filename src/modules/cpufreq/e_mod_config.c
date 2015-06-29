@@ -142,7 +142,7 @@ _basic_apply_data(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfdata
    if (cpufreq_config->pstate_min > cpufreq_config->pstate_max)
      cpufreq_config->pstate_min = cpufreq_config->pstate_max;
    _cpufreq_set_pstate(cpufreq_config->pstate_min - 1,
-                       cpufreq_config->pstate_max - 1, 1);
+                       cpufreq_config->pstate_max - 1);
    e_config_save_queue();
    return 1;
 }

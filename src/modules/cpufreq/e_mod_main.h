@@ -63,7 +63,7 @@ E_API int   e_modapi_save     (E_Module *m);
 E_Config_Dialog *e_int_config_cpufreq_module(Evas_Object *parent, const char *params);
 void _cpufreq_poll_interval_update(void);
 void _cpufreq_set_governor(const char *governor);
-void _cpufreq_set_pstate(int min, int max, int turbo);
+void _cpufreq_set_pstate(int min, int max);
 
 extern Config *cpufreq_config;
 
