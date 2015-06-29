@@ -2421,11 +2421,7 @@ _e_comp_x_focus_in(void *data EINA_UNUSED, int type EINA_UNUSED, Ecore_X_Event_W
     * these result from iconifying a client during a grab */
    if (ec->iconic) return ECORE_CALLBACK_RENEW;
 
-   /* block spurious focus events
-    * not sure if correct, but seems necessary to use pointer focus...
-    */
    focused = e_client_focused_get();
-   if (focused && (ec != focused)) return ECORE_CALLBACK_RENEW;
 
    _e_comp_x_client_pri_raise(ec);
    if (ev->mode == ECORE_X_EVENT_MODE_GRAB)
