@@ -555,33 +555,7 @@ e_requires="\
   $eeze_mount \
   $udisks_mount \
   $device_libs"
-if test "x${e_cv_want_wayland_only}" != "xyes"; then
-  e_requires="$e_requires ecore-x >= $efl_version"
-fi
 
-PKG_CHECK_MODULES(E, [$e_requires])
-requirements_e="\
-evas >= ${efl_version} \
-ecore >= ${efl_version} \
-ecore-x >= ${efl_version} \
-ecore-evas >= ${efl_version} \
-ecore-con >= ${efl_version} \
-ecore-ipc >= ${efl_version} \
-ecore-file >= ${efl_version} \
-eet >= ${efl_version} \
-edje >= ${efl_version} \
-efreet >= ${efl_version} \
-efreet-mime >= ${efl_version} \
-efreet-trash >= ${efl_version} \
-eina >= ${efl_version} \
-eldbus >= ${efl_version} \
-eio >= ${efl_version} \
-eo >= ${efl_version} \
-elementary >= ${efl_version} \
-emotion >= ${efl_version} \
-$udisks_mount \
-$eeze_mount \
-$device_libs"
 
 PKG_CHECK_MODULES(E_OPEN, [
   eina >= ${efl_version}
@@ -589,15 +563,6 @@ PKG_CHECK_MODULES(E_OPEN, [
   efreet >= ${efl_version}
   efreet-mime >= ${efl_version}
 ])
-
-e_libs="$E_LIBS $LIBINTL $fnmatch_libs $execinfo_libs"
-e_cflags="-DUSE_E_CONFIG_H $E_CFLAGS"
-e_configflags="-DUSE_E_CONFIG_H"
-
-AC_SUBST([e_libs])
-AC_SUBST([e_cflags])
-AC_SUBST([e_configflags])
-AC_SUBST([requirements_e])
 
 PKG_CHECK_EXISTS([xkeyboard-config],[
   xkb_base=`$PKG_CONFIG --variable=xkb_base xkeyboard-config 2>/dev/null`
@@ -797,9 +762,6 @@ if test "x${have_wayland}" = "xyes"; then
   else
     have_wayland_egl=no
   fi
-  if test "x${e_cv_want_wayland_only}" != "xno"; then
-    have_wayland_only=yes
-  fi
 fi
 
 AM_CONDITIONAL([HAVE_WAYLAND], [test "x${have_wayland}" = "xyes"])
@@ -816,22 +778,21 @@ else
   ecore_x=false
 fi
 
+WL_X11=false
 define([CHECK_MODULE_WL_X11],
 [
-  if test "x${have_wayland}" = "xyes" ; then
-    PKG_CHECK_MODULES([ECORE_X], [ecore-x >= ${efl_version}], [have_wayland_only=no], [WL_X11=false])
-  fi
   if test "x${have_wayland}" = "xyes"; then
-    AC_E_CHECK_PKG(WL_X11, [ ecore-x >= ${efl_version} ], [WL_X11=true], [WL_X11=false])
+    AC_E_CHECK_PKG(WL_X11, [ ecore >= ${efl_version} ecore-x >= ${efl_version} ecore-evas >= ${efl_version} ], [WL_X11=true], [WL_X11=false])
   else
     WL_X11=false
   fi
 ])
 AM_CONDITIONAL([HAVE_WL_X11], [test "x${WL_X11}" = "xtrue"])
 
+WL_DESKTOP_SHELL=false
 define([CHECK_MODULE_WL_DESKTOP_SHELL],
 [
-  if test "x${e_cv_want_wayland_only}" = "xyes"; then
+  if test "x${have_wayland}" = "xyes"; then
     AC_E_CHECK_PKG(WL_DESKTOP_SHELL, [ ecore >= $efl_version eina >= $efl_version ], [WL_DESKTOP_SHELL=true], [WL_DESKTOP_SHELL=false])
   else
     WL_DESKTOP_SHELL=false
@@ -839,9 +800,10 @@ define([CHECK_MODULE_WL_DESKTOP_SHELL],
 ])
 AM_CONDITIONAL([HAVE_WL_DESKTOP_SHELL], [test "x${WL_DESKTOP_SHELL}" = "xtrue"])
 
+WL_FB=false
 define([CHECK_MODULE_WL_FB],
 [
-  if test "x${e_cv_want_wayland_only}" = "xyes"; then
+  if test "x${have_wayland}" = "xyes"; then
     AC_E_CHECK_PKG(WL_FB, [ ecore-fb >= $efl_version ecore >= $efl_version eina >= $efl_version ], [WL_FB=true], [WL_FB=false])
   else
     WL_FB=false
@@ -849,6 +811,7 @@ define([CHECK_MODULE_WL_FB],
 ])
 AM_CONDITIONAL([HAVE_WL_FB], [test "x${WL_FB}" = "xtrue"])
 
+WL_DRM=false
 define([CHECK_MODULE_WL_DRM],
 [
   if test "x${have_wayland}" = "xyes" ; then
@@ -859,35 +822,17 @@ define([CHECK_MODULE_WL_DRM],
 ])
 AM_CONDITIONAL([HAVE_WL_DRM], [test "x${WL_DRM}" = "xtrue"])
 
+HAVE_XWAYLAND_DEPS=false
 define([CHECK_MODULE_XWAYLAND],
 [
-  if test "x${e_cv_want_wayland_only}" = "xyes"; then
-    AC_E_CHECK_PKG(XWAYLAND, [ ecore >= $efl_version eina >= $efl_version xcb xcb-xfixes xcb-composite xcursor ], [HAVE_XWAYLAND_DEPS=true], [HAVE_XWAYLAND_DEPS=false])
+  if test "x${have_wayland}" = "xyes"; then
+    AC_E_CHECK_PKG(XWAYLAND, [ ecore >= ${efl_version} ecore-x >= ${efl_version}  ], [HAVE_XWAYLAND_DEPS=true], [HAVE_XWAYLAND_DEPS=false])
     AC_PATH_PROG([XWAYLAND_BIN], [Xwayland], [false])
   else
     HAVE_XWAYLAND_DEPS=false
   fi
 ])
-AM_CONDITIONAL([HAVE_XWAYLAND], [test "x${XWAYLAND_BIN}" != "xfalse"])
-
-if test "x${WL_X11}" = "xfalse" && test "x${have_wayland}" = "xyes" && test "x${HAVE_XWAYLAND_DEPS}" = "xfalse"; then
-  AC_DEFINE_UNQUOTED([HAVE_WAYLAND_ONLY],[1],[enable wayland-only version of enlightenment])
-else
-  have_wayland_only=no
-fi
-AM_CONDITIONAL([HAVE_WAYLAND_ONLY], [test "x${have_wayland_only}" = "xyes"])
-
-if test "x${have_wayland_only}" != "xyes"; then
-  PKG_CHECK_MODULES(E_ALERT, [
-    xcb
-    xcb-shape
-    xcb-keysyms
-    eina >= ${efl_version}
-    ecore >= ${efl_version}
-    ecore-ipc >= ${efl_version}
-  ])
-fi
-
+AM_CONDITIONAL([HAVE_XWAYLAND], [test "x${HAVE_XWAYLAND}" != "xno"])
 
 AC_E_OPTIONAL_MODULE([ibar], true)
 AC_E_OPTIONAL_MODULE([clock], true)
@@ -940,12 +885,72 @@ AC_E_OPTIONAL_MODULE([music_control], true, [CHECK_MODULE_MUSIC_CONTROL])
 AC_E_OPTIONAL_MODULE([packagekit], true)
 AC_E_OPTIONAL_MODULE([wl_desktop_shell], $have_wayland, [CHECK_MODULE_WL_DESKTOP_SHELL])
 AC_E_OPTIONAL_MODULE([wl_x11], $have_wayland, [CHECK_MODULE_WL_X11])
-AC_E_OPTIONAL_MODULE([wl_fb], $have_wayland, [CHECK_MODULE_WL_FB])
+#AC_E_OPTIONAL_MODULE([wl_fb], $have_wayland, [CHECK_MODULE_WL_FB])
 AC_E_OPTIONAL_MODULE([wl_drm], $have_wayland, [CHECK_MODULE_WL_DRM])
 #AC_E_OPTIONAL_MODULE([wl_screenshot], true, [CHECK_MODULE_WL_SCREENSHOT])
 AC_E_OPTIONAL_MODULE([policy_mobile], true)
 AC_E_OPTIONAL_MODULE([geolocation], true)
 AC_E_OPTIONAL_MODULE([xwayland], $have_wayland, [CHECK_MODULE_XWAYLAND])
+
+if test "x${HAVE_WL_X11}" != "xyes" && test "x${have_wayland}" = "xyes" && test "x${HAVE_XWAYLAND}" != "xyes"; then
+  AC_DEFINE_UNQUOTED([HAVE_WAYLAND_ONLY],[1],[enable wayland-only version of enlightenment])
+  have_wayland_only=yes
+else
+  have_wayland_only=no
+fi
+
+AM_CONDITIONAL([HAVE_WAYLAND_ONLY], [test "x${have_wayland_only}" = "xyes"])
+
+if test "x${have_wayland_only}" != "xyes"; then
+  PKG_CHECK_MODULES(E_ALERT, [
+    xcb
+    xcb-shape
+    xcb-keysyms
+    eina >= ${efl_version}
+    ecore >= ${efl_version}
+    ecore-ipc >= ${efl_version}
+  ])
+fi
+
+if test "x${have_wayland_only}" != "xyes"; then
+  e_requires="$e_requires ecore-x >= $efl_version"
+fi
+
+PKG_CHECK_MODULES(E, [$e_requires])
+requirements_e="\
+evas >= ${efl_version} \
+ecore >= ${efl_version} \
+ecore-x >= ${efl_version} \
+ecore-evas >= ${efl_version} \
+ecore-con >= ${efl_version} \
+ecore-ipc >= ${efl_version} \
+ecore-file >= ${efl_version} \
+eet >= ${efl_version} \
+edje >= ${efl_version} \
+efreet >= ${efl_version} \
+efreet-mime >= ${efl_version} \
+efreet-trash >= ${efl_version} \
+eina >= ${efl_version} \
+eldbus >= ${efl_version} \
+eio >= ${efl_version} \
+eo >= ${efl_version} \
+elementary >= ${efl_version} \
+emotion >= ${efl_version} \
+$udisks_mount \
+$eeze_mount \
+$device_libs"
+if test "x${have_wayland_only}" != "xyes"; then
+  requirements_e="$requirements_e ecore-x >= $efl_version"
+fi
+
+e_libs="$E_LIBS $LIBINTL $fnmatch_libs $execinfo_libs"
+e_cflags="-DUSE_E_CONFIG_H $E_CFLAGS"
+e_configflags="-DUSE_E_CONFIG_H"
+
+AC_SUBST([e_libs])
+AC_SUBST([e_cflags])
+AC_SUBST([e_configflags])
+AC_SUBST([requirements_e])
 
 HALT="/sbin/shutdown -h now"
 REBOOT="/sbin/shutdown -r now"
