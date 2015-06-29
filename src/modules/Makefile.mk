@@ -115,7 +115,7 @@ include src/modules/Makefile_wl_desktop_shell.mk
 
 include src/modules/Makefile_wl_x11.mk
 
-include src/modules/Makefile_wl_fb.mk
+#include src/modules/Makefile_wl_fb.mk
 
 include src/modules/Makefile_xwayland.mk
 
