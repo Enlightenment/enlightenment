@@ -446,11 +446,11 @@ AM_CONDITIONAL([HAVE_EEZE_MOUNT], [test -n "$eeze_mount"])
 # verify "wayland-only" early to adapt dependencies
 
 have_wayland_only=no
-AC_ARG_ENABLE([wayland-only],
-  AS_HELP_STRING([--enable-wayland-only],[enable wayland-only version of enlightenment @<:@default=disabled@:>@]),
+AC_ARG_ENABLE([wayland],
+  AS_HELP_STRING([--enable-wayland],[enable wayland support in enlightenment @<:@default=disabled@:>@]),
   [e_cv_want_wayland_only=$enableval],
   [e_cv_want_wayland_only=no])
-AC_MSG_CHECKING([whether wayland-only version is enabled])
+AC_MSG_CHECKING([whether wayland support is enabled])
 AC_MSG_RESULT([${e_cv_want_wayland_only}])
 
 # doxygen program for documentation building
