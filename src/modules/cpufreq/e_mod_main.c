@@ -566,13 +566,13 @@ _cpufreq_set_frequency(int frequency)
 }
 
 void
-_cpufreq_set_pstate(int min, int max, int turbo)
+_cpufreq_set_pstate(int min, int max)
 {
    char buf[4096];
    int ret;
 
    snprintf(buf, sizeof(buf),
-            "%s %s %i %i %i", cpufreq_config->set_exe_path, "pstate", min, max, turbo);
+            "%s %s %i %i %i", cpufreq_config->set_exe_path, "pstate", min, max, cpufreq_config->status->pstate_turbo);
    ret = system(buf);
    if (ret != 0)
      {
@@ -597,6 +597,7 @@ _cpufreq_cb_check(void *data __UNUSED__)
    Instance *inst;
    Eina_List *l;
    int active;
+   static Eina_Bool init_set = EINA_FALSE;
 
    if (cpufreq_config->menu_poll) return ECORE_CALLBACK_RENEW;
    active = cpufreq_config->status->active;
@@ -618,6 +619,12 @@ _cpufreq_cb_check(void *data __UNUSED__)
              else if (cpufreq_config->status->active == 1)
                edje_object_signal_emit(inst->o_cpu, "e,state,enabled", "e");
           }
+     }
+   if (!init_set)
+     {
+        _cpufreq_set_pstate(cpufreq_config->pstate_min - 1,
+                            cpufreq_config->pstate_max - 1);
+        init_set = 1;
      }
 
    return ECORE_CALLBACK_RENEW;
@@ -1277,7 +1284,7 @@ _cpufreq_menu_pstate_min(void *data, E_Menu *m __UNUSED__, E_Menu_Item *mi __UNU
    if (cpufreq_config->pstate_max < cpufreq_config->pstate_min)
      cpufreq_config->pstate_max = cpufreq_config->pstate_min;
    _cpufreq_set_pstate(cpufreq_config->pstate_min - 1,
-                       cpufreq_config->pstate_max - 1, 1);
+                       cpufreq_config->pstate_max - 1);
    e_config_save_queue();
 }
 
@@ -1289,7 +1296,7 @@ _cpufreq_menu_pstate_max(void *data, E_Menu *m __UNUSED__, E_Menu_Item *mi __UNU
    if (cpufreq_config->pstate_min > cpufreq_config->pstate_max)
      cpufreq_config->pstate_min = cpufreq_config->pstate_max;
    _cpufreq_set_pstate(cpufreq_config->pstate_min - 1, 
-                       cpufreq_config->pstate_max - 1, 1);
+                       cpufreq_config->pstate_max - 1);
    e_config_save_queue();
 }
 
@@ -1398,9 +1405,6 @@ e_modapi_init(E_Module *m)
                }
           }
      }
-
-   _cpufreq_set_pstate(cpufreq_config->pstate_min - 1, 
-                       cpufreq_config->pstate_max - 1, 1);
 
    cpufreq_config->module = m;
 
