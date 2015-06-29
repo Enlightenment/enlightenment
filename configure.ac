@@ -818,10 +818,10 @@ fi
 
 define([CHECK_MODULE_WL_X11],
 [
-  if test "x${have_wayland_only}" = "xyes" ; then
-    PKG_CHECK_MODULES([ECORE_X], [ecore-x >= ${efl_version}])
+  if test "x${have_wayland}" = "xyes" ; then
+    PKG_CHECK_MODULES([ECORE_X], [ecore-x >= ${efl_version}], [have_wayland_only=no], [WL_X11=false])
   fi
-  if test "x${have_wayland_only}" = "xyes"; then
+  if test "x${have_wayland}" = "xyes"; then
     AC_E_CHECK_PKG(WL_X11, [ ecore-x >= ${efl_version} ], [WL_X11=true], [WL_X11=false])
   else
     WL_X11=false
