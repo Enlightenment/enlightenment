@@ -14,7 +14,6 @@ _cb_delete_request(Ecore_Evas *ee EINA_UNUSED)
 static Eina_Bool 
 _cb_keymap_changed(void *data, int type EINA_UNUSED, void *event EINA_UNUSED)
 {
-   E_Comp_Data *cdata;
    E_Config_XKB_Layout *ekbd;
    char *rules = NULL, *model = NULL, *layout = NULL;
    Ecore_X_Atom xkb = 0;
@@ -23,8 +22,6 @@ _cb_keymap_changed(void *data, int type EINA_UNUSED, void *event EINA_UNUSED)
    unsigned char *dat;
 
    printf("KEYMAP CHANGED\n");
-
-   if (!(cdata = data)) return ECORE_CALLBACK_PASS_ON;
 
    /* try to fetch the E keyboard layout */
    if ((ekbd = e_xkb_layout_get()))
