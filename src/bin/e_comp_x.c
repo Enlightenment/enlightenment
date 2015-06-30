@@ -1931,7 +1931,11 @@ _e_comp_x_message(void *data EINA_UNUSED, int type EINA_UNUSED, Ecore_X_Event_Cl
    E_Client *ec;
 
    ec = _e_comp_x_client_find_by_window(ev->win);
-   if (!ec) return ECORE_CALLBACK_RENEW;
+   if (!ec)
+     {
+        DBG("missed client message '%s' for %u", ecore_x_atom_name_get(ev->message_type), ev->win);
+        return ECORE_CALLBACK_RENEW;
+     }
    if (ev->message_type == ECORE_X_ATOM_NET_WM_WINDOW_OPACITY)
      {
         ec->netwm.fetch.opacity = 1;
