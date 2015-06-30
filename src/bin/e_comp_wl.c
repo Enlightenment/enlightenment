@@ -917,6 +917,9 @@ _e_comp_wl_cb_key_up(void *event)
    E_Comp_Wl_Data *cdata;
    Ecore_Event_Key *ev;
    uint32_t serial, *end, *k, keycode;
+   struct wl_client *wc = NULL;
+   struct wl_resource *res;
+   Eina_List *l;
 
    ev = event;
    keycode = (ev->keycode - 8);
@@ -931,25 +934,24 @@ _e_comp_wl_cb_key_up(void *event)
    /* update modifier state */
    e_comp_wl_input_keyboard_state_update(keycode, EINA_FALSE);
 
-   if ((ec = e_client_focused_get()))
+   ec = e_client_focused_get();
+   if ((ec) && (ec->comp_data->surface))
      {
-        if (ec->comp_data->surface)
-          {
-             struct wl_client *wc;
-             struct wl_resource *res;
-             Eina_List *l;
+        wc = wl_resource_get_client(ec->comp_data->surface);
+     }
 
-             if (eina_list_count(cdata->kbd.resources))
+   if (eina_list_count(cdata->kbd.resources))
+     {
+        serial = wl_display_next_serial(cdata->wl.disp);
+        EINA_LIST_FOREACH(cdata->kbd.resources, l, res)
+          {
+             if (wc)
                {
-                  wc = wl_resource_get_client(ec->comp_data->surface);
-                  serial = wl_display_next_serial(cdata->wl.disp);
-                  EINA_LIST_FOREACH(cdata->kbd.resources, l, res)
-                    {
-                       if (wl_resource_get_client(res) != wc) continue;
-                       wl_keyboard_send_key(res, serial, ev->timestamp,
-                                       keycode, WL_KEYBOARD_KEY_STATE_RELEASED);
-                    }
-              }
+                  if (wl_resource_get_client(res) != wc) continue;
+               }
+
+             wl_keyboard_send_key(res, serial, ev->timestamp,
+                                  keycode, WL_KEYBOARD_KEY_STATE_RELEASED);
           }
      }
 
