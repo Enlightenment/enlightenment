@@ -1244,6 +1244,11 @@ _e_comp_x_show_helper(E_Client *ec)
      }
    else if (ec->override)
      {
+        if (e_comp->comp_type == E_PIXMAP_TYPE_WL)
+          {
+             ec->visible = 1;
+             return;
+          }
         ec->redirected = !ec->input_only;
         ec->changes.visible = ec->visible = 1;
         EC_CHANGED(ec);
