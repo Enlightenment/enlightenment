@@ -102,6 +102,8 @@ _abstract_socket_bind(int disp)
    if ((fd = socket(PF_LOCAL, (SOCK_STREAM | SOCK_CLOEXEC), 0)) < 0) 
      return -1;
 
+   ecore_file_mkpath("/tmp/.X11-unix");
+
    addr.sun_family = AF_LOCAL;
    nsize = snprintf(addr.sun_path, sizeof(addr.sun_path), 
                     "%c/tmp/.X11-unix/X%d", 0, disp);
