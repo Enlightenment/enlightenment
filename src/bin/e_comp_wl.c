@@ -223,7 +223,7 @@ _e_comp_wl_evas_cb_mouse_move(void *data, Evas *evas EINA_UNUSED, Evas_Object *o
    if (!(ec = data)) return;
    if (ec->cur_mouse_action) return;
    if (e_object_is_del(E_OBJECT(ec))) return;
-   if (e_client_util_ignored_get(ec)) return;
+   if (ec->ignored) return;
    if (!ec->comp_data->surface) return;
 
    wc = wl_resource_get_client(ec->comp_data->surface);
@@ -247,7 +247,7 @@ _e_comp_wl_evas_handle_mouse_button(E_Client *ec, uint32_t timestamp, uint32_t b
 
    if (ec->cur_mouse_action || ec->border_menu) return EINA_FALSE;
    if (e_object_is_del(E_OBJECT(ec))) return EINA_FALSE;
-   if (e_client_util_ignored_get(ec)) return EINA_FALSE;
+   if (ec->ignored) return EINA_FALSE;
 
    switch (button_id)
      {
@@ -318,7 +318,7 @@ _e_comp_wl_evas_cb_mouse_wheel(void *data, Evas *evas EINA_UNUSED, Evas_Object *
    if (!(ec = data)) return;
    if (ec->cur_mouse_action) return;
    if (e_object_is_del(E_OBJECT(ec))) return;
-   if (e_client_util_ignored_get(ec)) return;
+   if (ec->ignored) return;
 
    if (ev->direction == 0)
      axis = WL_POINTER_AXIS_VERTICAL_SCROLL;
