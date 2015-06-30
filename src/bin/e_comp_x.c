@@ -3468,7 +3468,7 @@ _e_comp_x_hook_client_fetch(void *d EINA_UNUSED, E_Client *ec)
              ec_parent->transients = eina_list_append(ec_parent->transients, ec);
              ec->parent = ec_parent;
           }
-        if (ec->parent)
+        if (ec->parent && (!e_client_util_ignored_get(ec)))
           {
              evas_object_layer_set(ec->frame, ec->parent->layer);
              if (ec->netwm.state.modal)
