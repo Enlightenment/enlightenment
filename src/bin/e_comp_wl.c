@@ -1091,10 +1091,11 @@ _e_comp_wl_surface_state_commit(E_Client *ec, E_Comp_Wl_Surface_State *state)
 {
    Eina_Bool first = EINA_FALSE;
    Eina_Rectangle *dmg;
-   Eina_Bool placed = EINA_TRUE;
+   Eina_Bool ignored, placed = EINA_TRUE;
    int x = 0, y = 0;
 
    first = !e_pixmap_usable_get(ec->pixmap);
+   ignored = ec->ignored;
 
    if (state->new_attach)
      e_comp_wl_surface_attach(ec, state->buffer);
@@ -1138,6 +1139,7 @@ _e_comp_wl_surface_state_commit(E_Client *ec, E_Comp_Wl_Surface_State *state)
              else
                {
                   ec->visible = EINA_TRUE;
+                  ec->ignored = 0;
                   evas_object_show(ec->frame);
                   ec->comp_data->mapped = evas_object_visible_get(ec->frame);
                }
@@ -1165,6 +1167,7 @@ _e_comp_wl_surface_state_commit(E_Client *ec, E_Comp_Wl_Surface_State *state)
    state->sy = 0;
    state->new_attach = EINA_FALSE;
 
+   ec->ignored = ignored;
    if (!ec->comp_data->mapped) goto unmapped;
 
    /* put state damages into surface */
@@ -2704,8 +2707,11 @@ e_comp_wl_surface_attach(E_Client *ec, E_Comp_Wl_Buffer *buffer)
 EINTERN Eina_Bool
 e_comp_wl_surface_commit(E_Client *ec)
 {
+   Eina_Bool ignored;
+
    _e_comp_wl_surface_state_commit(ec, &ec->comp_data->pending);
 
+   ignored = ec->ignored;
    /* schedule repaint */
    if (e_pixmap_refresh(ec->pixmap))
      {
@@ -2736,11 +2742,13 @@ e_comp_wl_surface_commit(E_Client *ec)
              else
                {
                   ec->visible = EINA_TRUE;
+                  ec->ignored = 0;
                   evas_object_show(ec->frame);
                   ec->comp_data->mapped = evas_object_visible_get(ec->frame);
                }
           }
      }
+   ec->ignored = ignored;
    return EINA_TRUE;
 }
 
