@@ -541,8 +541,11 @@ e_comp_wl_input_keymap_set(const char *rules, const char *model, const char *lay
    /* assemble xkb_rule_names so we can fetch keymap */
    memset(&names, 0, sizeof(names));
    if (rules) names.rules = strdup(rules);
+   else names.rules = strdup("evdev");
    if (model) names.model = strdup(model);
+   else names.model = strdup("pc105");
    if (layout) names.layout = strdup(layout);
+   else names.layout = strdup("us");
 
    /* unreference any existing context */
    if (e_comp->wl_comp_data->xkb.context) xkb_context_unref(e_comp->wl_comp_data->xkb.context);
@@ -552,9 +555,11 @@ e_comp_wl_input_keymap_set(const char *rules, const char *model, const char *lay
 
    /* fetch new keymap based on names */
    keymap = xkb_map_new_from_names(e_comp->wl_comp_data->xkb.context, &names, 0);
-
-   /* update compositor keymap */
-   _e_comp_wl_input_keymap_update(keymap);
+   if (keymap)
+     {
+        /* update compositor keymap */
+        _e_comp_wl_input_keymap_update(keymap);
+     }
 
    /* cleanup */
    free((char *)names.rules);
