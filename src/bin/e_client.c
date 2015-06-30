@@ -20,7 +20,7 @@ E_API int E_EVENT_CLIENT_PROPERTY = -1;
 E_API int E_EVENT_CLIENT_FULLSCREEN = -1;
 E_API int E_EVENT_CLIENT_UNFULLSCREEN = -1;
 
-static Eina_Hash *clients_hash = NULL; // pixmap->client
+static Eina_Hash *clients_hash[2] = {NULL}; // pixmap->client
 
 static int focus_track_frozen = 0;
 
@@ -643,7 +643,7 @@ _e_client_del(E_Client *ec)
    EINA_LIST_FREE(ec->group, child)
      child->leader = NULL;
 
-   eina_hash_del_by_key(clients_hash, &ec->pixmap);
+   eina_hash_del_by_key(clients_hash[e_pixmap_type_get(ec->pixmap)], &ec->pixmap);
    e_comp->clients = eina_list_remove(e_comp->clients, ec);
    e_comp_object_render_update_del(ec->frame);
    if (e_pixmap_free(ec->pixmap))
@@ -2318,8 +2318,7 @@ e_client_idler_before(void)
    const Eina_List *l;
    E_Client *ec;
 
-   if (!eina_hash_population(clients_hash)) return;
-
+   if ((!eina_hash_population(clients_hash[0])) && (!eina_hash_population(clients_hash[1]))) return;
 
 
    EINA_LIST_FOREACH(e_comp->clients, l, ec)
@@ -2400,7 +2399,8 @@ e_client_idler_before(void)
 EINTERN Eina_Bool
 e_client_init(void)
 {
-   clients_hash = eina_hash_pointer_new(NULL);
+   clients_hash[0] = eina_hash_pointer_new(NULL);
+   clients_hash[1] = eina_hash_pointer_new(NULL);
 
    E_LIST_HANDLER_APPEND(handlers, E_EVENT_POINTER_WARP,
                          _e_client_cb_pointer_warp, NULL);
@@ -2432,13 +2432,14 @@ e_client_init(void)
    E_EVENT_CLIENT_FULLSCREEN = ecore_event_type_new();
    E_EVENT_CLIENT_UNFULLSCREEN = ecore_event_type_new();
 
-   return (!!clients_hash);
+   return (!!clients_hash[1]);
 }
 
 EINTERN void
 e_client_shutdown(void)
 {
-   E_FREE_FUNC(clients_hash, eina_hash_free);
+   E_FREE_FUNC(clients_hash[0], eina_hash_free);
+   E_FREE_FUNC(clients_hash[1], eina_hash_free);
 
    E_FREE_LIST(handlers, ecore_event_handler_del);
 
@@ -2452,7 +2453,7 @@ e_client_new(E_Pixmap *cp, int first_map, int internal)
 {
    E_Client *ec;
 
-   if (eina_hash_find(clients_hash, &cp)) return NULL;
+   if (eina_hash_find(clients_hash[e_pixmap_type_get(cp)], &cp)) return NULL;
 
    ec = E_OBJECT_ALLOC(E_Client, E_CLIENT_TYPE, _e_client_free);
    if (!ec) return NULL;
@@ -2547,7 +2548,7 @@ e_client_new(E_Pixmap *cp, int first_map, int internal)
    EC_CHANGED(ec);
 
    e_comp->clients = eina_list_append(e_comp->clients, ec);
-   eina_hash_add(clients_hash, &ec->pixmap, ec);
+   eina_hash_add(clients_hash[e_pixmap_type_get(cp)], &ec->pixmap, ec);
 
    _e_client_event_simple(ec, E_EVENT_CLIENT_ADD);
    e_comp_object_client_add(ec);
