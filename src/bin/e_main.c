@@ -517,7 +517,8 @@ main(int argc, char **argv)
    _e_main_shutdown_push(e_alert_shutdown);
 #endif
 
-#ifdef HAVE_WAYLAND
+#ifdef 0
+//#ifdef HAVE_WAYLAND
    /* init uuid store for window/surface properties */
    TS("E_UUID_Store Init");
    if (!e_uuid_store_init())
