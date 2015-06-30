@@ -12,7 +12,7 @@ _cb_delete_request(Ecore_Evas *ee EINA_UNUSED)
 }
 
 static Eina_Bool 
-_cb_keymap_changed(void *data, int type EINA_UNUSED, void *event EINA_UNUSED)
+_cb_keymap_changed(void *data EINA_UNUSED, int type EINA_UNUSED, void *event EINA_UNUSED)
 {
    E_Config_XKB_Layout *ekbd;
    char *rules = NULL, *model = NULL, *layout = NULL;
