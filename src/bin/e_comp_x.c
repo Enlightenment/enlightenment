@@ -1,3 +1,4 @@
+#define EXECUTIVE_MODE_ENABLED
 #define E_COMP_X
 #include "e.h"
 
@@ -5351,7 +5352,17 @@ e_comp_x_xwayland_client_setup(E_Client *ec, E_Client *wc)
    eina_hash_set(clients_win_hash, &win, wc);
    wc->visible = 1;
    wc->ignored = 0;
+   if (ec->override)
+     e_client_focus_stack_set(eina_list_remove(e_client_focus_stack_get(), wc));
    evas_object_show(wc->frame);
+   evas_object_name_set(wc->frame, evas_object_name_get(ec->frame));
+   wc->x = ec->x, wc->y = ec->y;
+   wc->client.x = ec->client.x, wc->client.y = ec->client.y;
+   wc->w = ec->w, wc->h = ec->h;
+   wc->client.x = ec->client.x, wc->client.y = ec->client.y;
+   wc->layer = ec->layer;
+   evas_object_layer_set(wc->frame, evas_object_layer_get(ec->frame));
+   evas_object_geometry_set(wc->frame, ec->x, ec->y, ec->w, ec->h);
    e_object_del(E_OBJECT(ec));
    e_hints_window_visible_set(wc);
    _e_comp_x_client_stack(wc);
