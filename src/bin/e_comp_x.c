@@ -5332,6 +5332,7 @@ e_comp_x_xwayland_client_setup(E_Client *ec, E_Client *wc)
 
    eina_hash_set(clients_win_hash, &win, wc);
    wc->visible = 1;
+   wc->ignored = 0;
    evas_object_show(wc->frame);
    e_object_del(E_OBJECT(ec));
    e_hints_window_visible_set(wc);
