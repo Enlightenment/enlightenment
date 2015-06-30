@@ -4366,6 +4366,15 @@ _e_comp_x_hook_client_del(void *d EINA_UNUSED, E_Client *ec)
      }
    if (cd)
      E_FREE_FUNC(cd->first_draw_delay, ecore_timer_del);
+#ifdef HAVE_WAYLAND
+   if (e_pixmap_is_x(ec->pixmap))
+     e_comp_wl_client_xwayland_setup(ec, NULL, NULL);
+   else
+     {
+        free(cd);
+        e_pixmap_free(_e_comp_x_client_pixmap_get(ec));
+     }
+#endif
    if (post_clients)
      post_clients = eina_list_remove(post_clients, ec);
 

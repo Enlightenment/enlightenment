@@ -322,9 +322,13 @@ e_comp_wl_client_xwayland_pixmap(const E_Client *ec)
 static inline void
 e_comp_wl_client_xwayland_setup(E_Client *ec, E_Comp_X_Client_Data *cd, E_Pixmap *ep)
 {
-   ((E_Comp_Wl_Client_Data*)ec->comp_data)->xwayland_data = cd;
-   ((E_Comp_Wl_Client_Data*)ec->comp_data)->xwayland_pixmap = ep;
-   e_comp->wl_comp_data->xwl_pending = eina_list_remove(e_comp->wl_comp_data->xwl_pending, ec);
+   if (cd && ep)
+     {
+        ((E_Comp_Wl_Client_Data*)ec->comp_data)->xwayland_data = cd;
+        ((E_Comp_Wl_Client_Data*)ec->comp_data)->xwayland_pixmap = ep;
+     }
+   if (e_comp->wl_comp_data->xwl_pending)
+     e_comp->wl_comp_data->xwl_pending = eina_list_remove(e_comp->wl_comp_data->xwl_pending, ec);
 }
 #  endif
 # endif
