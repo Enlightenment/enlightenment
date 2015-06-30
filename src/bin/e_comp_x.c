@@ -143,7 +143,7 @@ _e_comp_x_focus_setup(E_Client *ec)
 static void
 _e_comp_x_focus_setdown(E_Client *ec)
 {
-   Ecore_X_Window win = e_client_util_pwin_get(ec);
+   Ecore_X_Window win = e_client_util_win_get(ec);
 
    if (!ec->comp_data->button_grabbed) return;
    e_bindings_mouse_ungrab(E_BINDING_CONTEXT_WINDOW, win);
