@@ -621,6 +621,7 @@ _e_client_del(E_Client *ec)
    E_FREE_FUNC(ec->ping_poller, ecore_poller_del);
    /* must be called before parent/child clear */
    _e_client_hook_call(E_CLIENT_HOOK_DEL, ec);
+   E_FREE(ec->comp_data);
 
    if ((!ec->new_client) && (!stopping))
      _e_client_event_simple(ec, E_EVENT_CLIENT_REMOVE);

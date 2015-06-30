@@ -2168,7 +2168,6 @@ _e_comp_wl_client_cb_del(void *data EINA_UNUSED, E_Client *ec)
    if (ec->comp_data->surface)
      wl_resource_set_user_data(ec->comp_data->surface, NULL);
 
-   E_FREE(ec->comp_data);
    if (ec->internal_elm_win)
      _e_comp_wl_surface_render_stop(ec);
    _e_comp_wl_focus_check();

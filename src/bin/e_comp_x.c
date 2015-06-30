@@ -4361,7 +4361,6 @@ _e_comp_x_hook_client_del(void *d EINA_UNUSED, E_Client *ec)
      }
    if (cd)
      E_FREE_FUNC(cd->first_draw_delay, ecore_timer_del);
-   E_FREE(cd);
    if (post_clients)
      post_clients = eina_list_remove(post_clients, ec);
 
