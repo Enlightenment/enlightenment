@@ -1498,7 +1498,7 @@ _e_comp_wl_compositor_cb_surface_create(struct wl_client *client, struct wl_reso
    EINA_LIST_FOREACH(e_comp->wl_comp_data->xwl_pending, l, wc)
      {
         if (!e_pixmap_is_x(wc->pixmap)) continue;
-        if (wl_resource_get_id(res) != ((E_Comp_X_Client_Data*)ec->comp_data)->surface_id) continue;
+        if (wl_resource_get_id(res) != ((E_Comp_X_Client_Data*)wc->comp_data)->surface_id) continue;
         e_comp_x_xwayland_client_setup(wc, ec);
         break;
      }
