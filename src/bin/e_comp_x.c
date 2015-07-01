@@ -4197,8 +4197,8 @@ _e_comp_x_hook_client_del(void *d EINA_UNUSED, E_Client *ec)
    if ((!ec->already_unparented) && ec->comp_data->reparented)
      {
         _e_comp_x_focus_setdown(ec);
-        e_bindings_mouse_ungrab(E_BINDING_CONTEXT_WINDOW, e_client_util_pwin_get(ec));
-        e_bindings_wheel_ungrab(E_BINDING_CONTEXT_WINDOW, e_client_util_pwin_get(ec));
+        e_bindings_mouse_ungrab(E_BINDING_CONTEXT_WINDOW, e_client_util_win_get(ec));
+        e_bindings_wheel_ungrab(E_BINDING_CONTEXT_WINDOW, e_client_util_win_get(ec));
         if (!ec->comp_data->deleted)
           {
              if (stopping)
