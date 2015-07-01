@@ -176,12 +176,8 @@ _e_comp_x_print_win(Ecore_X_Window win)
 }
 
 static void
-_e_comp_x_focus_setup(E_Client *ec)
+_e_comp_x_focus_grab(E_Client *ec)
 {
-   if (_e_comp_x_client_data_get(ec)->button_grabbed) return;
-   if ((!e_client_focus_policy_click(ec)) ||
-       (e_config->always_click_to_raise) ||
-       (e_config->always_click_to_focus)) return;
    ecore_x_window_button_grab(_e_comp_x_client_util_win_get(ec), 1,
                               ECORE_X_EVENT_MASK_MOUSE_DOWN |
                               ECORE_X_EVENT_MASK_MOUSE_UP |
@@ -195,6 +191,26 @@ _e_comp_x_focus_setup(E_Client *ec)
                               ECORE_X_EVENT_MASK_MOUSE_UP |
                               ECORE_X_EVENT_MASK_MOUSE_MOVE, 0, 1);
    _e_comp_x_client_data_get(ec)->button_grabbed = 1;
+}
+
+static void
+_e_comp_x_focus_init(E_Client *ec)
+{
+   if (_e_comp_x_client_data_get(ec)->button_grabbed) return;
+   if (!((e_client_focus_policy_click(ec)) ||
+       (e_config->always_click_to_raise) ||
+       (e_config->always_click_to_focus))) return;
+   _e_comp_x_focus_grab(ec);
+}
+
+static void
+_e_comp_x_focus_setup(E_Client *ec)
+{
+   if (_e_comp_x_client_data_get(ec)->button_grabbed) return;
+   if ((!e_client_focus_policy_click(ec)) ||
+       (e_config->always_click_to_raise) ||
+       (e_config->always_click_to_focus)) return;
+   _e_comp_x_focus_grab(ec);
 }
 
 
@@ -2905,14 +2921,9 @@ _e_comp_x_hook_client_pre_frame_assign(void *d EINA_UNUSED, E_Client *ec)
         ecore_x_window_show(pwin);
      }
 
-   if (ec->focused)
-     _e_comp_x_focus_setdown(ec);
-   else
-     {
-        _e_comp_x_focus_setup(ec);
-        e_bindings_mouse_grab(E_BINDING_CONTEXT_WINDOW, win);
-        e_bindings_wheel_grab(E_BINDING_CONTEXT_WINDOW, win);
-     }
+   _e_comp_x_focus_init(ec);
+   e_bindings_mouse_grab(E_BINDING_CONTEXT_WINDOW, win);
+   e_bindings_wheel_grab(E_BINDING_CONTEXT_WINDOW, win);
    _e_comp_x_client_evas_init(ec);
    if (ec->netwm.ping && (!ec->ping_poller))
      e_client_ping(ec);
@@ -4922,6 +4933,7 @@ _e_comp_x_bindings_grab_cb(void)
    EINA_LIST_FOREACH(e_comp->clients, l, ec)
      {
         if (e_client_util_ignored_get(ec)) continue;
+        _e_comp_x_focus_init(ec);
         if (ec->focused)
           _e_comp_x_focus_setdown(ec);
         else
