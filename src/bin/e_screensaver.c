@@ -83,7 +83,7 @@ e_screensaver_update(void)
         changed = EINA_TRUE;
      }
 
-   if (e_comp->comp_type == E_PIXMAP_TYPE_X)
+   if (e_comp_util_has_x())
      {
         if (changed)
           ecore_x_screensaver_set(timeout, interval, blanking, expose);
@@ -96,7 +96,7 @@ e_screensaver_force_update(void)
 {
 #ifndef HAVE_WAYLAND_ONLY
    int timeout = e_screensaver_timeout_get(EINA_TRUE);
-   if (e_comp->comp_type == E_PIXMAP_TYPE_X)
+   if (e_comp_util_has_x())
      {
         ecore_x_screensaver_set(timeout + 10,
                                 0,
@@ -440,7 +440,7 @@ E_API void
 e_screensaver_activate(void)
 {
 #ifndef HAVE_WAYLAND_ONLY
-   if (e_comp->comp_type == E_PIXMAP_TYPE_X)
+   if (e_comp_util_has_x())
      {
         ecore_x_screensaver_activate();
      }
@@ -452,7 +452,7 @@ E_API void
 e_screensaver_deactivate(void)
 {
 #ifndef HAVE_WAYLAND_ONLY
-   if (e_comp->comp_type == E_PIXMAP_TYPE_X)
+   if (e_comp_util_has_x())
      {
         ecore_x_screensaver_reset();
      }

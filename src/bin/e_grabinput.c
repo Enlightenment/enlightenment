@@ -39,7 +39,7 @@ e_grabinput_get(Ecore_Window mouse_win, int confine_mouse, Ecore_Window key_win)
    if (grab_mouse_win)
      {
 #ifndef HAVE_WAYLAND_ONLY
-        if (e_comp->root)
+        if (e_comp_util_has_x())
           ecore_x_pointer_ungrab();
 #else
         if (e_comp->comp_type == E_PIXMAP_TYPE_WL)
@@ -50,7 +50,7 @@ e_grabinput_get(Ecore_Window mouse_win, int confine_mouse, Ecore_Window key_win)
    if (grab_key_win)
      {
 #ifndef HAVE_WAYLAND_ONLY
-        if (e_comp->root)
+        if (e_comp_util_has_x())
           ecore_x_keyboard_ungrab();
 #else
         if (e_comp->comp_type == E_PIXMAP_TYPE_WL)
@@ -63,7 +63,7 @@ e_grabinput_get(Ecore_Window mouse_win, int confine_mouse, Ecore_Window key_win)
    if (mouse_win)
      {
 #ifndef HAVE_WAYLAND_ONLY
-        if (e_comp->root)
+        if (e_comp_util_has_x())
           {
              int ret = 0;
              if (confine_mouse)
@@ -86,7 +86,7 @@ e_grabinput_get(Ecore_Window mouse_win, int confine_mouse, Ecore_Window key_win)
    if (key_win)
      {
 #ifndef HAVE_WAYLAND_ONLY
-        if (e_comp->root)
+        if (e_comp_util_has_x())
           {
              int ret = 0;
 
@@ -124,7 +124,7 @@ e_grabinput_release(Ecore_Window mouse_win, Ecore_Window key_win)
    if (mouse_win == grab_mouse_win)
      {
 #ifndef HAVE_WAYLAND_ONLY
-        if (e_comp->root)
+        if (e_comp_util_has_x())
           ecore_x_pointer_ungrab();
 #else
         if (e_comp->comp_type == E_PIXMAP_TYPE_WL)
@@ -136,7 +136,7 @@ e_grabinput_release(Ecore_Window mouse_win, Ecore_Window key_win)
    if (key_win == grab_key_win)
      {
 #ifndef HAVE_WAYLAND_ONLY
-        if (e_comp->root)
+        if (e_comp_util_has_x())
           ecore_x_keyboard_ungrab();
 #else
         if (e_comp->comp_type == E_PIXMAP_TYPE_WL)
@@ -229,7 +229,7 @@ _e_grabinput_focus_do(Ecore_Window win, E_Focus_Method method)
 
       case E_FOCUS_METHOD_LOCALLY_ACTIVE:
 #ifndef HAVE_WAYLAND_ONLY
-        if (e_comp->root)
+        if (e_comp_util_has_x())
           {
              ecore_x_window_focus_at_time(win, ecore_x_current_time_get());
              ecore_x_icccm_take_focus_send(win, ecore_x_current_time_get());
@@ -248,7 +248,7 @@ _e_grabinput_focus_do(Ecore_Window win, E_Focus_Method method)
 
       case E_FOCUS_METHOD_GLOBALLY_ACTIVE:
 #ifndef HAVE_WAYLAND_ONLY
-        if (e_comp->root)
+        if (e_comp_util_has_x())
           ecore_x_icccm_take_focus_send(win, ecore_x_current_time_get());
 #else
         if (e_comp->comp_type == E_PIXMAP_TYPE_WL)
@@ -263,7 +263,7 @@ _e_grabinput_focus_do(Ecore_Window win, E_Focus_Method method)
 
       case E_FOCUS_METHOD_PASSIVE:
 #ifndef HAVE_WAYLAND_ONLY
-        if (e_comp->root)
+        if (e_comp_util_has_x())
           ecore_x_window_focus_at_time(win, ecore_x_current_time_get());
 #else
         if (e_comp->comp_type == E_PIXMAP_TYPE_WL)

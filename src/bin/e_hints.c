@@ -303,7 +303,7 @@ e_hints_client_list_set(void)
    unsigned int i = 0;
    Ecore_X_Window *clients = NULL;
 
-   if (e_comp->comp_type != E_PIXMAP_TYPE_X) return;
+   if (!e_comp_util_has_x()) return;
    if (e_comp->clients)
      {
         E_Client *ec;
@@ -388,7 +388,7 @@ e_hints_active_window_set(E_Client *ec)
 #ifdef HAVE_WAYLAND_ONLY
    (void)ec;
 #else
-   if (e_comp->comp_type != E_PIXMAP_TYPE_X) return;
+   if (!e_comp_util_has_x()) return;
    if (ec && (e_pixmap_type_get(ec->pixmap) == E_PIXMAP_TYPE_X))
      ecore_x_netwm_client_active_set(e_comp->root, e_client_util_win_get(ec));
    else
