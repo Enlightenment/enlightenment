@@ -198,7 +198,7 @@ e_grabinput_mouse_win_get(void)
 static Eina_Bool
 _e_grabinput_focus_check(void *data EINA_UNUSED)
 {
-   if (e_comp->comp_type != E_PIXMAP_TYPE_X)
+   if (!e_comp->root)
      {
         focus_fix_timer = NULL;
         return EINA_FALSE;
