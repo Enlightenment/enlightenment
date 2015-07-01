@@ -25,7 +25,8 @@ e_scale_update(void)
 #ifndef HAVE_WAYLAND_ONLY
         if (e_comp->comp_type == E_PIXMAP_TYPE_X)
           e_scale = (double)ecore_x_dpi_get() / (double)e_config->scale.base_dpi;
-#else
+#endif
+#ifdef HAVE_WAYLAND
         if (e_comp->comp_type == E_PIXMAP_TYPE_WL)
           e_scale = (double)ecore_wl_dpi_get() / (double)e_config->scale.base_dpi;
 #endif
