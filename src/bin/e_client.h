@@ -821,6 +821,7 @@ E_API int e_client_pointer_warp_to_center_now(E_Client *ec);
 E_API int e_client_pointer_warp_to_center(E_Client *ec);
 E_API void e_client_redirected_set(E_Client *ec, Eina_Bool set);
 E_API Eina_Bool e_client_is_stacking(const E_Client *ec);
+E_API Eina_Bool e_client_has_xwindow(const E_Client *ec);
 E_API Eina_Bool e_client_desk_window_profile_available_check(E_Client *ec, const char *profile);
 E_API void      e_client_desk_window_profile_wait_desk_set(E_Client *ec, E_Desk *desk);
 E_API void      e_client_layout_cb_set(E_Client_Layout_Cb cb);

@@ -4913,6 +4913,20 @@ e_client_is_stacking(const E_Client *ec)
    return e_comp->layers[e_comp_canvas_layer_map(ec->layer)].obj == ec->frame;
 }
 
+E_API Eina_Bool
+e_client_has_xwindow(const E_Client *ec)
+{
+#ifdef HAVE_WAYLAND_ONLY
+   (void)ec;
+   return EINA_FALSE;
+#endif
+#ifdef HAVE_WAYLAND
+   if (!e_pixmap_is_x(ec->pixmap))
+     return !!e_comp_wl_client_xwayland_pixmap(ec);
+#endif
+   return e_pixmap_is_x(ec->pixmap);
+}
+
 ////////////////////////////////////////////
 
 E_API void
