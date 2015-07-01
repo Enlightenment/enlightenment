@@ -119,6 +119,9 @@ _e_comp_x_print_win(Ecore_X_Window win)
 static void
 _e_comp_x_focus_grab(E_Client *ec)
 {
+#if EFL_VERSION_MAJOR > 1 || EFL_VERSION_MINOR > 14
+   if (ec->internal_ecore_evas) return;
+#endif
    ecore_x_window_button_grab(e_client_util_win_get(ec), 1,
                               ECORE_X_EVENT_MASK_MOUSE_DOWN |
                               ECORE_X_EVENT_MASK_MOUSE_UP |
