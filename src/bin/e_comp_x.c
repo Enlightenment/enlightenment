@@ -2718,6 +2718,7 @@ _e_comp_x_grab_replay(void *data EINA_UNUSED, int type, void *event)
    ec = _e_comp_x_client_find_by_window(ev->event_window);
    if (!ec) return ECORE_CALLBACK_DONE;
    if (ec->cur_mouse_action) return ECORE_CALLBACK_DONE;
+   if (ev->event_window != _e_comp_x_client_util_win_get(ec)) return ECORE_CALLBACK_DONE;
    e_bindings_ecore_event_mouse_button_convert(ev, &ev2);
    return !e_bindings_mouse_button_find(E_BINDING_CONTEXT_WINDOW,
                                         &ev2, NULL);
