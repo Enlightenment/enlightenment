@@ -158,9 +158,13 @@ _e_comp_x_focus_setup(E_Client *ec)
 static void
 _e_comp_x_focus_setdown(E_Client *ec)
 {
-   Ecore_X_Window win = e_client_util_win_get(ec);
+   Ecore_X_Window win;
 
    if (!ec->comp_data->button_grabbed) return;
+   if ((!e_client_focus_policy_click(ec)) ||
+       (e_config->always_click_to_raise) ||
+       (e_config->always_click_to_focus)) return;
+   win = e_client_util_win_get(ec);
    e_bindings_mouse_ungrab(E_BINDING_CONTEXT_WINDOW, win);
    e_bindings_wheel_ungrab(E_BINDING_CONTEXT_WINDOW, win);
    ecore_x_window_button_ungrab(win, 1, 0, 1);
