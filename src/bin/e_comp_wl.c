@@ -903,11 +903,7 @@ _e_comp_wl_cb_key_down(void *event)
           }
      }
 
-   if (cdata->kbd.mod_changed)
-     {
-        e_comp_wl_input_keyboard_modifiers_update();
-        cdata->kbd.mod_changed = 0;
-     }
+   e_comp_wl_input_keyboard_modifiers_update();
 }
 
 static void
@@ -955,11 +951,7 @@ _e_comp_wl_cb_key_up(void *event)
           }
      }
 
-   if (cdata->kbd.mod_changed)
-     {
-        e_comp_wl_input_keyboard_modifiers_update();
-        cdata->kbd.mod_changed = 0;
-     }
+   e_comp_wl_input_keyboard_modifiers_update();
 }
 
 static void
