@@ -270,9 +270,9 @@ _cb_signal_event(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
 }
 
 /* module functions */
-EAPI E_Module_Api e_modapi = { E_MODULE_API_VERSION, "XWayland" };
+E_API E_Module_Api e_modapi = { E_MODULE_API_VERSION, "XWayland" };
 
-EAPI void *
+E_API void *
 e_modapi_init(E_Module *m)
 {
    char disp[8];
@@ -351,7 +351,7 @@ lock:
    return m;
 }
 
-EAPI int 
+E_API int 
 e_modapi_shutdown(E_Module *m EINA_UNUSED)
 {
    char path[256];
