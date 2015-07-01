@@ -453,10 +453,6 @@ e_comp_wl_input_shutdown(void)
    /* destroy e_comp->wl_comp_data->kbd.keys array */
    wl_array_release(&e_comp->wl_comp_data->kbd.keys);
 
-   /* unreference any existing keymap */
-   if (e_comp->wl_comp_data->xkb.keymap)
-     xkb_map_unref(e_comp->wl_comp_data->xkb.keymap);
-
    /* unmap any existing keyboard area */
    if (e_comp->wl_comp_data->xkb.area)
      munmap(e_comp->wl_comp_data->xkb.area, e_comp->wl_comp_data->xkb.size);
@@ -465,6 +461,10 @@ e_comp_wl_input_shutdown(void)
    /* unreference any existing keyboard state */
    if (e_comp->wl_comp_data->xkb.state)
      xkb_state_unref(e_comp->wl_comp_data->xkb.state);
+
+   /* unreference any existing keymap */
+   if (e_comp->wl_comp_data->xkb.keymap)
+     xkb_map_unref(e_comp->wl_comp_data->xkb.keymap);
 
    /* unreference any existing context */
    if (e_comp->wl_comp_data->xkb.context)
