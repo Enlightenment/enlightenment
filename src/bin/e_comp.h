@@ -225,5 +225,11 @@ e_comp_util_client_is_fullscreen(const E_Client *ec)
        );
 }
 
+static inline Eina_Bool
+e_comp_util_has_x(void)
+{
+   return !!e_comp->root;
+}
+
 #endif
 #endif
