@@ -65,7 +65,8 @@ e_xkb_update(int cur_group)
      {
         _e_xkb_cur_group = cur_group;
 #ifndef HAVE_WAYLAND_ONLY
-        ecore_x_xkb_select_group(cur_group);
+        if (e_comp->comp_type == E_PIXMAP_TYPE_X)
+          ecore_x_xkb_select_group(cur_group);
 #endif
         e_deskenv_xmodmap_run();
         _e_xkb_update_event(cur_group);
