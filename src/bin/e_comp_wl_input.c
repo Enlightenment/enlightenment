@@ -88,7 +88,8 @@ static const struct wl_touch_interface _e_touch_interface =
 static void
 _e_comp_wl_input_cb_pointer_unbind(struct wl_resource *resource)
 {
-   e_comp->wl_comp_data->ptr.resources = eina_list_remove(e_comp->wl_comp_data->ptr.resources, resource);
+   e_comp->wl_comp_data->ptr.resources =
+     eina_list_remove(e_comp->wl_comp_data->ptr.resources, resource);
 }
 
 static void
@@ -101,20 +102,24 @@ _e_comp_wl_input_cb_pointer_get(struct wl_client *client, struct wl_resource *re
                             wl_resource_get_version(resource), id);
    if (!res)
      {
-        ERR("Could not create pointer on seat %s: %m", e_comp->wl_comp_data->seat.name);
+        ERR("Could not create pointer on seat %s: %m",
+            e_comp->wl_comp_data->seat.name);
         wl_client_post_no_memory(client);
         return;
      }
 
-   e_comp->wl_comp_data->ptr.resources = eina_list_append(e_comp->wl_comp_data->ptr.resources, res);
-   wl_resource_set_implementation(res, &_e_pointer_interface, e_comp->wl_comp_data,
+   e_comp->wl_comp_data->ptr.resources =
+     eina_list_append(e_comp->wl_comp_data->ptr.resources, res);
+   wl_resource_set_implementation(res, &_e_pointer_interface,
+                                  e_comp->wl_comp_data,
                                  _e_comp_wl_input_cb_pointer_unbind);
 }
 
 static void
 _e_comp_wl_input_cb_keyboard_unbind(struct wl_resource *resource)
 {
-   e_comp->wl_comp_data->kbd.resources = eina_list_remove(e_comp->wl_comp_data->kbd.resources, resource);
+   e_comp->wl_comp_data->kbd.resources =
+     eina_list_remove(e_comp->wl_comp_data->kbd.resources, resource);
 }
 
 void
@@ -158,23 +163,26 @@ _e_comp_wl_input_cb_keyboard_get(struct wl_client *client, struct wl_resource *r
                             wl_resource_get_version(resource), id);
    if (!res)
      {
-        ERR("Could not create keyboard on seat %s: %m", e_comp->wl_comp_data->seat.name);
+        ERR("Could not create keyboard on seat %s: %m",
+            e_comp->wl_comp_data->seat.name);
         wl_client_post_no_memory(client);
         return;
      }
 
-   e_comp->wl_comp_data->kbd.resources = eina_list_append(e_comp->wl_comp_data->kbd.resources, res);
-   wl_resource_set_implementation(res, &_e_keyboard_interface, e_comp->wl_comp_data,
+   e_comp->wl_comp_data->kbd.resources =
+     eina_list_append(e_comp->wl_comp_data->kbd.resources, res);
+   wl_resource_set_implementation(res, &_e_keyboard_interface,
+                                  e_comp->wl_comp_data,
                                   _e_comp_wl_input_cb_keyboard_unbind);
 
    /* send current keymap */
    wl_keyboard_send_keymap(res, WL_KEYBOARD_KEYMAP_FORMAT_XKB_V1,
-                           e_comp->wl_comp_data->xkb.fd, e_comp->wl_comp_data->xkb.size);
+                           e_comp->wl_comp_data->xkb.fd,
+                           e_comp->wl_comp_data->xkb.size);
 
    /* if the client owns the focused surface, we need to send an enter */
    focused = e_client_focused_get();
-   if (!focused)
-     return;
+   if (!focused) return;
 
    e_comp_wl_input_keyboard_enter_send(focused);
 }
@@ -182,7 +190,8 @@ _e_comp_wl_input_cb_keyboard_get(struct wl_client *client, struct wl_resource *r
 static void
 _e_comp_wl_input_cb_touch_unbind(struct wl_resource *resource)
 {
-   e_comp->wl_comp_data->touch.resources = eina_list_remove(e_comp->wl_comp_data->touch.resources, resource);
+   e_comp->wl_comp_data->touch.resources =
+     eina_list_remove(e_comp->wl_comp_data->touch.resources, resource);
 }
 
 static void
@@ -195,13 +204,16 @@ _e_comp_wl_input_cb_touch_get(struct wl_client *client EINA_UNUSED, struct wl_re
                              wl_resource_get_version(resource), id);
     if (!res)
       {
-         ERR("Could not create touch on seat %s: %m", e_comp->wl_comp_data->seat.name);
+         ERR("Could not create touch on seat %s: %m",
+             e_comp->wl_comp_data->seat.name);
          wl_client_post_no_memory(client);
          return;
       }
 
-    e_comp->wl_comp_data->touch.resources = eina_list_append(e_comp->wl_comp_data->touch.resources, res);
-    wl_resource_set_implementation(res, &_e_touch_interface, e_comp->wl_comp_data,
+    e_comp->wl_comp_data->touch.resources =
+     eina_list_append(e_comp->wl_comp_data->touch.resources, res);
+    wl_resource_set_implementation(res, &_e_touch_interface,
+                                   e_comp->wl_comp_data,
                                   _e_comp_wl_input_cb_touch_unbind);
 }
 
@@ -215,7 +227,8 @@ static const struct wl_seat_interface _e_seat_interface =
 static void
 _e_comp_wl_input_cb_unbind_seat(struct wl_resource *resource)
 {
-   e_comp->wl_comp_data->seat.resources = eina_list_remove(e_comp->wl_comp_data->seat.resources, resource);
+   e_comp->wl_comp_data->seat.resources =
+     eina_list_remove(e_comp->wl_comp_data->seat.resources, resource);
 }
 
 static void
@@ -232,9 +245,11 @@ _e_comp_wl_input_cb_bind_seat(struct wl_client *client, void *data EINA_UNUSED, 
 
    /* store version of seat interface for reuse in updating capabilities */
    e_comp->wl_comp_data->seat.version = version;
-   e_comp->wl_comp_data->seat.resources = eina_list_append(e_comp->wl_comp_data->seat.resources, res);
+   e_comp->wl_comp_data->seat.resources =
+     eina_list_append(e_comp->wl_comp_data->seat.resources, res);
 
-   wl_resource_set_implementation(res, &_e_seat_interface, e_comp->wl_comp_data,
+   wl_resource_set_implementation(res, &_e_seat_interface,
+                                  e_comp->wl_comp_data,
                                   _e_comp_wl_input_cb_unbind_seat);
 
    _e_comp_wl_input_update_seat_caps();
@@ -299,19 +314,23 @@ _e_comp_wl_input_keymap_update(struct xkb_keymap *keymap)
    uint32_t serial;
 
    /* unreference any existing keymap */
-   if (e_comp->wl_comp_data->xkb.keymap) xkb_map_unref(e_comp->wl_comp_data->xkb.keymap);
+   if (e_comp->wl_comp_data->xkb.keymap)
+     xkb_map_unref(e_comp->wl_comp_data->xkb.keymap);
 
    /* unmap any existing keyboard area */
-   if (e_comp->wl_comp_data->xkb.area) munmap(e_comp->wl_comp_data->xkb.area, e_comp->wl_comp_data->xkb.size);
+   if (e_comp->wl_comp_data->xkb.area)
+     munmap(e_comp->wl_comp_data->xkb.area, e_comp->wl_comp_data->xkb.size);
    if (e_comp->wl_comp_data->xkb.fd >= 0) close(e_comp->wl_comp_data->xkb.fd);
 
    /* unreference any existing keyboard state */
    if (e_comp->wl_comp_data->xkb.state)
      {
         latched =
-          xkb_state_serialize_mods(e_comp->wl_comp_data->xkb.state, XKB_STATE_MODS_LATCHED);
+          xkb_state_serialize_mods(e_comp->wl_comp_data->xkb.state,
+                                   XKB_STATE_MODS_LATCHED);
         locked =
-          xkb_state_serialize_mods(e_comp->wl_comp_data->xkb.state, XKB_STATE_MODS_LOCKED);
+          xkb_state_serialize_mods(e_comp->wl_comp_data->xkb.state,
+                                   XKB_STATE_MODS_LOCKED);
         group =
           xkb_state_serialize_layout(e_comp->wl_comp_data->xkb.state,
                                      XKB_STATE_LAYOUT_EFFECTIVE);
@@ -322,17 +341,23 @@ _e_comp_wl_input_keymap_update(struct xkb_keymap *keymap)
    e_comp->wl_comp_data->xkb.state = xkb_state_new(keymap);
 
    if ((latched) || (locked) || (group))
-     xkb_state_update_mask(e_comp->wl_comp_data->xkb.state, 0, latched, locked, 0, 0, group);
+     xkb_state_update_mask(e_comp->wl_comp_data->xkb.state, 0,
+                           latched, locked, 0, 0, group);
 
    /* increment keymap reference */
    e_comp->wl_comp_data->xkb.keymap = xkb_map_ref(keymap);
 
    /* fetch updated modifiers */
-   e_comp->wl_comp_data->kbd.mod_shift = xkb_map_mod_get_index(keymap, XKB_MOD_NAME_SHIFT);
-   e_comp->wl_comp_data->kbd.mod_caps = xkb_map_mod_get_index(keymap, XKB_MOD_NAME_CAPS);
-   e_comp->wl_comp_data->kbd.mod_ctrl = xkb_map_mod_get_index(keymap, XKB_MOD_NAME_CTRL);
-   e_comp->wl_comp_data->kbd.mod_alt = xkb_map_mod_get_index(keymap, XKB_MOD_NAME_ALT);
-   e_comp->wl_comp_data->kbd.mod_super = xkb_map_mod_get_index(keymap, XKB_MOD_NAME_LOGO);
+   e_comp->wl_comp_data->kbd.mod_shift =
+     xkb_map_mod_get_index(keymap, XKB_MOD_NAME_SHIFT);
+   e_comp->wl_comp_data->kbd.mod_caps =
+     xkb_map_mod_get_index(keymap, XKB_MOD_NAME_CAPS);
+   e_comp->wl_comp_data->kbd.mod_ctrl =
+     xkb_map_mod_get_index(keymap, XKB_MOD_NAME_CTRL);
+   e_comp->wl_comp_data->kbd.mod_alt =
+     xkb_map_mod_get_index(keymap, XKB_MOD_NAME_ALT);
+   e_comp->wl_comp_data->kbd.mod_super =
+     xkb_map_mod_get_index(keymap, XKB_MOD_NAME_LOGO);
 
    if (!(tmp = xkb_map_get_as_string(keymap)))
      {
@@ -341,7 +366,8 @@ _e_comp_wl_input_keymap_update(struct xkb_keymap *keymap)
      }
 
    e_comp->wl_comp_data->xkb.size = strlen(tmp) + 1;
-   e_comp->wl_comp_data->xkb.fd = _e_comp_wl_input_keymap_fd_get(e_comp->wl_comp_data->xkb.size);
+   e_comp->wl_comp_data->xkb.fd =
+     _e_comp_wl_input_keymap_fd_get(e_comp->wl_comp_data->xkb.size);
    if (e_comp->wl_comp_data->xkb.fd < 0)
      {
         ERR("Could not create keymap file");
@@ -365,7 +391,8 @@ _e_comp_wl_input_keymap_update(struct xkb_keymap *keymap)
    /* send updated keymap */
    EINA_LIST_FOREACH(e_comp->wl_comp_data->kbd.resources, l, res)
      wl_keyboard_send_keymap(res, WL_KEYBOARD_KEYMAP_FORMAT_XKB_V1,
-                             e_comp->wl_comp_data->xkb.fd, e_comp->wl_comp_data->xkb.size);
+                             e_comp->wl_comp_data->xkb.fd,
+                             e_comp->wl_comp_data->xkb.size);
 
    /* update modifiers */
    e_comp_wl_input_keyboard_modifiers_update();
@@ -375,8 +402,10 @@ _e_comp_wl_input_keymap_update(struct xkb_keymap *keymap)
    /* send modifiers */
    serial = wl_display_get_serial(e_comp->wl_comp_data->wl.disp);
    EINA_LIST_FOREACH(e_comp->wl_comp_data->kbd.resources, l, res)
-     wl_keyboard_send_modifiers(res, serial, e_comp->wl_comp_data->kbd.mod_depressed,
-                                e_comp->wl_comp_data->kbd.mod_latched, e_comp->wl_comp_data->kbd.mod_locked,
+     wl_keyboard_send_modifiers(res, serial,
+                                e_comp->wl_comp_data->kbd.mod_depressed,
+                                e_comp->wl_comp_data->kbd.mod_latched,
+                                e_comp->wl_comp_data->kbd.mod_locked,
                                 e_comp->wl_comp_data->kbd.mod_group);
 }
 
@@ -384,7 +413,8 @@ EINTERN Eina_Bool
 e_comp_wl_input_init(void)
 {
    /* set default seat name */
-   if (!e_comp->wl_comp_data->seat.name) e_comp->wl_comp_data->seat.name = "default";
+   if (!e_comp->wl_comp_data->seat.name)
+     e_comp->wl_comp_data->seat.name = "default";
 
    e_comp->wl_comp_data->xkb.fd = -1;
 
@@ -424,20 +454,25 @@ e_comp_wl_input_shutdown(void)
    wl_array_release(&e_comp->wl_comp_data->kbd.keys);
 
    /* unreference any existing keymap */
-   if (e_comp->wl_comp_data->xkb.keymap) xkb_map_unref(e_comp->wl_comp_data->xkb.keymap);
+   if (e_comp->wl_comp_data->xkb.keymap)
+     xkb_map_unref(e_comp->wl_comp_data->xkb.keymap);
 
    /* unmap any existing keyboard area */
-   if (e_comp->wl_comp_data->xkb.area) munmap(e_comp->wl_comp_data->xkb.area, e_comp->wl_comp_data->xkb.size);
+   if (e_comp->wl_comp_data->xkb.area)
+     munmap(e_comp->wl_comp_data->xkb.area, e_comp->wl_comp_data->xkb.size);
    if (e_comp->wl_comp_data->xkb.fd >= 0) close(e_comp->wl_comp_data->xkb.fd);
 
    /* unreference any existing keyboard state */
-   if (e_comp->wl_comp_data->xkb.state) xkb_state_unref(e_comp->wl_comp_data->xkb.state);
+   if (e_comp->wl_comp_data->xkb.state)
+     xkb_state_unref(e_comp->wl_comp_data->xkb.state);
 
    /* unreference any existing context */
-   if (e_comp->wl_comp_data->xkb.context) xkb_context_unref(e_comp->wl_comp_data->xkb.context);
+   if (e_comp->wl_comp_data->xkb.context)
+     xkb_context_unref(e_comp->wl_comp_data->xkb.context);
 
    /* destroy the global seat resource */
-   if (e_comp->wl_comp_data->seat.global) wl_global_destroy(e_comp->wl_comp_data->seat.global);
+   if (e_comp->wl_comp_data->seat.global)
+     wl_global_destroy(e_comp->wl_comp_data->seat.global);
    e_comp->wl_comp_data->seat.global = NULL;
 }
 
@@ -459,13 +494,17 @@ EINTERN void
 e_comp_wl_input_keyboard_modifiers_serialize(void)
 {
    e_comp->wl_comp_data->kbd.mod_depressed =
-     xkb_state_serialize_mods(e_comp->wl_comp_data->xkb.state, XKB_STATE_DEPRESSED);
+     xkb_state_serialize_mods(e_comp->wl_comp_data->xkb.state,
+                              XKB_STATE_DEPRESSED);
    e_comp->wl_comp_data->kbd.mod_latched =
-     xkb_state_serialize_mods(e_comp->wl_comp_data->xkb.state, XKB_STATE_MODS_LATCHED);
+     xkb_state_serialize_mods(e_comp->wl_comp_data->xkb.state,
+                              XKB_STATE_MODS_LATCHED);
    e_comp->wl_comp_data->kbd.mod_locked =
-     xkb_state_serialize_mods(e_comp->wl_comp_data->xkb.state, XKB_STATE_MODS_LOCKED);
+     xkb_state_serialize_mods(e_comp->wl_comp_data->xkb.state,
+                              XKB_STATE_MODS_LOCKED);
    e_comp->wl_comp_data->kbd.mod_group =
-     xkb_state_serialize_layout(e_comp->wl_comp_data->xkb.state, XKB_STATE_LAYOUT_EFFECTIVE);
+     xkb_state_serialize_layout(e_comp->wl_comp_data->xkb.state,
+                                XKB_STATE_LAYOUT_EFFECTIVE);
 }
 
 EINTERN void
@@ -500,6 +539,8 @@ e_comp_wl_input_keyboard_state_update(uint32_t keycode, Eina_Bool pressed)
 
    e_comp->wl_comp_data->kbd.mod_changed =
      xkb_state_update_key(e_comp->wl_comp_data->xkb.state, keycode + 8, dir);
+
+   e_comp_wl_input_keyboard_modifiers_update();
 }
 
 E_API void
@@ -548,7 +589,8 @@ e_comp_wl_input_keymap_set(const char *rules, const char *model, const char *lay
    else names.layout = strdup("us");
 
    /* unreference any existing context */
-   if (e_comp->wl_comp_data->xkb.context) xkb_context_unref(e_comp->wl_comp_data->xkb.context);
+   if (e_comp->wl_comp_data->xkb.context)
+     xkb_context_unref(e_comp->wl_comp_data->xkb.context);
 
    /* create a new xkb context */
    e_comp->wl_comp_data->xkb.context = xkb_context_new(0);
