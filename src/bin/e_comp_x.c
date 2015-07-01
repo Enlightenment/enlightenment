@@ -10,7 +10,7 @@
   if (_e_comp_x_client_data_get(ec)->lock_win) ecore_x_window_gravity_set(_e_comp_x_client_data_get(ec)->lock_win, grav);
 
 #ifdef HAVE_WAYLAND
-# define E_COMP_X_PIXMAP_CHECK if ((e_pixmap_type_get(ec->pixmap) != E_PIXMAP_TYPE_X) && (!_e_comp_x_client_has_xwindow(ec))) return
+# define E_COMP_X_PIXMAP_CHECK if ((e_pixmap_type_get(ec->pixmap) != E_PIXMAP_TYPE_X) && (!e_client_has_xwindow(ec))) return
 #else
 # define E_COMP_X_PIXMAP_CHECK if (!e_pixmap_is_x(ec->pixmap)) return
 #endif
@@ -62,17 +62,6 @@ static Ecore_X_Atom backlight_atom = 0;
 extern double e_bl_val;
 
 static void _e_comp_x_hook_client_pre_frame_assign(void *d EINA_UNUSED, E_Client *ec);
-
-static inline Eina_Bool
-_e_comp_x_client_has_xwindow(const E_Client *ec)
-{
-#ifdef HAVE_WAYLAND
-   if (e_pixmap_is_x(ec->pixmap)) return EINA_TRUE;
-   return ec->comp_data && !!e_comp_wl_client_xwayland_pixmap(ec);
-#else
-   return !!ec;
-#endif
-}
 
 static inline E_Comp_X_Client_Data *
 _e_comp_x_client_data_get(const E_Client *ec)
@@ -711,7 +700,7 @@ _e_comp_x_client_stack(E_Client *ec)
         do
           {
              ec2 = e_client_above_get(ec2);
-             if (ec2 && _e_comp_x_client_has_xwindow(ec2) && (e_client_is_stacking(ec2) || ((!ec2->override) || ec2->internal)))
+             if (ec2 && e_client_has_xwindow(ec2) && (e_client_is_stacking(ec2) || ((!ec2->override) || ec2->internal)))
                {
                   if (ec2->layer != ec->layer) break;
                   if (_e_comp_x_client_data_get(ec2)->need_reparent && (!_e_comp_x_client_data_get(ec2)->reparented)) continue;
@@ -727,7 +716,7 @@ _e_comp_x_client_stack(E_Client *ec)
         do
           {
              ec2 = e_client_below_get(ec2);
-             if (ec2 && _e_comp_x_client_has_xwindow(ec2) && (e_client_is_stacking(ec2) || ((!ec2->override) || ec2->internal)))
+             if (ec2 && e_client_has_xwindow(ec2) && (e_client_is_stacking(ec2) || ((!ec2->override) || ec2->internal)))
                {
                   if (ec2->layer != ec->layer) break;
                   if (_e_comp_x_client_data_get(ec2)->need_reparent && (!_e_comp_x_client_data_get(ec2)->reparented)) continue;
@@ -4252,7 +4241,7 @@ _e_comp_x_hook_client_focus_set(void *d EINA_UNUSED, E_Client *ec)
 {
    focus_time = ecore_x_current_time_get();
    _e_comp_x_focus_setdown(ec);
-   if (!_e_comp_x_client_has_xwindow(ec))
+   if (!e_client_has_xwindow(ec))
      {
         e_grabinput_focus(e_comp->ee_win, E_FOCUS_METHOD_PASSIVE);
         return;
