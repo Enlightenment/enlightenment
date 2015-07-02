@@ -4246,12 +4246,12 @@ static void
 _e_comp_x_hook_client_focus_set(void *d EINA_UNUSED, E_Client *ec)
 {
    focus_time = ecore_x_current_time_get();
-   _e_comp_x_focus_setdown(ec);
    if (!e_client_has_xwindow(ec))
      {
         e_grabinput_focus(e_comp->ee_win, E_FOCUS_METHOD_PASSIVE);
         return;
      }
+   _e_comp_x_focus_setdown(ec);
 
    if ((ec->icccm.take_focus) && (ec->icccm.accepts_focus))
      {
