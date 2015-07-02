@@ -2497,7 +2497,7 @@ _e_comp_wl_compositor_create(void)
         Ecore_X_Window root = 0;
         int len = 0;
         unsigned char *dat;
-        char *rules, *model, *layout;
+        char *rules = NULL, *model = NULL, *layout = NULL;
 
         if ((ekbd = e_xkb_layout_get()))
           {
