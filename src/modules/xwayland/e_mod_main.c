@@ -28,31 +28,32 @@ struct _E_XWayland_Server
 static E_XWayland_Server *exs;
 
 /* local functions */
-static Eina_Bool 
-_lock_create(char *lock)
+static int
+_lock_create(int lock)
 {
    char pid[16], *end;
    int fd, size;
    pid_t opid;
 
-   fd = open(lock, (O_WRONLY | O_CLOEXEC | O_CREAT | O_EXCL), 0444);
+   /* assemble lock file name */
+   snprintf(exs->lock, sizeof(exs->lock), "/tmp/.X%d-lock", lock);
+
+   fd = open(exs->lock, (O_WRONLY | O_CLOEXEC | O_CREAT | O_EXCL), 0444);
    if ((fd < 0) && (errno == EEXIST))
      {
-        fd = open(lock, (O_CLOEXEC | O_RDONLY));
+        fd = open(exs->lock, (O_CLOEXEC | O_RDONLY));
         if ((fd < 0) || (read(fd, pid, 11) != 11))
           {
              ERR("Could not read XWayland lock file: %m");
              if (fd >= 0) close(fd);
-             errno = EEXIST;
-             return EINA_FALSE;
+             return EEXIST;
           }
 
         opid = strtol(pid, &end, 0);
         if ((end != (pid + 10)))
           {
              if (fd >= 0) close(fd);
-             errno = EEXIST;
-             return EINA_FALSE;
+             return EEXIST;
           }
 
         if ((kill(opid, 0) < 0) && (errno == ESRCH))
@@ -60,35 +61,31 @@ _lock_create(char *lock)
              /* close stale lock file */
              if (fd >= 0) close(fd);
 
-             if (unlink(lock))
-               errno = EEXIST;
-             else
-               errno = EAGAIN;
-
-             return EINA_FALSE;
+             if (unlink(exs->lock))
+               return EEXIST;
+             return EAGAIN;
           }
         close(fd);
-        errno = EEXIST;
-        return EINA_FALSE;
+        return EEXIST;
      }
    else if (fd < 0)
      {
         ERR("Could not create XWayland lock file: %m");
-        return EINA_FALSE;
+        return 0;
      }
 
    /* use the pid of the wayland compositor */
    size = snprintf(pid, sizeof(pid), "%10d\n", getpid());
    if (write(fd, pid, size) != size)
      {
-        unlink(lock);
+        unlink(exs->lock);
         close(fd);
-        return EINA_FALSE;
+        return 0;
      }
 
    close(fd);
 
-   return EINA_TRUE;
+   return 1;
 }
 
 static int 
@@ -269,6 +266,28 @@ _cb_signal_event(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
    return ECORE_CALLBACK_CANCEL;
 }
 
+static Eina_Bool
+setup_lock(void)
+{
+   do
+     {
+        /* try to create the xserver lock file */
+        switch (_lock_create(exs->disp))
+          {
+           case EEXIST:
+             exs->disp++;
+           case EAGAIN:
+             continue;
+           case 0:
+             free(exs);
+             return EINA_FALSE;
+           default:
+             return EINA_TRUE;
+          }
+     } while (1);
+   return EINA_FALSE;
+}
+
 /* module functions */
 E_API E_Module_Api e_modapi = { E_MODULE_API_VERSION, "XWayland" };
 
@@ -292,44 +311,30 @@ e_modapi_init(E_Module *m)
    /* default display to zero */
    exs->disp = 0;
 
-lock:
-   /* assemble lock file name */
-   snprintf(exs->lock, sizeof(exs->lock), "/tmp/.X%d-lock", exs->disp);
-
-   /* try to create the xserver lock file */
-   if (!_lock_create(exs->lock))
+   do
      {
-        if (errno == EAGAIN)
-          goto lock;
-        else if (errno == EEXIST)
+        if (!setup_lock()) return NULL;
+
+        /* try to bind abstract socket */
+        exs->abs_fd = _abstract_socket_bind(exs->disp);
+        if ((exs->abs_fd < 0) && (errno == EADDRINUSE))
           {
              exs->disp++;
-             goto lock;
+             unlink(exs->lock);
+             continue;
           }
-        else
+
+        /* try to bind unix socket */
+        exs->unx_fd = _unix_socket_bind(exs->disp);
+        if (exs->unx_fd < 0)
           {
+             unlink(exs->lock);
+             close(exs->abs_fd);
              free(exs);
              return NULL;
           }
-     }
-
-   /* try to bind abstract socket */
-   exs->abs_fd = _abstract_socket_bind(exs->disp);
-   if ((exs->abs_fd < 0) && (errno == EADDRINUSE))
-     {
-        exs->disp++;
-        unlink(exs->lock);
-        goto lock;
-     }
-
-   /* try to bind unix socket */
-   if ((exs->unx_fd = _unix_socket_bind(exs->disp)) < 0)
-     {
-        unlink(exs->lock);
-        close(exs->abs_fd);
-        free(exs);
-        return NULL;
-     }
+        break;
+     } while (1);
 
    /* assemble x11 display name and set it */
    snprintf(disp, sizeof(disp), ":%d", exs->disp);
