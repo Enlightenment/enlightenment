@@ -74,6 +74,8 @@ e_modapi_init(E_Module *m)
         return NULL;
      }
    ecore_evas_callback_delete_request_set(e_comp->ee, _cb_delete_request);
+   ecore_evas_title_set(e_comp->ee, "Enlightenment: WL-X11");
+   ecore_evas_name_class_set(e_comp->ee, "E", "compositor");
 
    ecore_evas_screen_geometry_get(e_comp->ee, NULL, NULL, &w, &h);
 
