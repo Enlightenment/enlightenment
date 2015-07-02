@@ -241,6 +241,7 @@ e_module_all_load(void)
         if ((!em) || (!em->name)) continue;
 
         if ((!e_util_strcmp(em->name, "comp")) || (!e_util_strcmp(em->name, "conf_comp")) ||
+            (eina_streq(em->name, "xwayland")) ||
             (!strncmp(em->name, "wl_", 3)) //block wl_* modules from being saved
            )
           {
