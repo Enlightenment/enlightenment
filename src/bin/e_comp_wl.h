@@ -316,7 +316,7 @@ e_comp_wl_client_xwayland_data(const E_Client *ec)
 static inline E_Pixmap *
 e_comp_wl_client_xwayland_pixmap(const E_Client *ec)
 {
-   return ((E_Comp_Wl_Client_Data*)ec->comp_data)->xwayland_pixmap;
+   return ec->comp_data ?  ((E_Comp_Wl_Client_Data*)ec->comp_data)->xwayland_pixmap : NULL;
 }
 
 static inline void
