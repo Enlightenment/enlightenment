@@ -1477,14 +1477,17 @@ _e_comp_wl_compositor_cb_surface_create(struct wl_client *client, struct wl_reso
           }
         DBG("\tUsing Pixmap: %p", ep);
 
-        if ((ec = e_client_new(ep, 0, 0)))
-          {
-             ec->new_client = 0;
-             e_comp->new_clients--;
-             ec->client.w = ec->client.h = 1;
-             ec->ignored = 1;
-             ec->comp_data->surface = res;
-          }
+        ec = e_client_new(ep, 0, 0);
+     }
+   if (ec)
+     {
+        if (ec->new_client)
+          e_comp->new_clients--;
+        ec->new_client = 0;
+        if ((!ec->client.w) && (ec->client.h))
+          ec->client.w = ec->client.h = 1;
+        ec->ignored = 1;
+        ec->comp_data->surface = res;
      }
 
    /* set reference to pixmap so we can fetch it later */
