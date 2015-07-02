@@ -883,7 +883,7 @@ _e_comp_wl_cb_key_down(void *event)
         /* update modifier state */
         e_comp_wl_input_keyboard_state_update(keycode, EINA_TRUE);
 
-        if (ec->comp_data->surface)
+        if (ec->comp_data->surface && (!e_client_action_get()) && (!e_comp->input_key_grabs))
           {
              struct wl_client *wc;
              struct wl_resource *res;
@@ -931,7 +931,7 @@ _e_comp_wl_cb_key_up(void *event)
    e_comp_wl_input_keyboard_state_update(keycode, EINA_FALSE);
 
    ec = e_client_focused_get();
-   if ((ec) && (ec->comp_data->surface))
+   if ((ec) && (ec->comp_data->surface) && (!e_client_action_get()) && (!e_comp->input_key_grabs))
      {
         wc = wl_resource_get_client(ec->comp_data->surface);
      }
