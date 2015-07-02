@@ -288,6 +288,13 @@ setup_lock(void)
    return EINA_FALSE;
 }
 
+static Eina_Bool
+error_dialog()
+{
+   e_util_dialog_internal(_("Error"), _("Cannot launch XWayland from X11 display."));
+   return EINA_FALSE;
+}
+
 /* module functions */
 E_API E_Module_Api e_modapi = { E_MODULE_API_VERSION, "XWayland" };
 
@@ -298,6 +305,12 @@ e_modapi_init(E_Module *m)
 
    /* make sure it's a wayland compositor */
    if (e_comp->comp_type != E_PIXMAP_TYPE_WL) return NULL;
+
+   if (getenv("DISPLAY"))
+     {
+        ecore_timer_add(1.0, error_dialog, NULL);
+        return NULL;
+     }
 
    DBG("LOAD XWAYLAND MODULE");
 
