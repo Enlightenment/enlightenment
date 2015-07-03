@@ -406,7 +406,7 @@ static Eina_Bool
 _e_wizard_cb_icons_update(void *data EINA_UNUSED, int ev_type EINA_UNUSED, void *ev EINA_UNUSED)
 {
    got_icons = EINA_TRUE;
-   if (_e_wizard_check_xdg())
+   if (curpage && _e_wizard_check_xdg())
      _e_wizard_next_xdg();
    return ECORE_CALLBACK_PASS_ON;
 }
