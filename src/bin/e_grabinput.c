@@ -12,9 +12,6 @@ static E_Focus_Method focus_method = E_FOCUS_METHOD_NO_INPUT;
 static double last_focus_time = 0.0;
 
 static Ecore_Window focus_fix_win = 0;
-#ifndef HAVE_WAYLAND_ONLY
-static Ecore_Timer *focus_fix_timer = NULL;
-#endif
 static E_Focus_Method focus_fix_method = E_FOCUS_METHOD_NO_INPUT;
 
 /* externally accessible functions */
@@ -27,9 +24,6 @@ e_grabinput_init(void)
 EINTERN int
 e_grabinput_shutdown(void)
 {
-#ifndef HAVE_WAYLAND_ONLY
-   E_FREE_FUNC(focus_fix_timer, ecore_timer_del);
-#endif
    return 1;
 }
 
@@ -194,26 +188,6 @@ e_grabinput_mouse_win_get(void)
    return grab_mouse_win;
 }
 
-#ifndef HAVE_WAYLAND_ONLY
-static Eina_Bool
-_e_grabinput_focus_check(void *data EINA_UNUSED)
-{
-   if (!e_comp->root)
-     {
-        focus_fix_timer = NULL;
-        return EINA_FALSE;
-     }
-
-   if (ecore_x_window_focus_get() != focus_fix_win)
-     {
-        /* fprintf(stderr, "foc do 2\n"); */
-        _e_grabinput_focus_do(focus_fix_win, focus_fix_method);
-     }
-   focus_fix_timer = NULL;
-   return EINA_FALSE;
-}
-#endif
-
 static void
 _e_grabinput_focus_do(Ecore_Window win, E_Focus_Method method)
 {
@@ -289,8 +263,4 @@ _e_grabinput_focus(Ecore_Window win, E_Focus_Method method)
    /* fprintf(stderr, "foc do 1\n"); */
    _e_grabinput_focus_do(win, method);
    last_focus_time = ecore_loop_time_get();
-#ifndef HAVE_WAYLAND_ONLY
-   if (focus_fix_timer) ecore_timer_del(focus_fix_timer);
-   focus_fix_timer = ecore_timer_add(0.2, _e_grabinput_focus_check, NULL);
-#endif
 }

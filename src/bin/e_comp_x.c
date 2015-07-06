@@ -40,6 +40,8 @@ struct _E_Comp_X_Data
 };
 
 static unsigned int focus_time = 0;
+static Ecore_Timer *focus_timer;
+static E_Client *mouse_client;
 static Eina_List *handlers = NULL;
 static Eina_Hash *clients_win_hash = NULL;
 static Eina_Hash *damages_hash = NULL;
@@ -2154,6 +2156,7 @@ _e_comp_x_mouse_in(void *data EINA_UNUSED, int type EINA_UNUSED, Ecore_X_Event_M
    ec = _e_comp_x_client_find_by_window(ev->win);
    if (!ec) return ECORE_CALLBACK_RENEW;
    if (_e_comp_x_client_data_get(ec)->deleted) return ECORE_CALLBACK_RENEW;
+   mouse_client = ec;
    e_client_mouse_in(ec, e_comp_canvas_x_root_adjust(ev->root.x), e_comp_canvas_x_root_adjust(ev->root.y));
    return ECORE_CALLBACK_RENEW;
 }
@@ -2174,6 +2177,7 @@ _e_comp_x_mouse_out(void *data EINA_UNUSED, int type EINA_UNUSED, Ecore_X_Event_
    ec = _e_comp_x_client_find_by_window(ev->win);
    if (!ec) return ECORE_CALLBACK_RENEW;
    if (_e_comp_x_client_data_get(ec)->deleted) return ECORE_CALLBACK_RENEW;
+   if (mouse_client == ec) mouse_client = NULL;
    e_client_mouse_out(ec, e_comp_canvas_x_root_adjust(ev->root.x), e_comp_canvas_x_root_adjust(ev->root.y));
    return ECORE_CALLBACK_RENEW;
 }
@@ -2572,6 +2576,50 @@ _e_comp_x_move_resize_request(void *data EINA_UNUSED, int type EINA_UNUSED, Ecor
 }
 
 static Eina_Bool
+_e_comp_x_focus_timer_cb(void *d EINA_UNUSED)
+{
+   E_Client *focused;
+
+   /* if mouse-based focus policy clients exist for [focused] and [mouse_client],
+    * [mouse_client] should have focus here.
+    * race conditions in x11 focus setting can result in a scenario such that:
+    * -> set focus on A
+    * -> set focus on B
+    * -> receive focus event on A
+    * -> re-set focus on A
+    * -> receive focus event on B
+    * -> receive focus event on A
+    * ...
+    * where the end state is that the cursor is over a client which does not have focus.
+    * this timer is triggered only when such eventing occurs in order to adjust the focused
+    * client as necessary
+    */
+   focused = e_client_focused_get();
+   if (mouse_client && focused && (!e_client_focus_policy_click(focused)) && (mouse_client != focused))
+     {
+        int x, y;
+
+        ecore_evas_pointer_xy_get(e_comp->ee, &x, &y);
+        if (E_INSIDE(x, y, mouse_client->x, mouse_client->y, mouse_client->w, mouse_client->h))
+          {
+             if (!_e_comp_x_client_data_get(mouse_client)->deleted)
+               e_client_mouse_in(mouse_client, x, y);
+          }
+     }
+   focus_timer = NULL;
+   return EINA_FALSE;
+}
+
+static void
+_e_comp_x_focus_timer(void)
+{
+   if (focus_timer)
+     ecore_timer_reset(focus_timer);
+   else /* focus has changed twice in .002 seconds; .01 seconds should be more than enough delay */
+     focus_timer = ecore_timer_add(0.01, _e_comp_x_focus_timer_cb, NULL);
+}
+
+static Eina_Bool
 _e_comp_x_focus_in(void *data EINA_UNUSED, int type EINA_UNUSED, Ecore_X_Event_Window_Focus_In *ev)
 {
    E_Client *ec, *focused;
@@ -2614,6 +2662,10 @@ _e_comp_x_focus_in(void *data EINA_UNUSED, int type EINA_UNUSED, Ecore_X_Event_W
    /* should be equal, maybe some clients don't reply with the proper timestamp ? */
    if (ev->time >= focus_time)
      evas_object_focus_set(ec->frame, 1);
+   /* handle case of someone trying to benchmark focus handling */
+   if ((!e_client_focus_policy_click(ec)) && (focused && (!e_client_focus_policy_click(focused))) &&
+       (ev->time - focus_time <= 2))
+     _e_comp_x_focus_timer();
    return ECORE_CALLBACK_PASS_ON;
 }
 
@@ -4325,6 +4377,7 @@ _e_comp_x_hook_client_del(void *d EINA_UNUSED, E_Client *ec)
    pwin = _e_comp_x_client_util_pwin_get(ec);
    cd = _e_comp_x_client_data_get(ec);
 
+   if (mouse_client == ec) mouse_client = NULL;
    if ((!stopping) && cd && (!cd->deleted))
      ecore_x_window_prop_card32_set(win, E_ATOM_MANAGED, &visible, 1);
    if ((!ec->already_unparented) && cd && cd->reparented)
