@@ -80,7 +80,7 @@ static inline Eina_Bool
 e_client_util_desk_visible(const E_Client *ec, const E_Desk *desk)
 {
    if (!ec) return EINA_FALSE;
-   return ec->sticky || (ec->desk == desk);
+   return !ec->desk || ec->sticky || (ec->desk == desk);
 }
 
 static inline Ecore_Window
