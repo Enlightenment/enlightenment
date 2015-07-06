@@ -46,7 +46,7 @@ packagekit_icon_update(E_PackageKit_Module_Context *ctxt,
           state = "packagekit,state,updated";
      }
 
-   DBG("PKGKIT: IconUpdate, %d updates available (%s)", count, state);
+   //DBG("PKGKIT: IconUpdate, %d updates available (%s)", count, state);
 
    if (count) snprintf(buf, sizeof(buf), "%d", count);
    EINA_LIST_FOREACH(ctxt->instances, l, inst)
@@ -256,7 +256,7 @@ signal_repo_detail_cb(void *data, const Eldbus_Message *msg)
         _store_error(ctxt, "could not get arguments (ssb)");
         return;
      }
-   DBG("PKGKIT: RepoDetail: (%d) %s [ %s ]", enabled, repo_id, desc);
+   //DBG("PKGKIT: RepoDetail: (%d) %s [ %s ]", enabled, repo_id, desc);
 }
 
 static void
@@ -265,7 +265,7 @@ signal_cache_finished_cb(void *data, const Eldbus_Message *msg)
    E_PackageKit_Module_Context *ctxt = data;
    const char *error, *error_msg;
 
-   DBG("PKGKIT: Cache Finished CB");
+   //DBG("PKGKIT: Cache Finished CB");
 
    if (eldbus_message_error_get(msg, &error, &error_msg))
      {
@@ -328,10 +328,10 @@ _signal_package_cb(void *data, const Eldbus_Message *msg)
         _store_error(ctxt, "could not get package arguments");
         return;
      }
-   if (PKITV07)
-     { DBG("PKGKIT: Package: (%s) %s [ %s ]", info_str, pkg_id, summary); }
-   else
-     { DBG("PKGKIT: Package: (%d) %s [ %s ]", info, pkg_id, summary); }
+   //if (PKITV07)
+     //{ DBG("PKGKIT: Package: (%s) %s [ %s ]", info_str, pkg_id, summary); }
+   //else
+     //{ DBG("PKGKIT: Package: (%d) %s [ %s ]", info, pkg_id, summary); }
 
    splitted = eina_str_split_full(pkg_id, ";", 2, &num_elements);
    if (num_elements == 2)
@@ -380,7 +380,7 @@ _signal_finished_cb(void *data, const Eldbus_Message *msg)
    E_FREE_FUNC(obj, eldbus_object_unref);
    E_FREE_FUNC(ctxt->error, eina_stringshare_del);
 
-   DBG("PKGKIT: PackageFinished");
+   //DBG("PKGKIT: PackageFinished");
    packagekit_icon_update(ctxt, EINA_FALSE);
 }
 
@@ -452,7 +452,7 @@ packagekit_create_transaction_and_exec(E_PackageKit_Module_Context *ctxt,
 {
    Eldbus_Pending *pending;
 
-   DBG("PKGKIT: Version: %d.%d.%d", ctxt->v_maj, ctxt->v_min, ctxt->v_mic);
+   //DBG("PKGKIT: Version: %d.%d.%d", ctxt->v_maj, ctxt->v_min, ctxt->v_mic);
 
    if (ctxt->transaction)
      {
@@ -524,7 +524,7 @@ packagekit_dbus_connect(E_PackageKit_Module_Context *ctxt)
 {
    Eldbus_Object *obj;
 
-   DBG("PKGKIT: dbus_init()");
+   //DBG("PKGKIT: dbus_init()");
    eldbus_init();
 
    ctxt->conn = eldbus_connection_get(ELDBUS_CONNECTION_TYPE_SYSTEM);
@@ -555,7 +555,7 @@ packagekit_dbus_disconnect(E_PackageKit_Module_Context *ctxt)
 {
    Eldbus_Object *obj;
 
-   DBG("PKGKIT: dbus_shutdown()");
+   //DBG("PKGKIT: dbus_shutdown()");
 
    if (ctxt->transaction)
      {

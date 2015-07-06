@@ -848,7 +848,6 @@ _e_comp_screensaver_on(void *data EINA_UNUSED, int type EINA_UNUSED, void *event
    Eina_List *l;
    E_Zone *zone;
 
-   printf("_e_comp_screensaver_on\n");
    ecore_frametime = ecore_animator_frametime_get();
    if (e_comp->saver) return ECORE_CALLBACK_RENEW;
    e_comp_override_add();
@@ -872,7 +871,6 @@ _e_comp_screensaver_off(void *data EINA_UNUSED, int type EINA_UNUSED, void *even
    E_Zone *zone;
    E_Client *ec;
 
-   printf("_e_comp_screensaver_off\n");
    ecore_animator_frametime_set(ecore_frametime);
    if (!e_comp->saver) return ECORE_CALLBACK_RENEW;
    e_comp_override_del();
