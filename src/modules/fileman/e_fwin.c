@@ -745,6 +745,24 @@ _e_fwin_new(const char *dev,
    return fwin;
 }
 
+static Eina_Bool
+_e_fwin_icon_popup_handler(void *data, ...)
+{
+   E_Fwin *fwin = data;
+
+   E_FREE_FUNC(fwin->popup_timer, ecore_timer_del);
+   if (fwin->popup)
+     {
+        evas_object_hide(fwin->popup);
+        E_FREE_FUNC(fwin->popup, evas_object_del);
+     }
+   evas_object_event_callback_del(fwin->win, EVAS_CALLBACK_MOUSE_IN, (Evas_Object_Event_Cb)_e_fwin_icon_popup_handler);
+   evas_object_event_callback_del(fwin->win, EVAS_CALLBACK_MOUSE_OUT, (Evas_Object_Event_Cb)_e_fwin_icon_popup_handler);
+   E_FREE_LIST(fwin->popup_handlers, ecore_event_handler_del);
+   fwin->popup_icon = NULL;
+   return ECORE_CALLBACK_RENEW;
+}
+
 static void
 _e_fwin_free(E_Fwin *fwin)
 {
@@ -782,6 +800,8 @@ _e_fwin_free(E_Fwin *fwin)
      }
    if (fwin->popup_timer) ecore_timer_del(fwin->popup_timer);
    fwin->popup_timer = NULL;
+   evas_object_event_callback_del(fwin->win, EVAS_CALLBACK_MOUSE_IN, (Evas_Object_Event_Cb)_e_fwin_icon_popup_handler);
+   evas_object_event_callback_del(fwin->win, EVAS_CALLBACK_MOUSE_OUT, (Evas_Object_Event_Cb)_e_fwin_icon_popup_handler);
    E_FREE_LIST(fwin->popup_handlers, ecore_event_handler_del);
    if (fwin->spring_parent) fwin->spring_parent->spring_child = NULL;
    if (fwin->win)
@@ -790,34 +810,6 @@ _e_fwin_free(E_Fwin *fwin)
         evas_object_del(fwin->win);
      }
    free(fwin);
-}
-
-static Eina_Bool
-_e_fwin_icon_popup_handler(void *data, int type, void *event)
-{
-   E_Fwin *fwin = data;
-   Ecore_Event_Mouse_IO *ev = event;
-
-   if (type == ECORE_EVENT_MOUSE_IN)
-     {
-        if (fwin->zone)
-          {
-             if (ev->event_window == e_comp->ee_win) return ECORE_CALLBACK_RENEW;
-          }
-        else
-          {
-             if (ev->event_window == elm_win_window_id_get(fwin->win)) return ECORE_CALLBACK_RENEW;
-          }
-     }
-   E_FREE_FUNC(fwin->popup_timer, ecore_timer_del);
-   if (fwin->popup)
-     {
-        evas_object_hide(fwin->popup);
-        E_FREE_FUNC(fwin->popup, evas_object_del);
-     }
-   E_FREE_LIST(fwin->popup_handlers, ecore_event_handler_del);
-   fwin->popup_icon = NULL;
-   return ECORE_CALLBACK_RENEW;
 }
 
 static void
@@ -913,11 +905,11 @@ _e_fwin_icon_popup(void *data)
 #ifndef HAVE_WAYLAND_ONLY
    if (!fwin->popup_handlers)
      {
-        E_LIST_HANDLER_APPEND(fwin->popup_handlers, ECORE_X_EVENT_XDND_ENTER, _e_fwin_icon_popup_handler, fwin);
-        E_LIST_HANDLER_APPEND(fwin->popup_handlers, ECORE_X_EVENT_XDND_POSITION, _e_fwin_icon_popup_handler, fwin);
-        E_LIST_HANDLER_APPEND(fwin->popup_handlers, ECORE_X_EVENT_MOUSE_IN, _e_fwin_icon_popup_handler, fwin);
-        E_LIST_HANDLER_APPEND(fwin->popup_handlers, ECORE_EVENT_MOUSE_BUTTON_DOWN, _e_fwin_icon_popup_handler, fwin);
-        E_LIST_HANDLER_APPEND(fwin->popup_handlers, ECORE_X_EVENT_MOUSE_OUT, _e_fwin_icon_popup_handler, fwin);
+        evas_object_event_callback_add(fwin->win, EVAS_CALLBACK_MOUSE_IN, (Evas_Object_Event_Cb)_e_fwin_icon_popup_handler, fwin);
+        evas_object_event_callback_add(fwin->win, EVAS_CALLBACK_MOUSE_OUT, (Evas_Object_Event_Cb)_e_fwin_icon_popup_handler, fwin);
+        if (e_comp_util_has_x())
+          E_LIST_HANDLER_APPEND(fwin->popup_handlers, ECORE_X_EVENT_XDND_POSITION, (Ecore_Event_Handler_Cb)_e_fwin_icon_popup_handler, fwin);
+        E_LIST_HANDLER_APPEND(fwin->popup_handlers, ECORE_EVENT_MOUSE_BUTTON_DOWN, (Ecore_Event_Handler_Cb)_e_fwin_icon_popup_handler, fwin);
      }
 #endif
    evas_object_show(fwin->popup);
@@ -955,11 +947,11 @@ _e_fwin_icon_mouse_in(void *data, Evas_Object *obj EINA_UNUSED, void *event_info
 #ifndef HAVE_WAYLAND_ONLY
    if (!fwin->popup_handlers)
      {
-        E_LIST_HANDLER_APPEND(fwin->popup_handlers, ECORE_X_EVENT_XDND_ENTER, _e_fwin_icon_popup_handler, fwin);
-        E_LIST_HANDLER_APPEND(fwin->popup_handlers, ECORE_X_EVENT_XDND_POSITION, _e_fwin_icon_popup_handler, fwin);
-        E_LIST_HANDLER_APPEND(fwin->popup_handlers, ECORE_X_EVENT_MOUSE_IN, _e_fwin_icon_popup_handler, fwin);
-        E_LIST_HANDLER_APPEND(fwin->popup_handlers, ECORE_EVENT_MOUSE_BUTTON_DOWN, _e_fwin_icon_popup_handler, fwin);
-        E_LIST_HANDLER_APPEND(fwin->popup_handlers, ECORE_X_EVENT_MOUSE_OUT, _e_fwin_icon_popup_handler, fwin);
+        evas_object_event_callback_add(fwin->win, EVAS_CALLBACK_MOUSE_IN, (Evas_Object_Event_Cb)_e_fwin_icon_popup_handler, fwin);
+        evas_object_event_callback_add(fwin->win, EVAS_CALLBACK_MOUSE_OUT, (Evas_Object_Event_Cb)_e_fwin_icon_popup_handler, fwin);
+        if (e_comp_util_has_x())
+          E_LIST_HANDLER_APPEND(fwin->popup_handlers, ECORE_X_EVENT_XDND_POSITION, (Ecore_Event_Handler_Cb)_e_fwin_icon_popup_handler, fwin);
+        E_LIST_HANDLER_APPEND(fwin->popup_handlers, ECORE_EVENT_MOUSE_BUTTON_DOWN, (Ecore_Event_Handler_Cb)_e_fwin_icon_popup_handler, fwin);
      }
 #endif
 }
