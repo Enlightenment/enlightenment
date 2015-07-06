@@ -36,6 +36,7 @@ _notification_show_common(const char *summary,
    n.icon.icon = "enlightenment";
    n.summary = summary;
    n.body = body;
+   n.urgency = E_NOTIFICATION_NOTIFY_URGENCY_CRITICAL;
    e_notification_client_send(&n, NULL, NULL);
 }
 
