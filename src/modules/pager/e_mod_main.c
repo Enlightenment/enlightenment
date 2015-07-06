@@ -1029,7 +1029,8 @@ _pager_cb_event_client_urgent_change(void *data EINA_UNUSED, int type EINA_UNUSE
 {
    if (!(ev->property & E_CLIENT_PROPERTY_URGENCY)) return ECORE_CALLBACK_RENEW;
 
-   if (pager_config->popup_urgent && (pager_config->popup_urgent_focus ||
+   if (pager_config->popup_urgent && (!e_client_util_desk_visible(ev->ec, e_desk_current_get(ev->ec->zone))) &&
+                                      (pager_config->popup_urgent_focus ||
                                       (!pager_config->popup_urgent_focus && (!ev->ec->focused) && (!ev->ec->want_focus))))
      {
         Pager_Popup *pp;
