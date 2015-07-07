@@ -2775,7 +2775,7 @@ e_client_mouse_in(E_Client *ec, int x, int y)
    if (ec->desk && ec->desk->animate_count) return;
    ec->mouse.current.mx = x;
    ec->mouse.current.my = y;
-   ec->mouse.in = 1;
+   ec->mouse_in = 1;
    if (!ec->iconic)
      e_focus_event_mouse_in(ec);
 }
@@ -2791,7 +2791,7 @@ e_client_mouse_out(E_Client *ec, int x, int y)
 
    ec->mouse.current.mx = x;
    ec->mouse.current.my = y;
-   ec->mouse.in = 0;
+   ec->mouse_in = 0;
    if (!ec->iconic)
      e_focus_event_mouse_out(ec);
 }
@@ -3488,7 +3488,7 @@ e_client_focused_set(E_Client *ec)
         ec_unfocus->want_focus = ec_unfocus->focused = 0;
         if (!e_object_is_del(E_OBJECT(ec_unfocus)))
           e_focus_event_focus_out(ec_unfocus);
-        if (ec_unfocus->mouse.in)
+        if (ec_unfocus->mouse_in)
           e_client_mouse_out(ec_unfocus, ec_unfocus->x - 1, ec_unfocus->y - 1);
 
         E_FREE_FUNC(ec_unfocus->raise_timer, ecore_timer_del);

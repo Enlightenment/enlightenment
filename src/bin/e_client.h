@@ -272,7 +272,6 @@ struct E_Client
          int x, y, w, h;
          int mx, my;
       } current, last_down[3], last_up[3];
-      Eina_Bool in : 1;
    } mouse;
 
    struct
@@ -699,6 +698,7 @@ struct E_Client
 #if defined(HAVE_WAYLAND_CLIENTS) || defined(HAVE_WAYLAND_ONLY)
    uuid_t uuid;
 #endif
+   Eina_Bool mouse_in : 1;
 };
 
 #define e_client_focus_policy_click(ec) \
