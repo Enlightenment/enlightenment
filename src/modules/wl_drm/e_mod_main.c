@@ -669,6 +669,7 @@ e_modapi_init(E_Module *m)
 
    ecore_evas_pointer_xy_get(e_comp->ee, &e_comp->wl_comp_data->ptr.x,
                              &e_comp->wl_comp_data->ptr.y);
+   evas_event_feed_mouse_in(e_comp->evas, 0, NULL);
 
    e_comp_wl_input_pointer_enabled_set(EINA_TRUE);
    e_comp_wl_input_keyboard_enabled_set(EINA_TRUE);
