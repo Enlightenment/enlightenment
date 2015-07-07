@@ -269,7 +269,7 @@ _e_comp_object_cb_signal_bind(void *data, Evas_Object *obj EINA_UNUSED, const ch
 #ifndef HAVE_WAYLAND_ONLY
    if (e_dnd_active()) return;
 #endif
-   if (cw->ec->iconic) return;
+   if (cw->ec->iconic || cw->ec->cur_mouse_action) return;
    e_bindings_signal_handle(E_BINDING_CONTEXT_WINDOW, E_OBJECT(cw->ec),
                             emission, source);
 }
