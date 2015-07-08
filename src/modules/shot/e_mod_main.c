@@ -8,8 +8,14 @@
  *
  * @}
  */
+#define E_COMP_WL
 #include "e.h"
+#ifdef HAVE_WAYLAND
+# include "screenshooter-client-protocol.h"
+#endif
 #include <time.h>
+#include <sys/mman.h>
+
 static E_Module *shot_module = NULL;
 
 static E_Action *border_act = NULL, *act = NULL;
@@ -36,6 +42,19 @@ static char *url_ret = NULL;
 static E_Dialog *fsel_dia = NULL;
 static E_Client_Menu_Hook *border_hook = NULL;
 
+#ifdef HAVE_WAYLAND
+Eina_Bool copy_done = EINA_FALSE;
+static struct screenshooter *_wl_screenshooter;
+static Eina_List *_outputs;
+struct screenshooter_output
+{
+   struct wl_output *output;
+   struct wl_buffer *buffer;
+   int x, y, w, h;
+   void *data;
+};
+#endif
+
 static void _file_select_ok_cb(void *data EINA_UNUSED, E_Dialog *dia);
 static void _file_select_cancel_cb(void *data EINA_UNUSED, E_Dialog *dia);
 
@@ -44,6 +63,66 @@ _win_cancel_cb(void *data EINA_UNUSED, void *data2 EINA_UNUSED)
 {
    E_FREE_FUNC(win, evas_object_del);
 }
+
+#ifdef HAVE_WAYLAND
+static void
+_wl_cb_screenshot_done(void *data EINA_UNUSED, struct screenshooter *screenshooter EINA_UNUSED)
+{
+   copy_done = EINA_TRUE;
+}
+
+static const struct screenshooter_listener _screenshooter_listener =
+{
+   _wl_cb_screenshot_done
+};
+
+static void
+_wl_output_cb_handle_geometry(void *data EINA_UNUSED, struct wl_output *wl_output, int x, int y, int pw EINA_UNUSED, int ph EINA_UNUSED, int subpixel EINA_UNUSED, const char *make EINA_UNUSED, const char *model EINA_UNUSED, int transform EINA_UNUSED)
+{
+   struct screenshooter_output *output;
+
+   output = wl_output_get_user_data(wl_output);
+   if ((output) && (wl_output == output->output))
+     {
+        output->x = x;
+        output->y = y;
+     }
+}
+
+static void
+_wl_output_cb_handle_mode(void *data EINA_UNUSED, struct wl_output *wl_output, uint32_t flags, int w, int h, int refresh EINA_UNUSED)
+{
+   struct screenshooter_output *output;
+
+   output = wl_output_get_user_data(wl_output);
+   if ((output) &&
+       ((wl_output == output->output) && (flags & WL_OUTPUT_MODE_CURRENT)))
+     {
+        output->w = w;
+        output->h = h;
+     }
+}
+
+static void
+_wl_output_cb_handle_done(void *data EINA_UNUSED, struct wl_output *output EINA_UNUSED)
+{
+
+}
+
+static void
+_wl_output_cb_handle_scale(void *data EINA_UNUSED, struct wl_output *output EINA_UNUSED, int32_t scale EINA_UNUSED)
+{
+
+}
+
+static const struct wl_output_listener _output_listener =
+{
+   _wl_output_cb_handle_geometry,
+   _wl_output_cb_handle_mode,
+   _wl_output_cb_handle_done,
+   _wl_output_cb_handle_scale
+};
+#endif
 
 static void
 _win_delete_cb()
@@ -586,109 +665,14 @@ _rect_down_cb(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj EINA
 }
 
 static void
-_shot_now(E_Zone *zone, E_Client *ec, const char *params)
+_save_dialog_show(E_Zone *zone, E_Client *ec, const char *params, void *dst, int sw, int sh)
 {
-   unsigned char *src;
-   unsigned int *dst;
-   int bpl = 0, rows = 0, bpp = 0, sw, sh;
    Evas *evas, *evas2;
    Evas_Object *o, *oa, *op, *ol;
-   int x, y, w, h;
    Evas_Modifier_Mask mask;
    E_Radio_Group *rg;
-#ifndef HAVE_WAYLAND_ONLY
-   Ecore_X_Window xwin;
-   Ecore_X_Visual visual;
-   Ecore_X_Display *display;
-   Ecore_X_Screen *scr;
-   Ecore_X_Window_Attributes watt;
-   Ecore_X_Colormap colormap;
-   Ecore_X_Image *img = NULL;
-   int depth;
+   int w, h;
 
-   if ((win) || (url_up)) return;
-   if ((!zone) && (!ec)) return;
-   if (e_comp_util_has_x())
-     {
-        if (zone)
-          {
-             xwin = e_comp->root;
-             w = sw = e_comp->w;
-             h = sh = e_comp->h;
-             x = y = 0;
-             if (!ecore_x_window_attributes_get(xwin, &watt)) return;
-             visual = watt.visual;
-             depth = watt.depth;
-          }
-        else
-          {
-             xwin = e_comp->ee_win;
-             x = ec->x, y = ec->y, sw = ec->w, sh = ec->h;
-             w = sw;
-             h = sh;
-             x = E_CLAMP(x, ec->zone->x, ec->zone->x + ec->zone->w);
-             y = E_CLAMP(y, ec->zone->y, ec->zone->y + ec->zone->h);
-             sw = E_CLAMP(sw, 1, ec->zone->x + ec->zone->w - x);
-             sh = E_CLAMP(sh, 1, ec->zone->y + ec->zone->h - y);
-             visual = e_pixmap_visual_get(ec->pixmap);
-             depth = ec->depth;
-          }
-        img = ecore_x_image_new(w, h, visual, depth);
-        if (!ecore_x_image_get(img, xwin, x, y, 0, 0, sw, sh))
-          {
-             Eina_Bool dialog = EINA_FALSE;
-             ecore_x_image_free(img);
-#ifdef __linux__
-             FILE *f;
-
-             f = fopen("/proc/sys/kernel/shmmax", "r");
-             if (f)
-               {
-                  long long unsigned int max = 0;
-
-                  int n = fscanf(f, "%llu", &max);
-                  if ((n > 0) && (max) && (max < (w * h * sizeof(int))))
-                    {
-                       e_util_dialog_show(_("Screenshot Error"),
-                                          _("SHMMAX is too small to take screenshot.<br>"
-                                            "Consider increasing /proc/sys/kernel/shmmax to a value larger than %llu"),
-                                          (long long unsigned int)(w * h * sizeof(int)));
-                       dialog = EINA_TRUE;
-                    }
-                  fclose(f);
-               }
-#elif defined(__FreeBSD__) || defined(__FreeBSD_kernel__)
-             int max;
-             size_t len = sizeof(max);
-
-             if (!sysctlbyname("kern.ipc.shmmax", &max, &len, NULL, 0))
-               {
-                  if (max && (max < (w * h * sizeof(int))))
-                    {
-                       e_util_dialog_show(_("Screenshot Error"),
-                                          _("SHMMAX is too small to take screenshot.<br>"
-                                            "Consider increasing kern.ipc.shmmax to a value larger than %llu"),
-                                          (long long unsigned int)(w * h * sizeof(int)));
-                       dialog = EINA_TRUE;
-                    }
-               }
-#endif
-             if (!dialog)
-               e_util_dialog_show(_("Screenshot Error"),
-                                  _("SHM creation failed.<br>"
-                                    "Ensure your system has enough RAM free and your user has sufficient permissions."));
-             return;
-          }
-        src = ecore_x_image_data_get(img, &bpl, &rows, &bpp);
-        display = ecore_x_display_get();
-        scr = ecore_x_default_screen_get();
-        colormap = ecore_x_default_colormap_get(display, scr);
-        dst = malloc(sw * sh * sizeof(int));
-        ecore_x_image_to_argb_convert(src, bpp, bpl, colormap, visual,
-                                      0, 0, sw, sh,
-                                      dst, (sw * sizeof(int)), 0, 0);
-     }
-#endif
    win = elm_win_add(NULL, NULL, ELM_WIN_BASIC);
 
    evas = evas_object_evas_get(win);
@@ -725,11 +709,7 @@ _shot_now(E_Zone *zone, E_Client *ec, const char *params)
    evas_object_image_alpha_set(o, EINA_FALSE);
    evas_object_image_size_set(o, sw, sh);
    evas_object_image_data_copy_set(o, dst);
-   free(dst);
-#ifndef HAVE_WAYLAND_ONLY
-   if (img)
-     ecore_x_image_free(img);
-#endif
+
    evas_object_image_data_update_add(o, 0, 0, sw, sh);
    e_widget_preview_extern_object_set(op, o);
    evas_object_show(o);
@@ -892,11 +872,237 @@ _shot_now(E_Zone *zone, E_Client *ec, const char *params)
      }
 }
 
+#ifdef HAVE_WAYLAND
+static struct wl_buffer *
+_create_shm_buffer(struct wl_shm *_shm, int width, int height, void **data_out)
+{
+   char filename[] = "wayland-shm-XXXXXX";
+   Eina_Tmpstr *tmpfile = NULL;
+   struct wl_shm_pool *pool;
+   struct wl_buffer *buffer;
+   int fd, size, stride;
+   void *data;
+
+   fd = eina_file_mkstemp(filename, &tmpfile);
+   if (fd < 0) 
+     {
+        fprintf(stderr, "open %s failed: %m\n", tmpfile);
+        return NULL;
+     }
+
+   stride = width * 4;
+   size = stride * height;
+   if (ftruncate(fd, size) < 0) 
+     {
+        fprintf(stderr, "ftruncate failed: %m\n");
+        close(fd);
+        return NULL;
+     }
+
+   data = mmap(NULL, size, PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
+   unlink(tmpfile);
+   eina_tmpstr_del(tmpfile);
+
+   if (data == MAP_FAILED) 
+     {
+        fprintf(stderr, "mmap failed: %m\n");
+        close(fd);
+        return NULL;
+     }
+
+   pool = wl_shm_create_pool(_shm, fd, size);
+   close(fd);
+
+   buffer = 
+     wl_shm_pool_create_buffer(pool, 0, width, height, stride,
+                               WL_SHM_FORMAT_ARGB8888);
+   wl_shm_pool_destroy(pool);
+
+   *data_out = data;
+
+   return buffer;
+}
+#endif
+
+static void
+_wl_shot_now(E_Zone *zone, E_Client *ec, const char *params)
+{
+#ifdef HAVE_WAYLAND
+   Eina_List *l;
+   struct screenshooter_output *output;
+   struct wl_shm *shm;
+   int x, y, sw, sh, i;
+   int ostride, bstride;
+   void *dst, *d, *s;
+
+   if ((win) || (url_up)) return;
+   if ((!zone) && (!ec)) return;
+   if (zone)
+     {
+        sw = e_comp->w;
+        sh = e_comp->h;
+        x = y = 0;
+     }
+   else
+     {
+        x = ec->x, y = ec->y, sw = ec->w, sh = ec->h;
+        x = E_CLAMP(x, ec->zone->x, ec->zone->x + ec->zone->w);
+        y = E_CLAMP(y, ec->zone->y, ec->zone->y + ec->zone->h);
+        sw = E_CLAMP(sw, 1, ec->zone->x + ec->zone->w - x);
+        sh = E_CLAMP(sh, 1, ec->zone->y + ec->zone->h - y);
+     }
+
+   shm = ecore_wl_shm_get();
+
+   EINA_LIST_FOREACH(_outputs, l, output)
+     {
+        output->buffer =
+          _create_shm_buffer(shm, output->w, output->h, &output->data);
+
+        screenshooter_shoot(_wl_screenshooter, output->output, output->buffer);
+
+        copy_done = EINA_FALSE;
+        while (!copy_done)
+          ecore_main_loop_iterate();
+     }
+
+   bstride = sw * sizeof(int);
+   dst = malloc(bstride * sh);
+
+   EINA_LIST_FOREACH(_outputs, l, output)
+     {
+        ostride = output->w * sizeof(int);
+        s = output->data;
+        d = dst + (output->y * bstride + output->x * sizeof(int));
+        for (i = 0; i < output->h; i++)
+          {
+             memcpy(d, s, ostride);
+             d += bstride;
+             s += ostride;
+          }
+     }
+
+   _save_dialog_show(zone, ec, params, dst, sw, sh);
+
+   free(dst);
+#else
+   (void)zone;
+   (void)ec;
+   (void)params;
+#endif
+}
+
+static void
+_x_shot_now(E_Zone *zone, E_Client *ec, const char *params)
+{
+   Ecore_X_Image *img;
+   unsigned char *src;
+   unsigned int *dst;
+   int bpl = 0, rows = 0, bpp = 0, sw, sh;
+   int x, y, w, h;
+   Ecore_X_Window xwin;
+   Ecore_X_Visual visual;
+   Ecore_X_Display *display;
+   Ecore_X_Screen *scr;
+   Ecore_X_Window_Attributes watt;
+   Ecore_X_Colormap colormap;
+   int depth;
+
+   if ((win) || (url_up)) return;
+   if ((!zone) && (!ec)) return;
+   if (zone)
+     {
+        xwin = e_comp->root;
+        w = sw = e_comp->w;
+        h = sh = e_comp->h;
+        x = y = 0;
+        if (!ecore_x_window_attributes_get(xwin, &watt)) return;
+        visual = watt.visual;
+        depth = watt.depth;
+     }
+   else
+     {
+        xwin = e_comp->ee_win;
+        x = ec->x, y = ec->y, sw = ec->w, sh = ec->h;
+        w = sw;
+        h = sh;
+        x = E_CLAMP(x, ec->zone->x, ec->zone->x + ec->zone->w);
+        y = E_CLAMP(y, ec->zone->y, ec->zone->y + ec->zone->h);
+        sw = E_CLAMP(sw, 1, ec->zone->x + ec->zone->w - x);
+        sh = E_CLAMP(sh, 1, ec->zone->y + ec->zone->h - y);
+        visual = e_pixmap_visual_get(ec->pixmap);
+        depth = ec->depth;
+     }
+   img = ecore_x_image_new(w, h, visual, depth);
+   if (!ecore_x_image_get(img, xwin, x, y, 0, 0, sw, sh))
+     {
+        Eina_Bool dialog = EINA_FALSE;
+        ecore_x_image_free(img);
+#ifdef __linux__
+        FILE *f;
+
+        f = fopen("/proc/sys/kernel/shmmax", "r");
+        if (f)
+          {
+             long long unsigned int max = 0;
+
+             int n = fscanf(f, "%llu", &max);
+             if ((n > 0) && (max) && (max < (w * h * sizeof(int))))
+               {
+                  e_util_dialog_show(_("Screenshot Error"),
+                                     _("SHMMAX is too small to take screenshot.<br>"
+                                       "Consider increasing /proc/sys/kernel/shmmax to a value larger than %llu"),
+                                     (long long unsigned int)(w * h * sizeof(int)));
+                  dialog = EINA_TRUE;
+               }
+             fclose(f);
+          }
+#elif defined(__FreeBSD__) || defined(__FreeBSD_kernel__)
+        int max;
+        size_t len = sizeof(max);
+
+        if (!sysctlbyname("kern.ipc.shmmax", &max, &len, NULL, 0))
+          {
+             if (max && (max < (w * h * sizeof(int))))
+               {
+                  e_util_dialog_show(_("Screenshot Error"),
+                                     _("SHMMAX is too small to take screenshot.<br>"
+                                       "Consider increasing kern.ipc.shmmax to a value larger than %llu"),
+                                     (long long unsigned int)(w * h * sizeof(int)));
+                  dialog = EINA_TRUE;
+               }
+          }
+#endif
+        if (!dialog)
+          e_util_dialog_show(_("Screenshot Error"),
+                             _("SHM creation failed.<br>"
+                               "Ensure your system has enough RAM free and your user has sufficient permissions."));
+        return;
+     }
+   src = ecore_x_image_data_get(img, &bpl, &rows, &bpp);
+   display = ecore_x_display_get();
+   scr = ecore_x_default_screen_get();
+   colormap = ecore_x_default_colormap_get(display, scr);
+   dst = malloc(sw * sh * sizeof(int));
+   ecore_x_image_to_argb_convert(src, bpp, bpl, colormap, visual,
+                                 0, 0, sw, sh,
+                                 dst, (sw * sizeof(int)), 0, 0);
+
+   _save_dialog_show(zone, ec, params, dst, sw, sh);
+
+   free(dst);
+   ecore_x_image_free(img);
+}
+
 static Eina_Bool
 _shot_delay(void *data)
 {
    timer = NULL;
-   _shot_now(data, NULL, NULL);
+   if (e_comp_util_has_x())
+     _x_shot_now(data, NULL, NULL);
+   else
+     _wl_shot_now(data, NULL, NULL);
+
    return EINA_FALSE;
 }
 
@@ -904,7 +1110,11 @@ static Eina_Bool
 _shot_delay_border(void *data)
 {
    border_timer = NULL;
-   _shot_now(NULL, data, NULL);
+   if (e_comp_util_has_x())
+     _x_shot_now(NULL, data, NULL);
+   else
+     _wl_shot_now(NULL, data, NULL);
+
    return EINA_FALSE;
 }
 
@@ -946,7 +1156,10 @@ _e_mod_action_border_cb(E_Object *obj EINA_UNUSED, const char *params EINA_UNUSE
         ecore_timer_del(border_timer);
         border_timer = NULL;
      }
-   _shot_now(NULL, ec, NULL);
+   if (e_comp_util_has_x())
+     _x_shot_now(NULL, ec, NULL);
+   else
+     _wl_shot_now(NULL, ec, NULL);
 }
 
 static void
@@ -966,7 +1179,10 @@ _e_mod_action_cb(E_Object *obj, const char *params)
    if (!zone) zone = e_zone_current_get();
    if (!zone) return;
    E_FREE_FUNC(timer, ecore_timer_del);
-   _shot_now(zone, NULL, params);
+   if (e_comp_util_has_x())
+     _x_shot_now(zone, NULL, params);
+   else
+     _wl_shot_now(zone, NULL, params);
 }
 
 static void
@@ -1044,6 +1260,43 @@ e_modapi_init(E_Module *m)
    maug = e_int_menus_menu_augmentation_add_sorted
      ("main/2",  _("Take Screenshot"), _e_mod_menu_add, NULL, NULL, NULL);
    border_hook = e_int_client_menu_hook_add(_bd_hook, NULL);
+
+#ifdef HAVE_WAYLAND
+   Eina_Inlist *globals;
+   Ecore_Wl_Global *global;
+
+   globals = ecore_wl_globals_get();
+   EINA_INLIST_FOREACH(globals, global)
+     {
+        if (!strcmp(global->interface, "screenshooter"))
+          {
+             _wl_screenshooter =
+               wl_registry_bind(ecore_wl_registry_get(), global->id,
+                                &screenshooter_interface, global->version);
+
+             if (_wl_screenshooter)
+               screenshooter_add_listener(_wl_screenshooter,
+                                          &_screenshooter_listener,
+                                          _wl_screenshooter);
+          }
+        else if (!strcmp(global->interface, "wl_output"))
+          {
+             struct screenshooter_output *output;
+
+             output = calloc(1, sizeof(*output));
+             if (output)
+               {
+                  output->output =
+                    wl_registry_bind(ecore_wl_registry_get(), global->id,
+                                     &wl_output_interface, global->version);
+                  _outputs = eina_list_append(_outputs, output);
+                  wl_output_add_listener(output->output,
+                                         &_output_listener, output);
+               }
+          }
+     }
+#endif
+
    return m;
 }
 
