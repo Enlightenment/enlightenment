@@ -24,6 +24,31 @@
 
 # define E_CSERVE
 
+# ifdef E_API
+#  undef E_API
+# endif
+# ifdef WIN32
+#  ifdef BUILDING_DLL
+#   define E_API __declspec(dllexport)
+#  else
+#   define E_API __declspec(dllimport)
+#  endif
+# else
+#  ifdef __GNUC__
+#   if __GNUC__ >= 4
+/* BROKEN in gcc 4 on amd64 */
+#    if 0
+#     pragma GCC visibility push(hidden)
+#    endif
+#    define E_API __attribute__ ((visibility("default")))
+#   else
+#    define E_API
+#   endif
+#  else
+#   define E_API
+#  endif
+# endif
+
 static Eina_Bool stop_ptrace = EINA_FALSE;
 
 static void env_set(const char *var, const char *val);
