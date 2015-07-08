@@ -1,4 +1,3 @@
-#define E_COMP_WL
 #include "e.h"
 #include <Ecore_Drm.h>
 

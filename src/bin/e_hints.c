@@ -1,4 +1,3 @@
-#define E_COMP_WL
 #include "e.h"
 
 #ifndef HAVE_WAYLAND_ONLY

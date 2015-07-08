@@ -8,7 +8,6 @@
  *
  * @}
  */
-#define E_COMP_WL
 #include "e.h"
 #ifdef HAVE_WAYLAND
 # include "screenshooter-client-protocol.h"
