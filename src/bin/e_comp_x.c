@@ -5412,10 +5412,11 @@ e_comp_x_nocomp_end(void)
 EINTERN void
 e_comp_x_xwayland_client_setup(E_Client *ec, E_Client *wc)
 {
-   Ecore_X_Window win;
+   Ecore_X_Window win, pwin;
    E_Comp_X_Client_Data *cd;
 
    win = e_client_util_win_get(ec);
+   pwin = e_client_util_pwin_get(ec);
    cd = ec->comp_data;
    e_comp_wl_client_xwayland_setup(wc, cd, e_pixmap_ref(ec->pixmap));
    eina_hash_del(damages_hash, &cd->damage, ec);
@@ -5440,6 +5441,8 @@ e_comp_x_xwayland_client_setup(E_Client *ec, E_Client *wc)
    e_comp->new_clients++;
 
    eina_hash_set(clients_win_hash, &win, wc);
+   if (pwin)
+     eina_hash_set(clients_win_hash, &pwin, wc);
    wc->visible = 1;
    wc->ignored = 0;
    if (ec->override)
