@@ -5461,3 +5461,13 @@ e_comp_x_xwayland_client_setup(E_Client *ec, E_Client *wc)
    _e_comp_x_client_stack(wc);
 }
 #endif
+
+E_API inline E_Pixmap *
+e_comp_x_client_pixmap_get(const E_Client *ec)
+{
+#ifdef HAVE_WAYLAND
+   if (!e_pixmap_is_x(ec->pixmap))
+     return e_comp_wl_client_xwayland_pixmap(ec);
+#endif
+   return ec->pixmap;
+}

@@ -111,5 +111,8 @@ E_API void e_comp_x_shutdown(void);
 E_API void e_alert_composite_win(Ecore_X_Window root, Ecore_X_Window win);
 EINTERN void e_comp_x_nocomp_end(void);
 EINTERN void e_comp_x_xwayland_client_setup(E_Client *ec, E_Client *wc);
+
+E_API E_Pixmap *e_comp_x_client_pixmap_get(const E_Client *ec);
+
 # endif
 #endif

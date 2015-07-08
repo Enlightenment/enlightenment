@@ -87,14 +87,22 @@ static inline Ecore_Window
 e_client_util_pwin_get(const E_Client *ec)
 {
    if (!ec->pixmap) return 0;
+#if defined(HAVE_WAYLAND) && !defined(HAVE_WAYLAND_ONLY)
+   return e_pixmap_parent_window_get(e_comp_x_client_pixmap_get(ec));
+#else
    return e_pixmap_parent_window_get(ec->pixmap);
+#endif
 }
 
 static inline Ecore_Window
 e_client_util_win_get(const E_Client *ec)
 {
    if (!ec->pixmap) return 0;
+#if defined(HAVE_WAYLAND) && !defined(HAVE_WAYLAND_ONLY)
+   return e_pixmap_window_get(e_comp_x_client_pixmap_get(ec));
+#else
    return e_pixmap_window_get(ec->pixmap);
+#endif
 }
 
 static inline Eina_Bool
