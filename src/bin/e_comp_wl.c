@@ -1105,8 +1105,9 @@ _e_comp_wl_surface_state_commit(E_Client *ec, E_Comp_Wl_Surface_State *state)
 
         if (ec->new_client) placed = ec->placed;
 
-        ec->w = ec->client.w = state->bw;
-        ec->h = ec->client.h = state->bh;
+        ec->client.w = state->bw;
+        ec->client.h = state->bh;
+        e_comp_object_frame_wh_adjust(ec->frame, ec->client.w, ec->client.h, &ec->w, &ec->h);
      }
    if (!e_pixmap_usable_get(ec->pixmap))
      {
