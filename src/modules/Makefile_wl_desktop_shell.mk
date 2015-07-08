@@ -12,7 +12,7 @@ wl_desktop_shellpkgdir = $(MDIR)/wl_desktop_shell/$(MODULE_ARCH)
 wl_desktop_shellpkg_LTLIBRARIES = src/modules/wl_desktop_shell/module.la
 
 src_modules_wl_desktop_shell_module_la_DEPENDENCIES = $(MDEPENDENCIES)
-src_modules_wl_desktop_shell_module_la_CPPFLAGS  = $(MOD_CPPFLAGS) @WL_DESKTOP_SHELL_CFLAGS@ @WAYLAND_CFLAGS@ -DNEED_WL
+src_modules_wl_desktop_shell_module_la_CPPFLAGS  = $(MOD_CPPFLAGS) @WL_DESKTOP_SHELL_CFLAGS@ @WAYLAND_CFLAGS@
 src_modules_wl_desktop_shell_module_la_LIBADD   = $(LIBS) @WL_DESKTOP_SHELL_LIBS@ @WAYLAND_LIBS@
 src_modules_wl_desktop_shell_module_la_LDFLAGS = $(MOD_LDFLAGS)
 
