@@ -211,6 +211,13 @@ struct _E_Comp_Wl_Data
         char *area;
      } xkb;
 
+   struct
+     {
+        struct wl_global *global;
+        struct wl_client *client;
+        void (*read_pixels)(E_Comp_Wl_Output *output, void *pixels);
+     } screenshooter;
+
    Eina_List *outputs;
 
    Ecore_Fd_Handler *fd_hdlr;
@@ -288,6 +295,11 @@ struct _E_Comp_Wl_Output
    unsigned int subpixel;
    unsigned int transform;
    double scale;
+
+   /* added for screenshot ability */
+   struct wl_output *wl_output;
+   struct wl_buffer *buffer;
+   void *data;
 };
 
 E_API Eina_Bool e_comp_wl_init(void);
