@@ -128,7 +128,7 @@ src_modules_wizard_page_130_la_LDFLAGS = $(MOD_LDFLAGS)
 src_modules_wizard_page_130_la_SOURCES = src/modules/wizard/page_130.c
 
 src_modules_wizard_page_150_la_LIBADD = $(MOD_LIBS)
-src_modules_wizard_page_150_la_CPPFLAGS = $(MOD_CPPFLAGS) -DNEED_X=1
+src_modules_wizard_page_150_la_CPPFLAGS = $(MOD_CPPFLAGS)
 src_modules_wizard_page_150_la_LDFLAGS = $(MOD_LDFLAGS)
 src_modules_wizard_page_150_la_SOURCES = src/modules/wizard/page_150.c
 

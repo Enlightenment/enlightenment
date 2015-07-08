@@ -4,7 +4,6 @@ xwaylandpkg_LTLIBRARIES = src/modules/xwayland/module.la
 
 src_modules_xwayland_module_la_DEPENDENCIES = $(MDEPENDENCIES)
 src_modules_xwayland_module_la_CPPFLAGS  = \
--DNEED_X \
 $(MOD_CPPFLAGS) \
 @XWAYLAND_CFLAGS@ \
 @WAYLAND_CFLAGS@ \

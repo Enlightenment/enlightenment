@@ -8,7 +8,7 @@ accesspkgdir = $(MDIR)/access/$(MODULE_ARCH)
 accesspkg_LTLIBRARIES = src/modules/access/module.la
 
 src_modules_access_module_la_LIBADD = $(MOD_LIBS)
-src_modules_access_module_la_CPPFLAGS = $(MOD_CPPFLAGS) -DNEED_X
+src_modules_access_module_la_CPPFLAGS = $(MOD_CPPFLAGS)
 src_modules_access_module_la_LDFLAGS = $(MOD_LDFLAGS)
 src_modules_access_module_la_SOURCES = src/modules/access/e_mod_main.c \
 			   src/modules/access/e_mod_main.h \

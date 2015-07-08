@@ -10,7 +10,7 @@ filemanpkgdir = $(MDIR)/fileman/$(MODULE_ARCH)
 filemanpkg_LTLIBRARIES = src/modules/fileman/module.la
 
 src_modules_fileman_module_la_LIBADD = $(MOD_LIBS)
-src_modules_fileman_module_la_CPPFLAGS = $(MOD_CPPFLAGS) -DNEED_X=1
+src_modules_fileman_module_la_CPPFLAGS = $(MOD_CPPFLAGS)
 src_modules_fileman_module_la_LDFLAGS = $(MOD_LDFLAGS)
 src_modules_fileman_module_la_SOURCES = src/modules/fileman/e_mod_main.c \
 			    src/modules/fileman/e_mod_main.h \

@@ -10,7 +10,7 @@ shotpkgdir = $(MDIR)/shot/$(MODULE_ARCH)
 shotpkg_LTLIBRARIES = src/modules/shot/module.la
 
 src_modules_shot_module_la_LIBADD = $(MOD_LIBS)
-src_modules_shot_module_la_CPPFLAGS = $(MOD_CPPFLAGS) -DNEED_X=1
+src_modules_shot_module_la_CPPFLAGS = $(MOD_CPPFLAGS)
 src_modules_shot_module_la_LDFLAGS = $(MOD_LDFLAGS)
 src_modules_shot_module_la_SOURCES = src/modules/shot/e_mod_main.c
 

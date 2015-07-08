@@ -19,7 +19,7 @@ src/modules/tiling/%.edj: src/modules/tiling/%.edc Makefile
 	$(EDJE_CC) $(TILING_EDJE_FLAGS) $< $@
 
 src_modules_tiling_module_la_LIBADD = $(MOD_LIBS)
-src_modules_tiling_module_la_CPPFLAGS = $(MOD_CPPFLAGS) -DNEED_X=1
+src_modules_tiling_module_la_CPPFLAGS = $(MOD_CPPFLAGS)
 src_modules_tiling_module_la_LDFLAGS = $(MOD_LDFLAGS)
 src_modules_tiling_module_la_SOURCES = src/modules/tiling/e_mod_tiling.c \
 				       src/modules/tiling/e_mod_tiling.h \

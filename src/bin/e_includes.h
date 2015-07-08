@@ -8,7 +8,7 @@
 #include "e_desk.h"
 #include "e_auth.h"
 #include "e_randr2.h"
-#ifdef NEED_X
+#ifndef HAVE_WAYLAND_ONLY
 # include "e_comp_x.h"
 #endif
 #include "e_pixmap.h"

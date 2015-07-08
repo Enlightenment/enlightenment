@@ -8,7 +8,7 @@ conf_themepkgdir = $(MDIR)/conf_theme/$(MODULE_ARCH)
 conf_themepkg_LTLIBRARIES = src/modules/conf_theme/module.la
 
 src_modules_conf_theme_module_la_LIBADD = $(MOD_LIBS)
-src_modules_conf_theme_module_la_CPPFLAGS = $(MOD_CPPFLAGS) -DNEED_X=1
+src_modules_conf_theme_module_la_CPPFLAGS = $(MOD_CPPFLAGS)
 src_modules_conf_theme_module_la_LDFLAGS = $(MOD_LDFLAGS)
 src_modules_conf_theme_module_la_SOURCES = src/modules/conf_theme/e_mod_main.c \
 			       src/modules/conf_theme/e_mod_main.h \

@@ -15,7 +15,7 @@ EVRYHEADERS = src/modules/everything/evry_api.h \
 	      src/modules/everything/evry_types.h
 
 src_modules_everything_module_la_LIBADD = $(MOD_LIBS)
-src_modules_everything_module_la_CPPFLAGS = $(MOD_CPPFLAGS) -DNEED_X=1
+src_modules_everything_module_la_CPPFLAGS = $(MOD_CPPFLAGS)
 src_modules_everything_module_la_LDFLAGS = $(MOD_LDFLAGS)
 src_modules_everything_module_la_SOURCES = $(EVRYHEADERS) \
 			       src/modules/everything/e_mod_main.c \

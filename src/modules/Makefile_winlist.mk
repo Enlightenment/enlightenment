@@ -10,7 +10,7 @@ winlistpkgdir = $(MDIR)/winlist/$(MODULE_ARCH)
 winlistpkg_LTLIBRARIES = src/modules/winlist/module.la
 
 src_modules_winlist_module_la_LIBADD = $(MOD_LIBS)
-src_modules_winlist_module_la_CPPFLAGS = $(MOD_CPPFLAGS) -DNEED_X=1
+src_modules_winlist_module_la_CPPFLAGS = $(MOD_CPPFLAGS)
 src_modules_winlist_module_la_LDFLAGS = $(MOD_LDFLAGS)
 src_modules_winlist_module_la_SOURCES = src/modules/winlist/e_mod_main.h \
 			    src/modules/winlist/e_mod_main.c \

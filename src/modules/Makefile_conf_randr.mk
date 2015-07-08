@@ -10,7 +10,7 @@ conf_randrpkgdir = $(MDIR)/conf_randr/$(MODULE_ARCH)
 conf_randrpkg_LTLIBRARIES = src/modules/conf_randr/module.la
 
 src_modules_conf_randr_module_la_LIBADD = $(MOD_LIBS)
-src_modules_conf_randr_module_la_CPPFLAGS = $(MOD_CPPFLAGS) -DNEED_X=1
+src_modules_conf_randr_module_la_CPPFLAGS = $(MOD_CPPFLAGS)
 src_modules_conf_randr_module_la_LDFLAGS = $(MOD_LDFLAGS)
 src_modules_conf_randr_module_la_SOURCES = src/modules/conf_randr/e_mod_main.c \
 			       src/modules/conf_randr/e_mod_main.h \

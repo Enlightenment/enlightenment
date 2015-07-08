@@ -10,7 +10,7 @@ pager_plainpkgdir = $(MDIR)/pager_plain/$(MODULE_ARCH)
 pager_plainpkg_LTLIBRARIES = src/modules/pager_plain/module.la
 
 src_modules_pager_plain_module_la_LIBADD = $(MOD_LIBS)
-src_modules_pager_plain_module_la_CPPFLAGS = $(MOD_CPPFLAGS) -DNEED_X=1
+src_modules_pager_plain_module_la_CPPFLAGS = $(MOD_CPPFLAGS)
 src_modules_pager_plain_module_la_LDFLAGS = $(MOD_LDFLAGS)
 src_modules_pager_plain_module_la_SOURCES = src/modules/pager_plain/e_mod_main.h \
 			  src/modules/pager_plain/e_mod_main.c \
