@@ -617,6 +617,36 @@ static E_Comp_Screen_Iface drmiface =
    .apply = _drm_randr_apply
 };
 
+static void
+_drm_read_pixels(E_Comp_Wl_Output *output, void *pixels)
+{
+   Ecore_Drm_Device *dev;
+   Ecore_Drm_Fb *fb;
+   const Eina_List *drm_devs, *l;
+   int i = 0, bstride;
+   void *s;
+
+   drm_devs = ecore_drm_devices_get();
+   EINA_LIST_FOREACH(drm_devs, l, dev)
+     {
+        fb = dev->next;
+        if (!fb) fb = dev->current;
+        if (fb) break;
+     }
+
+   if (!fb) return;
+
+   bstride = output->w * sizeof(int);
+   s = fb->mmap;
+
+   for (i = output->y; i < output->y + output->h; i++)
+     {
+        s = fb->mmap + (fb->stride * i) + (output->x * sizeof(int));
+        memcpy(pixels, s, (output->w * sizeof(int)));
+        pixels += bstride;
+     }
+}
+
 E_API void *
 e_modapi_init(E_Module *m)
 {
@@ -666,6 +696,8 @@ e_modapi_init(E_Module *m)
 
    if (!e_comp_wl_init()) return NULL;
    if (!e_comp_canvas_init(w, h)) return NULL;
+
+   e_comp->wl_comp_data->screenshooter.read_pixels = _drm_read_pixels;
 
    ecore_evas_pointer_xy_get(e_comp->ee, &e_comp->wl_comp_data->ptr.x,
                              &e_comp->wl_comp_data->ptr.y);
