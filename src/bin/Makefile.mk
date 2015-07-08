@@ -370,6 +370,8 @@ enlightenment_src += \
 src/bin/e_uuid_store.c \
 src/bin/session-recovery-protocol.c \
 src/bin/session-recovery-server-protocol.h \
+src/bin/e_comp_wl_screenshooter_server.c \
+src/bin/e_comp_wl_screenshooter_server.h \
 src/bin/e_comp_wl_data.c \
 src/bin/e_comp_wl_input.c \
 src/bin/e_comp_wl.c
