@@ -1301,6 +1301,24 @@ _e_comp_intercept_show_helper(E_Comp_Object *cw)
           }
         return;
      }
+   if ((!cw->updates) && (!cw->ec->input_only) && (!cw->ec->ignored))
+     {
+        int pw, ph;
+
+        pw = cw->ec->client.w, ph = cw->ec->client.h;
+        if ((!pw) || (!ph))
+          e_pixmap_size_get(cw->ec->pixmap, &pw, &ph);
+        cw->updates = eina_tiler_new(pw, ph);
+        if (!cw->updates)
+          {
+             cw->ec->changes.visible = !cw->ec->hidden;
+             cw->ec->visible = 1;
+             EC_CHANGED(cw->ec);
+             return;
+          }
+     }
+   if (cw->updates)
+     eina_tiler_tile_size_set(cw->updates, 1, 1);
    if (cw->ec->new_client)
      {
         /* ignore until client idler first run */
@@ -1390,12 +1408,6 @@ _e_comp_intercept_show(void *data, Evas_Object *obj EINA_UNUSED)
 #endif
         cw->redirected = 1;
         evas_object_color_set(cw->clip, ec->netwm.opacity, ec->netwm.opacity, ec->netwm.opacity, ec->netwm.opacity);
-
-        if ((!cw->ec->input_only) && (!cw->ec->ignored))
-          {
-             cw->updates = eina_tiler_new(cw->ec->client.w, cw->ec->client.h);
-             eina_tiler_tile_size_set(cw->updates, 1, 1);
-          }
      }
 
    _e_comp_intercept_show_helper(cw);
