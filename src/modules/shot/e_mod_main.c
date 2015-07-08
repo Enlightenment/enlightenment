@@ -937,6 +937,14 @@ _wl_shot_now(E_Zone *zone, E_Client *ec, const char *params)
 
    if ((win) || (url_up)) return;
    if ((!zone) && (!ec)) return;
+
+   if (ec)
+     {
+        e_util_dialog_show(_("Error - Cannot take window shot"),
+                           _("Carry on my wayland son. This feature not implemented yet."));
+        return;
+     }
+
    if (zone)
      {
         sw = e_comp->w;
