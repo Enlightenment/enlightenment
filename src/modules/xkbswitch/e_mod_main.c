@@ -77,7 +77,10 @@ e_modapi_init(E_Module *m)
 
 
    _xkb.module = m;
-   ecore_event_handler_add(ECORE_X_EVENT_XKB_STATE_NOTIFY, _xkb_changed_state, NULL);
+#ifndef HAVE_WAYLAND_ONLY
+   if (e_comp_util_has_x())
+     ecore_event_handler_add(ECORE_X_EVENT_XKB_STATE_NOTIFY, _xkb_changed_state, NULL);
+#endif
    /* Gadcon */
    e_gadcon_provider_register(&_gc_class);
    return m;
@@ -276,6 +279,7 @@ _gc_icon(const E_Gadcon_Client_Class *client_class EINA_UNUSED, Evas *evas)
    return o;
 }
 
+#ifndef HAVE_WAYLAND_ONLY
 static Eina_Bool
 _xkb_changed_state(void *data EINA_UNUSED, int type EINA_UNUSED, void *event EINA_UNUSED)
 {
@@ -286,6 +290,7 @@ _xkb_changed_state(void *data EINA_UNUSED, int type EINA_UNUSED, void *event EIN
    _xkb_update_icon(ev->group);
    return ECORE_CALLBACK_PASS_ON;
 }
+#endif
 
 #if 0
 static int

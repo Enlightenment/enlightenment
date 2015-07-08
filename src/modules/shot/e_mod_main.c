@@ -588,7 +588,6 @@ _rect_down_cb(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj EINA
 static void
 _shot_now(E_Zone *zone, E_Client *ec, const char *params)
 {
-   Ecore_X_Image *img;
    unsigned char *src;
    unsigned int *dst;
    int bpl = 0, rows = 0, bpp = 0, sw, sh;
@@ -596,95 +595,100 @@ _shot_now(E_Zone *zone, E_Client *ec, const char *params)
    Evas_Object *o, *oa, *op, *ol;
    int x, y, w, h;
    Evas_Modifier_Mask mask;
-   Ecore_X_Window xwin;
    E_Radio_Group *rg;
+#ifndef HAVE_WAYLAND_ONLY
+   Ecore_X_Window xwin;
    Ecore_X_Visual visual;
    Ecore_X_Display *display;
    Ecore_X_Screen *scr;
    Ecore_X_Window_Attributes watt;
    Ecore_X_Colormap colormap;
+   Ecore_X_Image *img = NULL;
    int depth;
 
    if ((win) || (url_up)) return;
    if ((!zone) && (!ec)) return;
-   if (zone)
+   if (e_comp_util_has_x())
      {
-        xwin = e_comp->root;
-        w = sw = e_comp->w;
-        h = sh = e_comp->h;
-        x = y = 0;
-        if (!ecore_x_window_attributes_get(xwin, &watt)) return;
-        visual = watt.visual;
-        depth = watt.depth;
-     }
-   else
-     {
-        xwin = e_comp->ee_win;
-        x = ec->x, y = ec->y, sw = ec->w, sh = ec->h;
-        w = sw;
-        h = sh;
-        x = E_CLAMP(x, ec->zone->x, ec->zone->x + ec->zone->w);
-        y = E_CLAMP(y, ec->zone->y, ec->zone->y + ec->zone->h);
-        sw = E_CLAMP(sw, 1, ec->zone->x + ec->zone->w - x);
-        sh = E_CLAMP(sh, 1, ec->zone->y + ec->zone->h - y);
-        visual = e_pixmap_visual_get(ec->pixmap);
-        depth = ec->depth;
-     }
-   img = ecore_x_image_new(w, h, visual, depth);
-   if (!ecore_x_image_get(img, xwin, x, y, 0, 0, sw, sh))
-     {
-        Eina_Bool dialog = EINA_FALSE;
-        ecore_x_image_free(img);
+        if (zone)
+          {
+             xwin = e_comp->root;
+             w = sw = e_comp->w;
+             h = sh = e_comp->h;
+             x = y = 0;
+             if (!ecore_x_window_attributes_get(xwin, &watt)) return;
+             visual = watt.visual;
+             depth = watt.depth;
+          }
+        else
+          {
+             xwin = e_comp->ee_win;
+             x = ec->x, y = ec->y, sw = ec->w, sh = ec->h;
+             w = sw;
+             h = sh;
+             x = E_CLAMP(x, ec->zone->x, ec->zone->x + ec->zone->w);
+             y = E_CLAMP(y, ec->zone->y, ec->zone->y + ec->zone->h);
+             sw = E_CLAMP(sw, 1, ec->zone->x + ec->zone->w - x);
+             sh = E_CLAMP(sh, 1, ec->zone->y + ec->zone->h - y);
+             visual = e_pixmap_visual_get(ec->pixmap);
+             depth = ec->depth;
+          }
+        img = ecore_x_image_new(w, h, visual, depth);
+        if (!ecore_x_image_get(img, xwin, x, y, 0, 0, sw, sh))
+          {
+             Eina_Bool dialog = EINA_FALSE;
+             ecore_x_image_free(img);
 #ifdef __linux__
-        FILE *f;
+             FILE *f;
 
-        f = fopen("/proc/sys/kernel/shmmax", "r");
-        if (f)
-          {
-             long long unsigned int max = 0;
-
-             int n = fscanf(f, "%llu", &max);
-             if ((n > 0) && (max) && (max < (w * h * sizeof(int))))
+             f = fopen("/proc/sys/kernel/shmmax", "r");
+             if (f)
                {
-                  e_util_dialog_show(_("Screenshot Error"),
-                                     _("SHMMAX is too small to take screenshot.<br>"
-                                       "Consider increasing /proc/sys/kernel/shmmax to a value larger than %llu"),
-                                     (long long unsigned int)(w * h * sizeof(int)));
-                  dialog = EINA_TRUE;
+                  long long unsigned int max = 0;
+
+                  int n = fscanf(f, "%llu", &max);
+                  if ((n > 0) && (max) && (max < (w * h * sizeof(int))))
+                    {
+                       e_util_dialog_show(_("Screenshot Error"),
+                                          _("SHMMAX is too small to take screenshot.<br>"
+                                            "Consider increasing /proc/sys/kernel/shmmax to a value larger than %llu"),
+                                          (long long unsigned int)(w * h * sizeof(int)));
+                       dialog = EINA_TRUE;
+                    }
+                  fclose(f);
                }
-             fclose(f);
-          }
 #elif defined(__FreeBSD__) || defined(__FreeBSD_kernel__)
-        int max;
-        size_t len = sizeof(max);
+             int max;
+             size_t len = sizeof(max);
 
-        if (!sysctlbyname("kern.ipc.shmmax", &max, &len, NULL, 0))
-          {
-             if (max && (max < (w * h * sizeof(int))))
+             if (!sysctlbyname("kern.ipc.shmmax", &max, &len, NULL, 0))
                {
-                  e_util_dialog_show(_("Screenshot Error"),
-                                     _("SHMMAX is too small to take screenshot.<br>"
-                                       "Consider increasing kern.ipc.shmmax to a value larger than %llu"),
-                                     (long long unsigned int)(w * h * sizeof(int)));
-                  dialog = EINA_TRUE;
+                  if (max && (max < (w * h * sizeof(int))))
+                    {
+                       e_util_dialog_show(_("Screenshot Error"),
+                                          _("SHMMAX is too small to take screenshot.<br>"
+                                            "Consider increasing kern.ipc.shmmax to a value larger than %llu"),
+                                          (long long unsigned int)(w * h * sizeof(int)));
+                       dialog = EINA_TRUE;
+                    }
                }
-          }
 #endif
-        if (!dialog)
-          e_util_dialog_show(_("Screenshot Error"),
-                             _("SHM creation failed.<br>"
-                               "Ensure your system has enough RAM free and your user has sufficient permissions."));
-        return;
+             if (!dialog)
+               e_util_dialog_show(_("Screenshot Error"),
+                                  _("SHM creation failed.<br>"
+                                    "Ensure your system has enough RAM free and your user has sufficient permissions."));
+             return;
+          }
+        src = ecore_x_image_data_get(img, &bpl, &rows, &bpp);
+        display = ecore_x_display_get();
+        scr = ecore_x_default_screen_get();
+        colormap = ecore_x_default_colormap_get(display, scr);
+        dst = malloc(sw * sh * sizeof(int));
+        ecore_x_image_to_argb_convert(src, bpp, bpl, colormap, visual,
+                                      0, 0, sw, sh,
+                                      dst, (sw * sizeof(int)), 0, 0);
      }
-   src = ecore_x_image_data_get(img, &bpl, &rows, &bpp);
-   display = ecore_x_display_get();
-   scr = ecore_x_default_screen_get();
-   colormap = ecore_x_default_colormap_get(display, scr);
-   dst = malloc(sw * sh * sizeof(int));
-   ecore_x_image_to_argb_convert(src, bpp, bpl, colormap, visual,
-                                 0, 0, sw, sh,
-                                 dst, (sw * sizeof(int)), 0, 0);
-
+#endif
    win = elm_win_add(NULL, NULL, ELM_WIN_BASIC);
 
    evas = evas_object_evas_get(win);
@@ -722,7 +726,10 @@ _shot_now(E_Zone *zone, E_Client *ec, const char *params)
    evas_object_image_size_set(o, sw, sh);
    evas_object_image_data_copy_set(o, dst);
    free(dst);
-   ecore_x_image_free(img);
+#ifndef HAVE_WAYLAND_ONLY
+   if (img)
+     ecore_x_image_free(img);
+#endif
    evas_object_image_data_update_add(o, 0, 0, sw, sh);
    e_widget_preview_extern_object_set(op, o);
    evas_object_show(o);
