@@ -1098,7 +1098,7 @@ static Eina_Bool
 _shot_delay(void *data)
 {
    timer = NULL;
-   if (e_comp_util_has_x())
+   if (e_comp->comp_type == E_PIXMAP_TYPE_X)
      _x_shot_now(data, NULL, NULL);
    else
      _wl_shot_now(data, NULL, NULL);
@@ -1110,7 +1110,7 @@ static Eina_Bool
 _shot_delay_border(void *data)
 {
    border_timer = NULL;
-   if (e_comp_util_has_x())
+   if (e_comp->comp_type == E_PIXMAP_TYPE_X)
      _x_shot_now(NULL, data, NULL);
    else
      _wl_shot_now(NULL, data, NULL);
@@ -1156,7 +1156,7 @@ _e_mod_action_border_cb(E_Object *obj EINA_UNUSED, const char *params EINA_UNUSE
         ecore_timer_del(border_timer);
         border_timer = NULL;
      }
-   if (e_comp_util_has_x())
+   if (e_comp->comp_type == E_PIXMAP_TYPE_X)
      _x_shot_now(NULL, ec, NULL);
    else
      _wl_shot_now(NULL, ec, NULL);
@@ -1179,7 +1179,7 @@ _e_mod_action_cb(E_Object *obj, const char *params)
    if (!zone) zone = e_zone_current_get();
    if (!zone) return;
    E_FREE_FUNC(timer, ecore_timer_del);
-   if (e_comp_util_has_x())
+   if (e_comp->comp_type == E_PIXMAP_TYPE_X)
      _x_shot_now(zone, NULL, params);
    else
      _wl_shot_now(zone, NULL, params);
