@@ -887,7 +887,6 @@ AC_E_OPTIONAL_MODULE([wl_desktop_shell], $have_wayland, [CHECK_MODULE_WL_DESKTOP
 AC_E_OPTIONAL_MODULE([wl_x11], $have_wayland, [CHECK_MODULE_WL_X11])
 #AC_E_OPTIONAL_MODULE([wl_fb], $have_wayland, [CHECK_MODULE_WL_FB])
 AC_E_OPTIONAL_MODULE([wl_drm], $have_wayland, [CHECK_MODULE_WL_DRM])
-#AC_E_OPTIONAL_MODULE([wl_screenshot], true, [CHECK_MODULE_WL_SCREENSHOT])
 AC_E_OPTIONAL_MODULE([policy_mobile], true)
 AC_E_OPTIONAL_MODULE([geolocation], true)
 AC_E_OPTIONAL_MODULE([xwayland], $have_wayland, [CHECK_MODULE_XWAYLAND])
@@ -1080,7 +1079,6 @@ src/modules/tiling/module.desktop
 src/modules/music-control/module.desktop
 src/modules/packagekit/module.desktop
 src/modules/wl_desktop_shell/module.desktop
-src/modules/wl_screenshot/module.desktop
 data/xsession/enlightenment.desktop
 data/etc/sysactions.conf
 data/units/enlightenment.service
