@@ -29,10 +29,12 @@ struct _E_Pointer
 
    Evas *evas;
    Ecore_Evas *ee;
+   Evas *buffer_evas;
    Evas_Object *o_ptr;
    Evas_Object *o_hot;
+   Evas_Object *buffer_o_ptr;
+   Evas_Object *buffer_o_hot;
 
-//   E_Pixmap *pixmap;
    Ecore_Window win;
 
    int *pixels;

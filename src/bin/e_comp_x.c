@@ -5183,6 +5183,8 @@ _e_comp_x_setup(Ecore_X_Window root, int w, int h)
         e_pointer_type_push(e_comp->pointer, e_comp->pointer, "default");
         ecore_x_icccm_state_set(ecore_evas_window_get(e_comp->ee), ECORE_X_WINDOW_STATE_HINT_NORMAL);
      }
+   else
+     e_comp->pointer->win = e_comp->root;
    _e_comp_x_manage_windows();
 
    {
