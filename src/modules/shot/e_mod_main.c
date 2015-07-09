@@ -937,13 +937,6 @@ _wl_shot_now(E_Zone *zone, E_Client *ec, const char *params)
    if ((win) || (url_up)) return;
    if ((!zone) && (!ec)) return;
 
-   if (ec)
-     {
-        e_util_dialog_show(_("Error - Cannot take window shot"),
-                           _("Carry on my wayland son. This feature not implemented yet."));
-        return;
-     }
-
    if (zone)
      {
         sw = e_comp->w;
@@ -963,6 +956,11 @@ _wl_shot_now(E_Zone *zone, E_Client *ec, const char *params)
 
    EINA_LIST_FOREACH(_outputs, l, output)
      {
+        if ((!zone) &&
+            (!E_CONTAINS(output->x, output->y, output->w, output->h,
+                         x, y, sw, sh)))
+          continue;
+
         output->buffer =
           _create_shm_buffer(shm, output->w, output->h, &output->data);
 
@@ -978,14 +976,32 @@ _wl_shot_now(E_Zone *zone, E_Client *ec, const char *params)
 
    EINA_LIST_FOREACH(_outputs, l, output)
      {
+        if ((!zone) &&
+            (!E_CONTAINS(output->x, output->y, output->w, output->h,
+                         x, y, sw, sh)))
+          continue;
+
         ostride = output->w * sizeof(int);
         s = output->data;
-        d = dst + (output->y * bstride + output->x * sizeof(int));
-        for (i = 0; i < output->h; i++)
+        if (zone)
           {
-             memcpy(d, s, ostride);
-             d += bstride;
-             s += ostride;
+             d = dst + (output->y * bstride + output->x * sizeof(int));
+             for (i = 0; i < output->h; i++)
+               {
+                  memcpy(d, s, ostride);
+                  d += bstride;
+                  s += ostride;
+               }
+          }
+        else
+          {
+             d = dst;
+             for (i = y; i < (y + sh); i++)
+               {
+                  s = output->data + (i * ostride) + (x * sizeof(int));
+                  memcpy(d, s, bstride);
+                  d += bstride;
+               }
           }
      }
 
