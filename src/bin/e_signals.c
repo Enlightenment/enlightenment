@@ -5,7 +5,7 @@
  */
 #include "e.h"
 
-#ifdef HAVE_WAYLAND_ONLY
+#ifdef HAVE_WAYLAND
 #include <Ecore_Drm.h>
 #endif
 
@@ -66,22 +66,27 @@ _e_write_safe_int(int fd, const char *buf, size_t size)
 static void
 _e_crash(void)
 {
-#ifdef HAVE_WAYLAND_ONLY
-   const Eina_List *list, *l, *ll;
-   Ecore_Drm_Device *dev;
-
-   list = ecore_drm_devices_get();
-   EINA_LIST_FOREACH_SAFE(list, l, ll, dev)
+#ifdef HAVE_WAYLAND
+   if (e_comp->comp_type == E_PIXMAP_TYPE_WL)
      {
-        ecore_drm_inputs_destroy(dev);
-        ecore_drm_sprites_destroy(dev);
-        ecore_drm_device_close(dev);
-        ecore_drm_launcher_disconnect(dev);
-        ecore_drm_device_free(dev);
-     }
+        const Eina_List *list, *l, *ll;
+        Ecore_Drm_Device *dev;
 
-   ecore_drm_shutdown();
-#else
+        list = ecore_drm_devices_get();
+        EINA_LIST_FOREACH_SAFE(list, l, ll, dev)
+          {
+             ecore_drm_inputs_destroy(dev);
+             ecore_drm_sprites_destroy(dev);
+             ecore_drm_device_close(dev);
+             ecore_drm_launcher_disconnect(dev);
+             ecore_drm_device_free(dev);
+          }
+
+        ecore_drm_shutdown();
+        return;
+     }
+#endif
+#ifndef HAVE_WAYLAND_ONLY
    _e_x_composite_shutdown();
    ecore_x_pointer_ungrab();
    ecore_x_keyboard_ungrab();
