@@ -63,11 +63,8 @@ _e_write_safe_int(int fd, const char *buf, size_t size)
 
 #endif
 
-/* a tricky little devil, requires e and it's libs to be built
- * with the -rdynamic flag to GCC for any sort of decent output.
- */
-E_API void
-e_sigseg_act(int x EINA_UNUSED, siginfo_t *info EINA_UNUSED, void *data EINA_UNUSED)
+static void
+_e_crash(void)
 {
 #ifdef HAVE_WAYLAND_ONLY
    const Eina_List *list, *l, *ll;
@@ -92,6 +89,15 @@ e_sigseg_act(int x EINA_UNUSED, siginfo_t *info EINA_UNUSED, void *data EINA_UNU
    ecore_x_sync();
    e_alert_show();
 #endif
+}
+
+/* a tricky little devil, requires e and it's libs to be built
+ * with the -rdynamic flag to GCC for any sort of decent output.
+ */
+E_API void
+e_sigseg_act(int x EINA_UNUSED, siginfo_t *info EINA_UNUSED, void *data EINA_UNUSED)
+{
+   _e_crash();
 }
 
 E_API void
@@ -115,83 +121,17 @@ e_sigill_act(int x EINA_UNUSED, siginfo_t *info EINA_UNUSED, void *data EINA_UNU
 E_API void
 e_sigfpe_act(int x EINA_UNUSED, siginfo_t *info EINA_UNUSED, void *data EINA_UNUSED)
 {
-#ifdef HAVE_WAYLAND_ONLY
-   const Eina_List *list, *l, *ll;
-   Ecore_Drm_Device *dev;
-
-   list = ecore_drm_devices_get();
-   EINA_LIST_FOREACH_SAFE(list, l, ll, dev)
-     {
-        ecore_drm_inputs_destroy(dev);
-        ecore_drm_sprites_destroy(dev);
-        ecore_drm_device_close(dev);
-        ecore_drm_launcher_disconnect(dev);
-        ecore_drm_device_free(dev);
-     }
-
-   ecore_drm_shutdown();
-#else
-   _e_x_composite_shutdown();
-   ecore_x_pointer_ungrab();
-   ecore_x_keyboard_ungrab();
-   ecore_x_ungrab();
-   ecore_x_sync();
-   e_alert_show();
-#endif
+   _e_crash();
 }
 
 E_API void
 e_sigbus_act(int x EINA_UNUSED, siginfo_t *info EINA_UNUSED, void *data EINA_UNUSED)
 {
-#ifdef HAVE_WAYLAND_ONLY
-   const Eina_List *list, *l, *ll;
-   Ecore_Drm_Device *dev;
-
-   list = ecore_drm_devices_get();
-   EINA_LIST_FOREACH_SAFE(list, l, ll, dev)
-     {
-        ecore_drm_inputs_destroy(dev);
-        ecore_drm_sprites_destroy(dev);
-        ecore_drm_device_close(dev);
-        ecore_drm_launcher_disconnect(dev);
-        ecore_drm_device_free(dev);
-     }
-
-   ecore_drm_shutdown();
-#else
-   _e_x_composite_shutdown();
-   ecore_x_pointer_ungrab();
-   ecore_x_keyboard_ungrab();
-   ecore_x_ungrab();
-   ecore_x_sync();
-   e_alert_show();
-#endif
+   _e_crash();
 }
 
 E_API void
 e_sigabrt_act(int x EINA_UNUSED, siginfo_t *info EINA_UNUSED, void *data EINA_UNUSED)
 {
-#ifdef HAVE_WAYLAND_ONLY
-   const Eina_List *list, *l, *ll;
-   Ecore_Drm_Device *dev;
-
-   list = ecore_drm_devices_get();
-   EINA_LIST_FOREACH_SAFE(list, l, ll, dev)
-     {
-        ecore_drm_inputs_destroy(dev);
-        ecore_drm_sprites_destroy(dev);
-        ecore_drm_device_close(dev);
-        ecore_drm_launcher_disconnect(dev);
-        ecore_drm_device_free(dev);
-     }
-
-   ecore_drm_shutdown();
-#else
-   _e_x_composite_shutdown();
-   ecore_x_pointer_ungrab();
-   ecore_x_keyboard_ungrab();
-   ecore_x_ungrab();
-   ecore_x_sync();
-   e_alert_show();
-#endif
+   _e_crash();
 }
