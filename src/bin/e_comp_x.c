@@ -591,7 +591,7 @@ _e_comp_x_post_client_idler_cb(void *d EINA_UNUSED)
           {
              if (ec->post_resize)
                {
-                  if (ec->netwm.sync.request)
+                  if (ec->netwm.sync.request && (e_comp->comp_type == E_PIXMAP_TYPE_X))
                     {
                        //INF("NETWM SYNC: %p", ec);
                        ec->netwm.sync.wait++;
@@ -2247,7 +2247,7 @@ _e_comp_x_mouse_move(void *d EINA_UNUSED, int t EINA_UNUSED, Ecore_Event_Mouse_M
      }
    E_COMP_X_PIXMAP_CHECK ECORE_CALLBACK_RENEW;
    if (_e_comp_x_client_data_get(ec)->deleted || e_client_util_ignored_get(ec)) return ECORE_CALLBACK_RENEW;
-   if (e_client_util_resizing_get(ec) &&
+   if (e_client_util_resizing_get(ec) && (e_comp->comp_type == E_PIXMAP_TYPE_X) &&
        ec->netwm.sync.request &&
        _e_comp_x_client_data_get(ec)->alarm
       )
@@ -4480,7 +4480,7 @@ static void
 _e_comp_x_hook_client_resize_begin(void *d EINA_UNUSED, E_Client *ec)
 {
    E_COMP_X_PIXMAP_CHECK;
-   if (!ec->netwm.sync.request) return;
+   if ((!ec->netwm.sync.request) || (e_comp->comp_type != E_PIXMAP_TYPE_X)) return;
    _e_comp_x_client_data_get(ec)->alarm = ecore_x_sync_alarm_new(_e_comp_x_client_data_get(ec)->sync_counter);
    eina_hash_add(alarm_hash, &_e_comp_x_client_data_get(ec)->alarm, ec);
    ec->netwm.sync.alarm = ec->netwm.sync.serial = 1;
