@@ -66,7 +66,7 @@ e_init_show(void)
         evas_object_clip_set(o, zone->bg_clip_object);
         evas_object_move(o, zone->x, zone->y);
         evas_object_resize(o, zone->w, zone->h);
-        evas_object_layer_set(o, E_LAYER_MAX);
+        evas_object_layer_set(o, E_LAYER_MAX - 1000);
         evas_object_show(o);
         splash_objs = eina_list_append(splash_objs, o);
      }
