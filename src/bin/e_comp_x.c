@@ -931,8 +931,7 @@ _e_comp_x_evas_resize_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_i
      }
 
    ec->post_resize = 1;
-   if (e_pixmap_is_x(ec->pixmap))
-     e_comp_object_render_update_del(ec->frame);
+   e_comp_object_render_update_del(ec->frame);
    _e_comp_x_post_client_idler_add(ec);
 }
 
