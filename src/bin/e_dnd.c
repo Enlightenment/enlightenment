@@ -108,7 +108,7 @@ e_dnd_init(void)
    _type_text_x_moz_url = eina_stringshare_add("text/x-moz-url");
    _type_enlightenment_x_file = eina_stringshare_add("enlightenment/x-file");
 #ifndef HAVE_WAYLAND_ONLY
-   if (e_comp->comp_type == E_PIXMAP_TYPE_X)
+   if (e_comp_util_has_x())
      _text_atom = ecore_x_atom_get("text/plain");
 #endif
 
@@ -207,7 +207,8 @@ e_drag_new(int x, int y,
    _drag_list = eina_list_append(_drag_list, drag);
 
 #ifndef HAVE_WAYLAND_ONLY
-   ecore_x_window_shadow_tree_flush();
+   if (e_comp_util_has_x())
+     ecore_x_window_shadow_tree_flush();
 #endif
 
    _drag_win_root = e_comp->root;
@@ -274,18 +275,22 @@ e_drag_start(E_Drag *drag, int x, int y)
 
    if (_drag_win) return 0;
 #ifndef HAVE_WAYLAND_ONLY
-   _drag_win = ecore_x_window_input_new(e_comp->win,
-                                        0, 0,
-                                        e_comp->w, e_comp->h);
-   ecore_event_window_register(_drag_win, e_comp->ee, e_comp->evas,
-                                 NULL, NULL, NULL, NULL);
-   ecore_x_window_show(_drag_win);
+   if (e_comp_util_has_x())
+     {
+        _drag_win = ecore_x_window_input_new(e_comp->win,
+                                             0, 0,
+                                             e_comp->w, e_comp->h);
+        ecore_event_window_register(_drag_win, e_comp->ee, e_comp->evas,
+                                      NULL, NULL, NULL, NULL);
+        ecore_x_window_show(_drag_win);
+     }
 #endif
    _drag_win_root = e_comp->root;
-   if (!e_grabinput_get(_drag_win, 1, _drag_win))
+   if (!e_grabinput_get(_drag_win, 0, _drag_win))
      {
 #ifndef HAVE_WAYLAND_ONLY
-        ecore_x_window_free(_drag_win);
+        if (e_comp_util_has_x())
+          ecore_x_window_free(_drag_win);
 #endif
         return 0;
      }
@@ -294,6 +299,7 @@ e_drag_start(E_Drag *drag, int x, int y)
         e_drag_object_set(drag, evas_object_rectangle_add(drag->evas));
         evas_object_color_set(drag->object, 255, 0, 0, 255);
      }
+   e_util_size_debug_set(drag->comp_object, 1);
    evas_object_move(drag->comp_object, drag->x, drag->y);
    evas_object_resize(drag->comp_object, drag->w, drag->h);
    drag->visible = 1;
@@ -339,14 +345,14 @@ e_drag_xdnd_start(E_Drag *drag, int x, int y)
 
    if (_drag_win) return 0;
 #ifndef HAVE_WAYLAND_ONLY
-   if (e_comp->comp_type != E_PIXMAP_TYPE_X) return 0;
+   if (!e_comp_util_has_x()) return 0;
    _drag_win = ecore_x_window_input_new(e_comp->win,
                                         0, 0,
                                         e_comp->w, e_comp->h);
 
    ecore_x_window_show(_drag_win);
 #endif
-   if (!e_grabinput_get(_drag_win, 1, _drag_win))
+   if (!e_grabinput_get(_drag_win, 0, _drag_win))
      {
 #ifndef HAVE_WAYLAND_ONLY
         ecore_x_window_free(_drag_win);
@@ -411,7 +417,7 @@ e_drop_xds_update(Eina_Bool enable, const char *value)
    int size;
    size_t len;
 
-   if (e_comp->comp_type != E_PIXMAP_TYPE_X) return;
+   if (!e_comp_util_has_x()) return;
    enable = !!enable;
 
    xwin = ecore_x_selection_owner_get(ECORE_X_ATOM_SELECTION_XDND);
@@ -524,7 +530,7 @@ e_drop_handler_del(E_Drop_Handler *handler)
 E_API int
 e_drop_xdnd_register_set(Ecore_Window win, int reg)
 {
-   if (e_comp->comp_type != E_PIXMAP_TYPE_X) return 0;
+   if (!e_comp_util_has_x()) return 0;
    if (reg)
      {
         if (!eina_hash_find(_drop_win_hash, &win))
@@ -996,14 +1002,13 @@ _e_drag_end(int x, int y)
    evas_object_hide(_drag_current->comp_object);
 
    e_grabinput_release(_drag_win, _drag_win);
+#ifndef HAVE_WAYLAND_ONLY
    while (_drag_current->type == E_DRAG_XDND)
      {
-#ifndef HAVE_WAYLAND_ONLY
         if (!(dropped = ecore_x_dnd_drop()))
           {
              if (win == e_comp->ee_win) break;
           }
-#endif
         if (_drag_current->cb.finished)
           _drag_current->cb.finished(_drag_current, dropped);
         _drag_current->cb.finished = NULL;
@@ -1011,6 +1016,7 @@ _e_drag_end(int x, int y)
 
         return;
      }
+#endif
 
    dropped = 0;
    if (!_drag_current->data)
@@ -1158,9 +1164,12 @@ _e_drag_free(E_Drag *drag)
      eina_stringshare_del(drag->types[i]);
    free(drag);
 #ifndef HAVE_WAYLAND_ONLY
-   ecore_event_window_unregister(_drag_win);
-   ecore_x_window_free(_drag_win);
-   ecore_x_window_shadow_tree_flush();
+   if (e_comp_util_has_x())
+     {
+        ecore_event_window_unregister(_drag_win);
+        ecore_x_window_free(_drag_win);
+        ecore_x_window_shadow_tree_flush();
+     }
 #endif
    _drag_win = 0;
 }
