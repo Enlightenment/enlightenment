@@ -11,6 +11,15 @@ struct _E_Pointer_Stack
 static Eina_List *_hdlrs = NULL;
 static Eina_List *_ptrs = NULL;
 
+static inline void
+_e_pointer_theme_buf(E_Pointer *ptr, char cursor[1024])
+{
+   if (ptr->color)
+     snprintf(cursor, 1024, "e/pointer/enlightenment/%s/color", ptr->type);
+   else
+     snprintf(cursor, 1024, "e/pointer/enlightenment/%s/mono", ptr->type);
+}
+
 static inline void 
 _e_pointer_hot_update(E_Pointer *ptr, int x, int y)
 {
@@ -354,6 +363,68 @@ _e_pointer_cb_free(E_Pointer *ptr)
    free(ptr);
 }
 
+static void
+_e_pointer_x11_setup(E_Pointer *ptr, const char *cursor)
+{
+   if (ptr->e_cursor)
+     {
+        /* create a pointer canvas if we need to */
+        if ((!ptr->buffer_evas) && ptr->win) _e_pointer_canvas_add(ptr);
+        if (ptr->buffer_o_ptr && (ptr->buffer_o_ptr != ptr->o_ptr))
+          {
+             e_theme_edje_object_set(ptr->buffer_o_ptr, "base/theme/pointer", cursor);
+             edje_object_part_swallow(ptr->buffer_o_ptr, "e.swallow.hotspot", ptr->buffer_o_hot);
+          }
+        return;
+     }
+   if (ptr->buffer_evas) _e_pointer_canvas_del(ptr);
+#ifndef HAVE_WAYLAND_ONLY
+   if (!e_comp_util_has_x()) return;
+   Ecore_X_Cursor curs = 0;
+
+   if (!strcmp(ptr->type, "move"))
+     curs = ecore_x_cursor_shape_get(ECORE_X_CURSOR_FLEUR);
+# if 0
+   else if (!strcmp(ptr->type, "resize"))
+     curs = ecore_x_cursor_shape_get(ECORE_X_CURSOR_SIZING);
+# endif
+   else if (!strcmp(ptr->type, "resize_tl"))
+     curs = ecore_x_cursor_shape_get(ECORE_X_CURSOR_TOP_LEFT_CORNER);
+   else if (!strcmp(ptr->type, "resize_t"))
+     curs = ecore_x_cursor_shape_get(ECORE_X_CURSOR_TOP_SIDE);
+   else if (!strcmp(ptr->type, "resize_tr"))
+     curs = ecore_x_cursor_shape_get(ECORE_X_CURSOR_TOP_RIGHT_CORNER);
+   else if (!strcmp(ptr->type, "resize_r"))
+     curs = ecore_x_cursor_shape_get(ECORE_X_CURSOR_RIGHT_SIDE);
+   else if (!strcmp(ptr->type, "resize_br"))
+     curs = ecore_x_cursor_shape_get(ECORE_X_CURSOR_BOTTOM_RIGHT_CORNER);
+   else if (!strcmp(ptr->type, "resize_b"))
+     curs = ecore_x_cursor_shape_get(ECORE_X_CURSOR_BOTTOM_SIDE);
+   else if (!strcmp(ptr->type, "resize_bl"))
+     curs = ecore_x_cursor_shape_get(ECORE_X_CURSOR_BOTTOM_LEFT_CORNER);
+   else if (!strcmp(ptr->type, "resize_l"))
+     curs = ecore_x_cursor_shape_get(ECORE_X_CURSOR_LEFT_SIDE);
+   else if (!strcmp(ptr->type, "entry"))
+     curs = ecore_x_cursor_shape_get(ECORE_X_CURSOR_XTERM);
+   else if (!strcmp(ptr->type, "default"))
+     curs = ecore_x_cursor_shape_get(ECORE_X_CURSOR_LEFT_PTR);
+   else if (!strcmp(ptr->type, "plus"))
+     curs = ecore_x_cursor_shape_get(ECORE_X_CURSOR_PLUS);
+   else if (!strcmp(ptr->type, "hand"))
+     curs = ecore_x_cursor_shape_get(ECORE_X_CURSOR_HAND1);
+   else if (!strcmp(ptr->type, "rotate"))
+     curs = ecore_x_cursor_shape_get(ECORE_X_CURSOR_EXCHANGE);
+   else
+     {
+        WRN("Unknown pointer ptr->type: %s\n", ptr->type);
+        curs = ecore_x_cursor_shape_get(ECORE_X_CURSOR_ARROW);
+     }
+   if (!curs) WRN("X Cursor for %s is missing\n", ptr->type);
+   ecore_x_window_cursor_set(ptr->win, curs);
+   if (curs) ecore_x_cursor_free(curs);
+#endif
+}
+
 static void 
 _e_pointer_type_set(E_Pointer *ptr, const char *type)
 {
@@ -374,24 +445,14 @@ _e_pointer_type_set(E_Pointer *ptr, const char *type)
         char cursor[1024];
         int x = 0, y = 0;
 
-        /* create a pointer canvas if we need to */
         if ((!ptr->buffer_evas) && ptr->win) _e_pointer_canvas_add(ptr);
-
-        if (ptr->color)
-          snprintf(cursor, sizeof(cursor), 
-                   "e/pointer/enlightenment/%s/color", type);
-        else
-          snprintf(cursor, sizeof(cursor), 
-                   "e/pointer/enlightenment/%s/mono", type);
+        _e_pointer_theme_buf(ptr, cursor);
 
         /* try to set the edje object theme */
         if (!e_theme_edje_object_set(ptr->o_ptr, "base/theme/pointer", cursor))
-          goto fallback;
-        if (ptr->buffer_o_ptr && (ptr->buffer_o_ptr != ptr->o_ptr))
-          {
-             e_theme_edje_object_set(ptr->buffer_o_ptr, "base/theme/pointer", cursor);
-             edje_object_part_swallow(ptr->buffer_o_ptr, "e.swallow.hotspot", ptr->buffer_o_hot);
-          }
+          cursor[0] = 0;
+        _e_pointer_x11_setup(ptr, cursor);
+        if (!cursor[0]) return;
 
         edje_object_part_geometry_get(ptr->o_ptr, "e.swallow.hotspot", 
                                       &x, &y, NULL, NULL);
@@ -402,56 +463,9 @@ _e_pointer_type_set(E_Pointer *ptr, const char *type)
         else
           evas_object_show(ptr->o_ptr);
 
-        return;
      }
-
-fallback:
-   if (ptr->buffer_evas) _e_pointer_canvas_del(ptr);
-#ifndef HAVE_WAYLAND_ONLY
-   if (!e_comp_util_has_x()) return;
-   Ecore_X_Cursor cursor = 0;
-
-   if (!strcmp(type, "move"))
-     cursor = ecore_x_cursor_shape_get(ECORE_X_CURSOR_FLEUR);
-# if 0
-   else if (!strcmp(type, "resize"))
-     cursor = ecore_x_cursor_shape_get(ECORE_X_CURSOR_SIZING);
-# endif
-   else if (!strcmp(type, "resize_tl"))
-     cursor = ecore_x_cursor_shape_get(ECORE_X_CURSOR_TOP_LEFT_CORNER);
-   else if (!strcmp(type, "resize_t"))
-     cursor = ecore_x_cursor_shape_get(ECORE_X_CURSOR_TOP_SIDE);
-   else if (!strcmp(type, "resize_tr"))
-     cursor = ecore_x_cursor_shape_get(ECORE_X_CURSOR_TOP_RIGHT_CORNER);
-   else if (!strcmp(type, "resize_r"))
-     cursor = ecore_x_cursor_shape_get(ECORE_X_CURSOR_RIGHT_SIDE);
-   else if (!strcmp(type, "resize_br"))
-     cursor = ecore_x_cursor_shape_get(ECORE_X_CURSOR_BOTTOM_RIGHT_CORNER);
-   else if (!strcmp(type, "resize_b"))
-     cursor = ecore_x_cursor_shape_get(ECORE_X_CURSOR_BOTTOM_SIDE);
-   else if (!strcmp(type, "resize_bl"))
-     cursor = ecore_x_cursor_shape_get(ECORE_X_CURSOR_BOTTOM_LEFT_CORNER);
-   else if (!strcmp(type, "resize_l"))
-     cursor = ecore_x_cursor_shape_get(ECORE_X_CURSOR_LEFT_SIDE);
-   else if (!strcmp(type, "entry"))
-     cursor = ecore_x_cursor_shape_get(ECORE_X_CURSOR_XTERM);
-   else if (!strcmp(type, "default"))
-     cursor = ecore_x_cursor_shape_get(ECORE_X_CURSOR_LEFT_PTR);
-   else if (!strcmp(type, "plus"))
-     cursor = ecore_x_cursor_shape_get(ECORE_X_CURSOR_PLUS);
-   else if (!strcmp(type, "hand"))
-     cursor = ecore_x_cursor_shape_get(ECORE_X_CURSOR_HAND1);
-   else if (!strcmp(type, "rotate"))
-     cursor = ecore_x_cursor_shape_get(ECORE_X_CURSOR_EXCHANGE);
    else
-     {
-        WRN("Unknown pointer type: %s\n", type);
-        cursor = ecore_x_cursor_shape_get(ECORE_X_CURSOR_ARROW);
-     }
-   if (!cursor) WRN("X Cursor for %s is missing\n", type);
-   ecore_x_window_cursor_set(ptr->win, cursor);
-   if (cursor) ecore_x_cursor_free(cursor);
-#endif
+     _e_pointer_x11_setup(ptr, NULL);
 }
 
 EINTERN int 
