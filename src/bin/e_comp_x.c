@@ -4944,6 +4944,7 @@ _e_comp_x_manage_windows(void)
                     _e_comp_x_client_damage_add(ec);
                   e_pixmap_usable_set(ec->pixmap, 1);
                   _e_comp_x_client_data_get(ec)->first_map = 1;
+                  evas_object_geometry_set(ec->frame, ec->client.x, ec->client.y, ec->client.w, ec->client.h);
                }
              ec->ignore_first_unmap = 1;
              evas_object_show(ec->frame);
