@@ -299,7 +299,7 @@ static Eina_Bool
 _e_comp_client_update(E_Client *ec)
 {
    int pw, ph;
-   Eina_Bool post = EINA_FALSE;
+   Eina_Bool post = !e_pixmap_is_x(ec->pixmap);
 
    DBG("UPDATE [%p] pm = %p", ec, ec->pixmap);
    if (e_object_is_del(E_OBJECT(ec))) return EINA_FALSE;

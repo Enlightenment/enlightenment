@@ -1771,12 +1771,7 @@ _e_comp_wl_subsurface_commit_from_cache(E_Client *ec)
 
    e_comp_wl_buffer_reference(&sdata->cached_buffer_ref, NULL);
 
-   /* schedule repaint */
-   if (e_pixmap_refresh(ec->pixmap))
-     {
-        e_comp->post_updates = eina_list_append(e_comp->post_updates, ec);
-        e_object_ref(E_OBJECT(ec));
-     }
+   e_pixmap_refresh(ec->pixmap);
 }
 
 static void
@@ -2802,12 +2797,8 @@ e_comp_wl_surface_commit(E_Client *ec)
    _e_comp_wl_surface_state_commit(ec, &ec->comp_data->pending);
 
    ignored = ec->ignored;
-   /* schedule repaint */
-   if (e_pixmap_refresh(ec->pixmap))
-     {
-        e_comp->post_updates = eina_list_append(e_comp->post_updates, ec);
-        e_object_ref(E_OBJECT(ec));
-     }
+
+   e_pixmap_refresh(ec->pixmap);
 
    if (!e_pixmap_usable_get(ec->pixmap))
      {
