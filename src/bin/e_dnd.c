@@ -280,8 +280,9 @@ e_drag_start(E_Drag *drag, int x, int y)
         _drag_win = ecore_x_window_input_new(e_comp->win,
                                              0, 0,
                                              e_comp->w, e_comp->h);
-        ecore_event_window_register(_drag_win, e_comp->ee, e_comp->evas,
-                                      NULL, NULL, NULL, NULL);
+        if (e_comp->comp_type == E_PIXMAP_TYPE_X)
+          ecore_event_window_register(_drag_win, e_comp->ee, e_comp->evas,
+                                        NULL, NULL, NULL, NULL);
         ecore_x_window_show(_drag_win);
      }
 #endif
@@ -1166,7 +1167,8 @@ _e_drag_free(E_Drag *drag)
 #ifndef HAVE_WAYLAND_ONLY
    if (e_comp_util_has_x())
      {
-        ecore_event_window_unregister(_drag_win);
+        if (e_comp->comp_type == E_PIXMAP_TYPE_X)
+          ecore_event_window_unregister(_drag_win);
         ecore_x_window_free(_drag_win);
         ecore_x_window_shadow_tree_flush();
      }
