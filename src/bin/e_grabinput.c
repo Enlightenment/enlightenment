@@ -1,7 +1,6 @@
 #include "e.h"
 
 /* local subsystem functions */
-static Eina_Bool _e_grabinput_focus_check(void *data);
 static void      _e_grabinput_focus_do(Ecore_Window win, E_Focus_Method method);
 static void      _e_grabinput_focus(Ecore_Window win, E_Focus_Method method);
 
