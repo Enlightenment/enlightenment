@@ -300,7 +300,6 @@ e_drag_start(E_Drag *drag, int x, int y)
         e_drag_object_set(drag, evas_object_rectangle_add(drag->evas));
         evas_object_color_set(drag->object, 255, 0, 0, 255);
      }
-   e_util_size_debug_set(drag->comp_object, 1);
    evas_object_move(drag->comp_object, drag->x, drag->y);
    evas_object_resize(drag->comp_object, drag->w, drag->h);
    drag->visible = 1;
