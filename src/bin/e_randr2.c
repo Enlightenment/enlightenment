@@ -373,9 +373,9 @@ _config_update(E_Randr2 *r, E_Config_Randr2 *cfg)
 static void
 _config_apply(E_Randr2 *r, E_Config_Randr2 *cfg)
 {
-   Eina_List *l;
-   E_Randr2_Screen *s;
-   E_Config_Randr2_Screen *cs;
+   Eina_List *l, *l2;
+   E_Randr2_Screen *s, *s2;
+   E_Config_Randr2_Screen *cs, *cs2;
 
    if ((!r) || (!cfg)) return;
    EINA_LIST_FOREACH(r->screens, l, s)
@@ -404,22 +404,66 @@ _config_apply(E_Randr2 *r, E_Config_Randr2 *cfg)
           }
         else
           {
-             printf("RRR: ... disabled\n");
-             s->config.enabled = EINA_FALSE;
-             s->config.geom.x = 0;
-             s->config.geom.y = 0;
-             s->config.geom.w = 0;
-             s->config.geom.h = 0;
-             s->config.mode.w = 0;
-             s->config.mode.h = 0;
-             s->config.mode.refresh = 0.0;
-             s->config.mode.preferred = EINA_FALSE;
-             s->config.rotation = 0;
-             s->config.priority = 0;
-             free(s->config.relative.to);
-             s->config.relative.to = NULL;
-             s->config.relative.mode = E_RANDR2_RELATIVE_NONE;
-             s->config.relative.align = 0.0;
+             cs2 = NULL;
+             if (s->info.connected)
+               {
+                  EINA_LIST_FOREACH(r->screens, l2, s2)
+                    {
+                       if (s2 == s) continue;
+                       if (s2->info.is_lid)
+                         {
+                            cs2 = e_randr2_config_screen_find(s2, cfg);
+                            if (cs2) break;
+                         }
+                    }
+                  if (!cs2)
+                    {
+                       EINA_LIST_FOREACH(r->screens, l2, s2)
+                         {
+                            if (s2 == s) continue;
+                            if (s2->info.connected)
+                              {
+                                 cs2 = e_randr2_config_screen_find(s2, cfg);
+                                 if (cs2) break;
+                              }
+                         }
+                    }
+               }
+             if (cs2)
+               {
+                  printf("RRR: ... enabled - fallback clone\n");
+                  s->config.enabled = EINA_TRUE;
+                  s->config.mode.w = cs2->mode_w;
+                  s->config.mode.h = cs2->mode_h;
+                  s->config.mode.refresh = cs2->mode_refresh;
+                  s->config.mode.preferred = EINA_FALSE;
+                  s->config.rotation = cs2->rotation;
+                  s->config.priority = cs2->priority;
+                  free(s->config.relative.to);
+                  s->config.relative.to = strdup(cs2->id);
+                  printf("RRR: ... clone = %s\n", s->config.relative.to);
+                  s->config.relative.mode = E_RANDR2_RELATIVE_CLONE;
+                  s->config.relative.align = 0.0;
+               }
+             else
+               {
+                  printf("RRR: ... disabled\n");
+                  s->config.enabled = EINA_FALSE;
+                  s->config.geom.x = 0;
+                  s->config.geom.y = 0;
+                  s->config.geom.w = 0;
+                  s->config.geom.h = 0;
+                  s->config.mode.w = 0;
+                  s->config.mode.h = 0;
+                  s->config.mode.refresh = 0.0;
+                  s->config.mode.preferred = EINA_FALSE;
+                  s->config.rotation = 0;
+                  s->config.priority = 0;
+                  free(s->config.relative.to);
+                  s->config.relative.to = NULL;
+                  s->config.relative.mode = E_RANDR2_RELATIVE_NONE;
+                  s->config.relative.align = 0.0;
+               }
           }
         s->config.configured = EINA_TRUE;
      }
@@ -661,7 +705,7 @@ _screen_clones_find(Eina_List *screens, E_Randr2_Screen *s)
    Eina_Bool added;
 
    // go over all screens and as long as we have found another screen that is
-   // clones from something in the clone set, then keep looking.
+   // cloned from something in the clone set, then keep looking.
    clones = eina_list_append(clones, s);
    added = EINA_TRUE;
    while (added)
@@ -678,36 +722,25 @@ _screen_clones_find(Eina_List *screens, E_Randr2_Screen *s)
                {
                   sclone = _screen_fuzzy_fallback_find(e_randr2_cfg,
                                                        s2->config.relative.to);
-                  // if the screen s2 is relative to is in our list, add
+                  if (!sclone) continue;
+                  // if the screen s2 is relative to is not in our list, add
                   // s2 to our clones list as well
-                  if (eina_list_data_find(clones, sclone))
+                  if (!eina_list_data_find(clones, sclone))
+                    {
+                       clones = eina_list_append(clones, sclone);
+                       added = EINA_TRUE;
+                    }
+                  if (!eina_list_data_find(clones, s2))
                     {
                        clones = eina_list_append(clones, s2);
                        added = EINA_TRUE;
+                    }
+                  if (added)
+                    {
                        // break our list walk, and iterate while again
                        break;
                     }
-               }
-          }
-        // we already found one to add - try the loop again
-        if (added) continue;
-        // we didn't find screens relative TO our clone list, so look for
-        // screens out clone list is relative to
-        EINA_LIST_FOREACH(clones, l, s2)
-          {
-             // if this screen clones another screen...
-             if ((s2->config.relative.to) &&
-                 (s2->config.relative.mode == E_RANDR2_RELATIVE_CLONE))
-               {
-                  sclone = _screen_fuzzy_fallback_find(e_randr2_cfg,
-                                                       s2->config.relative.to);
-                  // already in the list - so keep looking
-                  if (eina_list_data_find(clones, sclone)) continue;
-                  clones = eina_list_append(clones, s2);
-                  added = EINA_TRUE;
-                  // break our list walk, and iterate while again
-                  break;
-               }
+              }
           }
      }
    return clones;
@@ -754,7 +787,7 @@ again:
              EINA_LIST_FOREACH(s->info.modes, l3, m2)
                {
                   /// only check res, not refresh
-                  if ((m->w == m2->w) && (m->w == m2->h))
+                  if ((m->w == m2->w) && (m->h == m2->h))
                     {
                        common = EINA_TRUE;
                        break;
@@ -789,6 +822,8 @@ again:
         d += (sbase->config.mode.h - m->h) * (sbase->config.mode.h - m->h);
         d += ((sbase->config.mode.refresh - m->refresh) * 10) *
              ((sbase->config.mode.refresh - m->refresh) * 10);
+        if ((m->w > sbase->config.mode.w) || (m->h > sbase->config.mode.h))
+          continue;
         if (d < diff)
           {
              diff = d;
