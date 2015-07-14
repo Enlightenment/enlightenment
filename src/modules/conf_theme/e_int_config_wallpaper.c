@@ -525,7 +525,6 @@ _basic_apply(E_Config_Dialog *cfd, E_Config_Dialog_Data *cfdata)
    if (cw->specific_config)
      {
         /* update a specific config */
-        e_bg_del(cw->zone_num, cw->desk_x, cw->desk_y);
         e_bg_add(cw->zone_num, cw->desk_x, cw->desk_y, cfdata->bg);
      }
    else
