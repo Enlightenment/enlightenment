@@ -342,14 +342,26 @@ er_desktop_show_by_name(){
 #   E Desktop background add
 #-------------------------------------------------------------------------------
 er_desktop_bg_add(){
-   ERCIIIS org.enlightenment.wm.Desktop.Background.Add "$2" "$3" "$4" "$5"
+   # retain compatibility with the older versions by optionally supporting them
+   # no longer required parameter
+   if [ $# -eq 6 ]; then
+      ERCIIIS org.enlightenment.wm.Desktop.Background.Add "$3" "$4" "$5" "$6"
+   elif [ $# -eq 5 ]; then
+      ERCIIIS org.enlightenment.wm.Desktop.Background.Add "$2" "$3" "$4" "$5"
+   fi
 }
 
 #-------------------------------------------------------------------------------
 #   E Desktop background del
 #-------------------------------------------------------------------------------
 er_desktop_bg_del(){
-   ERCIII org.enlightenment.wm.Desktop.Background.Del "$2" "$3" "$4"
+   # retain compatibility with the older versions by optionally supporting them
+   # no longer required parameter
+   if [ $# -eq 5 ]; then
+      ERCIII org.enlightenment.wm.Desktop.Background.Del "$3" "$4" "$5"
+   elif [ $# -eq 4 ]; then
+      ERCIII org.enlightenment.wm.Desktop.Background.Del "$2" "$3" "$4"
+   fi
 }
 
 #-------------------------------------------------------------------------------
