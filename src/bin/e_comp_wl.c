@@ -852,6 +852,8 @@ _e_comp_wl_cb_key_down(void *event)
    uint32_t serial, *end, *k, keycode;
 
    ev = event;
+   if (ev->window != e_comp->ee_win) return;
+
    keycode = (ev->keycode - 8);
    if (!(cdata = e_comp->wl_comp_data)) return;
 
@@ -917,6 +919,8 @@ _e_comp_wl_cb_key_up(void *event)
    Eina_List *l;
 
    ev = event;
+   if (ev->window != e_comp->ee_win) return;
+
    keycode = (ev->keycode - 8);
    if (!(cdata = e_comp->wl_comp_data)) return;
 
