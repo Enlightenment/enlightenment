@@ -863,7 +863,7 @@ _e_comp_wl_cb_key_down(void *event)
      exit(0);
 #endif
 
-   end = (uint32_t *)cdata->kbd.keys.data + (cdata->kbd.keys.size / sizeof(*k));
+   end = (uint32_t *)cdata->kbd.keys.data + cdata->kbd.keys.size;
 
    for (k = cdata->kbd.keys.data; k < end; k++)
      {
@@ -878,9 +878,6 @@ _e_comp_wl_cb_key_down(void *event)
         return;
      }
    *k = keycode;
-
-   /* update modifier state */
-   e_comp_wl_input_keyboard_state_update(keycode, EINA_TRUE);
 
    if ((ec = e_client_focused_get()))
      {
@@ -904,7 +901,8 @@ _e_comp_wl_cb_key_down(void *event)
           }
      }
 
-   /* e_comp_wl_input_keyboard_modifiers_update(); */
+   /* update modifier state */
+   e_comp_wl_input_keyboard_state_update(keycode, EINA_TRUE);
 }
 
 static void
@@ -922,14 +920,11 @@ _e_comp_wl_cb_key_up(void *event)
    keycode = (ev->keycode - 8);
    if (!(cdata = e_comp->wl_comp_data)) return;
 
-   end = (uint32_t *)cdata->kbd.keys.data + (cdata->kbd.keys.size / sizeof(*k));
+   end = (uint32_t *)cdata->kbd.keys.data + cdata->kbd.keys.size;
    for (k = cdata->kbd.keys.data; k < end; k++)
      if (*k == keycode) *k = *--end;
 
    cdata->kbd.keys.size = (const char *)end - (const char *)cdata->kbd.keys.data;
-
-   /* update modifier state */
-   e_comp_wl_input_keyboard_state_update(keycode, EINA_FALSE);
 
    ec = e_client_focused_get();
    if ((ec) && (ec->comp_data->surface) && (!e_client_action_get()) && (!e_comp->input_key_grabs))
@@ -952,7 +947,8 @@ _e_comp_wl_cb_key_up(void *event)
           }
      }
 
-   /* e_comp_wl_input_keyboard_modifiers_update(); */
+   /* update modifier state */
+   e_comp_wl_input_keyboard_state_update(keycode, EINA_FALSE);
 }
 
 static void
