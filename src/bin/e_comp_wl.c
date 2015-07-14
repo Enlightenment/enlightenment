@@ -904,7 +904,7 @@ _e_comp_wl_cb_key_down(void *event)
           }
      }
 
-   e_comp_wl_input_keyboard_modifiers_update();
+   /* e_comp_wl_input_keyboard_modifiers_update(); */
 }
 
 static void
@@ -952,7 +952,7 @@ _e_comp_wl_cb_key_up(void *event)
           }
      }
 
-   e_comp_wl_input_keyboard_modifiers_update();
+   /* e_comp_wl_input_keyboard_modifiers_update(); */
 }
 
 static void
