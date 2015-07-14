@@ -863,7 +863,7 @@ _e_comp_wl_cb_key_down(void *event)
      exit(0);
 #endif
 
-   end = (uint32_t *)cdata->kbd.keys.data + cdata->kbd.keys.size;
+   end = (uint32_t *)cdata->kbd.keys.data + (cdata->kbd.keys.size / sizeof(*k));
 
    for (k = cdata->kbd.keys.data; k < end; k++)
      {
@@ -920,7 +920,7 @@ _e_comp_wl_cb_key_up(void *event)
    keycode = (ev->keycode - 8);
    if (!(cdata = e_comp->wl_comp_data)) return;
 
-   end = (uint32_t *)cdata->kbd.keys.data + cdata->kbd.keys.size;
+   end = (uint32_t *)cdata->kbd.keys.data + (cdata->kbd.keys.size / sizeof(*k));
    for (k = cdata->kbd.keys.data; k < end; k++)
      if (*k == keycode) *k = *--end;
 
