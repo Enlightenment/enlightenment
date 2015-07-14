@@ -400,17 +400,6 @@ _e_comp_wl_input_keymap_update(struct xkb_keymap *keymap)
 
    /* update modifiers */
    e_comp_wl_input_keyboard_modifiers_update();
-
-   if ((!latched) && (!locked)) return;
-
-   /* send modifiers */
-   serial = wl_display_get_serial(e_comp->wl_comp_data->wl.disp);
-   EINA_LIST_FOREACH(e_comp->wl_comp_data->kbd.resources, l, res)
-     wl_keyboard_send_modifiers(res, serial,
-                                e_comp->wl_comp_data->kbd.mod_depressed,
-                                e_comp->wl_comp_data->kbd.mod_latched,
-                                e_comp->wl_comp_data->kbd.mod_locked,
-                                e_comp->wl_comp_data->kbd.mod_group);
 }
 
 EINTERN Eina_Bool
