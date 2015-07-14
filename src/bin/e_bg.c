@@ -374,7 +374,7 @@ e_bg_del(int zone, int desk_x, int desk_y)
    EINA_LIST_FOREACH(e_config->desktop_backgrounds, l, cfbg)
      {
         if (!cfbg) continue;
-        if ((cfbg->desk_x == desk_x) && (cfbg->desk_y == desk_y))
+        if ((cfbg->zone == zone) && (cfbg->desk_x == desk_x) && (cfbg->desk_y == desk_y))
           {
              e_config->desktop_backgrounds = eina_list_remove_list(e_config->desktop_backgrounds, l);
              e_filereg_deregister(cfbg->file);
