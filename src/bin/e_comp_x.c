@@ -2143,7 +2143,7 @@ _e_comp_x_mouse_move(void *d EINA_UNUSED, int t EINA_UNUSED, Ecore_Event_Mouse_M
         if ((!ec) && (ev->window != ev->event_window))
           ec = _e_comp_x_client_find_by_window(ev->event_window);
         if ((!ec) || e_client_util_ignored_get(ec)) return ECORE_CALLBACK_RENEW;
-        if (!ec->mouse_in)
+        if ((!ec->mouse_in) && (!ec->hidden) && e_client_util_desk_visible(ec, e_desk_current_get(ec->zone)))
           e_client_mouse_in(ec, e_comp_canvas_x_root_adjust(ec->comp, ev->root.x), e_comp_canvas_x_root_adjust(ec->comp, ev->root.y));
         return ECORE_CALLBACK_RENEW;
      }
