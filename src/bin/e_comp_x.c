@@ -4460,10 +4460,12 @@ static void
 _e_comp_x_hook_client_resize_end(void *d EINA_UNUSED, E_Client *ec)
 {
    E_COMP_X_PIXMAP_CHECK;
-   if (!_e_comp_x_client_data_get(ec)->alarm) return;
-   eina_hash_del_by_key(alarm_hash, &_e_comp_x_client_data_get(ec)->alarm);
-   ecore_x_sync_alarm_free(_e_comp_x_client_data_get(ec)->alarm);
-   _e_comp_x_client_data_get(ec)->alarm = 0;
+   if (_e_comp_x_client_data_get(ec)->alarm)
+     {
+        eina_hash_del_by_key(alarm_hash, &_e_comp_x_client_data_get(ec)->alarm);
+        ecore_x_sync_alarm_free(_e_comp_x_client_data_get(ec)->alarm);
+        _e_comp_x_client_data_get(ec)->alarm = 0;
+     }
    ec->netwm.sync.alarm = 0;
    /* resize to last geometry if sync alarm for it was not yet handled */
    if (ec->pending_resize)
@@ -4480,9 +4482,12 @@ static void
 _e_comp_x_hook_client_resize_begin(void *d EINA_UNUSED, E_Client *ec)
 {
    E_COMP_X_PIXMAP_CHECK;
-   if ((!ec->netwm.sync.request) || (e_comp->comp_type != E_PIXMAP_TYPE_X)) return;
-   _e_comp_x_client_data_get(ec)->alarm = ecore_x_sync_alarm_new(_e_comp_x_client_data_get(ec)->sync_counter);
-   eina_hash_add(alarm_hash, &_e_comp_x_client_data_get(ec)->alarm, ec);
+   if (!ec->netwm.sync.request) return;
+   if (e_comp->comp_type == E_PIXMAP_TYPE_X)
+     {
+        _e_comp_x_client_data_get(ec)->alarm = ecore_x_sync_alarm_new(_e_comp_x_client_data_get(ec)->sync_counter);
+        eina_hash_add(alarm_hash, &_e_comp_x_client_data_get(ec)->alarm, ec);
+     }
    ec->netwm.sync.alarm = ec->netwm.sync.serial = 1;
    ec->netwm.sync.wait = 0;
    ec->netwm.sync.send_time = ecore_loop_time_get();
@@ -5290,8 +5295,9 @@ e_comp_x_init(void)
                          _e_comp_x_move_resize_request, NULL);
    E_LIST_HANDLER_APPEND(handlers, ECORE_X_EVENT_DESKTOP_CHANGE,
                          _e_comp_x_desktop_change, NULL);
-   E_LIST_HANDLER_APPEND(handlers, ECORE_X_EVENT_SYNC_ALARM,
-                         _e_comp_x_sync_alarm, NULL);
+   if (e_comp->comp_type != E_PIXMAP_TYPE_WL)
+     E_LIST_HANDLER_APPEND(handlers, ECORE_X_EVENT_SYNC_ALARM,
+                           _e_comp_x_sync_alarm, NULL);
 
    E_LIST_HANDLER_APPEND(handlers, ECORE_EVENT_MOUSE_BUTTON_DOWN,
                          _e_comp_x_mouse_down, NULL);
@@ -5434,6 +5440,7 @@ e_comp_x_xwayland_client_setup(E_Client *ec, E_Client *wc)
    wc->w = ec->w, wc->h = ec->h;
    wc->client.w = ec->client.w, wc->client.h = ec->client.h;
    wc->layer = ec->layer;
+   wc->netwm.sync.request = 1;
    evas_object_layer_set(wc->frame, evas_object_layer_get(ec->frame));
    evas_object_geometry_set(wc->frame, ec->x, ec->y, ec->w, ec->h);
    evas_object_show(wc->frame);

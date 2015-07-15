@@ -1146,7 +1146,35 @@ _e_comp_wl_surface_state_commit(E_Client *ec, E_Comp_Wl_Surface_State *state)
           ec->comp_data->shell.configure(ec->comp_data->shell.surface,
                                          x, y, state->bw, state->bh);
         else
-          e_client_util_move_resize_without_frame(ec, x, y, state->bw, state->bh);
+          {
+             if (ec->netwm.sync.wait)
+               {
+                  E_Client_Pending_Resize *pnd = NULL;
+
+                  ec->netwm.sync.wait--;
+
+                  /* skip pending for which we didn't get a reply */
+                  while (ec->pending_resize)
+                    {
+                       pnd = eina_list_data_get(ec->pending_resize);
+                       ec->pending_resize = eina_list_remove(ec->pending_resize, pnd);
+
+                       if ((state->bw == pnd->w) && (state->bh == pnd->h))
+                         break;
+
+                       E_FREE(pnd);
+                    }
+
+                  if (pnd)
+                    {
+                       e_comp_object_frame_wh_adjust(ec->frame, pnd->w, pnd->h, &ec->w, &ec->h);
+                       E_FREE(pnd);
+                    }
+                  ecore_evas_pointer_xy_get(e_comp->ee, &ec->mouse.current.mx, &ec->mouse.current.my);
+                  ec->netwm.sync.send_time = ecore_loop_time_get();
+               }
+             e_client_util_move_resize_without_frame(ec, x, y, state->bw, state->bh);
+          }
 
         if (ec->new_client)
           ec->placed = placed;
