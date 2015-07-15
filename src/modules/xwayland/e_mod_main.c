@@ -1,4 +1,5 @@
 #include "e.h"
+#include <dlfcn.h>
 #include <sys/socket.h>
 #include <sys/un.h>
 
@@ -245,6 +246,36 @@ fail:
    return ECORE_CALLBACK_RENEW;
 }
 
+static void
+xnotify(void *d EINA_UNUSED, Ecore_Thread *eth EINA_UNUSED, void *disp)
+{
+   if (!disp)
+     {
+        e_util_dialog_internal(_("Error"), _("Could not open X11 socket connection."));
+        return;
+     }
+   assert(ecore_x_init_from_display(disp));
+   e_comp_x_init();
+}
+
+static void
+xinit(void *d, Ecore_Thread *eth)
+{
+   void (*init_threads)(void);
+   void *(*open_display)(const char *);
+   void *disp = NULL;
+
+   init_threads = dlsym(NULL, "XInitThreads");
+   if (init_threads) init_threads();
+   open_display = dlsym(NULL, "XOpenDisplay");
+   if (open_display) disp = open_display(d);
+   free(d);
+   ecore_thread_feedback(eth, disp);
+}
+
+static void
+xend(){}
+
 static Eina_Bool 
 _cb_signal_event(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
 {
@@ -259,8 +290,7 @@ _cb_signal_event(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
 
    DBG("XWayland Finished Init");
    snprintf(buf, sizeof(buf), ":%d", exs->disp);
-   assert(ecore_x_init(buf));
-   e_comp_x_init();
+   ecore_thread_feedback_run(xinit, xnotify, (Ecore_Thread_Cb)xend, (Ecore_Thread_Cb)xend, strdup(buf), 0);
 
    return ECORE_CALLBACK_CANCEL;
 }
