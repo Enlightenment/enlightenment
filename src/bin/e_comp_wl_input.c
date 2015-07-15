@@ -315,7 +315,6 @@ _e_comp_wl_input_keymap_update(struct xkb_keymap *keymap)
    xkb_mod_mask_t latched = 0, locked = 0, group = 0;
    struct wl_resource *res;
    Eina_List *l;
-   uint32_t serial;
 
    /* unreference any existing keymap */
    if (e_comp->wl_comp_data->xkb.keymap)
