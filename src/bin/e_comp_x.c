@@ -4262,8 +4262,8 @@ _e_comp_x_hook_client_del(void *d EINA_UNUSED, E_Client *ec)
    E_COMP_X_PIXMAP_CHECK;
    win = e_client_util_win_get(ec);
 
-   if ((!stopping) && (!ec->comp_data->deleted))
    if (mouse_client == ec) mouse_client = NULL;
+   if ((!stopping) && (!ec->comp_data->deleted))
      ecore_x_window_prop_card32_set(win, E_ATOM_MANAGED, &visible, 1);
    if ((!ec->already_unparented) && ec->comp_data->reparented)
      {
