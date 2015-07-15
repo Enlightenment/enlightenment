@@ -279,6 +279,8 @@ e_winlist_hide(void)
      e_comp_ungrab_input(e_comp_get(NULL), 1, 1);
    if (ec)
      {
+        Eina_Bool set = !ec->lock_focus_out;
+
         if (ec->shaded)
           {
              if (!ec->lock_user_shade)
@@ -306,9 +308,9 @@ e_winlist_hide(void)
             (e_config->winlist_warp_at_end) ||
             (e_config->winlist_warp_while_selecting))
           {
-             e_client_pointer_warp_to_center_now(ec);
+             set |= !e_client_pointer_warp_to_center_now(ec);
           }
-        else if (!ec->lock_focus_out)
+        if (set)
           {
              evas_object_focus_set(ec->frame, 1);
              e_client_focus_latest_set(ec);
