@@ -653,7 +653,8 @@ _e_comp_x_client_stack(E_Client *ec)
         do
           {
              ec2 = e_client_above_get(ec2);
-             if (ec2 && (e_client_is_stacking(ec2) || ((!ec2->override) || ec2->internal)))
+             if (ec2 && (!ec2->new_client) &&
+                 (e_client_is_stacking(ec2) || ((!ec2->override) || ec2->internal)))
                {
                   if (ec2->layer != ec->layer) break;
                   if (ec2->comp_data->need_reparent && (!ec2->comp_data->reparented)) continue;
@@ -669,7 +670,8 @@ _e_comp_x_client_stack(E_Client *ec)
         do
           {
              ec2 = e_client_below_get(ec2);
-             if (ec2 && (e_client_is_stacking(ec2) || ((!ec2->override) || ec2->internal)))
+             if (ec2 && (!ec2->new_client) &&
+                 (e_client_is_stacking(ec2) || ((!ec2->override) || ec2->internal)))
                {
                   if (ec2->layer != ec->layer) break;
                   if (ec2->comp_data->need_reparent && (!ec2->comp_data->reparented)) continue;
