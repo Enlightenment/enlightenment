@@ -932,7 +932,7 @@ _wl_shot_now(E_Zone *zone, E_Client *ec, const char *params)
    struct wl_shm *shm;
    int x, y, sw, sh, i;
    int ostride, bstride;
-   void *dst, *d, *s;
+   unsigned char *dst, *d, *s;
 
    if ((win) || (url_up)) return;
    if ((!zone) && (!ec)) return;
@@ -998,7 +998,8 @@ _wl_shot_now(E_Zone *zone, E_Client *ec, const char *params)
              d = dst;
              for (i = y; i < (y + sh); i++)
                {
-                  s = output->data + (i * ostride) + (x * sizeof(int));
+                  s = output->data;
+                  s += (i * ostride) + (x * sizeof(int));
                   memcpy(d, s, bstride);
                   d += bstride;
                }

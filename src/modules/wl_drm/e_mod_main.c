@@ -623,7 +623,7 @@ _drm_read_pixels(E_Comp_Wl_Output *output, void *pixels)
    Ecore_Drm_Fb *fb;
    const Eina_List *drm_devs, *l;
    int i = 0, bstride;
-   void *s;
+   unsigned char *s, *d = pixels;
 
    drm_devs = ecore_drm_devices_get();
    EINA_LIST_FOREACH(drm_devs, l, dev)
@@ -636,13 +636,13 @@ _drm_read_pixels(E_Comp_Wl_Output *output, void *pixels)
    if (!fb) return;
 
    bstride = output->w * sizeof(int);
-   s = fb->mmap;
 
    for (i = output->y; i < output->y + output->h; i++)
      {
-        s = fb->mmap + (fb->stride * i) + (output->x * sizeof(int));
-        memcpy(pixels, s, (output->w * sizeof(int)));
-        pixels += bstride;
+        s = fb->mmap;
+        s += (fb->stride * i) + (output->x * sizeof(int));
+        memcpy(d, s, (output->w * sizeof(int)));
+        d += bstride;
      }
 }
 
