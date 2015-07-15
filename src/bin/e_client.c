@@ -400,6 +400,8 @@ _e_client_action_finish(void)
    E_FREE_FUNC(action_timer, ecore_timer_del);
    E_FREE_FUNC(action_handler_key,  ecore_event_handler_del);
    E_FREE_FUNC(action_handler_mouse, ecore_event_handler_del);
+   if (action_client)
+     action_client->keyboard_resizing = 0;
    action_client = NULL;
 }
 
@@ -733,6 +735,8 @@ _e_client_action_init(E_Client *ec)
    action_orig.w = ec->w;
    action_orig.h = ec->h;
 
+   if (action_client)
+     action_client->keyboard_resizing = 0;
    action_client = ec;
 }
 
@@ -4223,8 +4227,12 @@ e_client_act_resize_keyboard(E_Client *ec)
    if (!ec->zone) return;
 
    ec->resize_mode = E_POINTER_RESIZE_TL;
+   ec->keyboard_resizing = 1;
    if (!e_client_resize_begin(ec))
-     return;
+     {
+        ec->keyboard_resizing = 0;
+        return;
+     }
 
    _e_client_action_init(ec);
    _e_client_action_resize_timeout_add();
