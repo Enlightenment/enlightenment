@@ -275,26 +275,33 @@ e_drag_start(E_Drag *drag, int x, int y)
 
    if (_drag_win) return 0;
 #ifndef HAVE_WAYLAND_ONLY
-   if (e_comp_util_has_x())
+   if (e_comp->comp_type == E_PIXMAP_TYPE_X)
      {
         _drag_win = ecore_x_window_input_new(e_comp->win,
                                              0, 0,
                                              e_comp->w, e_comp->h);
-        if (e_comp->comp_type == E_PIXMAP_TYPE_X)
-          ecore_event_window_register(_drag_win, e_comp->ee, e_comp->evas,
-                                        NULL, NULL, NULL, NULL);
+        ecore_event_window_register(_drag_win, e_comp->ee, e_comp->evas,
+                                      NULL, NULL, NULL, NULL);
         ecore_x_window_show(_drag_win);
+        _drag_win_root = e_comp->root;
+        if (!e_grabinput_get(_drag_win, 0, _drag_win))
+          {
+             ecore_x_window_free(_drag_win);
+             _drag_win = _drag_win_root = 0;
+             return 0;
+          }
      }
+   else
 #endif
-   _drag_win_root = e_comp->root;
-   if (!e_grabinput_get(_drag_win, 0, _drag_win))
      {
-#ifndef HAVE_WAYLAND_ONLY
-        if (e_comp_util_has_x())
-          ecore_x_window_free(_drag_win);
-#endif
-        return 0;
+        _drag_win = _drag_win_root = e_comp->ee_win;
+        if (!e_comp_grab_input(1, 1))
+          {
+             _drag_win = _drag_win_root = 0;
+             return 0;
+          }
      }
+
    if (!drag->object)
      {
         e_drag_object_set(drag, evas_object_rectangle_add(drag->evas));
@@ -1168,7 +1175,8 @@ _e_drag_free(E_Drag *drag)
      {
         if (e_comp->comp_type == E_PIXMAP_TYPE_X)
           ecore_event_window_unregister(_drag_win);
-        ecore_x_window_free(_drag_win);
+        if (_drag_win != e_comp->ee_win)
+          ecore_x_window_free(_drag_win);
         ecore_x_window_shadow_tree_flush();
      }
 #endif
