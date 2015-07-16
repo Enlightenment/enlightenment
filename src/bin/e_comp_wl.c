@@ -2790,6 +2790,17 @@ e_comp_wl_shutdown(void)
    /* free handlers */
    E_FREE_LIST(handlers, ecore_event_handler_del);
 
+   while (e_comp->wl_comp_data->wl.globals)
+     {
+        Ecore_Wl_Global *global = EINA_INLIST_CONTAINER_GET(e_comp->wl_comp_data->wl.globals, Ecore_Wl_Global);
+        e_comp->wl_comp_data->wl.globals =
+          eina_inlist_remove(e_comp->wl_comp_data->wl.globals,
+                             e_comp->wl_comp_data->wl.globals);
+        free(global->interface);
+        free(global);
+     }
+   if (e_comp->wl_comp_data->wl.shm) wl_shm_destroy(e_comp->wl_comp_data->wl.shm);
+
    /* shutdown ecore_wayland */
    ecore_wl_shutdown();
 }

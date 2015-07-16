@@ -789,6 +789,17 @@ define([CHECK_MODULE_WL_X11],
 ])
 AM_CONDITIONAL([HAVE_WL_X11], [test "x${WL_X11}" = "xtrue"])
 
+WL_WL=false
+define([CHECK_MODULE_WL_WL],
+[
+  if test "x${have_wayland}" = "xyes"; then
+    WL_WL=true
+  else
+    WL_WL=false
+  fi
+])
+AM_CONDITIONAL([HAVE_WL_WL], [test "x${WL_WL}" = "xtrue"])
+
 WL_DESKTOP_SHELL=false
 define([CHECK_MODULE_WL_DESKTOP_SHELL],
 [
@@ -885,6 +896,7 @@ AC_E_OPTIONAL_MODULE([music_control], true, [CHECK_MODULE_MUSIC_CONTROL])
 AC_E_OPTIONAL_MODULE([packagekit], true)
 AC_E_OPTIONAL_MODULE([wl_desktop_shell], $have_wayland, [CHECK_MODULE_WL_DESKTOP_SHELL])
 AC_E_OPTIONAL_MODULE([wl_x11], $have_wayland, [CHECK_MODULE_WL_X11])
+AC_E_OPTIONAL_MODULE([wl_wl], $have_wayland, [CHECK_MODULE_WL_WL])
 #AC_E_OPTIONAL_MODULE([wl_fb], $have_wayland, [CHECK_MODULE_WL_FB])
 AC_E_OPTIONAL_MODULE([wl_drm], $have_wayland, [CHECK_MODULE_WL_DRM])
 AC_E_OPTIONAL_MODULE([policy_mobile], true)
