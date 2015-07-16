@@ -1180,6 +1180,8 @@ _e_drag_free(E_Drag *drag)
         ecore_x_window_shadow_tree_flush();
      }
 #endif
+   if (_drag_win == e_comp->ee_win)
+     e_comp_ungrab_input(1, 1);
    _drag_win = 0;
 }
 
