@@ -32,7 +32,7 @@ e_atoms_init(void)
       "__E_ATOM_WINDOW_STATE",
       "__E_ATOM_WINDOW_STATE_CENTERED",
       "__E_ATOM_DESKTOP_FILE",
-      "E_ZONE_GEOMETRY,",
+      "E_ZONE_GEOMETRY",
       "WL_SURFACE_ID"
    };
    Ecore_X_Atom atoms[EINA_C_ARRAY_LENGTH(atom_names)];
