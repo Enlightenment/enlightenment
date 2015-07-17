@@ -3373,7 +3373,8 @@ e_comp_object_dirty(Evas_Object *obj)
      eina_tiler_area_size_set(cw->pending_updates, w, h);
    EINA_LIST_FOREACH(cw->obj_mirror, ll, o)
      {
-        evas_object_image_border_set(o, bx, by, bxx, byy);
+        //evas_object_image_border_set(o, bx, by, bxx, byy);
+        //evas_object_image_border_center_fill_set(o, EVAS_BORDER_FILL_SOLID);
         evas_object_image_pixels_dirty_set(o, dirty);
         if (!dirty)
           evas_object_image_data_set(o, NULL);
@@ -3577,16 +3578,17 @@ e_comp_object_util_mirror_add(Evas_Object *obj)
      }
    {
       Eina_Bool dirty;
-      int bx, by, bxx, byy;
+      //int bx, by, bxx, byy;
 
       dirty = evas_object_image_pixels_dirty_get(cw->obj);
       evas_object_image_pixels_dirty_set(o, dirty);
-      e_pixmap_image_opaque_get(cw->ec->pixmap, &bx, &by, &bxx, &byy);
-      if (bxx && byy)
-        bxx = cw->ec->client.w - (bx + bxx), byy = cw->ec->client.h - (by + byy);
-      else
-        bx = by = bxx = byy = 0;
-      evas_object_image_border_set(o, bx, by, bxx, byy);
+      //e_pixmap_image_opaque_get(cw->ec->pixmap, &bx, &by, &bxx, &byy);
+      //if (bxx && byy)
+        //bxx = cw->ec->client.w - (bx + bxx), byy = cw->ec->client.h - (by + byy);
+      //else
+        //bx = by = bxx = byy = 0;
+      //evas_object_image_border_set(o, bx, by, bxx, byy);
+      //evas_object_image_border_center_fill_set(o, EVAS_BORDER_FILL_SOLID);
       if (dirty)
         evas_object_image_data_update_add(o, 0, 0, w, h);
       evas_object_image_data_set(o, pix);
