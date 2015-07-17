@@ -1203,6 +1203,7 @@ _e_comp_wl_surface_state_commit(E_Client *ec, E_Comp_Wl_Surface_State *state)
      }
 
    /* put state opaque into surface */
+   e_pixmap_image_opaque_set(ec->pixmap, 0, 0, 0, 0);
    if (state->opaque)
      {
         Eina_Rectangle *rect;
@@ -1218,8 +1219,6 @@ _e_comp_wl_surface_state_commit(E_Client *ec, E_Comp_Wl_Surface_State *state)
 
         eina_iterator_free(itr);
      }
-   else
-     e_pixmap_image_opaque_set(ec->pixmap, 0, 0, 0, 0);
 
    /* put state input into surface */
    if (state->input)
