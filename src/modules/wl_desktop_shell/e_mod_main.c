@@ -540,7 +540,7 @@ _e_shell_cb_shell_surface_get(struct wl_client *client, struct wl_resource *reso
    EC_CHANGED(ec);
    ec->new_client = ec->netwm.ping = EINA_TRUE;
    e_comp->new_clients++;
-   ec->ignored = 0;
+   e_client_unignore(ec);
 
    /* get the client data */
    if (!(cdata = ec->comp_data))
@@ -1088,7 +1088,7 @@ _e_xdg_shell_cb_surface_get(struct wl_client *client, struct wl_resource *resour
    EC_CHANGED(ec);
    ec->new_client = ec->netwm.ping = EINA_TRUE;
    e_comp->new_clients++;
-   ec->ignored = 0;
+   e_client_unignore(ec);
 
    /* get the client data */
    if (!(cdata = ec->comp_data))
@@ -1216,7 +1216,7 @@ _e_xdg_shell_cb_popup_get(struct wl_client *client, struct wl_resource *resource
 
    EC_CHANGED(ec);
    ec->new_client = ec->override = 1;
-   ec->ignored = 0;
+   e_client_unignore(ec);
    e_comp->new_clients++;
    e_client_focus_stack_set(eina_list_remove(e_client_focus_stack_get(), ec));
    if (!ec->internal)

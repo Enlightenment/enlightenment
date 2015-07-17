@@ -2453,6 +2453,17 @@ e_client_shutdown(void)
    warp_client = NULL;
 }
 
+E_API void
+e_client_unignore(E_Client *ec)
+{
+   E_OBJECT_CHECK(ec);
+   E_OBJECT_TYPE_CHECK(ec, E_CLIENT_TYPE);
+   if (!ec->ignored) return;
+
+   ec->ignored = 0;
+   _e_client_event_simple(ec, E_EVENT_CLIENT_ADD);
+}
+
 E_API E_Client *
 e_client_new(E_Pixmap *cp, int first_map, int internal)
 {
@@ -2555,7 +2566,8 @@ e_client_new(E_Pixmap *cp, int first_map, int internal)
    e_comp->clients = eina_list_append(e_comp->clients, ec);
    eina_hash_add(clients_hash[e_pixmap_type_get(cp)], &ec->pixmap, ec);
 
-   _e_client_event_simple(ec, E_EVENT_CLIENT_ADD);
+   if (!ec->ignored)
+     _e_client_event_simple(ec, E_EVENT_CLIENT_ADD);
    e_comp_object_client_add(ec);
    if (ec->frame)
      {

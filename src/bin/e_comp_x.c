@@ -5433,7 +5433,8 @@ e_comp_x_xwayland_client_setup(E_Client *ec, E_Client *wc)
    if (pwin)
      eina_hash_set(clients_win_hash, &pwin, wc);
    wc->visible = 1;
-   wc->ignored = 0;
+   if (wc->ignored)
+     e_client_unignore(wc);
    if (ec->override)
      e_client_focus_stack_set(eina_list_remove(e_client_focus_stack_get(), wc));
    evas_object_name_set(wc->frame, evas_object_name_get(ec->frame));

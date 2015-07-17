@@ -748,6 +748,7 @@ EINTERN void e_client_idler_before(void);
 EINTERN Eina_Bool e_client_init(void);
 EINTERN void e_client_shutdown(void);
 E_API E_Client *e_client_new(E_Pixmap *cp, int first_map, int internal);
+E_API void e_client_unignore(E_Client *ec);
 E_API void e_client_desk_set(E_Client *ec, E_Desk *desk);
 E_API Eina_Bool e_client_comp_grabbed_get(void);
 E_API E_Client *e_client_action_get(void);
