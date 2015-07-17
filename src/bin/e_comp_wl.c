@@ -1555,7 +1555,7 @@ _e_comp_wl_region_cb_add(struct wl_client *client EINA_UNUSED, struct wl_resourc
      {
         Eina_Tiler *src;
 
-        src = eina_tiler_new(w, h);
+        src = eina_tiler_new(w + x, h + y);
         eina_tiler_tile_size_set(src, 1, 1);
         eina_tiler_rect_add(src, &(Eina_Rectangle){x, y, w, h});
         eina_tiler_union(tiler, src);
@@ -1576,7 +1576,7 @@ _e_comp_wl_region_cb_subtract(struct wl_client *client EINA_UNUSED, struct wl_re
      {
         Eina_Tiler *src;
 
-        src = eina_tiler_new(w, h);
+        src = eina_tiler_new(w + x, h + y);
         eina_tiler_tile_size_set(src, 1, 1);
         eina_tiler_rect_add(src, &(Eina_Rectangle){x, y, w, h});
 
