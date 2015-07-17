@@ -1046,7 +1046,7 @@ e_comp_init(void)
            "wl_drm",
 #endif
 /* probably add other engines here; fb should be last? */
-#ifdef HAVE_WL_FM
+#ifdef HAVE_WL_FB
            "wl_fb",
 #endif
            NULL
