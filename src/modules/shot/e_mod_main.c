@@ -952,7 +952,7 @@ _wl_shot_now(E_Zone *zone, E_Client *ec, const char *params)
         sh = E_CLAMP(sh, 1, ec->zone->y + ec->zone->h - y);
      }
 
-   shm = ecore_wl_shm_get();
+   shm = e_comp->wl_comp_data->wl.shm ?: ecore_wl_shm_get();
 
    EINA_LIST_FOREACH(_outputs, l, output)
      {
@@ -1288,14 +1288,16 @@ e_modapi_init(E_Module *m)
 #ifdef HAVE_WAYLAND
    Eina_Inlist *globals;
    Ecore_Wl_Global *global;
+   struct wl_registry *reg;
 
-   globals = ecore_wl_globals_get();
+   globals = e_comp->wl_comp_data->wl.globals ?: ecore_wl_globals_get();
+   reg = e_comp->wl_comp_data->wl.registry ?: ecore_wl_registry_get();
    EINA_INLIST_FOREACH(globals, global)
      {
         if (!strcmp(global->interface, "screenshooter"))
           {
              _wl_screenshooter =
-               wl_registry_bind(ecore_wl_registry_get(), global->id,
+               wl_registry_bind(reg, global->id,
                                 &screenshooter_interface, global->version);
 
              if (_wl_screenshooter)
@@ -1311,7 +1313,7 @@ e_modapi_init(E_Module *m)
              if (output)
                {
                   output->output =
-                    wl_registry_bind(ecore_wl_registry_get(), global->id,
+                    wl_registry_bind(reg, global->id,
                                      &wl_output_interface, global->version);
                   _outputs = eina_list_append(_outputs, output);
                   wl_output_add_listener(output->output,
