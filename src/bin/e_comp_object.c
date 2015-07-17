@@ -3352,6 +3352,7 @@ e_comp_object_dirty(Evas_Object *obj)
    else
      bx = by = bxx = byy = 0;
    evas_object_image_border_set(cw->obj, bx, by, bxx, byy);
+   evas_object_image_border_center_fill_set(cw->obj, EVAS_BORDER_FILL_SOLID);
    {
       Edje_Message_Int_Set *msg;
       Edje_Message_Int msg2;
