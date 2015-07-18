@@ -3576,7 +3576,8 @@ e_comp_object_util_mirror_add(Evas_Object *obj)
                pix = evas_object_image_data_get(cw->obj, EINA_FALSE);
           }
      }
-   {
+   if (pix)
+     {
       Eina_Bool dirty;
       //int bx, by, bxx, byy;
 
@@ -3589,11 +3590,11 @@ e_comp_object_util_mirror_add(Evas_Object *obj)
         //bx = by = bxx = byy = 0;
       //evas_object_image_border_set(o, bx, by, bxx, byy);
       //evas_object_image_border_center_fill_set(o, EVAS_BORDER_FILL_SOLID);
-      if (dirty)
-        evas_object_image_data_update_add(o, 0, 0, w, h);
       evas_object_image_data_set(o, pix);
       if (!argb)
         evas_object_image_data_set(cw->obj, pix);
+      if (dirty)
+        evas_object_image_data_update_add(o, 0, 0, w, h);
    }
    return o;
 }
