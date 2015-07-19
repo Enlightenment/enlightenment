@@ -371,6 +371,44 @@ _config_update(E_Randr2 *r, E_Config_Randr2 *cfg)
 }
 
 static void
+_config_really_apply(E_Randr2_Screen *s, E_Config_Randr2_Screen *cs)
+{
+   if (cs)
+     {
+        s->config.enabled = EINA_TRUE;
+        s->config.mode.w = cs->mode_w;
+        s->config.mode.h = cs->mode_h;
+        s->config.mode.refresh = cs->mode_refresh;
+        s->config.mode.preferred = EINA_FALSE;
+        s->config.rotation = cs->rotation;
+        s->config.priority = cs->priority;
+        free(s->config.relative.to);
+        if (cs->rel_to) s->config.relative.to = strdup(cs->rel_to);
+        else s->config.relative.to = NULL;
+        s->config.relative.mode = cs->rel_mode;
+        s->config.relative.align = cs->rel_align;
+     }
+   else
+     {
+        s->config.enabled = EINA_FALSE;
+        s->config.geom.x = 0;
+        s->config.geom.y = 0;
+        s->config.geom.w = 0;
+        s->config.geom.h = 0;
+        s->config.mode.w = 0;
+        s->config.mode.h = 0;
+        s->config.mode.refresh = 0.0;
+        s->config.mode.preferred = EINA_FALSE;
+        s->config.rotation = 0;
+        s->config.priority = 0;
+        free(s->config.relative.to);
+        s->config.relative.to = NULL;
+        s->config.relative.mode = E_RANDR2_RELATIVE_NONE;
+        s->config.relative.align = 0.0;
+     }
+}
+
+static void
 _config_apply(E_Randr2 *r, E_Config_Randr2 *cfg)
 {
    Eina_List *l, *l2;
@@ -388,22 +426,12 @@ _config_apply(E_Randr2 *r, E_Config_Randr2 *cfg)
         if ((cs) && (cs->enabled))
           {
              printf("RRR: ... enabled\n");
-             s->config.enabled = EINA_TRUE;
-             s->config.mode.w = cs->mode_w;
-             s->config.mode.h = cs->mode_h;
-             s->config.mode.refresh = cs->mode_refresh;
-             s->config.mode.preferred = EINA_FALSE;
-             s->config.rotation = cs->rotation;
-             s->config.priority = cs->priority;
              printf("RRR: ... priority = %i\n", cs->priority);
-             free(s->config.relative.to);
-             if (cs->rel_to) s->config.relative.to = strdup(cs->rel_to);
-             else s->config.relative.to = NULL;
-             s->config.relative.mode = cs->rel_mode;
-             s->config.relative.align = cs->rel_align;
+             _config_really_apply(s, cs);
           }
-        else
+        else if (!cs)
           {
+             printf("RRR: ... no config found...\n");
              cs2 = NULL;
              if (s->info.connected)
                {
@@ -432,13 +460,7 @@ _config_apply(E_Randr2 *r, E_Config_Randr2 *cfg)
              if (cs2)
                {
                   printf("RRR: ... enabled - fallback clone\n");
-                  s->config.enabled = EINA_TRUE;
-                  s->config.mode.w = cs2->mode_w;
-                  s->config.mode.h = cs2->mode_h;
-                  s->config.mode.refresh = cs2->mode_refresh;
-                  s->config.mode.preferred = EINA_FALSE;
-                  s->config.rotation = cs2->rotation;
-                  s->config.priority = cs2->priority;
+                  _config_really_apply(s, cs2);
                   free(s->config.relative.to);
                   s->config.relative.to = strdup(cs2->id);
                   printf("RRR: ... clone = %s\n", s->config.relative.to);
@@ -448,22 +470,13 @@ _config_apply(E_Randr2 *r, E_Config_Randr2 *cfg)
              else
                {
                   printf("RRR: ... disabled\n");
-                  s->config.enabled = EINA_FALSE;
-                  s->config.geom.x = 0;
-                  s->config.geom.y = 0;
-                  s->config.geom.w = 0;
-                  s->config.geom.h = 0;
-                  s->config.mode.w = 0;
-                  s->config.mode.h = 0;
-                  s->config.mode.refresh = 0.0;
-                  s->config.mode.preferred = EINA_FALSE;
-                  s->config.rotation = 0;
-                  s->config.priority = 0;
-                  free(s->config.relative.to);
-                  s->config.relative.to = NULL;
-                  s->config.relative.mode = E_RANDR2_RELATIVE_NONE;
-                  s->config.relative.align = 0.0;
+                  _config_really_apply(s, NULL);
                }
+          }
+        else
+          {
+             printf("RRR: ... disabled\n");
+             _config_really_apply(s, NULL);
           }
         s->config.configured = EINA_TRUE;
      }

@@ -506,6 +506,7 @@ _cb_enabled_changed(void *data, Evas_Object *obj, void *event EINA_UNUSED)
    E_Config_Randr2_Screen *cs = _config_screen_find(cfdata);
    if (!cs) return;
    cs->enabled = elm_check_state_get(obj);
+   printf("RR: enabled = %i\n", cs->enabled);
    e_config_dialog_changed_set(cfdata->cfd, EINA_TRUE);
 }
 
