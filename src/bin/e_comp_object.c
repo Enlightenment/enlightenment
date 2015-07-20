@@ -1496,6 +1496,7 @@ _e_comp_intercept_show(void *data, Evas_Object *obj EINA_UNUSED)
      {
         _e_comp_object_setup(cw);
         cw->obj = evas_object_image_filled_add(e_comp->evas);
+        evas_object_image_border_center_fill_set(cw->obj, EVAS_BORDER_FILL_SOLID);
         e_util_size_debug_set(cw->obj, 1);
         evas_object_image_pixels_get_callback_set(cw->obj, _e_comp_object_pixels_get, cw);
         evas_object_image_smooth_scale_set(cw->obj, e_comp_config_get()->smooth_windows);
@@ -3333,7 +3334,7 @@ e_comp_object_dirty(Evas_Object *obj)
    Eina_Rectangle *rect;
    Eina_List *ll;
    Evas_Object *o;
-   int w, h, bx, by, bxx, byy;
+   int w, h;
    Eina_Bool dirty, visible;
 
    API_ENTRY;
@@ -3346,28 +3347,6 @@ e_comp_object_dirty(Evas_Object *obj)
      evas_object_image_data_set(cw->obj, NULL);
    evas_object_image_size_set(cw->obj, w, h);
 
-   e_pixmap_image_opaque_get(cw->ec->pixmap, &bx, &by, &bxx, &byy);
-   if (bxx && byy)
-     bxx = cw->ec->client.w - (bx + bxx), byy = cw->ec->client.h - (by + byy);
-   else
-     bx = by = bxx = byy = 0;
-   evas_object_image_border_set(cw->obj, bx, by, bxx, byy);
-   evas_object_image_border_center_fill_set(cw->obj, EVAS_BORDER_FILL_SOLID);
-   {
-      Edje_Message_Int_Set *msg;
-      Edje_Message_Int msg2;
-      Eina_Bool id = (bx || by || bxx || byy);
-
-      msg = alloca(sizeof(Edje_Message_Int_Set) + (sizeof(int) * 3));
-      msg->count = 4;
-      msg->val[0] = bx;
-      msg->val[1] = by;
-      msg->val[2] = bxx;
-      msg->val[3] = byy;
-      edje_object_message_send(cw->shobj, EDJE_MESSAGE_INT_SET, 1, msg);
-      msg2.val = id;
-      edje_object_message_send(cw->shobj, EDJE_MESSAGE_INT, 0, &msg2);
-   }
    RENDER_DEBUG("SIZE [%p]: %dx%d", cw->ec, w, h);
    if (cw->pending_updates)
      eina_tiler_area_size_set(cw->pending_updates, w, h);
@@ -3423,6 +3402,7 @@ e_comp_object_render(Evas_Object *obj)
    Evas_Object *o;
    int stride, pw, ph;
    unsigned int *pix, *srcpix;
+   int bx, by, bxx, byy;
    Eina_Bool ret = EINA_FALSE;
 
    API_ENTRY EINA_FALSE;
@@ -3444,7 +3424,27 @@ e_comp_object_render(Evas_Object *obj)
      }
 
    evas_object_image_pixels_dirty_set(cw->obj, EINA_FALSE);
+   e_pixmap_image_opaque_get(cw->ec->pixmap, &bx, &by, &bxx, &byy);
+   if (bxx && byy)
+     bxx = pw - (bx + bxx), byy = ph - (by + byy);
+   else
+     bx = by = bxx = byy = 0;
+   evas_object_image_border_set(cw->obj, bx, by, bxx, byy);
+   {
+      Edje_Message_Int_Set *msg;
+      Edje_Message_Int msg2;
+      Eina_Bool id = (bx || by || bxx || byy);
 
+      msg = alloca(sizeof(Edje_Message_Int_Set) + (sizeof(int) * 3));
+      msg->count = 4;
+      msg->val[0] = bx;
+      msg->val[1] = by;
+      msg->val[2] = bxx;
+      msg->val[3] = byy;
+      edje_object_message_send(cw->shobj, EDJE_MESSAGE_INT_SET, 1, msg);
+      msg2.val = id;
+      edje_object_message_send(cw->shobj, EDJE_MESSAGE_INT, 0, &msg2);
+   }
    RENDER_DEBUG("RENDER SIZE: %dx%d", pw, ph);
    it = eina_tiler_iterator_new(cw->pending_updates);
    if (e_pixmap_image_is_argb(cw->ec->pixmap))
