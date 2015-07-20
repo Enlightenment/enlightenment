@@ -657,13 +657,13 @@ e_comp_canvas_client_layer_map_nearest(int layer)
 E_API void
 e_comp_canvas_keys_grab(void)
 {
-   if (e_comp->root)
+   if (e_comp->comp_type == E_PIXMAP_TYPE_X)
      e_bindings_key_grab(E_BINDING_CONTEXT_ANY, e_comp->root);
 }
 
 E_API void
 e_comp_canvas_keys_ungrab(void)
 {
-   if (e_comp->root)
+   if (e_comp->comp_type == E_PIXMAP_TYPE_X)
      e_bindings_key_ungrab(E_BINDING_CONTEXT_ANY, e_comp->root);
 }
