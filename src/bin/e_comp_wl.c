@@ -1212,9 +1212,11 @@ _e_comp_wl_surface_state_commit(E_Client *ec, E_Comp_Wl_Surface_State *state)
         itr = eina_tiler_iterator_new(state->opaque);
         EINA_ITERATOR_FOREACH(itr, rect)
           {
-             E_RECTS_CLIP_TO_RECT(rect->x, rect->y, rect->w, rect->h, 0, 0, state->bw, state->bh);
-             e_pixmap_image_opaque_set(ec->pixmap, rect->x, rect->y,
-                                       rect->w, rect->h);
+             Eina_Rectangle r;
+
+             EINA_RECTANGLE_SET(&r, rect->x, rect->y, rect->w, rect->h);
+             E_RECTS_CLIP_TO_RECT(r.x, r.y, r.w, r.h, 0, 0, state->bw, state->bh);
+             e_pixmap_image_opaque_set(ec->pixmap, r.x, r.y, r.w, r.h);
              break;
           }
 
