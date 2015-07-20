@@ -1212,6 +1212,7 @@ _e_comp_wl_surface_state_commit(E_Client *ec, E_Comp_Wl_Surface_State *state)
         itr = eina_tiler_iterator_new(state->opaque);
         EINA_ITERATOR_FOREACH(itr, rect)
           {
+             E_RECTS_CLIP_TO_RECT(rect->x, rect->y, rect->w, rect->h, 0, 0, state->bw, state->bh);
              e_pixmap_image_opaque_set(ec->pixmap, rect->x, rect->y,
                                        rect->w, rect->h);
              break;
@@ -1356,6 +1357,8 @@ _e_comp_wl_surface_cb_opaque_region_set(struct wl_client *client EINA_UNUSED, st
    if (!(ec = wl_resource_get_user_data(resource))) return;
    if (e_object_is_del(E_OBJECT(ec))) return;
 
+   if (ec->comp_data->pending.opaque)
+     eina_tiler_clear(ec->comp_data->pending.opaque);
    if (region_resource)
      {
         Eina_Tiler *tmp;
@@ -1364,14 +1367,6 @@ _e_comp_wl_surface_cb_opaque_region_set(struct wl_client *client EINA_UNUSED, st
           return;
 
         eina_tiler_union(ec->comp_data->pending.opaque, tmp);
-     }
-   else
-     {
-        if (ec->comp_data->pending.opaque)
-          {
-             eina_tiler_clear(ec->comp_data->pending.opaque);
-             /* eina_tiler_free(ec->comp_data->pending.opaque); */
-          }
      }
 }
 
@@ -1383,6 +1378,8 @@ _e_comp_wl_surface_cb_input_region_set(struct wl_client *client EINA_UNUSED, str
    if (!(ec = wl_resource_get_user_data(resource))) return;
    if (e_object_is_del(E_OBJECT(ec))) return;
 
+   if (ec->comp_data->pending.input)
+     eina_tiler_clear(ec->comp_data->pending.input);
    if (region_resource)
      {
         Eina_Tiler *tmp;
@@ -1550,15 +1547,7 @@ _e_comp_wl_region_cb_add(struct wl_client *client EINA_UNUSED, struct wl_resourc
 
    /* get the tiler from the resource */
    if ((tiler = wl_resource_get_user_data(resource)))
-     {
-        Eina_Tiler *src;
-
-        src = eina_tiler_new(w + x, h + y);
-        eina_tiler_tile_size_set(src, 1, 1);
-        eina_tiler_rect_add(src, &(Eina_Rectangle){x, y, w, h});
-        eina_tiler_union(tiler, src);
-        eina_tiler_free(src);
-     }
+     eina_tiler_rect_add(tiler, &(Eina_Rectangle){x, y, w, h});
 }
 
 static void
@@ -1571,16 +1560,7 @@ _e_comp_wl_region_cb_subtract(struct wl_client *client EINA_UNUSED, struct wl_re
 
    /* get the tiler from the resource */
    if ((tiler = wl_resource_get_user_data(resource)))
-     {
-        Eina_Tiler *src;
-
-        src = eina_tiler_new(w + x, h + y);
-        eina_tiler_tile_size_set(src, 1, 1);
-        eina_tiler_rect_add(src, &(Eina_Rectangle){x, y, w, h});
-
-        eina_tiler_subtract(tiler, src);
-        eina_tiler_free(src);
-     }
+     eina_tiler_rect_del(tiler, &(Eina_Rectangle){x, y, w, h});
 }
 
 static const struct wl_region_interface _e_region_interface =
