@@ -3429,7 +3429,7 @@ e_comp_object_render(Evas_Object *obj)
      bxx = pw - (bx + bxx), byy = ph - (by + byy);
    else
      bx = by = bxx = byy = 0;
-   evas_object_image_border_set(cw->obj, bx, by, bxx, byy);
+   evas_object_image_border_set(cw->obj, bx, bxx, by, byy);
    {
       Edje_Message_Int_Set *msg;
       Edje_Message_Int msg2;
