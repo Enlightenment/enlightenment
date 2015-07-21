@@ -683,7 +683,7 @@ _lokker_cb_key_down(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
         if (edd->selected)
           {
              _lokker_unselect();
-             return ECORE_CALLBACK_RENEW;
+             return ECORE_CALLBACK_DONE;
           }
      }
    else if (!strcmp(ev->key, "KP_Enter"))
@@ -696,7 +696,7 @@ _lokker_cb_key_down(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
           {
              _lokker_null();
              _lokker_unselect();
-             return ECORE_CALLBACK_RENEW;
+             return ECORE_CALLBACK_DONE;
           }
         _lokker_backspace();
      }
@@ -706,7 +706,7 @@ _lokker_cb_key_down(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
           {
              _lokker_null();
              _lokker_unselect();
-             return ECORE_CALLBACK_RENEW;
+             return ECORE_CALLBACK_DONE;
           }
         _lokker_delete();
      }
@@ -728,7 +728,7 @@ _lokker_cb_key_down(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
 
                   for (c = ev->compose; c[0]; c++)
                     {
-                       if (!isdigit(c[0])) return ECORE_CALLBACK_RENEW;
+                       if (!isdigit(c[0])) return ECORE_CALLBACK_DONE;
                     }
                }
              if (edd->selected)
@@ -744,7 +744,7 @@ _lokker_cb_key_down(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
           }
      }
 
-   return ECORE_CALLBACK_PASS_ON;
+   return ECORE_CALLBACK_DONE;
 }
 
 EINTERN Eina_Bool
