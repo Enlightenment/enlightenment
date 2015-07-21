@@ -36,6 +36,8 @@ struct _E_Comp_X_Client_Data
    Ecore_Timer *first_draw_delay; //configurable placebo
    Eina_Bool first_damage : 1; //ignore first damage on non-re_manage clients
 
+   unsigned int parent_activate_count; //number of times a win has activated itself when parent was focused
+
    struct
    {
       struct
