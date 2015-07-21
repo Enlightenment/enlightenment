@@ -1285,6 +1285,8 @@ e_modapi_init(E_Module *m)
      ("main/2",  _("Take Screenshot"), _e_mod_menu_add, NULL, NULL, NULL);
    border_hook = e_int_client_menu_hook_add(_bd_hook, NULL);
 
+   if (e_comp->comp_type == E_PIXMAP_TYPE_X) return m;
+
 #ifdef HAVE_WAYLAND
    Eina_Inlist *globals;
    Ecore_Wl_Global *global;
