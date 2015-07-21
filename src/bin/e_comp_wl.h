@@ -320,6 +320,10 @@ E_API struct wl_signal e_comp_wl_surface_create_signal_get(void);
 E_API double e_comp_wl_idle_time_get(void);
 E_API Eina_Bool e_comp_wl_output_init(const char *id, const char *make, const char *model, int x, int y, int w, int h, int pw, int ph, unsigned int refresh, unsigned int subpixel, unsigned int transform);
 E_API void e_comp_wl_output_remove(const char *id);
+
+EINTERN Eina_Bool e_comp_wl_key_down(Ecore_Event_Key *ev);
+EINTERN Eina_Bool e_comp_wl_key_up(Ecore_Event_Key *ev);
+
 # ifndef HAVE_WAYLAND_ONLY
 EINTERN void e_comp_wl_xwayland_client_queue(E_Client *ec);
 static inline E_Comp_X_Client_Data *
