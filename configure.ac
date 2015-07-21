@@ -755,6 +755,17 @@ define([CHECK_MODULE_WL_FB],
 ])
 AM_CONDITIONAL([HAVE_WL_FB], [test "x${WL_FB}" = "xtrue"])
 
+WL_EGLFS=false
+define([CHECK_MODULE_WL_EGLFS],
+[
+  if test "x${have_wayland}" = "xyes" ; then
+    AC_E_CHECK_PKG(WL_EGLFS, [ ecore-fb >= $efl_version ecore >= $efl_version eina >= $efl_version ], [WL_EGLFS=true], [WL_EGLFS=false])
+  else
+    WL_EGLFS=false
+  fi
+])
+AM_CONDITIONAL([HAVE_WL_EGLFS], [test "x${WL_EGLFS}" = "xtrue"])
+
 WL_DRM=false
 define([CHECK_MODULE_WL_DRM],
 [
@@ -854,9 +865,11 @@ AC_E_OPTIONAL_MODULE([wl_desktop_shell], $have_wayland_dep)
 AC_E_OPTIONAL_MODULE([wl_x11], $have_wayland_dep, [CHECK_MODULE_WL_X11])
 AC_E_OPTIONAL_MODULE([wl_wl], $have_wayland_dep)
 #AC_E_OPTIONAL_MODULE([wl_fb], $have_wayland_dep, [CHECK_MODULE_WL_FB])
+AC_E_OPTIONAL_MODULE([wl_eglfs], $have_wayland, [CHECK_MODULE_WL_EGLFS])
 AC_E_OPTIONAL_MODULE([wl_drm], $have_wayland_dep, [CHECK_MODULE_WL_DRM])
 AC_E_OPTIONAL_MODULE([wl_text_input], $have_wayland_dep)
 AC_E_OPTIONAL_MODULE([wl_weekeyboard], $have_wayland_dep)
+
 AC_E_OPTIONAL_MODULE([policy_mobile], true)
 AC_E_OPTIONAL_MODULE([geolocation], true)
 AC_E_OPTIONAL_MODULE([xwayland], $have_wayland_dep, [CHECK_MODULE_XWAYLAND])

@@ -1129,6 +1129,9 @@ e_comp_init(void)
 #ifdef USE_MODULE_WL_DRM
            "wl_drm",
 #endif
+#ifdef HAVE_WL_EGLFS
+           "wl_eglfs",
+#endif
 /* probably add other engines here; fb should be last? */
 #ifdef USE_MODULE_WL_FB
            "wl_fb",
