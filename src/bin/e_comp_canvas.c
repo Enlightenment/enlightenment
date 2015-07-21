@@ -94,7 +94,7 @@ _e_comp_canvas_cb_mouse_wheel(void *d EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Obj
 static Eina_Bool
 _e_comp_cb_key_down(void *data EINA_UNUSED, int ev_type EINA_UNUSED, Ecore_Event_Key *ev)
 {
-   if (e_menu_grab_window_get() || e_comp->input_key_grabs)
+   if (e_menu_grab_window_get())
      {
 #ifdef HAVE_WAYLAND
         e_comp_wl_key_down(ev);
@@ -123,7 +123,7 @@ _e_comp_cb_key_down(void *data EINA_UNUSED, int ev_type EINA_UNUSED, Ecore_Event
 static Eina_Bool
 _e_comp_cb_key_up(void *data EINA_UNUSED, int ev_type EINA_UNUSED, Ecore_Event_Key *ev)
 {
-   if (e_menu_grab_window_get() || e_comp->input_key_grabs)
+   if (e_menu_grab_window_get())
      {
 #ifdef HAVE_WAYLAND
         e_comp_wl_key_up(ev);
