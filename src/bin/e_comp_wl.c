@@ -2673,6 +2673,7 @@ e_comp_wl_init(void)
 {
    /* set gl available if we have ecore_evas support */
    if (ecore_evas_engine_type_supported_get(ECORE_EVAS_ENGINE_WAYLAND_EGL) ||
+       ecore_evas_engine_type_supported_get(ECORE_EVAS_ENGINE_EGLFS) ||
        ecore_evas_engine_type_supported_get(ECORE_EVAS_ENGINE_OPENGL_DRM))
      e_comp_gl_set(EINA_TRUE);
 
