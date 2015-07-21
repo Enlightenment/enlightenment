@@ -105,6 +105,7 @@ struct _E_Comp_X_Client_Data
    Eina_Bool frame_update : 1;
    Eina_Bool evas_init : 1;
    Eina_Bool unredirected_single : 1;
+   unsigned int parent_activate_count; //number of times a win has activated itself when parent was focused
 };
 
 EINTERN Eina_Bool e_comp_x_init(void);

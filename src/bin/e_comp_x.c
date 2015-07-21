@@ -15,6 +15,9 @@
  */
 #define MOVE_COUNTER_LIMIT 50
 
+#define PARENT_ACTIVATE_TIME 200
+#define PARENT_ACTIVATE_LIMIT 2
+
 EINTERN void _e_main_cb_x_fatal(void *data EINA_UNUSED);
 
 typedef struct _Frame_Extents Frame_Extents;
@@ -88,6 +91,21 @@ _e_comp_x_focus_check(E_Comp *comp)
     * focus comp canvas on focus-out */
    if ((!focused) || (e_pixmap_type_get(focused->pixmap) != E_PIXMAP_TYPE_X))
      e_grabinput_focus(comp->ee_win, E_FOCUS_METHOD_PASSIVE);
+}
+
+static void
+_e_comp_x_client_modal_setup(E_Client *ec)
+{
+   ec->parent->modal = ec;
+   ec->parent->lock_close = 1;
+   if (!ec->parent->comp_data->lock_win)
+     {
+        eina_hash_add(clients_win_hash, &ec->parent->comp_data->lock_win, ec->parent);
+        ec->parent->comp_data->lock_win = ecore_x_window_input_new(e_client_util_pwin_get(ec->parent), 0, 0, ec->parent->w, ec->parent->h);
+        e_comp_ignore_win_add(E_PIXMAP_TYPE_X, ec->parent->comp_data->lock_win);
+        ecore_x_window_show(ec->parent->comp_data->lock_win);
+        ecore_x_icccm_name_class_set(ec->parent->comp_data->lock_win, "comp_data->lock_win", "comp_data->lock_win");
+     }
 }
 
 static void
@@ -1948,7 +1966,31 @@ _e_comp_x_message(void *data EINA_UNUSED, int type EINA_UNUSED, Ecore_X_Event_Cl
                       (!ec->desk->visible))
                     e_client_urgent_set(ec, 1);
                   else
-                    e_client_activate(ec, EINA_TRUE);
+                    {
+                       /* some apps, eg. libreoffice, create "modal" windows which
+                        * do not have the netwm modal state set. instead, attempting to
+                        * focus the parent window results in the app immediately trying to
+                        * activate the "modal" window, triggering an infinite loop.
+                        *
+                        * by treating this "modal" window as a genuine modal window,
+                        * we (eventually) can ignore this type of bad behavior and
+                        * give the application/user the expected behavior
+                        */
+                       if (ec->parent && (!ec->parent->modal) && (e_client_focused_get() == ec->parent) &&
+                           /* efl < 1.15 does not have a valid time member, so I guess just accept all such
+                            * events here?
+                            */
+                           ((!ev->time) || (ev->time - focus_time < PARENT_ACTIVATE_TIME)))
+                         {
+                            if (ec->comp_data)
+                              {
+                                 ec->comp_data->parent_activate_count++;
+                                 if (ec->comp_data->parent_activate_count >= PARENT_ACTIVATE_LIMIT)
+                                   _e_comp_x_client_modal_setup(ec);
+                              }
+                         }
+                       e_client_activate(ec, EINA_TRUE);
+                    }
                }
              else
                evas_object_raise(ec->frame);
@@ -3440,18 +3482,7 @@ _e_comp_x_hook_client_fetch(void *d EINA_UNUSED, E_Client *ec)
           {
              evas_object_layer_set(ec->frame, ec->parent->layer);
              if (ec->netwm.state.modal)
-               {
-                  ec->parent->modal = ec;
-                  ec->parent->lock_close = 1;
-                  if (!ec->parent->comp_data->lock_win)
-                    {
-                       eina_hash_add(clients_win_hash, &ec->parent->comp_data->lock_win, ec->parent);
-                       ec->parent->comp_data->lock_win = ecore_x_window_input_new(e_client_util_pwin_get(ec->parent), 0, 0, ec->parent->w, ec->parent->h);
-                       e_comp_ignore_win_add(E_PIXMAP_TYPE_X, ec->parent->comp_data->lock_win);
-                       ecore_x_window_show(ec->parent->comp_data->lock_win);
-                       ecore_x_icccm_name_class_set(ec->parent->comp_data->lock_win, "comp_data->lock_win", "comp_data->lock_win");
-                    }
-               }
+               _e_comp_x_client_modal_setup(ec);
 
              if (e_config->focus_setting == E_FOCUS_NEW_DIALOG ||
                  (ec->parent->focused && (e_config->focus_setting == E_FOCUS_NEW_DIALOG_IF_OWNER_FOCUSED)))
