@@ -5354,8 +5354,11 @@ e_comp_x_init(void)
    e_client_hook_add(E_CLIENT_HOOK_FOCUS_UNSET, _e_comp_x_hook_client_focus_unset, NULL);
    e_client_hook_add(E_CLIENT_HOOK_EVAL_END, _e_comp_x_hook_client_eval_end, NULL);
 
-   e_desklock_show_hook_add(_e_comp_x_desklock_show);
-   e_desklock_hide_hook_add(_e_comp_x_desklock_hide);
+   if (e_comp->comp_type != E_PIXMAP_TYPE_WL)
+     {
+        e_desklock_show_hook_add(_e_comp_x_desklock_show);
+        e_desklock_hide_hook_add(_e_comp_x_desklock_hide);
+     }
 
    if (!e_atoms_init()) return 0;
    if (!_e_comp_x_screens_setup()) return EINA_FALSE;
