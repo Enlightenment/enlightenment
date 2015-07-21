@@ -2461,6 +2461,13 @@ e_client_unignore(E_Client *ec)
    if (!ec->ignored) return;
 
    ec->ignored = 0;
+   if (!e_client_util_ignored_get(ec))
+     {
+        if (starting)
+          focus_stack = eina_list_prepend(focus_stack, ec);
+        else
+          focus_stack = eina_list_append(focus_stack, ec);
+     }
    _e_client_event_simple(ec, E_EVENT_CLIENT_ADD);
 }
 
