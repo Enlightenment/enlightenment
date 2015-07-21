@@ -2666,6 +2666,18 @@ disp_err:
    return EINA_FALSE;
 }
 
+static Eina_Bool
+_e_comp_wl_desklock_show(void)
+{
+   return e_comp_grab_input(1, 1);
+}
+
+static void
+_e_comp_wl_desklock_hide(void)
+{
+   e_comp_ungrab_input(1, 1);
+}
+
 /* public functions */
 
 /**
@@ -2745,6 +2757,9 @@ e_comp_wl_init(void)
                      _e_comp_wl_client_cb_resize_begin, NULL);
    e_client_hook_add(E_CLIENT_HOOK_RESIZE_END,
                      _e_comp_wl_client_cb_resize_end, NULL);
+
+   e_desklock_show_hook_add(_e_comp_wl_desklock_show);
+   e_desklock_hide_hook_add(_e_comp_wl_desklock_hide);
 
    _last_event_time = ecore_loop_time_get();
 
