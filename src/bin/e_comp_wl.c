@@ -516,10 +516,11 @@ _e_comp_wl_evas_cb_focus_out(void *data, Evas *evas EINA_UNUSED, Evas_Object *ob
 
    cdata = e_comp->wl_comp_data;
 
-   if (e_object_is_del(E_OBJECT(ec))) return;
+   if (!ec->comp_data) return;
 
    /* lower client priority */
-   _e_comp_wl_client_priority_normal(ec);
+   if (!e_object_is_del(data))
+     _e_comp_wl_client_priority_normal(ec);
 
    if (!ec->comp_data->surface) return;
 
