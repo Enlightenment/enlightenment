@@ -237,7 +237,7 @@ struct _E_Comp_Wl_Data
 
 struct _E_Comp_Wl_Client_Data
 {
-   Ecore_Timer *first_draw_tmr;
+   Ecore_Timer *on_focus_timer;
 
    struct
      {
