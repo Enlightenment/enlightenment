@@ -677,7 +677,7 @@ _client_desk_set(E_Smart_Data *sd, int type EINA_UNUSED, E_Event_Client_Desk_Set
    if (m)
      {
         /* ev->desk is previous desk */
-        if ((ev->desk == sd->desk) && (!ev->ec->sticky))
+        if (!e_client_util_desk_visible(ev->ec, sd->desk))
           eina_hash_del_by_key(sd->mirror_hash, &ev->ec->frame);
      }
    if (sd->desk == ev->ec->desk)
