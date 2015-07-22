@@ -499,10 +499,6 @@ _e_comp_wl_evas_cb_focus_in(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj
    /* raise client priority */
    _e_comp_wl_client_priority_raise(ec);
 
-   /* update keyboard modifier state */
-   wl_array_for_each(k, &e_comp->wl_comp_data->kbd.keys)
-     e_comp_wl_input_keyboard_state_update(*k, EINA_TRUE);
-
    e_comp_wl_input_keyboard_enter_send(ec);
 }
 
@@ -519,10 +515,6 @@ _e_comp_wl_evas_cb_focus_out(void *data, Evas *evas EINA_UNUSED, Evas_Object *ob
    if (!(ec = data)) return;
 
    cdata = e_comp->wl_comp_data;
-
-   /* update keyboard modifier state */
-   wl_array_for_each(k, &cdata->kbd.keys)
-     e_comp_wl_input_keyboard_state_update(*k, EINA_FALSE);
 
    if (e_object_is_del(E_OBJECT(ec))) return;
 
