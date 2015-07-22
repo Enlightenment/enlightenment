@@ -2968,7 +2968,7 @@ e_comp_wl_key_down(Ecore_Event_Key *ev)
    E_Client *ec = NULL;
    uint32_t serial, *end, *k, keycode;
 
-   if ((e_comp_>comp_type != E_PIXMAP_TYPE_WL) || (ev->window != e_comp->ee_win)) return EINA_FALSE;
+   if ((e_comp->comp_type != E_PIXMAP_TYPE_WL) || (ev->window != e_comp->ee_win)) return EINA_FALSE;
    _last_event_time = ecore_loop_time_get();
 
    keycode = (ev->keycode - 8);
@@ -3032,7 +3032,7 @@ e_comp_wl_key_up(Ecore_Event_Key *ev)
    struct wl_resource *res;
    Eina_List *l;
 
-   if ((e_comp_>comp_type != E_PIXMAP_TYPE_WL) || (ev->window != e_comp->ee_win)) return EINA_FALSE;
+   if ((e_comp->comp_type != E_PIXMAP_TYPE_WL) || (ev->window != e_comp->ee_win)) return EINA_FALSE;
    _last_event_time = ecore_loop_time_get();
 
    keycode = (ev->keycode - 8);
