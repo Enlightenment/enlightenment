@@ -65,10 +65,7 @@ e_backlight_init(void)
 #endif
    e_backlight_update();
    if (!getenv("E_RESTART"))
-     {
-        e_backlight_level_set(NULL, 0.1, 0.0);
-        e_backlight_level_set(NULL, e_config->backlight.normal, 0.0);
-     }
+     e_backlight_level_set(NULL, e_config->backlight.normal, 0.0);
 
    E_EVENT_BACKLIGHT_CHANGE = ecore_event_type_new();
 
