@@ -502,16 +502,17 @@ _e_comp_wl_evas_cb_focus_in(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj
    /* raise client priority */
    _e_comp_wl_client_priority_raise(ec);
 
-   e_comp_wl_input_keyboard_enter_send(ec);
    wc = wl_resource_get_client(ec->comp_data->surface);
-   serial = wl_display_next_serial(e_comp->wl_comp_data->wl.disp);
    EINA_LIST_FOREACH(e_comp->wl_comp_data->kbd.resources, l, res)
      if (wl_resource_get_client(res) == wc)
-       {
-          wl_array_for_each(k, &e_comp->wl_comp_data->kbd.keys)
-            wl_keyboard_send_key(res, serial, ecore_time_unix_get(),
-                                    *k, WL_KEYBOARD_KEY_STATE_PRESSED);
-       }
+       e_comp->wl_comp_data->kbd.focused = eina_list_append(e_comp->wl_comp_data->kbd.focused, res);
+   if (!e_comp->wl_comp_data->kbd.focused) return;
+   e_comp_wl_input_keyboard_enter_send(ec);
+   serial = wl_display_next_serial(e_comp->wl_comp_data->wl.disp);
+   EINA_LIST_FOREACH(e_comp->wl_comp_data->kbd.focused, l, res)
+     wl_array_for_each(k, &e_comp->wl_comp_data->kbd.keys)
+       wl_keyboard_send_key(res, serial, ecore_time_unix_get(),
+                               *k, WL_KEYBOARD_KEY_STATE_PRESSED);
 }
 
 static void
@@ -520,9 +521,8 @@ _e_comp_wl_evas_cb_focus_out(void *data, Evas *evas EINA_UNUSED, Evas_Object *ob
    E_Client *ec;
    E_Comp_Wl_Data *cdata;
    struct wl_resource *res;
-   struct wl_client *wc;
    uint32_t serial, *k;
-   Eina_List *l;
+   Eina_List *l, *ll;
 
    if (!(ec = data)) return;
 
@@ -539,15 +539,14 @@ _e_comp_wl_evas_cb_focus_out(void *data, Evas *evas EINA_UNUSED, Evas_Object *ob
    if (!eina_list_count(cdata->kbd.resources)) return;
 
    /* send keyboard_leave to all keyboard resources */
-   wc = wl_resource_get_client(ec->comp_data->surface);
    serial = wl_display_next_serial(cdata->wl.disp);
-   EINA_LIST_FOREACH(cdata->kbd.resources, l, res)
+   EINA_LIST_FOREACH_SAFE(cdata->kbd.focused, l, ll, res)
      {
-        if (wl_resource_get_client(res) != wc) continue;
         wl_array_for_each(k, &cdata->kbd.keys)
           wl_keyboard_send_key(res, serial, ecore_time_unix_get(),
                                     *k, WL_KEYBOARD_KEY_STATE_RELEASED);
         wl_keyboard_send_leave(res, serial, ec->comp_data->surface);
+        e_comp->wl_comp_data->kbd.focused = eina_list_remove_list(e_comp->wl_comp_data->kbd.focused, l);
      }
 }
 
@@ -3009,20 +3008,15 @@ e_comp_wl_key_down(Ecore_Event_Key *ev)
    if ((!e_client_action_get()) && (!e_comp->input_key_grabs) && (!e_menu_grab_window_get()))
      {
         ec = e_client_focused_get();
-        if (ec && ec->comp_data->surface && cdata->kbd.resources)
+        if (ec && ec->comp_data->surface && cdata->kbd.focused)
           {
-             struct wl_client *wc;
              struct wl_resource *res;
              Eina_List *l;
 
-             wc = wl_resource_get_client(ec->comp_data->surface);
              serial = wl_display_next_serial(cdata->wl.disp);
-             EINA_LIST_FOREACH(cdata->kbd.resources, l, res)
-               {
-                  if (wl_resource_get_client(res) != wc) continue;
-                  wl_keyboard_send_key(res, serial, ev->timestamp,
-                                  keycode, WL_KEYBOARD_KEY_STATE_PRESSED);
-               }
+             EINA_LIST_FOREACH(cdata->kbd.focused, l, res)
+               wl_keyboard_send_key(res, serial, ev->timestamp,
+                               keycode, WL_KEYBOARD_KEY_STATE_PRESSED);
           }
      }
 
@@ -3054,23 +3048,14 @@ e_comp_wl_key_up(Ecore_Event_Key *ev)
 
    if ((!e_client_action_get()) && (!e_comp->input_key_grabs) && (!e_menu_grab_window_get()))
      {
-        struct wl_client *wc = NULL;
-
         ec = e_client_focused_get();
-        if (ec && ec->comp_data->surface)
-          {
-             wc = wl_resource_get_client(ec->comp_data->surface);
-          }
 
-        if (wc && cdata->kbd.resources)
+        if (cdata->kbd.focused)
           {
              serial = wl_display_next_serial(cdata->wl.disp);
-             EINA_LIST_FOREACH(cdata->kbd.resources, l, res)
-               {
-                  if (wl_resource_get_client(res) != wc) continue;
-                  wl_keyboard_send_key(res, serial, ev->timestamp,
-                                       keycode, WL_KEYBOARD_KEY_STATE_RELEASED);
-               }
+             EINA_LIST_FOREACH(cdata->kbd.focused, l, res)
+               wl_keyboard_send_key(res, serial, ev->timestamp,
+                                    keycode, WL_KEYBOARD_KEY_STATE_RELEASED);
           }
      }
 

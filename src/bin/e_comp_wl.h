@@ -144,6 +144,7 @@ struct _E_Comp_Wl_Data
    struct
      {
         Eina_List *resources;
+        Eina_List *focused;
         Eina_Bool enabled : 1;
         xkb_mod_index_t mod_shift, mod_caps;
         xkb_mod_index_t mod_ctrl, mod_alt;
