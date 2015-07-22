@@ -487,21 +487,33 @@ e_comp_wl_input_keyboard_check(struct wl_resource *res)
                                   &_e_keyboard_interface);
 }
 
-EINTERN void
+EINTERN Eina_Bool
 e_comp_wl_input_keyboard_modifiers_serialize(void)
 {
-   e_comp->wl_comp_data->kbd.mod_depressed =
-     xkb_state_serialize_mods(e_comp->wl_comp_data->xkb.state,
+   Eina_Bool changed = EINA_FALSE;
+   xkb_mod_mask_t mod;
+   xkb_layout_index_t grp;
+
+   mod = xkb_state_serialize_mods(e_comp->wl_comp_data->xkb.state,
                               XKB_STATE_DEPRESSED);
-   e_comp->wl_comp_data->kbd.mod_latched =
-     xkb_state_serialize_mods(e_comp->wl_comp_data->xkb.state,
+   changed |= mod != e_comp->wl_comp_data->kbd.mod_depressed;
+   e_comp->wl_comp_data->kbd.mod_depressed = mod;
+
+   mod = xkb_state_serialize_mods(e_comp->wl_comp_data->xkb.state,
                               XKB_STATE_MODS_LATCHED);
-   e_comp->wl_comp_data->kbd.mod_locked =
-     xkb_state_serialize_mods(e_comp->wl_comp_data->xkb.state,
+   changed |= mod != e_comp->wl_comp_data->kbd.mod_latched;
+   e_comp->wl_comp_data->kbd.mod_latched = mod;
+
+   mod = xkb_state_serialize_mods(e_comp->wl_comp_data->xkb.state,
                               XKB_STATE_MODS_LOCKED);
-   e_comp->wl_comp_data->kbd.mod_group =
-     xkb_state_serialize_layout(e_comp->wl_comp_data->xkb.state,
+   changed |= mod != e_comp->wl_comp_data->kbd.mod_locked;
+   e_comp->wl_comp_data->kbd.mod_locked = mod;
+
+   grp = xkb_state_serialize_layout(e_comp->wl_comp_data->xkb.state,
                                 XKB_STATE_LAYOUT_EFFECTIVE);
+   changed |= grp != e_comp->wl_comp_data->kbd.mod_group;
+   e_comp->wl_comp_data->kbd.mod_group = grp;
+   return changed;
 }
 
 EINTERN void
@@ -511,7 +523,7 @@ e_comp_wl_input_keyboard_modifiers_update(void)
    struct wl_resource *res;
    Eina_List *l;
 
-   e_comp_wl_input_keyboard_modifiers_serialize();
+   if (!e_comp_wl_input_keyboard_modifiers_serialize()) return;
 
    if (!e_comp->wl_comp_data->kbd.focused) return;
 
