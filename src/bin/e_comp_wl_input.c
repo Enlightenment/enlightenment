@@ -181,7 +181,7 @@ _e_comp_wl_input_cb_keyboard_get(struct wl_client *client, struct wl_resource *r
 
    /* FIXME: These values should be configurable */
    if (wl_resource_get_version(res) >= WL_KEYBOARD_REPEAT_INFO_SINCE_VERSION)
-     wl_keyboard_send_repeat_info(res, 0.025, 0.4);
+     wl_keyboard_send_repeat_info(res, 25, 400);
 
    /* send current keymap */
    wl_keyboard_send_keymap(res, WL_KEYBOARD_KEYMAP_FORMAT_XKB_V1,
