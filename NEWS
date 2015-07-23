@@ -1,3 +1,59 @@
+Release 0.19.6:
+---------------------
+Carsten Haitzler (1):
+      e passive window grabs - fix side-effect leave/enter events on clients
+
+Christopher Michael (1):
+      enlightenment: Make E build again with EFL from git
+
+Derek Foreman (2):
+      wizard: Prevent crash
+      wizard: Prevent crash
+
+Mike Blumenkrantz (43):
+      reject client fullscreening based on config and desk visibility
+      force xwindow stacking to obey nocomp policy and stack below current nocomp
+      allow new fullscreening clients to replace current nocomp where applicable
+      fix focusing client on mouse events which trigger actions (with exceptions)
+      fix shelf visibility state signals
+      fix eo errors for ilist icon select state
+      allow layer-blocked clients in deskmirror to restack
+      return an accurate value for override clients in e_comp_object_util_zone_get()
+      only apply deskmirror client visibility logic for non-deleted clients
+      stop rejecting possibly-valid x11 focus events
+      check for possible parent window on x11 mouse button events
+      fix focus FIXME regarding focus-setting on clients from other desks
+      unset changes.visible when forcing visibility during no-effect desk flip
+      add E_Client->mouse.in for determining mouse-in status
+      trigger fake mouse-out on clients when unsetting focus
+      trigger client mouse-in on x11 mouse movement for non-action clients
+      enforce pstate's extremely-confusing no_turbo option in cpufreq
+      use client window for x11 button ungrabbing
+      redo all x11 client mouse grabbing for focus
+      straggler ungrab of x11 parent window from previous commit
+      ensure x11 focus grabs are applied on client init when needed
+      only ungrab x11 windows when appropriate focus options are set
+      reject x11 replay clicks when event window != client window
+      do not apply x11 focus grabs to internal clients if efl version > 1.14
+      make e_client_util_desk_visible() work for overrides without desks
+      make pager popups only trigger on urgency hint if client is not currently visible
+      set CRITICAL urgency for notification internal notifications
+      block client signal binding activation when mouse action is active
+      move E_Client->mouse.in to E_Client->mouse_in to avoid abi breakage
+      account for race condition when creating initial comp object updates tiler
+      fix compile against newer efl
+      move grabinput focus fix timer to x11 compositor and fix it to Work Better
+      always set x11 override client geometry on startup
+      fix compile warning
+      only unset e MANAGED atom on non-shutdown
+      only trigger client mouse-in from x11 mouse move event if client+desk are visible
+      ensure that focus is set and focus stack is managed on winlist hide
+      never use new clients for stacking part 2: the secret of the stacking
+      ensure clients possess comp_data before dereferencing it during x11 stacking
+      always stop passing key events on once they reach the lokker callback
+      simulate modal windows for badly behaved x11 clients
+
+
 Release 0.19.5:
 ---------------------
 
