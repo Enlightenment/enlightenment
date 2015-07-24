@@ -620,6 +620,12 @@ _e_xdg_shell_surface_configure_send(struct wl_resource *resource, uint32_t edges
    if (ec->focused)
      _e_xdg_surface_state_add(resource, &states, XDG_SURFACE_STATE_ACTIVATED);
 
+   if ((!ec->maximized) && (!ec->fullscreen) && (!e_client_util_resizing_get(ec)))
+     {
+        width -= ec->comp_data->shell.window_offsets.l + ec->comp_data->shell.window_offsets.r;
+        height -= ec->comp_data->shell.window_offsets.t + ec->comp_data->shell.window_offsets.b;
+     }
+
    if (ec->netwm.type != E_WINDOW_TYPE_POPUP_MENU)
      {
         serial = wl_display_next_serial(e_comp->wl_comp_data->wl.disp);

@@ -1096,6 +1096,14 @@ _e_comp_wl_surface_state_commit(E_Client *ec, E_Comp_Wl_Surface_State *state)
    ec->ignored = ignored;
    if (!ec->comp_data->mapped) goto unmapped;
 
+   if (ec->comp_data->shell.surface && ec->comp_data->shell.configure_send && (!ec->maximized) && (!ec->fullscreen))
+     {
+        ec->comp_data->shell.window_offsets.l = ec->comp_data->shell.window.x;
+        ec->comp_data->shell.window_offsets.r = ec->client.w - ec->comp_data->shell.window.w - ec->comp_data->shell.window.x;
+        ec->comp_data->shell.window_offsets.t = ec->comp_data->shell.window.y;
+        ec->comp_data->shell.window_offsets.b = ec->client.h - ec->comp_data->shell.window.h - ec->comp_data->shell.window.y;
+     }
+
    /* put state damages into surface */
    if ((!e_comp->nocomp) && (ec->frame))
      {
