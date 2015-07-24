@@ -21,7 +21,6 @@ static Eina_Bool      _e_dnd_cb_mouse_move(void *data, int type, void *event);
 static Eina_Bool      _e_dnd_cb_event_dnd_enter(void *data, int type, void *event);
 static Eina_Bool      _e_dnd_cb_event_dnd_leave(void *data, int type, void *event);
 static Eina_Bool      _e_dnd_cb_event_dnd_position(void *data, int type, void *event);
-static Eina_Bool      _e_dnd_cb_event_dnd_status(void *data, int type, void *event);
 static Eina_Bool      _e_dnd_cb_event_dnd_finished(void *data, int type, void *event);
 static Eina_Bool      _e_dnd_cb_event_dnd_drop(void *data, int type, void *event);
 static Eina_Bool      _e_dnd_cb_event_dnd_selection(void *data, int type, void *event);
