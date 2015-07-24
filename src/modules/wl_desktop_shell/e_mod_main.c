@@ -846,7 +846,6 @@ _e_xdg_shell_surface_cb_maximized_set(struct wl_client *client EINA_UNUSED, stru
      {
         e_client_maximize(ec, ((e_config->maximize_policy & E_MAXIMIZE_TYPE) |
                                E_MAXIMIZE_BOTH));
-        _e_xdg_shell_surface_configure_send(resource, 0, ec->w, ec->h);
      }
 }
 
