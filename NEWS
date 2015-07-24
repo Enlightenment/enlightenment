@@ -1,3 +1,10 @@
+Release 0.19.7:
+---------------------
+Mike Blumenkrantz (2):
+      use runtime check for determining x11 compositor grab behavior
+      improve x11 compatibility with efl versions earlier than 1.15
+
+
 Release 0.19.6:
 ---------------------
 Carsten Haitzler (1):
