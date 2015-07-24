@@ -3791,7 +3791,7 @@ e_client_unmaximize(E_Client *ec, E_Maximize max)
              _e_client_frame_update(ec);
              // re-set maximized state for unmaximize smart callback.
              ec->maximized = tmp_max;
-             evas_object_smart_callback_call(ec->frame, "unmaximize", NULL);
+             evas_object_smart_callback_call(ec->frame, "unfullscreen", NULL);
              // un-set maximized state.
              ec->maximized = E_MAXIMIZE_NONE;
              e_client_util_move_resize_without_frame(ec,
@@ -3811,11 +3811,6 @@ e_client_unmaximize(E_Client *ec, E_Maximize max)
              x = ec->client.x;
              y = ec->client.y;
 
-             if (((ec->maximized & E_MAXIMIZE_TYPE) == E_MAXIMIZE_SMART) ||
-                 ((ec->maximized & E_MAXIMIZE_TYPE) == E_MAXIMIZE_EXPAND))
-               {
-                  evas_object_smart_callback_call(ec->frame, "unfullscreen", NULL);
-               }
              if (max & E_MAXIMIZE_VERTICAL)
                {
                   /* Remove vertical */
