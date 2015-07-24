@@ -131,6 +131,22 @@ _module_monitor_error(void *d EINA_UNUSED, int type EINA_UNUSED, Eio_Monitor_Err
    return ECORE_CALLBACK_RENEW;
 }
 
+static Eina_Bool
+_module_is_nosave(const char *name)
+{
+   const char *blacklist[] =
+   {
+      "comp",
+      "conf_comp",
+      "xwayland",
+   };
+   unsigned int i;
+
+   for (i = 0; i < EINA_C_ARRAY_LENGTH(blacklist); i++)
+     if (eina_streq(name, blacklist[i])) return EINA_TRUE;
+   return !strncmp(name, "wl_", 3); //block wl_* modules from being saved
+}
+
 /* externally accessible functions */
 EINTERN int
 e_module_init(void)
@@ -240,10 +256,7 @@ e_module_all_load(void)
      {
         if ((!em) || (!em->name)) continue;
 
-        if ((!e_util_strcmp(em->name, "comp")) || (!e_util_strcmp(em->name, "conf_comp")) ||
-            (eina_streq(em->name, "xwayland")) ||
-            (!strncmp(em->name, "wl_", 3)) //block wl_* modules from being saved
-           )
+        if (_module_is_nosave(em->name))
           {
              eina_stringshare_del(em->name);
              e_config->modules = eina_list_remove_list(e_config->modules, l);
