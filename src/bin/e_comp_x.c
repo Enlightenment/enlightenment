@@ -139,17 +139,20 @@ _e_comp_x_print_win(Ecore_X_Window win)
 static void
 _e_comp_x_focus_grab(E_Client *ec)
 {
+   Ecore_X_Window win;
+
    if ((ecore_version->major > 1) || (ecore_version->minor > 14))
      if (ec->internal_ecore_evas) return;
-   ecore_x_window_button_grab(e_client_util_win_get(ec), 1,
+   win = ec->internal_ecore_evas ? e_client_util_pwin_get(ec) : e_client_util_win_get(ec);
+   ecore_x_window_button_grab(win, 1,
                               ECORE_X_EVENT_MASK_MOUSE_DOWN |
                               ECORE_X_EVENT_MASK_MOUSE_UP |
                               ECORE_X_EVENT_MASK_MOUSE_MOVE, 0, 1);
-   ecore_x_window_button_grab(e_client_util_win_get(ec), 2,
+   ecore_x_window_button_grab(win, 2,
                               ECORE_X_EVENT_MASK_MOUSE_DOWN |
                               ECORE_X_EVENT_MASK_MOUSE_UP |
                               ECORE_X_EVENT_MASK_MOUSE_MOVE, 0, 1);
-   ecore_x_window_button_grab(e_client_util_win_get(ec), 3,
+   ecore_x_window_button_grab(win, 3,
                               ECORE_X_EVENT_MASK_MOUSE_DOWN |
                               ECORE_X_EVENT_MASK_MOUSE_UP |
                               ECORE_X_EVENT_MASK_MOUSE_MOVE, 0, 1);
@@ -183,10 +186,13 @@ _e_comp_x_focus_setdown(E_Client *ec)
    Ecore_X_Window win;
 
    if (!ec->comp_data->button_grabbed) return;
-   if ((!e_client_focus_policy_click(ec)) ||
-       (e_config->always_click_to_raise) ||
-       (e_config->always_click_to_focus)) return;
-   win = e_client_util_win_get(ec);
+   if ((ecore_version->major > 1) || (ecore_version->minor > 14) || (!ec->internal_ecore_evas))
+     {
+        if ((!e_client_focus_policy_click(ec)) ||
+            (e_config->always_click_to_raise) ||
+            (e_config->always_click_to_focus)) return;
+     }
+   win = ec->internal_ecore_evas ? e_client_util_pwin_get(ec) : e_client_util_win_get(ec);
    e_bindings_mouse_ungrab(E_BINDING_CONTEXT_WINDOW, win);
    e_bindings_wheel_ungrab(E_BINDING_CONTEXT_WINDOW, win);
    ecore_x_window_button_ungrab(win, 1, 0, 1);
