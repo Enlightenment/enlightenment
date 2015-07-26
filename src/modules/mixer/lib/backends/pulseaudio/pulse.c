@@ -648,7 +648,15 @@ _subscribe_cb(pa_context *c, pa_subscription_event_type_t t,
             pa_operation_unref(o);
          }
        break;
-
+    case PA_SUBSCRIPTION_EVENT_SERVER:
+       if (!(o = pa_context_get_server_info(c, _server_info_cb,
+                                            data)))
+         {
+            ERR("pa_context_get_server_info() failed");
+            return;
+         }
+       pa_operation_unref(o);
+       break;
     default:
        WRN("Event not handled");
        break;
