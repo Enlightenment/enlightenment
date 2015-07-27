@@ -2178,6 +2178,9 @@ _e_comp_x_mouse_in(void *data EINA_UNUSED, int type EINA_UNUSED, Ecore_X_Event_M
 {
    E_Client *ec;
 
+   if ((ev->mode == ECORE_X_EVENT_MODE_NORMAL) &&
+       ((ev->detail == ECORE_X_EVENT_DETAIL_INFERIOR) || (ev->detail == ECORE_X_EVENT_DETAIL_VIRTUAL)))
+     return ECORE_CALLBACK_PASS_ON;
    ec = _e_comp_x_client_find_by_window(ev->win);
    if (!ec) return ECORE_CALLBACK_RENEW;
    if (_e_comp_x_client_data_get(ec)->deleted) return ECORE_CALLBACK_RENEW;
