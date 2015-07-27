@@ -479,9 +479,7 @@ e_screensaver_deactivate(void)
      ecore_x_screensaver_reset();
 #endif
 #ifdef HAVE_WAYLAND
-   if (e_comp->comp_type == E_PIXMAP_TYPE_WL)
-     e_screensaver_eval(0);
-   E_FREE_FUNC(_e_screensaver_timer, ecore_timer_del);
+   e_screensaver_notidle();
 #endif
 }
 
@@ -537,14 +535,15 @@ E_API void
 e_screensaver_notidle(void)
 {
 #ifdef HAVE_WAYLAND
+   if (e_comp->comp_type != E_PIXMAP_TYPE_WL) return;
+   E_FREE_FUNC(_e_screensaver_timer, ecore_timer_del);
    if (e_screensaver_on_get())
      {
-        E_FREE_FUNC(_e_screensaver_timer, ecore_timer_del);
         ecore_event_add(E_EVENT_SCREENSAVER_OFF_PRE, NULL, NULL, NULL);
         _e_screensaver_timer = ecore_timer_add(1.0, _e_screensaver_idle_timeout_cb, NULL);
      }
-   else if (_e_screensaver_timer)
-     ecore_timer_reset(_e_screensaver_timer);
+   else
+     _e_screensaver_timer = ecore_timer_add(_e_screensaver_timeout, _e_screensaver_idle_timeout_cb, (void*)1);
 #endif
 }
 
