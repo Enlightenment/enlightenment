@@ -22,8 +22,25 @@ static int _e_screensaver_expose = 0;
 static Ecore_Timer *_e_screensaver_suspend_timer = NULL;
 static Eina_Bool _e_screensaver_on = EINA_FALSE;
 
+static Ecore_Timer *screensaver_idle_timer = NULL;
+static Eina_Bool screensaver_dimmed = EINA_FALSE;
+
+#ifdef HAVE_WAYLAND
+static Ecore_Timer *_e_screensaver_timer;
+#endif
+
 E_API int E_EVENT_SCREENSAVER_ON = -1;
 E_API int E_EVENT_SCREENSAVER_OFF = -1;
+
+#ifdef HAVE_WAYLAND
+static Eina_Bool
+_e_screensaver_idle_timeout_cb(void *d EINA_UNUSED)
+{
+   e_screensaver_eval(1);
+   _e_screensaver_timer = NULL;
+   return EINA_FALSE;
+}
+#endif
 
 E_API int
 e_screensaver_timeout_get(Eina_Bool use_idle)
@@ -52,21 +69,22 @@ e_screensaver_timeout_get(Eina_Bool use_idle)
 E_API void
 e_screensaver_update(void)
 {
-#ifndef HAVE_WAYLAND_ONLY
-   int timeout = 0, interval = 0, blanking = 0, expose = 0;
+   int timeout;
    Eina_Bool changed = EINA_FALSE;
 
    timeout = e_screensaver_timeout_get(EINA_TRUE);
-
-   interval = e_config->screensaver_interval;
-   blanking = e_config->screensaver_blanking;
-   expose = e_config->screensaver_expose;
-
    if (_e_screensaver_timeout != timeout)
      {
         _e_screensaver_timeout = timeout;
         changed = EINA_TRUE;
      }
+#ifndef HAVE_WAYLAND_ONLY
+   int interval = 0, blanking = 0, expose = 0;
+
+   interval = e_config->screensaver_interval;
+   blanking = e_config->screensaver_blanking;
+   expose = e_config->screensaver_expose;
+
 //   if (_e_screensaver_interval != interval)
 //     {
 //        _e_screensaver_interval = interval;
@@ -83,10 +101,17 @@ e_screensaver_update(void)
         changed = EINA_TRUE;
      }
 
-   if (e_comp_util_has_x())
+   if (e_comp->comp_type != E_PIXMAP_TYPE_WL)
      {
         if (changed)
           ecore_x_screensaver_set(timeout, interval, blanking, expose);
+     }
+#endif
+#ifdef HAVE_WAYLAND
+   if (changed && (e_comp->comp_type == E_PIXMAP_TYPE_WL))
+     {
+        E_FREE_FUNC(_e_screensaver_timer, ecore_timer_del);
+        _e_screensaver_timer = ecore_timer_add(timeout, _e_screensaver_idle_timeout_cb, NULL);
      }
 #endif
 }
@@ -281,6 +306,9 @@ _e_screensaver_handler_screensaver_off_cb(void *data EINA_UNUSED, int type EINA_
      }
    else if (_e_screensaver_ask_presentation_count)
      _e_screensaver_ask_presentation_count = 0;
+#ifdef HAVE_WAYLAND
+   _e_screensaver_timer = ecore_timer_add(_e_screensaver_timeout, _e_screensaver_idle_timeout_cb, NULL);
+#endif
    return ECORE_CALLBACK_PASS_ON;
 }
 
@@ -303,6 +331,14 @@ _e_screensaver_handler_desk_show_cb(void *data EINA_UNUSED, int type EINA_UNUSED
 {
    e_screensaver_update();
    return ECORE_CALLBACK_PASS_ON;
+}
+
+static Eina_Bool
+_e_screensaver_idle_timer_cb(void *d EINA_UNUSED)
+{
+   ecore_event_add(E_EVENT_SCREENSAVER_ON, NULL, NULL, NULL);
+   screensaver_idle_timer = NULL;
+   return EINA_FALSE;
 }
 
 EINTERN void
@@ -439,24 +475,93 @@ e_screensaver_on_get(void)
 E_API void
 e_screensaver_activate(void)
 {
+   if (e_screensaver_on_get()) return;
+
+   E_FREE_FUNC(screensaver_idle_timer, ecore_timer_del);
 #ifndef HAVE_WAYLAND_ONLY
-   if (e_comp_util_has_x())
-     {
-        ecore_x_screensaver_activate();
-     }
-#else
+   if (e_comp->comp_type != E_PIXMAP_TYPE_WL)
+     ecore_x_screensaver_activate();
+#endif
+#ifdef HAVE_WAYLAND
+   if (e_comp->comp_type == E_PIXMAP_TYPE_WL)
+     e_screensaver_eval(1);
+   E_FREE_FUNC(_e_screensaver_timer, ecore_timer_del);
 #endif
 }
 
 E_API void
 e_screensaver_deactivate(void)
 {
+   if (!e_screensaver_on_get()) return;
+
+   E_FREE_FUNC(screensaver_idle_timer, ecore_timer_del);
 #ifndef HAVE_WAYLAND_ONLY
-   if (e_comp_util_has_x())
+   if (e_comp->comp_type != E_PIXMAP_TYPE_WL)
+     ecore_x_screensaver_reset();
+#endif
+#ifdef HAVE_WAYLAND
+   if (e_comp->comp_type == E_PIXMAP_TYPE_WL)
+     e_screensaver_eval(0);
+   E_FREE_FUNC(_e_screensaver_timer, ecore_timer_del);
+#endif
+}
+
+E_API void
+e_screensaver_eval(Eina_Bool saver_on)
+{
+   if (saver_on)
      {
-        ecore_x_screensaver_reset();
+        if (e_config->backlight.idle_dim)
+          {
+             double t = e_config->screensaver_timeout -
+               e_config->backlight.timer;
+
+             if (t < 1.0) t = 1.0;
+             E_FREE_FUNC(screensaver_idle_timer, ecore_timer_del);
+             if (e_config->screensaver_enable)
+               screensaver_idle_timer = ecore_timer_add
+                   (t, _e_screensaver_idle_timer_cb, NULL);
+             if (e_backlight_mode_get(NULL) != E_BACKLIGHT_MODE_DIM)
+               {
+                  e_backlight_mode_set(NULL, E_BACKLIGHT_MODE_DIM);
+                  screensaver_dimmed = EINA_TRUE;
+               }
+          }
+        else
+          {
+             if (!e_screensaver_on_get())
+               ecore_event_add(E_EVENT_SCREENSAVER_ON, NULL, NULL, NULL);
+          }
+        return;
      }
-#else
+   if (screensaver_idle_timer)
+     {
+        E_FREE_FUNC(screensaver_idle_timer, ecore_timer_del);
+        if (e_config->backlight.idle_dim)
+          {
+             if (e_backlight_mode_get(NULL) != E_BACKLIGHT_MODE_NORMAL)
+               e_backlight_mode_set(NULL, E_BACKLIGHT_MODE_NORMAL);
+          }
+        return;
+     }
+   if (screensaver_dimmed)
+     {
+        if (e_backlight_mode_get(NULL) != E_BACKLIGHT_MODE_NORMAL)
+          e_backlight_mode_set(NULL, E_BACKLIGHT_MODE_NORMAL);
+        screensaver_dimmed = EINA_FALSE;
+     }
+   if (e_screensaver_on_get())
+     ecore_event_add(E_EVENT_SCREENSAVER_OFF, NULL, NULL, NULL);
+}
+
+E_API void
+e_screensaver_notidle(void)
+{
+#ifdef HAVE_WAYLAND
+   if (_e_screensaver_timer)
+     ecore_timer_reset(_e_screensaver_timer);
+   if (e_screensaver_on_get())
+     e_screensaver_eval(0);
 #endif
 }
 

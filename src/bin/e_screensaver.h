@@ -16,6 +16,9 @@ E_API Eina_Bool e_screensaver_on_get(void);
 E_API void e_screensaver_activate(void);
 E_API void e_screensaver_deactivate(void);
 
+E_API void e_screensaver_eval(Eina_Bool saver_on);
+E_API void e_screensaver_notidle(void);
+
 E_API extern int E_EVENT_SCREENSAVER_ON;
 E_API extern int E_EVENT_SCREENSAVER_OFF;
 

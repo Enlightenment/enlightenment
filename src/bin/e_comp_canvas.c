@@ -65,6 +65,7 @@ _e_comp_canvas_cb_mouse_in(void *d EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object
 {
    E_Client *ec;
 
+   e_screensaver_notidle();
    if (e_client_action_get()) return;
    ec = e_client_focused_get();
    if (ec && (!ec->border_menu)) e_focus_event_mouse_out(ec);
@@ -73,6 +74,7 @@ _e_comp_canvas_cb_mouse_in(void *d EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object
 static void
 _e_comp_canvas_cb_mouse_down(void *d EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info)
 {
+   e_screensaver_notidle();
    if (e_client_action_get()) return;
    e_bindings_mouse_down_evas_event_handle(E_BINDING_CONTEXT_COMPOSITOR, E_OBJECT(e_comp), event_info);
 }
@@ -80,6 +82,7 @@ _e_comp_canvas_cb_mouse_down(void *d EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Obje
 static void
 _e_comp_canvas_cb_mouse_up(void *d EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info)
 {
+   e_screensaver_notidle();
    if (e_client_action_get()) return;
    e_bindings_mouse_up_evas_event_handle(E_BINDING_CONTEXT_COMPOSITOR, E_OBJECT(e_comp), event_info);
 }
@@ -87,6 +90,7 @@ _e_comp_canvas_cb_mouse_up(void *d EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object
 static void
 _e_comp_canvas_cb_mouse_wheel(void *d EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info)
 {
+   e_screensaver_notidle();
    if (e_client_action_get()) return;
    e_bindings_wheel_evas_event_handle(E_BINDING_CONTEXT_COMPOSITOR, E_OBJECT(e_comp), event_info);
 }
@@ -94,6 +98,7 @@ _e_comp_canvas_cb_mouse_wheel(void *d EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Obj
 static Eina_Bool
 _e_comp_cb_key_down(void *data EINA_UNUSED, int ev_type EINA_UNUSED, Ecore_Event_Key *ev)
 {
+   e_screensaver_notidle();
    if (e_menu_grab_window_get())
      {
 #ifdef HAVE_WAYLAND
@@ -123,6 +128,7 @@ _e_comp_cb_key_down(void *data EINA_UNUSED, int ev_type EINA_UNUSED, Ecore_Event
 static Eina_Bool
 _e_comp_cb_key_up(void *data EINA_UNUSED, int ev_type EINA_UNUSED, Ecore_Event_Key *ev)
 {
+   e_screensaver_notidle();
    if (e_menu_grab_window_get())
      {
 #ifdef HAVE_WAYLAND

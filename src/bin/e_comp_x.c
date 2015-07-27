@@ -60,9 +60,6 @@ static int _e_comp_x_mapping_change_disabled = 0;
 static Ecore_X_Randr_Screen_Size screen_size = { -1, -1 };
 static int screen_size_index = -1;
 
-static Ecore_Timer *screensaver_idle_timer = NULL;
-static Eina_Bool screensaver_dimmed = EINA_FALSE;
-
 static Ecore_X_Atom backlight_atom = 0;
 extern double e_bl_val;
 
@@ -4553,67 +4550,13 @@ _e_comp_x_cb_ping(void *data EINA_UNUSED, int ev_type EINA_UNUSED, Ecore_X_Event
    return ECORE_CALLBACK_PASS_ON;
 }
 
-static Eina_Bool
-_e_comp_x_screensaver_idle_timer_cb(void *d EINA_UNUSED)
-{
-   ecore_event_add(E_EVENT_SCREENSAVER_ON, NULL, NULL, NULL);
-   screensaver_idle_timer = NULL;
-   return EINA_FALSE;
-}
-
 static Ecore_Timer *screensaver_eval_timer = NULL;
 static Eina_Bool saver_on = EINA_FALSE;
 
 static Eina_Bool
 _e_comp_x_screensaver_eval_cb(void *d EINA_UNUSED)
 {
-   if (saver_on)
-     {
-        if (e_config->backlight.idle_dim)
-          {
-             double t = e_config->screensaver_timeout -
-               e_config->backlight.timer;
-
-             if (t < 1.0) t = 1.0;
-             E_FREE_FUNC(screensaver_idle_timer, ecore_timer_del);
-             if (e_config->screensaver_enable)
-               screensaver_idle_timer = ecore_timer_add
-                   (t, _e_comp_x_screensaver_idle_timer_cb, NULL);
-             if (e_backlight_mode_get(NULL) != E_BACKLIGHT_MODE_DIM)
-               {
-                  e_backlight_mode_set(NULL, E_BACKLIGHT_MODE_DIM);
-                  screensaver_dimmed = EINA_TRUE;
-               }
-          }
-        else
-          {
-             if (!e_screensaver_on_get())
-               ecore_event_add(E_EVENT_SCREENSAVER_ON, NULL, NULL, NULL);
-          }
-     }
-   else
-     {
-        if (screensaver_idle_timer)
-          {
-             E_FREE_FUNC(screensaver_idle_timer, ecore_timer_del);
-             if (e_config->backlight.idle_dim)
-               {
-                  if (e_backlight_mode_get(NULL) != E_BACKLIGHT_MODE_NORMAL)
-                    e_backlight_mode_set(NULL, E_BACKLIGHT_MODE_NORMAL);
-               }
-          }
-        else
-          {
-             if (screensaver_dimmed)
-               {
-                  if (e_backlight_mode_get(NULL) != E_BACKLIGHT_MODE_NORMAL)
-                    e_backlight_mode_set(NULL, E_BACKLIGHT_MODE_NORMAL);
-                  screensaver_dimmed = EINA_FALSE;
-               }
-             if (e_screensaver_on_get())
-               ecore_event_add(E_EVENT_SCREENSAVER_OFF, NULL, NULL, NULL);
-          }
-     }
+   e_screensaver_eval(saver_on);
    screensaver_eval_timer = NULL;
    return EINA_FALSE;
 }
@@ -4624,14 +4567,14 @@ _e_comp_x_screensaver_notify_cb(void *data EINA_UNUSED, int type EINA_UNUSED, Ec
    if ((ev->on) && (!saver_on))
      {
         saver_on = EINA_TRUE;
-	E_FREE_FUNC(screensaver_eval_timer, ecore_timer_del);
-	screensaver_eval_timer = ecore_timer_add(0.3, _e_comp_x_screensaver_eval_cb, NULL);
+        E_FREE_FUNC(screensaver_eval_timer, ecore_timer_del);
+        screensaver_eval_timer = ecore_timer_add(0.3, _e_comp_x_screensaver_eval_cb, NULL);
      }
    else if ((!ev->on) && (saver_on))
      {
         saver_on = EINA_FALSE;
-	E_FREE_FUNC(screensaver_eval_timer, ecore_timer_del);
-	screensaver_eval_timer = ecore_timer_add(0.3, _e_comp_x_screensaver_eval_cb, NULL);
+        E_FREE_FUNC(screensaver_eval_timer, ecore_timer_del);
+        screensaver_eval_timer = ecore_timer_add(0.3, _e_comp_x_screensaver_eval_cb, NULL);
      }
    return ECORE_CALLBACK_PASS_ON;
 }
@@ -5298,8 +5241,6 @@ e_comp_x_init(void)
         return EINA_FALSE;
      }
 
-   ecore_x_screensaver_event_listen_set(1);
-
    clients_win_hash = eina_hash_int32_new(NULL);
    damages_hash = eina_hash_int32_new(NULL);
    alarm_hash = eina_hash_int32_new(NULL);
@@ -5359,7 +5300,6 @@ e_comp_x_init(void)
                          _e_comp_x_cb_frame_extents_request, NULL);
    E_LIST_HANDLER_APPEND(handlers, ECORE_X_EVENT_PING,
                          _e_comp_x_cb_ping, NULL);
-   E_LIST_HANDLER_APPEND(handlers, ECORE_X_EVENT_SCREENSAVER_NOTIFY, _e_comp_x_screensaver_notify_cb, NULL);
    E_LIST_HANDLER_APPEND(handlers, ECORE_X_EVENT_RANDR_OUTPUT_PROPERTY_NOTIFY, _e_comp_x_backlight_notify_cb, NULL);
    if (ecore_x_randr_version_get() >= RANDR_VERSION_1_3)
      backlight_atom = ecore_x_atom_get("Backlight");
@@ -5367,11 +5307,16 @@ e_comp_x_init(void)
    if (!backlight_atom)
      backlight_atom = ecore_x_atom_get("BACKLIGHT");
 
-   ecore_x_screensaver_custom_blanking_enable();
+   if (e_comp->comp_type != E_PIXMAP_TYPE_WL)
+     {
+        ecore_x_screensaver_event_listen_set(1);
+        E_LIST_HANDLER_APPEND(handlers, ECORE_X_EVENT_SCREENSAVER_NOTIFY, _e_comp_x_screensaver_notify_cb, NULL);
+        ecore_x_screensaver_custom_blanking_enable();
 
-   e_screensaver_attrs_set(ecore_x_screensaver_timeout_get(),
-                           ecore_x_screensaver_blank_get(),
-                           ecore_x_screensaver_expose_get());
+        e_screensaver_attrs_set(ecore_x_screensaver_timeout_get(),
+                                ecore_x_screensaver_blank_get(),
+                                ecore_x_screensaver_expose_get());
+     }
    ecore_x_passive_grab_replay_func_set(_e_comp_x_grab_replay, NULL);
 
    e_client_hook_add(E_CLIENT_HOOK_DESK_SET, _e_comp_x_hook_client_desk_set, NULL);
@@ -5417,7 +5362,8 @@ e_comp_x_shutdown(void)
    E_FREE_FUNC(alarm_hash, eina_hash_free);
    E_FREE_FUNC(frame_extents, eina_hash_free);
    e_xsettings_shutdown();
-   ecore_x_screensaver_custom_blanking_disable();
+   if (e_comp->comp_type == E_PIXMAP_TYPE_X)
+     ecore_x_screensaver_custom_blanking_disable();
    if (x_fatal) return;
    e_atoms_shutdown();
    e_randr2_shutdown();
