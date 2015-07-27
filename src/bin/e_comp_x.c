@@ -5350,6 +5350,19 @@ e_comp_x_init(void)
    ecore_x_sync();
    _x_idle_flush = ecore_idle_enterer_add(_e_comp_x_flusher, NULL);
 
+   if (e_comp->comp_type != E_PIXMAP_TYPE_WL)
+     {
+        int timeout = e_screensaver_timeout_get(EINA_TRUE);
+        ecore_x_screensaver_set(timeout + 10,
+                                0,
+                                !e_config->screensaver_blanking,
+                                !e_config->screensaver_expose);
+        ecore_x_screensaver_set(timeout,
+                                0,
+                                e_config->screensaver_blanking,
+                                e_config->screensaver_expose);
+     }
+
    return EINA_TRUE;
 }
 

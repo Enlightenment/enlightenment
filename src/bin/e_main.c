@@ -706,7 +706,6 @@ main(int argc, char **argv)
      }
    TS("Screens Init Done");
    _e_main_shutdown_push(_e_main_screens_shutdown);
-   e_screensaver_force_update();
 
    TS("E_Pointer Init");
    if (!e_pointer_init())

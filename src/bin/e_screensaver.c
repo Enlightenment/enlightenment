@@ -116,28 +116,6 @@ e_screensaver_update(void)
 #endif
 }
 
-E_API void
-e_screensaver_force_update(void)
-{
-#ifndef HAVE_WAYLAND_ONLY
-   int timeout = e_screensaver_timeout_get(EINA_TRUE);
-   if (e_comp_util_has_x())
-     {
-        ecore_x_screensaver_set(timeout + 10,
-                                0,
-     //                           e_config->screensaver_interval,
-                                !e_config->screensaver_blanking,
-                                !e_config->screensaver_expose);
-        ecore_x_screensaver_set(timeout,
-                                0,
-     //                           e_config->screensaver_interval,
-                                e_config->screensaver_blanking,
-                                e_config->screensaver_expose);
-     }
-#else
-#endif
-}
-
 static Eina_Bool
 _e_screensaver_handler_config_mode_cb(void *data EINA_UNUSED, int type EINA_UNUSED, void *event EINA_UNUSED)
 {
@@ -286,7 +264,6 @@ _e_screensaver_handler_screensaver_on_cb(void *data EINA_UNUSED, int type EINA_U
 static Eina_Bool
 _e_screensaver_handler_screensaver_off_cb(void *data EINA_UNUSED, int type EINA_UNUSED, void *event EINA_UNUSED)
 {
-//   e_screensaver_force_update();
 //   e_dpms_force_update();
 
    _e_screensaver_on = EINA_FALSE;
