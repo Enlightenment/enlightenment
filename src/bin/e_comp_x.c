@@ -2122,6 +2122,8 @@ _e_comp_x_mouse_wheel(void *d EINA_UNUSED, int t EINA_UNUSED, Ecore_Event_Mouse_
    //else
      {
         ec = _e_comp_x_client_find_by_window(ev->window);
+        if ((!ec) && (ev->window != ev->event_window))
+          ec = _e_comp_x_client_find_by_window(ev->event_window);
         if (!ec) return ECORE_CALLBACK_RENEW;
      }
    if (ec->comp_data->deleted) return ECORE_CALLBACK_RENEW;
