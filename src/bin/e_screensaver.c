@@ -537,13 +537,14 @@ E_API void
 e_screensaver_notidle(void)
 {
 #ifdef HAVE_WAYLAND
-   if (_e_screensaver_timer)
-     ecore_timer_reset(_e_screensaver_timer);
    if (e_screensaver_on_get())
      {
+        E_FREE_FUNC(_e_screensaver_timer, ecore_timer_del);
         ecore_event_add(E_EVENT_SCREENSAVER_OFF_PRE, NULL, NULL, NULL);
         _e_screensaver_timer = ecore_timer_add(1.0, _e_screensaver_idle_timeout_cb, NULL);
      }
+   else if (_e_screensaver_timer)
+     ecore_timer_reset(_e_screensaver_timer);
 #endif
 }
 
