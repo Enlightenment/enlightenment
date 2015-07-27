@@ -68,6 +68,8 @@ typedef struct E_Comp_Screen_Iface
    E_Randr2 *(*create)(void);
    /* apply current config */
    void (*apply)(void);
+   /* set dpms (on, standby, suspend, off) */
+   void (*dpms)(int);
 } E_Comp_Screen_Iface;
 
 struct _E_Comp
