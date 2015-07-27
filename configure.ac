@@ -448,10 +448,10 @@ AM_CONDITIONAL([HAVE_EEZE_MOUNT], [test -n "$eeze_mount"])
 have_wayland_only=no
 AC_ARG_ENABLE([wayland],
   AS_HELP_STRING([--enable-wayland],[enable wayland support in enlightenment @<:@default=disabled@:>@]),
-  [e_cv_want_wayland_only=$enableval],
-  [e_cv_want_wayland_only=no])
+  [have_wayland_only=$enableval],
+  [have_wayland_only=no])
 AC_MSG_CHECKING([whether wayland support is enabled])
-AC_MSG_RESULT([${e_cv_want_wayland_only}])
+AC_MSG_RESULT([${have_wayland_only}])
 
 # doxygen program for documentation building
 
@@ -744,7 +744,7 @@ AC_MSG_RESULT([${e_cv_want_wayland_egl}])
 if test "x${e_cv_want_wayland_only}" != "xno" ;then
   PKG_CHECK_MODULES([WAYLAND], [ecore-wayland >= 1.16 wayland-server >= 1.8.0 wayland-client >= 1.8.0 xkbcommon uuid],
     [
-      have_wayland_only=yes
+      have_wayland=yes
       AC_DEFINE_UNQUOTED([HAVE_WAYLAND],[1],[enable wayland support])
     ])
 else
