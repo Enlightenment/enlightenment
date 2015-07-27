@@ -607,13 +607,35 @@ _drm_randr_apply(void)
      }
 }
 
+static void
+_drm_dpms(int set)
+{
+   Ecore_Drm_Device *dev;
+   Ecore_Drm_Output *out;
+   E_Randr2_Screen *s;
+   const Eina_List *l, *ll;
+
+   EINA_LIST_FOREACH(ecore_drm_devices_get(), l, dev)
+     {
+        EINA_LIST_FOREACH(e_randr2->screens, ll, s)
+          {
+             out = ecore_drm_device_output_name_find(dev, s->info.name);
+             if (!out) continue;
+
+             if ((!s->config.configured) || s->config.enabled)
+               ecore_drm_output_dpms_set(out, set);
+          }
+     }
+}
+
 static E_Comp_Screen_Iface drmiface =
 {
    .available = _drm_randr_available,
    .init = _drm_randr_stub,
    .shutdown = _drm_randr_stub,
    .create = _drm_randr_create,
-   .apply = _drm_randr_apply
+   .apply = _drm_randr_apply,
+   .dpms = _drm_dpms,
 };
 
 static void
