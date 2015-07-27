@@ -14,6 +14,17 @@ static unsigned int _e_dpms_timeout_suspend = 0;
 static unsigned int _e_dpms_timeout_off = 0;
 static int _e_dpms_enabled = EINA_FALSE;
 
+#ifdef HAVE_WAYLAND
+static Eina_List *handlers;
+static Ecore_Timer *standby_timer;
+static Ecore_Timer *suspend_timer;
+static Ecore_Timer *off_timer;
+#endif
+
+#define STANDBY 5
+#define SUSPEND 6
+#define OFF 7
+
 E_API void
 e_dpms_update(void)
 {
@@ -29,7 +40,7 @@ e_dpms_update(void)
      {
         _e_dpms_enabled = enabled;
 #ifndef HAVE_WAYLAND_ONLY
-        if (e_comp_util_has_x())
+        if (e_comp->comp_type == E_PIXMAP_TYPE_X)
           ecore_x_dpms_enabled_set(enabled);
 #endif
      }
@@ -38,9 +49,9 @@ e_dpms_update(void)
    if (e_config->screensaver_enable)
      {
         off = suspend = standby = e_screensaver_timeout_get(EINA_FALSE);
-        standby += 5;
-        suspend += 6;
-        off += 7;
+        standby += STANDBY;
+        suspend += SUSPEND;
+        off += OFF;
      }
    if (_e_dpms_timeout_standby != standby)
      {
@@ -58,7 +69,7 @@ e_dpms_update(void)
         changed = EINA_TRUE;
      }
 #ifndef HAVE_WAYLAND_ONLY
-   if (e_comp_util_has_x())
+   if (e_comp->comp_type == E_PIXMAP_TYPE_X)
      {
         if (changed) ecore_x_dpms_timeouts_set(standby, suspend, off);
      }
@@ -74,7 +85,7 @@ e_dpms_force_update(void)
    enabled = ((e_config->screensaver_enable) &&
               (!e_config->mode.presentation));
 #ifndef HAVE_WAYLAND_ONLY
-   if (e_comp_util_has_x())
+   if (e_comp->comp_type == E_PIXMAP_TYPE_X)
      ecore_x_dpms_enabled_set(enabled);
 #endif
    if (!enabled) return;
@@ -82,12 +93,12 @@ e_dpms_force_update(void)
    if (e_config->screensaver_enable)
      {
         off = suspend = standby = e_screensaver_timeout_get(EINA_FALSE);
-        standby += 5;
-        suspend += 6;
-        off += 7;
+        standby += STANDBY;
+        suspend += SUSPEND;
+        off += OFF;
      }
 #ifndef HAVE_WAYLAND_ONLY
-   if (!e_comp_util_has_x()) return;
+   if (!e_comp->comp_type == E_PIXMAP_TYPE_X) return;
    ecore_x_dpms_timeouts_set(standby + 10, suspend + 10, off + 10);
    ecore_x_dpms_timeouts_set(standby, suspend, off);
 #endif
@@ -121,6 +132,55 @@ _e_dpms_handler_desk_show_cb(void *data EINA_UNUSED, int type EINA_UNUSED, void 
    return ECORE_CALLBACK_PASS_ON;
 }
 
+#ifdef HAVE_WAYLAND
+static Eina_Bool
+_e_dpms_standby(void *d EINA_UNUSED)
+{
+   if (e_comp->screen->dpms)
+     e_comp->screen->dpms(1);
+   standby_timer = NULL;
+   return EINA_FALSE;
+}
+
+static Eina_Bool
+_e_dpms_suspend(void *d EINA_UNUSED)
+{
+   if (e_comp->screen->dpms)
+     e_comp->screen->dpms(2);
+   suspend_timer = NULL;
+   return EINA_FALSE;
+}
+
+static Eina_Bool
+_e_dpms_off(void *d EINA_UNUSED)
+{
+   if (e_comp->screen->dpms)
+     e_comp->screen->dpms(3);
+   off_timer = NULL;
+   return EINA_FALSE;
+}
+
+static Eina_Bool
+_e_dpms_screensaver_on()
+{
+   standby_timer = ecore_timer_add(STANDBY, _e_dpms_standby, NULL);
+   suspend_timer = ecore_timer_add(SUSPEND, _e_dpms_suspend, NULL);
+   off_timer = ecore_timer_add(OFF, _e_dpms_off, NULL);
+   return ECORE_CALLBACK_RENEW;
+}
+
+static Eina_Bool
+_e_dpms_screensaver_off()
+{
+   E_FREE_FUNC(standby_timer, ecore_timer_del);
+   E_FREE_FUNC(suspend_timer, ecore_timer_del);
+   E_FREE_FUNC(off_timer, ecore_timer_del);
+   if (e_comp->screen->dpms)
+     e_comp->screen->dpms(0);
+   return ECORE_CALLBACK_RENEW;
+}
+#endif
+
 EINTERN int
 e_dpms_init(void)
 {
@@ -149,15 +209,21 @@ e_dpms_init(void)
        (E_EVENT_DESK_SHOW, _e_dpms_handler_desk_show_cb, NULL);
 
 #ifndef HAVE_WAYLAND_ONLY
-   if (e_comp_util_has_x())
+   if (e_comp->comp_type == E_PIXMAP_TYPE_X)
      {
         _e_dpms_enabled = ecore_x_dpms_enabled_get();
         ecore_x_dpms_timeouts_get
           (&_e_dpms_timeout_standby, &_e_dpms_timeout_suspend, &_e_dpms_timeout_off);
+        e_dpms_force_update();
      }
 #endif
-
-   e_dpms_force_update();
+#ifdef HAVE_WAYLAND
+   if (e_comp->comp_type != E_PIXMAP_TYPE_X)
+     {
+        E_LIST_HANDLER_APPEND(handlers, E_EVENT_SCREENSAVER_ON, _e_dpms_screensaver_on, NULL);
+        E_LIST_HANDLER_APPEND(handlers, E_EVENT_SCREENSAVER_OFF_PRE, _e_dpms_screensaver_off, NULL);
+     }
+#endif
 
    return 1;
 }
