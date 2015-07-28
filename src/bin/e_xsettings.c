@@ -652,6 +652,7 @@ e_xsettings_shutdown(void)
 E_API void
 e_xsettings_config_update(void)
 {
+   if (!_atom_manager) return;
    setting = EINA_FALSE;
    if (eio_op) eio_file_cancel(eio_op);
    if (!e_config->xsettings.enabled)
