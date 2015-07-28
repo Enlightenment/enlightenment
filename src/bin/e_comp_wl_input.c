@@ -528,7 +528,7 @@ e_comp_wl_input_keyboard_modifiers_update(void)
    if (!e_comp->wl_comp_data->kbd.focused) return;
 
    serial = wl_display_next_serial(e_comp->wl_comp_data->wl.disp);
-   EINA_LIST_FOREACH(e_comp->wl_comp_data->kbd.resources, l, res)
+   EINA_LIST_FOREACH(e_comp->wl_comp_data->kbd.focused, l, res)
      wl_keyboard_send_modifiers(res, serial,
                                 e_comp->wl_comp_data->kbd.mod_depressed,
                                 e_comp->wl_comp_data->kbd.mod_latched,
