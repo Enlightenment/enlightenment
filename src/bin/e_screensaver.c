@@ -112,7 +112,8 @@ e_screensaver_update(void)
    if (changed && (e_comp->comp_type == E_PIXMAP_TYPE_WL))
      {
         E_FREE_FUNC(_e_screensaver_timer, ecore_timer_del);
-        _e_screensaver_timer = ecore_timer_add(timeout, _e_screensaver_idle_timeout_cb, (void*)1);
+        if (timeout)
+          _e_screensaver_timer = ecore_timer_add(timeout, _e_screensaver_idle_timeout_cb, (void*)1);
      }
 #endif
 }
@@ -285,7 +286,8 @@ _e_screensaver_handler_screensaver_off_cb(void *data EINA_UNUSED, int type EINA_
    else if (_e_screensaver_ask_presentation_count)
      _e_screensaver_ask_presentation_count = 0;
 #ifdef HAVE_WAYLAND
-   _e_screensaver_timer = ecore_timer_add(_e_screensaver_timeout, _e_screensaver_idle_timeout_cb, (void*)1);
+   if (_e_screensaver_timeout)
+     _e_screensaver_timer = ecore_timer_add(_e_screensaver_timeout, _e_screensaver_idle_timeout_cb, (void*)1);
 #endif
    return ECORE_CALLBACK_PASS_ON;
 }
@@ -542,7 +544,7 @@ e_screensaver_notidle(void)
         ecore_event_add(E_EVENT_SCREENSAVER_OFF_PRE, NULL, NULL, NULL);
         _e_screensaver_timer = ecore_timer_add(1.0, _e_screensaver_idle_timeout_cb, NULL);
      }
-   else
+   else if (_e_screensaver_timeout)
      _e_screensaver_timer = ecore_timer_add(_e_screensaver_timeout, _e_screensaver_idle_timeout_cb, (void*)1);
 #endif
 }
