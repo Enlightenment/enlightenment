@@ -542,7 +542,7 @@ e_screensaver_notidle(void)
    if (e_screensaver_on_get())
      {
         ecore_event_add(E_EVENT_SCREENSAVER_OFF_PRE, NULL, NULL, NULL);
-        _e_screensaver_timer = ecore_timer_add(1.0, _e_screensaver_idle_timeout_cb, NULL);
+        _e_screensaver_timer = ecore_timer_add(0.2, _e_screensaver_idle_timeout_cb, NULL);
      }
    else if (_e_screensaver_timeout)
      _e_screensaver_timer = ecore_timer_add(_e_screensaver_timeout, _e_screensaver_idle_timeout_cb, (void*)1);
