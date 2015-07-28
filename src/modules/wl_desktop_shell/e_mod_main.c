@@ -1013,8 +1013,8 @@ _e_xdg_shell_surface_ping(struct wl_resource *resource)
 
    if (e_comp->wl_comp_data->shell_interface.xdg_shell)
      {
-       serial = wl_display_next_serial(e_comp->wl_comp_data->wl.disp);
-       xdg_shell_send_ping(e_comp->wl_comp_data->shell_interface.xdg_shell, serial);
+        serial = wl_display_next_serial(e_comp->wl_comp_data->wl.disp);
+        xdg_shell_send_ping(e_comp->wl_comp_data->shell_interface.xdg_shell, serial);
      }
 }
 
