@@ -429,9 +429,12 @@ _e_desklock_cb_idle_poller(void *data EINA_UNUSED)
         if ((_e_custom_desklock_exe) || (_e_desklock_state)) return ECORE_CALLBACK_RENEW;
 
 #ifndef HAVE_WAYLAND_ONLY
-        idle = ecore_x_screensaver_idle_time_get();
-#else
-        idle = e_comp_wl_idle_time_get();
+        if (e_comp->comp_type == E_PIXMAP_TYPE_X)
+          idle = ecore_x_screensaver_idle_time_get();
+#endif
+#ifdef HAVE_WAYLAND
+        if (e_comp->comp_type == E_PIXMAP_TYPE_WL)
+          idle = e_comp_wl_idle_time_get();
 #endif
 
         max = e_config->desklock_autolock_idle_timeout;
@@ -491,17 +494,15 @@ _e_desklock_ask_presentation_no(void *data EINA_UNUSED, E_Dialog *dia)
 static void
 _e_desklock_ask_presentation_no_increase(void *data EINA_UNUSED, E_Dialog *dia)
 {
-#ifndef HAVE_WAYLAND_ONLY
-   int timeout, interval, blanking, expose;
+   int timeout, blanking, expose;
 
    _e_desklock_ask_presentation_count++;
    timeout = e_config->screensaver_timeout * _e_desklock_ask_presentation_count;
-   interval = e_config->screensaver_interval;
    blanking = e_config->screensaver_blanking;
    expose = e_config->screensaver_expose;
 
-   ecore_x_screensaver_set(timeout, interval, blanking, expose);
-#endif
+   e_screensaver_attrs_set(timeout, blanking, expose);
+   e_screensaver_update();
    e_object_del(E_OBJECT(dia));
 }
 
