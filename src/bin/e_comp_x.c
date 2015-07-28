@@ -2175,6 +2175,7 @@ _e_comp_x_mouse_in(void *data EINA_UNUSED, int type EINA_UNUSED, Ecore_X_Event_M
 {
    E_Client *ec;
 
+   if (e_comp->comp_type != E_PIXMAP_TYPE_X) return ECORE_CALLBACK_RENEW;
    if ((ev->mode == ECORE_X_EVENT_MODE_NORMAL) &&
        ((ev->detail == ECORE_X_EVENT_DETAIL_INFERIOR) || (ev->detail == ECORE_X_EVENT_DETAIL_VIRTUAL)))
      return ECORE_CALLBACK_PASS_ON;
@@ -2191,6 +2192,7 @@ _e_comp_x_mouse_out(void *data EINA_UNUSED, int type EINA_UNUSED, Ecore_X_Event_
 {
    E_Client *ec;
 
+   if (e_comp->comp_type != E_PIXMAP_TYPE_X) return ECORE_CALLBACK_RENEW;
    if ((ev->mode == ECORE_X_EVENT_MODE_UNGRAB) &&
        (ev->detail == ECORE_X_EVENT_DETAIL_INFERIOR))
      return ECORE_CALLBACK_PASS_ON;
@@ -2213,6 +2215,7 @@ _e_comp_x_mouse_wheel(void *d EINA_UNUSED, int t EINA_UNUSED, Ecore_Event_Mouse_
    E_Client *ec;
    E_Binding_Event_Wheel ev2;
 
+   if (e_comp->comp_type != E_PIXMAP_TYPE_X) return ECORE_CALLBACK_RENEW;
    //if (action_input_win)
      //ec = action_border;
    //else
@@ -2235,6 +2238,7 @@ _e_comp_x_mouse_up(void *d EINA_UNUSED, int t EINA_UNUSED, Ecore_Event_Mouse_But
    E_Client *ec;
    E_Binding_Event_Mouse_Button ev2;
 
+   if (e_comp->comp_type != E_PIXMAP_TYPE_X) return ECORE_CALLBACK_RENEW;
    //if (action_input_win)
      //ec = action_border;
    //else
@@ -2262,6 +2266,7 @@ _e_comp_x_mouse_down(void *d EINA_UNUSED, int t EINA_UNUSED, Ecore_Event_Mouse_B
    E_Client *ec;
    E_Binding_Event_Mouse_Button ev2;
 
+   if (e_comp->comp_type != E_PIXMAP_TYPE_X) return ECORE_CALLBACK_RENEW;
    if (e_client_action_get()) return ECORE_CALLBACK_RENEW; //block extra mouse buttons during action
    //if (action_input_win)
      //ec = action_border;
@@ -2283,6 +2288,7 @@ _e_comp_x_mouse_move(void *d EINA_UNUSED, int t EINA_UNUSED, Ecore_Event_Mouse_M
 {
    E_Client *ec;
 
+   if (e_comp->comp_type != E_PIXMAP_TYPE_X) return ECORE_CALLBACK_RENEW;
    ec = e_client_action_get();
    if (!ec)
      {
