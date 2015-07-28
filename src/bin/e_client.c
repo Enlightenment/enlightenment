@@ -401,7 +401,11 @@ _e_client_action_finish(void)
    E_FREE_FUNC(action_handler_key,  ecore_event_handler_del);
    E_FREE_FUNC(action_handler_mouse, ecore_event_handler_del);
    if (action_client)
-     action_client->keyboard_resizing = 0;
+     {
+        action_client->keyboard_resizing = 0;
+        if (action_client->internal_elm_win)
+          ecore_event_window_ignore_events(elm_win_window_id_get(action_client->internal_elm_win), 0);
+     }
    action_client = NULL;
 }
 
@@ -736,8 +740,14 @@ _e_client_action_init(E_Client *ec)
    action_orig.h = ec->h;
 
    if (action_client)
-     action_client->keyboard_resizing = 0;
+     {
+        action_client->keyboard_resizing = 0;
+        if (action_client->internal_elm_win)
+          ecore_event_window_ignore_events(elm_win_window_id_get(action_client->internal_elm_win), 0);
+     }
    action_client = ec;
+   if (ec->internal_elm_win)
+     ecore_event_window_ignore_events(elm_win_window_id_get(ec->internal_elm_win), 1);
 }
 
 static void
