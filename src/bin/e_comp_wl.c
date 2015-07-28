@@ -488,13 +488,15 @@ _e_comp_wl_evas_cb_focus_in_timer(E_Client *ec)
    uint32_t serial, *k;
    struct wl_resource *res;
    Eina_List *l;
+   double t;
 
    ec->comp_data->on_focus_timer = NULL;
 
    serial = wl_display_next_serial(e_comp->wl_comp_data->wl.disp);
+   t = ecore_time_unix_get();
    EINA_LIST_FOREACH(e_comp->wl_comp_data->kbd.focused, l, res)
      wl_array_for_each(k, &e_comp->wl_comp_data->kbd.keys)
-       wl_keyboard_send_key(res, serial, ecore_time_unix_get(),
+       wl_keyboard_send_key(res, serial, t,
                                *k, WL_KEYBOARD_KEY_STATE_PRESSED);
    return EINA_FALSE;
 }
@@ -535,6 +537,7 @@ _e_comp_wl_evas_cb_focus_out(void *data, Evas *evas EINA_UNUSED, Evas_Object *ob
    struct wl_resource *res;
    uint32_t serial, *k;
    Eina_List *l, *ll;
+   double t;
 
    if (!(ec = data)) return;
 
@@ -554,10 +557,11 @@ _e_comp_wl_evas_cb_focus_out(void *data, Evas *evas EINA_UNUSED, Evas_Object *ob
 
    /* send keyboard_leave to all keyboard resources */
    serial = wl_display_next_serial(cdata->wl.disp);
+   t = ecore_time_unix_get();
    EINA_LIST_FOREACH_SAFE(cdata->kbd.focused, l, ll, res)
      {
         wl_array_for_each(k, &cdata->kbd.keys)
-          wl_keyboard_send_key(res, serial, ecore_time_unix_get(),
+          wl_keyboard_send_key(res, serial, t,
                                     *k, WL_KEYBOARD_KEY_STATE_RELEASED);
         wl_keyboard_send_leave(res, serial, ec->comp_data->surface);
         e_comp->wl_comp_data->kbd.focused = eina_list_remove_list(e_comp->wl_comp_data->kbd.focused, l);
