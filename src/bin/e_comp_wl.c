@@ -2500,7 +2500,7 @@ _e_comp_wl_compositor_create(void)
      }
 
 #ifndef HAVE_WAYLAND_ONLY
-   if (getenv("DISPLAY"))
+   if (e_comp_util_has_x())
      {
         E_Config_XKB_Layout *ekbd;
         Ecore_X_Atom xkb = 0;
