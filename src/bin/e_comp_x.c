@@ -5450,6 +5450,7 @@ e_comp_x_xwayland_client_setup(E_Client *ec, E_Client *wc)
    wc->layer = ec->layer;
    wc->netwm.sync.request = 1;
    evas_object_layer_set(wc->frame, evas_object_layer_get(ec->frame));
+   evas_object_geometry_set(wc->frame, ec->x, ec->y, ec->w, ec->h);
    evas_object_show(wc->frame);
    e_object_del(E_OBJECT(ec));
    e_hints_window_visible_set(wc);
