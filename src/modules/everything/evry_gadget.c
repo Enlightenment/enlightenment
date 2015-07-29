@@ -466,7 +466,7 @@ _button_cb_mouse_down(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNU
                }
           }
 
-        win = evry_show(e_zone_current_get(),
+        win = evry_show(e_gadcon_zone_get(inst->gcc->gadcon),
                         0, inst->cfg->plugin, !inst->illume_mode);
         if (!win) return;
 
