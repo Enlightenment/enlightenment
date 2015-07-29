@@ -97,7 +97,9 @@ _e_comp_wl_cb_module_idle(void *data EINA_UNUSED)
    const char **m, *mods[] =
    {
       "wl_desktop_shell",
+#ifdef HAVE_XWAYLAND
       "xwayland",
+#endif
       NULL
    };
 
