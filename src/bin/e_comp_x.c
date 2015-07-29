@@ -5430,8 +5430,9 @@ e_comp_x_xwayland_client_setup(E_Client *ec, E_Client *wc)
    memcpy(&wc->icccm, &ec->icccm, sizeof(ec->icccm));
    memcpy(&wc->netwm, &ec->netwm, sizeof(ec->netwm));
    memcpy(&wc->e, &ec->e, sizeof(ec->e));
-   ec->new_client = 1;
-   e_comp->new_clients++;
+   wc->new_client = !wc->override;
+   if (wc->new_client)
+     e_comp->new_clients++;
 
    eina_hash_set(clients_win_hash, &win, wc);
    if (pwin)
@@ -5453,7 +5454,6 @@ e_comp_x_xwayland_client_setup(E_Client *ec, E_Client *wc)
    e_object_del(E_OBJECT(ec));
    e_hints_window_visible_set(wc);
    _e_comp_x_client_stack(wc);
-   wc->new_client = 1;
 }
 #endif
 
