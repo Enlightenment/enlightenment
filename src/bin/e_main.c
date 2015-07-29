@@ -438,6 +438,8 @@ main(int argc, char **argv)
         e_error_message_show(_("Enlightenment cannot initialize Elementary!\n"));
         _e_main_shutdown(-1);
      }
+   if (e_util_strcmp(elm_theme_get(NULL), "default"))
+     elm_theme_extension_add(NULL, "default");
    TS("Elementary Init Done");
    _e_main_shutdown_push(elm_shutdown);
 
