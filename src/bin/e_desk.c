@@ -281,13 +281,6 @@ e_desk_show(E_Desk *desk)
 
    if (desk->zone->bg_object) was_zone = 1;
    _e_desk_show_begin(desk, dx, dy);
-   if (!e_config->desk_flip_animate_type)
-     {
-        if (e_config->focus_last_focused_per_desktop)
-          e_desk_last_focused_focus(desk);
-        else if (e_client_focused_get())
-          evas_object_focus_set(e_client_focused_get()->frame, 0);
-     }
 
    if (was_zone)
      e_bg_zone_update(desk->zone, E_BG_TRANSITION_DESK);
