@@ -405,8 +405,8 @@ _e_client_action_finish(void)
    E_FREE_FUNC(action_handler_mouse, ecore_event_handler_del);
    if (action_client)
      {
-        if (action_client->internal_elm_win)
-          ecore_event_window_ignore_events(elm_win_window_id_get(action_client->internal_elm_win), 0);
+        if (action_client->internal_ecore_evas)
+          ecore_event_window_ignore_events(ecore_evas_window_get(action_client->internal_ecore_evas), 0);
      }
    action_client = NULL;
 }
@@ -738,12 +738,12 @@ _e_client_action_init(E_Client *ec)
 
    if (action_client)
      {
-        if (action_client->internal_elm_win)
-          ecore_event_window_ignore_events(elm_win_window_id_get(action_client->internal_elm_win), 0);
+        if (action_client->internal_ecore_evas)
+          ecore_event_window_ignore_events(ecore_evas_window_get(action_client->internal_ecore_evas), 0);
      }
    action_client = ec;
-   if (ec->internal_elm_win)
-     ecore_event_window_ignore_events(elm_win_window_id_get(ec->internal_elm_win), 1);
+   if (ec->internal_ecore_evas)
+     ecore_event_window_ignore_events(ecore_evas_window_get(ec->internal_ecore_evas), 1);
 }
 
 static void
