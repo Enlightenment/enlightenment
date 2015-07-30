@@ -2638,6 +2638,7 @@ e_comp_wl_init(void)
           e_randr2_screens_setup(-1, -1);
         elm_config_preferred_engine_set("wayland_shm");
      }
+   e_util_env_set("ELM_DISPLAY", "wl");
 
    E_LIST_HANDLER_APPEND(handlers, E_EVENT_RANDR_CHANGE,
                                 _e_comp_wl_cb_randr_change, NULL);
