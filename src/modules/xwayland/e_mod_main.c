@@ -419,6 +419,7 @@ e_modapi_shutdown(E_Module *m EINA_UNUSED)
    if (exs->sig_hdlr) ecore_event_handler_del(exs->sig_hdlr);
 
    free(exs);
+   e_util_env_set("DISPLAY", NULL);
 
    return 1;
 }
