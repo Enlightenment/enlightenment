@@ -397,7 +397,7 @@ _e_wizard_cb_desktops_update(void *data EINA_UNUSED, int ev_type EINA_UNUSED, vo
    if ((e) && (e->error))
      xdg_error = EINA_TRUE;
    got_desktops = EINA_TRUE;
-   if (curpage && _e_wizard_check_xdg())
+   if (_e_wizard_check_xdg() && curpage)
      _e_wizard_next_xdg();
    return ECORE_CALLBACK_PASS_ON;
 }
@@ -406,7 +406,7 @@ static Eina_Bool
 _e_wizard_cb_icons_update(void *data EINA_UNUSED, int ev_type EINA_UNUSED, void *ev EINA_UNUSED)
 {
    got_icons = EINA_TRUE;
-   if (curpage && _e_wizard_check_xdg())
+   if (_e_wizard_check_xdg() && curpage)
      _e_wizard_next_xdg();
    return ECORE_CALLBACK_PASS_ON;
 }
