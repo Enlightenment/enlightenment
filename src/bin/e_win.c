@@ -156,10 +156,21 @@ _e_elm_win_trap_show(void *data, Evas_Object *o)
 }
 
 static Eina_Bool
-_e_elm_win_trap_move(void *data, Evas_Object *o EINA_UNUSED, int x, int y)
+_e_elm_win_trap_move(void *data, Evas_Object *o, int x, int y)
 {
    Elm_Win_Trap_Ctx *ctx = data;
    EINA_SAFETY_ON_NULL_RETURN_VAL(ctx, EINA_TRUE);
+   if (e_comp->comp_type == E_PIXMAP_TYPE_WL)
+     {
+        int ex, ey;
+
+        /* if the ee coords match the requested coords, this is coming from
+         * a configure event which the compositor sent. failing to reject this
+         * move will result in bad window positioning
+         */
+        ecore_evas_geometry_get(e_win_ee_get(o), &ex, &ey, NULL, NULL);
+        if ((x == ex) && (y == ey)) return EINA_FALSE;
+     }
    ctx->placed = 1;
    if (!ctx->client) return EINA_TRUE;
    if ((ctx->client->client.x != x) || (ctx->client->client.y != y))
