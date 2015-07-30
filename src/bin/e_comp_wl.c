@@ -889,6 +889,7 @@ _e_comp_wl_cb_mouse_move(void *d EINA_UNUSED, int t EINA_UNUSED, Ecore_Event_Mou
 
    e_comp->wl_comp_data->ptr.x = wl_fixed_from_int(ev->x);
    e_comp->wl_comp_data->ptr.y = wl_fixed_from_int(ev->y);
+   e_screensaver_notidle();
    return ECORE_CALLBACK_RENEW;
 }
 
