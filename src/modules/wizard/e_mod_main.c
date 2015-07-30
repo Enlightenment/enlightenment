@@ -48,6 +48,7 @@ e_modapi_init(E_Module *m)
    Eina_List *files;
    char buf[PATH_MAX];
    char *file;
+   const char *src_path;
 
    wiz_module = m;
    e_wizard_init();
@@ -56,7 +57,11 @@ e_modapi_init(E_Module *m)
    e_config->scale.use_custom = 1;
    e_config->scale.factor = 1.2;
    e_scale_update();
-   snprintf(buf, sizeof(buf), "%s/%s", e_module_dir_get(m), MODULE_ARCH);
+   src_path = getenv("E_MODULE_SRC_PATH");
+   if (src_path)
+     snprintf(buf, sizeof(buf), "%s/.libs", e_module_dir_get(m));
+   else
+     snprintf(buf, sizeof(buf), "%s/%s", e_module_dir_get(m), MODULE_ARCH);
    files = ecore_file_ls(buf);
    files = eina_list_sort(files, 0, (Eina_Compare_Cb)_cb_sort_files);
    EINA_LIST_FREE(files, file)
@@ -65,8 +70,11 @@ e_modapi_init(E_Module *m)
           {
              void *handle;
 
-             snprintf(buf, sizeof(buf), "%s/%s/%s",
-                      e_module_dir_get(m), MODULE_ARCH, file);
+             if (src_path)
+               snprintf(buf, sizeof(buf), "%s/.libs/%s", e_module_dir_get(m), file);
+             else
+               snprintf(buf, sizeof(buf), "%s/%s/%s",
+                        e_module_dir_get(m), MODULE_ARCH, file);
              handle = dlopen(buf, RTLD_NOW | RTLD_GLOBAL);
              if (handle)
                e_wizard_page_add(handle,
