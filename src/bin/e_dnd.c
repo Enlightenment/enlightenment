@@ -97,6 +97,70 @@ _e_drop_handler_active_check(E_Drop_Handler *h, const E_Drag *drag, Eina_Strings
      }
 }
 
+static void
+_e_drag_finalize(E_Drag *drag, E_Drag_Type type, int x, int y)
+{
+   const Eina_List *l;
+   E_Drop_Handler *h;
+
+   if (!drag->object)
+     {
+        e_drag_object_set(drag, evas_object_rectangle_add(drag->evas));
+        evas_object_color_set(drag->object, 255, 0, 0, 255);
+     }
+   evas_object_move(drag->comp_object, drag->x, drag->y);
+   evas_object_resize(drag->comp_object, drag->w, drag->h);
+   drag->visible = 1;
+   drag->type = type;
+
+   drag->dx = x - drag->x;
+   drag->dy = y - drag->y;
+
+   _active_handlers = eina_list_free(_active_handlers);
+   EINA_LIST_FOREACH(_drop_handlers, l, h)
+     {
+        Eina_Bool active = h->active;
+
+        h->active = 0;
+        eina_stringshare_replace(&h->active_type, NULL);
+        _e_drop_handler_active_check(h, drag, NULL);
+        if (h->active != active)
+          {
+             if (h->active)
+               _active_handlers = eina_list_append(_active_handlers, h);
+             else
+               _active_handlers = eina_list_remove(_active_handlers, h);
+          }
+        h->entered = 0;
+     }
+
+   if (type == E_DRAG_XDND)
+     {
+#ifndef HAVE_WAYLAND_ONLY
+        if (e_comp->comp_type == E_PIXMAP_TYPE_X)
+          {
+             Ecore_X_Atom actions[] = {
+                ECORE_X_DND_ACTION_MOVE, ECORE_X_DND_ACTION_PRIVATE,
+                ECORE_X_DND_ACTION_COPY, ECORE_X_DND_ACTION_ASK,
+                ECORE_X_DND_ACTION_LINK
+             };
+
+             ecore_x_dnd_aware_set(_drag_win, 1);
+             ecore_x_dnd_types_set(_drag_win, drag->types, drag->num_types);
+             ecore_x_dnd_actions_set(_drag_win, actions, 5);
+             ecore_x_dnd_begin(_drag_win, drag->data, drag->data_size);
+          }
+#endif
+#ifdef HAVE_WAYLAND
+        if (e_comp->comp_type == E_PIXMAP_TYPE_WL)
+          {
+          }
+#endif
+     }
+
+   _drag_current = drag;
+}
+
 /* externally accessible functions */
 
 EINTERN int
@@ -268,9 +332,6 @@ e_dnd_active(void)
 E_API int
 e_drag_start(E_Drag *drag, int x, int y)
 {
-   const Eina_List *l;
-   E_Drop_Handler *h;
-
    if (_drag_win) return 0;
 #ifndef HAVE_WAYLAND_ONLY
    if (e_comp->comp_type == E_PIXMAP_TYPE_X)
@@ -300,54 +361,13 @@ e_drag_start(E_Drag *drag, int x, int y)
           }
      }
 
-   if (!drag->object)
-     {
-        e_drag_object_set(drag, evas_object_rectangle_add(drag->evas));
-        evas_object_color_set(drag->object, 255, 0, 0, 255);
-     }
-   evas_object_move(drag->comp_object, drag->x, drag->y);
-   evas_object_resize(drag->comp_object, drag->w, drag->h);
-   drag->visible = 1;
-   drag->type = E_DRAG_INTERNAL;
-
-   drag->dx = x - drag->x;
-   drag->dy = y - drag->y;
-
-   _active_handlers = eina_list_free(_active_handlers);
-   EINA_LIST_FOREACH(_drop_handlers, l, h)
-     {
-        Eina_Bool active = h->active;
-
-        h->active = 0;
-        eina_stringshare_replace(&h->active_type, NULL);
-        _e_drop_handler_active_check(h, drag, NULL);
-        if (h->active != active)
-          {
-             if (h->active)
-               _active_handlers = eina_list_append(_active_handlers, h);
-             else
-               _active_handlers = eina_list_remove(_active_handlers, h);
-          }
-        h->entered = 0;
-     }
-
-   _drag_current = drag;
+   _e_drag_finalize(drag, E_DRAG_INTERNAL, x, y);
    return 1;
 }
 
 E_API int
 e_drag_xdnd_start(E_Drag *drag, int x, int y)
 {
-#ifndef HAVE_WAYLAND_ONLY
-   Ecore_X_Atom actions[] = {
-      ECORE_X_DND_ACTION_MOVE, ECORE_X_DND_ACTION_PRIVATE,
-      ECORE_X_DND_ACTION_COPY, ECORE_X_DND_ACTION_ASK,
-      ECORE_X_DND_ACTION_LINK
-   };
-#endif
-   const Eina_List *l;
-   E_Drop_Handler *h;
-
    if (_drag_win) return 0;
 #ifndef HAVE_WAYLAND_ONLY
    if (!e_comp_util_has_x()) return 0;
@@ -364,44 +384,8 @@ e_drag_xdnd_start(E_Drag *drag, int x, int y)
 #endif
         return 0;
      }
-   if (!drag->object)
-     {
-        e_drag_object_set(drag, evas_object_rectangle_add(drag->evas));
-        evas_object_color_set(drag->object, 255, 0, 0, 255);
-     }
-   evas_object_move(drag->comp_object, drag->x, drag->y);
-   evas_object_resize(drag->comp_object, drag->w, drag->h);
-   drag->visible = 1;
-   drag->type = E_DRAG_XDND;
 
-   drag->dx = x - drag->x;
-   drag->dy = y - drag->y;
-   _active_handlers = eina_list_free(_active_handlers);
-   EINA_LIST_FOREACH(_drop_handlers, l, h)
-     {
-        Eina_Bool active = h->active;
-
-        h->active = 0;
-        eina_stringshare_replace(&h->active_type, NULL);
-        _e_drop_handler_active_check(h, drag, NULL);
-        if (h->active != active)
-          {
-             if (h->active)
-               _active_handlers = eina_list_append(_active_handlers, h);
-             else
-               _active_handlers = eina_list_remove(_active_handlers, h);
-          }
-        h->entered = 0;
-     }
-
-#ifndef HAVE_WAYLAND_ONLY
-   ecore_x_dnd_aware_set(_drag_win, 1);
-   ecore_x_dnd_types_set(_drag_win, drag->types, drag->num_types);
-   ecore_x_dnd_actions_set(_drag_win, actions, 5);
-   ecore_x_dnd_begin(_drag_win, drag->data, drag->data_size);
-#endif
-
-   _drag_current = drag;
+   _e_drag_finalize(drag, E_DRAG_XDND, x, y);
    return 1;
 }
 
