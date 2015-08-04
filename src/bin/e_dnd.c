@@ -273,8 +273,6 @@ e_drag_new(int x, int y,
    E_Drag *drag;
    unsigned int i;
 
-   /* No need to create a drag object without type */
-   if ((!types) || (!num_types)) return NULL;
    drag = e_object_alloc(sizeof(E_Drag) + num_types * sizeof(char *),
                          E_DRAG_TYPE, E_OBJECT_CLEANUP_FUNC(_e_drag_free));
    if (!drag) return NULL;
