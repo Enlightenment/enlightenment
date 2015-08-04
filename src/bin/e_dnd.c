@@ -298,7 +298,7 @@ e_drag_new(int x, int y,
    _drag_list = eina_list_append(_drag_list, drag);
 
 #ifndef HAVE_WAYLAND_ONLY
-   if (e_comp_util_has_x())
+   if (e_comp->comp_type == E_PIXMAP_TYPE_X)
      ecore_x_window_shadow_tree_flush();
 #endif
 
@@ -500,7 +500,7 @@ e_drop_handler_del(E_Drop_Handler *handler)
 E_API int
 e_drop_xdnd_register_set(Ecore_Window win, int reg)
 {
-   if (!e_comp_util_has_x()) return 0;
+   if (e_comp->comp_type != E_PIXMAP_TYPE_X) return 0;
    if (reg)
      {
         if (!eina_hash_find(_drop_win_hash, &win))
@@ -971,22 +971,28 @@ _e_drag_end(int x, int y)
 
    evas_object_hide(_drag_current->comp_object);
 
-   e_grabinput_release(_drag_win, _drag_win);
-#ifndef HAVE_WAYLAND_ONLY
+   if (e_comp->comp_type == E_PIXMAP_TYPE_X)
+     e_grabinput_release(_drag_win, _drag_win);
+
    while (_drag_current->type == E_DRAG_XDND)
      {
-        if (!(dropped = ecore_x_dnd_drop()))
+#ifndef HAVE_WAYLAND_ONLY
+        if (e_comp->comp_type == E_PIXMAP_TYPE_X)
           {
-             if (win == e_comp->ee_win) break;
+             if (!(dropped = ecore_x_dnd_drop()))
+               {
+                  if (win == e_comp->ee_win) break;
+               }
           }
+#endif
         if (_drag_current->cb.finished)
           _drag_current->cb.finished(_drag_current, dropped);
         _drag_current->cb.finished = NULL;
         _drag_current->ended = 1;
-
+        if (e_comp->comp_type == E_PIXMAP_TYPE_WL)
+          e_comp_ungrab_input(1, 1);
         return;
      }
-#endif
 
    dropped = 0;
    if (!_drag_current->data)
@@ -1062,6 +1068,8 @@ _e_drag_end(int x, int y)
    _drag_current->cb.finished = NULL;
 
    e_object_del(E_OBJECT(_drag_current));
+   if (e_comp->comp_type == E_PIXMAP_TYPE_WL)
+     e_comp_ungrab_input(1, 1);
 }
 
 static void
@@ -1134,16 +1142,15 @@ _e_drag_free(E_Drag *drag)
      eina_stringshare_del(drag->types[i]);
    free(drag);
 #ifndef HAVE_WAYLAND_ONLY
-   if (e_comp_util_has_x())
+   if (e_comp->comp_type == E_PIXMAP_TYPE_X)
      {
-        if (e_comp->comp_type == E_PIXMAP_TYPE_X)
-          ecore_event_window_unregister(_drag_win);
+        ecore_event_window_unregister(_drag_win);
         if (_drag_win != e_comp->ee_win)
           ecore_x_window_free(_drag_win);
         ecore_x_window_shadow_tree_flush();
      }
 #endif
-   if (_drag_win == e_comp->ee_win)
+   if (e_comp->comp_type == E_PIXMAP_TYPE_WL)
      e_comp_ungrab_input(1, 1);
    _drag_win = 0;
 }
