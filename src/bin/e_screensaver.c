@@ -27,6 +27,7 @@ static Eina_Bool screensaver_dimmed = EINA_FALSE;
 
 #ifdef HAVE_WAYLAND
 static Ecore_Timer *_e_screensaver_timer;
+static Eina_Bool _e_screensaver_inhibited = EINA_FALSE;
 #endif
 
 E_API int E_EVENT_SCREENSAVER_ON = -1;
@@ -537,7 +538,7 @@ E_API void
 e_screensaver_notidle(void)
 {
 #ifdef HAVE_WAYLAND
-   if (e_comp->comp_type != E_PIXMAP_TYPE_WL) return;
+   if (_e_screensaver_inhibited || (e_comp->comp_type != E_PIXMAP_TYPE_WL)) return;
    E_FREE_FUNC(_e_screensaver_timer, ecore_timer_del);
    if (e_screensaver_on_get())
      {
@@ -549,3 +550,18 @@ e_screensaver_notidle(void)
 #endif
 }
 
+E_API void
+e_screensaver_inhibit_toggle(Eina_Bool inhibit)
+{
+#ifdef HAVE_WAYLAND
+   if (e_comp->comp_type != E_PIXMAP_TYPE_WL) return;
+   E_FREE_FUNC(_e_screensaver_timer, ecore_timer_del);
+   _e_screensaver_inhibited = !!inhibit;
+   if (inhibit)
+     e_screensaver_eval(0);
+   else
+     e_screensaver_notidle();
+#else
+   (void)inhibit;
+#endif
+}
