@@ -97,11 +97,40 @@ _e_drop_handler_active_check(E_Drop_Handler *h, const E_Drag *drag, Eina_Strings
      }
 }
 
-static void
+static int
 _e_drag_finalize(E_Drag *drag, E_Drag_Type type, int x, int y)
 {
    const Eina_List *l;
    E_Drop_Handler *h;
+
+   if (_drag_win) return 0;
+#ifndef HAVE_WAYLAND_ONLY
+   if (e_comp->comp_type == E_PIXMAP_TYPE_X)
+     {
+        _drag_win = ecore_x_window_input_new(e_comp->win,
+                                             0, 0,
+                                             e_comp->w, e_comp->h);
+        ecore_event_window_register(_drag_win, e_comp->ee, e_comp->evas,
+                                      NULL, NULL, NULL, NULL);
+        ecore_x_window_show(_drag_win);
+        _drag_win_root = e_comp->root;
+        if (!e_grabinput_get(_drag_win, 0, _drag_win))
+          {
+             ecore_x_window_free(_drag_win);
+             _drag_win = _drag_win_root = 0;
+             return 0;
+          }
+     }
+   else
+#endif
+     {
+        _drag_win = _drag_win_root = e_comp->ee_win;
+        if (!e_comp_grab_input(1, 1))
+          {
+             _drag_win = _drag_win_root = 0;
+             return 0;
+          }
+     }
 
    if (!drag->object)
      {
@@ -160,6 +189,7 @@ _e_drag_finalize(E_Drag *drag, E_Drag_Type type, int x, int y)
      }
 
    _drag_current = drag;
+   return 1;
 }
 
 /* externally accessible functions */
@@ -333,61 +363,13 @@ e_dnd_active(void)
 E_API int
 e_drag_start(E_Drag *drag, int x, int y)
 {
-   if (_drag_win) return 0;
-#ifndef HAVE_WAYLAND_ONLY
-   if (e_comp->comp_type == E_PIXMAP_TYPE_X)
-     {
-        _drag_win = ecore_x_window_input_new(e_comp->win,
-                                             0, 0,
-                                             e_comp->w, e_comp->h);
-        ecore_event_window_register(_drag_win, e_comp->ee, e_comp->evas,
-                                      NULL, NULL, NULL, NULL);
-        ecore_x_window_show(_drag_win);
-        _drag_win_root = e_comp->root;
-        if (!e_grabinput_get(_drag_win, 0, _drag_win))
-          {
-             ecore_x_window_free(_drag_win);
-             _drag_win = _drag_win_root = 0;
-             return 0;
-          }
-     }
-   else
-#endif
-     {
-        _drag_win = _drag_win_root = e_comp->ee_win;
-        if (!e_comp_grab_input(1, 1))
-          {
-             _drag_win = _drag_win_root = 0;
-             return 0;
-          }
-     }
-
-   _e_drag_finalize(drag, E_DRAG_INTERNAL, x, y);
-   return 1;
+   return _e_drag_finalize(drag, E_DRAG_INTERNAL, x, y);
 }
 
 E_API int
 e_drag_xdnd_start(E_Drag *drag, int x, int y)
 {
-   if (_drag_win) return 0;
-#ifndef HAVE_WAYLAND_ONLY
-   if (!e_comp_util_has_x()) return 0;
-   _drag_win = ecore_x_window_input_new(e_comp->win,
-                                        0, 0,
-                                        e_comp->w, e_comp->h);
-
-   ecore_x_window_show(_drag_win);
-#endif
-   if (!e_grabinput_get(_drag_win, 0, _drag_win))
-     {
-#ifndef HAVE_WAYLAND_ONLY
-        ecore_x_window_free(_drag_win);
-#endif
-        return 0;
-     }
-
-   _e_drag_finalize(drag, E_DRAG_XDND, x, y);
-   return 1;
+   return _e_drag_finalize(drag, E_DRAG_XDND, x, y);
 }
 
 E_API void
