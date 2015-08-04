@@ -305,6 +305,7 @@ e_drag_start(E_Drag *drag, int x, int y)
    evas_object_move(drag->comp_object, drag->x, drag->y);
    evas_object_resize(drag->comp_object, drag->w, drag->h);
    drag->visible = 1;
+   evas_object_show(drag->comp_object);
    drag->type = E_DRAG_INTERNAL;
 
    drag->dx = x - drag->x;
@@ -369,6 +370,7 @@ e_drag_xdnd_start(E_Drag *drag, int x, int y)
    evas_object_move(drag->comp_object, drag->x, drag->y);
    evas_object_resize(drag->comp_object, drag->w, drag->h);
    drag->visible = 1;
+   evas_object_show(drag->comp_object);
    drag->type = E_DRAG_XDND;
 
    drag->dx = x - drag->x;
