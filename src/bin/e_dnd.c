@@ -4,13 +4,13 @@
 
 static void           _e_drag_move(E_Drag *drag, int x, int y);
 static void           _e_drag_coords_update(const E_Drop_Handler *h, int *dx, int *dy);
-static Ecore_X_Window _e_drag_win_get(const E_Drop_Handler *h, int xdnd);
-static int            _e_drag_win_matches(E_Drop_Handler *h, Ecore_X_Window win, int xdnd);
+static Ecore_Window _e_drag_win_get(const E_Drop_Handler *h, int xdnd);
+static int            _e_drag_win_matches(E_Drop_Handler *h, Ecore_Window win, int xdnd);
 static void           _e_drag_win_show(E_Drop_Handler *h);
 static void           _e_drag_win_hide(E_Drop_Handler *h);
-static int            _e_drag_update(Ecore_X_Window root, int x, int y, Ecore_X_Atom action);
+static int            _e_drag_update(Ecore_Window root, int x, int y, Ecore_X_Atom action);
 static void           _e_drag_end(int x, int y);
-static void           _e_drag_xdnd_end(Ecore_X_Window root, int x, int y);
+static void           _e_drag_xdnd_end(Ecore_Window root, int x, int y);
 static void           _e_drag_free(E_Drag *drag);
 
 static Eina_Bool      _e_dnd_cb_key_down(void *data, int type, void *event);
@@ -43,8 +43,8 @@ static Eina_List *_drop_handlers = NULL;
 static Eina_List *_active_handlers = NULL;
 static Eina_Hash *_drop_win_hash = NULL;
 
-static Ecore_X_Window _drag_win = 0;
-static Ecore_X_Window _drag_win_root = 0;
+static Ecore_Window _drag_win = 0;
+static Ecore_Window _drag_win_root = 0;
 
 static Eina_List *_drag_list = NULL;
 static E_Drag *_drag_current = NULL;
@@ -383,7 +383,7 @@ E_API void
 e_drop_xds_update(Eina_Bool enable, const char *value)
 {
 #ifndef HAVE_WAYLAND_ONLY
-   Ecore_X_Window xwin;
+   Ecore_Window xwin;
    char buf[PATH_MAX + 8];
    char *file;
    int size;
@@ -478,7 +478,7 @@ e_drop_handler_del(E_Drop_Handler *handler)
 {
    unsigned int i;
    Eina_List *l;
-   Ecore_X_Window hwin;
+   Ecore_Window hwin;
 
    if (!handler)
      return;
@@ -526,7 +526,7 @@ e_drop_xdnd_register_set(Ecore_Window win, int reg)
 E_API void
 e_drop_handler_responsive_set(E_Drop_Handler *handler)
 {
-   Ecore_X_Window hwin = _e_drag_win_get(handler, 1);
+   Ecore_Window hwin = _e_drag_win_get(handler, 1);
    Eina_List *l;
 
    l = eina_hash_find(_drop_handlers_responsives, &hwin);
@@ -536,7 +536,7 @@ e_drop_handler_responsive_set(E_Drop_Handler *handler)
 E_API int
 e_drop_handler_responsive_get(const E_Drop_Handler *handler)
 {
-   Ecore_X_Window hwin = _e_drag_win_get(handler, 1);
+   Ecore_Window hwin = _e_drag_win_get(handler, 1);
    Eina_List *l;
 
    l = eina_hash_find(_drop_handlers_responsives, &hwin);
@@ -699,10 +699,10 @@ _e_drag_coords_update(const E_Drop_Handler *h, int *dx, int *dy)
    *dy += py;
 }
 
-static Ecore_X_Window
+static Ecore_Window
 _e_drag_win_get(const E_Drop_Handler *h, int xdnd)
 {
-   Ecore_X_Window hwin = 0;
+   Ecore_Window hwin = 0;
 
    if (h->win)
      return elm_win_window_id_get(h->win);
@@ -742,9 +742,9 @@ _e_drag_win_get(const E_Drop_Handler *h, int xdnd)
 }
 
 static int
-_e_drag_win_matches(E_Drop_Handler *h, Ecore_X_Window win, int xdnd)
+_e_drag_win_matches(E_Drop_Handler *h, Ecore_Window win, int xdnd)
 {
-   Ecore_X_Window hwin = _e_drag_win_get(h, xdnd);
+   Ecore_Window hwin = _e_drag_win_get(h, xdnd);
 
    if (win == hwin) return 1;
    return 0;
@@ -827,7 +827,7 @@ _e_dnd_object_layer_get(E_Drop_Handler *h)
 }
 
 static int
-_e_drag_update(Ecore_X_Window root, int x, int y, Ecore_X_Atom action)
+_e_drag_update(Ecore_Window root, int x, int y, unsigned int action)
 {
    const Eina_List *l;
    Eina_List *entered = NULL;
@@ -837,7 +837,7 @@ _e_drag_update(Ecore_X_Window root, int x, int y, Ecore_X_Atom action)
    E_Drop_Handler *h, *top = NULL;
    unsigned int top_layer = 0;
    int dx, dy;
-   Ecore_X_Window win;
+   Ecore_Window win;
    int responsive = 0;
 
 //   double t1 = ecore_time_get(); ////
@@ -961,7 +961,7 @@ _e_drag_end(int x, int y)
    const Eina_List *l;
    E_Event_Dnd_Drop ev;
    int dx, dy;
-   Ecore_X_Window win;
+   Ecore_Window win;
    E_Drop_Handler *h;
    int dropped = 0;
 
@@ -1067,7 +1067,7 @@ _e_drag_end(int x, int y)
 }
 
 static void
-_e_drag_xdnd_end(Ecore_X_Window win, int x, int y)
+_e_drag_xdnd_end(Ecore_Window win, int x, int y)
 {
    const Eina_List *l;
    E_Event_Dnd_Drop ev;
