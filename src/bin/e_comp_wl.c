@@ -104,6 +104,7 @@ _e_comp_wl_evas_cb_show(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj EIN
    Eina_List *l;
 
    if (!(ec = data)) return;
+   if (e_object_is_del(data)) return;
 
    if (!ec->override) e_hints_window_visible_set(ec);
 
