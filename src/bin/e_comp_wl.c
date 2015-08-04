@@ -1441,6 +1441,7 @@ _e_comp_wl_compositor_cb_surface_create(struct wl_client *client, struct wl_reso
      }
 
    /* set reference to pixmap so we can fetch it later */
+   DBG("\tUsing Client: %p", ec);
    wl_resource_set_user_data(res, ec);
 #ifndef HAVE_WAYLAND_ONLY
    EINA_LIST_FOREACH(e_comp->wl_comp_data->xwl_pending, l, wc)

@@ -162,6 +162,7 @@ _e_comp_wl_data_device_destroy_selection_data_source(struct wl_listener *listene
    E_Comp_Wl_Data_Source *source;
    struct wl_resource *data_device_res, *focus = NULL;
 
+   DBG("Data Device Destroy Selection Source");
    if (!(source = (E_Comp_Wl_Data_Source*)data))
      return;
 
@@ -320,6 +321,7 @@ _e_comp_wl_data_device_cb_selection_set(struct wl_client *client EINA_UNUSED, st
 {
    E_Comp_Wl_Data_Source *source;
 
+   DBG("Data Device Selection Set");
    if (!source_resource) return;
    if (!(source = wl_resource_get_user_data(source_resource))) return;
 
@@ -329,6 +331,7 @@ _e_comp_wl_data_device_cb_selection_set(struct wl_client *client EINA_UNUSED, st
 static void 
 _e_comp_wl_data_device_cb_release(struct wl_client *client EINA_UNUSED, struct wl_resource *resource)
 {
+   DBG("Data Device Release");
    wl_resource_destroy(resource);
 }
 
@@ -385,7 +388,7 @@ _e_comp_wl_data_manager_cb_device_get(struct wl_client *client, struct wl_resour
 {
    struct wl_resource *res;
 
-   /* DBG("Data Manager Device Get"); */
+   DBG("Data Manager Device Get");
 
 
    /* try to create the data device resource */
