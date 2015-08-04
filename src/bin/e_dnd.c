@@ -111,6 +111,7 @@ _e_drag_finalize(E_Drag *drag, E_Drag_Type type, int x, int y)
    evas_object_move(drag->comp_object, drag->x, drag->y);
    evas_object_resize(drag->comp_object, drag->w, drag->h);
    drag->visible = 1;
+   evas_object_show(drag->comp_object);
    drag->type = type;
 
    drag->dx = x - drag->x;
