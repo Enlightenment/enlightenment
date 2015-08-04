@@ -164,8 +164,12 @@ _e_comp_wl_evas_cb_mouse_in(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj
    if (!ec->comp_data->surface) return;
 
    e_comp->wl_comp_data->ptr.ec = ec;
+   if (e_comp->wl_comp_data->drag)
+     {
+        e_comp_wl_data_device_send_enter(ec);
+        return;
+     }
    if (!eina_list_count(e_comp->wl_comp_data->ptr.resources)) return;
-
    wc = wl_resource_get_client(ec->comp_data->surface);
    serial = wl_display_next_serial(e_comp->wl_comp_data->wl.disp);
    EINA_LIST_FOREACH(e_comp->wl_comp_data->ptr.resources, l, res)
@@ -202,7 +206,11 @@ _e_comp_wl_evas_cb_mouse_out(void *data, Evas *evas EINA_UNUSED, Evas_Object *ob
    if (e_object_is_del(E_OBJECT(ec))) return;
 
    if (!ec->comp_data->surface) return;
-
+   if (e_comp->wl_comp_data->drag)
+     {
+        e_comp_wl_data_device_send_leave(ec);
+        return;
+     }
    if (!eina_list_count(e_comp->wl_comp_data->ptr.resources)) return;
 
    wc = wl_resource_get_client(ec->comp_data->surface);
@@ -895,6 +903,16 @@ _e_comp_wl_cb_mouse_move(void *d EINA_UNUSED, int t EINA_UNUSED, Ecore_Event_Mou
    e_comp->wl_comp_data->ptr.x = wl_fixed_from_int(ev->x);
    e_comp->wl_comp_data->ptr.y = wl_fixed_from_int(ev->y);
    e_screensaver_notidle();
+   if (e_comp->wl_comp_data->selection.target)
+     {
+        struct wl_resource *res;
+        int x, y;
+
+        res = e_comp_wl_data_find_for_client(wl_resource_get_client(e_comp->wl_comp_data->selection.target->comp_data->surface));
+        x = ev->x - e_comp->wl_comp_data->selection.target->client.x;
+        y = ev->y - e_comp->wl_comp_data->selection.target->client.y;
+        wl_data_device_send_motion(res, ev->timestamp, wl_fixed_from_int(x), wl_fixed_from_int(y));
+     }
    return ECORE_CALLBACK_RENEW;
 }
 
@@ -1088,7 +1106,16 @@ _e_comp_wl_surface_state_commit(E_Client *ec, E_Comp_Wl_Surface_State *state)
                   ecore_evas_pointer_xy_get(e_comp->ee, &ec->mouse.current.mx, &ec->mouse.current.my);
                   ec->netwm.sync.send_time = ecore_loop_time_get();
                }
-             e_client_util_move_resize_without_frame(ec, x, y, state->bw, state->bh);
+             if (e_comp->wl_comp_data->drag_client && (e_comp->wl_comp_data->drag_client == ec))
+               {
+                  e_comp->wl_comp_data->drag->dx -= state->sx;
+                  e_comp->wl_comp_data->drag->dy -= state->sy;
+                  e_drag_move(e_comp->wl_comp_data->drag,
+                    e_comp->wl_comp_data->drag->x + state->sx, e_comp->wl_comp_data->drag->y + state->sy);
+                  e_drag_resize(e_comp->wl_comp_data->drag, state->bw, state->bh);
+               }
+             else
+               e_client_util_move_resize_without_frame(ec, x, y, state->bw, state->bh);
           }
 
         if (ec->new_client)

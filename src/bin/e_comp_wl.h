@@ -192,6 +192,7 @@ struct _E_Comp_Wl_Data
         uint32_t serial;
         struct wl_signal signal;
         struct wl_listener data_source_listener;
+        E_Client *target;
      } selection;
 
    struct
@@ -231,9 +232,9 @@ struct _E_Comp_Wl_Data
    struct wl_client *xwl_client;
    Eina_List *xwl_pending;
 
-   /* Eina_List *retry_clients; */
-   /* Ecore_Timer *retry_timer; */
-   Eina_Bool restack : 1;
+   E_Drag *drag;
+   E_Client *drag_client;
+   void *drag_source;
 };
 
 struct _E_Comp_Wl_Client_Data

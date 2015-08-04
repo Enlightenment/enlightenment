@@ -1,3 +1,4 @@
+#define EXECUTIVE_MODE_ENABLED
 #define E_COMP_WL
 #include "e.h"
 
@@ -268,25 +269,67 @@ _e_comp_wl_data_device_selection_set(void *data EINA_UNUSED, E_Comp_Wl_Data_Sour
 }
 
 static void
+_e_comp_wl_data_device_drag_finished(E_Drag *drag, int dropped)
+{
+   Evas_Object *o;
+
+   o = edje_object_part_swallow_get(drag->comp_object, "e.swallow.content");
+   if (eina_streq(evas_object_type_get(o), "e_comp_object"))
+     edje_object_part_unswallow(drag->comp_object, o);
+   else
+     e_zoomap_child_set(o, NULL);
+   evas_object_hide(o);
+   evas_object_pass_events_set(o, 1);
+   if (e_comp->wl_comp_data->drag != drag) return;
+   if (e_comp->wl_comp_data->selection.target && (!dropped))
+     {
+        struct wl_resource *res;
+
+        res = e_comp_wl_data_find_for_client(wl_resource_get_client(e_comp->wl_comp_data->selection.target->comp_data->surface));
+        if (res)
+          {
+             wl_data_device_send_drop(res);
+             wl_data_device_send_leave(res);
+          }
+     }
+   e_comp->wl_comp_data->drag = NULL;
+   e_comp->wl_comp_data->drag_client = NULL;
+   e_comp->wl_comp_data->selection.target = NULL;
+   e_comp->wl_comp_data->drag_source = NULL;
+}
+
+static void
 _e_comp_wl_data_device_cb_drag_start(struct wl_client *client, struct wl_resource *resource EINA_UNUSED, struct wl_resource *source_resource, struct wl_resource *origin_resource, struct wl_resource *icon_resource, uint32_t serial)
 {
    E_Comp_Wl_Data_Source *source;
    Eina_List *l;
    struct wl_resource *res;
+   E_Client *ec = NULL;
+   int x, y;
 
    DBG("Data Device Drag Start");
 
    if ((e_comp->wl_comp_data->kbd.focus) && (e_comp->wl_comp_data->kbd.focus != origin_resource)) return;
 
    if (!(source = wl_resource_get_user_data(source_resource))) return;
+   e_comp->wl_comp_data->drag_source = source;
 
-   /* TODO: create icon for pointer ?? */
    if (icon_resource)
      {
-        E_Pixmap *cp;
-
         DBG("\tHave Icon Resource: %p", icon_resource);
-        cp = wl_resource_get_user_data(icon_resource);
+        ec = wl_resource_get_user_data(icon_resource);
+        if (!ec->re_manage)
+          {
+             ec->re_manage = 1;
+
+             ec->lock_focus_out = ec->override = 1;
+             ec->icccm.title = eina_stringshare_add("noshadow");
+             ec->layer = E_LAYER_CLIENT_DRAG;
+             evas_object_layer_set(ec->frame, E_LAYER_CLIENT_DRAG);
+             e_client_focus_stack_set(eina_list_remove(e_client_focus_stack_get(), ec));
+             EC_CHANGED(ec);
+             e_comp->wl_comp_data->drag_client = ec;
+          }
      }
 
    EINA_LIST_FOREACH(e_comp->wl_comp_data->ptr.resources, l, res)
@@ -296,7 +339,14 @@ _e_comp_wl_data_device_cb_drag_start(struct wl_client *client, struct wl_resourc
         wl_pointer_send_leave(res, serial, e_comp->wl_comp_data->kbd.focus);
      }
 
-   /* TODO: pointer start drag */
+   evas_pointer_canvas_xy_get(e_comp->evas, &x, &y);
+   e_comp->wl_comp_data->drag = e_drag_new(x, y,
+                                           NULL, 0, NULL, 0, NULL, _e_comp_wl_data_device_drag_finished);
+   if (ec)
+     e_drag_object_set(e_comp->wl_comp_data->drag, ec->frame);
+   e_drag_start(e_comp->wl_comp_data->drag, x, y);
+   if (e_comp->wl_comp_data->ptr.ec)
+     e_comp_wl_data_device_send_enter(e_comp->wl_comp_data->ptr.ec);
 }
 
 static void
@@ -640,6 +690,65 @@ _e_comp_wl_clipboard_create(void)
 {
    e_comp->wl_comp_data->clipboard.listener.notify = _e_comp_wl_clipboard_selection_set;
    wl_signal_add(&e_comp->wl_comp_data->selection.signal, &e_comp->wl_comp_data->clipboard.listener);
+}
+
+static void
+_e_comp_wl_data_device_target_del(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   E_Client *ec = data;
+
+   if (e_comp->wl_comp_data->selection.target == ec)
+     e_comp->wl_comp_data->selection.target = NULL;
+}
+
+EINTERN void
+e_comp_wl_data_device_send_enter(E_Client *ec)
+{
+   struct wl_resource *data_device_res, *offer_res;
+   uint32_t serial;
+   int x, y;
+
+   data_device_res =
+      e_comp_wl_data_find_for_client(wl_resource_get_client(ec->comp_data->surface));
+   if (!data_device_res) return;
+
+   offer_res = e_comp_wl_data_device_send_offer(ec);
+   if (e_comp->wl_comp_data->selection.data_source && (!offer_res)) return;
+   e_comp->wl_comp_data->selection.target = ec;
+   evas_object_event_callback_add(ec->frame, EVAS_CALLBACK_DEL, _e_comp_wl_data_device_target_del, ec);
+
+   x = wl_fixed_to_int(e_comp->wl_comp_data->ptr.x) - e_comp->wl_comp_data->selection.target->client.x;
+   y = wl_fixed_to_int(e_comp->wl_comp_data->ptr.y) - e_comp->wl_comp_data->selection.target->client.y;
+   serial = wl_display_next_serial(e_comp->wl_comp_data->wl.disp);
+   wl_data_device_send_enter(data_device_res, serial, ec->comp_data->surface,
+                             wl_fixed_from_int(x), wl_fixed_from_int(y), offer_res);
+}
+
+EINTERN void
+e_comp_wl_data_device_send_leave(E_Client *ec)
+{
+   struct wl_resource *res;
+
+   evas_object_event_callback_del_full(ec->frame, EVAS_CALLBACK_DEL, _e_comp_wl_data_device_target_del, ec);
+   if (e_comp->wl_comp_data->selection.target == ec)
+     e_comp->wl_comp_data->selection.target = NULL;
+   res = e_comp_wl_data_find_for_client(wl_resource_get_client(ec->comp_data->surface));
+   wl_data_device_send_leave(res);
+}
+
+EINTERN void *
+e_comp_wl_data_device_send_offer(E_Client *ec)
+{
+   struct wl_resource *data_device_res, *offer_res = NULL;
+   E_Comp_Wl_Data_Source *source;
+
+   data_device_res =
+      e_comp_wl_data_find_for_client(wl_resource_get_client(ec->comp_data->surface));
+   if (!data_device_res) return NULL;
+   source = e_comp->wl_comp_data->drag_source;
+   if (source)
+     offer_res = _e_comp_wl_data_device_data_offer_create(source, data_device_res);
+   return offer_res;
 }
 
 EINTERN void
