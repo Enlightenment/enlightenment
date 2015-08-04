@@ -380,8 +380,7 @@ static const struct wl_data_device_interface _e_data_device_interface =
 static void
 _e_comp_wl_data_device_cb_unbind(struct wl_resource *resource)
 {
-   e_comp->wl_comp_data->mgr.data_resources =
-     eina_list_remove(e_comp->wl_comp_data->mgr.data_resources, resource);
+   eina_hash_del_by_key(e_comp->wl_comp_data->mgr.data_resources, &resource);
 }
 
 static void
@@ -435,8 +434,7 @@ _e_comp_wl_data_manager_cb_device_get(struct wl_client *client, struct wl_resour
         return;
      }
 
-   e_comp->wl_comp_data->mgr.data_resources = 
-     eina_list_append(e_comp->wl_comp_data->mgr.data_resources, res);
+   eina_hash_add(e_comp->wl_comp_data->mgr.data_resources, &client, res);
    wl_resource_set_implementation(res, &_e_data_device_interface, e_comp->wl_comp_data, 
                                   _e_comp_wl_data_device_cb_unbind);
 }
@@ -799,6 +797,7 @@ e_comp_wl_data_manager_init(void)
 
    /* create clipboard */
    _e_comp_wl_clipboard_create();
+   e_comp->wl_comp_data->mgr.data_resources = eina_hash_pointer_new(NULL);
 
    return EINA_TRUE;
 }
@@ -810,19 +809,11 @@ e_comp_wl_data_manager_shutdown(void)
    /* if (e_comp->wl_comp_data->mgr.global) wl_global_destroy(e_comp->wl_comp_data->mgr.global); */
 
    wl_list_remove(&e_comp->wl_comp_data->clipboard.listener.link);
+   E_FREE_FUNC(e_comp->wl_comp_data->mgr.data_resources, eina_hash_free);
 }
 
 EINTERN struct wl_resource *
 e_comp_wl_data_find_for_client(struct wl_client *client)
 {
-   Eina_List *l;
-   struct wl_resource *res;
-
-   EINA_LIST_FOREACH(e_comp->wl_comp_data->mgr.data_resources, l, res)
-     {
-        if (wl_resource_get_client(res) == client)
-          return res;
-     }
-
-   return NULL;
+   return eina_hash_find(e_comp->wl_comp_data->mgr.data_resources, &client);
 }
