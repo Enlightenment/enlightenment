@@ -296,6 +296,7 @@ _e_comp_wl_data_device_drag_finished(E_Drag *drag, int dropped)
    e_comp->wl_comp_data->drag_client = NULL;
    e_comp->wl_comp_data->selection.target = NULL;
    e_comp->wl_comp_data->drag_source = NULL;
+   e_screensaver_inhibit_toggle(0);
 }
 
 static void
@@ -347,6 +348,7 @@ _e_comp_wl_data_device_cb_drag_start(struct wl_client *client, struct wl_resourc
    e_drag_start(e_comp->wl_comp_data->drag, x, y);
    if (e_comp->wl_comp_data->ptr.ec)
      e_comp_wl_data_device_send_enter(e_comp->wl_comp_data->ptr.ec);
+   e_screensaver_inhibit_toggle(1);
 }
 
 static void
