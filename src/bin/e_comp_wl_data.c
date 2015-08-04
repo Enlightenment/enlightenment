@@ -645,7 +645,7 @@ _e_comp_wl_clipboard_create(void)
 EINTERN void
 e_comp_wl_data_device_keyboard_focus_set(void)
 {
-   struct wl_resource *data_device_res, *offer_res, *focus;
+   struct wl_resource *data_device_res, *offer_res = NULL, *focus;
    E_Comp_Wl_Data_Source *source;
 
 
@@ -667,17 +667,8 @@ e_comp_wl_data_device_keyboard_focus_set(void)
 
    source = (E_Comp_Wl_Data_Source*)e_comp->wl_comp_data->selection.data_source;
    if (source)
-     {
-        uint32_t serial;
-
-        serial = wl_display_next_serial(e_comp->wl_comp_data->wl.disp);
-
-        offer_res = _e_comp_wl_data_device_data_offer_create(source,
-                                                             data_device_res);
-        wl_data_device_send_enter(data_device_res, serial, focus, 
-                                  e_comp->wl_comp_data->ptr.x, e_comp->wl_comp_data->ptr.y, offer_res);
-        wl_data_device_send_selection(data_device_res, offer_res);
-     }
+     offer_res = _e_comp_wl_data_device_data_offer_create(source, data_device_res);
+   wl_data_device_send_selection(data_device_res, offer_res);
 }
 
 EINTERN Eina_Bool
