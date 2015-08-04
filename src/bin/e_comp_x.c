@@ -5462,7 +5462,7 @@ E_API inline E_Pixmap *
 e_comp_x_client_pixmap_get(const E_Client *ec)
 {
 #ifdef HAVE_WAYLAND
-   if (!e_pixmap_is_x(ec->pixmap))
+   if ((!e_pixmap_is_x(ec->pixmap)) && e_client_has_xwindow(ec))
      return e_comp_wl_client_xwayland_pixmap(ec);
 #endif
    return ec->pixmap;
