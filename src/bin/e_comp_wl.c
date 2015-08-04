@@ -163,6 +163,7 @@ _e_comp_wl_evas_cb_mouse_in(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj
 
    if (!ec->comp_data->surface) return;
 
+   e_comp->wl_comp_data->ptr.ec = ec;
    if (!eina_list_count(e_comp->wl_comp_data->ptr.resources)) return;
 
    wc = wl_resource_get_client(ec->comp_data->surface);
@@ -196,6 +197,8 @@ _e_comp_wl_evas_cb_mouse_out(void *data, Evas *evas EINA_UNUSED, Evas_Object *ob
       if (e_comp->pointer->o_ptr != o)
         e_pointer_object_set(e_comp->pointer, NULL, 0, 0);
    }
+   if (e_comp->wl_comp_data->ptr.ec == ec)
+     e_comp->wl_comp_data->ptr.ec = NULL;
    if (e_object_is_del(E_OBJECT(ec))) return;
 
    if (!ec->comp_data->surface) return;

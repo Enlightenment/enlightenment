@@ -159,10 +159,11 @@ struct _E_Comp_Wl_Data
    struct
      {
         Eina_List *resources;
-        Eina_Bool enabled : 1;
         wl_fixed_t x, y;
         wl_fixed_t grab_x, grab_y;
         uint32_t button;
+        E_Client *ec;
+        Eina_Bool enabled : 1;
      } ptr;
 
    struct
