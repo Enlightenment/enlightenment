@@ -5368,6 +5368,8 @@ e_comp_x_init(void)
                                 e_config->screensaver_blanking,
                                 e_config->screensaver_expose);
      }
+   else
+     e_dnd_init();
 
    return EINA_TRUE;
 }

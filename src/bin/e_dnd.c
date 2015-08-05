@@ -197,24 +197,25 @@ _e_drag_finalize(E_Drag *drag, E_Drag_Type type, int x, int y)
 EINTERN int
 e_dnd_init(void)
 {
-   _type_text_uri_list = eina_stringshare_add("text/uri-list");
-   _type_xds = eina_stringshare_add("XdndDirectSave0");
-   _type_text_x_moz_url = eina_stringshare_add("text/x-moz-url");
-   _type_enlightenment_x_file = eina_stringshare_add("enlightenment/x-file");
-#ifndef HAVE_WAYLAND_ONLY
-   if (e_comp_util_has_x())
-     _text_atom = ecore_x_atom_get("text/plain");
-#endif
+   if (!_event_handlers)
+     {
+        _type_text_uri_list = eina_stringshare_add("text/uri-list");
+        _type_xds = eina_stringshare_add("XdndDirectSave0");
+        _type_text_x_moz_url = eina_stringshare_add("text/x-moz-url");
+        _type_enlightenment_x_file = eina_stringshare_add("enlightenment/x-file");
 
-   _drop_win_hash = eina_hash_int32_new(NULL);
-   _drop_handlers_responsives = eina_hash_int32_new(NULL);
+        _drop_win_hash = eina_hash_int32_new(NULL);
+        _drop_handlers_responsives = eina_hash_int32_new(NULL);
 
-   E_LIST_HANDLER_APPEND(_event_handlers, ECORE_EVENT_MOUSE_BUTTON_UP, _e_dnd_cb_mouse_up, NULL);
-   E_LIST_HANDLER_APPEND(_event_handlers, ECORE_EVENT_MOUSE_MOVE, _e_dnd_cb_mouse_move, NULL);
-   E_LIST_HANDLER_APPEND(_event_handlers, ECORE_EVENT_KEY_DOWN, _e_dnd_cb_key_down, NULL);
-   E_LIST_HANDLER_APPEND(_event_handlers, ECORE_EVENT_KEY_UP, _e_dnd_cb_key_up, NULL);
-   if (e_comp->comp_type != E_PIXMAP_TYPE_X) return 1;
+        E_LIST_HANDLER_APPEND(_event_handlers, ECORE_EVENT_MOUSE_BUTTON_UP, _e_dnd_cb_mouse_up, NULL);
+        E_LIST_HANDLER_APPEND(_event_handlers, ECORE_EVENT_MOUSE_MOVE, _e_dnd_cb_mouse_move, NULL);
+        E_LIST_HANDLER_APPEND(_event_handlers, ECORE_EVENT_KEY_DOWN, _e_dnd_cb_key_down, NULL);
+        E_LIST_HANDLER_APPEND(_event_handlers, ECORE_EVENT_KEY_UP, _e_dnd_cb_key_up, NULL);
+     }
+   if (!e_comp_util_has_x()) return 1;
 #ifndef HAVE_WAYLAND_ONLY
+   if (_text_atom) return 1;
+   _text_atom = ecore_x_atom_get("text/plain");
    E_LIST_HANDLER_APPEND(_event_handlers, ECORE_X_EVENT_XDND_ENTER, _e_dnd_cb_event_dnd_enter, NULL);
    E_LIST_HANDLER_APPEND(_event_handlers, ECORE_X_EVENT_XDND_LEAVE, _e_dnd_cb_event_dnd_leave, NULL);
    E_LIST_HANDLER_APPEND(_event_handlers, ECORE_X_EVENT_XDND_POSITION, _e_dnd_cb_event_dnd_position, NULL);
@@ -223,7 +224,8 @@ e_dnd_init(void)
    E_LIST_HANDLER_APPEND(_event_handlers, ECORE_X_EVENT_SELECTION_NOTIFY, _e_dnd_cb_event_dnd_selection, NULL);
    E_LIST_HANDLER_APPEND(_event_handlers, ECORE_X_EVENT_WINDOW_HIDE, _e_dnd_cb_event_hide, NULL);
 
-   e_drop_xdnd_register_set(e_comp->ee_win, 1);
+   if (e_comp->comp_type == E_PIXMAP_TYPE_X)
+     e_drop_xdnd_register_set(e_comp->ee_win, 1);
 
    _action = ECORE_X_ATOM_XDND_ACTION_PRIVATE;
 #endif
@@ -500,7 +502,7 @@ e_drop_handler_del(E_Drop_Handler *handler)
 E_API int
 e_drop_xdnd_register_set(Ecore_Window win, int reg)
 {
-   if (e_comp->comp_type != E_PIXMAP_TYPE_X) return 0;
+   if (!e_comp_util_has_x()) return 0;
    if (reg)
      {
         if (!eina_hash_find(_drop_win_hash, &win))
