@@ -37,6 +37,8 @@ struct _Instance
    Evas_Object     *popup_latitude;
    Evas_Object     *popup_longitude;
    Evas_Object     *popup_altitude;
+   Evas_Object     *popup_speed;
+   Evas_Object     *popup_heading;
    Evas_Object     *popup_accuracy;
    Evas_Object     *popup_description;
    int             in_use;
@@ -49,6 +51,8 @@ struct _Instance
    double longitude;
    double accuracy;
    double altitude;
+   double speed;
+   double heading;
    const char *description;
 };
 
@@ -82,6 +86,20 @@ popup_update(Instance *inst)
         snprintf(buf, sizeof(buf), _("Altitude:  N/A"));
 
    e_widget_label_text_set(inst->popup_altitude, buf);
+
+   if (inst->speed != -1.0)
+        snprintf(buf, sizeof(buf), _("Speed:  %f"), inst->speed);
+   else
+        snprintf(buf, sizeof(buf), _("Speed: N/A"));
+
+   e_widget_label_text_set(inst->popup_speed, buf);
+
+   if (inst->heading != -1.0)
+        snprintf(buf, sizeof(buf), _("Heading:  %f"), inst->heading);
+   else
+        snprintf(buf, sizeof(buf), _("Heading: N/A"));
+
+   e_widget_label_text_set(inst->popup_heading, buf);
 
    snprintf(buf, sizeof(buf), _("Accuracy:  %.1f m"), inst->accuracy);
    e_widget_label_text_set(inst->popup_accuracy, buf);
@@ -135,6 +153,22 @@ popup_new(Instance *inst)
 
    inst->popup_altitude = e_widget_label_add(evas, buf);
    e_widget_list_object_append(list, inst->popup_altitude, 1, 1, 0.5);
+
+   if (inst->speed != -1.0)
+        snprintf(buf, sizeof(buf), _("Speed:  %f"), inst->speed);
+   else
+        snprintf(buf, sizeof(buf), _("Speed: N/A"));
+
+   inst->popup_speed = e_widget_label_add(evas, buf);
+   e_widget_list_object_append(list, inst->popup_speed, 1, 1, 0.5);
+
+   if (inst->heading != -1.0)
+        snprintf(buf, sizeof(buf), _("Heading:  %f"), inst->heading);
+   else
+        snprintf(buf, sizeof(buf), _("Heading: N/A"));
+
+   inst->popup_heading = e_widget_label_add(evas, buf);
+   e_widget_list_object_append(list, inst->popup_heading, 1, 1, 0.5);
 
    snprintf(buf, sizeof(buf), _("Accuracy:  %.1f m"), inst->accuracy);
    inst->popup_accuracy = e_widget_label_add(evas, buf);
@@ -264,6 +298,32 @@ cb_location_prop_altitude_get(void *data EINA_UNUSED, Eldbus_Pending *p EINA_UNU
 }
 
 void
+cb_location_prop_speed_get(void *data EINA_UNUSED, Eldbus_Pending *p EINA_UNUSED,
+		           const char *propname EINA_UNUSED, Eldbus_Proxy *proxy EINA_UNUSED,
+		           Eldbus_Error_Info *error_info EINA_UNUSED, double value)
+{
+   Instance *inst = data;
+   inst->speed = value;
+
+   popup_update(inst);
+
+   DBG("Location property Speed: %f", value);
+}
+
+void
+cb_location_prop_heading_get(void *data EINA_UNUSED, Eldbus_Pending *p EINA_UNUSED,
+		             const char *propname EINA_UNUSED, Eldbus_Proxy *proxy EINA_UNUSED,
+		             Eldbus_Error_Info *error_info EINA_UNUSED, double value)
+{
+   Instance *inst = data;
+   inst->heading = value;
+
+   popup_update(inst);
+
+   DBG("Location property Heading: %f", value);
+}
+
+void
 cb_location_prop_description_get(void *data EINA_UNUSED, Eldbus_Pending *p EINA_UNUSED,
 		                 const char *propname EINA_UNUSED, Eldbus_Proxy *proxy EINA_UNUSED,
 		                 Eldbus_Error_Info *error_info EINA_UNUSED, const char *value)
@@ -311,6 +371,8 @@ cb_client_location_updated_signal(void *data, const Eldbus_Message *msg)
    geo_clue2_location_longitude_propget(inst->location, cb_location_prop_longitude_get, inst);
    geo_clue2_location_accuracy_propget(inst->location, cb_location_prop_accuracy_get, inst);
    geo_clue2_location_altitude_propget(inst->location, cb_location_prop_altitude_get, inst);
+   geo_clue2_location_speed_propget(inst->location, cb_location_prop_speed_get, inst);
+   geo_clue2_location_heading_propget(inst->location, cb_location_prop_heading_get, inst);
    geo_clue2_location_description_propget(inst->location, cb_location_prop_description_get, inst);
 }
 
@@ -397,7 +459,9 @@ _gc_init(E_Gadcon *gc, const char *name, const char *id, const char *style)
    inst->latitude = 0.0;
    inst->longitude = 0.0;
    inst->accuracy = 0.0;
-   inst->altitude= 0.0 ;
+   inst->altitude = 0.0;
+   inst->speed = 0.0;
+   inst->heading = 0.0;
    inst->description = NULL;
    inst->in_use = 0;
    edje_object_signal_emit(inst->icon, "e,state,location_off", "e");
