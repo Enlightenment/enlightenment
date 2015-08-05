@@ -40,6 +40,7 @@ struct _Instance
    Evas_Object     *popup_accuracy;
    Evas_Object     *popup_description;
    int             in_use;
+   int             available_accur_level;
    Eldbus_Connection *conn;
    Eldbus_Service_Interface *iface;
    Eldbus_Proxy *manager;
@@ -52,6 +53,11 @@ struct _Instance
    const char *description;
 };
 
+#define GCLUE_ACCURACY_LEVEL_NONE 0;
+#define GCLUE_ACCURACY_LEVEL_COUNTRY 1;
+#define GCLUE_ACCURACY_LEVEL_CITY 4;
+#define GCLUE_ACCURACY_LEVEL_NEIGHBORHOOD 5;
+#define GCLUE_ACCURACY_LEVEL_STREET 6;
 #define GCLUE_ACCURACY_LEVEL_EXACT 8;
 
 static Eina_List *geolocation_instances = NULL;
@@ -327,7 +333,7 @@ cb_client_object_get(Eldbus_Proxy *proxy EINA_UNUSED, void *data, Eldbus_Pending
 
    desktopid = "Enlightenment-module";
    geo_clue2_client_desktop_id_propset(inst->client, cb_client_prop_set, inst, desktopid);
-   accuracy = GCLUE_ACCURACY_LEVEL_EXACT;
+   accuracy = GCLUE_ACCURACY_LEVEL_NONE;
    geo_clue2_client_requested_accuracy_level_propset(inst->client, cb_client_prop_set, inst, (void*)(intptr_t)accuracy);
 
    eldbus_proxy_signal_handler_add(inst->client, "LocationUpdated", cb_client_location_updated_signal, inst);
@@ -356,6 +362,14 @@ cb_manager_props_changed(void *data, Eldbus_Proxy *proxy EINA_UNUSED, void *even
           edje_object_signal_emit(inst->icon, "e,state,location_on", "e");
 	else
           edje_object_signal_emit(inst->icon, "e,state,location_off", "e");
+     }
+   if (strcmp(ev->name, "AvailableAccuracyLevel") == 0)
+     {
+        eina_value_setup(&v, EINA_VALUE_TYPE_INT);
+        eina_value_convert(ev->value, &v);
+        eina_value_get(&v, &val);
+        inst->available_accur_level = val;
+        DBG("Manager AvailableAccuracyLevel property changed to %i", inst->available_accur_level);
      }
 }
 
