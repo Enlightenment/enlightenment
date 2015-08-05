@@ -27,6 +27,7 @@ E_API unsigned int e_comp_canvas_client_layer_map(E_Layer layer);
 E_API E_Layer e_comp_canvas_client_layer_map_nearest(int layer);
 E_API void e_comp_canvas_keys_grab(void);
 E_API void e_comp_canvas_keys_ungrab(void);
+E_API void e_comp_canvas_feed_mouse_up(unsigned int activate_time);
 
 /* the following functions are used for adjusting root window coordinates
  * to/from canvas coordinates.

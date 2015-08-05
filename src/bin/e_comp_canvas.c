@@ -693,3 +693,16 @@ e_comp_canvas_keys_ungrab(void)
    if (e_comp->comp_type == E_PIXMAP_TYPE_X)
      e_bindings_key_ungrab(E_BINDING_CONTEXT_ANY, e_comp->root);
 }
+
+E_API void
+e_comp_canvas_feed_mouse_up(unsigned int activate_time)
+{
+   int button_mask, i;
+
+   button_mask = evas_pointer_button_down_mask_get(e_comp->evas);
+   for (i = 0; i < 32; i++)
+     {
+       if ((button_mask & (1 << i)))
+         evas_event_feed_mouse_up(e_comp->evas, i + 1, EVAS_BUTTON_NONE, activate_time, NULL);
+     }
+}

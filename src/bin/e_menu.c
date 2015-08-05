@@ -103,19 +103,6 @@ static int _e_menu_autoscroll_y = 0;
 static Eina_List *handlers = NULL;
 static Eina_Bool _e_menu_lock = EINA_FALSE;
 
-static void
-_mouse_up_feed(Evas *e, unsigned int activate_time)
-{
-   int button_mask, i;
-
-   button_mask = evas_pointer_button_down_mask_get(e);
-   for (i = 0; i < 32; i++)
-     {
-       if ((button_mask & (1 << i)))
-         evas_event_feed_mouse_up(e, i + 1, EVAS_BUTTON_NONE, activate_time, NULL);
-     }
-}
-
 static Eina_List *
 _e_active_menus_copy_ref(void)
 {
@@ -357,7 +344,7 @@ e_menu_activate_mouse(E_Menu *m, E_Zone *zone, int x, int y, int w, int h, int d
      }
    pmi = _e_menu_item_active_get();
    if (pmi) e_menu_item_active_set(pmi, 0);
-   _mouse_up_feed(e_comp->evas, activate_time);
+   e_comp_canvas_feed_mouse_up(activate_time);
 }
 
 E_API void
