@@ -1,3 +1,23 @@
+Release 0.19.8:
+---------------------
+Carsten Haitzler (3):
+      e - warning fix - fix SVID_SOURCE complaint warning
+      e menu - an extra object ref causes menus to never be freed
+      e - shelf menu - handle deletion properly if cb is not for shelf menu
+
+Mike Blumenkrantz (10):
+      allow x11 mouse wheel events to check ev->event_window for possible client match
+      reject x11 NotifyVirtual and NotifyInferior mouse in events
+      disable ecore-evas events on client windows during actions
+      fix build break from previous commit
+      use gadget zone for evry gadget launcher
+      add fallback loading of default theme on init
+      remove spurious focus setting on desk flip without animation
+      fix wizard module loading when E_MODULE_SRC_PATH is set
+      defer focus-setting on focus revert during desk flip when visibility is pending
+      show drag object immediately when beginning a drag
+
+
 Release 0.19.7:
 ---------------------
 Mike Blumenkrantz (2):
