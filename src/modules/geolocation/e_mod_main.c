@@ -84,7 +84,7 @@ popup_update(Instance *inst)
 
    e_widget_label_text_set(inst->popup_altitude, buf);
 
-   snprintf(buf, sizeof(buf), _("Accuracy:  %f"), inst->accuracy);
+   snprintf(buf, sizeof(buf), _("Accuracy:  %.1f m"), inst->accuracy);
    e_widget_label_text_set(inst->popup_accuracy, buf);
 }
 
@@ -137,7 +137,7 @@ popup_new(Instance *inst)
    inst->popup_altitude = e_widget_label_add(evas, buf);
    e_widget_list_object_append(list, inst->popup_altitude, 1, 1, 0.5);
 
-   snprintf(buf, sizeof(buf), _("Accuracy:  %f"), inst->accuracy);
+   snprintf(buf, sizeof(buf), _("Accuracy:  %.1f m"), inst->accuracy);
    inst->popup_accuracy = e_widget_label_add(evas, buf);
    e_widget_list_object_append(list, inst->popup_accuracy, 1, 1, 0.5);
 
