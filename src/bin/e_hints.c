@@ -720,6 +720,7 @@ e_hints_window_type_get(E_Client *ec)
                }
           }
         free(types);
+        evas_object_pass_events_set(ec->frame, ec->netwm.type == E_WINDOW_TYPE_DND);
      }
    ec->dialog = (ec->netwm.type == E_WINDOW_TYPE_DIALOG);
    if (!ec->dialog)

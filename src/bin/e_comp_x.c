@@ -3848,7 +3848,7 @@ _e_comp_x_hook_client_fetch(void *d EINA_UNUSED, E_Client *ec)
                free(rects);
              if (ec->shape_changed)
                e_comp_object_frame_theme_set(ec->frame, E_COMP_OBJECT_FRAME_RESHADOW);
-             evas_object_pass_events_set(ec->frame, 0);
+             evas_object_pass_events_set(ec->frame, ec->netwm.type == E_WINDOW_TYPE_DND);
           }
         else
           {
@@ -3920,7 +3920,7 @@ _e_comp_x_hook_client_fetch(void *d EINA_UNUSED, E_Client *ec)
                   ec->shape_input_rects = (Eina_Rectangle*)rects;
                   ec->shape_input_rects_num = num;
                }
-             evas_object_pass_events_set(ec->frame, 0);
+             evas_object_pass_events_set(ec->frame, ec->netwm.type == E_WINDOW_TYPE_DND);
           }
         else
           {
