@@ -668,7 +668,7 @@ _e_comp_wl_data_device_target_del(void *data, Evas *e EINA_UNUSED, Evas_Object *
      e_comp->wl_comp_data->selection.target = NULL;
 }
 
-EINTERN void
+E_API void
 e_comp_wl_data_device_send_enter(E_Client *ec)
 {
    struct wl_resource *data_device_res, *offer_res;
@@ -691,7 +691,7 @@ e_comp_wl_data_device_send_enter(E_Client *ec)
                              wl_fixed_from_int(x), wl_fixed_from_int(y), offer_res);
 }
 
-EINTERN void
+E_API void
 e_comp_wl_data_device_send_leave(E_Client *ec)
 {
    struct wl_resource *res;
@@ -779,7 +779,7 @@ e_comp_wl_data_manager_shutdown(void)
    E_FREE_FUNC(e_comp->wl_comp_data->mgr.data_resources, eina_hash_free);
 }
 
-EINTERN struct wl_resource *
+E_API struct wl_resource *
 e_comp_wl_data_find_for_client(struct wl_client *client)
 {
    return eina_hash_find(e_comp->wl_comp_data->mgr.data_resources, &client);
