@@ -430,7 +430,7 @@ _e_comp_wl_data_cb_bind_manager(struct wl_client *client, void *data EINA_UNUSED
    struct wl_resource *res;
 
    /* try to create data manager resource */
-   res = wl_resource_create(client, &wl_data_device_manager_interface, 1, id);
+   e_comp->wl_comp_data->mgr.resource = res = wl_resource_create(client, &wl_data_device_manager_interface, 1, id);
    if (!res)
      {
         ERR("Could not create data device manager: %m");

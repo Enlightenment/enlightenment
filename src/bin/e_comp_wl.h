@@ -183,6 +183,7 @@ struct _E_Comp_Wl_Data
    struct
      {
         struct wl_global *global;
+        struct wl_resource *resource;
         Eina_Hash *data_resources;
      } mgr;
 
