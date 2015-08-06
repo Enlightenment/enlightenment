@@ -675,6 +675,7 @@ e_comp_wl_data_device_send_enter(E_Client *ec)
    uint32_t serial;
    int x, y;
 
+   if (e_client_has_xwindow(ec)) return;
    data_device_res =
       e_comp_wl_data_find_for_client(wl_resource_get_client(ec->comp_data->surface));
    if (!data_device_res) return;
@@ -696,6 +697,7 @@ e_comp_wl_data_device_send_leave(E_Client *ec)
 {
    struct wl_resource *res;
 
+   if (e_client_has_xwindow(ec)) return;
    evas_object_event_callback_del_full(ec->frame, EVAS_CALLBACK_DEL, _e_comp_wl_data_device_target_del, ec);
    if (e_comp->wl_comp_data->selection.target == ec)
      e_comp->wl_comp_data->selection.target = NULL;
