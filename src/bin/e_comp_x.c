@@ -4468,6 +4468,7 @@ _e_comp_x_hook_client_del(void *d EINA_UNUSED, E_Client *ec)
           e_comp_wl_client_xwayland_setup(ec, NULL, NULL);
         else
           {
+             e_pixmap_alias(NULL, E_PIXMAP_TYPE_X, e_comp_x_client_pixmap_get(ec));
              free(cd);
              e_pixmap_free(e_comp_x_client_pixmap_get(ec));
           }
@@ -5454,6 +5455,7 @@ e_comp_x_xwayland_client_setup(E_Client *ec, E_Client *wc)
    evas_object_layer_set(wc->frame, evas_object_layer_get(ec->frame));
    evas_object_geometry_set(wc->frame, ec->x, ec->y, ec->w, ec->h);
    evas_object_show(wc->frame);
+   e_pixmap_alias(wc->pixmap, E_PIXMAP_TYPE_X, e_pixmap_window_get(ec->pixmap));
    e_object_del(E_OBJECT(ec));
    e_hints_window_visible_set(wc);
    _e_comp_x_client_stack(wc);
