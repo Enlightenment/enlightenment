@@ -685,6 +685,30 @@ e_comp_wl_data_device_send_enter(E_Client *ec)
    e_comp->wl_comp_data->selection.target = ec;
    evas_object_event_callback_add(ec->frame, EVAS_CALLBACK_DEL, _e_comp_wl_data_device_target_del, ec);
 
+#ifndef HAVE_WAYLAND_ONLY
+   if (e_client_has_xwindow(e_comp->wl_comp_data->drag_client))
+     {
+        int d1 = 0x5UL, d2, d3, d4;
+
+        d2 = d3 = d4 = 0;
+
+        if (e_comp->wl_comp_data->drag->num_types > 3)
+          d1 |= 0x1UL;
+        else
+          {
+             if (e_comp->wl_comp_data->drag->num_types > 0)
+               d2 = ecore_x_atom_get(e_comp->wl_comp_data->drag->types[0]);
+             if (e_comp->wl_comp_data->drag->num_types > 1)
+               d3 = ecore_x_atom_get(e_comp->wl_comp_data->drag->types[1]);
+             if (e_comp->wl_comp_data->drag->num_types > 2)
+               d4 = ecore_x_atom_get(e_comp->wl_comp_data->drag->types[2]);
+          }
+
+        ecore_x_client_message32_send(e_client_util_win_get(e_comp->wl_comp_data->drag_client),
+          ECORE_X_ATOM_XDND_ENTER, ECORE_X_EVENT_MASK_NONE,
+          e_comp->cm_selection, d1, d2, d3, d4);
+     }
+#endif
    x = wl_fixed_to_int(e_comp->wl_comp_data->ptr.x) - e_comp->wl_comp_data->selection.target->client.x;
    y = wl_fixed_to_int(e_comp->wl_comp_data->ptr.y) - e_comp->wl_comp_data->selection.target->client.y;
    serial = wl_display_next_serial(e_comp->wl_comp_data->wl.disp);
@@ -701,8 +725,17 @@ e_comp_wl_data_device_send_leave(E_Client *ec)
    evas_object_event_callback_del_full(ec->frame, EVAS_CALLBACK_DEL, _e_comp_wl_data_device_target_del, ec);
    if (e_comp->wl_comp_data->selection.target == ec)
      e_comp->wl_comp_data->selection.target = NULL;
+#ifndef HAVE_WAYLAND_ONLY
+   if (e_client_has_xwindow(e_comp->wl_comp_data->drag_client))
+     {
+        ecore_x_client_message32_send(e_client_util_win_get(e_comp->wl_comp_data->drag_client),
+               ECORE_X_ATOM_XDND_LEAVE, ECORE_X_EVENT_MASK_NONE,
+               e_comp->cm_selection, 0, 0, 0, 0);
+     }
+#endif
    res = e_comp_wl_data_find_for_client(wl_resource_get_client(ec->comp_data->surface));
-   wl_data_device_send_leave(res);
+   if (res)
+     wl_data_device_send_leave(res);
 }
 
 EINTERN void *

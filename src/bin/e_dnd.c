@@ -227,6 +227,8 @@ e_dnd_init(void)
 
    if (e_comp->comp_type == E_PIXMAP_TYPE_X)
      e_drop_xdnd_register_set(e_comp->ee_win, 1);
+   else
+     e_drop_xdnd_register_set(e_comp->cm_selection, 1);
 
    _action = ECORE_X_ATOM_XDND_ACTION_PRIVATE;
 #endif
@@ -1211,6 +1213,18 @@ _e_dnd_cb_mouse_move(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
    if (!_xdnd)
      _e_drag_update(_drag_win_root, ev->x, ev->y,
                     _action ?: ECORE_X_ATOM_XDND_ACTION_PRIVATE);
+# ifdef HAVE_WAYLAND
+   if ((e_comp->comp_type == E_PIXMAP_TYPE_WL) && e_comp_util_has_x())
+     {
+        if (e_comp->wl_comp_data->drag != _drag_current) return ECORE_CALLBACK_RENEW;
+        if (!e_comp->wl_comp_data->ptr.ec) return ECORE_CALLBACK_RENEW;
+        if (e_client_has_xwindow(e_comp->wl_comp_data->ptr.ec)) return ECORE_CALLBACK_RENEW;
+        ecore_x_client_message32_send(e_client_util_win_get(e_comp->wl_comp_data->drag_client),
+          ECORE_X_ATOM_XDND_POSITION, ECORE_X_EVENT_MASK_NONE,
+          e_comp->cm_selection, 0, ((ev->x << 16) & 0xffff0000) | (ev->y & 0xffff),
+          ev->timestamp, ECORE_X_ATOM_XDND_ACTION_COPY);
+     }
+# endif
 #endif
 
    return ECORE_CALLBACK_PASS_ON;
@@ -1421,6 +1435,7 @@ _e_dnd_cb_event_dnd_selection(void *data EINA_UNUSED, int type EINA_UNUSED, void
 
    if (!eina_hash_find(_drop_win_hash, &ev->win)) return ECORE_CALLBACK_PASS_ON;
    if (ev->selection != ECORE_X_SELECTION_XDND) return ECORE_CALLBACK_PASS_ON;
+   if (e_comp->comp_type != E_PIXMAP_TYPE_X) return ECORE_CALLBACK_RENEW;
 
    if (!_xdnd)
      {

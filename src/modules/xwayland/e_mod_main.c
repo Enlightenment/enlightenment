@@ -3,6 +3,8 @@
 #include <sys/socket.h>
 #include <sys/un.h>
 
+EINTERN void dnd_init(void);
+
 /* local structures */
 typedef struct _E_XWayland_Server E_XWayland_Server;
 struct _E_XWayland_Server
@@ -256,6 +258,7 @@ xnotify(void *d EINA_UNUSED, Ecore_Thread *eth EINA_UNUSED, void *disp)
      }
    assert(ecore_x_init_from_display(disp));
    e_comp_x_init();
+   dnd_init();
 }
 
 static void
