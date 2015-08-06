@@ -10,6 +10,7 @@
 #include <uuid.h>
 
 static Eina_Hash *pixmaps[2] = {NULL};
+static Eina_Hash *aliases[2] = {NULL};
 
 struct _E_Pixmap
 {
@@ -155,6 +156,7 @@ _e_pixmap_find(E_Pixmap_Type type, va_list *l)
 #ifdef HAVE_WAYLAND
    uintptr_t id;
 #endif
+   E_Pixmap *cp;
    
    if (!pixmaps[type]) return NULL;
    switch (type)
@@ -162,13 +164,17 @@ _e_pixmap_find(E_Pixmap_Type type, va_list *l)
       case E_PIXMAP_TYPE_X:
 #ifndef HAVE_WAYLAND_ONLY
         xwin = va_arg(*l, uint32_t);
-        return eina_hash_find(pixmaps[type], &xwin);
+        cp = eina_hash_find(aliases[type], &xwin);
+        if (!cp) cp = eina_hash_find(pixmaps[type], &xwin);
+        return cp;
 #endif
         break;
       case E_PIXMAP_TYPE_WL:
 #ifdef HAVE_WAYLAND
         id = va_arg(*l, uintptr_t);
-        return eina_hash_find(pixmaps[type], &id);
+        cp = eina_hash_find(aliases[type], &id);
+        if (!cp) cp = eina_hash_find(pixmaps[type], &id);
+        return cp;
 #endif
         break;
       default: break;
@@ -880,4 +886,39 @@ e_pixmap_image_opaque_get(E_Pixmap *cp, int *x, int *y, int *w, int *h)
    if (w) *w = 0;
    if (h) *h = 0;
 #endif
+}
+
+E_API void
+e_pixmap_alias(E_Pixmap *cp, E_Pixmap_Type type, ...)
+{
+   va_list l;
+#ifndef HAVE_WAYLAND_ONLY
+   Ecore_X_Window xwin;
+#endif
+#ifdef HAVE_WAYLAND
+   uintptr_t id;
+#endif
+
+   va_start(l, type);
+   switch (type)
+     {
+      case E_PIXMAP_TYPE_X:
+#ifndef HAVE_WAYLAND_ONLY
+        xwin = va_arg(l, uint32_t);
+        if (!aliases[type])
+          aliases[type] = eina_hash_int32_new(NULL);
+        eina_hash_set(aliases[type], &xwin, cp);
+#endif
+        break;
+      case E_PIXMAP_TYPE_WL:
+#ifdef HAVE_WAYLAND
+        id = va_arg(l, uintptr_t);
+        if (!aliases[type])
+          aliases[type] = eina_hash_pointer_new(NULL);
+        eina_hash_set(aliases[type], &id, cp);
+#endif
+        break;
+      default: break;
+     }
+   va_end(l);
 }

@@ -49,6 +49,8 @@ E_API Eina_Bool e_pixmap_image_draw(E_Pixmap *cp, const Eina_Rectangle *r);
 E_API void e_pixmap_image_opaque_set(E_Pixmap *cp, int x, int y, int w, int h);
 E_API void e_pixmap_image_opaque_get(E_Pixmap *cp, int *x, int *y, int *w, int *h);
 
+E_API void e_pixmap_alias(E_Pixmap *cp, E_Pixmap_Type type, ...);
+
 static inline Eina_Bool
 e_pixmap_is_x(const E_Pixmap *cp)
 {
