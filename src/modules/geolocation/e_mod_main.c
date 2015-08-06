@@ -42,7 +42,6 @@ struct _Instance
    int             in_use;
    int             available_accur_level;
    Eldbus_Connection *conn;
-   Eldbus_Service_Interface *iface;
    Eldbus_Proxy *manager;
    Eldbus_Proxy *client;
    Eldbus_Proxy *location;
