@@ -438,8 +438,8 @@ _gc_shutdown(E_Gadcon_Client *gcc)
    inst = gcc->data;
    geolocation_instances = eina_list_remove(geolocation_instances, inst);
    evas_object_del(inst->icon);
-   geo_clue2_manager_proxy_unref(inst->location);
-   geo_clue2_manager_proxy_unref(inst->client);
+   geo_clue2_location_proxy_unref(inst->location);
+   geo_clue2_client_proxy_unref(inst->client);
    geo_clue2_manager_proxy_unref(inst->manager);
    eldbus_connection_unref(inst->conn);
    free(inst);
