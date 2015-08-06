@@ -33,7 +33,7 @@ e_grabinput_get(Ecore_Window mouse_win, int confine_mouse, Ecore_Window key_win)
    if (grab_mouse_win)
      {
 #ifndef HAVE_WAYLAND_ONLY
-        if (e_comp_util_has_x())
+        if (e_comp->comp_type == E_PIXMAP_TYPE_X)
           ecore_x_pointer_ungrab();
 #else
         if (e_comp->comp_type == E_PIXMAP_TYPE_WL)
@@ -44,7 +44,7 @@ e_grabinput_get(Ecore_Window mouse_win, int confine_mouse, Ecore_Window key_win)
    if (grab_key_win)
      {
 #ifndef HAVE_WAYLAND_ONLY
-        if (e_comp_util_has_x())
+        if (e_comp->comp_type == E_PIXMAP_TYPE_X)
           ecore_x_keyboard_ungrab();
 #else
         if (e_comp->comp_type == E_PIXMAP_TYPE_WL)
@@ -57,7 +57,7 @@ e_grabinput_get(Ecore_Window mouse_win, int confine_mouse, Ecore_Window key_win)
    if (mouse_win)
      {
 #ifndef HAVE_WAYLAND_ONLY
-        if (e_comp_util_has_x())
+        if (e_comp->comp_type == E_PIXMAP_TYPE_X)
           {
              int ret = 0;
              if (confine_mouse)
@@ -80,7 +80,7 @@ e_grabinput_get(Ecore_Window mouse_win, int confine_mouse, Ecore_Window key_win)
    if (key_win)
      {
 #ifndef HAVE_WAYLAND_ONLY
-        if (e_comp_util_has_x())
+        if (e_comp->comp_type == E_PIXMAP_TYPE_X)
           {
              int ret = 0;
 
@@ -118,7 +118,7 @@ e_grabinput_release(Ecore_Window mouse_win, Ecore_Window key_win)
    if (mouse_win == grab_mouse_win)
      {
 #ifndef HAVE_WAYLAND_ONLY
-        if (e_comp_util_has_x())
+        if (e_comp->comp_type == E_PIXMAP_TYPE_X)
           ecore_x_pointer_ungrab();
 #else
         if (e_comp->comp_type == E_PIXMAP_TYPE_WL)
@@ -130,7 +130,7 @@ e_grabinput_release(Ecore_Window mouse_win, Ecore_Window key_win)
    if (key_win == grab_key_win)
      {
 #ifndef HAVE_WAYLAND_ONLY
-        if (e_comp_util_has_x())
+        if (e_comp->comp_type == E_PIXMAP_TYPE_X)
           ecore_x_keyboard_ungrab();
 #else
         if (e_comp->comp_type == E_PIXMAP_TYPE_WL)
