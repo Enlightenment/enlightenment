@@ -57,5 +57,6 @@ EINTERN void e_comp_wl_data_device_keyboard_focus_set(void);
 EINTERN Eina_Bool e_comp_wl_data_manager_init(void);
 EINTERN void e_comp_wl_data_manager_shutdown(void);
 EINTERN struct wl_resource *e_comp_wl_data_find_for_client(struct wl_client *client);
+E_API E_Comp_Wl_Data_Source *e_comp_wl_data_manager_source_create(struct wl_client *client, struct wl_resource *resource, uint32_t id);
 # endif
 #endif

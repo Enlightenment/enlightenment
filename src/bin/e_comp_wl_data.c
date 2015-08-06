@@ -384,40 +384,6 @@ _e_comp_wl_data_device_cb_unbind(struct wl_resource *resource)
    eina_hash_del_by_key(e_comp->wl_comp_data->mgr.data_resources, &resource);
 }
 
-static void
-_e_comp_wl_data_manager_cb_source_create(struct wl_client *client EINA_UNUSED, struct wl_resource *resource, uint32_t id EINA_UNUSED)
-{
-   E_Comp_Wl_Data_Source *source;
-
-   DBG("Data Manager Source Create");
-
-   source = E_NEW(E_Comp_Wl_Data_Source, 1);
-   if (!source)
-     {
-        wl_resource_post_no_memory(resource);
-        return;
-     }
-
-   wl_signal_init(&source->destroy_signal);
-   source->target = _e_comp_wl_data_source_target_send;
-   source->send = _e_comp_wl_data_source_send_send;
-   source->cancelled = _e_comp_wl_data_source_cancelled_send;
-
-   source->resource = 
-     wl_resource_create(client, &wl_data_source_interface, 1, id);
-   if (!source->resource)
-     {
-        ERR("Could not create data source resource: %m");
-        free(source);
-        wl_resource_post_no_memory(resource);
-        return;
-     }
-
-   wl_resource_set_implementation(source->resource, 
-                                  &_e_data_source_interface, source, 
-                                  _e_comp_wl_data_source_cb_resource_destroy);
-}
-
 static void 
 _e_comp_wl_data_manager_cb_device_get(struct wl_client *client, struct wl_resource *manager_resource, uint32_t id, struct wl_resource *seat_resource EINA_UNUSED)
 {
@@ -442,7 +408,7 @@ _e_comp_wl_data_manager_cb_device_get(struct wl_client *client, struct wl_resour
 
 static const struct wl_data_device_manager_interface _e_manager_interface = 
 {
-   _e_comp_wl_data_manager_cb_source_create,
+   (void*)e_comp_wl_data_manager_source_create,
    _e_comp_wl_data_manager_cb_device_get
 };
 
@@ -817,4 +783,39 @@ EINTERN struct wl_resource *
 e_comp_wl_data_find_for_client(struct wl_client *client)
 {
    return eina_hash_find(e_comp->wl_comp_data->mgr.data_resources, &client);
+}
+
+E_API E_Comp_Wl_Data_Source *
+e_comp_wl_data_manager_source_create(struct wl_client *client, struct wl_resource *resource, uint32_t id)
+{
+   E_Comp_Wl_Data_Source *source;
+
+   DBG("Data Manager Source Create");
+
+   source = E_NEW(E_Comp_Wl_Data_Source, 1);
+   if (!source)
+     {
+        wl_resource_post_no_memory(resource);
+        return NULL;
+     }
+
+   wl_signal_init(&source->destroy_signal);
+   source->target = _e_comp_wl_data_source_target_send;
+   source->send = _e_comp_wl_data_source_send_send;
+   source->cancelled = _e_comp_wl_data_source_cancelled_send;
+
+   source->resource =
+     wl_resource_create(client, &wl_data_source_interface, 1, id);
+   if (!source->resource)
+     {
+        ERR("Could not create data source resource: %m");
+        free(source);
+        wl_resource_post_no_memory(resource);
+        return NULL;
+     }
+
+   wl_resource_set_implementation(source->resource,
+                                  &_e_data_source_interface, source,
+                                  _e_comp_wl_data_source_cb_resource_destroy);
+   return source;
 }
