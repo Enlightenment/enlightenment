@@ -2767,6 +2767,7 @@ e_comp_wl_surface_commit(E_Client *ec)
    Eina_Bool ignored;
 
    _e_comp_wl_surface_state_commit(ec, &ec->comp_data->pending);
+   e_comp_object_render_update_add(ec->frame);
 
    ignored = ec->ignored;
 
