@@ -258,7 +258,7 @@ _e_comp_wl_evas_handle_mouse_button(E_Client *ec, uint32_t timestamp, uint32_t b
    uint32_t serial, btn;
    struct wl_resource *res;
 
-   if (ec->cur_mouse_action || ec->border_menu) return EINA_FALSE;
+   if (ec->cur_mouse_action || ec->border_menu || e_comp->wl_comp_data->drag) return EINA_FALSE;
    if (e_object_is_del(E_OBJECT(ec))) return EINA_FALSE;
    if (ec->ignored) return EINA_FALSE;
 
