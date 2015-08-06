@@ -135,7 +135,8 @@ _e_drag_finalize(E_Drag *drag, E_Drag_Type type, int x, int y)
    if (!drag->object)
      {
         e_drag_object_set(drag, evas_object_rectangle_add(drag->evas));
-        evas_object_color_set(drag->object, 255, 0, 0, 255);
+        evas_object_color_set(drag->object, 0, 0, 0, 0);
+        //evas_object_color_set(drag->object, 255, 0, 0, 255);
      }
    evas_object_move(drag->comp_object, drag->x, drag->y);
    evas_object_resize(drag->comp_object, drag->w, drag->h);
