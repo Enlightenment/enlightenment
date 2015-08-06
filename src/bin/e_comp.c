@@ -698,6 +698,7 @@ _e_comp_shapes_update_job(void *d EINA_UNUSED)
    Eina_Iterator *ti;
    Eina_Rectangle *exr;
    unsigned int i, tile_count;
+   Ecore_Window win;
 #ifdef SHAPE_DEBUG
    Eina_Rectangle *r;
    Eina_List *rl = NULL;
@@ -706,6 +707,10 @@ _e_comp_shapes_update_job(void *d EINA_UNUSED)
    INF("---------------------");
 #endif
 
+   if (e_comp->comp_type == E_PIXMAP_TYPE_X)
+     win = e_comp->win;
+   else
+     win = e_comp->cm_selection;
    E_FREE_LIST(e_comp->debug_rects, evas_object_del);
    tb = eina_tiler_new(e_comp->w, e_comp->h);
    eina_tiler_tile_size_set(tb, 1, 1);
@@ -759,7 +764,7 @@ _e_comp_shapes_update_job(void *d EINA_UNUSED)
      }
 
 #ifndef HAVE_WAYLAND_ONLY
-   ecore_x_window_shape_input_rectangles_set(e_comp->win, (Ecore_X_Rectangle*)exr, i);
+   ecore_x_window_shape_input_rectangles_set(win, (Ecore_X_Rectangle*)exr, i);
 #endif
 
 #ifdef SHAPE_DEBUG
@@ -1348,7 +1353,7 @@ e_comp_render_queue(void)
 E_API void
 e_comp_shape_queue(void)
 {
-   if (e_comp->comp_type != E_PIXMAP_TYPE_X) return;
+   if ((e_comp->comp_type != E_PIXMAP_TYPE_X) && (!e_comp_util_has_x())) return;
    if (!e_comp->shape_job)
      e_comp->shape_job = ecore_job_add(_e_comp_shapes_update_job, NULL);
 }
