@@ -1131,6 +1131,12 @@ _e_comp_wl_surface_state_commit(E_Client *ec, E_Comp_Wl_Surface_State *state)
    state->sy = 0;
    state->new_attach = EINA_FALSE;
 
+   /* insert state frame callbacks into comp_data->frames
+    * NB: This clears state->frames list */
+   ec->comp_data->frames = eina_list_merge(ec->comp_data->frames,
+                                           state->frames);
+   state->frames = NULL;
+
    ec->ignored = ignored;
    if (!ec->comp_data->mapped) goto unmapped;
 
@@ -1200,11 +1206,6 @@ _e_comp_wl_surface_state_commit(E_Client *ec, E_Comp_Wl_Surface_State *state)
 
         eina_tiler_free(tmp);
      }
-
-   /* insert state frame callbacks into comp_data->frames
-    * NB: This clears state->frames list */
-   ec->comp_data->frames = eina_list_merge(ec->comp_data->frames, state->frames);
-   state->frames = NULL;
 
    return;
 
