@@ -4,6 +4,7 @@
 #include <sys/un.h>
 
 EINTERN void dnd_init(void);
+EINTERN void dnd_shutdown(void);
 
 /* local structures */
 typedef struct _E_XWayland_Server E_XWayland_Server;
@@ -407,6 +408,7 @@ e_modapi_shutdown(E_Module *m EINA_UNUSED)
    char path[256];
 
    if (!exs) return 1;
+   dnd_shutdown();
 
    unlink(exs->lock);
 

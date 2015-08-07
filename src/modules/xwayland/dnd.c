@@ -10,6 +10,8 @@ static Ecore_X_Atom xwl_dnd_atom;
 
 static int32_t cur_fd = -1;
 
+static Eina_List *handlers;
+
 static void
 _xdnd_finish(Eina_Bool success)
 {
@@ -193,10 +195,16 @@ dnd_init(void)
 {
    ecore_x_fixes_selection_notification_request(ecore_x_atom_get("CLIPBOARD"));
    ecore_x_fixes_selection_notification_request(ECORE_X_ATOM_SELECTION_XDND);
-   ecore_event_handler_add(ECORE_X_EVENT_FIXES_SELECTION_NOTIFY, (Ecore_Event_Handler_Cb)_xwl_fixes_selection_notify, NULL);
-   ecore_event_handler_add(ECORE_X_EVENT_SELECTION_NOTIFY, (Ecore_Event_Handler_Cb)_xwl_selection_notify, NULL);
+   E_LIST_HANDLER_APPEND(handlers, ECORE_X_EVENT_FIXES_SELECTION_NOTIFY, _xwl_fixes_selection_notify, NULL);
+   E_LIST_HANDLER_APPEND(handlers, ECORE_X_EVENT_SELECTION_NOTIFY, _xwl_selection_notify, NULL);
    xconvertselection = dlsym(NULL, "XConvertSelection");
    string_atom = ecore_x_atom_get("UTF8_STRING");
    xwl_dnd_atom = ecore_x_atom_get("E_XWL_DND_ATOM_HAHA");
    e_comp_shape_queue();
+}
+
+EINTERN void
+dnd_shutdown(void)
+{
+   E_FREE_LIST(handlers, ecore_event_handler_del);
 }
