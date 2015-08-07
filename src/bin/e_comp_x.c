@@ -2120,6 +2120,8 @@ _e_comp_x_message(void *data EINA_UNUSED, int type EINA_UNUSED, Ecore_X_Event_Cl
           }
      }
 #endif
+   else
+     DBG("missed client message '%s' for %u", ecore_x_atom_name_get(ev->message_type), ev->win);
    return ECORE_CALLBACK_PASS_ON;
 }
 
