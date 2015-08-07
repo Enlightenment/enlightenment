@@ -530,7 +530,7 @@ _drm_randr_apply(void)
 
         EINA_LIST_FOREACH(e_randr2->screens, ll, s)
           {
-             int orient = 0;
+             int orient;
              Ecore_Drm_Output_Mode *mode = NULL;
 
              printf("DRM RRR: find output for '%s'\n", s->info.name);
