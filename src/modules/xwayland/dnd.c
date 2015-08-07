@@ -27,6 +27,7 @@ _xwayland_dnd_finish(void)
    e_comp->wl_comp_data->drag_client = NULL;
    e_comp->wl_comp_data->drag_source = NULL;
    cur_fd = -1;
+   e_screensaver_inhibit_toggle(0);
 }
 
 static void
@@ -148,14 +149,12 @@ _xwl_fixes_selection_notify(void *d EINA_UNUSED, int t EINA_UNUSED, Ecore_X_Even
              source->cancelled = _xwayland_cancelled_send;
              source->mime_types = namelist;
              free(names);
+             e_screensaver_inhibit_toggle(1);
           }
         else
           {
              if (e_comp->wl_comp_data->drag)
                e_object_del(E_OBJECT(e_comp->wl_comp_data->drag));
-             ecore_x_window_hide(e_comp->cm_selection);
-             e_comp->wl_comp_data->drag = NULL;
-             e_comp->wl_comp_data->drag_client = NULL;
           }
         e_screensaver_inhibit_toggle(!!ev->owner);
         return ECORE_CALLBACK_RENEW;
