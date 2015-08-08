@@ -429,7 +429,7 @@ _config_apply(E_Randr2 *r, E_Config_Randr2 *cfg)
              printf("RRR: ... priority = %i\n", cs->priority);
              _config_really_apply(s, cs);
           }
-        else if (!cs)
+        else if ((!cs) && (!_screen_closed(s)))
           {
              printf("RRR: ... no config found...\n");
              cs2 = NULL;
@@ -872,7 +872,7 @@ _screen_config_do(E_Randr2_Screen *s)
    Eina_List *cloneset;
 
    printf("RRR: screen do '%s'\n", s->info.name);
-   if (_config_do_recurse > 20)
+   if (_config_do_recurse > 5)
      {
         ERR("screen config loop!");
         return;
