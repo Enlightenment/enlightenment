@@ -1218,8 +1218,9 @@ _e_dnd_cb_mouse_move(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
      {
         if (e_comp->wl_comp_data->drag != _drag_current) return ECORE_CALLBACK_RENEW;
         if (!e_comp->wl_comp_data->ptr.ec) return ECORE_CALLBACK_RENEW;
-        if (e_client_has_xwindow(e_comp->wl_comp_data->ptr.ec)) return ECORE_CALLBACK_RENEW;
-        ecore_x_client_message32_send(e_client_util_win_get(e_comp->wl_comp_data->drag_client),
+        if (!e_client_has_xwindow(e_comp->wl_comp_data->ptr.ec)) return ECORE_CALLBACK_RENEW;
+        if (e_client_has_xwindow(e_comp->wl_comp_data->drag_client)) return ECORE_CALLBACK_RENEW;
+        ecore_x_client_message32_send(e_client_util_win_get(e_comp->wl_comp_data->ptr.ec),
           ECORE_X_ATOM_XDND_POSITION, ECORE_X_EVENT_MASK_NONE,
           e_comp->cm_selection, 0, ((ev->x << 16) & 0xffff0000) | (ev->y & 0xffff),
           ev->timestamp, ECORE_X_ATOM_XDND_ACTION_COPY);
