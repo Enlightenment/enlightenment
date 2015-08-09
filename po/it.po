@@ -1028,7 +1028,7 @@ msgid ""
 msgstr ""
 "Enlightenment ha restituito un errore nello spostamento<br>dei file di "
 "configurazione da:<br>%s<br><br>a:<br>%s<br><br>Il resto della scrittura è "
-"stato abortito per sicurezza.<br>"
+"stato annullato per sicurezza.<br>"
 
 #: src/bin/e_config.c:1777 src/bin/e_config.c:2421
 #: src/bin/e_config_dialog.c:279 src/bin/e_desktop_editor.c:891
@@ -1802,7 +1802,7 @@ msgstr "Ritenta"
 
 #: src/bin/e_fm.c:10566 src/bin/e_fm.c:10792 src/bin/e_fm.c:11770
 msgid "Abort"
-msgstr "Abortisci"
+msgstr "Interrompi"
 
 #: src/bin/e_fm.c:10626
 msgid "No to all"
@@ -2051,7 +2051,7 @@ msgid ""
 "Please press key combination,<br><br>or <hilight>Escape</hilight> to abort."
 msgstr ""
 "Premere la combinazione di tasti,<br><br>o <hilight>Escape</hilight> per "
-"abortire"
+"annullare"
 
 #: src/bin/e_grab_dialog.c:5
 #: src/modules/conf_bindings/e_int_config_mousebindings.c:7
@@ -2062,7 +2062,7 @@ msgid ""
 msgstr ""
 "Tenere premuto il modificatore desiderato<br>e premere un bottone del mouse, "
 "o girare<br>una rotella, per assegnare un'associazione.<br>Premere "
-"<hilight>Escape</highlight> per abortire."
+"<hilight>Escape</highlight> per annullare."
 
 #: src/bin/e_grab_dialog.c:114
 msgid "Mouse Binding Combination"
@@ -2078,7 +2078,7 @@ msgid ""
 "on this screen. Aborting startup.\n"
 msgstr ""
 "Un'istanza precedente di Enlightenment è ancora\n"
-"attiva su questo schermo. Abortisco l'avvio.\n"
+"attiva su questo schermo. Avvio interrotto.\n"
 
 #: src/bin/e_import_config_dialog.c:293
 msgid "Picture Import Error"
@@ -5632,7 +5632,7 @@ msgid ""
 "<hilight>Escape</hilight> to abort."
 msgstr ""
 "Causare l'evento ACPI che si desidera impostare,<br><br>o <hilight>Escape</"
-"hilight> per abortire"
+"hilight> per annullare"
 
 #: src/modules/conf_bindings/e_int_config_edgebindings.c:5
 msgid ""
@@ -5641,7 +5641,7 @@ msgid ""
 "or make it<br>respond to edge clicks:"
 msgstr ""
 "Selezionare un bordo dello schermo<br>o cliccare <hilight>Chiudi</hilight> "
-"per abortire.<br><br>Si può anche specificare un ritardo<br> per questa "
+"per annullare.<br><br>Si può anche specificare un ritardo<br> per questa "
 "azione usando il cursore,<br>oppure fare in modo che risponda ai<br>clic del "
 "mouse sul bordo:"
 
@@ -8601,31 +8601,31 @@ msgstr "Comando personalizzato"
 #: src/modules/fileman_opinfo/e_mod_main.c:105
 #, c-format
 msgid "Copying is aborted"
-msgstr "Copiatura abortita"
+msgstr "Copia interrotta"
 
 #: src/modules/fileman/e_fwin.c:3003
 #: src/modules/fileman_opinfo/e_mod_main.c:109
 #, c-format
 msgid "Moving is aborted"
-msgstr "Spostamento abortito"
+msgstr "Spostamento interrotto"
 
 #: src/modules/fileman/e_fwin.c:3007
 #: src/modules/fileman_opinfo/e_mod_main.c:113
 #, c-format
 msgid "Deleting is aborted"
-msgstr "Eliminazione abortita"
+msgstr "Eliminazione interrotta"
 
 #: src/modules/fileman/e_fwin.c:3011
 #: src/modules/fileman_opinfo/e_mod_main.c:117
 #, c-format
 msgid "Secure deletion is aborted"
-msgstr "Eliminazione sicura abortita"
+msgstr "Eliminazione sicura interrotta"
 
 #: src/modules/fileman/e_fwin.c:3015
 #: src/modules/fileman_opinfo/e_mod_main.c:121
 #, c-format
 msgid "Unknown operation from slave is aborted"
-msgstr "Operazione sconosciuta dallo slave abortita"
+msgstr "Operazione sconosciuta dallo slave interrotta"
 
 #: src/modules/fileman/e_fwin.c:3025
 #: src/modules/fileman_opinfo/e_mod_main.c:131
