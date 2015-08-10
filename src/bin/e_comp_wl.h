@@ -200,6 +200,7 @@ struct _E_Comp_Wl_Data
      {
         void *source;
         struct wl_listener listener;
+        E_Client *xwl_owner;
      } clipboard;
 
    struct

@@ -131,7 +131,11 @@ _xwayland_cancelled_send(E_Comp_Wl_Data_Source *source)
 static Eina_Bool
 _xwl_fixes_selection_notify(void *d EINA_UNUSED, int t EINA_UNUSED, Ecore_X_Event_Fixes_Selection_Notify *ev)
 {
-   if (ev->owner == e_comp->cm_selection) return ECORE_CALLBACK_RENEW;
+   if (ev->owner == e_comp->cm_selection)
+     {
+        e_comp->wl_comp_data->clipboard.xwl_owner = NULL;
+        return ECORE_CALLBACK_RENEW;
+     }
    if (ev->atom == ECORE_X_ATOM_SELECTION_XDND)
      {
         if (ev->owner)
@@ -201,7 +205,10 @@ _xwl_fixes_selection_notify(void *d EINA_UNUSED, int t EINA_UNUSED, Ecore_X_Even
         e_screensaver_inhibit_toggle(!!ev->owner);
         return ECORE_CALLBACK_RENEW;
      }
-   //if (ev->atom == ECORE_X_ATOM_SELECTION_CLIPBOARD)
+   if (ev->atom == ECORE_X_ATOM_SELECTION_CLIPBOARD)
+     {
+        e_comp->wl_comp_data->clipboard.xwl_owner = ev->owner ? e_pixmap_find_client(E_PIXMAP_TYPE_X, ev->owner) : NULL;
+     }
    return ECORE_CALLBACK_RENEW;
 }
 
