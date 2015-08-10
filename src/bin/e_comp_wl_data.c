@@ -307,7 +307,7 @@ _e_comp_wl_data_device_drag_finished(E_Drag *drag, int dropped)
 #ifndef HAVE_WAYLAND_ONLY
              if ((e_comp->comp_type != E_PIXMAP_TYPE_X) && e_comp_util_has_x())
                {
-                  ecore_x_selection_owner_set(0, ECORE_X_ATOM_SELECTION_XDND, 0);
+                  ecore_x_selection_owner_set(0, ECORE_X_ATOM_SELECTION_XDND, ecore_x_current_time_get());
                   ecore_x_window_hide(e_comp->cm_selection);
                }
 #endif
@@ -368,7 +368,7 @@ _e_comp_wl_data_device_cb_drag_start(struct wl_client *client, struct wl_resourc
    if ((e_comp->comp_type != E_PIXMAP_TYPE_X) && e_comp_util_has_x())
      {
         ecore_x_window_show(e_comp->cm_selection);
-        ecore_x_selection_owner_set(e_comp->cm_selection, ECORE_X_ATOM_SELECTION_XDND, 0);
+        ecore_x_selection_owner_set(e_comp->cm_selection, ECORE_X_ATOM_SELECTION_XDND, ecore_x_current_time_get());
      }
 #endif
    if (e_comp->wl_comp_data->ptr.ec)
