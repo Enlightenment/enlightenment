@@ -305,7 +305,7 @@ _alsa_cards_refresh(void)
              //check if its a source or a sink
              if (snd_mixer_selem_has_capture_volume(elem))
                tmp_source = eina_list_append(tmp_source, elem);
-             else
+             else if (snd_mixer_selem_has_playback_volume(elem))
                tmp_sink = eina_list_append(tmp_sink, elem);
           }
 
