@@ -61,23 +61,16 @@ This can be done by passing:
 
 Now, on to the magic bits ;)
 
-In order for Enlightenment to be compiled without X11, using Wayland
-only, you will need to pass a few more options to the configure stage
-of Enlightenment:
+In order for Enlightenment to be compiled as Wayland compositor you will need to
+pass a few more options to the configure stage of Enlightenment:
 
-  --enable-wayland-only
-  --enable-wl-drm
+  --enable-wayland
 
-Since this is all still a work-in-progress, there are a few
-Enlightenment modules that have not been "fixed" to work without X11
-yet. Those will need to be disabled if you enabled the wayland-only
-option:
 
-  --disable-shot
-  --disable-xkbswitch
-  --disable-conf-randr
-  --disable-wl-x11
+If you also want support for running X applications under Wayland you might want
+to try out XWayland support:
 
+  --enable-xwayland
 
 At this stage, you should have EFL properly built, and Enlightenment
 properly built. Let's move on to running it...
