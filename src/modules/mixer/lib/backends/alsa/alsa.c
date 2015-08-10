@@ -420,7 +420,11 @@ _alsa_sources_volume_set(Emix_Source *source, Emix_Volume v)
      {
         elem = eina_list_nth(s->channels, i);
         _alsa_channel_volume_set(elem, v.volumes[i], EINA_FALSE);
+        s->source.volume.volumes[i] = v.volumes[i];
      }
+   if (ctx->cb)
+     ctx->cb((void *)ctx->userdata, EMIX_SOURCE_CHANGED_EVENT,
+                  (Emix_Source *)s);
 }
 
 
@@ -488,7 +492,11 @@ _alsa_sink_volume_set(Emix_Sink *sink, Emix_Volume v)
      {
         elem = eina_list_nth(s->channels, i);
         _alsa_channel_volume_set(elem, v.volumes[i], EINA_FALSE);
+        s->sink.volume.volumes[i] = v.volumes[i];
      }
+   if (ctx->cb)
+     ctx->cb((void *)ctx->userdata, EMIX_SINK_CHANGED_EVENT,
+                  (Emix_Sink *)s);
 }
 
 static Emix_Backend
