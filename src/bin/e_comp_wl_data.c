@@ -764,12 +764,29 @@ e_comp_wl_data_device_keyboard_focus_set(void)
         ERR("No focused resource");
         return;
      }
+   source = (E_Comp_Wl_Data_Source*)e_comp->wl_comp_data->selection.data_source;
 
+#ifndef HAVE_WAYLAND_ONLY
+   do
+     {
+        if (!e_comp_util_has_xwayland()) break;
+        if (e_comp->wl_comp_data->clipboard.xwl_owner)
+          {
+             if (e_client_has_xwindow(e_client_focused_get())) return;
+             break;
+          }
+        else if (source && e_client_has_xwindow(e_client_focused_get()))
+          {
+             /* wl -> x11 */
+             ecore_x_selection_owner_set(e_comp->cm_selection, ECORE_X_ATOM_SELECTION_CLIPBOARD, ecore_x_current_time_get());
+             return;
+          }
+     } while (0);
+#endif
    data_device_res =
       e_comp_wl_data_find_for_client(wl_resource_get_client(focus));
    if (!data_device_res) return;
 
-   source = (E_Comp_Wl_Data_Source*)e_comp->wl_comp_data->selection.data_source;
    if (source)
      offer_res = _e_comp_wl_data_device_data_offer_create(source, data_device_res);
    wl_data_device_send_selection(data_device_res, offer_res);
