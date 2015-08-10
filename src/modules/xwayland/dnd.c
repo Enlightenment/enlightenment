@@ -32,6 +32,7 @@ typedef struct
 static void
 _pipe_free(Pipe *p)
 {
+   close(ecore_main_fd_handler_fd_get(p->fdh));
    ecore_main_fd_handler_del(p->fdh);
    eina_binbuf_free(p->buf);
    free(p);
