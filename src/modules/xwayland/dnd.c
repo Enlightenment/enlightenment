@@ -343,6 +343,9 @@ _xwl_property(void *d EINA_UNUSED, int t EINA_UNUSED, Ecore_X_Event_Window_Prope
 {
    Pipe *p;
 
+#if (EFL_VERSION_MAJOR > 1) || (EFL_VERSION_MINOR >= 16)
+   if (!ev->state) return ECORE_CALLBACK_RENEW;
+#endif
    p = eina_hash_find(pipes, &ev->win);
    if (!p) return ECORE_CALLBACK_RENEW;
    /* FIXME: WHO FORGOT THE FUCKING STATE FLAG???? */
