@@ -233,5 +233,11 @@ e_comp_util_has_x(void)
    return !!e_comp->root;
 }
 
+static inline Eina_Bool
+e_comp_util_has_xwayland(void)
+{
+   return (e_comp->comp_type != E_PIXMAP_TYPE_X) && e_comp_util_has_x();
+}
+
 #endif
 #endif
