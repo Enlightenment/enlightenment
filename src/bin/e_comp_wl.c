@@ -1108,7 +1108,8 @@ _e_comp_wl_surface_state_commit(E_Client *ec, E_Comp_Wl_Surface_State *state)
                   ecore_evas_pointer_xy_get(e_comp->ee, &ec->mouse.current.mx, &ec->mouse.current.my);
                   ec->netwm.sync.send_time = ecore_loop_time_get();
                }
-             if (e_comp->wl_comp_data->drag_client && (e_comp->wl_comp_data->drag_client == ec))
+             if (e_comp->wl_comp_data->drag && e_comp->wl_comp_data->drag_client &&
+                 (e_comp->wl_comp_data->drag_client == ec))
                {
                   e_comp->wl_comp_data->drag->dx -= state->sx;
                   e_comp->wl_comp_data->drag->dy -= state->sy;
