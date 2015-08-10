@@ -352,14 +352,13 @@ static void
 _slider_changed_cb(void *data EINA_UNUSED, Evas_Object *obj,
                    void *event EINA_UNUSED)
 {
-   int val, pval;
+   int val;
    Emix_Volume v;
    unsigned int i;
    Emix_Sink *s = (Emix_Sink *)mixer_context->sink_default;
 
-   pval = s->volume.volumes[0];
+
    val = (int)elm_slider_value_get(obj);
-   if ((pval > 80) && (pval <= 100) && (val > 100) && (val < 120)) val = 100;
    v.volumes = calloc(s->volume.channel_count, sizeof(int));
    v.channel_count = s->volume.channel_count;
    for (i = 0; i < s->volume.channel_count; i++) v.volumes[i] = val;
