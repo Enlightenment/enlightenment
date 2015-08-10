@@ -188,9 +188,9 @@ _alsa_device_sink_create(const char *name, const char* hw_name,
         return NULL;
      }
    sink->sink.name = eina_stringshare_add(name);
-   _alsa_volume_create(&sink->sink.volume, channels);
    sink->hw_name = eina_stringshare_add(hw_name);
    sink->channels = channels;
+   _alsa_volume_create(&sink->sink.volume, channels);
    _alsa_sink_mute_get(sink);
    if (ctx->cb)
      {
@@ -214,9 +214,9 @@ _alsa_device_source_create(const char *name, const char* hw_name,
         return NULL;
      }
    source->source.name = eina_stringshare_add(name);
-   _alsa_volume_create(&source->source.volume, channels);
    source->hw_name = eina_stringshare_add(hw_name);
    source->channels = channels;
+   _alsa_volume_create(&source->source.volume, channels);
    _alsa_sources_mute_get(source);
    if (ctx->cb)
      ctx->cb((void *)ctx->userdata, EMIX_SOURCE_ADDED_EVENT,
