@@ -747,12 +747,11 @@ e_comp_wl_data_device_send_offer(E_Client *ec)
    return offer_res;
 }
 
-EINTERN void
+E_API void
 e_comp_wl_data_device_keyboard_focus_set(void)
 {
    struct wl_resource *data_device_res, *offer_res = NULL, *focus;
    E_Comp_Wl_Data_Source *source;
-
 
    if (!e_comp->wl_comp_data->kbd.enabled)
      {

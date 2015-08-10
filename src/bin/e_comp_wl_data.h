@@ -53,7 +53,7 @@ struct _E_Comp_Wl_Clipboard_Offer
 E_API void e_comp_wl_data_device_send_enter(E_Client *ec);
 E_API void e_comp_wl_data_device_send_leave(E_Client *ec);
 EINTERN void *e_comp_wl_data_device_send_offer(E_Client *ec);
-EINTERN void e_comp_wl_data_device_keyboard_focus_set(void);
+E_API void e_comp_wl_data_device_keyboard_focus_set(void);
 EINTERN Eina_Bool e_comp_wl_data_manager_init(void);
 EINTERN void e_comp_wl_data_manager_shutdown(void);
 E_API struct wl_resource *e_comp_wl_data_find_for_client(struct wl_client *client);
