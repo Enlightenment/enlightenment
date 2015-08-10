@@ -638,7 +638,10 @@ _sink_event(int type, void *info)
         if (sink == mixer_context->sink_default)
           {
              l = emix_sinks_get();
-             mixer_context->sink_default = l->data;
+             if (l)
+               mixer_context->sink_default = l->data;
+             else
+               mixer_context->sink_default = NULL;
              _mixer_gadget_update();
           }
      }
@@ -669,7 +672,10 @@ _ready(void)
    if (emix_sink_default_support())
      mixer_context->sink_default = emix_sink_default_get();
    else
-     mixer_context->sink_default = emix_sinks_get()->data;
+     {
+        if (emix_sinks_get())
+          mixer_context->sink_default = emix_sinks_get()->data;
+     }
 
    _mixer_gadget_update();
 }
