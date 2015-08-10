@@ -146,7 +146,7 @@ static void
 _e_comp_wl_data_device_destroy_selection_data_source(struct wl_listener *listener EINA_UNUSED, void *data)
 {
    E_Comp_Wl_Data_Source *source;
-   struct wl_resource *data_device_res, *focus = NULL;
+   struct wl_resource *data_device_res = NULL, *focus = NULL;
 
    DBG("Data Device Destroy Selection Source");
    if (!(source = (E_Comp_Wl_Data_Source*)data))
@@ -159,8 +159,9 @@ _e_comp_wl_data_device_destroy_selection_data_source(struct wl_listener *listene
 
    if (focus)
      {
-        data_device_res = 
-           e_comp_wl_data_find_for_client(wl_resource_get_client(source->resource));
+        if (source->resource)
+          data_device_res =
+             e_comp_wl_data_find_for_client(wl_resource_get_client(source->resource));
 
         if (data_device_res)
           wl_data_device_send_selection(data_device_res, NULL);
