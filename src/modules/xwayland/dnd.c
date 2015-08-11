@@ -88,11 +88,11 @@ _xwayland_dnd_finish(void)
 }
 
 static void
-_xwayland_drop(E_Drag *drag, int dropped EINA_UNUSED)
+_xwayland_drop(E_Drag *drag, int dropped)
 {
    if (e_comp->comp_type != E_PIXMAP_TYPE_WL) return;
    e_comp->wl_comp_data->drag = NULL;
-   if (e_object_is_del(E_OBJECT(drag)) || (!e_comp->wl_comp_data->selection.target))
+   if (dropped || e_object_is_del(E_OBJECT(drag)) || (!e_comp->wl_comp_data->selection.target))
      _xdnd_finish(0);
    else
      {
