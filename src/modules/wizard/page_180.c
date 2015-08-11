@@ -1,4 +1,4 @@
-/* Setup if we need connman? */
+/* Setup if user wants Tasks? */
 #include "e_wizard.h"
 
 static int do_tasks = 1;
