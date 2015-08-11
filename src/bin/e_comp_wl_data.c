@@ -232,7 +232,8 @@ _e_comp_wl_data_device_selection_set(void *data EINA_UNUSED, E_Comp_Wl_Data_Sour
      {
         if (sel_source->cancelled)
           sel_source->cancelled(sel_source);
-        wl_list_remove(&e_comp->wl_comp_data->selection.data_source_listener.link);
+        if (!e_comp->wl_comp_data->clipboard.xwl_owner)
+          wl_list_remove(&e_comp->wl_comp_data->selection.data_source_listener.link);
         e_comp->wl_comp_data->selection.data_source = NULL;
      }
 
