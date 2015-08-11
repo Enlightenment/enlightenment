@@ -259,11 +259,9 @@ _xwl_selection_notify(void *d EINA_UNUSED, int t EINA_UNUSED, Ecore_X_Event_Sele
              Ecore_X_Selection_Data_Targets *tgs = ev->data;
              E_Comp_Wl_Clipboard_Source *source;
              E_Comp_Wl_Data_Source *dsource;
-             int i, p[2];
+             int i;
 
-             if (pipe2(p, O_CLOEXEC) == -1)
-               return ECORE_CALLBACK_RENEW;
-             source = e_comp_wl_clipboard_source_create(NULL, 0, p[0]);
+             source = e_comp_wl_clipboard_source_create(NULL, 0, -1);
              dsource = e_comp_wl_data_manager_source_create(e_comp->wl_comp_data->xwl_client,
                e_comp->wl_comp_data->mgr.resource, 1);
              for (i = 0; i < tgs->num_targets; i++)
