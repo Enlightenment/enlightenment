@@ -5,12 +5,25 @@
 #define WL_TEXT_STR "text/plain;charset=utf-8"
 #define INCR_CHUNK_SIZE 1 << 17
 
+#undef DBG
+#undef INF
+#undef WRN
+#undef ERR
+#undef CRI
+#define DBG(...)            EINA_LOG_DOM_DBG(xwl_log_dom, __VA_ARGS__)
+#define INF(...)            EINA_LOG_DOM_INFO(xwl_log_dom, __VA_ARGS__)
+#define WRN(...)            EINA_LOG_DOM_WARN(xwl_log_dom, __VA_ARGS__)
+#define ERR(...)            EINA_LOG_DOM_ERR(xwl_log_dom, __VA_ARGS__)
+#define CRI(...)            EINA_LOG_DOM_CRIT(xwl_log_dom, __VA_ARGS__)
+
 static void (*xconvertselection)(Ecore_X_Display *, Ecore_X_Atom, Ecore_X_Atom, Ecore_X_Atom, Ecore_X_Window, Ecore_X_Time);
 static Ecore_X_Atom string_atom;
 static Ecore_X_Atom xwl_dnd_atom;
 static Ecore_X_Atom timestamp_atom;
 static Ecore_X_Atom incr_atom;
 static Ecore_X_Atom int_atom;
+
+static int xwl_log_dom = -1;
 
 static int32_t cur_fd = -1;
 
@@ -411,6 +424,7 @@ _xwl_property(void *d EINA_UNUSED, int t EINA_UNUSED, Ecore_X_Event_Window_Prope
 EINTERN void
 dnd_init(void)
 {
+   xwl_log_dom = eina_log_domain_register("xwayland", EINA_COLOR_CYAN);
    ecore_x_fixes_selection_notification_request(ecore_x_atom_get("CLIPBOARD"));
    ecore_x_fixes_selection_notification_request(ECORE_X_ATOM_SELECTION_XDND);
    E_LIST_HANDLER_APPEND(handlers, ECORE_X_EVENT_FIXES_SELECTION_NOTIFY, _xwl_fixes_selection_notify, NULL);
