@@ -75,7 +75,7 @@ _xwayland_dnd_finish(void)
 }
 
 static void
-_xwayland_drop(E_Drag *drag, int dropped)
+_xwayland_drop(E_Drag *drag, int dropped EINA_UNUSED)
 {
    if (e_comp->comp_type != E_PIXMAP_TYPE_WL) return;
    e_comp->wl_comp_data->drag = NULL;
@@ -97,7 +97,7 @@ _xwayland_drop(E_Drag *drag, int dropped)
 }
 
 static void
-_xwayland_target_send(E_Comp_Wl_Data_Source *source, uint32_t serial EINA_UNUSED, const char* mime_type)
+_xwayland_target_send(E_Comp_Wl_Data_Source *source EINA_UNUSED, uint32_t serial EINA_UNUSED, const char* mime_type)
 {
    DBG("XWL Data Source Target Send");
    ecore_x_client_message32_send(e_client_util_win_get(e_comp->wl_comp_data->drag_client), ECORE_X_ATOM_XDND_STATUS, ECORE_X_EVENT_MASK_NONE,
@@ -105,7 +105,7 @@ _xwayland_target_send(E_Comp_Wl_Data_Source *source, uint32_t serial EINA_UNUSED
 }
 
 static void
-_xwayland_send_send(E_Comp_Wl_Data_Source *source, const char* mime_type, int32_t fd)
+_xwayland_send_send(E_Comp_Wl_Data_Source *source EINA_UNUSED, const char* mime_type, int32_t fd)
 {
    Ecore_X_Atom type, sel = ECORE_X_ATOM_SELECTION_CLIPBOARD;
 
@@ -127,7 +127,7 @@ _xwayland_send_send(E_Comp_Wl_Data_Source *source, const char* mime_type, int32_
 }
 
 static void
-_xwayland_cancelled_send(E_Comp_Wl_Data_Source *source)
+_xwayland_cancelled_send(E_Comp_Wl_Data_Source *source EINA_UNUSED)
 {
    DBG("XWL Data Source Cancelled Send");
    e_object_del(E_OBJECT(e_comp->wl_comp_data->drag));
