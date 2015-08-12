@@ -204,6 +204,12 @@ _e_comp_canvas_cb_zone_sort(const void *data1, const void *data2)
    return z1->num - z2->num;
 }
 
+static void
+_e_comp_canvas_resize(Ecore_Evas *ee EINA_UNUSED)
+{
+   e_randr2_screens_setup(e_comp->w, e_comp->h);
+   e_comp_canvas_update();
+}
 
 E_API Eina_Bool
 e_comp_canvas_init(int w, int h)
@@ -260,6 +266,7 @@ e_comp_canvas_init(int w, int h)
    E_LIST_HANDLER_APPEND(handlers, E_EVENT_SCREENSAVER_ON, _e_comp_cb_screensaver_on, NULL);
    E_LIST_HANDLER_APPEND(handlers, E_EVENT_SCREENSAVER_OFF, _e_comp_cb_screensaver_off, NULL);
 
+   ecore_evas_callback_resize_set(e_comp->ee, _e_comp_canvas_resize);
    ecore_evas_resize(e_comp->ee, w, h);
 
    return EINA_TRUE;

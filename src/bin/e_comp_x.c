@@ -4741,45 +4741,15 @@ _e_comp_x_cb_frame_extents_request(void *data EINA_UNUSED, int ev_type EINA_UNUS
 static Eina_Bool
 _e_comp_x_randr_change(void *data EINA_UNUSED, int ev_type EINA_UNUSED, void *event_info EINA_UNUSED)
 {
-   if ((e_comp->w != e_randr2->w) ||
-       (e_comp->h != e_randr2->h))
-     {
-        if (e_comp->comp_type == E_PIXMAP_TYPE_X)
-          e_comp_canvas_resize(e_randr2->w, e_randr2->h);
-     }
-   else
-     {
-        E_Client *ec;
-
-        ecore_x_netwm_desk_size_set(e_comp->root, e_comp->w, e_comp->h);
-        if (e_comp->comp_type == E_PIXMAP_TYPE_X)
-          e_randr2_screens_setup(e_comp->w, e_comp->h);
-
-        if (e_comp->comp_type == E_PIXMAP_TYPE_X)
-          e_comp_canvas_update();
-        E_CLIENT_FOREACH(ec)
-          {
-             if (!e_client_util_ignored_get(ec))
-               _e_comp_x_client_zone_geometry_set(ec);
-          }
-     }
-   return ECORE_CALLBACK_RENEW;
-}
-
-static void
-_e_comp_x_ee_resize(Ecore_Evas *ee EINA_UNUSED)
-{
    E_Client *ec;
 
    ecore_x_netwm_desk_size_set(e_comp->root, e_comp->w, e_comp->h);
-   e_randr2_screens_setup(e_comp->w, e_comp->h);
-
-   e_comp_canvas_update();
    E_CLIENT_FOREACH(ec)
      {
         if (!e_client_util_ignored_get(ec))
           _e_comp_x_client_zone_geometry_set(ec);
      }
+   return ECORE_CALLBACK_RENEW;
 }
 
 static void
@@ -5132,7 +5102,6 @@ _e_comp_x_setup(Ecore_X_Window root, int w, int h)
                            ECORE_EVENT_MODIFIER_CTRL |
                            ECORE_EVENT_MODIFIER_ALT, 0);
 
-   ecore_evas_callback_resize_set(e_comp->ee, _e_comp_x_ee_resize);
    ecore_evas_data_set(e_comp->ee, "comp", e_comp);
    e_comp->bindings_grab_cb = _e_comp_x_bindings_grab_cb;
    e_comp->bindings_ungrab_cb = _e_comp_x_bindings_ungrab_cb;
