@@ -4470,7 +4470,7 @@ _e_comp_x_hook_client_del(void *d EINA_UNUSED, E_Client *ec)
           e_comp_wl_client_xwayland_setup(ec, NULL, NULL);
         else
           {
-             e_pixmap_alias(NULL, E_PIXMAP_TYPE_X, e_comp_x_client_pixmap_get(ec));
+             e_pixmap_alias(NULL, E_PIXMAP_TYPE_X, win);
              free(cd);
              e_pixmap_free(e_comp_x_client_pixmap_get(ec));
           }
