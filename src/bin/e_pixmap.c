@@ -842,21 +842,6 @@ e_pixmap_image_draw(E_Pixmap *cp, const Eina_Rectangle *r)
    return EINA_FALSE;
 }
 
-E_API void 
-e_pixmap_image_draw_done(E_Pixmap *cp)
-{
-   EINA_SAFETY_ON_NULL_RETURN(cp);
-
-#ifdef HAVE_WAYLAND
-   struct wl_shm_buffer *shm_buffer;
-
-   shm_buffer = wl_shm_buffer_get(cp->buffer_ref.buffer->resource);
-   if (!shm_buffer) return;
-
-   wl_shm_buffer_end_access(shm_buffer);
-#endif
-}
-
 E_API void
 e_pixmap_image_opaque_set(E_Pixmap *cp, int x, int y, int w, int h)
 {
