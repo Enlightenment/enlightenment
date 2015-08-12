@@ -1020,7 +1020,7 @@ _e_comp_wl_surface_state_commit(E_Client *ec, E_Comp_Wl_Surface_State *state)
    Eina_Bool first = EINA_FALSE;
    Eina_Rectangle *dmg;
    Eina_Bool ignored, placed = EINA_TRUE;
-   int x = 0, y = 0;
+   int x = 0, y = 0, w, h;
 
    first = !e_pixmap_usable_get(ec->pixmap);
    ignored = ec->ignored;
@@ -1041,10 +1041,20 @@ _e_comp_wl_surface_state_commit(E_Client *ec, E_Comp_Wl_Surface_State *state)
 
         if (ec->new_client) placed = ec->placed;
 
-        ec->client.w = state->bw;
-        ec->client.h = state->bh;
-        e_comp_object_frame_wh_adjust(ec->frame, ec->client.w, ec->client.h, &ec->w, &ec->h);
+        if (first && e_client_has_xwindow(ec))
+          /* use client geometry to avoid race condition from x11 configure request */
+          x = ec->x, y = ec->y;
+        else
+          {
+             ec->client.w = state->bw;
+             ec->client.h = state->bh;
+             e_comp_object_frame_wh_adjust(ec->frame, ec->client.w, ec->client.h, &ec->w, &ec->h);
+          }
+        w = ec->client.w;
+        h = ec->client.h;
      }
+   else
+     w = state->bw, h = state->bh;
    if (!e_pixmap_usable_get(ec->pixmap))
      {
         if (ec->comp_data->mapped)
@@ -1118,7 +1128,7 @@ _e_comp_wl_surface_state_commit(E_Client *ec, E_Comp_Wl_Surface_State *state)
                   e_drag_resize(e_comp->wl_comp_data->drag, state->bw, state->bh);
                }
              else
-               e_client_util_move_resize_without_frame(ec, x, y, state->bw, state->bh);
+               e_client_util_move_resize_without_frame(ec, x, y, w, h);
           }
 
         if (ec->new_client)
