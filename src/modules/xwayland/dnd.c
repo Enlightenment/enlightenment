@@ -285,8 +285,9 @@ _xwl_selection_notify(void *d EINA_UNUSED, int t EINA_UNUSED, Ecore_X_Event_Sele
              return ECORE_CALLBACK_RENEW;
           }
      }
-   /* FIXME: ecore-x events are fucked */
-   //if (ecore_x_atom_get(ev->target) != xwl_dnd_atom) return ECORE_CALLBACK_RENEW;
+#if (EFL_VERSION_MAJOR > 1) || (EFL_VERSION_MINOR >= 16)
+   if (ev->property != xwl_dnd_atom) return ECORE_CALLBACK_RENEW;
+#endif
    sd = ev->data;
 
    do
