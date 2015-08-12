@@ -3473,7 +3473,15 @@ e_comp_object_render(Evas_Object *obj)
              RENDER_DEBUG("UPDATE [%p] %i %i %ix%i", cw->ec, r->x, r->y, r->w, r->h);
           }
         /* set pixel data */
-        evas_object_image_data_set(cw->obj, pix);
+        if (e_comp->comp_type == E_PIXMAP_TYPE_WL)
+          {
+#warning FIXME BROKEN WAYLAND SHM BUFFER PROTOCOL
+             evas_object_image_data_copy_set(cw->obj, pix);
+             pix = evas_object_image_data_get(cw->obj, 0);
+             evas_object_image_data_set(cw->obj, pix);
+          }
+        else
+          evas_object_image_data_set(cw->obj, pix);
         EINA_LIST_FOREACH(cw->obj_mirror, l, o)
           {
              evas_object_image_data_set(o, pix);
