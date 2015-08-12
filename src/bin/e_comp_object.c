@@ -3452,25 +3452,28 @@ e_comp_object_render(Evas_Object *obj)
    if (e_pixmap_image_is_argb(cw->ec->pixmap))
      {
         pix = e_pixmap_image_data_get(cw->ec->pixmap);
-        EINA_ITERATOR_FOREACH(it, r)
+        if (e_comp->comp_type == E_PIXMAP_TYPE_X)
           {
-             E_RECTS_CLIP_TO_RECT(r->x, r->y, r->w, r->h, 0, 0, pw, ph);
-             /* get pixmap data from rect region on display server into memory */
-             ret = e_pixmap_image_draw(cw->ec->pixmap, r);
-             if (!ret)
+             EINA_ITERATOR_FOREACH(it, r)
                {
-                  WRN("UPDATE [%p]: %i %i %ix%i FAIL(%u)!!!!!!!!!!!!!!!!!", cw->ec, r->x, r->y, r->w, r->h, cw->failures);
-                  if (++cw->failures < FAILURE_MAX)
-                    e_comp_object_damage(obj, 0, 0, pw, ph);
-                  else
+                  E_RECTS_CLIP_TO_RECT(r->x, r->y, r->w, r->h, 0, 0, pw, ph);
+                  /* get pixmap data from rect region on display server into memory */
+                  ret = e_pixmap_image_draw(cw->ec->pixmap, r);
+                  if (!ret)
                     {
-                       DELD(cw->ec, 2);
-                       e_object_del(E_OBJECT(cw->ec));
-                       return EINA_FALSE;
+                       WRN("UPDATE [%p]: %i %i %ix%i FAIL(%u)!!!!!!!!!!!!!!!!!", cw->ec, r->x, r->y, r->w, r->h, cw->failures);
+                       if (++cw->failures < FAILURE_MAX)
+                         e_comp_object_damage(obj, 0, 0, pw, ph);
+                       else
+                         {
+                            DELD(cw->ec, 2);
+                            e_object_del(E_OBJECT(cw->ec));
+                            return EINA_FALSE;
+                         }
+                       break;
                     }
-                  break;
+                  RENDER_DEBUG("UPDATE [%p] %i %i %ix%i", cw->ec, r->x, r->y, r->w, r->h);
                }
-             RENDER_DEBUG("UPDATE [%p] %i %i %ix%i", cw->ec, r->x, r->y, r->w, r->h);
           }
         /* set pixel data */
         if (e_comp->comp_type == E_PIXMAP_TYPE_WL)
