@@ -219,7 +219,6 @@ _xwl_fixes_selection_notify(void *d EINA_UNUSED, int t EINA_UNUSED, Ecore_X_Even
              source->cancelled = _xwayland_cancelled_send;
              source->mime_types = namelist;
              free(names);
-             e_screensaver_inhibit_toggle(1);
           }
         else
           {
