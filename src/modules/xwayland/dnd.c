@@ -223,7 +223,9 @@ _xwl_fixes_selection_notify(void *d EINA_UNUSED, int t EINA_UNUSED, Ecore_X_Even
           }
         else
           {
-             if (e_comp->wl_comp_data->drag)
+             if (e_comp->wl_comp_data->drag &&
+                 e_comp->wl_comp_data->drag_client &&
+                 e_client_has_xwindow(e_comp->wl_comp_data->drag_client))
                e_object_del(E_OBJECT(e_comp->wl_comp_data->drag));
           }
         e_screensaver_inhibit_toggle(!!ev->owner);
