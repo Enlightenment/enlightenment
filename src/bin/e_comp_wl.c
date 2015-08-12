@@ -224,30 +224,36 @@ _e_comp_wl_evas_cb_mouse_out(void *data, Evas *evas EINA_UNUSED, Evas_Object *ob
 }
 
 static void
-_e_comp_wl_evas_cb_mouse_move(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event)
+_e_comp_wl_send_mouse_move(E_Client *ec, int x, int y, unsigned int timestamp)
 {
-   E_Client *ec;
-   Evas_Event_Mouse_Move *ev;
    struct wl_resource *res;
    struct wl_client *wc;
    Eina_List *l;
-
-   ev = event;
-   if (!(ec = data)) return;
-   if (ec->cur_mouse_action) return;
-   if (e_object_is_del(E_OBJECT(ec))) return;
-   if (ec->ignored) return;
-   if (!ec->comp_data->surface) return;
 
    wc = wl_resource_get_client(ec->comp_data->surface);
    EINA_LIST_FOREACH(e_comp->wl_comp_data->ptr.resources, l, res)
      {
         if (!e_comp_wl_input_pointer_check(res)) continue;
         if (wl_resource_get_client(res) != wc) continue;
-        wl_pointer_send_motion(res, ev->timestamp,
-                               wl_fixed_from_int(ev->cur.canvas.x - ec->client.x),
-                               wl_fixed_from_int(ev->cur.canvas.y - ec->client.y));
+        wl_pointer_send_motion(res, timestamp,
+                               wl_fixed_from_int(x - ec->client.x),
+                               wl_fixed_from_int(y - ec->client.y));
      }
+}
+
+static void
+_e_comp_wl_evas_cb_mouse_move(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event)
+{
+   E_Client *ec = data;
+   Evas_Event_Mouse_Move *ev = event;
+
+   if (ec->cur_mouse_action) return;
+   if (e_object_is_del(E_OBJECT(ec))) return;
+   if (ec->ignored) return;
+   if (!ec->comp_data->surface) return;
+
+   if ((!e_comp->wl_comp_data->drag_client) || (!e_client_has_xwindow(e_comp->wl_comp_data->drag_client)))
+     _e_comp_wl_send_mouse_move(ec, ev->cur.canvas.x, ev->cur.canvas.y, ev->timestamp);
 }
 
 static Eina_Bool
@@ -915,6 +921,10 @@ _e_comp_wl_cb_mouse_move(void *d EINA_UNUSED, int t EINA_UNUSED, Ecore_Event_Mou
         y = ev->y - e_comp->wl_comp_data->selection.target->client.y;
         wl_data_device_send_motion(res, ev->timestamp, wl_fixed_from_int(x), wl_fixed_from_int(y));
      }
+   if (e_comp->wl_comp_data->drag &&
+       e_comp->wl_comp_data->drag_client &&
+       e_client_has_xwindow(e_comp->wl_comp_data->drag_client))
+     _e_comp_wl_send_mouse_move(e_comp->wl_comp_data->drag_client, ev->x, ev->y, ev->timestamp);
    return ECORE_CALLBACK_RENEW;
 }
 
