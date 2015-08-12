@@ -93,6 +93,8 @@ _e_comp_wl_data_source_cb_offer(struct wl_client *client EINA_UNUSED, struct wl_
    if (!(source = wl_resource_get_user_data(resource)))
      return;
 
+   if (!source->mime_types)
+     source->mime_types = eina_array_new(1);
    eina_array_push(source->mime_types, eina_stringshare_add(mime_type));
 }
 
