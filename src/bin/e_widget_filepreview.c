@@ -250,7 +250,6 @@ _e_wid_fprev_preview_video_opened(E_Widget_Data *wd, Evas_Object *obj, void *eve
    if (iw < 1) iw = 1;
    if (ih < 1) ih = 1;
 
-   w = w;
    h = (w * ih) / iw;
    e_widget_preview_vsize_set(wd->o_preview_preview, w, h);
    if (h > oh)
