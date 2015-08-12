@@ -66,6 +66,11 @@ pass a few more options to the configure stage of Enlightenment:
 
   --enable-wayland
 
+Since this is all still a work-in-progress, there are a few Enlightenment 
+modules that have not been "fixed" to work without X11 yet.
+Those will need to be disabled if you enabled the wayland-only option:
+
+  --disable-xkbswitch
 
 If you also want support for running X applications under Wayland you might want
 to try out XWayland support:
