@@ -256,60 +256,13 @@ _e_comp_wl_evas_cb_mouse_move(void *data, Evas *evas EINA_UNUSED, Evas_Object *o
      _e_comp_wl_send_mouse_move(ec, ev->cur.canvas.x, ev->cur.canvas.y, ev->timestamp);
 }
 
-static Eina_Bool
-_e_comp_wl_evas_handle_mouse_button(E_Client *ec, uint32_t timestamp, uint32_t button_id, uint32_t state)
-{
-   Eina_List *l;
-   struct wl_client *wc;
-   uint32_t serial, btn;
-   struct wl_resource *res;
-
-   if (ec->cur_mouse_action || ec->border_menu || e_comp->wl_comp_data->drag) return EINA_FALSE;
-   if (e_object_is_del(E_OBJECT(ec))) return EINA_FALSE;
-   if (ec->ignored) return EINA_FALSE;
-
-   switch (button_id)
-     {
-      case 1:
-        btn = BTN_LEFT;
-        break;
-      case 2:
-        btn = BTN_MIDDLE;
-        break;
-      case 3:
-        btn = BTN_RIGHT;
-        break;
-      default:
-        btn = button_id;
-        break;
-     }
-
-   e_comp->wl_comp_data->ptr.button = btn;
-
-   if (!ec->comp_data->surface) return EINA_FALSE;
-
-   if (!eina_list_count(e_comp->wl_comp_data->ptr.resources))
-     return EINA_TRUE;
-
-   wc = wl_resource_get_client(ec->comp_data->surface);
-   serial = wl_display_next_serial(e_comp->wl_comp_data->wl.disp);
-
-   EINA_LIST_FOREACH(e_comp->wl_comp_data->ptr.resources, l, res)
-     {
-        if (wl_resource_get_client(res) != wc) continue;
-        if (!e_comp_wl_input_pointer_check(res)) continue;
-        wl_pointer_send_button(res, serial, timestamp, btn, state);
-     }
-   return EINA_TRUE;
-}
-
 static void
 _e_comp_wl_evas_cb_mouse_down(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event)
 {
    E_Client *ec = data;
    Evas_Event_Mouse_Down *ev = event;
 
-   _e_comp_wl_evas_handle_mouse_button(ec, ev->timestamp, ev->button,
+   e_comp_wl_evas_handle_mouse_button(ec, ev->timestamp, ev->button,
                                        WL_POINTER_BUTTON_STATE_PRESSED);
 }
 
@@ -319,7 +272,7 @@ _e_comp_wl_evas_cb_mouse_up(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj
    E_Client *ec = data;
    Evas_Event_Mouse_Up *ev = event;
 
-   _e_comp_wl_evas_handle_mouse_button(ec, ev->timestamp, ev->button,
+   e_comp_wl_evas_handle_mouse_button(ec, ev->timestamp, ev->button,
                                        WL_POINTER_BUTTON_STATE_RELEASED);
 }
 
@@ -3159,6 +3112,53 @@ e_comp_wl_key_up(Ecore_Event_Key *ev)
    /* update modifier state */
    e_comp_wl_input_keyboard_state_update(keycode, EINA_FALSE);
    return !!ec;
+}
+
+E_API Eina_Bool
+e_comp_wl_evas_handle_mouse_button(E_Client *ec, uint32_t timestamp, uint32_t button_id, uint32_t state)
+{
+   Eina_List *l;
+   struct wl_client *wc;
+   uint32_t serial, btn;
+   struct wl_resource *res;
+
+   if (ec->cur_mouse_action || ec->border_menu || e_comp->wl_comp_data->drag) return EINA_FALSE;
+   if (e_object_is_del(E_OBJECT(ec))) return EINA_FALSE;
+   if (ec->ignored) return EINA_FALSE;
+
+   switch (button_id)
+     {
+      case 1:
+        btn = BTN_LEFT;
+        break;
+      case 2:
+        btn = BTN_MIDDLE;
+        break;
+      case 3:
+        btn = BTN_RIGHT;
+        break;
+      default:
+        btn = button_id;
+        break;
+     }
+
+   e_comp->wl_comp_data->ptr.button = btn;
+
+   if (!ec->comp_data->surface) return EINA_FALSE;
+
+   if (!eina_list_count(e_comp->wl_comp_data->ptr.resources))
+     return EINA_TRUE;
+
+   wc = wl_resource_get_client(ec->comp_data->surface);
+   serial = wl_display_next_serial(e_comp->wl_comp_data->wl.disp);
+
+   EINA_LIST_FOREACH(e_comp->wl_comp_data->ptr.resources, l, res)
+     {
+        if (wl_resource_get_client(res) != wc) continue;
+        if (!e_comp_wl_input_pointer_check(res)) continue;
+        wl_pointer_send_button(res, serial, timestamp, btn, state);
+     }
+   return EINA_TRUE;
 }
 
 EINTERN void
