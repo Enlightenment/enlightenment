@@ -1536,6 +1536,7 @@ on_move(void *data, Evas_Object *o EINA_UNUSED, const char *em EINA_UNUSED, cons
                      drag_types, 1, drag_gcc, -1, NULL,
                      e_gadcon_drag_finished_cb);
    if (!drag) return;
+   drag->button_mask = evas_pointer_button_down_mask_get(e_comp->evas);
 
    o = drag_gcc->client_class->func.icon((E_Gadcon_Client_Class *)drag_gcc->client_class,
                                     e_drag_evas_get(drag));

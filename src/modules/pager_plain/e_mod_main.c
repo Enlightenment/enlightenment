@@ -1922,6 +1922,7 @@ _pager_window_cb_mouse_move(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EI
              drag = e_drag_new(x, y, drag_types, 2, pw, -1,
                                _pager_window_cb_drag_convert,
                                _pager_window_cb_drag_finished);
+             drag->button_mask = evas_pointer_button_down_mask_get(e_comp->evas);
 
              o = edje_object_add(drag->evas);
              e_theme_edje_object_set(o, "base/theme/modules/pager",
@@ -2297,6 +2298,7 @@ _pager_desk_cb_mouse_move(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA
         evas_object_geometry_get(pd->o_desk, &x, &y, &w, &h);
         drag = e_drag_new(x, y, drag_types, 1, pd, -1,
                           NULL, _pager_desk_cb_drag_finished);
+        drag->button_mask = evas_pointer_button_down_mask_get(e_comp->evas);
 
         /* redraw the desktop theme above */
         o = edje_object_add(drag->evas);

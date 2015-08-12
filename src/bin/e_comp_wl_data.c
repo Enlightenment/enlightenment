@@ -364,6 +364,7 @@ _e_comp_wl_data_device_cb_drag_start(struct wl_client *client, struct wl_resourc
    evas_pointer_canvas_xy_get(e_comp->evas, &x, &y);
    e_comp->wl_comp_data->drag = e_drag_new(x, y,
                                            NULL, 0, NULL, 0, NULL, _e_comp_wl_data_device_drag_finished);
+   e_comp->wl_comp_data->drag->button_mask = evas_pointer_button_down_mask_get(e_comp->evas);
    if (ec)
      e_drag_object_set(e_comp->wl_comp_data->drag, ec->frame);
    e_drag_start(e_comp->wl_comp_data->drag, x, y);

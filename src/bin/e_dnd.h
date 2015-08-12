@@ -44,6 +44,7 @@ struct _E_Drag
 
    int                x, y, w, h;
    int                dx, dy;
+   unsigned int       button_mask;
 
    E_Layer            layer;
    unsigned char      visible : 1;

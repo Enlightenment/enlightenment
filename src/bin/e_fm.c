@@ -7562,7 +7562,7 @@ _e_fm2_cb_icon_mouse_out(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_
 }
 
 static void
-_e_fm2_cb_icon_mouse_move(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info)
+_e_fm2_cb_icon_mouse_move(void *data, Evas *e, Evas_Object *obj EINA_UNUSED, void *event_info)
 {
    Evas_Event_Mouse_Move *ev;
    E_Fm2_Icon *ic;
@@ -7699,6 +7699,7 @@ _e_fm2_cb_icon_mouse_move(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA
 
              d = e_drag_new(0, 0, drag_types, 1,
                             sel, sel_length, NULL, _e_fm2_cb_drag_finished);
+             d->button_mask = evas_pointer_button_down_mask_get(e);
              if (layout)
                d->x = ic->sd->x, d->y = ic->sd->y;
              else

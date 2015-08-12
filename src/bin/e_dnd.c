@@ -1197,6 +1197,11 @@ _e_dnd_cb_mouse_up(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
 
    if (ev->window != _drag_win) return ECORE_CALLBACK_PASS_ON;
 
+   if (_drag_current && _drag_current->button_mask)
+     {
+        _drag_current->button_mask &= ~(1 << (ev->buttons - 1));
+        if (_drag_current->button_mask) return ECORE_CALLBACK_RENEW;
+     }
    _e_drag_end(ev->x, ev->y);
 
    return ECORE_CALLBACK_PASS_ON;

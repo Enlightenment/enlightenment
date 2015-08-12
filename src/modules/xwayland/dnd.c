@@ -203,6 +203,7 @@ _xwl_fixes_selection_notify(void *d EINA_UNUSED, int t EINA_UNUSED, Ecore_X_Even
              evas_pointer_canvas_xy_get(e_comp->evas, &x, &y);
              e_comp->wl_comp_data->drag_client = e_pixmap_find_client(E_PIXMAP_TYPE_X, ev->owner);
              e_comp->wl_comp_data->drag = e_drag_new(x, y, names, num, NULL, 0, NULL, _xwayland_drop);
+             e_comp->wl_comp_data->drag->button_mask = evas_pointer_button_down_mask_get(e_comp->evas);
              ecore_x_window_move_resize(e_comp->cm_selection, 0, 0, e_comp->w, e_comp->h);
              ecore_x_window_show(e_comp->cm_selection);
              e_drag_start(e_comp->wl_comp_data->drag, x, y);

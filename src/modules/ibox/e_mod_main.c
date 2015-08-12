@@ -783,6 +783,7 @@ _ibox_cb_icon_mouse_move(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_
              evas_object_geometry_get(ic->o_icon, &x, &y, &w, &h);
              d = e_drag_new(x, y, drag_types, 1,
                             ic->client, -1, NULL, _ibox_cb_drag_finished);
+             d->button_mask = evas_pointer_button_down_mask_get(e_comp->evas);
              o = e_client_icon_add(ic->client, e_drag_evas_get(d));
              e_drag_object_set(d, o);
 

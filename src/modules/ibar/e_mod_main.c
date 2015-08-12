@@ -1834,6 +1834,7 @@ _ibar_cb_icon_mouse_move(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_
         evas_object_geometry_get(ic->o_icon, &x, &y, &w, &h);
         d = e_drag_new(x, y, drag_types, 1,
                        ic->app, -1, NULL, _ibar_cb_drag_finished);
+        d->button_mask = evas_pointer_button_down_mask_get(e_comp->evas);
         efreet_desktop_ref(ic->app);
         size = MAX(w, h);
         o = e_util_desktop_icon_add(ic->app, size, e_drag_evas_get(d));

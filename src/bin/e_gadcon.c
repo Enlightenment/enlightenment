@@ -2302,6 +2302,7 @@ _e_gadcon_client_drag_begin(E_Gadcon_Client *gcc, int x, int y)
                                       drag_types, 1, gcc, -1, NULL,
                                       e_gadcon_drag_finished_cb);
    if (!drag) return;
+   drag->button_mask = evas_pointer_button_down_mask_get(e_comp->evas);
 
    o = gcc->client_class->func.icon((E_Gadcon_Client_Class *)gcc->client_class,
                                     e_drag_evas_get(drag));

@@ -3015,6 +3015,7 @@ e_client_mouse_move(E_Client *ec, Evas_Point *output)
                                                 drag_types, 1, ec, -1,
                                                 NULL,
                                                 _e_client_cb_drag_finished);
+                       client_drag->button_mask = evas_pointer_button_down_mask_get(e_comp->evas);
                        e_drag_resize(client_drag, w, h);
 
                        o = e_client_icon_add(ec, client_drag->evas);

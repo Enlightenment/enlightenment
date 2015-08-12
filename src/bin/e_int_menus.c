@@ -1009,6 +1009,7 @@ _e_int_menus_apps_drag(void *data, E_Menu *m EINA_UNUSED, E_Menu_Item *mi)
         efreet_desktop_ref(desktop);
         drag = e_drag_new(x, y, drag_types, 1, desktop, -1,
                           NULL, NULL);
+        drag->button_mask = evas_pointer_button_down_mask_get(e_comp->evas);
 
         size = MIN(w, h);
         o = e_util_desktop_icon_add(desktop, size, e_drag_evas_get(drag));
