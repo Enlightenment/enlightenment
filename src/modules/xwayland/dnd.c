@@ -165,7 +165,7 @@ _xwl_fixes_selection_notify(void *d EINA_UNUSED, int t EINA_UNUSED, Ecore_X_Even
              int x, y, num;
              unsigned char *data;
              const char **names = NULL;
-             Eina_List *namelist = NULL;
+             Eina_Array *namelist = NULL;
              E_Comp_Wl_Data_Source *source;
 
              if (ecore_x_window_prop_property_get(ev->owner,
@@ -179,6 +179,7 @@ _xwl_fixes_selection_notify(void *d EINA_UNUSED, int t EINA_UNUSED, Ecore_X_Even
                   Ecore_X_Atom *types = (void*)data;
 
                   names = malloc(num * sizeof(void*));
+                  namelist = eina_array_new(num);
                   for (i = 0; i < num; i++)
                     {
                        const char *name;
@@ -186,11 +187,11 @@ _xwl_fixes_selection_notify(void *d EINA_UNUSED, int t EINA_UNUSED, Ecore_X_Even
                        if (types[i] == string_atom)
                          {
                             name = names[i] = "UTF8_STRING";
-                            namelist = eina_list_append(namelist, eina_stringshare_add(WL_TEXT_STR));
+                            eina_array_push(namelist, eina_stringshare_add(WL_TEXT_STR));
                          }
                        else
                          names[i] = name = ecore_x_atom_name_get(types[i]);
-                       namelist = eina_list_append(namelist, eina_stringshare_add(name));
+                       eina_array_push(namelist, eina_stringshare_add(name));
                     }
                   if (num > 3)
                     {
@@ -269,9 +270,10 @@ _xwl_selection_notify(void *d EINA_UNUSED, int t EINA_UNUSED, Ecore_X_Event_Sele
              source = e_comp_wl_clipboard_source_create(NULL, 0, -1);
              dsource = e_comp_wl_data_manager_source_create(e_comp->wl_comp_data->xwl_client,
                e_comp->wl_comp_data->mgr.resource, 1);
+             source->data_source.mime_types = eina_array_new(tgs->num_targets);
              for (i = 0; i < tgs->num_targets; i++)
                if (tgs->targets[i])
-                 source->data_source.mime_types = eina_list_append(source->data_source.mime_types, eina_stringshare_add(tgs->targets[i]));
+                 eina_array_push(source->data_source.mime_types, eina_stringshare_add(tgs->targets[i]));
              e_comp->wl_comp_data->clipboard.source = source;
              e_comp->wl_comp_data->selection.data_source = &source->data_source;
              source->data_source.resource = dsource->resource;
@@ -346,7 +348,7 @@ _xwl_selection_request(void *d EINA_UNUSED, int t EINA_UNUSED, Ecore_X_Event_Sel
 {
    E_Comp_Wl_Data_Source *source;
    const char *type;
-   Eina_List *l;
+   Eina_Iterator *it = NULL;
 
    if (e_comp->wl_comp_data->drag_source)
      source = e_comp->wl_comp_data->drag_source;
@@ -360,8 +362,9 @@ _xwl_selection_request(void *d EINA_UNUSED, int t EINA_UNUSED, Ecore_X_Event_Sel
         Ecore_X_Atom *atoms;
         int i = 0;
 
-        atoms = alloca((2 + eina_list_count(source->mime_types)) * sizeof(void*));
-        EINA_LIST_FOREACH(source->mime_types, l, type)
+        atoms = alloca((2 + eina_array_count(source->mime_types)) * sizeof(void*));
+        it = eina_array_iterator_new(source->mime_types);
+        EINA_ITERATOR_FOREACH(it, type)
           atoms[i++] = ecore_x_atom_get(type);
         atoms[i++] = timestamp_atom;
         atoms[i++] = ECORE_X_ATOM_SELECTION_TARGETS;
@@ -382,7 +385,8 @@ _xwl_selection_request(void *d EINA_UNUSED, int t EINA_UNUSED, Ecore_X_Event_Sel
         Pipe *p;
 
         name = ecore_x_atom_name_get(ev->target);
-        EINA_LIST_FOREACH(source->mime_types, l, type)
+        it = eina_array_iterator_new(source->mime_types);
+        EINA_ITERATOR_FOREACH(it, type)
           if (eina_streq(name, type))
             {
                E_Client *ec;
@@ -406,6 +410,7 @@ _xwl_selection_request(void *d EINA_UNUSED, int t EINA_UNUSED, Ecore_X_Event_Sel
                break;
             }
      }
+   eina_iterator_free(it);
    return ECORE_CALLBACK_RENEW;
 }
 

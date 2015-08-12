@@ -16,7 +16,7 @@ struct _E_Comp_Wl_Data_Source
 {
    struct wl_resource *resource; //resource of wl_data_source
 
-   Eina_List *mime_types; //mime_type list to offer from source
+   Eina_Array *mime_types; //mime_type list to offer from source
    struct wl_signal destroy_signal; //signal to emit when wl_data_source resource is destroyed
 
    void (*target) (E_Comp_Wl_Data_Source *source, uint32_t serial, const char* mime_type);

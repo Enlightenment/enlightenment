@@ -2,6 +2,15 @@
 #define E_COMP_WL
 #include "e.h"
 
+static void
+_mime_types_free(E_Comp_Wl_Data_Source *source)
+{
+   if (!source->mime_types) return;
+   while (eina_array_count(source->mime_types))
+     eina_stringshare_del(eina_array_pop(source->mime_types));
+   eina_array_free(source->mime_types);
+}
+
 static void 
 _e_comp_wl_data_offer_cb_accept(struct wl_client *client EINA_UNUSED, struct wl_resource *resource, uint32_t serial, const char *mime_type)
 {
@@ -84,8 +93,7 @@ _e_comp_wl_data_source_cb_offer(struct wl_client *client EINA_UNUSED, struct wl_
    if (!(source = wl_resource_get_user_data(resource)))
      return;
 
-   source->mime_types = 
-     eina_list_append(source->mime_types, eina_stringshare_add(mime_type));
+   eina_array_push(source->mime_types, eina_stringshare_add(mime_type));
 }
 
 /* called by wl_data_source_destroy */
@@ -101,16 +109,13 @@ static void
 _e_comp_wl_data_source_cb_resource_destroy(struct wl_resource *resource)
 {
    E_Comp_Wl_Data_Source *source;
-   char *t;
 
    if (!(source = wl_resource_get_user_data(resource)))
      return;
 
    wl_signal_emit(&source->destroy_signal, source);
 
-   EINA_LIST_FREE(source->mime_types, t)
-      eina_stringshare_del(t);
-
+   _mime_types_free(source);
    free(source);
 }
 
@@ -174,7 +179,7 @@ static struct wl_resource*
 _e_comp_wl_data_device_data_offer_create(E_Comp_Wl_Data_Source *source, struct wl_resource *data_device_res)
 {
    E_Comp_Wl_Data_Offer *offer;
-   Eina_List *l;
+   Eina_Iterator *it;
    char *t;
 
    DBG("Data Offer Create");
@@ -201,8 +206,10 @@ _e_comp_wl_data_device_data_offer_create(E_Comp_Wl_Data_Source *source, struct w
 
    wl_data_device_send_data_offer(data_device_res, offer->resource);
 
-   EINA_LIST_FOREACH(source->mime_types, l, t)
-      wl_data_offer_send_offer(offer->resource, t);
+   it = eina_array_iterator_new(source->mime_types);
+   EINA_ITERATOR_FOREACH(it, t)
+     wl_data_offer_send_offer(offer->resource, t);
+   eina_iterator_free(it);
 
    return offer->resource;
 }
@@ -572,7 +579,7 @@ _e_comp_wl_clipboard_source_send_send(E_Comp_Wl_Data_Source *source, const char 
    clip_source = container_of(source, E_Comp_Wl_Clipboard_Source, data_source);
    if (!clip_source) return;
 
-   t = eina_list_nth(source->mime_types, 0);
+   t = eina_array_data_get(source->mime_types, 0);
    if (!strcmp(mime_type, t))
      _e_comp_wl_clipboard_offer_create(clip_source, fd);
    else
@@ -610,7 +617,7 @@ _e_comp_wl_clipboard_selection_set(struct wl_listener *listener EINA_UNUSED, voi
      e_comp_wl_clipboard_source_unref(clip_source);
 
    e_comp->wl_comp_data->clipboard.source = NULL;
-   mime_type = eina_list_nth(sel_source->mime_types, 0);
+   mime_type = eina_array_data_get(sel_source->mime_types, 0);
 
    if (pipe2(p, O_CLOEXEC) == -1)
      return;
@@ -665,37 +672,31 @@ e_comp_wl_data_device_send_enter(E_Client *ec)
      {
         int d1 = 0x5UL, d2, d3, d4;
         E_Comp_Wl_Data_Source *source;
-        Eina_List *l;
 
         d2 = d3 = d4 = 0;
         source = e_comp->wl_comp_data->drag_source;
 
-        if (eina_list_count(source->mime_types) > 3)
+        if (eina_array_count(source->mime_types) > 3)
           {
-             const char *type, *types[eina_list_count(source->mime_types)];
+             const char *type, *types[eina_array_count(source->mime_types)];
              int i = 0;
+             Eina_Iterator *it;
 
              d1 |= 0x1UL;
-             EINA_LIST_FOREACH(source->mime_types, l, type)
+             it = eina_array_iterator_new(source->mime_types);
+             EINA_ITERATOR_FOREACH(it, type)
                types[i++] = type;
+             eina_iterator_free(it);
              ecore_x_dnd_types_set(e_comp->cm_selection, types, i);
           }
-        else
+        else if (source->mime_types)
           {
-             l = source->mime_types;
-
-             if (source->mime_types)
-               d2 = ecore_x_atom_get(e_comp->wl_comp_data->drag->types[0]);
-             if (eina_list_count(source->mime_types) > 1)
-               {
-                  l = eina_list_next(l);
-                  d3 = ecore_x_atom_get(eina_list_data_get(l));
-               }
-             if (eina_list_count(source->mime_types) > 2)
-               {
-                  l = eina_list_next(l);
-                  d4 = ecore_x_atom_get(eina_list_data_get(l));
-               }
+             if (eina_array_count(source->mime_types))
+               d2 = ecore_x_atom_get(eina_array_data_get(source->mime_types, 0));
+             if (eina_array_count(source->mime_types) > 1)
+               d3 = ecore_x_atom_get(eina_array_data_get(source->mime_types, 1));
+             if (eina_array_count(source->mime_types) > 2)
+               d4 = ecore_x_atom_get(eina_array_data_get(source->mime_types, 2));
           }
 
         ecore_x_client_message32_send(e_client_util_win_get(ec),
@@ -887,9 +888,11 @@ e_comp_wl_clipboard_source_create(const char *mime_type, uint32_t serial, int fd
    source->serial = serial;
 
    if (mime_type)
-     source->data_source.mime_types =
-        eina_list_append(source->data_source.mime_types,
-                         eina_stringshare_add(mime_type));
+     {
+        if (!source->data_source.mime_types)
+          source->data_source.mime_types = eina_array_new(1);
+        eina_array_push(source->data_source.mime_types, eina_stringshare_add(mime_type));
+     }
 
    if (fd > 0)
      {
@@ -918,7 +921,7 @@ e_comp_wl_clipboard_source_unref(E_Comp_Wl_Clipboard_Source *source)
         close(source->fd);
      }
 
-   E_FREE_LIST(source->data_source.mime_types, eina_stringshare_del);
+   _mime_types_free(&source->data_source);
 
    wl_signal_emit(&source->data_source.destroy_signal, &source->data_source);
    wl_array_release(&source->contents);
