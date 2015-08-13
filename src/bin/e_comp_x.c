@@ -5381,6 +5381,7 @@ e_comp_x_xwayland_client_setup(E_Client *ec, E_Client *wc)
 {
    Ecore_X_Window win, pwin;
    E_Comp_X_Client_Data *cd;
+   Eina_Bool placed;
 
    win = e_client_util_win_get(ec);
    pwin = e_client_util_pwin_get(ec);
@@ -5398,7 +5399,7 @@ e_comp_x_xwayland_client_setup(E_Client *ec, E_Client *wc)
    EC_CHANGED(wc);
    wc->depth = ec->depth;
    wc->override = ec->override;
-   wc->placed = ec->placed;
+   placed = ec->placed;
    wc->input_only = ec->input_only;
    wc->border_size = ec->border_size;
    wc->no_shape_cut = 0;
@@ -5431,6 +5432,7 @@ e_comp_x_xwayland_client_setup(E_Client *ec, E_Client *wc)
    e_object_del(E_OBJECT(ec));
    e_hints_window_visible_set(wc);
    _e_comp_x_client_stack(wc);
+   wc->placed = placed;
 }
 #endif
 
