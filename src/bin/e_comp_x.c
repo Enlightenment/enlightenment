@@ -5401,6 +5401,7 @@ e_comp_x_xwayland_client_setup(E_Client *ec, E_Client *wc)
    wc->placed = ec->placed;
    wc->input_only = ec->input_only;
    wc->border_size = ec->border_size;
+   wc->no_shape_cut = 0;
    memcpy(&wc->icccm, &ec->icccm, sizeof(ec->icccm));
    memcpy(&wc->netwm, &ec->netwm, sizeof(ec->netwm));
    memcpy(&wc->e, &ec->e, sizeof(ec->e));
