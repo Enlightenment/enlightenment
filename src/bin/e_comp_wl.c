@@ -508,15 +508,12 @@ static void
 _e_comp_wl_evas_cb_focus_out(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
 {
    E_Client *ec;
-   E_Comp_Wl_Data *cdata;
    struct wl_resource *res;
    uint32_t serial, *k;
    Eina_List *l, *ll;
    double t;
 
    if (!(ec = data)) return;
-
-   cdata = e_comp->wl_comp_data;
 
    if (!ec->comp_data) return;
 
@@ -528,14 +525,14 @@ _e_comp_wl_evas_cb_focus_out(void *data, Evas *evas EINA_UNUSED, Evas_Object *ob
 
    if (!ec->comp_data->surface) return;
 
-   if (!eina_list_count(cdata->kbd.resources)) return;
+   if (!eina_list_count(e_comp_wl->kbd.resources)) return;
 
    /* send keyboard_leave to all keyboard resources */
-   serial = wl_display_next_serial(cdata->wl.disp);
+   serial = wl_display_next_serial(e_comp_wl->wl.disp);
    t = ecore_time_unix_get();
-   EINA_LIST_FOREACH_SAFE(cdata->kbd.focused, l, ll, res)
+   EINA_LIST_FOREACH_SAFE(e_comp_wl->kbd.focused, l, ll, res)
      {
-        wl_array_for_each(k, &cdata->kbd.keys)
+        wl_array_for_each(k, &e_comp_wl->kbd.keys)
           wl_keyboard_send_key(res, serial, t,
                                     *k, WL_KEYBOARD_KEY_STATE_RELEASED);
         wl_keyboard_send_leave(res, serial, ec->comp_data->surface);
@@ -1570,15 +1567,12 @@ _e_comp_wl_compositor_cb_bind(struct wl_client *client, void *data EINA_UNUSED, 
 static void
 _e_comp_wl_compositor_cb_del(void *data EINA_UNUSED)
 {
-   E_Comp_Wl_Data *cdata;
    E_Comp_Wl_Output *output;
 
-   cdata = e_comp->wl_comp_data;
+   if (e_comp_wl->screenshooter.global)
+     wl_global_destroy(e_comp_wl->screenshooter.global);
 
-   if (cdata->screenshooter.global)
-     wl_global_destroy(cdata->screenshooter.global);
-
-   EINA_LIST_FREE(cdata->outputs, output)
+   EINA_LIST_FREE(e_comp_wl->outputs, output)
      {
         if (output->id) eina_stringshare_del(output->id);
         if (output->make) eina_stringshare_del(output->make);
@@ -1587,10 +1581,10 @@ _e_comp_wl_compositor_cb_del(void *data EINA_UNUSED)
      }
 
    /* delete fd handler */
-   if (cdata->fd_hdlr) ecore_main_fd_handler_del(cdata->fd_hdlr);
+   if (e_comp_wl->fd_hdlr) ecore_main_fd_handler_del(e_comp_wl->fd_hdlr);
 
    /* free allocated data structure */
-   free(cdata);
+   free(e_comp_wl);
 }
 
 static void
@@ -2934,15 +2928,12 @@ e_comp_wl_output_init(const char *id, const char *make, const char *model,
                       unsigned int refresh, unsigned int subpixel,
                       unsigned int transform)
 {
-   E_Comp_Wl_Data *cdata;
    E_Comp_Wl_Output *output;
    Eina_List *l2;
    struct wl_resource *resource;
 
-   if (!(cdata = e_comp->wl_comp_data)) return EINA_FALSE;
-
    /* retrieve named output; or create it if it doesn't exist */
-   output = _e_comp_wl_output_get(cdata->outputs, id);
+   output = _e_comp_wl_output_get(e_comp_wl->outputs, id);
    if (!output)
      {
         if (!(output = E_NEW(E_Comp_Wl_Output, 1))) return EINA_FALSE;
@@ -2951,10 +2942,10 @@ e_comp_wl_output_init(const char *id, const char *make, const char *model,
         if (make) output->make = eina_stringshare_add(make);
         if (model) output->model = eina_stringshare_add(model);
 
-        cdata->outputs = eina_list_append(cdata->outputs, output);
+        e_comp_wl->outputs = eina_list_append(e_comp_wl->outputs, output);
 
         output->global = 
-          wl_global_create(cdata->wl.disp, &wl_output_interface,
+          wl_global_create(e_comp_wl->wl.disp, &wl_output_interface,
                            2, output, _e_comp_wl_cb_output_bind);
 
         output->resources = NULL;
@@ -3002,15 +2993,12 @@ e_comp_wl_output_init(const char *id, const char *make, const char *model,
 E_API void
 e_comp_wl_output_remove(const char *id)
 {
-   E_Comp_Wl_Data *cdata;
    E_Comp_Wl_Output *output;
 
-   if (!(cdata = e_comp->wl_comp_data)) return;
-
-   output = _e_comp_wl_output_get(cdata->outputs, id);
+   output = _e_comp_wl_output_get(e_comp_wl->outputs, id);
    if (output)
      {
-        cdata->outputs = eina_list_remove(cdata->outputs, output);
+        e_comp_wl->outputs = eina_list_remove(e_comp_wl->outputs, output);
 
         /* wl_global_destroy(output->global); */
 
@@ -3025,7 +3013,6 @@ e_comp_wl_output_remove(const char *id)
 EINTERN Eina_Bool
 e_comp_wl_key_down(Ecore_Event_Key *ev)
 {
-   E_Comp_Wl_Data *cdata;
    E_Client *ec = NULL;
    uint32_t serial, *end, *k, keycode;
 
@@ -3033,7 +3020,7 @@ e_comp_wl_key_down(Ecore_Event_Key *ev)
    _last_event_time = ecore_loop_time_get();
 
    keycode = (ev->keycode - 8);
-   if (!(cdata = e_comp->wl_comp_data)) return EINA_FALSE;
+   if (!(e_comp_wl = e_comp->wl_comp_data)) return EINA_FALSE;
 
 #ifndef E_RELEASE_BUILD
    if ((ev->modifiers & ECORE_EVENT_MODIFIER_CTRL) &&
@@ -3043,16 +3030,16 @@ e_comp_wl_key_down(Ecore_Event_Key *ev)
      exit(0);
 #endif
 
-   end = (uint32_t *)cdata->kbd.keys.data + (cdata->kbd.keys.size / sizeof(*k));
+   end = (uint32_t *)e_comp_wl->kbd.keys.data + (e_comp_wl->kbd.keys.size / sizeof(*k));
 
-   for (k = cdata->kbd.keys.data; k < end; k++)
+   for (k = e_comp_wl->kbd.keys.data; k < end; k++)
      {
         /* ignore server-generated key repeats */
         if (*k == keycode) return EINA_FALSE;
      }
 
-   cdata->kbd.keys.size = (const char *)end - (const char *)cdata->kbd.keys.data;
-   if (!(k = wl_array_add(&cdata->kbd.keys, sizeof(*k))))
+   e_comp_wl->kbd.keys.size = (const char *)end - (const char *)e_comp_wl->kbd.keys.data;
+   if (!(k = wl_array_add(&e_comp_wl->kbd.keys, sizeof(*k))))
      {
         DBG("wl_array_add: Out of memory\n");
         return EINA_FALSE;
@@ -3062,13 +3049,13 @@ e_comp_wl_key_down(Ecore_Event_Key *ev)
    if ((!e_client_action_get()) && (!e_comp->input_key_grabs) && (!e_menu_grab_window_get()))
      {
         ec = e_client_focused_get();
-        if (ec && ec->comp_data->surface && cdata->kbd.focused)
+        if (ec && ec->comp_data->surface && e_comp_wl->kbd.focused)
           {
              struct wl_resource *res;
              Eina_List *l;
 
-             serial = wl_display_next_serial(cdata->wl.disp);
-             EINA_LIST_FOREACH(cdata->kbd.focused, l, res)
+             serial = wl_display_next_serial(e_comp_wl->wl.disp);
+             EINA_LIST_FOREACH(e_comp_wl->kbd.focused, l, res)
                wl_keyboard_send_key(res, serial, ev->timestamp,
                                keycode, WL_KEYBOARD_KEY_STATE_PRESSED);
           }
@@ -3083,7 +3070,6 @@ EINTERN Eina_Bool
 e_comp_wl_key_up(Ecore_Event_Key *ev)
 {
    E_Client *ec = NULL;
-   E_Comp_Wl_Data *cdata;
    uint32_t serial, *end, *k, keycode;
    struct wl_resource *res;
    Eina_List *l;
@@ -3092,22 +3078,22 @@ e_comp_wl_key_up(Ecore_Event_Key *ev)
    _last_event_time = ecore_loop_time_get();
 
    keycode = (ev->keycode - 8);
-   if (!(cdata = e_comp->wl_comp_data)) return EINA_FALSE;
+   if (!(e_comp_wl = e_comp->wl_comp_data)) return EINA_FALSE;
 
-   end = (uint32_t *)cdata->kbd.keys.data + (cdata->kbd.keys.size / sizeof(*k));
-   for (k = cdata->kbd.keys.data; k < end; k++)
+   end = (uint32_t *)e_comp_wl->kbd.keys.data + (e_comp_wl->kbd.keys.size / sizeof(*k));
+   for (k = e_comp_wl->kbd.keys.data; k < end; k++)
      if (*k == keycode) *k = *--end;
 
-   cdata->kbd.keys.size = (const char *)end - (const char *)cdata->kbd.keys.data;
+   e_comp_wl->kbd.keys.size = (const char *)end - (const char *)e_comp_wl->kbd.keys.data;
 
    if ((!e_client_action_get()) && (!e_comp->input_key_grabs) && (!e_menu_grab_window_get()))
      {
         ec = e_client_focused_get();
 
-        if (cdata->kbd.focused)
+        if (e_comp_wl->kbd.focused)
           {
-             serial = wl_display_next_serial(cdata->wl.disp);
-             EINA_LIST_FOREACH(cdata->kbd.focused, l, res)
+             serial = wl_display_next_serial(e_comp_wl->wl.disp);
+             EINA_LIST_FOREACH(e_comp_wl->kbd.focused, l, res)
                wl_keyboard_send_key(res, serial, ev->timestamp,
                                     keycode, WL_KEYBOARD_KEY_STATE_RELEASED);
           }
