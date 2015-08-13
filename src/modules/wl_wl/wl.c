@@ -17,6 +17,7 @@ _wl_handle_global(void *data EINA_UNUSED, struct wl_registry *registry EINA_UNUS
 
    if (!strcmp(interface, "wl_shm"))
      e_comp->wl_comp_data->wl.shm = wl_registry_bind(registry, id, &wl_shm_interface, 1);
+   ecore_event_add(E_EVENT_WAYLAND_GLOBAL_ADD, NULL, NULL, NULL);
 }
 
 static void

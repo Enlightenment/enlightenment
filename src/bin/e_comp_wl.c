@@ -8,6 +8,8 @@
 
 #define COMPOSITOR_VERSION 3
 
+E_API int E_EVENT_WAYLAND_GLOBAL_ADD = -1;
+
 /* Resource Data Mapping: (wl_resource_get_user_data)
  *
  * wl_surface == e_pixmap
@@ -2675,6 +2677,8 @@ e_comp_wl_init(void)
 
    e_desklock_show_hook_add(_e_comp_wl_desklock_show);
    e_desklock_hide_hook_add(_e_comp_wl_desklock_hide);
+
+   E_EVENT_WAYLAND_GLOBAL_ADD = ecore_event_type_new();
 
    _last_event_time = ecore_loop_time_get();
 
