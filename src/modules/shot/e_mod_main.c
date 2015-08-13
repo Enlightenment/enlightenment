@@ -50,6 +50,7 @@ struct screenshooter_output
    struct wl_output *output;
    struct wl_buffer *buffer;
    int x, y, w, h;
+   uint32_t id;
    void *data;
 };
 #endif
@@ -1245,6 +1246,70 @@ _e_mod_menu_add(void *data EINA_UNUSED, E_Menu *m)
    e_menu_item_callback_set(mi, _e_mod_menu_cb, NULL);
 }
 
+#ifdef HAVE_WAYLAND
+static Ecore_Event_Handler *wl_global_handler;
+
+static Eina_Bool
+_wl_init()
+{
+   Eina_Inlist *globals;
+   Ecore_Wl_Global *global;
+   struct wl_registry *reg;
+
+   reg = e_comp->wl_comp_data->wl.registry ?: ecore_wl_registry_get();
+   if (e_comp->wl_comp_data->wl.registry)
+     globals = e_comp->wl_comp_data->wl.globals;
+   else
+     globals = ecore_wl_globals_get();
+   if (!globals)
+     {
+        if (!wl_global_handler)
+          {
+             if (e_comp->wl_comp_data->wl.registry)
+               wl_global_handler = ecore_event_handler_add(E_EVENT_WAYLAND_GLOBAL_ADD,
+                 (Ecore_Event_Handler_Cb)_wl_init, NULL);
+             else
+               wl_global_handler = ecore_event_handler_add(ECORE_WL_EVENT_INTERFACES_BOUND,
+                 (Ecore_Event_Handler_Cb)_wl_init, NULL);
+          }
+        return ECORE_CALLBACK_RENEW;
+     }
+   EINA_INLIST_FOREACH(globals, global)
+     {
+        if ((!_wl_screenshooter) && (!strcmp(global->interface, "screenshooter")))
+          {
+             _wl_screenshooter =
+               wl_registry_bind(reg, global->id,
+                                &screenshooter_interface, global->version);
+
+             if (_wl_screenshooter)
+               screenshooter_add_listener(_wl_screenshooter,
+                                          &_screenshooter_listener,
+                                          _wl_screenshooter);
+          }
+        else if (!strcmp(global->interface, "wl_output"))
+          {
+             struct screenshooter_output *output;
+             Eina_List *l;
+
+             EINA_LIST_FOREACH(_outputs, l, output)
+               if (output->id == global->id) return ECORE_CALLBACK_RENEW;
+             output = calloc(1, sizeof(*output));
+             if (output)
+               {
+                  output->output =
+                    wl_registry_bind(reg, global->id,
+                                     &wl_output_interface, global->version);
+                  _outputs = eina_list_append(_outputs, output);
+                  wl_output_add_listener(output->output,
+                                         &_output_listener, output);
+               }
+          }
+     }
+   return ECORE_CALLBACK_RENEW;
+}
+#endif
+
 /* module setup */
 E_API E_Module_Api e_modapi =
 {
@@ -1285,44 +1350,9 @@ e_modapi_init(E_Module *m)
      ("main/2",  _("Take Screenshot"), _e_mod_menu_add, NULL, NULL, NULL);
    border_hook = e_int_client_menu_hook_add(_bd_hook, NULL);
 
-   if (e_comp->comp_type == E_PIXMAP_TYPE_X) return m;
-
 #ifdef HAVE_WAYLAND
-   Eina_Inlist *globals;
-   Ecore_Wl_Global *global;
-   struct wl_registry *reg;
-
-   globals = e_comp->wl_comp_data->wl.globals ?: ecore_wl_globals_get();
-   reg = e_comp->wl_comp_data->wl.registry ?: ecore_wl_registry_get();
-   EINA_INLIST_FOREACH(globals, global)
-     {
-        if (!strcmp(global->interface, "screenshooter"))
-          {
-             _wl_screenshooter =
-               wl_registry_bind(reg, global->id,
-                                &screenshooter_interface, global->version);
-
-             if (_wl_screenshooter)
-               screenshooter_add_listener(_wl_screenshooter,
-                                          &_screenshooter_listener,
-                                          _wl_screenshooter);
-          }
-        else if (!strcmp(global->interface, "wl_output"))
-          {
-             struct screenshooter_output *output;
-
-             output = calloc(1, sizeof(*output));
-             if (output)
-               {
-                  output->output =
-                    wl_registry_bind(reg, global->id,
-                                     &wl_output_interface, global->version);
-                  _outputs = eina_list_append(_outputs, output);
-                  wl_output_add_listener(output->output,
-                                         &_output_listener, output);
-               }
-          }
-     }
+   if (e_comp->comp_type != E_PIXMAP_TYPE_X)
+     _wl_init();
 #endif
 
    return m;
@@ -1350,6 +1380,9 @@ e_modapi_shutdown(E_Module *m EINA_UNUSED)
         e_action_del("shot");
         act = NULL;
      }
+#ifdef HAVE_WAYLAND
+   E_FREE_FUNC(wl_global_handler, ecore_event_handler_del);
+#endif
    shot_module = NULL;
    e_int_client_menu_hook_del(border_hook);
    ecore_con_url_shutdown();
