@@ -2441,7 +2441,7 @@ _e_comp_wl_compositor_create(void)
      }
 
    /* set compositor wayland data */
-   e_comp->wl_comp_data = cdata;
+   e_comp_wl = e_comp->wl_comp_data = cdata;
 
    /* set wayland log handler */
    wl_log_set_handler_server(_e_comp_wl_log_cb_print);

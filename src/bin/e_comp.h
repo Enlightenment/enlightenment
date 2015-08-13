@@ -174,6 +174,8 @@ typedef enum
 } E_Comp_Engine;
 
 extern E_API E_Comp *e_comp;
+extern E_API E_Comp_X_Data *e_comp_x;
+extern E_API E_Comp_Wl_Data *e_comp_wl;
 
 EINTERN Eina_Bool e_comp_init(void);
 E_API E_Comp *e_comp_new(void);

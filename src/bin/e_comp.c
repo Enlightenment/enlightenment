@@ -22,6 +22,8 @@
 static Eina_List *handlers = NULL;
 static Eina_List *hooks = NULL;
 E_API E_Comp *e_comp = NULL;
+E_API E_Comp_X_Data *e_comp_x = NULL;
+E_API E_Comp_Wl_Data *e_comp_wl = NULL;
 static Eina_Hash *ignores = NULL;
 static Eina_List *actions = NULL;
 
