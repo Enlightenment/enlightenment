@@ -419,7 +419,8 @@ static const struct wl_data_device_interface _e_data_device_interface =
 static void
 _e_comp_wl_data_device_cb_unbind(struct wl_resource *resource)
 {
-   eina_hash_del_by_key(e_comp->wl_comp_data->mgr.data_resources, &resource);
+   struct wl_client *wc = wl_resource_get_client(resource);
+   eina_hash_del_by_key(e_comp->wl_comp_data->mgr.data_resources, &wc);
 }
 
 static void 
