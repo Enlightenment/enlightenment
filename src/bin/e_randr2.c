@@ -96,6 +96,7 @@ e_randr2_init(void)
         _config_update(e_randr2, e_randr2_cfg);
         e_randr2_config_save();
      }
+   ecore_event_add(E_EVENT_RANDR_CHANGE, NULL, NULL, NULL);
    return EINA_TRUE;
 }
 
