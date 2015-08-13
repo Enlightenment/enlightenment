@@ -657,10 +657,10 @@ _e_comp_x_post_client_idler_cb(void *d EINA_UNUSED)
         ec->post_move = 0;
         ec->post_resize = 0;
      }
-   if (e_comp->x_comp_data->restack && (!e_comp->new_clients))
+   if (e_comp_x->restack && (!e_comp->new_clients))
      {
         e_hints_client_stacking_set();
-        e_comp->x_comp_data->restack = 0;
+        e_comp_x->restack = 0;
      }
    _e_comp_x_post_client_idler = NULL;
    return EINA_FALSE;
@@ -742,7 +742,7 @@ _e_comp_x_client_stack(E_Client *ec)
                             ECORE_X_WINDOW_CONFIGURE_MASK_STACK_MODE,
                             0, 0, 0, 0, 0, win, mode);
    _e_comp_x_post_client_idler_add(ec);
-   e_comp->x_comp_data->restack = 1;
+   e_comp_x->restack = 1;
    EINA_LIST_FOREACH(ec->e.state.video_child, l, ec2)
      evas_object_stack_below(ec2->frame, ec->frame);
 }
@@ -1098,10 +1098,10 @@ _e_comp_x_destroy(void *data EINA_UNUSED, int type EINA_UNUSED, Ecore_X_Event_Wi
    ec = _e_comp_x_client_find_by_window(ev->win);
    if (!ec)
      {
-        if (!e_comp->x_comp_data->retry_clients) return ECORE_CALLBACK_RENEW;
-        e_comp->x_comp_data->retry_clients = eina_list_remove(e_comp->x_comp_data->retry_clients, (uintptr_t*)(unsigned long)ev->win);
-        if (!e_comp->x_comp_data->retry_clients)
-          E_FREE_FUNC(e_comp->x_comp_data->retry_timer, ecore_timer_del);
+        if (!e_comp_x->retry_clients) return ECORE_CALLBACK_RENEW;
+        e_comp_x->retry_clients = eina_list_remove(e_comp_x->retry_clients, (uintptr_t*)(unsigned long)ev->win);
+        if (!e_comp_x->retry_clients)
+          E_FREE_FUNC(e_comp_x->retry_timer, ecore_timer_del);
         return ECORE_CALLBACK_PASS_ON;
      }
    if (_e_comp_x_client_data_get(ec))
@@ -1284,7 +1284,7 @@ _e_comp_x_show_helper(E_Client *ec)
              _e_comp_x_post_client_idler_add(ec);
              ec->post_move = 1;
              ec->post_resize = 1;
-             e_comp->x_comp_data->restack = 1;
+             e_comp_x->restack = 1;
           }
      }
 }
@@ -1294,7 +1294,7 @@ _e_comp_x_show_retry(void *data EINA_UNUSED)
 {
    uintptr_t *win;
 
-   EINA_LIST_FREE(e_comp->x_comp_data->retry_clients, win)
+   EINA_LIST_FREE(e_comp_x->retry_clients, win)
      {
         E_Client *ec;
 
@@ -1302,7 +1302,7 @@ _e_comp_x_show_retry(void *data EINA_UNUSED)
         if (ec) _e_comp_x_show_helper(ec);
      }
 
-   e_comp->x_comp_data->retry_timer = NULL;
+   e_comp_x->retry_timer = NULL;
    return EINA_FALSE;
 }
 
@@ -1353,10 +1353,10 @@ _e_comp_x_hide(void *data EINA_UNUSED, int type EINA_UNUSED, Ecore_X_Event_Windo
    ec = _e_comp_x_client_find_by_window(ev->win);
    if (!ec)
      {
-        if (!e_comp->x_comp_data->retry_clients) return ECORE_CALLBACK_RENEW;
-        e_comp->x_comp_data->retry_clients = eina_list_remove(e_comp->x_comp_data->retry_clients, (uintptr_t*)(unsigned long)ev->win);
-        if (!e_comp->x_comp_data->retry_clients)
-          E_FREE_FUNC(e_comp->x_comp_data->retry_timer, ecore_timer_del);
+        if (!e_comp_x->retry_clients) return ECORE_CALLBACK_RENEW;
+        e_comp_x->retry_clients = eina_list_remove(e_comp_x->retry_clients, (uintptr_t*)(unsigned long)ev->win);
+        if (!e_comp_x->retry_clients)
+          E_FREE_FUNC(e_comp_x->retry_timer, ecore_timer_del);
         return ECORE_CALLBACK_PASS_ON;
      }
    if ((!ec->visible) || (ec->hidden && ec->unredirected_single))
@@ -2108,7 +2108,7 @@ _e_comp_x_message(void *data EINA_UNUSED, int type EINA_UNUSED, Ecore_X_Event_Cl
         E_Client *wc = NULL;
 
         if (e_comp->comp_type != E_PIXMAP_TYPE_WL) return ECORE_CALLBACK_RENEW;
-        res = wl_client_get_object(e_comp->wl_comp_data->xwl_client, ev->data.l[0]);
+        res = wl_client_get_object(e_comp_wl->xwl_client, ev->data.l[0]);
         if (res)
           wc = wl_resource_get_user_data(res);
         if (wc)
@@ -2816,10 +2816,10 @@ static void
 _e_comp_x_hook_client_eval_end(void *d EINA_UNUSED, E_Client *ec)
 {
    E_COMP_X_PIXMAP_CHECK;
-   if (e_comp->x_comp_data->restack && (!e_comp->new_clients))
+   if (e_comp_x->restack && (!e_comp->new_clients))
      {
         e_hints_client_stacking_set();
-        e_comp->x_comp_data->restack = 0;
+        e_comp_x->restack = 0;
      }
 }
 
@@ -4964,23 +4964,23 @@ _e_comp_x_bindings_ungrab_cb(void)
 static Eina_Bool
 _e_comp_x_desklock_key_down(void *d EINA_UNUSED, int t EINA_UNUSED, Ecore_Event_Key *ev)
 {
-   return (ev->window == e_comp->x_comp_data->lock_win);
+   return (ev->window == e_comp_x->lock_win);
 }
 
 static void
 _e_comp_x_desklock_hide(void)
 {
-   if (e_comp->x_comp_data->lock_win)
+   if (e_comp_x->lock_win)
      {
-        e_grabinput_release(e_comp->x_comp_data->lock_win, e_comp->x_comp_data->lock_win);
-        ecore_x_window_free(e_comp->x_comp_data->lock_win);
-        e_comp->x_comp_data->lock_win = 0;
+        e_grabinput_release(e_comp_x->lock_win, e_comp_x->lock_win);
+        ecore_x_window_free(e_comp_x->lock_win);
+        e_comp_x->lock_win = 0;
      }
 
-   if (e_comp->x_comp_data->lock_grab_break_wnd)
-     ecore_x_window_show(e_comp->x_comp_data->lock_grab_break_wnd);
-   e_comp->x_comp_data->lock_grab_break_wnd = 0;
-   E_FREE_FUNC(e_comp->x_comp_data->lock_key_handler, ecore_event_handler_del);
+   if (e_comp_x->lock_grab_break_wnd)
+     ecore_x_window_show(e_comp_x->lock_grab_break_wnd);
+   e_comp_x->lock_grab_break_wnd = 0;
+   E_FREE_FUNC(e_comp_x->lock_key_handler, ecore_event_handler_del);
    e_comp_override_del();
 }
 
@@ -4989,7 +4989,7 @@ _e_comp_x_desklock_show(void)
 {
    Ecore_X_Window win;
 
-   win = e_comp->x_comp_data->lock_win =
+   win = e_comp_x->lock_win =
      ecore_x_window_input_new(e_comp->root, 0, 0, 1, 1);
    ecore_x_window_show(win);
    if (!e_grabinput_get(win, 0, win))
@@ -5010,7 +5010,7 @@ _e_comp_x_desklock_show(void)
                   ecore_x_window_hide(windows[i]);
                   if (e_grabinput_get(win, 0, win))
                     {
-                       e_comp->x_comp_data->lock_grab_break_wnd = windows[i];
+                       e_comp_x->lock_grab_break_wnd = windows[i];
                        free(windows);
                        goto works;
                     }
@@ -5021,8 +5021,8 @@ _e_comp_x_desklock_show(void)
      }
 works:
    e_comp_override_add();
-   e_comp_ignore_win_add(E_PIXMAP_TYPE_X, e_comp->x_comp_data->lock_win);
-   e_comp->x_comp_data->lock_key_handler =
+   e_comp_ignore_win_add(E_PIXMAP_TYPE_X, e_comp_x->lock_win);
+   e_comp_x->lock_key_handler =
      ecore_event_handler_add(ECORE_EVENT_KEY_DOWN, (Ecore_Event_Handler_Cb)_e_comp_x_desklock_key_down, e_comp);
 
    return EINA_TRUE;

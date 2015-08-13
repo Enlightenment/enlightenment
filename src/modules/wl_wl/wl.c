@@ -13,10 +13,10 @@ _wl_handle_global(void *data EINA_UNUSED, struct wl_registry *registry EINA_UNUS
    global->id = id;
    global->interface = strdup(interface);
    global->version = version;
-   e_comp->wl_comp_data->wl.globals = eina_inlist_append(e_comp->wl_comp_data->wl.globals, EINA_INLIST_GET(global));
+   e_comp_wl->wl.globals = eina_inlist_append(e_comp_wl->wl.globals, EINA_INLIST_GET(global));
 
    if (!strcmp(interface, "wl_shm"))
-     e_comp->wl_comp_data->wl.shm = wl_registry_bind(registry, id, &wl_shm_interface, 1);
+     e_comp_wl->wl.shm = wl_registry_bind(registry, id, &wl_shm_interface, 1);
    ecore_event_add(E_EVENT_WAYLAND_GLOBAL_ADD, NULL, NULL, NULL);
 }
 
@@ -26,11 +26,11 @@ _wl_handle_global_remove(void *data EINA_UNUSED, struct wl_registry *registry EI
    Ecore_Wl_Global *global;
    Eina_Inlist *tmp;
 
-   EINA_INLIST_FOREACH_SAFE(e_comp->wl_comp_data->wl.globals, tmp, global)
+   EINA_INLIST_FOREACH_SAFE(e_comp_wl->wl.globals, tmp, global)
      {
         if (global->id != id) continue;
-        e_comp->wl_comp_data->wl.globals =
-          eina_inlist_remove(e_comp->wl_comp_data->wl.globals, EINA_INLIST_GET(global));
+        e_comp_wl->wl.globals =
+          eina_inlist_remove(e_comp_wl->wl.globals, EINA_INLIST_GET(global));
         free(global->interface);
         free(global);
      }
@@ -113,7 +113,7 @@ wl_wl_init(void)
    disp = wl_display_connect(getenv("WAYLAND_DISPLAY"));
    ecore_main_fd_handler_add(wl_display_get_fd(disp), ECORE_FD_READ | ECORE_FD_WRITE | ECORE_FD_ERROR,
                                _ecore_wl_cb_handle_data, NULL, NULL, NULL);
-   e_comp->wl_comp_data->wl.registry = wl_display_get_registry(disp);
-   wl_registry_add_listener(e_comp->wl_comp_data->wl.registry, &_global_registry_listener, NULL);
+   e_comp_wl->wl.registry = wl_display_get_registry(disp);
+   wl_registry_add_listener(e_comp_wl->wl.registry, &_global_registry_listener, NULL);
    ecore_idle_enterer_add(_ecore_wl_cb_idle_enterer, NULL);
 }

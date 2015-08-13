@@ -54,7 +54,7 @@ _pipe_free(Pipe *p)
 static void
 _xdnd_finish(Eina_Bool success)
 {
-   ecore_x_client_message32_send(e_client_util_win_get(e_comp->wl_comp_data->drag_client), ECORE_X_ATOM_XDND_FINISHED, ECORE_X_EVENT_MASK_NONE,
+   ecore_x_client_message32_send(e_client_util_win_get(e_comp_wl->drag_client), ECORE_X_ATOM_XDND_FINISHED, ECORE_X_EVENT_MASK_NONE,
      e_comp->cm_selection, !!success, (!!success) * ECORE_X_ATOM_XDND_ACTION_COPY, 0, 0);
 }
 
@@ -81,8 +81,8 @@ _xwayland_dnd_finish(void)
 {
    ecore_x_window_hide(e_comp->cm_selection);
    ecore_x_window_prop_property_del(e_comp->cm_selection, ECORE_X_ATOM_XDND_TYPE_LIST);
-   e_comp->wl_comp_data->drag_client = NULL;
-   e_comp->wl_comp_data->drag_source = NULL;
+   e_comp_wl->drag_client = NULL;
+   e_comp_wl->drag_source = NULL;
    cur_fd = -1;
    e_screensaver_inhibit_toggle(0);
 }
@@ -91,18 +91,18 @@ static void
 _xwayland_drop(E_Drag *drag, int dropped)
 {
    if (e_comp->comp_type != E_PIXMAP_TYPE_WL) return;
-   e_comp->wl_comp_data->drag = NULL;
-   if ((!e_comp->wl_comp_data->ptr.ec) ||
-     (wl_resource_get_client(e_comp->wl_comp_data->ptr.ec->comp_data->surface) != e_comp->wl_comp_data->xwl_client))
-     e_comp_wl_evas_handle_mouse_button(e_comp->wl_comp_data->drag_client, 0,
-       e_comp->wl_comp_data->ptr.button, WL_POINTER_BUTTON_STATE_RELEASED);
-   if (dropped || e_object_is_del(E_OBJECT(drag)) || (!e_comp->wl_comp_data->selection.target))
+   e_comp_wl->drag = NULL;
+   if ((!e_comp_wl->ptr.ec) ||
+     (wl_resource_get_client(e_comp_wl->ptr.ec->comp_data->surface) != e_comp_wl->xwl_client))
+     e_comp_wl_evas_handle_mouse_button(e_comp_wl->drag_client, 0,
+       e_comp_wl->ptr.button, WL_POINTER_BUTTON_STATE_RELEASED);
+   if (dropped || e_object_is_del(E_OBJECT(drag)) || (!e_comp_wl->selection.target))
      _xdnd_finish(0);
    else
      {
         struct wl_resource *res;
 
-        res = e_comp_wl_data_find_for_client(wl_resource_get_client(e_comp->wl_comp_data->selection.target->comp_data->surface));
+        res = e_comp_wl_data_find_for_client(wl_resource_get_client(e_comp_wl->selection.target->comp_data->surface));
         if (res)
           {
              wl_data_device_send_drop(res);
@@ -117,7 +117,7 @@ static void
 _xwayland_target_send(E_Comp_Wl_Data_Source *source EINA_UNUSED, uint32_t serial EINA_UNUSED, const char* mime_type)
 {
    DBG("XWL Data Source Target Send");
-   ecore_x_client_message32_send(e_client_util_win_get(e_comp->wl_comp_data->drag_client), ECORE_X_ATOM_XDND_STATUS, ECORE_X_EVENT_MASK_NONE,
+   ecore_x_client_message32_send(e_client_util_win_get(e_comp_wl->drag_client), ECORE_X_ATOM_XDND_STATUS, ECORE_X_EVENT_MASK_NONE,
      e_comp->cm_selection, 2 | !!mime_type, 0, 0, (!!mime_type) * ECORE_X_ATOM_XDND_ACTION_COPY);
 }
 
@@ -128,7 +128,7 @@ _xwayland_send_send(E_Comp_Wl_Data_Source *source EINA_UNUSED, const char* mime_
 
    DBG("XWL Data Source Source Send");
 
-   if (e_comp->wl_comp_data->drag_client)
+   if (e_comp_wl->drag_client)
      {
         _xdnd_finish(0);
         sel = ECORE_X_ATOM_SELECTION_XDND;
@@ -147,7 +147,7 @@ static void
 _xwayland_cancelled_send(E_Comp_Wl_Data_Source *source EINA_UNUSED)
 {
    DBG("XWL Data Source Cancelled Send");
-   e_object_del(E_OBJECT(e_comp->wl_comp_data->drag));
+   e_object_del(E_OBJECT(e_comp_wl->drag));
 }
 
 static Eina_Bool
@@ -155,7 +155,7 @@ _xwl_fixes_selection_notify(void *d EINA_UNUSED, int t EINA_UNUSED, Ecore_X_Even
 {
    if (ev->owner == e_comp->cm_selection)
      {
-        e_comp->wl_comp_data->clipboard.xwl_owner = NULL;
+        e_comp_wl->clipboard.xwl_owner = NULL;
         return ECORE_CALLBACK_RENEW;
      }
    if (ev->atom == ECORE_X_ATOM_SELECTION_XDND)
@@ -202,18 +202,18 @@ _xwl_fixes_selection_notify(void *d EINA_UNUSED, int t EINA_UNUSED, Ecore_X_Even
                   free(data);
                }
              evas_pointer_canvas_xy_get(e_comp->evas, &x, &y);
-             e_comp->wl_comp_data->drag_client = e_pixmap_find_client(E_PIXMAP_TYPE_X, ev->owner);
-             e_comp->wl_comp_data->drag = e_drag_new(x, y, names, num, NULL, 0, NULL, _xwayland_drop);
-             e_comp->wl_comp_data->drag->button_mask = evas_pointer_button_down_mask_get(e_comp->evas);
+             e_comp_wl->drag_client = e_pixmap_find_client(E_PIXMAP_TYPE_X, ev->owner);
+             e_comp_wl->drag = e_drag_new(x, y, names, num, NULL, 0, NULL, _xwayland_drop);
+             e_comp_wl->drag->button_mask = evas_pointer_button_down_mask_get(e_comp->evas);
              ecore_x_window_move_resize(e_comp->cm_selection, 0, 0, e_comp->w, e_comp->h);
              ecore_x_window_show(e_comp->cm_selection);
-             e_drag_start(e_comp->wl_comp_data->drag, x, y);
-             if (e_comp->wl_comp_data->ptr.ec)
-               e_comp_wl_data_device_send_enter(e_comp->wl_comp_data->ptr.ec);
+             e_drag_start(e_comp_wl->drag, x, y);
+             if (e_comp_wl->ptr.ec)
+               e_comp_wl_data_device_send_enter(e_comp_wl->ptr.ec);
              e_comp_canvas_feed_mouse_up(0);
-             source = e_comp_wl_data_manager_source_create(e_comp->wl_comp_data->xwl_client,
-               e_comp->wl_comp_data->mgr.resource, 1);
-             e_comp->wl_comp_data->drag_source = source;
+             source = e_comp_wl_data_manager_source_create(e_comp_wl->xwl_client,
+               e_comp_wl->mgr.resource, 1);
+             e_comp_wl->drag_source = source;
              source->target = _xwayland_target_send;
              source->send = _xwayland_send_send;
              source->cancelled = _xwayland_cancelled_send;
@@ -222,10 +222,10 @@ _xwl_fixes_selection_notify(void *d EINA_UNUSED, int t EINA_UNUSED, Ecore_X_Even
           }
         else
           {
-             if (e_comp->wl_comp_data->drag &&
-                 e_comp->wl_comp_data->drag_client &&
-                 e_client_has_xwindow(e_comp->wl_comp_data->drag_client))
-               e_object_del(E_OBJECT(e_comp->wl_comp_data->drag));
+             if (e_comp_wl->drag &&
+                 e_comp_wl->drag_client &&
+                 e_client_has_xwindow(e_comp_wl->drag_client))
+               e_object_del(E_OBJECT(e_comp_wl->drag));
           }
         e_screensaver_inhibit_toggle(!!ev->owner);
         return ECORE_CALLBACK_RENEW;
@@ -234,15 +234,15 @@ _xwl_fixes_selection_notify(void *d EINA_UNUSED, int t EINA_UNUSED, Ecore_X_Even
      {
         if (ev->owner)
           {
-             if (e_comp->wl_comp_data->clipboard.source)
-               e_comp_wl_clipboard_source_unref(e_comp->wl_comp_data->clipboard.source);
-             e_comp->wl_comp_data->clipboard.source = NULL;
-             e_comp->wl_comp_data->clipboard.xwl_owner = ev->owner ? e_pixmap_find_client(E_PIXMAP_TYPE_X, ev->owner) : NULL;
+             if (e_comp_wl->clipboard.source)
+               e_comp_wl_clipboard_source_unref(e_comp_wl->clipboard.source);
+             e_comp_wl->clipboard.source = NULL;
+             e_comp_wl->clipboard.xwl_owner = ev->owner ? e_pixmap_find_client(E_PIXMAP_TYPE_X, ev->owner) : NULL;
              xconvertselection(ecore_x_display_get(), ECORE_X_ATOM_SELECTION_CLIPBOARD,
                ECORE_X_ATOM_SELECTION_TARGETS, xwl_dnd_atom, e_comp->cm_selection, 0);
           }
         else
-          e_comp->wl_comp_data->clipboard.xwl_owner = NULL;
+          e_comp_wl->clipboard.xwl_owner = NULL;
      }
    return ECORE_CALLBACK_RENEW;
 }
@@ -256,7 +256,7 @@ _xwl_selection_notify(void *d EINA_UNUSED, int t EINA_UNUSED, Ecore_X_Event_Sele
    DBG("XWL SELECTION NOTIFY");
    if ((ev->selection != ECORE_X_SELECTION_XDND) && (ev->selection != ECORE_X_SELECTION_CLIPBOARD))
      {
-        e_object_del(E_OBJECT(e_comp->wl_comp_data->drag));
+        e_object_del(E_OBJECT(e_comp_wl->drag));
         return ECORE_CALLBACK_RENEW;
      }
    if (ev->selection == ECORE_X_SELECTION_CLIPBOARD)
@@ -269,14 +269,14 @@ _xwl_selection_notify(void *d EINA_UNUSED, int t EINA_UNUSED, Ecore_X_Event_Sele
              int i;
 
              source = e_comp_wl_clipboard_source_create(NULL, 0, -1);
-             dsource = e_comp_wl_data_manager_source_create(e_comp->wl_comp_data->xwl_client,
-               e_comp->wl_comp_data->mgr.resource, 1);
+             dsource = e_comp_wl_data_manager_source_create(e_comp_wl->xwl_client,
+               e_comp_wl->mgr.resource, 1);
              source->data_source.mime_types = eina_array_new(tgs->num_targets);
              for (i = 0; i < tgs->num_targets; i++)
                if (tgs->targets[i])
                  eina_array_push(source->data_source.mime_types, eina_stringshare_add(tgs->targets[i]));
-             e_comp->wl_comp_data->clipboard.source = source;
-             e_comp->wl_comp_data->selection.data_source = &source->data_source;
+             e_comp_wl->clipboard.source = source;
+             e_comp_wl->selection.data_source = &source->data_source;
              source->data_source.resource = dsource->resource;
              source->data_source.send = _xwayland_send_send;
              free(dsource);
@@ -352,10 +352,10 @@ _xwl_selection_request(void *d EINA_UNUSED, int t EINA_UNUSED, Ecore_X_Event_Sel
    const char *type;
    Eina_Iterator *it = NULL;
 
-   if (e_comp->wl_comp_data->drag_source)
-     source = e_comp->wl_comp_data->drag_source;
-   else if (e_comp->wl_comp_data->selection.data_source)
-     source = e_comp->wl_comp_data->selection.data_source;
+   if (e_comp_wl->drag_source)
+     source = e_comp_wl->drag_source;
+   else if (e_comp_wl->selection.data_source)
+     source = e_comp_wl->selection.data_source;
    else
      return ECORE_CALLBACK_RENEW;
 

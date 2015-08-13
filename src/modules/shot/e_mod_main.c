@@ -953,7 +953,7 @@ _wl_shot_now(E_Zone *zone, E_Client *ec, const char *params)
         sh = E_CLAMP(sh, 1, ec->zone->y + ec->zone->h - y);
      }
 
-   shm = e_comp->wl_comp_data->wl.shm ?: ecore_wl_shm_get();
+   shm = e_comp_wl->wl.shm ?: ecore_wl_shm_get();
 
    EINA_LIST_FOREACH(_outputs, l, output)
      {
@@ -1256,16 +1256,16 @@ _wl_init()
    Ecore_Wl_Global *global;
    struct wl_registry *reg;
 
-   reg = e_comp->wl_comp_data->wl.registry ?: ecore_wl_registry_get();
-   if (e_comp->wl_comp_data->wl.registry)
-     globals = e_comp->wl_comp_data->wl.globals;
+   reg = e_comp_wl->wl.registry ?: ecore_wl_registry_get();
+   if (e_comp_wl->wl.registry)
+     globals = e_comp_wl->wl.globals;
    else
      globals = ecore_wl_globals_get();
    if (!globals)
      {
         if (!wl_global_handler)
           {
-             if (e_comp->wl_comp_data->wl.registry)
+             if (e_comp_wl->wl.registry)
                wl_global_handler = ecore_event_handler_add(E_EVENT_WAYLAND_GLOBAL_ADD,
                  (Ecore_Event_Handler_Cb)_wl_init, NULL);
              else

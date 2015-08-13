@@ -47,8 +47,8 @@ e_modapi_init(E_Module *m)
    if (!e_comp_wl_init()) return NULL;
    if (!e_comp_canvas_init(w * 3 / 4, h * 3 / 4)) return NULL;
 
-   ecore_evas_pointer_xy_get(e_comp->ee, &e_comp->wl_comp_data->ptr.x,
-                             &e_comp->wl_comp_data->ptr.y);
+   ecore_evas_pointer_xy_get(e_comp->ee, &e_comp_wl->ptr.x,
+                             &e_comp_wl->ptr.y);
    e_comp_wl_input_pointer_enabled_set(EINA_TRUE);
    e_comp_wl_input_keyboard_enabled_set(EINA_TRUE);
    e_comp_wl_input_touch_enabled_set(EINA_TRUE);

@@ -229,7 +229,7 @@ fail:
 
       default:
         close(socks[1]);
-        e_comp->wl_comp_data->xwl_client = wl_client_create(exs->wl_disp, socks[0]);
+        e_comp_wl->xwl_client = wl_client_create(exs->wl_disp, socks[0]);
 
         close(wms[1]);
         exs->wm_fd = wms[0];
@@ -352,7 +352,7 @@ e_modapi_init(E_Module *m)
      return NULL;
 
    /* record wayland display */
-   exs->wl_disp = e_comp->wl_comp_data->wl.disp;
+   exs->wl_disp = e_comp_wl->wl.disp;
 
    /* default display to zero */
    exs->disp = 0;

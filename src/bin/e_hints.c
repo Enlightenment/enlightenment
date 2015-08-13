@@ -1659,7 +1659,7 @@ e_hints_scale_update(void)
    Eina_List *l;
    E_Comp_Wl_Output *output;
 
-   EINA_LIST_FOREACH(e_comp->wl_comp_data->outputs, l, output)
+   EINA_LIST_FOREACH(e_comp_wl->outputs, l, output)
      output->scale = e_scale;
 
 #else

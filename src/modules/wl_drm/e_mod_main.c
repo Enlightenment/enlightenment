@@ -718,10 +718,10 @@ e_modapi_init(E_Module *m)
    if (!e_comp_wl_init()) return NULL;
    if (!e_comp_canvas_init(w, h)) return NULL;
 
-   e_comp->wl_comp_data->screenshooter.read_pixels = _drm_read_pixels;
+   e_comp_wl->screenshooter.read_pixels = _drm_read_pixels;
 
-   ecore_evas_pointer_xy_get(e_comp->ee, &e_comp->wl_comp_data->ptr.x,
-                             &e_comp->wl_comp_data->ptr.y);
+   ecore_evas_pointer_xy_get(e_comp->ee, &e_comp_wl->ptr.x,
+                             &e_comp_wl->ptr.y);
    evas_event_feed_mouse_in(e_comp->evas, 0, NULL);
 
    e_comp_wl_input_pointer_enabled_set(EINA_TRUE);
