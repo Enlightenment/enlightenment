@@ -1219,7 +1219,7 @@ _e_dnd_cb_mouse_move(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
      _e_drag_update(_drag_win_root, ev->x, ev->y,
                     _action ?: ECORE_X_ATOM_XDND_ACTION_PRIVATE);
 # ifdef HAVE_WAYLAND
-   if ((e_comp->comp_type == E_PIXMAP_TYPE_WL) && e_comp_util_has_x())
+   if (e_comp_util_has_xwayland())
      {
         if (e_comp->wl_comp_data->drag != _drag_current) return ECORE_CALLBACK_RENEW;
         if (!e_comp->wl_comp_data->ptr.ec) return ECORE_CALLBACK_RENEW;
