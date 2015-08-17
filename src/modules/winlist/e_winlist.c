@@ -120,6 +120,7 @@ e_winlist_show(E_Zone *zone, E_Winlist_Filter filter)
      {
         if (!e_comp_grab_input(1, 1))
           return 0;
+        _input_window = e_comp->ee_win;
      }
 
    w = (double)zone->w * e_config->winlist_pos_size_w;
@@ -266,15 +267,18 @@ e_winlist_hide(void)
    E_FREE_FUNC(_animator, ecore_animator_del);
 
 #ifndef HAVE_WAYLAND_ONLY
-   if (_input_window)
+   if (e_comp->comp_type == E_PIXMAP_TYPE_X)
      {
-        e_grabinput_release(_input_window, _input_window);
-        ecore_x_window_free(_input_window);
-        _input_window = 0;
+        if (_input_window)
+          {
+             e_grabinput_release(_input_window, _input_window);
+             ecore_x_window_free(_input_window);
+          }
      }
-   else
 #endif
+   if (e_comp->comp_type == E_PIXMAP_TYPE_WL)
      e_comp_ungrab_input(1, 1);
+   _input_window = 0;
    if (ec)
      {
         Eina_Bool set = !ec->lock_focus_out;
@@ -1102,7 +1106,7 @@ _e_winlist_cb_key_down(void *data EINA_UNUSED, int type EINA_UNUSED, void *event
 {
    Ecore_Event_Key *ev = event;
 
-   if ((e_comp->comp_type == E_PIXMAP_TYPE_X) && (ev->window != _input_window)) return ECORE_CALLBACK_PASS_ON;
+   if (ev->window != _input_window) return ECORE_CALLBACK_PASS_ON;
    if (!strcmp(ev->key, "Up"))
      e_winlist_prev();
    else if (!strcmp(ev->key, "Down"))
@@ -1181,6 +1185,7 @@ _e_winlist_cb_key_up(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
    E_Binding_Modifier mod;
 
    ev = event;
+   if (ev->window != _input_window) return ECORE_CALLBACK_PASS_ON;
    if (!_winlist) return ECORE_CALLBACK_PASS_ON;
    if (_hold_mod)
      {
@@ -1244,7 +1249,7 @@ _e_winlist_cb_mouse_down(void *data EINA_UNUSED, int type EINA_UNUSED, void *eve
    Ecore_Event_Mouse_Button *ev;
 
    ev = event;
-   if ((e_comp->comp_type == E_PIXMAP_TYPE_X) && (ev->window != _input_window)) return ECORE_CALLBACK_PASS_ON;
+   if (ev->window != _input_window) return ECORE_CALLBACK_PASS_ON;
    e_bindings_mouse_down_ecore_event_handle(E_BINDING_CONTEXT_WINLIST,
                                       E_OBJECT(_winlist_zone), ev);
    return ECORE_CALLBACK_PASS_ON;
@@ -1256,7 +1261,7 @@ _e_winlist_cb_mouse_up(void *data EINA_UNUSED, int type EINA_UNUSED, void *event
    Ecore_Event_Mouse_Button *ev;
 
    ev = event;
-   if ((e_comp->comp_type == E_PIXMAP_TYPE_X) && (ev->window != _input_window)) return ECORE_CALLBACK_PASS_ON;
+   if (ev->window != _input_window) return ECORE_CALLBACK_PASS_ON;
    if (e_bindings_mouse_up_ecore_event_handle(E_BINDING_CONTEXT_WINLIST, E_OBJECT(_winlist_zone), ev))
      return ECORE_CALLBACK_RENEW;
    if (_activate_type != E_WINLIST_ACTIVATE_TYPE_MOUSE) return ECORE_CALLBACK_RENEW;
@@ -1271,7 +1276,7 @@ _e_winlist_cb_mouse_wheel(void *data EINA_UNUSED, int type EINA_UNUSED, void *ev
    int i;
 
    ev = event;
-   if ((e_comp->comp_type == E_PIXMAP_TYPE_X) && (ev->window != _input_window)) return ECORE_CALLBACK_PASS_ON;
+   if (ev->window != _input_window) return ECORE_CALLBACK_PASS_ON;
    e_bindings_wheel_ecore_event_handle(E_BINDING_CONTEXT_WINLIST,
                                  E_OBJECT(_winlist_zone), ev);
    if (ev->z < 0) /* up */
@@ -1294,7 +1299,7 @@ _e_winlist_cb_mouse_move(void *data EINA_UNUSED, int type EINA_UNUSED, void *eve
    int x, y, w, h;
 
    ev = event;
-   if ((e_comp->comp_type == E_PIXMAP_TYPE_X) && (ev->window != _input_window)) return ECORE_CALLBACK_PASS_ON;
+   if (ev->window != _input_window) return ECORE_CALLBACK_PASS_ON;
    evas_object_geometry_get(_winlist, &x, &y, &w, &h);
    /* only feed mouse move if it's within the winlist popup */
    if (E_INSIDE(ev->x, ev->y, x, y, w, h))
