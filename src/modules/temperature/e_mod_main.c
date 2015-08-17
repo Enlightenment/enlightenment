@@ -326,10 +326,11 @@ temperature_face_update_config(Config_Face *inst)
 		      inst->sensor_type,
 		      (inst->sensor_name ? inst->sensor_name : "(null)"),
 		      inst->poll_interval);
-	     inst->tempget_exe = 
-	       ecore_exe_pipe_run(buf, ECORE_EXE_PIPE_READ | 
-				  ECORE_EXE_PIPE_READ_LINE_BUFFERED |
-				  ECORE_EXE_NOT_LEADER, inst);
+             inst->tempget_exe =
+               ecore_exe_pipe_run(buf, ECORE_EXE_PIPE_READ |
+                                  ECORE_EXE_PIPE_READ_LINE_BUFFERED |
+                                  ECORE_EXE_NOT_LEADER |
+                                  ECORE_EXE_TERM_WITH_PARENT, inst);
 	  }
      }
    else if (inst->backend == UDEV)
@@ -354,10 +355,11 @@ temperature_face_update_config(Config_Face *inst)
 		 inst->sensor_type,
 		 (inst->sensor_name ? inst->sensor_name : "(null)"),
 		 inst->poll_interval);
-	inst->tempget_exe = 
-	  ecore_exe_pipe_run(buf, ECORE_EXE_PIPE_READ | 
-			     ECORE_EXE_PIPE_READ_LINE_BUFFERED |
-			     ECORE_EXE_NOT_LEADER, inst);
+        inst->tempget_exe =
+          ecore_exe_pipe_run(buf, ECORE_EXE_PIPE_READ |
+                             ECORE_EXE_PIPE_READ_LINE_BUFFERED |
+                             ECORE_EXE_NOT_LEADER |
+                             ECORE_EXE_TERM_WITH_PARENT, inst);
      }
 #endif
 }
