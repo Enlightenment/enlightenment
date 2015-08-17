@@ -2526,23 +2526,13 @@ _ibar_go_focus(void)
    IBar *b;
    
    if (_ibar_focus_win) return;
+   b = _ibar_manager_find();
+   if (!b) return;
    if (!e_comp_grab_input(0, 1)) return;
    _ibar_focus_win = e_comp->ee_win;
-   _ibar_key_down_handler = ecore_event_handler_add
-     (ECORE_EVENT_KEY_DOWN, _ibar_focus_cb_key_down, NULL);
-   if (!_ibar_key_down_handler) goto err;
-   b = _ibar_manager_find();
-   if (!b) goto err;
+   _ibar_key_down_handler = ecore_event_handler_add(ECORE_EVENT_KEY_DOWN,
+     _ibar_focus_cb_key_down, NULL);
    _ibar_focus(b);
-   return;
-err:
-   if (_ibar_key_down_handler) ecore_event_handler_del(_ibar_key_down_handler);
-   _ibar_key_down_handler = NULL;
-   if (_ibar_focus_win)
-     {
-        e_comp_ungrab_input(0, 1);
-     }
-   _ibar_focus_win = 0;
 }
 
 static void
