@@ -2526,12 +2526,8 @@ _ibar_go_focus(void)
    IBar *b;
    
    if (_ibar_focus_win) return;
+   if (!e_comp_grab_input(0, 1)) return;
    _ibar_focus_win = e_comp->ee_win;
-   if (!e_grabinput_get(0, 0, _ibar_focus_win))
-     {
-        _ibar_focus_win = 0;
-        return;
-     }
    _ibar_key_down_handler = ecore_event_handler_add
      (ECORE_EVENT_KEY_DOWN, _ibar_focus_cb_key_down, NULL);
    if (!_ibar_key_down_handler) goto err;
@@ -2544,7 +2540,7 @@ err:
    _ibar_key_down_handler = NULL;
    if (_ibar_focus_win)
      {
-        e_grabinput_release(0, _ibar_focus_win);
+        e_comp_ungrab_input(0, 1);
      }
    _ibar_focus_win = 0;
 }
@@ -2557,7 +2553,7 @@ _ibar_go_unfocus(void)
    if (!_ibar_focus_win) return;
    b = _ibar_focused_find();
    if (b) _ibar_unfocus(b);
-   e_grabinput_release(0, _ibar_focus_win);
+   e_comp_ungrab_input(0, 1);
    _ibar_focus_win = 0;
    ecore_event_handler_del(_ibar_key_down_handler);
    _ibar_key_down_handler = NULL;
