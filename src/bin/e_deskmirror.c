@@ -15,6 +15,7 @@ typedef struct E_Smart_Data
    Evas_Object *clip;
    Evas_Object *bgpreview;
    Evas_Object *layout;
+   Evas_Object *events;
    Eina_Inlist *mirrors;
    Eina_Hash *mirror_hash;
 
@@ -114,6 +115,8 @@ _e_deskmirror_smart_reconfigure(E_Smart_Data *sd)
    evas_object_move(sd->clip, sd->x, sd->y);
    evas_object_move(sd->bgpreview, sd->x, sd->y);
    evas_object_move(sd->layout, sd->x, sd->y);
+   if (sd->events)
+     evas_object_move(sd->events, sd->x, sd->y);
 
    if (sd->resize)
      {
@@ -122,6 +125,8 @@ _e_deskmirror_smart_reconfigure(E_Smart_Data *sd)
         evas_object_resize(sd->clip, sd->w, sd->h);
         evas_object_resize(sd->bgpreview, sd->w, sd->h);
         evas_object_resize(sd->layout, sd->w, sd->h);
+        if (sd->events)
+          evas_object_resize(sd->events, sd->w, sd->h);
         EINA_INLIST_FOREACH(sd->mirrors, m)
           _mirror_scale_set(m, (float)sd->h / (float)sd->desk->zone->h);
      }
@@ -162,6 +167,7 @@ _e_deskmirror_smart_del(Evas_Object *obj)
    evas_object_del(sd->clip);
    evas_object_del(sd->bgpreview);
    evas_object_del(sd->layout);
+   evas_object_del(sd->events);
    free(sd);
 }
 
@@ -727,6 +733,14 @@ e_deskmirror_add(E_Desk *desk, Eina_Bool pager, Eina_Bool taskbar)
    sd->desk = desk;
    sd->mirror_hash = eina_hash_pointer_new((Eina_Free_Cb)_e_deskmirror_mirror_del_hash);
    sd->desk_delfn = e_object_delfn_add(E_OBJECT(desk), (Ecore_End_Cb)_e_deskmirror_delfn, sd);
+   if (pager || taskbar)
+     {
+        sd->events = evas_object_rectangle_add(e);
+        evas_object_color_set(sd->events, 0, 0, 0, 0);
+        evas_object_clip_set(sd->events, sd->clip);
+        evas_object_smart_member_add(sd->events, o);
+        evas_object_show(sd->events);
+     }
    sd->bgpreview = e_widget_bgpreview_desk_add(e, desk->zone, desk->x, desk->y);
    evas_object_pass_events_set(sd->bgpreview, 1);
    evas_object_clip_set(sd->bgpreview, sd->clip);
