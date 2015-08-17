@@ -2028,7 +2028,10 @@ _pager_window_cb_drag_finished(E_Drag *drag, int dropped)
    e_comp_object_effect_unclip(pw->client->frame);
    if (act_popup)
      {
-        e_grabinput_get(input_window, 0, input_window);
+        if (e_comp->comp_type == E_PIXMAP_TYPE_X)
+          e_grabinput_get(input_window, 0, input_window);
+        else
+          e_comp_grab_input(1, 1);
         if (!hold_count) _pager_popup_hide(1);
      }
 }
@@ -2389,7 +2392,10 @@ _pager_desk_cb_drag_finished(E_Drag *drag, int dropped)
 
    if (act_popup)
      {
-        e_grabinput_get(input_window, 0, input_window);
+        if (e_comp->comp_type == E_PIXMAP_TYPE_X)
+          e_grabinput_get(input_window, 0, input_window);
+        else
+          e_comp_grab_input(1, 1);
         if (!hold_count) _pager_popup_hide(1);
      }
 }
@@ -2419,13 +2425,21 @@ _pager_popup_cb_timeout(void *data)
    _pager_popup_free(pp);
 
 #ifndef HAVE_WAYLAND_ONLY
-   if (input_window)
+   if (e_comp->comp_type == E_PIXMAP_TYPE_X)
      {
-        ecore_x_window_free(input_window);
-        e_grabinput_release(input_window, input_window);
-        input_window = 0;
+        if (input_window)
+          {
+             e_grabinput_release(input_window, input_window);
+             ecore_x_window_free(input_window);
+             input_window = 0;
+          }
      }
 #endif
+   if (e_comp->comp_type == E_PIXMAP_TYPE_WL)
+     {
+        e_comp_ungrab_input(1, 1);
+        input_window = 0;
+     }
 
    return ECORE_CALLBACK_CANCEL;
 }
@@ -2452,15 +2466,23 @@ _pager_popup_show(void)
    if (pp) _pager_popup_free(pp);
 
 #ifndef HAVE_WAYLAND_ONLY
-   input_window = ecore_x_window_input_new(e_comp->win, 0, 0, 1, 1);
-   ecore_x_window_show(input_window);
-   if (!e_grabinput_get(input_window, 0, input_window))
+   if (e_comp->comp_type == E_PIXMAP_TYPE_X)
      {
-        ecore_x_window_free(input_window);
-        input_window = 0;
-        return 0;
+        input_window = ecore_x_window_input_new(e_comp->win, 0, 0, 1, 1);
+        ecore_x_window_show(input_window);
+        if (!e_grabinput_get(input_window, 0, input_window))
+          {
+             ecore_x_window_free(input_window);
+             input_window = 0;
+             return 0;
+          }
      }
 #endif
+   if (e_comp->comp_type == E_PIXMAP_TYPE_WL)
+     {
+        input_window = e_comp->ee_win;
+        e_comp_grab_input(1, 1);
+     }
 
    handlers = eina_list_append
        (handlers, ecore_event_handler_add
