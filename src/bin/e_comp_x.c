@@ -2080,11 +2080,22 @@ _e_comp_x_mouse_in(void *data EINA_UNUSED, int type EINA_UNUSED, Ecore_X_Event_M
 {
    E_Client *ec;
 
-   if ((ev->mode == ECORE_X_EVENT_MODE_NORMAL) &&
-       ((ev->detail == ECORE_X_EVENT_DETAIL_INFERIOR) || (ev->detail == ECORE_X_EVENT_DETAIL_VIRTUAL)))
-     return ECORE_CALLBACK_PASS_ON;
    ec = _e_comp_x_client_find_by_window(ev->win);
    if (!ec) return ECORE_CALLBACK_RENEW;
+   if (ev->mode == ECORE_X_EVENT_MODE_NORMAL)
+     {
+        if (ev->detail == ECORE_X_EVENT_DETAIL_INFERIOR)
+          {
+             if (ev->win != e_client_util_pwin_get(ec)) return ECORE_CALLBACK_RENEW;
+             if (ev->event_win != e_client_util_win_get(ec)) return ECORE_CALLBACK_RENEW;
+          }
+        if (ev->detail == ECORE_X_EVENT_DETAIL_VIRTUAL)
+          {
+             if (ev->win != e_client_util_win_get(ec)) return ECORE_CALLBACK_RENEW;
+             if (ev->event_win != e_client_util_pwin_get(ec)) return ECORE_CALLBACK_RENEW;
+          }
+        if (!evas_object_visible_get(ec->frame)) return ECORE_CALLBACK_RENEW;
+     }
    if (ec->comp_data->deleted) return ECORE_CALLBACK_RENEW;
    mouse_client = ec;
    if (ec->input_object) return ECORE_CALLBACK_RENEW;
