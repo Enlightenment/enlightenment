@@ -1398,6 +1398,7 @@ _e_client_cb_evas_hide(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UN
         if (ec->focused)
           _e_client_revert_focus(ec);
      }
+   ec->want_focus = ec->take_focus = 0;
 
    ec->post_show = 0;
 
