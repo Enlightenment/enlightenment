@@ -29,9 +29,7 @@ _e_manager_cb_key_down(void *data, int ev_type EINA_UNUSED, Ecore_Event_Key *ev)
          * *block actions when event (grab) window isn't comp window
          * *other cases?
          */
-        if (!ec) return ECORE_CALLBACK_RENEW;
-        if ((ec->border_menu) || (ev->event_window != man->comp->ee_win))
-          return ECORE_CALLBACK_PASS_ON;
+        if ((!ec) || (ev->event_window != e_comp_get(NULL)->ee_win)) return ECORE_CALLBACK_RENEW;
      }
    if (ev->root_window != man->root) man = e_manager_find_by_root(ev->root_window);
    if (!man) man = eina_list_data_get(managers);
