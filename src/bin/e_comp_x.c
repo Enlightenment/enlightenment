@@ -2178,11 +2178,22 @@ _e_comp_x_mouse_in(void *data EINA_UNUSED, int type EINA_UNUSED, Ecore_X_Event_M
    E_Client *ec;
 
    if (e_comp->comp_type != E_PIXMAP_TYPE_X) return ECORE_CALLBACK_RENEW;
-   if ((ev->mode == ECORE_X_EVENT_MODE_NORMAL) &&
-       ((ev->detail == ECORE_X_EVENT_DETAIL_INFERIOR) || (ev->detail == ECORE_X_EVENT_DETAIL_VIRTUAL)))
-     return ECORE_CALLBACK_PASS_ON;
    ec = _e_comp_x_client_find_by_window(ev->win);
    if (!ec) return ECORE_CALLBACK_RENEW;
+   if (ev->mode == ECORE_X_EVENT_MODE_NORMAL)
+     {
+        if (ev->detail == ECORE_X_EVENT_DETAIL_INFERIOR)
+          {
+             if (ev->win != e_client_util_win_get(ec)) return ECORE_CALLBACK_RENEW;
+             if (ev->event_win != e_client_util_pwin_get(ec)) return ECORE_CALLBACK_RENEW;
+          }
+        if (ev->detail == ECORE_X_EVENT_DETAIL_VIRTUAL)
+          {
+             if (ev->win != e_client_util_pwin_get(ec)) return ECORE_CALLBACK_RENEW;
+             if (ev->event_win != e_client_util_win_get(ec)) return ECORE_CALLBACK_RENEW;
+          }
+        if (!evas_object_visible_get(ec->frame)) return ECORE_CALLBACK_RENEW;
+     }
    if (_e_comp_x_client_data_get(ec)->deleted) return ECORE_CALLBACK_RENEW;
    mouse_client = ec;
    e_client_mouse_in(ec, e_comp_canvas_x_root_adjust(ev->root.x), e_comp_canvas_x_root_adjust(ev->root.y));
