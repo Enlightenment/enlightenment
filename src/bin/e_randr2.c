@@ -157,11 +157,11 @@ static Evas_Object *_fade_obj = NULL;
 static Eina_Bool
 _screen_closed(E_Randr2_Screen *s)
 {
-   printf("RRR: check lid for %s...\n", s->info.name);
+   //printf("RRR: check lid for %s...\n", s->info.name);
    if (!e_acpi_lid_is_closed()) return EINA_FALSE;
    if (s->info.is_lid)
      {
-        printf("RRR:   is closed lid\n");
+        //printf("RRR:   is closed lid\n");
         return EINA_TRUE;
      }
    return EINA_FALSE;
@@ -245,19 +245,19 @@ static void
 _do_apply(void)
 {
    // take current screen config and apply it to the driver
-   printf("RRR: re-get info before applying..\n");
+   //printf("RRR: re-get info before applying..\n");
    _info_free(e_randr2);
    e_randr2 = e_comp->screen->create();
    _screen_config_maxsize();
-   printf("RRR: apply config...\n");
+   //printf("RRR: apply config...\n");
    _config_apply(e_randr2, e_randr2_cfg);
-   printf("RRR: takeover config...\n");
+   //printf("RRR: takeover config...\n");
    _screen_config_takeover();
-   printf("RRR: eval config...\n");
+   //printf("RRR: eval config...\n");
    _screen_config_eval();
-   printf("RRR: really apply config...\n");
+   //printf("RRR: really apply config...\n");
    e_comp->screen->apply();
-   printf("RRR: done config...\n");
+   //printf("RRR: done config...\n");
 }
 
 static void
@@ -297,7 +297,7 @@ _config_load(void)
           }
         else
           {
-             printf("RRR: loaded existing config\n");
+             //printf("RRR: loaded existing config\n");
              return cfg;
           }
      }
@@ -309,7 +309,7 @@ _config_load(void)
    cfg->restore = 1;
    cfg->ignore_hotplug_events = 0;
    cfg->ignore_acpi_events = 0;
-   printf("RRR: fresh config\n");
+   //printf("RRR: fresh config\n");
    return cfg;
 }
 
@@ -339,10 +339,10 @@ _config_update(E_Randr2 *r, E_Config_Randr2 *cfg)
    E_Randr2_Screen *s;
    E_Config_Randr2_Screen *cs;
 
-   printf("--------------------------------------------------\n");
+   //printf("--------------------------------------------------\n");
    EINA_LIST_FOREACH(r->screens, l, s)
      {
-        printf("RRR: out id=%s:  connected=%i\n", s->id, s->info.connected);
+        //printf("RRR: out id=%s:  connected=%i\n", s->id, s->info.connected);
         if ((!s->id) || (!s->info.connected) || (_screen_closed(s))) continue;
         cs = e_randr2_config_screen_find(s, cfg);
         if (!cs)
@@ -368,7 +368,7 @@ _config_update(E_Randr2 *r, E_Config_Randr2 *cfg)
              cs->enabled = s->config.enabled;
           }
      }
-   printf("--------------------------------------------------\n");
+   //printf("--------------------------------------------------\n");
 }
 
 static void
@@ -419,20 +419,20 @@ _config_apply(E_Randr2 *r, E_Config_Randr2 *cfg)
    if ((!r) || (!cfg)) return;
    EINA_LIST_FOREACH(r->screens, l, s)
      {
-        printf("RRR: apply '%s'...\n", s->info.name);
+        //printf("RRR: apply '%s'...\n", s->info.name);
         cs = NULL;
         if ((!_screen_closed(s)) && (s->info.connected))
           cs = e_randr2_config_screen_find(s, cfg);
-        printf("RRR: connected =  %i\n", s->info.connected);
+        //printf("RRR: connected =  %i\n", s->info.connected);
         if ((cs) && (cs->enabled))
           {
-             printf("RRR: ... enabled\n");
-             printf("RRR: ... priority = %i\n", cs->priority);
+             //printf("RRR: ... enabled\n");
+             //printf("RRR: ... priority = %i\n", cs->priority);
              _config_really_apply(s, cs);
           }
         else if ((!cs) && (!_screen_closed(s)))
           {
-             printf("RRR: ... no config found...\n");
+             //printf("RRR: ... no config found...\n");
              cs2 = NULL;
              if (s->info.connected)
                {
@@ -460,23 +460,23 @@ _config_apply(E_Randr2 *r, E_Config_Randr2 *cfg)
                }
              if (cs2)
                {
-                  printf("RRR: ... enabled - fallback clone\n");
+                  //printf("RRR: ... enabled - fallback clone\n");
                   _config_really_apply(s, cs2);
                   free(s->config.relative.to);
                   s->config.relative.to = strdup(cs2->id);
-                  printf("RRR: ... clone = %s\n", s->config.relative.to);
+                  //printf("RRR: ... clone = %s\n", s->config.relative.to);
                   s->config.relative.mode = E_RANDR2_RELATIVE_CLONE;
                   s->config.relative.align = 0.0;
                }
              else
                {
-                  printf("RRR: ... disabled\n");
+                  //printf("RRR: ... disabled\n");
                   _config_really_apply(s, NULL);
                }
           }
         else
           {
-             printf("RRR: ... disabled\n");
+             //printf("RRR: ... disabled\n");
              _config_really_apply(s, NULL);
           }
         s->config.configured = EINA_TRUE;
@@ -543,9 +543,9 @@ _screens_differ(E_Randr2 *r1, E_Randr2 *r2)
    s1 = _screens_fingerprint(r1);
    s2 = _screens_fingerprint(r2);
    if ((!s1) && (!s2)) return EINA_FALSE;
-   printf("RRR: check fingerprint...\n");
+   //printf("RRR: check fingerprint...\n");
    if ((s1) && (s2) && (strcmp(s1, s2))) changed = EINA_TRUE;
-   printf("RRR: ... fingerprint says %i\n", changed);
+   //printf("RRR: ... fingerprint says %i\n", changed);
    free(s1);
    free(s2);
    // check screen config
@@ -569,7 +569,7 @@ _screens_differ(E_Randr2 *r1, E_Randr2 *r2)
                  (s->info.lid_closed != ss->info.lid_closed))
           changed = EINA_TRUE;
      }
-   printf("RRR: changed = %i\n", changed);
+   //printf("RRR: changed = %i\n", changed);
    return changed;
 }
 
@@ -577,21 +577,21 @@ static Eina_Bool
 _cb_screen_change_delay(void *data EINA_UNUSED)
 {
    _screen_delay_timer = NULL;
-   printf("RRR: ... %i %i\n", event_screen, event_ignore);
+   //printf("RRR: ... %i %i\n", event_screen, event_ignore);
    // if we had a screen plug/unplug etc. event and we shouldnt ignore it...
    if ((event_screen) && (!event_ignore))
      {
         E_Randr2 *rtemp;
         Eina_Bool change = EINA_FALSE;
 
-        printf("RRR: reconfigure screens due to event...\n");
+        //printf("RRR: reconfigure screens due to event...\n");
         rtemp = e_comp->screen->create();
         if (rtemp)
           {
              if (_screens_differ(e_randr2, rtemp)) change = EINA_TRUE;
              _info_free(rtemp);
           }
-        printf("RRR: change = %i\n", change);
+        //printf("RRR: change = %i\n", change);
         // we plugged or unplugged some monitor - re-apply config so
         // known screens can be configured
         if (change) e_randr2_config_apply();
@@ -875,7 +875,7 @@ _screen_config_do(E_Randr2_Screen *s)
    E_Randr2_Screen *s2 = NULL;
    Eina_List *cloneset;
 
-   printf("RRR: screen do '%s'\n", s->info.name);
+   //printf("RRR: screen do '%s'\n", s->info.name);
    if (_config_do_recurse > 5)
      {
         ERR("screen config loop!");
@@ -897,7 +897,7 @@ _screen_config_do(E_Randr2_Screen *s)
         // if this screen is relative TO something (clone or left/right etc.
         // then calculate what it is relative to first
         s2 = _screen_fuzzy_fallback_find(e_randr2_cfg, s->config.relative.to);
-        printf("RRR: '%s' is relative to '%s'\n", s->info.name, s2 ? s2->info.name : "NONE");
+        //printf("RRR: '%s' is relative to '%s'\n", s->info.name, s2 ? s2->info.name : "NONE");
         if (s2)
           {
              _screen_config_do(s2);
@@ -920,7 +920,7 @@ _screen_config_do(E_Randr2_Screen *s)
      {
         if (s->config.relative.mode == E_RANDR2_RELATIVE_CLONE)
           {
-             printf("RRR: clone relative\n");
+             //printf("RRR: clone relative\n");
              s->config.geom.x = s2->config.geom.x;
              s->config.geom.y = s2->config.geom.y;
              s->config.geom.w = s2->config.geom.w;
@@ -932,7 +932,7 @@ _screen_config_do(E_Randr2_Screen *s)
           }
         else if (s->config.relative.mode == E_RANDR2_RELATIVE_TO_LEFT)
           {
-             printf("RRR: to left relative\n");
+             //printf("RRR: to left relative\n");
              s->config.geom.x = s2->config.geom.x - s->config.geom.w;
              s->config.geom.y = s2->config.geom.y +
              ((s2->config.geom.h - s->config.geom.h) *
@@ -940,7 +940,7 @@ _screen_config_do(E_Randr2_Screen *s)
           }
         else if (s->config.relative.mode == E_RANDR2_RELATIVE_TO_RIGHT)
           {
-             printf("RRR: to right relative\n");
+             //printf("RRR: to right relative\n");
              s->config.geom.x = s2->config.geom.x + s2->config.geom.w;
              s->config.geom.y = s2->config.geom.y +
              ((s2->config.geom.h - s->config.geom.h) *
@@ -948,7 +948,7 @@ _screen_config_do(E_Randr2_Screen *s)
           }
         else if (s->config.relative.mode == E_RANDR2_RELATIVE_TO_ABOVE)
           {
-             printf("RRR: to above relative\n");
+             //printf("RRR: to above relative\n");
              s->config.geom.x = s2->config.geom.x +
              ((s2->config.geom.w - s->config.geom.w) *
               s->config.relative.align);
@@ -956,7 +956,7 @@ _screen_config_do(E_Randr2_Screen *s)
           }
         else if (s->config.relative.mode == E_RANDR2_RELATIVE_TO_BELOW)
           {
-             printf("RRR: to below relative\n");
+             //printf("RRR: to below relative\n");
              s->config.geom.x = s2->config.geom.x +
              ((s2->config.geom.w - s->config.geom.w) *
               s->config.relative.align);
@@ -973,7 +973,7 @@ _screen_config_do(E_Randr2_Screen *s)
 
              cs = _config_screen_clone_resolve(e_randr2_cfg,
                                                s->config.relative.to, &x, &y);
-             printf("RRR: clone relative - config %p\n", cs);
+             //printf("RRR: clone relative - config %p\n", cs);
              if (cs)
                {
                   s->config.geom.x = x;
@@ -1013,7 +1013,7 @@ _screen_config_eval(void)
    miny = 65535;
    maxx = -65536;
    maxy = -65536;
-   printf("RRR:--------------------------------\n");
+   //printf("RRR:--------------------------------\n");
    EINA_LIST_FOREACH(e_randr2->screens, l, s)
      {
         if (!s->config.enabled) continue;
@@ -1023,12 +1023,12 @@ _screen_config_eval(void)
           maxx = s->config.geom.x + s->config.geom.w;
         if ((s->config.geom.y + s->config.geom.h) > maxy)
           maxy = s->config.geom.y + s->config.geom.h;
-        printf("RRR: s: '%s' @ %i %i - %ix%i\n",
-               s->info.name,
-               s->config.geom.x, s->config.geom.y,
-               s->config.geom.w, s->config.geom.h);
+        //printf("RRR: s: '%s' @ %i %i - %ix%i\n",
+               //s->info.name,
+               //s->config.geom.x, s->config.geom.y,
+               //s->config.geom.w, s->config.geom.h);
      }
-   printf("RRR:--- %i %i -> %i %i\n", minx, miny, maxx, maxy);
+   //printf("RRR:--- %i %i -> %i %i\n", minx, miny, maxx, maxy);
    EINA_LIST_FOREACH(e_randr2->screens, l, s)
      {
         s->config.geom.x -= minx;
@@ -1047,7 +1047,7 @@ _screen_config_maxsize(void)
 
    maxx = -65536;
    maxy = -65536;
-   printf("RRR:-------------------------------- 2\n");
+   //printf("RRR:-------------------------------- 2\n");
    EINA_LIST_FOREACH(e_randr2->screens, l, s)
      {
         if (!s->config.enabled) continue;
@@ -1055,12 +1055,12 @@ _screen_config_maxsize(void)
           maxx = s->config.geom.x + s->config.geom.w;
         if ((s->config.geom.y + s->config.geom.h) > maxy)
           maxy = s->config.geom.y + s->config.geom.h;
-        printf("RRR: '%s': %i %i %ix%i\n",
-               s->info.name,
-               s->config.geom.x, s->config.geom.y,
-               s->config.geom.w, s->config.geom.h);
+        //printf("RRR: '%s': %i %i %ix%i\n",
+               //s->info.name,
+               //s->config.geom.x, s->config.geom.y,
+               //s->config.geom.w, s->config.geom.h);
      }
-   printf("RRR: result max: %ix%i\n", maxx, maxy);
+   //printf("RRR: result max: %ix%i\n", maxx, maxy);
    e_randr2->w = maxx;
    e_randr2->h = maxy;
 }

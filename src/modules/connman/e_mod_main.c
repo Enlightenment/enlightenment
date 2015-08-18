@@ -337,13 +337,13 @@ _econnman_mod_manager_update_inst(E_Connman_Module_Context *ctxt EINA_UNUSED,
    snprintf(buf, sizeof(buf), "e,changed,technology,%s", typestr);
    edje_object_signal_emit(o, buf, "e");
 
-   DBG("state=%d type=%d", state, type);
+   //DBG("state=%d type=%d", state, type);
 }
 
 static enum Connman_Service_Type _econnman_manager_service_type_get(
                                                    struct Connman_Manager *cm)
 {
-   DBG("cm->services=%p", cm->services);
+   //DBG("cm->services=%p", cm->services);
 
    if ((cm->services) && ((cm->state == CONNMAN_STATE_ONLINE) ||
                           (cm->state == CONNMAN_STATE_READY)))
@@ -380,7 +380,7 @@ _econnman_gadget_setup(E_Connman_Instance *inst)
    E_Connman_Module_Context *ctxt = inst->ctxt;
    Evas_Object *o = inst->ui.gadget;
 
-   DBG("has_manager=%d", ctxt->cm != NULL);
+   //DBG("has_manager=%d", ctxt->cm != NULL);
 
    if (!ctxt->cm)
      {
@@ -400,7 +400,7 @@ econnman_mod_manager_inout(struct Connman_Manager *cm)
    const Eina_List *l;
    E_Connman_Instance *inst;
 
-   DBG("Manager %s", cm ? "in" : "out");
+   //DBG("Manager %s", cm ? "in" : "out");
    ctxt->cm = cm;
 
    EINA_LIST_FOREACH(ctxt->instances, l, inst)

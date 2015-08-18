@@ -54,7 +54,7 @@ static void _dbus_str_array_to_eina(Eldbus_Message_Iter *value, Eina_Array **old
    while (eldbus_message_iter_get_and_next(itr_array, 's', &s))
      {
         eina_array_push(array, eina_stringshare_add(s));
-        DBG("Push %s", s);
+        //DBG("Push %s", s);
      }
 
    return;
@@ -121,7 +121,7 @@ static enum Connman_Service_Type str_to_type(const char *s)
    else if (!strcmp(s, "cellular"))
      return CONNMAN_SERVICE_TYPE_CELLULAR;
 
-   DBG("Unknown type %s", s);
+   //DBG("Unknown type %s", s);
    return CONNMAN_SERVICE_TYPE_NONE;
 }
 
@@ -150,7 +150,7 @@ static void _service_parse_prop_changed(struct Connman_Service *cs,
                                         const char *prop_name,
                                         Eldbus_Message_Iter *value)
 {
-   DBG("service %p %s prop %s", cs, cs->path, prop_name);
+   //DBG("service %p %s prop %s", cs, cs->path, prop_name);
 
    if (strcmp(prop_name, "State") == 0)
      {
@@ -159,7 +159,7 @@ static void _service_parse_prop_changed(struct Connman_Service *cs,
                                                                      "s",
                                                                      &state));
         cs->state = str_to_state(state);
-        DBG("New state: %s %d", state, cs->state);
+        //DBG("New state: %s %d", state, cs->state);
      }
    else if (strcmp(prop_name, "Name") == 0)
      {
@@ -169,7 +169,7 @@ static void _service_parse_prop_changed(struct Connman_Service *cs,
                                                                      &name));
         free(cs->name);
         cs->name = strdup(name);
-        DBG("New name: %s", cs->name);
+        //DBG("New name: %s", cs->name);
      }
    else if (strcmp(prop_name, "Type") == 0)
      {
@@ -178,7 +178,7 @@ static void _service_parse_prop_changed(struct Connman_Service *cs,
                                                                      "s",
                                                                      &type));
         cs->type = str_to_type(type);
-        DBG("New type: %s %d", type, cs->type);
+        //DBG("New type: %s %d", type, cs->type);
      }
    else if (strcmp(prop_name, "Strength") == 0)
      {
@@ -187,14 +187,14 @@ static void _service_parse_prop_changed(struct Connman_Service *cs,
                                                                      "y",
                                                                      &strength));
         cs->strength = strength;
-        DBG("New strength: %d", strength);
+        //DBG("New strength: %d", strength);
      }
    else if (strcmp(prop_name, "Security") == 0)
      {
-        DBG("Old security count: %d",
-            cs->security ? eina_array_count(cs->security) : 0);
+        //DBG("Old security count: %d",
+        //    cs->security ? eina_array_count(cs->security) : 0);
         _dbus_str_array_to_eina(value, &cs->security, 2);
-        DBG("New security count: %d", eina_array_count(cs->security));
+        //DBG("New security count: %d", eina_array_count(cs->security));
      }
 }
 
@@ -437,7 +437,7 @@ static void _manager_services_remove(struct Connman_Manager *cm,
              continue;
           }
         cm->services = eina_inlist_remove(cm->services, EINA_INLIST_GET(cs));
-        DBG("Removed service: %p %s", cs, path);
+        //DBG("Removed service: %p %s", cs, path);
         _service_free(cs);
      }
 }
@@ -472,14 +472,14 @@ static void _manager_services_changed(void *data, const Eldbus_Message *msg)
         if (!cs)
           {
              cs = _service_new(path, array);
-             DBG("Added service: %p %s", cs, path);
+             //DBG("Added service: %p %s", cs, path);
           }
         else
           {
              _service_prop_dict_changed(cs, array);
              cm->services = eina_inlist_remove(cm->services,
                                                EINA_INLIST_GET(cs));
-             DBG("Changed service: %p %s", cs, path);
+             //DBG("Changed service: %p %s", cs, path);
           }
         tmp = eina_inlist_append(tmp, EINA_INLIST_GET(cs));
      }
@@ -502,7 +502,7 @@ static void _manager_get_services_cb(void *data, const Eldbus_Message *msg,
         ERR("Could not get services. %s: %s", name, text);
         return;
      }
-   DBG("cm->services=%p", cm->services);
+   //DBG("cm->services=%p", cm->services);
 
    if (!eldbus_message_arguments_get(msg, "a(oa{sv})", &array))
      {
@@ -524,7 +524,7 @@ static void _manager_get_services_cb(void *data, const Eldbus_Message *msg,
           continue;
 
         cm->services = eina_inlist_append(cm->services, EINA_INLIST_GET(cs));
-        DBG("Added service: %p %s", cs, path);
+        //DBG("Added service: %p %s", cs, path);
      }
    econnman_mod_services_changed(cm);
 }
@@ -538,7 +538,7 @@ static bool _manager_parse_prop_changed(struct Connman_Manager *cm,
         const char *state;
         if (!eldbus_message_iter_arguments_get(value, "s", &state))
           return false;
-        DBG("New state: %s", state);
+        //DBG("New state: %s", state);
         cm->state = str_to_state(state);
      }
    else if (strcmp(name, "OfflineMode") == 0)
@@ -675,7 +675,7 @@ _manager_agent_register_cb(void *data EINA_UNUSED, const Eldbus_Message *msg,
         return;
      }
 
-   INF("Agent registered");
+   //INF("Agent registered");
 }
 
 static void

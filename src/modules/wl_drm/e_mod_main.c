@@ -340,7 +340,7 @@ _drm_randr_create(void)
      };
    unsigned int type;
 
-   printf("DRM RRR: ................. info get!\n");
+   //printf("DRM RRR: ................. info get!\n");
 
    r = E_NEW(E_Randr2, 1);
    if (!r) return NULL;
@@ -363,10 +363,10 @@ _drm_randr_create(void)
              if (!s) continue;
 
              s->info.name = ecore_drm_output_name_get(output);
-             printf("DRM RRR: .... out %s\n", s->info.name);
+      //       printf("DRM RRR: .... out %s\n", s->info.name);
 
              s->info.connected = ecore_drm_output_connected_get(output);
-             printf("DRM RRR: ...... connected %i\n", s->info.connected);
+        //     printf("DRM RRR: ...... connected %i\n", s->info.connected);
 
              s->info.screen = _e_mod_drm_output_screen_get(output);
 
@@ -386,7 +386,7 @@ _drm_randr_create(void)
              strcat(s->id, "/");
              if (s->info.edid) strcat(s->id, s->info.edid);
 
-             printf("DRM RRR: Created Screen: %s\n", s->id);
+          //   printf("DRM RRR: Created Screen: %s\n", s->id);
 
              type = MIN(ecore_drm_output_connector_type_get(output),
                         EINA_C_ARRAY_LENGTH(conn_types) - 1);
@@ -394,8 +394,8 @@ _drm_randr_create(void)
              s->info.is_lid = ((type == DRM_MODE_CONNECTOR_LVDS) || 
                                (type == DRM_MODE_CONNECTOR_eDP));
              s->info.lid_closed = (s->info.is_lid && e_acpi_lid_is_closed());
-             printf("DRM RRR: ...... lid_closed = %i (%i && %i)\n",
-                    s->info.lid_closed, s->info.is_lid, e_acpi_lid_is_closed());
+            // printf("DRM RRR: ...... lid_closed = %i (%i && %i)\n",
+              //      s->info.lid_closed, s->info.is_lid, e_acpi_lid_is_closed());
 
              s->info.backlight = ecore_drm_output_backlight_get(output);
 
@@ -469,9 +469,9 @@ _drm_randr_create(void)
                        s->config.enabled = 
                          ((s->config.mode.w != 0) && (s->config.mode.h != 0));
 
-                       printf("DRM RRR: '%s' %i %i %ix%i\n", s->info.name,
-                              s->config.geom.x, s->config.geom.y,
-                              s->config.geom.w, s->config.geom.h);
+                     //  printf("DRM RRR: '%s' %i %i %ix%i\n", s->info.name,
+                     //         s->config.geom.x, s->config.geom.y,
+                     //         s->config.geom.w, s->config.geom.h);
                     }
 
                   /* TODO: are rotations possible ?? */
@@ -514,7 +514,7 @@ _drm_randr_apply(void)
    EINA_LIST_FOREACH(ecore_drm_devices_get(), l, dev)
      {
         ecore_drm_screen_size_range_get(dev, &minw, &minh, &maxw, &maxh);
-        printf("DRM RRR: size range: %ix%i -> %ix%i\n", minw, minh, maxw, maxh);
+        //printf("DRM RRR: size range: %ix%i -> %ix%i\n", minw, minh, maxw, maxh);
 
         ecore_drm_outputs_geometry_get(dev, NULL, NULL, &pw, &ph);
         if (nw > maxw) nw = maxw;
@@ -526,35 +526,35 @@ _drm_randr_apply(void)
         if (nw < pw) ww = pw;
         if (nh < ph) hh = ph;
 
-        printf("DRM RRR: set vsize: %ix%i\n", ww, hh);
+        //printf("DRM RRR: set vsize: %ix%i\n", ww, hh);
 
         EINA_LIST_FOREACH(e_randr2->screens, ll, s)
           {
              int orient;
              Ecore_Drm_Output_Mode *mode = NULL;
 
-             printf("DRM RRR: find output for '%s'\n", s->info.name);
+             //printf("DRM RRR: find output for '%s'\n", s->info.name);
 
              out = ecore_drm_device_output_name_find(dev, s->info.name);
              if (!out) continue;
 
              if (s->config.configured)
                {
-                  printf("\tDRM RRR: configured by E\n");
+                  //printf("\tDRM RRR: configured by E\n");
 
                   if (s->config.enabled)
                     {
-                       printf("\tDRM RRR: Enabled\n");
+                       //printf("\tDRM RRR: Enabled\n");
                        mode = _e_mod_drm_mode_screen_find(s, out);
                     }
                   else
                     {
-                       printf("\tDRM RRR: Disabled\n");
+                       //printf("\tDRM RRR: Disabled\n");
                     }
 
                   if (s->config.priority > top_priority)
                     top_priority = s->config.priority;
-
+#if 0
                   printf("\tDRM RRR: Priority: %d\n", s->config.priority);
 
                   printf("\tDRM RRR: Geom: %d %d %d %d\n", 
@@ -568,7 +568,7 @@ _drm_randr_apply(void)
                     }
                   else
                     printf("\tDRM RRR: No Valid Drm Mode Found\n");
-
+#endif
                   if (s->config.rotation == 0)
                     orient = (1 << 0);
                   else if (s->config.rotation == 90)
@@ -587,7 +587,7 @@ _drm_randr_apply(void)
                     ecore_drm_output_enable(out);
                   else
                     ecore_drm_output_disable(out);
-
+#if 0
                   printf("\tDRM RRR: Mode\n");
                   printf("\t\tDRM RRR: Geom: %d %d\n",
                          s->config.mode.w, s->config.mode.h);
@@ -602,6 +602,7 @@ _drm_randr_apply(void)
                   printf("\tDRM RRR: Relative To: %s\n",
                          s->config.relative.to);
                   printf("\tDRM RRR: Align: %f\n", s->config.relative.align);
+#endif
                }
           }
      }
