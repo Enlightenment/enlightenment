@@ -621,7 +621,7 @@ _e_qa_event_border_remove_cb(void *data EINA_UNUSED, int type EINA_UNUSED, E_Eve
         e_qa_entry_free(entry);
         return ECORE_CALLBACK_RENEW;
      }
-   else if (entry->config.relaunch) _e_qa_border_new(entry);
+   else if ((!stopping) && entry->config.relaunch) _e_qa_border_new(entry);
    entry->client = NULL;
 
    return ECORE_CALLBACK_RENEW;
