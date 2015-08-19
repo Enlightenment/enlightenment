@@ -388,7 +388,7 @@ e_desk_last_focused_focus(E_Desk *desk)
                        ecs = ec;
                        continue;
                     }
-                  if (ec->changes.visible)
+                  if (ec->changes.visible && (!evas_object_visible_get(ec->frame)))
                     ec->want_focus = ec->take_focus = 1;
                   else
                     e_client_focus_set_with_pointer(ec);
@@ -400,7 +400,7 @@ e_desk_last_focused_focus(E_Desk *desk)
      }
    if (ecs)
      {
-        if (ecs->changes.visible)
+        if (ecs->changes.visible && (!evas_object_visible_get(ecs->frame)))
           ecs->want_focus = ecs->take_focus = 1;
         else
           e_client_focus_set_with_pointer(ecs);
