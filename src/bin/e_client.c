@@ -1397,8 +1397,6 @@ _e_client_cb_evas_hide(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UN
 
    if (!ec->hidden)
      {
-        ec->changes.visible = 1;
-        EC_CHANGED(ec);
         if (ec->focused)
           _e_client_revert_focus(ec);
      }
@@ -1502,11 +1500,6 @@ _e_client_cb_evas_show(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UN
 {
    E_Client *ec = data;
 
-   if (!ec->hidden)
-     {
-        ec->changes.visible = 1;
-        EC_CHANGED(ec);
-     }
    if (!ec->iconic)
      _e_client_event_simple(data, E_EVENT_CLIENT_SHOW);
 }
