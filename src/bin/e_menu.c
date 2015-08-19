@@ -2840,6 +2840,10 @@ _e_menu_cb_mouse_down(void *data __UNUSED__, int type __UNUSED__, void *event)
         return ECORE_CALLBACK_PASS_ON;
      }
 
+   _e_menu_lock = 1;
+   _mouse_up_feed(e_comp_get(NULL)->evas, 0);
+   _e_menu_lock = 0;
+
    /* Only allow dragging from floating menus for now.
     * The reason for this is that for non floating menus,
     * the mouse is already down and dragging, so the decision
@@ -2858,6 +2862,7 @@ _e_menu_cb_mouse_up(void *data __UNUSED__, int type __UNUSED__, void *event)
    unsigned int t;
    int ret = 0;
 
+   if (_e_menu_lock) return ECORE_CALLBACK_RENEW;
    ev = event;
    if (ev->window != _e_menu_win) return ECORE_CALLBACK_RENEW;
 
