@@ -763,6 +763,7 @@ _e_sys_logout_begin(E_Sys_Action a_after, Eina_Bool raw)
    E_Client *ec;
    E_Obj_Dialog *od;
 
+   stopping = 1;
    /* start logout - at end do the a_after action */
    if (!raw)
      {
