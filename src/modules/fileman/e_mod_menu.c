@@ -104,9 +104,19 @@ _e_mod_menu_cleanup_cb(void *obj)
 }
 
 static Eina_Bool
-_e_mod_menu_populate_filter(void *data EINA_UNUSED, Eio_File *handler EINA_UNUSED, const Eina_File_Direct_Info *info)
+_e_mod_menu_populate_filter(void *data EINA_UNUSED, Eio_File *handler, const Eina_File_Direct_Info *info)
 {
    struct stat st;
+   long count;
+
+   count = (long)eio_file_associate_find(handler, "count");
+   if (count > 100)
+     {
+        eio_file_cancel(handler);
+        return EINA_FALSE;
+     }
+   count++;
+   eio_file_associate_add(handler, "count", (void*)count, NULL);
    /* don't show .dotfiles */
    if (fileman_config->view.menu_shows_files)
      return (info->path[info->name_start] != '.');
@@ -214,13 +224,6 @@ _e_mod_menu_populate_item(void *data, Eio_File *handler EINA_UNUSED, const Eina_
    e_menu_item_callback_set(mi, _e_mod_menu_populate_cb, dev);
 }
 
-static void
-_e_mod_menu_populate_err(void *data, Eio_File *handler EINA_UNUSED, int error EINA_UNUSED)
-{
-   if (!e_object_unref(data)) return;
-   e_menu_thaw(data);
-}
-
 static int
 _e_mod_menu_populate_sort(E_Menu_Item *a, E_Menu_Item *b)
 {
@@ -250,6 +253,12 @@ _e_mod_menu_populate_done(void *data, Eio_File *handler EINA_UNUSED)
    else
      m->items = eina_list_sort(m->items, 0, (Eina_Compare_Cb)_e_mod_menu_populate_sort);
    e_menu_thaw(m);
+}
+
+static void
+_e_mod_menu_populate_err(void *data, Eio_File *handler, int error EINA_UNUSED)
+{
+   _e_mod_menu_populate_done(data, handler);
 }
 
 static void
