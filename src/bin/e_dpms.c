@@ -136,7 +136,7 @@ _e_dpms_handler_desk_show_cb(void *data EINA_UNUSED, int type EINA_UNUSED, void 
 static Eina_Bool
 _e_dpms_standby(void *d EINA_UNUSED)
 {
-   if (e_comp->screen->dpms)
+   if (e_comp->screen && e_comp->screen->dpms)
      e_comp->screen->dpms(1);
    standby_timer = NULL;
    return EINA_FALSE;
@@ -145,7 +145,7 @@ _e_dpms_standby(void *d EINA_UNUSED)
 static Eina_Bool
 _e_dpms_suspend(void *d EINA_UNUSED)
 {
-   if (e_comp->screen->dpms)
+   if (e_comp->screen && e_comp->screen->dpms)
      e_comp->screen->dpms(2);
    suspend_timer = NULL;
    return EINA_FALSE;
@@ -154,7 +154,7 @@ _e_dpms_suspend(void *d EINA_UNUSED)
 static Eina_Bool
 _e_dpms_off(void *d EINA_UNUSED)
 {
-   if (e_comp->screen->dpms)
+   if (e_comp->screen && e_comp->screen->dpms)
      e_comp->screen->dpms(3);
    off_timer = NULL;
    return EINA_FALSE;
@@ -175,7 +175,7 @@ _e_dpms_screensaver_off()
    E_FREE_FUNC(standby_timer, ecore_timer_del);
    E_FREE_FUNC(suspend_timer, ecore_timer_del);
    E_FREE_FUNC(off_timer, ecore_timer_del);
-   if (e_comp->screen->dpms)
+   if (e_comp->screen && e_comp->screen->dpms)
      e_comp->screen->dpms(0);
    return ECORE_CALLBACK_RENEW;
 }
