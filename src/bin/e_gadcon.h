@@ -232,6 +232,7 @@ struct _E_Gadcon_Client
    unsigned char           hidden : 1;
 
    E_Config_Gadcon_Client *cf;
+   char                    pscrollstate;
 };
 
 struct _E_Event_Gadcon_Client_Class

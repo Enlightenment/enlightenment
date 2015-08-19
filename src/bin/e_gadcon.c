@@ -13,6 +13,7 @@ static void                     _e_gadcon_client_free(E_Gadcon_Client *gcc);
 
 static void                     _e_gadcon_moveresize_handle(E_Gadcon_Client *gcc);
 static Eina_Bool                _e_gadcon_cb_client_scroll_timer(void *data);
+static void                     _e_gadcon_client_scroll_state_update(E_Gadcon_Client *gcc);
 static Eina_Bool                _e_gadcon_cb_client_scroll_animator(void *data);
 static void                     _e_gadcon_cb_client_frame_mouse_move(void *data, Evas *e, Evas_Object *obj, void *event_info);
 static void                     _e_gadcon_cb_client_frame_moveresize(void *data, Evas *e, Evas_Object *obj, void *event_info);
@@ -1004,6 +1005,9 @@ _e_gadcon_client_box_del(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_
 static void
 _e_gadcon_client_box_hints_changed(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
+   E_Gadcon_Client *gcc = data;
+   if (gcc->autoscroll)
+     _e_gadcon_client_scroll_state_update(gcc);
    evas_object_size_hint_min_set(obj, 0, 0);
 }
 
@@ -1455,6 +1459,8 @@ e_gadcon_client_autoscroll_set(E_Gadcon_Client *gcc, int autoscroll)
                                            gcc->aspect.h);
         }
    }
+   if (gcc->autoscroll)
+     _e_gadcon_client_scroll_state_update(gcc);
 }
 
 E_API void
@@ -2172,6 +2178,7 @@ _e_gadcon_moveresize_handle(E_Gadcon_Client *gcc)
      }
    evas_object_size_hint_min_set(gcc->o_base, w, h);
    evas_object_size_hint_max_set(gcc->o_base, mw, mh);
+   _e_gadcon_client_scroll_state_update(gcc);
 }
 
 static void
@@ -2204,6 +2211,52 @@ _e_gadcon_cb_client_scroll_timer(void *data)
    return ECORE_CALLBACK_RENEW;
 }
 
+static void
+_e_gadcon_client_scroll_state_update(E_Gadcon_Client *gcc)
+{
+   Evas_Coord box_w, box_h, base_w, base_h;
+
+   if (gcc->o_frame)
+     {
+        evas_object_geometry_get(gcc->o_box, NULL, NULL, &box_w, &box_h);
+        evas_object_geometry_get(gcc->o_base, NULL, NULL, &base_w, &base_h);
+
+        if (((elm_box_horizontal_get(gcc->o_box)) && (box_w >= base_w)) ||
+            ((!elm_box_horizontal_get(gcc->o_box)) && (box_h >= base_h)))
+          {
+             if (gcc->pscrollstate != 0)
+               {
+                  edje_object_signal_emit(gcc->o_frame, "e,state,scroll,none", "e");
+                  gcc->pscrollstate = 0;
+               }
+          }
+        else if (gcc->scroll_pos <= 0.01)
+          {
+             if (gcc->pscrollstate != 1)
+               {
+                  edje_object_signal_emit(gcc->o_frame, "e,state,scroll,begin", "e");
+                  gcc->pscrollstate = 1;
+               }
+          }
+        else if (gcc->scroll_pos >= 0.99)
+          {
+             if (gcc->pscrollstate != 3)
+               {
+                  edje_object_signal_emit(gcc->o_frame, "e,state,scroll,end", "e");
+                  gcc->pscrollstate = 3;
+               }
+          }
+        else
+          {
+             if (gcc->pscrollstate != 2)
+               {
+                  edje_object_signal_emit(gcc->o_frame, "e,state,scroll,middle", "e");
+                  gcc->pscrollstate = 2;
+               }
+          }
+     }
+}
+
 static Eina_Bool
 _e_gadcon_cb_client_scroll_animator(void *data)
 {
@@ -2219,6 +2272,8 @@ _e_gadcon_cb_client_scroll_animator(void *data)
         gcc->scroll_animator = NULL;
         return ECORE_CALLBACK_CANCEL;
      }
+
+   _e_gadcon_client_scroll_state_update(gcc);
 
    if (gcc->scroll_cb.func)
      gcc->scroll_cb.func(gcc->scroll_cb.data);
@@ -2562,6 +2617,7 @@ _e_gadcon_cb_client_resize(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj,
    evas_object_geometry_get(obj, NULL, NULL, &w, &h);
    if (gcc->o_control) evas_object_resize(gcc->o_control, w, h);
    if (gcc->o_event) evas_object_resize(gcc->o_event, w, h);
+   _e_gadcon_client_scroll_state_update(gcc);
 }
 
 static void
@@ -3314,6 +3370,8 @@ _e_gadcon_client_cb_menu_autoscroll(void *data, E_Menu *m EINA_UNUSED, E_Menu_It
    e_gadcon_client_autoscroll_set(gcc, gcc->autoscroll);
    _e_gadcon_client_save(gcc);
    e_gadcon_layout_thaw(gcc->gadcon->o_container);
+   if (gcc->autoscroll)
+     _e_gadcon_client_scroll_state_update(gcc);
 }
 
 /*
