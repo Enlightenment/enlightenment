@@ -1,20 +1,17 @@
-Wayland support in Enlightenment
+*Wayland support in Enlightenment*
 
-Caution: Support for running Enlightenment in a Wayland-Only
-configuration is considered Highly Experimental !! Use at your own
-risk !! We are not responsible if it nukes your files, burns up your cpu, 
-kills your cat, sells your house, divorces you, or otherwise messes
-Anything up !
-
-Use at your own risk !! You have been warned !!
+Running Enlightenment as a Wayland compositor is not considered "safe"
+for everyday desktop use, though it is functional enough to test or
+use in specialized environments.
+A list of known issues can be found at the bottom of this file.
 
 
 Requirements:
 -------------
 
 Aside from the normal requirements that Enlightenment needs, there are
-a few things to note in order to get Enlightenment to build without
-X11 support.
+a few things to note in order to get Enlightenment to build with
+Wayland support.
 
 Firstly, you MUST have EFL built with the following options:
 
@@ -38,12 +35,6 @@ If you would like support for EGL in Wayland, then also build EFL with:
 The above options can be enabled for EFL without any adverse effects to
 existing applications.
 
-Wayland-Only:
--------------
-
-If you wish to test out the Highly Experimental standalone
-Wayland-Only (no X11) compositor, then read below about how to compile
-support for a wayland-only Enlightenment.
 
 Compiling:
 -------------
@@ -51,26 +42,10 @@ Compiling:
 Next, you will need to adjust the options that you pass to
 Enlightenment during the compile phase.
 
-Please note, we recommend installing This version of Enlightenment into it's 
-own separate prefix so that you can still safely fallback to the X11 version.
-
-This can be done by passing:
-
-  --prefix=<some_other_install_location>
-  --with-systemdunitdir=<some_other_install_location>/some/path
-
-Now, on to the magic bits ;)
-
 In order for Enlightenment to be compiled as Wayland compositor you will need to
-pass a few more options to the configure stage of Enlightenment:
+pass an option to the configure stage of Enlightenment:
 
   --enable-wayland
-
-Since this is all still a work-in-progress, there are a few Enlightenment 
-modules that have not been "fixed" to work without X11 yet.
-Those will need to be disabled if you enabled the wayland-only option:
-
-  --disable-xkbswitch
 
 If you also want support for running X applications under Wayland you might want
 to try out XWayland support:
@@ -85,57 +60,41 @@ Usage:
 -------------
 
 Hopefully at this stage you have successfully built EFL and
-Enlightenment in preparation for a Wayland-only setup. Congratulations
-!! Now, let's get it running...
+Enlightenment in preparation for a Wayland-supported setup. Congratulations!!
+Now, let's get it running...
 
-The following steps assume you are currently at a Virtual Terminal
-without anything else running (ie: no other window managers, X11, etc).
-
-In order for Enlightenment to function without X11, we need to setup
-the environment. In your current tty, do:
-
-  export E_WL_FORCE=drm
-  export ELM_DISPLAY=wl
-  export ELM_ACCEL=opengl (or 'none' for SHM engine)
-
-This will make sure that Enlightenment renders using DRM, and any
-Elementary applications use a Wayland engine.
-
-At this point, you should just be able 'cd' to the Enlightenment
-prefix where you installed, and issue:
+Enlightenment, when compiled with Wayland support and started from a tty,
+will automatically attempt to load the wl_drm output module and start
+a Wayland session. Simply start as usual:
 
   ./enlightenment_start
 
-Please Note: It is suggested that you create a separate configuration
-profile with only a Minimum of modules loaded. Due to the experimental
-(and ongoing) status of Wayland-Only support in Enlightenment, Many
-modules May Not Work. Very few have actually been tested yet !!
-
-If you have a separate configuration profile (as suggested) that you
-would like to use, you can tell Enlightenment to use that when you
-start it:
+If you have a separate configuration profile that you would like to use,
+you can tell Enlightenment to use that when you start it:
 
   ./enlightenment_start -profile <my_profile>
 
 
-Notes:
+
+Known Issues
 -------------
-
-Please Note: There is currently NO support for running X11
-applications with this !! So basically, your web browsers won't work,
-don't expect to be able to run Firefox, Thunderbird, or practically
-Any Other X11 application yet. About the only things "known" to work
-so far are EFL/Elementary applications.
-
-
-Bugs:
--------------
-
-Yes, there are Lots of them !!
-Yes, I am already aware of 99.9% of them. 
-Yes, you can start reporting them ... if you do create tickets for
-any bugs, please note in your ticket that you are using the e_comp_wl
-branch.
-
-When we feel that the work is reaching a "finalizing" stage, we will
-put out a request for actual testers and bug reports !
+* Internal window (eg. filemanager), DnD is not currently functional
+ - Requires EFL 1.16 release
+* Nested compositors (wl_wl output) cannot create internal windows
+ - Requires EFL 1.16 release
+* DRM output lacks hardware acceleration
+ - Requires EFL 1.16 release
+* Window close animations will not play for most Wayland clients
+ - Requires upstream Wayland protocol additions
+* Window closing occasionally leads to crash
+ - Requires upstream Wayland protocol additions
+* Restarting Enlightenment kills all open applications
+ - Requires upstream *-shell protocol additions, XWayland improvements
+* Window placement/resistance/resizing is not accurate
+ - Requires upstream *-shell protocol additions related to CSD
+* XWayland clients do not smoothly resize
+ - Requires upstream XWayland improvements
+* The first-launched X11 client will sometimes fail to show
+ - Requires upstream XWayland improvements
+* Keyboard layout switching is not available
+ - Requires various improvements
