@@ -34,7 +34,7 @@ AH_BOTTOM([
 #endif /* EFL_CONFIG_H__ */
 ])
 
-AM_INIT_AUTOMAKE([1.11 dist-bzip2 dist-xz -Wno-portability])
+AM_INIT_AUTOMAKE([1.11 dist-xz -Wno-portability])
 AM_SILENT_RULES([yes])
 
 AC_USE_SYSTEM_EXTENSIONS
