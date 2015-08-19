@@ -989,13 +989,14 @@ _e_drag_end(int x, int y)
                   if (win == e_comp->ee_win) break;
                }
           }
+        else
 #endif
+          if ((e_comp->comp_type == E_PIXMAP_TYPE_WL) && (win == e_comp->ee_win))
+            break;
         if (_drag_current->cb.finished)
           _drag_current->cb.finished(_drag_current, dropped);
         _drag_current->cb.finished = NULL;
         _drag_current->ended = 1;
-        if (e_comp->comp_type == E_PIXMAP_TYPE_WL)
-          e_comp_ungrab_input(1, 1);
         return;
      }
 
