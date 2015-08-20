@@ -577,6 +577,13 @@ _comp_object_configure(Mirror *m, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNU
    _e_deskmirror_mirror_reconfigure(m);
 }
 
+static void
+_comp_object_dirty(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
+{
+   if (_comp_object_check(data))
+     evas_object_smart_callback_del(obj, "dirty", _comp_object_dirty);
+}
+
 static Mirror *
 _e_deskmirror_mirror_add(E_Smart_Data *sd, Evas_Object *obj)
 {
@@ -627,6 +634,8 @@ _e_deskmirror_mirror_add(E_Smart_Data *sd, Evas_Object *obj)
    evas_object_event_callback_add(obj, EVAS_CALLBACK_RESIZE, (Evas_Object_Event_Cb)_comp_object_configure, m);
    evas_object_event_callback_add(obj, EVAS_CALLBACK_MOVE, (Evas_Object_Event_Cb)_comp_object_configure, m);
    evas_object_smart_callback_add(obj, "frame_recalc_done", _e_deskmirror_mirror_frame_recalc_cb, m);
+   if (!ec->redirected)
+     evas_object_smart_callback_add(obj, "dirty", _comp_object_dirty, m);
    sd->mirrors = eina_inlist_append(sd->mirrors, EINA_INLIST_GET(m));
    eina_hash_add(sd->mirror_hash, &obj, m);
    _e_deskmirror_mirror_setup(m);
