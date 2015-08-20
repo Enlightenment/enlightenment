@@ -3279,6 +3279,7 @@ e_comp_object_redirected_set(Evas_Object *obj, Eina_Bool set)
           e_comp_object_render_update_add(obj);
         else
           e_comp_object_damage(obj, 0, 0, cw->w, cw->h);
+        evas_object_smart_callback_call(obj, "redirected", NULL);
      }
    else
      {
@@ -3300,6 +3301,7 @@ e_comp_object_redirected_set(Evas_Object *obj, Eina_Bool set)
           }
         cw->native = 0;
         e_comp_object_render_update_del(obj);
+        evas_object_smart_callback_call(obj, "unredirected", NULL);
      }
 }
 
@@ -3391,6 +3393,7 @@ e_comp_object_dirty(Evas_Object *obj)
         eina_tiler_tile_size_set(cw->updates, 1, 1);
      }
    cw->update_count = cw->updates_full = cw->updates_exist = 0;
+   evas_object_smart_callback_call(obj, "dirty", NULL);
    if (cw->visible || (!visible) || (!cw->pending_updates)) return;
    /* force render if main object is hidden but mirrors are visible */
    e_comp_object_render(obj);
