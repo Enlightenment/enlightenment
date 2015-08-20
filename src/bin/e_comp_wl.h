@@ -178,6 +178,12 @@ struct _E_Comp_Wl_Data
         Eina_List *resources;
         uint32_t version;
         char *name;
+
+        struct
+          {
+             struct wl_global *global;
+             struct wl_resource *resource;
+          } im;
      } seat;
 
    struct

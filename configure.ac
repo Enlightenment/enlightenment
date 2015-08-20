@@ -845,6 +845,16 @@ define([CHECK_MODULE_XWAYLAND],
 ])
 AM_CONDITIONAL([HAVE_XWAYLAND], [test "x${HAVE_XWAYLAND}" != "xno"])
 
+define([CHECK_MODULE_WL_TEXT_INPUT],
+[
+  if test "x${have_wayland}" = "xyes"; then
+    AC_E_CHECK_PKG(WL_TEXT_INPUT, [ ecore >= $efl_version eina >= $efl_version ], [WL_TEXT_INPUT=true], [WL_TEXT_INPUT=false])
+  else
+    WL_TEXT_INPUT=false
+  fi
+])
+AM_CONDITIONAL([HAVE_WL_TEXT_INPUT], [test "x${WL_TEXT_INPUT}" = "xtrue"])
+
 AC_E_OPTIONAL_MODULE([ibar], true)
 AC_E_OPTIONAL_MODULE([clock], true)
 AC_E_OPTIONAL_MODULE([pager], true)
@@ -899,6 +909,7 @@ AC_E_OPTIONAL_MODULE([wl_x11], $have_wayland, [CHECK_MODULE_WL_X11])
 AC_E_OPTIONAL_MODULE([wl_wl], $have_wayland, [CHECK_MODULE_WL_WL])
 #AC_E_OPTIONAL_MODULE([wl_fb], $have_wayland, [CHECK_MODULE_WL_FB])
 AC_E_OPTIONAL_MODULE([wl_drm], $have_wayland, [CHECK_MODULE_WL_DRM])
+AC_E_OPTIONAL_MODULE([wl_text_input], $have_wayland, [CHECK_MODULE_WL_TEXT_INPUT])
 AC_E_OPTIONAL_MODULE([policy_mobile], true)
 AC_E_OPTIONAL_MODULE([geolocation], true)
 AC_E_OPTIONAL_MODULE([xwayland], $have_wayland, [CHECK_MODULE_XWAYLAND])

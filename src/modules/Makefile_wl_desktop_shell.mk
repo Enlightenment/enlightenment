@@ -1,6 +1,8 @@
 EXTRA_DIST += src/modules/wl_desktop_shell/module.desktop.in \
 src/modules/wl_desktop_shell/e-module-wl_desktop_shell.edj \
 src/modules/wl_desktop_shell/module.desktop.in \
+src/modules/wl_desktop_shell/e_input_method_protocol.h \
+src/modules/wl_desktop_shell/e_input_method_protocol.c \
 src/modules/wl_desktop_shell/e_desktop_shell_protocol.h \
 src/modules/wl_desktop_shell/e_desktop_shell_protocol.c
 if USE_MODULE_WL_DESKTOP_SHELL
@@ -18,6 +20,9 @@ src_modules_wl_desktop_shell_module_la_LDFLAGS = $(MOD_LDFLAGS)
 
 src_modules_wl_desktop_shell_module_la_SOURCES = \
   src/modules/wl_desktop_shell/e_mod_main.c \
+  src/modules/wl_desktop_shell/e_mod_input_panel.c \
+  src/modules/wl_desktop_shell/e_input_method_protocol.c \
+  src/modules/wl_desktop_shell/e_input_method_protocol.h \
   src/modules/wl_desktop_shell/e_desktop_shell_protocol.c \
   src/modules/wl_desktop_shell/e_desktop_shell_protocol.h
 

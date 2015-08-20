@@ -121,6 +121,8 @@ include src/modules/Makefile_wl_x11.mk
 
 include src/modules/Makefile_xwayland.mk
 
+include src/modules/Makefile_wl_text_input.mk
+
 include src/modules/Makefile_policy_mobile.mk
 
 include src/modules/Makefile_geolocation.mk

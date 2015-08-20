@@ -3,6 +3,15 @@
 # ifndef E_COMP_WL_INPUT_H
 #  define E_COMP_WL_INPUT_H
 
+EAPI extern int E_EVENT_TEXT_INPUT_PANEL_VISIBILITY_CHANGE;
+
+typedef struct _E_Event_Text_Input_Panel_Visibility_Change E_Event_Text_Input_Panel_Visibility_Change;
+
+struct _E_Event_Text_Input_Panel_Visibility_Change
+{
+   Eina_Bool visible;
+};
+
 EINTERN Eina_Bool e_comp_wl_input_init(void);
 EINTERN void e_comp_wl_input_shutdown(void);
 EINTERN Eina_Bool e_comp_wl_input_pointer_check(struct wl_resource *res);

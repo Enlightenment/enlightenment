@@ -1,5 +1,6 @@
 #define E_COMP_WL
 #include "e.h"
+#include "e_mod_main.h"
 #include "e_desktop_shell_protocol.h"
 
 #define XDG_SERVER_VERSION 5
@@ -1379,11 +1380,21 @@ e_modapi_init(E_Module *m)
         return NULL;
      }
 
+#ifdef HAVE_WL_TEXT_INPUT
+   if (!e_input_panel_init())
+     {
+        ERR("Could not init input panel");
+        return NULL;
+     }
+#endif
+
    return m;
 }
 
 E_API int
 e_modapi_shutdown(E_Module *m EINA_UNUSED)
 {
+   e_input_panel_shutdown();
+
    return 1;
 }

@@ -3,6 +3,8 @@
 #include "e.h"
 #include <sys/mman.h>
 
+EAPI int E_EVENT_TEXT_INPUT_PANEL_VISIBILITY_CHANGE = -1;
+
 static void
 _e_comp_wl_input_update_seat_caps(void)
 {
@@ -425,6 +427,8 @@ e_comp_wl_input_init(void)
      }
 
    wl_array_init(&e_comp_wl->kbd.keys);
+
+   E_EVENT_TEXT_INPUT_PANEL_VISIBILITY_CHANGE = ecore_event_type_new();
 
    return EINA_TRUE;
 }
