@@ -869,7 +869,7 @@ _e_text_cb_bind_input_method(struct wl_client *client, void *data EINA_UNUSED, u
         wl_resource_destroy(resource);
         return;
      }
-
+#warning FIXME SECURITY
    /* FIXME: we need to make sure the client attempting to bind
       this interface really provides vkbd. */
 
@@ -900,6 +900,7 @@ EAPI E_Module_Api e_modapi = { E_MODULE_API_VERSION, "Wl_Text_Input" };
 EAPI void *
 e_modapi_init(E_Module *m)
 {
+   return NULL;
    // FIXME: create only one input method object per seat.
    e_comp->wl_comp_data->seat.im.global =
       wl_global_create(e_comp->wl_comp_data->wl.disp, &wl_input_method_interface, 1,
