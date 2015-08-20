@@ -546,6 +546,7 @@ _comp_object_check(Mirror *m)
    evas_object_geometry_get(m->comp_object, NULL, NULL, &w, &h);
    if ((w < 2) || (h < 2)) return EINA_FALSE;
    m->mirror = e_comp_object_util_mirror_add(m->comp_object);
+   if (!m->mirror) return EINA_FALSE;
    evas_object_name_set(m->mirror, "m->mirror");
    _e_deskmirror_mirror_setup(m);
    return EINA_TRUE;
