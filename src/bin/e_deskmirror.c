@@ -549,6 +549,7 @@ _comp_object_check(Mirror *m)
    if ((w < 2) || (h < 2)) return EINA_FALSE;
    m->mirror = e_comp_object_util_mirror_add(m->comp_object);
    if (!m->mirror) return EINA_FALSE;
+   evas_object_smart_callback_del(m->comp_object, "dirty", _comp_object_dirty);
    evas_object_name_set(m->mirror, "m->mirror");
    _e_deskmirror_mirror_setup(m);
    return EINA_TRUE;
@@ -606,10 +607,9 @@ _comp_object_configure(Mirror *m, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNU
 }
 
 static void
-_comp_object_dirty(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
+_comp_object_dirty(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
-   if (_comp_object_check(data))
-     evas_object_smart_callback_del(obj, "dirty", _comp_object_dirty);
+   _comp_object_check(data);
 }
 
 static Mirror *
