@@ -1,3 +1,39 @@
+Release 0.19.9:
+---------------------
+Carsten @raster Haitzler (1):
+      e - systray - add more sizes to icon hunt to fix missing icons
+
+Cedric @cedric BAIL (2):
+      temperature: let's finally allow the temp process to rest also when enlightenment die.
+      battery: let's finally allow the battery process to rest also when enlightenment die.
+
+Mike @zmike Blumenkrantz (25):
+      add event rect for deskmirror in pager/taskbar modes
+      reject x11 NotifyVirtual and NotifyInferior mouse in events more accurately
+      use better keybind activation logic
+      do not modify E_Client->visible value in show/hide callbacks
+      unset E_Client->want/take_focus flags in hide callback
+      only use deferred focus-setting on desk flip focus if client is not visible
+      don't set E_Client->changes.visible on successful show/hide
+      set 'stopping' during logout action
+      do not relaunch relaunchable quickaccess windows during logout
+      redo fileman menus to only scan the first 100 items found
+      feed mouse-up event during mouse down on menus
+      force render queue and check for redirection on clients with 0x0 pixmaps
+      add some smart callbacks for comp objects on redirect/dirty state change
+      return false when failing to create a mirror during deskmirror obj check
+      watch dirty smart cb for currently unredirected clients in deskmirror
+      remove pager mirror delete callback during pager win delete
+      remove dirty smart callback from deskmirror clients during client delete
+      only check dirty smart callbacks on non-new_client deskmirror clients
+      don't watch dirty smart cb for desmirror clients with unusable pixmaps
+      add full damage for x11 override clients on resize configure event
+      reject focus-set attempt if desk flip to client's desk was rejected
+      track focus time for x11 canvas focus, unset client focus on x11 canvas focus-in
+      simplify e_desk_show visibility unsetting, reject recursive desk flips
+      remove dirty callback for deskmirror clients upon creating visual
+      remove bz2 from dist
+
 Release 0.19.8:
 ---------------------
 Carsten Haitzler (3):
