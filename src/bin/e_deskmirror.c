@@ -56,6 +56,7 @@ static Evas_Smart *_e_deskmirror_smart = NULL;
 static Evas_Smart *_mirror_client_smart = NULL;
 
 static void _e_deskmirror_mirror_setup(Mirror *m);
+static void _comp_object_dirty(void *data, Evas_Object *obj, void *event_info EINA_UNUSED);
 static void _comp_object_hide(Mirror *m, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED);
 static void _comp_object_show(Mirror *m, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED);
 static void _comp_object_stack(Mirror *m, Evas *e EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED);
@@ -469,6 +470,7 @@ static void
 _e_deskmirror_mirror_del_hash(Mirror *m)
 {
    m->sd->mirrors = eina_inlist_remove(m->sd->mirrors, EINA_INLIST_GET(m));
+   evas_object_smart_callback_del_full(m->comp_object, "dirty", _comp_object_dirty, m);
    evas_object_smart_callback_del_full(m->comp_object, "frame_recalc_done", _e_deskmirror_mirror_frame_recalc_cb, m);
    evas_object_event_callback_del_full(m->comp_object, EVAS_CALLBACK_DEL, _e_deskmirror_mirror_del_cb, m);
    evas_object_del(m->mirror);
