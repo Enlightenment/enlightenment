@@ -227,52 +227,45 @@ e_desk_show(E_Desk *desk)
    Edje_Message_Int_Set *msg;
    Eina_List *l;
    E_Shelf *es;
-   int was_zone = 0, x, y, dx = 0, dy = 0;
+   E_Desk *desk2;
+   int was_zone = 0, dx = 0, dy = 0;
 
    E_OBJECT_CHECK(desk);
    E_OBJECT_TYPE_CHECK(desk, E_DESK_TYPE);
    if (desk->visible) return;
 
+   desk2 = e_desk_at_xy_get(desk->zone, desk->zone->desk_x_current, desk->zone->desk_y_current);
+   if ((!starting) && (!desk2->visible)) return;
    eev = E_NEW(E_Event_Desk_Before_Show, 1);
    eev->desk = e_desk_current_get(desk->zone);
    e_object_ref(E_OBJECT(eev->desk));
    ecore_event_add(E_EVENT_DESK_BEFORE_SHOW, eev,
                    _e_desk_event_desk_before_show_free, NULL);
 
-   for (x = 0; x < desk->zone->desk_x_count; x++)
+   if (desk2->visible)
      {
-        for (y = 0; y < desk->zone->desk_y_count; y++)
+        desk2->visible = 0;
+        if (e_config->desk_flip_wrap)
           {
-             E_Desk *desk2;
-
-             desk2 = e_desk_at_xy_get(desk->zone, x, y);
-             if (desk2->visible)
+             /* current desk (desk2) is last desk, switching to first desk (desk) */
+             if ((!desk->x) && (!desk->y) && (desk2->x + 1 == desk->zone->desk_x_count) && (desk2->y + 1 == desk->zone->desk_y_count))
                {
-                  desk2->visible = 0;
-                  if (e_config->desk_flip_wrap)
-                    {
-                       /* current desk (desk2) is last desk, switching to first desk (desk) */
-                       if ((!desk->x) && (!desk->y) && (desk2->x + 1 == desk->zone->desk_x_count) && (desk2->y + 1 == desk->zone->desk_y_count))
-                         {
-                            dx = (desk->x != desk2->x) ? 1 : 0;
-                            dy = (desk->y != desk2->y) ? 1 : 0;
-                         }
-                       /* current desk (desk2) is first desk, switching to last desk (desk) */
-                       else if ((!desk2->x) && (!desk2->y) && (desk->x + 1 == desk->zone->desk_x_count) && (desk->y + 1 == desk->zone->desk_y_count))
-                         {
-                            dx = (desk->x != desk2->x) ? -1 : 0;
-                            dy = (desk->y != desk2->y) ? -1 : 0;
-                         }
-                    }
-                  if ((!dx) && (!dy))
-                    {
-                       dx = desk->x - desk2->x;
-                       dy = desk->y - desk2->y;
-                    }
-                  _e_desk_hide_begin(desk2, dx, dy);
-                  break;
+                  dx = (desk->x != desk2->x) ? 1 : 0;
+                  dy = (desk->y != desk2->y) ? 1 : 0;
+               }
+             /* current desk (desk2) is first desk, switching to last desk (desk) */
+             else if ((!desk2->x) && (!desk2->y) && (desk->x + 1 == desk->zone->desk_x_count) && (desk->y + 1 == desk->zone->desk_y_count))
+               {
+                  dx = (desk->x != desk2->x) ? -1 : 0;
+                  dy = (desk->y != desk2->y) ? -1 : 0;
                }
           }
+        if ((!dx) && (!dy))
+          {
+             dx = desk->x - desk2->x;
+             dy = desk->y - desk2->y;
+          }
+        _e_desk_hide_begin(desk2, dx, dy);
      }
 
    desk->zone->desk_x_prev = desk->zone->desk_x_current;
