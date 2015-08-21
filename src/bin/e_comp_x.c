@@ -1479,6 +1479,11 @@ _e_comp_x_configure(void *data EINA_UNUSED, int type EINA_UNUSED, Ecore_X_Event_
      {
         e_pixmap_dirty(ec->pixmap);
         evas_object_resize(ec->frame, ev->w, ev->h);
+        if (ec->override && (!ec->input_only))
+          {
+             e_comp_object_damage(ec->frame, 0, 0, ev->w, ev->h);
+             e_comp_object_render_update_del(ec->frame);
+          }
      }
    return ECORE_CALLBACK_RENEW;
 }
