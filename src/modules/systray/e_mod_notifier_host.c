@@ -80,7 +80,7 @@ image_load(const char *name, const char *path, Evas_Object *image)
         for (theme = themes; *theme; theme++)
           {
              struct stat st;
-             unsigned int *i, sizes[] = { 24, 32, 48, 64, 128, 256, 0 };
+             unsigned int *i, sizes[] = { 16, 22, 24, 32, 36, 40, 48, 64, 72, 96, 128, 192, 256, 512, 0 };
 
              snprintf(buf, sizeof(buf), "%s/%s", path, *theme);
              if (stat(buf, &st)) continue;
