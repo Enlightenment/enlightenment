@@ -719,6 +719,9 @@ _pager_window_free(Pager_Win *pw)
 {
    if ((pw->drag.from_pager) && (pw->desk->pager->dragging))
      pw->desk->pager->dragging = 0;
+   if (pw->o_mirror)
+     evas_object_event_callback_del_full(pw->o_mirror, EVAS_CALLBACK_DEL,
+                                    _pager_window_cb_del, pw);
    if (pw->o_window) evas_object_del(pw->o_window);
    free(pw);
 }
