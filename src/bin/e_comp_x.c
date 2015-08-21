@@ -39,6 +39,7 @@ struct _E_Comp_X_Data
 };
 
 static unsigned int focus_time = 0;
+static unsigned int focus_canvas_time = 0;
 static Ecore_Timer *focus_timer;
 static E_Client *mouse_client;
 static Eina_List *handlers = NULL;
@@ -90,7 +91,11 @@ _e_comp_x_focus_check(E_Comp *comp)
    /* if there is no new focused or it is a non-X client,
     * focus comp canvas on focus-out */
    if ((!focused) || (e_pixmap_type_get(focused->pixmap) != E_PIXMAP_TYPE_X))
-     e_grabinput_focus(comp->ee_win, E_FOCUS_METHOD_PASSIVE);
+     {
+        focus_canvas_time = ecore_x_current_time_get();
+        focus_time = 0;
+        e_grabinput_focus(comp->ee_win, E_FOCUS_METHOD_PASSIVE);
+     }
 }
 
 static void
@@ -2574,7 +2579,17 @@ _e_comp_x_focus_in(void *data EINA_UNUSED, int type EINA_UNUSED, Ecore_X_Event_W
    E_Client *ec, *focused;
 
    ec = _e_comp_x_client_find_by_window(ev->win);
-   if (!ec) return ECORE_CALLBACK_RENEW;
+   if (!ec)
+     {
+        if ((ev->win == e_comp_get(NULL)->ee_win) && (ev->time >= focus_canvas_time) && (!focus_time))
+          {
+             focused = e_client_focused_get();
+             if (focused)
+               evas_object_focus_set(focused->frame, 0);
+             focus_canvas_time = 0;
+          }
+        return ECORE_CALLBACK_RENEW;
+     }
 
    /* block refocus attempts on iconic clients
     * these result from iconifying a client during a grab */
@@ -4245,6 +4260,7 @@ static void
 _e_comp_x_hook_client_focus_set(void *d EINA_UNUSED, E_Client *ec)
 {
    focus_time = ecore_x_current_time_get();
+   focus_canvas_time = 0;
    _e_comp_x_focus_setdown(ec);
    if ((e_pixmap_type_get(ec->pixmap) != E_PIXMAP_TYPE_X))
      {
