@@ -1562,6 +1562,7 @@ _e_comp_intercept_focus(void *data, Evas_Object *obj, Eina_Bool focus)
           {
              if (ec->desk->animate_count) return;
              e_desk_show(ec->desk);
+             if (!ec->desk->visible) return;
           }
      }
 
