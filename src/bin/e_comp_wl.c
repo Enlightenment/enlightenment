@@ -9,6 +9,7 @@
 #define COMPOSITOR_VERSION 3
 
 E_API int E_EVENT_WAYLAND_GLOBAL_ADD = -1;
+#include "session-recovery-server-protocol.h"
 
 /* Resource Data Mapping: (wl_resource_get_user_data)
  *
@@ -2005,6 +2006,33 @@ _e_comp_wl_subcompositor_cb_bind(struct wl_client *client, void *data EINA_UNUSE
 }
 
 static void
+_e_comp_wl_sr_cb_provide_uuid(struct wl_client *client EINA_UNUSED, struct wl_resource *resource EINA_UNUSED, const char *uuid)
+{
+   DBG("Provide UUID callback called for UUID: %s", uuid);
+}
+
+static const struct session_recovery_interface _e_session_recovery_interface =
+{
+   _e_comp_wl_sr_cb_provide_uuid,
+};
+
+static void
+_e_comp_wl_session_recovery_cb_bind(struct wl_client *client, void *data EINA_UNUSED, uint32_t version EINA_UNUSED, uint32_t id)
+{
+   struct wl_resource *res;
+
+   if (!(res = wl_resource_create(client, &session_recovery_interface, 1, id)))
+     {
+        ERR("Could not create session_recovery interface");
+        wl_client_post_no_memory(client);
+        return;
+     }
+
+   /* set implementation on resource */
+   wl_resource_set_implementation(res, &_e_session_recovery_interface, e_comp, NULL);
+}
+
+static void
 _e_comp_wl_screenshooter_cb_shoot(struct wl_client *client EINA_UNUSED, struct wl_resource *resource, struct wl_resource *output_resource, struct wl_resource *buffer_resource)
 {
    E_Comp_Wl_Output *output;
@@ -2479,6 +2507,14 @@ _e_comp_wl_compositor_create(void)
                          e_comp, _e_comp_wl_subcompositor_cb_bind))
      {
         ERR("Could not add subcompositor to wayland globals: %m");
+        goto comp_global_err;
+     }
+
+   /* try to add session_recovery to wayland globals */
+   if (!wl_global_create(cdata->wl.disp, &session_recovery_interface, 1,
+                         e_comp, _e_comp_wl_session_recovery_cb_bind))
+     {
+        ERR("Could not add session_recovery to wayland globals: %m");
         goto comp_global_err;
      }
 
