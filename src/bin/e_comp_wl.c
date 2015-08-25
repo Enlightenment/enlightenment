@@ -19,6 +19,8 @@ E_API int E_EVENT_WAYLAND_GLOBAL_ADD = -1;
  *
  */
 
+struct wl_resource *uuid_res;
+
 static void _e_comp_wl_subsurface_parent_commit(E_Client *ec, Eina_Bool parent_synchronized);
 
 /* local variables */
@@ -1396,8 +1398,11 @@ _e_comp_wl_surface_destroy(struct wl_resource *resource)
    if (!(ec = wl_resource_get_user_data(resource))) return;
 
    _e_comp_wl_surface_render_stop(ec);
+   //e_uuid_store_entry_del(ec->uuid);
    e_object_del(E_OBJECT(ec));
 }
+
+#include <uuid.h>
 
 static void
 _e_comp_wl_compositor_cb_surface_create(struct wl_client *client, struct wl_resource *resource, uint32_t id)
@@ -1406,6 +1411,7 @@ _e_comp_wl_compositor_cb_surface_create(struct wl_client *client, struct wl_reso
    E_Client *wc, *ec = NULL;
    Eina_List *l;
    pid_t pid;
+   char uuid[37];
 
    DBG("Compositor Cb Surface Create: %d", id);
 
@@ -1468,6 +1474,12 @@ _e_comp_wl_compositor_cb_surface_create(struct wl_client *client, struct wl_reso
 #endif
    /* emit surface create signal */
    wl_signal_emit(&e_comp_wl->signals.surface.create, res);
+
+   /* Send UUID for new pixmap back to app */
+   uuid_unparse(ec->uuid, uuid);
+   printf("MOEP: Sending UUID to wayland client: %s\n", uuid);
+   //session_recovery_send_uuid(uuid_res, uuid);
+   session_recovery_send_uuid(uuid_res, "Comp to Client");
 }
 
 static void
@@ -2016,7 +2028,7 @@ _e_comp_wl_subcompositor_cb_bind(struct wl_client *client, void *data EINA_UNUSE
 static void
 _e_comp_wl_sr_cb_provide_uuid(struct wl_client *client EINA_UNUSED, struct wl_resource *resource EINA_UNUSED, const char *uuid)
 {
-   DBG("Provide UUID callback called for UUID: %s", uuid);
+   printf("Provide UUID callback called for UUID: %s\n", uuid);
 }
 
 static const struct session_recovery_interface _e_session_recovery_interface =
@@ -2037,7 +2049,7 @@ _e_comp_wl_session_recovery_cb_bind(struct wl_client *client, void *data EINA_UN
      }
 
    /* set implementation on resource */
-   wl_resource_set_implementation(res, &_e_session_recovery_interface, e_comp, NULL);
+   wl_resource_set_implementation(uuid_res, &_e_session_recovery_interface, e_comp, NULL);
 }
 
 static void
