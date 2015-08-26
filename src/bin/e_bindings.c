@@ -498,7 +498,7 @@ e_bindings_key_down_event_handle(E_Binding_Context ctxt, E_Object *obj, Ecore_Ev
    mod = _e_bindings_modifiers(ev->modifiers);
    EINA_LIST_FOREACH(key_bindings, l, binding)
      {
-        if ((binding->key) && (!strcmp(binding->key, ev->key)) &&
+        if ((binding->key) && ((!strcmp(binding->key, ev->key))  || (!strcmp(binding->key, ev->keyname))) &&
             ((binding->any_mod) || (binding->mod == mod)))
           {
              if (_e_bindings_context_match(binding->ctxt, ctxt))
