@@ -1002,7 +1002,7 @@ e_modapi_shutdown(E_Module *m __UNUSED__)
         e_object_del(E_OBJECT(win));
         win = NULL;
      }
-   E_FN_DEL(e_object_del, cd);
+   E_FREE_FUNC(cd, e_object_del);
    if (timer)
      {
         ecore_timer_del(timer);

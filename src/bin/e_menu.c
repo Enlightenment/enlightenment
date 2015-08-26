@@ -193,13 +193,13 @@ e_menu_shutdown(void)
 {
    E_Menu *m;
 
-   E_FN_DEL(ecore_event_handler_del, _e_menu_key_down_handler);
-   E_FN_DEL(ecore_event_handler_del, _e_menu_key_up_handler);
-   E_FN_DEL(ecore_event_handler_del, _e_menu_mouse_down_handler);
-   E_FN_DEL(ecore_event_handler_del, _e_menu_mouse_up_handler);
-   E_FN_DEL(ecore_event_handler_del, _e_menu_mouse_move_handler);
-   E_FN_DEL(ecore_event_handler_del, _e_menu_mouse_wheel_handler);
-   E_FN_DEL(ecore_event_handler_del, _e_menu_window_shape_handler);
+   E_FREE_FUNC(_e_menu_key_down_handler, ecore_event_handler_del);
+   E_FREE_FUNC(_e_menu_key_up_handler, ecore_event_handler_del);
+   E_FREE_FUNC(_e_menu_mouse_down_handler, ecore_event_handler_del);
+   E_FREE_FUNC(_e_menu_mouse_up_handler, ecore_event_handler_del);
+   E_FREE_FUNC(_e_menu_mouse_move_handler, ecore_event_handler_del);
+   E_FREE_FUNC(_e_menu_mouse_wheel_handler, ecore_event_handler_del);
+   E_FREE_FUNC(_e_menu_window_shape_handler, ecore_event_handler_del);
 
    if (!x_fatal)
      {
