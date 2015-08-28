@@ -1554,6 +1554,12 @@ _pager_desk_cb_mouse_up(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_U
         pd->drag.in_pager = 0;
         p->active_drop_pd = NULL;
      }
+   else if (ev->button == (int)pager_config->btn_desk)
+     {
+        if (pd->pager->dragging) pd->pager->dragging = 0;
+        pd->drag.start = 0;
+        pd->drag.in_pager = 0;
+     }
 
    if ((p->popup) && (p->popup->urgent)) _pager_popup_free(p->popup);
 }
