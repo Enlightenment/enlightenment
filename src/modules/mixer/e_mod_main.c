@@ -364,6 +364,7 @@ _slider_changed_cb(void *data EINA_UNUSED, Evas_Object *obj,
    for (i = 0; i < s->volume.channel_count; i++) v.volumes[i] = val;
    emix_sink_volume_set(s, v);
    elm_slider_value_set(obj, val);
+   free(v.volumes);
 }
 
 static void
