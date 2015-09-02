@@ -9,12 +9,11 @@ typedef void (*emix_config_meter_changed)(Eina_Bool enable, void *data);
 void emix_config_init(emix_config_backend_changed cb, const void *userdata);
 void emix_config_shutdown(void);
 void emix_config_save(void);
-
 Eina_Bool emix_config_save_get(void);
-Eina_Bool emix_config_save_mute_get(void);
-void emix_config_save_mute_set(Eina_Bool mute);
-int emix_config_save_volume_get(void);
-void emix_config_save_volume_set(int volume);
+void emix_config_save_state_get(void);
+void emix_config_save_state_restore(void);
+const char *emix_config_save_sink_get(void);
+void emix_config_save_sink_set(const char *sink);
 
 const char *emix_config_backend_get(void);
 void emix_config_backend_set(const char *backend);

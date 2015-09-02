@@ -187,7 +187,8 @@ _volume_increase_cb(E_Object *obj EINA_UNUSED, const char *params EINA_UNUSED)
      }
 
    emix_sink_volume_set(s, volume);
-   if (volume.volumes) emix_config_save_volume_set(volume.volumes[0]);
+   emix_config_save_state_get();
+   if (emix_config_save_get()) e_config_save_queue();
    free(volume.volumes);
 }
 
@@ -212,7 +213,8 @@ _volume_decrease_cb(E_Object *obj EINA_UNUSED, const char *params EINA_UNUSED)
      }
 
    emix_sink_volume_set(s, volume);
-   if (volume.volumes) emix_config_save_volume_set(volume.volumes[0]);
+   emix_config_save_state_get();
+   if (emix_config_save_get()) e_config_save_queue();
    free(volume.volumes);
 }
 
@@ -224,7 +226,8 @@ _volume_mute_cb(E_Object *obj EINA_UNUSED, const char *params EINA_UNUSED)
    Emix_Sink *s = (Emix_Sink *)mixer_context->sink_default;
    Eina_Bool mute = !s->mute;
    emix_sink_mute_set(s, mute);
-   emix_config_save_mute_set(mute);
+   emix_config_save_state_get();
+   if (emix_config_save_get()) e_config_save_queue();
 }
 
 static void
@@ -344,7 +347,8 @@ _check_changed_cb(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
 {
    Emix_Sink *s = (Emix_Sink *)mixer_context->sink_default;
    emix_sink_mute_set(s, !s->mute);
-   emix_config_save_mute_set(!s->mute);
+   emix_config_save_state_get();
+   if (emix_config_save_get()) e_config_save_queue();
    /*
     *TODO: is it really necessary ? or it will be update
     *      with the sink changed hanlder
@@ -367,7 +371,8 @@ _slider_changed_cb(void *data EINA_UNUSED, Evas_Object *obj,
    for (i = 0; i < s->volume.channel_count; i++) v.volumes[i] = val;
    emix_sink_volume_set(s, v);
    elm_slider_value_set(obj, val);
-   if (v.volumes) emix_config_save_volume_set(v.volumes[0]);
+   emix_config_save_state_get();
+   if (emix_config_save_get()) e_config_save_queue();
    free(v.volumes);
 }
 
@@ -386,6 +391,7 @@ _sink_selected_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EIN
    Emix_Sink *s = data;
 
    mixer_context->sink_default = s;
+   if (s) emix_config_save_sink_set(s->name);
    _mixer_gadget_update();
 }
 
@@ -647,6 +653,8 @@ _sink_event(int type, void *info)
                mixer_context->sink_default = l->data;
              else
                mixer_context->sink_default = NULL;
+             emix_config_save_state_get();
+             if (emix_config_save_get()) e_config_save_queue();
              _mixer_gadget_update();
           }
      }
@@ -684,16 +692,27 @@ _ready(void)
 
    if (emix_config_save_get())
      {
-        Emix_Volume v;
-        unsigned int i;
-        Emix_Sink *s = (Emix_Sink *)mixer_context->sink_default;
+        Emix_Sink *s;
+        const char *sinkname;
 
-        v.volumes = calloc(s->volume.channel_count, sizeof(int));
-        v.channel_count = s->volume.channel_count;
-        for (i = 0; i < s->volume.channel_count; i++) v.volumes[i] = 100;
-        emix_sink_volume_set(s, v);
-        free(v.volumes);
-        emix_sink_mute_set(s, emix_config_save_mute_get());
+        sinkname = emix_config_save_sink_get();
+        if (sinkname)
+          {
+             Eina_List *sinks = (Eina_List *)emix_sinks_get();
+             Eina_List *l;
+
+             EINA_LIST_FOREACH(sinks, l, s)
+               {
+                  if ((s->name) && (!strcmp(s->name, sinkname)))
+                    {
+                       mixer_context->sink_default = s;
+                       break;
+                    }
+               }
+          }
+        s = (Emix_Sink *)mixer_context->sink_default;
+
+        emix_config_save_state_restore();
      }
 
    _mixer_gadget_update();

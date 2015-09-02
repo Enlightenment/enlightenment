@@ -10,36 +10,76 @@ typedef struct _Emix_Config
    int mute;
 
    int save;
-   int save_mute;
-   int save_volume;
+   const char *save_sink;
+
+   Eina_List *sinks;
+   Eina_List *sources;
 
    emix_config_backend_changed cb;
    const void *userdata;
 } Emix_Config;
 
+typedef struct _Emix_Config_Sink
+{
+   const char *name;
+   Eina_List *ports;
+   int mute;
+   int volume;
+} Emix_Config_Sink;
+
+typedef struct _Emix_Config_Source
+{
+   const char *name;
+   int mute;
+   int volume;
+} Emix_Config_Source;
+
+typedef struct _Emix_Config_Port
+{
+   const char *name;
+   int active;
+} Emix_Config_Port;
+
+
 struct _E_Config_Dialog_Data
 {
    Emix_Config config;
    Evas_Object *list;
+   Evas_Object *sources;
 };
 
-static E_Config_DD *cd;
-static Emix_Config *_config;
+static E_Config_DD *cd, *c_portd, *c_sinkd, *c_sourced;
+static Emix_Config *_config = NULL;
 
-static E_Config_DD*
+static void
 _emix_config_dd_new(void)
 {
-   E_Config_DD *result = E_CONFIG_DD_NEW("Emix_Config", Emix_Config);
+   c_portd = E_CONFIG_DD_NEW("Emix_Config_Port", Emix_Config_Port);
+   E_CONFIG_VAL(c_portd, Emix_Config_Port, name, STR);
+   E_CONFIG_VAL(c_portd, Emix_Config_Port, active, INT);
 
-   E_CONFIG_VAL(result, Emix_Config, backend, STR);
-   E_CONFIG_VAL(result, Emix_Config, notify, INT);
-   E_CONFIG_VAL(result, Emix_Config, mute, INT);
+   c_sinkd = E_CONFIG_DD_NEW("Emix_Config_Sink", Emix_Config_Sink);
+   E_CONFIG_VAL(c_sinkd, Emix_Config_Sink, name, STR);
+   E_CONFIG_LIST(c_sinkd, Emix_Config_Sink, ports, c_portd);
+   E_CONFIG_VAL(c_sinkd, Emix_Config_Sink, mute, INT);
+   E_CONFIG_VAL(c_sinkd, Emix_Config_Sink, volume, INT);
 
-   E_CONFIG_VAL(result, Emix_Config, save, INT);
-   E_CONFIG_VAL(result, Emix_Config, save_mute, INT);
-   E_CONFIG_VAL(result, Emix_Config, save_volume, INT);
+   c_sourced = E_CONFIG_DD_NEW("Emix_Config_Source", Emix_Config_Source);
+   E_CONFIG_VAL(c_sourced, Emix_Config_Source, name, STR);
+   E_CONFIG_VAL(c_sourced, Emix_Config_Source, mute, INT);
+   E_CONFIG_VAL(c_sourced, Emix_Config_Source, volume, INT);
 
-   return result;
+   cd = E_CONFIG_DD_NEW("Emix_Config", Emix_Config);
+
+   E_CONFIG_VAL(cd, Emix_Config, backend, STR);
+   E_CONFIG_VAL(cd, Emix_Config, notify, INT);
+   E_CONFIG_VAL(cd, Emix_Config, mute, INT);
+
+   E_CONFIG_VAL(cd, Emix_Config, save, INT);
+   E_CONFIG_VAL(cd, Emix_Config, save_sink, STR);
+
+   E_CONFIG_LIST(cd, Emix_Config, sinks, c_sinkd);
+   E_CONFIG_LIST(cd, Emix_Config, sources, c_sourced);
 }
 
 const char *
@@ -90,7 +130,7 @@ emix_config_init(emix_config_backend_changed cb, const void *userdata)
    const Eina_List *l;
 
    EINA_SAFETY_ON_FALSE_RETURN(emix_init());
-   cd = _emix_config_dd_new();
+   _emix_config_dd_new();
    _config = e_config_domain_load("module.emix", cd);
    if (!_config)
      {
@@ -100,12 +140,7 @@ emix_config_init(emix_config_backend_changed cb, const void *userdata)
           _config->backend = eina_stringshare_add(l->data);
      }
 
-   if (_config->save == 0)
-     {
-        _config->save = 1;
-        _config->save_mute = 0;
-        _config->save_volume = 100;
-     }
+   if (_config->save == 0) _config->save = 1;
 
    _config->cb = cb;
    _config->userdata = userdata;
@@ -115,9 +150,31 @@ emix_config_init(emix_config_backend_changed cb, const void *userdata)
 void
 emix_config_shutdown(void)
 {
+   Emix_Config_Sink *sink;
+   Emix_Config_Port *port;
+   Emix_Config_Source *source;
+
    E_CONFIG_DD_FREE(cd);
-   if (_config->backend)
-     eina_stringshare_del(_config->backend);
+   E_CONFIG_DD_FREE(c_sourced);
+   E_CONFIG_DD_FREE(c_sinkd);
+   E_CONFIG_DD_FREE(c_portd);
+   if (_config->backend) eina_stringshare_del(_config->backend);
+   if (_config->save_sink) eina_stringshare_del(_config->save_sink);
+   EINA_LIST_FREE(_config->sinks, sink)
+     {
+        if (sink->name) eina_stringshare_del(sink->name);
+        EINA_LIST_FREE(sink->ports, port)
+          {
+             if (port->name) eina_stringshare_del(port->name);
+             free(port);
+          }
+        free(sink);
+     }
+   EINA_LIST_FREE(_config->sources, source)
+     {
+        if (source->name) eina_stringshare_del(source->name);
+        free(source);
+     }
    free(_config);
    emix_shutdown();
 }
@@ -136,29 +193,186 @@ emix_config_save_get(void)
    return EINA_FALSE;
 }
 
-Eina_Bool
-emix_config_save_mute_get(void)
+void
+emix_config_save_state_get(void)
 {
-   return _config->save_mute;
+   Emix_Config_Sink *sink;
+   Emix_Config_Port *port;
+   Emix_Config_Source *source;
+
+   Eina_List *sinks, *sources, *l, *ll;
+   Emix_Sink *emsink;
+   Emix_Source *emsource;
+   Emix_Port *emport;
+
+   EINA_LIST_FREE(_config->sinks, sink)
+     {
+        if (sink->name) eina_stringshare_del(sink->name);
+        EINA_LIST_FREE(sink->ports, port)
+          {
+             if (port->name) eina_stringshare_del(port->name);
+             free(port);
+          }
+        free(sink);
+     }
+   EINA_LIST_FREE(_config->sources, source)
+     {
+        if (source->name) eina_stringshare_del(source->name);
+        free(source);
+     }
+
+   sinks = (Eina_List *)emix_sinks_get();
+   EINA_LIST_FOREACH(sinks, l, emsink)
+     {
+        if (!emsink->name) continue;
+        sink = calloc(1, sizeof(Emix_Config_Sink));
+        if (sink)
+          {
+             sink->name = eina_stringshare_add(emsink->name);
+             EINA_LIST_FOREACH(emsink->ports, ll, emport)
+               {
+                  if (!emport->name) continue;
+                  port = calloc(1, sizeof(Emix_Config_Port));
+                  if (port)
+                    {
+                       port->name = eina_stringshare_add(emport->name);
+                       port->active = emport->active;
+                       sink->ports = eina_list_append(sink->ports, port);
+                    }
+               }
+             if (emsink->volume.channel_count > 0)
+               sink->volume = emsink->volume.volumes[0];
+             sink->mute = emsink->mute;
+             _config->sinks = eina_list_append(_config->sinks, sink);
+          }
+     }
+   sources = (Eina_List *)emix_sources_get();
+   EINA_LIST_FOREACH(sources, ll, emsource)
+     {
+        if (!emsource->name) continue;
+        source = calloc(1, sizeof(Emix_Config_Source));
+        if (source)
+          {
+             source->name = eina_stringshare_add(emsource->name);
+             if (emsource->volume.channel_count > 0)
+               source->volume = emsource->volume.volumes[0];
+             source->mute = emsource->mute;
+             _config->sources = eina_list_append(_config->sources, source);
+          }
+     }
+}
+
+static Emix_Sink *
+_find_sink(const char *name)
+{
+   Eina_List *sinks, *l;
+   Emix_Sink *emsink;
+
+   sinks = (Eina_List *)emix_sinks_get();
+   EINA_LIST_FOREACH(sinks, l, emsink)
+     {
+        if (!emsink->name) continue;
+        if (!strcmp(emsink->name, name)) return emsink;
+     }
+   return NULL;
+}
+
+static Emix_Port *
+_find_port(Emix_Sink *sink, const char *name)
+{
+   Eina_List *l;
+   Emix_Port *emport;
+
+   EINA_LIST_FOREACH(sink->ports, l, emport)
+     {
+        if (!emport->name) continue;
+        if (!strcmp(emport->name, name)) return emport;
+     }
+   return NULL;
+}
+
+static Emix_Source *
+_find_source(const char *name)
+{
+   Eina_List *sources, *l;
+   Emix_Source *emsource;
+
+   sources = (Eina_List *)emix_sources_get();
+   EINA_LIST_FOREACH(sources, l, emsource)
+     {
+        if (!emsource->name) continue;
+        if (!strcmp(emsource->name, name)) return emsource;
+     }
+   return NULL;
 }
 
 void
-emix_config_save_mute_set(Eina_Bool mute)
+emix_config_save_state_restore(void)
 {
-   _config->save_mute = mute;
-   if (_config->save == 1) e_config_save_queue();
+   Emix_Config_Sink *sink;
+   Emix_Config_Port *port;
+   Emix_Config_Source *source;
+   Emix_Sink *emsink;
+   Emix_Source *emsource;
+   Emix_Port *emport;
+   Eina_List *l, *ll;
+   Emix_Volume v;
+   unsigned int i;
+
+   EINA_LIST_FOREACH(_config->sinks, l, sink)
+     {
+        if (!sink->name) continue;
+        emsink = _find_sink(sink->name);
+        if (!emsink) continue;
+        v.volumes = calloc(emsink->volume.channel_count, sizeof(int));
+        if (v.volumes)
+          {
+             v.channel_count = emsink->volume.channel_count;
+             for (i = 0; i < v.channel_count; i++)
+               v.volumes[i] = sink->volume;
+             emix_sink_volume_set(emsink, v);
+             free(v.volumes);
+          }
+        emix_sink_mute_set(emsink, sink->mute);
+        EINA_LIST_FOREACH(sink->ports, ll, port)
+          {
+             if (!port->name) continue;
+             if (port->active)
+               {
+                  emport = _find_port(emsink, port->name);
+                  if (emport) emix_sink_port_set(emsink, emport);
+                  break;
+               }
+          }
+     }
+   EINA_LIST_FOREACH(_config->sources, l, source)
+     {
+        if (!source->name) continue;
+        emsource = _find_source(source->name);
+        if (!emsource) continue;
+        v.volumes = calloc(emsource->volume.channel_count, sizeof(int));
+        if (v.volumes)
+          {
+             v.channel_count = emsource->volume.channel_count;
+             for (i = 0; i < v.channel_count; i++)
+               v.volumes[i] = source->volume;
+             emix_source_volume_set(emsource, v);
+             free(v.volumes);
+          }
+        emix_source_mute_set(emsource, source->mute);
+     }
 }
 
-int
-emix_config_save_volume_get(void)
+const char *
+emix_config_save_sink_get(void)
 {
-   return _config->save_volume;
+   return _config->save_sink;
 }
 
 void
-emix_config_save_volume_set(int volume)
+emix_config_save_sink_set(const char *sink)
 {
-   _config->save_volume = volume;
+   eina_stringshare_replace(&(_config->save_sink), sink);
    if (_config->save == 1) e_config_save_queue();
 }
 
