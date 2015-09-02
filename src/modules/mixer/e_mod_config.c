@@ -9,6 +9,10 @@ typedef struct _Emix_Config
    int notify;
    int mute;
 
+   int save;
+   int save_mute;
+   int save_volume;
+
    emix_config_backend_changed cb;
    const void *userdata;
 } Emix_Config;
@@ -30,6 +34,10 @@ _emix_config_dd_new(void)
    E_CONFIG_VAL(result, Emix_Config, backend, STR);
    E_CONFIG_VAL(result, Emix_Config, notify, INT);
    E_CONFIG_VAL(result, Emix_Config, mute, INT);
+
+   E_CONFIG_VAL(result, Emix_Config, save, INT);
+   E_CONFIG_VAL(result, Emix_Config, save_mute, INT);
+   E_CONFIG_VAL(result, Emix_Config, save_volume, INT);
 
    return result;
 }
@@ -68,6 +76,9 @@ _config_set(Emix_Config *config)
    _config->notify = config->notify;
    _config->mute = config->mute;
 
+   if (config->save == 0) _config->save = -1;
+   else if (config->save == 1) _config->save = 1;
+
    DBG("SAVING CONFIG %s %d %d", _config->backend, config->notify,
        config->mute);
    e_config_domain_save("module.emix", cd, config);
@@ -89,6 +100,13 @@ emix_config_init(emix_config_backend_changed cb, const void *userdata)
           _config->backend = eina_stringshare_add(l->data);
      }
 
+   if (_config->save == 0)
+     {
+        _config->save = 1;
+        _config->save_mute = 0;
+        _config->save_volume = 100;
+     }
+
    _config->cb = cb;
    _config->userdata = userdata;
    DBG("Config loaded, backend to use: %s", _config->backend);
@@ -104,6 +122,46 @@ emix_config_shutdown(void)
    emix_shutdown();
 }
 
+void
+emix_config_save(void)
+{
+   if ((_config) && (cd))
+     e_config_domain_save("module.emix", cd, _config);
+}
+
+Eina_Bool
+emix_config_save_get(void)
+{
+   if (_config->save == 1) return EINA_TRUE;
+   return EINA_FALSE;
+}
+
+Eina_Bool
+emix_config_save_mute_get(void)
+{
+   return _config->save_mute;
+}
+
+void
+emix_config_save_mute_set(Eina_Bool mute)
+{
+   _config->save_mute = mute;
+   if (_config->save == 1) e_config_save_queue();
+}
+
+int
+emix_config_save_volume_get(void)
+{
+   return _config->save_volume;
+}
+
+void
+emix_config_save_volume_set(int volume)
+{
+   _config->save_volume = volume;
+   if (_config->save == 1) e_config_save_queue();
+}
+
 static void*
 _create_data(E_Config_Dialog *cfg EINA_UNUSED)
 {
@@ -113,6 +171,10 @@ _create_data(E_Config_Dialog *cfg EINA_UNUSED)
    d->config.backend = eina_stringshare_add(_config->backend);
    d->config.notify = _config->notify;
    d->config.mute = _config->mute;
+
+   if (_config->save == -1) d->config.save = 0;
+   else if (_config->save == 1) d->config.save = 1;
+   else d->config.save = 1;
 
    return d;
 }
@@ -139,6 +201,9 @@ _basic_create_widgets(E_Config_Dialog *cfd EINA_UNUSED, Evas *evas,
    e_widget_list_object_append(o, l, 0, 0, 0);
 
    l = e_widget_check_add(evas, "Mute on lock", &cfdata->config.mute);
+   e_widget_list_object_append(o, l, 0, 0, 0);
+
+   l = e_widget_check_add(evas, "Remember", &cfdata->config.save);
    e_widget_list_object_append(o, l, 0, 0, 0);
 
    l = e_widget_label_add(evas, "Backend to use:");

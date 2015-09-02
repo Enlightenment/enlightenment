@@ -187,6 +187,7 @@ _volume_increase_cb(E_Object *obj EINA_UNUSED, const char *params EINA_UNUSED)
      }
 
    emix_sink_volume_set(s, volume);
+   if (volume.volumes) emix_config_save_volume_set(volume.volumes[0]);
    free(volume.volumes);
 }
 
@@ -211,6 +212,7 @@ _volume_decrease_cb(E_Object *obj EINA_UNUSED, const char *params EINA_UNUSED)
      }
 
    emix_sink_volume_set(s, volume);
+   if (volume.volumes) emix_config_save_volume_set(volume.volumes[0]);
    free(volume.volumes);
 }
 
@@ -222,6 +224,7 @@ _volume_mute_cb(E_Object *obj EINA_UNUSED, const char *params EINA_UNUSED)
    Emix_Sink *s = (Emix_Sink *)mixer_context->sink_default;
    Eina_Bool mute = !s->mute;
    emix_sink_mute_set(s, mute);
+   emix_config_save_mute_set(mute);
 }
 
 static void
@@ -341,6 +344,7 @@ _check_changed_cb(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
 {
    Emix_Sink *s = (Emix_Sink *)mixer_context->sink_default;
    emix_sink_mute_set(s, !s->mute);
+   emix_config_save_mute_set(!s->mute);
    /*
     *TODO: is it really necessary ? or it will be update
     *      with the sink changed hanlder
@@ -357,13 +361,13 @@ _slider_changed_cb(void *data EINA_UNUSED, Evas_Object *obj,
    unsigned int i;
    Emix_Sink *s = (Emix_Sink *)mixer_context->sink_default;
 
-
    val = (int)elm_slider_value_get(obj);
    v.volumes = calloc(s->volume.channel_count, sizeof(int));
    v.channel_count = s->volume.channel_count;
    for (i = 0; i < s->volume.channel_count; i++) v.volumes[i] = val;
    emix_sink_volume_set(s, v);
    elm_slider_value_set(obj, val);
+   if (v.volumes) emix_config_save_volume_set(v.volumes[0]);
    free(v.volumes);
 }
 
@@ -678,6 +682,20 @@ _ready(void)
           mixer_context->sink_default = emix_sinks_get()->data;
      }
 
+   if (emix_config_save_get())
+     {
+        Emix_Volume v;
+        unsigned int i;
+        Emix_Sink *s = (Emix_Sink *)mixer_context->sink_default;
+
+        v.volumes = calloc(s->volume.channel_count, sizeof(int));
+        v.channel_count = s->volume.channel_count;
+        for (i = 0; i < s->volume.channel_count; i++) v.volumes[i] = 100;
+        emix_sink_volume_set(s, v);
+        free(v.volumes);
+        emix_sink_mute_set(s, emix_config_save_mute_get());
+     }
+
    _mixer_gadget_update();
 }
 
@@ -833,6 +851,7 @@ e_modapi_shutdown(E_Module *m EINA_UNUSED)
 E_API int
 e_modapi_save(E_Module *m EINA_UNUSED)
 {
+   emix_config_save();
    return 1;
 }
 
