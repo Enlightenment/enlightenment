@@ -670,6 +670,8 @@ _sink_event(int type, void *info)
      {
         DBG("Sink added");
      }
+   emix_config_save_state_get();
+   if (emix_config_save_get()) e_config_save_queue();
 }
 
 static void
