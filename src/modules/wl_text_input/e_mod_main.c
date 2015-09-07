@@ -853,6 +853,7 @@ _e_text_cb_bind_input_method(struct wl_client *client, void *data EINA_UNUSED, u
 {
    E_Input_Method *input_method;
    struct wl_resource *resource;
+   pid_t pid;
 
    resource = wl_resource_create(client, &wl_input_method_interface, 1, id);
    if (!resource)
@@ -869,9 +870,17 @@ _e_text_cb_bind_input_method(struct wl_client *client, void *data EINA_UNUSED, u
         wl_resource_destroy(resource);
         return;
      }
-#warning FIXME SECURITY
-   /* FIXME: we need to make sure the client attempting to bind
-      this interface really provides vkbd. */
+
+   wl_client_get_credentials(client, &pid, NULL, NULL);
+   if (pid != getpid())
+     {
+        ERR("Permission to bind input method denied");
+        wl_resource_post_error(resource,
+                               WL_DISPLAY_ERROR_INVALID_OBJECT,
+                               "permission to bind input_method denied");
+        wl_resource_destroy(resource);
+        return;
+     }
 
    input_method = E_NEW(E_Input_Method, 1);
    if (!input_method)
@@ -900,7 +909,6 @@ EAPI E_Module_Api e_modapi = { E_MODULE_API_VERSION, "Wl_Text_Input" };
 EAPI void *
 e_modapi_init(E_Module *m)
 {
-   return NULL;
    // FIXME: create only one input method object per seat.
    e_comp->wl_comp_data->seat.im.global =
       wl_global_create(e_comp->wl_comp_data->wl.disp, &wl_input_method_interface, 1,
