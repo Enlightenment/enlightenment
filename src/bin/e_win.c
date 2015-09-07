@@ -397,6 +397,7 @@ e_win_show(E_Win *win)
           ecore_x_icccm_transient_for_unset(ecore_evas_window_get(win->ecore_evas));
      }
 #endif
+   evas_object_show(win->client->frame);
    _e_win_prop_update(win);
    if (win->state.centered)
      e_comp_object_util_center(win->client->frame);
