@@ -824,7 +824,7 @@ _e_text_cb_bind_text_input_manager(struct wl_client *client, void *data EINA_UNU
 static void
 _e_text_input_method_cb_unbind(struct wl_resource *resource)
 {
-   E_Input_Method *input_method = wl_resource_get_user_data(resource);
+   E_Input_Method *input_method;
 
    e_comp->wl_comp_data->seat.im.resource = NULL;
 
