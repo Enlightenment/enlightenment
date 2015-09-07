@@ -1461,11 +1461,6 @@ _e_comp_x_configure(void *data EINA_UNUSED, int type EINA_UNUSED, Ecore_X_Event_
      {
         e_pixmap_dirty(ec->pixmap);
         evas_object_resize(ec->frame, ev->w, ev->h);
-        if (ec->override && (!ec->input_only))
-          {
-             e_comp_object_damage(ec->frame, 0, 0, ev->w, ev->h);
-             e_comp_object_render_update_del(ec->frame);
-          }
      }
    return ECORE_CALLBACK_RENEW;
 }
@@ -2683,27 +2678,33 @@ static Eina_Bool
 _e_comp_x_damage(void *data EINA_UNUSED, int type EINA_UNUSED, Ecore_X_Event_Damage *ev)
 {
    E_Client *ec;
+   Ecore_X_Rectangle *rects;
+   int n = 0;
 
    ec = _e_comp_x_client_find_by_damage(ev->damage);
    if (!ec) return ECORE_CALLBACK_PASS_ON;
    if (ec->comp_data->damage)
      {
         Ecore_X_Region parts;
+        Ecore_X_Rectangle bounds;
 
         parts = ecore_x_region_new(NULL, 0);
         ecore_x_damage_subtract(ec->comp_data->damage, 0, parts);
+        rects = ecore_x_region_fetch(parts, &n, &bounds);
         ecore_x_region_free(parts);
      }
    //WRN("DAMAGE %p: %dx%d", ec, ev->area.width, ev->area.height);
 
+   if (!n) return ECORE_CALLBACK_RENEW;
    if (ec->comp->nocomp)
      e_pixmap_dirty(ec->pixmap);
-   /* discard unwanted xy position of first damage
-    * to avoid wrong composition for override redirect window */
-   else if ((ec->override) && (!ec->comp_data->first_damage))
-     e_comp_object_damage(ec->frame, 0, 0, ev->area.width, ev->area.height);
    else
-     e_comp_object_damage(ec->frame, ev->area.x, ev->area.y, ev->area.width, ev->area.height);
+     {
+        int i;
+
+        for (i = 0; i < n; i++)
+          e_comp_object_damage(ec->frame, rects[i].x, rects[i].y, rects[i].width, rects[i].height);
+     }
    if ((!ec->re_manage) && (!ec->override) && (!ec->comp_data->first_damage))
      e_comp_object_render_update_del(ec->frame);
    else
