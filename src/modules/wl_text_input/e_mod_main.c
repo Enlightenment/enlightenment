@@ -925,7 +925,7 @@ e_modapi_init(E_Module *m)
    if (!text_input_manager_global)
      {
         ERR("failed to create wl_global for text input manager");
-        wl_global_destroy(e_comp->wl_comp_data->seat.im.global);
+        E_FREE_FUNC(e_comp->wl_comp_data->seat.im.global, wl_global_destroy);
         return NULL;
      }
 
