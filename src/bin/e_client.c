@@ -3578,6 +3578,8 @@ e_client_activate(E_Client *ec, Eina_Bool just_do_it)
           }
         if (!ec->lock_user_stacking)
           evas_object_raise(ec->frame);
+        if (ec->shaded || ec->shading)
+          e_client_unshade(ec, ec->shade_dir);
         if (!ec->lock_focus_out)
           {
              /* XXX ooffice does send this request for
