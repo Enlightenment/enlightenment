@@ -3566,7 +3566,15 @@ e_client_activate(E_Client *ec, Eina_Bool just_do_it)
                e_client_uniconify(ec);
           }
         if ((!ec->iconic) && (!ec->sticky))
-          e_desk_show(ec->desk);
+          {
+             int val = e_config->focus_last_focused_per_desktop;
+
+             /* prevent infinite focus loops during refocus */
+             if (!ec->lock_focus_out)
+               e_config->focus_last_focused_per_desktop = 0;
+             e_desk_show(ec->desk);
+             e_config->focus_last_focused_per_desktop = val;
+          }
         if (!ec->lock_user_stacking)
           evas_object_raise(ec->frame);
         if (!ec->lock_focus_out)
