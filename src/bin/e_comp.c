@@ -243,7 +243,15 @@ _e_comp_cb_nocomp_begin(void)
    INF("NOCOMP %p: frame %p", ecf, ecf->frame);
    e_comp->nocomp = 1;
 
-   evas_object_raise(ecf->frame);
+   {
+      Eina_Bool fs;
+
+      fs = e_comp->nocomp_ec->fullscreen;
+      e_comp->nocomp_ec->fullscreen = 0;
+      e_comp->nocomp_ec->layer = E_LAYER_CLIENT_PRIO;
+      evas_object_layer_set(e_comp->nocomp_ec->frame, E_LAYER_CLIENT_PRIO);
+      e_comp->nocomp_ec->fullscreen = fs;
+   }
    e_client_redirected_set(ecf, 0);
 
    //ecore_evas_manual_render_set(e_comp->ee, EINA_TRUE);
@@ -345,6 +353,21 @@ _e_comp_nocomp_end(void)
    e_comp->nocomp_want = 0;
    E_FREE_FUNC(e_comp->nocomp_delay_timer, ecore_timer_del);
    _e_comp_cb_nocomp_end();
+   if (e_comp->nocomp_ec)
+     {
+        if (e_comp->nocomp_ec->fullscreen)
+          {
+             E_Layer layer = MAX(e_comp->nocomp_ec->saved.layer, E_LAYER_CLIENT_NORMAL);
+
+             if (!e_config->allow_above_fullscreen)
+               layer = E_LAYER_CLIENT_FULLSCREEN;
+             else if (e_config->mode.presentation)
+               layer = E_LAYER_CLIENT_TOP;
+             e_comp->nocomp_ec->fullscreen = 0;
+             evas_object_layer_set(e_comp->nocomp_ec->frame, layer);
+             e_comp->nocomp_ec->fullscreen = 1;
+          }
+     }
    e_comp->nocomp_ec = NULL;
 }
 
@@ -834,6 +857,15 @@ _e_comp_free(E_Comp *c)
 //////////////////////////////////////////////////////////////////////////
 
 static Eina_Bool
+_e_comp_object_add(void *d EINA_UNUSED, int t EINA_UNUSED, E_Event_Comp_Object *ev)
+{
+   if ((!e_comp->nocomp) || (!e_comp->nocomp_ec)) return ECORE_CALLBACK_RENEW;
+   if (evas_object_layer_get(ev->comp_object) > MAX(e_comp->nocomp_ec->saved.layer, E_LAYER_CLIENT_NORMAL))
+     _e_comp_nocomp_end();
+   return ECORE_CALLBACK_RENEW;
+}
+
+static Eina_Bool
 _e_comp_override_expire(void *data EINA_UNUSED)
 {
    e_comp->nocomp_override_timer = NULL;
@@ -1089,6 +1121,7 @@ out:
 
    E_LIST_HANDLER_APPEND(handlers, ECORE_EVENT_KEY_DOWN, _e_comp_key_down, NULL);
    E_LIST_HANDLER_APPEND(handlers, ECORE_EVENT_SIGNAL_USER, _e_comp_signal_user, NULL);
+   E_LIST_HANDLER_APPEND(handlers, E_EVENT_COMP_OBJECT_ADD, _e_comp_object_add, NULL);
 
    return EINA_TRUE;
 }
@@ -1471,7 +1504,7 @@ E_API void
 e_comp_override_add()
 {
    e_comp->nocomp_override++;
-   if ((e_comp->nocomp_override > 0) && (e_comp->nocomp)) _e_comp_cb_nocomp_end();
+   if ((e_comp->nocomp_override > 0) && (e_comp->nocomp)) _e_comp_nocomp_end();
 }
 
 #if 0
