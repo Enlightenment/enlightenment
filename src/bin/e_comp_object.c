@@ -1222,8 +1222,19 @@ _e_comp_intercept_raise(void *data, Evas_Object *obj)
      evas_object_raise(obj);
    else
      {
-        /* still stack below layer marker */
-        evas_object_stack_below(obj, cw->comp->layers[cw->layer].obj);
+        Evas_Object *op;
+
+        /* still stack below override below the layer marker */
+        for (op = o = cw->comp->layers[cw->layer].obj;
+             o && o != cw->comp->layers[cw->layer - 1].obj;
+             op = o, o = evas_object_below_get(o))
+          {
+             E_Client *ec;
+
+             ec = e_comp_object_client_get(o);
+             if (ec && (!ec->override)) break;
+          }
+        evas_object_stack_below(obj, op);
         if (e_client_focus_track_enabled())
           e_client_raise_latest_set(cw->ec); //modify raise list if necessary
      }
