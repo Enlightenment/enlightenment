@@ -241,7 +241,15 @@ _e_comp_cb_nocomp_begin(E_Comp *c)
    INF("NOCOMP %p: frame %p", ecf, ecf->frame);
    c->nocomp = 1;
 
-   evas_object_raise(ecf->frame);
+   {
+      Eina_Bool fs;
+
+      fs = c->nocomp_ec->fullscreen;
+      c->nocomp_ec->fullscreen = 0;
+      c->nocomp_ec->layer = E_LAYER_CLIENT_PRIO;
+      evas_object_layer_set(c->nocomp_ec->frame, E_LAYER_CLIENT_PRIO);
+      c->nocomp_ec->fullscreen = fs;
+   }
    e_client_redirected_set(ecf, 0);
 
    //ecore_evas_manual_render_set(c->ee, EINA_TRUE);
@@ -345,6 +353,22 @@ _e_comp_nocomp_end(E_Comp *c)
    c->nocomp_want = 0;
    E_FREE_FUNC(c->nocomp_delay_timer, ecore_timer_del);
    _e_comp_cb_nocomp_end(c);
+   
+   if (c->nocomp_ec)
+     {
+        if (c->nocomp_ec->fullscreen)
+          {
+             E_Layer layer = MAX(c->nocomp_ec->saved.layer, E_LAYER_CLIENT_NORMAL);
+
+             if (!e_config->allow_above_fullscreen)
+               layer = E_LAYER_CLIENT_FULLSCREEN;
+             else if (e_config->mode.presentation)
+               layer = E_LAYER_CLIENT_TOP;
+             c->nocomp_ec->fullscreen = 0;
+             evas_object_layer_set(c->nocomp_ec->frame, layer);
+             c->nocomp_ec->fullscreen = 1;
+          }
+     }
    c->nocomp_ec = NULL;
 }
 
@@ -834,6 +858,16 @@ _e_comp_free(E_Comp *c)
 //////////////////////////////////////////////////////////////////////////
 
 static Eina_Bool
+_e_comp_object_add(void *d EINA_UNUSED, int t EINA_UNUSED, E_Event_Comp_Object *ev)
+{
+   E_Comp *c = e_comp_util_evas_object_comp_get(ev->comp_object);
+   if ((!c->nocomp) || (!c->nocomp_ec)) return ECORE_CALLBACK_RENEW;
+   if (evas_object_layer_get(ev->comp_object) > MAX(c->nocomp_ec->saved.layer, E_LAYER_CLIENT_NORMAL))
+     _e_comp_nocomp_end(c);
+   return ECORE_CALLBACK_RENEW;
+}
+
+static Eina_Bool
 _e_comp_override_expire(void *data)
 {
    E_Comp *c = data;
@@ -1084,6 +1118,7 @@ out:
 
    E_LIST_HANDLER_APPEND(handlers, ECORE_EVENT_KEY_DOWN, _e_comp_key_down, NULL);
    E_LIST_HANDLER_APPEND(handlers, ECORE_EVENT_SIGNAL_USER, _e_comp_signal_user, NULL);
+   E_LIST_HANDLER_APPEND(handlers, E_EVENT_COMP_OBJECT_ADD, _e_comp_object_add, NULL);
 
    E_LIST_HANDLER_APPEND(handlers, E_EVENT_ZONE_MOVE_RESIZE, _e_comp_cb_zone_change, NULL);
    E_LIST_HANDLER_APPEND(handlers, E_EVENT_ZONE_ADD, _e_comp_cb_zone_change, NULL);
@@ -1576,7 +1611,7 @@ E_API void
 e_comp_override_add(E_Comp *c)
 {
    c->nocomp_override++;
-   if ((c->nocomp_override > 0) && (c->nocomp)) _e_comp_cb_nocomp_end(c);
+   if ((c->nocomp_override > 0) && (c->nocomp)) _e_comp_nocomp_end(c);
 }
 
 #if 0
