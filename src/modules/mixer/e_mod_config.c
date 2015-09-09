@@ -387,7 +387,6 @@ _create_data(E_Config_Dialog *cfg EINA_UNUSED)
    d->config.mute = _config->mute;
 
    if (_config->save == -1) d->config.save = 0;
-   else if (_config->save == 1) d->config.save = 1;
    else d->config.save = 1;
 
    return d;
