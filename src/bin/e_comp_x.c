@@ -2678,7 +2678,7 @@ static Eina_Bool
 _e_comp_x_damage(void *data EINA_UNUSED, int type EINA_UNUSED, Ecore_X_Event_Damage *ev)
 {
    E_Client *ec;
-   Ecore_X_Rectangle *rects;
+   Ecore_X_Rectangle *rects = NULL;
    int n = 0;
 
    ec = _e_comp_x_client_find_by_damage(ev->damage);
