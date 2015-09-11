@@ -720,8 +720,12 @@ e_zone_desk_count_set(E_Zone *zone,
    desk = e_desk_current_get(zone);
    if (desk)
      {
+        /* need to simulate "startup" conditions to force desk show to reevaluate here */
+        int s = starting;
         desk->visible = 0;
+        starting = 1;
         e_desk_show(desk);
+        starting = s;
      }
 
    e_zone_edge_flip_eval(zone);
