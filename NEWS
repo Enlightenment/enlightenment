@@ -1,13 +1,32 @@
+Release 0.19.10:
+---------------------
+Carsten Haitzler (1):
+      e comp - set rects to null to silence compiler warning
+
+Mike Blumenkrantz (8):
+      fix x11 compositor to use damage events
+      explicitly show the client object of internal window during show
+      force-disable refocus during desk flip on client activation
+      unshade clients when activating
+      ensure that normal clients are stacked below overrides when raising
+      add extreme hacks to enforce nocomp stacking policies
+      set 'starting' flag for desk show in e_zone_desk_count_set()
+      ensure that non-fullscreen nocomp clients have their layers re-set
+
+Simon Lees (1):
+      Wizard: Update icon theme search list
+
+
 Release 0.19.9:
 ---------------------
-Carsten @raster Haitzler (1):
+Carsten Haitzler (1):
       e - systray - add more sizes to icon hunt to fix missing icons
 
-Cedric @cedric BAIL (2):
+Cedric BAIL (2):
       temperature: let's finally allow the temp process to rest also when enlightenment die.
       battery: let's finally allow the battery process to rest also when enlightenment die.
 
-Mike @zmike Blumenkrantz (25):
+Mike Blumenkrantz (25):
       add event rect for deskmirror in pager/taskbar modes
       reject x11 NotifyVirtual and NotifyInferior mouse in events more accurately
       use better keybind activation logic
@@ -33,6 +52,7 @@ Mike @zmike Blumenkrantz (25):
       simplify e_desk_show visibility unsetting, reject recursive desk flips
       remove dirty callback for deskmirror clients upon creating visual
       remove bz2 from dist
+
 
 Release 0.19.8:
 ---------------------
