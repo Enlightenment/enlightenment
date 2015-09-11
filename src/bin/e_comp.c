@@ -247,6 +247,8 @@ _e_comp_cb_nocomp_begin(void)
       Eina_Bool fs;
 
       fs = e_comp->nocomp_ec->fullscreen;
+      if (!fs)
+        e_comp->nocomp_ec->saved.layer = e_comp->nocomp_ec->layer;
       e_comp->nocomp_ec->fullscreen = 0;
       e_comp->nocomp_ec->layer = E_LAYER_CLIENT_PRIO;
       evas_object_layer_set(e_comp->nocomp_ec->frame, E_LAYER_CLIENT_PRIO);
@@ -355,18 +357,17 @@ _e_comp_nocomp_end(void)
    _e_comp_cb_nocomp_end();
    if (e_comp->nocomp_ec)
      {
-        if (e_comp->nocomp_ec->fullscreen)
-          {
-             E_Layer layer = MAX(e_comp->nocomp_ec->saved.layer, E_LAYER_CLIENT_NORMAL);
+        E_Layer layer = MAX(e_comp->nocomp_ec->saved.layer, E_LAYER_CLIENT_NORMAL);
+        Eina_Bool fs;
 
-             if (!e_config->allow_above_fullscreen)
-               layer = E_LAYER_CLIENT_FULLSCREEN;
-             else if (e_config->mode.presentation)
-               layer = E_LAYER_CLIENT_TOP;
-             e_comp->nocomp_ec->fullscreen = 0;
-             evas_object_layer_set(e_comp->nocomp_ec->frame, layer);
-             e_comp->nocomp_ec->fullscreen = 1;
-          }
+        if (!e_config->allow_above_fullscreen)
+          layer = E_LAYER_CLIENT_FULLSCREEN;
+        else if (e_config->mode.presentation)
+          layer = E_LAYER_CLIENT_TOP;
+        fs = e_comp->nocomp_ec->fullscreen;
+        e_comp->nocomp_ec->fullscreen = 0;
+        evas_object_layer_set(e_comp->nocomp_ec->frame, layer);
+        e_comp->nocomp_ec->fullscreen = fs;
      }
    e_comp->nocomp_ec = NULL;
 }
