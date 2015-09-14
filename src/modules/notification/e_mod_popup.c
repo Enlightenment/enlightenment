@@ -477,7 +477,8 @@ _notification_popup_new(E_Notification_Notify *n, unsigned id)
              int x, y, w, h;
 
              if (zone == e_comp_object_util_zone_get(popup->win)) continue;
-             o = e_comp_object_util_mirror_add(popup->win);
+             o = e_comp_object_util_mirror_add(popup->theme);
+             o = e_comp_object_util_add(o, E_COMP_OBJECT_TYPE_POPUP);
              evas_object_name_set(o, "notification_mirror");
              evas_object_data_set(o, "zone", zone);
              evas_object_geometry_get(popup->win, NULL, NULL, &w, &h);
@@ -729,7 +730,7 @@ _notification_popdown(Popup_Data                  *popup,
                       E_Notification_Notify_Closed_Reason reason)
 {
    E_FREE_FUNC(popup->timer, ecore_timer_del);
-   popup->mirrors = eina_list_free(popup->mirrors);
+   E_FREE_LIST(popup->mirrors, evas_object_del);
    if (popup->win)
      {
         evas_object_hide(popup->win);
