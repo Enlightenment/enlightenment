@@ -110,6 +110,7 @@ e_config_dialog_find(const char *name, const char *class)
              ec = e_win_client_get(cfd->dia->win);
              e_client_uniconify(ec);
              elm_win_raise(cfd->dia->win);
+             ec->hidden = 0;
              e_client_desk_set(ec, e_desk_current_get(z));
              if (ec->shaded || ec->shading)
                e_client_unshade(ec, ec->shade_dir);
