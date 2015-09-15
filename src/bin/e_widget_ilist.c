@@ -291,14 +291,7 @@ _e_wid_disable_hook(Evas_Object *obj)
    disabled = e_widget_disabled_get(obj);
    wd = e_widget_data_get(obj);
    if (!wd) return;
-
-   EINA_LIST_FOREACH(e_widget_ilist_items_get(obj), l, ili)
-     {
-        if (disabled)
-          edje_object_signal_emit(ili->o_base, "e,state,disabled", "e");
-        else
-          edje_object_signal_emit(ili->o_base, "e,state,enabled", "e");
-     }
+   e_ilist_disabled_set(wd->o_ilist, disabled);
    evas_object_freeze_events_set(wd->o_scrollframe, disabled);
 }
 
