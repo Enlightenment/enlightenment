@@ -109,7 +109,10 @@ e_config_dialog_find(const char *name, const char *class)
              e_client_uniconify(cfd->dia->win->client);
              e_win_raise(cfd->dia->win);
              if (z->comp == cfd->dia->win->client->zone->comp)
-               e_client_desk_set(cfd->dia->win->client, e_desk_current_get(z));
+               {
+                  cfd->dia->win->client->hidden = 0;
+                  e_client_desk_set(cfd->dia->win->client, e_desk_current_get(z));
+               }
              else
                {
                   if (!cfd->dia->win->client->sticky)
