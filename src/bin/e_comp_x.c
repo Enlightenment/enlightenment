@@ -2996,6 +2996,7 @@ _e_comp_x_hook_client_pre_frame_assign(void *d EINA_UNUSED, E_Client *ec)
    if (!ec->internal)
      ecore_x_window_save_set_add(win);
    ecore_x_window_reparent(win, pwin, 0, 0);
+   e_pixmap_alias(ep, E_PIXMAP_TYPE_X, pwin);
 
    {
       unsigned int managed = 1;
@@ -4457,6 +4458,7 @@ _e_comp_x_hook_client_del(void *d EINA_UNUSED, E_Client *ec)
                ecore_x_window_reparent(win, e_comp->root,
                                        cd->initial_attributes.x,
                                        cd->initial_attributes.y);
+             e_pixmap_alias(NULL, E_PIXMAP_TYPE_X, pwin);
              if (!ec->internal)
                ecore_x_window_save_set_del(win);
           }
