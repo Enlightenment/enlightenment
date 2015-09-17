@@ -54,7 +54,7 @@ typedef enum _E_Layer
 extern E_API int E_EVENT_COMPOSITOR_DISABLE;
 extern E_API int E_EVENT_COMPOSITOR_ENABLE;
 
-typedef void (*E_Comp_Grab_Cb)(void);
+typedef void (*E_Comp_Cb)(void);
 
 typedef struct E_Comp_Screen_Iface
 {
@@ -143,9 +143,9 @@ struct _E_Comp
    unsigned int    input_key_grabs;
    unsigned int    input_mouse_grabs;
 
-   E_Comp_Grab_Cb        grab_cb;
-   E_Comp_Grab_Cb        bindings_grab_cb;
-   E_Comp_Grab_Cb        bindings_ungrab_cb;
+   E_Comp_Cb        grab_cb;
+   E_Comp_Cb        bindings_grab_cb;
+   E_Comp_Cb        bindings_ungrab_cb;
 
    Eina_Bool       gl : 1;
    Eina_Bool       grabbed : 1;
