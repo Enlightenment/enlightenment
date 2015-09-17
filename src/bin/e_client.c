@@ -1498,10 +1498,7 @@ _e_client_cb_evas_resize(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_
 static void
 _e_client_cb_evas_show(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
-   E_Client *ec = data;
-
-   if (!ec->iconic)
-     _e_client_event_simple(data, E_EVENT_CLIENT_SHOW);
+   _e_client_event_simple(data, E_EVENT_CLIENT_SHOW);
 }
 
 static void
