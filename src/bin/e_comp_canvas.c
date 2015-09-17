@@ -211,6 +211,16 @@ _e_comp_canvas_resize(Ecore_Evas *ee EINA_UNUSED)
    e_comp_canvas_update();
 }
 
+static void
+_e_comp_canvas_prerender(Ecore_Evas *ee EINA_UNUSED)
+{
+   E_Comp_Cb cb;
+   Eina_List *l;
+
+   EINA_LIST_FOREACH(e_comp->pre_render_cbs, l, cb)
+     cb();
+}
+
 E_API Eina_Bool
 e_comp_canvas_init(int w, int h)
 {
@@ -266,6 +276,7 @@ e_comp_canvas_init(int w, int h)
    E_LIST_HANDLER_APPEND(handlers, E_EVENT_SCREENSAVER_ON, _e_comp_cb_screensaver_on, NULL);
    E_LIST_HANDLER_APPEND(handlers, E_EVENT_SCREENSAVER_OFF, _e_comp_cb_screensaver_off, NULL);
 
+   ecore_evas_callback_pre_render_set(e_comp->ee, _e_comp_canvas_prerender);
    ecore_evas_callback_resize_set(e_comp->ee, _e_comp_canvas_resize);
    ecore_evas_resize(e_comp->ee, w, h);
 

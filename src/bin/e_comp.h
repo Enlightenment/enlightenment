@@ -89,6 +89,8 @@ struct _E_Comp
    Eina_List *clients;
    unsigned int new_clients;
 
+   Eina_List *pre_render_cbs; /* E_Comp_Cb */
+
    E_Comp_X_Data *x_comp_data;
    E_Comp_Wl_Data *wl_comp_data;
 
