@@ -872,6 +872,14 @@ e_comp_x_randr_canvas_new(Ecore_Window parent, int w, int h)
           }
         if (opt_i > 0)
           {
+             opt[opt_i] = ECORE_EVAS_GL_X11_OPT_GL_DEPTH;
+             opt_i++;
+             opt[opt_i] = 24;
+             opt_i++;
+             opt[opt_i] = ECORE_EVAS_GL_X11_OPT_GL_STENCIL;
+             opt_i++;
+             opt[opt_i] = 8;
+             opt_i++;
              opt[opt_i] = ECORE_EVAS_GL_X11_OPT_NONE;
              e_comp->ee = ecore_evas_gl_x11_options_new(NULL, parent, 0, 0, w, h, opt);
           }
