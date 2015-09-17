@@ -283,8 +283,6 @@ _queue_clear(Evas_Object *obj)
 static void
 _e_wid_disable_hook(Evas_Object *obj)
 {
-   E_Ilist_Item *ili;
-   const Eina_List *l;
    Eina_Bool disabled;
    E_Widget_Data *wd;
 
