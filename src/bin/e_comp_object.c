@@ -1395,6 +1395,7 @@ _e_comp_intercept_hide(void *data, Evas_Object *obj)
                     _e_comp_object_animating_begin(cw);
                   if (!_e_comp_object_effect_visibility_start(cw, 0)) return;
                }
+             evas_object_smart_callback_call(obj, "hiding", cw->ec);
              cw->defer_hide = !!cw->animating;
              if (!cw->animating)
                e_comp_object_effect_set(obj, NULL);
