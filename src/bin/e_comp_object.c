@@ -3085,10 +3085,14 @@ E_API void
 e_comp_object_damage(Evas_Object *obj, int x, int y, int w, int h)
 {
    int tw, th;
+   Eina_Rectangle rect;
    API_ENTRY;
 
    if (cw->ec->input_only || (!cw->updates)) return;
    if (cw->nocomp) return;
+   rect.x = x, rect.y = y;
+   rect.w = w, rect.h = h;
+   evas_object_smart_callback_call(obj, "damage", &rect);
    if (e_comp->nocomp)
      {
         cw->nocomp_need_update = EINA_TRUE;
