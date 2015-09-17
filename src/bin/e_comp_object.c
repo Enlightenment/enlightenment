@@ -271,6 +271,15 @@ _e_comp_object_layers_remove(E_Comp_Object *cw)
 }
 
 /////////////////////////////////////
+static void
+_e_comp_object_alpha_set(E_Comp_Object *cw)
+{
+   Eina_Bool alpha = cw->ec->argb;
+
+   if (cw->ec->shaped) alpha = EINA_TRUE;
+
+   evas_object_image_alpha_set(cw->obj, alpha);
+}
 
 static void
 _e_comp_object_shadow(E_Comp_Object *cw)
@@ -1515,7 +1524,7 @@ _e_comp_intercept_show(void *data, Evas_Object *obj EINA_UNUSED)
         evas_object_image_smooth_scale_set(cw->obj, e_comp_config_get()->smooth_windows);
         evas_object_name_set(cw->obj, "cw->obj");
         evas_object_image_colorspace_set(cw->obj, EVAS_COLORSPACE_ARGB8888);
-        evas_object_image_alpha_set(cw->obj, ec->argb);
+        _e_comp_object_alpha_set(cw);
 #ifdef BORDER_ZOOMAPS
         e_comp_object_zoomap_set(o, 1);
 #else
@@ -3200,7 +3209,7 @@ e_comp_object_shape_apply(Evas_Object *obj)
    //INF("SHAPE RENDER %p", cw->ec);
 
    if (cw->ec->shaped) evas_object_image_native_surface_set(cw->obj, NULL);
-   evas_object_image_alpha_set(cw->obj, !!cw->ec->shaped);
+   _e_comp_object_alpha_set(cw);
    EINA_LIST_FOREACH(cw->obj_mirror, l, o)
      {
         if (cw->ec->shaped) evas_object_image_native_surface_set(o, NULL);
