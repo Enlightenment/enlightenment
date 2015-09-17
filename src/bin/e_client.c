@@ -4280,12 +4280,6 @@ e_client_act_move_begin(E_Client *ec, E_Binding_Event_Mouse_Button *ev)
    E_OBJECT_TYPE_CHECK(ec, E_CLIENT_TYPE);
    if (!ec->zone) return;
    if (e_client_util_resizing_get(ec) || (ec->moving)) return;
-   if (!_e_client_move_begin(ec))
-     return;
-
-   _e_client_action_init(ec);
-   e_zone_edge_disable();
-   e_pointer_mode_push(ec, E_POINTER_MOVE);
    if (ev)
      {
         char source[256];
@@ -4293,6 +4287,12 @@ e_client_act_move_begin(E_Client *ec, E_Binding_Event_Mouse_Button *ev)
         snprintf(source, sizeof(source) - 1, "mouse,down,%i", ev->button);
         _e_client_moveinfo_gather(ec, source);
      }
+   if (!_e_client_move_begin(ec))
+     return;
+
+   _e_client_action_init(ec);
+   e_zone_edge_disable();
+   e_pointer_mode_push(ec, E_POINTER_MOVE);
 }
 
 E_API void
@@ -4645,10 +4645,10 @@ e_client_signal_move_begin(E_Client *ec, const char *sig, const char *src EINA_U
    if (!ec->zone) return;
 
    if (e_client_util_resizing_get(ec) || (ec->moving)) return;
+   _e_client_moveinfo_gather(ec, sig);
    if (!_e_client_move_begin(ec)) return;
    e_pointer_mode_push(ec, E_POINTER_MOVE);
    e_zone_edge_disable();
-   _e_client_moveinfo_gather(ec, sig);
 }
 
 E_API void
