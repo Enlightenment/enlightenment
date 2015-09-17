@@ -124,6 +124,7 @@ typedef struct _E_Comp_Object
 
    Eina_Bool            force_move : 1;
    Eina_Bool            frame_extends : 1; //frame may extend beyond object size
+   Eina_Bool            blanked : 1; //window is rendering blank content (externally composited)
 } E_Comp_Object;
 
 
@@ -278,7 +279,7 @@ _e_comp_object_alpha_set(E_Comp_Object *cw)
 {
    Eina_Bool alpha = cw->ec->argb;
 
-   if (cw->ns || cw->ec->shaped) alpha = EINA_TRUE;
+   if (cw->blanked || cw->ns || cw->ec->shaped) alpha = EINA_TRUE;
 
    evas_object_image_alpha_set(cw->obj, alpha);
 }
@@ -3355,7 +3356,7 @@ e_comp_object_native_surface_set(Evas_Object *obj, Eina_Bool set)
      }
    cw->native = set;
 
-   evas_object_image_native_surface_set(cw->obj, set ? (cw->ns ?: &ns) : NULL);
+   evas_object_image_native_surface_set(cw->obj, set && (!cw->blanked) ? (cw->ns ?: &ns) : NULL);
    EINA_LIST_FOREACH(cw->obj_mirror, l, o)
      {
         evas_object_image_alpha_set(o, !!cw->ns ? 1 : cw->ec->argb);
@@ -3377,6 +3378,25 @@ e_comp_object_native_surface_override(Evas_Object *obj, Evas_Native_Surface *ns)
    e_comp_object_damage(obj, 0, 0, cw->w, cw->h);
 }
 
+E_API void
+e_comp_object_blank(Evas_Object *obj, Eina_Bool set)
+{
+   API_ENTRY;
+
+   set = !!set;
+
+   if (cw->blanked == set) return;
+   cw->blanked = set;
+   _e_comp_object_alpha_set(cw);
+   if (set)
+     {
+        evas_object_image_native_surface_set(cw->obj, NULL);
+        evas_object_image_data_set(cw->obj, NULL);
+        return;
+     }
+   if (cw->native)
+     e_comp_object_native_surface_set(obj, 1);
+   e_comp_object_damage(obj, 0, 0, cw->w, cw->h);
 }
 
 /* mark an object as dirty and setup damages */
@@ -3395,7 +3415,7 @@ e_comp_object_dirty(Evas_Object *obj)
    dirty = e_pixmap_size_get(cw->ec->pixmap, &w, &h);
    visible = cw->visible;
    if (!dirty) w = h = 1;
-   evas_object_image_pixels_dirty_set(cw->obj, dirty);
+   evas_object_image_pixels_dirty_set(cw->obj, cw->blanked ? 0 : dirty);
    if (!dirty)
      evas_object_image_data_set(cw->obj, NULL);
    evas_object_image_size_set(cw->obj, w, h);
@@ -3531,12 +3551,12 @@ e_comp_object_render(Evas_Object *obj)
         if (e_comp->comp_type == E_PIXMAP_TYPE_WL)
           {
 #warning FIXME BROKEN WAYLAND SHM BUFFER PROTOCOL
-             evas_object_image_data_copy_set(cw->obj, pix);
+             evas_object_image_data_copy_set(cw->obj, cw->blanked ? NULL : pix);
              pix = evas_object_image_data_get(cw->obj, 0);
              evas_object_image_data_set(cw->obj, pix);
           }
         else
-          evas_object_image_data_set(cw->obj, pix);
+          evas_object_image_data_set(cw->obj, cw->blanked ? NULL : pix);
         EINA_LIST_FOREACH(cw->obj_mirror, l, o)
           {
              evas_object_image_data_set(o, pix);
@@ -3570,7 +3590,7 @@ e_comp_object_render(Evas_Object *obj)
         e_pixmap_image_data_argb_convert(cw->ec->pixmap, pix, srcpix, r, stride);
         RENDER_DEBUG("UPDATE [%p]: %d %d %dx%d -- pix = %p", cw->ec, r->x, r->y, r->w, r->h, pix);
      }
-   evas_object_image_data_set(cw->obj, pix);
+   evas_object_image_data_set(cw->obj, cw->blanked ? NULL : pix);
    EINA_LIST_FOREACH(cw->obj_mirror, l, o)
      {
         evas_object_image_data_set(o, pix);
