@@ -91,6 +91,8 @@ typedef struct _E_Comp_Object
    Eina_Tiler          *updates; //render update regions
    Eina_Tiler          *pending_updates; //render update regions which are about to render
 
+   Evas_Native_Surface *ns; //for custom gl rendering
+
    unsigned int         update_count;  // how many updates have happened to this obj
 
    unsigned int         opacity;  // opacity set with _NET_WM_WINDOW_OPACITY
@@ -276,7 +278,7 @@ _e_comp_object_alpha_set(E_Comp_Object *cw)
 {
    Eina_Bool alpha = cw->ec->argb;
 
-   if (cw->ec->shaped) alpha = EINA_TRUE;
+   if (cw->ns || cw->ec->shaped) alpha = EINA_TRUE;
 
    evas_object_image_alpha_set(cw->obj, alpha);
 }
@@ -2158,6 +2160,7 @@ _e_comp_smart_del(Evas_Object *obj)
    e_comp_object_render_update_del(cw->smart_obj);
    E_FREE_FUNC(cw->updates, eina_tiler_free);
    E_FREE_FUNC(cw->pending_updates, eina_tiler_free);
+   free(cw->ns);
 
    if (cw->obj_mirror)
      {
@@ -3344,13 +3347,32 @@ e_comp_object_native_surface_set(Evas_Object *obj, Eina_Bool set)
         /* native requires gl enabled, texture from pixmap enabled, and a non-shaped client */
         set = (e_comp->gl && e_comp_config_get()->texture_from_pixmap && (!cw->ec->shaped));
         if (set)
-          set = e_pixmap_native_surface_init(cw->ec->pixmap, &ns);
+          set = (!!cw->ns) || e_pixmap_native_surface_init(cw->ec->pixmap, &ns);
      }
    cw->native = set;
 
-   evas_object_image_native_surface_set(cw->obj, set ? &ns : NULL);
+   evas_object_image_native_surface_set(cw->obj, set ? (cw->ns ?: &ns) : NULL);
    EINA_LIST_FOREACH(cw->obj_mirror, l, o)
-     evas_object_image_native_surface_set(o, set ? &ns : NULL);
+     {
+        evas_object_image_alpha_set(o, !!cw->ns ? 1 : cw->ec->argb);
+        evas_object_image_native_surface_set(o, set ? (cw->ns ?: &ns) : NULL);
+     }
+}
+
+E_API void
+e_comp_object_native_surface_override(Evas_Object *obj, Evas_Native_Surface *ns)
+{
+   API_ENTRY;
+   if (cw->ec->input_only) return;
+   E_FREE(cw->ns);
+   if (ns)
+     cw->ns = (Evas_Native_Surface*)eina_memdup((unsigned char*)ns, sizeof(Evas_Native_Surface), 0);
+   _e_comp_object_alpha_set(cw);
+   if (cw->native)
+     e_comp_object_native_surface_set(obj, cw->native);
+   e_comp_object_damage(obj, 0, 0, cw->w, cw->h);
+}
+
 }
 
 /* mark an object as dirty and setup damages */
@@ -3600,10 +3622,15 @@ e_comp_object_util_mirror_add(Evas_Object *obj)
      {
         if (cw->native)
           {
-             Evas_Native_Surface ns;
+             if (cw->ns)
+               evas_object_image_native_surface_set(o, cw->ns);
+             else
+               {
+                  Evas_Native_Surface ns;
 
-             e_pixmap_native_surface_init(cw->ec->pixmap, &ns);
-             evas_object_image_native_surface_set(o, &ns);
+                  e_pixmap_native_surface_init(cw->ec->pixmap, &ns);
+                  evas_object_image_native_surface_set(o, &ns);
+               }
           }
         else
           {
