@@ -3614,7 +3614,7 @@ e_comp_object_util_mirror_add(Evas_Object *obj)
    evas_object_data_set(o, "E_Client", cw->ec);
    evas_object_data_set(o, "comp_mirror", cw);
 
-   evas_object_image_alpha_set(o, cw->ec->argb || (!!cw->ec->shaped));
+   evas_object_image_alpha_set(o, evas_object_image_alpha_get(cw->obj));
    evas_object_image_size_set(o, w, h);
 
    if (cw->ec->shaped)
