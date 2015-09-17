@@ -305,6 +305,16 @@ e_pixmap_visual_get(const E_Pixmap *cp)
    return NULL;
 }
 
+E_API uint32_t
+e_pixmap_pixmap_get(const E_Pixmap *cp)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(cp, 0);
+#ifndef HAVE_WAYLAND_ONLY
+   if (e_pixmap_is_x(cp)) return cp->pixmap;
+#endif
+   return 0;
+}
+
 E_API void
 e_pixmap_usable_set(E_Pixmap *cp, Eina_Bool set)
 {
