@@ -198,7 +198,6 @@ _backlight_popup_new(Instance *inst)
    
    if (inst->popup) return;
 
-   e_backlight_update();
    e_backlight_mode_set(inst->gcc->gadcon->zone, E_BACKLIGHT_MODE_NORMAL);
    inst->val = e_backlight_level_get(inst->gcc->gadcon->zone);
    _backlight_gadget_update(inst);
@@ -333,7 +332,6 @@ _gc_init(E_Gadcon *gc, const char *name, const char *id, const char *style)
    inst->gcc = gcc;
    inst->o_backlight = o;
 
-   e_backlight_update();
    inst->val = e_backlight_level_get(inst->gcc->gadcon->zone);
    _backlight_gadget_update(inst);
    
@@ -428,7 +426,6 @@ _backlight_cb_mod_init_end(void *d EINA_UNUSED, int type EINA_UNUSED, void *ev E
    Eina_List *l;
    Instance *inst;
 
-   e_backlight_update();
    EINA_LIST_FOREACH(backlight_instances, l, inst)
      {
         inst->val = e_backlight_level_get(inst->gcc->gadcon->zone);
