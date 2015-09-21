@@ -1150,6 +1150,7 @@ _e_client_under_pointer_helper(E_Desk *desk, E_Client *exclude, int x, int y)
         /* If a border was specified which should be excluded from the list
          * (because it will be closed shortly for example), skip */
         if (e_client_util_ignored_get(cec) || (!e_client_util_desk_visible(cec, desk))) continue;
+        if (!evas_object_visible_get(cec->frame)) continue;
         if ((exclude) && (cec == exclude)) continue;
         if (!E_INSIDE(x, y, cec->x, cec->y, cec->w, cec->h))
           continue;
