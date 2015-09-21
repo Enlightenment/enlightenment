@@ -1647,6 +1647,7 @@ _e_main_desk_restore(void)
    E_Comp *c;
    const Eina_List *l, *ll;
    E_Zone *zone;
+   E_Client *ec;
    char *env;
    char name[1024];
 
@@ -1664,6 +1665,13 @@ _e_main_desk_restore(void)
            if (!desk) continue;
            e_desk_show(desk);
         }
+
+   E_CLIENT_REVERSE_FOREACH(e_comp_get(NULL), ec)
+     if ((!e_client_util_ignored_get(ec)) && e_client_util_desk_visible(ec, e_desk_current_get(ec->zone)))
+       {
+          ec->want_focus = ec->take_focus = 1;
+          break;
+       }
 }
 
 static void

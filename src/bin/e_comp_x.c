@@ -5253,17 +5253,6 @@ _e_comp_x_setup(E_Comp *c, Ecore_X_Window root, int w, int h)
    e_pointer_type_push(c->pointer, c->pointer, "default");
    _e_comp_x_manage_windows(c);
 
-   {
-      E_Client *ec;
-
-      E_CLIENT_REVERSE_FOREACH(c, ec)
-        if (!e_client_util_ignored_get(ec))
-          {
-             ec->want_focus = ec->take_focus = 1;
-             break;
-          }
-   }
-
    return !!c->bg_blank_object;
 }
 
