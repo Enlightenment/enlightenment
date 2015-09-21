@@ -122,7 +122,9 @@ _e_mod_menu_populate_filter(void *data EINA_UNUSED, Eio_File *handler, const Ein
      return (info->path[info->name_start] != '.');
    if (lstat(info->path, &st)) return EINA_FALSE;
    /* don't show links to prevent infinite submenus */
-   return (info->path[info->name_start] != '.') && (info->type == EINA_FILE_DIR) && (!S_ISLNK(st.st_mode));
+   return (info->path[info->name_start] != '.') &&
+          ((info->type == EINA_FILE_DIR) || eina_str_has_extension(info->path + info->name_start, "desktop")) &&
+          (!S_ISLNK(st.st_mode));
 }
 
 static void
@@ -174,30 +176,41 @@ _e_mod_menu_populate_item(void *data, Eio_File *handler __UNUSED__, const Eina_F
      ed = efreet_desktop_get(info->path);
    if (ed)
      {
-        /* FIXME: need to loop here for idiots who link desktops to other desktops */
         const char *type;
-        const char *uri;
+        Efreet_Uri *uri;
 
+        if (ed->type == EFREET_DESKTOP_TYPE_APPLICATION)
+          {
+             e_object_del(E_OBJECT(mi));
+             return;
+          }
         e_util_menu_item_theme_icon_set(mi, ed->icon);
-        uri = ed->url;
+        if (ed->name)
+          e_menu_item_label_set(mi, ed->name);
+        uri = efreet_uri_decode(ed->url);
+        if ((!uri) || (!uri->path)) goto end;
         if (ed->type == EFREET_DESKTOP_TYPE_LINK)
           {
              type = efreet_desktop_x_field_get(ed, "X-Enlightenment-Type");
-             if (!strncmp(ed->url, "file://", 7))
-               uri += 6; // need first slash
              if (e_util_strcmp(type, "Removable"))
                {
+                  const char *p = uri->path;
+                  char *esc = NULL;
+
                   dev = eina_stringshare_add("/");
-                  e_object_data_set(E_OBJECT(mi), eina_stringshare_add(uri));
+                  if (p[0] == '$')
+                    esc = e_util_shell_env_path_eval(p);
+                  e_object_data_set(E_OBJECT(mi), eina_stringshare_add(esc ?: p));
+                  free(esc);
                }
              else
                {
                   E_Volume *vol;
 
-                  vol = e_fm2_device_volume_find(uri);
+                  vol = e_fm2_device_volume_find(ed->url);
                   if (vol)
                     {
-                       dev = eina_stringshare_printf("removable:%s", uri);
+                       dev = eina_stringshare_printf("removable:%s", ed->url);
                        e_menu_item_callback_set(mi, _e_mod_menu_volume_cb, vol);
                     }
                   //FIXME: else
@@ -206,10 +219,9 @@ _e_mod_menu_populate_item(void *data, Eio_File *handler __UNUSED__, const Eina_F
         else
           {
              eina_stringshare_ref(dev);
-             if (!strncmp(ed->url, "file://", 7))
-               uri += 6; // need first slash
-             e_object_data_set(E_OBJECT(mi), eina_stringshare_add(uri));
+             e_object_data_set(E_OBJECT(mi), eina_stringshare_add(uri->path));
           }
+        efreet_uri_free(uri);
         efreet_desktop_free(ed);
      }
    else
@@ -218,6 +230,7 @@ _e_mod_menu_populate_item(void *data, Eio_File *handler __UNUSED__, const Eina_F
         eina_stringshare_ref(dev);
         e_object_data_set(E_OBJECT(mi), eina_stringshare_printf("%s/%s", path ?: "", info->path + info->name_start));
      }
+end:
    e_menu_item_submenu_pre_callback_set(mi, _e_mod_menu_populate, dev);
    //fprintf(stderr, "PATH SET: %s\n", e_object_data_get(E_OBJECT(mi)));
    e_object_free_attach_func_set(E_OBJECT(mi), _e_mod_menu_cleanup_cb);
