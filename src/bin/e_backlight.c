@@ -339,6 +339,7 @@ _bl_anim(void *data, double pos)
 }
 
 #ifdef HAVE_EEZE
+#if (EFL_VERSION_MAJOR > 1) || (EFL_VERSION_MINOR >= 12)
 static void
 _bl_sys_change(const char *device, Eeze_Udev_Event event EINA_UNUSED, void *data EINA_UNUSED, Eeze_Udev_Watch *watch EINA_UNUSED)
 {
@@ -349,6 +350,7 @@ _bl_sys_change(const char *device, Eeze_Udev_Event event EINA_UNUSED, void *data
      }
    eina_stringshare_del(device);
 }
+#endif
 
 static void
 _bl_sys_find(void)
@@ -434,7 +436,9 @@ _bl_sys_find(void)
      }
    /* clear out preferred devs list */
    E_FREE_LIST(pdevs, eina_stringshare_del);
+#if (EFL_VERSION_MAJOR > 1) || (EFL_VERSION_MINOR >= 12)
    eeze_udev_watch_add(EEZE_UDEV_TYPE_BACKLIGHT, EEZE_UDEV_EVENT_CHANGE, _bl_sys_change, NULL);
+#endif
 }
 
 static void
