@@ -1,23 +1,4 @@
-DEFAULT_FILES = \
-   src/modules/wl_weekeyboard/themes/default/default.edc \
-   src/modules/wl_weekeyboard/themes/default/ignorekeys.txt \
-   src/modules/wl_weekeyboard/themes/default/fonts/SourceSansPro-Regular.ttf \
-   src/modules/wl_weekeyboard/themes/default/fonts/SourceSansPro-Semibold.ttf \
-   src/modules/wl_weekeyboard/themes/default/images/key-hint-bg.png \
-   src/modules/wl_weekeyboard/themes/default/images/icon-language.png \
-   src/modules/wl_weekeyboard/themes/default/images/icon-backspace.png \
-   src/modules/wl_weekeyboard/themes/default/images/key-special.png \
-   src/modules/wl_weekeyboard/themes/default/images/icon-space.png \
-   src/modules/wl_weekeyboard/themes/default/images/key-hint.png \
-   src/modules/wl_weekeyboard/themes/default/images/icon-shift.png \
-   src/modules/wl_weekeyboard/themes/default/images/icon-shift-active.png \
-   src/modules/wl_weekeyboard/themes/default/images/icon-enter.png \
-   src/modules/wl_weekeyboard/themes/default/images/key-special-pressed.png \
-   src/modules/wl_weekeyboard/themes/default/images/key-default.png \
-   src/modules/wl_weekeyboard/themes/default/images/key-default-pressed.png
-
 EXTRA_DIST += \
-   $(DEFAULT_FILES) \
    src/modules/wl_weekeyboard/themes/default/default_600.edc \
    src/modules/wl_weekeyboard/themes/default/default_720.edj \
    src/modules/wl_weekeyboard/themes/default/default_1080.edj
@@ -28,35 +9,6 @@ wl_weekeyboard_DATA = \
    src/modules/wl_weekeyboard/themes/default/default_600.edj \
    src/modules/wl_weekeyboard/themes/default/default_720.edj \
    src/modules/wl_weekeyboard/themes/default/default_1080.edj
-
-CLEANFILES += \
-   src/modules/wl_weekeyboard/themes/default/default_600.edj \
-   src/modules/wl_weekeyboard/themes/default/default_720.edj \
-   src/modules/wl_weekeyboard/themes/default/default_1080.edj
-
-src/modules/wl_weekeyboard/themes/default/default_600.edj: src/modules/wl_weekeyboard/themes/default/default_600.edc $(DEFAULT_FILES) Makefile
-	$(EDJE_CC) $(EDJE_FLAGS) \
-	    -dd $(top_srcdir)/src/modules/wl_weekeyboard/themes/default \
-	    -id $(top_srcdir)/src/modules/wl_weekeyboard/themes/default/images \
-	    -fd $(top_srcdir)/src/modules/wl_weekeyboard/themes/default/fonts \
-	    $(top_srcdir)/src/modules/wl_weekeyboard/themes/default/default_600.edc \
-	    $(top_builddir)/src/modules/wl_weekeyboard/themes/default/default_600.edj
-
-src/modules/wl_weekeyboard/themes/default/default_720.edj: src/modules/wl_weekeyboard/themes/default/default_720.edc $(DEFAULT_FILES) Makefile
-	$(EDJE_CC) $(EDJE_FLAGS) \
-	    -dd $(top_srcdir)/src/modules/wl_weekeyboard/themes/default \
-	    -id $(top_srcdir)/src/modules/wl_weekeyboard/themes/default/images \
-	    -fd $(top_srcdir)/src/modules/wl_weekeyboard/themes/default/fonts \
-	    $(top_srcdir)/src/modules/wl_weekeyboard/themes/default/default_720.edc \
-	    $(top_builddir)/src/modules/wl_weekeyboard/themes/default/default_720.edj
-
-src/modules/wl_weekeyboard/themes/default/default_1080.edj: src/modules/wl_weekeyboard/themes/default/default_1080.edc $(DEFAULT_FILES) Makefile
-	$(EDJE_CC) $(EDJE_FLAGS) \
-	    -dd $(top_srcdir)/src/modules/wl_weekeyboard/themes/default \
-	    -id $(top_srcdir)/src/modules/wl_weekeyboard/themes/default/images \
-	    -fd $(top_srcdir)/src/modules/wl_weekeyboard/themes/default/fonts \
-	    $(top_srcdir)/src/modules/wl_weekeyboard/themes/default/default_1080.edc \
-	    $(top_builddir)/src/modules/wl_weekeyboard/themes/default/default_1080.edj
 
 wl_weekeyboardpkgdir = $(MDIR)/wl_weekeyboard/$(MODULE_ARCH)
 wl_weekeyboardpkg_LTLIBRARIES = src/modules/wl_weekeyboard/module.la
