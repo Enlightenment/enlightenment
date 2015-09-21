@@ -318,6 +318,7 @@ e_win_new(E_Comp *c)
                                   &win->evas_win);
    e_canvas_add(win->ecore_evas);
    ecore_evas_alpha_set(win->ecore_evas, 1);
+   win->evas_win = ecore_evas_window_get(win->ecore_evas);
    ecore_evas_data_set(win->ecore_evas, "E_Win", win);
    ecore_evas_callback_move_set(win->ecore_evas, _e_win_cb_move);
    ecore_evas_callback_resize_set(win->ecore_evas, _e_win_cb_resize);
