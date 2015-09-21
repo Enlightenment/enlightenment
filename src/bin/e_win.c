@@ -479,6 +479,7 @@ e_elm_win_add(Evas_Object *parent, const char *name, Elm_Win_Type type)
    e_util_env_set("ELM_ACCEL", "none");
    o = elm_win_add(parent, name, type);
    e_util_env_set("ELM_ACCEL", eng);
+   elm_win_alpha_set(o, 1);
    free(eng);
    return o;
 }
