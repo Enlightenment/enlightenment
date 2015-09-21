@@ -5187,17 +5187,6 @@ _e_comp_x_setup(Ecore_X_Window root, int w, int h)
      e_pointer_window_add(e_comp->pointer, e_comp->root);
    _e_comp_x_manage_windows();
 
-   {
-      E_Client *ec;
-
-      E_CLIENT_REVERSE_FOREACH(ec)
-        if (!e_client_util_ignored_get(ec))
-          {
-             ec->want_focus = ec->take_focus = 1;
-             break;
-          }
-   }
-
    return !!e_comp->bg_blank_object;
 }
 
