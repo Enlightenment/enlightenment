@@ -183,7 +183,9 @@ _e_maximize_client_rects_fill(E_Client *ec, Eina_List *rects, int *x1, int *yy1,
 
         if ((dir & E_MAXIMIZE_DIRECTION) == E_MAXIMIZE_HORIZONTAL)
           _e_maximize_client_rects_fill_horiz(ec, rects, x1, x2, &bx, &by, &bw, &bh);
-        else if ((dir & E_MAXIMIZE_DIRECTION) == E_MAXIMIZE_VERTICAL)
+        else if (((dir & E_MAXIMIZE_DIRECTION) == E_MAXIMIZE_VERTICAL) ||
+                 ((dir & E_MAXIMIZE_LEFT) == E_MAXIMIZE_LEFT) ||
+                 ((dir & E_MAXIMIZE_RIGHT) == E_MAXIMIZE_RIGHT))
           _e_maximize_client_rects_fill_vert(ec, rects, yy1, y2, &bx, &by, &bw, &bh);
      }
 }
