@@ -213,7 +213,7 @@ e_desk_show(E_Desk *desk)
    E_Event_Desk_Show *ev;
    E_Event_Desk_Before_Show *eev;
    E_Event_Desk_After_Show *eeev;
-   Edje_Message_Int_Set *msg;
+   Edje_Message_Float_Set *msg;
    Eina_List *l;
    E_Shelf *es;
    E_Desk *desk2;
@@ -263,14 +263,15 @@ e_desk_show(E_Desk *desk)
    desk->zone->desk_y_current = desk->y;
    desk->visible = 1;
 
-   msg = alloca(sizeof(Edje_Message_Int_Set) + (3 * sizeof(int)));
-   msg->count = 4;
-   msg->val[0] = desk->x;
-   msg->val[1] = desk->zone->desk_x_count;
-   msg->val[2] = desk->y;
-   msg->val[3] = desk->zone->desk_y_count;
+   msg = alloca(sizeof(Edje_Message_Float_Set) + (4 * sizeof(double)));
+   msg->count = 5;
+   msg->val[0] = 0.2 * (!!e_config->desk_flip_animate_mode);//e_config->desk_flip_animate_time;
+   msg->val[1] = desk->x;
+   msg->val[2] = desk->zone->desk_x_count;
+   msg->val[3] = desk->y;
+   msg->val[4] = desk->zone->desk_y_count;
    if (desk->zone->bg_object)
-     edje_object_message_send(desk->zone->bg_object, EDJE_MESSAGE_INT_SET, 0, msg);
+     edje_object_message_send(desk->zone->bg_object, EDJE_MESSAGE_FLOAT_SET, 0, msg);
 
    if (desk->zone->bg_object) was_zone = 1;
    _e_desk_show_begin(desk, dx, dy);
