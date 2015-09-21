@@ -5172,7 +5172,7 @@ _e_comp_x_setup(Ecore_X_Window root, int w, int h)
         evas_object_pass_events_set(ec->frame, 1);
         evas_object_show(ec->frame);
      }
-   for (i = e_comp_canvas_layer_map(E_LAYER_CLIENT_NORMAL); i < e_comp_canvas_layer_map(E_LAYER_CLIENT_ABOVE); i--)
+   for (i = e_comp_canvas_layer_map(E_LAYER_CLIENT_NORMAL); i >= e_comp_canvas_layer_map(E_LAYER_CLIENT_DESKTOP); i--)
      ecore_x_window_lower(e_comp->layers[i].win);
 
    ecore_evas_lower(e_comp->ee);
