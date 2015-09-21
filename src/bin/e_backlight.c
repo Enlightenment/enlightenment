@@ -253,6 +253,7 @@ _e_backlight_update(void)
    if (bl_sysval)
      {
         sysmode = MODE_SYS;
+        xbl_avail = EINA_FALSE;
         _bl_sys_level_get();
         return;
      }
@@ -338,6 +339,17 @@ _bl_anim(void *data EINA_UNUSED, double pos)
 
 #ifdef HAVE_EEZE
 static void
+_bl_sys_change(const char *device, Eeze_Udev_Event event EINA_UNUSED, void *data EINA_UNUSED, Eeze_Udev_Watch *watch EINA_UNUSED)
+{
+   if (device == bl_sysval)
+     {
+        _bl_sys_level_get();
+        ecore_event_add(E_EVENT_BACKLIGHT_CHANGE, NULL, NULL, NULL);
+     }
+   eina_stringshare_del(device);
+}
+
+static void
 _bl_sys_find(void)
 {
    Eina_List *l, *devs, *pdevs = NULL;
@@ -421,6 +433,7 @@ _bl_sys_find(void)
      }
    /* clear out preferred devs list */
    E_FREE_LIST(pdevs, eina_stringshare_del);
+   eeze_udev_watch_add(EEZE_UDEV_TYPE_BACKLIGHT, EEZE_UDEV_EVENT_CHANGE, _bl_sys_change, NULL);
 }
 
 static void
