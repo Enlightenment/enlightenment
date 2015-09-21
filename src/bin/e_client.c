@@ -2203,14 +2203,12 @@ _e_client_eval(E_Client *ec)
                  ec->changes.need_maximize || ec->changes.need_unmaximize;
    ec->changes.stack = 0;
 
-   if ((!ec->input_only) && ((ec->take_focus) || (ec->want_focus)))
+   if ((!ec->input_only) && (!ec->iconic) &&
+       ((!ec->zone) || e_client_util_desk_visible(ec, e_desk_current_get(ec->zone))) &&
+       ((ec->take_focus) || (ec->want_focus)))
      {
-        ec->take_focus = 0;
         if ((e_config->focus_setting == E_FOCUS_NEW_WINDOW) || (ec->want_focus))
-          {
-             ec->want_focus = 0;
-             e_client_focus_set_with_pointer(ec);
-          }
+          e_client_focus_set_with_pointer(ec);
         else if (ec->dialog)
           {
              if ((e_config->focus_setting == E_FOCUS_NEW_DIALOG) ||
@@ -2239,6 +2237,8 @@ _e_client_eval(E_Client *ec)
                }
           }
      }
+   else
+     ec->take_focus = ec->want_focus = 0;
 
    if (ec->changes.need_maximize)
      {
