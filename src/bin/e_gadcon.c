@@ -618,7 +618,8 @@ e_gadcon_unpopulate(E_Gadcon *gc)
    if (gc->awaiting_classes)
      eina_hash_free(gc->awaiting_classes);
    gc->awaiting_classes = NULL;
-   if (gc->o_container && (!stopping)) e_gadcon_layout_thaw(gc->o_container);
+   if (gc->o_container && (!stopping) && (!e_object_is_del(E_OBJECT(gc))))
+     e_gadcon_layout_thaw(gc->o_container);
 }
 
 E_API void
