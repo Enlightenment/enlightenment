@@ -178,8 +178,8 @@ _e_maximize_client_rects_fill(E_Client *ec, Eina_List *rects, int *x1, int *yy1,
 
         bx = E_CLAMP(ec->x, ec->zone->x, ec->zone->x + ec->zone->w);
         by = E_CLAMP(ec->y, ec->zone->y, ec->zone->y + ec->zone->h);
-        bw = ec->w;
-        bh = ec->h;
+        bw = E_CLAMP(ec->w, 0, ec->zone->w);
+        bh = E_CLAMP(ec->h, 0, ec->zone->h);
 
         if ((dir & E_MAXIMIZE_DIRECTION) == E_MAXIMIZE_HORIZONTAL)
           _e_maximize_client_rects_fill_horiz(ec, rects, x1, x2, &bx, &by, &bw, &bh);
