@@ -2208,8 +2208,12 @@ _e_client_eval(E_Client *ec)
        ((!ec->zone) || e_client_util_desk_visible(ec, e_desk_current_get(ec->zone))) &&
        ((ec->take_focus) || (ec->want_focus)))
      {
+        ec->take_focus = 0;
         if ((e_config->focus_setting == E_FOCUS_NEW_WINDOW) || (ec->want_focus))
-          e_client_focus_set_with_pointer(ec);
+          {
+             ec->want_focus = 0;
+             e_client_focus_set_with_pointer(ec);
+          }
         else if (ec->dialog)
           {
              if ((e_config->focus_setting == E_FOCUS_NEW_DIALOG) ||
