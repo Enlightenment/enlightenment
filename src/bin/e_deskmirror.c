@@ -41,7 +41,6 @@ typedef struct Mirror
    Evas_Object *comp_object;
    Evas_Object *mirror;
    int x, y, w, h;
-   int ref;
    Eina_Bool added : 1;
 } Mirror;
 
@@ -108,20 +107,6 @@ _mirror_scale_set(Mirror *m, float sc)
    if (!mb) return;
    msg.val = sc;
    edje_object_message_send(mb->frame, EDJE_MESSAGE_FLOAT, 0, &msg);
-}
-
-static void
-_mirror_ref(Mirror *m)
-{
-   m->ref++;
-}
-
-static void
-_mirror_unref(Mirror *m)
-{
-   m->ref--;
-   if (m->ref > 0) return;
-   free(m);
 }
 
 static void
@@ -352,10 +337,7 @@ _mirror_client_smart_del(Evas_Object *obj)
         evas_object_smart_callback_del_full(mb->m->ec->frame, "shadow_change", _mirror_client_shadow_change, mb->frame);
      }
    evas_object_del(mb->frame);
-   mb->frame = NULL;
    evas_object_del(mb->mirror);
-   mb->mirror = NULL;
-   _mirror_unref(mb->m);
    free(mb);
 }
 
@@ -492,13 +474,12 @@ _e_deskmirror_mirror_del_hash(Mirror *m)
    evas_object_smart_callback_del_full(m->comp_object, "frame_recalc_done", _e_deskmirror_mirror_frame_recalc_cb, m);
    evas_object_event_callback_del_full(m->comp_object, EVAS_CALLBACK_DEL, _e_deskmirror_mirror_del_cb, m);
    evas_object_del(m->mirror);
-   m->mirror = NULL;
    evas_object_event_callback_del_full(m->comp_object, EVAS_CALLBACK_SHOW, (Evas_Object_Event_Cb)_comp_object_show, m);
    evas_object_event_callback_del_full(m->comp_object, EVAS_CALLBACK_HIDE, (Evas_Object_Event_Cb)_comp_object_hide, m);
    evas_object_event_callback_del_full(m->comp_object, EVAS_CALLBACK_RESTACK, (Evas_Object_Event_Cb)_comp_object_stack, m);
    evas_object_event_callback_del_full(m->comp_object, EVAS_CALLBACK_RESIZE, (Evas_Object_Event_Cb)_comp_object_configure, m);
    evas_object_event_callback_del_full(m->comp_object, EVAS_CALLBACK_MOVE, (Evas_Object_Event_Cb)_comp_object_configure, m);
-   _mirror_unref(m);
+   free(m);
 }
 
 static Evas_Object *
@@ -511,7 +492,6 @@ _mirror_client_new(Mirror *m)
    o = evas_object_smart_add(m->sd->e, _mirror_client_smart);
    mb = evas_object_smart_data_get(o);
    mb->m = m;
-   _mirror_ref(m);
    mb->frame = edje_object_add(m->sd->e);
    evas_object_name_set(mb->frame, "mirror_border");
    _mirror_client_theme_setup(mb, mb->frame);
@@ -676,7 +656,6 @@ _e_deskmirror_mirror_add(E_Smart_Data *sd, Evas_Object *obj)
    m->ec = ec;
    m->sd = sd;
    m->mirror = o;
-   m->ref = 1;
    evas_object_event_callback_add(obj, EVAS_CALLBACK_SHOW, (Evas_Object_Event_Cb)_comp_object_show, m);
    evas_object_event_callback_add(obj, EVAS_CALLBACK_HIDE, (Evas_Object_Event_Cb)_comp_object_hide, m);
    evas_object_event_callback_add(obj, EVAS_CALLBACK_RESTACK, (Evas_Object_Event_Cb)_comp_object_stack, m);
