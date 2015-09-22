@@ -71,10 +71,6 @@ struct _E_Config
    double      border_shade_speed; // GUI
    double      framerate; // GUI
    int         priority; // GUI
-   int         image_cache; // GUI
-   int         font_cache; // GUI
-   int         edje_cache; // GUI
-   int         edje_collection_cache; // GUI
    int         zone_desks_x_count; // GUI
    int         zone_desks_y_count; // GUI
    int         show_desktop_icons; // GUI
@@ -282,13 +278,12 @@ struct _E_Config
 
    Eina_List                *mime_icons; // GUI
    int                       desk_auto_switch; // GUI;
-   
+
    int                       screen_limits;
 
    int                       thumb_nice;
 
    int                       ping_clients_interval; // GUI
-   int                       cache_flush_poll_interval; // GUI
 
    int                       thumbscroll_enable; // GUI
    int                       thumbscroll_threshhold; // GUI

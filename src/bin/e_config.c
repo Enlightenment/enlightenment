@@ -438,10 +438,6 @@ _e_config_edd_init(Eina_Bool old)
    E_CONFIG_VAL(D, T, border_shade_speed, DOUBLE); /**/
    E_CONFIG_VAL(D, T, framerate, DOUBLE); /**/
    E_CONFIG_VAL(D, T, priority, INT); /**/
-   E_CONFIG_VAL(D, T, image_cache, INT); /**/
-   E_CONFIG_VAL(D, T, font_cache, INT); /**/
-   E_CONFIG_VAL(D, T, edje_cache, INT); /**/
-   E_CONFIG_VAL(D, T, edje_collection_cache, INT); /**/
    E_CONFIG_VAL(D, T, zone_desks_x_count, INT); /**/
    E_CONFIG_VAL(D, T, zone_desks_y_count, INT); /**/
    E_CONFIG_VAL(D, T, show_desktop_icons, INT); /**/
@@ -646,7 +642,6 @@ _e_config_edd_init(Eina_Bool old)
    E_CONFIG_VAL(D, T, menu_gadcon_client_toplevel, INT);
 
    E_CONFIG_VAL(D, T, ping_clients_interval, INT);
-   E_CONFIG_VAL(D, T, cache_flush_poll_interval, INT);
 
    E_CONFIG_VAL(D, T, thumbscroll_enable, INT);
    E_CONFIG_VAL(D, T, thumbscroll_threshhold, INT);
@@ -1348,11 +1343,6 @@ e_config_load(void)
    E_CONFIG_LIMIT(e_config->border_shade_speed, 1.0, 20000.0);
    E_CONFIG_LIMIT(e_config->framerate, 1.0, 200.0);
    E_CONFIG_LIMIT(e_config->priority, 0, 19);
-   E_CONFIG_LIMIT(e_config->image_cache, 0, 256 * 1024);
-   E_CONFIG_LIMIT(e_config->font_cache, 0, 32 * 1024);
-   E_CONFIG_LIMIT(e_config->edje_cache, 0, 256);
-   E_CONFIG_LIMIT(e_config->edje_collection_cache, 0, 512);
-   E_CONFIG_LIMIT(e_config->cache_flush_poll_interval, 8, 32768);
    E_CONFIG_LIMIT(e_config->zone_desks_x_count, 1, 64);
    E_CONFIG_LIMIT(e_config->zone_desks_y_count, 1, 64);
    E_CONFIG_LIMIT(e_config->show_desktop_icons, 0, 1);
