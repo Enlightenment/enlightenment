@@ -1020,6 +1020,11 @@ _wl_shot_now(E_Zone *zone, E_Client *ec, const char *params)
 static void
 _x_shot_now(E_Zone *zone, E_Client *ec, const char *params)
 {
+#ifdef HAVE_WAYLAND_ONLY
+   (void)zone;
+   (void)ec;
+   (void)params;
+#else
    Ecore_X_Image *img;
    unsigned char *src;
    unsigned int *dst;
@@ -1117,6 +1122,7 @@ _x_shot_now(E_Zone *zone, E_Client *ec, const char *params)
 
    free(dst);
    ecore_x_image_free(img);
+#endif
 }
 
 static Eina_Bool
