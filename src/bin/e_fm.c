@@ -2635,6 +2635,15 @@ _e_fm2_client_unmount(const char *udi)
 
    _e_fm2_client_get();
 
+   elm_cache_all_flush();
+   edje_file_cache_flush();
+   edje_collection_cache_flush();
+   if (e_comp)
+     {
+        evas_image_cache_flush(e_comp->evas);
+        evas_font_cache_flush(e_comp->evas);
+     }
+
    return _e_fm_client_send_new(E_FM_OP_UNMOUNT, (void *)d, l);
 }
 
