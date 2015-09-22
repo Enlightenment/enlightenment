@@ -233,10 +233,13 @@ e_xkb_layout_set(const E_Config_XKB_Layout *cl)
         if (e_config_xkb_layout_eq(cl, cl2))
           {
              INF("Setting keyboard layout: %s|%s|%s", cl2->name, cl2->model, cl2->variant);
+             eina_stringshare_replace(&e_config->xkb.cur_layout, cl->name);
+             eina_stringshare_replace(&e_config->xkb.selected_layout, cl->name);
              e_xkb_update(cur_group);
              break;
           }
      }
+   _e_xkb_update_event(e_config->xkb.cur_group);
    e_config_save_queue();
 }
 
