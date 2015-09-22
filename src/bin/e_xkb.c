@@ -31,7 +31,8 @@ _e_xkb_init_timer(void *data)
 E_API int
 e_xkb_init(void)
 {
-   E_EVENT_XKB_CHANGED = ecore_event_type_new();
+   if (!E_EVENT_XKB_CHANGED)
+     E_EVENT_XKB_CHANGED = ecore_event_type_new();
    if (e_config->xkb.dont_touch_my_damn_keyboard) return 1;
    e_xkb_update(-1);
    if (e_config->xkb.cur_layout)
