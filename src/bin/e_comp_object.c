@@ -3432,6 +3432,7 @@ e_comp_object_dirty(Evas_Object *obj)
         if (!dirty)
           evas_object_image_data_set(o, NULL);
         evas_object_image_size_set(o, w, h);
+        visible |= evas_object_visible_get(o);
      }
    if (!dirty)
      {
@@ -3445,10 +3446,7 @@ e_comp_object_dirty(Evas_Object *obj)
         RENDER_DEBUG("UPDATE ADD [%p]: %d %d %dx%d", cw->ec, rect->x, rect->y, rect->w, rect->h);
         evas_object_image_data_update_add(cw->obj, rect->x, rect->y, rect->w, rect->h);
         EINA_LIST_FOREACH(cw->obj_mirror, ll, o)
-          {
-             evas_object_image_data_update_add(o, rect->x, rect->y, rect->w, rect->h);
-             visible |= evas_object_visible_get(o);
-          }
+          evas_object_image_data_update_add(o, rect->x, rect->y, rect->w, rect->h);
         if (cw->pending_updates)
           eina_tiler_rect_add(cw->pending_updates, rect);
      }
