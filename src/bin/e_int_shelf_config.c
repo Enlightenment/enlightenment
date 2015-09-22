@@ -347,7 +347,8 @@ _basic_apply(E_Config_Dialog *cfd, E_Config_Dialog_Data *cfdata)
           }
      }
 
-   e_gadcon_unpopulate(cfdata->es->gadcon);
+   if (!recreate)
+     e_gadcon_unpopulate(cfdata->es->gadcon);
    if (!cfdata->escfg->style)
      {
         cfdata->escfg->style = eina_stringshare_ref(cfdata->style);
