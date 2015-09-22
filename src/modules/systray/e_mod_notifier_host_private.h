@@ -57,6 +57,10 @@ struct _Notifier_Item
    const char *menu_path;
    E_DBusMenu_Ctx *menu_data;
    Eina_List *signals;
+   uint32_t *imgdata;
+   int imgw, imgh;
+   uint32_t *attnimgdata;
+   int attnimgw, attnimgh;
 };
 
 typedef void (*E_Notifier_Watcher_Item_Registered_Cb)(void *data, const char *service);
