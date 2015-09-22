@@ -86,6 +86,24 @@ static Ecore_Event_Handler *_e_shelf_gadcon_populate_handler = NULL;
 static Ecore_Event_Handler *_e_shelf_module_init_end_handler = NULL;
 static Ecore_Event_Handler *_e_shelf_zone_moveresize_handler = NULL;
 
+static void
+_e_shelf_remaximize(E_Shelf *es)
+{
+   E_Client *ec;
+
+   if (es->cfg->overlap) return;
+   E_CLIENT_FOREACH(e_comp_get(es->zone), ec)
+     {
+        E_Maximize max = ec->maximized;
+
+        if (!ec->maximized) continue;
+        if ((!ec->sticky) && (!e_shelf_desk_visible(es, ec->desk ?: e_desk_current_get(es->zone))))
+          continue;
+        e_client_unmaximize(ec, ec->maximized);
+        e_client_maximize(ec, max);
+     }
+}
+
 /* externally accessible functions */
 EINTERN int
 e_shelf_init(void)
@@ -472,9 +490,11 @@ e_shelf_move(E_Shelf *es, int x, int y)
 {
    E_OBJECT_CHECK(es);
    E_OBJECT_TYPE_CHECK(es, E_SHELF_TYPE);
+   if ((es->x == x) && (es->y == y)) return;
    es->x = x;
    es->y = y;
    evas_object_move(es->comp_object, es->zone->x + es->x, es->zone->y + es->y);
+   _e_shelf_remaximize(es);
 }
 
 E_API void
@@ -482,9 +502,11 @@ e_shelf_resize(E_Shelf *es, int w, int h)
 {
    E_OBJECT_CHECK(es);
    E_OBJECT_TYPE_CHECK(es, E_SHELF_TYPE);
+   if ((es->w == w) && (es->h == h)) return;
    es->w = w;
    es->h = h;
    evas_object_resize(es->comp_object, es->w, es->h);
+   _e_shelf_remaximize(es);
 }
 
 E_API void
@@ -492,12 +514,14 @@ e_shelf_move_resize(E_Shelf *es, int x, int y, int w, int h)
 {
    E_OBJECT_CHECK(es);
    E_OBJECT_TYPE_CHECK(es, E_SHELF_TYPE);
+   if ((es->x == x) && (es->y == y) && (es->w == w) && (es->h == h)) return;
    es->x = x;
    es->y = y;
    es->w = w;
    es->h = h;
    evas_object_move(es->comp_object, es->zone->x + es->x, es->zone->y + es->y);
    evas_object_resize(es->comp_object, es->w, es->h);
+   _e_shelf_remaximize(es);
 }
 
 E_API void
