@@ -42,6 +42,8 @@ systray_notifier_item_free(Notifier_Item *item)
      e_dbusmenu_unload(item->menu_data);
    eina_stringshare_del(item->bus_id);
    eina_stringshare_del(item->path);
+   free(item->imgdata);
+   free(item->attnimgdata);
    if (item->attention_icon_name)
      eina_stringshare_del(item->attention_icon_name);
    if (item->icon_name)
@@ -64,7 +66,7 @@ systray_notifier_item_free(Notifier_Item *item)
 }
 
 static void
-image_load(const char *name, const char *path, Evas_Object *image)
+image_load(const char *name, const char *path, uint32_t *imgdata, int w, int h, Evas_Object *image)
 {
    const char **ext, *exts[] =
    {
@@ -96,7 +98,18 @@ image_load(const char *name, const char *path, Evas_Object *image)
                }
           }
      }
-   if (!e_util_icon_theme_set(image, name))
+   if (name && name[0] && e_util_icon_theme_set(image, name)) return;
+   if (imgdata)
+     {
+        Evas_Object *o;
+
+        o = evas_object_image_filled_add(evas_object_evas_get(image));
+        evas_object_image_alpha_set(o, 1);
+        evas_object_image_size_set(o, w, h);
+        evas_object_image_data_set(o, imgdata);
+        e_icon_image_object_set(image, o);
+     }
+   else
      e_util_icon_theme_set(image, "dialog-error");
 }
 
@@ -261,7 +274,7 @@ jump_search:
      {
       case STATUS_ACTIVE:
         {
-           image_load(item->icon_name, item->icon_path, ii->icon);
+           image_load(item->icon_name, item->icon_path, item->imgdata, item->imgw, item->imgh, ii->icon);
            if (!evas_object_visible_get(ii->icon))
              {
                 systray_edje_box_append(host_inst->inst, ii->icon);
@@ -280,7 +293,7 @@ jump_search:
         }
       case STATUS_ATTENTION:
         {
-           image_load(item->attention_icon_name, item->icon_path, ii->icon);
+           image_load(item->attention_icon_name, item->icon_path, item->attnimgdata, item->attnimgw, item->attnimgh, ii->icon);
            if (!evas_object_visible_get(ii->icon))
              {
                 systray_edje_box_append(host_inst->inst, ii->icon);

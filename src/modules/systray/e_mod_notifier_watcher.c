@@ -26,29 +26,32 @@ enum
 static void
 item_name_monitor_cb(void *data, const char *bus, const char *old_id EINA_UNUSED, const char *new_id)
 {
-   const char *service = data;
+   const char *svc, *service = data;
 
    if (strcmp(new_id, ""))
      return;
 
-   eldbus_service_signal_emit(iface, ITEM_UNREGISTERED, service);
+   svc = strchr(service, '/') + 1;
+
+   eldbus_service_signal_emit(iface, ITEM_UNREGISTERED, svc);
    items = eina_list_remove(items, service);
    if (unregistered_cb)
-     unregistered_cb(user_data, service);
+     unregistered_cb(user_data, bus);
+   eldbus_name_owner_changed_callback_del(conn, svc, item_name_monitor_cb, service);
    eina_stringshare_del(service);
-   eldbus_name_owner_changed_callback_del(conn, bus, item_name_monitor_cb, service);
 }
 
 static Eldbus_Message *
 register_item_cb(const Eldbus_Service_Interface *s_iface, const Eldbus_Message *msg)
 {
-   const char *service;
+   const char *service, *svc;
    char buf[1024];
 
    if (!eldbus_message_arguments_get(msg, "s", &service))
      return NULL;
+   svc = service;
 
-   snprintf(buf, sizeof(buf), "%s%s", eldbus_message_sender_get(msg), service);
+   snprintf(buf, sizeof(buf), "%s/%s", eldbus_message_sender_get(msg), service);
    service = eina_stringshare_add(buf);
    if (eina_list_data_find(items, service))
      {
@@ -57,13 +60,13 @@ register_item_cb(const Eldbus_Service_Interface *s_iface, const Eldbus_Message *
      }
 
    items = eina_list_append(items, service);
-   eldbus_service_signal_emit(s_iface, ITEM_REGISTERED, service);
-   eldbus_name_owner_changed_callback_add(conn, eldbus_message_sender_get(msg),
+   eldbus_service_signal_emit(s_iface, ITEM_REGISTERED, svc);
+   eldbus_name_owner_changed_callback_add(conn, svc,
                                          item_name_monitor_cb, service,
                                          EINA_FALSE);
 
    if (registered_cb)
-     registered_cb(user_data, service);
+     registered_cb(user_data, svc);
    return eldbus_message_method_return_new(msg);
 }
 
