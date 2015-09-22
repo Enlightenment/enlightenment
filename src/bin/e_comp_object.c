@@ -634,8 +634,9 @@ _e_comp_object_shadow_setup(E_Comp_Object *cw)
    else
      e_comp_object_signal_emit(cw->smart_obj, "e,state,hidden", "e");
 
-   if (cw->ec->iconic)
-     e_comp_object_signal_emit(cw->smart_obj, "e,action,iconify", "e");
+   /* breaks animation counter */
+   //if (cw->ec->iconic)
+     //e_comp_object_signal_emit(cw->smart_obj, "e,action,iconify", "e");
    if (!cw->zoomap_disabled)
      e_zoomap_child_set(cw->zoomobj, NULL);
    if (cw->frame_object)
