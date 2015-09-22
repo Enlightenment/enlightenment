@@ -225,6 +225,7 @@ _basic_apply(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfdata)
    E_Config_XKB_Layout *cl, *nl;
    E_Config_XKB_Option *oc;
    E_XKB_Dialog_Option *od;
+   Eina_Bool cur_ok = EINA_FALSE, sel_ok = EINA_FALSE;
 
    EINA_LIST_FREE(e_config->xkb.used_layouts, cl)
      {
@@ -243,6 +244,34 @@ _basic_apply(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfdata)
 
         e_config->xkb.used_layouts =
           eina_list_append(e_config->xkb.used_layouts, nl);
+        if (e_config_xkb_layout_eq(e_config->xkb.current_layout, nl))
+          cur_ok = EINA_TRUE;
+        if (e_config_xkb_layout_eq(e_config->xkb.sel_layout, nl))
+          sel_ok = EINA_TRUE;
+     }
+   if (!cur_ok)
+     {
+        E_FREE_FUNC(e_config->xkb.current_layout, e_config_xkb_layout_free);
+        EINA_LIST_FOREACH(e_config->xkb.used_layouts, l, cl)
+          if (e_config->xkb.cur_layout == cl->name)
+            {
+               e_config->xkb.current_layout = e_config_xkb_layout_dup(cl);
+               break;
+            }
+        if (!e_config->xkb.current_layout)
+          eina_stringshare_replace(&e_config->xkb.cur_layout, NULL);
+     }
+   if (!sel_ok)
+     {
+        E_FREE_FUNC(e_config->xkb.sel_layout, e_config_xkb_layout_free);
+        EINA_LIST_FOREACH(e_config->xkb.used_layouts, l, cl)
+          if (e_config->xkb.selected_layout == cl->name)
+            {
+               e_config->xkb.sel_layout = e_config_xkb_layout_dup(cl);
+               break;
+            }
+        if (!e_config->xkb.sel_layout)
+          eina_stringshare_replace(&e_config->xkb.selected_layout, NULL);
      }
 
    eina_stringshare_replace(&e_config->xkb.default_model, cfdata->default_model);
@@ -266,8 +295,7 @@ _basic_apply(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfdata)
         e_config->xkb.used_options = eina_list_append(e_config->xkb.used_options, oc);
      }
 
-   e_xkb_update(-1);
-   _xkb_update_icon(0);
+   e_xkb_init();
 
    e_config_save_queue();
    return 1;
