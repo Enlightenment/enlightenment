@@ -1,3 +1,45 @@
+Release 0.19.11:
+---------------------
+Carsten Haitzler (3):
+      e - fm - flush all evas caches to get rid of open file handles b4 umount
+      e - fix crash in desktop lookup+fixup where exe_inst is null
+      deskmirror - fix dangling reference to mirror by refcounting it
+
+Marcel Hollerbach (1):
+      deskmirror: check if ec is not null before accessing it
+
+Mike Blumenkrantz (29):
+      delete notification mirror objects upon deleting original popup
+      unset client hidden flag on config dialogs when activating from another vdesk
+      add ilist method for setting disabled state
+      remove unused variables in ilist widget
+      send FLOAT_SET edje messages during desk flip
+      make bgpreview widget work with panoramic wallpapers
+      always set alpha for internal wins
+      decode .desktop link and directory uris in fileman menus
+      re-set internal ee win after applying alpha
+      only lower x11 layer windows for layers which have windows during init
+      add eeze watch for backlight events
+      remove backlight update calls from backlight module
+      add efl versioning for eeze backlight monitoring
+      do not return non-visible clients for e_client_under_pointer_get()
+      only set focus on clients which are visible during client eval
+      move focus setting on restart into desk restore function
+      apply vertical maximize algorithm for LEFT/RIGHT maximized windows
+      unset E_Client->want/take_focus flags during client eval
+      block gadcon thaw on unpopulate when gadcon is deleted
+      only unpopulate a shelf when applying new settings if the shelf won't be recreated
+      clamp client geometry to zone during geometry calc
+      redo client maximization when a non-overlap shelf changes geometry
+      do not emit client iconify signal when reapplying compositor theme
+      calculate comp object visibility regardless of pending damages
+      update xkb settings and send xkb update event when calling e_xkb_layout_set()
+      only init E_EVENT_XKB_CHANGED during xkb init if xkb init hasn't already occurred
+      attempt to maintain currently-selected kbd layout when modifying kbd list
+      improve client exe_inst creation
+      fix systray implementation of notifier watcher (StatusNotifierItem)
+
+
 Release 0.19.10:
 ---------------------
 Carsten Haitzler (1):
