@@ -74,7 +74,8 @@ you can tell Enlightenment to use that when you start it:
 
   ./enlightenment_start -profile <my_profile>
 
-
+To run a wayland session inside x11, export E_WL_FORCE=x11 before starting
+enlightenment.
 
 Known Issues
 -------------
