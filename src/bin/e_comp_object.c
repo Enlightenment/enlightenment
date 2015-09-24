@@ -822,10 +822,20 @@ _e_comp_object_pixels_get(void *data, Evas_Object *obj EINA_UNUSED)
    //INF("PIXEL GET %p: %dx%d || %dx%d", ec, ec->w, ec->h, pw, ph);
    e_pixmap_image_opaque_get(cw->ec->pixmap, &bx, &by, &bxx, &byy);
    if (bxx && byy)
-     bxx = pw - (bx + bxx), byy = ph - (by + byy);
+     {
+        bxx = pw - (bx + bxx), byy = ph - (by + byy);
+        evas_object_image_border_set(cw->obj, bx, bxx, by, byy);
+     }
+   else if (cw->client_inset.calc && (!cw->frame_object)) //CSD
+     {
+        bx = -cw->client_inset.l + 4, by = -cw->client_inset.t + 4;
+        bxx = -cw->client_inset.r, byy = -cw->client_inset.b;
+     }
    else
-     bx = by = bxx = byy = 0;
-   evas_object_image_border_set(cw->obj, bx, bxx, by, byy);
+     {
+        bx = by = bxx = byy = 0;
+        evas_object_image_border_set(cw->obj, bx, bxx, by, byy);
+     }
    {
       Edje_Message_Int_Set *msg;
       Edje_Message_Int msg2;
