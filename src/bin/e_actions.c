@@ -732,6 +732,7 @@ ACT_FN_GO(window_shaded, )
         E_Client *ec;
 
         ec = (E_Client *)obj;
+        if (!e_comp_object_frame_allowed(ec->frame)) return;
         if (params)
           {
              int v;
@@ -777,6 +778,7 @@ ACT_FN_GO(window_borderless_toggle, EINA_UNUSED)
         E_Client *ec;
 
         ec = (E_Client *)obj;
+        if (!e_comp_object_frame_allowed(ec->frame)) return;
         ec->borderless = !ec->borderless;
 
         ec->border.changed = 1;
@@ -795,6 +797,7 @@ ACT_FN_GO(window_border_set, EINA_UNUSED)
         E_Client *ec;
 
         ec = (E_Client *)obj;
+        if (!e_comp_object_frame_allowed(ec->frame)) return;
         if (ec && params)
           {
              eina_stringshare_replace(&ec->bordername, params);
@@ -815,6 +818,7 @@ ACT_FN_GO(window_border_cycle, EINA_UNUSED)
         E_Client *ec;
 
         ec = (E_Client *)obj;
+        if (!e_comp_object_frame_allowed(ec->frame)) return;
         if (ec && params)
           {
              const char *space;
