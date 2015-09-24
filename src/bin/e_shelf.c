@@ -680,104 +680,104 @@ e_shelf_position_calc(E_Shelf *es)
    switch (orient)
      {
       case E_GADCON_ORIENT_FLOAT:
-        if (!es->fit_along) es->w = es->zone->w;
-        if (!es->fit_size) es->h = size;
+        if (!es->fit_along) w = es->zone->w;
+        if (!es->fit_size) h = size;
         break;
 
       case E_GADCON_ORIENT_HORIZ:
-        if (!es->fit_along) es->w = es->zone->w;
-        if (!es->fit_size) es->h = size;
-        es->x = (es->zone->w - es->w) / 2;
+        if (!es->fit_along) w = es->zone->w;
+        if (!es->fit_size) h = size;
+        x = (es->zone->w - w) / 2;
         break;
 
       case E_GADCON_ORIENT_VERT:
-        if (!es->fit_along) es->h = es->zone->h;
-        if (!es->fit_size) es->w = size;
-        es->y = (es->zone->h - es->h) / 2;
+        if (!es->fit_along) h = es->zone->h;
+        if (!es->fit_size) w = size;
+        y = (es->zone->h - h) / 2;
         break;
 
       case E_GADCON_ORIENT_LEFT:
-        if (!es->fit_along) es->h = es->zone->h;
-        if (!es->fit_size) es->w = size;
-        es->x = 0;
-        es->y = (es->zone->h - es->h) / 2;
+        if (!es->fit_along) h = es->zone->h;
+        if (!es->fit_size) w = size;
+        x = 0;
+        y = (es->zone->h - h) / 2;
         break;
 
       case E_GADCON_ORIENT_RIGHT:
-        if (!es->fit_along) es->h = es->zone->h;
-        if (!es->fit_size) es->w = size;
-        es->x = es->zone->w - es->w;
-        es->y = (es->zone->h - es->h) / 2;
+        if (!es->fit_along) h = es->zone->h;
+        if (!es->fit_size) w = size;
+        x = es->zone->w - w;
+        y = (es->zone->h - h) / 2;
         break;
 
       case E_GADCON_ORIENT_TOP:
-        if (!es->fit_along) es->w = es->zone->w;
-        if (!es->fit_size) es->h = size;
-        es->x = (es->zone->w - es->w) / 2;
-        es->y = 0;
+        if (!es->fit_along) w = es->zone->w;
+        if (!es->fit_size) h = size;
+        x = (es->zone->w - w) / 2;
+        y = 0;
         break;
 
       case E_GADCON_ORIENT_BOTTOM:
-        if (!es->fit_along) es->w = es->zone->w;
-        if (!es->fit_size) es->h = size;
-        es->x = (es->zone->w - es->w) / 2;
-        es->y = es->zone->h - es->h;
+        if (!es->fit_along) w = es->zone->w;
+        if (!es->fit_size) h = size;
+        x = (es->zone->w - w) / 2;
+        y = es->zone->h - h;
         break;
 
       case E_GADCON_ORIENT_CORNER_TL:
-        if (!es->fit_along) es->w = es->zone->w;
-        if (!es->fit_size) es->h = size;
-        es->x = 0;
-        es->y = 0;
+        if (!es->fit_along) w = es->zone->w;
+        if (!es->fit_size) h = size;
+        x = 0;
+        y = 0;
         break;
 
       case E_GADCON_ORIENT_CORNER_TR:
-        if (!es->fit_along) es->w = es->zone->w;
-        if (!es->fit_size) es->h = size;
-        es->x = es->zone->w - es->w;
-        es->y = 0;
+        if (!es->fit_along) w = es->zone->w;
+        if (!es->fit_size) h = size;
+        x = es->zone->w - w;
+        y = 0;
         break;
 
       case E_GADCON_ORIENT_CORNER_BL:
-        if (!es->fit_along) es->w = es->zone->w;
-        if (!es->fit_size) es->h = size;
-        es->x = 0;
-        es->y = es->zone->h - es->h;
+        if (!es->fit_along) w = es->zone->w;
+        if (!es->fit_size) h = size;
+        x = 0;
+        y = es->zone->h - h;
         break;
 
       case E_GADCON_ORIENT_CORNER_BR:
-        if (!es->fit_along) es->w = es->zone->w;
-        if (!es->fit_size) es->h = size;
-        es->x = es->zone->w - es->w;
-        es->y = es->zone->h - es->h;
+        if (!es->fit_along) w = es->zone->w;
+        if (!es->fit_size) h = size;
+        x = es->zone->w - w;
+        y = es->zone->h - h;
         break;
 
       case E_GADCON_ORIENT_CORNER_LT:
-        if (!es->fit_along) es->h = es->zone->h;
-        if (!es->fit_size) es->w = size;
-        es->x = 0;
-        es->y = 0;
+        if (!es->fit_along) h = es->zone->h;
+        if (!es->fit_size) w = size;
+        x = 0;
+        y = 0;
         break;
 
       case E_GADCON_ORIENT_CORNER_RT:
-        if (!es->fit_along) es->h = es->zone->h;
-        if (!es->fit_size) es->w = size;
-        es->x = es->zone->w - es->w;
-        es->y = 0;
+        if (!es->fit_along) h = es->zone->h;
+        if (!es->fit_size) w = size;
+        x = es->zone->w - w;
+        y = 0;
         break;
 
       case E_GADCON_ORIENT_CORNER_LB:
-        if (!es->fit_along) es->h = es->zone->h;
-        if (!es->fit_size) es->w = size;
-        es->x = 0;
-        es->y = es->zone->h - es->h;
+        if (!es->fit_along) h = es->zone->h;
+        if (!es->fit_size) w = size;
+        x = 0;
+        y = es->zone->h - h;
         break;
 
       case E_GADCON_ORIENT_CORNER_RB:
-        if (!es->fit_along) es->h = es->zone->h;
-        if (!es->fit_size) es->w = size;
-        es->x = es->zone->w - es->w;
-        es->y = es->zone->h - es->h;
+        if (!es->fit_along) h = es->zone->h;
+        if (!es->fit_size) w = size;
+        x = es->zone->w - w;
+        y = es->zone->h - h;
         break;
 
       default:
@@ -788,7 +788,7 @@ e_shelf_position_calc(E_Shelf *es)
 
    if ((es->x == x) && (es->y == y) && (es->w == w) && (es->h == h)) return;
 
-   e_shelf_move_resize(es, es->x, es->y, es->w, es->h);
+   e_shelf_move_resize(es, x, y, w, h);
    if (es->hidden)
      {
         es->hidden = 0;
