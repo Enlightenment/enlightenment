@@ -175,6 +175,7 @@ e_int_client_menu_create(E_Client *ec)
      }
 
    if ((!ec->lock_user_shade) && (!ec->fullscreen) && (!ec->maximized) &&
+       e_comp_object_frame_allowed(ec->frame) &&
        ((!ec->border.name) || (!borderless)))
      {
         mi = e_menu_item_new(m);
@@ -188,7 +189,8 @@ e_int_client_menu_create(E_Client *ec)
                                   "e/widgets/border/default/shade");
      }
 
-   if ((!ec->fullscreen) && (!ec->lock_border) && (!ec->shading) && (!ec->shaded) && (!ec->mwm.borderless))
+   if ((!ec->fullscreen) && (!ec->lock_border) && (!ec->shading) &&
+       (!ec->shaded) && e_comp_object_frame_allowed(ec->frame))
      {
         mi = e_menu_item_new(m);
         e_menu_item_label_set(mi, _("Borderless"));
@@ -1233,7 +1235,7 @@ _e_client_menu_cb_border_pre(void *data, E_Menu *m __UNUSED__, E_Menu_Item *mi)
    e_menu_item_submenu_set(mi, subm);
    e_object_unref(E_OBJECT(subm));
 
-   if (e_configure_registry_exists("internal/borders_border"))
+   if (e_comp_object_frame_allowed(ec->frame) && e_configure_registry_exists("internal/borders_border"))
      {
         submi = e_menu_item_new(subm);
         e_menu_item_label_set(submi, _("Select Border Style"));
