@@ -422,6 +422,8 @@ _e_comp_x_client_new_helper(E_Client *ec)
              /* loop to check for window profile list atom */
              else if (atoms[i] == ECORE_X_ATOM_E_WINDOW_PROFILE_SUPPORTED)
                ec->e.fetch.profile = 1;
+             else if (atoms[i] == ATM_GTK_FRAME_EXTENTS)
+               ec->comp_data->fetch_gtk_frame_extents = 1;
           }
         if (video_position && video_parent)
           {
@@ -2125,6 +2127,11 @@ _e_comp_x_message(void *data EINA_UNUSED, int type EINA_UNUSED, Ecore_X_Event_Cl
           }
      }
 #endif
+   else if (ev->message_type == ATM_GTK_FRAME_EXTENTS)
+     {
+        _e_comp_x_client_data_get(ec)->fetch_gtk_frame_extents = 1;
+        EC_CHANGED(ec);
+     }
    else
      DBG("missed client message '%s' for %u", ecore_x_atom_name_get(ev->message_type), ev->win);
    return ECORE_CALLBACK_PASS_ON;
@@ -4287,6 +4294,29 @@ _e_comp_x_hook_client_fetch(void *d EINA_UNUSED, E_Client *ec)
         eina_stringshare_replace(&ec->e.state.profile.wait, ec->e.state.profile.set);
         ec->e.state.profile.wait_for_done = 1;
         eina_stringshare_replace(&ec->e.state.profile.set, NULL);
+     }
+   if (cd->fetch_gtk_frame_extents)
+     {
+        unsigned char *data;
+        int count;
+
+        if (ecore_x_window_prop_property_get(win,
+                                             ATM_GTK_FRAME_EXTENTS,
+                                             ECORE_X_ATOM_CARDINAL, 32,
+                                             &data, &count))
+          {
+             unsigned int *extents = (unsigned int*)data;
+
+             /* _GTK_FRAME_EXTENTS describes a region l/r/t/b pixels
+              * from the "window" object in which shadows will be drawn.
+              * this area should not be accounted for in sizing or
+              * placement calculations.
+              */
+             e_comp_object_frame_geometry_set(ec->frame,
+               -extents[0], -extents[1], -extents[2], -extents[3]);
+             free(data);
+          }
+        cd->fetch_gtk_frame_extents = 0;
      }
    ec->changes.prop = 0;
    if (rem_change) e_remember_update(ec);

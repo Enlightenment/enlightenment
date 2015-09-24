@@ -105,6 +105,7 @@ struct _E_Comp_X_Client_Data
    Eina_Bool frame_update : 1;
    Eina_Bool evas_init : 1;
    Eina_Bool unredirected_single : 1;
+   Eina_Bool fetch_gtk_frame_extents : 1;
 };
 
 E_API Eina_Bool e_comp_x_init(void);

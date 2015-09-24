@@ -868,9 +868,15 @@ static void
 _e_comp_intercept_move(void *data, Evas_Object *obj, int x, int y)
 {
    E_Comp_Object *cw = data;
-   int ix, iy;
+   int ix, iy, fx, fy;
 
-   if ((cw->x == x) && (cw->y == y))
+   /* if frame_object does not exist, client_inset indicates CSD.
+    * this means that ec->client matches cw->x/y, the opposite
+    * of SSD.
+    */
+   fx = (!cw->frame_object) * cw->client_inset.l;
+   fy = (!cw->frame_object) * cw->client_inset.t;
+   if ((cw->x == x + fx) && (cw->y == y + fy))
      {
         if ((cw->ec->x != x) || (cw->ec->y != y))
           {
@@ -929,6 +935,9 @@ _e_comp_intercept_move(void *data, Evas_Object *obj, int x, int y)
              cw->ec->client.x = ix;
              cw->ec->client.y = iy;
           }
+        /* flip SSD->CSD */
+        if (!cw->frame_object)
+          x = ix, y = iy;
         evas_object_move(obj, x, y);
      }
 }
@@ -939,7 +948,13 @@ _e_comp_intercept_resize(void *data, Evas_Object *obj, int w, int h)
    E_Comp_Object *cw = data;
    int pw, ph, fw, fh, iw, ih, prev_w, prev_h;
 
-   if ((cw->w == w) && (cw->h == h))
+   /* if frame_object does not exist, client_inset indicates CSD.
+    * this means that ec->client matches cw->w/h, the opposite
+    * of SSD.
+    */
+   fw = (!cw->frame_object) * (-cw->client_inset.l - cw->client_inset.r);
+   fh = (!cw->frame_object) * (-cw->client_inset.t - cw->client_inset.b);
+   if ((cw->w == w + fw) && (cw->h == h + fh))
      {
         if (cw->ec->shading || cw->ec->shaded) return;
         if (((cw->ec->w != w) || (cw->ec->h != h)) ||
@@ -1022,7 +1037,11 @@ _e_comp_intercept_resize(void *data, Evas_Object *obj, int w, int h)
      {
         //INF("CALLBACK: REQ(%dx%d) != CUR(%dx%d)", w - fw, h - fh, pw, ph);
         evas_object_smart_callback_call(obj, "client_resize", NULL);
-        e_comp_object_frame_wh_adjust(obj, pw, ph, &w, &h);
+        /* flip for CSD */
+        if (cw->frame_object || cw->ec->input_only)
+          e_comp_object_frame_wh_adjust(obj, pw, ph, &w, &h);
+        else
+          w = pw, h = ph;
         if ((cw->w == w) && (cw->h == h))
           {
              /* going to be a noop resize which won't trigger smart resize */
@@ -1033,6 +1052,9 @@ _e_comp_intercept_resize(void *data, Evas_Object *obj, int w, int h)
      }
    else
      {
+        /* flip for CSD */
+        if ((!cw->frame_object) && (!cw->ec->input_only))
+          w = pw, h = ph;
         /* "just do it" for overrides */
         //INF("INTERCEPT %dx%d", w, h);
         evas_object_resize(obj, w, h);
@@ -2231,7 +2253,11 @@ _e_comp_smart_resize(Evas_Object *obj, int w, int h)
    if ((!cw->ec->shading) && (!cw->ec->shaded))
      {
         int ww, hh, pw, ph;
-        e_comp_object_frame_wh_unadjust(obj, w, h, &ww, &hh);
+
+        if (cw->frame_object)
+          e_comp_object_frame_wh_unadjust(obj, w, h, &ww, &hh);
+        else
+          ww = w, hh = h;
         /* verify pixmap:object size */
         if (e_pixmap_size_get(cw->ec->pixmap, &pw, &ph) && (!cw->ec->override))
           {
@@ -2845,6 +2871,22 @@ e_comp_object_frame_geometry_get(Evas_Object *obj, int *l, int *r, int *t, int *
    if (r) *r = cw->client_inset.r;
    if (t) *t = cw->client_inset.t;
    if (b) *b = cw->client_inset.b;
+}
+
+/* set geometry for CSD */
+E_API void
+e_comp_object_frame_geometry_set(Evas_Object *obj, int l, int r, int t, int b)
+{
+   API_ENTRY;
+   cw->client_inset.l = l;
+   cw->client_inset.r = r;
+   cw->client_inset.t = t;
+   cw->client_inset.b = b;
+   cw->client_inset.calc = 1;
+   eina_stringshare_replace(&cw->frame_theme, "borderless");
+   if (!cw->ec->new_client) return;
+   cw->ec->w += l + r;
+   cw->ec->h += t + b;
 }
 
 E_API void
