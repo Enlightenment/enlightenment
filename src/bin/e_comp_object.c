@@ -1679,7 +1679,7 @@ _e_comp_object_frame_recalc(E_Comp_Object *cw)
         cw->client_inset.t = 0;
         cw->client_inset.b = 0;
      }
-   cw->client_inset.calc = 1;
+   cw->client_inset.calc = !!cw->frame_object;
 }
 
 static void
