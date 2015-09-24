@@ -3661,6 +3661,7 @@ e_client_shade(E_Client *ec, E_Direction dir)
    if ((ec->shaded) || (ec->shading) || (ec->fullscreen) ||
        ((ec->maximized) && (!e_config->allow_manip))) return;
    if (!e_util_strcmp("borderless", ec->bordername)) return;
+   if (!e_comp_object_frame_allowed(ec->frame)) return;
 
    e_hints_window_shaded_set(ec, 1);
    e_hints_window_shade_direction_set(ec, dir);
@@ -4198,6 +4199,7 @@ e_client_border_set(E_Client *ec, const char *name)
 
    E_OBJECT_CHECK_RETURN(ec, EINA_FALSE);
    E_OBJECT_TYPE_CHECK_RETURN(ec, E_CLIENT_TYPE, EINA_FALSE);
+   if (!e_comp_object_frame_allowed(ec->frame)) return EINA_FALSE;
    if (ec->border.changed)
      CRI("CALLING WHEN border.changed SET!");
 
