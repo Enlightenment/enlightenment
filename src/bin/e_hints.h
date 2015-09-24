@@ -55,6 +55,8 @@ extern E_API Ecore_X_Atom ATM_GNOME_SM_PROXY;
 extern E_API Ecore_X_Atom ATM_ENLIGHTENMENT_COMMS;
 extern E_API Ecore_X_Atom ATM_ENLIGHTENMENT_VERSION;
 extern E_API Ecore_X_Atom ATM_ENLIGHTENMENT_SCALE;
+
+extern E_API Ecore_X_Atom ATM_GTK_FRAME_EXTENTS;
 #endif
 #endif
 #endif

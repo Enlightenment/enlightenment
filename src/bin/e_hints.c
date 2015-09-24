@@ -13,6 +13,8 @@ E_API Ecore_X_Atom ATM_GNOME_SM_PROXY = 0;
 E_API Ecore_X_Atom ATM_ENLIGHTENMENT_COMMS = 0;
 E_API Ecore_X_Atom ATM_ENLIGHTENMENT_VERSION = 0;
 E_API Ecore_X_Atom ATM_ENLIGHTENMENT_SCALE = 0;
+
+E_API Ecore_X_Atom ATM_GTK_FRAME_EXTENTS = 0;
 #endif
 
 EINTERN void
@@ -26,7 +28,8 @@ e_hints_init(Ecore_Window root, Ecore_Window propwin)
       "GNOME_SM_PROXY",
       "ENLIGHTENMENT_COMMS",
       "ENLIGHTENMENT_VERSION",
-      "ENLIGHTENMENT_SCALE"
+      "ENLIGHTENMENT_SCALE",
+      "_GTK_FRAME_EXTENTS",
    };
    Ecore_X_Atom atoms[6];
    Ecore_X_Atom supported[43];
@@ -43,6 +46,7 @@ e_hints_init(Ecore_Window root, Ecore_Window propwin)
    ATM_ENLIGHTENMENT_COMMS = atoms[3];
    ATM_ENLIGHTENMENT_VERSION = atoms[4];
    ATM_ENLIGHTENMENT_SCALE = atoms[5];
+   ATM_GTK_FRAME_EXTENTS = atoms[6];
 
    supported_num = 0;
    /* Set what hints we support */
@@ -121,6 +125,7 @@ e_hints_init(Ecore_Window root, Ecore_Window propwin)
    supported[supported_num++] = ECORE_X_ATOM_E_VIDEO_PARENT;
    supported[supported_num++] = ECORE_X_ATOM_E_VIDEO_POSITION;
 
+   supported[supported_num++] = ATM_GTK_FRAME_EXTENTS;
 
 
 
