@@ -53,6 +53,7 @@ E_API void e_comp_object_util_center(Evas_Object *obj);
 E_API void e_comp_object_util_center_on(Evas_Object *obj, Evas_Object *on);
 E_API void e_comp_object_util_center_pos_get(Evas_Object *obj, int *x, int *y);
 E_API void e_comp_object_util_fullscreen(Evas_Object *obj);
+E_API Eina_Bool e_comp_object_frame_allowed(Evas_Object *obj);
 E_API void e_comp_object_frame_geometry_get(Evas_Object *obj, int *l, int *r, int *t, int *b);
 E_API void e_comp_object_frame_geometry_set(Evas_Object *obj, int l, int r, int t, int b);
 E_API void e_comp_object_frame_icon_geometry_get(Evas_Object *obj, int *x, int *y, int *w, int *h);
