@@ -2889,6 +2889,13 @@ e_comp_object_frame_geometry_set(Evas_Object *obj, int l, int r, int t, int b)
    cw->ec->h += t + b;
 }
 
+E_API Eina_Bool
+e_comp_object_frame_allowed(Evas_Object *obj)
+{
+   API_ENTRY EINA_FALSE;
+   return (!cw->ec->mwm.borderless) && (cw->frame_object || (!cw->client_inset.calc));
+}
+
 E_API void
 e_comp_object_frame_icon_geometry_get(Evas_Object *obj, int *x, int *y, int *w, int *h)
 {
