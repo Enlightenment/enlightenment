@@ -815,10 +815,32 @@ _e_comp_object_pixels_get(void *data, Evas_Object *obj EINA_UNUSED)
    E_Comp_Object *cw = data;
    E_Client *ec = cw->ec;
    int pw, ph;
+   int bx, by, bxx, byy;
 
    if (e_object_is_del(E_OBJECT(ec))) return;
    if (!e_pixmap_size_get(ec->pixmap, &pw, &ph)) return;
    //INF("PIXEL GET %p: %dx%d || %dx%d", ec, ec->w, ec->h, pw, ph);
+   e_pixmap_image_opaque_get(cw->ec->pixmap, &bx, &by, &bxx, &byy);
+   if (bxx && byy)
+     bxx = pw - (bx + bxx), byy = ph - (by + byy);
+   else
+     bx = by = bxx = byy = 0;
+   evas_object_image_border_set(cw->obj, bx, bxx, by, byy);
+   {
+      Edje_Message_Int_Set *msg;
+      Edje_Message_Int msg2;
+      Eina_Bool id = (bx || by || bxx || byy);
+
+      msg = alloca(sizeof(Edje_Message_Int_Set) + (sizeof(int) * 3));
+      msg->count = 4;
+      msg->val[0] = bx;
+      msg->val[1] = by;
+      msg->val[2] = bxx;
+      msg->val[3] = byy;
+      edje_object_message_send(cw->shobj, EDJE_MESSAGE_INT_SET, 1, msg);
+      msg2.val = id;
+      edje_object_message_send(cw->shobj, EDJE_MESSAGE_INT, 0, &msg2);
+   }
    if (cw->native)
      E_FREE_FUNC(cw->pending_updates, eina_tiler_free);
    else if (e_comp_object_render(ec->frame))
@@ -3524,7 +3546,6 @@ e_comp_object_render(Evas_Object *obj)
    Evas_Object *o;
    int stride, pw, ph;
    unsigned int *pix, *srcpix;
-   int bx, by, bxx, byy;
    Eina_Bool ret = EINA_FALSE;
 
    API_ENTRY EINA_FALSE;
@@ -3546,27 +3567,7 @@ e_comp_object_render(Evas_Object *obj)
      }
 
    evas_object_image_pixels_dirty_set(cw->obj, EINA_FALSE);
-   e_pixmap_image_opaque_get(cw->ec->pixmap, &bx, &by, &bxx, &byy);
-   if (bxx && byy)
-     bxx = pw - (bx + bxx), byy = ph - (by + byy);
-   else
-     bx = by = bxx = byy = 0;
-   evas_object_image_border_set(cw->obj, bx, bxx, by, byy);
-   {
-      Edje_Message_Int_Set *msg;
-      Edje_Message_Int msg2;
-      Eina_Bool id = (bx || by || bxx || byy);
 
-      msg = alloca(sizeof(Edje_Message_Int_Set) + (sizeof(int) * 3));
-      msg->count = 4;
-      msg->val[0] = bx;
-      msg->val[1] = by;
-      msg->val[2] = bxx;
-      msg->val[3] = byy;
-      edje_object_message_send(cw->shobj, EDJE_MESSAGE_INT_SET, 1, msg);
-      msg2.val = id;
-      edje_object_message_send(cw->shobj, EDJE_MESSAGE_INT, 0, &msg2);
-   }
    RENDER_DEBUG("RENDER SIZE: %dx%d", pw, ph);
    it = eina_tiler_iterator_new(cw->pending_updates);
    if (e_pixmap_image_is_argb(cw->ec->pixmap))
