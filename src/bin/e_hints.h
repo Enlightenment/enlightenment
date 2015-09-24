@@ -57,6 +57,7 @@ extern E_API Ecore_X_Atom ATM_ENLIGHTENMENT_VERSION;
 extern E_API Ecore_X_Atom ATM_ENLIGHTENMENT_SCALE;
 extern E_API Ecore_X_Atom ATM_NETWM_SHOW_WINDOW_MENU;
 extern E_API Ecore_X_Atom ATM_NETWM_PERFORM_BUTTON_ACTION;
+extern E_API Ecore_X_Atom ATM_GTK_FRAME_EXTENTS;
 #endif
 #endif
 #endif

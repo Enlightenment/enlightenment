@@ -14,6 +14,7 @@ E_API Ecore_X_Atom ATM_ENLIGHTENMENT_SCALE = 0;
 
 E_API Ecore_X_Atom ATM_NETWM_SHOW_WINDOW_MENU = 0;
 E_API Ecore_X_Atom ATM_NETWM_PERFORM_BUTTON_ACTION = 0;
+E_API Ecore_X_Atom ATM_GTK_FRAME_EXTENTS = 0;
 #endif
 
 EINTERN void
@@ -32,6 +33,7 @@ e_hints_init(Ecore_Window root, Ecore_Window propwin)
       "ENLIGHTENMENT_SCALE",
       "_NET_WM_SHOW_WINDOW_MENU",
       "_NET_WM_PERFORM_BUTTON_ACTION",
+      "_GTK_FRAME_EXTENTS",
    };
    Ecore_X_Atom atoms[EINA_C_ARRAY_LENGTH(atom_names)];
    Ecore_X_Atom supported[45];
@@ -50,6 +52,7 @@ e_hints_init(Ecore_Window root, Ecore_Window propwin)
    ATM_ENLIGHTENMENT_SCALE = atoms[5];
    ATM_NETWM_SHOW_WINDOW_MENU = atoms[6];
    ATM_NETWM_PERFORM_BUTTON_ACTION = atoms[7];
+   ATM_GTK_FRAME_EXTENTS = atoms[8];
 
    supported_num = 0;
    /* Set what hints we support */
@@ -130,6 +133,7 @@ e_hints_init(Ecore_Window root, Ecore_Window propwin)
 
    supported[supported_num++] = ATM_NETWM_SHOW_WINDOW_MENU;
    supported[supported_num++] = ATM_NETWM_PERFORM_BUTTON_ACTION;
+   supported[supported_num++] = ATM_GTK_FRAME_EXTENTS;
 
 
 
