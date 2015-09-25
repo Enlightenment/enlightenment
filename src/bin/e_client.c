@@ -230,7 +230,7 @@ _e_client_desk_window_profile_wait_desk_delfn(void *data, void *obj)
 static Eina_Bool
 _e_client_pointer_warp_to_center_timer(void *data EINA_UNUSED)
 {
-   if (warp_to)
+   if (warp_to && warp_client)
      {
         int x, y;
         double spd;
