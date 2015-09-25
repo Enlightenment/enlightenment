@@ -414,7 +414,7 @@ e_hints_window_init(E_Client *ec)
    if (ec->remember)
      rem = ec->remember;
 
-   if (ec->icccm.state == ECORE_X_WINDOW_STATE_HINT_NONE)
+   if (ec->icccm.initial_state == ECORE_X_WINDOW_STATE_HINT_NONE)
      {
         if (ec->netwm.state.hidden)
           ec->icccm.state = ECORE_X_WINDOW_STATE_HINT_ICONIC;
@@ -563,7 +563,7 @@ e_hints_window_init(E_Client *ec)
    else if (ec->desk == e_desk_current_get(ec->zone))
      {
         /* ...but only if it's supposed to be shown */
-        if (ec->re_manage)
+        if (ec->re_manage && (ec->icccm.state != ECORE_X_WINDOW_STATE_HINT_WITHDRAWN))
           {
              ec->changes.visible = 1;
              ec->visible = 1;
@@ -1230,9 +1230,11 @@ e_hints_window_visible_set(E_Client *ec)
 #ifdef HAVE_WAYLAND_ONLY
 #else
    if (!e_pixmap_is_x(ec->pixmap)) return;
-   if (ec->icccm.state != ECORE_X_WINDOW_STATE_HINT_NORMAL)
-     ec->icccm.state = ECORE_X_WINDOW_STATE_HINT_NORMAL;
-   ecore_x_icccm_state_set(e_client_util_win_get(ec), ECORE_X_WINDOW_STATE_HINT_NORMAL);
+   if (ec->icccm.state != ECORE_X_WINDOW_STATE_HINT_WITHDRAWN)
+     {
+        ec->icccm.state = ECORE_X_WINDOW_STATE_HINT_NORMAL;
+        ecore_x_icccm_state_set(e_client_util_win_get(ec), ECORE_X_WINDOW_STATE_HINT_NORMAL);
+     }
    if (ec->netwm.state.hidden)
      {
         ec->netwm.update.state = 1;
@@ -1249,9 +1251,11 @@ e_hints_window_iconic_set(E_Client *ec)
 #ifdef HAVE_WAYLAND_ONLY
 #else
    if (!e_pixmap_is_x(ec->pixmap)) return;
-   if (ec->icccm.state != ECORE_X_WINDOW_STATE_HINT_ICONIC)
-     ec->icccm.state = ECORE_X_WINDOW_STATE_HINT_ICONIC;
-   ecore_x_icccm_state_set(e_client_util_win_get(ec), ECORE_X_WINDOW_STATE_HINT_ICONIC);
+   if (ec->icccm.state != ECORE_X_WINDOW_STATE_HINT_WITHDRAWN)
+     {
+        ec->icccm.state = ECORE_X_WINDOW_STATE_HINT_ICONIC;
+        ecore_x_icccm_state_set(e_client_util_win_get(ec), ECORE_X_WINDOW_STATE_HINT_ICONIC);
+     }
    if (!ec->netwm.state.hidden)
      {
         ec->netwm.update.state = 1;

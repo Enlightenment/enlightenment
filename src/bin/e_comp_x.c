@@ -303,8 +303,6 @@ _e_comp_x_client_new_helper(E_Client *ec)
                ec->icccm.fetch.client_leader = 1;
              else if (atoms[i] == ECORE_X_ATOM_WM_WINDOW_ROLE)
                ec->icccm.fetch.window_role = 1;
-             else if (atoms[i] == ECORE_X_ATOM_WM_STATE)
-               ec->icccm.fetch.state = 1;
           }
         /* netwm, loop again, netwm will ignore some icccm, so we
          * have to be sure that netwm is checked after */
@@ -1248,7 +1246,7 @@ _e_comp_x_show_helper(E_Client *ec)
              evas_object_hide(ec->frame);
              e_comp_object_damage(ec->frame, 0, 0, ec->w, ec->h);
           }
-        else
+        else if (ec->icccm.state != ECORE_X_WINDOW_STATE_HINT_WITHDRAWN)
           evas_object_show(ec->frame);
         ec->comp_data->first_map = 1;
         if (ec->internal_ecore_evas)
@@ -1370,6 +1368,7 @@ _e_comp_x_hide(void *data EINA_UNUSED, int type EINA_UNUSED, Ecore_X_Event_Windo
      {
         hid = EINA_TRUE;
         evas_object_hide(ec->frame);
+        e_hints_window_hidden_set(ec);
         if (!ec->internal)
           {
              if (ec->exe_inst && ec->exe_inst->exe)
@@ -1751,6 +1750,8 @@ _e_comp_x_property(void *data EINA_UNUSED, int type EINA_UNUSED, Ecore_X_Event_W
      {
         ec->icccm.fetch.hints = 1;
         EC_CHANGED(ec);
+        if (ec->icccm.state == ECORE_X_WINDOW_STATE_HINT_WITHDRAWN)
+          ec->ignored = 0;
      }
    else if (ev->atom == ECORE_X_ATOM_WM_NORMAL_HINTS)
      {
@@ -2951,11 +2952,9 @@ _e_comp_x_hook_client_pre_frame_assign(void *d EINA_UNUSED, E_Client *ec)
              ec->comp_data->set_win_type = 0;
           }
      }
-   if (ec->re_manage || ec->visible)
-     {
-        ecore_x_window_show(win);
-        ecore_x_window_show(pwin);
-     }
+   ecore_x_window_show(win);
+   if (!ec->iconic)
+     ecore_x_window_show(pwin);
 
    _e_comp_x_focus_init(ec);
    e_bindings_mouse_grab(E_BINDING_CONTEXT_WINDOW, win);
@@ -2963,7 +2962,7 @@ _e_comp_x_hook_client_pre_frame_assign(void *d EINA_UNUSED, E_Client *ec)
    _e_comp_x_client_evas_init(ec);
    if (ec->netwm.ping && (!ec->ping_poller))
      e_client_ping(ec);
-   if (ec->visible) evas_object_show(ec->frame);
+   if (ec->visible && (ec->icccm.state != ECORE_X_WINDOW_STATE_HINT_WITHDRAWN))
    ec->comp_data->need_reparent = 0;
    ec->redirected = 1;
    if (ec->comp_data->change_icon)
@@ -3099,12 +3098,6 @@ _e_comp_x_hook_client_fetch(void *d EINA_UNUSED, E_Client *ec)
         eina_stringshare_del(pname);
         eina_stringshare_del(pclass);
         ec->icccm.fetch.name_class = 0;
-     }
-   if (ec->changes.prop || ec->icccm.fetch.state)
-     {
-        ec->icccm.state = ecore_x_icccm_state_get(win);
-        ec->icccm.fetch.state = 0;
-        rem_change = 1;
      }
    if (ec->changes.prop || ec->e.fetch.state)
      {
@@ -3273,19 +3266,30 @@ _e_comp_x_hook_client_fetch(void *d EINA_UNUSED, E_Client *ec)
    if (ec->changes.prop || ec->icccm.fetch.hints)
      {
         Eina_Bool accepts_focus, is_urgent;
+        Ecore_X_Window_State_Hint state = ec->icccm.state;
 
         accepts_focus = EINA_TRUE;
         is_urgent = EINA_FALSE;
-        ec->icccm.initial_state = ECORE_X_WINDOW_STATE_HINT_NORMAL;
+        ec->icccm.state = ECORE_X_WINDOW_STATE_HINT_NORMAL;
         if (ecore_x_icccm_hints_get(win,
                                     &accepts_focus,
-                                    &ec->icccm.initial_state,
+                                    &ec->icccm.state,
                                     &ec->icccm.icon_pixmap,
                                     &ec->icccm.icon_mask,
                                     (Ecore_X_Window*)&ec->icccm.icon_window,
                                     (Ecore_X_Window*)&ec->icccm.window_group,
                                     &is_urgent))
           {
+             if (ec->new_client)
+               ec->icccm.initial_state = ec->icccm.state;
+             if (state != ec->icccm.state)
+               {
+                  ecore_x_icccm_state_set(win, ec->icccm.state);
+                  if (ec->icccm.state == ECORE_X_WINDOW_STATE_HINT_WITHDRAWN)
+                    ec->ignored = 1, ec->visible = 0;
+                  else
+                    ec->changes.visible = ec->visible = 1;
+               }
              ec->icccm.accepts_focus = accepts_focus;
              ec->icccm.urgent = is_urgent;
              e_client_urgent_set(ec, is_urgent);
@@ -4269,7 +4273,7 @@ _e_comp_x_hook_client_new(void *d EINA_UNUSED, E_Client *ec)
    ec->changes.shape_input = 1;
 
    ec->netwm.type = E_WINDOW_TYPE_UNKNOWN;
-   ec->icccm.state = ECORE_X_WINDOW_STATE_HINT_NONE;
+   ec->icccm.state =ec->icccm.initial_state = ECORE_X_WINDOW_STATE_HINT_NONE;
 
    if (!_e_comp_x_client_new_helper(ec)) return;
 
@@ -4975,7 +4979,8 @@ _e_comp_x_manage_windows(E_Comp *c)
                   evas_object_geometry_set(ec->frame, ec->client.x, ec->client.y, ec->client.w, ec->client.h);
                }
              ec->ignore_first_unmap = 1;
-             evas_object_show(ec->frame);
+             if (ec->override || (!ec->icccm.fetch.hints))
+               evas_object_show(ec->frame);
              _e_comp_x_client_stack(ec);
           }
      }
