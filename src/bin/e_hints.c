@@ -36,7 +36,7 @@ e_hints_init(Ecore_Window root, Ecore_Window propwin)
       "_GTK_FRAME_EXTENTS",
    };
    Ecore_X_Atom atoms[EINA_C_ARRAY_LENGTH(atom_names)];
-   Ecore_X_Atom supported[45];
+   Ecore_X_Atom supported[46];
    int supported_num;
    Ecore_X_Window win, twin;
    int nwins;
