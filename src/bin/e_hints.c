@@ -31,7 +31,7 @@ e_hints_init(Ecore_Window root, Ecore_Window propwin)
       "ENLIGHTENMENT_SCALE",
       "_GTK_FRAME_EXTENTS",
    };
-   Ecore_X_Atom atoms[6];
+   Ecore_X_Atom atoms[EINA_C_ARRAY_LENGTH(atom_names)];
    Ecore_X_Atom supported[43];
    int supported_num;
    Ecore_X_Window win, twin;
@@ -39,7 +39,7 @@ e_hints_init(Ecore_Window root, Ecore_Window propwin)
    char *name;
    double ts;
 
-   ecore_x_atoms_get(atom_names, 6, atoms);
+   ecore_x_atoms_get(atom_names, EINA_C_ARRAY_LENGTH(atom_names), atoms);
    ATM__QTOPIA_SOFT_MENU = atoms[0];
    ATM__QTOPIA_SOFT_MENUS = atoms[1];
    ATM_GNOME_SM_PROXY = atoms[2];
