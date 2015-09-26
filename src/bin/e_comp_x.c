@@ -3378,10 +3378,7 @@ _e_comp_x_hook_client_fetch(void *d EINA_UNUSED, E_Client *ec)
                   if (ec->icccm.state == ECORE_X_WINDOW_STATE_HINT_WITHDRAWN)
                     ec->ignored = 1, ec->visible = 0;
                   else
-                    {
-                       ec->ignored = ec->changes.visible = ec->visible = 1;
-                       e_client_unignore(ec);
-                    }
+                    ec->changes.visible = ec->visible = 1;
                }
              ec->icccm.accepts_focus = accepts_focus;
              ec->icccm.urgent = is_urgent;
