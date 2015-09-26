@@ -977,7 +977,10 @@ _e_comp_x_evas_hide_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UN
      evas_object_hide(tmp->frame);
 
    if (ec->unredirected_single || ec->iconic)
-     ecore_x_window_hide(_e_comp_x_client_window_get(ec));
+     {
+        ecore_x_window_hide(_e_comp_x_client_window_get(ec));
+        e_pixmap_clear(ec->pixmap);
+     }
 
    if (e_comp_config_get()->send_flush)
      ecore_x_e_comp_flush_send(e_client_util_win_get(ec));
