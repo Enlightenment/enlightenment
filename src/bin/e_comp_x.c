@@ -976,7 +976,7 @@ _e_comp_x_evas_hide_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UN
    EINA_LIST_FOREACH(ec->e.state.video_child, l, tmp)
      evas_object_hide(tmp->frame);
 
-   if (ec->unredirected_single)
+   if (ec->unredirected_single || ec->iconic)
      ecore_x_window_hide(_e_comp_x_client_window_get(ec));
 
    if (e_comp_config_get()->send_flush)
@@ -998,7 +998,7 @@ _e_comp_x_evas_show_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UN
    ecore_x_window_shadow_tree_flush();
    if (!_e_comp_x_client_data_get(ec)->need_reparent)
      ecore_x_window_show(win);
-   if (ec->unredirected_single)
+   if (ec->unredirected_single || ec->iconic)
      ecore_x_window_show(_e_comp_x_client_window_get(ec));
    if (!ec->override)
      e_hints_window_visible_set(ec);
