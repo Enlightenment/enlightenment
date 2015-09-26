@@ -94,7 +94,11 @@ AC_DEFINE(HAVE_ENVIRON, 1, [Have environ var])
 
 efl_version="1.11"
 AC_SUBST(efl_version)
-
+PKG_CHECK_EXISTS([ecore < 1.15.2], [
+  PKG_CHECK_EXISTS([ecore >= 1.12], [
+    AC_MSG_ERROR([your version of efl has been blacklisted due to T2745])
+  ], [])
+], [])
 AC_CHECK_HEADERS([sys/timerfd.h sys/ptrace.h arpa/inet.h netinet/in.h])
 
 dnl AC_CHECK_HEADERS(X11/extensions/shape.h,, AC_MSG_ERROR([Cannot find X11/extensions/shape.h. Make sure your CFLAGS environment variable contains include lines for the location of this file]))
