@@ -838,7 +838,7 @@ static void
 _e_comp_intercept_resize(void *data, Evas_Object *obj, int w, int h)
 {
    E_Comp_Object *cw = data;
-   int pw, ph, fw, fh, iw, ih, prev_w, prev_h;
+   int pw = 0, ph = 0, fw, fh, iw, ih, prev_w, prev_h;
 
    /* if frame_object does not exist, client_inset indicates CSD.
     * this means that ec->client matches cw->w/h, the opposite
