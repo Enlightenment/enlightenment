@@ -9,8 +9,6 @@ E_CPPFLAGS = \
 @cf_cflags@ \
 @VALGRIND_CFLAGS@ \
 @EDJE_DEF@ \
-@WAYLAND_CFLAGS@ \
-@WAYLAND_EGL_CFLAGS@ \
 -DE_BINDIR=\"$(bindir)\" \
 -DPACKAGE_BIN_DIR=\"@PACKAGE_BIN_DIR@\" \
 -DPACKAGE_LIB_DIR=\"@PACKAGE_LIB_DIR@\" \
@@ -201,14 +199,6 @@ src/bin/e_xsettings.h \
 src/bin/e_zoomap.h \
 src/bin/e_zone.h
 
-if HAVE_WAYLAND
-ENLIGHTENMENTHEADERS += \
-src/bin/e_uuid_store.h \
-src/bin/e_comp_wl_data.h \
-src/bin/e_comp_wl_input.h \
-src/bin/e_comp_wl.h
-endif
-
 
 enlightenment_src = \
 src/bin/e_about.c \
@@ -369,28 +359,18 @@ src/bin/e_zoomap.c \
 src/bin/e_zone.c \
 $(ENLIGHTENMENTHEADERS)
 
-if ! HAVE_WAYLAND_ONLY
 enlightenment_src += \
 src/bin/e_comp_x.c \
 src/bin/e_randr.c \
 src/bin/e_xsettings.c
-endif
 
-if HAVE_WAYLAND
-enlightenment_src += \
-src/bin/e_uuid_store.c \
-src/bin/e_comp_wl_data.c \
-src/bin/e_comp_wl_input.c \
-src/bin/e_comp_wl.c
-endif
-
-src_bin_enlightenment_CPPFLAGS = $(E_CPPFLAGS) -DEFL_BETA_API_SUPPORT -DEFL_EO_API_SUPPORT -DE_LOGGING=1 @WAYLAND_CFLAGS@ @WAYLAND_EGL_CFLAGS@ @ECORE_X_CFLAGS@ -DNEED_X=1 -DNEED_WL
+src_bin_enlightenment_CPPFLAGS = $(E_CPPFLAGS) -DEFL_BETA_API_SUPPORT -DEFL_EO_API_SUPPORT -DE_LOGGING=1 @ECORE_X_CFLAGS@ -DNEED_X=1 -DNEED_WL
 src_bin_enlightenment_SOURCES = \
 src/bin/e_main.c \
 $(enlightenment_src)
 
 src_bin_enlightenment_LDFLAGS = -export-dynamic
-src_bin_enlightenment_LDADD = @e_libs@ @dlopen_libs@ @cf_libs@ @VALGRIND_LIBS@ @WAYLAND_LIBS@ @WAYLAND_EGL_LIBS@ -lm @ECORE_X_LIBS@ @SHM_OPEN_LIBS@
+src_bin_enlightenment_LDADD = @e_libs@ @dlopen_libs@ @cf_libs@ @VALGRIND_LIBS@ -lm @ECORE_X_LIBS@ @SHM_OPEN_LIBS@
 
 src_bin_enlightenment_imc_SOURCES = \
 src/bin/e.h \

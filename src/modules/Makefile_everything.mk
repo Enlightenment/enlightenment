@@ -41,9 +41,7 @@ src_modules_everything_module_la_SOURCES = $(EVRYHEADERS) \
 			       src/modules/everything/evry_plug_settings.c \
 			       src/modules/everything/evry_plug_calc.c
 
-if ! HAVE_WAYLAND_ONLY
 src_modules_everything_module_la_SOURCES += src/modules/everything/evry_plug_clipboard.c
-endif
 
 everything_headersdir = $(pkgincludedir)
 dist_everything_headers_DATA = $(EVRYHEADERS)
