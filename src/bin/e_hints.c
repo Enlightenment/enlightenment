@@ -809,7 +809,7 @@ e_hints_window_state_update(E_Client *ec, int state, int action)
            {
             case ECORE_X_WINDOW_STATE_ACTION_REMOVE:
               if (ec->maximized & max[state])
-                e_client_unmaximize(ec, E_MAXIMIZE_VERTICAL);
+                e_client_unmaximize(ec, max[state]);
               break;
 
             case ECORE_X_WINDOW_STATE_ACTION_ADD:
