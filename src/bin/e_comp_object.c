@@ -978,7 +978,7 @@ static void
 _e_comp_intercept_resize(void *data, Evas_Object *obj, int w, int h)
 {
    E_Comp_Object *cw = data;
-   int pw = 0, ph = 0, fw, fh, iw, ih, prev_w, prev_h;
+   int pw = 0, ph = 0, fw, fh, iw, ih, prev_w, prev_h, x, y;
 
    /* if frame_object does not exist, client_inset indicates CSD.
     * this means that ec->client matches cw->w/h, the opposite
@@ -1121,18 +1121,22 @@ _e_comp_intercept_resize(void *data, Evas_Object *obj, int w, int h)
     * which also changes the client's position
     */
    cw->force_move = 1;
+   if (cw->frame_object)
+     x = cw->x, y = cw->y;
+   else
+     x = cw->ec->x, y = cw->ec->y;
    switch (cw->ec->resize_mode)
      {
       case E_POINTER_RESIZE_BL:
       case E_POINTER_RESIZE_L:
-        evas_object_move(obj, cw->x + prev_w - cw->w, cw->y);
+        evas_object_move(obj, x + prev_w - cw->w, y);
         break;
       case E_POINTER_RESIZE_TL:
-        evas_object_move(obj, cw->x + prev_w - cw->w, cw->y + prev_h - cw->h);
+        evas_object_move(obj, x + prev_w - cw->w, y + prev_h - cw->h);
         break;
       case E_POINTER_RESIZE_T:
       case E_POINTER_RESIZE_TR:
-        evas_object_move(obj, cw->x, cw->y + prev_h - cw->h);
+        evas_object_move(obj, x, y + prev_h - cw->h);
         break;
       default:
         break;
