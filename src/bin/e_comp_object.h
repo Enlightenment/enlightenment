@@ -77,7 +77,7 @@ E_API void e_comp_object_native_surface_override(Evas_Object *obj, Evas_Native_S
 E_API void e_comp_object_blank(Evas_Object *obj, Eina_Bool set);
 E_API void e_comp_object_dirty(Evas_Object *obj);
 E_API Eina_Bool e_comp_object_render(Evas_Object *obj);
-EAPI Eina_Bool e_comp_object_effect_allowed_get(Evas_Object *obj);
+E_API Eina_Bool e_comp_object_effect_allowed_get(Evas_Object *obj);
 E_API Eina_Bool e_comp_object_effect_set(Evas_Object *obj, const char *effect);
 E_API void e_comp_object_effect_params_set(Evas_Object *obj, int id, int *params, unsigned int count);
 E_API void e_comp_object_effect_clip(Evas_Object *obj);

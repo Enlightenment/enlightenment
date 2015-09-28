@@ -3,7 +3,7 @@
 # ifndef E_COMP_WL_INPUT_H
 #  define E_COMP_WL_INPUT_H
 
-EAPI extern int E_EVENT_TEXT_INPUT_PANEL_VISIBILITY_CHANGE;
+E_API extern int E_EVENT_TEXT_INPUT_PANEL_VISIBILITY_CHANGE;
 
 typedef struct _E_Event_Text_Input_Panel_Visibility_Change E_Event_Text_Input_Panel_Visibility_Change;
 

@@ -908,9 +908,9 @@ _e_text_cb_bind_input_method(struct wl_client *client, void *data EINA_UNUSED, u
                          _e_text_input_cb_event_client_focus_in, input_method);
 }
 
-EAPI E_Module_Api e_modapi = { E_MODULE_API_VERSION, "Wl_Text_Input" };
+E_API E_Module_Api e_modapi = { E_MODULE_API_VERSION, "Wl_Text_Input" };
 
-EAPI void *
+E_API void *
 e_modapi_init(E_Module *m)
 {
    // FIXME: create only one input method object per seat.
@@ -936,7 +936,7 @@ e_modapi_init(E_Module *m)
    return m;
 }
 
-EAPI int
+E_API int
 e_modapi_shutdown(E_Module *m EINA_UNUSED)
 {
    E_FREE_FUNC(e_comp->wl_comp_data->seat.im.global, wl_global_destroy);

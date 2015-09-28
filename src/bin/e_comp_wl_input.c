@@ -3,7 +3,7 @@
 #include "e.h"
 #include <sys/mman.h>
 
-EAPI int E_EVENT_TEXT_INPUT_PANEL_VISIBILITY_CHANGE = -1;
+E_API int E_EVENT_TEXT_INPUT_PANEL_VISIBILITY_CHANGE = -1;
 
 static void
 _e_comp_wl_input_update_seat_caps(void)
@@ -622,7 +622,7 @@ e_comp_wl_input_keymap_set(const char *rules, const char *model, const char *lay
    free((char *)names.layout);
 }
 
-EAPI void
+E_API void
 e_comp_wl_input_touch_enabled_set(Eina_Bool enabled)
 {
    /* check for valid compositor data */

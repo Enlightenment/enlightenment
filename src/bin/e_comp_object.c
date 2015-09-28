@@ -3776,7 +3776,7 @@ e_comp_object_util_mirror_add(Evas_Object *obj)
 
 //////////////////////////////////////////////////////
 
-EAPI Eina_Bool
+E_API Eina_Bool
 e_comp_object_effect_allowed_get(Evas_Object *obj)
 {
    API_ENTRY EINA_FALSE;
