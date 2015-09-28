@@ -873,13 +873,30 @@ _e_comp_intercept_resize(void *data, Evas_Object *obj, int w, int h)
         if ((!e_config->allow_manip) && ((cw->ec->maximized & E_MAXIMIZE_DIRECTION) == E_MAXIMIZE_BOTH)) return;
         if ((!cw->ec->shading) && (!cw->ec->shaded))
           {
-             cw->ec->changes.need_unmaximize = 1;
-             cw->ec->saved.w = iw;
-             cw->ec->saved.h = ih;
-             cw->ec->saved.x = cw->ec->client.x - cw->ec->zone->x;
-             cw->ec->saved.y = cw->ec->client.y - cw->ec->zone->y;
-             EC_CHANGED(cw->ec);
-             return;
+             Eina_Bool reject = EINA_FALSE;
+             if (cw->ec->maximized & E_MAXIMIZE_VERTICAL)
+               {
+                  if (cw->ec->client.h != ih)
+                    {
+                       cw->ec->saved.h = ih;
+                       cw->ec->saved.y = cw->ec->client.y - cw->ec->zone->y;
+                       reject = cw->ec->changes.need_unmaximize = 1;
+                    }
+               }
+             if (cw->ec->maximized & E_MAXIMIZE_HORIZONTAL)
+               {
+                  if (cw->ec->client.w != iw)
+                    {
+                       cw->ec->saved.w = iw;
+                       cw->ec->saved.x = cw->ec->client.x - cw->ec->zone->x;
+                       reject = cw->ec->changes.need_unmaximize = 1;
+                    }
+               }
+             if (reject)
+               {
+                  EC_CHANGED(cw->ec);
+                  return;
+               }
           }
      }
    if (cw->ec->new_client)
