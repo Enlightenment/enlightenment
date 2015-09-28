@@ -1943,6 +1943,11 @@ _e_comp_x_property(void *data EINA_UNUSED, int type EINA_UNUSED, Ecore_X_Event_W
         ec->e.fetch.profile = 1;
         EC_CHANGED(ec);
      }
+   else if (ev->atom == ATM_GTK_FRAME_EXTENTS)
+     {
+        _e_comp_x_client_data_get(ec)->fetch_gtk_frame_extents = 1;
+        EC_CHANGED(ec);
+     }
 
    return ECORE_CALLBACK_RENEW;
 }
@@ -2131,11 +2136,6 @@ _e_comp_x_message(void *data EINA_UNUSED, int type EINA_UNUSED, Ecore_X_Event_Cl
           }
      }
 #endif
-   else if (ev->message_type == ATM_GTK_FRAME_EXTENTS)
-     {
-        _e_comp_x_client_data_get(ec)->fetch_gtk_frame_extents = 1;
-        EC_CHANGED(ec);
-     }
    else
      DBG("missed client message '%s' for %u", ecore_x_atom_name_get(ev->message_type), ev->win);
    return ECORE_CALLBACK_PASS_ON;
