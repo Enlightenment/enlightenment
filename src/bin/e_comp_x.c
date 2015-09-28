@@ -1920,6 +1920,11 @@ _e_comp_x_property(void *data EINA_UNUSED, int type EINA_UNUSED, Ecore_X_Event_W
         ec->e.fetch.profile = 1;
         EC_CHANGED(ec);
      }
+   else if (ev->atom == ATM_GTK_FRAME_EXTENTS)
+     {
+        ec->comp_data->fetch_gtk_frame_extents = 1;
+        EC_CHANGED(ec);
+     }
 
    return ECORE_CALLBACK_RENEW;
 }
@@ -2033,11 +2038,6 @@ _e_comp_x_message(void *data EINA_UNUSED, int type EINA_UNUSED, Ecore_X_Event_Cl
                }
              free(p);
           }
-     }
-   else if (ev->message_type == ATM_GTK_FRAME_EXTENTS)
-     {
-        ec->comp_data->fetch_gtk_frame_extents = 1;
-        EC_CHANGED(ec);
      }
    return ECORE_CALLBACK_PASS_ON;
 }
