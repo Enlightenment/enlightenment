@@ -810,12 +810,12 @@ e_hints_window_state_update(E_Client *ec, int state, int action)
          switch (action)
            {
             case ECORE_X_WINDOW_STATE_ACTION_REMOVE:
-              if (ec->maximized & max[state])
+              if ((ec->maximized & max[state]) == max[state])
                 e_client_unmaximize(ec, max[state]);
               break;
 
             case ECORE_X_WINDOW_STATE_ACTION_ADD:
-              if (ec->maximized & max[state]) break;
+              if ((ec->maximized & max[state]) == max[state]) break;
               ec->changes.need_maximize = 1;
               ec->maximized &= ~E_MAXIMIZE_TYPE;
               ec->maximized |= (e_config->maximize_policy & E_MAXIMIZE_TYPE) | max[state];
@@ -823,7 +823,7 @@ e_hints_window_state_update(E_Client *ec, int state, int action)
               break;
 
             case ECORE_X_WINDOW_STATE_ACTION_TOGGLE:
-              if (ec->maximized & max[state])
+              if ((ec->maximized & max[state]) == max[state])
                 {
                    e_client_unmaximize(ec, max[state]);
                    break;
