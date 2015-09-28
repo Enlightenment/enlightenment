@@ -808,9 +808,9 @@ _e_comp_intercept_move(void *data, Evas_Object *obj, int x, int y)
           }
         return;
      }
-   cw->ec->x = x, cw->ec->y = y;
    /* only update during resize if triggered by resize */
    if (e_client_util_resizing_get(cw->ec) && (!cw->force_move)) return;
+   cw->ec->x = x, cw->ec->y = y;
    if (cw->ec->new_client)
      {
         /* don't actually do anything until first client idler loop */
