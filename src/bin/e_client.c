@@ -3837,9 +3837,12 @@ e_client_unmaximize(E_Client *ec, E_Maximize max)
                   h = ec->saved.h;
                   vert = EINA_TRUE;
                   y = ec->saved.y + ec->zone->y;
-                  ec->maximized &= ~E_MAXIMIZE_VERTICAL;
-                  ec->maximized &= ~E_MAXIMIZE_LEFT;
-                  ec->maximized &= ~E_MAXIMIZE_RIGHT;
+                  if ((max & E_MAXIMIZE_VERTICAL) == E_MAXIMIZE_VERTICAL)
+                    ec->maximized &= ~E_MAXIMIZE_VERTICAL;
+                  if ((max & E_MAXIMIZE_LEFT) == E_MAXIMIZE_LEFT)
+                    ec->maximized &= ~E_MAXIMIZE_LEFT;
+                  if ((max & E_MAXIMIZE_RIGHT) == E_MAXIMIZE_RIGHT)
+                    ec->maximized &= ~E_MAXIMIZE_RIGHT;
                }
              if (max & E_MAXIMIZE_HORIZONTAL)
                {
