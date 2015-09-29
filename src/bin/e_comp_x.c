@@ -1960,7 +1960,12 @@ _e_comp_x_message(void *data EINA_UNUSED, int type EINA_UNUSED, Ecore_X_Event_Cl
    ec = _e_comp_x_client_find_by_window(ev->win);
    if (!ec)
      {
-        DBG("missed client message '%s' for %u", ecore_x_atom_name_get(ev->message_type), ev->win);
+        char *name;
+
+        if (!eina_log_domain_level_check(e_log_dom, EINA_LOG_LEVEL_DBG)) return ECORE_CALLBACK_RENEW;
+        name = ecore_x_atom_name_get(ev->message_type);
+        DBG("missed client message '%s' for %u", name, ev->win);
+        free(name);
         return ECORE_CALLBACK_RENEW;
      }
    if (ev->message_type == ECORE_X_ATOM_NET_WM_WINDOW_OPACITY)
