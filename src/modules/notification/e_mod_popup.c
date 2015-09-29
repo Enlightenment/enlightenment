@@ -733,6 +733,7 @@ _notification_popdown(Popup_Data                  *popup,
    E_FREE_LIST(popup->mirrors, evas_object_del);
    if (popup->win)
      {
+        evas_object_event_callback_del_full(popup->win, EVAS_CALLBACK_DEL, _notification_popup_del_cb, popup);
         evas_object_hide(popup->win);
         evas_object_del(popup->win);
      }
