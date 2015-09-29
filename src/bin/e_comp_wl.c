@@ -28,6 +28,20 @@ static double _last_event_time = 0.0;
 
 /* local functions */
 static void
+_e_comp_wl_configure_send(E_Client *ec, Eina_Bool edges)
+{
+   int w, h;
+
+   if (e_comp_object_frame_exists(ec->frame))
+     w = ec->client.w, h = ec->client.h;
+   else
+     w = ec->w, h = ec->h;
+   ec->comp_data->shell.configure_send(ec->comp_data->shell.surface,
+                                       edges * e_comp_wl->resize.edges,
+                                       w, h);
+}
+
+static void
 _e_comp_wl_focus_down_set(E_Client *ec)
 {
    Ecore_Window win = 0;
@@ -555,17 +569,10 @@ _e_comp_wl_evas_cb_resize(void *data, Evas_Object *obj EINA_UNUSED, void *event 
    if (!ec->comp_data->shell.configure_send) return;
    if (e_client_util_resizing_get(ec) && e_comp_wl->resize.edges)
      {
-        int x, y, ax, ay;
+        int x, y;
 
         x = ec->mouse.last_down[ec->moveinfo.down.button - 1].w;
         y = ec->mouse.last_down[ec->moveinfo.down.button - 1].h;
-        if (ec->comp_data->shell.window.w && ec->comp_data->shell.window.h)
-          {
-             ax = ec->client.w - ec->comp_data->shell.window.w;
-             ay = ec->client.h - ec->comp_data->shell.window.h;
-          }
-        else
-          ax = ay = 0;
 
         switch (ec->resize_mode)
           {
@@ -573,16 +580,15 @@ _e_comp_wl_evas_cb_resize(void *data, Evas_Object *obj EINA_UNUSED, void *event 
            case E_POINTER_RESIZE_L:
            case E_POINTER_RESIZE_BL:
              x += ec->mouse.last_down[ec->moveinfo.down.button - 1].mx -
-               ec->mouse.current.mx - ec->comp_data->shell.window.x;
+               ec->mouse.current.mx;
              break;
            case E_POINTER_RESIZE_TR:
            case E_POINTER_RESIZE_R:
            case E_POINTER_RESIZE_BR:
-             x += ec->mouse.current.mx - ec->mouse.last_down[ec->moveinfo.down.button - 1].mx -
-               ec->comp_data->shell.window.x;
+             x += ec->mouse.current.mx - ec->mouse.last_down[ec->moveinfo.down.button - 1].mx;
              break;
            default:
-             x -= ax;
+             break;;
           }
         switch (ec->resize_mode)
           {
@@ -590,16 +596,15 @@ _e_comp_wl_evas_cb_resize(void *data, Evas_Object *obj EINA_UNUSED, void *event 
            case E_POINTER_RESIZE_T:
            case E_POINTER_RESIZE_TR:
              y += ec->mouse.last_down[ec->moveinfo.down.button - 1].my -
-               ec->mouse.current.my - ec->comp_data->shell.window.y;
+               ec->mouse.current.my;
              break;
            case E_POINTER_RESIZE_BL:
            case E_POINTER_RESIZE_B:
            case E_POINTER_RESIZE_BR:
-             y += ec->mouse.current.my - ec->mouse.last_down[ec->moveinfo.down.button - 1].my -
-               ec->comp_data->shell.window.y;
+             y += ec->mouse.current.my - ec->mouse.last_down[ec->moveinfo.down.button - 1].my;
              break;
            default:
-             y -= ay;
+             break;
           }
         x = E_CLAMP(x, 1, x);
         y = E_CLAMP(y, 1, y);
@@ -609,9 +614,7 @@ _e_comp_wl_evas_cb_resize(void *data, Evas_Object *obj EINA_UNUSED, void *event 
      }
    else if ((!ec->fullscreen) && (!ec->maximized) &&
             (!ec->comp_data->maximize_pre))
-     ec->comp_data->shell.configure_send(ec->comp_data->shell.surface,
-                                         e_comp_wl->resize.edges,
-                                         ec->client.w, ec->client.h);
+     _e_comp_wl_configure_send(ec, 1);
 }
 
 static void
@@ -624,8 +627,7 @@ _e_comp_wl_evas_cb_state_update(void *data, Evas_Object *obj EINA_UNUSED, void *
    /* check for wayland pixmap */
 
    if (ec->comp_data->shell.configure_send)
-     ec->comp_data->shell.configure_send(ec->comp_data->shell.surface,
-                                         0, ec->client.w, ec->client.h);
+     _e_comp_wl_configure_send(ec, 0);
    ec->comp_data->maximize_pre = 0;
 }
 
@@ -901,15 +903,8 @@ _e_comp_wl_cb_mouse_move(void *d EINA_UNUSED, int t EINA_UNUSED, Ecore_Event_Mou
 static void
 _e_comp_wl_surface_state_size_update(E_Client *ec, E_Comp_Wl_Surface_State *state)
 {
-   int w = 0, h = 0;
+   Eina_Rectangle *window;
    /* double scale = 0.0; */
-
-   if (!ec->comp_data->buffer_ref.buffer)
-     {
-        state->bw = 0;
-        state->bh = 0;
-        return;
-     }
 
    /* scale = e_comp_wl->output.scale; */
    /* switch (e_comp_wl->output.transform) */
@@ -927,11 +922,15 @@ _e_comp_wl_surface_state_size_update(E_Client *ec, E_Comp_Wl_Surface_State *stat
    /*      break; */
    /*   } */
 
-   w = ec->comp_data->buffer_ref.buffer->w;
-   h = ec->comp_data->buffer_ref.buffer->h;
-
-   state->bw = w;
-   state->bh = h;
+   if (!e_pixmap_size_get(ec->pixmap, &state->bw, &state->bh)) return;
+   if (e_client_has_xwindow(ec)) return;
+   window = &ec->comp_data->shell.window;
+   if (window->x || window->y || window->w || window->h)
+     e_comp_object_frame_geometry_set(ec->frame, -window->x, -window->y,
+       (window->x + window->w) - state->bw,
+       (window->y + window->h) - state->bh);
+   else
+     e_comp_object_frame_geometry_set(ec->frame, 0, 0, 0, 0);
 }
 
 static void
@@ -1132,14 +1131,6 @@ _e_comp_wl_surface_state_commit(E_Client *ec, E_Comp_Wl_Surface_State *state)
 
    ec->ignored = ignored;
    if (!ec->comp_data->mapped) goto unmapped;
-
-   if (ec->comp_data->shell.surface && ec->comp_data->shell.configure_send && (!ec->maximized) && (!ec->fullscreen))
-     {
-        ec->comp_data->shell.window_offsets.l = ec->comp_data->shell.window.x;
-        ec->comp_data->shell.window_offsets.r = ec->client.w - ec->comp_data->shell.window.w - ec->comp_data->shell.window.x;
-        ec->comp_data->shell.window_offsets.t = ec->comp_data->shell.window.y;
-        ec->comp_data->shell.window_offsets.b = ec->client.h - ec->comp_data->shell.window.h - ec->comp_data->shell.window.y;
-     }
 
    /* put state damages into surface */
    if ((!e_comp->nocomp) && (ec->frame))
@@ -2317,8 +2308,7 @@ _e_comp_wl_client_cb_focus_set(void *data EINA_UNUSED, E_Client *ec)
    if (ec->comp_data->shell.configure_send)
      {
         if (ec->comp_data->shell.surface)
-          ec->comp_data->shell.configure_send(ec->comp_data->shell.surface,
-                                              0, ec->client.w, ec->client.h);
+          _e_comp_wl_configure_send(ec, 0);
      }
 
    //if ((ec->icccm.take_focus) && (ec->icccm.accepts_focus))
@@ -2342,8 +2332,7 @@ _e_comp_wl_client_cb_focus_unset(void *data EINA_UNUSED, E_Client *ec)
    if (ec->comp_data->shell.configure_send)
      {
         if (ec->comp_data->shell.surface)
-          ec->comp_data->shell.configure_send(ec->comp_data->shell.surface,
-                                              0, ec->client.w, ec->client.h);
+          _e_comp_wl_configure_send(ec, 0);
      }
 
    _e_comp_wl_focus_check();
