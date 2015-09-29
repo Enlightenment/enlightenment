@@ -2716,6 +2716,7 @@ _e_comp_x_damage(void *data EINA_UNUSED, int type EINA_UNUSED, Ecore_X_Event_Dam
         for (i = 0; i < n; i++)
           e_comp_object_damage(ec->frame, rects[i].x, rects[i].y, rects[i].width, rects[i].height);
      }
+   free(rects);
    if ((!ec->re_manage) && (!ec->override) && (!ec->comp_data->first_damage))
      e_comp_object_render_update_del(ec->frame);
    else
