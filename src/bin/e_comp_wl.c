@@ -1721,8 +1721,6 @@ _e_comp_wl_subsurface_commit_from_cache(E_Client *ec)
    _e_comp_wl_surface_state_commit(ec, &sdata->cached);
 
    e_comp_wl_buffer_reference(&sdata->cached_buffer_ref, NULL);
-
-   e_pixmap_refresh(ec->pixmap);
 }
 
 static void
@@ -2789,7 +2787,6 @@ e_comp_wl_surface_attach(E_Client *ec, E_Comp_Wl_Buffer *buffer)
    /* set usable early because shell module checks this */
    e_pixmap_usable_set(ec->pixmap, (buffer != NULL));
    e_pixmap_resource_set(ec->pixmap, buffer);
-   e_pixmap_dirty(ec->pixmap);
 
    _e_comp_wl_surface_state_size_update(ec, &ec->comp_data->pending);
 }
@@ -2804,8 +2801,6 @@ e_comp_wl_surface_commit(E_Client *ec)
      e_pixmap_image_clear(ec->pixmap, 1);
 
    ignored = ec->ignored;
-
-   e_pixmap_refresh(ec->pixmap);
 
    if (!e_pixmap_usable_get(ec->pixmap))
      {
