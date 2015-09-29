@@ -927,7 +927,8 @@ _e_comp_intercept_resize(void *data, Evas_Object *obj, int w, int h)
         cw->ec->client.h = ih;
         if ((cw->ec->client.w < 0) || (cw->ec->client.h < 0)) CRI("WTF");
      }
-   if ((!cw->ec->input_only) && cw->redirected && (!e_pixmap_size_get(cw->ec->pixmap, &pw, &ph)))
+   if ((!cw->ec->input_only) && cw->redirected && (e_pixmap_dirty_get(cw->ec->pixmap) ||
+       (!e_pixmap_size_get(cw->ec->pixmap, &pw, &ph))))
      {
         /* client can't be resized if its pixmap isn't usable, try again */
         e_pixmap_dirty(cw->ec->pixmap);
