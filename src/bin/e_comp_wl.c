@@ -2205,8 +2205,6 @@ _e_comp_wl_client_cb_del(void *data EINA_UNUSED, E_Client *ec)
 
    _e_comp_wl_surface_state_finish(&ec->comp_data->pending);
 
-   e_comp_wl_buffer_reference(&ec->comp_data->buffer_ref, NULL);
-
    EINA_LIST_FREE(ec->comp_data->frames, cb)
      wl_resource_destroy(cb);
 
@@ -2771,11 +2769,11 @@ e_comp_wl_surface_create(struct wl_client *client, int version, uint32_t id)
 EINTERN void
 e_comp_wl_surface_attach(E_Client *ec, E_Comp_Wl_Buffer *buffer)
 {
-   e_comp_wl_buffer_reference(&ec->comp_data->buffer_ref, buffer);
-
    /* set usable early because shell module checks this */
    e_pixmap_usable_set(ec->pixmap, (buffer != NULL));
    e_pixmap_resource_set(ec->pixmap, buffer);
+   e_pixmap_dirty(ec->pixmap);
+   e_pixmap_refresh(ec->pixmap);
 
    _e_comp_wl_surface_state_size_update(ec, &ec->comp_data->pending);
 }
