@@ -1,3 +1,392 @@
+Release 0.19.11:
+---------------------
+Carsten Haitzler (3):
+      e - fm - flush all evas caches to get rid of open file handles b4 umount
+      e - fix crash in desktop lookup+fixup where exe_inst is null
+      deskmirror - fix dangling reference to mirror by refcounting it
+
+Marcel Hollerbach (1):
+      deskmirror: check if ec is not null before accessing it
+
+Mike Blumenkrantz (29):
+      delete notification mirror objects upon deleting original popup
+      unset client hidden flag on config dialogs when activating from another vdesk
+      add ilist method for setting disabled state
+      remove unused variables in ilist widget
+      send FLOAT_SET edje messages during desk flip
+      make bgpreview widget work with panoramic wallpapers
+      always set alpha for internal wins
+      decode .desktop link and directory uris in fileman menus
+      re-set internal ee win after applying alpha
+      only lower x11 layer windows for layers which have windows during init
+      add eeze watch for backlight events
+      remove backlight update calls from backlight module
+      add efl versioning for eeze backlight monitoring
+      do not return non-visible clients for e_client_under_pointer_get()
+      only set focus on clients which are visible during client eval
+      move focus setting on restart into desk restore function
+      apply vertical maximize algorithm for LEFT/RIGHT maximized windows
+      unset E_Client->want/take_focus flags during client eval
+      block gadcon thaw on unpopulate when gadcon is deleted
+      only unpopulate a shelf when applying new settings if the shelf won't be recreated
+      clamp client geometry to zone during geometry calc
+      redo client maximization when a non-overlap shelf changes geometry
+      do not emit client iconify signal when reapplying compositor theme
+      calculate comp object visibility regardless of pending damages
+      update xkb settings and send xkb update event when calling e_xkb_layout_set()
+      only init E_EVENT_XKB_CHANGED during xkb init if xkb init hasn't already occurred
+      attempt to maintain currently-selected kbd layout when modifying kbd list
+      improve client exe_inst creation
+      fix systray implementation of notifier watcher (StatusNotifierItem)
+
+
+Release 0.19.10:
+---------------------
+Carsten Haitzler (1):
+      e comp - set rects to null to silence compiler warning
+
+Mike Blumenkrantz (8):
+      fix x11 compositor to use damage events
+      explicitly show the client object of internal window during show
+      force-disable refocus during desk flip on client activation
+      unshade clients when activating
+      ensure that normal clients are stacked below overrides when raising
+      add extreme hacks to enforce nocomp stacking policies
+      set 'starting' flag for desk show in e_zone_desk_count_set()
+      ensure that non-fullscreen nocomp clients have their layers re-set
+
+Simon Lees (1):
+      Wizard: Update icon theme search list
+
+
+Release 0.19.9:
+---------------------
+Carsten Haitzler (1):
+      e - systray - add more sizes to icon hunt to fix missing icons
+
+Cedric BAIL (2):
+      temperature: let's finally allow the temp process to rest also when enlightenment die.
+      battery: let's finally allow the battery process to rest also when enlightenment die.
+
+Mike Blumenkrantz (25):
+      add event rect for deskmirror in pager/taskbar modes
+      reject x11 NotifyVirtual and NotifyInferior mouse in events more accurately
+      use better keybind activation logic
+      do not modify E_Client->visible value in show/hide callbacks
+      unset E_Client->want/take_focus flags in hide callback
+      only use deferred focus-setting on desk flip focus if client is not visible
+      don't set E_Client->changes.visible on successful show/hide
+      set 'stopping' during logout action
+      do not relaunch relaunchable quickaccess windows during logout
+      redo fileman menus to only scan the first 100 items found
+      feed mouse-up event during mouse down on menus
+      force render queue and check for redirection on clients with 0x0 pixmaps
+      add some smart callbacks for comp objects on redirect/dirty state change
+      return false when failing to create a mirror during deskmirror obj check
+      watch dirty smart cb for currently unredirected clients in deskmirror
+      remove pager mirror delete callback during pager win delete
+      remove dirty smart callback from deskmirror clients during client delete
+      only check dirty smart callbacks on non-new_client deskmirror clients
+      don't watch dirty smart cb for desmirror clients with unusable pixmaps
+      add full damage for x11 override clients on resize configure event
+      reject focus-set attempt if desk flip to client's desk was rejected
+      track focus time for x11 canvas focus, unset client focus on x11 canvas focus-in
+      simplify e_desk_show visibility unsetting, reject recursive desk flips
+      remove dirty callback for deskmirror clients upon creating visual
+      remove bz2 from dist
+
+
+Release 0.19.8:
+---------------------
+Carsten Haitzler (3):
+      e - warning fix - fix SVID_SOURCE complaint warning
+      e menu - an extra object ref causes menus to never be freed
+      e - shelf menu - handle deletion properly if cb is not for shelf menu
+
+Mike Blumenkrantz (10):
+      allow x11 mouse wheel events to check ev->event_window for possible client match
+      reject x11 NotifyVirtual and NotifyInferior mouse in events
+      disable ecore-evas events on client windows during actions
+      fix build break from previous commit
+      use gadget zone for evry gadget launcher
+      add fallback loading of default theme on init
+      remove spurious focus setting on desk flip without animation
+      fix wizard module loading when E_MODULE_SRC_PATH is set
+      defer focus-setting on focus revert during desk flip when visibility is pending
+      show drag object immediately when beginning a drag
+
+
+Release 0.19.7:
+---------------------
+Mike Blumenkrantz (2):
+      use runtime check for determining x11 compositor grab behavior
+      improve x11 compatibility with efl versions earlier than 1.15
+
+
+Release 0.19.6:
+---------------------
+Carsten Haitzler (1):
+      e passive window grabs - fix side-effect leave/enter events on clients
+
+Christopher Michael (1):
+      enlightenment: Make E build again with EFL from git
+
+Derek Foreman (2):
+      wizard: Prevent crash
+      wizard: Prevent crash
+
+Mike Blumenkrantz (43):
+      reject client fullscreening based on config and desk visibility
+      force xwindow stacking to obey nocomp policy and stack below current nocomp
+      allow new fullscreening clients to replace current nocomp where applicable
+      fix focusing client on mouse events which trigger actions (with exceptions)
+      fix shelf visibility state signals
+      fix eo errors for ilist icon select state
+      allow layer-blocked clients in deskmirror to restack
+      return an accurate value for override clients in e_comp_object_util_zone_get()
+      only apply deskmirror client visibility logic for non-deleted clients
+      stop rejecting possibly-valid x11 focus events
+      check for possible parent window on x11 mouse button events
+      fix focus FIXME regarding focus-setting on clients from other desks
+      unset changes.visible when forcing visibility during no-effect desk flip
+      add E_Client->mouse.in for determining mouse-in status
+      trigger fake mouse-out on clients when unsetting focus
+      trigger client mouse-in on x11 mouse movement for non-action clients
+      enforce pstate's extremely-confusing no_turbo option in cpufreq
+      use client window for x11 button ungrabbing
+      redo all x11 client mouse grabbing for focus
+      straggler ungrab of x11 parent window from previous commit
+      ensure x11 focus grabs are applied on client init when needed
+      only ungrab x11 windows when appropriate focus options are set
+      reject x11 replay clicks when event window != client window
+      do not apply x11 focus grabs to internal clients if efl version > 1.14
+      make e_client_util_desk_visible() work for overrides without desks
+      make pager popups only trigger on urgency hint if client is not currently visible
+      set CRITICAL urgency for notification internal notifications
+      block client signal binding activation when mouse action is active
+      move E_Client->mouse.in to E_Client->mouse_in to avoid abi breakage
+      account for race condition when creating initial comp object updates tiler
+      fix compile against newer efl
+      move grabinput focus fix timer to x11 compositor and fix it to Work Better
+      always set x11 override client geometry on startup
+      fix compile warning
+      only unset e MANAGED atom on non-shutdown
+      only trigger client mouse-in from x11 mouse move event if client+desk are visible
+      ensure that focus is set and focus stack is managed on winlist hide
+      never use new clients for stacking part 2: the secret of the stacking
+      ensure clients possess comp_data before dereferencing it during x11 stacking
+      always stop passing key events on once they reach the lokker callback
+      simulate modal windows for badly behaved x11 clients
+
+
+Release 0.19.5:
+---------------------
+
+Bertrand Jacquin (1):
+      MEDIUM: modules/shot: switch to https://
+
+Carsten Haitzler (4):
+      e clients - make sure we handle client with a NULL zone
+      e_shelf - check visiblity with zone and desk FIRST not later
+      e - xsettings - calloc buffer since we leave 3 of 4 bytes unset
+      e client - desk wait - ref it properly and clean up delfn
+
+Jean Guyomarc'h (2):
+      modules/bluez4: fix duplicated symbol
+      e_ipc: fix creation of IPC server when $DISPLAY is a path
+
+Mike Blumenkrantz (38):
+      pre-escape all notification body texts before display or merge
+      set ec->fullscreen before applying fullscreen geometry
+      never resize client clip object
+      exit immediately if any unrecognized arg is passed on startup
+      use stderr messages when failing to init X compositor
+      fix horizontal/vertical smart maximize
+      fix crash when using e_comp_object_util_center_pos_get() with non comp_objects
+      don't modify pixmap hash when changing pixmap parent window
+      slight ibar dnd optimization when checking taskbar apps for drop site
+      fix ibar drop calc to not unexpectedly trigger epileptic seizures in users
+      fix straggler container text in mousebindings config
+      remove layer setting from deskmirror
+      always lower e_layout children upon packing
+      raise deskmirror windows on startup
+      set xkb dialog as changed after adding a new layout
+      set E_Exec_Instance desktop during client idler if none present
+      allow client icon change events in ibar client prop handler
+      fix nocomp_override conditional which would inaccurately toggle nocomp
+      fix evry comparison macro to work as expected
+      use client geometry for starting unmaximize calculations
+      swap key -> keyname when attempting to bind lparen/rparen keys
+      remove contact module
+      add function for clearing app menu cache
+      clear app menu cache any time a desktop is edited internally
+      remove eina_streq usage
+      attempt to decode notification image uris with efreet before showing them
+      fix submenu visibility during scroll
+      ensure client max w/h props are set before applying them to client geom
+      use client geom for comp object centering functions if ec->new_client is set
+      rename client menu move/resize items to indicate real function
+      freeze evas events on clients during keyboard move/resize actions
+      only apply mouse down focus events if a binding did not run on the same event
+      force visibility on clients before attempting to hide them
+      change default icon theme to hicolor
+      try hicolor icon theme as fallback for fdo icon setting if user's theme fails
+      fix notification text to conform to spec and libnotify implementation
+      prune module config list when loading a module
+      fix infinite loop when changing ibar sources
+
+
+Release 0.19.4:
+---------------------
+
+Carsten Haitzler (5):
+      maximization bug affecting libreoffice and others - fix
+      e - client list update after adding to client list - fix netwm bug
+      efm - make dir listing far faster - no file magic content and dont sync
+      e - menus - fix autoscroll on zones not at 0 y...
+      e - menus - fix submenu popup direction when zones are not at 0 y
+
+Chidambar Zinnoury (1):
+      e backlight: use saner default values.
+
+Dmitry Luhtionov (1):
+      cpufreq: freebsd fixes
+
+Mike Blumenkrantz (21):
+      continue to hide window input regions on desk flip if they are shaded
+      ensure no duplicate XDG paths are prepended during startup
+      check for eldbus instead of edbus in device backend libs
+      block linear desk flips that would wrap if desk flip wrapping is disabled
+      use direct path for setting icons in util theme set function when icon is a path
+      don't send unfocused signal to override clients
+      escape notification popup text...always
+      fix crashing when changing desklock settings and using pin/personal auth
+      clamp client size to screen when client limit policy does not allow offscreen
+      rename extremely frustratingly-named E_Screen_Limits enum and members
+      do not reapply focus on canvas object ungrab/close for pointer-focus enthusiasts
+      remove unnecessary icon setting and fix sizing in edgebindings
+      fix dialog sizing when icon setting fails
+      set default text for edgebindings caption when no bindings exist
+      fix appindicator icon loading when using IconThemePath key
+      don't clamp bgpreview vsize if bgpreview is a fullscreen overlay
+      fix border frame color classes to be configured as solids, not text
+      remove wayland-only support
+
+Vincent Torri (1):
+      add MIN define for non-linux systems
+
+
+Release 0.19.3:
+---------------------
+
+Carsten Haitzler (2):
+      e - force a config flush before sys actions that could kill e
+      comp base - make base black. makes for better screenshots of blank areas
+
+Christopher Michael (8):
+      Fix e_msgbus file having missing initializers for Eldbus     Messages & Signals
+      Fix e_notification file having missing initializers for Eldbus     Messages & Signals
+      Cleanup appmenu module having missing field initializers for     Eldbus Messages & Signals
+      Cleanup bluex module having missing initializers for services     & icons
+      Cleanup fileman module from having missing initializers for     Eldbus Messages & Signals
+      Cleanup msgbus module from having missing field initializers     for Eldbus Messages & Signals
+      Cleanup systray module having missing initializers for Eldbus     Message & Signals
+      Cleanup teamwork module from having missing initializerss for Eldbus     Messages & Signals
+
+Mike Blumenkrantz (11):
+      don't recalc winlist on client add event if client is not added to winlist
+      don't show mixer popup during nocomp
+      comp pending resizes should not require both w+h to change
+      don't set gravity on client windows during X move/resize
+      completely block border changes on MWM borderless windows
+      disable client stack debugging
+      add E_VERSION_MAJOR define for external module usage
+      check focus after X nocomp end
+      don't change shade.x/y during unshade or after shade
+      fix build from tarball when configured mount backend is different from origin
+      don't set deskmirror scale for non-mb objects
+
+Tom Hacohen (1):
+      Tiling: don't try to change the border of borderless windows.
+
+
+Release 0.19.2:
+---------------------
+
+Carsten Haitzler (5):
+      e_auth - null out compilert memset opts like lokker
+      e - randr - stop saving config using XID - this is utterly WRONG
+      e randr - fix warning (signed vs unsigned cmp)
+      e randr - make it work on nvidia - lots of "wrong" things fixed
+      e randr - restore edp checks
+
+Christopher Michael (1):
+      call e_powersave_init Before we call e_screensaver_init[...]
+
+Marcel Hollerbach (3):
+      Fix wrong deskshow function
+      everything: terminate bc instead of quit
+      Register the new window into out evas.
+
+Mike Blumenkrantz (21):
+      fix teamwork popup positioning for non-dbus popups
+      fix internal window border changing
+      set skip pager/taskbar hints on parent window instead of client window
+      force shape queue on notification delete
+      ensure string safety on dbus message in connman agent
+      apply pointer warp effects immediately when instant warping
+      print more descriptive error messages when scanner connection fails, also don't exit() here
+      don't exit e_fm when eeze init fails, send RASTER mode instead
+      store eeze_scanner connection poller to avoid creating an infinite number
+      only attempt to start eeze_scanner a couple times before giving up
+      attempt to run eeze_scanner on failure to connect, not successful connect
+      ensure clients are visible before triggering shape/render queue
+      fix X crash when trying to apply desktop window profile to client without desk
+      add failure count for client rendering, drop clients after FAILURE_MAX tries
+      redo shaped client checks to use shape flags instead of rect pointer, fix shapeless clients
+      reduce shape recalc for clients which cannot currently receive input
+      remove access module from build
+      greatly reduce FAILURE_MAX
+      remembering size on a window should also remember maximize state
+      apply client size based on correct remember value, only apply if value != 0
+      store hide_logo state for desklock backgrounds
+
+Sebastian Dransfeld (5):
+      randr: further cleanup
+      randr: Don't match DP as LID
+      randr: remember crtcid for fast lookup on reconnect
+      randr: TODO++
+
+Stefan Schmidt (1):
+      po: Remove file from now disabled access module to pass distcheck
+
+Takeshi Banse (1):
+      cpufreq: teach cpuinfo_{min,max}_freq as available frequencies
+
+
+Release 0.19.1:
+---------------------
+
+Mike Blumenkrantz (10):
+      don't add nocomp damages for input-only windows
+      check protocol visibility for nocomp breaks, not comp object visibility
+      manually break out of nocomp
+      end nocomp on nocomp end...always
+      force render queue on unmaximize if client was fullscreen
+      add borderless theme for deskmirror clients to support various animations
+      comp render queue on every client resize instead of on unmaximize
+      force comp render queue more aggressively to detect changes in nocomp
+      client hooks should not continue to be called if the client has been deleted
+      thaw evas on winlist activation with no clients available
+
+Stefan Schmidt (1):
+      modules/teamwork: Use eina_file_mkstemp() to avoid problems with umask
+
+Tom Hacohen (1):
+      fix: Add more desktops to be tiled by default in the tiling config.
+
+
+
 Release 0.19.0:
 ---------------------
 
