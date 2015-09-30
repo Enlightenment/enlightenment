@@ -611,7 +611,7 @@ _e_client_menu_cb_icon_edit(void *data, E_Menu *m EINA_UNUSED, E_Menu_Item *mi E
    ec = data;
    e_desktop_client_edit(ec);
 }
-
+#if 0
 static void
 _e_client_menu_cb_colors_edit_moveresize(E_Client *ec, ...)
 {
@@ -652,7 +652,7 @@ _e_client_menu_cb_colors_edit(void *data, E_Menu *m EINA_UNUSED, E_Menu_Item *mi
    evas_object_event_callback_add(ec->frame, EVAS_CALLBACK_MOVE, (Evas_Object_Event_Cb)_e_client_menu_cb_colors_edit_moveresize, ec);
    evas_object_event_callback_add(ec->frame, EVAS_CALLBACK_RESIZE, (Evas_Object_Event_Cb)_e_client_menu_cb_colors_edit_moveresize, ec);
 }
-
+#endif
 static void
 _e_client_menu_cb_application_pre(void *data, E_Menu *m EINA_UNUSED, E_Menu_Item *mi)
 {
@@ -703,12 +703,13 @@ _e_client_menu_cb_application_pre(void *data, E_Menu *m EINA_UNUSED, E_Menu_Item
         e_menu_item_callback_set(submi, _e_client_menu_cb_kbdshrtct_add, ec);
         e_util_menu_item_theme_icon_set(submi, "preferences-desktop-keyboard");
      }
-
+#if 0
    if (ec->color_editor || (!e_pixmap_is_x(ec->pixmap))) return;
    submi = e_menu_item_new(subm);
    e_menu_item_label_set(submi, _("Edit Color Scheme"));
    e_menu_item_callback_set(submi, _e_client_menu_cb_colors_edit, ec);
    e_util_menu_item_theme_icon_set(submi, "preferences-desktop-color");
+#endif
 }
 
 static void
