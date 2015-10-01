@@ -202,7 +202,7 @@ _e_input_panel_cb_surface_get(struct wl_client *client, struct wl_resource *reso
    if (!ips)
      {
         wl_client_post_no_memory(client);
-        return NULL;
+        return;
      }
 
    cd->shell.surface = wl_resource_create(client,
@@ -212,7 +212,7 @@ _e_input_panel_cb_surface_get(struct wl_client *client, struct wl_resource *reso
      {
         wl_client_post_no_memory(client);
         free(ips);
-        return NULL;
+        return;
      }
 
    ips->ec = ec;
