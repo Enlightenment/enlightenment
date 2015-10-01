@@ -1,3 +1,1799 @@
+Release 0.20.0:
+---------------------
+Highlights:
+      * Full Wayland support
+       - See README.wayland
+      * New screen management infrastructure and dialog
+      * New audio mixer infrastructure and gadget
+      * Many internal widgets replaced with Elementary
+       - Improved Elementary support
+      * Improved FreeBSD support
+      * Geolocation module
+
+
+Bertrand Jacquin (1):
+      MEDIUM: modules/shot: switch to https://
+
+Boram Park (5):
+      fix tty problem when enlightenment(drm-backend) is killed by SIGSEGV
+      e_comp_wl: fix segfault in case parent's surface is destroyed before subsurface is destroyed
+      e_comp_wl: fix not sending a mouse enter event to client.
+      Creating wl_shm global object before creating other global objects
+      wl_desktop_shell: return void
+
+Boris Faure (3):
+      synchronize mailmap
+      notification: don't segv if no zone found to place the popup
+      update mailmap
+
+Brian 'morlenxus' Miculcy (2):
+      mixer: Optionally select an external mixer application.
+      enlightenment/conf: fix missing icons in settings panel
+
+Bryce Harrington (14):
+      Code cleanup and check for OOM condition with wl_array_add
+      cosmetic:  Whitespace cleanup of wayland client files
+      wayland:  Refactor out common mouse handling code
+      wayland: Whitespace cleanup
+      wayland: Fix missing check on E_NEW return
+      wayland: Eliminate extraneous E_COMP_WL_PIXMAP_CHECK macro
+      wayland:  Document the public API
+      wayland: Refactor output initialization code
+      wayland: Make sure we're initializing output scale sensibly
+      wayland: Check for potential OOM from wl_array_add()
+      wayland: Handle failure to init a display screen
+      uuid: Check error on ftruncate call
+      wayland: whitespace cleanup
+      wayland: Free temporary string on error exit
+
+Carsten Haitzler (105):
+      mixer: Optionally select an external mixer application.
+      e backlight - limit min to 0.05 to avoid totally off backlight
+      fix README to be more up to date
+      e_start - add ~/Applications/.bin to use for app bin searches
+      update po's
+      e_auth - null out compilert memset opts like lokker
+      windows - allow close button to work again in internal wins
+      Revert "windows - allow close button to work again in internal wins"
+      e - tiling module - silence warning (real possibility of an issue)
+      e - warning fix - fix SVID_SOURCE complaint warning
+      e - randr - stop saving config using XID - this is utterly WRONG
+      e randr - fix warning (signed vs unsigned cmp)
+      e randr - make it work on nvidia - lots of "wrong" things fixed
+      e randr - restore edp checks
+      Revert "randr: Don't track active outputs"
+      Revert "Randr: Fix null dereference."     This reverts commit 4aef218d28ed66e80d882f052c704d92d11c3c81.
+      e - randr include - move to master includes (only if building for x)
+      Revert "all dialogs are now resizable"
+      e zone - add stow/unstow apis
+      e - force a config flush before sys actions that could kill e
+      revert all the ui breakes in e - going the wrong direction in the     first place anyway. shoudl replace the entire dialgo one at a time by     an elm version not try and stuff elm widgets into where e widgets used     to be. this doesnt improve e's config dialogs, just makes them buggy     as all hell in the name of a move to elm.
+      e dialogs - this one too
+      shot module - dont allow another instance and keep the current one
+      e - gadcon popup - handle delection of content object properly
+      clock - fix popup content.. use elm widgets now.
+      comp base - make base black. makes for better screenshots of blank areas
+      e - fix e widgets to use evas size hints - this unifies sizing elm vs e
+      e - rewrite randr code entirely. core and dialog. dialog is basic atm
+      e randr config - fid selecting of screen to populate correctly
+      update po
+      e - randr2 - handle lid close/open as screen unplug/plug
+      xinerama note for multiscreen handling
+      maximization bug affecting libreoffice and others - fix
+      adapt to new win center trap in 1.13 efl
+      e - client list update after adding to client list - fix netwm bug
+      e - fix build when wayland not enabled
+      elm accel pref config - fix to use correct api to set accel pref
+      e - randr - laptop lids - handle plug/unplug and well as lid open/close
+      e - fix build. build break!
+      shut up shadow warnings
+      e - remove earns from randr2
+      e - randr - handle missing relative display and use priority for zone
+      actions - add smart suspend + hibernate actions for laptop usage
+      randr2 - handle missing clone src and walk back config only structs
+      e - actions - smart suspend/hibernate - also dont do when on mains power
+      efm - make dir listing far faster - no file magic content and dont sync
+      e - menus - fix autoscroll on zones not at 0 y...
+      e - menus - fix submenu popup direction when zones are not at 0 y
+      e clients - make sure we handle client with a NULL zone
+      e - lost windows menu is back. no windows menu does not handle it.
+      add options to randr2 to ignore acpi and hotplug randr events.
+      shot - only access e client if not null
+      e - xsettings - calloc buffer since we leave 3 of 4 bytes unset
+      e client - desk wait - ref it properly and clean up delfn
+      e - e_client - fix added printf
+      e screenlock config diloag - note insecureness for personal pw/pin
+      e auto-placement - don't include shelves from other screens
+      e_shelf - check visiblity with zone and desk FIRST not later
+      e_place - dont need extrra zone check here anymore
+      e - randr2 - filter to the "best" common mode match on clone config
+      e randr2 - add some logic for knowing when to ask to configure a screen
+      e - fix profiles to have correct adjust value for bl adjust in bindings
+      e start - path manipulation - don't add a : if there already is one
+      enlightenment deskenv support - fix dialog labelling and desktop name
+      e desklock - listen to randr screen changes and re-do locks
+      fix leak in randr2 when matching clone modes
+      e mixer - replace with epulse/emixer
+      update po files
+      Revert "fix mixer gcc class name"
+      e - mixer - don't do anything on desklock if no mixer context exists
+      e - shelf menu - handle deletion properly if cb is not for shelf menu
+      Revert "Revert "fix mixer gcc class name""
+      mixer - dont make list scrollable horizontally for nicer look
+      e mixer - fix segv on desklock if default sink not set yet
+      e - mixer - clean up popup a bit with mute next to slider etc.
+      e menu - an extra object ref causes menus to never be freed
+      e - mixer - allow to 150% volume with some "stickynedd" from 100 to 120
+      e comp - fix refcounting for e_comp and comp clients
+      e - fix crash in desktop lookup+fixup where exe_inst is null
+      e - bring back fullscreen crash bug while fixing refcount correctness
+      e - e client, comp win etc. reffing fix ... part 2
+      e passive window grabs - fix side-effect leave/enter events on clients
+      e -> menu -> fix games menu to be flat like others and include steam
+      e desktop file properties - fix icon sel tab to expand icon and icon name
+      e randr2 - auto clone and use common res when doing so - make it work
+      e - unbreak client pixmaps when native surf is used
+      e - randr allow you to turn off screens and keep them off if config says so
+      e - randr - handle lid close screen turnoff correctly again
+      e shelf - small missing set of signals - tell theme when inset scrolls
+      deskmirror - fix dangling reference to mirror by refcounting it
+      e - systray - add more sizes to icon hunt to fix missing icons
+      Revert "Revert "deskmirror - fix dangling reference to mirror by refcounting it""
+      e pagers - fix full desktop ddnd (eg middle mouse) to finish the drag
+      e - mixer - fix leak when seting volume
+      e mixer - discovered bug as a lack of feature - does not remember volume
+      e mixer - fix up saving to save everything
+      e mixer - save state when we get change events too
+      e mixer - shut up coverity CID 1323098
+      e comp - set rects to null to silence compiler warning
+      e winlist focus alt-tabbing - fix focus list changes while tabbing
+      e - fm - flush all evas caches to get rid of open file handles b4 umount
+      e config - cache sizes in config don't actually work, so remove
+      Revert "Revert "Revert "Revert "deskmirror - fix dangling reference to mirror by refcounting it""""
+      efm - handle cancel of async eio if icon is freed and eio still active
+      e - efm fix. fix eio error handler that is called after eio cancel
+
+Cedric BAIL (3):
+      lokker: empty string should not be translated.
+      battery: let's finally allow the battery process to rest also when enlightenment die.
+      temperature: let's finally allow the temp process to rest also when enlightenment die.
+
+Chidambar Zinnoury (2):
+      Bugfix: e backlight: use saner default values.
+      Bugfix: e dialog: don’t crash when using the escape key to close.
+
+Christopher Michael (343):
+      bugfix: Fix e_msgbus file having missing initializers for Eldbus     Messages & Signals
+      bugfix: Fix e_notification file having missing initializers for Eldbus     Messages & Signals
+      bugfix: Cleanup appmenu module having missing field initializers for     Eldbus Messages & Signals
+      bugfix: Cleanup bluex module having missing initializers for services     & icons
+      bugfix: Cleanup fileman module from having missing initializers for     Eldbus Messages & Signals
+      bugfix: Cleanup msgbus module from having missing field initializers     for Eldbus Messages & Signals
+      bugfix: Cleanup systray module having missing initializers for Eldbus     Message & Signals
+      Cleanup teamwork module from having missing initializerss for Eldbus     Messages & Signals
+      wl-desktop-shell: Bump xdg protocol version
+      e-comp-wl: Remove dead structure members
+      e-comp-wl: Update compositor for new xdg shell protocol
+      wl-desktop-shell: Update desktop shell module for new xdg shell protocol
+      wl-desktop-shell: Update module code for new xdg shell protocol
+      fix unused function paramters warning when building for wayland only
+      only call ecore-x functions here if we are Not build for wayland-only
+      clean compiler warnings when building for wayland-only
+      remove ifdef's for compiling out e_dnd support in wayland-only mode
+      fix compiler warnings when building for wayland-only
+      don't clear 'changed' variable unless we are going to use it. (fixes     compiler warning when building for wayland-only)
+      fix compiler warnings when building for wayland-only
+      fix compiler warnings when building for wayland-only
+      declare drag finished callback event if building for wayland-only
+      Revert "don't clear 'changed' variable unless we are going to use it. (fixes"
+      don't define x selection notify handler if we are building for wayland-only
+      cleanup compiler warnings when building for wayland-only
+      Don't resend a configure event after resize is done. This is part of a     xdg_shell maximize fix
+      send xdg surface configure message when we maximize/unmaximize.
+      fix improper define which was causing uuid header to not be included     in certain cases.
+      fix resizing wayland clients by sending configure message if client is     Not maximized.
+      update wl_seat interface version so that gtk apps function...for     Daniel ;)
+      don't crash when closing internal dialog boxes
+      e-comp-wl: Send the resource as data to the surface_create signal
+      e-comp-wl: Support wl_display_add_socket_auto function
+      e-comp-wl: Reduce calls to wayland protocol functions. These are not     needed here and just waste extra cycles.
+      e-comp-wl: Enable sending of the surface_create signal from the     compositor and provide an API function to retrieve that signal (used     in a pending commit)
+      bump required wayland-server version to 1.6.0 for wayland-only
+      wl_desktop_shell: Fix formatting
+      wl-desktop-shell: Don't call e_client_ping here.
+      remove old wayland compositor file
+      remove useless return
+      add start of new compositor
+      set comp_gl if we have the correct engines available
+      add functions to create new compositor
+      add code to setup wayland logging function
+      add code to create new wayland display
+      add code to create wayland display socket
+      add code to setup wayland compositor signals
+      add code to create and bind the wayland compositor
+      rename compositor delete callback
+      add function call to initialize shm
+      add code to integrate wayland event loop with ecore_main loop
+      add code to load desktop shell module
+      add code to initialize data manager
+      add code to initialze input
+      add code to setup input & keyboard if we are using an X compositor
+      set compositor wayland data
+      add code to initialize Ecore_Wayland
+      add call to shutdown Ecore_Wayland
+      Fix missing variable compiler warning
+      Fix printing of wayland log output
+      start on actual compositor interface code
+      rename surface signal get function
+      remove debug noise in comp_wl_data
+      add start of surface implementation code
+      add call to delete fd handler when we close the compositor
+      unset pixmap resource when surface resource is destroyed
+      Fix compile errors. Implement start of buffer code
+      Implement code for surfaced attach
+      Add code to create the clients window hash
+      add code to hook the client new event
+      add hooks for client delete
+      add internal function prototype for surface commit
+      Start on surface commit code and improve some debugging messages
+      change damages to be a list
+      add code to handle regions (creating, destroying, setting)
+      Add code to handle setting surface damages
+      add code to handle setting surface opaque region
+      add code to handle setting surface input region
+      add code to handle pending damages during surface commit
+      add code to handle pending opaque regions during surface commit
+      add code to handle pending input regions during surface commit
+      update resource data comment
+      add some comments about fetching resource data
+      cleanup any remaning damage rectangles when we delete the client
+      cleanup any pending opaque regions when we delete the client
+      cleanup any pending input regions when we delete the client
+      update todo
+      fix typo
+      add listener for comp_object_add event so we can setup evas callbacks     for a client.
+      fetch pixmap id in opaque & input region set functions
+      add hoook for evas show callback and show any video childs
+      add hook for evas callback hide so we can hide any video children
+      add callback for mouse in on the client.     Fix improper tiler_clear in surface_commit function.     Add fast-path in surface commit to skip processing regions & damage if     the client is not visible.
+      remove some debug messages
+      add evas callback for mouse out on a surface
+      add evas callback for mouse move on a surface
+      add evas callback function for mouse down event
+      add evas callbacks for mouse up event
+      add evas callbacks for mouse wheel event
+      add evas callback for key down event
+      add evas callback for key up events
+      add evas callback for delete_request and fix printf warnings for     uint64_t
+      add evas callback for kill request
+      add evas callback for ping event
+      add evas callback for color_set
+      add evas callback for client resize
+      add callbacks for client focus/unfocus
+      add checks in client focus/unfocus to test for wayland client
+      remove debug messages for mouse in/out
+      fix formatting
+      e-comp-wl: Comment out EGL include
+      e-comp-wl: Que a buffer release after we have committed the pending buffer
+      e-comp-wl: Remove resize.width & height from structure
+      remove call to release compositor buffer reference in e_pixmap. This     is handled differently now.
+      wl_desktop_shell: Remove resize.width/height compositor data fields.     Add some debugging print outs.     Don't check client size compared to new size.
+      wl_desktop_shell: Remove silly debug message
+      e_comp_wl: Cleanup resizing of wayland clients. This hooks into     various resize callbacks to set/unset the resize edges and to update     the surface size.
+      e_comp_wl: Add hooks for focus in/out events so we can set wayland focus
+      e_comp_wl: Implement surface frame callback support
+      send wl_buffer release after we have drawn this pixmap
+      change comp_wl_data structure to store the wl_resource of the client     buffer. No longer dealing with reference buffers.
+      e-comp-wl: Make new compositor functional.
+      Merge branch 'devs/devilhorns/e_comp_wl'
+      e_comp_wl: add support for priority raise/normalize during focus events
+      e_comp_wl: Remove unused variables
+      e-comp-wl: Cleanup wayland compositor header
+      e-comp-wl: Start to reimplement subcompositor and subsurface support
+      e-comp-wl: Destroy subsurface resource in destroy callback
+      e-comp-wl: Implement subsurface destroy callbacks
+      e-comp-wl: Implement subsurface position set function
+      e-comp-wl: Implement subsurface synchronized_set function
+      e-comp-wl: Implement subsurface desynchronized_set function
+      e-comp-wl: Implement subsurface place_above function
+      wl-desktop-shell: Always set netwm.ping on the client
+      e-comp-wl: Implement subsurface place_below function
+      e-comp-wl: Add internal function prototype for subsurface commit
+      e-comp-wl: Start on implementing subsurface commit functions
+      e-comp-wl: Fix various compile errors
+      update wayland readme
+      e-comp-wl: Implement subsurface commit_to_cache and commit_from_cache     functions
+      e-comp-wl: Implement subsurface parent commit function
+      e-comp-wl: Remove unnecessary todo item
+      e-comp-wl: Implement callback for surface resource destroy
+      e-comp-wl: Set e_client properties on subsurface E_Client
+      e-comp-wl: Hook into post_new_client event so we can setup hints and     export any shape changes
+      e-comp-wl: Clip shape rectangles to client size
+      e-comp-wl: Fix keyboard input with wayland clients when running in X11.     Don't run client_post_new hook for deleted clients.     Start work on client pre_frame hook.
+      Fix incorrect return value when creating native surface for wayland     clients
+      e-comp: Return proper post value for wayland clients during     client_update
+      Implement caching of pixmap resources for wayland clients.     Move sending of frame completion to the image_draw function.
+      e-comp-wl: Implement client idler for sending configure during resize.     Cleanup surface commit function to work with new pixmap caching code.
+      e-comp-wl: Don't try to set null data if we don't have a surface
+      e-start: Fix 'control reaches end of non-void function'
+      call e_powersave_init Before we call e_screensaver_init because the     init of e_screensaver sets up an event handler for the     powersave_update event (which would be 0 unless powersave is init     first).
+      remove use of deprecated e_comp_get function
+      wl-desktop-shell: Remove use of deprecated e_comp_get function
+      fix issue where wayland modules were always creating a new compositor
+      comp_wl: Fix issue with multiple clients being created
+      wl-desktop-shell: Fix issue where internal elm windows were not     borderless
+      comp-wl: Add missing function prototype
+      comp-wl: Remove unused variable
+      pager_plain: Fix Coverity CID1261290 reporting logically dead code,     but in fact it looks like a copy/paste issue
+      Fix Coverity CID1261288. Idential code for different branches
+      Fix Coverity CID1261286. Identical code for different branches
+      comp-wl: Set argb and no_shape_cut for new clients. This fixes the     black shadow issue
+      fix centering of elm wayland windows
+      update entry widget to not use deprecated elm scrollbar policy function
+      don't crash if the client comp_data has no surface yet
+      add workaround for ELM_DIALOG_WIN_BASIC not working in wayland.     add #warning to remove when resolved.
+      wl_drm: Fix creation of the ecore_evas_gl_drm
+      add fixme note about desklock timeouts not working in wayland
+      wl_x11: When creating the ecore_evas for wl_x11, use     ecore_evas_screen_geometry_get function and resize the ecore_evas     accordingly.
+      Ignore checking size of client and just always send new size. This     fixed basic-->advanced dialogs here
+      update README.wayland for Mike's everything module fixes
+      de-e_comp_get()ify e_actions
+      de-e_comp_get()ify e_desk
+      de-e_comp_get()ify e_deskmirror
+      de-e_comp_get()ify e_int_client_menu
+      de-e_comp_get()ify e_moveresize
+      Revert "only set wl client borderless state as necessary, don't overwrite existing states"
+      make enlightenment build again for wayland-only
+      remove unused inline function
+      de-e_comp_get()-ify lokker module
+      add function prototype for getting idle time
+      add function to return input idle time in wayland compositor
+      make desklock timeouts work in wayland-only. Fixes T1818
+      add EINA_UNUSED for unused function paramater
+      de-e_comp_get()-ify grab dialog
+      de-e_comp_get()-ify gadcon
+      de-e_comp_get()-ify e_gadcon_popup
+      de-e_comp_get()-ify e_pointer
+      de-e_comp_get()-ify e_scale
+      make e_scale get the dpi for wayland also
+      de-e_comp_get()-ify widget_bgpreview
+      de-e_comp_get()-ify e_zone
+      de-e_comp_get()-ify e_randr2
+      fix e_pointer using incorrect comp variable
+      start making e_grabinput work for wayland (nb: not finished yet)
+      fix copy/paste errors
+      pass the proper window to ecore_wl functions
+      cleanup keymap properly on shutdown(fixes E restart issue).
+      reset keyboard modifiers when client is deleted
+      Revert "reset keyboard modifiers when client is deleted"
+      de-e_comp_get()-ify e_utils
+      quiet compiler warnings when building for wayland-only
+      add a mod_changed field to compositor data so we can know when     modifiers change
+      change keyboard input listeners to Not depend on a client but rather     use ecore_event_handlers for key events.
+      cleanup xkb state modifiers and only update state_mask if necessary
+      only send key events to focused clients
+      call e_manager_new with the proper root window so that keybindings on     the desktop work
+      enlightenment: Fix 'type' may be used uninitialized message
+      enlightenment: Don't crash if fwin app dialog has no exec_cmd
+      fix e_pixmap compile for non-wayland usecase
+      fix typo in wayland readme file
+      enlightenment: Fix building for wayland-only
+      update wayland README file to remove build confusion
+      fix compiler warning about pointer targets differ in signedness
+      fix some formatting ugliness
+      change output_bind function name
+      add E_Comp_Wl_Output structure and function prototype to create outputs
+      Fix T2131 (crash when creating wl_outputs)
+      create wl_outputs when in wayland-only mode
+      don't remove E_Comp_Wl_Output on unbind as this Could lead to nasty     crashes if a second client tries to bind wl_output
+      append E_Comp_Wl_Output to compositor's output list during output_init     call
+      remove unused variable
+      add a surface_state structure to E_Comp_Wl_Client_Data
+      adjust wayland compositor scale when we adjust e_scale
+      Implement buffer_reference to fix client resizing issue
+      fix compile issue due to output change and fixup subsurface creation to match new "state" paradigm
+      remove missed use of E_COMP_WL_PIXMAP_CHECK macro
+      set output->scale to e_scale, and when we wl_output_send_scale     actually send output->scale
+      when we get a request to close client app, defer resource deletion     until After close animation has been run
+      don't install SIGBUS handler if we are running wayland-only
+      enlightenment: Bump required Wayland version to 1.7.0
+      enlightenment: Implement support for wl_data_device_interface "release" event
+      add debugging when output gets bound, and fix formatting
+      wl-drm: Add more debugging during output hotplug events
+      fix debug message for wl_output_bind
+      wl-drm: Remove need for extra E_Comp variable
+      wl-drm: Remove output event handler when we shutdown
+      wl-drm: Hook into ecore_evas_resize callback to update comp canvas
+      wl-drm: If we end up using software_drm, then override elm preferences (ala X compositor)
+      e_comp: Only need 'type' variable if we are building with HAVE_WAYLAND
+      e-comp-wl: Remove unused variable
+      wl-drm: Use ecore_evas_new with an engine name rather than direct ecore_evas_drm_new calls
+      e-comp-wl: Don't crash if we fail to create a new e_client
+      wl-drm: Set initial compositor pointer values base on ecore_evas_pointer_position
+      Revert "wl-drm: Set initial compositor pointer values base on ecore_evas_pointer_position"
+      wl-drm: We need to set the compositor pointer values After wl_comp_data has been created else we crash
+      e-comp-wl: Init randr if we are not wayland only
+      Fix T2385 : internal windows not showing resize cursor
+      enlightenment: Make E build again with EFL from git
+      make e_acpi_lid_is_closed function callable from wl_drm module
+      wl-drm: Start on making the RandR config dialog usable in drm
+      send screen paramaters in proper order to e_comp_wl_output_init
+      fix numerous compile errors from D2482
+      remove unused 'serial' variable in mulit-move callback
+      wl-desktop-shell: Quiet debug output
+      conf_randr: Reduce debug output noise
+      drm randr: More work on getting RandR functional in E-Wl. This adds a     function to remove an output from e_comp_wl also.
+      wl-drm: Don't enable/disable an output until after we have set the current mode
+      add missing EINA_UNUSED for function paramater
+      Fix call to e_comp_wl_input_keymap_set
+      add missing EINA_UNUSED for function paramater
+      remove unused variable
+      ELM_WIN_DIALOG_BASIC is broken in wl right now, so for wl create     normal elm windows for now.
+      remove cpp warning
+      fix call to e_comp_wl_input_keymap_set for building with     wayland-client support
+      allow starting enlightenment with the valgrind option again
+      Properly fix T2182 (add a --version option to enlightenment)
+      wl-desktop-shell: Fix T2357: Update xdg_shell for version 5
+      wl-desktop-shell: Fix popup menu placement for xdg surfaces
+      e-comp-wl: #if 0 out a currently unused function for pre_frame assignment.
+      Fix Coverity CID1298052
+      Fix Coverity CID1298053
+      wl-desktop-shell: Fix formatting
+      wl-desktop-shell: Remove useless return at end of function
+      wl-desktop-shell: Don't crash when trying to place popup menus in QT apps
+      add xwayland to configure.ac
+      Add xwayland module to modules Makefile
+      Add xwayland Makefile
+      add xwayland module desktop file
+      add xwayland module edj file for icon
+      Add start of xwayand module code
+      xwayland: Fix configure.ac to substitute the xwayland binary path
+      xwayland: Fix makefile to use xwayland binary path
+      xwayland: Create and bind to unix & abstract sockets
+      xwayland: Create the wl_client which represents the window manager     process.
+      Whitelist the new xwayland module
+      xwayland: Fix launching of XWayland server and pass proper display to     wl_client_create
+      xwayland: Add some debugging code while trying to work out failures     with this
+      xwayland: Fix build breakage with recent e_comp_wl changes
+      xwayland: Check for sigusr1 in event handler
+      xwayland: Add code to cleanup xwayland on shutdown
+      xwayland: Add checks for xcb libraries needed for xwayland support
+      mixer: Fix resource leaks
+      e-comp-wl: Fix formatting
+      e-comp-wl: Don't crash from a missing keymap
+      e-comp-wl: Release keys on key_up regardless if client has focus
+      Don't call ecore_x_xkb_select_group if the compositor is not X11
+      e_grabinput: Don't call ecore_x functions if we are not an X compositor
+      correctly fix check for compositor in e_grabinput
+      correctly fix check for x11 compositor in e_xkb
+      xwayland: Use proper E_API for exporting module symbols
+      e-comp-wl-input: Format for 80 columns
+      e-comp-wl-input: destroy xkb keyboard state Before destroying the keymap
+      e-comp-wl: Update modifiers on key down/key up events
+      shot: Fix formatting for 80 columns
+      e-comp-wl: Add screenshooter protocol files
+      shot: Add screenshooter client protocol files
+      e-comp-wl: Add screenshooter files to build order
+      e-comp-wl: Add screenshooter structure to comp_wl_data and add additional fields we need in E_Comp_Wl_Output
+      e-comp-wl: Create compositor screenshooter global and add function to actually handle taking shots
+      wl-drm: Add function to readback pixels for compositor screenshots
+      shot: Update shot makefile to include client screenshot protocol files
+      shot: Update shot module to now be able to take Wayland screenshots
+      remove wl_screenshot from configure.ac
+      remove old wl_screenshot module
+      shot: Update with proper compositor checking tests
+      shot: Disable window shots in wayland for now
+      shot: Enable feature of taking just window shots in wayland
+      e-comp-wl: Don't call keyboard_modifiers_update twice
+      e-comp-wl: Update keyboard key state regardless of client focus or not
+      e-comp-wl: Add support for wl_keyboard_send_repeat_info to allow for configurable keyboard repeat rates
+      e-comp-wl: Update keyboard and modifier state AFTER we send them to clients
+      e-comp-wl: don't send keyboard modifiers twice.
+      e-comp-wl: Fix getting end key during key down/up events
+      e-comp-wl: Fix T2570: stuck key when closing efm windows
+      e-comp-wl: Remove unused variable
+      e-comp-wl: Fix region_add and region_subtract functions to make sure we have accurate opaque regions
+      desklock: Fix T2589: Screen Lock crashes in E
+      enlightenment: Remove listener for XDnD status
+      enlightenment: Allocate space for terminating NULL
+      enlightenment: Remove static function prototype for unused function
+      wl_desktop_shell: Formatting
+      xwayland: Add missing EINA_UNUSED for unused function parameters
+      enlightenment: Update README.wayland to reflect things that do not work yet
+      enlightenment: Remove legacy unused e_pixmap_image_draw_done function
+      enlightenment: Replace old comp_type conditionals
+      enlightenment: Replace old comp_type conditionals
+      enlightenment: Remove wl_screenshot module from whitelist
+      enlightenment: Remove commented out reference to wl_screenshot Makefile
+      enlightenment: Fix formatting of Wayland compositor code so it is easily readable in 80 columns
+
+Conrad Meyer (4):
+      Mixer Pulse: Fix trivial use-after-free.
+      backlight: Use basic ACPI sysctl knob on FreeBSD (kernel)
+      tempget: Add lm75(4) temperature source for non-x86 FreeBSD
+      e_auth: Add suid helper for lokker own-pw checking on FreeBSD
+
+Daniel Hirt (1):
+      lokker: update caps-lock hint even on "checking" state
+
+Daniel Kolesa (17):
+      remove obsolete E_Hal.h include
+      remove hal detection from build system
+      specialize some sysactions fields for freebsd
+      freebsd: use /usr/sbin/zzz for suspend
+      freebsd seems to require both -fPIE and -pie in cflags to compile
+      rename WEIGHT/ALIGN/EXPAND/FILL to E_WEIGHT/E_ALIGN/E_EXPAND/E_FILL
+      seems like enlightenment_sys will still fail linkage on freebsd; workaround
+      remove e_mod_xembed.c from POTFILES.in
+      clean up E ptrace detection and usage
+      detab e_start_main.c; spank spank spank
+      e_start_main: refactor (reduce scope depth, separate ifdefs, cleanup)
+      remove unused variable
+      fix indentation
+      cpufreq: freebsd fixes
+      tempget: Add more temperature sources for FreeBSD
+      mailmap: update q66
+      remove str(n)dupa usages
+
+Dave Andreoli (3):
+      Fix gadman config to be actually usable.
+      Update gtk bookmarks to work with new gtk3 path
+      Improve italian lang
+
+Derek Foreman (31):
+      Conditionally ignore wayland cursor set events
+      Provide wl_output interface to clients
+      Provide wl_output events on hotplug
+      Fix wl_output tracking in wayland compositor
+      Don't crash when an error pop-up occurs before the compositor is set up.
+      clamp to parent height, not parent y co-ordinate.
+      Fix stuck modifiers on client exit
+      Don't update xkbstate when no app has focus
+      Break e_comp_wl_input_keyboard_modifiers_update into two functions
+      Send modifiers to wayland clients on focus in
+      Wayland: Don't consume serials when not sending events
+      Wayland: more checks to avoid consuming serials needlessly
+      Wayland frame callback times are in milliseconds
+      wayland-compositor: Clamp to 1, 1 on drag resize
+      wayland compositor: Remove focus_update from compositor client data
+      wayland compositor: Send keyboard enter events on get keyboard
+      wayland compositor: remove _e_comp_wl_client_focus()
+      Fix wayland compositor on 32 bit systems
+      wayland-compositor: Set server mode
+      wayland: Remove a lot of E_Comp_Data pointers
+      Resize the canvas at the end of canvas init
+      Init some vars to NULL in compositor create
+      wizard: Prevent crash
+      wizard: Prevent crash
+      screenshooting: Avoid void pointer arithmetic
+      wayland: Also link with libwayland-client.so
+      shot: Skip the wayland setup bits when running under X
+      wayland: fix key repeat
+      wayland: Only send keyboard modifiers to focused resources
+      wayland: Always add frame callbacks to current state on commit
+      wayland: force wl surface frame callbacks on commit for undamaged surfaces
+
+Duna Oh (1):
+      fix crash when activating menu that is not in range
+
+Flavio Ceolin (1):
+      modules:mixer:pulse Update default sink
+
+Gustavo Lima Chaves (1):
+      Generate *all* music control files in src tree.
+
+Jake Jaeseok Yoon (1):
+      src/modules/clock/module.desktop.in korean add
+
+Jean Guyomarc'h (4):
+      modules/battery: fix compiling on OS X
+      modules/bluez4: fix duplicated symbol
+      e_backlight_main: fix compiling when not having Eeze
+      e_ipc: fix creation of IPC server when $DISPLAY is a path
+
+Jean-Philippe ANDRÉ (6):
+      Fix include order of EGL & Evas GL
+      Add ecore-wayland flags to the general cflags
+      Revert "Add ecore-wayland flags to the general cflags"
+      Really fix the compilation with wayland
+      PackageKit: Fix crash on error
+      PackageKit: Fix a crash properly
+
+Jee-Yong Um (1):
+      e_actions: Fix to parse syntax correctly in key binding settings
+
+Kai Huuhko (1):
+      L10N: Update Finnish translations
+
+Leif Middelschulte (2):
+      Implement FreeDesktop .deskop Additional Actions menu
+      ibar: Fix "additional action"s and seperator placement.
+
+Luis de Bethencourt (2):
+      backlight: visual feedback when adjusting value through keybindings
+      backlight: remove code duplication
+
+Manuel Bachmann (1):
+      build: allow building in pure Wayland mode (no xcb, no ecore-x)
+
+Marcel Hollerbach (22):
+      tiling: Implemented tiling window position manipulation
+      tiling: Fix issue with window-moving and windows not breaking out.
+      Fix wrong deskshow function
+      wizard: Fix the resolving of the FIXME comment
+      wizard: use eina_list_free to free the list
+      Tiling: Fixed break out method
+      e_order: Added a function to check if this Efreet entry allready exists
+      ibar: Changed the key which is used to store IBar Icons.
+      everything: terminate bc instead of quit
+      Register the new window into out evas.
+      e_win: Fix Dialog Titles
+      config: Fix segfault
+      po files: remove remove e_randr
+      enlightenment_remote: Added a Note that not all features are available
+      Ibar: Emit the given origin to the Ibar Icon.
+      mixer: this if does not make much sense
+      mixer: get volume after setting channels
+      mixer: update internal volume and call the changed event
+      mixer: only list playbackdevices if they are _real_ playbackdevices
+      mixer: Fix segfault when backend does not have any sink
+      Merge branch 'devs/bu5hm4n/mixer'
+      deskmirror: check if ec is not null before accessing it
+
+Massimo Maiurana (12):
+      Updating italian translation
+      Updating italian translation
+      Updating italian translation
+      Updating serbian translation
+      Updating italian translation
+      Updating spanish translation
+      Update catalan translation
+      Make some randr messages translatable
+      Updating italian translation
+      Updating italian translation
+      Updating italian translation
+      Updating catalan translation
+
+Mike Blumenkrantz (952):
+      unset release mode
+      bump version
+      Revert "mixer: Optionally select an external mixer application."
+      don't add nocomp damages for input-only windows
+      check protocol visibility for nocomp breaks, not comp object visibility
+      manually break out of nocomp
+      end nocomp on nocomp end...always
+      force render queue on unmaximize if client was fullscreen
+      add borderless theme for deskmirror clients to support various animations
+      comp render queue on every client resize instead of on unmaximize
+      force comp render queue more aggressively to detect changes in nocomp
+      client hooks should not continue to be called if the client has been deleted
+      thaw evas on winlist activation with no clients available
+      fix teamwork popup positioning for non-dbus popups
+      fix internal window border changing
+      fix signal emission on selected ilist item icons
+      add alignment client menu
+      remove dead conf_display file
+      remove E_Win+e_canvas, convert all internal wins to use elm_win
+      add macro wrapper to force elm win accel disabling on internal windows
+      rename elm win trap functions for easier namespace debugging
+      minor tweaks to prevent harmless invalid reads during restarts with windows open
+      fix fileman crash when restarting with window open
+      remove ec->changes.internal_props
+      bump required efl version for new elm features
+      resolve recent coverity complaints
+      fix internal window closing with frame button
+      remove unnecessary unfocused signal emit on clients
+      don't call elm_shutdown() for now
+      only change internal win visibility on comp obj show if win not already visible
+      only show comp obj during internal win show if win not already visible
+      set skip pager/taskbar hints on parent window instead of client window
+      remove xembeds from systray module
+      force shape queue on notification delete
+      ensure string safety on dbus message in connman agent
+      apply pointer warp effects immediately when instant warping
+      fix efm dnd crash
+      print more descriptive error messages when scanner connection fails, also don't exit() here
+      don't exit e_fm when eeze init fails, send RASTER mode instead
+      store eeze_scanner connection poller to avoid creating an infinite number
+      only attempt to start eeze_scanner a couple times before giving up
+      attempt to run eeze_scanner on failure to connect, not successful connect
+      ensure clients are visible before triggering shape/render queue
+      fix X crash when trying to apply desktop window profile to client without desk
+      add failure count for client rendering, drop clients after FAILURE_MAX tries
+      redo shaped client checks to use shape flags instead of rect pointer, fix shapeless clients
+      reduce shape recalc for clients which cannot currently receive input
+      remove access module from build
+      greatly reduce FAILURE_MAX
+      remembering size on a window should also remember maximize state
+      apply client size based on correct remember value, only apply if value != 0
+      store hide_logo state for desklock backgrounds
+      only use elm win title for internal windows if it has been set
+      add back notification merging
+      use frame geometry in win resize trap to get accurate sizes
+      don't show mixer popup during nocomp
+      comp pending resizes should not require both w+h to change
+      e_box -> elm_box conversion
+      don't recalc winlist on client add event if client is not added to winlist
+      set elm log level to CRI
+      add compile warning note for elm hack
+      remove e_box from POTFILES.in
+      don't set gravity on client windows during X move/resize
+      completely block border changes on MWM borderless windows
+      add support for new netwm csd X atoms
+      enforce no multihead in X compositor
+      remove e_comp_list(), deprecate all related functions for pending removal
+      disable client stack debugging
+      remove some e_comp_get() usage in core comp/client files
+      unused param--
+      add E_VERSION_MAJOR define for external module usage
+      check focus after X nocomp end
+      don't change shade.x/y during unshade or after shade
+      +e_win_evas_win_get()
+      unwrap INLINE_IMAGE window creation
+      set comp X window hint to normal
+      use elm_win_fake() to create a fake elm_win for widget parenting/focus
+      simplify comp usage in e_fm
+      e_entry -> elm_entry conversion
+      fix build from tarball when configured mount backend is different from origin
+      de-e_comp_get()-ify e_shelf
+      e_table -> elm_table conversion
+      set evas size hint min in widget min size
+      Revert "fix centering of elm wayland windows"
+      redo fileman tooltips to size correctly
+      autoupdate widget min sizes
+      de-e_comp_get()ify e_fwin
+      remove unused vars
+      force internal window recentering after resize when no move/resize is active
+      e_label -> elm_label conversion
+      remove unnecessary size hinting
+      don't override entry min sizing in filepreview
+      make comp cfd unresizable
+      e frame -> elm_frame conversion
+      e_widget_textblock -> elm_entry conversion
+      remove no-longer-necessary size hinting in list widgets
+      update widget size hints when setting a resize object
+      ignore size hint changes for fileman popups if popup icon has been moused out
+      e_widget_button -> elm_button conversion
+      de-e_comp_get()ify e_menu
+      convert e_conf to use elm_layout for min sizing updates
+      Revert "revert all the ui breakes in e - going the wrong direction in the"
+      Revert "e dialogs - this one too"
+      don't update widget size hints on resize add if hints already exist
+      remove widget subobj delete callback on widget delete
+      only set internal win name/class if not already set
+      randr widget needs to set min size hint on calc
+      convert shot dialog to elm_layout
+      e_dialog -> elm_layout for bg_object
+      enforce min width for filepreview attr entries
+      remove unnecessary filepreview size hinting
+      use elm functions on new clock elm objects
+      improve gadcon popup sizing/positioning
+      fix edje usage in frametable
+      use changed,user entry scb for widget change to prevent infinite looping
+      give csel entries 3 columns to force visibility
+      convert e_dialog text object to elm_layout
+      fix edje usage in e_dialog
+      don't set deskmirror scale for non-mb objects
+      reenable elm log domain
+      fix elm box parenting
+      set client frame geometry for new internal wins based on ee geometry
+      remove e_comp_get() use in grabinput
+      de-e_comp_get()ify e_dnd
+      fix evry build on wayland-only
+      typo from last evry commit
+      de-e_comp_get()ify evry
+      move grabinput focus fix timer to be X-only
+      move more grabinput code to not fail in wl
+      fix comp cfdlg sizing and centering
+      never uncenter a centered internal window
+      remove no longer necessary setting of changes.size on client resize
+      set wl client geometry before showing in desktop shell
+      simplify wl xdg/shell configure functions
+      de-e_comp_get()ify e_win
+      force server borders on internal wl wins again
+      continue to hide window input regions on desk flip if they are shaded
+      only set wl client borderless state as necessary, don't overwrite existing states
+      simplify/fix wl client borderless setting
+      preserve internal window borderless state when set prior to showing window
+      Revert "simplify/fix wl client borderless setting"
+      defer client frame resizes if client is not protocol-visible
+      allow client pixmap size to be used in place of actual client geom for tiler creation
+      clarify wl shell errors when failing to create clients
+      move wl pixmap creation into shell, fix pixmap id usage
+      Revert "move wl pixmap creation into shell, fix pixmap id usage"
+      move wl pixmap creation back to comp
+      use new pixmap id for internal wl wins
+      Revert "Include /usr/local too in the no-duplication of XDG_DATA_DIRS"
+      Revert "Do not add /usr/share twice for XDG_DATA_DIRS"
+      ensure no duplicate XDG paths are prepended during startup
+      don't crash in stupid e_module dialog hack
+      change module version name to force module rebuild
+      delete all clients in wl delete request cb
+      don't hide client before delete in win del trap
+      clean up comp object to not use deprecated comp functions
+      don't create wl clients as re_manage
+      make comp param in e_client_new unused
+      ref/free client pixmaps during hide animations
+      hide wl clients on surface delete
+      make wl clients use post render canvas cb to clear buffers
+      Revert "ref/free client pixmaps during hide animations"
+      remove unnecessary comp work in wl pixmap functionality
+      set wl popups as overrides
+      clamp wl popup coords to parent when possible
+      remove unnecessary EC_CHANGED from wl shell creation
+      move wl pixmap stuff to use pixmap functions in compositor instead of in pixmap
+      clear wl pixmap cache on client free instead of leaking
+      remove pixmap resource delete cb
+      add wl util function for calculating pixmap id
+      use pixmap size for resizes in wl commit
+      configure/show/hide surfaces which lack shells automatically
+      implement wl client cursor support...as clients
+      add pointer util function for changing cursor object without deleting it
+      replace all occurrences of cursor setting with calls to pointer util function
+      use unixtime instead of loop time for wl frame callback done
+      force wl client cursor clients to hide when unset from pointer
+      correctly set/update wl opaque regions
+      add pixmap image border functions
+      don't set client shape rects based on wl opaque regions
+      fix wl input region setting
+      handle image borders during client rendering
+      set pixmap image borders for wayland clients
+      remove wl opaque tilers, just set border in opaque callback
+      unset new_client flag for wayland clients
+      set client image borders even when 0
+      don't add rect for entire screen on wl region create
+      redo pixmap image border to take xywh instead of lrtb
+      apply client focus glow based on opaque region
+      set take_focus more appropriately for wl clients
+      unset wl client cursor when no surface resource is passed
+      setup evas callbacks for wl clients during commit
+      send wl keyboard enter during commit
+      set wl client keyboard focus on evas focus and commit
+      remove nonsensical wl client finding code
+      use accurate xy coords for wl surface configures
+      reenable new_client for wl clients, but force moveresize actions to succeed
+      move map before configure for wl clients during commit
+      use pixmap size for wl subsurface commit configure
+      reapply accurate ec->placed value for wl clients during surface commit configure
+      don't set geometry during wl client surface mapping
+      don't use garbage values for new_client wl surface configures
+      don't add wl evas callbacks multiple times
+      unset wl client placed value on first commit to force placement
+      remove unused E_Client->input_object
+      add E_Client->mouse.in for determining mouse-in status
+      don't clear wl surface input tiler during commit
+      manage client pointer client hidden states when changing pointer cursor objects
+      fix dbus unit installation with DESTDIR
+      update wl readme
+      add note about logind to wl readme
+      remove unused var
+      prevent client cursor clients from receiving focus
+      remove some futile attempts at variable setting in wl client new hook
+      set wl popups to appropriate layer in shell module
+      remove unneeded client attr setting in wl shell
+      allow focus on normal wl clients again
+      add YOLO define to throw a compile warning for Extremely Dangerous Functions
+      add first YOLO: e_client_focus_stack_set()
+      remove wl override clients from focus stack
+      only reject client mouse out for X clients
+      add ctrl+alt+backspace to kill wl-only e
+      Revert "fix dbus unit installation with DESTDIR"
+      revert some comp object debugging bits that snuck into another commit
+      use elm scroller for xkb options
+      don't revert X focus during nocomp
+      block linear desk flips that would wrap if desk flip wrapping is disabled
+      use direct path for setting icons in util theme set function when icon is a path
+      don't send unfocused signal to override clients
+      escape notification popup text...always
+      fix crashing when changing desklock settings and using pin/personal auth
+      clamp client size to screen when client limit policy does not allow offscreen
+      rename extremely frustratingly-named E_Screen_Limits enum and members
+      do not reapply focus on canvas object ungrab/close for pointer-focus enthusiasts
+      remove unnecessary icon setting and fix sizing in edgebindings
+      fix dialog sizing when icon setting fails
+      set default text for edgebindings caption when no bindings exist
+      fix appindicator icon loading when using IconThemePath key
+      don't clamp bgpreview vsize if bgpreview is a fullscreen overlay
+      fix border frame color classes to be configured as solids, not text
+      pre-escape all notification body texts before display or merge
+      reject ignored clients from client mouse event functions
+      unify wl comp mouse button callback checks
+      don't send wl mouse button events when client's menu is active
+      update wl xdg states on maximize/fullscreen events
+      disable fileman popups in wl-only mode
+      noop when setting pointer object if re-setting same object
+      remove wl client resize idler, send ec->w/h instead of ec->client.w/h on resize
+      send different values to wl clients for configure when performing a resize action
+      update+clamp wl surface client size to buffer size during commit
+      improve wl grab resize calcs
+      remove ec->awaiting_hide_event
+      grab wl shell surface geom and use for adjusting resize operations
+      reapply wl surface focus during commit when necessary
+      set ec->fullscreen before applying fullscreen geometry
+      never resize client clip object
+      re-setting same cursor object updates hotspot as expected
+      Revert "when we get a request to close client app, defer resource deletion"
+      hide comp object image on smart hide
+      force non-internal wl clients to hide when gl is not available
+      add E_Client->dead to mark clients that should immediately be removed from the compositor
+      trivial move comp object function
+      flag non-internal wl shm clients as dead and delete mirrors on hide
+      only hide comp object images for dead clients on smart hide
+      don't require client mirror object existence to hide dead comp object mirrors
+      disable wl clients in X
+      exit immediately if any unrecognized arg is passed on startup
+      use stderr messages when failing to init X compositor
+      remove unnecessary wl client pixmap checks
+      Revert "disable fileman popups in wl-only mode"
+      use current zone for shelf cfd setup
+      fix horizontal/vertical smart maximize
+      fix crash when using e_comp_object_util_center_pos_get() with non comp_objects
+      redo ibar icon label position signalling to emit left/center/right
+      fix invalid eina list usage when merging wl surface frame list
+      don't attempt to find wl shell E_Client when one cannot exist
+      don't reuse wl surface pixmaps without adding a ref
+      always create new client for wl shell surfaces
+      CRI on attempting to change a pixmap's client when pixmap already has client
+      don't modify pixmap hash when changing pixmap parent window
+      slight ibar dnd optimization when checking taskbar apps for drop site
+      fix ibar drop calc to not unexpectedly trigger epileptic seizures in users
+      don't identify all wl shell clients as internal...you crackhead
+      disable wl client hide animations even with gl
+      wl drm output module must set comp gl state more pedantically
+      Revert "e - fix build when wayland not enabled"
+      conditionally compile elm win trap wayland functionality
+      don't create new wl shell clients for internal windows
+      correctly apply wl shell client border states only for non-internal clients
+      don't crash when creating external shell surface clients
+      don't reset placement of internal wl clients on first commit
+      remove unused wl variables
+      send client sizes for wl configure events when fullscreening/maximizing
+      fix wl shell client borders for internal, borderful clients...again
+      de-e_comp_get()ify e
+      remove e_comp_get() function
+      e_util_comp_zone_number_get() -> e_comp_zone_number_get()
+      remove e_util_comp_zone_id_get() and e_util_comp_zone_number_get()
+      remove e_comp_util_evas_object_comp_get() usage
+      remove e_comp_util_evas_object_comp_get()
+      remove E_Comp_Object->comp member
+      remove E_Client->comp
+      E_CLIENT_*FOREACH() macros no longer take a E_Comp param
+      remove unnecessary E_Comp references in comp object callbacks
+      comp canvas functions no longer require an E_Comp param
+      remove E_Event_Compositor_Resize struct
+      remove E_Drag->comp and E_Comp param from e_drag_new()
+      remove e_comp_evas_find() usage
+      remove e_comp_evas_find()
+      remove e_util_comp_current_get() usage
+      remove e_util_comp_current_get()
+      e_comp functions no longer require E_Comp param
+      e_client functions no longer require E_Comp param
+      e_zone functions no longer require E_Comp param
+      use correct wayland ifdef for E_Client uuid generation
+      remove E_Zone->comp member
+      remove e_util_zone_current_get() usage
+      remove e_util_zone_current_get()
+      e_util_comp_desk_count_get() -> e_desks_count()
+      bump modapi version to 15
+      wl compile fixes
+      fix constant expression conditional
+      only throw frame object size CRI for X comp objects
+      set e_comp->elm as fullscreen for internal elm hinting
+      remove E_Comp from e_desktop*edit apis
+      e_desktop_border_edit -> e_desktop_client_edit
+      remove E_Comp from E_Client_Layout_Cb
+      remove E_Comp from object/about dialogs
+      remove E_Comp from color dialog
+      remove E_Comp from e_fm_prop_file()
+      remove E_Comp from e_resist apis
+      remove E_Comp from e_configure registry callbacks
+      remove most E_Comp usage from e_comp
+      remove most E_Comp usage from e_comp_x
+      remove E_Comp usage from e_comp_canvas
+      remove E_Comp usage from e_font
+      remove E_Comp usage from e_comp_wl
+      remove E_Comp usage from internal menus
+      remove E_Comp usage from wl desktop shell
+      remove E_Comp usage from tiling config
+      remove E_Comp usage from shot
+      remove E_Comp usage from notification popups
+      remove E_Comp usage from fileman/fwin
+      remove E_Comp usage from conf
+      remove E_Comp usage from conf_apps
+      remove E_Conf usage in conf theme
+      update contact module for api changes + remove E_Comp usage
+      __UNUSED__ -> EINA_UNUSED
+      remove contact module
+      remove illume modules
+      remove manager number from e_bg functions
+      completely remove E_Manager
+      remove manager/container id from bg/wallpaper things
+      remove E_Comp->x/y
+      remove shelf manager/container references in config
+      remove manager references in desk name/profile configs
+      remove shelf manager config vals from profiles
+      fix straggler container text in mousebindings config
+      remove E_Comp->num
+      remove E_Remember->prop.head
+      remove e_util_head_exec()
+      move E_Comp->root window setting into e_comp_wl_init() for wl compositors
+      move comp fake layer init into canvas init for non-X compositors
+      remove E_Comp from gadman and systray structs
+      mobile policy desk set hook needs to ignore new_client clients
+      decrement e_comp->new_clients counter when unsetting new_client flag on wl cursor clients
+      fix e_remote bg commands
+      remove useless wl comp code for shape exports
+      move wl E_Client creation to same place as E_Pixmap creation
+      make only critical notifications display in presentation mode
+      fix geolocation compile
+      geolocation module build: now with fewer generated files!
+      block ignored clients from lost client list
+      add colorclass editor to app menu
+      add explicit file deps for geolocation eldbus generated files
+      make application color editor follow client geometry on move/resize
+      fix wl randr error message string
+      move colorclass config to use elm infra, redo cc dialog to use new editor
+      remove e_color_class
+      prepend geolocation build dir to cppflags
+      only call e_comp_wl_shutdown() for wayland compositors
+      remove all debug output from mixer module
+      don't crash on wl shutdown
+      remove layer setting from deskmirror
+      always lower e_layout children upon packing
+      raise deskmirror windows on startup
+      match client dialogs to client's layer
+      set desktop editor appselector dialog to be resizable
+      set xkb dialog as changed after adding a new layout
+      fix entry sizing in file props dialog
+      force dialogs to recalc content sizes before setting min size
+      don't redo min size hints on e_dialog show
+      make entry widget call changed callbacks on "changed" again
+      redo color dialog to use elm colorselector
+      remove csel widget
+      remove cslider widget
+      add xkb options scroller as subobj to toolbook widget
+      make connman agent dialog resizable and autosized
+      toggle comp_hidden and grab input while client color editor is active
+      do not attempt to re-center fullscreen/maximized internal windows
+      fix desktop editor entry widget parenting
+      only set shot window layer if taking window shot
+      check correct number of params passed to internal/desk cfd
+      set E_Exec_Instance desktop during client idler if none present
+      allow client icon change events in ibar client prop handler
+      fix nocomp_override conditional which would inaccurately toggle nocomp
+      fix return value in backlight helper exe on non-freebsd systems
+      fix evry comparison macro to work as expected
+      fix pixmap image clearing based on pixmap type
+      fix evry app listing list leak
+      prune no_display desktops from evry apps plugin
+      fix unoptimized stringshare usage in keybindings cfd
+      remove support for wayland builds on 32bit
+      use client geometry for starting unmaximize calculations
+      fix clock popup widget parenting
+      swap key -> keyname when attempting to bind lparen/rparen keys
+      add function for clearing app menu cache
+      clear app menu cache any time a desktop is edited internally
+      attempt to decode notification image uris with efreet before showing them
+      fix submenu visibility during scroll
+      use client geom for comp object centering functions if ec->new_client is set
+      add wl client event callbacks at lower priority
+      wl client pixmaps now use a different method for creating the pixmap id
+      disable client color editor for non-X clients for now
+      add explicit includes for elm color class header in colorclass cfd
+      Revert "build: Remove generated eldbus files during normal clean and not only maintainer-clean"
+      pass surface resource when creating wl surface pixmaps
+      use pointer hash for wl pixmaps
+      unadjust frame coords when calculating wl surface placement during commit
+      update wl shell parent setting code to use clients instead of pixmaps
+      add e_acpi_lid_is_closed() for returning cached state of computer lid
+      move e_randr internal screen changing timer -> e_randr2_screen_refresh_queue()
+      move acpi lid status tracking from e_randr to e_acpi
+      _config_screen_find() -> e_randr2_config_screen_find()
+      move all x11-related randr code into e_comp_x_randr.c
+      add E_PIXMAP_TYPE_NONE
+      create e_comp during e_comp_init, set comp_type automatically
+      always register E_EVENT_RANDR_CHANGE
+      fix ecore-x cflags/libs inclusion for e binary
+      fix wl-x11 configure detection/check
+      ensure valid strings are send when sending wl output geometry
+      move comp_x randr init to screen init function
+      break out comp_x gl/sw canvas creation into external function
+      create wl-x11 canvas using comp_x canvas creation method
+      add a small screen management interface to E_Comp, remove hardcoded x11 randr calls
+      always add e_randr2.c to e build
+      use randr for screen setup in wl-x11 output module
+      change comp type check at start of e_comp_wl_init()
+      init randr during wayland init...always
+      remove dead conf_randr files
+      enable conf_randr module unconditionally by default
+      fix module blocking for wl modules
+      resize comp canvas on e_comp_canvas_init()
+      move comp_x screen setup code into e_randr
+      move canvas init after wl init in output modules
+      use const lists for drm devices in signal handlers
+      add wl drm module phony make targets
+      add read-only randr iface for wl drm output module
+      check module name existence before reading from it
+      simplify comp_x screen setup
+      fix typo when setting event state in e_randr2_screen_refresh_queue()
+      fix tasks gadget parenting
+      fix internal win pixmap id int size in show trap
+      fix wl-drm install rule
+      remove rest of ecore-drm usage from wl-drm randr info grabbing
+      fix comp fake layer init for wl compositors
+      fix comp init failure case
+      don't set e_comp->root for wl compositors
+      ensure evry key events do not get erroneously rejected in grab mode
+      ensure client max w/h props are set before applying them to client geom
+      do not pass key events through autoclose handler
+      set focus on comp autoclose objects
+      set internal win icccm name/class/title during win trap show
+      add internal win trap to set override property on windows
+      fix MANAGER context keybinds to work with rootless compositors
+      add comp util function for determining whether the keyboard has been grabbed
+      only allow efm key actions if key grab does not exist
+      add e_grabinput_mouse_win_get()
+      add comp mouse grab detection function
+      more accurately determine whether a mouse grab is active in some parts of e
+      fix evry mouse event detection on wayland
+      redo drop handlers to take an E_Object and Evas_Object
+      bump modapi version
+      add focus callback to override elm_win being stupid
+      freeze comp object edjes while not hidden
+      rename client menu move/resize items to indicate real function
+      freeze evas events on clients during keyboard move/resize actions
+      only apply mouse down focus events if a binding did not run on the same event
+      force visibility on clients before attempting to hide them
+      change default icon theme to hicolor
+      try hicolor icon theme as fallback for fdo icon setting if user's theme fails
+      fix notification text to conform to spec and libnotify implementation
+      prune module config list when loading a module
+      fix comp input ungrabbing to read more clearly and not pop nocomp wrongly
+      don't destroy efm icon entry on client focus-in if icon's client is being focused
+      add efm function for getting an editing icon
+      only apply fwin focus to main efm object if no icon is editing
+      fix infinite loop when changing ibar sources
+      fix nocomp popping on comp input ungrabbing
+      reject client fullscreening based on config and desk visibility
+      force xwindow stacking to obey nocomp policy and stack below current nocomp
+      allow new fullscreening clients to replace current nocomp where applicable
+      remove legacy entry widget pointer setting code
+      use layout for theme import dialog
+      fix focusing client on mouse events which trigger actions (with exceptions)
+      lower minimum backlight clamp to 5%
+      fix eo errors for ilist icon select state
+      only freeze/thaw edje objects on non-input clients
+      disable animations on clients during hide
+      completely freeze all deskmirror object events/animations during hide
+      fix shelf visibility state signals
+      add gadcon visibility handling, send hide signal to pager desks on hide
+      fix mixer gcc class name
+      allow comp matching for UNKNOWN type windows
+      add compositor visibility effects and matching configuration
+      rename visibility effect struct member effect -> visibility_effect
+      use a safe iterator when deleting clients during comp shutdown
+      add flag to E_Comp_Object for detecting show animation state
+      add flag for detecting whether an effect is currently set on a comp object
+      unify comp object visibility effect animation code
+      send client/screen/pointer geometry to visibility effect edje
+      use new visibility effects by default for menu + combo windows
+      add utility function for determining if a comp object should animate
+      only play visibility effects for allowed clients
+      allow layer-blocked clients in deskmirror to restack
+      remove a stupid elm win hack flagged for deletion
+      use current zone for visibility effects on override windows
+      return an accurate value for override clients in e_comp_object_util_zone_get()
+      only apply deskmirror client visibility logic for non-deleted clients
+      sanitize bool return of _e_comp_object_animating_end()
+      make e_comp_object_effect_stop() return bool for object validity
+      add comp object bool flag to indicate whether a compositor effect is currently running
+      fix animation refcounting when toggling object visibility very quickly
+      handle compositor animation race condition when changing effects
+      remove xwayland .desktop and .edj files
+      fix xwayland linkage + makefile formatting
+      update xwayland for api changes
+      load wl_desktop_shell and xwayland after wl comp load
+      fix xwayland configure check
+      fix xwayland fd dup conditionals
+      finish xwayland module implementation
+      HAVE_WAYLAND_CLIENTS || HAVE_WAYLAND_ONLY -> HAVE_WAYLAND
+      bump wayland version requirement to 1.8
+      remove wayland-clients configure option
+      use c array size for e atom init
+      add setup for WL_SURFACE_ID X atom
+      simplify e build and add X headers for xwayland module
+      redo wayland-only configure option and define
+      remove E_Comp_Data typedef, use backend-specific typedefs unconditionally
+      don't undef NEED_X in wl compositor headers
+      remove unnecessary header includes from e_comp_x.h
+      set wl client surface pointer in surface create method
+      unused variable--
+      use ctrl+alt+backspace hotkey in wayland compositor for all non-release builds
+      reject stacking clients from frame updates in client idler
+      reject ignored clients from being processed in client idler
+      set client visibility for shell-less wayland clients appropriately during commit
+      comment out grabinput focus calls in wayland compositor
+      don't call wl comp delete function twice on shutdown
+      move X idle flusher to comp_x
+      correct e_comp->new_client count for overrides in x compositor
+      block xkb activation for non-X11 compositors
+      reject non-X clients from _e_comp_x_object_add()
+      fix grabinput to work better with multiple compositor backends
+      add hooking for WL_SURFACE_ID atom on XWayland windows and composite them
+      reject non-x11 clients from _e_comp_x_client_zone_geometry_set()
+      add wrappers for window/pixmap/comp_data fetching in x11 compositor
+      set shm engine for wl internal windows
+      don't select mouse wheel events on x11 reparenting window
+      rename --enable-wayland-only to --enable-wayland
+      fix wl-x11 configure checks
+      remove E_Comp_Data reference from wl-x11 module
+      disable wl-fb output module
+      fix ecore-x detection with wayland support, also fix wl-only detection
+      set pager_plain to fill area
+      stop rejecting possibly-valid x11 focus events
+      check for possible parent window on x11 mouse button events
+      fix focus FIXME regarding focus-setting on clients from other desks
+      unset changes.visible when forcing visibility during no-effect desk flip
+      trigger fake mouse-out on clients when unsetting focus
+      trigger client mouse-in on x11 mouse movement for non-action clients
+      enforce pstate's extremely-confusing no_turbo option in cpufreq
+      add focusgrab test
+      attempt to create xwayland x11 socket path before creating socket
+      unset ec->ignored during xwayland client data swap
+      disable uuid store
+      fix compile from previous commit
+      use separate client hashes for x11/wl clients
+      add special case for xwayland override clients in show event handler
+      only reject ec->ignored clients from wl mouse events
+      free all ec->comp_data ptrs in _e_client_del
+      fix typo in iterating pending xwl clients on wl surface creation
+      temporarily toggle ignored flag during wl surface commit
+      add debug info when x11 client messages are missed
+      don't attempt to change layer of override clients with parent set in x11
+      don't create first draw timers for input-only x11 clients
+      clean up xwl data on client deletion
+      copy more attributes from x11 -> wl on xwayland client swap
+      use client window for x11 button ungrabbing
+      redo all x11 client mouse grabbing for focus
+      straggler ungrab of x11 parent window from previous commit
+      ensure x11 focus grabs are applied on client init when needed
+      print xwl loading debug after checking compositor type
+      add util function for determining presence of x11 compositor
+      fix e_scale wayland conditional defines
+      replace some x11 compositor checks with calls to util function
+      add client util function for determining if a backing xwindow exists
+      replace comp_x usage of internal xwindow detection function with new util fn
+      allow hint setting on x11 windows in xwayland
+      only ungrab x11 windows when appropriate focus options are set
+      reject x11 replay clicks when event window != client window
+      do not apply x11 focus grabs to internal elm clients
+      fix typo in conditional for setting x11 hints
+      clean up xwayland lock/socket init code
+      set initial surface attrs for internal wl clients
+      reject xwayland module from saved module loading
+      pop an error dialog when trying to load xwayland module under x11
+      block wl key events from reaching clients during client actions or key grabs
+      return NULL when a client's xwayland pixmap is unreachable
+      unset x11 focus grabs on clients only if there is an xwindow present
+      reorder xwayland client swap attribute setting
+      bump required efl version
+      only apply xwl client deletion to xwl clients in x11 compositor
+      set title/name/class on wl-x11 output canvas window
+      make e_client_util_desk_visible() work for overrides without desks
+      make pager popups only trigger on urgency hint if client is not currently visible
+      silence printf noise in screensaver and pkgkit module
+      use evas object callbacks for fwin mouse in/out, don't use ecore-x handlers in wayland
+      use ref macros to silence more printfs in e_remember
+      move grabinput focus fix timer to x11 compositor and fix it to Work Better
+      set CRITICAL urgency for notification internal notifications
+      block client signal binding activation when mouse action is active
+      feed mouse-in event to drm canvas on init
+      account for race condition when creating initial comp object updates tiler
+      properly calculate client+frame sizes during wl surface commit
+      set xwayland clients in x11 compositor client hash using parent window on flip
+      make e_client_util_.?win_get() fns return xwayland windows when available
+      remove NEED_X define from build
+      fix wayland-only build
+      remove NEED_WL define from some makefiles
+      make wayland-specific shot protocol files conditional on wayland build
+      remove unnecessary E_COMP_WL #defines
+      return to using standard client util fns for getting client wins in x11
+      redo e_pointer to support xwayland cursors
+      unify crash handler functions
+      when e crashes in wayland, just crash instead of possibly freezing
+      disable netwm sync on x11 clients in wayland compositors
+      always set x11 override client geometry on startup
+      break up some pointer setting code into helper functions
+      add function to fill in x11 cursor image on creation
+      add wayland client post-render references in the render loop
+      adjust layering of pointer and init splash
+      fix xdnd in (x)wayland
+      only register dnd xwindow with compositor canvas in x11 compositor mode
+      delete render updates for xwayland clients upon triggering a client resize
+      disable size debug on drags
+      Revert "delete render updates for xwayland clients upon triggering a client resize"
+      move xwayland socket connection to its own thread
+      simulate netwm sync for xwl clients
+      only trigger client mouse-in from x11 mouse move event if client+desk are visible
+      ensure that focus is set and focus stack is managed on winlist hide
+      never use new clients for stacking part 2: the secret of the stacking
+      add E_Client->keyboard_resizing flag
+      wl clients should not use edges during keyboard resize
+      only use input xwindows for internal drags in x11 compositor
+      ...and also ungrab the compositor when internal drags end
+      add wl_wl wl output module
+      always set new wayland E_Clients to be ignored during client hook
+      do not update client list hint when creating a new wayland client
+      ensure wayland parts of shot module use the correct wayland display objects
+      enforce image border/size/pixels_dirty setting on comp mirrors during create
+      fix wl_fb define name in comp init
+      add e_client_unignore() for triggering events when unignoring a client
+      zero out wl surface opaque region on commit in all cases
+      render surface opaque regions as opaque when image border is set
+      do not set opaque regions on comp object mirrors
+      block compositor keybinds using more accurate x11 detection
+      only perform keybind grabs on root window for x11 compositors
+      improve wl compositor tiler usage
+      don't mangle wl client opaque region tiler during commit clip
+      move opaque region (image border) apply to render fn
+      fix typo in comp object opaque region render
+      do not block winlist activity based on event window in non-x11 compositors
+      do not attempt to remove wl xdg popup clients from focus stack
+      always stop passing key events on once they reach the lokker callback
+      add clients to focus stack as necessary in e_client_unignore()
+      add wl compositor desklock hooks to add grabs during lock
+      do not add x11 compositor desklock hooks in non-x11 compositor
+      redo wl compositor key eventing
+      ensure clients possess comp_data before dereferencing it during x11 stacking
+      don't block keybind activation while grabs are active
+      simulate modal windows for badly behaved x11 clients
+      fix wl build
+      simplify deskmirror client desk checking
+      fix compositing error when client is ec->hidden during show animation
+      fix backlight init value
+      don't update wl keyboard state on client focus events
+      allow wl client focus-out callback to execute on deleted E_Clients
+      update wl keyboard resource key presses on focus in/out of surfaces
+      set shell-less wl surface mapped state regardless of visibility during commit
+      remove unnecessary geometry setting during xwl client swap
+      set new_client flag on xwl clients during swap
+      create/manage list of focused wl keyboard resources for reuse in kbd operations
+      send wl kbd modifiers only when changes occur
+      add a timer for wl client focus to delay held key input
+      add an actual module no-save blacklist
+      fix client smart callbacks on (un)maximize
+      do not send duplicate configures for wayland clients during maximize
+      always send geometry to configure method for wayland clients when not resizing
+      apply csd sizing transform for wayland configure events
+      allow x11 mouse wheel events to check ev->event_window for possible client match
+      reject x11 NotifyVirtual and NotifyInferior mouse in events
+      add functioning wayland screensaver support
+      remove e_screensaver_force_update()
+      add dpms method for E_Comp_Screen_Iface
+      add wl_drm dpms setting
+      add E_EVENT_SCREENSAVER_OFF_PRE
+      add dpms handling for wayland compositors
+      fix wl screensaver activation when deactivating during fade
+      ensure expected screensaver blanking in x11 compositors with HAVE_WAYLAND
+      fix desklock-related screensaver modification
+      fix x11 detection for wayland compositor setup
+      block xsettings config update if xsettings has not been initialized
+      do not create wayland screensaver timer when screensaver is disabled
+      disable x11 mouse eventing in wayland compositor mode
+      disable ecore-evas events on client windows during actions
+      reduce delay before running screensaver-off animations in wayland
+      do not call ecore_time_unix_get() on each key sending loop for wayland clients
+      return immediately on wayland focus-in key timer when no focused kbds exist
+      end compositor animations for dead clients on hide
+      don't reset wayland surface geometry for overrides
+      fix new_client setting on xwl clients during swap
+      Revert "remove unnecessary geometry setting during xwl client swap"
+      use gadget zone for evry gadget launcher
+      add fallback loading of default theme on init
+      remove spurious focus setting on desk flip without animation
+      flip conditional in wizard xdg events to call xdg function first
+      fix wizard module loading when E_MODULE_SRC_PATH is set
+      unset DISPLAY on xwayland module shutdown
+      reject internal window moves when they originate from a wl configure event
+      set ELM_DISPLAY appropriately for wayland compositors
+      notidle the screensaver in wl compositor mouse move cb
+      defer focus-setting on focus revert during desk flip when visibility is pending
+      unify most of drag start functions
+      only return xwayland pixmap from e_comp_x_client_pixmap_get() for xwl clients
+      show drag object immediately when beginning a drag
+      reject deleted clients from wl show callback
+      track the current pointer focus client in wayland compositor
+      further unify drag start functions
+      reduce explicit ecore-x type usage in e_dnd
+      allow new drags to be created with no associated mime types
+      fix compositor type detection for dnd operations
+      apply wayland data device focus after focus has been set
+      add more wl data device debug infos
+      make wl data device util function EINTERN
+      fix wl data device kbd focus function
+      add server-side wl dnd
+      add functionality for blocking wl screensaver activation
+      block screensaver activation during wl dnd operations
+      use pointer hash to track data manager resources
+      enable x11 dnd in wayland compositors
+      move menu mouse-up feed util function to E_API in comp canvas
+      force mouse-up on wayland drag start
+      block internal usage of x11 input grabs under wayland
+      reenable compositor shape cutting onto the selection window in xwl
+      move wl compositor function for creating data sources to be external
+      store global wayland data manager resource
+      block wayland mouse button propagation to clients while drag is active
+      only attempt to provide wayland drag motion data if drag exists
+      make most wayland data device functions external
+      reject xwl clients from wayland data device enter/leave functions
+      set pass events on DND type windows
+      make dummy e_drag rect invisible
+      add pixmap aliasing
+      alias xwl client pixmaps -> wl surface pixmaps
+      implement x11->wayland dnd operations
+      force render update on wayland clients during commit
+      track xwl dnd event handlers
+      block screensaver activation during xwl dnd operations
+      print DBG infos for unhandled x11 client messages
+      force wl surface frame callbacks on commit for bufferless surfaces
+      do not send wl dnd positioning updates to xwl clients
+      implement wl->x11 dnd operations
+      account for state in xwl property change handler
+      add comp util function for determining whether xwayland is active
+      use current ecore-x time when setting selection owner for xwl dnd operations
+      track xwl clipboard owner
+      only update wl dnd surface client if a wl drag is active
+      don't crash in wl compositor when data resource is destroyed in multiple listeners
+      make wl clipboard source create/unref external
+      make e_comp_wl_data_device_keyboard_focus_set() external
+      close xwl dnd pipe on operation end
+      finish off x11<->wl clipboard support
+      add separate log domain for xwayland
+      don't remove wl data source listener when xwl owns the selection
+      only create fd handler for wl clipboard data source if fd is passed
+      don't create pipe for x11->wl clipboard selections
+      finish xwl dnd operation immediately if drop occurred somehow
+      do not add render update on resize fail due to unusable pixmap in wl
+      use unmodified client geometry for new xwl clients during first surface commit
+      force copy rendering for argb wayland clients
+      don't iterate damage rects during render in wayland compositor mode
+      fix xwl pixmap unaliasing during client deletion
+      break out wl client motion sending, force motion events during x11 drags
+      make wl client mouse button handler fn external
+      force sending of mouse button release on xwl drag end
+      track button mask for all drags, only end drag when mask has depopulated
+      convert E_Comp_Wl_Data_Source->mime_types to Eina_Array
+      only delete current drag on x11 xdnd selection loss if x11 owned selection
+      don't toggle screensaver twice on x11 xdnd selection owner change
+      reject xwl selection notify events which do not match our xwl property atom
+      init null wl mime types array when new type is offered
+      move x11 ee resize callback to comp_canvas, simplify x11 randr event handler
+      enforce compositor canvas resizing/updating when emitting randr events
+      emit randr change event on randr init
+      add local event for wl_wl output to use when a global has been received
+      redo wayland shot init to account for async+slow global loading
+      delete data device resources from hash using client
+      add e_comp_x and e_comp_wl globals
+      replace existing usage of x/wl_comp_data with corresponding globals
+      remove some local aliasing of e_comp_wl global
+      enable shape cutting for xwl clients during flip
+      force xwl client to retain original x11 client's placed flag during swap
+      handle winlist kbd events more accurately in wayland compositors
+      make pager kbd/mouse grabs more effective in wayland compositors
+      explicitly grab compositor on ibar focus
+      simplify ibar focus function
+      add event rect for deskmirror in pager/taskbar modes
+      reject x11 NotifyVirtual and NotifyInferior mouse in events more accurately
+      do not modify E_Client->visible value in show/hide callbacks
+      unset E_Client->want/take_focus flags in hide callback
+      only use deferred focus-setting on desk flip focus if client is not visible
+      update wayland readme with current information
+      don't set E_Client->changes.visible on successful show/hide
+      end wl xdnd drags on the compositor canvas using the full dnd end codepath
+      set 'stopping' during logout action
+      do not relaunch relaunchable quickaccess windows during logout
+      redo fileman menus to only scan the first 100 items found
+      feed mouse-up event during mouse down on menus
+      disable xkbswitch module loading under wayland
+      check compositor screen iface existence before deref in dpms
+      remove bz2 from dist
+      add compile warning and block load of wl_text_input module
+      force render queue and check for redirection on clients with 0x0 pixmaps
+      add some smart callbacks for comp objects on redirect/dirty state change
+      return false when failing to create a mirror during deskmirror obj check
+      watch dirty smart cb for currently unredirected clients in deskmirror
+      add basic fullscreen window test
+      remove pager mirror delete callback during pager win delete
+      remove dirty smart callback from deskmirror clients during client delete
+      only check dirty smart callbacks on non-new_client deskmirror clients
+      Revert "deskmirror - fix dangling reference to mirror by refcounting it"
+      don't watch dirty smart cb for desmirror clients with unusable pixmaps
+      add full damage for x11 override clients on resize configure event
+      reject focus-set attempt if desk flip to client's desk was rejected
+      track focus time for x11 canvas focus, unset client focus on x11 canvas focus-in
+      simplify e_desk_show visibility unsetting, reject recursive desk flips
+      remove dirty callback for deskmirror clients upon creating visual
+      fix x11 compositor to use damage events
+      block forced mirror render for clients with native surfaces
+      force-disable refocus during desk flip on client activation
+      unshade clients when activating
+      ensure that normal clients are stacked below overrides when raising
+      add extreme hacks to enforce nocomp stacking policies
+      set 'starting' flag for desk show in e_zone_desk_count_set()
+      ensure that non-fullscreen nocomp clients have their layers re-set
+      delete notification mirror objects upon deleting original popup
+      unset client hidden flag on config dialogs when activating from another vdesk
+      add ilist method for setting disabled state
+      enforce gathering client moveinfo before beginning move/resize action
+      rename E_Comp_Grab_Cb to E_Comp_Cb
+      enable depth+stencil bits for x11 gl compositor canvas creation
+      add pre-render callback list for compositor canvas
+      add function for getting x11 pixmap from E_Pixmap
+      alias x11 pixmaps to parent windows during reparent
+      create util function for enforcing comp object image alpha setting
+      add smart callback for comp object hiding animation begin
+      add function for overriding the native surface of a client's comp object
+      add smart callback for comp object damage calls
+      set comp object mirror alpha flag more accurately on creation
+      remove unused variables in ilist widget
+      always send CLIENT_SHOW event when clients are shown
+      add function to blank out a client's rendered image
+      distribute weekeyboard edj files
+      send FLOAT_SET edje messages during desk flip
+      make bgpreview widget work with panoramic wallpapers
+      always set alpha for internal wins
+      decode .desktop link and directory uris in fileman menus
+      only lower x11 layer windows for layers which have windows during init
+      add eeze watch for backlight events
+      remove backlight update calls from backlight module
+      do not return non-visible clients for e_client_under_pointer_get()
+      only set focus on clients which are visible during client eval
+      move focus setting on restart into desk restore function
+      apply vertical maximize algorithm for LEFT/RIGHT maximized windows
+      unset E_Client->want/take_focus flags during client eval
+      block gadcon thaw on unpopulate when gadcon is deleted
+      only unpopulate a shelf when applying new settings if the shelf won't be recreated
+      clamp client geometry to zone during geometry calc
+      redo client maximization when a non-overlap shelf changes geometry
+      Revert "Revert "Revert "deskmirror - fix dangling reference to mirror by refcounting it"""
+      do not emit client iconify signal when reapplying compositor theme
+      calculate comp object visibility regardless of pending damages
+      update xkb settings and send xkb update event when calling e_xkb_layout_set()
+      fix shot module compile without x11 support
+      only init E_EVENT_XKB_CHANGED during xkb init if xkb init hasn't already occurred
+      attempt to maintain currently-selected kbd layout when modifying kbd list
+      add weekeyboard edj files
+      improve client exe_inst creation
+      fix systray implementation of notifier watcher (StatusNotifierItem)
+      add note for starting wl-x11
+      broadcast support for _GTK_FRAME_EXTENTS
+      fully support _GTK_FRAME_EXTENTS
+      add util function for determining if a client is allowed to have a frame
+      fix e_shelf_position_calc() to not set struct members before applying them
+      block border-affecting entries from showing up in client menu with csd
+      block border-affecting client functions for csd clients
+      set comp object client_inset.calc based on frame_object existence
+      move compositor frame adjust messages to pixels_get callback
+      add csd case for compositor frame adjust messages
+      check warp_client existence during pointer warp before dereferencing it
+      fix handling of x11 ICCCM WithdrawnState
+      set x11 supported atom array size correctly
+      initialize pixmap size vars in comp resize interceptor
+      map/unmap x11 client windows when toggling iconic state
+      bump required efl version
+      don't call e_client_unignore() when un-withdrawing an x11 window
+      force pixmap clear when hiding an x11 window
+      reject identical calls to e_comp_object_frame_geometry_set()
+      _GTK_FRAME_EXTENTS changes using a property, not a client message
+      force adjustment of client geometry when changing csd frame size
+      remove client maximize states during unmaximize only if they are active
+      unset E_Client->changes.need_unmaximize after calling unmaximize
+      allow client resizes on axes currently unrestricted by maximize state
+      unset the requested maximize state when receiving a client unmaximize request
+      use more accurate math to determine whether to apply a client maximize change
+      do not set client window coordinates during a move until after resizing check
+      use client window coords for resize-moving without a frame_object
+      s/EAPI/E_API/ ...again
+      reject client resize attempts for clients with dirty pixmaps
+      remove object event callback on notification popdown
+      do not roundtrip for x11 client message DBG if it will not be visible
+      unset E_Client->internal_elm_win before deleting the client in e_win
+      do not roundtrip for x11 client message DBG if it will not be visible
+      free x11 damage region rects
+      never mark wl client pixmaps as dirty or refresh them
+      redo CSD for wayland clients to use comp object frame geometry
+      redo wayland client buffer referencing
+      update wayland readme
+      merge E19 branch NEWS items
+      remove remote colorclass editor usage
+      always apply all randr changes after a screen event
+
+MinJeong Kim (1):
+      e_menu: remove an unnecessary comparison
+
+Nicolas Marcotte (1):
+      added a macro and a fucntion to switch to desktop D on screen S as specified in https://phab.enlightenment.org/T2218
+
+Samuel F. Baggen (2):
+      Do not add /usr/share twice for XDG_DATA_DIRS
+      Include /usr/local too in the no-duplication of XDG_DATA_DIRS
+
+Sebastian Dransfeld (20):
+      e: Use same gettext version as efl and elementary
+      e: Add preferred desktop environment for apps
+      e: Improve code
+      randr: fix formatting
+      randr: further cleanup
+      randr: Don't match DP as LID
+      randr: remember crtcid for fast lookup on reconnect
+      randr: TODO++
+      randr: Don't track active outputs
+      randr: cleanup try 2
+      randr: remove weird code
+      randr: handle (x, y) > 0
+      randr: always call _e_randr_output_active_set
+      randr: don't try to enable crtc with no outputs
+      randr: TODO++ and error print
+      Revert "randr: always call _e_randr_output_active_set"
+      randr: add error print
+      systray: revert change which shouldn't go in
+      randr: fix bad copy paste error
+      randr: improve code readability in lid update
+
+Seunghun Lee (9):
+      Remove HAVE_WAYLAND_ONLY dependency from searching and enabling backend module.
+      wl_drm: Add event handler for session activation signal.
+      remove a kind of typo in E_ZONE_GEOMETRY atom string.
+      Add module "wl_text_input" for supporting *wl_text_input* and *wl_input_method* protocol in wayland.
+      Binding input method will be allowed to wl_client that is created by enlightenment.
+      wl_text_input: initializes global handle after destroying.
+      wl_text_input: remove duplicated code.
+      wl_text_input: initializes input_method's context when destroy context.
+      Add initial module of weekeyboard as a wayland virtual keyboard.
+
+Simon Lees (5):
+      Wizard: Update icon theme search list
+      e_bg_del should only delete the bg on the zone specified
+      remove unnecessary call to e_bg_del
+      enlightenment_remote: restore compatibility with older versions with bg-add / bg-del
+      Fix copy-paste error in comment, This page is tasks not connman
+
+Srivardhan Hebbar (1):
+      autotools: modified autogen.sh script to be able to build from different directory.
+
+Stefan Schmidt (64):
+      modules/wl_drm: Remove trailing whitespaces
+      e_client: _e_client_cb_drag_finished is not used in wayland only mode
+      modules/lokker: Array address is never NULL.
+      modules/teamwork: The ih value would never be < 1 as we checked it already.
+      modules/pager: We already dereferenced pw->desk before, no need to check now
+      modules/teamwork: Use eina_file_mkstemp() to avoid problems with umask
+      modules/mixer: Check fcntl setting CLOEXEC for success
+      modules/music-control: Add Tomahawk as compatible player.
+      music-control: Update generated code after various eldbus-codegen fixes
+      e_start_main: Close fd only if we actually succeeded opening it.
+      po: Remove file from now disabled access module to pass distcheck
+      e_sys: Make sure we return false if systemd does not support various suspend modes
+      e_backlight: de-e_comp_get()ify
+      e_bindings: de-e_comp_get()ify
+      e_configure: de-e_comp_get()ify
+      e_dpms: de-e_comp_get()ify
+      e_main: de-e_comp_get()ify
+      e_module: de-e_comp_get()ify
+      e_mouse: de-e_comp_get()ify
+      e_notification: de-e_comp_get()ify
+      e_screensaver: de-e_comp_get()ify
+      po: Change file name to adapt for randr_conf changes.
+      modules: Add new geolocation module to handle location access requests
+      modules/geolocation: Keep the UI indicator in off state at start
+      modules/geolocation: Add communication to geoClue2 to receive current location.
+      modules/geolocation: Add popup with location information to gadget
+      modules/geolocation: Fix naming for the whole module to be geolocation
+      modules/geoloation: Do not stop the client for now as we cannot enable it again
+      e_module: Whitelist geolocation module
+      modules/geolocation: No need to set popup to NULL here.
+      module/geolocation: No need to init and shutdown eldbus as E handles that
+      modules/geolocation: Add module theme and icons.
+      modules/geolocation: Ignore now generated edj in git
+      modules/geolocation: Add source file for artwork.
+      music-control: Generate eldbus files during compile
+      everything: win variable is only used inside ifdef.
+      everything: Actual return something in non wayland only-mode
+      music-control: Mimic explicit file deps fix from geolocation.
+      build: Allow to define path for eldbus-codegen binary
+      build: Use EFL_WITH_BIN instead of E homegrown one.
+      build: Remove generated eldbus files during normal clean and not only maintainer-clean
+      gadman: Remove self assignment of e_comp
+      systray: Remove self assignment from e_comp
+      e_client: Remove self assignment from e_comp
+      po: Remove unused e_int_config_randr.c file from POTFILES.in to pass distcheck
+      modules/geolocation: Only display a valid altitude value
+      modules/geolocation: Make module work with newer GeoClue2
+      modules/geolocation: Follow InUse property change to give UI indication
+      module/geolocation: Stop setting gadget icon from start and stop callbacks
+      e_client: Remove deleted client from UUID store
+      e_remember: Update UUID store properties from e_remember
+      e_main: Initialize UUID store during E startup
+      e_pixmap: Create uuid when being used as a wl surface
+      session_recovery: Add wayland extension protocol prototype for session recovery
+      wl_x11: Mark data in callback as unused
+      modules/geolocation: Keep track of accuracy and set lower minimal value
+      modules/geolocation: Limit the accurancy double to one decimal in the popup
+      modules/geolocation: Remove unused eldbus interface variable
+      module/geolocation: Use correct unref function for proxies.
+      wl_drm: No need to init orient to 0 as it will never be read.
+      README.Wayland: Update to latest configure options and mention xwayland
+      e_widget_filepreview: Remove assign without effect
+      modules/battery: Remove assign without effect
+      e_comp_wl: create global and bind  session_recovery interface
+
+Takeshi Banse (1):
+      cpufreq: teach cpuinfo_{min,max}_freq as available frequencies
+
+Thierry (1):
+      menu: match file looked by code.
+
+Toan Pham (4):
+      Changed search pattern to focus window by name to case-insensitive.
+      fixed window focus and keyboard input issues
+      Center a dialog window when it is displaying off-screen
+      added quick tile to corner feature
+
+Tom Hacohen (16):
+      fix: Add more desktops to be tiled by default in the tiling config.
+      Fix tiling window properties restore issues with iconify.
+      tiling: fix coding conventions and style.
+      Tiling: Fix up previous tiling commit (make it safer).
+      AUTHORS: Add Luis to authors file.
+      AUTHORS: Add Marcel to authors file.
+      Randr: Fix null dereference.
+      Tiling: don't try to change the border of borderless windows.
+      E comp: Adjust according to elm function rename.
+      Allow building without ptrace
+      Module Music control: Don't build if disabled.
+      Tiling: don't tile centered windows.
+      E auth: improve clearing out passwords from memory.
+      Module teamwork: Stop using a deprecated function.
+      Auth: try harder when clearing passwords.
+      Logging: Fix broken logging macros.
+
+Vincent Torri (1):
+      add MIN define for non-linux systems
+
+Wonguk Jeong (1):
+      conf_application: fix crash on setting Desktop Environment
+
+Yomi (10):
+      update copyright year
+      Update the error message shown if a theme file is invalid.
+      Fixed tense in presentation mode notifications.
+      change DESKTOP env setting on startup
+      Correct misspelling.
+      Fix misspelling in e_randr2.c
+      Fix misspelling in e_client.h
+      Fix misspellings in E's files.
+      Update README for those viewing this repo from github.
+      Update links in head.html
+
+bootleg (1):
+      Adding support for Pithos (http://pithos.github.io/) in the music-control module. Play/pause, skip, and lock screen are confirmed to work correctly with the latest version. Additional functions (Ban, Tired, etc.) aren't working just yet and the...
+
+jhyuni.kang (1):
+      Support wl_touch and send wl_touch events to client
+
+kabeer khan (5):
+      Added Caps Lock On/Off Hint in Lock Screen
+      e_startup: Added dialog to notify user to fix his dbus setup
+      Wizard : Resolved FIXME added code to free blang_list in page_010
+      wl_drm: create ecore_evas for drm gl backend
+      Release list of touch resources when input is shutdown
+
+vivek (3):
+      wl_desktop_shell: Implemented function to show xdg shell surface menu
+      wl_desktop_shell: Fixed the issue to check if client is active or hung up
+      wl_desktop_shell: Fixed the issue to check if wl surface is active or hung up
+
+
 Release 0.19.11:
 ---------------------
 Carsten Haitzler (3):
