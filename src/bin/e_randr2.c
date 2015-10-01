@@ -598,13 +598,9 @@ _cb_screen_change_delay(void *data EINA_UNUSED)
      }
    // update screen info after the above apply or due to external changes
    e_randr2_screeninfo_update();
-   if ((e_comp->w != e_randr2->w) || (e_comp->h != e_randr2->h))
-     e_comp_canvas_resize(e_randr2->w, e_randr2->h);
-   else
-     {
-        e_randr2_screens_setup(e_comp->w, e_comp->h);
-        e_comp_canvas_update();
-     }
+   e_comp_canvas_resize(e_randr2->w, e_randr2->h);
+   e_randr2_screens_setup(e_comp->w, e_comp->h);
+   e_comp_canvas_update();
    // tell the rest of e some screen reconfigure thing happened
    ecore_event_add(E_EVENT_RANDR_CHANGE, NULL, NULL, NULL);
    event_screen = EINA_FALSE;
