@@ -3646,14 +3646,7 @@ e_comp_object_render(Evas_Object *obj)
           }
         else
           evas_object_image_data_set(cw->obj, cw->blanked ? NULL : pix);
-        EINA_LIST_FOREACH(cw->obj_mirror, l, o)
-          {
-             evas_object_image_data_set(o, pix);
-             evas_object_image_pixels_dirty_set(o, EINA_FALSE);
-          }
-        eina_iterator_free(it);
-        E_FREE_FUNC(cw->pending_updates, eina_tiler_free);
-        return ret;
+        goto end;
      }
 
    pix = evas_object_image_data_get(cw->obj, EINA_TRUE);
@@ -3680,6 +3673,7 @@ e_comp_object_render(Evas_Object *obj)
         RENDER_DEBUG("UPDATE [%p]: %d %d %dx%d -- pix = %p", cw->ec, r->x, r->y, r->w, r->h, pix);
      }
    evas_object_image_data_set(cw->obj, cw->blanked ? NULL : pix);
+end:
    EINA_LIST_FOREACH(cw->obj_mirror, l, o)
      {
         evas_object_image_data_set(o, pix);
