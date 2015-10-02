@@ -3688,7 +3688,7 @@ e_comp_object_render(Evas_Object *obj)
 
    eina_iterator_free(it);
    E_FREE_FUNC(cw->pending_updates, eina_tiler_free);
-   return EINA_TRUE;
+   return ret;
 }
 
 /* create a duplicate of an evas object */
