@@ -1261,6 +1261,9 @@ _e_comp_wl_frame_cb_destroy(struct wl_resource *resource)
 
    ec->comp_data->frames =
      eina_list_remove(ec->comp_data->frames, resource);
+
+   ec->comp_data->pending.frames =
+     eina_list_remove(ec->comp_data->pending.frames, resource);
 }
 
 static void
