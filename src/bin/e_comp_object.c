@@ -3634,6 +3634,8 @@ e_comp_object_render(Evas_Object *obj)
                   RENDER_DEBUG("UPDATE [%p] %i %i %ix%i", cw->ec, r->x, r->y, r->w, r->h);
                }
           }
+        else
+          ret = EINA_TRUE;
         /* set pixel data */
         if (e_comp->comp_type == E_PIXMAP_TYPE_WL)
           {
