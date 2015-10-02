@@ -307,14 +307,13 @@ _e_comp_cb_nocomp_begin_timeout(void *data EINA_UNUSED)
 }
 
 
-static Eina_Bool
+static void
 _e_comp_client_update(E_Client *ec)
 {
    int pw, ph;
-   Eina_Bool post = !e_pixmap_is_x(ec->pixmap);
 
    DBG("UPDATE [%p] pm = %p", ec, ec->pixmap);
-   if (e_object_is_del(E_OBJECT(ec))) return EINA_FALSE;
+   if (e_object_is_del(E_OBJECT(ec))) return;
 
    e_pixmap_size_get(ec->pixmap, &pw, &ph);
 
@@ -327,7 +326,6 @@ _e_comp_client_update(E_Client *ec)
             e_pixmap_size_changed(ec->pixmap, pw, ph))
           {
              e_pixmap_image_clear(ec->pixmap, 0);
-             post = EINA_TRUE;
              e_comp_object_render_update_del(ec->frame); //clear update
           }
         else if (!e_pixmap_size_get(ec->pixmap, NULL, NULL))
@@ -346,7 +344,6 @@ _e_comp_client_update(E_Client *ec)
         if (e_pixmap_is_x(ec->pixmap) && (!ec->override))
           evas_object_resize(ec->frame, ec->w, ec->h);
      }
-   return post;
 }
 
 static void
@@ -397,12 +394,7 @@ _e_comp_cb_update(void)
      {
         /* clear update flag */
         e_comp_object_render_update_del(ec->frame);
-        if (_e_comp_client_update(ec))
-          {
-             e_comp->post_updates = eina_list_append(e_comp->post_updates, ec);
-             REFD(ec, 111);
-             e_object_ref(E_OBJECT(ec));
-          }
+        _e_comp_client_update(ec);
      }
    _e_comp_fps_update();
    if (conf->fps_show)

@@ -3682,6 +3682,12 @@ end:
 
    eina_iterator_free(it);
    E_FREE_FUNC(cw->pending_updates, eina_tiler_free);
+   if (ret)
+     {
+        e_comp->post_updates = eina_list_append(e_comp->post_updates, cw->ec);
+        REFD(cw->ec, 111);
+        e_object_ref(E_OBJECT(cw->ec));
+     }
    return ret;
 }
 
