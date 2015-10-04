@@ -1451,7 +1451,7 @@ e_fm2_parent_go(Evas_Object *obj)
    char buf[PATH_MAX];
    EFM_SMART_CHECK();
    if (!sd->path) return;
-   path = memcpy(buf, sd->path, strlen(sd->path + 1));
+   path = memcpy(buf, sd->path, strlen(sd->path) + 1);
    if ((p = strrchr(path, '/'))) *p = 0;
    if (*path)
      e_fm2_path_set(obj, sd->dev, path);
