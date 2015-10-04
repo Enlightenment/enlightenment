@@ -35,7 +35,7 @@ static void         _add_edge_binding_cb(void *data, void *data2);
 static void         _modify_edge_binding_cb(void *data, void *data2);
 
 /********* Helper *************************/
-static char        *_edge_binding_text_get(E_Zone_Edge edge, float delay, int mod);
+static char        *_edge_binding_text_get(E_Zone_Edge edge, float delay, int mod, int drag_only);
 static void         _auto_apply_changes(E_Config_Dialog_Data *cfdata);
 static void         _find_edge_binding_action(const char *action, const char *params, int *g, int *a, int *n);
 
@@ -768,7 +768,7 @@ _update_edge_binding_list(E_Config_Dialog_Data *cfdata)
 
         bi = l->data;
 
-        b = _edge_binding_text_get(bi->edge, bi->delay, bi->modifiers);
+        b = _edge_binding_text_get(bi->edge, bi->delay, bi->modifiers, bi->drag_only);
         if (!b) continue;
 
         ic = edje_object_add(cfdata->evas);
@@ -933,7 +933,7 @@ _edge_grab_wnd_show(E_Config_Dialog_Data *cfdata)
 
    if (cfdata->locals.edge)
      {
-        label = _edge_binding_text_get(cfdata->locals.edge, ((float)cfdata->locals.delay), cfdata->locals.modifiers);
+       label = _edge_binding_text_get(cfdata->locals.edge, ((float)cfdata->locals.delay), cfdata->locals.modifiers, cfdata->locals.drag_only);
         edje_object_part_text_set(cfdata->gui.o_selector, "e.text.selection", label);
         E_FREE(label);
      }
@@ -982,7 +982,8 @@ _edge_grab_wnd_slider_changed_cb(void *data, Evas_Object *obj __UNUSED__)
    if (!cfdata->locals.edge) return;
    label = _edge_binding_text_get(cfdata->locals.edge,
                                   ((float)cfdata->locals.delay),
-                                  cfdata->locals.modifiers);
+                                  cfdata->locals.modifiers,
+                                  cfdata->locals.drag_only);
    edje_object_part_text_set(cfdata->gui.o_selector, "e.text.selection", label);
    E_FREE(label);
 }
@@ -996,12 +997,12 @@ _edge_grab_wnd_check_changed_cb(void *data, Evas_Object *obj __UNUSED__)
    if (cfdata->locals.click)
      {
         if (cfdata->locals.edge && cfdata->locals.button)
-          label = _edge_binding_text_get(cfdata->locals.edge, -1.0 * cfdata->locals.button, cfdata->locals.modifiers);
+          label = _edge_binding_text_get(cfdata->locals.edge, -1.0 * cfdata->locals.button, cfdata->locals.modifiers, cfdata->locals.drag_only);
      }
    else
      {
         if (cfdata->locals.edge)
-          label = _edge_binding_text_get(cfdata->locals.edge, ((float)cfdata->locals.delay), cfdata->locals.modifiers);
+          label = _edge_binding_text_get(cfdata->locals.edge, ((float)cfdata->locals.delay), cfdata->locals.modifiers, cfdata->locals.drag_only);
         e_widget_disabled_set(cfdata->gui.o_slider, 0);
      }
    e_widget_disabled_set(cfdata->gui.o_slider, cfdata->locals.click);
@@ -1091,7 +1092,8 @@ stop:
 
    label = _edge_binding_text_get(cfdata->locals.edge,
                                   cfdata->locals.click ? (-1.0 * cfdata->locals.button) : ((float)cfdata->locals.delay),
-                                  cfdata->locals.modifiers);
+                                  cfdata->locals.modifiers,
+                                  cfdata->locals.drag_only);
    edje_object_part_text_set(cfdata->gui.o_selector, "e.text.selection", label);
    E_FREE(label);
 }
@@ -1208,7 +1210,7 @@ _edge_grab_wnd_selection_apply(E_Config_Dialog_Data *cfdata)
           {
              char *label;
 
-             label = _edge_binding_text_get(bi->edge, bi->delay, bi->modifiers);
+             label = _edge_binding_text_get(bi->edge, bi->delay, bi->modifiers, bi->drag_only);
              e_widget_ilist_nth_label_set(cfdata->gui.o_binding_list, n, label);
              free(label);
           }
@@ -1361,7 +1363,7 @@ _find_edge_binding_action(const char *action, const char *params, int *g, int *a
 }
 
 static char *
-_edge_binding_text_get(E_Zone_Edge edge, float delay, int mod)
+_edge_binding_text_get(E_Zone_Edge edge, float delay, int mod, int drag_only)
 {
    char b[256] = "";
 
@@ -1441,6 +1443,12 @@ _edge_binding_text_get(E_Zone_Edge edge, float delay, int mod)
         else
           snprintf(buf, 20, "%.2fs", delay);
         strcat(b, buf);
+     }
+
+   if (drag_only)
+     {
+        if (b[0]) strcat(b, " ");
+        strcat(b, _("(drag only)"));
      }
 
    if (!b[0]) return strdup(TEXT_NONE_ACTION_EDGE);
