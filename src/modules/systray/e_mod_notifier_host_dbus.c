@@ -14,8 +14,6 @@
 extern const char *Category_Names[];
 extern const char *Status_Names[];
 
-static Eina_Stringshare *DBUS_PATH;
-
 typedef struct _Notifier_Host_Data {
    Instance_Notifier_Host *host_inst;
    void *data;
@@ -445,24 +443,26 @@ notifier_items_get_cb(void *data, const Eldbus_Message *msg, Eldbus_Pending *pen
 }
 
 static void
-item_registered_local_cb(void *data, const char *bus)
+item_registered_local_cb(void *data, const char *bus, const char *path)
 {
    Context_Notifier_Host *ctx = data;
-   notifier_item_add(eina_stringshare_ref(DBUS_PATH), eina_stringshare_add(bus), ctx);
+   notifier_item_add(eina_stringshare_add(path), eina_stringshare_add(bus), ctx);
 }
 
 static void
-item_unregistered_local_cb(void *data, const char *bus)
+item_unregistered_local_cb(void *data, const char *bus, const char *path)
 {
    Context_Notifier_Host *ctx = data;
    Notifier_Item *item;
-   Eina_Stringshare *s;
+   Eina_Stringshare *s, *p;
 
    s = eina_stringshare_add(bus);
-   item = notifier_item_find(DBUS_PATH, s, ctx);
+   p = eina_stringshare_add(path);
+   item = notifier_item_find(p, s, ctx);
    if (item)
      systray_notifier_item_free(item);
    eina_stringshare_del(s);
+   eina_stringshare_del(p);
 }
 
 static void
@@ -515,7 +515,6 @@ systray_notifier_dbus_init(Context_Notifier_Host *ctx)
    eldbus_init();
    ctx->conn = eldbus_connection_get(ELDBUS_CONNECTION_TYPE_SESSION);
    if (!ctx->conn) return;
-   DBUS_PATH = eina_stringshare_add("/StatusNotifierItem");
    p = eldbus_name_request(ctx->conn,
                           WATCHER_BUS, ELDBUS_NAME_REQUEST_FLAG_REPLACE_EXISTING,
                           name_request_cb, ctx);
@@ -542,7 +541,6 @@ void systray_notifier_dbus_shutdown(Context_Notifier_Host *ctx)
         eldbus_object_unref(obj);
         ctx->watcher = NULL;
      }
-   eina_stringshare_replace(&DBUS_PATH, NULL);
    eldbus_connection_unref(ctx->conn);
    eldbus_shutdown();
 }

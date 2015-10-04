@@ -36,8 +36,8 @@ item_name_monitor_cb(void *data, const char *bus, const char *old_id EINA_UNUSED
    eldbus_service_signal_emit(iface, ITEM_UNREGISTERED, svc);
    items = eina_list_remove(items, service);
    if (unregistered_cb)
-     unregistered_cb(user_data, bus);
-   eldbus_name_owner_changed_callback_del(conn, svc, item_name_monitor_cb, service);
+     unregistered_cb(user_data, bus, svc);
+   eldbus_name_owner_changed_callback_del(conn, bus, item_name_monitor_cb, service);
    eina_stringshare_del(service);
 }
 
@@ -46,12 +46,16 @@ register_item_cb(const Eldbus_Service_Interface *s_iface, const Eldbus_Message *
 {
    const char *service, *svc;
    char buf[1024];
+   Eina_Bool stupid;
 
    if (!eldbus_message_arguments_get(msg, "s", &service))
      return NULL;
    svc = service;
+   /* if stupid, this app does not conform to http://www.freedesktop.org/wiki/Specifications/StatusNotifierItem/
+    * and is expecting to have its send id watched as it is not providing a real bus name here */
+   stupid = !!strncmp(svc, "org.", 4);
 
-   snprintf(buf, sizeof(buf), "%s/%s", eldbus_message_sender_get(msg), service);
+   snprintf(buf, sizeof(buf), "%s/%s", stupid ? eldbus_message_sender_get(msg) : svc, stupid ? svc : "/StatusNotifierItem");
    service = eina_stringshare_add(buf);
    if (eina_list_data_find(items, service))
      {
@@ -61,12 +65,12 @@ register_item_cb(const Eldbus_Service_Interface *s_iface, const Eldbus_Message *
 
    items = eina_list_append(items, service);
    eldbus_service_signal_emit(s_iface, ITEM_REGISTERED, svc);
-   eldbus_name_owner_changed_callback_add(conn, svc,
+   eldbus_name_owner_changed_callback_add(conn, stupid ? eldbus_message_sender_get(msg) : svc,
                                          item_name_monitor_cb, service,
                                          EINA_FALSE);
 
    if (registered_cb)
-     registered_cb(user_data, svc);
+     registered_cb(user_data, stupid ? eldbus_message_sender_get(msg) : svc, stupid ? svc : "/StatusNotifierItem");
    return eldbus_message_method_return_new(msg);
 }
 
