@@ -1325,7 +1325,7 @@ _e_int_menus_clients_add_by_desk(E_Desk *curr_desk, Eina_List *clients, E_Menu *
    /* Deal with present desk first */
    EINA_LIST_FOREACH(clients, l, ec)
      {
-        if (ec->iconic && e_config->clientlist_separate_iconified_apps && E_CLIENTLIST_GROUPICONS_SEP)
+        if (ec->iconic && (e_config->clientlist_separate_iconified_apps == E_CLIENTLIST_GROUPICONS_SEP))
           {
              ico = eina_list_append(ico, ec);
              continue;
@@ -1396,8 +1396,7 @@ _e_int_menus_clients_add_by_none(Eina_List *clients, E_Menu *m)
 
    EINA_LIST_FOREACH(clients, l, ec)
      {
-        if ((ec->iconic) && (e_config->clientlist_separate_iconified_apps) &&
-            (E_CLIENTLIST_GROUPICONS_SEP))
+        if ((ec->iconic) && (e_config->clientlist_separate_iconified_apps == E_CLIENTLIST_GROUPICONS_SEP))
           {
              ico = eina_list_append(ico, ec);
              continue;
