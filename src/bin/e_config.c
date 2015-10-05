@@ -1089,7 +1089,7 @@ e_config_load(void)
    else
      e_bindings = e_config_domain_load("e_bindings", _e_config_binding_edd);
 
-   if (e_bindings && (e_bindings->config_version != E_CONFIG_BINDINGS_VERSION))
+   if ((!e_bindings) || (e_bindings->config_version != E_CONFIG_BINDINGS_VERSION))
      {
         Eina_Stringshare *prof;
 
