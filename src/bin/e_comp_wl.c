@@ -923,7 +923,7 @@ _e_comp_wl_surface_state_size_update(E_Client *ec, E_Comp_Wl_Surface_State *stat
    /*   } */
 
    if (!e_pixmap_size_get(ec->pixmap, &state->bw, &state->bh)) return;
-   if (e_client_has_xwindow(ec)) return;
+   if (e_client_has_xwindow(ec) || e_comp_object_frame_exists(ec->frame)) return;
    window = &ec->comp_data->shell.window;
    if (window->x || window->y || window->w || window->h)
      e_comp_object_frame_geometry_set(ec->frame, -window->x, -window->y,
