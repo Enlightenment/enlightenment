@@ -648,10 +648,9 @@ _e_comp_x_post_client_idler_cb(void *d EINA_UNUSED)
              ecore_x_window_prop_card32_set(e_client_util_win_get(ec), ECORE_X_ATOM_NET_WM_WINDOW_OPACITY, &opacity, 1);
              /* flag gets unset in property cb to avoid fetching opacity after we just set it */
           }
-        if (e_pixmap_is_x(ec->pixmap))
+        if (e_pixmap_is_x(ec->pixmap) && ec->post_resize)
           {
-             if (ec->post_resize)
-               e_pixmap_dirty(ec->pixmap);
+             e_pixmap_dirty(ec->pixmap);
              e_comp_object_render_update_del(ec->frame);
              if (!ec->internal)
                {
