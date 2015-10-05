@@ -80,11 +80,11 @@ enlightenment.
 Known Issues
 -------------
 * Internal window (eg. filemanager), DnD is not currently functional
- - Requires EFL 1.16 release
+ - Requires new EFL release
 * Nested compositors (wl_wl output) cannot create internal windows
- - Requires EFL 1.16 release
+ - Requires new EFL release
 * DRM output lacks hardware acceleration
- - Requires EFL 1.16 release
+ - Requires new EFL release
 * Window close animations will not play for most Wayland clients
  - Requires upstream Wayland protocol additions
 * Window closing occasionally leads to crash
