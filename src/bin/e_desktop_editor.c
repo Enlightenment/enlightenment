@@ -847,6 +847,7 @@ _e_desktop_editor_cb_icon_select(void *data1, void *data2)
 
    dia = e_dialog_new(cfdata->editor->cfd->comp, "E", "_eap_icon_select_dialog");
    if (!dia) return;
+   e_dialog_resizable_set(dia, 1);
    e_object_del_attach_func_set(E_OBJECT(dia),
                                 _e_desktop_edit_cb_icon_select_destroy);
    snprintf(buf, sizeof(buf), _("Select an Icon for '%s'"), ecore_file_file_get(cfdata->orig_path));
