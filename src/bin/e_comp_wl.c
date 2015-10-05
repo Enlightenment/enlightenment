@@ -1164,7 +1164,8 @@ _e_comp_wl_surface_state_commit(E_Client *ec, E_Comp_Wl_Surface_State *state)
      }
 
    /* put state input into surface */
-   if (state->input)
+   if ((state->input) &&
+       (!eina_tiler_empty(state->input)))
      {
         Eina_Tiler *src, *tmp;
 
@@ -1189,6 +1190,9 @@ _e_comp_wl_surface_state_commit(E_Client *ec, E_Comp_Wl_Surface_State *state)
           e_comp_object_input_area_set(ec->frame, 0, 0, ec->w, ec->h);
 
         eina_tiler_free(tmp);
+
+        /* clear input tiler */
+        eina_tiler_clear(state->input);
      }
 
    return;
@@ -1197,10 +1201,6 @@ unmapped:
    /* clear pending damages */
    EINA_LIST_FREE(state->damages, dmg)
      eina_rectangle_free(dmg);
-
-   /* clear input tiler */
-   if (state->input)
-     eina_tiler_clear(state->input);
 }
 
 static void
