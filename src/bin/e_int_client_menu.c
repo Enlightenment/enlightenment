@@ -1656,6 +1656,7 @@ _e_client_menu_cb_fav_add(void *data, E_Menu *m EINA_UNUSED, E_Menu_Item *mi EIN
    efreet_menu_desktop_insert(menu, ec->desktop, -1);
    efreet_menu_save(menu, buf);
    efreet_menu_free(menu);
+   e_int_menus_cache_clear();
 }
 
 static void
