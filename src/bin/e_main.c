@@ -507,10 +507,6 @@ main(int argc, char **argv)
    TS("E_Alert Init Done");
    _e_main_shutdown_push(e_alert_shutdown);
 
-   TS("E_Configure Init");
-   e_configure_init();
-   TS("E_Configure Init Done");
-
    TS("E Directories Init");
    /* setup directories we will be using for configurations storage etc. */
    if (!_e_main_dirs_init())
@@ -632,6 +628,10 @@ main(int argc, char **argv)
      }
    TS("E_Intl Post Init Done");
    _e_main_shutdown_push(e_intl_post_shutdown);
+
+   TS("E_Configure Init");
+   e_configure_init();
+   TS("E_Configure Init Done");
 
    e_screensaver_preinit();
 
