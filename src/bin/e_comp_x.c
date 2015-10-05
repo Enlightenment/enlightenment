@@ -626,12 +626,14 @@ _e_comp_x_post_client_idler_cb(void *d EINA_UNUSED)
              /* flag gets unset in property cb to avoid fetching opacity after we just set it */
           }
         if (ec->post_resize)
-          e_pixmap_dirty(ec->pixmap);
-        e_comp_object_render_update_del(ec->frame);
-        if (!ec->internal)
           {
-             ec->comp_data->pw = ec->client.w;
-             ec->comp_data->ph = ec->client.h;
+             e_pixmap_dirty(ec->pixmap);
+             e_comp_object_render_update_del(ec->frame);
+             if (!ec->internal)
+               {
+                  ec->comp_data->pw = ec->client.w;
+                  ec->comp_data->ph = ec->client.h;
+               }
           }
         ec->post_move = 0;
         ec->post_resize = 0;
