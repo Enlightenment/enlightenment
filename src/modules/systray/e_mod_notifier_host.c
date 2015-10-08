@@ -216,6 +216,7 @@ image_scale(Instance_Notifier_Host *notifier_inst, Notifier_Item_Icon *ii)
    Evas_Coord sz;
    switch (systray_gadcon_get(notifier_inst->inst)->orient)
      {
+      case E_GADCON_ORIENT_FLOAT:
       case E_GADCON_ORIENT_HORIZ:
       case E_GADCON_ORIENT_TOP:
       case E_GADCON_ORIENT_BOTTOM:
@@ -223,7 +224,11 @@ image_scale(Instance_Notifier_Host *notifier_inst, Notifier_Item_Icon *ii)
       case E_GADCON_ORIENT_CORNER_TR:
       case E_GADCON_ORIENT_CORNER_BL:
       case E_GADCON_ORIENT_CORNER_BR:
-        sz = systray_gadcon_get(notifier_inst->inst)->shelf->h;
+        if (systray_gadcon_get(notifier_inst->inst)->shelf)
+          sz = systray_gadcon_get(notifier_inst->inst)->shelf->h;
+        else
+          evas_object_geometry_get(notifier_inst->inst->gcc->o_frame ?:
+            notifier_inst->inst->gcc->o_base, NULL, NULL, NULL, &sz);
         break;
 
       case E_GADCON_ORIENT_VERT:
@@ -234,7 +239,11 @@ image_scale(Instance_Notifier_Host *notifier_inst, Notifier_Item_Icon *ii)
       case E_GADCON_ORIENT_CORNER_LB:
       case E_GADCON_ORIENT_CORNER_RB:
       default:
-        sz = systray_gadcon_get(notifier_inst->inst)->shelf->w;
+        if (systray_gadcon_get(notifier_inst->inst)->shelf)
+          sz = systray_gadcon_get(notifier_inst->inst)->shelf->w;
+        else
+          evas_object_geometry_get(notifier_inst->inst->gcc->o_frame ?:
+            notifier_inst->inst->gcc->o_base, NULL, NULL, &sz, NULL);
         break;
      }
    sz = sz - 5;
