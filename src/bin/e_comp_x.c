@@ -5469,6 +5469,13 @@ e_comp_x_xwayland_client_setup(E_Client *ec, E_Client *wc)
    ec->comp_data = NULL;
    cd->evas_init = 0;
    _e_comp_x_client_evas_init(wc);
+   if (!e_comp_object_frame_exists(ec->frame))
+     {
+        int l, r, t, b;
+
+        e_comp_object_frame_geometry_get(ec->frame, &l, &r, &t, &b);
+        e_comp_object_frame_geometry_set(wc->frame, l, r, t, b);
+     }
    wc->borderless = ec->borderless;
    wc->border.changed = 1;
    EC_CHANGED(wc);
