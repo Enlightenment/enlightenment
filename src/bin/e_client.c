@@ -4090,6 +4090,7 @@ e_client_urgent_set(E_Client *ec, Eina_Bool urgent)
         int x, y;
         ecore_evas_pointer_xy_get(e_comp->ee, &x, &y);
         ecore_evas_pointer_warp(e_comp->ee, x, y);
+        e_screensaver_notidle();
      }
    if (!ec->zone) return;
 
