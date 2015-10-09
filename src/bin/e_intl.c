@@ -546,7 +546,8 @@ _e_intl_locale_alias_get(const char *language)
    if (!alias_hash) /* No alias file available */
      return strdup(language);
 
-   strcpy(lower_language, language);
+   strncpy(lower_language, language, sizeof(lower_language) - 1);
+   lower_language[sizeof(lower_language) - 1] = '\0';
    eina_str_tolower(&lower_language);
    alias = eina_hash_find(alias_hash, lower_language);
 
