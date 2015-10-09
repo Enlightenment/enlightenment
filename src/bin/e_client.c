@@ -4085,6 +4085,13 @@ e_client_urgent_set(E_Client *ec, Eina_Bool urgent)
 {
    E_OBJECT_CHECK(ec);
    E_OBJECT_TYPE_CHECK(ec, E_CLIENT_TYPE);
+
+   if (urgent && e_screensaver_on_get() && e_config->screensaver_wake_on_urgent)
+     {
+        int x, y;
+        ecore_evas_pointer_xy_get(e_comp_get(NULL)->ee, &x, &y);
+        ecore_evas_pointer_warp(e_comp_get(NULL)->ee, x, y);
+     }
    if (!ec->zone) return;
 
    urgent = !!urgent;
@@ -4099,12 +4106,6 @@ e_client_urgent_set(E_Client *ec, Eina_Bool urgent)
      {
         e_comp_object_signal_emit(ec->frame, "e,state,not_urgent", "e");
         ec->urgent = 0;
-     }
-   if (urgent && e_screensaver_on_get() && e_config->screensaver_wake_on_urgent)
-     {
-        int x, y;
-        ecore_evas_pointer_xy_get(e_comp_get(NULL)->ee, &x, &y);
-        ecore_evas_pointer_warp(e_comp_get(NULL)->ee, x, y);
      }
 }
 
