@@ -3257,7 +3257,10 @@ e_client_below_get(const E_Client *ec)
    if (e_comp_canvas_client_layer_map(ec->layer) == 9999) return NULL;
 
    /* go down the layers until we find one */
-   for (x = e_comp_canvas_layer_map(ec->layer) - 1; x >= e_comp_canvas_layer_map(E_LAYER_CLIENT_DESKTOP); x--)
+   x = e_comp_canvas_layer_map(ec->layer);
+   if (x > 0) x--;
+
+   for (; x >= e_comp_canvas_layer_map(E_LAYER_CLIENT_DESKTOP); x--)
      {
         if (!e_comp->layers[x].clients) continue;
         EINA_INLIST_REVERSE_FOREACH(e_comp->layers[x].clients, ec2)
