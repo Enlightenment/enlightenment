@@ -170,9 +170,9 @@ static void
 _volume_increase_cb(E_Object *obj EINA_UNUSED, const char *params EINA_UNUSED)
 {
    unsigned int i;
-   EINA_SAFETY_ON_NULL_RETURN(mixer_context->sink_default);
    Emix_Volume volume;
 
+   EINA_SAFETY_ON_NULL_RETURN(mixer_context->sink_default);
    Emix_Sink *s = (Emix_Sink *)mixer_context->sink_default;
    volume.channel_count = s->volume.channel_count;
    volume.volumes = calloc(s->volume.channel_count, sizeof(int));
@@ -196,9 +196,9 @@ static void
 _volume_decrease_cb(E_Object *obj EINA_UNUSED, const char *params EINA_UNUSED)
 {
    unsigned int i;
-   EINA_SAFETY_ON_NULL_RETURN(mixer_context->sink_default);
    Emix_Volume volume;
 
+   EINA_SAFETY_ON_NULL_RETURN(mixer_context->sink_default);
    Emix_Sink *s = (Emix_Sink *)mixer_context->sink_default;
    volume.channel_count = s->volume.channel_count;
    volume.volumes = calloc(s->volume.channel_count, sizeof(int));
@@ -222,7 +222,6 @@ static void
 _volume_mute_cb(E_Object *obj EINA_UNUSED, const char *params EINA_UNUSED)
 {
    EINA_SAFETY_ON_NULL_RETURN(mixer_context->sink_default);
-
    Emix_Sink *s = (Emix_Sink *)mixer_context->sink_default;
    Eina_Bool mute = !s->mute;
    emix_sink_mute_set(s, mute);
@@ -345,6 +344,7 @@ static void
 _check_changed_cb(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
                   void *event EINA_UNUSED)
 {
+   EINA_SAFETY_ON_NULL_RETURN(mixer_context->sink_default);
    Emix_Sink *s = (Emix_Sink *)mixer_context->sink_default;
    emix_sink_mute_set(s, !s->mute);
    emix_config_save_state_get();
@@ -363,8 +363,9 @@ _slider_changed_cb(void *data EINA_UNUSED, Evas_Object *obj,
    int val;
    Emix_Volume v;
    unsigned int i;
-   Emix_Sink *s = (Emix_Sink *)mixer_context->sink_default;
 
+   EINA_SAFETY_ON_NULL_RETURN(mixer_context->sink_default);
+   Emix_Sink *s = (Emix_Sink *)mixer_context->sink_default;
    val = (int)elm_slider_value_get(obj);
    v.volumes = calloc(s->volume.channel_count, sizeof(int));
    v.channel_count = s->volume.channel_count;
@@ -380,6 +381,7 @@ static void
 _slider_drag_stop_cb(void *data EINA_UNUSED, Evas_Object *obj,
                      void *event EINA_UNUSED)
 {
+   EINA_SAFETY_ON_NULL_RETURN(mixer_context->sink_default);
    Emix_Sink *s = (Emix_Sink *)mixer_context->sink_default;
    int val = s->volume.volumes[0];
    elm_slider_value_set(obj, val);
@@ -403,10 +405,9 @@ _popup_new(Instance *inst)
    Eina_List *l;
    int num = 0;
    unsigned int volume = 0, i;
-   unsigned int channels = mixer_context->sink_default->volume.channel_count;
 
    EINA_SAFETY_ON_NULL_RETURN(mixer_context->sink_default);
-
+   unsigned int channels = mixer_context->sink_default->volume.channel_count;
    inst->popup = e_gadcon_popup_new(inst->gcc, 0);
    list = elm_box_add(e_comp->elm);
 
@@ -712,8 +713,6 @@ _ready(void)
                     }
                }
           }
-        s = (Emix_Sink *)mixer_context->sink_default;
-
         emix_config_save_state_restore();
      }
 
