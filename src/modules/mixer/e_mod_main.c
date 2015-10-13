@@ -325,15 +325,11 @@ static void
 _emixer_exec_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Instance *inst = data;
-   char buf[PATH_MAX];
 
    _popup_del(inst);
    if (mixer_context->emixer) return;
 
-   snprintf(buf, sizeof(buf), "%s/%s/emixer %s",
-            e_module_dir_get(mixer_context->module),
-            MODULE_ARCH, emix_config_backend_get());
-   mixer_context->emixer = ecore_exe_run(buf, NULL);
+   mixer_context->emixer = ecore_exe_run("emixer", NULL);
    if (mixer_context->emix_event_handler)
       ecore_event_handler_del(mixer_context->emix_event_handler);
    mixer_context->emix_event_handler =
