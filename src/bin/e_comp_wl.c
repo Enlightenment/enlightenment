@@ -1011,8 +1011,6 @@ _e_comp_wl_surface_state_commit(E_Client *ec, E_Comp_Wl_Surface_State *state)
 
    if (state->new_attach)
      {
-        _e_comp_wl_surface_state_size_update(ec, &ec->comp_data->pending);
-
         if (ec->changes.pos)
           e_comp_object_frame_xy_unadjust(ec->frame, ec->x, ec->y, &x, &y);
         else
