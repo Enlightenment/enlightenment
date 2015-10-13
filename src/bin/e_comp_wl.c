@@ -926,8 +926,8 @@ _e_comp_wl_surface_state_size_update(E_Client *ec, E_Comp_Wl_Surface_State *stat
    if (e_client_has_xwindow(ec) || e_comp_object_frame_exists(ec->frame)) return;
    window = &ec->comp_data->shell.window;
    if (window->x || window->y || window->w || window->h)
-     e_comp_object_frame_geometry_set(ec->frame, -window->x, -window->y,
-       (window->x + window->w) - state->bw,
+     e_comp_object_frame_geometry_set(ec->frame, -window->x, (window->x + window->w) - state->bw,
+       -window->y,
        (window->y + window->h) - state->bh);
    else
      e_comp_object_frame_geometry_set(ec->frame, 0, 0, 0, 0);
