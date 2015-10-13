@@ -1,5 +1,7 @@
 EXTRA_DIST += src/modules/mixer/module.desktop.in \
-src/modules/mixer/e-module-mixer.edj
+src/modules/mixer/e-module-mixer.edj \
+src/modules/mixer/emixer.png \
+src/modules/mixer/emixer.desktop
 if USE_MODULE_MIXER
 mixerdir = $(MDIR)/mixer
 mixer_DATA = src/modules/mixer/e-module-mixer.edj \
