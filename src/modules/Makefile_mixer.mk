@@ -20,7 +20,7 @@ emixerlib += src/modules/mixer/lib/backends/pulseaudio/pulse.c
 endif
 
 src_modules_mixer_emixerdir = $(mixerpkgdir)
-src_modules_mixer_emixer_PROGRAMS = src/modules/mixer/emixer
+bin_PROGRAMS += src/modules/mixer/emixer
 src_modules_mixer_emixer_SOURCES = src/modules/mixer/emixer.c \
                           $(emixerlib)
 src_modules_mixer_emixer_CPPFLAGS = $(MOD_CPPFLAGS) @e_cflags@ -I$(top_srcdir)/src/modules/mixer/lib
