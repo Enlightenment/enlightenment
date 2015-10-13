@@ -38,4 +38,11 @@ src_modules_mixer_module_la_LIBADD = $(MOD_LIBS) @PULSE_LIBS@ @ALSA_LIBS@
 PHONIES += mixer install-mixer
 mixer: $(mixerpkg_LTLIBRARIES) $(mixer_DATA)
 install-mixer: install-mixerDATA install-mixerpkgLTLIBRARIES
+
+desktopfiledir = $(datadir)/applications
+desktopfile_DATA = src/modules/mixer/emixer.desktop
+
+iconsdir= $(datadir)/icons
+icons_DATA = src/modules/mixer/emixer.png
+
 endif
