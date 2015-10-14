@@ -2693,15 +2693,13 @@ _e_comp_x_damage(void *data EINA_UNUSED, int type EINA_UNUSED, Ecore_X_Event_Dam
    E_Client *ec;
    Ecore_X_Rectangle *rects = NULL;
    int n = 0;
-   Eina_Bool skip = EINA_FALSE;
+   Eina_Bool skip;
 
    ec = _e_comp_x_client_find_by_damage(ev->damage);
    if (!ec) return ECORE_CALLBACK_PASS_ON;
+   skip = ec->shape_rects_num > 50;
    if (ec->override && (!ec->comp_data->first_damage))
-     {
-        e_comp_object_damage(ec->frame, 0, 0, ec->w, ec->h);
-        skip = EINA_TRUE;
-     }
+     skip = EINA_TRUE;
    if (ec->comp_data->damage)
      {
         Ecore_X_Region parts;
@@ -2717,6 +2715,8 @@ _e_comp_x_damage(void *data EINA_UNUSED, int type EINA_UNUSED, Ecore_X_Event_Dam
 
    if (ec->comp->nocomp)
      e_pixmap_dirty(ec->pixmap);
+   else if (skip)
+     e_comp_object_damage(ec->frame, 0, 0, ec->w, ec->h);
    else if (n)
      {
         int i;
