@@ -412,6 +412,16 @@ e_modapi_init(E_Module *m)
 
    systray_notifier_host_init();
 
+   //start the watcher service
+   char buf[PATH_MAX];
+
+   snprintf(buf, sizeof(buf), "%s/%s/watcher", e_module_dir_get(m), MODULE_ARCH);
+
+   if (!ecore_exe_run(buf, NULL))
+     {
+        printf("Starting watcher failed\n");
+     }
+
    return ctx;
 }
 

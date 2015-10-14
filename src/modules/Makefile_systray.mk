@@ -21,8 +21,7 @@ src_modules_systray_module_la_SOURCES = src/modules/systray/e_mod_main.h \
 			    src/modules/systray/e_mod_main.c \
 			    src/modules/systray/e_mod_notifier_host_private.h \
 			    src/modules/systray/e_mod_notifier_host.c \
-			    src/modules/systray/e_mod_notifier_host_dbus.c \
-			    src/modules/systray/e_mod_notifier_watcher.c
+			    src/modules/systray/e_mod_notifier_host_dbus.c
 
 PHONIES += systray install-systray
 systray: $(systraypkg_LTLIBRARIES) $(systray_DATA)

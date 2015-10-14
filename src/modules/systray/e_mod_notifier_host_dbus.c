@@ -477,36 +477,13 @@ item_unregistered_local_cb(void *data, const char *bus, const char *path)
    eina_stringshare_del(p);
 }
 
-static void
-name_request_cb(void *data, const Eldbus_Message *msg, Eldbus_Pending *pending)
+void
+systray_notifier_dbus_init(Context_Notifier_Host *ctx)
 {
-   const char *error, *error_msg;
-   unsigned flag;
    Eldbus_Object *obj;
-   Context_Notifier_Host *ctx = data;
 
-   ctx->pending = eina_list_remove(ctx->pending, pending);
-   if (eldbus_message_error_get(msg, &error, &error_msg))
-     {
-        ERR("%s %s", error, error_msg);
-        goto end;
-     }
+   eldbus_init();
 
-   if (!eldbus_message_arguments_get(msg, "u", &flag))
-     {
-        ERR("Error reading message.");
-        goto end;
-     }
-
-   if (flag == ELDBUS_NAME_REQUEST_REPLY_PRIMARY_OWNER)
-     {
-        systray_notifier_dbus_watcher_start(ctx->conn,
-                                            item_registered_local_cb,
-                                            item_unregistered_local_cb, ctx);
-        return;
-     }
-end:
-   WRN("Bus name: %s already in use, getting data via dbus.\n", WATCHER_BUS);
    obj = eldbus_object_get(ctx->conn, WATCHER_BUS, WATCHER_PATH);
    ctx->watcher = eldbus_proxy_get(obj, WATCHER_IFACE);
    eldbus_proxy_call(ctx->watcher, "RegisterStatusNotifierHost", NULL, NULL, -1, "s",
@@ -517,20 +494,6 @@ end:
                                   notifier_item_add_cb, ctx);
    eldbus_proxy_signal_handler_add(ctx->watcher, "StatusNotifierItemUnregistered",
                                   notifier_item_del_cb, ctx);
-}
-
-void
-systray_notifier_dbus_init(Context_Notifier_Host *ctx)
-{
-   Eldbus_Pending *p;
-   
-   eldbus_init();
-   ctx->conn = eldbus_connection_get(ELDBUS_CONNECTION_TYPE_SESSION);
-   if (!ctx->conn) return;
-   p = eldbus_name_request(ctx->conn,
-                          WATCHER_BUS, ELDBUS_NAME_REQUEST_FLAG_REPLACE_EXISTING,
-                          name_request_cb, ctx);
-   if (p) ctx->pending = eina_list_append(ctx->pending, p);
 }
 
 void systray_notifier_dbus_shutdown(Context_Notifier_Host *ctx)
