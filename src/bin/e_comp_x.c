@@ -2702,7 +2702,7 @@ _e_comp_x_damage(void *data EINA_UNUSED, int type EINA_UNUSED, Ecore_X_Event_Dam
         e_comp_object_damage(ec->frame, 0, 0, ec->w, ec->h);
         skip = EINA_TRUE;
      }
-   else if (ec->comp_data->damage)
+   if (ec->comp_data->damage)
      {
         Ecore_X_Region parts;
         Ecore_X_Rectangle bounds;
