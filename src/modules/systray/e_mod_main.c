@@ -7,7 +7,6 @@ static const char _sig_source[] = "e";
 
 static E_Module *systray_mod = NULL;
 static Systray_Context *ctx = NULL;
-EINTERN Instance *instance = NULL; /* only one systray ever possible */
 static char tmpbuf[4096]; /* general purpose buffer, just use immediately */
 
 #define SYSTRAY_MIN_W 16
@@ -144,14 +143,6 @@ _gc_init(E_Gadcon *gc, const char *name, const char *id, const char *style)
 
    if (!systray_mod)
      return NULL;
-   if ((!id) || (instance))
-     {
-        e_util_dialog_internal
-          (_("Another systray exists"),
-          _("There can be only one systray gadget and "
-            "another one already exists."));
-        return NULL;
-     }
 
    inst = E_NEW(Instance, 1);
    if (!inst)
@@ -183,7 +174,6 @@ _gc_init(E_Gadcon *gc, const char *name, const char *id, const char *style)
 
    inst->notifier = systray_notifier_host_new(inst, inst->gcc->gadcon);
 
-   instance = inst;
    return inst->gcc;
 }
 
