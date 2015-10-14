@@ -324,11 +324,13 @@ _e_wid_cb_bg_update(void *data, int type, void *event)
        ((ev->desk_x < 0) || (dd->x == ev->desk_x)) &&
        ((ev->desk_y < 0) || (dd->y == ev->desk_y)))
      {
+        E_Zone *zone;
         const char *bgfile;
 
+        zone = e_comp_zone_number_get(dd->zone);
         bgfile = e_bg_file_get(dd->zone, dd->x, dd->y);
         edje_object_file_set(dd->thumb, bgfile, "e/desktop/background");
-        _bgpreview_viewport_update(dd->thumb, e_comp_zone_number_get(dd->zone), dd->x, dd->y);
+        if (zone) _bgpreview_viewport_update(dd->thumb, zone, dd->x, dd->y);
         eina_stringshare_del(bgfile);
      }
 
