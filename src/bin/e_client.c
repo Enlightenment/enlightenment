@@ -49,7 +49,7 @@ static Eina_List *handlers = NULL;
 static Ecore_Event_Handler *action_handler_key = NULL;
 static Ecore_Event_Handler *action_handler_mouse = NULL;
 static Ecore_Timer *action_timer = NULL;
-static Eina_Rectangle action_orig = {0};
+static Eina_Rectangle action_orig = {0, 0, 0, 0};
 
 static E_Client_Layout_Cb _e_client_layout_cb = NULL;
 
