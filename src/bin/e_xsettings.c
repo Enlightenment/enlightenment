@@ -68,7 +68,9 @@ static Eina_Bool reset = EINA_FALSE;
 static const char _setting_icon_theme_name[] = "Net/IconThemeName";
 static const char _setting_theme_name[] = "Net/ThemeName";
 static const char _setting_font_name[] = "Gtk/FontName";
+#if 0
 static const char _setting_xft_dpi[] = "Xft/DPI";
+#endif
 static const char *_setting_theme = NULL;
 
 static void _e_xsettings_done_cb(void *data, Eio_File *handler, const Eina_Stat *stat);
