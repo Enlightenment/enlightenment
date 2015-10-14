@@ -50,7 +50,7 @@ _create_data(E_Config_Dialog *dialog)
 }
 
 E_Config_Dialog *
-e_connman_config_dialog_new(Evas_Object *parent,
+e_connman_config_dialog_new(Evas_Object *parent EINA_UNUSED,
                             E_Connman_Module_Context *ctxt)
 {
    E_Config_Dialog *dialog;
