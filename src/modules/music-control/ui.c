@@ -233,7 +233,7 @@ _cfg_data_apply(E_Config_Dialog *cfd, E_Config_Dialog_Data *cfdata)
 }
 
 static void
-_cb_menu_cfg(void *data, E_Menu *m, E_Menu_Item *mi EINA_UNUSED)
+_cb_menu_cfg(void *data, E_Menu *m EINA_UNUSED, E_Menu_Item *mi EINA_UNUSED)
 {
    E_Config_Dialog_View *v;
 
