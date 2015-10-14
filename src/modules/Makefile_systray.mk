@@ -9,6 +9,11 @@ systray_DATA = src/modules/systray/e-module-systray.edj \
 systraypkgdir = $(MDIR)/systray/$(MODULE_ARCH)
 systraypkg_LTLIBRARIES = src/modules/systray/module.la
 
+systraypkg_PROGRAMS = src/modules/systray/watcher
+src_modules_systray_watcher_SOURCES = src/modules/systray/watcher.c
+src_modules_systray_watcher_CPPFLAGS = $(MOD_CPPFLAGS) @e_cflags@
+src_modules_systray_watcher_LDADD =  $(MOD_LIBS)
+
 src_modules_systray_module_la_LIBADD = $(MOD_LIBS)
 src_modules_systray_module_la_CPPFLAGS = $(MOD_CPPFLAGS)
 src_modules_systray_module_la_LDFLAGS = $(MOD_LDFLAGS)
