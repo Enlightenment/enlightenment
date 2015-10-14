@@ -108,7 +108,7 @@ _e_mod_drm_mode_screen_find(E_Randr2_Screen *s, Ecore_Drm_Output *output)
      {
         diff = (100 * abs(s->config.mode.w - mode->width)) + 
           (100 * abs(s->config.mode.h - mode->height)) + 
-          abs((100 * s->config.mode.refresh) - (100 * mode->refresh));
+          fabs((100 * s->config.mode.refresh) - (100 * mode->refresh));
         if (diff < distance)
           {
              m = mode;
