@@ -50,7 +50,7 @@ static Ecore_Idler *media_cleaner[2] = {NULL};
 static Eina_List *handlers = NULL;
 static Media_Cache_List *tw_cache_list[2] = {NULL};
 
-static Evas_Point last_coords = {0};
+static Evas_Point last_coords = {0, 0};
 
 static uint64_t tw_win = 0;
 
