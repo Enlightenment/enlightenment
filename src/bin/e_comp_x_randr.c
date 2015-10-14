@@ -399,7 +399,7 @@ _mode_screen_find(Ecore_X_Window root, E_Randr2_Screen *s, Ecore_X_Randr_Output 
              diff =
                (100 * abs(s->config.mode.w - minfo->width)) +
                (100 * abs(s->config.mode.h - minfo->height)) +
-               abs((100 * s->config.mode.refresh) - (100 * refresh));
+               fabs((100 * s->config.mode.refresh) - (100 * refresh));
              if (diff < distance)
                {
                   mode = modes[i];
