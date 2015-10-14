@@ -2804,19 +2804,24 @@ _e_comp_x_damage(void *data EINA_UNUSED, int type EINA_UNUSED, Ecore_X_Event_Dam
    E_Client *ec;
    Ecore_X_Rectangle *rects = NULL;
    int n = 0;
+   Eina_Bool skip = EINA_FALSE;
 
    ec = _e_comp_x_client_find_by_damage(ev->damage);
    if ((!ec) || e_object_is_del(E_OBJECT(ec))) return ECORE_CALLBACK_PASS_ON;
    if (ec->override && (!_e_comp_x_client_data_get(ec)->first_damage))
-     e_comp_object_damage(ec->frame, 0, 0, ec->w, ec->h);
-   else if (_e_comp_x_client_data_get(ec)->damage)
+     {
+        e_comp_object_damage(ec->frame, 0, 0, ec->w, ec->h);
+        skip = EINA_TRUE;
+     }
+   if (_e_comp_x_client_data_get(ec)->damage)
      {
         Ecore_X_Region parts;
         Ecore_X_Rectangle bounds;
 
         parts = ecore_x_region_new(NULL, 0);
         ecore_x_damage_subtract(_e_comp_x_client_data_get(ec)->damage, 0, parts);
-        rects = ecore_x_region_fetch(parts, &n, &bounds);
+        if (!skip)
+          rects = ecore_x_region_fetch(parts, &n, &bounds);
         ecore_x_region_free(parts);
      }
    //WRN("DAMAGE %p: %dx%d", ec, ev->area.width, ev->area.height);
