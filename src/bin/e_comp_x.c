@@ -2715,7 +2715,6 @@ _e_comp_x_damage(void *data EINA_UNUSED, int type EINA_UNUSED, Ecore_X_Event_Dam
      }
    //WRN("DAMAGE %p: %dx%d", ec, ev->area.width, ev->area.height);
 
-   if (!n) return ECORE_CALLBACK_RENEW;
    if (ec->comp->nocomp)
      e_pixmap_dirty(ec->pixmap);
    else if (n)
