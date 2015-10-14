@@ -75,7 +75,7 @@ _ebluez4_search_dialog_del(Instance *inst)
 }
 
 static void
-_ebluez4_cb_search_dialog_del(void *data, Evas *e, Evas_Object *obj, void *event_info)
+_ebluez4_cb_search_dialog_del(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    E_Dialog *dialog = data;
    _ebluez4_search_dialog_del(dialog->data);
@@ -133,7 +133,7 @@ _ebluez4_cb_search(void *data, E_Menu *m EINA_UNUSED, E_Menu_Item *mi EINA_UNUSE
 }
 
 static void
-_ebluez4_cb_adap_settings_dialog_del(void *data, Evas *e, Evas_Object *obj, void *event_info)
+_ebluez4_cb_adap_settings_dialog_del(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    E_Dialog *dialog = data;
    ebluez4_adapter_settings_del(dialog);
@@ -235,7 +235,7 @@ _ebluez4_adap_list_dialog_del(Instance *inst)
 }
 
 static void
-_ebluez4_cb_adap_list_dialog_del(void *data, Evas *e, Evas_Object *obj, void *event_info)
+_ebluez4_cb_adap_list_dialog_del(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    E_Dialog *dialog = data;
    _ebluez4_adap_list_dialog_del(dialog->data);
