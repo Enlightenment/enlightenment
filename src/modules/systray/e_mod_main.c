@@ -13,16 +13,6 @@ static char tmpbuf[4096]; /* general purpose buffer, just use immediately */
 #define SYSTRAY_MIN_W 16
 #define SYSTRAY_MIN_H 8
 
-static Eina_Bool
-_systray_site_is_safe(E_Gadcon_Site site)
-{
-   /* NB: filter out sites we know are not safe for a systray to sit.
-    * This was done so that systray could be put into illume indicator
-    * (or anywhere else really) that is 'safe' for systray to be.
-    * Pretty much, this is anywhere but toolbars at the moment */
-   return !e_gadcon_site_is_any_toolbar(site);
-}
-
 static const char *
 _systray_theme_path(void)
 {
@@ -41,55 +31,6 @@ _systray_theme_path(void)
 #undef TF
 }
 
-#if 0
-static void *
-_cfg_data_create(E_Config_Dialog *cfd EINA_UNUSED)
-{
-   E_Config_Dialog_Data *cfdata = calloc(1, sizeof(E_Config_Dialog_Data));
-   return cfdata;
-}
-
-static void
-_cfg_data_free(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfdata)
-{
-   free(cfdata);
-}
-
-static Evas_Object *
-_cfg_widgets_create(E_Config_Dialog *cfd EINA_UNUSED, Evas *evas, E_Config_Dialog_Data *cfdata)
-{
-   Evas_Object *o, *of;
-   o = e_widget_list_add(evas, 0, 0);
-
-   return o;
-}
-
-static int
-_cfg_data_apply(E_Config_Dialog *cfd, E_Config_Dialog_Data *cfdata)
-{
-   Instance *inst = cfd->data;
-
-   systray_size_updated(inst);
-
-   return 1;
-}
-
-static void
-_cb_menu_cfg(void *data, E_Menu *m EINA_UNUSED, E_Menu_Item *mi EINA_UNUSED)
-{
-   E_Config_Dialog_View *v;
-
-   v = calloc(1, sizeof(E_Config_Dialog_View));
-   v->create_cfdata = _cfg_data_create;
-   v->free_cfdata = _cfg_data_free;
-   v->basic.create_widgets = _cfg_widgets_create;
-   v->basic.apply_cfdata = _cfg_data_apply;
-
-   e_config_dialog_new(NULL, _("Systray Settings"), "E",
-                       "_e_mod_systray_config_dialog",
-                       NULL, 0, v, data);
-}
-#endif
 static void
 _systray_menu_new(Instance *inst, Evas_Event_Mouse_Down *ev)
 {
@@ -377,7 +318,7 @@ static const E_Gadcon_Client_Class _gc_class =
    GADCON_CLIENT_CLASS_VERSION, _name,
    {
       _gc_init, _gc_shutdown, _gc_orient, _gc_label, _gc_icon, _gc_id_new, NULL,
-      _systray_site_is_safe
+      NULL
    },
    E_GADCON_CLIENT_STYLE_PLAIN
 };
@@ -388,25 +329,6 @@ E_API void *
 e_modapi_init(E_Module *m)
 {
    systray_mod = m;
-
-   ctx = calloc(1, sizeof(Systray_Context));
-   ctx->conf_edd = E_CONFIG_DD_NEW("Systray_Config", Systray_Config);
-   ctx->notifier_item_edd = E_CONFIG_DD_NEW("Notifier_Item_Cache", Notifier_Item_Cache);
-   #undef T
-   #undef D
-   #define T Notifier_Item_Cache
-   #define D ctx->notifier_item_edd
-   E_CONFIG_VAL(D, T, path, STR);
-   #undef T
-   #undef D
-   #define T Systray_Config
-   #define D ctx->conf_edd
-   E_CONFIG_VAL(D, T, dbus, STR);
-   E_CONFIG_HASH(D, T, items, ctx->notifier_item_edd);
-
-   ctx->config = e_config_domain_load(_name, ctx->conf_edd);
-   if (!ctx->config)
-     ctx->config = calloc(1, sizeof(Systray_Config));
 
    e_gadcon_provider_register(&_gc_class);
 
