@@ -391,10 +391,19 @@ e_modapi_init(E_Module *m)
 
    ctx = calloc(1, sizeof(Systray_Context));
    ctx->conf_edd = E_CONFIG_DD_NEW("Systray_Config", Systray_Config);
+   ctx->notifier_item_edd = E_CONFIG_DD_NEW("Notifier_Item_Cache", Notifier_Item_Cache);
+   #undef T
+   #undef D
+   #define T Notifier_Item_Cache
+   #define D ctx->notifier_item_edd
+   E_CONFIG_VAL(D, T, path, STR);
    #undef T
    #undef D
    #define T Systray_Config
    #define D ctx->conf_edd
+   E_CONFIG_VAL(D, T, dbus, STR);
+   E_CONFIG_HASH(D, T, items, ctx->notifier_item_edd);
+
    ctx->config = e_config_domain_load(_name, ctx->conf_edd);
    if (!ctx->config)
      ctx->config = calloc(1, sizeof(Systray_Config));
@@ -415,6 +424,7 @@ e_modapi_shutdown(E_Module *m EINA_UNUSED)
    systray_notifier_host_shutdown();
 
    E_CONFIG_DD_FREE(ctx->conf_edd);
+   E_CONFIG_DD_FREE(ctx->notifier_item_edd);
    free(ctx->config);
    free(ctx);
    return 1;

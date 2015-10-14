@@ -340,6 +340,7 @@ static void
 notifier_item_add(const char *path, const char *bus_id, Context_Notifier_Host *ctx)
 {
    Eldbus_Proxy *proxy;
+   Notifier_Item_Cache *nic;
    Notifier_Item *item = calloc(1, sizeof(Notifier_Item));
    Eldbus_Signal_Handler *s;
    EINA_SAFETY_ON_NULL_RETURN(item);
@@ -368,6 +369,11 @@ notifier_item_add(const char *path, const char *bus_id, Context_Notifier_Host *c
    item->signals = eina_list_append(item->signals, s);
    s = eldbus_proxy_signal_handler_add(proxy, "NewTitle", new_title_cb, item);
    item->signals = eina_list_append(item->signals, s);
+   if (eina_hash_find(systray_ctx_get()->config->items, bus_id)) return;
+   nic = malloc(sizeof(Notifier_Item_Cache));
+   nic->path = eina_stringshare_ref(path);
+   eina_hash_add(systray_ctx_get()->config->items, bus_id, nic);
+   e_config_save_queue();
 }
 
 static void

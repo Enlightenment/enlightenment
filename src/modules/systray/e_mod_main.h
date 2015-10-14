@@ -14,7 +14,7 @@ typedef struct _Context_Notifier_Host Context_Notifier_Host;
 typedef struct _Instance_Notifier_Host Instance_Notifier_Host;
 typedef struct _Notifier_Item Notifier_Item;
 typedef struct _Systray_Context Systray_Context;
-typedef struct _E_Config_Dialog_Data Systray_Config;
+typedef struct Systray_Config Systray_Config;
 
 struct _E_Config_Dialog_Data
 {
@@ -24,6 +24,7 @@ struct _Systray_Context
 {
    Systray_Config *config;
    E_Config_DD *conf_edd;
+   E_Config_DD *notifier_item_edd;
 };
 
 struct _Instance
@@ -39,6 +40,17 @@ struct _Instance
    {
       Ecore_Job *size_apply;
    } job;
+};
+
+typedef struct Notifier_Item_Cache
+{
+   Eina_Stringshare *path;
+} Notifier_Item_Cache;
+
+struct Systray_Config
+{
+   Eina_Stringshare *dbus;
+   Eina_Hash *items;
 };
 
 E_Gadcon_Orient systray_orient_get(const Instance *inst);
