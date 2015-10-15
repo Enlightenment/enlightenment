@@ -190,7 +190,7 @@ systray_notifier_dbus_watcher_start(Eldbus_Connection *connection, E_Notifier_Wa
    dbus = eldbus_connection_unique_name_get(conn);
    if (systray_ctx_get()->config->items)
      eina_hash_free_cb_set(systray_ctx_get()->config->items, (Eina_Free_Cb)systray_notifier_item_hash_del);
-   if (systray_ctx_get()->config->dbus && systray_ctx_get()->config->items)
+   if (dbus && systray_ctx_get()->config->dbus && systray_ctx_get()->config->items)
      {
         if (!strcmp(systray_ctx_get()->config->dbus, dbus))
           {
