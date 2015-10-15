@@ -951,10 +951,7 @@ _e_comp_x_evas_hide_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UN
      evas_object_hide(tmp->frame);
 
    if (ec->unredirected_single || ec->iconic)
-     {
-        ecore_x_window_hide(_e_comp_x_client_window_get(ec));
-        e_pixmap_clear(ec->pixmap);
-     }
+     ecore_x_window_hide(_e_comp_x_client_window_get(ec));
 
    if (e_comp_config_get()->send_flush)
      ecore_x_e_comp_flush_send(e_client_util_win_get(ec));
@@ -976,7 +973,10 @@ _e_comp_x_evas_show_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UN
    if (!ec->comp_data->need_reparent)
      ecore_x_window_show(win);
    if (ec->unredirected_single || ec->iconic)
-     ecore_x_window_show(_e_comp_x_client_window_get(ec));
+     {
+        e_pixmap_clear(ec->pixmap);
+        ecore_x_window_show(_e_comp_x_client_window_get(ec));
+     }
    if (!ec->override)
      e_hints_window_visible_set(ec);
 
