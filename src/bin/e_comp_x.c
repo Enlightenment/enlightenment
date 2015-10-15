@@ -2352,7 +2352,7 @@ _e_comp_x_sync_alarm(void *data EINA_UNUSED, int type EINA_UNUSED, Ecore_X_Event
    Eina_Bool resize = EINA_FALSE;
 
    ec = _e_comp_x_client_find_by_alarm(ev->alarm);
-   if (!ec) return ECORE_CALLBACK_RENEW;
+   if ((!ec) || e_object_is_del(E_OBJECT(ec))) return ECORE_CALLBACK_RENEW;
 
    if (ec->netwm.sync.wait)
      ec->netwm.sync.wait--;
