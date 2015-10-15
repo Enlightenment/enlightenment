@@ -187,7 +187,7 @@ systray_notifier_dbus_watcher_start(Eldbus_Connection *connection, E_Notifier_Wa
    unregistered_cb = unregistered;
    user_data = (void *)data;
    host_service = eina_stringshare_add("internal");
-   dbus = getenv("DBUS_SESSION_BUS_ADDRESS");
+   dbus = eldbus_connection_unique_name_get(conn);
    if (systray_ctx_get()->config->items)
      eina_hash_free_cb_set(systray_ctx_get()->config->items, (Eina_Free_Cb)systray_notifier_item_hash_del);
    if (systray_ctx_get()->config->dbus && systray_ctx_get()->config->items)
