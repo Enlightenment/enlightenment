@@ -2461,6 +2461,7 @@ _e_comp_x_sync_alarm(void *data EINA_UNUSED, int type EINA_UNUSED, Ecore_X_Event
    unsigned int serial;
    E_Client *ec;
    Eina_Bool resize = EINA_FALSE;
+   E_Comp_X_Client_Data *cl;
 
    ec = _e_comp_x_client_find_by_alarm(ev->alarm);
    if (!ec) return ECORE_CALLBACK_RENEW;
@@ -2468,7 +2469,8 @@ _e_comp_x_sync_alarm(void *data EINA_UNUSED, int type EINA_UNUSED, Ecore_X_Event
    if (ec->netwm.sync.wait)
      ec->netwm.sync.wait--;
 
-   if (ecore_x_sync_counter_query(_e_comp_x_client_data_get(ec)->sync_counter, &serial))
+   cl = _e_comp_x_client_data_get(ec);
+   if ((cl) && (ecore_x_sync_counter_query(cl->sync_counter, &serial)))
      {
         E_Client_Pending_Resize *pnd = NULL;
 
