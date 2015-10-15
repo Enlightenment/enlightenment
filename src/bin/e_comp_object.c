@@ -2169,6 +2169,11 @@ _e_comp_smart_hide(Evas_Object *obj)
      evas_object_focus_set(cw->ec->frame, 0);
    e_comp_render_queue(); //force nocomp recheck
    e_comp_shape_queue();
+   if ((!cw->ec->iconic) || (!e_pixmap_is_x(cw->ec->pixmap)) || (!cw->native)) return;
+   e_comp_object_native_surface_set(obj, 0);
+   e_comp_object_damage(obj, 0, 0, cw->w, cw->h);
+   e_comp_object_dirty(obj);
+   e_comp_object_render(obj);
 }
 
 static void
