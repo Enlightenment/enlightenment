@@ -201,7 +201,7 @@ _basic_create_widgets(E_Config_Dialog *cfd EINA_UNUSED, Evas *evas, E_Config_Dia
 
    ob = e_widget_label_add(evas, _("Threshold"));
    e_widget_framelist_object_append(of, ob);
-   ob = e_widget_slider_add(evas, 1, 0, _("%1.0f"), 1.0, 10.0, 1.0, 0,
+   ob = e_widget_slider_add(evas, 1, 0, _("%1.0f"), 0.0, 10.0, 1.0, 0,
 			    &(cfdata->threshold), NULL, 100);
    e_widget_framelist_object_append(of, ob);
 
