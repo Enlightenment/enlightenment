@@ -37,6 +37,7 @@ struct _E_Pixmap
 #ifdef HAVE_WAYLAND
    E_Comp_Wl_Buffer *buffer;
    E_Comp_Wl_Buffer_Ref buffer_ref;
+   Eina_List *buffers;
    struct wl_listener buffer_destroy_listener;
    void *data;
    Eina_Rectangle opaque;
@@ -49,6 +50,13 @@ struct _E_Pixmap
 };
 
 #ifdef HAVE_WAYLAND
+typedef struct E_Pixmap_Pending_Buffer
+{
+   E_Comp_Wl_Buffer *buffer;
+   E_Pixmap *cp;
+   struct wl_listener destroy_listener;
+} E_Pixmap_Pending_Buffer;
+
 static void 
 _e_pixmap_cb_buffer_destroy(struct wl_listener *listener, void *data EINA_UNUSED)
 {
@@ -58,6 +66,42 @@ _e_pixmap_cb_buffer_destroy(struct wl_listener *listener, void *data EINA_UNUSED
    cp->data = NULL;
    cp->buffer_destroy_listener.notify = NULL;
 }
+
+static void
+_e_pixmap_cb_pending_buffer_destroy(struct wl_listener *listener, void *data EINA_UNUSED)
+{
+   E_Pixmap_Pending_Buffer *ref;
+
+   ref = container_of(listener, E_Pixmap_Pending_Buffer, destroy_listener);
+   ref->cp->buffers = eina_list_remove(ref->cp->buffers, ref);
+   free(ref);
+}
+
+static Eina_Bool
+_e_pixmap_wl_image_refresh(E_Pixmap *cp, E_Comp_Wl_Buffer *buffer)
+{
+   struct wl_shm_buffer *shm_buffer;
+
+   shm_buffer = wl_shm_buffer_get(buffer->resource);
+   if (!shm_buffer)
+     {
+        WRN("Cannot get shm buffer from buffer resource");
+        return EINA_FALSE;
+     }
+   e_comp_wl_buffer_reference(&cp->buffer_ref, buffer);
+
+   if (cp->buffer_destroy_listener.notify)
+     {
+        wl_list_remove(&cp->buffer_destroy_listener.link);
+        cp->buffer_destroy_listener.notify = NULL;
+     }
+
+   cp->buffer_destroy_listener.notify = _e_pixmap_cb_buffer_destroy;
+   wl_signal_add(&buffer->destroy_signal, &cp->buffer_destroy_listener);
+   cp->data = wl_shm_buffer_get_data(shm_buffer);
+   return EINA_TRUE;
+}
+
 #endif
 
 static void
@@ -81,6 +125,8 @@ _e_pixmap_clear(E_Pixmap *cp, Eina_Bool cache)
       case E_PIXMAP_TYPE_WL:
 #ifdef HAVE_WAYLAND
         e_pixmap_image_clear(cp, cache);
+        while (cp->buffers)
+          e_pixmap_image_clear(cp, cache);
 #endif
         break;
       default: 
@@ -530,7 +576,7 @@ e_pixmap_resource_get(E_Pixmap *cp)
         return NULL;
      }
 #ifdef HAVE_WAYLAND
-   return cp->buffer;
+   return cp->buffer_ref.buffer ?: cp->buffer;
 #endif
    return NULL;
 }
@@ -650,6 +696,16 @@ e_pixmap_image_clear(E_Pixmap *cp, Eina_Bool cache)
           }
         e_comp_wl_buffer_reference(&cp->buffer_ref, NULL);
         cp->data = NULL;
+        if (!cp->buffers) break;
+        {
+           E_Pixmap_Pending_Buffer *ref;
+
+           ref = eina_list_data_get(cp->buffers);
+           cp->buffers = eina_list_remove_list(cp->buffers, cp->buffers);
+           wl_list_remove(&ref->destroy_listener.link);
+           _e_pixmap_wl_image_refresh(cp, ref->buffer);
+           free(ref);
+        }
 #endif
         break;
       default:
@@ -688,31 +744,20 @@ e_pixmap_image_refresh(E_Pixmap *cp)
 #ifdef HAVE_WAYLAND
         {
            E_Comp_Wl_Buffer *buffer = cp->buffer;
-           struct wl_shm_buffer *shm_buffer;
-
-           shm_buffer = wl_shm_buffer_get(buffer->resource);
-           if (!shm_buffer)
-             {
-                WRN("Cannot get shm buffer from buffer resource");
-                return EINA_FALSE;
-             }
            if (cp->buffer_ref.buffer && (cp->buffer_ref.buffer != buffer))
              {
-                /* FIXME: wtf? */
+                E_Pixmap_Pending_Buffer *ref;
+
+                ref = calloc(1, sizeof(E_Pixmap_Pending_Buffer));
+                cp->buffers = eina_list_append(cp->buffers, ref);
+                ref->destroy_listener.notify = _e_pixmap_cb_pending_buffer_destroy;
+                wl_signal_add(&buffer->destroy_signal, &ref->destroy_listener);
+                ref->buffer = buffer;
+                ref->cp = cp;
+                return EINA_TRUE;
              }
            else if (cp->buffer_ref.buffer) return EINA_TRUE;
-           e_comp_wl_buffer_reference(&cp->buffer_ref, buffer);
-
-           if (cp->buffer_destroy_listener.notify)
-             {
-                wl_list_remove(&cp->buffer_destroy_listener.link);
-                cp->buffer_destroy_listener.notify = NULL;
-             }
-
-           cp->buffer_destroy_listener.notify = _e_pixmap_cb_buffer_destroy;
-           wl_signal_add(&buffer->destroy_signal, &cp->buffer_destroy_listener);
-           cp->data = wl_shm_buffer_get_data(shm_buffer);
-           return EINA_TRUE;
+           return _e_pixmap_wl_image_refresh(cp, buffer);
         }
 #endif
         break;
