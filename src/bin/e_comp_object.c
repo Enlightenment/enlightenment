@@ -2798,21 +2798,21 @@ e_comp_object_frame_geometry_set(Evas_Object *obj, int l, int r, int t, int b)
    API_ENTRY;
    if ((cw->client_inset.l == l) && (cw->client_inset.r == r) &&
        (cw->client_inset.t == t) && (cw->client_inset.b == b)) return;
+   cw->client_inset.calc = l || r || t || b;
+   eina_stringshare_replace(&cw->frame_theme, "borderless");
+   cw->ec->w += (l + r) - (cw->client_inset.l + cw->client_inset.r);
+   cw->ec->h += (t + b) - (cw->client_inset.t + cw->client_inset.b);
+   if (!cw->ec->new_client)
+     {
+        cw->ec->x -= l - cw->client_inset.l;
+        cw->ec->y -= t - cw->client_inset.t;
+        cw->ec->changes.pos = cw->ec->changes.size = 1;
+        EC_CHANGED(cw->ec);
+     }
    cw->client_inset.l = l;
    cw->client_inset.r = r;
    cw->client_inset.t = t;
    cw->client_inset.b = b;
-   cw->client_inset.calc = l || r || t || b;
-   eina_stringshare_replace(&cw->frame_theme, "borderless");
-   cw->ec->w += l + r;
-   cw->ec->h += t + b;
-   if (!cw->ec->new_client)
-     {
-        cw->ec->x -= l;
-        cw->ec->y -= t;
-        cw->ec->changes.pos = cw->ec->changes.size = 1;
-        EC_CHANGED(cw->ec);
-     }
 }
 
 E_API Eina_Bool
