@@ -354,7 +354,7 @@ _e_comp_wl_input_keymap_update(struct xkb_keymap *keymap)
                            latched, locked, 0, 0, group);
 
    /* increment keymap reference */
-   e_comp_wl->xkb.keymap = xkb_map_ref(keymap);
+   e_comp_wl->xkb.keymap = keymap;
 
    /* fetch updated modifiers */
    e_comp_wl->kbd.mod_shift =
