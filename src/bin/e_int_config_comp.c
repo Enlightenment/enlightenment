@@ -85,7 +85,6 @@ e_int_config_comp(E_Comp *comp, const char *params __UNUSED__)
    
    cfd = e_config_dialog_new(comp, _("Composite Settings"),
                              "E", "appearance/comp", "preferences-composite", 0, v, NULL);
-   e_dialog_resizable_set(cfd->dia, 1);
    return cfd;
 }
 
