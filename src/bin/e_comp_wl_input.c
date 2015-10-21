@@ -128,7 +128,7 @@ _e_comp_wl_input_cb_keyboard_unbind(struct wl_resource *resource)
    EINA_LIST_FOREACH_SAFE(e_comp_wl->kbd.focused, l, ll, res)
      if (res == resource)
        e_comp_wl->kbd.focused =
-         eina_list_remove_list(e_comp_wl->kbd.resources, l);
+         eina_list_remove_list(e_comp_wl->kbd.focused, l);
 }
 
 void
