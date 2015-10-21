@@ -85,7 +85,6 @@ e_int_config_comp(Evas_Object *parent EINA_UNUSED, const char *params EINA_UNUSE
    
    cfd = e_config_dialog_new(NULL, _("Composite Settings"),
                              "E", "appearance/comp", "preferences-composite", 0, v, NULL);
-   e_dialog_resizable_set(cfd->dia, 1);
    return cfd;
 }
 
