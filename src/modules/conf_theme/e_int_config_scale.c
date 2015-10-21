@@ -226,7 +226,8 @@ _basic_create(E_Config_Dialog *cfd EINA_UNUSED, Evas *evas, E_Config_Dialog_Data
    o = e_widget_table_add(e_win_evas_win_get(evas), 1);
 
 #ifndef HAVE_WAYLAND_ONLY
-   dpi = ecore_x_dpi_get();
+   if (e_comp->comp_type == E_PIXMAP_TYPE_X)
+     dpi = ecore_x_dpi_get();
 #endif
    if ((dpi > 0) && (cfdata->base_dpi > 0))
      sc = (double)dpi / (double)cfdata->base_dpi;
@@ -292,7 +293,7 @@ _adv_create(E_Config_Dialog *cfd EINA_UNUSED, Evas *evas, E_Config_Dialog_Data *
 {
    Evas_Object *o, *otb, *ow;
    E_Radio_Group *rg;
-   char buff[256];
+   char buff[256] = {0};
 
    _fill_data(cfdata);
    if (cfdata->obs) cfdata->obs = eina_list_free(cfdata->obs);
@@ -309,8 +310,9 @@ _adv_create(E_Config_Dialog *cfd EINA_UNUSED, Evas *evas, E_Config_Dialog_Data *
    e_widget_list_object_append(o, ow, 1, 1, 0.5);
 
 #ifndef HAVE_WAYLAND_ONLY
-   snprintf(buff, sizeof(buff),
-            _("Base DPI (Currently %i DPI)"), ecore_x_dpi_get());
+   if (e_comp->comp_type == E_PIXMAP_TYPE_X)
+     snprintf(buff, sizeof(buff),
+              _("Base DPI (Currently %i DPI)"), ecore_x_dpi_get());
 #endif
    ow = e_widget_label_add(evas, buff);
    cfdata->gui.adv.dpi_lbl = ow;
