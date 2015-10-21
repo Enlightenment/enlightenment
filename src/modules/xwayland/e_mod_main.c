@@ -2,6 +2,9 @@
 #include <dlfcn.h>
 #include <sys/socket.h>
 #include <sys/un.h>
+#ifdef HAVE_PULSE
+# include <Ecore_Audio.h>
+#endif
 
 EINTERN void dnd_init(void);
 EINTERN void dnd_shutdown(void);
@@ -350,6 +353,10 @@ e_modapi_init(E_Module *m)
    /* alloc space for server struct */
    if (!(exs = calloc(1, sizeof(E_XWayland_Server))))
      return NULL;
+
+#ifdef HAVE_PULSE
+   eo_del(eo_add(ECORE_AUDIO_OUT_PULSE_CLASS, NULL));
+#endif
 
    /* record wayland display */
    exs->wl_disp = e_comp_wl->wl.disp;

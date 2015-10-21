@@ -682,7 +682,7 @@ define([CHECK_MODULE_MIXER],
   AC_E_CHECK_PKG(ALSA, [alsa >= 1.0.8],
     [ ], [ ])
  AC_E_CHECK_PKG([PULSE], [libpulse-simple libpulse],
-    [ ], [ ])
+    [AC_DEFINE_UNQUOTED([HAVE_PULSE], [1], [have pulseaudio])], [ ])
 ])
 
 SHM_OPEN_LIBS=""
@@ -837,7 +837,7 @@ HAVE_XWAYLAND_DEPS=false
 define([CHECK_MODULE_XWAYLAND],
 [
   if test "x${have_wayland}" = "xyes"; then
-    AC_E_CHECK_PKG(XWAYLAND, [ ecore >= ${efl_version} ecore-x >= ${efl_version}  ], [HAVE_XWAYLAND_DEPS=true], [HAVE_XWAYLAND_DEPS=false])
+    AC_E_CHECK_PKG(XWAYLAND, [ ecore >= ${efl_version} ecore-x >= ${efl_version} ecore-audio >= ${efl_version}  ], [HAVE_XWAYLAND_DEPS=true], [HAVE_XWAYLAND_DEPS=false])
     AC_PATH_PROG([XWAYLAND_BIN], [Xwayland], [false])
   else
     HAVE_XWAYLAND_DEPS=false

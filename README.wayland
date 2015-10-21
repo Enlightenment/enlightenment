@@ -52,6 +52,9 @@ to try out XWayland support:
 
   --enable-xwayland
 
+NOTE: DO NOT DISABLE THE MIXER MODULE BUILD IF YOU ARE USING XWAYLAND.
+You have been warned.
+
 At this stage, you should have EFL properly built, and Enlightenment
 properly built. Let's move on to running it...
 
