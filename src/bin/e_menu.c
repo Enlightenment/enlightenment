@@ -1608,7 +1608,7 @@ _e_menu_realize(E_Menu *m)
    if (m->parent_item && m->parent_item->menu)
      m->zone = m->parent_item->menu->zone;
    if (!m->zone) return; //menu not ready!
-   m->evas = e_comp->evas;
+   m->evas = evas_object_evas_get(e_comp->elm);
    evas_event_freeze(m->evas);
 
    o = edje_object_add(m->evas);
