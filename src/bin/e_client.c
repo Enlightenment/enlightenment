@@ -2282,6 +2282,7 @@ _e_client_frame_update(E_Client *ec)
    const char *bordername;
 
    ec->border.changed = 0;
+   if (!e_comp_object_frame_allowed(ec->frame)) return;
    if (ec->fullscreen || ec->borderless)
      bordername = "borderless";
    else if (ec->bordername)
