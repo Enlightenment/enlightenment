@@ -2891,7 +2891,7 @@ e_comp_object_input_area_set(Evas_Object *obj, int x, int y, int w, int h)
    API_ENTRY;
 
    //INF("%d,%d %dx%d", x, y, w, h);
-   E_RECTS_CLIP_TO_RECT(x, y, w, h, 0, 0, cw->ec->w, cw->ec->h);
+   E_RECTS_CLIP_TO_RECT(x, y, w, h, 0, 0, cw->ec->client.w, cw->ec->client.h);
    if ((cw->input_rect.x == x) && (cw->input_rect.y == y) &&
        (cw->input_rect.w == w) && (cw->input_rect.h == h)) return;
    EINA_RECTANGLE_SET(&cw->input_rect, x, y, w, h);
