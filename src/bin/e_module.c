@@ -900,7 +900,6 @@ _e_module_whitelist_check(void)
    const char *s;
    const char *goodmods[] =
    {
-      "access",
       "backlight",
       "battery",
       "bluez4",
