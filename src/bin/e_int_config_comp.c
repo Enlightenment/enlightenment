@@ -265,13 +265,12 @@ _advanced_create_widgets(E_Config_Dialog *cfd, Evas *evas, E_Config_Dialog_Data 
    rg = e_widget_radio_group_new(&(cfdata->engine));
    ob = e_widget_radio_add(evas, _("Software"), E_COMP_ENGINE_SW, rg);
    e_widget_framelist_object_append(of, ob);
-   if (!getenv("ECORE_X_NO_XLIB"))
+   ob = e_widget_radio_add(evas, _("OpenGL"), E_COMP_ENGINE_GL, rg);
+   e_widget_framelist_object_append(of, ob);
+   if ((e_comp->comp_type == E_PIXMAP_TYPE_X) && (!getenv("ECORE_X_NO_XLIB")))
      {
         if (ecore_evas_engine_type_supported_get(ECORE_EVAS_ENGINE_OPENGL_X11))
           {
-             ob = e_widget_radio_add(evas, _("OpenGL"), E_COMP_ENGINE_GL, rg);
-             e_widget_framelist_object_append(of, ob);
-
              ob = e_widget_label_add(evas, _("OpenGL options:"));
              e_widget_framelist_object_append(of, ob);
              ob = e_widget_check_add(evas, _("Tear-free updates (VSynced)"), &(cfdata->vsync));
@@ -600,14 +599,8 @@ _basic_create_widgets(E_Config_Dialog *cfd,
    rg = e_widget_radio_group_new(&(cfdata->engine));
    ob = e_widget_radio_add(evas, _("Software"), E_COMP_ENGINE_SW, rg);
    e_widget_framelist_object_append(of, ob);
-   if (!getenv("ECORE_X_NO_XLIB"))
-     {
-        if (ecore_evas_engine_type_supported_get(ECORE_EVAS_ENGINE_OPENGL_X11))
-          {
-             ob = e_widget_radio_add(evas, _("OpenGL"), E_COMP_ENGINE_GL, rg);
-             e_widget_framelist_object_append(of, ob);
-          }
-     }
+   ob = e_widget_radio_add(evas, _("OpenGL"), E_COMP_ENGINE_GL, rg);
+   e_widget_framelist_object_append(of, ob);
    ob = e_widget_label_add(evas, _("To reset compositor:"));
    e_widget_framelist_object_append(of, ob);
    ob = e_widget_label_add(evas, _("Ctrl+Alt+Shift+Home"));
