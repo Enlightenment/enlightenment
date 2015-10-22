@@ -9,7 +9,7 @@
 
 /* local subsystem functions */
 static void      _e_module_free(E_Module *m);
-static void      _e_module_dialog_disable_show(const char *title, const char *body, E_Module *m);
+static void      _e_module_dialog_disable_create(const char *title, const char *body, E_Module *m);
 static void      _e_module_cb_dialog_disable(void *data, E_Dialog *dia);
 static void      _e_module_event_update_free(void *data, void *event);
 static Eina_Bool _e_module_cb_idler(void *data);
@@ -349,7 +349,7 @@ e_module_new(const char *name)
                  _("There was an error loading the module named: %s<br>"
                    "No module named %s could be found in the<br>"
                    "module search directories.<br>"), name, buf);
-        _e_module_dialog_disable_show(_("Error loading Module"), body, m);
+        _e_module_dialog_disable_create(_("Error loading Module"), body, m);
         m->error = 1;
         goto init_done;
      }
@@ -362,7 +362,7 @@ e_module_new(const char *name)
                    "%s<br>"
                    "The error reported was:<br>"
                    "%s<br>"), name, buf, dlerror());
-        _e_module_dialog_disable_show(_("Error loading Module"), body, m);
+        _e_module_dialog_disable_create(_("Error loading Module"), body, m);
         m->error = 1;
         goto init_done;
      }
@@ -380,7 +380,7 @@ e_module_new(const char *name)
                    "The error reported was:<br>"
                    "%s<br>"),
                  name, buf, _("Module does not contain all needed functions"));
-        _e_module_dialog_disable_show(_("Error loading Module"), body, m);
+        _e_module_dialog_disable_create(_("Error loading Module"), body, m);
         m->api = NULL;
         m->func.init = NULL;
         m->func.shutdown = NULL;
@@ -402,7 +402,7 @@ e_module_new(const char *name)
         snprintf(title, sizeof(title), _("Enlightenment %s Module"),
                  _(m->api->name));
 
-        _e_module_dialog_disable_show(title, body, m);
+        _e_module_dialog_disable_create(title, body, m);
         m->api = NULL;
         m->func.init = NULL;
         m->func.shutdown = NULL;
@@ -759,6 +759,13 @@ _e_module_desktop_list_cb(const Eina_Hash *hash EINA_UNUSED, const void *key EIN
    return EINA_TRUE;
 }
 
+typedef struct Disable_Dialog
+{
+   char *title;
+   char *body;
+   E_Module *m;
+} Disable_Dialog;
+
 static void
 _e_module_dialog_disable_show(const char *title, const char *body, E_Module *m)
 {
@@ -767,14 +774,7 @@ _e_module_dialog_disable_show(const char *title, const char *body, E_Module *m)
 
    printf("MODULE ERR:\n%s\n", body);
 
-   /* FIXME: Stupid hack for ELM_WIN_DIALOG_BASIC not working in wayland */
-#warning REMOVE STUPID ELM HACK FOR WAYLAND BEFORE RELEASE
-   if (e_comp && e_comp->comp_type != E_PIXMAP_TYPE_WL)
-     dia = e_dialog_new(NULL, "E", "_module_unload_dialog");
-   else
-     dia = e_dialog_normal_win_new(NULL, "E", "_module_unload_dialog");
-
-   EINA_SAFETY_ON_NULL_RETURN(dia);
+   dia = e_dialog_new(NULL, "E", "_module_unload_dialog");
 
    snprintf(buf, sizeof(buf), "%s<br>%s", body,
             _("What action should be taken with this module?<br>"));
@@ -787,6 +787,28 @@ _e_module_dialog_disable_show(const char *title, const char *body, E_Module *m)
    elm_win_center(dia->win, 1, 1);
    e_win_no_remember_set(dia->win, 1);
    e_dialog_show(dia);
+}
+
+static Eina_Bool
+_e_module_dialog_disable_timer(Disable_Dialog *dd)
+{
+   _e_module_dialog_disable_show(dd->title, dd->body, dd->m);
+   free(dd->title);
+   free(dd->body);
+   free(dd);
+   return EINA_FALSE;
+}
+
+static void
+_e_module_dialog_disable_create(const char *title, const char *body, E_Module *m)
+{
+   Disable_Dialog *dd;
+
+   dd = E_NEW(Disable_Dialog, 1);
+   dd->title = strdup(title);
+   dd->body = strdup(body);
+   dd->m = m;
+   ecore_timer_add(1.5, (Ecore_Task_Cb)_e_module_dialog_disable_timer, dd);
 }
 
 static void
@@ -888,6 +910,41 @@ _ignore_cb(void *data, E_Dialog *dialog)
      eina_stringshare_del(s);
    e_config->bad_modules = data;
    e_config_save_queue();
+}
+
+static Eina_Bool
+_e_module_whitelist_dialog_timer(void *badl)
+{
+   E_Dialog *dia;
+   Eina_Strbuf *sbuf;
+   Eina_List *l;
+   const char *s;
+
+   dia = e_dialog_new(NULL,
+                      "E", "_module_whitelist_dialog");
+   sbuf = eina_strbuf_new();
+   eina_strbuf_append
+     (sbuf, _("The following modules are not standard ones for<br>"
+              "Enlightenment and may cause bugs and crashes.<br>"
+              "Please remove them before reporting any bugs.<br>"
+              "<br>"
+              "The module list is as follows:<br>"
+              "<br>"));
+   EINA_LIST_FOREACH(badl, l, s)
+     {
+        eina_strbuf_append(sbuf, s);
+        eina_strbuf_append(sbuf, "<br>");
+     }
+
+   e_dialog_title_set(dia, _("Unstable module tainting"));
+   e_dialog_icon_set(dia, "enlightenment", 64);
+   e_dialog_text_set(dia, eina_strbuf_string_get(sbuf));
+   e_dialog_button_add(dia, _("OK"), NULL, _cleanup_cb, badl);
+   e_dialog_button_add(dia, _("I know"), NULL, _ignore_cb, badl);
+   elm_win_center(dia->win, 1, 1);
+   e_dialog_show(dia);
+   eina_strbuf_free(sbuf);
+   return EINA_FALSE;
 }
 
 static void
@@ -1020,47 +1077,7 @@ _e_module_whitelist_check(void)
 #endif
 
    if (eina_list_count(badl) != known)
-     {
-        E_Dialog *dia;
-        Eina_Strbuf *sbuf;
-
-        dia = e_dialog_new(NULL,
-                           "E", "_module_whitelist_dialog");
-        if (!dia)
-          {
-             eina_list_free(badl);
-             return;
-          }
-
-        sbuf = eina_strbuf_new();
-        if (!sbuf)
-          {
-             eina_list_free(badl);
-             e_object_del(E_OBJECT(dia));
-             return;
-          }
-        eina_strbuf_append
-          (sbuf, _("The following modules are not standard ones for<br>"
-                   "Enlightenment and may cause bugs and crashes.<br>"
-                   "Please remove them before reporting any bugs.<br>"
-                   "<br>"
-                   "The module list is as follows:<br>"
-                   "<br>"));
-        EINA_LIST_FOREACH(badl, l, s)
-          {
-             eina_strbuf_append(sbuf, s);
-             eina_strbuf_append(sbuf, "<br>");
-          }
-
-        e_dialog_title_set(dia, _("Unstable module tainting"));
-        e_dialog_icon_set(dia, "enlightenment", 64);
-        e_dialog_text_set(dia, eina_strbuf_string_get(sbuf));
-        e_dialog_button_add(dia, _("OK"), NULL, _cleanup_cb, badl);
-        e_dialog_button_add(dia, _("I know"), NULL, _ignore_cb, badl);
-        elm_win_center(dia->win, 1, 1);
-        e_dialog_show(dia);
-        eina_strbuf_free(sbuf);
-     }
+     ecore_timer_add(1.5, _e_module_whitelist_dialog_timer, badl);
    else
      {
         EINA_LIST_FREE(badl, s)
