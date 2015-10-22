@@ -663,6 +663,10 @@ _e_comp_object_shadow_setup(E_Comp_Object *cw)
         else
           edje_object_part_swallow(cw->shobj, "e.swallow.content", cw->obj);
      }
+   if (cw->input_obj)
+     evas_object_pass_events_set(cw->obj, 1);
+   else
+     evas_object_pass_events_set(cw->obj, 0);
 #ifdef BORDER_ZOOMAPS
    e_zoomap_child_edje_solid_setup(cw->zoomobj);
 #endif
@@ -2903,12 +2907,12 @@ e_comp_object_input_area_set(Evas_Object *obj, int x, int y, int w, int h)
              //e_util_size_debug_set(cw->input_obj, 1);
              evas_object_name_set(cw->input_obj, "cw->input_obj");
              evas_object_color_set(cw->input_obj, 0, 0, 0, 0);
-             evas_object_pass_events_set(cw->obj, 1);
              evas_object_clip_set(cw->input_obj, cw->clip);
              evas_object_smart_member_add(cw->input_obj, obj);
           }
         evas_object_geometry_set(cw->input_obj, MAX(cw->x, 0) + x, MAX(cw->y, 0) + y, w, h);
         evas_object_layer_set(cw->input_obj, 9999);
+        evas_object_pass_events_set(cw->obj, 1);
         if (cw->visible) evas_object_show(cw->input_obj);
      }
    else
