@@ -14,6 +14,8 @@
 #endif
 
 E_API int E_EVENT_WAYLAND_GLOBAL_ADD = -1;
+E_API Ecore_Wl2_Display *ewd = NULL;
+
 #include "session-recovery-server-protocol.h"
 
 #ifndef EGL_HEIGHT
@@ -74,27 +76,11 @@ _e_comp_wl_focus_check(void)
      e_grabinput_focus(e_comp->ee_win, E_FOCUS_METHOD_PASSIVE);
 }
 
-static void
-_e_comp_wl_log_cb_print(const char *format, va_list args)
-{
-   EINA_LOG_DOM_INFO(e_log_dom, format, args);
-}
-
-static Eina_Bool
-_e_comp_wl_cb_read(void *data EINA_UNUSED, Ecore_Fd_Handler *hdlr EINA_UNUSED)
-{
-   /* dispatch pending wayland events */
-   wl_event_loop_dispatch(e_comp_wl->wl.loop, 0);
-
-   return ECORE_CALLBACK_RENEW;
-}
-
-static void
-_e_comp_wl_cb_prepare(void *data EINA_UNUSED, Ecore_Fd_Handler *hdlr EINA_UNUSED)
-{
-   /* flush pending client events */
-   wl_display_flush_clients(e_comp_wl->wl.disp);
-}
+/* static void */
+/* _e_comp_wl_log_cb_print(const char *format, va_list args) */
+/* { */
+/*    EINA_LOG_DOM_INFO(e_log_dom, format, args); */
+/* } */
 
 static Eina_Bool
 _e_comp_wl_cb_module_idle(void *data EINA_UNUSED)
@@ -1676,7 +1662,7 @@ _e_comp_wl_compositor_cb_del(void *data EINA_UNUSED)
      }
 
    /* delete fd handler */
-   if (e_comp_wl->fd_hdlr) ecore_main_fd_handler_del(e_comp_wl->fd_hdlr);
+   /* if (e_comp_wl->fd_hdlr) ecore_main_fd_handler_del(e_comp_wl->fd_hdlr); */
 
    /* free allocated data structure */
    free(e_comp_wl);
@@ -2537,8 +2523,6 @@ static Eina_Bool
 _e_comp_wl_compositor_create(void)
 {
    E_Comp_Wl_Data *cdata;
-   const char *name;
-   int fd = 0;
 
    /* check for existing compositor. create if needed */
    if (e_comp->comp_type == E_PIXMAP_TYPE_NONE)
@@ -2555,24 +2539,25 @@ _e_comp_wl_compositor_create(void)
    e_comp_wl = e_comp->wl_comp_data = cdata;
 
    /* set wayland log handler */
-   wl_log_set_handler_server(_e_comp_wl_log_cb_print);
+   /* wl_log_set_handler_server(_e_comp_wl_log_cb_print); */
 
-   /* try to create a wayland display */
-   if (!(cdata->wl.disp = wl_display_create()))
+   /* try to create an ecore_wl2 display */
+   ewd = ecore_wl2_display_create(NULL);
+   if (!ewd)
+     {
+        ERR("Could not create a Wayland display: %m");
+        free(cdata);
+        return EINA_FALSE;
+     }
+
+   cdata->wl.disp = ecore_wl2_display_get(ewd);
+   if (!cdata->wl.disp)
      {
         ERR("Could not create a Wayland display: %m");
         goto disp_err;
      }
 
-   /* try to setup wayland socket */
-   if (!(name = wl_display_add_socket_auto(cdata->wl.disp)))
-     {
-        ERR("Could not create Wayland display socket: %m");
-        goto sock_err;
-     }
-
-   /* set wayland display environment variable */
-   e_env_set("WAYLAND_DISPLAY", name);
+   /* e_env_set("WAYLAND_DISPLAY", name); */
 
    /* initialize compositor signals */
    wl_signal_init(&cdata->signals.surface.create);
@@ -2674,19 +2659,6 @@ _e_comp_wl_compositor_create(void)
      }
 #endif
 
-   /* get the wayland display loop */
-   cdata->wl.loop = wl_display_get_event_loop(cdata->wl.disp);
-
-   /* get the file descriptor of the wayland event loop */
-   fd = wl_event_loop_get_fd(cdata->wl.loop);
-
-   /* create a listener for wayland main loop events */
-   cdata->fd_hdlr =
-     ecore_main_fd_handler_add(fd, (ECORE_FD_READ | ECORE_FD_ERROR),
-                               _e_comp_wl_cb_read, cdata, NULL, NULL);
-   ecore_main_fd_handler_prepare_callback_set(cdata->fd_hdlr,
-                                              _e_comp_wl_cb_prepare, cdata);
-
    /* setup module idler to load shell mmodule */
    ecore_idler_add(_e_comp_wl_cb_module_idle, cdata);
 
@@ -2703,9 +2675,9 @@ input_err:
    e_comp_wl_data_manager_shutdown();
 data_err:
 comp_global_err:
-   e_env_unset("WAYLAND_DISPLAY");
-sock_err:
-   wl_display_destroy(cdata->wl.disp);
+   /* e_env_unset("WAYLAND_DISPLAY"); */
+/* sock_err: */
+   ecore_wl2_display_destroy(ewd);
 disp_err:
    free(cdata);
    return EINA_FALSE;
@@ -2775,12 +2747,10 @@ e_comp_wl_init(void)
         return EINA_FALSE;
      }
 
-   ecore_wl_server_mode_set(1);
-
    /* try to init ecore_wayland */
-   if (!ecore_wl_init(NULL))
+   if (!ecore_wl2_init())
      {
-        e_error_message_show(_("Enlightenment cannot initialize Ecore_Wayland!\n"));
+        e_error_message_show(_("Enlightenment cannot initialize Ecore_Wl2!\n"));
         return EINA_FALSE;
      }
 
@@ -2852,24 +2822,27 @@ e_comp_wl_shutdown(void)
    /* free handlers */
    E_FREE_LIST(handlers, ecore_event_handler_del);
 
-   while (e_comp_wl->wl.globals)
-     {
-        Ecore_Wl_Global *global;
+   /* while (e_comp_wl->wl.globals) */
+   /*   { */
+   /*      Ecore_Wl_Global *global; */
 
-        global =
-          EINA_INLIST_CONTAINER_GET(e_comp_wl->wl.globals, Ecore_Wl_Global);
+   /*      global = */
+   /*        EINA_INLIST_CONTAINER_GET(e_comp_wl->wl.globals, Ecore_Wl_Global); */
 
-        e_comp_wl->wl.globals =
-          eina_inlist_remove(e_comp_wl->wl.globals, e_comp_wl->wl.globals);
+   /*      e_comp_wl->wl.globals = */
+   /*        eina_inlist_remove(e_comp_wl->wl.globals, e_comp_wl->wl.globals); */
 
-        free(global->interface);
-        free(global);
-     }
+   /*      free(global->interface); */
+   /*      free(global); */
+   /*   } */
+
    if (e_comp_wl->wl.shm) wl_shm_destroy(e_comp_wl->wl.shm);
    _e_comp_wl_gl_shutdown();
 
+   ecore_wl2_display_destroy(ewd);
+
    /* shutdown ecore_wayland */
-   ecore_wl_shutdown();
+   ecore_wl2_shutdown();
 }
 
 EINTERN struct wl_resource *
