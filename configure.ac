@@ -742,7 +742,7 @@ AC_MSG_CHECKING([whether wayland EGL support is enabled])
 AC_MSG_RESULT([${e_cv_want_wayland_egl}])
 
 if test "x${e_cv_want_wayland_only}" != "xno" ;then
-  PKG_CHECK_MODULES([WAYLAND], [ecore-wayland >= 1.16 wayland-server >= 1.8.0 wayland-client >= 1.8.0 xkbcommon uuid],
+  PKG_CHECK_MODULES([WAYLAND], [ecore-wl2 wayland-server >= 1.8.0 wayland-client >= 1.8.0 xkbcommon uuid],
     [
       have_wayland=yes
       AC_DEFINE_UNQUOTED([HAVE_WAYLAND],[1],[enable wayland support])
@@ -859,7 +859,7 @@ WL_WEEKEYBOARD=false
 define([CHECK_MODULE_WL_WEEKEYBOARD],
 [
    if test "x${have_wayland}" = "xyes" ; then
-      AC_E_CHECK_PKG(WL_WEEKEYBOARD, [ eina >= 1.8.0 evas >= 1.8.0 ecore >= 1.8.0 ecore-evas >= 1.8.0 ecore-wayland >= 1.8.0 edje >= 1.8.0 ], [WL_WEEKEYBOARD=true], [WL_WEEKEYBOARD=false])
+      AC_E_CHECK_PKG(WL_WEEKEYBOARD, [ eina >= 1.8.0 evas >= 1.8.0 ecore >= 1.8.0 ecore-evas >= 1.8.0 ecore-wl2 >= 1.8.0 edje >= 1.8.0 ], [WL_WEEKEYBOARD=true], [WL_WEEKEYBOARD=false])
    else
       WL_WEEKEYBOARD=false
    fi
