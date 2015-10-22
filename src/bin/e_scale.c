@@ -27,8 +27,12 @@ e_scale_update(void)
           e_scale = (double)ecore_x_dpi_get() / (double)e_config->scale.base_dpi;
 #endif
 #ifdef HAVE_WAYLAND
+        /* FIXME: This needs to get the DPI from a given output */
         if (e_comp->comp_type == E_PIXMAP_TYPE_WL)
-          e_scale = (double)ecore_wl_dpi_get() / (double)e_config->scale.base_dpi;
+          {
+             e_scale = (double)ecore_wl2_output_dpi_get(NULL) /
+               (double)e_config->scale.base_dpi;
+          }
 #endif
         if (e_scale > e_config->scale.max) e_scale = e_config->scale.max;
         else if (e_scale < e_config->scale.min)
