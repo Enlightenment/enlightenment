@@ -1606,8 +1606,13 @@ _e_client_maximize(E_Client *ec, E_Maximize max)
 
         evas_object_smart_callback_call(ec->frame, "maximize", NULL);
         e_client_resize_limit(ec, &w, &h);
-        e_comp_object_frame_xy_unadjust(ec->frame, ec->x, ec->y, &ecx, &ecy);
-        e_comp_object_frame_wh_unadjust(ec->frame, ec->w, ec->h, &ecw, &ech);
+        if (e_comp_object_frame_allowed(ec->frame))
+          {
+             e_comp_object_frame_xy_unadjust(ec->frame, ec->x, ec->y, &ecx, &ecy);
+             e_comp_object_frame_wh_unadjust(ec->frame, ec->w, ec->h, &ecw, &ech);
+          }
+        else
+          ecx = ec->x, ecy = ec->y, ecw = ec->w, ech = ec->h;
 
         if (ecw < zw)
           w = ecw;
@@ -3745,13 +3750,19 @@ e_client_maximize(E_Client *ec, E_Maximize max)
      {
         /* Horizontal hasn't been set */
         ec->saved.x = ec->client.x - ec->zone->x;
-        ec->saved.w = ec->client.w;
+        if ((!e_comp_object_frame_allowed(ec->frame)) && (!e_pixmap_is_x(ec->pixmap)))
+          ec->saved.w = ec->w;
+        else
+          ec->saved.w = ec->client.w;
      }
    if (!(ec->maximized & E_MAXIMIZE_VERTICAL))
      {
         /* Vertical hasn't been set */
         ec->saved.y = ec->client.y - ec->zone->y;
-        ec->saved.h = ec->client.h;
+        if ((!e_comp_object_frame_allowed(ec->frame)) && (!e_pixmap_is_x(ec->pixmap)))
+          ec->saved.h = ec->h;
+        else
+          ec->saved.h = ec->client.h;
      }
 
    ec->saved.zone = ec->zone->num;
