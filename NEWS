@@ -11,15 +11,21 @@ Highlights:
       * Geolocation module
 
 
+Amitesh Singh (3):
+      md5: fix wrong sizeof argument (SIZEOF_MISMATCH)
+      pulseaudio: pass big data as pass by reference
+      e_flowlayout: typecast return value to int
+
 Bertrand Jacquin (1):
       MEDIUM: modules/shot: switch to https://
 
-Boram Park (5):
+Boram Park (6):
       fix tty problem when enlightenment(drm-backend) is killed by SIGSEGV
       e_comp_wl: fix segfault in case parent's surface is destroyed before subsurface is destroyed
       e_comp_wl: fix not sending a mouse enter event to client.
       Creating wl_shm global object before creating other global objects
       wl_desktop_shell: return void
+      should remove a frame resource from pending.frames list also
 
 Boris Faure (3):
       synchronize mailmap
@@ -46,7 +52,7 @@ Bryce Harrington (14):
       wayland: whitespace cleanup
       wayland: Free temporary string on error exit
 
-Carsten Haitzler (105):
+Carsten Haitzler (109):
       mixer: Optionally select an external mixer application.
       e backlight - limit min to 0.05 to avoid totally off backlight
       fix README to be more up to date
@@ -152,17 +158,23 @@ Carsten Haitzler (105):
       Revert "Revert "Revert "Revert "deskmirror - fix dangling reference to mirror by refcounting it""""
       efm - handle cancel of async eio if icon is freed and eio still active
       e - efm fix. fix eio error handler that is called after eio cancel
+      e comp - default config was rather broken - fix
+      e comp data - actually ... NO visibility effect by default is right
+      e mixer - be more robust if pulse exits/crashes and def sink is null
+      e - comps sync - ec client was null - i think, so protect against crash
 
 Cedric BAIL (3):
       lokker: empty string should not be translated.
       battery: let's finally allow the battery process to rest also when enlightenment die.
       temperature: let's finally allow the temp process to rest also when enlightenment die.
 
-Chidambar Zinnoury (2):
+Chidambar Zinnoury (4):
       Bugfix: e backlight: use saner default values.
       Bugfix: e dialog: don’t crash when using the escape key to close.
+      e menus: Fix invalid comparisons.
+      e fm: Use correct string length when copying path.
 
-Christopher Michael (343):
+Christopher Michael (355):
       bugfix: Fix e_msgbus file having missing initializers for Eldbus     Messages & Signals
       bugfix: Fix e_notification file having missing initializers for Eldbus     Messages & Signals
       bugfix: Cleanup appmenu module having missing field initializers for     Eldbus Messages & Signals
@@ -506,6 +518,18 @@ Christopher Michael (343):
       enlightenment: Remove wl_screenshot module from whitelist
       enlightenment: Remove commented out reference to wl_screenshot Makefile
       enlightenment: Fix formatting of Wayland compositor code so it is easily readable in 80 columns
+      enlightenment: Update wayland readme
+      enlightenment: Add missing EINA_UNUSED for unused function paramaters
+      enlightenment: Add missing EINA_UNUSED for unused function parameters
+      enlightenment: Add missing EINA_UNUSED for unused function paramaters
+      enlightenment: Add missing field initializers for Evas_Point
+      enlightenment: Add missing field initializers for Eina_Rectangle
+      enlightenment: Fix E_CONFIG_LIMIT to use the proper min & max values
+      enlightenment: Use 'fabs' to get absolute value of floating point types
+      enlightenment: #if 0 out an unused variable
+      enlightenment: Use 'fabs' to compute absolute value of floating point     types
+      enlightenment: Make sure we have a zone before calling     _bgpreview_viewport_update
+      Fix e_menu trying to swallow an object from a different canvas
 
 Conrad Meyer (4):
       Mixer Pulse: Fix trivial use-after-free.
@@ -616,7 +640,7 @@ Luis de Bethencourt (2):
 Manuel Bachmann (1):
       build: allow building in pure Wayland mode (no xcb, no ecore-x)
 
-Marcel Hollerbach (22):
+Marcel Hollerbach (27):
       tiling: Implemented tiling window position manipulation
       tiling: Fix issue with window-moving and windows not breaking out.
       Fix wrong deskshow function
@@ -639,6 +663,11 @@ Marcel Hollerbach (22):
       mixer: Fix segfault when backend does not have any sink
       Merge branch 'devs/bu5hm4n/mixer'
       deskmirror: check if ec is not null before accessing it
+      mixer: install app to bin directory
+      mixer: install icon and .desktop file
+      mixer: start app from bin directory
+      Fix make distcheck
+      systray: search for the best available resolution of a icon
 
 Massimo Maiurana (12):
       Updating italian translation
@@ -654,7 +683,7 @@ Massimo Maiurana (12):
       Updating italian translation
       Updating catalan translation
 
-Mike Blumenkrantz (952):
+Mike Blumenkrantz (1008):
       unset release mode
       bump version
       Revert "mixer: Optionally select an external mixer application."
@@ -1607,12 +1636,72 @@ Mike Blumenkrantz (952):
       merge E19 branch NEWS items
       remove remote colorclass editor usage
       always apply all randr changes after a screen event
+      20.0-alpha release
+      20.0-alpha NEWS updates
+      unset release mode
+      add RENDER_DEBUG for forced renders when setting dirty flag
+      fix return value of comp render for wayland clients
+      fix comp render return value for failed draws of non-argb clients
+      unify comp render returns for argb and non-argb clients
+      move client post-update adding into render function
+      fix systray to work with spec-breaking apps, eg. steam
+      move configure init after intl init has completed
+      make icon selection dialog resizable in .desktop editor
+      clear menu cache when saving a menu file
+      throw an ACK when trying to set comp frame geometry if frame exists
+      do not set frame geometry on frame-possessing wayland clients
+      attempt to load default e_bindings if initial load fails
+      repopulate app list dialogs when efreet deskop cache updates
+      update wayland readme
+      only use fast-path pixmap size updating after a resize for x11 clients
+      when removing VERTICAL maximize state, also remove LEFT and RIGHT states
+      don't crash desktop gadget systrays when adjusting image sizing
+      apply _GTK_FRAME_EXTENTS for xwayland clients
+      make wake-on-urgent apply for all cases of window urgency
+      explicitly disable screensaver for wayland urgency wakeups
+      remove duplicate surface size update for wayland clients during commit
+      use correct param ordering for setting wayland client frame geometry
+      force full damage for first frame of x11 override clients
+      subtract x11 client damage region even when forcing full override damage
+      do not return when x11 damage event returns no rects
+      trap shaped x11 clients and prevent compositor blocking with high rect count
+      cache systray items for each dbus session
+      reject deleted clients from x11 sync alarm event callback
+      use dbus unique name for tracking systray sessions
+      check systray dbus name existence before attempting to recover session
+      clear x11 client pixmap when returning from iconic
+      force a software render in all cases when finalizing x11 client iconify
+      queue pending buffers for wayland shm clients
+      update csd using deltas of previous values
+      do not use x11 input windows for grab dialogs when running in wayland
+      fix typo in wayland keyboard resource unbind list management
+      append new keyboard resources for wayland focused-client to the focused list
+      do not use ecore-x functions in scale config while running in wayland
+      make comp config unresizable...again
+      require efl >= 1.16 for wayland support
+      add hacks to work around pulseaudio+xwayland integration deadlocks
+      unconditionally show opengl option in compositor settings
+      remove dead modules from whitelist
+      completely remove access module
+      defer all module error dialogs
+      clip client input rect to client geometry, not window geometry
+      enforce cw->obj pass_events state more accurately
+      set client input rects more accurately, accounting for SSD
+      only apply frame geometry deltas for CSD if the CSD region exists
+      reject frame theme changes for clients which have CSD
+      when maximizing a wayland client with csd, use window geometry
+      add NEWS from 19.12 release
+      20.0-beta release
 
 MinJeong Kim (1):
       e_menu: remove an unnecessary comparison
 
 Nicolas Marcotte (1):
       added a macro and a fucntion to switch to desktop D on screen S as specified in https://phab.enlightenment.org/T2218
+
+Peter Kjellerstedt (2):
+      Add "(drag only)" to title for drag only edge bindings
+      Add support for the ISO 8601 date format to the clock module
 
 Samuel F. Baggen (2):
       Do not add /usr/share twice for XDG_DATA_DIRS
@@ -1640,7 +1729,7 @@ Sebastian Dransfeld (20):
       randr: fix bad copy paste error
       randr: improve code readability in lid update
 
-Seunghun Lee (9):
+Seunghun Lee (11):
       Remove HAVE_WAYLAND_ONLY dependency from searching and enabling backend module.
       wl_drm: Add event handler for session activation signal.
       remove a kind of typo in E_ZONE_GEOMETRY atom string.
@@ -1650,6 +1739,8 @@ Seunghun Lee (9):
       wl_text_input: remove duplicated code.
       wl_text_input: initializes input_method's context when destroy context.
       Add initial module of weekeyboard as a wayland virtual keyboard.
+      clear the tiler for input region after setting to comp object.
+      e-comp-wl-input: don't leak the initial keymap.
 
 Simon Lees (5):
       Wizard: Update icon theme search list
@@ -1730,8 +1821,9 @@ Stefan Schmidt (64):
 Takeshi Banse (1):
       cpufreq: teach cpuinfo_{min,max}_freq as available frequencies
 
-Thierry (1):
+Thierry (2):
       menu: match file looked by code.
+      mouse_config: fix accel threshold and numerator limits.
 
 Toan Pham (4):
       Changed search pattern to focus window by name to case-insensitive.
@@ -1739,7 +1831,7 @@ Toan Pham (4):
       Center a dialog window when it is displaying off-screen
       added quick tile to corner feature
 
-Tom Hacohen (16):
+Tom Hacohen (18):
       fix: Add more desktops to be tiled by default in the tiling config.
       Fix tiling window properties restore issues with iconify.
       tiling: fix coding conventions and style.
@@ -1756,6 +1848,11 @@ Tom Hacohen (16):
       Module teamwork: Stop using a deprecated function.
       Auth: try harder when clearing passwords.
       Logging: Fix broken logging macros.
+      Client: fix potential out of bounds read.
+      Intl: fix potential stack buffer overflow.
+
+Tomáš Čech (1):
+      don't forget wl_desktop_shell's header in tarball
 
 Vincent Torri (1):
       add MIN define for non-linux systems
