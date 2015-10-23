@@ -1794,6 +1794,66 @@ vivek (3):
       wl_desktop_shell: Fixed the issue to check if wl surface is active or hung up
 
 
+Release 0.19.12:
+---------------------
+Amitesh Singh (1):
+      md5: fix wrong sizeof argument (SIZEOF_MISMATCH)
+
+Carsten Haitzler (2):
+      efm - handle cancel of async eio if icon is freed and eio still active
+      e - efm fix. fix eio error handler that is called after eio cancel
+
+Chidambar Zinnoury (1):
+      e menus: Fix invalid comparisons.
+
+Mike Blumenkrantz (39):
+      broadcast support for _GTK_FRAME_EXTENTS
+      fully support _GTK_FRAME_EXTENTS
+      add util function for determining if a client is allowed to have a frame
+      fix e_shelf_position_calc() to not set struct members before applying them
+      block border-affecting entries from showing up in client menu with csd
+      block border-affecting client functions for csd clients
+      set comp object client_inset.calc based on frame_object existence
+      check warp_client existence during pointer warp before dereferencing it
+      fix handling of x11 ICCCM WithdrawnState
+      initialize pixmap size vars in comp resize interceptor
+      map/unmap x11 client windows when toggling iconic state
+      completely remove all wayland support from build system
+      blacklist all versions of efl affected by T2745
+      force pixmap clear when hiding an x11 window
+      set x11 broadcast atom hint array size based on array-name size
+      force adjustment of client geometry when changing csd frame size
+      remove client maximize states during unmaximize only if they are active
+      unset E_Client->changes.need_unmaximize after calling unmaximize
+      allow client resizes on axes currently unrestricted by maximize state
+      unset the requested maximize state when receiving a client unmaximize request
+      use more accurate math to determine whether to apply a client maximize change
+      do not set client window coordinates during a move until after resizing check
+      use client window coords for resize-moving without a frame_object
+      _GTK_FRAME_EXTENTS changes using a property, not a client message
+      reject identical calls to e_comp_object_frame_geometry_set()
+      reject client resize attempts for clients with dirty pixmaps
+      remove object event callback on notification popdown
+      free x11 damage region rects
+      add RENDER_DEBUG for forced renders when setting dirty flag
+      fix comp render return value for failed draws of non-argb clients
+      unify comp render returns for argb and non-argb clients
+      move client post-update adding into render function
+      fix systray to work with spec-breaking apps, eg. steam
+      move configure init after intl init has completed
+      make icon selection dialog resizable in .desktop editor
+      clear menu cache when saving a menu file
+      attempt to load default e_bindings if initial load fails
+      repopulate app list dialogs when efreet deskop cache updates
+      only use fast-path pixmap size updating after a resize for x11 clients
+
+Peter Kjellerstedt (1):
+      Add "(drag only)" to title for drag only edge bindings
+
+maxerba (1):
+      Updating spanish translation
+
+
 Release 0.19.11:
 ---------------------
 Carsten Haitzler (3):
