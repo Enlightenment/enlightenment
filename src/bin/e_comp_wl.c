@@ -2041,7 +2041,7 @@ _e_comp_wl_session_recovery_cb_bind(struct wl_client *client, void *data EINA_UN
 {
    struct wl_resource *res;
 
-   if (!(res = wl_resource_create(client, &session_recovery_interface, 1, id)))
+   if (!(uuid_res = wl_resource_create(client, &session_recovery_interface, 1, id)))
      {
         ERR("Could not create session_recovery interface");
         wl_client_post_no_memory(client);
