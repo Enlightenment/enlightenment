@@ -549,6 +549,14 @@ _server_info_cb(pa_context *c, const pa_server_info *info,
 {
    pa_operation *o;
 
+   if (pa_context_errno(c) != PA_OK)
+     {
+        WRN("Could not get pa server info, error: %d", pa_context_errno(c));
+        return;
+     }
+
+   EINA_SAFETY_ON_NULL_RETURN(info);
+
    if (!(o = pa_context_get_sink_info_by_name(c, info->default_sink_name,
                                               _sink_default_cb, userdata)))
      {
