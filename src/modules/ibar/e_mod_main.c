@@ -78,6 +78,7 @@ struct _IBar_Icon
    Eina_List       *exes; //all instances
    Eina_List       *menu_pending; //clients with menu items pending
    E_Gadcon_Popup  *menu;
+   const char      *hashname;
    int              mouse_down;
    struct
    {
@@ -824,7 +825,17 @@ _ibar_icon_new(IBar *b, Efreet_Desktop *desktop, Eina_Bool notinorder)
 
    _ibar_icon_fill(ic);
    b->icons = eina_inlist_append(b->icons, EINA_INLIST_GET(ic));
-   eina_hash_add(b->icon_hash, _desktop_name_get(ic->app), ic);
+   if (eina_hash_find(b->icon_hash, _desktop_name_get(ic->app)))
+     {
+        char buf[PATH_MAX];
+
+        ERR("Ibar - Unexpected: icon with same desktop path created twice");
+        snprintf(buf, sizeof(buf), "%s::%1.20f",
+                 _desktop_name_get(ic->app), ecore_time_get());
+        ic->hashname = eina_stringshare_add(buf);
+     }
+   else ic->hashname = eina_stringshare_add(_desktop_name_get(ic->app));
+   eina_hash_add(b->icon_hash, ic->hashname, ic);
    if (notinorder)
      {
         ic->not_in_order = 1;
@@ -873,7 +884,8 @@ _ibar_icon_free(IBar_Icon *ic)
    E_FREE_FUNC(ic->hide_timer, ecore_timer_del);
    E_FREE_FUNC(ic->show_timer, ecore_timer_del);
    ic->ibar->icons = eina_inlist_remove(ic->ibar->icons, EINA_INLIST_GET(ic));
-   eina_hash_del_by_key(ic->ibar->icon_hash, _desktop_name_get(ic->app));
+   eina_hash_del_by_key(ic->ibar->icon_hash, ic->hashname);
+   E_FREE_FUNC(ic->hashname, eina_stringshare_del);
    E_FREE_FUNC(ic->reset_timer, ecore_timer_del);
    if (ic->app) efreet_desktop_unref(ic->app);
    evas_object_event_callback_del_full(ic->o_holder, EVAS_CALLBACK_MOUSE_IN,
