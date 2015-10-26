@@ -1,6 +1,6 @@
 #include "e.h"
 #include <Ecore_Fb.h>
-#include <Ecore_Wayland.h>
+/* #include <Ecore_Wayland.h> */
 
 E_API E_Module_Api e_modapi = { E_MODULE_API_VERSION, "Wl_FB" };
 
@@ -39,8 +39,8 @@ e_modapi_init(E_Module *m)
    e_comp_canvas_init(w, h);
    e_comp->pointer = e_pointer_canvas_new(e_comp->ee, EINA_TRUE);
 
-   ecore_wl_init(NULL);
-   ecore_wl_server_mode_set(1);
+   /* ecore_wl_init(NULL); */
+   /* ecore_wl_server_mode_set(1); */
    return m;
 }
 
