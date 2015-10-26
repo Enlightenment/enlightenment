@@ -9,7 +9,7 @@ struct weekeyboard
 {
    E_Module *module;
    Ecore_Evas *ee;
-   Ecore_Wl_Window *win;
+   Ecore_Wl2_Window *win;
    Evas_Object *edje_obj;
    const char *ee_engine;
    char **ignore_keys;
@@ -250,7 +250,7 @@ _wkb_ui_setup(struct weekeyboard *wkb)
 
    if (eina_streq(wkb->theme, "default"))
      {
-        ecore_wl_screen_size_get(&w, &h);
+        ecore_wl2_display_screen_size_get(ewd, &w, &h);
         DBG("Screen size: w=%d, h=%d", w, h);
         if (w >= 1080)
           w = 1080;
@@ -298,7 +298,7 @@ _wkb_ui_setup(struct weekeyboard *wkb)
 
         edje_object_part_geometry_get(wkb->edje_obj, "background",
                                       &rx, &ry, &rw, &rh);
-        ecore_wl_window_input_region_set(wkb->win, rx, ry, rw, rh);
+        ecore_wl2_window_input_region_set(wkb->win, rx, ry, rw, rh);
      }
 
    ignore_keys = edje_file_data_get(path, "ignore-keys");
@@ -501,15 +501,18 @@ static const struct wl_input_method_listener wkb_im_listener = {
 static Eina_Bool
 _wkb_setup(struct weekeyboard *wkb)
 {
-   Eina_Inlist *globals;
+   Eina_Iterator *itr;
+   Ecore_Wl2_Global *global;
    struct wl_registry *registry;
-   Ecore_Wl_Global *global;
    struct wl_input_panel_surface *ips;
+   void *data;
 
-   globals = ecore_wl_globals_get();
-   registry = ecore_wl_registry_get();
-   EINA_INLIST_FOREACH(globals, global)
+   registry = e_comp_wl->wl.registry ?: ecore_wl2_display_registry_get(ewd);
+   itr = ecore_wl2_display_globals_get(ewd);
+   EINA_ITERATOR_FOREACH(itr, data)
      {
+        global = (Ecore_Wl2_Global *)data;
+
         DBG("interface: <%s>", global->interface);
         if (eina_streq(global->interface, "wl_input_panel"))
           {
@@ -532,6 +535,7 @@ _wkb_setup(struct weekeyboard *wkb)
              DBG("binding wl_output");
           }
      }
+   eina_iterator_free(itr);
 
    if ((!wkb->ip) || (!wkb->im) || (!wkb->output))
      return EINA_FALSE;
@@ -541,9 +545,11 @@ _wkb_setup(struct weekeyboard *wkb)
 
    /* Set input panel surface */
    DBG("Setting up input panel");
-   wkb->win = ecore_evas_wayland_window_get(wkb->ee);
-   ecore_wl_window_type_set(wkb->win, ECORE_WL_WINDOW_TYPE_NONE);
-   wkb->surface = ecore_wl_window_surface_create(wkb->win);
+
+   wkb->win = ecore_evas_wayland_window_get2(wkb->ee);
+   ecore_wl2_window_type_set(wkb->win, ECORE_WL2_WINDOW_TYPE_NONE);
+
+   wkb->surface = ecore_wl2_window_surface_get(wkb->win);
    ips = wl_input_panel_get_input_panel_surface(wkb->ip, wkb->surface);
    wl_input_panel_surface_set_toplevel(ips, wkb->output,
                                        WL_INPUT_PANEL_SURFACE_POSITION_CENTER_BOTTOM);
