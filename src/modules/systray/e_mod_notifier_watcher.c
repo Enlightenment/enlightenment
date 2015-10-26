@@ -242,4 +242,6 @@ systray_notifier_dbus_watcher_stop(void)
    if (host_service)
      eina_stringshare_del(host_service);
    conn = NULL;
+   E_FREE_FUNC(systray_ctx_get()->config->items, eina_hash_free);
+   eina_stringshare_replace(&systray_ctx_get()->config->dbus, NULL);
 }
