@@ -4514,10 +4514,10 @@ _e_comp_x_hook_client_del(void *d EINA_UNUSED, E_Client *ec)
                ecore_x_window_reparent(win, e_comp->root,
                                        cd->initial_attributes.x,
                                        cd->initial_attributes.y);
-             e_pixmap_alias(NULL, E_PIXMAP_TYPE_X, pwin);
              if (!ec->internal)
                ecore_x_window_save_set_del(win);
           }
+        e_pixmap_alias(NULL, E_PIXMAP_TYPE_X, pwin);
      }
    ec->already_unparented = 1;
    if (cd)
