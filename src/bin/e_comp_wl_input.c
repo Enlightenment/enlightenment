@@ -20,7 +20,7 @@ _e_comp_wl_input_update_seat_caps(void)
      caps |= WL_SEAT_CAPABILITY_TOUCH;
 
    EINA_LIST_FOREACH(e_comp_wl->seat.resources, l, res)
-        wl_seat_send_capabilities(res, caps);
+     wl_seat_send_capabilities(res, caps);
 }
 
 static void
@@ -126,9 +126,13 @@ _e_comp_wl_input_cb_keyboard_unbind(struct wl_resource *resource)
    e_comp_wl->kbd.resources =
      eina_list_remove(e_comp_wl->kbd.resources, resource);
    EINA_LIST_FOREACH_SAFE(e_comp_wl->kbd.focused, l, ll, res)
-     if (res == resource)
-       e_comp_wl->kbd.focused =
-         eina_list_remove_list(e_comp_wl->kbd.focused, l);
+     {
+        if (res == resource)
+          {
+             e_comp_wl->kbd.focused =
+               eina_list_remove_list(e_comp_wl->kbd.focused, l);
+          }
+     }
 }
 
 void
@@ -169,8 +173,7 @@ _e_comp_wl_input_cb_keyboard_get(struct wl_client *client, struct wl_resource *r
                             wl_resource_get_version(resource), id);
    if (!res)
      {
-        ERR("Could not create keyboard on seat %s: %m",
-            e_comp_wl->seat.name);
+        ERR("Could not create keyboard on seat %s: %m", e_comp_wl->seat.name);
         wl_client_post_no_memory(client);
         return;
      }
@@ -187,8 +190,7 @@ _e_comp_wl_input_cb_keyboard_get(struct wl_client *client, struct wl_resource *r
 
    /* send current keymap */
    wl_keyboard_send_keymap(res, WL_KEYBOARD_KEYMAP_FORMAT_XKB_V1,
-                           e_comp_wl->xkb.fd,
-                           e_comp_wl->xkb.size);
+                           e_comp_wl->xkb.fd, e_comp_wl->xkb.size);
 
    /* if the client owns the focused surface, we need to send an enter */
    focused = e_client_focused_get();
@@ -210,23 +212,23 @@ _e_comp_wl_input_cb_touch_unbind(struct wl_resource *resource)
 static void
 _e_comp_wl_input_cb_touch_get(struct wl_client *client EINA_UNUSED, struct wl_resource *resource, uint32_t id EINA_UNUSED)
 {
-    struct wl_resource *res;
+   struct wl_resource *res;
 
     /* try to create pointer resource */
-    res = wl_resource_create(client, &wl_touch_interface,
-                             wl_resource_get_version(resource), id);
-    if (!res)
-      {
-         ERR("Could not create touch on seat %s: %m",
-             e_comp_wl->seat.name);
-         wl_client_post_no_memory(client);
-         return;
-      }
+   res = wl_resource_create(client, &wl_touch_interface,
+                            wl_resource_get_version(resource), id);
+   if (!res)
+     {
+        ERR("Could not create touch on seat %s: %m",
+            e_comp_wl->seat.name);
+        wl_client_post_no_memory(client);
+        return;
+     }
 
-    e_comp_wl->touch.resources =
+   e_comp_wl->touch.resources =
      eina_list_append(e_comp_wl->touch.resources, res);
-    wl_resource_set_implementation(res, &_e_touch_interface,
-                                   e_comp->wl_comp_data,
+   wl_resource_set_implementation(res, &_e_touch_interface,
+                                  e_comp->wl_comp_data,
                                   _e_comp_wl_input_cb_touch_unbind);
 }
 
@@ -403,8 +405,7 @@ _e_comp_wl_input_keymap_update(struct xkb_keymap *keymap)
    /* send updated keymap */
    EINA_LIST_FOREACH(e_comp_wl->kbd.resources, l, res)
      wl_keyboard_send_keymap(res, WL_KEYBOARD_KEYMAP_FORMAT_XKB_V1,
-                             e_comp_wl->xkb.fd,
-                             e_comp_wl->xkb.size);
+                             e_comp_wl->xkb.fd, e_comp_wl->xkb.size);
 
    /* update modifiers */
    e_comp_wl_input_keyboard_modifiers_update();
@@ -501,23 +502,20 @@ e_comp_wl_input_keyboard_modifiers_serialize(void)
    xkb_mod_mask_t mod;
    xkb_layout_index_t grp;
 
-   mod = xkb_state_serialize_mods(e_comp_wl->xkb.state,
-                              XKB_STATE_DEPRESSED);
+   mod = xkb_state_serialize_mods(e_comp_wl->xkb.state, XKB_STATE_DEPRESSED);
    changed |= mod != e_comp_wl->kbd.mod_depressed;
    e_comp_wl->kbd.mod_depressed = mod;
 
-   mod = xkb_state_serialize_mods(e_comp_wl->xkb.state,
-                              XKB_STATE_MODS_LATCHED);
+   mod = xkb_state_serialize_mods(e_comp_wl->xkb.state, XKB_STATE_MODS_LATCHED);
    changed |= mod != e_comp_wl->kbd.mod_latched;
    e_comp_wl->kbd.mod_latched = mod;
 
-   mod = xkb_state_serialize_mods(e_comp_wl->xkb.state,
-                              XKB_STATE_MODS_LOCKED);
+   mod = xkb_state_serialize_mods(e_comp_wl->xkb.state, XKB_STATE_MODS_LOCKED);
    changed |= mod != e_comp_wl->kbd.mod_locked;
    e_comp_wl->kbd.mod_locked = mod;
 
    grp = xkb_state_serialize_layout(e_comp_wl->xkb.state,
-                                XKB_STATE_LAYOUT_EFFECTIVE);
+                                    XKB_STATE_LAYOUT_EFFECTIVE);
    changed |= grp != e_comp_wl->kbd.mod_group;
    e_comp_wl->kbd.mod_group = grp;
    return changed;
