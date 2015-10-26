@@ -1300,6 +1300,7 @@ _wl_init()
                }
           }
      }
+   eina_iterator_free(itr);
 
    return ECORE_CALLBACK_RENEW;
 }
