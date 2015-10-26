@@ -72,11 +72,14 @@ _wkb_commit_preedit_str(struct weekeyboard *wkb)
      return;
 
    wl_input_method_context_cursor_position(wkb->im_ctx, 0, 0);
-   wl_input_method_context_commit_string(wkb->im_ctx, wkb->serial, wkb->preedit_str);
+   wl_input_method_context_commit_string(wkb->im_ctx, wkb->serial,
+                                         wkb->preedit_str);
 
    if (wkb->surrounding_text)
      {
-        surrounding_text = _wkb_insert_text(wkb->surrounding_text, wkb->surrounding_cursor, wkb->preedit_str);
+        surrounding_text =
+          _wkb_insert_text(wkb->surrounding_text, wkb->surrounding_cursor,
+                           wkb->preedit_str);
         free(wkb->surrounding_text);
         wkb->surrounding_text = surrounding_text;
         wkb->surrounding_cursor += strlen(wkb->preedit_str);
@@ -97,13 +100,16 @@ _wkb_send_preedit_str(struct weekeyboard *wkb, int cursor)
    unsigned int index = strlen(wkb->preedit_str);
 
    if (wkb->preedit_style)
-     wl_input_method_context_preedit_styling(wkb->im_ctx, 0, strlen(wkb->preedit_str), wkb->preedit_style);
+     wl_input_method_context_preedit_styling(wkb->im_ctx, 0,
+                                             strlen(wkb->preedit_str),
+                                             wkb->preedit_style);
 
    if (cursor > 0)
      index = cursor;
 
    wl_input_method_context_preedit_cursor(wkb->im_ctx, index);
-   wl_input_method_context_preedit_string(wkb->im_ctx, wkb->serial, wkb->preedit_str, wkb->preedit_str);
+   wl_input_method_context_preedit_string(wkb->im_ctx, wkb->serial,
+                                          wkb->preedit_str, wkb->preedit_str);
 }
 
 static void
@@ -185,7 +191,8 @@ _cb_wkb_on_key_down(void *data, Evas_Object *obj EINA_UNUSED, const char *emissi
      {
         _wkb_commit_preedit_str(wkb);
         wl_input_method_context_keysym(wkb->im_ctx, wkb->serial, 0,
-                                       XKB_KEY_Return, WL_KEYBOARD_KEY_STATE_PRESSED, 0);
+                                       XKB_KEY_Return,
+                                       WL_KEYBOARD_KEY_STATE_PRESSED, 0);
         goto end;
      }
    else if (eina_streq(key, "space"))
@@ -213,12 +220,14 @@ _wkb_ui_setup(struct weekeyboard *wkb)
    if (!wkb->edje_obj)
      {
         Evas *evas;
+
         ecore_evas_alpha_set(wkb->ee, EINA_TRUE);
         ecore_evas_title_set(wkb->ee, "Weekeyboard");
 
         evas = ecore_evas_get(wkb->ee);
         wkb->edje_obj = edje_object_add(evas);
-        edje_object_signal_callback_add(wkb->edje_obj, "key_down", "*", _cb_wkb_on_key_down, wkb);
+        edje_object_signal_callback_add(wkb->edje_obj, "key_down", "*",
+                                        _cb_wkb_on_key_down, wkb);
      }
 
    // hard coded
@@ -244,7 +253,8 @@ _wkb_ui_setup(struct weekeyboard *wkb)
         DBG("Using default_%d theme", w);
      }
 
-   snprintf(path, PATH_MAX, "%s/%s_%d.edj", e_module_dir_get(wkb->module), wkb->theme, w);
+   snprintf(path, PATH_MAX, "%s/%s_%d.edj",
+            e_module_dir_get(wkb->module), wkb->theme, w);
    INF("Loading edje file: '%s'", path);
 
    if (!edje_object_file_set(wkb->edje_obj, path, "main"))
@@ -277,7 +287,8 @@ _wkb_ui_setup(struct weekeyboard *wkb)
      {
         int rx, ry, rw, rh;
 
-        edje_object_part_geometry_get(wkb->edje_obj, "background", &rx, &ry, &rw, &rh);
+        edje_object_part_geometry_get(wkb->edje_obj, "background",
+                                      &rx, &ry, &rw, &rh);
         ecore_wl_window_input_region_set(wkb->win, rx, ry, rw, rh);
      }
 
@@ -304,7 +315,8 @@ _wkb_im_ctx_surrounding_text(void *data, struct wl_input_method_context *im_ctx,
 
    EINA_SAFETY_ON_NULL_RETURN(text);
 
-   DBG("im_context = %p text = '%s' cursor = %d anchor = %d", im_ctx, text, cursor, anchor);
+   DBG("im_context = %p text = '%s' cursor = %d anchor = %d",
+       im_ctx, text, cursor, anchor);
 
    free(wkb->surrounding_text);
 
@@ -390,7 +402,8 @@ _wkb_im_ctx_commit_state(void *data, struct wl_input_method_context *im_ctx, uin
    wkb->serial = serial;
 
    wl_input_method_context_language(im_ctx, wkb->serial, "en");
-   wl_input_method_context_text_direction(im_ctx, wkb->serial, WL_TEXT_INPUT_TEXT_DIRECTION_LTR);
+   wl_input_method_context_text_direction(im_ctx, wkb->serial,
+                                          WL_TEXT_INPUT_TEXT_DIRECTION_LTR);
 }
 
 static void
@@ -451,7 +464,8 @@ _wkb_im_activate(void *data, struct wl_input_method *input_method EINA_UNUSED, s
 
    /* hard coded */
    wl_input_method_context_language(im_ctx, wkb->serial, "en");
-   wl_input_method_context_text_direction(im_ctx, wkb->serial, WL_TEXT_INPUT_TEXT_DIRECTION_LTR);
+   wl_input_method_context_text_direction(im_ctx, wkb->serial,
+                                          WL_TEXT_INPUT_TEXT_DIRECTION_LTR);
 
    wkb->context_changed = EINA_TRUE;
    evas_object_show(wkb->edje_obj);
@@ -490,17 +504,22 @@ _wkb_setup(struct weekeyboard *wkb)
         DBG("interface: <%s>", global->interface);
         if (eina_streq(global->interface, "wl_input_panel"))
           {
-             wkb->ip = wl_registry_bind(registry, global->id, &wl_input_panel_interface, 1);
+             wkb->ip =
+               wl_registry_bind(registry, global->id,
+                                &wl_input_panel_interface, 1);
              DBG("binding wl_input_panel");
           }
         else if (eina_streq(global->interface, "wl_input_method"))
           {
-             wkb->im = wl_registry_bind(registry, global->id, &wl_input_method_interface, 1);
+             wkb->im =
+               wl_registry_bind(registry, global->id,
+                                &wl_input_method_interface, 1);
              DBG("binding wl_input_method, id = %d", global->id);
           }
         else if (eina_streq(global->interface, "wl_output"))
           {
-             wkb->output = wl_registry_bind(registry, global->id, &wl_output_interface, 1);
+             wkb->output =
+               wl_registry_bind(registry, global->id, &wl_output_interface, 1);
              DBG("binding wl_output");
           }
      }
@@ -517,7 +536,8 @@ _wkb_setup(struct weekeyboard *wkb)
    ecore_wl_window_type_set(wkb->win, ECORE_WL_WINDOW_TYPE_NONE);
    wkb->surface = ecore_wl_window_surface_create(wkb->win);
    ips = wl_input_panel_get_input_panel_surface(wkb->ip, wkb->surface);
-   wl_input_panel_surface_set_toplevel(ips, wkb->output, WL_INPUT_PANEL_SURFACE_POSITION_CENTER_BOTTOM);
+   wl_input_panel_surface_set_toplevel(ips, wkb->output,
+                                       WL_INPUT_PANEL_SURFACE_POSITION_CENTER_BOTTOM);
 
    /* Input method listener */
    DBG("Adding wl_input_method listener");
