@@ -70,7 +70,7 @@ _e_comp_wl_data_offer_cb_source_destroy(struct wl_listener *listener, void *data
    E_Comp_Wl_Data_Offer *offer;
 
    DBG("Data Offer Source Destroy");
-   offer = container_of(listener, E_Comp_Wl_Data_Offer, 
+   offer = container_of(listener, E_Comp_Wl_Data_Offer,
                         source_destroy_listener);
    if (!offer) return;
 
@@ -256,14 +256,13 @@ _e_comp_wl_data_device_selection_set(void *data EINA_UNUSED, E_Comp_Wl_Data_Sour
    if (focus)
      {
         data_device_res =
-           e_comp_wl_data_find_for_client(wl_resource_get_client(focus));
+          e_comp_wl_data_find_for_client(wl_resource_get_client(focus));
         if ((data_device_res) && (source))
           {
              offer_res =
-                _e_comp_wl_data_device_data_offer_create(source,
-                                                         data_device_res);
+               _e_comp_wl_data_device_data_offer_create(source,
+                                                        data_device_res);
              wl_data_device_send_selection(data_device_res, offer_res);
-
           }
         else if (data_device_res)
           wl_data_device_send_selection(data_device_res, NULL);
@@ -302,8 +301,10 @@ _e_comp_wl_data_device_drag_finished(E_Drag *drag, int dropped)
         if (e_client_has_xwindow(e_comp_wl->selection.target))
           {
              ecore_x_client_message32_send(e_client_util_win_get(e_comp_wl->selection.target),
-               ECORE_X_ATOM_XDND_DROP, ECORE_X_EVENT_MASK_NONE,
-               e_comp->cm_selection, 0, ecore_x_current_time_get(), 0, 0);
+                                           ECORE_X_ATOM_XDND_DROP,
+                                           ECORE_X_EVENT_MASK_NONE,
+                                           e_comp->cm_selection, 0,
+                                           ecore_x_current_time_get(), 0, 0);
           }
         else
 #endif
@@ -319,7 +320,8 @@ _e_comp_wl_data_device_drag_finished(E_Drag *drag, int dropped)
 #ifndef HAVE_WAYLAND_ONLY
              if (e_comp_util_has_xwayland())
                {
-                  ecore_x_selection_owner_set(0, ECORE_X_ATOM_SELECTION_XDND, ecore_x_current_time_get());
+                  ecore_x_selection_owner_set(0, ECORE_X_ATOM_SELECTION_XDND,
+                                              ecore_x_current_time_get());
                   ecore_x_window_hide(e_comp->cm_selection);
                }
 #endif
@@ -340,7 +342,8 @@ _e_comp_wl_data_device_cb_drag_start(struct wl_client *client, struct wl_resourc
 
    DBG("Data Device Drag Start");
 
-   if ((e_comp_wl->kbd.focus) && (e_comp_wl->kbd.focus != origin_resource)) return;
+   if ((e_comp_wl->kbd.focus) && (e_comp_wl->kbd.focus != origin_resource))
+     return;
 
    if (!(source = wl_resource_get_user_data(source_resource))) return;
    e_comp_wl->drag_source = source;
@@ -371,9 +374,10 @@ _e_comp_wl_data_device_cb_drag_start(struct wl_client *client, struct wl_resourc
      }
 
    evas_pointer_canvas_xy_get(e_comp->evas, &x, &y);
-   e_comp_wl->drag = e_drag_new(x, y,
-                                           NULL, 0, NULL, 0, NULL, _e_comp_wl_data_device_drag_finished);
-   e_comp_wl->drag->button_mask = evas_pointer_button_down_mask_get(e_comp->evas);
+   e_comp_wl->drag = e_drag_new(x, y, NULL, 0, NULL, 0, NULL,
+                                _e_comp_wl_data_device_drag_finished);
+   e_comp_wl->drag->button_mask =
+     evas_pointer_button_down_mask_get(e_comp->evas);
    if (ec)
      e_drag_object_set(e_comp_wl->drag, ec->frame);
    e_drag_start(e_comp_wl->drag, x, y);
@@ -381,7 +385,9 @@ _e_comp_wl_data_device_cb_drag_start(struct wl_client *client, struct wl_resourc
    if (e_comp_util_has_xwayland())
      {
         ecore_x_window_show(e_comp->cm_selection);
-        ecore_x_selection_owner_set(e_comp->cm_selection, ECORE_X_ATOM_SELECTION_XDND, ecore_x_current_time_get());
+        ecore_x_selection_owner_set(e_comp->cm_selection,
+                                    ECORE_X_ATOM_SELECTION_XDND,
+                                    ecore_x_current_time_get());
      }
 #endif
    if (e_comp_wl->ptr.ec)
@@ -441,7 +447,8 @@ _e_comp_wl_data_manager_cb_device_get(struct wl_client *client, struct wl_resour
      }
 
    eina_hash_add(e_comp_wl->mgr.data_resources, &client, res);
-   wl_resource_set_implementation(res, &_e_data_device_interface, e_comp->wl_comp_data, 
+   wl_resource_set_implementation(res, &_e_data_device_interface,
+                                  e_comp->wl_comp_data, 
                                   _e_comp_wl_data_device_cb_unbind);
 }
 
@@ -469,7 +476,8 @@ _e_comp_wl_data_cb_bind_manager(struct wl_client *client, void *data EINA_UNUSED
    struct wl_resource *res;
 
    /* try to create data manager resource */
-   e_comp_wl->mgr.resource = res = wl_resource_create(client, &wl_data_device_manager_interface, 1, id);
+   e_comp_wl->mgr.resource = res =
+     wl_resource_create(client, &wl_data_device_manager_interface, 1, id);
    if (!res)
      {
         ERR("Could not create data device manager: %m");
@@ -628,8 +636,8 @@ _e_comp_wl_clipboard_selection_set(struct wl_listener *listener EINA_UNUSED, voi
    sel_source->send(sel_source, mime_type, p[1]);
 
    e_comp_wl->clipboard.source =
-      e_comp_wl_clipboard_source_create(mime_type,
-                                         e_comp_wl->selection.serial, p[0]);
+     e_comp_wl_clipboard_source_create(mime_type,
+                                       e_comp_wl->selection.serial, p[0]);
 
    if (!e_comp_wl->clipboard.source)
      close(p[0]);
@@ -658,17 +666,20 @@ e_comp_wl_data_device_send_enter(E_Client *ec)
    uint32_t serial;
    int x, y;
 
-   if (e_client_has_xwindow(ec) && e_client_has_xwindow(e_comp_wl->drag_client)) return;
+   if (e_client_has_xwindow(ec) &&
+       e_client_has_xwindow(e_comp_wl->drag_client))
+     return;
    if (!e_client_has_xwindow(ec))
      {
         data_device_res =
-              e_comp_wl_data_find_for_client(wl_resource_get_client(ec->comp_data->surface));
+          e_comp_wl_data_find_for_client(wl_resource_get_client(ec->comp_data->surface));
         if (!data_device_res) return;
         offer_res = e_comp_wl_data_device_send_offer(ec);
         if (e_comp_wl->drag_source && (!offer_res)) return;
      }
    e_comp_wl->selection.target = ec;
-   evas_object_event_callback_add(ec->frame, EVAS_CALLBACK_DEL, _e_comp_wl_data_device_target_del, ec);
+   evas_object_event_callback_add(ec->frame, EVAS_CALLBACK_DEL,
+                                  _e_comp_wl_data_device_target_del, ec);
 
 #ifndef HAVE_WAYLAND_ONLY
    if (e_client_has_xwindow(ec))
@@ -703,8 +714,10 @@ e_comp_wl_data_device_send_enter(E_Client *ec)
           }
 
         ecore_x_client_message32_send(e_client_util_win_get(ec),
-          ECORE_X_ATOM_XDND_ENTER, ECORE_X_EVENT_MASK_NONE,
-          e_comp->cm_selection, d1, d2, d3, d4);
+                                      ECORE_X_ATOM_XDND_ENTER,
+                                      ECORE_X_EVENT_MASK_NONE,
+                                      e_comp->cm_selection, d1, d2, d3, d4);
+
         return;
      }
 #endif
@@ -712,7 +725,8 @@ e_comp_wl_data_device_send_enter(E_Client *ec)
    y = wl_fixed_to_int(e_comp_wl->ptr.y) - e_comp_wl->selection.target->client.y;
    serial = wl_display_next_serial(e_comp_wl->wl.disp);
    wl_data_device_send_enter(data_device_res, serial, ec->comp_data->surface,
-                             wl_fixed_from_int(x), wl_fixed_from_int(y), offer_res);
+                             wl_fixed_from_int(x), wl_fixed_from_int(y),
+                             offer_res);
 }
 
 E_API void
@@ -720,16 +734,20 @@ e_comp_wl_data_device_send_leave(E_Client *ec)
 {
    struct wl_resource *res;
 
-   if (e_client_has_xwindow(ec) && e_client_has_xwindow(e_comp_wl->drag_client)) return;
-   evas_object_event_callback_del_full(ec->frame, EVAS_CALLBACK_DEL, _e_comp_wl_data_device_target_del, ec);
+   if (e_client_has_xwindow(ec) &&
+       e_client_has_xwindow(e_comp_wl->drag_client))
+     return;
+   evas_object_event_callback_del_full(ec->frame, EVAS_CALLBACK_DEL,
+                                       _e_comp_wl_data_device_target_del, ec);
    if (e_comp_wl->selection.target == ec)
      e_comp_wl->selection.target = NULL;
 #ifndef HAVE_WAYLAND_ONLY
    if (e_client_has_xwindow(ec))
      {
         ecore_x_client_message32_send(e_client_util_win_get(ec),
-               ECORE_X_ATOM_XDND_LEAVE, ECORE_X_EVENT_MASK_NONE,
-               e_comp->cm_selection, 0, 0, 0, 0);
+                                      ECORE_X_ATOM_XDND_LEAVE,
+                                      ECORE_X_EVENT_MASK_NONE,
+                                      e_comp->cm_selection, 0, 0, 0, 0);
         return;
      }
 #endif
@@ -749,7 +767,11 @@ e_comp_wl_data_device_send_offer(E_Client *ec)
    if (!data_device_res) return NULL;
    source = e_comp_wl->drag_source;
    if (source)
-     offer_res = _e_comp_wl_data_device_data_offer_create(source, data_device_res);
+     {
+        offer_res =
+          _e_comp_wl_data_device_data_offer_create(source, data_device_res);
+     }
+
    return offer_res;
 }
 
@@ -784,17 +806,23 @@ e_comp_wl_data_device_keyboard_focus_set(void)
         else if (source && e_client_has_xwindow(e_client_focused_get()))
           {
              /* wl -> x11 */
-             ecore_x_selection_owner_set(e_comp->cm_selection, ECORE_X_ATOM_SELECTION_CLIPBOARD, ecore_x_current_time_get());
+             ecore_x_selection_owner_set(e_comp->cm_selection,
+                                         ECORE_X_ATOM_SELECTION_CLIPBOARD,
+                                         ecore_x_current_time_get());
              return;
           }
      } while (0);
 #endif
    data_device_res =
-      e_comp_wl_data_find_for_client(wl_resource_get_client(focus));
+     e_comp_wl_data_find_for_client(wl_resource_get_client(focus));
    if (!data_device_res) return;
 
    if (source)
-     offer_res = _e_comp_wl_data_device_data_offer_create(source, data_device_res);
+     {
+        offer_res =
+          _e_comp_wl_data_device_data_offer_create(source, data_device_res);
+     }
+
    wl_data_device_send_selection(data_device_res, offer_res);
 }
 
@@ -894,15 +922,16 @@ e_comp_wl_clipboard_source_create(const char *mime_type, uint32_t serial, int fd
      {
         if (!source->data_source.mime_types)
           source->data_source.mime_types = eina_array_new(1);
-        eina_array_push(source->data_source.mime_types, eina_stringshare_add(mime_type));
+        eina_array_push(source->data_source.mime_types,
+                        eina_stringshare_add(mime_type));
      }
 
    if (fd > 0)
      {
         source->fd_handler =
-           ecore_main_fd_handler_add(fd, ECORE_FD_READ,
-                                     _e_comp_wl_clipboard_source_save,
-                                     e_comp->wl_comp_data, NULL, NULL);
+          ecore_main_fd_handler_add(fd, ECORE_FD_READ,
+                                    _e_comp_wl_clipboard_source_save,
+                                    e_comp->wl_comp_data, NULL, NULL);
         if (!source->fd_handler) return NULL;
      }
 
