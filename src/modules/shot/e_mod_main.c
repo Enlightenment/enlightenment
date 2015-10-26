@@ -953,7 +953,7 @@ _wl_shot_now(E_Zone *zone, E_Client *ec, const char *params)
         sh = E_CLAMP(sh, 1, ec->zone->y + ec->zone->h - y);
      }
 
-   shm = e_comp_wl->wl.shm ?: ecore_wl_shm_get();
+   shm = e_comp_wl->wl.shm ?: ecore_wl2_display_shm_get(ewd);
 
    EINA_LIST_FOREACH(_outputs, l, output)
      {
@@ -1258,31 +1258,19 @@ static Ecore_Event_Handler *wl_global_handler;
 static Eina_Bool
 _wl_init()
 {
-   Eina_Inlist *globals;
-   Ecore_Wl_Global *global;
+   Eina_Iterator *itr;
+   Ecore_Wl2_Global *global;
    struct wl_registry *reg;
+   void *data;
 
-   reg = e_comp_wl->wl.registry ?: ecore_wl_registry_get();
-   if (e_comp_wl->wl.registry)
-     globals = e_comp_wl->wl.globals;
-   else
-     globals = ecore_wl_globals_get();
-   if (!globals)
+   reg = e_comp_wl->wl.registry ?: ecore_wl2_display_registry_get(ewd);
+   itr = ecore_wl2_display_globals_get(ewd);
+   EINA_ITERATOR_FOREACH(itr, data)
      {
-        if (!wl_global_handler)
-          {
-             if (e_comp_wl->wl.registry)
-               wl_global_handler = ecore_event_handler_add(E_EVENT_WAYLAND_GLOBAL_ADD,
-                 (Ecore_Event_Handler_Cb)_wl_init, NULL);
-             else
-               wl_global_handler = ecore_event_handler_add(ECORE_WL_EVENT_INTERFACES_BOUND,
-                 (Ecore_Event_Handler_Cb)_wl_init, NULL);
-          }
-        return ECORE_CALLBACK_RENEW;
-     }
-   EINA_INLIST_FOREACH(globals, global)
-     {
-        if ((!_wl_screenshooter) && (!strcmp(global->interface, "screenshooter")))
+        global = (Ecore_Wl2_Global *)data;
+
+        if ((!_wl_screenshooter) &&
+            (!strcmp(global->interface, "screenshooter")))
           {
              _wl_screenshooter =
                wl_registry_bind(reg, global->id,
@@ -1312,6 +1300,7 @@ _wl_init()
                }
           }
      }
+
    return ECORE_CALLBACK_RENEW;
 }
 #endif
