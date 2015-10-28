@@ -1049,6 +1049,24 @@ e_comp_init(void)
 
    e_comp_new();
    e_comp->comp_type = E_PIXMAP_TYPE_NONE;
+
+   {
+      const char *gl;
+
+      gl = getenv("E_COMP_ENGINE");
+      if (gl)
+        {
+           int val;
+
+           val = strtol(gl, NULL, 10);
+           if ((val == E_COMP_ENGINE_SW) || (val == E_COMP_ENGINE_GL))
+             e_comp_config_get()->engine = val;
+           else if (!strcmp(gl, "gl"))
+             e_comp_config_get()->engine = E_COMP_ENGINE_GL;
+           else if (!strcmp(gl, "sw"))
+             e_comp_config_get()->engine = E_COMP_ENGINE_SW;
+        }
+   }
    {
       const char *eng;
       
