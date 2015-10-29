@@ -2956,6 +2956,11 @@ e_comp_object_frame_geometry_set(Evas_Object *obj, int l, int r, int t, int b)
         cw->ec->w += (l + r) - (cw->client_inset.l + cw->client_inset.r);
         cw->ec->h += (t + b) - (cw->client_inset.t + cw->client_inset.b);
      }
+   else if ((!e_client_has_xwindow(cw->ec)) && (cw->ec->maximized || cw->ec->fullscreen))
+     {
+        cw->ec->saved.w -= ((l + r) - (cw->client_inset.l + cw->client_inset.r));
+        cw->ec->saved.h -= ((t + b) - (cw->client_inset.t + cw->client_inset.b));
+     }
    if (!cw->ec->new_client)
      {
         if (cw->client_inset.calc)
