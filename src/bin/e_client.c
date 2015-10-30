@@ -1609,19 +1609,14 @@ _e_client_maximize(E_Client *ec, E_Maximize max)
         w = zw, h = zh;
 
         evas_object_smart_callback_call(ec->frame, "maximize", NULL);
-        e_client_resize_limit(ec, &w, &h);
         e_comp_object_frame_xy_unadjust(ec->frame, ec->x, ec->y, &ecx, &ecy);
         e_comp_object_frame_wh_unadjust(ec->frame, ec->w, ec->h, &ecw, &ech);
 
         if (ecw < zw)
           w = ecw;
-        else
-          w = zw;
 
         if (ech < zh)
           h = ech;
-        else
-          h = zh;
 
         if (ecx < zx) // window left not useful coordinates
           x1 = zx;
