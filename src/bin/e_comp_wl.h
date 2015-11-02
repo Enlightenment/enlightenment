@@ -55,11 +55,7 @@ struct _E_Comp_Wl_Buffer
    struct wl_resource *resource;
    struct wl_signal destroy_signal;
    struct wl_listener destroy_listener;
-   union
-     {
-        struct wl_shm_buffer *shm_buffer;
-        void *legacy_buffer;
-     };
+   struct wl_shm_buffer *shm_buffer;
    int32_t w, h;
    uint32_t busy;
 };
@@ -109,6 +105,11 @@ struct _E_Comp_Wl_Data
         struct wl_event_loop *loop;
         Eina_Inlist *globals;  // only used for nested wl compositors
         struct wl_shm *shm;  // only used for nested wl compositors
+        Evas_GL *gl;
+        Evas_GL_Config *glcfg;
+        Evas_GL_Context *glctx;
+        Evas_GL_Surface *glsfc;
+        Evas_GL_API *glapi;
      } wl;
 
    struct

@@ -2,6 +2,12 @@
 
 #ifdef HAVE_WAYLAND
 # include "e_comp_wl.h"
+# ifndef EGL_TEXTURE_FORMAT
+#  define EGL_TEXTURE_FORMAT		0x3080
+# endif
+# ifndef EGL_TEXTURE_RGBA
+#  define EGL_TEXTURE_RGBA		0x305E
+# endif
 #endif
 #ifndef HAVE_WAYLAND_ONLY
 # include "e_comp_x.h"
@@ -404,25 +410,25 @@ e_pixmap_refresh(E_Pixmap *cp)
         {
            E_Comp_Wl_Buffer *buffer = cp->buffer;
            struct wl_shm_buffer *shm_buffer;
+           int format;
 
            cp->w = cp->h = 0;
            cp->image_argb = EINA_FALSE;
 
            if (!buffer) return EINA_FALSE;
 
-           shm_buffer = wl_shm_buffer_get(buffer->resource);
-           if (!shm_buffer)
-             {
-                WRN("Cannot get shm buffer from buffer resource");
-                return EINA_FALSE;
-             }
-
+           shm_buffer = buffer->shm_buffer;
            cp->w = buffer->w;
            cp->h = buffer->h;
 
-           switch (wl_shm_buffer_get_format(shm_buffer))
+           if (shm_buffer)
+             format = wl_shm_buffer_get_format(shm_buffer);
+           else
+             e_comp_wl->wl.glapi->evasglQueryWaylandBuffer(e_comp_wl->wl.gl, buffer->resource, EGL_TEXTURE_FORMAT, &format);
+           switch (format)
              {
               case WL_SHM_FORMAT_ARGB8888:
+              case EGL_TEXTURE_RGBA:
                 cp->image_argb = EINA_TRUE;
                 break;
               default:
@@ -574,15 +580,10 @@ e_pixmap_native_surface_init(E_Pixmap *cp, Evas_Native_Surface *ns)
         break;
       case E_PIXMAP_TYPE_WL:
 #ifdef HAVE_WAYLAND
-        ns->type = EVAS_NATIVE_SURFACE_OPENGL;
+        ns->type = EVAS_NATIVE_SURFACE_WL;
         ns->version = EVAS_NATIVE_SURFACE_VERSION;
-        ns->data.opengl.texture_id = 0;
-        ns->data.opengl.framebuffer_id = 0;
-        ns->data.opengl.x = 0;
-        ns->data.opengl.y = 0;
-        ns->data.opengl.w = cp->w;
-        ns->data.opengl.h = cp->h;
-        ret = EINA_TRUE;
+        ns->data.wl.legacy_buffer = cp->buffer->resource;
+        ret = !cp->buffer->shm_buffer;
 #endif
         break;
       default:
@@ -690,12 +691,7 @@ e_pixmap_image_refresh(E_Pixmap *cp)
            E_Comp_Wl_Buffer *buffer = cp->buffer;
            struct wl_shm_buffer *shm_buffer;
 
-           shm_buffer = wl_shm_buffer_get(buffer->resource);
-           if (!shm_buffer)
-             {
-                WRN("Cannot get shm buffer from buffer resource");
-                return EINA_FALSE;
-             }
+           shm_buffer = buffer->shm_buffer;
            if (cp->buffer_ref.buffer && (cp->buffer_ref.buffer != buffer))
              {
                 /* FIXME: wtf? */
@@ -711,7 +707,8 @@ e_pixmap_image_refresh(E_Pixmap *cp)
 
            cp->buffer_destroy_listener.notify = _e_pixmap_cb_buffer_destroy;
            wl_signal_add(&buffer->destroy_signal, &cp->buffer_destroy_listener);
-           cp->data = wl_shm_buffer_get_data(shm_buffer);
+           if (shm_buffer)
+             cp->data = wl_shm_buffer_get_data(shm_buffer);
            return EINA_TRUE;
         }
 #endif
@@ -733,7 +730,7 @@ e_pixmap_image_exists(const E_Pixmap *cp)
      return !!cp->image;
 #endif
 #ifdef HAVE_WAYLAND
-   return !!cp->data; /* FIXME: egl */
+   return (!!cp->data) || (e_comp->gl && (!cp->buffer->shm_buffer));
 #endif
 
    return EINA_FALSE;
@@ -811,7 +808,7 @@ e_pixmap_image_data_argb_convert(E_Pixmap *cp, void *pix, void *ipix, Eina_Recta
              int i, x, y;
              unsigned int *src, *dst;
 
-             shm_buffer = wl_shm_buffer_get(cp->buffer_ref.buffer->resource);
+             shm_buffer = cp->buffer_ref.buffer->shm_buffer;
              if (!shm_buffer) return EINA_FALSE;
 
              format = wl_shm_buffer_get_format(shm_buffer);

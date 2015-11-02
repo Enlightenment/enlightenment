@@ -11,6 +11,13 @@
 E_API int E_EVENT_WAYLAND_GLOBAL_ADD = -1;
 #include "session-recovery-server-protocol.h"
 
+#ifndef EGL_HEIGHT
+# define EGL_HEIGHT			0x3056
+#endif
+#ifndef EGL_WIDTH
+# define EGL_WIDTH			0x3057
+#endif
+
 /* Resource Data Mapping: (wl_resource_get_user_data)
  *
  * wl_surface == e_pixmap
@@ -2638,6 +2645,20 @@ _e_comp_wl_desklock_hide(void)
    e_comp_ungrab_input(1, 1);
 }
 
+static void
+_e_comp_wl_gl_init(void *d EINA_UNUSED)
+{
+   e_comp_wl->wl.gl = evas_gl_new(e_comp->evas);
+   e_comp->gl = !!e_comp_wl->wl.gl;
+   if (!e_comp->gl) return;
+   e_comp_wl->wl.glctx = evas_gl_context_create(e_comp_wl->wl.gl, NULL);
+   e_comp_wl->wl.glcfg = evas_gl_config_new();
+   e_comp_wl->wl.glsfc = evas_gl_surface_create(e_comp_wl->wl.gl, e_comp_wl->wl.glcfg, 1, 1);
+   evas_gl_make_current(e_comp_wl->wl.gl, e_comp_wl->wl.glsfc, e_comp_wl->wl.glctx);
+   e_comp_wl->wl.glapi = evas_gl_context_api_get(e_comp_wl->wl.gl, e_comp_wl->wl.glctx);
+   e_comp_wl->wl.glapi->evasglBindWaylandDisplay(e_comp_wl->wl.gl, e_comp_wl->wl.disp);
+}
+
 /* public functions */
 
 /**
@@ -2682,6 +2703,8 @@ e_comp_wl_init(void)
         elm_config_preferred_engine_set("wayland_shm");
      }
    e_util_env_set("ELM_DISPLAY", "wl");
+   if (e_comp_gl_get())
+     ecore_job_add(_e_comp_wl_gl_init, NULL);
 
    E_LIST_HANDLER_APPEND(handlers, E_EVENT_RANDR_CHANGE,
                                 _e_comp_wl_cb_randr_change, NULL);
@@ -2751,6 +2774,14 @@ e_comp_wl_shutdown(void)
         free(global);
      }
    if (e_comp_wl->wl.shm) wl_shm_destroy(e_comp_wl->wl.shm);
+   if (e_comp->gl)
+     {
+        e_comp_wl->wl.glapi->evasglUnbindWaylandDisplay(e_comp_wl->wl.gl, e_comp_wl->wl.disp);
+        evas_gl_surface_destroy(e_comp_wl->wl.gl, e_comp_wl->wl.glsfc);
+        evas_gl_context_destroy(e_comp_wl->wl.gl, e_comp_wl->wl.glctx);
+        evas_gl_free(e_comp_wl->wl.gl);
+        evas_gl_config_free(e_comp_wl->wl.glcfg);
+     }
 
    /* shutdown ecore_wayland */
    ecore_wl_shutdown();
@@ -2902,11 +2933,19 @@ e_comp_wl_buffer_get(struct wl_resource *resource)
    if (listener)
      return container_of(listener, E_Comp_Wl_Buffer, destroy_listener);
 
-   if (!(shmbuff = wl_shm_buffer_get(resource))) return NULL;
    if (!(buffer = E_NEW(E_Comp_Wl_Buffer, 1))) return NULL;
-
-   buffer->w = wl_shm_buffer_get_width(shmbuff);
-   buffer->h = wl_shm_buffer_get_height(shmbuff);
+   shmbuff = wl_shm_buffer_get(resource);
+   if (shmbuff)
+     {
+        buffer->w = wl_shm_buffer_get_width(shmbuff);
+        buffer->h = wl_shm_buffer_get_height(shmbuff);
+     }
+   else if (e_comp->gl)
+     {
+        e_comp_wl->wl.glapi->evasglQueryWaylandBuffer(e_comp_wl->wl.gl, resource, EGL_WIDTH, &buffer->w);
+        e_comp_wl->wl.glapi->evasglQueryWaylandBuffer(e_comp_wl->wl.gl, resource, EGL_HEIGHT, &buffer->h);
+     }
+   buffer->shm_buffer = shmbuff;
 
    buffer->resource = resource;
    wl_signal_init(&buffer->destroy_signal);
