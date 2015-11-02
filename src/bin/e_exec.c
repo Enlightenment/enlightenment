@@ -50,6 +50,7 @@ struct _E_Config_Dialog_Data
 static E_Exec_Instance *_e_exec_cb_exec(void *data, Efreet_Desktop *desktop, char *exec, int remaining);
 static Eina_Bool        _e_exec_cb_expire_timer(void *data);
 static Eina_Bool        _e_exec_cb_exit(void *data, int type, void *event);
+static Eina_Bool        _e_exec_cb_desktop_update(void *data, int type, void *event);
 static void        _e_exec_cb_exec_new_free(void *data, void *event);
 static void _e_exec_cb_exec_new_client_free(void *data, void *ev);
 static void        _e_exec_cb_exec_del_free(void *data, void *event);
@@ -72,7 +73,7 @@ static Eina_Hash *e_exec_instances = NULL;
 static int startup_id = 0;
 
 static Ecore_Event_Handler *_e_exec_exit_handler = NULL;
-static Ecore_Event_Handler *_e_exec_border_add_handler = NULL;
+static Ecore_Event_Handler *_e_exec_desktop_update_handler = NULL;
 
 static E_Exec_Instance *(*_e_exec_executor_func)(void *data, E_Zone * zone, Efreet_Desktop * desktop, const char *exec, Eina_List *files, const char *launch_method) = NULL;
 static void *_e_exec_executor_data = NULL;
@@ -89,10 +90,8 @@ e_exec_init(void)
 
    _e_exec_exit_handler =
      ecore_event_handler_add(ECORE_EXE_EVENT_DEL, _e_exec_cb_exit, NULL);
-#if 0
-   _e_exec_border_add_handler =
-     ecore_event_handler_add(E_EVENT_CLIENT_ADD, _e_exec_cb_event_border_add, NULL);
-#endif
+   _e_exec_desktop_update_handler =
+     ecore_event_handler_add(EFREET_EVENT_DESKTOP_CACHE_UPDATE, _e_exec_cb_desktop_update, NULL);
 
    E_EVENT_EXEC_NEW = ecore_event_type_new();
    E_EVENT_EXEC_NEW_CLIENT = ecore_event_type_new();
@@ -105,8 +104,8 @@ e_exec_shutdown(void)
 {
    e_exehist_startup_id_set(startup_id);
    if (_e_exec_exit_handler) ecore_event_handler_del(_e_exec_exit_handler);
-   if (_e_exec_border_add_handler)
-     ecore_event_handler_del(_e_exec_border_add_handler);
+   if (_e_exec_desktop_update_handler)
+     ecore_event_handler_del(_e_exec_desktop_update_handler);
    eina_hash_free(e_exec_instances);
    eina_list_free(e_exec_start_pending);
    return 1;
@@ -593,8 +592,8 @@ _e_exec_cb_exec(void *data, Efreet_Desktop *desktop, char *exec, int remaining)
 
    if (desktop)
      {
-        efreet_desktop_ref(desktop);
         inst->desktop = desktop;
+        efreet_desktop_ref(desktop);
         inst->key = eina_stringshare_add(desktop->orig_path ?: desktop->name);
      }
    else
@@ -808,6 +807,36 @@ _e_exec_cb_exit(void *data __UNUSED__, int type __UNUSED__, void *event)
    _e_exe_instance_watchers_call(inst, E_EXEC_WATCH_STOPPED);
    _e_exec_instance_free(inst);
 
+   return ECORE_CALLBACK_PASS_ON;
+}
+
+static Eina_Bool
+_e_exec_cb_desktop_update(void *data EINA_UNUSED, int type EINA_UNUSED, void *event EINA_UNUSED)
+{
+   const Eina_Hash *execs = e_exec_instances_get();
+   Eina_Iterator *it;
+   const Eina_List *l, *ll;
+   E_Exec_Instance *exe;
+
+   it = eina_hash_iterator_data_new(execs);
+   EINA_ITERATOR_FOREACH(it, l)
+     {
+        EINA_LIST_FOREACH(l, ll, exe)
+          {
+             if (exe->desktop)
+               {
+                  efreet_desktop_free(exe->desktop);
+                  exe->desktop = NULL;
+                  if (exe->key)
+                    {
+                       exe->desktop = efreet_desktop_get(exe->key);
+                       if (!exe->desktop)
+                         exe->desktop = efreet_util_desktop_name_find(exe->key);
+                    }
+               }
+          }
+     }
+   eina_iterator_free(it);
    return ECORE_CALLBACK_PASS_ON;
 }
 
