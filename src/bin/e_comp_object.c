@@ -3493,7 +3493,9 @@ e_comp_object_native_surface_set(Evas_Object *obj, Eina_Bool set)
    if (set)
      {
         /* native requires gl enabled, texture from pixmap enabled, and a non-shaped client */
-        set = (e_comp->gl && e_comp_config_get()->texture_from_pixmap && (!cw->ec->shaped));
+        set = (e_comp->gl &&
+          ((e_comp->comp_type != E_PIXMAP_TYPE_X) || e_comp_config_get()->texture_from_pixmap) &&
+          (!cw->ec->shaped));
         if (set)
           set = (!!cw->ns) || e_pixmap_native_surface_init(cw->ec->pixmap, &ns);
      }
