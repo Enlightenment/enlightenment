@@ -856,7 +856,12 @@ _e_comp_object_pixels_get(void *data, Evas_Object *obj EINA_UNUSED)
       edje_object_message_send(cw->shobj, EDJE_MESSAGE_INT, 0, &msg2);
    }
    if (cw->native)
-     E_FREE_FUNC(cw->pending_updates, eina_tiler_free);
+     {
+        E_FREE_FUNC(cw->pending_updates, eina_tiler_free);
+        e_comp->post_updates = eina_list_append(e_comp->post_updates, cw->ec);
+        REFD(cw->ec, 111);
+        e_object_ref(E_OBJECT(cw->ec));
+     }
    else if (e_comp_object_render(ec->frame))
      {
         /* apply shape mask if necessary */
