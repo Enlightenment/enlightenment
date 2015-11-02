@@ -712,7 +712,11 @@ _e_comp_object_pixels_get(void *data, Evas_Object *obj EINA_UNUSED)
    if (!e_pixmap_size_get(ec->pixmap, &pw, &ph)) return;
    //INF("PIXEL GET %p: %dx%d || %dx%d", ec, ec->w, ec->h, pw, ph);
    if (cw->native)
-     E_FREE_FUNC(cw->pending_updates, eina_tiler_free);
+     {
+        E_FREE_FUNC(cw->pending_updates, eina_tiler_free);
+        cw->comp->post_updates = eina_list_append(cw->comp->post_updates, cw->ec);
+        e_object_ref(E_OBJECT(cw->ec));
+     }
    else if (e_comp_object_render(ec->frame))
      {
         /* apply shape mask if necessary */
