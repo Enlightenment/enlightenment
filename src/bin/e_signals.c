@@ -5,7 +5,7 @@
  */
 #include "e.h"
 
-#ifdef HAVE_WL_DRM
+#ifdef HAVE_WAYLAND
 #include <Ecore_Drm.h>
 #endif
 
@@ -66,7 +66,7 @@ _e_write_safe_int(int fd, const char *buf, size_t size)
 static void
 _e_crash(void)
 {
-#ifdef HAVE_WL_DRM
+#ifdef HAVE_WAYLAND
    if (e_comp->comp_type == E_PIXMAP_TYPE_WL)
      {
         const Eina_List *list, *l, *ll;
