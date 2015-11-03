@@ -111,8 +111,6 @@ include src/modules/Makefile_wl_drm.mk
 
 include src/modules/Makefile_wl_wl.mk
 
-include src/modules/Makefile_wl_eglfs.mk
-
 include src/modules/Makefile_wl_desktop_shell.mk
 
 include src/modules/Makefile_wl_x11.mk
