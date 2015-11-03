@@ -744,7 +744,7 @@ AC_MSG_RESULT([${e_cv_want_wayland_egl}])
 if test "x${e_cv_want_wayland_only}" != "xno" ;then
   PKG_CHECK_MODULES([WAYLAND], [ecore-wayland >= 1.16 wayland-server >= 1.8.0 wayland-client >= 1.8.0 xkbcommon uuid],
     [
-      have_wayland_only=yes
+      have_wayland=yes
       AC_DEFINE_UNQUOTED([HAVE_WAYLAND],[1],[enable wayland support])
     ])
 else
