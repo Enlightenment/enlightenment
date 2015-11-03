@@ -12,9 +12,8 @@ e_modapi_init(E_Module *m)
    int w, h;
 
    printf("LOAD WL_EGLFS MODULE\n");
-   e_util_env_set("HYBRIS_EGLPLATFORM", "fbdev");
 
-   /* try to init ecore_fb */
+   /* try to init ecore_x */
    if (!ecore_fb_init(NULL))
      {
         fprintf(stderr, "Could not initialize ecore_fb");
@@ -25,7 +24,6 @@ e_modapi_init(E_Module *m)
    ee = ecore_evas_eglfs_new(NULL, 0, w, h);
 
    e_comp->ee = ee;
-   e_comp_gl_set(!!e_comp->ee);
 
    if (!e_xinerama_fake_screens_exist())
      {
@@ -41,14 +39,8 @@ e_modapi_init(E_Module *m)
    e_comp_canvas_init(w, h);
    e_comp->pointer = e_pointer_canvas_new(e_comp->ee, EINA_TRUE);
 
-   e_comp_wl_input_pointer_enabled_set(EINA_TRUE);
-   e_comp_wl_input_keyboard_enabled_set(EINA_TRUE);
-   e_comp_wl_input_touch_enabled_set(EINA_TRUE);
-   e_comp_wl_input_keymap_set(NULL, NULL, NULL);
-
    ecore_wl_init(NULL);
    ecore_wl_server_mode_set(1);
-   e_util_env_set("HYBRIS_EGLPLATFORM", "wayland");
    return m;
 }
 
