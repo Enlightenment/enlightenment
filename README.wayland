@@ -88,8 +88,6 @@ Known Issues
  - Requires new EFL release
 * Window close animations will not play for most Wayland clients
  - Requires upstream Wayland protocol additions
-* Window closing occasionally leads to crash
- - Requires upstream Wayland protocol additions
 * Restarting Enlightenment kills all open applications
  - Requires upstream *-shell protocol additions, XWayland improvements
 * XWayland clients do not smoothly resize
