@@ -2646,6 +2646,18 @@ _e_comp_wl_desklock_hide(void)
 }
 
 static void
+_e_comp_wl_gl_shutdown(void)
+{
+   if (!e_comp->gl) return;
+   if (e_comp_wl->wl.glapi->evasglUnbindWaylandDisplay)
+     e_comp_wl->wl.glapi->evasglUnbindWaylandDisplay(e_comp_wl->wl.gl, e_comp_wl->wl.disp);
+   evas_gl_surface_destroy(e_comp_wl->wl.gl, e_comp_wl->wl.glsfc);
+   evas_gl_context_destroy(e_comp_wl->wl.gl, e_comp_wl->wl.glctx);
+   evas_gl_free(e_comp_wl->wl.gl);
+   evas_gl_config_free(e_comp_wl->wl.glcfg);
+}
+
+static void
 _e_comp_wl_gl_init(void *d EINA_UNUSED)
 {
    e_comp_wl->wl.gl = evas_gl_new(e_comp->evas);
@@ -2656,7 +2668,10 @@ _e_comp_wl_gl_init(void *d EINA_UNUSED)
    e_comp_wl->wl.glsfc = evas_gl_surface_create(e_comp_wl->wl.gl, e_comp_wl->wl.glcfg, 1, 1);
    evas_gl_make_current(e_comp_wl->wl.gl, e_comp_wl->wl.glsfc, e_comp_wl->wl.glctx);
    e_comp_wl->wl.glapi = evas_gl_context_api_get(e_comp_wl->wl.gl, e_comp_wl->wl.glctx);
-   e_comp_wl->wl.glapi->evasglBindWaylandDisplay(e_comp_wl->wl.gl, e_comp_wl->wl.disp);
+   if (e_comp_wl->wl.glapi->evasglBindWaylandDisplay)
+     e_comp_wl->wl.glapi->evasglBindWaylandDisplay(e_comp_wl->wl.gl, e_comp_wl->wl.disp);
+   else
+     _e_comp_wl_gl_shutdown();
 }
 
 /* public functions */
@@ -2774,14 +2789,7 @@ e_comp_wl_shutdown(void)
         free(global);
      }
    if (e_comp_wl->wl.shm) wl_shm_destroy(e_comp_wl->wl.shm);
-   if (e_comp->gl)
-     {
-        e_comp_wl->wl.glapi->evasglUnbindWaylandDisplay(e_comp_wl->wl.gl, e_comp_wl->wl.disp);
-        evas_gl_surface_destroy(e_comp_wl->wl.gl, e_comp_wl->wl.glsfc);
-        evas_gl_context_destroy(e_comp_wl->wl.gl, e_comp_wl->wl.glctx);
-        evas_gl_free(e_comp_wl->wl.gl);
-        evas_gl_config_free(e_comp_wl->wl.glcfg);
-     }
+   _e_comp_wl_gl_shutdown();
 
    /* shutdown ecore_wayland */
    ecore_wl_shutdown();
