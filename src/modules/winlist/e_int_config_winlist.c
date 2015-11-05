@@ -199,7 +199,7 @@ _basic_create(E_Config_Dialog *cfd __UNUSED__, Evas *evas, E_Config_Dialog_Data 
    e_widget_list_object_append(ol, ob, 1, 0, 0.0);
    e_widget_check_widget_disable_on_unchecked_add(iconified, ob);
    e_widget_toolbook_page_append(otb, NULL, _("Display"), ol,
-                                 0, 0, 1, 0, 0.5, 0.0);
+                                 1, 0, 1, 0, 0.5, 0.0);
 
    ol = e_widget_list_add(evas, 0, 0);
    ob = e_widget_check_add(evas, _("Focus"), &(cfdata->focus));
@@ -227,7 +227,7 @@ _basic_create(E_Config_Dialog *cfd __UNUSED__, Evas *evas, E_Config_Dialog_Data 
    e_widget_check_widget_disable_on_checked_add(ob, ck);
    e_widget_list_object_append(ol, ob, 1, 0, 0.0);
    e_widget_toolbook_page_append(otb, NULL, _("Selecting"), ol,
-                                 0, 0, 1, 0, 0.5, 0.0);
+                                 1, 0, 1, 0, 0.5, 0.0);
 
    ol = e_widget_list_add(evas, 0, 0);
    scroll_animate = ob = e_widget_check_add(evas, _("Scroll Animation"),
@@ -241,7 +241,7 @@ _basic_create(E_Config_Dialog *cfd __UNUSED__, Evas *evas, E_Config_Dialog_Data 
    e_widget_check_widget_disable_on_unchecked_add(scroll_animate, ob);
    e_widget_list_object_append(ol, ob, 1, 0, 0.0);
    e_widget_toolbook_page_append(otb, NULL, _("Animations"), ol,
-                                 0, 0, 1, 0, 0.5, 0.0);
+                                 1, 0, 1, 0, 0.5, 0.0);
 
    ol = e_widget_list_add(evas, 0, 0);
    ob = e_widget_label_add(evas, _("Minimum width"));
@@ -271,7 +271,7 @@ _basic_create(E_Config_Dialog *cfd __UNUSED__, Evas *evas, E_Config_Dialog_Data 
    e_widget_on_change_hook_set(ob, _height_limits_changed, cfdata);
    e_widget_list_object_append(ol, ob, 1, 0, 0.0);
    e_widget_toolbook_page_append(otb, NULL, _("Geometry"), ol,
-                                 0, 0, 1, 0, 0.5, 0.0);
+                                 1, 0, 1, 0, 0.5, 0.0);
 
    ol = e_widget_list_add(evas, 0, 0);
    ob = e_widget_label_add(evas, _("Horizontal alignment"));
@@ -285,7 +285,7 @@ _basic_create(E_Config_Dialog *cfd __UNUSED__, Evas *evas, E_Config_Dialog_Data 
                             &(cfdata->align_y), NULL, 100);
    e_widget_list_object_append(ol, ob, 1, 0, 0.0);
    e_widget_toolbook_page_append(otb, NULL, _("Alignment"), ol,
-                                 0, 0, 1, 0, 0.5, 0.0);
+                                 1, 0, 1, 0, 0.5, 0.0);
 
    e_widget_toolbook_page_show(otb, 0);
 

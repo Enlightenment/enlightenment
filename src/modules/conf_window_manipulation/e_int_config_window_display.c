@@ -157,7 +157,7 @@ _basic_create(E_Config_Dialog *cfd __UNUSED__, Evas *evas, E_Config_Dialog_Data 
    e_widget_framelist_object_append(of, ow);
    e_widget_list_object_append(ol, of, 1, 1, 0.5);
    e_widget_toolbook_page_append(otb, NULL, _("Display"), ol,
-                                 0, 0, 1, 0, 0.5, 0.0);
+                                 1, 0, 1, 0, 0.5, 0.0);
 
    /* New Windows */
    ol = e_widget_list_add(evas, 0, 0);
@@ -183,7 +183,7 @@ _basic_create(E_Config_Dialog *cfd __UNUSED__, Evas *evas, E_Config_Dialog_Data 
                            &(cfdata->desk_auto_switch));
    e_widget_list_object_append(ol, ow, 1, 1, 0.5);
    e_widget_toolbook_page_append(otb, NULL, _("New Windows"), ol,
-                                 0, 0, 1, 0, 0.5, 0.0);
+                                 1, 0, 1, 0, 0.5, 0.0);
 
    /* Shading */
    ol = e_widget_list_add(evas, 0, 0);
@@ -235,7 +235,7 @@ _basic_create(E_Config_Dialog *cfd __UNUSED__, Evas *evas, E_Config_Dialog_Data 
    e_widget_list_object_append(ol, ow, 1, 1, 0.5);
 
    e_widget_toolbook_page_append(otb, NULL, _("Shading"), ol,
-                                 0, 0, 1, 0, 0.5, 0.0);
+                                 1, 0, 1, 0, 0.5, 0.0);
 
    /* Screen Limits */
    ol = e_widget_list_add(evas, 0, 0);
@@ -252,7 +252,7 @@ _basic_create(E_Config_Dialog *cfd __UNUSED__, Evas *evas, E_Config_Dialog_Data 
    e_widget_list_object_append(ol, ow, 1, 1, 0.5);
 
    e_widget_toolbook_page_append(otb, NULL, _("Screen Limits"), ol,
-                                 0, 0, 1, 0, 0.5, 0.0);
+                                 1, 0, 1, 0, 0.5, 0.0);
 
    e_widget_toolbook_page_show(otb, 0);
    return otb;
