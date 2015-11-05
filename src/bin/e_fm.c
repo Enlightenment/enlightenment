@@ -7716,7 +7716,7 @@ _e_fm2_cb_icon_mouse_move(void *data, Evas *e, Evas_Object *obj EINA_UNUSED, voi
              if (ic->sd->win)
                evas_object_geometry_get(ic->sd->win, &wx, &wy, NULL, NULL);
              if (layout)
-               d->x = ic->sd->x, d->y = ic->sd->y;
+               d->x = ic->sd->x - ic->sd->pos.x, d->y = ic->sd->y - ic->sd->pos.y;
              else
                d->x = ic->x + ic->sd->x - ic->sd->pos.x, d->y = ic->y + ic->sd->y - ic->sd->pos.y;
              d->x += wx, d->y += wy;
