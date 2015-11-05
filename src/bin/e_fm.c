@@ -7688,7 +7688,7 @@ _e_fm2_cb_icon_mouse_move(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNU
              d = e_drag_new(c, 0, 0, drag_types, 1,
                             sel, sel_length, NULL, _e_fm2_cb_drag_finished);
              if (layout)
-               d->x = ic->sd->x, d->y = ic->sd->y;
+               d->x = ic->sd->x - ic->sd->pos.x, d->y = ic->sd->y - ic->sd->pos.y;
              else
                d->x = ic->x + ic->sd->x - ic->sd->pos.x, d->y = ic->y + ic->sd->y - ic->sd->pos.y;
 #ifndef HAVE_WAYLAND_ONLY
