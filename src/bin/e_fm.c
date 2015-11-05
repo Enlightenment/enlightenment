@@ -7609,6 +7609,7 @@ _e_fm2_cb_icon_mouse_move(void *data, Evas *e, Evas_Object *obj EINA_UNUSED, voi
              Eina_Binbuf *sbuf;
              Eina_List *sl, *icons = NULL;
              size_t sel_length = 0, p_offset, p_length;
+             int wx = 0, wy = 0;
 
              ic->sd->drag = EINA_TRUE;
              ic->drag.start = EINA_FALSE;
@@ -7712,10 +7713,13 @@ _e_fm2_cb_icon_mouse_move(void *data, Evas *e, Evas_Object *obj EINA_UNUSED, voi
              d = e_drag_new(0, 0, drag_types, 1,
                             sel, sel_length, NULL, _e_fm2_cb_drag_finished);
              d->button_mask = evas_pointer_button_down_mask_get(e);
+             if (ic->sd->win)
+               evas_object_geometry_get(ic->sd->win, &wx, &wy, NULL, NULL);
              if (layout)
                d->x = ic->sd->x, d->y = ic->sd->y;
              else
                d->x = ic->x + ic->sd->x - ic->sd->pos.x, d->y = ic->y + ic->sd->y - ic->sd->pos.y;
+             d->x += wx, d->y += wy;
 #ifndef HAVE_WAYLAND_ONLY
              e_drop_handler_action_set(ECORE_X_ATOM_XDND_ACTION_MOVE);
 #endif
@@ -7738,8 +7742,8 @@ _e_fm2_cb_icon_mouse_move(void *data, Evas *e, Evas_Object *obj EINA_UNUSED, voi
              e_drag_key_up_cb_set(d, _e_fm_drag_key_up_cb);
 
              e_drag_xdnd_start(d,
-                               ic->drag.x + ic->x + ic->sd->x - ic->sd->pos.x,
-                               ic->drag.y + ic->y + ic->sd->y - ic->sd->pos.y);
+                               ic->drag.x + wx + ic->x + ic->sd->x - ic->sd->pos.x,
+                               ic->drag.y + wy + ic->y + ic->sd->y - ic->sd->pos.y);
           }
      }
 }
