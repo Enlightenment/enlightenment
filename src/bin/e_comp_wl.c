@@ -2661,15 +2661,14 @@ static void
 _e_comp_wl_gl_init(void *d EINA_UNUSED)
 {
    e_comp_wl->wl.gl = evas_gl_new(e_comp->evas);
-   e_comp->gl = !!e_comp_wl->wl.gl;
-   if (!e_comp->gl) return;
+   if (!e_comp_wl->wl.gl) return;
    e_comp_wl->wl.glctx = evas_gl_context_create(e_comp_wl->wl.gl, NULL);
    e_comp_wl->wl.glcfg = evas_gl_config_new();
    e_comp_wl->wl.glsfc = evas_gl_surface_create(e_comp_wl->wl.gl, e_comp_wl->wl.glcfg, 1, 1);
    evas_gl_make_current(e_comp_wl->wl.gl, e_comp_wl->wl.glsfc, e_comp_wl->wl.glctx);
    e_comp_wl->wl.glapi = evas_gl_context_api_get(e_comp_wl->wl.gl, e_comp_wl->wl.glctx);
    if (e_comp_wl->wl.glapi->evasglBindWaylandDisplay)
-     e_comp_wl->wl.glapi->evasglBindWaylandDisplay(e_comp_wl->wl.gl, e_comp_wl->wl.disp);
+     e_comp->gl = e_comp_wl->wl.glapi->evasglBindWaylandDisplay(e_comp_wl->wl.gl, e_comp_wl->wl.disp);
    else
      _e_comp_wl_gl_shutdown();
 }
