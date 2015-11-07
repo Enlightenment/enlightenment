@@ -947,6 +947,8 @@ _e_comp_x_client_hide(E_Client *ec)
 
    if (ec->unredirected_single || ec->iconic)
      ecore_x_window_hide(_e_comp_x_client_window_get(ec));
+   if (ec->iconic)
+     e_hints_window_iconic_set(ec);
 }
 
 static void
