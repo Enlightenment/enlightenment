@@ -641,11 +641,11 @@ _ibox_icon_signal_emit(IBox_Icon *ic, char *sig, char *src)
    if (ic->o_holder)
      edje_object_signal_emit(ic->o_holder, sig, src);
    if (ic->o_icon && e_icon_edje_get(ic->o_icon))
-     edje_object_signal_emit(ic->o_icon, sig, src);
+     edje_object_signal_emit(e_icon_edje_get(ic->o_icon), sig, src);
    if (ic->o_holder2)
      edje_object_signal_emit(ic->o_holder2, sig, src);
    if (ic->o_icon2 && e_icon_edje_get(ic->o_icon2))
-     edje_object_signal_emit(ic->o_icon2, sig, src);
+     edje_object_signal_emit(e_icon_edje_get(ic->o_icon2), sig, src);
 }
 
 static Eina_List *
