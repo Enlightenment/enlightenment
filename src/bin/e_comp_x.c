@@ -945,9 +945,10 @@ _e_comp_x_client_hide(E_Client *ec)
    if ((!ec->iconic) && (!ec->override))
      ecore_x_window_prop_card32_set(e_client_util_win_get(ec), E_ATOM_MAPPED, &visible, 1);
 
-   if (ec->unredirected_single || ec->iconic)
+   ec->comp_data->iconic = ec->iconic && (!e_comp_object_mirror_visibility_check(ec->frame));
+   if (ec->unredirected_single || ec->comp_data->iconic)
      ecore_x_window_hide(_e_comp_x_client_window_get(ec));
-   if (ec->iconic)
+   if (ec->comp_data->iconic)
      e_hints_window_iconic_set(ec);
 }
 
@@ -979,10 +980,11 @@ _e_comp_x_client_show(E_Client *ec)
    ecore_x_window_shadow_tree_flush();
    if (!ec->comp_data->need_reparent)
      ecore_x_window_show(win);
-   if (ec->unredirected_single || ec->iconic)
+   if (ec->unredirected_single || ec->comp_data->iconic)
      {
         e_pixmap_clear(ec->pixmap);
         ecore_x_window_show(_e_comp_x_client_window_get(ec));
+        ec->comp_data->iconic = 0;
      }
    if (!ec->override)
      e_hints_window_visible_set(ec);
@@ -1152,6 +1154,26 @@ _e_comp_x_resize_request(void *data EINA_UNUSED, int type EINA_UNUSED, Ecore_X_E
 }
 
 static void
+_e_comp_x_evas_mirror_hidden(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   E_Client *ec = data;
+
+   if ((!ec->iconic) || (!ec->comp_data->iconic)) return;
+   if (ec->comp_data)
+     _e_comp_x_client_hide(ec);
+}
+
+static void
+_e_comp_x_evas_mirror_visible(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   E_Client *ec = data;
+
+   if ((!ec->iconic) || ec->comp_data->iconic) return;
+   if (ec->comp_data)
+     _e_comp_x_client_show(ec);
+}
+
+static void
 _e_comp_x_client_evas_init(E_Client *ec)
 {
    if (ec->comp_data->evas_init) return;
@@ -1173,6 +1195,8 @@ _e_comp_x_client_evas_init(E_Client *ec)
    evas_object_smart_callback_add(ec->frame, "color_set", _e_comp_x_evas_color_set_cb, ec);
    evas_object_smart_callback_add(ec->frame, "fullscreen_zoom", _e_comp_x_evas_fullscreen_zoom_cb, ec);
    evas_object_smart_callback_add(ec->frame, "unfullscreen_zoom", _e_comp_x_evas_unfullscreen_zoom_cb, ec);
+   evas_object_smart_callback_add(ec->frame, "visibility_force", _e_comp_x_evas_mirror_visible, ec);
+   evas_object_smart_callback_add(ec->frame, "visibility_normal", _e_comp_x_evas_mirror_hidden, ec);
    /* force apply this since we haven't set up our smart cb previously */
    _e_comp_x_evas_comp_hidden_cb(ec, NULL, NULL);
 }
