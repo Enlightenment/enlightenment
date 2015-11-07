@@ -961,22 +961,29 @@ _e_comp_x_evas_resize_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_i
 }
 
 static void
-_e_comp_x_evas_hide_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+_e_comp_x_client_hide(E_Client *ec)
 {
-   E_Client *ec = data, *tmp;
    unsigned int visible = 0;
-   Eina_List *l;
 
-   if (!_e_comp_x_client_data_get(ec)) return; // already deleted, happens with internal wins
    ecore_x_window_shadow_tree_flush();
    if ((!ec->iconic) && (!ec->override))
      ecore_x_window_prop_card32_set(e_client_util_win_get(ec), E_ATOM_MAPPED, &visible, 1);
 
-   EINA_LIST_FOREACH(ec->e.state.video_child, l, tmp)
-     evas_object_hide(tmp->frame);
-
    if (ec->unredirected_single || ec->iconic)
      ecore_x_window_hide(_e_comp_x_client_window_get(ec));
+}
+
+static void
+_e_comp_x_evas_hide_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   E_Client *ec = data, *tmp;
+   Eina_List *l;
+
+   if (!_e_comp_x_client_data_get(ec)) return; // already deleted, happens with internal wins
+   _e_comp_x_client_hide(ec);
+
+   EINA_LIST_FOREACH(ec->e.state.video_child, l, tmp)
+     evas_object_hide(tmp->frame);
 
    if (e_comp_config_get()->send_flush)
      ecore_x_e_comp_flush_send(e_client_util_win_get(ec));
@@ -985,14 +992,11 @@ _e_comp_x_evas_hide_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UN
 }
 
 static void
-_e_comp_x_evas_show_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+_e_comp_x_client_show(E_Client *ec)
 {
-   E_Client *ec = data, *tmp;
    unsigned int visible = 1;
    Ecore_X_Window win;
-   Eina_List *l;
 
-   if (!_e_comp_x_client_data_get(ec)) return;
    win = e_client_util_win_get(ec);
    ecore_x_window_shadow_tree_flush();
    if (!_e_comp_x_client_data_get(ec)->need_reparent)
@@ -1007,6 +1011,16 @@ _e_comp_x_evas_show_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UN
 
    ecore_x_window_prop_card32_set(win, E_ATOM_MAPPED, &visible, 1);
    ecore_x_window_prop_card32_set(win, E_ATOM_MANAGED, &visible, 1);
+}
+
+static void
+_e_comp_x_evas_show_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   E_Client *ec = data, *tmp;
+   Eina_List *l;
+
+   if (!_e_comp_x_client_data_get(ec)) return;
+   _e_comp_x_client_show(ec);
 
    if (_e_comp_x_client_data_get(ec)->frame_update)
      {
