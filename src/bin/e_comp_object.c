@@ -2448,6 +2448,12 @@ e_comp_object_zoomap_set(Evas_Object *obj, Eina_Bool enabled)
    cw->zoomap_disabled = enabled;
 }
 
+E_API Eina_Bool
+e_comp_object_mirror_visibility_check(Evas_Object *obj)
+{
+   API_ENTRY EINA_FALSE;
+   return !!cw->force_visible;
+}
 /////////////////////////////////////////////////////////
 
 static void
