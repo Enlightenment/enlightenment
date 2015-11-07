@@ -312,7 +312,8 @@ e_ilist_selected_get(Evas_Object *obj)
      return sd->selected;
    j = -1;
    i = 0;
-   EINA_LIST_FOREACH(sd->selected_items, l, li)
+   /* Return the index the of last selected item */
+   EINA_LIST_FOREACH(sd->items, l, li)
      {
         if (li && li->selected) j = i;
         i++;
