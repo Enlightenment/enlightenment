@@ -99,6 +99,7 @@ typedef struct _E_Comp_Object
 
    unsigned int         animating;  // it's busy animating
    unsigned int         failures; //number of consecutive e_pixmap_image_draw() failures
+   unsigned int         force_visible; //number of visible obj_mirror objects
    Eina_Bool            delete_pending : 1;  // delete pending
    Eina_Bool            defer_hide : 1;  // flag to get hide to work on deferred hide
    Eina_Bool            showing : 1;  // object is currently in "show" animation
@@ -189,6 +190,26 @@ _e_comp_object_cb_mirror_del(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, 
    E_Comp_Object *cw = data;
 
    cw->obj_mirror = eina_list_remove(cw->obj_mirror, obj);
+}
+
+static void
+_e_comp_object_cb_mirror_show(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   E_Comp_Object *cw = data;
+
+   if ((!cw->force_visible) && (!e_object_is_del(E_OBJECT(cw->ec))))
+     evas_object_smart_callback_call(cw->smart_obj, "visibility_force", cw->ec);
+   cw->force_visible++;
+}
+
+static void
+_e_comp_object_cb_mirror_hide(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   E_Comp_Object *cw = data;
+
+   cw->force_visible--;
+   if ((!cw->force_visible) && (!e_object_is_del(E_OBJECT(cw->ec))))
+     evas_object_smart_callback_call(cw->smart_obj, "visibility_normal", cw->ec);
 }
 
 /////////////////////////////////////
@@ -3756,6 +3777,8 @@ e_comp_object_util_mirror_add(Evas_Object *obj)
    evas_object_image_smooth_scale_set(o, e_comp_config_get()->smooth_windows);
    cw->obj_mirror = eina_list_append(cw->obj_mirror, o);
    evas_object_event_callback_add(o, EVAS_CALLBACK_DEL, _e_comp_object_cb_mirror_del, cw);
+   evas_object_event_callback_add(o, EVAS_CALLBACK_SHOW, _e_comp_object_cb_mirror_show, cw);
+   evas_object_event_callback_add(o, EVAS_CALLBACK_HIDE, _e_comp_object_cb_mirror_hide, cw);
    evas_object_data_set(o, "E_Client", cw->ec);
    evas_object_data_set(o, "comp_mirror", cw);
 
