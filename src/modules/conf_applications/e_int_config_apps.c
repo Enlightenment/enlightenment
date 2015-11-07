@@ -305,7 +305,7 @@ _basic_create(E_Config_Dialog *cfd, Evas *evas, E_Config_Dialog_Data *cfdata)
 
         cfdata->apps_xdg.o_desc = e_widget_textblock_add(evas);
         e_widget_size_min_set(cfdata->apps_xdg.o_desc, 100, (45 * e_scale));
-        e_widget_table_object_append(ot, cfdata->apps_xdg.o_desc, 0, 1, 2, 1, 1, 1, 0, 0);
+        e_widget_table_object_append(ot, cfdata->apps_xdg.o_desc, 0, 1, 2, 1, 1, 1, 1, 0);
 
         cfdata->apps_xdg.o_add = e_widget_button_add(evas, _("Add"), "list-add",
                                                      _cb_add, &cfdata->apps_xdg, NULL);
