@@ -64,7 +64,7 @@ e_int_config_wallpaper_desk(Evas_Object *parent EINA_UNUSED, const char *params)
 
    if (!params) return NULL;
    zone_num = desk_x = desk_y = -1;
-   if (sscanf(params, "%i %i %i", &zone_num, &desk_x, &desk_y) != 4)
+   if (sscanf(params, "%i %i %i", &zone_num, &desk_x, &desk_y) != 3)
      return NULL;
    return _e_int_config_wallpaper_desk(NULL, zone_num, desk_x, desk_y);
 }
