@@ -156,18 +156,21 @@ e_int_client_menu_create(E_Client *ec)
         e_menu_item_submenu_pre_callback_set(mi, _e_client_menu_cb_align_pre, ec);
      }
 
-   mi = e_menu_item_new(m);
-   e_menu_item_label_set(mi, _("Always on Top"));
-   e_menu_item_check_set(mi, 1);
-   e_menu_item_toggle_set(mi, (ec->layer == E_LAYER_CLIENT_ABOVE ? 1 : 0));
-   if (ec->layer == E_LAYER_CLIENT_ABOVE)
-     e_menu_item_callback_set(mi, _e_client_menu_cb_normal, ec);
-   else
-     e_menu_item_callback_set(mi, _e_client_menu_cb_on_top, ec);
-   e_menu_item_icon_edje_set(mi,
-                             e_theme_edje_file_get("base/theme/borders",
-                                                   "e/widgets/border/default/stack_on_top"),
-                             "e/widgets/border/default/stack_on_top");
+   if (ec->layer <= E_LAYER_CLIENT_ABOVE)
+     {
+        mi = e_menu_item_new(m);
+        e_menu_item_label_set(mi, _("Always on Top"));
+        e_menu_item_check_set(mi, 1);
+        e_menu_item_toggle_set(mi, (ec->layer == E_LAYER_CLIENT_ABOVE ? 1 : 0));
+        if (ec->layer == E_LAYER_CLIENT_ABOVE)
+          e_menu_item_callback_set(mi, _e_client_menu_cb_normal, ec);
+        else
+          e_menu_item_callback_set(mi, _e_client_menu_cb_on_top, ec);
+        e_menu_item_icon_edje_set(mi,
+                                  e_theme_edje_file_get("base/theme/borders",
+                                                        "e/widgets/border/default/stack_on_top"),
+                                  "e/widgets/border/default/stack_on_top");
+     }
 
    if (!ec->lock_user_sticky)
      {
@@ -790,7 +793,7 @@ _e_client_menu_cb_window_pre(void *data, E_Menu *m EINA_UNUSED, E_Menu_Item *mi)
    submi = e_menu_item_new(subm);
    e_menu_item_separator_set(submi, 1);
 
-   if ((!ec->lock_user_stacking) && (!ec->fullscreen))
+   if ((!ec->lock_user_stacking) && (!ec->fullscreen) && (ec->layer <= E_LAYER_CLIENT_ABOVE))
      {
         submi = e_menu_item_new(subm);
         e_menu_item_label_set(submi, _("Stacking"));
