@@ -364,6 +364,13 @@ _e_comp_nocomp_end(E_Comp *c)
           layer = E_LAYER_CLIENT_TOP;
         fs = c->nocomp_ec->fullscreen;
         c->nocomp_ec->fullscreen = 0;
+        if (fs)
+          {
+             if (!e_config->allow_above_fullscreen)
+               layer = E_LAYER_CLIENT_FULLSCREEN;
+             else if (e_config->mode.presentation)
+               layer = E_LAYER_CLIENT_TOP;
+          }
         evas_object_layer_set(c->nocomp_ec->frame, layer);
         c->nocomp_ec->fullscreen = fs;
      }
