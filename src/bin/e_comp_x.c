@@ -1176,9 +1176,9 @@ _e_comp_x_evas_mirror_hidden(void *data, Evas_Object *obj EINA_UNUSED, void *eve
 {
    E_Client *ec = data;
 
+   if (!_e_comp_x_client_data_get(ec)) return;
    if ((!ec->iconic) || (!ec->comp_data->iconic)) return;
-   if (_e_comp_x_client_data_get(ec))
-     _e_comp_x_client_hide(ec);
+   _e_comp_x_client_hide(ec);
 }
 
 static void
@@ -1186,9 +1186,9 @@ _e_comp_x_evas_mirror_visible(void *data, Evas_Object *obj EINA_UNUSED, void *ev
 {
    E_Client *ec = data;
 
+   if (!_e_comp_x_client_data_get(ec)) return;
    if ((!ec->iconic) || ec->comp_data->iconic) return;
-   if (_e_comp_x_client_data_get(ec))
-     _e_comp_x_client_show(ec);
+   _e_comp_x_client_show(ec);
 }
 
 static void
