@@ -41,8 +41,17 @@ _wkb_insert_text(const char *text, uint32_t offset, const char *insert)
    char *new_text = malloc(strlen(text) + strlen(insert) + 1);
    uint32_t text_len = 0;
 
+   if (!new_text)
+     {
+        ERR("out of memory");
+        return NULL;
+     }
+
    if ((!text) || (!insert))
-     return NULL;
+     {
+        free(new_text);
+        return NULL;
+     }
 
    text_len = strlen(text);
    if (offset > text_len)
