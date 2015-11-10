@@ -567,6 +567,7 @@ _comp_object_check(Mirror *m)
 
    evas_object_geometry_get(m->comp_object, NULL, NULL, &w, &h);
    if ((w < 2) || (h < 2)) return EINA_FALSE;
+   if (m->mirror) evas_object_del(m->mirror);
    m->mirror = e_comp_object_util_mirror_add(m->comp_object);
    if (!m->mirror) return EINA_FALSE;
    evas_object_smart_callback_del(m->comp_object, "dirty", _comp_object_dirty);
