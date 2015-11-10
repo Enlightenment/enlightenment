@@ -390,8 +390,11 @@ _cb_rel_to_set(void *data, Evas_Object *obj, void *event)
         if (it == event)
           {
              E_Config_Randr2_Screen *cs2 = _config_screen_n_find(cfdata, i);
-             printf("find cs = %p\n", cs2);
-             printf("cs id = %s\n", cs2->id);
+             if (cs2)
+               {
+                  printf("find cs = %p\n", cs2);
+                  printf("cs id = %s\n", cs2->id);
+               }
              if (cs2 == cs) return;
              if (cs2)
                {
