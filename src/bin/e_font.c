@@ -159,7 +159,7 @@ _e_font_fontconfig_name_parse(Eina_Hash **font_hash, E_Font_Properties *efp, con
    s1 = strchr(font, ':');
    if (s1)
      {
-        char *s2, *name, *style;
+        char *s2, *name, *style, *temp;
         int len;
 
         len = s1 - font;
@@ -171,7 +171,13 @@ _e_font_fontconfig_name_parse(Eina_Hash **font_hash, E_Font_Properties *efp, con
         if (s2)
           {
              len = s2 - name;
+             temp = name;
              name = realloc(name, sizeof(char) * len + 1);
+             if (!name)
+               {
+                  free(temp);
+                  return NULL;
+               }
              memset(name, 0, sizeof(char) * len + 1);
              strncpy(name, font, len);
           }
