@@ -1475,11 +1475,14 @@ _e_comp_wl_compositor_cb_surface_create(struct wl_client *client, struct wl_reso
    /* emit surface create signal */
    wl_signal_emit(&e_comp_wl->signals.surface.create, res);
 
+   /* Generate a new UUID for this surface */
+   uuid_generate(ec->uuid);
+
    /* Send UUID for new pixmap back to app */
    uuid_unparse(ec->uuid, uuid);
    printf("MOEP: Sending UUID to wayland client: %s\n", uuid);
    //session_recovery_send_uuid(uuid_res, uuid);
-   session_recovery_send_uuid(uuid_res, "Comp to Client");
+   session_recovery_send_uuid(uuid_res, uuid);
 }
 
 static void
@@ -2028,7 +2031,7 @@ _e_comp_wl_subcompositor_cb_bind(struct wl_client *client, void *data EINA_UNUSE
 static void
 _e_comp_wl_sr_cb_provide_uuid(struct wl_client *client EINA_UNUSED, struct wl_resource *resource EINA_UNUSED, const char *uuid)
 {
-   printf("Provide UUID callback called for UUID: %s\n", uuid);
+   printf("MOEP: UUID provided by application during start (UUID: %s)\n", uuid);
 }
 
 static const struct session_recovery_interface _e_session_recovery_interface =
