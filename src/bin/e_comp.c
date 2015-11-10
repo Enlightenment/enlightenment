@@ -354,7 +354,7 @@ _e_comp_nocomp_end(void)
    _e_comp_cb_nocomp_end();
    if (e_comp->nocomp_ec)
      {
-        E_Layer layer = MAX(e_comp->nocomp_ec->saved.layer, E_LAYER_CLIENT_ABOVE);
+        E_Layer layer = MAX(e_comp->nocomp_ec->saved.layer, E_LAYER_CLIENT_NORMAL);
         Eina_Bool fs;
 
         fs = e_comp->nocomp_ec->fullscreen;
