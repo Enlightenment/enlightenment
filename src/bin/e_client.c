@@ -22,7 +22,7 @@ E_API int E_EVENT_CLIENT_UNFULLSCREEN = -1;
 
 static Eina_Hash *clients_hash[2] = {NULL}; // pixmap->client
 
-static int focus_track_frozen = 0;
+static unsigned int focus_track_frozen = 0;
 
 static int warp_to = 0;
 static int warp_to_x = 0;
@@ -3379,7 +3379,8 @@ e_client_focus_track_freeze(void)
 E_API void
 e_client_focus_track_thaw(void)
 {
-   focus_track_frozen--;
+   if (focus_track_frozen)
+     focus_track_frozen--;
 }
 
 E_API void
