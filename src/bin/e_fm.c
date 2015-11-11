@@ -5176,8 +5176,10 @@ _e_fm2_cb_eio_stat(void *data, Eio_File *handler __UNUSED__, const Eina_Stat *st
 }
 
 static void
-_e_fm2_cb_eio_err(void *data EINA_UNUSED, Eio_File *handler EINA_UNUSED, int error EINA_UNUSED)
+_e_fm2_cb_eio_err(void *data, Eio_File *handler EINA_UNUSED, int error EINA_UNUSED)
 {
+   E_Fm2_Icon *ic = data;
+   ic->eio = NULL;
 }
 
 static int
