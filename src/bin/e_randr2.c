@@ -1194,6 +1194,8 @@ e_randr2_screens_setup(int rw, int rh)
         screen->y = s->config.geom.y;
         screen->w = s->config.geom.w;
         screen->h = s->config.geom.h;
+        if (s->id) screen->id = strdup(s->id);
+
         all_screens = eina_list_append(all_screens, screen);
         printf("xinerama screen %i %i %ix%i\n", screen->x, screen->y, screen->w, screen->h);
         INF("E INIT: XINERAMA SCREEN: [%i][%i], %ix%i+%i+%i",

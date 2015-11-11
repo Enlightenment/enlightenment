@@ -89,6 +89,7 @@ struct _E_Zone
       Eina_Bool dirty : 1;
    } useful_geometry;
    Eina_Bool      stowed : 1;
+   char *randr2_id; // same id we get from randr2 so look it up there
 };
 
 struct _E_Event_Zone_Generic

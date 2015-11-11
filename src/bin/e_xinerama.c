@@ -8,6 +8,13 @@ static Eina_List *all_screens = NULL;
 static Eina_List *chosen_screens = NULL;
 static Eina_List *fake_screens = NULL;
 
+static void
+_screen_free(E_Screen *scr)
+{
+   free(scr->id);
+   free(scr);
+}
+
 EINTERN int
 e_xinerama_init(void)
 {
@@ -45,7 +52,7 @@ e_xinerama_screens_all_get(void)
 E_API void
 e_xinerama_screens_set(Eina_List *screens)
 {
-   E_FREE_LIST(all_screens, free);
+   E_FREE_LIST(all_screens, _screen_free);
    chosen_screens = eina_list_free(chosen_screens);
    all_screens = screens;
    _e_xinerama_update();
@@ -76,9 +83,9 @@ e_xinerama_fake_screens_exist(void)
 static void
 _e_xinerama_clean(void)
 {
-   E_FREE_LIST(all_screens, free);
+   E_FREE_LIST(all_screens, _screen_free);
    chosen_screens = eina_list_free(chosen_screens);
-   E_FREE_LIST(fake_screens, free);
+   E_FREE_LIST(fake_screens, _screen_free);
 }
 
 static void
