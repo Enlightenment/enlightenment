@@ -52,7 +52,7 @@ Bryce Harrington (14):
       wayland: whitespace cleanup
       wayland: Free temporary string on error exit
 
-Carsten Haitzler (109):
+Carsten Haitzler (114):
       mixer: Optionally select an external mixer application.
       e backlight - limit min to 0.05 to avoid totally off backlight
       fix README to be more up to date
@@ -162,6 +162,11 @@ Carsten Haitzler (109):
       e comp data - actually ... NO visibility effect by default is right
       e mixer - be more robust if pulse exits/crashes and def sink is null
       e - comps sync - ec client was null - i think, so protect against crash
+      e - ibar - fix clash when 2 icons of the same path get added somehow
+      e exec tracker - fix tracking to update desktop files on efreet change
+      ibar - fix shutdown if ibar client menu is up
+      e deskmirror - fix loss of mirror object from deskmirror
+      e screens/zones/randr - store randr2 id in xinerama and zones for lookup
 
 Cedric BAIL (3):
       lokker: empty string should not be translated.
@@ -600,8 +605,18 @@ Derek Foreman (31):
 Duna Oh (1):
       fix crash when activating menu that is not in range
 
-Flavio Ceolin (1):
+Flavio Ceolin (2):
       modules:mixer:pulse Update default sink
+      modules:mixer: Avoid pa backend from crash
+
+Florent Revest (7):
+      Adds eglfs to Enlightenment
+      configure.ac: fixes wayland-only build
+      e_signals.c: Inclues Ecore_DRM only if WL_DRM is built and not only if WAYLAND is built
+      wl_eglfs: enable gl acceleration, mouse, touchscreen and keyboard
+      [HACK??] Fixes wayland-only build
+      Fixes build complaining about missing ABOUT-NLS
+      Don't load xwayland if it isn't compiled
 
 Gustavo Lima Chaves (1):
       Generate *all* music control files in src tree.
@@ -683,7 +698,7 @@ Massimo Maiurana (12):
       Updating italian translation
       Updating catalan translation
 
-Mike Blumenkrantz (1008):
+Mike Blumenkrantz (1041):
       unset release mode
       bump version
       Revert "mixer: Optionally select an external mixer application."
@@ -1692,9 +1707,51 @@ Mike Blumenkrantz (1008):
       when maximizing a wayland client with csd, use window geometry
       add NEWS from 19.12 release
       20.0-beta release
+      20.0-beta NEWS updates
+      unset release mode
+      always unalias x11 client parent window <-> pixmap relation during delete
+      clean up some systray leaks
+      add E_COMP_ENGINE env var to determine sw/gl
+      Revert "when maximizing a wayland client with csd, use window geometry"
+      adjust non-x11 client's saved frame geometry when changing csd
+      simplify client SMART/EXPAND maximize
+      Revert "queue pending buffers for wayland shm clients"
+      add native surface (gl) clients to post render list
+      fix comp object native surface config checking for non-x11 compositors
+      use e_comp->gl flag to set native surface state
+      add wayland egl client support
+      check for wayland egl extensions before starting a gl compositor
+      remove note about window close crashing
+      account for window position in efm window drag initial positioning
+      adjust efm multi-icon drag positioning by the current pan coords
+      set e_comp->gl for wayland compositors based on gl display bind success
+      break out x11 client visibility setting into util functions
+      move client iconic hint setting into x11 hide function
+      emit ibox icon signals to the internal edje object of the e_icon
+      add counter and smart callbacks for comp object visible mirrors
+      add e_comp_object_mirror_visibility_check()
+      toggle x11 client iconic/mapped state based on mirror visibility
+      Revert "force a software render in all cases when finalizing x11 client iconify"
+      disable client menu stacking functions for unstackable windows
+      enforce fullscreen client stacking during nocomp end IFF client is fullscreen
+      check client comp data existence in x11 mirror visibility callbacks
+      clamp client to ABOVE layer when ending nocomp
+      Revert "clamp client to ABOVE layer when ending nocomp"
+      use unsigned int for client focus tracking freeze state
+      ensure that all mixer volumes resolve to the appropriate gadget icon
+      null efm icon eio handle in error callback
 
 MinJeong Kim (1):
       e_menu: remove an unnecessary comparison
+
+Nicolas Aguirre (7):
+      Revert "Don't load xwayland if it isn't compiled"
+      Revert "Fixes build complaining about missing ABOUT-NLS"
+      Revert "[HACK??] Fixes wayland-only build"
+      Revert "wl_eglfs: enable gl acceleration, mouse, touchscreen and keyboard"
+      Revert "e_signals.c: Inclues Ecore_DRM only if WL_DRM is built and not only if WAYLAND is built"
+      Revert "configure.ac: fixes wayland-only build"
+      Revert "Adds eglfs to Enlightenment"
 
 Nicolas Marcotte (1):
       added a macro and a fucntion to switch to desktop D on screen S as specified in https://phab.enlightenment.org/T2218
@@ -1751,6 +1808,11 @@ Simon Lees (5):
 
 Srivardhan Hebbar (1):
       autotools: modified autogen.sh script to be able to build from different directory.
+
+Stafford Horne (3):
+      e/conf_apps: Fix resizing of "Startup Application" dialog
+      e/ilist: Fix issue with multiselect returning wrong index
+      e/desk_wallpaper: Fix setting wallpaper from within Virtual Desk dialog
 
 Stefan Schmidt (64):
       modules/wl_drm: Remove trailing whitespaces
@@ -1857,6 +1919,11 @@ Tomáš Čech (1):
 Vincent Torri (1):
       add MIN define for non-linux systems
 
+Vivek Ellur (3):
+      e: Fix realloc issue in e font module
+      Fix memory leak issue
+      Fix null dereference issue
+
 Wonguk Jeong (1):
       conf_application: fix crash on setting Desktop Environment
 
@@ -1884,6 +1951,9 @@ kabeer khan (5):
       Wizard : Resolved FIXME added code to free blang_list in page_010
       wl_drm: create ecore_evas for drm gl backend
       Release list of touch resources when input is shutdown
+
+shorne (1):
+      e/win_config: allow content of some dialogs to resize with the window
 
 vivek (3):
       wl_desktop_shell: Implemented function to show xdg shell surface menu
