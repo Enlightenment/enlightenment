@@ -10,6 +10,7 @@ struct _E_Screen
 {
    int screen, escreen;
    int x, y, w, h;
+   char *id; // this is the same id we get from randr2 so look it up there
 };
 
 EINTERN int           e_xinerama_init(void);

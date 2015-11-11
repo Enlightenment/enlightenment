@@ -1492,7 +1492,7 @@ _e_zone_free(E_Zone *zone)
           e_object_del(E_OBJECT(zone->desks[x + (y * zone->desk_x_count)]));
      }
    free(zone->desks);
-
+   free(zone->randr2_id);
    free(zone);
 }
 
