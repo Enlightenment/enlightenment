@@ -102,7 +102,7 @@ _notify(const int val)
      icon = "audio-volume-muted";
    else if ((val > 33) && (val < 66))
      icon = "audio-volume-medium";
-   else if (val < 33)
+   else if (val <= 33)
      icon = "audio-volume-low";
    else
      icon = "audio-volume-high";
