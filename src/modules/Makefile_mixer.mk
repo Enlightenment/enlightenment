@@ -44,7 +44,7 @@ install-mixer: install-mixerDATA install-mixerpkgLTLIBRARIES
 desktopfiledir = $(datadir)/applications
 desktopfile_DATA = src/modules/mixer/emixer.desktop
 
-iconsdir= $(datadir)/icons
+iconsdir= $(datadir)/pixmaps
 icons_DATA = src/modules/mixer/emixer.png
 
 endif
