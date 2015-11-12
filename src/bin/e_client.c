@@ -3550,6 +3550,8 @@ e_client_focused_set(E_Client *ec)
 
    e_hints_active_window_set(ec);
    _e_client_event_simple(ec, E_EVENT_CLIENT_FOCUS_IN);
+   if (ec->sticky && ec->desk && (!ec->desk->visible))
+     e_client_desk_set(ec, e_desk_current_get(ec->zone));
 }
 
 E_API void
