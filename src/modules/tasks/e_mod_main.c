@@ -82,7 +82,7 @@ static Eina_Bool    _tasks_cb_event_client_uniconify(void *data, int type, void 
 static Eina_Bool    _tasks_cb_event_client_icon_change(void *data, int type, void *event);
 static Eina_Bool    _tasks_cb_event_client_title_change(void *data, int type, void *event);
 static Eina_Bool    _tasks_cb_event_client_zone_set(void *data, int type, void *event);
-static Eina_Bool    _tasks_cb_event_client_desk_set(void *data, int type, void *event);
+static Eina_Bool    _tasks_cb_event_client_desk_set(void *data, int type, E_Event_Client *ev);
 static Eina_Bool    _tasks_cb_window_focus_in(void *data, int type, void *event);
 static Eina_Bool    _tasks_cb_window_focus_out(void *data, int type, void *event);
 static Eina_Bool    _tasks_cb_event_desk_show(void *data, int type, void *event);
@@ -972,9 +972,10 @@ _tasks_cb_event_client_zone_set(void *data __UNUSED__, int type __UNUSED__, void
 }
 
 static Eina_Bool
-_tasks_cb_event_client_desk_set(void *data __UNUSED__, int type __UNUSED__, void *event __UNUSED__)
+_tasks_cb_event_client_desk_set(void *data __UNUSED__, int type __UNUSED__, E_Event_Client *ev)
 {
-   _tasks_refill_all();
+   if (!ev->ec->sticky)
+     _tasks_refill_all();
    return EINA_TRUE;
 }
 
