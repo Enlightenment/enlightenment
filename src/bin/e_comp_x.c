@@ -2376,8 +2376,22 @@ _e_comp_x_mouse_move(void *d EINA_UNUSED, int t EINA_UNUSED, Ecore_Event_Mouse_M
         if ((!ec) && (ev->window != ev->event_window))
           ec = _e_comp_x_client_find_by_window(ev->event_window);
         if ((!ec) || e_client_util_ignored_get(ec)) return ECORE_CALLBACK_RENEW;
-        if ((!ec->mouse.in) && (!ec->hidden) && e_client_util_desk_visible(ec, e_desk_current_get(ec->zone)))
-          e_client_mouse_in(ec, e_comp_canvas_x_root_adjust(ev->root.x), e_comp_canvas_x_root_adjust(ev->root.y));
+        if ((!ec->mouse.in) && evas_object_visible_get(ec->frame) && (!ec->desk->animate_count))
+          {
+             E_Client *tec;
+             Ecore_Window top = e_comp_top_window_at_xy_get(ev->root.x, ev->root.y);
+             int x, y;
+             if (top == e_comp->ee_win) return ECORE_CALLBACK_RENEW;
+
+             x = e_comp_canvas_x_root_adjust(ev->root.x);
+             y = e_comp_canvas_x_root_adjust(ev->root.y);
+             for (tec = e_client_above_get(ec); tec; tec = e_client_above_get(tec))
+               {
+                  if (!evas_object_visible_get(tec->frame)) continue;
+                  if (E_INSIDE(x, y, tec->x, tec->y, tec->w, tec->h)) return ECORE_CALLBACK_RENEW;
+               }
+             e_client_mouse_in(ec, x, y);
+          }
         return ECORE_CALLBACK_RENEW;
      }
    E_COMP_X_PIXMAP_CHECK ECORE_CALLBACK_RENEW;
