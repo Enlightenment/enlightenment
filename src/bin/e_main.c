@@ -352,10 +352,10 @@ main(int argc, char **argv)
    _e_main_shutdown_push(ecore_shutdown);
 
    e_first_frame = getenv("E_FIRST_FRAME");
-   if (e_first_frame && (!e_first_frame[0]))
-     e_first_frame = NULL;
-   else
+   if (e_first_frame && e_first_frame[0])
      e_first_frame_start_time = ecore_time_get();
+   else
+     e_first_frame = NULL;
 
    TS("EIO Init");
    if (!eio_init())
