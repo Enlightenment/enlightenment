@@ -686,7 +686,7 @@ _client_desk_set(E_Smart_Data *sd, int type EINA_UNUSED, E_Event_Client_Desk_Set
         if ((ev->desk == sd->desk) && (!ev->ec->sticky))
           eina_hash_del_by_key(sd->mirror_hash, &ev->ec->frame);
      }
-   if (sd->desk == ev->ec->desk)
+   if ((!m) && (sd->desk == ev->ec->desk))
      _e_deskmirror_mirror_add(sd, ev->ec->frame);
    return ECORE_CALLBACK_RENEW;
 }
