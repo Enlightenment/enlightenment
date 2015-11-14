@@ -127,7 +127,8 @@ _config_set(Emix_Config *config)
 void
 emix_config_init(emix_config_backend_changed cb, const void *userdata)
 {
-   const Eina_List *l;
+   const Eina_List *backends, *l;
+   const char *s;
 
    EINA_SAFETY_ON_FALSE_RETURN(emix_init());
    _emix_config_dd_new();
@@ -135,9 +136,25 @@ emix_config_init(emix_config_backend_changed cb, const void *userdata)
    if (!_config)
      {
         _config = E_NEW(Emix_Config, 1);
-        l = emix_backends_available();
-        if (l)
-          _config->backend = eina_stringshare_add(l->data);
+        backends = emix_backends_available();
+        // prefer pulseaudio as a packend if it exists as this is generally
+        // more useful, and a superset of ALSA. so if pulse is there, alsa
+        // is too - so choosing alsa if pulse is available is wrong (as a
+        // default) and leads to brokenness. in the case pulse is not
+        // around, alsa will then work
+        EINA_LIST_FOREACH(backends, l, s)
+          {
+             if (!strcmp(s, "PULSEAUDIO"))
+               {
+                  _config->backend = eina_stringshare_add(s);
+                  break;
+               }
+          }
+        if (!_config->backend)
+          {
+             if (backends)
+               _config->backend = eina_stringshare_add(backends->data);
+          }
      }
 
    if (_config->save == 0) _config->save = 1;
