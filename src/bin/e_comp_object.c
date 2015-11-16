@@ -2971,11 +2971,14 @@ e_comp_object_frame_geometry_get(Evas_Object *obj, int *l, int *r, int *t, int *
 E_API void
 e_comp_object_frame_geometry_set(Evas_Object *obj, int l, int r, int t, int b)
 {
+   Eina_Bool calc;
+
    API_ENTRY;
    if (cw->frame_object)
      CRI("ACK!");
    if ((cw->client_inset.l == l) && (cw->client_inset.r == r) &&
        (cw->client_inset.t == t) && (cw->client_inset.b == b)) return;
+   calc = cw->client_inset.calc;
    cw->client_inset.calc = l || r || t || b;
    eina_stringshare_replace(&cw->frame_theme, "borderless");
    if (cw->client_inset.calc)
@@ -2983,14 +2986,22 @@ e_comp_object_frame_geometry_set(Evas_Object *obj, int l, int r, int t, int b)
         cw->ec->w += (l + r) - (cw->client_inset.l + cw->client_inset.r);
         cw->ec->h += (t + b) - (cw->client_inset.t + cw->client_inset.b);
      }
-   else if ((!e_client_has_xwindow(cw->ec)) && (cw->ec->maximized || cw->ec->fullscreen))
+   else if (cw->ec->maximized || cw->ec->fullscreen)
      {
-        cw->ec->saved.w -= ((l + r) - (cw->client_inset.l + cw->client_inset.r));
-        cw->ec->saved.h -= ((t + b) - (cw->client_inset.t + cw->client_inset.b));
+        if (e_client_has_xwindow(cw->ec))
+          {
+             cw->ec->saved.x += l - cw->client_inset.l;
+             cw->ec->saved.y += t - cw->client_inset.t;
+          }
+        else
+          {
+             cw->ec->saved.w -= ((l + r) - (cw->client_inset.l + cw->client_inset.r));
+             cw->ec->saved.h -= ((t + b) - (cw->client_inset.t + cw->client_inset.b));
+          }
      }
    if (!cw->ec->new_client)
      {
-        if (cw->client_inset.calc)
+        if ((calc || (!e_client_has_xwindow(cw->ec))) && cw->client_inset.calc)
           {
              cw->ec->x -= l - cw->client_inset.l;
              cw->ec->y -= t - cw->client_inset.t;
