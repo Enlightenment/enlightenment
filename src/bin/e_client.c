@@ -3352,6 +3352,7 @@ e_client_hook_del(E_Client_Hook *ch)
 E_API void
 e_client_focus_latest_set(E_Client *ec)
 {
+   if (!ec) CRI("ACK");
    if (focus_track_frozen > 0) return;
    focus_stack = eina_list_remove(focus_stack, ec);
    focus_stack = eina_list_prepend(focus_stack, ec);
@@ -3360,6 +3361,7 @@ e_client_focus_latest_set(E_Client *ec)
 E_API void
 e_client_raise_latest_set(E_Client *ec)
 {
+   if (!ec) CRI("ACK");
    raise_stack = eina_list_remove(raise_stack, ec);
    raise_stack = eina_list_prepend(raise_stack, ec);
 }
