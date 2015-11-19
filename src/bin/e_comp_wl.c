@@ -2160,7 +2160,7 @@ _e_comp_wl_client_cb_new(void *data EINA_UNUSED, E_Client *ec)
    /* set initial client properties */
    ec->argb = EINA_TRUE;
    ec->no_shape_cut = EINA_TRUE;
-   ec->ignored = 1;
+   ec->redirected = ec->ignored = 1;
    ec->border_size = 0;
 
    /* NB: could not find a better place to do this, BUT for internal windows,
