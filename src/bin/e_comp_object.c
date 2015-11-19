@@ -3544,7 +3544,6 @@ e_comp_object_util_mirror_add(Evas_Object *obj)
    Evas_Object *o;
    int w, h;
    unsigned int *pix = NULL;
-   Eina_Bool argb = EINA_FALSE;
 
    SOFT_ENTRY(NULL);
 
@@ -3560,7 +3559,6 @@ e_comp_object_util_mirror_add(Evas_Object *obj)
         return o;
      }
    if ((!cw->ec) || (!e_pixmap_size_get(cw->ec->pixmap, &w, &h))) return NULL;
-   if ((!cw->native) && (!e_pixmap_image_exists(cw->ec->pixmap))) return NULL;
    o = evas_object_image_filled_add(evas_object_evas_get(obj));
    evas_object_image_colorspace_set(o, EVAS_COLORSPACE_ARGB8888);
    evas_object_image_smooth_scale_set(o, e_comp_config_get()->smooth_windows);
@@ -3575,10 +3573,7 @@ e_comp_object_util_mirror_add(Evas_Object *obj)
    evas_object_image_size_set(o, w, h);
 
    if (cw->ec->shaped)
-     {
-        if (!e_pixmap_image_exists(cw->ec->pixmap)) return o;
-        pix = evas_object_image_data_get(cw->obj, 0);
-     }
+     pix = evas_object_image_data_get(cw->obj, 0);
    else
      {
         if (cw->native)
@@ -3589,20 +3584,12 @@ e_comp_object_util_mirror_add(Evas_Object *obj)
              evas_object_image_native_surface_set(o, &ns);
           }
         else
-          {
-             if (!e_pixmap_image_exists(cw->ec->pixmap)) return o;
-             argb = e_pixmap_image_is_argb(cw->ec->pixmap);
-             if (argb)
-               pix = e_pixmap_image_data_get(cw->ec->pixmap);
-             else
-               pix = evas_object_image_data_get(cw->obj, EINA_FALSE);
-          }
+          pix = evas_object_image_data_get(cw->obj, EINA_FALSE);
      }
    if (pix)
      {
         evas_object_image_data_set(o, pix);
-        if (!argb)
-          evas_object_image_data_set(cw->obj, pix);
+        evas_object_image_data_set(cw->obj, pix);
      }
    evas_object_image_data_update_add(o, 0, 0, w, h);
    return o;
