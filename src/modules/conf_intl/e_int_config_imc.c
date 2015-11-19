@@ -129,6 +129,7 @@ _create_data(E_Config_Dialog *cfd)
 
    cfdata = E_NEW(E_Config_Dialog_Data, 1);
    cfdata->cfd = cfd;
+   cfd->cfdata = cfdata;
    _fill_data(cfdata);
    return cfdata;
 }
@@ -146,8 +147,7 @@ _change_hash_free_cb(const Eina_Hash *hash EINA_UNUSED, const void *key EINA_UNU
 static void
 _free_data(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfdata)
 {
-   if (cfdata->win_import)
-     e_int_config_imc_import_del(cfdata->win_import);
+   E_FREE_FUNC(cfdata->win_import, evas_object_del);
    eina_stringshare_del(cfdata->imc_current);
 
    if (cfdata->imc_basic_map)
