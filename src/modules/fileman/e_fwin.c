@@ -1934,24 +1934,20 @@ _e_fwin_cb_key_down(void *data,
 }
 
 static void
-_e_fwin_cb_page_obj_del(void *data,
+_e_fwin_cb_page_obj_del(void *data EINA_UNUSED,
                         Evas *evas       EINA_UNUSED,
-                        Evas_Object *obj EINA_UNUSED,
+                        Evas_Object *obj,
                         void *event_info EINA_UNUSED)
 {
-   E_Fwin_Page *page;
-
-   page = data;
-
-   evas_object_smart_callback_del(page->fm_obj, "dir_changed",
+   evas_object_smart_callback_del(obj, "dir_changed",
                                   _e_fwin_changed);
-   evas_object_smart_callback_del(page->fm_obj, "dir_deleted",
+   evas_object_smart_callback_del(obj, "dir_deleted",
                                   _e_fwin_deleted);
-   evas_object_smart_callback_del(page->fm_obj, "selected",
+   evas_object_smart_callback_del(obj, "selected",
                                   _e_fwin_selected);
-   evas_object_smart_callback_del(page->fm_obj, "selection_change",
+   evas_object_smart_callback_del(obj, "selection_change",
                                   _e_fwin_selection_change);
-   evas_object_event_callback_del(page->fm_obj, EVAS_CALLBACK_DEL,
+   evas_object_event_callback_del(obj, EVAS_CALLBACK_DEL,
                                   _e_fwin_cb_page_obj_del);
 }
 
