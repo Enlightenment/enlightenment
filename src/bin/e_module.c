@@ -136,6 +136,7 @@ EINTERN int
 e_module_init(void)
 {
    Eina_List *module_paths;
+   Eina_List *next_path;
    E_Path_Dir *epd;
    Eio_Monitor *mon;
    Eio_File *ls;
@@ -165,7 +166,7 @@ e_module_init(void)
           }
      }
    module_paths = e_path_dir_list_get(path_modules);
-   EINA_LIST_FREE(module_paths, epd)
+   EINA_LIST_FOREACH(module_paths, next_path, epd)
      {
         if (ecore_file_is_dir(epd->dir))
           {
@@ -176,10 +177,9 @@ e_module_init(void)
              ls = eio_file_direct_ls(epd->dir, _module_filter_cb, _module_main_cb, _module_done_cb, _module_error_cb, data);
              _e_module_path_monitors = eina_list_append(_e_module_path_monitors, mon);
              _e_module_path_lists = eina_list_append(_e_module_path_lists, ls);
-             eina_stringshare_del(epd->dir);
-             free(epd);
           }
      }
+   e_path_dir_list_free(module_paths);
 
    return 1;
 }
