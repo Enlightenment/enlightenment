@@ -857,6 +857,12 @@ _e_fwin_icon_hints(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *even
    evas_object_geometry_set(fwin->popup, px, py, mw, mh);
 }
 
+static void
+_e_fwin_popup_del(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   evas_object_event_callback_del(data, EVAS_CALLBACK_CHANGED_SIZE_HINTS, _e_fwin_icon_hints);
+}
+
 static Eina_Bool
 _e_fwin_icon_popup(void *data)
 {
@@ -888,6 +894,8 @@ _e_fwin_icon_popup(void *data)
                              fwin->popup_icon->label : fwin->popup_icon->file);
    
    list = e_widget_list_add(e_comp->evas, 0, 0);
+   if (fwin->win)
+     evas_object_event_callback_add(fwin->win, EVAS_CALLBACK_DEL, _e_fwin_popup_del, list);
    
    o = e_widget_filepreview_add(e_comp->evas, mw, mh, 0);
    e_widget_filepreview_clamp_video_set(o, fileman_config->tooltip.clamp_size);
