@@ -98,6 +98,7 @@ _e_shell_surface_destroy(struct wl_resource *resource)
    /* get the client for this resource */
    if ((ec = wl_resource_get_user_data(resource)))
      {
+        if (!e_object_unref(E_OBJECT(ec))) return;
         if (e_object_is_del(E_OBJECT(ec))) return;
 
         if (ec->comp_data)
@@ -571,6 +572,8 @@ _e_shell_cb_shell_surface_get(struct wl_client *client, struct wl_resource *reso
    wl_resource_set_implementation(cdata->shell.surface,
                                   &_e_shell_surface_interface,
                                   ec, _e_shell_surface_cb_destroy);
+
+   e_object_ref(E_OBJECT(ec));
 
    cdata->shell.configure_send = _e_shell_surface_configure_send;
    cdata->shell.configure = _e_shell_surface_configure;
@@ -1120,6 +1123,8 @@ _e_xdg_shell_cb_surface_get(struct wl_client *client, struct wl_resource *resour
                                   &_e_xdg_surface_interface, ec,
                                   _e_shell_surface_cb_destroy);
 
+   e_object_ref(E_OBJECT(ec));
+
    cdata->shell.configure_send = _e_xdg_shell_surface_configure_send;
    cdata->shell.configure = _e_xdg_shell_surface_configure;
    cdata->shell.ping = _e_xdg_shell_surface_ping;
@@ -1206,6 +1211,8 @@ _e_xdg_shell_cb_popup_get(struct wl_client *client, struct wl_resource *resource
 
    wl_resource_set_implementation(cdata->shell.surface,
                                   &_e_xdg_popup_interface, ec, NULL);
+
+   e_object_ref(E_OBJECT(ec));
 
    cdata->shell.configure_send = _e_xdg_shell_surface_configure_send;
    cdata->shell.configure = _e_xdg_shell_surface_configure;
