@@ -34,8 +34,8 @@ e_dpms_update(void)
 
    enabled = ((e_config->screensaver_enable) &&
               (!e_config->mode.presentation) &&
-              ((!e_util_fullscreen_current_any()) && (!e_config->no_dpms_on_fullscreen))
-             );
+              ((!e_util_fullscreen_current_any()) &&
+                  (!e_config->no_dpms_on_fullscreen)));
    if (_e_dpms_enabled != enabled)
      {
         _e_dpms_enabled = enabled;
@@ -220,8 +220,10 @@ e_dpms_init(void)
 #ifdef HAVE_WAYLAND
    if (e_comp->comp_type != E_PIXMAP_TYPE_X)
      {
-        E_LIST_HANDLER_APPEND(handlers, E_EVENT_SCREENSAVER_ON, _e_dpms_screensaver_on, NULL);
-        E_LIST_HANDLER_APPEND(handlers, E_EVENT_SCREENSAVER_OFF_PRE, _e_dpms_screensaver_off, NULL);
+        E_LIST_HANDLER_APPEND(handlers, E_EVENT_SCREENSAVER_ON,
+                              _e_dpms_screensaver_on, NULL);
+        E_LIST_HANDLER_APPEND(handlers, E_EVENT_SCREENSAVER_OFF_PRE,
+                              _e_dpms_screensaver_off, NULL);
      }
 #endif
 
@@ -281,4 +283,3 @@ e_dpms_shutdown(void)
 
    return 1;
 }
-
