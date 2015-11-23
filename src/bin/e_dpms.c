@@ -98,7 +98,7 @@ e_dpms_force_update(void)
         off += OFF;
      }
 #ifndef HAVE_WAYLAND_ONLY
-   if (!e_comp->comp_type == E_PIXMAP_TYPE_X) return;
+   if (e_comp->comp_type != E_PIXMAP_TYPE_X) return;
    ecore_x_dpms_timeouts_set(standby + 10, suspend + 10, off + 10);
    ecore_x_dpms_timeouts_set(standby, suspend, off);
 #endif
