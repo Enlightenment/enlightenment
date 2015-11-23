@@ -2,12 +2,14 @@
 
 static Eina_List *handlers;
 static Ecore_Timer *timer_post_screensaver_lock = NULL;
+static Ecore_Timer *timer_post_screensaver_on = NULL;
 
 static void
 _e_comp_canvas_cb_del()
 {
    E_FREE_LIST(handlers, ecore_event_handler_del);
    E_FREE_FUNC(timer_post_screensaver_lock, ecore_timer_del);
+   E_FREE_FUNC(timer_post_screensaver_on, ecore_timer_del);
 }
 
 static void
@@ -155,13 +157,23 @@ _e_comp_cb_zone_change()
 
 ////////////////////////////////////
 
-static void
-_e_comp_canvas_screensaver_active(void *d EINA_UNUSED, Evas_Object *obj EINA_UNUSED, const char *sig EINA_UNUSED, const char *src EINA_UNUSED)
+static Eina_Bool
+_e_comp_cb_screensaver_active_delay(void *data EINA_UNUSED)
 {
-   /* thawed in _e_comp_screensaver_off() */
    ecore_animator_frametime_set(10.0);
    if (!e_comp->nocomp)
      ecore_evas_manual_render_set(e_comp->ee, EINA_TRUE);
+   timer_post_screensaver_on = NULL;
+   return ECORE_CALLBACK_CANCEL;
+}
+
+static void
+_e_comp_canvas_screensaver_active(void *d EINA_UNUSED, Evas_Object *obj EINA_UNUSED, const char *sig EINA_UNUSED, const char *src EINA_UNUSED)
+{
+   if (timer_post_screensaver_on) return;
+   /* thawed in _e_comp_screensaver_off() */
+   timer_post_screensaver_on = ecore_timer_add
+     (1.0, _e_comp_cb_screensaver_active_delay, NULL);
 }
 
 static Eina_Bool
@@ -192,6 +204,7 @@ static Eina_Bool
 _e_comp_cb_screensaver_off()
 {
    E_FREE_FUNC(timer_post_screensaver_lock, ecore_timer_del);
+   E_FREE_FUNC(timer_post_screensaver_on, ecore_timer_del);
    return ECORE_CALLBACK_PASS_ON;
 }
 ////////////////////////////////////
