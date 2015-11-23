@@ -287,7 +287,7 @@ _e_screensaver_handler_screensaver_off_cb(void *data EINA_UNUSED, int type EINA_
    else if (_e_screensaver_ask_presentation_count)
      _e_screensaver_ask_presentation_count = 0;
 #ifdef HAVE_WAYLAND
-   if (_e_screensaver_timeout)
+   if (_e_screensaver_timeout && (e_comp->comp_type == E_PIXMAP_TYPE_WL))
      _e_screensaver_timer = ecore_timer_add(_e_screensaver_timeout, _e_screensaver_idle_timeout_cb, (void*)1);
 #endif
    return ECORE_CALLBACK_PASS_ON;
