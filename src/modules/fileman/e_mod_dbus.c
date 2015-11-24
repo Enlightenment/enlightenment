@@ -56,6 +56,21 @@ _e_fileman_dbus_daemon_free(E_Fileman_DBus_Daemon *d)
    free(d);
 }
 
+static Eina_Bool
+_e_fileman_dbus_call_rate_limit(void)
+{
+   static double last_call = 0.0;
+   static unsigned long long last_calls = 0;
+   double t = ecore_time_get();
+
+   if ((t - last_call) < 0.5) last_calls++;
+   else last_calls = 0;
+   last_call = t;
+   // if we get more than 10 requests over 0.5 sec - rate limit
+   if (last_calls > 10) return EINA_TRUE;
+   return EINA_FALSE;
+}
+
 static Eldbus_Message *
 _e_fileman_dbus_daemon_open_directory_cb(const Eldbus_Service_Interface *iface EINA_UNUSED,
                                          const Eldbus_Message *msg)
@@ -64,6 +79,12 @@ _e_fileman_dbus_daemon_open_directory_cb(const Eldbus_Service_Interface *iface E
    char *dev, *to_free = NULL;
    E_Zone *zone;
 
+
+   if (_e_fileman_dbus_call_rate_limit())
+     {
+        fprintf(stderr, "EFM remote call rate limiting to avoid DOS attacks");
+        return eldbus_message_method_return_new(msg);
+     }
    if (!eldbus_message_arguments_get(msg, "s", &directory))
      {
         fprintf(stderr, "Error: getting arguments of OpenDirectory call.\n");
@@ -159,6 +180,11 @@ _e_fileman_dbus_daemon_open_file_cb(const Eldbus_Service_Interface *iface EINA_U
    char *real_file, *to_free = NULL;
    E_Zone *zone;
 
+   if (_e_fileman_dbus_call_rate_limit())
+     {
+        fprintf(stderr, "EFM remote call rate limiting to avoid DOS attacks");
+        return eldbus_message_method_return_new(msg);
+     }
    if (!eldbus_message_arguments_get(msg, "s", &param_file))
      {
         fprintf(stderr, "ERROR: getting arguments of OpenFile call.\n");
