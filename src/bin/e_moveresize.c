@@ -56,28 +56,24 @@ e_moveresize_replace(Eina_Bool enable)
 E_API void
 e_moveresize_client_extents(const E_Client *ec, int *w, int *h)
 {
+   if (e_comp_object_frame_allowed(ec->frame))
+     *w = ec->client.w, *h = ec->client.h;
+   else
+     *w = ec->w, *h = ec->h;
    if ((ec->icccm.base_w >= 0) &&
        (ec->icccm.base_h >= 0))
      {
         if (ec->icccm.step_w > 0)
-          *w = (ec->client.w - ec->icccm.base_w) / ec->icccm.step_w;
-        else
-          *w = ec->client.w;
+          *w = (*w - ec->icccm.base_w) / ec->icccm.step_w;
         if (ec->icccm.step_h > 0)
-          *h = (ec->client.h - ec->icccm.base_h) / ec->icccm.step_h;
-        else
-          *h = ec->client.h;
+          *h = (*h - ec->icccm.base_h) / ec->icccm.step_h;
      }
    else
      {
         if (ec->icccm.step_w > 0)
-          *w = (ec->client.w - ec->icccm.min_w) / ec->icccm.step_w;
-        else
-          *w = ec->client.w;
+          *w = (*w - ec->icccm.min_w) / ec->icccm.step_w;
         if (ec->icccm.step_h > 0)
-          *h = (ec->client.h - ec->icccm.min_h) / ec->icccm.step_h;
-        else
-          *h = ec->client.h;
+          *h = (*h - ec->icccm.min_h) / ec->icccm.step_h;
      }
 }
 
