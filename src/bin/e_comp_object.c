@@ -1615,6 +1615,7 @@ _e_comp_smart_cb_frame_recalc(void *data, Evas_Object *obj, void *event_info EIN
      evas_object_resize(cw->ec->frame, cw->ec->zone->w, cw->ec->zone->h);
    else if (cw->ec->new_client)
      {
+        if ((cw->ec->w < 1) || (cw->ec->h < 1)) return;
         e_comp_object_frame_wh_adjust(obj, pw, ph, &w, &h);
         evas_object_resize(cw->ec->frame, w, h);
      }
