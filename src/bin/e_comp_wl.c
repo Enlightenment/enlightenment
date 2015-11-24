@@ -566,6 +566,8 @@ _e_comp_wl_evas_cb_resize(void *data, Evas_Object *obj EINA_UNUSED, void *event 
 
         x = ec->mouse.last_down[ec->moveinfo.down.button - 1].w;
         y = ec->mouse.last_down[ec->moveinfo.down.button - 1].h;
+        if (e_comp_object_frame_exists(ec->frame))
+          e_comp_object_frame_wh_unadjust(ec->frame, x, y, &x, &y);
 
         switch (ec->resize_mode)
           {
