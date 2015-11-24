@@ -8,6 +8,9 @@
 
 EINTERN void dnd_init(void);
 EINTERN void dnd_shutdown(void);
+E_API int e_modapi_shutdown(E_Module *m EINA_UNUSED);
+
+E_API void *e_modapi_init(E_Module *m);
 
 /* local structures */
 typedef struct _E_XWayland_Server E_XWayland_Server;
