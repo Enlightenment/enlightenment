@@ -253,6 +253,14 @@ fail:
 }
 
 static void
+xwayland_fatal(void *d EINA_UNUSED)
+{
+   /* on xwayland fatal, attempt to restart it */
+   e_modapi_shutdown(NULL);
+   e_modapi_init(NULL);
+}
+
+static void
 xnotify(void *d EINA_UNUSED, Ecore_Thread *eth EINA_UNUSED, void *disp)
 {
    if (!disp)
@@ -263,6 +271,7 @@ xnotify(void *d EINA_UNUSED, Ecore_Thread *eth EINA_UNUSED, void *disp)
    assert(ecore_x_init_from_display(disp));
    e_comp_x_init();
    dnd_init();
+   ecore_x_io_error_handler_set(xwayland_fatal, NULL);
 }
 
 static void
