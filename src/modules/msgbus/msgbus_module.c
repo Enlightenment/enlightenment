@@ -33,14 +33,14 @@ static Eldbus_Message *
 _e_msgbus_module_load_cb(const Eldbus_Service_Interface *iface EINA_UNUSED,
                          const Eldbus_Message *msg)
 {
-   char *module;
+   char *mod;
    Eldbus_Message *reply = eldbus_message_method_return_new(msg);
 
-   if (!eldbus_message_arguments_get(msg, "s", &module)) return reply;
+   if (!eldbus_message_arguments_get(msg, "s", &mod)) return reply;
 
-   if (!e_module_find(module))
+   if (!e_module_find(mod))
      {
-        e_module_new(module);
+        e_module_new(mod);
         e_config_save_queue();
      }
 
@@ -51,13 +51,13 @@ static Eldbus_Message *
 _e_msgbus_module_unload_cb(const Eldbus_Service_Interface *iface EINA_UNUSED,
                            const Eldbus_Message *msg)
 {
-   char *module;
+   char *mod;
    E_Module *m;
    Eldbus_Message *reply = eldbus_message_method_return_new(msg);
 
-   if (!eldbus_message_arguments_get(msg, "s", &module)) return reply;
+   if (!eldbus_message_arguments_get(msg, "s", &mod)) return reply;
 
-   if ((m = e_module_find(module)))
+   if ((m = e_module_find(mod)))
      {
         e_module_disable(m);
         e_object_del(E_OBJECT(m));
@@ -71,13 +71,13 @@ static Eldbus_Message *
 _e_msgbus_module_enable_cb(const Eldbus_Service_Interface *iface EINA_UNUSED,
                            const Eldbus_Message *msg)
 {
-   char *module;
+   char *mod;
    E_Module *m;
    Eldbus_Message *reply = eldbus_message_method_return_new(msg);
 
-   if (!eldbus_message_arguments_get(msg, "s", &module)) return reply;
+   if (!eldbus_message_arguments_get(msg, "s", &mod)) return reply;
 
-   if ((m = e_module_find(module)))
+   if ((m = e_module_find(mod)))
      {
         e_module_enable(m);
         e_config_save_queue();
@@ -90,13 +90,13 @@ static Eldbus_Message *
 _e_msgbus_module_disable_cb(const Eldbus_Service_Interface *iface EINA_UNUSED,
                             const Eldbus_Message *msg)
 {
-   char *module;
+   char *mod;
    E_Module *m;
    Eldbus_Message *reply = eldbus_message_method_return_new(msg);
 
-   if (!eldbus_message_arguments_get(msg, "s", &module)) return reply;
+   if (!eldbus_message_arguments_get(msg, "s", &mod)) return reply;
 
-   if ((m = e_module_find(module)))
+   if ((m = e_module_find(mod)))
      {
         e_module_disable(m);
         e_config_save_queue();

@@ -34,14 +34,14 @@ static Eldbus_Message *
 _e_msgbus_profile_set_cb(const Eldbus_Service_Interface *iface EINA_UNUSED,
                          const Eldbus_Message *msg)
 {
-   char *profile;
+   char *prof;
    Eldbus_Message *reply = eldbus_message_method_return_new(msg);
 
-   if (!eldbus_message_arguments_get(msg, "s", &profile))
+   if (!eldbus_message_arguments_get(msg, "s", &prof))
      return reply;
 
    e_config_save_flush();
-   e_config_profile_set(profile);
+   e_config_profile_set(prof);
    e_config_profile_save();
    e_config_save_block_set(1);
    e_sys_action_do(E_SYS_RESTART, NULL);
@@ -54,11 +54,11 @@ _e_msgbus_profile_get_cb(const Eldbus_Service_Interface *iface EINA_UNUSED,
                          const Eldbus_Message *msg)
 {
    Eldbus_Message *reply = eldbus_message_method_return_new(msg);
-   const char *profile;
+   const char *prof;
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(reply, NULL);
-   profile = e_config_profile_get();
-   eldbus_message_arguments_append(reply, "s", profile);
+   prof = e_config_profile_get();
+   eldbus_message_arguments_append(reply, "s", prof);
    return reply;
 }
 
@@ -95,12 +95,12 @@ static Eldbus_Message *
 _e_msgbus_profile_add_cb(const Eldbus_Service_Interface *iface EINA_UNUSED,
                          const Eldbus_Message *msg)
 {
-   char *profile;
+   char *prof;
    Eldbus_Message *reply = eldbus_message_method_return_new(msg);
 
-   if (!eldbus_message_arguments_get(msg, "s", &profile))
+   if (!eldbus_message_arguments_get(msg, "s", &prof))
      return reply;
-   e_config_profile_add(profile);
+   e_config_profile_add(prof);
 
    return reply;
 }
@@ -109,15 +109,15 @@ static Eldbus_Message *
 _e_msgbus_profile_delete_cb(const Eldbus_Service_Interface *iface EINA_UNUSED,
                             const Eldbus_Message *msg)
 {
-   char *profile;
+   char *prof;
 
-   if (!eldbus_message_arguments_get(msg, "s", &profile))
+   if (!eldbus_message_arguments_get(msg, "s", &prof))
      return eldbus_message_method_return_new(msg);
-   if (!strcmp(e_config_profile_get(), profile))
+   if (!strcmp(e_config_profile_get(), prof))
      return eldbus_message_error_new(msg,
                                     "org.enlightenment.DBus.InvalidArgument",
-                                    "Can't delete active profile");
-   e_config_profile_del(profile);
+                                    "Can't delete active prof");
+   e_config_profile_del(prof);
    return eldbus_message_method_return_new(msg);
 }
 
