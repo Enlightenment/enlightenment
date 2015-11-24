@@ -147,6 +147,27 @@ _module_is_nosave(const char *name)
    return !strncmp(name, "wl_", 3); //block wl_* modules from being saved
 }
 
+static Eina_Bool
+_module_is_important(const char *name)
+{
+   const char *list[] =
+   {
+      "xwayland",
+      "wl_desktop_shell",
+      "wl_drm",
+      "wl_fb",
+      "wl_text_input",
+      "wl_weekeyboard",
+      "wl_wl",
+      "wl_x11",
+   };
+   unsigned int i;
+
+   for (i = 0; i < EINA_C_ARRAY_LENGTH(list); i++)
+     if (eina_streq(name, list[i])) return EINA_TRUE;
+   return EINA_FALSE;
+}
+
 /* externally accessible functions */
 EINTERN int
 e_module_init(void)
@@ -535,6 +556,7 @@ e_module_disable(E_Module *m)
    E_OBJECT_CHECK_RETURN(m, 0);
    E_OBJECT_TYPE_CHECK_RETURN(m, E_MODULE_TYPE, 0);
    if ((!m->enabled) || (m->error)) return 0;
+   if ((!stopping) && _module_is_important(m->name)) return 0;
    ret = m->func.shutdown ? m->func.shutdown(m) : 1;
    m->data = NULL;
    m->enabled = 0;
