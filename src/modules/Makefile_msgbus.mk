@@ -17,7 +17,10 @@ src/modules/msgbus/e_mod_main.h \
 src/modules/msgbus/e_mod_main.c \
 src/modules/msgbus/msgbus_audit.c \
 src/modules/msgbus/msgbus_desktop.c \
-src/modules/msgbus/msgbus_lang.c
+src/modules/msgbus/msgbus_lang.c \
+src/modules/msgbus/msgbus_module.c \
+src/modules/msgbus/msgbus_profile.c \
+src/modules/msgbus/msgbus_window.c
 
 PHONIES += msgbus install-msgbus
 msgbus: $(msgbuspkg_LTLIBRARIES) $(msgbus_DATA)

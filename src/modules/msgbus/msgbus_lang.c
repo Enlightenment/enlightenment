@@ -31,14 +31,11 @@ cb_langs(const Eldbus_Service_Interface *iface EINA_UNUSED,
         eldbus_message_iter_basic_append(array, 's', str);
      }
    eldbus_message_iter_container_close(main_iter, array);
-
    return reply;
 }
 
 static const Eldbus_Method methods[] = {
-   {
-    "List", NULL, ELDBUS_ARGS({"as", "langs"}), cb_langs, 0
-   },
+   { "List", NULL, ELDBUS_ARGS({"as", "langs"}), cb_langs, 0 },
    { NULL, NULL, NULL, NULL, 0 }
 };
 
@@ -49,14 +46,14 @@ static const Eldbus_Service_Interface_Desc lang = {
 void msgbus_lang_init(Eina_Array *ifaces)
 {
    Eldbus_Service_Interface *iface;
+
    if (_log_dom == -1)
      {
-	_log_dom = eina_log_domain_register("msgbus_lang", EINA_COLOR_BLUE);
-	if (_log_dom < 0)
-	  EINA_LOG_ERR("could not register msgbus_lang log domain!");
+        _log_dom = eina_log_domain_register("msgbus_lang", EINA_COLOR_BLUE);
+        if (_log_dom < 0)
+          EINA_LOG_ERR("could not register msgbus_lang log domain!");
      }
 
    iface = e_msgbus_interface_attach(&lang);
-   if (iface)
-     eina_array_push(ifaces, iface);
+   if (iface) eina_array_push(ifaces, iface);
 }

@@ -19,11 +19,9 @@ cb_audit_timer_dump(const Eldbus_Service_Interface *iface EINA_UNUSED,
 
    tmp = ecore_timer_dump();
    if (!tmp)
-     eldbus_message_arguments_append(reply, "s",
-                                    "Not enable, recompile Ecore with ecore_timer_dump.");
-   else
-     eldbus_message_arguments_append(reply, "s", tmp);
-
+     eldbus_message_arguments_append
+       (reply, "s", "Not enable, recompile Ecore with ecore_timer_dump.");
+   else eldbus_message_arguments_append(reply, "s", tmp);
    return reply;
 }
 
@@ -42,12 +40,11 @@ void msgbus_audit_init(Eina_Array *ifaces)
 
    if (_log_dom == -1)
      {
-	_log_dom = eina_log_domain_register("msgbus_audit", EINA_COLOR_BLUE);
-	if (_log_dom < 0)
-	  EINA_LOG_ERR("could not register msgbus_audit log domain!");
+        _log_dom = eina_log_domain_register("msgbus_audit", EINA_COLOR_BLUE);
+        if (_log_dom < 0)
+          EINA_LOG_ERR("could not register msgbus_audit log domain!");
      }
 
    iface = e_msgbus_interface_attach(&audit);
-   if (iface)
-     eina_array_push(ifaces, iface);
+   if (iface) eina_array_push(ifaces, iface);
 }
