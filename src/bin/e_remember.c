@@ -733,11 +733,11 @@ _e_remember_cb_hook_pre_post_fetch(void *data __UNUSED__, E_Client *ec)
                }
              if (ec->icccm.min_w > ec->client.w)
                ec->client.w = ec->icccm.min_w;
-             if (ec->icccm.max_w < ec->client.w)
+             if ((ec->icccm.max_w > 0) && (ec->icccm.max_w < ec->client.w))
                ec->client.w = ec->icccm.max_w;
              if (ec->icccm.min_h > ec->client.h)
                ec->client.h = ec->icccm.min_h;
-             if (ec->icccm.max_h < ec->client.h)
+             if ((ec->icccm.max_h > 0) && (ec->icccm.max_h < ec->client.h))
                ec->client.h = ec->icccm.max_h;
           }
         e_comp_object_frame_wh_adjust(ec->frame, ec->client.w, ec->client.h, &ec->w, &ec->h);
