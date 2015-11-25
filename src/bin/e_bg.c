@@ -490,6 +490,7 @@ _e_bg_signal(void *data, Evas_Object *obj EINA_UNUSED, const char *emission EINA
 
    E_FREE_FUNC(zone->prev_bg_object, evas_object_del);
    E_FREE_FUNC(zone->transition_object, evas_object_del);
+   e_comp_canvas_zone_update(zone);
    evas_object_move(zone->bg_object, zone->x, zone->y);
    evas_object_resize(zone->bg_object, zone->w, zone->h);
    evas_object_layer_set(zone->bg_object, E_LAYER_BG);
