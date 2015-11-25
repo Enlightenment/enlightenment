@@ -323,6 +323,9 @@ _e_client_hook_call(E_Client_Hook_Point hookpoint, E_Client *ec)
         if (ch->delete_me) continue;
         ch->func(ch->data, ec);
         if ((hookpoint != E_CLIENT_HOOK_DEL) &&
+          (hookpoint != E_CLIENT_HOOK_MOVE_END) &&
+          (hookpoint != E_CLIENT_HOOK_RESIZE_END) &&
+          (hookpoint != E_CLIENT_HOOK_FOCUS_UNSET) &&
           e_object_is_del(E_OBJECT(ec)))
           break;
      }
