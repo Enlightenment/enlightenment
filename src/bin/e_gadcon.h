@@ -194,7 +194,7 @@ struct _E_Gadcon_Client
       int seq, flags;   /* goes to save */
       int state, resist;
       int prev_pos, prev_size;
-      int want_save : 1;
+      Eina_Bool want_save : 1;
    } state_info;
 
    struct
