@@ -31,7 +31,7 @@ struct _E_Menu
    const char	       *category;
 
    struct {
-      char              visible : 1;
+      Eina_Bool         visible : 1;
       int               x, y, w, h;
    } cur, prev;
 
