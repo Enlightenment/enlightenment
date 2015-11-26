@@ -672,7 +672,7 @@ _subscribe_cb(pa_context *c, pa_subscription_event_type_t t,
 }
 
 static Eina_Bool _pulse_connect(void *data);
-static void _disconnect_cb();
+static void _disconnect_cb(void);
 
 static void
 _pulse_pa_state_cb(pa_context *context, void *data)
