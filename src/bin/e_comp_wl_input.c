@@ -249,7 +249,7 @@ _e_comp_wl_input_cb_bind_seat(struct wl_client *client, void *data EINA_UNUSED, 
 {
    struct wl_resource *res;
 
-   res = wl_resource_create(client, &wl_seat_interface, MIN(version, 4), id);
+   res = wl_resource_create(client, &wl_seat_interface, version, id);
    if (!res)
      {
         ERR("Could not create seat resource: %m");
