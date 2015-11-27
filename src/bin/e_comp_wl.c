@@ -1560,7 +1560,7 @@ _e_comp_wl_compositor_cb_bind(struct wl_client *client, void *data EINA_UNUSED, 
 
    if (!(res =
          wl_resource_create(client, &wl_compositor_interface,
-                            MIN(version, COMPOSITOR_VERSION), id)))
+                            version, id)))
      {
         ERR("Could not create compositor resource: %m");
         wl_client_post_no_memory(client);
@@ -1996,7 +1996,7 @@ _e_comp_wl_subcompositor_cb_bind(struct wl_client *client, void *data EINA_UNUSE
 
    if (!(res =
          wl_resource_create(client, &wl_subcompositor_interface,
-                            MIN(version, 1), id)))
+                            version, id)))
      {
         ERR("Could not create subcompositor resource: %m");
         wl_client_post_no_memory(client);
@@ -2412,7 +2412,7 @@ _e_comp_wl_cb_output_bind(struct wl_client *client, void *data, uint32_t version
    if (!(output = data)) return;
 
    resource =
-     wl_resource_create(client, &wl_output_interface, MIN(version, 2), id);
+     wl_resource_create(client, &wl_output_interface, version, id);
    if (!resource)
      {
         wl_client_post_no_memory(client);

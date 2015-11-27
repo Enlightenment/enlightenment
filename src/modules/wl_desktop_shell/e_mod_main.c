@@ -1323,7 +1323,7 @@ _e_shell_cb_bind(struct wl_client *client, void *data EINA_UNUSED, uint32_t vers
 {
    struct wl_resource *res;
 
-   if (!(res = wl_resource_create(client, &wl_shell_interface, MIN(version, 1), id)))
+   if (!(res = wl_resource_create(client, &wl_shell_interface, version, id)))
      {
         wl_client_post_no_memory(client);
         return;
@@ -1340,7 +1340,7 @@ _e_xdg_shell_cb_bind(struct wl_client *client, void *data EINA_UNUSED, uint32_t 
 {
    struct wl_resource *res;
 
-   if (!(res = wl_resource_create(client, &xdg_shell_interface, MIN(version, 1), id)))
+   if (!(res = wl_resource_create(client, &xdg_shell_interface, version, id)))
      {
         wl_client_post_no_memory(client);
         return;
