@@ -3579,7 +3579,7 @@ e_client_activate(E_Client *ec, Eina_Bool just_do_it)
              if (!ec->lock_user_iconify)
                e_client_uniconify(ec);
           }
-        if ((!ec->iconic) && (!ec->sticky))
+        if ((!ec->iconic) && ((!ec->sticky) || e_config->focus_revert_allow_sticky))
           {
              int val = e_config->focus_last_focused_per_desktop;
 

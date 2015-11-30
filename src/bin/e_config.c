@@ -525,6 +525,7 @@ _e_config_edd_init(Eina_Bool old)
    E_CONFIG_VAL(D, T, resize_info_visible, INT); /**/
    E_CONFIG_VAL(D, T, focus_last_focused_per_desktop, INT); /**/
    E_CONFIG_VAL(D, T, focus_revert_on_hide_or_close, INT); /**/
+   E_CONFIG_VAL(D, T, focus_revert_allow_sticky, INT); /**/
    E_CONFIG_VAL(D, T, pointer_slide, INT); /**/
    E_CONFIG_VAL(D, T, disable_all_pointer_warps, INT); /**/
    E_CONFIG_VAL(D, T, pointer_warp_speed, DOUBLE); /**/
@@ -1410,6 +1411,7 @@ e_config_load(void)
    E_CONFIG_LIMIT(e_config->resize_info_visible, 0, 1);
    E_CONFIG_LIMIT(e_config->focus_last_focused_per_desktop, 0, 1);
    E_CONFIG_LIMIT(e_config->focus_revert_on_hide_or_close, 0, 1);
+   E_CONFIG_LIMIT(e_config->focus_revert_allow_sticky, 0, 1);
    E_CONFIG_LIMIT(e_config->pointer_slide, 0, 1);
    E_CONFIG_LIMIT(e_config->disable_all_pointer_warps, 0, 1);
    E_CONFIG_LIMIT(e_config->pointer_warp_speed, 0.0, 1.0);

@@ -26,6 +26,7 @@ struct _E_Config_Dialog_Data
    int    always_click_to_focus;
    int    focus_last_focused_per_desktop;
    int    focus_revert_on_hide_or_close;
+   int    focus_revert_allow_sticky;
    int    pointer_slide;
    int    disable_all_pointer_warps;
    double pointer_warp_speed;
@@ -75,6 +76,8 @@ _fill_data(E_Config_Dialog_Data *cfdata)
      e_config->focus_last_focused_per_desktop;
    cfdata->focus_revert_on_hide_or_close =
      e_config->focus_revert_on_hide_or_close;
+   cfdata->focus_revert_allow_sticky =
+     e_config->focus_revert_allow_sticky;
    cfdata->pointer_slide = e_config->pointer_slide;
    cfdata->disable_all_pointer_warps = e_config->disable_all_pointer_warps;
    cfdata->pointer_warp_speed = e_config->pointer_warp_speed;
@@ -181,6 +184,8 @@ _advanced_apply(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfdata)
      cfdata->focus_last_focused_per_desktop;
    e_config->focus_revert_on_hide_or_close =
      cfdata->focus_revert_on_hide_or_close;
+   e_config->focus_revert_allow_sticky =
+     cfdata->focus_revert_allow_sticky;
    e_config->pointer_slide = cfdata->pointer_slide;
    e_config->disable_all_pointer_warps = cfdata->disable_all_pointer_warps;
    e_config->pointer_warp_speed = cfdata->pointer_warp_speed;
@@ -205,6 +210,7 @@ _advanced_check_changed(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *
           (e_config->always_click_to_focus != cfdata->always_click_to_focus) ||
           (e_config->focus_last_focused_per_desktop != cfdata->focus_last_focused_per_desktop) ||
           (e_config->focus_revert_on_hide_or_close != cfdata->focus_revert_on_hide_or_close) ||
+          (e_config->focus_revert_allow_sticky != cfdata->focus_revert_allow_sticky) ||
           (e_config->pointer_slide != cfdata->pointer_slide) ||
           (e_config->disable_all_pointer_warps != cfdata->disable_all_pointer_warps) ||
           (fabs(e_config->pointer_warp_speed - cfdata->pointer_warp_speed) > DBL_EPSILON) ||
@@ -360,6 +366,9 @@ _advanced_create(E_Config_Dialog *cfd EINA_UNUSED, Evas *evas, E_Config_Dialog_D
    e_widget_framelist_object_append(of, ob);
    ob = e_widget_check_add(evas, _("Refocus last window on desktop switch"),
                            &(cfdata->focus_last_focused_per_desktop));
+   e_widget_framelist_object_append(of, ob);
+   ob = e_widget_check_add(evas, _("Allow focusing of sticky windows when reverting focus"),
+                           &(cfdata->focus_revert_allow_sticky));
    e_widget_framelist_object_append(of, ob);
    ob = e_widget_check_add(evas, _("Focus last focused window on lost focus"),
                            &(cfdata->focus_revert_on_hide_or_close));
