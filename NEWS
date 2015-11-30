@@ -52,7 +52,7 @@ Bryce Harrington (14):
       wayland: whitespace cleanup
       wayland: Free temporary string on error exit
 
-Carsten Haitzler (114):
+Carsten Haitzler (118):
       mixer: Optionally select an external mixer application.
       e backlight - limit min to 0.05 to avoid totally off backlight
       fix README to be more up to date
@@ -167,6 +167,10 @@ Carsten Haitzler (114):
       ibar - fix shutdown if ibar client menu is up
       e deskmirror - fix loss of mirror object from deskmirror
       e screens/zones/randr - store randr2 id in xinerama and zones for lookup
+      e mixer fix - fix default mixer to pulse if there
+      e - fix compositor fade out ghosting
+      e msgbus - move almost all of core dbus methods to msgbus module
+      e - efm - rate limit dbus requests to open dirs or files to avoid dos
 
 Cedric BAIL (3):
       lokker: empty string should not be translated.
@@ -179,7 +183,7 @@ Chidambar Zinnoury (4):
       e menus: Fix invalid comparisons.
       e fm: Use correct string length when copying path.
 
-Christopher Michael (355):
+Christopher Michael (357):
       bugfix: Fix e_msgbus file having missing initializers for Eldbus     Messages & Signals
       bugfix: Fix e_notification file having missing initializers for Eldbus     Messages & Signals
       bugfix: Cleanup appmenu module having missing field initializers for     Eldbus Messages & Signals
@@ -535,6 +539,8 @@ Christopher Michael (355):
       enlightenment: Use 'fabs' to compute absolute value of floating point     types
       enlightenment: Make sure we have a zone before calling     _bgpreview_viewport_update
       Fix e_menu trying to swallow an object from a different canvas
+      Fix formatting and remove extra blank line
+      Fix invalid compositor type check in e_dpms_force_update
 
 Conrad Meyer (4):
       Mixer Pulse: Fix trivial use-after-free.
@@ -569,7 +575,7 @@ Dave Andreoli (3):
       Update gtk bookmarks to work with new gtk3 path
       Improve italian lang
 
-Derek Foreman (31):
+Derek Foreman (32):
       Conditionally ignore wayland cursor set events
       Provide wl_output interface to clients
       Provide wl_output events on hotplug
@@ -601,6 +607,7 @@ Derek Foreman (31):
       wayland: Only send keyboard modifiers to focused resources
       wayland: Always add frame callbacks to current state on commit
       wayland: force wl surface frame callbacks on commit for undamaged surfaces
+      Stop using MIN macros when choosing versions for wayland resources
 
 Duna Oh (1):
       fix crash when activating menu that is not in range
@@ -641,7 +648,8 @@ Jean-Philippe ANDRÉ (6):
 Jee-Yong Um (1):
       e_actions: Fix to parse syntax correctly in key binding settings
 
-Kai Huuhko (1):
+Kai Huuhko (2):
+      L10N: Update Finnish translations
       L10N: Update Finnish translations
 
 Leif Middelschulte (2):
@@ -698,7 +706,7 @@ Massimo Maiurana (12):
       Updating italian translation
       Updating catalan translation
 
-Mike Blumenkrantz (1041):
+Mike Blumenkrantz (1074):
       unset release mode
       bump version
       Revert "mixer: Optionally select an external mixer application."
@@ -1740,6 +1748,39 @@ Mike Blumenkrantz (1041):
       use unsigned int for client focus tracking freeze state
       ensure that all mixer volumes resolve to the appropriate gadget icon
       null efm icon eio handle in error callback
+      20.0-rc release
+      20.0-rc NEWS updates
+      unset release mode
+      install emixer icon to $(datadir)/pixmaps instead of /icons
+      improve readability of E_FIRST_FRAME environment variable detection
+      improve x11 client focusing with mouse-based focus policies on mouse move
+      do not add new deskmirror clients on desk_set event if client already exists
+      do not refill all tasks bars when a sticky window changes desks
+      update E_Client->desk member upon focusing a sticky client
+      further improve csd calculations for x11 clients
+      add safety checks to e_client_focus/raise_latest_set() fns
+      always create compositor mirror objects, ignore pixmap image state
+      block task gadget refills while a drag is active
+      Revert "e deskmirror - fix loss of mirror object from deskmirror"
+      ensure that a deskmirror object does not orphan child objects
+      always set wayland E_Client->redirected during client creation
+      ensure fwin efm delete callback does not trigger crash
+      remove fwin popup size hint change callback on win deletion
+      ref clients while a wayland shell surface exists
+      only create wayland screensaver timer in wayland mode
+      only perform drm shutdown during signal handler if drm engine is in use
+      reenable restart/shutdown dbus methods under x11
+      fix all shadow warnings in msgbus module
+      add mechanism for preventing unload of important modules during runtime
+      use separate handler for x11 fatal errors when using xwayland
+      declare xwayland functions prior to using them
+      avoid setting incorrect geometry during new_client frame calc
+      adjust for SSD geometry during wayland client resize
+      use CSD geometry during move/resize display
+      do not apply max client geometry restriction if max geometry is not set
+      allow more client hooks to bypass delete check
+      re-swallow bg_object after wallpaper transition has completed
+      remove e_comp_wl struct keyboard repeat members
 
 MinJeong Kim (1):
       e_menu: remove an unnecessary comparison
@@ -1809,12 +1850,14 @@ Simon Lees (5):
 Srivardhan Hebbar (1):
       autotools: modified autogen.sh script to be able to build from different directory.
 
-Stafford Horne (3):
+Stafford Horne (5):
       e/conf_apps: Fix resizing of "Startup Application" dialog
       e/ilist: Fix issue with multiselect returning wrong index
       e/desk_wallpaper: Fix setting wallpaper from within Virtual Desk dialog
+      e/imc: fix issue with input method import segv and small window size
+      e/core: Fix minor mem leak when reading module paths
 
-Stefan Schmidt (64):
+Stefan Schmidt (68):
       modules/wl_drm: Remove trailing whitespaces
       e_client: _e_client_cb_drag_finished is not used in wayland only mode
       modules/lokker: Array address is never NULL.
@@ -1879,6 +1922,13 @@ Stefan Schmidt (64):
       e_widget_filepreview: Remove assign without effect
       modules/battery: Remove assign without effect
       e_comp_wl: create global and bind  session_recovery interface
+      e_fm:correct declaration of  function with no parameters
+      pulse backend: correct declaration of  function with no parameters
+      e_gadcon: use Eina_Bool for one-bit bitfield
+      e_menu: use Eina_Bool for one-bit bitfield
+
+Sung-Jin Park (1):
+      (1) e_config.c/e_comp_wl.c: add code for making repeat values configurable     (2) e.src(s): add keyboard.repeat_delay, keyboard.repeat_rate into e.src files
 
 Takeshi Banse (1):
       cpufreq: teach cpuinfo_{min,max}_freq as available frequencies
