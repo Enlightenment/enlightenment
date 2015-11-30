@@ -47,7 +47,7 @@ typedef enum
 /* increment this whenever a new set of config values are added but the users
  * config doesn't need to be wiped - simply new values need to be put in
  */
-#define E_CONFIG_FILE_GENERATION 18
+#define E_CONFIG_FILE_GENERATION 19
 #define E_CONFIG_FILE_VERSION    ((E_CONFIG_FILE_EPOCH * 1000000) + E_CONFIG_FILE_GENERATION)
 
 #define E_CONFIG_BINDINGS_VERSION 0 // DO NOT INCREMENT UNLESS YOU WANT TO WIPE ALL BINDINGS!!!!!
@@ -428,7 +428,13 @@ struct _E_Config
       const char *selected_layout; // whatever teh current layout that the user has selected is
       const char *desklock_layout;
    } xkb;
-   
+
+   struct
+   {
+      int repeat_delay;//delay in milliseconds since key down until repeating starts
+      int repeat_rate;//the rate of repeating keys in characters per second
+   } keyboard;
+
    Eina_List  *menu_applications;
    unsigned char exe_always_single_instance; // GUI
    int           use_desktop_window_profile; // GUI
