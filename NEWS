@@ -1,3 +1,25 @@
+Release 0.19.14:
+---------------------
+Mike Blumenkrantz (14):
+      improve x11 client focusing with mouse-based focus policies on mouse move
+      do not add new deskmirror clients on desk_set event if client already exists
+      do not refill all tasks bars when a sticky window changes desks
+      update E_Client->desk member upon focusing a sticky client
+      further improve csd calculations for x11 clients
+      always create compositor mirror objects, ignore pixmap image state
+      block task gadget refills while a drag is active
+      Revert "e deskmirror - fix loss of mirror object from deskmirror"
+      ensure that a deskmirror object does not orphan child objects
+      avoid setting incorrect geometry during new_client frame calc
+      use CSD geometry during move/resize display
+      do not apply max client geometry restriction if max geometry is not set
+      allow more client hooks to bypass delete check
+      re-swallow bg_object after wallpaper transition has completed
+
+Stafford Horne (1):
+      e/core: Fix minor mem leak when reading module paths
+
+
 Release 0.19.13:
 ---------------------
 Carsten Haitzler (4):
