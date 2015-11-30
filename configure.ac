@@ -1,11 +1,11 @@
 ##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##
 ##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##
 m4_define([v_maj], [0])
-m4_define([v_min], [20])
-m4_define([v_mic], [0])
+m4_define([v_min], [19])
+m4_define([v_mic], [99])
 m4_define([v_rev], m4_esyscmd([(git rev-list --count HEAD 2>/dev/null || echo 0) | tr -d '\n']))dnl
 ##--   When released, remove the dnl on the below line
-m4_undefine([v_rev])
+dnl m4_undefine([v_rev])
 m4_define([relname], [0.20.0])
 ##--   When doing snapshots - change soname. remove dnl on below line
 m4_define([relname], [ver-autocannoli-0.20])
@@ -54,7 +54,7 @@ AC_DEFINE_UNQUOTED(VMAJ, [v_maj], [Major version])
 AC_DEFINE_UNQUOTED(VMIN, [v_min], [Minor version])
 AC_DEFINE_UNQUOTED(VMIC, [v_mic], [Micro version])
 AC_DEFINE_UNQUOTED(VREV, [v_rev], [Revison])
-AC_DEFINE_UNQUOTED(E_RELEASE_BUILD, [1], [doin it])
+##AC_DEFINE_UNQUOTED(E_RELEASE_BUILD, [1], [doin it])
 version_info="lt_cur:lt_rev:lt_age"
 release_info="v_rel"
 AC_SUBST([version_info])
