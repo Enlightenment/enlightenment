@@ -1961,6 +1961,80 @@ vivek (3):
       wl_desktop_shell: Fixed the issue to check if wl surface is active or hung up
 
 
+Release 0.19.14:
+---------------------
+Mike Blumenkrantz (14):
+      improve x11 client focusing with mouse-based focus policies on mouse move
+      do not add new deskmirror clients on desk_set event if client already exists
+      do not refill all tasks bars when a sticky window changes desks
+      update E_Client->desk member upon focusing a sticky client
+      further improve csd calculations for x11 clients
+      always create compositor mirror objects, ignore pixmap image state
+      block task gadget refills while a drag is active
+      Revert "e deskmirror - fix loss of mirror object from deskmirror"
+      ensure that a deskmirror object does not orphan child objects
+      avoid setting incorrect geometry during new_client frame calc
+      use CSD geometry during move/resize display
+      do not apply max client geometry restriction if max geometry is not set
+      allow more client hooks to bypass delete check
+      re-swallow bg_object after wallpaper transition has completed
+
+Stafford Horne (1):
+      e/core: Fix minor mem leak when reading module paths
+
+
+Release 0.19.13:
+---------------------
+Carsten Haitzler (4):
+      e - ibar - fix clash when 2 icons of the same path get added somehow
+      e exec tracker - fix tracking to update desktop files on efreet change
+      ibar - fix shutdown if ibar client menu is up
+      e deskmirror - fix loss of mirror object from deskmirror
+
+Mike Blumenkrantz (31):
+      when removing VERTICAL maximize state, also remove LEFT and RIGHT states
+      don't crash desktop gadget systrays when adjusting image sizing
+      make wake-on-urgent apply for all cases of window urgency
+      force full damage for first frame of x11 override clients
+      subtract x11 client damage region even when forcing full override damage
+      fix typo in previous damage rect commit
+      do not return when x11 damage event returns no rects
+      trap shaped x11 clients and prevent compositor blocking with high rect count
+      reject deleted clients from x11 sync alarm event callback
+      clear x11 client pixmap when returning from iconic
+      force a software render in all cases when finalizing x11 client iconify
+      update csd using deltas of previous values
+      make comp config unresizable...again
+      remove dead modules from whitelist
+      only apply frame geometry deltas for CSD if the CSD region exists
+      reject frame theme changes for clients which have CSD
+      simplify client SMART/EXPAND maximize
+      add native surface (gl) clients to post render list
+      adjust efm multi-icon drag positioning by the current pan coords
+      break out x11 client visibility setting into util functions
+      move client iconic hint setting into x11 hide function
+      emit ibox icon signals to the internal edje object of the e_icon
+      add counter and smart callbacks for comp object visible mirrors
+      add e_comp_object_mirror_visibility_check()
+      toggle x11 client iconic/mapped state based on mirror visibility
+      Revert "force a software render in all cases when finalizing x11 client iconify"
+      disable client menu stacking functions for unstackable windows
+      enforce fullscreen client stacking during nocomp end IFF client is fullscreen
+      check client comp data existence in x11 mirror visibility callbacks
+      use unsigned int for client focus tracking freeze state
+      null efm icon eio handle in error callback
+
+Stafford Horne (2):
+      e/conf_apps: Fix resizing of "Startup Application" dialog
+      e/ilist: Fix issue with multiselect returning wrong index
+
+Thierry (1):
+      mouse_config: fix accel threshold and numerator limits.
+
+shorne (1):
+      e/win_config: allow content of some dialogs to resize with the window
+
+
 Release 0.19.12:
 ---------------------
 Amitesh Singh (1):
