@@ -733,6 +733,9 @@ _e_config_edd_init(Eina_Bool old)
    E_CONFIG_VAL(D, T, xkb.dont_touch_my_damn_keyboard, UCHAR);
    E_CONFIG_VAL(D, T, xkb.default_model, STR);
 
+   E_CONFIG_VAL(D, T, keyboard.repeat_delay, INT);
+   E_CONFIG_VAL(D, T, keyboard.repeat_rate, INT);
+
    if (old)
      {
         E_CONFIG_SUB(D, T, xkb.current_layout, _e_config_xkb_option_edd);
@@ -1326,6 +1329,14 @@ e_config_load(void)
                   free(ecc);
                }
           }
+        CONFIG_VERSION_CHECK(19)
+          {
+             CONFIG_VERSION_UPDATE_INFO(19);
+
+             /* set (400, 25) as the default values of repeat delay, rate */
+             e_config->keyboard.repeat_delay = 400;
+             e_config->keyboard.repeat_rate = 25;
+          }
      }
    if (!e_config->remember_internal_fm_windows)
      e_config->remember_internal_fm_windows = !!(e_config->remember_internal_windows & E_REMEMBER_INTERNAL_FM_WINS);
@@ -1503,6 +1514,9 @@ e_config_load(void)
    E_CONFIG_LIMIT(e_config->backlight.normal, 0.05, 1.0);
    E_CONFIG_LIMIT(e_config->backlight.dim, 0.05, 1.0);
    E_CONFIG_LIMIT(e_config->backlight.idle_dim, 0, 1);
+
+   E_CONFIG_LIMIT(e_config->keyboard.repeat_delay, -1, 1000); // 1 second
+   E_CONFIG_LIMIT(e_config->keyboard.repeat_rate, -1, 1000); // 1 second
 
    if (!e_config->icon_theme)
      e_config->icon_theme = eina_stringshare_add("hicolor");  // FDO default

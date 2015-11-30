@@ -155,6 +155,8 @@ struct _E_Comp_Wl_Data
         struct wl_array keys;
         struct wl_resource *focus;
         int mod_changed;
+        int repeat_delay;
+        int repeat_rate;
      } kbd;
 
    struct
