@@ -161,6 +161,7 @@ struct _E_Config
    int         resize_info_visible; // GUI
    int         focus_last_focused_per_desktop; // GUI
    int         focus_revert_on_hide_or_close; // GUI
+   int         focus_revert_allow_sticky; // GUI
    int         disable_all_pointer_warps; // GUI
    int         pointer_slide; // GUI
    double      pointer_warp_speed; // GUI

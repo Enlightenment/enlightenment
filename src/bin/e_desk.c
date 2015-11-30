@@ -377,7 +377,7 @@ e_desk_last_focused_focus(E_Desk *desk)
              /* this was the window last focused in this desktop */
              if (!ec->lock_focus_out)
                {
-                  if (ec->sticky)
+                  if (ec->sticky && (!e_config->focus_revert_allow_sticky))
                     {
                        ecs = ec;
                        continue;
