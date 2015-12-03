@@ -1561,8 +1561,8 @@ _e_comp_x_configure_request(void *data  EINA_UNUSED, int type EINA_UNUSED, Ecore
         return ECORE_CALLBACK_PASS_ON;
      }
 
-   x = ox = ec->x;
-   y = oy = ec->y;
+   x = ox = ec->client.x;
+   y = oy = ec->client.y;
    w = ow = ec->client.w;
    h = oh = ec->client.h;
 
@@ -1599,6 +1599,7 @@ _e_comp_x_configure_request(void *data  EINA_UNUSED, int type EINA_UNUSED, Ecore
           h = ev->h, _e_comp_x_client_data_get(ec)->initial_attributes.h = ev->h;
      }
    
+   e_comp_object_frame_xy_adjust(ec->frame, x, y, &x, &y);
    e_comp_object_frame_wh_adjust(ec->frame, w, h, &w, &h);
 
    move = (x != ec->x) || (y != ec->y);
@@ -1610,8 +1611,7 @@ _e_comp_x_configure_request(void *data  EINA_UNUSED, int type EINA_UNUSED, Ecore
           {
              E_Zone *zone;
 
-             ec->saved.x = x;
-             ec->saved.y = y;
+             e_comp_object_frame_xy_unadjust(ec->frame, x, y, &ec->saved.x, &ec->saved.y);
 
              zone = e_comp_zone_xy_get(x, y);
              if (zone && (zone->x || zone->y))
@@ -1643,10 +1643,7 @@ _e_comp_x_configure_request(void *data  EINA_UNUSED, int type EINA_UNUSED, Ecore
    if (resize && (!ec->lock_client_size) && (move || ((!ec->maximized) && (!ec->fullscreen))))
      {
         if ((ec->maximized & E_MAXIMIZE_TYPE) != E_MAXIMIZE_NONE)
-          {
-             ec->saved.w = w;
-             ec->saved.h = h;
-          }
+          e_comp_object_frame_wh_unadjust(ec->frame, w, h, &ec->saved.w, &ec->saved.h);
         else
           {
              evas_object_resize(ec->frame, w, h);
