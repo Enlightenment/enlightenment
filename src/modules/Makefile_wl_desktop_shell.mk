@@ -25,7 +25,9 @@ src_modules_wl_desktop_shell_module_la_SOURCES = \
   src/modules/wl_desktop_shell/e_input_method_protocol.c \
   src/modules/wl_desktop_shell/e_input_method_protocol.h \
   src/modules/wl_desktop_shell/e_desktop_shell_protocol.c \
-  src/modules/wl_desktop_shell/e_desktop_shell_protocol.h
+  src/modules/wl_desktop_shell/e_desktop_shell_protocol.h \
+src/modules/wl_desktop_shell/draw-mode.c \
+src/modules/wl_desktop_shell/draw-mode.h
 
 PHONIES += wl_desktop_shell install-wl_desktop_shell
 wl_desktop_shell: $(wl_desktop_shellpkg_LTLIBRARIES) $(wl_desktop_shell_DATA)

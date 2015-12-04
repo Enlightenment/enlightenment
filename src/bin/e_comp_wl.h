@@ -140,6 +140,7 @@ struct _E_Comp_Wl_Data
      {
         struct wl_resource *shell;
         struct wl_resource *xdg_shell;
+        struct wl_resource *draw_modes;
      } shell_interface;
 
    struct
@@ -272,6 +273,7 @@ struct _E_Comp_Wl_Client_Data
         void (*map)(struct wl_resource *resource);
         void (*unmap)(struct wl_resource *resource);
         Eina_Rectangle window;
+        Eina_Bool draw_mode_noshadow;
      } shell;
 
    E_Comp_Wl_Buffer_Ref buffer_ref;

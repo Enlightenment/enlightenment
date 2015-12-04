@@ -2,6 +2,7 @@
 #include "e.h"
 #include "e_mod_main.h"
 #include "e_desktop_shell_protocol.h"
+#include "draw-mode.h"
 
 #define XDG_SERVER_VERSION 5
 
@@ -623,6 +624,8 @@ _e_xdg_shell_surface_configure_send(struct wl_resource *resource, uint32_t edges
      _e_xdg_surface_state_add(resource, &states, XDG_SURFACE_STATE_RESIZING);
    if (ec->focused)
      _e_xdg_surface_state_add(resource, &states, XDG_SURFACE_STATE_ACTIVATED);
+   if (ec->comp_data->shell.draw_mode_noshadow)
+     _e_xdg_surface_state_add(resource, &states, DRAW_MODES_STATE_DRAW_NOSHADOW);
 
    if (ec->netwm.type != E_WINDOW_TYPE_POPUP_MENU)
      {
@@ -1262,6 +1265,23 @@ _e_xdg_shell_cb_pong(struct wl_client *client EINA_UNUSED, struct wl_resource *r
      }
 }
 
+static void
+_e_draw_modes_cb_set_available_draw_modes(struct wl_client *client EINA_UNUSED, struct wl_resource *resource EINA_UNUSED, struct wl_resource *surface, struct wl_array *modes)
+{
+   E_Client *ec;
+   uint32_t *m;
+
+   ec = wl_resource_get_user_data(surface);
+
+   wl_array_for_each(m, modes)
+     switch (*m)
+       {
+        case DRAW_MODES_STATE_DRAW_NOSHADOW:
+          ec->comp_data->shell.draw_mode_noshadow = 1;
+          break;
+       }
+}
+
 static const struct wl_shell_interface _e_shell_interface =
 {
    _e_shell_cb_shell_surface_get
@@ -1276,10 +1296,21 @@ static const struct xdg_shell_interface _e_xdg_shell_interface =
    _e_xdg_shell_cb_pong
 };
 
+static const struct draw_modes_interface _e_draw_modes_interface =
+{
+   _e_draw_modes_cb_set_available_draw_modes,
+};
+
 static void
 _e_xdg_shell_cb_unbind(struct wl_resource *resource EINA_UNUSED)
 {
    e_comp_wl->shell_interface.xdg_shell = NULL;
+}
+
+static void
+_e_draw_modes_cb_unbind(struct wl_resource *resource EINA_UNUSED)
+{
+   e_comp_wl->shell_interface.draw_modes = NULL;
 }
 
 static int
@@ -1351,6 +1382,23 @@ _e_xdg_shell_cb_bind(struct wl_client *client, void *data EINA_UNUSED, uint32_t 
                               e_comp->wl_comp_data, NULL);
 }
 
+static void
+_e_draw_modes_cb_bind(struct wl_client *client, void *data EINA_UNUSED, uint32_t version, uint32_t id)
+{
+   struct wl_resource *res;
+
+   if (!(res = wl_resource_create(client, &draw_modes_interface, version, id)))
+     {
+        wl_client_post_no_memory(client);
+        return;
+     }
+
+   e_comp_wl->shell_interface.draw_modes = res;
+   wl_resource_set_implementation(res, &_e_draw_modes_interface,
+                                  e_comp->wl_comp_data,
+                                  _e_draw_modes_cb_unbind);
+}
+
 E_API E_Module_Api e_modapi = { E_MODULE_API_VERSION, "Wl_Desktop_Shell" };
 
 E_API void *
@@ -1378,6 +1426,12 @@ e_modapi_init(E_Module *m)
                          e_comp->wl_comp_data, _e_xdg_shell_cb_bind))
      {
         ERR("Could not create xdg_shell global: %m");
+        return NULL;
+     }
+   if (!wl_global_create(e_comp_wl->wl.disp, &draw_modes_interface, 1,
+                         e_comp->wl_comp_data, _e_draw_modes_cb_bind))
+     {
+        ERR("Could not create draw_modes global: %m");
         return NULL;
      }
 
