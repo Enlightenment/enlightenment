@@ -953,7 +953,7 @@ _wl_shot_now(E_Zone *zone, E_Client *ec, const char *params)
         sh = E_CLAMP(sh, 1, ec->zone->y + ec->zone->h - y);
      }
 
-   shm = e_comp_wl->wl.shm ?: ecore_wl2_display_shm_get(ewd);
+   shm = e_comp_wl->wl.shm ?: ecore_wl2_display_shm_get(e_comp_wl->wl.client_disp);
 
    EINA_LIST_FOREACH(_outputs, l, output)
      {
@@ -1263,8 +1263,8 @@ _wl_init()
    struct wl_registry *reg;
    void *data;
 
-   reg = e_comp_wl->wl.registry ?: ecore_wl2_display_registry_get(ewd);
-   itr = ecore_wl2_display_globals_get(ewd);
+   reg = e_comp_wl->wl.registry ?: ecore_wl2_display_registry_get(e_comp_wl->wl.client_disp);
+   itr = ecore_wl2_display_globals_get(e_comp_wl->wl.client_disp);
    EINA_ITERATOR_FOREACH(itr, data)
      {
         global = (Ecore_Wl2_Global *)data;
