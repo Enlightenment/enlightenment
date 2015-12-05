@@ -2582,6 +2582,7 @@ _e_comp_wl_compositor_create(void)
         e_comp_wl_input_keymap_set(rules, model, layout);
      }
 #endif
+   e_comp_wl->wl.client_disp = ecore_wl2_display_connect(NULL);
 
    /* setup module idler to load shell mmodule */
    ecore_idler_add(_e_comp_wl_cb_module_idle, cdata);
