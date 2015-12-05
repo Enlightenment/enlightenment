@@ -2459,6 +2459,8 @@ _e_comp_wl_compositor_create(void)
        return EINA_FALSE;
      }
 
+   ecore_wl2_init();
+
    /* set compositor wayland data */
    e_comp_wl = e_comp->wl_comp_data = cdata;
 
