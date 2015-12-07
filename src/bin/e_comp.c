@@ -980,7 +980,11 @@ _e_comp_act_opacity_set_go(E_Object * obj EINA_UNUSED, const char *params)
 static void
 _e_comp_act_redirect_toggle_go(E_Object * obj EINA_UNUSED, const char *params EINA_UNUSED)
 {
-   e_comp_client_redirect_toggle(e_client_focused_get());
+   E_Client *ec;
+
+   ec = e_client_focused_get();
+   if ((!ec) || (!e_pixmap_is_x(ec->pixmap)) || (ec == e_comp->nocomp_ec)) return;
+   e_comp_client_redirect_toggle(ec);
 }
 
 //////////////////////////////////////////////////////////////////////////
