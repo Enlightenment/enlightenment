@@ -813,7 +813,10 @@ again:
      {
         // one of the common modes matches the base config - we are ok
         if ((m->w == sbase->config.mode.w) && (m->h == sbase->config.mode.h))
-          return;
+          {
+             modes = eina_list_free(modes);
+             return;
+          }
      }
    // find a common mode since current config doesn't match
    EINA_LIST_FOREACH(modes, l, m)
