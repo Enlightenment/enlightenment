@@ -241,7 +241,7 @@ _wkb_ui_setup(struct weekeyboard *wkb)
 
    if (eina_streq(wkb->theme, "default"))
      {
-        ecore_wl2_display_screen_size_get(ewd, &w, &h);
+        ecore_wl2_display_screen_size_get(e_comp_wl->ewd, &w, &h);
         DBG("Screen size: w=%d, h=%d", w, h);
         if (w >= 1080)
           w = 1080;
@@ -498,8 +498,8 @@ _wkb_setup(struct weekeyboard *wkb)
    struct wl_input_panel_surface *ips;
    void *data;
 
-   registry = e_comp_wl->wl.registry ?: ecore_wl2_display_registry_get(ewd);
-   itr = ecore_wl2_display_globals_get(ewd);
+   registry = e_comp_wl->wl.registry ?: ecore_wl2_display_registry_get(e_comp_wl->ewd);
+   itr = ecore_wl2_display_globals_get(e_comp_wl->ewd);
    EINA_ITERATOR_FOREACH(itr, data)
      {
         global = (Ecore_Wl2_Global *)data;

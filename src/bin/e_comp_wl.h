@@ -98,6 +98,8 @@ struct _E_Comp_Wl_Subsurf_Data
 
 struct _E_Comp_Wl_Data
 {
+   Ecore_Wl2_Display *ewd;
+
    struct
      {
         struct wl_display *disp;
@@ -340,8 +342,6 @@ EINTERN Eina_Bool e_comp_wl_key_up(Ecore_Event_Key *ev);
 E_API Eina_Bool e_comp_wl_evas_handle_mouse_button(E_Client *ec, uint32_t timestamp, uint32_t button_id, uint32_t state);
 
 E_API extern int E_EVENT_WAYLAND_GLOBAL_ADD;
-
-E_API extern Ecore_Wl2_Display *ewd;
 
 # ifndef HAVE_WAYLAND_ONLY
 EINTERN void e_comp_wl_xwayland_client_queue(E_Client *ec);

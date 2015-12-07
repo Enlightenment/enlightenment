@@ -40,7 +40,9 @@ e_grabinput_get(Ecore_Window mouse_win, int confine_mouse, Ecore_Window key_win)
           {
              Ecore_Wl2_Window *wl_win;
 
-             if ((wl_win = ecore_wl2_display_window_find(ewd, grab_mouse_win)))
+             wl_win =
+               ecore_wl2_display_window_find(e_comp_wl->ewd, grab_mouse_win);
+             if (wl_win)
                ecore_wl2_input_ungrab(ecore_wl2_window_input_get(wl_win),
                                       wl_win, 0);
           }
@@ -58,7 +60,9 @@ e_grabinput_get(Ecore_Window mouse_win, int confine_mouse, Ecore_Window key_win)
           {
              Ecore_Wl2_Window *wl_win;
 
-             if ((wl_win = ecore_wl2_display_window_find(ewd, grab_key_win)))
+             wl_win =
+               ecore_wl2_display_window_find(e_comp_wl->ewd, grab_key_win);
+             if (wl_win)
                ecore_wl2_input_ungrab(ecore_wl2_window_input_get(wl_win),
                                       wl_win, 0);
           }
@@ -84,7 +88,8 @@ e_grabinput_get(Ecore_Window mouse_win, int confine_mouse, Ecore_Window key_win)
           {
              Ecore_Wl2_Window *wl_win;
 
-             if ((wl_win = ecore_wl2_display_window_find(ewd, mouse_win)))
+             wl_win = ecore_wl2_display_window_find(e_comp_wl->ewd, mouse_win);
+             if (wl_win)
                ecore_wl2_input_grab(ecore_wl2_window_input_get(wl_win),
                                     wl_win, 0);
           }
@@ -114,7 +119,8 @@ e_grabinput_get(Ecore_Window mouse_win, int confine_mouse, Ecore_Window key_win)
           {
              Ecore_Wl2_Window *wl_win;
 
-             if ((wl_win = ecore_wl2_display_window_find(key_win)))
+             wl_win = ecore_wl2_display_window_find(e_comp_wl->ewd, key_win);
+             if (wl_win)
                ecore_wl2_input_grab(ecore_wl2_window_input_get(wl_win),
                                     wl_win, 0);
           }
@@ -140,7 +146,8 @@ e_grabinput_release(Ecore_Window mouse_win, Ecore_Window key_win)
           {
              Ecore_Wl2_Window *wl_win;
 
-             if ((wl_win = ecore_wl2_display_window_find(ewd, mouse_win)))
+             wl_win = ecore_wl2_display_window_find(e_comp_wl->ewd, mouse_win);
+             if (wl_win)
                ecore_wl2_input_ungrab(ecore_wl2_window_input_get(wl_win),
                                       wl_win, 0);
           }
@@ -158,7 +165,8 @@ e_grabinput_release(Ecore_Window mouse_win, Ecore_Window key_win)
           {
              Ecore_Wl2_Window *wl_win;
 
-             if ((wl_win = ecore_wl2_display_window_find(key_win)))
+             wl_win = ecore_wl2_display_window_find(e_comp_wl->ewd, key_win);
+             if (wl_win)
                ecore_wl2_input_grab(ecore_wl2_window_input_get(wl_win),
                                     wl_win, 0);
           }
@@ -239,7 +247,7 @@ _e_grabinput_focus_do(Ecore_Window win, E_Focus_Method method)
 #ifdef HAVE_WAYLAND
         if (e_comp->comp_type == E_PIXMAP_TYPE_WL)
           {
-             if ((wl_win = ecore_wl2_display_window_find(ewd, win)))
+             if ((wl_win = ecore_wl2_display_window_find(e_comp_wl->ewd, win)))
                {
                   /* FIXME: Need to add an ecore_wl_window_focus function */
                }
@@ -254,7 +262,7 @@ _e_grabinput_focus_do(Ecore_Window win, E_Focus_Method method)
 #else
         if (e_comp->comp_type == E_PIXMAP_TYPE_WL)
           {
-             if ((wl_win = ecore_wl2_display_window_find(ewd, win)))
+             if ((wl_win = ecore_wl2_display_window_find(e_comp_wl->ewd, win)))
                {
                   /* FIXME: Need to add an ecore_wl_window_focus function */
                }
@@ -269,7 +277,7 @@ _e_grabinput_focus_do(Ecore_Window win, E_Focus_Method method)
 #else
         if (e_comp->comp_type == E_PIXMAP_TYPE_WL)
           {
-             if ((wl_win = ecore_wl2_display_window_find(ewd, win)))
+             if ((wl_win = ecore_wl2_display_window_find(e_comp_wl->ewd, win)))
                {
                   /* FIXME: Need to add an ecore_wl_window_focus function */
                }
