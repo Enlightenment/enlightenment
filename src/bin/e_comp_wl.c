@@ -14,7 +14,6 @@
 #endif
 
 E_API int E_EVENT_WAYLAND_GLOBAL_ADD = -1;
-E_API Ecore_Wl2_Display *ewd = NULL;
 
 #include "session-recovery-server-protocol.h"
 
@@ -2542,15 +2541,15 @@ _e_comp_wl_compositor_create(void)
    /* wl_log_set_handler_server(_e_comp_wl_log_cb_print); */
 
    /* try to create an ecore_wl2 display */
-   ewd = ecore_wl2_display_create(NULL);
-   if (!ewd)
+   cdata->ewd = ecore_wl2_display_create(NULL);
+   if (!cdata->ewd)
      {
         ERR("Could not create a Wayland display: %m");
         free(cdata);
         return EINA_FALSE;
      }
 
-   cdata->wl.disp = ecore_wl2_display_get(ewd);
+   cdata->wl.disp = ecore_wl2_display_get(cdata->ewd);
    if (!cdata->wl.disp)
      {
         ERR("Could not create a Wayland display: %m");
@@ -2677,7 +2676,7 @@ data_err:
 comp_global_err:
    /* e_env_unset("WAYLAND_DISPLAY"); */
 /* sock_err: */
-   ecore_wl2_display_destroy(ewd);
+   ecore_wl2_display_destroy(cdata->ewd);
 disp_err:
    free(cdata);
    return EINA_FALSE;
@@ -2839,7 +2838,7 @@ e_comp_wl_shutdown(void)
    if (e_comp_wl->wl.shm) wl_shm_destroy(e_comp_wl->wl.shm);
    _e_comp_wl_gl_shutdown();
 
-   ecore_wl2_display_destroy(ewd);
+   ecore_wl2_display_destroy(e_comp_wl->ewd);
 
    /* shutdown ecore_wayland */
    ecore_wl2_shutdown();
