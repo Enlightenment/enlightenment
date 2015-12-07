@@ -168,6 +168,32 @@ _screen_closed(E_Randr2_Screen *s)
 }
 
 static void
+_screen_check_unconfigured(E_Randr2 *r, E_Config_Randr2 *cfg)
+{
+   Eina_List *l;
+   E_Randr2_Screen *s;
+   E_Config_Randr2_Screen *cs;
+
+   printf("RRR: check for unconfigured screens....\n");
+   EINA_LIST_FOREACH(r->screens, l, s)
+     {
+        cs = NULL;
+        printf("RRR: looking at %s ...\n", s->info.name);
+        if ((!_screen_closed(s)) && (s->info.connected))
+          {
+             cs = e_randr2_config_screen_find(s, cfg);
+             if (!cs)
+               {
+                  printf("RRR: unconfig display on: %s\n", s->info.name);
+                  e_configure_registry_call("screen/screen_setup",
+                                            NULL, s->info.name);
+                  return;
+               }
+          }
+     }
+}
+
+static void
 _animated_apply_abort(void)
 {
    if (_apply_delay) ecore_timer_del(_apply_delay);
@@ -206,6 +232,7 @@ _cb_fade_animator(void *data EINA_UNUSED)
           {
              _apply_delay = ecore_timer_add(3.0, _cb_delay_timer, NULL);
              _do_apply();
+             _screen_check_unconfigured(e_randr2, e_randr2_cfg);
           }
         else
           {
@@ -412,9 +439,9 @@ _config_really_apply(E_Randr2_Screen *s, E_Config_Randr2_Screen *cs)
 static void
 _config_apply(E_Randr2 *r, E_Config_Randr2 *cfg)
 {
-   Eina_List *l, *l2;
-   E_Randr2_Screen *s, *s2;
-   E_Config_Randr2_Screen *cs, *cs2;
+   Eina_List *l;
+   E_Randr2_Screen *s;
+   E_Config_Randr2_Screen *cs;
 
    if ((!r) || (!cfg)) return;
    EINA_LIST_FOREACH(r->screens, l, s)
@@ -429,50 +456,6 @@ _config_apply(E_Randr2 *r, E_Config_Randr2 *cfg)
              printf("RRR: ... enabled\n");
              printf("RRR: ... priority = %i\n", cs->priority);
              _config_really_apply(s, cs);
-          }
-        else if ((!cs) && (!_screen_closed(s)))
-          {
-             printf("RRR: ... no config found...\n");
-             cs2 = NULL;
-             if (s->info.connected)
-               {
-                  EINA_LIST_FOREACH(r->screens, l2, s2)
-                    {
-                       if (s2 == s) continue;
-                       if (s2->info.is_lid)
-                         {
-                            cs2 = e_randr2_config_screen_find(s2, cfg);
-                            if (cs2) break;
-                         }
-                    }
-                  if (!cs2)
-                    {
-                       EINA_LIST_FOREACH(r->screens, l2, s2)
-                         {
-                            if (s2 == s) continue;
-                            if (s2->info.connected)
-                              {
-                                 cs2 = e_randr2_config_screen_find(s2, cfg);
-                                 if (cs2) break;
-                              }
-                         }
-                    }
-               }
-             if (cs2)
-               {
-                  printf("RRR: ... enabled - fallback clone\n");
-                  _config_really_apply(s, cs2);
-                  free(s->config.relative.to);
-                  s->config.relative.to = strdup(cs2->id);
-                  printf("RRR: ... clone = %s\n", s->config.relative.to);
-                  s->config.relative.mode = E_RANDR2_RELATIVE_CLONE;
-                  s->config.relative.align = 0.0;
-               }
-             else
-               {
-                  printf("RRR: ... disabled\n");
-                  _config_really_apply(s, NULL);
-               }
           }
         else
           {
