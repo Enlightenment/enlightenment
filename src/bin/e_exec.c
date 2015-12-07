@@ -660,6 +660,7 @@ _e_exec_instance_free(E_Exec_Instance *inst)
    if (!inst->deleted)
      {
         inst->deleted = 1;
+        inst->ref++;
         ecore_event_add(E_EVENT_EXEC_DEL, inst, _e_exec_cb_exec_del_free, inst);
         return;
      }
@@ -712,7 +713,10 @@ _e_exec_cb_exec_new_free(void *data, void *ev EINA_UNUSED)
 static void
 _e_exec_cb_exec_del_free(void *data, void *ev EINA_UNUSED)
 {
-   _e_exec_instance_free(data);
+   E_Exec_Instance *inst = data;
+
+   inst->ref--;
+   _e_exec_instance_free(inst);
 }
 
 static Eina_Bool
