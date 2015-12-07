@@ -233,6 +233,26 @@ _notification_popup_merge(E_Notification_Notify *n)
    return popup;
 }
 
+static void
+_notification_reshuffle_cb(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
+{
+   Popup_Data *popup;
+   Eina_List *l, *l2;
+   int pos = 0;
+
+   EINA_LIST_FOREACH_SAFE(notification_cfg->popups, l, l2, popup)
+     {
+        if (popup->theme == obj)
+          {
+             popup->pending = 0;
+             _notification_popdown(popup, 0);
+             notification_cfg->popups = eina_list_remove_list(notification_cfg->popups, l);
+          }
+        else
+          pos = _notification_popup_place(popup, pos);
+     }
+   next_pos = pos;
+}
 
 void
 notification_popup_notify(E_Notification_Notify *n,
@@ -276,7 +296,10 @@ notification_popup_notify(E_Notification_Notify *n,
    else if (!n->replaces_id)
      {
         if ((popup = _notification_popup_merge(n)))
-          _notification_popup_refresh(popup);
+          {
+             _notification_popup_refresh(popup);
+             _notification_reshuffle_cb(NULL, NULL, NULL, NULL);
+          }
      }
 
    if (!popup)
@@ -683,27 +706,6 @@ _notification_popup_find(unsigned int id)
      if (popup->id == id)
        return popup;
    return NULL;
-}
-
-static void
-_notification_reshuffle_cb(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
-{
-   Popup_Data *popup;
-   Eina_List *l, *l2;
-   int pos = 0;
-
-   EINA_LIST_FOREACH_SAFE(notification_cfg->popups, l, l2, popup)
-     {
-        if (popup->theme == obj)
-          {
-             popup->pending = 0;
-             _notification_popdown(popup, 0);
-             notification_cfg->popups = eina_list_remove_list(notification_cfg->popups, l);
-          }
-        else
-          pos = _notification_popup_place(popup, pos);
-     }
-   next_pos = pos;
 }
 
 static void
