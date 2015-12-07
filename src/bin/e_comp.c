@@ -1358,6 +1358,7 @@ e_comp_shutdown(void)
         e_object_del(E_OBJECT(ec));
      }
    e_object_del(E_OBJECT(e_comp));
+   e_comp = NULL;
    E_FREE_LIST(handlers, ecore_event_handler_del);
    E_FREE_LIST(actions, e_object_del);
    E_FREE_LIST(hooks, e_client_hook_del);
