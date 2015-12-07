@@ -536,6 +536,7 @@ e_comp_x_randr_config_apply(void)
                                            ecore_x_randr_crtc_info_free(info);
                                            break;
                                         }
+                                      ecore_x_randr_crtc_info_free(info);
                                    }
                               }
                          }
