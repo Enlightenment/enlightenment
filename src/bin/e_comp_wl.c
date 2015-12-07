@@ -2735,6 +2735,13 @@ _e_comp_wl_gl_init(void *d EINA_UNUSED)
 E_API Eina_Bool
 e_comp_wl_init(void)
 {
+   /* try to init ecore_wayland */
+   if (!ecore_wl2_init())
+     {
+        e_error_message_show(_("Enlightenment cannot initialize Ecore_Wl2!\n"));
+        return EINA_FALSE;
+     }
+
    /* set gl available if we have ecore_evas support */
    if (ecore_evas_engine_type_supported_get(ECORE_EVAS_ENGINE_WAYLAND_EGL) ||
        ecore_evas_engine_type_supported_get(ECORE_EVAS_ENGINE_OPENGL_DRM))
@@ -2744,13 +2751,6 @@ e_comp_wl_init(void)
    if (!_e_comp_wl_compositor_create())
      {
         e_error_message_show(_("Enlightenment cannot create a Wayland Compositor!\n"));
-        return EINA_FALSE;
-     }
-
-   /* try to init ecore_wayland */
-   if (!ecore_wl2_init())
-     {
-        e_error_message_show(_("Enlightenment cannot initialize Ecore_Wl2!\n"));
         return EINA_FALSE;
      }
 
