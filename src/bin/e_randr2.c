@@ -219,10 +219,13 @@ static Eina_Bool
 _cb_fade_animator(void *data EINA_UNUSED)
 {
    double t = ecore_loop_time_get() - _start_time;
+   const double duration = 0.5;
    int v;
 
-   t = t / 0.5;
    if (t < 0.0) t = 0.0;
+   t = t / duration;
+   if (t > 1.0) t = 1.0;
+   t = ecore_animator_pos_map(t, ECORE_POS_MAP_SINUSOIDAL, 0.0, 0.0);
    v = _target_from + ((_target_to - _target_from) * t);
    if (t >= 1.0) v = _target_to;
    evas_object_color_set(_fade_obj, 0, 0, 0, v);
@@ -230,7 +233,7 @@ _cb_fade_animator(void *data EINA_UNUSED)
      {
         if (_target_to == 255)
           {
-             _apply_delay = ecore_timer_add(3.0, _cb_delay_timer, NULL);
+             _apply_delay = ecore_timer_add(5.0, _cb_delay_timer, NULL);
              _do_apply();
              _screen_check_unconfigured(e_randr2, e_randr2_cfg);
           }
