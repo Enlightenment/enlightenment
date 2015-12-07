@@ -55,7 +55,13 @@ _output_screen_get(Ecore_X_Window root, Ecore_X_Randr_Output o)
    if (!edid) return NULL;
    name = ecore_x_randr_edid_display_name_get(edid, len);
    free(edid);
-   return name;
+   if (name)
+     {
+        char *name2 = strdup(name);
+        free(name);
+        return name2;
+     }
+   return NULL;
 }
 
 static Ecore_X_Randr_Edid_Display_Interface_Type
@@ -76,7 +82,12 @@ _output_name_get(Ecore_X_Window root, Ecore_X_Randr_Output o)
 {
    // get the output name - like connector (hdmi-0, dp1, dvi-0-1 etc.)
    char *name = ecore_x_randr_output_name_get(root, o, NULL);
-   if (name) return name;
+   if (name)
+     {
+        char *name2 = strdup(name);
+        free(name);
+        return name2;
+     }
    return _output_screen_get(root, o);
 }
 
