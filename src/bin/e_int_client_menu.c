@@ -224,7 +224,7 @@ e_int_client_menu_create(E_Client *ec)
         e_menu_item_submenu_set(mi, subm);
         e_object_unref(E_OBJECT(subm));
         e_object_data_set(E_OBJECT(subm), e_comp);
-        if (e_pixmap_type_get(ec->pixmap) == E_PIXMAP_TYPE_X)
+        if (e_pixmap_is_x(ec->pixmap) && (e_comp->nocomp_ec != ec))
           {
              mi = e_menu_item_new(subm);
              e_menu_item_check_set(mi, 1);
