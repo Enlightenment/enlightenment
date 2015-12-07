@@ -5,6 +5,7 @@
 /* local structures */
 struct _E_Config_Dialog_Data
 {
+   char *params;
    E_Config_Dialog *cfd;
    Eina_List *screen_items;
    Eina_List *screen_items2;
@@ -49,7 +50,7 @@ static int          _basic_check(E_Config_Dialog *cfd, E_Config_Dialog_Data *cfd
 
 /* public functions */
 E_Config_Dialog *
-e_int_config_randr2(Evas_Object *parent EINA_UNUSED, const char *params EINA_UNUSED)
+e_int_config_randr2(Evas_Object *parent EINA_UNUSED, const char *params)
 {
    E_Config_Dialog *cfd;
    E_Config_Dialog_View *v;
@@ -69,7 +70,7 @@ e_int_config_randr2(Evas_Object *parent EINA_UNUSED, const char *params EINA_UNU
    cfd = e_config_dialog_new(NULL, _("Screen Setup"),
                              "E", "screen/screen_setup",
                              "preferences-system-screen-resolution",
-                             0, v, NULL);
+                             0, v, (void *)params);
    return cfd;
 }
 
@@ -80,7 +81,8 @@ _create_data(E_Config_Dialog *cfd EINA_UNUSED)
    E_Config_Dialog_Data *cfdata;
 
    if (!(cfdata = E_NEW(E_Config_Dialog_Data, 1))) return NULL;
-   cfdata->restore = e_randr2_cfg->restore;
+   cfdata->params = strdup(cfd->data);
+   if (cfd->data) cfdata->restore = e_randr2_cfg->restore;
    cfdata->hotplug = !e_randr2_cfg->ignore_hotplug_events;
    cfdata->acpi = !e_randr2_cfg->ignore_acpi_events;
    return cfdata;
@@ -98,6 +100,7 @@ _free_data(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfdata)
         eina_stringshare_del(cs->rel_to);
         free(cs);
      }
+   free(cfdata->params);
    eina_list_free(cfdata->screen_items);
    eina_list_free(cfdata->screen_items2);
    EINA_LIST_FREE(cfdata->freelist, dt) free(dt);
@@ -572,12 +575,27 @@ _basic_create(E_Config_Dialog *cfd, Evas *evas EINA_UNUSED, E_Config_Dialog_Data
                   it = elm_hoversel_item_add(o, s->info.name,
                                              NULL, ELM_ICON_NONE,
                                              _cb_screen_select, cfdata);
-                  if (!first)
+                  if (cfdata->params)
                     {
-                       first = s;
-                       first_cfg = cs;
-                       cfdata->screen = i;
-                       elm_object_text_set(o, s->info.name);
+                       if ((s->info.name) &&
+                           (!strcmp(s->info.name, cfdata->params)) &&
+                           (!first))
+                         {
+                            first = s;
+                            first_cfg = cs;
+                            cfdata->screen = i;
+                            elm_object_text_set(o, s->info.name);
+                          }
+                    }
+                  else
+                    {
+                       if (!first)
+                         {
+                            first = s;
+                            first_cfg = cs;
+                            cfdata->screen = i;
+                            elm_object_text_set(o, s->info.name);
+                         }
                     }
                   cfdata->screen_items = eina_list_append(cfdata->screen_items, it);
                   i++;
