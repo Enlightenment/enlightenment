@@ -400,6 +400,7 @@ e_zone_current_get(void)
    Eina_List *l = NULL;
    E_Zone *zone;
 
+   if (!e_comp) return NULL;
    if (!starting)
      {
         int x, y;
