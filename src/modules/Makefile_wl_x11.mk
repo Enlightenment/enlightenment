@@ -11,6 +11,6 @@ src_modules_wl_x11_module_la_LDFLAGS = $(MOD_LDFLAGS)
 src_modules_wl_x11_module_la_SOURCES = src/modules/wl_x11/e_mod_main.c
 
 PHONIES += wl_x11 install-wl_x11
-wl_x11: $(wl_x11pkg_LTLIBRARIES) $(wl_x11_DATA)
-install-wl_x11: install-wl_x11DATA install-wl_x11pkgLTLIBRARIES
+wl_x11: $(wl_x11pkg_LTLIBRARIES)
+install-wl_x11: install-wl_x11pkgLTLIBRARIES
 endif
