@@ -56,6 +56,7 @@ E_API int E_EVENT_CONFIG_MODE_CHANGED = 0;
 E_API int E_EVENT_CONFIG_LOADED = 0;
 
 static E_Dialog *_e_config_error_dialog = NULL;
+static Eina_List *handlers = NULL;
 
 typedef struct _E_Color_Class
 {
@@ -64,6 +65,24 @@ typedef struct _E_Color_Class
    int		  r2, g2, b2, a2;
    int		  r3, g3, b3, a3;
 } E_Color_Class;
+
+static Eina_Bool
+_e_config_cb_efreet_cache_update(void *data EINA_UNUSED, int type EINA_UNUSED, void *ev EINA_UNUSED)
+{
+   if (e_config)
+     {
+        if (e_config->icon_theme)
+          {
+             if (!efreet_icon_theme_find(e_config->icon_theme))
+               {
+                  e_config->icon_theme = eina_stringshare_add("hicolor");
+                  e_config_save_queue();
+               }
+          }
+     }
+   return ECORE_CALLBACK_RENEW;
+}
+
 
 static void
 _e_config_error_dialog_cb_delete(void *dia)
@@ -933,12 +952,21 @@ e_config_init(void)
    e_config_load();
 
    e_config_save_queue();
+
+   E_LIST_HANDLER_APPEND(handlers, EFREET_EVENT_DESKTOP_CACHE_UPDATE,
+                         _e_config_cb_efreet_cache_update, NULL);
+   E_LIST_HANDLER_APPEND(handlers, EFREET_EVENT_ICON_CACHE_UPDATE,
+                         _e_config_cb_efreet_cache_update, NULL);
+   E_LIST_HANDLER_APPEND(handlers, E_EVENT_CONFIG_ICON_THEME,
+                         _e_config_cb_efreet_cache_update, NULL);
+
    return 1;
 }
 
 EINTERN int
 e_config_shutdown(void)
 {
+   E_FREE_LIST(handlers, ecore_event_handler_del);
    eina_stringshare_del(_e_config_profile);
    E_CONFIG_DD_FREE(_e_config_binding_edd);
    E_CONFIG_DD_FREE(_e_config_bindings_mouse_edd);
