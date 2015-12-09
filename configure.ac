@@ -793,7 +793,7 @@ WL_WL=false
 define([CHECK_MODULE_WL_WL],
 [
   if test "x${have_wayland}" = "xyes"; then
-    WL_WL=true
+    WL_WL=false
   else
     WL_WL=false
   fi
