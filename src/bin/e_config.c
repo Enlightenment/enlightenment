@@ -75,7 +75,7 @@ _e_config_cb_efreet_cache_update(void *data EINA_UNUSED, int type EINA_UNUSED, v
           {
              if (!efreet_icon_theme_find(e_config->icon_theme))
                {
-                  e_config->icon_theme = eina_stringshare_add("hicolor");
+                  eina_stringshare_replace(&e_config->icon_theme, "hicolor");
                   e_config_save_queue();
                }
           }
