@@ -71,7 +71,7 @@ popup_update(Instance *inst)
 {
    char buf[PATH_MAX];
 
-   if(!inst->popup)
+   if (!inst->popup)
      return;
 
    snprintf(buf, sizeof(buf), _("Latitude:  %f"), inst->latitude);
@@ -81,23 +81,23 @@ popup_update(Instance *inst)
    e_widget_label_text_set(inst->popup_longitude, buf);
 
    if (inst->altitude != -DBL_MAX)
-        snprintf(buf, sizeof(buf), _("Altitude:  %f"), inst->altitude);
+     snprintf(buf, sizeof(buf), _("Altitude:  %f"), inst->altitude);
    else
-        snprintf(buf, sizeof(buf), _("Altitude:  N/A"));
+     snprintf(buf, sizeof(buf), _("Altitude:  N/A"));
 
    e_widget_label_text_set(inst->popup_altitude, buf);
 
    if (inst->speed != -1.0)
-        snprintf(buf, sizeof(buf), _("Speed:  %f"), inst->speed);
+     snprintf(buf, sizeof(buf), _("Speed:  %f"), inst->speed);
    else
-        snprintf(buf, sizeof(buf), _("Speed: N/A"));
+     snprintf(buf, sizeof(buf), _("Speed: N/A"));
 
    e_widget_label_text_set(inst->popup_speed, buf);
 
    if (inst->heading != -1.0)
-        snprintf(buf, sizeof(buf), _("Heading:  %f"), inst->heading);
+     snprintf(buf, sizeof(buf), _("Heading:  %f"), inst->heading);
    else
-        snprintf(buf, sizeof(buf), _("Heading: N/A"));
+     snprintf(buf, sizeof(buf), _("Heading: N/A"));
 
    e_widget_label_text_set(inst->popup_heading, buf);
 
@@ -147,25 +147,25 @@ popup_new(Instance *inst)
    e_widget_list_object_append(list, inst->popup_longitude, 1, 1, 0.5);
 
    if (inst->altitude != -DBL_MAX)
-        snprintf(buf, sizeof(buf), _("Altitude:  %f"), inst->altitude);
+     snprintf(buf, sizeof(buf), _("Altitude:  %f"), inst->altitude);
    else
-        snprintf(buf, sizeof(buf), _("Altitude:  N/A"));
+     snprintf(buf, sizeof(buf), _("Altitude:  N/A"));
 
    inst->popup_altitude = e_widget_label_add(evas, buf);
    e_widget_list_object_append(list, inst->popup_altitude, 1, 1, 0.5);
 
    if (inst->speed != -1.0)
-        snprintf(buf, sizeof(buf), _("Speed:  %f"), inst->speed);
+     snprintf(buf, sizeof(buf), _("Speed:  %f"), inst->speed);
    else
-        snprintf(buf, sizeof(buf), _("Speed: N/A"));
+     snprintf(buf, sizeof(buf), _("Speed: N/A"));
 
    inst->popup_speed = e_widget_label_add(evas, buf);
    e_widget_list_object_append(list, inst->popup_speed, 1, 1, 0.5);
 
    if (inst->heading != -1.0)
-        snprintf(buf, sizeof(buf), _("Heading:  %f"), inst->heading);
+     snprintf(buf, sizeof(buf), _("Heading:  %f"), inst->heading);
    else
-        snprintf(buf, sizeof(buf), _("Heading: N/A"));
+     snprintf(buf, sizeof(buf), _("Heading: N/A"));
 
    inst->popup_heading = e_widget_label_add(evas, buf);
    e_widget_list_object_append(list, inst->popup_heading, 1, 1, 0.5);
