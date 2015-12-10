@@ -81,8 +81,11 @@ _create_data(E_Config_Dialog *cfd EINA_UNUSED)
    E_Config_Dialog_Data *cfdata;
 
    if (!(cfdata = E_NEW(E_Config_Dialog_Data, 1))) return NULL;
-   cfdata->params = strdup(cfd->data);
-   if (cfd->data) cfdata->restore = e_randr2_cfg->restore;
+   if (cfd->data)
+     {
+        cfdata->restore = e_randr2_cfg->restore;
+        cfdata->params = strdup(cfd->data);
+     }
    cfdata->hotplug = !e_randr2_cfg->ignore_hotplug_events;
    cfdata->acpi = !e_randr2_cfg->ignore_acpi_events;
    return cfdata;
