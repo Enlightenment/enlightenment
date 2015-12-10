@@ -49,6 +49,7 @@ typedef struct _E_Comp_Wl_Surface_State E_Comp_Wl_Surface_State;
 typedef struct _E_Comp_Wl_Client_Data E_Comp_Wl_Client_Data;
 typedef struct _E_Comp_Wl_Data E_Comp_Wl_Data;
 typedef struct _E_Comp_Wl_Output E_Comp_Wl_Output;
+typedef struct E_Shell_Data E_Shell_Data;
 
 struct _E_Comp_Wl_Buffer
 {
@@ -275,6 +276,7 @@ struct _E_Comp_Wl_Client_Data
         void (*map)(struct wl_resource *resource);
         void (*unmap)(struct wl_resource *resource);
         Eina_Rectangle window;
+        E_Shell_Data *data;
      } shell;
 
    E_Comp_Wl_Buffer_Ref buffer_ref;

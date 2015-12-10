@@ -5,6 +5,16 @@
 
 #define XDG_SERVER_VERSION 5
 
+struct E_Shell_Data
+{
+   uint32_t edges;
+   uint32_t width;
+   uint32_t height;
+   Eina_Bool fullscreen : 1;
+   Eina_Bool maximized : 1;
+   Eina_Bool activated : 1;
+};
+
 static void
 _e_shell_surface_parent_set(E_Client *ec, struct wl_resource *parent_resource)
 {
@@ -103,6 +113,7 @@ _e_shell_surface_destroy(struct wl_resource *resource)
 
         if (ec->comp_data)
           {
+             E_FREE(ec->comp_data->shell.data);
              if (ec->comp_data->mapped)
                {
                   if ((ec->comp_data->shell.surface) &&
@@ -598,6 +609,7 @@ static void
 _e_xdg_shell_surface_configure_send(struct wl_resource *resource, uint32_t edges, int32_t width, int32_t height)
 {
    E_Client *ec;
+   E_Shell_Data *shd;
    struct wl_array states;
    uint32_t serial;
 
@@ -612,6 +624,18 @@ _e_xdg_shell_surface_configure_send(struct wl_resource *resource, uint32_t edges
                                "No Client For Shell Surface");
         return;
      }
+
+   shd = ec->comp_data->shell.data;
+   if ((shd->edges == edges) && (shd->width == width) && (shd->height == height) &&
+       (shd->fullscreen == ec->fullscreen) &&
+       ((!ec->fullscreen) || (shd->maximized == ec->maximized)) &&
+       (shd->activated == ec->focused)) return;
+   shd->edges = edges;
+   shd->width = width;
+   shd->height = height;
+   shd->fullscreen = ec->fullscreen;
+   shd->maximized = ec->maximized;
+   shd->activated = ec->focused;
 
    wl_array_init(&states);
 
@@ -1130,6 +1154,7 @@ _e_xdg_shell_cb_surface_get(struct wl_client *client, struct wl_resource *resour
    cdata->shell.ping = _e_xdg_shell_surface_ping;
    cdata->shell.map = _e_xdg_shell_surface_map;
    cdata->shell.unmap = _e_xdg_shell_surface_unmap;
+   cdata->shell.data = E_NEW(E_Shell_Data, 1);
 
    /* set toplevel client properties */
    ec->icccm.accepts_focus = 1;
