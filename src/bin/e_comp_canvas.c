@@ -218,7 +218,7 @@ _e_comp_canvas_cb_zone_sort(const void *data1, const void *data2)
 }
 
 static void
-_e_comp_canvas_prerender(Ecore_Evas *ee EINA_UNUSED)
+_e_comp_canvas_prerender(void *data EINA_UNUSED, Evas *e EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    E_Comp_Cb cb;
    Eina_List *l;
@@ -284,7 +284,7 @@ e_comp_canvas_init(int w, int h)
    E_LIST_HANDLER_APPEND(handlers, E_EVENT_SCREENSAVER_ON, _e_comp_cb_screensaver_on, NULL);
    E_LIST_HANDLER_APPEND(handlers, E_EVENT_SCREENSAVER_OFF, _e_comp_cb_screensaver_off, NULL);
 
-   ecore_evas_callback_pre_render_set(e_comp->ee, _e_comp_canvas_prerender);
+   evas_event_callback_add(e_comp->evas, EVAS_CALLBACK_RENDER_PRE, _e_comp_canvas_prerender, NULL);
    ecore_evas_resize(e_comp->ee, w, h);
 
    return EINA_TRUE;
