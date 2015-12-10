@@ -566,6 +566,25 @@ _e_comp_wl_evas_cb_focus_out(void *data, Evas *evas EINA_UNUSED, Evas_Object *ob
 }
 
 static void
+_e_comp_wl_evas_cb_restack(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   E_Client *sec, *ec = data;
+   Eina_List *l, *ll;
+
+   if (!ec->comp_data->sub.list) return;
+   EINA_LIST_FOREACH(ec->comp_data->sub.list, l, sec)
+     evas_object_layer_set(sec->frame, evas_object_layer_get(ec->frame));
+   sec = eina_list_last_data_get(ec->comp_data->sub.list);
+   evas_object_stack_above(sec->frame, ec->frame);
+   EINA_LIST_REVERSE_FOREACH_SAFE(ec->comp_data->sub.list, l, ll, sec)
+     {
+        E_Client *nsec = eina_list_data_get(ll);
+
+        if (nsec)
+          evas_object_stack_below(nsec->frame, sec->frame);
+     }
+}
+
 _e_comp_wl_evas_cb_resize(void *data, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
 {
    E_Client *ec;
@@ -797,6 +816,9 @@ _e_comp_wl_client_evas_init(E_Client *ec)
         evas_object_smart_callback_add(ec->frame, "unfullscreen",
                                        _e_comp_wl_evas_cb_state_update, ec);
      }
+   evas_object_event_callback_priority_add(ec->frame, EVAS_CALLBACK_RESTACK,
+                                           EVAS_CALLBACK_PRIORITY_AFTER,
+                                           _e_comp_wl_evas_cb_restack, ec);
 
    /* setup delete/kill callbacks */
    evas_object_smart_callback_add(ec->frame, "delete_request",
@@ -1931,6 +1953,7 @@ _e_comp_wl_subsurface_create(E_Client *ec, E_Client *epc, uint32_t id, struct wl
    ec->netwm.state.skip_pager = EINA_TRUE;
    ec->no_shape_cut = EINA_TRUE;
    ec->border_size = 0;
+   ec->layer_block = 1;
 
    if (epc)
      {
