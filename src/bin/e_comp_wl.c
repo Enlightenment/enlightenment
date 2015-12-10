@@ -585,6 +585,21 @@ _e_comp_wl_evas_cb_restack(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EIN
      }
 }
 
+static void
+_e_comp_wl_evas_cb_move(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   E_Client *sec, *ec = data;
+   Eina_List *l;
+
+   EINA_LIST_FOREACH(ec->comp_data->sub.list, l, sec)
+     {
+        if (!sec->comp_data->sub.data->position.set)
+          evas_object_move(sec->frame, ec->client.x + sec->comp_data->sub.data->position.x,
+                           ec->client.y + sec->comp_data->sub.data->position.y);
+     }
+}
+
+static void
 _e_comp_wl_evas_cb_resize(void *data, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
 {
    E_Client *ec;
@@ -816,6 +831,9 @@ _e_comp_wl_client_evas_init(E_Client *ec)
         evas_object_smart_callback_add(ec->frame, "unfullscreen",
                                        _e_comp_wl_evas_cb_state_update, ec);
      }
+   evas_object_event_callback_priority_add(ec->frame, EVAS_CALLBACK_MOVE,
+                                           EVAS_CALLBACK_PRIORITY_AFTER,
+                                           _e_comp_wl_evas_cb_move, ec);
    evas_object_event_callback_priority_add(ec->frame, EVAS_CALLBACK_RESTACK,
                                            EVAS_CALLBACK_PRIORITY_AFTER,
                                            _e_comp_wl_evas_cb_restack, ec);
@@ -1757,8 +1775,8 @@ _e_comp_wl_subsurface_parent_commit(E_Client *ec, Eina_Bool parent_synchronized)
 
    if (sdata->position.set)
      {
-        evas_object_move(ec->frame, parent->x + sdata->position.x,
-                         parent->y + sdata->position.y);
+        evas_object_move(ec->frame, parent->client.x + sdata->position.x,
+                         parent->client.y + sdata->position.y);
         sdata->position.set = EINA_FALSE;
      }
 
