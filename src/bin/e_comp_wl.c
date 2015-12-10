@@ -1745,8 +1745,8 @@ _e_comp_wl_subsurface_commit_from_cache(E_Client *ec)
    DBG("Subsurface Commit from Cache");
 
    _e_comp_wl_surface_state_commit(ec, &sdata->cached);
-
-   e_comp_wl_buffer_reference(&sdata->cached_buffer_ref, NULL);
+   if (!e_comp_object_damage_exists(ec->frame))
+     e_pixmap_image_clear(ec->pixmap, 1);
 }
 
 static void
