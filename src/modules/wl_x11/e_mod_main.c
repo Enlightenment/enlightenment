@@ -83,8 +83,8 @@ e_modapi_init(E_Module *m)
    ecore_evas_name_class_set(e_comp->ee, "E", "compositor");
 
    ecore_evas_screen_geometry_get(e_comp->ee, NULL, NULL, &w, &h);
-
-   e_comp_x_randr_screen_iface_set();
+   if (!ecore_x_screen_is_composited(0))
+     e_comp_x_randr_screen_iface_set();
    if (!e_comp_wl_init()) return NULL;
    if (!e_comp_canvas_init(w, h)) return NULL;
 
