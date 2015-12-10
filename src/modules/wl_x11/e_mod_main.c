@@ -66,6 +66,11 @@ e_modapi_init(E_Module *m)
 
    printf("LOAD WL_X11 MODULE\n");
 
+   if (!ecore_x_init(NULL))
+     {
+        fprintf(stderr, "X11 connect failed!\n");
+        return NULL;
+     }
    e_comp_x_randr_canvas_new(ecore_x_window_root_first_get(), 1, 1);
 
    if (!e_comp->ee)
@@ -108,6 +113,7 @@ e_modapi_shutdown(E_Module *m EINA_UNUSED)
 {
    /* delete handler for keymap change */
    if (kbd_hdlr) ecore_event_handler_del(kbd_hdlr);
+   ecore_x_shutdown();
 
    return 1;
 }
