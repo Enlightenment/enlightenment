@@ -1043,6 +1043,18 @@ _e_comp_wl_surface_state_buffer_set(E_Comp_Wl_Surface_State *state, E_Comp_Wl_Bu
 }
 
 static void
+_e_comp_wl_surface_state_attach(E_Client *ec, E_Comp_Wl_Surface_State *state)
+{
+   /* set usable early because shell module checks this */
+   e_pixmap_usable_set(ec->pixmap, (state->buffer != NULL));
+   e_pixmap_resource_set(ec->pixmap, state->buffer);
+   e_pixmap_dirty(ec->pixmap);
+   e_pixmap_refresh(ec->pixmap);
+
+   _e_comp_wl_surface_state_size_update(ec, state);
+}
+
+static void
 _e_comp_wl_surface_state_commit(E_Client *ec, E_Comp_Wl_Surface_State *state)
 {
    Eina_Bool first = EINA_FALSE;
@@ -1054,7 +1066,7 @@ _e_comp_wl_surface_state_commit(E_Client *ec, E_Comp_Wl_Surface_State *state)
    ignored = ec->ignored;
 
    if (state->new_attach)
-     e_comp_wl_surface_attach(ec, state->buffer);
+     _e_comp_wl_surface_state_attach(ec, state);
 
    _e_comp_wl_surface_state_buffer_set(state, NULL);
 
@@ -2846,18 +2858,6 @@ e_comp_wl_surface_create(struct wl_client *client, int version, uint32_t id)
      DBG("Created Surface: %d", wl_resource_get_id(ret));
 
    return ret;
-}
-
-EINTERN void
-e_comp_wl_surface_attach(E_Client *ec, E_Comp_Wl_Buffer *buffer)
-{
-   /* set usable early because shell module checks this */
-   e_pixmap_usable_set(ec->pixmap, (buffer != NULL));
-   e_pixmap_resource_set(ec->pixmap, buffer);
-   e_pixmap_dirty(ec->pixmap);
-   e_pixmap_refresh(ec->pixmap);
-
-   _e_comp_wl_surface_state_size_update(ec, &ec->comp_data->pending);
 }
 
 EINTERN Eina_Bool
