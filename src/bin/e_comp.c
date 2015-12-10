@@ -989,6 +989,17 @@ _e_comp_act_redirect_toggle_go(E_Object * obj EINA_UNUSED, const char *params EI
 
 //////////////////////////////////////////////////////////////////////////
 
+static void
+_e_comp_resize(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
+{
+   int w, h;
+
+   evas_object_geometry_get(obj, NULL, NULL, &w, &h);
+   if ((w == e_comp->w) && (h == e_comp->h)) return;
+   e_randr2_screens_setup(w, h);
+   e_comp_canvas_update();
+}
+
 EINTERN Eina_Bool
 e_comp_init(void)
 {
@@ -1131,6 +1142,7 @@ out:
         e_screensaver_update();
      }
    e_comp->elm = elm_win_fake_add(e_comp->ee);
+   evas_object_event_callback_add(e_comp->elm, EVAS_CALLBACK_RESIZE, _e_comp_resize, NULL);
    elm_win_fullscreen_set(e_comp->elm, 1);
    evas_object_show(e_comp->elm);
    e_util_env_set("HYBRIS_EGLPLATFORM", NULL);
