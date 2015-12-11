@@ -3446,7 +3446,6 @@ _e_comp_x_hook_client_fetch(void *d EINA_UNUSED, E_Client *ec)
                ec->icccm.initial_state = ec->icccm.state;
              if (state != ec->icccm.state)
                {
-                  ecore_x_icccm_state_set(win, ec->icccm.state);
                   if (ec->icccm.state == ECORE_X_WINDOW_STATE_HINT_WITHDRAWN)
                     ec->ignored = 1, ec->visible = 0;
                   else
