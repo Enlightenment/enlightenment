@@ -12,7 +12,7 @@ e_modapi_init(E_Module *m)
    int w, h;
 
    printf("LOAD WL_EGLFS MODULE\n");
-   e_util_env_set("HYBRIS_EGLPLATFORM", "fbdev");
+   e_util_env_set("HYBRIS_EGLPLATFORM", "hwcomposer");
 
    /* try to init ecore_fb */
    if (!ecore_fb_init(NULL))
@@ -52,7 +52,7 @@ e_modapi_init(E_Module *m)
    return m;
 }
 
-E_API int 
+E_API int
 e_modapi_shutdown(E_Module *m EINA_UNUSED)
 {
    /* shutdown ecore_fb */
