@@ -28,9 +28,7 @@ static void      _e_backlight_update(void);
 static void      _e_backlight_set(double val);
 static Eina_Bool _bl_anim(void *data, double pos);
 static Eina_Bool bl_avail = EINA_TRUE;
-#ifndef HAVE_WAYLAND_ONLY
 static Eina_Bool xbl_avail = EINA_FALSE;
-#endif
 #if defined(HAVE_EEZE) || defined(__FreeBSD_kernel__)
 static double bl_delayval = 1.0;
 static const char *bl_sysval = NULL;
@@ -162,7 +160,7 @@ E_API void
 e_backlight_mode_set(E_Zone *zone, E_Backlight_Mode mode)
 {
    E_Backlight_Mode pmode;
-   
+
    // zone == NULL == everything
    if (e_config->backlight.mode == mode) return;
    pmode = e_config->backlight.mode;
