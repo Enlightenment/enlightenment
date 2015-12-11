@@ -142,7 +142,7 @@ e_int_config_apps_desk_lock(Evas_Object *parent EINA_UNUSED, const char *params 
    E_Config_Data *data;
    char buff[PATH_MAX];
 
-   e_user_dir_concat_static(buff, "applications/screen-lock/.order");
+   e_user_dir_concat_static(buff, "applications/desk-lock/.order");
    data = E_NEW(E_Config_Data, 1);
    data->title = eina_stringshare_add(_("Screen Lock Applications"));
    data->dialog = eina_stringshare_add("applications/screen_lock_applications");
@@ -157,7 +157,7 @@ e_int_config_apps_desk_unlock(Evas_Object *parent EINA_UNUSED, const char *param
    E_Config_Data *data;
    char buff[PATH_MAX];
 
-   e_user_dir_concat_static(buff, "applications/screen-unlock/.order");
+   e_user_dir_concat_static(buff, "applications/desk-unlock/.order");
    data = E_NEW(E_Config_Data, 1);
    data->title = eina_stringshare_add(_("Screen Unlock Applications"));
    data->dialog = eina_stringshare_add("applications/screen_unlock_applications");
