@@ -643,3 +643,14 @@ e_comp_wl_input_touch_check(struct wl_resource *res)
    return wl_resource_instance_of(res, &wl_touch_interface,
                                   &_e_touch_interface);
 }
+
+EINTERN void
+e_comp_wl_input_keyboard_modifers_clear(void)
+{
+   e_comp_wl->kbd.mod_depressed = 0;
+   e_comp_wl->kbd.mod_latched = 0;
+   e_comp_wl->kbd.mod_locked = 0;
+   e_comp_wl->kbd.mod_group = 0;
+
+   e_comp_wl_input_keyboard_modifiers_serialize();
+}
