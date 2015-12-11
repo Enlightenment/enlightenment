@@ -268,7 +268,7 @@ _gc_init(E_Gadcon *gc, const char *name, const char *id, const char *style)
    ci = _ibar_config_item_get(id);
    inst->ci = ci;
    if (!ci->dir) ci->dir = eina_stringshare_add("default");
-   b = _ibar_new(gc->o_container, inst);
+   b = _ibar_new(gc->o_container ?: e_comp->elm, inst);
    gcc = e_gadcon_client_new(gc, name, id, style, b->o_outerbox);
    e_gadcon_client_autoscroll_toggle_disabled_set(gcc, !ci->dont_add_nonorder);
    gcc->data = inst;
@@ -287,6 +287,7 @@ _gc_init(E_Gadcon *gc, const char *name, const char *id, const char *style)
    evas_object_event_callback_add(b->o_outerbox, EVAS_CALLBACK_RESIZE,
                                   _ibar_cb_obj_moveresize, inst);
    ibar_config->instances = eina_list_append(ibar_config->instances, inst);
+   _ibar_resize_handle(b);
    inst->iconify_provider = e_comp_object_effect_mover_add(80, "e,action,*iconify", _ibar_cb_iconify_provider, inst);
    return gcc;
 }
@@ -638,16 +639,17 @@ _ibar_resize_handle(IBar *b)
    IBar_Icon *ic;
    Evas_Coord w, h;
 
+   if (!b->inst->gcc) return;
    elm_box_recalculate(b->o_box);
    elm_box_recalculate(b->o_outerbox);
-   evas_object_size_hint_min_get(b->o_outerbox, &w, &h);
-   if (b->inst->gcc)
-     {
-        if (b->inst->gcc->max.w)
-          w = MIN(w, b->inst->gcc->max.w);
-        if (b->inst->gcc->max.h)
-          h = MIN(h, b->inst->gcc->max.h);
-     }
+   if (!e_gadcon_site_is_desktop(b->inst->gcc->gadcon->location->site))
+     evas_object_size_hint_min_get(b->o_outerbox, &w, &h);
+   else
+     evas_object_geometry_get(b->o_outerbox, NULL, NULL, &w, &h);
+   if (b->inst->gcc->max.w)
+     w = MIN(w, b->inst->gcc->max.w);
+   if (b->inst->gcc->max.h)
+     h = MIN(h, b->inst->gcc->max.h);
    if (elm_box_horizontal_get(b->o_box))
      w = h;
    else
@@ -666,7 +668,6 @@ _ibar_resize_handle(IBar *b)
         evas_object_size_hint_min_set(b->o_sep, 8, 8);
         evas_object_size_hint_max_set(b->o_sep, w, h);
      }
-   if (!b->inst->gcc) return;
    elm_box_recalculate(b->o_box);
    elm_box_recalculate(b->o_outerbox);
    evas_object_size_hint_min_get(b->o_outerbox, &w, &h);

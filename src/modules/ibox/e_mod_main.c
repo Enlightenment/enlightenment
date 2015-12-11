@@ -184,7 +184,7 @@ _gc_init(E_Gadcon *gc, const char *name, const char *id, const char *style)
    ci = _ibox_config_item_get(id);
    inst->ci = ci;
 
-   b = _ibox_new(gc->o_container, gc->zone);
+   b = _ibox_new(gc->o_container ?: e_comp->elm, gc->zone);
    b->inst = inst;
    inst->ibox = b;
    o = b->o_box;
@@ -448,6 +448,8 @@ _ibox_fill(IBox *b)
    if (!e_gadcon_site_is_desktop(b->inst->gcc->gadcon->location->site)) return;
    elm_box_recalculate(b->o_box);
    evas_object_size_hint_min_get(b->o_box, &mw, &mh);
+   if ((!mw) && (!mh))
+     evas_object_geometry_get(b->o_box, NULL, NULL, &mw, &mh);
    evas_object_geometry_get(b->inst->gcc->o_frame, NULL, NULL, NULL, &h);
    evas_object_resize(b->inst->gcc->o_frame, MIN(mw, b->inst->gcc->gadcon->zone->w), MAX(h, mh));
 }
@@ -1111,6 +1113,8 @@ _ibox_cb_event_client_iconify(void *data EINA_UNUSED, int type EINA_UNUSED, void
         if (!e_gadcon_site_is_desktop(b->inst->gcc->gadcon->location->site)) continue;
         elm_box_recalculate(b->o_box);
         evas_object_size_hint_min_get(b->o_box, &mw, &mh);
+        if ((!mw) && (!mh))
+          evas_object_geometry_get(b->o_box, NULL, NULL, &mw, &mh);
         evas_object_geometry_get(b->inst->gcc->o_frame, NULL, NULL, NULL, &h);
         evas_object_resize(b->inst->gcc->o_frame, MIN(mw, b->inst->gcc->gadcon->zone->w), MAX(h, mh));
      }
@@ -1143,6 +1147,8 @@ _ibox_cb_event_client_uniconify(void *data EINA_UNUSED, int type EINA_UNUSED, vo
         if (!e_gadcon_site_is_desktop(b->inst->gcc->gadcon->location->site)) continue;
         elm_box_recalculate(b->o_box);
         evas_object_size_hint_min_get(b->o_box, &mw, &mh);
+        if ((!mw) && (!mh))
+          evas_object_geometry_get(b->o_box, NULL, NULL, &mw, &mh);
         evas_object_geometry_get(b->inst->gcc->o_frame, NULL, NULL, NULL, &h);
         evas_object_resize(b->inst->gcc->o_frame, MIN(mw, b->inst->gcc->gadcon->zone->w), MAX(h, mh));
      }
