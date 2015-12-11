@@ -1283,9 +1283,6 @@ e_hints_window_hidden_set(E_Client *ec)
    (void)ec;
 #else
    if (!e_client_has_xwindow(ec)) return;
-   if (ec->icccm.state != ECORE_X_WINDOW_STATE_HINT_WITHDRAWN)
-     ec->icccm.state = ECORE_X_WINDOW_STATE_HINT_WITHDRAWN;
-   ecore_x_icccm_state_set(e_client_util_win_get(ec), ECORE_X_WINDOW_STATE_HINT_WITHDRAWN);
    if (ec->netwm.state.hidden)
      {
         ec->netwm.update.state = 1;
