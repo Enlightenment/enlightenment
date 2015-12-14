@@ -1,3 +1,47 @@
+Release 0.20.1:
+---------------------
+Carsten Haitzler (11):
+      e backlight - avoid seg when comp is shut down and backlight updated
+      e comp - set e_comp to null on shutdown so others dont access junk
+      e zone - handle null e_comp if comp is already shut down
+      e randr - feature fix that allows config to jump to specific screen
+      e exec - fix missing ref and unref for instance event
+      e randr - fix silent free of data behind randr's back
+      e comp randr support - fix leak of randr info
+      e randr2 - remove auto-clone and now make randr dialog come up instead
+      e randr - fix leak of modes list in randr code
+      e - fix using an invalid icon theme - fall back to hicolor if not exists
+      e - fix leak added by previous fix for icon theme
+
+Lukasz Stanislawski (1):
+      conf_apps: fix add/remove screen lock applications.
+
+Marcel Hollerbach (1):
+      e_randr2: Add NULL check
+
+Massimo Maiurana (1):
+      Updating italian translation
+
+Mike Blumenkrantz (17):
+      use client geometry for calculations in x11 ConfigureRequest handler
+      reshuffle all notifications on a notification merge
+      disable redirection toggling for the nocomp client
+      fix wl-x11 make/install rules to not include nonexistent DATA files
+      enforce wayland subsurface stacking order when parent surface is restacked
+      apply already-committed wayland subsurface positioning after parent surface move
+      init ecore-x during wl-x11 init to ensure DISPLAY is set
+      move comp canvas resize callback to monitor elm win geometry
+      do not apply x11 randr iface in wl-x11 if running nested in x11
+      add wayland shell private data for managing shell-specific data
+      do not drop subsurface buffer early after commit from cache
+      make e_comp_wl_surface_attach static and take a surface state
+      set wayland new client focus based on accepts_focus and !override
+      use canvas RENDER_PRE callback to trigger compositor pre-render callbacks
+      do not reapply x11 icccm state during fetch
+      never set withdrawn state on x11 clients
+      use current box geometry for calculating desktop ibar/ibox sizing
+
+
 Release 0.20.0:
 ---------------------
 Highlights:
