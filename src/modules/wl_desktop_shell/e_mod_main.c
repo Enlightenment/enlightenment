@@ -8,8 +8,8 @@
 struct E_Shell_Data
 {
    uint32_t edges;
-   uint32_t width;
-   uint32_t height;
+   int32_t width;
+   int32_t height;
    Eina_Bool fullscreen : 1;
    Eina_Bool maximized : 1;
    Eina_Bool activated : 1;
