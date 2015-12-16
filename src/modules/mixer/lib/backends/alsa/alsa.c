@@ -66,7 +66,7 @@ _alsa_mixer_source_changed_cb(snd_mixer_t *ctl, unsigned int mask EINA_UNUSED,
 static void
 _alsa_channel_volume_get(snd_mixer_elem_t *channel, int *v, Eina_Bool capture)
 {
-   long int min, max, vol;
+   long int min = 0, max = 100, vol = 0;
    int range, divide;
 
    if (capture)
