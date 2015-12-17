@@ -1323,7 +1323,7 @@ _e_comp_x_show_helper(E_Client *ec)
              evas_object_hide(ec->frame);
              e_comp_object_damage(ec->frame, 0, 0, ec->w, ec->h);
           }
-        else if (ec->icccm.state != ECORE_X_WINDOW_STATE_HINT_WITHDRAWN)
+        else if (ec->icccm.state == ECORE_X_WINDOW_STATE_HINT_NORMAL)
           evas_object_show(ec->frame);
         _e_comp_x_client_data_get(ec)->first_map = 1;
         if (ec->internal_elm_win)
