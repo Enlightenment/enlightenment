@@ -6,7 +6,12 @@
 #define __STDC_FORMAT_MACROS
 #include <inttypes.h>
 
-#define COMPOSITOR_VERSION 3
+/* When a wayland is released with this macro we can remove the ifdefs */
+#ifdef WL_SURFACE_DAMAGE_BUFFER_SINCE_VERSION
+# define COMPOSITOR_VERSION 4
+#else
+# define COMPOSITOR_VERSION 3
+#endif
 
 E_API int E_EVENT_WAYLAND_GLOBAL_ADD = -1;
 #include "session-recovery-server-protocol.h"
@@ -1299,7 +1304,7 @@ _e_comp_wl_surface_cb_attach(struct wl_client *client EINA_UNUSED, struct wl_res
 }
 
 static void
-_e_comp_wl_surface_cb_damage(struct wl_client *client EINA_UNUSED, struct wl_resource *resource, int32_t x, int32_t y, int32_t w, int32_t h)
+_e_comp_wl_surface_cb_damage_buffer(struct wl_client *client EINA_UNUSED, struct wl_resource *resource, int32_t x, int32_t y, int32_t w, int32_t h)
 {
    E_Client *ec;
    Eina_Rectangle *dmg = NULL;
@@ -1311,6 +1316,17 @@ _e_comp_wl_surface_cb_damage(struct wl_client *client EINA_UNUSED, struct wl_res
 
    ec->comp_data->pending.damages =
      eina_list_append(ec->comp_data->pending.damages, dmg);
+}
+
+/*
+ * Currently damage and damage_buffer are the same because we don't support
+ * buffer_scale, transform, or viewport.  Once we support those we'll have
+ * to make surface_cb_damage handle damage in surface co-ordinates.
+ */
+static void
+_e_comp_wl_surface_cb_damage(struct wl_client *client, struct wl_resource *resource, int32_t x, int32_t y, int32_t w, int32_t h)
+{
+   _e_comp_wl_surface_cb_damage_buffer(client, resource, x, y, w, h);
 }
 
 static void
@@ -1440,7 +1456,11 @@ static const struct wl_surface_interface _e_surface_interface =
    _e_comp_wl_surface_cb_input_region_set,
    _e_comp_wl_surface_cb_commit,
    _e_comp_wl_surface_cb_buffer_transform_set,
-   _e_comp_wl_surface_cb_buffer_scale_set
+   _e_comp_wl_surface_cb_buffer_scale_set,
+/* remove ifdefs once damage_buffer is officially released */
+#ifdef WL_SURFACE_DAMAGE_BUFFER_SINCE_VERSION
+   _e_comp_wl_surface_cb_damage_buffer
+#endif
 };
 
 static void
