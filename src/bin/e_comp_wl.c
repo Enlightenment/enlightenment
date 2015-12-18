@@ -2069,7 +2069,7 @@ _e_comp_wl_sr_cb_provide_uuid(struct wl_client *client EINA_UNUSED, struct wl_re
    DBG("Provide UUID callback called for UUID: %s", uuid);
 }
 
-static const struct session_recovery_interface _e_session_recovery_interface =
+static const struct zwp_e_session_recovery_interface _e_session_recovery_interface =
 {
    _e_comp_wl_sr_cb_provide_uuid,
 };
@@ -2079,7 +2079,7 @@ _e_comp_wl_session_recovery_cb_bind(struct wl_client *client, void *data EINA_UN
 {
    struct wl_resource *res;
 
-   if (!(res = wl_resource_create(client, &session_recovery_interface, 1, id)))
+   if (!(res = wl_resource_create(client, &zwp_e_session_recovery_interface, 1, id)))
      {
         ERR("Could not create session_recovery interface");
         wl_client_post_no_memory(client);
@@ -2564,7 +2564,7 @@ _e_comp_wl_compositor_create(void)
      }
 
    /* try to add session_recovery to wayland globals */
-   if (!wl_global_create(cdata->wl.disp, &session_recovery_interface, 1,
+   if (!wl_global_create(cdata->wl.disp, &zwp_e_session_recovery_interface, 1,
                          e_comp, _e_comp_wl_session_recovery_cb_bind))
      {
         ERR("Could not add session_recovery to wayland globals: %m");
