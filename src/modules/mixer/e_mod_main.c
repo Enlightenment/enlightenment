@@ -7,6 +7,7 @@
 #define VOLUME_STEP 5
 
 int _e_emix_log_domain;
+static Eina_Bool init;
 
 /* module requirements */
 E_API E_Module_Api e_modapi =
@@ -650,7 +651,6 @@ _sink_event(int type, void *info)
                mixer_context->sink_default = l->data;
              else
                mixer_context->sink_default = NULL;
-             emix_config_save_state_get();
              if (emix_config_save_get()) e_config_save_queue();
              _mixer_gadget_update();
           }
@@ -667,8 +667,17 @@ _sink_event(int type, void *info)
      {
         DBG("Sink added");
      }
-   emix_config_save_state_get();
-   if (emix_config_save_get()) e_config_save_queue();
+   /*
+     Only safe the state if we are not in init mode,
+     If we are in init mode, this is a result of the restore call.
+     Restore iterates over a list of sinks which would get deleted in the
+     save_state_get call.
+    */
+   if (!init)
+     {
+        emix_config_save_state_get();
+        if (emix_config_save_get()) e_config_save_queue();
+     }
 }
 
 static void
@@ -678,9 +687,11 @@ _disconnected(void)
    _mixer_gadget_update();
 }
 
+
 static void
 _ready(void)
 {
+   init = EINA_TRUE;
    if (emix_sink_default_support())
      mixer_context->sink_default = emix_sink_default_get();
    else
@@ -713,6 +724,7 @@ _ready(void)
      }
 
    _mixer_gadget_update();
+   init = EINA_FALSE;
 }
 
 static void
