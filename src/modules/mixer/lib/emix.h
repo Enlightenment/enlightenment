@@ -97,7 +97,7 @@ typedef struct _Emix_Backend {
 
    const Eina_List*      (*ebackend_sources_get)(void);
    void                  (*ebackend_source_mute_set)(Emix_Source *source,
-                                                     Eina_Bool bool);
+                                                     Eina_Bool mute);
    void                  (*ebackend_source_volume_set)(Emix_Source *source,
                                                        Emix_Volume volume);
 
