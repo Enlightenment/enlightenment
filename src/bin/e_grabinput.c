@@ -173,7 +173,7 @@ _e_grabinput_focus_do(Ecore_Window win, E_Focus_Method method)
 #ifndef HAVE_WAYLAND_ONLY
         if (e_comp_util_has_x())
           {
-             ecore_x_window_focus_at_time(win, ecore_x_current_time_get());
+             ecore_x_window_focus(win);
              ecore_x_icccm_take_focus_send(win, ecore_x_current_time_get());
           }
 #endif
@@ -189,7 +189,7 @@ _e_grabinput_focus_do(Ecore_Window win, E_Focus_Method method)
       case E_FOCUS_METHOD_PASSIVE:
 #ifndef HAVE_WAYLAND_ONLY
         if (e_comp_util_has_x())
-          ecore_x_window_focus_at_time(win, ecore_x_current_time_get());
+          ecore_x_window_focus(win);
 #endif
         break;
 
