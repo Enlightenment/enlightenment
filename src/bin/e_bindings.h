@@ -11,7 +11,8 @@ typedef enum _E_Binding_Context
    E_BINDING_CONTEXT_MENU,
    E_BINDING_CONTEXT_WINLIST,
    E_BINDING_CONTEXT_POPUP,
-   E_BINDING_CONTEXT_ANY
+   E_BINDING_CONTEXT_ANY,
+   E_BINDING_CONTEXT_LAST,
 } E_Binding_Context;
 
 /* why do we do this? config stored bindings must be fixed. x's modifier masks

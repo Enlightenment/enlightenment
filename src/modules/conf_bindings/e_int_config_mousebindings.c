@@ -2,7 +2,6 @@
 
 #define TEXT_NO_PARAMS                     _("<None>")
 #define EXAMPLE_STRING                     "example : "
-#define E_BINDING_CONTEXT_NUMBER           10
 
 #define TEXT_PRESS_MOUSE_BINIDING_SEQUENCE _("Please hold any modifier you want<br>"            \
                                              "and press any button on your mouse,<br>or roll a" \
