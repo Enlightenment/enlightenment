@@ -156,21 +156,10 @@ _e_mod_action_winlist_cb_helper(E_Object *obj EINA_UNUSED, const char *params, i
    else if (direction == -1)
      e_winlist_prev();
    if (direction) return;
-   switch (udlr)
-     {
-      case 0:
-        e_winlist_up(zone);
-        break;
-      case 1:
-        e_winlist_down(zone);
-        break;
-      case 2:
-        e_winlist_left(zone);
-        break;
-      case 3:
-        e_winlist_right(zone);
-        break;
-     }
+   
+   if (udlr == -1) return;
+   
+   e_winlist_direction_select(zone, udlr);
 }
 
 static void
