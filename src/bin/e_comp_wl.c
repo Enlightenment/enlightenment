@@ -1659,6 +1659,7 @@ _e_comp_wl_compositor_cb_del(void *data EINA_UNUSED)
         if (output->model) eina_stringshare_del(output->model);
         free(output);
      }
+   e_comp_wl_shutdown();
 
    /* delete fd handler */
    /* if (e_comp_wl->fd_hdlr) ecore_main_fd_handler_del(e_comp_wl->fd_hdlr); */

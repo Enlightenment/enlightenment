@@ -1370,25 +1370,18 @@ e_comp_shutdown(void)
    Eina_List *l, *ll;
    E_Client *ec;
 
-#ifdef HAVE_WAYLAND
-   E_Pixmap_Type type = e_comp->comp_type;
-#endif
    E_FREE_FUNC(action_timeout, ecore_timer_del);
    EINA_LIST_FOREACH_SAFE(e_comp->clients, l, ll, ec)
      {
         DELD(ec, 99999);
         e_object_del(E_OBJECT(ec));
      }
+
    e_object_del(E_OBJECT(e_comp));
    e_comp = NULL;
    E_FREE_LIST(handlers, ecore_event_handler_del);
    E_FREE_LIST(actions, e_object_del);
    E_FREE_LIST(hooks, e_client_hook_del);
-
-#ifdef HAVE_WAYLAND
-   if (type == E_PIXMAP_TYPE_WL)
-     e_comp_wl_shutdown();
-#endif
 
    gl_avail = EINA_FALSE;
    e_comp_cfdata_config_free(conf);
