@@ -27,5 +27,6 @@ void e_winlist_right(E_Zone *zone);
 void e_winlist_down(E_Zone *zone);
 void e_winlist_up(E_Zone *zone);
 void e_winlist_modifiers_set(int mod, E_Winlist_Activate_Type type);
+void e_winlist_direction_select(E_Zone *zone, int dir);
 
 #endif
