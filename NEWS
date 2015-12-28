@@ -1,3 +1,29 @@
+Release 0.20.2:
+---------------------
+Chris Michael (1):
+      Add missing function prototype for e_winlist_direction_select
+
+Derek Foreman (2):
+      emix: Rename parameter bool to mute
+      wayland: Add support for wl_surface.damage_buffer
+
+Marcel Hollerbach (2):
+      alsa: fix a valgrind warning
+      mixer: only save state if not in init
+
+Mike Blumenkrantz (4):
+      simplify e_mouse_update() code for x11 compositors
+      only show x11 clients during MapNotify/Request if they have Normal state
+      show non-new x11 clients immediately when changing Withdrawn -> Normal
+      ignore withdrawn state for x11 override clients during show
+
+Simon Lees (1):
+      Set QT_QPA_PLATFORM theme to gtk2
+
+Toan Pham (1):
+      enhance winlist next window selection
+
+
 Release 0.20.1:
 ---------------------
 Carsten Haitzler (11):
