@@ -428,7 +428,7 @@ _bl_sys_find(void)
      {
         EINA_LIST_FOREACH(pdevs, l, f)
           {
-             if ((!strstr(f, "kbd")) && (!strstr(f, "mail")))
+             if ((!strstr(f, "kbd")) && (!strstr(f, "mail")) && (!strstr(f, "input")))
                {
                   bl_sysval = eina_stringshare_add(f);
                   break;
