@@ -254,7 +254,9 @@ _e_backlight_update(void)
    if (bl_sysval)
      {
         sysmode = MODE_SYS;
+#ifndef HAVE_WAYLAND_ONLY
         xbl_avail = EINA_FALSE;
+#endif
         _bl_sys_level_get();
         return;
      }
