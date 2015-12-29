@@ -1215,3 +1215,27 @@ out:
      }
    e_xinerama_screens_set(all_screens);
 }
+
+E_API E_Randr2_Screen *
+e_randr2_screen_id_find(const char *id)
+{
+   Eina_List *l;
+   E_Randr2_Screen *s;
+
+   EINA_LIST_FOREACH(e_randr2->screens, l, s)
+     {
+        if (!strcmp(id, s->id)) return s;
+     }
+   return NULL;
+}
+
+E_API double
+e_randr2_screen_dpi_get(E_Randr2_Screen *s)
+{
+   double dpi1, dpi2;
+
+   if ((s->info.size.w <= 0) || (s->info.size.h <= 0)) return 0.0;
+   dpi1 = (25.4 * (double)(s->config.mode.w)) / (double)(s->info.size.w);
+   dpi2 = (25.4 * (double)(s->config.mode.h)) / (double)(s->info.size.h);
+   return (dpi1 + dpi2) / 2.0;
+}
