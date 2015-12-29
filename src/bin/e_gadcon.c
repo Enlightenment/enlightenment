@@ -250,6 +250,7 @@ e_gadcon_shutdown(void)
    if (_module_init_end_handler)
      ecore_event_handler_del(_module_init_end_handler);
    _module_init_end_handler = NULL;
+   E_LIST_FOREACH(gadcons, e_gadcon_unpopulate);
 
    return 1;
 }
