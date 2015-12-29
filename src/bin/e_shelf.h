@@ -49,6 +49,7 @@ struct _E_Shelf
    unsigned char        dummy : 1;
    Eina_Bool            cfg_delete : 1;
    unsigned int         locked;
+   Eina_Bool hiding : 1;
 };
 
 typedef struct E_Event_Shelf

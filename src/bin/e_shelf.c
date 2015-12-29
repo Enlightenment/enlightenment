@@ -211,6 +211,12 @@ e_shelf_zone_dummy_new(E_Zone *zone, Evas_Object *obj, int id)
 
    return es;
 }
+static void
+_e_shelf_hidden(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   E_Shelf *es = data;
+   es->hiding = 0;
+}
 
 E_API E_Shelf *
 e_shelf_zone_new(E_Zone *zone, const char *name, const char *style, E_Layer layer, int id)
@@ -249,6 +255,7 @@ e_shelf_zone_new(E_Zone *zone, const char *name, const char *style, E_Layer laye
    if (layer == E_LAYER_DESKTOP)
      type = E_COMP_OBJECT_TYPE_NONE;
    es->comp_object = e_comp_object_util_add(es->o_base, type);
+   evas_object_event_callback_add(es->comp_object, EVAS_CALLBACK_HIDE, _e_shelf_hidden, es);
    evas_object_data_set(es->comp_object, "E_Shelf", es);
    evas_object_data_set(es->comp_object, "comp_skip", (void*)1);
    evas_object_name_set(es->comp_object, es->name);
@@ -365,6 +372,7 @@ e_shelf_show(E_Shelf *es)
 {
    E_OBJECT_CHECK(es);
    E_OBJECT_TYPE_CHECK(es, E_SHELF_TYPE);
+   if (es->hiding) evas_object_hide(es->comp_object);
    evas_object_show(es->comp_object);
 }
 
@@ -374,6 +382,7 @@ e_shelf_hide(E_Shelf *es)
    E_OBJECT_CHECK(es);
    E_OBJECT_TYPE_CHECK(es, E_SHELF_TYPE);
    evas_object_hide(es->comp_object);
+   es->hiding = evas_object_visible_get(es->comp_object);
 }
 
 E_API void
