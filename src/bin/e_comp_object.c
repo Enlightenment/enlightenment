@@ -2522,7 +2522,15 @@ _e_comp_object_util_hide(void *data EINA_UNUSED, Evas_Object *obj)
 {
    if (!evas_object_visible_get(obj)) return;
    /* already hiding */
-   if (evas_object_data_get(obj, "comp_hiding")) return;
+   if (evas_object_data_get(obj, "comp_hiding"))
+     {
+        evas_object_data_del(obj, "comp_hiding");
+        evas_object_hide(obj);
+        e_comp_shape_queue();
+        if (evas_object_data_del(obj, "comp_ref"))
+          evas_object_unref(obj);
+        return;
+     }
    if (!evas_object_data_del(obj, "comp_showing"))
      {
         evas_object_ref(obj);
