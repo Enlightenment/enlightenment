@@ -3175,6 +3175,11 @@ reshadow:
    do
      {
         _e_comp_smart_cb_frame_recalc(cw, cw->smart_obj, NULL);
+        if ((cw->x == -1) && (cw->y == -1) && cw->ec->new_client && (!cw->ec->placed))
+          {
+             cw->ec->x = MAX(cw->ec->zone->x, cw->ec->client.x - cw->client_inset.l);
+             cw->ec->y = MAX(cw->ec->zone->y, cw->ec->client.y - cw->client_inset.t);
+          }
         /* this guarantees that we won't get blocked by the NOP check in the interceptor */
         cw->y = cw->x = -99999;
         if (pbg)
