@@ -333,6 +333,27 @@ e_place_desk_region_smart(E_Desk *desk, Eina_List *skiplist, int x, int y, int w
       int i, j;
       int area = 0x7fffffff;
 
+      if ((x <= (zw - w)) &&
+          (y <= (zh - h)))
+        {
+           int ar = 0;
+
+           ar = _e_place_coverage_client_add(desk, skiplist, ar,
+                                             x, y,
+                                             w, h);
+           if (e_config->window_placement_policy == E_WINDOW_PLACEMENT_SMART)
+             ar = _e_place_coverage_shelf_add(desk, ar,
+                                              x, y,
+                                              w, h);
+           if (ar < area)
+             {
+                area = ar;
+                *rx = x;
+                *ry = y;
+                if (ar == 0) goto done;
+             }
+        }
+
       for (j = 0; j < a_h - 1; j++)
         {
            for (i = 0; i < a_w - 1; i++)
