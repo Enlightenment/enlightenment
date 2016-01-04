@@ -272,6 +272,7 @@ e_comp_canvas_init(int w, int h)
              E_Zone *zone = e_zone_new(scr->screen, scr->escreen,
                                        scr->x, scr->y, scr->w, scr->h);
              if (scr->id) zone->randr2_id = strdup(scr->id);
+             e_desk_window_profile_update(zone);
           }
      }
    else
@@ -484,12 +485,14 @@ e_comp_canvas_update(void)
                   free(zone->randr2_id);
                   zone->randr2_id = NULL;
                   if (scr->id) zone->randr2_id = strdup(scr->id);
+                  e_desk_window_profile_update(zone);
                }
              else
                {
                   zone = e_zone_new(scr->screen, scr->escreen,
                                     scr->x, scr->y, scr->w, scr->h);
                   if (scr->id) zone->randr2_id = strdup(scr->id);
+                  e_desk_window_profile_update(zone);
                   printf("@@@ NEW ZONE = %p\n", zone);
                   changed = EINA_TRUE;
                }

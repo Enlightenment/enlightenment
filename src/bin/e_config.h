@@ -13,7 +13,6 @@ typedef struct _E_Config_Binding_Acpi       E_Config_Binding_Acpi;
 typedef struct _E_Config_Desktop_Background E_Config_Desktop_Background;
 typedef struct _E_Config_Desklock_Background E_Config_Desklock_Background;
 typedef struct _E_Config_Desktop_Name       E_Config_Desktop_Name;
-typedef struct _E_Config_Desktop_Window_Profile E_Config_Desktop_Window_Profile;
 typedef struct _E_Config_Gadcon             E_Config_Gadcon;
 typedef struct _E_Config_Gadcon_Client      E_Config_Gadcon_Client;
 typedef struct _E_Config_Shelf              E_Config_Shelf;
@@ -60,9 +59,7 @@ struct _E_Config
    const char *desktop_default_background; // GUI
    Eina_List  *desktop_backgrounds; // GUI
    const char *desktop_default_name;
-   const char *desktop_default_window_profile;
    Eina_List  *desktop_names; // GUI
-   Eina_List  *desktop_window_profiles; // GUI
    double      menus_scroll_speed; // GUI
    double      menus_fast_mouse_move_threshhold; // GUI
    double      menus_click_drag_timeout; // GUI
@@ -439,7 +436,7 @@ struct _E_Config
 
    Eina_List  *menu_applications;
    unsigned char exe_always_single_instance; // GUI
-   int           use_desktop_window_profile; // GUI
+   Eina_List *screen_profiles;
 };
 
 struct E_Config_Bindings
@@ -557,14 +554,6 @@ struct _E_Config_Desktop_Name
    int         desk_x;
    int         desk_y;
    const char *name;
-};
-
-struct _E_Config_Desktop_Window_Profile
-{
-   int         zone;
-   int         desk_x;
-   int         desk_y;
-   const char *profile;
 };
 
 struct _E_Config_Gadcon

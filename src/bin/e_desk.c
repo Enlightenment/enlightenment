@@ -44,13 +44,52 @@ e_desk_shutdown(void)
    return 1;
 }
 
+static void
+_do_profile(E_Desk *desk, E_Randr2_Screen *sc)
+{
+   int scale = 100;
+   char buf[PATH_MAX], buf2[PATH_MAX];
+
+   eina_stringshare_del(desk->window_profile);
+   desk->window_profile = NULL;
+
+   if (sc->config.scale_multiplier > 0.0)
+     {
+        scale = (int)(sc->config.scale_multiplier * 100.0);
+     }
+   else if (e_config->scale.use_dpi)
+     {
+        double dpi = e_randr2_screen_dpi_get(sc);
+
+        if ((dpi > 0.0) && (e_config->scale.base_dpi > 0))
+          scale = (int)((100.0 * dpi) / (double)e_config->scale.base_dpi);
+     }
+
+   if (scale == 100)
+     snprintf(buf, sizeof(buf), "%s", sc->config.profile);
+   else
+     {
+        snprintf(buf, sizeof(buf), ".scale-%04i-%s",
+                 scale, sc->config.profile);
+        if (!elm_config_profile_exists(buf))
+          {
+             snprintf(buf2, sizeof(buf2),
+                      "%s/enlightenment/utils/enlightenment_elm_cfgtool "
+                      "set %s %s 'scale-mul %i'",
+                      e_prefix_lib_get(), sc->config.profile, buf, scale);
+             system(buf2);
+          }
+     }
+   desk->window_profile = eina_stringshare_add(buf);
+}
+
 E_API E_Desk *
 e_desk_new(E_Zone *zone, int x, int y)
 {
    E_Desk *desk;
    Eina_List *l;
    E_Config_Desktop_Name *cfname;
-   E_Config_Desktop_Window_Profile *cfprof;
+
    char name[40];
    int ok = 0;
 
@@ -59,6 +98,8 @@ e_desk_new(E_Zone *zone, int x, int y)
 
    desk = E_OBJECT_ALLOC(E_Desk, E_DESK_TYPE, _e_desk_free);
    if (!desk) return NULL;
+
+   _e_desk_window_profile_change_protocol_set();
 
    desk->zone = zone;
    desk->x = x;
@@ -81,21 +122,15 @@ e_desk_new(E_Zone *zone, int x, int y)
         snprintf(name, sizeof(name), _(e_config->desktop_default_name), x, y);
         desk->name = eina_stringshare_add(name);
      }
+
    /* Get window profile name for current desktop */
-   ok = 0;
-   EINA_LIST_FOREACH(e_config->desktop_window_profiles, l, cfprof)
+   if (zone->randr2_id)
      {
-        if ((cfprof->zone >= 0) &&
-            ((int)zone->num != cfprof->zone)) continue;
-        if ((cfprof->desk_x != desk->x) || (cfprof->desk_y != desk->y))
-          continue;
-        desk->window_profile = eina_stringshare_ref(cfprof->profile);
-        ok = 1;
-        break;
+        E_Randr2_Screen *sc = e_randr2_screen_id_find(zone->randr2_id);
+
+        if ((sc) && (sc->config.profile)) _do_profile(desk, sc);
      }
 
-   if (!ok)
-     desk->window_profile = eina_stringshare_ref(e_config->desktop_default_window_profile);
    return desk;
 }
 
@@ -550,85 +585,20 @@ e_desk_window_profile_set(E_Desk *desk,
 }
 
 E_API void
-e_desk_window_profile_add(int zone,
-                          int desk_x,
-                          int desk_y,
-                          const char *profile)
+e_desk_window_profile_update(E_Zone *zone)
 {
-   E_Config_Desktop_Window_Profile *cfprof;
-
-   e_desk_window_profile_del(zone, desk_x, desk_y);
-
-   cfprof = E_NEW(E_Config_Desktop_Window_Profile, 1);
-   cfprof->zone = zone;
-   cfprof->desk_x = desk_x;
-   cfprof->desk_y = desk_y;
-   cfprof->profile = eina_stringshare_add(profile);
-   e_config->desktop_window_profiles = eina_list_append(e_config->desktop_window_profiles, cfprof);
-}
-
-E_API void
-e_desk_window_profile_del(int zone,
-                          int desk_x,
-                          int desk_y)
-{
-   Eina_List *l = NULL;
-   E_Config_Desktop_Window_Profile *cfprof = NULL;
-
-   EINA_LIST_FOREACH(e_config->desktop_window_profiles, l, cfprof)
+   if (zone->randr2_id)
      {
-        if (!((cfprof->zone == zone) &&
-              (cfprof->desk_x == desk_x) &&
-              (cfprof->desk_y == desk_y)))
-          continue;
+        E_Randr2_Screen *sc = e_randr2_screen_id_find(zone->randr2_id);
 
-        e_config->desktop_window_profiles =
-          eina_list_remove_list(e_config->desktop_window_profiles, l);
-        eina_stringshare_del(cfprof->profile);
-        free(cfprof);
-        break;
-     }
-}
-
-E_API void
-e_desk_window_profile_update(void)
-{
-   const Eina_List *z, *l;
-   E_Zone *zone;
-   E_Desk *desk;
-   E_Config_Desktop_Window_Profile *cfprof;
-   int d_x, d_y, ok;
-
-   _e_desk_window_profile_change_protocol_set();
-
-   if (!(e_config->use_desktop_window_profile))
-     return;
-
-   EINA_LIST_FOREACH(e_comp->zones, z, zone)
-     {
-        for (d_x = 0; d_x < zone->desk_x_count; d_x++)
+        if ((sc) && (sc->config.profile))
           {
-             for (d_y = 0; d_y < zone->desk_y_count; d_y++)
+             int x, y;
+
+             for (y = 0; y < zone->desk_y_count; y++)
                {
-                  desk = zone->desks[d_x + zone->desk_x_count * d_y];
-                  ok = 0;
-
-                  EINA_LIST_FOREACH(e_config->desktop_window_profiles, l, cfprof)
-                    {
-                       if ((cfprof->zone >= 0) &&
-                           ((int)zone->num != cfprof->zone)) continue;
-                       if ((cfprof->desk_x != d_x) ||
-                           (cfprof->desk_y != d_y)) continue;
-                       e_desk_window_profile_set(desk, cfprof->profile);
-                       ok = 1;
-                       break;
-                    }
-
-                  if (!ok)
-                    {
-                       e_desk_window_profile_set
-                         (desk, e_config->desktop_default_window_profile);
-                    }
+                  for (x = 0; x < zone->desk_x_count; x++)
+                    _do_profile(zone->desks[x + (y * zone->desk_x_count)], sc);
                }
           }
      }
@@ -890,6 +860,15 @@ static void
 _e_desk_window_profile_change_protocol_set(void)
 {
 #ifndef HAVE_WAYLAND_ONLY
-  ecore_x_e_window_profile_supported_set(e_comp->root, e_config->use_desktop_window_profile);
+   static Eina_Bool is_set = EINA_FALSE;
+
+   if (!is_set)
+     {
+        if (e_comp->root)
+          {
+             is_set = EINA_TRUE;
+             ecore_x_e_window_profile_supported_set(e_comp->root, EINA_TRUE);
+          }
+     }
 #endif
 }

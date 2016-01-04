@@ -16,7 +16,6 @@ struct _E_Config_Dialog_Data
    int y;
    int edge_flip_dragging;
    int flip_wrap;
-   int use_desktop_window_profile;
    int flip_mode;
    int flip_interp;
 
@@ -63,7 +62,6 @@ _fill_data(E_Config_Dialog_Data *cfdata)
    cfdata->y = e_config->zone_desks_y_count;
    cfdata->edge_flip_dragging = e_config->edge_flip_dragging;
    cfdata->flip_wrap = e_config->desk_flip_wrap;
-   cfdata->use_desktop_window_profile = e_config->use_desktop_window_profile;
    cfdata->flip_interp = e_config->desk_flip_animate_interpolation;
 
    cfdata->flip_mode = 0;
@@ -132,11 +130,6 @@ _basic_apply_data(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfdata
    e_config->edge_flip_dragging = cfdata->edge_flip_dragging;
    e_config->desk_flip_wrap = cfdata->flip_wrap;
 
-   if (e_config->use_desktop_window_profile != cfdata->use_desktop_window_profile)
-     {
-        e_config->use_desktop_window_profile = cfdata->use_desktop_window_profile;
-        e_desk_window_profile_update();
-     }
    e_config_save_queue();
    return 1; /* Apply was OK */
 }
@@ -159,9 +152,7 @@ _basic_check_changed(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfd
    return ((e_util_strcasecmp(eina_list_nth(cfdata->comp_effects, cfdata->flip_mode), e_config->desk_flip_animate_type)) ||
 	   (e_config->desk_flip_animate_interpolation != cfdata->flip_interp) ||
 	   (e_config->edge_flip_dragging != cfdata->edge_flip_dragging) ||
-	   (e_config->desk_flip_wrap != cfdata->flip_wrap) ||
-    (e_config->use_desktop_window_profile != cfdata->use_desktop_window_profile)
-    );
+	   (e_config->desk_flip_wrap != cfdata->flip_wrap));
 }
 
 /**--GUI--**/
@@ -209,14 +200,6 @@ _basic_create_widgets(E_Config_Dialog *cfd EINA_UNUSED, Evas *evas, E_Config_Dia
                            &(cfdata->flip_wrap));
    e_widget_framelist_object_append(of, ob);
 
-   e_widget_list_object_append(o, of, 1, 0, 0.5);
-   of = e_widget_framelist_add(evas, _("Desktop Window Profile"), 0);
-
-   ob = e_widget_check_add(evas, _("Use desktop window profile"),
-                           &(cfdata->use_desktop_window_profile));
-   e_widget_framelist_object_append(of, ob);
-
-   e_widget_list_object_append(o, of, 1, 0, 0.5);
    e_widget_toolbook_page_append(otb, NULL, _("Desktops"), o, 1, 1, 1, 1, 
                                  0.5, 0.0);
 

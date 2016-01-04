@@ -2673,14 +2673,17 @@ e_client_desk_set(E_Client *ec, E_Desk *desk)
    E_OBJECT_CHECK(desk);
    E_OBJECT_TYPE_CHECK(desk, E_DESK_TYPE);
    if (ec->desk == desk) return;
-   if ((e_config->use_desktop_window_profile) &&
-       (ec->e.state.profile.use))
+   if (ec->e.state.profile.use)
      {
-        if (e_util_strcmp(ec->e.state.profile.name, desk->window_profile))
+        const char *profile = desk->window_profile;
+
+        // XXX: have default profile config
+        if (!profile) profile = "standard";
+        if (e_util_strcmp(ec->e.state.profile.name, profile))
           {
-             if (e_client_desk_window_profile_available_check(ec, desk->window_profile))
+             if (e_client_desk_window_profile_available_check(ec, profile))
                {
-                  eina_stringshare_replace(&ec->e.state.profile.set, desk->window_profile);
+                  eina_stringshare_replace(&ec->e.state.profile.set, profile);
                   eina_stringshare_replace(&ec->e.state.profile.wait, NULL);
                   ec->e.state.profile.wait_for_done = 0;
                   e_client_desk_window_profile_wait_desk_set(ec, desk);

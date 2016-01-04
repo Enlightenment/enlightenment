@@ -4304,7 +4304,7 @@ _e_comp_x_hook_client_fetch(void *d EINA_UNUSED, E_Client *ec)
         cd->fetch_exe = 0;
      }
 
-   if ((e_config->use_desktop_window_profile) && (need_desk_set))
+   if (need_desk_set)
      {
         E_Desk *desk = NULL;
         const char *p, *p2;
@@ -5199,7 +5199,7 @@ _e_comp_x_setup(Ecore_X_Window root, int w, int h)
 
    E_OBJECT_DEL_SET(e_comp, _e_comp_x_del);
    e_comp_x = e_comp->x_comp_data = E_NEW(E_Comp_X_Data, 1);
-   ecore_x_e_window_profile_supported_set(root, e_config->use_desktop_window_profile);
+   ecore_x_e_window_profile_supported_set(root, EINA_TRUE);
    e_comp->cm_selection = ecore_x_window_input_new(root, 0, 0, 1, 1);
    if (!e_comp->cm_selection) return EINA_FALSE;
    ecore_x_icccm_name_class_set(e_comp->cm_selection, "comp", "cm_selection");

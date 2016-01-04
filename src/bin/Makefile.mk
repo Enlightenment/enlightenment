@@ -31,6 +31,7 @@ src/bin/enlightenment_backlight \
 src/bin/enlightenment_fm_op \
 src/bin/enlightenment_sys \
 src/bin/enlightenment_thumb \
+src/bin/enlightenment_elm_cfgtool \
 src/bin/enlightenment_static_grabber
 
 if ! HAVE_WAYLAND_ONLY
@@ -406,6 +407,12 @@ src/bin/e_user.c
 
 src_bin_enlightenment_thumb_LDADD = @E_THUMB_LIBS@
 src_bin_enlightenment_thumb_CPPFLAGS = $(E_CPPFLAGS)
+
+src_bin_enlightenment_elm_cfgtool_SOURCES = \
+src/bin/e_elm_cfgtool_main.c
+
+src_bin_enlightenment_elm_cfgtool_LDADD = @e_libs@ -lm
+src_bin_enlightenment_elm_cfgtool_CPPFLAGS = $(E_CPPFLAGS)
 
 src_bin_enlightenment_fm_op_SOURCES = \
 src/bin/e_fm_op.c

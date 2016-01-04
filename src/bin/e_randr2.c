@@ -63,6 +63,8 @@ e_randr2_init(void)
    E_CONFIG_VAL(D, T, priority, INT);
    E_CONFIG_VAL(D, T, rel_mode, UCHAR);
    E_CONFIG_VAL(D, T, enabled, UCHAR);
+   E_CONFIG_VAL(D, T, profile, STR);
+   E_CONFIG_VAL(D, T, scale_multiplier, DOUBLE);
 
    _e_randr2_cfg_edd = E_CONFIG_DD_NEW("E_Config_Randr2", E_Config_Randr2);
 #undef T
@@ -306,6 +308,7 @@ _info_free(E_Randr2 *r)
         free(s->info.edid);
         EINA_LIST_FREE(s->info.modes, m) free(m);
         free(s->config.relative.to);
+        free(s->config.profile);
         free(s);
      }
    free(r);
@@ -350,7 +353,13 @@ _config_free(E_Config_Randr2 *cfg)
 
    if (!cfg) return;
    // free config data
-   EINA_LIST_FREE(cfg->screens, cs) free(cs);
+   EINA_LIST_FREE(cfg->screens, cs)
+     {
+        eina_stringshare_del(cs->id);
+        eina_stringshare_del(cs->rel_to);
+        eina_stringshare_del(cs->profile);
+        free(cs);
+     }
    free(cfg);
 }
 
@@ -387,7 +396,7 @@ _config_update(E_Randr2 *r, E_Config_Randr2 *cfg)
         if (cs)
           {
              if (s->config.relative.to)
-               cs->rel_to = strdup(s->config.relative.to);
+               cs->rel_to = eina_stringshare_add(s->config.relative.to);
              cs->rel_align = s->config.relative.align;
              cs->mode_refresh = s->config.mode.refresh;
              cs->mode_w = s->config.mode.w;
@@ -396,6 +405,19 @@ _config_update(E_Randr2 *r, E_Config_Randr2 *cfg)
              cs->priority = s->config.priority;
              cs->rel_mode = s->config.relative.mode;
              cs->enabled = s->config.enabled;
+             if (cs->profile)
+               {
+                  printf("RRR: store config profile '%s'\n", cs->profile);
+                  free(s->config.profile);
+                  s->config.profile = strdup(cs->profile);
+               }
+             else
+               {
+                  free(s->config.profile);
+                  s->config.profile = NULL;
+               }
+             printf("RRR: store scale mul %1.5f\n", cs->scale_multiplier);
+             s->config.scale_multiplier = cs->scale_multiplier;
           }
      }
    printf("--------------------------------------------------\n");
@@ -418,6 +440,10 @@ _config_really_apply(E_Randr2_Screen *s, E_Config_Randr2_Screen *cs)
         else s->config.relative.to = NULL;
         s->config.relative.mode = cs->rel_mode;
         s->config.relative.align = cs->rel_align;
+        free(s->config.profile);
+        if (cs->profile) s->config.profile = strdup(cs->profile);
+        else s->config.profile = NULL;
+        s->config.scale_multiplier = cs->scale_multiplier;
      }
    else
      {
@@ -436,6 +462,9 @@ _config_really_apply(E_Randr2_Screen *s, E_Config_Randr2_Screen *cs)
         s->config.relative.to = NULL;
         s->config.relative.mode = E_RANDR2_RELATIVE_NONE;
         s->config.relative.align = 0.0;
+        free(s->config.profile);
+        s->config.profile = NULL;
+        s->config.scale_multiplier = 0.0;
      }
 }
 
@@ -867,7 +896,7 @@ _screen_config_do(E_Randr2_Screen *s)
    printf("RRR: screen do '%s'\n", s->info.name);
    if (_config_do_recurse > 5)
      {
-        ERR("screen config loop!");
+        printf("RRR: screen config loop!\n");
         return;
      }
    _config_do_recurse++;

@@ -38,7 +38,6 @@ static E_Config_DD *_e_config_path_append_edd = NULL;
 static E_Config_DD *_e_config_desktop_bg_edd = NULL;
 static E_Config_DD *_e_config_desklock_bg_edd = NULL;
 static E_Config_DD *_e_config_desktop_name_edd = NULL;
-static E_Config_DD *_e_config_desktop_window_profile_edd = NULL;
 static E_Config_DD *_e_config_menu_applications_edd = NULL;
 static E_Config_DD *_e_config_color_class_edd = NULL;
 static E_Config_DD *_e_config_gadcon_edd = NULL;
@@ -135,7 +134,6 @@ _e_config_edd_shutdown(void)
    E_CONFIG_DD_FREE(_e_config_desktop_bg_edd);
    E_CONFIG_DD_FREE(_e_config_desklock_bg_edd);
    E_CONFIG_DD_FREE(_e_config_desktop_name_edd);
-   E_CONFIG_DD_FREE(_e_config_desktop_window_profile_edd);
    E_CONFIG_DD_FREE(e_remember_edd);
    E_CONFIG_DD_FREE(_e_config_menu_applications_edd);
    E_CONFIG_DD_FREE(_e_config_gadcon_edd);
@@ -146,6 +144,7 @@ _e_config_edd_shutdown(void)
    E_CONFIG_DD_FREE(_e_config_syscon_action_edd);
    E_CONFIG_DD_FREE(_e_config_env_var_edd);
    E_CONFIG_DD_FREE(_e_config_xkb_layout_edd);
+   E_CONFIG_DD_FREE(_e_config_xkb_option_edd);
    E_CONFIG_DD_FREE(_e_config_xkb_option_edd);
 }
 
@@ -242,16 +241,6 @@ _e_config_edd_init(Eina_Bool old)
    E_CONFIG_VAL(D, T, desk_x, INT);
    E_CONFIG_VAL(D, T, desk_y, INT);
    E_CONFIG_VAL(D, T, name, STR);
-
-   _e_config_desktop_window_profile_edd = E_CONFIG_DD_NEW("E_Config_Desktop_Window_Profile", E_Config_Desktop_Window_Profile);
-#undef T
-#undef D
-#define T E_Config_Desktop_Window_Profile
-#define D _e_config_desktop_window_profile_edd
-   E_CONFIG_VAL(D, T, zone, INT);
-   E_CONFIG_VAL(D, T, desk_x, INT);
-   E_CONFIG_VAL(D, T, desk_y, INT);
-   E_CONFIG_VAL(D, T, profile, STR);
 
    _e_config_path_append_edd = E_CONFIG_DD_NEW("E_Path_Dir", E_Path_Dir);
 #undef T
@@ -434,6 +423,14 @@ _e_config_edd_init(Eina_Bool old)
 #define D _e_config_xkb_option_edd
    E_CONFIG_VAL(D, T, name, STR);
 
+   _e_config_xkb_option_edd = E_CONFIG_DD_NEW("E_Config_XKB_Option",
+                                              E_Config_XKB_Option);
+#undef T
+#undef D
+#define T E_Config_XKB_Option
+#define D _e_config_xkb_option_edd
+   E_CONFIG_VAL(D, T, name, STR);
+
    _e_config_edd = E_CONFIG_DD_NEW("E_Config", E_Config);
 #undef T
 #undef D
@@ -445,10 +442,8 @@ _e_config_edd_init(Eina_Bool old)
    E_CONFIG_VAL(D, T, show_splash, INT); /**/
    E_CONFIG_VAL(D, T, desktop_default_background, STR); /**/
    E_CONFIG_VAL(D, T, desktop_default_name, STR); /**/
-   E_CONFIG_VAL(D, T, desktop_default_window_profile, STR); /**/
    E_CONFIG_LIST(D, T, desktop_backgrounds, _e_config_desktop_bg_edd); /**/
    E_CONFIG_LIST(D, T, desktop_names, _e_config_desktop_name_edd); /**/
-   E_CONFIG_LIST(D, T, desktop_window_profiles, _e_config_desktop_window_profile_edd);
    E_CONFIG_VAL(D, T, menus_scroll_speed, DOUBLE); /**/
    E_CONFIG_VAL(D, T, menus_fast_mouse_move_threshhold, DOUBLE); /**/
    E_CONFIG_VAL(D, T, menus_click_drag_timeout, DOUBLE); /**/
@@ -775,8 +770,6 @@ _e_config_edd_init(Eina_Bool old)
    //E_CONFIG_VAL(D, T, xkb.cur_group, INT);
 
    E_CONFIG_VAL(D, T, exe_always_single_instance, UCHAR);
-
-   E_CONFIG_VAL(D, T, use_desktop_window_profile, INT);
 }
 
 /* externally accessible functions */
@@ -2182,16 +2175,9 @@ _e_config_free(E_Config *ecf)
    E_Remember *rem;
    E_Config_Env_Var *evr;
    E_Config_XKB_Option *op;
-   E_Config_Desktop_Window_Profile *wp;
    E_Int_Menu_Applications *ema;
 
    if (!ecf) return;
-
-   EINA_LIST_FREE(ecf->desktop_window_profiles, wp)
-     {
-        eina_stringshare_del(wp->profile);
-        E_FREE(wp);
-     }
 
    eina_stringshare_del(ecf->xkb.default_model);
 
@@ -2282,7 +2268,6 @@ _e_config_free(E_Config *ecf)
      }
    if (ecf->desktop_default_background) eina_stringshare_del(ecf->desktop_default_background);
    if (ecf->desktop_default_name) eina_stringshare_del(ecf->desktop_default_name);
-   if (ecf->desktop_default_window_profile) eina_stringshare_del(ecf->desktop_default_window_profile);
    if (ecf->language) eina_stringshare_del(ecf->language);
    eina_stringshare_del(ecf->desklock_language);
    eina_stringshare_del(ecf->xkb.selected_layout);

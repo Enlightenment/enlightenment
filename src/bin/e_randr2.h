@@ -83,6 +83,9 @@ struct _E_Randr2_Screen
       int                   priority; // larger num == more important
       Eina_Bool             enabled : 1; // should this monitor be enabled?
       Eina_Bool             configured : 1; // has screen been configured by e?
+
+      char                 *profile; // profile name to use on this screen
+      double                scale_multiplier; // if 0.0 - then dont multiply scale
    } config;
 };
 
@@ -97,16 +100,19 @@ struct _E_Config_Randr2
 
 struct _E_Config_Randr2_Screen
 {
-   const char   *id;
-   const char   *rel_to;
-   double        rel_align;
-   double        mode_refresh;
-   int           mode_w;
-   int           mode_h;
-   int           rotation;
-   int           priority;
-   unsigned char rel_mode;
-   unsigned char enabled;
+   const char    *id;
+   const char    *rel_to;
+   double         rel_align;
+   double         mode_refresh;
+   int            mode_w;
+   int            mode_h;
+   int            rotation;
+   int            priority;
+   unsigned char  rel_mode;
+   unsigned char  enabled;
+
+   const char    *profile;
+   double         scale_multiplier;
 };
 
 extern E_API E_Config_Randr2 *e_randr2_cfg;

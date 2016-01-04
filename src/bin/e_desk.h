@@ -86,9 +86,7 @@ E_API void         e_desk_row_remove(E_Zone *zone);
 E_API void         e_desk_col_add(E_Zone *zone);
 E_API void         e_desk_col_remove(E_Zone *zone);
 E_API void         e_desk_window_profile_set(E_Desk *desk, const char *profile);
-E_API void         e_desk_window_profile_add(int zone, int desk_x, int desk_y, const char *profile);
-E_API void         e_desk_window_profile_del(int zone, int desk_x, int desk_y);
-E_API void         e_desk_window_profile_update(void);
+E_API void         e_desk_window_profile_update(E_Zone *zone);
 
 E_API void         e_desk_flip_cb_set(E_Desk_Flip_Cb cb, const void *data);
 E_API void         e_desk_flip_end(E_Desk *desk);
