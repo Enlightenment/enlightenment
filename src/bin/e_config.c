@@ -752,6 +752,7 @@ _e_config_edd_init(Eina_Bool old)
    E_CONFIG_VAL(D, T, xkb.only_label, INT);
    E_CONFIG_VAL(D, T, xkb.dont_touch_my_damn_keyboard, UCHAR);
    E_CONFIG_VAL(D, T, xkb.default_model, STR);
+   E_CONFIG_VAL(D, T, xkb.use_cache, UCHAR);
 
    E_CONFIG_VAL(D, T, keyboard.repeat_delay, INT);
    E_CONFIG_VAL(D, T, keyboard.repeat_rate, INT);

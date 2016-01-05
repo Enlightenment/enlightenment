@@ -668,10 +668,32 @@ _drm_read_pixels(E_Comp_Wl_Output *output, void *pixels)
      }
 }
 
+static void
+_e_mod_drm_keymap_set(struct xkb_context *ctx, struct xkb_keymap *map)
+{
+   struct xkb_rule_names names;
+
+   ctx = xkb_context_new(0);
+   EINA_SAFETY_ON_NULL_RETURN(ctx);
+
+   memset(&names, 0, sizeof(names));
+   names.rules = strdup("evdev");
+   names.model = strdup("pc105");
+   names.layout = strdup("us");
+
+   map = xkb_map_new_from_names(ctx, &names, 0);
+   EINA_SAFETY_ON_NULL_RETURN(map);
+
+   ecore_drm_device_keyboard_cached_context_set(ctx);
+   ecore_drm_device_keyboard_cached_keymap_set(map);
+}
+
 E_API void *
 e_modapi_init(E_Module *m)
 {
    int w = 0, h = 0;
+   struct xkb_context *ctx = NULL;
+   struct xkb_keymap *map = NULL;
 
    printf("LOAD WL_DRM MODULE\n");
 
@@ -681,6 +703,8 @@ e_modapi_init(E_Module *m)
    /*      fprintf(stderr, "Could not initialize ecore_drm"); */
    /*      return NULL; */
    /*   } */
+
+   _e_mod_drm_keymap_set(ctx, map);
 
    if (e_comp_config_get()->engine == E_COMP_ENGINE_GL)
      {
@@ -743,7 +767,7 @@ e_modapi_init(E_Module *m)
 
    /* FIXME: This is just for testing at the moment....
     * happens to jive with what drm does */
-   e_comp_wl_input_keymap_set(NULL, NULL, NULL);
+   e_comp_wl_input_keymap_set(NULL, NULL, NULL, ctx, map);
 
    activate_handler =
       ecore_event_handler_add(ECORE_DRM_EVENT_ACTIVATE,

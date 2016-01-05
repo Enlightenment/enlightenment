@@ -865,6 +865,7 @@ group "E_Config" struct {
     }
     value "xkb.only_label" int: 0;
     value "xkb.default_model" string: "default";
+    value "xkb.use_cache" uchar: 0;
     value "keyboard.repeat_delay" int: 400;
     value "keyboard.repeat_rate" int: 25;
     value "exe_always_single_instance" uchar: 1;
