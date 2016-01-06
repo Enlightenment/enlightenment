@@ -377,7 +377,7 @@ src/bin/e_comp_wl_input.c \
 src/bin/e_comp_wl.c
 endif
 
-src_bin_enlightenment_CPPFLAGS = $(E_CPPFLAGS) -DEFL_BETA_API_SUPPORT -DEFL_EO_API_SUPPORT -DE_LOGGING=1 @WAYLAND_CFLAGS@ @WAYLAND_EGL_CFLAGS@ @ECORE_X_CFLAGS@
+src_bin_enlightenment_CPPFLAGS = $(E_CPPFLAGS) -DE_LOGGING=1 @WAYLAND_CFLAGS@ @WAYLAND_EGL_CFLAGS@ @ECORE_X_CFLAGS@
 src_bin_enlightenment_SOURCES = \
 src/bin/e_main.c \
 $(enlightenment_src)

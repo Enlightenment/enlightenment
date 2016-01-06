@@ -10,7 +10,7 @@ iboxpkgdir = $(MDIR)/ibox/$(MODULE_ARCH)
 iboxpkg_LTLIBRARIES = src/modules/ibox/module.la
 
 src_modules_ibox_module_la_LIBADD = $(MOD_LIBS)
-src_modules_ibox_module_la_CPPFLAGS = -DEFL_BETA_API_SUPPORT -DEFL_EO_API_SUPPORT $(MOD_CPPFLAGS)
+src_modules_ibox_module_la_CPPFLAGS = $(MOD_CPPFLAGS)
 src_modules_ibox_module_la_LDFLAGS = $(MOD_LDFLAGS)
 src_modules_ibox_module_la_SOURCES = src/modules/ibox/e_mod_main.c \
 			 src/modules/ibox/e_mod_main.h \
