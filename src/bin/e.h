@@ -16,6 +16,10 @@
 #  include "config.h"
 # endif
 
+#ifdef HAVE_WAYLAND
+# define EFL_BETA_API_SUPPORT
+#endif
+
 # define USE_IPC
 # if 0
 #  define OBJECT_PARANOIA_CHECK
