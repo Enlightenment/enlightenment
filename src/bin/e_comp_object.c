@@ -2744,6 +2744,7 @@ e_comp_object_util_add(Evas_Object *obj, E_Comp_Object_Type type)
      }
    vis = evas_object_visible_get(obj);
    o = edje_object_add(e_comp->evas);
+   evas_object_data_set(o, "comp_object", (void*)1);
    e_comp_object_util_type_set(o, type);
 
    evas_object_geometry_get(obj, &x, &y, &w, &h);
