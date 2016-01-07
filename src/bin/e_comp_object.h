@@ -39,6 +39,7 @@ E_API void e_comp_object_zoomap_set(Evas_Object *obj, Eina_Bool enabled);
 E_API Eina_Bool e_comp_object_mirror_visibility_check(Evas_Object *obj);
 E_API Evas_Object *e_comp_object_client_add(E_Client *ec);
 E_API Evas_Object *e_comp_object_util_mirror_add(Evas_Object *obj);
+E_API void e_comp_object_util_type_set(Evas_Object *obj, E_Comp_Object_Type type);
 E_API Evas_Object *e_comp_object_util_add(Evas_Object *obj, E_Comp_Object_Type type);
 E_API void e_comp_object_frame_xy_adjust(Evas_Object *obj, int x, int y, int *ax, int *ay);
 E_API void e_comp_object_frame_xy_unadjust(Evas_Object *obj, int x, int y, int *ax, int *ay);

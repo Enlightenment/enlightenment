@@ -2575,22 +2575,23 @@ _e_comp_object_util_moveresize(void *data, Evas *e EINA_UNUSED, Evas_Object *obj
      e_comp_shape_queue();
 }
 
-E_API Evas_Object *
-e_comp_object_util_add(Evas_Object *obj, E_Comp_Object_Type type)
+E_API void
+e_comp_object_util_type_set(Evas_Object *obj, E_Comp_Object_Type type)
 {
-   Evas_Object *o, *z = NULL;
-   const char *name;
+   Evas_Object *content;
+   const char *name = NULL;
    Eina_List *l, *list = NULL;
    E_Comp_Config *conf = e_comp_config_get();
    Eina_Bool skip = EINA_FALSE, fast = EINA_FALSE, shadow = EINA_FALSE;
    E_Comp_Match *m;
+   const char *grp;
    char buf[1024];
    int ok = 0;
-   int x, y, w, h;
-   Eina_Bool vis;
+   int w, h;
 
-   EINA_SAFETY_ON_NULL_RETURN_VAL(obj, NULL);
+   EINA_SAFETY_ON_NULL_RETURN(obj);
 
+   edje_object_file_get(obj, NULL, &grp);
    switch (type)
      {
       case E_COMP_OBJECT_TYPE_MENU:
@@ -2609,15 +2610,21 @@ e_comp_object_util_add(Evas_Object *obj, E_Comp_Object_Type type)
         skip = conf->match.disable_objects;
         fast = conf->fast_objects;
      }
-   name = evas_object_name_get(obj);
-   vis = evas_object_visible_get(obj);
-   o = edje_object_add(e_comp->evas);
-   evas_object_data_set(o, "comp_object", (void*)1);
+   content = edje_object_part_swallow_get(obj, "e.swallow.content");
+   if (content)
+     {
+        if (eina_streq(evas_object_type_get(content), "e_zoomap"))
+          name = evas_object_name_get(e_zoomap_child_get(content));
+        else
+          name = evas_object_name_get(content);
+     }
    if (name && (!skip))
      skip = (!strncmp(name, "noshadow", 8));
    if (skip)
-     evas_object_data_set(o, "comp_object_skip", (void*)1);
-   else if (list)
+     evas_object_data_set(obj, "comp_object_skip", (void*)1);
+   else
+     evas_object_data_del(obj, "comp_object_skip");
+   if (list && (!skip))
      {
         EINA_LIST_FOREACH(list, l, m)
           {
@@ -2628,12 +2635,14 @@ e_comp_object_util_add(Evas_Object *obj, E_Comp_Object_Type type)
              if (fast)
                {
                   snprintf(buf, sizeof(buf), "e/comp/frame/%s/fast", m->shadow_style);
-                  ok = e_theme_edje_object_set(o, "base/theme/comp", buf);
+                  if (eina_streq(buf, grp)) return;
+                  ok = e_theme_edje_object_set(obj, "base/theme/comp", buf);
                }
              if (!ok)
                {
                   snprintf(buf, sizeof(buf), "e/comp/frame/%s", m->shadow_style);
-                  ok = e_theme_edje_object_set(o, "base/theme/comp", buf);
+                  if (eina_streq(buf, grp)) return;
+                  ok = e_theme_edje_object_set(obj, "base/theme/comp", buf);
                }
              if (ok)
                {
@@ -2647,32 +2656,95 @@ e_comp_object_util_add(Evas_Object *obj, E_Comp_Object_Type type)
    while (!ok)
      {
         if (skip)
-          ok = e_theme_edje_object_set(o, "base/theme/comp", "e/comp/frame/none");
+          {
+             if (eina_streq("e/comp/frame/none", grp)) return;
+             ok = e_theme_edje_object_set(obj, "base/theme/comp", "e/comp/frame/none");
+          }
         if (ok) break;
         if (conf->shadow_style)
           {
              if (fast)
                {
                   snprintf(buf, sizeof(buf), "e/comp/frame/%s/fast", conf->shadow_style);
-                  ok = e_theme_edje_object_set(o, "base/theme/comp", buf);
+                  if (eina_streq(buf, grp)) return;
+                  ok = e_theme_edje_object_set(obj, "base/theme/comp", buf);
                }
              if (!ok)
                {
                   snprintf(buf, sizeof(buf), "e/comp/frame/%s", conf->shadow_style);
-                  ok = e_theme_edje_object_set(o, "base/theme/comp", buf);
+                  if (eina_streq(buf, grp)) return;
+                  ok = e_theme_edje_object_set(obj, "base/theme/comp", buf);
                }
              if (ok) break;
           }
         if (fast)
-          ok = e_theme_edje_object_set(o, "base/theme/comp", "e/comp/frame/default/fast");
+          {
+             if (eina_streq("e/comp/frame/default/fast", grp)) return;
+             ok = e_theme_edje_object_set(obj, "base/theme/comp", "e/comp/frame/default/fast");
+          }
         if (!ok)
-          ok = e_theme_edje_object_set(o, "base/theme/comp", "e/comp/frame/default");
+          {
+             if (eina_streq("e/comp/frame/default", grp)) return;
+             ok = e_theme_edje_object_set(obj, "base/theme/comp", "e/comp/frame/default");
+          }
         break;
      }
    if (shadow && (e_util_strcmp(evas_object_type_get(obj), "edje") || (!edje_object_data_get(obj, "noshadow"))))
-     edje_object_signal_emit(o, "e,state,shadow,on", "e");
+     edje_object_signal_emit(obj, "e,state,shadow,on", "e");
    else
-     edje_object_signal_emit(o, "e,state,shadow,off", "e");
+     edje_object_signal_emit(obj, "e,state,shadow,off", "e");
+   if (!content) return;
+   {
+      Evas_Object *child;
+
+      if (eina_streq(evas_object_type_get(content), "e_zoomap"))
+        child = e_zoomap_child_get(content);
+      else
+        child = content;
+
+      if (list && (child == content))
+        {
+           evas_object_geometry_get(child, NULL, NULL, &w, &h);
+           content = e_zoomap_add(e_comp->evas);
+           e_zoomap_child_edje_solid_setup(content);
+           e_zoomap_smooth_set(content, conf->smooth_windows);
+           e_zoomap_child_set(content, child);
+           e_zoomap_child_resize(content, w, h);
+           evas_object_show(content);
+        }
+      else if (child != content)
+        {
+           e_zoomap_child_set(content, NULL);
+           evas_object_del(content);
+        }
+      edje_object_part_swallow(obj, "e.swallow.content", content);
+   }
+}
+
+E_API Evas_Object *
+e_comp_object_util_add(Evas_Object *obj, E_Comp_Object_Type type)
+{
+   Evas_Object *o, *z = NULL;
+   Eina_List *list = NULL;
+   E_Comp_Config *conf = e_comp_config_get();
+   int x, y, w, h;
+   Eina_Bool vis;
+
+   EINA_SAFETY_ON_NULL_RETURN_VAL(obj, NULL);
+   switch (type)
+     {
+      case E_COMP_OBJECT_TYPE_MENU:
+        list = conf->match.menus;
+        break;
+      case E_COMP_OBJECT_TYPE_POPUP:
+        list = conf->match.popups;
+        break;
+      default:
+        list = conf->match.objects;
+     }
+   vis = evas_object_visible_get(obj);
+   o = edje_object_add(e_comp->evas);
+   e_comp_object_util_type_set(o, type);
 
    evas_object_geometry_get(obj, &x, &y, &w, &h);
    evas_object_geometry_set(o, x, y, w, h);
