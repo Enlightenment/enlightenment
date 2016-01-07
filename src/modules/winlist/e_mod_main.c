@@ -155,11 +155,8 @@ _e_mod_action_winlist_cb_helper(E_Object *obj EINA_UNUSED, const char *params, i
      e_winlist_next();
    else if (direction == -1)
      e_winlist_prev();
-   if (direction) return;
-   
-   if (udlr == -1) return;
-   
-   e_winlist_direction_select(zone, udlr);
+   else
+     e_winlist_direction_select(zone, udlr);
 }
 
 static void
