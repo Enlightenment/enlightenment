@@ -2854,12 +2854,18 @@ e_comp_object_util_zone_get(Evas_Object *obj)
      zone = cw->ec->zone;
    if (!zone)
      {
-        int x, y;
+        int x, y, w, h;
 
         if (e_win_client_get(obj))
           return e_win_client_get(obj)->zone;
-        evas_object_geometry_get(obj, &x, &y, NULL, NULL);
+        evas_object_geometry_get(obj, &x, &y, &w, &h);
         zone = e_comp_zone_xy_get(x, y);
+        if (zone) return zone;
+        zone = e_comp_zone_xy_get(x + w, y + h);
+        if (zone) return zone;
+        zone = e_comp_zone_xy_get(x + w, y);
+        if (zone) return zone;
+        zone = e_comp_zone_xy_get(x, y + h);
      }
    return zone;
 }
