@@ -10,6 +10,7 @@ struct _E_Smart_Data
    Evas_Object *smart_obj, *child_obj;
    Evas_Coord   x, y, w, h;
    Evas_Coord   child_w, child_h;
+   unsigned int recurse;
    Eina_Bool    solid : 1;
    Eina_Bool    smooth : 1;
    Eina_Bool    always : 1;
@@ -190,6 +191,7 @@ static void
 _e_zoomap_smart_reconfigure(E_Smart_Data *sd)
 {
    if (!sd->child_obj) return;
+   sd->recurse++;
    if ((!sd->always) &&
        ((sd->w == sd->child_w) && (sd->h == sd->child_h)))
      {
@@ -206,7 +208,13 @@ _e_zoomap_smart_reconfigure(E_Smart_Data *sd)
         int r = 0, g = 0, b = 0, a = 0;
         
         evas_object_geometry_get(sd->child_obj, &cx, &cy, NULL, NULL);
-        evas_object_color_get(sd->child_obj, &r, &g, &b, &a);
+        if (sd->recurse != 1)
+          {
+             /* recursion: do move and exit to set map in outer call */
+             evas_object_move(sd->child_obj, sd->x, sd->y);
+             sd->recurse--;
+             return;
+          }
         if ((cx != sd->x) || (cy != sd->y))
           {
              evas_smart_objects_calculate(e);
@@ -215,6 +223,7 @@ _e_zoomap_smart_reconfigure(E_Smart_Data *sd)
              evas_smart_objects_calculate(e);
              evas_nochange_pop(e);
           }
+        evas_object_color_get(sd->child_obj, &r, &g, &b, &a);
         m = evas_map_new(4);
         evas_map_util_points_populate_from_geometry(m, sd->x, sd->y, 
                                                     sd->w, sd->h, 0);
@@ -233,6 +242,7 @@ _e_zoomap_smart_reconfigure(E_Smart_Data *sd)
         evas_object_map_enable_set(sd->child_obj, EINA_TRUE);
         evas_map_free(m);
      }
+   sd->recurse--;
 }
 
 static void
