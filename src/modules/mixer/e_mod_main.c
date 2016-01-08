@@ -401,6 +401,7 @@ _popup_new(Instance *inst)
    Emix_Sink *s;
    Eina_List *l;
    int num = 0;
+   Elm_Object_Item *default_it = NULL;
    unsigned int volume = 0, i;
 
    EINA_SAFETY_ON_NULL_RETURN(mixer_context->sink_default);
@@ -420,7 +421,7 @@ _popup_new(Instance *inst)
 
         it = elm_list_item_append(inst->list, s->name, NULL, NULL, _sink_selected_cb, s);
         if (mixer_context->sink_default == s)
-          elm_list_item_selected_set(it, EINA_TRUE);
+          default_it = it;
         num++;
      }
    elm_list_go(inst->list);
@@ -479,6 +480,9 @@ _popup_new(Instance *inst)
    e_gadcon_popup_show(inst->popup);
    e_object_data_set(E_OBJECT(inst->popup), inst);
    E_OBJECT_DEL_SET(inst->popup, _popup_del_cb);
+
+   if (default_it)
+     elm_list_item_selected_set(default_it, EINA_TRUE);
 }
 
 static void
