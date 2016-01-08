@@ -942,6 +942,9 @@ if test "x${have_wayland_only}" != "xyes"; then
     eina >= ${efl_version}
     ecore >= ${efl_version}
     ecore-ipc >= ${efl_version}
+    ecore-input >= ${efl_version}
+    ecore-drm >= ${efl_version}
+    evas >= ${efl_version}
   ])
 fi
 
