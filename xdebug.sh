@@ -63,6 +63,7 @@ for arg in $@; do
 		 echo "                                  r: raster's memory profiling (memprof_raster)"
 		 echo "                                  s: show syscalls (strace)"
 		 echo "                                  v: GUI memory check (valkyrie)"
+       echo "                                  u: run clouseau"
 		 echo "      --dbg-ecore-errors        = to cause ecore to abort on errors"
 		 echo "      --dbg-ecore-noclean       = to cause ecore to not unload modules"
 		 echo "      --dbg-redraw              = to cause redraw to happen slovly and obviously"
@@ -112,6 +113,7 @@ case $debugger in
    "r") debugcmd="memprof_raster --display=$DISPLAY" ;;
    "s") debugcmd="strace -F -o strace_log" ;;
    "v") debugcmd="valkyrie -display $DISPLAY" ;;
+   "u") debugcmd="clouseau_start" ;;
 esac
 
 
