@@ -546,7 +546,7 @@ _wkb_setup(struct weekeyboard *wkb)
    /* Set input panel surface */
    DBG("Setting up input panel");
 
-   wkb->win = ecore_evas_wayland_window_get2(wkb->ee);
+   wkb->win = ecore_evas_wayland2_window_get(wkb->ee);
    ecore_wl2_window_type_set(wkb->win, ECORE_WL2_WINDOW_TYPE_NONE);
 
    wkb->surface = ecore_wl2_window_surface_get(wkb->win);
