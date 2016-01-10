@@ -302,6 +302,10 @@ _alsa_cards_refresh(void)
         elem = snd_mixer_first_elem(mixer);
         for (; elem; elem = snd_mixer_elem_next(elem))
           {
+             if (strncmp(snd_mixer_selem_get_name(elem),
+                         "Master", sizeof("Master") - 1))
+                continue;
+
              //check if its a source or a sink
              if (snd_mixer_selem_has_capture_volume(elem))
                tmp_source = eina_list_append(tmp_source, elem);
