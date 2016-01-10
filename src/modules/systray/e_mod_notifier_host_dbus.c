@@ -346,7 +346,6 @@ static void
 notifier_item_add(const char *path, const char *bus_id, Context_Notifier_Host *ctx)
 {
    Eldbus_Proxy *proxy;
-   Notifier_Item_Cache *nic;
    Notifier_Item *item = calloc(1, sizeof(Notifier_Item));
    Eldbus_Signal_Handler *s;
    EINA_SAFETY_ON_NULL_RETURN(item);

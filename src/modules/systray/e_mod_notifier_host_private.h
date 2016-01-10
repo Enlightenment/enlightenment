@@ -14,13 +14,6 @@ typedef enum {
    STATUS_LAST
 } Tray_Status;
 
-typedef struct _Notifier_Data
-{
-   EINA_INLIST;
-   Notifier_Item *item;
-   Evas_Object *icon;
-} Notifier_Item_Icon;
-
 struct _Instance_Notifier_Host
 {
    EINA_INLIST;
@@ -63,9 +56,6 @@ struct _Notifier_Item
    int attnimgw, attnimgh;
    Eina_List *icons; //list of icons which gets updated
 };
-
-typedef void (*E_Notifier_Watcher_Item_Registered_Cb)(void *data, const char *service, const char *path);
-typedef void (*E_Notifier_Watcher_Item_Unregistered_Cb)(void *data, const char *service, const char *path);
 
 void _hack_get_me_the_correct_min_size(Edje_Object *obj);
 

@@ -2,11 +2,9 @@
 
 static const char _Name[] = "Systray";
 static const char _name[] = "systray";
-static const char _group_gadget[] = "e/modules/systray/main";
 static const char _sig_source[] = "e";
 
 E_Module *systray_mod = NULL;
-static Systray_Context *ctx = NULL;
 static char tmpbuf[4096]; /* general purpose buffer, just use immediately */
 
 #define SYSTRAY_MIN_W 16
@@ -272,7 +270,6 @@ e_modapi_shutdown(E_Module *m EINA_UNUSED)
 
    systray_notifier_host_shutdown();
 
-   free(ctx);
    return 1;
 }
 
@@ -281,108 +278,4 @@ e_modapi_save(E_Module *m EINA_UNUSED)
 {
    //e_config_domain_save(_name, ctx->conf_edd, ctx->config);
    return 1;
-}
-
-E_Gadcon_Orient
-systray_orient_get(const Instance *inst)
-{
-   EINA_SAFETY_ON_NULL_RETURN_VAL(inst, E_GADCON_ORIENT_HORIZ);
-   return inst->gcc->gadcon->orient;
-}
-
-const E_Gadcon *
-systray_gadcon_get(const Instance *inst)
-{
-   EINA_SAFETY_ON_NULL_RETURN_VAL(inst, NULL);
-   return inst->gcc->gadcon;
-}
-
-E_Gadcon_Client *
-systray_gadcon_client_get(const Instance *inst)
-{
-   EINA_SAFETY_ON_NULL_RETURN_VAL(inst, NULL);
-   return inst->gcc;
-}
-
-const char *
-systray_style_get(const Instance *inst)
-{
-   const char *style;
-
-   EINA_SAFETY_ON_NULL_RETURN_VAL(inst, NULL);
-   style = inst->gcc->style;
-   if (!style)
-     style = "default";
-   return style;
-}
-
-Evas *
-systray_evas_get(const Instance *inst)
-{
-   EINA_SAFETY_ON_NULL_RETURN_VAL(inst, NULL);
-   return inst->evas;
-}
-
-Evas_Object *
-systray_edje_get(const Instance *inst)
-{
-   EINA_SAFETY_ON_NULL_RETURN_VAL(inst, NULL);
-   return inst->ui.gadget;
-}
-
-const Evas_Object *
-systray_box_get(const Instance *inst)
-{
-   EINA_SAFETY_ON_NULL_RETURN_VAL(inst, NULL);
-   return edje_object_part_object_get(inst->ui.gadget, "box");
-}
-
-void
-systray_edje_box_append(const Instance *inst, Evas_Object *child)
-{
-   edje_object_part_box_append(inst->ui.gadget, "box", child);
-}
-
-void
-systray_edje_box_prepend(const Instance *inst, Evas_Object *child)
-{
-   edje_object_part_box_prepend(inst->ui.gadget, "box", child);
-}
-
-void
-systray_edje_box_remove(const Instance *inst, Evas_Object *child)
-{
-   edje_object_part_box_remove(inst->ui.gadget, "box", child);
-}
-
-static void
-_systray_size_apply_do(Instance *inst)
-{
-   Evas_Coord w, h;
-
-   edje_object_message_signal_process(inst->ui.gadget);
-   edje_object_size_min_calc(inst->ui.gadget, &w, &h);
-   e_gadcon_client_min_size_set(inst->gcc, MAX(w, SYSTRAY_MIN_W), MAX(h, SYSTRAY_MIN_H));
-}
-
-static void
-_systray_size_apply_delayed(void *data)
-{
-   Instance *inst = data;
-   _systray_size_apply_do(inst);
-   inst->job.size_apply = NULL;
-}
-
-void
-systray_size_updated(Instance *inst)
-{
-   EINA_SAFETY_ON_NULL_RETURN(inst);
-   if (inst->job.size_apply) return;
-   inst->job.size_apply = ecore_job_add(_systray_size_apply_delayed, inst);
-}
-
-EINTERN Systray_Context *
-systray_ctx_get(void)
-{
-   return ctx;
 }
