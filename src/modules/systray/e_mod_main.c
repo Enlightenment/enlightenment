@@ -70,7 +70,6 @@ _hack_get_me_the_correct_min_size(Edje_Object *obj)
    client = evas_object_data_get(obj, "gadcon");
    evas_object_size_hint_min_get(obj, &w, &h);
    e_gadcon_client_min_size_set(client, MAX(w, SYSTRAY_MIN_W), MAX(h, SYSTRAY_MIN_H));
-   printf("MIAU %d %d\n", w ,h);
 }
 
 

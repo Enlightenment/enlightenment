@@ -235,7 +235,6 @@ _visualize_add(Evas_Object *parent, Notifier_Item *item)
     evas_object_show(obj);
     evas_object_event_callback_add(obj, EVAS_CALLBACK_MOUSE_DOWN,
                                    _clicked_item_cb, item);
-    printf("Add vis %p\n", obj);
 
     return obj;
 }
@@ -243,7 +242,6 @@ _visualize_add(Evas_Object *parent, Notifier_Item *item)
 static void
 _visualize_update(Evas_Object *icon, Notifier_Item *item)
 {
-   printf("Update vis %p\n", icon);
    switch (item->status)
      {
       case STATUS_ACTIVE:
@@ -362,8 +360,6 @@ systray_notifier_item_new(Notifier_Item *item)
     Evas_Object *traybar;
     Eina_List *node;
 
-    printf("Item new %p\n", item);
-
     EINA_LIST_FOREACH(traybars, node, traybar)
       {
          Evas_Object *icon;
@@ -388,5 +384,4 @@ _systray_size_apply_do(Edje_Object *obj)
    edje_object_size_min_calc(obj, &w, &h);
    evas_object_size_hint_min_set(obj, w, h);
    _hack_get_me_the_correct_min_size(obj);
-   printf("New min size %d %d\n", w, h);
 }
