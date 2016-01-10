@@ -5,7 +5,7 @@ static const char _name[] = "systray";
 static const char _group_gadget[] = "e/modules/systray/main";
 static const char _sig_source[] = "e";
 
-static E_Module *systray_mod = NULL;
+E_Module *systray_mod = NULL;
 static Systray_Context *ctx = NULL;
 static char tmpbuf[4096]; /* general purpose buffer, just use immediately */
 
@@ -49,7 +49,7 @@ _systray_menu_new(Instance *inst, Evas_Event_Mouse_Down *ev)
    e_gadcon_canvas_zone_geometry_get(inst->gcc->gadcon, &x, &y, NULL, NULL);
    e_menu_activate_mouse(m, zone, x + ev->output.x, y + ev->output.y,
                          1, 1, E_MENU_POP_DIRECTION_AUTO, ev->timestamp);
-   evas_event_feed_mouse_up(inst->gcc->gadcon->evas, ev->button,
+   evas_event_feed_mouse_up(e_comp->evas, ev->button,
                             EVAS_BUTTON_NONE, ev->timestamp, NULL);
 }
 
@@ -63,116 +63,49 @@ _systray_cb_mouse_down(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj EINA
      _systray_menu_new(inst, ev);
 }
 
-static void
-_systray_theme(Evas_Object *o, const char *shelf_style, const char *gc_style)
+void
+_hack_get_me_the_correct_min_size(Edje_Object *obj)
 {
-   const char base_theme[] = "base/theme/modules/systray";
-   const char *path = _systray_theme_path();
-   char buf[128], *p;
-   size_t len, avail;
+   Evas_Coord w, h;
+   E_Gadcon_Client *client;
 
-   len = eina_strlcpy(buf, _group_gadget, sizeof(buf));
-   if (len >= sizeof(buf))
-     goto fallback;
-   p = buf + len;
-   *p = '/';
-   p++;
-   avail = sizeof(buf) - len - 2;
-
-   if (shelf_style && gc_style)
-     {
-        size_t r;
-        r = snprintf(p, avail, "%s/%s", shelf_style, gc_style);
-        if (r < avail && e_theme_edje_object_set(o, base_theme, buf))
-          return;
-     }
-
-   if (shelf_style)
-     {
-        size_t r;
-        r = eina_strlcpy(p, shelf_style, avail);
-        if (r < avail && e_theme_edje_object_set(o, base_theme, buf))
-          return;
-     }
-
-   if (gc_style)
-     {
-        size_t r;
-        r = eina_strlcpy(p, gc_style, avail);
-        if (r < avail && e_theme_edje_object_set(o, base_theme, buf))
-          return;
-     }
-
-   if (e_theme_edje_object_set(o, base_theme, _group_gadget))
-     return;
-
-   if (shelf_style && gc_style)
-     {
-        size_t r;
-        r = snprintf(p, avail, "%s/%s", shelf_style, gc_style);
-        if (r < avail && edje_object_file_set(o, path, buf))
-          return;
-     }
-
-   if (shelf_style)
-     {
-        size_t r;
-        r = eina_strlcpy(p, shelf_style, avail);
-        if (r < avail && edje_object_file_set(o, path, buf))
-          return;
-     }
-
-   if (gc_style)
-     {
-        size_t r;
-        r = eina_strlcpy(p, gc_style, avail);
-        if (r < avail && edje_object_file_set(o, path, buf))
-          return;
-     }
-
-fallback:
-   edje_object_file_set(o, path, _group_gadget);
+   client = evas_object_data_get(obj, "gadcon");
+   evas_object_size_hint_min_get(obj, &w, &h);
+   e_gadcon_client_min_size_set(client, MAX(w, SYSTRAY_MIN_W), MAX(h, SYSTRAY_MIN_H));
+   printf("MIAU %d %d\n", w ,h);
 }
+
 
 static E_Gadcon_Client *
 _gc_init(E_Gadcon *gc, const char *name, const char *id, const char *style)
 {
    Instance *inst;
-
+   Evas_Object *content;
    // fprintf(stderr, "SYSTRAY: init name=%s, id=%s, style=%s\n", name, id, style);
-
-   if (!systray_mod)
-     return NULL;
 
    inst = E_NEW(Instance, 1);
    if (!inst)
      return NULL;
-   inst->evas = gc->evas;
-   if (!e_comp)
-     {
-        E_FREE(inst);
-        return NULL;
-     }
 
-   inst->ui.gadget = edje_object_add(inst->evas);
+   inst->ui.gadget = content = systray_notifier_host_new(gc->shelf ? gc->shelf->style : NULL, style);
 
-   _systray_theme(inst->ui.gadget, gc->shelf ? gc->shelf->style : NULL, style);
+   inst->gcc = e_gadcon_client_new(gc, name, id, style, content);
 
-   inst->gcc = e_gadcon_client_new(gc, name, id, style, inst->ui.gadget);
    if (!inst->gcc)
      {
         evas_object_del(inst->ui.gadget);
         E_FREE(inst);
         return NULL;
      }
+
+   evas_object_data_set(content, "gadcon", inst->gcc);
+
    e_gadcon_client_min_size_set(inst->gcc, SYSTRAY_MIN_W, SYSTRAY_MIN_H);
 
    inst->gcc->data = inst;
 
    evas_object_event_callback_add(inst->ui.gadget, EVAS_CALLBACK_MOUSE_DOWN,
                                   _systray_cb_mouse_down, inst);
-
-   inst->notifier = systray_notifier_host_new(inst, inst->gcc->gadcon);
 
    return inst->gcc;
 }
@@ -187,13 +120,7 @@ _gc_shutdown(E_Gadcon_Client *gcc)
 
    if (!inst)
      return;
-
-   systray_notifier_host_free(inst->notifier);
-
    evas_object_del(inst->ui.gadget);
-
-   if (instance == inst)
-     instance = NULL;
 
    if (inst->job.size_apply)
      ecore_job_del(inst->job.size_apply);
@@ -334,7 +261,7 @@ e_modapi_init(E_Module *m)
         printf("Starting watcher failed\n");
      }
 
-   return ctx;
+   return m;
 }
 
 E_API int
@@ -345,9 +272,6 @@ e_modapi_shutdown(E_Module *m EINA_UNUSED)
 
    systray_notifier_host_shutdown();
 
-   E_CONFIG_DD_FREE(ctx->conf_edd);
-   E_CONFIG_DD_FREE(ctx->notifier_item_edd);
-   free(ctx->config);
    free(ctx);
    return 1;
 }
@@ -355,7 +279,7 @@ e_modapi_shutdown(E_Module *m EINA_UNUSED)
 E_API int
 e_modapi_save(E_Module *m EINA_UNUSED)
 {
-   e_config_domain_save(_name, ctx->conf_edd, ctx->config);
+   //e_config_domain_save(_name, ctx->conf_edd, ctx->config);
    return 1;
 }
 
@@ -429,13 +353,6 @@ void
 systray_edje_box_remove(const Instance *inst, Evas_Object *child)
 {
    edje_object_part_box_remove(inst->ui.gadget, "box", child);
-}
-
-Ecore_X_Window
-systray_root_get(const Instance *inst)
-{
-   EINA_SAFETY_ON_NULL_RETURN_VAL(inst, 0);
-   return e_comp->root;
 }
 
 static void

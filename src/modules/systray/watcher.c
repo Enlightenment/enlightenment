@@ -48,8 +48,6 @@ register_item_cb(const Eldbus_Service_Interface *s_iface, const Eldbus_Message *
    char buf[1024];
    Eina_Bool stupid;
 
-   printf("Item registered\n");
-
    if (!eldbus_message_arguments_get(msg, "s", &service))
      return NULL;
    svc = service;
@@ -66,16 +64,18 @@ register_item_cb(const Eldbus_Service_Interface *s_iface, const Eldbus_Message *
      }
 
    items = eina_list_append(items, service);
-   eldbus_service_signal_emit(s_iface, ITEM_REGISTERED, svc);
+   eldbus_service_signal_emit(s_iface, ITEM_REGISTERED, service);
    eldbus_name_owner_changed_callback_add(conn, stupid ? eldbus_message_sender_get(msg) : svc,
                                          item_name_monitor_cb, service,
                                          EINA_FALSE);
+
+   printf("Item registered %s\n", service);
 
    return eldbus_message_method_return_new(msg);
 }
 
 static void
-host_name_monitor_cb(void *data EINA_UNUSED, const char *bus, const char *old_id EINA_UNUSED, const char *new_id)
+host_name_monitor_cb(void *data, const char *bus, const char *old_id EINA_UNUSED, const char *new_id)
 {
    if (strcmp(new_id, ""))
      return;
@@ -84,6 +84,8 @@ host_name_monitor_cb(void *data EINA_UNUSED, const char *bus, const char *old_id
 
    eldbus_service_signal_emit(iface, HOST_UNREGISTERED);
    eldbus_name_owner_changed_callback_del(conn, bus, host_name_monitor_cb, NULL);
+   hosts = eina_list_remove(hosts, data);
+   eina_stringshare_del(data);
 }
 
 static Eldbus_Message *
@@ -106,7 +108,7 @@ register_host_cb(const Eldbus_Service_Interface *s_iface, const Eldbus_Message *
    hosts = eina_list_append(hosts, service);
    eldbus_service_signal_emit(s_iface, HOST_REGISTERED);
    eldbus_name_owner_changed_callback_add(conn, eldbus_message_sender_get(msg),
-                                         host_name_monitor_cb, NULL, EINA_FALSE);
+                                         host_name_monitor_cb, service, EINA_FALSE);
    return eldbus_message_method_return_new(msg);
 }
 
@@ -130,7 +132,7 @@ properties_get(const Eldbus_Service_Interface *s_iface EINA_UNUSED, const char *
         eldbus_message_iter_container_close(iter, array);
      }
    else if (!strcmp(propname, "IsStatusNotifierHostRegistered"))
-     eldbus_message_iter_arguments_append(iter, "b", EINA_TRUE);
+       eldbus_message_iter_arguments_append(iter, "b", hosts ? EINA_TRUE : EINA_FALSE);
    return EINA_TRUE;
 }
 

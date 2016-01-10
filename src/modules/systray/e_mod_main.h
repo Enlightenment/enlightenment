@@ -59,22 +59,14 @@ E_Gadcon_Client *systray_gadcon_client_get(const Instance *inst);
 const char *systray_style_get(const Instance *inst);
 void systray_size_updated(Instance *inst);
 Evas *systray_evas_get(const Instance *inst);
-Evas_Object *systray_edje_get(const Instance *inst);
-const Evas_Object *systray_box_get(const Instance *inst);
-void systray_edje_box_append(const Instance *inst, Evas_Object *child);
-void systray_edje_box_remove(const Instance *inst, Evas_Object *child);
-void systray_edje_box_prepend(const Instance *inst, Evas_Object *child);
-
-Ecore_X_Window systray_root_get(const Instance *inst);
-
-Instance_Notifier_Host *systray_notifier_host_new(Instance *inst, E_Gadcon *gadcon);
-void systray_notifier_host_free(Instance_Notifier_Host *notifier);
 void systray_notifier_host_init(void);
 void systray_notifier_host_shutdown(void);
 
+Evas_Object* systray_notifier_host_new(const char *shelfstyle, const char *style);
+
 
 EINTERN Systray_Context *systray_ctx_get(void);
-extern Instance *instance;
+extern E_Module *systray_mod;
 /**
  * @addtogroup Optional_Gadgets
  * @{

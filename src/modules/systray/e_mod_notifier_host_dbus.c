@@ -375,11 +375,8 @@ notifier_item_add(const char *path, const char *bus_id, Context_Notifier_Host *c
    item->signals = eina_list_append(item->signals, s);
    s = eldbus_proxy_signal_handler_add(proxy, "NewTitle", new_title_cb, item);
    item->signals = eina_list_append(item->signals, s);
-   if (eina_hash_find(systray_ctx_get()->config->items, bus_id)) return;
-   nic = malloc(sizeof(Notifier_Item_Cache));
-   nic->path = eina_stringshare_ref(path);
-   eina_hash_add(systray_ctx_get()->config->items, bus_id, nic);
-   e_config_save_queue();
+
+   systray_notifier_item_new(item);
 }
 
 static void
@@ -454,37 +451,16 @@ notifier_items_get_cb(void *data, const Eldbus_Message *msg, Eldbus_Pending *pen
      }
 }
 
-static void
-item_registered_local_cb(void *data, const char *bus, const char *path)
+static Eina_Bool
+_delayed_start(void *data)
 {
    Context_Notifier_Host *ctx = data;
-   notifier_item_add(eina_stringshare_add(path), eina_stringshare_add(bus), ctx);
-}
-
-static void
-item_unregistered_local_cb(void *data, const char *bus, const char *path)
-{
-   Context_Notifier_Host *ctx = data;
-   Notifier_Item *item;
-   Eina_Stringshare *s, *p;
-
-   s = eina_stringshare_add(bus);
-   p = eina_stringshare_add(path);
-   item = notifier_item_find(p, s, ctx);
-   if (item)
-     systray_notifier_item_free(item);
-   eina_stringshare_del(s);
-   eina_stringshare_del(p);
-}
-
-void
-systray_notifier_dbus_init(Context_Notifier_Host *ctx)
-{
    Eldbus_Object *obj;
 
-   eldbus_init();
+   ctx->conn = eldbus_connection_get(ELDBUS_CONNECTION_TYPE_SESSION);
 
    obj = eldbus_object_get(ctx->conn, WATCHER_BUS, WATCHER_PATH);
+
    ctx->watcher = eldbus_proxy_get(obj, WATCHER_IFACE);
    eldbus_proxy_call(ctx->watcher, "RegisterStatusNotifierHost", NULL, NULL, -1, "s",
                     HOST_REGISTRER);
@@ -494,6 +470,16 @@ systray_notifier_dbus_init(Context_Notifier_Host *ctx)
                                   notifier_item_add_cb, ctx);
    eldbus_proxy_signal_handler_add(ctx->watcher, "StatusNotifierItemUnregistered",
                                   notifier_item_del_cb, ctx);
+
+   return ECORE_CALLBACK_DONE;
+}
+
+void
+systray_notifier_dbus_init(Context_Notifier_Host *ctx)
+{
+   eldbus_init();
+
+   ecore_timer_add(1.0, _delayed_start, ctx);
 }
 
 void systray_notifier_dbus_shutdown(Context_Notifier_Host *ctx)
@@ -506,9 +492,6 @@ void systray_notifier_dbus_shutdown(Context_Notifier_Host *ctx)
    EINA_INLIST_FOREACH_SAFE(ctx->item_list, safe_list, item)
      systray_notifier_item_free(item);
 
-   if (!ctx->watcher)
-     systray_notifier_dbus_watcher_stop();
-   else
      {
         Eldbus_Object *obj;
         obj = eldbus_proxy_object_get(ctx->watcher);
@@ -516,6 +499,7 @@ void systray_notifier_dbus_shutdown(Context_Notifier_Host *ctx)
         eldbus_object_unref(obj);
         ctx->watcher = NULL;
      }
+
    eldbus_connection_unref(ctx->conn);
    eldbus_shutdown();
 }

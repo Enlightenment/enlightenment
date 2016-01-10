@@ -26,7 +26,7 @@ struct _Instance_Notifier_Host
    EINA_INLIST;
    Instance *inst;
    const Evas_Object *box;
-   const Evas_Object *edje;
+   const Edje_Object *edje;
    Eina_Inlist *ii_list;
    E_Gadcon *gadcon;
 };
@@ -61,17 +61,19 @@ struct _Notifier_Item
    int imgw, imgh;
    uint32_t *attnimgdata;
    int attnimgw, attnimgh;
+   Eina_List *icons; //list of icons which gets updated
 };
 
 typedef void (*E_Notifier_Watcher_Item_Registered_Cb)(void *data, const char *service, const char *path);
 typedef void (*E_Notifier_Watcher_Item_Unregistered_Cb)(void *data, const char *service, const char *path);
 
+void _hack_get_me_the_correct_min_size(Edje_Object *obj);
+
 void systray_notifier_update_menu(void *data, E_DBusMenu_Item *new_root_item);
 void systray_notifier_item_update(Notifier_Item *item);
 void systray_notifier_item_free(Notifier_Item *item);
+void systray_notifier_item_new(Notifier_Item *item);
 
 void systray_notifier_dbus_init(Context_Notifier_Host *ctx);
 void systray_notifier_dbus_shutdown(Context_Notifier_Host *ctx);
 
-void systray_notifier_dbus_watcher_start(Eldbus_Connection *connection, E_Notifier_Watcher_Item_Registered_Cb registered, E_Notifier_Watcher_Item_Unregistered_Cb unregistered, const void *data);
-void systray_notifier_dbus_watcher_stop(void);
