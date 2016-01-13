@@ -4133,16 +4133,7 @@ e_comp_object_util_autoclose(Evas_Object *obj, E_Comp_Object_Autoclose_Cb del_cb
      {
         if (e_comp->autoclose.obj == obj) return;
         evas_object_event_callback_del_full(e_comp->autoclose.obj, EVAS_CALLBACK_DEL, _e_comp_object_autoclose_del, e_comp);
-        e_comp->autoclose.obj = obj;
-        e_comp->autoclose.del_cb = del_cb;
-        e_comp->autoclose.key_cb = cb;
-        e_comp->autoclose.data = (void*)data;
-        if (evas_object_visible_get(obj))
-          _e_comp_object_autoclose_setup(obj);
-        else
-          evas_object_event_callback_add(obj, EVAS_CALLBACK_SHOW, _e_comp_object_autoclose_show, e_comp);
-        evas_object_event_callback_add(obj, EVAS_CALLBACK_DEL, _e_comp_object_autoclose_del, e_comp);
-        return;
+        _e_comp_object_autoclose_cleanup(0);
      }
    e_comp->autoclose.obj = obj;
    e_comp->autoclose.del_cb = del_cb;
