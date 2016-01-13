@@ -16,6 +16,15 @@
 #include <xcb/shape.h>
 #include <X11/keysym.h>
 
+#ifdef HAVE_WAYLAND
+# ifdef HAVE_WL_DRM
+#  include <Ecore_Input.h>
+#  include <Ecore_Drm.h>
+#  include <Evas.h>
+#  include <Evas_Engine_Buffer.h>
+# endif
+#endif
+
 #define WINDOW_WIDTH   320
 #define WINDOW_HEIGHT  240
 
@@ -24,6 +33,7 @@
 #endif
 
 /* local function prototypes */
+#ifndef HAVE_WAYLAND
 static int           _e_alert_connect(void);
 static void          _e_alert_create(void);
 static void          _e_alert_display(void);
@@ -51,14 +61,433 @@ static xcb_window_t btn1 = 0;
 static xcb_window_t btn2 = 0;
 static xcb_font_t font = 0;
 static xcb_gcontext_t gc = 0;
+static int fa = 0, fw = 0;
+#endif
+
 static int sw = 0, sh = 0;
-static int fa = 0, fh = 0, fw = 0;
+static int fh = 0;
 static const char *title = NULL, *str1 = NULL, *str2 = NULL;
 static int ret = 0, sig = 0;
 static pid_t pid;
 static Eina_Bool tainted = EINA_TRUE;
 static const char *backtrace_str = NULL;
 static int exit_gdb = 0;
+
+struct
+{
+   int         signal;
+   const char *name;
+} signal_name[5] = {
+   { SIGSEGV, "SEGV" },
+   { SIGILL, "SIGILL" },
+   { SIGFPE, "SIGFPE" },
+   { SIGBUS, "SIGBUS" },
+   { SIGABRT, "SIGABRT" }
+};
+
+#ifdef HAVE_WAYLAND
+# ifdef HAVE_WL_DRM
+static Ecore_Drm_Device *dev = NULL;
+static Ecore_Drm_Fb *buffer;
+static Evas *canvas = NULL;
+
+static Eina_Bool
+_e_alert_drm_cb_key_down(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
+{
+   Ecore_Event_Key *ev;
+
+   ev = event;
+   if (!strcmp(ev->key, "F12"))
+     {
+        ret = 2;
+        ecore_main_loop_quit();
+     }
+   else if (!strcmp(ev->key, "F1"))
+     {
+        ret = 1;
+        ecore_main_loop_quit();
+     }
+
+   return ECORE_CALLBACK_RENEW;
+}
+
+static int
+_e_alert_drm_connect(void)
+{
+   fprintf(stderr, "E_Alert Drm Connect\n");
+
+   if (!evas_init())
+     {
+        printf("\tCannot init evas\n");
+        return 0;
+     }
+
+   if (!ecore_drm_init())
+     {
+        printf("\tCannot init ecore_drm\n");
+        return 0;
+     }
+
+   dev = ecore_drm_device_find(NULL, NULL);
+   if (!dev)
+     {
+        printf("\tCannot find drm device\n");
+        return 0;
+     }
+
+   if (!ecore_drm_launcher_connect(dev))
+     {
+        printf("\tCannot connect to drm device\n");
+        return 0;
+     }
+
+   if (!ecore_drm_device_open(dev))
+     {
+        printf("\tCannot open drm device\n");
+        return 0;
+     }
+
+   if (!ecore_drm_outputs_create(dev))
+     {
+        printf("\tCannot create drm outputs\n");
+        return 0;
+     }
+
+   if (!ecore_drm_inputs_create(dev))
+     {
+        printf("\tCannot create drm inputs\n");
+        return 0;
+     }
+
+   ecore_drm_outputs_geometry_get(dev, NULL, NULL, &sw, &sh);
+   fprintf(stderr, "\tOutput Size: %d %d\n", sw, sh);
+
+   ecore_event_handler_add(ECORE_EVENT_KEY_DOWN,
+                           _e_alert_drm_cb_key_down, NULL);
+
+   return 1;
+}
+
+static void
+_e_alert_drm_draw_outline(void)
+{
+   Evas_Object *o;
+   int wx = 0, wy = 0;
+
+   wx = ((sw - WINDOW_WIDTH) / 2);
+   wy = ((sh - WINDOW_HEIGHT) / 2);
+
+   /* create background */
+   o = evas_object_rectangle_add(canvas);
+   evas_object_move(o, wx, wy);
+   evas_object_resize(o, WINDOW_WIDTH, WINDOW_HEIGHT);
+   evas_object_show(o);
+
+   /* create outline */
+   o = evas_object_rectangle_add(canvas);
+   evas_object_color_set(o, 0, 0, 0, 255);
+   evas_object_move(o, wx, wy);
+   evas_object_resize(o, WINDOW_WIDTH, WINDOW_HEIGHT);
+   evas_object_show(o);
+
+   /* create white inside */
+   o = evas_object_rectangle_add(canvas);
+   evas_object_move(o, wx + 1, wy + 1);
+   evas_object_resize(o, WINDOW_WIDTH - 2, WINDOW_HEIGHT - 2);
+   evas_object_show(o);
+}
+
+static void
+_e_alert_drm_draw_title_outline(void)
+{
+   Evas_Object *o;
+   int wx = 0, wy = 0;
+
+   wx = ((sw - WINDOW_WIDTH) / 2);
+   wy = ((sh - WINDOW_HEIGHT) / 2);
+
+   /* create title outline */
+   o = evas_object_rectangle_add(canvas);
+   evas_object_color_set(o, 0, 0, 0, 255);
+   evas_object_move(o, wx + 2, wy + 2);
+   evas_object_resize(o, WINDOW_WIDTH - 4, 20);
+   evas_object_show(o);
+
+   /* create white inside */
+   o = evas_object_rectangle_add(canvas);
+   evas_object_move(o, wx + 3, wy + 3);
+   evas_object_resize(o, WINDOW_WIDTH - 6, 18);
+   evas_object_show(o);
+}
+
+static void
+_e_alert_drm_draw_title(void)
+{
+   Evas_Object *o;
+   Evas_Textblock_Style *style;
+   int wx = 0, wy = 0;
+
+   wx = ((sw - WINDOW_WIDTH) / 2);
+   wy = ((sh - WINDOW_HEIGHT) / 2);
+
+   style = evas_textblock_style_new();
+   evas_textblock_style_set(style,
+                            "DEFAULT='font=Fixed font_size=8 color=#000000'"
+                            "newline='br' align=center valign=center");
+
+   title = "<align=center>Enlightenment Error</align>";
+
+   o = evas_object_textblock_add(canvas);
+   evas_object_textblock_style_set(o, style);
+   evas_object_textblock_text_markup_set(o, title);
+   evas_object_color_set(o, 0, 0, 0, 255);
+   evas_object_move(o, wx + 4, wy + 4);
+   evas_object_resize(o, WINDOW_WIDTH - 8, 18);
+   evas_object_show(o);
+
+   evas_textblock_style_free(style);
+}
+
+static void
+_e_alert_drm_draw_text(void)
+{
+   Evas_Object *o;
+   Evas_Textblock_Style *style;
+   char warn[4096], msg[4096];
+   unsigned int i = 0;
+   int wx = 0, wy = 0;
+
+   wx = ((sw - WINDOW_WIDTH) / 2);
+   wy = ((sh - WINDOW_HEIGHT) / 2);
+
+   strcpy(warn, "");
+
+   for (i = 0; i < sizeof(signal_name) / sizeof(signal_name[0]); ++i)
+     if (signal_name[i].signal == sig)
+       snprintf(warn, sizeof(warn),
+                "This is very bad. Enlightenment %s'd.<br/><br/>",
+                signal_name[i].name);
+
+   if (!tainted)
+     {
+        if (exit_gdb)
+          {
+             snprintf(msg, sizeof(msg),
+                      "This is not meant to happen and is likely a sign of <br/>"
+                      "a bug in Enlightenment or the libraries it relies <br/>"
+                      "on. We were not able to generate a backtrace, check <br/>"
+                      "if your 'sysactions.conf' has an 'gdb' action line.<br/>"
+                      "<br/>"
+                      "Please compile latest Git E and EFL with<br/>"
+                      "-g and -ggdb3 in your CFLAGS.<br/>");
+          }
+        else if (backtrace_str)
+          {
+             snprintf(msg, sizeof(msg),
+                      "This is not meant to happen and is likely a sign of <br/>"
+                      "a bug in Enlightenment or the libraries it relies <br/>"
+                      "on. You will find an backtrace of E (%d) in :<br/>"
+                      "'%s'<br/>"
+                      "Before reporting issue, compile latest E and EFL<br/>"
+                      "from Git with '-g -ggdb3' in your CFLAGS.<br/>"
+                      "You can then report this crash on :<br/>"
+                      "https://phab.enlightenment.org/maniphest/.<br/>",
+                      pid, backtrace_str);
+          }
+        else
+          {
+             snprintf(msg, sizeof(msg),
+                      "This is not meant to happen and is likely a sign of <br/>"
+                      "a bug in Enlightenment or the libraries it relies <br/>"
+                      "on. You can gdb attach to this process (%d) now <br/>"
+                      "to try debug it or you could logout, or just hit <br/>"
+                      "recover to try and get your desktop back the way <br/>"
+                      "it was.<br/>"
+                      "<br/>"
+                      "Please compile latest Git E and EFL with<br/>"
+                      "-g and -ggdb3 in your CFLAGS.<br/>", pid);
+          }
+     }
+   else
+     {
+        snprintf(msg, sizeof(msg),
+                 "This is not meant to happen and is likely<br/>"
+                 "a sign of a bug, but you are using<br/>"
+                 "unsupported modules; before reporting this<br/>"
+                 "issue, please unload them and try to<br/>"
+                 "see if the bug is still there.<br/>"
+                 "Also update to latest Git<br/>"
+                 "and be sure to compile E and EFL with<br/>"
+                 "-g and -ggdb3 in your CFLAGS");
+     }
+
+   style = evas_textblock_style_new();
+   evas_textblock_style_set(style,
+                            "DEFAULT='font=Fixed font_size=8 color=#000000'"
+                            "newline='br' align=center valign=center wrap=word");
+
+   strcat(warn, msg);
+
+   o = evas_object_textblock_add(canvas);
+   evas_object_textblock_style_set(o, style);
+   evas_object_textblock_text_markup_set(o, warn);
+   evas_object_color_set(o, 0, 0, 0, 255);
+   evas_object_move(o, wx + 4, wy + 28);
+   evas_object_resize(o, WINDOW_WIDTH - 4, WINDOW_HEIGHT - 30);
+   evas_object_show(o);
+
+   evas_textblock_style_free(style);
+}
+
+static void
+_e_alert_drm_draw_button_outlines(void)
+{
+   Evas_Object *o;
+   int wx = 0, wy = 0;
+   int x = 0, w = 0;
+   int tx, ty, tw, th;
+
+   wx = ((sw - WINDOW_WIDTH) / 2);
+   wy = ((sh - WINDOW_HEIGHT) / 2);
+
+   x =  wx + 20;
+   w = (WINDOW_WIDTH / 2) - 40;
+
+   o = evas_object_rectangle_add(canvas);
+   evas_object_color_set(o, 0, 255, 0, 255);
+   evas_object_move(o, x, wy + WINDOW_HEIGHT - 20 - (fh + 20));
+   evas_object_resize(o, w, (fh + 20));
+   evas_object_show(o);
+
+   evas_object_geometry_get(o, &tx, &ty, &tw, &th);
+
+   o = evas_object_text_add(canvas);
+   evas_object_text_font_set(o, "Fixed", 8);
+   evas_object_text_text_set(o, str1);
+   evas_object_color_set(o, 0, 0, 0, 255);
+   evas_object_move(o, tx, ty);
+   evas_object_resize(o, tw, th);
+   evas_object_show(o);
+
+   x = wx + ((WINDOW_WIDTH / 2) + 20);
+   o = evas_object_rectangle_add(canvas);
+   evas_object_color_set(o, 255, 0, 0, 255);
+   evas_object_move(o, x, wy + WINDOW_HEIGHT - 20 - (fh + 20));
+   evas_object_resize(o, w, (fh + 20));
+   evas_object_show(o);
+
+   evas_object_geometry_get(o, &tx, &ty, &tw, &th);
+
+   o = evas_object_text_add(canvas);
+   evas_object_text_font_set(o, "Fixed", 8);
+   evas_object_text_text_set(o, str2);
+   evas_object_color_set(o, 0, 0, 0, 255);
+   evas_object_move(o, tx, ty);
+   evas_object_resize(o, tw, th);
+   evas_object_show(o);
+}
+
+static void
+_e_alert_drm_create(void)
+{
+   int method = 0;
+
+   fprintf(stderr, "E_Alert Drm Create\n");
+
+   fh = 13;
+
+   if (!ecore_drm_device_software_setup(dev))
+     {
+        printf("\tFailed to setup software mode\n");
+        return;
+     }
+
+   buffer = ecore_drm_fb_create(dev, sw, sh);
+   memset(buffer->mmap, 0, buffer->size);
+
+   method = evas_render_method_lookup("buffer");
+   if (method <= 0)
+     {
+        fprintf(stderr, "\tCould not get evas render method\n");
+        return;
+     }
+
+   canvas = evas_new();
+   if (!canvas)
+     {
+        fprintf(stderr, "\tFailed to create new canvas\n");
+        return;
+     }
+
+   evas_output_method_set(canvas, method);
+   evas_output_size_set(canvas, sw, sh);
+   evas_output_viewport_set(canvas, 0, 0, sw, sh);
+
+   Evas_Engine_Info_Buffer *einfo;
+   einfo = (Evas_Engine_Info_Buffer *)evas_engine_info_get(canvas);
+   if (!einfo)
+     {
+        printf("\tFailed to get evas engine info: %m\n");
+        evas_free(canvas);
+        return;
+     }
+
+   einfo->info.depth_type = EVAS_ENGINE_BUFFER_DEPTH_ARGB32;
+   einfo->info.dest_buffer = buffer->mmap;
+   einfo->info.dest_buffer_row_bytes = (sw * sizeof(int));
+   einfo->info.use_color_key = 0;
+   einfo->info.alpha_threshold = 0;
+   einfo->info.func.new_update_region = NULL;
+   einfo->info.func.free_update_region = NULL;
+   evas_engine_info_set(canvas, (Evas_Engine_Info *)einfo);
+
+   _e_alert_drm_draw_outline();
+   _e_alert_drm_draw_title_outline();
+   _e_alert_drm_draw_title();
+   _e_alert_drm_draw_text();
+   _e_alert_drm_draw_button_outlines();
+}
+
+static void
+_e_alert_drm_display(void)
+{
+   Eina_List *updates;
+
+   printf("E_Alert Drm Display\n");
+
+   updates = evas_render_updates(canvas);
+   evas_render_updates_free(updates);
+
+   ecore_drm_fb_set(dev, buffer);
+   ecore_drm_fb_send(dev, buffer, NULL, NULL);
+}
+
+static void
+_e_alert_drm_run(void)
+{
+   printf("E_Alert Drm Run\n");
+   ecore_main_loop_begin();
+}
+
+static void
+_e_alert_drm_shutdown(void)
+{
+   printf("E_Alert Drm Shutdown\n");
+
+   evas_free(canvas);
+
+   if (dev)
+     {
+        ecore_drm_device_close(dev);
+        ecore_drm_launcher_disconnect(dev);
+        ecore_drm_device_free(dev);
+     }
+
+   ecore_drm_shutdown();
+   evas_shutdown();
+}
+# endif
+#endif
 
 int
 main(int argc, char **argv)
@@ -67,10 +496,10 @@ main(int argc, char **argv)
    int i = 0;
 
 /* XCB is not available when running in wayland only mode. No need to start anything here */
-#ifdef HAVE_WAYLAND_ONLY
-   printf("E Alert is not suitable to be used with E in wayland only mode\n");
-   exit(0);
-#endif
+/* #ifdef HAVE_WAYLAND_ONLY */
+/*    printf("E Alert is not suitable to be used with E in wayland only mode\n"); */
+/*    exit(0); */
+/* #endif */
 
    for (i = 1; i < argc; i++)
      {
@@ -102,21 +531,35 @@ main(int argc, char **argv)
    if (!ecore_init()) return EXIT_FAILURE;
    ecore_app_args_set(argc, (const char **)argv);
 
+   title = "Enlightenment Error";
+   str1 = "(F1) Recover";
+   str2 = "(F12) Logout";
+
+#ifdef HAVE_WAYLAND
+# ifdef HAVE_WL_DRM
+   if (!_e_alert_drm_connect())
+     {
+        printf("FAILED TO INIT ALERT SYSTEM!!!\n");
+        ecore_shutdown();
+        return EXIT_FAILURE;
+     }
+   _e_alert_drm_create();
+   _e_alert_drm_display();
+   _e_alert_drm_run();
+   _e_alert_drm_shutdown();
+# endif
+#else
    if (!_e_alert_connect())
      {
         printf("FAILED TO INIT ALERT SYSTEM!!!\n");
         ecore_shutdown();
         return EXIT_FAILURE;
      }
-
-   title = "Enlightenment Error";
-   str1 = "(F1) Recover";
-   str2 = "(F12) Logout";
-
    _e_alert_create();
    _e_alert_display();
    _e_alert_run();
    _e_alert_shutdown();
+#endif
 
    ecore_shutdown();
 
@@ -126,6 +569,7 @@ main(int argc, char **argv)
 }
 
 /* local functions */
+#ifndef HAVE_WAYLAND
 static int
 _e_alert_connect(void)
 {
@@ -407,17 +851,17 @@ _e_alert_run(void)
              break;
 
            case XCB_EXPOSE:
-           {
-              xcb_expose_event_t *ev;
+               {
+                  xcb_expose_event_t *ev;
 
-              ev = (xcb_expose_event_t *)event;
-              if (ev->window != win) break;
+                  ev = (xcb_expose_event_t *)event;
+                  if (ev->window != win) break;
 
-              _e_alert_draw();
-              _e_alert_sync();
+                  _e_alert_draw();
+                  _e_alert_sync();
 
-              break;
-           }
+                  break;
+               }
 
            default:
              break;
@@ -531,18 +975,6 @@ _e_alert_draw_title(void)
 
    xcb_image_text_8(conn, strlen(title), win, gc, x, y, title);
 }
-
-struct
-{
-   int         signal;
-   const char *name;
-} signal_name[5] = {
-   { SIGSEGV, "SEGV" },
-   { SIGILL, "SIGILL" },
-   { SIGFPE, "SIGFPE" },
-   { SIGBUS, "SIGBUS" },
-   { SIGABRT, "SIGABRT" }
-};
 
 static void
 _e_alert_draw_text(void)
@@ -687,4 +1119,4 @@ _e_alert_draw_button_text(void)
 
    xcb_image_text_8(conn, strlen(str2), btn2, gc, x, (10 + fa), str2);
 }
-
+#endif
