@@ -146,7 +146,7 @@ static E_Config_DD *conf_item_edd = NULL;
 static Eina_Hash *ibar_orders = NULL;
 static Eina_List *ibars = NULL;
 
-Config *ibar_config = NULL;
+EINTERN Config *ibar_config = NULL;
 
 static inline const char *
 _desktop_name_get(const Efreet_Desktop *desktop)
