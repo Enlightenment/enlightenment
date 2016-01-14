@@ -89,7 +89,7 @@ _e_shelf_remaximize(E_Shelf *es)
 {
    E_Client *ec;
 
-   if (es->cfg->overlap) return;
+   if (es->cfg->overlap && e_config->border_fix_on_shelf_toggle) return;
    E_CLIENT_FOREACH(ec)
      {
         E_Maximize max = ec->maximized;
@@ -973,7 +973,7 @@ E_API void
 e_shelf_obstacles_update(E_Shelf *es)
 {
    E_FREE_LIST(es->zone_obstacles, e_object_del);
-   if (es->cfg->overlap || es->cfg->autohide) return;
+   if ((es->cfg->overlap && e_config->border_fix_on_shelf_toggle) || es->cfg->autohide) return;
    if (es->cfg->desk_show_mode)
      {
         Eina_List *l;
