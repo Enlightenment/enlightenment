@@ -1394,7 +1394,7 @@ e_modapi_init(E_Module *m)
    if (!wl_global_create(e_comp_wl->wl.disp, &wl_shell_interface, 1,
                          e_comp->wl_comp_data, _e_shell_cb_bind))
      {
-        ERR("Could not create shell global: %m");
+        ERR("Could not create shell global");
         return NULL;
      }
 
@@ -1402,7 +1402,7 @@ e_modapi_init(E_Module *m)
    if (!wl_global_create(e_comp_wl->wl.disp, &xdg_shell_interface, 1,
                          e_comp->wl_comp_data, _e_xdg_shell_cb_bind))
      {
-        ERR("Could not create xdg_shell global: %m");
+        ERR("Could not create xdg_shell global");
         return NULL;
      }
 

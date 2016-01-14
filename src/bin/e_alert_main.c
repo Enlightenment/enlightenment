@@ -427,7 +427,7 @@ _e_alert_drm_create(void)
    einfo = (Evas_Engine_Info_Buffer *)evas_engine_info_get(canvas);
    if (!einfo)
      {
-        printf("\tFailed to get evas engine info: %m\n");
+        printf("\tFailed to get evas engine info\n");
         evas_free(canvas);
         return;
      }

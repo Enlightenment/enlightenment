@@ -441,7 +441,7 @@ _e_comp_wl_data_manager_cb_device_get(struct wl_client *client, struct wl_resour
    res = wl_resource_create(client, &wl_data_device_interface, 1, id);
    if (!res)
      {
-        ERR("Could not create data device resource: %m");
+        ERR("Could not create data device resource");
         wl_resource_post_no_memory(manager_resource);
         return;
      }
@@ -480,7 +480,7 @@ _e_comp_wl_data_cb_bind_manager(struct wl_client *client, void *data EINA_UNUSED
      wl_resource_create(client, &wl_data_device_manager_interface, 1, id);
    if (!res)
      {
-        ERR("Could not create data device manager: %m");
+        ERR("Could not create data device manager");
         wl_client_post_no_memory(client);
         return;
      }
@@ -835,7 +835,7 @@ e_comp_wl_data_manager_init(void)
                       e_comp->wl_comp_data, _e_comp_wl_data_cb_bind_manager);
    if (!e_comp_wl->mgr.global)
      {
-        ERR("Could not create global for data device manager: %m");
+        ERR("Could not create global for data device manager");
         return EINA_FALSE;
      }
 
@@ -887,7 +887,7 @@ e_comp_wl_data_manager_source_create(struct wl_client *client, struct wl_resourc
      wl_resource_create(client, &wl_data_source_interface, 1, id);
    if (!source->resource)
      {
-        ERR("Could not create data source resource: %m");
+        ERR("Could not create data source resource");
         free(source);
         wl_resource_post_no_memory(resource);
         return NULL;

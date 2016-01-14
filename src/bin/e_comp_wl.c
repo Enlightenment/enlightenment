@@ -1636,7 +1636,7 @@ _e_comp_wl_compositor_cb_bind(struct wl_client *client, void *data EINA_UNUSED, 
          wl_resource_create(client, &wl_compositor_interface,
                             version, id)))
      {
-        ERR("Could not create compositor resource: %m");
+        ERR("Could not create compositor resource");
         wl_client_post_no_memory(client);
         return;
      }
@@ -2074,7 +2074,7 @@ _e_comp_wl_subcompositor_cb_bind(struct wl_client *client, void *data EINA_UNUSE
          wl_resource_create(client, &wl_subcompositor_interface,
                             version, id)))
      {
-        ERR("Could not create subcompositor resource: %m");
+        ERR("Could not create subcompositor resource");
         wl_client_post_no_memory(client);
         return;
      }
@@ -2184,7 +2184,7 @@ _e_comp_wl_screenshooter_cb_bind(struct wl_client *client, void *data, uint32_t 
    res = wl_resource_create(client, &screenshooter_interface, 1, id);
    if (!res)
      {
-        ERR("Could not create screenshooter resource: %m");
+        ERR("Could not create screenshooter resource");
         wl_client_post_no_memory(client);
         return;
      }
@@ -2531,7 +2531,7 @@ _e_comp_wl_compositor_create(void)
    /* create new compositor data */
    if (!(cdata = E_NEW(E_Comp_Wl_Data, 1)))
      {
-       ERR("Could not create compositor data: %m");
+       ERR("Could not create compositor data");
        return EINA_FALSE;
      }
 
@@ -2545,7 +2545,7 @@ _e_comp_wl_compositor_create(void)
    cdata->ewd = ecore_wl2_display_create(NULL);
    if (!cdata->ewd)
      {
-        ERR("Could not create a Wayland display: %m");
+        ERR("Could not create a Wayland display");
         free(cdata);
         return EINA_FALSE;
      }
@@ -2553,7 +2553,7 @@ _e_comp_wl_compositor_create(void)
    cdata->wl.disp = ecore_wl2_display_get(cdata->ewd);
    if (!cdata->wl.disp)
      {
-        ERR("Could not create a Wayland display: %m");
+        ERR("Could not create a Wayland display");
         goto disp_err;
      }
 
@@ -2572,7 +2572,7 @@ _e_comp_wl_compositor_create(void)
                          COMPOSITOR_VERSION, e_comp,
                          _e_comp_wl_compositor_cb_bind))
      {
-        ERR("Could not add compositor to wayland globals: %m");
+        ERR("Could not add compositor to wayland globals");
         goto comp_global_err;
      }
 
@@ -2580,7 +2580,7 @@ _e_comp_wl_compositor_create(void)
    if (!wl_global_create(cdata->wl.disp, &wl_subcompositor_interface, 1,
                          e_comp, _e_comp_wl_subcompositor_cb_bind))
      {
-        ERR("Could not add subcompositor to wayland globals: %m");
+        ERR("Could not add subcompositor to wayland globals");
         goto comp_global_err;
      }
 
@@ -2588,7 +2588,7 @@ _e_comp_wl_compositor_create(void)
    if (!wl_global_create(cdata->wl.disp, &zwp_e_session_recovery_interface, 1,
                          e_comp, _e_comp_wl_session_recovery_cb_bind))
      {
-        ERR("Could not add session_recovery to wayland globals: %m");
+        ERR("Could not add session_recovery to wayland globals");
         goto comp_global_err;
      }
 
@@ -2600,7 +2600,7 @@ _e_comp_wl_compositor_create(void)
                       e_comp, _e_comp_wl_screenshooter_cb_bind);
    if (!cdata->screenshooter.global)
      {
-        ERR("Could not create screenshooter global: %m");
+        ERR("Could not create screenshooter global");
         goto comp_global_err;
      }
 

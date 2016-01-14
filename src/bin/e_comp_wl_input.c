@@ -107,7 +107,7 @@ _e_comp_wl_input_cb_pointer_get(struct wl_client *client, struct wl_resource *re
                             wl_resource_get_version(resource), id);
    if (!res)
      {
-        ERR("Could not create pointer on seat %s: %m",
+        ERR("Could not create pointer on seat %s",
             e_comp_wl->seat.name);
         wl_client_post_no_memory(client);
         return;
@@ -176,7 +176,7 @@ _e_comp_wl_input_cb_keyboard_get(struct wl_client *client, struct wl_resource *r
                             wl_resource_get_version(resource), id);
    if (!res)
      {
-        ERR("Could not create keyboard on seat %s: %m", e_comp_wl->seat.name);
+        ERR("Could not create keyboard on seat %s", e_comp_wl->seat.name);
         wl_client_post_no_memory(client);
         return;
      }
@@ -222,7 +222,7 @@ _e_comp_wl_input_cb_touch_get(struct wl_client *client EINA_UNUSED, struct wl_re
                             wl_resource_get_version(resource), id);
    if (!res)
      {
-        ERR("Could not create touch on seat %s: %m",
+        ERR("Could not create touch on seat %s",
             e_comp_wl->seat.name);
         wl_client_post_no_memory(client);
         return;
@@ -257,7 +257,7 @@ _e_comp_wl_input_cb_bind_seat(struct wl_client *client, void *data EINA_UNUSED, 
    res = wl_resource_create(client, &wl_seat_interface, version, id);
    if (!res)
      {
-        ERR("Could not create seat resource: %m");
+        ERR("Could not create seat resource");
         return;
      }
 
@@ -429,7 +429,7 @@ e_comp_wl_input_init(void)
                       e_comp->wl_comp_data, _e_comp_wl_input_cb_bind_seat);
    if (!e_comp_wl->seat.global)
      {
-        ERR("Could not create global for seat: %m");
+        ERR("Could not create global for seat");
         return EINA_FALSE;
      }
 
