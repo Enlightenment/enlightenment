@@ -189,6 +189,8 @@ e_menu_hide_all(void)
         if (m->post_deactivate_cb.func)
           m->post_deactivate_cb.func(m->post_deactivate_cb.data, m);
         m->active = 0;
+        if (m->comp_object == e_comp->autoclose.obj)
+          e_comp_object_util_autoclose(NULL, NULL, NULL, NULL);
         _e_menu_unrealize(m);
         m->in_active_list = 0;
         e_object_unref(E_OBJECT(m));
@@ -2699,9 +2701,13 @@ _e_menu_cb_key_down(void *data EINA_UNUSED, Ecore_Event_Key *ev)
  */
 
 static void
-_e_menu_cb_mouse_evas_down(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED)
+_e_menu_cb_mouse_evas_down(void *data, Evas_Object *obj EINA_UNUSED)
 {
-   _e_menu_deactivate_all();
+   E_Menu *m = data;
+
+   while (m->parent_item)
+     m = m->parent_item->menu;
+   e_menu_deactivate(m);
 }
 
 static Eina_Bool
