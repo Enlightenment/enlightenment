@@ -476,7 +476,7 @@ e_desk_current_get(E_Zone *zone)
 }
 
 E_API E_Desk *
-e_desk_at_xy_get(E_Zone *zone, int x, int y)
+e_desk_at_xy_get(const E_Zone *zone, int x, int y)
 {
    E_OBJECT_CHECK_RETURN(zone, NULL);
    E_OBJECT_TYPE_CHECK_RETURN(zone, E_ZONE_TYPE, NULL);
