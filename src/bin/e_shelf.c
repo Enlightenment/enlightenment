@@ -82,9 +82,7 @@ static const char *orient_names[] =
 E_API int E_EVENT_SHELF_RENAME = -1;
 E_API int E_EVENT_SHELF_ADD = -1;
 E_API int E_EVENT_SHELF_DEL = -1;
-static Ecore_Event_Handler *_e_shelf_gadcon_populate_handler = NULL;
-static Ecore_Event_Handler *_e_shelf_module_init_end_handler = NULL;
-static Ecore_Event_Handler *_e_shelf_zone_moveresize_handler = NULL;
+static Eina_List *handlers;
 
 static void
 _e_shelf_remaximize(E_Shelf *es)
@@ -104,6 +102,18 @@ _e_shelf_remaximize(E_Shelf *es)
      }
 }
 
+static Eina_Bool
+_e_shelf_desk_count_handler(void *d EINA_UNUSED, int t EINA_UNUSED, E_Event_Zone_Desk_Count_Set *ev)
+{
+   Eina_List *l;
+   E_Shelf *es;
+
+   EINA_LIST_FOREACH(shelves, l, es)
+     if (ev->zone == es->zone)
+       e_shelf_obstacles_update(es);
+   return ECORE_CALLBACK_RENEW;
+}
+
 /* externally accessible functions */
 EINTERN int
 e_shelf_init(void)
@@ -111,7 +121,8 @@ e_shelf_init(void)
    E_EVENT_SHELF_RENAME = ecore_event_type_new();
    E_EVENT_SHELF_ADD = ecore_event_type_new();
    E_EVENT_SHELF_DEL = ecore_event_type_new();
-   _e_shelf_gadcon_populate_handler = ecore_event_handler_add(E_EVENT_GADCON_POPULATE, _e_shelf_gadcon_populate_handler_cb, NULL);
+   E_LIST_HANDLER_APPEND(handlers, E_EVENT_GADCON_POPULATE, _e_shelf_gadcon_populate_handler_cb, NULL);
+   E_LIST_HANDLER_APPEND(handlers, E_EVENT_ZONE_DESK_COUNT_SET, _e_shelf_desk_count_handler, NULL);
    return 1;
 }
 
@@ -126,12 +137,7 @@ e_shelf_shutdown(void)
         es = eina_list_data_get(shelves);
         e_object_del(E_OBJECT(es));
      }
-   if (_e_shelf_gadcon_populate_handler)
-     _e_shelf_gadcon_populate_handler = ecore_event_handler_del(_e_shelf_gadcon_populate_handler);
-   if (_e_shelf_module_init_end_handler)
-     _e_shelf_module_init_end_handler = ecore_event_handler_del(_e_shelf_module_init_end_handler);
-   if (_e_shelf_zone_moveresize_handler)
-     _e_shelf_zone_moveresize_handler = ecore_event_handler_del(_e_shelf_zone_moveresize_handler);
+   E_FREE_LIST(handlers, ecore_event_handler_del);
 
    return 1;
 }
@@ -234,8 +240,6 @@ e_shelf_zone_new(E_Zone *zone, const char *name, const char *style, E_Layer laye
    es->h = 32;
    es->zone = zone;
    e_object_del_attach_func_set(E_OBJECT(es), _e_shelf_del_cb);
-   e_zone_useful_geometry_dirty(zone);
-
 
    es->ee = e_comp->ee;
    es->evas = e_comp->evas;
@@ -962,6 +966,31 @@ e_shelf_autohide_set(E_Shelf *es, int autohide_type)
  */
 }
 
+E_API void
+e_shelf_obstacles_update(E_Shelf *es)
+{
+   E_FREE_LIST(es->zone_obstacles, e_object_del);
+   if (es->cfg->overlap || es->cfg->autohide) return;
+   if (es->cfg->desk_show_mode)
+     {
+        Eina_List *l;
+        E_Config_Shelf_Desk *sd;
+
+        EINA_LIST_FOREACH(es->cfg->desk_list, l, sd)
+          {
+             E_Desk *desk;
+
+             desk = e_desk_at_xy_get(es->zone, sd->x, sd->y);
+             if (!desk) continue;
+             es->zone_obstacles = eina_list_append(es->zone_obstacles,
+               e_zone_obstacle_add(es->zone, desk, &(Eina_Rectangle){es->x, es->y, es->w, es->h}));
+          }
+     }
+   else
+     es->zone_obstacles = eina_list_append(es->zone_obstacles,
+       e_zone_obstacle_add(es->zone, NULL, &(Eina_Rectangle){es->x, es->y, es->w, es->h}));
+}
+
 E_API E_Shelf *
 e_shelf_config_new(E_Zone *zone, E_Config_Shelf *cf_es)
 {
@@ -992,6 +1021,7 @@ e_shelf_config_new(E_Zone *zone, E_Config_Shelf *cf_es)
      e_shelf_show(es);
 
    e_shelf_toggle(es, 0);
+   e_shelf_obstacles_update(es);
    return es;
 }
 
@@ -1108,9 +1138,8 @@ _e_shelf_free(E_Shelf *es)
    if (!es->dummy)
      _e_shelf_bindings_del(es);
 
-   if (!stopping)
-     e_zone_useful_geometry_dirty(es->zone);
    E_FREE_LIST(es->handlers, ecore_event_handler_del);
+   E_FREE_LIST(es->zone_obstacles, e_object_del);
 
    E_FREE_FUNC(es->autohide, ecore_event_handler_del);
    E_FREE_FUNC(es->hide_animator, ecore_animator_del);

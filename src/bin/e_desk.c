@@ -677,6 +677,11 @@ e_desks_count(void)
 static void
 _e_desk_free(E_Desk *desk)
 {
+   while (desk->obstacles)
+     {
+        E_Object *obs = (void*)EINA_INLIST_CONTAINER_GET(desk->obstacles, E_Zone_Obstacle);
+        e_object_del(obs);
+     }
    eina_stringshare_del(desk->name);
    desk->name = NULL;
    free(desk);

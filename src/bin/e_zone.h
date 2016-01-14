@@ -25,11 +25,14 @@ typedef struct _E_Event_Zone_Edge           E_Event_Zone_Edge;
 typedef struct _E_Event_Zone_Generic        E_Event_Zone_Stow;
 typedef struct _E_Event_Zone_Generic        E_Event_Zone_Unstow;
 
+typedef struct _E_Zone_Obstacle             E_Zone_Obstacle;
+
 #else
 #ifndef E_ZONE_H
 #define E_ZONE_H
 
 #define E_ZONE_TYPE (int)0xE0b0100d
+#define E_ZONE_OBSTACLE_TYPE (int)0xE0b0110d
 
 struct _E_Zone
 {
@@ -52,6 +55,7 @@ struct _E_Zone
    int          desk_x_current, desk_y_current;
    int          desk_x_prev, desk_y_prev;
    E_Desk     **desks;
+   Eina_Inlist *obstacles;
 
    Eina_List   *handlers;
 
@@ -119,6 +123,14 @@ struct _E_Event_Zone_Edge
    Eina_Bool  drag : 1;
 };
 
+struct _E_Zone_Obstacle
+{
+   E_Object     e_obj_inherit;
+   EINA_INLIST;
+   int x, y, w, h;
+   E_Object *owner;
+};
+
 EINTERN int    e_zone_init(void);
 EINTERN int    e_zone_shutdown(void);
 E_API E_Zone   *e_zone_new(int num, int id, int x, int y, int w, int h);
@@ -151,6 +163,9 @@ E_API void      e_zone_stow(E_Zone *zone);
 E_API void      e_zone_unstow(E_Zone *zone);
 
 E_API void      e_zone_fade_handle(E_Zone *zone, int out, double tim);
+
+E_API E_Zone_Obstacle *e_zone_obstacle_add(E_Zone *zone, E_Desk *desk, Eina_Rectangle *geom);
+E_API void e_zone_obstacle_modify(E_Zone_Obstacle *obs, Eina_Rectangle *geom);
 
 extern E_API int E_EVENT_ZONE_DESK_COUNT_SET;
 extern E_API int E_EVENT_ZONE_MOVE_RESIZE;

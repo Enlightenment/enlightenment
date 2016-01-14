@@ -40,6 +40,7 @@ struct _E_Shelf
    Ecore_Timer         *module_init_end_timer;
    Eina_List           *handlers;
    Ecore_Event_Handler *autohide;
+   Eina_List           *zone_obstacles;
    unsigned char        fit_along   : 1;
    unsigned char        fit_size    : 1;
    unsigned char        hidden      : 1;
@@ -94,5 +95,6 @@ E_API void             e_shelf_name_set(E_Shelf *es, const char *name);
 E_API void             e_shelf_rename_dialog(E_Shelf *es);
 E_API void             e_shelf_autohide_set(E_Shelf *es, int autohide_type);
 E_API Eina_Bool       e_shelf_desk_visible(const E_Shelf *es, const E_Desk *desk);
+E_API void e_shelf_obstacles_update(E_Shelf *es);
 #endif
 #endif

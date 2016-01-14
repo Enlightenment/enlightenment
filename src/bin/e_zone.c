@@ -18,6 +18,7 @@ static void        _e_zone_event_generic_free(void *data, void *ev);
 static void        _e_zone_object_del_attach(void *o);
 static E_Zone_Edge _e_zone_detect_edge(E_Zone *zone, Evas_Object *obj);
 static void        _e_zone_edge_move_resize(E_Zone *zone);
+static void _e_zone_obstacle_free(E_Zone_Obstacle *obs);
 
 E_API int E_EVENT_ZONE_DESK_COUNT_SET = 0;
 E_API int E_EVENT_POINTER_WARP = 0;
@@ -1220,98 +1221,49 @@ e_zone_fade_handle(E_Zone *zone, int out, double tim)
 static void
 _e_zone_useful_geometry_calc(const E_Zone *zone, int dx, int dy, int *x, int *y, int *w, int *h)
 {
-   const E_Shelf *shelf;
-   Eina_List *shelves;
-   int x0, x1, yy0, yy1;
+   E_Desk *desk;
+   E_Zone_Obstacle *obs;
+   Eina_Tiler *tiler;
+   int zx, zy, zw, zh;
+   Eina_Iterator *it;
+   Eina_Rectangle geom, *rect;
+   int size = 0;
 
-   x0 = 0;
-   yy0 = 0;
-   x1 = zone->w;
-   yy1 = zone->h;
-   shelves = e_shelf_list_all();
-   EINA_LIST_FREE(shelves, shelf)
+   zx = zone->x;
+   zy = zone->y;
+   zw = zone->w;
+   zh = zone->h;
+   tiler = eina_tiler_new(zw, zh);
+   eina_tiler_tile_size_set(tiler, 1, 1);
+   eina_tiler_rect_add(tiler, &(Eina_Rectangle){0, 0, zw, zh});
+   EINA_INLIST_FOREACH(zone->obstacles, obs)
      {
-        E_Config_Shelf_Desk *sd;
-        E_Gadcon_Orient orient;
-        Eina_List *ll;
-        int skip_shelf = 0;
-
-        if (shelf->zone != zone)
-          continue;
-
-        if (shelf->cfg)
+        if (!E_INTERSECTS(obs->x, obs->y, obs->w, obs->h, zx, zy, zw, zh)) continue;
+        eina_tiler_rect_del(tiler, &(Eina_Rectangle){obs->x - zx, obs->y - zy, obs->w, obs->h});
+     }
+   desk = e_desk_at_xy_get(zone, dx, dy);
+   if (desk)
+     {
+        EINA_INLIST_FOREACH(zone->obstacles, obs)
           {
-             if (shelf->cfg->overlap)
-               continue;
-
-             if (shelf->cfg->autohide)
-               continue;
-             orient = shelf->cfg->orient;
-
-             if (shelf->cfg->desk_show_mode)
-               {
-                  skip_shelf = 1;
-                  EINA_LIST_FOREACH(shelf->cfg->desk_list, ll, sd)
-                    {
-                       if (!sd) continue;
-                       if ((sd->x == dx) && (sd->y == dy))
-                         {
-                            skip_shelf = 0;
-                            break;
-                         }
-                    }
-                  if (skip_shelf)
-                    continue;
-               }
-          }
-        else
-          orient = shelf->gadcon->orient;
-
-        switch (orient)
-          {
-           /* these are non-edje orientations */
-           case E_GADCON_ORIENT_FLOAT:
-           case E_GADCON_ORIENT_HORIZ:
-           case E_GADCON_ORIENT_VERT:
-             break;
-
-           case E_GADCON_ORIENT_TOP:
-           case E_GADCON_ORIENT_CORNER_TL:
-           case E_GADCON_ORIENT_CORNER_TR:
-             if (yy0 < shelf->h)
-               yy0 = shelf->h;
-             break;
-
-           case E_GADCON_ORIENT_BOTTOM:
-           case E_GADCON_ORIENT_CORNER_BL:
-           case E_GADCON_ORIENT_CORNER_BR:
-             if (yy1 > zone->h - shelf->h)
-               yy1 = zone->h - shelf->h;
-             break;
-
-           case E_GADCON_ORIENT_LEFT:
-           case E_GADCON_ORIENT_CORNER_LT:
-           case E_GADCON_ORIENT_CORNER_LB:
-             if (x0 < shelf->w)
-               x0 = shelf->w;
-             break;
-
-           case E_GADCON_ORIENT_RIGHT:
-           case E_GADCON_ORIENT_CORNER_RT:
-           case E_GADCON_ORIENT_CORNER_RB:
-             if (x1 > zone->w - shelf->w)
-               x1 = zone->w - shelf->w;
-             break;
-
-           default:
-             break;
+             if (!E_INTERSECTS(obs->x, obs->y, obs->w, obs->h, zx, zy, zw, zh)) continue;
+             eina_tiler_rect_del(tiler, &(Eina_Rectangle){obs->x - zx, obs->y - zy, obs->w, obs->h});
           }
      }
+   it = eina_tiler_iterator_new(tiler);
+   EINA_ITERATOR_FOREACH(it, rect)
+     {
+        if (rect->w * rect->h < size) continue;
+        size = rect->w * rect->h;
+        geom = *rect;
+     }
+   eina_iterator_free(it);
+   eina_tiler_free(tiler);
 
-   if (x) *x = zone->x + x0;
-   if (y) *y = zone->y + yy0;
-   if (w) *w = x1 - x0;
-   if (h) *h = yy1 - yy0;
+   if (x) *x = geom.x;
+   if (y) *y = geom.y;
+   if (w) *w = geom.w;
+   if (h) *h = geom.h;
 }
 
 /**
@@ -1324,39 +1276,20 @@ e_zone_useful_geometry_get(E_Zone *zone,
                            int *w,
                            int *h)
 {
-   E_Shelf *shelf;
    int zx, zy, zw, zh;
-   Eina_Bool calc = EINA_TRUE;
 
    E_OBJECT_CHECK(zone);
    E_OBJECT_TYPE_CHECK(zone, E_ZONE_TYPE);
 
-   if (!zone->useful_geometry.dirty)
+   if (zone->useful_geometry.dirty)
      {
-        Eina_List *l = e_shelf_list_all();
-        calc = EINA_FALSE;
-        EINA_LIST_FREE(l, shelf)
-          {
-             if (!shelf->cfg) continue;
-             if (shelf->cfg->desk_show_mode)
-               {
-                  _e_zone_useful_geometry_calc(zone, zone->desk_x_current, zone->desk_y_current, &zx, &zy, &zw, &zh);
-                  calc = EINA_TRUE;
-                  break;
-               }
-          }
-        eina_list_free(l);
-     }
-   else
-     _e_zone_useful_geometry_calc(zone, zone->desk_x_current, zone->desk_y_current, &zx, &zy, &zw, &zh);
-   zone->useful_geometry.dirty = 0;
-   if (calc)
-     {
+        _e_zone_useful_geometry_calc(zone, zone->desk_x_current, zone->desk_y_current, &zx, &zy, &zw, &zh);
         zone->useful_geometry.x = zx;
         zone->useful_geometry.y = zy;
         zone->useful_geometry.w = zw;
         zone->useful_geometry.h = zh;
      }
+   zone->useful_geometry.dirty = 0;
 
    if (x) *x = zone->useful_geometry.x;
    if (y) *y = zone->useful_geometry.y;
@@ -1398,6 +1331,68 @@ e_zone_useful_geometry_dirty(E_Zone *zone)
    zone->useful_geometry.y = -1;
    zone->useful_geometry.w = -1;
    zone->useful_geometry.h = -1;
+}
+
+E_API E_Zone_Obstacle *
+e_zone_obstacle_add(E_Zone *zone, E_Desk *desk, Eina_Rectangle *geom)
+{
+   E_Zone_Obstacle *obs;
+
+   E_OBJECT_CHECK_RETURN(zone, NULL);
+   E_OBJECT_TYPE_CHECK_RETURN(zone, E_ZONE_TYPE, NULL);
+   if (desk)
+     {
+        E_OBJECT_CHECK_RETURN(desk, NULL);
+        E_OBJECT_TYPE_CHECK_RETURN(desk, E_DESK_TYPE, NULL);
+        if (desk->zone != zone)
+          {
+             ERR("zone != desk->zone");
+             return NULL;
+          }
+     }
+   obs = E_OBJECT_ALLOC(E_Zone_Obstacle, E_ZONE_OBSTACLE_TYPE, _e_zone_obstacle_free);
+   obs->x = geom->x, obs->y = geom->y;
+   obs->w = geom->w, obs->h = geom->h;
+   obs->owner = E_OBJECT(desk) ?: E_OBJECT(zone);
+   if (desk)
+     {
+        desk->obstacles = eina_inlist_append(desk->obstacles, EINA_INLIST_GET(obs));
+        if (desk->visible)
+          desk->zone->useful_geometry.dirty = 1;
+     }
+   else
+     {
+        zone->obstacles = eina_inlist_append(zone->obstacles, EINA_INLIST_GET(obs));
+        zone->useful_geometry.dirty = 1;
+     }
+   return obs;
+}
+
+E_API void
+e_zone_obstacle_modify(E_Zone_Obstacle *obs, Eina_Rectangle *geom)
+{
+   E_Zone *zone;
+   E_Desk *desk;
+
+   E_OBJECT_CHECK(obs);
+   E_OBJECT_TYPE_CHECK(obs, E_ZONE_OBSTACLE_TYPE);
+   EINA_SAFETY_ON_NULL_RETURN(geom);
+   if ((obs->x == geom->x) && (obs->y == geom->y) && (obs->w == geom->w) && (obs->h == geom->h))
+     return;
+   obs->x = geom->x, obs->y = geom->y;
+   obs->w = geom->w, obs->h = geom->h;
+
+   if (obs->owner->type == E_DESK_TYPE)
+     {
+        desk = (E_Desk*)obs->owner;
+        if (desk->visible)
+          desk->zone->useful_geometry.dirty = 1;
+     }
+   else
+     {
+        zone = (E_Zone*)obs->owner;
+        zone->useful_geometry.dirty = 1;
+     }
 }
 
 E_API void
@@ -1491,6 +1486,11 @@ _e_zone_free(E_Zone *zone)
      {
         for (y = 0; y < zone->desk_y_count; y++)
           e_object_del(E_OBJECT(zone->desks[x + (y * zone->desk_x_count)]));
+     }
+   while (zone->obstacles)
+     {
+        E_Object *obs = (void*)EINA_INLIST_CONTAINER_GET(zone->obstacles, E_Zone_Obstacle);
+        e_object_del(obs);
      }
    free(zone->desks);
    free(zone->randr2_id);
@@ -1672,4 +1672,26 @@ _e_zone_edge_move_resize(E_Zone *zone)
              zone->x + 1 + cw, zone->y + zone->h - 1, zone->w - 2 - 2 * cw, 1);
    evas_object_geometry_set(zone->corner.bottom_left,
              zone->x + zone->w - cw - 2, zone->y + zone->h - 1, cw, 1);
+}
+
+static void
+_e_zone_obstacle_free(E_Zone_Obstacle *obs)
+{
+   E_Zone *zone;
+   E_Desk *desk;
+
+   if (obs->owner->type == E_DESK_TYPE)
+     {
+        desk = (E_Desk*)obs->owner;
+        desk->obstacles = eina_inlist_remove(desk->obstacles, EINA_INLIST_GET(obs));
+        if (desk->visible)
+          desk->zone->useful_geometry.dirty = 1;
+     }
+   else
+     {
+        zone = (E_Zone*)obs->owner;
+        zone->obstacles = eina_inlist_remove(zone->obstacles, EINA_INLIST_GET(obs));
+        zone->useful_geometry.dirty = 1;
+     }
+   free(obs);
 }
