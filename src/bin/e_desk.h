@@ -13,7 +13,7 @@ typedef void (*E_Desk_Flip_Cb)(void *data, E_Desk *desk, int dx, int dy, Eina_Bo
 #ifndef E_DESK_H
 #define E_DESK_H
 
-#define E_DESK_TYPE 0xE0b01005
+#define E_DESK_TYPE (int)0xE0b01005
 
 typedef enum
 {
