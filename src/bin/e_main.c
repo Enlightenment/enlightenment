@@ -1584,7 +1584,12 @@ _e_main_screens_init(void)
    if (!e_client_init()) return 0;
    TS("\tscreens: win");
    if (!e_win_init()) return 0;
-#ifndef HAVE_WAYLAND_ONLY
+   TS("Compositor Init");
+   if (!e_comp_init())
+     {
+        e_error_message_show(_("Enlightenment cannot create a compositor.\n"));
+        _e_main_shutdown(-1);
+     }
    TS("E_Xkb Init");
    if (!e_xkb_init())
      {
@@ -1592,14 +1597,6 @@ _e_main_screens_init(void)
         _e_main_shutdown(-1);
      }
    TS("E_Xkb Init Done");
-#endif
-
-   TS("Compositor Init");
-   if (!e_comp_init())
-     {
-        e_error_message_show(_("Enlightenment cannot create a compositor.\n"));
-        _e_main_shutdown(-1);
-     }
 
    _e_main_desk_restore();
 
