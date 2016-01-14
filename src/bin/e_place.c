@@ -122,6 +122,61 @@ _e_place_coverage_shelf_add(E_Desk *desk, int ar, int x, int y, int w, int h)
    return ar;
 }
 
+static int *
+_e_place_array_resize(int *array, int *pos, int *size)
+{
+   (*pos)++;
+   if (*pos > *size)
+     {
+        *size += 32;
+        E_REALLOC(array, int, *size);
+     }
+   return array;
+}
+
+static void
+_e_place_desk_region_smart_obstacle_add(char *u_x, char *u_y, int **a_x, int **a_y, int *a_w, int *a_h, int *a_alloc_w, int *a_alloc_h, int zw, int zh, int bx, int by, int bw, int bh)
+{
+   if (bx < 0)
+     {
+        bw += bx;
+        bx = 0;
+     }
+   if ((bx + bw) > zw) bw = zw - bx;
+   if (bx >= zw) return;
+   if (by < 0)
+     {
+        bh += by;
+        by = 0;
+     }
+   if ((by + bh) > zh) bh = zh - by;
+   if (by >= zh) return;
+   if (!u_x[bx])
+     {
+        *a_x = _e_place_array_resize(*a_x, a_w, a_alloc_w);
+        (*a_x)[*a_w - 1] = bx;
+        u_x[bx] = 1;
+     }
+   if (!u_x[bx + bw])
+     {
+        *a_x = _e_place_array_resize(*a_x, a_w, a_alloc_w);
+        (*a_x)[*a_w - 1] = bx + bw;
+        u_x[bx + bw] = 1;
+     }
+   if (!u_y[by])
+     {
+        *a_y = _e_place_array_resize(*a_y, a_h, a_alloc_h);
+        (*a_y)[*a_h - 1] = by;
+        u_y[by] = 1;
+     }
+   if (!u_y[by + bh])
+     {
+        *a_y = _e_place_array_resize(*a_y, a_h, a_alloc_h);
+        (*a_y)[*a_h - 1] = by + bh;
+        u_y[by + bh] = 1;
+     }
+}
+
 E_API int
 e_place_desk_region_smart(E_Desk *desk, Eina_List *skiplist, int x, int y, int w, int h, int *rx, int *ry)
 {
@@ -184,66 +239,9 @@ e_place_desk_region_smart(E_Desk *desk, Eina_List *skiplist, int x, int y, int w
              by = es->y;
              bw = es->w;
              bh = es->h;
-             if (!E_INTERSECTS(bx, by, bw, bh, 0, 0, zw, zh)) continue;
-
-             if (bx < 0)
-               {
-                  bw += bx;
-                  bx = 0;
-               }
-             if ((bx + bw) > zw) bw = zw - bx;
-             if (bx >= zw) continue;
-             if (by < 0)
-               {
-                  bh += by;
-                  by = 0;
-               }
-             if ((by + bh) > zh) bh = zh - by;
-             if (by >= zh) continue;
-             if (!u_x[bx])
-               {
-                  a_w++;
-                  if (a_w > a_alloc_w)
-                    {
-                       a_alloc_w += 32;
-                       E_REALLOC(a_x, int, a_alloc_w);
-                    }
-                  a_x[a_w - 1] = bx;
-                  u_x[bx] = 1;
-               }
-             if (!u_x[bx + bw])
-               {
-                  a_w++;
-                  if (a_w > a_alloc_w)
-                    {
-                       a_alloc_w += 32;
-                       E_REALLOC(a_x, int, a_alloc_w);
-                    }
-                  a_x[a_w - 1] = bx + bw;
-                  u_x[bx + bw] = 1;
-               }
-             if (!u_y[by])
-               {
-                  a_h++;
-                  if (a_h > a_alloc_h)
-                    {
-                       a_alloc_h += 32;
-                       E_REALLOC(a_y, int, a_alloc_h);
-                    }
-                  a_y[a_h - 1] = by;
-                  u_y[by] = 1;
-               }
-             if (!u_y[by + bh])
-               {
-                  a_h++;
-                  if (a_h > a_alloc_h)
-                    {
-                       a_alloc_h += 32;
-                       E_REALLOC(a_y, int, a_alloc_h);
-                    }
-                  a_y[a_h - 1] = by + bh;
-                  u_y[by + bh] = 1;
-               }
+             if (E_INTERSECTS(bx, by, bw, bh, 0, 0, zw, zh))
+               _e_place_desk_region_smart_obstacle_add(u_x, u_y, &a_x, &a_y,
+                 &a_w, &a_h, &a_alloc_w, &a_alloc_h, zw, zh, bx, by, bw, bh);
           }
      }
 
@@ -271,66 +269,8 @@ e_place_desk_region_smart(E_Desk *desk, Eina_List *skiplist, int x, int y, int w
         bh = ec->h;
 
         if (E_INTERSECTS(bx, by, bw, bh, 0, 0, zw, zh))
-          {
-             if (bx < 0)
-               {
-                  bw += bx;
-                  bx = 0;
-               }
-             if ((bx + bw) > zw) bw = zw - bx;
-             if (bx >= zw) continue;
-             if (by < 0)
-               {
-                  bh += by;
-                  by = 0;
-               }
-             if ((by + bh) > zh) bh = zh - by;
-             if (by >= zh) continue;
-             if (!u_x[bx])
-               {
-                  a_w++;
-                  if (a_w > a_alloc_w)
-                    {
-                       a_alloc_w += 32;
-                       E_REALLOC(a_x, int, a_alloc_w);
-                    }
-                  a_x[a_w - 1] = bx;
-                  u_x[bx] = 1;
-               }
-             if (!u_x[bx + bw])
-               {
-                  a_w++;
-                  if (a_w > a_alloc_w)
-                    {
-                       a_alloc_w += 32;
-                       E_REALLOC(a_x, int, a_alloc_w);
-                    }
-                  a_x[a_w - 1] = bx + bw;
-                  u_x[bx + bw] = 1;
-               }
-             if (!u_y[by])
-               {
-                  a_h++;
-                  if (a_h > a_alloc_h)
-                    {
-                       a_alloc_h += 32;
-                       E_REALLOC(a_y, int, a_alloc_h);
-                    }
-                  a_y[a_h - 1] = by;
-                  u_y[by] = 1;
-               }
-             if (!u_y[by + bh])
-               {
-                  a_h++;
-                  if (a_h > a_alloc_h)
-                    {
-                       a_alloc_h += 32;
-                       E_REALLOC(a_y, int, a_alloc_h);
-                    }
-                  a_y[a_h - 1] = by + bh;
-                  u_y[by + bh] = 1;
-               }
-          }
+          _e_place_desk_region_smart_obstacle_add(u_x, u_y, &a_x, &a_y,
+            &a_w, &a_h, &a_alloc_w, &a_alloc_h, zw, zh, bx, by, bw, bh);
      }
    qsort(a_x, a_w, sizeof(int), _e_place_cb_sort_cmp);
    qsort(a_y, a_h, sizeof(int), _e_place_cb_sort_cmp);
