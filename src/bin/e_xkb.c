@@ -51,8 +51,8 @@ e_xkb_shutdown(void)
    return 1;
 }
 
-E_API void
-e_xkb_update(int cur_group)
+static void
+_e_x_xkb_update(int cur_group)
 {
    E_Config_XKB_Layout *cl;
    E_Config_XKB_Option *op;
@@ -153,6 +153,37 @@ e_xkb_update(int cur_group)
    INF("SET XKB RUN: %s", eina_strbuf_string_get(buf));
    ecore_exe_run(eina_strbuf_string_get(buf), NULL);
    eina_strbuf_free(buf);
+}
+
+static void
+_e_wl_xkb_update(int cur_group)
+{
+#ifdef HAVE_WAYLAND
+   E_Config_XKB_Layout *cl;
+   Eina_List *l;
+
+   if (cur_group == -1) {
+     cur_group = e_config->xkb.cur_group;
+   }
+
+   l = eina_list_nth_list(e_config->xkb.used_layouts, cur_group);
+   if (!l) return;
+   cl = eina_list_data_get(l);
+
+   e_comp_wl_input_keymap_set(NULL, cl->model, cl->name, NULL, NULL);
+   INF("Set wl keyboard to %s %s", cl->model, cl->name);
+#else
+   (void) cur_group;
+#endif
+}
+
+E_API void
+e_xkb_update(int cur_group)
+{
+   if (e_comp->comp_type == E_PIXMAP_TYPE_WL)
+     _e_wl_xkb_update(cur_group);
+   else
+     _e_x_xkb_update(cur_group);
 }
 
 E_API void
