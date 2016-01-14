@@ -109,7 +109,7 @@ _e_shelf_desk_count_handler(void *d EINA_UNUSED, int t EINA_UNUSED, E_Event_Zone
    E_Shelf *es;
 
    EINA_LIST_FOREACH(shelves, l, es)
-     if (ev->zone == es->zone)
+     if (es->cfg->desk_show_mode && (ev->zone == es->zone))
        e_shelf_obstacles_update(es);
    return ECORE_CALLBACK_RENEW;
 }
