@@ -4200,14 +4200,13 @@ _e_comp_object_autoclose_del(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_O
 E_API void
 e_comp_object_util_autoclose(Evas_Object *obj, E_Comp_Object_Autoclose_Cb del_cb, E_Comp_Object_Key_Cb cb, const void *data)
 {
-   SOFT_ENTRY();
-
    if (e_comp->autoclose.obj)
      {
         if (e_comp->autoclose.obj == obj) return;
         evas_object_event_callback_del_full(e_comp->autoclose.obj, EVAS_CALLBACK_DEL, _e_comp_object_autoclose_del, e_comp);
         _e_comp_object_autoclose_cleanup(0);
      }
+   if (!obj) return;
    e_comp->autoclose.obj = obj;
    e_comp->autoclose.del_cb = del_cb;
    e_comp->autoclose.key_cb = cb;
