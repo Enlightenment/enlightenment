@@ -233,20 +233,28 @@ e_place_desk_region_smart(E_Desk *desk, Eina_List *skiplist, int x, int y, int w
 
    if (e_config->window_placement_policy == E_WINDOW_PLACEMENT_SMART)
      {
-        Eina_List *l;
-        E_Shelf *es;
+        E_Zone_Obstacle *obs;
 
-        l = e_shelf_list_all();
-        EINA_LIST_FREE(l, es)
+        EINA_INLIST_FOREACH(desk->obstacles, obs)
           {
              int bx, by, bw, bh;
 
-             if (!e_shelf_desk_visible(es, desk)) continue;
+             bx = obs->x - desk->zone->x;
+             by = obs->y - desk->zone->y;
+             bw = obs->w;
+             bh = obs->h;
+             if (E_INTERSECTS(bx, by, bw, bh, 0, 0, zw, zh))
+               _e_place_desk_region_smart_obstacle_add(u_x, u_y, &a_x, &a_y,
+                 &a_w, &a_h, &a_alloc_w, &a_alloc_h, zw, zh, bx, by, bw, bh);
+          }
+        EINA_INLIST_FOREACH(desk->zone->obstacles, obs)
+          {
+             int bx, by, bw, bh;
 
-             bx = es->x;
-             by = es->y;
-             bw = es->w;
-             bh = es->h;
+             bx = obs->x - desk->zone->x;
+             by = obs->y - desk->zone->y;
+             bw = obs->w;
+             bh = obs->h;
              if (E_INTERSECTS(bx, by, bw, bh, 0, 0, zw, zh))
                _e_place_desk_region_smart_obstacle_add(u_x, u_y, &a_x, &a_y,
                  &a_w, &a_h, &a_alloc_w, &a_alloc_h, zw, zh, bx, by, bw, bh);
