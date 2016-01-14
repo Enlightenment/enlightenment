@@ -102,6 +102,16 @@ _e_shelf_remaximize(E_Shelf *es)
      }
 }
 
+static void
+_e_shelf_obstacles_update(E_Shelf *es)
+{
+   Eina_List *l;
+   E_Zone_Obstacle *obs;
+
+   EINA_LIST_FOREACH(es->zone_obstacles, l, obs)
+     e_zone_obstacle_modify(obs, &(Eina_Rectangle){es->x, es->y, es->w, es->h});
+}
+
 static Eina_Bool
 _e_shelf_desk_count_handler(void *d EINA_UNUSED, int t EINA_UNUSED, E_Event_Zone_Desk_Count_Set *ev)
 {
@@ -507,7 +517,7 @@ e_shelf_move(E_Shelf *es, int x, int y)
    es->x = x;
    es->y = y;
    evas_object_move(es->comp_object, es->zone->x + es->x, es->zone->y + es->y);
-   e_shelf_obstacles_update(es);
+   _e_shelf_obstacles_update(es);
    _e_shelf_remaximize(es);
 }
 
@@ -520,7 +530,7 @@ e_shelf_resize(E_Shelf *es, int w, int h)
    es->w = w;
    es->h = h;
    evas_object_resize(es->comp_object, es->w, es->h);
-   e_shelf_obstacles_update(es);
+   _e_shelf_obstacles_update(es);
    _e_shelf_remaximize(es);
 }
 
@@ -536,7 +546,7 @@ e_shelf_move_resize(E_Shelf *es, int x, int y, int w, int h)
    es->h = h;
    evas_object_move(es->comp_object, es->zone->x + es->x, es->zone->y + es->y);
    evas_object_resize(es->comp_object, es->w, es->h);
-   e_shelf_obstacles_update(es);
+   _e_shelf_obstacles_update(es);
    _e_shelf_remaximize(es);
 }
 
