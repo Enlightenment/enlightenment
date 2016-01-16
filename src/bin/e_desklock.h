@@ -42,6 +42,7 @@ struct _E_Event_Desklock
 EINTERN int e_desklock_init(void);
 EINTERN int e_desklock_shutdown(void);
 
+E_API Eina_Bool e_desklock_demo(void);
 E_API int e_desklock_show(Eina_Bool suspend);
 E_API int e_desklock_show_autolocked(void);
 E_API void e_desklock_hide(void);

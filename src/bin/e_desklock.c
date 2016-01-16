@@ -32,6 +32,7 @@ static Eina_List *block_rects = NULL;
 
 static Eina_List *desklock_ifaces = NULL;
 static E_Desklock_Interface *current_iface = NULL;
+static Eina_Bool demo = EINA_FALSE;
 
 /***********************************************************************/
 static Eina_Bool _e_desklock_cb_custom_desklock_exit(void *data EINA_UNUSED, int type EINA_UNUSED, void *event);
@@ -210,6 +211,26 @@ e_desklock_show_autolocked(void)
    return e_desklock_show(EINA_FALSE);
 }
 
+E_API Eina_Bool
+e_desklock_demo(void)
+{
+   E_Desklock_Interface *iface;
+   Eina_List *l;
+
+   if (e_desklock_is_external()) return EINA_FALSE;
+   EINA_LIST_REVERSE_FOREACH(desklock_ifaces, l, iface)
+     {
+        if (iface->show())
+          {
+             demo = iface->active = EINA_TRUE;
+             current_iface = iface;
+             e_comp_shape_queue();
+             return EINA_TRUE;
+          }
+     }
+   return EINA_FALSE;
+}
+
 E_API int
 e_desklock_show(Eina_Bool suspend)
 {
@@ -283,6 +304,14 @@ e_desklock_show(Eina_Bool suspend)
    if (e_config->xkb.lock_layout)
      e_xkb_layout_set(e_config->xkb.lock_layout);
 
+   if (demo)
+     {
+        if (current_iface->hide)
+          current_iface->hide();
+        current_iface->active = demo = EINA_FALSE;
+        current_iface = NULL;
+     }
+
    {
       E_Desklock_Interface *iface;
       Eina_Bool success = EINA_TRUE;
@@ -335,6 +364,16 @@ e_desklock_hide(void)
    Eina_List *l;
    E_Event_Desklock *ev;
    E_Desklock_Hide_Cb hide_cb;
+
+   if (demo && current_iface)
+     {
+        if (current_iface->hide)
+          current_iface->hide();
+        demo = current_iface->active = EINA_FALSE;
+        current_iface = NULL;
+        return;
+     }
+   demo = EINA_FALSE;
 
    if ((!_e_desklock_state) && (!_e_custom_desklock_exe)) return;
 
