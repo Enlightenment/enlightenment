@@ -1260,8 +1260,8 @@ _e_zone_useful_geometry_calc(const E_Zone *zone, int dx, int dy, int *x, int *y,
    eina_iterator_free(it);
    eina_tiler_free(tiler);
 
-   if (x) *x = geom.x;
-   if (y) *y = geom.y;
+   if (x) *x = geom.x + zx;
+   if (y) *y = geom.y + zy;
    if (w) *w = geom.w;
    if (h) *h = geom.h;
 }
