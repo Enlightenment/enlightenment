@@ -396,6 +396,12 @@ _lokker_popup_add(E_Zone *zone)
    evas_object_resize(lp->bg_object, zone->w, zone->h);
    evas_object_show(lp->bg_object);
    lp->comp_object = e_comp_object_util_add(lp->bg_object, 0);
+   {
+      char buf[1024];
+
+      snprintf(buf, sizeof(buf), "desklock.%d", zone->id);
+      evas_object_name_set(lp->comp_object, buf);
+   }
    evas_object_layer_set(lp->comp_object, E_LAYER_DESKLOCK);
    evas_object_clip_set(lp->comp_object, lp->zone->bg_clip_object);
 
