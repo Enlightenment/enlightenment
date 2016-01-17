@@ -128,7 +128,8 @@ _e_comp_wl_evas_cb_show(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj EIN
         ec->comp_data->need_reparent = EINA_TRUE;
         ec->visible = EINA_TRUE;
      }
-   if (!e_client_util_ignored_get(ec))
+
+   if (!ec->ignored)
      {
         ec->take_focus = !starting;
         EC_CHANGED(ec);
