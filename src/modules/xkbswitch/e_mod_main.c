@@ -44,6 +44,8 @@ static Eina_List *instances = NULL;
 /* CONFIG STRUCTURE */
 Xkb _xkb = { NULL, NULL, NULL };
 
+static Ecore_Event_Handler *xkb_change_handle = NULL;
+
 static const E_Gadcon_Client_Class _gc_class =
 {
    GADCON_CLIENT_CLASS_VERSION,
@@ -75,12 +77,8 @@ e_modapi_init(E_Module *m)
                                  "preferences-desktop-keyboard",
                                  _xkb_cfg_dialog);
 
-
    _xkb.module = m;
-#ifndef HAVE_WAYLAND_ONLY
-   if (e_comp_util_has_x())
-     ecore_event_handler_add(ECORE_X_EVENT_XKB_STATE_NOTIFY, _xkb_changed_state, NULL);
-#endif
+   xkb_change_handle = ecore_event_handler_add(E_EVENT_XKB_CHANGED, _xkb_changed_state, NULL);
    /* Gadcon */
    e_gadcon_provider_register(&_gc_class);
    return m;
@@ -100,6 +98,7 @@ e_modapi_shutdown(E_Module *m EINA_UNUSED)
    if (_xkb.cfd) e_object_del(E_OBJECT(_xkb.cfd));
    _xkb.cfd = NULL;
    _xkb.module = NULL;
+   ecore_event_handler_del(xkb_change_handle);
    e_gadcon_provider_unregister(&_gc_class);
 
    return 1;
@@ -279,18 +278,12 @@ _gc_icon(const E_Gadcon_Client_Class *client_class EINA_UNUSED, Evas *evas)
    return o;
 }
 
-#ifndef HAVE_WAYLAND_ONLY
 static Eina_Bool
-_xkb_changed_state(void *data EINA_UNUSED, int type EINA_UNUSED, void *event EINA_UNUSED)
+_xkb_changed_state(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
 {
-   Ecore_X_Event_Xkb *ev = (Ecore_X_Event_Xkb *)event;
-
-   //INF("xkb group %d", ev->group);
-   e_config->xkb.cur_group = ev->group;
-   _xkb_update_icon(ev->group);
+   _xkb_update_icon(e_config->xkb.cur_group);
    return ECORE_CALLBACK_PASS_ON;
 }
-#endif
 
 #if 0
 static int
