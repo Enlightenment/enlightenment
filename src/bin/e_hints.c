@@ -1289,6 +1289,7 @@ e_hints_window_hidden_set(E_Client *ec)
         ec->netwm.state.hidden = 0;
         EC_CHANGED(ec);
      }
+   ecore_x_window_prop_property_del(e_client_util_win_get(ec), ECORE_X_ATOM_WM_STATE);
    _e_hints_process_wakeup(ec);
 #endif
 }
