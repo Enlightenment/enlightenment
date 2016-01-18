@@ -3,6 +3,7 @@
 static void _e_xkb_update_event(int);
 
 static int _e_xkb_cur_group = -1;
+static Ecore_Event_Handler *xkb_state_handler = NULL;
 
 E_API int E_EVENT_XKB_CHANGED = 0;
 
@@ -28,12 +29,31 @@ _e_xkb_init_timer(void *data)
    return EINA_FALSE;
 }
 
+#ifndef HAVE_WAYLAND_ONLY
+static Eina_Bool
+_xkb_changed_state(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
+{
+   Ecore_X_Event_Xkb *ev = (Ecore_X_Event_Xkb *)event;
+
+   if (ev->group < 0 || ev->group >= eina_list_count(e_config->xkb.used_layouts))
+     return ECORE_CALLBACK_PASS_ON;
+
+   e_config->xkb.cur_group = ev->group;
+   _e_xkb_update_event(ev->group);
+   return ECORE_CALLBACK_PASS_ON;
+}
+#endif
+
 /* externally accessible functions */
 E_API int
 e_xkb_init(void)
 {
    if (!E_EVENT_XKB_CHANGED)
      E_EVENT_XKB_CHANGED = ecore_event_type_new();
+#ifndef HAVE_WAYLAND_ONLY
+   if (e_comp->comp_type == E_PIXMAP_TYPE_X)
+     xkb_state_handler = ecore_event_handler_add(ECORE_X_EVENT_XKB_STATE_NOTIFY, _xkb_changed_state, NULL);
+#endif
    if (e_config->xkb.dont_touch_my_damn_keyboard) return 1;
    e_xkb_update(-1);
    if (e_config->xkb.cur_layout)
@@ -48,6 +68,8 @@ e_xkb_init(void)
 E_API int
 e_xkb_shutdown(void)
 {
+   if (xkb_state_handler)
+     ecore_event_handler_del(xkb_state_handler);
    return 1;
 }
 
