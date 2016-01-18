@@ -296,6 +296,21 @@ _e_comp_object_layers_remove(E_Comp_Object *cw)
 
 /////////////////////////////////////
 static void
+_e_comp_object_updates_init(E_Comp_Object *cw)
+{
+   int pw, ph;
+
+   if (cw->updates) return;
+   pw = cw->ec->client.w, ph = cw->ec->client.h;
+   if ((!pw) || (!ph))
+     e_pixmap_size_get(cw->ec->pixmap, &pw, &ph);
+   cw->updates = eina_tiler_new(pw, ph);
+   if (cw->updates)
+     eina_tiler_tile_size_set(cw->updates, 1, 1);
+}
+
+
+static void
 _e_comp_object_alpha_set(E_Comp_Object *cw)
 {
    Eina_Bool alpha = cw->ec->argb;
@@ -1533,12 +1548,7 @@ _e_comp_intercept_show_helper(E_Comp_Object *cw)
      }
    if ((!cw->updates) && (!cw->ec->input_only) && (!cw->ec->ignored))
      {
-        int pw, ph;
-
-        pw = cw->ec->client.w, ph = cw->ec->client.h;
-        if ((!pw) || (!ph))
-          e_pixmap_size_get(cw->ec->pixmap, &pw, &ph);
-        cw->updates = eina_tiler_new(pw, ph);
+        _e_comp_object_updates_init(cw);
         if (!cw->updates)
           {
              cw->ec->changes.visible = !cw->ec->hidden;
@@ -1547,8 +1557,6 @@ _e_comp_intercept_show_helper(E_Comp_Object *cw)
              return;
           }
      }
-   if (cw->updates)
-     eina_tiler_tile_size_set(cw->updates, 1, 1);
    if (cw->ec->new_client)
      {
         /* ignore until client idler first run */
@@ -3285,8 +3293,10 @@ e_comp_object_damage(Evas_Object *obj, int x, int y, int w, int h)
    Eina_Rectangle rect;
    API_ENTRY;
 
-   if (cw->ec->input_only || (!cw->updates)) return;
+   if (cw->ec->input_only) return;
    if (cw->nocomp) return;
+   _e_comp_object_updates_init(cw);
+   EINA_SAFETY_ON_NULL_RETURN(cw->updates);
    rect.x = x, rect.y = y;
    rect.w = w, rect.h = h;
    evas_object_smart_callback_call(obj, "damage", &rect);
