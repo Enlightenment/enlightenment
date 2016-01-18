@@ -1110,6 +1110,9 @@ e_comp_init(void)
      {
         const char **test, *eng[] =
         {
+#ifdef USE_MODULE_WL_WL
+           "wl_wl",
+#endif
 #ifdef HAVE_WL_DRM
            "wl_drm",
 #endif
