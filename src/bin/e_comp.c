@@ -1113,6 +1113,9 @@ e_comp_init(void)
 #ifdef USE_MODULE_WL_WL
            "wl_wl",
 #endif
+#ifdef USE_MODULE_WL_X11
+           "wl_x11",
+#endif
 #ifdef USE_MODULE_WL_DRM
            "wl_drm",
 #endif
