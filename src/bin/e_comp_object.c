@@ -3496,13 +3496,9 @@ e_comp_object_shape_apply(Evas_Object *obj)
 
    //INF("SHAPE RENDER %p", cw->ec);
 
-   if (cw->ec->shaped) evas_object_image_native_surface_set(cw->obj, NULL);
    _e_comp_object_alpha_set(cw);
    EINA_LIST_FOREACH(cw->obj_mirror, l, o)
-     {
-        if (cw->ec->shaped) evas_object_image_native_surface_set(o, NULL);
-        evas_object_image_alpha_set(o, 1);
-     }
+     evas_object_image_alpha_set(o, 1);
 
    p = pix = evas_object_image_data_get(cw->obj, 1);
    if (!pix)
