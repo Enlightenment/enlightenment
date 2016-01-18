@@ -1,3 +1,55 @@
+Release 0.20.3:
+---------------------
+Carsten Haitzler (1):
+      e randr - fix randr dialog to do restore right again
+
+Chris Michael (1):
+      Fix xbl_avail variable being used when it could be undefined
+
+Jean-Philippe ANDRÉ (1):
+      Fix spelling in .pc file
+
+Marcel Hollerbach (1):
+      e_grabinput: do not pass a faulty time
+
+Mike Blumenkrantz (26):
+      block input devices from backlight list
+      unpopulate all gadcons during shutdown
+      add shelf callback for hidden state and trigger extra hide-on-show if hiding
+      un-defer comp util object hiding if second hide occurs during animation
+      add special case for frame adjustment during first recalc of new clients
+      test given coordinates in smart window placement algorithm
+      remove wayland function usage from grabinput methods
+      simplify and clarify winlist directional selection action code
+      check all corners of an object in e_comp_object_util_zone_get()
+      disable custom logging when eina backtrace is active
+      select mixer popup sink after popup has been fully initialized
+      optimize zoomap recalc during recursion
+      make ibar config pointer EINTERN
+      do full cleanup when overriding existing comp autoclose object
+      remove configs for illume modules
+      allow NULL object in e_comp_object_util_autoclose()
+      improve menu hiding and autoclose
+      make E_DESK_TYPE an int define
+      enforce border_fix_on_shelf_toggle config option in shelf
+      create comp object updates tiler in helper function from either show or damage
+      do not unset comp object native surface during shape apply
+      unset WM_STATE for x11 clients upon unmapping them
+      if available, use wl output (nested) for wayland compositor creation
+      use more correct defines for enabling wl output modules during comp init
+      automatically attempt to create a wayland x11 output during comp init
+      20.3 release
+
+Seunghun Lee (1):
+      configure.ac: Remove ecore-x from wayland only build.
+
+Tom Hacohen (1):
+      Tiling: tile windows with "Static" gravity.
+
+Yomi (1):
+      Update copyright year.
+
+
 Release 0.20.2:
 ---------------------
 Chris Michael (1):
