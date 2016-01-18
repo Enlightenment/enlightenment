@@ -21,7 +21,7 @@ _cb_sync_done(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
    ecore_evas_screen_geometry_get(e_comp->ee, NULL, NULL, &w, &h);
    if ((w < 1) || (h < 1)) return ECORE_CALLBACK_PASS_ON;
 
-   e_comp_canvas_resize(w / 4, h / 4);
+   e_comp_canvas_resize(w * 2 / 3, h * 2 / 3);
 
    return ECORE_CALLBACK_PASS_ON;
 }
