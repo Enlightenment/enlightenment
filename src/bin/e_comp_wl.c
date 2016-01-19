@@ -1480,7 +1480,7 @@ _e_comp_wl_compositor_cb_surface_create(struct wl_client *client, struct wl_reso
         E_Pixmap *ep;
 
         /* try to create new pixmap */
-        if (!(ep = e_pixmap_new(E_PIXMAP_TYPE_WL, (uintptr_t)id)))
+        if (!(ep = e_pixmap_new(E_PIXMAP_TYPE_WL, res)))
           {
              ERR("Could not create new pixmap");
              wl_resource_destroy(res);
