@@ -125,8 +125,10 @@ _e_comp_wl_evas_cb_show(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj EIN
 
    if (!ec->ignored)
      {
-        ec->take_focus = !starting;
-        EC_CHANGED(ec);
+        if (ec->new_client)
+          ec->take_focus = !starting;
+        else
+          evas_object_focus_set(ec->frame, !starting);
      }
 
    EINA_LIST_FOREACH(ec->e.state.video_child, l, tmp)
