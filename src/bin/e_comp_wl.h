@@ -296,10 +296,7 @@ struct _E_Comp_Wl_Client_Data
    Eina_Bool keep_buffer : 1;
    Eina_Bool mapped : 1;
    Eina_Bool change_icon : 1;
-   Eina_Bool need_reparent : 1;
-   Eina_Bool reparented : 1;
    Eina_Bool evas_init : 1;
-   Eina_Bool first_damage : 1;
    Eina_Bool set_win_type : 1;
    Eina_Bool frame_update : 1;
    Eina_Bool maximize_pre : 1;
