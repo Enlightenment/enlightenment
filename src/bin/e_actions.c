@@ -2928,23 +2928,17 @@ ACT_FN_GO(kbd_layout, )
    errno = 0;
    x = strtoul(params, NULL, 10);
    if (errno || (x > eina_list_count(e_config->xkb.used_layouts) - 1)) return;
-#ifndef HAVE_WAYLAND_ONLY
    e_xkb_layout_set(eina_list_nth(e_config->xkb.used_layouts, x));
-#endif
 }
 
 ACT_FN_GO(kbd_layout_next, EINA_UNUSED)
 {
-#ifndef HAVE_WAYLAND_ONLY
    e_xkb_layout_next();
-#endif
 }
 
 ACT_FN_GO(kbd_layout_prev, EINA_UNUSED)
 {
-#ifndef HAVE_WAYLAND_ONLY
    e_xkb_layout_prev();
-#endif
 }
 
 ACT_FN_GO(module_enable, )
