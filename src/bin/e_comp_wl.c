@@ -1143,7 +1143,7 @@ _e_comp_wl_surface_state_commit(E_Client *ec, E_Comp_Wl_Surface_State *state)
         if (ec->new_client)
           {
              ec->placed = placed;
-             ec->want_focus = ec->icccm.accepts_focus && (!ec->override);
+             ec->want_focus |= ec->icccm.accepts_focus && (!ec->override);
           }
         else if ((first) && (ec->placed) && (!ec->internal) && (!ec->override))
           {
