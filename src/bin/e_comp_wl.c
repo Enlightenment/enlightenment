@@ -122,28 +122,11 @@ _e_comp_wl_evas_cb_show(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj EIN
 
    if (!ec->override) e_hints_window_visible_set(ec);
 
-   if ((!ec->override) && (!ec->re_manage) && (!ec->comp_data->reparented) &&
-       (!ec->comp_data->need_reparent))
-     {
-        ec->comp_data->need_reparent = EINA_TRUE;
-        ec->visible = EINA_TRUE;
-     }
 
    if (!ec->ignored)
      {
         ec->take_focus = !starting;
         EC_CHANGED(ec);
-     }
-
-   if (!ec->comp_data->need_reparent)
-     {
-        if ((ec->hidden) || (ec->iconic))
-          {
-             evas_object_hide(ec->frame);
-             e_comp_object_damage(ec->frame, 0, 0, ec->w, ec->h);
-          }
-        else if (!ec->internal_elm_win)
-          evas_object_show(ec->frame);
      }
 
    EINA_LIST_FOREACH(ec->e.state.video_child, l, tmp)
@@ -700,11 +683,6 @@ _e_comp_wl_evas_cb_kill_request(void *data, Evas_Object *obj EINA_UNUSED, void *
    /* if (ec->netwm.ping) e_client_ping(ec); */
 
    e_comp_ignore_win_del(E_PIXMAP_TYPE_WL, e_pixmap_window_get(ec->pixmap));
-   if (ec->comp_data)
-     {
-        if (ec->comp_data->reparented)
-          e_client_comp_hidden_set(ec, EINA_TRUE);
-     }
 
    evas_object_pass_events_set(ec->frame, EINA_TRUE);
    if (ec->visible) evas_object_hide(ec->frame);
@@ -2236,9 +2214,6 @@ _e_comp_wl_client_cb_new(void *data EINA_UNUSED, E_Client *ec)
 
    /* set initial client data properties */
    ec->comp_data->mapped = EINA_FALSE;
-   ec->comp_data->first_damage = ec->internal;
-
-   ec->comp_data->need_reparent = !ec->internal;
 
    /* add this client to the hash */
    /* eina_hash_add(clients_win_hash, &win, ec); */
@@ -2253,16 +2228,6 @@ _e_comp_wl_client_cb_del(void *data EINA_UNUSED, E_Client *ec)
 
    /* make sure this is a wayland client */
    if (e_pixmap_type_get(ec->pixmap) != E_PIXMAP_TYPE_WL) return;
-
-   if ((!ec->already_unparented) && (ec->comp_data->reparented))
-     _e_comp_wl_focus_down_set(ec);
-
-   ec->already_unparented = EINA_TRUE;
-   if (ec->comp_data->reparented)
-     {
-        /* reset pixmap parent window */
-        e_pixmap_parent_window_set(ec->pixmap, 0);
-     }
 
    /* remove sub list */
    EINA_LIST_FREE(ec->comp_data->sub.list, subc)
@@ -2288,87 +2253,6 @@ _e_comp_wl_client_cb_del(void *data EINA_UNUSED, E_Client *ec)
      _e_comp_wl_surface_render_stop(ec);
    _e_comp_wl_focus_check();
 }
-
-#if 0
-static void
-_e_comp_wl_client_cb_pre_frame(void *data EINA_UNUSED, E_Client *ec)
-{
-   uint64_t parent;
-
-   if (e_pixmap_type_get(ec->pixmap) != E_PIXMAP_TYPE_WL) return;
-   if (!ec->comp_data->need_reparent) return;
-
-   DBG("Client Pre Frame: %d", wl_resource_get_id(ec->comp_data->surface));
-
-   parent = e_client_util_pwin_get(ec);
-
-   /* set pixmap parent window */
-   e_pixmap_parent_window_set(ec->pixmap, parent);
-
-   ec->border_size = 0;
-   ec->border.changed = EINA_TRUE;
-   ec->changes.shape = EINA_TRUE;
-   ec->changes.shape_input = EINA_TRUE;
-   EC_CHANGED(ec);
-
-   if (ec->visible)
-     {
-        if ((ec->comp_data->set_win_type) && (ec->internal_elm_win))
-          {
-             int type = ECORE_WL_WINDOW_TYPE_TOPLEVEL;
-
-             switch (ec->netwm.type)
-               {
-                case E_WINDOW_TYPE_DIALOG:
-                  /* NB: If there is No transient set, then dialogs get
-                   * treated as Normal Toplevel windows */
-                  if (ec->icccm.transient_for)
-                    type = ECORE_WL_WINDOW_TYPE_TRANSIENT;
-                  break;
-                case E_WINDOW_TYPE_DESKTOP:
-                  type = ECORE_WL_WINDOW_TYPE_FULLSCREEN;
-                  break;
-                case E_WINDOW_TYPE_DND:
-                  type = ECORE_WL_WINDOW_TYPE_DND;
-                  break;
-                case E_WINDOW_TYPE_MENU:
-                case E_WINDOW_TYPE_DROPDOWN_MENU:
-                case E_WINDOW_TYPE_POPUP_MENU:
-                  type = ECORE_WL_WINDOW_TYPE_MENU;
-                  break;
-                case E_WINDOW_TYPE_NORMAL:
-                default:
-                    break;
-               }
-
-             ecore_evas_wayland_type_set(e_win_ee_get(ec->internal_elm_win), type);
-             ec->comp_data->set_win_type = EINA_FALSE;
-          }
-     }
-
-   e_bindings_mouse_grab(E_BINDING_CONTEXT_WINDOW, parent);
-   e_bindings_wheel_grab(E_BINDING_CONTEXT_WINDOW, parent);
-
-   _e_comp_wl_client_evas_init(ec);
-
-   /* if ((ec->netwm.ping) && (!ec->ping_poller)) */
-   /*   e_client_ping(ec); */
-
-   if (ec->visible) evas_object_show(ec->frame);
-
-   ec->comp_data->need_reparent = EINA_FALSE;
-   ec->redirected = EINA_TRUE;
-
-   if (ec->comp_data->change_icon)
-     {
-        ec->comp_data->change_icon = EINA_FALSE;
-        ec->changes.icon = EINA_TRUE;
-        EC_CHANGED(ec);
-     }
-
-   ec->comp_data->reparented = EINA_TRUE;
-}
-#endif
 
 static void
 _e_comp_wl_client_cb_focus_set(void *data EINA_UNUSED, E_Client *ec)
@@ -2782,9 +2666,6 @@ e_comp_wl_init(void)
    /* add hooks to catch e_client events */
    e_client_hook_add(E_CLIENT_HOOK_NEW_CLIENT, _e_comp_wl_client_cb_new, NULL);
    e_client_hook_add(E_CLIENT_HOOK_DEL, _e_comp_wl_client_cb_del, NULL);
-
-   /* e_client_hook_add(E_CLIENT_HOOK_EVAL_PRE_FRAME_ASSIGN,  */
-   /*                   _e_comp_wl_client_cb_pre_frame, NULL); */
 
    e_client_hook_add(E_CLIENT_HOOK_FOCUS_SET,
                      _e_comp_wl_client_cb_focus_set, NULL);
