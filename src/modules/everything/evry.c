@@ -890,7 +890,7 @@ _evry_cb_mouse(void *data, int type, void *event)
    if (!win->grab)
      return ECORE_CALLBACK_PASS_ON;
 
-   if ((win->grab && (ev->event_window != ecore_evas_window_get(e_comp->ee))) &&
+   if ((ev->event_window != ecore_evas_window_get(e_comp->ee)) &&
        (ev->event_window != elm_win_window_id_get(win->ewin)))
      return ECORE_CALLBACK_PASS_ON;
 
@@ -954,12 +954,20 @@ _evry_cb_mouse(void *data, int type, void *event)
      {
         win->mouse_out = 0;
 
-        if (!E_INSIDE(e_comp_canvas_x_root_adjust(ev->root.x),
-                      e_comp_canvas_y_root_adjust(ev->root.y), x, y, w, h))
+        if (e_comp->comp_type == E_PIXMAP_TYPE_WL)
           {
-             win->mouse_out = 1;
-             return ECORE_CALLBACK_PASS_ON;
+             if (ev->event_window == ecore_evas_window_get(e_comp->ee))
+               {
+                  if (!E_INSIDE(e_comp_canvas_x_root_adjust(ev->root.x),
+                      e_comp_canvas_y_root_adjust(ev->root.y), x, y, w, h))
+                    win->mouse_out = 1;
+               }
           }
+        else if (!E_INSIDE(e_comp_canvas_x_root_adjust(ev->root.x),
+                 e_comp_canvas_y_root_adjust(ev->root.y), x, y, w, h))
+          win->mouse_out = 1;
+        if (win->mouse_out)
+          return ECORE_CALLBACK_PASS_ON;
 
         win->mouse_button = ev->buttons;
      }
@@ -967,9 +975,7 @@ _evry_cb_mouse(void *data, int type, void *event)
      {
         win->mouse_button = 0;
 
-        if (win->mouse_out &&
-            (!E_INSIDE(e_comp_canvas_x_root_adjust(ev->root.x),
-                      e_comp_canvas_y_root_adjust(ev->root.y), x, y, w, h)))
+        if (win->mouse_out)
           {
              evry_hide(win, 0);
              return ECORE_CALLBACK_PASS_ON;
