@@ -2941,6 +2941,52 @@ ACT_FN_GO(kbd_layout_prev, EINA_UNUSED)
    e_xkb_layout_prev();
 }
 
+#ifdef HAVE_WAYLAND
+ACT_FN_GO_MOUSE(mouse_to_key, )
+{
+   const char *p, *nextp, *key = NULL;
+   const char *mods[] =
+   {
+      "shift",
+      "ctrl",
+      "alt",
+      "win",
+      "altgr",
+      NULL
+   };
+   int modifiers = 0, mod = 0;
+
+   if ((!params) || (!params[0]) || (params[0] == '+')) return;
+   for (p = params; p; p = nextp)
+     {
+        const char **m;
+
+        nextp = strchr(p + 1, '+');
+        if (!nextp) break;
+        for (m = mods; *m; m++)
+          {
+             if (strncmp(p, *m, nextp - p)) continue;
+             modifiers |= 1 << (m - mods);
+             break;
+          }
+        key = nextp;
+     }
+   if (key)
+     key++;
+   else
+     key = params;
+   if (!key[0]) return;
+
+   mod |= (ECORE_EVENT_MODIFIER_SHIFT * !!(modifiers & E_BINDING_MODIFIER_SHIFT));
+   mod |= (ECORE_EVENT_MODIFIER_CTRL * !!(modifiers & E_BINDING_MODIFIER_CTRL));
+   mod |= (ECORE_EVENT_MODIFIER_ALT * !!(modifiers & E_BINDING_MODIFIER_ALT));
+   mod |= (ECORE_EVENT_MODIFIER_WIN * !!(modifiers & E_BINDING_MODIFIER_WIN));
+   mod |= (ECORE_EVENT_MODIFIER_ALTGR * !!(modifiers & E_BINDING_MODIFIER_ALTGR));
+   e_comp_wl_input_keyboard_event_generate(key, mod, 0);
+   e_comp_wl_input_keyboard_event_generate(key, mod, 1);
+}
+#endif
+
 ACT_FN_GO(module_enable, )
 {
    E_Module *m;
@@ -2998,6 +3044,27 @@ static Eina_Hash *actions = NULL;
 static Eina_List *action_list = NULL;
 static Eina_List *action_names = NULL;
 static Eina_List *action_groups = NULL;
+
+static void
+_e_actions_post_init(void *d EINA_UNUSED)
+{
+#ifdef HAVE_WAYLAND
+   E_Action *act;
+
+   /* wayland-specific actions */
+   if (e_comp->comp_type == E_PIXMAP_TYPE_WL)
+     {
+        /* mouse -> key */
+        /* "key" here is the platform-specific key name;
+         * /usr/share/X11/xkb/keycodes/evdev is probably what your system is using
+         */
+        ACT_GO_MOUSE(mouse_to_key);
+        e_action_predef_name_set(N_("Mouse Remapping"),
+                                 N_("Mouse to key"), "mouse_to_key",
+                                 NULL, "[AD02] [ctrl+shift+alt+win+altgr+AD02]", 1);
+     }
+#endif
+}
 
 /* externally accessible functions */
 
@@ -3560,6 +3627,8 @@ e_actions_init(void)
    e_action_predef_name_set(N_("Keyboard Layouts"),
                             N_("Previous keyboard layout"), "kbd_layout_prev",
                             NULL, NULL, 0);
+
+   ecore_job_add(_e_actions_post_init, NULL);
 
    return 1;
 }
