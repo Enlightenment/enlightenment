@@ -1163,7 +1163,6 @@ _e_comp_wl_surface_state_commit(E_Client *ec, E_Comp_Wl_Surface_State *state)
    state->frames = NULL;
 
    ec->ignored = ignored;
-   if (!ec->comp_data->mapped) goto unmapped;
 
    /* put state damages into surface */
    if ((!e_comp->nocomp) && (ec->frame))
@@ -1227,13 +1226,6 @@ _e_comp_wl_surface_state_commit(E_Client *ec, E_Comp_Wl_Surface_State *state)
         /* clear input tiler */
         eina_tiler_clear(state->input);
      }
-
-   return;
-
-unmapped:
-   /* clear pending damages */
-   EINA_LIST_FREE(state->damages, dmg)
-     eina_rectangle_free(dmg);
 }
 
 static void
