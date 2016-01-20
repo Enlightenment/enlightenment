@@ -55,16 +55,6 @@ _e_comp_wl_configure_send(E_Client *ec, Eina_Bool edges)
 }
 
 static void
-_e_comp_wl_focus_down_set(E_Client *ec)
-{
-   Ecore_Window win = 0;
-
-   win = e_client_util_pwin_get(ec);
-   e_bindings_mouse_grab(E_BINDING_CONTEXT_WINDOW, win);
-   e_bindings_wheel_grab(E_BINDING_CONTEXT_WINDOW, win);
-}
-
-static void
 _e_comp_wl_focus_check(void)
 {
    E_Client *ec;
