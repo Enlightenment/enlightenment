@@ -452,6 +452,8 @@ _drm_randr_create(void)
 
              if (ok)
                {
+                  unsigned int rotations;
+
                   if (!possible)
                     {
                        unsigned int refresh;
@@ -474,7 +476,27 @@ _drm_randr_create(void)
                               s->config.geom.w, s->config.geom.h);
                     }
 
-                  /* TODO: are rotations possible ?? */
+                  rotations =
+                    ecore_drm_output_supported_rotations_get(output,
+                                                             ECORE_DRM_PLANE_TYPE_PRIMARY);
+
+                  if (rotations & ECORE_DRM_PLANE_ROTATION_NORMAL)
+                    s->info.can_rot_0 = EINA_TRUE;
+                  if (rotations & ECORE_DRM_PLANE_ROTATION_90)
+                    s->info.can_rot_90 = EINA_TRUE;
+                  if (rotations & ECORE_DRM_PLANE_ROTATION_180)
+                    s->info.can_rot_180 = EINA_TRUE;
+                  if (rotations & ECORE_DRM_PLANE_ROTATION_270)
+                    s->info.can_rot_270 = EINA_TRUE;
+
+                  if (cs)
+                    {
+                       if (cs->profile)
+                         s->config.profile = strdup(cs->profile);
+                       else
+                         s->config.profile = NULL;
+                       s->config.scale_multiplier = cs->scale_multiplier;
+                    }
                }
 
              r->screens = eina_list_append(r->screens, s);
@@ -580,6 +602,10 @@ _drm_randr_apply(void)
 
                   ecore_drm_output_mode_set(out, mode,
                                             s->config.geom.x, s->config.geom.y);
+                  ecore_drm_output_rotation_set(out,
+                                                ECORE_DRM_PLANE_TYPE_PRIMARY,
+                                                orient);
+
                   if (s->config.priority == top_priority)
                     ecore_drm_output_primary_set(out);
 
