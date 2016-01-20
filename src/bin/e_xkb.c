@@ -35,7 +35,8 @@ _xkb_changed_state(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
 {
    Ecore_X_Event_Xkb *ev = (Ecore_X_Event_Xkb *)event;
 
-   if (ev->group < 0 || ev->group >= eina_list_count(e_config->xkb.used_layouts))
+   if (ev->group < 0 ||
+       ev->group >= (int)eina_list_count(e_config->xkb.used_layouts))
      return ECORE_CALLBACK_PASS_ON;
 
    e_config->xkb.cur_group = ev->group;
