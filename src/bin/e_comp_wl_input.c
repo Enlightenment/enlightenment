@@ -66,6 +66,8 @@ _e_comp_wl_input_pointer_cb_cursor_set(struct wl_client *client, struct wl_resou
         ec->icccm.title = eina_stringshare_add("noshadow");
         evas_object_pass_events_set(ec->frame, 1);
         evas_object_show(ec->frame);
+        if (e_comp_object_damage_exists(ec->frame))
+          e_comp_object_render_update_add(ec->frame);
         ec->comp_data->mapped = 1;
         e_client_focus_stack_set(eina_list_remove(e_client_focus_stack_get(), ec));
         EC_CHANGED(ec);
