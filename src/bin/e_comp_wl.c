@@ -1070,7 +1070,7 @@ _e_comp_wl_surface_state_commit(E_Client *ec, E_Comp_Wl_Surface_State *state)
           {
              if ((ec->comp_data->shell.surface) && (ec->comp_data->shell.unmap))
                ec->comp_data->shell.unmap(ec->comp_data->shell.surface);
-             else if (e_client_has_xwindow(ec))
+             else if (ec->comp_data->cursor || e_client_has_xwindow(ec))
                {
                   ec->visible = EINA_FALSE;
                   evas_object_hide(ec->frame);
@@ -1084,7 +1084,7 @@ _e_comp_wl_surface_state_commit(E_Client *ec, E_Comp_Wl_Surface_State *state)
           {
              if ((ec->comp_data->shell.surface) && (ec->comp_data->shell.map))
                ec->comp_data->shell.map(ec->comp_data->shell.surface);
-             else if (e_client_has_xwindow(ec))
+             else if (ec->comp_data->cursor || e_client_has_xwindow(ec))
                {
                   ec->visible = EINA_TRUE;
                   ec->ignored = 0;
@@ -2758,7 +2758,7 @@ e_comp_wl_surface_commit(E_Client *ec)
           {
              if ((ec->comp_data->shell.surface) && (ec->comp_data->shell.unmap))
                ec->comp_data->shell.unmap(ec->comp_data->shell.surface);
-             else if (e_client_has_xwindow(ec))
+             else if (ec->comp_data->cursor || e_client_has_xwindow(ec))
                {
                   ec->visible = EINA_FALSE;
                   evas_object_hide(ec->frame);
@@ -2772,7 +2772,7 @@ e_comp_wl_surface_commit(E_Client *ec)
           {
              if ((ec->comp_data->shell.surface) && (ec->comp_data->shell.map))
                ec->comp_data->shell.map(ec->comp_data->shell.surface);
-             else if (e_client_has_xwindow(ec))
+             else if (ec->comp_data->cursor || e_client_has_xwindow(ec))
                {
                   ec->visible = EINA_TRUE;
                   ec->ignored = 0;
