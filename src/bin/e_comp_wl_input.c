@@ -55,12 +55,14 @@ _e_comp_wl_input_pointer_cb_cursor_set(struct wl_client *client, struct wl_resou
    ec = wl_resource_get_user_data(surface_resource);
    if (!ec->re_manage)
      {
-        ec->re_manage = 1;
+        ec->comp_data->cursor = ec->re_manage = 1;
         ec->ignored = 0;
 
         ec->lock_focus_out = ec->layer_block = ec->visible = ec->override = 1;
         ec->icccm.title = eina_stringshare_add("noshadow");
         evas_object_pass_events_set(ec->frame, 1);
+        evas_object_show(ec->frame);
+        ec->comp_data->mapped = 1;
         e_client_focus_stack_set(eina_list_remove(e_client_focus_stack_get(), ec));
         EC_CHANGED(ec);
      }
