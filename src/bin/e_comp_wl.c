@@ -2736,44 +2736,10 @@ e_comp_wl_surface_create(struct wl_client *client, int version, uint32_t id)
 EINTERN Eina_Bool
 e_comp_wl_surface_commit(E_Client *ec)
 {
-   Eina_Bool ignored;
-
    _e_comp_wl_surface_state_commit(ec, &ec->comp_data->pending);
    if (!e_comp_object_damage_exists(ec->frame))
      e_pixmap_image_clear(ec->pixmap, 1);
 
-   ignored = ec->ignored;
-
-   if (!e_pixmap_usable_get(ec->pixmap))
-     {
-        if (ec->comp_data->mapped)
-          {
-             if ((ec->comp_data->shell.surface) && (ec->comp_data->shell.unmap))
-               ec->comp_data->shell.unmap(ec->comp_data->shell.surface);
-             else if (ec->comp_data->cursor || e_client_has_xwindow(ec))
-               {
-                  ec->visible = EINA_FALSE;
-                  evas_object_hide(ec->frame);
-                  ec->comp_data->mapped = 0;
-               }
-          }
-     }
-   else
-     {
-        if (!ec->comp_data->mapped)
-          {
-             if ((ec->comp_data->shell.surface) && (ec->comp_data->shell.map))
-               ec->comp_data->shell.map(ec->comp_data->shell.surface);
-             else if (ec->comp_data->cursor || e_client_has_xwindow(ec))
-               {
-                  ec->visible = EINA_TRUE;
-                  ec->ignored = 0;
-                  evas_object_show(ec->frame);
-                  ec->comp_data->mapped = 1;
-               }
-          }
-     }
-   ec->ignored = ignored;
    return EINA_TRUE;
 }
 
