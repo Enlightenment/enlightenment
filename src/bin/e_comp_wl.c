@@ -123,7 +123,7 @@ _e_comp_wl_evas_cb_show(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj EIN
    if (!ec->override) e_hints_window_visible_set(ec);
 
 
-   if (!ec->ignored)
+   if ((!ec->ignored) && (!ec->comp_data->cursor))
      {
         if (ec->new_client)
           ec->take_focus = !starting;
