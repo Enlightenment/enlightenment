@@ -7,6 +7,7 @@
 #endif
 
 E_API int E_EVENT_TEXT_INPUT_PANEL_VISIBILITY_CHANGE = -1;
+static xkb_keycode_t (*_xkb_keymap_key_by_name)(void *, const char *);
 
 static void
 _e_comp_wl_input_update_seat_caps(void)
@@ -437,6 +438,8 @@ e_comp_wl_input_init(void)
 
    E_EVENT_TEXT_INPUT_PANEL_VISIBILITY_CHANGE = ecore_event_type_new();
 
+   _xkb_keymap_key_by_name = dlsym(NULL, "xkb_keymap_key_by_name");
+
    return EINA_TRUE;
 }
 
@@ -677,4 +680,67 @@ e_comp_wl_input_keyboard_modifers_clear(void)
    e_comp_wl->kbd.mod_group = 0;
 
    e_comp_wl_input_keyboard_modifiers_serialize();
+}
+
+static void
+_event_generate(const char *key, const char *keyname, int mods, Eina_Bool up)
+{
+   Ecore_Event_Key *ev;
+   int keycode;
+
+   /* "key" here is the platform-specific key name;
+    * /usr/share/X11/xkb/keycodes/evdev is probably what your system is using
+    */
+   keycode = _xkb_keymap_key_by_name(e_comp_wl->xkb.keymap, keyname ?: key);
+   if (!keycode)
+     {
+        ERR("no keycode found for key '%s'", key);
+        return;
+     }
+   ev = calloc(1, sizeof(Ecore_Event_Key) + (2 * (strlen(key) + 1)));
+
+   ev->keyname = (char *)(ev + 1);
+   ev->key = ev->keyname + strlen(key) + 1;
+
+   strcpy((char *)ev->keyname, key);
+   strcpy((char *)ev->key, key);
+
+   ev->window = e_comp->ee_win;
+   ev->event_window = e_comp->ee_win;
+   ev->timestamp = 0;
+   ev->modifiers = mods;
+   ev->keycode = keycode;
+   ecore_event_add(up ? ECORE_EVENT_KEY_UP : ECORE_EVENT_KEY_DOWN, ev, NULL, NULL);
+}
+
+static void
+_event_generate_mods(int mods, Eina_Bool up)
+{
+   if (!mods) return;
+   if (mods & ECORE_EVENT_MODIFIER_SHIFT)
+     _event_generate("Shift", "LFSH", mods, up);
+   if (mods & ECORE_EVENT_MODIFIER_CTRL)
+     _event_generate("Control_L", "LCTL", mods, up);
+   if (mods & ECORE_EVENT_MODIFIER_ALT)
+     _event_generate("Alt_L", "LALT", mods, up);
+   if (mods & ECORE_EVENT_MODIFIER_WIN)
+     _event_generate("Super_L", "LWIN", mods, up);
+   if (mods & ECORE_EVENT_MODIFIER_ALTGR)
+     _event_generate("Mode_switch", "ALGR", mods, up);
+}
+
+E_API void
+e_comp_wl_input_keyboard_event_generate(const char *key, int mods, Eina_Bool up)
+{
+   if (!_xkb_keymap_key_by_name)
+     {
+        ERR("xkbcommon >= 0.6.0 required for keyboard event generation!");
+        return;
+     }
+
+   if (!up)
+     _event_generate_mods(mods, up);
+   _event_generate(key, NULL, mods, up);
+   if (up)
+     _event_generate_mods(mods, up);
 }
