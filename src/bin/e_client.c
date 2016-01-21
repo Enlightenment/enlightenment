@@ -2862,11 +2862,7 @@ e_client_mouse_down(E_Client *ec, int button, Evas_Point *output, E_Binding_Even
         if (ec->cur_mouse_action)
           {
              did_act = EINA_TRUE;
-             if ((!ec->cur_mouse_action->func.end_mouse) &&
-                 (!ec->cur_mouse_action->func.end))
-               ec->cur_mouse_action = NULL;
-             if (ec->cur_mouse_action)
-               e_object_ref(E_OBJECT(ec->cur_mouse_action));
+             e_object_ref(E_OBJECT(ec->cur_mouse_action));
           }
      }
    if ((!did_act) || (((pfocus == e_client_focused_get()) || (ec == e_client_focused_get())) && (ec->layer >= player)))
