@@ -167,6 +167,7 @@ struct _E_Comp_Wl_Data
         wl_fixed_t x, y;
         wl_fixed_t grab_x, grab_y;
         uint32_t button;
+        uint32_t button_mask;
         E_Client *ec;
         Eina_Bool enabled : 1;
      } ptr;
