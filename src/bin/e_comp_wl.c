@@ -1024,6 +1024,10 @@ _e_comp_wl_surface_state_commit(E_Client *ec, E_Comp_Wl_Surface_State *state)
    int x = 0, y = 0, w, h;
 
    first = !e_pixmap_usable_get(ec->pixmap);
+#ifndef HAVE_WAYLAND_ONLY
+   if (first && e_client_has_xwindow(ec))
+     first = !e_pixmap_usable_get(e_comp_x_client_pixmap_get(ec));
+#endif
    ignored = ec->ignored;
 
    if (state->new_attach)
