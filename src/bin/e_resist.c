@@ -21,7 +21,6 @@ e_resist_client_position(Eina_List *skiplist,
    E_Resist_Rect *r;
    E_Client *ec;
    E_Desk *desk;
-   E_Shelf *es;
    E_Zone *zone;
 
    if (!e_config->use_resist)
@@ -66,15 +65,14 @@ e_resist_client_position(Eina_List *skiplist,
      }
 
    desk = e_desk_current_get(e_zone_current_get());
-   l = e_shelf_list_all();
-   EINA_LIST_FREE(l, es)
-     {
-        if (e_shelf_desk_visible(es, desk))
-          {
-             OBSTACLE(es->x + es->zone->x, es->y + es->zone->y, es->w, es->h,
-                      e_config->gadget_resist);
-          }
-     }
+   {
+      E_Zone_Obstacle *obs;
+
+      EINA_INLIST_FOREACH(desk->obstacles, obs)
+        OBSTACLE(obs->x, obs->y, obs->w, obs->h, e_config->gadget_resist);
+      EINA_INLIST_FOREACH(desk->zone->obstacles, obs)
+        OBSTACLE(obs->x, obs->y, obs->w, obs->h, e_config->gadget_resist);
+   }
    if (rects)
      {
         _e_resist_rects(rects,
