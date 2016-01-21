@@ -817,6 +817,12 @@ _e_comp_key_down(void *data EINA_UNUSED, int type EINA_UNUSED, Ecore_Event_Key *
 static Eina_Bool
 _e_comp_signal_user(void *data EINA_UNUSED, int type EINA_UNUSED, Ecore_Event_Signal_User *ev)
 {
+   siginfo_t sig;
+
+   sig = ev->data;
+   /* anything sent via 'kill' will set this code to SI_USER */
+   if (sig.si_code != SI_USER) return ECORE_CALLBACK_PASS_ON;
+
    if (ev->number == 1)
      {
         // e uses this to pop up config panel
