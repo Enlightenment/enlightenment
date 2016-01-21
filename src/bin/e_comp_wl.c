@@ -3099,6 +3099,14 @@ e_comp_wl_evas_handle_mouse_button(E_Client *ec, uint32_t timestamp, uint32_t bu
         break;
      }
 
+   if (state == WL_POINTER_BUTTON_STATE_PRESSED)
+     e_comp_wl->ptr.button_mask |= 1 << button_id;
+   else
+     {
+        /* reject release events if button is not pressed */
+        if (!(e_comp_wl->ptr.button_mask & (1 << button_id))) return EINA_FALSE;
+        e_comp_wl->ptr.button_mask &= ~(1 << button_id);
+     }
    e_comp_wl->ptr.button = btn;
 
    if (!ec->comp_data->surface) return EINA_FALSE;
