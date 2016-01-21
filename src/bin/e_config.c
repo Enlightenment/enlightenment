@@ -145,7 +145,6 @@ _e_config_edd_shutdown(void)
    E_CONFIG_DD_FREE(_e_config_env_var_edd);
    E_CONFIG_DD_FREE(_e_config_xkb_layout_edd);
    E_CONFIG_DD_FREE(_e_config_xkb_option_edd);
-   E_CONFIG_DD_FREE(_e_config_xkb_option_edd);
 }
 
 static void
@@ -414,14 +413,6 @@ _e_config_edd_init(Eina_Bool old)
    E_CONFIG_VAL(D, T, name, STR);
    E_CONFIG_VAL(D, T, model, STR);
    E_CONFIG_VAL(D, T, variant, STR);
-
-   _e_config_xkb_option_edd = E_CONFIG_DD_NEW("E_Config_XKB_Option",
-                                              E_Config_XKB_Option);
-#undef T
-#undef D
-#define T E_Config_XKB_Option
-#define D _e_config_xkb_option_edd
-   E_CONFIG_VAL(D, T, name, STR);
 
    _e_config_xkb_option_edd = E_CONFIG_DD_NEW("E_Config_XKB_Option",
                                               E_Config_XKB_Option);
