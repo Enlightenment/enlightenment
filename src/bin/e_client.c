@@ -413,6 +413,17 @@ _e_client_action_finish(void)
 }
 
 static void
+_e_client_mouse_action_end(E_Client *ec)
+{
+   if (!ec->cur_mouse_action) return;
+   if (ec->cur_mouse_action->func.end_mouse)
+     ec->cur_mouse_action->func.end_mouse(E_OBJECT(ec), "", NULL);
+   else if (ec->cur_mouse_action->func.end)
+     ec->cur_mouse_action->func.end(E_OBJECT(ec), "");
+   E_FREE_FUNC(ec->cur_mouse_action, e_object_unref);
+}
+
+static void
 _e_client_revert_focus(E_Client *ec)
 {
    E_Client *pec;
@@ -586,11 +597,7 @@ _e_client_del(E_Client *ec)
           ec->exe_inst = NULL;
      }
 
-   if (ec->cur_mouse_action)
-     {
-        if (ec->cur_mouse_action->func.end)
-          ec->cur_mouse_action->func.end(E_OBJECT(ec), "");
-     }
+   _e_client_mouse_action_end(ec);
    if (action_client == ec) _e_client_action_finish();
    e_pointer_type_pop(e_comp->pointer, ec, NULL);
 
@@ -1388,14 +1395,7 @@ _e_client_cb_evas_hide(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UN
 
    if (stopping) return; //ignore all of this if we're shutting down!
    if (e_object_is_del(data)) return; //client is about to die
-   if (ec->cur_mouse_action)
-     {
-        if (ec->cur_mouse_action->func.end_mouse)
-          ec->cur_mouse_action->func.end_mouse(E_OBJECT(ec), "", NULL);
-        else if (ec->cur_mouse_action->func.end)
-          ec->cur_mouse_action->func.end(E_OBJECT(ec), "");
-        E_FREE_FUNC(ec->cur_mouse_action, e_object_unref);
-     }
+   _e_client_mouse_action_end(ec);
    if (action_client == ec) _e_client_action_finish();
    e_pointer_type_pop(e_comp->pointer, ec, NULL);
 
@@ -2905,14 +2905,7 @@ e_client_mouse_up(E_Client *ec, int button, Evas_Point *output, E_Binding_Event_
    /* also we don't pass the same params that went in - then again that */
    /* should be ok as we are just ending the action if it has an end */
    if (ec->cur_mouse_action)
-     {
-        if (ec->cur_mouse_action->func.end_mouse)
-          ec->cur_mouse_action->func.end_mouse(E_OBJECT(ec), "", ev);
-        else if (ec->cur_mouse_action->func.end)
-          ec->cur_mouse_action->func.end(E_OBJECT(ec), "");
-        e_object_unref(E_OBJECT(ec->cur_mouse_action));
-        ec->cur_mouse_action = NULL;
-     }
+     _e_client_mouse_action_end(ec);
    else
      {
         if (!e_bindings_mouse_up_event_handle(E_BINDING_CONTEXT_WINDOW, E_OBJECT(ec), ev))
@@ -4587,12 +4580,7 @@ e_client_move_cancel(void)
 
         ec = ecmove;
         e_object_ref(E_OBJECT(ec));
-        if (ec->cur_mouse_action->func.end_mouse)
-          ec->cur_mouse_action->func.end_mouse(E_OBJECT(ec), "", NULL);
-        else if (ec->cur_mouse_action->func.end)
-          ec->cur_mouse_action->func.end(E_OBJECT(ec), "");
-        e_object_unref(E_OBJECT(ec->cur_mouse_action));
-        ec->cur_mouse_action = NULL;
+        _e_client_mouse_action_end(ec);
         e_object_unref(E_OBJECT(ec));
      }
    else
@@ -4609,12 +4597,7 @@ e_client_resize_cancel(void)
 
         ec = ecresize;
         e_object_ref(E_OBJECT(ec));
-        if (ec->cur_mouse_action->func.end_mouse)
-          ec->cur_mouse_action->func.end_mouse(E_OBJECT(ec), "", NULL);
-        else if (ec->cur_mouse_action->func.end)
-          ec->cur_mouse_action->func.end(E_OBJECT(ec), "");
-        e_object_unref(E_OBJECT(ec->cur_mouse_action));
-        ec->cur_mouse_action = NULL;
+        _e_client_mouse_action_end(ec);
         e_object_unref(E_OBJECT(ec));
      }
    else
