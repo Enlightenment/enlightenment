@@ -1247,6 +1247,7 @@ _e_xdg_shell_cb_popup_get(struct wl_client *client, struct wl_resource *resource
    cdata->shell.ping = _e_xdg_shell_surface_ping;
    cdata->shell.map = _e_xdg_shell_surface_map;
    cdata->shell.unmap = _e_xdg_shell_surface_unmap;
+   cdata->shell.data = E_NEW(E_Shell_Data, 1);
 
    EC_CHANGED(ec);
    ec->new_client = ec->want_focus = ec->override = 1;
