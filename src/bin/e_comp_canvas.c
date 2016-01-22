@@ -101,13 +101,6 @@ static Eina_Bool
 _e_comp_cb_key_down(void *data EINA_UNUSED, int ev_type EINA_UNUSED, Ecore_Event_Key *ev)
 {
    e_screensaver_notidle();
-   if (e_menu_grab_window_get())
-     {
-#ifdef HAVE_WAYLAND
-        e_comp_wl_key_down(ev);
-#endif
-        return ECORE_CALLBACK_RENEW;
-     }
    if ((e_comp->comp_type == E_PIXMAP_TYPE_X) && (ev->event_window != e_comp->root))
      {
         E_Client *ec;
@@ -131,13 +124,6 @@ static Eina_Bool
 _e_comp_cb_key_up(void *data EINA_UNUSED, int ev_type EINA_UNUSED, Ecore_Event_Key *ev)
 {
    e_screensaver_notidle();
-   if (e_menu_grab_window_get())
-     {
-#ifdef HAVE_WAYLAND
-        e_comp_wl_key_up(ev);
-#endif
-        return ECORE_CALLBACK_RENEW;
-     }
    if ((e_comp->comp_type == E_PIXMAP_TYPE_X) && (ev->event_window != e_comp->root)) return ECORE_CALLBACK_PASS_ON;
    return !e_bindings_key_up_event_handle(E_BINDING_CONTEXT_MANAGER, E_OBJECT(e_comp), ev)
 #ifdef HAVE_WAYLAND
