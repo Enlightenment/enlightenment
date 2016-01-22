@@ -188,7 +188,7 @@ _e_drag_finalize(E_Drag *drag, E_Drag_Type type, int x, int y)
           }
 #endif
      }
-
+   e_bindings_disabled_set(1);
    _drag_current = drag;
    return 1;
 }
@@ -1158,6 +1158,7 @@ _e_drag_free(E_Drag *drag)
 #endif
    if (e_comp->comp_type == E_PIXMAP_TYPE_WL)
      e_comp_ungrab_input(1, 1);
+   e_bindings_disabled_set(0);
    _drag_win = 0;
 }
 
