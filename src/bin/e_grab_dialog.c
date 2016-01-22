@@ -80,6 +80,7 @@ _e_grab_dialog_free(E_Grab_Dialog *eg)
           e_comp_ungrab_input(1, 1);
      }
    E_FREE_LIST(eg->handlers, ecore_event_handler_del);
+   e_bindings_disabled_set(0);
 
    e_object_del(E_OBJECT(eg->dia));
    free(eg);
@@ -162,6 +163,7 @@ e_grab_dialog_show(Evas_Object *parent, Eina_Bool is_mouse, Ecore_Event_Handler_
      }
    e_dialog_show(eg->dia);
    evas_object_layer_set(e_win_client_get(eg->dia->win)->frame, E_LAYER_CLIENT_PRIO);
+   e_bindings_disabled_set(1);
    return eg;
 }
 

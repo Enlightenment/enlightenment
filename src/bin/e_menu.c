@@ -1186,6 +1186,7 @@ e_menu_idler_before(void)
           {
              e_comp_ungrab_input(1, 1);
              _e_menu_win = 0;
+             e_bindings_disabled_set(0);
           }
      }
 }
@@ -1880,6 +1881,7 @@ _e_menu_activate_internal(E_Menu *m, E_Zone *zone)
              _e_menu_win = 0;
              return;
           }
+        e_bindings_disabled_set(1);
      }
    m->zone = zone;
    if (!m->active)
