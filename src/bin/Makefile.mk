@@ -5,6 +5,7 @@ E_CPPFLAGS = \
 -I$(top_builddir)/src/bin \
 -I$(top_srcdir) \
 -I$(top_srcdir)/src/bin \
+-I$(top_srcdir)/src/bin/generated \
 @e_cflags@ \
 @cf_cflags@ \
 @VALGRIND_CFLAGS@ \
@@ -369,10 +370,10 @@ endif
 if HAVE_WAYLAND
 enlightenment_src += \
 src/bin/e_uuid_store.c \
-src/bin/session-recovery-protocol.c \
-src/bin/session-recovery-server-protocol.h \
-src/bin/e_comp_wl_screenshooter_server.c \
-src/bin/e_comp_wl_screenshooter_server.h \
+src/bin/generated/session-recovery-protocol.c \
+src/bin/generated/session-recovery-server-protocol.h \
+src/bin/generated/e_comp_wl_screenshooter_server.c \
+src/bin/generated/e_comp_wl_screenshooter_server.h \
 src/bin/e_comp_wl_data.c \
 src/bin/e_comp_wl_input.c \
 src/bin/e_comp_wl.c
