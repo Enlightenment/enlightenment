@@ -1,6 +1,5 @@
 #define E_COMP_WL
 #include "e.h"
-#include "e_comp_wl_screenshooter_server.h"
 
 /* handle include for printing uint64_t */
 #define __STDC_FORMAT_MACROS
@@ -14,8 +13,6 @@
 #endif
 
 E_API int E_EVENT_WAYLAND_GLOBAL_ADD = -1;
-
-#include "session-recovery-server-protocol.h"
 
 #ifndef EGL_HEIGHT
 # define EGL_HEIGHT			0x3056
@@ -33,6 +30,8 @@ E_API int E_EVENT_WAYLAND_GLOBAL_ADD = -1;
  */
 
 static void _e_comp_wl_subsurface_parent_commit(E_Client *ec, Eina_Bool parent_synchronized);
+
+EINTERN Eina_Bool e_comp_wl_extensions_init(void);
 
 /* local variables */
 /* static Eina_Hash *clients_win_hash = NULL; */
@@ -1620,9 +1619,6 @@ _e_comp_wl_compositor_cb_del(void *data EINA_UNUSED)
 {
    E_Comp_Wl_Output *output;
 
-   if (e_comp_wl->screenshooter.global)
-     wl_global_destroy(e_comp_wl->screenshooter.global);
-
    EINA_LIST_FREE(e_comp_wl->outputs, output)
      {
         if (output->id) eina_stringshare_del(output->id);
@@ -1636,6 +1632,7 @@ _e_comp_wl_compositor_cb_del(void *data EINA_UNUSED)
    /* if (e_comp_wl->fd_hdlr) ecore_main_fd_handler_del(e_comp_wl->fd_hdlr); */
 
    /* free allocated data structure */
+   free(e_comp_wl->extensions);
    free(e_comp_wl);
 }
 
@@ -2056,114 +2053,6 @@ _e_comp_wl_subcompositor_cb_bind(struct wl_client *client, void *data EINA_UNUSE
 }
 
 static void
-_e_comp_wl_sr_cb_provide_uuid(struct wl_client *client EINA_UNUSED, struct wl_resource *resource EINA_UNUSED, const char *uuid)
-{
-   DBG("Provide UUID callback called for UUID: %s", uuid);
-}
-
-static const struct zwp_e_session_recovery_interface _e_session_recovery_interface =
-{
-   _e_comp_wl_sr_cb_provide_uuid,
-};
-
-static void
-_e_comp_wl_session_recovery_cb_bind(struct wl_client *client, void *data EINA_UNUSED, uint32_t version EINA_UNUSED, uint32_t id)
-{
-   struct wl_resource *res;
-
-   if (!(res = wl_resource_create(client, &zwp_e_session_recovery_interface, 1, id)))
-     {
-        ERR("Could not create session_recovery interface");
-        wl_client_post_no_memory(client);
-        return;
-     }
-
-   /* set implementation on resource */
-   wl_resource_set_implementation(res, &_e_session_recovery_interface, e_comp, NULL);
-}
-
-static void
-_e_comp_wl_screenshooter_cb_shoot(struct wl_client *client EINA_UNUSED, struct wl_resource *resource, struct wl_resource *output_resource, struct wl_resource *buffer_resource)
-{
-   E_Comp_Wl_Output *output;
-   E_Comp_Wl_Buffer *buffer;
-   struct wl_shm_buffer *shm_buffer;
-   int stride;
-   void *pixels, *d;
-
-   output = wl_resource_get_user_data(output_resource);
-   buffer = e_comp_wl_buffer_get(buffer_resource);
-
-   if (!buffer)
-     {
-        wl_resource_post_no_memory(resource);
-        return;
-     }
-
-   if ((buffer->w < output->w) || (buffer->h < output->h))
-     {
-        ERR("Buffer size less than output");
-        /* send done with bad buffer error */
-        return;
-     }
-
-   stride = buffer->w * sizeof(int);
-
-   pixels = malloc(stride * buffer->h);
-   if (!pixels)
-     {
-        /* send done with bad buffer error */
-        ERR("Could not allocate space for destination");
-        return;
-     }
-
-   if (e_comp_wl->screenshooter.read_pixels)
-     e_comp_wl->screenshooter.read_pixels(output, pixels);
-
-   shm_buffer = wl_shm_buffer_get(buffer->resource);
-   if (!shm_buffer)
-     {
-        ERR("Could not get shm_buffer from resource");
-        return;
-     }
-
-   stride = wl_shm_buffer_get_stride(shm_buffer);
-   d = wl_shm_buffer_get_data(shm_buffer);
-   if (!d)
-     {
-        ERR("Could not get buffer data");
-        return;
-     }
-
-   wl_shm_buffer_begin_access(shm_buffer);
-   memcpy(d, pixels, buffer->h * stride);
-   wl_shm_buffer_end_access(shm_buffer);
-
-   screenshooter_send_done(resource);
-}
-
-static const struct screenshooter_interface _e_screenshooter_interface =
-{
-   _e_comp_wl_screenshooter_cb_shoot
-};
-
-static void
-_e_comp_wl_screenshooter_cb_bind(struct wl_client *client, void *data, uint32_t version EINA_UNUSED, uint32_t id)
-{
-   struct wl_resource *res;
-
-   res = wl_resource_create(client, &screenshooter_interface, 1, id);
-   if (!res)
-     {
-        ERR("Could not create screenshooter resource");
-        wl_client_post_no_memory(client);
-        return;
-     }
-
-   wl_resource_set_implementation(res, &_e_screenshooter_interface, data, NULL);
-}
-
-static void
 _e_comp_wl_client_cb_new(void *data EINA_UNUSED, E_Client *ec)
 {
    uint64_t win;
@@ -2461,25 +2350,10 @@ _e_comp_wl_compositor_create(void)
         goto comp_global_err;
      }
 
-   /* try to add session_recovery to wayland globals */
-   if (!wl_global_create(cdata->wl.disp, &zwp_e_session_recovery_interface, 1,
-                         e_comp, _e_comp_wl_session_recovery_cb_bind))
-     {
-        ERR("Could not add session_recovery to wayland globals");
-        goto comp_global_err;
-     }
+   if (!e_comp_wl_extensions_init()) goto comp_global_err;
 
    /* initialize shm mechanism */
    wl_display_init_shm(cdata->wl.disp);
-
-   cdata->screenshooter.global =
-     wl_global_create(cdata->wl.disp, &screenshooter_interface, 1,
-                      e_comp, _e_comp_wl_screenshooter_cb_bind);
-   if (!cdata->screenshooter.global)
-     {
-        ERR("Could not create screenshooter global");
-        goto comp_global_err;
-     }
 
    /* _e_comp_wl_cb_randr_change(NULL, 0, NULL); */
 

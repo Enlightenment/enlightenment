@@ -97,6 +97,15 @@ struct _E_Comp_Wl_Subsurf_Data
    Eina_Bool synchronized;
 };
 
+typedef struct E_Comp_Wl_Extension_Data
+{
+   struct
+   {
+      struct wl_client *client;
+      void (*read_pixels)(E_Comp_Wl_Output *output, void *pixels);
+   } screenshooter;
+} E_Comp_Wl_Extension_Data;
+
 struct _E_Comp_Wl_Data
 {
    Ecore_Wl2_Display *ewd;
@@ -231,12 +240,7 @@ struct _E_Comp_Wl_Data
         char *area;
      } xkb;
 
-   struct
-     {
-        struct wl_global *global;
-        struct wl_client *client;
-        void (*read_pixels)(E_Comp_Wl_Output *output, void *pixels);
-     } screenshooter;
+   E_Comp_Wl_Extension_Data *extensions;
 
    Eina_List *outputs;
 

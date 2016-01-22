@@ -376,7 +376,8 @@ src/bin/generated/e_comp_wl_screenshooter_server.c \
 src/bin/generated/e_comp_wl_screenshooter_server.h \
 src/bin/e_comp_wl_data.c \
 src/bin/e_comp_wl_input.c \
-src/bin/e_comp_wl.c
+src/bin/e_comp_wl.c \
+src/bin/e_comp_wl_extensions.c
 endif
 
 src_bin_enlightenment_CPPFLAGS = $(E_CPPFLAGS) -DE_LOGGING=1 @WAYLAND_CFLAGS@ @WAYLAND_EGL_CFLAGS@ @ECORE_X_CFLAGS@
