@@ -10,27 +10,6 @@ _e_comp_wl_sr_cb_provide_uuid(struct wl_client *client EINA_UNUSED, struct wl_re
    DBG("Provide UUID callback called for UUID: %s", uuid);
 }
 
-static const struct zwp_e_session_recovery_interface _e_session_recovery_interface =
-{
-   _e_comp_wl_sr_cb_provide_uuid,
-};
-
-static void
-_e_comp_wl_session_recovery_cb_bind(struct wl_client *client, void *data EINA_UNUSED, uint32_t version EINA_UNUSED, uint32_t id)
-{
-   struct wl_resource *res;
-
-   if (!(res = wl_resource_create(client, &zwp_e_session_recovery_interface, 1, id)))
-     {
-        ERR("Could not create session_recovery interface");
-        wl_client_post_no_memory(client);
-        return;
-     }
-
-   /* set implementation on resource */
-   wl_resource_set_implementation(res, &_e_session_recovery_interface, e_comp, NULL);
-}
-
 static void
 _e_comp_wl_screenshooter_cb_shoot(struct wl_client *client EINA_UNUSED, struct wl_resource *resource, struct wl_resource *output_resource, struct wl_resource *buffer_resource)
 {
@@ -91,44 +70,54 @@ _e_comp_wl_screenshooter_cb_shoot(struct wl_client *client EINA_UNUSED, struct w
    screenshooter_send_done(resource);
 }
 
+static const struct zwp_e_session_recovery_interface _e_session_recovery_interface =
+{
+   _e_comp_wl_sr_cb_provide_uuid,
+};
+
 static const struct screenshooter_interface _e_screenshooter_interface =
 {
    _e_comp_wl_screenshooter_cb_shoot
 };
 
-static void
-_e_comp_wl_screenshooter_cb_bind(struct wl_client *client, void *data, uint32_t version EINA_UNUSED, uint32_t id)
-{
-   struct wl_resource *res;
-
-   res = wl_resource_create(client, &screenshooter_interface, 1, id);
-   if (!res)
-     {
-        ERR("Could not create screenshooter resource");
-        wl_client_post_no_memory(client);
-        return;
-     }
-
-   wl_resource_set_implementation(res, &_e_screenshooter_interface, data, NULL);
+#define GLOBAL_BIND_CB(NAME, IFACE) \
+static void \
+_e_comp_wl_##NAME##_cb_bind(struct wl_client *client, void *data EINA_UNUSED, uint32_t version EINA_UNUSED, uint32_t id) \
+{ \
+   struct wl_resource *res; \
+\
+   if (!(res = wl_resource_create(client, &(IFACE), 1, id))) \
+     { \
+        ERR("Could not create %s interface", #NAME);\
+        wl_client_post_no_memory(client);\
+        return;\
+     }\
+\
+   wl_resource_set_implementation(res, &_e_##NAME##_interface, NULL, NULL);\
 }
+
+GLOBAL_BIND_CB(session_recovery, zwp_e_session_recovery_interface)
+GLOBAL_BIND_CB(screenshooter, screenshooter_interface)
+
+
+#define GLOBAL_CREATE_OR_RETURN(NAME, IFACE) \
+   do { \
+      if (!wl_global_create(e_comp_wl->wl.disp, &(IFACE), 1, \
+                            NULL, _e_comp_wl_##NAME##_cb_bind)) \
+        { \
+           ERR("Could not add %s to wayland globals", #IFACE); \
+           return EINA_FALSE; \
+        } \
+   } while (0)
+
 
 EINTERN Eina_Bool
 e_comp_wl_extensions_init(void)
 {
    /* try to add session_recovery to wayland globals */
-   if (!wl_global_create(e_comp_wl->wl.disp, &zwp_e_session_recovery_interface, 1,
-                         e_comp, _e_comp_wl_session_recovery_cb_bind))
-     {
-        ERR("Could not add session_recovery to wayland globals");
-        return EINA_FALSE;
-     }
+   GLOBAL_CREATE_OR_RETURN(session_recovery, zwp_e_session_recovery_interface);
+   GLOBAL_CREATE_OR_RETURN(screenshooter, screenshooter_interface);
 
-   if (!wl_global_create(e_comp_wl->wl.disp, &screenshooter_interface, 1,
-                      e_comp, _e_comp_wl_screenshooter_cb_bind))
-     {
-        ERR("Could not create screenshooter global");
-        return EINA_FALSE;
-     }
    e_comp_wl->extensions = E_NEW(E_Comp_Wl_Extension_Data, 1);
    return EINA_TRUE;
 }
