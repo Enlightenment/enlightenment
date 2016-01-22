@@ -1,22 +1,12 @@
 EXTRA_DIST += src/modules/tiling/module.desktop.in \
-src/modules/tiling/e-module-tiling.edc \
-src/modules/tiling/images/icon_floating.png \
-src/modules/tiling/images/icon_horizontal.png \
-src/modules/tiling/images/icon_vertical.png \
-src/modules/tiling/images/module_icon.png
+src/modules/tiling/e-module-tiling.edj
 if USE_MODULE_TILING
 tilingdir = $(MDIR)/tiling
 tiling_DATA = src/modules/tiling/e-module-tiling.edj \
 	      src/modules/tiling/module.desktop
-CLEANFILES += src/modules/tiling/e-module-tiling.edj
 
 tilingpkgdir = $(MDIR)/tiling/$(MODULE_ARCH)
 tilingpkg_LTLIBRARIES = src/modules/tiling/module.la
-
-TILING_EDJE_FLAGS = $(EDJE_FLAGS) -id $(top_srcdir)/src/modules/tiling/images
-
-src/modules/tiling/%.edj: src/modules/tiling/%.edc Makefile
-	$(EDJE_CC) $(TILING_EDJE_FLAGS) $< $@
 
 src_modules_tiling_module_la_LIBADD = $(MOD_LIBS)
 src_modules_tiling_module_la_CPPFLAGS = $(MOD_CPPFLAGS)
