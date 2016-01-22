@@ -201,5 +201,7 @@ E_API void e_bindings_evas_event_mouse_wheel_convert(const Evas_Event_Mouse_Whee
 E_API void e_bindings_ecore_event_mouse_button_convert(const Ecore_Event_Mouse_Button *ev, E_Binding_Event_Mouse_Button *event);
 E_API void e_bindings_ecore_event_mouse_wheel_convert(const Ecore_Event_Mouse_Wheel *ev, E_Binding_Event_Wheel *event);
 
+
+E_API void e_bindings_disabled_set(Eina_Bool disabled);
 #endif
 #endif
