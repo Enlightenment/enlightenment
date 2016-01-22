@@ -5237,8 +5237,11 @@ _e_comp_x_setup(Ecore_X_Window root, int w, int h)
 
    e_alert_composite_win(root, e_comp->win);
 
-   if (!e_comp_x_randr_canvas_new(e_comp->win, w, h))
-     ecore_job_add(_e_comp_x_add_fail_job, NULL);
+   if (!e_comp->ee)
+     {
+        if (!e_comp_x_randr_canvas_new(e_comp->win, w, h))
+          ecore_job_add(_e_comp_x_add_fail_job, NULL);
+     }
 
    ecore_x_composite_redirect_subwindows(root, ECORE_X_COMPOSITE_UPDATE_MANUAL);
 
