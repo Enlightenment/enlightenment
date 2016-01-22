@@ -955,6 +955,7 @@ _wl_shot_now(E_Zone *zone, E_Client *ec, const char *params)
 
    shm = e_comp_wl->wl.shm ?: ecore_wl2_display_shm_get(e_comp_wl->wl.client_disp);
 
+   e_bindings_disabled_set(1);
    EINA_LIST_FOREACH(_outputs, l, output)
      {
         if ((!zone) &&
@@ -971,6 +972,7 @@ _wl_shot_now(E_Zone *zone, E_Client *ec, const char *params)
         while (!copy_done)
           ecore_main_loop_iterate();
      }
+   e_bindings_disabled_set(0);
 
    bstride = sw * sizeof(int);
    dst = malloc(bstride * sh);
