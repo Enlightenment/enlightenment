@@ -29,6 +29,8 @@ E_API void e_comp_canvas_keys_grab(void);
 E_API void e_comp_canvas_keys_ungrab(void);
 E_API void e_comp_canvas_feed_mouse_up(unsigned int activate_time);
 
+EINTERN void e_comp_canvas_intercept(void);
+
 /* the following functions are used for adjusting root window coordinates
  * to/from canvas coordinates.
  * this ensures correct positioning when running E as a nested compositor

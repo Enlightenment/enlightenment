@@ -365,7 +365,7 @@ main(int argc, char **argv)
      }
    TS("Ecore Init Done");
    _e_main_shutdown_push(ecore_shutdown);
-
+   e_comp_canvas_intercept();
    e_first_frame = getenv("E_FIRST_FRAME");
    if (e_first_frame && e_first_frame[0])
      e_first_frame_start_time = ecore_time_get();
