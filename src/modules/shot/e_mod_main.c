@@ -1193,10 +1193,31 @@ _e_mod_action_border_cb(E_Object *obj EINA_UNUSED, const char *params EINA_UNUSE
      _wl_shot_now(NULL, ec, NULL);
 }
 
+typedef struct
+{
+   E_Zone *zone;
+   char *params;
+} Delayed_Shot;
+
+static void
+_delayed_shot(void *data)
+{
+   Delayed_Shot *ds = data;
+
+   if (e_comp->comp_type == E_PIXMAP_TYPE_X)
+     _x_shot_now(ds->zone, NULL, ds->params);
+   else
+     _wl_shot_now(ds->zone, NULL, ds->params);
+   e_object_unref(E_OBJECT(ds->zone));
+   free(ds->params);
+   free(ds);
+}
+
 static void
 _e_mod_action_cb(E_Object *obj, const char *params)
 {
    E_Zone *zone = NULL;
+   Delayed_Shot *ds;
 
    if (obj)
      {
@@ -1210,10 +1231,14 @@ _e_mod_action_cb(E_Object *obj, const char *params)
    if (!zone) zone = e_zone_current_get();
    if (!zone) return;
    E_FREE_FUNC(timer, ecore_timer_del);
-   if (e_comp->comp_type == E_PIXMAP_TYPE_X)
-     _x_shot_now(zone, NULL, params);
-   else
-     _wl_shot_now(zone, NULL, params);
+   ds = E_NEW(Delayed_Shot, 1);
+   e_object_ref(E_OBJECT(zone));
+   ds->zone = zone;
+   ds->params = params ? strdup(params) : NULL;
+   /* forced main loop iteration in screenshots causes bugs if the action
+    * executes immediately
+    */
+   ecore_job_add(_delayed_shot, ds);
 }
 
 static void
