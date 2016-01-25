@@ -516,6 +516,11 @@ e_comp_wl_input_keyboard_modifiers_serialize(void)
 
    grp = xkb_state_serialize_layout(e_comp_wl->xkb.state,
                                     XKB_STATE_LAYOUT_EFFECTIVE);
+   if (grp != e_comp_wl->kbd.mod_group)
+     {
+        e_config->xkb.cur_group = grp;
+        ecore_event_add(E_EVENT_XKB_CHANGED, NULL, NULL, NULL);
+     }
    changed |= grp != e_comp_wl->kbd.mod_group;
    e_comp_wl->kbd.mod_group = grp;
    return changed;
