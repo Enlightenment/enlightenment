@@ -643,69 +643,33 @@ e_bindings_key_ungrab(E_Binding_Context ctxt, Ecore_X_Window win)
 E_API E_Action *
 e_bindings_key_down_event_handle(E_Binding_Context ctxt, E_Object *obj, Ecore_Event_Key *ev)
 {
-   E_Binding_Modifier mod = 0;
    E_Binding_Key *binding;
-   Eina_List *l;
+   E_Action *act;
 
    if (bindings_disabled) return NULL;
-   mod = _e_bindings_modifiers(ev->modifiers);
-   EINA_LIST_FOREACH(key_bindings, l, binding)
-     {
-        if ((binding->key) && ((!strcmp(binding->key, ev->key)) || (!strcmp(binding->key, ev->keyname))) &&
-            ((binding->any_mod) || (binding->mod == mod)))
-          {
-             if (_e_bindings_context_match(binding->ctxt, ctxt))
-               {
-                  E_Action *act;
-
-                  act = e_action_find(binding->action);
-                  if (act)
-                    {
-                       if (act->func.go_key)
-                         act->func.go_key(obj, binding->params, ev);
-                       else if (act->func.go)
-                         act->func.go(obj, binding->params);
-                       return act;
-                    }
-                  return NULL;
-               }
-          }
-     }
-   return NULL;
+   act = e_bindings_key_event_find(ctxt, ev, &binding);
+   if (!act) return NULL;
+   if (act->func.go_key)
+     act->func.go_key(obj, binding->params, ev);
+   else if (act->func.go)
+     act->func.go(obj, binding->params);
+   return act;
 }
 
 E_API E_Action *
 e_bindings_key_up_event_handle(E_Binding_Context ctxt, E_Object *obj, Ecore_Event_Key *ev)
 {
-   E_Binding_Modifier mod = 0;
    E_Binding_Key *binding;
-   Eina_List *l;
+   E_Action *act;
 
    if (bindings_disabled) return NULL;
-   mod = _e_bindings_modifiers(ev->modifiers);
-   EINA_LIST_FOREACH(key_bindings, l, binding)
-     {
-        if ((binding->key) && (!strcmp(binding->key, ev->key)) &&
-            ((binding->any_mod) || (binding->mod == mod)))
-          {
-             if (_e_bindings_context_match(binding->ctxt, ctxt))
-               {
-                  E_Action *act;
-
-                  act = e_action_find(binding->action);
-                  if (act)
-                    {
-                       if (act->func.end_key)
-                         act->func.end_key(obj, binding->params, ev);
-                       else if (act->func.end)
-                         act->func.end(obj, binding->params);
-                       return act;
-                    }
-                  return NULL;
-               }
-          }
-     }
-   return NULL;
+   act = e_bindings_key_event_find(ctxt, ev, &binding);
+   if (!act) return NULL;
+   if (act->func.end_key)
+     act->func.end_key(obj, binding->params, ev);
+   else if (act->func.end)
+     act->func.end(obj, binding->params);
+   return act;
 }
 
 E_API E_Action *
@@ -896,161 +860,100 @@ e_bindings_edge_event_find(E_Binding_Context ctxt, E_Event_Zone_Edge *ev, Eina_B
 E_API E_Action *
 e_bindings_edge_in_event_handle(E_Binding_Context ctxt, E_Object *obj, E_Event_Zone_Edge *ev)
 {
-   E_Binding_Modifier mod = 0;
    E_Binding_Edge *binding;
    E_Desk *current = NULL;
    E_Action *act = NULL;
-   Eina_List *l;
+   E_Binding_Edge_Data *ed;
+   E_Event_Zone_Edge *ev2;
 
    if (bindings_disabled) return NULL;
    current = e_desk_at_xy_get(ev->zone, ev->zone->desk_x_current, ev->zone->desk_y_current);
    if (current->fullscreen_clients && (!e_config->fullscreen_flip)) return NULL;
+   act = e_bindings_edge_event_find(ctxt, ev, 0, &binding);
+   if (!act) return NULL;
+   ed = E_NEW(E_Binding_Edge_Data, 1);
+   ev2 = E_NEW(E_Event_Zone_Edge, 1);
 
-   if (ev->modifiers & ECORE_EVENT_MODIFIER_SHIFT) mod |= E_BINDING_MODIFIER_SHIFT;
-   if (ev->modifiers & ECORE_EVENT_MODIFIER_CTRL) mod |= E_BINDING_MODIFIER_CTRL;
-   if (ev->modifiers & ECORE_EVENT_MODIFIER_ALT) mod |= E_BINDING_MODIFIER_ALT;
-   if (ev->modifiers & ECORE_EVENT_MODIFIER_WIN) mod |= E_BINDING_MODIFIER_WIN;
-   EINA_LIST_FOREACH(edge_bindings, l, binding)
-     {
-        /* A value of <= -1.0 for the delay indicates it as a mouse-click binding on that edge */
-        if (((binding->edge == ev->edge)) && (binding->delay >= 0.0) &&
-            ((binding->drag_only == ev->drag) || ev->drag) &&
-            ((binding->any_mod) || (binding->mod == mod)))
-          {
-             if (_e_bindings_context_match(binding->ctxt, ctxt))
-               {
-                  act = e_action_find(binding->action);
-                  if (act)
-                    {
-                       E_Binding_Edge_Data *ed = E_NEW(E_Binding_Edge_Data, 1);
-                       E_Event_Zone_Edge *ev2 = E_NEW(E_Event_Zone_Edge, 1);
+   /* The original event will be freed before it can be
+    * used again */
+   ev2->zone = ev->zone;
+   ev2->edge = ev->edge;
+   ev2->x = ev->x;
+   ev2->y = ev->y;
 
-                       /* The original event will be freed before it can be
-                        * used again */
-                       ev2->zone = ev->zone;
-                       ev2->edge = ev->edge;
-                       ev2->x = ev->x;
-                       ev2->y = ev->y;
-
-                       ed->bind = binding;
-                       ed->obj = obj;
-                       ed->act = act;
-                       ed->ev = ev2;
-                       binding->timer = ecore_timer_add(((double)binding->delay), _e_bindings_edge_cb_timer, ed);
-                    }
-               }
-          }
-     }
+   ed->bind = binding;
+   ed->obj = obj;
+   ed->act = act;
+   ed->ev = ev2;
+   binding->timer = ecore_timer_add(((double)binding->delay), _e_bindings_edge_cb_timer, ed);
    return act;
 }
 
 E_API E_Action *
 e_bindings_edge_out_event_handle(E_Binding_Context ctxt, E_Object *obj, E_Event_Zone_Edge *ev)
 {
-   E_Binding_Modifier mod = 0;
    E_Binding_Edge *binding;
    E_Action *act = NULL;
-   Eina_List *l;
+   E_Desk *current = NULL;
 
    if (bindings_disabled) return NULL;
-   if (ev->modifiers & ECORE_EVENT_MODIFIER_SHIFT) mod |= E_BINDING_MODIFIER_SHIFT;
-   if (ev->modifiers & ECORE_EVENT_MODIFIER_CTRL) mod |= E_BINDING_MODIFIER_CTRL;
-   if (ev->modifiers & ECORE_EVENT_MODIFIER_ALT) mod |= E_BINDING_MODIFIER_ALT;
-   if (ev->modifiers & ECORE_EVENT_MODIFIER_WIN) mod |= E_BINDING_MODIFIER_WIN;
-   EINA_LIST_FOREACH(edge_bindings, l, binding)
+   current = e_desk_at_xy_get(ev->zone, ev->zone->desk_x_current, ev->zone->desk_y_current);
+   if (current->fullscreen_clients && (!e_config->fullscreen_flip)) return NULL;
+   act = e_bindings_edge_event_find(ctxt, ev, 0, &binding);
+   if (!act) return NULL;
+   if (binding->timer)
      {
-        /* A value of <= -1.0 for the delay indicates it as a mouse-click binding on that edge */
-        if ((binding->edge == ev->edge) && (binding->delay >= 0.0) &&
-            ((binding->any_mod) || (binding->mod == mod)))
+        E_Binding_Edge_Data *ed;
+
+        ed = ecore_timer_del(binding->timer);
+        if (ed)
           {
-             if (_e_bindings_context_match(binding->ctxt, ctxt))
-               {
-                  if (binding->timer)
-                    {
-                       E_Binding_Edge_Data *ed;
-
-                       ed = ecore_timer_del(binding->timer);
-                       if (ed)
-                         {
-                            E_FREE(ed->ev);
-                            E_FREE(ed);
-                         }
-                    }
-                  binding->timer = NULL;
-
-                  act = e_action_find(binding->action);
-                  if (act && act->func.end)
-                    act->func.end(obj, binding->params);
-               }
+             E_FREE(ed->ev);
+             E_FREE(ed);
           }
      }
+   binding->timer = NULL;
+
+   act = e_action_find(binding->action);
+   if (act && act->func.end)
+     act->func.end(obj, binding->params);
    return act;
 }
 
 E_API E_Action *
 e_bindings_edge_down_event_handle(E_Binding_Context ctxt, E_Object *obj, E_Event_Zone_Edge *ev)
 {
-   E_Binding_Modifier mod = 0;
    E_Binding_Edge *binding;
    E_Desk *current = NULL;
    E_Action *act = NULL;
-   Eina_List *l;
 
    if (bindings_disabled) return NULL;
    current = e_desk_at_xy_get(ev->zone, ev->zone->desk_x_current, ev->zone->desk_y_current);
    if (current->fullscreen_clients && (!e_config->fullscreen_flip)) return NULL;
-
-   if (ev->modifiers & ECORE_EVENT_MODIFIER_SHIFT) mod |= E_BINDING_MODIFIER_SHIFT;
-   if (ev->modifiers & ECORE_EVENT_MODIFIER_CTRL) mod |= E_BINDING_MODIFIER_CTRL;
-   if (ev->modifiers & ECORE_EVENT_MODIFIER_ALT) mod |= E_BINDING_MODIFIER_ALT;
-   if (ev->modifiers & ECORE_EVENT_MODIFIER_WIN) mod |= E_BINDING_MODIFIER_WIN;
-   EINA_LIST_FOREACH(edge_bindings, l, binding)
-     {
-        if (((binding->edge == ev->edge)) && (binding->delay == -1.0 * ev->button) &&
-            (!binding->drag_only) && ((binding->any_mod) || (binding->mod == mod)))
-          {
-             if (_e_bindings_context_match(binding->ctxt, ctxt))
-               {
-                  act = e_action_find(binding->action);
-                  if (act)
-                    {
-                       if (act->func.go_edge)
-                         act->func.go_edge(obj, binding->params, ev);
-                       else if (act->func.go)
-                         act->func.go(obj, binding->params);
-                    }
-               }
-          }
-     }
+   act = e_bindings_edge_event_find(ctxt, ev, 1, &binding);
+   if (!act) return NULL;
+   if (act->func.go_edge)
+     act->func.go_edge(obj, binding->params, ev);
+   else if (act->func.go)
+     act->func.go(obj, binding->params);
    return act;
 }
 
 E_API E_Action *
 e_bindings_edge_up_event_handle(E_Binding_Context ctxt, E_Object *obj, E_Event_Zone_Edge *ev)
 {
-   E_Binding_Modifier mod = 0;
    E_Binding_Edge *binding;
    E_Action *act = NULL;
-   Eina_List *l;
+   E_Desk *current = NULL;
 
    if (bindings_disabled) return NULL;
-   if (ev->modifiers & ECORE_EVENT_MODIFIER_SHIFT) mod |= E_BINDING_MODIFIER_SHIFT;
-   if (ev->modifiers & ECORE_EVENT_MODIFIER_CTRL) mod |= E_BINDING_MODIFIER_CTRL;
-   if (ev->modifiers & ECORE_EVENT_MODIFIER_ALT) mod |= E_BINDING_MODIFIER_ALT;
-   if (ev->modifiers & ECORE_EVENT_MODIFIER_WIN) mod |= E_BINDING_MODIFIER_WIN;
-   EINA_LIST_FOREACH(edge_bindings, l, binding)
-     {
-        if (((binding->edge == ev->edge)) && (binding->delay == -1.0 * ev->button) &&
-            ((binding->any_mod) || (binding->mod == mod)))
-          {
-             if (_e_bindings_context_match(binding->ctxt, ctxt))
-               {
-                  act = e_action_find(binding->action);
-                  if (act && act->func.end)
-                    act->func.end(obj, binding->params);
-               }
-          }
-     }
+   current = e_desk_at_xy_get(ev->zone, ev->zone->desk_x_current, ev->zone->desk_y_current);
+   if (current->fullscreen_clients && (!e_config->fullscreen_flip)) return NULL;
+   act = e_bindings_edge_event_find(ctxt, ev, 1, &binding);
+   if (!act) return NULL;
+   act = e_action_find(binding->action);
+   if (act && act->func.end)
+     act->func.end(obj, binding->params);
    return act;
 }
 
