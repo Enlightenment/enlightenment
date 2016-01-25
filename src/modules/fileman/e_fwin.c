@@ -1147,7 +1147,7 @@ _e_fwin_custom_file_path_eval(E_Fwin *fwin,
    const char *res, *ret = NULL;
 
    /* get a X-something custom tage from the .desktop for the dir */
-   res = eina_hash_find(ef->x, key);
+   res = efreet_desktop_x_field_get(ef, key);
    /* free the old path */
    if (prev_path) eina_stringshare_del(prev_path);
    /* if there was no key found - return NULL */
@@ -1155,14 +1155,12 @@ _e_fwin_custom_file_path_eval(E_Fwin *fwin,
 
    /* it's a full path */
    if (res[0] == '/')
-     ret = eina_stringshare_add(res);
+     return res;
    /* relative path to the dir */
-   else
-     {
-        snprintf(buf, sizeof(buf), "%s/%s",
-                 e_fm2_real_path_get(fwin->cur_page->fm_obj), res);
-        ret = eina_stringshare_add(buf);
-     }
+   snprintf(buf, sizeof(buf), "%s/%s",
+            e_fm2_real_path_get(fwin->cur_page->fm_obj), res);
+   ret = eina_stringshare_add(buf);
+   eina_stringshare_del(res);
    return ret;
 }
 
