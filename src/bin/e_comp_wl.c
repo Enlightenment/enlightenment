@@ -2393,45 +2393,6 @@ _e_comp_wl_compositor_create(void)
         ERR("Could not initialize input");
         goto input_err;
      }
-
-#ifndef HAVE_WAYLAND_ONLY
-   if (e_comp_util_has_x())
-     {
-        E_Config_XKB_Layout *ekbd;
-        Ecore_X_Atom xkb = 0;
-        Ecore_X_Window root = 0;
-        int len = 0;
-        unsigned char *dat;
-        char *rules = NULL, *model = NULL, *layout = NULL;
-
-        if ((ekbd = e_xkb_layout_get()))
-          {
-             model = strdup(ekbd->model);
-             layout = strdup(ekbd->name);
-          }
-
-        root = ecore_x_window_root_first_get();
-        xkb = ecore_x_atom_get("_XKB_RULES_NAMES");
-        ecore_x_window_prop_property_get(root, xkb, ECORE_X_ATOM_STRING,
-                                         1024, &dat, &len);
-        if ((dat) && (len > 0))
-          {
-             rules = (char *)dat;
-             dat += strlen((const char *)dat) + 1;
-             if (!model) model = strdup((const char *)dat);
-             dat += strlen((const char *)dat) + 1;
-             if (!layout) layout = strdup((const char *)dat);
-          }
-
-        /* fallback */
-        if (!rules) rules = strdup("evdev");
-        if (!model) model = strdup("pc105");
-        if (!layout) layout = strdup("us");
-
-        /* update compositor keymap */
-        e_comp_wl_input_keymap_set(rules, model, layout, NULL, NULL, NULL, NULL);
-     }
-#endif
    e_comp_wl->wl.client_disp = ecore_wl2_display_connect(NULL);
 
    /* setup module idler to load shell mmodule */

@@ -72,8 +72,6 @@ e_modapi_init(E_Module *m)
    e_comp->pointer = e_pointer_canvas_new(e_comp->ee, EINA_TRUE);
    e_comp->pointer->color = EINA_TRUE;
 
-   e_comp_wl_input_keymap_set(NULL, NULL, NULL, NULL, NULL, NULL, NULL);
-
    ecore_evas_pointer_xy_get(e_comp->ee, &e_comp_wl->ptr.x,
                              &e_comp_wl->ptr.y);
    evas_event_feed_mouse_in(e_comp->evas, 0, NULL);
