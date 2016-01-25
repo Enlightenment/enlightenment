@@ -198,21 +198,83 @@ static void
 _e_wl_xkb_update(int cur_group)
 {
 #ifdef HAVE_WAYLAND
+   E_Config_XKB_Option *op;
    E_Config_XKB_Layout *cl;
-   Eina_List *l;
+   Eina_Strbuf *options, *layouts, *variants;
+   Eina_List *l, *selected;
 
    if (cur_group == -1) {
      cur_group = e_config->xkb.cur_group;
    }
 
+   options = eina_strbuf_new();
+
+    /* create options */
+   EINA_LIST_FOREACH(e_config->xkb.used_options, l, op)
+     {
+        if (op->name)
+          {
+             eina_strbuf_append(options, op->name);
+             eina_strbuf_append_char(options, ',');
+          }
+     }
+
+   layouts = eina_strbuf_new();
+   variants = eina_strbuf_new();
+
+   //search for the correct layout
+   selected = eina_list_nth_list(e_config->xkb.used_layouts, cur_group);
+   if (!selected) selected = e_config->xkb.used_layouts;
+   /* create layouts */
+   //first walk from the selected layout to the end
+   EINA_LIST_FOREACH(selected, l, cl)
+     {
+        if (cl->name)
+          {
+             eina_strbuf_append(layouts, cl->name);
+             eina_strbuf_append_char(layouts, ',');
+          }
+
+        if (cl->variant)
+          {
+             eina_strbuf_append(variants, cl->variant);
+             eina_strbuf_append_char(variants, ',');
+          }
+     }
+   //then append all item from the first to the selected
+   EINA_LIST_FOREACH(e_config->xkb.used_layouts, l, cl)
+     {
+        if (selected == l) break;
+        if (cl->name)
+          {
+             eina_strbuf_append(layouts, cl->name);
+             eina_strbuf_append_char(layouts, ',');
+          }
+
+        if (cl->variant)
+          {
+             eina_strbuf_append(variants, cl->variant);
+             eina_strbuf_append_char(variants, ',');
+          }
+     }
+   /* collect model to use */
    l = eina_list_nth_list(e_config->xkb.used_layouts, cur_group);
    if (!l) return;
    cl = eina_list_data_get(l);
 
-   e_comp_wl_input_keymap_set(NULL, cl->model, cl->name, NULL, NULL);
-   INF("Set wl keyboard to %s %s", cl->model, cl->name);
+   /* set keymap to the compositor */
+   e_comp_wl_input_keymap_set(NULL,
+      e_config->xkb.default_model,
+      eina_strbuf_string_get(layouts), //pool of layouts to use
+      eina_strbuf_string_get(variants),  //pool of variants to use
+      eina_strbuf_string_get(options), //list of options
+      NULL, NULL);
+
    e_config->xkb.cur_group = cur_group;
    _e_xkb_update_event(cur_group);
+   eina_strbuf_free(variants);
+   eina_strbuf_free(layouts);
+   eina_strbuf_free(options);
 #else
    (void) cur_group;
 #endif
