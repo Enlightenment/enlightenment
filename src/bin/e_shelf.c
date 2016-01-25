@@ -252,7 +252,7 @@ e_shelf_zone_new(E_Zone *zone, const char *name, const char *style, E_Layer laye
 
    e_shelf_style_set(es, style);
    evas_object_move(es->o_base, es->zone->x + es->x, es->zone->y + es->y);
-   if (layer == E_LAYER_DESKTOP)
+   if ((layer == E_LAYER_DESKTOP) || edje_object_data_get(es->o_base, "noshadow"))
      type = E_COMP_OBJECT_TYPE_NONE;
    es->comp_object = e_comp_object_util_add(es->o_base, type);
    evas_object_event_callback_add(es->comp_object, EVAS_CALLBACK_HIDE, _e_shelf_hidden, es);
