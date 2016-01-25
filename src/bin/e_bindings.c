@@ -424,23 +424,21 @@ e_bindings_mouse_button_find(E_Binding_Context ctxt, E_Binding_Event_Mouse_Butto
 {
    E_Binding_Mouse *binding;
    Eina_List *l;
+   E_Action *act = NULL;
 
    EINA_LIST_FOREACH(mouse_bindings, l, binding)
      {
         if ((binding->button == (int)ev->button) &&
             ((binding->any_mod) || (binding->mod == ev->modifiers)))
           {
-             if (_e_bindings_context_match(binding->ctxt, ctxt))
-               {
-                  E_Action *act;
-
-                  act = e_action_find(binding->action);
-                  if (bind_ret) *bind_ret = binding;
-                  return act;
-               }
+             if (!_e_bindings_context_match(binding->ctxt, ctxt)) continue;
+             act = e_action_find(binding->action);
+             if (bind_ret) *bind_ret = binding;
+             if (!act) continue;
+             if (binding->ctxt != E_BINDING_CONTEXT_ANY) break;
           }
      }
-   return NULL;
+   return act;
 }
 
 E_API E_Action *
@@ -678,6 +676,7 @@ e_bindings_key_event_find(E_Binding_Context ctxt, Ecore_Event_Key *ev, E_Binding
    E_Binding_Modifier mod = 0;
    E_Binding_Key *binding;
    Eina_List *l;
+   E_Action *act = NULL;
 
    mod = _e_bindings_modifiers(ev->modifiers);
    EINA_LIST_FOREACH(key_bindings, l, binding)
@@ -685,18 +684,14 @@ e_bindings_key_event_find(E_Binding_Context ctxt, Ecore_Event_Key *ev, E_Binding
         if ((binding->key) && (!strcmp(binding->key, ev->key)) &&
             ((binding->any_mod) || (binding->mod == mod)))
           {
-             if (_e_bindings_context_match(binding->ctxt, ctxt))
-               {
-                  E_Action *act;
-
-                  act = e_action_find(binding->action);
-                  if (!act) continue;
-                  if (bind_ret) *bind_ret = binding;
-                  return act;
-               }
+             if (!_e_bindings_context_match(binding->ctxt, ctxt)) continue;
+             act = e_action_find(binding->action);
+             if (bind_ret) *bind_ret = binding;
+             if (!act) continue;
+             if (binding->ctxt != E_BINDING_CONTEXT_ANY) break;
           }
      }
-   return NULL;
+   return act;
 }
 
 E_API Eina_Bool
@@ -850,9 +845,9 @@ e_bindings_edge_event_find(E_Binding_Context ctxt, E_Event_Zone_Edge *ev, Eina_B
        {
           if (!_e_bindings_context_match(binding->ctxt, ctxt)) continue;
           act = e_action_find(binding->action);
-          if (!act) continue;
           if (bind_ret) *bind_ret = binding;
-          break;
+          if (!act) continue;
+          if (binding->ctxt != E_BINDING_CONTEXT_ANY) break;
        }
    return act;
 }
@@ -1006,6 +1001,7 @@ e_bindings_signal_find(E_Binding_Context ctxt, const char *sig, const char *src,
    E_Binding_Modifier mod = 0;
    E_Binding_Signal *binding;
    Eina_List *l;
+   E_Action *act = NULL;
 
    if (strstr(sig, "MOD:Shift")) mod |= E_BINDING_MODIFIER_SHIFT;
    if (strstr(sig, "MOD:Control")) mod |= E_BINDING_MODIFIER_CTRL;
@@ -1017,17 +1013,14 @@ e_bindings_signal_find(E_Binding_Context ctxt, const char *sig, const char *src,
             (e_util_glob_match(src, binding->src)) &&
             ((binding->any_mod) || (binding->mod == mod)))
           {
-             if (_e_bindings_context_match(binding->ctxt, ctxt))
-               {
-                  E_Action *act;
-
-                  act = e_action_find(binding->action);
-                  if (bind_ret) *bind_ret = binding;
-                  return act;
-               }
+             if (!_e_bindings_context_match(binding->ctxt, ctxt)) continue;
+             act = e_action_find(binding->action);
+             if (bind_ret) *bind_ret = binding;
+             if (!act) continue;
+             if (binding->ctxt != E_BINDING_CONTEXT_ANY) break;
           }
      }
-   return NULL;
+   return act;
 }
 
 E_API E_Action *
@@ -1175,6 +1168,7 @@ e_bindings_wheel_find(E_Binding_Context ctxt, E_Binding_Event_Wheel *ev, E_Bindi
 {
    E_Binding_Wheel *binding;
    Eina_List *l;
+   E_Action *act = NULL;
 
    EINA_LIST_FOREACH(wheel_bindings, l, binding)
      {
@@ -1182,17 +1176,14 @@ e_bindings_wheel_find(E_Binding_Context ctxt, E_Binding_Event_Wheel *ev, E_Bindi
             (((binding->z < 0) && (ev->z < 0)) || ((binding->z > 0) && (ev->z > 0))) &&
             ((binding->any_mod) || (binding->mod == ev->modifiers)))
           {
-             if (_e_bindings_context_match(binding->ctxt, ctxt))
-               {
-                  E_Action *act;
-
-                  act = e_action_find(binding->action);
-                  if (bind_ret) *bind_ret = binding;
-                  return act;
-               }
+             if (!_e_bindings_context_match(binding->ctxt, ctxt)) continue;
+             act = e_action_find(binding->action);
+             if (bind_ret) *bind_ret = binding;
+             if (!act) continue;
+             if (binding->ctxt != E_BINDING_CONTEXT_ANY) break;
           }
      }
-   return NULL;
+   return act;
 }
 
 E_API E_Action *
@@ -1275,6 +1266,7 @@ e_bindings_acpi_find(E_Binding_Context ctxt, E_Event_Acpi *ev, E_Binding_Acpi **
 {
    E_Binding_Acpi *binding;
    Eina_List *l;
+   E_Action *act = NULL;
 
    EINA_LIST_FOREACH(acpi_bindings, l, binding)
      {
@@ -1286,17 +1278,14 @@ e_bindings_acpi_find(E_Binding_Context ctxt, E_Event_Acpi *ev, E_Binding_Acpi **
                   /* binding status is set to something, compare event status */
                   if (binding->status != ev->status) continue;
                }
-             if (_e_bindings_context_match(binding->ctxt, ctxt))
-               {
-                  E_Action *act;
-
-                  act = e_action_find(binding->action);
-                  if (bind_ret) *bind_ret = binding;
-                  return act;
-               }
+             if (!_e_bindings_context_match(binding->ctxt, ctxt)) continue;
+             act = e_action_find(binding->action);
+             if (bind_ret) *bind_ret = binding;
+             if (!act) continue;
+             if (binding->ctxt != E_BINDING_CONTEXT_ANY) break;
           }
      }
-   return NULL;
+   return act;
 }
 
 E_API E_Action *
