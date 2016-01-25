@@ -132,6 +132,10 @@ typedef struct E_Comp_Wl_Extension_Data
         struct wl_global *global;
         Eina_Hash *constraints;
      } zwp_pointer_constraints_v1;
+    struct
+    {
+      struct wl_global *global;
+    } action_route;
 } E_Comp_Wl_Extension_Data;
 
 struct _E_Comp_Wl_Data

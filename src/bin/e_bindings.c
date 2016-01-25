@@ -7,7 +7,6 @@ static void               _e_bindings_edge_free(E_Binding_Edge *bind);
 static void               _e_bindings_signal_free(E_Binding_Signal *bind);
 static void               _e_bindings_wheel_free(E_Binding_Wheel *bind);
 static void               _e_bindings_acpi_free(E_Binding_Acpi *bind);
-static int                _e_bindings_context_match(E_Binding_Context bctxt, E_Binding_Context ctxt);
 static E_Binding_Modifier _e_bindings_modifiers(unsigned int modifiers);
 static Eina_Bool          _e_bindings_edge_cb_timer(void *data);
 
@@ -21,6 +20,8 @@ static Eina_List *wheel_bindings = NULL;
 static Eina_List *acpi_bindings = NULL;
 
 static unsigned int bindings_disabled = 0;
+
+EINTERN E_Action *(*e_binding_key_list_cb)(E_Binding_Context, Ecore_Event_Key*, E_Binding_Modifier, E_Binding_Key **);
 
 typedef struct _E_Binding_Edge_Data E_Binding_Edge_Data;
 
@@ -382,7 +383,7 @@ e_bindings_mouse_grab(E_Binding_Context ctxt, Ecore_X_Window win)
    EINA_LIST_FOREACH(mouse_bindings, l, binding)
      {
         if (binding->ctxt == E_BINDING_CONTEXT_ANY) continue;
-        if (_e_bindings_context_match(binding->ctxt, ctxt))
+        if (e_bindings_context_match(binding->ctxt, ctxt))
           {
 #ifndef HAVE_WAYLAND_ONLY
              ecore_x_window_button_grab(win, binding->button,
@@ -408,7 +409,7 @@ e_bindings_mouse_ungrab(E_Binding_Context ctxt, Ecore_X_Window win)
    EINA_LIST_FOREACH(mouse_bindings, l, binding)
      {
         if (binding->ctxt == E_BINDING_CONTEXT_ANY) continue;
-        if (_e_bindings_context_match(binding->ctxt, ctxt))
+        if (e_bindings_context_match(binding->ctxt, ctxt))
           {
 #ifndef HAVE_WAYLAND_ONLY
              ecore_x_window_button_ungrab(win, binding->button,
@@ -444,7 +445,7 @@ e_bindings_mouse_button_find(E_Binding_Context ctxt, E_Binding_Event_Mouse_Butto
         if ((binding->button == (int)ev->button) &&
             ((binding->any_mod) || (binding->mod == ev->modifiers)))
           {
-             if (!_e_bindings_context_match(binding->ctxt, ctxt)) continue;
+             if (!e_bindings_context_match(binding->ctxt, ctxt)) continue;
              if (act && (binding->ctxt == E_BINDING_CONTEXT_ANY)) continue;
              act = e_action_find(binding->action);
              if (bind_ret) *bind_ret = binding;
@@ -620,7 +621,7 @@ e_bindings_key_grab(E_Binding_Context ctxt, Ecore_X_Window win)
 
    EINA_LIST_FOREACH(key_bindings, l, binding)
      {
-        if (_e_bindings_context_match(binding->ctxt, ctxt))
+        if (e_bindings_context_match(binding->ctxt, ctxt))
           {
              if (e_bindings_key_allowed(binding->key))
                {
@@ -644,7 +645,7 @@ e_bindings_key_ungrab(E_Binding_Context ctxt, Ecore_X_Window win)
 
    EINA_LIST_FOREACH(key_bindings, l, binding)
      {
-        if (_e_bindings_context_match(binding->ctxt, ctxt))
+        if (e_bindings_context_match(binding->ctxt, ctxt))
           {
              if (e_bindings_key_allowed(binding->key))
                {
@@ -701,12 +702,18 @@ e_bindings_key_event_find(E_Binding_Context ctxt, Ecore_Event_Key *ev, E_Binding
    E_Action *act = NULL;
 
    mod = _e_bindings_modifiers(ev->modifiers);
+   if (e_binding_key_list_cb)
+     {
+        act = e_binding_key_list_cb(ctxt, ev, mod, bind_ret);
+        if (act) return act;
+        if (bind_ret) *bind_ret = NULL;
+     }
    EINA_LIST_FOREACH(key_bindings, l, binding)
      {
         if ((binding->key) && ((!strcmp(binding->key, ev->key)) || (!strcmp(binding->key, ev->keyname))) &&
             ((binding->any_mod) || (binding->mod == mod)))
           {
-             if (!_e_bindings_context_match(binding->ctxt, ctxt)) continue;
+             if (!e_bindings_context_match(binding->ctxt, ctxt)) continue;
              if (act && (binding->ctxt == E_BINDING_CONTEXT_ANY)) continue;
              act = e_action_find(binding->action);
              if (bind_ret) *bind_ret = binding;
@@ -866,7 +873,7 @@ e_bindings_edge_event_find(E_Binding_Context ctxt, E_Event_Zone_Edge *ev, Eina_B
          ((binding->drag_only == ev->drag) || ev->drag) &&
          ((binding->any_mod) || (binding->mod == mod)))
        {
-          if (!_e_bindings_context_match(binding->ctxt, ctxt)) continue;
+          if (!e_bindings_context_match(binding->ctxt, ctxt)) continue;
           if (act && (binding->ctxt == E_BINDING_CONTEXT_ANY)) continue;
           act = e_action_find(binding->action);
           if (bind_ret) *bind_ret = binding;
@@ -1037,7 +1044,7 @@ e_bindings_signal_find(E_Binding_Context ctxt, const char *sig, const char *src,
             (e_util_glob_match(src, binding->src)) &&
             ((binding->any_mod) || (binding->mod == mod)))
           {
-             if (!_e_bindings_context_match(binding->ctxt, ctxt)) continue;
+             if (!e_bindings_context_match(binding->ctxt, ctxt)) continue;
              if (act && (binding->ctxt == E_BINDING_CONTEXT_ANY)) continue;
              act = e_action_find(binding->action);
              if (bind_ret) *bind_ret = binding;
@@ -1120,7 +1127,7 @@ e_bindings_wheel_grab(E_Binding_Context ctxt, Ecore_X_Window win)
    EINA_LIST_FOREACH(wheel_bindings, l, binding)
      {
         if (binding->ctxt == E_BINDING_CONTEXT_ANY) continue;
-        if (_e_bindings_context_match(binding->ctxt, ctxt))
+        if (e_bindings_context_match(binding->ctxt, ctxt))
           {
              int button = 0;
 
@@ -1160,7 +1167,7 @@ e_bindings_wheel_ungrab(E_Binding_Context ctxt, Ecore_X_Window win)
    EINA_LIST_FOREACH(wheel_bindings, l, binding)
      {
         if (binding->ctxt == E_BINDING_CONTEXT_ANY) continue;
-        if (_e_bindings_context_match(binding->ctxt, ctxt))
+        if (e_bindings_context_match(binding->ctxt, ctxt))
           {
              int button = 0;
 
@@ -1214,7 +1221,7 @@ e_bindings_wheel_find(E_Binding_Context ctxt, E_Binding_Event_Wheel *ev, E_Bindi
             (((binding->z < 0) && (ev->z < 0)) || ((binding->z > 0) && (ev->z > 0))) &&
             ((binding->any_mod) || (binding->mod == ev->modifiers)))
           {
-             if (!_e_bindings_context_match(binding->ctxt, ctxt)) continue;
+             if (!e_bindings_context_match(binding->ctxt, ctxt)) continue;
              if (act && (binding->ctxt == E_BINDING_CONTEXT_ANY)) continue;
              act = e_action_find(binding->action);
              if (bind_ret) *bind_ret = binding;
@@ -1321,7 +1328,7 @@ e_bindings_acpi_find(E_Binding_Context ctxt, E_Event_Acpi *ev, E_Binding_Acpi **
                   /* binding status is set to something, compare event status */
                   if (binding->status != ev->status) continue;
                }
-             if (!_e_bindings_context_match(binding->ctxt, ctxt)) continue;
+             if (!e_bindings_context_match(binding->ctxt, ctxt)) continue;
              if (act && (binding->ctxt == E_BINDING_CONTEXT_ANY)) continue;
              act = e_action_find(binding->action);
              if (bind_ret) *bind_ret = binding;
@@ -1442,8 +1449,8 @@ _e_bindings_acpi_free(E_Binding_Acpi *binding)
    E_FREE(binding);
 }
 
-static int
-_e_bindings_context_match(E_Binding_Context bctxt, E_Binding_Context ctxt)
+E_API int
+e_bindings_context_match(E_Binding_Context bctxt, E_Binding_Context ctxt)
 {
    if (bctxt == E_BINDING_CONTEXT_ANY &&
        !(ctxt == E_BINDING_CONTEXT_ZONE)) return 1;
