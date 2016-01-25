@@ -331,7 +331,7 @@ static void
 _e_comp_wl_input_keymap_update(struct xkb_keymap *keymap)
 {
    char *tmp;
-   xkb_mod_mask_t latched = 0, locked = 0, group = 0;
+   xkb_mod_mask_t latched = 0, locked = 0;
    struct wl_resource *res;
    Eina_List *l;
 
@@ -353,18 +353,14 @@ _e_comp_wl_input_keymap_update(struct xkb_keymap *keymap)
         locked =
           xkb_state_serialize_mods(e_comp_wl->xkb.state,
                                    XKB_STATE_MODS_LOCKED);
-        group =
-          xkb_state_serialize_layout(e_comp_wl->xkb.state,
-                                     XKB_STATE_LAYOUT_EFFECTIVE);
         xkb_state_unref(e_comp_wl->xkb.state);
      }
 
    /* create a new xkb state */
    e_comp_wl->xkb.state = xkb_state_new(keymap);
 
-   if ((latched) || (locked) || (group))
-     xkb_state_update_mask(e_comp_wl->xkb.state, 0,
-                           latched, locked, 0, 0, group);
+   xkb_state_update_mask(e_comp_wl->xkb.state, 0,
+                         latched, locked, 0, 0, 0);
 
    /* increment keymap reference */
    e_comp_wl->xkb.keymap = keymap;
