@@ -161,8 +161,7 @@ E_API void        e_bindings_key_grab(E_Binding_Context ctxt, Ecore_X_Window win
 E_API void        e_bindings_key_ungrab(E_Binding_Context ctxt, Ecore_X_Window win);
 E_API E_Action   *e_bindings_key_down_event_handle(E_Binding_Context ctxt, E_Object *obj, Ecore_Event_Key *ev);
 E_API E_Action   *e_bindings_key_up_event_handle(E_Binding_Context ctxt, E_Object *obj, Ecore_Event_Key *ev);
-E_API E_Action   *e_bindings_key_down_event_find(E_Binding_Context ctxt, Ecore_Event_Key *ev, E_Binding_Key **bind_ret);
-E_API E_Action   *e_bindings_key_up_event_find(E_Binding_Context ctxt, Ecore_Event_Key *ev);
+E_API E_Action   *e_bindings_key_event_find(E_Binding_Context ctxt, Ecore_Event_Key *ev, E_Binding_Key **bind_ret);
 
 E_API Eina_Bool   e_bindings_key_allowed(const char *key);
 

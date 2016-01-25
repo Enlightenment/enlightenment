@@ -709,7 +709,7 @@ e_bindings_key_up_event_handle(E_Binding_Context ctxt, E_Object *obj, Ecore_Even
 }
 
 E_API E_Action *
-e_bindings_key_down_event_find(E_Binding_Context ctxt, Ecore_Event_Key *ev, E_Binding_Key **bind_ret)
+e_bindings_key_event_find(E_Binding_Context ctxt, Ecore_Event_Key *ev, E_Binding_Key **bind_ret)
 {
    E_Binding_Modifier mod = 0;
    E_Binding_Key *binding;
@@ -728,31 +728,6 @@ e_bindings_key_down_event_find(E_Binding_Context ctxt, Ecore_Event_Key *ev, E_Bi
                   act = e_action_find(binding->action);
                   if (!act) continue;
                   if (bind_ret) *bind_ret = binding;
-                  return act;
-               }
-          }
-     }
-   return NULL;
-}
-
-E_API E_Action *
-e_bindings_key_up_event_find(E_Binding_Context ctxt, Ecore_Event_Key *ev)
-{
-   E_Binding_Modifier mod = 0;
-   E_Binding_Key *binding;
-   Eina_List *l;
-
-   mod = _e_bindings_modifiers(ev->modifiers);
-   EINA_LIST_FOREACH(key_bindings, l, binding)
-     {
-        if ((binding->key) && (!strcmp(binding->key, ev->key)) &&
-            ((binding->any_mod) || (binding->mod == mod)))
-          {
-             if (_e_bindings_context_match(binding->ctxt, ctxt))
-               {
-                  E_Action *act;
-
-                  act = e_action_find(binding->action);
                   return act;
                }
           }

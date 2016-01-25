@@ -390,7 +390,7 @@ _cb_key_down(EINA_UNUSED void *data, Ecore_Event_Key *ev)
         t = ecore_loop_time_get();
         if (t - show_time > 0.5)
           {
-             act = e_bindings_key_down_event_find(E_BINDING_CONTEXT_ANY, ev, NULL);
+             act = e_bindings_key_event_find(E_BINDING_CONTEXT_ANY, ev, NULL);
              if ((act) && (act->name))
                {
                   if (!strcmp(act->name, "syscon"))
