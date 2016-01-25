@@ -279,7 +279,7 @@ _gc_icon(const E_Gadcon_Client_Class *client_class EINA_UNUSED, Evas *evas)
 }
 
 static Eina_Bool
-_xkb_changed_state(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
+_xkb_changed_state(void *data EINA_UNUSED, int type EINA_UNUSED, void *event EINA_UNUSED)
 {
    _xkb_update_icon(e_config->xkb.cur_group);
    return ECORE_CALLBACK_PASS_ON;
