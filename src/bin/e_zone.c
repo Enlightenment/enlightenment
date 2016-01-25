@@ -1244,7 +1244,7 @@ _e_zone_useful_geometry_calc(const E_Zone *zone, int dx, int dy, int *x, int *y,
    desk = e_desk_at_xy_get(zone, dx, dy);
    if (desk)
      {
-        EINA_INLIST_FOREACH(zone->obstacles, obs)
+        EINA_INLIST_FOREACH(desk->obstacles, obs)
           {
              if (!E_INTERSECTS(obs->x, obs->y, obs->w, obs->h, zx, zy, zw, zh)) continue;
              eina_tiler_rect_del(tiler, &(Eina_Rectangle){obs->x - zx, obs->y - zy, obs->w, obs->h});
