@@ -869,6 +869,31 @@ e_bindings_edge_del(E_Binding_Context ctxt, E_Zone_Edge edge, Eina_Bool drag_onl
 }
 
 E_API E_Action *
+e_bindings_edge_event_find(E_Binding_Context ctxt, E_Event_Zone_Edge *ev, Eina_Bool click, E_Binding_Edge **bind_ret)
+{
+   E_Binding_Edge *binding;
+   E_Binding_Modifier mod = 0;
+   E_Action *act = NULL;
+   Eina_List *l;
+
+   mod = _e_bindings_modifiers(ev->modifiers);
+   EINA_LIST_FOREACH(edge_bindings, l, binding)
+     /* A value of <= -1.0 for the delay indicates it as a mouse-click binding on that edge */
+     if (((binding->edge == ev->edge)) &&
+         ((click && (binding->delay == -1.0 * click)) || (!click && (binding->delay >= 0.0))) &&
+         ((binding->drag_only == ev->drag) || ev->drag) &&
+         ((binding->any_mod) || (binding->mod == mod)))
+       {
+          if (!_e_bindings_context_match(binding->ctxt, ctxt)) continue;
+          act = e_action_find(binding->action);
+          if (!act) continue;
+          if (bind_ret) *bind_ret = binding;
+          break;
+       }
+   return act;
+}
+
+E_API E_Action *
 e_bindings_edge_in_event_handle(E_Binding_Context ctxt, E_Object *obj, E_Event_Zone_Edge *ev)
 {
    E_Binding_Modifier mod = 0;
