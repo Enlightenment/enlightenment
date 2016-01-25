@@ -2429,7 +2429,7 @@ _e_comp_wl_compositor_create(void)
         if (!layout) layout = strdup("us");
 
         /* update compositor keymap */
-        e_comp_wl_input_keymap_set(rules, model, layout, NULL, NULL);
+        e_comp_wl_input_keymap_set(rules, model, layout, NULL, NULL, NULL, NULL);
      }
 #endif
    e_comp_wl->wl.client_disp = ecore_wl2_display_connect(NULL);

@@ -605,7 +605,7 @@ e_comp_wl_input_keyboard_enabled_set(Eina_Bool enabled)
 }
 
 E_API void
-e_comp_wl_input_keymap_set(const char *rules, const char *model, const char *layout, struct xkb_context *dflt_ctx, struct xkb_keymap *dflt_map)
+e_comp_wl_input_keymap_set(const char *rules, const char *model, const char *layout, const char *variant, const char *options, struct xkb_context *dflt_ctx, struct xkb_keymap *dflt_map)
 {
    struct xkb_keymap *keymap;
    struct xkb_rule_names names;
@@ -619,17 +619,27 @@ e_comp_wl_input_keymap_set(const char *rules, const char *model, const char *lay
    if (!use_dflt_xkb)
      {
         memset(&names, 0, sizeof(names));
-        if (rules) names.rules = strdup(rules);
-        else names.rules = strdup("evdev");
-        if (model) names.model = strdup(model);
-        else names.model = strdup("pc105");
-        if (layout) names.layout = strdup(layout);
-        else names.layout = strdup("us");
+
+        if (rules) names.rules = rules;
+        else names.rules = "evdev";
+
+        if (model) names.model = model;
+        else names.model = "pc105";
+
+        if (layout) names.layout = layout;
+        else names.layout = "us";
+
+        if (variant) names.variant = variant;
+        else names.variant = NULL;
+
+        if (options) names.options = options;
+        else names.options = NULL;
      }
 
    /* unreference any existing context */
    if (e_comp_wl->xkb.context)
      xkb_context_unref(e_comp_wl->xkb.context);
+
 
    /* create a new xkb context */
    if (use_dflt_xkb) e_comp_wl->xkb.context = dflt_ctx;
@@ -643,24 +653,20 @@ e_comp_wl_input_keymap_set(const char *rules, const char *model, const char *lay
    /* fetch new keymap based on names */
    if (use_dflt_xkb) keymap = dflt_map;
    else keymap = xkb_map_new_from_names(e_comp_wl->xkb.context, &names, 0);
-   if (keymap)
+
+   if (!keymap)
      {
-        /* update compositor keymap */
-        _e_comp_wl_input_keymap_update(keymap);
+        ERR("Failed to compile keymap");
+        NULL;
      }
+
+   /* update compositor keymap */
+   _e_comp_wl_input_keymap_update(keymap);
 
 #ifdef HAVE_WL_DRM
    if (e_config->xkb.use_cache)
      ecore_drm_device_keyboard_cached_keymap_set(keymap);
 #endif
-
-   /* cleanup */
-   if (!use_dflt_xkb)
-     {
-        free((char *)names.rules);
-        free((char *)names.model);
-        free((char *)names.layout);
-     }
 }
 
 E_API void
