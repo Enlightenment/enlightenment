@@ -605,36 +605,30 @@ e_comp_wl_input_keyboard_enabled_set(Eina_Bool enabled)
 }
 
 E_API void
-e_comp_wl_input_keymap_set(const char *rules, const char *model, const char *layout, const char *variant, const char *options, struct xkb_context *dflt_ctx, struct xkb_keymap *dflt_map)
+e_comp_wl_input_keymap_set(const char *rules, const char *model, const char *layout, const char *variant, const char *options)
 {
    struct xkb_keymap *keymap;
    struct xkb_rule_names names;
-   Eina_Bool use_dflt_xkb = EINA_FALSE;
 
    /* DBG("COMP_WL: Keymap Set: %s %s %s", rules, model, layout); */
 
-   if (dflt_ctx && dflt_map) use_dflt_xkb = EINA_TRUE;
-
    /* assemble xkb_rule_names so we can fetch keymap */
-   if (!use_dflt_xkb)
-     {
-        memset(&names, 0, sizeof(names));
+   memset(&names, 0, sizeof(names));
 
-        if (rules) names.rules = rules;
-        else names.rules = "evdev";
+   if (rules) names.rules = rules;
+   else names.rules = "evdev";
 
-        if (model) names.model = model;
-        else names.model = "pc105";
+   if (model) names.model = model;
+   else names.model = "pc105";
 
-        if (layout) names.layout = layout;
-        else names.layout = "us";
+   if (layout) names.layout = layout;
+   else names.layout = "us";
 
-        if (variant) names.variant = variant;
-        else names.variant = NULL;
+   if (variant) names.variant = variant;
+   else names.variant = NULL;
 
-        if (options) names.options = options;
-        else names.options = NULL;
-     }
+   if (options) names.options = options;
+   else names.options = NULL;
 
    /* unreference any existing context */
    if (e_comp_wl->xkb.context)
@@ -642,8 +636,7 @@ e_comp_wl_input_keymap_set(const char *rules, const char *model, const char *lay
 
 
    /* create a new xkb context */
-   if (use_dflt_xkb) e_comp_wl->xkb.context = dflt_ctx;
-   else e_comp_wl->xkb.context = xkb_context_new(0);
+   e_comp_wl->xkb.context = xkb_context_new(0);
 
 #ifdef HAVE_WL_DRM
    if (e_config->xkb.use_cache)
@@ -651,13 +644,12 @@ e_comp_wl_input_keymap_set(const char *rules, const char *model, const char *lay
 #endif
 
    /* fetch new keymap based on names */
-   if (use_dflt_xkb) keymap = dflt_map;
-   else keymap = xkb_map_new_from_names(e_comp_wl->xkb.context, &names, 0);
+   keymap = xkb_map_new_from_names(e_comp_wl->xkb.context, &names, 0);
 
    if (!keymap)
      {
         ERR("Failed to compile keymap");
-        NULL;
+        return;
      }
 
    /* update compositor keymap */

@@ -267,8 +267,8 @@ _e_wl_xkb_update(int cur_group)
       e_config->xkb.default_model,
       eina_strbuf_string_get(layouts), //pool of layouts to use
       eina_strbuf_string_get(variants),  //pool of variants to use
-      eina_strbuf_string_get(options), //list of options
-      NULL, NULL);
+      eina_strbuf_string_get(options) //list of options
+   );
 
    e_config->xkb.cur_group = cur_group;
    _e_xkb_update_event(cur_group);
