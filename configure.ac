@@ -945,11 +945,13 @@ e_alert_requires="\
   ecore-ipc >= ${efl_version}"
 
 if test "x${have_wayland}" = "xyes"; then
-  e_alert_requires="\
-    $e_alert_requires \
-    ecore-input >= ${efl_version} \
-    ecore-drm >= ${efl_version} \
-    evas >= ${efl_version}"
+  if test "x${HAVE_WL_DRM}" = "xyes"; then
+    e_alert_requires="\
+      $e_alert_requires \
+      ecore-input >= ${efl_version} \
+      ecore-drm >= ${efl_version} \
+      evas >= ${efl_version}"
+ fi
 fi
 
 if test "x${have_wayland_only}" != "xyes"; then
