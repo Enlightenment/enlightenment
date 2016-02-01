@@ -50,6 +50,8 @@ e_zoomap_child_set(Evas_Object *obj, Evas_Object *child)
    if (child == sd->child_obj) return;
    if (sd->child_obj)
      {
+        evas_object_map_set(sd->child_obj, NULL);
+        evas_object_map_enable_set(sd->child_obj, EINA_FALSE);
         evas_object_clip_unset(sd->child_obj);
         evas_object_smart_member_del(sd->child_obj);
         evas_object_event_callback_del(sd->child_obj, EVAS_CALLBACK_DEL,
