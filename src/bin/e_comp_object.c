@@ -2724,6 +2724,7 @@ e_comp_object_util_type_set(Evas_Object *obj, E_Comp_Object_Type type)
         {
            e_zoomap_child_set(content, NULL);
            evas_object_del(content);
+           content = child;
         }
       edje_object_part_swallow(obj, "e.swallow.content", content);
    }
