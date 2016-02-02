@@ -1,3 +1,71 @@
+Release 0.20.4:
+---------------------
+Chris Michael (5):
+      Fix type of size fields for E_Shell_Data
+      Fix issue of nested compositors not working with Ecore_Wl2 library
+      Update wl_weekeyboard for ecore_evas_wayland_window_get2 function rename
+      Fix issue of using the wrong id when finding pixmap client
+      check siginfo si_code to verify that SIGUSR2 comes from user
+
+Christopher Michael (14):
+      Make configure check for Ecore_Wl2 library
+      include header for Ecore_Wl2
+      remove unused event loop and add external Ecore_Wl2_Display variable
+      port wayland compositor to use Ecore_Wl2
+      port e_scale to use Ecore_Wl2
+      Port shot module to use ecore_wl2 library
+      Fix formatting of wl_weekeyboard module
+      Don't leak eina_iterator in shot module
+      Port wl_weekeyboard to use Ecore_Wl2 library
+      Port wl_fb module to use Ecore_Wl2 Library
+      Fix formatting
+      Fix formatting
+      Try to init (and error check the init) of ecore_wl2 library before we     create a compositor
+      Fix using global ewd variable by making it part of e_comp_wl
+
+Marcel Hollerbach (1):
+      e_comp_wl: only ignore ignored clients
+
+Mike Blumenkrantz (37):
+      call ecore_wl2_shutdown() in wl compositor delete callback
+      create wl client connection during compositor init, use in shot module
+      define EFL_BETA_API_SUPPORT explicitly in e.h if wayland support is enabled
+      remove defines for various beta api in other places
+      remove need_reparent, reparented, first_damage flags from wl client comp_data
+      call xdg surface map when creating a surface for visible internal windows
+      set want_focus for xdg popup surfaces on creation
+      only do passthrough surface map on xwayland surfaces during commit
+      more correctly handle evry mouse detection on wayland
+      improve focus setting during wayland client show callback
+      |= instead of = flag setting for want_focus during wayland surface commit
+      automatically mark wayland cursor surfaces as visible during set_cursor
+      do not set focus in wayland client show callback for cursor clients
+      always apply damages and input regions during wayland commit
+      remove duplicate visibility setting blocks from wayland surface commit
+      add render updates for cursor clients if damages exist during set_cursor
+      reenable fallthrough surface (un)mapping for subsurfaces during commit
+      remove _e_comp_wl_focus_down_set()
+      track wayland client mouse button states as a full button mask
+      enable surface visibility fallthrough for drag clients
+      unify client mouse action ending
+      allow instant client mouse actions to persist until mouse up
+      determine new_client state for xwayland clients using xwayland pixmap
+      handle more mouse buttons in wayland
+      allocate E_Shell_Data for all xdg surfaces (popups)
+      add function for disabling mouse/key/wheel/signal bindings
+      disable binding activation when grab dialog, menus, or dnd is active
+      remove comp canvas key handler shortcuts for passing keys to wayland clients
+      defer screenshot action execution using a job
+      disable bindings during wayland screenshot operations
+      do not attempt to create x11 canvas during xwayland init
+      do not shortcut access of Efreet_Desktop->x hash in fileman
+      disable shelf shadows if "noshadow" data item exists in shelf theme
+      do not update keymap group in _e_comp_wl_input_keymap_update()
+      update xkb.cur_group and send event upon serializing an EFFECTIVE layout in wl input
+      send mouse out+in on desk flip end
+      disable map when unsetting zoomap child
+
+
 Release 0.20.3:
 ---------------------
 Carsten Haitzler (1):
