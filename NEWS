@@ -1,3 +1,9 @@
+Release 0.20.5:
+---------------------
+Mike Blumenkrantz (1):
+      add back x11 window focusing
+
+
 Release 0.20.4:
 ---------------------
 Chris Michael (5):
@@ -3140,3 +3146,4 @@ Fixes:
     * Further improve initial window placement coordinates
     * Fixed cases where gadgets would sometimes reorder randomly on shelves
     * fixed filemanager race condition causing create-queued icons to not be deleted
+
