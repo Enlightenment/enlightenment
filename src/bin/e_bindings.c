@@ -432,6 +432,7 @@ e_bindings_mouse_button_find(E_Binding_Context ctxt, E_Binding_Event_Mouse_Butto
             ((binding->any_mod) || (binding->mod == ev->modifiers)))
           {
              if (!_e_bindings_context_match(binding->ctxt, ctxt)) continue;
+             if (act && (binding->ctxt == E_BINDING_CONTEXT_ANY)) continue;
              act = e_action_find(binding->action);
              if (bind_ret) *bind_ret = binding;
              if (!act) continue;
@@ -685,6 +686,7 @@ e_bindings_key_event_find(E_Binding_Context ctxt, Ecore_Event_Key *ev, E_Binding
             ((binding->any_mod) || (binding->mod == mod)))
           {
              if (!_e_bindings_context_match(binding->ctxt, ctxt)) continue;
+             if (act && (binding->ctxt == E_BINDING_CONTEXT_ANY)) continue;
              act = e_action_find(binding->action);
              if (bind_ret) *bind_ret = binding;
              if (!act) continue;
@@ -844,6 +846,7 @@ e_bindings_edge_event_find(E_Binding_Context ctxt, E_Event_Zone_Edge *ev, Eina_B
          ((binding->any_mod) || (binding->mod == mod)))
        {
           if (!_e_bindings_context_match(binding->ctxt, ctxt)) continue;
+          if (act && (binding->ctxt == E_BINDING_CONTEXT_ANY)) continue;
           act = e_action_find(binding->action);
           if (bind_ret) *bind_ret = binding;
           if (!act) continue;
@@ -1014,6 +1017,7 @@ e_bindings_signal_find(E_Binding_Context ctxt, const char *sig, const char *src,
             ((binding->any_mod) || (binding->mod == mod)))
           {
              if (!_e_bindings_context_match(binding->ctxt, ctxt)) continue;
+             if (act && (binding->ctxt == E_BINDING_CONTEXT_ANY)) continue;
              act = e_action_find(binding->action);
              if (bind_ret) *bind_ret = binding;
              if (!act) continue;
@@ -1177,6 +1181,7 @@ e_bindings_wheel_find(E_Binding_Context ctxt, E_Binding_Event_Wheel *ev, E_Bindi
             ((binding->any_mod) || (binding->mod == ev->modifiers)))
           {
              if (!_e_bindings_context_match(binding->ctxt, ctxt)) continue;
+             if (act && (binding->ctxt == E_BINDING_CONTEXT_ANY)) continue;
              act = e_action_find(binding->action);
              if (bind_ret) *bind_ret = binding;
              if (!act) continue;
@@ -1279,6 +1284,7 @@ e_bindings_acpi_find(E_Binding_Context ctxt, E_Event_Acpi *ev, E_Binding_Acpi **
                   if (binding->status != ev->status) continue;
                }
              if (!_e_bindings_context_match(binding->ctxt, ctxt)) continue;
+             if (act && (binding->ctxt == E_BINDING_CONTEXT_ANY)) continue;
              act = e_action_find(binding->action);
              if (bind_ret) *bind_ret = binding;
              if (!act) continue;
