@@ -423,10 +423,13 @@ E_API E_Action *
 e_bindings_mouse_button_find(E_Binding_Context ctxt, E_Binding_Event_Mouse_Button *ev, E_Binding_Mouse **bind_ret)
 {
    E_Binding_Mouse *binding;
-   Eina_List *l;
+   Eina_List *start = NULL, *l;
    E_Action *act = NULL;
 
-   EINA_LIST_FOREACH(mouse_bindings, l, binding)
+   if (bind_ret && *bind_ret)
+     start = eina_list_data_find_list(mouse_bindings, *bind_ret);
+   if (start) start = start->next;
+   EINA_LIST_FOREACH(start ?: mouse_bindings, l, binding)
      {
         if ((binding->button == (int)ev->button) &&
             ((binding->any_mod) || (binding->mod == ev->modifiers)))
@@ -446,17 +449,21 @@ E_API E_Action *
 e_bindings_mouse_down_event_handle(E_Binding_Context ctxt, E_Object *obj, E_Binding_Event_Mouse_Button *ev)
 {
    E_Action *act;
-   E_Binding_Mouse *binding;
+   E_Binding_Mouse *binding = NULL;
 
    if (bindings_disabled) return NULL;
-   act = e_bindings_mouse_button_find(ctxt, ev, &binding);
-   if (act)
+   while (1)
      {
+        act = e_bindings_mouse_button_find(ctxt, ev, &binding);
+        if (!act) break;
         if (act->func.go_mouse)
-          act->func.go_mouse(obj, binding->params, ev);
+          {
+             if (!act->func.go_mouse(obj, binding->params, ev))
+               continue;
+          }
         else if (act->func.go)
           act->func.go(obj, binding->params);
-        return act;
+        break;
      }
    return act;
 }
@@ -488,14 +495,18 @@ e_bindings_mouse_up_event_handle(E_Binding_Context ctxt, E_Object *obj, E_Bindin
    E_Binding_Mouse *binding;
 
    if (bindings_disabled) return NULL;
-   act = e_bindings_mouse_button_find(ctxt, ev, &binding);
-   if (act)
+   while (1)
      {
-        if (act->func.end_mouse)
-          act->func.end_mouse(obj, binding->params, ev);
-        else if (act->func.end)
-          act->func.end(obj, binding->params);
-        return act;
+        act = e_bindings_mouse_button_find(ctxt, ev, &binding);
+        if (!act) break;
+        if (act->func.go_mouse)
+          {
+             if (!act->func.go_mouse(obj, binding->params, ev))
+               continue;
+          }
+        else if (act->func.go)
+          act->func.go(obj, binding->params);
+        break;
      }
    return act;
 }
@@ -1171,10 +1182,13 @@ E_API E_Action *
 e_bindings_wheel_find(E_Binding_Context ctxt, E_Binding_Event_Wheel *ev, E_Binding_Wheel **bind_ret)
 {
    E_Binding_Wheel *binding;
-   Eina_List *l;
+   Eina_List *start = NULL, *l;
    E_Action *act = NULL;
 
-   EINA_LIST_FOREACH(wheel_bindings, l, binding)
+   if (bind_ret && *bind_ret)
+     start = eina_list_data_find_list(wheel_bindings, *bind_ret);
+   if (start) start = start->next;
+   EINA_LIST_FOREACH(start ?: wheel_bindings, l, binding)
      {
         if ((binding->direction == ev->direction) &&
             (((binding->z < 0) && (ev->z < 0)) || ((binding->z > 0) && (ev->z > 0))) &&
@@ -1198,14 +1212,18 @@ e_bindings_wheel_event_handle(E_Binding_Context ctxt, E_Object *obj, E_Binding_E
    E_Binding_Wheel *binding;
 
    if (bindings_disabled) return NULL;
-   act = e_bindings_wheel_find(ctxt, ev, &binding);
-   if (act)
+   while (1)
      {
+        act = e_bindings_wheel_find(ctxt, ev, &binding);
+        if (!act) break;
         if (act->func.go_wheel)
-          act->func.go_wheel(obj, binding->params, ev);
+          {
+             if (!act->func.go_wheel(obj, binding->params, ev))
+               continue;
+          }
         else if (act->func.go)
           act->func.go(obj, binding->params);
-        return act;
+        break;
      }
    return act;
 }

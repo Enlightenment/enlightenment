@@ -708,7 +708,7 @@ _e_mod_action_toggle_floating_cb(E_Object *obj EINA_UNUSED,
 
 static E_Client *_go_mouse_client = NULL;
 
-static void
+static Eina_Bool
 _e_mod_action_swap_window_go_mouse(E_Object *obj EINA_UNUSED,
                                    const char *params EINA_UNUSED,
                                    E_Binding_Event_Mouse_Button *ev EINA_UNUSED)
@@ -718,12 +718,13 @@ _e_mod_action_swap_window_go_mouse(E_Object *obj EINA_UNUSED,
    Client_Extra *extra = tiling_entry_func(ec);
 
    if (!extra || !extra->tiled)
-     return;
+     return EINA_FALSE;
 
    _go_mouse_client = ec;
+   return EINA_TRUE;
 }
 
-static void
+static Eina_Bool
 _e_mod_action_swap_window_end_mouse(E_Object *obj EINA_UNUSED,
                                     const char *params EINA_UNUSED,
                                     E_Binding_Event_Mouse_Button *ev EINA_UNUSED)
@@ -734,33 +735,34 @@ _e_mod_action_swap_window_end_mouse(E_Object *obj EINA_UNUSED,
    _go_mouse_client = NULL;
 
    if (!first_ec)
-     return;
+     return EINA_FALSE;
 
    Client_Extra *extra = tiling_entry_func(ec);
 
    if (!extra || !extra->tiled)
-     return;
+     return EINA_FALSE;
 
    /* XXX: Only support swap on the first desk for now. */
    if (ec->desk != first_ec->desk)
-     return;
+     return EINA_FALSE;
 
    Window_Tree *item, *first_item;
 
    item = tiling_window_tree_client_find(_G.tinfo->tree, ec);
 
    if (!item)
-     return;
+     return EINA_FALSE;
 
    first_item = tiling_window_tree_client_find(_G.tinfo->tree, first_ec);
 
    if (!first_item)
-     return;
+     return EINA_FALSE;
 
    item->client = first_ec;
    first_item->client = ec;
 
    _reapply_tree();
+   return EINA_TRUE;
 }
 
 static void

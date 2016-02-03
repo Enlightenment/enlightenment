@@ -771,10 +771,11 @@ _e_mod_action_cb_key(E_Object *obj EINA_UNUSED, const char *params, Ecore_Event_
    _e_mod_action(params);
 }
 
-static void
+static Eina_Bool
 _e_mod_action_cb_mouse(E_Object *obj EINA_UNUSED, const char *params, E_Binding_Event_Mouse_Button *ev EINA_UNUSED)
 {
    _e_mod_action(params);
+   return EINA_TRUE;
 }
 
 static Eina_Bool

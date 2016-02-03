@@ -3,7 +3,7 @@
 
 /* actual module specifics */
 static void _e_mod_action_winlist_cb(E_Object *obj, const char *params);
-static void _e_mod_action_winlist_mouse_cb(E_Object *obj, const char *params, E_Binding_Event_Mouse_Button *ev);
+static Eina_Bool _e_mod_action_winlist_mouse_cb(E_Object *obj, const char *params, E_Binding_Event_Mouse_Button *ev);
 static void _e_mod_action_winlist_key_cb(E_Object *obj, const char *params, Ecore_Event_Key *ev);
 static void _e_mod_action_winlist_edge_cb(E_Object *obj, const char *params, E_Event_Zone_Edge *ev);
 static void _e_mod_action_winlist_signal_cb(E_Object *obj, const char *params, const char *sig, const char *src);
@@ -106,7 +106,7 @@ e_modapi_save(E_Module *m EINA_UNUSED)
 }
 
 /* action callback */
-static void
+static Eina_Bool
 _e_mod_action_winlist_cb_helper(E_Object *obj EINA_UNUSED, const char *params, int modifiers, E_Winlist_Activate_Type type)
 {
    E_Zone *zone = NULL;
@@ -116,7 +116,7 @@ _e_mod_action_winlist_cb_helper(E_Object *obj EINA_UNUSED, const char *params, i
    Eina_Bool ok = EINA_TRUE;
 
    zone = e_zone_current_get();
-   if (!zone) return;
+   if (!zone) return EINA_FALSE;
    if (params)
      {
         if (!strcmp(params, "next"))
@@ -139,7 +139,7 @@ _e_mod_action_winlist_cb_helper(E_Object *obj EINA_UNUSED, const char *params, i
           udlr = 2;
         else if (!strcmp(params, "right"))
           udlr = 3;
-        else return;
+        else return EINA_FALSE;
      }
    else
      direction = 1;
@@ -147,9 +147,9 @@ _e_mod_action_winlist_cb_helper(E_Object *obj EINA_UNUSED, const char *params, i
      ok = !e_winlist_show(zone, filter);
    if (!ok)
      {
-        if (!type) return;
+        if (!type) return EINA_FALSE;
         e_winlist_modifiers_set(modifiers, type);
-        return;
+        return EINA_TRUE;
      }
    if (direction == 1)
      e_winlist_next();
@@ -157,6 +157,7 @@ _e_mod_action_winlist_cb_helper(E_Object *obj EINA_UNUSED, const char *params, i
      e_winlist_prev();
    else
      e_winlist_direction_select(zone, udlr);
+   return EINA_TRUE;
 }
 
 static void
@@ -165,10 +166,11 @@ _e_mod_action_winlist_cb(E_Object *obj, const char *params)
    _e_mod_action_winlist_cb_helper(obj, params, 0, 0);
 }
 
-static void
+static Eina_Bool
 _e_mod_action_winlist_mouse_cb(E_Object *obj, const char *params, E_Binding_Event_Mouse_Button *ev)
 {
-   _e_mod_action_winlist_cb_helper(obj, params, e_bindings_modifiers_to_ecore_convert(ev->modifiers), E_WINLIST_ACTIVATE_TYPE_MOUSE);
+   return _e_mod_action_winlist_cb_helper(obj, params,
+     e_bindings_modifiers_to_ecore_convert(ev->modifiers), E_WINLIST_ACTIVATE_TYPE_MOUSE);
 }
 
 static void

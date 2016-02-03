@@ -18,14 +18,14 @@ struct _E_Action
    struct
    {
       void (*go)(E_Object *obj, const char *params);
-      void (*go_mouse)(E_Object *obj, const char *params, E_Binding_Event_Mouse_Button *ev);
-      void (*go_wheel)(E_Object *obj, const char *params, E_Binding_Event_Wheel *ev);
+      Eina_Bool (*go_mouse)(E_Object *obj, const char *params, E_Binding_Event_Mouse_Button *ev);
+      Eina_Bool (*go_wheel)(E_Object *obj, const char *params, E_Binding_Event_Wheel *ev);
       void (*go_edge)(E_Object *obj, const char *params, E_Event_Zone_Edge *ev);
       void (*go_key)(E_Object *obj, const char *params, Ecore_Event_Key *ev);
       void (*go_signal)(E_Object *obj, const char *params, const char *sig, const char *src);
       void (*go_acpi)(E_Object *obj, const char *params, E_Event_Acpi *ev);
       void (*end)(E_Object *obj, const char *params);
-      void (*end_mouse)(E_Object *obj, const char *params, E_Binding_Event_Mouse_Button *ev);
+      Eina_Bool (*end_mouse)(E_Object *obj, const char *params, E_Binding_Event_Mouse_Button *ev);
       void (*end_key)(E_Object *obj, const char *params, Ecore_Event_Key *ev);
    } func;
 };
