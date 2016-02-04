@@ -10,7 +10,7 @@ struct _E_Widget_Data
 typedef struct _E_Widget_Desk_Data E_Widget_Desk_Data;
 struct _E_Widget_Desk_Data
 {
-   Evas_Object         *icon, *thumb, *live;
+   Evas_Object         *icon, *thumb, *live, *cont;
    int                  zone, x, y;
    Ecore_Event_Handler *bg_upd_hdl;
    Ecore_Job           *resize_job;
@@ -84,6 +84,7 @@ E_API Evas_Object *
 e_widget_bgpreview_desk_add(Evas *e, E_Zone *zone, int x, int y)
 {
    E_Widget_Desk_Data *dd;
+   Evas_Object *o;
    const char *bgfile;
 
    bgfile = e_bg_file_get(zone->num, x, y);
@@ -93,23 +94,46 @@ e_widget_bgpreview_desk_add(Evas *e, E_Zone *zone, int x, int y)
    dd->x = x;
    dd->y = y;
 
-   dd->live = e_livethumb_add(e);
+   dd->cont = evas_object_table_add(e);
 
-   dd->thumb = edje_object_add(e_livethumb_evas_get(dd->live));
-   edje_object_file_set(dd->thumb, bgfile, "e/desktop/background");
-   _bgpreview_viewport_update(dd->thumb, zone, x, y);
-   e_livethumb_thumb_set(dd->live, dd->thumb);
-   evas_object_show(dd->thumb);
+   if (eina_str_has_extension(bgfile, ".edj"))
+     {
+        dd->live = e_livethumb_add(e);
+        dd->thumb = o = edje_object_add(e_livethumb_evas_get(dd->live));
+        edje_object_file_set(o, bgfile, "e/desktop/background");
+        _bgpreview_viewport_update(o, zone, x, y);
+        e_livethumb_thumb_set(dd->live, o);
+        evas_object_show(dd->thumb);
+     }
+   else if ((eina_str_has_extension(bgfile, ".gif")) ||
+            (eina_str_has_extension(bgfile, ".png")) ||
+            (eina_str_has_extension(bgfile, ".jpg")) ||
+            (eina_str_has_extension(bgfile, ".jpeg")) ||
+            (eina_str_has_extension(bgfile, ".bmp")))
+     {
+        dd->live = o = e_icon_add(e);
+        e_icon_file_key_set(o, bgfile, NULL);
+        e_icon_fill_inside_set(o, 0);
+     }
+   else
+     {
+        dd->live = o = e_video_add(e, bgfile, EINA_TRUE);
+     }
    eina_stringshare_del(bgfile);
 
-   evas_object_data_set(dd->live, "desk_data", dd);
-   evas_object_event_callback_add(dd->live, EVAS_CALLBACK_FREE, _e_wid_data_del, dd);
-   evas_object_event_callback_add(dd->live, EVAS_CALLBACK_RESIZE, _e_wid_livethumb_resize, dd);
+   evas_object_size_hint_weight_set(dd->live, 1, 1);
+   evas_object_size_hint_align_set(dd->live, -1, -1);
+   evas_object_table_pack(dd->cont, dd->live, 0, 0, 1, 1);
+   evas_object_show(dd->live);
+
+   evas_object_data_set(dd->cont, "desk_data", dd);
+   evas_object_event_callback_add(dd->cont, EVAS_CALLBACK_DEL, _e_wid_data_del, dd);
+   evas_object_event_callback_add(dd->cont, EVAS_CALLBACK_RESIZE, _e_wid_livethumb_resize, dd);
 
    dd->bg_upd_hdl = ecore_event_handler_add(E_EVENT_BG_UPDATE,
                                             _e_wid_cb_bg_update, dd);
 
-   return dd->live;
+   return dd->cont;
 }
 
 E_API void
@@ -139,25 +163,28 @@ _e_wid_livethumb_resize_job(void *data)
    E_Zone *zone;
    int w, h;
 
-   zone = e_comp_object_util_zone_get(dd->live);
-   if (!zone) zone = eina_list_data_get(e_comp->zones);
-   evas_object_geometry_get(dd->live, NULL, NULL, &w, &h);
-   if ((w != zone->w) || (h != zone->h))
+   if (dd->thumb)
      {
-        w *= 2;
-        h *= 2;
-        if (w > 128)
+        zone = e_comp_object_util_zone_get(dd->live);
+        if (!zone) zone = eina_list_data_get(e_comp->zones);
+        evas_object_geometry_get(dd->live, NULL, NULL, &w, &h);
+        if ((w != zone->w) || (h != zone->h))
           {
-             w = 128;
-             h = (zone->h * w) / zone->w;
+             w *= 2;
+             h *= 2;
+             if (w > 128)
+               {
+                  w = 128;
+                  h = (zone->h * w) / zone->w;
+               }
+             if (h > 128)
+               {
+                  h = 128;
+                  w = (zone->w * h) / zone->h;
+               }
           }
-        if (h > 128)
-          {
-             h = 128;
-             w = (zone->w * h) / zone->h;
-          }
+        e_livethumb_vsize_set(dd->live, w, h);
      }
-   e_livethumb_vsize_set(dd->live, w, h);
    dd->resize_job = NULL;
 }
 
@@ -326,12 +353,46 @@ _e_wid_cb_bg_update(void *data, int type, void *event)
      {
         E_Zone *zone;
         const char *bgfile;
+        Evas_Object *o;
+        Evas *e = evas_object_evas_get(dd->cont);
 
         zone = e_comp_zone_number_get(dd->zone);
         bgfile = e_bg_file_get(dd->zone, dd->x, dd->y);
-        edje_object_file_set(dd->thumb, bgfile, "e/desktop/background");
-        if (zone) _bgpreview_viewport_update(dd->thumb, zone, dd->x, dd->y);
+
+        if (dd->thumb) evas_object_del(dd->thumb);
+        dd->thumb = NULL;
+        if (dd->live) evas_object_del(dd->live);
+        dd->live = NULL;
+
+        if (eina_str_has_extension(bgfile, ".edj"))
+          {
+             dd->live = e_livethumb_add(e);
+             dd->thumb = o = edje_object_add(e_livethumb_evas_get(dd->live));
+             edje_object_file_set(o, bgfile, "e/desktop/background");
+             _bgpreview_viewport_update(o, zone, dd->x, dd->y);
+             e_livethumb_thumb_set(dd->live, o);
+             evas_object_show(dd->thumb);
+          }
+        else if ((eina_str_has_extension(bgfile, ".gif")) ||
+                 (eina_str_has_extension(bgfile, ".png")) ||
+                 (eina_str_has_extension(bgfile, ".jpg")) ||
+                 (eina_str_has_extension(bgfile, ".jpeg")) ||
+                 (eina_str_has_extension(bgfile, ".bmp")))
+          {
+             dd->live = o = e_icon_add(e);
+             e_icon_file_key_set(o, bgfile, NULL);
+             e_icon_fill_inside_set(o, 0);
+          }
+        else
+          {
+             dd->live = o = e_video_add(e, bgfile, EINA_TRUE);
+          }
         eina_stringshare_del(bgfile);
+
+        evas_object_size_hint_weight_set(dd->live, 1, 1);
+        evas_object_size_hint_align_set(dd->live, -1, -1);
+        evas_object_table_pack(dd->cont, dd->live, 0, 0, 1, 1);
+        evas_object_show(dd->live);
      }
 
    return ECORE_CALLBACK_PASS_ON;

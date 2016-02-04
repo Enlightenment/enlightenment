@@ -196,6 +196,8 @@ e_bg_zone_update(E_Zone *zone, E_Bg_Transition transition)
    const char *trans = "";
    E_Desk *desk;
 
+   printf("UP %p trans %i\n", zone, transition);
+
    if (transition == E_BG_TRANSITION_START) trans = e_config->transition_start;
    else if (transition == E_BG_TRANSITION_DESK)
      trans = e_config->transition_desk;
@@ -211,10 +213,15 @@ e_bg_zone_update(E_Zone *zone, E_Bg_Transition transition)
 
    if (zone->bg_object)
      {
-        const char *pfile = "";
+        const char *pfile = NULL;
 
         edje_object_file_get(zone->bg_object, &pfile, NULL);
-        if (!e_util_strcmp(pfile, bgfile)) goto end;
+        if (!pfile) e_icon_file_get(zone->bg_object, &pfile, NULL);
+        if (!pfile) pfile = e_video_file_get(zone->bg_object);
+        if (pfile)
+          {
+             if (!e_util_strcmp(pfile, bgfile)) goto end;
+          }
      }
 
    if (transition == E_BG_TRANSITION_NONE)
@@ -252,11 +259,19 @@ e_bg_zone_update(E_Zone *zone, E_Bg_Transition transition)
         if (edje_object_data_get(o, "noanimation"))
           edje_object_animation_set(o, EINA_FALSE);
      }
-   else
+   else if ((eina_str_has_extension(bgfile, ".gif")) ||
+            (eina_str_has_extension(bgfile, ".png")) ||
+            (eina_str_has_extension(bgfile, ".jpg")) ||
+            (eina_str_has_extension(bgfile, ".jpeg")) ||
+            (eina_str_has_extension(bgfile, ".bmp")))
      {
         o = e_icon_add(e_comp->evas);
         e_icon_file_key_set(o, bgfile, NULL);
         e_icon_fill_inside_set(o, 0);
+     }
+   else
+     {
+        o = e_video_add(e_comp->evas, bgfile, EINA_FALSE);
      }
    evas_object_data_set(o, "e_zone", zone);
    evas_object_repeat_events_set(o, 1);

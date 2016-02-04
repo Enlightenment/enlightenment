@@ -165,6 +165,7 @@ src/bin/e_toolbar.h \
 src/bin/e_update.h \
 src/bin/e_user.h \
 src/bin/e_utils.h \
+src/bin/e_video.h \
 src/bin/e_widget_aspect.h \
 src/bin/e_widget_button.h \
 src/bin/e_widget_check.h \
@@ -325,6 +326,7 @@ src/bin/e_toolbar.c \
 src/bin/e_update.c \
 src/bin/e_user.c \
 src/bin/e_utils.c \
+src/bin/e_video.c \
 src/bin/e_widget_aspect.c \
 src/bin/e_widget_button.c \
 src/bin/e_widget.c \

@@ -514,7 +514,23 @@ _basic_apply(E_Config_Dialog *cfd, E_Config_Dialog_Data *cfdata)
 
    if (!cfdata->bg) return 0;
    cw = cfd->data;
-   if (!eina_str_has_extension(cfdata->bg, ".edj"))
+   if ((!eina_str_has_extension(cfdata->bg, ".edj")) &&
+       (!eina_str_has_extension(cfdata->bg, ".gif")) &&
+       (!eina_str_has_extension(cfdata->bg, ".png")) &&
+       (!eina_str_has_extension(cfdata->bg, ".jpg")) &&
+       (!eina_str_has_extension(cfdata->bg, ".jpeg")) &&
+       (!eina_str_has_extension(cfdata->bg, ".mp4")) &&
+       (!eina_str_has_extension(cfdata->bg, ".m4v")) &&
+       (!eina_str_has_extension(cfdata->bg, ".mp2")) &&
+       (!eina_str_has_extension(cfdata->bg, ".mpg")) &&
+       (!eina_str_has_extension(cfdata->bg, ".mpeg")) &&
+       (!eina_str_has_extension(cfdata->bg, ".avi")) &&
+       (!eina_str_has_extension(cfdata->bg, ".mov")) &&
+       (!eina_str_has_extension(cfdata->bg, ".ogg")) &&
+       (!eina_str_has_extension(cfdata->bg, ".ogv")) &&
+       (!eina_str_has_extension(cfdata->bg, ".ts")) &&
+       (!eina_str_has_extension(cfdata->bg, ".mov"))
+      )
      {
         cfdata->import = e_import_config_dialog_show(cfd->dia->win, cfdata->bg, (Ecore_End_Cb)_apply_import_ok, NULL);
         e_object_del_attach_func_set(E_OBJECT(cfdata->import), _apply_import_del);
