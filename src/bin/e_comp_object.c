@@ -2704,6 +2704,7 @@ e_comp_object_util_type_set(Evas_Object *obj, E_Comp_Object_Type type)
    if (!content) return;
    {
       Evas_Object *child;
+      Eina_Bool redo = EINA_FALSE;
 
       if (eina_streq(evas_object_type_get(content), "e_zoomap"))
         child = e_zoomap_child_get(content);
@@ -2719,14 +2720,34 @@ e_comp_object_util_type_set(Evas_Object *obj, E_Comp_Object_Type type)
            e_zoomap_child_set(content, child);
            e_zoomap_child_resize(content, w, h);
            evas_object_show(content);
+           redo = EINA_TRUE;
         }
       else if (child != content)
         {
            e_zoomap_child_set(content, NULL);
            evas_object_del(content);
            content = child;
+           redo = EINA_TRUE;
         }
       edje_object_part_swallow(obj, "e.swallow.content", content);
+
+      if (!redo) return;
+      if (content == child) content = NULL;
+      edje_object_signal_callback_del(obj, "e,action,*,done", "e", _e_comp_object_util_done_defer);
+      evas_object_intercept_show_callback_del(obj, _e_comp_object_util_show);
+      evas_object_intercept_hide_callback_del(obj, _e_comp_object_util_hide);
+      evas_object_event_callback_del(obj, EVAS_CALLBACK_MOVE, _e_comp_object_util_moveresize);
+      evas_object_event_callback_del(obj, EVAS_CALLBACK_DEL, _e_comp_object_util_del);
+      evas_object_event_callback_del(obj, EVAS_CALLBACK_RESIZE, _e_comp_object_util_moveresize);
+      evas_object_event_callback_del(obj, EVAS_CALLBACK_RESTACK, _e_comp_object_util_restack);
+
+      edje_object_signal_callback_add(obj, "e,action,*,done", "e", _e_comp_object_util_done_defer, content);
+      evas_object_intercept_show_callback_add(obj, _e_comp_object_util_show, content);
+      evas_object_intercept_hide_callback_add(obj, _e_comp_object_util_hide, content);
+      evas_object_event_callback_add(obj, EVAS_CALLBACK_MOVE, _e_comp_object_util_moveresize, content);
+      evas_object_event_callback_add(obj, EVAS_CALLBACK_DEL, _e_comp_object_util_del, content);
+      evas_object_event_callback_add(obj, EVAS_CALLBACK_RESIZE, _e_comp_object_util_moveresize, content);
+      evas_object_event_callback_add(obj, EVAS_CALLBACK_RESTACK, _e_comp_object_util_restack, content);
    }
 }
 
