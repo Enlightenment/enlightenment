@@ -92,7 +92,7 @@ _fill_data(E_Config_Dialog_Data *cfdata)
    cfdata->fit_along = cfdata->escfg->fit_along;
 
    /* size */
-   cfdata->size = cfdata->escfg->size;
+   cfdata->size = MAX(cfdata->escfg->size, 20);
 
    /* style */
    if (cfdata->escfg->style)
@@ -207,7 +207,7 @@ _basic_create(E_Config_Dialog *cfd EINA_UNUSED, Evas *evas, E_Config_Dialog_Data
 
    /* size */
    ol = e_widget_list_add(evas, 0, 0);
-   ow = e_widget_slider_add(evas, 1, 0, _("%1.0f pixels"), 4, 256, 4, 0,
+   ow = e_widget_slider_add(evas, 1, 0, _("%1.0f pixels"), 20, 256, 4, 0,
                             NULL, &(cfdata->size), 100);
    e_widget_list_object_append(ol, ow, 1, 1, 0.5);
    ow = e_widget_check_add(evas, _("Shrink to Content Width"),
