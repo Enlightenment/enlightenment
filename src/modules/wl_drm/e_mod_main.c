@@ -476,7 +476,7 @@ _drm_randr_create(void)
                               s->config.geom.w, s->config.geom.h);
                     }
 
-#ifdef (EFL_VERSION_MAJOR > 1) || (EFL_VERSION_MINOR >= 18)
+#if (EFL_VERSION_MAJOR > 1) || (EFL_VERSION_MINOR >= 18)
                   rotations =
                     ecore_drm_output_supported_rotations_get(output,
                                                              ECORE_DRM_PLANE_TYPE_PRIMARY);
@@ -604,7 +604,7 @@ _drm_randr_apply(void)
 
                   ecore_drm_output_mode_set(out, mode,
                                             s->config.geom.x, s->config.geom.y);
-#ifdef (EFL_VERSION_MAJOR > 1) || (EFL_VERSION_MINOR >= 18)
+#if (EFL_VERSION_MAJOR > 1) || (EFL_VERSION_MINOR >= 18)
                   ecore_drm_output_rotation_set(out,
                                                 ECORE_DRM_PLANE_TYPE_PRIMARY,
                                                 orient);
