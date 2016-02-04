@@ -46,6 +46,7 @@ typedef struct Config
 
    Eina_Bool autohide;
    Eina_Bool hide_when_behind;
+   Eina_Bool skip_window_list;
    Eina_Bool skip_taskbar;
    Eina_Bool skip_pager;
    Eina_Bool dont_bug_me;

@@ -245,7 +245,8 @@ _e_qa_entry_border_props_apply(E_Quick_Access_Entry *entry)
    SET(lock_client_iconify);
    SET(lock_user_sticky);
    SET(lock_client_sticky);
-   SET(user_skip_winlist);
+   if (qa_config->skip_window_list)
+     SET(user_skip_winlist);
    EC_CHANGED(entry->client);
 #undef SET
 }

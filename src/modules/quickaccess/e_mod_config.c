@@ -19,6 +19,7 @@ struct _E_Config_Dialog_Data
 
    int autohide;
    int hide_when_behind;
+   int skip_window_list;
    int skip_taskbar;
    int skip_pager;
 
@@ -77,6 +78,7 @@ _fill_data(E_Config_Dialog_Data *cfdata)
 
    cfdata->autohide = qa_config->autohide;
    cfdata->hide_when_behind = qa_config->hide_when_behind;
+   cfdata->skip_window_list = qa_config->skip_window_list;
    cfdata->skip_taskbar = qa_config->skip_taskbar;
    cfdata->skip_pager = qa_config->skip_pager;
 
@@ -142,6 +144,7 @@ _basic_check_changed(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfd
    CHECK(autohide);
    CHECK(skip_pager);
    CHECK(skip_taskbar);
+   CHECK(skip_window_list);
    CHECK(hide_when_behind);
 
 #undef CHECK
@@ -335,6 +338,9 @@ _basic_create_widgets(E_Config_Dialog *cfd EINA_UNUSED, Evas *evas, E_Config_Dia
    ob = e_widget_check_add(evas, _("Hide If Focus Lost"), &cfdata->autohide);
    e_widget_list_object_append(ol, ob, 1, 0, 0.5);
 
+   ob = e_widget_check_add(evas, _("Skip Window List"), &cfdata->skip_window_list);
+   e_widget_list_object_append(ol, ob, 1, 0, 0.5);
+
    ob = e_widget_check_add(evas, _("Skip Taskbar"), &cfdata->skip_taskbar);
    e_widget_list_object_append(ol, ob, 1, 0, 0.5);
 
@@ -395,6 +401,7 @@ _basic_apply_data(E_Config_Dialog *cfd  EINA_UNUSED, E_Config_Dialog_Data *cfdat
 #define SET(X) qa_config->X = cfdata->X
    SET(autohide);
    SET(hide_when_behind);
+   SET(skip_window_list);
    SET(skip_taskbar);
    SET(skip_pager);
    e_qa_entries_update();
@@ -466,6 +473,7 @@ e_qa_config_dd_new(void)
    E_CONFIG_LIST(D, T, transient_entries, entry_edd);
    E_CONFIG_VAL(D, T, autohide, UCHAR);
    E_CONFIG_VAL(D, T, hide_when_behind, UCHAR);
+   E_CONFIG_VAL(D, T, skip_window_list, UCHAR);
    E_CONFIG_VAL(D, T, skip_taskbar, UCHAR);
    E_CONFIG_VAL(D, T, skip_pager, UCHAR);
    E_CONFIG_VAL(D, T, dont_bug_me, UCHAR);
@@ -496,6 +504,7 @@ e_qa_config_new(void)
    Config *conf;
 
    conf = E_NEW(Config, 1);
+   conf->skip_window_list = 1;
    conf->skip_taskbar = 1;
    conf->skip_pager = 1;
    return conf;
