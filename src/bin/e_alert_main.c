@@ -62,10 +62,10 @@ static xcb_window_t btn2 = 0;
 static xcb_font_t font = 0;
 static xcb_gcontext_t gc = 0;
 static int fa = 0, fw = 0;
-#endif
-
 static int sw = 0, sh = 0;
 static int fh = 0;
+#endif
+
 static const char *title = NULL, *str1 = NULL, *str2 = NULL;
 static int ret = 0, sig = 0;
 static pid_t pid;
@@ -87,6 +87,8 @@ struct
 
 #ifdef HAVE_WAYLAND
 # ifdef HAVE_WL_DRM
+static int fh = 0;
+static int sw = 0, sh = 0;
 static Ecore_Drm_Device *dev = NULL;
 static Ecore_Drm_Fb *buffer;
 static Evas *canvas = NULL;
