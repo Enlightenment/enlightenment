@@ -285,9 +285,7 @@ _xwl_selection_notify(void *d EINA_UNUSED, int t EINA_UNUSED, Ecore_X_Event_Sele
              return ECORE_CALLBACK_RENEW;
           }
      }
-#if (EFL_VERSION_MAJOR > 1) || (EFL_VERSION_MINOR >= 16)
    if (ev->property != xwl_dnd_atom) return ECORE_CALLBACK_RENEW;
-#endif
    sd = ev->data;
 
    do
@@ -421,9 +419,7 @@ _xwl_property(void *d EINA_UNUSED, int t EINA_UNUSED, Ecore_X_Event_Window_Prope
 {
    Pipe *p;
 
-#if (EFL_VERSION_MAJOR > 1) || (EFL_VERSION_MINOR >= 16)
    if (!ev->state) return ECORE_CALLBACK_RENEW;
-#endif
    p = eina_hash_find(pipes, &ev->win);
    if (!p) return ECORE_CALLBACK_RENEW;
    /* FIXME: WHO FORGOT THE FUCKING STATE FLAG???? */
