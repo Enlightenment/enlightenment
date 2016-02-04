@@ -1574,6 +1574,7 @@ e_comp_block_window_del(void)
 E_API E_Comp *
 e_comp_find_by_window(Ecore_Window win)
 {
+   if (!e_comp) return NULL;
    if ((e_comp->win == win) || (e_comp->ee_win == win) || (e_comp->root == win)) return e_comp;
    return NULL;
 }
