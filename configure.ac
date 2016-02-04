@@ -91,7 +91,7 @@ extern char **environ;
 AC_DEFINE(HAVE_ENVIRON, 1, [Have environ var])
     ])
 
-efl_version="1.15.2"
+efl_version="1.17"
 AC_SUBST(efl_version)
 
 AC_CHECK_HEADERS([sys/timerfd.h sys/ptrace.h arpa/inet.h netinet/in.h])
