@@ -167,7 +167,7 @@ _e_wid_livethumb_resize_job(void *data)
      {
         zone = e_comp_object_util_zone_get(dd->live);
         if (!zone) zone = eina_list_data_get(e_comp->zones);
-        evas_object_geometry_get(dd->live, NULL, NULL, &w, &h);
+        evas_object_geometry_get(dd->cont, NULL, NULL, &w, &h);
         if ((w != zone->w) || (h != zone->h))
           {
              w *= 2;
