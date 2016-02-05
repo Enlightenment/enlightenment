@@ -196,8 +196,6 @@ e_bg_zone_update(E_Zone *zone, E_Bg_Transition transition)
    const char *trans = "";
    E_Desk *desk;
 
-   printf("UP %p trans %i\n", zone, transition);
-
    if (transition == E_BG_TRANSITION_START) trans = e_config->transition_start;
    else if (transition == E_BG_TRANSITION_DESK)
      trans = e_config->transition_desk;
