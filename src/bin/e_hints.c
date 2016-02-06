@@ -1401,11 +1401,8 @@ e_hints_window_size_get(E_Client *ec)
    ec->y = sizes[1];
    ec->w = sizes[2];
    ec->h = sizes[3];
-   ERR("XXXXXX1 %x which is %ix%i to %i %i",
-       (unsigned int)e_client_util_win_get(ec),
-       ec->client.w, ec->client.h,
-       ec->x, ec->y);
 #endif
+
    return 1;
 }
 

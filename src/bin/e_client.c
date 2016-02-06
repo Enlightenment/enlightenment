@@ -1767,10 +1767,6 @@ _e_client_eval(E_Client *ec)
                             if (E_CONTAINS(x, y, ec->w, ec->h, zx, zy, zw, zh))
                               {
                                  ec->x = x, ec->y = y;
-                                 ERR("XXXXXX2 %x which is %ix%i to %i %i",
-                                     (unsigned int)e_client_util_win_get(ec),
-                                     ec->client.w, ec->client.h,
-                                     ec->x, ec->y);
                               }
                             else
                               {
@@ -1812,19 +1808,11 @@ _e_client_eval(E_Client *ec)
                        // transient parent if found
                        ec->x = trans_ec->x + ((trans_ec->w - ec->w) / 2);
                        ec->y = trans_ec->y + ((trans_ec->h - ec->h) / 2);
-                       ERR("XXXXXX32 %x which is %ix%i to %i %i",
-                           (unsigned int)e_client_util_win_get(ec),
-                           ec->client.w, ec->client.h,
-                           ec->x, ec->y);
                     }
                   else
                     {
                        ec->x = zx + ((zw - ec->w) / 2);
                        ec->y = zy + ((zh - ec->h) / 2);
-                       ERR("XXXXXX33 %x which is %ix%i to %i %i",
-                           (unsigned int)e_client_util_win_get(ec),
-                           ec->client.w, ec->client.h,
-                           ec->x, ec->y);
                     }
                   ec->changes.pos = 1;
                   ec->placed = 1;
@@ -1882,27 +1870,16 @@ _e_client_eval(E_Client *ec)
                }
              ec->x = new_x;
              ec->y = new_y;
-             ERR("XXXXXX3 %x which is %ix%i to %i %i",
-                 (unsigned int)e_client_util_win_get(ec),
-                 ec->client.w, ec->client.h,
-                 ec->x, ec->y);
              ec->changes.pos = 1;
              ec->placed = 1;
              ec->pre_cb.x = ec->x; ec->pre_cb.y = ec->y;
           }
         else if (!E_INSIDE(ec->x, ec->y, zx, zy, zw, zh))
           {
-// FIXFIX: this causes initial positioning of windows to be broken on restart
-#if 0
              /* If an ec is placed out of bound, fix it! */
              ec->x = zx + ((zw - ec->w) / 2);
              ec->y = zy + ((zh - ec->h) / 2);
              ec->changes.pos = 1;
-             ERR("XXXXXX34 %x which is %ix%i to %i %i",
-                 (unsigned int)e_client_util_win_get(ec),
-                 ec->client.w, ec->client.h,
-                 ec->x, ec->y);
-#endif
           }
 
         /* Recreate state */
@@ -1915,10 +1892,6 @@ _e_client_eval(E_Client *ec)
              ec->x = zx + (zw - ec->w) / 2;
              ec->y = zy + (zh - ec->h) / 2;
              ec->changes.pos = 1;
-             ERR("XXXXXX35 %x which is %ix%i to %i %i",
-                 (unsigned int)e_client_util_win_get(ec),
-                 ec->client.w, ec->client.h,
-                 ec->x, ec->y);
           }
 
         /* if the explicit geometry request asks for the app to be
@@ -2080,10 +2053,6 @@ _e_client_eval(E_Client *ec)
                        ec->x = x - (ec->w >> 1);
                        e_comp_object_frame_geometry_get(ec->frame, NULL, NULL, &t, NULL);
                        ec->y = y - (t >> 1);
-                       ERR("XXXXXX4 %x which is %ix%i to %i %i",
-                           (unsigned int)e_client_util_win_get(ec),
-                           ec->client.w, ec->client.h,
-                           ec->x, ec->y);
                        EC_CHANGED(ec);
                        ec->changes.pos = 1;
                     }

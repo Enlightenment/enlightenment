@@ -254,11 +254,7 @@ _e_comp_x_client_new_helper(E_Client *ec)
    ec->input_only = ec->comp_data->initial_attributes.input_only;
    ec->border_size = ec->comp_data->initial_attributes.border;
    ec->icccm.accepts_focus = (!ec->override) && (!ec->input_only);
-   printf("NEW CLIENT: %x -->> %ix%i | %d,%d -> %d,%d\n",
-          win,
-          ec->comp_data->initial_attributes.w, ec->comp_data->initial_attributes.h,
-          ec->x, ec->y,
-          ec->comp_data->initial_attributes.x, ec->comp_data->initial_attributes.y);
+   //INF("NEW CLIENT: %d,%d -> %d,%d", ec->x, ec->y, ec->comp_data->initial_attributes.x, ec->comp_data->initial_attributes.y);
    ec->x = ec->client.x = ec->comp_data->initial_attributes.x;
    ec->y = ec->client.y = ec->comp_data->initial_attributes.y;
    if (ec->override && ((ec->x == -77) && (ec->y == -777)))
@@ -3559,10 +3555,6 @@ _e_comp_x_hook_client_fetch(void *d EINA_UNUSED, E_Client *ec)
                        ec->x = att->x;
                        ec->y = att->y;
                     }
-                  ERR("XXXXXX91 %x which is %ix%i to %i %i",
-                      (unsigned int)e_client_util_win_get(ec),
-                      ec->client.w, ec->client.h,
-                      ec->x, ec->y);
 
                   /*
                    * This ensures that windows that like to open with a x/y
@@ -3578,10 +3570,6 @@ _e_comp_x_hook_client_fetch(void *d EINA_UNUSED, E_Client *ec)
                        if (ec->y < zy)
                          ec->y = zy;
 
-                       ERR("XXXXXX71 %x which is %ix%i to %i %i",
-                           (unsigned int)e_client_util_win_get(ec),
-                           ec->client.w, ec->client.h,
-                           ec->x, ec->y);
                        /* ensure we account for windows which already have client_inset;
                         * fixes lots of wine placement issues
                         */
@@ -3596,10 +3584,6 @@ _e_comp_x_hook_client_fetch(void *d EINA_UNUSED, E_Client *ec)
                        if (ec->y + ec->h > zy + zh)
                          ec->y = zy + zh - ec->h;
 
-                       ERR("XXXXXX72 %x which is %ix%i to %i %i",
-                           (unsigned int)e_client_util_win_get(ec),
-                           ec->client.w, ec->client.h,
-                           ec->x, ec->y);
                        // <--
                        if (e_comp_zone_xy_get(ec->x, ec->y))
                          {
@@ -3607,10 +3591,6 @@ _e_comp_x_hook_client_fetch(void *d EINA_UNUSED, E_Client *ec)
                               {
                                  ec->x = E_CLAMP(ec->x, ec->zone->x, ec->zone->x + ec->zone->w);
                                  ec->y = E_CLAMP(ec->y, ec->zone->y, ec->zone->y + ec->zone->h);
-                                 ERR("XXXXXX73 %x which is %ix%i to %i %i",
-                                     (unsigned int)e_client_util_win_get(ec),
-                                     ec->client.w, ec->client.h,
-                                     ec->x, ec->y);
                               }
                             /* some application failing to correctly center a window */
                             if (eina_list_count(e_comp->zones) > 1)
@@ -3619,10 +3599,6 @@ _e_comp_x_hook_client_fetch(void *d EINA_UNUSED, E_Client *ec)
                                    ec->x = ((ec->zone->x + ec->zone->w) / 2) - (ec->w / 2);
                                  if (abs((e_comp->h / 2) - ec->y - (ec->h / 2)) < 3)
                                    ec->y = ((ec->zone->y + ec->zone->h) / 2) - (ec->h / 2);
-                                 ERR("XXXXXX74 %x which is %ix%i to %i %i",
-                                     (unsigned int)e_client_util_win_get(ec),
-                                     ec->client.w, ec->client.h,
-                                     ec->x, ec->y);
                               }
                             ec->changes.pos = 1;
                             ec->placed = 1;
@@ -4170,10 +4146,6 @@ _e_comp_x_hook_client_fetch(void *d EINA_UNUSED, E_Client *ec)
         ec->e.fetch.video_position = 0;
         ec->x = ec->e.state.video_position.x;
         ec->y = ec->e.state.video_position.y;
-        ERR("XXXXXX93 %x which is %ix%i to %i %i",
-            (unsigned int)e_client_util_win_get(ec),
-            ec->client.w, ec->client.h,
-            ec->x, ec->y);
 
         fprintf(stderr, "internal position has been updated [%i, %i]\n", ec->e.state.video_position.x, ec->e.state.video_position.y);
      }

@@ -961,10 +961,6 @@ _e_comp_intercept_move(void *data, Evas_Object *obj, int x, int y)
              cw->ec->x = x, cw->ec->y = y;
              cw->ec->client.x = x + cw->client_inset.l;
              cw->ec->client.y = y + cw->client_inset.t;
-             ERR("XXXXXX41 %x which is %ix%i to %i %i",
-                 (unsigned int)e_client_util_win_get(cw->ec),
-                 cw->ec->client.w, cw->ec->client.h,
-                 cw->ec->x, cw->ec->y);
           }
         return;
      }
@@ -1000,10 +996,6 @@ _e_comp_intercept_move(void *data, Evas_Object *obj, int x, int y)
    /* only update during resize if triggered by resize */
    if (e_client_util_resizing_get(cw->ec) && (!cw->force_move)) return;
    cw->ec->x = x, cw->ec->y = y;
-   ERR("XXXXXX42 %x which is %ix%i to %i %i",
-       (unsigned int)e_client_util_win_get(cw->ec),
-       cw->ec->client.w, cw->ec->client.h,
-       cw->ec->x, cw->ec->y);
    if (cw->ec->new_client)
      {
         /* don't actually do anything until first client idler loop */
@@ -1017,10 +1009,6 @@ _e_comp_intercept_move(void *data, Evas_Object *obj, int x, int y)
          * first damage region if it is not a new_client. */
         if (!cw->ec->shading)
           {
-             ERR("MOVING %x which is %ix%i to %i %i",
-                 (unsigned int)e_client_util_win_get(cw->ec),
-                 cw->ec->client.w, cw->ec->client.h,
-                 ix, iy);
              cw->ec->client.x = ix;
              cw->ec->client.y = iy;
           }
@@ -1586,11 +1574,6 @@ _e_comp_intercept_show_helper(E_Comp_Object *cw)
         evas_object_show(cw->smart_obj);
         return;
      }
-   printf("MOOOOOOOOOOV %x -->>>>>>> %ix%i to %i %i\n",
-          (unsigned int)e_client_util_win_get(cw->ec),
-          cw->ec->client.w, cw->ec->client.h,
-          cw->ec->x, cw->ec->y);
-
    /* re-set geometry */
    evas_object_move(cw->smart_obj, cw->ec->x, cw->ec->y);
    /* ensure that some kind of frame calc has occurred if there's a frame */
@@ -3303,15 +3286,8 @@ reshadow:
         _e_comp_smart_cb_frame_recalc(cw, cw->smart_obj, NULL);
         if ((cw->x == -1) && (cw->y == -1) && cw->ec->new_client && (!cw->ec->placed))
           {
-// FIXFIX: this causes windows to move up
-#if 0
              cw->ec->x = MAX(cw->ec->zone->x, cw->ec->client.x - cw->client_inset.l);
              cw->ec->y = MAX(cw->ec->zone->y, cw->ec->client.y - cw->client_inset.t);
-             ERR("XXXXXX44 %x which is %ix%i to %i %i",
-                 (unsigned int)e_client_util_win_get(cw->ec),
-                 cw->ec->client.w, cw->ec->client.h,
-                 cw->ec->x, cw->ec->y);
-#endif
           }
         /* this guarantees that we won't get blocked by the NOP check in the interceptor */
         cw->y = cw->x = -99999;
