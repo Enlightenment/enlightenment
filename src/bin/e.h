@@ -313,6 +313,7 @@ extern E_API Eina_Bool starting;
 extern E_API Eina_Bool stopping;
 extern E_API Eina_Bool restart;
 extern E_API Eina_Bool e_nopause;
+extern E_API double e_main_loop_started;
 
 extern E_API Eina_Bool e_precache_end;
 extern E_API Eina_Bool x_fatal;

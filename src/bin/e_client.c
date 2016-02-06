@@ -1876,10 +1876,17 @@ _e_client_eval(E_Client *ec)
           }
         else if (!E_INSIDE(ec->x, ec->y, zx, zy, zw, zh))
           {
-             /* If an ec is placed out of bound, fix it! */
-             ec->x = zx + ((zw - ec->w) / 2);
-             ec->y = zy + ((zh - ec->h) / 2);
-             ec->changes.pos = 1;
+// FIXME: this causes initial positioning of windows to be broken on restart
+             if (!((ecore_time_get() - e_main_loop_started) < 5.0))
+             // if during the startup phase and inital event burst
+             // big nasty hack - assume 5 seconds ... then DONT do this
+             // because otherwise windows just shuffle into the center
+               {
+                  /* If an ec is placed out of bound, fix it! */
+                  ec->x = zx + ((zw - ec->w) / 2);
+                  ec->y = zy + ((zh - ec->h) / 2);
+                  ec->changes.pos = 1;
+               }
           }
 
         /* Recreate state */
