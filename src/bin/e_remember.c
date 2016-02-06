@@ -770,6 +770,10 @@ _e_remember_cb_hook_pre_post_fetch(void *data EINA_UNUSED, E_Client *ec)
      {
         ec->x = rem->prop.pos_x;
         ec->y = rem->prop.pos_y;
+        ERR("XXXXXX91 %x which is %ix%i to %i %i",
+            (unsigned int)e_client_util_win_get(ec),
+            ec->client.w, ec->client.h,
+            ec->x, ec->y);
         if (ec->zone->w != rem->prop.res_x)
           {
              int px;
@@ -782,6 +786,10 @@ _e_remember_cb_hook_pre_post_fetch(void *data EINA_UNUSED, E_Client *ec)
                   else
                     ec->x = ((rem->prop.pos_x - 0) * ec->zone->w) /
                       (rem->prop.res_x / 3);
+                  ERR("XXXXXX92 %x which is %ix%i to %i %i",
+                      (unsigned int)e_client_util_win_get(ec),
+                      ec->client.w, ec->client.h,
+                      ec->x, ec->y);
                }
              else if (px < ((rem->prop.res_x * 2) / 3))
                {
@@ -794,6 +802,10 @@ _e_remember_cb_hook_pre_post_fetch(void *data EINA_UNUSED, E_Client *ec)
                       (((px - (rem->prop.res_x / 2)) * ec->zone->w) /
                        (rem->prop.res_x / 3)) -
                       (ec->w / 2);
+                  ERR("XXXXXX93 %x which is %ix%i to %i %i",
+                      (unsigned int)e_client_util_win_get(ec),
+                      ec->client.w, ec->client.h,
+                      ec->x, ec->y);
                }
              else
                {
@@ -806,12 +818,20 @@ _e_remember_cb_hook_pre_post_fetch(void *data EINA_UNUSED, E_Client *ec)
                       (((rem->prop.pos_x - rem->prop.res_x) * ec->zone->w) /
                        (rem->prop.res_x / 3)) +
                       (rem->prop.w - ec->client.w);
+                  ERR("XXXXXX94 %x which is %ix%i to %i %i",
+                      (unsigned int)e_client_util_win_get(ec),
+                      ec->client.w, ec->client.h,
+                      ec->x, ec->y);
                }
              if ((rem->prop.pos_x >= 0) && (ec->x < 0))
                ec->x = 0;
              else if (((rem->prop.pos_x + rem->prop.w) < rem->prop.res_x) &&
                       ((ec->x + ec->w) > ec->zone->w))
                ec->x = ec->zone->w - ec->w;
+             ERR("XXXXXX95 %x which is %ix%i to %i %i",
+                 (unsigned int)e_client_util_win_get(ec),
+                 ec->client.w, ec->client.h,
+                 ec->x, ec->y);
           }
         if (ec->zone->h != rem->prop.res_y)
           {
