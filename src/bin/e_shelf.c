@@ -84,6 +84,39 @@ E_API int E_EVENT_SHELF_ADD = -1;
 E_API int E_EVENT_SHELF_DEL = -1;
 static Eina_List *handlers;
 
+static inline Eina_Bool
+_e_shelf_is_horizontal(const E_Shelf *es)
+{
+   Eina_Bool horiz = EINA_FALSE;
+   switch (es->gadcon->orient)
+     {
+      case E_GADCON_ORIENT_FLOAT:
+      case E_GADCON_ORIENT_HORIZ:
+      case E_GADCON_ORIENT_TOP:
+      case E_GADCON_ORIENT_BOTTOM:
+      case E_GADCON_ORIENT_CORNER_TL:
+      case E_GADCON_ORIENT_CORNER_TR:
+      case E_GADCON_ORIENT_CORNER_BL:
+      case E_GADCON_ORIENT_CORNER_BR:
+        horiz = 1;
+        break;
+
+      case E_GADCON_ORIENT_VERT:
+      case E_GADCON_ORIENT_LEFT:
+      case E_GADCON_ORIENT_RIGHT:
+      case E_GADCON_ORIENT_CORNER_LT:
+      case E_GADCON_ORIENT_CORNER_RT:
+      case E_GADCON_ORIENT_CORNER_LB:
+      case E_GADCON_ORIENT_CORNER_RB:
+        horiz = 0;
+        break;
+
+      default:
+        break;
+     }
+   return horiz;
+}
+
 static void
 _e_shelf_remaximize(E_Shelf *es)
 {
@@ -109,7 +142,7 @@ _e_shelf_obstacles_update(E_Shelf *es)
    E_Zone_Obstacle *obs;
 
    EINA_LIST_FOREACH(es->zone_obstacles, l, obs)
-     e_zone_obstacle_modify(obs, &(Eina_Rectangle){es->x, es->y, es->w, es->h});
+     e_zone_obstacle_modify(obs, &(Eina_Rectangle){es->x, es->y, es->w, es->h}, !_e_shelf_is_horizontal(es));
 }
 
 static Eina_Bool
@@ -996,12 +1029,14 @@ e_shelf_obstacles_update(E_Shelf *es)
              desk = e_desk_at_xy_get(es->zone, sd->x, sd->y);
              if (!desk) continue;
              es->zone_obstacles = eina_list_append(es->zone_obstacles,
-               e_zone_obstacle_add(es->zone, desk, &(Eina_Rectangle){es->x, es->y, es->w, es->h}));
+               e_zone_obstacle_add(es->zone, desk, &(Eina_Rectangle){es->x, es->y, es->w, es->h},
+                 !_e_shelf_is_horizontal(es)));
           }
      }
    else
      es->zone_obstacles = eina_list_append(es->zone_obstacles,
-       e_zone_obstacle_add(es->zone, NULL, &(Eina_Rectangle){es->x, es->y, es->w, es->h}));
+       e_zone_obstacle_add(es->zone, NULL, &(Eina_Rectangle){es->x, es->y, es->w, es->h},
+         !_e_shelf_is_horizontal(es)));
 }
 
 E_API E_Shelf *

@@ -1239,10 +1239,10 @@ _e_zone_useful_geometry_calc(const E_Zone *zone, int dx, int dy, int *x, int *y,
    EINA_INLIST_FOREACH(zone->obstacles, obs)
      {
         if (!E_INTERSECTS(obs->x, obs->y, obs->w, obs->h, zx, zy, zw, zh)) continue;
-        if (obs->w >= obs->h)
-          eina_tiler_rect_del(tiler, &(Eina_Rectangle){0, obs->y - zy, zw, obs->h});
-        else
+        if (obs->vertical)
           eina_tiler_rect_del(tiler, &(Eina_Rectangle){obs->x - zx, 0, obs->w, zh});
+        else
+          eina_tiler_rect_del(tiler, &(Eina_Rectangle){0, obs->y - zy, zw, obs->h});
      }
    desk = e_desk_at_xy_get(zone, dx, dy);
    if (desk)
@@ -1250,10 +1250,10 @@ _e_zone_useful_geometry_calc(const E_Zone *zone, int dx, int dy, int *x, int *y,
         EINA_INLIST_FOREACH(desk->obstacles, obs)
           {
              if (!E_INTERSECTS(obs->x, obs->y, obs->w, obs->h, zx, zy, zw, zh)) continue;
-             if (obs->w >= obs->h)
-               eina_tiler_rect_del(tiler, &(Eina_Rectangle){0, obs->y - zy, zw, obs->h});
-             else
+             if (obs->vertical)
                eina_tiler_rect_del(tiler, &(Eina_Rectangle){obs->x - zx, 0, obs->w, zh});
+             else
+               eina_tiler_rect_del(tiler, &(Eina_Rectangle){0, obs->y - zy, zw, obs->h});
           }
      }
    it = eina_tiler_iterator_new(tiler);
@@ -1340,7 +1340,7 @@ e_zone_useful_geometry_dirty(E_Zone *zone)
 }
 
 E_API E_Zone_Obstacle *
-e_zone_obstacle_add(E_Zone *zone, E_Desk *desk, Eina_Rectangle *geom)
+e_zone_obstacle_add(E_Zone *zone, E_Desk *desk, Eina_Rectangle *geom, Eina_Bool vertical)
 {
    E_Zone_Obstacle *obs;
 
@@ -1360,6 +1360,7 @@ e_zone_obstacle_add(E_Zone *zone, E_Desk *desk, Eina_Rectangle *geom)
    obs->x = geom->x, obs->y = geom->y;
    obs->w = geom->w, obs->h = geom->h;
    obs->owner = E_OBJECT(desk) ?: E_OBJECT(zone);
+   obs->vertical = !!vertical;
    if (desk)
      {
         desk->obstacles = eina_inlist_append(desk->obstacles, EINA_INLIST_GET(obs));
@@ -1375,7 +1376,7 @@ e_zone_obstacle_add(E_Zone *zone, E_Desk *desk, Eina_Rectangle *geom)
 }
 
 E_API void
-e_zone_obstacle_modify(E_Zone_Obstacle *obs, Eina_Rectangle *geom)
+e_zone_obstacle_modify(E_Zone_Obstacle *obs, Eina_Rectangle *geom, Eina_Bool vertical)
 {
    E_Zone *zone;
    E_Desk *desk;
@@ -1387,6 +1388,7 @@ e_zone_obstacle_modify(E_Zone_Obstacle *obs, Eina_Rectangle *geom)
      return;
    obs->x = geom->x, obs->y = geom->y;
    obs->w = geom->w, obs->h = geom->h;
+   obs->vertical = !!vertical;
 
    if (obs->owner->type == E_DESK_TYPE)
      {
