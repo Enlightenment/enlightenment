@@ -111,7 +111,6 @@ E_API Eina_Bool starting = EINA_TRUE;
 E_API Eina_Bool stopping = EINA_FALSE;
 E_API Eina_Bool restart = EINA_FALSE;
 E_API Eina_Bool e_nopause = EINA_FALSE;
-E_API double e_main_loop_started = 0.0;
 EINTERN const char *e_first_frame = NULL;
 EINTERN double e_first_frame_start_time = -1;
 
@@ -1059,7 +1058,6 @@ main(int argc, char **argv)
    e_util_env_set("E_RESTART", "1");
 
    TS("MAIN LOOP AT LAST");
-   e_main_loop_started = ecore_time_get();
    if (!setjmp(x_fatal_buff))
      ecore_main_loop_begin();
    else
