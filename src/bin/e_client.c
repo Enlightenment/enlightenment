@@ -462,6 +462,10 @@ _e_client_revert_focus(E_Client *ec)
 static void
 _e_client_free(E_Client *ec)
 {
+   if (e_pixmap_free(ec->pixmap))
+     e_pixmap_client_set(ec->pixmap, NULL);
+   ec->pixmap = NULL;
+
    e_comp_object_redirected_set(ec->frame, 0);
    e_comp_object_render_update_del(ec->frame);
 
@@ -663,9 +667,6 @@ _e_client_del(E_Client *ec)
    eina_hash_del_by_key(clients_hash[e_pixmap_type_get(ec->pixmap)], &ec->pixmap);
    e_comp->clients = eina_list_remove(e_comp->clients, ec);
    e_comp_object_render_update_del(ec->frame);
-   if (e_pixmap_free(ec->pixmap))
-     e_pixmap_client_set(ec->pixmap, NULL);
-   ec->pixmap = NULL;
 }
 
 ///////////////////////////////////////////
