@@ -3759,16 +3759,7 @@ e_comp_object_render(Evas_Object *obj)
           }
         else
           ret = EINA_TRUE;
-        /* set pixel data */
-        if (e_comp->comp_type == E_PIXMAP_TYPE_WL)
-          {
-#warning FIXME BROKEN WAYLAND SHM BUFFER PROTOCOL
-             evas_object_image_data_copy_set(cw->obj, cw->blanked ? NULL : pix);
-             pix = evas_object_image_data_get(cw->obj, 0);
-             evas_object_image_data_set(cw->obj, pix);
-          }
-        else
-          evas_object_image_data_set(cw->obj, cw->blanked ? NULL : pix);
+        evas_object_image_data_set(cw->obj, cw->blanked ? NULL : pix);
         goto end;
      }
 
