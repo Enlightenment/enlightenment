@@ -108,7 +108,7 @@ _e_comp_wl_evas_cb_show(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj EIN
    Eina_List *l;
 
    if (!(ec = data)) return;
-   if (e_object_is_del(data)) return;
+   if (e_object_is_del(E_OBJECT(ec))) return;
 
    if (!ec->override) e_hints_window_visible_set(ec);
 
@@ -182,6 +182,7 @@ _e_comp_wl_evas_cb_mouse_out(void *data, Evas *evas EINA_UNUSED, Evas_Object *ob
    uint32_t serial;
 
    if (!(ec = data)) return;
+   if (e_object_is_del(E_OBJECT(ec))) return;
    if (ec->cur_mouse_action) return;
    /* FIXME? this is a hack to just reset the cursor whenever we mouse out. not sure if accurate */
    {
@@ -315,6 +316,7 @@ _e_comp_wl_evas_cb_multi_down(void *data, Evas *evas EINA_UNUSED, Evas_Object *o
    Evas_Event_Multi_Down *ev = event;
    wl_fixed_t x, y;
 
+   if (e_object_is_del(E_OBJECT(ec))) return;
    if (!ec->comp_data->surface) return;
 
    wc = wl_resource_get_client(ec->comp_data->surface);
@@ -342,6 +344,7 @@ _e_comp_wl_evas_cb_multi_up(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj
    E_Client *ec = data;
    Evas_Event_Multi_Up *ev = event;
 
+   if (e_object_is_del(E_OBJECT(ec))) return;
    if (!ec->comp_data->surface) return;
 
    wc = wl_resource_get_client(ec->comp_data->surface);
@@ -365,6 +368,7 @@ _e_comp_wl_evas_cb_multi_move(void *data, Evas *evas EINA_UNUSED, Evas_Object *o
    Evas_Event_Multi_Move *ev = event;
    wl_fixed_t x, y;
 
+   if (e_object_is_del(E_OBJECT(ec))) return;
    if (!ec->comp_data->surface) return;
 
    wc = wl_resource_get_client(ec->comp_data->surface);
@@ -504,8 +508,7 @@ _e_comp_wl_evas_cb_focus_out(void *data, Evas *evas EINA_UNUSED, Evas_Object *ob
    double t;
 
    if (!(ec = data)) return;
-
-   if (!ec->comp_data) return;
+   if (e_object_is_del(E_OBJECT(ec))) return;
 
    E_FREE_FUNC(ec->comp_data->on_focus_timer, ecore_timer_del);
 
@@ -537,6 +540,7 @@ _e_comp_wl_evas_cb_restack(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EIN
    E_Client *sec, *ec = data;
    Eina_List *l, *ll;
 
+   if (e_object_is_del(E_OBJECT(ec))) return;
    if (!ec->comp_data->sub.list) return;
    EINA_LIST_FOREACH(ec->comp_data->sub.list, l, sec)
      evas_object_layer_set(sec->frame, evas_object_layer_get(ec->frame));
@@ -557,6 +561,7 @@ _e_comp_wl_evas_cb_move(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_U
    E_Client *sec, *ec = data;
    Eina_List *l;
 
+   if (e_object_is_del(E_OBJECT(ec))) return;
    EINA_LIST_FOREACH(ec->comp_data->sub.list, l, sec)
      {
         if (!sec->comp_data->sub.data->position.set)
@@ -571,6 +576,7 @@ _e_comp_wl_evas_cb_resize(void *data, Evas_Object *obj EINA_UNUSED, void *event 
    E_Client *ec;
 
    if (!(ec = data)) return;
+   if (e_object_is_del(E_OBJECT(ec))) return;
 
    if ((ec->shading) || (ec->shaded)) return;
    if (!ec->comp_data->shell.configure_send) return;
@@ -689,6 +695,7 @@ _e_comp_wl_evas_cb_ping(void *data, Evas_Object *obj EINA_UNUSED, void *event EI
    E_Client *ec;
 
    if (!(ec = data)) return;
+   if (e_object_is_del(E_OBJECT(ec))) return;
    if (!(ec->comp_data->shell.ping)) return;
    if (!(ec->comp_data->shell.surface)) return;
 
