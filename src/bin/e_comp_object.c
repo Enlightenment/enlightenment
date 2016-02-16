@@ -2967,8 +2967,8 @@ e_comp_object_input_area_set(Evas_Object *obj, int x, int y, int w, int h)
              evas_object_smart_member_add(cw->input_obj, obj);
           }
         evas_object_geometry_set(cw->input_obj,
-          MAX(cw->ec->client.x + (!!cw->frame_object * cw->client_inset.l), 0) + x,
-          MAX(cw->ec->client.y + (!!cw->frame_object * cw->client_inset.t), 0) + y, w, h);
+          cw->ec->client.x + (!!cw->frame_object * cw->client_inset.l) + x,
+          cw->ec->client.y + (!!cw->frame_object * cw->client_inset.t) + y, w, h);
         evas_object_pass_events_set(cw->obj, 1);
         if (cw->visible) evas_object_show(cw->input_obj);
      }
