@@ -729,16 +729,6 @@ _e_comp_wl_evas_cb_color_set(void *data, Evas_Object *obj, void *event EINA_UNUS
 }
 
 static void
-_e_comp_wl_buffer_reference_cb_destroy(struct wl_listener *listener, void *data)
-{
-   E_Comp_Wl_Buffer_Ref *ref;
-
-   ref = container_of(listener, E_Comp_Wl_Buffer_Ref, destroy_listener);
-   if ((E_Comp_Wl_Buffer *)data != ref->buffer) return;
-   ref->buffer = NULL;
-}
-
-static void
 _e_comp_wl_buffer_cb_destroy(struct wl_listener *listener, void *data EINA_UNUSED)
 {
    E_Comp_Wl_Buffer *buffer;
@@ -1984,7 +1974,6 @@ _e_comp_wl_subsurface_create(E_Client *ec, E_Client *epc, uint32_t id, struct wl
    _e_comp_wl_surface_state_init(&sdata->cached, ec->w, ec->h);
 
    /* set subsurface data properties */
-   sdata->cached_buffer_ref.buffer = NULL;
    sdata->resource = res;
    sdata->synchronized = EINA_TRUE;
    sdata->parent = epc;
@@ -2693,30 +2682,6 @@ e_comp_wl_subsurface_commit(E_Client *ec)
      }
 
    return EINA_TRUE;
-}
-
-EINTERN void
-e_comp_wl_buffer_reference(E_Comp_Wl_Buffer_Ref *ref, E_Comp_Wl_Buffer *buffer)
-{
-   if ((ref->buffer) && (buffer != ref->buffer))
-     {
-        ref->buffer->busy--;
-        if (ref->buffer->busy == 0)
-          {
-             if (!wl_resource_get_client(ref->buffer->resource)) return;
-             wl_resource_queue_event(ref->buffer->resource, WL_BUFFER_RELEASE);
-          }
-        wl_list_remove(&ref->destroy_listener.link);
-     }
-
-   if ((buffer) && (buffer != ref->buffer))
-     {
-        buffer->busy++;
-        wl_signal_add(&buffer->destroy_signal, &ref->destroy_listener);
-     }
-
-   ref->buffer = buffer;
-   ref->destroy_listener.notify = _e_comp_wl_buffer_reference_cb_destroy;
 }
 
 /**

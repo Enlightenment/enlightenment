@@ -43,7 +43,6 @@
    })
 
 typedef struct _E_Comp_Wl_Buffer E_Comp_Wl_Buffer;
-typedef struct _E_Comp_Wl_Buffer_Ref E_Comp_Wl_Buffer_Ref;
 typedef struct _E_Comp_Wl_Subsurf_Data E_Comp_Wl_Subsurf_Data;
 typedef struct _E_Comp_Wl_Surface_State E_Comp_Wl_Surface_State;
 typedef struct _E_Comp_Wl_Client_Data E_Comp_Wl_Client_Data;
@@ -62,12 +61,6 @@ struct _E_Comp_Wl_Buffer
    E_Pixmap *discarding_pixmap;
    int32_t w, h;
    uint32_t busy;
-};
-
-struct _E_Comp_Wl_Buffer_Ref
-{
-   E_Comp_Wl_Buffer *buffer;
-   struct wl_listener destroy_listener;
 };
 
 struct _E_Comp_Wl_Surface_State
@@ -95,7 +88,6 @@ struct _E_Comp_Wl_Subsurf_Data
      } position;
 
    E_Comp_Wl_Surface_State cached;
-   E_Comp_Wl_Buffer_Ref cached_buffer_ref;
 
    Eina_Bool synchronized;
 };
@@ -287,7 +279,6 @@ struct _E_Comp_Wl_Client_Data
         E_Shell_Data *data;
      } shell;
 
-   E_Comp_Wl_Buffer_Ref buffer_ref;
    E_Comp_Wl_Surface_State pending;
 
    Eina_List *frames;
@@ -336,7 +327,6 @@ EINTERN struct wl_resource *e_comp_wl_surface_create(struct wl_client *client, i
 EINTERN void e_comp_wl_surface_destroy(struct wl_resource *resource);
 EINTERN Eina_Bool e_comp_wl_surface_commit(E_Client *ec);
 EINTERN Eina_Bool e_comp_wl_subsurface_commit(E_Client *ec);
-EINTERN void e_comp_wl_buffer_reference(E_Comp_Wl_Buffer_Ref *ref, E_Comp_Wl_Buffer *buffer);
 E_API E_Comp_Wl_Buffer *e_comp_wl_buffer_get(struct wl_resource *resource);
 
 E_API struct wl_signal e_comp_wl_surface_create_signal_get(void);
