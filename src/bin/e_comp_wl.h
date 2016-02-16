@@ -56,7 +56,10 @@ struct _E_Comp_Wl_Buffer
    struct wl_resource *resource;
    struct wl_signal destroy_signal;
    struct wl_listener destroy_listener;
+   struct wl_listener deferred_destroy_listener;
    struct wl_shm_buffer *shm_buffer;
+   struct wl_shm_pool *pool;
+   E_Pixmap *discarding_pixmap;
    int32_t w, h;
    uint32_t busy;
 };

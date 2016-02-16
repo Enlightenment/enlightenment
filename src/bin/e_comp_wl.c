@@ -1699,7 +1699,6 @@ _e_comp_wl_subsurface_destroy(struct wl_resource *resource)
      }
 
    _e_comp_wl_surface_state_finish(&sdata->cached);
-   e_comp_wl_buffer_reference(&sdata->cached_buffer_ref, NULL);
 
    /* the client is getting deleted, which means the pixmap will be getting
     * freed. We need to unset the surface user data */
@@ -1746,8 +1745,9 @@ _e_comp_wl_subsurface_commit_to_cache(E_Client *ec)
         sdata->cached.new_attach = EINA_TRUE;
         _e_comp_wl_surface_state_buffer_set(&sdata->cached,
                                             cdata->pending.buffer);
-        e_comp_wl_buffer_reference(&sdata->cached_buffer_ref,
-                                   cdata->pending.buffer);
+        e_pixmap_resource_set(ec->pixmap, cdata->pending.buffer);
+        e_pixmap_dirty(ec->pixmap);
+        e_pixmap_refresh(ec->pixmap);
      }
 
    sdata->cached.sx = cdata->pending.sx;
