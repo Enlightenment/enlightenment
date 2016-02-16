@@ -636,7 +636,6 @@ struct E_Client
    unsigned int       internal : 1;
    unsigned int       internal_no_remember : 1;
    unsigned int       internal_no_reopen : 1;
-   Eina_Bool          dead : 1;
 
    Evas_Object       *internal_elm_win;
 
