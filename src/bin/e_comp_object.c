@@ -2187,20 +2187,6 @@ _e_comp_smart_hide(Evas_Object *obj)
    evas_object_hide(cw->clip);
    if (cw->input_obj) evas_object_hide(cw->input_obj);
    evas_object_hide(cw->effect_obj);
-   if (cw->ec->dead)
-     {
-        Evas_Object *o;
-
-        evas_object_hide(cw->obj);
-        EINA_LIST_FREE(cw->obj_mirror, o)
-          {
-             evas_object_image_data_set(o, NULL);
-             evas_object_freeze_events_set(o, 1);
-             evas_object_event_callback_del_full(o, EVAS_CALLBACK_DEL, _e_comp_object_cb_mirror_del, cw);
-             evas_object_del(o);
-          }
-        if (!_e_comp_object_animating_end(cw)) return;
-     }
    if (stopping) return;
    if (!cw->ec->input_only)
      {

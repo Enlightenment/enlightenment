@@ -1441,14 +1441,6 @@ static const struct wl_surface_interface _e_surface_interface =
 #endif
 };
 
-static void
-_e_comp_wl_surface_render_stop(E_Client *ec)
-{
-   /* FIXME: this may be fine after e_pixmap can create textures for wl clients? */
-   //if ((!ec->internal) && (!e_comp_gl_get()))
-     ec->dead = ec->hidden = 1;
-   evas_object_hide(ec->frame);
-}
 
 static void
 _e_comp_wl_surface_destroy(struct wl_resource *resource)
@@ -1457,7 +1449,7 @@ _e_comp_wl_surface_destroy(struct wl_resource *resource)
 
    if (!(ec = wl_resource_get_user_data(resource))) return;
 
-   _e_comp_wl_surface_render_stop(ec);
+   evas_object_hide(ec->frame);
    e_object_del(E_OBJECT(ec));
 }
 
@@ -2278,7 +2270,7 @@ _e_comp_wl_client_cb_del(void *data EINA_UNUSED, E_Client *ec)
      wl_resource_set_user_data(ec->comp_data->surface, NULL);
 
    if (ec->internal_elm_win)
-     _e_comp_wl_surface_render_stop(ec);
+     evas_object_hide(ec->frame);
    _e_comp_wl_focus_check();
 }
 
