@@ -428,7 +428,15 @@ e_bindings_mouse_button_find(E_Binding_Context ctxt, E_Binding_Event_Mouse_Butto
 
    if (bind_ret && *bind_ret)
      start = eina_list_data_find_list(mouse_bindings, *bind_ret);
-   if (start) start = start->next;
+   if (start)
+     {
+        start = start->next;
+        if (!start)
+          {
+             *bind_ret = NULL;
+             return NULL;
+          }
+     }
    EINA_LIST_FOREACH(start ?: mouse_bindings, l, binding)
      {
         if ((binding->button == (int)ev->button) &&
@@ -1187,7 +1195,15 @@ e_bindings_wheel_find(E_Binding_Context ctxt, E_Binding_Event_Wheel *ev, E_Bindi
 
    if (bind_ret && *bind_ret)
      start = eina_list_data_find_list(wheel_bindings, *bind_ret);
-   if (start) start = start->next;
+   if (start)
+     {
+        start = start->next;
+        if (!start)
+          {
+             *bind_ret = NULL;
+             return NULL;
+          }
+     }
    EINA_LIST_FOREACH(start ?: wheel_bindings, l, binding)
      {
         if ((binding->direction == ev->direction) &&
