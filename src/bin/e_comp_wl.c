@@ -980,8 +980,14 @@ _e_comp_wl_surface_state_finish(E_Comp_Wl_Surface_State *state)
 {
    struct wl_resource *cb;
    Eina_Rectangle *dmg;
+   Eina_List *free_list;
 
-   EINA_LIST_FREE(state->frames, cb)
+   /* The resource destroy callback will walk the state->frames list,
+    * so move the list to a temporary first.
+    */
+   free_list = state->frames;
+   state->frames = NULL;
+   EINA_LIST_FREE(free_list, cb)
      wl_resource_destroy(cb);
 
    EINA_LIST_FREE(state->damages, dmg)
@@ -2118,6 +2124,7 @@ _e_comp_wl_client_cb_del(void *data EINA_UNUSED, E_Client *ec)
    /* Eina_Rectangle *dmg; */
    struct wl_resource *cb;
    E_Client *subc;
+   Eina_List *free_list;
 
    /* make sure this is a wayland client */
    if (e_pixmap_type_get(ec->pixmap) != E_PIXMAP_TYPE_WL) return;
@@ -2136,7 +2143,12 @@ _e_comp_wl_client_cb_del(void *data EINA_UNUSED, E_Client *ec)
 
    _e_comp_wl_surface_state_finish(&ec->comp_data->pending);
 
-   EINA_LIST_FREE(ec->comp_data->frames, cb)
+   /* The resource destroy callback will walk the state->frames list,
+    * so move the list to a temporary first.
+    */
+   free_list = ec->comp_data->frames;
+   ec->comp_data->frames = NULL;
+   EINA_LIST_FREE(free_list, cb)
      wl_resource_destroy(cb);
 
    if (ec->comp_data->surface)
