@@ -1304,6 +1304,11 @@ _e_comp_wl_frame_cb_destroy(struct wl_resource *resource)
 
    ec->comp_data->pending.frames =
      eina_list_remove(ec->comp_data->pending.frames, resource);
+
+   if (!ec->comp_data->sub.data) return;
+
+   ec->comp_data->sub.data->cached.frames =
+     eina_list_remove(ec->comp_data->sub.data->cached.frames, resource);
 }
 
 static void
