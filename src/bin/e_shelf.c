@@ -91,7 +91,7 @@ _e_shelf_remaximize(E_Shelf *es)
 {
    E_Client *ec;
 
-   if (es->cfg->overlap && e_config->border_fix_on_shelf_toggle) return;
+   if ((!e_config->border_fix_on_shelf_toggle) || es->cfg->overlap) return;
    E_CLIENT_FOREACH(ec)
      {
         E_Maximize max = ec->maximized;
