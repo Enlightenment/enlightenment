@@ -635,10 +635,17 @@ e_pixmap_image_clear(E_Pixmap *cp, Eina_Bool cache)
           {
              E_Comp_Wl_Client_Data *cd;
              struct wl_resource *cb;
+             Eina_List *free_list;
 
              if ((!cp->client) || (!cp->client->comp_data)) return;
              cd = (E_Comp_Wl_Client_Data *)cp->client->comp_data;
-             EINA_LIST_FREE(cd->frames, cb)
+
+             /* The destroy callback will remove items from the frame list
+              * so we move the list to a temporary before walking it here
+              */
+             free_list = cd->frames;
+             cd->frames = NULL;
+             EINA_LIST_FREE(free_list, cb)
                {
                   wl_callback_send_done(cb, ecore_time_unix_get() * 1000);
                   wl_resource_destroy(cb);
