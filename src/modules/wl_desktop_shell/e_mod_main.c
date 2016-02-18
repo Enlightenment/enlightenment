@@ -660,7 +660,7 @@ _e_xdg_shell_surface_configure_send(struct wl_resource *resource, uint32_t edges
 static void
 _e_xdg_shell_surface_cb_destroy(struct wl_client *client EINA_UNUSED, struct wl_resource *resource)
 {
-   _e_shell_surface_destroy(resource);
+   wl_resource_destroy(resource);
 }
 
 static void
@@ -1173,7 +1173,7 @@ _e_xdg_shell_cb_surface_get(struct wl_client *client, struct wl_resource *resour
 static void
 _e_xdg_shell_popup_cb_destroy(struct wl_client *client EINA_UNUSED, struct wl_resource *resource)
 {
-   _e_shell_surface_destroy(resource);
+   wl_resource_destroy(resource);
 }
 
 static const struct xdg_popup_interface _e_xdg_popup_interface =
