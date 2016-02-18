@@ -2241,6 +2241,9 @@ _e_comp_wl_client_cb_del(void *data EINA_UNUSED, E_Client *ec)
    /* make sure this is a wayland client */
    if (e_pixmap_type_get(ec->pixmap) != E_PIXMAP_TYPE_WL) return;
 
+   /* remove focus timer */
+   E_FREE_FUNC(ec->comp_data->on_focus_timer, ecore_timer_del);
+
    /* remove sub list */
    EINA_LIST_FREE(ec->comp_data->sub.list, subc)
      subc->comp_data->sub.data->parent = NULL;
