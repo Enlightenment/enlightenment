@@ -3730,6 +3730,19 @@ e_comp_object_render(Evas_Object *obj)
    evas_object_image_pixels_dirty_set(cw->obj, EINA_FALSE);
 
    RENDER_DEBUG("RENDER SIZE: %dx%d", pw, ph);
+
+   if (e_comp->comp_type == E_PIXMAP_TYPE_WL)
+     {
+        Eina_Bool alpha = e_pixmap_image_is_argb(cw->ec->pixmap);
+
+        it = NULL;
+        pix = e_pixmap_image_data_get(cw->ec->pixmap);
+        evas_object_image_data_set(cw->obj, cw->blanked ? NULL : pix);
+        evas_object_image_alpha_set(cw->obj, alpha);
+        ret = EINA_TRUE;
+        goto end;
+     }
+
    it = eina_tiler_iterator_new(cw->pending_updates);
    if (e_pixmap_image_is_argb(cw->ec->pixmap))
      {
