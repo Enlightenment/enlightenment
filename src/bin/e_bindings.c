@@ -500,7 +500,7 @@ E_API E_Action *
 e_bindings_mouse_up_event_handle(E_Binding_Context ctxt, E_Object *obj, E_Binding_Event_Mouse_Button *ev)
 {
    E_Action *act;
-   E_Binding_Mouse *binding;
+   E_Binding_Mouse *binding = NULL;
 
    if (bindings_disabled) return NULL;
    while (1)
