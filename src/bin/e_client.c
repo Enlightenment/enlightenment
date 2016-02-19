@@ -462,9 +462,12 @@ _e_client_revert_focus(E_Client *ec)
 static void
 _e_client_free(E_Client *ec)
 {
-   if (e_pixmap_free(ec->pixmap))
-     e_pixmap_client_set(ec->pixmap, NULL);
-   ec->pixmap = NULL;
+   if (ec->pixmap)
+     {
+        if (e_pixmap_free(ec->pixmap))
+          e_pixmap_client_set(ec->pixmap, NULL);
+        ec->pixmap = NULL;
+     }
 
    e_comp_object_redirected_set(ec->frame, 0);
    e_comp_object_render_update_del(ec->frame);
@@ -639,6 +642,7 @@ _e_client_del(E_Client *ec)
    evas_object_focus_set(ec->frame, 0);
 
    E_FREE_FUNC(ec->ping_poller, ecore_poller_del);
+   eina_hash_del_by_key(clients_hash[e_pixmap_type_get(ec->pixmap)], &ec->pixmap);
    /* must be called before parent/child clear */
    _e_client_hook_call(E_CLIENT_HOOK_DEL, ec);
    E_FREE(ec->comp_data);
@@ -664,7 +668,6 @@ _e_client_del(E_Client *ec)
    EINA_LIST_FREE(ec->group, child)
      child->leader = NULL;
 
-   eina_hash_del_by_key(clients_hash[e_pixmap_type_get(ec->pixmap)], &ec->pixmap);
    e_comp->clients = eina_list_remove(e_comp->clients, ec);
    e_comp_object_render_update_del(ec->frame);
 }
