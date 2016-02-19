@@ -5339,6 +5339,7 @@ _e_comp_x_screens_setup(void)
 E_API Eina_Bool
 e_comp_x_init(void)
 {
+   Eina_List *h = NULL;
    if (!ecore_x_init(NULL))
      {
         e_error_message_show(_("Enlightenment cannot initialize Ecore_X!\n"));
@@ -5366,11 +5367,39 @@ e_comp_x_init(void)
              "or Ecore was built without XDamage support."));
         return EINA_FALSE;
      }
+   if (!e_atoms_init()) return 0;
 
    clients_win_hash = eina_hash_int32_new(NULL);
    damages_hash = eina_hash_int32_new(NULL);
    alarm_hash = eina_hash_int32_new(NULL);
    frame_extents = eina_hash_string_superfast_new(free);
+
+   h = eina_list_append(h, e_client_hook_add(E_CLIENT_HOOK_DESK_SET, _e_comp_x_hook_client_desk_set, NULL));
+   h = eina_list_append(h, e_client_hook_add(E_CLIENT_HOOK_RESIZE_BEGIN, _e_comp_x_hook_client_resize_begin, NULL));
+   h = eina_list_append(h, e_client_hook_add(E_CLIENT_HOOK_RESIZE_END, _e_comp_x_hook_client_resize_end, NULL));
+   h = eina_list_append(h, e_client_hook_add(E_CLIENT_HOOK_MOVE_BEGIN, _e_comp_x_hook_client_move_begin, NULL));
+   h = eina_list_append(h, e_client_hook_add(E_CLIENT_HOOK_MOVE_END, _e_comp_x_hook_client_move_end, NULL));
+   h = eina_list_append(h, e_client_hook_add(E_CLIENT_HOOK_DEL, _e_comp_x_hook_client_del, NULL));
+   h = eina_list_append(h, e_client_hook_add(E_CLIENT_HOOK_NEW_CLIENT, _e_comp_x_hook_client_new, NULL));
+   h = eina_list_append(h, e_client_hook_add(E_CLIENT_HOOK_EVAL_FETCH, _e_comp_x_hook_client_fetch, NULL));
+   h = eina_list_append(h, e_client_hook_add(E_CLIENT_HOOK_EVAL_PRE_FRAME_ASSIGN, _e_comp_x_hook_client_pre_frame_assign, NULL));
+   h = eina_list_append(h, e_client_hook_add(E_CLIENT_HOOK_UNREDIRECT, _e_comp_x_hook_client_unredirect, NULL));
+   h = eina_list_append(h, e_client_hook_add(E_CLIENT_HOOK_REDIRECT, _e_comp_x_hook_client_redirect, NULL));
+   h = eina_list_append(h, e_client_hook_add(E_CLIENT_HOOK_EVAL_POST_NEW_CLIENT, _e_comp_x_hook_client_post_new_client, NULL));
+   h = eina_list_append(h, e_client_hook_add(E_CLIENT_HOOK_FOCUS_SET, _e_comp_x_hook_client_focus_set, NULL));
+   h = eina_list_append(h, e_client_hook_add(E_CLIENT_HOOK_FOCUS_UNSET, _e_comp_x_hook_client_focus_unset, NULL));
+   h = eina_list_append(h, e_client_hook_add(E_CLIENT_HOOK_EVAL_END, _e_comp_x_hook_client_eval_end, NULL));
+
+   if (!_e_comp_x_screens_setup())
+     {
+        e_atoms_shutdown();
+        E_FREE_LIST(h, e_client_hook_del);
+        E_FREE_FUNC(clients_win_hash, eina_hash_free);
+        E_FREE_FUNC(damages_hash, eina_hash_free);
+        E_FREE_FUNC(alarm_hash, eina_hash_free);
+        E_FREE_FUNC(frame_extents, eina_hash_free);
+        return 0;
+     }
 
    E_LIST_HANDLER_APPEND(handlers, E_EVENT_COMP_OBJECT_ADD, _e_comp_x_object_add, NULL);
 
@@ -5433,42 +5462,8 @@ e_comp_x_init(void)
    if (!backlight_atom)
      backlight_atom = ecore_x_atom_get("BACKLIGHT");
 
-   if (e_comp->comp_type != E_PIXMAP_TYPE_WL)
-     {
-        ecore_x_screensaver_event_listen_set(1);
-        E_LIST_HANDLER_APPEND(handlers, ECORE_X_EVENT_SCREENSAVER_NOTIFY, _e_comp_x_screensaver_notify_cb, NULL);
-        ecore_x_screensaver_custom_blanking_enable();
-
-        e_screensaver_attrs_set(ecore_x_screensaver_timeout_get(),
-                                ecore_x_screensaver_blank_get(),
-                                ecore_x_screensaver_expose_get());
-     }
    ecore_x_passive_grab_replay_func_set(_e_comp_x_grab_replay, NULL);
 
-   e_client_hook_add(E_CLIENT_HOOK_DESK_SET, _e_comp_x_hook_client_desk_set, NULL);
-   e_client_hook_add(E_CLIENT_HOOK_RESIZE_BEGIN, _e_comp_x_hook_client_resize_begin, NULL);
-   e_client_hook_add(E_CLIENT_HOOK_RESIZE_END, _e_comp_x_hook_client_resize_end, NULL);
-   e_client_hook_add(E_CLIENT_HOOK_MOVE_BEGIN, _e_comp_x_hook_client_move_begin, NULL);
-   e_client_hook_add(E_CLIENT_HOOK_MOVE_END, _e_comp_x_hook_client_move_end, NULL);
-   e_client_hook_add(E_CLIENT_HOOK_DEL, _e_comp_x_hook_client_del, NULL);
-   e_client_hook_add(E_CLIENT_HOOK_NEW_CLIENT, _e_comp_x_hook_client_new, NULL);
-   e_client_hook_add(E_CLIENT_HOOK_EVAL_FETCH, _e_comp_x_hook_client_fetch, NULL);
-   e_client_hook_add(E_CLIENT_HOOK_EVAL_PRE_FRAME_ASSIGN, _e_comp_x_hook_client_pre_frame_assign, NULL);
-   e_client_hook_add(E_CLIENT_HOOK_UNREDIRECT, _e_comp_x_hook_client_unredirect, NULL);
-   e_client_hook_add(E_CLIENT_HOOK_REDIRECT, _e_comp_x_hook_client_redirect, NULL);
-   e_client_hook_add(E_CLIENT_HOOK_EVAL_POST_NEW_CLIENT, _e_comp_x_hook_client_post_new_client, NULL);
-   e_client_hook_add(E_CLIENT_HOOK_FOCUS_SET, _e_comp_x_hook_client_focus_set, NULL);
-   e_client_hook_add(E_CLIENT_HOOK_FOCUS_UNSET, _e_comp_x_hook_client_focus_unset, NULL);
-   e_client_hook_add(E_CLIENT_HOOK_EVAL_END, _e_comp_x_hook_client_eval_end, NULL);
-
-   if (e_comp->comp_type != E_PIXMAP_TYPE_WL)
-     {
-        e_desklock_show_hook_add(_e_comp_x_desklock_show);
-        e_desklock_hide_hook_add(_e_comp_x_desklock_hide);
-     }
-
-   if (!e_atoms_init()) return 0;
-   if (!_e_comp_x_screens_setup()) return EINA_FALSE;
    if (!e_xsettings_init())
      e_error_message_show(_("Enlightenment cannot initialize the XSettings system.\n"));
    E_LIST_HANDLER_APPEND(handlers, E_EVENT_RANDR_CHANGE, _e_comp_x_randr_change, NULL);
@@ -5478,6 +5473,15 @@ e_comp_x_init(void)
 
    if (e_comp->comp_type != E_PIXMAP_TYPE_WL)
      {
+        ecore_x_screensaver_event_listen_set(1);
+        E_LIST_HANDLER_APPEND(handlers, ECORE_X_EVENT_SCREENSAVER_NOTIFY, _e_comp_x_screensaver_notify_cb, NULL);
+        ecore_x_screensaver_custom_blanking_enable();
+
+        e_screensaver_attrs_set(ecore_x_screensaver_timeout_get(),
+                                ecore_x_screensaver_blank_get(),
+                                ecore_x_screensaver_expose_get());
+        e_desklock_show_hook_add(_e_comp_x_desklock_show);
+        e_desklock_hide_hook_add(_e_comp_x_desklock_hide);
         int timeout = e_screensaver_timeout_get(EINA_TRUE);
         ecore_x_screensaver_set(timeout + 10,
                                 0,
@@ -5490,7 +5494,7 @@ e_comp_x_init(void)
      }
    else
      e_dnd_init();
-
+   eina_list_free(h);
    return EINA_TRUE;
 }
 
