@@ -4621,7 +4621,14 @@ _e_comp_x_hook_client_del(void *d EINA_UNUSED, E_Client *ec)
              e_pixmap_free(e_comp_x_client_pixmap_get(ec));
           }
      }
+   else
 #endif
+     {
+        if (e_pixmap_free(ec->pixmap))
+          e_pixmap_client_set(ec->pixmap, NULL);
+        ec->pixmap = NULL;
+     }
+
    if (post_clients)
      post_clients = eina_list_remove(post_clients, ec);
 
