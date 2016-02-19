@@ -698,6 +698,7 @@ struct E_Client
    Eina_Bool maximize_override : 1; // client is doing crazy stuff and should "just do it" when moving/resizing
    Eina_Bool keyboard_resizing : 1;
 
+   Eina_Bool on_post_updates : 1; // client is on the post update list
 #ifdef HAVE_WAYLAND
    uuid_t uuid;
 #endif

@@ -53,6 +53,7 @@ _e_comp_canvas_render_post(void *data EINA_UNUSED, Evas *e EINA_UNUSED, void *ev
    EINA_LIST_FREE(e_comp->post_updates, ec)
      {
         //INF("POST %p", ec);
+        ec->on_post_updates = EINA_FALSE;
         if (!e_object_is_del(E_OBJECT(ec)))
           e_pixmap_image_clear(ec->pixmap, 1);
         UNREFD(ec, 111);
