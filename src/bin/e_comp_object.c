@@ -900,6 +900,7 @@ _e_comp_object_pixels_get(void *data, Evas_Object *obj EINA_UNUSED)
    if (cw->native)
      {
         E_FREE_FUNC(cw->pending_updates, eina_tiler_free);
+        cw->ec->on_post_updates = EINA_TRUE;
         e_comp->post_updates = eina_list_append(e_comp->post_updates, cw->ec);
         REFD(cw->ec, 111);
         e_object_ref(E_OBJECT(cw->ec));
@@ -3787,6 +3788,7 @@ end:
    E_FREE_FUNC(cw->pending_updates, eina_tiler_free);
    if (ret)
      {
+        cw->ec->on_post_updates = EINA_TRUE;
         e_comp->post_updates = eina_list_append(e_comp->post_updates, cw->ec);
         REFD(cw->ec, 111);
         e_object_ref(E_OBJECT(cw->ec));
