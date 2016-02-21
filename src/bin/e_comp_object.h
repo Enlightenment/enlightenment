@@ -50,6 +50,7 @@ E_API E_Client *e_comp_object_client_get(Evas_Object *obj);
 E_API E_Zone *e_comp_object_util_zone_get(Evas_Object *obj);
 E_API void e_comp_object_util_del_list_append(Evas_Object *obj, Evas_Object *to_del);
 E_API void e_comp_object_util_del_list_remove(Evas_Object *obj, Evas_Object *to_del);
+E_API Eina_Bool e_comp_object_util_autoclose_on_escape(void *d EINA_UNUSED, Ecore_Event_Key *ev);
 E_API void e_comp_object_util_autoclose(Evas_Object *obj, E_Comp_Object_Autoclose_Cb del_cb, E_Comp_Object_Key_Cb cb, const void *data);
 E_API void e_comp_object_util_center(Evas_Object *obj);
 E_API void e_comp_object_util_center_on(Evas_Object *obj, Evas_Object *on);

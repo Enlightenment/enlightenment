@@ -4226,6 +4226,13 @@ _e_comp_object_autoclose_del(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_O
      e_client_refocus();
 }
 
+
+E_API Eina_Bool
+e_comp_object_util_autoclose_on_escape(void *d EINA_UNUSED, Ecore_Event_Key *ev)
+{
+   return strcmp(ev->key, "Escape");
+}
+
 E_API void
 e_comp_object_util_autoclose(Evas_Object *obj, E_Comp_Object_Autoclose_Cb del_cb, E_Comp_Object_Key_Cb cb, const void *data)
 {
