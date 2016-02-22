@@ -3717,7 +3717,7 @@ e_comp_object_dirty(Evas_Object *obj)
    if (!dirty) w = h = 1;
    evas_object_image_pixels_dirty_set(cw->obj, cw->blanked ? 0 : dirty);
    if (!dirty)
-     evas_object_image_data_set(cw->obj, NULL);
+     evas_object_image_data_set(cw->obj, e_pixmap_image_data_get(cw->ec->pixmap));
    evas_object_image_size_set(cw->obj, w, h);
 
    RENDER_DEBUG("SIZE [%p]: %dx%d", cw->ec, w, h);
