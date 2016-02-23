@@ -341,14 +341,6 @@ e_fm2_op_registry_entry_listener_add(E_Fm2_Op_Registry_Entry *entry, void (*cb)(
 
    e = _e_fm2_op_registry_entry_internal_get(entry);
    e->listeners = eina_inlist_append(e->listeners, EINA_INLIST_GET(listener));
-   err = eina_error_get();
-   if (err)
-     {
-        printf("could not add listener: %s\n", eina_error_msg_get(err));
-        if (free_data) free_data((void *)data);
-        free(listener);
-        return;
-     }
 }
 
 /**
