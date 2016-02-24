@@ -26,7 +26,7 @@ struct _E_Pixmap
    E_Client *client;
    E_Pixmap_Type type;
 
-   uint64_t win;
+   int64_t win;
    Ecore_Window parent;
 
    int w, h;
@@ -79,7 +79,7 @@ _e_pixmap_clear(E_Pixmap *cp, Eina_Bool cache)
           {
              ecore_x_pixmap_free(cp->pixmap);
              cp->pixmap = 0;
-             ecore_x_e_comp_pixmap_set(cp->parent ?: cp->win, 0);
+             ecore_x_e_comp_pixmap_set(cp->parent ?: (Ecore_X_Window)cp->win, 0);
              e_pixmap_image_clear(cp, cache);
           }
 #endif
@@ -153,7 +153,7 @@ _e_pixmap_find(E_Pixmap_Type type, va_list *l)
    Ecore_X_Window xwin;
 #endif
 #ifdef HAVE_WAYLAND
-   uintptr_t id;
+   intptr_t id;
 #endif
    E_Pixmap *cp;
    
@@ -170,7 +170,7 @@ _e_pixmap_find(E_Pixmap_Type type, va_list *l)
         break;
       case E_PIXMAP_TYPE_WL:
 #ifdef HAVE_WAYLAND
-        id = va_arg(*l, uintptr_t);
+        id = va_arg(*l, int64_t);
         cp = eina_hash_find(aliases[type], &id);
         if (!cp) cp = eina_hash_find(pixmaps[type], &id);
         return cp;
@@ -208,7 +208,7 @@ e_pixmap_new(E_Pixmap_Type type, ...)
    Ecore_X_Window xwin;
 #endif
 #ifdef HAVE_WAYLAND
-   uintptr_t id;
+   int64_t id;
 #endif
 
    EINA_SAFETY_ON_TRUE_RETURN_VAL((type != E_PIXMAP_TYPE_WL) && (type != E_PIXMAP_TYPE_X), NULL);
@@ -236,7 +236,7 @@ e_pixmap_new(E_Pixmap_Type type, ...)
         break;
       case E_PIXMAP_TYPE_WL:
 #ifdef HAVE_WAYLAND
-        id = va_arg(l, uintptr_t);
+        id = va_arg(l, int64_t);
         if (pixmaps[type])
           {
              cp = eina_hash_find(pixmaps[type], &id);
@@ -247,7 +247,7 @@ e_pixmap_new(E_Pixmap_Type type, ...)
                }
           }
         else
-          pixmaps[type] = eina_hash_pointer_new((Eina_Free_Cb)_e_pixmap_free);
+          pixmaps[type] = eina_hash_int64_new((Eina_Free_Cb)_e_pixmap_free);
         cp = _e_pixmap_new(type);
         cp->win = id;
         eina_hash_add(pixmaps[type], &id, cp);
@@ -372,7 +372,7 @@ e_pixmap_refresh(E_Pixmap *cp)
            int pw, ph;
            E_Comp_X_Client_Data *cd = NULL;
 
-           pixmap = ecore_x_composite_name_window_pixmap_get(cp->parent ?: cp->win);
+           pixmap = ecore_x_composite_name_window_pixmap_get(cp->parent ?: (Ecore_X_Window)cp->win);
            if (cp->client)
              {
                 cd = (E_Comp_X_Client_Data*)cp->client->comp_data;
@@ -394,7 +394,7 @@ e_pixmap_refresh(E_Pixmap *cp)
                      ecore_x_pixmap_free(cp->pixmap);
                      cp->pixmap = pixmap;
                      cp->w = pw, cp->h = ph;
-                     ecore_x_e_comp_pixmap_set(cp->parent ?: cp->win, cp->pixmap);
+                     ecore_x_e_comp_pixmap_set(cp->parent ?: (Ecore_X_Window)cp->win, cp->pixmap);
                      e_pixmap_image_clear(cp, 0);
                   }
                 else
@@ -519,7 +519,7 @@ e_pixmap_find_client(E_Pixmap_Type type, ...)
    return (!cp) ? NULL : cp->client;
 }
 
-E_API uint64_t
+E_API int64_t
 e_pixmap_window_get(E_Pixmap *cp)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(cp, 0);
@@ -906,7 +906,7 @@ e_pixmap_alias(E_Pixmap *cp, E_Pixmap_Type type, ...)
    Ecore_X_Window xwin;
 #endif
 #ifdef HAVE_WAYLAND
-   uintptr_t id;
+   int64_t id;
 #endif
 
    va_start(l, type);
@@ -922,9 +922,9 @@ e_pixmap_alias(E_Pixmap *cp, E_Pixmap_Type type, ...)
         break;
       case E_PIXMAP_TYPE_WL:
 #ifdef HAVE_WAYLAND
-        id = va_arg(l, uintptr_t);
+        id = va_arg(l, int64_t);
         if (!aliases[type])
-          aliases[type] = eina_hash_pointer_new(NULL);
+          aliases[type] = eina_hash_int64_new(NULL);
         eina_hash_set(aliases[type], &id, cp);
 #endif
         break;
