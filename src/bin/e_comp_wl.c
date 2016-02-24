@@ -39,6 +39,8 @@ static void _e_comp_wl_subsurface_parent_commit(E_Client *ec, Eina_Bool parent_s
 static Eina_List *handlers = NULL;
 static double _last_event_time = 0.0;
 
+static int64_t surface_id = 0;
+
 /* local functions */
 static void
 _e_comp_wl_configure_send(E_Client *ec, Eina_Bool edges)
@@ -1487,10 +1489,15 @@ _e_comp_wl_compositor_cb_surface_create(struct wl_client *client, struct wl_reso
      ec = e_pixmap_find_client(E_PIXMAP_TYPE_WL, (uintptr_t)id);
    if (!ec)
      {
-        E_Pixmap *ep;
+        E_Pixmap *ep = NULL;
 
         /* try to create new pixmap */
-        if (!(ep = e_pixmap_new(E_PIXMAP_TYPE_WL, res)))
+        do
+          {
+             if (--surface_id >= 0) surface_id = -1;
+             ep = e_pixmap_find(E_PIXMAP_TYPE_WL, surface_id);
+          } while (ep);
+        if (!(ep = e_pixmap_new(E_PIXMAP_TYPE_WL, surface_id)))
           {
              ERR("Could not create new pixmap");
              wl_resource_destroy(res);
