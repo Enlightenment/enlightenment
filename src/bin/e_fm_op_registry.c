@@ -321,7 +321,6 @@ e_fm2_op_registry_entry_listener_add(E_Fm2_Op_Registry_Entry *entry, void (*cb)(
 {
    E_Fm2_Op_Registry_Entry_Internal *e;
    E_Fm2_Op_Registry_Entry_Listener *listener;
-   Eina_Error err;
 
    if ((!entry) || (!cb))
      {
