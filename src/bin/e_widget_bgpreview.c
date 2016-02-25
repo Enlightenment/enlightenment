@@ -292,7 +292,7 @@ _e_wid_reconfigure(E_Widget_Data *wd)
              e_theme_edje_object_set(dd->icon, "base/theme/widgets",
                                      "e/widgets/deskpreview/desk");
 
-             edje_object_part_swallow(dd->icon, "e.swallow.content", dd->live);
+             edje_object_part_swallow(dd->icon, "e.swallow.content", dd->cont);
              dd->configurable = EINA_TRUE;
              evas_object_event_callback_add(dd->icon, EVAS_CALLBACK_MOUSE_DOWN,
                                             _e_wid_desk_cb_config, dd);
