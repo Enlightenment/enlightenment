@@ -163,7 +163,6 @@ vidimg_video_add(Evas_Object *obj, const char *file)
    Evas_Object *o;
    Vidimg *vi;
 
-   emotion_init();
    o = emotion_object_add(evas_object_evas_get(obj));
    if (!emotion_object_init(o, "gstreamer1"))
      {
@@ -208,7 +207,6 @@ vidimg_release(Evas_Object *o)
         if (vi->offtimer) ecore_timer_del(vi->offtimer);
         free(vi);
         evas_object_del(src);
-        emotion_shutdown();
      }
 }
 
