@@ -123,10 +123,10 @@ e_widget_bgpreview_desk_configurable_set(Evas_Object *obj, Eina_Bool enable)
    enable = !!enable;
    if (dd->configurable == enable) return;
    if (enable)
-     evas_object_event_callback_add(dd->icon, EVAS_CALLBACK_MOUSE_DOWN,
+     evas_object_event_callback_add(dd->icon, EVAS_CALLBACK_MOUSE_UP,
                                     _e_wid_desk_cb_config, dd);
    else
-     evas_object_event_callback_del_full(dd->icon, EVAS_CALLBACK_MOUSE_DOWN,
+     evas_object_event_callback_del_full(dd->icon, EVAS_CALLBACK_MOUSE_UP,
                                          _e_wid_desk_cb_config, dd);
    dd->configurable = enable;
 }
@@ -267,7 +267,7 @@ _e_wid_reconfigure(E_Widget_Data *wd)
 
              edje_object_part_swallow(dd->icon, "e.swallow.content", dd->live);
              dd->configurable = EINA_TRUE;
-             evas_object_event_callback_add(dd->icon, EVAS_CALLBACK_MOUSE_DOWN,
+             evas_object_event_callback_add(dd->icon, EVAS_CALLBACK_MOUSE_UP,
                                             _e_wid_desk_cb_config, dd);
              evas_object_show(dd->icon);
              evas_object_data_set(dd->icon, "desk_data", dd);
