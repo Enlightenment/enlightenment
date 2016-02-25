@@ -1711,8 +1711,6 @@ _e_comp_wl_subsurface_commit_to_cache(E_Client *ec)
 {
    E_Comp_Client_Data *cdata;
    E_Comp_Wl_Subsurf_Data *sdata;
-   struct wl_resource *cb;
-   Eina_List *l;
    Eina_Iterator *itr;
    Eina_Rectangle *rect;
 
