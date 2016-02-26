@@ -2595,7 +2595,6 @@ e_comp_object_util_type_set(Evas_Object *obj, E_Comp_Object_Type type)
    const char *grp;
    char buf[1024];
    int ok = 0;
-   int w, h;
 
    EINA_SAFETY_ON_NULL_RETURN(obj);
 
@@ -2701,77 +2700,19 @@ e_comp_object_util_type_set(Evas_Object *obj, E_Comp_Object_Type type)
      edje_object_signal_emit(obj, "e,state,shadow,on", "e");
    else
      edje_object_signal_emit(obj, "e,state,shadow,off", "e");
-   if (!content) return;
-   {
-      Evas_Object *child;
-      Eina_Bool redo = EINA_FALSE;
-
-      if (eina_streq(evas_object_type_get(content), "e_zoomap"))
-        child = e_zoomap_child_get(content);
-      else
-        child = content;
-
-      if (list && (child == content))
-        {
-           evas_object_geometry_get(child, NULL, NULL, &w, &h);
-           content = e_zoomap_add(e_comp->evas);
-           e_zoomap_child_edje_solid_setup(content);
-           e_zoomap_smooth_set(content, conf->smooth_windows);
-           e_zoomap_child_set(content, child);
-           e_zoomap_child_resize(content, w, h);
-           evas_object_show(content);
-           redo = EINA_TRUE;
-        }
-      else if (child != content)
-        {
-           e_zoomap_child_set(content, NULL);
-           evas_object_del(content);
-           content = child;
-           redo = EINA_TRUE;
-        }
-      edje_object_part_swallow(obj, "e.swallow.content", content);
-
-      if (!redo) return;
-      if (content == child) content = NULL;
-      edje_object_signal_callback_del(obj, "e,action,*,done", "e", _e_comp_object_util_done_defer);
-      evas_object_intercept_show_callback_del(obj, _e_comp_object_util_show);
-      evas_object_intercept_hide_callback_del(obj, _e_comp_object_util_hide);
-      evas_object_event_callback_del(obj, EVAS_CALLBACK_MOVE, _e_comp_object_util_moveresize);
-      evas_object_event_callback_del(obj, EVAS_CALLBACK_DEL, _e_comp_object_util_del);
-      evas_object_event_callback_del(obj, EVAS_CALLBACK_RESIZE, _e_comp_object_util_moveresize);
-      evas_object_event_callback_del(obj, EVAS_CALLBACK_RESTACK, _e_comp_object_util_restack);
-
-      edje_object_signal_callback_add(obj, "e,action,*,done", "e", _e_comp_object_util_done_defer, content);
-      evas_object_intercept_show_callback_add(obj, _e_comp_object_util_show, content);
-      evas_object_intercept_hide_callback_add(obj, _e_comp_object_util_hide, content);
-      evas_object_event_callback_add(obj, EVAS_CALLBACK_MOVE, _e_comp_object_util_moveresize, content);
-      evas_object_event_callback_add(obj, EVAS_CALLBACK_DEL, _e_comp_object_util_del, content);
-      evas_object_event_callback_add(obj, EVAS_CALLBACK_RESIZE, _e_comp_object_util_moveresize, content);
-      evas_object_event_callback_add(obj, EVAS_CALLBACK_RESTACK, _e_comp_object_util_restack, content);
-   }
+   if (content)
+     edje_object_part_swallow(obj, "e.swallow.content", content);
 }
 
 E_API Evas_Object *
 e_comp_object_util_add(Evas_Object *obj, E_Comp_Object_Type type)
 {
    Evas_Object *o, *z = NULL;
-   Eina_List *list = NULL;
    E_Comp_Config *conf = e_comp_config_get();
    int x, y, w, h;
    Eina_Bool vis;
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(obj, NULL);
-   switch (type)
-     {
-      case E_COMP_OBJECT_TYPE_MENU:
-        list = conf->match.menus;
-        break;
-      case E_COMP_OBJECT_TYPE_POPUP:
-        list = conf->match.popups;
-        break;
-      default:
-        list = conf->match.objects;
-     }
    vis = evas_object_visible_get(obj);
    o = edje_object_add(e_comp->evas);
    evas_object_data_set(o, "comp_object", (void*)1);
@@ -2781,15 +2722,12 @@ e_comp_object_util_add(Evas_Object *obj, E_Comp_Object_Type type)
    evas_object_geometry_set(o, x, y, w, h);
    evas_object_pass_events_set(o, evas_object_pass_events_get(obj));
 
-   if (list)
-     {
-        z = e_zoomap_add(e_comp->evas);
-        e_zoomap_child_edje_solid_setup(z);
-        e_zoomap_smooth_set(z, conf->smooth_windows);
-        e_zoomap_child_set(z, obj);
-        e_zoomap_child_resize(z, w, h);
-        evas_object_show(z);
-     }
+   z = e_zoomap_add(e_comp->evas);
+   e_zoomap_child_edje_solid_setup(z);
+   e_zoomap_smooth_set(z, conf->smooth_windows);
+   e_zoomap_child_set(z, obj);
+   e_zoomap_child_resize(z, w, h);
+   evas_object_show(z);
    edje_object_signal_callback_add(o, "e,action,*,done", "e", _e_comp_object_util_done_defer, z);
 
    evas_object_intercept_show_callback_add(o, _e_comp_object_util_show, z);
