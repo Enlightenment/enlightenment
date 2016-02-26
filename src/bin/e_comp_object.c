@@ -2723,11 +2723,11 @@ e_comp_object_util_add(Evas_Object *obj, E_Comp_Object_Type type)
    evas_object_pass_events_set(o, evas_object_pass_events_get(obj));
 
    z = e_zoomap_add(e_comp->evas);
+   evas_object_show(z);
+   evas_object_geometry_set(z, x, y, w, h);
    e_zoomap_child_edje_solid_setup(z);
    e_zoomap_smooth_set(z, conf->smooth_windows);
    e_zoomap_child_set(z, obj);
-   e_zoomap_child_resize(z, w, h);
-   evas_object_show(z);
    edje_object_signal_callback_add(o, "e,action,*,done", "e", _e_comp_object_util_done_defer, z);
 
    evas_object_intercept_show_callback_add(o, _e_comp_object_util_show, z);
