@@ -57,7 +57,6 @@ static double _scroll_align_to = 0.0;
 static double _scroll_align = 0.0;
 static Ecore_Timer *_scroll_timer = NULL;
 static Ecore_Animator *_animator = NULL;
-static E_Client *_ec_next = NULL;
 
 static Eina_Bool
 _wmclass_picked(const Eina_List *lst, const char *wmclass)
@@ -369,43 +368,6 @@ e_winlist_prev(void)
    _e_winlist_activate();
 }
 
-static void
-_e_winlist_select(E_Client *ec)
-{
-   Eina_Bool focus = EINA_FALSE;
-
-   if (ec->shaded)
-     {
-        if (!ec->lock_user_shade)
-          e_client_unshade(ec, ec->shade_dir);
-     }
-   if (ec->iconic)
-     e_client_uniconify(ec);
-   if ((!ec->lock_focus_out) &&
-       (!e_config->winlist_no_warp_on_direction) &&
-       ((e_config->focus_policy != E_FOCUS_CLICK) ||
-       (e_config->winlist_warp_at_end) ||
-       (e_config->winlist_warp_while_selecting)))
-     {
-       if (!e_client_pointer_warp_to_center(ec))
-         focus = EINA_TRUE;
-       if (_list_object && (!_animator))
-         _animator = ecore_animator_add(_e_winlist_animator, NULL);
-     }
-
-   if ((!ec->lock_user_stacking) &&
-       (e_config->winlist_list_raise_while_selecting))
-     {
-        e_client_raise_latest_set(ec);
-        evas_object_raise(ec->frame);
-     }
-   if ((!ec->lock_focus_out) &&
-       (e_config->winlist_list_focus_while_selecting))
-     focus = EINA_TRUE;
-   if (focus)
-     evas_object_focus_set(ec->frame, 1);
-}
-
 static int
 point_line_dist(int x, int y, int lx1, int ly1, int lx2, int ly2)
 {
@@ -450,11 +412,12 @@ e_winlist_direction_select(E_Zone *zone, int dir)
    E_Client *ec;
    Eina_List *l;
    E_Desk *desk;
-   E_Client *ec_orig;
+   E_Client *ec_orig, *ec_next = NULL;
    int distance = INT_MAX;
    int cx, cy;
+   E_Winlist_Win *ww;
 
-   _ec_next = NULL;
+   ec_next = NULL;
 
    E_OBJECT_CHECK(zone);
    E_OBJECT_TYPE_CHECK(zone, E_ZONE_TYPE);
@@ -566,11 +529,20 @@ e_winlist_direction_select(E_Zone *zone, int dir)
              if (d >= distance) continue;
              break;
           }
-        _ec_next = ec;
+        ec_next = ec;
         distance = d;
      }
 
-   if (_ec_next) _e_winlist_select(_ec_next);
+   if (!ec_next) return;
+   _e_winlist_deactivate();
+   EINA_LIST_FOREACH(_wins, l, ww)
+     {
+        if (ww->client != ec_next) continue;
+        _win_selected = l;
+        break;
+     }
+   _e_winlist_show_active();
+   _e_winlist_activate();
 }
 
 
