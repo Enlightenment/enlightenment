@@ -427,6 +427,7 @@ _cb_add(void *data, void *data2 EINA_UNUSED)
    E_Config_Dialog_Data *cfdata;
    if (!(cfdata = data)) return;
 
+   e_config_dialog_changed_set(cfdata->cfd, 1);
    if (cfdata->dlg_add_new) elm_win_raise(cfdata->dlg_add_new->win);
    else cfdata->dlg_add_new = _dlg_add_new(cfdata);
 }
@@ -440,6 +441,7 @@ _cb_del(void *data, void *data2 EINA_UNUSED)
    if (!(cfdata = data)) return;
    if ((n = e_widget_ilist_selected_get(cfdata->used_list)) < 0) return;
 
+   e_config_dialog_changed_set(cfdata->cfd, 1);
    cfdata->cfg_layouts = eina_list_remove_list(cfdata->cfg_layouts, eina_list_nth_list(cfdata->cfg_layouts, n));
 
    /* Update the list */
