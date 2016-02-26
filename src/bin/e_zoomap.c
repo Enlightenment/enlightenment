@@ -32,6 +32,17 @@ static void _e_zoomap_smart_clip_set(Evas_Object *obj, Evas_Object *clip);
 static void _e_zoomap_smart_clip_unset(Evas_Object *obj);
 static void _e_zoomap_smart_init(void);
 
+static void
+_e_zoomap_smart_child_hints(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
+{
+   E_Smart_Data *sd = data;
+   int w, h;
+
+   evas_object_size_hint_min_get(obj, &w, &h);
+   evas_object_size_hint_min_set(sd->smart_obj, w, h);
+   evas_object_resize(sd->smart_obj, w, h);
+}
+
 /* local subsystem globals */
 static Evas_Smart *_e_smart = NULL;
 
@@ -58,6 +69,8 @@ e_zoomap_child_set(Evas_Object *obj, Evas_Object *child)
                                        _e_zoomap_smart_child_del_hook);
         evas_object_event_callback_del(sd->child_obj, EVAS_CALLBACK_RESIZE,
                                        _e_zoomap_smart_child_resize_hook);
+        evas_object_event_callback_del(child, EVAS_CALLBACK_CHANGED_SIZE_HINTS,
+                                       _e_zoomap_smart_child_hints);
         sd->child_obj = NULL;
      }
    if (child)
@@ -70,6 +83,8 @@ e_zoomap_child_set(Evas_Object *obj, Evas_Object *child)
                                  &sd->child_w, &sd->child_h);
         evas_object_event_callback_add(child, EVAS_CALLBACK_DEL,
                                        _e_zoomap_smart_child_del_hook, sd);
+        evas_object_event_callback_add(child, EVAS_CALLBACK_CHANGED_SIZE_HINTS,
+                                       _e_zoomap_smart_child_hints, sd);
         evas_object_event_callback_add(child, EVAS_CALLBACK_RESIZE,
                                        _e_zoomap_smart_child_resize_hook, sd);
         if (evas_object_visible_get(obj)) evas_object_show(sd->child_obj);
@@ -275,6 +290,8 @@ _e_zoomap_smart_del(Evas_Object *obj)
                                        _e_zoomap_smart_child_del_hook);
         evas_object_event_callback_del(o, EVAS_CALLBACK_RESIZE,
                                        _e_zoomap_smart_child_resize_hook);
+        evas_object_event_callback_del(o, EVAS_CALLBACK_CHANGED_SIZE_HINTS,
+                                       _e_zoomap_smart_child_hints);
         evas_object_del(o);
      }
    E_FREE(sd);
