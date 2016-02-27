@@ -465,7 +465,8 @@ main(int argc, char **argv)
         _e_main_shutdown(-1);
      }
    TS("Emotion Init Done");
-   _e_main_shutdown_push((void *)emotion_shutdown);
+   /* triggers event flush: do not call */
+   //_e_main_shutdown_push((void *)emotion_shutdown);
 
    /* e doesn't sync to compositor - it should be one */
    ecore_evas_app_comp_sync_set(0);
