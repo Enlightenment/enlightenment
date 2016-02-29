@@ -1878,10 +1878,12 @@ _pager_window_cb_mouse_move(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EI
             (resist * resist)) return;
 
         if ((pw->desk) && (pw->desk->pager))
-          pw->desk->pager->dragging = 1;
+          {
+             pw->desk->pager->dragging = 1;
+             edje_object_signal_emit(pw->desk->o_desk, "e,action,drag,in", "e");
+          }
         pw->drag.start = 0;
         e_comp_object_effect_clip(pw->client->frame);
-        edje_object_signal_emit(pw->desk->o_desk, "e,action,drag,in", "e");
         pw->desk->pager->active_drop_pd = pw->desk;
      }
 
