@@ -1111,84 +1111,78 @@ _find_key_binding_action(const char *action,
      }
 }
 
-static char *
-_key_binding_header_get(int modifiers)
+static void
+_modifiers_add(Eina_Strbuf *b, int modifiers)
 {
-   char b[256] = "";
-
-   if (modifiers & E_BINDING_MODIFIER_CTRL)
-     strcat(b, _("CTRL"));
-
    if (modifiers & E_BINDING_MODIFIER_ALT)
      {
-        if (b[0]) strcat(b, " + ");
-        strcat(b, _("ALT"));
+        if (eina_strbuf_length_get(b)) eina_strbuf_append(b, " + ");
+        eina_strbuf_append(b, _("ALT"));
      }
 
    if (modifiers & E_BINDING_MODIFIER_SHIFT)
      {
-        if (b[0]) strcat(b, " + ");
-        strcat(b, _("SHIFT"));
+        if (eina_strbuf_length_get(b)) eina_strbuf_append(b, " + ");
+        eina_strbuf_append(b, _("SHIFT"));
      }
 
    if (modifiers & E_BINDING_MODIFIER_WIN)
      {
-        if (b[0]) strcat(b, " + ");
-        strcat(b, _("WIN"));
+        if (eina_strbuf_length_get(b)) eina_strbuf_append(b, " + ");
+        eina_strbuf_append(b, _("WIN"));
      }
+}
 
-   if (!b[0]) return strdup(TEXT_NO_MODIFIER_HEADER);
-   return strdup(b);
+static char *
+_key_binding_header_get(int modifiers)
+{
+   Eina_Strbuf *b;
+   char *ret;
+
+   b = eina_strbuf_new();
+   _modifiers_add(b, modifiers);
+
+   ret = eina_strbuf_string_steal(b);
+   eina_strbuf_free(b);
+   if (ret[0]) return ret;
+   free(ret);
+   return strdup(TEXT_NO_MODIFIER_HEADER);
 }
 
 static char *
 _key_binding_text_get(E_Config_Binding_Key *bi)
 {
-   char b[256] = "";
+   Eina_Strbuf *b;
+   char *ret;
 
    if (!bi) return NULL;
 
-   if (bi->modifiers & E_BINDING_MODIFIER_CTRL)
-     strcat(b, _("CTRL"));
-
-   if (bi->modifiers & E_BINDING_MODIFIER_ALT)
-     {
-        if (b[0]) strcat(b, " + ");
-        strcat(b, _("ALT"));
-     }
-
-   if (bi->modifiers & E_BINDING_MODIFIER_SHIFT)
-     {
-        if (b[0]) strcat(b, " + ");
-        strcat(b, _("SHIFT"));
-     }
-
-   if (bi->modifiers & E_BINDING_MODIFIER_WIN)
-     {
-        if (b[0]) strcat(b, " + ");
-        strcat(b, _("WIN"));
-     }
+   b = eina_strbuf_new();
+   _modifiers_add(b, bi->modifiers);
 
    if (bi->key && bi->key[0])
      {
         char *l;
-        if (b[0]) strcat(b, " + ");
+        if (eina_strbuf_length_get(b)) eina_strbuf_append(b, " + ");
 
         l = strdup(bi->key);
         l[0] = (char)toupper(bi->key[0]);
-        strcat(b, l);
+        eina_strbuf_append(b, l);
         free(l);
      }
 
    /* see comment in e_bindings on numlock
       if (bi->modifiers & ECORE_X_LOCK_NUM)
       {
-        if (b[0]) strcat(b, " ");
-        strcat(b, _("OFF"));
+        if (eina_strbuf_length_get(b)) eina_strbuf_append(b, " ");
+        eina_strbuf_append(b, _("OFF"));
       }
     */
 
-   if (!b[0]) return strdup(TEXT_NONE_ACTION_KEY);
-   return strdup(b);
+   ret = eina_strbuf_string_steal(b);
+   eina_strbuf_free(b);
+   if (ret[0]) return ret;
+   free(ret);
+   return strdup(TEXT_NONE_ACTION_KEY);
 }
 
