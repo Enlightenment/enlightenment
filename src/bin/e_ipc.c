@@ -77,13 +77,7 @@ e_ipc_init(void)
      {
         snprintf(buf, sizeof(buf), "%s/e-%s@%x",
                  base, user, id1);
-        if (mkdir(buf, S_IRWXU) < 0)
-          goto retry;
-        if (stat(buf, &st) < 0)
-          goto retry;
-        if ((st.st_uid == getuid()) &&
-            ((st.st_mode & (S_IFDIR | S_IRWXU | S_IRWXG | S_IRWXO)) ==
-             (S_IRWXU | S_IFDIR)))
+        if (!mkdir(buf, S_IRWXU))
           {
 #ifdef USE_IPC
              snprintf(buf3, sizeof(buf3), "%s/%i",
@@ -97,7 +91,6 @@ e_ipc_init(void)
                   break;
                }
           }
-retry:
         id1 = rand();
      }
 #ifdef USE_IPC
