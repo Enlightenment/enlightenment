@@ -37,6 +37,7 @@ _e_comp_wl_input_pointer_cb_cursor_set(struct wl_client *client, struct wl_resou
 
    E_CLIENT_FOREACH(ec)
      {
+       if (e_object_is_del(E_OBJECT(ec))) continue;
        if (e_pixmap_type_get(ec->pixmap) != E_PIXMAP_TYPE_WL) continue;
        if (!ec->comp_data->surface) continue;
        if (client != wl_resource_get_client(ec->comp_data->surface)) continue;
