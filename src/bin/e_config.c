@@ -1846,7 +1846,7 @@ e_config_profile_save(void)
                     {
                        e_user_dir_snprintf(bsrc, sizeof(bsrc), "config/profile.cfg");
                        e_user_dir_snprintf(bdst, sizeof(bdst), "config/profile.1.cfg");
-                       ret = ecore_file_mv(bsrc, bdst);
+                       ecore_file_mv(bsrc, bdst);
 //                       if (!ret)
 //                          _e_config_mv_error(bsrc, bdst);
                     }
