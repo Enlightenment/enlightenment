@@ -1110,7 +1110,7 @@ _edge_grab_wnd_selection_apply(E_Config_Dialog_Data *cfdata)
           if ((bi->modifiers == cfdata->locals.modifiers) &&
               (bi->edge == cfdata->locals.edge) &&
               (bi->drag_only == cfdata->locals.drag_only) &&
-              ((bi->delay * 1000) == (cfdata->locals.delay * 1000)))
+              (dblequal(bi->delay * 1000, cfdata->locals.delay * 1000)))
             {
                found = 1;
                break;
@@ -1128,7 +1128,7 @@ _edge_grab_wnd_selection_apply(E_Config_Dialog_Data *cfdata)
                   if ((bi->modifiers == cfdata->locals.modifiers) &&
                       (bi->edge == cfdata->locals.edge) &&
                       (bi->drag_only == cfdata->locals.drag_only) &&
-                      ((bi->delay * 1000) == (cfdata->locals.delay * 1000)))
+                      (dblequal(bi->delay * 1000, cfdata->locals.delay * 1000)))
                     {
                        found = 1;
                        break;
@@ -1429,7 +1429,7 @@ _edge_binding_text_get(E_Zone_Edge edge, float delay, int mod, int drag_only)
    if (delay)
      {
         if (eina_strbuf_length_get(b)) eina_strbuf_append(b, " ");
-        if (delay == -1.0)
+        if (dblequal(delay, -1.0))
           eina_strbuf_append(b, _("(left clickable)"));
         else if (delay < -1.0)
           eina_strbuf_append(b, _("(clickable)"));
