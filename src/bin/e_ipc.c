@@ -165,48 +165,6 @@ _e_ipc_cb_client_data(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
       case E_IPC_DOMAIN_REQUEST:
       case E_IPC_DOMAIN_REPLY:
       case E_IPC_DOMAIN_EVENT:
-        switch (e->minor)
-          {
-           case E_IPC_OP_EXEC_ACTION:
-           {
-              E_Ipc_2Str *req = NULL;
-
-              if (e_ipc_codec_2str_dec(e->data, e->size, &req))
-                {
-                   int len, ok = 0;
-                   void *d;
-
-                   E_Action *act = e_action_find(req->str1);
-
-                   if ((act) && (act->func.go))
-                     {
-                        act->func.go(E_OBJECT(e_comp), req->str2);
-                        ok = 1;
-                     }
-
-                   d = e_ipc_codec_int_enc(ok, &len);
-                   if (d)
-                     {
-                        ecore_ipc_client_send(e->client,
-                                              E_IPC_DOMAIN_REPLY,
-                                              E_IPC_OP_EXEC_ACTION_REPLY,
-                                              0, 0, 0, d, len);
-                        free(d);
-                     }
-
-                   if (req)
-                     {
-                        E_FREE(req->str1);
-                        E_FREE(req->str2);
-                        E_FREE(req);
-                     }
-                }
-           }
-           break;
-
-           default:
-             break;
-          }
         break;
 
       case E_IPC_DOMAIN_THUMB:

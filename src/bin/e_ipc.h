@@ -4,9 +4,6 @@ EINTERN extern char *e_ipc_socket;
 
 #ifdef USE_IPC
 
-#define E_IPC_OP_EXEC_ACTION 386
-#define E_IPC_OP_EXEC_ACTION_REPLY 387
-
 typedef enum _E_Ipc_Domain
 {
    E_IPC_DOMAIN_NONE,
