@@ -411,7 +411,6 @@ _e_exec_cb_exec(void *data, Efreet_Desktop *desktop, char *exec, int remaining)
    E_Exec_Launch *launch;
    Eina_List *l, *lnew;
    Ecore_Exe *exe = NULL;
-   const char *penv_display;
    char buf[4096];
 
    launch = data;
@@ -425,53 +424,6 @@ _e_exec_cb_exec(void *data, Efreet_Desktop *desktop, char *exec, int remaining)
         if (startup_id < 0) startup_id = 0;
      }
    if (++startup_id < 1) startup_id = 1;
-   /* save previous env vars we need to save */
-   penv_display = getenv("DISPLAY");
-   if ((penv_display) && (launch->zone))
-     {
-        const char *p1, *p2;
-        char buf2[32];
-        char *buf3 = NULL;
-        int head_length;
-        int penv_display_length;
-
-        penv_display_length = strlen(penv_display);
-        /* Check for insane length for DISPLAY env */
-        if (penv_display_length + 32 > 4096)
-          {
-             free(inst);
-             return NULL;
-          }
-
-        /* buf2 = '.%i' */
-        *buf2 = '.';
-        head_length = eina_convert_itoa(0, buf2 + 1) + 2;
-
-        /* set env vars */
-        p1 = strrchr(penv_display, ':');
-        p2 = strrchr(penv_display, '.');
-        if ((p1) && (p2) && (p2 > p1)) /* "blah:x.y" */
-          {
-             buf3 = alloca((p2 - penv_display) + head_length + 1);
-
-             memcpy(buf3, penv_display, p2 - penv_display);
-             memcpy(buf3 + (p2 - penv_display), buf2, head_length);
-          }
-        else if (p1) /* "blah:x */
-          {
-             buf3 = alloca(penv_display_length + head_length);
-
-             memcpy(buf3, penv_display, penv_display_length);
-             memcpy(buf3 + penv_display_length, buf2, head_length);
-          }
-        else
-          {
-             buf3 = alloca(penv_display_length + 1);
-             memcpy(buf3, penv_display, penv_display_length + 1);
-          }
-
-        e_util_env_set("DISPLAY", buf3);
-     }
    snprintf(buf, sizeof(buf), "E_START|%i", startup_id);
    e_util_env_set("DESKTOP_STARTUP_ID", buf);
 
@@ -565,8 +517,6 @@ _e_exec_cb_exec(void *data, Efreet_Desktop *desktop, char *exec, int remaining)
           exe = ecore_exe_run(exec, inst);
      }
 
-   if (penv_display)
-     e_util_env_set("DISPLAY", penv_display);
    if (!exe)
      {
         free(inst);
