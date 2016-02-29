@@ -1038,7 +1038,7 @@ _cpufreq_face_update_available(Instance *inst)
    Edje_Message_String_Set *governor_msg;
    Eina_List *l;
    int i;
-   int count;
+   unsigned int count;
 
    count = eina_list_count(cpufreq_config->status->frequencies);
    frequency_msg = malloc(sizeof(Edje_Message_Int_Set) + (count - 1) * sizeof(int));
