@@ -123,7 +123,7 @@ _e_color_dialog_cb_csel_change(void *data, Evas_Object *obj, void *ev EINA_UNUSE
    re = evas_object_data_get(obj, "rect");
    evas_color_argb_premul(dia->color->a, &r, &g, &b);
    evas_object_color_set(re, r, g, b, dia->color->a);
-   if (dia->change_func && dia->color)
+   if (dia->change_func)
      dia->change_func(dia, dia->color, dia->change_data);
 }
 
