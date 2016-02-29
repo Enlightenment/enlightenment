@@ -3383,7 +3383,8 @@ e_comp_object_damage(Evas_Object *obj, int x, int y, int w, int h)
         RENDER_DEBUG("DAMAGE: %d,%d %dx%d", x, y, w, h);
      }
    cw->updates_exist = 1;
-   e_comp_object_render_update_add(obj);
+   if (!e_object_is_del(E_OBJECT(cw->ec)))
+     e_comp_object_render_update_add(obj);
 }
 
 E_API Eina_Bool
