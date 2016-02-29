@@ -1016,12 +1016,10 @@ _e_fm_ipc_file_add_mod(E_Dir *ed, const char *path, E_Fm_Op_Type op, int listing
    struct stat st;
    char *lnk = NULL, *rlnk = NULL;
    int broken_lnk = 0;
-   int bsz = 0;
-   unsigned char *p, buf
+   Eina_Binbuf *buf;
    /* file add/change format is as follows:
     *
     * stat_info[stat size] + broken_link[1] + path[n]\0 + lnk[n]\0 + rlnk[n]\0 */
-   [sizeof(struct stat) + 1 + 4096 + 4096 + 4096];
 
    /* FIXME: handle BACKOFF */
    if ((!listing) && (op == E_FM_OP_FILE_CHANGE) && (!ed->cleaning)) /* 5 == mod */
@@ -1082,29 +1080,21 @@ _e_fm_ipc_file_add_mod(E_Dir *ed, const char *path, E_Fm_Op_Type op, int listing
    if (!lnk) lnk = strdup("");
    if (!rlnk) rlnk = strdup("");
 
-   p = buf;
+   buf = eina_binbuf_new();
    /* NOTE: i am NOT converting this data to portable arch/os independent
     * format. i am ASSUMING e_fm_main and e are local and built together
     * and thus this will work. if this ever changes this here needs to
     * change */
-   memcpy(buf, &st, sizeof(struct stat));
-   p += sizeof(struct stat);
+   eina_binbuf_append_length(buf, (void*)&st, sizeof(struct stat));
 
-   p[0] = broken_lnk;
-   p += 1;
+   eina_binbuf_append_char(buf, !!broken_lnk);
+   eina_binbuf_append_length(buf, (void*)path, strlen(path) + 1);
+   eina_binbuf_append_length(buf, (void*)lnk, strlen(lnk) + 1);
+   eina_binbuf_append_length(buf, (void*)rlnk, strlen(rlnk) + 1);
 
-   strcpy((char *)p, path);
-   p += strlen(path) + 1;
-
-   strcpy((char *)p, lnk);
-   p += strlen(lnk) + 1;
-
-   strcpy((char *)p, rlnk);
-   p += strlen(rlnk) + 1;
-
-   bsz = p - buf;
    ecore_ipc_server_send(_e_fm_ipc_server, 6 /*E_IPC_DOMAIN_FM*/, op, 0, ed->id,
-                         listing, buf, bsz);
+                         listing, eina_binbuf_string_get(buf), eina_binbuf_length_get(buf));
+   eina_binbuf_free(buf);
    free(lnk);
    free(rlnk);
 }
