@@ -692,7 +692,7 @@ _fetch(Evry_Plugin *plugin, const char *input)
                {
                   dir = dirname(buf);
                   _folder_item_add(p, dir, prio++);
-                  strcpy(buf, dir);
+                  strncpy(buf, dir, sizeof(buf) - 1);
                }
 
              p->command = CMD_SHOW_PARENT;
