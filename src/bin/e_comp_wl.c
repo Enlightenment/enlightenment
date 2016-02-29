@@ -136,6 +136,18 @@ _e_comp_wl_evas_cb_hide(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj EIN
 
    EINA_LIST_FOREACH(ec->e.state.video_child, l, tmp)
      evas_object_hide(tmp->frame);
+
+   if (!e_object_is_del(E_OBJECT(ec))) return;
+
+   e_comp_object_dirty(ec->frame);
+   e_comp_object_damage(ec->frame, 0, 0, ec->w, ec->h);
+   if (!e_comp_object_render(ec->frame)) return;
+   if (!ec->on_post_updates)
+     {
+        ec->on_post_updates = EINA_TRUE;
+        e_comp->post_updates = eina_list_append(e_comp->post_updates, ec);
+     }
+   else e_object_unref(E_OBJECT(ec));
 }
 
 static void
@@ -1532,6 +1544,8 @@ _e_comp_wl_compositor_cb_surface_create(struct wl_client *client, struct wl_reso
 #endif
    /* emit surface create signal */
    wl_signal_emit(&e_comp_wl->signals.surface.create, res);
+
+   e_object_ref(E_OBJECT(ec));
 }
 
 static void
