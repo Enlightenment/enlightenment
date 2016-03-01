@@ -236,11 +236,18 @@ _e_comp_wl_input_cb_touch_get(struct wl_client *client EINA_UNUSED, struct wl_re
                                   _e_comp_wl_input_cb_touch_unbind);
 }
 
+static void
+_e_comp_wl_input_cb_release(struct wl_client *client EINA_UNUSED, struct wl_resource *resource EINA_UNUSED)
+{
+   /* TODO: implement */
+}
+
 static const struct wl_seat_interface _e_seat_interface =
 {
    _e_comp_wl_input_cb_pointer_get,
    _e_comp_wl_input_cb_keyboard_get,
    _e_comp_wl_input_cb_touch_get,
+   _e_comp_wl_input_cb_release,
 };
 
 static void
