@@ -48,6 +48,18 @@ _e_comp_wl_data_offer_cb_destroy(struct wl_client *client EINA_UNUSED, struct wl
    wl_resource_destroy(resource);
 }
 
+static void
+_e_comp_wl_data_offer_cb_finish(struct wl_client *client EINA_UNUSED, struct wl_resource *resource EINA_UNUSED)
+{
+   /* TODO: implement */
+}
+
+static void
+_e_comp_wl_data_offer_cb_actions_set(struct wl_client *client EINA_UNUSED, struct wl_resource *resource EINA_UNUSED, uint32_t actions EINA_UNUSED, uint32_t preferred_action EINA_UNUSED)
+{
+   /* TODO: implement */
+}
+
 /* called by wl_resource_destroy */
 static void
 _e_comp_wl_data_offer_cb_resource_destroy(struct wl_resource *resource)
@@ -82,6 +94,8 @@ static const struct wl_data_offer_interface _e_data_offer_interface =
    _e_comp_wl_data_offer_cb_accept,
    _e_comp_wl_data_offer_cb_receive,
    _e_comp_wl_data_offer_cb_destroy,
+   _e_comp_wl_data_offer_cb_finish,
+   _e_comp_wl_data_offer_cb_actions_set,
 };
 
 static void
