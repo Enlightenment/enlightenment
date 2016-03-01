@@ -452,8 +452,6 @@ _drm_randr_create(void)
 
              if (ok)
                {
-                  unsigned int rotations;
-
                   if (!possible)
                     {
                        unsigned int refresh;
@@ -477,6 +475,8 @@ _drm_randr_create(void)
                     }
 
 #if (EFL_VERSION_MAJOR > 1) || (EFL_VERSION_MINOR >= 18)
+                  unsigned int rotations;
+
                   rotations =
                     ecore_drm_output_supported_rotations_get(output,
                                                              ECORE_DRM_PLANE_TYPE_PRIMARY);
@@ -554,7 +554,6 @@ _drm_randr_apply(void)
 
         EINA_LIST_FOREACH(e_randr2->screens, ll, s)
           {
-             int orient;
              Ecore_Drm_Output_Mode *mode = NULL;
 
              printf("DRM RRR: find output for '%s'\n", s->info.name);
@@ -593,6 +592,11 @@ _drm_randr_apply(void)
                   else
                     printf("\tDRM RRR: No Valid Drm Mode Found\n");
 
+                  ecore_drm_output_mode_set(out, mode,
+                                            s->config.geom.x, s->config.geom.y);
+#if (EFL_VERSION_MAJOR > 1) || (EFL_VERSION_MINOR >= 18)
+                  int orient;
+
                   if (s->config.rotation == 0)
                     orient = (1 << 0);
                   else if (s->config.rotation == 90)
@@ -602,9 +606,6 @@ _drm_randr_apply(void)
                   else if (s->config.rotation == 270)
                     orient = (1 << 3);
 
-                  ecore_drm_output_mode_set(out, mode,
-                                            s->config.geom.x, s->config.geom.y);
-#if (EFL_VERSION_MAJOR > 1) || (EFL_VERSION_MINOR >= 18)
                   ecore_drm_output_rotation_set(out,
                                                 ECORE_DRM_PLANE_TYPE_PRIMARY,
                                                 orient);
