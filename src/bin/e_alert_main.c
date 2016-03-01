@@ -460,7 +460,6 @@ _e_alert_drm_display(void)
    updates = evas_render_updates(canvas);
    evas_render_updates_free(updates);
 
-   ecore_drm_fb_set(dev, buffer);
    ecore_drm_fb_send(dev, buffer, NULL, NULL);
 }
 
