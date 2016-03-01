@@ -120,6 +120,12 @@ _e_comp_wl_data_source_cb_destroy(struct wl_client *client EINA_UNUSED, struct w
    wl_resource_destroy(resource);
 }
 
+static void
+_e_comp_wl_data_source_cb_actions_set(struct wl_client *client EINA_UNUSED, struct wl_resource *resource EINA_UNUSED, uint32_t actions EINA_UNUSED)
+{
+   /* TODO: implement */
+}
+
 /* called by wl_resource_destroy */
 static void
 _e_comp_wl_data_source_cb_resource_destroy(struct wl_resource *resource)
@@ -161,6 +167,7 @@ static const struct wl_data_source_interface _e_data_source_interface =
 {
    _e_comp_wl_data_source_cb_offer,
    _e_comp_wl_data_source_cb_destroy,
+   _e_comp_wl_data_source_cb_actions_set,
 };
 
 static void
