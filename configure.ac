@@ -924,6 +924,7 @@ AC_E_OPTIONAL_MODULE([wl_weekeyboard], $have_wayland, [CHECK_MODULE_WL_WEEKEYBOA
 AC_E_OPTIONAL_MODULE([policy_mobile], true)
 AC_E_OPTIONAL_MODULE([geolocation], true)
 AC_E_OPTIONAL_MODULE([xwayland], $have_wayland, [CHECK_MODULE_XWAYLAND])
+AC_E_OPTIONAL_MODULE([wireless], true)
 
 if test "x${HAVE_WL_X11}" != "xyes" && test "x${have_wayland}" = "xyes" && test "x${HAVE_XWAYLAND}" != "xyes"; then
   AC_DEFINE_UNQUOTED([HAVE_WAYLAND_ONLY],[1],[enable wayland-only version of enlightenment])
@@ -1125,6 +1126,7 @@ src/modules/tiling/module.desktop
 src/modules/music-control/module.desktop
 src/modules/packagekit/module.desktop
 src/modules/wl_desktop_shell/module.desktop
+src/modules/wireless/module.desktop
 data/xsession/enlightenment.desktop
 data/etc/sysactions.conf
 data/units/enlightenment.service

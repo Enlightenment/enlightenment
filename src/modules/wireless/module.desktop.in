@@ -1,0 +1,8 @@
+[Desktop Entry]
+Encoding=UTF-8
+Type=Link
+Name=Wireless
+GenericName=Wireless
+Comment=Manage wifi connections
+Icon=e-module-wireless
+X-Enlightenment-ModuleType=system

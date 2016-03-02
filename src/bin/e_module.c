@@ -1025,6 +1025,7 @@ _e_module_whitelist_check(void)
       "temperature",
       "tiling",
       "winlist",
+      "wireless",
       "wizard",
       "wl_desktop_shell",
       "wl_x11",
