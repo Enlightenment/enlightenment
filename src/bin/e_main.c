@@ -1054,6 +1054,13 @@ main(int argc, char **argv)
    TS("E_Test Done");
 
    if (e_config->show_splash)
+     e_init_status_set(_("Setup Bryces"));
+   TS("Bryce Init");
+   e_bryce_init();
+   TS("Bryce Init Done");
+   _e_main_shutdown_push((void*)e_bryce_shutdown);
+
+   if (e_config->show_splash)
      e_init_status_set(_("Setup Shelves"));
    TS("E_Shelf Init");
    if (!e_shelf_init())
