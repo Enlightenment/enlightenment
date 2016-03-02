@@ -129,6 +129,7 @@ void *alloca (size_t);
 # include <Eio.h>
 # include <Emotion.h>
 # include <Elementary.h>
+# include "e_Efx.h"
 
 # ifdef HAVE_WAYLAND
 #  include <Ecore_Wl2.h>

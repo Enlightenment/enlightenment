@@ -372,6 +372,15 @@ main(int argc, char **argv)
    else
      e_first_frame = NULL;
 
+   TS("EFX Init");
+   if (!e_efx_init())
+     {
+        e_error_message_show(_("Enlightenment cannot initialize EFX!\n"));
+        _e_main_shutdown(-1);
+     }
+   TS("EFX Init Done");
+   _e_main_shutdown_push((void*)e_efx_shutdown);
+
    TS("EIO Init");
    if (!eio_init())
      {

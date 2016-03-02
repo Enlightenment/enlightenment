@@ -3,6 +3,7 @@ EFM_CPPFLAGS = \
 -I$(top_builddir)/src/bin \
 -I$(top_srcdir) \
 -I$(top_srcdir)/src/bin \
+-I$(top_srcdir)/src/bin/efx \
 @e_cflags@ \
 @cf_cflags@ \
 @VALGRIND_CFLAGS@ \

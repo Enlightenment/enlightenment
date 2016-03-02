@@ -1,10 +1,26 @@
 DISTCLEANFILES += src/bin/e_fm_shared_types.h
 
+efx_files = \
+src/bin/efx/efx_bumpmapping.c \
+src/bin/efx/efx.c \
+src/bin/efx/efx_fade.c \
+src/bin/efx/efx_helpers.c \
+src/bin/efx/efx_move.c \
+src/bin/efx/efx_pan.c \
+src/bin/efx/e_efx_private.h \
+src/bin/efx/efx_queue.c \
+src/bin/efx/efx_resize.c \
+src/bin/efx/efx_rotate.c \
+src/bin/efx/efx_spin.c \
+src/bin/efx/efx_util.c \
+src/bin/efx/efx_zoom.c
+
 E_CPPFLAGS = \
 -I$(top_builddir) \
 -I$(top_builddir)/src/bin \
 -I$(top_srcdir) \
 -I$(top_srcdir)/src/bin \
+-I$(top_srcdir)/src/bin/efx \
 -I$(top_srcdir)/src/bin/generated \
 @e_cflags@ \
 @cf_cflags@ \
@@ -43,6 +59,7 @@ internal_bin_PROGRAMS += src/bin/enlightenment_ckpasswd
 endif
 
 ENLIGHTENMENTHEADERS = \
+src/bin/efx/e_Efx.h \
 src/bin/e_about.h \
 src/bin/e_acpi.h \
 src/bin/e_actions.h \
@@ -359,7 +376,8 @@ src/bin/e_xkb.c \
 src/bin/e_xinerama.c \
 src/bin/e_zoomap.c \
 src/bin/e_zone.c \
-$(ENLIGHTENMENTHEADERS)
+$(ENLIGHTENMENTHEADERS) \
+$(efx_files)
 
 if ! HAVE_WAYLAND_ONLY
 enlightenment_src += \
