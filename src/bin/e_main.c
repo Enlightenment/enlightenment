@@ -910,6 +910,14 @@ main(int argc, char **argv)
    _e_main_shutdown_push(e_remember_shutdown);
 
    if (e_config->show_splash)
+     e_init_status_set(_("Setup Gadgets"));
+   TS("E_Gadget Init");
+   e_gadget_init();
+   TS("E_Gadget Init Done");
+   _e_main_shutdown_push((void*)e_gadget_shutdown);
+
+
+   if (e_config->show_splash)
      e_init_status_set(_("Setup Gadcon"));
    TS("E_Gadcon Init");
    if (!e_gadcon_init())

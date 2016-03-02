@@ -114,6 +114,7 @@ src/bin/e_focus.h \
 src/bin/e_font.h \
 src/bin/e_gadcon.h \
 src/bin/e_gadcon_popup.h \
+src/bin/e_gadget.h \
 src/bin/e_grabinput.h \
 src/bin/e_grab_dialog.h \
 src/bin/e.h \
@@ -276,6 +277,7 @@ src/bin/e_focus.c \
 src/bin/e_font.c \
 src/bin/e_gadcon.c \
 src/bin/e_gadcon_popup.c \
+src/bin/e_gadget.c \
 src/bin/e_grabinput.c \
 src/bin/e_grab_dialog.c \
 src/bin/e_hints.c \

@@ -2147,11 +2147,14 @@ e_config_bindings_free(E_Config_Bindings *ecb)
 static void
 _e_config_save_cb(void *data EINA_UNUSED)
 {
+   EINTERN void e_gadget_save(void);
+
    e_config_profile_save();
    e_module_save_all();
    elm_config_save();
    e_config_domain_save("e", _e_config_edd, e_config);
    e_config_domain_save("e_bindings", _e_config_binding_edd, e_bindings);
+   e_gadget_save();
    _e_config_save_defer = NULL;
 }
 
