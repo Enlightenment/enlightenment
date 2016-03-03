@@ -86,6 +86,12 @@ _e_int_menus_augmentation_find(const char *key)
    return eina_hash_find(_e_int_menus_augmentation, key);
 }
 
+static void
+_e_int_menus_bryce_cb()
+{
+   e_bryce_edit(NULL);
+}
+
 #ifdef ISCOMFITOR
 static void
 _TEST_ADD(void *data, E_Dialog *dia EINA_UNUSED)
@@ -331,6 +337,11 @@ e_int_menus_desktops_new(void)
    e_util_menu_item_theme_icon_set(mi, "preferences-desktop-shelf");
    e_menu_pre_activate_callback_set(subm, _e_int_menus_shelves_pre_cb, NULL);
    e_menu_item_submenu_set(mi, subm);
+
+   mi = e_menu_item_new(m);
+   e_menu_item_label_set(mi, _("Add Bryce"));
+   e_util_menu_item_theme_icon_set(mi, "list-add");
+   e_menu_item_callback_set(mi, _e_int_menus_bryce_cb, NULL);
 
    mi = e_menu_item_new(m);
    e_menu_item_separator_set(mi, 1);
