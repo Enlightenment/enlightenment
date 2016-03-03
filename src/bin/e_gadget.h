@@ -136,5 +136,6 @@ E_API void e_gadget_util_allow_deny_ctxpopup(Evas_Object *g, const char *text, E
 
 E_API Evas_Object *e_gadget_editor_add(Evas_Object *parent, Evas_Object *site);
 E_API Evas_Object *e_gadget_site_edit(Evas_Object *site);
+E_API void e_gadget_site_desklock_edit(void);
 #endif
 #endif

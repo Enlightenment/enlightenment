@@ -1,6 +1,7 @@
 #include "e.h"
 #include "e_mod_main.h"
 
+
 static void        *_create_data(E_Config_Dialog *cfd);
 static void         _free_data(E_Config_Dialog *cfd, E_Config_Dialog_Data *cfdata);
 static void         _fill_data(E_Config_Dialog_Data *cfdata);
@@ -210,6 +211,12 @@ _free_data(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfdata)
    free(cfdata);
 }
 
+static void
+_cb_lockscreen_gadgets()
+{
+   e_gadget_site_desklock_edit();
+}
+
 static Evas_Object *
 _basic_create(E_Config_Dialog *cfd, Evas *evas, E_Config_Dialog_Data *cfdata)
 {
@@ -273,6 +280,9 @@ _basic_create(E_Config_Dialog *cfd, Evas *evas, E_Config_Dialog_Data *cfdata)
      (cfdata->desklock_auth_method != E_DESKLOCK_AUTH_METHOD_EXTERNAL));
 
    e_widget_list_object_append(ol, of, 1, 1, 0.5);
+   ow = e_widget_button_add(evas, _("Configure Lockscreen Gadgets"), "configure", _cb_lockscreen_gadgets, NULL, NULL);
+
+   e_widget_list_object_append(ol, ow, 1, 1, 0.5);
    e_widget_toolbook_page_append(otb, NULL, _("Locking"), ol,
                                  1, 0, 1, 0, 0.5, 0.0);
 
