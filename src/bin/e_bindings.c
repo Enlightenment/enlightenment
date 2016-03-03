@@ -507,13 +507,13 @@ e_bindings_mouse_up_event_handle(E_Binding_Context ctxt, E_Object *obj, E_Bindin
      {
         act = e_bindings_mouse_button_find(ctxt, ev, &binding);
         if (!act) break;
-        if (act->func.go_mouse)
+        if (act->func.end_mouse)
           {
-             if (!act->func.go_mouse(obj, binding->params, ev))
+             if (!act->func.end_mouse(obj, binding->params, ev))
                continue;
           }
-        else if (act->func.go)
-          act->func.go(obj, binding->params);
+        else if (act->func.end)
+          act->func.end(obj, binding->params);
         break;
      }
    return act;
