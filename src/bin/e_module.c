@@ -1024,6 +1024,7 @@ _e_module_whitelist_check(void)
       "teamwork",
       "temperature",
       "tiling",
+      "time",
       "winlist",
       "wireless",
       "wizard",
