@@ -50,6 +50,9 @@ _e_comp_canvas_render_post(void *data EINA_UNUSED, Evas *e EINA_UNUSED, void *ev
         //EINA_LIST_FOREACH(ev->updated_area, l, r)
           //INF("POST RENDER: %d,%d %dx%d", r->x, r->y, r->w, r->h);
      //}
+
+   e_comp->rendering = EINA_FALSE;
+
    EINA_LIST_FREE(e_comp->post_updates, ec)
      {
         //INF("POST %p", ec);
@@ -209,6 +212,8 @@ _e_comp_canvas_prerender(void *data EINA_UNUSED, Evas *e EINA_UNUSED, void *even
 {
    E_Comp_Cb cb;
    Eina_List *l;
+
+   e_comp->rendering = EINA_TRUE;
 
    EINA_LIST_FOREACH(e_comp->pre_render_cbs, l, cb)
      cb();
