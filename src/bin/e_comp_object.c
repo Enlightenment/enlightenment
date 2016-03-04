@@ -863,7 +863,7 @@ _e_comp_object_pixels_get(void *data, Evas_Object *obj EINA_UNUSED)
    int pw, ph;
    int bx, by, bxx, byy;
 
-   if (e_object_is_del(E_OBJECT(ec))) return;
+   if (!ec->pixmap) return;
    if (!e_pixmap_size_get(ec->pixmap, &pw, &ph)) return;
    //INF("PIXEL GET %p: %dx%d || %dx%d", ec, ec->w, ec->h, pw, ph);
    e_pixmap_image_opaque_get(cw->ec->pixmap, &bx, &by, &bxx, &byy);
