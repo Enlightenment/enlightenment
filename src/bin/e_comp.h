@@ -155,6 +155,8 @@ struct _E_Comp
    Eina_Bool       nocomp_want : 1;
    Eina_Bool       saver : 1;
    Eina_Bool       shape_queue_blocked : 1;
+
+   Eina_Bool       rendering : 1; // we've received a pre-render callback but no post-render yet.
 };
 
 
