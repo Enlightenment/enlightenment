@@ -580,6 +580,7 @@ e_pixmap_native_surface_init(E_Pixmap *cp, Evas_Native_Surface *ns)
         break;
       case E_PIXMAP_TYPE_WL:
 #ifdef HAVE_WAYLAND
+        if (!cp->buffer) return EINA_FALSE;
         ns->type = EVAS_NATIVE_SURFACE_WL;
         ns->version = EVAS_NATIVE_SURFACE_VERSION;
         ns->data.wl.legacy_buffer = cp->buffer->resource;
