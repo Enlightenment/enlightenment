@@ -71,6 +71,7 @@ struct E_Gadget_Config
    E_Gadget_Config *orig; //gadget is a copy of the original gadget during a move
    Eina_Bool moving : 1;
    Eina_Bool resizing : 1;
+   Eina_Bool display_del : 1; //deleted using ->display
 };
 
 typedef struct E_Gadget_Sites
@@ -226,10 +227,11 @@ _gadget_popup(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
 }
 
 static void
-_gadget_del(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+_gadget_del(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
    E_Gadget_Config *zgc = data;
 
+   zgc->display_del = obj == zgc->display;
    if (!e_object_is_del(zgc->e_obj_inherit))
      e_object_del(zgc->e_obj_inherit);
 }
@@ -253,16 +255,20 @@ _gadget_object_free(E_Object *eobj)
    zgc = evas_object_data_get(g, "__e_gadget");
    evas_object_smart_callback_call(zgc->site->layout, "gadget_destroyed", zgc->gadget);
    evas_object_event_callback_del_full(zgc->gadget, EVAS_CALLBACK_DEL, _gadget_del, zgc);
-   if (zgc->gadget == zgc->display)
+   if (zgc->display_del || (zgc->gadget == zgc->display))
      zgc->display = NULL;
    else
-     evas_object_event_callback_del_full(zgc->display, EVAS_CALLBACK_DEL, _gadget_del, zgc);
+     {
+        evas_object_event_callback_del_full(zgc->display, EVAS_CALLBACK_DEL, _gadget_del, zgc);
+        E_FREE_FUNC(zgc->display, evas_object_del);
+     }
    E_FREE_FUNC(zgc->gadget, evas_object_del);
    E_FREE_FUNC(zgc->cfg_object, evas_object_del);
    E_FREE_FUNC(zgc->style.obj, evas_object_del);
    _gadget_util_allow_deny_cleanup(zgc);
    E_FREE(zgc->e_obj_inherit);
    zgc->configure = NULL;
+   zgc->display_del = zgc->moving = zgc->resizing = 0;
 }
 
 static void
