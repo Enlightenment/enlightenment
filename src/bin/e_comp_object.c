@@ -3857,7 +3857,10 @@ e_comp_object_util_mirror_add(Evas_Object *obj)
    evas_object_image_size_set(o, w, h);
 
    if (cw->ec->shaped)
-     pix = evas_object_image_data_get(cw->obj, 0);
+     {
+        if (e_pixmap_image_data_get(cw->ec->pixmap))
+          pix = evas_object_image_data_get(cw->obj, 0);
+     }
    else
      {
         if (cw->native)
@@ -3873,7 +3876,7 @@ e_comp_object_util_mirror_add(Evas_Object *obj)
                }
           }
         else
-          pix = evas_object_image_data_get(cw->obj, EINA_FALSE);
+          pix = e_pixmap_image_data_get(cw->ec->pixmap);
      }
    if (pix)
      {
@@ -3890,7 +3893,8 @@ e_comp_object_util_mirror_add(Evas_Object *obj)
       //evas_object_image_border_set(o, bx, by, bxx, byy);
       //evas_object_image_border_center_fill_set(o, EVAS_BORDER_FILL_SOLID);
       evas_object_image_data_set(o, pix);
-      evas_object_image_data_set(cw->obj, pix);
+      if (cw->ec->shaped)
+        evas_object_image_data_set(cw->obj, pix);
       if (dirty)
         evas_object_image_data_update_add(o, 0, 0, w, h);
    }
