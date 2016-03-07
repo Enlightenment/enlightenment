@@ -54,6 +54,10 @@ static Eina_Hash *alarm_hash = NULL;
 
 static Evas_Point mouse_in_coords = {-1, -1};
 static Ecore_Job *mouse_in_job;
+static E_Client *focus_job_client;
+static Ecore_Job *focus_job;
+static E_Client *unfocus_job_client;
+static Ecore_Job *unfocus_job;
 static Ecore_Idle_Enterer *_e_comp_x_post_client_idler = NULL;
 static Ecore_Idle_Enterer *_x_idle_flush = NULL;
 static Eina_List *post_clients = NULL;
@@ -4471,16 +4475,32 @@ _e_comp_x_hook_client_new(void *d EINA_UNUSED, E_Client *ec)
 }
 
 static void
-_e_comp_x_hook_client_focus_unset(void *d EINA_UNUSED, E_Client *ec)
+_e_comp_x_hook_client_focus_unset_job(void *d EINA_UNUSED)
 {
+   E_Client *ec = unfocus_job_client;
+   unfocus_job = NULL;
+   if (!unfocus_job_client) return;
+   unfocus_job_client = NULL;
    E_COMP_X_PIXMAP_CHECK;
    _e_comp_x_focus_setup(ec);
    _e_comp_x_focus_check();
 }
 
 static void
-_e_comp_x_hook_client_focus_set(void *d EINA_UNUSED, E_Client *ec)
+_e_comp_x_hook_client_focus_unset(void *d EINA_UNUSED, E_Client *ec)
 {
+   unfocus_job_client = ec;
+   if (!unfocus_job)
+     unfocus_job = ecore_job_add(_e_comp_x_hook_client_focus_unset_job, NULL);
+}
+
+static void
+_e_comp_x_hook_client_focus_set_job(void *d EINA_UNUSED)
+{
+   E_Client *ec = focus_job_client;
+   focus_job = NULL;
+   if (!focus_job_client) return;
+   focus_job_client = NULL;
    focus_time = ecore_x_current_time_get();
    focus_canvas_time = 0;
    if (!e_client_has_xwindow(ec))
@@ -4503,6 +4523,14 @@ _e_comp_x_hook_client_focus_set(void *d EINA_UNUSED, E_Client *ec)
      {
         e_grabinput_focus(e_client_util_win_get(ec), E_FOCUS_METHOD_PASSIVE);
      }
+}
+
+static void
+_e_comp_x_hook_client_focus_set(void *d EINA_UNUSED, E_Client *ec)
+{
+   focus_job_client = ec;
+   if (!focus_job)
+     focus_job = ecore_job_add(_e_comp_x_hook_client_focus_set_job, NULL);
 }
 
 static void
@@ -4563,6 +4591,8 @@ _e_comp_x_hook_client_del(void *d EINA_UNUSED, E_Client *ec)
    cd = _e_comp_x_client_data_get(ec);
 
    if (mouse_client == ec) mouse_client = NULL;
+   if (focus_job_client == ec) focus_job_client = NULL;
+   if (unfocus_job_client == ec) unfocus_job_client = NULL;
    if ((!stopping) && cd && (!cd->deleted))
      ecore_x_window_prop_card32_set(win, E_ATOM_MANAGED, &visible, 1);
    if ((!ec->already_unparented) && cd && cd->reparented)
@@ -4956,6 +4986,8 @@ _e_comp_x_del(E_Comp *c)
    eina_list_free(c->x_comp_data->retry_clients);
    ecore_timer_del(c->x_comp_data->retry_timer);
    E_FREE_FUNC(mouse_in_job, ecore_job_del);
+   E_FREE_FUNC(focus_job, ecore_job_del);
+   E_FREE_FUNC(unfocus_job, ecore_job_del);
    free(c->x_comp_data);
 }
 
