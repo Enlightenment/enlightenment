@@ -52,6 +52,8 @@ static Eina_Hash *damages_hash = NULL;
 static Eina_Hash *frame_extents = NULL;
 static Eina_Hash *alarm_hash = NULL;
 
+static Evas_Point mouse_in_coords = {-1, -1};
+static Ecore_Job *mouse_in_job;
 static Ecore_Idle_Enterer *_e_comp_x_post_client_idler = NULL;
 static Ecore_Idle_Enterer *_x_idle_flush = NULL;
 static Eina_List *post_clients = NULL;
@@ -2236,6 +2238,14 @@ _e_comp_x_mapping_change(void *data EINA_UNUSED, int type EINA_UNUSED, Ecore_X_E
    return ECORE_CALLBACK_PASS_ON;
 }
 
+static void
+_e_comp_x_mouse_in_job(void *d EINA_UNUSED)
+{
+   if (mouse_client)
+     e_client_mouse_in(mouse_client, e_comp_canvas_x_root_adjust(mouse_in_coords.x), e_comp_canvas_x_root_adjust(mouse_in_coords.y));
+   mouse_in_job = NULL;
+}
+
 static Eina_Bool
 _e_comp_x_mouse_in(void *data EINA_UNUSED, int type EINA_UNUSED, Ecore_X_Event_Mouse_In *ev)
 {
@@ -2260,7 +2270,10 @@ _e_comp_x_mouse_in(void *data EINA_UNUSED, int type EINA_UNUSED, Ecore_X_Event_M
      }
    if (_e_comp_x_client_data_get(ec)->deleted) return ECORE_CALLBACK_RENEW;
    mouse_client = ec;
-   e_client_mouse_in(ec, e_comp_canvas_x_root_adjust(ev->root.x), e_comp_canvas_x_root_adjust(ev->root.y));
+   if (!mouse_in_job)
+     mouse_in_job = ecore_job_add(_e_comp_x_mouse_in_job, NULL);
+   mouse_in_coords.x = ev->root.x;
+   mouse_in_coords.y = ev->root.y;
    return ECORE_CALLBACK_RENEW;
 }
 
@@ -2281,7 +2294,11 @@ _e_comp_x_mouse_out(void *data EINA_UNUSED, int type EINA_UNUSED, Ecore_X_Event_
    ec = _e_comp_x_client_find_by_window(ev->win);
    if (!ec) return ECORE_CALLBACK_RENEW;
    if (_e_comp_x_client_data_get(ec)->deleted) return ECORE_CALLBACK_RENEW;
-   if (mouse_client == ec) mouse_client = NULL;
+   if (mouse_client == ec)
+     {
+        mouse_client = NULL;
+        E_FREE_FUNC(mouse_in_job, ecore_job_del);
+     }
    if (ec->mouse.in)
      e_client_mouse_out(ec, e_comp_canvas_x_root_adjust(ev->root.x), e_comp_canvas_x_root_adjust(ev->root.y));
    return ECORE_CALLBACK_RENEW;
@@ -2388,7 +2405,8 @@ _e_comp_x_mouse_move(void *d EINA_UNUSED, int t EINA_UNUSED, Ecore_Event_Mouse_M
                   if (!evas_object_visible_get(tec->frame)) continue;
                   if (E_INSIDE(x, y, tec->x, tec->y, tec->w, tec->h)) return ECORE_CALLBACK_RENEW;
                }
-             e_client_mouse_in(ec, x, y);
+             if (!mouse_in_job)
+               e_client_mouse_in(ec, x, y);
           }
         return ECORE_CALLBACK_RENEW;
      }
@@ -4937,6 +4955,7 @@ _e_comp_x_del(E_Comp *c)
 
    eina_list_free(c->x_comp_data->retry_clients);
    ecore_timer_del(c->x_comp_data->retry_timer);
+   E_FREE_FUNC(mouse_in_job, ecore_job_del);
    free(c->x_comp_data);
 }
 
