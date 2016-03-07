@@ -654,11 +654,6 @@ e_desk_flip_end(E_Desk *desk)
                    _e_desk_event_desk_after_show_free, NULL);
 
    e_comp_shape_queue();
-   if (e_comp->comp_type == E_PIXMAP_TYPE_X)
-     {
-        evas_event_feed_mouse_out(e_comp->evas, 0, NULL);
-        evas_event_feed_mouse_in(e_comp->evas, 0, NULL);
-     }
    if (!e_config->focus_last_focused_per_desktop) return;
    if ((e_config->focus_policy == E_FOCUS_MOUSE) ||
        (e_config->focus_policy == E_FOCUS_SLOPPY))
