@@ -2248,13 +2248,13 @@ _e_comp_x_mouse_in(void *data EINA_UNUSED, int type EINA_UNUSED, Ecore_X_Event_M
      {
         if (ev->detail == ECORE_X_EVENT_DETAIL_INFERIOR)
           {
-             if (ev->win != e_client_util_win_get(ec)) return ECORE_CALLBACK_RENEW;
-             if (ev->event_win != e_client_util_pwin_get(ec)) return ECORE_CALLBACK_RENEW;
+             if (ev->win != e_client_util_pwin_get(ec)) return ECORE_CALLBACK_RENEW;
+             if (ev->event_win != e_client_util_win_get(ec)) return ECORE_CALLBACK_RENEW;
           }
         if (ev->detail == ECORE_X_EVENT_DETAIL_VIRTUAL)
           {
-             if (ev->win != e_client_util_pwin_get(ec)) return ECORE_CALLBACK_RENEW;
-             if (ev->event_win != e_client_util_win_get(ec)) return ECORE_CALLBACK_RENEW;
+             if (ev->win != e_client_util_win_get(ec)) return ECORE_CALLBACK_RENEW;
+             if (ev->event_win != e_client_util_pwin_get(ec)) return ECORE_CALLBACK_RENEW;
           }
         if (!evas_object_visible_get(ec->frame)) return ECORE_CALLBACK_RENEW;
      }
