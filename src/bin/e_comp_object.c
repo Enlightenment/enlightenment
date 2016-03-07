@@ -350,11 +350,17 @@ _e_comp_object_cb_signal_bind(void *data, Evas_Object *obj EINA_UNUSED, const ch
 
 /* handle evas mouse-in events on client object */
 static void
-_e_comp_object_cb_mouse_in(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info)
+_e_comp_object_cb_mouse_in(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *event_info)
 {
    Evas_Event_Mouse_In *ev = event_info;
    E_Comp_Object *cw = data;
 
+   if (e_pixmap_is_x(cw->ec->pixmap))
+     {
+        if (!e_comp_object_frame_allowed(obj)) return;
+        if (E_INSIDE(ev->output.x, ev->output.y, cw->ec->client.x, cw->ec->client.y,
+            cw->ec->client.w, cw->ec->client.h)) return;
+     }
    e_client_mouse_in(cw->ec, ev->output.x, ev->output.y);
 }
 
