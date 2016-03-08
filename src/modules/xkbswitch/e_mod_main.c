@@ -141,10 +141,7 @@ _xkb_update_icon(int cur_group)
         EINA_LIST_FOREACH(instances, l, inst)
           {
              if (!e_config_xkb_layout_eq(e_config->xkb.current_layout, inst->layout))
-               {
-                  e_config_xkb_layout_free(inst->layout);
-                  inst->layout = e_config->xkb.current_layout;
-               }
+               inst->layout = e_config->xkb.current_layout;
              E_FREE_FUNC(inst->o_xkbflag, evas_object_del);
              e_theme_edje_object_set(inst->o_xkbswitch,
                                      "base/theme/modules/xkbswitch",
@@ -158,10 +155,7 @@ _xkb_update_icon(int cur_group)
         EINA_LIST_FOREACH(instances, l, inst)
           {
              if (!e_config_xkb_layout_eq(e_config->xkb.current_layout, inst->layout))
-               {
-                  e_config_xkb_layout_free(inst->layout);
-                  inst->layout = e_config->xkb.current_layout;
-               }
+               inst->layout = e_config->xkb.current_layout;
              if (!inst->o_xkbflag)
                inst->o_xkbflag = e_icon_add(inst->gcc->gadcon->evas);
              e_theme_edje_object_set(inst->o_xkbswitch,
