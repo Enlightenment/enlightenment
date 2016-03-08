@@ -469,6 +469,9 @@ _e_config_edd_init(Eina_Bool old)
    E_CONFIG_VAL(D, T, menus_scroll_speed, DOUBLE); /**/
    E_CONFIG_VAL(D, T, menus_fast_mouse_move_threshhold, DOUBLE); /**/
    E_CONFIG_VAL(D, T, menus_click_drag_timeout, DOUBLE); /**/
+   E_CONFIG_VAL(D, T, window_maximize_animate, INT); /**/
+   E_CONFIG_VAL(D, T, window_maximize_transition, INT); /**/
+   E_CONFIG_VAL(D, T, window_maximize_time, DOUBLE); /**/
    E_CONFIG_VAL(D, T, border_shade_animate, INT); /**/
    E_CONFIG_VAL(D, T, border_shade_transition, INT); /**/
    E_CONFIG_VAL(D, T, border_shade_speed, DOUBLE); /**/
@@ -1432,6 +1435,15 @@ e_config_load(void)
                     }
                }
           }
+
+          CONFIG_VERSION_CHECK(21)
+            {
+               CONFIG_VERSION_UPDATE_INFO(21);
+
+               e_config->window_maximize_animate = 1;
+               e_config->window_maximize_transition = E_EFX_EFFECT_SPEED_SINUSOIDAL;
+               e_config->window_maximize_time = 0.15;
+            }
      }
    if (!e_config->remember_internal_fm_windows)
      e_config->remember_internal_fm_windows = !!(e_config->remember_internal_windows & E_REMEMBER_INTERNAL_FM_WINS);
@@ -1444,6 +1456,9 @@ e_config_load(void)
    E_CONFIG_LIMIT(e_config->show_splash, 0, 1);
    E_CONFIG_LIMIT(e_config->menus_fast_mouse_move_threshhold, 1.0, 2000.0);
    E_CONFIG_LIMIT(e_config->menus_click_drag_timeout, 0.0, 10.0);
+   E_CONFIG_LIMIT(e_config->window_maximize_animate, 0, 1);
+   E_CONFIG_LIMIT(e_config->window_maximize_transition, 0, E_EFX_EFFECT_SPEED_SINUSOIDAL);
+   E_CONFIG_LIMIT(e_config->window_maximize_time, 0.0, 1.0);
    E_CONFIG_LIMIT(e_config->border_shade_animate, 0, 1);
    E_CONFIG_LIMIT(e_config->border_shade_transition, 0, 8);
    E_CONFIG_LIMIT(e_config->border_shade_speed, 1.0, 20000.0);

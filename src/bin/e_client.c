@@ -1545,10 +1545,17 @@ _e_client_cb_evas_restack(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA
 ////////////////////////////////////////////////
 
 static void
+_e_client_maximize_done(void *data, E_Efx_Map_Data *emd EINA_UNUSED, Evas_Object *obj EINA_UNUSED)
+{
+   E_Client *ec = data;
+   ec->maximize_override = 0;
+}
+
+static void
 _e_client_maximize(E_Client *ec, E_Maximize max)
 {
    int x1, yy1, x2, y2;
-   int w, h, pw, ph;
+   int x, y, w, h, pw, ph;
    int zx, zy, zw, zh;
    int ecx, ecy, ecw, ech;
    Eina_Bool override = ec->maximize_override;
@@ -1577,25 +1584,30 @@ _e_client_maximize(E_Client *ec, E_Maximize max)
         switch (max & E_MAXIMIZE_DIRECTION)
           {
            case E_MAXIMIZE_BOTH:
-             evas_object_geometry_set(ec->frame, x1, yy1, w, h);
+             x = x1, y = yy1;
              break;
 
            case E_MAXIMIZE_VERTICAL:
-             evas_object_geometry_set(ec->frame, ec->x, yy1, ec->w, h);
+             x = ec->x, y = yy1, w = ec->w;
              break;
 
            case E_MAXIMIZE_HORIZONTAL:
-             evas_object_geometry_set(ec->frame, x1, ec->y, w, ec->h);
+             x = x1, y = ec->y, h = ec->h;
              break;
 
            case E_MAXIMIZE_LEFT:
-             evas_object_geometry_set(ec->frame, ec->zone->x, ec->zone->y, w / 2, h);
+             x = ec->zone->x, y = ec->zone->y, w /= 2;
              break;
 
            case E_MAXIMIZE_RIGHT:
-             evas_object_geometry_set(ec->frame, x1, ec->zone->y, w / 2, h);
+             x = x1, y = ec->zone->y, w /= 2;
              break;
           }
+        if (e_config->window_maximize_animate && (!starting) && (!ec->changes.need_maximize))
+          e_efx_resize(ec->frame, e_config->window_maximize_transition, E_EFX_POINT(x, y),
+            w, h, e_config->window_maximize_time, _e_client_maximize_done, ec);
+        else
+          evas_object_geometry_set(ec->frame, x, y, w, h);
         break;
 
       case E_MAXIMIZE_SMART:
@@ -1642,26 +1654,30 @@ _e_client_maximize(E_Client *ec, E_Maximize max)
         switch (max & E_MAXIMIZE_DIRECTION)
           {
            case E_MAXIMIZE_BOTH:
-             evas_object_geometry_set(ec->frame, zx, zy, zw, zh);
+             x = zx, y = zy, w = zw, h = zh;
              break;
 
            case E_MAXIMIZE_VERTICAL:
-             evas_object_geometry_set(ec->frame, ec->x, zy, ec->w, zh);
+             x = ec->x, y = zy, w = ec->w, h = zh;
              break;
 
            case E_MAXIMIZE_HORIZONTAL:
-             evas_object_geometry_set(ec->frame, zx, ec->y, zw, ec->h);
+             x = zx, y = ec->y, w = zw, h = ec->h;
              break;
 
            case E_MAXIMIZE_LEFT:
-             evas_object_geometry_set(ec->frame, zx, zy, zw / 2, zh);
+             x = zx, y = zy, w = zw / 2, h = zh;
              break;
 
            case E_MAXIMIZE_RIGHT:
-             evas_object_geometry_set(ec->frame, zx + zw / 2, zy, zw / 2, zh);
+             x = zx + zw / 2, y = zy, w = zw / 2, h = zh;
              break;
           }
-
+        if (e_config->window_maximize_animate && (!starting) && (!ec->changes.need_maximize))
+          e_efx_resize(ec->frame, e_config->window_maximize_transition, E_EFX_POINT(x, y),
+            w, h, e_config->window_maximize_time, _e_client_maximize_done, ec);
+        else
+          evas_object_geometry_set(ec->frame, x, y, w, h);
         break;
 
       case E_MAXIMIZE_FILL:
@@ -1689,28 +1705,33 @@ _e_client_maximize(E_Client *ec, E_Maximize max)
         switch (max & E_MAXIMIZE_DIRECTION)
           {
            case E_MAXIMIZE_BOTH:
-             evas_object_geometry_set(ec->frame, x1, yy1, w, h);
+             x = x1, y = yy1;
              break;
 
            case E_MAXIMIZE_VERTICAL:
-             evas_object_geometry_set(ec->frame, ec->x, yy1, ec->w, h);
+             x = ec->x, y = yy1, w = ec->w;
              break;
 
            case E_MAXIMIZE_HORIZONTAL:
-             evas_object_geometry_set(ec->frame, x1, ec->y, w, ec->h);
+             x = x1, y = ec->y, h = ec->h;
              break;
 
            case E_MAXIMIZE_LEFT:
-             evas_object_geometry_set(ec->frame, ec->zone->x, ec->zone->y, w / 2, h);
+             x = ec->zone->x, y = ec->zone->y, w /= 2;
              break;
 
            case E_MAXIMIZE_RIGHT:
-             evas_object_geometry_set(ec->frame, x1, ec->zone->y, w / 2, h);
+             x = x1, y = ec->zone->y, w /= 2;
              break;
           }
+        if (e_config->window_maximize_animate && (!starting) && (!ec->changes.need_maximize))
+          e_efx_resize(ec->frame, e_config->window_maximize_transition, E_EFX_POINT(x, y),
+            w, h, e_config->window_maximize_time, _e_client_maximize_done, ec);
+        else
+          evas_object_geometry_set(ec->frame, x, y, w, h);
         break;
      }
-   if (ec->maximize_override)
+   if (ec->maximize_override && (starting || ec->changes.need_maximize || (!e_config->window_maximize_animate)))
      ec->maximize_override = override;
 }
 
@@ -3868,17 +3889,19 @@ e_client_unmaximize(E_Client *ec, E_Maximize max)
                {
                   ec->maximized = E_MAXIMIZE_NONE;
                   _e_client_frame_update(ec);
-                  evas_object_smart_callback_call(ec->frame, "unmaximize", NULL);
-                  e_client_resize_limit(ec, &w, &h);
-                  e_client_util_move_resize_without_frame(ec, x, y, w, h);
                   e_hints_window_size_unset(ec);
                }
+             else if (e_config->window_maximize_animate)
+               ec->maximize_override = 1;
+             evas_object_smart_callback_call(ec->frame, "unmaximize", NULL);
+             e_client_resize_limit(ec, &w, &h);
+             e_comp_object_frame_xy_adjust(ec->frame, x, y, &x, &y);
+             e_comp_object_frame_wh_adjust(ec->frame, w, h, &w, &h);
+             if (e_config->window_maximize_animate && (!starting))
+               e_efx_resize(ec->frame, e_config->window_maximize_transition, E_EFX_POINT(x, y),
+                 w, h, e_config->window_maximize_time, _e_client_maximize_done, ec);
              else
-               {
-                  evas_object_smart_callback_call(ec->frame, "unmaximize", NULL);
-                  e_client_resize_limit(ec, &w, &h);
-                  e_client_util_move_resize_without_frame(ec, x, y, w, h);
-               }
+               evas_object_geometry_set(ec->frame, x, y, w, h);
              if (vert)
                ec->saved.h = ec->saved.y = 0;
              if (horiz)
