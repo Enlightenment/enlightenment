@@ -91,12 +91,6 @@ end:
    return ECORE_CALLBACK_PASS_ON;
 }
 
-static void
-_e_mod_drm_cb_ee_resize(Ecore_Evas *ee EINA_UNUSED)
-{
-   e_comp_canvas_update();
-}
-
 static Ecore_Drm_Output_Mode *
 _e_mod_drm_mode_screen_find(E_Randr2_Screen *s, Ecore_Drm_Output *output)
 {
@@ -710,8 +704,6 @@ e_modapi_init(E_Module *m)
 
    /* get the current screen geometry */
    ecore_evas_screen_geometry_get(e_comp->ee, NULL, NULL, &w, &h);
-
-   ecore_evas_callback_resize_set(e_comp->ee, _e_mod_drm_cb_ee_resize);
 
    e_comp->screen = &drmiface;
 
