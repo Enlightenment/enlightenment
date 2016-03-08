@@ -1175,8 +1175,12 @@ _site_util_add(E_Gadget_Site_Orient orient, const char *name, Eina_Bool autoadd)
    zgs = E_NEW(E_Gadget_Site, 1);
 
    zgs->name = eina_stringshare_add(name);
-   zgs->orient = orient;
    zgs->autoadd = autoadd;
+
+   if (name)
+     sites->sites = eina_list_append(sites->sites, zgs);
+out:
+   zgs->orient = orient;
    switch (orient)
      {
       case E_GADGET_SITE_ORIENT_HORIZONTAL:
@@ -1187,10 +1191,6 @@ _site_util_add(E_Gadget_Site_Orient orient, const char *name, Eina_Bool autoadd)
         break;
       default: break;
      }
-
-   if (name)
-     sites->sites = eina_list_append(sites->sites, zgs);
-out:
    if (autoadd)
      {
         parent = evas_object_name_find(e_comp->evas, name);

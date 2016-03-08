@@ -731,6 +731,14 @@ _bryce_gadget_popup(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
 }
 
 static void
+_bryce_site_anchor(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
+{
+   Bryce *b = data;
+
+   e_bryce_orient(b->bryce, e_gadget_site_orient_get(obj), e_gadget_site_anchor_get(obj));
+}
+
+static void
 _bryce_orient(Bryce *b)
 {
    char buf[1024];
@@ -748,6 +756,11 @@ _bryce_orient(Bryce *b)
      elm_layout_signal_emit(b->layout, "e,state,orient,horizontal", "e");
    else
      elm_layout_signal_emit(b->layout, "e,state,orient,vertical", "e");
+   evas_object_event_callback_add(b->site, EVAS_CALLBACK_CHANGED_SIZE_HINTS, _bryce_site_hints, b);
+   evas_object_smart_callback_add(b->site, "gadget_site_anchor", _bryce_site_anchor, b);
+   evas_object_smart_callback_add(b->site, "gadget_site_style_menu", _bryce_style_menu, b);
+   evas_object_smart_callback_add(b->site, "gadget_site_owner_menu", _bryce_owner_menu, b);
+   evas_object_smart_callback_add(b->site, "gadget_site_popup", _bryce_gadget_popup, b);
 }
 
 static void
@@ -801,11 +814,6 @@ _bryce_create(Bryce *b, Evas_Object *parent)
    evas_object_event_callback_add(bryce, EVAS_CALLBACK_MOUSE_DOWN, _bryce_mouse_down, b);
    evas_object_event_callback_add(bryce, EVAS_CALLBACK_MOUSE_UP, _bryce_mouse_up, b);
    evas_object_event_callback_add(bryce, EVAS_CALLBACK_MOUSE_WHEEL, _bryce_mouse_wheel, b);
-   evas_object_event_callback_add(b->site, EVAS_CALLBACK_CHANGED_SIZE_HINTS, _bryce_site_hints, b);
-
-   evas_object_smart_callback_add(b->site, "gadget_site_style_menu", _bryce_style_menu, b);
-   evas_object_smart_callback_add(b->site, "gadget_site_owner_menu", _bryce_owner_menu, b);
-   evas_object_smart_callback_add(b->site, "gadget_site_popup", _bryce_gadget_popup, b);
 
    zone_clip = e_comp_zone_number_get(b->zone)->bg_clip_object;
    evas_object_clip_set(bryce, zone_clip);
@@ -912,10 +920,20 @@ e_bryce_add(Evas_Object *parent, const char *name, E_Gadget_Site_Orient orient, 
 E_API void
 e_bryce_orient(Evas_Object *bryce, E_Gadget_Site_Orient orient, E_Gadget_Site_Anchor an)
 {
+   int w, h;
+   E_Gadget_Site_Orient prev;
+
    BRYCE_GET(bryce);
+   if ((b->orient == orient) && (b->anchor == an)) return;
+   prev = b->orient;
    b->orient = orient;
    b->anchor = an;
+   evas_object_geometry_get(bryce, NULL, NULL, &w, &h);
    _bryce_orient(b);
+   if (prev == orient)
+     _bryce_autosize(b);
+   else
+     evas_object_resize(bryce, h, w);
 }
 
 E_API Evas_Object *

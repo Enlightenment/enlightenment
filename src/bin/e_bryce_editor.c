@@ -77,7 +77,10 @@ _editor_bryce_add(Evas_Object *obj)
           gravity = E_GADGET_SITE_GRAVITY_BOTTOM;
      }
    if (b)
-     site = e_bryce_site_get(b);
+     {
+        e_bryce_orient(b, bi->orient, bi->anchor);
+        site = e_bryce_site_get(b);
+     }
    else
      {
         b = e_bryce_add(e_comp->elm, buf, bi->orient, bi->anchor);
