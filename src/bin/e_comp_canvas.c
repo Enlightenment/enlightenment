@@ -532,6 +532,26 @@ e_comp_canvas_update(void)
           }
      }
 
+   for (i = 0; i < 11; i++)
+     {
+        Eina_List *tmp = NULL;
+        E_Client *ec;
+
+        if (!e_comp->layers[i].clients) continue;
+        /* Make temporary list as e_client_res_change_geometry_restore
+         * rearranges the order. */
+        EINA_INLIST_FOREACH(e_comp->layers[i].clients, ec)
+          {
+             if (!e_client_util_ignored_get(ec))
+               tmp = eina_list_append(tmp, ec);
+          }
+
+        EINA_LIST_FREE(tmp, ec)
+          {
+             e_client_res_change_geometry_save(ec);
+             e_client_res_change_geometry_restore(ec);
+          }
+     }
    if (!changed) return;
    if (!starting)
      {
@@ -553,27 +573,6 @@ e_comp_canvas_update(void)
                }
           }
         e_comp_canvas_zone_update(zone);
-     }
-
-   for (i = 0; i < 11; i++)
-     {
-        Eina_List *tmp = NULL;
-        E_Client *ec;
-
-        if (!e_comp->layers[i].clients) continue;
-        /* Make temporary list as e_client_res_change_geometry_restore
-         * rearranges the order. */
-        EINA_INLIST_FOREACH(e_comp->layers[i].clients, ec)
-          {
-             if (!e_client_util_ignored_get(ec))
-               tmp = eina_list_append(tmp, ec);
-          }
-
-        EINA_LIST_FREE(tmp, ec)
-          {
-             e_client_res_change_geometry_save(ec);
-             e_client_res_change_geometry_restore(ec);
-          }
      }
 }
 
