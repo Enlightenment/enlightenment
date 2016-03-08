@@ -127,14 +127,11 @@ _bryce_position(Bryce *b, int w, int h, int *nx, int *ny)
         
         zone = e_comp_zone_number_get(b->zone);
         ox = zone->x, oy = zone->y, ow = zone->w, oh = zone->h;
-        e_comp_object_util_center_pos_get(b->bryce, &x, &y);
      }
    else
-     {
-        evas_object_geometry_get(b->parent, &ox, &oy, &ow, &oh);
-        x = ox + (ow - w) / 2;
-        y = oy + (oh - h) / 2;
-     }
+     evas_object_geometry_get(b->parent, &ox, &oy, &ow, &oh);
+   x = ox + (ow - w) / 2;
+   y = oy + (oh - h) / 2;
    an = e_gadget_site_anchor_get(b->site);
    if (an & E_GADGET_SITE_ANCHOR_LEFT)
      x = ox;
