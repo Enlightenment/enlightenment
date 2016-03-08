@@ -944,6 +944,13 @@ e_bryce_site_get(Evas_Object *bryce)
    return b->site;
 }
 
+E_API Eina_Bool
+e_bryce_autosize_get(Evas_Object *bryce)
+{
+   BRYCE_GET(bryce);
+   return b->autosize;
+}
+
 E_API void
 e_bryce_autosize_set(Evas_Object *bryce, Eina_Bool set)
 {
@@ -955,6 +962,13 @@ e_bryce_autosize_set(Evas_Object *bryce, Eina_Bool set)
 
    e_config_save_queue();
    _bryce_autosize(b);
+}
+
+E_API Eina_Bool
+e_bryce_autohide_get(Evas_Object *bryce)
+{
+   BRYCE_GET(bryce);
+   return b->autohide;
 }
 
 E_API void

@@ -134,13 +134,14 @@ _editor_style_click(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *eve
    const char *g;
    char style[1024] = {0};
    Bryce_Info *bi;
-   Evas_Object *ly, *box, *ck, *button;
+   Evas_Object *ly, *box, *ck, *button, *bryce;
 
    ly = elm_object_part_content_get(obj, "e.swallow.content");
    elm_layout_file_get(ly, NULL, &g);
    g += (sizeof("e/bryce/") - 1);
    memcpy(style, g, MIN(sizeof(style) - 1, strchr(g, '/') - g));
 
+   bryce = evas_object_data_get(data, "__bryce_editor_bryce");
    bi = evas_object_data_get(data, "__bryce_info");
    bi->style = eina_stringshare_add(style);
    e_theme_edje_object_set(data, NULL, "e/bryce/editor/finish");
@@ -149,24 +150,42 @@ _editor_style_click(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *eve
    elm_box_padding_set(box, 0, 20 * e_scale);
 
    ck = elm_check_add(box);
+   elm_object_focus_allow_set(ck, 0);
    E_ALIGN(ck, 0, 0.5);
    evas_object_show(ck);
    elm_object_text_set(ck, _("Automatically size based on contents"));
    evas_object_smart_callback_add(ck, "changed", _editor_autosize, bi);
+   if (bryce)
+     {
+        bi->autosize = e_bryce_autosize_get(bryce);
+        elm_check_state_set(ck, bi->autosize);
+     }
    elm_box_pack_end(box, ck);
 
    ck = elm_check_add(box);
+   elm_object_focus_allow_set(ck, 0);
    E_ALIGN(ck, 0, 0.5);
    evas_object_show(ck);
    elm_object_text_set(ck, _("Automatically hide"));
    evas_object_smart_callback_add(ck, "changed", _editor_autohide, bi);
+   if (bryce)
+     {
+        bi->autohide = e_bryce_autohide_get(bryce);
+        elm_check_state_set(ck, bi->autohide);
+     }
    elm_box_pack_end(box, ck);
 
    ck = elm_check_add(box);
+   elm_object_focus_allow_set(ck, 0);
    E_ALIGN(ck, 0, 0.5);
    evas_object_show(ck);
    elm_object_text_set(ck, _("Do not stack above windows"));
    evas_object_smart_callback_add(ck, "changed", _editor_stacking, bi);
+   if (bryce)
+     {
+        bi->stack_under = evas_object_layer_get(bryce) == E_LAYER_DESKTOP;
+        elm_check_state_set(ck, bi->stack_under);
+     }
    elm_box_pack_end(box, ck);
 
    //ck = elm_check_add(box);
