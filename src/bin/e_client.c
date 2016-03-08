@@ -1460,6 +1460,8 @@ _e_client_cb_evas_move(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UN
    if (ec->moving || (ecmove == ec))
      _e_client_hook_call(E_CLIENT_HOOK_MOVE_UPDATE, ec);
    e_remember_update(ec);
+   if (ec->fullscreen || (ec->maximized & E_MAXIMIZE_DIRECTION))
+     e_hints_window_size_set(ec);
    ec->pre_cb.x = x; ec->pre_cb.y = y;
 }
 
@@ -1500,6 +1502,8 @@ _e_client_cb_evas_resize(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_
    if (e_client_util_resizing_get(ec) || (ecresize == ec))
      _e_client_hook_call(E_CLIENT_HOOK_RESIZE_UPDATE, ec);
    e_remember_update(ec);
+   if (ec->fullscreen || (ec->maximized & E_MAXIMIZE_DIRECTION))
+     e_hints_window_size_set(ec);
    ec->pre_cb.w = w; ec->pre_cb.h = h;
 }
 
@@ -3755,7 +3759,6 @@ e_client_maximize(E_Client *ec, E_Maximize max)
      }
 
    ec->saved.zone = ec->zone->num;
-   e_hints_window_size_set(ec);
 
    _e_client_maximize(ec, max);
 
@@ -3875,7 +3878,6 @@ e_client_unmaximize(E_Client *ec, E_Maximize max)
                   evas_object_smart_callback_call(ec->frame, "unmaximize", NULL);
                   e_client_resize_limit(ec, &w, &h);
                   e_client_util_move_resize_without_frame(ec, x, y, w, h);
-                  e_hints_window_size_set(ec);
                }
              if (vert)
                ec->saved.h = ec->saved.y = 0;
@@ -3936,7 +3938,6 @@ e_client_fullscreen(E_Client *ec, E_Fullscreen policy)
         ec->saved.w = w;
         ec->saved.h = h;
      }
-   e_hints_window_size_set(ec);
 
    ec->saved.layer = ec->layer;
    if (!e_config->allow_above_fullscreen)
