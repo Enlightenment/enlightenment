@@ -3543,6 +3543,7 @@ e_comp_object_native_surface_set(Evas_Object *obj, Eina_Bool set)
    EINA_SAFETY_ON_NULL_RETURN(cw->ec);
    if (cw->ec->input_only) return;
    set = !!set;
+   if ((!set) && (!cw->native)) return;
 
    if (set)
      {
