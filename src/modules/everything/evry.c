@@ -989,6 +989,8 @@ static void
 _evry_window_free(Evry_Window *win)
 {
    evas_event_freeze(win->evas);
+   evas_object_event_callback_del(e_win_client_get(win->ewin)->frame,
+     EVAS_CALLBACK_SHOW, (Evas_Object_Event_Cb)_evry_cb_show);
    evas_object_del(win->ewin);
    free(win);
 }
