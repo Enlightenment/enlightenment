@@ -367,7 +367,13 @@ e_modapi_init(E_Module *m)
      return NULL;
 
 #ifdef HAVE_PULSE
+# ifdef EFL_VERSION_1_18
+   void *tmp;
+   eo_add(&tmp, ECORE_AUDIO_OUT_PULSE_CLASS, NULL);
+   eo_del(tmp);
+# else
    eo_del(eo_add(ECORE_AUDIO_OUT_PULSE_CLASS, NULL));
+# endif
 #endif
 
    /* record wayland display */
