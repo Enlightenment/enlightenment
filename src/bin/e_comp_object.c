@@ -3303,7 +3303,8 @@ e_comp_object_damage(Evas_Object *obj, int x, int y, int w, int h)
    if (cw->updates_full)
      {
         RENDER_DEBUG("IGNORED %p: %d,%d %dx%d", cw->ec, x, y, w, h);
-        e_comp_object_render_update_add(obj);
+        if (!e_object_is_del(E_OBJECT(cw->ec)))
+          e_comp_object_render_update_add(obj);
         return;
      }
    /* clip rect to client surface */
