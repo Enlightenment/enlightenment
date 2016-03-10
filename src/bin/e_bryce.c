@@ -460,6 +460,7 @@ _bryce_moveresize(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *event
              zone = lz;
           }
      }
+   if (!zone) return;
    if (b->zone != zone->num)
      e_config_save_queue();
    b->zone = zone->num;
