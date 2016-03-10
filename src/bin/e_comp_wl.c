@@ -140,9 +140,13 @@ _e_comp_wl_evas_cb_hide(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj EIN
 
    if (!e_object_is_del(E_OBJECT(ec))) return;
 
-   e_comp_object_dirty(ec->frame);
    e_comp_object_damage(ec->frame, 0, 0, ec->w, ec->h);
-   if (!e_comp_object_render(ec->frame)) return;
+   e_comp_object_dirty(ec->frame);
+   if (!e_comp_object_render(ec->frame))
+     {
+        e_object_unref(E_OBJECT(ec));
+        return;
+     }
    if (!ec->on_post_updates)
      {
         ec->on_post_updates = EINA_TRUE;
