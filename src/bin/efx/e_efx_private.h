@@ -98,11 +98,12 @@ void e_efx_fade_reclip(void *efd);
 
 #define E_EFX_QUEUE_CHECK(X) do \
    { \
-      Eina_Bool run; \
       E_EFX *ee = (X)->e; \
-      run = e_efx_queue_complete((X)->e, (X)); \
+      evas_object_ref(ee->obj); \
       if ((X)->cb) (X)->cb((X)->data, &(X)->e->map_data, (X)->e->obj); \
-      if (run) e_efx_queue_process(ee); \
+      if (e_efx_queue_complete((X)->e, (X))) \
+        e_efx_queue_process(ee); \
+      evas_object_unref(ee->obj); \
    } while (0)
 Eina_Bool e_efx_queue_complete(E_EFX *e, void *effect_data);
 void e_efx_queue_process(E_EFX *e);
