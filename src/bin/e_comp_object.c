@@ -304,6 +304,7 @@ _e_comp_object_updates_init(E_Comp_Object *cw)
    pw = cw->ec->client.w, ph = cw->ec->client.h;
    if ((!pw) || (!ph))
      e_pixmap_size_get(cw->ec->pixmap, &pw, &ph);
+   if ((!pw) || (!ph)) return;
    cw->updates = eina_tiler_new(pw, ph);
    if (cw->updates)
      eina_tiler_tile_size_set(cw->updates, 1, 1);
