@@ -71,7 +71,7 @@ _e_elm_win_trap_show(void *data, Evas_Object *o)
         E_Client *ec;
         Ecore_Window win;
 #ifdef HAVE_WAYLAND
-        uintptr_t wl_win_id;
+        int64_t wl_win_id;
 #endif
         E_Pixmap_Type type = E_PIXMAP_TYPE_X;
 
