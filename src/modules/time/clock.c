@@ -178,7 +178,7 @@ _clock_timer(void *d EINA_UNUSED)
    Eina_List *l;
    Instance *inst;
    Eina_Bool seconds = EINA_FALSE;
-   int sec;
+   int sec = 0;
    char buf[128];
 
    EINA_LIST_FOREACH(clock_instances, l, inst)

@@ -483,7 +483,7 @@ config_clock(Config_Item *ci)
      {
         E_ALIGN(o, 0, 0.5);
         E_WEIGHT(o, 0, 0);
-        o = _config_date_custom(ci, bx);
+        _config_date_custom(ci, bx);
      }
    else
      {
