@@ -238,7 +238,7 @@ _e_pixmap_find(E_Pixmap_Type type, va_list *l)
    Ecore_X_Window xwin;
 #endif
 #ifdef HAVE_WAYLAND
-   intptr_t id;
+   int64_t id;
 #endif
    E_Pixmap *cp;
    
