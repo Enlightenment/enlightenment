@@ -4173,7 +4173,7 @@ _e_comp_object_autoclose_del(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_O
 E_API Eina_Bool
 e_comp_object_util_autoclose_on_escape(void *d EINA_UNUSED, Ecore_Event_Key *ev)
 {
-   return strcmp(ev->key, "Escape");
+   return !!strcmp(ev->key, "Escape");
 }
 
 E_API void

@@ -507,7 +507,7 @@ _wireless_edit_key(void *d EINA_UNUSED, Ecore_Event_Key *ev)
         _wireless_edit_send();
         return EINA_FALSE;
      }
-   return strcmp(ev->key, "Escape");
+   return !!strcmp(ev->key, "Escape");
 }
 
 static void
