@@ -200,7 +200,6 @@ _e_comp_wl_evas_cb_mouse_out(void *data, Evas *evas EINA_UNUSED, Evas_Object *ob
    uint32_t serial;
 
    if (!(ec = data)) return;
-   if (e_object_is_del(E_OBJECT(ec))) return;
    if (ec->cur_mouse_action) return;
    /* FIXME? this is a hack to just reset the cursor whenever we mouse out. not sure if accurate */
    {
@@ -519,14 +518,10 @@ _e_comp_wl_evas_cb_focus_in(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj
 static void
 _e_comp_wl_evas_cb_focus_out(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
 {
-   E_Client *ec;
+   E_Client *ec = data;
    struct wl_resource *res;
    uint32_t serial, *k;
-   Eina_List *l, *ll;
    double t;
-
-   if (!(ec = data)) return;
-   if (e_object_is_del(E_OBJECT(ec))) return;
 
    E_FREE_FUNC(ec->comp_data->on_focus_timer, ecore_timer_del);
 
@@ -539,16 +534,18 @@ _e_comp_wl_evas_cb_focus_out(void *data, Evas *evas EINA_UNUSED, Evas_Object *ob
    if (!eina_list_count(e_comp_wl->kbd.resources)) return;
 
    /* send keyboard_leave to all keyboard resources */
-   serial = wl_display_next_serial(e_comp_wl->wl.disp);
-   t = ecore_time_unix_get();
-   EINA_LIST_FOREACH_SAFE(e_comp_wl->kbd.focused, l, ll, res)
+   if (!e_object_is_del(data))
      {
+        serial = wl_display_next_serial(e_comp_wl->wl.disp);
+        t = ecore_time_unix_get();
+     }
+   EINA_LIST_FREE(e_comp_wl->kbd.focused, res)
+     {
+        if (e_object_is_del(data)) continue;
         wl_array_for_each(k, &e_comp_wl->kbd.keys)
           wl_keyboard_send_key(res, serial, t,
                                *k, WL_KEYBOARD_KEY_STATE_RELEASED);
         wl_keyboard_send_leave(res, serial, ec->comp_data->surface);
-        e_comp_wl->kbd.focused =
-          eina_list_remove_list(e_comp_wl->kbd.focused, l);
      }
 }
 
@@ -2244,9 +2241,6 @@ _e_comp_wl_client_cb_del(void *data EINA_UNUSED, E_Client *ec)
 
    /* make sure this is a wayland client */
    if (e_pixmap_type_get(ec->pixmap) != E_PIXMAP_TYPE_WL) return;
-
-   /* remove focus timer */
-   E_FREE_FUNC(ec->comp_data->on_focus_timer, ecore_timer_del);
 
    /* remove sub list */
    EINA_LIST_FREE(ec->comp_data->sub.list, subc)
