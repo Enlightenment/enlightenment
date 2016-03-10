@@ -1370,7 +1370,7 @@ e_gadget_type_del(const char *type)
    E_Gadget_Config *zgc;
    char buf[1024];
 
-   strncpy(buf, type, sizeof(buf));
+   strncpy(buf, type, sizeof(buf) - 1);
 
    if (!gadget_types) return;
 
