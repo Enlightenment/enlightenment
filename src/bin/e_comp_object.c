@@ -1680,7 +1680,10 @@ _e_comp_intercept_focus(void *data, Evas_Object *obj, Eina_Bool focus)
      }
    if (focus && ec->lock_focus_out) return;
    if (e_object_is_del(E_OBJECT(ec)) && focus)
-     CRI("CAN'T FOCUS DELETED CLIENT!");
+     {
+        CRI("CAN'T FOCUS DELETED CLIENT!");
+        return;
+     }
 
    /* filter focus setting based on current state */
    if (focus)
