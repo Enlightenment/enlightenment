@@ -516,37 +516,49 @@ _e_comp_wl_evas_cb_focus_in(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj
 }
 
 static void
+_e_comp_wl_keyboard_leave(E_Client *ec)
+{
+   struct wl_resource *res;
+   struct wl_client *wc;
+   Eina_List *l, *ll;
+   uint32_t serial, *k;
+   double t;
+
+   if (!eina_list_count(e_comp_wl->kbd.resources)) return;
+   if (!ec->comp_data) return;
+   if (!ec->comp_data->surface) return;
+
+   wc = wl_resource_get_client(ec->comp_data->surface);
+   if (!e_object_is_del(E_OBJECT(ec)))
+     {
+        serial = wl_display_next_serial(e_comp_wl->wl.disp);
+        t = ecore_time_unix_get();
+     }
+   EINA_LIST_FOREACH_SAFE(e_comp_wl->kbd.focused, l, ll, res)
+     {
+        if (wl_resource_get_client(res) != wc) continue;
+        if (!e_object_is_del(E_OBJECT(ec)))
+          {
+             wl_array_for_each(k, &e_comp_wl->kbd.keys)
+               wl_keyboard_send_key(res, serial, t,
+                                    *k, WL_KEYBOARD_KEY_STATE_RELEASED);
+             wl_keyboard_send_leave(res, serial, ec->comp_data->surface);
+          }
+        e_comp_wl->kbd.focused = eina_list_remove_list(e_comp_wl->kbd.focused, l);
+     }
+}
+
+static void
 _e_comp_wl_evas_cb_focus_out(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
 {
    E_Client *ec = data;
-   struct wl_resource *res;
-   uint32_t serial, *k;
-   double t;
 
    E_FREE_FUNC(ec->comp_data->on_focus_timer, ecore_timer_del);
 
    /* lower client priority */
    if (!e_object_is_del(data))
      _e_comp_wl_client_priority_normal(ec);
-
-   if (!ec->comp_data->surface) return;
-
-   if (!eina_list_count(e_comp_wl->kbd.resources)) return;
-
-   /* send keyboard_leave to all keyboard resources */
-   if (!e_object_is_del(data))
-     {
-        serial = wl_display_next_serial(e_comp_wl->wl.disp);
-        t = ecore_time_unix_get();
-     }
-   EINA_LIST_FREE(e_comp_wl->kbd.focused, res)
-     {
-        if (e_object_is_del(data)) continue;
-        wl_array_for_each(k, &e_comp_wl->kbd.keys)
-          wl_keyboard_send_key(res, serial, t,
-                               *k, WL_KEYBOARD_KEY_STATE_RELEASED);
-        wl_keyboard_send_leave(res, serial, ec->comp_data->surface);
-     }
+   _e_comp_wl_keyboard_leave(ec);
 }
 
 static void
@@ -2251,6 +2263,7 @@ _e_comp_wl_client_cb_del(void *data EINA_UNUSED, E_Client *ec)
         ec->parent->lock_close = EINA_FALSE;
         ec->parent->modal = NULL;
      }
+   _e_comp_wl_keyboard_leave(ec);
 
    wl_signal_emit(&ec->comp_data->destroy_signal, &ec->comp_data->surface);
 
