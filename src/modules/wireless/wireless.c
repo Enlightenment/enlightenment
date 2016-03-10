@@ -380,6 +380,7 @@ _wireless_array_notequal(Eina_Array *a, Eina_Array *b)
    unsigned int i;
 
    if ((!!a) != (!!b)) return EINA_TRUE;
+   if ((!a) && (!b)) return EINA_FALSE;
    if (eina_array_count(a) != eina_array_count(b)) return EINA_TRUE;
    for (i = 0; i < eina_array_count(a); i++)
      if (eina_array_data_get(a, i) != eina_array_data_get(b, i)) return EINA_TRUE;

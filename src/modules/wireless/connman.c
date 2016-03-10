@@ -1110,7 +1110,7 @@ _connman_dbus_dict_append_array(Eldbus_Message_Iter *array, const char *key, Ein
    variant = eldbus_message_iter_container_new(dict, 'v', "as");
    array2 = eldbus_message_iter_container_new(variant, 'a', "s");
    EINA_ARRAY_ITER_NEXT(val, i, str, it)
-     eldbus_message_iter_basic_append(array2, 's', str ?: "");
+     eldbus_message_iter_basic_append(array2, 's', str);
    eldbus_message_iter_container_close(variant, array2);
    eldbus_message_iter_container_close(dict, variant);
    eldbus_message_iter_container_close(array, dict);
