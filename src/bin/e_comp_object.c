@@ -1124,6 +1124,7 @@ _e_comp_intercept_resize(void *data, Evas_Object *obj, int w, int h)
        (!e_pixmap_size_get(cw->ec->pixmap, &pw, &ph))))
      {
         if (e_comp->comp_type != E_PIXMAP_TYPE_X) return;
+        if (e_object_is_del(E_OBJECT(cw->ec))) return;
         /* client can't be resized if its pixmap isn't usable, try again */
         e_pixmap_dirty(cw->ec->pixmap);
         e_comp_object_render_update_add(obj);
