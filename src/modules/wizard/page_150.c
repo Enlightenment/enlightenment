@@ -1,88 +1,35 @@
 /* Ask about compositing */
 #include "e_wizard.h"
+#include <Evas_GL.h>
 
 static int do_gl = 0;
 static int do_vsync = 0;
 static int disable_effects = 0;
-static Eina_Bool gl_avail = EINA_FALSE;
 
-static int
-match_file_glob(FILE *f, const char *globbing)
-{
-   char buf[32768];
-   int found = 0;
-
-   while (fgets(buf, sizeof(buf), f))
-     {
-        if (e_util_glob_match(buf, globbing))
-          {
-             found = 1;
-             break;
-          }
-     }
-   fclose(f);
-   return found;
-}
-
-static int
-match_xorg_log(const char *globbing)
-{
-   FILE *f;
-   int i;
-   char buf[PATH_MAX];
-
-   for (i = 0; i < 5; i++)
-     {
-        snprintf(buf, sizeof(buf), "/var/log/Xorg.%i.log", i);
-        f = fopen(buf, "rb");
-        if (f)
-          {
-             if (match_file_glob(f, globbing)) return 1;
-          }
-     }
-   return 0;
-}
 
 E_API int
 wizard_page_show(E_Wizard_Page *pg)
 {
    Evas_Object *o, *of, *ob;
-   Ecore_Evas *ee;
-
-#ifndef HAVE_WAYLAND_ONLY
-   Ecore_X_Window_Attributes att;
-
-   if (!ecore_x_composite_query()) return 0;
-   if (!ecore_x_damage_query()) return 0;
-
-   memset((&att), 0, sizeof(Ecore_X_Window_Attributes));
-   ecore_x_window_attributes_get(ecore_x_window_root_first_get(), &att);
-   if ((att.depth <= 8)) return 0;
-
-   gl_avail = ecore_evas_engine_type_supported_get(ECORE_EVAS_ENGINE_OPENGL_X11);
-#endif
 
    o = e_widget_list_add(pg->evas, 1, 0);
    e_wizard_title_set(_("Compositing"));
 
 
    of = e_widget_framelist_add(pg->evas, _("Settings"), 0);
-   if (gl_avail)
+   if (e_comp->gl)
      {
-        ee = ecore_evas_gl_x11_new(NULL, 0, 0, 0, 320, 240);
-        if (ee)
+        Evas_GL *gl;
+
+        gl = evas_gl_new(e_comp->evas);
+        if (gl)
           {
-             ecore_evas_free(ee);
-             if (
-               (match_xorg_log("*(II)*NVIDIA*: Creating default Display*")) ||
-               (match_xorg_log("*(II)*intel*: Creating default Display*")) ||
-               (match_xorg_log("*(II)*NOUVEAU*: Creating default Display*")) ||
-               (match_xorg_log("*(II)*RADEON*: Creating default Display*"))
-               )
-               {
-                  do_gl = 1;
-                  do_vsync = 1;
-               }
+             const char *str;
+             Evas_GL_API *glapi = evas_gl_api_get(gl);
+             str = (char*)glapi->glGetString(GL_RENDERER);
+             if (str && (!strcasestr(str, "llvmpipe")))
+               do_gl = do_vsync = 1;
+             evas_gl_free(gl);
           }
         ob = e_widget_check_add(pg->evas, _("Hardware Accelerated (OpenGL)"), &(do_gl));
         e_widget_framelist_object_append(of, ob);
