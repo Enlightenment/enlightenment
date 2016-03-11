@@ -165,7 +165,6 @@ e_modapi_init(E_Module *m)
 
    appmenu_module = m;
 
-   eldbus_init();
    ctxt->conn = eldbus_connection_get(ELDBUS_CONNECTION_TYPE_SESSION);
 
    event = ecore_event_handler_add(E_EVENT_CLIENT_FOCUS_IN, cb_focus_in, ctxt);
@@ -200,7 +199,6 @@ e_modapi_shutdown(E_Module *m)
 
    appmenu_dbus_registrar_server_shutdown(ctxt);
    eldbus_connection_unref(ctxt->conn);
-   eldbus_shutdown();
    free(ctxt);
    return 1;
 }

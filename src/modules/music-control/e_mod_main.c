@@ -359,7 +359,6 @@ cb_name_owner_has(void *data, const Eldbus_Message *msg,
 Eina_Bool
 music_control_dbus_init(E_Music_Control_Module_Context *ctxt, const char *bus)
 {
-   eldbus_init();
    ctxt->conn = eldbus_connection_get(ELDBUS_CONNECTION_TYPE_SESSION);
    EINA_SAFETY_ON_NULL_RETURN_VAL(ctxt->conn, EINA_FALSE);
 
@@ -427,7 +426,6 @@ e_modapi_shutdown(E_Module *m EINA_UNUSED)
    media_player2_player_proxy_unref(ctxt->mpris2_player);
    mpris_media_player2_proxy_unref(ctxt->mrpis2);
    eldbus_connection_unref(ctxt->conn);
-   eldbus_shutdown();
 
    e_gadcon_provider_unregister(&_gc_class);
 

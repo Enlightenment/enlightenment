@@ -310,7 +310,6 @@ _battery_upower_start(void)
 {
    Eldbus_Object *obj;
 
-   eldbus_init();
    conn = eldbus_connection_get(ELDBUS_CONNECTION_TYPE_SYSTEM);
    EINA_SAFETY_ON_NULL_RETURN_VAL(conn, 0);
 
@@ -348,5 +347,4 @@ _battery_upower_stop(void)
    eldbus_proxy_unref(upower_proxy);
    eldbus_object_unref(obj);
    eldbus_connection_unref(conn);
-   eldbus_shutdown();
 }
