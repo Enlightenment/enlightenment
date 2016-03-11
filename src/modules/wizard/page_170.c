@@ -1,7 +1,7 @@
 /* Ask about updates checking */
 #include "e_wizard.h"
 
-static int do_up = 1;
+static Eina_Bool do_up = 1;
 /*
 E_API int
 wizard_page_init(E_Wizard_Page *pg EINA_UNUSED, Eina_Bool *need_xdg_desktops EINA_UNUSED, Eina_Bool *need_xdg_icons EINA_UNUSED)
@@ -16,19 +16,23 @@ wizard_page_shutdown(E_Wizard_Page *pg EINA_UNUSED)
 }
 */
 E_API int
-wizard_page_show(E_Wizard_Page *pg)
+wizard_page_show(E_Wizard_Page *pg EINA_UNUSED)
 {
    Evas_Object *o, *of, *ob;
 
-   o = e_widget_list_add(pg->evas, 1, 0);
    e_wizard_title_set(_("Updates"));
 
-   of = e_widget_framelist_add(pg->evas, _("Check for available updates"), 0);
+   of = elm_frame_add(e_comp->elm);
+   elm_object_text_set(of, _("Check for available updates"));
 
-   ob = e_widget_textblock_add(pg->evas);
-   e_widget_size_min_set(ob, 260 * e_scale, 280 * e_scale);
-   e_widget_textblock_markup_set
-     (ob,
+   o = elm_box_add(of);
+   elm_object_content_set(of, o);
+
+   ob = elm_label_add(of);
+   E_ALIGN(ob, 0, 0.5);
+   evas_object_show(ob);
+   elm_box_pack_end(o, ob);
+   elm_object_text_set(ob,
      _("Enlightenment can check for new<br>"
        "versions, updates, security and<br>"
        "bugfixes, as well as available add-ons.<br>"
@@ -48,16 +52,16 @@ wizard_page_show(E_Wizard_Page *pg)
        "with bugs."
        )
      );
-   e_widget_framelist_object_append(of, ob);
-
-   ob = e_widget_check_add(pg->evas, _("Enable update checking"), &(do_up));
-   e_widget_framelist_object_append(of, ob);
-
-   e_widget_list_object_append(o, of, 0, 0, 0.5);
+   ob = elm_check_add(o);
+   E_ALIGN(ob, 0, 0.5);
+   evas_object_show(ob);
+   elm_object_text_set(ob, _("Enable update checking"));
+   elm_check_state_pointer_set(ob, &do_up);
+   elm_box_pack_end(o, ob);
 
    evas_object_show(of);
 
-   e_wizard_page_show(o);
+   e_wizard_page_show(of);
    return 1; /* 1 == show ui, and wait for user, 0 == just continue */
 }
 

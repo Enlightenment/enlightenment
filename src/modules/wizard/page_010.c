@@ -149,75 +149,94 @@ wizard_page_shutdown(E_Wizard_Page *pg EINA_UNUSED)
    return 1;
 }
 
-E_API int
-wizard_page_show(E_Wizard_Page *pg)
+static Evas_Object *
+_lang_content_get(E_Intl_Pair *pair, Evas_Object *obj, const char *part)
 {
-   Evas_Object *o, *of, *ob, *ic;
-   Eina_List *l;
-   int i, sel = -1;
    char buf[PATH_MAX];
+   Evas_Object *ic;
 
-   o = e_widget_list_add(pg->evas, 1, 0);
-   e_wizard_title_set(_("Language"));
-   of = e_widget_framelist_add(pg->evas, _("Select one"), 0);
-   ob = e_widget_ilist_add(pg->evas,10 * e_scale, 10 * e_scale, &lang);
-   e_widget_size_min_set(ob, 140 * e_scale, 140 * e_scale);
-
-   e_widget_ilist_freeze(ob);
-
-   e_prefix_data_snprintf(buf, sizeof(buf), "data/flags/%s", "lang-system.png");
-   ic = e_util_icon_add(buf, pg->evas);
-   e_widget_ilist_append(ob, ic, _("System Default"),
-                         NULL, NULL, NULL);
-   for (i = 1, l = blang_list; l; l = l->next, i++)
-     {
-        E_Intl_Pair *pair;
-
-        pair = l->data;
-        if (pair->locale_icon)
-          {
-             e_prefix_data_snprintf(buf, sizeof(buf), "data/flags/%s", pair->locale_icon);
-             ic = e_util_icon_add(buf, pg->evas);
-          }
-        else
-          ic = NULL;
-        if (ic)
-          evas_object_size_hint_aspect_set
-          (ic, EVAS_ASPECT_CONTROL_VERTICAL, 20, 10);
-        if (e_intl_language_get())
-          {
-             if (!strcmp(pair->locale_key, e_intl_language_get()))
-               {
-                  snprintf(buf, sizeof(buf), "System Default [%s]", pair->locale_translation);
-                  e_widget_ilist_nth_label_set(ob, 0, _(buf));
-                  e_widget_ilist_nth_icon_set(ob, 0, ic);
-                  sel = 0;
-               }
-            else
-              e_widget_ilist_append(ob, ic, _(pair->locale_translation),
-                                    NULL, NULL, pair->locale_key);
-          }
-        else
-          e_widget_ilist_append(ob, ic, _(pair->locale_translation),
-                                NULL, NULL, pair->locale_key);
-     }
-   e_widget_ilist_go(ob);
-   e_widget_ilist_thaw(ob);
-   if (sel >= 0)
-     {
-        e_widget_ilist_selected_set(ob, sel);
-        e_widget_ilist_nth_show(ob, sel, 0);
-     }
-   else if (e_widget_ilist_count(ob) == 2) // default and one other
-     e_widget_ilist_selected_set(ob, 1);
+   if (!eina_streq(part, "elm.swallow.icon")) return NULL;
+   if (pair && (!pair->locale_icon)) return NULL;
+   if (pair)
+     e_prefix_data_snprintf(buf, sizeof(buf), "data/flags/%s", pair->locale_icon);
    else
-     e_widget_ilist_selected_set(ob, 0);
+     e_prefix_data_snprintf(buf, sizeof(buf), "data/flags/%s", "lang-system.png");
+   
+   ic = elm_icon_add(obj);
+   elm_image_file_set(ic, buf, NULL);
+   evas_object_size_hint_aspect_set(ic, EVAS_ASPECT_CONTROL_VERTICAL, 20, 10);
+   return ic;
+}
 
-   e_widget_framelist_object_append(of, ob);
-   e_widget_list_object_append(o, of, 1, 1, 0.5);
+static char *
+_lang_text_get(E_Intl_Pair *pair, Evas_Object *obj EINA_UNUSED, const char *part)
+{
+   char buf[4096];
+
+   if (!eina_streq(part, "elm.text")) return NULL;
+   if (!pair)
+     return strdup(_("System Default"));
+
+   if ((!e_intl_language_get()) || (!eina_streq(pair->locale_key, e_intl_language_get())))
+     return strdup(_(pair->locale_translation));
+
+   snprintf(buf, sizeof(buf), "System Default [%s]", pair->locale_translation);
+   return strdup(buf);
+}
+
+static void
+_lang_select(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   E_Intl_Pair *pair = data;
+
+   lang = pair ? pair->locale_key : NULL;
+}
+
+E_API int
+wizard_page_show(E_Wizard_Page *pg EINA_UNUSED)
+{
+   Evas_Object *of, *ob;
+   Eina_List *l;
+   E_Intl_Pair *pair;
+   Eina_Bool found = EINA_FALSE;
+   static Elm_Genlist_Item_Class itc =
+   {
+      .item_style = "default",
+      .func =
+      {
+         .content_get = (Elm_Genlist_Item_Content_Get_Cb)_lang_content_get,
+         .text_get = (Elm_Genlist_Item_Text_Get_Cb)_lang_text_get,
+      },
+      .version = ELM_GENLIST_ITEM_CLASS_VERSION
+   };
+
+   e_wizard_title_set(_("Language"));
+   of = elm_frame_add(e_comp->elm);
+   elm_object_text_set(of, _("Select one"));
+   ob = elm_genlist_add(of);
+   elm_genlist_homogeneous_set(ob, 1);
+   elm_genlist_mode_set(ob, ELM_LIST_COMPRESS);
+   elm_scroller_bounce_set(ob, 0, 0);
+   elm_object_content_set(of, ob);
+   EINA_LIST_FOREACH(blang_list, l, pair)
+     {
+        if (e_intl_language_get() && eina_streq(pair->locale_key, e_intl_language_get()))
+          found = 1;
+        elm_genlist_item_append(ob, &itc, pair, NULL, 0, _lang_select, pair);
+     }
+   if (!found)
+     elm_genlist_item_prepend(ob, &itc, NULL, NULL, 0, _lang_select, NULL);
+   if ((!found) && (elm_genlist_items_count(ob) == 2)) // default and one other
+     elm_genlist_item_selected_set(elm_genlist_last_item_get(ob), 1);
+   else
+     elm_genlist_item_selected_set(elm_genlist_first_item_get(ob), 1);
+
    evas_object_show(ob);
    evas_object_show(of);
-   e_wizard_page_show(o);
+   E_EXPAND(of);
+   E_FILL(of);
+   elm_genlist_item_show(elm_genlist_selected_item_get(ob), ELM_GENLIST_ITEM_SCROLLTO_MIDDLE);
+   e_wizard_page_show(of);
 //   pg->data = o;
    return 1; /* 1 == show ui, and wait for user, 0 == just continue */
 }

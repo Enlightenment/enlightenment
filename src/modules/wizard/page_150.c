@@ -2,21 +2,37 @@
 #include "e_wizard.h"
 #include <Evas_GL.h>
 
-static int do_gl = 0;
-static int do_vsync = 0;
-static int disable_effects = 0;
+static Eina_Bool do_gl = 0;
+static Eina_Bool do_vsync = 0;
+static Eina_Bool disable_effects = 0;
 
+
+static void
+check_add(Evas_Object *box, const char *txt, Eina_Bool *val)
+{
+   Evas_Object *ck;
+
+   ck = elm_check_add(box);
+   evas_object_show(ck);
+   E_ALIGN(ck, 0, 0.5);
+   elm_object_text_set(ck, txt);
+   elm_check_state_pointer_set(ck, val);
+   elm_box_pack_end(box, ck);
+}
 
 E_API int
-wizard_page_show(E_Wizard_Page *pg)
+wizard_page_show(E_Wizard_Page *pg EINA_UNUSED)
 {
-   Evas_Object *o, *of, *ob;
+   Evas_Object *o, *of;
 
-   o = e_widget_list_add(pg->evas, 1, 0);
    e_wizard_title_set(_("Compositing"));
 
+   of = elm_frame_add(e_comp->elm);
+   elm_object_text_set(of, _("Settings"));
 
-   of = e_widget_framelist_add(pg->evas, _("Settings"), 0);
+   o = elm_box_add(of);
+   elm_box_homogeneous_set(o, 1);
+   elm_object_content_set(of, o);
    if (e_comp->gl)
      {
         Evas_GL *gl;
@@ -31,18 +47,13 @@ wizard_page_show(E_Wizard_Page *pg)
                do_gl = do_vsync = 1;
              evas_gl_free(gl);
           }
-        ob = e_widget_check_add(pg->evas, _("Hardware Accelerated (OpenGL)"), &(do_gl));
-        e_widget_framelist_object_append(of, ob);
-
-        ob = e_widget_check_add(pg->evas, _("Tear-free Rendering (OpenGL only)"), &(do_vsync));
-        e_widget_framelist_object_append(of, ob);
+        check_add(o, _("Hardware Accelerated (OpenGL)"), &do_gl);
+        check_add(o, _("Tear-free Rendering (OpenGL only)"), &do_vsync);
      }
-   ob = e_widget_check_add(pg->evas, _("Disable composite effects"), &(disable_effects));
-   e_widget_framelist_object_append(of, ob);
+   check_add(o, _("Disable composite effects"), &disable_effects);
 
-   e_widget_list_object_append(o, of, 0, 0, 0.5);
    evas_object_show(of);
-   e_wizard_page_show(o);
+   e_wizard_page_show(of);
 
    return 1; /* 1 == show ui, and wait for user, 0 == just continue */
 }

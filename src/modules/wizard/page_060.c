@@ -16,31 +16,37 @@ wizard_page_shutdown(E_Wizard_Page *pg EINA_UNUSED)
 }
 */
 E_API int
-wizard_page_show(E_Wizard_Page *pg)
+wizard_page_show(E_Wizard_Page *pg EINA_UNUSED)
 {
-   Evas_Object *o, *of, *ob;
-   E_Radio_Group *rg;
+   Evas_Object *o, *of, *ob, *rg;
 
    if (e_config->focus_policy == E_FOCUS_CLICK) focus_mode = 0;
 
-   o = e_widget_list_add(pg->evas, 1, 0);
    e_wizard_title_set(_("Window Focus"));
 
-   of = e_widget_framelist_add(pg->evas, _("Focus:"), 0);
+   of = elm_frame_add(e_comp->elm);
+   elm_object_text_set(of, _("Focus:"));
+   o = elm_box_add(of);
+   elm_box_homogeneous_set(o, 1);
+   elm_object_content_set(of, o);
 
-   rg = e_widget_radio_group_new(&focus_mode);
-
-   ob = e_widget_radio_add(pg->evas, _("Whenever a window is clicked"), 0, rg);
-   e_widget_framelist_object_append(of, ob);
+   rg = ob = elm_radio_add(o);
    evas_object_show(ob);
-   ob = e_widget_radio_add(pg->evas, _("Whenever the mouse enters a window"), 1, rg);
-   e_widget_framelist_object_append(of, ob);
+   E_ALIGN(ob, 0, 0.5);
+   elm_box_pack_end(o, ob);
+   elm_object_text_set(ob, _("Whenever a window is clicked"));
+   elm_radio_state_value_set(ob, 0);
+   elm_radio_value_pointer_set(ob, &focus_mode);
+
+   ob = elm_radio_add(o);
+   E_ALIGN(ob, 0, 0.5);
    evas_object_show(ob);
+   elm_box_pack_end(o, ob);
+   elm_radio_group_add(ob, rg);
+   elm_object_text_set(ob, _("Whenever the mouse enters a window"));
+   elm_radio_state_value_set(ob, 1);
 
-   e_widget_list_object_append(o, of, 0, 0, 0.5);
-   evas_object_show(of);
-
-   e_wizard_page_show(o);
+   e_wizard_page_show(of);
 //   pg->data = o;
    return 1; /* 1 == show ui, and wait for user, 0 == just continue */
 }

@@ -135,53 +135,82 @@ wizard_page_shutdown(E_Wizard_Page *pg EINA_UNUSED)
    return 1;
 }
 */
-E_API int
-wizard_page_show(E_Wizard_Page *pg)
+
+
+static Evas_Object *
+_layout_content_get(Layout *lay, Evas_Object *obj, const char *part)
 {
-   Evas_Object *o, *of, *ob, *ic;
+   char buf[PATH_MAX];
+   Evas_Object *ic;
+
+   if (!eina_streq(part, "elm.swallow.icon")) return NULL;
+   e_xkb_flag_file_get(buf, sizeof(buf), lay->name);
+   ic = elm_icon_add(obj);
+   elm_image_file_set(ic, buf, NULL);
+   evas_object_size_hint_aspect_set(ic, EVAS_ASPECT_CONTROL_VERTICAL, 20, 10);
+   return ic;
+}
+
+static char *
+_layout_text_get(Layout *lay, Evas_Object *obj EINA_UNUSED, const char *part)
+{
+   if (!eina_streq(part, "elm.text")) return NULL;
+   return strdup(_(lay->label));
+}
+
+static void
+_layout_select(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   Layout *lay = data;
+   layout = lay->name;
+}
+
+E_API int
+wizard_page_show(E_Wizard_Page *pg EINA_UNUSED)
+{
+   Evas_Object *of, *ob;
    Eina_List *l;
-   int i, sel = -1;
+   Layout *lay;
+   void *sel_it = NULL;
+   static Elm_Genlist_Item_Class itc =
+   {
+      .item_style = "default",
+      .func =
+      {
+         .content_get = (Elm_Genlist_Item_Content_Get_Cb)_layout_content_get,
+         .text_get = (Elm_Genlist_Item_Text_Get_Cb)_layout_text_get,
+      },
+      .version = ELM_GENLIST_ITEM_CLASS_VERSION
+   };
 
-   o = e_widget_list_add(pg->evas, 1, 0);
    e_wizard_title_set(_("Keyboard"));
-   of = e_widget_framelist_add(pg->evas, _("Select one"), 0);
-   ob = e_widget_ilist_add(pg->evas, 10 * e_scale, 10 * e_scale, &layout);
-   e_widget_size_min_set(ob, 140 * e_scale, 140 * e_scale);
+   of = elm_frame_add(e_comp->elm);
+   elm_object_text_set(of, _("Select one"));
+   ob = elm_genlist_add(of);
+   elm_genlist_homogeneous_set(ob, 1);
+   elm_genlist_mode_set(ob, ELM_LIST_COMPRESS);
+   elm_scroller_bounce_set(ob, 0, 0);
+   elm_object_content_set(of, ob);
 
-   e_widget_ilist_freeze(ob);
-   for (i = 0, l = layouts; l; l = l->next, i++)
+   EINA_LIST_FOREACH(layouts, l, lay)
      {
-        Layout *lay;
-        const char *label;
-
-        lay = l->data;
-        ic = e_icon_add(pg->evas);
-        e_xkb_e_icon_flag_setup(ic, lay->name);
-        label = lay->label;
-        if (!label) label = "Unknown";
-        if (ic)
-          evas_object_size_hint_aspect_set
-          (ic, EVAS_ASPECT_CONTROL_VERTICAL, 20, 10);
-        e_widget_ilist_append(ob, ic, _(label), NULL, NULL, lay->name);
-        if (lay->name)
-          {
-             if (!strcmp(lay->name, "us")) sel = i;
-          }
+        void *it;
+        
+        it = elm_genlist_item_append(ob, &itc, lay, NULL, 0, _layout_select, lay);
+        if (eina_streq(lay->name, "us"))
+          sel_it = it;
      }
 
-   e_widget_ilist_go(ob);
-   e_widget_ilist_thaw(ob);
-   if (sel >= 0)
-     {
-        e_widget_ilist_selected_set(ob, sel);
-        e_widget_ilist_nth_show(ob, sel, 0);
-     }
-
-   e_widget_framelist_object_append(of, ob);
-   e_widget_list_object_append(o, of, 1, 1, 0.5);
    evas_object_show(ob);
    evas_object_show(of);
-   e_wizard_page_show(o);
+   E_EXPAND(of);
+   E_FILL(of);
+   if (sel_it)
+     {
+        elm_genlist_item_selected_set(sel_it, 1);
+        elm_genlist_item_show(sel_it, ELM_GENLIST_ITEM_SCROLLTO_MIDDLE);
+     }
+   e_wizard_page_show(of);
    return 1; /* 1 == show ui, and wait for user, 0 == just continue */
 }
 

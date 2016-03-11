@@ -2,34 +2,28 @@
 #include "e_wizard.h"
 
 static void
-_recommend_connman(E_Wizard_Page *pg)
+_recommend_connman(E_Wizard_Page *pg EINA_UNUSED)
 {
-   Evas_Object *o, *of, *ob;
+   Evas_Object *of, *ob;
 
-   o = e_widget_list_add(pg->evas, 1, 0);
    e_wizard_title_set(_("Network Management"));
 
+   of = elm_frame_add(e_comp->elm);
+   ob = elm_label_add(of);
+   elm_object_content_set(of, ob);
 #if defined(USE_MODULE_CONNMAN) || defined(USE_MODULE_WIRELESS)
-   of = e_widget_framelist_add(pg->evas,
-                               _("Connman network service not found"), 0);
+   elm_object_text_set(of, _("Connman network service not found"));
 
-   ob = e_widget_label_add
-       (pg->evas, _("Install Connman for network management support"));
+   
+   elm_object_text_set(ob, _("Install/Enable Connman service for network management support"));
 #else
-   of = e_widget_framelist_add(pg->evas,
-                               _("Connman support disabled"), 0);
-
-   ob = e_widget_label_add
-       (pg->evas, _("Install/Enable Connman for network management support"));
+   elm_object_text_set(of, _("Connman and Wireless modules disabled"));
+   elm_object_text_set(ob, _("Install one of these modules for network management support"));
 #endif
-   e_widget_framelist_object_append(of, ob);
-   evas_object_show(ob);
-
-   e_widget_list_object_append(o, of, 0, 0, 0.5);
    evas_object_show(ob);
    evas_object_show(of);
 
-   e_wizard_page_show(o);
+   e_wizard_page_show(of);
 //   pg->data = o;
 
    e_wizard_button_next_enable_set(1);
