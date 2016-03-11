@@ -1,8 +1,5 @@
 /* Setup if we need connman? */
 #include "e_wizard.h"
-#ifdef HAVE_ECONNMAN
-#include <Eldbus.h>
-#endif
 
 static void
 _recommend_connman(E_Wizard_Page *pg)
@@ -12,7 +9,7 @@ _recommend_connman(E_Wizard_Page *pg)
    o = e_widget_list_add(pg->evas, 1, 0);
    e_wizard_title_set(_("Network Management"));
 
-#ifdef HAVE_ECONNMAN
+#ifdef USE_MODULE_CONNMAN
    of = e_widget_framelist_add(pg->evas,
                                _("Connman network service not found"), 0);
 
@@ -124,7 +121,7 @@ wizard_page_show(E_Wizard_Page *pg)
 {
    Eina_Bool have_connman = EINA_FALSE;
 
-#ifdef HAVE_ECONNMAN
+#ifdef USE_MODULE_CONNMAN
    eldbus_init();
    conn = eldbus_connection_get(ELDBUS_CONNECTION_TYPE_SYSTEM);
 #endif
@@ -181,7 +178,7 @@ wizard_page_hide(E_Wizard_Page *pg EINA_UNUSED)
      eldbus_connection_unref(conn);
    conn = NULL;
 
-#ifdef HAVE_ECONNMAN
+#ifdef USE_MODULE_CONNMAN
    eldbus_shutdown();
 #endif
 

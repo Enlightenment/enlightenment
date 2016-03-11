@@ -12,7 +12,7 @@ wl_text_inputpkg_LTLIBRARIES = src/modules/wl_text_input/module.la
 
 src_modules_wl_text_input_module_la_DEPENDENCIES = $(MDEPENDENCIES)
 src_modules_wl_text_input_module_la_CPPFLAGS  = $(MOD_CPPFLAGS) @WAYLAND_CFLAGS@
-src_modules_wl_text_input_module_la_LIBADD   = $(LIBS) @WAYLAND_LIBS@
+src_modules_wl_text_input_module_la_LIBADD   = $(MOD_LIBS) @WAYLAND_LIBS@
 src_modules_wl_text_input_module_la_LDFLAGS = $(MOD_LDFLAGS)
 src_modules_wl_text_input_module_la_SOURCES = \
   src/modules/wl_text_input/e_mod_main.c \

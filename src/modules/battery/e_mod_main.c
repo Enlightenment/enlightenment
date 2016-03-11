@@ -33,9 +33,7 @@ struct _Instance
    Evas_Object     *o_battery;
    Evas_Object     *popup_battery;
    E_Gadcon_Popup  *warning;
-#ifdef HAVE_ENOTIFY
    unsigned int     notification_id;
-#endif
 };
 
 static void      _battery_update(int full, int time_left, int time_full, Eina_Bool have_battery, Eina_Bool have_power);
@@ -427,7 +425,6 @@ _battery_warning_popup_destroy(Instance *inst)
    E_FREE_FUNC(inst->warning, e_object_del);
 }
 
-#ifdef HAVE_ENOTIFY
 static void
 _battery_warning_popup_cb(void *data, unsigned int id)
 {
@@ -435,7 +432,6 @@ _battery_warning_popup_cb(void *data, unsigned int id)
 
    inst->notification_id = id;
 }
-#endif
 
 static void
 _battery_warning_popup(Instance *inst, int t, double percent)
@@ -446,7 +442,6 @@ _battery_warning_popup(Instance *inst, int t, double percent)
 
    if ((!inst) || (inst->warning)) return;
 
-#ifdef HAVE_ENOTIFY
    if (battery_config->desktop_notifications)
      {
         E_Notification_Notify n;
@@ -460,7 +455,7 @@ _battery_warning_popup(Instance *inst, int t, double percent)
         e_notification_client_send(&n, _battery_warning_popup_cb, inst);
         return;
      }
-#endif
+
    inst->warning = e_gadcon_popup_new(inst->gcc, 0);
    if (!inst->warning) return;
 
@@ -746,9 +741,7 @@ e_modapi_init(E_Module *m)
 #if defined HAVE_EEZE || defined __OpenBSD__
    E_CONFIG_VAL(D, T, fuzzy, INT);
 #endif
-#ifdef HAVE_ENOTIFY
    E_CONFIG_VAL(D, T, desktop_notifications, INT);
-#endif
 
    battery_config = e_config_domain_load("module.battery", conf_edd);
    if (!battery_config)
@@ -763,9 +756,7 @@ e_modapi_init(E_Module *m)
 #if defined HAVE_EEZE || defined __OpenBSD__
         battery_config->fuzzy = 0;
 #endif
-#ifdef HAVE_ENOTIFY
         battery_config->desktop_notifications = 0;
-#endif
      }
    E_CONFIG_LIMIT(battery_config->poll_interval, 4, 4096);
    E_CONFIG_LIMIT(battery_config->alert, 0, 60);
@@ -773,9 +764,7 @@ e_modapi_init(E_Module *m)
    E_CONFIG_LIMIT(battery_config->alert_timeout, 0, 300);
    E_CONFIG_LIMIT(battery_config->suspend_below, 0, 50);
    E_CONFIG_LIMIT(battery_config->force_mode, 0, 2);
-#ifdef HAVE_ENOTIFY
    E_CONFIG_LIMIT(battery_config->desktop_notifications, 0, 1);
-#endif
 
    battery_config->module = m;
    battery_config->full = -2;

@@ -18,7 +18,7 @@ src_modules_bluez4_module_la_SOURCES = src/modules/bluez4/e_mod_main.h \
 			   src/modules/bluez4/agent.c
 
 src_modules_bluez4_module_la_CPPFLAGS = $(MOD_CPPFLAGS) -Wno-unused-parameter
-src_modules_bluez4_module_la_LIBADD = $(MOD_LIBS) @BLUEZ4_LIBS@
+src_modules_bluez4_module_la_LIBADD = $(MOD_LIBS)
 
 PHONIES += bluez4 install-bluez4
 bluez4: $(bluez4pkg_LTLIBRARIES) $(bluez4_DATA)

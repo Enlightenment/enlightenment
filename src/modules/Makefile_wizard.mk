@@ -113,9 +113,6 @@ src_modules_wizard_page_110_la_LIBADD = $(MOD_LIBS)
 src_modules_wizard_page_110_la_CPPFLAGS = $(MOD_CPPFLAGS)
 src_modules_wizard_page_110_la_LDFLAGS = $(MOD_LDFLAGS)
 src_modules_wizard_page_110_la_SOURCES = src/modules/wizard/page_110.c
-if USE_MODULE_CONNMAN
-src_modules_wizard_page_110_la_LIBADD         += @ECONNMAN_LIBS@
-endif
 
 src_modules_wizard_page_120_la_LIBADD = $(MOD_LIBS)
 src_modules_wizard_page_120_la_CPPFLAGS = $(MOD_CPPFLAGS)

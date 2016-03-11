@@ -16,7 +16,7 @@ src_modules_notification_module_la_SOURCES = src/modules/notification/e_mod_main
 				  src/modules/notification/e_mod_config.c \
 				  src/modules/notification/e_mod_popup.c
 
-src_modules_notification_module_la_LIBADD = $(MOD_LIBS) @ENOTIFY_LIBS@
+src_modules_notification_module_la_LIBADD = $(MOD_LIBS)
 
 PHONIES += notification install-notification
 notification: $(notificationpkg_LTLIBRARIES) $(notification_DATA)
