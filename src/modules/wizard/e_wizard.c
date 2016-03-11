@@ -46,6 +46,8 @@ e_wizard_init(void)
           pops = eina_list_append(pops, _e_wizard_extra_new(zone));
      }
 
+   e_comp_grab_input(1, 1);
+
    E_LIST_HANDLER_APPEND(handlers, EFREET_EVENT_DESKTOP_CACHE_BUILD,
                          _e_wizard_cb_desktops_update, NULL);
 
