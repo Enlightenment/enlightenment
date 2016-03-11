@@ -176,7 +176,6 @@ e_sys_init(void)
    Eldbus_Connection *conn;
    Eldbus_Object *obj;
 
-   eldbus_init();
    conn = eldbus_connection_get(ELDBUS_CONNECTION_TYPE_SYSTEM);
    obj = eldbus_object_get(conn, "org.freedesktop.login1",
                            "/org/freedesktop/login1");
@@ -222,7 +221,6 @@ e_sys_shutdown(void)
         close(_e_sys_systemd_inhibit_fd);
         _e_sys_systemd_inhibit_fd = -1;
      }
-   eldbus_shutdown();
    return 1;
 }
 

@@ -122,7 +122,6 @@ wizard_page_show(E_Wizard_Page *pg)
    Eina_Bool have_connman = EINA_FALSE;
 
 #ifdef USE_MODULE_CONNMAN
-   eldbus_init();
    conn = eldbus_connection_get(ELDBUS_CONNECTION_TYPE_SYSTEM);
 #endif
    if (conn)
@@ -177,10 +176,6 @@ wizard_page_hide(E_Wizard_Page *pg EINA_UNUSED)
    if (conn)
      eldbus_connection_unref(conn);
    conn = NULL;
-
-#ifdef USE_MODULE_CONNMAN
-   eldbus_shutdown();
-#endif
 
    return 1;
 }

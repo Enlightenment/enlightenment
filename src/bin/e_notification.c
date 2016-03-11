@@ -193,7 +193,6 @@ e_notification_server_register(const E_Notification_Server_Info *server_info, E_
    n_data = calloc(1, sizeof(Notification_Data));
    EINA_SAFETY_ON_NULL_RETURN_VAL(n_data, EINA_FALSE);
 
-   eldbus_init();
    n_data->conn = eldbus_connection_get(ELDBUS_CONNECTION_TYPE_SESSION);
    n_data->iface = eldbus_service_interface_register(n_data->conn, PATH, &desc);
    n_data->notify_cb = n_cb;
@@ -212,7 +211,6 @@ e_notification_server_unregister(void)
    EINA_SAFETY_ON_NULL_RETURN(n_data);
    eldbus_service_interface_unregister(n_data->iface);
    eldbus_connection_unref(n_data->conn);
-   eldbus_shutdown();
    free(n_data);
    n_data = NULL;
 }

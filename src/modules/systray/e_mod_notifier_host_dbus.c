@@ -524,7 +524,6 @@ systray_notifier_dbus_init(Context_Notifier_Host *ctx)
 {
    Eldbus_Pending *p;
    
-   eldbus_init();
    ctx->conn = eldbus_connection_get(ELDBUS_CONNECTION_TYPE_SESSION);
    if (!ctx->conn) return;
    p = eldbus_name_request(ctx->conn,
@@ -554,5 +553,4 @@ void systray_notifier_dbus_shutdown(Context_Notifier_Host *ctx)
         ctx->watcher = NULL;
      }
    eldbus_connection_unref(ctx->conn);
-   eldbus_shutdown();
 }

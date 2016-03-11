@@ -635,7 +635,6 @@ e_modapi_init(E_Module *m)
    ctxt = E_NEW(E_Connman_Module_Context, 1);
    if (!ctxt)
      goto error_connman_context;
-   eldbus_init();
    c = eldbus_connection_get(ELDBUS_CONNECTION_TYPE_SYSTEM);
    if (!c)
      goto error_dbus_bus_get;
@@ -683,7 +682,6 @@ e_modapi_shutdown(E_Module *m)
      return 0;
 
    e_connman_system_shutdown();
-   eldbus_shutdown();
 
    _econnman_instances_free(ctxt);
    _econnman_configure_registry_unregister();

@@ -339,7 +339,6 @@ e_fileman_dbus_init(void)
    if (_daemon)
      return;
 
-   eldbus_init();
    _daemon = _e_fileman_dbus_daemon_new();
 }
 
@@ -351,6 +350,5 @@ e_fileman_dbus_shutdown(void)
 
    _e_fileman_dbus_daemon_free(_daemon);
    _daemon = NULL;
-   eldbus_shutdown();
 }
 

@@ -739,8 +739,6 @@ ebluez4_eldbus_init(void)
 
    ctxt = calloc(1, sizeof(Context));
 
-   eldbus_init();
-
    ctxt->conn = eldbus_connection_get(ELDBUS_CONNECTION_TYPE_SYSTEM);
    obj = eldbus_object_get(ctxt->conn, BLUEZ_BUS, MANAGER_PATH);
    ctxt->man_proxy = eldbus_proxy_get(obj, MANAGER_INTERFACE);
@@ -768,7 +766,6 @@ ebluez4_eldbus_shutdown(void)
    eldbus_connection_unref(ctxt->conn);
    free(ctxt);
 
-   eldbus_shutdown();
 }
 
 void
