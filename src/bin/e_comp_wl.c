@@ -2170,6 +2170,7 @@ _e_comp_wl_screenshooter_cb_shoot(struct wl_client *client EINA_UNUSED, struct w
    wl_shm_buffer_begin_access(shm_buffer);
    memcpy(d, pixels, buffer->h * stride);
    wl_shm_buffer_end_access(shm_buffer);
+   free(pixels);
 
    screenshooter_send_done(resource);
 }
