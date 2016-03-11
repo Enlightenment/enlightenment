@@ -9,7 +9,7 @@ _recommend_connman(E_Wizard_Page *pg)
    o = e_widget_list_add(pg->evas, 1, 0);
    e_wizard_title_set(_("Network Management"));
 
-#ifdef USE_MODULE_CONNMAN
+#if defined(USE_MODULE_CONNMAN) || defined(USE_MODULE_WIRELESS)
    of = e_widget_framelist_add(pg->evas,
                                _("Connman network service not found"), 0);
 
@@ -121,7 +121,7 @@ wizard_page_show(E_Wizard_Page *pg)
 {
    Eina_Bool have_connman = EINA_FALSE;
 
-#ifdef USE_MODULE_CONNMAN
+#if defined(USE_MODULE_CONNMAN) || defined(USE_MODULE_WIRELESS)
    conn = eldbus_connection_get(ELDBUS_CONNECTION_TYPE_SYSTEM);
 #endif
    if (conn)
