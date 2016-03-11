@@ -44,7 +44,10 @@ _resize_anchor(E_Efx_Resize_Data *erd)
    _e_efx_resize_adjust(erd->e, &x, &y);
    if ((!x) && (!y)) return;
 
-   evas_object_geometry_get(erd->e->obj, &cx, &cy, NULL, NULL);
+   if (erd->e->move_data)
+     cx = erd->e->x, cy = erd->e->y;
+   else
+     evas_object_geometry_get(erd->e->obj, &cx, &cy, NULL, NULL);
    x += cx, y += cy;
    evas_object_move(erd->e->obj, x, y);
 }
@@ -61,11 +64,14 @@ _resize_cb(E_Efx_Resize_Data *erd, double pos)
         factor = ecore_animator_pos_map(pos, erd->speed, 0, 0);
         w = lround(factor * (erd->w - erd->start_w)) + erd->start_w;
         h = lround(factor * (erd->h - erd->start_h)) + erd->start_h;
+        //DBG("%p to (%dx%d)", erd->e->obj, w, h);
+        erd->e->w = w, erd->e->h = h;
         evas_object_resize(erd->e->obj, w, h);
         _resize_anchor(erd);
         return EINA_TRUE;
      }
    /* lround will usually be off by 1 at the end, so we manually set this here */
+   erd->e->w = erd->w, erd->e->h = erd->h;
    evas_object_resize(erd->e->obj, erd->w, erd->h);
    _resize_anchor(erd);
 
@@ -85,6 +91,7 @@ _resize_stop(Evas_Object *obj, Eina_Bool reset)
    erd = e->resize_data;
    if (reset)
      {
+        erd->e->w = erd->start_w, erd->e->h = erd->start_h;
         evas_object_resize(obj, erd->start_w, erd->start_h);
         evas_object_event_callback_del_full(obj, EVAS_CALLBACK_FREE, (Evas_Object_Event_Cb)_obj_del, erd);
         if (erd->moving)
@@ -118,7 +125,9 @@ _e_efx_resize_adjust(E_EFX *e, int *ax, int *ay)
    int x, y, w, h;
 
    if (!erd) return;
-   evas_object_geometry_get(e->obj, &x, &y, &w, &h);
+   if (e->move_data)
+     x = e->x, y = e->y;
+   w = e->w, h = e->h;
    switch (erd->anchor_type)
      {
       case TOP_RIGHT:
@@ -165,6 +174,10 @@ e_efx_resize(Evas_Object *obj, E_Efx_Effect_Speed speed, const Evas_Point *posit
    erd->cb = cb;
    erd->data = (void*)data;
    evas_object_geometry_get(obj, &x, &y, &erd->start_w, &erd->start_h);
+   e->w = erd->start_w;
+   e->h = erd->start_h;
+   if (e->move_data)
+     x = e->x, y = e->y;
    INF("resize: %p || %dx%d => %dx%d %s over %gs", obj, erd->start_w, erd->start_h, w, h, e_efx_speed_str[speed], total_time);
    if (position && ((position->x != x) || (position->y != y)))
      {

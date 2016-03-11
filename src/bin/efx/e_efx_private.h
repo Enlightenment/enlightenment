@@ -71,6 +71,7 @@ struct E_EFX
    E_Efx_Map_Data map_data;
    Eina_List *followers;
    Eina_List *queue;
+   int x, y, w, h;
 };
 
 void _e_efx_zoom_calc(void *, void *, Evas_Object *obj, Evas_Map *map);

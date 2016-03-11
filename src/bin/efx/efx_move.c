@@ -23,13 +23,11 @@ _obj_del(E_Efx_Move_Data *emd, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED
 }
 
 static void
-_move(Evas_Object *obj, int x, int y)
+_move(E_EFX *e, int x, int y)
 {
-   Evas_Coord ox, oy;
-
-   evas_object_geometry_get(obj, &ox, &oy, NULL, NULL);
-   evas_object_move(obj, ox + x, oy + y);
-   //DBG("%p to (%d,%d)", obj, ox + x, oy + y);
+   e->x += x, e->y += y;
+   evas_object_move(e->obj, e->x + x, e->y + y);
+   //DBG("%p to (%d,%d)", e->obj, e->x + x, e->y + y);
 }
 
 static Eina_Bool
@@ -44,7 +42,11 @@ _move_circle_cb(E_Efx_Move_Data *emd, double pos)
 
    pct = ecore_animator_pos_map(pos, emd->speed, 0, 0);
    degrees = pct * emd->degrees;
-   evas_object_geometry_get(emd->e->obj, &ox, &oy, &w, &h);
+   ox = emd->e->x, oy = emd->e->y;
+   if (emd->e->resize_data)
+     w = emd->e->w, h = emd->e->h;
+   else
+     evas_object_geometry_get(emd->e->obj, NULL, NULL, &w, &h);
    r = (degrees * M_PI) / 180.0;
    rad = sqrt((emd->current.x + w/2.0 - emd->e->map_data.move_center->x) * (emd->current.x + w/2.0 - emd->e->map_data.move_center->x) +
               (emd->current.y + h/2.0 - emd->e->map_data.move_center->y) * (emd->current.y + h/2.0 - emd->e->map_data.move_center->y));
@@ -55,11 +57,12 @@ _move_circle_cb(E_Efx_Move_Data *emd, double pos)
    xx = lround(x);
    yy = lround(y);
    //DBG("move: %g || %g,%g", degrees, x, y);
+   emd->e->x = xx, emd->e->y = yy;
    evas_object_move(emd->e->obj, xx, yy);
    e_efx_maps_apply(emd->e, emd->e->obj, NULL, E_EFX_MAPS_APPLY_ALL);
    EINA_LIST_FOREACH(emd->e->followers, l, e)
      {
-        _move(e->obj, xx - ox, yy - oy);
+        _move(e, xx - ox, yy - oy);
         e_efx_maps_apply(e, e->obj, NULL, E_EFX_MAPS_APPLY_ALL);
      }
 
@@ -81,11 +84,11 @@ _move_cb(E_Efx_Move_Data *emd, double pos)
    x = lround(pct * (double)emd->change.x) - emd->current.x;
    y = lround(pct * (double)emd->change.y) - emd->current.y;
    _e_efx_resize_adjust(emd->e, &x, &y);
-   _move(emd->e->obj, x, y);
+   _move(emd->e, x, y);
    e_efx_maps_apply(emd->e, emd->e->obj, NULL, E_EFX_MAPS_APPLY_ALL);
    EINA_LIST_FOREACH(emd->e->followers, l, e)
      {
-        _move(e->obj, x, y);
+        _move(e, x, y);
         e_efx_maps_apply(e, e->obj, NULL, E_EFX_MAPS_APPLY_ALL);
      }
 
@@ -157,6 +160,7 @@ e_efx_move(Evas_Object *obj, E_Efx_Effect_Speed speed, const Evas_Point *end_poi
    emd = e->move_data;
    emd->e = e;
    emd->speed = speed;
+   e->x = x, e->y = y;
    emd->change.x = end_point->x - x;
    emd->change.y = end_point->y - y;
    emd->current.x = emd->current.y = 0;
@@ -202,8 +206,8 @@ e_efx_move_circle(Evas_Object *obj, E_Efx_Effect_Speed speed, const Evas_Point *
    emd = e->move_data;
    emd->e = e;
    emd->speed = speed;
-   emd->start.x = emd->current.x = x;
-   emd->start.y = emd->current.y = y;
+   e->x = emd->start.x = emd->current.x = x;
+   e->y = emd->start.y = emd->current.y = y;
    emd->degrees = degrees;
    emd->cb = cb;
    emd->data = (void*)data;
