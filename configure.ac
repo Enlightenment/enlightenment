@@ -587,19 +587,13 @@ EFL_WITH_BIN([eldbus], [eldbus_codegen], [eldbus-codegen])
 
 AC_DEFINE(E_INTERNAL, 1, "This define can be used to wrap internal E stuff, as config.h isn't exported")
 
-AM_CONDITIONAL(HAVE_BATTERY, false)
-define([CHECK_MODULE_BATTERY],
-[
-  AC_E_CHECK_PKG(BATTERY, [ ecore >= $efl_version ecore-file >= $efl_version ecore-con >= $efl_version eina >= $efl_version ], [], [BATTERY=false])
-])
-
 have_openbsd="no"
 have_freebsd="no"
 BATTERY_LDFLAGS=
 case "$host_os" in
   darwin*)
     BATTERY_LDFLAGS="${cf_libs}"
-    BATTERY_CFLAGS="${BATTERY_CFLAGS} ${cf_cflags}"
+    BATTERY_CFLAGS="${cf_cflags}"
   ;;
   openbsd*)
     have_openbsd="yes"
@@ -609,21 +603,10 @@ case "$host_os" in
   ;;
 esac
 
+AC_SUBST([BATTERY_CFLAGS])
 AC_SUBST([BATTERY_LDFLAGS])
 AM_CONDITIONAL([HAVE_OPENBSD], [test "x${have_openbsd}" = "xyes"])
 AM_CONDITIONAL([HAVE_FREEBSD], [test "x${have_freebsd}" = "xyes"])
-
-AM_CONDITIONAL(HAVE_TEMPERATURE, false)
-define([CHECK_MODULE_TEMPERATURE],
-[
-  AC_E_CHECK_PKG(TEMPERATURE, [ ecore >= $efl_version ecore-file >= $efl_version eina >= $efl_version ], [], [TEMPERATURE=false])
-])
-
-AM_CONDITIONAL(HAVE_MUSIC_CONTROL, false)
-define([CHECK_MODULE_MUSIC_CONTROL],
-[
-  AC_E_CHECK_PKG(MUSIC_CONTROL, [ ecore >= $efl_version eina >= $efl_version eldbus ], [], [MUSIC_CONTROL=false])
-])
 
 ##have_exchange=no
 ##AC_ARG_ENABLE(exchange,
@@ -641,38 +624,6 @@ AM_CONDITIONAL(HAVE_EXCHANGE, false)
 ##    AC_MSG_NOTICE([requested to not use exchange library])
 ##  fi
 ##])
-
-
-have_enotify=no
-AM_CONDITIONAL([HAVE_ENOTIFY], [false])
-AC_ARG_ENABLE([enotify],
-  AS_HELP_STRING([--disable-enotify], [disable Enotify support @<:@default=detect@:>@]),
-  [e_cv_want_enotify=$enableval],
-  AC_CACHE_VAL([e_cv_want_enotify], [e_cv_want_enotify=yes])
-)
-if test "x$e_cv_want_enotify" != "xno" ; then
-  AC_E_CHECK_PKG(ENOTIFY, [ eldbus >= $efl_version ],
-  [
-    AC_DEFINE_UNQUOTED([HAVE_ENOTIFY], [1], [enable enotify])
-  ], 
-  [
-    AC_MSG_NOTICE([enotify disabled])
-    e_cv_want_enotify=no
-  ])
-else
-  AC_MSG_NOTICE([enotify disabled])
-    e_cv_want_enotify=no
-fi
-AC_SUBST([ENOTIFY_CFLAGS])
-AC_SUBST([ENOTIFY_LIBS])
-
-AM_CONDITIONAL(HAVE_NOTIFICATION, false)
-define([CHECK_MODULE_NOTIFICATION],
-[
-  if test "x$e_cv_want_enotify" = "xno" ; then
-    NOTIFICATION=false
-  fi
-])
 
 
 AM_CONDITIONAL(HAVE_ALSA, false)
@@ -714,25 +665,6 @@ AC_SUBST(SHM_OPEN_LIBS)
 AC_SUBST([SOUND_CFLAGS])
 AC_SUBST([SOUND_LIBS])
 
-AM_CONDITIONAL(HAVE_ECONNMAN, false)
-AM_CONDITIONAL(HAVE_DUMMY, false)
-define([CHECK_MODULE_CONNMAN],
-[
-  AC_E_CHECK_PKG(ECONNMAN, [ eldbus >= $efl_version ], [], [CONNMAN=false])
-dnl  AC_E_CHECK_PKG(DUMMY, [ connman >= 1.0 ], [], [CONNMAN=false])
-])
-AC_SUBST([ECONNMAN_CFLAGS])
-AC_SUBST([ECONNMAN_LIBS])
-
-AM_CONDITIONAL(HAVE_BLUEZ4, false)
-AM_CONDITIONAL(HAVE_DUMMY, false)
-define([CHECK_MODULE_BLUEZ4],
-[
-  AC_E_CHECK_PKG(BLUEZ4, [ eldbus ],)
-])
-AC_SUBST([EBLUEZ4_CFLAGS])
-AC_SUBST([EBLUEZ4_LIBS])
-
 have_wayland_egl=no
 AC_ARG_ENABLE([wayland-egl],
   AS_HELP_STRING([--enable-wayland-egl],[enable wayland to render using EGL @<:@default=disabled@:>@]),
@@ -745,6 +677,7 @@ if test "x${e_cv_want_wayland_only}" != "xno" ;then
   PKG_CHECK_MODULES([WAYLAND], [ecore-wl2 wayland-server >= 1.10.0 wayland-client >= 1.10.0 xkbcommon uuid],
     [
       have_wayland=yes
+      have_wayland_dep=true
       AC_DEFINE_UNQUOTED([HAVE_WAYLAND],[1],[enable wayland support])
     ])
 else
@@ -782,7 +715,7 @@ WL_X11=false
 define([CHECK_MODULE_WL_X11],
 [
   if test "x${have_wayland}" = "xyes"; then
-    AC_E_CHECK_PKG(WL_X11, [ ecore >= ${efl_version} ecore-x >= ${efl_version} ecore-evas >= ${efl_version} ], [WL_X11=true], [WL_X11=false])
+    AC_E_CHECK_PKG(WL_X11, [ ecore-x >= ${efl_version} ], [WL_X11=true], [WL_X11=false])
   else
     WL_X11=false
   fi
@@ -804,7 +737,7 @@ WL_DESKTOP_SHELL=false
 define([CHECK_MODULE_WL_DESKTOP_SHELL],
 [
   if test "x${have_wayland}" = "xyes"; then
-    AC_E_CHECK_PKG(WL_DESKTOP_SHELL, [ ecore >= $efl_version eina >= $efl_version ], [WL_DESKTOP_SHELL=true], [WL_DESKTOP_SHELL=false])
+    WL_DESKTOP_SHELL=true
   else
     WL_DESKTOP_SHELL=false
   fi
@@ -815,7 +748,7 @@ WL_FB=false
 define([CHECK_MODULE_WL_FB],
 [
   if test "x${have_wayland}" = "xyes"; then
-    AC_E_CHECK_PKG(WL_FB, [ ecore-fb >= $efl_version ecore >= $efl_version eina >= $efl_version ], [WL_FB=true], [WL_FB=false])
+    AC_E_CHECK_PKG(WL_FB, [ ecore-fb >= $efl_version ], [WL_FB=true], [WL_FB=false])
   else
     WL_FB=false
   fi
@@ -826,7 +759,7 @@ WL_DRM=false
 define([CHECK_MODULE_WL_DRM],
 [
   if test "x${have_wayland}" = "xyes" ; then
-    AC_E_CHECK_PKG(WL_DRM, [ ecore-drm >= $efl_version ecore >= $efl_version eina >= $efl_version ], [WL_DRM=true], [WL_DRM=false])
+    AC_E_CHECK_PKG(WL_DRM, [ ecore-drm >= $efl_version ], [WL_DRM=true], [WL_DRM=false])
   else
     WL_DRM=false
   fi
@@ -837,7 +770,7 @@ HAVE_XWAYLAND_DEPS=false
 define([CHECK_MODULE_XWAYLAND],
 [
   if test "x${have_wayland}" = "xyes"; then
-    AC_E_CHECK_PKG(XWAYLAND, [ ecore >= ${efl_version} ecore-x >= ${efl_version} ecore-audio >= ${efl_version}  ], [HAVE_XWAYLAND_DEPS=true], [HAVE_XWAYLAND_DEPS=false])
+    AC_E_CHECK_PKG(XWAYLAND, [ ecore-x >= ${efl_version} ecore-audio >= ${efl_version}  ], [HAVE_XWAYLAND_DEPS=true], [HAVE_XWAYLAND_DEPS=false])
     AC_PATH_PROG([XWAYLAND_BIN], [Xwayland], [false])
   else
     HAVE_XWAYLAND_DEPS=false
@@ -848,7 +781,7 @@ AM_CONDITIONAL([HAVE_XWAYLAND], [test "x${HAVE_XWAYLAND}" != "xno"])
 define([CHECK_MODULE_WL_TEXT_INPUT],
 [
   if test "x${have_wayland}" = "xyes"; then
-    AC_E_CHECK_PKG(WL_TEXT_INPUT, [ ecore >= $efl_version eina >= $efl_version ], [WL_TEXT_INPUT=true], [WL_TEXT_INPUT=false])
+    WL_TEXT_INPUT=true
   else
     WL_TEXT_INPUT=false
   fi
@@ -859,7 +792,7 @@ WL_WEEKEYBOARD=false
 define([CHECK_MODULE_WL_WEEKEYBOARD],
 [
    if test "x${have_wayland}" = "xyes" ; then
-      AC_E_CHECK_PKG(WL_WEEKEYBOARD, [ eina >= 1.8.0 evas >= 1.8.0 ecore >= 1.8.0 ecore-evas >= 1.8.0 ecore-wl2 >= 1.8.0 edje >= 1.8.0 ], [WL_WEEKEYBOARD=true], [WL_WEEKEYBOARD=false])
+     WL_WEEKEYBOARD=true
    else
       WL_WEEKEYBOARD=false
    fi
@@ -870,9 +803,9 @@ AC_E_OPTIONAL_MODULE([ibar], true)
 AC_E_OPTIONAL_MODULE([clock], true)
 AC_E_OPTIONAL_MODULE([pager], true)
 AC_E_OPTIONAL_MODULE([pager_plain], true)
-AC_E_OPTIONAL_MODULE([battery], true, [CHECK_MODULE_BATTERY])
-AC_E_OPTIONAL_MODULE([temperature], true, [CHECK_MODULE_TEMPERATURE])
-AC_E_OPTIONAL_MODULE([notification], true, [CHECK_MODULE_NOTIFICATION])
+AC_E_OPTIONAL_MODULE([battery], true)
+AC_E_OPTIONAL_MODULE([temperature], true)
+AC_E_OPTIONAL_MODULE([notification], true)
 AC_E_OPTIONAL_MODULE([cpufreq], true)
 AC_E_OPTIONAL_MODULE([ibox], true)
 AC_E_OPTIONAL_MODULE([start], true)
@@ -897,8 +830,8 @@ AC_E_OPTIONAL_MODULE([conf_paths], true)
 AC_E_OPTIONAL_MODULE([conf_interaction], true)
 AC_E_OPTIONAL_MODULE([gadman], true)
 AC_E_OPTIONAL_MODULE([mixer], true, [CHECK_MODULE_MIXER])
-AC_E_OPTIONAL_MODULE([connman], true, [CHECK_MODULE_CONNMAN])
-AC_E_OPTIONAL_MODULE([bluez4], true, [CHECK_MODULE_BLUEZ4])
+AC_E_OPTIONAL_MODULE([connman], true)
+AC_E_OPTIONAL_MODULE([bluez4], true)
 AC_E_OPTIONAL_MODULE([syscon], true)
 AC_E_OPTIONAL_MODULE([everything], true)
 AC_E_OPTIONAL_MODULE([systray], true)
@@ -912,18 +845,18 @@ AC_E_OPTIONAL_MODULE([tasks], true)
 AC_E_OPTIONAL_MODULE([conf_randr], true)
 AC_E_OPTIONAL_MODULE([xkbswitch], true, $ecore_x)
 AC_E_OPTIONAL_MODULE([tiling], true)
-AC_E_OPTIONAL_MODULE([music_control], true, [CHECK_MODULE_MUSIC_CONTROL])
+AC_E_OPTIONAL_MODULE([music_control], true)
 AC_E_OPTIONAL_MODULE([packagekit], true)
-AC_E_OPTIONAL_MODULE([wl_desktop_shell], $have_wayland, [CHECK_MODULE_WL_DESKTOP_SHELL])
-AC_E_OPTIONAL_MODULE([wl_x11], $have_wayland, [CHECK_MODULE_WL_X11])
-AC_E_OPTIONAL_MODULE([wl_wl], $have_wayland, [CHECK_MODULE_WL_WL])
-#AC_E_OPTIONAL_MODULE([wl_fb], $have_wayland, [CHECK_MODULE_WL_FB])
-AC_E_OPTIONAL_MODULE([wl_drm], $have_wayland, [CHECK_MODULE_WL_DRM])
-AC_E_OPTIONAL_MODULE([wl_text_input], $have_wayland, [CHECK_MODULE_WL_TEXT_INPUT])
-AC_E_OPTIONAL_MODULE([wl_weekeyboard], $have_wayland, [CHECK_MODULE_WL_WEEKEYBOARD])
+AC_E_OPTIONAL_MODULE([wl_desktop_shell], $have_wayland_dep)
+AC_E_OPTIONAL_MODULE([wl_x11], $have_wayland_dep, [CHECK_MODULE_WL_X11])
+AC_E_OPTIONAL_MODULE([wl_wl], $have_wayland_dep)
+#AC_E_OPTIONAL_MODULE([wl_fb], $have_wayland_dep, [CHECK_MODULE_WL_FB])
+AC_E_OPTIONAL_MODULE([wl_drm], $have_wayland_dep, [CHECK_MODULE_WL_DRM])
+AC_E_OPTIONAL_MODULE([wl_text_input], $have_wayland_dep)
+AC_E_OPTIONAL_MODULE([wl_weekeyboard], $have_wayland_dep)
 AC_E_OPTIONAL_MODULE([policy_mobile], true)
 AC_E_OPTIONAL_MODULE([geolocation], true)
-AC_E_OPTIONAL_MODULE([xwayland], $have_wayland, [CHECK_MODULE_XWAYLAND])
+AC_E_OPTIONAL_MODULE([xwayland], $have_wayland_dep, [CHECK_MODULE_XWAYLAND])
 
 if test "x${HAVE_WL_X11}" != "xyes" && test "x${have_wayland}" = "xyes" && test "x${HAVE_XWAYLAND}" != "xyes"; then
   AC_DEFINE_UNQUOTED([HAVE_WAYLAND_ONLY],[1],[enable wayland-only version of enlightenment])

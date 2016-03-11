@@ -26,7 +26,7 @@ music_controlpkg_LTLIBRARIES = src/modules/music-control/module.la
 
 src_modules_music_control_module_la_DEPENDENCIES = $(MDEPENDENCIES)
 src_modules_music_control_module_la_CPPFLAGS = $(MOD_CPPFLAGS) -Wno-unused-parameter
-src_modules_music_control_module_la_LIBADD = @MUSIC_CONTROL_LIBS@ $(MOD_LIBS)
+src_modules_music_control_module_la_LIBADD = $(MOD_LIBS)
 src_modules_music_control_module_la_LDFLAGS = $(MOD_LDFLAGS)
 src_modules_music_control_module_la_SOURCES = \
 src/modules/music-control/e_mod_main.h \

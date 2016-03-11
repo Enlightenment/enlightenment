@@ -15,9 +15,7 @@ struct _E_Config_Dialog_Data
    int suspend_below;
    int suspend_method;
    int force_mode; // 0 == auto, 1 == batget, 2 == subsystem
-#ifdef HAVE_ENOTIFY
    int desktop_notifications;
-#endif
    struct
    {
       Evas_Object *show_alert_label;
@@ -82,9 +80,7 @@ _fill_data(E_Config_Dialog_Data *cfdata)
 #ifdef HAVE_EEZE
    cfdata->fuzzy = battery_config->fuzzy;
 #endif
-#ifdef HAVE_ENOTIFY
    cfdata->desktop_notifications = battery_config->desktop_notifications;
-#endif
 
    if ((cfdata->alert_time > 0) || (cfdata->alert_percent > 0))
      cfdata->show_alert = 1;
@@ -134,11 +130,9 @@ _basic_create_widgets(E_Config_Dialog *cfd EINA_UNUSED, Evas *evas, E_Config_Dia
    ob = e_widget_check_add(evas, _("Show alert when battery is low"),
                            &(cfdata->show_alert));
    e_widget_list_object_append(o, ob, 1, 0, 0.5);
-#ifdef HAVE_ENOTIFY
    ob = e_widget_check_add(evas, _("Use desktop notifications for alert"),
                            &(cfdata->desktop_notifications));
    e_widget_list_object_append(o, ob, 1, 0, 0.5);
-#endif
    return o;
 }
 
@@ -152,17 +146,13 @@ _basic_apply_data(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfdata
         _ensure_alert_time(cfdata);
         battery_config->alert = cfdata->alert_time;
         battery_config->alert_p = cfdata->alert_percent;
-#ifdef HAVE_ENOTIFY
         battery_config->desktop_notifications = cfdata->desktop_notifications;
-#endif
      }
    else
      {
         battery_config->alert = 0;
         battery_config->alert_p = 0;
-#ifdef HAVE_ENOTIFY
         battery_config->desktop_notifications = EINA_FALSE;
-#endif
      }
 
    _battery_config_updated();
@@ -178,9 +168,7 @@ _basic_check_changed(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfd
                          (battery_config->alert_p > 0));
 
    ret = (cfdata->show_alert != old_show_alert);
-#ifdef HAVE_ENOTIFY
    ret |= (cfdata->desktop_notifications != battery_config->desktop_notifications);
-#endif
    return ret;
 }
 

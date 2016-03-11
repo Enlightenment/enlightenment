@@ -6,7 +6,7 @@ wl_fbpkg_LTLIBRARIES = src/modules/wl_fb/module.la
 
 src_modules_wl_fb_module_la_DEPENDENCIES = $(MDEPENDENCIES)
 src_modules_wl_fb_module_la_CPPFLAGS  = $(MOD_CPPFLAGS) @WL_FB_CFLAGS@ @WAYLAND_CFLAGS@
-src_modules_wl_fb_module_la_LIBADD   = $(LIBS) @WL_FB_LIBS@ @WAYLAND_LIBS@
+src_modules_wl_fb_module_la_LIBADD   = $(MOD_LIBS) @WL_FB_LIBS@ @WAYLAND_LIBS@
 src_modules_wl_fb_module_la_LDFLAGS = $(MOD_LDFLAGS)
 src_modules_wl_fb_module_la_SOURCES = src/modules/wl_fb/e_mod_main.c
 

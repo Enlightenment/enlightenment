@@ -26,8 +26,8 @@ src_modules_temperature_tempgetdir = $(temperaturepkgdir)
 src_modules_temperature_tempget_PROGRAMS = src/modules/temperature/tempget
 
 src_modules_temperature_tempget_CPPFLAGS = $(MOD_CPPFLAGS)
+src_modules_temperature_tempget_LDADD = $(MOD_LIBS)
 src_modules_temperature_tempget_SOURCES = src/modules/temperature/tempget.c
-src_modules_temperature_tempget_LDADD   = @TEMPERATURE_LIBS@
 
 PHONIES += temperature install-temperature
 temperature: $(temperaturepkg_LTLIBRARIES) $(temperature_DATA) $(src_modules_temperature_tempget_PROGRAMS)

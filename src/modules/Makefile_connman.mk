@@ -18,7 +18,7 @@ src_modules_connman_module_la_SOURCES = src/modules/connman/e_mod_main.h \
 			    src/modules/connman/E_Connman.h
 
 src_modules_connman_module_la_CPPFLAGS = $(MOD_CPPFLAGS) -Wno-unused-parameter
-src_modules_connman_module_la_LIBADD = $(MOD_LIBS) @ECONNMAN_LIBS@
+src_modules_connman_module_la_LIBADD = $(MOD_LIBS)
 
 PHONIES += connman install-connman
 connman: $(connmanpkg_LTLIBRARIES) $(connman_DATA)

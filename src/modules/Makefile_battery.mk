@@ -27,17 +27,12 @@ endif
 src_modules_battery_module_la_LIBADD = $(MOD_LIBS)
 src_modules_battery_module_la_LDFLAGS = $(MOD_LDFLAGS)
 
-if HAVE_ENOTIFY
-src_modules_battery_module_la_CPPFLAGS += @ENOTIFY_CFLAGS@
-src_modules_battery_module_la_LIBADD += @ENOTIFY_LIBS@
-endif
-
 src_modules_battery_batgetdir = $(batterypkgdir)
 src_modules_battery_batget_PROGRAMS = src/modules/battery/batget
 
 src_modules_battery_batget_CPPFLAGS = $(MOD_CPPFLAGS) @BATTERY_CFLAGS@
+src_modules_battery_batget_LDADD = $(MOD_LIBS)
 src_modules_battery_batget_SOURCES = src/modules/battery/batget.c
-src_modules_battery_batget_LDADD   = @BATTERY_LIBS@
 src_modules_battery_batget_LDFLAGS = @BATTERY_LDFLAGS@
 
 PHONIES += battery install-battery
