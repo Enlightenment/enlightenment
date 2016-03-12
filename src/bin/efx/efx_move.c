@@ -26,8 +26,8 @@ static void
 _move(E_EFX *e, int x, int y)
 {
    e->x += x, e->y += y;
-   evas_object_move(e->obj, e->x + x, e->y + y);
-   //DBG("%p to (%d,%d)", e->obj, e->x + x, e->y + y);
+   evas_object_move(e->obj, e->x, e->y);
+   //DBG("%p to (%d,%d)", e->obj, e->x, e->y);
 }
 
 static Eina_Bool
