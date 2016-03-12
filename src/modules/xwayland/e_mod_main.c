@@ -8,9 +8,9 @@
 
 EINTERN void dnd_init(void);
 EINTERN void dnd_shutdown(void);
-E_API int e_modapi_shutdown(E_Module *m EINA_UNUSED);
 
-E_API void *e_modapi_init(E_Module *m);
+static E_Module *xwl_init(E_Module *m);
+static void xwl_shutdown(void);
 
 /* local structures */
 typedef struct _E_XWayland_Server E_XWayland_Server;
@@ -259,8 +259,8 @@ static void
 xwayland_fatal(void *d EINA_UNUSED)
 {
    /* on xwayland fatal, attempt to restart it */
-   e_modapi_shutdown(NULL);
-   e_modapi_init(NULL);
+   xwl_shutdown();
+   xwl_init(NULL);
 }
 
 static void
@@ -343,11 +343,8 @@ error_dialog()
    return EINA_FALSE;
 }
 
-/* module functions */
-E_API E_Module_Api e_modapi = { E_MODULE_API_VERSION, "XWayland" };
-
-E_API void *
-e_modapi_init(E_Module *m)
+static E_Module *
+xwl_init(E_Module *m)
 {
    char disp[8];
 
@@ -417,16 +414,15 @@ e_modapi_init(E_Module *m)
    /* setup listener for SIGUSR1 */
    exs->sig_hdlr = 
      ecore_event_handler_add(ECORE_EVENT_SIGNAL_USER, _cb_signal_event, exs);
-
    return m;
 }
 
-E_API int 
-e_modapi_shutdown(E_Module *m EINA_UNUSED)
+static void
+xwl_shutdown(void)
 {
    char path[256];
 
-   if (!exs) return 1;
+   if (!exs) return;
    dnd_shutdown();
 
    unlink(exs->lock);
@@ -444,6 +440,20 @@ e_modapi_shutdown(E_Module *m EINA_UNUSED)
 
    free(exs);
    e_util_env_set("DISPLAY", NULL);
+}
 
+/* module functions */
+E_API E_Module_Api e_modapi = { E_MODULE_API_VERSION, "XWayland" };
+
+E_API void *
+e_modapi_init(E_Module *m)
+{
+   return xwl_init(m);
+}
+
+E_API int 
+e_modapi_shutdown(E_Module *m EINA_UNUSED)
+{
+   xwl_shutdown();
    return 1;
 }
