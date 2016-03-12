@@ -3641,7 +3641,8 @@ e_comp_object_dirty(Evas_Object *obj)
      }
    if (!dirty)
      {
-        ERR("ERROR FETCHING PIXMAP FOR %p", cw->ec);
+        if (!e_object_is_del(E_OBJECT(cw->ec)))
+          ERR("ERROR FETCHING PIXMAP FOR %p", cw->ec);
         return;
      }
    e_comp_object_native_surface_set(obj, e_comp->gl);
