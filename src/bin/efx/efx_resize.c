@@ -127,6 +127,8 @@ _e_efx_resize_adjust(E_EFX *e, int *ax, int *ay)
    if (!erd) return;
    if (e->move_data)
      x = e->x, y = e->y;
+   else
+     evas_object_geometry_get(e->obj, &x, &y, NULL, NULL);
    w = e->w, h = e->h;
    switch (erd->anchor_type)
      {
