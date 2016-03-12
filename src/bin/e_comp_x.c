@@ -975,10 +975,10 @@ _e_comp_x_client_hide(E_Client *ec)
    if ((!ec->iconic) && (!ec->override))
      ecore_x_window_prop_card32_set(e_client_util_win_get(ec), E_ATOM_MAPPED, &visible, 1);
 
-   ec->comp_data->iconic = ec->iconic && (!e_comp_object_mirror_visibility_check(ec->frame));
-   if (ec->unredirected_single || ec->comp_data->iconic)
+   _e_comp_x_client_data_get(ec)->iconic = ec->iconic && (!e_comp_object_mirror_visibility_check(ec->frame));
+   if (ec->unredirected_single || _e_comp_x_client_data_get(ec)->iconic)
      ecore_x_window_hide(_e_comp_x_client_window_get(ec));
-   if (ec->comp_data->iconic)
+   if (_e_comp_x_client_data_get(ec)->iconic)
      e_hints_window_iconic_set(ec);
 }
 
@@ -1010,11 +1010,11 @@ _e_comp_x_client_show(E_Client *ec)
    ecore_x_window_shadow_tree_flush();
    if (!_e_comp_x_client_data_get(ec)->need_reparent)
      ecore_x_window_show(win);
-   if (ec->unredirected_single || ec->comp_data->iconic)
+   if (ec->unredirected_single || _e_comp_x_client_data_get(ec)->iconic)
      {
         e_pixmap_clear(ec->pixmap);
         ecore_x_window_show(_e_comp_x_client_window_get(ec));
-        ec->comp_data->iconic = 0;
+        _e_comp_x_client_data_get(ec)->iconic = 0;
      }
    if (!ec->override)
      e_hints_window_visible_set(ec);
@@ -1183,7 +1183,7 @@ _e_comp_x_evas_mirror_hidden(void *data, Evas_Object *obj EINA_UNUSED, void *eve
    E_Client *ec = data;
 
    if (!_e_comp_x_client_data_get(ec)) return;
-   if ((!ec->iconic) || (!ec->comp_data->iconic)) return;
+   if ((!ec->iconic) || (!_e_comp_x_client_data_get(ec)->iconic)) return;
    _e_comp_x_client_hide(ec);
 }
 
@@ -1193,7 +1193,7 @@ _e_comp_x_evas_mirror_visible(void *data, Evas_Object *obj EINA_UNUSED, void *ev
    E_Client *ec = data;
 
    if (!_e_comp_x_client_data_get(ec)) return;
-   if ((!ec->iconic) || ec->comp_data->iconic) return;
+   if ((!ec->iconic) || _e_comp_x_client_data_get(ec)->iconic) return;
    _e_comp_x_client_show(ec);
 }
 
