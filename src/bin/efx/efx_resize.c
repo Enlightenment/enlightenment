@@ -181,43 +181,48 @@ e_efx_resize(Evas_Object *obj, E_Efx_Effect_Speed speed, const Evas_Point *posit
    if (e->move_data)
      x = e->x, y = e->y;
    INF("resize: %p || %dx%d => %dx%d %s over %gs", obj, erd->start_w, erd->start_h, w, h, e_efx_speed_str[speed], total_time);
-   if (position && ((position->x != x) || (position->y != y)))
+   if (position)
      {
-        Evas_Point tr, bl, br;
-        Evas_Point atr, abl, abr;
+        if ((position->x != x) || (position->y != y))
+          {
+             Evas_Point tr, bl, br;
+             Evas_Point atr, abl, abr;
 
-        tr = (Evas_Point){x + erd->start_w, y};
-        bl = (Evas_Point){x, y + erd->start_h};
-        br = (Evas_Point){x + erd->start_w, y + erd->start_h};
-        atr = (Evas_Point){position->x + w, position->y};
-        abl = (Evas_Point){position->x, position->y + h};
-        abr = (Evas_Point){position->x + w, position->y + h};
-        if (!memcmp(&tr, &atr, sizeof(Evas_Point)))
-          {
-             erd->anchor_type = TOP_RIGHT;
-             erd->anchor = tr;
-          }
-        else if (!memcmp(&bl, &abl, sizeof(Evas_Point)))
-          {
-             erd->anchor_type = BOTTOM_LEFT;
-             erd->anchor = bl;
-          }
-        else if (!memcmp(&br, &abr, sizeof(Evas_Point)))
-          {
-             erd->anchor_type = BOTTOM_RIGHT;
-             erd->anchor = br;
-          }
+             tr = (Evas_Point){x + erd->start_w, y};
+             bl = (Evas_Point){x, y + erd->start_h};
+             br = (Evas_Point){x + erd->start_w, y + erd->start_h};
+             atr = (Evas_Point){position->x + w, position->y};
+             abl = (Evas_Point){position->x, position->y + h};
+             abr = (Evas_Point){position->x + w, position->y + h};
+             if (!memcmp(&tr, &atr, sizeof(Evas_Point)))
+               {
+                  erd->anchor_type = TOP_RIGHT;
+                  erd->anchor = tr;
+               }
+             else if (!memcmp(&bl, &abl, sizeof(Evas_Point)))
+               {
+                  erd->anchor_type = BOTTOM_LEFT;
+                  erd->anchor = bl;
+               }
+             else if (!memcmp(&br, &abr, sizeof(Evas_Point)))
+               {
+                  erd->anchor_type = BOTTOM_RIGHT;
+                  erd->anchor = br;
+               }
 
-        if (!e_efx_move(obj, speed, position, total_time, NULL, NULL))
-          {
-             evas_object_event_callback_del_full(obj, EVAS_CALLBACK_FREE, (Evas_Object_Event_Cb)_obj_del, e->resize_data);
-             free(erd);
-             e->resize_data = NULL;
-             e_efx_free(e);
-             return EINA_FALSE;
+             if (!e_efx_move(obj, speed, position, total_time, NULL, NULL))
+               {
+                  evas_object_event_callback_del_full(obj, EVAS_CALLBACK_FREE, (Evas_Object_Event_Cb)_obj_del, e->resize_data);
+                  free(erd);
+                  e->resize_data = NULL;
+                  e_efx_free(e);
+                  return EINA_FALSE;
+               }
+             else
+               erd->moving = 1;
           }
         else
-          erd->moving = 1;
+          evas_object_move(obj, position->x, position->y);
      }
    if (total_time)
      erd->anim = ecore_animator_timeline_add(total_time, (Ecore_Timeline_Cb)_resize_cb, erd);
