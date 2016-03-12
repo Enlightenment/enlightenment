@@ -653,8 +653,7 @@ _e_comp_wl_evas_cb_resize(void *data, Evas_Object *obj EINA_UNUSED, void *event 
                                             e_comp_wl->resize.edges,
                                             x, y);
      }
-   else if ((!ec->fullscreen) && (!ec->maximized) &&
-            (!ec->comp_data->maximize_pre))
+   else
      _e_comp_wl_configure_send(ec, 1);
 }
 
@@ -669,15 +668,6 @@ _e_comp_wl_evas_cb_state_update(void *data, Evas_Object *obj EINA_UNUSED, void *
 
    if (ec->comp_data->shell.configure_send)
      _e_comp_wl_configure_send(ec, 0);
-   ec->comp_data->maximize_pre = 0;
-}
-
-static void
-_e_comp_wl_evas_cb_maximize_pre(void *data, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
-{
-   E_Client *ec = data;
-
-   ec->comp_data->maximize_pre = 1;
 }
 
 static void
@@ -806,10 +796,6 @@ _e_comp_wl_client_evas_init(E_Client *ec)
                                        _e_comp_wl_evas_cb_state_update, ec);
         evas_object_smart_callback_add(ec->frame, "unmaximize_done",
                                        _e_comp_wl_evas_cb_state_update, ec);
-        evas_object_smart_callback_add(ec->frame, "maximize_pre",
-                                       _e_comp_wl_evas_cb_maximize_pre, ec);
-        evas_object_smart_callback_add(ec->frame, "unmaximize_pre",
-                                       _e_comp_wl_evas_cb_maximize_pre, ec);
         evas_object_smart_callback_add(ec->frame, "fullscreen",
                                        _e_comp_wl_evas_cb_state_update, ec);
         evas_object_smart_callback_add(ec->frame, "unfullscreen",
