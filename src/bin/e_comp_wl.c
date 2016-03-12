@@ -528,21 +528,15 @@ _e_comp_wl_keyboard_leave(E_Client *ec)
    if (!ec->comp_data->surface) return;
 
    wc = wl_resource_get_client(ec->comp_data->surface);
-   if (!e_object_is_del(E_OBJECT(ec)))
-     {
-        serial = wl_display_next_serial(e_comp_wl->wl.disp);
-        t = ecore_time_unix_get();
-     }
+   serial = wl_display_next_serial(e_comp_wl->wl.disp);
+   t = ecore_time_unix_get();
    EINA_LIST_FOREACH_SAFE(e_comp_wl->kbd.focused, l, ll, res)
      {
         if (wl_resource_get_client(res) != wc) continue;
-        if (!e_object_is_del(E_OBJECT(ec)))
-          {
-             wl_array_for_each(k, &e_comp_wl->kbd.keys)
-               wl_keyboard_send_key(res, serial, t,
-                                    *k, WL_KEYBOARD_KEY_STATE_RELEASED);
-             wl_keyboard_send_leave(res, serial, ec->comp_data->surface);
-          }
+        wl_array_for_each(k, &e_comp_wl->kbd.keys)
+          wl_keyboard_send_key(res, serial, t,
+                               *k, WL_KEYBOARD_KEY_STATE_RELEASED);
+        wl_keyboard_send_leave(res, serial, ec->comp_data->surface);
         e_comp_wl->kbd.focused = eina_list_remove_list(e_comp_wl->kbd.focused, l);
      }
 }
