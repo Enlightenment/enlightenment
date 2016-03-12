@@ -2175,7 +2175,21 @@ _e_comp_x_message(void *data EINA_UNUSED, int type EINA_UNUSED, Ecore_X_Event_Cl
         if (res)
           wc = wl_resource_get_user_data(res);
         if (wc)
-          e_comp_x_xwayland_client_setup(ec, wc);
+          {
+             if (wc->internal)
+               {
+                  e_object_del(E_OBJECT(wc));
+                  e_object_del(E_OBJECT(ec));
+                  /* this is an xwayland bug. somehow the wrong surface is being passed
+                   * and it's an internal surface--internal surfaces are NEVER
+                   * xwayland clients.
+                   *
+                   * ever.
+                   */
+                  return ECORE_CALLBACK_RENEW;
+               }
+             e_comp_x_xwayland_client_setup(ec, wc);
+          }
         else
           {
              ec->comp_data->surface_id = ev->data.l[0];
