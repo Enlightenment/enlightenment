@@ -1422,6 +1422,16 @@ e_comp_render_queue(void)
 }
 
 E_API void
+e_comp_client_post_update_add(E_Client *ec)
+{
+   if (ec->on_post_updates) return;
+   ec->on_post_updates = EINA_TRUE;
+   e_comp->post_updates = eina_list_append(e_comp->post_updates, ec);
+   REFD(ec, 111);
+   e_object_ref(E_OBJECT(ec));
+}
+
+E_API void
 e_comp_shape_queue(void)
 {
    if ((e_comp->comp_type != E_PIXMAP_TYPE_X) && (!e_comp_util_has_x())) return;

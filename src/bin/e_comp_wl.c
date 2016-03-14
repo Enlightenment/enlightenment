@@ -142,17 +142,9 @@ _e_comp_wl_evas_cb_hide(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj EIN
 
    e_comp_object_damage(ec->frame, 0, 0, ec->w, ec->h);
    e_comp_object_dirty(ec->frame);
-   if (!e_comp_object_render(ec->frame))
-     {
-        e_object_unref(E_OBJECT(ec));
-        return;
-     }
-   if (!ec->on_post_updates)
-     {
-        ec->on_post_updates = EINA_TRUE;
-        e_comp->post_updates = eina_list_append(e_comp->post_updates, ec);
-     }
-   else e_object_unref(E_OBJECT(ec));
+   if (e_comp_object_render(ec->frame))
+     e_comp_client_post_update_add(ec);
+   e_object_unref(E_OBJECT(ec));
 }
 
 static void
