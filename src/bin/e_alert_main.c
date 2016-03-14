@@ -16,14 +16,12 @@
 #include <xcb/shape.h>
 #include <X11/keysym.h>
 
-#ifdef HAVE_WAYLAND
 # ifdef HAVE_WL_DRM
 #  include <Ecore_Input.h>
 #  include <Ecore_Drm.h>
 #  include <Evas.h>
 #  include <Evas_Engine_Buffer.h>
 # endif
-#endif
 
 #define WINDOW_WIDTH   320
 #define WINDOW_HEIGHT  240
@@ -33,7 +31,6 @@
 #endif
 
 /* local function prototypes */
-#ifndef HAVE_WAYLAND
 static int           _e_alert_connect(void);
 static void          _e_alert_create(void);
 static void          _e_alert_display(void);
@@ -64,7 +61,6 @@ static xcb_gcontext_t gc = 0;
 static int fa = 0, fw = 0;
 static int sw = 0, sh = 0;
 static int fh = 0;
-#endif
 
 static const char *title = NULL, *str1 = NULL, *str2 = NULL;
 static int ret = 0, sig = 0;
@@ -85,10 +81,7 @@ struct
    { SIGABRT, "SIGABRT" }
 };
 
-#ifdef HAVE_WAYLAND
 # ifdef HAVE_WL_DRM
-static int fh = 0;
-static int sw = 0, sh = 0;
 static Ecore_Drm_Device *dev = NULL;
 static Ecore_Drm_Fb *buffer;
 static Evas *canvas = NULL;
@@ -487,7 +480,6 @@ _e_alert_drm_shutdown(void)
    ecore_drm_shutdown();
    evas_shutdown();
 }
-# endif
 #endif
 
 int
@@ -536,31 +528,34 @@ main(int argc, char **argv)
    str1 = "(F1) Recover";
    str2 = "(F12) Logout";
 
-#ifdef HAVE_WAYLAND
-# ifdef HAVE_WL_DRM
-   if (!_e_alert_drm_connect())
+#ifdef HAVE_WL_DRM
+   if (!getenv("DISPLAY"))
      {
-        printf("FAILED TO INIT ALERT SYSTEM!!!\n");
-        ecore_shutdown();
-        return EXIT_FAILURE;
+        if (!_e_alert_drm_connect())
+          {
+             printf("FAILED TO INIT ALERT SYSTEM!!!\n");
+             ecore_shutdown();
+             return EXIT_FAILURE;
+          }
+        _e_alert_drm_create();
+        _e_alert_drm_display();
+        _e_alert_drm_run();
+        _e_alert_drm_shutdown();
      }
-   _e_alert_drm_create();
-   _e_alert_drm_display();
-   _e_alert_drm_run();
-   _e_alert_drm_shutdown();
-# endif
-#else
-   if (!_e_alert_connect())
-     {
-        printf("FAILED TO INIT ALERT SYSTEM!!!\n");
-        ecore_shutdown();
-        return EXIT_FAILURE;
-     }
-   _e_alert_create();
-   _e_alert_display();
-   _e_alert_run();
-   _e_alert_shutdown();
+   else
 #endif
+     {
+        if (!_e_alert_connect())
+          {
+             printf("FAILED TO INIT ALERT SYSTEM!!!\n");
+             ecore_shutdown();
+             return EXIT_FAILURE;
+          }
+        _e_alert_create();
+        _e_alert_display();
+        _e_alert_run();
+        _e_alert_shutdown();
+     }
 
    ecore_shutdown();
 
@@ -570,7 +565,6 @@ main(int argc, char **argv)
 }
 
 /* local functions */
-#ifndef HAVE_WAYLAND
 static int
 _e_alert_connect(void)
 {
@@ -1120,4 +1114,3 @@ _e_alert_draw_button_text(void)
 
    xcb_image_text_8(conn, strlen(str2), btn2, gc, x, (10 + fa), str2);
 }
-#endif
