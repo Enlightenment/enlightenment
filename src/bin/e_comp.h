@@ -186,6 +186,7 @@ E_API E_Comp *e_comp_new(void);
 E_API int e_comp_internal_save(void);
 EINTERN int e_comp_shutdown(void);
 E_API void e_comp_render_queue(void);
+E_API void e_comp_client_post_update_add(E_Client *ec);
 E_API void e_comp_shape_queue(void);
 E_API void e_comp_shape_queue_block(Eina_Bool block);
 E_API E_Comp_Config *e_comp_config_get(void);
