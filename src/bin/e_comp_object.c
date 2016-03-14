@@ -727,6 +727,7 @@ _e_comp_object_animating_begin(E_Comp_Object *cw)
         e_comp->animating++;
         REFD(cw->ec, 2);
         e_object_ref(E_OBJECT(cw->ec));
+        evas_object_image_border_center_fill_set(cw->obj, EVAS_BORDER_FILL_DEFAULT);
      }
 }
 
@@ -740,6 +741,7 @@ _e_comp_object_animating_end(E_Comp_Object *cw)
           {
              e_comp->animating--;
              cw->showing = 0;
+             evas_object_image_border_center_fill_set(cw->obj, EVAS_BORDER_FILL_SOLID);
              UNREFD(cw->ec, 2);
              /* remove ref from animation start, account for possibility of deletion from unref */
              return !!e_object_unref(E_OBJECT(cw->ec));
