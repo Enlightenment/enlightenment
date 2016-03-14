@@ -3141,7 +3141,9 @@ e_client_res_change_geometry_restore(E_Client *ec)
           x = zx + zw - w;
         if ((y + h) > (zy + zh))
           y = zy + zh - h;
-        evas_object_geometry_set(ec->frame, x, y, w, h);
+        evas_object_move(ec->frame, x, y);
+        if (w && h)
+          evas_object_resize(ec->frame, w, h);
      }
    memcpy(&ec->pre_res_change, &pre_res_change, sizeof(pre_res_change));
 }
