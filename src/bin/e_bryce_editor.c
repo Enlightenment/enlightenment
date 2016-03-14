@@ -40,6 +40,8 @@ _editor_bryce_add(Evas_Object *obj)
    char buf[1024];
    const char *loc = "", *loc2 = "";
    Bryce_Info *bi;
+   E_Zone *zone;
+   int x, y;
    E_Gadget_Site_Gravity gravity = E_GADGET_SITE_GRAVITY_CENTER;
 
    bi = evas_object_data_get(obj, "__bryce_info");
@@ -90,6 +92,10 @@ _editor_bryce_add(Evas_Object *obj)
         e_gadget_site_gadget_add(site, "Digital Clock", 0);
         e_gadget_site_gadget_add(site, "Wireless", 0);
      }
+   zone = e_comp_object_util_zone_get(obj);
+   if (!zone) zone = e_zone_current_get();
+   evas_object_geometry_get(b, &x, &y, NULL, NULL);
+   evas_object_move(b, x + zone->x, y + zone->y);
    e_gadget_site_gravity_set(site, gravity);
    e_bryce_style_set(b, bi->style);
    e_bryce_autohide_set(b, bi->autohide);

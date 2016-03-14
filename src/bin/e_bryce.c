@@ -184,7 +184,10 @@ _bryce_autosize(Bryce *b)
    E_FREE_FUNC(b->calc_job, ecore_job_del);
    if (!b->autosize)
      {
-        evas_object_geometry_get(b->parent, NULL, NULL, &w, &h);
+        if (b->parent == e_comp->elm)
+          w = e_comp_zone_number_get(b->zone)->w, h = e_comp_zone_number_get(b->zone)->h;
+        else
+          evas_object_geometry_get(b->parent, NULL, NULL, &w, &h);
         if (b->size_changed)
           elm_object_content_unset(b->scroller);
         _bryce_position(b, w, h, &x, &y);
@@ -383,6 +386,40 @@ _bryce_moveresize_save(void *data)
 }
 
 static void
+_bryce_zone_del(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   Bryce *b = data;
+   e_object_del(E_OBJECT(b->e_obj_inherit));
+}
+
+static void
+_bryce_zone_moveresize(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   Bryce *b = data;
+   if (!b->calc_job)
+     b->calc_job = ecore_job_add((Ecore_Cb)_bryce_autosize, b);
+}
+
+static void
+_bryce_zone_setup(Bryce *b)
+{
+   Evas_Object *zone_clip;
+
+   zone_clip = evas_object_clip_get(b->bryce);
+   if (zone_clip)
+     {
+        evas_object_event_callback_del_full(zone_clip, EVAS_CALLBACK_DEL, _bryce_zone_del, b);
+        evas_object_event_callback_del_full(zone_clip, EVAS_CALLBACK_MOVE, _bryce_zone_moveresize, b);
+        evas_object_event_callback_del_full(zone_clip, EVAS_CALLBACK_RESIZE, _bryce_zone_moveresize, b);
+     }
+   zone_clip = e_comp_zone_number_get(b->zone)->bg_clip_object;
+   evas_object_clip_set(b->bryce, zone_clip);
+   evas_object_event_callback_add(zone_clip, EVAS_CALLBACK_DEL, _bryce_zone_del, b);
+   evas_object_event_callback_add(zone_clip, EVAS_CALLBACK_MOVE, _bryce_zone_moveresize, b);
+   evas_object_event_callback_add(zone_clip, EVAS_CALLBACK_RESIZE, _bryce_zone_moveresize, b);
+}
+
+static void
 _bryce_moveresize(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
    Bryce *b = data;
@@ -401,7 +438,7 @@ _bryce_moveresize(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *event
    else
      size = w;
 
-   if (b->size != size)
+   if (size && (b->size != size))
      {
         if (b->save_timer)
           ecore_timer_reset(b->save_timer);
@@ -461,9 +498,11 @@ _bryce_moveresize(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *event
           }
      }
    if (!zone) return;
-   if (b->zone != zone->num)
-     e_config_save_queue();
+   if (b->zone == zone->num) return;
+   e_config_save_queue();
    b->zone = zone->num;
+   _bryce_zone_setup(b);
+   _bryce_autosize(b);
 }
 
 static Eina_Bool
@@ -542,26 +581,11 @@ _bryce_popup_hide(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *event
 }
 
 static void
-_bryce_zone_del(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
-{
-   Bryce *b = data;
-   e_object_del(E_OBJECT(b->e_obj_inherit));
-}
-
-static void
-_bryce_zone_moveresize(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
-{
-   Bryce *b = data;
-   if (!b->calc_job)
-     b->calc_job = ecore_job_add((Ecore_Cb)_bryce_autosize, b);
-}
-
-static void
 _bryce_del(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Bryce *b = data;
    Evas_Object *p;
-   E_Zone *zone;
+   Evas_Object *zone_clip;
    void *obs;
 
    EINA_LIST_FREE(b->zone_obstacles, obs)
@@ -575,12 +599,12 @@ _bryce_del(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *
    ecore_timer_del(b->save_timer);
    EINA_LIST_FREE(b->popups, p)
      evas_object_event_callback_del(p, EVAS_CALLBACK_HIDE, _bryce_popup_hide);
-   zone = e_comp_zone_number_get(b->zone);
-   if (zone)
+   zone_clip = evas_object_clip_get(b->bryce);
+   if (zone_clip)
      {
-        evas_object_event_callback_del(zone->bg_clip_object, EVAS_CALLBACK_DEL, _bryce_zone_del);
-        evas_object_event_callback_del(zone->bg_clip_object, EVAS_CALLBACK_MOVE, _bryce_zone_moveresize);
-        evas_object_event_callback_del(zone->bg_clip_object, EVAS_CALLBACK_RESIZE, _bryce_zone_moveresize);
+        evas_object_event_callback_del_full(zone_clip, EVAS_CALLBACK_DEL, _bryce_zone_del, b);
+        evas_object_event_callback_del_full(zone_clip, EVAS_CALLBACK_MOVE, _bryce_zone_moveresize, b);
+        evas_object_event_callback_del_full(zone_clip, EVAS_CALLBACK_RESIZE, _bryce_zone_moveresize, b);
      }
    E_FREE(b->e_obj_inherit);
 }
@@ -779,7 +803,6 @@ static void
 _bryce_create(Bryce *b, Evas_Object *parent)
 {
    Evas_Object *ly, *bryce, *scr;
-   Evas_Object *zone_clip;
 
    b->e_obj_inherit = E_OBJECT_ALLOC(E_Object, E_BRYCE_TYPE, _bryce_object_free);
    e_object_data_set(b->e_obj_inherit, b);
@@ -813,11 +836,7 @@ _bryce_create(Bryce *b, Evas_Object *parent)
    evas_object_event_callback_add(bryce, EVAS_CALLBACK_MOUSE_UP, _bryce_mouse_up, b);
    evas_object_event_callback_add(bryce, EVAS_CALLBACK_MOUSE_WHEEL, _bryce_mouse_wheel, b);
 
-   zone_clip = e_comp_zone_number_get(b->zone)->bg_clip_object;
-   evas_object_clip_set(bryce, zone_clip);
-   evas_object_event_callback_add(zone_clip, EVAS_CALLBACK_DEL, _bryce_zone_del, b);
-   evas_object_event_callback_add(zone_clip, EVAS_CALLBACK_MOVE, _bryce_zone_moveresize, b);
-   evas_object_event_callback_add(zone_clip, EVAS_CALLBACK_RESIZE, _bryce_zone_moveresize, b);
+  _bryce_zone_setup(b);
    _bryce_autohide_setup(b);
    _bryce_autosize(b);
 }
