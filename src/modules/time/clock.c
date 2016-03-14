@@ -342,7 +342,7 @@ static Evas_Object *
 _clock_gadget_configure(Evas_Object *g)
 {
    Instance *inst = evas_object_data_get(g, "clock");
-   return config_clock(inst->cfg);
+   return config_clock(inst->cfg, e_comp_object_util_zone_get(g));
 }
 
 static void
@@ -466,7 +466,7 @@ clock_wizard(E_Gadget_Wizard_End_Cb cb, void *data, Eina_Bool digital)
 
    ci = _conf_item_get(&id, digital);
    wi->id = ci->id;
-   evas_object_event_callback_add(config_clock(ci), EVAS_CALLBACK_DEL, _wizard_end, wi); 
+   evas_object_event_callback_add(config_clock(ci, NULL), EVAS_CALLBACK_DEL, _wizard_end, wi); 
 }
 
 EINTERN void

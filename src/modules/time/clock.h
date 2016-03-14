@@ -68,7 +68,7 @@ struct _Instance
    Config_Item     *cfg;
 };
 
-EINTERN Evas_Object *config_clock(Config_Item *);
+EINTERN Evas_Object *config_clock(Config_Item *, E_Zone*);
 EINTERN void config_timezone_populate(Evas_Object *obj, const char *name);
 void clock_instances_redo(void);
 

@@ -423,13 +423,14 @@ _config_advanced_changed(void *data, Evas_Object *obj, void *event_info EINA_UNU
 }
 
 EINTERN Evas_Object *
-config_clock(Config_Item *ci)
+config_clock(Config_Item *ci, E_Zone *zone)
 {
    Evas_Object *popup, *tb, *o, *bx;
    int i, row = 0;
    char daynames[7][64];
    struct tm tm;
 
+   if (!zone) zone = e_zone_current_get();
    memset(&tm, 0, sizeof(struct tm));
    for (i = 0; i < 7; i++)
      {
@@ -559,7 +560,8 @@ config_clock(Config_Item *ci)
 
    popup = e_comp_object_util_add(popup, E_COMP_OBJECT_TYPE_NONE);
    evas_object_layer_set(popup, E_LAYER_POPUP);
-   evas_object_resize(popup, e_zone_current_get()->w / 4, e_zone_current_get()->h / 3);
+   evas_object_move(popup, zone->x, zone->y);
+   evas_object_resize(popup, zone->w / 4, zone->h / 3);
    e_comp_object_util_center(popup);
    evas_object_show(popup);
    e_comp_object_util_autoclose(popup, NULL, e_comp_object_util_autoclose_on_escape, NULL);
