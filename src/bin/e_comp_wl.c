@@ -1042,7 +1042,11 @@ _e_comp_wl_surface_state_commit(E_Client *ec, E_Comp_Wl_Surface_State *state)
         if (ec->changes.pos)
           e_comp_object_frame_xy_unadjust(ec->frame, ec->x, ec->y, &x, &y);
         else
-          x = ec->client.x, y = ec->client.y;
+          {
+             x = ec->client.x, y = ec->client.y;
+             if (ec->new_client)
+               x -= ec->comp_data->shell.window.x, y -= ec->comp_data->shell.window.y;
+          }
 
         if (ec->new_client) placed = ec->placed;
 
