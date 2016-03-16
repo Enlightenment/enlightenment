@@ -77,7 +77,7 @@ e_modapi_init(E_Module *m)
                         e_module_dir_get(m), MODULE_ARCH, file);
              handle = dlopen(buf, RTLD_NOW | RTLD_GLOBAL);
              if (handle)
-               e_wizard_page_add(handle,
+               e_wizard_page_add(handle, file,
                                  dlsym(handle, "wizard_page_init"),
                                  dlsym(handle, "wizard_page_shutdown"),
                                  dlsym(handle, "wizard_page_show"),

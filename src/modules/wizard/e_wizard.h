@@ -19,6 +19,7 @@ struct _E_Wizard_Page
    EINA_INLIST;
    void *handle;
    Evas *evas;
+   Eina_Stringshare *name;
    int (*init)     (E_Wizard_Page *pg, Eina_Bool *need_xdg_desktops, Eina_Bool *need_xdg_icons);
    int (*shutdown) (E_Wizard_Page *pg);
    int (*show)     (E_Wizard_Page *pg);
@@ -33,7 +34,7 @@ E_API void e_wizard_go(void);
 E_API void e_wizard_apply(void);
 E_API void e_wizard_next(void);
 E_API void e_wizard_page_show(Evas_Object *obj);
-E_API E_Wizard_Page *e_wizard_page_add(void *handle,
+E_API E_Wizard_Page *e_wizard_page_add(void *handle, const char *name,
                                       int (*init)     (E_Wizard_Page *pg, Eina_Bool *need_xdg_desktops, Eina_Bool *need_xdg_icons),
                                       int (*shutdown) (E_Wizard_Page *pg),
                                       int (*show)     (E_Wizard_Page *pg),

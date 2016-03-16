@@ -123,7 +123,7 @@ e_wizard_next(void)
         e_wizard_next();
         return;
      }
-
+   fprintf(stderr, "WIZARD PAGE: %s\n", curpage->name);
    e_wizard_button_next_enable_set(1);
    need_xdg_desktops = EINA_FALSE;
    need_xdg_icons = EINA_FALSE;
@@ -152,7 +152,7 @@ e_wizard_page_show(Evas_Object *obj)
 }
 
 E_API E_Wizard_Page *
-e_wizard_page_add(void *handle,
+e_wizard_page_add(void *handle, const char *name,
                   int (*init_cb)(E_Wizard_Page *pg, Eina_Bool *need_xdg_desktops, Eina_Bool *need_xdg_icons),
                   int (*shutdown_cb)(E_Wizard_Page *pg),
                   int (*show_cb)(E_Wizard_Page *pg),
@@ -164,6 +164,7 @@ e_wizard_page_add(void *handle,
 
    pg = E_NEW(E_Wizard_Page, 1);
    if (!pg) return NULL;
+   pg->name = eina_stringshare_add(name);
 
    pg->handle = handle;
    pg->evas = evas_object_evas_get(pop);
@@ -187,6 +188,7 @@ e_wizard_page_del(E_Wizard_Page *pg)
 // once only then e restarts itself with final wizard page
 //   if (pg->handle) dlclose(pg->handle);
    if (pg->shutdown) pg->shutdown(pg);
+   eina_stringshare_del(pg->name);
    pages = (E_Wizard_Page*)eina_inlist_remove(EINA_INLIST_GET(pages), EINA_INLIST_GET(pg));
    free(pg);
 }
