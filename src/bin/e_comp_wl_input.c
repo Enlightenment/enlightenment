@@ -242,9 +242,9 @@ _e_comp_wl_input_cb_touch_get(struct wl_client *client EINA_UNUSED, struct wl_re
 }
 
 static void
-_e_comp_wl_input_cb_release(struct wl_client *client EINA_UNUSED, struct wl_resource *resource EINA_UNUSED)
+_e_comp_wl_input_cb_release(struct wl_client *client EINA_UNUSED, struct wl_resource *resource)
 {
-   /* TODO: implement */
+   wl_resource_destroy(resource);
 }
 
 static const struct wl_seat_interface _e_seat_interface =
