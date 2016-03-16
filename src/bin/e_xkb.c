@@ -33,6 +33,7 @@ _e_xkb_init_timer(void *data)
 static Eina_Bool
 _xkb_changed_state(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
 {
+#if 0
    Ecore_X_Event_Xkb *ev = (Ecore_X_Event_Xkb *)event;
 
    if (ev->group < 0 ||
@@ -40,7 +41,15 @@ _xkb_changed_state(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
      return ECORE_CALLBACK_PASS_ON;
 
    e_config->xkb.cur_group = ev->group;
-   _e_xkb_update_event(ev->group);
+#endif
+   /*
+    * XKb_STATE_NOTIFY does not only indicate a new group setted somewhere in e,
+    * it also indicates that there is probebly a new set of available groups which is unknown to e
+    * so setting a new groupindex does not mean you have setted to a new group from the enlightenment config.
+    * So better reconfigure the enlightenment known configuration and ignore the sets from outside of e
+    */
+   _e_xkb_update_event(0);
+   _e_xkb_update_event(e_config->xkb.cur_group);
    return ECORE_CALLBACK_PASS_ON;
 }
 #endif
