@@ -38,6 +38,8 @@ modifiers_changed(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
        binding |= (1 << i);
    if (binding == current) return;
    current = binding;
+   e_wizard_button_next_enable_set(!!current);
+   if (!current) return;
    EINA_LIST_FOREACH(e_bindings->mouse_bindings, l, ebm)
      if (eina_streq(ebm->action, "window_move") ||
          eina_streq(ebm->action, "window_resize") ||
