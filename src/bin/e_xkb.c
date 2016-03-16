@@ -4,6 +4,8 @@ static void _e_xkb_update_event(int);
 
 static int _e_xkb_cur_group = -1;
 static Ecore_Event_Handler *xkb_state_handler = NULL;
+static int _e_xkb_skip_events = 0;
+
 
 E_API int E_EVENT_XKB_CHANGED = 0;
 
@@ -33,6 +35,12 @@ _e_xkb_init_timer(void *data)
 static Eina_Bool
 _xkb_changed_state(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
 {
+   if (_e_xkb_skip_events > 0)
+     {
+        _e_xkb_skip_events--;
+        return ECORE_CALLBACK_PASS_ON;
+     }
+
 #if 0
    Ecore_X_Event_Xkb *ev = (Ecore_X_Event_Xkb *)event;
 
@@ -97,6 +105,7 @@ _e_x_xkb_update(int cur_group)
    if (cur_group != -1)
      {
         _e_xkb_cur_group = cur_group;
+        _e_xkb_skip_events ++;
 #ifndef HAVE_WAYLAND_ONLY
         if (e_comp->root)
           ecore_x_xkb_select_group(cur_group);
@@ -182,6 +191,7 @@ _e_x_xkb_update(int cur_group)
                }
           }
      }
+   _e_xkb_skip_events ++;
    INF("SET XKB RUN: %s", eina_strbuf_string_get(buf));
    ecore_exe_run(eina_strbuf_string_get(buf), NULL);
    eina_strbuf_free(buf);
