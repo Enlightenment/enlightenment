@@ -104,6 +104,7 @@ wizard_page_show(E_Wizard_Page *pg EINA_UNUSED)
    elm_object_content_set(of, o);
 
    ob = elm_label_add(o);
+   elm_object_style_set(ob, "default/left");
    snprintf(buf, sizeof(buf), _("Enlightenment sets default mouse bindings for objects.<br>"
                                 "These bindings provide three operations on click:<br>"
                                 "* <b>Move</b> (left button)<br>"

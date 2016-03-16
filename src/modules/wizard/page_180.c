@@ -29,6 +29,7 @@ wizard_page_show(E_Wizard_Page *pg EINA_UNUSED)
    elm_object_content_set(of, o);
 
    ob = elm_label_add(o);
+   elm_object_style_set(ob, "default/left");
    E_ALIGN(ob, 0, 0.5);
    evas_object_show(ob);
    elm_box_pack_end(o, ob);
