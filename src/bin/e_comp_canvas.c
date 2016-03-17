@@ -593,7 +593,7 @@ e_comp_canvas_update(void)
          * rearranges the order. */
         EINA_INLIST_FOREACH(e_comp->layers[i].clients, ec)
           {
-             if (!e_client_util_ignored_get(ec))
+             if ((!e_client_util_ignored_get(ec)) && (!e_object_is_del(E_OBJECT(ec))))
                tmp = eina_list_append(tmp, ec);
           }
 
