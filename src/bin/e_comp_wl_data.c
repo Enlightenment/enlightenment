@@ -245,19 +245,6 @@ _e_comp_wl_data_device_selection_set(void *data EINA_UNUSED, E_Comp_Wl_Data_Sour
 
    sel_source = (E_Comp_Wl_Data_Source*)e_comp_wl->selection.data_source;
 
-   if ((sel_source) &&
-       (e_comp_wl->selection.serial - serial < UINT32_MAX / 2))
-     {
-        /* TODO: elm_entry is sending too many request on now,
-         * for those requests, selection.signal is being emitted also a lot.
-         * when it completes to optimize the entry, it should be checked more.
-         */
-        if (e_comp_wl->clipboard.source)
-          wl_signal_emit(&e_comp_wl->selection.signal, e_comp->wl_comp_data);
-
-        return;
-     }
-
    if (sel_source)
      {
         if (sel_source->cancelled)
