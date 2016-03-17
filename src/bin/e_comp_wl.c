@@ -1437,8 +1437,8 @@ _e_comp_wl_surface_destroy(struct wl_resource *resource)
 
    if (!(ec = wl_resource_get_user_data(resource))) return;
 
-   evas_object_hide(ec->frame);
    e_object_del(E_OBJECT(ec));
+   evas_object_hide(ec->frame);
 }
 
 static void
