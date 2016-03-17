@@ -88,6 +88,7 @@ typedef struct _E_Comp_Object
    Evas_Object         *effect_obj; // effects object
    unsigned int         layer; //e_comp_canvas_layer_map(cw->ec->layer)
    Eina_List           *obj_mirror;  // extra mirror objects
+   Eina_List           *obj_agent;  // extra agent objects
    Eina_Tiler          *updates; //render update regions
    Eina_Tiler          *pending_updates; //render update regions which are about to render
 
@@ -126,6 +127,8 @@ typedef struct _E_Comp_Object
    Eina_Bool            force_move : 1;
    Eina_Bool            frame_extends : 1; //frame may extend beyond object size
    Eina_Bool            blanked : 1; //window is rendering blank content (externally composited)
+
+   Eina_Bool            agent_updating : 1; //updating agents
 } E_Comp_Object;
 
 
@@ -180,6 +183,38 @@ _e_comp_object_event_add(Evas_Object *obj)
         e_object_ref(E_OBJECT(ec));
      }
    ecore_event_add(E_EVENT_COMP_OBJECT_ADD, ev, _e_comp_object_event_free, NULL);
+}
+
+/////////////////////////////////////
+
+static void
+_e_comp_object_cb_agent_del(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
+{
+   E_Comp_Object *cw = data;
+
+   cw->obj_agent = eina_list_remove(cw->obj_agent, obj);
+}
+
+static void
+_e_comp_object_cb_agent_resize(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
+{
+   E_Comp_Object *cw = data;
+   int w, h;
+
+   if (cw->agent_updating) return;
+   evas_object_geometry_get(obj, NULL, NULL, &w, &h);
+   evas_object_resize(cw->smart_obj, w, h);
+}
+
+static void
+_e_comp_object_cb_agent_move(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
+{
+   E_Comp_Object *cw = data;
+   int x, y;
+
+   if (cw->agent_updating) return;
+   evas_object_geometry_get(obj, &x, &y, NULL, NULL);
+   evas_object_move(cw->smart_obj, x, y);
 }
 
 /////////////////////////////////////
@@ -2265,6 +2300,7 @@ static void
 _e_comp_smart_del(Evas_Object *obj)
 {
    Eina_List *l;
+   Evas_Object *o;
 
    INTERNAL_ENTRY;
 
@@ -2273,17 +2309,18 @@ _e_comp_smart_del(Evas_Object *obj)
    E_FREE_FUNC(cw->pending_updates, eina_tiler_free);
    free(cw->ns);
 
-   if (cw->obj_mirror)
+   EINA_LIST_FREE(cw->obj_mirror, o)
      {
-        Evas_Object *o;
-
-        EINA_LIST_FREE(cw->obj_mirror, o)
-          {
-             evas_object_image_data_set(o, NULL);
-             evas_object_freeze_events_set(o, 1);
-             evas_object_event_callback_del_full(o, EVAS_CALLBACK_DEL, _e_comp_object_cb_mirror_del, cw);
-             evas_object_del(o);
-          }
+        evas_object_image_data_set(o, NULL);
+        evas_object_freeze_events_set(o, 1);
+        evas_object_event_callback_del_full(o, EVAS_CALLBACK_DEL, _e_comp_object_cb_mirror_del, cw);
+        evas_object_del(o);
+     }
+   EINA_LIST_FREE(cw->obj_agent, o)
+     {
+        evas_object_freeze_events_set(o, 1);
+        evas_object_event_callback_del_full(o, EVAS_CALLBACK_DEL, _e_comp_object_cb_agent_del, cw);
+        evas_object_del(o);
      }
    _e_comp_object_layers_remove(cw);
    l = evas_object_data_get(obj, "comp_object-to_del");
@@ -2314,9 +2351,16 @@ _e_comp_smart_del(Evas_Object *obj)
 static void
 _e_comp_smart_move(Evas_Object *obj, int x, int y)
 {
+   Eina_List *l;
+   Evas_Object *o;
+
    INTERNAL_ENTRY;
 
    cw->x = x, cw->y = y;
+   cw->agent_updating = 1;
+   EINA_LIST_FOREACH(cw->obj_agent, l, o)
+     evas_object_move(o, cw->ec->x, cw->ec->x);
+   cw->agent_updating = 0;
    evas_object_move(cw->clip, 0, 0);
    evas_object_move(cw->effect_obj, x, y);
    if (cw->input_obj)
@@ -2333,6 +2377,8 @@ static void
 _e_comp_smart_resize(Evas_Object *obj, int w, int h)
 {
    Eina_Bool first = EINA_FALSE;
+   Eina_List *l;
+   Evas_Object *o;
 
    INTERNAL_ENTRY;
 
@@ -2384,6 +2430,10 @@ _e_comp_smart_resize(Evas_Object *obj, int w, int h)
      {
         evas_object_resize(cw->effect_obj, w, h);
      }
+   cw->agent_updating = 1;
+   EINA_LIST_FOREACH(cw->obj_agent, l, o)
+     evas_object_resize(o, cw->ec->w, cw->ec->h);
+   cw->agent_updating = 0;
    if (!cw->visible) return;
    e_comp_render_queue();
    if (!cw->animating)
@@ -3820,6 +3870,25 @@ end:
    if (ret)
      e_comp_client_post_update_add(cw->ec);
    return ret;
+}
+
+E_API Evas_Object *
+e_comp_object_agent_add(Evas_Object *obj)
+{
+   Evas_Object *o;
+
+   API_ENTRY NULL;
+
+   o = evas_object_rectangle_add(e_comp->evas);
+   evas_object_color_set(o, 0, 0, 0, 0);
+   evas_object_pass_events_set(o, 1);
+   evas_object_geometry_set(o, cw->ec->x, cw->ec->y, cw->ec->w, cw->ec->h);
+
+   cw->obj_agent = eina_list_append(cw->obj_agent, o);
+   evas_object_event_callback_add(o, EVAS_CALLBACK_RESIZE, _e_comp_object_cb_agent_resize, cw);
+   evas_object_event_callback_add(o, EVAS_CALLBACK_MOVE, _e_comp_object_cb_agent_move, cw);
+   evas_object_event_callback_add(o, EVAS_CALLBACK_DEL, _e_comp_object_cb_agent_del, cw);
+   return o;
 }
 
 /* create a duplicate of an evas object */

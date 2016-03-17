@@ -77,6 +77,7 @@ E_API void e_comp_object_shape_apply(Evas_Object *obj);
 E_API void e_comp_object_redirected_set(Evas_Object *obj, Eina_Bool set);
 E_API void e_comp_object_native_surface_set(Evas_Object *obj, Eina_Bool set);
 E_API void e_comp_object_native_surface_override(Evas_Object *obj, Evas_Native_Surface *ns);
+E_API Evas_Object *e_comp_object_agent_add(Evas_Object *obj);
 E_API void e_comp_object_blank(Evas_Object *obj, Eina_Bool set);
 E_API void e_comp_object_dirty(Evas_Object *obj);
 E_API Eina_Bool e_comp_object_render(Evas_Object *obj);
