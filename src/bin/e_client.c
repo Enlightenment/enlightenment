@@ -1545,18 +1545,24 @@ _e_client_cb_evas_restack(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA
 ////////////////////////////////////////////////
 
 static void
-_e_client_maximize_done(void *data, E_Efx_Map_Data *emd EINA_UNUSED, Evas_Object *obj EINA_UNUSED)
+_e_client_maximize_done(void *data, E_Efx_Map_Data *emd EINA_UNUSED, Evas_Object *obj)
 {
    E_Client *ec = data;
    ec->maximize_override = 0;
+   evas_object_del(obj);
 }
 
 static void
 _e_client_maximize_run(E_Client *ec, int x, int y, int w, int h)
 {
    if (e_config->window_maximize_animate && (!starting) && (!ec->changes.need_maximize))
-     e_efx_resize(ec->frame, e_config->window_maximize_transition, E_EFX_POINT(x, y),
-       w, h, e_config->window_maximize_time, _e_client_maximize_done, ec);
+     {
+        Evas_Object *agent;
+
+        agent = e_comp_object_agent_add(ec->frame);
+        e_efx_resize(agent, e_config->window_maximize_transition, E_EFX_POINT(x, y),
+          w, h, e_config->window_maximize_time, _e_client_maximize_done, ec);
+     }
    else
      evas_object_geometry_set(ec->frame, x, y, w, h);
 }
