@@ -3020,8 +3020,12 @@ e_comp_object_frame_geometry_set(Evas_Object *obj, int l, int r, int t, int b)
      {
         if ((calc || (!e_client_has_xwindow(cw->ec))) && cw->client_inset.calc)
           {
-             cw->ec->x -= l - cw->client_inset.l;
-             cw->ec->y -= t - cw->client_inset.t;
+             E_Zone *zone = e_comp_object_util_zone_get(obj);
+
+             if (cw->ec->x != zone->x)
+               cw->ec->x -= l - cw->client_inset.l;
+             if (cw->ec->y != zone->y)
+               cw->ec->y -= t - cw->client_inset.t;
           }
         cw->ec->changes.pos = cw->ec->changes.size = 1;
         EC_CHANGED(cw->ec);
