@@ -7,8 +7,10 @@ typedef struct _Elm_Win_Trap_Ctx
 {
    E_Client      *client;
    E_Pointer     *pointer;
+   int x, y, w, h;
    Eina_Bool      centered : 1;
    Eina_Bool      placed : 1;
+   Eina_Bool      sized : 1;
    Eina_Bool      internal_no_remember : 1;
    Eina_Bool      internal_no_reopen : 1;
    Eina_Bool      visible : 1;
@@ -154,6 +156,8 @@ _e_elm_win_trap_show(void *data, Evas_Object *o)
    e_comp_object_frame_xy_adjust(ctx->client->frame, ctx->client->client.x, ctx->client->client.y, &ctx->client->x, &ctx->client->y);
    e_comp_object_frame_wh_adjust(ctx->client->frame, ctx->client->client.w, ctx->client->client.h, &ctx->client->w, &ctx->client->h);
    if (ctx->centered) e_comp_object_util_center(ctx->client->frame);
+   else if (ctx->placed) evas_object_move(o, ctx->x, ctx->y);
+   if (ctx->sized) evas_object_resize(o, ctx->w, ctx->h);
    return EINA_TRUE;
 }
 
@@ -174,6 +178,7 @@ _e_elm_win_trap_move(void *data, Evas_Object *o, int x, int y)
         if ((x == ex) && (y == ey)) return EINA_FALSE;
      }
    ctx->placed = 1;
+   ctx->x = x, ctx->y = y;
    if (!ctx->client) return EINA_TRUE;
    if ((ctx->client->client.x != x) || (ctx->client->client.y != y))
      e_client_util_move_without_frame(ctx->client, x, y);
@@ -185,6 +190,8 @@ _e_elm_win_trap_resize(void *data, Evas_Object *o EINA_UNUSED, int w, int h)
 {
    Elm_Win_Trap_Ctx *ctx = data;
    EINA_SAFETY_ON_NULL_RETURN_VAL(ctx, EINA_TRUE);
+   ctx->sized = 1;
+   ctx->w = w, ctx->h = h;
    if (!ctx->client) return EINA_TRUE;
    e_comp_object_frame_wh_adjust(ctx->client->frame, w, h, &w, &h);
    e_client_resize_limit(ctx->client, &w, &h);
