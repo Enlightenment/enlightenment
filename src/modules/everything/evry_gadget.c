@@ -336,10 +336,10 @@ _gadget_popup_show(Instance *inst)
         break;
      }
 
-   if (px + pw > inst->win->zone->w)
+   if (px + pw > inst->win->zone->x + inst->win->zone->w)
      x = inst->win->zone->w - pw;
 
-   if (py + ph > inst->win->zone->h)
+   if (py + ph > inst->win->zone->y + inst->win->zone->h)
      y = inst->win->zone->h - ph;
 
    evas_object_move(ewin, x, y);
