@@ -251,6 +251,9 @@ _sink_remove_cb(int index, void *data EINA_UNUSED)
    Eina_List *l;
    DBG("Removing sink: %d", index);
 
+   if (index == ctx->default_sink)
+     ctx->default_sink = -1;
+
    EINA_LIST_FOREACH(ctx->sinks, l, sink)
      {
         if (sink->idx == index)
@@ -1019,7 +1022,7 @@ _sink_default_get(void)
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(ctx, NULL);
    EINA_LIST_FOREACH(ctx->sinks, l, s)
-      if (s->idx == ctx->default_sink)
+      if (s->idx == ctx->default_sink || ctx->default_sink == -1)
         return (Emix_Sink *)s;
 
    return NULL;
