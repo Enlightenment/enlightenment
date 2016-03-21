@@ -659,14 +659,15 @@ _e_comp_wl_evas_cb_state_update(void *data, Evas_Object *obj EINA_UNUSED, void *
 static void
 _e_comp_wl_evas_cb_delete_request(void *data, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
 {
-   E_Client *ec;
-
-   if (!(ec = data)) return;
-   if (ec->netwm.ping) e_client_ping(ec);
+   E_Client *ec = data;
 
    e_comp_ignore_win_del(E_PIXMAP_TYPE_WL, e_pixmap_window_get(ec->pixmap));
 
-   e_object_del(E_OBJECT(ec));
+   if (!e_client_has_xwindow(ec))
+     {
+        if (ec->netwm.ping) e_client_ping(ec);
+        e_object_del(E_OBJECT(ec));
+     }
 
    _e_comp_wl_focus_check();
 
