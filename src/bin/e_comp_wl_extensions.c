@@ -81,7 +81,12 @@ static const struct screenshooter_interface _e_screenshooter_interface =
    _e_comp_wl_screenshooter_cb_shoot
 };
 
-#define GLOBAL_BIND_CB(NAME, IFACE) \
+#define GLOBAL_BIND_CB(NAME, IFACE, ...) \
+static void \
+_e_comp_wl_##NAME##_cb_unbind(struct wl_resource *resource EINA_UNUSED) \
+{ \
+   e_comp_wl->extensions->NAME.global = NULL; \
+} \
 static void \
 _e_comp_wl_##NAME##_cb_bind(struct wl_client *client, void *data EINA_UNUSED, uint32_t version EINA_UNUSED, uint32_t id) \
 { \
@@ -94,7 +99,8 @@ _e_comp_wl_##NAME##_cb_bind(struct wl_client *client, void *data EINA_UNUSED, ui
         return;\
      }\
 \
-   wl_resource_set_implementation(res, &_e_##NAME##_interface, NULL, NULL);\
+   e_comp_wl->extensions->NAME.global = res; \
+   wl_resource_set_implementation(res, &_e_##NAME##_interface, NULL, _e_comp_wl_##NAME##_cb_unbind);\
 }
 
 GLOBAL_BIND_CB(session_recovery, zwp_e_session_recovery_interface)
