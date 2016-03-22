@@ -1844,8 +1844,8 @@ _pager_window_cb_mouse_up(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA
 static void
 _pager_window_cb_mouse_move(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info)
 {
-   Evas_Event_Mouse_Move *ev;
-   Pager_Win *pw;
+   Evas_Event_Mouse_Move *ev = event_info;
+   Pager_Win *pw = data;
    E_Drag *drag;
    Evas_Object *o, *oo;
    Evas_Coord x, y, w, h;
@@ -1856,33 +1856,22 @@ _pager_window_cb_mouse_move(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EI
    Evas_Coord mx, my, vx, vy;
    Pager_Desk *pd;
 
-   ev = event_info;
-   pw = data;
-
-   if (!pw) return;
    if (pw->client->lock_user_location) return;
-   if ((pw->desk) && (pw->desk->pager))
-     {
-        if ((pw->desk->pager->popup) && (!act_popup)) return;
-     }
+   if ((pw->desk->pager->popup) && (!act_popup)) return;
 
    /* prevent drag for a few pixels */
    if (pw->drag.start)
      {
         dx = pw->drag.x - ev->cur.output.x;
         dy = pw->drag.y - ev->cur.output.y;
-        if ((pw->desk) && (pw->desk->pager))
-          resist = pager_config->drag_resist;
+        resist = pager_config->drag_resist;
 
-        if (((unsigned int)(dx * dx) + (unsigned int)(dy * dy)) <=
-            (resist * resist)) return;
+        if ((unsigned int)(dx * dx) + (unsigned int)(dy * dy) <= resist * resist)
+          return;
 
-        if ((pw->desk) && (pw->desk->pager))
-          {
-             pw->desk->pager->dragging = 1;
-             edje_object_signal_emit(pw->desk->o_desk, "e,action,drag,in", "e");
-             pw->desk->pager->active_drop_pd = pw->desk;
-          }
+        pw->desk->pager->dragging = 1;
+        edje_object_signal_emit(pw->desk->o_desk, "e,action,drag,in", "e");
+        pw->desk->pager->active_drop_pd = pw->desk;
         pw->drag.start = 0;
         e_comp_object_effect_clip(pw->client->frame);
      }
