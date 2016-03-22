@@ -126,72 +126,30 @@ _systray_cb_mouse_down(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj EINA
 static void
 _systray_theme(Evas_Object *o, const char *shelf_style, const char *gc_style)
 {
-   const char base_theme[] = "base/theme/modules/systray";
-   const char *path = _systray_theme_path();
-   char buf[128], *p;
-   size_t len, avail;
-
-   len = eina_strlcpy(buf, _group_gadget, sizeof(buf));
-   if (len >= sizeof(buf))
-     goto fallback;
-   p = buf + len;
-   *p = '/';
-   p++;
-   avail = sizeof(buf) - len - 2;
+   char buf[4096];
 
    if (shelf_style && gc_style)
      {
-        size_t r;
-        r = snprintf(p, avail, "%s/%s", shelf_style, gc_style);
-        if (r < avail && e_theme_edje_object_set(o, base_theme, buf))
+        snprintf(buf, sizeof(buf), "%s/%s/%s", _group_gadget, shelf_style, gc_style);
+        if (e_theme_edje_object_set(o, NULL, buf))
           return;
      }
 
    if (shelf_style)
      {
-        size_t r;
-        r = eina_strlcpy(p, shelf_style, avail);
-        if (r < avail && e_theme_edje_object_set(o, base_theme, buf))
+        snprintf(buf, sizeof(buf), "%s/%s", _group_gadget, shelf_style);
+        if (e_theme_edje_object_set(o, NULL, buf))
           return;
      }
 
    if (gc_style)
      {
-        size_t r;
-        r = eina_strlcpy(p, gc_style, avail);
-        if (r < avail && e_theme_edje_object_set(o, base_theme, buf))
+        snprintf(buf, sizeof(buf), "%s/%s", _group_gadget, gc_style);
+        if (e_theme_edje_object_set(o, NULL, buf))
           return;
      }
 
-   if (e_theme_edje_object_set(o, base_theme, _group_gadget))
-     return;
-
-   if (shelf_style && gc_style)
-     {
-        size_t r;
-        r = snprintf(p, avail, "%s/%s", shelf_style, gc_style);
-        if (r < avail && edje_object_file_set(o, path, buf))
-          return;
-     }
-
-   if (shelf_style)
-     {
-        size_t r;
-        r = eina_strlcpy(p, shelf_style, avail);
-        if (r < avail && edje_object_file_set(o, path, buf))
-          return;
-     }
-
-   if (gc_style)
-     {
-        size_t r;
-        r = eina_strlcpy(p, gc_style, avail);
-        if (r < avail && edje_object_file_set(o, path, buf))
-          return;
-     }
-
-fallback:
-   edje_object_file_set(o, path, _group_gadget);
+   e_theme_edje_object_set(o, NULL, _group_gadget);
 }
 
 static E_Gadcon_Client *
