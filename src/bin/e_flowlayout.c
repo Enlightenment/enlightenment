@@ -233,7 +233,7 @@ e_flowlayout_pack_end(Evas_Object *obj, Evas_Object *child)
    sd->items = eina_list_append(sd->items, child);
    sd->changed = 1;
    if (sd->frozen <= 0) _e_flowlayout_smart_reconfigure(sd);
-   return (int)(eina_list_count(sd->items) - 1);
+   return (int)eina_list_count(sd->items) - 1;
 }
 
 E_API int
