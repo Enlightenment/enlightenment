@@ -1176,7 +1176,7 @@ e_util_binding_match(const Eina_List *bindlist, Ecore_Event_Key *ev, unsigned in
      {
         if (bi != skip)
           {
-             if ((bi->modifiers == mod) && (!strcmp(bi->key, ev->key)))
+             if ((bi->modifiers == mod) && eina_streq(bi->key, ev->key))
                return bi;
           }
         if (num) (*num)++;
