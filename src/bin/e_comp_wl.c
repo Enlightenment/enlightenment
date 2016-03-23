@@ -2341,6 +2341,9 @@ _e_comp_wl_client_cb_resize_begin(void *data EINA_UNUSED, E_Client *ec)
       default:
         break;
      }
+   ec->comp_data->shell.configure_send(ec->comp_data->shell.surface,
+                                       e_comp_wl->resize.edges,
+                                       0, 0);
 }
 
 static void
@@ -2351,6 +2354,10 @@ _e_comp_wl_client_cb_resize_end(void *data EINA_UNUSED, E_Client *ec)
 
    e_comp_wl->resize.edges = 0;
    e_comp_wl->resize.resource = NULL;
+
+   ec->comp_data->shell.configure_send(ec->comp_data->shell.surface,
+                                       e_comp_wl->resize.edges,
+                                       0, 0);
 
    if (ec->pending_resize)
      {
