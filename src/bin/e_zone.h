@@ -87,13 +87,11 @@ struct _E_Zone
 
    int            id;
 
-   struct
-   {
-      int       x, y, w, h;
-      Eina_Bool dirty : 1;
-   } useful_geometry;
-   Eina_Bool      stowed : 1;
+   Eina_Rectangle useful_geometry[2];
    char *randr2_id; // same id we get from randr2 so look it up there
+   Eina_Bool useful_geometry_changed : 1;
+   Eina_Bool useful_geometry_dirty : 1;
+   Eina_Bool      stowed : 1;
 };
 
 struct _E_Event_Zone_Generic
@@ -158,7 +156,7 @@ E_API Eina_Bool e_zone_exists_direction(E_Zone *zone, E_Zone_Edge edge);
 E_API void      e_zone_edge_win_layer_set(E_Zone *zone, E_Layer layer);
 
 E_API void      e_zone_useful_geometry_dirty(E_Zone *zone);
-E_API void      e_zone_useful_geometry_get(E_Zone *zone, int *x, int *y, int *w, int *h);
+E_API Eina_Bool e_zone_useful_geometry_get(E_Zone *zone, int *x, int *y, int *w, int *h);
 E_API void      e_zone_desk_useful_geometry_get(const E_Zone *zone, const E_Desk *desk, int *x, int *y, int *w, int *h);
 E_API void      e_zone_stow(E_Zone *zone);
 E_API void      e_zone_unstow(E_Zone *zone);

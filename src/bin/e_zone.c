@@ -198,11 +198,11 @@ e_zone_new(int num, int id, int x, int y, int w, int h)
    zone->num = num;
    zone->id = id;
 
-   zone->useful_geometry.dirty = 1;
-   zone->useful_geometry.x = -1;
-   zone->useful_geometry.y = -1;
-   zone->useful_geometry.w = -1;
-   zone->useful_geometry.h = -1;
+   zone->useful_geometry_dirty = 1;
+   zone->useful_geometry[0].x = zone->useful_geometry[0].y =
+     zone->useful_geometry[0].w = zone->useful_geometry[0].h = -1;
+   zone->useful_geometry[1].x = zone->useful_geometry[1].y =
+     zone->useful_geometry[1].w = zone->useful_geometry[1].h = -1;
 
    //printf("@@@@@@@@@@ e_zone_new: %i %i | %i %i %ix%i = %p\n", num, id, x, y, w, h, zone);
 
@@ -1275,7 +1275,7 @@ _e_zone_useful_geometry_calc(const E_Zone *zone, int dx, int dy, int *x, int *y,
 /**
  * Get (or calculate) the useful (or free, without any shelves) area.
  */
-E_API void
+E_API Eina_Bool
 e_zone_useful_geometry_get(E_Zone *zone,
                            int *x,
                            int *y,
@@ -1284,23 +1284,28 @@ e_zone_useful_geometry_get(E_Zone *zone,
 {
    int zx, zy, zw, zh;
 
-   E_OBJECT_CHECK(zone);
-   E_OBJECT_TYPE_CHECK(zone, E_ZONE_TYPE);
+   E_OBJECT_CHECK_RETURN(zone, EINA_FALSE);
+   E_OBJECT_TYPE_CHECK_RETURN(zone, E_ZONE_TYPE, EINA_FALSE);
 
-   if (zone->useful_geometry.dirty)
+   if (zone->useful_geometry_dirty)
      {
         _e_zone_useful_geometry_calc(zone, zone->desk_x_current, zone->desk_y_current, &zx, &zy, &zw, &zh);
-        zone->useful_geometry.x = zx;
-        zone->useful_geometry.y = zy;
-        zone->useful_geometry.w = zw;
-        zone->useful_geometry.h = zh;
+        memcpy(&zone->useful_geometry[0], &zone->useful_geometry[1], sizeof(Eina_Rectangle));
+        zone->useful_geometry[1].x = zx;
+        zone->useful_geometry[1].y = zy;
+        zone->useful_geometry[1].w = zw;
+        zone->useful_geometry[1].h = zh;
+        zone->useful_geometry_changed =
+          !!memcmp(&zone->useful_geometry[0], &zone->useful_geometry[1], sizeof(Eina_Rectangle));
+        
      }
-   zone->useful_geometry.dirty = 0;
+   zone->useful_geometry_dirty = 0;
 
-   if (x) *x = zone->useful_geometry.x;
-   if (y) *y = zone->useful_geometry.y;
-   if (w) *w = zone->useful_geometry.w;
-   if (h) *h = zone->useful_geometry.h;
+   if (x) *x = zone->useful_geometry[1].x;
+   if (y) *y = zone->useful_geometry[1].y;
+   if (w) *w = zone->useful_geometry[1].w;
+   if (h) *h = zone->useful_geometry[1].h;
+   return zone->useful_geometry_changed;
 }
 
 E_API void
@@ -1332,11 +1337,7 @@ e_zone_useful_geometry_dirty(E_Zone *zone)
    e_object_ref(E_OBJECT(ev->zone));
    ecore_event_add(E_EVENT_ZONE_MOVE_RESIZE, ev, _e_zone_event_generic_free, NULL);
 
-   zone->useful_geometry.dirty = 1;
-   zone->useful_geometry.x = -1;
-   zone->useful_geometry.y = -1;
-   zone->useful_geometry.w = -1;
-   zone->useful_geometry.h = -1;
+   zone->useful_geometry_dirty = 1;
 }
 
 E_API E_Zone_Obstacle *
@@ -1365,12 +1366,12 @@ e_zone_obstacle_add(E_Zone *zone, E_Desk *desk, Eina_Rectangle *geom, Eina_Bool 
      {
         desk->obstacles = eina_inlist_append(desk->obstacles, EINA_INLIST_GET(obs));
         if (desk->visible)
-          desk->zone->useful_geometry.dirty = 1;
+          desk->zone->useful_geometry_dirty = 1;
      }
    else
      {
         zone->obstacles = eina_inlist_append(zone->obstacles, EINA_INLIST_GET(obs));
-        zone->useful_geometry.dirty = 1;
+        zone->useful_geometry_dirty = 1;
      }
    return obs;
 }
@@ -1394,12 +1395,12 @@ e_zone_obstacle_modify(E_Zone_Obstacle *obs, Eina_Rectangle *geom, Eina_Bool ver
      {
         desk = (E_Desk*)obs->owner;
         if (desk->visible)
-          desk->zone->useful_geometry.dirty = 1;
+          desk->zone->useful_geometry_dirty = 1;
      }
    else
      {
         zone = (E_Zone*)obs->owner;
-        zone->useful_geometry.dirty = 1;
+        zone->useful_geometry_dirty = 1;
      }
 }
 
@@ -1693,13 +1694,13 @@ _e_zone_obstacle_free(E_Zone_Obstacle *obs)
         desk = (E_Desk*)obs->owner;
         desk->obstacles = eina_inlist_remove(desk->obstacles, EINA_INLIST_GET(obs));
         if (desk->visible)
-          desk->zone->useful_geometry.dirty = 1;
+          desk->zone->useful_geometry_dirty = 1;
      }
    else
      {
         zone = (E_Zone*)obs->owner;
         zone->obstacles = eina_inlist_remove(zone->obstacles, EINA_INLIST_GET(obs));
-        zone->useful_geometry.dirty = 1;
+        zone->useful_geometry_dirty = 1;
      }
    free(obs);
 }
