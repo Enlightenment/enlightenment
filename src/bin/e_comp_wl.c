@@ -1022,7 +1022,7 @@ _e_comp_wl_surface_state_commit(E_Client *ec, E_Comp_Wl_Surface_State *state)
 {
    Eina_Bool first = EINA_FALSE;
    Eina_Rectangle *dmg;
-   Eina_Bool ignored, placed = EINA_TRUE;
+   Eina_Bool placed = EINA_TRUE;
    int x = 0, y = 0, w, h;
 
    first = !e_pixmap_usable_get(ec->pixmap);
@@ -1030,7 +1030,14 @@ _e_comp_wl_surface_state_commit(E_Client *ec, E_Comp_Wl_Surface_State *state)
    if (first && e_client_has_xwindow(ec))
      first = !e_pixmap_usable_get(e_comp_x_client_pixmap_get(ec));
 #endif
-   ignored = ec->ignored;
+
+   if (ec->ignored && (ec->comp_data->shell.surface || ec->internal))
+     {
+        EC_CHANGED(ec);
+        ec->new_client = 1;
+        e_comp->new_clients++;
+        e_client_unignore(ec);
+     }
 
    if (state->new_attach)
      _e_comp_wl_surface_state_attach(ec, state);
@@ -1070,7 +1077,7 @@ _e_comp_wl_surface_state_commit(E_Client *ec, E_Comp_Wl_Surface_State *state)
           {
              if ((ec->comp_data->shell.surface) && (ec->comp_data->shell.unmap))
                ec->comp_data->shell.unmap(ec->comp_data->shell.surface);
-             else if (ec->comp_data->cursor || e_client_has_xwindow(ec) ||
+             else if (ec->comp_data->cursor || e_client_has_xwindow(ec) || ec->internal ||
                       (ec->comp_data->sub.data && ec->comp_data->sub.data->parent->comp_data->mapped) ||
                       (ec == e_comp_wl->drag_client))
                {
@@ -1086,7 +1093,7 @@ _e_comp_wl_surface_state_commit(E_Client *ec, E_Comp_Wl_Surface_State *state)
           {
              if ((ec->comp_data->shell.surface) && (ec->comp_data->shell.map))
                ec->comp_data->shell.map(ec->comp_data->shell.surface);
-             else if (ec->comp_data->cursor || e_client_has_xwindow(ec) ||
+             else if (ec->comp_data->cursor || e_client_has_xwindow(ec) || ec->internal ||
                       (ec->comp_data->sub.data && ec->comp_data->sub.data->parent->comp_data->mapped) ||
                       (ec == e_comp_wl->drag_client))
                {
@@ -1149,12 +1156,6 @@ _e_comp_wl_surface_state_commit(E_Client *ec, E_Comp_Wl_Surface_State *state)
              ec->placed = placed;
              ec->want_focus |= ec->icccm.accepts_focus && (!ec->override);
           }
-        else if ((first) && (ec->placed) && (!ec->internal) && (!ec->override))
-          {
-             ec->x = ec->y = 0;
-             ec->placed = EINA_FALSE;
-             ec->new_client = EINA_TRUE;
-          }
      }
    state->sx = 0;
    state->sy = 0;
@@ -1165,8 +1166,6 @@ _e_comp_wl_surface_state_commit(E_Client *ec, E_Comp_Wl_Surface_State *state)
    ec->comp_data->frames = eina_list_merge(ec->comp_data->frames,
                                            state->frames);
    state->frames = NULL;
-
-   ec->ignored = ignored;
 
    /* put state damages into surface */
    if ((!e_comp->nocomp) && (ec->frame))
