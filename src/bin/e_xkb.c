@@ -49,7 +49,10 @@ _xkb_changed_state(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
      return ECORE_CALLBACK_PASS_ON;
 
    e_config->xkb.cur_group = ev->group;
+#else
+   (void)event;
 #endif
+
    /*
     * XKb_STATE_NOTIFY does not only indicate a new group setted somewhere in e,
     * it also indicates that there is probebly a new set of available groups which is unknown to e
