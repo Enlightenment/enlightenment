@@ -33,7 +33,7 @@ _e_xkb_init_timer(void *data)
 
 #ifndef HAVE_WAYLAND_ONLY
 static Eina_Bool
-_xkb_changed_state(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
+_xkb_changed_state(void *data EINA_UNUSED, int type EINA_UNUSED, void *event EINA_UNUSED)
 {
    if (_e_xkb_skip_events > 0)
      {
