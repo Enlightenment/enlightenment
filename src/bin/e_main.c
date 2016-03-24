@@ -1615,13 +1615,6 @@ _e_main_screens_init(void)
         e_error_message_show(_("Enlightenment cannot create a compositor.\n"));
         _e_main_shutdown(-1);
      }
-   TS("E_Xkb Init");
-   if (!e_xkb_init())
-     {
-        e_error_message_show(_("Enlightenment cannot setup XKB Keyboard layouts.\n"));
-        _e_main_shutdown(-1);
-     }
-   TS("E_Xkb Init Done");
 
    _e_main_desk_restore();
 

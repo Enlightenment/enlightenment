@@ -1100,6 +1100,7 @@ e_comp_init(void)
            char buf[128];
 
            snprintf(buf, sizeof(buf), "wl_%s", eng);
+           e_xkb_init(E_PIXMAP_TYPE_WL);
            if (e_module_enable(e_module_new(buf)))
              {
                 e_comp->comp_type = E_PIXMAP_TYPE_WL;
@@ -1110,7 +1111,10 @@ e_comp_init(void)
 
 #ifndef HAVE_WAYLAND_ONLY
    if (e_comp_x_init())
-     e_comp->comp_type = E_PIXMAP_TYPE_X;
+     {
+        e_comp->comp_type = E_PIXMAP_TYPE_X;
+        e_xkb_init(E_PIXMAP_TYPE_X);
+     }
    else
 #endif
      {
@@ -1132,6 +1136,7 @@ e_comp_init(void)
            NULL
         };
 
+        e_xkb_init(E_PIXMAP_TYPE_WL);
         e_util_env_set("HYBRIS_EGLPLATFORM", "wayland");
         for (test = eng; *test; test++)
           {

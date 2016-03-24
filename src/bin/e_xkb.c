@@ -1,7 +1,7 @@
 #include "e.h"
 
 static void _e_xkb_update_event(int);
-
+static void _e_xkb_type_update(E_Pixmap_Type comp_type, int cur_group);
 static int _e_xkb_cur_group = -1;
 static Ecore_Event_Handler *xkb_state_handler = NULL;
 static int _e_xkb_skip_events = 0;
@@ -67,16 +67,16 @@ _xkb_changed_state(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
 
 /* externally accessible functions */
 E_API int
-e_xkb_init(void)
+e_xkb_init(E_Pixmap_Type comp_type)
 {
    if (!E_EVENT_XKB_CHANGED)
      E_EVENT_XKB_CHANGED = ecore_event_type_new();
 #ifndef HAVE_WAYLAND_ONLY
-   if (e_comp->comp_type == E_PIXMAP_TYPE_X)
+   if (comp_type == E_PIXMAP_TYPE_X)
      xkb_state_handler = ecore_event_handler_add(ECORE_X_EVENT_XKB_STATE_NOTIFY, _xkb_changed_state, NULL);
 #endif
    if (e_config->xkb.dont_touch_my_damn_keyboard) return 1;
-   e_xkb_update(-1);
+   _e_xkb_type_update(comp_type, -1);
    if (e_config->xkb.cur_layout)
      ecore_timer_add(1.5, _e_xkb_init_timer, e_config->xkb.current_layout);
    else if (e_config->xkb.selected_layout)
@@ -280,13 +280,19 @@ _e_wl_xkb_update(int cur_group)
 #endif
 }
 
-E_API void
-e_xkb_update(int cur_group)
+static void
+_e_xkb_type_update(E_Pixmap_Type comp_type, int cur_group)
 {
-   if (e_comp->comp_type == E_PIXMAP_TYPE_WL)
+   if (comp_type == E_PIXMAP_TYPE_WL)
      _e_wl_xkb_update(cur_group);
    else
      _e_x_xkb_update(cur_group);
+}
+
+E_API void
+e_xkb_update(int cur_group)
+{
+   _e_xkb_type_update(e_comp->comp_type, cur_group);
 }
 
 E_API void
