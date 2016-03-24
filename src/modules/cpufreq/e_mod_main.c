@@ -1040,22 +1040,28 @@ _cpufreq_face_update_available(Instance *inst)
    int i;
    unsigned int count;
 
-   count = eina_list_count(cpufreq_config->status->frequencies);
-   frequency_msg = malloc(sizeof(Edje_Message_Int_Set) + (count - 1) * sizeof(int));
-   EINA_SAFETY_ON_NULL_RETURN(frequency_msg);
-   frequency_msg->count = count;
-   for (l = cpufreq_config->status->frequencies, i = 0; l; l = l->next, i++)
-     frequency_msg->val[i] = (long)l->data;
-   edje_object_message_send(inst->o_cpu, EDJE_MESSAGE_INT_SET, 1, frequency_msg);
-   free(frequency_msg);
+   if (cpufreq_config->status->frequencies)
+     {
+        count = eina_list_count(cpufreq_config->status->frequencies);
+        frequency_msg = malloc(sizeof(Edje_Message_Int_Set) + (count - 1) * sizeof(int));
+        EINA_SAFETY_ON_NULL_RETURN(frequency_msg);
+        frequency_msg->count = count;
+        for (l = cpufreq_config->status->frequencies, i = 0; l; l = l->next, i++)
+          frequency_msg->val[i] = (long)l->data;
+        edje_object_message_send(inst->o_cpu, EDJE_MESSAGE_INT_SET, 1, frequency_msg);
+        free(frequency_msg);
+     }
 
-   count = eina_list_count(cpufreq_config->status->governors);
-   governor_msg = malloc(sizeof(Edje_Message_String_Set) + (count - 1) * sizeof(char *));
-   governor_msg->count = count;
-   for (l = cpufreq_config->status->governors, i = 0; l; l = l->next, i++)
-     governor_msg->str[i] = (char *)l->data;
-   edje_object_message_send(inst->o_cpu, EDJE_MESSAGE_STRING_SET, 2, governor_msg);
-   free(governor_msg);
+   if (cpufreq_config->status->governors)
+     {
+        count = eina_list_count(cpufreq_config->status->governors);
+        governor_msg = malloc(sizeof(Edje_Message_String_Set) + (count - 1) * sizeof(char *));
+        governor_msg->count = count;
+        for (l = cpufreq_config->status->governors, i = 0; l; l = l->next, i++)
+          governor_msg->str[i] = (char *)l->data;
+        edje_object_message_send(inst->o_cpu, EDJE_MESSAGE_STRING_SET, 2, governor_msg);
+        free(governor_msg);
+     }
 }
 
 static void
