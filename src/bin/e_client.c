@@ -2583,13 +2583,14 @@ e_client_new(E_Pixmap *cp, int first_map, int internal)
    ec->netwm.action.close = 0;
    ec->netwm.opacity = 255;
 
-   EC_CHANGED(ec);
-
    e_comp->clients = eina_list_append(e_comp->clients, ec);
    eina_hash_add(clients_hash[e_pixmap_type_get(cp)], &ec->pixmap, ec);
 
    if (!ec->ignored)
-     _e_client_event_simple(ec, E_EVENT_CLIENT_ADD);
+     {
+        EC_CHANGED(ec);
+        _e_client_event_simple(ec, E_EVENT_CLIENT_ADD);
+     }
    e_comp_object_client_add(ec);
    if (ec->frame)
      {
