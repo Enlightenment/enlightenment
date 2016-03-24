@@ -2869,6 +2869,19 @@ e_client_mouse_down(E_Client *ec, int button, Evas_Point *output, E_Binding_Even
           {
              did_act = EINA_TRUE;
              e_object_ref(E_OBJECT(ec->cur_mouse_action));
+             if (ec->internal)
+               {
+                  int button_mask, i;
+                  Evas *e;
+
+                  e = evas_object_evas_get(ec->internal_elm_win);
+                  button_mask = evas_pointer_button_down_mask_get(e);
+                  for (i = 0; i < 32; i++)
+                    {
+                      if ((button_mask & (1 << i)))
+                        evas_event_feed_mouse_up(e, i + 1, EVAS_BUTTON_NONE, 0, NULL);
+                    }
+               }
           }
      }
    if ((!did_act) || (((pfocus == e_client_focused_get()) || (ec == e_client_focused_get())) && (ec->layer >= player)))
