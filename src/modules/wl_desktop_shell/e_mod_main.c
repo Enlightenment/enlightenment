@@ -548,12 +548,7 @@ _e_shell_cb_shell_surface_get(struct wl_client *client, struct wl_resource *reso
                                "No Pixmap Set On Surface");
         return;
      }
-
-   EC_CHANGED(ec);
-   ec->new_client = ec->netwm.ping = EINA_TRUE;
-   e_comp->new_clients++;
-   e_client_unignore(ec);
-
+   ec->netwm.ping = 1;
    /* get the client data */
    if (!(cdata = ec->comp_data))
      {
@@ -1111,10 +1106,7 @@ _e_xdg_shell_cb_surface_get(struct wl_client *client, struct wl_resource *resour
         return;
      }
 
-   EC_CHANGED(ec);
-   ec->new_client = ec->netwm.ping = EINA_TRUE;
-   e_comp->new_clients++;
-   e_client_unignore(ec);
+   ec->netwm.ping = 1;
 
    /* get the client data */
    if (!(cdata = ec->comp_data))
