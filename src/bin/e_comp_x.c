@@ -1626,7 +1626,7 @@ _e_comp_x_configure_request(void *data  EINA_UNUSED, int type EINA_UNUSED, Ecore
                   ec->saved.y -= zone->y;
                }
           }
-        else
+        else if (!ec->maximize_override)
           {
              /* client is completely outside the screen, policy does not allow */
              if (((!E_INTERSECTS(x, y, ec->w, ec->h, 0, 0, e_comp->w - 5, e_comp->h - 5)) &&
@@ -1650,7 +1650,7 @@ _e_comp_x_configure_request(void *data  EINA_UNUSED, int type EINA_UNUSED, Ecore
      {
         if ((ec->maximized & E_MAXIMIZE_TYPE) != E_MAXIMIZE_NONE)
           e_comp_object_frame_wh_unadjust(ec->frame, w, h, &ec->saved.w, &ec->saved.h);
-        else
+        else if (!ec->maximize_override)
           {
              evas_object_resize(ec->frame, w, h);
           }
