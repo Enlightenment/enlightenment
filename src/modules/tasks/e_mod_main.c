@@ -369,7 +369,7 @@ _tasks_new(Evas *e, E_Zone *zone, const char *id)
    tasks->horizontal = 1;
    EINA_LIST_FOREACH(e_comp->clients, l, ec)
      {
-        if (!e_client_util_ignored_get(ec))
+        if ((!e_client_util_ignored_get(ec)) && (!e_object_is_del(E_OBJECT(ec))))
           tasks->clients = eina_list_append(tasks->clients, ec);
      }
 
@@ -889,7 +889,7 @@ _tasks_cb_event_client_add(void *data EINA_UNUSED, int type EINA_UNUSED, void *e
    Tasks *tasks;
    Eina_List *l;
 
-   if (e_client_util_ignored_get(ev->ec)) return ECORE_CALLBACK_RENEW;
+   if (e_client_util_ignored_get(ev->ec) || e_object_is_del(E_OBJECT(ev->ec))) return ECORE_CALLBACK_RENEW;
    EINA_LIST_FOREACH(tasks_config->tasks, l, tasks)
      {
         if ((!tasks->clients) || (!eina_list_data_find(tasks->clients, ev->ec)))
