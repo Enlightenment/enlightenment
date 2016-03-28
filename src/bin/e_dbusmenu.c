@@ -9,6 +9,7 @@ struct _E_DBusMenu_Ctx
    void                     *data;
    E_DBusMenu_Pop_Request_Cb pop_request_cb;
    E_DBusMenu_Update_Cb      update_cb;
+   Eina_Bool  hacks : 1;
 };
 
 static const char *Menu_Item_Type_Names[] =
@@ -30,6 +31,8 @@ static const char *Menu_Item_Event_Names[] =
 {
    "clicked", "hovered", "opened", "closed"
 };
+
+static void proxy_init(E_DBusMenu_Ctx *ctx);
 
 static int
 id_find(const char *text, const char *array_of_names[], unsigned max)
@@ -197,6 +200,46 @@ dbus_menu_free(E_DBusMenu_Item *m)
    free(m);
 }
 
+static Eina_Bool
+attempt_hacks(E_DBusMenu_Ctx *ctx)
+{
+   /* https://phab.enlightenment.org/T3139 */
+   Eldbus_Object *obj;
+   Eldbus_Connection *conn;
+   const char *bus, *p;
+   int n;
+   char buf[1024] = {0}, buf2[1024] = {0};
+
+   if (ctx->hacks) return EINA_FALSE;
+   obj = eldbus_proxy_object_get(ctx->proxy);
+   conn = eldbus_object_connection_get(obj);
+   bus = eldbus_object_bus_name_get(obj);
+   if (bus[0] != ':') return EINA_FALSE;
+   /* if this is a qt5 app, menu bus is $bus + 2
+    * ...probably
+    */
+
+   p = strchr(bus + 1, '.');
+   if (!p) return EINA_FALSE;
+   p++;
+   if (!p[0]) return EINA_FALSE;
+   n = strtol(p, NULL, 10);
+   if (n == -1) return EINA_FALSE;
+   n += 2;
+   if ((unsigned int)(p - bus) > sizeof(buf) - 1) return EINA_FALSE;
+   strncpy(buf, bus, p - bus);
+   snprintf(buf2, sizeof(buf2), "%s%d", buf, n);
+   E_FREE_FUNC(ctx->root_menu, dbus_menu_free);
+   eldbus_proxy_unref(ctx->proxy);
+   eldbus_object_unref(obj);
+
+   obj = eldbus_object_get(conn, buf2, "/MenuBar");
+   ctx->proxy = eldbus_proxy_get(obj, DBUS_MENU_IFACE);
+   proxy_init(ctx);
+   ctx->hacks = 1;
+   return EINA_TRUE;
+}
+
 static void
 layout_get_cb(void *data, const Eldbus_Message *msg, Eldbus_Pending *pending EINA_UNUSED)
 {
@@ -220,6 +263,15 @@ layout_get_cb(void *data, const Eldbus_Message *msg, Eldbus_Pending *pending EIN
 
    m = parse_layout(layout, NULL, ctx);
    m->revision = revision;
+   if (m->is_submenu && (!m->parent) && (!m->sub_items))
+     {
+        if (attempt_hacks(ctx))
+          {
+             dbus_menu_free(m);
+             return;
+          }
+     }
+
    if (ctx->update_cb)
      ctx->update_cb(ctx->data, m);
    if (ctx->root_menu)
@@ -271,32 +323,6 @@ menu_pop_request(void *data, const Eldbus_Message *msg)
 }
 
 static void
-icon_theme_path_get_cb(void *data EINA_UNUSED, const Eldbus_Message *msg, Eldbus_Pending *pending EINA_UNUSED)
-{
-   const char *error, *error_msg;
-   Eldbus_Message_Iter *var, *array;
-   const char *path;
-
-   if (eldbus_message_error_get(msg, &error, &error_msg))
-     {
-        ERR("%s %s", error, error_msg);
-        return;
-     }
-
-   if (!eldbus_message_arguments_get(msg, "v", &var) ||
-       !eldbus_message_iter_arguments_get(var, "as", &array))
-     {
-        ERR("Error reading message.");
-        return;
-     }
-
-   while (eldbus_message_iter_get_and_next(array, 's', &path))
-     {
-        //TODO
-     }
-}
-
-static void
 prop_changed_cb(void *data EINA_UNUSED, const Eldbus_Message *msg)
 {
    const char *interface, *propname;
@@ -337,6 +363,23 @@ layout_updated_cb(void *data, const Eldbus_Message *msg EINA_UNUSED)
    layout_update(ctx);
 }
 
+static void
+proxy_init(E_DBusMenu_Ctx *ctx)
+{
+   layout_update(ctx);
+   eldbus_proxy_signal_handler_add(ctx->proxy,
+                                  "ItemActivationRequested",
+                                  menu_pop_request, ctx);
+
+   eldbus_proxy_properties_changed_callback_add(ctx->proxy,
+                                               prop_changed_cb, ctx);
+
+   eldbus_proxy_signal_handler_add(ctx->proxy, "ItemsPropertiesUpdated",
+                                  layout_updated_cb, ctx);
+   eldbus_proxy_signal_handler_add(ctx->proxy, "LayoutUpdated",
+                                  layout_updated_cb, ctx);
+}
+
 E_API E_DBusMenu_Ctx *
 e_dbusmenu_load(Eldbus_Connection *conn, const char *bus, const char *path, const void *data)
 {
@@ -353,21 +396,7 @@ e_dbusmenu_load(Eldbus_Connection *conn, const char *bus, const char *path, cons
    eldbus_connection_ref(conn);
    obj = eldbus_object_get(conn, bus, path);
    ctx->proxy = eldbus_proxy_get(obj, DBUS_MENU_IFACE);
-
-   layout_update(ctx);
-   eldbus_proxy_signal_handler_add(ctx->proxy,
-                                  "ItemActivationRequested",
-                                  menu_pop_request, ctx);
-
-   eldbus_proxy_property_get(ctx->proxy, "IconThemePath",
-                            icon_theme_path_get_cb, ctx);
-   eldbus_proxy_properties_changed_callback_add(ctx->proxy,
-                                               prop_changed_cb, ctx);
-
-   eldbus_proxy_signal_handler_add(ctx->proxy, "ItemsPropertiesUpdated",
-                                  layout_updated_cb, ctx);
-   eldbus_proxy_signal_handler_add(ctx->proxy, "LayoutUpdated",
-                                  layout_updated_cb, ctx);
+   proxy_init(ctx);
    return ctx;
 }
 
