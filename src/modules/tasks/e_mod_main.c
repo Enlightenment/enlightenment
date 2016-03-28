@@ -616,6 +616,8 @@ static void
 _tasks_item_free(Tasks_Item *item)
 {
    if (item->o_icon) evas_object_del(item->o_icon);
+   if (e_object_is_del(E_OBJECT(item->client)))
+     item->tasks->clients = eina_list_remove(item->tasks->clients, item->client);
    e_object_unref(E_OBJECT(item->client));
    evas_object_del(item->o_item);
    free(item);
