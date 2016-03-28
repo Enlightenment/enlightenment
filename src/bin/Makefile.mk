@@ -395,6 +395,8 @@ endif
 if HAVE_WAYLAND
 enlightenment_src += \
 src/bin/e_uuid_store.c \
+src/bin/generated/www-protocol.c \
+src/bin/generated/www-protocol.h \
 src/bin/generated/session-recovery-protocol.c \
 src/bin/generated/session-recovery-server-protocol.h \
 src/bin/generated/e_comp_wl_screenshooter_server.c \

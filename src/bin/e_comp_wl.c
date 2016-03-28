@@ -5,6 +5,8 @@
 #define __STDC_FORMAT_MACROS
 #include <inttypes.h>
 
+#include "www-protocol.h"
+
 /* When a wayland is released with this macro we can remove the ifdefs */
 #ifdef WL_SURFACE_DAMAGE_BUFFER_SINCE_VERSION
 # define COMPOSITOR_VERSION 4
@@ -581,6 +583,15 @@ _e_comp_wl_evas_cb_move(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_U
    Eina_List *l;
 
    if (e_object_is_del(E_OBJECT(ec))) return;
+   if (ec->comp_data->www.surface)
+     {
+        if (ec->comp_data->moved && (!ec->maximized) && (!ec->fullscreen))
+          www_surface_send_status(ec->comp_data->www.surface,
+            ec->x - ec->comp_data->www.x, ec->y - ec->comp_data->www.y, lround(ecore_loop_time_get()));
+        ec->comp_data->www.x = ec->x;
+        ec->comp_data->www.y = ec->y;
+     }
+   ec->comp_data->moved = 1;
    EINA_LIST_FOREACH(ec->comp_data->sub.list, l, sec)
      {
         if (!sec->comp_data->sub.data->position.set)

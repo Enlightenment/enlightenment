@@ -104,6 +104,10 @@ typedef struct E_Comp_Wl_Extension_Data
     {
        struct wl_resource *global;
     } session_recovery;
+   struct
+   {
+       struct wl_resource *global;
+   } www;
 } E_Comp_Wl_Extension_Data;
 
 struct _E_Comp_Wl_Data
@@ -283,6 +287,11 @@ struct _E_Comp_Wl_Client_Data
         Eina_Rectangle window;
         E_Shell_Data *data;
      } shell;
+   struct
+   {
+      struct wl_resource *surface;
+      int x, y;
+   } www;
 
    E_Comp_Wl_Surface_State pending;
 
@@ -304,6 +313,7 @@ struct _E_Comp_Wl_Client_Data
    Eina_Bool set_win_type : 1;
    Eina_Bool frame_update : 1;
    Eina_Bool cursor : 1;
+   Eina_Bool moved : 1;
 };
 
 struct _E_Comp_Wl_Output
