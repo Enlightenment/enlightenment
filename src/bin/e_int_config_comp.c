@@ -601,10 +601,6 @@ _basic_create_widgets(E_Config_Dialog *cfd,
    e_widget_framelist_object_append(of, ob);
    ob = e_widget_radio_add(evas, _("OpenGL"), E_COMP_ENGINE_GL, rg);
    e_widget_framelist_object_append(of, ob);
-   ob = e_widget_label_add(evas, _("To reset compositor:"));
-   e_widget_framelist_object_append(of, ob);
-   ob = e_widget_label_add(evas, _("Ctrl+Alt+Shift+Home"));
-   e_widget_framelist_object_append(of, ob);
 
    e_widget_list_object_append(ol, of, 1, 0, 0.5);
    
