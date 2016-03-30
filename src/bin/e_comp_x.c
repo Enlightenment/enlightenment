@@ -4976,9 +4976,6 @@ _e_comp_x_del(E_Comp *c)
    ecore_x_window_key_ungrab(c->root, "F", ECORE_EVENT_MODIFIER_SHIFT |
                              ECORE_EVENT_MODIFIER_CTRL |
                              ECORE_EVENT_MODIFIER_ALT, 0);
-   ecore_x_window_key_ungrab(c->root, "Home", ECORE_EVENT_MODIFIER_SHIFT |
-                             ECORE_EVENT_MODIFIER_CTRL |
-                             ECORE_EVENT_MODIFIER_ALT, 0);
    if (c->grabbed)
      {
         c->grabbed = 0;
@@ -5318,9 +5315,6 @@ _e_comp_x_setup(Ecore_X_Window root, int w, int h)
 
    ecore_x_composite_redirect_subwindows(root, ECORE_X_COMPOSITE_UPDATE_MANUAL);
 
-   ecore_x_window_key_grab(root, "Home", ECORE_EVENT_MODIFIER_SHIFT |
-                           ECORE_EVENT_MODIFIER_CTRL |
-                           ECORE_EVENT_MODIFIER_ALT, 0);
    ecore_x_window_key_grab(root, "F", ECORE_EVENT_MODIFIER_SHIFT |
                            ECORE_EVENT_MODIFIER_CTRL |
                            ECORE_EVENT_MODIFIER_ALT, 0);
