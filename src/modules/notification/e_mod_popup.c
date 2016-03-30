@@ -133,6 +133,7 @@ notification_popup_notify(E_Notification_Notify *n,
         popup->notif = n;
         popup->id = id;
         _notification_popup_refresh(popup);
+        _notification_reshuffle_cb(NULL, NULL, NULL, NULL);
      }
    else if (!n->replaces_id)
      {
