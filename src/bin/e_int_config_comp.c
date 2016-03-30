@@ -255,8 +255,11 @@ _advanced_create_widgets(E_Config_Dialog *cfd, Evas *evas, E_Config_Dialog_Data 
    of = e_widget_framelist_add(evas, _("Behavior"), 0);
    ob = e_widget_check_add(evas, _("Smooth scaling"), &(cfdata->smooth_windows));
    e_widget_framelist_object_append(of, ob);
-   ob = e_widget_check_add(evas, _("Don't composite fullscreen windows"), &(cfdata->nocomp_fs));
-   e_widget_framelist_object_append(of, ob);
+   if (e_comp->comp_type == E_PIXMAP_TYPE_X)
+     {
+        ob = e_widget_check_add(evas, _("Don't composite fullscreen windows"), &(cfdata->nocomp_fs));
+        e_widget_framelist_object_append(of, ob);
+     }
    ob = e_widget_check_add(evas, _("Don't fade backlight"), &(cfdata->nofade));
    e_widget_framelist_object_append(of, ob);
    e_widget_list_object_append(ol, of, 1, 1, 0.5);
@@ -300,47 +303,24 @@ _advanced_create_widgets(E_Config_Dialog *cfd, Evas *evas, E_Config_Dialog_Data 
 
    ///////////////////////////////////////////
    ol = e_widget_list_add(evas, 0, 0);
-   of = e_widget_framelist_add(evas, _("X Messages"), 0);
-   ob = e_widget_check_add(evas, _("Send flush"), &(cfdata->send_flush));
-   e_widget_framelist_object_append(of, ob);
-   ob = e_widget_check_add(evas, _("Send dump"), &(cfdata->send_dump));
-   e_widget_framelist_object_append(of, ob);
-   e_widget_list_object_append(ol, of, 1, 1, 0.5);
+   if (e_comp->comp_type == E_PIXMAP_TYPE_X)
+     {
+        of = e_widget_framelist_add(evas, _("X Messages"), 0);
+        ob = e_widget_check_add(evas, _("Send flush"), &(cfdata->send_flush));
+        e_widget_framelist_object_append(of, ob);
+        ob = e_widget_check_add(evas, _("Send dump"), &(cfdata->send_dump));
+        e_widget_framelist_object_append(of, ob);
+        e_widget_list_object_append(ol, of, 1, 1, 0.5);
 
-/*   
-   ob = e_widget_check_add(evas, _("Keep hidden windows"), &(cfdata->keep_unmapped));
-   e_widget_list_object_append(ol, ob, 1, 1, 0.5);
-   of = e_widget_frametable_add(evas, _("Maximum hidden pixels"), 0);
-   e_widget_frametable_content_align_set(of, 0.5, 0.5);
-   rg = e_widget_radio_group_new(&(cfdata->max_unmapped_pixels));
-   ob = e_widget_radio_add(evas, _("1M"), 1 * 1024, rg);
-   e_widget_frametable_object_append(of, ob, 0, 0, 1, 1, 1, 1, 0, 0);
-   ob = e_widget_radio_add(evas, _("2M"), 2 * 1024, rg);
-   e_widget_frametable_object_append(of, ob, 0, 1, 1, 1, 1, 1, 0, 0);
-   ob = e_widget_radio_add(evas, _("4M"), 4 * 1024, rg);
-   e_widget_frametable_object_append(of, ob, 0, 2, 1, 1, 1, 1, 0, 0);
-   ob = e_widget_radio_add(evas, _("8M"), 8 * 1024, rg);
-   e_widget_frametable_object_append(of, ob, 1, 0, 1, 1, 1, 1, 0, 0);
-   ob = e_widget_radio_add(evas, _("16M"), 16 * 1024, rg);
-   e_widget_frametable_object_append(of, ob, 1, 1, 1, 1, 1, 1, 0, 0);
-   ob = e_widget_radio_add(evas, _("32M"), 32 * 1024, rg);
-   e_widget_frametable_object_append(of, ob, 1, 2, 1, 1, 1, 1, 0, 0);
-   ob = e_widget_radio_add(evas, _("64M"), 64 * 1024, rg);
-   e_widget_frametable_object_append(of, ob, 2, 0, 1, 1, 1, 1, 0, 0);
-   ob = e_widget_radio_add(evas, _("128M"), 128 * 1024, rg);
-   e_widget_frametable_object_append(of, ob, 2, 1, 1, 1, 1, 1, 0, 0);
-   ob = e_widget_radio_add(evas, _("256M"), 256 * 1024, rg);
-   e_widget_frametable_object_append(of, ob, 2, 2, 1, 1, 1, 1, 0, 0);
-   e_widget_list_object_append(ol, of, 1, 1, 0.5);
- */
-   of = e_widget_framelist_add(evas, _("Sync"), 0);
-   ob = e_widget_check_add(evas, _("Grab Server during draw"), &(cfdata->grab));
-   e_widget_framelist_object_append(of, ob);
-   ob = e_widget_label_add(evas, _("Initial draw timeout for newly mapped windows"));
-   e_widget_framelist_object_append(of, ob);
-   ob = e_widget_slider_add(evas, 1, 0, _("%1.2f Seconds"), 0.01, 0.5, 0.01, 0, &(cfdata->first_draw_delay), NULL, 150);
-   e_widget_framelist_object_append(of, ob);
-   e_widget_list_object_append(ol, of, 1, 1, 0.5);
+        of = e_widget_framelist_add(evas, _("Sync"), 0);
+        ob = e_widget_check_add(evas, _("Grab Server during draw"), &(cfdata->grab));
+        e_widget_framelist_object_append(of, ob);
+        ob = e_widget_label_add(evas, _("Initial draw timeout for newly mapped windows"));
+        e_widget_framelist_object_append(of, ob);
+        ob = e_widget_slider_add(evas, 1, 0, _("%1.2f Seconds"), 0.01, 0.5, 0.01, 0, &(cfdata->first_draw_delay), NULL, 150);
+        e_widget_framelist_object_append(of, ob);
+        e_widget_list_object_append(ol, of, 1, 1, 0.5);
+     }
    of = e_widget_framelist_add(evas, _("DANGEROUS"), 0);
    ob = e_widget_check_add(evas, _("Enable advanced compositing features"), &(cfdata->enable_advanced_features));
    e_widget_framelist_object_append(of, ob);
@@ -590,8 +570,11 @@ _basic_create_widgets(E_Config_Dialog *cfd,
    ob = e_widget_check_add(evas, _("Smooth scaling of window content"), &(cfdata->smooth_windows));
    e_widget_framelist_object_append(of, ob);
 
-   ob = e_widget_check_add(evas, _("Don't composite fullscreen windows"), &(cfdata->nocomp_fs));
-   e_widget_framelist_object_append(of, ob);
+   if (e_comp->comp_type == E_PIXMAP_TYPE_X)
+     {
+        ob = e_widget_check_add(evas, _("Don't composite fullscreen windows"), &(cfdata->nocomp_fs));
+        e_widget_framelist_object_append(of, ob);
+     }
 
    e_widget_list_object_append(ol, of, 1, 0, 0.5);
 
