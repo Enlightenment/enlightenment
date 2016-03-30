@@ -2877,6 +2877,7 @@ e_client_mouse_down(E_Client *ec, int button, Evas_Point *output, E_Binding_Even
 
                   e = evas_object_evas_get(ec->internal_elm_win);
                   button_mask = evas_pointer_button_down_mask_get(e);
+                  evas_event_feed_mouse_out(e, 0, NULL);
                   for (i = 0; i < 32; i++)
                     {
                       if ((button_mask & (1 << i)))
