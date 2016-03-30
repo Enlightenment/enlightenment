@@ -94,6 +94,8 @@ typedef struct _E_Comp_Object
 
    Evas_Native_Surface *ns; //for custom gl rendering
 
+   double               action_client_loop_time; //loop time when client's action ended
+
    unsigned int         update_count;  // how many updates have happened to this obj
 
    unsigned int         opacity;  // opacity set with _NET_WM_WINDOW_OPACITY
@@ -378,8 +380,9 @@ _e_comp_object_cb_signal_bind(void *data, Evas_Object *obj EINA_UNUSED, const ch
    if (e_dnd_active()) return;
 #endif
    if (cw->ec->iconic || cw->ec->cur_mouse_action) return;
-   e_bindings_signal_handle(E_BINDING_CONTEXT_WINDOW, E_OBJECT(cw->ec),
-                            emission, source);
+   if (!dblequal(cw->action_client_loop_time, ecore_loop_time_get()))
+     e_bindings_signal_handle(E_BINDING_CONTEXT_WINDOW, E_OBJECT(cw->ec),
+                              emission, source);
 }
 
 /////////////////////////////////////
@@ -445,11 +448,15 @@ _e_comp_object_cb_mouse_up(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EIN
    Evas_Event_Mouse_Down *ev = event_info;
    E_Comp_Object *cw = data;
    E_Binding_Event_Mouse_Button ev2;
+   Eina_Bool acting;
 
    if (!cw->ec) return;
    if (e_client_action_get() && (e_client_action_get() != cw->ec)) return;
    e_bindings_evas_event_mouse_button_convert(ev, &ev2);
+   acting = !!cw->ec->cur_mouse_action;
    e_client_mouse_up(cw->ec, ev->button, &ev->output, &ev2);
+   if (acting && (!e_client_action_get()))
+     cw->action_client_loop_time = ecore_loop_time_get();
 }
 
 /* handle evas mouse movement events on client object */
