@@ -10,6 +10,9 @@ Config *notification_cfg = NULL;
 
 static E_Config_DD *conf_edd = NULL;
 
+static unsigned int offline_id;
+static unsigned int pres_id;
+
 static unsigned int
 _notification_notify(E_Notification_Notify *n)
 {
@@ -25,19 +28,27 @@ _notification_notify(E_Notification_Notify *n)
 }
 
 static void
+_notification_id_update(void *d, unsigned int id)
+{
+   uintptr_t *update_id = d;
+
+   *update_id = id;
+}
+
+static void
 _notification_show_common(const char *summary,
                           const char *body,
-                          int         replaces_id)
+                          unsigned int *update_id)
 {
    E_Notification_Notify n;
    memset(&n, 0, sizeof(E_Notification_Notify));
    n.app_name = "enlightenment";
-   n.replaces_id = replaces_id;
+   n.replaces_id = *update_id;
    n.icon.icon = "enlightenment";
    n.summary = summary;
    n.body = body;
    n.urgency = E_NOTIFICATION_NOTIFY_URGENCY_CRITICAL;
-   e_notification_client_send(&n, NULL, NULL);
+   e_notification_client_send(&n, _notification_id_update, update_id);
 }
 
 static void
@@ -60,7 +71,7 @@ _notification_show_presentation(Eina_Bool enabled)
                  "power saving settings will be restored.");
      }
 
-   _notification_show_common(summary, body, -1);
+   _notification_show_common(summary, body, &pres_id);
 }
 
 static void
@@ -83,7 +94,7 @@ _notification_show_offline(Eina_Bool enabled)
                  "resume regular tasks.");
      }
 
-   _notification_show_common(summary, body, -1);
+   _notification_show_common(summary, body, &offline_id);
 }
 
 static Eina_Bool
