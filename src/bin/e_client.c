@@ -1907,7 +1907,7 @@ _e_client_eval(E_Client *ec)
              ec->placed = 1;
              ec->pre_cb.x = ec->x; ec->pre_cb.y = ec->y;
           }
-        else if (!E_INSIDE(ec->x, ec->y, zx, zy, zw, zh))
+        else if (!E_INTERSECTS(ec->x, ec->y, ec->w, ec->h, zx, zy, zw, zh))
           {
              /* If an ec is placed out of bound, fix it! */
              ec->x = zx + ((zw - ec->w) / 2);
