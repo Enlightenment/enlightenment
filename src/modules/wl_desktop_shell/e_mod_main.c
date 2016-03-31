@@ -1000,14 +1000,8 @@ _e_xdg_shell_surface_configure(struct wl_resource *resource, Evas_Coord x, Evas_
             (ec->netwm.type == E_WINDOW_TYPE_POPUP_MENU) ||
             (ec->netwm.type == E_WINDOW_TYPE_DROPDOWN_MENU))
           {
-             x = E_CLAMP(ec->parent->client.x + ec->comp_data->popup.x,
-                         ec->parent->client.x,
-                         ec->parent->client.x + 
-                         ec->parent->client.w - ec->client.w);
-             y = E_CLAMP(ec->parent->client.y + ec->comp_data->popup.y,
-                         ec->parent->client.y,
-                         ec->parent->client.y + 
-                         ec->parent->client.h - ec->client.h);
+             x = ec->parent->client.x + ec->comp_data->popup.x;
+             y = ec->parent->client.y + ec->comp_data->popup.y;
           }
      }
 
