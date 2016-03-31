@@ -110,6 +110,7 @@ _e_comp_cb_key_down(void *data EINA_UNUSED, int ev_type EINA_UNUSED, Ecore_Event
         E_Client *ec;
 
         ec = e_client_focused_get();
+        if (!ec) ec = e_client_action_get();
         /* *block actions when no client is focused (probably something else did a grab here so we'll play nice)
          * *block actions when menu is up
          * *block actions when event (grab) window isn't comp window
