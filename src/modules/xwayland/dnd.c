@@ -311,6 +311,7 @@ _xwl_pipe_read(void *data, Ecore_Fd_Handler *fdh)
    len = read(ecore_main_fd_handler_fd_get(fdh), (void*)buf, INCR_CHUNK_SIZE);
    if (len < 0)
      {
+        free(buf);
         _incr_update(p, 0);
         eina_hash_del_by_key(pipes, &p->win);
      }
