@@ -468,6 +468,7 @@ _e_comp_wl_evas_cb_focus_in_timer(E_Client *ec)
    ec->comp_data->on_focus_timer = NULL;
 
    if (!e_comp_wl->kbd.focused) return EINA_FALSE;
+   e_comp_wl_input_keyboard_modifiers_update();
    serial = wl_display_next_serial(e_comp_wl->wl.disp);
    t = ecore_time_unix_get();
    EINA_LIST_FOREACH(e_comp_wl->kbd.focused, l, res)
