@@ -1230,7 +1230,7 @@ _e_xdg_shell_cb_popup_get(struct wl_client *client, struct wl_resource *resource
      }
 
    wl_resource_set_implementation(cdata->shell.surface,
-                                  &_e_xdg_popup_interface, ec, NULL);
+                                  &_e_xdg_popup_interface, ec, _e_shell_surface_destroy);
 
    e_object_ref(E_OBJECT(ec));
 
