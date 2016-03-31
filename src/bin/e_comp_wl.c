@@ -555,6 +555,12 @@ _e_comp_wl_evas_cb_restack(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EIN
    Eina_List *l, *ll;
 
    if (e_object_is_del(E_OBJECT(ec))) return;
+   if (e_client_has_xwindow(ec)) return;
+   EINA_LIST_FOREACH(ec->transients, l, sec)
+     {
+        evas_object_layer_set(sec->frame, evas_object_layer_get(ec->frame));
+        evas_object_stack_above(sec->frame, ec->frame);
+     }
    if (!ec->comp_data->sub.list) return;
    EINA_LIST_FOREACH(ec->comp_data->sub.list, l, sec)
      evas_object_layer_set(sec->frame, evas_object_layer_get(ec->frame));

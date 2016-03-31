@@ -63,6 +63,8 @@ _e_shell_surface_parent_set(E_Client *ec, struct wl_resource *parent_resource)
      {
         pc->transients = eina_list_append(pc->transients, ec);
         ec->parent = pc;
+        evas_object_layer_set(ec->frame, evas_object_layer_get(pc->frame));
+        evas_object_stack_above(ec->frame, pc->frame);
      }
 
    ec->icccm.fetch.transient_for = EINA_TRUE;
