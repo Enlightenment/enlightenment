@@ -1048,7 +1048,8 @@ _e_comp_intercept_move(void *data, Evas_Object *obj, int x, int y)
    if (cw->ec->new_client)
      {
         /* don't actually do anything until first client idler loop */
-        cw->ec->placed = ((!cw->ec->dialog) && (!cw->ec->parent));
+        if (!cw->ec->placed)
+          cw->ec->placed = ((!cw->ec->dialog) && (!cw->ec->parent));
         cw->ec->changes.pos = 1;
         EC_CHANGED(cw->ec);
      }
