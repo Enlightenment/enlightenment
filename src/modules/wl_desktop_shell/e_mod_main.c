@@ -1241,10 +1241,6 @@ _e_xdg_shell_cb_popup_get(struct wl_client *client, struct wl_resource *resource
    cdata->shell.unmap = _e_xdg_shell_surface_unmap;
    cdata->shell.data = E_NEW(E_Shell_Data, 1);
 
-   EC_CHANGED(ec);
-   ec->new_client = ec->want_focus = ec->override = 1;
-   e_client_unignore(ec);
-   e_comp->new_clients++;
    if (!ec->internal)
      ec->borderless = !ec->internal_elm_win;
    ec->lock_border = EINA_TRUE;
