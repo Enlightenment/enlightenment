@@ -1653,6 +1653,8 @@ e_comp_grab_input(Eina_Bool mouse, Eina_Bool kbd)
    if ((e_comp->input_mouse_grabs && e_comp->input_key_grabs) ||
        e_grabinput_get(mwin, 0, kwin))
      {
+        if (e_client_focused_get())
+          evas_object_focus_set(e_client_focused_get()->frame, 0);
         ret = EINA_TRUE;
         e_comp->input_mouse_grabs += mouse;
         e_comp->input_key_grabs += kbd;
@@ -1680,7 +1682,17 @@ e_comp_ungrab_input(Eina_Bool mouse, Eina_Bool kbd)
    e_grabinput_release(mwin, kwin);
    evas_event_feed_mouse_out(e_comp->evas, 0, NULL);
    evas_event_feed_mouse_in(e_comp->evas, 0, NULL);
-   if (e_client_focused_get()) return;
+   if (e_client_focused_get())
+     {
+        E_Client *ec = e_client_focused_get();
+
+        if (e_comp->comp_type == E_PIXMAP_TYPE_WL)
+          {
+             evas_object_focus_set(ec->frame, 0);
+             evas_object_focus_set(ec->frame, 1);
+          }
+        return;
+     }
    if (e_config->focus_policy != E_FOCUS_MOUSE)
      e_client_refocus();
 }
