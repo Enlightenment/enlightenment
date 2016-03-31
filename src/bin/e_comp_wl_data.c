@@ -940,7 +940,12 @@ e_comp_wl_clipboard_source_create(const char *mime_type, uint32_t serial, int fd
           ecore_main_fd_handler_add(fd, ECORE_FD_READ,
                                     _e_comp_wl_clipboard_source_save,
                                     e_comp->wl_comp_data, NULL, NULL);
-        if (!source->fd_handler) return NULL;
+        if (!source->fd_handler)
+          {
+             _mime_types_free(&source->data_source);
+             free(source);
+             return NULL;
+          }
      }
 
    source->fd = fd;
