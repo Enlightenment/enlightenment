@@ -1285,6 +1285,8 @@ ACT_FN_GO(window_desk_move_by, )
    if (obj->type != E_CLIENT_TYPE)
      {
         obj = E_OBJECT(e_client_focused_get());
+        if (!obj)
+          obj = E_OBJECT(e_client_action_get());
         if (!obj) return;
      }
 
@@ -1345,6 +1347,8 @@ ACT_FN_GO(window_zone_move_by, )
 
    if (!params) return;
    if (!obj) obj = E_OBJECT(e_client_focused_get());
+   if (!obj)
+     obj = E_OBJECT(e_client_action_get());
    if (!obj) return;
    if (obj->type != E_CLIENT_TYPE)
      {
@@ -1391,6 +1395,8 @@ ACT_FN_GO(window_desk_move_to, )
    if (obj->type != E_CLIENT_TYPE)
      {
         obj = E_OBJECT(e_client_focused_get());
+        if (!obj)
+          obj = E_OBJECT(e_client_action_get());
         if (!obj) return;
      }
 
