@@ -3795,30 +3795,16 @@ _e_comp_x_hook_client_fetch(void *d EINA_UNUSED, E_Client *ec)
      }
    if (ec->netwm.fetch.icon)
      {
-        int i;
-        if (ec->netwm.icons)
-          {
-             for (i = 0; i < ec->netwm.num_icons; i++)
-               {
-                  free(ec->netwm.icons[i].data);
-                  ec->netwm.icons[i].data = NULL;
-               }
-             free(ec->netwm.icons);
-          }
+        e_client_icon_free(ec->netwm.icons, ec->netwm.num_icons);
         ec->netwm.icons = NULL;
         ec->netwm.num_icons = 0;
         if (ecore_x_netwm_icons_get(win,
                                     &ec->netwm.icons,
                                     &ec->netwm.num_icons))
           {
-             // unless the rest of e uses border icons OTHER than icon #0
-             // then free the rest that we don't need anymore.
-             for (i = 1; i < ec->netwm.num_icons; i++)
-               {
-                  free(ec->netwm.icons[i].data);
-                  ec->netwm.icons[i].data = NULL;
-               }
-             ec->netwm.num_icons = 1;
+             if (ec->netwm.icons)
+               ec->netwm.icons = e_client_icon_deduplicate
+                 (ec->netwm.icons, ec->netwm.num_icons);
              ec->changes.icon = 1;
           }
         ec->netwm.fetch.icon = 0;

@@ -534,10 +534,9 @@ _e_client_free(E_Client *ec)
    ec->stick_desks = eina_list_free(ec->stick_desks);
    if (ec->netwm.icons)
      {
-        int i;
-        for (i = 0; i < ec->netwm.num_icons; i++)
-          free(ec->netwm.icons[i].data);
-        E_FREE(ec->netwm.icons);
+        e_client_icon_free(ec->netwm.icons, ec->netwm.num_icons);
+        ec->netwm.icons = NULL;
+        ec->netwm.num_icons = 0;
      }
    E_FREE(ec->netwm.extra_types);
    eina_stringshare_replace(&ec->border.name, NULL);
@@ -5022,4 +5021,100 @@ e_client_layout_cb_set(E_Client_Layout_Cb cb)
    if (_e_client_layout_cb && cb)
      CRI("ATTEMPTING TO OVERWRITE EXISTING CLIENT LAYOUT HOOK!!!");
    _e_client_layout_cb = cb;
+}
+
+////////////////////////////////////////////
+static Eina_List *iconshare = NULL;
+
+typedef struct _E_Client_Icon_Entry E_Client_Icon_Entry;
+
+struct _E_Client_Icon_Entry
+{
+   Ecore_X_Icon *icons;
+   int num_icons;
+   int ref;
+};
+
+E_API Ecore_X_Icon *
+e_client_icon_deduplicate(Ecore_X_Icon *icons, int num_icons)
+{
+   int i;
+   Eina_List *l;
+   E_Client_Icon_Entry *ie;
+
+   // unless the rest of e uses border icons OTHER than icon #0
+   // then free the rest that we don't need anymore.
+   for (i = 1; i < num_icons; i++)
+     {
+        free(icons[i].data);
+        icons[i].data = NULL;
+     }
+   // lookup icon data in icons cache/share
+   EINA_LIST_FOREACH(iconshare, l, ie)
+     {
+        if ((ie->num_icons == num_icons) &&
+            (num_icons  > 0) &&
+            (ie->icons[0].width == icons[0].width) &&
+            (ie->icons[0].height == icons[0].height) &&
+            (!memcmp(ie->icons[0].data, icons[0].data,
+                     icons[0].width * icons[0].height * 4)))
+          {
+             // found so free the input icons
+             for (i = 0; i < num_icons; i++)
+               free(icons[i].data);
+             free(icons);
+             // ref the shared/cached one
+             ie->ref++;
+             iconshare = eina_list_promote_list(iconshare, l);
+             // and return that
+             return ie->icons;
+          }
+     }
+   // no hit - new entry to cache. add it
+   ie = calloc(1, sizeof(E_Client_Icon_Entry));
+   if (ie)
+     {
+        ie->icons = icons;
+        ie->num_icons = num_icons;
+        ie->ref = 1;
+        iconshare = eina_list_prepend(iconshare, ie);
+     }
+   return icons;
+}
+
+E_API void
+e_client_icon_free(Ecore_X_Icon *icons, int num_icons)
+{
+   int i;
+   Eina_List *l;
+   E_Client_Icon_Entry *ie;
+
+   // lookup in icon share cache
+   EINA_LIST_FOREACH(iconshare, l, ie)
+     {
+        if ((ie->num_icons == num_icons) &&
+            (num_icons  > 0) &&
+            (ie->icons[0].width == icons[0].width) &&
+            (ie->icons[0].height == icons[0].height) &&
+            (!memcmp(ie->icons[0].data, icons[0].data,
+                     icons[0].width * icons[0].height * 4)))
+          {
+             // found so deref
+             ie->ref--;
+             if (ie->ref <= 0)
+               {
+                  // no refs left - free the icon from the share/cache
+                  iconshare = eina_list_remove_list(iconshare, l);
+                  for (i = 0; i < ie->num_icons; i++)
+                    free(ie->icons[i].data);
+                  free(ie->icons);
+                  free(ie);
+               }
+             return;
+          }
+     }
+   // not found - so just free it ... odd - we should never be here
+   for (i = 0; i < num_icons; i++)
+     free(icons[i].data);
+   free(icons);
 }

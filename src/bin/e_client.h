@@ -827,6 +827,8 @@ E_API Eina_Bool e_client_has_xwindow(const E_Client *ec);
 E_API Eina_Bool e_client_desk_window_profile_available_check(E_Client *ec, const char *profile);
 E_API void      e_client_desk_window_profile_wait_desk_set(E_Client *ec, E_Desk *desk);
 E_API void      e_client_layout_cb_set(E_Client_Layout_Cb cb);
+E_API Ecore_X_Icon *e_client_icon_deduplicate(Ecore_X_Icon *icons, int num_icons);
+E_API void      e_client_icon_free(Ecore_X_Icon *icons, int num_icons);
 
 YOLO E_API void e_client_focus_stack_set(Eina_List *l);
 
