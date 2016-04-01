@@ -152,6 +152,100 @@ _e_comp_x_client_frame_update(E_Client *ec, int l, int r, int t, int b)
    _e_comp_x_client_data_get(ec)->frame_update = 0;
 }
 
+static Eina_List *iconshare = NULL;
+
+typedef struct _E_Client_Icon_Entry E_Client_Icon_Entry;
+
+struct _E_Client_Icon_Entry
+{
+   Ecore_X_Icon *icons;
+   int num_icons;
+   int ref;
+};
+
+static Ecore_X_Icon *
+_e_comp_x_client_icon_deduplicate(Ecore_X_Icon *icons, int num_icons)
+{
+   int i;
+   Eina_List *l;
+   E_Client_Icon_Entry *ie;
+
+   // unless the rest of e uses border icons OTHER than icon #0
+   // then free the rest that we don't need anymore.
+   for (i = 1; i < num_icons; i++)
+     {
+        E_FREE(icons[i].data);
+     }
+   // lookup icon data in icons cache/share
+   EINA_LIST_FOREACH(iconshare, l, ie)
+     {
+        if ((ie->num_icons == num_icons) &&
+            (num_icons  > 0) &&
+            (ie->icons[0].width == icons[0].width) &&
+            (ie->icons[0].height == icons[0].height) &&
+            (!memcmp(ie->icons[0].data, icons[0].data,
+                     icons[0].width * icons[0].height * 4)))
+          {
+             // found so free the input icons
+             for (i = 0; i < num_icons; i++)
+               free(icons[i].data);
+             free(icons);
+             // ref the shared/cached one
+             ie->ref++;
+             iconshare = eina_list_promote_list(iconshare, l);
+             // and return that
+             return ie->icons;
+          }
+     }
+   // no hit - new entry to cache. add it
+   ie = calloc(1, sizeof(E_Client_Icon_Entry));
+   if (ie)
+     {
+        ie->icons = icons;
+        ie->num_icons = num_icons;
+        ie->ref = 1;
+        iconshare = eina_list_prepend(iconshare, ie);
+     }
+   return icons;
+}
+
+static void
+_e_comp_x_client_icon_free(Ecore_X_Icon *icons, int num_icons)
+{
+   int i;
+   Eina_List *l;
+   E_Client_Icon_Entry *ie;
+
+   // lookup in icon share cache
+   EINA_LIST_FOREACH(iconshare, l, ie)
+     {
+        if ((ie->num_icons == num_icons) &&
+            (num_icons  > 0) &&
+            (ie->icons[0].width == icons[0].width) &&
+            (ie->icons[0].height == icons[0].height) &&
+            (!memcmp(ie->icons[0].data, icons[0].data,
+                     icons[0].width * icons[0].height * 4)))
+          {
+             // found so deref
+             ie->ref--;
+             if (ie->ref <= 0)
+               {
+                  // no refs left - free the icon from the share/cache
+                  iconshare = eina_list_remove_list(iconshare, l);
+                  for (i = 0; i < ie->num_icons; i++)
+                    free(ie->icons[i].data);
+                  free(ie->icons);
+                  free(ie);
+               }
+             return;
+          }
+     }
+   // not found - so just free it ... odd - we should never be here
+   for (i = 0; i < num_icons; i++)
+     free(icons[i].data);
+   free(icons);
+}
+
 static void
 _e_comp_x_client_event_free(void *d EINA_UNUSED, void *e)
 {
@@ -3795,7 +3889,7 @@ _e_comp_x_hook_client_fetch(void *d EINA_UNUSED, E_Client *ec)
      }
    if (ec->netwm.fetch.icon)
      {
-        e_client_icon_free(ec->netwm.icons, ec->netwm.num_icons);
+        _e_comp_x_client_icon_free(ec->netwm.icons, ec->netwm.num_icons);
         ec->netwm.icons = NULL;
         ec->netwm.num_icons = 0;
         if (ecore_x_netwm_icons_get(win,
@@ -3803,7 +3897,7 @@ _e_comp_x_hook_client_fetch(void *d EINA_UNUSED, E_Client *ec)
                                     &ec->netwm.num_icons))
           {
              if (ec->netwm.icons)
-               ec->netwm.icons = e_client_icon_deduplicate
+               ec->netwm.icons = _e_comp_x_client_icon_deduplicate
                  (ec->netwm.icons, ec->netwm.num_icons);
              ec->changes.icon = 1;
           }
@@ -4686,6 +4780,12 @@ _e_comp_x_hook_client_del(void *d EINA_UNUSED, E_Client *ec)
         if (e_pixmap_free(ec->pixmap))
           e_pixmap_client_set(ec->pixmap, NULL);
         ec->pixmap = NULL;
+     }
+   if (ec->netwm.icons)
+     {
+        _e_comp_x_client_icon_free(ec->netwm.icons, ec->netwm.num_icons);
+        ec->netwm.icons = NULL;
+        ec->netwm.num_icons = 0;
      }
 
    if (post_clients)
