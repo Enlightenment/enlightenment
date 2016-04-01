@@ -2465,6 +2465,7 @@ _e_comp_wl_gl_init(void *d EINA_UNUSED)
 {
    e_comp_wl->wl.gl = evas_gl_new(e_comp->evas);
    if (!e_comp_wl->wl.gl) return;
+   e_util_env_set("ELM_ACCEL", "gl");
    e_comp_wl->wl.glctx = evas_gl_context_create(e_comp_wl->wl.gl, NULL);
    e_comp_wl->wl.glcfg = evas_gl_config_new();
    e_comp_wl->wl.glsfc = evas_gl_surface_create(e_comp_wl->wl.gl, e_comp_wl->wl.glcfg, 1, 1);
