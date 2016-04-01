@@ -503,7 +503,8 @@ e_shelf_move(E_Shelf *es, int x, int y)
    es->x = x;
    es->y = y;
    evas_object_move(es->comp_object, es->zone->x + es->x, es->zone->y + es->y);
-   _e_shelf_remaximize(es);
+   if (!es->hide_animator)
+     _e_shelf_remaximize(es);
 }
 
 E_API void
@@ -515,7 +516,8 @@ e_shelf_resize(E_Shelf *es, int w, int h)
    es->w = w;
    es->h = h;
    evas_object_resize(es->comp_object, es->w, es->h);
-   _e_shelf_remaximize(es);
+   if (!es->hide_animator)
+     _e_shelf_remaximize(es);
 }
 
 E_API void
@@ -530,7 +532,8 @@ e_shelf_move_resize(E_Shelf *es, int x, int y, int w, int h)
    es->h = h;
    evas_object_move(es->comp_object, es->zone->x + es->x, es->zone->y + es->y);
    evas_object_resize(es->comp_object, es->w, es->h);
-   _e_shelf_remaximize(es);
+   if (!es->hide_animator)
+     _e_shelf_remaximize(es);
 }
 
 E_API void
