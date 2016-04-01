@@ -684,13 +684,12 @@ _e_comp_wl_evas_cb_delete_request(void *data, Evas_Object *obj EINA_UNUSED, void
    if (!e_client_has_xwindow(ec))
      {
         if (ec->netwm.ping) e_client_ping(ec);
+        if (ec->internal_elm_win)
+          E_FREE_FUNC(ec->internal_elm_win, evas_object_del);
         e_object_del(E_OBJECT(ec));
      }
 
    _e_comp_wl_focus_check();
-
-   /* TODO: Delete request send ??
-    * NB: No such animal wrt wayland */
 }
 
 static void
