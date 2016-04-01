@@ -1389,7 +1389,6 @@ _e_shelf_gadcon_frame_request(void *data, E_Gadcon_Client *gcc, const char *styl
 static void
 _e_shelf_toggle_client_fix(E_Shelf *es)
 {
-   Eina_List *l;
    E_Client *ec;
 
    if (!e_config->border_fix_on_shelf_toggle)
@@ -1397,8 +1396,10 @@ _e_shelf_toggle_client_fix(E_Shelf *es)
    if (es->cfg->overlap)
      return;
 
-   EINA_LIST_FOREACH(e_comp->clients, l, ec)
+   E_CLIENT_FOREACH(ec)
      {
+        if ((!ec->sticky) && (!e_shelf_desk_visible(es, ec->desk ?: e_desk_current_get(es->zone))))
+          continue;
         if ((ec->maximized & E_MAXIMIZE_TYPE) == E_MAXIMIZE_NONE)
           {
              if (ec->lock_client_location) continue;
