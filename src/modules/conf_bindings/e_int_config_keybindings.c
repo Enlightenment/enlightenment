@@ -1114,6 +1114,11 @@ _find_key_binding_action(const char *action,
 static void
 _modifiers_add(Eina_Strbuf *b, int modifiers)
 {
+   if (modifiers & E_BINDING_MODIFIER_CTRL)
+     {
+        if (eina_strbuf_length_get(b)) eina_strbuf_append(b, " + ");
+        eina_strbuf_append(b, _("CTRL"));
+     }
    if (modifiers & E_BINDING_MODIFIER_ALT)
      {
         if (eina_strbuf_length_get(b)) eina_strbuf_append(b, " + ");
