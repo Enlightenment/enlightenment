@@ -572,9 +572,15 @@ _e_comp_wl_evas_cb_move(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_U
    if (e_object_is_del(E_OBJECT(ec))) return;
    if (ec->comp_data->www.surface)
      {
-        if (ec->comp_data->moved && (!ec->maximized) && (!ec->fullscreen))
-          www_surface_send_status(ec->comp_data->www.surface,
-            ec->x - ec->comp_data->www.x, ec->y - ec->comp_data->www.y, lround(ecore_loop_time_get()));
+        if (ec->comp_data->moved)
+          {
+             if ((!ec->maximized) && (!ec->fullscreen) && (!ec->comp_data->maximizing) && (!ec->maximize_override))
+               www_surface_send_status(ec->comp_data->www.surface,
+                 ec->x - ec->comp_data->www.x, ec->y - ec->comp_data->www.y, lround(ecore_loop_time_get()));
+             else if (ec->comp_data->maximizing || ec->maximize_override)
+               www_surface_send_status(ec->comp_data->www.surface,
+                 ec->w / 3, ec->h / 3, lround(ecore_loop_time_get()));
+          }
         ec->comp_data->www.x = ec->x;
         ec->comp_data->www.y = ec->y;
      }
