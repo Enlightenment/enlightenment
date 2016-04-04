@@ -106,10 +106,8 @@ _e_comp_wl_cb_module_idle(void *data EINA_UNUSED)
 static void
 _e_comp_wl_evas_cb_show(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
 {
-   E_Client *ec, *tmp;
-   Eina_List *l;
+   E_Client *ec = data;
 
-   if (!(ec = data)) return;
    if (e_object_is_del(E_OBJECT(ec))) return;
 
    if (!ec->override) e_hints_window_visible_set(ec);
@@ -122,21 +120,12 @@ _e_comp_wl_evas_cb_show(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj EIN
         else
           evas_object_focus_set(ec->frame, !starting);
      }
-
-   EINA_LIST_FOREACH(ec->e.state.video_child, l, tmp)
-     evas_object_show(tmp->frame);
 }
 
 static void
 _e_comp_wl_evas_cb_hide(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
 {
-   E_Client *ec, *tmp;
-   Eina_List *l;
-
-   if (!(ec = data)) return;
-
-   EINA_LIST_FOREACH(ec->e.state.video_child, l, tmp)
-     evas_object_hide(tmp->frame);
+   E_Client *ec = data;
 
    if (!e_object_is_del(E_OBJECT(ec))) return;
 
