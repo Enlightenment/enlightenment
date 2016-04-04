@@ -222,7 +222,7 @@ _cb_xserver_event(void *data EINA_UNUSED, Ecore_Fd_Handler *hdlr EINA_UNUSED)
         snprintf(disp, sizeof(disp), ":%d", exs->disp);
 
         snprintf(xserver, sizeof(xserver), "%s", XWAYLAND_BIN);
-        DBG("\tLaunching %s: %s: %s", XWAYLAND_BIN, xserver, disp);
+        DBG("\tLaunching %s: %s", xserver, disp);
         if (execl(xserver, xserver, disp, "-rootless", "-listen", abs_fd,
                   "-listen", unx_fd, "-terminate", "-shm",
                   NULL) < 0)
