@@ -588,6 +588,15 @@ _e_comp_wl_evas_cb_move(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_U
 }
 
 static void
+_e_comp_wl_evas_cb_maximize_pre(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   E_Client *ec = data;
+
+   if (!e_object_is_del(E_OBJECT(ec)))
+     ec->comp_data->maximizing = 1;
+}
+
+static void
 _e_comp_wl_evas_cb_resize(void *data, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
 {
    E_Client *ec;
@@ -659,6 +668,16 @@ _e_comp_wl_evas_cb_state_update(void *data, Evas_Object *obj EINA_UNUSED, void *
 
    if (ec->comp_data->shell.configure_send)
      _e_comp_wl_configure_send(ec, 0);
+}
+
+static void
+_e_comp_wl_evas_cb_maximize_done(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   E_Client *ec = data;
+
+   if (e_object_is_del(E_OBJECT(ec))) return;
+   ec->comp_data->maximizing = 0;
+   _e_comp_wl_evas_cb_state_update(ec, NULL, NULL);
 }
 
 static void
@@ -783,10 +802,14 @@ _e_comp_wl_client_evas_init(E_Client *ec)
      {
         evas_object_smart_callback_add(ec->frame, "client_resize",
                                        _e_comp_wl_evas_cb_resize, ec);
+        evas_object_smart_callback_add(ec->frame, "maximize_pre",
+                                       _e_comp_wl_evas_cb_maximize_pre, ec);
+        evas_object_smart_callback_add(ec->frame, "unmaximize_pre",
+                                       _e_comp_wl_evas_cb_maximize_pre, ec);
         evas_object_smart_callback_add(ec->frame, "maximize_done",
-                                       _e_comp_wl_evas_cb_state_update, ec);
+                                       _e_comp_wl_evas_cb_maximize_done, ec);
         evas_object_smart_callback_add(ec->frame, "unmaximize_done",
-                                       _e_comp_wl_evas_cb_state_update, ec);
+                                       _e_comp_wl_evas_cb_maximize_done, ec);
         evas_object_smart_callback_add(ec->frame, "fullscreen",
                                        _e_comp_wl_evas_cb_state_update, ec);
         evas_object_smart_callback_add(ec->frame, "unfullscreen",

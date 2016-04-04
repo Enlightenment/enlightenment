@@ -314,6 +314,7 @@ struct _E_Comp_Wl_Client_Data
    Eina_Bool frame_update : 1;
    Eina_Bool cursor : 1;
    Eina_Bool moved : 1;
+   Eina_Bool maximizing : 1;
 };
 
 struct _E_Comp_Wl_Output
