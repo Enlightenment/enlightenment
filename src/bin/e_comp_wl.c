@@ -47,6 +47,7 @@ _e_comp_wl_configure_send(E_Client *ec, Eina_Bool edges)
 {
    int w, h;
 
+   if (e_object_is_del(E_OBJECT(ec))) return;
    if (e_comp_object_frame_exists(ec->frame))
      w = ec->client.w, h = ec->client.h;
    else
