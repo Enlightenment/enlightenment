@@ -641,7 +641,7 @@ _xdg_shell_surface_send_configure(struct wl_resource *resource, Eina_Bool fullsc
    shd = ec->comp_data->shell.data;
    if ((shd->edges == edges) && (shd->width == width) && (shd->height == height) &&
        (shd->fullscreen == fullscreen) &&
-       ((!fullscreen) || (shd->maximized == maximized)) &&
+       (shd->maximized == maximized) &&
        (shd->activated == focused)) return;
    shd->edges = edges;
    shd->width = width;
@@ -703,7 +703,7 @@ _e_xdg_shell_surface_configure_send(struct wl_resource *resource, uint32_t edges
      }
    if (ec->netwm.type == E_WINDOW_TYPE_POPUP_MENU) return;
 
-   _xdg_shell_surface_send_configure(resource, ec->fullscreen, ec->maximized, edges, ec->focused, width, height);
+   _xdg_shell_surface_send_configure(resource, ec->fullscreen, !!ec->maximized, edges, ec->focused, width, height);
 }
 
 static void
@@ -977,6 +977,7 @@ static void
 _e_xdg_shell_surface_cb_maximized_unset(struct wl_client *client EINA_UNUSED, struct wl_resource *resource)
 {
    E_Client *ec;
+   int w, h;
 
    /* get the client for this resource */
    if (!(ec = wl_resource_get_user_data(resource)))
@@ -988,7 +989,11 @@ _e_xdg_shell_surface_cb_maximized_unset(struct wl_client *client EINA_UNUSED, st
      }
 
    if (ec->lock_user_maximize) return;
-   _xdg_shell_surface_send_configure(resource, ec->fullscreen, 0, 0, ec->focused, ec->saved.w, ec->saved.h);
+   if (e_config->window_maximize_animate)
+     w = ec->w, h = ec->h;
+   else
+     w = ec->saved.w, h = ec->saved.h;
+   _xdg_shell_surface_send_configure(resource, ec->fullscreen, 0, 0, ec->focused, w, h);
 }
 
 static void

@@ -1059,6 +1059,7 @@ _e_comp_wl_surface_state_commit(E_Client *ec, E_Comp_Wl_Surface_State *state)
    Eina_Bool placed = EINA_TRUE;
    int x = 0, y = 0, w, h;
    Eina_Rectangle saved;
+   Eina_Bool saved_frame;
 
    first = !e_pixmap_usable_get(ec->pixmap);
 #ifndef HAVE_WAYLAND_ONLY
@@ -1078,6 +1079,7 @@ _e_comp_wl_surface_state_commit(E_Client *ec, E_Comp_Wl_Surface_State *state)
    memcpy(&saved, &ec->client, sizeof(Eina_Rectangle));
    saved.x -= ec->zone->x;
    saved.y -= ec->zone->y;
+   saved_frame = !e_comp_object_frame_allowed(ec->frame);
 
    if (state->new_attach)
      _e_comp_wl_surface_state_attach(ec, state);
@@ -1204,16 +1206,28 @@ _e_comp_wl_surface_state_commit(E_Client *ec, E_Comp_Wl_Surface_State *state)
 
    if (ec->comp_data->shell.surface)
      {
-        if (ec->comp_data->shell.set.fullscreen)
+        if (ec->comp_data->shell.set.fullscreen && (!ec->fullscreen))
           {
              e_client_fullscreen(ec, E_FULLSCREEN_RESIZE);
              memcpy(&ec->saved, &saved, sizeof(Eina_Rectangle));
+             ec->saved.frame = saved_frame;
           }
         if (ec->comp_data->shell.set.unfullscreen)
            e_client_unfullscreen(ec);
         if (ec->comp_data->shell.set.maximize)
-          e_client_maximize(ec,
-               (e_config->maximize_policy & E_MAXIMIZE_TYPE) | E_MAXIMIZE_BOTH);
+          {
+             unsigned int max = (e_config->maximize_policy & E_MAXIMIZE_TYPE) | E_MAXIMIZE_BOTH;
+
+             if (ec->maximized != max)
+               {
+                  e_client_maximize(ec, max);
+                  if (!ec->maximize_override)
+                    {
+                       memcpy(&ec->saved, &saved, sizeof(Eina_Rectangle));
+                       ec->saved.frame = saved_frame;
+                    }
+               }
+          }
         if (ec->comp_data->shell.set.unmaximize)
           e_client_unmaximize(ec, E_MAXIMIZE_BOTH);
         if (ec->comp_data->shell.set.minimize)
