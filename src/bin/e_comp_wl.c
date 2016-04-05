@@ -2535,6 +2535,7 @@ e_comp_wl_init(void)
           e_randr2_screens_setup(-1, -1);
         elm_config_preferred_engine_set("wayland_shm");
      }
+   e_util_env_set("WAYLAND_DEBUG", "0");
    e_util_env_set("ELM_DISPLAY", "wl");
    if (e_comp_gl_get())
      ecore_job_add(_e_comp_wl_gl_init, NULL);
