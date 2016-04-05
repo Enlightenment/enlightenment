@@ -3740,6 +3740,7 @@ e_client_maximize(E_Client *ec, E_Maximize max)
    E_OBJECT_TYPE_CHECK(ec, E_CLIENT_TYPE);
 
    if (!ec->zone) return;
+   if (ec->maximized == max) return;
    if (!(max & E_MAXIMIZE_DIRECTION)) max |= E_MAXIMIZE_BOTH;
 
    if ((ec->shaded) || (ec->shading)) return;
