@@ -5,11 +5,26 @@
 
 #define XDG_SERVER_VERSION 5
 
+typedef enum
+{
+   STATE_MAXIMIZED = (1 << 0),
+   STATE_UNMAXIMIZED = (1 << 1),
+   STATE_FULLSCREEN = (1 << 2),
+   STATE_UNFULLSCREEN = (1 << 3),
+} State;
+
+typedef struct Pending_State
+{
+   State state;
+   uint32_t serial;
+} Pending_State;
+
 struct E_Shell_Data
 {
    uint32_t edges;
    int32_t width;
    int32_t height;
+   Eina_List *pending;
    Eina_Bool fullscreen : 1;
    Eina_Bool maximized : 1;
    Eina_Bool activated : 1;
@@ -115,6 +130,9 @@ _e_shell_surface_destroy(struct wl_resource *resource)
 
         if (ec->comp_data)
           {
+             E_Shell_Data *shd = ec->comp_data->shell.data;
+
+             E_FREE_LIST(shd->pending, free);
              E_FREE(ec->comp_data->shell.data);
              if (ec->comp_data->mapped)
                {
@@ -603,15 +621,77 @@ _e_xdg_surface_state_add(struct wl_resource *resource, struct wl_array *states, 
 }
 
 static void
+_xdg_shell_surface_send_configure(struct wl_resource *resource, Eina_Bool fullscreen, Eina_Bool maximized, uint32_t edges, Eina_Bool focused, int32_t width, int32_t height)
+{
+   struct wl_array states;
+   uint32_t serial;
+   E_Client *ec;
+   E_Shell_Data *shd;
+   State pending = 0;
+
+   if (!(ec = wl_resource_get_user_data(resource)))
+     {
+        wl_resource_post_error(resource,
+                               WL_DISPLAY_ERROR_INVALID_OBJECT,
+                               "No Client For Shell Surface");
+        return;
+     }
+   if (ec->netwm.type == E_WINDOW_TYPE_POPUP_MENU) return;
+
+   shd = ec->comp_data->shell.data;
+   if ((shd->edges == edges) && (shd->width == width) && (shd->height == height) &&
+       (shd->fullscreen == fullscreen) &&
+       ((!fullscreen) || (shd->maximized == maximized)) &&
+       (shd->activated == focused)) return;
+   shd->edges = edges;
+   shd->width = width;
+   shd->height = height;
+   if (shd->fullscreen != fullscreen)
+     {
+        if (fullscreen)
+          pending |= STATE_FULLSCREEN;
+        else
+          pending |= STATE_UNFULLSCREEN;
+     }
+   shd->fullscreen = fullscreen;
+   if (shd->maximized != maximized)
+     {
+        if (maximized)
+          pending |= STATE_MAXIMIZED;
+        else
+          pending |= STATE_UNMAXIMIZED;
+     }
+   shd->maximized = maximized;
+   shd->activated = focused;
+   wl_array_init(&states);
+
+   if (fullscreen)
+     _e_xdg_surface_state_add(resource, &states, XDG_SURFACE_STATE_FULLSCREEN);
+   else if (maximized)
+     _e_xdg_surface_state_add(resource, &states, XDG_SURFACE_STATE_MAXIMIZED);
+   if (edges)
+     _e_xdg_surface_state_add(resource, &states, XDG_SURFACE_STATE_RESIZING);
+   if (focused)
+     _e_xdg_surface_state_add(resource, &states, XDG_SURFACE_STATE_ACTIVATED);
+
+   serial = wl_display_next_serial(e_comp_wl->wl.disp);
+   xdg_surface_send_configure(resource, width, height, &states, serial);
+   {
+      Pending_State *ps;
+
+      ps = E_NEW(Pending_State, 1);
+      ps->state = pending;
+      ps->serial = serial;
+      shd->pending = eina_list_append(shd->pending, ps);
+   }
+
+   wl_array_release(&states);
+}
+
+static void
 _e_xdg_shell_surface_configure_send(struct wl_resource *resource, uint32_t edges, int32_t width, int32_t height)
 {
    E_Client *ec;
-   E_Shell_Data *shd;
-   struct wl_array states;
-   uint32_t serial;
-
-   /* DBG("XDG_SHELL: Surface Configure Send: %d \t%d %d\tEdges: %d", */
-   /*     wl_resource_get_id(resource), width, height, edges); */
 
    /* get the client for this resource */
    if (!(ec = wl_resource_get_user_data(resource)))
@@ -621,37 +701,9 @@ _e_xdg_shell_surface_configure_send(struct wl_resource *resource, uint32_t edges
                                "No Client For Shell Surface");
         return;
      }
+   if (ec->netwm.type == E_WINDOW_TYPE_POPUP_MENU) return;
 
-   shd = ec->comp_data->shell.data;
-   if ((shd->edges == edges) && (shd->width == width) && (shd->height == height) &&
-       (shd->fullscreen == ec->fullscreen) &&
-       ((!ec->fullscreen) || (shd->maximized == ec->maximized)) &&
-       (shd->activated == ec->focused)) return;
-   shd->edges = edges;
-   shd->width = width;
-   shd->height = height;
-   shd->fullscreen = ec->fullscreen;
-   shd->maximized = ec->maximized;
-   shd->activated = ec->focused;
-
-   wl_array_init(&states);
-
-   if (ec->fullscreen)
-     _e_xdg_surface_state_add(resource, &states, XDG_SURFACE_STATE_FULLSCREEN);
-   else if (ec->maximized)
-     _e_xdg_surface_state_add(resource, &states, XDG_SURFACE_STATE_MAXIMIZED);
-   if (edges != 0)
-     _e_xdg_surface_state_add(resource, &states, XDG_SURFACE_STATE_RESIZING);
-   if (ec->focused)
-     _e_xdg_surface_state_add(resource, &states, XDG_SURFACE_STATE_ACTIVATED);
-
-   if (ec->netwm.type != E_WINDOW_TYPE_POPUP_MENU)
-     {
-        serial = wl_display_next_serial(e_comp_wl->wl.disp);
-        xdg_surface_send_configure(resource, width, height, &states, serial);
-     }
-
-   wl_array_release(&states);
+   _xdg_shell_surface_send_configure(resource, ec->fullscreen, ec->maximized, edges, ec->focused, width, height);
 }
 
 static void
@@ -832,9 +884,45 @@ _e_xdg_shell_surface_cb_resize(struct wl_client *client EINA_UNUSED, struct wl_r
 }
 
 static void
-_e_xdg_shell_surface_cb_ack_configure(struct wl_client *client EINA_UNUSED, struct wl_resource *resource EINA_UNUSED, uint32_t serial EINA_UNUSED)
+_e_xdg_shell_surface_cb_ack_configure(struct wl_client *client EINA_UNUSED, struct wl_resource *resource, uint32_t serial)
 {
-   /* No-Op */
+   E_Client *ec;
+   Pending_State *ps;
+   E_Shell_Data *shd;
+
+   ec = wl_resource_get_user_data(resource);
+   if (!ec)
+     {
+        wl_resource_post_error(resource, WL_DISPLAY_ERROR_INVALID_OBJECT,
+                                "No Client For Shell Surface");
+        return;
+     }
+   shd = ec->comp_data->shell.data;
+   EINA_LIST_FREE(shd->pending, ps)
+     {
+        if (ps->serial > serial) break;
+        if (ps->state & STATE_FULLSCREEN)
+          {
+             ec->comp_data->shell.set.fullscreen = 1;
+             ec->comp_data->shell.set.unfullscreen = 0;
+          }
+        if (ps->state & STATE_UNFULLSCREEN)
+          {
+             ec->comp_data->shell.set.unfullscreen = 1;
+             ec->comp_data->shell.set.fullscreen = 0;
+          }
+        if (ps->state & STATE_MAXIMIZED)
+          {
+             ec->comp_data->shell.set.maximize = 1;
+             ec->comp_data->shell.set.unmaximize = 0;
+          }
+        if (ps->state & STATE_UNMAXIMIZED)
+          {
+             ec->comp_data->shell.set.unmaximize = 1;
+             ec->comp_data->shell.set.maximize = 0;
+          }
+        free(ps);
+     }
 }
 
 static void
@@ -857,6 +945,7 @@ static void
 _e_xdg_shell_surface_cb_maximized_set(struct wl_client *client EINA_UNUSED, struct wl_resource *resource)
 {
    E_Client *ec;
+   int w, h;
 
    /* get the client for this resource */
    if (!(ec = wl_resource_get_user_data(resource)))
@@ -867,11 +956,21 @@ _e_xdg_shell_surface_cb_maximized_set(struct wl_client *client EINA_UNUSED, stru
         return;
      }
 
-   if (!ec->lock_user_maximize)
+   if (ec->lock_user_maximize) return;
+   if (e_config->window_maximize_animate)
+     w = ec->w, h = ec->h;
+   else
      {
-        e_client_maximize(ec, ((e_config->maximize_policy & E_MAXIMIZE_TYPE) |
-                               E_MAXIMIZE_BOTH));
+        switch (e_config->maximize_policy & E_MAXIMIZE_TYPE)
+          {
+           case E_MAXIMIZE_FULLSCREEN:
+             w = ec->zone->w, h = ec->zone->h;
+             break;
+           default:
+             e_zone_useful_geometry_get(ec->zone, NULL, NULL, &w, &h);
+          }
      }
+   _xdg_shell_surface_send_configure(resource, ec->fullscreen, 1, 0, ec->focused, w, h);
 }
 
 static void
@@ -888,8 +987,8 @@ _e_xdg_shell_surface_cb_maximized_unset(struct wl_client *client EINA_UNUSED, st
         return;
      }
 
-   e_client_unmaximize(ec, E_MAXIMIZE_BOTH);
-   _e_xdg_shell_surface_configure_send(resource, 0, ec->w, ec->h);
+   if (ec->lock_user_maximize) return;
+   _xdg_shell_surface_send_configure(resource, ec->fullscreen, 0, 0, ec->focused, ec->saved.w, ec->saved.h);
 }
 
 static void
@@ -906,8 +1005,8 @@ _e_xdg_shell_surface_cb_fullscreen_set(struct wl_client *client EINA_UNUSED, str
         return;
      }
 
-   if (!ec->lock_user_fullscreen)
-     e_client_fullscreen(ec, e_config->fullscreen_policy);
+   if (ec->lock_user_fullscreen) return;
+   _xdg_shell_surface_send_configure(resource, 1, ec->maximized, 0, ec->focused, ec->zone->w, ec->zone->h);
 }
 
 static void
@@ -924,8 +1023,8 @@ _e_xdg_shell_surface_cb_fullscreen_unset(struct wl_client *client EINA_UNUSED, s
         return;
      }
 
-   if (!ec->lock_user_fullscreen)
-     e_client_unfullscreen(ec);
+   if (ec->lock_user_fullscreen) return;
+   _xdg_shell_surface_send_configure(resource, 0, ec->maximized, 0, ec->focused, ec->saved.w, ec->saved.h);
 }
 
 static void
@@ -942,8 +1041,8 @@ _e_xdg_shell_surface_cb_minimized_set(struct wl_client *client EINA_UNUSED, stru
         return;
      }
 
-   if (!ec->lock_client_iconify)
-     e_client_iconify(ec);
+   if (!ec->lock_user_iconify)
+     ec->comp_data->shell.set.minimize = 1;
 }
 
 static const struct xdg_surface_interface _e_xdg_surface_interface =

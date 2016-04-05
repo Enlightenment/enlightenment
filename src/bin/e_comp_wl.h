@@ -286,6 +286,14 @@ struct _E_Comp_Wl_Client_Data
         void (*unmap)(struct wl_resource *resource);
         Eina_Rectangle window;
         E_Shell_Data *data;
+        struct
+        {
+           Eina_Bool fullscreen : 1;
+           Eina_Bool unfullscreen : 1;
+           Eina_Bool maximize : 1;
+           Eina_Bool unmaximize : 1;
+           Eina_Bool minimize : 1;
+        } set;
      } shell;
    struct
    {
