@@ -309,6 +309,7 @@ struct E_Client
       E_Layer      layer;
       int          zone;
       E_Maximize   maximized;
+      Eina_Bool frame : 1;
    } saved;
 
    struct
