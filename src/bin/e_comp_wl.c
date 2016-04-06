@@ -1047,8 +1047,6 @@ _e_comp_wl_surface_state_attach(E_Client *ec, E_Comp_Wl_Surface_State *state)
    e_pixmap_resource_set(ec->pixmap, state->buffer);
    e_pixmap_dirty(ec->pixmap);
    e_pixmap_refresh(ec->pixmap);
-
-   _e_comp_wl_surface_state_size_update(ec, state);
 }
 
 static void
@@ -1058,8 +1056,6 @@ _e_comp_wl_surface_state_commit(E_Client *ec, E_Comp_Wl_Surface_State *state)
    Eina_Rectangle *dmg;
    Eina_Bool placed = EINA_TRUE;
    int x = 0, y = 0, w, h;
-   Eina_Rectangle saved;
-   Eina_Bool saved_frame;
 
    first = !e_pixmap_usable_get(ec->pixmap);
 #ifndef HAVE_WAYLAND_ONLY
@@ -1075,16 +1071,35 @@ _e_comp_wl_surface_state_commit(E_Client *ec, E_Comp_Wl_Surface_State *state)
         e_client_unignore(ec);
      }
 
-   /* store to override in case of buffered fullscreen */
-   memcpy(&saved, &ec->client, sizeof(Eina_Rectangle));
-   saved.x -= ec->zone->x;
-   saved.y -= ec->zone->y;
-   saved_frame = !e_comp_object_frame_allowed(ec->frame);
-
    if (state->new_attach)
      _e_comp_wl_surface_state_attach(ec, state);
 
    _e_comp_wl_surface_state_buffer_set(state, NULL);
+
+
+   if (ec->comp_data->shell.surface)
+     {
+        if (ec->comp_data->shell.set.fullscreen && (!ec->fullscreen))
+          {
+             e_client_fullscreen(ec, E_FULLSCREEN_RESIZE);
+          }
+        if (ec->comp_data->shell.set.unfullscreen)
+           e_client_unfullscreen(ec);
+        if (ec->comp_data->shell.set.maximize)
+          {
+             unsigned int max = (e_config->maximize_policy & E_MAXIMIZE_TYPE) | E_MAXIMIZE_BOTH;
+
+             if (ec->maximized != max)
+               {
+                  e_client_maximize(ec, max);
+               }
+          }
+        if (ec->comp_data->shell.set.unmaximize)
+          e_client_unmaximize(ec, E_MAXIMIZE_BOTH);
+        if (ec->comp_data->shell.set.minimize)
+          e_client_iconify(ec);
+     }
+   _e_comp_wl_surface_state_size_update(ec, state);
 
    if (state->new_attach)
      {
@@ -1199,41 +1214,10 @@ _e_comp_wl_surface_state_commit(E_Client *ec, E_Comp_Wl_Surface_State *state)
              ec->want_focus |= ec->icccm.accepts_focus && (!ec->override);
           }
      }
+
    state->sx = 0;
    state->sy = 0;
    state->new_attach = EINA_FALSE;
-
-
-   if (ec->comp_data->shell.surface)
-     {
-        if (ec->comp_data->shell.set.fullscreen && (!ec->fullscreen))
-          {
-             e_client_fullscreen(ec, E_FULLSCREEN_RESIZE);
-             memcpy(&ec->saved, &saved, sizeof(Eina_Rectangle));
-             ec->saved.frame = saved_frame;
-          }
-        if (ec->comp_data->shell.set.unfullscreen)
-           e_client_unfullscreen(ec);
-        if (ec->comp_data->shell.set.maximize)
-          {
-             unsigned int max = (e_config->maximize_policy & E_MAXIMIZE_TYPE) | E_MAXIMIZE_BOTH;
-
-             if (ec->maximized != max)
-               {
-                  e_client_maximize(ec, max);
-                  if (!ec->maximize_override)
-                    {
-                       memcpy(&ec->saved, &saved, sizeof(Eina_Rectangle));
-                       ec->saved.frame = saved_frame;
-                    }
-               }
-          }
-        if (ec->comp_data->shell.set.unmaximize)
-          e_client_unmaximize(ec, E_MAXIMIZE_BOTH);
-        if (ec->comp_data->shell.set.minimize)
-          e_client_iconify(ec);
-        memset(&ec->comp_data->shell.set, 0, sizeof(ec->comp_data->shell.set));
-     }
 
    /* insert state frame callbacks into comp_data->frames
     * NB: This clears state->frames list */
