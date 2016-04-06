@@ -3109,7 +3109,7 @@ e_comp_object_frame_geometry_set(Evas_Object *obj, int l, int r, int t, int b)
      }
    if (!cw->ec->new_client)
      {
-        if ((calc || (!e_client_has_xwindow(cw->ec))) && cw->client_inset.calc)
+        if (calc && cw->client_inset.calc)
           {
              E_Zone *zone = e_comp_object_util_zone_get(obj);
 
