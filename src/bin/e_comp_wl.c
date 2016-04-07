@@ -780,8 +780,6 @@ _e_comp_wl_client_evas_init(E_Client *ec)
                                        _e_comp_wl_evas_cb_state_update, ec);
         evas_object_smart_callback_add(ec->frame, "fullscreen",
                                        _e_comp_wl_evas_cb_state_update, ec);
-        evas_object_smart_callback_add(ec->frame, "unfullscreen",
-                                       _e_comp_wl_evas_cb_state_update, ec);
      }
    evas_object_event_callback_priority_add(ec->frame, EVAS_CALLBACK_MOVE,
                                            EVAS_CALLBACK_PRIORITY_AFTER,
