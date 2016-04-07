@@ -719,8 +719,9 @@ _e_comp_wl_buffer_cb_destroy(struct wl_listener *listener, void *data EINA_UNUSE
    E_Comp_Wl_Buffer *buffer;
 
    buffer = container_of(listener, E_Comp_Wl_Buffer, destroy_listener);
+fprintf(stderr, "EMIT SIGNAL FOR %p\n", buffer);
    wl_signal_emit(&buffer->destroy_signal, buffer);
-   free(buffer);
+//   free(buffer);
 }
 
 static void
@@ -942,6 +943,7 @@ _e_comp_wl_surface_state_cb_buffer_destroy(struct wl_listener *listener, void *d
    state =
      container_of(listener, E_Comp_Wl_Surface_State, buffer_destroy_listener);
    state->buffer = NULL;
+   state->buffer_destroy_listener.notify = NULL;
 }
 
 static void
@@ -949,8 +951,9 @@ _e_comp_wl_surface_state_init(E_Comp_Wl_Surface_State *state, int w, int h)
 {
    state->new_attach = EINA_FALSE;
    state->buffer = NULL;
-   state->buffer_destroy_listener.notify =
-     _e_comp_wl_surface_state_cb_buffer_destroy;
+   state->buffer_destroy_listener.notify = NULL;
+//   state->buffer_destroy_listener.notify =
+//     _e_comp_wl_surface_state_cb_buffer_destroy;
    state->sx = state->sy = 0;
 
    state->input = eina_tiler_new(w, h);
@@ -984,20 +987,27 @@ _e_comp_wl_surface_state_finish(E_Comp_Wl_Surface_State *state)
    if (state->input) eina_tiler_free(state->input);
    state->input = NULL;
 
-   if (state->buffer) wl_list_remove(&state->buffer_destroy_listener.link);
+   if (state->buffer_destroy_listener.notify) wl_list_remove(&state->buffer_destroy_listener.link);
    state->buffer = NULL;
+   state->buffer_destroy_listener.notify = NULL;
 }
 
 static void
 _e_comp_wl_surface_state_buffer_set(E_Comp_Wl_Surface_State *state, E_Comp_Wl_Buffer *buffer)
 {
    if (state->buffer == buffer) return;
-   if (state->buffer)
+   if (state->buffer_destroy_listener.notify) {
+fprintf(stderr, "REMOVE SIGNAL: BUFFER %p HANDLER %p\n", state->buffer, &state->buffer_destroy_listener);
      wl_list_remove(&state->buffer_destroy_listener.link);
+state->buffer_destroy_listener.notify = NULL;
+}
    state->buffer = buffer;
-   if (state->buffer)
+   if (state->buffer) { fprintf(stderr, "STATE %p ADD SIGNAL: BUFFER %p HANDLER %p\n", state, state->buffer, &state->buffer_destroy_listener);
+  state->buffer_destroy_listener.notify =
+     _e_comp_wl_surface_state_cb_buffer_destroy;
+wl_list_init(&state->buffer_destroy_listener.link);
      wl_signal_add(&state->buffer->destroy_signal,
-                   &state->buffer_destroy_listener);
+                   &state->buffer_destroy_listener);}
 }
 
 static void
@@ -2829,6 +2839,7 @@ e_comp_wl_buffer_get(struct wl_resource *resource)
    buffer->shm_buffer = shmbuff;
 
    buffer->resource = resource;
+fprintf(stderr, "INIT SIGNAL FOR %p\n", buffer);
    wl_signal_init(&buffer->destroy_signal);
    buffer->destroy_listener.notify = _e_comp_wl_buffer_cb_destroy;
    wl_resource_add_destroy_listener(resource, &buffer->destroy_listener);

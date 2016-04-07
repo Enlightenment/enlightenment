@@ -1,7 +1,6 @@
 #ifndef PACKAGEKIT_H
 #define PACKAGEKIT_H
 
-#include <Eldbus.h>
 #include <e.h>
 
 

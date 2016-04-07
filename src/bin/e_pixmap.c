@@ -64,6 +64,7 @@ _e_pixmap_cb_deferred_buffer_destroy(struct wl_listener *listener, void *data EI
    E_Comp_Wl_Buffer *buffer;
 
    buffer = container_of(listener, E_Comp_Wl_Buffer, deferred_destroy_listener);
+fprintf(stderr, "DEFERRED DESTROY: %p\n", buffer);
    buffer->discarding_pixmap->free_buffers = eina_list_remove(buffer->discarding_pixmap->free_buffers, buffer);
    buffer->discarding_pixmap = NULL;
 }
@@ -74,6 +75,7 @@ _e_pixmap_cb_buffer_destroy(struct wl_listener *listener, void *data EINA_UNUSED
    E_Pixmap *cp;
 
    cp = container_of(listener, E_Pixmap, buffer_destroy_listener);
+fprintf(stderr, "BUFFER DESTROY: %p\n", cp->buffer);
    cp->buffer = NULL;
    cp->buffer_destroy_listener.notify = NULL;
 }
@@ -84,6 +86,7 @@ _e_pixmap_cb_held_buffer_destroy(struct wl_listener *listener, void *data EINA_U
    E_Pixmap *cp;
 
    cp = container_of(listener, E_Pixmap, held_buffer_destroy_listener);
+fprintf(stderr, "HELD BUFFER DESTROY: %p\n", cp->held_buffer);
    cp->held_buffer = NULL;
    cp->held_buffer_destroy_listener.notify = NULL;
 }
@@ -136,7 +139,9 @@ _e_pixmap_wayland_buffer_release(E_Pixmap *cp, E_Comp_Wl_Buffer *buffer)
         if (buffer->discarding_pixmap) return;
 
         buffer->discarding_pixmap = cp;
+if (buffer->deferred_destroy_listener.notify) fprintf(stderr, "EXPLODE\n");
         buffer->deferred_destroy_listener.notify = _e_pixmap_cb_deferred_buffer_destroy;
+fprintf(stderr, "DEFERRED: BUFFER %p LISTENER %p\n", buffer, &buffer->deferred_destroy_listener);
         wl_signal_add(&buffer->destroy_signal, &buffer->deferred_destroy_listener);
         cp->free_buffers = eina_list_append(cp->free_buffers, buffer);
         return;
@@ -177,6 +182,7 @@ _e_pixmap_wayland_image_clear(E_Pixmap *cp)
    _e_pixmap_wayland_buffer_release(cp, cp->held_buffer);
    if (cp->held_buffer_destroy_listener.notify)
      {
+fprintf(stderr, "HELD--: BUFFER %p LISTENER %p\n", cp->held_buffer, &cp->held_buffer_destroy_listener);
         wl_list_remove(&cp->held_buffer_destroy_listener.link);
         cp->held_buffer_destroy_listener.notify = NULL;
      }
@@ -645,12 +651,14 @@ e_pixmap_resource_set(E_Pixmap *cp, void *resource)
      }
    if (cp->buffer_destroy_listener.notify)
      {
+fprintf(stderr, "SMOKING GUN--: BUFFER %p HANDLER %p\n", cp->buffer, &cp->buffer_destroy_listener);
         wl_list_remove(&cp->buffer_destroy_listener.link);
         cp->buffer_destroy_listener.notify = NULL;
      }
    cp->buffer = resource;
    if (!cp->buffer) return;
    cp->buffer_destroy_listener.notify = _e_pixmap_cb_buffer_destroy;
+fprintf(stderr, "SMOKING GUN: BUFFER %p HANDLER %p\n", cp->buffer, &cp->buffer_destroy_listener);
    wl_signal_add(&cp->buffer->destroy_signal,
                  &cp->buffer_destroy_listener);
 
@@ -813,6 +821,7 @@ e_pixmap_image_refresh(E_Pixmap *cp)
            cp->data = wl_shm_buffer_get_data(cp->buffer->shm_buffer);
 
            cp->held_buffer_destroy_listener.notify = _e_pixmap_cb_held_buffer_destroy;
+fprintf(stderr, "HELD: BUFFER %p LISTENER %p\n", cp->held_buffer, &cp->held_buffer_destroy_listener);
            wl_signal_add(&cp->held_buffer->destroy_signal,
                          &cp->held_buffer_destroy_listener);
            return EINA_TRUE;

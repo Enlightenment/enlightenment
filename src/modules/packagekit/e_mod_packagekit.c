@@ -1,6 +1,4 @@
-#include <e.h>
-#include <Eldbus.h>
-#include <Efreet.h>
+#include "e.h"
 #include "e_mod_main.h"
 #include "e_mod_packagekit.h"
 
