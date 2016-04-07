@@ -1,7 +1,4 @@
-#include <stdlib.h>
-#include <stdio.h>
-#include <string.h>
-#include <limits.h>
+#include "e.h"
 
 #ifdef __FreeBSD__
 # include <sys/types.h>
@@ -17,9 +14,6 @@
 #include <err.h>
 #endif
 
-#include <Eina.h>
-#include <Ecore.h>
-#include <Ecore_File.h>
 #include "e_mod_main.h"
 
 static int sensor_type = SENSOR_TYPE_NONE;

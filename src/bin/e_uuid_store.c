@@ -6,14 +6,8 @@
  * 3. (optional) Write the whole blob into a file on disk for later use)
  */
 
-#include <sys/types.h>
-#include <sys/mman.h>
-#include <fcntl.h>
-#include <unistd.h>
-
-#include <Eina.h>
-
 #include <e.h>
+#include <sys/mman.h>
 
 /* Use anonymous mapping if we don't want a persistent file on the disk */
 #define OBJECT_NAME "/e_uuid_store"

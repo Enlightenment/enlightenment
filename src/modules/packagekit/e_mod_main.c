@@ -1,5 +1,4 @@
 #include <e.h>
-#include <Eldbus.h>
 #include "e_mod_main.h"
 #include "e_mod_config.h"
 #include "e_mod_packagekit.h"
