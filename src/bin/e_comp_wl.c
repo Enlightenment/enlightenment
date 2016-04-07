@@ -1087,7 +1087,8 @@ _e_comp_wl_surface_state_commit(E_Client *ec, E_Comp_Wl_Surface_State *state)
           {
              unsigned int max = (e_config->maximize_policy & E_MAXIMIZE_TYPE) | E_MAXIMIZE_BOTH;
 
-             if (ec->maximized != max)
+             /* FIXME: server-side desync */
+             if (!ec->maximized)
                {
                   e_client_maximize(ec, max);
                }
