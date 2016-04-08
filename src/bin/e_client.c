@@ -4822,7 +4822,7 @@ e_client_signal_resize_end(E_Client *ec, const char *dir EINA_UNUSED, const char
 ////////////////////////////////////////////
 
 E_API void
-e_client_resize_limit(E_Client *ec, int *w, int *h)
+e_client_resize_limit(const E_Client *ec, int *w, int *h)
 {
    double a;
    Eina_Bool inc_h;

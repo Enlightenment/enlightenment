@@ -14,19 +14,19 @@ struct _E_Maximize_Rect
      rects = eina_list_append(rects, r);                          \
   }
 
-static void _e_maximize_client_rects_fill(E_Client *ec, Eina_List *list, int *x1, int *yy1, int *x2, int *y2, E_Maximize dir);
-static void _e_maximize_client_rects_fill_both(E_Client *ec, Eina_List *rects, int *x1, int *yy1, int *x2, int *y2);
-static void _e_maximize_client_rects_fill_horiz(E_Client *ec, Eina_List *rects, int *x1, int *x2, int *bx, int *by, int *bw, int *bh);
-static void _e_maximize_client_rects_fill_vert(E_Client *ec, Eina_List *rects, int *yy1, int *y2, int *bx, int *by, int *bw, int *bh);
+static void _e_maximize_client_rects_fill(const E_Client *ec, Eina_List *list, int *x1, int *yy1, int *x2, int *y2, E_Maximize dir);
+static void _e_maximize_client_rects_fill_both(const E_Client *ec, Eina_List *rects, int *x1, int *yy1, int *x2, int *y2);
+static void _e_maximize_client_rects_fill_horiz(const E_Client *ec, Eina_List *rects, int *x1, int *x2, int *bx, int *by, int *bw, int *bh);
+static void _e_maximize_client_rects_fill_vert(const E_Client *ec, Eina_List *rects, int *yy1, int *y2, int *bx, int *by, int *bw, int *bh);
 
 E_API void
-e_maximize_client_shelf_fit(E_Client *ec, int *x1, int *yy1, int *x2, int *y2, E_Maximize dir)
+e_maximize_client_shelf_fit(const E_Client *ec, int *x1, int *yy1, int *x2, int *y2, E_Maximize dir)
 {
    e_maximize_client_shelf_fill(ec, x1, yy1, x2, y2, dir);
 }
 
 E_API void
-e_maximize_client_dock_fit(E_Client *ec, int *x1, int *yy1, int *x2, int *y2)
+e_maximize_client_dock_fit(const E_Client *ec, int *x1, int *yy1, int *x2, int *y2)
 {
    E_Client *ec2;
    int cx1, cx2, cy1, cy2;
@@ -124,7 +124,7 @@ e_maximize_client_dock_fit(E_Client *ec, int *x1, int *yy1, int *x2, int *y2)
 }
 
 E_API void
-e_maximize_client_shelf_fill(E_Client *ec, int *x1, int *yy1, int *x2, int *y2, E_Maximize dir)
+e_maximize_client_shelf_fill(const E_Client *ec, int *x1, int *yy1, int *x2, int *y2, E_Maximize dir)
 {
    Eina_List *l, *rects = NULL;
    E_Shelf *es;
@@ -146,7 +146,7 @@ e_maximize_client_shelf_fill(E_Client *ec, int *x1, int *yy1, int *x2, int *y2, 
 }
 
 E_API void
-e_maximize_client_client_fill(E_Client *ec, int *x1, int *yy1, int *x2, int *y2, E_Maximize dir)
+e_maximize_client_client_fill(const E_Client *ec, int *x1, int *yy1, int *x2, int *y2, E_Maximize dir)
 {
    Eina_List *rects = NULL;
    E_Maximize_Rect *r;
@@ -166,7 +166,7 @@ e_maximize_client_client_fill(E_Client *ec, int *x1, int *yy1, int *x2, int *y2,
 }
 
 static void
-_e_maximize_client_rects_fill(E_Client *ec, Eina_List *rects, int *x1, int *yy1, int *x2, int *y2, E_Maximize dir)
+_e_maximize_client_rects_fill(const E_Client *ec, Eina_List *rects, int *x1, int *yy1, int *x2, int *y2, E_Maximize dir)
 {
    if ((dir & E_MAXIMIZE_DIRECTION) == E_MAXIMIZE_BOTH)
      {
@@ -191,7 +191,7 @@ _e_maximize_client_rects_fill(E_Client *ec, Eina_List *rects, int *x1, int *yy1,
 }
 
 static void
-_e_maximize_client_rects_fill_both(E_Client *ec, Eina_List *rects, int *x1, int *yy1, int *x2, int *y2)
+_e_maximize_client_rects_fill_both(const E_Client *ec, Eina_List *rects, int *x1, int *yy1, int *x2, int *y2)
 {
    int hx1, hy1, hx2, hy2;
    int vx1, vy1, vx2, vy2;
@@ -243,7 +243,7 @@ _e_maximize_client_rects_fill_both(E_Client *ec, Eina_List *rects, int *x1, int 
 }
 
 static void
-_e_maximize_client_rects_fill_horiz(E_Client *ec, Eina_List *rects, int *x1, int *x2, int *bx, int *by, int *bw, int *bh)
+_e_maximize_client_rects_fill_horiz(const E_Client *ec, Eina_List *rects, int *x1, int *x2, int *bx, int *by, int *bw, int *bh)
 {
    Eina_List *l;
    E_Maximize_Rect *rect;
@@ -283,7 +283,7 @@ _e_maximize_client_rects_fill_horiz(E_Client *ec, Eina_List *rects, int *x1, int
 }
 
 static void
-_e_maximize_client_rects_fill_vert(E_Client *ec, Eina_List *rects, int *yy1, int *y2, int *bx, int *by, int *bw, int *bh)
+_e_maximize_client_rects_fill_vert(const E_Client *ec, Eina_List *rects, int *yy1, int *y2, int *bx, int *by, int *bw, int *bh)
 {
    Eina_List *l;
    E_Maximize_Rect *rect;
