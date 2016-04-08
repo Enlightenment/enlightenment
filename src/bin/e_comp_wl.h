@@ -309,6 +309,8 @@ struct _E_Comp_Wl_Client_Data
      {
         int32_t x, y;
      } popup;
+
+   E_Maximize max;
 #ifndef HAVE_WAYLAND_ONLY
    E_Pixmap *xwayland_pixmap;
    E_Comp_X_Client_Data *xwayland_data;
@@ -323,6 +325,7 @@ struct _E_Comp_Wl_Client_Data
    Eina_Bool cursor : 1;
    Eina_Bool moved : 1;
    Eina_Bool maximizing : 1;
+   Eina_Bool in_commit : 1;
 };
 
 struct _E_Comp_Wl_Output

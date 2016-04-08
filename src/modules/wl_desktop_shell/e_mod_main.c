@@ -989,6 +989,7 @@ _e_xdg_shell_surface_cb_maximized_unset(struct wl_client *client EINA_UNUSED, st
      }
 
    if (ec->lock_user_maximize) return;
+   ec->comp_data->max = (e_config->maximize_policy & E_MAXIMIZE_TYPE) | E_MAXIMIZE_BOTH;
    if (e_config->window_maximize_animate)
      w = ec->w, h = ec->h;
    else
@@ -1046,8 +1047,9 @@ _e_xdg_shell_surface_cb_minimized_set(struct wl_client *client EINA_UNUSED, stru
         return;
      }
 
-   if (!ec->lock_user_iconify)
-     ec->comp_data->shell.set.minimize = 1;
+   if (ec->lock_user_iconify) return;
+   ec->comp_data->shell.set.minimize = 1;
+   ec->comp_data->max = (e_config->maximize_policy & E_MAXIMIZE_TYPE) | E_MAXIMIZE_BOTH;
 }
 
 static const struct xdg_surface_interface _e_xdg_surface_interface =

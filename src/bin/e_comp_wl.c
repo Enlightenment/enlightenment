@@ -595,12 +595,61 @@ _e_comp_wl_evas_cb_move(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_U
 }
 
 static void
-_e_comp_wl_evas_cb_maximize_pre(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+_e_comp_wl_evas_cb_unmaximize_pre(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
 {
    E_Client *ec = data;
+   E_Maximize *max = event_info;
 
-   if (!e_object_is_del(E_OBJECT(ec)))
+   if (e_object_is_del(E_OBJECT(ec))) return;
+   if (ec->comp_data->in_commit)
      ec->comp_data->maximizing = 1;
+   else if (!e_client_has_xwindow(ec))
+     {
+        int w, h, ew, eh;
+        unsigned int pmax = ec->maximized;
+        ec->comp_data->max = *max;
+        if ((!e_config->window_maximize_animate) || ec->maximize_anims_disabled)
+          {
+             e_client_unmaximize_geometry_get(ec, *max, NULL, NULL, &w, &h);
+             ew = ec->w, eh = ec->h;
+             ec->w = w, ec->h = h;
+          }
+        ec->maximized = 0;
+        _e_comp_wl_configure_send(ec, 0);
+        if ((!e_config->window_maximize_animate) || ec->maximize_anims_disabled)
+          ec->w = ew, ec->h = eh;
+        ec->maximized = pmax;
+        *max = 0;
+     }
+}
+
+static void
+_e_comp_wl_evas_cb_maximize_pre(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
+{
+   E_Client *ec = data;
+   E_Maximize *max = event_info;
+
+   if (e_object_is_del(E_OBJECT(ec))) return;
+   if (ec->comp_data->in_commit)
+     ec->comp_data->maximizing = 1;
+   else if (!e_client_has_xwindow(ec))
+     {
+        int w, h, ew, eh;
+        unsigned int pmax = ec->maximized;
+        ec->comp_data->max = *max;
+        if ((!e_config->window_maximize_animate) || ec->maximize_anims_disabled)
+          {
+             e_client_maximize_geometry_get(ec, *max, NULL, NULL, &w, &h);
+             ew = ec->w, eh = ec->h;
+             ec->w = w, ec->h = h;
+          }
+        ec->maximized = *max;
+        _e_comp_wl_configure_send(ec, 0);
+        if ((!e_config->window_maximize_animate) || ec->maximize_anims_disabled)
+          ec->w = ew, ec->h = eh;
+        ec->maximized = pmax;
+        *max = 0;
+     }
 }
 
 static void
@@ -812,7 +861,7 @@ _e_comp_wl_client_evas_init(E_Client *ec)
         evas_object_smart_callback_add(ec->frame, "maximize_pre",
                                        _e_comp_wl_evas_cb_maximize_pre, ec);
         evas_object_smart_callback_add(ec->frame, "unmaximize_pre",
-                                       _e_comp_wl_evas_cb_maximize_pre, ec);
+                                       _e_comp_wl_evas_cb_unmaximize_pre, ec);
         evas_object_smart_callback_add(ec->frame, "maximize_done",
                                        _e_comp_wl_evas_cb_maximize_done, ec);
         evas_object_smart_callback_add(ec->frame, "unmaximize_done",
@@ -1061,6 +1110,7 @@ _e_comp_wl_surface_state_commit(E_Client *ec, E_Comp_Wl_Surface_State *state)
      first = !e_pixmap_usable_get(e_comp_x_client_pixmap_get(ec));
 #endif
 
+   ec->comp_data->in_commit = 1;
    if (ec->ignored && (ec->comp_data->shell.surface || ec->internal))
      {
         EC_CHANGED(ec);
@@ -1283,6 +1333,7 @@ _e_comp_wl_surface_state_commit(E_Client *ec, E_Comp_Wl_Surface_State *state)
         /* clear input tiler */
         eina_tiler_clear(state->input);
      }
+   ec->comp_data->in_commit = 0;
 }
 
 static void
