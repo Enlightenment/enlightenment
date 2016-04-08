@@ -683,9 +683,8 @@ _e_comp_wl_evas_cb_maximize_done(void *data, Evas_Object *obj EINA_UNUSED, void 
 {
    E_Client *ec = data;
 
-   if (e_object_is_del(E_OBJECT(ec))) return;
-   ec->comp_data->maximizing = 0;
-   _e_comp_wl_evas_cb_state_update(ec, NULL, NULL);
+   if (!e_object_is_del(E_OBJECT(ec)))
+     ec->comp_data->maximizing = 0;
 }
 
 static void
