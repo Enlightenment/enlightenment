@@ -1561,178 +1561,6 @@ _e_client_maximize_run(E_Client *ec, int x, int y, int w, int h)
      evas_object_geometry_set(ec->frame, x, y, w, h);
 }
 
-static void
-_e_client_maximize(E_Client *ec, E_Maximize max)
-{
-   int x1, yy1, x2, y2;
-   int x, y, w, h, pw, ph;
-   int zx, zy, zw, zh;
-   int ecx, ecy, ecw, ech;
-   Eina_Bool override = ec->maximize_override;
-
-   if (!ec->zone) return;
-   zx = zy = zw = zh = 0;
-   ec->maximize_override = 1;
-
-   switch (max & E_MAXIMIZE_TYPE)
-     {
-      case E_MAXIMIZE_NONE:
-        /* Ignore */
-        break;
-
-      case E_MAXIMIZE_FULLSCREEN:
-        w = ec->zone->w;
-        h = ec->zone->h;
-
-        evas_object_smart_callback_call(ec->frame, "fullscreen", NULL);
-        e_client_resize_limit(ec, &w, &h);
-        /* center x-direction */
-        x1 = ec->zone->x + (ec->zone->w - w) / 2;
-        /* center y-direction */
-        yy1 = ec->zone->y + (ec->zone->h - h) / 2;
-
-        switch (max & E_MAXIMIZE_DIRECTION)
-          {
-           case E_MAXIMIZE_BOTH:
-             x = x1, y = yy1;
-             break;
-
-           case E_MAXIMIZE_VERTICAL:
-             x = ec->x, y = yy1, w = ec->w;
-             break;
-
-           case E_MAXIMIZE_HORIZONTAL:
-             x = x1, y = ec->y, h = ec->h;
-             break;
-
-           case E_MAXIMIZE_LEFT:
-             x = ec->zone->x, y = ec->zone->y, w /= 2;
-             break;
-
-           case E_MAXIMIZE_RIGHT:
-             x = x1, y = ec->zone->y, w /= 2;
-             break;
-          }
-        _e_client_maximize_run(ec, x, y, w, h);
-        break;
-
-      case E_MAXIMIZE_SMART:
-      case E_MAXIMIZE_EXPAND:
-        if (ec->desk->visible)
-          e_zone_useful_geometry_get(ec->zone, &zx, &zy, &zw, &zh);
-        else
-          {
-             x1 = ec->zone->x;
-             yy1 = ec->zone->y;
-             x2 = ec->zone->x + ec->zone->w;
-             y2 = ec->zone->y + ec->zone->h;
-             e_maximize_client_shelf_fill(ec, &x1, &yy1, &x2, &y2, max);
-             zx = x1, zy = yy1;
-             zw = x2 - x1;
-             zh = y2 - yy1;
-          }
-        w = zw, h = zh;
-
-        evas_object_smart_callback_call(ec->frame, "maximize", NULL);
-        e_comp_object_frame_xy_unadjust(ec->frame, ec->x, ec->y, &ecx, &ecy);
-        e_comp_object_frame_wh_unadjust(ec->frame, ec->w, ec->h, &ecw, &ech);
-
-        if (ecw < zw)
-          w = ecw;
-
-        if (ech < zh)
-          h = ech;
-
-        if (ecx < zx) // window left not useful coordinates
-          x1 = zx;
-        else if (ecx + ecw > zx + zw) // window right not useful coordinates
-          x1 = zx + zw - ecw;
-        else // window normal position
-          x1 = ecx;
-
-        if (ecy < zy) // window top not useful coordinates
-          yy1 = zy;
-        else if (ecy + ech > zy + zh) // window bottom not useful coordinates
-          yy1 = zy + zh - ech;
-        else // window normal position
-          yy1 = ecy;
-
-        switch (max & E_MAXIMIZE_DIRECTION)
-          {
-           case E_MAXIMIZE_BOTH:
-             x = zx, y = zy, w = zw, h = zh;
-             break;
-
-           case E_MAXIMIZE_VERTICAL:
-             x = ec->x, y = zy, w = ec->w, h = zh;
-             break;
-
-           case E_MAXIMIZE_HORIZONTAL:
-             x = zx, y = ec->y, w = zw, h = ec->h;
-             break;
-
-           case E_MAXIMIZE_LEFT:
-             x = zx, y = zy, w = zw / 2, h = zh;
-             break;
-
-           case E_MAXIMIZE_RIGHT:
-             x = zx + zw / 2, y = zy, w = zw / 2, h = zh;
-             break;
-          }
-        _e_client_maximize_run(ec, x, y, w, h);
-        break;
-
-      case E_MAXIMIZE_FILL:
-        x1 = ec->zone->x;
-        yy1 = ec->zone->y;
-        x2 = ec->zone->x + ec->zone->w;
-        y2 = ec->zone->y + ec->zone->h;
-
-        /* walk through all shelves */
-        e_maximize_client_shelf_fill(ec, &x1, &yy1, &x2, &y2, max);
-
-        /* walk through all windows */
-        e_maximize_client_client_fill(ec, &x1, &yy1, &x2, &y2, max);
-
-        w = x2 - x1;
-        h = y2 - yy1;
-        pw = w;
-        ph = h;
-        e_client_resize_limit(ec, &w, &h);
-        /* center x-direction */
-        x1 = x1 + (pw - w) / 2;
-        /* center y-direction */
-        yy1 = yy1 + (ph - h) / 2;
-
-        switch (max & E_MAXIMIZE_DIRECTION)
-          {
-           case E_MAXIMIZE_BOTH:
-             x = x1, y = yy1;
-             break;
-
-           case E_MAXIMIZE_VERTICAL:
-             x = ec->x, y = yy1, w = ec->w;
-             break;
-
-           case E_MAXIMIZE_HORIZONTAL:
-             x = x1, y = ec->y, h = ec->h;
-             break;
-
-           case E_MAXIMIZE_LEFT:
-             x = ec->zone->x, y = ec->zone->y, w /= 2;
-             break;
-
-           case E_MAXIMIZE_RIGHT:
-             x = x1, y = ec->zone->y, w /= 2;
-             break;
-          }
-        _e_client_maximize_run(ec, x, y, w, h);
-        break;
-     }
-   if (ec->maximize_override && (starting || ec->changes.need_maximize || (!e_config->window_maximize_animate)))
-     ec->maximize_override = override;
-}
-
 ////////////////////////////////////////////////
 
 static void
@@ -3755,9 +3583,182 @@ e_client_unshade(E_Client *ec, E_Direction dir)
 
 ///////////////////////////////////////
 
+E_API Eina_Bool
+e_client_maximize_geometry_get(const E_Client *ec, E_Maximize max, int *mx, int *my, int *mw, int *mh)
+{
+   int x1, yy1, x2, y2;
+   int x, y, w, h, pw, ph;
+   int zx, zy, zw, zh;
+   int ecx, ecy, ecw, ech;
+
+   if (e_client_util_ignored_get(ec)) return EINA_FALSE;
+   zx = zy = zw = zh = 0;
+
+   switch (max & E_MAXIMIZE_TYPE)
+     {
+      case E_MAXIMIZE_NONE:
+        return EINA_FALSE;
+        break;
+
+      case E_MAXIMIZE_FULLSCREEN:
+        w = ec->zone->w;
+        h = ec->zone->h;
+
+        e_client_resize_limit(ec, &w, &h);
+        /* center x-direction */
+        x1 = ec->zone->x + (ec->zone->w - w) / 2;
+        /* center y-direction */
+        yy1 = ec->zone->y + (ec->zone->h - h) / 2;
+
+        switch (max & E_MAXIMIZE_DIRECTION)
+          {
+           case E_MAXIMIZE_BOTH:
+             x = x1, y = yy1;
+             break;
+
+           case E_MAXIMIZE_VERTICAL:
+             x = ec->x, y = yy1, w = ec->w;
+             break;
+
+           case E_MAXIMIZE_HORIZONTAL:
+             x = x1, y = ec->y, h = ec->h;
+             break;
+
+           case E_MAXIMIZE_LEFT:
+             x = ec->zone->x, y = ec->zone->y, w /= 2;
+             break;
+
+           case E_MAXIMIZE_RIGHT:
+             x = x1, y = ec->zone->y, w /= 2;
+             break;
+          }
+        if (mx) *mx = x;
+        if (my) *my = y;
+        if (mw) *mw = w;
+        if (mh) *mh = h;
+        break;
+
+      case E_MAXIMIZE_SMART:
+      case E_MAXIMIZE_EXPAND:
+        if (ec->desk->visible)
+          e_zone_useful_geometry_get(ec->zone, &zx, &zy, &zw, &zh);
+        else
+          {
+             x1 = ec->zone->x;
+             yy1 = ec->zone->y;
+             x2 = ec->zone->x + ec->zone->w;
+             y2 = ec->zone->y + ec->zone->h;
+             e_maximize_client_shelf_fill(ec, &x1, &yy1, &x2, &y2, max);
+             zx = x1, zy = yy1;
+             zw = x2 - x1;
+             zh = y2 - yy1;
+          }
+        w = zw, h = zh;
+
+        e_comp_object_frame_xy_unadjust(ec->frame, ec->x, ec->y, &ecx, &ecy);
+        e_comp_object_frame_wh_unadjust(ec->frame, ec->w, ec->h, &ecw, &ech);
+
+        if (ecw < zw)
+          w = ecw;
+
+        if (ech < zh)
+          h = ech;
+
+        if (ecx < zx) // window left not useful coordinates
+          x1 = zx;
+        else if (ecx + ecw > zx + zw) // window right not useful coordinates
+          x1 = zx + zw - ecw;
+        else // window normal position
+          x1 = ecx;
+
+        if (ecy < zy) // window top not useful coordinates
+          yy1 = zy;
+        else if (ecy + ech > zy + zh) // window bottom not useful coordinates
+          yy1 = zy + zh - ech;
+        else // window normal position
+          yy1 = ecy;
+
+        switch (max & E_MAXIMIZE_DIRECTION)
+          {
+           case E_MAXIMIZE_BOTH:
+             x = zx, y = zy, w = zw, h = zh;
+             break;
+
+           case E_MAXIMIZE_VERTICAL:
+             x = ec->x, y = zy, w = ec->w, h = zh;
+             break;
+
+           case E_MAXIMIZE_HORIZONTAL:
+             x = zx, y = ec->y, w = zw, h = ec->h;
+             break;
+
+           case E_MAXIMIZE_LEFT:
+             x = zx, y = zy, w = zw / 2, h = zh;
+             break;
+
+           case E_MAXIMIZE_RIGHT:
+             x = zx + zw / 2, y = zy, w = zw / 2, h = zh;
+             break;
+          }
+        break;
+
+      case E_MAXIMIZE_FILL:
+        x1 = ec->zone->x;
+        yy1 = ec->zone->y;
+        x2 = ec->zone->x + ec->zone->w;
+        y2 = ec->zone->y + ec->zone->h;
+
+        /* walk through all shelves */
+        e_maximize_client_shelf_fill(ec, &x1, &yy1, &x2, &y2, max);
+
+        /* walk through all windows */
+        e_maximize_client_client_fill(ec, &x1, &yy1, &x2, &y2, max);
+
+        w = x2 - x1;
+        h = y2 - yy1;
+        pw = w;
+        ph = h;
+        e_client_resize_limit(ec, &w, &h);
+        /* center x-direction */
+        x1 = x1 + (pw - w) / 2;
+        /* center y-direction */
+        yy1 = yy1 + (ph - h) / 2;
+
+        switch (max & E_MAXIMIZE_DIRECTION)
+          {
+           case E_MAXIMIZE_BOTH:
+             x = x1, y = yy1;
+             break;
+
+           case E_MAXIMIZE_VERTICAL:
+             x = ec->x, y = yy1, w = ec->w;
+             break;
+
+           case E_MAXIMIZE_HORIZONTAL:
+             x = x1, y = ec->y, h = ec->h;
+             break;
+
+           case E_MAXIMIZE_LEFT:
+             x = ec->zone->x, y = ec->zone->y, w /= 2;
+             break;
+
+           case E_MAXIMIZE_RIGHT:
+             x = x1, y = ec->zone->y, w /= 2;
+             break;
+          }
+        break;
+     }
+   if (mx) *mx = x;
+   if (my) *my = y;
+   if (mw) *mw = w;
+   if (mh) *mh = h;
+   return EINA_TRUE;
+}
+
 E_API void
 e_client_maximize(E_Client *ec, E_Maximize max)
 {
+   Eina_Bool override;
    E_OBJECT_CHECK(ec);
    E_OBJECT_TYPE_CHECK(ec, E_CLIENT_TYPE);
 
@@ -3779,6 +3780,7 @@ e_client_maximize(E_Client *ec, E_Maximize max)
         return;
      }
    evas_object_smart_callback_call(ec->frame, "maximize_pre", NULL);
+   override = ec->maximize_override;
    if (ec->fullscreen)
      e_client_unfullscreen(ec);
    ec->pre_res_change.valid = 0;
@@ -3800,7 +3802,18 @@ e_client_maximize(E_Client *ec, E_Maximize max)
         ec->saved.zone = ec->zone->num;
      }
 
-   _e_client_maximize(ec, max);
+   ec->maximize_override = 1;
+   if ((max & E_MAXIMIZE_TYPE) == E_MAXIMIZE_FULLSCREEN)
+     evas_object_smart_callback_call(ec->frame, "fullscreen", NULL);
+   else
+     evas_object_smart_callback_call(ec->frame, "maximize", NULL);
+   {
+      int x, y, w, h;
+      e_client_maximize_geometry_get(ec, max, &x, &y, &w, &h);
+      _e_client_maximize_run(ec, x, y, w, h);
+   }
+   if (ec->maximize_override && (starting || ec->changes.need_maximize || (!e_config->window_maximize_animate)))
+     ec->maximize_override = override;
 
    /* Remove previous type */
    ec->maximized &= ~E_MAXIMIZE_TYPE;
@@ -3818,6 +3831,47 @@ e_client_maximize(E_Client *ec, E_Maximize max)
                                   ec->maximized & E_MAXIMIZE_VERTICAL);
    e_remember_update(ec);
    evas_object_smart_callback_call(ec->frame, "maximize_done", NULL);
+}
+
+E_API Eina_Bool
+e_client_unmaximize_geometry_get(const E_Client *ec, E_Maximize max, int *mx, int *my, int *mw, int *mh)
+{
+   int w, h, x, y;
+
+   if (e_client_util_ignored_get(ec)) return EINA_FALSE;
+   if (!(ec->maximized & E_MAXIMIZE_TYPE)) return EINA_FALSE;
+   if ((ec->maximized & E_MAXIMIZE_TYPE) == E_MAXIMIZE_FULLSCREEN)
+     {
+        if (mx) *mx = ec->saved.x + ec->zone->x;
+        if (my) *my = ec->saved.y + ec->zone->y;
+        if (mw) *mw = ec->saved.w;
+        if (mh) *mh = ec->saved.h;
+        return EINA_TRUE;
+     }
+
+   w = ec->client.w;
+   h = ec->client.h;
+   x = ec->client.x;
+   y = ec->client.y;
+   max &= (ec->maximized & E_MAXIMIZE_DIRECTION);
+
+   if (max & E_MAXIMIZE_VERTICAL)
+     {
+        /* Remove vertical */
+        h = ec->saved.h;
+        y = ec->saved.y + ec->zone->y;
+     }
+   if (max & E_MAXIMIZE_HORIZONTAL)
+     {
+        /* Remove horizontal */
+        w = ec->saved.w;
+        x = ec->saved.x + ec->zone->x;
+     }
+   if (mx) *mx = x;
+   if (my) *my = y;
+   if (mw) *mw = w;
+   if (mh) *mh = h;
+   return EINA_TRUE;
 }
 
 E_API void
@@ -3874,17 +3928,11 @@ e_client_unmaximize(E_Client *ec, E_Maximize max)
              int w, h, x, y;
              Eina_Bool horiz = EINA_FALSE, vert = EINA_FALSE;
 
-             w = ec->client.w;
-             h = ec->client.h;
-             x = ec->client.x;
-             y = ec->client.y;
-
+             e_client_unmaximize_geometry_get(ec, max, &x, &y, &w, &h);
              if (max & E_MAXIMIZE_VERTICAL)
                {
                   /* Remove vertical */
-                  h = ec->saved.h;
                   vert = EINA_TRUE;
-                  y = ec->saved.y + ec->zone->y;
                   if ((max & E_MAXIMIZE_VERTICAL) == E_MAXIMIZE_VERTICAL)
                     {
                        ec->maximized &= ~E_MAXIMIZE_VERTICAL;
@@ -3899,8 +3947,6 @@ e_client_unmaximize(E_Client *ec, E_Maximize max)
              if (max & E_MAXIMIZE_HORIZONTAL)
                {
                   /* Remove horizontal */
-                  w = ec->saved.w;
-                  x = ec->saved.x + ec->zone->x;
                   horiz = EINA_TRUE;
                   ec->maximized &= ~E_MAXIMIZE_HORIZONTAL;
                }
