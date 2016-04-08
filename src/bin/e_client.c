@@ -3744,7 +3744,7 @@ e_client_maximize(E_Client *ec, E_Maximize max)
    if (!(max & E_MAXIMIZE_DIRECTION)) max |= E_MAXIMIZE_BOTH;
 
    if ((ec->shaded) || (ec->shading)) return;
-   evas_object_smart_callback_call(ec->frame, "maximize_pre", NULL);
+
    /* Only allow changes in vertical/ horizontal maximization */
    if (((ec->maximized & E_MAXIMIZE_DIRECTION) == (max & E_MAXIMIZE_DIRECTION)) ||
        ((ec->maximized & E_MAXIMIZE_DIRECTION) == E_MAXIMIZE_BOTH)) return;
@@ -3756,7 +3756,7 @@ e_client_maximize(E_Client *ec, E_Maximize max)
         EC_CHANGED(ec);
         return;
      }
-
+   evas_object_smart_callback_call(ec->frame, "maximize_pre", NULL);
    if (ec->fullscreen)
      e_client_unfullscreen(ec);
    ec->pre_res_change.valid = 0;
@@ -3814,9 +3814,10 @@ e_client_unmaximize(E_Client *ec, E_Maximize max)
      }
 
    if ((ec->shaded) || (ec->shading)) return;
-   evas_object_smart_callback_call(ec->frame, "unmaximize_pre", NULL);
+
    /* Remove directions not used */
    max &= (ec->maximized & E_MAXIMIZE_DIRECTION);
+   evas_object_smart_callback_call(ec->frame, "unmaximize_pre", NULL);
    /* Can only remove existing maximization directions */
    if (!max) return;
    if (ec->maximized & E_MAXIMIZE_TYPE)
