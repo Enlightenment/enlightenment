@@ -3782,20 +3782,23 @@ e_client_maximize(E_Client *ec, E_Maximize max)
    if (ec->fullscreen)
      e_client_unfullscreen(ec);
    ec->pre_res_change.valid = 0;
-   if (!(ec->maximized & E_MAXIMIZE_HORIZONTAL))
+   if (!ec->maximize_override)
      {
-        /* Horizontal hasn't been set */
-        ec->saved.x = ec->client.x - ec->zone->x;
-        ec->saved.w = ec->client.w;
-     }
-   if (!(ec->maximized & E_MAXIMIZE_VERTICAL))
-     {
-        /* Vertical hasn't been set */
-        ec->saved.y = ec->client.y - ec->zone->y;
-        ec->saved.h = ec->client.h;
-     }
+        if (!(ec->maximized & E_MAXIMIZE_HORIZONTAL))
+          {
+             /* Horizontal hasn't been set */
+             ec->saved.x = ec->client.x - ec->zone->x;
+             ec->saved.w = ec->client.w;
+          }
+        if (!(ec->maximized & E_MAXIMIZE_VERTICAL))
+          {
+             /* Vertical hasn't been set */
+             ec->saved.y = ec->client.y - ec->zone->y;
+             ec->saved.h = ec->client.h;
+          }
 
-   ec->saved.zone = ec->zone->num;
+        ec->saved.zone = ec->zone->num;
+     }
 
    _e_client_maximize(ec, max);
 
