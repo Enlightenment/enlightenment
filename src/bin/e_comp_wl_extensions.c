@@ -98,6 +98,7 @@ _e_comp_wl_www_surface_del(struct wl_resource *res)
    ec = wl_resource_get_user_data(res);
    if (!e_object_is_del(E_OBJECT(ec)))
      ec->comp_data->www.surface = NULL;
+   ec->maximize_anims_disabled = 0;
    e_object_unref(E_OBJECT(ec));
 }
 
@@ -138,6 +139,7 @@ _e_comp_wl_www_cb_create(struct wl_client *client, struct wl_resource *resource,
     ec->comp_data->www.surface = ww;
     ec->comp_data->www.x = ec->x;
     ec->comp_data->www.y = ec->y;
+    ec->maximize_anims_disabled = 1;
     e_object_ref(E_OBJECT(ec));
 }
 
