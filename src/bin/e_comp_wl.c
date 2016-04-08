@@ -613,6 +613,7 @@ _e_comp_wl_evas_cb_resize(void *data, Evas_Object *obj EINA_UNUSED, void *event 
 
    if ((ec->shading) || (ec->shaded)) return;
    if (!ec->comp_data->shell.configure_send) return;
+   if (ec->comp_data->maximizing) return;
    if (e_client_util_resizing_get(ec) && e_comp_wl->resize.edges)
      {
         int x, y;
