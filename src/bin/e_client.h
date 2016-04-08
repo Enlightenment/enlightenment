@@ -234,6 +234,7 @@ struct E_Client
    } pre_cb;
    Eina_Rectangle client; //client geom
    Evas_Object *frame; //comp object
+   Evas_Object *agent; //resize agent;
    E_Zone *zone;
    E_Desk *desk;
 
