@@ -3780,7 +3780,8 @@ e_client_maximize(E_Client *ec, E_Maximize max)
         EC_CHANGED(ec);
         return;
      }
-   evas_object_smart_callback_call(ec->frame, "maximize_pre", NULL);
+   evas_object_smart_callback_call(ec->frame, "maximize_pre", &max);
+   if (!max) return;
    override = ec->maximize_override;
    if (ec->fullscreen)
      e_client_unfullscreen(ec);
@@ -3899,7 +3900,7 @@ e_client_unmaximize(E_Client *ec, E_Maximize max)
 
    /* Remove directions not used */
    max &= (ec->maximized & E_MAXIMIZE_DIRECTION);
-   evas_object_smart_callback_call(ec->frame, "unmaximize_pre", NULL);
+   evas_object_smart_callback_call(ec->frame, "unmaximize_pre", &max);
    /* Can only remove existing maximization directions */
    if (!max) return;
    if (ec->maximized & E_MAXIMIZE_TYPE)
