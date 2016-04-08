@@ -1084,19 +1084,16 @@ _e_comp_wl_surface_state_commit(E_Client *ec, E_Comp_Wl_Surface_State *state)
         if (ec->comp_data->shell.set.unfullscreen)
            e_client_unfullscreen(ec);
         if (ec->comp_data->shell.set.maximize)
-          {
-             unsigned int max = (e_config->maximize_policy & E_MAXIMIZE_TYPE) | E_MAXIMIZE_BOTH;
-
-             /* FIXME: server-side desync */
-             if (!ec->maximized)
-               {
-                  e_client_maximize(ec, max);
-               }
-          }
+          e_client_maximize(ec, (e_config->maximize_policy & E_MAXIMIZE_TYPE) | ec->comp_data->max);
         if (ec->comp_data->shell.set.unmaximize)
-          e_client_unmaximize(ec, E_MAXIMIZE_BOTH);
+          e_client_unmaximize(ec, (e_config->maximize_policy & E_MAXIMIZE_TYPE) | ec->comp_data->max);
         if (ec->comp_data->shell.set.minimize)
           e_client_iconify(ec);
+        ec->comp_data->shell.set.fullscreen =
+        ec->comp_data->shell.set.unfullscreen =
+        ec->comp_data->shell.set.maximize =
+        ec->comp_data->shell.set.unmaximize =
+        ec->comp_data->shell.set.minimize = 0;
      }
    _e_comp_wl_surface_state_size_update(ec, state);
 
