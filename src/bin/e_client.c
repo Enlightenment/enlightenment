@@ -1549,7 +1549,8 @@ _e_client_maximize_done(void *data, E_Efx_Map_Data *emd EINA_UNUSED, Evas_Object
 static void
 _e_client_maximize_run(E_Client *ec, int x, int y, int w, int h)
 {
-   if (e_config->window_maximize_animate && (!starting) && (!ec->changes.need_maximize))
+   if (e_config->window_maximize_animate && (!ec->maximize_anims_disabled) &&
+       (!starting) && (!ec->changes.need_maximize))
      {
         Evas_Object *agent;
 
@@ -3812,7 +3813,9 @@ e_client_maximize(E_Client *ec, E_Maximize max)
       e_client_maximize_geometry_get(ec, max, &x, &y, &w, &h);
       _e_client_maximize_run(ec, x, y, w, h);
    }
-   if (ec->maximize_override && (starting || ec->changes.need_maximize || (!e_config->window_maximize_animate)))
+   if (ec->maximize_override && (ec->maximize_anims_disabled || starting ||
+                                 ec->changes.need_maximize ||
+                                 (!e_config->window_maximize_animate)))
      ec->maximize_override = override;
 
    /* Remove previous type */
@@ -3957,7 +3960,7 @@ e_client_unmaximize(E_Client *ec, E_Maximize max)
                   _e_client_frame_update(ec);
                   e_hints_window_size_unset(ec);
                }
-             if (e_config->window_maximize_animate)
+             if (e_config->window_maximize_animate && (!ec->maximize_anims_disabled))
                ec->maximize_override = 1;
              evas_object_smart_callback_call(ec->frame, "unmaximize", NULL);
              e_client_resize_limit(ec, &w, &h);

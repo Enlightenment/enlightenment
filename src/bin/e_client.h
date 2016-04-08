@@ -684,6 +684,10 @@ struct E_Client
 
    E_Focus_Policy             focus_policy_override;
 
+#ifdef HAVE_WAYLAND
+   uuid_t uuid;
+#endif
+
    Eina_Bool override : 1;
    Eina_Bool input_only : 1;
    Eina_Bool dialog : 1;
@@ -695,12 +699,10 @@ struct E_Client
    Eina_Bool ignored : 1; // client is comp-ignored
    Eina_Bool no_shape_cut : 1; // client shape should not be cut
    Eina_Bool maximize_override : 1; // client is doing crazy stuff and should "just do it" when moving/resizing
+   Eina_Bool maximize_anims_disabled : 1; // client cannot invoke anims or it will break
    Eina_Bool keyboard_resizing : 1;
 
    Eina_Bool on_post_updates : 1; // client is on the post update list
-#ifdef HAVE_WAYLAND
-   uuid_t uuid;
-#endif
 };
 
 #define e_client_focus_policy_click(ec) \
