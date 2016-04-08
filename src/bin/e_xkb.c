@@ -3,9 +3,12 @@
 static void _e_xkb_update_event(int);
 static void _e_xkb_type_update(E_Pixmap_Type comp_type, int cur_group);
 static int _e_xkb_cur_group = -1;
-static Ecore_Event_Handler *xkb_state_handler = NULL;
-static int _e_xkb_skip_events = 0;
+static Ecore_Event_Handler *xkb_state_handler = NULL, *xkb_new_keyboard_handler = NULL;
 
+#ifndef HAVE_WAYLAND_ONLY
+static int skip_new_keyboard = 0;
+static Ecore_Timer *save_group;
+#endif
 
 E_API int E_EVENT_XKB_CHANGED = 0;
 
@@ -32,35 +35,50 @@ _e_xkb_init_timer(void *data)
 }
 
 #ifndef HAVE_WAYLAND_ONLY
+
 static Eina_Bool
-_xkb_changed_state(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
+_e_xkb_save_group(void *data)
 {
-   if (_e_xkb_skip_events > 0)
+   int group = (int) data;
+
+   if (e_config->xkb.cur_group != group)
      {
-        _e_xkb_skip_events--;
+        e_config->xkb.cur_group = group;
+        e_config_save_queue();
+
+        e_xkb_update(e_config->xkb.cur_group);
+     }
+
+   save_group = NULL;
+
+   return EINA_FALSE;
+}
+
+static Eina_Bool
+_xkb_new_keyboard(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
+{
+   if (skip_new_keyboard > 0)
+     {
+        skip_new_keyboard --;
         return ECORE_CALLBACK_PASS_ON;
      }
 
-#if 0
-   Ecore_X_Event_Xkb *ev = (Ecore_X_Event_Xkb *)event;
+   //we have to restore our settings here
+   e_xkb_update(-1);
+   e_xkb_update(e_config->xkb.cur_group);
 
-   if (ev->group < 0 ||
-       ev->group >= (int)eina_list_count(e_config->xkb.used_layouts))
-     return ECORE_CALLBACK_PASS_ON;
+   return ECORE_CALLBACK_PASS_ON;
+}
 
-   e_config->xkb.cur_group = ev->group;
-#else
-   (void)event;
-#endif
+static Eina_Bool
+_xkb_new_state(void* data EINA_UNUSED, int type EINA_UNUSED, void *event)
+{
+   Ecore_X_Event_Xkb *ev = event;
 
-   /*
-    * XKb_STATE_NOTIFY does not only indicate a new group setted somewhere in e,
-    * it also indicates that there is probebly a new set of available groups which is unknown to e
-    * so setting a new groupindex does not mean you have setted to a new group from the enlightenment config.
-    * So better reconfigure the enlightenment known configuration and ignore the sets from outside of e
-    */
-   _e_xkb_update_event(0);
-   _e_xkb_update_event(e_config->xkb.cur_group);
+   ecore_timer_del(save_group);
+
+   save_group = ecore_timer_add(0.5, _e_xkb_save_group, (void*)(intptr_t)ev->group);
+
    return ECORE_CALLBACK_PASS_ON;
 }
 #endif
@@ -73,7 +91,10 @@ e_xkb_init(E_Pixmap_Type comp_type)
      E_EVENT_XKB_CHANGED = ecore_event_type_new();
 #ifndef HAVE_WAYLAND_ONLY
    if (comp_type == E_PIXMAP_TYPE_X)
-     xkb_state_handler = ecore_event_handler_add(ECORE_X_EVENT_XKB_STATE_NOTIFY, _xkb_changed_state, NULL);
+     {
+        xkb_state_handler = ecore_event_handler_add(ECORE_X_EVENT_XKB_STATE_NOTIFY, _xkb_new_state, NULL);
+        xkb_new_keyboard_handler = ecore_event_handler_add(ECORE_X_EVENT_XKB_NEWKBD_NOTIFY, _xkb_new_keyboard, NULL);
+     }
 #endif
    if (e_config->xkb.dont_touch_my_damn_keyboard) return 1;
    _e_xkb_type_update(comp_type, -1);
@@ -89,8 +110,12 @@ e_xkb_init(E_Pixmap_Type comp_type)
 E_API int
 e_xkb_shutdown(void)
 {
-   if (xkb_state_handler)
-     ecore_event_handler_del(xkb_state_handler);
+   E_FREE_FUNC(xkb_state_handler, ecore_event_handler_del);
+   E_FREE_FUNC(xkb_new_keyboard_handler, ecore_event_handler_del);
+#ifndef HAVE_WAYLAND_ONLY
+   ecore_timer_del(save_group);
+   save_group = NULL;
+#endif
    return 1;
 }
 
@@ -108,7 +133,6 @@ _e_x_xkb_update(int cur_group)
    if (cur_group != -1)
      {
         _e_xkb_cur_group = cur_group;
-        _e_xkb_skip_events ++;
 #ifndef HAVE_WAYLAND_ONLY
         if (e_comp->root)
           ecore_x_xkb_select_group(cur_group);
@@ -188,7 +212,7 @@ _e_x_xkb_update(int cur_group)
                }
           }
      }
-   _e_xkb_skip_events ++;
+   skip_new_keyboard ++;
    INF("SET XKB RUN: %s", eina_strbuf_string_get(buf));
    ecore_exe_run(eina_strbuf_string_get(buf), NULL);
    eina_strbuf_free(buf);
