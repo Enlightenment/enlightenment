@@ -295,6 +295,10 @@ typedef struct _E_Rect         E_Rect;
 
 E_API double          e_main_ts(const char *str);
 
+#define E_EFL_VERSION_MINIMUM(MAJ, MIN, MIC) \
+  ((eina_version->major > MAJ) || (eina_version->minor > MIN) ||\
+   ((eina_version->minor == MIN) && (eina_version->micro >= MIC)))
+
 struct _E_Rect
 {
    int x, y, w, h;

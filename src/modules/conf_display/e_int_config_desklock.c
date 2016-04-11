@@ -279,8 +279,11 @@ _basic_create(E_Config_Dialog *cfd, Evas *evas, E_Config_Dialog_Data *cfdata)
    e_widget_disabled_set(cfdata->lock_cmd_entry,
      (cfdata->desklock_auth_method != E_DESKLOCK_AUTH_METHOD_EXTERNAL));
 
-   e_widget_list_object_append(ol, of, 1, 1, 0.5);
-   ow = e_widget_button_add(evas, _("Configure Lockscreen Gadgets"), "configure", _cb_lockscreen_gadgets, NULL, NULL);
+   if (E_EFL_VERSION_MINIMUM(1, 17, 99))
+     {
+        e_widget_list_object_append(ol, of, 1, 1, 0.5);
+        ow = e_widget_button_add(evas, _("Configure Lockscreen Gadgets"), "configure", _cb_lockscreen_gadgets, NULL, NULL);
+     }
 
    e_widget_list_object_append(ol, ow, 1, 1, 0.5);
    e_widget_toolbook_page_append(otb, NULL, _("Locking"), ol,

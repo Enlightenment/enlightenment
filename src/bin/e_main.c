@@ -909,12 +909,15 @@ main(int argc, char **argv)
    TS("E_Remember Init Done");
    _e_main_shutdown_push(e_remember_shutdown);
 
-   if (e_config->show_splash)
-     e_init_status_set(_("Setup Gadgets"));
-   TS("E_Gadget Init");
-   e_gadget_init();
-   TS("E_Gadget Init Done");
-   _e_main_shutdown_push((void*)e_gadget_shutdown);
+   if (E_EFL_VERSION_MINIMUM(1, 17, 99))
+     {
+        if (e_config->show_splash)
+          e_init_status_set(_("Setup Gadgets"));
+        TS("E_Gadget Init");
+        e_gadget_init();
+        TS("E_Gadget Init Done");
+        _e_main_shutdown_push((void*)e_gadget_shutdown);
+     }
 
 
    if (e_config->show_splash)
@@ -1053,12 +1056,15 @@ main(int argc, char **argv)
    e_test();
    TS("E_Test Done");
 
-   if (e_config->show_splash)
-     e_init_status_set(_("Setup Bryces"));
-   TS("Bryce Init");
-   e_bryce_init();
-   TS("Bryce Init Done");
-   _e_main_shutdown_push((void*)e_bryce_shutdown);
+   if (E_EFL_VERSION_MINIMUM(1, 17, 99))
+     {
+        if (e_config->show_splash)
+          e_init_status_set(_("Setup Bryces"));
+        TS("Bryce Init");
+        e_bryce_init();
+        TS("Bryce Init Done");
+        _e_main_shutdown_push((void*)e_bryce_shutdown);
+     }
 
    if (e_config->show_splash)
      e_init_status_set(_("Setup Shelves"));

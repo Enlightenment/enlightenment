@@ -338,10 +338,13 @@ e_int_menus_desktops_new(void)
    e_menu_pre_activate_callback_set(subm, _e_int_menus_shelves_pre_cb, NULL);
    e_menu_item_submenu_set(mi, subm);
 
-   mi = e_menu_item_new(m);
-   e_menu_item_label_set(mi, _("Add Bryce"));
-   e_util_menu_item_theme_icon_set(mi, "list-add");
-   e_menu_item_callback_set(mi, _e_int_menus_bryce_cb, NULL);
+   if (E_EFL_VERSION_MINIMUM(1, 17, 99))
+     {
+        mi = e_menu_item_new(m);
+        e_menu_item_label_set(mi, _("Add Bryce"));
+        e_util_menu_item_theme_icon_set(mi, "list-add");
+        e_menu_item_callback_set(mi, _e_int_menus_bryce_cb, NULL);
+     }
 
    mi = e_menu_item_new(m);
    e_menu_item_separator_set(mi, 1);
