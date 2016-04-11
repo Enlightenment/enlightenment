@@ -605,19 +605,25 @@ _e_comp_wl_evas_cb_unmaximize_pre(void *data, Evas_Object *obj EINA_UNUSED, void
      ec->comp_data->maximizing = 1;
    else if (!e_client_has_xwindow(ec))
      {
-        int w, h, ew, eh;
+        int w, h, ew, eh, *ecw, *ech;
         unsigned int pmax = ec->maximized;
         ec->comp_data->max = *max;
+        if (ec->internal)
+          ecw = &ec->client.w, ech = &ec->client.h;
+        else
+          ecw = &ec->w, ech = &ec->h;
         if ((!e_config->window_maximize_animate) || ec->maximize_anims_disabled)
           {
              e_client_unmaximize_geometry_get(ec, *max, NULL, NULL, &w, &h);
-             ew = ec->w, eh = ec->h;
-             ec->w = w, ec->h = h;
+             if (ec->internal)
+               e_comp_object_frame_wh_unadjust(ec->frame, w, h, &w, &h);
+             ew = *ecw, eh = *ech;
+             *ecw = w, *ech = h;
           }
         ec->maximized = 0;
         _e_comp_wl_configure_send(ec, 0);
         if ((!e_config->window_maximize_animate) || ec->maximize_anims_disabled)
-          ec->w = ew, ec->h = eh;
+          *ecw = ew, *ech = eh;
         ec->maximized = pmax;
         *max = 0;
      }
@@ -634,19 +640,25 @@ _e_comp_wl_evas_cb_maximize_pre(void *data, Evas_Object *obj EINA_UNUSED, void *
      ec->comp_data->maximizing = 1;
    else if (!e_client_has_xwindow(ec))
      {
-        int w, h, ew, eh;
+        int w, h, ew, eh, *ecw, *ech;
         unsigned int pmax = ec->maximized;
         ec->comp_data->max = *max;
+        if (ec->internal)
+          ecw = &ec->client.w, ech = &ec->client.h;
+        else
+          ecw = &ec->w, ech = &ec->h;
         if ((!e_config->window_maximize_animate) || ec->maximize_anims_disabled)
           {
              e_client_maximize_geometry_get(ec, *max, NULL, NULL, &w, &h);
-             ew = ec->w, eh = ec->h;
-             ec->w = w, ec->h = h;
+             if (ec->internal)
+               e_comp_object_frame_wh_unadjust(ec->frame, w, h, &w, &h);
+             ew = *ecw, eh = *ech;
+             *ecw = w, *ech = h;
           }
         ec->maximized = *max;
         _e_comp_wl_configure_send(ec, 0);
         if ((!e_config->window_maximize_animate) || ec->maximize_anims_disabled)
-          ec->w = ew, ec->h = eh;
+          *ecw = ew, *ech = eh;
         ec->maximized = pmax;
         *max = 0;
      }
