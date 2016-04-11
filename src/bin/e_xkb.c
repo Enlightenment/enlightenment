@@ -39,7 +39,7 @@ _e_xkb_init_timer(void *data)
 static Eina_Bool
 _e_xkb_save_group(void *data)
 {
-   int group = (int) data;
+   int group = (intptr_t)data;
 
    if (e_config->xkb.cur_group != group)
      {
@@ -55,7 +55,7 @@ _e_xkb_save_group(void *data)
 }
 
 static Eina_Bool
-_xkb_new_keyboard(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
+_xkb_new_keyboard(void *data EINA_UNUSED, int type EINA_UNUSED, void *event EINA_UNUSED)
 {
    if (skip_new_keyboard > 0)
      {
