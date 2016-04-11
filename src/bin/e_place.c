@@ -256,6 +256,14 @@ e_place_desk_region_smart(E_Desk *desk, Eina_List *skiplist, int x, int y, int w
         if (eina_list_data_find(skiplist, ec)) continue;
 
         if (!((ec->sticky) || (ec->desk == desk))) continue;
+        if (ec->fullscreen) continue;
+        if (ec->maximized)
+          {
+             E_Maximize max = ec->maximized & E_MAXIMIZE_TYPE;
+
+             if (max == E_MAXIMIZE_FULLSCREEN) continue;
+             if (max & (E_MAXIMIZE_HORIZONTAL | E_MAXIMIZE_VERTICAL)) continue;
+          }
 
         bx = ec->x - desk->zone->x;
         by = ec->y - desk->zone->y;
