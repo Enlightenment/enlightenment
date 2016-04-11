@@ -455,7 +455,10 @@ e_comp_wl_input_init(void)
 
    _xkb_keymap_key_by_name = dlsym(NULL, "xkb_keymap_key_by_name");
 
-    _e_comp_wl_input_context_keymap_set(cached_keymap, cached_context);
+    if (cached_keymap)
+      _e_comp_wl_input_context_keymap_set(cached_keymap, cached_context);
+    else
+      e_comp_wl_input_keymap_set(NULL, NULL, NULL, NULL, NULL);
 
    return EINA_TRUE;
 }
