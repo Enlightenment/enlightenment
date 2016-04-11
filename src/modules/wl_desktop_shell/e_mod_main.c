@@ -957,7 +957,7 @@ _e_xdg_shell_surface_cb_maximized_set(struct wl_client *client EINA_UNUSED, stru
      }
 
    if (ec->lock_user_maximize) return;
-   if (e_config->window_maximize_animate)
+   if (e_config->window_maximize_animate && (!ec->maximize_anims_disabled))
      w = ec->w, h = ec->h;
    else
      {
@@ -990,7 +990,7 @@ _e_xdg_shell_surface_cb_maximized_unset(struct wl_client *client EINA_UNUSED, st
 
    if (ec->lock_user_maximize) return;
    ec->comp_data->max = (e_config->maximize_policy & E_MAXIMIZE_TYPE) | E_MAXIMIZE_BOTH;
-   if (e_config->window_maximize_animate)
+   if (e_config->window_maximize_animate && (!ec->maximize_anims_disabled))
      w = ec->w, h = ec->h;
    else
      w = ec->saved.w, h = ec->saved.h;
