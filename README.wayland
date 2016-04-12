@@ -84,15 +84,11 @@ Known Issues
 -------------
 * Internal window (eg. filemanager), DnD is not currently functional
  - Requires new EFL release
-* Nested compositors (wl_wl output) cannot create internal windows
- - Requires new EFL release
-* Window close animations will not play for most Wayland clients
- - Requires upstream Wayland protocol additions
 * Restarting Enlightenment kills all open applications
  - Requires upstream *-shell protocol additions, XWayland improvements
 * XWayland clients do not smoothly resize
  - Requires upstream XWayland improvements
 * The first-launched X11 client will sometimes fail to show
  - Requires upstream XWayland improvements
-* Keyboard layout switching is not available
+* Some issues related to keyboard layout switching
  - Requires various improvements
