@@ -536,8 +536,7 @@ _e_intl_locale_alias_get(const char *language)
 {
    Eina_Hash *alias_hash;
    char *alias;
-   char llbuf[256];
-   char *lower_language = llbuf;
+   char lower_language[256];
 
    if ((!language) || (!strncmp(language, "POSIX", strlen("POSIX"))))
      return strdup("C");
