@@ -1,3 +1,280 @@
+Release 0.20.6:
+---------------------
+Carsten Haitzler (2):
+      e - efm: fix op registry listener add and dont use eina_error
+      e xkbswitch: don't free layouts that are just pointed to in instances
+
+Chris Michael (6):
+      update mailmap addresses
+      update mailmap addresses
+      add prototype functions for missing wl_data_offer interface
+      add prototype function for missing wl_seat interface
+      add prototype functions for missing wl_data_source interface
+      don't have to hook the ecore_evas resize callback here as that should     be handled by elm now
+
+Derek Foreman (20):
+      Ensure wayland clients haven't been deleted when processing callbacks
+      Remove wayland frame callbacks from subsurface cache on destruction
+      Fix xdg-shell destructors
+      Protect the wayland frame callback list from corruption
+      Use eina_list_merge instead of eina_list_move for wayland lists
+      Move pixmap free to client free from client destroy
+      Bump wayland version requirement
+      Remove wayland focus timer in delete callback
+      Add a NULL check in native_surface_init under wayland
+      Render deleted objects as long as they still have a pixmap
+      Track whether objects are on the post_updates list or not
+      Take an extra reference on wayland clients
+      Don't allow deleted wayland clients to set the cursor
+      Track whether a render is in progress or not
+      Rework wayland buffer handling
+      Remove wayland buffer reference
+      Re-enable window close animations for wayland
+      Stop copying all wayland buffers
+      Don't use e_pixmap_image_data_argb_convert for wayland images
+      Remove argb_convert for wayland buffers
+
+Mike Blumenkrantz (42):
+      clamp minimum shelf size to 20px in shelf config
+      do not perform special case position adjustment for re_manage clients
+      do not clamp comp object input regions to 0,0
+      improve enforcement of shelf autohide-related window adjustment
+      reshuffle x11 comp init to cleanup on failure cases
+      pre-remove pixmap from x11 clients during del hook
+      enable comp object image data refresh if a dirty call is made with no damages
+      redo wayland pixmap ids to use monotonic decreasing ints with no collisions
+      remove some unused variables
+      make bgpreview create vdesk config dialog on mouse up instead of mouse down
+      do not decrement e_comp->new_clients for non-new clients during _e_client_eval
+      update winlist ui when using directional window selection
+      force changed when adding or removing keyboard layouts in config
+      disable emotion_shutdown during shutdown procedure
+      use strbufs instead of strcat in fwin navbars
+      do not set XCURSOR_PATH variable if re-setting existing value
+      remove security hole in e_start_main
+      remove DISPLAY usage from E_IPC_SOCKET value
+      remove multihead env var setting in e_exec
+      strcpy -> strncpy in evry files plugin
+      use strbuf instead of strcat in keybinding string synthesis
+      use strbuf instead of strcat in edgebinding string synthesis
+      use dblequal for double comparisons in edgebindings config
+      replace static buffer usage with binbuf in e_fm_ipc
+      prevent potential null deref during pager (plain) window drag
+      remove unused value in config profile saving
+      remove useless client_add handler in e_ipc
+      use uint instead of int for eina_list_count() return in cpufreq (trivial)
+      simplify static grab case statements
+      remove ipc command allowing arbitrary command execution by the compositor
+      simplify ipc socket creation
+      remove impossible null check in color dialog
+      do not add render updates during damage of deleted clients
+      don't directly use image data when creating a comp object mirror
+      Revert "send mouse out+in on desk flip end"
+      reject x11 client mouse-in events on comp object based on frame geometry
+      reverse ordering for x11 client mouse in NotifyVirtual and NotifyInferior details
+      only use x11 mouse out event if client has received mouse in previously
+      apply x11 mouse in event for clients using a job
+      apply x11 focus/unfocus using jobs
+      block re-unsetting of native surface for comp objects
+      always run client res changes in e_comp_canvas_update()
+
+
+Release 0.20.5:
+---------------------
+Mike Blumenkrantz (1):
+      add back x11 window focusing
+
+
+Release 0.20.4:
+---------------------
+Chris Michael (5):
+      Fix type of size fields for E_Shell_Data
+      Fix issue of nested compositors not working with Ecore_Wl2 library
+      Update wl_weekeyboard for ecore_evas_wayland_window_get2 function rename
+      Fix issue of using the wrong id when finding pixmap client
+      check siginfo si_code to verify that SIGUSR2 comes from user
+
+Christopher Michael (14):
+      Make configure check for Ecore_Wl2 library
+      include header for Ecore_Wl2
+      remove unused event loop and add external Ecore_Wl2_Display variable
+      port wayland compositor to use Ecore_Wl2
+      port e_scale to use Ecore_Wl2
+      Port shot module to use ecore_wl2 library
+      Fix formatting of wl_weekeyboard module
+      Don't leak eina_iterator in shot module
+      Port wl_weekeyboard to use Ecore_Wl2 library
+      Port wl_fb module to use Ecore_Wl2 Library
+      Fix formatting
+      Fix formatting
+      Try to init (and error check the init) of ecore_wl2 library before we     create a compositor
+      Fix using global ewd variable by making it part of e_comp_wl
+
+Marcel Hollerbach (1):
+      e_comp_wl: only ignore ignored clients
+
+Mike Blumenkrantz (37):
+      call ecore_wl2_shutdown() in wl compositor delete callback
+      create wl client connection during compositor init, use in shot module
+      define EFL_BETA_API_SUPPORT explicitly in e.h if wayland support is enabled
+      remove defines for various beta api in other places
+      remove need_reparent, reparented, first_damage flags from wl client comp_data
+      call xdg surface map when creating a surface for visible internal windows
+      set want_focus for xdg popup surfaces on creation
+      only do passthrough surface map on xwayland surfaces during commit
+      more correctly handle evry mouse detection on wayland
+      improve focus setting during wayland client show callback
+      |= instead of = flag setting for want_focus during wayland surface commit
+      automatically mark wayland cursor surfaces as visible during set_cursor
+      do not set focus in wayland client show callback for cursor clients
+      always apply damages and input regions during wayland commit
+      remove duplicate visibility setting blocks from wayland surface commit
+      add render updates for cursor clients if damages exist during set_cursor
+      reenable fallthrough surface (un)mapping for subsurfaces during commit
+      remove _e_comp_wl_focus_down_set()
+      track wayland client mouse button states as a full button mask
+      enable surface visibility fallthrough for drag clients
+      unify client mouse action ending
+      allow instant client mouse actions to persist until mouse up
+      determine new_client state for xwayland clients using xwayland pixmap
+      handle more mouse buttons in wayland
+      allocate E_Shell_Data for all xdg surfaces (popups)
+      add function for disabling mouse/key/wheel/signal bindings
+      disable binding activation when grab dialog, menus, or dnd is active
+      remove comp canvas key handler shortcuts for passing keys to wayland clients
+      defer screenshot action execution using a job
+      disable bindings during wayland screenshot operations
+      do not attempt to create x11 canvas during xwayland init
+      do not shortcut access of Efreet_Desktop->x hash in fileman
+      disable shelf shadows if "noshadow" data item exists in shelf theme
+      do not update keymap group in _e_comp_wl_input_keymap_update()
+      update xkb.cur_group and send event upon serializing an EFFECTIVE layout in wl input
+      send mouse out+in on desk flip end
+      disable map when unsetting zoomap child
+
+
+Release 0.20.3:
+---------------------
+Carsten Haitzler (1):
+      e randr - fix randr dialog to do restore right again
+
+Chris Michael (1):
+      Fix xbl_avail variable being used when it could be undefined
+
+Jean-Philippe ANDRÉ (1):
+      Fix spelling in .pc file
+
+Marcel Hollerbach (1):
+      e_grabinput: do not pass a faulty time
+
+Mike Blumenkrantz (26):
+      block input devices from backlight list
+      unpopulate all gadcons during shutdown
+      add shelf callback for hidden state and trigger extra hide-on-show if hiding
+      un-defer comp util object hiding if second hide occurs during animation
+      add special case for frame adjustment during first recalc of new clients
+      test given coordinates in smart window placement algorithm
+      remove wayland function usage from grabinput methods
+      simplify and clarify winlist directional selection action code
+      check all corners of an object in e_comp_object_util_zone_get()
+      disable custom logging when eina backtrace is active
+      select mixer popup sink after popup has been fully initialized
+      optimize zoomap recalc during recursion
+      make ibar config pointer EINTERN
+      do full cleanup when overriding existing comp autoclose object
+      remove configs for illume modules
+      allow NULL object in e_comp_object_util_autoclose()
+      improve menu hiding and autoclose
+      make E_DESK_TYPE an int define
+      enforce border_fix_on_shelf_toggle config option in shelf
+      create comp object updates tiler in helper function from either show or damage
+      do not unset comp object native surface during shape apply
+      unset WM_STATE for x11 clients upon unmapping them
+      if available, use wl output (nested) for wayland compositor creation
+      use more correct defines for enabling wl output modules during comp init
+      automatically attempt to create a wayland x11 output during comp init
+      20.3 release
+
+Seunghun Lee (1):
+      configure.ac: Remove ecore-x from wayland only build.
+
+Tom Hacohen (1):
+      Tiling: tile windows with "Static" gravity.
+
+Yomi (1):
+      Update copyright year.
+
+
+Release 0.20.2:
+---------------------
+Chris Michael (1):
+      Add missing function prototype for e_winlist_direction_select
+
+Derek Foreman (2):
+      emix: Rename parameter bool to mute
+      wayland: Add support for wl_surface.damage_buffer
+
+Marcel Hollerbach (2):
+      alsa: fix a valgrind warning
+      mixer: only save state if not in init
+
+Mike Blumenkrantz (4):
+      simplify e_mouse_update() code for x11 compositors
+      only show x11 clients during MapNotify/Request if they have Normal state
+      show non-new x11 clients immediately when changing Withdrawn -> Normal
+      ignore withdrawn state for x11 override clients during show
+
+Simon Lees (1):
+      Set QT_QPA_PLATFORM theme to gtk2
+
+Toan Pham (1):
+      enhance winlist next window selection
+
+
+Release 0.20.1:
+---------------------
+Carsten Haitzler (11):
+      e backlight - avoid seg when comp is shut down and backlight updated
+      e comp - set e_comp to null on shutdown so others dont access junk
+      e zone - handle null e_comp if comp is already shut down
+      e randr - feature fix that allows config to jump to specific screen
+      e exec - fix missing ref and unref for instance event
+      e randr - fix silent free of data behind randr's back
+      e comp randr support - fix leak of randr info
+      e randr2 - remove auto-clone and now make randr dialog come up instead
+      e randr - fix leak of modes list in randr code
+      e - fix using an invalid icon theme - fall back to hicolor if not exists
+      e - fix leak added by previous fix for icon theme
+
+Lukasz Stanislawski (1):
+      conf_apps: fix add/remove screen lock applications.
+
+Marcel Hollerbach (1):
+      e_randr2: Add NULL check
+
+Massimo Maiurana (1):
+      Updating italian translation
+
+Mike Blumenkrantz (17):
+      use client geometry for calculations in x11 ConfigureRequest handler
+      reshuffle all notifications on a notification merge
+      disable redirection toggling for the nocomp client
+      fix wl-x11 make/install rules to not include nonexistent DATA files
+      enforce wayland subsurface stacking order when parent surface is restacked
+      apply already-committed wayland subsurface positioning after parent surface move
+      init ecore-x during wl-x11 init to ensure DISPLAY is set
+      move comp canvas resize callback to monitor elm win geometry
+      do not apply x11 randr iface in wl-x11 if running nested in x11
+      add wayland shell private data for managing shell-specific data
+      do not drop subsurface buffer early after commit from cache
+      make e_comp_wl_surface_attach static and take a surface state
+      set wayland new client focus based on accepts_focus and !override
+      use canvas RENDER_PRE callback to trigger compositor pre-render callbacks
+      do not reapply x11 icccm state during fetch
+      never set withdrawn state on x11 clients
+      use current box geometry for calculating desktop ibar/ibox sizing
+
+
 Release 0.20.0:
 ---------------------
 Highlights:
