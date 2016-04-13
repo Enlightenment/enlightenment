@@ -251,8 +251,12 @@ _connman_service_convert(Connman_Service *cs)
    Wireless_Network *wn;
 
    wn = E_NEW(Wireless_Network, 1);
-   memcpy(wn, &cs->path, offsetof(Wireless_Network, connect_cb));
+   wn->path = cs->path;
+   wn->name = cs->name;
+   wn->security = cs->security;
    wn->state = _connman_wifi_state_convert(cs->state);
+   wn->type = cs->type;
+   wn->strength = cs->strength;
    wn->connect_cb = _connman_service_connect;
    return wn;
 }
