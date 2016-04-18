@@ -541,7 +541,7 @@ _dlg_add_new(E_Config_Dialog_Data *cfdata)
    Evas_Coord mw, mh;
    Evas_Object *mainn, *available, *modelss, *variants;
 
-   if (!(dlg = e_dialog_new(NULL, "E", "xkbswitch_config_add_dialog"))) return NULL;
+   if (!(dlg = e_dialog_new(e_win_evas_win_get(cfdata->evas), "E", "xkbswitch_config_add_dialog"))) return NULL;
 
    e_dialog_resizable_set(dlg, 1);
    dlg->data = cfdata;
