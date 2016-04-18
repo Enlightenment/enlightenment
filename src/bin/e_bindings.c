@@ -381,6 +381,7 @@ e_bindings_mouse_grab(E_Binding_Context ctxt, Ecore_X_Window win)
 
    EINA_LIST_FOREACH(mouse_bindings, l, binding)
      {
+        if (binding->ctxt == E_BINDING_CONTEXT_ANY) continue;
         if (_e_bindings_context_match(binding->ctxt, ctxt))
           {
 #ifndef HAVE_WAYLAND_ONLY
@@ -406,6 +407,7 @@ e_bindings_mouse_ungrab(E_Binding_Context ctxt, Ecore_X_Window win)
 
    EINA_LIST_FOREACH(mouse_bindings, l, binding)
      {
+        if (binding->ctxt == E_BINDING_CONTEXT_ANY) continue;
         if (_e_bindings_context_match(binding->ctxt, ctxt))
           {
 #ifndef HAVE_WAYLAND_ONLY
@@ -1117,6 +1119,7 @@ e_bindings_wheel_grab(E_Binding_Context ctxt, Ecore_X_Window win)
 
    EINA_LIST_FOREACH(wheel_bindings, l, binding)
      {
+        if (binding->ctxt == E_BINDING_CONTEXT_ANY) continue;
         if (_e_bindings_context_match(binding->ctxt, ctxt))
           {
              int button = 0;
@@ -1156,6 +1159,7 @@ e_bindings_wheel_ungrab(E_Binding_Context ctxt, Ecore_X_Window win)
 
    EINA_LIST_FOREACH(wheel_bindings, l, binding)
      {
+        if (binding->ctxt == E_BINDING_CONTEXT_ANY) continue;
         if (_e_bindings_context_match(binding->ctxt, ctxt))
           {
              int button = 0;
