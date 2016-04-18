@@ -1401,6 +1401,8 @@ e_modapi_init(E_Module *m)
         return NULL;
      }
 #endif
+   e_startup();
+
 
    return m;
 }
