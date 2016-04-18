@@ -617,7 +617,7 @@ main(int argc, char **argv)
    if (home)
      {
         const char *tmps;
-#if 0
+#if 1
         FILE *f;
         /* mtrack memory tracker support */
         /* if you have ~/.e-mtrack, then the tracker will be enabled
@@ -636,10 +636,15 @@ main(int argc, char **argv)
                        len--;
                     }
                   env_set("LD_PRELOAD", buf);
-                  env_set("MTRACK", "track");
-                  env_set("E_START_MTRACK", "track");
-                  snprintf(buf, sizeof(buf), "%s/.e-mtrack.log", home);
-                  env_set("MTRACK_TRACE_FILE", buf);
+//                  env_set("MTRACK", "track");
+//                  env_set("E_START_MTRACK", "track");
+//                  snprintf(buf, sizeof(buf), "%s/.e-mtrack.log", home);
+//                  env_set("MTRACK_TRACE_FILE", buf);
+                  env_set("MTRACK", "debug");
+                  env_set("MTRACK_FREE_FILL", "1");
+                  env_set("MTRACK_ALLOC_FILL", "2");
+                  env_set("MTRACK_CANARY_SIZE", "16");
+                  env_set("MTRACK_CANARY", "3");
                }
              fclose(f);
           }
