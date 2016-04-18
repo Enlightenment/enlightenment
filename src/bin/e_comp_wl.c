@@ -661,7 +661,6 @@ _e_comp_wl_evas_cb_delete_request(void *data, Evas_Object *obj EINA_UNUSED, void
 
    if (!e_client_has_xwindow(ec))
      {
-        if (ec->netwm.ping) e_client_ping(ec);
         if (ec->internal_elm_win)
           E_FREE_FUNC(ec->internal_elm_win, evas_object_del);
         e_object_del(E_OBJECT(ec));
@@ -676,7 +675,6 @@ _e_comp_wl_evas_cb_kill_request(void *data, Evas_Object *obj EINA_UNUSED, void *
    E_Client *ec;
 
    if (!(ec = data)) return;
-   /* if (ec->netwm.ping) e_client_ping(ec); */
 
    e_comp_ignore_win_del(E_PIXMAP_TYPE_WL, e_pixmap_window_get(ec->pixmap));
 
