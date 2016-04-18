@@ -179,10 +179,10 @@ _volume_increase_cb(E_Object *obj EINA_UNUSED, const char *params EINA_UNUSED)
    volume.volumes = calloc(s->volume.channel_count, sizeof(int));
    for (i = 0; i < volume.channel_count; i++)
      {
-        if (s->volume.volumes[i] < EMIX_VOLUME_MAX - VOLUME_STEP)
+        if (s->volume.volumes[i] < (EMIX_VOLUME_MAX + 50) - VOLUME_STEP)
           volume.volumes[i] = s->volume.volumes[i] + VOLUME_STEP;
-        else if (s->volume.volumes[i] < EMIX_VOLUME_MAX)
-          volume.volumes[i] = EMIX_VOLUME_MAX;
+        else if (s->volume.volumes[i] < EMIX_VOLUME_MAX + 50)
+          volume.volumes[i] = EMIX_VOLUME_MAX + 50;
         else
           volume.volumes[i] = s->volume.volumes[i];
      }
