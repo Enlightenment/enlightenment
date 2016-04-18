@@ -1112,7 +1112,6 @@ _e_xdg_shell_surface_configure(struct wl_resource *resource, Evas_Coord x, Evas_
      }
 
    e_client_util_move_resize_without_frame(ec, x, y, w, h);
-   /* TODO: ack configure ?? */
 }
 
 static void
@@ -1450,8 +1449,7 @@ _e_shell_cb_bind(struct wl_client *client, void *data EINA_UNUSED, uint32_t vers
 
    e_comp_wl->shell_interface.shell = res;
    wl_resource_set_implementation(res, &_e_shell_interface,
-                                  e_comp->wl_comp_data,
-                                  _e_shell_cb_unbind);
+                                  NULL, _e_shell_cb_unbind);
 }
 
 static void
@@ -1467,7 +1465,7 @@ _e_xdg_shell_cb_bind(struct wl_client *client, void *data EINA_UNUSED, uint32_t 
 
    e_comp_wl->shell_interface.xdg_shell = res;
    wl_resource_set_dispatcher(res, _e_xdg_shell_cb_dispatch, NULL,
-                              e_comp->wl_comp_data, NULL);
+                              NULL, NULL);
 }
 
 E_API E_Module_Api e_modapi = { E_MODULE_API_VERSION, "Wl_Desktop_Shell" };
@@ -1475,18 +1473,9 @@ E_API E_Module_Api e_modapi = { E_MODULE_API_VERSION, "Wl_Desktop_Shell" };
 E_API void *
 e_modapi_init(E_Module *m)
 {
-   /* try to get the current compositor */
-   if (!e_comp) return NULL;
-
-   /* make sure it's a wayland compositor */
-   /* if (e_comp->comp_type != E_PIXMAP_TYPE_WL) return NULL; */
-
-   /* try to get the compositor data */
-   if (!e_comp->wl_comp_data) return NULL;
-
    /* try to create global shell interface */
    if (!wl_global_create(e_comp_wl->wl.disp, &wl_shell_interface, 1,
-                         e_comp->wl_comp_data, _e_shell_cb_bind))
+                         NULL, _e_shell_cb_bind))
      {
         ERR("Could not create shell global");
         return NULL;
@@ -1494,7 +1483,7 @@ e_modapi_init(E_Module *m)
 
    /* try to create global xdg_shell interface */
    if (!wl_global_create(e_comp_wl->wl.disp, &xdg_shell_interface, 1,
-                         e_comp->wl_comp_data, _e_xdg_shell_cb_bind))
+                         NULL, _e_xdg_shell_cb_bind))
      {
         ERR("Could not create xdg_shell global");
         return NULL;
