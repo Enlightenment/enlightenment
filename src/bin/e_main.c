@@ -1039,9 +1039,9 @@ main(int argc, char **argv)
    if (!nostartup)
      {
         if (after_restart)
-          e_startup(E_STARTUP_RESTART);
+          e_startup_mode_set(E_STARTUP_RESTART);
         else
-          e_startup(E_STARTUP_START);
+          e_startup_mode_set(E_STARTUP_START);
      }
    TS("Run Startup Apps Done");
 

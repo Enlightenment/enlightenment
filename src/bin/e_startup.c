@@ -15,9 +15,12 @@ static E_Order *startup_apps = NULL;
 static int start_app_pos = -1;
 static Ecore_Event_Handler *desktop_cache_update_handler = NULL;
 
+static Eina_Bool started = EINA_FALSE;
+
 /* externally accessible functions */
+
 E_API void
-e_startup(E_Startup_Mode mode)
+e_startup_mode_set(E_Startup_Mode mode)
 {
    char buf[PATH_MAX];
 
@@ -38,6 +41,15 @@ e_startup(E_Startup_Mode mode)
                              _e_startup_event_cb,
                              strdup(buf));
    e_init_undone();
+}
+
+E_API void
+e_startup(void)
+{
+   if (desktop_cache_update_handler)
+     started = EINA_TRUE;
+   else
+     _e_startup();
 }
 
 /* local subsystem functions */
@@ -104,13 +116,14 @@ _e_startup_event_cb(void *data, int ev_type EINA_UNUSED, void *ev)
         _e_startup_error_dialog("E: Efreet could not build cache. "
                                 "Please check your DBus setup");
      }
-   ecore_event_handler_del(desktop_cache_update_handler);
+   E_FREE_FUNC(desktop_cache_update_handler, ecore_event_handler_del);
    buf = data;
    startup_apps = e_order_new(buf);
    if (startup_apps)
      start_app_pos = 0;
    free(buf);
-   _e_startup();
+   if (started)
+     _e_startup();
    return ECORE_CALLBACK_PASS_ON;
 }
 
