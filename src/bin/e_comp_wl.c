@@ -2299,7 +2299,7 @@ _e_comp_wl_client_cb_focus_unset(void *data EINA_UNUSED, E_Client *ec)
 static void
 _e_comp_wl_client_cb_resize_begin(void *data EINA_UNUSED, E_Client *ec)
 {
-   if (e_pixmap_type_get(ec->pixmap) != E_PIXMAP_TYPE_WL) return;
+   if (e_client_has_xwindow(ec)) return;
 
    e_comp_wl->resize.edges = 0;
    if (ec->keyboard_resizing) return;
@@ -2341,7 +2341,7 @@ static void
 _e_comp_wl_client_cb_resize_end(void *data EINA_UNUSED, E_Client *ec)
 {
    if (e_object_is_del(E_OBJECT(ec))) return;
-   if (e_pixmap_type_get(ec->pixmap) != E_PIXMAP_TYPE_WL) return;
+   if (e_client_has_xwindow(ec)) return;
 
    e_comp_wl->resize.edges = 0;
    e_comp_wl->resize.resource = NULL;
