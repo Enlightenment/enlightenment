@@ -30,6 +30,9 @@ struct E_Shell_Data
    Eina_Bool activated : 1;
 };
 
+static Eina_Hash *shell_resources;
+static Eina_Hash *xdg_shell_resources;
+
 static void
 _e_shell_surface_parent_set(E_Client *ec, struct wl_resource *parent_resource)
 {
@@ -606,6 +609,8 @@ _e_shell_cb_shell_surface_get(struct wl_client *client, struct wl_resource *reso
    cdata->shell.ping = _e_shell_surface_ping;
    cdata->shell.map = _e_shell_surface_map;
    cdata->shell.unmap = _e_shell_surface_unmap;
+   if (!ec->internal)
+     e_client_ping(ec);
 }
 
 static void
@@ -1119,6 +1124,8 @@ _e_xdg_shell_surface_ping(struct wl_resource *resource)
 {
    E_Client *ec;
    uint32_t serial;
+   struct wl_client *client;
+   struct wl_resource *xdg_shell;
 
    /* get the client for this resource */
    if (!(ec = wl_resource_get_user_data(resource)))
@@ -1128,12 +1135,12 @@ _e_xdg_shell_surface_ping(struct wl_resource *resource)
                                "No Client For Shell Surface");
         return;
      }
+   client = wl_resource_get_client(resource);
+   xdg_shell = eina_hash_find(xdg_shell_resources, &client);
 
-   if (e_comp_wl->shell_interface.xdg_shell)
-     {
-        serial = wl_display_next_serial(e_comp_wl->wl.disp);
-        xdg_shell_send_ping(e_comp_wl->shell_interface.xdg_shell, serial);
-     }
+   if (!xdg_shell) return;
+   serial = wl_display_next_serial(e_comp_wl->wl.disp);
+   xdg_shell_send_ping(xdg_shell, serial);
 }
 
 static void
@@ -1261,6 +1268,8 @@ _e_xdg_shell_cb_surface_get(struct wl_client *client, struct wl_resource *resour
 
    if (ec->internal_elm_win && evas_object_visible_get(ec->internal_elm_win))
      _e_xdg_shell_surface_map(surface_resource);
+   if (!ec->internal)
+     e_client_ping(ec);
 }
 
 static void
@@ -1395,9 +1404,10 @@ static const struct xdg_shell_interface _e_xdg_shell_interface =
 };
 
 static void
-_e_xdg_shell_cb_unbind(struct wl_resource *resource EINA_UNUSED)
+_e_xdg_shell_cb_unbind(struct wl_resource *resource)
 {
-   e_comp_wl->shell_interface.xdg_shell = NULL;
+   struct wl_client *client = wl_resource_get_client(resource);
+   eina_hash_set(shell_resources, &client, NULL);
 }
 
 static int
@@ -1424,16 +1434,16 @@ _e_xdg_shell_cb_dispatch(const void *implementation EINA_UNUSED, void *target, u
      }
 
    wl_resource_set_implementation(res, &_e_xdg_shell_interface,
-                                  e_comp->wl_comp_data,
-                                  _e_xdg_shell_cb_unbind);
+                                  NULL, _e_xdg_shell_cb_unbind);
 
    return 1;
 }
 
 static void
-_e_shell_cb_unbind(struct wl_resource *resource EINA_UNUSED)
+_e_shell_cb_unbind(struct wl_resource *resource)
 {
-   e_comp_wl->shell_interface.shell = NULL;
+   struct wl_client *client = wl_resource_get_client(resource);
+   eina_hash_set(shell_resources, &client, NULL);
 }
 
 static void
@@ -1447,7 +1457,7 @@ _e_shell_cb_bind(struct wl_client *client, void *data EINA_UNUSED, uint32_t vers
         return;
      }
 
-   e_comp_wl->shell_interface.shell = res;
+   eina_hash_set(shell_resources, &client, res);
    wl_resource_set_implementation(res, &_e_shell_interface,
                                   NULL, _e_shell_cb_unbind);
 }
@@ -1463,7 +1473,7 @@ _e_xdg_shell_cb_bind(struct wl_client *client, void *data EINA_UNUSED, uint32_t 
         return;
      }
 
-   e_comp_wl->shell_interface.xdg_shell = res;
+   eina_hash_set(xdg_shell_resources, &client, res);
    wl_resource_set_dispatcher(res, _e_xdg_shell_cb_dispatch, NULL,
                               NULL, NULL);
 }
@@ -1498,6 +1508,8 @@ e_modapi_init(E_Module *m)
 #endif
    e_startup();
 
+   shell_resources = eina_hash_pointer_new(NULL);
+   xdg_shell_resources = eina_hash_pointer_new(NULL);
 
    return m;
 }
@@ -1506,6 +1518,8 @@ E_API int
 e_modapi_shutdown(E_Module *m EINA_UNUSED)
 {
    e_input_panel_shutdown();
+   eina_hash_free(shell_resources);
+   eina_hash_free(xdg_shell_resources);
 
    return 1;
 }
