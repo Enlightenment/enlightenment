@@ -47,6 +47,14 @@ struct _E_Comp_Wl_Data_Source
    void (*target) (E_Comp_Wl_Data_Source *source, uint32_t serial, const char* mime_type);
    void (*send) (E_Comp_Wl_Data_Source *source, const char* mime_type, int32_t fd);
    void (*cancelled) (E_Comp_Wl_Data_Source *source);
+   E_Comp_Wl_Data_Offer *offer;
+   uint32_t dnd_actions;
+   enum wl_data_device_manager_dnd_action current_dnd_action;
+   enum wl_data_device_manager_dnd_action compositor_action;
+   uint32_t serial;
+
+   Eina_Bool accepted : 1;
+   Eina_Bool actions_set : 1;
 };
 
 struct _E_Comp_Wl_Data_Offer
@@ -55,6 +63,9 @@ struct _E_Comp_Wl_Data_Offer
 
    E_Comp_Wl_Data_Source *source; //indicates source client data
    struct wl_listener source_destroy_listener; //listener for destroy of source
+   uint32_t dnd_actions;
+   enum wl_data_device_manager_dnd_action preferred_dnd_action;
+   Eina_Bool in_ask : 1;
 };
 
 struct _E_Comp_Wl_Clipboard_Source
