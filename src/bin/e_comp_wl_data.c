@@ -269,6 +269,8 @@ _e_comp_wl_data_device_selection_set(void *data EINA_UNUSED, E_Comp_Wl_Data_Sour
    struct wl_resource *offer_res, *data_device_res, *focus = NULL;
 
    sel_source = (E_Comp_Wl_Data_Source*)e_comp_wl->selection.data_source;
+   if (sel_source && (e_comp_wl->selection.serial - serial < UINT32_MAX / 2))
+     return;
 
    if (sel_source)
      {
