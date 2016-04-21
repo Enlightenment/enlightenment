@@ -127,6 +127,7 @@ _e_comp_wl_evas_cb_hide(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj EIN
    E_Client *ec = data;
 
    if (!e_object_is_del(E_OBJECT(ec))) return;
+   if (!e_object_ref_get(E_OBJECT(ec))) return;
 
    e_comp_object_damage(ec->frame, 0, 0, ec->w, ec->h);
    e_comp_object_dirty(ec->frame);
