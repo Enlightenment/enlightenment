@@ -3837,6 +3837,7 @@ e_comp_object_render(Evas_Object *obj)
                }
              RENDER_DEBUG("UPDATE [%p] %i %i %ix%i", cw->ec, r->x, r->y, r->w, r->h);
           }
+        if (!it) pix = NULL;
         goto end;
      }
 
@@ -3863,6 +3864,7 @@ e_comp_object_render(Evas_Object *obj)
         e_pixmap_image_data_argb_convert(cw->ec->pixmap, pix, srcpix, r, stride);
         RENDER_DEBUG("UPDATE [%p]: %d %d %dx%d -- pix = %p", cw->ec, r->x, r->y, r->w, r->h, pix);
      }
+   if (!it) pix = NULL;
    eina_iterator_free(it);
 end:
    evas_object_image_data_set(cw->obj, cw->blanked ? NULL : pix);
