@@ -2897,8 +2897,6 @@ _e_comp_x_damage(void *data EINA_UNUSED, int type EINA_UNUSED, Ecore_X_Event_Dam
    ec = _e_comp_x_client_find_by_damage(ev->damage);
    if ((!ec) || e_object_is_del(E_OBJECT(ec))) return ECORE_CALLBACK_PASS_ON;
    skip = ec->shape_rects_num > 50;
-   if (ec->override && (!_e_comp_x_client_data_get(ec)->first_damage))
-     skip = EINA_TRUE;
    if (_e_comp_x_client_data_get(ec)->damage)
      {
         Ecore_X_Region parts;
@@ -2916,7 +2914,7 @@ _e_comp_x_damage(void *data EINA_UNUSED, int type EINA_UNUSED, Ecore_X_Event_Dam
      e_pixmap_dirty(ec->pixmap);
    else if (skip)
      e_comp_object_damage(ec->frame, 0, 0, ec->w, ec->h);
-   else if (n)
+   else
      {
         int i;
 
