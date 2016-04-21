@@ -2844,6 +2844,7 @@ static Eina_Bool
 _e_comp_x_shape(void *data EINA_UNUSED, int type EINA_UNUSED, Ecore_X_Event_Window_Shape *ev)
 {
    E_Client *ec;
+   Eina_Bool pshaped;
    //const char *txt[] =
    //{
       //[ECORE_X_SHAPE_BOUNDING] = "BOUNDING",
@@ -2853,6 +2854,7 @@ _e_comp_x_shape(void *data EINA_UNUSED, int type EINA_UNUSED, Ecore_X_Event_Wind
 
    ec = _e_comp_x_client_find_by_window(ev->win);
    if (!ec) return ECORE_CALLBACK_RENEW;
+   pshaped = ec->shaped;
    //INF("%p(%s): %d,%d %dx%d || %d", ec, txt[ev->type], ev->x, ev->y, ev->w, ev->h, ev->shaped);
    if (ev->win == e_client_util_win_get(ec))
      {
@@ -2879,8 +2881,11 @@ _e_comp_x_shape(void *data EINA_UNUSED, int type EINA_UNUSED, Ecore_X_Event_Wind
      ec->need_shape_export = 1;
    if (ec->changes.shape)
      {
-        if (ev->type == ECORE_X_SHAPE_BOUNDING)
-          e_comp_object_damage(ec->frame, 0, 0, ec->w, ec->h);
+        if ((ev->type == ECORE_X_SHAPE_BOUNDING) && (ec->shaped || (pshaped != ec->shaped)))
+          {
+             if (ec->shape_rects || (!ec->shaped))
+               e_comp_object_damage(ec->frame, 0, 0, ec->w, ec->h);
+          }
      }
    EC_CHANGED(ec);
    return ECORE_CALLBACK_PASS_ON;
@@ -4452,7 +4457,8 @@ _e_comp_x_first_draw_delay_cb(void *data)
    E_Client *ec = data;
 
    _e_comp_x_client_data_get(ec)->first_draw_delay = NULL;
-   e_comp_object_damage(ec->frame, 0, 0, ec->w, ec->h);
+   if (ec->shape_rects || (!ec->shaped))
+     e_comp_object_damage(ec->frame, 0, 0, ec->w, ec->h);
    return EINA_FALSE;
 }
 
