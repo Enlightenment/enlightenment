@@ -470,8 +470,6 @@ _e_comp_wl_data_device_data_offer_create(E_Comp_Wl_Data_Source *source, struct w
      wl_data_offer_send_offer(offer->resource, t);
    eina_iterator_free(it);
 
-   data_offer_update_action(offer);
-
    return offer->resource;
 }
 
@@ -979,6 +977,7 @@ e_comp_wl_data_device_send_enter(E_Client *ec)
         if (!data_device_res) return;
         offer_res = e_comp_wl_data_device_send_offer(ec);
         if (e_comp_wl->drag_source && (!offer_res)) return;
+        data_offer_update_action(drag_source->offer);
         if (offer_res)
           {
              if (wl_resource_get_version(offer_res) >= WL_DATA_OFFER_SOURCE_ACTIONS_SINCE_VERSION)
