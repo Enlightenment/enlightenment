@@ -55,6 +55,23 @@ _e_place_cb_sort_cmp(const void *v1, const void *v2)
    return (*((int *)v1)) - (*((int *)v2));
 }
 
+static Eina_Bool
+ignore_client(const E_Client *ec, const Eina_List *skiplist)
+{
+   if (eina_list_data_find(skiplist, ec)) return EINA_TRUE;
+   if (e_client_util_ignored_get(ec)) return EINA_TRUE;
+   if (!evas_object_visible_get(ec->frame)) return EINA_TRUE;
+   if (ec->fullscreen) return EINA_TRUE;
+   if (ec->maximized)
+     {
+        E_Maximize max = ec->maximized & E_MAXIMIZE_TYPE;
+
+        if (max == E_MAXIMIZE_FULLSCREEN) return EINA_TRUE;
+        if (max & (E_MAXIMIZE_HORIZONTAL | E_MAXIMIZE_VERTICAL)) return EINA_TRUE;
+     }
+   return EINA_FALSE;
+}
+
 static int
 _e_place_coverage_client_add(Eina_List *skiplist, int ar, int x, int y, int w, int h)
 {
@@ -65,17 +82,7 @@ _e_place_coverage_client_add(Eina_List *skiplist, int ar, int x, int y, int w, i
 
    E_CLIENT_FOREACH(ec)
      {
-        if (eina_list_data_find(skiplist, ec)) continue;
-        if (e_client_util_ignored_get(ec)) continue;
-        if (!evas_object_visible_get(ec->frame)) continue;
-        if (ec->fullscreen) continue;
-        if (ec->maximized)
-          {
-             E_Maximize max = ec->maximized & E_MAXIMIZE_TYPE;
-
-             if (max == E_MAXIMIZE_FULLSCREEN) continue;
-             if (max & (E_MAXIMIZE_HORIZONTAL | E_MAXIMIZE_VERTICAL)) continue;
-          }
+        if (ignore_client(ec, skiplist)) continue;
         x2 = ec->x; y2 = ec->y; w2 = ec->w; h2 = ec->h;
         if (E_INTERSECTS(x, y, w, h, x2, y2, w2, h2))
           {
@@ -274,19 +281,7 @@ e_place_desk_region_smart(E_Desk *desk, Eina_List *skiplist, int x, int y, int w
      {
         int bx, by, bw, bh;
 
-        if (e_client_util_ignored_get(ec)) continue;
-
-        if (eina_list_data_find(skiplist, ec)) continue;
-
-        if (!evas_object_visible_get(ec->frame)) continue;
-        if (ec->fullscreen) continue;
-        if (ec->maximized)
-          {
-             E_Maximize max = ec->maximized & E_MAXIMIZE_TYPE;
-
-             if (max == E_MAXIMIZE_FULLSCREEN) continue;
-             if (max & (E_MAXIMIZE_HORIZONTAL | E_MAXIMIZE_VERTICAL)) continue;
-          }
+        if (ignore_client(ec, skiplist)) continue;
 
         bx = ec->x;
         by = ec->y;
