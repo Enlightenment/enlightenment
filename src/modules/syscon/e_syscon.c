@@ -81,6 +81,7 @@ e_syscon_show(E_Zone *zone, const char *defact)
      }
 
    if (!e_comp_grab_input(1, 1)) return 0;
+   if (e_desklock_state_get()) return 0;
    evas = e_comp->evas;
    evas_event_freeze(evas);
 
