@@ -157,7 +157,7 @@ data_offer_update_action(E_Comp_Wl_Data_Offer *offer)
 {
    uint32_t action;
 
-   if (!offer->source || !offer->source->actions_set)
+   if (!offer->source)
      return;
 
    action = data_offer_choose_action(offer);
