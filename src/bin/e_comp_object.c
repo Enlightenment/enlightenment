@@ -3734,31 +3734,26 @@ e_comp_object_render(Evas_Object *obj)
    if (e_pixmap_image_is_argb(cw->ec->pixmap))
      {
         pix = e_pixmap_image_data_get(cw->ec->pixmap);
-        if (e_comp->comp_type == E_PIXMAP_TYPE_X)
+        EINA_ITERATOR_FOREACH(it, r)
           {
-             EINA_ITERATOR_FOREACH(it, r)
+             E_RECTS_CLIP_TO_RECT(r->x, r->y, r->w, r->h, 0, 0, pw, ph);
+             /* get pixmap data from rect region on display server into memory */
+             ret = e_pixmap_image_draw(cw->ec->pixmap, r);
+             if (!ret)
                {
-                  E_RECTS_CLIP_TO_RECT(r->x, r->y, r->w, r->h, 0, 0, pw, ph);
-                  /* get pixmap data from rect region on display server into memory */
-                  ret = e_pixmap_image_draw(cw->ec->pixmap, r);
-                  if (!ret)
+                  WRN("UPDATE [%p]: %i %i %ix%i FAIL(%u)!!!!!!!!!!!!!!!!!", cw->ec, r->x, r->y, r->w, r->h, cw->failures);
+                  if (++cw->failures < FAILURE_MAX)
+                    e_comp_object_damage(obj, 0, 0, pw, ph);
+                  else
                     {
-                       WRN("UPDATE [%p]: %i %i %ix%i FAIL(%u)!!!!!!!!!!!!!!!!!", cw->ec, r->x, r->y, r->w, r->h, cw->failures);
-                       if (++cw->failures < FAILURE_MAX)
-                         e_comp_object_damage(obj, 0, 0, pw, ph);
-                       else
-                         {
-                            DELD(cw->ec, 2);
-                            e_object_del(E_OBJECT(cw->ec));
-                            return EINA_FALSE;
-                         }
-                       break;
+                       DELD(cw->ec, 2);
+                       e_object_del(E_OBJECT(cw->ec));
+                       return EINA_FALSE;
                     }
-                  RENDER_DEBUG("UPDATE [%p] %i %i %ix%i", cw->ec, r->x, r->y, r->w, r->h);
+                  break;
                }
+             RENDER_DEBUG("UPDATE [%p] %i %i %ix%i", cw->ec, r->x, r->y, r->w, r->h);
           }
-        else
-          ret = EINA_TRUE;
         evas_object_image_data_set(cw->obj, cw->blanked ? NULL : pix);
         goto end;
      }
