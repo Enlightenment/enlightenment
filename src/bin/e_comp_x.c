@@ -1102,7 +1102,7 @@ _e_comp_x_client_show(E_Client *ec)
 
    win = e_client_util_win_get(ec);
    ecore_x_window_shadow_tree_flush();
-   if (!_e_comp_x_client_data_get(ec)->need_reparent)
+   if ((!_e_comp_x_client_data_get(ec)->need_reparent) && (!ec->override))
      ecore_x_window_show(win);
    if (ec->unredirected_single || _e_comp_x_client_data_get(ec)->iconic)
      {
