@@ -2160,7 +2160,7 @@ _e_client_frame_update(E_Client *ec)
      bordername = "nofocus";
    else if (ec->urgent)
      bordername = "urgent";
-   else if (((ec->icccm.transient_for != 0) || (ec->dialog)) && 
+   else if (((ec->icccm.transient_for && (!ec->netwm.type)) || (ec->dialog)) && 
             (e_pixmap_is_x(ec->pixmap)))
      bordername = "dialog";
    else if (ec->netwm.state.modal)
