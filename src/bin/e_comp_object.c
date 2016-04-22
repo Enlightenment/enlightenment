@@ -1170,11 +1170,13 @@ _e_comp_intercept_resize(void *data, Evas_Object *obj, int w, int h)
         /* shapeless clients smh */
         if (cw->ec->shaped && (!cw->ec->shape_rects)) return;
         /* pending shape change gtfo */
-        if (cw->ec->changes.shape) return;
-        /* client can't be resized if its pixmap isn't usable, try again */
-        e_pixmap_dirty(cw->ec->pixmap);
-        e_comp_object_render_update_add(obj);
-        e_comp_render_queue();
+        if (!cw->ec->changes.shape)
+          {
+             /* client can't be resized if its pixmap isn't usable, try again */
+             e_pixmap_dirty(cw->ec->pixmap);
+             e_comp_object_render_update_add(obj);
+             e_comp_render_queue();
+          }
         cw->ec->changes.size = 1;
         EC_CHANGED(cw->ec);
         return;
