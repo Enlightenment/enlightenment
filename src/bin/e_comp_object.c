@@ -904,15 +904,18 @@ _e_comp_object_setup(E_Comp_Object *cw)
 
 /* for fast path evas rendering; only called during render */
 static void
-_e_comp_object_pixels_get(void *data, Evas_Object *obj EINA_UNUSED)
+_e_comp_object_pixels_get(void *data, Evas_Object *obj)
 {
    E_Comp_Object *cw = data;
    E_Client *ec = cw->ec;
    int pw, ph;
    int bx, by, bxx, byy;
 
-   if (!ec->pixmap) return;
-   if (!e_pixmap_size_get(ec->pixmap, &pw, &ph)) return;
+   if ((!ec->pixmap) || (!e_pixmap_size_get(ec->pixmap, &pw, &ph)))
+     {
+        evas_object_image_data_set(obj, NULL);
+        return;
+     }
    //INF("PIXEL GET %p: %dx%d || %dx%d", ec, ec->w, ec->h, pw, ph);
    e_pixmap_image_opaque_get(cw->ec->pixmap, &bx, &by, &bxx, &byy);
    if (bxx && byy)
