@@ -680,7 +680,10 @@ _e_comp_object_shadow_setup(E_Comp_Object *cw)
     * stuck as hidden
     */
    if (cw->visible || cw->ec->iconic || cw->ec->re_manage)
-     e_comp_object_signal_emit(cw->smart_obj, "e,state,visible", "e");
+     {
+        if ((cw->w > 0) && (cw->h > 0))
+          e_comp_object_signal_emit(cw->smart_obj, "e,state,visible", "e");
+     }
    else
      e_comp_object_signal_emit(cw->smart_obj, "e,state,hidden", "e");
 
