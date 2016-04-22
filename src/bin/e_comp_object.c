@@ -572,17 +572,19 @@ _e_comp_object_shadow_setup(E_Comp_Object *cw)
    Eina_List *list = NULL, *l;
    E_Comp_Match *m;
    Eina_Stringshare *reshadow_group = NULL;
-   Eina_Bool focus = EINA_FALSE, urgent = EINA_FALSE, skip = EINA_FALSE, fast = EINA_FALSE, reshadow = EINA_FALSE, no_shadow = EINA_FALSE;
+   Eina_Bool focus = EINA_FALSE, urgent = EINA_FALSE, skip = EINA_FALSE,
+             fast = EINA_FALSE, reshadow = EINA_FALSE, no_shadow = EINA_FALSE, override;
    Eina_Stringshare *name, *title;
    E_Comp_Config *conf = e_comp_config_get();
 
    edje_object_file_get(cw->shobj, NULL, &reshadow_group);
+   override = cw->ec->override || (cw->ec->netwm.type == E_WINDOW_TYPE_POPUP_MENU);
    /* match correct client type */
-   list = cw->ec->override ? conf->match.overrides : conf->match.borders;
+   list = override ? conf->match.overrides : conf->match.borders;
    name = cw->ec->icccm.name;
    title = cw->ec->icccm.title;
-   skip = (cw->ec->override ? conf->match.disable_overrides : conf->match.disable_borders) || (title && (!strncmp(title, "noshadow", 8)));
-   fast = cw->ec->override ? conf->fast_overrides : conf->fast_borders;
+   skip = (override ? conf->match.disable_overrides : conf->match.disable_borders) || (title && (!strncmp(title, "noshadow", 8)));
+   fast = override ? conf->fast_overrides : conf->fast_borders;
 
    /* skipping here is mostly a hack for systray because I hate it */
    if (!skip)
@@ -676,7 +678,7 @@ _e_comp_object_shadow_setup(E_Comp_Object *cw)
              if (cw->frame_object && (edje_object_part_swallow_get(cw->shobj, "e.swallow.content") == cw->frame_object)) return EINA_FALSE;
           }
      }
-   if (cw->ec->override)
+   if (override)
      {
         if ((!cw->ec->shaped) && (!no_shadow) && (!cw->ec->argb))
           edje_object_signal_emit(cw->shobj, "e,state,shadow,on", "e");
@@ -695,7 +697,7 @@ _e_comp_object_shadow_setup(E_Comp_Object *cw)
           _e_comp_object_shadow(cw);
      }
 
-   if (focus || cw->ec->focused || cw->ec->override)
+   if (focus || cw->ec->focused || override)
      e_comp_object_signal_emit(cw->smart_obj, "e,state,focused", "e");
    else
      e_comp_object_signal_emit(cw->smart_obj, "e,state,unfocused", "e");
