@@ -482,9 +482,11 @@ _basic_create(E_Config_Dialog *cfd EINA_UNUSED, Evas *evas, E_Config_Dialog_Data
     * e_widget_list_object_append(o, ow, 0, 0, 0.0); */
 
    // >> advanced
+#ifndef HAVE_WAYLAND_ONLY
    oc = e_widget_check_add(evas, _("Enable X Application Settings"),
                            &(cfdata->enable_xsettings));
    e_widget_list_object_append(ol, oc, 0, 0, 0.0);
+#endif
    e_widget_check_widget_disable_on_unchecked_add(oc, ilist);
    e_widget_check_widget_disable_on_unchecked_add(oc, ow);
    e_widget_toolbook_page_append(otb, NULL, _("GTK Applications"), ol, 

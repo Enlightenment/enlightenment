@@ -155,11 +155,11 @@ _basic_create_widgets(E_Config_Dialog *cfd EINA_UNUSED, Evas *evas, E_Config_Dia
    e_widget_framelist_object_append(of, ob);
    e_widget_check_widget_disable_on_unchecked_add(oc, ob);
 
-   ob = e_widget_label_add(evas, _("Theme"));
+   ob = e_widget_label_add(evas, _("E Theme"));
    e_widget_framelist_object_append(of, ob);
    e_widget_check_widget_disable_on_unchecked_add(oc, ob);
 
-   ob = e_widget_radio_add(evas, _("X"), 0, rg);
+   ob = e_widget_radio_add(evas, _("Application"), 0, rg);
    e_widget_on_change_hook_set(ob, _use_e_cursor_cb_change, cfdata);
    e_widget_framelist_object_append(of, ob);
    e_widget_check_widget_disable_on_unchecked_add(oc, ob);

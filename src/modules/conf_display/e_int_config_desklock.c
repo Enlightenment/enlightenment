@@ -359,7 +359,7 @@ _basic_create(E_Config_Dialog *cfd, Evas *evas, E_Config_Dialog_Data *cfdata)
 
    /* Timers */
    ol = e_widget_list_add(evas, 0, 0);
-   oc = e_widget_check_add(evas, _("Lock after X screensaver activates"),
+   oc = e_widget_check_add(evas, _("Lock after screensaver activates"),
                            &cfdata->screensaver_lock);
    e_widget_disabled_set(oc, !cfdata->use_xscreensaver);
    e_widget_list_object_append(ol, oc, 1, 1, 0.5);

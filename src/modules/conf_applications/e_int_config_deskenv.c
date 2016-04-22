@@ -141,15 +141,20 @@ _basic_create(E_Config_Dialog *cfd EINA_UNUSED, Evas *evas, E_Config_Dialog_Data
                            &(cfdata->exe_always_single_instance));
    e_widget_framelist_object_append(fr, ob);
    e_widget_list_object_append(o, fr, 1, 0, 0.0);
-   
-   fr = e_widget_framelist_add(evas, _("X11 Basics"), 0);
-   ob = e_widget_check_add(evas, _("Load X Resources"),
-                           &(cfdata->load_xrdb));
-   e_widget_framelist_object_append(fr, ob);
-   ob = e_widget_check_add(evas, _("Load X Modifier Map"),
-                           &(cfdata->load_xmodmap));
-   e_widget_framelist_object_append(fr, ob);
-   e_widget_list_object_append(o, fr, 1, 0, 0.0);
+
+#ifndef HAVE_WAYLAND_ONLY
+   if (e_comp->comp_type == E_PIXMAP_TYPE_X)
+     {
+        fr = e_widget_framelist_add(evas, _("X11 Basics"), 0);
+        ob = e_widget_check_add(evas, _("Load X Resources"),
+                                &(cfdata->load_xrdb));
+        e_widget_framelist_object_append(fr, ob);
+        ob = e_widget_check_add(evas, _("Load X Modifier Map"),
+                                &(cfdata->load_xmodmap));
+        e_widget_framelist_object_append(fr, ob);
+        e_widget_list_object_append(o, fr, 1, 0, 0.0);
+     }
+#endif
    
    fr = e_widget_framelist_add(evas, _("Major Desktops"), 0);
    ob = e_widget_check_add(evas, _("Start GNOME services on login"),
