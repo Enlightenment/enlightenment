@@ -43,6 +43,7 @@ default.edj
 /missing
 /mkinstalldirs
 /stamp-h1
+/data/units/enlightenment.service
 *.eo.c
 *.eo.h
 Session.vim
