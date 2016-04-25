@@ -985,13 +985,11 @@ _e_drag_end(int x, int y)
         if (e_comp->comp_type == E_PIXMAP_TYPE_X)
           {
              if (!(dropped = ecore_x_dnd_drop()))
-               {
-                  if (win == e_comp->ee_win) break;
-               }
+               break;
           }
         else
 #endif
-          if ((e_comp->comp_type == E_PIXMAP_TYPE_WL) && (win == e_comp->ee_win))
+          if (e_comp->comp_type == E_PIXMAP_TYPE_WL)
             break;
         if (_drag_current->cb.finished)
           _drag_current->cb.finished(_drag_current, dropped);
