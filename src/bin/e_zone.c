@@ -1226,7 +1226,7 @@ _e_zone_useful_geometry_calc(const E_Zone *zone, int dx, int dy, int *x, int *y,
    Eina_Tiler *tiler;
    int zx, zy, zw, zh;
    Eina_Iterator *it;
-   Eina_Rectangle geom, *rect;
+   Eina_Rectangle geom = { 0 } , *rect;
    int size = 0;
 
    zx = zone->x;

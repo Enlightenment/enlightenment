@@ -3589,7 +3589,7 @@ E_API Eina_Bool
 e_client_maximize_geometry_get(const E_Client *ec, E_Maximize max, int *mx, int *my, int *mw, int *mh)
 {
    int x1, yy1, x2, y2;
-   int x, y, w, h, pw, ph;
+   int x = 0, y = 0, w, h, pw, ph;
    int zx, zy, zw, zh;
    int ecx, ecy, ecw, ech;
 
@@ -3987,7 +3987,7 @@ e_client_unmaximize(E_Client *ec, E_Maximize max)
 E_API void
 e_client_fullscreen(E_Client *ec, E_Fullscreen policy)
 {
-   int x, y, w, h;
+   int x = 0, y = 0, w = 0, h = 0;
 
    E_OBJECT_CHECK(ec);
    E_OBJECT_TYPE_CHECK(ec, E_CLIENT_TYPE);
