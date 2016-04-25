@@ -1443,6 +1443,8 @@ _e_comp_wl_compositor_cb_surface_create(struct wl_client *client, struct wl_reso
 
    DBG("Compositor Cb Surface Create: %d", id);
 
+   if (e_object_is_del(E_OBJECT(ec))) return;
+
    /* try to create an internal surface */
    if (!(res = wl_resource_create(client, &wl_surface_interface,
                                   wl_resource_get_version(resource), id)))
