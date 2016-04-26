@@ -1,5 +1,5 @@
 EXTRA_DIST += \
-   src/modules/wl_weekeyboard/themes/default/default_600.edc \
+   src/modules/wl_weekeyboard/themes/default/default_600.edj \
    src/modules/wl_weekeyboard/themes/default/default_720.edj \
    src/modules/wl_weekeyboard/themes/default/default_1080.edj
 
