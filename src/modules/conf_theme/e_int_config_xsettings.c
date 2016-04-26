@@ -160,7 +160,8 @@ _basic_apply(E_Config_Dialog *cfd, E_Config_Dialog_Data *cfdata)
    e_config_save_queue();
 
 #ifdef EFL_VERSION_1_18
-   if (cfdata->match_e17_icon_theme)
+   if (cfdata->match_e17_icon_theme &&
+       strcmp(e_config->icon_theme, elm_config_icon_theme_get()))
      {
         elm_config_icon_theme_set(e_config->icon_theme);
         elm_config_all_flush();
