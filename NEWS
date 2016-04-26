@@ -6,7 +6,10 @@ Highlights:
       * Wizard improvements
       * Video backgrounds
 
-Carsten Haitzler (30):
+Andy Williams (1):
+      Set the fdo theme to Elementary as well
+
+Carsten Haitzler (33):
       e backlight - avoid seg when comp is shut down and backlight updated
       e comp - set e_comp to null on shutdown so others dont access junk
       e zone - handle null e_comp if comp is already shut down
@@ -37,6 +40,9 @@ Carsten Haitzler (30):
       e icons: reduce mem usage (in x11) by a fair bit by de-duplicating
       e intl - fix string buffer length size
       e intel - fix number 2
+      e - wireless module - remove horrible memcpy with offsetof magic
+      e - e_start - update mtrack to use new debug mode for hunting bugs
+      e syscon - dont show syscon if desklock is up - you can't respond
 
 Chris Michael (48):
       Make configure check for Ecore_Wl2 library
@@ -88,7 +94,7 @@ Chris Michael (48):
       Reverting this commit to handle a better way
       add #else to #if 0'd block in order to avoid compiler warning about     unused variable.
 
-Derek Foreman (35):
+Derek Foreman (36):
       emix: Rename parameter bool to mute
       wayland: Add support for wl_surface.damage_buffer
       Remove inappropriate usage of %m
@@ -124,6 +130,18 @@ Derek Foreman (35):
       Clean up some header inclusion
       Remove unwanted debug detritus from last commit
       wayland: Bump ecore-wl2 dependency to 1.17.99
+      wayland: Fix crash when attempting to create surfaces for deleted clients
+
+Eduardo Lima (2):
+      Bluez 5
+      WIP
+
+Eduardo Lima (Etrunko) (5):
+      Update .gitignore
+      Fix warnings about uninitialized use of variables
+      Revert "Update .gitignore"
+      Revert "WIP"
+      Revert "Bluez 5"
 
 Gustavo Lima Chaves (1):
       e/quickaccess: Make "Skip window list" a quickaccess behavior option too.
@@ -167,7 +185,7 @@ Massimo Maiurana (2):
       Updating italian translation
       Updating italian translation
 
-Mike Blumenkrantz (357):
+Mike Blumenkrantz (396):
       unset release mode
       bump version
       add config option for allowing sticky windows to receive focus reverts
@@ -522,12 +540,54 @@ Mike Blumenkrantz (357):
       reduce efl version req to 1.17.0, make new gadget stuff 1.7.99+ at runtime
       redo e_place_desk_region_smart() to handle multiple screens
       Revert "mixer: try to fix a possible bug"
-      21.0-alpha release
       update README.wayland known issues list
       add NEWS from 20.1-6 releases
+      21.0-alpha release
+      0.21.0-alpha NEWS updates
+      unset release mode
+      allow mixer volume increase actions to exceed 100%
+      do not perform x11 mouse/wheel grabs for ANY binding contexts
+      reject xwayland clients in wl client resize handlers
+      make startup/restart app exec timing protocol-specific
+      trivial wl shell module cleanups
+      redo wl (xdg)shell surface ping
+      add copyright headers (MIT) from weston to e_comp_wl_data
+      update wl dnd/clipboard support to v3 of protocol
+      apply formatting rules to e_comp_wl_data.c
+      more accurately reject wl selection setting based on whether serial is invalid
+      do not perform input ungrab twice during dnd end in wayland
+      always update wl dnd offer actions
+      only update wl dnd actions when applying focus
+      ensure that wl clients do not run extra render on hide twice
+      unify client filtering checks from e_place_desk_region_smart()
+      do not attempt to show x11 override windows
+      don't force full damage on x11 override clients
+      don't defer resizes+queue render updates for shapeless or pending shaped clients
+      ensure damages do not get added for shapeless x11 clients
+      remove unnecessary conditional in e_comp_object_render()
+      slightly simplify image data setting in e_comp_object_render()
+      set NULL image pixel data during x11 render when no damages exist
+      ensure resize is still deferred for changes.shape clients during failed resize
+      do not show unsized comp objects during theme apply
+      set NULL image data in _e_comp_object_pixels_get() on failure
+      only set "dialog" border for transient clients if window type is unset
+      do not revert client focus except for normal and dialog windows
+      remove some X references in settings dialogs
+      Revert "do not revert client focus except for normal and dialog windows"
+      treat POPUP_MENU window type as an override window for comp theme matching
+      always end drag operations on failure
+      remove explicit edje_init/shutdown calls
+      ensure evry gadget popups effectively clamp to their zones
+      protect xdg-shell functions from accessing deleted client data
+      move wayland surface E_Client del check to a place where it's more useful
+      handle recursion more effectively in e_menu_hide_all()
+      distribute all weekeyboard edj files
 
 Seunghun Lee (1):
       configure.ac: Remove ecore-x from wayland only build.
+
+Shuhrat Dehkanov (1):
+      xkbswitch: establish parent/child relationship
 
 Simon Lees (1):
       Set QT_QPA_PLATFORM theme to gtk2
