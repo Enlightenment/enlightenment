@@ -1443,8 +1443,6 @@ _e_comp_wl_compositor_cb_surface_create(struct wl_client *client, struct wl_reso
 
    DBG("Compositor Cb Surface Create: %d", id);
 
-   if (e_object_is_del(E_OBJECT(ec))) return;
-
    /* try to create an internal surface */
    if (!(res = wl_resource_create(client, &wl_surface_interface,
                                   wl_resource_get_version(resource), id)))
@@ -1463,7 +1461,11 @@ _e_comp_wl_compositor_cb_surface_create(struct wl_client *client, struct wl_reso
    wl_client_get_credentials(client, &pid, NULL, NULL);
    if (pid == getpid()) //internal!
      ec = e_pixmap_find_client(E_PIXMAP_TYPE_WL, (uintptr_t)id);
-   if (!ec)
+   if (ec)
+     {
+        if (e_object_is_del(E_OBJECT(ec))) return;
+     }
+   else
      {
         E_Pixmap *ep = NULL;
 
