@@ -182,10 +182,10 @@ e_menu_shutdown(void)
 E_API void
 e_menu_hide_all(void)
 {
-   while (_e_active_menus)
+   E_Menu *m;
+
+   EINA_LIST_FREE(_e_active_menus, m)
      {
-        E_Menu *m;
-        m = eina_list_data_get(_e_active_menus);
         if (m->post_deactivate_cb.func)
           m->post_deactivate_cb.func(m->post_deactivate_cb.data, m);
         m->active = 0;
@@ -193,7 +193,6 @@ e_menu_hide_all(void)
           e_comp_object_util_autoclose(NULL, NULL, NULL, NULL);
         _e_menu_unrealize(m);
         m->in_active_list = 0;
-        _e_active_menus = eina_list_remove_list(_e_active_menus, _e_active_menus);
         e_object_unref(E_OBJECT(m));
      }
 }
