@@ -1,3 +1,156 @@
+Release 0.20.7:
+---------------------
+Carsten Haitzler (4):
+      e mod: cpufreq - handle the case where cpu has zero freqs - dont crash
+      e intl - fix string buffer length size
+      e intel - fix number 2
+      e syscon - dont show syscon if desklock is up - you can't respond
+
+Chris Michael (1):
+      destroy seat resource when we get a release request
+
+Derek Foreman (10):
+      Fix wayland hide for internal windows
+      Fix internal window borders on 32-bit computers
+      Free pixel data after taking a wayland screen shot
+      wayland: Don't leak a clipboard source if adding fd handler fails
+      wayland: Stop E from consuming all CPU as soon as a selection is made
+      xwayland: Don't leak memory on dnd read failure
+      wayland: Fix xdg-popup crash
+      Clean up some header inclusion
+      Remove unwanted debug detritus from last commit
+      wayland: Fix crash when attempting to create surfaces for deleted clients
+
+Massimo Maiurana (1):
+      Updating italian translation
+
+Mike Blumenkrantz (121):
+      unify client e_hints window size setting in move/resize callbacks
+      remove show callback from evry win on deletion
+      don't add render update during ignored damage on deleted clients
+      check returned pixmap size before attempting to create updates tiler
+      run focus-out and mouse-out wayland client callbacks for deleted clients
+      reject attempts to focus deleted comp objects
+      make wayland client keyboard focus list pruning more robust
+      remove library checks for a number of modules along with useless defines
+      remove eldbus init/shutdown calls from the codebase
+      redo wizard's gl testing mechanism
+      grab comp input on wizard start
+      don't add render updates for deleted clients on failed resize
+      break out xwl init/shutdown into static functions for reuse internally
+      remove maximize_pre flag from wl client comp_data
+      always send wl key releases if surface still exists
+      calling dirty() on a comp object for a deleted client should not print an error
+      remove direct references to ec->comp_data in x11 compositor
+      add workaround for xwayland client bug
+      unify client post_updates management code into single function
+      do not attempt to resize clients to 0x0 during res restore
+      unset solid drawing of opaque regions during comp object animations
+      adjust wayland client coords by window_geometry during first surface commit
+      do not reset the wizard got_desktops flag when setting the default system lang
+      fix stringshare usage in wizard language page (010)
+      reduce wizard connman timeout timer to 0.5s
+      always update saved coords for maximized/fullscreen clients on csd geom update
+      do not update client coords on csd geom update if it would change the zone
+      ignore deleted clients when reapplying zone geometry policy in canvas update
+      hide wl clients before deleting them when surface is destroyed
+      remove wl selection hacks from f0ba92d39e1f6631974d53100dcbb4cc040a8241
+      use zone geometry when clamping evry gadget popup to gadget's screen
+      store (internal) elm win geometry when set prior to showing the win
+      ignore xwayland clients in wl client delete request callback
+      cast eina_list_count() in flowlayout, not entire expression
+      unset opaque region during comp object render if none exists
+      avoid null deref in during pager_plain dnd
+      use eina_streq for e_util_binding_match() comparisons
+      use snprintf for string handling in batget
+      rework systray theme applying code
+      use snprintf for string handling in batget
+      remove lots of impossible null checks from pager move callback
+      send resize edges to wl clients on resize start and end
+      feed mouse-up events for all buttons on internal wins when activating a binding
+      do not set initial changed state for new clients if they are ignored
+      redo wayland client unignore mechanism
+      do not add deleted clients to tasks gadgets
+      remove deleted clients from tasks client list during repop
+      use canvas pointer coords in systray mouse cb
+      ignore x11 ConfigureRequest events when maximize_override is set
+      add even more systray/dbusmenu hacks
+      feed mouse out to internal clients upon activating a mouse binding
+      selectively reject comp object signal emissions based on action_client state
+      move notification text escaping into dbus notify method callback
+      track offline/presentation mode notification ids and replace on toggle
+      reshuffle notifications on replace
+      remove old compositor reset code
+      don't show some x11-specific compositor settings under wayland
+      force keyboard modifier update on wl client focus-in
+      block wl keyboard modifier updating during input grabs
+      explicitly manage client focus when setting/unsetting input grabs
+      optimize case where an x11 client is focused/unfocused in same loop iteration
+      remove wl xdg popup new_client stuff from get_popup method
+      allow some client zone/desk move actions to occur on action client
+      only attempt to rescue offscreen clients if they are completely offscreen
+      apply compositor keybinds if an action client that is not focus exists
+      do not reset previously-set ec->placed state when attempting early client moves
+      set destructor for xdg popups when setting implementation
+      enforce wl xdg popup stacking relative to parent stacking
+      don't set wl xdg popups to POPUP layer, set popups as placed on creation
+      remove clamping for wl xdg popup configures
+      reapply client focus after input grab, only handle focus for wayland compositors
+      do not incrementally remaximize clients during shelf hide animation
+      restrict shelf border_fix to only affect clients affected by the shelf
+      delete internal wayland elm windows in wl client delete request callback
+      add back CTRL to keybindings editor display
+      remove video child references from wl compositor
+      wl popup surfaces should not receive focus on show if parent is not focused
+      print xwayland exe path in debug logs
+      don't print xwayland path twice...
+      disable xwayland module if exe cannot be found during configure
+      reject client maximize attempts using identical maximize params
+      set WAYLAND_DEBUG=0 during wl compositor init
+      do not send shell configures for deleted wl clients
+      do not unconditionally update position+size when changing wl client csd geometry
+      don't send duplicate configure to wayland clients during unfullscreen
+      directly include e.h in efm device backends
+      make e_client_has_xwindow() more wayland-only friendly
+      change client un/maximize_pre callback location to occur after safety checks
+      ignore maximized+fullscreen windows when placing new clients
+      unify a large portion of repeated code in e_place
+      redo e_place_desk_region_smart() to handle multiple screens
+      allow mixer volume increase actions to exceed 100%
+      reject xwayland clients in wl client resize handlers
+      make startup/restart app exec timing protocol-specific
+      trivial wl shell module cleanups
+      redo wl (xdg)shell surface ping
+      add copyright headers (MIT) from weston to e_comp_wl_data
+      more accurately reject wl selection setting based on whether serial is invalid
+      do not perform input ungrab twice during dnd end in wayland
+      ensure that wl clients do not run extra render on hide twice
+      unify client filtering checks from e_place_desk_region_smart()
+      do not attempt to show x11 override windows
+      don't force full damage on x11 override clients
+      don't defer resizes+queue render updates for shapeless or pending shaped clients
+      ensure damages do not get added for shapeless x11 clients
+      remove unnecessary conditional in e_comp_object_render()
+      slightly simplify image data setting in e_comp_object_render()
+      set NULL image pixel data during x11 render when no damages exist
+      ensure resize is still deferred for changes.shape clients during failed resize
+      do not show unsized comp objects during theme apply
+      set NULL image data in _e_comp_object_pixels_get() on failure
+      only set "dialog" border for transient clients if window type is unset
+      remove some X references in settings dialogs
+      treat POPUP_MENU window type as an override window for comp theme matching
+      always end drag operations on failure
+      remove explicit edje_init/shutdown calls
+      ensure evry gadget popups effectively clamp to their zones
+      protect xdg-shell functions from accessing deleted client data
+      move wayland surface E_Client del check to a place where it's more useful
+      handle recursion more effectively in e_menu_hide_all()
+      distribute all weekeyboard edj files
+
+Shuhrat Dehkanov (1):
+      xkbswitch: establish parent/child relationship
+
+
 Release 0.20.6:
 ---------------------
 Carsten Haitzler (2):
