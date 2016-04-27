@@ -630,13 +630,14 @@ _e_xdg_surface_state_add(struct wl_resource *resource, struct wl_array *states, 
 }
 
 static void
-_xdg_shell_surface_send_configure(struct wl_resource *resource, Eina_Bool fullscreen, Eina_Bool maximized, uint32_t edges, Eina_Bool focused, int32_t width, int32_t height)
+_xdg_shell_surface_send_configure(struct wl_resource *resource, Eina_Bool fullscreen, Eina_Bool maximized, uint32_t edges, int32_t width, int32_t height)
 {
    struct wl_array states;
    uint32_t serial;
-   E_Client *ec;
+   E_Client *focused, *ec;
    E_Shell_Data *shd;
    State pending = 0;
+   Eina_Bool activated = EINA_FALSE;
 
    if (!(ec = wl_resource_get_user_data(resource)))
      {
@@ -646,12 +647,24 @@ _xdg_shell_surface_send_configure(struct wl_resource *resource, Eina_Bool fullsc
         return;
      }
    if (ec->netwm.type == E_WINDOW_TYPE_POPUP_MENU) return;
-
+   focused = e_client_focused_get();
+   if (ec == focused)
+     activated = 1;
+   else if (focused && focused->parent)
+     {
+        do
+          {
+             if (focused->parent != ec)
+               focused = focused->parent;
+             else
+               activated = 1;
+          } while (focused && (!activated));
+     }
    shd = ec->comp_data->shell.data;
    if ((shd->edges == edges) && (shd->width == width) && (shd->height == height) &&
        (shd->fullscreen == fullscreen) &&
        (shd->maximized == maximized) &&
-       (shd->activated == focused)) return;
+       (shd->activated == activated)) return;
    shd->edges = edges;
    shd->width = width;
    shd->height = height;
@@ -671,7 +684,7 @@ _xdg_shell_surface_send_configure(struct wl_resource *resource, Eina_Bool fullsc
           pending |= STATE_UNMAXIMIZED;
      }
    shd->maximized = maximized;
-   shd->activated = focused;
+   shd->activated = activated;
    wl_array_init(&states);
 
    if (fullscreen)
@@ -680,7 +693,7 @@ _xdg_shell_surface_send_configure(struct wl_resource *resource, Eina_Bool fullsc
      _e_xdg_surface_state_add(resource, &states, XDG_SURFACE_STATE_MAXIMIZED);
    if (edges)
      _e_xdg_surface_state_add(resource, &states, XDG_SURFACE_STATE_RESIZING);
-   if (focused)
+   if (activated)
      _e_xdg_surface_state_add(resource, &states, XDG_SURFACE_STATE_ACTIVATED);
 
    serial = wl_display_next_serial(e_comp_wl->wl.disp);
@@ -713,7 +726,7 @@ _e_xdg_shell_surface_configure_send(struct wl_resource *resource, uint32_t edges
    if (e_object_is_del(E_OBJECT(ec))) return;
    if (ec->netwm.type == E_WINDOW_TYPE_POPUP_MENU) return;
 
-   _xdg_shell_surface_send_configure(resource, ec->fullscreen, !!ec->maximized, edges, ec->focused, width, height);
+   _xdg_shell_surface_send_configure(resource, ec->fullscreen, !!ec->maximized, edges, width, height);
 }
 
 static void
@@ -989,7 +1002,7 @@ _e_xdg_shell_surface_cb_maximized_set(struct wl_client *client EINA_UNUSED, stru
              e_zone_useful_geometry_get(ec->zone, NULL, NULL, &w, &h);
           }
      }
-   _xdg_shell_surface_send_configure(resource, ec->fullscreen, 1, 0, ec->focused, w, h);
+   _xdg_shell_surface_send_configure(resource, ec->fullscreen, 1, 0, w, h);
 }
 
 static void
@@ -1014,7 +1027,7 @@ _e_xdg_shell_surface_cb_maximized_unset(struct wl_client *client EINA_UNUSED, st
      w = ec->w, h = ec->h;
    else
      w = ec->saved.w, h = ec->saved.h;
-   _xdg_shell_surface_send_configure(resource, ec->fullscreen, 0, 0, ec->focused, w, h);
+   _xdg_shell_surface_send_configure(resource, ec->fullscreen, 0, 0, w, h);
 }
 
 static void
@@ -1032,7 +1045,7 @@ _e_xdg_shell_surface_cb_fullscreen_set(struct wl_client *client EINA_UNUSED, str
      }
 
    if (ec->lock_user_fullscreen) return;
-   _xdg_shell_surface_send_configure(resource, 1, ec->maximized, 0, ec->focused, ec->zone->w, ec->zone->h);
+   _xdg_shell_surface_send_configure(resource, 1, ec->maximized, 0, ec->zone->w, ec->zone->h);
 }
 
 static void
@@ -1051,7 +1064,7 @@ _e_xdg_shell_surface_cb_fullscreen_unset(struct wl_client *client EINA_UNUSED, s
    if (e_object_is_del(E_OBJECT(ec))) return;
 
    if (ec->lock_user_fullscreen) return;
-   _xdg_shell_surface_send_configure(resource, 0, ec->maximized, 0, ec->focused, ec->saved.w, ec->saved.h);
+   _xdg_shell_surface_send_configure(resource, 0, ec->maximized, 0, ec->saved.w, ec->saved.h);
 }
 
 static void
