@@ -75,8 +75,8 @@ _e_comp_wl_focus_check(void)
 /*    EINA_LOG_DOM_INFO(e_log_dom, format, args); */
 /* } */
 
-static Eina_Bool
-_e_comp_wl_cb_module_idle(void *data EINA_UNUSED)
+static void
+_e_comp_wl_modules_load(void)
 {
    const char **m, *mods[] =
    {
@@ -84,9 +84,6 @@ _e_comp_wl_cb_module_idle(void *data EINA_UNUSED)
       "xwayland",
       NULL
    };
-
-   /* check if we are still loading modules */
-   if (e_module_loading_get()) return ECORE_CALLBACK_RENEW;
 
    for (m = mods; *m; m++)
      {
@@ -98,11 +95,6 @@ _e_comp_wl_cb_module_idle(void *data EINA_UNUSED)
         if (mod)
           e_module_enable(mod);
      }
-
-   /* FIXME: NB:
-    * Do we need to dispatch pending wl events here ?? */
-
-   return ECORE_CALLBACK_CANCEL;
 }
 
 static void
@@ -2514,8 +2506,7 @@ _e_comp_wl_compositor_create(void)
      }
    e_comp_wl->wl.client_disp = ecore_wl2_display_connect(NULL);
 
-   /* setup module idler to load shell mmodule */
-   ecore_idler_add(_e_comp_wl_cb_module_idle, cdata);
+   _e_comp_wl_modules_load();
 
    if (e_comp->comp_type == E_PIXMAP_TYPE_X)
      {
