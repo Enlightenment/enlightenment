@@ -3671,7 +3671,6 @@ e_comp_object_native_surface_set(Evas_Object *obj, Eina_Bool set)
    EINA_SAFETY_ON_NULL_RETURN(cw->ec);
    if (cw->ec->input_only) return;
    set = !!set;
-   if ((!set) && (!cw->native)) return;
 
    if (set)
      {
@@ -3692,6 +3691,8 @@ e_comp_object_native_surface_set(Evas_Object *obj, Eina_Bool set)
         if (set)
           set = (!!cw->ns) || e_pixmap_native_surface_init(cw->ec->pixmap, &ns);
      }
+   if ((!set) && (!cw->native)) return;
+
    cw->native = set;
 
    evas_object_image_native_surface_set(cw->obj, set && (!cw->blanked) ? (cw->ns ?: &ns) : NULL);
