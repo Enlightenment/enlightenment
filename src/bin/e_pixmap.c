@@ -668,6 +668,22 @@ e_pixmap_parent_window_get(E_Pixmap *cp)
 }
 
 E_API Eina_Bool
+e_pixmap_is_pixels(E_Pixmap *cp)
+{
+   switch (cp->type)
+     {
+        case E_PIXMAP_TYPE_X:
+          return EINA_FALSE;
+        case E_PIXMAP_TYPE_WL:
+          if (!cp->buffer) return EINA_TRUE;
+          if (cp->buffer->shm_buffer) return EINA_TRUE;
+          return EINA_FALSE;
+        default:
+          return EINA_TRUE;
+     }
+}
+
+E_API Eina_Bool
 e_pixmap_native_surface_init(E_Pixmap *cp, Evas_Native_Surface *ns)
 {
    Eina_Bool ret = EINA_FALSE;
