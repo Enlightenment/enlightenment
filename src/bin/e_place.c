@@ -56,19 +56,26 @@ _e_place_cb_sort_cmp(const void *v1, const void *v2)
 }
 
 static Eina_Bool
+ignore_client_and_break(const E_Client *ec)
+{
+   if (ec->fullscreen) return EINA_TRUE;
+   if (ec->maximized)
+     {
+        E_Maximize max = ec->maximized & E_MAXIMIZE_DIRECTION;
+
+        if (max == E_MAXIMIZE_FULLSCREEN) return EINA_TRUE;
+        if (max == E_MAXIMIZE_BOTH) return EINA_TRUE;
+     }
+   return EINA_FALSE;
+}
+
+static Eina_Bool
 ignore_client(const E_Client *ec, const Eina_List *skiplist)
 {
    if (eina_list_data_find(skiplist, ec)) return EINA_TRUE;
    if (e_client_util_ignored_get(ec)) return EINA_TRUE;
    if (!evas_object_visible_get(ec->frame)) return EINA_TRUE;
-   if (ec->fullscreen) return EINA_TRUE;
-   if (ec->maximized)
-     {
-        E_Maximize max = ec->maximized & E_MAXIMIZE_TYPE;
 
-        if (max == E_MAXIMIZE_FULLSCREEN) return EINA_TRUE;
-        if (max & (E_MAXIMIZE_HORIZONTAL | E_MAXIMIZE_VERTICAL)) return EINA_TRUE;
-     }
    return EINA_FALSE;
 }
 
@@ -80,9 +87,10 @@ _e_place_coverage_client_add(Eina_List *skiplist, int ar, int x, int y, int w, i
    int iw, ih;
    int x0, x00, yy0, y00;
 
-   E_CLIENT_FOREACH(ec)
+   E_CLIENT_REVERSE_FOREACH(ec)
      {
         if (ignore_client(ec, skiplist)) continue;
+        if (ignore_client_and_break(ec)) break;
         x2 = ec->x; y2 = ec->y; w2 = ec->w; h2 = ec->h;
         if (E_INTERSECTS(x, y, w, h, x2, y2, w2, h2))
           {
@@ -277,11 +285,12 @@ e_place_desk_region_smart(E_Desk *desk, Eina_List *skiplist, int x, int y, int w
           }
      }
 
-   E_CLIENT_FOREACH(ec)
+   E_CLIENT_REVERSE_FOREACH(ec)
      {
         int bx, by, bw, bh;
 
         if (ignore_client(ec, skiplist)) continue;
+        if (ignore_client_and_break(ec)) break;
 
         bx = ec->x;
         by = ec->y;
