@@ -151,6 +151,19 @@ _evry_cb_item_changed(EINA_UNUSED void *data, EINA_UNUSED int type, void *event)
    return ECORE_CALLBACK_PASS_ON;
 }
 
+static void
+_evry_focus_out(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   Evry_Window *win = data;
+   E_Client *ec;
+
+   if (!win->grab) return;
+
+   ec = e_win_client_get(win->ewin);
+   if (ec && (!e_object_is_del(E_OBJECT(ec))))
+     evry_hide(win, 0);
+}
+
 Evry_Window *
 evry_show(E_Zone *zone, E_Zone_Edge edge, const char *params, Eina_Bool popup)
 {
@@ -197,6 +210,7 @@ evry_show(E_Zone *zone, E_Zone_Edge edge, const char *params, Eina_Bool popup)
           }
 
         win->grab = 1;
+        evas_object_event_callback_add(ec->frame, EVAS_CALLBACK_FOCUS_OUT, _evry_focus_out, win);
      }
 
    evry_history_load();
