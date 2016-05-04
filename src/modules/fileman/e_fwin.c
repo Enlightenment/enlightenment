@@ -244,6 +244,7 @@ _e_fwin_client_hook_focus_unset(void *d EINA_UNUSED, E_Client *ec)
    /* if there is no new focused, set focus to zone fwin */
    if (e_client_focused_get() ||
        (!e_client_util_ignored_get(e_desk_client_top_visible_get(e_desk_current_get(ec->zone))))) return;
+   if (e_comp_util_kbd_grabbed()) return;
    fwin = e_fwin_zone_find(ec->zone);
    if (fwin)
      evas_object_focus_set(fwin->cur_page->fm_obj, 1);
