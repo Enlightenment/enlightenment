@@ -1666,7 +1666,7 @@ e_comp_grab_input(Eina_Bool mouse, Eina_Bool kbd)
         e_comp->input_key_grabs += kbd;
         if (e_comp->comp_type == E_PIXMAP_TYPE_WL)
           {
-             if (ec)
+             if (ec && (!e_object_is_del(E_OBJECT(ec))))
                evas_object_focus_set(ec->frame, 1);
           }
      }
