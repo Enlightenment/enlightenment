@@ -521,11 +521,12 @@ _e_comp_wl_evas_cb_focus_out(void *data, Evas *evas EINA_UNUSED, Evas_Object *ob
 {
    E_Client *ec = data;
 
-   E_FREE_FUNC(ec->comp_data->on_focus_timer, ecore_timer_del);
-
    /* lower client priority */
    if (!e_object_is_del(data))
-     _e_comp_wl_client_priority_normal(ec);
+     {
+        _e_comp_wl_client_priority_normal(ec);
+        E_FREE_FUNC(ec->comp_data->on_focus_timer, ecore_timer_del);
+     }
    _e_comp_wl_keyboard_leave(ec);
 }
 
@@ -2232,6 +2233,7 @@ _e_comp_wl_client_cb_del(void *data EINA_UNUSED, E_Client *ec)
    wl_signal_emit(&ec->comp_data->destroy_signal, &ec->comp_data->surface);
 
    _e_comp_wl_surface_state_finish(&ec->comp_data->pending);
+   E_FREE_FUNC(ec->comp_data->on_focus_timer, ecore_timer_del);
 
    /* The resource destroy callback will walk the state->frames list,
     * so move the list to a temporary first.
