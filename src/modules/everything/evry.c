@@ -207,10 +207,10 @@ evry_show(E_Zone *zone, E_Zone_Edge edge, const char *params, Eina_Bool popup)
 #endif
              ec->netwm.state.skip_taskbar = 1;
              EC_CHANGED(ec);
+             evas_object_event_callback_add(ec->frame, EVAS_CALLBACK_FOCUS_OUT, _evry_focus_out, win);
           }
 
         win->grab = 1;
-        evas_object_event_callback_add(ec->frame, EVAS_CALLBACK_FOCUS_OUT, _evry_focus_out, win);
      }
 
    evry_history_load();
