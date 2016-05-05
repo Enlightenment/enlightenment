@@ -1,8 +1,10 @@
 #define E_COMP_WL
 #include "e.h"
 
+
+#include <uuid.h>
 #include "e_comp_wl_screenshooter_server.h"
-#include "session-recovery-server-protocol.h"
+#include "session-recovery.h"
 #include "www-protocol.h"
 
 static void
@@ -24,9 +26,62 @@ _e_comp_wl_extensions_client_move_end(void *d EINA_UNUSED, E_Client *ec)
 }
 
 static void
-_e_comp_wl_sr_cb_provide_uuid(struct wl_client *client EINA_UNUSED, struct wl_resource *resource EINA_UNUSED, const char *uuid)
+_e_comp_wl_session_recovery_get_uuid(struct wl_client *client EINA_UNUSED, struct wl_resource *resource, struct wl_resource *surface)
 {
-   DBG("Provide UUID callback called for UUID: %s", uuid);
+   E_Client *ec;
+   uuid_t u;
+   char uuid[37];
+
+   ec = wl_resource_get_user_data(surface);
+   if (e_object_is_del(E_OBJECT(ec))) return;
+   if (ec->internal || ec->uuid) return;
+   uuid_generate(u);
+   uuid_unparse_lower(u, uuid);
+   eina_stringshare_replace(&ec->uuid, uuid);
+   zwp_e_session_recovery_send_create_uuid(resource, surface, uuid);
+   if (ec->remember)
+     e_remember_unuse(ec->remember);
+   ec->remember = e_remember_new();
+   e_remember_use(ec->remember);
+   ec->remember->apply = E_REMEMBER_APPLY_POS | E_REMEMBER_APPLY_DESKTOP |
+                         E_REMEMBER_APPLY_LAYER | E_REMEMBER_APPLY_ZONE | E_REMEMBER_APPLY_UUID;
+   e_remember_update(ec);
+}
+
+static void
+_e_comp_wl_session_recovery_set_uuid(struct wl_client *client EINA_UNUSED, struct wl_resource *resource EINA_UNUSED, struct wl_resource *surface, const char *uuid)
+{
+   E_Client *ec;
+   E_Remember *rem;
+
+   ec = wl_resource_get_user_data(surface);
+   if (e_object_is_del(E_OBJECT(ec))) return;
+   if (ec->internal || ec->uuid) return; //FIXME: error
+   eina_stringshare_replace(&ec->uuid, uuid);
+   rem = e_remember_find_usable(ec);
+   if ((!rem) || (rem == ec->remember)) return;
+   if (ec->remember)
+     e_remember_unuse(ec->remember);
+   ec->remember = rem;
+   e_remember_use(rem);
+   e_remember_apply(rem, ec);
+   ec->re_manage = 1;
+}
+
+static void
+_e_comp_wl_session_recovery_destroy_uuid(struct wl_client *client EINA_UNUSED, struct wl_resource *resource EINA_UNUSED, struct wl_resource *surface, const char *uuid)
+{
+   E_Client *ec;
+
+   ec = wl_resource_get_user_data(surface);
+   if (!eina_streq(ec->uuid, uuid)) return; //FIXME: error
+   eina_stringshare_replace(&ec->uuid, NULL);
+   e_remember_unuse(ec->remember);
+   e_remember_del(ec->remember);
+   ec->remember = e_remember_find_usable(ec);
+   if (!ec->remember) return;
+   e_remember_use(ec->remember);
+   e_remember_apply(ec->remember, ec);
 }
 
 static void
@@ -145,7 +200,9 @@ _e_comp_wl_www_cb_create(struct wl_client *client, struct wl_resource *resource,
 
 static const struct zwp_e_session_recovery_interface _e_session_recovery_interface =
 {
-   _e_comp_wl_sr_cb_provide_uuid,
+   _e_comp_wl_session_recovery_get_uuid,
+   _e_comp_wl_session_recovery_set_uuid,
+   _e_comp_wl_session_recovery_destroy_uuid,
 };
 
 static const struct screenshooter_interface _e_screenshooter_interface =

@@ -133,7 +133,6 @@ void *alloca (size_t);
 
 # ifdef HAVE_WAYLAND
 #  include <Ecore_Wl2.h>
-#  include <uuid.h>
 # endif
 
 # ifdef E_API

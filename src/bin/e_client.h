@@ -686,9 +686,7 @@ struct E_Client
 
    E_Focus_Policy             focus_policy_override;
 
-#ifdef HAVE_WAYLAND
-   uuid_t uuid;
-#endif
+   Eina_Stringshare *uuid;
 
    Eina_Bool override : 1;
    Eina_Bool input_only : 1;

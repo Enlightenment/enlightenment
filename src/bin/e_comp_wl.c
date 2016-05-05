@@ -1603,15 +1603,13 @@ _e_comp_wl_compositor_cb_surface_create(struct wl_client *client, struct wl_reso
 
         ec = e_client_new(ep, 0, 0);
      }
-   if (ec)
-     {
-        if (ec->new_client)
-          e_comp->new_clients--;
-        ec->new_client = 0;
-        if ((!ec->client.w) && (ec->client.h))
-          ec->client.w = ec->client.h = 1;
-        ec->comp_data->surface = res;
-     }
+   if (ec->new_client)
+     e_comp->new_clients--;
+   ec->new_client = 0;
+   if ((!ec->client.w) && (ec->client.h))
+     ec->client.w = ec->client.h = 1;
+   ec->comp_data->surface = res;
+   ec->netwm.pid = pid;
 
    /* set reference to pixmap so we can fetch it later */
    DBG("\tUsing Client: %p", ec);

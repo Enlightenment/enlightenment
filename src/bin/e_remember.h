@@ -35,6 +35,7 @@ typedef struct _E_Remember E_Remember;
 #define E_REMEMBER_APPLY_FULLSCREEN       (1 << 15)
 #define E_REMEMBER_APPLY_OFFER_RESISTANCE (1 << 16)
 #define E_REMEMBER_APPLY_OPACITY          (1 << 17)
+#define E_REMEMBER_APPLY_UUID             (1 << 18)
 
 #define E_REMEMBER_INTERNAL_DIALOGS       (1 << 0)
 #define E_REMEMBER_INTERNAL_FM_WINS       (1 << 1)
@@ -109,6 +110,8 @@ struct _E_Remember
       const char   *desktop_file;
       unsigned char opacity;
    } prop;
+   Eina_Stringshare *uuid;
+   int pid;
 };
 
 EINTERN int      e_remember_init(E_Startup_Mode mode);
@@ -124,5 +127,7 @@ E_API void        e_remember_match_update(E_Remember *rem);
 E_API void        e_remember_update(E_Client *ec);
 E_API int         e_remember_default_match_set(E_Remember *rem, E_Client *ec);
 E_API void        e_remember_internal_save(void);
+
+E_API void e_remember_apply(E_Remember *rem, E_Client *ec);
 #endif
 #endif

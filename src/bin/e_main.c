@@ -536,19 +536,6 @@ main(int argc, char **argv)
    _e_main_shutdown_push(e_alert_shutdown);
 #endif
 
-#if 0
-//#ifdef HAVE_WAYLAND
-   /* init uuid store for window/surface properties */
-   TS("E_UUID_Store Init");
-   if (!e_uuid_store_init())
-     {
-        e_error_message_show(_("Enlightenment cannot initialize its UUID store.\n"));
-        _e_main_shutdown(-1);
-     }
-   TS("E_UUID_Store Init Done");
-   _e_main_shutdown_push(e_uuid_store_shutdown);
-#endif
-
    TS("E Directories Init");
    /* setup directories we will be using for configurations storage etc. */
    if (!_e_main_dirs_init())

@@ -268,411 +268,10 @@ e_remember_del(E_Remember *rem)
    _e_remember_free(rem);
 }
 
-E_API E_Remember *
-e_remember_find_usable(E_Client *ec)
-{
-   E_Remember *rem;
-
-   rem = _e_remember_find(ec, 1);
-   return rem;
-}
-
-E_API E_Remember *
-e_remember_find(E_Client *ec)
-{
-   E_Remember *rem;
-
-   rem = _e_remember_find(ec, 0);
-   return rem;
-}
-
 E_API void
-e_remember_match_update(E_Remember *rem)
+e_remember_apply(E_Remember *rem, E_Client *ec)
 {
-   int max_count = 0;
-
-   if (rem->match & E_REMEMBER_MATCH_NAME) max_count += 2;
-   if (rem->match & E_REMEMBER_MATCH_CLASS) max_count += 2;
-   if (rem->match & E_REMEMBER_MATCH_TITLE) max_count += 2;
-   if (rem->match & E_REMEMBER_MATCH_ROLE) max_count += 2;
-   if (rem->match & E_REMEMBER_MATCH_TYPE) max_count += 2;
-   if (rem->match & E_REMEMBER_MATCH_TRANSIENT) max_count += 2;
-   if (rem->apply_first_only) max_count++;
-
-   if (max_count != rem->max_score)
-     {
-        /* The number of matches for this remember has changed so we
-         * need to remove from list and insert back into the appropriate
-         * location. */
-        Eina_List *l = NULL;
-        E_Remember *r;
-
-        rem->max_score = max_count;
-        e_config->remembers = eina_list_remove(e_config->remembers, rem);
-
-        EINA_LIST_FOREACH(e_config->remembers, l, r)
-          {
-             if (r->max_score <= rem->max_score) break;
-          }
-
-        if (l)
-          e_config->remembers = eina_list_prepend_relative_list(e_config->remembers, rem, l);
-        else
-          e_config->remembers = eina_list_append(e_config->remembers, rem);
-     }
-}
-
-E_API int
-e_remember_default_match_set(E_Remember *rem, E_Client *ec)
-{
-   const char *title, *clasz, *name, *role;
-   int match;
-
-   eina_stringshare_replace(&rem->name, NULL);
-   eina_stringshare_replace(&rem->class, NULL);
-   eina_stringshare_replace(&rem->title, NULL);
-   eina_stringshare_replace(&rem->role, NULL);
-
-   name = ec->icccm.name;
-   if (!name || name[0] == 0) name = NULL;
-   clasz = ec->icccm.class;
-   if (!clasz || clasz[0] == 0) clasz = NULL;
-   role = ec->icccm.window_role;
-   if (!role || role[0] == 0) role = NULL;
-
-   match = E_REMEMBER_MATCH_TRANSIENT;
-   if (ec->icccm.transient_for != 0)
-     rem->transient = 1;
-   else
-     rem->transient = 0;
-
-   if (name && clasz)
-     {
-        match |= E_REMEMBER_MATCH_NAME | E_REMEMBER_MATCH_CLASS;
-        rem->name = eina_stringshare_ref(name);
-        rem->class = eina_stringshare_ref(clasz);
-     }
-   else if ((title = e_client_util_name_get(ec)) && title[0])
-     {
-        match |= E_REMEMBER_MATCH_TITLE;
-        rem->title = eina_stringshare_ref(title);
-     }
-   if (role)
-     {
-        match |= E_REMEMBER_MATCH_ROLE;
-        rem->role = eina_stringshare_ref(role);
-     }
-   if (ec->netwm.type != E_WINDOW_TYPE_UNKNOWN)
-     {
-        match |= E_REMEMBER_MATCH_TYPE;
-        rem->type = ec->netwm.type;
-     }
-
-   rem->match = match;
-
-   return match;
-}
-
-E_API void
-e_remember_update(E_Client *ec)
-{
-#ifdef HAVE_WAYLAND
-   /* Use this as e_remeber_update is called in all the right places already */
-   e_uuid_store_entry_update(ec->uuid, ec);
-#endif
-   if (ec->new_client) return;
-   if (!ec->remember) return;
-   if (ec->remember->keep_settings) return;
-   _e_remember_update(ec, ec->remember);
-   e_config_save_queue();
-}
-
-static void
-_e_remember_event_free(void *d EINA_UNUSED, void *event)
-{
-   E_Event_Remember_Update *ev = event;
-   UNREFD(ev->ec, 10);
-   e_object_unref(E_OBJECT(ev->ec));
-   free(ev);
-}
-
-static void
-_e_remember_update(E_Client *ec, E_Remember *rem)
-{
-   if (rem->apply & E_REMEMBER_APPLY_POS ||
-       rem->apply & E_REMEMBER_APPLY_SIZE)
-     {
-        if (ec->fullscreen || ec->maximized)
-          {
-             rem->prop.pos_x = ec->saved.x;
-             rem->prop.pos_y = ec->saved.y;
-             rem->prop.pos_w = ec->saved.w;
-             rem->prop.pos_h = ec->saved.h;
-          }
-        else
-          {
-             rem->prop.pos_x = ec->x - ec->zone->x;
-             rem->prop.pos_y = ec->y - ec->zone->y;
-             rem->prop.res_x = ec->zone->w;
-             rem->prop.res_y = ec->zone->h;
-             rem->prop.pos_w = ec->client.w;
-             rem->prop.pos_h = ec->client.h;
-             rem->prop.w = ec->client.w;
-             rem->prop.h = ec->client.h;
-          }
-        rem->prop.maximize = ec->maximized & E_MAXIMIZE_DIRECTION;
-     }
-   if (rem->apply & E_REMEMBER_APPLY_LAYER)
-     {
-        if (ec->fullscreen)
-          rem->prop.layer = ec->saved.layer;
-        else
-          rem->prop.layer = ec->layer;
-     }
-   if (rem->apply & E_REMEMBER_APPLY_LOCKS)
-     {
-        rem->prop.lock_user_location = ec->lock_user_location;
-        rem->prop.lock_client_location = ec->lock_client_location;
-        rem->prop.lock_user_size = ec->lock_user_size;
-        rem->prop.lock_client_size = ec->lock_client_size;
-        rem->prop.lock_user_stacking = ec->lock_user_stacking;
-        rem->prop.lock_client_stacking = ec->lock_client_stacking;
-        rem->prop.lock_user_iconify = ec->lock_user_iconify;
-        rem->prop.lock_client_iconify = ec->lock_client_iconify;
-        rem->prop.lock_user_desk = ec->lock_user_desk;
-        rem->prop.lock_client_desk = ec->lock_client_desk;
-        rem->prop.lock_user_sticky = ec->lock_user_sticky;
-        rem->prop.lock_client_sticky = ec->lock_client_sticky;
-        rem->prop.lock_user_shade = ec->lock_user_shade;
-        rem->prop.lock_client_shade = ec->lock_client_shade;
-        rem->prop.lock_user_maximize = ec->lock_user_maximize;
-        rem->prop.lock_client_maximize = ec->lock_client_maximize;
-        rem->prop.lock_user_fullscreen = ec->lock_user_fullscreen;
-        rem->prop.lock_client_fullscreen = ec->lock_client_fullscreen;
-        rem->prop.lock_border = ec->lock_border;
-        rem->prop.lock_close = ec->lock_close;
-        rem->prop.lock_focus_in = ec->lock_focus_in;
-        rem->prop.lock_focus_out = ec->lock_focus_out;
-        rem->prop.lock_life = ec->lock_life;
-     }
-   if (rem->apply & E_REMEMBER_APPLY_SHADE)
-     {
-        if (ec->shaded)
-          rem->prop.shaded = (100 + ec->shade_dir);
-        else
-          rem->prop.shaded = (50 + ec->shade_dir);
-     }
-   if (rem->apply & E_REMEMBER_APPLY_ZONE)
-     {
-        rem->prop.zone = ec->zone->num;
-     }
-   if (rem->apply & E_REMEMBER_APPLY_SKIP_WINLIST)
-     rem->prop.skip_winlist = ec->user_skip_winlist;
-   if (rem->apply & E_REMEMBER_APPLY_STICKY)
-     rem->prop.sticky = ec->sticky;
-   if (rem->apply & E_REMEMBER_APPLY_SKIP_PAGER)
-     rem->prop.skip_pager = ec->netwm.state.skip_pager;
-   if (rem->apply & E_REMEMBER_APPLY_SKIP_TASKBAR)
-     rem->prop.skip_taskbar = ec->netwm.state.skip_taskbar;
-   if (rem->apply & E_REMEMBER_APPLY_ICON_PREF)
-     rem->prop.icon_preference = ec->icon_preference;
-   if (rem->apply & E_REMEMBER_APPLY_DESKTOP)
-     e_desk_xy_get(ec->desk, &rem->prop.desk_x, &rem->prop.desk_y);
-   if (rem->apply & E_REMEMBER_APPLY_FULLSCREEN)
-     rem->prop.fullscreen = ec->fullscreen;
-   if (rem->apply & E_REMEMBER_APPLY_OFFER_RESISTANCE)
-     rem->prop.offer_resistance = ec->offer_resistance;
-   if (rem->apply & E_REMEMBER_APPLY_OPACITY)
-     rem->prop.opacity = ec->netwm.opacity;
-   if (rem->apply & E_REMEMBER_APPLY_BORDER)
-     {
-        if (ec->borderless)
-          eina_stringshare_replace(&rem->prop.border, "borderless");
-        else
-          eina_stringshare_replace(&rem->prop.border, ec->bordername);
-     }
-   rem->no_reopen = ec->internal_no_reopen;
-   {
-      E_Event_Remember_Update *ev;
-
-      ev = malloc(sizeof(E_Event_Remember_Update));
-      if (!ev) return;
-      ev->ec = ec;
-      REFD(ec, 10);
-      e_object_ref(E_OBJECT(ec));
-      ecore_event_add(E_EVENT_REMEMBER_UPDATE, ev, _e_remember_event_free, NULL);
-   }
-}
-
-/* local subsystem functions */
-static E_Remember *
-_e_remember_find(E_Client *ec, int check_usable)
-{
-   Eina_List *l = NULL;
-   E_Remember *rem;
-
-#if REMEMBER_SIMPLE
-   EINA_LIST_FOREACH(e_config->remembers, l, rem)
-     {
-        int required_matches;
-        int matches;
-        const char *title = "";
-
-        matches = 0;
-        required_matches = 0;
-        if (rem->match & E_REMEMBER_MATCH_NAME) required_matches++;
-        if (rem->match & E_REMEMBER_MATCH_CLASS) required_matches++;
-        if (rem->match & E_REMEMBER_MATCH_TITLE) required_matches++;
-        if (rem->match & E_REMEMBER_MATCH_ROLE) required_matches++;
-        if (rem->match & E_REMEMBER_MATCH_TYPE) required_matches++;
-        if (rem->match & E_REMEMBER_MATCH_TRANSIENT) required_matches++;
-
-        if (ec->netwm.name) title = ec->netwm.name;
-        else title = ec->icccm.title;
-
-        if ((rem->match & E_REMEMBER_MATCH_NAME) &&
-            ((!e_util_strcmp(rem->name, ec->icccm.name)) ||
-             (e_util_both_str_empty(rem->name, ec->icccm.name))))
-          matches++;
-        if ((rem->match & E_REMEMBER_MATCH_CLASS) &&
-            ((!e_util_strcmp(rem->class, ec->icccm.class)) ||
-             (e_util_both_str_empty(rem->class, ec->icccm.class))))
-          matches++;
-        if ((rem->match & E_REMEMBER_MATCH_TITLE) &&
-            ((!e_util_strcmp(rem->title, title)) ||
-             (e_util_both_str_empty(rem->title, title))))
-          matches++;
-        if ((rem->match & E_REMEMBER_MATCH_ROLE) &&
-            ((!e_util_strcmp(rem->role, ec->icccm.window_role)) ||
-             (e_util_both_str_empty(rem->role, ec->icccm.window_role))))
-          matches++;
-        if ((rem->match & E_REMEMBER_MATCH_TYPE) &&
-            (rem->type == ec->netwm.type))
-          matches++;
-        if ((rem->match & E_REMEMBER_MATCH_TRANSIENT) &&
-            (((rem->transient) && (ec->icccm.transient_for != 0)) ||
-             ((!rem->transient) && (ec->icccm.transient_for == 0))))
-          matches++;
-        if (matches >= required_matches)
-          return rem;
-     }
-   return NULL;
-#endif
-#if REMEMBER_HIERARCHY
-   /* This search method finds the best possible match available and is
-    * based on the fact that the list is sorted, with those remembers
-    * with the most possible matches at the start of the list. This
-    * means, as soon as a valid match is found, it is a match
-    * within the set of best possible matches. */
-   EINA_LIST_FOREACH(e_config->remembers, l, rem)
-     {
-        const char *title = "";
-
-        if ((check_usable) && (!e_remember_usable_get(rem)))
-          continue;
-
-        if (ec->netwm.name) title = ec->netwm.name;
-        else title = ec->icccm.title;
-
-        /* For each type of match, check whether the match is
-         * required, and if it is, check whether there's a match. If
-         * it fails, then go to the next remember */
-        if (rem->match & E_REMEMBER_MATCH_NAME &&
-            !e_util_glob_match(ec->icccm.name, rem->name))
-          continue;
-        if (rem->match & E_REMEMBER_MATCH_CLASS &&
-            !e_util_glob_match(ec->icccm.class, rem->class))
-          continue;
-        if (rem->match & E_REMEMBER_MATCH_TITLE &&
-            !e_util_glob_match(title, rem->title))
-          continue;
-        if (rem->match & E_REMEMBER_MATCH_ROLE &&
-            e_util_strcmp(rem->role, ec->icccm.window_role) &&
-            !e_util_both_str_empty(rem->role, ec->icccm.window_role))
-          continue;
-        if (rem->match & E_REMEMBER_MATCH_TYPE &&
-            rem->type != (int)ec->netwm.type)
-          continue;
-        if (rem->match & E_REMEMBER_MATCH_TRANSIENT &&
-            !(rem->transient && ec->icccm.transient_for != 0) &&
-            !(!rem->transient) && (ec->icccm.transient_for == 0))
-          continue;
-
-        return rem;
-     }
-
-   return NULL;
-#endif
-}
-
-static void
-_e_remember_free(E_Remember *rem)
-{
-   e_config->remembers = eina_list_remove(e_config->remembers, rem);
-   if (rem->name) eina_stringshare_del(rem->name);
-   if (rem->class) eina_stringshare_del(rem->class);
-   if (rem->title) eina_stringshare_del(rem->title);
-   if (rem->role) eina_stringshare_del(rem->role);
-   if (rem->prop.border) eina_stringshare_del(rem->prop.border);
-   if (rem->prop.command) eina_stringshare_del(rem->prop.command);
-   if (rem->prop.desktop_file) eina_stringshare_del(rem->prop.desktop_file);
-   free(rem);
-}
-
-static void
-_e_remember_cb_hook_eval_post_new_client(void *data EINA_UNUSED, E_Client *ec)
-{
-   // remember only when window was modified
-   // if (!ec->new_client) return;
-   if (e_client_util_ignored_get(ec)) return;
-   if ((ec->internal) && (!ec->remember) &&
-       (e_config->remember_internal_windows) &&
-       (!ec->internal_no_remember) &&
-       (ec->icccm.class && ec->icccm.class[0]))
-     {
-        E_Remember *rem;
-
-        if (!strncmp(ec->icccm.class, "e_fwin", 6))
-          {
-             if (!e_config->remember_internal_fm_windows) return;
-          }
-        else
-          {
-             if (!e_config->remember_internal_windows)
-               return;
-          }
-
-        rem = e_remember_new();
-        if (!rem) return;
-
-        e_remember_default_match_set(rem, ec);
-
-        rem->apply = E_REMEMBER_APPLY_POS | E_REMEMBER_APPLY_SIZE | E_REMEMBER_APPLY_BORDER;
-
-        e_remember_use(rem);
-        e_remember_update(ec);
-        ec->remember = rem;
-     }
-}
-
-static void
-_e_remember_cb_hook_pre_post_fetch(void *data EINA_UNUSED, E_Client *ec)
-{
-   E_Remember *rem = NULL;
    int temporary = 0;
-
-   if ((!ec->new_client) || ec->internal_no_remember || e_client_util_ignored_get(ec)) return;
-
-   if (!ec->remember)
-     {
-        rem = e_remember_find_usable(ec);
-        if (rem)
-          {
-             ec->remember = rem;
-             e_remember_use(rem);
-          }
-     }
-
    if (ec->internal && remembers && ec->icccm.class && ec->icccm.class[0])
      {
         Eina_List *l;
@@ -950,6 +549,423 @@ _e_remember_cb_hook_pre_post_fetch(void *data EINA_UNUSED, E_Client *ec)
 
    if (temporary)
      _e_remember_free(rem);
+}
+
+E_API E_Remember *
+e_remember_find_usable(E_Client *ec)
+{
+   E_Remember *rem;
+
+   rem = _e_remember_find(ec, 1);
+   return rem;
+}
+
+E_API E_Remember *
+e_remember_find(E_Client *ec)
+{
+   E_Remember *rem;
+
+   rem = _e_remember_find(ec, 0);
+   return rem;
+}
+
+E_API void
+e_remember_match_update(E_Remember *rem)
+{
+   int max_count = 0;
+
+   if (rem->match & E_REMEMBER_MATCH_NAME) max_count += 2;
+   if (rem->match & E_REMEMBER_MATCH_CLASS) max_count += 2;
+   if (rem->match & E_REMEMBER_MATCH_TITLE) max_count += 2;
+   if (rem->match & E_REMEMBER_MATCH_ROLE) max_count += 2;
+   if (rem->match & E_REMEMBER_MATCH_TYPE) max_count += 2;
+   if (rem->match & E_REMEMBER_MATCH_TRANSIENT) max_count += 2;
+   if (rem->apply_first_only) max_count++;
+
+   if (max_count != rem->max_score)
+     {
+        /* The number of matches for this remember has changed so we
+         * need to remove from list and insert back into the appropriate
+         * location. */
+        Eina_List *l = NULL;
+        E_Remember *r;
+
+        rem->max_score = max_count;
+        e_config->remembers = eina_list_remove(e_config->remembers, rem);
+
+        EINA_LIST_FOREACH(e_config->remembers, l, r)
+          {
+             if (r->max_score <= rem->max_score) break;
+          }
+
+        if (l)
+          e_config->remembers = eina_list_prepend_relative_list(e_config->remembers, rem, l);
+        else
+          e_config->remembers = eina_list_append(e_config->remembers, rem);
+     }
+}
+
+E_API int
+e_remember_default_match_set(E_Remember *rem, E_Client *ec)
+{
+   const char *title, *clasz, *name, *role;
+   int match;
+
+   eina_stringshare_replace(&rem->name, NULL);
+   eina_stringshare_replace(&rem->class, NULL);
+   eina_stringshare_replace(&rem->title, NULL);
+   eina_stringshare_replace(&rem->role, NULL);
+
+   name = ec->icccm.name;
+   if (!name || name[0] == 0) name = NULL;
+   clasz = ec->icccm.class;
+   if (!clasz || clasz[0] == 0) clasz = NULL;
+   role = ec->icccm.window_role;
+   if (!role || role[0] == 0) role = NULL;
+
+   match = E_REMEMBER_MATCH_TRANSIENT;
+   if (ec->icccm.transient_for != 0)
+     rem->transient = 1;
+   else
+     rem->transient = 0;
+
+   if (name && clasz)
+     {
+        match |= E_REMEMBER_MATCH_NAME | E_REMEMBER_MATCH_CLASS;
+        rem->name = eina_stringshare_ref(name);
+        rem->class = eina_stringshare_ref(clasz);
+     }
+   else if ((title = e_client_util_name_get(ec)) && title[0])
+     {
+        match |= E_REMEMBER_MATCH_TITLE;
+        rem->title = eina_stringshare_ref(title);
+     }
+   if (role)
+     {
+        match |= E_REMEMBER_MATCH_ROLE;
+        rem->role = eina_stringshare_ref(role);
+     }
+   if (ec->netwm.type != E_WINDOW_TYPE_UNKNOWN)
+     {
+        match |= E_REMEMBER_MATCH_TYPE;
+        rem->type = ec->netwm.type;
+     }
+
+   rem->match = match;
+
+   return match;
+}
+
+E_API void
+e_remember_update(E_Client *ec)
+{
+   if (ec->new_client) return;
+   if (!ec->remember) return;
+   if (ec->remember->keep_settings) return;
+   _e_remember_update(ec, ec->remember);
+   e_config_save_queue();
+}
+
+static void
+_e_remember_event_free(void *d EINA_UNUSED, void *event)
+{
+   E_Event_Remember_Update *ev = event;
+   UNREFD(ev->ec, 10);
+   e_object_unref(E_OBJECT(ev->ec));
+   free(ev);
+}
+
+static void
+_e_remember_update(E_Client *ec, E_Remember *rem)
+{
+   if (rem->apply & E_REMEMBER_APPLY_POS ||
+       rem->apply & E_REMEMBER_APPLY_SIZE)
+     {
+        if (ec->fullscreen || ec->maximized)
+          {
+             rem->prop.pos_x = ec->saved.x;
+             rem->prop.pos_y = ec->saved.y;
+             rem->prop.pos_w = ec->saved.w;
+             rem->prop.pos_h = ec->saved.h;
+          }
+        else
+          {
+             rem->prop.pos_x = ec->x - ec->zone->x;
+             rem->prop.pos_y = ec->y - ec->zone->y;
+             rem->prop.res_x = ec->zone->w;
+             rem->prop.res_y = ec->zone->h;
+             rem->prop.pos_w = ec->client.w;
+             rem->prop.pos_h = ec->client.h;
+             rem->prop.w = ec->client.w;
+             rem->prop.h = ec->client.h;
+          }
+        rem->prop.maximize = ec->maximized & E_MAXIMIZE_DIRECTION;
+     }
+   if (rem->apply & E_REMEMBER_APPLY_LAYER)
+     {
+        if (ec->fullscreen)
+          rem->prop.layer = ec->saved.layer;
+        else
+          rem->prop.layer = ec->layer;
+     }
+   if (rem->apply & E_REMEMBER_APPLY_LOCKS)
+     {
+        rem->prop.lock_user_location = ec->lock_user_location;
+        rem->prop.lock_client_location = ec->lock_client_location;
+        rem->prop.lock_user_size = ec->lock_user_size;
+        rem->prop.lock_client_size = ec->lock_client_size;
+        rem->prop.lock_user_stacking = ec->lock_user_stacking;
+        rem->prop.lock_client_stacking = ec->lock_client_stacking;
+        rem->prop.lock_user_iconify = ec->lock_user_iconify;
+        rem->prop.lock_client_iconify = ec->lock_client_iconify;
+        rem->prop.lock_user_desk = ec->lock_user_desk;
+        rem->prop.lock_client_desk = ec->lock_client_desk;
+        rem->prop.lock_user_sticky = ec->lock_user_sticky;
+        rem->prop.lock_client_sticky = ec->lock_client_sticky;
+        rem->prop.lock_user_shade = ec->lock_user_shade;
+        rem->prop.lock_client_shade = ec->lock_client_shade;
+        rem->prop.lock_user_maximize = ec->lock_user_maximize;
+        rem->prop.lock_client_maximize = ec->lock_client_maximize;
+        rem->prop.lock_user_fullscreen = ec->lock_user_fullscreen;
+        rem->prop.lock_client_fullscreen = ec->lock_client_fullscreen;
+        rem->prop.lock_border = ec->lock_border;
+        rem->prop.lock_close = ec->lock_close;
+        rem->prop.lock_focus_in = ec->lock_focus_in;
+        rem->prop.lock_focus_out = ec->lock_focus_out;
+        rem->prop.lock_life = ec->lock_life;
+     }
+   if (rem->apply & E_REMEMBER_APPLY_SHADE)
+     {
+        if (ec->shaded)
+          rem->prop.shaded = (100 + ec->shade_dir);
+        else
+          rem->prop.shaded = (50 + ec->shade_dir);
+     }
+   if (rem->apply & E_REMEMBER_APPLY_ZONE)
+     {
+        rem->prop.zone = ec->zone->num;
+     }
+   if (rem->apply & E_REMEMBER_APPLY_SKIP_WINLIST)
+     rem->prop.skip_winlist = ec->user_skip_winlist;
+   if (rem->apply & E_REMEMBER_APPLY_STICKY)
+     rem->prop.sticky = ec->sticky;
+   if (rem->apply & E_REMEMBER_APPLY_SKIP_PAGER)
+     rem->prop.skip_pager = ec->netwm.state.skip_pager;
+   if (rem->apply & E_REMEMBER_APPLY_SKIP_TASKBAR)
+     rem->prop.skip_taskbar = ec->netwm.state.skip_taskbar;
+   if (rem->apply & E_REMEMBER_APPLY_ICON_PREF)
+     rem->prop.icon_preference = ec->icon_preference;
+   if (rem->apply & E_REMEMBER_APPLY_DESKTOP)
+     e_desk_xy_get(ec->desk, &rem->prop.desk_x, &rem->prop.desk_y);
+   if (rem->apply & E_REMEMBER_APPLY_FULLSCREEN)
+     rem->prop.fullscreen = ec->fullscreen;
+   if (rem->apply & E_REMEMBER_APPLY_OFFER_RESISTANCE)
+     rem->prop.offer_resistance = ec->offer_resistance;
+   if (rem->apply & E_REMEMBER_APPLY_OPACITY)
+     rem->prop.opacity = ec->netwm.opacity;
+   if (rem->apply & E_REMEMBER_APPLY_BORDER)
+     {
+        if (ec->borderless)
+          eina_stringshare_replace(&rem->prop.border, "borderless");
+        else
+          eina_stringshare_replace(&rem->prop.border, ec->bordername);
+     }
+   if (rem->apply & E_REMEMBER_APPLY_UUID)
+     {
+        eina_stringshare_refplace(&rem->uuid, ec->uuid);
+        rem->pid = ec->netwm.pid;
+        rem->apply_first_only = 1;
+     }
+   rem->no_reopen = ec->internal_no_reopen;
+   {
+      E_Event_Remember_Update *ev;
+
+      ev = malloc(sizeof(E_Event_Remember_Update));
+      if (!ev) return;
+      ev->ec = ec;
+      REFD(ec, 10);
+      e_object_ref(E_OBJECT(ec));
+      ecore_event_add(E_EVENT_REMEMBER_UPDATE, ev, _e_remember_event_free, NULL);
+   }
+}
+
+/* local subsystem functions */
+static E_Remember *
+_e_remember_find(E_Client *ec, int check_usable)
+{
+   Eina_List *l = NULL;
+   E_Remember *rem;
+
+#if REMEMBER_SIMPLE
+   EINA_LIST_FOREACH(e_config->remembers, l, rem)
+     {
+        int required_matches;
+        int matches;
+        const char *title = "";
+
+        matches = 0;
+        required_matches = 0;
+        if (rem->match & E_REMEMBER_MATCH_NAME) required_matches++;
+        if (rem->match & E_REMEMBER_MATCH_CLASS) required_matches++;
+        if (rem->match & E_REMEMBER_MATCH_TITLE) required_matches++;
+        if (rem->match & E_REMEMBER_MATCH_ROLE) required_matches++;
+        if (rem->match & E_REMEMBER_MATCH_TYPE) required_matches++;
+        if (rem->match & E_REMEMBER_MATCH_TRANSIENT) required_matches++;
+
+        if (ec->netwm.name) title = ec->netwm.name;
+        else title = ec->icccm.title;
+
+        if ((rem->match & E_REMEMBER_MATCH_NAME) &&
+            ((!e_util_strcmp(rem->name, ec->icccm.name)) ||
+             (e_util_both_str_empty(rem->name, ec->icccm.name))))
+          matches++;
+        if ((rem->match & E_REMEMBER_MATCH_CLASS) &&
+            ((!e_util_strcmp(rem->class, ec->icccm.class)) ||
+             (e_util_both_str_empty(rem->class, ec->icccm.class))))
+          matches++;
+        if ((rem->match & E_REMEMBER_MATCH_TITLE) &&
+            ((!e_util_strcmp(rem->title, title)) ||
+             (e_util_both_str_empty(rem->title, title))))
+          matches++;
+        if ((rem->match & E_REMEMBER_MATCH_ROLE) &&
+            ((!e_util_strcmp(rem->role, ec->icccm.window_role)) ||
+             (e_util_both_str_empty(rem->role, ec->icccm.window_role))))
+          matches++;
+        if ((rem->match & E_REMEMBER_MATCH_TYPE) &&
+            (rem->type == ec->netwm.type))
+          matches++;
+        if ((rem->match & E_REMEMBER_MATCH_TRANSIENT) &&
+            (((rem->transient) && (ec->icccm.transient_for != 0)) ||
+             ((!rem->transient) && (ec->icccm.transient_for == 0))))
+          matches++;
+        if (matches >= required_matches)
+          return rem;
+     }
+   return NULL;
+#endif
+#if REMEMBER_HIERARCHY
+   /* This search method finds the best possible match available and is
+    * based on the fact that the list is sorted, with those remembers
+    * with the most possible matches at the start of the list. This
+    * means, as soon as a valid match is found, it is a match
+    * within the set of best possible matches. */
+   EINA_LIST_FOREACH(e_config->remembers, l, rem)
+     {
+        const char *title = "";
+
+        if ((check_usable) && (!e_remember_usable_get(rem)))
+          continue;
+
+        if (!eina_streq(rem->uuid, ec->uuid)) continue;
+        if (rem->uuid)
+          {
+             if (rem->pid != ec->netwm.pid) continue;
+             return rem;
+          }
+
+        if (ec->netwm.name) title = ec->netwm.name;
+        else title = ec->icccm.title;
+
+        /* For each type of match, check whether the match is
+         * required, and if it is, check whether there's a match. If
+         * it fails, then go to the next remember */
+        if (rem->match & E_REMEMBER_MATCH_NAME &&
+            !e_util_glob_match(ec->icccm.name, rem->name))
+          continue;
+        if (rem->match & E_REMEMBER_MATCH_CLASS &&
+            !e_util_glob_match(ec->icccm.class, rem->class))
+          continue;
+        if (rem->match & E_REMEMBER_MATCH_TITLE &&
+            !e_util_glob_match(title, rem->title))
+          continue;
+        if (rem->match & E_REMEMBER_MATCH_ROLE &&
+            e_util_strcmp(rem->role, ec->icccm.window_role) &&
+            !e_util_both_str_empty(rem->role, ec->icccm.window_role))
+          continue;
+        if (rem->match & E_REMEMBER_MATCH_TYPE &&
+            rem->type != (int)ec->netwm.type)
+          continue;
+        if (rem->match & E_REMEMBER_MATCH_TRANSIENT &&
+            !(rem->transient && ec->icccm.transient_for != 0) &&
+            !(!rem->transient) && (ec->icccm.transient_for == 0))
+          continue;
+
+        return rem;
+     }
+
+   return NULL;
+#endif
+}
+
+static void
+_e_remember_free(E_Remember *rem)
+{
+   e_config->remembers = eina_list_remove(e_config->remembers, rem);
+   if (rem->name) eina_stringshare_del(rem->name);
+   if (rem->class) eina_stringshare_del(rem->class);
+   if (rem->title) eina_stringshare_del(rem->title);
+   if (rem->role) eina_stringshare_del(rem->role);
+   if (rem->prop.border) eina_stringshare_del(rem->prop.border);
+   if (rem->prop.command) eina_stringshare_del(rem->prop.command);
+   if (rem->prop.desktop_file) eina_stringshare_del(rem->prop.desktop_file);
+   eina_stringshare_del(rem->uuid);
+   free(rem);
+}
+
+static void
+_e_remember_cb_hook_eval_post_new_client(void *data EINA_UNUSED, E_Client *ec)
+{
+   // remember only when window was modified
+   // if (!ec->new_client) return;
+   if (e_client_util_ignored_get(ec)) return;
+   if ((ec->internal) && (!ec->remember) &&
+       (e_config->remember_internal_windows) &&
+       (!ec->internal_no_remember) &&
+       (ec->icccm.class && ec->icccm.class[0]))
+     {
+        E_Remember *rem;
+
+        if (!strncmp(ec->icccm.class, "e_fwin", 6))
+          {
+             if (!e_config->remember_internal_fm_windows) return;
+          }
+        else
+          {
+             if (!e_config->remember_internal_windows)
+               return;
+          }
+
+        rem = e_remember_new();
+        if (!rem) return;
+
+        e_remember_default_match_set(rem, ec);
+
+        rem->apply = E_REMEMBER_APPLY_POS | E_REMEMBER_APPLY_SIZE | E_REMEMBER_APPLY_BORDER;
+
+        e_remember_use(rem);
+        e_remember_update(ec);
+        ec->remember = rem;
+     }
+}
+
+static void
+_e_remember_cb_hook_pre_post_fetch(void *data EINA_UNUSED, E_Client *ec)
+{
+   E_Remember *rem = NULL;
+
+   if ((!ec->new_client) || ec->internal_no_remember || e_client_util_ignored_get(ec)) return;
+
+   if (!ec->remember)
+     {
+        rem = e_remember_find_usable(ec);
+        if (rem)
+          {
+             ec->remember = rem;
+             e_remember_use(rem);
+          }
+     }
+
+   e_remember_apply(rem, ec);
 }
 
 static void

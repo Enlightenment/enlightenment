@@ -554,6 +554,7 @@ _e_client_free(E_Client *ec)
    eina_stringshare_replace(&ec->netwm.icon_name, NULL);
    eina_stringshare_replace(&ec->internal_icon, NULL);
    eina_stringshare_replace(&ec->internal_icon_key, NULL);
+   eina_stringshare_replace(&ec->uuid, NULL);
    
    focus_stack = eina_list_remove(focus_stack, ec);
    raise_stack = eina_list_remove(raise_stack, ec);
@@ -569,10 +570,6 @@ _e_client_free(E_Client *ec)
    ec->e.state.profile.wait_desk = NULL;
    evas_object_del(ec->frame);
    E_OBJECT(ec)->references--;
-
-#ifdef HAVE_WAYLAND
-   e_uuid_store_entry_del(ec->uuid);
-#endif
 
    free(ec);
 }
@@ -2345,10 +2342,6 @@ e_client_new(E_Pixmap *cp, int first_map, int internal)
    ec = E_OBJECT_ALLOC(E_Client, E_CLIENT_TYPE, _e_client_free);
    if (!ec) return NULL;
    e_object_del_func_set(E_OBJECT(ec), E_OBJECT_CLEANUP_FUNC(_e_client_del));
-
-#ifdef HAVE_WAYLAND
-   uuid_generate(ec->uuid);
-#endif
 
    ec->focus_policy_override = E_FOCUS_LAST;
    ec->w = 1;

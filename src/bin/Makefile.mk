@@ -221,7 +221,6 @@ src/bin/e_zone.h
 
 if HAVE_WAYLAND
 ENLIGHTENMENTHEADERS += \
-src/bin/e_uuid_store.h \
 src/bin/e_comp_wl_data.h \
 src/bin/e_comp_wl_input.h \
 src/bin/e_comp_wl.h
@@ -394,11 +393,10 @@ endif
 
 if HAVE_WAYLAND
 enlightenment_src += \
-src/bin/e_uuid_store.c \
 src/bin/generated/www-protocol.c \
 src/bin/generated/www-protocol.h \
-src/bin/generated/session-recovery-protocol.c \
-src/bin/generated/session-recovery-server-protocol.h \
+src/bin/generated/session-recovery.c \
+src/bin/generated/session-recovery.h \
 src/bin/generated/e_comp_wl_screenshooter_server.c \
 src/bin/generated/e_comp_wl_screenshooter_server.h \
 src/bin/e_comp_wl_data.c \
