@@ -3598,10 +3598,6 @@ e_client_maximize_geometry_get(const E_Client *ec, E_Maximize max, int *mx, int 
 
    switch (max & E_MAXIMIZE_TYPE)
      {
-      case E_MAXIMIZE_NONE:
-        return EINA_FALSE;
-        break;
-
       case E_MAXIMIZE_FULLSCREEN:
         w = ec->zone->w;
         h = ec->zone->h;
@@ -3749,6 +3745,8 @@ e_client_maximize_geometry_get(const E_Client *ec, E_Maximize max, int *mx, int 
              break;
           }
         break;
+      default:
+        return EINA_FALSE;
      }
    if (mx) *mx = x;
    if (my) *my = y;
