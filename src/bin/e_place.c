@@ -177,7 +177,7 @@ _e_place_desk_region_smart_obstacle_add(char *u_x, char *u_y, int **a_x, int **a
    if (by < zy)
      {
         bh += by;
-        by = zx;
+        by = zy;
      }
    if ((by + bh) > zy + zh) bh = zy + zh - by;
    if (by >= zy + zh) return;
