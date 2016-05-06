@@ -7,7 +7,7 @@ src_modules_xwayland_module_la_CPPFLAGS  = \
 $(MOD_CPPFLAGS) \
 @XWAYLAND_CFLAGS@ \
 @WAYLAND_CFLAGS@ \
--DXWAYLAND_BIN=\"@XWAYLAND_BIN@\"
+-DXWAYLAND_BIN=\"@xwayland@\"
 
 src_modules_xwayland_module_la_LIBADD   = $(MOD_LIBS) @XWAYLAND_LIBS@ @WAYLAND_LIBS@
 src_modules_xwayland_module_la_LDFLAGS = $(MOD_LDFLAGS)
