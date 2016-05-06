@@ -1,9 +1,11 @@
-#include <Eina.h>
-#include <Ecore.h>
-#include <pulse/pulseaudio.h>
-
+#include "e.h"
 #include "emix.h"
 
+#include <pulse/pulseaudio.h>
+
+#undef ERR
+#undef DBG
+#undef WRN
 #define ERR(...)      EINA_LOG_ERR(__VA_ARGS__)
 #define DBG(...)      EINA_LOG_DBG(__VA_ARGS__)
 #define WRN(...)      EINA_LOG_WARN(__VA_ARGS__)
