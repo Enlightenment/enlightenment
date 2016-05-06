@@ -1,6 +1,10 @@
 #ifndef EMIX_H
 #define EMIX_H
 
+#ifdef HAVE_CONFIG_H
+# include "config.h"
+#endif
+
 #include <Eina.h>
 #include <Evas.h>
 
