@@ -349,7 +349,7 @@ xwl_init(E_Module *m)
    char disp[8];
 
    /* make sure it's a wayland compositor */
-   if (e_comp->comp_type != E_PIXMAP_TYPE_WL) return NULL;
+   if (e_comp->comp_type == E_PIXMAP_TYPE_X) return NULL;
 
    if (getenv("DISPLAY"))
      {
