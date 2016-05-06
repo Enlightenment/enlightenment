@@ -771,8 +771,8 @@ define([CHECK_MODULE_XWAYLAND],
 [
   if test "x${have_wayland}" = "xyes"; then
     AC_E_CHECK_PKG(XWAYLAND, [ ecore-x >= ${efl_version} ecore-audio >= ${efl_version}  ], [HAVE_XWAYLAND_DEPS=true], [HAVE_XWAYLAND_DEPS=false])
-    AC_PATH_PROG([XWAYLAND_BIN], [Xwayland], [false])
-    if test "x${XWAYLAND_BIN}" = "xfalse"; then
+    EFL_WITH_BIN([Xwayland], [Xwayland], [Xwayland])
+    if test -z "x${Xwayland}" ; then
       HAVE_XWAYLAND_DEPS=false
     fi
   else
