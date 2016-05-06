@@ -25,7 +25,7 @@ src_modules_mixer_emixerdir = $(mixerpkgdir)
 bin_PROGRAMS += src/modules/mixer/emixer
 src_modules_mixer_emixer_SOURCES = src/modules/mixer/emixer.c \
                           $(emixerlib)
-src_modules_mixer_emixer_CPPFLAGS = $(MOD_CPPFLAGS) @e_cflags@ -I$(top_srcdir)/src/modules/mixer/lib
+src_modules_mixer_emixer_CPPFLAGS = $(MOD_CPPFLAGS) -I$(top_srcdir)/src/modules/mixer/lib -DEMIXER_BUILD
 src_modules_mixer_emixer_LDADD = $(MOD_LIBS) @PULSE_LIBS@ @ALSA_LIBS@
 
 src_modules_mixer_module_la_CPPFLAGS = $(MOD_CPPFLAGS) @e_cflags@ @ALSA_CFLAGS@ @PULSE_CFLAGS@ -I$(top_srcdir)/src/modules/mixer/lib
