@@ -83,9 +83,9 @@ enlightenment.
 Known Issues
 -------------
 * Internal window (eg. filemanager), DnD is not currently functional
- - Requires new EFL release
-* Restarting Enlightenment kills all open applications
- - Requires upstream *-shell protocol additions, XWayland improvements
+ - Requires various improvements
+* Restarting Enlightenment kills some applications
+ - Requires upstream external protocol support, XWayland improvements
 * XWayland clients do not smoothly resize
  - Requires upstream XWayland improvements
 * The first-launched X11 client will sometimes fail to show
