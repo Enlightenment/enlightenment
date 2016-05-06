@@ -36,13 +36,13 @@ static Eina_List *remember_idler_list = NULL;
 EINTERN int
 e_remember_init(E_Startup_Mode mode)
 {
-   Eina_List *l = NULL;
+   Eina_List *ll, *l = NULL;
    E_Remember *rem;
    E_Client_Hook *h;
 
    if (mode == E_STARTUP_START)
      {
-        EINA_LIST_FOREACH(e_config->remembers, l, rem)
+        EINA_LIST_FOREACH_SAFE(e_config->remembers, l, ll, rem)
           {
              if ((rem->apply & E_REMEMBER_APPLY_RUN) && (rem->prop.command))
                {
@@ -54,6 +54,11 @@ e_remember_init(E_Startup_Mode mode)
                                             "%s<br>"),
                                           rem->prop.command);
                     }
+               }
+             if (rem->apply & E_REMEMBER_APPLY_UUID)
+               {
+                  e_config->remembers = eina_list_remove_list(e_config->remembers, l);
+                  _e_remember_free(rem);
                }
           }
      }
