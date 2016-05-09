@@ -1298,7 +1298,7 @@ _ibar_icon_menu_client_add(IBar_Icon *ic, E_Client *ec)
    Eina_Stringshare *txt;
    int w, h;
 
-   if (ec->netwm.state.skip_taskbar) return EINA_FALSE;
+   if (ec->netwm.state.skip_taskbar || e_client_util_ignored_get(ec)) return EINA_FALSE;
    o = ic->menu->o_bg;
    it = edje_object_add(e_comp->evas);
    ic->client_objs = eina_list_append(ic->client_objs, it);
