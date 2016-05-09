@@ -70,12 +70,12 @@ Enlightenment, when compiled with Wayland support and started from a tty,
 will automatically attempt to load the wl_drm output module and start
 a Wayland session. Simply start as usual:
 
-  ./enlightenment_start
+  dbus-launch enlightenment_start
 
 If you have a separate configuration profile that you would like to use,
 you can tell Enlightenment to use that when you start it:
 
-  ./enlightenment_start -profile <my_profile>
+  dbus-launch enlightenment_start -profile <my_profile>
 
 To run a wayland session inside x11, export E_WL_FORCE=x11 before starting
 enlightenment.
