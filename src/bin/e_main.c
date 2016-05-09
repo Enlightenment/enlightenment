@@ -629,7 +629,17 @@ main(int argc, char **argv)
    if (e_config->show_splash)
      e_init_status_set(_("Setup Message Bus"));
    TS("E_Msgbus Init");
-   if (e_msgbus_init())
+   if (!e_msgbus_init())
+     {
+        if (!getenv("E_NO_DBUS_SESSION"))
+          {
+             e_error_message_show(_("Enlightenment cannot create a dbus session connection.\n"
+                                    "At best this will break many things, at worst it will hard lock your machine.\n"
+                                    "If you're sure you know what you're doing, export E_NO_DBUS_SESSION=1"));
+             _e_main_shutdown(-1);
+          }
+     }
+   else
      _e_main_shutdown_push(e_msgbus_shutdown);
    TS("E_Msgbus Init Done");
 
