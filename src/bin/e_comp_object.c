@@ -688,6 +688,10 @@ _e_comp_object_shadow_setup(E_Comp_Object *cw)
      }
    else
      e_comp_object_signal_emit(cw->smart_obj, "e,state,hidden", "e");
+   if (e_comp_object_frame_allowed(cw->smart_obj))
+     e_comp_object_signal_emit(cw->smart_obj, "e,state,focus,enabled", "e");
+   else
+     e_comp_object_signal_emit(cw->smart_obj, "e,state,focus,disabled", "e");
 
    /* breaks animation counter */
    //if (cw->ec->iconic)
@@ -3056,6 +3060,11 @@ e_comp_object_frame_geometry_set(Evas_Object *obj, int l, int r, int t, int b)
    cw->client_inset.r = r;
    cw->client_inset.t = t;
    cw->client_inset.b = b;
+   if (!cw->shobj) return;
+   if (cw->client_inset.calc)
+     e_comp_object_signal_emit(obj, "e,state,focus,disabled", "e");
+   else
+     e_comp_object_signal_emit(obj, "e,state,focus,enabled", "e");
 }
 
 E_API Eina_Bool
