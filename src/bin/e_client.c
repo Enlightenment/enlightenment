@@ -1758,6 +1758,7 @@ _e_client_eval(E_Client *ec)
           {
              if (ec->parent)
                {
+                  Eina_Bool centered = EINA_FALSE;
                   if (ec->parent->zone != e_zone_current_get())
                     {
                        e_client_zone_set(ec, ec->parent->zone);
@@ -1784,6 +1785,7 @@ _e_client_eval(E_Client *ec)
                                    {
                                       e_comp_object_util_center_on(ec->frame,
                                                                    ec->parent->frame);
+                                      centered = 1;
                                    }
                               }
                             ec->changes.pos = 1;
@@ -1793,7 +1795,22 @@ _e_client_eval(E_Client *ec)
                     {
                        e_comp_object_util_center_on(ec->frame,
                                                     ec->parent->frame);
-                       ec->changes.pos = 1;
+                       centered = 1;
+                    }
+                  if (centered) //test for offscreen
+                    {
+                       if (!E_CONTAINS(ec->x, ec->y, ec->w, ec->h, zx, zy, zw, zh))
+                         {
+                            if (ec->x < zx)
+                              ec->x = ec->parent->x;
+                            if (ec->y < zy)
+                              ec->y = ec->parent->y;
+                            if (ec->x + ec->w > zx + zw)
+                              ec->x = ec->parent->x + ec->parent->w - ec->w;
+                            if (ec->y + ec->h > zy + zh)
+                              ec->y = ec->parent->y + ec->parent->h - ec->h;
+                            ec->changes.pos = 1;
+                         }
                     }
                   ec->placed = 1;
                   ec->pre_cb.x = ec->x; ec->pre_cb.y = ec->y;
