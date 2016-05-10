@@ -918,6 +918,7 @@ _e_xdg_shell_surface_cb_ack_configure(struct wl_client *client EINA_UNUSED, stru
    E_Client *ec;
    Pending_State *ps;
    E_Shell_Data *shd;
+   Eina_List *l, *ll;
 
    ec = wl_resource_get_user_data(resource);
    if (!ec)
@@ -928,7 +929,7 @@ _e_xdg_shell_surface_cb_ack_configure(struct wl_client *client EINA_UNUSED, stru
      }
    if (e_object_is_del(E_OBJECT(ec))) return;
    shd = ec->comp_data->shell.data;
-   EINA_LIST_FREE(shd->pending, ps)
+   EINA_LIST_FOREACH_SAFE(shd->pending, l, ll, ps)
      {
         if (ps->serial > serial) break;
         if (ps->state & STATE_FULLSCREEN)
@@ -951,6 +952,7 @@ _e_xdg_shell_surface_cb_ack_configure(struct wl_client *client EINA_UNUSED, stru
              ec->comp_data->shell.set.unmaximize = 1;
              ec->comp_data->shell.set.maximize = 0;
           }
+        shd->pending = eina_list_remove_list(shd->pending, l);
         free(ps);
      }
 }
