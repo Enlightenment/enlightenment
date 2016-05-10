@@ -79,8 +79,12 @@ _e_comp_wl_modules_load(void)
 {
    const char **m, *mods[] =
    {
+#ifdef USE_MODULE_WL_DESKTOP_SHELL
       "wl_desktop_shell",
+#endif
+#ifdef USE_MODULE_XWAYLAND
       "xwayland",
+#endif
       NULL
    };
 
