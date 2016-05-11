@@ -73,7 +73,7 @@ _e_elm_win_trap_show(void *data, Evas_Object *o)
         E_Client *ec;
         Ecore_Window win;
 #ifdef HAVE_WAYLAND
-        int64_t wl_win_id;
+        int64_t wl_win_id = -1;
 #endif
         E_Pixmap_Type type = E_PIXMAP_TYPE_X;
 
@@ -96,12 +96,7 @@ _e_elm_win_trap_show(void *data, Evas_Object *o)
              ctx->pointer = e_pointer_window_new(win, EINA_TRUE);
           }
 
-#ifdef HAVE_WAYLAND
-        if (type == E_PIXMAP_TYPE_WL)
-          ec = e_pixmap_find_client(type, wl_win_id);
-        else
-#endif
-          ec = e_pixmap_find_client(type, win);
+        ec = e_pixmap_find_client(type, win);
         if (ec)
           ctx->client = ec;
         else
@@ -118,13 +113,12 @@ _e_elm_win_trap_show(void *data, Evas_Object *o)
                title = "E";
              ecore_evas_title_set(ee, title);
 
-#ifdef HAVE_WAYLAND
-             if (type == E_PIXMAP_TYPE_WL)
-               cp = e_pixmap_new(type, wl_win_id);
-             else
-#endif
-               cp = e_pixmap_new(type, win);
+             cp = e_pixmap_new(type, win);
              EINA_SAFETY_ON_NULL_RETURN_VAL(cp, EINA_TRUE);
+#ifdef HAVE_WAYLAND
+             if (wl_win_id >= 0)
+               e_pixmap_alias(cp, type, wl_win_id);
+#endif
 
              current_win = ctx;
              ctx->client = e_client_new(cp, 0, 1);

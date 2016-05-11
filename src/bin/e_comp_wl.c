@@ -1427,6 +1427,7 @@ _e_comp_wl_surface_destroy(struct wl_resource *resource)
 
    if (!(ec = wl_resource_get_user_data(resource))) return;
 
+   e_pixmap_alias(ec->pixmap, E_PIXMAP_TYPE_WL, wl_resource_get_id(resource));
    e_object_del(E_OBJECT(ec));
    evas_object_hide(ec->frame);
 }
@@ -2243,7 +2244,10 @@ _e_comp_wl_client_cb_del(void *data EINA_UNUSED, E_Client *ec)
      wl_resource_destroy(cb);
 
    if (ec->comp_data->surface)
-     wl_resource_set_user_data(ec->comp_data->surface, NULL);
+     {
+        e_pixmap_alias(ec->pixmap, E_PIXMAP_TYPE_WL, wl_resource_get_id(ec->comp_data->surface));
+        wl_resource_set_user_data(ec->comp_data->surface, NULL);
+     }
 
    if (ec->internal_elm_win)
      evas_object_hide(ec->frame);
