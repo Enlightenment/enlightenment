@@ -10417,9 +10417,8 @@ _e_fm2_icon_entry_widget_add(E_Fm2_Icon *ic)
    ic->entry_widget = e_widget_entry_add(e_win_evas_win_get(e), NULL, NULL, NULL, NULL);
    evas_object_event_callback_add(ic->entry_widget, EVAS_CALLBACK_KEY_DOWN,
                                   _e_fm2_icon_entry_widget_cb_key_down, ic);
-#ifndef HAVE_WAYLAND_ONLY
-   evas_event_feed_mouse_out(evas_object_evas_get(ic->obj), ecore_x_current_time_get(), NULL);
-#endif
+   if (e_comp->comp_type == E_PIXMAP_TYPE_X)
+     evas_event_feed_mouse_out(evas_object_evas_get(ic->obj), 0, NULL);
    if (e_comp->evas == e)
      e_comp_grab_input(0, 1);
    ic->keygrab = (e_comp->evas == e);
@@ -10432,9 +10431,8 @@ _e_fm2_icon_entry_widget_add(E_Fm2_Icon *ic)
    e_widget_entry_select_all(ic->entry_widget);
    ic->sd->iop_icon = ic;
    ic->sd->typebuf.disabled = EINA_TRUE;
-#ifndef HAVE_WAYLAND_ONLY
-   evas_event_feed_mouse_in(e, ecore_x_current_time_get(), NULL);
-#endif
+   if (e_comp->comp_type == E_PIXMAP_TYPE_X)
+     evas_event_feed_mouse_in(e, 0, NULL);
    return ic->entry_widget;
 }
 
