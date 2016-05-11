@@ -4394,9 +4394,9 @@ _e_comp_x_hook_client_fetch(void *d EINA_UNUSED, E_Client *ec)
                     ecl = ec->leader;
                   if (!ecl)
                     {
-                       E_Client *child = e_client_bottom_get();
+                       E_Client *child;
 
-                       do
+                       E_CLIENT_FOREACH(child)
                          {
                             if (child == ec) continue;
                             if (e_object_is_del(E_OBJECT(child))) continue;
@@ -4407,8 +4407,7 @@ _e_comp_x_hook_client_fetch(void *d EINA_UNUSED, E_Client *ec)
                                  ecl = child;
                                  break;
                               }
-                            child = e_client_above_get(child);
-                         } while (child);
+                         }
                     }
                   if (ecl)
                     {
