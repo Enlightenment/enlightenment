@@ -3824,10 +3824,7 @@ e_comp_object_render(Evas_Object *obj)
 
    if (e_comp->comp_type == E_PIXMAP_TYPE_WL)
      {
-        Eina_Bool alpha = e_pixmap_image_is_argb(cw->ec->pixmap);
-
         pix = e_pixmap_image_data_get(cw->ec->pixmap);
-        evas_object_image_alpha_set(cw->obj, alpha);
         ret = EINA_TRUE;
         goto end;
      }
@@ -3887,9 +3884,11 @@ e_comp_object_render(Evas_Object *obj)
    eina_iterator_free(it);
 end:
    evas_object_image_data_set(cw->obj, cw->blanked ? NULL : pix);
+   _e_comp_object_alpha_set(cw);
    EINA_LIST_FOREACH(cw->obj_mirror, l, o)
      {
         evas_object_image_data_set(o, pix);
+        evas_object_image_alpha_set(o, evas_object_image_alpha_get(cw->obj));
         evas_object_image_pixels_dirty_set(o, EINA_FALSE);
      }
 
