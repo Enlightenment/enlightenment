@@ -1161,6 +1161,8 @@ out:
    e_comp->elm = elm_win_fake_add(e_comp->ee);
    evas_object_event_callback_add(e_comp->elm, EVAS_CALLBACK_RESIZE, _e_comp_resize, NULL);
    elm_win_fullscreen_set(e_comp->elm, 1);
+   ecore_evas_focus_set(e_comp->ee, 0);
+   ecore_evas_focus_set(e_comp->ee, 1);
    evas_object_show(e_comp->elm);
    e_util_env_set("HYBRIS_EGLPLATFORM", NULL);
    E_LIST_HANDLER_APPEND(handlers, E_EVENT_SCREENSAVER_ON, _e_comp_screensaver_on, NULL);
