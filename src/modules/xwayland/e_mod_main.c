@@ -448,11 +448,6 @@ E_API E_Module_Api e_modapi = { E_MODULE_API_VERSION, "XWayland" };
 E_API void *
 e_modapi_init(E_Module *m)
 {
-   struct sigaction sa;
-
-   sigaction(SIGCHLD, NULL, &sa);
-   sa.sa_flags |= SA_NOCLDWAIT;
-   sigaction(SIGCHLD, &sa, NULL);
    return xwl_init(m);
 }
 
