@@ -639,7 +639,7 @@ _dlg_add_cb_ok(void *data EINA_UNUSED, E_Dialog *dlg)
    evas_event_thaw(cfdata->evas);
 
    cfdata->dlg_add_new = NULL;
-   e_object_unref(E_OBJECT(dlg));
+   e_object_del(E_OBJECT(dlg));
    e_config_dialog_changed_set(cfdata->cfd, 1);
 }
 
@@ -648,7 +648,7 @@ _dlg_add_cb_cancel(void *data EINA_UNUSED, E_Dialog *dlg)
 {
    E_Config_Dialog_Data *cfdata = dlg->data;
    cfdata->dlg_add_new = NULL;
-   e_object_unref(E_OBJECT(dlg));
+   e_object_del(E_OBJECT(dlg));
 }
 
 static void
@@ -657,7 +657,6 @@ _dlg_add_cb_del(void *obj)
    E_Dialog *dlg = obj;
    E_Config_Dialog_Data *cfdata = dlg->data;
    cfdata->dlg_add_new = NULL;
-   e_object_unref(E_OBJECT(dlg));
 }
 
 static Eina_Bool
