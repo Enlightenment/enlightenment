@@ -2195,7 +2195,10 @@ _e_comp_wl_client_cb_new(void *data EINA_UNUSED, E_Client *ec)
     * we need to set delete_request else the close buttons on the frames do
     * basically nothing */
    if ((ec->internal) || (ec->internal_elm_win))
-     ec->icccm.delete_request = EINA_TRUE;
+     {
+        ec->icccm.delete_request = EINA_TRUE;
+        ec->override = elm_win_override_get(e_win_evas_win_get(ecore_evas_get(ecore_event_window_match(win))));
+     }
 
    /* set initial client data properties */
    ec->comp_data->mapped = EINA_FALSE;
