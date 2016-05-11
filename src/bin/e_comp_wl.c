@@ -2175,14 +2175,6 @@ _e_comp_wl_client_cb_new(void *data EINA_UNUSED, E_Client *ec)
    /* get window id from pixmap */
    win = e_pixmap_window_get(ec->pixmap);
 
-   /* ignore fake root windows */
-   if ((ec->override) && ((ec->x == -77) && (ec->y == -77)))
-     {
-        e_comp_ignore_win_add(E_PIXMAP_TYPE_WL, win);
-        e_object_del(E_OBJECT(ec));
-        return;
-     }
-
    if (!(ec->comp_data = E_NEW(E_Comp_Client_Data, 1)))
      {
         ERR("Could not allocate new client data structure");
