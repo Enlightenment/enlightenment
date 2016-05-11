@@ -1582,7 +1582,7 @@ _e_comp_wl_compositor_cb_surface_create(struct wl_client *client, struct wl_reso
 
    wl_client_get_credentials(client, &pid, NULL, NULL);
    if (pid == getpid()) //internal!
-     ec = e_pixmap_find_client(E_PIXMAP_TYPE_WL, (uintptr_t)id);
+     ec = e_pixmap_find_client(E_PIXMAP_TYPE_WL, (int64_t)id);
    if (ec)
      {
         if (e_object_is_del(E_OBJECT(ec))) return;
@@ -2180,7 +2180,7 @@ _e_comp_wl_subcompositor_cb_bind(struct wl_client *client, void *data EINA_UNUSE
 static void
 _e_comp_wl_client_cb_new(void *data EINA_UNUSED, E_Client *ec)
 {
-   uint64_t win;
+   int64_t win;
 
    /* make sure this is a wayland client */
    if (e_pixmap_type_get(ec->pixmap) != E_PIXMAP_TYPE_WL) return;
