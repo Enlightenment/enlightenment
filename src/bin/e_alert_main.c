@@ -18,7 +18,13 @@
 
 # ifdef HAVE_WL_DRM
 #  include <Ecore_Input.h>
-#  include <Ecore_Drm.h>
+#  ifdef HAVE_DRM2
+#   define EFL_BETA_API_SUPPORT
+#   include <drm_fourcc.h>
+#   include <Ecore_Drm2.h>
+#  else
+#   include <Ecore_Drm.h>
+#  endif
 #  include <Evas.h>
 #  include <Evas_Engine_Buffer.h>
 # endif
@@ -82,8 +88,6 @@ struct
 };
 
 # ifdef HAVE_WL_DRM
-static Ecore_Drm_Device *dev = NULL;
-static Ecore_Drm_Fb *buffer;
 static Evas *canvas = NULL;
 
 static Eina_Bool
@@ -104,63 +108,6 @@ _e_alert_drm_cb_key_down(void *data EINA_UNUSED, int type EINA_UNUSED, void *eve
      }
 
    return ECORE_CALLBACK_RENEW;
-}
-
-static int
-_e_alert_drm_connect(void)
-{
-   fprintf(stderr, "E_Alert Drm Connect\n");
-
-   if (!evas_init())
-     {
-        printf("\tCannot init evas\n");
-        return 0;
-     }
-
-   if (!ecore_drm_init())
-     {
-        printf("\tCannot init ecore_drm\n");
-        return 0;
-     }
-
-   dev = ecore_drm_device_find(NULL, NULL);
-   if (!dev)
-     {
-        printf("\tCannot find drm device\n");
-        return 0;
-     }
-
-   if (!ecore_drm_launcher_connect(dev))
-     {
-        printf("\tCannot connect to drm device\n");
-        return 0;
-     }
-
-   if (!ecore_drm_device_open(dev))
-     {
-        printf("\tCannot open drm device\n");
-        return 0;
-     }
-
-   if (!ecore_drm_outputs_create(dev))
-     {
-        printf("\tCannot create drm outputs\n");
-        return 0;
-     }
-
-   if (!ecore_drm_inputs_create(dev))
-     {
-        printf("\tCannot create drm inputs\n");
-        return 0;
-     }
-
-   ecore_drm_outputs_geometry_get(dev, NULL, NULL, &sw, &sh);
-   fprintf(stderr, "\tOutput Size: %d %d\n", sw, sh);
-
-   ecore_event_handler_add(ECORE_EVENT_KEY_DOWN,
-                           _e_alert_drm_cb_key_down, NULL);
-
-   return 1;
 }
 
 static void
@@ -383,6 +330,212 @@ _e_alert_drm_draw_button_outlines(void)
 }
 
 static void
+_e_alert_drm_run(void)
+{
+   printf("E_Alert Drm Run\n");
+   ecore_main_loop_begin();
+}
+
+#  ifdef HAVE_DRM2
+static Ecore_Drm2_Device *dev = NULL;
+static Ecore_Drm2_Fb *buffer = NULL;
+static Ecore_Drm2_Output *output = NULL;
+static int fd = 0;
+
+static int
+_e_alert_drm_connect(void)
+{
+   fprintf(stderr, "E_Alert Drm Connect\n");
+
+   if (!evas_init())
+     {
+        printf("\tCannot init evas\n");
+        return 0;
+     }
+
+   if (!ecore_drm2_init())
+     {
+        printf("\tCannot init ecore_drm\n");
+        return 0;
+     }
+
+   dev = ecore_drm2_device_find("seat0", 0);
+   if (!dev)
+     {
+        printf("\tCannot find drm device\n");
+        return 0;
+     }
+
+   fd = ecore_drm2_device_open(dev);
+   if (fd < 0)
+     {
+        printf("\tCannot open drm device\n");
+        return 0;
+     }
+
+   if (!ecore_drm2_outputs_create(dev))
+     {
+        printf("\tCannot create drm outputs\n");
+        return 0;
+     }
+
+   output = ecore_drm2_output_find(dev, 0, 0);
+   if (output) ecore_drm2_output_crtc_size_get(output, &sw, &sh);
+   fprintf(stderr, "\tOutput Size: %d %d\n", sw, sh);
+
+   ecore_event_handler_add(ECORE_EVENT_KEY_DOWN,
+                           _e_alert_drm_cb_key_down, NULL);
+
+   return 1;
+}
+
+static void
+_e_alert_drm_create(void)
+{
+   Evas_Engine_Info_Buffer *einfo;
+   int method = 0;
+
+   fprintf(stderr, "E_Alert Drm Create\n");
+
+   fh = 13;
+
+   buffer = ecore_drm2_fb_create(fd, sw, sh, 24, 32, DRM_FORMAT_XRGB8888);
+
+   method = evas_render_method_lookup("buffer");
+   if (method <= 0)
+     {
+        fprintf(stderr, "\tCould not get evas render method\n");
+        return;
+     }
+
+   canvas = evas_new();
+   if (!canvas)
+     {
+        fprintf(stderr, "\tFailed to create new canvas\n");
+        return;
+     }
+
+   evas_output_method_set(canvas, method);
+   evas_output_size_set(canvas, sw, sh);
+   evas_output_viewport_set(canvas, 0, 0, sw, sh);
+
+   einfo = (Evas_Engine_Info_Buffer *)evas_engine_info_get(canvas);
+   if (!einfo)
+     {
+        printf("\tFailed to get evas engine info\n");
+        evas_free(canvas);
+        return;
+     }
+
+   einfo->info.depth_type = EVAS_ENGINE_BUFFER_DEPTH_ARGB32;
+   einfo->info.dest_buffer = ecore_drm2_fb_data_get(buffer);
+   einfo->info.dest_buffer_row_bytes = (sw * sizeof(int));
+   einfo->info.use_color_key = 0;
+   einfo->info.alpha_threshold = 0;
+   einfo->info.func.new_update_region = NULL;
+   einfo->info.func.free_update_region = NULL;
+   evas_engine_info_set(canvas, (Evas_Engine_Info *)einfo);
+
+   _e_alert_drm_draw_outline();
+   _e_alert_drm_draw_title_outline();
+   _e_alert_drm_draw_title();
+   _e_alert_drm_draw_text();
+   _e_alert_drm_draw_button_outlines();
+}
+
+static void
+_e_alert_drm_display(void)
+{
+   Eina_List *updates;
+
+   printf("E_Alert Drm Display\n");
+
+   updates = evas_render_updates(canvas);
+   evas_render_updates_free(updates);
+
+   ecore_drm2_fb_flip(buffer, output, NULL);
+}
+
+static void
+_e_alert_drm_shutdown(void)
+{
+   printf("E_Alert Drm Shutdown\n");
+
+   evas_free(canvas);
+
+   if (dev)
+     {
+        ecore_drm2_outputs_destroy(dev);
+        ecore_drm2_device_close(dev);
+        ecore_drm2_device_free(dev);
+     }
+
+   ecore_drm2_shutdown();
+   evas_shutdown();
+}
+
+#  else
+static Ecore_Drm_Device *dev = NULL;
+static Ecore_Drm_Fb *buffer;
+
+static int
+_e_alert_drm_connect(void)
+{
+   fprintf(stderr, "E_Alert Drm Connect\n");
+
+   if (!evas_init())
+     {
+        printf("\tCannot init evas\n");
+        return 0;
+     }
+
+   if (!ecore_drm_init())
+     {
+        printf("\tCannot init ecore_drm\n");
+        return 0;
+     }
+
+   dev = ecore_drm_device_find(NULL, NULL);
+   if (!dev)
+     {
+        printf("\tCannot find drm device\n");
+        return 0;
+     }
+
+   if (!ecore_drm_launcher_connect(dev))
+     {
+        printf("\tCannot connect to drm device\n");
+        return 0;
+     }
+
+   if (!ecore_drm_device_open(dev))
+     {
+        printf("\tCannot open drm device\n");
+        return 0;
+     }
+
+   if (!ecore_drm_outputs_create(dev))
+     {
+        printf("\tCannot create drm outputs\n");
+        return 0;
+     }
+
+   if (!ecore_drm_inputs_create(dev))
+     {
+        printf("\tCannot create drm inputs\n");
+        return 0;
+     }
+
+   ecore_drm_outputs_geometry_get(dev, NULL, NULL, &sw, &sh);
+   fprintf(stderr, "\tOutput Size: %d %d\n", sw, sh);
+
+   ecore_event_handler_add(ECORE_EVENT_KEY_DOWN,
+                           _e_alert_drm_cb_key_down, NULL);
+
+   return 1;
+}
+
+static void
 _e_alert_drm_create(void)
 {
    int method = 0;
@@ -457,13 +610,6 @@ _e_alert_drm_display(void)
 }
 
 static void
-_e_alert_drm_run(void)
-{
-   printf("E_Alert Drm Run\n");
-   ecore_main_loop_begin();
-}
-
-static void
 _e_alert_drm_shutdown(void)
 {
    printf("E_Alert Drm Shutdown\n");
@@ -480,6 +626,7 @@ _e_alert_drm_shutdown(void)
    ecore_drm_shutdown();
    evas_shutdown();
 }
+#  endif
 #endif
 
 int

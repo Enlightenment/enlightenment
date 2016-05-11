@@ -3,7 +3,11 @@
 #include "e.h"
 #include <sys/mman.h>
 #ifdef HAVE_WL_DRM
-#include <Ecore_Drm.h>
+# ifdef HAVE_DRM2
+#  include <Ecore_Drm2.h>
+# else
+#  include <Ecore_Drm.h>
+# endif
 #endif
 
 E_API int E_EVENT_TEXT_INPUT_PANEL_VISIBILITY_CHANGE = -1;
@@ -638,10 +642,24 @@ _e_comp_wl_input_context_keymap_set(struct xkb_keymap *keymap, struct xkb_contex
 
 //set the values to the drm devices
 #ifdef HAVE_WL_DRM
+# ifdef HAVE_DRM2
+   if (e_config->xkb.use_cache)
+     {
+        Ecore_Drm2_Device *dev;
+
+        dev = ecore_evas_data_get(e_comp->ee, "device");
+        if (dev)
+          {
+             ecore_drm2_device_keyboard_cached_context_set(dev, context);
+             ecore_drm2_device_keyboard_cached_keymap_set(dev, keymap);
+          }
+     }
+# else
    if (e_config->xkb.use_cache)
      ecore_drm_device_keyboard_cached_context_set(context);
    if (e_config->xkb.use_cache)
      ecore_drm_device_keyboard_cached_keymap_set(keymap);
+# endif
 #endif
 }
 

@@ -893,11 +893,19 @@ e_alert_requires="\
 
 if test "x${have_wayland}" = "xyes"; then
   if test "x${HAVE_WL_DRM}" = "xyes"; then
-    e_alert_requires="\
-      $e_alert_requires \
-      ecore-input >= ${efl_version} \
-      ecore-drm >= ${efl_version} \
-      evas >= ${efl_version}"
+    if test "x${have_ecore_drm2}" = "xyes"; then
+      e_alert_requires="\
+        $e_alert_requires \
+        ecore-input >= ${efl_version} \
+        ecore-drm2 >= ${efl_version} \
+        evas >= ${efl_version}"
+    else
+      e_alert_requires="\
+        $e_alert_requires \
+        ecore-input >= ${efl_version} \
+        ecore-drm >= ${efl_version} \
+        evas >= ${efl_version}"
+    fi
  fi
 fi
 

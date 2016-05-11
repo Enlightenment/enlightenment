@@ -1,6 +1,10 @@
 #include "e.h"
 #ifdef HAVE_WL_DRM
-#include <Ecore_Drm.h>
+# ifdef HAVE_DRM2
+#  include <Ecore_Drm2.h>
+# else
+#  include <Ecore_Drm2.h>
+# endif
 #endif
 
 E_API int
@@ -44,7 +48,18 @@ e_mouse_update(void)
         if (!ecore_x_pointer_mapping_set(map, n)) return 0;
      }
 #endif
+
 #ifdef HAVE_WL_DRM
+# ifdef HAVE_DRM2
+   if (strstr(ecore_evas_engine_name_get(e_comp->ee), "drm"))
+     {
+        Ecore_Drm2_Device *dev;
+
+        dev = ecore_evas_data_get(e_comp->ee, "device");
+        if (dev)
+          ecore_drm2_device_pointer_left_handed_set(dev, (Eina_Bool)!e_config->mouse_hand);
+     }
+# else
    if (strstr(ecore_evas_engine_name_get(e_comp->ee), "drm"))
      {
         const Eina_List *list, *l;
@@ -56,6 +71,7 @@ e_mouse_update(void)
              ecore_drm_device_pointer_left_handed_set(dev, (Eina_Bool)!e_config->mouse_hand);
           }
      }
+# endif
 #endif
    return 1;
 }
