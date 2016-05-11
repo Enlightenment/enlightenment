@@ -251,6 +251,9 @@ struct _E_Comp_Wl_Data
    E_Drag *drag;
    E_Client *drag_client;
    void *drag_source;
+
+   Eina_Bool dmabuf_disable : 1;
+   Eina_Bool dmabuf_proxy : 1;
 };
 
 struct _E_Comp_Wl_Client_Data

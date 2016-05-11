@@ -23,6 +23,11 @@ _cb_sync_done(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
 
    e_comp_canvas_resize(w * 2 / 3, h * 2 / 3);
 
+   if (!ecore_wl2_display_dmabuf_get(e_comp_wl->wl.client_disp))
+     e_comp_wl->dmabuf_disable = EINA_TRUE;
+   else
+     e_comp_wl->dmabuf_proxy = EINA_TRUE;
+
    return ECORE_CALLBACK_PASS_ON;
 }
 
