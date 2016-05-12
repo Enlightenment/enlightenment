@@ -451,6 +451,7 @@ e_place_zone_cursor(E_Zone *zone, int x EINA_UNUSED, int y EINA_UNUSED, int w, i
 {
    int cursor_x = 0, cursor_y = 0;
    int zone_right, zone_bottom;
+   int zx, zy, zw, zh;
 
    E_OBJECT_CHECK_RETURN(zone, 0);
 
@@ -458,14 +459,16 @@ e_place_zone_cursor(E_Zone *zone, int x EINA_UNUSED, int y EINA_UNUSED, int w, i
    *rx = cursor_x - (w >> 1);
    *ry = cursor_y - (it >> 1);
 
+   e_zone_useful_geometry_get(zone, &zx, &zy, &zw, &zh);
+
    if (*rx < zone->x)
-     *rx = zone->x;
+     *rx = zx;
 
    if (*ry < zone->y)
-     *ry = zone->y;
+     *ry = zy;
 
-   zone_right = zone->x + zone->w;
-   zone_bottom = zone->y + zone->h;
+   zone_right = zx + zw;
+   zone_bottom = zy + zh;
 
    if ((*rx + w) > zone_right)
      *rx = zone_right - w;
