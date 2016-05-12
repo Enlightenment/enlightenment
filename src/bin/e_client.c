@@ -1896,7 +1896,6 @@ _e_client_eval(E_Client *ec)
              ec->x = new_x;
              ec->y = new_y;
              ec->changes.pos = 1;
-             ec->placed = 1;
              ec->pre_cb.x = ec->x; ec->pre_cb.y = ec->y;
           }
         else if (!E_INTERSECTS(ec->x, ec->y, ec->w, ec->h, zx, zy, zw, zh))
@@ -2040,8 +2039,12 @@ _e_client_eval(E_Client *ec)
      }
    if (ec->changes.pos)
      {
+        Eina_Bool placed = ec->placed;
+
         ec->changes.pos = 0;
         evas_object_move(ec->frame, ec->x, ec->y);
+        if (e_config->window_placement_policy == E_WINDOW_PLACEMENT_MANUAL)
+          ec->placed = placed;
         rem_change = 1;
         prop |= E_CLIENT_PROPERTY_POS;
      }
@@ -2085,30 +2088,27 @@ _e_client_eval(E_Client *ec)
           }
 
         evas_object_show(ec->frame);
-        if (evas_object_visible_get(ec->frame))
+        if (ec->cur_mouse_action)
           {
-             if (ec->cur_mouse_action)
-               {
-                  ec->moveinfo.down.x = ec->x;
-                  ec->moveinfo.down.y = ec->y;
-                  ec->moveinfo.down.w = ec->w;
-                  ec->moveinfo.down.h = ec->h;
-                  ec->mouse.current.mx = x;
-                  ec->mouse.current.my = y;
-                  ec->moveinfo.down.button = 0;
-                  ec->moveinfo.down.mx = x;
-                  ec->moveinfo.down.my = y;
+             ec->moveinfo.down.x = ec->x;
+             ec->moveinfo.down.y = ec->y;
+             ec->moveinfo.down.w = ec->w;
+             ec->moveinfo.down.h = ec->h;
+             ec->mouse.current.mx = x;
+             ec->mouse.current.my = y;
+             ec->moveinfo.down.button = 0;
+             ec->moveinfo.down.mx = x;
+             ec->moveinfo.down.my = y;
 
-                  e_object_ref(E_OBJECT(ec->cur_mouse_action));
-                  ec->cur_mouse_action->func.go(E_OBJECT(ec), NULL);
-                  if (e_config->border_raise_on_mouse_action)
-                    evas_object_raise(ec->frame);
-                  evas_object_focus_set(ec->frame, 1);
-               }
-             ec->changes.visible = 0;
-             rem_change = 1;
-             _e_client_event_simple(ec, E_EVENT_CLIENT_SHOW);
+             e_object_ref(E_OBJECT(ec->cur_mouse_action));
+             ec->cur_mouse_action->func.go(E_OBJECT(ec), NULL);
+             if (e_config->border_raise_on_mouse_action)
+               evas_object_raise(ec->frame);
+             evas_object_focus_set(ec->frame, 1);
           }
+        ec->changes.visible = 0;
+        rem_change = 1;
+        _e_client_event_simple(ec, E_EVENT_CLIENT_SHOW);
      }
    else if ((ec->changes.visible) && (ec->new_client))
      {
