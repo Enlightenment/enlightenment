@@ -115,7 +115,7 @@ implement_layout(void)
         nl->variant = eina_stringshare_add("basic");
         nl->model = eina_stringshare_add("default");
         e_config->xkb.used_layouts = eina_list_prepend(e_config->xkb.used_layouts, nl);
-        e_xkb_update(-1);
+        e_xkb_reconfig();
      }
    e_xkb_layout_set(nl);
 }

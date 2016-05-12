@@ -1,7 +1,9 @@
 #include "e.h"
 
 static void _e_xkb_update_event(int);
-static void _e_xkb_type_update(E_Pixmap_Type comp_type, int cur_group);
+
+static void _e_xkb_type_reconfig(E_Pixmap_Type comp_type);
+
 static int _e_xkb_cur_group = -1;
 static Ecore_Event_Handler *xkb_state_handler = NULL, *xkb_new_keyboard_handler = NULL;
 
@@ -64,7 +66,7 @@ _xkb_new_keyboard(void *data EINA_UNUSED, int type EINA_UNUSED, void *event EINA
      }
 
    //we have to restore our settings here
-   e_xkb_update(-1);
+   e_xkb_reconfig();
    e_xkb_update(e_config->xkb.cur_group);
 
    return ECORE_CALLBACK_PASS_ON;
@@ -97,7 +99,7 @@ e_xkb_init(E_Pixmap_Type comp_type)
      }
 #endif
    if (e_config->xkb.dont_touch_my_damn_keyboard) return 1;
-   _e_xkb_type_update(comp_type, -1);
+   _e_xkb_type_reconfig(comp_type);
    if (e_config->xkb.cur_layout)
      ecore_timer_add(1.5, _e_xkb_init_timer, e_config->xkb.current_layout);
    else if (e_config->xkb.selected_layout)
@@ -120,7 +122,7 @@ e_xkb_shutdown(void)
 }
 
 static void
-_e_x_xkb_update(int cur_group)
+_e_x_xkb_reconfig(void)
 {
    E_Config_XKB_Layout *cl;
    E_Config_XKB_Option *op;
@@ -130,20 +132,6 @@ _e_x_xkb_update(int cur_group)
    if (e_config->xkb.dont_touch_my_damn_keyboard) return;
    if ((!e_config->xkb.used_layouts) && (!e_config->xkb.used_options) && (!e_config->xkb.default_model)) return;
    if (!getenv("DISPLAY")) return;
-   if (cur_group != -1)
-     {
-        _e_xkb_cur_group = cur_group;
-#ifndef HAVE_WAYLAND_ONLY
-        if (e_comp->root)
-          ecore_x_xkb_select_group(cur_group);
-#endif
-        e_deskenv_xmodmap_run();
-        _e_xkb_update_event(cur_group);
-        return;
-     }
-   /* We put an empty -option here in order to override all previously
-    * set options.
-    */
 
    buf = eina_strbuf_new();
    eina_strbuf_append(buf, "setxkbmap ");
@@ -216,6 +204,25 @@ _e_x_xkb_update(int cur_group)
    INF("SET XKB RUN: %s", eina_strbuf_string_get(buf));
    ecore_exe_run(eina_strbuf_string_get(buf), NULL);
    eina_strbuf_free(buf);
+}
+
+static void
+_e_x_xkb_update(int cur_group)
+{
+   if (e_config->xkb.dont_touch_my_damn_keyboard) return;
+   if ((!e_config->xkb.used_layouts) && (!e_config->xkb.used_options) && (!e_config->xkb.default_model)) return;
+   if (!getenv("DISPLAY")) return;
+   if (cur_group != -1)
+     {
+        _e_xkb_cur_group = cur_group;
+#ifndef HAVE_WAYLAND_ONLY
+        if (e_comp->root)
+          ecore_x_xkb_select_group(cur_group);
+#endif
+        e_deskenv_xmodmap_run();
+        _e_xkb_update_event(cur_group);
+        return;
+     }
 }
 
 static void
@@ -305,18 +312,26 @@ _e_wl_xkb_update(int cur_group)
 }
 
 static void
-_e_xkb_type_update(E_Pixmap_Type comp_type, int cur_group)
+_e_xkb_type_reconfig(E_Pixmap_Type comp_type)
 {
-   if (comp_type == E_PIXMAP_TYPE_WL)
-     _e_wl_xkb_update(cur_group);
-   else
-     _e_x_xkb_update(cur_group);
+   if (comp_type == E_PIXMAP_TYPE_X)
+     _e_x_xkb_reconfig();
+   //we dont need to init wl yet
+}
+
+E_API void
+e_xkb_reconfig(void)
+{
+   _e_xkb_type_reconfig(e_comp->comp_type);
 }
 
 E_API void
 e_xkb_update(int cur_group)
 {
-   _e_xkb_type_update(e_comp->comp_type, cur_group);
+   if (e_comp->comp_type == E_PIXMAP_TYPE_WL)
+     _e_wl_xkb_update(cur_group);
+   else
+     _e_x_xkb_update(cur_group);
 }
 
 E_API void
