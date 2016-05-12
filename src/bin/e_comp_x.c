@@ -216,20 +216,21 @@ _e_comp_x_focus_setup(E_Client *ec)
 static void
 _e_comp_x_focus_setdown(E_Client *ec)
 {
-   Ecore_X_Window win;
+   Ecore_X_Window win, pwin;
 
    if (!_e_comp_x_client_data_get(ec)->button_grabbed) return;
    if ((!e_client_focus_policy_click(ec)) ||
        (e_config->always_click_to_raise) ||
        (e_config->always_click_to_focus)) return;
    win = e_client_util_win_get(ec);
-   e_bindings_mouse_ungrab(E_BINDING_CONTEXT_WINDOW, win);
-   e_bindings_wheel_ungrab(E_BINDING_CONTEXT_WINDOW, win);
+   pwin = e_client_util_pwin_get(ec);
+   e_bindings_mouse_ungrab(E_BINDING_CONTEXT_WINDOW, pwin);
+   e_bindings_wheel_ungrab(E_BINDING_CONTEXT_WINDOW, pwin);
    ecore_x_window_button_ungrab(win, 1, 0, 1);
    ecore_x_window_button_ungrab(win, 2, 0, 1);
    ecore_x_window_button_ungrab(win, 3, 0, 1);
-   e_bindings_mouse_grab(E_BINDING_CONTEXT_WINDOW, win);
-   e_bindings_wheel_grab(E_BINDING_CONTEXT_WINDOW, win);
+   e_bindings_mouse_grab(E_BINDING_CONTEXT_WINDOW, pwin);
+   e_bindings_wheel_grab(E_BINDING_CONTEXT_WINDOW, pwin);
    _e_comp_x_client_data_get(ec)->button_grabbed = 0;
 }
 
@@ -2234,10 +2235,7 @@ _e_comp_x_mapping_change(void *data EINA_UNUSED, int type EINA_UNUSED, Ecore_X_E
    e_comp_canvas_keys_ungrab();
    EINA_LIST_FOREACH(e_comp->clients, l, ec)
      {
-        Ecore_X_Window win;
-
         if (e_pixmap_type_get(ec->pixmap) != E_PIXMAP_TYPE_X) continue;
-        win = e_client_util_win_get(ec);
         if ((!_e_comp_x_client_data_get(ec)->first_map) || (!_e_comp_x_client_data_get(ec)->reparented)) continue;
         if (ec->focused)
           {
@@ -2248,8 +2246,8 @@ _e_comp_x_mapping_change(void *data EINA_UNUSED, int type EINA_UNUSED, Ecore_X_E
           {
              _e_comp_x_focus_setdown(ec);
              _e_comp_x_focus_setup(ec);
-             e_bindings_mouse_grab(E_BINDING_CONTEXT_WINDOW, win);
-             e_bindings_wheel_grab(E_BINDING_CONTEXT_WINDOW, win);
+             e_bindings_mouse_grab(E_BINDING_CONTEXT_WINDOW, e_client_util_pwin_get(ec));
+             e_bindings_wheel_grab(E_BINDING_CONTEXT_WINDOW, e_client_util_pwin_get(ec));
           }
      }
    e_comp_canvas_keys_grab();
@@ -3155,8 +3153,8 @@ _e_comp_x_hook_client_pre_frame_assign(void *d EINA_UNUSED, E_Client *ec)
      ecore_x_window_show(pwin);
 
    _e_comp_x_focus_init(ec);
-   e_bindings_mouse_grab(E_BINDING_CONTEXT_WINDOW, win);
-   e_bindings_wheel_grab(E_BINDING_CONTEXT_WINDOW, win);
+   e_bindings_mouse_grab(E_BINDING_CONTEXT_WINDOW, pwin);
+   e_bindings_wheel_grab(E_BINDING_CONTEXT_WINDOW, pwin);
    _e_comp_x_client_evas_init(ec);
    if (ec->netwm.ping && (!ec->ping_poller))
      e_client_ping(ec);
@@ -3397,8 +3395,8 @@ _e_comp_x_hook_client_fetch(void *d EINA_UNUSED, E_Client *ec)
              ec->focus_policy_override = E_FOCUS_CLICK;
              _e_comp_x_focus_setdown(ec);
              _e_comp_x_focus_setup(ec);
-             e_bindings_mouse_grab(E_BINDING_CONTEXT_WINDOW, win);
-             e_bindings_wheel_grab(E_BINDING_CONTEXT_WINDOW, win);
+             e_bindings_mouse_grab(E_BINDING_CONTEXT_WINDOW, pwin);
+             e_bindings_wheel_grab(E_BINDING_CONTEXT_WINDOW, pwin);
              if (!ec->netwm.state.skip_pager)
                {
                   ec->netwm.state.skip_pager = 1;
@@ -4629,8 +4627,8 @@ _e_comp_x_hook_client_del(void *d EINA_UNUSED, E_Client *ec)
    if ((!ec->already_unparented) && cd && cd->reparented)
      {
         _e_comp_x_focus_setdown(ec);
-        e_bindings_mouse_ungrab(E_BINDING_CONTEXT_WINDOW, win);
-        e_bindings_wheel_ungrab(E_BINDING_CONTEXT_WINDOW, win);
+        e_bindings_mouse_ungrab(E_BINDING_CONTEXT_WINDOW, pwin);
+        e_bindings_wheel_ungrab(E_BINDING_CONTEXT_WINDOW, pwin);
         if (!cd->deleted)
           {
              if (stopping)
@@ -5168,8 +5166,8 @@ _e_comp_x_bindings_grab_cb(void)
         else
           {
              _e_comp_x_focus_setup(ec);
-             e_bindings_mouse_grab(E_BINDING_CONTEXT_WINDOW, e_client_util_win_get(ec));
-             e_bindings_wheel_grab(E_BINDING_CONTEXT_WINDOW, e_client_util_win_get(ec));
+             e_bindings_mouse_grab(E_BINDING_CONTEXT_WINDOW, e_client_util_pwin_get(ec));
+             e_bindings_wheel_grab(E_BINDING_CONTEXT_WINDOW, e_client_util_pwin_get(ec));
           }
      }
 }
@@ -5189,8 +5187,8 @@ _e_comp_x_bindings_ungrab_cb(void)
         ecore_x_window_button_ungrab(win, 1, 0, 1);
         ecore_x_window_button_ungrab(win, 2, 0, 1);
         ecore_x_window_button_ungrab(win, 3, 0, 1);
-        e_bindings_mouse_ungrab(E_BINDING_CONTEXT_WINDOW, win);
-        e_bindings_wheel_ungrab(E_BINDING_CONTEXT_WINDOW, win);
+        e_bindings_mouse_ungrab(E_BINDING_CONTEXT_WINDOW, e_client_util_pwin_get(ec));
+        e_bindings_wheel_ungrab(E_BINDING_CONTEXT_WINDOW, e_client_util_pwin_get(ec));
         _e_comp_x_client_data_get(ec)->button_grabbed = 0;
      }
 }
