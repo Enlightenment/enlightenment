@@ -1948,15 +1948,12 @@ _e_client_eval(E_Client *ec)
 
              e_object_ref(E_OBJECT(ec->cur_mouse_action));
              ec->cur_mouse_action->func.go(E_OBJECT(ec), NULL);
-          }
-        if (evas_object_visible_get(ec->frame))
-          {
              if (e_config->border_raise_on_mouse_action)
                evas_object_raise(ec->frame);
              evas_object_focus_set(ec->frame, 1);
-             ec->changes.visible = 0;
-             rem_change = 1;
           }
+        if (evas_object_visible_get(ec->frame))
+          ec->changes.visible = 0;
      }
    else if ((ec->changes.visible) && (ec->new_client))
      {
