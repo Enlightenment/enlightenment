@@ -1956,7 +1956,6 @@ _e_client_eval(E_Client *ec)
              evas_object_focus_set(ec->frame, 1);
              ec->changes.visible = 0;
              rem_change = 1;
-             _e_client_event_simple(ec, E_EVENT_CLIENT_SHOW);
           }
      }
    else if ((ec->changes.visible) && (ec->new_client))
