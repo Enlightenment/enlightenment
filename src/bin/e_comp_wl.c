@@ -1517,13 +1517,13 @@ _e_comp_wl_surface_cb_commit(struct wl_client *client EINA_UNUSED, struct wl_res
 static void
 _e_comp_wl_surface_cb_buffer_transform_set(struct wl_client *client EINA_UNUSED, struct wl_resource *resource EINA_UNUSED, int32_t transform EINA_UNUSED)
 {
-   DBG("Surface Buffer Transform: %d", wl_resource_get_id(resource));
+   /* DBG("Surface Buffer Transform: %d", wl_resource_get_id(resource)); */
 }
 
 static void
 _e_comp_wl_surface_cb_buffer_scale_set(struct wl_client *client EINA_UNUSED, struct wl_resource *resource EINA_UNUSED, int32_t scale EINA_UNUSED)
 {
-   DBG("Surface Buffer Scale: %d", wl_resource_get_id(resource));
+   /* DBG("Surface Buffer Scale: %d", wl_resource_get_id(resource)); */
 }
 
 static const struct wl_surface_interface _e_surface_interface =
