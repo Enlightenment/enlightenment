@@ -238,7 +238,7 @@ _bryce_autosize(Bryce *b)
 static Eina_Bool
 _bryce_autohide_timeout(Bryce *b)
 {
-   int x, y;
+   int x = 0, y = 0;
 
    b->autohide_timer = NULL;
    b->hidden = b->animating = 1;

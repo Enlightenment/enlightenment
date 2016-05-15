@@ -339,7 +339,7 @@ _notification_popup_new(E_Notification_Notify *n, unsigned id)
         EINA_LIST_FOREACH(e_comp->zones, l, zone)
           {
              Evas_Object *o;
-             int x, y, w, h;
+             int x = 0, y = 0, w = 0, h = 0;
 
              if (zone == e_comp_object_util_zone_get(popup->win)) continue;
              o = e_comp_object_util_mirror_add(popup->theme);
@@ -363,7 +363,7 @@ _notification_popup_new(E_Notification_Notify *n, unsigned id)
 static int
 _notification_popup_place(Popup_Data *popup, int pos)
 {
-   int x, y, w, h;
+   int x = 0, y = 0, w = 0, h = 0;
    Eina_List *l;
    Evas_Object *o;
    E_Zone *zone;

@@ -1850,7 +1850,7 @@ static void
 _e_comp_smart_cb_frame_recalc(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
    E_Comp_Object *cw = data;
-   int w, h, pw, ph;
+   int w = 0, h = 0, pw = 0, ph = 0;
 
    /* - get current size
     * - calc new size
@@ -2417,12 +2417,15 @@ _e_comp_smart_resize(Evas_Object *obj, int w, int h)
    cw->w = w, cw->h = h;
    if ((!cw->ec->shading) && (!cw->ec->shaded))
      {
-        int ww, hh, pw, ph;
+        int ww = 0, hh = 0, pw = 0, ph = 0;
 
         if (cw->frame_object)
           e_comp_object_frame_wh_unadjust(obj, w, h, &ww, &hh);
         else
-          ww = w, hh = h;
+          {
+             ww = w;
+             hh = h;
+          }
         /* verify pixmap:object size */
         if (e_pixmap_size_get(cw->ec->pixmap, &pw, &ph) && (!cw->ec->override))
           {
