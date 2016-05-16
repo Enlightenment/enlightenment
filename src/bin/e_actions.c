@@ -2454,8 +2454,7 @@ _have_lid_and_external_screens_on(void)
 
 ACT_FN_GO(suspend_smart, EINA_UNUSED)
 {
-   if ((!_have_lid_and_external_screens_on()) &&
-       (ecore_power_state_get() != ECORE_POWER_STATE_MAINS))
+   if (!_have_lid_and_external_screens_on())
      e_sys_action_do(E_SYS_SUSPEND, NULL);
 }
 
@@ -2523,8 +2522,7 @@ ACT_FN_GO(hibernate, )
 
 ACT_FN_GO(hibernate_smart, EINA_UNUSED)
 {
-   if ((!_have_lid_and_external_screens_on()) &&
-       (ecore_power_state_get() != ECORE_POWER_STATE_MAINS))
+   if (!_have_lid_and_external_screens_on())
      e_sys_action_do(E_SYS_HIBERNATE, NULL);
 }
 
