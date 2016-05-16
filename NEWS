@@ -1,3 +1,52 @@
+Release 0.20.8:
+---------------------
+Chris Michael (1):
+      disable option for mouse to use Application theme if we are running in Wayland
+
+Mike Blumenkrantz (41):
+      Revert "handle recursion more effectively in e_menu_hide_all()"
+      feed mouse up events to internal wins before mouse out during action exec
+      ensure that the startup apps cache handler has run before trying to start apps
+      directly load extra wl modules during compositor init
+      further optimize window smart placement by reducing obstacle calcs
+      don't refocus deleted clients during wl compositor grab
+      ensure lifetime for wl client focus timer
+      hide evry on focus-out
+      don't revert focus to desktop fileman during compositor grab
+      evry null deref
+      bad copy/paste in _e_place_desk_region_smart_obstacle_add()
+      add configure flag for xwayland binary
+      clean up mixer includes
+      unset DISPLAY during mixer's pulse backend startup
+      ensure xwayland module init does not fail due to early startup
+      flag wl surfaces as internal during create() based on pid matching
+      make init fail if a dbus session connection cannot be created
+      update README.wayland to include dbus-launch
+      do not add ignored clients to ibar menu
+      ensure child windows are placed on screen
+      disable focus effects for windows with csd
+      block keyboard sending for wl clients if a compositor grab is active
+      only load wayland-specific modules on startup if they have been built
+      handle positioning of x11 overrides with csd accurately
+      change efm icon entry to only toggle focus in x11 compositors (runtime)
+      toggle compositor canvas focus during init
+      fix usage of e_object_unref in xkbswitch when managing new kbd dialog
+      also check pixmap argb state when setting comp object alpha
+      enforce setting alpha on comp objects only after image data has been set
+      ensure int64_t is used in all cases for wl pixmap ids
+      remove some cruft from _e_comp_wl_client_cb_new()
+      set E_Client->override flag for internal wins as needed
+      use window id for internal window pixmaps again on wayland
+      avoid infinitely looping when applying x11 window grouping
+      only check pixmap argb state for non-X11 clients
+      use parent windows for x11 binding grabs
+      adjust some client eval parts to make manual placement work again
+      force cursor placement to obey useful zone geometry
+      ensure that client eval correctly handles retries on visibility-pending clients
+      prevent double emission of E_EVENT_CLIENT_SHOW
+      more tweaks for manual window placement in client eval
+
+
 Release 0.20.7:
 ---------------------
 Carsten Haitzler (4):
