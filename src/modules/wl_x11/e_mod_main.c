@@ -49,6 +49,8 @@ e_modapi_init(E_Module *m)
    e_comp->pointer = e_pointer_canvas_new(e_comp->ee, EINA_TRUE);
    e_comp->pointer->color = EINA_TRUE;
 
+   e_comp_wl->dmabuf_disable = EINA_TRUE;
+
    return m;
 }
 
