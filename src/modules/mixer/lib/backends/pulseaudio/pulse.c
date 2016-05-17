@@ -257,11 +257,11 @@ _sink_remove_cb(int index, void *data EINA_UNUSED)
      {
         if (sink->idx == index)
           {
+             ctx->sinks = eina_list_remove_list(ctx->sinks, l);
              if (ctx->cb)
                ctx->cb((void *)ctx->userdata, EMIX_SINK_REMOVED_EVENT,
                             (Emix_Sink *)sink);
              _sink_del(sink);
-             ctx->sinks = eina_list_remove_list(ctx->sinks, l);
              break;
           }
      }
@@ -405,13 +405,13 @@ _sink_input_remove_cb(int index, void *data EINA_UNUSED)
      {
         if (input->idx == index)
           {
+             ctx->inputs = eina_list_remove_list(ctx->inputs, l);
              if (ctx->cb)
                ctx->cb((void *)ctx->userdata,
                        EMIX_SINK_INPUT_REMOVED_EVENT,
                        (Emix_Sink_Input *)input);
              _sink_input_del(input);
 
-             ctx->inputs = eina_list_remove_list(ctx->inputs, l);
              break;
           }
      }
@@ -510,12 +510,12 @@ _source_remove_cb(int index, void *data EINA_UNUSED)
      {
         if (source->idx == index)
           {
+             ctx->sources = eina_list_remove_list(ctx->sources, l);
              if (ctx->cb)
                ctx->cb((void *)ctx->userdata, EMIX_SOURCE_REMOVED_EVENT,
                        (Emix_Source *)source);
 
              _source_del(source);
-             ctx->sources = eina_list_remove_list(ctx->sources, l);
              break;
           }
      }
