@@ -8,11 +8,16 @@
 # ifndef EGL_TEXTURE_RGBA
 #  define EGL_TEXTURE_RGBA		0x305E
 # endif
+# ifndef DRM_FORMAT_ARGB8888
+#  define DRM_FORMAT_ARGB8888           0x34325241
+#  define DRM_FORMAT_XRGB8888           0x34325258
+# endif
 #endif
 #ifndef HAVE_WAYLAND_ONLY
 # include "e_comp_x.h"
 #endif
 
+#include <sys/mman.h>
 #include <uuid.h>
 
 static Eina_Hash *pixmaps[2] = {NULL};
@@ -42,6 +47,7 @@ struct _E_Pixmap
 
 #ifdef HAVE_WAYLAND
    E_Comp_Wl_Buffer *buffer;
+   E_Comp_Wl_Buffer *native_buffer;
    E_Comp_Wl_Buffer *held_buffer;
    struct wl_listener buffer_destroy_listener;
    struct wl_listener held_buffer_destroy_listener;
@@ -500,6 +506,7 @@ e_pixmap_refresh(E_Pixmap *cp)
         {
            E_Comp_Wl_Buffer *buffer = cp->buffer;
            struct wl_shm_buffer *shm_buffer;
+           struct linux_dmabuf_buffer *dmabuf_buffer;
            int format;
 
            cp->w = cp->h = 0;
@@ -513,10 +520,14 @@ e_pixmap_refresh(E_Pixmap *cp)
 
            if (shm_buffer)
              format = wl_shm_buffer_get_format(shm_buffer);
+           else if (buffer->dmabuf_buffer)
+             format = buffer->dmabuf_buffer->attributes.format;
            else
              e_comp_wl->wl.glapi->evasglQueryWaylandBuffer(e_comp_wl->wl.gl, buffer->resource, EGL_TEXTURE_FORMAT, &format);
+
            switch (format)
              {
+              case DRM_FORMAT_ARGB8888:
               case WL_SHM_FORMAT_ARGB8888:
               case EGL_TEXTURE_RGBA:
                 cp->image_argb = EINA_TRUE;
@@ -705,10 +716,27 @@ e_pixmap_native_surface_init(E_Pixmap *cp, Evas_Native_Surface *ns)
       case E_PIXMAP_TYPE_WL:
 #ifdef HAVE_WAYLAND
         if (!cp->buffer) return EINA_FALSE;
-        ns->type = EVAS_NATIVE_SURFACE_WL;
-        ns->version = EVAS_NATIVE_SURFACE_VERSION;
-        ns->data.wl.legacy_buffer = cp->buffer->resource;
-        ret = !cp->buffer->shm_buffer;
+        if (cp->buffer->dmabuf_buffer)
+          {
+             struct dmabuf_attributes *a;
+
+             a = &cp->buffer->dmabuf_buffer->attributes;
+             ns->type = EVAS_NATIVE_SURFACE_WL_DMABUF;
+             ns->version = EVAS_NATIVE_SURFACE_VERSION;
+
+             ns->data.wl_dmabuf.attr = &cp->buffer->dmabuf_buffer->attributes;
+             ns->data.wl_dmabuf.resource = cp->buffer->resource;
+             cp->native_buffer = cp->buffer;
+             ret = EINA_TRUE;
+          }
+        else if (!cp->buffer->shm_buffer)
+          {
+             ns->type = EVAS_NATIVE_SURFACE_WL;
+             ns->version = EVAS_NATIVE_SURFACE_VERSION;
+             ns->data.wl.legacy_buffer = cp->buffer->resource;
+             ret = EINA_TRUE;
+          }
+        else ret = EINA_FALSE;
 #endif
         break;
       default:
@@ -852,7 +880,7 @@ e_pixmap_image_exists(const E_Pixmap *cp)
      return !!cp->image;
 #endif
 #ifdef HAVE_WAYLAND
-   return (!!cp->data) || (e_comp->gl && (!cp->buffer->shm_buffer));
+   return (!!cp->data) || (e_comp->gl && (!cp->buffer->shm_buffer)) || cp->buffer->dmabuf_buffer;
 #endif
 
    return EINA_FALSE;
@@ -1017,4 +1045,26 @@ e_pixmap_alias(E_Pixmap *cp, E_Pixmap_Type type, ...)
       default: break;
      }
    va_end(l);
+}
+
+E_API Eina_Bool
+e_pixmap_dmabuf_test(struct linux_dmabuf_buffer *dmabuf)
+{
+   int size;
+   void *data;
+
+   if (e_comp->gl) return EINA_TRUE;
+
+   /* TODO: Software rendering for multi-plane formats */
+   if (dmabuf->attributes.n_planes != 1) return EINA_FALSE;
+   if (dmabuf->attributes.format != DRM_FORMAT_ARGB8888 &&
+       dmabuf->attributes.format != DRM_FORMAT_XRGB8888) return EINA_FALSE;
+
+   /* This is only legit for ARGB8888 */
+   size = dmabuf->attributes.height * dmabuf->attributes.stride[0];
+   data = mmap(NULL, size, PROT_READ | PROT_WRITE, MAP_SHARED, dmabuf->attributes.fd[0], 0);
+   if (data == MAP_FAILED) return EINA_FALSE;
+   munmap(data, size);
+
+   return EINA_TRUE;
 }

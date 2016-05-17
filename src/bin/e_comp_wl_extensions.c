@@ -253,6 +253,22 @@ GLOBAL_BIND_CB(www, www_interface)
         } \
    } while (0)
 
+static Eina_Bool
+_dmabuf_add(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
+{
+   Ecore_Wl2_Event_Sync_Done *ev;
+   int w = 0, h = 0;
+
+   ev = event;
+   if (ev->display != e_comp_wl->wl.client_disp)
+     return ECORE_CALLBACK_PASS_ON;
+
+   /* Proxy not supported yet */
+   if (!(e_comp_wl->dmabuf_disable || e_comp_wl->dmabuf_proxy))
+     linux_dmabuf_setup(e_comp_wl->wl.disp);
+
+   return ECORE_CALLBACK_PASS_ON;
+}
 
 EINTERN Eina_Bool
 e_comp_wl_extensions_init(void)
@@ -261,6 +277,8 @@ e_comp_wl_extensions_init(void)
    GLOBAL_CREATE_OR_RETURN(session_recovery, zwp_e_session_recovery_interface);
    GLOBAL_CREATE_OR_RETURN(screenshooter, screenshooter_interface);
    GLOBAL_CREATE_OR_RETURN(www, www_interface);
+
+   ecore_event_handler_add(ECORE_WL2_EVENT_SYNC_DONE, _dmabuf_add, NULL);
 
    e_client_hook_add(E_CLIENT_HOOK_MOVE_BEGIN, _e_comp_wl_extensions_client_move_begin, NULL);
    e_client_hook_add(E_CLIENT_HOOK_MOVE_END, _e_comp_wl_extensions_client_move_end, NULL);

@@ -222,6 +222,7 @@ src/bin/e_zone.h
 if HAVE_WAYLAND
 ENLIGHTENMENTHEADERS += \
 src/bin/e_comp_wl_data.h \
+src/bin/e_comp_wl_dmabuf.h \
 src/bin/e_comp_wl_input.h \
 src/bin/e_comp_wl.h
 endif
@@ -393,6 +394,8 @@ endif
 
 if HAVE_WAYLAND
 enlightenment_src += \
+src/bin/generated/linux-dmabuf-unstable-v1-server-protocol.h \
+src/bin/generated/linux-dmabuf-unstable-v1-protocol.c \
 src/bin/generated/www-protocol.c \
 src/bin/generated/www-protocol.h \
 src/bin/generated/session-recovery.c \
@@ -401,6 +404,7 @@ src/bin/generated/e_comp_wl_screenshooter_server.c \
 src/bin/generated/e_comp_wl_screenshooter_server.h \
 src/bin/e_comp_wl_data.c \
 src/bin/e_comp_wl_input.c \
+src/bin/e_comp_wl_dmabuf.c \
 src/bin/e_comp_wl.c \
 src/bin/e_comp_wl_extensions.c
 endif

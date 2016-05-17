@@ -2767,6 +2767,7 @@ e_comp_wl_buffer_get(struct wl_resource *resource)
    E_Comp_Wl_Buffer *buffer;
    struct wl_listener *listener;
    struct wl_shm_buffer *shmbuff;
+   struct linux_dmabuf_buffer *dmabuf;
 
    listener =
      wl_resource_get_destroy_listener(resource, _e_comp_wl_buffer_cb_destroy);
@@ -2775,10 +2776,16 @@ e_comp_wl_buffer_get(struct wl_resource *resource)
 
    if (!(buffer = E_NEW(E_Comp_Wl_Buffer, 1))) return NULL;
    shmbuff = wl_shm_buffer_get(resource);
+   dmabuf = linux_dmabuf_buffer_get(resource);
    if (shmbuff)
      {
         buffer->w = wl_shm_buffer_get_width(shmbuff);
         buffer->h = wl_shm_buffer_get_height(shmbuff);
+     }
+   else if (dmabuf)
+     {
+        buffer->w = dmabuf->attributes.width;
+        buffer->h = dmabuf->attributes.height;
      }
    else if (e_comp->gl)
      {
@@ -2786,6 +2793,7 @@ e_comp_wl_buffer_get(struct wl_resource *resource)
         e_comp_wl->wl.glapi->evasglQueryWaylandBuffer(e_comp_wl->wl.gl, resource, EGL_HEIGHT, &buffer->h);
      }
    buffer->shm_buffer = shmbuff;
+   buffer->dmabuf_buffer = dmabuf;
 
    buffer->resource = resource;
    wl_signal_init(&buffer->destroy_signal);

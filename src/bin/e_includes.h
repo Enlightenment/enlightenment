@@ -156,5 +156,6 @@
 #ifdef HAVE_WAYLAND
 # include "e_comp_wl.h"
 # include "e_comp_wl_data.h"
+# include "e_comp_wl_dmabuf.h"
 # include "e_comp_wl_input.h"
 #endif
