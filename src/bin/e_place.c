@@ -29,7 +29,7 @@ e_place_zone_region_smart_cleanup(E_Zone *zone)
                   /* Insert the ec if larger than the current ec */
                   if (area >= testarea)
                     {
-                       clients = eina_list_prepend_relative(clients, ec2, ec);
+                       clients = eina_list_prepend_relative_list(clients, ec, ll);
                        break;
                     }
                }
@@ -41,10 +41,12 @@ e_place_zone_region_smart_cleanup(E_Zone *zone)
    /* Loop over the clients moving each one using the smart placement */
    EINA_LIST_FREE(clients, ec)
      {
-        int new_x, new_y;
+        int new_x = zone->x, new_y = zone->y;
+        Eina_List *l = eina_list_append(NULL, ec);
 
-        e_place_zone_region_smart(zone, clients, ec->x, ec->y,
+        e_place_zone_region_smart(zone, l, zone->x, zone->y,
                                   ec->w, ec->h, &new_x, &new_y);
+        eina_list_free(l);
         evas_object_move(ec->frame, new_x, new_y);
      }
 }
