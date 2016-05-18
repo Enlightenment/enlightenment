@@ -1299,6 +1299,7 @@ _ibar_icon_menu_client_add(IBar_Icon *ic, E_Client *ec)
    int w, h;
 
    if (ec->netwm.state.skip_taskbar || e_client_util_ignored_get(ec)) return EINA_FALSE;
+   if (e_client_util_is_popup(ec)) return EINA_FALSE;
    o = ic->menu->o_bg;
    it = edje_object_add(e_comp->evas);
    ic->client_objs = eina_list_append(ic->client_objs, it);
