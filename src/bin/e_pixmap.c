@@ -506,7 +506,6 @@ e_pixmap_refresh(E_Pixmap *cp)
         {
            E_Comp_Wl_Buffer *buffer = cp->buffer;
            struct wl_shm_buffer *shm_buffer;
-           struct linux_dmabuf_buffer *dmabuf_buffer;
            int format;
 
            cp->w = cp->h = 0;
@@ -718,9 +717,6 @@ e_pixmap_native_surface_init(E_Pixmap *cp, Evas_Native_Surface *ns)
         if (!cp->buffer) return EINA_FALSE;
         if (cp->buffer->dmabuf_buffer)
           {
-             struct dmabuf_attributes *a;
-
-             a = &cp->buffer->dmabuf_buffer->attributes;
              ns->type = EVAS_NATIVE_SURFACE_WL_DMABUF;
              ns->version = EVAS_NATIVE_SURFACE_VERSION;
 

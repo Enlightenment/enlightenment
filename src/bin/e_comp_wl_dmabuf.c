@@ -2,6 +2,14 @@
  * follows.
  */
 
+#if __clang__
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wunused-parameter"
+#elif (__GNUC__ == 4 && __GNUC_MINOR__ >= 6) || __GNUC__ > 4
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wunused-parameter"
+#endif
+
 /*
  * Copyright © 2014, 2015 Collabora, Ltd.
  *
@@ -152,7 +160,6 @@ params_create(struct wl_client *client,
 {
 	struct linux_dmabuf_buffer *buffer;
 	int i;
-	void *lala;
 
 	buffer = wl_resource_get_user_data(params_resource);
 
