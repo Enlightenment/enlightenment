@@ -29,6 +29,7 @@ typedef struct Media
    unsigned long long timestamp;
    unsigned int tries;
    Ecore_Thread *video_thread;
+   Eina_List *clients;
    Eina_Stringshare *tmpfile;
    Eina_Bool video;
    Eina_Bool dummy : 1;
@@ -52,11 +53,9 @@ static Media_Cache_List *tw_cache_list[2] = {NULL};
 
 static Evas_Point last_coords = {0, 0};
 
-static uint64_t tw_win = 0;
+static E_Client *tw_win;
 
 static Ecore_Timer *tw_hide_timer = NULL;
-
-static Eldbus_Service_Interface *tw_dbus_iface = NULL;
 
 static Eina_Stringshare *tw_tmpfile = NULL;
 static int tw_tmpfd = -1;
@@ -71,23 +70,6 @@ typedef enum
     TEAMWORK_LINK_TYPE_REMOTE
 } Teamwork_Link_Type;
 
-typedef enum
-{
-   TEAMWORK_SIGNAL_LINK_DOWNLOADING,
-   TEAMWORK_SIGNAL_LINK_PROGRESS,
-   TEAMWORK_SIGNAL_LINK_COMPLETE,
-   TEAMWORK_SIGNAL_LINK_INVALID,
-} Teamwork_Signal;
-
-static const Eldbus_Signal tw_signals[] =
-{
-   [TEAMWORK_SIGNAL_LINK_DOWNLOADING] = {"LinkDownloading", ELDBUS_ARGS({"s", "URI"}, {"u", "Timestamp"}), 0},
-   [TEAMWORK_SIGNAL_LINK_PROGRESS] = {"LinkProgress", ELDBUS_ARGS({"s", "URI"}, {"u", "Timestamp"}, {"d", "Percent Completion"}), 0},
-   [TEAMWORK_SIGNAL_LINK_COMPLETE] = {"LinkComplete", ELDBUS_ARGS({"s", "URI"}, {"u", "Timestamp"}), 0},
-   [TEAMWORK_SIGNAL_LINK_INVALID] = {"LinkInvalid", ELDBUS_ARGS({"s", "URI"}, {"u", "Timestamp"}), 0},
-   {NULL, NULL, 0}
-};
-
 static void tw_show(Media *i);
 static void tw_show_local_file(const char *uri);
 static void tw_show_local_dir(const char *uri);
@@ -99,35 +81,85 @@ static void tw_media_ping(const char *url, unsigned long long timestamp, Eina_Bo
 static Eina_Binbuf *tw_media_get(const char *url, unsigned long long timestamp, Eina_Bool *video);
 static Eina_Bool tw_idler_start(void);
 
+EINTERN Teamwork_Signal_Cb tw_signal_link_complete[E_PIXMAP_TYPE_NONE];
+EINTERN Teamwork_Signal_Cb tw_signal_link_invalid[E_PIXMAP_TYPE_NONE];
+EINTERN Teamwork_Signal_Progress_Cb tw_signal_link_progress[E_PIXMAP_TYPE_NONE];
+EINTERN Teamwork_Signal_Cb tw_signal_link_downloading[E_PIXMAP_TYPE_NONE];
+
 static void
-dbus_signal_link_complete(Media *i)
+media_client_del(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
-   unsigned int u = ecore_time_unix_get();
-   if (i->show) tw_show(i);
+   Media *i = data;
+   E_Client *ec = e_comp_object_client_get(obj);
+
+   i->clients = eina_list_remove(i->clients, ec);
+}
+
+static void
+signal_link_complete(Media *i)
+{
+   E_Client *ec;
+
+   if (i->show && (i->clients || (!tw_win))) tw_show(i);
    i->show = 0;
-   eldbus_service_signal_emit(tw_dbus_iface, TEAMWORK_SIGNAL_LINK_COMPLETE, i->addr, u);
+
+   EINA_LIST_FREE(i->clients, ec)
+     {
+        E_Pixmap_Type type = e_pixmap_type_get(ec->pixmap);
+        if (e_client_has_xwindow(ec))
+          type = E_PIXMAP_TYPE_X;
+        if (tw_signal_link_complete[type])
+          tw_signal_link_complete[type](ec, i->addr);
+        evas_object_event_callback_del_full(ec->frame, EVAS_CALLBACK_DEL, media_client_del, i);
+     }
 }
 
 static void
-dbus_signal_link_invalid(Media *i)
+signal_link_invalid(Media *i)
 {
-   unsigned int u = ecore_time_unix_get();
-   eldbus_service_signal_emit(tw_dbus_iface, TEAMWORK_SIGNAL_LINK_INVALID, i->addr, u);
+   E_Client *ec;
+
+   EINA_LIST_FREE(i->clients, ec)
+     {
+        E_Pixmap_Type type = e_pixmap_type_get(ec->pixmap);
+        if (e_client_has_xwindow(ec))
+          type = E_PIXMAP_TYPE_X;
+        if (tw_signal_link_invalid[type])
+          tw_signal_link_invalid[type](ec, i->addr);
+        evas_object_event_callback_del_full(ec->frame, EVAS_CALLBACK_DEL, media_client_del, i);
+     }
 }
 
 static void
-dbus_signal_link_progress(Media *i, double pr)
+signal_link_progress(Media *i, double pr)
 {
-   unsigned int u = ecore_time_unix_get();
+   Eina_List *l;
+   E_Client *ec;
 
-   eldbus_service_signal_emit(tw_dbus_iface, TEAMWORK_SIGNAL_LINK_PROGRESS, i->addr, u, pr);
+   EINA_LIST_FOREACH(i->clients, l, ec)
+     {
+        E_Pixmap_Type type = e_pixmap_type_get(ec->pixmap);
+        if (e_client_has_xwindow(ec))
+          type = E_PIXMAP_TYPE_X;
+        if (tw_signal_link_progress[type])
+          tw_signal_link_progress[type](ec, i->addr, lround(pr));
+     }
 }
 
 static void
-dbus_signal_link_downloading(Media *i)
+signal_link_downloading(Media *i)
 {
-   unsigned int u = ecore_time_unix_get();
-   eldbus_service_signal_emit(tw_dbus_iface, TEAMWORK_SIGNAL_LINK_DOWNLOADING, i->addr, u);
+   Eina_List *l;
+   E_Client *ec;
+
+   EINA_LIST_FOREACH(i->clients, l, ec)
+     {
+        E_Pixmap_Type type = e_pixmap_type_get(ec->pixmap);
+        if (e_client_has_xwindow(ec))
+          type = E_PIXMAP_TYPE_X;
+        if (tw_signal_link_downloading[type])
+          tw_signal_link_downloading[type](ec, i->addr);
+     }
 }
 
 static Eina_Bool
@@ -143,7 +175,7 @@ download_media_complete(void *data EINA_UNUSED, int type EINA_UNUSED, Ecore_Con_
    if (tw_media_add(i->addr, i->buf, i->timestamp, i->video) == 1)
      tw_mod->media_size += eina_binbuf_length_get(i->buf);
    E_FREE_FUNC(i->client, ecore_con_url_free);
-   dbus_signal_link_complete(i);
+   signal_link_complete(i);
    download_media_cleanup();
    DBG("MEDIA CACHE: %zu bytes", tw_mod->media_size);
    return ECORE_CALLBACK_DONE;
@@ -177,7 +209,7 @@ download_media_status(void *data EINA_UNUSED, int t EINA_UNUSED, Ecore_Con_Event
 
    if (i->valid)
      {
-        dbus_signal_link_progress(i, ev->down.now / ev->down.total);
+        signal_link_progress(i, ev->down.now / ev->down.total);
         return ECORE_CALLBACK_DONE; //already checked
      }
    status = ecore_con_url_status_code_get(ev->url_con);
@@ -213,11 +245,11 @@ download_media_status(void *data EINA_UNUSED, int t EINA_UNUSED, Ecore_Con_Event
         break;
      }
    i->valid = !i->dummy;
-   if (i->valid) dbus_signal_link_progress(i, ev->down.now / ev->down.total);
+   if (i->valid) signal_link_progress(i, ev->down.now / ev->down.total);
 
    return ECORE_CALLBACK_DONE;
 dummy:
-   dbus_signal_link_invalid(i);
+   signal_link_invalid(i);
    tw_dummy_add(i->addr);
    i->dummy = EINA_TRUE;
 invalid:
@@ -283,10 +315,10 @@ download_media_add(const char *url)
         i->client = ecore_con_url_new(url);
         ecore_con_url_data_set(i->client, i);
         ecore_con_url_get(i->client);
-        dbus_signal_link_downloading(i);
+        signal_link_downloading(i);
      }
    if (!add) return i;
-   eina_hash_direct_add(tw_mod->media, url, i);
+   eina_hash_add(tw_mod->media, url, i);
    tw_mod->media_list = eina_inlist_sorted_insert(tw_mod->media_list, EINA_INLIST_GET(i), (Eina_Compare_Cb)download_media_sort_cb);
    return i;
 }
@@ -294,11 +326,15 @@ download_media_add(const char *url)
 static void
 download_media_free(Media *i)
 {
+   E_Client *ec;
+
    if (!i) return;
    tw_mod->media_list = eina_inlist_remove(tw_mod->media_list, EINA_INLIST_GET(i));
    if (i->client) ecore_con_url_free(i->client);
    if (i->buf) eina_binbuf_free(i->buf);
    if (i->tmpfile) ecore_file_unlink(i->tmpfile);
+   EINA_LIST_FREE(i->clients, ec)
+     evas_object_event_callback_del_full(ec->frame, EVAS_CALLBACK_DEL, media_client_del, i);
    eina_stringshare_del(i->tmpfile);
    eina_stringshare_del(i->addr);
    free(i);
@@ -336,7 +372,7 @@ download_media_cleanup(void)
 }
 
 static Teamwork_Link_Type
-dbus_link_uri_local_type_get(const char *uri)
+link_uri_local_type_get(const char *uri)
 {
    size_t len = strlen(uri);
 
@@ -345,38 +381,39 @@ dbus_link_uri_local_type_get(const char *uri)
 }
 
 static Teamwork_Link_Type
-dbus_link_uri_type_get(const char *uri)
+link_uri_type_get(const char *uri)
 {
    if (!uri[0]) return TEAMWORK_LINK_TYPE_NONE; //invalid
-   if (uri[0] == '/') return dbus_link_uri_local_type_get(uri + 1); //probably a file?
+   if (uri[0] == '/') return link_uri_local_type_get(uri + 1); //probably a file?
    if ((!strncasecmp(uri, "http://", 7)) || (!strncasecmp(uri, "https://", 8))) return TEAMWORK_LINK_TYPE_REMOTE;
-   if (!strncmp(uri, "file://", 7)) return dbus_link_uri_local_type_get(uri + 7);
+   if (!strncmp(uri, "file://", 7)) return link_uri_local_type_get(uri + 7);
    WRN("Unknown link type for '%s'", uri);
    return TEAMWORK_LINK_TYPE_NONE;
 }
 
-static Eldbus_Message *
-dbus_link_detect_cb(const Eldbus_Service_Interface *iface EINA_UNUSED, const Eldbus_Message *msg)
+EINTERN void
+tw_link_detect(E_Client *ec, const char *uri)
 {
-   const char *uri;
-   unsigned int t;
+   Media *i;
 
-   if (!tw_config->allowed_media_age) goto out;
-   if (!eldbus_message_arguments_get(msg, "su", &uri, &t)) goto out;
+   if (!tw_config->allowed_media_age) return;
 
-   if (dbus_link_uri_type_get(uri) == TEAMWORK_LINK_TYPE_REMOTE)
-     download_media_add(uri);
-out:
-   return eldbus_message_method_return_new(msg);
+   if (link_uri_type_get(uri) != TEAMWORK_LINK_TYPE_REMOTE) return;
+   i = download_media_add(uri);
+   if ((!i->clients) || (!eina_list_data_find(i->clients, ec)))
+     {
+        i->clients = eina_list_append(i->clients, ec);
+        evas_object_event_callback_add(ec->frame, EVAS_CALLBACK_DEL, media_client_del, i);
+     }
 }
 
 static void
-dbus_link_show_helper(const char *uri, Eina_Bool signal_open)
+link_show_helper(const char *uri, Eina_Bool signal_open)
 {
    Teamwork_Link_Type type;
 
    if (tw_mod->pop && (!e_util_strcmp(evas_object_data_get(tw_mod->pop, "uri"), uri))) return;
-   type = dbus_link_uri_type_get(uri);
+   type = link_uri_type_get(uri);
    switch (type)
      {
       case TEAMWORK_LINK_TYPE_NONE: break;
@@ -409,115 +446,51 @@ dbus_link_show_helper(const char *uri, Eina_Bool signal_open)
    if (tw_mod->pop) tw_mod->force = signal_open;
 }
 
-static Eldbus_Message *
-dbus_link_show_cb(const Eldbus_Service_Interface *iface EINA_UNUSED, const Eldbus_Message *msg)
+EINTERN void
+tw_link_show(E_Client *ec, const char *uri, int x, int y)
 {
-   const char *uri;
-
-   if (eldbus_message_arguments_get(msg, "s", &uri))
-     {
-        tw_win = 0;
-        last_coords.x = last_coords.y = -1;
-        dbus_link_show_helper(uri, 1);
-     }
-   return eldbus_message_method_return_new(msg);
+   tw_win = ec;
+   last_coords.x = x;
+   last_coords.y = y;
+   link_show_helper(uri, 0);
+   tw_mod->hidden = 0;
 }
 
-static Eldbus_Message *
-dbus_link_hide_cb(const Eldbus_Service_Interface *iface EINA_UNUSED, const Eldbus_Message *msg)
+EINTERN void
+tw_link_hide(E_Client *ec, const char *uri)
 {
-   const char *uri;
-
-   if (eldbus_message_arguments_get(msg, "s", &uri))
+   if (ec != tw_win) return;
+   if (tw_mod->pop && (!tw_mod->sticky) &&
+       ((tw_tmpfile && eina_streq(evas_object_data_get(tw_mod->pop, "uri"), tw_tmpfile)) ||
+         eina_streq(evas_object_data_get(tw_mod->pop, "uri"), uri)))
      {
-        if (tw_mod->pop && (!tw_mod->sticky) && (!e_util_strcmp(evas_object_data_get(tw_mod->pop, "uri"), uri)))
+        if (tw_config->mouse_out_delay)
           {
-             tw_hide(NULL);
-             tw_mod->force = 0;
+             if (tw_hide_timer) ecore_timer_reset(tw_hide_timer);
+             else tw_hide_timer = ecore_timer_add(tw_config->mouse_out_delay, tw_hide, NULL);
           }
-     }
-   return eldbus_message_method_return_new(msg);
-}
-
-static Eldbus_Message *
-dbus_link_mouse_in_cb(const Eldbus_Service_Interface *iface EINA_UNUSED, const Eldbus_Message *msg)
-{
-   const char *uri;
-   unsigned int t;
-   uint64_t win;
-
-   if (eldbus_message_arguments_get(msg, "sutii", &uri, &t, &win, &last_coords.x, &last_coords.y))
-     {
-        tw_win = win;
-        dbus_link_show_helper(uri, 0);
-        tw_mod->hidden = 0;
-     }
-   return eldbus_message_method_return_new(msg);
-}
-
-static Eldbus_Message *
-dbus_link_mouse_out_cb(const Eldbus_Service_Interface *iface EINA_UNUSED, const Eldbus_Message *msg)
-{
-   const char *uri;
-   unsigned int t;
-   uint64_t win;
-
-   if (eldbus_message_arguments_get(msg, "sutii", &uri, &t, &win, &last_coords.x, &last_coords.y))
-     {
-        if (tw_mod->pop && (!tw_mod->sticky) &&
-            ((tw_tmpfile && (!e_util_strcmp(evas_object_data_get(tw_mod->pop, "uri"), tw_tmpfile))) ||
-            (!e_util_strcmp(evas_object_data_get(tw_mod->pop, "uri"), uri))))
-          {
-             if (tw_config->mouse_out_delay)
-               {
-                  if (tw_hide_timer) ecore_timer_reset(tw_hide_timer);
-                  else tw_hide_timer = ecore_timer_add(tw_config->mouse_out_delay, tw_hide, NULL);
-               }
-             else
-               tw_hide(NULL);
-             tw_mod->force = 0;
-          }
-        else if (tw_tmpthread || tw_tmpfile)
+        else
           tw_hide(NULL);
-        tw_mod->hidden = !tw_mod->pop;
+        tw_mod->force = 0;
      }
-   return eldbus_message_method_return_new(msg);
+   else if (tw_tmpthread || tw_tmpfile)
+     tw_hide(NULL);
+   tw_mod->hidden = !tw_mod->pop;
 }
 
-static Eldbus_Message *
-dbus_link_open_cb(const Eldbus_Service_Interface *iface EINA_UNUSED, const Eldbus_Message *msg)
+EINTERN void
+tw_link_open(E_Client *ec, const char *uri)
 {
-   const char *uri;
+   char *sb;
+   size_t size = 4096, len = sizeof(E_BINDIR "/enlightenment_open ") - 1;
 
-   if (eldbus_message_arguments_get(msg, "s", &uri))
-     {
-        char *sb;
-        size_t size = 4096, len = sizeof(E_BINDIR "/enlightenment_open ") - 1;
-
-        sb = malloc(size);
-        memcpy(sb, E_BINDIR "/enlightenment_open ", len);
-        sb = e_util_string_append_quoted(sb, &size, &len, uri);
-        ecore_exe_run(sb, NULL);
-        free(sb);
-     }
-   return eldbus_message_method_return_new(msg);
+   if (!ec->focused) return;
+   sb = malloc(size);
+   memcpy(sb, E_BINDIR "/enlightenment_open ", len);
+   sb = e_util_string_append_quoted(sb, &size, &len, uri);
+   ecore_exe_run(sb, NULL);
+   free(sb);
 }
-
-
-static const Eldbus_Method tw_methods[] = {
-   { "LinkDetect", ELDBUS_ARGS({"s", "URI"}, {"u", "Timestamp"}), NULL, dbus_link_detect_cb, 0 },
-   { "LinkMouseIn", ELDBUS_ARGS({"s", "URI"}, {"u", "Timestamp"}, {"t", "Window ID"}, {"i", "X Coordinate"}, {"i", "Y Coordinate"}), NULL, dbus_link_mouse_in_cb, 0 },
-   { "LinkMouseOut", ELDBUS_ARGS({"s", "URI"}, {"u", "Timestamp"}, {"t", "Window ID"}, {"i", "X Coordinate"}, {"i", "Y Coordinate"}), NULL, dbus_link_mouse_out_cb, 0 },
-   { "LinkShow", ELDBUS_ARGS({"s", "URI"}), NULL, dbus_link_show_cb, 0 },
-   { "LinkHide", ELDBUS_ARGS({"s", "URI"}), NULL, dbus_link_hide_cb, 0 },
-   { "LinkOpen", ELDBUS_ARGS({"s", "URI"}), NULL, dbus_link_open_cb, 0 },
-   { NULL, NULL, NULL, NULL, 0 }
-};
-
-static const Eldbus_Service_Interface_Desc tw_desc =
-{
-   "org.enlightenment.wm.Teamwork", tw_methods, tw_signals, NULL, NULL, NULL
-};
 
 static Eet_Data_Descriptor *
 media_cache_edd_new(void)
@@ -778,7 +751,6 @@ tw_show_helper(Evas_Object *o, int w, int h)
 {
    int px, py, pw, ph;
    double ratio = tw_config->popup_size / 100.;
-   E_Client *ec = NULL;
    E_Zone *zone = e_zone_current_get();
 
    evas_object_hide(tw_mod->pop);
@@ -810,13 +782,12 @@ tw_show_helper(Evas_Object *o, int w, int h)
           py = zone->h - ph;
         evas_object_move(tw_mod->pop, px, py);
      }
-   else if (tw_win && (((ec = e_pixmap_find_client(E_PIXMAP_TYPE_X, (Ecore_Window)tw_win))) ||
-                       ((ec = e_pixmap_find_client(E_PIXMAP_TYPE_WL, tw_win)))))
+   else if (tw_win)
      {
         int x, y;
 
-        x = ec->client.x + last_coords.x;
-        y = ec->client.y + last_coords.y;
+        x = tw_win->client.x + last_coords.x;
+        y = tw_win->client.y + last_coords.y;
         /* prefer tooltip left of last_coords */
         px = x - pw - 3;
         /* if it's offscreen, try right of last_coords */
@@ -1167,7 +1138,7 @@ tw_hide(void *d EINA_UNUSED)
         tw_tmpfd = -1;
      }
    eina_stringshare_replace(&tw_tmpfile, NULL);
-   tw_win = 0;
+   tw_win = NULL;
    evas_object_hide(tw_mod->pop);
    E_FREE_FUNC(tw_mod->pop, evas_object_del);
    last_coords.x = last_coords.y = 0;
@@ -1182,7 +1153,14 @@ e_tw_init(void)
    char buf[PATH_MAX];
    Eet_Data_Descriptor_Class eddc;
 
-   tw_dbus_iface = e_msgbus_interface_attach(&tw_desc);
+#ifdef HAVE_WAYLAND
+   if (e_comp->comp_type == E_PIXMAP_TYPE_WL)
+     wl_tw_init();
+#endif
+#ifndef HAVE_WAYLAND_ONLY
+   if (e_comp_util_has_x())
+     x11_tw_init();
+#endif
 
    e_user_dir_concat_static(buf, "images/tw_cache_images.eet");
    media[MEDIA_CACHE_TYPE_IMAGE] = eet_open(buf, EET_FILE_MODE_READ_WRITE);
@@ -1235,6 +1213,15 @@ EINTERN void
 e_tw_shutdown(void)
 {
    unsigned int x;
+
+#ifdef HAVE_WAYLAND
+   if (e_comp->comp_type == E_PIXMAP_TYPE_WL)
+     wl_tw_shutdown();
+#endif
+#ifndef HAVE_WAYLAND_ONLY
+   if (e_comp_util_has_x())
+     x11_tw_shutdown();
+#endif
    E_FREE_LIST(handlers, ecore_event_handler_del);
    for (x = 0; x <= MEDIA_CACHE_TYPE_VIDEO; x++)
      {
@@ -1254,7 +1241,6 @@ e_tw_shutdown(void)
              E_FREE_FUNC(media[x], eet_close);
           }
      }
-   E_FREE_FUNC(tw_dbus_iface, eldbus_service_interface_unregister);
    E_FREE_FUNC(dummies, eet_close);
    E_FREE_FUNC(cleaner_edd, eet_data_descriptor_free);
    E_FREE_FUNC(cache_edd, eet_data_descriptor_free);
@@ -1276,5 +1262,5 @@ e_tw_shutdown(void)
 EINTERN void
 tw_uri_show(const char *uri)
 {
-   dbus_link_show_helper(uri, 1);
+   link_show_helper(uri, 1);
 }

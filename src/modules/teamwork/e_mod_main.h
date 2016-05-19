@@ -1,10 +1,6 @@
 #ifndef E_MOD_MAIN_H
 #define E_MOD_MAIN_H
 
-#ifdef HAVE_CONFIG_H
-#include "config.h"
-#endif
-
 #include "e.h"
 
 /**
@@ -57,9 +53,35 @@ EINTERN Eina_Bool tw_hide(void *d EINA_UNUSED);
 EINTERN void tw_popup_opacity_set(void);
 EINTERN void tw_uri_show(const char *uri);
 
+EINTERN void tw_link_detect(E_Client *ec, const char *uri);
+EINTERN void tw_link_show(E_Client *ec, const char *uri, int x, int y);
+EINTERN void tw_link_hide(E_Client *ec, const char *uri);
+EINTERN void tw_link_open(E_Client *ec, const char *uri);
+
+typedef void (*Teamwork_Signal_Cb)(E_Client *, const char *);
+typedef void (*Teamwork_Signal_Progress_Cb)(E_Client *, const char *, uint32_t);
+
+extern Teamwork_Signal_Cb tw_signal_link_complete[E_PIXMAP_TYPE_NONE];
+extern Teamwork_Signal_Cb tw_signal_link_invalid[E_PIXMAP_TYPE_NONE];
+extern Teamwork_Signal_Progress_Cb tw_signal_link_progress[E_PIXMAP_TYPE_NONE];
+extern Teamwork_Signal_Cb tw_signal_link_downloading[E_PIXMAP_TYPE_NONE];
+
 EINTERN E_Config_Dialog *e_int_config_teamwork_module(Evas_Object *parent, const char *params EINA_UNUSED); 
 
 E_API int e_modapi_shutdown(E_Module *m EINA_UNUSED);
+
+#ifdef HAVE_WAYLAND
+EINTERN Eina_Bool wl_tw_init(void);
+EINTERN void wl_tw_shutdown(void);
+#endif
+
+#ifndef HAVE_WAYLAND_ONLY
+EINTERN Eina_Bool x11_tw_init(void);
+EINTERN void x11_tw_shutdown(void);
+#endif
+
+#define E_TW_VERSION 2
+
 #undef DBG
 #undef INF
 #undef WRN

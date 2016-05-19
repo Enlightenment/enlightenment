@@ -20,6 +20,18 @@ src/modules/teamwork/e_mod_tw.c \
 src/modules/teamwork/sha1.c \
 src/modules/teamwork/sha1.h
 
+if HAVE_WAYLAND
+src_modules_teamwork_module_la_SOURCES += \
+src/modules/teamwork/wl.c \
+src/modules/teamwork/wl_teamwork.c \
+src/modules/teamwork/wl_teamwork.h
+endif
+
+if ! HAVE_WAYLAND_ONLY
+src_modules_teamwork_module_la_SOURCES += \
+src/modules/teamwork/x11.c
+endif
+
 PHONIES += teamwork install-teamwork
 teamwork: $(teamworkpkg_LTLIBRARIES) $(teamwork_DATA)
 install-teamwork: install-teamworkDATA install-teamworkpkgLTLIBRARIES
