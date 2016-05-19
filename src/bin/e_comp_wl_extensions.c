@@ -257,7 +257,6 @@ static Eina_Bool
 _dmabuf_add(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
 {
    Ecore_Wl2_Event_Sync_Done *ev;
-   int w = 0, h = 0;
 
    ev = event;
    if (ev->display != e_comp_wl->wl.client_disp)
