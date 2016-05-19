@@ -53,7 +53,9 @@ E_API void e_pixmap_image_opaque_get(E_Pixmap *cp, int *x, int *y, int *w, int *
 
 E_API void e_pixmap_alias(E_Pixmap *cp, E_Pixmap_Type type, ...);
 
+#ifdef HAVE_WAYLAND
 E_API Eina_Bool e_pixmap_dmabuf_test(struct linux_dmabuf_buffer *);
+#endif
 
 static inline Eina_Bool
 e_pixmap_is_x(const E_Pixmap *cp)

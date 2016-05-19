@@ -684,10 +684,12 @@ e_pixmap_is_pixels(E_Pixmap *cp)
      {
         case E_PIXMAP_TYPE_X:
           return EINA_FALSE;
+#ifdef HAVE_WAYLAND
         case E_PIXMAP_TYPE_WL:
           if (!cp->buffer) return EINA_TRUE;
           if (cp->buffer->shm_buffer) return EINA_TRUE;
           return EINA_FALSE;
+#endif
         default:
           return EINA_TRUE;
      }
@@ -1043,6 +1045,7 @@ e_pixmap_alias(E_Pixmap *cp, E_Pixmap_Type type, ...)
    va_end(l);
 }
 
+#ifdef HAVE_WAYLAND
 E_API Eina_Bool
 e_pixmap_dmabuf_test(struct linux_dmabuf_buffer *dmabuf)
 {
@@ -1064,3 +1067,4 @@ e_pixmap_dmabuf_test(struct linux_dmabuf_buffer *dmabuf)
 
    return EINA_TRUE;
 }
+#endif
