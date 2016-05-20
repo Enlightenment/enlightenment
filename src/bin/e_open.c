@@ -8,6 +8,7 @@
 #include <unistd.h>
 #include <ctype.h>
 #include <errno.h>
+#include <sys/wait.h>
 
 # ifdef E_API
 #  undef E_API
@@ -562,7 +563,7 @@ main(int argc, char *argv[])
           }
         free(cmds);
 
-        return ret;
+        return WEXITSTATUS(ret);
      }
 }
 
