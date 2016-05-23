@@ -120,7 +120,7 @@ x11_tw_init(void)
    for (i = 0; i < 4; i++)
      atoms[i] = at[i];
    for (i = 4; i < 7; i++)
-     server_atoms[i] = at[i];
+     server_atoms[i - 4] = at[i];
    prop = at[7];
    handler = ecore_event_handler_add(ECORE_X_EVENT_CLIENT_MESSAGE, (Ecore_Event_Handler_Cb)x11_message_handler, NULL);
    tw_signal_link_complete[E_PIXMAP_TYPE_X] = x11_tw_link_complete;
