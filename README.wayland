@@ -96,3 +96,5 @@ Known Issues
  - Requires upstream XWayland improvements
 * Keyboard layout switching is not available
  - Requires various improvements
+* XWayland crashes on start
+ - Requires XWayland release - https://bugs.freedesktop.org/show_bug.cgi?id=95337
