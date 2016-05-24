@@ -265,7 +265,7 @@ _ilist_fill(E_Config_Dialog_Data *cfdata)
    e_widget_ilist_freeze(cfdata->o_list);
    e_widget_ilist_clear(cfdata->o_list);
    e_widget_ilist_go(cfdata->o_list);
-   zone = e_comp_object_util_zone_get(cfdata->cfd->dia->win);
+   zone = e_zone_current_get();
    desk = e_desk_current_get(zone);
 
    EINA_LIST_FOREACH(e_shelf_list(), l, es)
