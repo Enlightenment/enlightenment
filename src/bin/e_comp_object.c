@@ -2229,6 +2229,9 @@ _e_comp_smart_color_set(Evas_Object *obj, int r, int g, int b, int a)
 {
    INTERNAL_ENTRY;
    evas_object_color_set(cw->clip, r, g, b, a);
+   cw->ec->netwm.opacity = a;
+   if (cw->ec->remember && (cw->ec->remember->apply & E_REMEMBER_APPLY_OPACITY))
+     e_remember_update(cw->ec);
    evas_object_smart_callback_call(obj, "color_set", NULL);
 }
 
