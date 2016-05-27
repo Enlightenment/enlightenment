@@ -1039,8 +1039,8 @@ _e_client_resize_end(E_Client *ec)
    /* If this border was maximized, we need to unset Maximized state or
     * on restart, E still thinks it's maximized */
    if (ec->maximized != E_MAXIMIZE_NONE)
-     e_hints_window_maximized_set(ec, ec->maximized & E_MAXIMIZE_NONE,
-                                  ec->maximized & E_MAXIMIZE_NONE);
+     e_hints_window_maximized_set(ec, ec->maximized & E_MAXIMIZE_HORIZONTAL,
+                                  ec->maximized & E_MAXIMIZE_VERTICAL);
 
    _e_client_hook_call(E_CLIENT_HOOK_RESIZE_END, ec);
 
