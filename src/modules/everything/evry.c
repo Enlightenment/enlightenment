@@ -71,6 +71,7 @@ static Eina_Bool      _evry_cb_selection_notify(void *data, int type, void *even
 static Eina_Bool      _evry_cb_mouse(void *data, int type, void *event);
 
 static Eina_Bool      _evry_delay_hide_timer(void *data);
+static Eina_Bool      _evry_focus_out_timer(void *data);
 
 static Eina_List *windows = NULL;
 
@@ -151,17 +152,32 @@ _evry_cb_item_changed(EINA_UNUSED void *data, EINA_UNUSED int type, void *event)
    return ECORE_CALLBACK_PASS_ON;
 }
 
-static void
-_evry_focus_out(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+static Eina_Bool
+_evry_focus_out_timer(void *data)
 {
    Evry_Window *win = data;
    E_Client *ec;
 
-   if (!win->grab) return;
+   win->delay_hide_action = NULL;
 
    ec = e_win_client_get(win->ewin);
    if (ec && (!e_object_is_del(E_OBJECT(ec))))
      evry_hide(win, 0);
+
+   return ECORE_CALLBACK_CANCEL;
+}
+
+static void
+_evry_focus_out(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   Evry_Window *win = data;
+
+   if (!win->grab) return;
+
+   if (win->delay_hide_action)
+     ecore_timer_del(win->delay_hide_action);
+
+   win->delay_hide_action = ecore_timer_add(0.0, _evry_focus_out_timer, win);
 }
 
 Evry_Window *
