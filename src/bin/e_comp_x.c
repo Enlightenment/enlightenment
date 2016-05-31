@@ -989,6 +989,12 @@ _e_comp_x_evas_hide_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UN
    E_Client *ec = data, *tmp;
    Eina_List *l;
 
+   if (ec == mouse_client)
+     {
+        mouse_client = NULL;
+        E_FREE_FUNC(mouse_in_job, ecore_job_del);
+     }
+
    if (!_e_comp_x_client_data_get(ec)) return; // already deleted, happens with internal wins
    _e_comp_x_client_hide(ec);
 
