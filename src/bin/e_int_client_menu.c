@@ -259,7 +259,7 @@ e_int_client_menu_show(E_Client *ec, Evas_Coord x, Evas_Coord y, int key, unsign
      e_menu_activate_key(ec->border_menu, ec->zone, x, y, 1, 1,
                          E_MENU_POP_DIRECTION_DOWN);
    else
-     e_menu_activate_mouse(ec->border_menu, ec->zone, x, y, 1, 1,
+     e_menu_activate_mouse(ec->border_menu, e_zone_current_get(), x, y, 1, 1,
                            E_MENU_POP_DIRECTION_DOWN, timestamp);
 }
 
