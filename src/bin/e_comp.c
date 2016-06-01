@@ -1696,8 +1696,15 @@ e_comp_ungrab_input(Eina_Bool mouse, Eina_Bool kbd)
 
         if (e_comp->comp_type == E_PIXMAP_TYPE_WL)
           {
+             Eina_Bool mouse_in = ec->mouse.in;
+             int x, y;
+
+             x = ec->mouse.current.mx;
+             y = ec->mouse.current.my;
              evas_object_focus_set(ec->frame, 0);
              evas_object_focus_set(ec->frame, 1);
+             if (mouse_in)
+               e_client_mouse_in(ec, x, y);
           }
         return;
      }
