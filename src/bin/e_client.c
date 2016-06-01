@@ -387,8 +387,8 @@ _e_client_action_input_win_del(void)
 {
    if (!comp_grabbed) return 0;
 
-   e_comp_ungrab_input(1, 1);
    comp_grabbed = 0;
+   e_comp_ungrab_input(1, 1);
    return 1;
 }
 
