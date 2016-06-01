@@ -364,12 +364,7 @@ xwl_init(E_Module *m)
      return NULL;
 
 #ifdef HAVE_PULSE
-# ifdef EFL_VERSION_1_18
-   eo_unref
-# else
-   eo_del
-# endif
-   (eo_add(ECORE_AUDIO_OUT_PULSE_CLASS, NULL));
+   eo_del(eo_add(ECORE_AUDIO_OUT_PULSE_CLASS, NULL));
 #endif
 
    /* record wayland display */
