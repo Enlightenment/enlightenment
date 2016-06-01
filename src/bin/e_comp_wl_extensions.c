@@ -76,8 +76,11 @@ _e_comp_wl_session_recovery_destroy_uuid(struct wl_client *client EINA_UNUSED, s
    ec = wl_resource_get_user_data(surface);
    if (!eina_streq(ec->uuid, uuid)) return; //FIXME: error
    eina_stringshare_replace(&ec->uuid, NULL);
-   e_remember_unuse(ec->remember);
-   e_remember_del(ec->remember);
+   if (ec->remember)
+     {
+        e_remember_unuse(ec->remember);
+        e_remember_del(ec->remember);
+     }
    ec->remember = e_remember_find_usable(ec);
    if (!ec->remember) return;
    e_remember_use(ec->remember);
