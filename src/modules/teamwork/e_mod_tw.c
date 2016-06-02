@@ -61,6 +61,7 @@ static Eina_Stringshare *tw_tmpfile = NULL;
 static int tw_tmpfd = -1;
 static Ecore_Thread *tw_tmpthread = NULL;
 static Media *tw_tmpthread_media = NULL;
+static Eina_Bool tw_tooltip = EINA_FALSE;
 
 typedef enum
 {
@@ -162,6 +163,20 @@ signal_link_downloading(Media *i)
      }
 }
 
+static void
+link_failure_show(void)
+{
+   tw_mod->pop = evas_object_rectangle_add(e_comp->evas);
+   evas_object_color_set(tw_mod->pop, 0, 0, 0, 0);
+   evas_object_pass_events_set(tw_mod->pop, 1);
+   evas_object_geometry_set(tw_mod->pop, 0, 0, 1, 1);
+   evas_object_show(tw_mod->pop);
+   tw_tooltip = 1;
+   elm_object_tooltip_text_set(e_comp->elm, _("Target URI could not be shown.<ps/>"
+                                                            "Hold [Ctrl] to disable link fetching."));
+   elm_object_tooltip_show(e_comp->elm);
+}
+
 static Eina_Bool
 download_media_complete(void *data EINA_UNUSED, int type EINA_UNUSED, Ecore_Con_Event_Url_Complete *ev)
 {
@@ -255,6 +270,9 @@ dummy:
 invalid:
    E_FREE_FUNC(i->buf, eina_binbuf_free);
    E_FREE_FUNC(i->client, ecore_con_url_free);
+   if (i->show)
+     link_failure_show();
+   i->show = 0;
    return ECORE_CALLBACK_RENEW;
 }
 
@@ -411,12 +429,15 @@ static void
 link_show_helper(const char *uri, Eina_Bool signal_open)
 {
    Teamwork_Link_Type type;
+   Eina_Bool dummy = EINA_TRUE;
 
    if (tw_mod->pop && (!e_util_strcmp(evas_object_data_get(tw_mod->pop, "uri"), uri))) return;
    type = link_uri_type_get(uri);
    switch (type)
      {
-      case TEAMWORK_LINK_TYPE_NONE: break;
+      case TEAMWORK_LINK_TYPE_NONE:
+        dummy = EINA_FALSE;
+        break;
       case TEAMWORK_LINK_TYPE_LOCAL_DIRECTORY:
         if (signal_open) tw_show_local_dir(uri);
         break;
@@ -434,21 +455,36 @@ link_show_helper(const char *uri, Eina_Bool signal_open)
               i = download_media_add(uri);
               if (i)
                 {
-                   if (i->buf) tw_show(i);
+                   if (i->buf)
+                     {
+                        tw_show(i);
+                        dummy = EINA_FALSE;
+                     }
                    else if (i->dummy) break;
-                   else i->show = 1;
+                   else
+                     {
+                        i->show = 1;
+                        dummy = EINA_FALSE;
+                     }
                 }
            }
-         else if (!i->dummy) tw_show(i);
+         else if (!i->dummy)
+           {
+              tw_show(i);
+              dummy = EINA_FALSE;
+           }
          break;
       }
      }
    if (tw_mod->pop) tw_mod->force = signal_open;
+   else if (dummy)
+     link_failure_show();
 }
 
 EINTERN void
 tw_link_show(E_Client *ec, const char *uri, int x, int y)
 {
+   if (evas_key_modifier_is_set(evas_key_modifier_get(e_comp->evas), "Control")) return;
    tw_win = ec;
    last_coords.x = x;
    last_coords.y = y;
@@ -459,6 +495,8 @@ tw_link_show(E_Client *ec, const char *uri, int x, int y)
 EINTERN void
 tw_link_hide(E_Client *ec, const char *uri)
 {
+   if (tw_tooltip)
+     elm_object_tooltip_hide(e_comp->elm);
    if (ec != tw_win) return;
    if (tw_mod->pop && (!tw_mod->sticky) &&
        ((tw_tmpfile && eina_streq(evas_object_data_get(tw_mod->pop, "uri"), tw_tmpfile)) ||
