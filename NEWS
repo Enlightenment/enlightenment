@@ -6,10 +6,11 @@ Highlights:
       * Wizard improvements
       * Video backgrounds
 
-Andy Williams (1):
+Andy Williams (2):
       Set the fdo theme to Elementary as well
+      Only set the icon theme in elm on change
 
-Carsten Haitzler (33):
+Carsten Haitzler (36):
       e backlight - avoid seg when comp is shut down and backlight updated
       e comp - set e_comp to null on shutdown so others dont access junk
       e zone - handle null e_comp if comp is already shut down
@@ -43,8 +44,11 @@ Carsten Haitzler (33):
       e - wireless module - remove horrible memcpy with offsetof magic
       e - e_start - update mtrack to use new debug mode for hunting bugs
       e syscon - dont show syscon if desklock is up - you can't respond
+      warnings - silence some theoreitcal wranings in build
+      e start - no it doesny need dbus-launch
+      e - suspend.hibernat intelligently - dont account for ac power
 
-Chris Michael (48):
+Chris Michael (54):
       Make configure check for Ecore_Wl2 library
       include header for Ecore_Wl2
       remove unused event loop and add external Ecore_Wl2_Display variable
@@ -93,8 +97,17 @@ Chris Michael (48):
       add EINA_UNUSED for unused function parameter
       Reverting this commit to handle a better way
       add #else to #if 0'd block in order to avoid compiler warning about     unused variable.
+      disable option for mouse to use Application theme if we are running in Wayland
+      stop filling logs with buffer transform/scale spam
+      remove unused variables in _dmabuf_add function
+      change 'if' clause to make gcc-6 happy
+      add checks for building with Ecore_Drm2 support
+      port enlightenment to use drm2
 
-Derek Foreman (36):
+Dave Andreoli (1):
+      enlightenment_open: correctly return the exist status code of the executed command
+
+Derek Foreman (46):
       emix: Rename parameter bool to mute
       wayland: Add support for wl_surface.damage_buffer
       Remove inappropriate usage of %m
@@ -131,6 +144,16 @@ Derek Foreman (36):
       Remove unwanted debug detritus from last commit
       wayland: Bump ecore-wl2 dependency to 1.17.99
       wayland: Fix crash when attempting to create surfaces for deleted clients
+      Add e_pixmap API for testing if a pixmap is a native surface
+      Break native surface test criteria into explicit wayland and X cases
+      Move the test for resetting no native surface to after caps checks
+      Remove GL presence test from native surface set on dirty objects
+      Track parent compositor dmabuf capabilities on wayland on wayland
+      Disable wayland dmabuf for the X11 backend
+      Add DMABuf support for wayland
+      clean up warnings in dmabuf code
+      Fix dmabuf breakage of non wayland builds.
+      Bump wayland version requirement to 1.11.0
 
 Eduardo Lima (2):
       Bluez 5
@@ -146,6 +169,9 @@ Eduardo Lima (Etrunko) (5):
 Gustavo Lima Chaves (1):
       e/quickaccess: Make "Skip window list" a quickaccess behavior option too.
 
+Hannes Janetzek (1):
+      just a small patch to make sure evry_hide does not get called synchronously from an Evry_Action
+
 Jean-Philippe ANDRÉ (1):
       Fix spelling in .pc file
 
@@ -156,7 +182,7 @@ JengHyun Kang (2):
 Lukasz Stanislawski (1):
       conf_apps: fix add/remove screen lock applications.
 
-Marcel Hollerbach (23):
+Marcel Hollerbach (25):
       e_randr2: Add NULL check
       alsa: fix a valgrind warning
       mixer: only save state if not in init
@@ -180,12 +206,18 @@ Marcel Hollerbach (23):
       e_xkb: init before e_comp_wl init
       e_xkb: use new_keyboard event to restore known layout
       mixer: try to fix a possible bug
+      e_xkb: split up e_xkb_update
+      e_xkb: reconfig when we have set a new set of layouts
 
-Massimo Maiurana (2):
+Massimo Maiurana (3):
       Updating italian translation
       Updating italian translation
+      Updating italian translation
 
-Mike Blumenkrantz (396):
+Michael Jennings (1):
+      enlightenment.spec.in:  Update spec file to work with current Git.
+
+Mike Blumenkrantz (467):
       unset release mode
       bump version
       add config option for allowing sticky windows to receive focus reverts
@@ -580,8 +612,79 @@ Mike Blumenkrantz (396):
       ensure evry gadget popups effectively clamp to their zones
       protect xdg-shell functions from accessing deleted client data
       move wayland surface E_Client del check to a place where it's more useful
-      handle recursion more effectively in e_menu_hide_all()
       distribute all weekeyboard edj files
+      handle recursion more effectively in e_menu_hide_all()
+      21.0-beta release
+      0.21.0-beta NEWS updates
+      unset release mode
+      Revert "handle recursion more effectively in e_menu_hide_all()"
+      apply xdg-shell activated state based on popup surface focus hierarchy
+      feed mouse up events to internal wins before mouse out during action exec
+      ensure that the startup apps cache handler has run before trying to start apps
+      directly load extra wl modules during compositor init
+      further optimize window smart placement by reducing obstacle calcs
+      don't refocus deleted clients during wl compositor grab
+      ensure lifetime for wl client focus timer
+      hide evry on focus-out
+      don't revert focus to desktop fileman during compositor grab
+      evry null deref
+      uninitialized vars in e_client_maximize_geometry_get()
+      bad copy/paste in _e_place_desk_region_smart_obstacle_add()
+      implement wl client session recovery
+      add configure flag for xwayland binary
+      clean up mixer includes
+      unset DISPLAY during mixer's pulse backend startup
+      ensure xwayland module init does not fail due to early startup
+      add SA_NOCLDWAIT to SIGCHLD flags when xwayland module loads
+      flag wl surfaces as internal during create() based on pid matching
+      update README.wayland
+      prune uuid remembers on clean startup
+      make init fail if a dbus session connection cannot be created
+      update README.wayland to include dbus-launch
+      do not add ignored clients to ibar menu
+      manage pending state list more effectively in wl shell
+      ensure child windows are placed on screen
+      disable focus effects for windows with csd
+      block keyboard sending for wl clients if a compositor grab is active
+      only load wayland-specific modules on startup if they have been built
+      handle positioning of x11 overrides with csd accurately
+      Revert "add SA_NOCLDWAIT to SIGCHLD flags when xwayland module loads"
+      change efm icon entry to only toggle focus in x11 compositors (runtime)
+      toggle compositor canvas focus during init
+      fix usage of e_object_unref in xkbswitch when managing new kbd dialog
+      also check pixmap argb state when setting comp object alpha
+      enforce setting alpha on comp objects only after image data has been set
+      ensure int64_t is used in all cases for wl pixmap ids
+      remove some cruft from _e_comp_wl_client_cb_new()
+      set E_Client->override flag for internal wins as needed
+      use window id for internal window pixmaps again on wayland
+      avoid infinitely looping when applying x11 window grouping
+      only check pixmap argb state for non-X11 clients
+      use parent windows for x11 binding grabs
+      adjust some client eval parts to make manual placement work again
+      force cursor placement to obey useful zone geometry
+      ensure that client eval correctly handles retries on visibility-pending clients
+      prevent double emission of E_EVENT_CLIENT_SHOW
+      more tweaks for manual window placement in client eval
+      allow building shot+xkbswitch modules without ecore-x
+      remove pulse sinks/sources from list before running cbs which access the list
+      fix e_place_zone_region_smart_cleanup()
+      eo_del -> eo_unref in xwayland
+      add client util function for detecting popups, block popups in ibar/tasks
+      upgrade teamwork module to use teamwork v2: teamwork++
+      use correct indexing for x11 teamwork server atom array
+      update README.wayland to include xwayland crash bug
+      update client remember on opacity change
+      use current zone for shelf config dialog
+      set x11 maximized window hint correctly on resize end
+      delete x11 mouse-in job when hiding the job's client
+      use current zone when activating a client's menu with the mouse
+      handle shaded state when receiving x11 configure requests
+      Revert "eo_del -> eo_unref in xwayland"
+      protect against crash when deleting wl session recovery remember
+      only block mouse-out callback for wl action clients if the mouse is grabbed
+      unset comp_grabbed flag before action client compositor ungrab
+      force mouse-in again during comp ungrab if client previously had mouse-in
 
 Seunghun Lee (1):
       configure.ac: Remove ecore-x from wayland only build.
