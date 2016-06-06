@@ -316,10 +316,12 @@ _e_comp_object_updates_init(E_Comp_Object *cw)
 static void
 _e_comp_object_alpha_set(E_Comp_Object *cw)
 {
-   Eina_Bool alpha = cw->ec->argb;
+   Eina_Bool alpha;
 
    if (!e_pixmap_is_x(cw->ec->pixmap))
-     alpha |= e_pixmap_image_is_argb(cw->ec->pixmap);
+     alpha = e_pixmap_image_is_argb(cw->ec->pixmap);
+   else
+     alpha = cw->ec->argb;
 
    if (cw->blanked || cw->ns || cw->ec->shaped) alpha = EINA_TRUE;
 
