@@ -2949,16 +2949,32 @@ e_client_res_change_geometry_restore(E_Client *ec)
 
    if (ec->fullscreen)
      {
-        e_client_unfullscreen(ec);
-        e_client_fullscreen(ec, e_config->fullscreen_policy);
+        if ((eina_list_count(e_comp->zones) > 1) ||
+            (e_config->fullscreen_policy == E_FULLSCREEN_RESIZE))
+          evas_object_geometry_set(ec->frame, ec->zone->x, ec->zone->y, ec->zone->w, ec->zone->h);
+        else
+          {
+             e_client_unfullscreen(ec);
+             e_client_fullscreen(ec, e_config->fullscreen_policy);
+          }
      }
    else if (ec->maximized != E_MAXIMIZE_NONE)
      {
-        E_Maximize max;
+        int x, y, w, h;
 
-        max = ec->maximized;
-        e_client_unmaximize(ec, E_MAXIMIZE_BOTH);
-        e_client_maximize(ec, max);
+        if (e_client_maximize_geometry_get(ec, ec->maximized, &x, &y, &w, &h))
+          {
+             Eina_Bool override = ec->maximize_override;
+             ec->maximize_override = 1;
+             evas_object_geometry_set(ec->frame, x, y, w, h);
+             ec->maximize_override = override;
+          }
+        else
+          {
+             E_Maximize max = ec->maximized;
+             e_client_unmaximize(ec, E_MAXIMIZE_BOTH);
+             e_client_maximize(ec, max);
+          }
      }
    else
      {
