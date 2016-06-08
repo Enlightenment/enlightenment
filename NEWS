@@ -1,3 +1,37 @@
+Release 0.20.9:
+---------------------
+Carsten Haitzler (2):
+      e start - no it doesny need dbus-launch
+      e - suspend.hibernat intelligently - dont account for ac power
+
+Chris Michael (2):
+      stop filling logs with buffer transform/scale spam
+      change 'if' clause to make gcc-6 happy
+
+Dave Andreoli (1):
+      enlightenment_open: correctly return the exist status code of the executed command
+
+Hannes Janetzek (1):
+      just a small patch to make sure evry_hide does not get called synchronously from an Evry_Action
+
+Massimo Maiurana (1):
+      Updating italian translation
+
+Mike Blumenkrantz (13):
+      remove pulse sinks/sources from list before running cbs which access the list
+      fix e_place_zone_region_smart_cleanup()
+      add client util function for detecting popups, block popups in ibar/tasks
+      update README.wayland to include xwayland crash bug
+      update client remember on opacity change
+      use current zone for shelf config dialog
+      set x11 maximized window hint correctly on resize end
+      delete x11 mouse-in job when hiding the job's client
+      use current zone when activating a client's menu with the mouse
+      handle shaded state when receiving x11 configure requests
+      only block mouse-out callback for wl action clients if the mouse is grabbed
+      unset comp_grabbed flag before action client compositor ungrab
+      force mouse-in again during comp ungrab if client previously had mouse-in
+
 Release 0.20.8:
 ---------------------
 Chris Michael (1):
