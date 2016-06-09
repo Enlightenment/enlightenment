@@ -110,29 +110,52 @@ _battery_openbsd_battery_update()
        /* update the poller interval */
        ecore_poller_poller_interval_set(bat->poll,
                                         battery_config->poll_interval);
-    
+   
        /* last full capacity */
-       bat->mib[3] = 8;
+       bat->mib[3] = 7;
        bat->mib[4] = 0;
        if (sysctl(bat->mib, 5, &s, &slen, NULL, 0) != -1)
          {
             bat->last_full_charge = (double)s.value;
          }
     
-       /* remaining capcity */
-       bat->mib[3] = 8;
+       /* remaining capacity */
+       bat->mib[3] = 7;
        bat->mib[4] = 3;
        if (sysctl(bat->mib, 5, &s, &slen, NULL, 0) != -1)
          {
             charge = (double)s.value;
          }
-    
+  
+       /* This is a workaround because there's an ACPI bug */ 
+       if (charge == 0 || bat->last_full_charge == 0)
+         {
+           /* last full capacity */
+           bat->mib[3] = 8;
+           bat->mib[4] = 0;
+           if (sysctl(bat->mib, 5, &s, &slen, NULL, 0) != -1)
+             {
+                bat->last_full_charge = (double)s.value;
+             }
+
+           /* remaining capacity */
+           bat->mib[3] = 8;
+           bat->mib[4] = 3;
+           if (sysctl(bat->mib, 5, &s, &slen, NULL, 0) != -1)
+             {
+                charge = (double)s.value;
+             }
+         }
+ 
        _time = ecore_time_get();
        if ((bat->got_prop) && (charge != bat->current_charge))
          bat->charge_rate = ((charge - bat->current_charge) / (_time - bat->last_update));
        bat->last_update = _time;
        bat->current_charge = charge;
        bat->percent = 100 * (bat->current_charge / bat->last_full_charge);
+       if (bat->current_charge >= bat->last_full_charge)
+         bat->percent = 100;
+
        if (bat->got_prop)
          {
             if (bat->charge_rate > 0)
