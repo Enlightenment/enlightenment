@@ -133,17 +133,13 @@ _e_comp_wl_evas_cb_hide(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj EIN
 }
 
 static void
-_e_comp_wl_evas_cb_mouse_in(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
+_e_comp_wl_mouse_in(E_Client *ec, Evas_Event_Mouse_In *ev)
 {
-   E_Client *ec;
-   Evas_Event_Mouse_In *ev;
    struct wl_resource *res;
    struct wl_client *wc;
    Eina_List *l;
    uint32_t serial;
 
-   ev = event;
-   if (!(ec = data)) return;
    if (e_object_is_del(E_OBJECT(ec))) return;
 
    if (!ec->comp_data->surface) return;
@@ -168,15 +164,25 @@ _e_comp_wl_evas_cb_mouse_in(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj
 }
 
 static void
-_e_comp_wl_evas_cb_mouse_out(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
+_e_comp_wl_evas_cb_mouse_in(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info)
 {
-   E_Client *ec;
+   _e_comp_wl_mouse_in(data, event_info);
+}
+
+static void
+_e_comp_wl_cb_internal_mouse_in(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
+{
+   _e_comp_wl_mouse_in(data, event_info);
+}
+
+static void
+_e_comp_wl_mouse_out(E_Client *ec, Evas_Event_Mouse_Out *ev EINA_UNUSED)
+{
    struct wl_resource *res;
    struct wl_client *wc;
    Eina_List *l;
    uint32_t serial;
 
-   if (!(ec = data)) return;
    if (ec->cur_mouse_action && e_grabinput_mouse_win_get()) return;
    /* FIXME? this is a hack to just reset the cursor whenever we mouse out. not sure if accurate */
    {
@@ -209,6 +215,18 @@ _e_comp_wl_evas_cb_mouse_out(void *data, Evas *evas EINA_UNUSED, Evas_Object *ob
 }
 
 static void
+_e_comp_wl_evas_cb_mouse_out(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info)
+{
+   _e_comp_wl_mouse_out(data, event_info);
+}
+
+static void
+_e_comp_wl_cb_internal_mouse_out(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
+{
+   _e_comp_wl_mouse_out(data, event_info);
+}
+
+static void
 _e_comp_wl_send_mouse_move(E_Client *ec, int x, int y, unsigned int timestamp)
 {
    struct wl_resource *res;
@@ -233,6 +251,7 @@ _e_comp_wl_evas_cb_mouse_move(void *data, Evas *evas EINA_UNUSED, Evas_Object *o
    Evas_Event_Mouse_Move *ev = event;
 
    if (ec->cur_mouse_action) return;
+   if (!ec->mouse.in) return;
    if (e_object_is_del(E_OBJECT(ec))) return;
    if (ec->ignored) return;
    if (!ec->comp_data->surface) return;
@@ -277,6 +296,7 @@ _e_comp_wl_evas_cb_mouse_wheel(void *data, Evas *evas EINA_UNUSED, Evas_Object *
    if (ec->cur_mouse_action) return;
    if (e_object_is_del(E_OBJECT(ec))) return;
    if (ec->ignored) return;
+   if (!ec->mouse.in) return;
 
    if (ev->direction == 0)
      axis = WL_POINTER_AXIS_VERTICAL_SCROLL;
@@ -312,6 +332,7 @@ _e_comp_wl_evas_cb_multi_down(void *data, Evas *evas EINA_UNUSED, Evas_Object *o
 
    if (e_object_is_del(E_OBJECT(ec))) return;
    if (!ec->comp_data->surface) return;
+   if (!ec->mouse.in) return;
 
    wc = wl_resource_get_client(ec->comp_data->surface);
    serial = wl_display_next_serial(e_comp_wl->wl.disp);
@@ -340,6 +361,7 @@ _e_comp_wl_evas_cb_multi_up(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj
 
    if (e_object_is_del(E_OBJECT(ec))) return;
    if (!ec->comp_data->surface) return;
+   if (!ec->mouse.in) return;
 
    wc = wl_resource_get_client(ec->comp_data->surface);
    serial = wl_display_next_serial(e_comp_wl->wl.disp);
@@ -364,6 +386,7 @@ _e_comp_wl_evas_cb_multi_move(void *data, Evas *evas EINA_UNUSED, Evas_Object *o
 
    if (e_object_is_del(E_OBJECT(ec))) return;
    if (!ec->comp_data->surface) return;
+   if (!ec->mouse.in) return;
 
    wc = wl_resource_get_client(ec->comp_data->surface);
 
@@ -730,12 +753,22 @@ _e_comp_wl_client_evas_init(E_Client *ec)
                                   _e_comp_wl_evas_cb_hide, ec);
 
    /* setup input callbacks */
-   evas_object_event_callback_priority_add(ec->frame, EVAS_CALLBACK_MOUSE_IN,
-                                           EVAS_CALLBACK_PRIORITY_AFTER,
-                                           _e_comp_wl_evas_cb_mouse_in, ec);
-   evas_object_event_callback_priority_add(ec->frame, EVAS_CALLBACK_MOUSE_OUT,
-                                           EVAS_CALLBACK_PRIORITY_AFTER,
-                                           _e_comp_wl_evas_cb_mouse_out, ec);
+   if (ec->internal)
+     {
+        evas_object_smart_callback_add(ec->frame, "mouse_in",
+          (Evas_Smart_Cb)_e_comp_wl_cb_internal_mouse_in, ec);
+        evas_object_smart_callback_add(ec->frame, "mouse_out",
+          (Evas_Smart_Cb)_e_comp_wl_cb_internal_mouse_out, ec);
+     }
+   else
+     {
+        evas_object_event_callback_priority_add(ec->frame, EVAS_CALLBACK_MOUSE_IN,
+                                                EVAS_CALLBACK_PRIORITY_AFTER,
+                                                (Evas_Object_Event_Cb)_e_comp_wl_evas_cb_mouse_in, ec);
+        evas_object_event_callback_priority_add(ec->frame, EVAS_CALLBACK_MOUSE_OUT,
+                                                EVAS_CALLBACK_PRIORITY_AFTER,
+                                                (Evas_Object_Event_Cb)_e_comp_wl_evas_cb_mouse_out, ec);
+     }
    evas_object_event_callback_priority_add(ec->frame, EVAS_CALLBACK_MOUSE_MOVE,
                                            EVAS_CALLBACK_PRIORITY_AFTER,
                                            _e_comp_wl_evas_cb_mouse_move, ec);
@@ -3079,6 +3112,7 @@ e_comp_wl_evas_handle_mouse_button(E_Client *ec, uint32_t timestamp, uint32_t bu
      return EINA_FALSE;
    if (e_object_is_del(E_OBJECT(ec))) return EINA_FALSE;
    if (ec->ignored) return EINA_FALSE;
+   if (!ec->mouse.in) return EINA_FALSE;
 
    switch (button_id)
      {
