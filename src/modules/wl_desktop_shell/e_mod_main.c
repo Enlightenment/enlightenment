@@ -492,11 +492,11 @@ _e_shell_surface_configure(struct wl_resource *resource, Evas_Coord x, Evas_Coor
              x = E_CLAMP(ec->parent->client.x + ec->comp_data->popup.x,
                          ec->parent->client.x,
                          ec->parent->client.x +
-                         ec->parent->client.w - ec->client.w);
+                         ec->parent->client.w);
              y = E_CLAMP(ec->parent->client.y + ec->comp_data->popup.y,
                          ec->parent->client.y,
                          ec->parent->client.y +
-                         ec->parent->client.h - ec->client.h);
+                         ec->parent->client.h);
           }
      }
 
