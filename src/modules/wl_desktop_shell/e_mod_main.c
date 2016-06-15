@@ -135,8 +135,12 @@ _e_shell_surface_destroy(struct wl_resource *resource)
           {
              E_Shell_Data *shd = ec->comp_data->shell.data;
 
-             E_FREE_LIST(shd->pending, free);
-             E_FREE(ec->comp_data->shell.data);
+             if (shd)
+               {
+                  E_FREE_LIST(shd->pending, free);
+                  E_FREE(ec->comp_data->shell.data);
+               }
+
              if (ec->comp_data->mapped)
                {
                   if ((ec->comp_data->shell.surface) &&
