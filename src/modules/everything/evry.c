@@ -320,6 +320,9 @@ evry_hide(Evry_Window *win, int clear)
    if (!win) return;
 
    evas_object_event_callback_del(win->ewin, EVAS_CALLBACK_DEL, _evry_cb_win_delete);
+   evas_object_event_callback_del(e_win_client_get(win->ewin)->frame,
+                                                   EVAS_CALLBACK_FOCUS_OUT,
+                                                   _evry_focus_out);
    evas_object_hide(win->ewin);
    _evry_state_clear(win);
 
