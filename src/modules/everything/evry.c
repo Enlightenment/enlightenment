@@ -1968,6 +1968,7 @@ _evry_cb_key_down(void *data, int type EINA_UNUSED, void *event)
 
         ec = e_win_client_get(ewin);
         elm_win_borderless_set(ewin, 0);
+        ec->override = 0;
 #ifndef HAVE_WAYLAND_ONLY
         if (e_comp->comp_type == E_PIXMAP_TYPE_X)
           ecore_x_netwm_window_type_set(elm_win_window_id_get(ewin),
@@ -1979,6 +1980,7 @@ _evry_cb_key_down(void *data, int type EINA_UNUSED, void *event)
         ec->netwm.state.skip_taskbar = 0;
         ec->netwm.update.state = 1;
         ec->internal_no_remember = 1;
+        e_comp_object_frame_theme_set(ec->frame, E_COMP_OBJECT_FRAME_RESHADOW);
 
         win->grab = 0;
         return ECORE_CALLBACK_PASS_ON;
