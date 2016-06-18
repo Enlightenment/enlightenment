@@ -370,6 +370,8 @@ _e_comp_object_cb_mouse_in(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, vo
         if (E_INSIDE(ev->output.x, ev->output.y, cw->ec->client.x, cw->ec->client.y,
             cw->ec->client.w, cw->ec->client.h)) return;
      }
+   if (e_grabinput_mouse_win_get() && (e_grabinput_mouse_win_get() != e_client_util_win_get(cw->ec)))
+     return;
    e_client_mouse_in(cw->ec, ev->output.x, ev->output.y);
 }
 
@@ -380,6 +382,8 @@ _e_comp_object_cb_mouse_out(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EI
    Evas_Event_Mouse_Out *ev = event_info;
    E_Comp_Object *cw = data;
 
+   if (e_grabinput_mouse_win_get() && (e_grabinput_mouse_win_get() != e_client_util_win_get(cw->ec)))
+     return;
    e_client_mouse_out(cw->ec, ev->output.x, ev->output.y);
 }
 
