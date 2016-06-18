@@ -72,7 +72,7 @@ _e_comp_canvas_cb_mouse_in(void *d EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object
    E_Client *ec;
 
    e_screensaver_notidle();
-   if (e_client_action_get()) return;
+   if (e_client_action_get() || e_grabinput_mouse_win_get()) return;
    ec = e_client_focused_get();
    if (ec && (!ec->border_menu)) e_focus_event_mouse_out(ec);
 }
@@ -81,7 +81,7 @@ static void
 _e_comp_canvas_cb_mouse_down(void *d EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info)
 {
    e_screensaver_notidle();
-   if (e_client_action_get()) return;
+   if (e_client_action_get() || e_grabinput_mouse_win_get()) return;
    e_bindings_mouse_down_evas_event_handle(E_BINDING_CONTEXT_COMPOSITOR, E_OBJECT(e_comp), event_info);
 }
 
@@ -89,7 +89,7 @@ static void
 _e_comp_canvas_cb_mouse_up(void *d EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info)
 {
    e_screensaver_notidle();
-   if (e_client_action_get()) return;
+   if (e_client_action_get() || e_grabinput_mouse_win_get()) return;
    e_bindings_mouse_up_evas_event_handle(E_BINDING_CONTEXT_COMPOSITOR, E_OBJECT(e_comp), event_info);
 }
 
@@ -97,7 +97,7 @@ static void
 _e_comp_canvas_cb_mouse_wheel(void *d EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info)
 {
    e_screensaver_notidle();
-   if (e_client_action_get()) return;
+   if (e_client_action_get() || e_grabinput_mouse_win_get()) return;
    e_bindings_wheel_evas_event_handle(E_BINDING_CONTEXT_COMPOSITOR, E_OBJECT(e_comp), event_info);
 }
 
