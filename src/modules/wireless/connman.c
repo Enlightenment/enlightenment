@@ -990,7 +990,22 @@ _connman_agent_release(const Eldbus_Service_Interface *iface EINA_UNUSED, const 
 static Eldbus_Message *
 _connman_agent_report_error(const Eldbus_Service_Interface *iface EINA_UNUSED, const Eldbus_Message *msg EINA_UNUSED)
 {
-#warning FIXME
+   const char *path, *err;
+   E_Notification_Notify n;
+
+   if (!eldbus_message_arguments_get(msg, "ss", &path, &err))
+     {
+        ERR("Could not parse message %p", msg);
+        return NULL;
+     }
+   /* TODO: need a generic "sticky" gadget popup */
+   memset(&n, 0, sizeof(E_Notification_Notify));
+   n.timeout = 3000;
+   n.summary = _("Connection Error");
+   n.body = err;
+   n.urgency = E_NOTIFICATION_NOTIFY_URGENCY_NORMAL;
+   e_notification_client_send(&n, NULL, NULL);
+
    return NULL;
 }
 
