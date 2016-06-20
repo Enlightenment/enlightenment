@@ -1704,3 +1704,20 @@ _e_zone_obstacle_free(E_Zone_Obstacle *obs)
      }
    free(obs);
 }
+
+E_API E_Zone *
+e_zone_for_id_get(const char *id)
+{
+   Eina_List *l = NULL;
+   E_Zone *zone;
+
+   if (!e_comp) return NULL;
+
+   EINA_LIST_FOREACH(e_comp->zones, l, zone)
+     {
+        if (strcmp(zone->randr2_id, id) == 0)
+          return zone;
+     }
+
+   return NULL;
+}

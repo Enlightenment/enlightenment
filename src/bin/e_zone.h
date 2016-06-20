@@ -166,6 +166,8 @@ E_API void      e_zone_fade_handle(E_Zone *zone, int out, double tim);
 E_API E_Zone_Obstacle *e_zone_obstacle_add(E_Zone *zone, E_Desk *desk, Eina_Rectangle *geom, Eina_Bool vertical);
 E_API void e_zone_obstacle_modify(E_Zone_Obstacle *obs, Eina_Rectangle *geom, Eina_Bool vertical);
 
+E_API E_Zone *e_zone_for_id_get(const char *id);
+
 extern E_API int E_EVENT_ZONE_DESK_COUNT_SET;
 extern E_API int E_EVENT_ZONE_MOVE_RESIZE;
 extern E_API int E_EVENT_ZONE_ADD;
