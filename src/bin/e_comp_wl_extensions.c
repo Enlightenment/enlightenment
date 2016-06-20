@@ -43,7 +43,7 @@ _e_comp_wl_session_recovery_get_uuid(struct wl_client *client EINA_UNUSED, struc
      e_remember_unuse(ec->remember);
    ec->remember = e_remember_new();
    e_remember_use(ec->remember);
-   ec->remember->apply = E_REMEMBER_APPLY_POS | E_REMEMBER_APPLY_DESKTOP |
+   ec->remember->apply = E_REMEMBER_APPLY_POS | E_REMEMBER_APPLY_SIZE | E_REMEMBER_APPLY_DESKTOP |
                          E_REMEMBER_APPLY_LAYER | E_REMEMBER_APPLY_ZONE | E_REMEMBER_APPLY_UUID;
    e_remember_update(ec);
 }
