@@ -309,6 +309,7 @@ struct _E_Comp_Wl_Client_Data
      } popup;
 
    E_Maximize max;
+   E_Maximize unmax;
 #ifndef HAVE_WAYLAND_ONLY
    E_Pixmap *xwayland_pixmap;
    E_Comp_X_Client_Data *xwayland_data;

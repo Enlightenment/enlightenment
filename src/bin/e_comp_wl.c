@@ -629,7 +629,7 @@ _e_comp_wl_evas_cb_unmaximize_pre(void *data, Evas_Object *obj EINA_UNUSED, void
      {
         int w, h, ew, eh, *ecw, *ech;
         unsigned int pmax = ec->maximized;
-        ec->comp_data->max = *max;
+        ec->comp_data->unmax = *max;
         if (ec->internal)
           ecw = &ec->client.w, ech = &ec->client.h;
         else
@@ -1176,9 +1176,17 @@ _e_comp_wl_surface_state_commit(E_Client *ec, E_Comp_Wl_Surface_State *state)
         if (ec->comp_data->shell.set.unfullscreen)
            e_client_unfullscreen(ec);
         if (ec->comp_data->shell.set.maximize)
-          e_client_maximize(ec, (e_config->maximize_policy & E_MAXIMIZE_TYPE) | ec->comp_data->max);
+          {
+             ec->changes.need_maximize = 1;
+             e_client_maximize(ec, (e_config->maximize_policy & E_MAXIMIZE_TYPE) | ec->comp_data->max);
+             ec->comp_data->max = 0;
+             ec->changes.need_maximize = 0;
+          }
         if (ec->comp_data->shell.set.unmaximize)
-          e_client_unmaximize(ec, (e_config->maximize_policy & E_MAXIMIZE_TYPE) | ec->comp_data->max);
+          {
+             e_client_unmaximize(ec, (e_config->maximize_policy & E_MAXIMIZE_TYPE) | ec->comp_data->unmax);
+             ec->comp_data->unmax = 0;
+          }
         if (ec->comp_data->shell.set.minimize)
           e_client_iconify(ec);
         ec->comp_data->shell.set.fullscreen =
