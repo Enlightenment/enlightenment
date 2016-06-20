@@ -248,7 +248,7 @@ e_remember_use(E_Remember *rem)
 E_API void
 e_remember_unuse(E_Remember *rem)
 {
-   rem->used_count--;
+   if (rem->used_count) rem->used_count--;
 }
 
 E_API void
