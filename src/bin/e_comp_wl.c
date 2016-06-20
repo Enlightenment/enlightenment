@@ -2900,11 +2900,14 @@ e_comp_wl_output_init(const char *id, const char *make, const char *model,
    E_Comp_Wl_Output *output;
    Eina_List *l2;
    struct wl_resource *resource;
+   E_Zone *zone;
 
    /* retrieve named output; or create it if it doesn't exist */
    output = _e_comp_wl_output_get(e_comp_wl->outputs, id);
    if (!output)
      {
+        zone = e_zone_for_id_get(id);
+        if (!zone) return EINA_FALSE;
         if (!(output = E_NEW(E_Comp_Wl_Output, 1))) return EINA_FALSE;
 
         if (id) output->id = eina_stringshare_add(id);
@@ -2919,6 +2922,8 @@ e_comp_wl_output_init(const char *id, const char *make, const char *model,
 
         output->resources = NULL;
         output->scale = e_scale;
+
+        zone->output = output;
      }
 
    /* update the output details */

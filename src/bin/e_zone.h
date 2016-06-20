@@ -87,6 +87,8 @@ struct _E_Zone
 
    int            id;
 
+   void *output;
+
    Eina_Rectangle useful_geometry[2];
    char *randr2_id; // same id we get from randr2 so look it up there
    Eina_Bool useful_geometry_changed : 1;
