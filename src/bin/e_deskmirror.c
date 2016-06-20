@@ -313,6 +313,17 @@ _e_deskmirror_mirror_frame_recalc_cb(void *data, Evas_Object *obj EINA_UNUSED, v
 }
 
 static void
+_e_deskmirror_mirror_color_set_cb(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
+{
+   Mirror *m = data;
+   int r, g, b, a;
+
+   if (!m->mirror) return;
+   evas_object_color_get(obj, &r, &g, &b, &a);
+   evas_object_color_set(m->mirror, r, g, b, a);
+}
+
+static void
 _mirror_client_smart_add(Evas_Object *obj)
 {
    Mirror_Border *mb;
@@ -490,6 +501,7 @@ _e_deskmirror_mirror_del_hash(Mirror *m)
    m->sd->mirrors = eina_inlist_remove(m->sd->mirrors, EINA_INLIST_GET(m));
    evas_object_smart_callback_del_full(m->comp_object, "dirty", _comp_object_dirty, m);
    evas_object_smart_callback_del_full(m->comp_object, "frame_recalc_done", _e_deskmirror_mirror_frame_recalc_cb, m);
+   evas_object_smart_callback_del_full(m->comp_object, "color_set", _e_deskmirror_mirror_color_set_cb, m);
    evas_object_event_callback_del_full(m->comp_object, EVAS_CALLBACK_DEL, _e_deskmirror_mirror_del_cb, m);
    evas_object_del(m->mirror);
    m->mirror = NULL;
@@ -687,6 +699,7 @@ _e_deskmirror_mirror_add(E_Smart_Data *sd, Evas_Object *obj)
    evas_object_event_callback_add(obj, EVAS_CALLBACK_RESIZE, (Evas_Object_Event_Cb)_comp_object_configure, m);
    evas_object_event_callback_add(obj, EVAS_CALLBACK_MOVE, (Evas_Object_Event_Cb)_comp_object_configure, m);
    evas_object_smart_callback_add(obj, "frame_recalc_done", _e_deskmirror_mirror_frame_recalc_cb, m);
+   evas_object_smart_callback_add(obj, "color_set", _e_deskmirror_mirror_color_set_cb, m);
    if (ec && (!ec->redirected) && (!ec->new_client) && e_pixmap_usable_get(ec->pixmap))
      evas_object_smart_callback_add(obj, "dirty", _comp_object_dirty, m);
    sd->mirrors = eina_inlist_append(sd->mirrors, EINA_INLIST_GET(m));
