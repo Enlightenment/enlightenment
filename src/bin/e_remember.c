@@ -362,6 +362,7 @@ e_remember_apply(E_Remember *rem, E_Client *ec)
              ec->saved.w = ec->client.w;
              ec->saved.h = ec->client.h;
              ec->maximized = rem->prop.maximize | e_config->maximize_policy;
+             ec->changes.need_maximize = 1;
           }
         if ((w != ec->client.w) || (h != ec->client.h))
           {
