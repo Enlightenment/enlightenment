@@ -327,6 +327,7 @@ _e_config_edd_init(Eina_Bool old)
    E_CONFIG_VAL(D, T, prop.w, INT);
    E_CONFIG_VAL(D, T, prop.h, INT);
    E_CONFIG_VAL(D, T, prop.layer, INT);
+   E_CONFIG_VAL(D, T, prop.maximize, UINT);
    E_CONFIG_VAL(D, T, prop.lock_user_location, UCHAR);
    E_CONFIG_VAL(D, T, prop.lock_client_location, UCHAR);
    E_CONFIG_VAL(D, T, prop.lock_user_size, UCHAR);
