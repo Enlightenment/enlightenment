@@ -668,6 +668,11 @@ e_remember_update(E_Client *ec)
    if (!ec->remember) return;
    if (ec->remember->keep_settings) return;
    _e_remember_update(ec, ec->remember);
+   if (ec->remember->apply & E_REMEMBER_APPLY_UUID)
+     {
+        E_Remember *rem = e_remember_find_usable(ec);
+        if (rem) _e_remember_update(ec, rem);
+     }
    e_config_save_queue();
 }
 
