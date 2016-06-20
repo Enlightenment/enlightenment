@@ -729,7 +729,7 @@ _e_xdg_shell_surface_configure_send(struct wl_resource *resource, uint32_t edges
    if (e_object_is_del(E_OBJECT(ec))) return;
    if (ec->netwm.type == E_WINDOW_TYPE_POPUP_MENU) return;
 
-   _xdg_shell_surface_send_configure(resource, ec->fullscreen, !!ec->maximized, edges, width, height);
+   _xdg_shell_surface_send_configure(resource, ec->fullscreen, !!ec->maximized || ec->comp_data->max, edges, width, height);
 }
 
 static void
@@ -1050,7 +1050,7 @@ _e_xdg_shell_surface_cb_fullscreen_set(struct wl_client *client EINA_UNUSED, str
      }
 
    if (ec->lock_user_fullscreen) return;
-   _xdg_shell_surface_send_configure(resource, 1, ec->maximized, 0, ec->zone->w, ec->zone->h);
+   _xdg_shell_surface_send_configure(resource, 1, !!ec->maximized || ec->comp_data->max, 0, ec->zone->w, ec->zone->h);
 }
 
 static void
@@ -1069,7 +1069,7 @@ _e_xdg_shell_surface_cb_fullscreen_unset(struct wl_client *client EINA_UNUSED, s
    if (e_object_is_del(E_OBJECT(ec))) return;
 
    if (ec->lock_user_fullscreen) return;
-   _xdg_shell_surface_send_configure(resource, 0, ec->maximized, 0, ec->saved.w, ec->saved.h);
+   _xdg_shell_surface_send_configure(resource, 0, !!ec->maximized || ec->comp_data->max, 0, ec->saved.w, ec->saved.h);
 }
 
 static void
