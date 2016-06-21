@@ -316,7 +316,8 @@ _e_xkb_type_reconfig(E_Pixmap_Type comp_type)
 {
    if (comp_type == E_PIXMAP_TYPE_X)
      _e_x_xkb_reconfig();
-   //we dont need to init wl yet
+   else if (comp_type == E_PIXMAP_TYPE_WL)
+     _e_wl_xkb_update(e_config->xkb.cur_group);
 }
 
 E_API void
