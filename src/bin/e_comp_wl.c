@@ -43,6 +43,55 @@ static double _last_event_time = 0.0;
 static int64_t surface_id = 0;
 
 /* local functions */
+
+static struct wl_resource *
+_output_resource_find(Eina_List *reslist, struct wl_resource *surface)
+{
+   Eina_List *l;
+   struct wl_client *client;
+   struct wl_resource *res;
+
+   client = wl_resource_get_client(surface);
+   EINA_LIST_FOREACH(reslist, l, res)
+     if (wl_resource_get_client(res) == client) return res;
+
+   return NULL;
+}
+
+static void
+_e_comp_wl_surface_outputs_update(E_Client *ec)
+{
+   Eina_List *l;
+   E_Zone *zone;
+   int32_t obits = 0;
+
+   if (ec->visible)
+     EINA_LIST_FOREACH(e_comp->zones, l, zone)
+       if (E_INTERSECTS(zone->x, zone->y, zone->w, zone->h,
+                        ec->x, ec->y, ec->w, ec->h)) obits |= 1 << zone->id;
+
+   if (obits != ec->comp_data->on_outputs)
+     {
+        int32_t leave = (obits ^ ec->comp_data->on_outputs) & ec->comp_data->on_outputs;
+        int32_t enter = (obits ^ ec->comp_data->on_outputs) & obits;
+
+        ec->comp_data->on_outputs = obits;
+        EINA_LIST_FOREACH(e_comp->zones, l, zone)
+          {
+             struct wl_resource *s, *res;
+             E_Comp_Wl_Output *wlo;
+
+             s = ec->comp_data->surface;
+             wlo = zone->output;
+             res = _output_resource_find(wlo->resources, s);
+             if (!res) continue;
+
+             if (leave & (1 << zone->id)) wl_surface_send_leave(s, res);
+             if (enter & (1 << zone->id)) wl_surface_send_enter(s, res);
+          }
+     }
+}
+
 static void
 _e_comp_wl_configure_send(E_Client *ec, Eina_Bool edges)
 {
@@ -614,6 +663,7 @@ _e_comp_wl_evas_cb_move(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_U
           evas_object_move(sec->frame, ec->client.x + sec->comp_data->sub.data->position.x,
                            ec->client.y + sec->comp_data->sub.data->position.y);
      }
+   _e_comp_wl_surface_outputs_update(ec);
 }
 
 static void
@@ -1384,6 +1434,8 @@ _e_comp_wl_surface_state_commit(E_Client *ec, E_Comp_Wl_Surface_State *state)
         eina_tiler_clear(state->input);
      }
    ec->comp_data->in_commit = 0;
+
+   _e_comp_wl_surface_outputs_update(ec);
 }
 
 static void

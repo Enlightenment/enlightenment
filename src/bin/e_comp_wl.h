@@ -308,6 +308,8 @@ struct _E_Comp_Wl_Client_Data
         int32_t x, y;
      } popup;
 
+   int32_t on_outputs; /* Bitfield of the outputs this client is present on */
+
    E_Maximize max;
    E_Maximize unmax;
 #ifndef HAVE_WAYLAND_ONLY
