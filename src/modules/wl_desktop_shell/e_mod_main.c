@@ -288,11 +288,12 @@ _e_shell_surface_cb_toplevel_set(struct wl_client *client EINA_UNUSED, struct wl
    if (e_object_is_del(E_OBJECT(ec))) return;
 
    /* set toplevel client properties */
+   ec->icccm.accepts_focus = 1;
    if (!ec->internal)
      ec->borderless = !ec->internal;
 
    ec->lock_border = EINA_TRUE;
-   if (!ec->internal)
+   if ((!ec->internal) || (!ec->borderless))
      ec->border.changed = ec->changes.border = !ec->borderless;
    ec->netwm.type = E_WINDOW_TYPE_NORMAL;
    ec->comp_data->set_win_type = EINA_TRUE;
@@ -343,6 +344,7 @@ static void
 _e_shell_surface_cb_popup_set(struct wl_client *client EINA_UNUSED, struct wl_resource *resource, struct wl_resource *seat_resource EINA_UNUSED, uint32_t serial EINA_UNUSED, struct wl_resource *parent_resource, int32_t x, int32_t y, uint32_t flags EINA_UNUSED)
 {
    E_Client *ec;
+   E_Comp_Client_Data *cdata;
 
    if (!(ec = wl_resource_get_user_data(resource)))
      {
@@ -363,6 +365,18 @@ _e_shell_surface_cb_popup_set(struct wl_client *client EINA_UNUSED, struct wl_re
    ec->changes.icon = !!ec->icccm.class;
    ec->netwm.type = E_WINDOW_TYPE_POPUP_MENU;
    ec->comp_data->set_win_type = EINA_TRUE;
+
+   cdata = ec->comp_data;
+   if (ec->parent)
+     {
+        cdata->popup.x = E_CLAMP(x, 0, ec->parent->client.w);
+        cdata->popup.y = E_CLAMP(y, 0, ec->parent->client.h);
+     }
+   else
+     {
+        cdata->popup.x = x;
+        cdata->popup.y = y;
+     }
 
    /* set this client as a transient for parent */
    _e_shell_surface_parent_set(ec, parent_resource);
@@ -601,6 +615,7 @@ _e_shell_cb_shell_surface_get(struct wl_client *client, struct wl_resource *reso
    if (!(cdata->shell.surface =
          wl_resource_create(client, &wl_shell_surface_interface, 1, id)))
      {
+        ERR("Could not create wl_shell surface");
         wl_resource_post_no_memory(surface_resource);
         return;
      }
