@@ -1227,10 +1227,8 @@ _e_comp_wl_surface_state_commit(E_Client *ec, E_Comp_Wl_Surface_State *state)
            e_client_unfullscreen(ec);
         if (ec->comp_data->shell.set.maximize)
           {
-             ec->changes.need_maximize = 1;
              e_client_maximize(ec, (e_config->maximize_policy & E_MAXIMIZE_TYPE) | ec->comp_data->max);
              ec->comp_data->max = 0;
-             ec->changes.need_maximize = 0;
           }
         if (ec->comp_data->shell.set.unmaximize)
           {
