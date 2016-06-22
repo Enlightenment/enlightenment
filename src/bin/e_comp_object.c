@@ -3119,6 +3119,7 @@ e_comp_object_input_area_set(Evas_Object *obj, int x, int y, int w, int h)
    else
      {
         evas_object_smart_member_del(cw->input_obj);
+        evas_object_freeze_events_set(cw->input_obj, 1);
         E_FREE_FUNC(cw->input_obj, evas_object_del);
         evas_object_pass_events_set(cw->obj, 0);
      }
