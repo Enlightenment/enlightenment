@@ -3798,18 +3798,6 @@ e_client_maximize(E_Client *ec, E_Maximize max)
        ((ec->maximized & E_MAXIMIZE_DIRECTION) == E_MAXIMIZE_BOTH)) return;
    if (ec->new_client)
      {
-        if (!(ec->maximized & E_MAXIMIZE_HORIZONTAL))
-          {
-             /* Horizontal hasn't been set */
-             ec->saved.x = ec->client.x - ec->zone->x;
-             ec->saved.w = ec->client.w;
-          }
-        if (!(ec->maximized & E_MAXIMIZE_VERTICAL))
-          {
-             /* Vertical hasn't been set */
-             ec->saved.y = ec->client.y - ec->zone->y;
-             ec->saved.h = ec->client.h;
-          }
         ec->changes.need_maximize = 1;
         ec->maximized &= ~E_MAXIMIZE_TYPE;
         ec->maximized |= max;
@@ -3825,18 +3813,14 @@ e_client_maximize(E_Client *ec, E_Maximize max)
    if (!(ec->maximized & E_MAXIMIZE_HORIZONTAL))
      {
         /* Horizontal hasn't been set */
-        if ((!ec->changes.need_maximize) || (!ec->saved.x))
-          ec->saved.x = ec->client.x - ec->zone->x;
-        if ((!ec->changes.need_maximize) || (!ec->saved.w))
-          ec->saved.w = ec->client.w;
+        ec->saved.x = ec->client.x - ec->zone->x;
+        ec->saved.w = ec->client.w;
      }
    if (!(ec->maximized & E_MAXIMIZE_VERTICAL))
      {
         /* Vertical hasn't been set */
-        if ((!ec->changes.need_maximize) || (!ec->saved.y))
-          ec->saved.y = ec->client.y - ec->zone->y;
-        if ((!ec->changes.need_maximize) || (!ec->saved.h))
-          ec->saved.h = ec->client.h;
+        ec->saved.y = ec->client.y - ec->zone->y;
+        ec->saved.h = ec->client.h;
      }
 
    ec->saved.zone = ec->zone->num;
