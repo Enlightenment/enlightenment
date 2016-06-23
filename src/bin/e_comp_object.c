@@ -1730,7 +1730,6 @@ _e_comp_intercept_show(void *data, Evas_Object *obj EINA_UNUSED)
      {
         _e_comp_object_setup(cw);
         cw->obj = evas_object_image_filled_add(e_comp->evas);
-        evas_object_pointer_mode_set(cw->obj, EVAS_OBJECT_POINTER_MODE_NOGRAB);
         evas_object_image_border_center_fill_set(cw->obj, EVAS_BORDER_FILL_SOLID);
         e_util_size_debug_set(cw->obj, 1);
         evas_object_image_pixels_get_callback_set(cw->obj, _e_comp_object_pixels_get, cw);
@@ -3105,7 +3104,6 @@ e_comp_object_input_area_set(Evas_Object *obj, int x, int y, int w, int h)
         if (!cw->input_obj)
           {
              cw->input_obj = evas_object_rectangle_add(e_comp->evas);
-             evas_object_pointer_mode_set(cw->input_obj, EVAS_OBJECT_POINTER_MODE_NOGRAB);
              //e_util_size_debug_set(cw->input_obj, 1);
              evas_object_name_set(cw->input_obj, "cw->input_obj");
              evas_object_color_set(cw->input_obj, 0, 0, 0, 0);
