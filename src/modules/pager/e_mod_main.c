@@ -1129,6 +1129,7 @@ _pager_window_cb_mouse_down(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EI
    pw->desk->pager->active_drag_client = NULL;
    if (pw->desk->pager->popup && !act_popup) return;
    if (!pw->desk->pager->popup && ev->button == 3) return;
+   if (e_client_util_ignored_get(pw->client) || e_client_util_is_popup(pw->client)) return;
    if (ev->button == (int)pager_config->btn_desk) return;
    if ((ev->button == (int)pager_config->btn_drag) ||
        (ev->button == (int)pager_config->btn_noplace))
