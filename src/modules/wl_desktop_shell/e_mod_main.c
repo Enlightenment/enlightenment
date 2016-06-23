@@ -498,9 +498,7 @@ _e_shell_surface_configure(struct wl_resource *resource, Evas_Coord x, Evas_Coor
 
    if (ec->parent)
      {
-        if ((ec->netwm.type == E_WINDOW_TYPE_MENU) ||
-            (ec->netwm.type == E_WINDOW_TYPE_POPUP_MENU) ||
-            (ec->netwm.type == E_WINDOW_TYPE_DROPDOWN_MENU))
+        if (e_client_util_is_popup(ec))
           {
              x = E_CLAMP(ec->parent->client.x + ec->comp_data->popup.x,
                          ec->parent->client.x,
@@ -664,7 +662,7 @@ _xdg_shell_surface_send_configure(struct wl_resource *resource, Eina_Bool fullsc
                                "No Client For Shell Surface");
         return;
      }
-   if (ec->netwm.type == E_WINDOW_TYPE_POPUP_MENU) return;
+   if (e_client_util_is_popup(ec)) return;
    focused = e_client_focused_get();
    if (ec == focused)
      activated = 1;
@@ -742,7 +740,7 @@ _e_xdg_shell_surface_configure_send(struct wl_resource *resource, uint32_t edges
         return;
      }
    if (e_object_is_del(E_OBJECT(ec))) return;
-   if (ec->netwm.type == E_WINDOW_TYPE_POPUP_MENU) return;
+   if (e_client_util_is_popup(ec)) return;
 
    _xdg_shell_surface_send_configure(resource, ec->fullscreen, !!ec->maximized || ec->comp_data->max, edges, width, height);
 }
@@ -1158,9 +1156,7 @@ _e_xdg_shell_surface_configure(struct wl_resource *resource, Evas_Coord x, Evas_
 
    if (ec->parent)
      {
-        if ((ec->netwm.type == E_WINDOW_TYPE_MENU) ||
-            (ec->netwm.type == E_WINDOW_TYPE_POPUP_MENU) ||
-            (ec->netwm.type == E_WINDOW_TYPE_DROPDOWN_MENU))
+        if (e_client_util_is_popup(ec))
           {
              x = ec->parent->client.x + ec->comp_data->popup.x;
              y = ec->parent->client.y + ec->comp_data->popup.y;
@@ -1221,7 +1217,7 @@ _e_xdg_shell_surface_map(struct wl_resource *resource)
 
         /* FIXME: sometimes popup surfaces Do Not raise above their
          * respective parents... */
-        /* if (ec->netwm.type == E_WINDOW_TYPE_POPUP_MENU) */
+        /* if (e_client_util_is_popup(ec)) */
         /*   e_client_raise_latest_set(ec); */
      }
 }
