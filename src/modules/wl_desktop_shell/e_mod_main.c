@@ -475,6 +475,17 @@ static const struct wl_shell_surface_interface _e_shell_surface_interface =
 static void
 _e_shell_surface_configure_send(struct wl_resource *resource, uint32_t edges, int32_t width, int32_t height)
 {
+   E_Client *ec;
+
+   if (!(ec = wl_resource_get_user_data(resource)))
+     {
+        wl_resource_post_error(resource,
+                               WL_DISPLAY_ERROR_INVALID_OBJECT,
+                               "No Client For Shell Surface");
+        return;
+     }
+   if (e_client_util_is_popup(ec)) return;
+
    wl_shell_surface_send_configure(resource, edges, width, height);
 }
 
