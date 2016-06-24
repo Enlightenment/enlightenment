@@ -96,7 +96,11 @@ _e_elm_win_trap_show(void *data, Evas_Object *o)
              ctx->pointer = e_pointer_window_new(win, EINA_TRUE);
           }
 
-        ec = e_pixmap_find_client(type, win);
+        if (type == E_PIXMAP_TYPE_WL)
+          ec = e_pixmap_find_client(type, (int64_t)win);
+        else
+          ec = e_pixmap_find_client(type, win);
+
         if (ec)
           ctx->client = ec;
         else
@@ -113,7 +117,11 @@ _e_elm_win_trap_show(void *data, Evas_Object *o)
                title = "E";
              ecore_evas_title_set(ee, title);
 
-             cp = e_pixmap_new(type, win);
+             if (type == E_PIXMAP_TYPE_WL)
+               cp = e_pixmap_new(type, (int64_t)win);
+             else
+               cp = e_pixmap_new(type, win);
+
              EINA_SAFETY_ON_NULL_RETURN_VAL(cp, EINA_TRUE);
 #ifdef HAVE_WAYLAND
              if (wl_win_id >= 0)
