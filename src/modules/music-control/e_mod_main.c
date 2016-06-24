@@ -24,6 +24,7 @@ const Player music_player_players[] =
    {"Emotion Media Center", "org.mpris.MediaPlayer2.epymc"},
    {"Pithos", "org.mpris.MediaPlayer2.pithos"},
    {"Tomahawk", "org.mpris.MediaPlayer2.tomahawk"},
+   {"Spotify", "org.mpris.MediaPlayer2.spotify"},
    {NULL, NULL}
 };
 
