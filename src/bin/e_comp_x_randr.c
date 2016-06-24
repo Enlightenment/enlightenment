@@ -838,7 +838,7 @@ e_comp_x_randr_create(void)
                }
           }
         zone = e_zone_for_id_get(s->id);
-        if (zone) zone->output = s;
+        if (zone && !zone->output) zone->output = s;
         r->screens = eina_list_append(r->screens, s);
      }
 
