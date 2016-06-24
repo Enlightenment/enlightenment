@@ -83,6 +83,8 @@ _e_comp_wl_surface_outputs_update(E_Client *ec)
 
              s = ec->comp_data->surface;
              wlo = zone->output;
+             if (!wlo) continue;
+
              res = _output_resource_find(wlo->resources, s);
              if (!res) continue;
 
