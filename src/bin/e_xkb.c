@@ -14,25 +14,39 @@ static Ecore_Timer *save_group;
 
 E_API int E_EVENT_XKB_CHANGED = 0;
 
-static Eina_Bool
-_e_xkb_init_timer(void *data)
+static void
+_eval_cur_group(void)
 {
    Eina_List *l;
-   E_Config_XKB_Layout *cl2, *cl = data;
+   E_Config_XKB_Layout *cl2, *cl = NULL;
    int cur_group = -1;
 
-   if (!e_comp->root) return EINA_FALSE;
+   cl = e_config->xkb.current_layout;
+   if (!cl) cl = e_config->xkb.sel_layout;
+
    EINA_LIST_FOREACH(e_config->xkb.used_layouts, l, cl2)
      {
         cur_group++;
         if (!cl2->name) continue;
-        if (e_config_xkb_layout_eq(cl, cl2))
+        if (!cl || e_config_xkb_layout_eq(cl, cl2))
           {
              INF("Setting keyboard layout: %s|%s|%s", cl2->name, cl2->model, cl2->variant);
-             e_xkb_update(cur_group);
-             break;
+             e_config->xkb.cur_group = cur_group;
+             return;
           }
      }
+   e_config->xkb.cur_group = 0;
+}
+
+static Eina_Bool
+_e_xkb_init_timer(void *data EINA_UNUSED)
+{
+   if (!e_comp->root) return EINA_FALSE;
+
+   _eval_cur_group();
+
+   e_xkb_update(e_config->xkb.cur_group);
+
    return EINA_FALSE;
 }
 
@@ -99,13 +113,12 @@ e_xkb_init(E_Pixmap_Type comp_type)
      }
 #endif
    if (e_config->xkb.dont_touch_my_damn_keyboard) return 1;
+
    _e_xkb_type_reconfig(comp_type);
-   if (e_config->xkb.cur_layout)
-     ecore_timer_add(1.5, _e_xkb_init_timer, e_config->xkb.current_layout);
-   else if (e_config->xkb.selected_layout)
-     ecore_timer_add(1.5, _e_xkb_init_timer, e_config->xkb.sel_layout);
-   else if (e_config->xkb.used_layouts)
-      ecore_timer_add(1.5, _e_xkb_init_timer, eina_list_data_get(e_config->xkb.used_layouts));
+
+   if (comp_type == E_PIXMAP_TYPE_X)
+     ecore_timer_add(1.5, _e_xkb_init_timer, NULL);
+
    return 1;
 }
 
@@ -317,7 +330,10 @@ _e_xkb_type_reconfig(E_Pixmap_Type comp_type)
    if (comp_type == E_PIXMAP_TYPE_X)
      _e_x_xkb_reconfig();
    else if (comp_type == E_PIXMAP_TYPE_WL)
-     _e_wl_xkb_update(e_config->xkb.cur_group);
+     {
+        _eval_cur_group();
+        _e_wl_xkb_update(e_config->xkb.cur_group);
+     }
 }
 
 E_API void
