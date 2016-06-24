@@ -284,7 +284,55 @@ _e_comp_wl_send_mouse_move(E_Client *ec, int x, int y, unsigned int timestamp)
    struct wl_resource *res;
    struct wl_client *wc;
    Eina_List *l;
+   E_Client *tec, *tec_in = NULL;
+   Eina_Bool found = EINA_FALSE;
+   Evas_Event_Mouse_In ev;
 
+   /* begin hacks:
+    *
+    * this should be handled by setting NOGRAB pointer mode on comp object internals,
+    * ie. 03a4ecbdb0972f8267c07ea14d752fcee69bd9fa
+    * but doing so breaks dnd eventing.
+    *
+    * instead, walk the transients list, assuming (correctly) that they are listed from
+    * bottom to top, and send mouse events to whichever surface the pointer is in
+    */
+   ev.canvas.x = x;
+   ev.canvas.y = y;
+   EINA_LIST_FOREACH(ec->transients, l, tec)
+     {
+        if (e_client_util_ignored_get(tec) || (!evas_object_visible_get(tec->frame)))
+          continue;
+        if (tec->mouse.in) tec_in = tec;
+        if (E_INSIDE(x, y, tec->x, tec->y, tec->w, tec->h))
+          {
+             if (tec_in && (tec != tec_in))
+               {
+                  e_client_mouse_out(tec_in, x, y);
+                  _e_comp_wl_mouse_out(tec_in);
+                  tec_in = NULL;
+               }
+             e_client_mouse_in(tec, x, y);
+             _e_comp_wl_mouse_in(tec, &ev);
+             e_client_mouse_move(tec, &(Evas_Point){x, y});
+             _e_comp_wl_send_mouse_move(tec, x, y, timestamp);
+             found = EINA_TRUE;
+          }
+        else if (tec->mouse.in)
+          {
+             e_client_mouse_out(tec, x, y);
+             _e_comp_wl_mouse_out(tec);
+          }
+     }
+   if (found) return;
+   /* if a transient previously had mouse.in, re-set mouse.in to the parent */
+   if (tec_in)
+     {
+        e_client_mouse_in(ec, x, y);
+        _e_comp_wl_mouse_in(ec, &ev);
+        e_client_mouse_move(ec, &(Evas_Point){x, y});
+     }
+   /* end hacks */
    wc = wl_resource_get_client(ec->comp_data->surface);
    EINA_LIST_FOREACH(e_comp_wl->ptr.resources, l, res)
      {
