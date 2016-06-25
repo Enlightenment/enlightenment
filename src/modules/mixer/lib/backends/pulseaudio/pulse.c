@@ -351,6 +351,7 @@ _sink_input_changed_cb(pa_context *c EINA_UNUSED,
                        void *userdata EINA_UNUSED)
 {
    Sink_Input *input = NULL, *i;
+   Sink *s = NULL;
    Eina_List *l;
 
    EINA_SAFETY_ON_NULL_RETURN(ctx);
@@ -386,6 +387,12 @@ _sink_input_changed_cb(pa_context *c EINA_UNUSED,
    input->idx = info->index;
    input->base.volume = _pa_cvolume_convert(&info->volume);
    input->base.mute = !!info->mute;
+
+   EINA_LIST_FOREACH(ctx->sinks, l, s)
+     {
+        if (s->idx == (int)info->sink)
+          input->base.sink = (Emix_Sink *)s;
+     }
 
    if (ctx->cb)
      ctx->cb((void *)ctx->userdata, EMIX_SINK_INPUT_CHANGED_EVENT,
