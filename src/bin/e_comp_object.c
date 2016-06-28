@@ -880,6 +880,26 @@ _e_comp_object_setup(E_Comp_Object *cw)
      }
 }
 
+static void
+_e_comp_object_mirror_pixels_get(void *data, Evas_Object *obj)
+{
+   E_Comp_Object *cw = data;
+   E_Client *ec = cw->ec;
+   int pw, ph;
+
+   if ((!ec->pixmap) || (!e_pixmap_size_get(ec->pixmap, &pw, &ph)))
+     {
+        evas_object_image_data_set(obj, NULL);
+        return;
+     }
+
+   if (cw->native) return;
+
+   evas_object_image_data_set(obj, e_pixmap_image_data_get(cw->ec->pixmap));
+   evas_object_image_alpha_set(obj, evas_object_image_alpha_get(cw->obj));
+   evas_object_image_pixels_dirty_set(obj, EINA_FALSE);
+}
+
 /////////////////////////////////////////////
 
 /* for fast path evas rendering; only called during render */
@@ -3836,12 +3856,6 @@ e_comp_object_render(Evas_Object *obj)
 end:
    evas_object_image_data_set(cw->obj, cw->blanked ? NULL : pix);
    _e_comp_object_alpha_set(cw);
-   EINA_LIST_FOREACH(cw->obj_mirror, l, o)
-     {
-        evas_object_image_data_set(o, pix);
-        evas_object_image_alpha_set(o, evas_object_image_alpha_get(cw->obj));
-        evas_object_image_pixels_dirty_set(o, EINA_FALSE);
-     }
 
    E_FREE_FUNC(cw->pending_updates, eina_tiler_free);
    if (ret)
@@ -3926,6 +3940,7 @@ e_comp_object_util_mirror_add(Evas_Object *obj)
       if (dirty)
         evas_object_image_data_update_add(o, 0, 0, w, h);
    }
+   evas_object_image_pixels_get_callback_set(o, _e_comp_object_mirror_pixels_get, cw);
    return o;
 }
 
