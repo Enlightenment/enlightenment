@@ -3799,8 +3799,9 @@ e_comp_object_dirty(Evas_Object *obj)
      {
         //evas_object_image_border_set(o, bx, by, bxx, byy);
         //evas_object_image_border_center_fill_set(o, EVAS_BORDER_FILL_SOLID);
-        evas_object_image_data_set(o, NULL);
         evas_object_image_pixels_dirty_set(o, dirty);
+        if (!dirty)
+          evas_object_image_data_set(o, NULL);
         evas_object_image_size_set(o, w, h);
         visible |= evas_object_visible_get(o);
      }
