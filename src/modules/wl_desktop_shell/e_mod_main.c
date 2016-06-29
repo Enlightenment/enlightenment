@@ -320,6 +320,20 @@ _e_shell_surface_cb_transient_set(struct wl_client *client EINA_UNUSED, struct w
    /* set this client as a transient for parent */
    _e_shell_surface_parent_set(ec, parent_resource);
 
+   ec->icccm.accepts_focus = 1;
+   if (!ec->internal)
+     ec->borderless = !ec->internal;
+
+   ec->lock_border = EINA_TRUE;
+   if ((!ec->internal) || (!ec->borderless))
+     ec->border.changed = ec->changes.border = !ec->borderless;
+   ec->netwm.type = E_WINDOW_TYPE_DIALOG;
+   ec->dialog = EINA_TRUE;
+   ec->comp_data->set_win_type = EINA_TRUE;
+   if ((!ec->lock_user_maximize) && (ec->maximized))
+     e_client_unmaximize(ec, E_MAXIMIZE_BOTH);
+   if ((!ec->lock_user_fullscreen) && (ec->fullscreen))
+     e_client_unfullscreen(ec);
    EC_CHANGED(ec);
 }
 
