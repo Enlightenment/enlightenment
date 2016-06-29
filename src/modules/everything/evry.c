@@ -180,6 +180,16 @@ _evry_focus_out(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, v
    win->delay_hide_action = ecore_timer_add(0.0, _evry_focus_out_timer, win);
 }
 
+static void
+_evry_focus_in(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   Evry_Window *win = data;
+
+   if (!win->grab) return;
+
+   E_FREE_FUNC(win->delay_hide_action, ecore_timer_del);
+}
+
 Evry_Window *
 evry_show(E_Zone *zone, E_Zone_Edge edge, const char *params, Eina_Bool popup)
 {
@@ -224,6 +234,7 @@ evry_show(E_Zone *zone, E_Zone_Edge edge, const char *params, Eina_Bool popup)
              ec->netwm.state.skip_taskbar = 1;
              EC_CHANGED(ec);
              evas_object_event_callback_add(ec->frame, EVAS_CALLBACK_FOCUS_OUT, _evry_focus_out, win);
+             evas_object_event_callback_add(ec->frame, EVAS_CALLBACK_FOCUS_IN, _evry_focus_in, win);
           }
 
         win->grab = 1;
