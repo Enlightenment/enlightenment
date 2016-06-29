@@ -1323,6 +1323,7 @@ _e_xdg_shell_cb_surface_get(struct wl_client *client, struct wl_resource *resour
    cdata->shell.map = _e_xdg_shell_surface_map;
    cdata->shell.unmap = _e_xdg_shell_surface_unmap;
    cdata->shell.data = E_NEW(E_Shell_Data, 1);
+   cdata->is_xdg_surface = EINA_TRUE;
 
    /* set toplevel client properties */
    ec->icccm.accepts_focus = 1;
@@ -1412,6 +1413,7 @@ _e_xdg_shell_cb_popup_get(struct wl_client *client, struct wl_resource *resource
    cdata->shell.map = _e_xdg_shell_surface_map;
    cdata->shell.unmap = _e_xdg_shell_surface_unmap;
    cdata->shell.data = E_NEW(E_Shell_Data, 1);
+   cdata->is_xdg_surface = EINA_TRUE;
 
    if (!ec->internal)
      ec->borderless = !ec->internal_elm_win;
