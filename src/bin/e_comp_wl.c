@@ -44,6 +44,25 @@ static int64_t surface_id = 0;
 
 /* local functions */
 
+static Eina_Bool
+_parent_client_contains_pointer(E_Client *ec)
+{
+   Eina_List *l;
+   E_Client *c, *top = ec;
+
+   while (top->parent) top = top->parent;
+
+   if (top->mouse.in) return EINA_TRUE;
+
+   EINA_LIST_FOREACH(top->comp_data->sub.list, l, c)
+     if (c->mouse.in) return EINA_TRUE;
+
+   EINA_LIST_FOREACH(top->transients, l, c)
+     if ((ec != c) && c->mouse.in) return EINA_TRUE;
+
+   return EINA_FALSE;
+}
+
 static struct wl_resource *
 _output_resource_find(Eina_List *reslist, struct wl_resource *surface)
 {
@@ -606,6 +625,18 @@ _e_comp_wl_evas_cb_focus_in(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj
    _e_comp_wl_client_priority_raise(ec);
 
    wc = wl_resource_get_client(ec->comp_data->surface);
+   if (ec->comp_data->is_xdg_surface)
+     {
+        /* If an xdg shell popup's parent already has focus we don't
+         * need to do anything more.
+         */
+        EINA_LIST_FOREACH(e_comp_wl->kbd.focused, l, res)
+          if (wl_resource_get_client(res) == wc) return;
+
+        /* We only kbd focus top level xdg */
+        while (ec->parent) ec = ec->parent;
+     }
+
    EINA_LIST_FOREACH(e_comp_wl->kbd.resources, l, res)
      if (wl_resource_get_client(res) == wc)
        e_comp_wl->kbd.focused = eina_list_append(e_comp_wl->kbd.focused, res);
@@ -629,6 +660,16 @@ _e_comp_wl_keyboard_leave(E_Client *ec)
    if (!eina_list_count(e_comp_wl->kbd.resources)) return;
    if (!ec->comp_data) return;
    if (!ec->comp_data->surface) return;
+
+   if (ec->comp_data->is_xdg_surface)
+     {
+        /* If we left an xdg popup to enter some other (sub)surface
+         * of the same top level, we don't need to do anything */
+        if (_parent_client_contains_pointer(ec)) return;
+
+        /* We only kbd focus top level xdg */
+        while (ec->parent) ec = ec->parent;
+     }
 
    wc = wl_resource_get_client(ec->comp_data->surface);
    serial = wl_display_next_serial(e_comp_wl->wl.disp);
