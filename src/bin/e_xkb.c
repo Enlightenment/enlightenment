@@ -311,8 +311,6 @@ _e_wl_xkb_reconfig(void)
    eina_strbuf_free(variants);
    eina_strbuf_free(layouts);
    eina_strbuf_free(options);
-#else
-   (void) cur_group;
 #endif
 }
 
