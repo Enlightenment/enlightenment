@@ -3,6 +3,7 @@
 static void _e_xkb_update_event(int);
 
 static void _e_xkb_type_reconfig(E_Pixmap_Type comp_type);
+static void _e_xkb_type_update(E_Pixmap_Type comp_type, int cur_group);
 
 static int _e_xkb_cur_group = -1;
 static Ecore_Event_Handler *xkb_state_handler = NULL, *xkb_new_keyboard_handler = NULL;
@@ -118,6 +119,11 @@ e_xkb_init(E_Pixmap_Type comp_type)
 
    if (comp_type == E_PIXMAP_TYPE_X)
      ecore_timer_add(1.5, _e_xkb_init_timer, NULL);
+   else if (comp_type == E_PIXMAP_TYPE_WL)
+     {
+        _eval_cur_group();
+        _e_xkb_type_update(comp_type, e_config->xkb.cur_group);
+     }
 
    return 1;
 }
@@ -238,18 +244,26 @@ _e_x_xkb_update(int cur_group)
      }
 }
 
+
 static void
 _e_wl_xkb_update(int cur_group)
+{
+#ifdef HAVE_WAYLAND
+   e_comp_wl_input_keymap_index_set(cur_group);
+   _e_xkb_update_event(cur_group);
+#endif
+}
+
+
+static void
+_e_wl_xkb_reconfig(void)
 {
 #ifdef HAVE_WAYLAND
    E_Config_XKB_Option *op;
    E_Config_XKB_Layout *cl;
    Eina_Strbuf *options, *layouts, *variants;
-   Eina_List *l, *selected;
+   Eina_List *l;
 
-   if (cur_group == -1) {
-     cur_group = e_config->xkb.cur_group;
-   }
 
    options = eina_strbuf_new();
 
@@ -267,28 +281,10 @@ _e_wl_xkb_update(int cur_group)
    variants = eina_strbuf_new();
 
    //search for the correct layout
-   selected = eina_list_nth_list(e_config->xkb.used_layouts, cur_group);
-   if (!selected) selected = e_config->xkb.used_layouts;
-   /* create layouts */
-   //first walk from the selected layout to the end
-   EINA_LIST_FOREACH(selected, l, cl)
-     {
-        if (cl->name)
-          {
-             eina_strbuf_append(layouts, cl->name);
-             eina_strbuf_append_char(layouts, ',');
-          }
 
-        if (cl->variant)
-          {
-             eina_strbuf_append(variants, cl->variant);
-             eina_strbuf_append_char(variants, ',');
-          }
-     }
-   //then append all item from the first to the selected
+   /* create layouts */
    EINA_LIST_FOREACH(e_config->xkb.used_layouts, l, cl)
      {
-        if (selected == l) break;
         if (cl->name)
           {
              eina_strbuf_append(layouts, cl->name);
@@ -301,10 +297,8 @@ _e_wl_xkb_update(int cur_group)
              eina_strbuf_append_char(variants, ',');
           }
      }
+
    /* collect model to use */
-   l = eina_list_nth_list(e_config->xkb.used_layouts, cur_group);
-   if (!l) return;
-   cl = eina_list_data_get(l);
 
    /* set keymap to the compositor */
    e_comp_wl_input_keymap_set(NULL,
@@ -314,8 +308,6 @@ _e_wl_xkb_update(int cur_group)
       eina_strbuf_string_get(options) //list of options
    );
 
-   e_config->xkb.cur_group = cur_group;
-   _e_xkb_update_event(cur_group);
    eina_strbuf_free(variants);
    eina_strbuf_free(layouts);
    eina_strbuf_free(options);
@@ -330,10 +322,7 @@ _e_xkb_type_reconfig(E_Pixmap_Type comp_type)
    if (comp_type == E_PIXMAP_TYPE_X)
      _e_x_xkb_reconfig();
    else if (comp_type == E_PIXMAP_TYPE_WL)
-     {
-        _eval_cur_group();
-        _e_wl_xkb_update(e_config->xkb.cur_group);
-     }
+     _e_wl_xkb_reconfig();
 }
 
 E_API void
@@ -342,13 +331,22 @@ e_xkb_reconfig(void)
    _e_xkb_type_reconfig(e_comp->comp_type);
 }
 
-E_API void
-e_xkb_update(int cur_group)
+static void
+_e_xkb_type_update(E_Pixmap_Type comp_type, int cur_group)
 {
-   if (e_comp->comp_type == E_PIXMAP_TYPE_WL)
+   e_config->xkb.cur_group = cur_group;
+   e_config_save_queue();
+
+   if (comp_type == E_PIXMAP_TYPE_WL)
      _e_wl_xkb_update(cur_group);
    else
      _e_x_xkb_update(cur_group);
+}
+
+E_API void
+e_xkb_update(int cur_group)
+{
+   _e_xkb_type_update(e_comp->comp_type, cur_group);
 }
 
 E_API void
