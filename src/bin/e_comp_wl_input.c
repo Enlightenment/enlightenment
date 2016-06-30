@@ -19,6 +19,7 @@ static void _e_comp_wl_input_context_keymap_set(struct xkb_keymap *keymap, struc
 //when then later init is called those two fields are used in the keymap of the e_comp_wl struct
 static struct xkb_context *cached_context;
 static struct xkb_keymap *cached_keymap;
+static xkb_layout_index_t choosen_group;
 
 static void
 _e_comp_wl_input_update_seat_caps(void)
@@ -346,22 +347,11 @@ _e_comp_wl_input_keymap_fd_get(off_t size)
    return fd;
 }
 
+
 static void
-_e_comp_wl_input_keymap_update(struct xkb_keymap *keymap)
+_e_comp_wl_input_state_update(void)
 {
-   char *tmp;
    xkb_mod_mask_t latched = 0, locked = 0;
-   struct wl_resource *res;
-   Eina_List *l;
-
-   /* unreference any existing keymap */
-   if (e_comp_wl->xkb.keymap)
-     xkb_map_unref(e_comp_wl->xkb.keymap);
-
-   /* unmap any existing keyboard area */
-   if (e_comp_wl->xkb.area)
-     munmap(e_comp_wl->xkb.area, e_comp_wl->xkb.size);
-   if (e_comp_wl->xkb.fd >= 0) close(e_comp_wl->xkb.fd);
 
    /* unreference any existing keyboard state */
    if (e_comp_wl->xkb.state)
@@ -376,13 +366,37 @@ _e_comp_wl_input_keymap_update(struct xkb_keymap *keymap)
      }
 
    /* create a new xkb state */
-   e_comp_wl->xkb.state = xkb_state_new(keymap);
+   e_comp_wl->xkb.state = xkb_state_new(e_comp_wl->xkb.keymap);
 
    xkb_state_update_mask(e_comp_wl->xkb.state, 0,
-                         latched, locked, 0, 0, 0);
+                         latched, locked,
+                         e_comp_wl->kbd.choosen_group,
+                         0,
+                         0);
+}
+
+static void
+_e_comp_wl_input_keymap_update(struct xkb_keymap *keymap)
+{
+   char *tmp;
+   struct wl_resource *res;
+   Eina_List *l;
+
+   /* unreference any existing keymap */
+   if (e_comp_wl->xkb.keymap)
+     xkb_map_unref(e_comp_wl->xkb.keymap);
+
+   /* unmap any existing keyboard area */
+   if (e_comp_wl->xkb.area)
+     munmap(e_comp_wl->xkb.area, e_comp_wl->xkb.size);
+   if (e_comp_wl->xkb.fd >= 0) close(e_comp_wl->xkb.fd);
+
 
    /* increment keymap reference */
    e_comp_wl->xkb.keymap = keymap;
+
+   /* update the state */
+   _e_comp_wl_input_state_update();
 
    /* fetch updated modifiers */
    e_comp_wl->kbd.mod_shift =
@@ -463,6 +477,13 @@ e_comp_wl_input_init(void)
       _e_comp_wl_input_context_keymap_set(cached_keymap, cached_context);
     else
       e_comp_wl_input_keymap_set(NULL, NULL, NULL, NULL, NULL);
+
+    if (choosen_group)
+      e_comp_wl_input_keymap_index_set(choosen_group);
+    else
+      e_comp_wl_input_keymap_index_set(0);
+
+   e_comp_wl_input_keyboard_modifiers_update();
 
    return EINA_TRUE;
 }
@@ -661,6 +682,22 @@ _e_comp_wl_input_context_keymap_set(struct xkb_keymap *keymap, struct xkb_contex
      ecore_drm_device_keyboard_cached_keymap_set(keymap);
 # endif
 #endif
+}
+
+E_API void
+e_comp_wl_input_keymap_index_set(xkb_layout_index_t index)
+{
+   if (e_comp_wl)
+     {
+        e_comp_wl->kbd.choosen_group = index;
+        _e_comp_wl_input_state_update();
+        e_comp_wl_input_keyboard_modifiers_update();
+
+     }
+   else
+     choosen_group = index;
+
+
 }
 
 E_API void

@@ -29,6 +29,8 @@ E_API void e_comp_wl_input_pointer_enabled_set(Eina_Bool enabled);
 E_API void e_comp_wl_input_keyboard_enabled_set(Eina_Bool enabled);
 E_API void e_comp_wl_input_touch_enabled_set(Eina_Bool enabled);
 
+
+E_API void e_comp_wl_input_keymap_index_set(xkb_layout_index_t index);
 E_API void e_comp_wl_input_keymap_set(const char *rules, const char *model, const char *layout, const char *variant, const char *options);
 
 E_API void e_comp_wl_input_keyboard_event_generate(const char *key, int mods, Eina_Bool up);

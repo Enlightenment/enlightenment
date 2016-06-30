@@ -164,6 +164,7 @@ struct _E_Comp_Wl_Data
         xkb_mod_index_t mod_super;
         xkb_mod_mask_t mod_depressed, mod_latched, mod_locked;
         xkb_layout_index_t mod_group;
+        xkb_layout_index_t choosen_group;
         struct wl_array keys;
         struct wl_resource *focus;
         int mod_changed;
