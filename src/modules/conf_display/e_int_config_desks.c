@@ -168,8 +168,6 @@ _basic_create_widgets(E_Config_Dialog *cfd EINA_UNUSED, Evas *evas, E_Config_Dia
 
    otb = e_widget_toolbook_add(evas, (48 * e_scale), (48 * e_scale));
    
-   o = e_widget_list_add(evas, 0, 0);
-
    of = e_widget_frametable_add(evas, _("Number of Desktops"), 0);
    e_widget_frametable_content_align_set(of, 0.5, 0.0);
 
@@ -190,22 +188,22 @@ _basic_create_widgets(E_Config_Dialog *cfd EINA_UNUSED, Evas *evas, E_Config_Dia
    e_widget_on_change_hook_set(ob, _cb_slider_change, cfdata);
    e_widget_frametable_object_append(of, ob, 0, 2, 1, 1, 1, 1, 1, 0);
 
-   e_widget_list_object_append(o, of, 1, 1, 0.5);
-
-   of = e_widget_framelist_add(evas, _("Desktop Flip"), 0);
-   ob = e_widget_check_add(evas, _("Flip when dragging objects to the screen edge"), 
-                           &(cfdata->edge_flip_dragging));
-   e_widget_framelist_object_append(of, ob);
-   ob = e_widget_check_add(evas, _("Wrap desktops around when flipping"), 
-                           &(cfdata->flip_wrap));
-   e_widget_framelist_object_append(of, ob);
-   e_widget_list_object_append(o, of, 1, 0, 0.5);
-
-   e_widget_toolbook_page_append(otb, NULL, _("Desktops"), o, 1, 1, 1, 1, 
+   e_widget_toolbook_page_append(otb, NULL, _("Desktops"), of, 1, 1, 1, 1,
                                  0.5, 0.0);
 
-   /* FIXME: this could maybe be some sort of demo list like comp config? */
    o = e_widget_list_add(evas, 0, 0);
+
+   ob = e_widget_check_add(evas, _("Flip when dragging objects to the screen edge"), 
+                           &(cfdata->edge_flip_dragging));
+   e_widget_list_object_append(o, ob, 1, 1, 0.);
+
+   ob = e_widget_check_add(evas, _("Wrap desktops around when flipping"), 
+                           &(cfdata->flip_wrap));
+   e_widget_list_object_append(o, ob, 1, 0, 0.5);
+
+   of = e_widget_framelist_add(evas, _("Animation"), 0);
+
+   /* FIXME: this could maybe be some sort of demo list like comp config? */
    rg = e_widget_radio_group_new(&(cfdata->flip_mode));
    EINA_LIST_FOREACH(cfdata->comp_effects, l, s)
      {
@@ -218,10 +216,13 @@ _basic_create_widgets(E_Config_Dialog *cfd EINA_UNUSED, Evas *evas, E_Config_Dia
         p = memcpy(buf, pp, strlen(pp) + 1);
         p[0] = toupper(p[0]);
         ob = e_widget_radio_add(evas, _(p), mode, rg);
-        e_widget_list_object_append(o, ob, 1, 0, 0.5);
+        e_widget_framelist_object_append(of, ob);
         mode++;
      }
-   e_widget_toolbook_page_append(otb, NULL, _("Flip Animation"), o, 
+
+   e_widget_list_object_append(o, of, 1, 1, 0.);
+
+   e_widget_toolbook_page_append(otb, NULL, _("Flip"), o,
                                  1, 0, 1, 0, 0.5, 0.0);
 
    e_widget_toolbook_page_show(otb, 0);
