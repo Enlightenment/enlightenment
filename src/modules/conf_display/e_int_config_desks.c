@@ -199,6 +199,7 @@ _basic_create_widgets(E_Config_Dialog *cfd EINA_UNUSED, Evas *evas, E_Config_Dia
    ob = e_widget_check_add(evas, _("Wrap desktops around when flipping"), 
                            &(cfdata->flip_wrap));
    e_widget_framelist_object_append(of, ob);
+   e_widget_list_object_append(o, of, 1, 0, 0.5);
 
    e_widget_toolbook_page_append(otb, NULL, _("Desktops"), o, 1, 1, 1, 1, 
                                  0.5, 0.0);
