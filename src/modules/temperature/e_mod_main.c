@@ -64,7 +64,7 @@ _gc_init(E_Gadcon *gc, const char *name, const char *id, const char *style)
         inst->high = 80;
         inst->sensor_type = SENSOR_TYPE_NONE;
         inst->sensor_name = NULL;
-        inst->units = CELCIUS;
+        inst->units = CELSIUS;
 #ifdef HAVE_EEZE
         inst->backend = UDEV;
 #endif
@@ -76,7 +76,7 @@ _gc_init(E_Gadcon *gc, const char *name, const char *id, const char *style)
    E_CONFIG_LIMIT(inst->poll_interval, 1, 1024);
    E_CONFIG_LIMIT(inst->low, 0, 100);
    E_CONFIG_LIMIT(inst->high, 0, 220);
-   E_CONFIG_LIMIT(inst->units, CELCIUS, FAHRENHEIT);
+   E_CONFIG_LIMIT(inst->units, CELSIUS, FAHRENHEIT);
 #ifdef HAVE_EEZE
    E_CONFIG_LIMIT(inst->backend, TEMPGET, UDEV);
 #endif
@@ -201,7 +201,7 @@ _gc_id_new(const E_Gadcon_Client_Class *client_class EINA_UNUSED)
    inst->high = 80;
    inst->sensor_type = SENSOR_TYPE_NONE;
    inst->sensor_name = NULL;
-   inst->units = CELCIUS;
+   inst->units = CELSIUS;
 #ifdef HAVE_EEZE
    inst->backend = TEMPGET;
 #endif
