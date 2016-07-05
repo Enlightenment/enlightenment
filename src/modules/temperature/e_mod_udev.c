@@ -39,7 +39,7 @@ temperature_udev_update(void *data)
                        cur = strtod(test, NULL);
                        if (cur > 0)
                          {
-                            temp += (cur / 1000); /* udev reports temp in (celcius * 1000) for some reason */
+                            temp += (cur / 1000); /* udev reports temp in (celsius * 1000) for some reason */
                             cpus++;
                          }
                     }
