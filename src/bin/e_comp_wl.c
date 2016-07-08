@@ -627,14 +627,16 @@ _e_comp_wl_evas_cb_focus_in(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj
    wc = wl_resource_get_client(ec->comp_data->surface);
    if (ec->comp_data->is_xdg_surface)
      {
-        /* If an xdg shell popup's parent already has focus we don't
-         * need to do anything more.
-         */
-        EINA_LIST_FOREACH(e_comp_wl->kbd.focused, l, res)
-          if (wl_resource_get_client(res) == wc) return;
+        /* We only send kbd focus to xdg top levels */
+        while (ec->parent)
+          {
+             ec = ec->parent;
 
-        /* We only kbd focus top level xdg */
-        while (ec->parent) ec = ec->parent;
+             /* If an xdg shell popup's parent already has focus we don't
+              * need to do anything more.
+              */
+             if (ec->focused) return;
+          }
      }
 
    EINA_LIST_FOREACH(e_comp_wl->kbd.resources, l, res)
