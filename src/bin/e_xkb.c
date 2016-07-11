@@ -251,6 +251,8 @@ _e_wl_xkb_update(int cur_group)
 #ifdef HAVE_WAYLAND
    e_comp_wl_input_keymap_index_set(cur_group);
    _e_xkb_update_event(cur_group);
+#else
+   (void)cur_group;
 #endif
 }
 
