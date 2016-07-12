@@ -5485,6 +5485,7 @@ _e_comp_x_screens_setup(void)
 {
    Ecore_X_Window root;
    int rw, rh;
+   Eina_Bool ret;
 
    if (e_comp->comp_type == E_PIXMAP_TYPE_NONE)
      {
@@ -5500,7 +5501,12 @@ _e_comp_x_screens_setup(void)
    ecore_x_window_size_get(root, &rw, &rh);
    if (e_comp->comp_type == E_PIXMAP_TYPE_NONE)
      e_randr2_screens_setup(rw, rh);
-   return _e_comp_x_setup(root, rw, rh);
+   ret = _e_comp_x_setup(root, rw, rh);
+   if (ret) return EINA_TRUE;
+   e_randr2_shutdown();
+   e_xinerama_screens_set(NULL);
+   e_comp->screen = NULL;
+   return EINA_FALSE;
 }
 
 E_API Eina_Bool
