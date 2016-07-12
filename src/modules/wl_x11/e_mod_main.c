@@ -91,6 +91,8 @@ e_modapi_init(E_Module *m)
    if (!managed)
      e_comp_x_randr_screen_iface_set();
    if (!e_comp_wl_init()) return NULL;
+   if (managed)
+     w = w * 2 / 3, h = h * 2 / 3;
    if (!e_comp_canvas_init(w, h)) return NULL;
 
    e_comp_wl_input_pointer_enabled_set(EINA_TRUE);
