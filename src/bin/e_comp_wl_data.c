@@ -163,6 +163,10 @@ _e_comp_wl_data_source_cb_resource_destroy(struct wl_resource *resource)
    wl_signal_emit(&source->destroy_signal, source);
 
    _mime_types_free(source);
+
+   if (e_comp_wl->drag_source == source)
+     e_comp_wl->drag_source = NULL;
+
    free(source);
 }
 
