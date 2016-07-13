@@ -605,6 +605,19 @@ _e_comp_wl_evas_cb_focus_in_timer(E_Client *ec)
    return EINA_FALSE;
 }
 
+static Eina_Bool
+_keyboard_resource_add(struct wl_resource *newres)
+{
+  Eina_List *l;
+  struct wl_resource *res;
+
+  EINA_LIST_FOREACH(e_comp_wl->kbd.focused, l, res)
+    if (res == newres) return EINA_FALSE;
+
+  e_comp_wl->kbd.focused = eina_list_append(e_comp_wl->kbd.focused, newres);
+  return EINA_TRUE;
+}
+
 static void
 _e_comp_wl_evas_cb_focus_in(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
 {
@@ -612,6 +625,7 @@ _e_comp_wl_evas_cb_focus_in(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj
    struct wl_resource *res;
    struct wl_client *wc;
    Eina_List *l;
+   int added = 0;
 
    if (!(ec = data)) return;
    if (e_object_is_del(E_OBJECT(ec))) return;
@@ -641,8 +655,9 @@ _e_comp_wl_evas_cb_focus_in(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj
 
    EINA_LIST_FOREACH(e_comp_wl->kbd.resources, l, res)
      if (wl_resource_get_client(res) == wc)
-       e_comp_wl->kbd.focused = eina_list_append(e_comp_wl->kbd.focused, res);
+       added |= _keyboard_resource_add(res);
    if (!e_comp_wl->kbd.focused) return;
+   if (!added) return;
    e_comp_wl_input_keyboard_enter_send(ec);
    if (e_comp_util_kbd_grabbed()) return;
    e_comp_wl_data_device_keyboard_focus_set();
