@@ -1065,7 +1065,7 @@ _e_xdg_shell_surface_cb_maximized_unset(struct wl_client *client EINA_UNUSED, st
    if (e_object_is_del(E_OBJECT(ec))) return;
 
    if (ec->lock_user_maximize) return;
-   ec->comp_data->max = (e_config->maximize_policy & E_MAXIMIZE_TYPE) | E_MAXIMIZE_BOTH;
+   ec->comp_data->unmax = (e_config->maximize_policy & E_MAXIMIZE_TYPE) | E_MAXIMIZE_BOTH;
    if (e_config->window_maximize_animate && (!ec->maximize_anims_disabled))
      w = ec->w, h = ec->h;
    else
