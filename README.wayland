@@ -90,7 +90,7 @@ Known Issues
  - Requires upstream XWayland improvements
 * The first-launched X11 client will sometimes fail to show
  - Requires upstream XWayland improvements
-* Some issues related to keyboard layout switching
- - Requires various improvements
+* There are not more than 4 keyboard layouts possible
+ - Requires libxkbcommon changes - https://github.com/xkbcommon/libxkbcommon/issues/37
 * XWayland crashes on start
  - Requires XWayland release - https://bugs.freedesktop.org/show_bug.cgi?id=95337
