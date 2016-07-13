@@ -681,8 +681,11 @@ _e_comp_wl_keyboard_leave(E_Client *ec)
    if (ec->comp_data->is_xdg_surface)
      {
         /* If we left an xdg popup to enter some other (sub)surface
-         * of the same top level, we don't need to do anything */
-        if (_parent_client_contains_pointer(ec)) return;
+         * of the same top level, we don't need to do anything.
+         * We also test e_client_focused_get() because it will be NULL
+         * on moves which trip up _parent_client_contains_pointer() */
+        if (e_client_focused_get() &&
+            _parent_client_contains_pointer(ec)) return;
 
         /* We only kbd focus top level xdg */
         while (ec->parent) ec = ec->parent;
