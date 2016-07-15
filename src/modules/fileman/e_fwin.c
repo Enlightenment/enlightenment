@@ -747,7 +747,7 @@ _e_fwin_new(const char *dev,
 }
 
 static Eina_Bool
-_e_fwin_icon_popup_handler(void *data, ...)
+_e_fwin_icon_popup_handler(void *data)
 {
    E_Fwin *fwin = data;
 
