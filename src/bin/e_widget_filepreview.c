@@ -26,9 +26,13 @@ struct _E_Widget_Data
    Evas_Object  *o_preview_time_entry;
    Evas_Object  *o_preview_preview;
    Evas_Object  *o_preview_scrollframe;
+
    Evas_Coord    preview_w, preview_h;
    int           w, h;
-   Ecore_Thread *preview_text_file_thread;
+
+   Eio_File     *preview_text_file_thread;
+   Eina_File    *preview_text_file;
+
    Eio_Monitor  *monitor;
    Eina_List    *handlers;
    char         *preview_extra_text;
@@ -39,6 +43,7 @@ struct _E_Widget_Data
    const char   *path;
    const char   *mime;
    double        vid_pct;
+
    Eina_Bool     mime_icon : 1;
    Eina_Bool     is_dir : 1;
    Eina_Bool     is_txt : 1;
@@ -48,6 +53,8 @@ struct _E_Widget_Data
    Eina_Bool     prev_is_font : 1;
    Eina_Bool     prev_is_video : 1;
    Eina_Bool     clamp_video : 1;
+   Eina_Bool     delete_me : 1;
+   Eina_Bool     preview_text_file_next : 1;
 };
 
 static void  _e_wid_fprev_preview_update(void *data, Evas_Object *obj, void *event_info);
@@ -214,8 +221,8 @@ _e_wid_fprev_clear_widgets(E_Widget_Data *wd)
    CLRWID(o_preview_scrollframe);
    wd->is_dir = wd->is_txt = wd->is_font = wd->prev_is_fm = wd->prev_is_video = EINA_FALSE;
    wd->vid_pct = 0;
-   if (wd->preview_text_file_thread) ecore_thread_cancel(wd->preview_text_file_thread);
-   wd->preview_text_file_thread = NULL;
+
+   if (wd->preview_text_file_thread) eio_file_cancel(wd->preview_text_file_thread);
 }
 
 static void
@@ -850,10 +857,15 @@ _e_wid_del_hook(Evas_Object *obj)
    E_FREE(wd->preview_time_text);
    eina_stringshare_del(wd->path);
    eina_stringshare_del(wd->mime);
-   if (wd->preview_text_file_thread) ecore_thread_cancel(wd->preview_text_file_thread);
-   wd->preview_text_file_thread = NULL;
    if (wd->monitor) eio_monitor_del(wd->monitor);
    E_FREE_LIST(wd->handlers, ecore_event_handler_del);
+   wd->preview_text_file_next = EINA_FALSE;
+   if (wd->preview_text_file_thread)
+     {
+        wd->delete_me = EINA_TRUE;
+        eio_file_cancel(wd->preview_text_file_thread);
+        return ;
+     }
    free(wd);
 }
 
@@ -864,7 +876,7 @@ _e_wid_fprev_preview_reset(E_Widget_Data *wd)
 
    evas_object_del(wd->o_preview_scrollframe);
    wd->o_preview_scrollframe = wd->o_preview_preview = NULL;
-   if (wd->preview_text_file_thread) ecore_thread_cancel(wd->preview_text_file_thread);
+   if (wd->preview_text_file_thread) eio_file_cancel(wd->preview_text_file_thread);
    wd->preview_text_file_thread = NULL;
    if (wd->is_dir || wd->is_txt || wd->is_font) return;
    o = e_widget_preview_add(evas_object_evas_get(wd->obj), wd->w, wd->h);
@@ -912,48 +924,67 @@ _e_wid_cb_file_deleted(void *data, Evas_Object *obj, void *event EINA_UNUSED)
 }
 
 static void
-_e_wid_fprev_preview_txt_read_cancel(void *data EINA_UNUSED, Ecore_Thread *eth EINA_UNUSED)
-{
-}
-
-static void
-_e_wid_fprev_preview_txt_read_end(void *data EINA_UNUSED, Ecore_Thread *eth EINA_UNUSED)
-{
-}
-
-static void
-_e_wid_fprev_preview_txt_read_notify(void *data, Ecore_Thread *eth EINA_UNUSED, void *msg)
+_e_wid_fprev_preview_txt_map_success(void *data, Eio_File *handler EINA_UNUSED, void *map, size_t length)
 {
    E_Widget_Data *wd = data;
-   char *buf;
+   Eina_Strbuf *buf;
+   char *msg;
    Evas_Coord mw, mh;
-   
-   //INF("text='%s'", (char*)msg);
-   buf = alloca(strlen(msg) + 4096);
-   strcpy(buf, "<align=left>");
-   strcat(buf, msg);
-   edje_object_part_text_set(wd->o_preview_preview, "e.textblock.message", buf);
+
+   buf = eina_strbuf_new();
+   eina_strbuf_append_n(buf, map, length);
+   msg = evas_textblock_text_utf8_to_markup(NULL, eina_strbuf_string_get(buf));
+   eina_strbuf_reset(buf);
+
+   eina_strbuf_append(buf, "<align=left>");
+   eina_strbuf_append(buf, msg);
+   free(msg);
+
+   edje_object_part_text_set(wd->o_preview_preview, "e.textblock.message", eina_strbuf_string_get(buf));
    edje_object_size_min_calc(wd->o_preview_preview, &mw, &mh);
    evas_object_resize(wd->o_preview_preview, mw, mh);
-   free(msg);
+
+   eina_strbuf_free(buf);
+   eina_file_map_free(wd->preview_text_file, map);
+   eina_file_close(wd->preview_text_file);
+   wd->preview_text_file = NULL;
+   wd->preview_text_file_thread = NULL;
+}
+
+static void _e_wid_fprev_preview_txt_open_success(void *data, Eio_File *handler, Eina_File *file);
+
+static void
+_e_wid_fprev_preview_txt_error(void *data, Eio_File *handler, int error EINA_UNUSED)
+{
+   E_Widget_Data *wd = data;
+
+   wd->preview_text_file_thread = NULL;
+   if (wd->preview_text_file) eina_file_close(wd->preview_text_file);
+   wd->preview_text_file = NULL;
+
+   if (wd->preview_text_file_next)
+     {
+        wd->preview_text_file_thread = eio_file_open(wd->path, EINA_FALSE,
+                                                     _e_wid_fprev_preview_txt_open_success,
+                                                     _e_wid_fprev_preview_txt_error, wd);
+        wd->preview_text_file_next = EINA_FALSE;
+     }
+
+   if (wd->delete_me) free(wd);
 }
 
 static void
-_e_wid_fprev_preview_txt_read(void *data EINA_UNUSED, Ecore_Thread *eth)
+_e_wid_fprev_preview_txt_open_success(void *data, Eio_File *handler, Eina_File *file)
 {
-   char *text;
-   char buf[FILEPREVIEW_TEXT_PREVIEW_SIZE + 1];
-   FILE *f;
-   size_t n;
+   E_Widget_Data *wd = data;
+   unsigned int length = eina_file_size_get(file);
 
-   text = ecore_thread_global_data_find("fprev_file");
-   if (!text) return;
-   f = fopen(text, "r");
-   if (!f) return;
-   n = fread(buf, sizeof(char), FILEPREVIEW_TEXT_PREVIEW_SIZE, f);
-   buf[n] = 0;
-   ecore_thread_feedback(eth, evas_textblock_text_utf8_to_markup(NULL, buf));
-   fclose(f);
+   if (length > FILEPREVIEW_TEXT_PREVIEW_SIZE) length = FILEPREVIEW_TEXT_PREVIEW_SIZE;
+
+   wd->preview_text_file = file;
+   wd->preview_text_file_thread = eio_file_map_new(file, EINA_FILE_POPULATE,
+                                                   0, length,
+                                                   NULL, _e_wid_fprev_preview_txt_map_success, _e_wid_fprev_preview_txt_error, wd);
 }
 
 static void
@@ -972,7 +1003,7 @@ _e_wid_fprev_preview_txt(E_Widget_Data *wd)
    if (!wd->o_preview_preview)
      {
         Evas *evas;
-        
+
         evas = evas_object_evas_get(wd->obj);
         o = edje_object_add(evas);
         /* using dialog theme for now because it's simple, common, and doesn't require all
@@ -998,11 +1029,18 @@ _e_wid_fprev_preview_txt(E_Widget_Data *wd)
                                     wd->o_preview_properties_table,
                                     1, 1, 0.5);
      }
-   ecore_thread_global_data_del("fprev_file");
-   if (wd->preview_text_file_thread) ecore_thread_cancel(wd->preview_text_file_thread);
-   ecore_thread_global_data_add("fprev_file", strdup(wd->path), free, 0);
-   wd->preview_text_file_thread = ecore_thread_feedback_run(_e_wid_fprev_preview_txt_read, _e_wid_fprev_preview_txt_read_notify,
-                                                            _e_wid_fprev_preview_txt_read_end, _e_wid_fprev_preview_txt_read_cancel, wd, EINA_FALSE);
+
+   if (wd->preview_text_file_thread)
+     {
+        eio_file_cancel(wd->preview_text_file_thread);
+        wd->preview_text_file_next = EINA_TRUE;
+     }
+   else
+     {
+        wd->preview_text_file_thread = eio_file_open(wd->path, EINA_FALSE,
+                                                     _e_wid_fprev_preview_txt_open_success,
+                                                     _e_wid_fprev_preview_txt_error, wd);
+     }
 }
 
 static void
