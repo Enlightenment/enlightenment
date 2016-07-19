@@ -954,7 +954,7 @@ _e_wid_fprev_preview_txt_map_success(void *data, Eio_File *handler EINA_UNUSED, 
 static void _e_wid_fprev_preview_txt_open_success(void *data, Eio_File *handler, Eina_File *file);
 
 static void
-_e_wid_fprev_preview_txt_error(void *data, Eio_File *handler, int error EINA_UNUSED)
+_e_wid_fprev_preview_txt_error(void *data, Eio_File *handler EINA_UNUSED, int error EINA_UNUSED)
 {
    E_Widget_Data *wd = data;
 
@@ -974,7 +974,7 @@ _e_wid_fprev_preview_txt_error(void *data, Eio_File *handler, int error EINA_UNU
 }
 
 static void
-_e_wid_fprev_preview_txt_open_success(void *data, Eio_File *handler, Eina_File *file)
+_e_wid_fprev_preview_txt_open_success(void *data, Eio_File *handler EINA_UNUSED, Eina_File *file)
 {
    E_Widget_Data *wd = data;
    unsigned int length = eina_file_size_get(file);
