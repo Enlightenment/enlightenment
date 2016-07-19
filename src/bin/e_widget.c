@@ -164,6 +164,8 @@ e_widget_sub_object_add(Evas_Object *obj, Evas_Object *sobj)
      {
         if (e_widget_can_focus_get(sobj)) sd->child_can_focus = 1;
      }
+   if (!evas_object_smart_parent_get(sobj))
+     evas_object_smart_member_add(sobj, obj);
    if (strcmp(evas_object_type_get(sobj), SMART_NAME)) return;
 
    sd = evas_object_smart_data_get(sobj);
@@ -179,6 +181,8 @@ E_API void
 e_widget_sub_object_del(Evas_Object *obj, Evas_Object *sobj)
 {
    API_ENTRY return;
+   if (evas_object_smart_parent_get(sobj) == obj)
+     evas_object_smart_member_del(sobj);
    evas_object_event_callback_del(sobj, EVAS_CALLBACK_DEL, _sub_obj_del);
    sd->subobjs = eina_list_remove(sd->subobjs, sobj);
    if (!sd->child_can_focus)
