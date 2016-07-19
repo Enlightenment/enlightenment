@@ -748,7 +748,7 @@ _e_xdg_shell_surface_cb_window_menu_show(struct wl_client *client EINA_UNUSED, s
    if (e_object_is_del(E_OBJECT(ec))) return;
 
    timestamp = ecore_loop_time_get();
-   e_int_client_menu_show(ec, x, y, 0, timestamp);
+   e_int_client_menu_show(ec, ec->x + x, ec->y + y, 0, timestamp);
 }
 
 static void
