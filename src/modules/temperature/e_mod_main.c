@@ -135,7 +135,7 @@ _gc_shutdown(E_Gadcon_Client *gcc)
 
    if (inst->tempget_exe)
      {
-	ecore_exe_terminate(inst->tempget_exe);
+	ecore_exe_kill(inst->tempget_exe);
 	ecore_exe_free(inst->tempget_exe);
 	inst->tempget_exe = NULL;
      }
@@ -305,7 +305,7 @@ temperature_face_update_config(Config_Face *inst)
 
    if (inst->tempget_exe)
      {
-        ecore_exe_terminate(inst->tempget_exe);
+        ecore_exe_kill(inst->tempget_exe);
         ecore_exe_free(inst->tempget_exe);
         inst->tempget_exe = NULL;
      }
