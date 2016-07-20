@@ -1,3 +1,39 @@
+Release 0.21.1:
+---------------------
+Al Poole (1):
+      fwin: prevent segv when the vaarg abi messup with unused parameter.
+
+Carsten Haitzler (1):
+      e ibar/ibox fix starrting/started signal emittion
+
+Cedric BAIL (1):
+      filepreview: avoid race condition when destroying txt file preview with slow hard drive.
+
+Chidambar Zinnoury (1):
+      e desks config: Bring some flip settings back.
+
+Chris Michael (1):
+      add missing EINA_UNUSED for unused function params
+
+Derek Foreman (3):
+      Properly send kbd focus to xdg_shell popups
+      Make sure the same keyboard resource doesn't end up on the focus list twice
+      Fix xdg_shell focus logic
+
+Marcel Hollerbach (1):
+      e_comp_data: NULL out source once it is freed
+
+Mariusz Bialonczyk (1):
+      modules/temperature: cosmetics: typo fix (celcius -> celsius)
+
+Mike Blumenkrantz (6):
+      handle e_comp_x init failure more effectively and perform cleanups
+      set x11 randr iface for wl_x11 based on wm presence, not composited state
+      match wl_wl output sizing in wl_x11 when running in an existing wm session
+      set unmax flag for xdg shell unmaximize
+      set/unset smart parent as e_widget when adding sub-objects
+      adjust xdg-shell window menu coords by client's coords
+
 Release 0.21.0:
 ---------------------
 Highlights:
