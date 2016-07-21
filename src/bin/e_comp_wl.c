@@ -2469,14 +2469,14 @@ _e_comp_wl_client_cb_del(void *data EINA_UNUSED, E_Client *ec)
         wl_resource_set_user_data(ec->comp_data->surface, NULL);
      }
 
-   if (ec->internal_elm_win)
-     evas_object_hide(ec->frame);
-
    /* WL clients take an extra ref at startup so they don't get deleted while
     * visible.  Since we drop that in the render loop we need to make sure
     * it's dropped here if the client isn't going to be rendered.
     */
-   if (!e_pixmap_is_x(ec->pixmap) && ec->hidden) e_object_unref(E_OBJECT(ec));
+   if (!evas_object_visible_get(ec->frame)) e_object_unref(E_OBJECT(ec));
+
+   if (ec->internal_elm_win)
+     evas_object_hide(ec->frame);
 
    _e_comp_wl_focus_check();
 }
