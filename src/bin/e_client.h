@@ -704,6 +704,7 @@ struct E_Client
 
    Eina_Bool on_post_updates : 1; // client is on the post update list
    Eina_Bool signals_priority : 1; // send sigstop/sigcont on focus out/in instead of niceing
+   Eina_Bool stopped : 1; // if signals priority is enabled, and the client stopped
 };
 
 #define e_client_focus_policy_click(ec) \

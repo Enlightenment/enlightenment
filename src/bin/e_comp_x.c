@@ -871,17 +871,16 @@ _e_comp_x_client_pri_raise(E_Client *ec)
    if (ec->netwm.pid <= 0) return;
    if (ec->netwm.pid == getpid()) return;
 
-   if (!ec->signals_priority)
-     {
-        _pri_adj(ec->netwm.pid,
-                 e_config->priority - 1, -1, EINA_FALSE,
-//                 EINA_TRUE, EINA_TRUE);
-                 EINA_TRUE, EINA_FALSE);
-     }
-   else
+   if (ec->stopped)
      {
         kill(ec->netwm.pid, SIGCONT);
+        ec->stopped = EINA_FALSE;
      }
+
+   _pri_adj(ec->netwm.pid,
+            e_config->priority - 1, -1, EINA_FALSE,
+//              EINA_TRUE, EINA_TRUE);
+            EINA_TRUE, EINA_FALSE);
 //   printf("WIN: pid %i, title %s (HI!!!!!!!!!!!!!!!!!!)\n",
 //          ec->netwm.pid, e_client_util_name_get(ec));
 }
@@ -892,16 +891,15 @@ _e_comp_x_client_pri_norm(E_Client *ec)
    if (ec->netwm.pid <= 0) return;
    if (ec->netwm.pid == getpid()) return;
 
-   if (!ec->signals_priority)
-     {
-        _pri_adj(ec->netwm.pid,
-                 e_config->priority, 1, EINA_FALSE,
-//                 EINA_TRUE, EINA_TRUE);
-                 EINA_TRUE, EINA_FALSE);
-     }
-   else
+   _pri_adj(ec->netwm.pid,
+            e_config->priority, 1, EINA_FALSE,
+//            EINA_TRUE, EINA_TRUE);
+            EINA_TRUE, EINA_FALSE);
+
+   if (ec->signals_priority)
      {
         kill(ec->netwm.pid, SIGSTOP);
+        ec->stopped = EINA_TRUE;
      }
 //   printf("WIN: pid %i, title %s (NORMAL)\n",
 //          ec->netwm.pid, e_client_util_name_get(ec));
