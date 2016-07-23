@@ -1382,13 +1382,13 @@ _e_client_menu_cb_stacking_pre(void *data, E_Menu *m EINA_UNUSED, E_Menu_Item *m
                                                    "e/widgets/border/default/stack_below"),
                              "e/widgets/border/default/stack_below");
 
-   submi = e_menu_item_new(subm);
-   e_menu_item_separator_set(submi, 1);
-
    // Only allow to change layer for windows in "normal" layers
    if ((!ec->lock_user_stacking) &&
        ((ec->layer == 50) || (ec->layer == 100) || (ec->layer == 150)))
      {
+        submi = e_menu_item_new(subm);
+        e_menu_item_separator_set(submi, 1);
+
         submi = e_menu_item_new(subm);
         e_menu_item_label_set(submi, _("Raise"));
         e_menu_item_callback_set(submi, _e_client_menu_cb_raise, ec);
