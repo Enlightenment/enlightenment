@@ -9065,6 +9065,7 @@ _e_fm2_icon_menu(E_Fm2_Icon *ic, Evas_Object *obj, unsigned int timestamp)
    Eina_List *l = NULL;
    int x, y, can_w, can_w2, protect;
    char buf[PATH_MAX], *ext;
+   Eina_Bool writable;
 
    sd = ic->sd;
    if (ic->menu) return;
@@ -9077,6 +9078,8 @@ _e_fm2_icon_menu(E_Fm2_Icon *ic, Evas_Object *obj, unsigned int timestamp)
      sd->icon_menu.replace.func(sd->icon_menu.replace.data, sd->obj, mn, &ic->info);
    else
      {
+        writable = ecore_file_can_write(sd->realpath);
+
         if (sd->icon_menu.start.func)
           sd->icon_menu.start.func(sd->icon_menu.start.data, sd->obj, mn, &ic->info);
         if (!(sd->icon_menu.flags & E_FM2_MENU_NO_VIEW_MENU))
@@ -9115,7 +9118,7 @@ _e_fm2_icon_menu(E_Fm2_Icon *ic, Evas_Object *obj, unsigned int timestamp)
           }
 
         /* FIXME: stat the dir itself - move to e_fm_main */
-        if (ecore_file_can_write(sd->realpath) && !(sd->icon_menu.flags & E_FM2_MENU_NO_NEW))
+        if (writable && !(sd->icon_menu.flags & E_FM2_MENU_NO_NEW))
           {
              mi = e_menu_item_new(mn);
              e_menu_item_separator_set(mi, 1);
@@ -9194,7 +9197,7 @@ _e_fm2_icon_menu(E_Fm2_Icon *ic, Evas_Object *obj, unsigned int timestamp)
           {
              if (!(sd->icon_menu.flags & E_FM2_MENU_NO_CUT))
                {
-                  if (ecore_file_can_write(sd->realpath))
+                  if (writable)
                     {
                        mi = e_menu_item_new(mn);
                        e_menu_item_separator_set(mi, 1);
@@ -9207,7 +9210,7 @@ _e_fm2_icon_menu(E_Fm2_Icon *ic, Evas_Object *obj, unsigned int timestamp)
                }
              if (!(sd->icon_menu.flags & E_FM2_MENU_NO_COPY))
                {
-                  if (!ecore_file_can_write(sd->realpath))
+                  if (!writable)
                     {
                        mi = e_menu_item_new(mn);
                        e_menu_item_separator_set(mi, 1);
@@ -9222,7 +9225,7 @@ _e_fm2_icon_menu(E_Fm2_Icon *ic, Evas_Object *obj, unsigned int timestamp)
              if (((!(sd->icon_menu.flags & E_FM2_MENU_NO_PASTE)) ||
                   (!(sd->icon_menu.flags & E_FM2_MENU_NO_SYMLINK))) &&
                  (eina_list_count(_e_fm_file_buffer) > 0) &&
-                 ecore_file_can_write(sd->realpath))
+                 writable)
                {
                   if (!(sd->icon_menu.flags & E_FM2_MENU_NO_PASTE))
                     {
