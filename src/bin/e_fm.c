@@ -10032,8 +10032,12 @@ _e_fm2_view_menu_pre(void *data, E_Menu *subm)
    if (_e_fm2_desktop_open(sd) < 0) return;
    e_object_data_set(E_OBJECT(subm), sd);
    e_object_del_attach_func_set(E_OBJECT(subm), _e_fm2_view_menu_del);
-   mi = e_menu_item_new(subm);
-   e_menu_item_separator_set(mi, 1);
+
+   if (e_menu_item_nth(subm, 0) != NULL)
+     {
+        mi = e_menu_item_new(subm);
+        e_menu_item_separator_set(mi, 1);
+     }
 
    mi = e_menu_item_new(subm);
    e_menu_item_label_set(mi, _("Set background..."));
