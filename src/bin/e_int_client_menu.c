@@ -51,6 +51,7 @@ static void _e_client_menu_cb_iconpref_netwm(void *data, E_Menu *m, E_Menu_Item 
 static void _e_client_menu_cb_iconpref_user(void *data, E_Menu *m, E_Menu_Item *mi);
 static void _e_client_menu_cb_default_icon(void *data, E_Menu *m, E_Menu_Item *mi);
 static void _e_client_menu_cb_netwm_icon(void *data, E_Menu *m, E_Menu_Item *mi);
+static void _e_client_menu_cb_signals_priority(void *data, E_Menu *m, E_Menu_Item *mi);
 
 static Eina_List *menu_hooks = NULL;
 
@@ -213,6 +214,12 @@ e_int_client_menu_create(E_Client *ec)
                                                         "e/widgets/border/default/borderless"),
                                   "e/widgets/border/default/borderless");
      }
+
+   mi = e_menu_item_new(m);
+   e_menu_item_label_set(mi, _("Signals priority"));
+   e_menu_item_check_set(mi, 1);
+   e_menu_item_toggle_set(mi, ec->signals_priority ? 1 : 0);
+   e_menu_item_callback_set(mi, _e_client_menu_cb_signals_priority, ec);
 
    if (e_comp_config_get()->enable_advanced_features)
      {
@@ -1496,6 +1503,14 @@ _e_client_menu_cb_netwm_icon(void *data, E_Menu *m, E_Menu_Item *mi)
         e_icon_alpha_set(o, 1);
         mi->icon_object = o;
      }
+}
+
+static void
+_e_client_menu_cb_signals_priority(void *data, E_Menu *m EINA_UNUSED, E_Menu_Item *mi)
+{
+   E_Client *ec = data;
+
+   ec->signals_priority = mi->toggle;
 }
 
 static void

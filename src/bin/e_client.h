@@ -703,6 +703,7 @@ struct E_Client
    Eina_Bool keyboard_resizing : 1;
 
    Eina_Bool on_post_updates : 1; // client is on the post update list
+   Eina_Bool signals_priority : 1; // send sigstop/sigcont on focus out/in instead of niceing
 };
 
 #define e_client_focus_policy_click(ec) \
