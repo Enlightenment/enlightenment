@@ -638,7 +638,7 @@ static void
 _ibar_resize_handle(IBar *b)
 {
    IBar_Icon *ic;
-   Evas_Coord w, h, xx, yy, ww, hh;
+   Evas_Coord w, h, ww, hh;
 
    if (!b->inst->gcc) return;
    evas_object_geometry_get(b->o_outerbox, NULL, NULL, &ww, &hh);
