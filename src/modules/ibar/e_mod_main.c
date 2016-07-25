@@ -285,7 +285,7 @@ _gc_init(E_Gadcon *gc, const char *name, const char *id, const char *style)
                         drop, 3, x, y, w, h);
    evas_object_event_callback_add(b->o_outerbox, EVAS_CALLBACK_MOVE,
                                   _ibar_cb_obj_moveresize, inst);
-   evas_object_event_callback_add(b->o_outerbox, EVAS_CALLBACK_RESIZE,
+   evas_object_event_callback_add(b->o_outerbox, EVAS_CALLBACK_CHANGED_SIZE_HINTS,
                                   _ibar_cb_obj_moveresize, inst);
    ibar_config->instances = eina_list_append(ibar_config->instances, inst);
    _ibar_resize_handle(b);
@@ -445,8 +445,8 @@ static void
 _ibar_free(IBar *b)
 {
    _ibar_empty(b);
-   evas_object_del(b->o_outerbox);
    evas_object_del(b->o_box);
+   evas_object_del(b->o_outerbox);
    if (b->o_drop) evas_object_del(b->o_drop);
    if (b->o_drop_over) evas_object_del(b->o_drop_over);
    if (b->o_empty) evas_object_del(b->o_empty);
@@ -526,7 +526,7 @@ _ibar_empty_handle(IBar *b)
              evas_object_color_set(b->o_empty, 0, 0, 0, 0);
              evas_object_show(b->o_empty);
              elm_box_pack_end(b->o_box, b->o_empty);
-             evas_object_geometry_get(b->o_box, NULL, NULL, &w, &h);
+             evas_object_size_hint_min_get(b->o_box, &w, &h);
              if (elm_box_horizontal_get(b->o_box))
                w = h;
              else
@@ -638,27 +638,18 @@ static void
 _ibar_resize_handle(IBar *b)
 {
    IBar_Icon *ic;
-   Evas_Coord w, h;
+   Evas_Coord w, h, xx, yy, ww, hh;
 
    if (!b->inst->gcc) return;
-   elm_box_recalculate(b->o_box);
-   elm_box_recalculate(b->o_outerbox);
-   if (!e_gadcon_site_is_desktop(b->inst->gcc->gadcon->location->site))
-     evas_object_size_hint_min_get(b->o_outerbox, &w, &h);
-   else
-     evas_object_geometry_get(b->o_outerbox, NULL, NULL, &w, &h);
-   if (b->inst->gcc->max.w)
-     w = MIN(w, b->inst->gcc->max.w);
-   if (b->inst->gcc->max.h)
-     h = MIN(h, b->inst->gcc->max.h);
-   if (elm_box_horizontal_get(b->o_box))
-     w = h;
-   else
-     h = w;
+   evas_object_geometry_get(b->o_outerbox, NULL, NULL, &ww, &hh);
+   if (b->inst->gcc->max.w) ww = MIN(ww, b->inst->gcc->max.w);
+   if (b->inst->gcc->max.h) hh = MIN(hh, b->inst->gcc->max.h);
+   if (elm_box_horizontal_get(b->o_box)) ww = hh;
+   else hh = ww;
    EINA_INLIST_FOREACH(b->icons, ic)
      {
-        evas_object_size_hint_min_set(ic->o_holder, w, h);
-        evas_object_size_hint_max_set(ic->o_holder, w, h);
+        evas_object_size_hint_min_set(ic->o_holder, ww, hh);
+        evas_object_size_hint_max_set(ic->o_holder, ww, hh);
      }
    if (b->o_sep)
      {
@@ -667,12 +658,17 @@ _ibar_resize_handle(IBar *b)
         else
           w = 16 * e_scale;
         evas_object_size_hint_min_set(b->o_sep, 8, 8);
-        evas_object_size_hint_max_set(b->o_sep, w, h);
+        evas_object_size_hint_max_set(b->o_sep, ww, hh);
      }
    elm_box_recalculate(b->o_box);
    elm_box_recalculate(b->o_outerbox);
+   evas_object_smart_calculate(b->o_outerbox);
+   evas_object_smart_calculate(b->o_box);
    evas_object_size_hint_min_get(b->o_outerbox, &w, &h);
-   if ((!w) || (!h)) return;
+   if (b->inst->gcc->max.w) w = MIN(w, b->inst->gcc->max.w);
+   if (b->inst->gcc->max.h) h = MIN(h, b->inst->gcc->max.h);
+   evas_object_resize(b->o_outerbox, w, h);
+
    e_gadcon_client_min_size_set(b->inst->gcc, w, h);
    e_gadcon_client_aspect_set(b->inst->gcc, w, h);
 }
@@ -1331,7 +1327,6 @@ _ibar_icon_menu_client_add(IBar_Icon *ic, E_Client *ec)
      edje_object_signal_emit(it, "e,state,other,desk", "e");
    edje_object_calc_force(it);
    edje_object_size_min_calc(it, &w, &h);
-   evas_object_size_hint_min_set(it, w, h);
    evas_object_size_hint_min_set(it, w, h);
    evas_object_show(it);
    evas_object_event_callback_add(it, EVAS_CALLBACK_MOUSE_UP, _ibar_cb_icon_menu_mouse_up, ec);
