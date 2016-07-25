@@ -375,7 +375,12 @@ _e_comp_wl_data_source_cb_resource_destroy(struct wl_resource *resource)
    _mime_types_free(source);
 
    if (e_comp_wl->drag_source == source)
-     e_comp_wl->drag_source = NULL;
+     {
+        e_comp_wl->drag_source = NULL;
+        //free the drag here
+        e_object_del(E_OBJECT(e_comp_wl->drag));
+        e_comp_wl->drag = NULL;
+     }
 
    free(source);
 }
