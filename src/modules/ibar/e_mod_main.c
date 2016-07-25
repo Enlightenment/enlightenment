@@ -658,7 +658,7 @@ _ibar_resize_handle(IBar *b)
         else
           w = 16 * e_scale;
         evas_object_size_hint_min_set(b->o_sep, 8, 8);
-        evas_object_size_hint_max_set(b->o_sep, ww, hh);
+        evas_object_size_hint_max_set(b->o_sep, w, h);
      }
    elm_box_recalculate(b->o_box);
    elm_box_recalculate(b->o_outerbox);
