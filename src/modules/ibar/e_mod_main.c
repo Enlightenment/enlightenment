@@ -653,12 +653,10 @@ _ibar_resize_handle(IBar *b)
      }
    if (b->o_sep)
      {
-        if (_is_vertical(b->inst))
-          h = 16 * e_scale;
-        else
-          w = 16 * e_scale;
+        if (_is_vertical(b->inst)) hh = 16 * e_scale;
+        else ww = 16 * e_scale;
         evas_object_size_hint_min_set(b->o_sep, 8, 8);
-        evas_object_size_hint_max_set(b->o_sep, w, h);
+        evas_object_size_hint_max_set(b->o_sep, ww, wh);
      }
    elm_box_recalculate(b->o_box);
    elm_box_recalculate(b->o_outerbox);
