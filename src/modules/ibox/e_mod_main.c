@@ -205,7 +205,7 @@ _gc_init(E_Gadcon *gc, const char *name, const char *id, const char *style)
                         drop, 1, x, y, w, h);
    evas_object_event_callback_add(o, EVAS_CALLBACK_MOVE,
                                   _ibox_cb_obj_moveresize, inst);
-   evas_object_event_callback_add(o, EVAS_CALLBACK_RESIZE,
+   evas_object_event_callback_add(o, EVAS_CALLBACK_CHANGED_SIZE_HINTS,
                                   _ibox_cb_obj_moveresize, inst);
    ibox_config->instances = eina_list_append(ibox_config->instances, inst);
    // add highest priority iconify provider - tasks and ibar can do this
@@ -476,10 +476,10 @@ _ibox_resize_handle(IBox *b)
    int w, h;
 
    evas_object_geometry_get(b->o_box, NULL, NULL, &w, &h);
-   if (elm_box_horizontal_get(b->o_box))
-     w = h;
-   else
-     h = w;
+   if (b->inst->gcc->max.w) w = MIN(w, b->inst->gcc->max.w);
+   if (b->inst->gcc->max.h) h = MIN(h, b->inst->gcc->max.h);
+   if (elm_box_horizontal_get(b->o_box)) w = h;
+   else h = w;
    EINA_LIST_FOREACH(b->icons, l, ic)
      {
         evas_object_size_hint_min_set(ic->o_holder, w, h);
