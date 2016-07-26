@@ -830,12 +830,7 @@ e_pixmap_image_refresh(E_Pixmap *cp)
      {
       case E_PIXMAP_TYPE_X:
 #ifndef HAVE_WAYLAND_ONLY
-        if (cp->image) return EINA_TRUE;
-        if ((!cp->visual) || (!cp->client->depth)) return EINA_FALSE;
-        cp->image = ecore_x_image_new(cp->w, cp->h, cp->visual, cp->client->depth);
-        if (cp->image)
-          cp->image_argb = ecore_x_image_is_argb32_get(cp->image);
-        return !!cp->image;
+        return EINA_TRUE;
 #endif
         break;
       case E_PIXMAP_TYPE_WL:
@@ -904,6 +899,20 @@ e_pixmap_image_is_argb(const E_Pixmap *cp)
    return EINA_FALSE;
 }
 
+static Eina_Bool
+_e_pixmap_image_alloc(E_Pixmap *cp)
+{
+   if (cp->image) return EINA_TRUE;
+   if ((!cp->visual) || (!cp->client->depth)) return EINA_FALSE;
+   cp->image = ecore_x_image_new(cp->w, cp->h, cp->visual, cp->client->depth);
+   if (cp->image)
+     {
+        cp->image_argb = ecore_x_image_is_argb32_get(cp->image);
+        return EINA_TRUE;
+     }
+   return EINA_FALSE;
+}
+
 E_API void *
 e_pixmap_image_data_get(E_Pixmap *cp)
 {
@@ -913,7 +922,7 @@ e_pixmap_image_data_get(E_Pixmap *cp)
      {
       case E_PIXMAP_TYPE_X:
 #ifndef HAVE_WAYLAND_ONLY
-        if (cp->image)
+        if (_e_pixmap_image_alloc(cp))
           return ecore_x_image_data_get(cp->image, &cp->ibpl, NULL, &cp->ibpp);
 #endif
         break;
@@ -964,7 +973,8 @@ e_pixmap_image_draw(E_Pixmap *cp, const Eina_Rectangle *r)
      {
       case E_PIXMAP_TYPE_X:
 #ifndef HAVE_WAYLAND_ONLY
-        if ((!cp->image) || (!cp->pixmap)) return EINA_FALSE;
+        if (!cp->pixmap) return EINA_FALSE;
+        if (!_e_pixmap_image_alloc(cp)) return EINA_FALSE;
         return ecore_x_image_get(cp->image, cp->pixmap, r->x, r->y, r->x, r->y, r->w, r->h);
 #endif
         break;
