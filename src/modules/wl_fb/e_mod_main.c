@@ -35,7 +35,9 @@ e_modapi_init(E_Module *m)
         screen->h = h;
         e_xinerama_screens_set(eina_list_append(NULL, screen));
      }
-   e_comp_wl_init();
+
+   if (!e_comp_wl_init()) return NULL;
+
    e_comp_canvas_init(w, h);
    e_comp->pointer = e_pointer_canvas_new(e_comp->ee, EINA_TRUE);
 
