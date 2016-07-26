@@ -5,14 +5,14 @@
 # Federico Vera <Unknown>, 2008.
 # DiegoJ <diegojromerolopez@gmail.com>, 2009.
 # Aníbal Garrido <khany@member.trisquel.info>, 2012.
-# Adrián Arévalo <adri58@gmail.com>, 2012, 2013.
+# Adrián Arévalo <adri58@gmail.com>, 2012, 2013, 2016.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: Enlightenment 0.17\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
 "POT-Creation-Date: 2015-06-08 21:10+0900\n"
-"PO-Revision-Date: 2015-03-22 10:07+0100\n"
+"PO-Revision-Date: 2016-07-25 17:09+0200\n"
 "Last-Translator: Adrián Arévalo <adri58@gmail.com>\n"
 "Language-Team: Español; Castellano <>\n"
 "Language: es\n"
@@ -20,8 +20,8 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Poedit 1.7.5\n"
-"X-Poedit-Basepath: /home/adrian/trunk/e/\n"
+"X-Generator: Poedit 1.8.8\n"
+"X-Poedit-Basepath: /home/adrian/trunk/e\n"
 
 #: src/bin/e_about.c:17
 msgid "About Enlightenment"
@@ -53,7 +53,7 @@ msgid ""
 "it.<br><br>To contact us please visit:<br><hilight>http://www.enlightenment."
 "org</><br><br>"
 msgstr ""
-"<title>Copyright &copy; 2000-2012, por el Equipo de Desarrollo de  "
+"<title>Copyright &copy; 2000-2015, por el Equipo de Desarrollo de  "
 "Enlightenment</><br><br>Esperamos que disfrute usando este software tanto "
 "como nosotros disfrutamos escribiéndolo.<br><br>Para contactar con nosotros "
 "visite:<br><hilight>http://www.enlightenment.org</><br><br>"
@@ -86,8 +86,7 @@ msgstr "Matar"
 #: src/bin/e_actions.c:2246 src/bin/e_actions.c:2303 src/bin/e_actions.c:2365
 #: src/bin/e_actions.c:2456 src/bin/e_confirm_dialog.c:53
 #: src/bin/e_desklock.c:549 src/bin/e_fm.c:10625 src/bin/e_fm.c:10978
-#: src/bin/e_screensaver.c:196
-#: src/modules/quickaccess/e_mod_quickaccess.c:1305
+#: src/bin/e_screensaver.c:196 src/modules/quickaccess/e_mod_quickaccess.c:1305
 msgid "No"
 msgstr "No"
 
@@ -106,8 +105,7 @@ msgstr "¿Está seguro de que desea salir de Enlightenment?"
 #: src/bin/e_actions.c:2093 src/bin/e_actions.c:2184 src/bin/e_actions.c:2244
 #: src/bin/e_actions.c:2301 src/bin/e_actions.c:2363 src/bin/e_actions.c:2454
 #: src/bin/e_confirm_dialog.c:52 src/bin/e_desklock.c:547 src/bin/e_fm.c:10628
-#: src/bin/e_screensaver.c:194
-#: src/modules/quickaccess/e_mod_quickaccess.c:1305
+#: src/bin/e_screensaver.c:194 src/modules/quickaccess/e_mod_quickaccess.c:1305
 msgid "Yes"
 msgstr "Sí"
 
@@ -215,7 +213,7 @@ msgstr "Alternar modo minimizado"
 #: src/bin/e_actions.c:3025
 #, fuzzy
 msgid "Iconic Mode Enable"
-msgstr "Minimizar"
+msgstr "Habilitar modo minizado"
 
 #: src/bin/e_actions.c:3030
 msgid "Fullscreen Mode Toggle"
@@ -370,7 +368,7 @@ msgstr "Voltear el escritorio a..."
 #: src/bin/e_actions.c:3140
 #, fuzzy
 msgid "Switch Desktop To... On Screen..."
-msgstr "Cambiar al escritorio... (todas las pantallas)"
+msgstr "Cambiar al escritorio... en pantalla..."
 
 #: src/bin/e_actions.c:3146
 msgid "Flip Desktop Linearly..."
@@ -771,18 +769,16 @@ msgid "Suspend Now"
 msgstr "Suspender ahora"
 
 #: src/bin/e_actions.c:3444
-#, fuzzy
 msgid "Suspend Intelligently"
-msgstr "Retardo de suspensión"
+msgstr "Suspender en modo inteligente"
 
 #: src/bin/e_actions.c:3452
 msgid "Hibernate Now"
 msgstr "Hibernar ahora"
 
 #: src/bin/e_actions.c:3456
-#, fuzzy
 msgid "Hibernate Intelligently"
-msgstr "La hibernación falló."
+msgstr "Hibernar en modo inteligente"
 
 #: src/bin/e_actions.c:3464
 msgid "Lock"
@@ -798,7 +794,7 @@ msgstr "Genérico : Acciones"
 
 #: src/bin/e_actions.c:3474
 msgid "Delayed Action"
-msgstr "Acciones retardadas"
+msgstr "Acción retrasada"
 
 #: src/bin/e_actions.c:3482 src/bin/e_actions.c:3486 src/bin/e_actions.c:3490
 msgid "Keyboard Layouts"
@@ -835,9 +831,8 @@ msgid "Color Selector"
 msgstr "Selector de color"
 
 #: src/bin/e_color_dialog.c:53
-#, fuzzy
 msgid "Color Preview"
-msgstr "Previsualizar"
+msgstr "Previsualización de color"
 
 #: src/bin/e_color_dialog.c:67
 msgid "Select"
@@ -933,20 +928,19 @@ msgstr ""
 #: src/bin/e_comp_x.c:4858
 #, fuzzy
 msgid "Another compositor is already running on your display server."
-msgstr "Ya hay otro compositor de ventanas ejecutándose"
+msgstr "Ya hay otro compositor ejecutándose."
 
 #: src/bin/e_comp_x.c:4877
-#, fuzzy
 msgid ""
 "Your display server does not support the compositor overlay window.\n"
 "This is needed for Enlightenment to function."
 msgstr ""
-"Su tarjeta gráfica no soporta la superposición<br>de ventanas. Hace falta "
-"para que funcione."
+"Su tarjeta gráfica no soporta la superposición<br>de ventanas.\n"
+"Hace falta para que funcione Enlightenment."
 
 #: src/bin/e_comp_x.c:4994
 msgid "Enlightenment cannot initialize Ecore_X!\n"
-msgstr "Enlightenment no puede iniciar Ecore_X!\n"
+msgstr "¡Enlightenment no puede iniciar Ecore_X!\n"
 
 #: src/bin/e_comp_x.c:5005
 msgid ""
@@ -1087,16 +1081,16 @@ msgid ""
 "at most)."
 msgstr ""
 "El archivo de configuración es demasiado grande.<br>Debería ser muy pequeño "
-"(unos pocos cientos de<br>KB como máximo)."
+"(unos pocos cientos de KB como máximo)."
 
 #: src/bin/e_config.c:2342
 msgid "You have I/O errors on the disk.<br>Maybe it needs replacing?"
 msgstr ""
-"Tiene errores de entrada/salida en el disco.<br>Quizá haya que cambiarlo"
+"Tiene errores de entrada/salida en el disco.<br>¿Quizá haya que cambiarlo?"
 
 #: src/bin/e_config.c:2346
 msgid "You ran out of space while writing the file."
-msgstr "Se quedó sin espacio al escribir el archivo"
+msgstr "Se quedó sin espacio al escribir el archivo."
 
 #: src/bin/e_config.c:2350
 msgid "The file was closed while writing."
@@ -1116,7 +1110,7 @@ msgstr "La firma falló."
 
 #: src/bin/e_config.c:2366
 msgid "The signature was invalid."
-msgstr "Firma inválida."
+msgstr "Firma inválida"
 
 #: src/bin/e_config.c:2370
 msgid "Not signed."
@@ -1124,7 +1118,7 @@ msgstr "No firmado"
 
 #: src/bin/e_config.c:2374
 msgid "Feature not implemented."
-msgstr "Función no implementada."
+msgstr "Función no implementada"
 
 # ?¿?¿
 #: src/bin/e_config.c:2378
@@ -1176,8 +1170,7 @@ msgstr "Aplicar"
 
 #: src/bin/e_configure.c:29 src/modules/conf_shelves/e_mod_main.c:21
 #: src/modules/connman/e_mod_main.c:604 src/modules/gadman/e_mod_main.c:23
-#: src/modules/mixer/e_mod_main.c:774
-#: src/modules/notification/e_mod_main.c:151
+#: src/modules/mixer/e_mod_main.c:774 src/modules/notification/e_mod_main.c:151
 msgid "Extensions"
 msgstr "Extensiones"
 
@@ -1333,8 +1326,7 @@ msgid "Show in Menus"
 msgstr "Mostrar en los menús"
 
 #: src/bin/e_desktop_editor.c:822 src/bin/e_fm.c:8932 src/bin/e_fm.c:9078
-#: src/bin/e_int_client_remember.c:817
-#: src/modules/xkbswitch/e_mod_config.c:378
+#: src/bin/e_int_client_remember.c:817 src/modules/xkbswitch/e_mod_config.c:378
 msgid "Options"
 msgstr "Opciones"
 
@@ -1361,17 +1353,17 @@ msgstr "Enlightenment no pudo acceder al directorio actual."
 #: src/bin/e_exec.c:503
 #, c-format
 msgid "Enlightenment was unable to change to directory:<br><br>%s"
-msgstr "Enlightenment no pudo cambiar al directorio:<br><br>%s<br>"
+msgstr "Enlightenment no pudo cambiar al directorio:<br><br>%s"
 
 #: src/bin/e_exec.c:514
 #, c-format
 msgid "Enlightenment was unable to restore to directory:<br><br>%s"
-msgstr "Enlightenment no pudo restaurar el directorio:<br><br>%s<br>"
+msgstr "Enlightenment no pudo restaurar el directorio:<br><br>%s"
 
 #: src/bin/e_exec.c:574
 #, c-format
 msgid "Enlightenment was unable to fork a child process:<br><br>%s"
-msgstr "Enlightenment no pudo crear un nuevo proceso hijo:<br><br>%s<br>"
+msgstr "Enlightenment no pudo crear un nuevo proceso hijo:<br><br>%s"
 
 #: src/bin/e_exec.c:753
 msgid "Application run error"
@@ -1384,7 +1376,7 @@ msgid ""
 "application failed to start."
 msgstr ""
 "Enlightenment no pudo ejecutar la aplicación:<br><br>%s<br><br>La aplicación "
-"falló."
+"no se inició."
 
 #: src/bin/e_exec.c:863
 msgid "Application Execution Error"
@@ -1454,16 +1446,16 @@ msgstr "%s fue interrumpido por la señal número %i."
 msgid ""
 "***The remaining output has been truncated. Save the output to view.***\n"
 msgstr ""
-"***La parte de la salida restante fue cortada. Guarde la salida para verla."
+"***La parte de la salida restante fue eliminada. Guarde la salida para verla."
 "***\n"
 
 #: src/bin/e_exec.c:1039 src/bin/e_exec.c:1117 src/bin/e_exec.c:1124
 msgid "Error Logs"
-msgstr "Informe de errores"
+msgstr "Registros de errores"
 
 #: src/bin/e_exec.c:1045 src/bin/e_exec.c:1125
 msgid "There was no error message."
-msgstr "No hay mensajes de error"
+msgstr "No hubo ningún mensaje de error."
 
 #: src/bin/e_exec.c:1049 src/bin/e_exec.c:1132
 msgid "Save This Message"
@@ -1489,7 +1481,7 @@ msgstr "Datos de salida"
 
 #: src/bin/e_exec.c:1109
 msgid "There was no output."
-msgstr "No hubo datos de salida"
+msgstr "No hubo datos de salida."
 
 #: src/bin/e_fm.c:1075
 msgid "Nonexistent path"
@@ -1695,11 +1687,11 @@ msgstr "Tamaño de icono (%d)"
 
 #: src/bin/e_fm.c:9641
 msgid "Could not create a directory!"
-msgstr "No se pudo crear un directorio!"
+msgstr "¡No se pudo crear un directorio!"
 
 #: src/bin/e_fm.c:9656
 msgid "Could not create a file!"
-msgstr "No se pudo crear un archivo!"
+msgstr "¡No se pudo crear un archivo!"
 
 #: src/bin/e_fm.c:9672 src/bin/e_fm.c:9710
 #: src/modules/conf_paths/e_int_config_paths.c:204
@@ -1717,14 +1709,13 @@ msgstr "¡Ya se está creando un nuevo archivo para este directorio!"
 #: src/bin/e_fm.c:9796 src/bin/e_fm.c:9817
 #, c-format
 msgid "%s can't be written to!"
-msgstr "No puede escribir en %s!"
+msgstr "¡No se puede escribir en %s!"
 
 #: src/bin/e_fm.c:9836
 msgid "Directory"
 msgstr "Directorio"
 
-#: src/bin/e_fm.c:9841
-#: src/modules/conf_applications/e_int_config_defapps.c:312
+#: src/bin/e_fm.c:9841 src/modules/conf_applications/e_int_config_defapps.c:312
 msgid "File"
 msgstr "Archivo"
 
@@ -1772,7 +1763,7 @@ msgstr "Eliminar fondo"
 #: src/bin/e_fm.c:10031 src/bin/e_fm.c:10265
 #, fuzzy
 msgid "Set overlay..."
-msgstr "Establecer transperencia..."
+msgstr "Establecer transparencia..."
 
 # En las vistas de EFM (gestor de archivos) se puede establecer un fondo y/o un "overlay", pero no consigo que funcione ninguno de los dos en mis maquinas de 32 bits ni con una versión "Live" en la de 64. En Photoshop son capas y creo que refiere a algún efecto de composición.
 #: src/bin/e_fm.c:10037
@@ -1792,7 +1783,7 @@ msgstr "Renombrar archivo"
 #: src/bin/e_fm.c:10465 src/bin/e_fm.c:10501
 #, c-format
 msgid "%s already exists!"
-msgstr "%s ya existe!"
+msgstr "¡%s ya existe!"
 
 #: src/bin/e_fm.c:10469 src/bin/e_fm.c:10506
 #, c-format
@@ -1984,8 +1975,7 @@ msgstr "Predeterminado"
 msgid "Thumbnail"
 msgstr "Miniatura"
 
-#: src/bin/e_fm_prop.c:543
-#: src/modules/conf_display/e_int_config_desklock.c:399
+#: src/bin/e_fm_prop.c:543 src/modules/conf_display/e_int_config_desklock.c:399
 msgid "Custom"
 msgstr "Personalizado"
 
@@ -2361,7 +2351,7 @@ msgstr "Crear un atajo de teclado"
 
 #: src/bin/e_int_client_menu.c:707
 msgid "Edit Color Scheme"
-msgstr ""
+msgstr "Editar esquema de colores"
 
 #: src/bin/e_int_client_menu.c:752
 #: src/modules/everything/evry_plug_windows.c:441
@@ -2370,11 +2360,11 @@ msgstr "Minimizar"
 
 #: src/bin/e_int_client_menu.c:765
 msgid "Move with keyboard"
-msgstr ""
+msgstr "Mover con el teclado"
 
 #: src/bin/e_int_client_menu.c:779
 msgid "Resize with keyboard"
-msgstr ""
+msgstr "Redimensionar con el teclado"
 
 #: src/bin/e_int_client_menu.c:802
 msgid "Skip"
@@ -2404,9 +2394,8 @@ msgid "Alignment"
 msgstr "Alineación"
 
 #: src/bin/e_int_client_menu.c:1014
-#, fuzzy
 msgid "Click an object to align with."
-msgstr "Clic en un objeto para alinearse con él."
+msgstr "Click en un objeto para alinearse con él."
 
 #: src/bin/e_int_client_menu.c:1185
 #, fuzzy
@@ -2701,6 +2690,7 @@ msgid "Transient For"
 msgstr "Transitorio para"
 
 #: src/bin/e_int_client_prop.c:471
+#, fuzzy
 msgid "Client Leader"
 msgstr "Client leader"
 
@@ -2809,9 +2799,8 @@ msgstr ""
 "cambios."
 
 #: src/bin/e_int_client_remember.c:540
-#, fuzzy
 msgid "No match properties set"
-msgstr "No hay coincidencias asignadas"
+msgstr "No hay coincidencias"
 
 #: src/bin/e_int_client_remember.c:543
 msgid ""
@@ -2863,7 +2852,7 @@ msgstr "Tipo de ventana"
 # RR: ¿No seria mejor "se admite comodines en las búsquedas"?
 #: src/bin/e_int_client_remember.c:733
 msgid "wildcard matches are allowed"
-msgstr "se permitan los comodines"
+msgstr "se permiten los comodines"
 
 #: src/bin/e_int_client_remember.c:735
 #, fuzzy
@@ -2990,6 +2979,7 @@ msgid "Disable composite effects for objects"
 msgstr "Deshabilitar efectos en los objetos"
 
 #: src/bin/e_int_config_comp.c:244
+#, fuzzy
 msgid "Disable composite effects for overrides"
 msgstr "Deshabilitar efectos para overrides"
 
@@ -3035,7 +3025,7 @@ msgstr "OpenGL"
 
 #: src/bin/e_int_config_comp.c:276
 msgid "OpenGL options:"
-msgstr "Opciones de OpenGL"
+msgstr "Opciones de OpenGL:"
 
 #: src/bin/e_int_config_comp.c:278 src/bin/e_int_config_comp.c:589
 msgid "Tear-free updates (VSynced)"
@@ -3341,8 +3331,7 @@ msgstr "Abajo"
 #: src/modules/conf_dialogs/e_int_config_profiles.c:133
 #: src/modules/conf_paths/e_int_config_env.c:311
 #: src/modules/conf_shelves/e_int_config_shelf.c:137
-#: src/modules/ibar/e_mod_config.c:114
-#: src/modules/xkbswitch/e_mod_config.c:311
+#: src/modules/ibar/e_mod_config.c:114 src/modules/xkbswitch/e_mod_config.c:311
 msgid "Add"
 msgstr "Añadir"
 
@@ -3422,8 +3411,6 @@ msgstr "Preferencias de módulos"
 msgid "Load"
 msgstr "Cargar"
 
-# RR: Originalmente "deshabilitar" y el anterior "habilitar"
-# AA: Descargar?
 #: src/bin/e_int_config_modules.c:203 src/bin/e_module.c:771
 msgid "Unload"
 msgstr "Descargar"
@@ -3588,8 +3575,7 @@ msgstr "Mostrar al hacer clic con el ratón"
 msgid "Hide timeout"
 msgstr "Tiempo de espera para ocultar"
 
-#: src/bin/e_int_shelf_config.c:248
-#: src/modules/notification/e_mod_config.c:115
+#: src/bin/e_int_shelf_config.c:248 src/modules/notification/e_mod_config.c:115
 #, c-format
 msgid "%.1f seconds"
 msgstr "%.1f segundos"
@@ -3644,23 +3630,25 @@ msgstr ""
 
 #: src/bin/e_main.c:288
 msgid "Enlightenment cannot initialize Eina!\n"
-msgstr "Enlightenment no puede iniciar Eina!\n"
+msgstr "¡Enlightenment no puede iniciar Eina!\n"
 
+# RR (2016): Nota que habla de "logging" no de "login"
 #: src/bin/e_main.c:294
+#, fuzzy
 msgid "Enlightenment could not create a logging domain!\n"
-msgstr "Enlightenment no puede crear un dominio de inicio de sesión\n"
+msgstr "¡Enlightenment no pudo crear un dominio para registros!\n"
 
 #: src/bin/e_main.c:341
 msgid "Enlightenment cannot initialize Eet!\n"
-msgstr "Enlightenment no puede iniciar Eet!\n"
+msgstr "¡Enlightenment no puede iniciar Eet!\n"
 
 #: src/bin/e_main.c:350
 msgid "Enlightenment cannot initialize Ecore!\n"
-msgstr "Enlightenment no puede iniciar Ecore!\n"
+msgstr "¡Enlightenment no puede iniciar Ecore!\n"
 
 #: src/bin/e_main.c:365
 msgid "Enlightenment cannot initialize EIO!\n"
-msgstr "Enlightenment no puede iniciar EIO!.\n"
+msgstr "¡Enlightenment no puede iniciar EIO!.\n"
 
 #: src/bin/e_main.c:377
 msgid ""
@@ -3688,27 +3676,27 @@ msgstr ""
 
 #: src/bin/e_main.c:400
 msgid "Enlightenment cannot initialize Ecore_File!\n"
-msgstr "Enlightenment no puede iniciar Ecore_File!\n"
+msgstr "¡Enlightenment no puede iniciar Ecore_File!\n"
 
 #: src/bin/e_main.c:409
 msgid "Enlightenment cannot initialize Ecore_Con!\n"
-msgstr "Enlightenment no puede iniciar Ecore_Con!\n"
+msgstr "¡Enlightenment no puede iniciar Ecore_Con!\n"
 
 #: src/bin/e_main.c:418
 msgid "Enlightenment cannot initialize Ecore_Ipc!\n"
-msgstr "Enlightenment no puede iniciar Ecore_Ipc!\n"
+msgstr "¡Enlightenment no puede iniciar Ecore_Ipc!\n"
 
 #: src/bin/e_main.c:431
 msgid "Enlightenment cannot initialize Ecore_Evas!\n"
-msgstr "Enlightenment no puede iniciar Ecore_Evas!\n"
+msgstr "¡Enlightenment no puede iniciar Ecore_Evas!\n"
 
 #: src/bin/e_main.c:440
 msgid "Enlightenment cannot initialize Elementary!\n"
-msgstr "Enlightenment no puede iniciar Elementary!\n"
+msgstr "¡Enlightenment no puede iniciar Elementary!\n"
 
 #: src/bin/e_main.c:449
 msgid "Enlightenment cannot initialize Emotion!\n"
-msgstr "Enlightenment no puede iniciar Emotion!\n"
+msgstr "¡Enlightenment no puede iniciar Emotion!\n"
 
 #: src/bin/e_main.c:462
 #, fuzzy
@@ -3718,8 +3706,8 @@ msgid ""
 "Ecore and check they support the Wayland SHM rendering engine."
 msgstr ""
 "Enlightenment ha descubierto que ecore_evas no admite el<br>renderizado por "
-"software de X11 en Evas. Por favor, compruebe<br>la instalación de Evas y "
-"Ecore para verificar que<br>admitan el renderizado por software de X11."
+"software de Wayland SHM en Evas.<br>Por favor, compruebela instalación de "
+"Evas y Ecore para<br>verificar que admitan el renderizado por Wayland SHM."
 
 #: src/bin/e_main.c:472
 #, fuzzy
@@ -3746,11 +3734,11 @@ msgstr ""
 
 #: src/bin/e_main.c:491
 msgid "Enlightenment cannot initialize Edje!\n"
-msgstr "Enlightenment no puede iniciar Edje!\n"
+msgstr "¡Enlightenment no puede iniciar Edje!\n"
 
 #: src/bin/e_main.c:503
 msgid "Enlightenment cannot initialize E_Intl!\n"
-msgstr "Enlightenment no puede iniciar E_Intl!\n"
+msgstr "¡Enlightenment no puede iniciar E_Intl!\n"
 
 #: src/bin/e_main.c:514
 msgid ""
@@ -3936,7 +3924,7 @@ msgstr "Enlightenment no puede configurar el sistema de mensajes.\n"
 #: src/bin/e_main.c:843
 #, fuzzy
 msgid "Setup Grab Input Handling"
-msgstr "Configurar la apropiación de entradas"
+msgstr "Configurar la gestión de apropiación de entradas"
 
 #: src/bin/e_main.c:847
 #, fuzzy
@@ -3955,16 +3943,18 @@ msgstr "Enlightenment no puede configurar el sistema de módulos.\n"
 # AA: "Recordación" duele con solo leerlo xD
 # En todo caso "Recordatorios"
 # RR: Ve "Windows Remembers". "Remember" no es nombre en inglés -- ¡y mucho menos contable!
+# RR (2016): En un menu desplegable aparece "Recordar", entonces le he cambiado. Conincide con la traducción de Massimo al it. Fue 'Configurar "recuerdos"'
 #: src/bin/e_main.c:865
 #, fuzzy
 msgid "Setup Remembers"
-msgstr "Configurar \"recuerdos\""
+msgstr "Configurar Recordar"
 
 #: src/bin/e_main.c:869
 #, fuzzy
 msgid "Enlightenment cannot setup remember settings.\n"
 msgstr ""
-"Enlightenment no puede configurar el sistema de recordar preferencias.\n"
+"Enlightenment no puede configurar el sistema de preferencias de \"recordar"
+"\".\n"
 
 #: src/bin/e_main.c:876
 msgid "Setup Gadcon"
@@ -4054,9 +4044,9 @@ msgid "Almost Done"
 msgstr "Casi terminado"
 
 #: src/bin/e_main.c:1176
-#, fuzzy, c-format
+#, c-format
 msgid "Version: %s\n"
-msgstr "Permisos:"
+msgstr "Versión: %s\n"
 
 #: src/bin/e_main.c:1185
 #, fuzzy, c-format
@@ -4092,25 +4082,25 @@ msgstr ""
 "\t\tConectar a pantalla DISPLAY.\n"
 "\t\tEG: -display :1.0\n"
 "\t-fake-xinerama-screen WxH+X+Y\n"
-"\t\tAñadir una pantalla xinerama falsa (en vez de las verdaderas)\n"
-" +++\t\tgiven the geometry. Add as many as you like. They all\n"
-"\t\treplace the real xinerama screens, if any. This can\n"
-"\t\tbe used to simulate xinerama.\n"
+"\t\tAgregar una pantalla xinerama falsa (en vez de las verdaderas)\n"
+" \t\tdado la geometría. Agregue todas las que quiera. Todos\n"
+"\t\treemplazen las verdaderas, si las haya. Se puede usar\n"
+"\t\testo para simular xinerama.\n"
 "\t\tEG: -fake-xinerama-screen 800x600+0+0 -fake-xinerama-screen "
 "800x600+800+0\n"
 "\t-profile CONF_PROFILE\n"
-"\t\tUse the configuration profile CONF_PROFILE instead of the user selected "
-"default or just \"default\".\n"
+"\t\tUse el perfil de configuración CONF_PROFILE en vez de la predeterminada "
+"por el usuario o somplemente  \"default\".\n"
 "\t-good\n"
-"\t\tBe good.\n"
+"\t\tSer bueno.\n"
 "\t-evil\n"
-"\t\tBe evil.\n"
+"\t\tSer mal.\n"
 "\t-psychotic\n"
-"\t\tBe psychotic.\n"
+"\t\tSer psicótico.\n"
 "\t-locked\n"
-"\t\tStart with desklock on, so password will be asked.\n"
-"\t-i-really-know-what-i-am-doing-and-accept-full-responsibility-for-it\n"
-"\t\tIf you need this help, you don't need this option.\n"
+"\t\tEmpiece con bloqueo de escritorio para que se pregunte contraseña.\n"
+"\t-realmente-sé-lo-que-hago-y-acepto-plena-responsibilidad-para-ello\n"
+"\t\tSi le necesita esta ayuda, no le necesita esta opción.\n"
 
 #: src/bin/e_main.c:1239
 msgid ""
@@ -4145,8 +4135,8 @@ msgid ""
 "Enlightenment found Evas can't load SVG files. Check Evas has SVG loader "
 "support.\n"
 msgstr ""
-"Evas no puede cargar imágenes SVG. Verifique\n"
-"que Evas tiene soporte para cargar imágenes SVG.\n"
+"Evas no puede cargar imágenes SVG. Verifique que\n"
+"Evas tiene soporte para cargar imágenes SVG.\n"
 
 #: src/bin/e_main.c:1517
 msgid ""
@@ -4178,8 +4168,8 @@ msgid ""
 "fontconfig\n"
 "support and system fontconfig defines a 'Sans' font.\n"
 msgstr ""
-"Evas no puede cargar la fuente 'Sans'. \n"
-"Verifique que Evas tiene soporte para cargar una fuente 'Sans'.\n"
+"Evas no puede cargar la fuente 'Sans'. Verifique que\n"
+"Evas tiene soporte para cargar una fuente 'Sans'.\n"
 
 #: src/bin/e_main.c:1570
 msgid "Enlightenment cannot setup XKB Keyboard layouts.\n"
@@ -4205,36 +4195,39 @@ msgid ""
 "error loading the<br>module named: %s. This module has been disabled<br>and "
 "will not be loaded."
 msgstr ""
-"Enlightenment falló al arranque y se ha reiniciado. Hubo un error<br> "
-"cargando el módulo: %s. Este módulo ha sido deshabilitado y no se cargará."
+"Enlightenment falló al arranque y se ha reiniciado. Hubo un "
+"error<br>cargando el módulo: %s. Este<br>módulo ha sido deshabilitado y no "
+"se cargará."
 
 #: src/bin/e_main.c:1704 src/bin/e_main.c:1720
 msgid "Enlightenment crashed early on start and has been restarted"
 msgstr "Enlightenment falló en el arranque y se ha reiniciado."
 
 #: src/bin/e_main.c:1705
-#, c-format
+#, fuzzy, c-format
 msgid ""
 "Enlightenment crashed early on start and has been restarted.<br>There was an "
 "error loading the module named: %s<br><br>This module has been disabled and "
 "will not be loaded."
 msgstr ""
 "Enlightenment falló al arranque y se ha reiniciado. Hubo un error cargando "
-"el módulo: %s. <br>Este módulo ha sido deshabilitado y no se cargará."
+"el módulo: %s.<br><br>Este módulo ha sido deshabilitado y no se cargará."
 
 #: src/bin/e_main.c:1713
+#, fuzzy
 msgid ""
 "Enlightenment crashed early on start and has<br>been restarted. All modules "
 "have been disabled<br>and will not be loaded to help remove any "
 "problem<br>modules from your configuration. The module<br>configuration "
 "dialog should let you select your<br>modules again.\n"
 msgstr ""
-"Enlightenment falló al arranque y se ha reiniciado. Todos los módulos fueron "
-"deshabilitados<br>y no serán cargados para ayudar a resolver cualquier "
-"problema<br> con los módulos en su configuración. El cuadro de "
+"Enlightenment falló al arranque y se ha reiniciado.<br>Todos los módulos "
+"fueron deshabilitados y no<br>serán cargados para ayudar a resolver "
+"cualquier problema<br>con los módulos en su configuración. El cuadro de "
 "configuración<br>de módulos le permitirá elegir nuevamente los módulos.\n"
 
 #: src/bin/e_main.c:1721
+#, fuzzy
 msgid ""
 "Enlightenment crashed early on start and has been restarted.<br>All modules "
 "have been disabled and will not be loaded to help<br>remove any problem "
@@ -4243,7 +4236,7 @@ msgid ""
 msgstr ""
 "Enlightenment falló al arranque y se ha reiniciado. Todos los módulos fueron "
 "deshabilitados<br>y no serán cargados para ayudar a resolver cualquier "
-"problema<br> con los módulos en su configuración. El cuadro de diálogo de "
+"problema<br>con los módulos en su configuración. El cuadro de diálogo de "
 "configuración<br>de módulos le permitirá elegir nuevamente<br>sus módulos."
 
 #: src/bin/e_module.c:267
@@ -4265,13 +4258,13 @@ msgid "Error loading Module"
 msgstr "Error cargando módulo"
 
 #: src/bin/e_module.c:346 src/bin/e_module.c:363
-#, c-format
+#, fuzzy, c-format
 msgid ""
 "There was an error loading the module named: %s<br>The full path to this "
 "module is:<br>%s<br>The error reported was:<br>%s<br>"
 msgstr ""
-"Error cargando el módulo: %s<br><br>La ruta completa es:<br>%s<br><br>El "
-"error fué:<br>%s<br>"
+"Error cargando el módulo: %s<br>La ruta completa es:<br>%s<br>El error fué:"
+"<br>%s<br>"
 
 #: src/bin/e_module.c:368
 msgid "Module does not contain all needed functions"
@@ -4331,13 +4324,14 @@ msgid "Enlightenment was unable to fork a child process:<br><br>%s<br>"
 msgstr "Enlightenment no fué capaz de crear el proceso hijo:<br><br>%s<br>"
 
 #: src/bin/e_screensaver.c:188
+#, fuzzy
 msgid ""
 "You disabled the screensaver too fast.<br><br>Would you like to enable "
 "<b>presentation</b> mode and temporarily disable screen saver, lock and "
 "power saving?"
 msgstr ""
 "Deshabilitó el salvapantallas demasiado rápido.<br><br>¿Le gustaría "
-"habilitar el modo <b>presentación</b> y deshabilitar temporalmente el "
+"habilitar el modo <b>presentación</b>y deshabilitar temporalmente el "
 "salvapantallas, el bloqueo de pantalla y el ahorro de energía?"
 
 #: src/bin/e_shelf.c:65
@@ -4400,13 +4394,14 @@ msgid "Shelf Autohide Error"
 msgstr "Error al ocultar el estante"
 
 #: src/bin/e_shelf.c:815
+#, fuzzy
 msgid ""
 "Shelf autohiding will not work properly<br>with the current configuration; "
 "set your shelf to<br>\"Below Everything\" or disable autohiding."
 msgstr ""
-"La ocultación del estante no funcionará correctamente con la configuración "
-"actual.<br> Asigne el panel a<br>\"Debajo de todo\" o deshabilite la "
-"ocultación."
+"La ocultación del estante no funcionará correctamente<br>con la "
+"configuración actual. Asigne el panel a<br>\"Debajo de todo\" o deshabilite "
+"la ocultación."
 
 #: src/bin/e_shelf.c:972
 msgid "Add New Shelf"
@@ -4478,14 +4473,14 @@ msgid "System Check Done"
 msgstr "Comprobación del sistema terminada"
 
 #: src/bin/e_sys.c:647
-#, c-format
+#, fuzzy, c-format
 msgid ""
 "Logout is taking too long.<br>Some applications refuse to close.<br>Do you "
 "want to finish the logout<br>anyway without closing these<br>applications "
 "first?<br><br>Auto logout in %d seconds."
 msgstr ""
-"Se está tardando demasiado en cerrar sesión. Algunas aplicaciones no se "
-"cierran.<br>Desea cerrar sesión sin cerrar estas aplicaciones?"
+"Se está tardando demasiado en cerrar sesión.<br>Algunas aplicaciones no se "
+"cierran.<br>¿Desea cerrar sesión sin cerrar<br>estas aplicaciones primero?"
 "<br><br>Cerrando sesión en %d segundos."
 
 #: src/bin/e_sys.c:707
@@ -4514,7 +4509,7 @@ msgstr "Saliendo.<br><hilight>Espere, por favor.</hilight>"
 
 #: src/bin/e_sys.c:801 src/bin/e_sys.c:856
 msgid "Enlightenment is busy with another request"
-msgstr "Enlightenment esta ocupado con otra petición"
+msgstr "Enlightenment esta ocupado con otra petición."
 
 #: src/bin/e_sys.c:806
 msgid ""
@@ -4558,7 +4553,7 @@ msgstr ""
 
 #: src/bin/e_sys.c:837 src/bin/e_sys.c:878
 msgid "EEK! This should not happen"
-msgstr "OOPS! Esto no debería suceder"
+msgstr "OOPS! Esto no debería suceder."
 
 #: src/bin/e_sys.c:862
 msgid "Power off failed."
@@ -4625,7 +4620,7 @@ msgstr ""
 
 #: src/bin/e_utils.c:134
 msgid "Cannot exit - immortal windows."
-msgstr "No se puede salir - ventanas inmortales"
+msgstr "No se puede salir - ventanas inmortales."
 
 #: src/bin/e_utils.c:135
 msgid ""
@@ -4676,21 +4671,21 @@ msgstr "En el último minuto"
 #, c-format
 msgid "Last year"
 msgid_plural "%li Years ago"
-msgstr[0] "En el último año"
+msgstr[0] "El año pasado"
 msgstr[1] "Hace %li años"
 
 #: src/bin/e_utils.c:600
-#, c-format
+#, fuzzy, c-format
 msgid "Last month"
 msgid_plural "%li Months ago"
-msgstr[0] "En el último mes"
+msgstr[0] "El mes pasado"
 msgstr[1] "Hace %li meses"
 
 #: src/bin/e_utils.c:605
 #, c-format
 msgid "Last week"
 msgid_plural "%li Weeks ago"
-msgstr[0] "En la última semana"
+msgstr[0] "La semana pasada"
 msgstr[1] "Hace %li semanas"
 
 #: src/bin/e_utils.c:610
@@ -4906,7 +4901,7 @@ msgstr "Subir un directorio"
 
 #: src/modules/appmenu/e_mod_main.c:88
 msgid "Application Menu"
-msgstr "Menú de aplicación"
+msgstr "Menú de aplicaciones"
 
 #: src/modules/backlight/e_mod_main.c:356
 #: src/modules/conf_display/e_mod_main.c:36
@@ -5060,7 +5055,7 @@ msgid ""
 "Enter the PinCode above. It should have 1-16 characters and can be "
 "alphanumeric."
 msgstr ""
-"Introduzca el código PIN. Debería tener de 1 a 16 caracteres y ser "
+"Introduzca el código PIN. Debería tener de 1 a 16 carácteres y ser "
 "alfanumérico."
 
 #: src/modules/bluez4/agent.c:149
@@ -5386,7 +5381,6 @@ msgstr "Ejecución"
 msgid "Only launch single instances"
 msgstr "Sólo lanzar instancias únicas"
 
-# AA: En este caso yo creo que se refiere a las "Opciones Básicas de X11" en lugar de "Fundamentos", que no tiene mucho sentido aquí
 #: src/modules/conf_applications/e_int_config_deskenv.c:145
 msgid "X11 Basics"
 msgstr "Opciones básicas X11"
@@ -5414,7 +5408,7 @@ msgstr "Arrancar servicios de KDE al inicio"
 #: src/modules/conf_applications/e_int_config_deskenv.c:163
 #, fuzzy
 msgid "Show applications only for Environment"
-msgstr "Preferir aplicaciones del entorno de escritorio"
+msgstr "Mostrar solamente aplicaciones del entorno de escritorio"
 
 #: src/modules/conf_applications/e_int_config_deskenv.c:165
 #: src/modules/conf_bindings/e_int_config_mousebindings.c:328
@@ -5621,19 +5615,23 @@ msgid "ACPI Binding"
 msgstr "Atajo ACPI"
 
 #: src/modules/conf_bindings/e_int_config_acpibindings.c:524
+#, fuzzy
 msgid ""
 "Please trigger the ACPI event you wish to bind to, <br><br>or "
 "<hilight>Escape</hilight> to abort."
-msgstr "Ejecute el evento ACPI <br>o pulse <hilight>Esc</hilight>para salir."
+msgstr ""
+"Ejecute el evento ACPI que quiere<br><br>o pulse <hilight>Esc</hilight> para "
+"salir."
 
 #: src/modules/conf_bindings/e_int_config_edgebindings.c:5
+#, fuzzy
 msgid ""
 "Please select an edge,<br>or click <hilight>Close</hilight> to abort."
 "<br><br>You can either specify a delay of this<br> action using the slider, "
 "or make it<br>respond to edge clicks:"
 msgstr ""
 "Seleccione un borde o<br>haga clic en <hilight>Cerrar</hilight> para abortar."
-"<br><br>Se puede seleccionar un retardo para<br>esta acción usando el "
+"<br><br>Se puede seleccionar un retraso para<br>esta acción usando el "
 "deslizador, o<br>hacer que responda a los clics en<br>los bordes: "
 
 #: src/modules/conf_bindings/e_int_config_edgebindings.c:106
@@ -5696,9 +5694,8 @@ msgid "Drag only"
 msgstr "Solo arrastrar"
 
 #: src/modules/conf_bindings/e_int_config_edgebindings.c:938
-#, fuzzy
 msgid "No edge selected"
-msgstr "No hay módulos seleccionados."
+msgstr "No hay bordes seleccionados."
 
 #: src/modules/conf_bindings/e_int_config_edgebindings.c:1229
 msgid "Edge Binding Error"
@@ -5711,8 +5708,8 @@ msgid ""
 "The edge binding that you chose is already used by<br><hilight>%s</hilight> "
 "action.<br>Please choose another edge to bind."
 msgstr ""
-"El atajo que eligió para el borde ya está siendo usado para <br>la acción "
-"<hilight>%s</hilight>. <br>Por favor, elija otro borde para el atajo."
+"El atajo que eligió para el borde ya está siendo usado para<br>la acción "
+"<hilight>%s</hilight>.<br>Por favor, elija otro borde para el atajo."
 
 #: src/modules/conf_bindings/e_int_config_edgebindings.c:1365
 #: src/modules/conf_bindings/e_int_config_keybindings.c:1120
@@ -5804,7 +5801,7 @@ msgid ""
 "The binding key combination that you chose is already used by <br><hilight>"
 "%s</hilight> action.<br>Please choose another binding key combination."
 msgstr ""
-"La combinación de teclas que eligió, ya está siendo usada para <br>la acción "
+"La combinación de teclas que eligió, ya está siendo usada para<br>la acción "
 "<hilight>%s</hilight>. <br>Elija otra combinación de teclas para el atajo."
 
 #: src/modules/conf_bindings/e_int_config_mousebindings.c:109
@@ -5934,17 +5931,17 @@ msgid ""
 "The signal and source that you entered are already used by<br><hilight>%s</"
 "hilight> action.<br>"
 msgstr ""
-"La señal y el origen ya están siendo usados por<br><hilight>%s</hilight><br>"
+"La señal y el origen ya están siendo usados por<br><hilight>%s</hilight>.<br>"
 
 #: src/modules/conf_bindings/e_int_config_signalbindings.c:621
+#, fuzzy
 msgid "Add Signal Binding"
-msgstr "Añadir atajo de señal"
+msgstr "Agregar atajo de señal"
 
 # AA: Fuente u Origen
 #: src/modules/conf_bindings/e_int_config_signalbindings.c:632
-#, fuzzy
 msgid "Source:"
-msgstr "Fuente: "
+msgstr "Origen:"
 
 #: src/modules/conf_bindings/e_int_config_signalbindings.c:637
 msgid "Signal:"
@@ -6025,7 +6022,6 @@ msgid "Scratch"
 msgstr "Hacer desde cero"
 
 #: src/modules/conf_dialogs/e_int_config_profiles.c:141
-#, fuzzy
 msgid "Reset"
 msgstr "Restablecer"
 
@@ -6086,8 +6082,6 @@ msgstr "Asignar"
 msgid "Screen Lock Settings"
 msgstr "Preferencias de bloqueo de pantalla"
 
-# RR: Quitaría "sesión".
-# AA: Quitado
 #: src/modules/conf_display/e_int_config_desklock.c:230
 msgid "Lock on Startup"
 msgstr "Bloquear al iniciar"
@@ -6103,11 +6097,11 @@ msgstr "Usar autenticación del sistema"
 #: src/modules/conf_display/e_int_config_desklock.c:241
 #, fuzzy
 msgid "Use Personal Screenlock Password (insecure)"
-msgstr "Usar contraseña en la pantalla de bloqueo"
+msgstr "Usar contraseña personal para el bloqueo de pantalla (inseguro)"
 
 #: src/modules/conf_display/e_int_config_desklock.c:244
 msgid "Use PIN (insecure)"
-msgstr ""
+msgstr "Usar PIN (inseguro)"
 
 #: src/modules/conf_display/e_int_config_desklock.c:247
 msgid "Use External Screenlock Command"
@@ -6116,13 +6110,13 @@ msgstr "Usar comando externo para el bloqueo de pantalla"
 #: src/modules/conf_display/e_int_config_desklock.c:251
 #, fuzzy
 msgid "Personal Screenlock Password (insecure)"
-msgstr "Contraseña de la pantalla de bloqueo"
+msgstr "Contraseña personal para el bloqueo de pantalla (inseguro)"
 
 # AA: No suena muy bien
 #: src/modules/conf_display/e_int_config_desklock.c:257
 #, fuzzy
 msgid "PIN Entry (insecure)"
-msgstr "Introducir PIN"
+msgstr "Introducir PIN (inseguro)"
 
 #: src/modules/conf_display/e_int_config_desklock.c:263
 msgid "External Screenlock Command"
@@ -6247,16 +6241,19 @@ msgid "Click to change wallpaper"
 msgstr "Clic para cambiar el fondo de pantalla"
 
 #: src/modules/conf_display/e_int_config_desks.c:204
+#, fuzzy
 msgid "Desktop Flip"
-msgstr "Volteo de escritorio"
+msgstr "Cambio de escritorio"
 
 #: src/modules/conf_display/e_int_config_desks.c:205
+#, fuzzy
 msgid "Flip when dragging objects to the screen edge"
-msgstr "Voltear cuando se arrastren objetos al borde de la pantalla"
+msgstr "Cambiar cuando se arrastren objetos al borde de la pantalla"
 
 #: src/modules/conf_display/e_int_config_desks.c:208
+#, fuzzy
 msgid "Wrap desktops around when flipping"
-msgstr "Volver al escritorio inicial al llegar al final"
+msgstr "Ir al escritorio opuesto al cambiar"
 
 #: src/modules/conf_display/e_int_config_desks.c:215
 msgid "Use desktop window profile"
@@ -6295,8 +6292,9 @@ msgid "Dim Backlight"
 msgstr "Retroiluminación suave"
 
 #: src/modules/conf_display/e_int_config_dpms.c:187
+#, fuzzy
 msgid "Idle Fade Time"
-msgstr "Tiempo de fundido inactivo"
+msgstr "Retraso de atenuación por inactividad"
 
 #: src/modules/conf_display/e_int_config_dpms.c:190
 #, c-format
@@ -6304,8 +6302,9 @@ msgid "%1.0f second(s)"
 msgstr "%1.0f segundos"
 
 #: src/modules/conf_display/e_int_config_dpms.c:196
+#, fuzzy
 msgid "Fade Time"
-msgstr "Tiempo de fundido"
+msgstr "Retraso de atenuación"
 
 #: src/modules/conf_display/e_int_config_dpms.c:198
 #, c-format
@@ -6313,8 +6312,9 @@ msgid "%1.1f second(s)"
 msgstr "%1.1f segundos"
 
 #: src/modules/conf_display/e_int_config_dpms.c:227
+#, fuzzy
 msgid "Dimming"
-msgstr "Oscurecimiento"
+msgstr "Atenuación"
 
 #: src/modules/conf_display/e_int_config_screensaver.c:58
 msgid "Screen Blank Settings"
@@ -6326,21 +6326,22 @@ msgstr "Habilitar apagado de pantalla"
 
 #: src/modules/conf_display/e_int_config_screensaver.c:172
 #: src/modules/syscon/e_int_config_syscon.c:174
-#, fuzzy
 msgid "Timeout"
 msgstr "Tiempo de espera"
 
 #: src/modules/conf_display/e_int_config_screensaver.c:180
+#, fuzzy
 msgid "Suspend on blank"
-msgstr "Suspender al apagarse la pantalla"
+msgstr "Suspender al apagarse"
 
 #: src/modules/conf_display/e_int_config_screensaver.c:184
 msgid "Suspend even if AC"
 msgstr "Suspender aunque esté conectado a la corriente"
 
 #: src/modules/conf_display/e_int_config_screensaver.c:189
+#, fuzzy
 msgid "Suspend delay"
-msgstr "Retardo de suspensión"
+msgstr "Retraso de suspensión"
 
 #: src/modules/conf_display/e_int_config_screensaver.c:197
 msgid "Disable blanking for Fullscreen Windows"
@@ -6386,7 +6387,7 @@ msgstr "Preferencias de las interacciones"
 #: src/modules/conf_interaction/e_int_config_interaction.c:95
 #, fuzzy
 msgid "Thumbscroll"
-msgstr "Desplazar por dedo"
+msgstr "Desplazamiento por dedo"
 
 #: src/modules/conf_interaction/e_int_config_interaction.c:97
 #, fuzzy
@@ -6556,9 +6557,10 @@ msgid ""
 "affected, use the<br>Environment variable settings to unset them.<br>The "
 "variables that may affect you are<br>as follows:<br>%s"
 msgstr ""
-"Tiene variables de entorno que pueden<br>interferir con la visualización "
-"correcta<br>del idioma elegido. Use las opciones de<br>variables de entorno "
-"para desasignarlas.<br>Las variables que podrían afectar al sistema son las "
+"Tiene variables de región adicionales que pueden<br>interferir con la "
+"visualización correcta<br>del idioma elegido. Si quiere que no se tocan "
+"estas<br>variables, use las opciones de la variable de Entorno<br>para "
+"desasignarlas. Las variables que podrían afectar<br>al sistema son las "
 "siguientes:<br>%s"
 
 #: src/modules/conf_intl/e_int_config_intl.c:966
@@ -6778,8 +6780,9 @@ msgid "Application priority"
 msgstr "Prioridad de las aplicaciones"
 
 #: src/modules/conf_performance/e_int_config_performance.c:120
+#, fuzzy
 msgid "Allow module load delay"
-msgstr "Permitir retardo en la carga de módulos"
+msgstr "Permitir retraso en la carga de módulos"
 
 #: src/modules/conf_performance/e_int_config_performance.c:127
 msgid "Cache flush interval"
@@ -6838,7 +6841,9 @@ msgstr "Preferencias de manejo de energía"
 msgid "Levels Allowed"
 msgstr "Niveles permitidos"
 
+# RR (2016): demasiado largo -¿ Retraso/Intervalo para las tareas que consuman mucho?
 #: src/modules/conf_performance/e_int_config_powermanagement.c:129
+#, fuzzy
 msgid "Time to defer power-hungry tasks"
 msgstr "Tiempo de espera para las tareas con mucha carga de trabajo"
 
@@ -6910,21 +6915,21 @@ msgstr "Preferencias de pantalla"
 #: src/modules/conf_randr/e_int_config_randr2.c:444
 #: src/modules/conf_randr/e_int_config_randr2.c:667
 msgid "Clone"
-msgstr ""
+msgstr "Clonar"
 
 #: src/modules/conf_randr/e_int_config_randr2.c:317
 #: src/modules/conf_randr/e_int_config_randr2.c:455
 #: src/modules/conf_randr/e_int_config_randr2.c:668
 #, fuzzy
 msgid "Left of"
-msgstr "Izquierda"
+msgstr "A la Izquierda"
 
 #: src/modules/conf_randr/e_int_config_randr2.c:319
 #: src/modules/conf_randr/e_int_config_randr2.c:466
 #: src/modules/conf_randr/e_int_config_randr2.c:669
 #, fuzzy
 msgid "Right of"
-msgstr "Derecha"
+msgstr "A la derecha"
 
 #: src/modules/conf_randr/e_int_config_randr2.c:540
 #, fuzzy
@@ -6933,21 +6938,19 @@ msgstr "Datos de salida"
 
 #: src/modules/conf_randr/e_int_config_randr2.c:607
 msgid "Laptop lid"
-msgstr ""
+msgstr "Tapa de portátil"
 
 #: src/modules/conf_randr/e_int_config_randr2.c:653
-#, fuzzy
 msgid "Priority"
-msgstr "prioridad"
+msgstr "Prioridad"
 
 #: src/modules/conf_randr/e_int_config_randr2.c:665
 msgid "Relative"
-msgstr ""
+msgstr "Relativo"
 
 #: src/modules/conf_randr/e_int_config_randr2.c:679
-#, fuzzy
 msgid "To"
-msgstr "Arriba"
+msgstr "A"
 
 #: src/modules/conf_randr/e_int_config_randr2.c:721
 #, fuzzy
@@ -6955,13 +6958,13 @@ msgid "Restore setup on start"
 msgstr "Restaurar al inicio"
 
 #: src/modules/conf_randr/e_int_config_randr2.c:730
+#, fuzzy
 msgid "Monitor hotplug"
-msgstr ""
+msgstr "Controlar hotplug"
 
 #: src/modules/conf_randr/e_int_config_randr2.c:739
-#, fuzzy
 msgid "Lid Events"
-msgstr "Eventos"
+msgstr "Eventos de tapa"
 
 #: src/modules/conf_shelves/e_int_config_shelf.c:129
 #, c-format
@@ -7314,10 +7317,8 @@ msgstr "Selector de temas"
 msgid "Theme File Error"
 msgstr "Error en el archivo de tema"
 
-# RR: ¡Se supone que trata de la version E19 ahoar! Debería de ser un variable.
-# AA: Así nos vale para todas las versiones
 #: src/modules/conf_theme/e_int_config_theme.c:573
-#, fuzzy, c-format
+#, c-format
 msgid "%s is probably not an E theme!"
 msgstr "%s puede no ser un tema de Enlightenment"
 
@@ -7326,7 +7327,6 @@ msgid " Import..."
 msgstr "Importar..."
 
 #: src/modules/conf_theme/e_int_config_theme.c:728
-#, fuzzy
 msgid "Show startup splash"
 msgstr "Mostrar pantalla de inicio"
 
@@ -7349,7 +7349,8 @@ msgstr ""
 
 #: src/modules/conf_theme/e_int_config_theme_import.c:272
 msgid "Enlightenment was unable to import the theme<br>due to a copy error."
-msgstr "Enlightenment no pudo importar el tema debido a un error en la copia."
+msgstr ""
+"Enlightenment no pudo importar el tema<br>debido a un error en la copia."
 
 #: src/modules/conf_theme/e_int_config_transitions.c:46
 msgid "Transition Settings"
@@ -7514,7 +7515,6 @@ msgstr "Ventanas minimizadas"
 
 # AA: "Caption" yo creo que hace referencia a un texto de un boton
 #: src/modules/conf_window_manipulation/e_int_config_clientlist.c:176
-#, fuzzy
 msgid "Limit caption length"
 msgstr "Limitar el tamaño del texto"
 
@@ -7638,8 +7638,9 @@ msgid "Activate if on visible desk"
 msgstr "Activarse en escritorio visible"
 
 #: src/modules/conf_window_manipulation/e_int_config_focus.c:318
+#, fuzzy
 msgid "Hints"
-msgstr ""
+msgstr "Hints"
 
 #: src/modules/conf_window_manipulation/e_int_config_focus.c:322
 msgid "Warping"
@@ -7677,25 +7678,29 @@ msgstr "Pasar siempre los eventos de clicks a los programas"
 
 #: src/modules/conf_window_manipulation/e_int_config_focus.c:355
 msgid "Click raises the window"
-msgstr "Hacer click eleva la ventana"
+msgstr "Hacer clic eleva la ventana"
 
 #: src/modules/conf_window_manipulation/e_int_config_focus.c:358
 msgid "Click focuses the window"
-msgstr "Hacer click enfoca la ventana"
+msgstr "Hacer clic enfoca la ventana"
 
 #: src/modules/conf_window_manipulation/e_int_config_focus.c:361
 msgid "Refocus last window on desktop switch"
 msgstr "Re-enfocar la última ventana al cambiar de escritorio"
 
 #: src/modules/conf_window_manipulation/e_int_config_focus.c:364
+#, fuzzy
 msgid "Focus last focused window on lost focus"
-msgstr "Enfocar la última ventana focalizada al cambiar de escritorio"
+msgstr "Enfocar la última ventana focalizada al perder foco"
 
 # Hace referencia a diversas opciones de las ventanas
+# RR (2016): Para aclarar, sí, es el menu de las opciones de las ventanas, o sea, el grupo de ajustes que afecta la visualización de las ventanas. Lo traduciría más o menos literal o como opciones/preferencias de ventanas.
+# (conf_window_manipulation)
 #: src/modules/conf_window_manipulation/e_int_config_window_display.c:44
 #: src/modules/conf_window_manipulation/e_mod_main.c:18
+#, fuzzy
 msgid "Window Display"
-msgstr "Opciones"
+msgstr "Visualización de Ventanas"
 
 #: src/modules/conf_window_manipulation/e_int_config_window_display.c:131
 msgid "Border Icon"
@@ -7728,7 +7733,7 @@ msgid "Resize Geometry"
 msgstr "Geometría de redimensionado"
 
 # AA: Puede ser pantalla
-# RR: Tiene que ver con la manipulación de ventanas y por eso creo que es verbo. No he podido encontrar en los menús.
+# RR: Tiene que ver con la manipulación de ventanas y por eso creo que es verbo. No lo he podido encontrar en los menús.
 #: src/modules/conf_window_manipulation/e_int_config_window_display.c:160
 #: src/modules/fileman/e_mod_config.c:362 src/modules/tasks/e_mod_config.c:84
 #: src/modules/winlist/e_int_config_winlist.c:202
@@ -7892,13 +7897,13 @@ msgstr "Maximización"
 msgid "Automatically accept changes after:"
 msgstr "Aceptar cambios automáticamente después de:"
 
-# AA: Ambiguo
+# Especifica el número de píxeles que se puede mover una ventana con cada pulsación en el teclado.
 #: src/modules/conf_window_manipulation/e_int_config_window_geometry.c:245
 #, fuzzy
 msgid "Move by"
 msgstr "Mover por"
 
-# AA: Ambiguo
+# Especifica el número de píxeles que se puede redimensionar una ventana con cada pulsación en el teclado.
 #: src/modules/conf_window_manipulation/e_int_config_window_geometry.c:250
 #, fuzzy
 msgid "Resize by"
@@ -7951,6 +7956,7 @@ msgid "Follow Iconify"
 msgstr "Seguir minimizado"
 
 # AA: Abiguo
+# Refiere al grupo de las 7 preferencias anteriores, o sea, el comportamiento de las ventanas transitorias.
 #: src/modules/conf_window_manipulation/e_int_config_window_geometry.c:297
 #: src/modules/quickaccess/e_mod_config.c:308
 #, fuzzy
@@ -8049,7 +8055,7 @@ msgid ""
 "exist.<br>Please install <b>EConnMan</b> application."
 msgstr ""
 "Este módulo quiere ejecutar una aplicación externa. EConnMan no existe."
-"<br>Por favor, instale <b>EConnMan</b>"
+"<br>Por favor, instale <b>EConnMan</b>."
 
 #: src/modules/connman/e_mod_main.c:282
 msgid "Wifi On"
@@ -8078,23 +8084,23 @@ msgstr "Actualizar intervalo de sondeo"
 
 #: src/modules/cpufreq/e_mod_config.c:93 src/modules/cpufreq/e_mod_main.c:192
 msgid "Fast (4 ticks)"
-msgstr "Rápido (0.01 segundos)"
+msgstr "Rápido (0,01 segundos)"
 
 #: src/modules/cpufreq/e_mod_config.c:95 src/modules/cpufreq/e_mod_main.c:199
 msgid "Medium (8 ticks)"
-msgstr "Medio (0.08 segundos)"
+msgstr "Medio (0,08 segundos)"
 
 #: src/modules/cpufreq/e_mod_config.c:97 src/modules/cpufreq/e_mod_main.c:206
 msgid "Normal (32 ticks)"
-msgstr "Normal (0.32 segundos)"
+msgstr "Normal (0,32 segundos)"
 
 #: src/modules/cpufreq/e_mod_config.c:99 src/modules/cpufreq/e_mod_main.c:213
 msgid "Slow (64 ticks)"
-msgstr "Lento (0.64 segundos)"
+msgstr "Lento (0,64 segundos)"
 
 #: src/modules/cpufreq/e_mod_config.c:101 src/modules/cpufreq/e_mod_main.c:220
 msgid "Very Slow (256 ticks)"
-msgstr "Muy lento (2.56 segundos)"
+msgstr "Muy lento (2,56 segundos)"
 
 #: src/modules/cpufreq/e_mod_config.c:107
 #, fuzzy
@@ -8170,7 +8176,7 @@ msgid ""
 "module's<br>setfreq utility."
 msgstr ""
 "Hubo un error al tratar de establecer<br>la frequencia de la CPU a través de "
-"la<br> utilidad setfreq del módulo."
+"la<br>utilidad setfreq del módulo."
 
 #: src/modules/cpufreq/e_mod_main.c:533
 msgid ""
@@ -8222,7 +8228,7 @@ msgid ""
 "<br><br>sudo chown root %s<br>sudo chmod u+s,a+x %s<br>"
 msgstr ""
 "El binario 'freqset' del módulo cpufreq<br>no pertenece a root o no tiene "
-"activado<br>el bit 'setuid' Por favor, asegúrese de que<br>es así. Por "
+"activado<br>el bit 'setuid'. Por favor, asegúrese de que<br>es así. Por "
 "ejemplo:<br><br>sudo chown root %s<br>sudo chmod u+s,a+x %s<br>"
 
 #: src/modules/cpufreq/e_mod_main.c:1412
@@ -8273,8 +8279,9 @@ msgid "Move Down"
 msgstr "Mover abajo"
 
 #: src/modules/everything/evry_config.c:383
+#, fuzzy
 msgid "Enabled"
-msgstr "Activado"
+msgstr "Habilitado"
 
 #: src/modules/everything/evry_config.c:389
 msgid "Show in \"All\""
@@ -8504,7 +8511,7 @@ msgstr "Copiar al portapapeles"
 
 #: src/modules/everything/evry_plug_files.c:1302
 msgid "Copy To ..."
-msgstr "Copiar a ..."
+msgstr "Copiar a..."
 
 #: src/modules/everything/evry_plug_files.c:1307
 msgid "Move To ..."
@@ -8579,7 +8586,7 @@ msgstr "Enviar al escritorio"
 
 #: src/modules/everything/evry_plugin.c:177
 #: src/modules/everything/evry_plugin.c:208
-#, fuzzy, c-format
+#, c-format
 msgid "Show %s Plugin"
 msgstr "Mostrar Plugin %s"
 
@@ -8608,24 +8615,24 @@ msgid ""
 "</hilight> toggle list view modes<br>    <hilight>&lt;ctrl+3&gt;</hilight> "
 "toggle thumb view modes"
 msgstr ""
-"  Bien, aquí viene la explicación de <hilight>Everything (Todo)</hilight>..."
-"<br> Simplemente escribe unas pocas letras sobre lo que buscas.<br> Usa el "
-"cursor <hilight>&lt;arriba/abajo&gt;</hilight> para elegir.<br> Pulsa "
-"<hilight>&lt;TAB&gt;</hilight> para seleccionar una acción, después "
-"<hilight>&lt;ENTER&gt;</hilight>.<br> Esta página no volverá a aparecer la "
-"próxima vez que ejecute <hilight>Everything</hilight>.<br>    <hilight>&lt;"
-"ESC&gt;</hilight> para cerrar esta ventana<br>    <hilight>&lt;?&gt;</"
-"hilight> muestra esta ventana<br>    <hilight>&lt;ENTER&gt;</hilight> "
-"ejecutar acción<br>    <hilight>&lt;CTRL+ENTER&gt;</hilight> ejecutar acción "
-"y continuar<br>    <hilight>&lt;TAB&gt;</hilight> alternar selectores<br>    "
-"<hilight>&lt;CTRL+TAB&gt;</hilight> completar entrada (depende del "
-"plugin)<br>    <hilight>&lt;CTRL+'x''&gt;</hilight> ir al plugin que empieza "
-"por 'x'<br>    <hilight>&lt;CTRL+izquiera/derecha&gt;</hilight> recorrer los "
-"plugins<br>    <hilight>&lt;CTRL+arriba/debajo&gt;</hilight> ir al primer/"
-"último<br>    <hilight>&lt;CTRL+1&gt;</hilight> alternar modos de vista "
-"(sale de está ventana ;)<br>    <hilight>&lt;CTRL+2&gt;</hilight> alternar "
-"modos de vista de lista<br>    <hilight>&lt;CTRL+3&gt;</hilight> alternar "
-"modos de vista de miniaturas"
+"  Bien, aquí viene la explicación de <hilight>Everything</hilight>....<br> "
+"Simplemente escribe unas pocas letras sobre lo que busca.<br> Use el cursor "
+"<hilight>&lt;arriba/abajo&gt;</hilight> para elegir.<br> Pulse <hilight>&lt;"
+"TAB&gt;</hilight> para seleccionar una acción, después <hilight>&lt;ENTER&gt;"
+"</hilight>.<br> Esta página no volverá a aparecer la próxima vez que ejecute "
+"<hilight>Everything</hilight>.<br>    <hilight>&lt;ESC&gt;</hilight> para "
+"cerrar esta ventana<br>    <hilight>&lt;?&gt;</hilight> muestra esta "
+"ventana<br>    <hilight>&lt;ENTER&gt;</hilight> ejecutar acción<br>    "
+"<hilight>&lt;CTRL+ENTER&gt;</hilight> ejecutar acción y continuar<br>    "
+"<hilight>&lt;TAB&gt;</hilight> alternar selectores<br>    <hilight>&lt;CTRL"
+"+TAB&gt;</hilight> completar entrada (depende del plugin)<br>    "
+"<hilight>&lt;CTRL+'x''&gt;</hilight> ir al plugin que empieza por 'x'<br>    "
+"<hilight>&lt;CTRL+izquiera/derecha&gt;</hilight> recorrer los plugins<br>    "
+"<hilight>&lt;CTRL+arriba/debajo&gt;</hilight> ir al primer/último<br>    "
+"<hilight>&lt;CTRL+1&gt;</hilight> alternar modos de vista (sale de está "
+"ventana ;)<br>    <hilight>&lt;CTRL+2&gt;</hilight> alternar modos de vista "
+"de lista<br>    <hilight>&lt;CTRL+3&gt;</hilight> alternar modos de vista de "
+"miniaturas"
 
 #: src/modules/everything/evry_view_tabs.c:93
 msgid "Back"
@@ -8864,15 +8871,15 @@ msgid "Max File Size For Thumbnailing"
 msgstr "Tamaño máximo para las miniaturas"
 
 #: src/modules/fileman/e_mod_config.c:420
+#, fuzzy
 msgid "Spring Delay"
-msgstr "Retardo para abrir después de arrastrar"
+msgstr "Retraso para abrir después de arrastrar"
 
 #: src/modules/fileman/e_mod_config.c:434
 #: src/modules/fileman/e_mod_config.c:437
 #: src/modules/fileman/e_mod_config.c:440
 #: src/modules/fileman/e_mod_config.c:443
-#: src/modules/fileman/e_mod_config.c:446
-#: src/modules/gadman/e_mod_config.c:208
+#: src/modules/fileman/e_mod_config.c:446 src/modules/gadman/e_mod_config.c:208
 msgid "Mode"
 msgstr "Modo"
 
@@ -8901,8 +8908,9 @@ msgid "Clamp video size"
 msgstr "Limitar tamaño de vídeo"
 
 #: src/modules/fileman/e_mod_config.c:473
+#, fuzzy
 msgid "Tooltip delay"
-msgstr "Retardo:"
+msgstr "Retraso"
 
 #: src/modules/fileman/e_mod_config.c:475
 #, c-format
@@ -9047,6 +9055,7 @@ msgstr "Mostrar/ocultar gadgets"
 
 # Parece incorrecta la traduducción pero no!!
 # Hazme caso xDDD Una vez lo veas, tiene mucho sentido
+# RR (2016): Grupo de preferencias del escritorio (capas, fondos, animación, etc.)
 #: src/modules/gadman/e_mod_main.c:183
 msgid "Change Gadgets"
 msgstr "Gadgets de escritorio"
@@ -9096,17 +9105,18 @@ msgstr "Crear una nueva fuente para IBar"
 msgid "Enter a name for this new source:"
 msgstr "Introducir un nombre para la nueva fuente:"
 
+# RR: "bar source" = fuente de la barra
 #: src/modules/ibar/e_mod_config.c:204
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "You requested to delete \"%s\".<br><br>Are you sure you want to delete this "
 "bar source?"
-msgstr "Pidió borrar \"%s\".<br><br>¿Está seguro de querer borrar esta barra? "
+msgstr "Pidió borrar \"%s\".<br><br>¿Está seguro de querer borrar esta fuente?"
 
 #: src/modules/ibar/e_mod_config.c:208
 #, fuzzy
 msgid "Are you sure you want to delete this bar source?"
-msgstr "¿Está seguro de querer borrar la fuente de esta barra?"
+msgstr "¿Está seguro de querer borrar la fuente de esta fuente?"
 
 #: src/modules/ibar/e_mod_main.c:364 src/modules/ibar/e_mod_main.c:2830
 msgid "IBar"
@@ -9216,9 +9226,9 @@ msgid ""
 "The error code was <hilight>%i</hilight>.<br>This is bad and should not be "
 "happening. Please report this bug."
 msgstr ""
-"La autentificación a través de PAM tuvo errores configurando la<br>sesión de "
+"La autentificación a través de PAM tuvo errores configurando la sesión<br>de "
 "autenticación. El código de error fue <hilight>%i</hilight>.<br>Esto es malo "
-"y no debería pasar. Por<br>favor, avise de este error."
+"y no debería pasar. Por favor, avise de este error."
 
 #: src/modules/mixer/e_mod_main.c:99
 msgid "New volume"
@@ -9226,7 +9236,7 @@ msgstr "Nuevo volumen"
 
 #: src/modules/mixer/e_mod_main.c:112
 msgid "Emix"
-msgstr ""
+msgstr "Emix"
 
 #: src/modules/mixer/e_mod_main.c:115
 msgid "Volume changed"
@@ -9241,7 +9251,6 @@ msgid "Decrease Volume"
 msgstr "Bajar volumen"
 
 #: src/modules/mixer/e_mod_main.c:252
-#, fuzzy
 msgid "Mute volume"
 msgstr "Silenciar"
 
@@ -9345,18 +9354,16 @@ msgid "Ignore replace ID"
 msgstr "Ignorar sustituir ID"
 
 #: src/modules/notification/e_mod_main.c:49
-#, fuzzy
 msgid "Entered Presentation Mode"
-msgstr "Empezar modo presentación"
+msgstr "Empezó el modo presentación"
 
 #: src/modules/notification/e_mod_main.c:50
-#, fuzzy
 msgid ""
 "Enlightenment has now entered <b>presentation</b> mode.<br>During "
 "presentation mode, screen saver, lock and power saving will be disabled so "
 "you are not interrupted."
 msgstr ""
-"Enlightenment está en modo <b>presentación</b>.<br>En este modo, el "
+"Enlightenment ahora está en modo <b>presentación</b>.<br>En este modo, el "
 "salvapantallas, bloqueo de escritorio y ahorro de energía están "
 "deshabilitados."
 
@@ -9382,7 +9389,7 @@ msgid ""
 "Enlightenment is in <b>offline</b> mode.<br>During offline mode, modules "
 "that use network will stop polling remote services."
 msgstr ""
-"Enlightenment está en modo <b>desconectado</b>.<br/>Los módulos que usen la "
+"Enlightenment está en modo <b>desconectado</b>.<br>Los módulos que usen la "
 "red no responderán a servicios remotos."
 
 #: src/modules/notification/e_mod_main.c:79
@@ -9463,7 +9470,7 @@ msgid ""
 "configuration and set<br>the program to run.<br>"
 msgstr ""
 "Hace falta configurar el gestor de paquetes preferido.<br>Abra el módulo de "
-"preferencias y asigne<br>el programa a ejecutar."
+"preferencias y asigne<br>el programa a ejecutar.<br>"
 
 #: src/modules/packagekit/e_mod_packagekit.c:98
 msgid "No information available"
@@ -9574,7 +9581,7 @@ msgstr "%1.1f segundos"
 #: src/modules/pager_plain/e_mod_config.c:256
 #, fuzzy
 msgid "Pager action popup height"
-msgstr "Altura de la acción"
+msgstr "Altura de la acción emergente"
 
 #: src/modules/pager/e_mod_config.c:257
 #: src/modules/pager_plain/e_mod_config.c:266
@@ -9680,7 +9687,7 @@ msgstr ""
 
 #: src/modules/quickaccess/e_mod_config.c:226
 msgid "Enter a unique name for this entry"
-msgstr "Introducizca un nombre único para esta entrada"
+msgstr "Introduce un nombre único para esta entrada"
 
 #: src/modules/quickaccess/e_mod_config.c:247
 msgid "Disable Warning Dialogs"
@@ -9750,9 +9757,12 @@ msgid ""
 "you can add a data.item to"
 msgstr ""
 "Esta opción está pensada para usarse con aplicaciones<br>de terminal, que "
-"creen terminales persistentes que se<br>reabran cuando se cierren (tipo "
-"Quake). Si quiere,<br>puede informar de un bug si es una terminal que "
-"puede<bt>cambiar el nombre de la ventana.<br>"
+"creen terminales persistentes que se<br>\n"
+"reabran cuando se cierren (tipo Quake).<br>O la aplicación elegida no es una "
+"terminal o se desconoce<br>el indicador cmdline para cambiar la ventana de "
+"la<br>terminal. Si quiere, puede informar de un bug si es una<br>terminal "
+"que puede cambiar el nombre de la ventana.<br>Como alternativa, puede "
+"agregar un data.item a "
 
 #: src/modules/quickaccess/e_mod_quickaccess.c:326
 msgid "Like so:"
@@ -9783,16 +9793,17 @@ msgstr ""
 "No se puede asignar relanzamiento para un cuadro de dialogo interno de E!"
 
 #: src/modules/quickaccess/e_mod_quickaccess.c:380
-#, c-format
+#, fuzzy, c-format
 msgid ""
 "The selected window created with name:<br>%s<br>and class:<br>%s<br>could "
 "not be found in the Quickaccess app database<br>This means that either the "
 "app is unknown to us<br>or it is not intended for use with this option."
 "<br>Please choose an action to take:"
 msgstr ""
-"La ventana:<br>%s<br>y clase:<br>%s<br>no se pudo encontrar en la base de "
-"datos de Acceso rápido.<br>O bien se desconoce la aplicación o no está "
-"pensada para usarse con está opción.<br>Por favor, elija una acción:"
+"La ventana que se creó con nombre:<br>%s<br>y clase:<br>%s<br>no se pudo "
+"encontrar en la base de datos de Acceso rápido.<br>O bien se desconoce la "
+"aplicación o no está pensada para usarse con está opción.<br>Por favor, "
+"elija una acción:"
 
 #: src/modules/quickaccess/e_mod_quickaccess.c:391
 #: src/modules/quickaccess/e_mod_quickaccess.c:1015
@@ -10283,7 +10294,7 @@ msgid "Fahrenheit"
 msgstr "Fahrenheit"
 
 # AA: Unidades de medida o Mostrar unidades?
-# RR: El primero - es para elegir entre Celsius y Fahrenheit. ¿Ponemos solamente Unidades para dejar más espacio.
+# RR: El primero - es para elegir entre Celsius y Fahrenheit. ¿Ponemos solamente Unidades para dejar más espacio?
 #: src/modules/temperature/e_mod_config.c:229
 msgid "Display Units"
 msgstr "Unidades"
@@ -10584,7 +10595,7 @@ msgstr "Seleccione el tamaño preferido"
 
 #: src/modules/wizard/page_060.c:29
 msgid "Focus:"
-msgstr "Foco"
+msgstr "Foco:"
 
 #: src/modules/wizard/page_060.c:33
 msgid "Whenever a window is clicked"
@@ -10612,7 +10623,7 @@ msgstr "Soporte Connman desactivado"
 
 #: src/modules/wizard/page_110.c:26
 msgid "Install/Enable Connman for network management support"
-msgstr "Instale/Habilite Connman para poder gestionar la red"
+msgstr "Instalar/Habilitar Connman para poder gestionar la red"
 
 #: src/modules/wizard/page_110.c:163
 msgid "Checking to see if Connman exists"
