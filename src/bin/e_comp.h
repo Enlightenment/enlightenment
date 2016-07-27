@@ -70,6 +70,10 @@ typedef struct E_Comp_Screen_Iface
    void (*apply)(void);
    /* set dpms (on, standby, suspend, off) */
    void (*dpms)(int);
+   /* is key event eaten */
+   Eina_Bool (*key_down)(Ecore_Event_Key *ev);
+   /* is key event eaten */
+   Eina_Bool (*key_up)(Ecore_Event_Key *ev);
 } E_Comp_Screen_Iface;
 
 struct _E_Comp

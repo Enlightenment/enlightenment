@@ -736,6 +736,41 @@ _drm2_dpms(int set)
      }
 }
 
+static Eina_Bool
+_drm2_key_down(Ecore_Event_Key *ev)
+{
+   int code;
+
+   code = (ev->keycode - 8);
+
+   if ((ev->modifiers & ECORE_EVENT_MODIFIER_CTRL) &&
+       ((ev->modifiers & ECORE_EVENT_MODIFIER_ALT) ||
+           (ev->modifiers & ECORE_EVENT_MODIFIER_ALTGR)) &&
+       (code >= KEY_F1) && (code <= KEY_F8))
+     {
+        Ecore_Drm2_Device *dev;
+        int vt;
+
+        vt = (code - KEY_F1 + 1);
+
+        dev = ecore_evas_data_get(e_comp->ee, "device");
+        if (dev)
+          {
+             ecore_drm2_device_vt_set(dev, vt);
+             return EINA_TRUE;
+          }
+     }
+
+   return EINA_FALSE;
+}
+
+static Eina_Bool
+_drm2_key_up(Ecore_Event_Key *ev)
+{
+   (void)ev;
+   return EINA_FALSE;
+}
+
 static void
 _drm2_read_pixels(E_Comp_Wl_Output *output, void *pixels)
 {
@@ -1143,6 +1178,8 @@ static E_Comp_Screen_Iface drmiface =
    .create = _drm2_randr_create,
    .apply = _drm2_randr_apply,
    .dpms = _drm2_dpms,
+   .key_down = _drm2_key_down,
+   .key_up = _drm2_key_up,
 #else
    .create = _drm_randr_create,
    .apply = _drm_randr_apply,
