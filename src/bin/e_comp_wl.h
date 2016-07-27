@@ -97,17 +97,17 @@ typedef struct E_Comp_Wl_Extension_Data
 {
    struct
    {
-      struct wl_resource *global;
+      struct wl_global *global;
       struct wl_client *client;
       void (*read_pixels)(E_Comp_Wl_Output *output, void *pixels);
    } screenshooter;
     struct
     {
-       struct wl_resource *global;
+       struct wl_global *global;
     } session_recovery;
    struct
    {
-       struct wl_resource *global;
+       struct wl_global *global;
    } www;
 } E_Comp_Wl_Extension_Data;
 
