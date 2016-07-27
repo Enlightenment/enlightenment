@@ -221,11 +221,6 @@ static const struct www_interface _e_www_interface =
 
 #define GLOBAL_BIND_CB(NAME, IFACE, ...) \
 static void \
-_e_comp_wl_##NAME##_cb_unbind(struct wl_resource *resource EINA_UNUSED) \
-{ \
-   e_comp_wl->extensions->NAME.global = NULL; \
-} \
-static void \
 _e_comp_wl_##NAME##_cb_bind(struct wl_client *client, void *data EINA_UNUSED, uint32_t version EINA_UNUSED, uint32_t id) \
 { \
    struct wl_resource *res; \
@@ -237,8 +232,7 @@ _e_comp_wl_##NAME##_cb_bind(struct wl_client *client, void *data EINA_UNUSED, ui
         return;\
      }\
 \
-   e_comp_wl->extensions->NAME.global = res; \
-   wl_resource_set_implementation(res, &_e_##NAME##_interface, NULL, _e_comp_wl_##NAME##_cb_unbind);\
+   wl_resource_set_implementation(res, &_e_##NAME##_interface, NULL, NULL);\
 }
 
 GLOBAL_BIND_CB(session_recovery, zwp_e_session_recovery_interface)
@@ -248,12 +242,16 @@ GLOBAL_BIND_CB(www, www_interface)
 
 #define GLOBAL_CREATE_OR_RETURN(NAME, IFACE) \
    do { \
-      if (!wl_global_create(e_comp_wl->wl.disp, &(IFACE), 1, \
-                            NULL, _e_comp_wl_##NAME##_cb_bind)) \
+      struct wl_global *global; \
+\
+      global = wl_global_create(e_comp_wl->wl.disp, &(IFACE), 1, \
+                                NULL, _e_comp_wl_##NAME##_cb_bind); \
+      if (!global) \
         { \
            ERR("Could not add %s to wayland globals", #IFACE); \
            return EINA_FALSE; \
         } \
+      e_comp_wl->extensions->NAME.global = global; \
    } while (0)
 
 static Eina_Bool
@@ -275,6 +273,8 @@ _dmabuf_add(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
 EINTERN Eina_Bool
 e_comp_wl_extensions_init(void)
 {
+   e_comp_wl->extensions = E_NEW(E_Comp_Wl_Extension_Data, 1);
+
    /* try to add session_recovery to wayland globals */
    GLOBAL_CREATE_OR_RETURN(session_recovery, zwp_e_session_recovery_interface);
    GLOBAL_CREATE_OR_RETURN(screenshooter, screenshooter_interface);
@@ -285,6 +285,5 @@ e_comp_wl_extensions_init(void)
    e_client_hook_add(E_CLIENT_HOOK_MOVE_BEGIN, _e_comp_wl_extensions_client_move_begin, NULL);
    e_client_hook_add(E_CLIENT_HOOK_MOVE_END, _e_comp_wl_extensions_client_move_end, NULL);
 
-   e_comp_wl->extensions = E_NEW(E_Comp_Wl_Extension_Data, 1);
    return EINA_TRUE;
 }
