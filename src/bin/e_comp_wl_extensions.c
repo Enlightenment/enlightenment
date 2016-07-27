@@ -240,11 +240,11 @@ GLOBAL_BIND_CB(screenshooter, screenshooter_interface)
 GLOBAL_BIND_CB(www, www_interface)
 
 
-#define GLOBAL_CREATE_OR_RETURN(NAME, IFACE) \
+#define GLOBAL_CREATE_OR_RETURN(NAME, IFACE, VERSION) \
    do { \
       struct wl_global *global; \
 \
-      global = wl_global_create(e_comp_wl->wl.disp, &(IFACE), 1, \
+      global = wl_global_create(e_comp_wl->wl.disp, &(IFACE), VERSION, \
                                 NULL, _e_comp_wl_##NAME##_cb_bind); \
       if (!global) \
         { \
@@ -276,9 +276,9 @@ e_comp_wl_extensions_init(void)
    e_comp_wl->extensions = E_NEW(E_Comp_Wl_Extension_Data, 1);
 
    /* try to add session_recovery to wayland globals */
-   GLOBAL_CREATE_OR_RETURN(session_recovery, zwp_e_session_recovery_interface);
-   GLOBAL_CREATE_OR_RETURN(screenshooter, screenshooter_interface);
-   GLOBAL_CREATE_OR_RETURN(www, www_interface);
+   GLOBAL_CREATE_OR_RETURN(session_recovery, zwp_e_session_recovery_interface, 1);
+   GLOBAL_CREATE_OR_RETURN(screenshooter, screenshooter_interface, 1);
+   GLOBAL_CREATE_OR_RETURN(www, www_interface, 1);
 
    ecore_event_handler_add(ECORE_WL2_EVENT_SYNC_DONE, _dmabuf_add, NULL);
 
