@@ -298,7 +298,11 @@ _e_shell_surface_cb_toplevel_set(struct wl_client *client EINA_UNUSED, struct wl
    ec->netwm.type = E_WINDOW_TYPE_NORMAL;
    ec->comp_data->set_win_type = EINA_TRUE;
    if ((!ec->lock_user_maximize) && (ec->maximized))
-     e_client_unmaximize(ec, E_MAXIMIZE_BOTH);
+     {
+        e_client_unmaximize(ec, E_MAXIMIZE_BOTH);
+        ec->comp_data->shell.set.maximize = 0;
+        ec->comp_data->shell.set.unmaximize = 1;
+     }
    if ((!ec->lock_user_fullscreen) && (ec->fullscreen))
      e_client_unfullscreen(ec);
    EC_CHANGED(ec);
@@ -402,6 +406,8 @@ static void
 _e_shell_surface_cb_maximized_set(struct wl_client *client EINA_UNUSED, struct wl_resource *resource, struct wl_resource *output_resource EINA_UNUSED)
 {
    E_Client *ec;
+   int w, h;
+   unsigned int edges = 0;
 
    /* DBG("WL_SHELL: Surface Maximize: %d", wl_resource_get_id(resource)); */
 
@@ -415,17 +421,31 @@ _e_shell_surface_cb_maximized_set(struct wl_client *client EINA_UNUSED, struct w
      }
    if (e_object_is_del(E_OBJECT(ec))) return;
 
-   /* tell E to maximize this client */
-   if (!ec->lock_user_maximize)
+   if (!ec->comp_data->mapped)
      {
-        unsigned int edges = 0;
-
-        e_client_maximize(ec, ((e_config->maximize_policy & E_MAXIMIZE_TYPE) |
-                               E_MAXIMIZE_BOTH));
-
-        edges = (WL_SHELL_SURFACE_RESIZE_TOP | WL_SHELL_SURFACE_RESIZE_LEFT);
-        wl_shell_surface_send_configure(resource, edges, ec->w, ec->h);
+        ec->comp_data->map_maximized = EINA_TRUE;
+        return;
      }
+
+   if (ec->lock_user_maximize) return;
+   if (e_config->window_maximize_animate && (!ec->maximize_anims_disabled))
+     w = ec->w, h = ec->h;
+   else
+     {
+        switch (e_config->maximize_policy & E_MAXIMIZE_TYPE)
+          {
+           case E_MAXIMIZE_FULLSCREEN:
+             w = ec->zone->w, h = ec->zone->h;
+             break;
+           default:
+             e_zone_useful_geometry_get(ec->zone, NULL, NULL, &w, &h);
+          }
+     }
+
+   ec->comp_data->shell.set.maximize = 1;
+   ec->comp_data->shell.set.unmaximize = 0;
+   edges = (WL_SHELL_SURFACE_RESIZE_TOP | WL_SHELL_SURFACE_RESIZE_LEFT);
+   wl_shell_surface_send_configure(resource, edges, w, h);
 }
 
 static void
@@ -573,6 +593,20 @@ _e_shell_surface_map(struct wl_resource *resource)
         return;
      }
    if (e_object_is_del(E_OBJECT(ec))) return;
+
+   if (ec->comp_data->map_maximized)
+     {
+        unsigned int edges = 0;
+
+        ec->comp_data->shell.set.maximize = 1;
+        ec->comp_data->shell.set.unmaximize = 0;
+
+        e_client_maximize(ec, ((e_config->maximize_policy & E_MAXIMIZE_TYPE) |
+                               E_MAXIMIZE_BOTH));
+
+        edges = (WL_SHELL_SURFACE_RESIZE_TOP | WL_SHELL_SURFACE_RESIZE_LEFT);
+        wl_shell_surface_send_configure(resource, edges, ec->w, ec->h);
+      }
 
    /* map this surface if needed */
    if ((!ec->comp_data->mapped) && (e_pixmap_usable_get(ec->pixmap)))

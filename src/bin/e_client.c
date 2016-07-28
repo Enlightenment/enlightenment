@@ -3618,7 +3618,6 @@ e_client_maximize_geometry_get(const E_Client *ec, E_Maximize max, int *mx, int 
    int zx, zy, zw, zh;
    int ecx, ecy, ecw, ech;
 
-   if (e_client_util_ignored_get(ec)) return EINA_FALSE;
    zx = zy = zw = zh = 0;
 
    switch (max & E_MAXIMIZE_TYPE)
