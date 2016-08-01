@@ -1709,8 +1709,12 @@ _e_comp_x_configure_request(void *data  EINA_UNUSED, int type EINA_UNUSED, Ecore
    e_comp_object_frame_xy_adjust(ec->frame, x, y, &x, &y);
    e_comp_object_frame_wh_adjust(ec->frame, w, h, &w, &h);
 
-   move = (x != ec->x) || (y != ec->y);
-   resize = (w != ec->w) || (h != ec->h);
+   if ((ev->value_mask & ECORE_X_WINDOW_CONFIGURE_MASK_X) ||
+       (ev->value_mask & ECORE_X_WINDOW_CONFIGURE_MASK_Y))
+     move = (x != ec->x) || (y != ec->y);
+   if ((ev->value_mask & ECORE_X_WINDOW_CONFIGURE_MASK_W) ||
+       (ev->value_mask & ECORE_X_WINDOW_CONFIGURE_MASK_H))
+     resize = (w != ec->w) || (h != ec->h);
 
    if (move && (!ec->lock_client_location))
      {
