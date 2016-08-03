@@ -1,5 +1,9 @@
 #include "config.h"
 
+#ifdef HAVE_DRM2
+#  define EFL_BETA_API_SUPPORT
+#endif
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdarg.h>
@@ -19,7 +23,6 @@
 # ifdef HAVE_WL_DRM
 #  include <Ecore_Input.h>
 #  ifdef HAVE_DRM2
-#   define EFL_BETA_API_SUPPORT
 #   include <drm_fourcc.h>
 #   include <Ecore_Drm2.h>
 #  else
