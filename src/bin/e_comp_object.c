@@ -3751,8 +3751,8 @@ e_comp_object_native_surface_set(Evas_Object *obj, Eina_Bool set)
    evas_object_image_native_surface_set(cw->obj, set && (!cw->blanked) ? (cw->ns ?: &ns) : NULL);
    EINA_LIST_FOREACH(cw->obj_mirror, l, o)
      {
-        evas_object_image_alpha_set(o, !!cw->ns ? 1 : cw->ec->argb);
         evas_object_image_native_surface_set(o, set ? (cw->ns ?: &ns) : NULL);
+        evas_object_image_alpha_set(o, !!cw->ns ? 1 : cw->ec->argb);
      }
 }
 
