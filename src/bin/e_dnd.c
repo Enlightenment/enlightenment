@@ -1072,8 +1072,6 @@ _e_drag_end(int x, int y)
    _drag_current->cb.finished = NULL;
 
    e_object_del(E_OBJECT(_drag_current));
-   if (e_comp->comp_type == E_PIXMAP_TYPE_WL)
-     e_comp_ungrab_input(1, 1);
 }
 
 static void
@@ -1152,6 +1150,10 @@ _e_drag_free(E_Drag *drag)
         if (_drag_win != e_comp->ee_win)
           ecore_x_window_free(_drag_win);
         ecore_x_window_shadow_tree_flush();
+     }
+   else
+     {
+        e_comp_ungrab_input(1, 1);
      }
 #endif
    e_bindings_disabled_set(0);
