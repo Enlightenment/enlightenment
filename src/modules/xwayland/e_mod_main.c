@@ -9,6 +9,7 @@
 EINTERN void dnd_init(void);
 EINTERN void dnd_shutdown(void);
 
+static Ecore_Event_Handler *sync_handler;
 static E_Module *xwl_init(E_Module *m);
 static void xwl_shutdown(void);
 
@@ -337,9 +338,13 @@ setup_lock(void)
 }
 
 static Eina_Bool
-error_dialog()
+_cb_sync_done(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
 {
    e_util_dialog_internal(_("Error"), _("Cannot launch XWayland from X11 display."));
+
+   ecore_event_handler_del(sync_handler);
+   sync_handler = NULL;
+
    return EINA_FALSE;
 }
 
@@ -353,7 +358,7 @@ xwl_init(E_Module *m)
 
    if (getenv("DISPLAY"))
      {
-        ecore_timer_add(1.0, error_dialog, NULL);
+        sync_handler = ecore_event_handler_add(ECORE_WL2_EVENT_SYNC_DONE, _cb_sync_done, NULL);
         return NULL;
      }
 
