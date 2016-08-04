@@ -41,6 +41,7 @@ AC_USE_SYSTEM_EXTENSIONS
 AC_PROG_MKDIR_P
 AC_C_BIGENDIAN
 AC_PROG_CC_C99
+AC_PROG_CXX
 AM_PROG_CC_C_O
 AC_FUNC_ALLOCA
 
@@ -811,6 +812,13 @@ define([CHECK_MODULE_WL_WEEKEYBOARD],
 ])
 AM_CONDITIONAL([HAVE_WL_WEEKEYBOARD], [test "x${WL_WEEKEYBOARD}" = "xtrue"])
 
+AM_CONDITIONAL(HAVE_IMFOS, false)
+define([CHECK_MODULE_IMFOS],
+[
+  AC_E_CHECK_PKG(IMFOS, [ libv4l2 opencv ], [], [])
+])
+
+
 AC_E_OPTIONAL_MODULE([ibar], true)
 AC_E_OPTIONAL_MODULE([clock], true)
 AC_E_OPTIONAL_MODULE([pager], true)
@@ -871,6 +879,7 @@ AC_E_OPTIONAL_MODULE([geolocation], true)
 AC_E_OPTIONAL_MODULE([xwayland], $have_wayland_dep, [CHECK_MODULE_XWAYLAND])
 AC_E_OPTIONAL_MODULE([wireless], true)
 AC_E_OPTIONAL_MODULE([time], true)
+AC_E_OPTIONAL_MODULE([imfos], true, [CHECK_MODULE_IMFOS])
 
 if test "x${HAVE_WL_X11}" != "xyes" && test "x${have_wayland}" = "xyes" && test "x${HAVE_XWAYLAND}" != "xyes"; then
   AC_DEFINE_UNQUOTED([HAVE_WAYLAND_ONLY],[1],[enable wayland-only version of enlightenment])
@@ -1082,6 +1091,7 @@ src/modules/packagekit/module.desktop
 src/modules/wl_desktop_shell/module.desktop
 src/modules/wireless/module.desktop
 src/modules/time/module.desktop
+src/modules/imfos/module.desktop
 data/xsession/enlightenment.desktop
 data/etc/sysactions.conf
 data/units/enlightenment.service
