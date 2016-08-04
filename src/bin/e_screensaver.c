@@ -547,6 +547,8 @@ e_screensaver_notidle(void)
      }
    else if (_e_screensaver_timeout)
      _e_screensaver_timer = ecore_timer_add(_e_screensaver_timeout, _e_screensaver_idle_timeout_cb, (void*)1);
+#else
+   ecore_x_screensaver_reset();
 #endif
 }
 
