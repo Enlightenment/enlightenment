@@ -2,6 +2,7 @@
 
 #ifdef HAVE_WAYLAND
 # include "e_comp_wl.h"
+# include <uuid.h>
 # ifndef EGL_TEXTURE_FORMAT
 #  define EGL_TEXTURE_FORMAT		0x3080
 # endif
@@ -18,7 +19,6 @@
 #endif
 
 #include <sys/mman.h>
-#include <uuid.h>
 
 static Eina_Hash *pixmaps[2] = {NULL};
 static Eina_Hash *aliases[2] = {NULL};
