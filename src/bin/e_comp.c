@@ -1485,14 +1485,12 @@ e_comp_top_window_at_xy_get(Evas_Coord x, Evas_Coord y)
    if (!objs) return e_comp->ee_win;
    EINA_LIST_FOREACH(objs, l, o)
      {
-        if (evas_object_repeat_events_get(o)) continue;
         ec = evas_object_data_get(o, "E_Client");
         if (ec)
           {
              eina_list_free(objs);
              return e_client_util_pwin_get(ec);
           }
-        break;
      }
    eina_list_free(objs);
    return e_comp->ee_win;
