@@ -2436,7 +2436,10 @@ _e_comp_wl_client_cb_del(void *data EINA_UNUSED, E_Client *ec)
 
    /* remove sub list */
    EINA_LIST_FREE(ec->comp_data->sub.list, subc)
-     subc->comp_data->sub.data->parent = NULL;
+     {
+        if (!e_object_is_del(E_OBJECT(subc)))
+          subc->comp_data->sub.data->parent = NULL;
+     }
 
    if ((ec->parent) && (ec->parent->modal == ec))
      {
