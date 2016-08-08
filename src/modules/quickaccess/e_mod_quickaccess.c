@@ -313,8 +313,7 @@ _e_qa_entry_relaunch_setup_help(void *data, E_Dialog *dia)
    entry->dia = NULL;
    entry->dia = dia = e_dialog_new(NULL, "E", "_quickaccess_cmd_help_dialog");
 
-   snprintf(buf, sizeof(buf), "%s<br>%s/e-module-quickaccess.edj<br>%s<br>"
-                               "data.item: \"%s\" \"--OPT\";", _("The relaunch option is meant to be used<br>"
+   snprintf(buf, sizeof(buf), _("The relaunch option is meant to be used<br>"
                                "with terminal applications to create a persistent<br>"
                                "terminal which reopens when closed, generally seen<br>"
                                "in quake-style drop-down terminals.<br>"
@@ -322,9 +321,12 @@ _e_qa_entry_relaunch_setup_help(void *data, E_Dialog *dia)
                                "or the cmdline flag for changing the terminal's window<br>"
                                "name is not known. Feel free to submit a bug report if this<br>"
                                "is a terminal which can change its window name.<br>"
-                               "Alternatively, you can add a data.item to"),
+                               "Alternatively, you can add a data.item to<br>"
+                               "%s/e-module-quickaccess.edj<br>"
+                               "Like so:<br>"
+                               "data.item: \"%s\" \"--OPT\";"),
                                e_module_dir_get(qa_mod->module),
-                               _("Like so:"), entry->class);
+                               entry->class);
 
    e_dialog_title_set(dia, _("Quickaccess Help"));
    e_dialog_icon_set(dia, "enlightenment", 64);
