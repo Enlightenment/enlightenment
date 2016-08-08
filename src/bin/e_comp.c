@@ -1477,22 +1477,13 @@ E_API Ecore_Window
 e_comp_top_window_at_xy_get(Evas_Coord x, Evas_Coord y)
 {
    E_Client *ec;
-   Eina_List *objs, *l;
    Evas_Object *o;
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(e_comp, 0);
-   objs = evas_objects_at_xy_get(e_comp->evas, x, y, 0, 0);
-   if (!objs) return e_comp->ee_win;
-   EINA_LIST_FOREACH(objs, l, o)
-     {
-        ec = evas_object_data_get(o, "E_Client");
-        if (ec)
-          {
-             eina_list_free(objs);
-             return e_client_util_pwin_get(ec);
-          }
-     }
-   eina_list_free(objs);
+   o = evas_object_top_at_xy_get(e_comp->evas, x, y, 0, 0);
+   if (!o) return e_comp->ee_win;
+   ec = evas_object_data_get(o, "E_Client");
+   if (ec) return e_client_util_pwin_get(ec);
    return e_comp->ee_win;
 }
 
