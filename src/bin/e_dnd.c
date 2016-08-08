@@ -829,6 +829,28 @@ _e_dnd_object_layer_get(E_Drop_Handler *h)
    return adjust;
 }
 
+static Ecore_Window
+_dnd_top_window_at_xy_get(Evas_Coord x, Evas_Coord y)
+{
+   E_Client *ec;
+   Eina_List *objs, *l;
+   Evas_Object *o;
+
+   objs = evas_objects_at_xy_get(e_comp->evas, x, y, 0, 0);
+   if (!objs) return e_comp->ee_win;
+   EINA_LIST_FOREACH(objs, l, o)
+     {
+        ec = evas_object_data_get(o, "E_Client");
+        if (ec)
+          {
+             eina_list_free(objs);
+             return e_client_util_pwin_get(ec);
+          }
+     }
+   eina_list_free(objs);
+   return e_comp->ee_win;
+}
+
 static int
 _e_drag_update(Ecore_Window root, int x, int y, unsigned int action)
 {
@@ -845,7 +867,7 @@ _e_drag_update(Ecore_Window root, int x, int y, unsigned int action)
 
 //   double t1 = ecore_time_get(); ////
    if (_drag_current && !_xdnd)
-     win = e_comp_top_window_at_xy_get(x, y);
+     win = _dnd_top_window_at_xy_get(x, y);
    else
      win = root;
 
@@ -969,7 +991,7 @@ _e_drag_end(int x, int y)
    int dropped = 0;
 
    if (!_drag_current) return;
-   win = e_comp_top_window_at_xy_get(x, y);
+   win = _dnd_top_window_at_xy_get(x, y);
    zone = e_comp_zone_xy_get(x, y);
    /* Pass -1, -1, so that it is possible to drop at the edge. */
    if (zone) e_zone_flip_coords_handle(zone, -1, -1);
