@@ -325,6 +325,8 @@ main(int argc, char **argv)
    e_util_env_set("E_RESTART_OK", NULL);
    e_util_env_set("PANTS", "ON");
    e_util_env_set("DESKTOP", "Enlightenment");
+   snprintf(buff, sizeof(buff), "%s/enlightenment_askpass", e_prefix_bin_get());
+   e_util_env_set("SUDO_ASKPASS", buff);
    TS("Environment Variables Done");
 
    /* KDE5 applications don't understand anything other then gnome or kde     */

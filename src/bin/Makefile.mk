@@ -40,7 +40,8 @@ src/bin/enlightenment \
 src/bin/enlightenment_imc \
 src/bin/enlightenment_start \
 src/bin/enlightenment_filemanager \
-src/bin/enlightenment_open
+src/bin/enlightenment_open \
+src/bin/enlightenment_askpass
 
 internal_bindir = $(libdir)/enlightenment/utils
 internal_bin_PROGRAMS = \
@@ -430,6 +431,12 @@ src_bin_enlightenment_start_SOURCES = \
 src/bin/e_start_main.c
 src_bin_enlightenment_start_CPPFLAGS = $(E_CPPFLAGS) @E_START_CFLAGS@
 src_bin_enlightenment_start_LDADD = @dlopen_libs@ @E_START_LIBS@
+
+src_bin_enlightenment_askpass_SOURCES = \
+src/bin/e_askpass_main.c
+
+src_bin_enlightenment_askpass_LDADD = @E_ASKPASS_LIBS@
+src_bin_enlightenment_askpass_CPPFLAGS = $(E_CPPFLAGS)
 
 src_bin_enlightenment_thumb_SOURCES = \
 src/bin/e_sha1.c \

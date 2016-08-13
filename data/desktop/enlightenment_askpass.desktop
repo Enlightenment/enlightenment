@@ -1,0 +1,12 @@
+[Desktop Entry]
+Encoding=UTF-8
+Type=Application
+Name=Enlightenment Askpass
+Comment=Enlightenment Password Request
+Icon=enlightenment-askpass
+OnlyShowIn=Enlightenment;
+Exec=enlightenment_askpass
+Terminal=false
+Categories=System
+StartupNotify=false
+StartupWMClass=enlighenment_askpass

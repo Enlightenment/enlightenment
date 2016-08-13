@@ -476,6 +476,10 @@ PKG_CHECK_MODULES(E_IMC, [
   eina >= ${efl_version}
 ])
 
+PKG_CHECK_MODULES(E_ASKPASS, [
+  elementary >= ${efl_version}
+])
+
 PKG_CHECK_MODULES(E_THUMB, [
   eina >= ${efl_version}
   evas >= ${efl_version}
