@@ -327,6 +327,7 @@ main(int argc, char **argv)
    e_util_env_set("DESKTOP", "Enlightenment");
    snprintf(buff, sizeof(buff), "%s/enlightenment_askpass", e_prefix_bin_get());
    e_util_env_set("SUDO_ASKPASS", buff);
+   e_util_env_set("SSH_ASKPASS", buff);
    TS("Environment Variables Done");
 
    /* KDE5 applications don't understand anything other then gnome or kde     */
