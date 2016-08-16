@@ -215,6 +215,7 @@ main(int argc, char **argv)
    Eina_Bool safe_mode = EINA_FALSE;
    Eina_Bool after_restart = EINA_FALSE;
    Eina_Bool waslocked = EINA_FALSE;
+   Eina_Stringshare *strshare;
    double t = 0.0, tstart = 0.0;
    char *s = NULL, buff[32];
    struct sigaction action;
@@ -325,9 +326,15 @@ main(int argc, char **argv)
    e_util_env_set("E_RESTART_OK", NULL);
    e_util_env_set("PANTS", "ON");
    e_util_env_set("DESKTOP", "Enlightenment");
-   snprintf(buff, sizeof(buff), "%s/enlightenment_askpass", e_prefix_bin_get());
-   e_util_env_set("SUDO_ASKPASS", buff);
-   e_util_env_set("SSH_ASKPASS", buff);
+
+   strshare = eina_stringshare_printf("%s/enlightenment_askpass",
+                                      e_prefix_bin_get());
+   if (strshare)
+     {
+        e_util_env_set("SUDO_ASKPASS", strshare);
+        e_util_env_set("SSH_ASKPASS", strshare);
+        eina_stringshare_del(strshare);
+     }
    TS("Environment Variables Done");
 
    /* KDE5 applications don't understand anything other then gnome or kde     */
