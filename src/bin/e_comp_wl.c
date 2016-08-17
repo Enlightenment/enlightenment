@@ -3235,7 +3235,13 @@ e_comp_wl_key_up(Ecore_Event_Key *ev)
 
    end = (uint32_t *)e_comp_wl->kbd.keys.data + (e_comp_wl->kbd.keys.size / sizeof(*k));
    for (k = e_comp_wl->kbd.keys.data; k < end; k++)
-     if (*k == keycode) *k = *--end;
+     {
+        if (*k == keycode)
+          {
+             *k = *--end;
+             break;
+          }
+     }
 
    e_comp_wl->kbd.keys.size =
      (const char *)end - (const char *)e_comp_wl->kbd.keys.data;
