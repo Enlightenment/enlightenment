@@ -4,5 +4,6 @@ Type=Link
 Name=Wireless
 GenericName=Wireless
 Comment=Manage wifi connections
+Comment[it]=Gestisce le connessioni wifi
 Icon=e-module-wireless
 X-Enlightenment-ModuleType=system

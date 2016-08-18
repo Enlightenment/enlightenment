@@ -3,6 +3,7 @@ Encoding=UTF-8
 Type=Application
 Name=Enlightenment Askpass
 Comment=Enlightenment Password Request
+Comment[it]=Richiesta password per Enlightenment
 Icon=enlightenment-askpass
 OnlyShowIn=Enlightenment;
 Exec=enlightenment_askpass

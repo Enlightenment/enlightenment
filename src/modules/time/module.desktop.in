@@ -3,5 +3,6 @@ Encoding=UTF-8
 Type=Link
 Name=Time
 Comment=Time-related gadgets and utilities
+Comment[it]=Gadget e utilità correlate al tempo
 Icon=e-module-time
 X-Enlightenment-ModuleType=utils
