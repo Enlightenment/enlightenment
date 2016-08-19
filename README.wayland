@@ -18,6 +18,7 @@ Firstly, you MUST have EFL built with the following options:
   --enable-drm
   --enable-wayland
   --enable-systemd
+  --enable-elput
 
 Note that the drm engine will not be functional unless the target system
 has libsystemd-login installed.
