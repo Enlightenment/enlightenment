@@ -704,6 +704,11 @@ _wireless_gadget_edit(int type)
    Wireless_Network *wn;
 
    if (!wc) return;
+   if (wireless_popup.popup)
+     {
+        evas_object_hide(wireless_popup.popup);
+        evas_object_del(wireless_popup.popup);
+     }
    wireless_edit[0] = E_NEW(Wireless_Connection, 1);
    wireless_edit[1] = E_NEW(Wireless_Connection, 1);
    wn = E_NEW(Wireless_Network, 1);
