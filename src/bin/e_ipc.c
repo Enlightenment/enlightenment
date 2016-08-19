@@ -9,6 +9,7 @@ static Eina_Bool _e_ipc_cb_client_data(void *data EINA_UNUSED, int type EINA_UNU
 
 /* local subsystem globals */
 static Ecore_Ipc_Server *_e_ipc_server = NULL;
+static Eina_Stringshare *_e_ipc_dir = NULL;
 #endif
 
 /* externally accessible functions */
@@ -80,6 +81,7 @@ e_ipc_init(void)
         if (!mkdir(buf, S_IRWXU))
           {
 #ifdef USE_IPC
+             _e_ipc_dir = eina_stringshare_add(buf);
              snprintf(buf3, sizeof(buf3), "%s/%i",
                       buf, pid);
              _e_ipc_server = ecore_ipc_server_add
@@ -96,6 +98,12 @@ e_ipc_init(void)
 #ifdef USE_IPC
    if (!_e_ipc_server)
      {
+        if (_e_ipc_dir)
+          {
+             ecore_file_recursive_rm(_e_ipc_dir);
+             eina_stringshare_del(_e_ipc_dir);
+             _e_ipc_dir = NULL;
+          }
         ERR("Gave up after 4096 sockets in '%s'. All failed", base);
         return 0;
      }
@@ -121,6 +129,12 @@ e_ipc_shutdown(void)
      {
         ecore_ipc_server_del(_e_ipc_server);
         _e_ipc_server = NULL;
+     }
+   if (_e_ipc_dir)
+     {
+        ecore_file_recursive_rm(_e_ipc_dir);
+        eina_stringshare_del(_e_ipc_dir);
+        _e_ipc_dir = NULL;
      }
 #endif
    E_FREE(e_ipc_socket);
