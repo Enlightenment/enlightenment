@@ -700,7 +700,7 @@ fi
 AM_CONDITIONAL([HAVE_WAYLAND], [test "x${have_wayland}" = "xyes"])
 AM_CONDITIONAL([HAVE_WAYLAND_EGL], [test "x${have_wayland_egl}" = "xyes"])
 
-if test "x${have_wayland_only}" != "xyes"; then
+if test "x${e_cv_want_wayland_only}" != "xyes"; then
   PKG_CHECK_MODULES([ECORE_X], [ecore-x >= ${efl_version}])
   if test -n "$ECORE_X_CFLAGS" ; then
      ecore_x=true
