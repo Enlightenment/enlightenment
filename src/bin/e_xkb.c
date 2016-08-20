@@ -213,7 +213,9 @@ _e_x_xkb_reconfig(void)
                }
           }
      }
+#ifndef HAVE_WAYLAND_ONLY
    skip_new_keyboard ++;
+#endif
    INF("SET XKB RUN: %s", eina_strbuf_string_get(buf));
    ecore_exe_run(eina_strbuf_string_get(buf), NULL);
    eina_strbuf_free(buf);
