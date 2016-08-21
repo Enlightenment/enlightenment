@@ -1,3 +1,66 @@
+Release 0.21.2:
+---------------------
+Carsten Haitzler (6):
+      e - fix dnd problems coming from getting top object in comp canvas
+      e ibar/ibox port to elm box - fix assumption on resize
+      e temp module - kill tempget process not terminate to ensure death
+      e ibar - fix devilhorns fix to use the right widght and hight for separator
+      e comp - set alpha after setting native surface to avoid random crash
+      e ipc - fix cleanup of ipc socket on shutdown
+
+Chidambar Zinnoury (3):
+      e: Don’t show two consecutive menu separators if there is no need in client menu.
+      e fm: Add a separator only if there is something before.
+      e fm: Don’t check every other line whether the location is writable when creating menu.
+
+Christopher Michael (6):
+      remove unused variables from _ibar_resize_handle
+      use proper variables to set size_hint_max on ibar
+      e ibar - fix "old man" fat finger typo ;)
+      remove need to create different dialog windows under wayland
+      wl_fb: Check that e_comp_wl_init does not fail.
+      add key_up and key_down methods to sreen interface
+
+Derek Foreman (2):
+      Fix wayland clients not deleting when they're hidden
+      Fix wayland extension global creation
+
+Jean-Philippe ANDRÉ (1):
+      bg: Fix bg with single jpeg images (no edj)
+
+JengHyun Kang (1):
+      e_comp_wl: break from meaningless loop
+
+Marcel Hollerbach (4):
+      e_comp_wl: destroy e_drag when source disappears
+      e_alert: define EFL_BETA_API_SUPPORT before any include
+      e_dnd: move the ungrab to the object free
+      xwayland: show the dialog after ecore_wl2 is in sync
+
+Massimo Maiurana (2):
+      Updating italian and spanish translations
+      Updating italian translation
+
+Mike Blumenkrantz (9):
+      only check x11 configurerequest geometry changes when applicable
+      improve quickaccess relaunch help dialog text
+      move new version of e_comp_top_window_at_xy_get() to dnd, restore old version
+      clear wl subsurface data during delete only if subsurface is not also deleted
+      add xwayland compat for efl 1.19+
+      bump efl wayland req to 1.18 now that it's out
+      Revert "track/manage size hints for zoomap child objects"
+      track current bryce geom, force recalc on gadget site upon change
+      clean up some string leaks in wireless gadget popups
+
+Romain Naour (1):
+      E: include uuid.h only when Wayland support is enabled.
+
+Simon Lees (1):
+      README.wayland --enable-elput is required for building wayland efl
+
+Stefan Schmidt (1):
+      mailmap: sync updated file from efl repo
+
 Release 0.21.1:
 ---------------------
 Al Poole (1):
