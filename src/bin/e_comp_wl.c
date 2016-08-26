@@ -2448,11 +2448,7 @@ _e_comp_wl_client_cb_del(void *data EINA_UNUSED, E_Client *ec)
         ec->parent->modal = NULL;
      }
 
-   /* FIXME: We should probably test if ec really has keyboard
-    * focus, but this at least catches GTK's silly habit of creating
-    * a surface, never attaching anything to it, then deleting it.
-    */
-   if (ec->visible)_e_comp_wl_keyboard_leave(ec);
+   if ((ec == e_client_focused_get()) && ec->visible) _e_comp_wl_keyboard_leave(ec);
 
    wl_signal_emit(&ec->comp_data->destroy_signal, &ec->comp_data->surface);
 
