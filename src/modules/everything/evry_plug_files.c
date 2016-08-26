@@ -349,7 +349,7 @@ _file_add(Plugin *p, Evry_Item *item)
    char *path = (char *)file->path;
 
    file->path = eina_stringshare_add(path);
-   file->mime = eina_stringshare_ref(file->mime);
+   file->mime = eina_stringshare_add(file->mime);
 
    item->label = eina_stringshare_add(filename);
    item->id = eina_stringshare_ref(file->path);
