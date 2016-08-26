@@ -113,7 +113,7 @@ _item_fill(Evry_Item_File *file)
         const char *mime = efreet_mime_type_get(file->path);
 
         if (mime)
-          file->mime = eina_stringshare_ref(mime);
+          file->mime = eina_stringshare_add(mime);
         else
           file->mime = eina_stringshare_add("unknown");
      }
