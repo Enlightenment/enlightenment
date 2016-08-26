@@ -1784,7 +1784,7 @@ _e_comp_wl_compositor_cb_surface_create(struct wl_client *client, struct wl_reso
                                   _e_comp_wl_surface_destroy);
 
    wl_client_get_credentials(client, &pid, NULL, NULL);
-   if (pid == getpid()) //internal!
+   if ((client != e_comp_wl->xwl_client) && (pid == getpid())) //internal!
      ec = e_pixmap_find_client(E_PIXMAP_TYPE_WL, (int64_t)id);
    if (ec)
      {
@@ -1818,7 +1818,8 @@ _e_comp_wl_compositor_cb_surface_create(struct wl_client *client, struct wl_reso
      ec->client.w = ec->client.h = 1;
    ec->comp_data->surface = res;
    ec->netwm.pid = pid;
-   ec->internal = pid == getpid();
+   if (client != e_comp_wl->xwl_client)
+     ec->internal = pid == getpid();
 
    /* set reference to pixmap so we can fetch it later */
    DBG("\tUsing Client: %p", ec);
