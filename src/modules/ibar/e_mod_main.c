@@ -638,12 +638,28 @@ static void
 _ibar_resize_handle(IBar *b)
 {
    IBar_Icon *ic;
-   Evas_Coord w, h, ww, hh;
+   Evas_Coord w, h, w2, h2, ww = 0, hh = 0;
+   int max_w, max_h;
 
    if (!b->inst->gcc) return;
-   evas_object_geometry_get(b->o_outerbox, NULL, NULL, &ww, &hh);
-   if (b->inst->gcc->max.w) ww = MIN(ww, b->inst->gcc->max.w);
-   if (b->inst->gcc->max.h) hh = MIN(hh, b->inst->gcc->max.h);
+
+   if (b->inst->gcc->gadcon->shelf)
+     {
+        /* we are in a shelf */
+        ww = hh = b->inst->gcc->gadcon->shelf->cfg->size;
+     }
+   else if (b->inst->gcc->max.w || b->inst->gcc->max.h)
+     {
+        evas_object_geometry_get(b->o_outerbox, NULL, NULL, &ww, &hh);
+        ww = MIN(b->inst->gcc->max.w, ww);
+        hh = MIN(b->inst->gcc->max.h, hh);
+     }
+
+   /* Fallback to a size for the case noone gives a max size and no shelf config is there */
+   if (ww == 0) ww = 40;
+   if (hh == 0) hh = 40;
+
+
    if (elm_box_horizontal_get(b->o_box)) ww = hh;
    else hh = ww;
    EINA_INLIST_FOREACH(b->icons, ic)
