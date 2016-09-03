@@ -1,6 +1,11 @@
 #ifndef _E_MOD_MAIN_H
 #define _E_MOD_MAIN_H
 
+#include <e.h>
+#include "imfos_devices.h"
+
+#define IMFOS_CONFIG_VERSION 1
+
 #ifdef _cplusplus
 extern "C++"
 #endif
@@ -22,13 +27,9 @@ typedef enum _Imfos_Orient Imfos_Orient;
 
 struct _Imfos_Config
 {
-   Imfos_Orient orient;
-   //E_Config_Dialog *cfd;
-};
-
-struct _Config_Item {
-     Imfos_Orient orient;
-     const char *path;
+   unsigned int config_version;
+   Eina_List *devices;
+   E_Config_Dialog *cfd;
 };
 
 extern Imfos_Config *imfos_config;
