@@ -96,6 +96,7 @@ static struct tiling_mod_main_g
         Evas_Object *comp_obj;
         Evas_Object *obj;
         Ecore_Timer *timer;
+        E_Desk *desk;
    } split_popup;
 } _G =
 {
@@ -844,6 +845,7 @@ _split_type_popup_timer_del_cb(void *data EINA_UNUSED)
    _G.split_popup.comp_obj = NULL;
    _G.split_popup.obj = NULL;
    _G.split_popup.timer = NULL;
+   _G.split_popup.desk = NULL;
 
    return EINA_FALSE;
 }
@@ -853,8 +855,19 @@ _tiling_split_type_changed_popup(void)
 {
    Evas_Object *comp_obj = _G.split_popup.comp_obj;
    Evas_Object *o = _G.split_popup.obj;
+   E_Desk *desk = NULL;
 
    /* If this is not NULL, the rest isn't either. */
+
+   /* check for the current desk we have */
+   if (e_client_focused_get())
+     {
+        E_Client *c;
+
+        c = e_client_focused_get();
+        desk = c->desk;
+     }
+
    if (!o)
      {
         _G.split_popup.obj = o = edje_object_add(e_comp->evas);
@@ -864,7 +877,12 @@ _tiling_split_type_changed_popup(void)
         evas_object_resize(o, TILING_POPUP_SIZE, TILING_POPUP_SIZE);
 
         _G.split_popup.comp_obj = comp_obj = e_comp_object_util_add(o, E_COMP_OBJECT_TYPE_POPUP);
-        e_comp_object_util_center(comp_obj);
+
+        if (desk)
+          e_comp_object_util_center_on_zone(comp_obj, e_zone_current_get());
+        else
+          e_comp_object_util_center(comp_obj);
+        _G.split_popup.desk = desk;
         evas_object_layer_set(comp_obj, E_LAYER_POPUP);
         evas_object_pass_events_set(comp_obj, EINA_TRUE);
 
@@ -874,8 +892,11 @@ _tiling_split_type_changed_popup(void)
      }
    else
      {
+        if (desk != _G.split_popup.desk)
+          e_comp_object_util_center_on_zone(comp_obj, e_zone_current_get());
         ecore_timer_reset(_G.split_popup.timer);
      }
+
 
    _edje_tiling_icon_set(o);
 }
