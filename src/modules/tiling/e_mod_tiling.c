@@ -1620,7 +1620,7 @@ e_modapi_shutdown(E_Module *m EINA_UNUSED)
    ACTION_DEL(_G.act_move_left, "Move the focused window left", "move_left");
    ACTION_DEL(_G.act_move_right, "Move the focused window right", "move_right");
 
-   ACTION_DEL(_G.act_toggle_split_mode, "Toggle split mode",
+   ACTION_DEL(_G.act_toggle_split_mode, "Toggle split mode for new windows.",
               "toggle_split_mode");
    ACTION_DEL(_G.act_swap_window, "Swap window", "swap_window");
 #undef ACTION_DEL
