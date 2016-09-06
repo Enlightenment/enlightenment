@@ -130,6 +130,16 @@ E_API void e_gadget_type_add(const char *type, E_Gadget_Create_Cb callback, E_Ga
 E_API void e_gadget_type_del(const char *type);
 E_API Eina_Iterator *e_gadget_type_iterator_get(void);
 
+/* drop region initially matches gadget size, resizes to match returned object's size
+ * handler is removed when returned object is deleted
+ */
+E_API Evas_Object *e_gadget_drop_handler_add(Evas_Object *g, void *data,
+                                        void (*enter_cb)(void *data, const char *type, void *event),
+                                        void (*move_cb)(void *data, const char *type, void *event),
+                                        void (*leave_cb)(void *data, const char *type, void *event),
+                                        void (*drop_cb)(void *data, const char *type, void *event),
+                                        const char **types, unsigned int num_types);
+
 E_API Evas_Object *e_gadget_util_layout_style_init(Evas_Object *g, Evas_Object *style);
 E_API void e_gadget_util_ctxpopup_place(Evas_Object *g, Evas_Object *ctx, Evas_Object *pos_obj);
 E_API void e_gadget_util_allow_deny_ctxpopup(Evas_Object *g, const char *text, Evas_Smart_Cb allow_cb, Evas_Smart_Cb deny_cb, const void *data);

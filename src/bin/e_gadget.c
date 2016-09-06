@@ -64,6 +64,8 @@ struct E_Gadget_Config
       void *data;
    } allow_deny;
 
+   Eina_Hash *drop_handlers;
+
    double x, y; //fixed % positioning
    double w, h; //fixed % sizing
    Evas_Point offset; //offset from mouse down
@@ -262,6 +264,7 @@ _gadget_object_free(E_Object *eobj)
         evas_object_event_callback_del_full(zgc->display, EVAS_CALLBACK_DEL, _gadget_del, zgc);
         E_FREE_FUNC(zgc->display, evas_object_del);
      }
+   E_FREE_FUNC(zgc->drop_handlers, eina_hash_free);
    E_FREE_FUNC(zgc->gadget, evas_object_del);
    E_FREE_FUNC(zgc->cfg_object, evas_object_del);
    E_FREE_FUNC(zgc->style.obj, evas_object_del);
@@ -1387,6 +1390,62 @@ E_API Eina_Iterator *
 e_gadget_type_iterator_get(void)
 {
    return gadget_types ? eina_hash_iterator_key_new(gadget_types) : NULL;
+}
+
+static void
+_gadget_drop_handler_moveresize(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
+{
+   int x, y, w, h;
+
+   evas_object_geometry_get(obj, &x, &y, &w, &h);
+   e_drop_handler_geometry_set(data, x, y, w, h);
+}
+
+static void
+_gadget_drop_handler_del(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
+{
+   E_Gadget_Config *zgc = data;
+
+   eina_hash_del_by_key(zgc->drop_handlers, &obj);
+   e_object_del(evas_object_data_get(obj, "gadget_drop_handler"));
+}
+
+E_API Evas_Object *
+e_gadget_drop_handler_add(Evas_Object *g, void *data,
+                                        void (*enter_cb)(void *data, const char *type, void *event),
+                                        void (*move_cb)(void *data, const char *type, void *event),
+                                        void (*leave_cb)(void *data, const char *type, void *event),
+                                        void (*drop_cb)(void *data, const char *type, void *event),
+                                        const char **types, unsigned int num_types)
+{
+   E_Gadget_Config *zgc;
+   int x, y, w, h;
+   Evas_Object *drop_object;
+   E_Drop_Handler *drop_handler;
+
+   EINA_SAFETY_ON_NULL_RETURN_VAL(g, NULL);
+   zgc = evas_object_data_get(g, "__e_gadget");
+   EINA_SAFETY_ON_NULL_RETURN_VAL(zgc, NULL);
+
+   if (!zgc->drop_handlers)
+     zgc->drop_handlers = eina_hash_pointer_new((Eina_Free_Cb)evas_object_del);
+
+   evas_object_geometry_get(zgc->display, &x, &y, &w, &h);
+   drop_handler = e_drop_handler_add(zgc->e_obj_inherit, NULL, data,
+                        enter_cb, move_cb, leave_cb, drop_cb,
+                        types, num_types, x, y, w, h);
+   drop_object = evas_object_rectangle_add(e_comp->evas);
+   evas_object_color_set(drop_object, 0, 0, 0, 0);
+   e_object_data_set(E_OBJECT(drop_handler), drop_object);
+   evas_object_data_set(drop_object, "gadget_drop_handler", drop_handler);
+   evas_object_geometry_set(drop_object, x, y, w, h);
+   evas_object_pass_events_set(drop_object, 1);
+   evas_object_layer_set(drop_object, evas_object_layer_get(zgc->display));
+   evas_object_event_callback_add(drop_object, EVAS_CALLBACK_MOVE, _gadget_drop_handler_moveresize, drop_handler);
+   evas_object_event_callback_add(drop_object, EVAS_CALLBACK_RESIZE, _gadget_drop_handler_moveresize, drop_handler);
+   evas_object_event_callback_add(drop_object, EVAS_CALLBACK_DEL, _gadget_drop_handler_del, zgc);
+   eina_hash_add(zgc->drop_handlers, &drop_object, drop_handler);
+   return drop_object;
 }
 
 E_API Evas_Object *
