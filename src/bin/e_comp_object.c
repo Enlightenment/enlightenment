@@ -3043,14 +3043,12 @@ e_comp_object_util_zone_get(Evas_Object *obj)
 }
 
 E_API void
-e_comp_object_util_center(Evas_Object *obj)
+e_comp_object_util_center_on_zone(Evas_Object *obj, E_Zone *zone)
 {
    int x, y, w, h, ow, oh;
-   E_Zone *zone;
 
    SOFT_ENTRY();
 
-   zone = e_comp_object_util_zone_get(obj);
    EINA_SAFETY_ON_NULL_RETURN(zone);
    e_zone_useful_geometry_get(zone, &x, &y, &w, &h);
    if (cw && (cw->ec->changes.size || cw->ec->new_client))
@@ -3060,6 +3058,16 @@ e_comp_object_util_center(Evas_Object *obj)
    x = x + (w - ow) / 2;
    y = y + (h - oh) / 2;
    evas_object_move(obj, x, y);
+}
+
+E_API void
+e_comp_object_util_center(Evas_Object *obj)
+{
+   E_Zone *zone;
+
+   zone = e_comp_object_util_zone_get(obj);
+
+   e_comp_object_util_center_on_zone(obj, zone);
 }
 
 E_API void

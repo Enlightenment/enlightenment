@@ -54,6 +54,7 @@ E_API Eina_Bool e_comp_object_util_autoclose_on_escape(void *d EINA_UNUSED, Ecor
 E_API void e_comp_object_util_autoclose(Evas_Object *obj, E_Comp_Object_Autoclose_Cb del_cb, E_Comp_Object_Key_Cb cb, const void *data);
 E_API void e_comp_object_util_center(Evas_Object *obj);
 E_API void e_comp_object_util_center_on(Evas_Object *obj, Evas_Object *on);
+E_API void e_comp_object_util_center_on_zone(Evas_Object *obj, E_Zone *zone);
 E_API void e_comp_object_util_center_pos_get(Evas_Object *obj, int *x, int *y);
 E_API void e_comp_object_util_fullscreen(Evas_Object *obj);
 E_API Eina_Bool e_comp_object_frame_allowed(Evas_Object *obj);
