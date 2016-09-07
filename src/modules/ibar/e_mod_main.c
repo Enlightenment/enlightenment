@@ -638,8 +638,7 @@ static void
 _ibar_resize_handle(IBar *b)
 {
    IBar_Icon *ic;
-   Evas_Coord w, h, w2, h2, ww = 0, hh = 0;
-   int max_w, max_h;
+   Evas_Coord w, h, ww = 0, hh = 0;
 
    if (!b->inst->gcc) return;
 
