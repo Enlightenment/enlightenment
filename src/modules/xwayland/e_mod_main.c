@@ -338,7 +338,7 @@ setup_lock(void)
 }
 
 static Eina_Bool
-_cb_sync_done(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
+_cb_sync_done(void *data EINA_UNUSED, int type EINA_UNUSED, void *event EINA_UNUSED)
 {
    e_util_dialog_internal(_("Error"), _("Cannot launch XWayland from X11 display."));
 
