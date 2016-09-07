@@ -170,6 +170,15 @@ emix_backends_available(void)
    return ctx->backends_names;
 }
 
+int
+emix_max_volume_get(void)
+{
+   EINA_SAFETY_ON_FALSE_RETURN_VAL((ctx && ctx->loaded &&
+                                    ctx->loaded->ebackend_max_volume_get),
+                                   0);
+  return ctx->loaded->ebackend_max_volume_get();
+}
+
 Eina_Bool
 emix_backend_set(const char *backend)
 {

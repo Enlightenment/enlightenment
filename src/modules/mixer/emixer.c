@@ -144,8 +144,8 @@ _emix_sink_add(Emix_Sink *sink)
 
    sl = elm_slider_add(win);
    evas_object_data_set(bxv, "volume", sl);
-   elm_slider_min_max_set(sl, 0.0, EMIX_VOLUME_MAX + 50);
-   elm_slider_span_size_set(sl, (EMIX_VOLUME_MAX + 50) * elm_config_scale_get());
+   elm_slider_min_max_set(sl, 0.0, emix_max_volume_get());
+   elm_slider_span_size_set(sl, emix_max_volume_get() * elm_config_scale_get());
    elm_slider_unit_format_set(sl, "%1.0f");
    elm_slider_indicator_format_set(sl, "%1.0f");
    evas_object_size_hint_weight_set(sl, EVAS_HINT_EXPAND, 0.5);
@@ -324,8 +324,8 @@ _emix_sink_input_add(Emix_Sink_Input *input)
 
    sl = elm_slider_add(win);
    evas_object_data_set(bxv, "volume", sl);
-   elm_slider_min_max_set(sl, 0.0, EMIX_VOLUME_MAX + 50);
-   elm_slider_span_size_set(sl, (EMIX_VOLUME_MAX + 50) * elm_config_scale_get());
+   elm_slider_min_max_set(sl, 0.0, emix_max_volume_get());
+   elm_slider_span_size_set(sl, (emix_max_volume_get()) * elm_config_scale_get());
    elm_slider_unit_format_set(sl, "%1.0f");
    elm_slider_indicator_format_set(sl, "%1.0f");
    evas_object_size_hint_weight_set(sl, EVAS_HINT_EXPAND, 0.5);
@@ -476,8 +476,8 @@ _emix_source_add(Emix_Source *source)
 
    sl = elm_slider_add(win);
    evas_object_data_set(bxv, "volume", sl);
-   elm_slider_min_max_set(sl, 0.0, EMIX_VOLUME_MAX + 50);
-   elm_slider_span_size_set(sl, (EMIX_VOLUME_MAX + 50) * elm_config_scale_get());
+   elm_slider_min_max_set(sl, 0.0, emix_max_volume_get());
+   elm_slider_span_size_set(sl, (emix_max_volume_get()) * elm_config_scale_get());
    elm_slider_unit_format_set(sl, "%1.0f");
    elm_slider_indicator_format_set(sl, "%1.0f");
    evas_object_size_hint_weight_set(sl, EVAS_HINT_EXPAND, 0.5);

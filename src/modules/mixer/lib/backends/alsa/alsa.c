@@ -1,6 +1,8 @@
 #include "emix.h"
 #include <alsa/asoundlib.h>
 
+#define MAX_VOLUME 100
+
 #define ERR(...)      EINA_LOG_ERR(__VA_ARGS__)
 #define DBG(...)      EINA_LOG_DBG(__VA_ARGS__)
 #define WRN(...)      EINA_LOG_WARN(__VA_ARGS__)
@@ -74,7 +76,7 @@ _alsa_channel_volume_get(snd_mixer_elem_t *channel, int *v, Eina_Bool capture)
    else
      snd_mixer_selem_get_playback_volume_range(channel, &min, &max);
 
-   divide = 100 + min;
+   divide = MAX_VOLUME + min;
    if (divide == 0)
      {
         divide = 1;
@@ -99,7 +101,7 @@ _alsa_channel_volume_set(snd_mixer_elem_t *channel, int v, Eina_Bool capture)
    long int vol, min, max, divide, range;
    snd_mixer_selem_get_playback_volume_range(channel, &min, &max);
 
-   divide = 100 + min;
+   divide = MAX_VOLUME + min;
    range = max - min;
    if (range < 1)
      return;
@@ -503,11 +505,18 @@ _alsa_sink_volume_set(Emix_Sink *sink, Emix_Volume v)
                   (Emix_Sink *)s);
 }
 
+static int
+_max_volume(void)
+{
+   return MAX_VOLUME;
+}
+
 static Emix_Backend
 _alsa_backend =
 {
    _alsa_init,
    _alsa_shutdown,
+   _max_volume,
    _alsa_sinks_get,
    _alsa_support, /*default support*/
    NULL, /*get*/

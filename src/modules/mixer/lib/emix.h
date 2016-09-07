@@ -23,7 +23,7 @@
 #endif
 
 
-#define EMIX_VOLUME_MAX 100
+#define EMIX_VOLUME_BARRIER 100
 
 enum Emix_Event {
    EMIX_READY_EVENT = 0,
@@ -79,6 +79,8 @@ typedef struct _Emix_Backend {
    Eina_Bool             (*ebackend_init)(Emix_Event_Cb cb, const void *data);
    void                  (*ebackend_shutdown)(void);
 
+   int                   (*ebackend_max_volume_get)(void);
+
    const Eina_List*      (*ebackend_sinks_get)(void);
    Eina_Bool             (*ebackend_sink_default_support)(void);
    const Emix_Sink*      (*ebackend_sink_default_get)(void);
@@ -118,6 +120,8 @@ E_API Eina_Bool           emix_event_callback_add(Emix_Event_Cb cb,
                                                  const void *data);
 E_API Eina_Bool           emix_event_callback_del(Emix_Event_Cb cb);
 
+E_API int                 emix_max_volume_get(void);
+
 E_API const Eina_List*    emix_sinks_get(void);
 E_API Eina_Bool           emix_sink_default_support(void);
 E_API const Emix_Sink*    emix_sink_default_get(void);
@@ -141,7 +145,6 @@ E_API void                emix_source_mute_set(Emix_Source *source,
                                                   Eina_Bool mute);
 E_API void                emix_source_volume_set(Emix_Source *source,
                                                 Emix_Volume volume);
-
 E_API Evas_Object*        emix_advanced_options_add(Evas_Object *parent);
 
 #endif  /* EMIX_H */
