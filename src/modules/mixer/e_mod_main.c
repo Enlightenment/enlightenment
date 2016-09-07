@@ -6,6 +6,12 @@
 
 #define VOLUME_STEP 5
 
+#define BARRIER_CHECK(old_val, new_val) \
+   (old_val > EMIX_VOLUME_BARRIER - 20) && \
+   (old_val <= EMIX_VOLUME_BARRIER) && \
+   (new_val > EMIX_VOLUME_BARRIER) && \
+   (new_val < EMIX_VOLUME_BARRIER + 20)
+
 int _e_emix_log_domain;
 static Eina_Bool init;
 
@@ -175,6 +181,10 @@ _volume_increase_cb(E_Object *obj EINA_UNUSED, const char *params EINA_UNUSED)
 
    EINA_SAFETY_ON_NULL_RETURN(mixer_context->sink_default);
    Emix_Sink *s = (Emix_Sink *)mixer_context->sink_default;
+
+   if (BARRIER_CHECK(s->volume.volumes[0], s->volume.volumes[0] + VOLUME_STEP))
+     return;
+
    volume.channel_count = s->volume.channel_count;
    volume.volumes = calloc(s->volume.channel_count, sizeof(int));
    for (i = 0; i < volume.channel_count; i++)
@@ -360,12 +370,19 @@ _slider_changed_cb(void *data EINA_UNUSED, Evas_Object *obj,
    int val;
    Emix_Volume v;
    unsigned int i;
+   int pval;
 
    EINA_SAFETY_ON_NULL_RETURN(mixer_context->sink_default);
    Emix_Sink *s = (Emix_Sink *)mixer_context->sink_default;
+
+   pval = s->volume.volumes[0];
+
    val = (int)elm_slider_value_get(obj);
    v.volumes = calloc(s->volume.channel_count, sizeof(int));
    v.channel_count = s->volume.channel_count;
+   if (BARRIER_CHECK(pval, val))
+     val = 100;
+
    for (i = 0; i < s->volume.channel_count; i++) v.volumes[i] = val;
    emix_sink_volume_set(s, v);
    elm_slider_value_set(obj, val);
