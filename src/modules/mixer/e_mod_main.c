@@ -189,10 +189,10 @@ _volume_increase_cb(E_Object *obj EINA_UNUSED, const char *params EINA_UNUSED)
    volume.volumes = calloc(s->volume.channel_count, sizeof(int));
    for (i = 0; i < volume.channel_count; i++)
      {
-        if (s->volume.volumes[i] < (EMIX_VOLUME_MAX + 50) - VOLUME_STEP)
+        if (s->volume.volumes[i] < (emix_max_volume_get()) - VOLUME_STEP)
           volume.volumes[i] = s->volume.volumes[i] + VOLUME_STEP;
-        else if (s->volume.volumes[i] < EMIX_VOLUME_MAX + 50)
-          volume.volumes[i] = EMIX_VOLUME_MAX + 50;
+        else if (s->volume.volumes[i] < emix_max_volume_get())
+          volume.volumes[i] = emix_max_volume_get();
         else
           volume.volumes[i] = s->volume.volumes[i];
      }
@@ -463,7 +463,7 @@ _popup_new(Instance *inst)
    evas_object_size_hint_align_set(slider, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_size_hint_weight_set(slider, EVAS_HINT_EXPAND, 0.0);
    evas_object_show(slider);
-   elm_slider_min_max_set(slider, 0.0, EMIX_VOLUME_MAX + 50);
+   elm_slider_min_max_set(slider, 0.0, emix_max_volume_get());
    evas_object_smart_callback_add(slider, "changed", _slider_changed_cb, NULL);
    evas_object_smart_callback_add(slider, "slider,drag,stop", _slider_drag_stop_cb, NULL);
    elm_slider_value_set(slider, volume);

@@ -11,11 +11,11 @@
 #define WRN(...)      EINA_LOG_WARN(__VA_ARGS__)
 
 #define PA_VOLUME_TO_INT(_vol) \
-   ((_vol * EMIX_VOLUME_MAX) / \
+   ((_vol * EMIX_VOLUME_BARRIER) / \
     PA_VOLUME_NORM)
 #define INT_TO_PA_VOLUME(_vol) \
    ((PA_VOLUME_NORM * _vol) / \
-    EMIX_VOLUME_MAX)
+    EMIX_VOLUME_BARRIER)
 
 typedef struct _Context
 {
@@ -491,7 +491,7 @@ _source_changed_cb(pa_context *c EINA_UNUSED,
 
    if (!source)
      {
-        source = calloc(1, sizeof(Source)); 
+        source = calloc(1, sizeof(Source));
         EINA_SAFETY_ON_NULL_RETURN(source);
         ctx->sources = eina_list_append(ctx->sources, source);
      }
@@ -1057,11 +1057,18 @@ _sink_change_support(void)
    return EINA_TRUE;
 }
 
+static int
+_max_volume(void)
+{
+   return 150;
+}
+
 static Emix_Backend
 _pulseaudio_backend =
 {
    _init,
    _shutdown,
+   _max_volume,
    _sinks_get,
    _sink_default_support,
    _sink_default_get,
