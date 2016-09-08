@@ -49,6 +49,56 @@ static int       auth_etc_enlightenment_sysactions(char *a,
 static void      auth_etc_enlightenment_sysactions_perm(char *path);
 static char     *get_word(char *s,
                           char *d);
+#if defined(__OpenBSD__)
+
+static void
+_exit_backoff(void)
+{
+   sleep(3);
+   exit(1 << 7);
+}
+
+static int
+_check_auth(const char *guess)
+{
+   struct passwd *pw_ent;
+   uid_t uid = getuid();
+
+   pw_ent = getpwuid_shadow(uid);
+   if (!pw_ent)
+     _exit_backoff();
+
+   return crypt_checkpass(guess, pw_ent->pw_passwd);
+}
+
+static int
+auth_generic_enlightenment_desklock(void)
+{
+   char buf[4096];
+   char byte[1];
+   int res = -1;
+   int i = 0;
+
+   while (read(STDIN_FILENO, byte, sizeof(byte)) > 0)
+     {
+        if (byte[0] == '\n') break;
+        buf[i++] = byte[0];
+        if (i == sizeof(buf) -1) break;
+     }
+
+   buf[i] = '\0';
+
+   if (!i)
+     _exit_backoff();
+
+   res = _check_auth(buf);
+
+   if (res) _exit_backoff();
+
+   return res;
+}
+
+#endif
 
 /* local subsystem globals */
 static Eina_Hash *actions = NULL;
@@ -82,6 +132,15 @@ main(int argc,
              exit(0);
           }
      }
+#if defined(__OpenBSD__)
+   if (argc >= 2)
+     {
+        if (!strcmp(argv[1], "-z"))
+          {
+             exit(auth_generic_enlightenment_desklock());
+          }
+     }
+#endif
    if (argc >= 3)
      {
         if ((argc == 3) && (!strcmp(argv[1], "-t")))

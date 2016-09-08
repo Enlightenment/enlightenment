@@ -259,7 +259,7 @@ e_desklock_show(Eina_Bool suspend)
         return 1;
      }
 
-#ifndef HAVE_PAM
+#if ! defined(HAVE_PAM) && ! defined(__OpenBSD__)
    if (e_desklock_is_system())
      {
         e_util_dialog_show(_("Error - no PAM support"),

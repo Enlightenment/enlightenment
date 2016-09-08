@@ -1,6 +1,6 @@
 #include "e.h"
 
-#if defined(HAVE_PAM) && !defined(__FreeBSD__)
+#if defined(HAVE_PAM) && !defined(__FreeBSD__)  && !defined(__OpenBSD__)
 # include <security/pam_appl.h>
 # include <pwd.h>
 
@@ -128,7 +128,7 @@ _auth_pam_init(E_Auth *da)
    free(current_host);
    return 0;
 }
-#endif  // HAVE_PAM && !__FreeBSD__
+#endif  // HAVE_PAM && !__FreeBSD__ && !_OpenBSD__
 
 E_API int
 #if defined(__FreeBSD__)
@@ -162,6 +162,41 @@ out:
    for (p = passwd; *p; p++)
      *p = 0;
    if (passwd[0] || passwd[3]) fprintf(stderr, "ACK!\n");
+
+   return ret;
+}
+#elif defined(__OpenBSD__)
+e_auth_begin(char *passwd)
+{
+   char exe_path[PATH_MAX], *p;
+   Ecore_Exe *exe = NULL;
+   int ret = 0;
+   int len = strlen(passwd);
+
+   if (len == 0) goto out;
+
+   snprintf(exe_path, sizeof(exe_path), "%s/enlightenment/utils/enlightenment_sys -z",
+            e_prefix_lib_get());
+
+   exe = ecore_exe_pipe_run(exe_path, ECORE_EXE_PIPE_WRITE, NULL);
+   if (!exe) goto out;
+   if (ecore_exe_send(exe, passwd, len) != EINA_TRUE) goto out;
+   if (ecore_exe_send(exe, "\n", 1) != EINA_TRUE) goto out;
+   ecore_exe_close_stdin(exe);
+
+   ret = ecore_exe_pid_get(exe);
+   if (ret == -1)
+     {
+       ret = 0;
+       goto out;
+     }
+ 
+   exe = NULL;
+out:
+   if (exe) ecore_exe_free(exe);
+
+   for (p = passwd; *p; p++)
+     *p = 0;
 
    return ret;
 }
