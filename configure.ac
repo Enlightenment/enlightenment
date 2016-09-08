@@ -1036,12 +1036,30 @@ m4_ifndef([v_rel],
     EFL_COMPILER_FLAG([-Wformat=2])
    ])
 
-SUID_CFLAGS=-fPIE
-SUID_LDFLAGS=-pie
+SUID_CFLAGS=
+SUID_LDFLAGS=
 case "$host_os" in
    freebsd*|pcbsd*)
-      SUID_CFLAGS=
-      SUID_LDFLAGS=
+      ;;
+   *)
+      if test -n "$GCC"; then
+        AC_MSG_CHECKING(if GCC supports -fPIE)
+
+        OLDCFLAGS="$CFLAGS"
+        OLDLDFLAGS="$LDFLAGS"
+
+        CFLAGS="$CFLAGS -fPIE"
+        LDFLAGS="$LDFLAGS -pie"
+
+        AC_TRY_LINK(,,
+             [
+              SUID_CFLAGS="-fPIE"
+             SUID_LDFLAGS="-pie"
+             AC_MSG_RESULT(yes)],
+             AC_MSG_RESULT(no))
+        CFLAGS="$OLDCFLAGS"
+        LDFLAGS="$OLDLFDLAGS"
+      fi
       ;;
 esac
 AC_SUBST([SUID_CFLAGS])
