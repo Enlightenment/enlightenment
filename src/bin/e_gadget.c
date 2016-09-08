@@ -1357,9 +1357,10 @@ e_gadget_type_add(const char *type, E_Gadget_Create_Cb callback, E_Gadget_Wizard
    t->wizard = wizard;
    eina_hash_add(gadget_types, type, t);
    EINA_LIST_FOREACH(sites->sites, l, zgs)
-     EINA_LIST_FOREACH(zgs->gadgets, ll, zgc)
-       if (eina_streq(type, zgc->type))
-         _gadget_object_create(zgc);
+     if (zgs->layout)
+       EINA_LIST_FOREACH(zgs->gadgets, ll, zgc)
+         if (eina_streq(type, zgc->type))
+           _gadget_object_create(zgc);
 }
 
 E_API void
