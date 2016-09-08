@@ -259,7 +259,7 @@ evry_show(E_Zone *zone, E_Zone_Edge edge, const char *params, Eina_Bool popup)
 #endif
    evas_object_event_callback_add(e_win_client_get(win->ewin)->frame, EVAS_CALLBACK_SHOW, (Evas_Object_Event_Cb)_evry_cb_show, win);
 
-   E_LIST_HANDLER_APPEND(win->handlers, EVRY_EVENT_ITEM_CHANGED, _evry_cb_item_changed, win);
+   E_LIST_HANDLER_APPEND(win->handlers, _evry_events[EVRY_EVENT_ITEM_CHANGED], _evry_cb_item_changed, win);
 
    E_LIST_HANDLER_APPEND(win->handlers, ECORE_EVENT_MOUSE_BUTTON_DOWN, _evry_cb_mouse, win);
 
