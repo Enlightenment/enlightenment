@@ -94,6 +94,10 @@ AC_DEFINE(HAVE_ENVIRON, 1, [Have environ var])
 efl_version="1.17.0"
 AC_SUBST(efl_version)
 
+#We use ecore_drm2 beta API
+efl_ecore_drm2_version="1.18.99"
+AC_SUBST(efl_ecore_drm2_version)
+
 AC_CHECK_HEADERS([sys/timerfd.h sys/ptrace.h arpa/inet.h netinet/in.h])
 
 dnl AC_CHECK_HEADERS(X11/extensions/shape.h,, AC_MSG_ERROR([Cannot find X11/extensions/shape.h. Make sure your CFLAGS environment variable contains include lines for the location of this file]))
@@ -763,9 +767,9 @@ WL_DRM=false
 define([CHECK_MODULE_WL_DRM],
 [
   if test "x${have_wayland}" = "xyes" ; then
-    PKG_CHECK_EXISTS([ecore-drm2 >= $efl_version], [have_ecore_drm2="yes"], [have_ecore_drm2="no"])
+    PKG_CHECK_EXISTS([ecore-drm2 >= $efl_ecore_drm2_version], [have_ecore_drm2="yes"], [have_ecore_drm2="no"])
     if test "x${have_ecore_drm2}" = "xyes"; then
-      AC_E_CHECK_PKG(WL_DRM, [ ecore-drm2 >= $efl_version ecore >= $efl_version eina >= $efl_version ],
+      AC_E_CHECK_PKG(WL_DRM, [ ecore-drm2 >= $efl_ecore_drm2_version ecore >= $efl_version eina >= $efl_version ],
         [
           WL_DRM=true
           AC_DEFINE_UNQUOTED([HAVE_DRM2],[1],[enable ecore-drm2 support])
@@ -901,7 +905,7 @@ if test "x${have_wayland}" = "xyes"; then
       e_alert_requires="\
         $e_alert_requires \
         ecore-input >= ${efl_version} \
-        ecore-drm2 >= ${efl_version} \
+        ecore-drm2 >= ${efl_ecore_drm2_version} \
         evas >= ${efl_version}"
     else
       e_alert_requires="\

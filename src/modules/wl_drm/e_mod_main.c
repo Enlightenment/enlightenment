@@ -788,12 +788,8 @@ _drm2_read_pixels(E_Comp_Wl_Output *output, void *pixels)
    out = ecore_drm2_output_find(dev, output->x, output->y);
    if (!out) return;
 
-   fb = ecore_drm2_output_next_fb_get(out);
-   if (!fb)
-     {
-        fb = ecore_drm2_output_current_fb_get(out);
-        if (!fb) return;
-     }
+   fb = ecore_drm2_output_latest_fb_get(out);
+   if (!fb) return;
 
    data = ecore_drm2_fb_data_get(fb);
    fstride = ecore_drm2_fb_stride_get(fb);
