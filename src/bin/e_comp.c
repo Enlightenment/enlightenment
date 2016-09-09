@@ -844,7 +844,6 @@ _e_comp_free(E_Comp *c)
    e_comp_canvas_clear();
 
    ecore_evas_free(c->ee);
-   eina_stringshare_del(c->name);
 
    if (c->render_animator) ecore_animator_del(c->render_animator);
    if (c->update_job) ecore_job_del(c->update_job);
@@ -1365,7 +1364,6 @@ e_comp_new(void)
    e_comp = E_OBJECT_ALLOC(E_Comp, E_COMP_TYPE, _e_comp_free);
    if (!e_comp) return NULL;
 
-   e_comp->name = eina_stringshare_add(_("Compositor"));
    e_comp->render_animator = ecore_animator_add(_e_comp_cb_animator, NULL);
    ecore_animator_freeze(e_comp->render_animator);
    return e_comp;

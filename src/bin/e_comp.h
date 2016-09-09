@@ -100,7 +100,6 @@ struct _E_Comp
 
    E_Pixmap_Type comp_type; //for determining X/Wayland primary type
 
-   Eina_Stringshare *name;
    struct {
       Ecore_Window win; //x11 layer stacking window
       Evas_Object *obj; //layer stacking object
