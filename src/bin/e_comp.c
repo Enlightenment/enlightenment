@@ -847,7 +847,6 @@ _e_comp_free(E_Comp *c)
 
    if (c->render_animator) ecore_animator_del(c->render_animator);
    if (c->update_job) ecore_job_del(c->update_job);
-   if (c->screen_job) ecore_job_del(c->screen_job);
    if (c->nocomp_delay_timer) ecore_timer_del(c->nocomp_delay_timer);
    if (c->nocomp_override_timer) ecore_timer_del(c->nocomp_override_timer);
    ecore_job_del(c->shape_job);

@@ -5414,8 +5414,6 @@ _e_comp_x_setup(Ecore_X_Window root, int w, int h)
                   return NULL;
          */
      }
-   e_comp->depth = att.depth;
-
    e_alert_composite_win(root, e_comp->win);
 
    if (!e_comp->ee)

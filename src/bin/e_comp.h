@@ -130,7 +130,6 @@ struct _E_Comp
    Ecore_Job      *update_job; //job to trigger render updates
    Evas_Object    *fps_bg;
    Evas_Object    *fps_fg;
-   Ecore_Job      *screen_job;
    Ecore_Timer    *nocomp_delay_timer; //delay before activating nocomp in x11
    Ecore_Timer    *nocomp_override_timer; //delay before overriding nocomp in x11
    int             animating; //number of animating comp objects
@@ -144,7 +143,6 @@ struct _E_Comp
    Ecore_Window  cm_selection; //FIXME: move to comp_x ?
    E_Client       *nocomp_ec; //window that triggered nocomp mode
 
-   int depth;
    unsigned int    input_key_grabs; //number of active compositor key grabs
    unsigned int    input_mouse_grabs; //number of active compositor mouse grabs
 
