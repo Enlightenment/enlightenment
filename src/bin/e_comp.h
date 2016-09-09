@@ -79,63 +79,63 @@ typedef struct E_Comp_Screen_Iface
 struct _E_Comp
 {
    E_Object e_obj_inherit;
-   int w, h;
+   int w, h; //overall size of compositor
 
    Ecore_Window  win; // input overlay
-   Ecore_Window  root;
-   Ecore_Evas     *ee;
-   Ecore_Window  ee_win;
-   Evas_Object    *elm;
-   Evas           *evas;
-   Evas_Object    *bg_blank_object;
-   Eina_List      *zones;
+   Ecore_Window  root; //x11 root window
+   Ecore_Evas     *ee; //canvas
+   Ecore_Window  ee_win; //canvas window
+   Evas_Object    *elm; //elm win base
+   Evas           *evas; //canvas
+   Evas_Object    *bg_blank_object; //black blocker rect to cover background artifacts
+   Eina_List      *zones; //list of E_Zones
    E_Pointer      *pointer;
-   Eina_List *clients;
-   unsigned int new_clients;
+   Eina_List *clients; //list of all E_Clients
+   unsigned int new_clients; //number of clients with new_client set
 
    Eina_List *pre_render_cbs; /* E_Comp_Cb */
 
-   E_Comp_X_Data *x_comp_data;
-   E_Comp_Wl_Data *wl_comp_data;
+   E_Comp_X_Data *x_comp_data; //x11 compositor-specific data
+   E_Comp_Wl_Data *wl_comp_data; //wl compositor-specific data
 
-   E_Pixmap_Type comp_type; //for determining X/Wayland/
+   E_Pixmap_Type comp_type; //for determining X/Wayland primary type
 
    Eina_Stringshare *name;
    struct {
-      Ecore_Window win;
-      Evas_Object *obj;
+      Ecore_Window win; //x11 layer stacking window
+      Evas_Object *obj; //layer stacking object
       //Eina_Inlist *objs; /* E_Comp_Object; NOT to be exposed; seems pointless? */
       Eina_Inlist *clients; /* E_Client, bottom to top */
-      unsigned int clients_count;
+      unsigned int clients_count; //count of clients on layer
    } layers[E_LAYER_COUNT];
 
-   struct
+   struct //autoclose handler for e_comp_object_util_autoclose
    {
-      Evas_Object *rect;
-      Evas_Object *obj;
+      Evas_Object *rect; //autoclose blocker rect
+      Evas_Object *obj; //autoclose object
       Ecore_Event_Handler *key_handler;
-      E_Comp_Object_Autoclose_Cb del_cb;
-      E_Comp_Object_Key_Cb key_cb;
-      void *data;
+      E_Comp_Object_Autoclose_Cb del_cb; //cb to call on autoclose delete
+      E_Comp_Object_Key_Cb key_cb; //cb to call on key press
+      void *data; //user data
    } autoclose;
 
    E_Comp_Screen_Iface *screen;
 
-   Eina_List *debug_rects;
-   Eina_List *ignore_wins;
+   Eina_List *debug_rects; //used when SHAPE_DEBUG is defined in e_comp.c
+   Eina_List *ignore_wins; //windows to be ignored by the compositor
 
-   Eina_List      *updates;
-   Eina_List      *post_updates;
-   Ecore_Animator *render_animator;
-   Ecore_Job      *shape_job;
-   Ecore_Job      *update_job;
+   Eina_List      *updates; //E_Clients with render updates
+   Eina_List      *post_updates; //E_Clients awaiting post render flushing
+   Ecore_Animator *render_animator; //animator for fixed time rendering
+   Ecore_Job      *shape_job; //job to update x11 input shapes
+   Ecore_Job      *update_job; //job to trigger render updates
    Evas_Object    *fps_bg;
    Evas_Object    *fps_fg;
    Ecore_Job      *screen_job;
-   Ecore_Timer    *nocomp_delay_timer;
-   Ecore_Timer    *nocomp_override_timer;
-   int             animating;
-   double          frametimes[122];
+   Ecore_Timer    *nocomp_delay_timer; //delay before activating nocomp in x11
+   Ecore_Timer    *nocomp_override_timer; //delay before overriding nocomp in x11
+   int             animating; //number of animating comp objects
+   double          frametimes[122]; //used for calculating fps
    int             frameskip;
 
    int             nocomp_override; //number of times nocomp override has been requested
@@ -143,22 +143,22 @@ struct _E_Comp
    int             block_count; //number of times block window has been requested
 
    Ecore_Window  cm_selection; //FIXME: move to comp_x ?
-   E_Client       *nocomp_ec;
+   E_Client       *nocomp_ec; //window that triggered nocomp mode
 
    int depth;
-   unsigned int    input_key_grabs;
-   unsigned int    input_mouse_grabs;
+   unsigned int    input_key_grabs; //number of active compositor key grabs
+   unsigned int    input_mouse_grabs; //number of active compositor mouse grabs
 
-   E_Comp_Cb        grab_cb;
-   E_Comp_Cb        bindings_grab_cb;
-   E_Comp_Cb        bindings_ungrab_cb;
+   E_Comp_Cb        grab_cb; //callback for grabbing the xserver
+   E_Comp_Cb        bindings_grab_cb; //callback for triggering binding input grab
+   E_Comp_Cb        bindings_ungrab_cb; //callback for triggering binding input ungrab
 
-   Eina_Bool       gl : 1;
-   Eina_Bool       grabbed : 1;
-   Eina_Bool       nocomp : 1;
-   Eina_Bool       nocomp_want : 1;
-   Eina_Bool       saver : 1;
-   Eina_Bool       shape_queue_blocked : 1;
+   Eina_Bool       gl : 1; //gl is active
+   Eina_Bool       grabbed : 1; //xserver is grabbed
+   Eina_Bool       nocomp : 1; //nocomp is active
+   Eina_Bool       nocomp_want : 1; //nocomp is pending
+   Eina_Bool       saver : 1; //screensaver is active
+   Eina_Bool       shape_queue_blocked : 1; //x11 input shape updates are blocked
 
    Eina_Bool       rendering : 1; // we've received a pre-render callback but no post-render yet.
 };
