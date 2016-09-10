@@ -645,7 +645,7 @@ _ibar_resize_handle(IBar *b)
    if (b->inst->gcc->gadcon->shelf)
      {
         /* we are in a shelf */
-        ww = hh = b->inst->gcc->gadcon->shelf->cfg->size;
+        ww = hh = b->inst->gcc->gadcon->shelf->cfg->size * elm_config_scale_get();
      }
    else if (b->inst->gcc->max.w || b->inst->gcc->max.h)
      {
