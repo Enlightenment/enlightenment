@@ -682,10 +682,19 @@ AC_MSG_CHECKING([whether wayland EGL support is enabled])
 AC_MSG_RESULT([${e_cv_want_wayland_egl}])
 
 if test "x${e_cv_want_wayland_only}" != "xno" ;then
-  PKG_CHECK_MODULES([WAYLAND], [ecore-wl2 >= 1.18 wayland-server >= 1.11.0 wayland-client >= 1.11.0 xkbcommon uuid],
+  PKG_CHECK_MODULES([WAYLAND], [ecore-wl2 >= 1.18 wayland-server >= 1.11.0 wayland-client >= 1.11.0 wayland-protocols >= 1.7 wayland-scanner >= 1.11.0 xkbcommon uuid],
     [
       have_wayland=yes
       have_wayland_dep=true
+      AC_ARG_VAR([wayland_scanner], [The wayland-scanner executable])
+      AC_PATH_PROG([wayland_scanner], [wayland-scanner])
+      if test x$wayland_scanner = x; then
+        PKG_CHECK_MODULES(WAYLAND_SCANNER, [wayland-scanner])
+        wayland_scanner=`$PKG_CONFIG --variable=wayland_scanner wayland-scanner`
+      fi
+      ac_wayland_protocols_pkgdatadir=`$PKG_CONFIG --variable=pkgdatadir wayland-protocols`
+      AC_SUBST(WAYLAND_PROTOCOLS_DATADIR, $ac_wayland_protocols_pkgdatadir)
+
       AC_DEFINE_UNQUOTED([HAVE_WAYLAND],[1],[enable wayland support])
     ])
 else
