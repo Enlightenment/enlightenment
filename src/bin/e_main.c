@@ -341,6 +341,7 @@ main(int argc, char **argv)
    /* install qt5ct and overwrite this variable with qt5ct and use that to    */
    /* configure there Qt5 applications.                                       */
    e_util_env_set("QT_QPA_PLATFORMTHEME", "gtk2");
+   e_util_env_set("QT_STYLE_OVERRIDE", "gtk2");
 
    TS("Parse Arguments");
    _e_main_parse_arguments(argc, argv);
