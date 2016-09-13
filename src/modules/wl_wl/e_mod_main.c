@@ -53,7 +53,7 @@ e_modapi_init(E_Module *m)
           }
         else
           {
-             fprintf(stderr, "Could not create ecore_evas_drm canvas");
+             fprintf(stderr, "Could not create wayland canvas");
              return NULL;
           }
      }
