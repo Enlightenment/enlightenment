@@ -733,7 +733,9 @@ _e_drag_win_get(const E_Drop_Handler *h, int xdnd)
            case E_CLIENT_TYPE:
            case E_ZONE_TYPE:
            default:
-             hwin = e_comp->ee_win;
+             /* protect against crashes during shutdown */
+             if (e_comp)
+               hwin = e_comp->ee_win;
              break;
           }
      }
