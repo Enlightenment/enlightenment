@@ -732,11 +732,8 @@ _e_drag_win_get(const E_Drop_Handler *h, int xdnd)
 
            case E_CLIENT_TYPE:
            case E_ZONE_TYPE:
-             hwin = e_comp->ee_win;
-             break;
-
-           /* FIXME: add more types as needed */
            default:
+             hwin = e_comp->ee_win;
              break;
           }
      }
