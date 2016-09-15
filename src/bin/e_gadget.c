@@ -1436,6 +1436,7 @@ e_gadget_drop_handler_add(Evas_Object *g, void *data,
                         enter_cb, move_cb, leave_cb, drop_cb,
                         types, num_types, x, y, w, h);
    drop_object = evas_object_rectangle_add(e_comp->evas);
+   drop_handler->base = drop_object;
    evas_object_color_set(drop_object, 0, 0, 0, 0);
    e_object_data_set(E_OBJECT(drop_handler), drop_object);
    evas_object_data_set(drop_object, "gadget_drop_handler", drop_handler);
