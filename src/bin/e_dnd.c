@@ -835,6 +835,8 @@ _dnd_top_window_at_xy_get(Evas_Coord x, Evas_Coord y)
    Eina_List *objs, *l;
    Evas_Object *o;
 
+   if (_drag_current->type == E_DRAG_INTERNAL)
+     return e_comp_top_window_at_xy_get(x, y);
    objs = evas_objects_at_xy_get(e_comp->evas, x, y, 0, 0);
    if (!objs) return e_comp->ee_win;
    EINA_LIST_FOREACH(objs, l, o)
