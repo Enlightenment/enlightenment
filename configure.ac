@@ -780,12 +780,16 @@ define([CHECK_MODULE_XWAYLAND],
 [
   if test "x${have_wayland}" = "xyes"; then
     AC_E_CHECK_PKG(XWAYLAND, [ ecore-x >= ${efl_version} ecore-audio >= ${efl_version}  ], [HAVE_XWAYLAND_DEPS=true], [HAVE_XWAYLAND_DEPS=false])
-    EFL_WITH_BIN([Xwayland], [Xwayland], [Xwayland])
-    if test -z "x${Xwayland}" ; then
-      HAVE_XWAYLAND_DEPS=false
+    AC_ARG_WITH(Xwayland, AS_HELP_STRING([--with-Xwayland=PATH], [Path to Xwayland]), [Xwayland_with="$withval"], [Xwayland_with="yes"])
+    if test "x${Xwayland_with}" != "xyes"; then
+      xwayland=$Xwayland_with
+      AC_SUBST(xwayland)
+    else
+      AC_PATH_PROG(xwayland, Xwayland, "no")
     fi
-  else
-    HAVE_XWAYLAND_DEPS=false
+    if test "x${xwayland}" == "xno"; then
+      AC_MSG_ERROR([Xwayland enabled but not found.])
+    fi
   fi
 ])
 AM_CONDITIONAL([HAVE_XWAYLAND], [test "x${HAVE_XWAYLAND}" != "xno"])
