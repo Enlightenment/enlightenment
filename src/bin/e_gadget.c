@@ -648,6 +648,7 @@ _gadget_act_move(E_Object *obj, const char *params EINA_UNUSED, E_Binding_Event_
 {
    E_Gadget_Config *zgc, *z;
    Evas_Object *g;
+   int w, h;
 
    if (obj->type != E_GADGET_TYPE) return EINA_FALSE;
 
@@ -660,6 +661,8 @@ _gadget_act_move(E_Object *obj, const char *params EINA_UNUSED, E_Binding_Event_
    ZGS_GET(pointer_site);
    _gadget_util_add(zgs, zgc->type, zgc->id);
    z = eina_list_data_get(zgs->gadgets);
+   evas_object_geometry_get(g, NULL, NULL, &w, &h);
+   evas_object_resize(pointer_site, w, h);
    eina_stringshare_refplace(&z->style.name, zgc->style.name);
    z->orig = zgc;
    return EINA_TRUE;
