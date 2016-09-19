@@ -642,6 +642,7 @@ _gadget_act_resize_end(E_Object *obj, const char *params EINA_UNUSED, E_Binding_
    zgc->moving = 0;
 
    E_FREE_FUNC(zgc->site->move_handler, ecore_event_handler_del);
+   evas_object_smart_need_recalculate_set(zgc->site->layout, 1);
    return EINA_TRUE;
 }
 
@@ -905,6 +906,8 @@ _site_drop(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
    evas_pointer_canvas_xy_get(e_comp->evas, &mx, &my);
    evas_object_geometry_get(zgs->layout, &x, &y, &w, &h);
    if (!E_INSIDE(mx, my, x, y, w, h)) return;
+   if (evas_object_smart_need_recalculate_get(event_info))
+     evas_object_smart_calculate(event_info);
    EINA_LIST_FOREACH(zgs->gadgets, l, zgc)
      {
         if (!zgc->display) continue;
@@ -1805,6 +1808,8 @@ _editor_pointer_move(Gadget_Item *active EINA_UNUSED, int t EINA_UNUSED, Ecore_E
 
    evas_object_geometry_get(pointer_site, NULL, NULL, &w, &h);
    evas_object_move(pointer_site, ev->x - (w / 2), ev->y - (h / 2));
+   if (!e_gadget_site_orient_get(pointer_site))
+     evas_object_smart_need_recalculate_set(pointer_site, 1);
    return ECORE_CALLBACK_RENEW;
 }
 
