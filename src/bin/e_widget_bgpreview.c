@@ -387,6 +387,7 @@ _e_wid_cb_bg_update(void *data, int type, void *event)
           {
              dd->live = o = e_video_add(e, bgfile, EINA_TRUE);
           }
+        _e_wid_livethumb_resize_job(dd);
         eina_stringshare_del(bgfile);
 
         evas_object_size_hint_weight_set(dd->live, 1, 1);
