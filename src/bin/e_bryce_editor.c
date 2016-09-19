@@ -100,7 +100,7 @@ _editor_bryce_add(Evas_Object *obj)
    e_bryce_style_set(b, bi->style);
    e_bryce_autohide_set(b, bi->autohide);
    e_bryce_autosize_set(b, bi->autosize);
-   evas_object_layer_set(b, bi->stack_under ? E_LAYER_DESKTOP : E_LAYER_CLIENT_EDGE);
+   evas_object_layer_set(b, bi->stack_under ? E_LAYER_DESKTOP : E_LAYER_CLIENT_ABOVE);
    evas_object_del(obj);
 }
 
