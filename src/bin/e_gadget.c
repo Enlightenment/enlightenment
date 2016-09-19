@@ -297,6 +297,7 @@ _gadget_object_create(E_Gadget_Config *zgc)
         if (t->wizard)
           {
              t->wizard(_gadget_wizard_end, zgc);
+             added = 1;
              return EINA_TRUE;
           }
      }
@@ -306,6 +307,7 @@ _gadget_object_create(E_Gadget_Config *zgc)
     */
    g = t->cb(zgc->site->layout, &zgc->id, zgc->site->orient);
    EINA_SAFETY_ON_NULL_RETURN_VAL(g, EINA_FALSE);
+   added = 1;
 
    zgc->e_obj_inherit = E_OBJECT_ALLOC(E_Object, E_GADGET_TYPE, _gadget_object_free);
    e_object_data_set(zgc->e_obj_inherit, g);
