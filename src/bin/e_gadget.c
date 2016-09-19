@@ -1711,7 +1711,7 @@ _editor_pointer_button(Gadget_Item *active, int t EINA_UNUSED, Ecore_Event_Mouse
              EINA_LIST_FOREACH(sites->sites, l, zgs)
                {
                   if (!zgs->layout) continue;
-                  if (!evas_object_visible_get(zgs->layout)) continue;
+                  if (!evas_object_visible_get(zgs->events)) continue;
                   evas_object_geometry_get(zgs->layout, &x, &y, &w, &h);
                   if (!E_INSIDE(ev->x, ev->y, x, y, w, h)) continue;
                   /* FIXME: technically not accurate since objects on the same layer
