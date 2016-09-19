@@ -370,8 +370,8 @@ _site_gadget_resize(Evas_Object *g, int w, int h, Evas_Coord *ww, Evas_Coord *hh
    else
      {
         *ww = mnw, *hh = mnh;
-        if (!(*ww)) *ww = w;
-        if (!(*hh)) *hh = h;
+        if ((!(*ww)) || ((*ww) < w)) *ww = w;
+        if ((!(*hh)) || ((*hh) < h)) *hh = h;
      }
    if (aspect && ax && ay)
      {
@@ -392,7 +392,14 @@ _site_gadget_resize(Evas_Object *g, int w, int h, Evas_Coord *ww, Evas_Coord *hh
                {
                   double ar = ax / (double) ay;
 
-                  if (ar > 1.0)
+                  if (ax == ay)
+                    {
+                       if (*ww > *hh)
+                         *hh = *ww;
+                       else
+                         *ww = *hh;
+                    }
+                  else if (ar > 1.0)
                     *hh = (*ww * ay / ax);
                   else
                     *ww = (*hh * ax / ay);
