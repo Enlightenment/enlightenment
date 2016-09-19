@@ -14,7 +14,8 @@
       "gadget_created"
        - a gadget object was created on the site
       "gadget_destroyed"
-       - a gadget object was destroyed on the site
+       - a gadget object was destroyed on the site; all objects created by the
+         gadget infrastructure are now dead
       "gadget_moved"
        - a gadget is preparing to move from its current site
       "gadget_removed"
