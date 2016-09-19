@@ -529,16 +529,21 @@ _site_layout(Evas_Object *o, Evas_Object_Box_Data *priv EINA_UNUSED, void *data)
         int ww, hh, ow, oh;
 
         if (!zgc->display) continue;
-        _site_gadget_resize(zgc->gadget, w * zgc->w, h * zgc->h, &ww, &hh, &ow, &oh);
-        if (zgc->x > -1.0)
+        if (zgc->moving)
+          _site_gadget_resize(zgc->gadget, w, h, &ww, &hh, &ow, &oh);
+        else
           {
-             gx = zgc->x * w;
-             gx += (Evas_Coord)(((double)(ww - ow)) * 0.5 * -ax);
-          }
-        if (zgc->y > -1.0)
-          {
-             gy = zgc->y * h;
-             gy += (Evas_Coord)(((double)(hh - oh)) * 0.5 * -ay);
+             _site_gadget_resize(zgc->gadget, w * zgc->w, h * zgc->h, &ww, &hh, &ow, &oh);
+             if (zgc->x > -1.0)
+               {
+                  gx = zgc->x * w;
+                  gx += (Evas_Coord)(((double)(ww - ow)) * 0.5 * -ax);
+               }
+             if (zgc->y > -1.0)
+               {
+                  gy = zgc->y * h;
+                  gy += (Evas_Coord)(((double)(hh - oh)) * 0.5 * -ay);
+               }
           }
         if (zgs->gravity)
           {
