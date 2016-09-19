@@ -1035,8 +1035,8 @@ _site_drop(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
                   zgs->gadget_list = eina_inlist_append(zgs->gadget_list,
                     EINA_INLIST_GET(dzgc));
                   zgs->gadgets = eina_list_append(zgs->gadgets, dzgc);
-                  dzgc->x = ((gx - dx) / (double)dw) + ((mx - x) / (double)w);
-                  dzgc->y = ((gy - dy) / (double)dh) + ((my - y) / (double)h);
+                  dzgc->x = ((gx - dx) / (double)dw) + ((mx - x - (mx - gx)) / (double)w);
+                  dzgc->y = ((gy - dy) / (double)dh) + ((my - y - (my - gy)) / (double)h);
                   dzgc->w = gw / (double)w;
                   dzgc->h = gh / (double)h;
                   dzgc->site = zgs;
