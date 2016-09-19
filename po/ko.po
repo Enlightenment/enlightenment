@@ -5705,7 +5705,7 @@ msgstr "WIN"
 
 #: src/modules/conf_bindings/e_int_config_edgebindings.c:1393
 msgid "Left Edge"
-msgstr "왼쪽 테두리"
+msgstr "왼쪽 가장자리"
 
 #: src/modules/conf_bindings/e_int_config_edgebindings.c:1397
 msgid "Top Edge"
