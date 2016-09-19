@@ -1,6 +1,6 @@
 #include "e.h"
 
-#define DEFAULT_LAYER E_LAYER_POPUP
+#define DEFAULT_LAYER E_LAYER_CLIENT_ABOVE
 #define E_BRYCE_TYPE 0xE31338
 
 typedef struct Bryce
@@ -1171,6 +1171,7 @@ e_bryce_init(void)
         EINA_LIST_FOREACH(bryces->bryces, l, b)
           {
              if (!e_comp_zone_number_get(b->zone)) continue;
+             b->layer = E_CLAMP(b->layer, E_LAYER_DESKTOP, E_LAYER_CLIENT_ABOVE);
              _bryce_create(b, e_comp->elm);
              evas_object_show(b->bryce);
           }
