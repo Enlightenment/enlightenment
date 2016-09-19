@@ -723,15 +723,21 @@ _gadget_act_configure(E_Object *obj, const char *params EINA_UNUSED, E_Binding_E
 }
 
 static void
+_gadget_remove(E_Gadget_Config *zgc)
+{
+   evas_object_smart_callback_call(zgc->site->layout, "gadget_removed", zgc->gadget);
+   zgc->site->gadget_list = eina_inlist_remove(zgc->site->gadget_list, EINA_INLIST_GET(zgc));
+   zgc->site->gadgets = eina_list_remove(zgc->site->gadgets, zgc);
+   _gadget_free(zgc);
+}
+
+static void
 _gadget_menu_remove(void *data, E_Menu *m EINA_UNUSED, E_Menu_Item *mi EINA_UNUSED)
 {
    E_Gadget_Config *zgc = data;
 
-   evas_object_smart_callback_call(zgc->site->layout, "gadget_removed", zgc->gadget);
-   zgc->site->gadget_list = eina_inlist_remove(zgc->site->gadget_list, EINA_INLIST_GET(zgc));
-   zgc->site->gadgets = eina_list_remove(zgc->site->gadgets, zgc);
+   _gadget_remove(zgc);
    evas_object_smart_need_recalculate_set(zgc->site->layout, 1);
-   _gadget_free(zgc);
    e_config_save_queue();
 }
 
@@ -1895,11 +1901,27 @@ _edit_end()
    e_comp_ungrab_input(1, 1);
 }
 
+static void
+_gadget_desklock_clear(void)
+{
+   Eina_List *l;
+   E_Gadget_Site *zgs;
+
+   EINA_LIST_FOREACH(sites->sites, l, zgs)
+     if (zgs->autoadd && zgs->layout && strstr(zgs->name, "desklock."))
+       {
+          E_LIST_FOREACH(zgs->gadgets, _gadget_remove);
+       }
+   e_config_save_queue();
+}
+
 static Eina_Bool
 _gadget_key_handler(void *d EINA_UNUSED, int t EINA_UNUSED, Ecore_Event_Key *ev)
 {
    if (eina_streq(ev->key, "Escape"))
      _gadget_desklock_del();
+   else if (eina_streq(ev->key, "Delete") || eina_streq(ev->key, "Backspace"))
+     _gadget_desklock_clear();
    return ECORE_CALLBACK_DONE;
 }
 
@@ -1938,7 +1960,8 @@ _gadget_desklock_handler(void *d EINA_UNUSED, int t EINA_UNUSED, E_Event_Comp_Ob
    memset(&n, 0, sizeof(E_Notification_Notify));
    n.timeout = 3000;
    n.summary = _("Lockscreen Gadgets");
-   n.body = _("Press Escape or click the background to exit.");
+   n.body = _("Press Escape or click the background to exit.<ps/>"
+              "Use Backspace or Delete to remove all gadgets from this screen");
    n.urgency = E_NOTIFICATION_NOTIFY_URGENCY_NORMAL;
    e_notification_client_send(&n, NULL, NULL);
    return ECORE_CALLBACK_RENEW;
