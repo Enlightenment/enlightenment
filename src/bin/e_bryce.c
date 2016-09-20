@@ -361,6 +361,7 @@ _bryce_restack(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *event_in
    E_Layer layer;
 
    layer = evas_object_layer_get(obj);
+   if (layer > DEFAULT_LAYER) return;
    b->layer = layer;
    if ((!b->noshadow) && (layer != b->layer))
      e_comp_object_util_type_set(b->bryce, _bryce_shadow_type(b));
