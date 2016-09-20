@@ -248,6 +248,15 @@ _gadget_util_allow_deny_cleanup(E_Gadget_Config *zgc)
 }
 
 static void
+_gadget_drop_handler_del(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
+{
+   E_Gadget_Config *zgc = data;
+
+   if (zgc->drop_handlers)//may be calling during object_free
+     eina_hash_del_by_key(zgc->drop_handlers, &obj);
+}
+
+static void
 _gadget_object_free(E_Object *eobj)
 {
    E_Gadget_Config *zgc;
@@ -265,6 +274,7 @@ _gadget_object_free(E_Object *eobj)
         E_FREE_FUNC(zgc->display, evas_object_del);
      }
    zgc->gadget = NULL;
+
    E_FREE_FUNC(zgc->drop_handlers, eina_hash_free);
    E_FREE_FUNC(zgc->gadget, evas_object_del);
    E_FREE_FUNC(zgc->cfg_object, evas_object_del);
@@ -1429,15 +1439,6 @@ _gadget_drop_handler_moveresize(void *data, Evas *e EINA_UNUSED, Evas_Object *ob
    e_drop_handler_geometry_set(data, x, y, w, h);
 }
 
-static void
-_gadget_drop_handler_del(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
-{
-   E_Gadget_Config *zgc = data;
-
-   eina_hash_del_by_key(zgc->drop_handlers, &obj);
-   e_object_del(evas_object_data_get(obj, "gadget_drop_handler"));
-}
-
 E_API Evas_Object *
 e_gadget_drop_handler_add(Evas_Object *g, void *data,
                                         void (*enter_cb)(void *data, const char *type, void *event),
@@ -1456,13 +1457,14 @@ e_gadget_drop_handler_add(Evas_Object *g, void *data,
    EINA_SAFETY_ON_NULL_RETURN_VAL(zgc, NULL);
 
    if (!zgc->drop_handlers)
-     zgc->drop_handlers = eina_hash_pointer_new((Eina_Free_Cb)evas_object_del);
+     zgc->drop_handlers = eina_hash_pointer_new((Eina_Free_Cb)e_drop_handler_del);
 
    evas_object_geometry_get(zgc->display, &x, &y, &w, &h);
    drop_handler = e_drop_handler_add(zgc->e_obj_inherit, NULL, data,
                         enter_cb, move_cb, leave_cb, drop_cb,
                         types, num_types, x, y, w, h);
    drop_object = evas_object_rectangle_add(e_comp->evas);
+   e_comp_object_util_del_list_append(g, drop_object);
    drop_handler->base = drop_object;
    evas_object_color_set(drop_object, 0, 0, 0, 0);
    e_object_data_set(E_OBJECT(drop_handler), drop_object);
