@@ -264,6 +264,7 @@ _gadget_object_free(E_Object *eobj)
         evas_object_event_callback_del_full(zgc->display, EVAS_CALLBACK_DEL, _gadget_del, zgc);
         E_FREE_FUNC(zgc->display, evas_object_del);
      }
+   zgc->gadget = NULL;
    E_FREE_FUNC(zgc->drop_handlers, eina_hash_free);
    E_FREE_FUNC(zgc->gadget, evas_object_del);
    E_FREE_FUNC(zgc->cfg_object, evas_object_del);
@@ -1102,7 +1103,7 @@ _site_del(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *e
    E_FREE_FUNC(zgs->move_handler, ecore_event_handler_del);
    E_FREE_FUNC(zgs->mouse_up_handler, ecore_event_handler_del);
    EINA_LIST_FOREACH(zgs->gadgets, l, zgc)
-     evas_object_del(zgc->gadget);
+     evas_object_del(zgc->display);
    if (zgs->name) return;
    eina_stringshare_del(zgs->name);
    free(zgs);
