@@ -4578,6 +4578,7 @@ e_client_act_kill_begin(E_Client *ec)
    if (!ec->zone) return;
    if (ec->internal) return;
    if (ec->lock_close) return;
+   if (ec->netwm.pid == getpid()) return;
    if ((ec->netwm.pid > 1) && (e_config->kill_process))
      {
         kill(ec->netwm.pid, SIGINT);
