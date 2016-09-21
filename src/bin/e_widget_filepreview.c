@@ -931,8 +931,13 @@ _e_wid_fprev_preview_txt_map_success(void *data, Eio_File *handler EINA_UNUSED, 
    char *msg;
    Evas_Coord mw, mh;
 
+   msg = malloc(length + 1);
+   if (!msg) return;
+   strncpy(msg, map, length);
+   msg[length] = 0;
    buf = eina_strbuf_new();
-   eina_strbuf_append_length(buf, map, length);
+   eina_strbuf_append_length(buf, msg, length);
+   free(msg);
    msg = evas_textblock_text_utf8_to_markup(NULL, eina_strbuf_string_get(buf));
    eina_strbuf_reset(buf);
 
