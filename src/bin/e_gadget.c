@@ -745,7 +745,6 @@ _gadget_menu_remove(void *data, E_Menu *m EINA_UNUSED, E_Menu_Item *mi EINA_UNUS
    E_Gadget_Config *zgc = data;
 
    _gadget_remove(zgc);
-   evas_object_smart_need_recalculate_set(zgc->site->layout, 1);
    e_config_save_queue();
 }
 
