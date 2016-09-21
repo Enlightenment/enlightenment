@@ -16,6 +16,7 @@ Wayland support.
 Firstly, you MUST have EFL built with the following options:
 
   --enable-drm
+  --enable-gl-drm (for hardware acceleration)
   --enable-wayland
   --enable-systemd
   --enable-elput
