@@ -70,10 +70,10 @@ _config_pager_module(Config_Item *ci)
    v->advanced.check_changed = _adv_check_changed;
 
    snprintf(buff, sizeof(buff), "%s/e-module-pager.edj",
-            pager_config->module->dir);
+            module->dir);
    cfd = e_config_dialog_new(NULL, _("Pager Settings"), "E",
                              "_e_mod_pager_config_dialog", buff, 0, v, ci);
-   pager_config->config_dialog = cfd;
+   config_dialog = cfd;
 }
 
 /* local function prototypes */
@@ -111,7 +111,7 @@ _free_data(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfdata)
 {
    cfdata->gui.popup_list = eina_list_free(cfdata->gui.popup_list);
    cfdata->gui.urgent_list = eina_list_free(cfdata->gui.urgent_list);
-   pager_config->config_dialog = NULL;
+   config_dialog = NULL;
    E_FREE(cfdata);
 }
 
@@ -153,6 +153,7 @@ _basic_apply(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfdata)
    pager_config->show_desk_names = cfdata->show_desk_names;
    pager_config->popup_urgent = cfdata->popup.urgent_show;
    _pager_cb_config_updated();
+   _pager_cb_config_gadget_updated();
    e_config_save_queue();
    return 1;
 }
@@ -306,6 +307,7 @@ _adv_apply(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfdata)
    pager_config->btn_noplace = cfdata->btn.noplace;
    pager_config->btn_desk = cfdata->btn.desk;
    _pager_cb_config_updated();
+   _pager_cb_config_gadget_updated();
    e_config_save_queue();
    return 1;
 }
