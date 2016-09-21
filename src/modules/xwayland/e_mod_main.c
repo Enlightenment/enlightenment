@@ -247,6 +247,8 @@ fail:
           ecore_main_fd_handler_del(exs->abs_hdlr);
         if (exs->unx_hdlr)
           ecore_main_fd_handler_del(exs->unx_hdlr);
+        exs->abs_hdlr = NULL;
+        exs->unx_hdlr = NULL;
         break;
       case -1:
         ERR("Failed to fork: %m");
