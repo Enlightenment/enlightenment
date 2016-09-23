@@ -228,6 +228,8 @@ src/bin/e_comp_wl_input.h \
 src/bin/e_comp_wl.h
 endif
 
+enlightenment_gen_src =
+MAINTAINERCLEANFILES += $(enlightenment_gen_src)
 
 enlightenment_src = \
 src/bin/e_about.c \
@@ -394,6 +396,36 @@ src/bin/e_xsettings.c
 endif
 
 if HAVE_WAYLAND
+#Stolen from weston's Makefile.am and modified for Enlightenment
+.SECONDEXPANSION:
+
+define protostability
+$(if $(findstring unstable,$1),unstable,stable)
+endef
+
+define protoname
+$(shell echo $1 | sed 's/\([a-z\-]\+\)-[a-z]\+-v[0-9]\+/\1/')
+endef
+
+%-protocol.c : $(WAYLAND_PROTOCOLS_DATADIR)/$$(call protostability,$$*)/$$(call protoname,$$*)/$$*.xml
+	$(AM_V_GEN)$(MKDIR_P) $(dir $@) && $(wayland_scanner) code < $< > $@
+
+%-server-protocol.h : $(WAYLAND_PROTOCOLS_DATADIR)/$$(call protostability,$$*)/$$(call protoname,$$*)/$$*.xml
+	$(AM_V_GEN)$(MKDIR_P) $(dir $@) && $(wayland_scanner) server-header < $< > $@
+
+%-client-protocol.h : $(WAYLAND_PROTOCOLS_DATADIR)/$$(call protostability,$$*)/$$(call protoname,$$*)/$$*.xml
+	$(AM_V_GEN)$(MKDIR_P) $(dir $@) && $(wayland_scanner) client-header < $< > $@
+
+%-protocol.c : $(top_srcdir)/src/protocol/$(notdir $$*).xml
+	$(AM_V_GEN)$(MKDIR_P) $(dir $@) && $(wayland_scanner) code < $< > $@
+
+%-server-protocol.h : $(top_srcdir)/src/protocol/$(notdir $$*).xml
+	$(AM_V_GEN)$(MKDIR_P) $(dir $@) && $(wayland_scanner) server-header < $< > $@
+
+%-client-protocol.h : $(top_srcdir)/src/protocol/$(notdir $$*).xml
+	$(AM_V_GEN)$(MKDIR_P) $(dir $@) && $(wayland_scanner) client-header < $< > $@
+#End of weston stuff
+
 enlightenment_src += \
 src/bin/generated/linux-dmabuf-unstable-v1-server-protocol.h \
 src/bin/generated/linux-dmabuf-unstable-v1-protocol.c \
@@ -408,12 +440,17 @@ src/bin/e_comp_wl_input.c \
 src/bin/e_comp_wl_dmabuf.c \
 src/bin/e_comp_wl.c \
 src/bin/e_comp_wl_extensions.c
+
+enlightenment_gen_src +=
+
 endif
 
 src_bin_enlightenment_CPPFLAGS = $(E_CPPFLAGS) -DE_LOGGING=1 @WAYLAND_CFLAGS@ @WAYLAND_EGL_CFLAGS@ @ECORE_X_CFLAGS@
 src_bin_enlightenment_SOURCES = \
 src/bin/e_main.c \
 $(enlightenment_src)
+
+nodist_src_bin_enlightenment_SOURCES = $(enlightenment_gen_src)
 
 src_bin_enlightenment_LDFLAGS = -export-dynamic
 src_bin_enlightenment_LDADD = @e_libs@ @dlopen_libs@ @cf_libs@ @VALGRIND_LIBS@ @WAYLAND_LIBS@ @WL_DRM_LIBS@ @WAYLAND_EGL_LIBS@ -lm @SHM_OPEN_LIBS@ @ECORE_X_LIBS@
