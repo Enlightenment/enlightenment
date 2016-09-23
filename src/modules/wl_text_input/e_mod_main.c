@@ -1,7 +1,7 @@
 #define E_COMP_WL
 #include "e.h"
-#include "text-protocol.h"
-#include "input-method-protocol.h"
+#include "text-input-unstable-v1-server-protocol.h"
+#include "input-method-unstable-v1-server-protocol.h"
 
 typedef struct _E_Text_Input E_Text_Input;
 typedef struct _E_Input_Method E_Input_Method;
@@ -123,7 +123,7 @@ _e_text_input_deactivate(E_Text_Input *text_input, E_Input_Method *input_method)
                _e_text_input_method_context_grab_set(input_method->context,
                                                      EINA_FALSE);
 
-             wl_input_method_send_deactivate(input_method->resource,
+             zwp_input_method_v1_send_deactivate(input_method->resource,
                                              input_method->context->resource);
           }
 
@@ -132,7 +132,7 @@ _e_text_input_deactivate(E_Text_Input *text_input, E_Input_Method *input_method)
 
         text_input->input_methods = eina_list_remove(text_input->input_methods, input_method);
 
-        wl_text_input_send_leave(text_input->resource);
+        zwp_text_input_v1_send_leave(text_input->resource);
      }
 }
 
@@ -156,7 +156,7 @@ _e_text_input_method_context_cb_string_commit(struct wl_client *client EINA_UNUS
      }
 
    if (context->model)
-     wl_text_input_send_commit_string(context->model->resource,
+     zwp_text_input_v1_send_commit_string(context->model->resource,
                                       serial, text);
 }
 
@@ -174,7 +174,7 @@ _e_text_input_method_context_cb_preedit_string(struct wl_client *client EINA_UNU
      }
 
    if (context->model)
-     wl_text_input_send_preedit_string(context->model->resource,
+     zwp_text_input_v1_send_preedit_string(context->model->resource,
                                        serial, text, commit);
 }
 
@@ -192,7 +192,7 @@ _e_text_input_method_context_cb_preedit_styling(struct wl_client *client EINA_UN
      }
 
    if (context->model)
-     wl_text_input_send_preedit_styling(context->model->resource,
+     zwp_text_input_v1_send_preedit_styling(context->model->resource,
                                         index, length, style);
 }
 
@@ -210,7 +210,7 @@ _e_text_input_method_context_cb_preedit_cursor(struct wl_client *client EINA_UNU
      }
 
    if (context->model)
-     wl_text_input_send_preedit_cursor(context->model->resource,
+     zwp_text_input_v1_send_preedit_cursor(context->model->resource,
                                        cursor);
 }
 
@@ -228,7 +228,7 @@ _e_text_input_method_context_cb_surrounding_text_delete(struct wl_client *client
      }
 
    if (context->model)
-     wl_text_input_send_delete_surrounding_text(context->model->resource,
+     zwp_text_input_v1_send_delete_surrounding_text(context->model->resource,
                                                 index, length);
 }
 
@@ -246,7 +246,7 @@ _e_text_input_method_context_cb_cursor_position(struct wl_client *client EINA_UN
      }
 
    if (context->model)
-     wl_text_input_send_cursor_position(context->model->resource,
+     zwp_text_input_v1_send_cursor_position(context->model->resource,
                                         index, anchor);
 }
 
@@ -264,7 +264,7 @@ _e_text_input_method_context_cb_modifiers_map(struct wl_client *client EINA_UNUS
      }
 
    if (context->model)
-     wl_text_input_send_modifiers_map(context->model->resource, map);
+     zwp_text_input_v1_send_modifiers_map(context->model->resource, map);
 }
 
 static void
@@ -281,7 +281,7 @@ _e_text_input_method_context_cb_keysym(struct wl_client *client EINA_UNUSED, str
      }
 
    if (context->model)
-     wl_text_input_send_keysym(context->model->resource,
+     zwp_text_input_v1_send_keysym(context->model->resource,
                                serial, time, sym, state, modifiers);
 }
 
@@ -359,7 +359,7 @@ _e_text_input_method_context_cb_language(struct wl_client *client EINA_UNUSED, s
      }
 
    if (context->model)
-     wl_text_input_send_language(context->model->resource,
+     zwp_text_input_v1_send_language(context->model->resource,
                                  serial, language);
 }
 
@@ -377,11 +377,11 @@ _e_text_input_method_context_cb_text_direction(struct wl_client *client EINA_UNU
      }
 
    if (context->model)
-     wl_text_input_send_text_direction(context->model->resource,
+     zwp_text_input_v1_send_text_direction(context->model->resource,
                                        serial, direction);
 }
 
-static const struct wl_input_method_context_interface _e_text_input_method_context_implementation = {
+static const struct zwp_input_method_context_v1_interface _e_text_input_method_context_implementation = {
      _e_text_input_method_context_cb_destroy,
      _e_text_input_method_context_cb_string_commit,
      _e_text_input_method_context_cb_preedit_string,
@@ -492,7 +492,7 @@ _e_text_input_cb_activate(struct wl_client *client, struct wl_resource *resource
 
         context->resource =
            wl_resource_create(wl_resource_get_client(input_method->resource),
-                              &wl_input_method_context_interface, 1, 0);
+                              &zwp_input_method_context_v1_interface, 1, 0);
         wl_resource_set_implementation(context->resource,
                                        &_e_text_input_method_context_implementation,
                                        context, _e_text_input_method_context_cb_resource_destroy);
@@ -501,13 +501,13 @@ _e_text_input_cb_activate(struct wl_client *client, struct wl_resource *resource
         context->input_method = input_method;
         input_method->context = context;
 
-        wl_input_method_send_activate(input_method->resource, context->resource);
+        zwp_input_method_v1_send_activate(input_method->resource, context->resource);
      }
 
    if (text_input->input_panel_visible)
      _e_text_input_event_visible_change_send(EINA_TRUE);
 
-   wl_text_input_send_enter(text_input->resource, surface);
+   zwp_text_input_v1_send_enter(text_input->resource, surface);
 }
 
 static void
@@ -606,7 +606,7 @@ _e_text_input_cb_reset(struct wl_client *client EINA_UNUSED, struct wl_resource 
    EINA_LIST_FOREACH(text_input->input_methods, l, input_method)
      {
         if (!input_method->context) continue;
-        wl_input_method_context_send_reset(input_method->context->resource);
+        zwp_input_method_context_v1_send_reset(input_method->context->resource);
      }
 }
 
@@ -628,7 +628,7 @@ _e_text_input_cb_surrounding_text_set(struct wl_client *client EINA_UNUSED, stru
    EINA_LIST_FOREACH(text_input->input_methods, l, input_method)
      {
         if (!input_method->context) continue;
-        wl_input_method_context_send_surrounding_text(input_method->context->resource,
+        zwp_input_method_context_v1_send_surrounding_text(input_method->context->resource,
                                                       text, cursor, anchor);
      }
 }
@@ -651,7 +651,7 @@ _e_text_input_cb_content_type_set(struct wl_client *client EINA_UNUSED, struct w
    EINA_LIST_FOREACH(text_input->input_methods, l, input_method)
      {
         if (!input_method->context) continue;
-        wl_input_method_context_send_content_type(input_method->context->resource,
+        zwp_input_method_context_v1_send_content_type(input_method->context->resource,
                                                   hint, purpose);
      }
 }
@@ -692,7 +692,7 @@ _e_text_input_cb_preferred_language_set(struct wl_client *client EINA_UNUSED, st
    EINA_LIST_FOREACH(text_input->input_methods, l, input_method)
      {
         if (!input_method->context) continue;
-        wl_input_method_context_send_preferred_language(input_method->context->resource,
+        zwp_input_method_context_v1_send_preferred_language(input_method->context->resource,
                                                         language);
      }
 }
@@ -715,7 +715,7 @@ _e_text_input_cb_state_commit(struct wl_client *client EINA_UNUSED, struct wl_re
    EINA_LIST_FOREACH(text_input->input_methods, l, input_method)
      {
         if (!input_method->context) continue;
-        wl_input_method_context_send_commit_state(input_method->context->resource, serial);
+        zwp_input_method_context_v1_send_commit_state(input_method->context->resource, serial);
      }
 }
 
@@ -737,12 +737,12 @@ _e_text_input_cb_action_invoke(struct wl_client *client EINA_UNUSED, struct wl_r
    EINA_LIST_FOREACH(text_input->input_methods, l, input_method)
      {
         if (!input_method->context) continue;
-        wl_input_method_context_send_invoke_action(input_method->context->resource,
+        zwp_input_method_context_v1_send_invoke_action(input_method->context->resource,
                                                    button, index);
      }
 }
 
-static const struct wl_text_input_interface _e_text_input_implementation = {
+static const struct zwp_text_input_v1_interface _e_text_input_implementation = {
      _e_text_input_cb_activate,
      _e_text_input_cb_deactivate,
      _e_text_input_cb_input_panel_show,
@@ -791,7 +791,7 @@ _e_text_input_manager_cb_text_input_create(struct wl_client *client, struct wl_r
      }
 
    text_input->resource = wl_resource_create(client,
-                                             &wl_text_input_interface,
+                                             &zwp_text_input_v1_interface,
                                              1, id);
    if (!text_input->resource)
      {
@@ -805,7 +805,7 @@ _e_text_input_manager_cb_text_input_create(struct wl_client *client, struct wl_r
                                   text_input, _e_text_input_cb_destroy);
 }
 
-static const struct wl_text_input_manager_interface _e_text_input_manager_implementation = {
+static const struct zwp_text_input_manager_v1_interface _e_text_input_manager_implementation = {
      _e_text_input_manager_cb_text_input_create
 };
 
@@ -814,7 +814,7 @@ _e_text_cb_bind_text_input_manager(struct wl_client *client, void *data EINA_UNU
 {
    struct wl_resource *resource;
 
-   resource = wl_resource_create(client, &wl_text_input_manager_interface, 1, id);
+   resource = wl_resource_create(client, &zwp_text_input_manager_v1_interface, 1, id);
    if (!resource)
      {
         wl_client_post_no_memory(client);
@@ -859,7 +859,7 @@ _e_text_cb_bind_input_method(struct wl_client *client, void *data EINA_UNUSED, u
    struct wl_resource *resource;
    pid_t pid;
 
-   resource = wl_resource_create(client, &wl_input_method_interface, 1, id);
+   resource = wl_resource_create(client, &zwp_input_method_v1_interface, 1, id);
    if (!resource)
      {
         wl_client_post_no_memory(client);
@@ -915,7 +915,7 @@ e_modapi_init(E_Module *m)
 {
    // FIXME: create only one input method object per seat.
    e_comp->wl_comp_data->seat.im.global =
-      wl_global_create(e_comp->wl_comp_data->wl.disp, &wl_input_method_interface, 1,
+      wl_global_create(e_comp->wl_comp_data->wl.disp, &zwp_input_method_v1_interface, 1,
                        NULL, _e_text_cb_bind_input_method);
    if (!e_comp->wl_comp_data->seat.im.global)
      {
@@ -924,7 +924,7 @@ e_modapi_init(E_Module *m)
      }
 
    text_input_manager_global =
-      wl_global_create(e_comp->wl_comp_data->wl.disp, &wl_text_input_manager_interface, 1,
+      wl_global_create(e_comp->wl_comp_data->wl.disp, &zwp_text_input_manager_v1_interface, 1,
                        NULL, _e_text_cb_bind_text_input_manager);
    if (!text_input_manager_global)
      {

@@ -1,7 +1,7 @@
 #define E_COMP_WL
 #include "e.h"
 #include "e_mod_main.h"
-#include "e_desktop_shell_protocol.h"
+#include "xdg-shell-unstable-v5-server-protocol.h"
 
 #define XDG_SERVER_VERSION 5
 

@@ -3,9 +3,9 @@
 
 
 #include <uuid.h>
-#include "e_comp_wl_screenshooter_server.h"
-#include "session-recovery.h"
-#include "www-protocol.h"
+#include "screenshooter-server-protocol.h"
+#include "session-recovery-server-protocol.h"
+#include "www-server-protocol.h"
 
 static void
 _e_comp_wl_extensions_client_move_begin(void *d EINA_UNUSED, E_Client *ec)
@@ -145,7 +145,7 @@ _e_comp_wl_screenshooter_cb_shoot(struct wl_client *client EINA_UNUSED, struct w
    wl_shm_buffer_end_access(shm_buffer);
    free(pixels);
 
-   screenshooter_send_done(resource);
+   zwp_screenshooter_send_done(resource);
 }
 
 static void
@@ -208,7 +208,7 @@ static const struct zwp_e_session_recovery_interface _e_session_recovery_interfa
    _e_comp_wl_session_recovery_destroy_uuid,
 };
 
-static const struct screenshooter_interface _e_screenshooter_interface =
+static const struct zwp_screenshooter_interface _e_screenshooter_interface =
 {
    _e_comp_wl_screenshooter_cb_shoot
 };
@@ -236,7 +236,7 @@ _e_comp_wl_##NAME##_cb_bind(struct wl_client *client, void *data EINA_UNUSED, ui
 }
 
 GLOBAL_BIND_CB(session_recovery, zwp_e_session_recovery_interface)
-GLOBAL_BIND_CB(screenshooter, screenshooter_interface)
+GLOBAL_BIND_CB(screenshooter, zwp_screenshooter_interface)
 GLOBAL_BIND_CB(www, www_interface)
 
 
@@ -277,7 +277,7 @@ e_comp_wl_extensions_init(void)
 
    /* try to add session_recovery to wayland globals */
    GLOBAL_CREATE_OR_RETURN(session_recovery, zwp_e_session_recovery_interface, 1);
-   GLOBAL_CREATE_OR_RETURN(screenshooter, screenshooter_interface, 1);
+   GLOBAL_CREATE_OR_RETURN(screenshooter, zwp_screenshooter_interface, 1);
    GLOBAL_CREATE_OR_RETURN(www, www_interface, 1);
 
    ecore_event_handler_add(ECORE_WL2_EVENT_SYNC_DONE, _dmabuf_add, NULL);

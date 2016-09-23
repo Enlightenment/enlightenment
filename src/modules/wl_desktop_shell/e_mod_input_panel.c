@@ -1,7 +1,7 @@
 #define E_COMP_WL
 #include "e.h"
 #include "e_mod_main.h"
-#include "e_input_method_protocol.h"
+#include "input-method-unstable-v1-server-protocol.h"
 
 typedef struct _E_Input_Panel E_Input_Panel;
 typedef struct _E_Input_Panel_Surface E_Input_Panel_Surface;
@@ -42,7 +42,7 @@ _e_input_panel_surface_cb_overlay_panel_set(struct wl_client *client EINA_UNUSED
    ips->panel = EINA_TRUE;
 }
 
-static const struct wl_input_panel_surface_interface _e_input_panel_surface_implementation = {
+static const struct zwp_input_panel_surface_v1_interface _e_input_panel_surface_implementation = {
      _e_input_panel_surface_cb_toplevel_set,
      _e_input_panel_surface_cb_overlay_panel_set
 };
@@ -206,7 +206,7 @@ _e_input_panel_cb_surface_get(struct wl_client *client, struct wl_resource *reso
      }
 
    cd->shell.surface = wl_resource_create(client,
-                                          &wl_input_panel_surface_interface,
+                                          &zwp_input_panel_surface_v1_interface,
                                           1, id);
    if (!cd->shell.surface)
      {
@@ -254,7 +254,7 @@ _e_input_panel_cb_surface_get(struct wl_client *client, struct wl_resource *reso
    input_panel.surfaces = eina_list_append(input_panel.surfaces, ips);
 }
 
-static const struct wl_input_panel_interface _e_input_panel_implementation = {
+static const struct zwp_input_panel_v1_interface _e_input_panel_implementation = {
      _e_input_panel_cb_surface_get
 };
 
@@ -271,7 +271,7 @@ _e_input_panel_bind(struct wl_client *client, void *data EINA_UNUSED, uint32_t v
 {
    struct wl_resource *resource;
 
-   resource = wl_resource_create(client, &wl_input_panel_interface, 1, id);
+   resource = wl_resource_create(client, &zwp_input_panel_v1_interface, 1, id);
    if (!resource)
      {
         wl_client_post_no_memory(client);
@@ -317,7 +317,7 @@ e_input_panel_init(void)
    // TODO: add signal handler - update input panel
 
    input_panel_global = wl_global_create(e_comp->wl_comp_data->wl.disp,
-                                         &wl_input_panel_interface, 1,
+                                         &zwp_input_panel_v1_interface, 1,
                                          NULL, _e_input_panel_bind);
    if (!input_panel_global)
      {

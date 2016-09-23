@@ -427,21 +427,31 @@ endef
 #End of weston stuff
 
 enlightenment_src += \
-src/bin/generated/linux-dmabuf-unstable-v1-server-protocol.h \
-src/bin/generated/linux-dmabuf-unstable-v1-protocol.c \
-src/bin/generated/www-protocol.c \
-src/bin/generated/www-protocol.h \
-src/bin/generated/session-recovery.c \
-src/bin/generated/session-recovery.h \
-src/bin/generated/e_comp_wl_screenshooter_server.c \
-src/bin/generated/e_comp_wl_screenshooter_server.h \
 src/bin/e_comp_wl_data.c \
 src/bin/e_comp_wl_input.c \
 src/bin/e_comp_wl_dmabuf.c \
 src/bin/e_comp_wl.c \
 src/bin/e_comp_wl_extensions.c
 
-enlightenment_gen_src +=
+enlightenment_gen_src += \
+src/bin/generated/linux-dmabuf-unstable-v1-server-protocol.h \
+src/bin/generated/linux-dmabuf-unstable-v1-protocol.c \
+src/bin/generated/session-recovery-protocol.c \
+src/bin/generated/session-recovery-server-protocol.h \
+src/bin/generated/www-protocol.c \
+src/bin/generated/www-server-protocol.h \
+src/bin/generated/screenshooter-protocol.c \
+src/bin/generated/screenshooter-server-protocol.h
+
+src/bin/e_comp_wl_extensions.c: \
+ src/bin/generated/screenshooter-server-protocol.h \
+ src/bin/generated/session-recovery-server-protocol.h
+
+src/bin/e_comp_wl.c: \
+ src/bin/generated/www-server-protocol.h
+
+src/bin/e_comp_wl_dmabuf.c: \
+ src/bin/generated/linux-dmabuf-unstable-v1-server-protocol.h
 
 endif
 

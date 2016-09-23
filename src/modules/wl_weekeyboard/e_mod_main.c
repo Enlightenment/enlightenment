@@ -2,8 +2,8 @@
 
 #include "wkb-log.h"
 
-#include "input-method-client-protocol.h"
-#include "text-client-protocol.h"
+#include "input-method-unstable-v1-client-protocol.h"
+#include "text-input-unstable-v1-client-protocol.h"
 
 struct weekeyboard
 {
@@ -15,10 +15,10 @@ struct weekeyboard
    char **ignore_keys;
 
    struct wl_surface *surface;
-   struct wl_input_panel *ip;
-   struct wl_input_method *im;
+   struct zwp_input_panel_v1 *ip;
+   struct zwp_input_method_v1 *im;
    struct wl_output *output;
-   struct wl_input_method_context *im_ctx;
+   struct zwp_input_method_context_v1 *im_ctx;
 
    char *surrounding_text;
    char *preedit_str;
@@ -80,8 +80,8 @@ _wkb_commit_preedit_str(struct weekeyboard *wkb)
    if ((!wkb->preedit_str) || (strlen(wkb->preedit_str) == 0))
      return;
 
-   wl_input_method_context_cursor_position(wkb->im_ctx, 0, 0);
-   wl_input_method_context_commit_string(wkb->im_ctx, wkb->serial,
+   zwp_input_method_context_v1_cursor_position(wkb->im_ctx, 0, 0);
+   zwp_input_method_context_v1_commit_string(wkb->im_ctx, wkb->serial,
                                          wkb->preedit_str);
 
    if (wkb->surrounding_text)
@@ -109,15 +109,15 @@ _wkb_send_preedit_str(struct weekeyboard *wkb, int cursor)
    unsigned int index = strlen(wkb->preedit_str);
 
    if (wkb->preedit_style)
-     wl_input_method_context_preedit_styling(wkb->im_ctx, 0,
+     zwp_input_method_context_v1_preedit_styling(wkb->im_ctx, 0,
                                              strlen(wkb->preedit_str),
                                              wkb->preedit_style);
 
    if (cursor > 0)
      index = cursor;
 
-   wl_input_method_context_preedit_cursor(wkb->im_ctx, index);
-   wl_input_method_context_preedit_string(wkb->im_ctx, wkb->serial,
+   zwp_input_method_context_v1_preedit_cursor(wkb->im_ctx, index);
+   zwp_input_method_context_v1_preedit_string(wkb->im_ctx, wkb->serial,
                                           wkb->preedit_str, wkb->preedit_str);
 }
 
@@ -185,8 +185,8 @@ _cb_wkb_on_key_down(void *data, Evas_Object *obj EINA_UNUSED, const char *emissi
      {
         if (strlen(wkb->preedit_str) == 0)
           {
-             wl_input_method_context_delete_surrounding_text(wkb->im_ctx, -1, 1);
-             wl_input_method_context_commit_string(wkb->im_ctx, wkb->serial, "");
+             zwp_input_method_context_v1_delete_surrounding_text(wkb->im_ctx, -1, 1);
+             zwp_input_method_context_v1_commit_string(wkb->im_ctx, wkb->serial, "");
           }
         else
           {
@@ -199,7 +199,7 @@ _cb_wkb_on_key_down(void *data, Evas_Object *obj EINA_UNUSED, const char *emissi
    else if (eina_streq(key, "enter"))
      {
         _wkb_commit_preedit_str(wkb);
-        wl_input_method_context_keysym(wkb->im_ctx, wkb->serial, 0,
+        zwp_input_method_context_v1_keysym(wkb->im_ctx, wkb->serial, 0,
                                        XKB_KEY_Return,
                                        WL_KEYBOARD_KEY_STATE_PRESSED, 0);
         goto end;
@@ -318,7 +318,7 @@ end:
 }
 
 static void
-_wkb_im_ctx_surrounding_text(void *data, struct wl_input_method_context *im_ctx, const char *text, uint32_t cursor, uint32_t anchor)
+_wkb_im_ctx_surrounding_text(void *data, struct zwp_input_method_context_v1 *im_ctx, const char *text, uint32_t cursor, uint32_t anchor)
 {
    struct weekeyboard *wkb = data;
 
@@ -340,7 +340,7 @@ _wkb_im_ctx_surrounding_text(void *data, struct wl_input_method_context *im_ctx,
 }
 
 static void
-_wkb_im_ctx_reset(void *data, struct wl_input_method_context *im_ctx)
+_wkb_im_ctx_reset(void *data, struct zwp_input_method_context_v1 *im_ctx)
 {
    struct weekeyboard *wkb = data;
 
@@ -354,7 +354,7 @@ _wkb_im_ctx_reset(void *data, struct wl_input_method_context *im_ctx)
 }
 
 static void
-_wkb_im_ctx_content_type(void *data, struct wl_input_method_context *im_ctx, uint32_t hint, uint32_t purpose)
+_wkb_im_ctx_content_type(void *data, struct zwp_input_method_context_v1 *im_ctx, uint32_t hint, uint32_t purpose)
 {
    struct weekeyboard *wkb = data;
 
@@ -365,8 +365,8 @@ _wkb_im_ctx_content_type(void *data, struct wl_input_method_context *im_ctx, uin
 
    switch (purpose)
      {
-      case WL_TEXT_INPUT_CONTENT_PURPOSE_DIGITS:
-      case WL_TEXT_INPUT_CONTENT_PURPOSE_NUMBER:
+      case ZWP_TEXT_INPUT_V1_CONTENT_PURPOSE_DIGITS:
+      case ZWP_TEXT_INPUT_V1_CONTENT_PURPOSE_NUMBER:
            {
               if (wkb->edje_obj)
                  edje_object_signal_emit(wkb->edje_obj, "show,numeric", "");
@@ -386,7 +386,7 @@ _wkb_im_ctx_content_type(void *data, struct wl_input_method_context *im_ctx, uin
 }
 
 static void
-_wkb_im_ctx_invoke_action(void *data, struct wl_input_method_context *im_ctx, uint32_t button, uint32_t index)
+_wkb_im_ctx_invoke_action(void *data, struct zwp_input_method_context_v1 *im_ctx, uint32_t button, uint32_t index)
 {
    struct weekeyboard *wkb = data;
 
@@ -399,7 +399,7 @@ _wkb_im_ctx_invoke_action(void *data, struct wl_input_method_context *im_ctx, ui
 }
 
 static void
-_wkb_im_ctx_commit_state(void *data, struct wl_input_method_context *im_ctx, uint32_t serial)
+_wkb_im_ctx_commit_state(void *data, struct zwp_input_method_context_v1 *im_ctx, uint32_t serial)
 {
    struct weekeyboard *wkb = data;
 
@@ -410,13 +410,13 @@ _wkb_im_ctx_commit_state(void *data, struct wl_input_method_context *im_ctx, uin
 
    wkb->serial = serial;
 
-   wl_input_method_context_language(im_ctx, wkb->serial, "en");
-   wl_input_method_context_text_direction(im_ctx, wkb->serial,
-                                          WL_TEXT_INPUT_TEXT_DIRECTION_LTR);
+   zwp_input_method_context_v1_language(im_ctx, wkb->serial, "en");
+   zwp_input_method_context_v1_text_direction(im_ctx, wkb->serial,
+                                          ZWP_TEXT_INPUT_V1_TEXT_DIRECTION_LTR);
 }
 
 static void
-_wkb_im_ctx_preferred_language(void *data, struct wl_input_method_context *im_ctx, const char *language)
+_wkb_im_ctx_preferred_language(void *data, struct zwp_input_method_context_v1 *im_ctx, const char *language)
 {
    struct weekeyboard *wkb = data;
 
@@ -434,7 +434,7 @@ _wkb_im_ctx_preferred_language(void *data, struct wl_input_method_context *im_ct
      }
 }
 
-static const struct wl_input_method_context_listener wkb_im_context_listener = {
+static const struct zwp_input_method_context_v1_listener wkb_im_context_listener = {
    _wkb_im_ctx_surrounding_text,
    _wkb_im_ctx_reset,
    _wkb_im_ctx_content_type,
@@ -444,7 +444,7 @@ static const struct wl_input_method_context_listener wkb_im_context_listener = {
 };
 
 static void
-_wkb_im_activate(void *data, struct wl_input_method *input_method EINA_UNUSED, struct wl_input_method_context *im_ctx)
+_wkb_im_activate(void *data, struct zwp_input_method_v1 *input_method EINA_UNUSED, struct zwp_input_method_context_v1 *im_ctx)
 {
    struct weekeyboard *wkb = data;
 
@@ -453,12 +453,12 @@ _wkb_im_activate(void *data, struct wl_input_method *input_method EINA_UNUSED, s
    // check if the UI is valid and draw it if not
    _wkb_ui_setup(wkb);
 
-   E_FREE_FUNC(wkb->im_ctx, wl_input_method_context_destroy);
+   E_FREE_FUNC(wkb->im_ctx, zwp_input_method_context_v1_destroy);
 
    free(wkb->preedit_str);
    wkb->preedit_str = strdup("");
-   wkb->content_hint = WL_TEXT_INPUT_CONTENT_HINT_NONE;
-   wkb->content_purpose = WL_TEXT_INPUT_CONTENT_PURPOSE_NORMAL;
+   wkb->content_hint = ZWP_TEXT_INPUT_V1_CONTENT_HINT_NONE;
+   wkb->content_purpose = ZWP_TEXT_INPUT_V1_CONTENT_PURPOSE_NORMAL;
 
    free(wkb->language);
    wkb->language = NULL;
@@ -469,31 +469,31 @@ _wkb_im_activate(void *data, struct wl_input_method *input_method EINA_UNUSED, s
    wkb->serial = 0;
 
    wkb->im_ctx = im_ctx;
-   wl_input_method_context_add_listener(im_ctx, &wkb_im_context_listener, wkb);
+   zwp_input_method_context_v1_add_listener(im_ctx, &wkb_im_context_listener, wkb);
 
    /* hard coded */
-   wl_input_method_context_language(im_ctx, wkb->serial, "en");
-   wl_input_method_context_text_direction(im_ctx, wkb->serial,
-                                          WL_TEXT_INPUT_TEXT_DIRECTION_LTR);
+   zwp_input_method_context_v1_language(im_ctx, wkb->serial, "en");
+   zwp_input_method_context_v1_text_direction(im_ctx, wkb->serial,
+                                          ZWP_TEXT_INPUT_V1_TEXT_DIRECTION_LTR);
 
    wkb->context_changed = EINA_TRUE;
    evas_object_show(wkb->edje_obj);
 }
 
 static void
-_wkb_im_deactivate(void *data, struct wl_input_method *input_method EINA_UNUSED, struct wl_input_method_context *im_ctx EINA_UNUSED)
+_wkb_im_deactivate(void *data, struct zwp_input_method_v1 *input_method EINA_UNUSED, struct zwp_input_method_context_v1 *im_ctx EINA_UNUSED)
 {
    struct weekeyboard *wkb = data;
 
    DBG("Deactivate");
 
-   E_FREE_FUNC(wkb->im_ctx, wl_input_method_context_destroy);
+   E_FREE_FUNC(wkb->im_ctx, zwp_input_method_context_v1_destroy);
 
    if (wkb->edje_obj)
      evas_object_hide(wkb->edje_obj);
 }
 
-static const struct wl_input_method_listener wkb_im_listener = {
+static const struct zwp_input_method_v1_listener wkb_im_listener = {
    _wkb_im_activate,
    _wkb_im_deactivate
 };
@@ -504,7 +504,7 @@ _wkb_setup(struct weekeyboard *wkb)
    Eina_Iterator *itr;
    Ecore_Wl2_Global *global;
    struct wl_registry *registry;
-   struct wl_input_panel_surface *ips;
+   struct zwp_input_panel_surface_v1 *ips;
    void *data;
 
    registry = e_comp_wl->wl.registry ?: ecore_wl2_display_registry_get(e_comp_wl->ewd);
@@ -514,19 +514,19 @@ _wkb_setup(struct weekeyboard *wkb)
         global = (Ecore_Wl2_Global *)data;
 
         DBG("interface: <%s>", global->interface);
-        if (eina_streq(global->interface, "wl_input_panel"))
+        if (eina_streq(global->interface, "zwp_input_panel_v1"))
           {
              wkb->ip =
                wl_registry_bind(registry, global->id,
-                                &wl_input_panel_interface, 1);
-             DBG("binding wl_input_panel");
+                                &zwp_input_panel_v1_interface, 1);
+             DBG("binding zwp_input_panel_v1");
           }
-        else if (eina_streq(global->interface, "wl_input_method"))
+        else if (eina_streq(global->interface, "zwp_input_method_v1"))
           {
              wkb->im =
                wl_registry_bind(registry, global->id,
-                                &wl_input_method_interface, 1);
-             DBG("binding wl_input_method, id = %d", global->id);
+                                &zwp_input_method_v1_interface, 1);
+             DBG("binding zwp_input_method_v1, id = %d", global->id);
           }
         else if (eina_streq(global->interface, "wl_output"))
           {
@@ -550,13 +550,13 @@ _wkb_setup(struct weekeyboard *wkb)
    ecore_wl2_window_type_set(wkb->win, ECORE_WL2_WINDOW_TYPE_NONE);
 
    wkb->surface = ecore_wl2_window_surface_get(wkb->win);
-   ips = wl_input_panel_get_input_panel_surface(wkb->ip, wkb->surface);
-   wl_input_panel_surface_set_toplevel(ips, wkb->output,
-                                       WL_INPUT_PANEL_SURFACE_POSITION_CENTER_BOTTOM);
+   ips = zwp_input_panel_v1_get_input_panel_surface(wkb->ip, wkb->surface);
+   zwp_input_panel_surface_v1_set_toplevel(ips, wkb->output,
+                                       ZWP_INPUT_PANEL_SURFACE_V1_POSITION_CENTER_BOTTOM);
 
    /* Input method listener */
-   DBG("Adding wl_input_method listener");
-   wl_input_method_add_listener(wkb->im, &wkb_im_listener, wkb);
+   DBG("Adding zwp_input_method_v1 listener");
+   zwp_input_method_v1_add_listener(wkb->im, &wkb_im_listener, wkb);
 
    wkb->edje_obj = NULL;
 
@@ -595,7 +595,7 @@ _wkb_check_evas_engine(struct weekeyboard *wkb)
 static void
 _wkb_free(struct weekeyboard *wkb)
 {
-   E_FREE_FUNC(wkb->im_ctx, wl_input_method_context_destroy);
+   E_FREE_FUNC(wkb->im_ctx, zwp_input_method_context_v1_destroy);
    E_FREE_FUNC(wkb->edje_obj, evas_object_del);
 
    if (wkb->ignore_keys)

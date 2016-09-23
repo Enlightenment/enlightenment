@@ -1,7 +1,5 @@
 EXTRA_DIST += src/modules/shot/module.desktop.in \
-src/modules/shot/e-module-shot.edj \
-src/modules/shot/screenshooter-client-protocol.h \
-src/modules/shot/screenshooter-client-protocol.c
+src/modules/shot/e-module-shot.edj
 
 if USE_MODULE_SHOT
 shotdir = $(MDIR)/shot
@@ -11,6 +9,7 @@ shot_DATA = src/modules/shot/e-module-shot.edj \
 shotpkgdir = $(MDIR)/shot/$(MODULE_ARCH)
 shotpkg_LTLIBRARIES = src/modules/shot/module.la
 
+nodist_src_modules_shot_module_la_SOURCES =
 src_modules_shot_module_la_LIBADD = $(MOD_LIBS) @WAYLAND_LIBS@
 src_modules_shot_module_la_CPPFLAGS = \
 $(MOD_CPPFLAGS) @WAYLAND_CFLAGS@
@@ -19,9 +18,18 @@ src_modules_shot_module_la_SOURCES = \
 src/modules/shot/e_mod_main.c
 
 if HAVE_WAYLAND
-src_modules_shot_module_la_SOURCES += \
-src/modules/shot/screenshooter-client-protocol.c \
+shot_wayland_sources = \
+src/modules/shot/screenshooter-protocol.c \
 src/modules/shot/screenshooter-client-protocol.h
+
+nodist_src_modules_shot_module_la_SOURCES += \
+$(shot_wayland_sources)
+
+MAINTAINERCLEANFILES += \
+$(shot_wayland_sources)
+
+src/modules/shot/e_mod_main.c: \
+ src/modules/shot/screenshooter-client-protocol.h
 endif
 
 PHONIES += shot install-shot

@@ -5,7 +5,7 @@
 #define __STDC_FORMAT_MACROS
 #include <inttypes.h>
 
-#include "www-protocol.h"
+#include "www-server-protocol.h"
 
 /* When a wayland is released with this macro we can remove the ifdefs */
 #ifdef WL_SURFACE_DAMAGE_BUFFER_SINCE_VERSION

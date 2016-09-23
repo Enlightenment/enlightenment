@@ -43,7 +43,7 @@ static E_Client_Menu_Hook *border_hook = NULL;
 
 #ifdef HAVE_WAYLAND
 Eina_Bool copy_done = EINA_FALSE;
-static struct screenshooter *_wl_screenshooter;
+static struct zwp_screenshooter *_wl_screenshooter;
 static Eina_List *_outputs;
 struct screenshooter_output
 {
@@ -66,12 +66,12 @@ _win_cancel_cb(void *data EINA_UNUSED, void *data2 EINA_UNUSED)
 
 #ifdef HAVE_WAYLAND
 static void
-_wl_cb_screenshot_done(void *data EINA_UNUSED, struct screenshooter *screenshooter EINA_UNUSED)
+_wl_cb_screenshot_done(void *data EINA_UNUSED, struct zwp_screenshooter *screenshooter EINA_UNUSED)
 {
    copy_done = EINA_TRUE;
 }
 
-static const struct screenshooter_listener _screenshooter_listener =
+static const struct zwp_screenshooter_listener _screenshooter_listener =
 {
    _wl_cb_screenshot_done
 };
@@ -966,7 +966,9 @@ _wl_shot_now(E_Zone *zone, E_Client *ec, const char *params)
         output->buffer =
           _create_shm_buffer(shm, output->w, output->h, &output->data);
 
-        screenshooter_shoot(_wl_screenshooter, output->output, output->buffer);
+        zwp_screenshooter_shoot(_wl_screenshooter,
+                               output->output,
+                               output->buffer);
 
         copy_done = EINA_FALSE;
         while (!copy_done)
@@ -1297,16 +1299,16 @@ _wl_init()
         global = (Ecore_Wl2_Global *)data;
 
         if ((!_wl_screenshooter) &&
-            (!strcmp(global->interface, "screenshooter")))
+            (!strcmp(global->interface, "zwp_screenshooter")))
           {
              _wl_screenshooter =
                wl_registry_bind(reg, global->id,
-                                &screenshooter_interface, global->version);
+                                &zwp_screenshooter_interface, global->version);
 
              if (_wl_screenshooter)
-               screenshooter_add_listener(_wl_screenshooter,
-                                          &_screenshooter_listener,
-                                          _wl_screenshooter);
+               zwp_screenshooter_add_listener(_wl_screenshooter,
+                                              &_screenshooter_listener,
+                                              _wl_screenshooter);
           }
         else if (!strcmp(global->interface, "wl_output"))
           {
