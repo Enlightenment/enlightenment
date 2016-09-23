@@ -91,7 +91,7 @@ extern char **environ;
 AC_DEFINE(HAVE_ENVIRON, 1, [Have environ var])
     ])
 
-efl_version="1.17.0"
+efl_version="1.18.99"
 AC_SUBST(efl_version)
 
 #We use ecore_drm2 beta API
