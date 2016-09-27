@@ -3867,6 +3867,26 @@ e_comp_object_dirty(Evas_Object *obj)
    e_comp_object_render(obj);
 }
 
+E_API void
+e_comp_object_map_set(Evas_Object *obj, Evas_Map *map)
+{
+   Eina_List *l;
+   Evas_Object *o;
+
+   API_ENTRY;
+
+   evas_object_map_set(obj, map);
+   evas_object_map_enable_set(obj, map ? EINA_TRUE : EINA_FALSE);
+
+   EINA_LIST_FOREACH(cw->obj_mirror, l, o)
+     {
+        Evas_Map *map2 = evas_map_dup(map);
+        evas_object_map_set(o, map2);
+        evas_object_map_enable_set(o, map2 ? EINA_TRUE : EINA_FALSE);
+        evas_map_free(map2);
+     }
+}
+
 E_API Eina_Bool
 e_comp_object_render(Evas_Object *obj)
 {

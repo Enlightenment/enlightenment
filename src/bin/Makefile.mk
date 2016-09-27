@@ -225,7 +225,8 @@ ENLIGHTENMENTHEADERS += \
 src/bin/e_comp_wl_data.h \
 src/bin/e_comp_wl_dmabuf.h \
 src/bin/e_comp_wl_input.h \
-src/bin/e_comp_wl.h
+src/bin/e_comp_wl.h \
+src/bin/e_comp_wl_scaler.h
 endif
 
 enlightenment_gen_src =
@@ -431,7 +432,8 @@ src/bin/e_comp_wl_data.c \
 src/bin/e_comp_wl_input.c \
 src/bin/e_comp_wl_dmabuf.c \
 src/bin/e_comp_wl.c \
-src/bin/e_comp_wl_extensions.c
+src/bin/e_comp_wl_extensions.c \
+src/bin/e_comp_wl_scaler.c
 
 enlightenment_gen_src += \
 src/bin/generated/linux-dmabuf-unstable-v1-server-protocol.h \
@@ -441,7 +443,9 @@ src/bin/generated/session-recovery-server-protocol.h \
 src/bin/generated/www-protocol.c \
 src/bin/generated/www-server-protocol.h \
 src/bin/generated/screenshooter-protocol.c \
-src/bin/generated/screenshooter-server-protocol.h
+src/bin/generated/screenshooter-server-protocol.h \
+src/bin/generated/viewporter-protocol.c \
+src/bin/generated/viewporter-server-protocol.h
 
 src/bin/e_comp_wl_extensions.c: \
  src/bin/generated/screenshooter-server-protocol.h \
@@ -452,6 +456,9 @@ src/bin/e_comp_wl.c: \
 
 src/bin/e_comp_wl_dmabuf.c: \
  src/bin/generated/linux-dmabuf-unstable-v1-server-protocol.h
+
+src/bin/e_comp_wl_scaler.c: \
+ src/bin/generated/viewporter-server-protocol.h
 
 endif
 

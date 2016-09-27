@@ -43,6 +43,7 @@
    })
 
 typedef struct _E_Comp_Wl_Buffer E_Comp_Wl_Buffer;
+typedef struct _E_Comp_Wl_Buffer_Viewport E_Comp_Wl_Buffer_Viewport;
 typedef struct _E_Comp_Wl_Subsurf_Data E_Comp_Wl_Subsurf_Data;
 typedef struct _E_Comp_Wl_Surface_State E_Comp_Wl_Surface_State;
 typedef struct _E_Comp_Wl_Client_Data E_Comp_Wl_Client_Data;
@@ -64,6 +65,26 @@ struct _E_Comp_Wl_Buffer
    uint32_t busy;
 };
 
+struct _E_Comp_Wl_Buffer_Viewport {
+   struct
+     {
+        uint32_t transform;   /* wl_surface.set_buffer_transform */
+        int32_t scale;        /* wl_surface.set_scaling_factor */
+
+        /* If src_width != wl_fixed_from_int(-1), then and only then src_* are used. */
+        wl_fixed_t src_x, src_y;
+        wl_fixed_t src_width, src_height;
+     } buffer;
+
+   struct
+     {
+        /* If width == -1, the size is inferred from the buffer. */
+        int32_t width, height;
+     } surface;
+
+   int changed;
+};
+
 struct _E_Comp_Wl_Surface_State
 {
    int sx, sy;
@@ -72,6 +93,7 @@ struct _E_Comp_Wl_Surface_State
    struct wl_listener buffer_destroy_listener;
    Eina_List *damages, *frames;
    Eina_Tiler *input, *opaque;
+   E_Comp_Wl_Buffer_Viewport buffer_viewport;
    Eina_Bool new_attach : 1;
    Eina_Bool has_data : 1;
 };
@@ -308,6 +330,12 @@ struct _E_Comp_Wl_Client_Data
      {
         int32_t x, y;
      } popup;
+
+   struct
+     {
+        struct wl_resource *viewport;
+        E_Comp_Wl_Buffer_Viewport buffer_viewport;
+     } scaler;
 
    int32_t on_outputs; /* Bitfield of the outputs this client is present on */
 

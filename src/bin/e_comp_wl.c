@@ -1247,6 +1247,12 @@ _e_comp_wl_surface_state_init(E_Comp_Wl_Surface_State *state, int w, int h)
 
    state->opaque = eina_tiler_new(w, h);
    eina_tiler_tile_size_set(state->opaque, 1, 1);
+
+   state->buffer_viewport.buffer.transform = WL_OUTPUT_TRANSFORM_NORMAL;
+   state->buffer_viewport.buffer.scale = 1;
+   state->buffer_viewport.buffer.src_width = wl_fixed_from_int(-1);
+   state->buffer_viewport.surface.width = -1;
+   state->buffer_viewport.changed = 0;
 }
 
 static void
@@ -1300,6 +1306,157 @@ _e_comp_wl_surface_state_attach(E_Client *ec, E_Comp_Wl_Surface_State *state)
 }
 
 static void
+_e_comp_wl_map_transform(int width, int height, uint32_t transform, int32_t scale,
+                         int sx, int sy, int *dx, int *dy)
+{
+   switch (transform)
+     {
+      case WL_OUTPUT_TRANSFORM_NORMAL:
+      default:
+        *dx = sx, *dy = sy;
+        break;
+      case WL_OUTPUT_TRANSFORM_FLIPPED:
+        *dx = width - sx, *dy = sy;
+        break;
+      case WL_OUTPUT_TRANSFORM_90:
+        *dx = height - sy, *dy = sx;
+        break;
+      case WL_OUTPUT_TRANSFORM_FLIPPED_90:
+        *dx = height - sy, *dy = width - sx;
+        break;
+      case WL_OUTPUT_TRANSFORM_180:
+        *dx = width - sx, *dy = height - sy;
+        break;
+      case WL_OUTPUT_TRANSFORM_FLIPPED_180:
+        *dx = sx, *dy = height - sy;
+        break;
+      case WL_OUTPUT_TRANSFORM_270:
+        *dx = sy, *dy = width - sx;
+        break;
+      case WL_OUTPUT_TRANSFORM_FLIPPED_270:
+        *dx = sy, *dy = sx;
+        break;
+     }
+
+   *dx *= scale;
+   *dy *= scale;
+}
+
+static void
+_e_comp_wl_map_size_cal_from_buffer(E_Client *ec, int32_t *ow, int32_t *oh)
+{
+   E_Comp_Wl_Buffer_Viewport *vp = &ec->comp_data->scaler.buffer_viewport;
+   int32_t width, height, pw, ph;
+
+   if (!e_pixmap_size_get(ec->pixmap, &pw, &ph)) return;
+
+   switch (vp->buffer.transform)
+     {
+      case WL_OUTPUT_TRANSFORM_90:
+      case WL_OUTPUT_TRANSFORM_270:
+      case WL_OUTPUT_TRANSFORM_FLIPPED_90:
+      case WL_OUTPUT_TRANSFORM_FLIPPED_270:
+        width = ph / vp->buffer.scale;
+        height = pw / vp->buffer.scale;
+        break;
+      default:
+        width = pw / vp->buffer.scale;
+        height = ph / vp->buffer.scale;
+        break;
+     }
+
+   *ow = width;
+   *oh = height;
+}
+
+static void
+_e_comp_wl_map_size_cal_from_viewport(E_Client *ec, int32_t bw, int32_t bh, int32_t *ow, int32_t *oh)
+{
+   E_Comp_Wl_Buffer_Viewport *vp = &ec->comp_data->scaler.buffer_viewport;
+   int32_t width, height;
+
+   width = bw;
+   height = bh;
+
+   if (width != 0 && vp->surface.width != -1)
+     {
+        *ow = vp->surface.width;
+        *oh = vp->surface.height;
+        return;
+     }
+
+   if (width != 0 && vp->buffer.src_width != wl_fixed_from_int(-1))
+     {
+        int32_t w = wl_fixed_to_int(wl_fixed_from_int(1) - 1 + vp->buffer.src_width);
+        int32_t h = wl_fixed_to_int(wl_fixed_from_int(1) - 1 + vp->buffer.src_height);
+
+        *ow = w ?: 1;
+        *oh = h ?: 1;
+        return;
+     }
+
+   *ow = width;
+   *oh = height;
+}
+
+static void
+_e_comp_wl_map_apply(E_Client *ec)
+{
+   E_Comp_Wl_Buffer_Viewport *vp = &ec->comp_data->scaler.buffer_viewport;
+   Evas_Map *map;
+   int x1, y1, x2, y2, x, y;
+   int32_t w, h, vw, vh;
+
+   _e_comp_wl_map_size_cal_from_buffer(ec, &w, &h);
+   _e_comp_wl_map_size_cal_from_viewport(ec, w, h, &vw, &vh);
+
+   map = evas_map_new(4);
+
+   evas_map_util_points_populate_from_geometry(map,
+                                               ec->x, ec->y,
+                                               vw, vh, 0);
+
+   if (vp->buffer.src_width == wl_fixed_from_int(-1))
+     {
+        x1 = 0.0;
+        y1 = 0.0;
+        x2 = w;
+        y2 = h;
+     }
+   else
+     {
+        x1 = wl_fixed_to_int(vp->buffer.src_x);
+        y1 = wl_fixed_to_int(vp->buffer.src_y);
+        x2 = wl_fixed_to_int(vp->buffer.src_x + vp->buffer.src_width);
+        y2 = wl_fixed_to_int(vp->buffer.src_y + vp->buffer.src_height);
+     }
+
+   _e_comp_wl_map_transform(w, h,
+                            vp->buffer.transform, vp->buffer.scale,
+                            x1, y1, &x, &y);
+   evas_map_point_image_uv_set(map, 0, x, y);
+
+   _e_comp_wl_map_transform(w, h,
+                            vp->buffer.transform, vp->buffer.scale,
+                            x2, y1, &x, &y);
+   evas_map_point_image_uv_set(map, 1, x, y);
+
+   _e_comp_wl_map_transform(w, h,
+                            vp->buffer.transform, vp->buffer.scale,
+                            x2, y2, &x, &y);
+   evas_map_point_image_uv_set(map, 2, x, y);
+
+   _e_comp_wl_map_transform(w, h,
+                            vp->buffer.transform, vp->buffer.scale,
+                            x1, y2, &x, &y);
+   evas_map_point_image_uv_set(map, 3, x, y);
+
+   e_comp_object_map_set(ec->frame, map);
+
+   evas_map_free(map);
+}
+
+static void
 _e_comp_wl_surface_state_commit(E_Client *ec, E_Comp_Wl_Surface_State *state)
 {
    Eina_Bool first = EINA_FALSE;
@@ -1321,6 +1478,8 @@ _e_comp_wl_surface_state_commit(E_Client *ec, E_Comp_Wl_Surface_State *state)
         e_comp->new_clients++;
         e_client_unignore(ec);
      }
+
+   ec->comp_data->scaler.buffer_viewport = state->buffer_viewport;
 
    if (state->new_attach)
      _e_comp_wl_surface_state_attach(ec, state);
@@ -1468,6 +1627,12 @@ _e_comp_wl_surface_state_commit(E_Client *ec, E_Comp_Wl_Surface_State *state)
              ec->placed = placed;
              ec->want_focus |= ec->icccm.accepts_focus && (!ec->override);
           }
+     }
+
+   if (e_pixmap_usable_get(ec->pixmap) && state->buffer_viewport.changed)
+     {
+        _e_comp_wl_map_apply(ec);
+        state->buffer_viewport.changed = 0;
      }
 
    state->sx = 0;
@@ -2419,6 +2584,11 @@ _e_comp_wl_client_cb_new(void *data EINA_UNUSED, E_Client *ec)
 
    /* set initial client data properties */
    ec->comp_data->mapped = EINA_FALSE;
+
+   ec->comp_data->scaler.buffer_viewport.buffer.transform = WL_OUTPUT_TRANSFORM_NORMAL;
+   ec->comp_data->scaler.buffer_viewport.buffer.scale = 1;
+   ec->comp_data->scaler.buffer_viewport.buffer.src_width = wl_fixed_from_int(-1);
+   ec->comp_data->scaler.buffer_viewport.surface.width = -1;
 
    /* add this client to the hash */
    /* eina_hash_add(clients_win_hash, &win, ec); */

@@ -6,6 +6,7 @@
 #include "screenshooter-server-protocol.h"
 #include "session-recovery-server-protocol.h"
 #include "www-server-protocol.h"
+#include "e_comp_wl_scaler.h"
 
 static void
 _e_comp_wl_extensions_client_move_begin(void *d EINA_UNUSED, E_Client *ec)
@@ -279,6 +280,8 @@ e_comp_wl_extensions_init(void)
    GLOBAL_CREATE_OR_RETURN(session_recovery, zwp_e_session_recovery_interface, 1);
    GLOBAL_CREATE_OR_RETURN(screenshooter, zwp_screenshooter_interface, 1);
    GLOBAL_CREATE_OR_RETURN(www, www_interface, 1);
+
+   e_scaler_init();
 
    ecore_event_handler_add(ECORE_WL2_EVENT_SYNC_DONE, _dmabuf_add, NULL);
 
