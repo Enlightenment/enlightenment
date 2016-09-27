@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: enlightenment 0.19.99.20491\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2016-08-29 09:35+0900\n"
+"POT-Creation-Date: 2016-09-26 23:22+0900\n"
 "PO-Revision-Date: 2015-10-12 01:01+0900\n"
 "Last-Translator: Thiep Ha <thiepha@gmail.com>\n"
 "Language-Team: \n"
@@ -876,41 +876,41 @@ msgstr "Chọn"
 msgid "Cancel"
 msgstr "Hủy"
 
-#: src/bin/e_comp.c:1056 src/bin/e_comp.c:1062 src/bin/e_comp.c:1068
-#: src/bin/e_comp.c:1368 src/bin/e_configure.c:33
+#: src/bin/e_comp.c:1054 src/bin/e_comp.c:1060 src/bin/e_comp.c:1066
+#: src/bin/e_configure.c:33
 #: src/modules/conf_bindings/e_int_config_mousebindings.c:351
 msgid "Compositor"
 msgstr "Bộ Đa Hợp"
 
-#: src/bin/e_comp.c:1057
+#: src/bin/e_comp.c:1055
 msgid "Change current window opacity"
 msgstr "Thay đổi độ mờ của cửa sổ hiện tại"
 
-#: src/bin/e_comp.c:1063
+#: src/bin/e_comp.c:1061
 msgid "Set current window opacity"
 msgstr "Thiết lập độ mờ của cửa sổ hiện tại"
 
-#: src/bin/e_comp.c:1069
+#: src/bin/e_comp.c:1067
 msgid "Toggle focused client's redirect state"
 msgstr "Bật tắt trạng thái chuyển đến của chương trình khách được tập trung"
 
-#: src/bin/e_comp.c:1201 src/modules/bluez4/e_mod_main.c:204
+#: src/bin/e_comp.c:1199 src/modules/bluez4/e_mod_main.c:204
 msgid "Visible"
 msgstr "Khả Kiến"
 
-#: src/bin/e_comp.c:1206
+#: src/bin/e_comp.c:1204
 msgid "Focus-Out"
 msgstr "Bị Mất Tập Trung"
 
-#: src/bin/e_comp.c:1211
+#: src/bin/e_comp.c:1209
 msgid "Focus-In"
 msgstr "Lấy Tập Trung"
 
-#: src/bin/e_comp.c:1216 src/bin/e_int_client_prop.c:515
+#: src/bin/e_comp.c:1214 src/bin/e_int_client_prop.c:515
 msgid "Hidden"
 msgstr "Ẩn"
 
-#: src/bin/e_comp.c:1323 src/bin/e_int_client_prop.c:449
+#: src/bin/e_comp.c:1321 src/bin/e_int_client_prop.c:449
 #: src/bin/e_int_client_remember.c:707 src/bin/e_int_config_comp_match.c:369
 #: src/modules/wizard/page_050.c:96
 msgid "Title"
@@ -957,11 +957,11 @@ msgstr ""
 "Server chỗ làm việc của bạn không hỗ trợ cửa sổ bao phủ bộ đa hợp.\n"
 "Đây là tính năng thiết yếu để Enlightenment hoạt động."
 
-#: src/bin/e_comp_x.c:5522
+#: src/bin/e_comp_x.c:5520
 msgid "Enlightenment cannot initialize Ecore_X!\n"
 msgstr "Enlightenment không thể khởi tạo Ecore_X!\n"
 
-#: src/bin/e_comp_x.c:5534
+#: src/bin/e_comp_x.c:5532
 msgid ""
 "Your display server does not support XComposite, or Ecore-X was built "
 "without XComposite support. Note that for composite support you will also "
@@ -971,7 +971,7 @@ msgstr ""
 "dựng mà không hỗ trợ XComposite. Chú ý rằng để hỗ trợ cho việc đa hợp, bạn "
 "cũng sẽ cần hỗ trợ XRender và XFixes cho X11 và Ecore."
 
-#: src/bin/e_comp_x.c:5543
+#: src/bin/e_comp_x.c:5541
 msgid ""
 "Your display server does not support XDamage or Ecore was built without "
 "XDamage support."
@@ -979,7 +979,7 @@ msgstr ""
 "Server chỗ làm việc của bạn không hỗ trợ XDamage hoặc Ecore được xây dựng mà "
 "không hỗ trợ XDamage."
 
-#: src/bin/e_comp_x.c:5645
+#: src/bin/e_comp_x.c:5643
 msgid "Enlightenment cannot initialize the XSettings system.\n"
 msgstr "Enlightenment không thể khởi tạo hệ thống XSettings.\n"
 
@@ -1044,7 +1044,7 @@ msgstr ""
 #: src/bin/e_config.c:1895 src/bin/e_config.c:2540
 #: src/bin/e_config_dialog.c:274 src/bin/e_desktop_editor.c:892
 #: src/bin/e_desktop_editor.c:956 src/bin/e_entry_dialog.c:65
-#: src/bin/e_exec.c:716 src/bin/e_fm.c:10169 src/bin/e_fm.c:10926
+#: src/bin/e_exec.c:717 src/bin/e_fm.c:10169 src/bin/e_fm.c:10926
 #: src/bin/e_fm_prop.c:634 src/bin/e_import_config_dialog.c:542
 #: src/bin/e_int_client_remember.c:359 src/bin/e_int_client_remember.c:556
 #: src/bin/e_int_config_comp_match.c:583 src/bin/e_module.c:662
@@ -1164,7 +1164,7 @@ msgstr ""
 #: src/modules/conf/e_mod_main.c:284 src/modules/conf_bindings/e_mod_main.c:37
 #: src/modules/conf_paths/e_mod_main.c:17
 #: src/modules/conf_performance/e_mod_main.c:17
-#: src/modules/cpufreq/e_mod_main.c:1420 src/modules/mixer/e_mod_main.c:514
+#: src/modules/cpufreq/e_mod_main.c:1420 src/modules/mixer/e_mod_main.c:541
 #: src/modules/syscon/e_mod_main.c:36
 msgid "Advanced"
 msgstr "Cao Cấp"
@@ -1180,7 +1180,7 @@ msgstr "Áp Dụng"
 
 #: src/bin/e_configure.c:29 src/modules/conf_shelves/e_mod_main.c:21
 #: src/modules/connman/e_mod_main.c:604 src/modules/gadman/e_mod_main.c:23
-#: src/modules/mixer/e_mod_main.c:845 src/modules/notification/e_mod_main.c:163
+#: src/modules/mixer/e_mod_main.c:872 src/modules/notification/e_mod_main.c:163
 msgid "Extensions"
 msgstr "Các Phấn Mở Rộng"
 
@@ -1313,7 +1313,7 @@ msgstr "Tập tin chỗ làm việc"
 #: src/modules/conf_applications/e_int_config_defapps.c:358
 #: src/modules/everything/evry_config.c:376
 #: src/modules/everything/evry_plug_files.c:1462
-#: src/modules/pager/e_mod_config.c:127 src/modules/pager/e_mod_config.c:217
+#: src/modules/pager/e_mod_config.c:127 src/modules/pager/e_mod_config.c:218
 #: src/modules/pager_plain/e_mod_config.c:128
 #: src/modules/pager_plain/e_mod_config.c:226
 #: src/modules/tiling/e_mod_config.c:177
@@ -1348,7 +1348,7 @@ msgid "Select an Executable"
 msgstr "Chọn Một tập tin thực thi"
 
 #: src/bin/e_exec.c:446 src/bin/e_exec.c:454 src/bin/e_exec.c:465
-#: src/bin/e_exec.c:523 src/bin/e_remember.c:51
+#: src/bin/e_exec.c:524 src/bin/e_remember.c:51
 #: src/modules/conf_intl/e_int_config_imc.c:271
 #: src/modules/conf_intl/e_int_config_imc.c:520
 msgid "Run Error"
@@ -1368,16 +1368,16 @@ msgstr "Enlightenment không thể chuyển đến thư mục:<br><br>%s"
 msgid "Enlightenment was unable to restore to directory:<br><br>%s"
 msgstr "Enlightenment không thể khôi phục vào thư mục:<br><br>%s"
 
-#: src/bin/e_exec.c:524
+#: src/bin/e_exec.c:525
 #, c-format
 msgid "Enlightenment was unable to fork a child process:<br><br>%s"
 msgstr "Enlightenment không thể tạo ra tiến trình con:<br><br>%s"
 
-#: src/bin/e_exec.c:707
+#: src/bin/e_exec.c:708
 msgid "Application run error"
 msgstr "Lỗi Chạy Ứng Dụng"
 
-#: src/bin/e_exec.c:709
+#: src/bin/e_exec.c:710
 #, c-format
 msgid ""
 "Enlightenment was unable to run the application:<br><br>%s<br><br>The "
@@ -1386,106 +1386,106 @@ msgstr ""
 "Enlightenment không thể chạy ứng dụng:<br><br>%s<br><br>Ứng dụng thất bại "
 "trong lúc bắt đầu chạy."
 
-#: src/bin/e_exec.c:847
+#: src/bin/e_exec.c:848
 msgid "Application Execution Error"
 msgstr "Lỗi Thực Thi Ứng Dụng"
 
-#: src/bin/e_exec.c:860 src/bin/e_exec.c:862
+#: src/bin/e_exec.c:861 src/bin/e_exec.c:863
 #, c-format
 msgid "%s stopped running unexpectedly."
 msgstr "%s dừng thực thi một cách đột xuất."
 
-#: src/bin/e_exec.c:868
+#: src/bin/e_exec.c:869
 #, c-format
 msgid "An exit code of %i was returned from %s."
 msgstr "Mã thoát của %i được trả về từ %s."
 
-#: src/bin/e_exec.c:876
+#: src/bin/e_exec.c:877
 #, c-format
 msgid "%s was interrupted by an Interrupt Signal."
 msgstr "%s bị ngắt bởi một Tín Hiệu Ngắt."
 
-#: src/bin/e_exec.c:879
+#: src/bin/e_exec.c:880
 #, c-format
 msgid "%s was interrupted by a Quit Signal."
 msgstr "%s bị ngắt bởi một Tín Hiệu Dừng."
 
-#: src/bin/e_exec.c:883
+#: src/bin/e_exec.c:884
 #, c-format
 msgid "%s was interrupted by an Abort Signal."
 msgstr "%s bị ngắt bởi một Tín Hiệu Thoát."
 
-#: src/bin/e_exec.c:886
+#: src/bin/e_exec.c:887
 #, c-format
 msgid "%s was interrupted by a Floating Point Error."
 msgstr "%s bị ngắt bởi một Lỗi Dấu Chấm Động."
 
-#: src/bin/e_exec.c:890
+#: src/bin/e_exec.c:891
 #, c-format
 msgid "%s was interrupted by an Uninterruptable Kill Signal."
 msgstr "%s bị ngắt bởi một Tín Hiệu Tắt Không Thể Ngắt."
 
-#: src/bin/e_exec.c:894
+#: src/bin/e_exec.c:895
 #, c-format
 msgid "%s was interrupted by a Segmentation Fault."
 msgstr "%s bị ngắt bởi một Lỗi Phân Mảnh."
 
-#: src/bin/e_exec.c:898
+#: src/bin/e_exec.c:899
 #, c-format
 msgid "%s was interrupted by a Broken Pipe."
 msgstr "%s bị ngắt bởi một Ống Bị Vỡ."
 
-#: src/bin/e_exec.c:901
+#: src/bin/e_exec.c:902
 #, c-format
 msgid "%s was interrupted by a Termination Signal."
 msgstr "%s bị ngắt bởi một Tín Hiệu Chấm Dứt."
 
-#: src/bin/e_exec.c:905
+#: src/bin/e_exec.c:906
 #, c-format
 msgid "%s was interrupted by a Bus Error."
 msgstr "%s bị ngắt bởi một Lỗi Bus."
 
-#: src/bin/e_exec.c:908
+#: src/bin/e_exec.c:909
 #, c-format
 msgid "%s was interrupted by the signal number %i."
 msgstr "%s bị ngắt bởi tín hiệu số %i."
 
-#: src/bin/e_exec.c:964
+#: src/bin/e_exec.c:965
 msgid ""
 "***The remaining output has been truncated. Save the output to view.***\n"
 msgstr "***Phần còn lại của bộ xuất đã bị cắt. Lưu bộ xuất vào tầm nhìn.***\n"
 
-#: src/bin/e_exec.c:1023 src/bin/e_exec.c:1101 src/bin/e_exec.c:1108
+#: src/bin/e_exec.c:1024 src/bin/e_exec.c:1102 src/bin/e_exec.c:1109
 msgid "Error Logs"
 msgstr "Bản Ghi Lỗi"
 
-#: src/bin/e_exec.c:1029 src/bin/e_exec.c:1109
+#: src/bin/e_exec.c:1030 src/bin/e_exec.c:1110
 msgid "There was no error message."
 msgstr "Không có thông điệp lỗi."
 
-#: src/bin/e_exec.c:1033 src/bin/e_exec.c:1116
+#: src/bin/e_exec.c:1034 src/bin/e_exec.c:1117
 msgid "Save This Message"
 msgstr "Lưu Thông Điệp Này"
 
-#: src/bin/e_exec.c:1038 src/bin/e_exec.c:1041 src/bin/e_exec.c:1121
-#: src/bin/e_exec.c:1124
+#: src/bin/e_exec.c:1039 src/bin/e_exec.c:1042 src/bin/e_exec.c:1122
+#: src/bin/e_exec.c:1125
 #, c-format
 msgid "This error log will be saved as %s/%s.log"
 msgstr "Bản ghi của lỗi này sẽ đươc lưu %s/%s.log"
 
-#: src/bin/e_exec.c:1067
+#: src/bin/e_exec.c:1068
 msgid "Error Information"
 msgstr "Thông Tin Lỗi"
 
-#: src/bin/e_exec.c:1075
+#: src/bin/e_exec.c:1076
 msgid "Error Signal Information"
 msgstr "Thông Tin Tín Hiệu Lỗi"
 
-#: src/bin/e_exec.c:1085 src/bin/e_exec.c:1092
+#: src/bin/e_exec.c:1086 src/bin/e_exec.c:1093
 msgid "Output Data"
 msgstr "Dữ Liệu Đầu Ra"
 
-#: src/bin/e_exec.c:1093
+#: src/bin/e_exec.c:1094
 msgid "There was no output."
 msgstr "Không có đầu ra."
 
@@ -1535,7 +1535,7 @@ msgstr "Không thể đẩy thiết bị ra"
 #: src/bin/e_fm.c:10493 src/bin/e_fm.c:10497 src/bin/e_fm.c:10501
 #: src/bin/e_fm.c:10529 src/bin/e_fm.c:10534 src/bin/e_fm.c:10538
 #: src/bin/e_fm.c:10597 src/bin/e_fm.c:10827 src/bin/e_fm_prop.c:254
-#: src/bin/e_shelf.c:2258 src/modules/pager/e_mod_main.c:2046
+#: src/bin/e_shelf.c:2258 src/modules/pager/e_mod_main.c:2048
 #: src/modules/pager_plain/e_mod_main.c:2836
 msgid "Error"
 msgstr "Lỗi"
@@ -1652,7 +1652,7 @@ msgid "Eject"
 msgstr "Đẩy Ra"
 
 #: src/bin/e_fm.c:9346 src/bin/e_int_client_remember.c:804
-#: src/modules/ibar/e_mod_main.c:1592
+#: src/modules/ibar/e_mod_main.c:1607
 msgid "Properties"
 msgstr "Thuộc Tính"
 
@@ -2458,11 +2458,11 @@ msgstr "Đưa Ra Sự Đề Kháng"
 msgid "Window List"
 msgstr "Danh Sách Cửa Sổ"
 
-#: src/bin/e_int_client_menu.c:1626 src/modules/pager/e_mod_main.c:291
-#: src/modules/pager/e_mod_main.c:2111 src/modules/pager/e_mod_main.c:2118
-#: src/modules/pager/e_mod_main.c:2125 src/modules/pager/e_mod_main.c:2127
-#: src/modules/pager/e_mod_main.c:2129 src/modules/pager/e_mod_main.c:2131
-#: src/modules/pager/e_mod_main.c:2133 src/modules/pager/e_mod_main.c:2135
+#: src/bin/e_int_client_menu.c:1626 src/modules/pager/e_mod_main.c:292
+#: src/modules/pager/e_mod_main.c:2113 src/modules/pager/e_mod_main.c:2120
+#: src/modules/pager/e_mod_main.c:2127 src/modules/pager/e_mod_main.c:2129
+#: src/modules/pager/e_mod_main.c:2131 src/modules/pager/e_mod_main.c:2133
+#: src/modules/pager/e_mod_main.c:2135 src/modules/pager/e_mod_main.c:2137
 #: src/modules/pager_plain/e_mod_main.c:275
 #: src/modules/pager_plain/e_mod_main.c:2919
 #: src/modules/pager_plain/e_mod_main.c:2926
@@ -2713,13 +2713,13 @@ msgstr "Yêu Cầu Vị Trí"
 #: src/modules/everything/evry_gadget.c:497
 #: src/modules/everything/evry_gadget.c:679
 #: src/modules/everything/evry_plug_settings.c:183
-#: src/modules/ibar/e_mod_main.c:495 src/modules/ibar/e_mod_main.c:1585
+#: src/modules/ibar/e_mod_main.c:495 src/modules/ibar/e_mod_main.c:1600
 #: src/modules/ibox/e_mod_main.c:356 src/modules/ibox/e_mod_main.c:730
-#: src/modules/mixer/e_mod_main.c:519 src/modules/music-control/ui.c:277
-#: src/modules/packagekit/e_mod_main.c:47 src/modules/pager/e_mod_main.c:885
+#: src/modules/mixer/e_mod_main.c:546 src/modules/music-control/ui.c:277
+#: src/modules/packagekit/e_mod_main.c:47 src/modules/pager/e_mod_main.c:886
 #: src/modules/pager_plain/e_mod_main.c:870 src/modules/tasks/e_mod_main.c:770
 #: src/modules/temperature/e_mod_main.c:230
-#: src/modules/tiling/e_mod_tiling.c:1697 src/modules/wizard/page_150.c:31
+#: src/modules/tiling/e_mod_tiling.c:1718 src/modules/wizard/page_150.c:31
 #: src/modules/xkbswitch/e_mod_main.c:315
 #: src/modules/xkbswitch/e_mod_main.c:349
 msgid "Settings"
@@ -3421,7 +3421,7 @@ msgstr "Ứng Dụng"
 #: src/modules/conf_window_manipulation/e_mod_main.c:17
 #: src/modules/conf_window_remembers/e_mod_main.c:14
 #: src/modules/everything/evry_plug_windows.c:428
-#: src/modules/tiling/e_mod_tiling.c:1450 src/modules/winlist/e_mod_main.c:27
+#: src/modules/tiling/e_mod_tiling.c:1471 src/modules/winlist/e_mod_main.c:27
 msgid "Windows"
 msgstr "Cửa Sổ"
 
@@ -3594,24 +3594,24 @@ msgstr "Enlightenment không thể khởi tạo Eina!\n"
 msgid "Enlightenment could not create a logging domain!\n"
 msgstr "Enlightenment không thể tạo miền nhật ký!\n"
 
-#: src/bin/e_main.c:364
+#: src/bin/e_main.c:365
 msgid "Enlightenment cannot initialize Eet!\n"
 msgstr "Enlightenment không thể khởi tạo Eet!\n"
 
-#: src/bin/e_main.c:373
+#: src/bin/e_main.c:374
 msgid "Enlightenment cannot initialize Ecore!\n"
 msgstr "Enlightenment không thể khởi tạo Ecore!\n"
 
-#: src/bin/e_main.c:388
+#: src/bin/e_main.c:389
 #, fuzzy
 msgid "Enlightenment cannot initialize EFX!\n"
 msgstr "Enlightenment không thể khởi tạo Eet!\n"
 
-#: src/bin/e_main.c:397
+#: src/bin/e_main.c:398
 msgid "Enlightenment cannot initialize EIO!\n"
 msgstr "Enlightenment không thể khởi tạo EIO!\n"
 
-#: src/bin/e_main.c:409
+#: src/bin/e_main.c:410
 msgid ""
 "Enlightenment cannot set up an exit signal handler.\n"
 "Perhaps you are out of memory?"
@@ -3619,7 +3619,7 @@ msgstr ""
 "Enlightenment không thể thiết lập bộ điều khiển tín hiệu thoát.\n"
 "Có lẽ bạn bị hết bộ nhớ?"
 
-#: src/bin/e_main.c:416
+#: src/bin/e_main.c:417
 msgid ""
 "Enlightenment cannot set up a HUP signal handler.\n"
 "Perhaps you are out of memory?"
@@ -3627,7 +3627,7 @@ msgstr ""
 "Enlightenment không thể thiết lập bộ điều khiển tín hiệu HUP.\n"
 "Có lẽ bạn bị hết bộ nhớ?"
 
-#: src/bin/e_main.c:423
+#: src/bin/e_main.c:424
 msgid ""
 "Enlightenment cannot set up a USER signal handler.\n"
 "Perhaps you are out of memory?"
@@ -3635,31 +3635,31 @@ msgstr ""
 "Enlightenment không thể thiết lập bộ điều khiển tín hiệu USER.\n"
 "Có lẽ bạn bị hết bộ nhớ?"
 
-#: src/bin/e_main.c:432
+#: src/bin/e_main.c:433
 msgid "Enlightenment cannot initialize Ecore_File!\n"
 msgstr "Enlightenment không thể khởi tạo Ecore_File!\n"
 
-#: src/bin/e_main.c:441
+#: src/bin/e_main.c:442
 msgid "Enlightenment cannot initialize Ecore_Con!\n"
 msgstr "Enlightenment không thể khởi tạo Ecore_Con!\n"
 
-#: src/bin/e_main.c:450
+#: src/bin/e_main.c:451
 msgid "Enlightenment cannot initialize Ecore_Ipc!\n"
 msgstr "Enlightenment không thể khởi tạo Ecore_Ipc!\n"
 
-#: src/bin/e_main.c:463
+#: src/bin/e_main.c:464
 msgid "Enlightenment cannot initialize Ecore_Evas!\n"
 msgstr "Enlightenment không thể khởi tạo Ecore_Evas!\n"
 
-#: src/bin/e_main.c:472
+#: src/bin/e_main.c:473
 msgid "Enlightenment cannot initialize Elementary!\n"
 msgstr "Enlightenment không thể khởi tạo Elementary!\n"
 
-#: src/bin/e_main.c:483
+#: src/bin/e_main.c:484
 msgid "Enlightenment cannot initialize Emotion!\n"
 msgstr "Enlightenment không thể khởi tạo Emotion!\n"
 
-#: src/bin/e_main.c:497
+#: src/bin/e_main.c:498
 msgid ""
 "Enlightenment found ecore_evas doesn't support the Wayland SHM\n"
 "rendering in Evas. Please check your installation of Evas and\n"
@@ -3669,7 +3669,7 @@ msgstr ""
 "trong Evas. Xin hãy kiểm tra việc cài đặt Evas và Ecore\n"
 "và kiểm tra xem chúng có hỗ trợ động cơ render với Wayland SHM."
 
-#: src/bin/e_main.c:507
+#: src/bin/e_main.c:508
 msgid ""
 "Enlightenment found ecore_evas doesn't support the Software X11\n"
 "rendering in Evas. Please check your installation of Evas and\n"
@@ -3679,7 +3679,7 @@ msgstr ""
 "trong Evas. Xin hãy kiểm tra việc cài đặt Evas và Ecore\n"
 "và kiểm tra xem chúng có hỗ trợ động cơ render với Phần Mềm X11."
 
-#: src/bin/e_main.c:516
+#: src/bin/e_main.c:517
 msgid ""
 "Enlightenment found ecore_evas doesn't support the Software Buffer\n"
 "rendering in Evas. Please check your installation of Evas and\n"
@@ -3689,11 +3689,11 @@ msgstr ""
 "trong Evas. Xin hãy kiểm tra việc cài đặt Evas và Ecore\n"
 "và kiểm tra xem chúng có hỗ trợ động cơ render với Bộ Đệm Phần Mềm."
 
-#: src/bin/e_main.c:530
+#: src/bin/e_main.c:531
 msgid "Enlightenment cannot initialize E_Intl!\n"
 msgstr "Enlightenment không thể khởi tạo E_Intl!\n"
 
-#: src/bin/e_main.c:541
+#: src/bin/e_main.c:542
 msgid ""
 "Enlightenment cannot initialize its emergency alert system.\n"
 "Have you set your DISPLAY variable?"
@@ -3701,7 +3701,7 @@ msgstr ""
 "Enlightenment không thể khởi tạo hệ thống cảnh báo khẩn cấp.\n"
 "Bạn đã thiết lập biến DISPLAY chưa?"
 
-#: src/bin/e_main.c:553
+#: src/bin/e_main.c:554
 msgid ""
 "Enlightenment cannot create directories in your home directory.\n"
 "Perhaps you have no home directory or the disk is full?"
@@ -3709,19 +3709,19 @@ msgstr ""
 "Enlightenment không thể tạo thư mục trong thư mục nhà của bạn.\n"
 "Có lẽ bạn không có thư mục nhà hoặc là ổ đĩa của bạn bị đầy?"
 
-#: src/bin/e_main.c:563
+#: src/bin/e_main.c:564
 msgid "Enlightenment cannot set up its file registry system.\n"
 msgstr "Enlightenment không thể thiết lập hệ thống thanh ghi tập tin.\n"
 
-#: src/bin/e_main.c:572
+#: src/bin/e_main.c:573
 msgid "Enlightenment cannot set up its config system.\n"
 msgstr "Enlightenment không thể thiết lập hệ thống cấu hình.\n"
 
-#: src/bin/e_main.c:581
+#: src/bin/e_main.c:582
 msgid "Enlightenment cannot set up its environment.\n"
 msgstr "Enlightenment không thể thiết lập môi trường.\n"
 
-#: src/bin/e_main.c:598
+#: src/bin/e_main.c:599
 msgid ""
 "Enlightenment cannot set up paths for finding files.\n"
 "Perhaps you are out of memory?"
@@ -3729,19 +3729,19 @@ msgstr ""
 "Enlightenment không thể thiết lập đường dẫn cho các tập tin tìm kiếm.\n"
 "Có lẽ bạn bị hết bộ nhớ?"
 
-#: src/bin/e_main.c:615
+#: src/bin/e_main.c:616
 msgid "Enlightenment cannot set up its font system.\n"
 msgstr "Enlightenment không thể thiết lập hệ thống phông.\n"
 
-#: src/bin/e_main.c:628
+#: src/bin/e_main.c:629
 msgid "Enlightenment cannot set up its theme system.\n"
 msgstr "Enlightenment không thể thiết lập hệ thống chủ đề.\n"
 
-#: src/bin/e_main.c:640
+#: src/bin/e_main.c:641
 msgid "Setup Message Bus"
 msgstr "Thiết Lập Bus Thông Điệp"
 
-#: src/bin/e_main.c:646
+#: src/bin/e_main.c:647
 msgid ""
 "Enlightenment cannot create a dbus session connection.\n"
 "At best this will break many things, at worst it will hard lock your "
@@ -3749,7 +3749,7 @@ msgid ""
 "If you're sure you know what you're doing, export E_NO_DBUS_SESSION=1"
 msgstr ""
 
-#: src/bin/e_main.c:659
+#: src/bin/e_main.c:660
 msgid ""
 "Enlightenment cannot initialize the FDO desktop system.\n"
 "Perhaps you lack permissions on ~/.cache/efreet or are\n"
@@ -3759,43 +3759,43 @@ msgstr ""
 "Có lẽ bạn không có đủ quyền với ~/.cache/efreet hoặc là\n"
 "bạn thiếu bộ nhớ hoặc ổ cứng bị đầy?"
 
-#: src/bin/e_main.c:668
+#: src/bin/e_main.c:669
 msgid "Starting International Support"
 msgstr "Khởi Động Hỗ Trợ Toàn Cầu"
 
-#: src/bin/e_main.c:672
+#: src/bin/e_main.c:673
 msgid "Enlightenment cannot set up its intl system.\n"
 msgstr "Enlightenment không thể thiết lập hệ thống intl.\n"
 
-#: src/bin/e_main.c:685
+#: src/bin/e_main.c:686
 msgid "Setup Actions"
 msgstr "Thiết Lập Tác Vụ"
 
-#: src/bin/e_main.c:689
+#: src/bin/e_main.c:690
 msgid "Enlightenment cannot set up its actions system.\n"
 msgstr "Enlightenment không thể thiết lập hệ thống tác vụ.\n"
 
-#: src/bin/e_main.c:703
+#: src/bin/e_main.c:704
 msgid "Setup Powersave Modes"
 msgstr "Thiết Lập Chế Độ Tiết Kiệm Điện"
 
-#: src/bin/e_main.c:707
+#: src/bin/e_main.c:708
 msgid "Enlightenment cannot set up its powersave modes.\n"
 msgstr "Enlightenment không thể thiết lập chế độ tiết kiệm điện.\n"
 
-#: src/bin/e_main.c:714
+#: src/bin/e_main.c:715
 msgid "Setup Screensaver"
 msgstr "Thiết Lập Bảo Vệ Màn Hình"
 
-#: src/bin/e_main.c:718
+#: src/bin/e_main.c:719
 msgid "Enlightenment cannot configure the X screensaver.\n"
 msgstr "Enlightenment không thể cấu hình bảo vệ màn hình của X.\n"
 
-#: src/bin/e_main.c:725
+#: src/bin/e_main.c:726
 msgid "Setup Screens"
 msgstr "Thiết Lập Màn Hình"
 
-#: src/bin/e_main.c:729
+#: src/bin/e_main.c:730
 msgid ""
 "Enlightenment set up window management for all the screens on your system\n"
 "failed. Perhaps another window manager is running?\n"
@@ -3804,206 +3804,206 @@ msgstr ""
 "màn hình\n"
 " trong hệ thống. Có lẽ bộ quản lý cửa sổ khác đang chạy?\n"
 
-#: src/bin/e_main.c:739
+#: src/bin/e_main.c:740
 msgid "Enlightenment cannot set up its pointer system.\n"
 msgstr "Enlightenment không thể thiết lập hệ thống con trỏ.\n"
 
-#: src/bin/e_main.c:749
+#: src/bin/e_main.c:750
 msgid "Enlightenment cannot set up its scale system.\n"
 msgstr "Enlightenment không thể thiết lập hệ thống co giãn.\n"
 
-#: src/bin/e_main.c:760
+#: src/bin/e_main.c:761
 msgid "Enlightenment cannot set up its init screen.\n"
 msgstr "Enlightenment không thể thiết lập màn hình khởi tạo.\n"
 
-#: src/bin/e_main.c:784
+#: src/bin/e_main.c:785
 msgid "Setup ACPI"
 msgstr "Thiết Lập ACPI"
 
-#: src/bin/e_main.c:791
+#: src/bin/e_main.c:792
 msgid "Setup Backlight"
 msgstr "Thiết Lập Đèn Hậu"
 
-#: src/bin/e_main.c:795
+#: src/bin/e_main.c:796
 msgid "Enlightenment cannot configure the backlight.\n"
 msgstr "Enlightenment không thể cấu hình đèn hậu.\n"
 
-#: src/bin/e_main.c:801
+#: src/bin/e_main.c:802
 msgid "Setup DPMS"
 msgstr "Thiết Lập DPMS"
 
-#: src/bin/e_main.c:805
+#: src/bin/e_main.c:806
 msgid "Enlightenment cannot configure the DPMS settings.\n"
 msgstr "Enlightenment không thể cấu hình các cài đặt cho DPMS.\n"
 
-#: src/bin/e_main.c:812
+#: src/bin/e_main.c:813
 msgid "Setup Desklock"
 msgstr "Thiết Lập Khóa Chỗ Làm Việc"
 
-#: src/bin/e_main.c:816
+#: src/bin/e_main.c:817
 msgid "Enlightenment cannot set up its desk locking system.\n"
 msgstr "Enlightenment không thể thiết lập hệ thống khóa chỗ làm việc.\n"
 
-#: src/bin/e_main.c:826
+#: src/bin/e_main.c:827
 msgid "Setup Paths"
 msgstr "Thiết Lập Đường Dẫn"
 
-#: src/bin/e_main.c:832
+#: src/bin/e_main.c:833
 msgid "Setup System Controls"
 msgstr "Thiết Lập Điều Khiển Hệ Thống"
 
-#: src/bin/e_main.c:836
+#: src/bin/e_main.c:837
 msgid "Enlightenment cannot initialize the System Command system.\n"
 msgstr "Enlightenment không thể khởi tạo hệ thống Lệnh Hệ Thống.\n"
 
-#: src/bin/e_main.c:843
+#: src/bin/e_main.c:844
 msgid "Setup Execution System"
 msgstr "Thiết Lập Hệ Thống Thực Thi"
 
-#: src/bin/e_main.c:847
+#: src/bin/e_main.c:848
 msgid "Enlightenment cannot set up its exec system.\n"
 msgstr "Enlightenment không thể thiết lập hệ thống thực thi.\n"
 
-#: src/bin/e_main.c:857
+#: src/bin/e_main.c:858
 msgid "Setup Filemanager"
 msgstr "Thiết Lập Bộ Quản Lý Tập Tin"
 
-#: src/bin/e_main.c:861
+#: src/bin/e_main.c:862
 msgid "Enlightenment cannot initialize the File manager.\n"
 msgstr "Enlightenment không thể khởi tạo bộ quản lý Tập Tin.\n"
 
-#: src/bin/e_main.c:868
+#: src/bin/e_main.c:869
 msgid "Setup Message System"
 msgstr "Thiết Lập Hệ Thống Thông Điệp"
 
-#: src/bin/e_main.c:872
+#: src/bin/e_main.c:873
 msgid "Enlightenment cannot set up its msg system.\n"
 msgstr "Enlightenment không thể thiết lập hệ thống thông điệp.\n"
 
-#: src/bin/e_main.c:879
+#: src/bin/e_main.c:880
 msgid "Setup Grab Input Handling"
 msgstr "Thiết Lập Điều Khiển Nắm Bộ Nhập"
 
-#: src/bin/e_main.c:883
+#: src/bin/e_main.c:884
 msgid "Enlightenment cannot set up its grab input handling system.\n"
 msgstr "Enlightenment không thể thiết lập hệ thống điều khiển nắm bộ nhập.\n"
 
-#: src/bin/e_main.c:890
+#: src/bin/e_main.c:891
 msgid "Setup Modules"
 msgstr "Thiết Lập Mô-Đun"
 
-#: src/bin/e_main.c:894 src/bin/e_main.c:1073
+#: src/bin/e_main.c:895 src/bin/e_main.c:1074
 msgid "Enlightenment cannot set up its module system.\n"
 msgstr "Enlightenment không thể thiết lập hệ thống mô-đun.\n"
 
-#: src/bin/e_main.c:901
+#: src/bin/e_main.c:902
 msgid "Setup Remembers"
 msgstr "Thiết Lập Ghi Nhớ"
 
-#: src/bin/e_main.c:905
+#: src/bin/e_main.c:906
 msgid "Enlightenment cannot setup remember settings.\n"
 msgstr "Enlightenment không thể thiết lập cài đặt ghi nhớ.\n"
 
-#: src/bin/e_main.c:914
+#: src/bin/e_main.c:915
 #, fuzzy
 msgid "Setup Gadgets"
 msgstr "Gadget Chỗ Làm Việc"
 
-#: src/bin/e_main.c:923
+#: src/bin/e_main.c:924
 msgid "Setup Gadcon"
 msgstr "Thiết Lập Gadcon"
 
-#: src/bin/e_main.c:927
+#: src/bin/e_main.c:928
 msgid "Enlightenment cannot set up its gadget control system.\n"
 msgstr "Enlightenment không thể thiết lập hệ thống điều khiển gadget.\n"
 
-#: src/bin/e_main.c:934
+#: src/bin/e_main.c:935
 msgid "Setup Toolbars"
 msgstr "Thiết Lập Thanh Công Cụ"
 
-#: src/bin/e_main.c:938
+#: src/bin/e_main.c:939
 msgid "Enlightenment cannot set up its toolbars.\n"
 msgstr "Enlightenment không thể thiết lập thanh công cụ.\n"
 
-#: src/bin/e_main.c:945
+#: src/bin/e_main.c:946
 msgid "Setup Wallpaper"
 msgstr "Thiết Lập Màn Hình Nền"
 
-#: src/bin/e_main.c:949
+#: src/bin/e_main.c:950
 msgid "Enlightenment cannot set up its desktop background system.\n"
 msgstr "Enlightenment không thể thiết lập hệ thống màn hình nền.\n"
 
-#: src/bin/e_main.c:956
+#: src/bin/e_main.c:957
 msgid "Setup Mouse"
 msgstr "Thiết Lập Con Trỏ"
 
-#: src/bin/e_main.c:960
+#: src/bin/e_main.c:961
 msgid "Enlightenment cannot configure the mouse settings.\n"
 msgstr "Enlightenment không thể cấu hình các cài đặt con trỏ.\n"
 
-#: src/bin/e_main.c:966
+#: src/bin/e_main.c:967
 msgid "Setup Bindings"
 msgstr "Thiết Lập Gán"
 
-#: src/bin/e_main.c:970
+#: src/bin/e_main.c:971
 msgid "Enlightenment cannot set up its bindings system.\n"
 msgstr "Enlightenment không thể thiết lập hệ thống gán.\n"
 
-#: src/bin/e_main.c:977
+#: src/bin/e_main.c:978
 msgid "Setup Thumbnailer"
 msgstr "Thiết Lập Bộ Hình Nhỏ"
 
-#: src/bin/e_main.c:981
+#: src/bin/e_main.c:982
 msgid "Enlightenment cannot initialize the Thumbnailing system.\n"
 msgstr "Enlightenment không thể khởi tạo hệ thống Hình Nhỏ.\n"
 
-#: src/bin/e_main.c:990
+#: src/bin/e_main.c:991
 msgid "Enlightenment cannot initialize the Icon Cache system.\n"
 msgstr "Enlightenment không thể khởi tạo hệ thống Lưu Trữ Biểu Tượng.\n"
 
-#: src/bin/e_main.c:999
+#: src/bin/e_main.c:1000
 msgid "Enlightenment cannot initialize the Update system.\n"
 msgstr "Enlightenment không thể khởi tạo hệ thống Cập Nhật.\n"
 
-#: src/bin/e_main.c:1006
+#: src/bin/e_main.c:1007
 msgid "Setup Desktop Environment"
 msgstr "Thiết Lập Môi Trường Chỗ Làm Việc"
 
-#: src/bin/e_main.c:1010
+#: src/bin/e_main.c:1011
 msgid "Enlightenment cannot initialize its desktop environment.\n"
 msgstr "Enlightenment không thể khởi tạo môi trường chỗ làm việc.\n"
 
-#: src/bin/e_main.c:1017
+#: src/bin/e_main.c:1018
 msgid "Setup File Ordering"
 msgstr "Thiết Lập Thứ Tự Tập Tin"
 
-#: src/bin/e_main.c:1021
+#: src/bin/e_main.c:1022
 msgid "Enlightenment cannot set up its order file system.\n"
 msgstr "Enlightenment không thể thiết lập hệ thống tập tin thứ tự.\n"
 
-#: src/bin/e_main.c:1032
+#: src/bin/e_main.c:1033
 msgid "Load Modules"
 msgstr "Tải Mô-Đun"
 
-#: src/bin/e_main.c:1061
+#: src/bin/e_main.c:1062
 #, fuzzy
 msgid "Setup Bryces"
 msgstr "Thiết Lập Màn Hình"
 
-#: src/bin/e_main.c:1069
+#: src/bin/e_main.c:1070
 msgid "Setup Shelves"
 msgstr "Thiết Lập Khay"
 
-#: src/bin/e_main.c:1083
+#: src/bin/e_main.c:1084
 msgid "Almost Done"
 msgstr "Gần Xong"
 
-#: src/bin/e_main.c:1227
+#: src/bin/e_main.c:1228
 #, c-format
 msgid "Version: %s\n"
 msgstr "Phiên Bản: %s\n"
 
-#: src/bin/e_main.c:1236
+#: src/bin/e_main.c:1237
 #, c-format
 msgid ""
 "Options:\n"
@@ -4058,7 +4058,7 @@ msgstr ""
 "\t\tNếu bạn cần sự giúp đỡ, bạn không cần tùy chọn này.\n"
 "\t-version\n"
 
-#: src/bin/e_main.c:1290
+#: src/bin/e_main.c:1291
 msgid ""
 "You are executing enlightenment directly. This is\n"
 "bad. Please do not execute the \"enlightenment\"\n"
@@ -4074,11 +4074,11 @@ msgstr ""
 "và chạy các dịch vụ yêu cầu khác, vân vân...\n"
 "trước khi thực thi enlightenment.\n"
 
-#: src/bin/e_main.c:1543
+#: src/bin/e_main.c:1544
 msgid "Testing Format Support"
 msgstr "Kiểm Tra Hỗ Trợ Định Dạng"
 
-#: src/bin/e_main.c:1547
+#: src/bin/e_main.c:1548
 msgid ""
 "Enlightenment found Evas can't create a buffer canvas. Please check\n"
 "Evas has Software Buffer engine support.\n"
@@ -4086,7 +4086,7 @@ msgstr ""
 "Enlightenment thấy Evas không thể tạo bức vẽ bộ đệm. Xin hãy\n"
 "kiểm tra Evas có hỗ trợ động cơ Bộ Đệm Phần Mềm không.\n"
 
-#: src/bin/e_main.c:1558
+#: src/bin/e_main.c:1559
 msgid ""
 "Enlightenment found Evas can't load SVG files. Check Evas has SVG loader "
 "support.\n"
@@ -4094,7 +4094,7 @@ msgstr ""
 "Enlightenment thấy Evas không thể tải tập tin SVG. Xin hãy\n"
 "kiểm tra Evas có hỗ trợ bộ tải SVG không.\n"
 
-#: src/bin/e_main.c:1568
+#: src/bin/e_main.c:1569
 msgid ""
 "Enlightenment found Evas can't load JPEG files. Check Evas has JPEG loader "
 "support.\n"
@@ -4102,7 +4102,7 @@ msgstr ""
 "Enlightenment thấy Evas không thể tải tập tin JPEG. Xin hãy\n"
 "kiểm tra Evas có hỗ trợ bộ tải JPEG không.\n"
 
-#: src/bin/e_main.c:1578
+#: src/bin/e_main.c:1579
 msgid ""
 "Enlightenment found Evas can't load PNG files. Check Evas has PNG loader "
 "support.\n"
@@ -4110,7 +4110,7 @@ msgstr ""
 "Enlightenment thấy Evas không thể tải tập tin PNG. Xin hãy\n"
 "kiểm tra Evas có hỗ trợ bộ tải PNG không.\n"
 
-#: src/bin/e_main.c:1588
+#: src/bin/e_main.c:1589
 msgid ""
 "Enlightenment found Evas can't load EET files. Check Evas has EET loader "
 "support.\n"
@@ -4118,7 +4118,7 @@ msgstr ""
 "Enlightenment thấy Evas không thể tải tập tin EET. Xin hãy\n"
 "kiểm tra Evas có hỗ trợ bộ tải EET không.\n"
 
-#: src/bin/e_main.c:1602
+#: src/bin/e_main.c:1603
 msgid ""
 "Enlightenment found Evas can't load the 'Sans' font. Check Evas has "
 "fontconfig\n"
@@ -4128,19 +4128,19 @@ msgstr ""
 "có hỗ trợ fontconfig và fontconfig hệ thống có định nghĩa phông 'Sans' "
 "không.\n"
 
-#: src/bin/e_main.c:1620
+#: src/bin/e_main.c:1621
 msgid "Enlightenment cannot create a compositor.\n"
 msgstr "Enlightenment không thể tạo một bộ đa hợp.\n"
 
-#: src/bin/e_main.c:1628
+#: src/bin/e_main.c:1629
 msgid "Setup DND"
 msgstr "Thiết Lập Kéo Thả"
 
-#: src/bin/e_main.c:1632
+#: src/bin/e_main.c:1633
 msgid "Enlightenment cannot set up its dnd system.\n"
 msgstr "Enlightenment không thể thiết lập hệ thống kéo thả.\n"
 
-#: src/bin/e_main.c:1748
+#: src/bin/e_main.c:1749
 #, c-format
 msgid ""
 "Enlightenment crashed early on start and has<br>been restarted. There was an "
@@ -4151,11 +4151,11 @@ msgstr ""
 "xảy ra trong việc tải<br>mô-đun tên: %s. Mô-đun này đã bị tắt<br>và sẽ không "
 "được tải."
 
-#: src/bin/e_main.c:1753 src/bin/e_main.c:1769
+#: src/bin/e_main.c:1754 src/bin/e_main.c:1770
 msgid "Enlightenment crashed early on start and has been restarted"
 msgstr "Enlightenment bị sự cố ngay lúc bắt đầu và đã được tái khởi động"
 
-#: src/bin/e_main.c:1754
+#: src/bin/e_main.c:1755
 #, c-format
 msgid ""
 "Enlightenment crashed early on start and has been restarted.<br>There was an "
@@ -4166,7 +4166,7 @@ msgstr ""
 "xảy ra trong việc tải mô-đun tên: %s.<br><br>Mô-đun này đã bị tắt và sẽ "
 "không được tải."
 
-#: src/bin/e_main.c:1762
+#: src/bin/e_main.c:1763
 msgid ""
 "Enlightenment crashed early on start and has<br>been restarted. All modules "
 "have been disabled<br>and will not be loaded to help remove any "
@@ -4178,7 +4178,7 @@ msgstr ""
 "đun<br>có vấn đề trong cấu hình của bạn. Hộp thoại<br>cấu hình mô-đun sẽ "
 "giúp bạn lựa chọn lại các mô-đun.\n"
 
-#: src/bin/e_main.c:1770
+#: src/bin/e_main.c:1771
 msgid ""
 "Enlightenment crashed early on start and has been restarted.<br>All modules "
 "have been disabled and will not be loaded to help<br>remove any problem "
@@ -4386,7 +4386,7 @@ msgid "Rename Shelf"
 msgstr "Đổi Tên Khay"
 
 #: src/bin/e_shelf.c:2351 src/modules/conf_shelves/e_int_config_shelf.c:145
-#: src/modules/ibar/e_mod_main.c:489 src/modules/ibar/e_mod_main.c:1579
+#: src/modules/ibar/e_mod_main.c:489 src/modules/ibar/e_mod_main.c:1594
 msgid "Contents"
 msgstr "Nội Dung"
 
@@ -5482,7 +5482,7 @@ msgid "Vaio"
 msgstr "Vaio"
 
 #: src/modules/conf_bindings/e_int_config_acpibindings.c:395
-#: src/modules/mixer/e_mod_main.c:459
+#: src/modules/mixer/e_mod_main.c:486
 msgid "Mute"
 msgstr "Yên Lặng"
 
@@ -5761,7 +5761,7 @@ msgid "Win List"
 msgstr "Danh Sách Cửa Sổ"
 
 #: src/modules/conf_bindings/e_int_config_mousebindings.c:343
-#: src/modules/pager/e_mod_config.c:136 src/modules/pager/e_mod_config.c:252
+#: src/modules/pager/e_mod_config.c:136 src/modules/pager/e_mod_config.c:253
 #: src/modules/pager_plain/e_mod_config.c:140
 #: src/modules/pager_plain/e_mod_config.c:261
 msgid "Popup"
@@ -5785,7 +5785,7 @@ msgstr "Cuộn Con Trỏ"
 
 #: src/modules/conf_bindings/e_int_config_mousebindings.c:1142
 #: src/modules/conf_bindings/e_int_config_mousebindings.c:1160
-#: src/modules/pager/e_mod_config.c:363 src/modules/pager/e_mod_config.c:389
+#: src/modules/pager/e_mod_config.c:365 src/modules/pager/e_mod_config.c:391
 #: src/modules/pager_plain/e_mod_config.c:374
 #: src/modules/pager_plain/e_mod_config.c:400
 #, c-format
@@ -5794,7 +5794,7 @@ msgstr "Nút Trái"
 
 #: src/modules/conf_bindings/e_int_config_mousebindings.c:1144
 #: src/modules/conf_bindings/e_int_config_mousebindings.c:1158
-#: src/modules/pager/e_mod_config.c:368 src/modules/pager/e_mod_config.c:384
+#: src/modules/pager/e_mod_config.c:370 src/modules/pager/e_mod_config.c:386
 #: src/modules/pager_plain/e_mod_config.c:379
 #: src/modules/pager_plain/e_mod_config.c:395
 #, c-format
@@ -5803,8 +5803,8 @@ msgstr "Nút Phải"
 
 #: src/modules/conf_bindings/e_int_config_mousebindings.c:1147
 #: src/modules/conf_bindings/e_int_config_mousebindings.c:1163
-#: src/modules/pager/e_mod_config.c:373 src/modules/pager/e_mod_config.c:394
-#: src/modules/pager/e_mod_config.c:399
+#: src/modules/pager/e_mod_config.c:375 src/modules/pager/e_mod_config.c:396
+#: src/modules/pager/e_mod_config.c:401
 #: src/modules/pager_plain/e_mod_config.c:384
 #: src/modules/pager_plain/e_mod_config.c:405
 #: src/modules/pager_plain/e_mod_config.c:410
@@ -5813,7 +5813,7 @@ msgid "Button %i"
 msgstr "Nút %i"
 
 #: src/modules/conf_bindings/e_int_config_mousebindings.c:1153
-#: src/modules/pager/e_mod_config.c:378
+#: src/modules/pager/e_mod_config.c:380
 #: src/modules/pager_plain/e_mod_config.c:389
 #, c-format
 msgid "Middle button"
@@ -6144,7 +6144,7 @@ msgid "Hide Logo"
 msgstr "Ẩn Logo"
 
 #: src/modules/conf_display/e_int_config_desks.c:48
-#: src/modules/pager/e_mod_main.c:893 src/modules/pager_plain/e_mod_main.c:878
+#: src/modules/pager/e_mod_main.c:894 src/modules/pager_plain/e_mod_main.c:878
 msgid "Virtual Desktops Settings"
 msgstr "Thiết Lập Chỗ Làm Việc Ảo"
 
@@ -8917,28 +8917,28 @@ msgstr ""
 msgid "Are you sure you want to delete this bar source?"
 msgstr "Bạn có chắc chắn muốn xóa nguồn của thanh này không?"
 
-#: src/modules/ibar/e_mod_main.c:368 src/modules/ibar/e_mod_main.c:2838
+#: src/modules/ibar/e_mod_main.c:368 src/modules/ibar/e_mod_main.c:2853
 msgid "IBar"
 msgstr "IBar"
 
-#: src/modules/ibar/e_mod_main.c:478 src/modules/ibar/e_mod_main.c:1568
+#: src/modules/ibar/e_mod_main.c:478 src/modules/ibar/e_mod_main.c:1583
 msgid "Create new Icon"
 msgstr "Tạo biểu tượng mới"
 
-#: src/modules/ibar/e_mod_main.c:1599
+#: src/modules/ibar/e_mod_main.c:1614
 msgid "Add to bar"
 msgstr "Thêm vào thanh"
 
-#: src/modules/ibar/e_mod_main.c:1605
+#: src/modules/ibar/e_mod_main.c:1620
 msgid "Remove from bar"
 msgstr "Loại khỏi thanh"
 
-#: src/modules/ibar/e_mod_main.c:1611
+#: src/modules/ibar/e_mod_main.c:1626
 #, c-format
 msgid "Icon %s"
 msgstr "Biểu Tượng %s"
 
-#: src/modules/ibar/e_mod_main.c:2838
+#: src/modules/ibar/e_mod_main.c:2853
 msgid "Focus IBar"
 msgstr "Tập Trung Vào IBar"
 
@@ -9029,35 +9029,35 @@ msgstr ""
 "<hilight>%i</hillight>.<br>Điều này là tệ và không nên xảy ra. Xin hãy báo "
 "cáo lỗi này."
 
-#: src/modules/mixer/e_mod_main.c:98
+#: src/modules/mixer/e_mod_main.c:104
 msgid "New volume"
 msgstr "Âm lượng mới"
 
-#: src/modules/mixer/e_mod_main.c:111
+#: src/modules/mixer/e_mod_main.c:117
 msgid "Emix"
 msgstr "Emix"
 
-#: src/modules/mixer/e_mod_main.c:114
+#: src/modules/mixer/e_mod_main.c:120
 msgid "Volume changed"
 msgstr "Âm lượng đã thay đổi"
 
-#: src/modules/mixer/e_mod_main.c:240 src/modules/mixer/e_mod_main.c:269
+#: src/modules/mixer/e_mod_main.c:251 src/modules/mixer/e_mod_main.c:280
 msgid "Increase Volume"
 msgstr "Tăng Âm Lượng"
 
-#: src/modules/mixer/e_mod_main.c:248 src/modules/mixer/e_mod_main.c:276
+#: src/modules/mixer/e_mod_main.c:259 src/modules/mixer/e_mod_main.c:287
 msgid "Decrease Volume"
 msgstr "Giảm Âm Lượng"
 
-#: src/modules/mixer/e_mod_main.c:256
+#: src/modules/mixer/e_mod_main.c:267
 msgid "Mute volume"
 msgstr "Tắt âm thanh"
 
-#: src/modules/mixer/e_mod_main.c:283
+#: src/modules/mixer/e_mod_main.c:294
 msgid "Mute Volume"
 msgstr "Tắt Âm Thanh"
 
-#: src/modules/mixer/e_mod_main.c:469 src/modules/mixer/e_mod_main.c:847
+#: src/modules/mixer/e_mod_main.c:496 src/modules/mixer/e_mod_main.c:874
 msgid "Mixer"
 msgstr "Bộ Trộn"
 
@@ -9292,19 +9292,19 @@ msgstr "Chạy bộ quản lý gói"
 msgid "Pager Settings"
 msgstr "Thiết Lập Quản Lý Trang"
 
-#: src/modules/pager/e_mod_config.c:128 src/modules/pager/e_mod_config.c:183
+#: src/modules/pager/e_mod_config.c:128 src/modules/pager/e_mod_config.c:184
 #: src/modules/pager_plain/e_mod_config.c:129
 #: src/modules/pager_plain/e_mod_config.c:189
 msgid "Flip desktop on mouse wheel"
 msgstr "Lập chỗ làm việc khi cuộn con trỏ"
 
-#: src/modules/pager/e_mod_config.c:131 src/modules/pager/e_mod_config.c:186
+#: src/modules/pager/e_mod_config.c:131 src/modules/pager/e_mod_config.c:187
 #: src/modules/pager_plain/e_mod_config.c:132
 #: src/modules/pager_plain/e_mod_config.c:192
 msgid "Always show desktop names"
 msgstr "Luôn luôn hiển thị tên chỗ làm việc"
 
-#: src/modules/pager/e_mod_config.c:137 src/modules/pager/e_mod_config.c:222
+#: src/modules/pager/e_mod_config.c:137 src/modules/pager/e_mod_config.c:223
 #: src/modules/pager_plain/e_mod_config.c:141
 #: src/modules/pager_plain/e_mod_config.c:231
 msgid "Show popup on desktop change"
@@ -9315,13 +9315,13 @@ msgstr "Hiển thị hộp thoại khi thay đổi chỗ làm việc"
 msgid "Show popup for urgent windows"
 msgstr "Hiển thị hộp thoại cho cửa sổ khẩn cấp"
 
-#: src/modules/pager/e_mod_config.c:189
+#: src/modules/pager/e_mod_config.c:190
 #: src/modules/pager_plain/e_mod_config.c:198
 msgid "Resistance to dragging"
 msgstr "Kháng cự lại việc kéo"
 
-#: src/modules/pager/e_mod_config.c:191 src/modules/pager/e_mod_config.c:230
-#: src/modules/pager/e_mod_config.c:249
+#: src/modules/pager/e_mod_config.c:192 src/modules/pager/e_mod_config.c:231
+#: src/modules/pager/e_mod_config.c:250
 #: src/modules/pager_plain/e_mod_config.c:200
 #: src/modules/pager_plain/e_mod_config.c:239
 #: src/modules/pager_plain/e_mod_config.c:258
@@ -9329,13 +9329,13 @@ msgstr "Kháng cự lại việc kéo"
 msgid "%.0f pixels"
 msgstr "%.0f điểm ảnh"
 
-#: src/modules/pager/e_mod_config.c:196
+#: src/modules/pager/e_mod_config.c:197
 #: src/modules/pager_plain/e_mod_config.c:205
 msgid "Select and Slide button"
 msgstr "Nút Chọn và Kéo"
 
-#: src/modules/pager/e_mod_config.c:198 src/modules/pager/e_mod_config.c:206
-#: src/modules/pager/e_mod_config.c:212 src/modules/pager/e_mod_config.c:358
+#: src/modules/pager/e_mod_config.c:199 src/modules/pager/e_mod_config.c:207
+#: src/modules/pager/e_mod_config.c:213 src/modules/pager/e_mod_config.c:360
 #: src/modules/pager_plain/e_mod_config.c:207
 #: src/modules/pager_plain/e_mod_config.c:215
 #: src/modules/pager_plain/e_mod_config.c:221
@@ -9344,27 +9344,27 @@ msgstr "Nút Chọn và Kéo"
 msgid "Click to set"
 msgstr "Nhấp để thiết lập"
 
-#: src/modules/pager/e_mod_config.c:204
+#: src/modules/pager/e_mod_config.c:205
 #: src/modules/pager_plain/e_mod_config.c:213
 msgid "Drag and Drop button"
 msgstr "Nút Kéo Thả"
 
-#: src/modules/pager/e_mod_config.c:210
+#: src/modules/pager/e_mod_config.c:211
 #: src/modules/pager_plain/e_mod_config.c:219
 msgid "Drag whole desktop"
 msgstr "Kéo toàn bộ chỗ làm việc"
 
-#: src/modules/pager/e_mod_config.c:226
+#: src/modules/pager/e_mod_config.c:227
 #: src/modules/pager_plain/e_mod_config.c:235
 msgid "Popup pager height"
 msgstr "Chiều cao hộp thoại bộ quản lý trang "
 
-#: src/modules/pager/e_mod_config.c:236
+#: src/modules/pager/e_mod_config.c:237
 #: src/modules/pager_plain/e_mod_config.c:245
 msgid "Popup duration"
 msgstr "Thời khoảng hộp thoại"
 
-#: src/modules/pager/e_mod_config.c:240 src/modules/pager/e_mod_config.c:277
+#: src/modules/pager/e_mod_config.c:241 src/modules/pager/e_mod_config.c:278
 #: src/modules/pager_plain/e_mod_config.c:249
 #: src/modules/pager_plain/e_mod_config.c:286
 #: src/modules/teamwork/e_mod_config.c:112
@@ -9372,42 +9372,42 @@ msgstr "Thời khoảng hộp thoại"
 msgid "%1.1f seconds"
 msgstr "%1.1f giây"
 
-#: src/modules/pager/e_mod_config.c:247
+#: src/modules/pager/e_mod_config.c:248
 #: src/modules/pager_plain/e_mod_config.c:256
 msgid "Pager action popup height"
 msgstr "Chiều cao hộp thoại tác vụ bộ quản lý trang"
 
-#: src/modules/pager/e_mod_config.c:257
+#: src/modules/pager/e_mod_config.c:258
 #: src/modules/pager_plain/e_mod_config.c:266
 msgid "Show popup for urgent window"
 msgstr "Hiển thị hộp thoại cho cửa sổ khẩn cấp"
 
-#: src/modules/pager/e_mod_config.c:261
+#: src/modules/pager/e_mod_config.c:262
 #: src/modules/pager_plain/e_mod_config.c:270
 msgid "Urgent popup sticks on screen"
 msgstr "Hộp thoại khẩn cấp dính vào màn hình"
 
-#: src/modules/pager/e_mod_config.c:267
+#: src/modules/pager/e_mod_config.c:268
 #: src/modules/pager_plain/e_mod_config.c:276
 msgid "Show popup for focused windows"
 msgstr "Hiển thị hộp thoại cho cửa sổ tập trung"
 
-#: src/modules/pager/e_mod_config.c:273
+#: src/modules/pager/e_mod_config.c:274
 #: src/modules/pager_plain/e_mod_config.c:282
 msgid "Urgent popup duration"
 msgstr "Thời khoảng hộp thoại khẩn cấp"
 
-#: src/modules/pager/e_mod_config.c:284
+#: src/modules/pager/e_mod_config.c:285
 #: src/modules/pager_plain/e_mod_config.c:293
 msgid "Urgent Windows"
 msgstr "Cửa Sổ Khẩn Cấp"
 
-#: src/modules/pager/e_mod_config.c:451
+#: src/modules/pager/e_mod_config.c:453
 #: src/modules/pager_plain/e_mod_config.c:462
 msgid "Attention"
 msgstr "Chú Ý"
 
-#: src/modules/pager/e_mod_config.c:452
+#: src/modules/pager/e_mod_config.c:454
 #: src/modules/pager_plain/e_mod_config.c:463
 msgid ""
 "You cannot use the right mouse button in the<br>shelf for this as it is "
@@ -9418,43 +9418,43 @@ msgstr ""
 "lấy bởi mã nội cho<br>danh mục cảm ngữ cảnh.<br>Nút này chỉ hoạt động với "
 "hộp thoại."
 
-#: src/modules/pager/e_mod_main.c:2046
+#: src/modules/pager/e_mod_main.c:2048
 msgid "Pager module cannot be loaded at the same time as Pager Plain!"
 msgstr ""
 "Không thể tải mô-đun Bộ Quản Lý Trang cùng lúc với Bộ Quản Lý Trang Đơn "
 "Thuần!"
 
-#: src/modules/pager/e_mod_main.c:2118
+#: src/modules/pager/e_mod_main.c:2120
 #: src/modules/pager_plain/e_mod_main.c:2926
 msgid "Show Pager Popup"
 msgstr "Hiển Thị Hộp Thoại Bộ Quản Lý Trang"
 
-#: src/modules/pager/e_mod_main.c:2125
+#: src/modules/pager/e_mod_main.c:2127
 #: src/modules/pager_plain/e_mod_main.c:2933
 msgid "Popup Desk Right"
 msgstr "Bật Hộp Thoại Bàn Bên Phải"
 
-#: src/modules/pager/e_mod_main.c:2127
+#: src/modules/pager/e_mod_main.c:2129
 #: src/modules/pager_plain/e_mod_main.c:2935
 msgid "Popup Desk Left"
 msgstr "Bật Hộp Thoại Bàn Bên Trái"
 
-#: src/modules/pager/e_mod_main.c:2129
+#: src/modules/pager/e_mod_main.c:2131
 #: src/modules/pager_plain/e_mod_main.c:2937
 msgid "Popup Desk Up"
 msgstr "Bật Hộp Thoại Bàn Phía Trên"
 
-#: src/modules/pager/e_mod_main.c:2131
+#: src/modules/pager/e_mod_main.c:2133
 #: src/modules/pager_plain/e_mod_main.c:2939
 msgid "Popup Desk Down"
 msgstr "Bật Hộp Thoại Bàn Phía Dưới"
 
-#: src/modules/pager/e_mod_main.c:2133
+#: src/modules/pager/e_mod_main.c:2135
 #: src/modules/pager_plain/e_mod_main.c:2941
 msgid "Popup Desk Next"
 msgstr "Bật Hộp Thoại Bàn Kế Tiếp"
 
-#: src/modules/pager/e_mod_main.c:2135
+#: src/modules/pager/e_mod_main.c:2137
 #: src/modules/pager_plain/e_mod_main.c:2943
 msgid "Popup Desk Previous"
 msgstr "Bật Hộp Thoại Bàn Phía Sau"
@@ -10131,42 +10131,42 @@ msgstr "Giúp Đỡ"
 msgid "Tiling Configuration"
 msgstr "Cấu Hình Lát Gạch"
 
-#: src/modules/tiling/e_mod_tiling.c:1340
+#: src/modules/tiling/e_mod_tiling.c:1361
 msgid "Floating"
 msgstr "Trôi Nổi"
 
-#: src/modules/tiling/e_mod_tiling.c:1419
-#: src/modules/tiling/e_mod_tiling.c:1452
-#: src/modules/tiling/e_mod_tiling.c:1777
-#: src/modules/tiling/e_mod_tiling.c:1795
+#: src/modules/tiling/e_mod_tiling.c:1440
+#: src/modules/tiling/e_mod_tiling.c:1473
+#: src/modules/tiling/e_mod_tiling.c:1798
+#: src/modules/tiling/e_mod_tiling.c:1816
 msgid "Tiling"
 msgstr "Lát Gạch"
 
-#: src/modules/tiling/e_mod_tiling.c:1426
+#: src/modules/tiling/e_mod_tiling.c:1447
 msgid "Toggle floating"
 msgstr "Bật/Tắt trôi nổi"
 
-#: src/modules/tiling/e_mod_tiling.c:1429
+#: src/modules/tiling/e_mod_tiling.c:1450
 msgid "Move the focused window up"
 msgstr "Di chuyển cửa sổ tập trung lên trên"
 
-#: src/modules/tiling/e_mod_tiling.c:1431
+#: src/modules/tiling/e_mod_tiling.c:1452
 msgid "Move the focused window down"
 msgstr "Di chuyển cửa sổ tập trung xuống dưới"
 
-#: src/modules/tiling/e_mod_tiling.c:1433
+#: src/modules/tiling/e_mod_tiling.c:1454
 msgid "Move the focused window left"
 msgstr "Di chuyển cửa sổ tập trung sang trái"
 
-#: src/modules/tiling/e_mod_tiling.c:1435
+#: src/modules/tiling/e_mod_tiling.c:1456
 msgid "Move the focused window right"
 msgstr "Di chuyển cửa sổ tập trung sang phải"
 
-#: src/modules/tiling/e_mod_tiling.c:1438
+#: src/modules/tiling/e_mod_tiling.c:1459
 msgid "Toggle split mode"
 msgstr "Bật/Tắt chế độ chia"
 
-#: src/modules/tiling/e_mod_tiling.c:1440
+#: src/modules/tiling/e_mod_tiling.c:1461
 msgid "Swap window"
 msgstr "Chuyển đổi cửa sổ"
 

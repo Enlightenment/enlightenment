@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Enlightenment DR17\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2016-08-29 09:35+0900\n"
+"POT-Creation-Date: 2016-09-26 23:22+0900\n"
 "PO-Revision-Date: 2012-12-28 20:57+0900\n"
 "Last-Translator: Daniel Juyung Seo <seojuyung2@gmali.com>\n"
 "Language-Team: Korean <KO@li.org>\n"
@@ -880,42 +880,42 @@ msgstr "선택"
 msgid "Cancel"
 msgstr "취소"
 
-#: src/bin/e_comp.c:1056 src/bin/e_comp.c:1062 src/bin/e_comp.c:1068
-#: src/bin/e_comp.c:1368 src/bin/e_configure.c:33
+#: src/bin/e_comp.c:1054 src/bin/e_comp.c:1060 src/bin/e_comp.c:1066
+#: src/bin/e_configure.c:33
 #: src/modules/conf_bindings/e_int_config_mousebindings.c:351
 #, fuzzy
 msgid "Compositor"
 msgstr "합성 효과"
 
-#: src/bin/e_comp.c:1057
+#: src/bin/e_comp.c:1055
 msgid "Change current window opacity"
 msgstr ""
 
-#: src/bin/e_comp.c:1063
+#: src/bin/e_comp.c:1061
 msgid "Set current window opacity"
 msgstr ""
 
-#: src/bin/e_comp.c:1069
+#: src/bin/e_comp.c:1067
 msgid "Toggle focused client's redirect state"
 msgstr ""
 
-#: src/bin/e_comp.c:1201 src/modules/bluez4/e_mod_main.c:204
+#: src/bin/e_comp.c:1199 src/modules/bluez4/e_mod_main.c:204
 msgid "Visible"
 msgstr "보임"
 
-#: src/bin/e_comp.c:1206
+#: src/bin/e_comp.c:1204
 msgid "Focus-Out"
 msgstr "포커스 아웃"
 
-#: src/bin/e_comp.c:1211
+#: src/bin/e_comp.c:1209
 msgid "Focus-In"
 msgstr "포커스 인"
 
-#: src/bin/e_comp.c:1216 src/bin/e_int_client_prop.c:515
+#: src/bin/e_comp.c:1214 src/bin/e_int_client_prop.c:515
 msgid "Hidden"
 msgstr "숨김"
 
-#: src/bin/e_comp.c:1323 src/bin/e_int_client_prop.c:449
+#: src/bin/e_comp.c:1321 src/bin/e_int_client_prop.c:449
 #: src/bin/e_int_client_remember.c:707 src/bin/e_int_config_comp_match.c:369
 #: src/modules/wizard/page_050.c:96
 msgid "Title"
@@ -963,11 +963,11 @@ msgstr ""
 "디스플레이 서버에서 콤포지터 오버레이<br>창을 지원하지 않습니다. 제 기능을 하"
 "려면<br>이것이 필요합니다."
 
-#: src/bin/e_comp_x.c:5522
+#: src/bin/e_comp_x.c:5520
 msgid "Enlightenment cannot initialize Ecore_X!\n"
 msgstr "인라이튼먼트가 Ecore_X를 초기화 할 수 없습니다!\n"
 
-#: src/bin/e_comp_x.c:5534
+#: src/bin/e_comp_x.c:5532
 #, fuzzy
 msgid ""
 "Your display server does not support XComposite, or Ecore-X was built "
@@ -978,7 +978,7 @@ msgstr ""
 "XComposite 지원을 뺐습니다.<br>합성 효과 지원을 위해 X11과 Ecore에서 XRender"
 "와<br>XFixes 또한 필요함을 참고하십시오."
 
-#: src/bin/e_comp_x.c:5543
+#: src/bin/e_comp_x.c:5541
 #, fuzzy
 msgid ""
 "Your display server does not support XDamage or Ecore was built without "
@@ -987,7 +987,7 @@ msgstr ""
 "디스플레이 서버에서 XDamage를 지원하지 않거나<br>Ecore를 빌드할 때 XDamage 지"
 "원을 뺐습니다."
 
-#: src/bin/e_comp_x.c:5645
+#: src/bin/e_comp_x.c:5643
 msgid "Enlightenment cannot initialize the XSettings system.\n"
 msgstr "인라이튼먼트가 XSettings 시스템을 초기화 할 수 없습니다.\n"
 
@@ -1047,7 +1047,7 @@ msgstr ""
 #: src/bin/e_config.c:1895 src/bin/e_config.c:2540
 #: src/bin/e_config_dialog.c:274 src/bin/e_desktop_editor.c:892
 #: src/bin/e_desktop_editor.c:956 src/bin/e_entry_dialog.c:65
-#: src/bin/e_exec.c:716 src/bin/e_fm.c:10169 src/bin/e_fm.c:10926
+#: src/bin/e_exec.c:717 src/bin/e_fm.c:10169 src/bin/e_fm.c:10926
 #: src/bin/e_fm_prop.c:634 src/bin/e_import_config_dialog.c:542
 #: src/bin/e_int_client_remember.c:359 src/bin/e_int_client_remember.c:556
 #: src/bin/e_int_config_comp_match.c:583 src/bin/e_module.c:662
@@ -1166,7 +1166,7 @@ msgstr ""
 #: src/modules/conf/e_mod_main.c:284 src/modules/conf_bindings/e_mod_main.c:37
 #: src/modules/conf_paths/e_mod_main.c:17
 #: src/modules/conf_performance/e_mod_main.c:17
-#: src/modules/cpufreq/e_mod_main.c:1420 src/modules/mixer/e_mod_main.c:514
+#: src/modules/cpufreq/e_mod_main.c:1420 src/modules/mixer/e_mod_main.c:541
 #: src/modules/syscon/e_mod_main.c:36
 msgid "Advanced"
 msgstr "고급 설정"
@@ -1182,7 +1182,7 @@ msgstr "적용"
 
 #: src/bin/e_configure.c:29 src/modules/conf_shelves/e_mod_main.c:21
 #: src/modules/connman/e_mod_main.c:604 src/modules/gadman/e_mod_main.c:23
-#: src/modules/mixer/e_mod_main.c:845 src/modules/notification/e_mod_main.c:163
+#: src/modules/mixer/e_mod_main.c:872 src/modules/notification/e_mod_main.c:163
 msgid "Extensions"
 msgstr "확장"
 
@@ -1316,7 +1316,7 @@ msgstr "데스크톱 파일"
 #: src/modules/conf_applications/e_int_config_defapps.c:358
 #: src/modules/everything/evry_config.c:376
 #: src/modules/everything/evry_plug_files.c:1462
-#: src/modules/pager/e_mod_config.c:127 src/modules/pager/e_mod_config.c:217
+#: src/modules/pager/e_mod_config.c:127 src/modules/pager/e_mod_config.c:218
 #: src/modules/pager_plain/e_mod_config.c:128
 #: src/modules/pager_plain/e_mod_config.c:226
 #: src/modules/tiling/e_mod_config.c:177
@@ -1351,7 +1351,7 @@ msgid "Select an Executable"
 msgstr "실행 파일 선택"
 
 #: src/bin/e_exec.c:446 src/bin/e_exec.c:454 src/bin/e_exec.c:465
-#: src/bin/e_exec.c:523 src/bin/e_remember.c:51
+#: src/bin/e_exec.c:524 src/bin/e_remember.c:51
 #: src/modules/conf_intl/e_int_config_imc.c:271
 #: src/modules/conf_intl/e_int_config_imc.c:520
 msgid "Run Error"
@@ -1371,16 +1371,16 @@ msgstr "인라이튼먼트가 디렉터리 위치를 바꿀 수 없습니다:<br
 msgid "Enlightenment was unable to restore to directory:<br><br>%s"
 msgstr "인라이튼먼트가 디렉터리로 돌아갈 수 없습니다:<br><br>%s"
 
-#: src/bin/e_exec.c:524
+#: src/bin/e_exec.c:525
 #, c-format
 msgid "Enlightenment was unable to fork a child process:<br><br>%s"
 msgstr "인라이튼먼트가 자식 프로세스를 분할(fork)할 수 없습니다:<br><br>%s"
 
-#: src/bin/e_exec.c:707
+#: src/bin/e_exec.c:708
 msgid "Application run error"
 msgstr "프로그램 실행 오류"
 
-#: src/bin/e_exec.c:709
+#: src/bin/e_exec.c:710
 #, c-format
 msgid ""
 "Enlightenment was unable to run the application:<br><br>%s<br><br>The "
@@ -1389,107 +1389,107 @@ msgstr ""
 "인라이튼먼트가 프로그램을 실행할 수 없습니다:<br><br>%s<br><br>프로그램 시작"
 "에 실패했습니다."
 
-#: src/bin/e_exec.c:847
+#: src/bin/e_exec.c:848
 msgid "Application Execution Error"
 msgstr "프로그램 실행 오류"
 
-#: src/bin/e_exec.c:860 src/bin/e_exec.c:862
+#: src/bin/e_exec.c:861 src/bin/e_exec.c:863
 #, c-format
 msgid "%s stopped running unexpectedly."
 msgstr "%s 프로그램이 갑작스럽게 동작을 멈추었습니다."
 
-#: src/bin/e_exec.c:868
+#: src/bin/e_exec.c:869
 #, c-format
 msgid "An exit code of %i was returned from %s."
 msgstr "%2$s 프로그램이 %1$i 종료 코드를 남겼습니다."
 
-#: src/bin/e_exec.c:876
+#: src/bin/e_exec.c:877
 #, c-format
 msgid "%s was interrupted by an Interrupt Signal."
 msgstr "인터럽트 시그널이 %s 프로그램을 중단했습니다."
 
-#: src/bin/e_exec.c:879
+#: src/bin/e_exec.c:880
 #, c-format
 msgid "%s was interrupted by a Quit Signal."
 msgstr "종료 시그널이 %s 프로그램을 중단했습니다."
 
-#: src/bin/e_exec.c:883
+#: src/bin/e_exec.c:884
 #, c-format
 msgid "%s was interrupted by an Abort Signal."
 msgstr "중지 시그널이 %s 프로그램을 중단했습니다."
 
-#: src/bin/e_exec.c:886
+#: src/bin/e_exec.c:887
 #, c-format
 msgid "%s was interrupted by a Floating Point Error."
 msgstr "부동소수점 오류가 %s 프로그램을 중단했습니다."
 
-#: src/bin/e_exec.c:890
+#: src/bin/e_exec.c:891
 #, c-format
 msgid "%s was interrupted by an Uninterruptable Kill Signal."
 msgstr "중단할 수 없는 강제 종료 시그널이 %s 프로그램을 중단했습니다."
 
-#: src/bin/e_exec.c:894
+#: src/bin/e_exec.c:895
 #, c-format
 msgid "%s was interrupted by a Segmentation Fault."
 msgstr "세그먼테이션 오류가 %s 프로그램을 중단했습니다."
 
-#: src/bin/e_exec.c:898
+#: src/bin/e_exec.c:899
 #, c-format
 msgid "%s was interrupted by a Broken Pipe."
 msgstr "깨진 파이프가 %s 프로그램을 중단했습니다."
 
-#: src/bin/e_exec.c:901
+#: src/bin/e_exec.c:902
 #, c-format
 msgid "%s was interrupted by a Termination Signal."
 msgstr "중단 시그널이 %s 프로그램을 중단했습니다."
 
-#: src/bin/e_exec.c:905
+#: src/bin/e_exec.c:906
 #, c-format
 msgid "%s was interrupted by a Bus Error."
 msgstr "버스 오류가 %s 프로그램을 중단했습니다."
 
-#: src/bin/e_exec.c:908
+#: src/bin/e_exec.c:909
 #, c-format
 msgid "%s was interrupted by the signal number %i."
 msgstr "%2$i번 시그널이 %1$s 프로그램을 중단했습니다."
 
-#: src/bin/e_exec.c:964
+#: src/bin/e_exec.c:965
 msgid ""
 "***The remaining output has been truncated. Save the output to view.***\n"
 msgstr ""
 "***나머지 출력 내용을 잘랐습니다. 출력 내용을 보시려면 저장하십시오.***\n"
 
-#: src/bin/e_exec.c:1023 src/bin/e_exec.c:1101 src/bin/e_exec.c:1108
+#: src/bin/e_exec.c:1024 src/bin/e_exec.c:1102 src/bin/e_exec.c:1109
 msgid "Error Logs"
 msgstr "오류 기록"
 
-#: src/bin/e_exec.c:1029 src/bin/e_exec.c:1109
+#: src/bin/e_exec.c:1030 src/bin/e_exec.c:1110
 msgid "There was no error message."
 msgstr "오류 메시지가 없음."
 
-#: src/bin/e_exec.c:1033 src/bin/e_exec.c:1116
+#: src/bin/e_exec.c:1034 src/bin/e_exec.c:1117
 msgid "Save This Message"
 msgstr "이 메시지 저장"
 
-#: src/bin/e_exec.c:1038 src/bin/e_exec.c:1041 src/bin/e_exec.c:1121
-#: src/bin/e_exec.c:1124
+#: src/bin/e_exec.c:1039 src/bin/e_exec.c:1042 src/bin/e_exec.c:1122
+#: src/bin/e_exec.c:1125
 #, c-format
 msgid "This error log will be saved as %s/%s.log"
 msgstr "이 오류 기록은 %s/%s.log 파일로 저장합니다."
 
-#: src/bin/e_exec.c:1067
+#: src/bin/e_exec.c:1068
 msgid "Error Information"
 msgstr "오류 메세지"
 
-#: src/bin/e_exec.c:1075
+#: src/bin/e_exec.c:1076
 msgid "Error Signal Information"
 msgstr "시그널 정보 오류"
 
-#: src/bin/e_exec.c:1085 src/bin/e_exec.c:1092
+#: src/bin/e_exec.c:1086 src/bin/e_exec.c:1093
 msgid "Output Data"
 msgstr "출력 데이터"
 
-#: src/bin/e_exec.c:1093
+#: src/bin/e_exec.c:1094
 msgid "There was no output."
 msgstr "출력 내용이 없습니다."
 
@@ -1538,7 +1538,7 @@ msgstr "장치를 꺼낼 수 없습니다"
 #: src/bin/e_fm.c:10493 src/bin/e_fm.c:10497 src/bin/e_fm.c:10501
 #: src/bin/e_fm.c:10529 src/bin/e_fm.c:10534 src/bin/e_fm.c:10538
 #: src/bin/e_fm.c:10597 src/bin/e_fm.c:10827 src/bin/e_fm_prop.c:254
-#: src/bin/e_shelf.c:2258 src/modules/pager/e_mod_main.c:2046
+#: src/bin/e_shelf.c:2258 src/modules/pager/e_mod_main.c:2048
 #: src/modules/pager_plain/e_mod_main.c:2836
 msgid "Error"
 msgstr "오류"
@@ -1656,7 +1656,7 @@ msgid "Eject"
 msgstr "꺼내기"
 
 #: src/bin/e_fm.c:9346 src/bin/e_int_client_remember.c:804
-#: src/modules/ibar/e_mod_main.c:1592
+#: src/modules/ibar/e_mod_main.c:1607
 msgid "Properties"
 msgstr "속성"
 
@@ -2466,11 +2466,11 @@ msgstr "저항 효과"
 msgid "Window List"
 msgstr "창 목록"
 
-#: src/bin/e_int_client_menu.c:1626 src/modules/pager/e_mod_main.c:291
-#: src/modules/pager/e_mod_main.c:2111 src/modules/pager/e_mod_main.c:2118
-#: src/modules/pager/e_mod_main.c:2125 src/modules/pager/e_mod_main.c:2127
-#: src/modules/pager/e_mod_main.c:2129 src/modules/pager/e_mod_main.c:2131
-#: src/modules/pager/e_mod_main.c:2133 src/modules/pager/e_mod_main.c:2135
+#: src/bin/e_int_client_menu.c:1626 src/modules/pager/e_mod_main.c:292
+#: src/modules/pager/e_mod_main.c:2113 src/modules/pager/e_mod_main.c:2120
+#: src/modules/pager/e_mod_main.c:2127 src/modules/pager/e_mod_main.c:2129
+#: src/modules/pager/e_mod_main.c:2131 src/modules/pager/e_mod_main.c:2133
+#: src/modules/pager/e_mod_main.c:2135 src/modules/pager/e_mod_main.c:2137
 #: src/modules/pager_plain/e_mod_main.c:275
 #: src/modules/pager_plain/e_mod_main.c:2919
 #: src/modules/pager_plain/e_mod_main.c:2926
@@ -2721,13 +2721,13 @@ msgstr "위치 지정 요청"
 #: src/modules/everything/evry_gadget.c:497
 #: src/modules/everything/evry_gadget.c:679
 #: src/modules/everything/evry_plug_settings.c:183
-#: src/modules/ibar/e_mod_main.c:495 src/modules/ibar/e_mod_main.c:1585
+#: src/modules/ibar/e_mod_main.c:495 src/modules/ibar/e_mod_main.c:1600
 #: src/modules/ibox/e_mod_main.c:356 src/modules/ibox/e_mod_main.c:730
-#: src/modules/mixer/e_mod_main.c:519 src/modules/music-control/ui.c:277
-#: src/modules/packagekit/e_mod_main.c:47 src/modules/pager/e_mod_main.c:885
+#: src/modules/mixer/e_mod_main.c:546 src/modules/music-control/ui.c:277
+#: src/modules/packagekit/e_mod_main.c:47 src/modules/pager/e_mod_main.c:886
 #: src/modules/pager_plain/e_mod_main.c:870 src/modules/tasks/e_mod_main.c:770
 #: src/modules/temperature/e_mod_main.c:230
-#: src/modules/tiling/e_mod_tiling.c:1697 src/modules/wizard/page_150.c:31
+#: src/modules/tiling/e_mod_tiling.c:1718 src/modules/wizard/page_150.c:31
 #: src/modules/xkbswitch/e_mod_main.c:315
 #: src/modules/xkbswitch/e_mod_main.c:349
 msgid "Settings"
@@ -3441,7 +3441,7 @@ msgstr "프로그램"
 #: src/modules/conf_window_manipulation/e_mod_main.c:17
 #: src/modules/conf_window_remembers/e_mod_main.c:14
 #: src/modules/everything/evry_plug_windows.c:428
-#: src/modules/tiling/e_mod_tiling.c:1450 src/modules/winlist/e_mod_main.c:27
+#: src/modules/tiling/e_mod_tiling.c:1471 src/modules/winlist/e_mod_main.c:27
 msgid "Windows"
 msgstr "창"
 
@@ -3614,24 +3614,24 @@ msgstr "인라이튼먼트가 Eina를 초기화 할 수 없습니다!\n"
 msgid "Enlightenment could not create a logging domain!\n"
 msgstr "인라이튼먼트가 로깅 도메인을 만들 수 없습니다!\n"
 
-#: src/bin/e_main.c:364
+#: src/bin/e_main.c:365
 msgid "Enlightenment cannot initialize Eet!\n"
 msgstr "인라이튼먼트가 Eet를 초기화 할 수 없습니다!\n"
 
-#: src/bin/e_main.c:373
+#: src/bin/e_main.c:374
 msgid "Enlightenment cannot initialize Ecore!\n"
 msgstr "인라이튼먼트가 Ecore를 초기화 할 수 없습니다!\n"
 
-#: src/bin/e_main.c:388
+#: src/bin/e_main.c:389
 #, fuzzy
 msgid "Enlightenment cannot initialize EFX!\n"
 msgstr "인라이튼먼트가 Eet를 초기화 할 수 없습니다!\n"
 
-#: src/bin/e_main.c:397
+#: src/bin/e_main.c:398
 msgid "Enlightenment cannot initialize EIO!\n"
 msgstr "인라이튼먼트가 EIO를 초기화 할 수 없습니다!\n"
 
-#: src/bin/e_main.c:409
+#: src/bin/e_main.c:410
 msgid ""
 "Enlightenment cannot set up an exit signal handler.\n"
 "Perhaps you are out of memory?"
@@ -3639,7 +3639,7 @@ msgstr ""
 "인라이튼먼트가 종료 시그널 핸들러를 설정할 수 없습니다.\n"
 "메모리가 부족하지 않습니까?"
 
-#: src/bin/e_main.c:416
+#: src/bin/e_main.c:417
 msgid ""
 "Enlightenment cannot set up a HUP signal handler.\n"
 "Perhaps you are out of memory?"
@@ -3647,7 +3647,7 @@ msgstr ""
 "인라이튼먼트가 HUP 시그널 핸들러를 설정할 수 없습니다.\n"
 "메모리가 부족하지 않습니까?"
 
-#: src/bin/e_main.c:423
+#: src/bin/e_main.c:424
 msgid ""
 "Enlightenment cannot set up a USER signal handler.\n"
 "Perhaps you are out of memory?"
@@ -3655,31 +3655,31 @@ msgstr ""
 "인라이튼먼트가 USER 시그널 핸들러를 설정할 수 없습니다.\n"
 "메모리가 부족하지 않습니까?"
 
-#: src/bin/e_main.c:432
+#: src/bin/e_main.c:433
 msgid "Enlightenment cannot initialize Ecore_File!\n"
 msgstr "인라이튼먼트가 Ecore_File을 초기화 할 수 없습니다!\n"
 
-#: src/bin/e_main.c:441
+#: src/bin/e_main.c:442
 msgid "Enlightenment cannot initialize Ecore_Con!\n"
 msgstr "인라이튼먼트가 Ecore_Con를 초기화 할 수 없습니다!\n"
 
-#: src/bin/e_main.c:450
+#: src/bin/e_main.c:451
 msgid "Enlightenment cannot initialize Ecore_Ipc!\n"
 msgstr "인라이튼먼트가 Ecore_Ipc를 초기화 할 수 없습니다!\n"
 
-#: src/bin/e_main.c:463
+#: src/bin/e_main.c:464
 msgid "Enlightenment cannot initialize Ecore_Evas!\n"
 msgstr "인라이튼먼트가 Ecore_Evas를 초기화 할 수 없습니다!\n"
 
-#: src/bin/e_main.c:472
+#: src/bin/e_main.c:473
 msgid "Enlightenment cannot initialize Elementary!\n"
 msgstr "인라이튼먼트가 Elementary를 초기화 할 수 없습니다!\n"
 
-#: src/bin/e_main.c:483
+#: src/bin/e_main.c:484
 msgid "Enlightenment cannot initialize Emotion!\n"
 msgstr "인라이튼먼트가 Emotion을 초기화 할 수 없습니다!\n"
 
-#: src/bin/e_main.c:497
+#: src/bin/e_main.c:498
 #, fuzzy
 msgid ""
 "Enlightenment found ecore_evas doesn't support the Wayland SHM\n"
@@ -3690,7 +3690,7 @@ msgstr ""
 "않는 ecore_evas를 발견했습니다. Evas와 Ecore를 설치했는지\n"
 "확인하시고 소프트웨어 X11 렌더링 엔진을 지원하는지 확인하십시오."
 
-#: src/bin/e_main.c:507
+#: src/bin/e_main.c:508
 msgid ""
 "Enlightenment found ecore_evas doesn't support the Software X11\n"
 "rendering in Evas. Please check your installation of Evas and\n"
@@ -3700,7 +3700,7 @@ msgstr ""
 "않는 ecore_evas를 발견했습니다. Evas와 Ecore를 설치했는지\n"
 "확인하시고 소프트웨어 X11 렌더링 엔진을 지원하는지 확인하십시오."
 
-#: src/bin/e_main.c:516
+#: src/bin/e_main.c:517
 msgid ""
 "Enlightenment found ecore_evas doesn't support the Software Buffer\n"
 "rendering in Evas. Please check your installation of Evas and\n"
@@ -3710,11 +3710,11 @@ msgstr ""
 "발견했습니다. 설치된 Evas와 Ecore의 소프트웨어 버퍼 렌더링 엔진을\n"
 "확인 하십시오."
 
-#: src/bin/e_main.c:530
+#: src/bin/e_main.c:531
 msgid "Enlightenment cannot initialize E_Intl!\n"
 msgstr "인라이튼먼트가 E_Intl을 초기화 할 수 없습니다!\n"
 
-#: src/bin/e_main.c:541
+#: src/bin/e_main.c:542
 msgid ""
 "Enlightenment cannot initialize its emergency alert system.\n"
 "Have you set your DISPLAY variable?"
@@ -3722,7 +3722,7 @@ msgstr ""
 "인라이튼먼트가 비상 경고 시스템을 초기화 할 수 없습니다.\n"
 "DISPLAY 변수를 설정했습니까?"
 
-#: src/bin/e_main.c:553
+#: src/bin/e_main.c:554
 msgid ""
 "Enlightenment cannot create directories in your home directory.\n"
 "Perhaps you have no home directory or the disk is full?"
@@ -3730,19 +3730,19 @@ msgstr ""
 "인라이튼먼트가 여러분의 홈 디렉터리에 디렉터리를 만들 수 없습니다.\n"
 "홈 디렉터리가 없거나 디스크가 가득 차지 않았습니까?"
 
-#: src/bin/e_main.c:563
+#: src/bin/e_main.c:564
 msgid "Enlightenment cannot set up its file registry system.\n"
 msgstr "인라이튼먼트가 파일 레지스트리 시스템을 설정할 수 없습니다.\n"
 
-#: src/bin/e_main.c:572
+#: src/bin/e_main.c:573
 msgid "Enlightenment cannot set up its config system.\n"
 msgstr "인라이튼먼트가 설정 시스템을 설정할 수 없습니다.\n"
 
-#: src/bin/e_main.c:581
+#: src/bin/e_main.c:582
 msgid "Enlightenment cannot set up its environment.\n"
 msgstr "인라이튼먼트가 환경을 설정할 수 없습니다.\n"
 
-#: src/bin/e_main.c:598
+#: src/bin/e_main.c:599
 msgid ""
 "Enlightenment cannot set up paths for finding files.\n"
 "Perhaps you are out of memory?"
@@ -3750,19 +3750,19 @@ msgstr ""
 "인라이튼먼트가 파일을 찾기 위한 경로를 설정할 수 없습니다.\n"
 "메모리가 부족하지 않습니까?"
 
-#: src/bin/e_main.c:615
+#: src/bin/e_main.c:616
 msgid "Enlightenment cannot set up its font system.\n"
 msgstr "인라이튼먼트가 글꼴 시스템을 설정할 수 없습니다.\n"
 
-#: src/bin/e_main.c:628
+#: src/bin/e_main.c:629
 msgid "Enlightenment cannot set up its theme system.\n"
 msgstr "인라이튼먼트가 테마 시스템을 설정할 수 없습니다.\n"
 
-#: src/bin/e_main.c:640
+#: src/bin/e_main.c:641
 msgid "Setup Message Bus"
 msgstr "메시지 버스 설정"
 
-#: src/bin/e_main.c:646
+#: src/bin/e_main.c:647
 msgid ""
 "Enlightenment cannot create a dbus session connection.\n"
 "At best this will break many things, at worst it will hard lock your "
@@ -3770,7 +3770,7 @@ msgid ""
 "If you're sure you know what you're doing, export E_NO_DBUS_SESSION=1"
 msgstr ""
 
-#: src/bin/e_main.c:659
+#: src/bin/e_main.c:660
 msgid ""
 "Enlightenment cannot initialize the FDO desktop system.\n"
 "Perhaps you lack permissions on ~/.cache/efreet or are\n"
@@ -3780,43 +3780,43 @@ msgstr ""
 "~/.cache/efreet의 권한이 빠졌거나, 메모리가 부족하거나\n"
 "디스크 공간이 부족하지 않습니까?"
 
-#: src/bin/e_main.c:668
+#: src/bin/e_main.c:669
 msgid "Starting International Support"
 msgstr "국제화 지원 시작 중"
 
-#: src/bin/e_main.c:672
+#: src/bin/e_main.c:673
 msgid "Enlightenment cannot set up its intl system.\n"
 msgstr "인라이튼먼트가 초기화 시스템을 설정할 수 없습니다.\n"
 
-#: src/bin/e_main.c:685
+#: src/bin/e_main.c:686
 msgid "Setup Actions"
 msgstr "동작 설정"
 
-#: src/bin/e_main.c:689
+#: src/bin/e_main.c:690
 msgid "Enlightenment cannot set up its actions system.\n"
 msgstr "인라이튼먼트가 동작 시스템을 설정할 수 없습니다.\n"
 
-#: src/bin/e_main.c:703
+#: src/bin/e_main.c:704
 msgid "Setup Powersave Modes"
 msgstr "전원 절약 모드 설정"
 
-#: src/bin/e_main.c:707
+#: src/bin/e_main.c:708
 msgid "Enlightenment cannot set up its powersave modes.\n"
 msgstr "인라이트먼트가 자체 전원 절약 모드를 설정할 수 없습니다.\n"
 
-#: src/bin/e_main.c:714
+#: src/bin/e_main.c:715
 msgid "Setup Screensaver"
 msgstr "화면 보호기 설정"
 
-#: src/bin/e_main.c:718
+#: src/bin/e_main.c:719
 msgid "Enlightenment cannot configure the X screensaver.\n"
 msgstr "인라이튼먼트가 화면 보호기를 설정할 수 없습니다.\n"
 
-#: src/bin/e_main.c:725
+#: src/bin/e_main.c:726
 msgid "Setup Screens"
 msgstr "화면 설정"
 
-#: src/bin/e_main.c:729
+#: src/bin/e_main.c:730
 msgid ""
 "Enlightenment set up window management for all the screens on your system\n"
 "failed. Perhaps another window manager is running?\n"
@@ -3824,208 +3824,208 @@ msgstr ""
 "인라이튼먼트가 시스템의 모든 화면에 대한 윈도 관리 설정에 실패했습니다.\n"
 "다른 윈도 매니저가 실행중입니까?\n"
 
-#: src/bin/e_main.c:739
+#: src/bin/e_main.c:740
 msgid "Enlightenment cannot set up its pointer system.\n"
 msgstr "인라이튼먼트가 포인터 시스템을 설정할 수 없습니다.\n"
 
-#: src/bin/e_main.c:749
+#: src/bin/e_main.c:750
 msgid "Enlightenment cannot set up its scale system.\n"
 msgstr "인라이튼먼트가 스케일 시스템을 설정할 수 없습니다.\n"
 
-#: src/bin/e_main.c:760
+#: src/bin/e_main.c:761
 msgid "Enlightenment cannot set up its init screen.\n"
 msgstr "인라이튼먼트가 초기 화면을 설정할 수 없습니다.\n"
 
-#: src/bin/e_main.c:784
+#: src/bin/e_main.c:785
 msgid "Setup ACPI"
 msgstr "ACPI 설정"
 
-#: src/bin/e_main.c:791
+#: src/bin/e_main.c:792
 msgid "Setup Backlight"
 msgstr "백라이트 설정"
 
-#: src/bin/e_main.c:795
+#: src/bin/e_main.c:796
 msgid "Enlightenment cannot configure the backlight.\n"
 msgstr "인라이튼먼트가 백라이트를 설정할 수 없습니다.\n"
 
-#: src/bin/e_main.c:801
+#: src/bin/e_main.c:802
 msgid "Setup DPMS"
 msgstr "DPMS 설정"
 
-#: src/bin/e_main.c:805
+#: src/bin/e_main.c:806
 msgid "Enlightenment cannot configure the DPMS settings.\n"
 msgstr "인라이튼먼트가 DPMS 설정을 할 수 없습니다.\n"
 
-#: src/bin/e_main.c:812
+#: src/bin/e_main.c:813
 msgid "Setup Desklock"
 msgstr "데스크 잠금 설정"
 
-#: src/bin/e_main.c:816
+#: src/bin/e_main.c:817
 msgid "Enlightenment cannot set up its desk locking system.\n"
 msgstr "인라이튼먼트가 데스크톱 고정 시스템을 설정할 수 없습니다.\n"
 
-#: src/bin/e_main.c:826
+#: src/bin/e_main.c:827
 msgid "Setup Paths"
 msgstr "경로 설정"
 
-#: src/bin/e_main.c:832
+#: src/bin/e_main.c:833
 msgid "Setup System Controls"
 msgstr "시스템 제어 설정"
 
-#: src/bin/e_main.c:836
+#: src/bin/e_main.c:837
 msgid "Enlightenment cannot initialize the System Command system.\n"
 msgstr "인라이튼먼트가 시스템 명령 체계를 초기화 할 수 없습니다.\n"
 
-#: src/bin/e_main.c:843
+#: src/bin/e_main.c:844
 msgid "Setup Execution System"
 msgstr "실행 시스템 설정"
 
-#: src/bin/e_main.c:847
+#: src/bin/e_main.c:848
 msgid "Enlightenment cannot set up its exec system.\n"
 msgstr "인라이튼먼트가 자체 exec 시스템을 설정할 수 없습니다.\n"
 
-#: src/bin/e_main.c:857
+#: src/bin/e_main.c:858
 msgid "Setup Filemanager"
 msgstr "파일 관리자 설정"
 
-#: src/bin/e_main.c:861
+#: src/bin/e_main.c:862
 msgid "Enlightenment cannot initialize the File manager.\n"
 msgstr "인라이튼먼트가 파일 관리자를 초기화 할 수 없습니다.\n"
 
-#: src/bin/e_main.c:868
+#: src/bin/e_main.c:869
 msgid "Setup Message System"
 msgstr "메시지 시스템 설정"
 
-#: src/bin/e_main.c:872
+#: src/bin/e_main.c:873
 msgid "Enlightenment cannot set up its msg system.\n"
 msgstr "인라이튼먼트가 메세지 시스템을 설정할 수 없습니다.\n"
 
-#: src/bin/e_main.c:879
+#: src/bin/e_main.c:880
 msgid "Setup Grab Input Handling"
 msgstr "입력 처리기 설정"
 
-#: src/bin/e_main.c:883
+#: src/bin/e_main.c:884
 msgid "Enlightenment cannot set up its grab input handling system.\n"
 msgstr "인라이튼먼트가 입력 처리기를 설정할 수 없습니다.\n"
 
-#: src/bin/e_main.c:890
+#: src/bin/e_main.c:891
 msgid "Setup Modules"
 msgstr "모듈 설정"
 
-#: src/bin/e_main.c:894 src/bin/e_main.c:1073
+#: src/bin/e_main.c:895 src/bin/e_main.c:1074
 msgid "Enlightenment cannot set up its module system.\n"
 msgstr "인라이튼먼트가 모듈 시스템을 설정할 수 없습니다.\n"
 
-#: src/bin/e_main.c:901
+#: src/bin/e_main.c:902
 msgid "Setup Remembers"
 msgstr "기억 설정"
 
-#: src/bin/e_main.c:905
+#: src/bin/e_main.c:906
 msgid "Enlightenment cannot setup remember settings.\n"
 msgstr "인라이튼먼트가 기억 내용을 설정할 수 없습니다.\n"
 
-#: src/bin/e_main.c:914
+#: src/bin/e_main.c:915
 #, fuzzy
 msgid "Setup Gadgets"
 msgstr "데스크톱 가젯"
 
-#: src/bin/e_main.c:923
+#: src/bin/e_main.c:924
 msgid "Setup Gadcon"
 msgstr "가젯 관리 설정"
 
-#: src/bin/e_main.c:927
+#: src/bin/e_main.c:928
 msgid "Enlightenment cannot set up its gadget control system.\n"
 msgstr "인라이튼먼트가 가젯 관리 시스템을 설정할 수 없습니다.\n"
 
-#: src/bin/e_main.c:934
+#: src/bin/e_main.c:935
 #, fuzzy
 msgid "Setup Toolbars"
 msgstr "도구 모음 내용 설정"
 
-#: src/bin/e_main.c:938
+#: src/bin/e_main.c:939
 #, fuzzy
 msgid "Enlightenment cannot set up its toolbars.\n"
 msgstr "인라이튼먼트가 초기화 시스템을 설정할 수 없습니다.\n"
 
-#: src/bin/e_main.c:945
+#: src/bin/e_main.c:946
 msgid "Setup Wallpaper"
 msgstr "바탕 화면 설정"
 
-#: src/bin/e_main.c:949
+#: src/bin/e_main.c:950
 msgid "Enlightenment cannot set up its desktop background system.\n"
 msgstr "인라이튼먼트가 데스크톱 배경 시스템을 설정할 수 없습니다.\n"
 
-#: src/bin/e_main.c:956
+#: src/bin/e_main.c:957
 msgid "Setup Mouse"
 msgstr "마우스 설정"
 
-#: src/bin/e_main.c:960
+#: src/bin/e_main.c:961
 msgid "Enlightenment cannot configure the mouse settings.\n"
 msgstr "인라이튼먼트가 마우스를 설정할 수 없습니다.\n"
 
-#: src/bin/e_main.c:966
+#: src/bin/e_main.c:967
 msgid "Setup Bindings"
 msgstr "바인딩 설정"
 
-#: src/bin/e_main.c:970
+#: src/bin/e_main.c:971
 msgid "Enlightenment cannot set up its bindings system.\n"
 msgstr "인라이튼먼트가 바인딩 시스템을 설정할 수 없습니다.\n"
 
-#: src/bin/e_main.c:977
+#: src/bin/e_main.c:978
 msgid "Setup Thumbnailer"
 msgstr "미리보기 아이콘 설정"
 
-#: src/bin/e_main.c:981
+#: src/bin/e_main.c:982
 msgid "Enlightenment cannot initialize the Thumbnailing system.\n"
 msgstr "인라이튼먼트가 미리 보기 아이콘 시스템을 초기화 할 수 없습니다.\n"
 
-#: src/bin/e_main.c:990
+#: src/bin/e_main.c:991
 msgid "Enlightenment cannot initialize the Icon Cache system.\n"
 msgstr "인라이튼먼트가 아이콘 캐시 시스템을 초기화 할 수 없습니다.\n"
 
-#: src/bin/e_main.c:999
+#: src/bin/e_main.c:1000
 msgid "Enlightenment cannot initialize the Update system.\n"
 msgstr "인라이튼먼트가 업데이트 시스템을 초기화 할 수 없습니다.\n"
 
-#: src/bin/e_main.c:1006
+#: src/bin/e_main.c:1007
 msgid "Setup Desktop Environment"
 msgstr "데스크톱 환경 설정"
 
-#: src/bin/e_main.c:1010
+#: src/bin/e_main.c:1011
 msgid "Enlightenment cannot initialize its desktop environment.\n"
 msgstr "인라이튼먼트가 데스크톱 환경을 초기화 할 수 없습니다.\n"
 
-#: src/bin/e_main.c:1017
+#: src/bin/e_main.c:1018
 msgid "Setup File Ordering"
 msgstr "파일 정렬 설정"
 
-#: src/bin/e_main.c:1021
+#: src/bin/e_main.c:1022
 msgid "Enlightenment cannot set up its order file system.\n"
 msgstr "인라이튼먼트가 order 파일 시스템을 설정할 수 없습니다.\n"
 
-#: src/bin/e_main.c:1032
+#: src/bin/e_main.c:1033
 msgid "Load Modules"
 msgstr "모듈 불러오기"
 
-#: src/bin/e_main.c:1061
+#: src/bin/e_main.c:1062
 #, fuzzy
 msgid "Setup Bryces"
 msgstr "화면 설정"
 
-#: src/bin/e_main.c:1069
+#: src/bin/e_main.c:1070
 msgid "Setup Shelves"
 msgstr "서랍 설정"
 
-#: src/bin/e_main.c:1083
+#: src/bin/e_main.c:1084
 msgid "Almost Done"
 msgstr "거의 다 되었습니다"
 
-#: src/bin/e_main.c:1227
+#: src/bin/e_main.c:1228
 #, fuzzy, c-format
 msgid "Version: %s\n"
 msgstr "권한"
 
-#: src/bin/e_main.c:1236
+#: src/bin/e_main.c:1237
 #, fuzzy, c-format
 msgid ""
 "Options:\n"
@@ -4080,7 +4080,7 @@ msgstr ""
 "\t-i-really-know-what-i-am-doing-and-accept-full-responsibility-for-it\n"
 "\t\t이 도움말이 필요하다면 이 옵션은 필요치 않습니다.\n"
 
-#: src/bin/e_main.c:1290
+#: src/bin/e_main.c:1291
 msgid ""
 "You are executing enlightenment directly. This is\n"
 "bad. Please do not execute the \"enlightenment\"\n"
@@ -4096,11 +4096,11 @@ msgstr ""
 "그리고 다른 여러가지 필수 서비스를 실행하기 위한 설정을\n"
 "자체적으로 수행합니다.\n"
 
-#: src/bin/e_main.c:1543
+#: src/bin/e_main.c:1544
 msgid "Testing Format Support"
 msgstr "포맷 지원 테스트"
 
-#: src/bin/e_main.c:1547
+#: src/bin/e_main.c:1548
 msgid ""
 "Enlightenment found Evas can't create a buffer canvas. Please check\n"
 "Evas has Software Buffer engine support.\n"
@@ -4108,7 +4108,7 @@ msgstr ""
 "Evas가 버퍼 캔버스를 만들 수 없음을 발견 했습니다. Evas가\n"
 "소프트웨어 버퍼 엔진을 지원하는지 확인 하십시오.\n"
 
-#: src/bin/e_main.c:1558
+#: src/bin/e_main.c:1559
 msgid ""
 "Enlightenment found Evas can't load SVG files. Check Evas has SVG loader "
 "support.\n"
@@ -4117,7 +4117,7 @@ msgstr ""
 "를\n"
 "지원하는지 확인하시십시오.\n"
 
-#: src/bin/e_main.c:1568
+#: src/bin/e_main.c:1569
 msgid ""
 "Enlightenment found Evas can't load JPEG files. Check Evas has JPEG loader "
 "support.\n"
@@ -4126,7 +4126,7 @@ msgstr ""
 "를\n"
 "지원하는지 확인하십시오.\n"
 
-#: src/bin/e_main.c:1578
+#: src/bin/e_main.c:1579
 msgid ""
 "Enlightenment found Evas can't load PNG files. Check Evas has PNG loader "
 "support.\n"
@@ -4135,7 +4135,7 @@ msgstr ""
 "를\n"
 "지원하는지 확인하십시오.\n"
 
-#: src/bin/e_main.c:1588
+#: src/bin/e_main.c:1589
 msgid ""
 "Enlightenment found Evas can't load EET files. Check Evas has EET loader "
 "support.\n"
@@ -4144,7 +4144,7 @@ msgstr ""
 "를\n"
 "지원하는지 확인하십시오.\n"
 
-#: src/bin/e_main.c:1602
+#: src/bin/e_main.c:1603
 msgid ""
 "Enlightenment found Evas can't load the 'Sans' font. Check Evas has "
 "fontconfig\n"
@@ -4154,20 +4154,20 @@ msgstr ""
 "Evas가 fontconfig를 지원하는지 시스템 fontconfig에 'Sans' 글꼴을 정의했는지\n"
 "확인하십시오.\n"
 
-#: src/bin/e_main.c:1620
+#: src/bin/e_main.c:1621
 #, fuzzy
 msgid "Enlightenment cannot create a compositor.\n"
 msgstr "인라이튼먼트가 기억 내용을 설정할 수 없습니다.\n"
 
-#: src/bin/e_main.c:1628
+#: src/bin/e_main.c:1629
 msgid "Setup DND"
 msgstr "DND 설정"
 
-#: src/bin/e_main.c:1632
+#: src/bin/e_main.c:1633
 msgid "Enlightenment cannot set up its dnd system.\n"
 msgstr "인라이튼먼트가 DND 시스템을 설정할 수 없습니다.\n"
 
-#: src/bin/e_main.c:1748
+#: src/bin/e_main.c:1749
 #, c-format
 msgid ""
 "Enlightenment crashed early on start and has<br>been restarted. There was an "
@@ -4178,11 +4178,11 @@ msgstr ""
 "을 불러오는데 오류가 발생했습니다.<br>이 모듈을 비활성화 했으며 앞으로 불러오"
 "지<br> 않습니다."
 
-#: src/bin/e_main.c:1753 src/bin/e_main.c:1769
+#: src/bin/e_main.c:1754 src/bin/e_main.c:1770
 msgid "Enlightenment crashed early on start and has been restarted"
 msgstr "시작시 인라이튼먼트가 깨졌고 다시 시작했습니다"
 
-#: src/bin/e_main.c:1754
+#: src/bin/e_main.c:1755
 #, c-format
 msgid ""
 "Enlightenment crashed early on start and has been restarted.<br>There was an "
@@ -4193,7 +4193,7 @@ msgstr ""
 "을 불러오는데 오류가 발생했습니다<br><br>이 모듈을 비활성화 했으며 불러오지"
 "<br> 않습니다."
 
-#: src/bin/e_main.c:1762
+#: src/bin/e_main.c:1763
 msgid ""
 "Enlightenment crashed early on start and has<br>been restarted. All modules "
 "have been disabled<br>and will not be loaded to help remove any "
@@ -4204,7 +4204,7 @@ msgstr ""
 "화 하고<br> 문제가 있는 모듈을 설정에서 제거하십시오.<br>모듈 설정에서 기능을"
 "<br>새로 설정하여 문제를 해결 하십시오.\n"
 
-#: src/bin/e_main.c:1770
+#: src/bin/e_main.c:1771
 msgid ""
 "Enlightenment crashed early on start and has been restarted.<br>All modules "
 "have been disabled and will not be loaded to help<br>remove any problem "
@@ -4412,7 +4412,7 @@ msgid "Rename Shelf"
 msgstr "서랍 이름 바꾸기"
 
 #: src/bin/e_shelf.c:2351 src/modules/conf_shelves/e_int_config_shelf.c:145
-#: src/modules/ibar/e_mod_main.c:489 src/modules/ibar/e_mod_main.c:1579
+#: src/modules/ibar/e_mod_main.c:489 src/modules/ibar/e_mod_main.c:1594
 msgid "Contents"
 msgstr "컨텐츠"
 
@@ -5518,7 +5518,7 @@ msgid "Vaio"
 msgstr "Vaio"
 
 #: src/modules/conf_bindings/e_int_config_acpibindings.c:395
-#: src/modules/mixer/e_mod_main.c:459
+#: src/modules/mixer/e_mod_main.c:486
 msgid "Mute"
 msgstr "음소거"
 
@@ -5808,7 +5808,7 @@ msgid "Win List"
 msgstr "창 목록"
 
 #: src/modules/conf_bindings/e_int_config_mousebindings.c:343
-#: src/modules/pager/e_mod_config.c:136 src/modules/pager/e_mod_config.c:252
+#: src/modules/pager/e_mod_config.c:136 src/modules/pager/e_mod_config.c:253
 #: src/modules/pager_plain/e_mod_config.c:140
 #: src/modules/pager_plain/e_mod_config.c:261
 msgid "Popup"
@@ -5832,7 +5832,7 @@ msgstr "마우스 휠"
 
 #: src/modules/conf_bindings/e_int_config_mousebindings.c:1142
 #: src/modules/conf_bindings/e_int_config_mousebindings.c:1160
-#: src/modules/pager/e_mod_config.c:363 src/modules/pager/e_mod_config.c:389
+#: src/modules/pager/e_mod_config.c:365 src/modules/pager/e_mod_config.c:391
 #: src/modules/pager_plain/e_mod_config.c:374
 #: src/modules/pager_plain/e_mod_config.c:400
 #, c-format
@@ -5841,7 +5841,7 @@ msgstr "왼쪽 버튼"
 
 #: src/modules/conf_bindings/e_int_config_mousebindings.c:1144
 #: src/modules/conf_bindings/e_int_config_mousebindings.c:1158
-#: src/modules/pager/e_mod_config.c:368 src/modules/pager/e_mod_config.c:384
+#: src/modules/pager/e_mod_config.c:370 src/modules/pager/e_mod_config.c:386
 #: src/modules/pager_plain/e_mod_config.c:379
 #: src/modules/pager_plain/e_mod_config.c:395
 #, c-format
@@ -5850,8 +5850,8 @@ msgstr "오른쪽 버튼"
 
 #: src/modules/conf_bindings/e_int_config_mousebindings.c:1147
 #: src/modules/conf_bindings/e_int_config_mousebindings.c:1163
-#: src/modules/pager/e_mod_config.c:373 src/modules/pager/e_mod_config.c:394
-#: src/modules/pager/e_mod_config.c:399
+#: src/modules/pager/e_mod_config.c:375 src/modules/pager/e_mod_config.c:396
+#: src/modules/pager/e_mod_config.c:401
 #: src/modules/pager_plain/e_mod_config.c:384
 #: src/modules/pager_plain/e_mod_config.c:405
 #: src/modules/pager_plain/e_mod_config.c:410
@@ -5860,7 +5860,7 @@ msgid "Button %i"
 msgstr "버튼 %i"
 
 #: src/modules/conf_bindings/e_int_config_mousebindings.c:1153
-#: src/modules/pager/e_mod_config.c:378
+#: src/modules/pager/e_mod_config.c:380
 #: src/modules/pager_plain/e_mod_config.c:389
 #, c-format
 msgid "Middle button"
@@ -6199,7 +6199,7 @@ msgid "Hide Logo"
 msgstr "숨기기"
 
 #: src/modules/conf_display/e_int_config_desks.c:48
-#: src/modules/pager/e_mod_main.c:893 src/modules/pager_plain/e_mod_main.c:878
+#: src/modules/pager/e_mod_main.c:894 src/modules/pager_plain/e_mod_main.c:878
 msgid "Virtual Desktops Settings"
 msgstr "가상 데스크톱 설정"
 
@@ -8992,30 +8992,30 @@ msgstr ""
 msgid "Are you sure you want to delete this bar source?"
 msgstr "이 표시줄의 원본을 삭제하시겠습니까?"
 
-#: src/modules/ibar/e_mod_main.c:368 src/modules/ibar/e_mod_main.c:2838
+#: src/modules/ibar/e_mod_main.c:368 src/modules/ibar/e_mod_main.c:2853
 msgid "IBar"
 msgstr "IBar"
 
-#: src/modules/ibar/e_mod_main.c:478 src/modules/ibar/e_mod_main.c:1568
+#: src/modules/ibar/e_mod_main.c:478 src/modules/ibar/e_mod_main.c:1583
 msgid "Create new Icon"
 msgstr "새 아이콘 만들기"
 
-#: src/modules/ibar/e_mod_main.c:1599
+#: src/modules/ibar/e_mod_main.c:1614
 #, fuzzy
 msgid "Add to bar"
 msgstr "IBar에 추가"
 
-#: src/modules/ibar/e_mod_main.c:1605
+#: src/modules/ibar/e_mod_main.c:1620
 #, fuzzy
 msgid "Remove from bar"
 msgstr "스택 제거"
 
-#: src/modules/ibar/e_mod_main.c:1611
+#: src/modules/ibar/e_mod_main.c:1626
 #, c-format
 msgid "Icon %s"
 msgstr "%s 아이콘"
 
-#: src/modules/ibar/e_mod_main.c:2838
+#: src/modules/ibar/e_mod_main.c:2853
 msgid "Focus IBar"
 msgstr "IBar 활성화"
 
@@ -9108,36 +9108,36 @@ msgstr ""
 "<hilight>%i</hilight> 입니다.<br>이 현상은 바람직하지 않으며 일어나서는 안되"
 "는 일입니다. 이 버그를 보고하십시오."
 
-#: src/modules/mixer/e_mod_main.c:98
+#: src/modules/mixer/e_mod_main.c:104
 msgid "New volume"
 msgstr "새 음량"
 
-#: src/modules/mixer/e_mod_main.c:111
+#: src/modules/mixer/e_mod_main.c:117
 msgid "Emix"
 msgstr ""
 
-#: src/modules/mixer/e_mod_main.c:114
+#: src/modules/mixer/e_mod_main.c:120
 msgid "Volume changed"
 msgstr "음량을 조절했습니다"
 
-#: src/modules/mixer/e_mod_main.c:240 src/modules/mixer/e_mod_main.c:269
+#: src/modules/mixer/e_mod_main.c:251 src/modules/mixer/e_mod_main.c:280
 msgid "Increase Volume"
 msgstr "음량 증가"
 
-#: src/modules/mixer/e_mod_main.c:248 src/modules/mixer/e_mod_main.c:276
+#: src/modules/mixer/e_mod_main.c:259 src/modules/mixer/e_mod_main.c:287
 msgid "Decrease Volume"
 msgstr "음량 감소"
 
-#: src/modules/mixer/e_mod_main.c:256
+#: src/modules/mixer/e_mod_main.c:267
 #, fuzzy
 msgid "Mute volume"
 msgstr "음소거"
 
-#: src/modules/mixer/e_mod_main.c:283
+#: src/modules/mixer/e_mod_main.c:294
 msgid "Mute Volume"
 msgstr "음소거"
 
-#: src/modules/mixer/e_mod_main.c:469 src/modules/mixer/e_mod_main.c:847
+#: src/modules/mixer/e_mod_main.c:496 src/modules/mixer/e_mod_main.c:874
 msgid "Mixer"
 msgstr "음량 조절기"
 
@@ -9385,19 +9385,19 @@ msgstr ""
 msgid "Pager Settings"
 msgstr "페이저 설정"
 
-#: src/modules/pager/e_mod_config.c:128 src/modules/pager/e_mod_config.c:183
+#: src/modules/pager/e_mod_config.c:128 src/modules/pager/e_mod_config.c:184
 #: src/modules/pager_plain/e_mod_config.c:129
 #: src/modules/pager_plain/e_mod_config.c:189
 msgid "Flip desktop on mouse wheel"
 msgstr "마우스 휠로 데스크톱 전환"
 
-#: src/modules/pager/e_mod_config.c:131 src/modules/pager/e_mod_config.c:186
+#: src/modules/pager/e_mod_config.c:131 src/modules/pager/e_mod_config.c:187
 #: src/modules/pager_plain/e_mod_config.c:132
 #: src/modules/pager_plain/e_mod_config.c:192
 msgid "Always show desktop names"
 msgstr "항상 데스크톱 이름을 표시"
 
-#: src/modules/pager/e_mod_config.c:137 src/modules/pager/e_mod_config.c:222
+#: src/modules/pager/e_mod_config.c:137 src/modules/pager/e_mod_config.c:223
 #: src/modules/pager_plain/e_mod_config.c:141
 #: src/modules/pager_plain/e_mod_config.c:231
 msgid "Show popup on desktop change"
@@ -9408,13 +9408,13 @@ msgstr "데스크톱이 바뀔 때 팝업 보기"
 msgid "Show popup for urgent windows"
 msgstr "긴급 상황 창에 대해 팝업 보기"
 
-#: src/modules/pager/e_mod_config.c:189
+#: src/modules/pager/e_mod_config.c:190
 #: src/modules/pager_plain/e_mod_config.c:198
 msgid "Resistance to dragging"
 msgstr "끌기 저항"
 
-#: src/modules/pager/e_mod_config.c:191 src/modules/pager/e_mod_config.c:230
-#: src/modules/pager/e_mod_config.c:249
+#: src/modules/pager/e_mod_config.c:192 src/modules/pager/e_mod_config.c:231
+#: src/modules/pager/e_mod_config.c:250
 #: src/modules/pager_plain/e_mod_config.c:200
 #: src/modules/pager_plain/e_mod_config.c:239
 #: src/modules/pager_plain/e_mod_config.c:258
@@ -9422,13 +9422,13 @@ msgstr "끌기 저항"
 msgid "%.0f pixels"
 msgstr "%.0f 픽셀"
 
-#: src/modules/pager/e_mod_config.c:196
+#: src/modules/pager/e_mod_config.c:197
 #: src/modules/pager_plain/e_mod_config.c:205
 msgid "Select and Slide button"
 msgstr "버튼 선택하고 끌기"
 
-#: src/modules/pager/e_mod_config.c:198 src/modules/pager/e_mod_config.c:206
-#: src/modules/pager/e_mod_config.c:212 src/modules/pager/e_mod_config.c:358
+#: src/modules/pager/e_mod_config.c:199 src/modules/pager/e_mod_config.c:207
+#: src/modules/pager/e_mod_config.c:213 src/modules/pager/e_mod_config.c:360
 #: src/modules/pager_plain/e_mod_config.c:207
 #: src/modules/pager_plain/e_mod_config.c:215
 #: src/modules/pager_plain/e_mod_config.c:221
@@ -9437,27 +9437,27 @@ msgstr "버튼 선택하고 끌기"
 msgid "Click to set"
 msgstr "설정하려면 클릭"
 
-#: src/modules/pager/e_mod_config.c:204
+#: src/modules/pager/e_mod_config.c:205
 #: src/modules/pager_plain/e_mod_config.c:213
 msgid "Drag and Drop button"
 msgstr "버튼 끌어다 놓기"
 
-#: src/modules/pager/e_mod_config.c:210
+#: src/modules/pager/e_mod_config.c:211
 #: src/modules/pager_plain/e_mod_config.c:219
 msgid "Drag whole desktop"
 msgstr "전체 데스크톱 끌기"
 
-#: src/modules/pager/e_mod_config.c:226
+#: src/modules/pager/e_mod_config.c:227
 #: src/modules/pager_plain/e_mod_config.c:235
 msgid "Popup pager height"
 msgstr "팝업 페이저 높이"
 
-#: src/modules/pager/e_mod_config.c:236
+#: src/modules/pager/e_mod_config.c:237
 #: src/modules/pager_plain/e_mod_config.c:245
 msgid "Popup duration"
 msgstr "팝업 지속시간"
 
-#: src/modules/pager/e_mod_config.c:240 src/modules/pager/e_mod_config.c:277
+#: src/modules/pager/e_mod_config.c:241 src/modules/pager/e_mod_config.c:278
 #: src/modules/pager_plain/e_mod_config.c:249
 #: src/modules/pager_plain/e_mod_config.c:286
 #: src/modules/teamwork/e_mod_config.c:112
@@ -9465,42 +9465,42 @@ msgstr "팝업 지속시간"
 msgid "%1.1f seconds"
 msgstr "%1.1f초"
 
-#: src/modules/pager/e_mod_config.c:247
+#: src/modules/pager/e_mod_config.c:248
 #: src/modules/pager_plain/e_mod_config.c:256
 msgid "Pager action popup height"
 msgstr "페이저 동작 팝업 높이"
 
-#: src/modules/pager/e_mod_config.c:257
+#: src/modules/pager/e_mod_config.c:258
 #: src/modules/pager_plain/e_mod_config.c:266
 msgid "Show popup for urgent window"
 msgstr "긴급 상황 창에 대해 팝업 보기"
 
-#: src/modules/pager/e_mod_config.c:261
+#: src/modules/pager/e_mod_config.c:262
 #: src/modules/pager_plain/e_mod_config.c:270
 msgid "Urgent popup sticks on screen"
 msgstr "화면에 긴급 창 고정"
 
-#: src/modules/pager/e_mod_config.c:267
+#: src/modules/pager/e_mod_config.c:268
 #: src/modules/pager_plain/e_mod_config.c:276
 msgid "Show popup for focused windows"
 msgstr "활성화 한 창에 대해 팝업 표시"
 
-#: src/modules/pager/e_mod_config.c:273
+#: src/modules/pager/e_mod_config.c:274
 #: src/modules/pager_plain/e_mod_config.c:282
 msgid "Urgent popup duration"
 msgstr "긴급 팝업 지속시간"
 
-#: src/modules/pager/e_mod_config.c:284
+#: src/modules/pager/e_mod_config.c:285
 #: src/modules/pager_plain/e_mod_config.c:293
 msgid "Urgent Windows"
 msgstr "긴급 창"
 
-#: src/modules/pager/e_mod_config.c:451
+#: src/modules/pager/e_mod_config.c:453
 #: src/modules/pager_plain/e_mod_config.c:462
 msgid "Attention"
 msgstr "주목"
 
-#: src/modules/pager/e_mod_config.c:452
+#: src/modules/pager/e_mod_config.c:454
 #: src/modules/pager_plain/e_mod_config.c:463
 msgid ""
 "You cannot use the right mouse button in the<br>shelf for this as it is "
@@ -9510,41 +9510,41 @@ msgstr ""
 "상태 메뉴에 대한 내부 코드때문에 서랍에서<br>오른쪽 마우스 버튼을 사용할 수 "
 "없습니다.<br>이 버튼은 팝업에 대해서만 동작합니다."
 
-#: src/modules/pager/e_mod_main.c:2046
+#: src/modules/pager/e_mod_main.c:2048
 msgid "Pager module cannot be loaded at the same time as Pager Plain!"
 msgstr ""
 
-#: src/modules/pager/e_mod_main.c:2118
+#: src/modules/pager/e_mod_main.c:2120
 #: src/modules/pager_plain/e_mod_main.c:2926
 msgid "Show Pager Popup"
 msgstr "페이저 팝업 표시"
 
-#: src/modules/pager/e_mod_main.c:2125
+#: src/modules/pager/e_mod_main.c:2127
 #: src/modules/pager_plain/e_mod_main.c:2933
 msgid "Popup Desk Right"
 msgstr "데스크 오른쪽에 팝업 표시"
 
-#: src/modules/pager/e_mod_main.c:2127
+#: src/modules/pager/e_mod_main.c:2129
 #: src/modules/pager_plain/e_mod_main.c:2935
 msgid "Popup Desk Left"
 msgstr "데스크 왼쪽에 팝업 표시"
 
-#: src/modules/pager/e_mod_main.c:2129
+#: src/modules/pager/e_mod_main.c:2131
 #: src/modules/pager_plain/e_mod_main.c:2937
 msgid "Popup Desk Up"
 msgstr "데스크 상단에 팝업 표시"
 
-#: src/modules/pager/e_mod_main.c:2131
+#: src/modules/pager/e_mod_main.c:2133
 #: src/modules/pager_plain/e_mod_main.c:2939
 msgid "Popup Desk Down"
 msgstr "데스크 하단에 팝업 표시"
 
-#: src/modules/pager/e_mod_main.c:2133
+#: src/modules/pager/e_mod_main.c:2135
 #: src/modules/pager_plain/e_mod_main.c:2941
 msgid "Popup Desk Next"
 msgstr "다음 데스크에 팝업 표시"
 
-#: src/modules/pager/e_mod_main.c:2135
+#: src/modules/pager/e_mod_main.c:2137
 #: src/modules/pager_plain/e_mod_main.c:2943
 msgid "Popup Desk Previous"
 msgstr "이전 데스크에 팝업 표시"
@@ -10225,48 +10225,48 @@ msgstr "도움말 좀 더 보기"
 msgid "Tiling Configuration"
 msgstr "바둑판 배치 설정"
 
-#: src/modules/tiling/e_mod_tiling.c:1340
+#: src/modules/tiling/e_mod_tiling.c:1361
 #, fuzzy
 msgid "Floating"
 msgstr "소수"
 
-#: src/modules/tiling/e_mod_tiling.c:1419
-#: src/modules/tiling/e_mod_tiling.c:1452
-#: src/modules/tiling/e_mod_tiling.c:1777
-#: src/modules/tiling/e_mod_tiling.c:1795
+#: src/modules/tiling/e_mod_tiling.c:1440
+#: src/modules/tiling/e_mod_tiling.c:1473
+#: src/modules/tiling/e_mod_tiling.c:1798
+#: src/modules/tiling/e_mod_tiling.c:1816
 msgid "Tiling"
 msgstr "바둑판 배치"
 
-#: src/modules/tiling/e_mod_tiling.c:1426
+#: src/modules/tiling/e_mod_tiling.c:1447
 msgid "Toggle floating"
 msgstr "떠다님 효과 전환"
 
-#: src/modules/tiling/e_mod_tiling.c:1429
+#: src/modules/tiling/e_mod_tiling.c:1450
 #, fuzzy
 msgid "Move the focused window up"
 msgstr "위로 창 이동"
 
-#: src/modules/tiling/e_mod_tiling.c:1431
+#: src/modules/tiling/e_mod_tiling.c:1452
 #, fuzzy
 msgid "Move the focused window down"
 msgstr "아래로 창 이동"
 
-#: src/modules/tiling/e_mod_tiling.c:1433
+#: src/modules/tiling/e_mod_tiling.c:1454
 #, fuzzy
 msgid "Move the focused window left"
 msgstr "왼쪽으로 창 배치"
 
-#: src/modules/tiling/e_mod_tiling.c:1435
+#: src/modules/tiling/e_mod_tiling.c:1456
 #, fuzzy
 msgid "Move the focused window right"
 msgstr "오른쪽으로 창 이동"
 
-#: src/modules/tiling/e_mod_tiling.c:1438
+#: src/modules/tiling/e_mod_tiling.c:1459
 #, fuzzy
 msgid "Toggle split mode"
 msgstr "지정한 모듈 전환"
 
-#: src/modules/tiling/e_mod_tiling.c:1440
+#: src/modules/tiling/e_mod_tiling.c:1461
 #, fuzzy
 msgid "Swap window"
 msgstr "창"
