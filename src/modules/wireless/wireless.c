@@ -1442,18 +1442,10 @@ _wireless_auth_external_deny(void *data, Evas_Object *obj EINA_UNUSED, void *eve
 static void
 _wireless_auth_external_allow(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
-   char *sb, *uri = data;
-   const char *bindir;
-   size_t size = PATH_MAX, len;
+   char *uri = data;
 
-   bindir = e_prefix_bin_get();
-   len = strlen(bindir);
-   sb = malloc(size);
-   snprintf(sb, size, "%s/enlightenment_open", bindir);
-   sb = e_util_string_append_quoted(sb, &size, &len, uri);
-   DBG("launched command: %s", sb);
-   ecore_exe_run(sb, NULL);
-   free(sb);
+   e_util_open(uri, NULL);
+   DBG("launched uri: %s", uri);
    free(uri);
    auth_popup = 0;
 }

@@ -65,6 +65,8 @@ E_API void e_util_string_list_free(Eina_List *l);
 
 E_API void e_util_memclear(void *s, size_t n);
 
+E_API Ecore_Exe *e_util_open(const char *exe, void *data);
+
 static inline void
 e_util_pointer_center(const E_Client *ec)
 {
