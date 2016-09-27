@@ -4286,6 +4286,7 @@ _e_comp_object_autoclose_key_down_cb(void *data EINA_UNUSED, int type EINA_UNUSE
    Ecore_Event_Key *ev = event;
    Eina_Bool del = EINA_TRUE;
 
+   if (e_desklock_state_get()) return ECORE_CALLBACK_RENEW;
    /* returning false in key_cb means delete the object */
    if (e_comp->autoclose.key_cb)
      del = !e_comp->autoclose.key_cb(e_comp->autoclose.data, ev);
