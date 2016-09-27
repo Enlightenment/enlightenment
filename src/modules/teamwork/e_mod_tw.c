@@ -519,15 +519,8 @@ tw_link_hide(E_Client *ec, const char *uri)
 EINTERN void
 tw_link_open(E_Client *ec, const char *uri)
 {
-   char *sb;
-   size_t size = 4096, len = sizeof(E_BINDIR "/enlightenment_open ") - 1;
-
-   if (!ec->focused) return;
-   sb = malloc(size);
-   memcpy(sb, E_BINDIR "/enlightenment_open ", len);
-   sb = e_util_string_append_quoted(sb, &size, &len, uri);
-   ecore_exe_run(sb, NULL);
-   free(sb);
+   if (ec->focused)
+     e_util_open(uri, NULL);
 }
 
 static Eet_Data_Descriptor *

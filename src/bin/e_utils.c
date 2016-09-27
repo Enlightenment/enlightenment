@@ -1441,3 +1441,20 @@ e_util_memclear(void *s, size_t n)
 {
    memset_ptr(s, 0, n);
 }
+
+
+E_API Ecore_Exe *
+e_util_open(const char *exe, void *data)
+{
+   char *sb;
+   size_t size = 65536, len;
+   Ecore_Exe *ret;
+
+   sb = malloc(size);
+   snprintf(sb, size, "%s/enlightenment_open ", e_prefix_bin_get());
+   len = strlen(sb);
+   sb = e_util_string_append_quoted(sb, &size, &len, exe);
+   ret = ecore_exe_run(sb, data);
+   free(sb);
+   return ret;
+}
