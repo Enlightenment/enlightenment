@@ -896,6 +896,7 @@ _wireless_gadget_mouse_down(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, v
    };
 
    if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return;
+   if (e_desklock_state_get()) return;
    if (auth_popup) return;
    for (type = 0; type < WIRELESS_SERVICE_TYPE_LAST; type++)
      if (obj == inst->icon[type])
