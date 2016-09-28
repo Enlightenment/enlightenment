@@ -33,9 +33,7 @@ struct _Frame_Extents
 
 struct _E_Comp_X_Data
 {
-   Ecore_X_Window lock_win;
    Ecore_X_Window lock_grab_break_wnd;
-   Ecore_Event_Handler *lock_key_handler;
 
    Eina_List *retry_clients;
    Ecore_Timer *retry_timer;
@@ -5289,26 +5287,14 @@ _e_comp_x_bindings_ungrab_cb(void)
      }
 }
 
-static Eina_Bool
-_e_comp_x_desklock_key_down(void *d EINA_UNUSED, int t EINA_UNUSED, Ecore_Event_Key *ev)
-{
-   return (ev->window == e_comp_x->lock_win);
-}
-
 static void
 _e_comp_x_desklock_hide(void)
 {
-   if (e_comp_x->lock_win)
-     {
-        e_grabinput_release(e_comp_x->lock_win, e_comp_x->lock_win);
-        ecore_x_window_free(e_comp_x->lock_win);
-        e_comp_x->lock_win = 0;
-     }
+   e_comp_ungrab_input(1, 1);
 
    if (e_comp_x->lock_grab_break_wnd)
      ecore_x_window_show(e_comp_x->lock_grab_break_wnd);
    e_comp_x->lock_grab_break_wnd = 0;
-   E_FREE_FUNC(e_comp_x->lock_key_handler, ecore_event_handler_del);
    e_comp_override_del();
 }
 
@@ -5317,10 +5303,7 @@ _e_comp_x_desklock_show(void)
 {
    Ecore_X_Window win;
 
-   win = e_comp_x->lock_win =
-     ecore_x_window_input_new(e_comp->root, 0, 0, 1, 1);
-   ecore_x_window_show(win);
-   if (!e_grabinput_get(win, 0, win))
+   if (!e_comp_grab_input(1, 1))
      {
         Ecore_X_Window *windows;
         int wnum, i;
@@ -5336,7 +5319,7 @@ _e_comp_x_desklock_show(void)
              if (att.visible)
                {
                   ecore_x_window_hide(windows[i]);
-                  if (e_grabinput_get(win, 0, win))
+                  if (e_comp_grab_input(1, 1))
                     {
                        e_comp_x->lock_grab_break_wnd = windows[i];
                        free(windows);
@@ -5349,9 +5332,6 @@ _e_comp_x_desklock_show(void)
      }
 works:
    e_comp_override_add();
-   e_comp_ignore_win_add(E_PIXMAP_TYPE_X, e_comp_x->lock_win);
-   e_comp_x->lock_key_handler =
-     ecore_event_handler_add(ECORE_EVENT_KEY_DOWN, (Ecore_Event_Handler_Cb)_e_comp_x_desklock_key_down, e_comp);
 
    return EINA_TRUE;
 fail:
