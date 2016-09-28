@@ -241,7 +241,6 @@ clock_popup_new(Instance *inst)
 
    elm_object_content_set(inst->popup, inst->o_table);
    e_gadget_util_ctxpopup_place(inst->o_clock, inst->popup, NULL);
-   evas_object_layer_set(inst->popup, E_LAYER_POPUP);
    evas_object_show(inst->popup);
 }
 
