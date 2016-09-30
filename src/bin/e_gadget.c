@@ -1461,6 +1461,12 @@ e_gadget_util_layout_style_init(Evas_Object *g, Evas_Object *style)
    return prev;
 }
 
+static void
+_gadget_util_ctxpopup_visibility(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   e_comp_shape_queue();
+}
+
 E_API void
 e_gadget_util_ctxpopup_place(Evas_Object *g, Evas_Object *ctx, Evas_Object *pos_obj)
 {
@@ -1490,7 +1496,11 @@ e_gadget_util_ctxpopup_place(Evas_Object *g, Evas_Object *ctx, Evas_Object *pos_
         elm_ctxpopup_direction_priority_set(ctx, ELM_CTXPOPUP_DIRECTION_RIGHT, ELM_CTXPOPUP_DIRECTION_LEFT, 0, 0);
      }
    evas_object_move(ctx, x, y);
+   evas_object_event_callback_add(ctx, EVAS_CALLBACK_SHOW, _gadget_util_ctxpopup_visibility, NULL);
+   evas_object_event_callback_add(ctx, EVAS_CALLBACK_HIDE, _gadget_util_ctxpopup_visibility, NULL);
    evas_object_smart_callback_call(zgc->site->layout, "gadget_site_popup", ctx);
+   if (evas_object_visible_get(ctx))
+     e_comp_shape_queue();
 }
 
 static void
