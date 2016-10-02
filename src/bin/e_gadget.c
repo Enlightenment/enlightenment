@@ -1533,6 +1533,7 @@ E_API void
 e_gadget_util_ctxpopup_place(Evas_Object *g, Evas_Object *ctx, Evas_Object *pos_obj)
 {
    int x, y, w, h;
+   E_Layer layer;
    E_Gadget_Config *zgc;
 
    EINA_SAFETY_ON_NULL_RETURN(g);
@@ -1540,7 +1541,8 @@ e_gadget_util_ctxpopup_place(Evas_Object *g, Evas_Object *ctx, Evas_Object *pos_
    EINA_SAFETY_ON_NULL_RETURN(zgc);
 
    elm_ctxpopup_hover_parent_set(ctx, e_comp->elm);
-   evas_object_layer_set(ctx, evas_object_layer_get(pos_obj ?: g));
+   layer = MAX(evas_object_layer_get(pos_obj ?: g), E_LAYER_POPUP);
+   evas_object_layer_set(ctx, layer);
 
    evas_object_geometry_get(pos_obj ?: g, &x, &y, &w, &h);
    if (zgc->site->anchor & E_GADGET_SITE_ANCHOR_TOP)
