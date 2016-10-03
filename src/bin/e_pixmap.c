@@ -127,7 +127,8 @@ _e_pixmap_clear(E_Pixmap *cp, Eina_Bool cache)
 static void
 _e_pixmap_image_clear_x(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
-   E_FREE_LIST(data, ecore_x_image_free);
+   Eina_List *list = data;
+   E_FREE_LIST(list, ecore_x_image_free);
 }
 #endif
 

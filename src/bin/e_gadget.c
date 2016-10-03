@@ -1751,7 +1751,8 @@ e_gadget_shutdown(void)
 static void
 _editor_del(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
-   E_FREE_LIST(data, free);
+   Eina_List *list = data;
+   E_FREE_LIST(list, free);
 }
 
 static void

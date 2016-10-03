@@ -1051,6 +1051,7 @@ _e_drag_end(int x, int y)
             ((h->cb.drop) && (E_INSIDE(ev.x, ev.y, h->x, h->y, h->w, h->h))))
           {
              Eina_Bool need_free = EINA_FALSE;
+             Eina_List *list;
 
              if (_drag_current->cb.convert)
                {
@@ -1084,7 +1085,8 @@ _e_drag_end(int x, int y)
                     ev.data = _drag_current->data;
                }
              h->cb.drop(h->cb.data, h->active_type, &ev);
-             if (need_free) E_FREE_LIST(ev.data, free);
+             list = ev.data;
+             if (need_free) E_FREE_LIST(list, free);
              dropped = 1;
           }
         h->entered = 0;

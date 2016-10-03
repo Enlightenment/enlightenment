@@ -683,9 +683,11 @@ _e_fm2_device_check_desktop_icons_list_cb(const char *name, const char *path, vo
 static void
 _e_fm2_device_check_desktop_icons_cb(void *data, Ecore_Thread *eth EINA_UNUSED)
 {
+   Eina_List *list = data;
+
    eina_file_dir_list(efreet_desktop_dir_get(), EINA_FALSE, _e_fm2_device_check_desktop_icons_list_cb, data);
 
-   E_FREE_LIST(data, free);
+   E_FREE_LIST(list, free);
 }
 
 E_API void
