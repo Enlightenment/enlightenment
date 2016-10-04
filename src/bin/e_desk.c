@@ -290,6 +290,8 @@ e_desk_show(E_Desk *desk)
              dy = desk->y - desk2->y;
           }
         _e_desk_hide_begin(desk2, dx, dy);
+        if (desk2->obstacles || desk->obstacles)
+          e_zone_useful_geometry_dirty(desk->zone);
      }
 
    desk->zone->desk_x_prev = desk->zone->desk_x_current;
