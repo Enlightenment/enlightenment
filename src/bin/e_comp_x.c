@@ -5301,8 +5301,6 @@ _e_comp_x_desklock_hide(void)
 static Eina_Bool
 _e_comp_x_desklock_show(void)
 {
-   Ecore_X_Window win;
-
    if (!e_comp_grab_input(1, 1))
      {
         Ecore_X_Window *windows;
