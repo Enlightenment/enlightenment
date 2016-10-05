@@ -1248,8 +1248,8 @@ _e_comp_wl_surface_state_init(E_Comp_Wl_Surface_State *state, int w, int h)
    state->opaque = eina_tiler_new(w, h);
    eina_tiler_tile_size_set(state->opaque, 1, 1);
 
-   state->buffer_viewport.buffer.transform = WL_OUTPUT_TRANSFORM_NORMAL;
-   state->buffer_viewport.buffer.scale = 1;
+   state->transform = WL_OUTPUT_TRANSFORM_NORMAL;
+   state->scale = 1;
    state->buffer_viewport.buffer.src_width = wl_fixed_from_int(-1);
    state->buffer_viewport.surface.width = -1;
    state->buffer_viewport.changed = 0;
@@ -1306,70 +1306,6 @@ _e_comp_wl_surface_state_attach(E_Client *ec, E_Comp_Wl_Surface_State *state)
 }
 
 static void
-_e_comp_wl_map_transform(int width, int height, uint32_t transform, int32_t scale,
-                         int sx, int sy, int *dx, int *dy)
-{
-   switch (transform)
-     {
-      case WL_OUTPUT_TRANSFORM_NORMAL:
-      default:
-        *dx = sx, *dy = sy;
-        break;
-      case WL_OUTPUT_TRANSFORM_FLIPPED:
-        *dx = width - sx, *dy = sy;
-        break;
-      case WL_OUTPUT_TRANSFORM_90:
-        *dx = height - sy, *dy = sx;
-        break;
-      case WL_OUTPUT_TRANSFORM_FLIPPED_90:
-        *dx = height - sy, *dy = width - sx;
-        break;
-      case WL_OUTPUT_TRANSFORM_180:
-        *dx = width - sx, *dy = height - sy;
-        break;
-      case WL_OUTPUT_TRANSFORM_FLIPPED_180:
-        *dx = sx, *dy = height - sy;
-        break;
-      case WL_OUTPUT_TRANSFORM_270:
-        *dx = sy, *dy = width - sx;
-        break;
-      case WL_OUTPUT_TRANSFORM_FLIPPED_270:
-        *dx = sy, *dy = sx;
-        break;
-     }
-
-   *dx *= scale;
-   *dy *= scale;
-}
-
-static void
-_e_comp_wl_map_size_cal_from_buffer(E_Client *ec, int32_t *ow, int32_t *oh)
-{
-   E_Comp_Wl_Buffer_Viewport *vp = &ec->comp_data->scaler.buffer_viewport;
-   int32_t width, height, pw, ph;
-
-   if (!e_pixmap_size_get(ec->pixmap, &pw, &ph)) return;
-
-   switch (vp->buffer.transform)
-     {
-      case WL_OUTPUT_TRANSFORM_90:
-      case WL_OUTPUT_TRANSFORM_270:
-      case WL_OUTPUT_TRANSFORM_FLIPPED_90:
-      case WL_OUTPUT_TRANSFORM_FLIPPED_270:
-        width = ph / vp->buffer.scale;
-        height = pw / vp->buffer.scale;
-        break;
-      default:
-        width = pw / vp->buffer.scale;
-        height = ph / vp->buffer.scale;
-        break;
-     }
-
-   *ow = width;
-   *oh = height;
-}
-
-static void
 _e_comp_wl_map_size_cal_from_viewport(E_Client *ec, int32_t bw, int32_t bh, int32_t *ow, int32_t *oh)
 {
    E_Comp_Wl_Buffer_Viewport *vp = &ec->comp_data->scaler.buffer_viewport;
@@ -1398,7 +1334,7 @@ _e_comp_wl_map_size_cal_from_viewport(E_Client *ec, int32_t bw, int32_t bh, int3
    *ow = width;
    *oh = height;
 }
-
+/*
 static void
 _e_comp_wl_map_apply(E_Client *ec)
 {
@@ -1455,7 +1391,7 @@ _e_comp_wl_map_apply(E_Client *ec)
 
    evas_map_free(map);
 }
-
+*/
 static void
 _e_comp_wl_surface_state_commit(E_Client *ec, E_Comp_Wl_Surface_State *state)
 {
@@ -1629,9 +1565,35 @@ _e_comp_wl_surface_state_commit(E_Client *ec, E_Comp_Wl_Surface_State *state)
           }
      }
 
+   if (e_pixmap_usable_get(ec->pixmap))
+     {
+        if (state->scale > 1 && state->scale != ec->comp_data->scale)
+          {
+             ec->comp_data->scale = state->scale;
+             e_comp_object_zoomap_set(ec->frame, 1);
+             e_comp_object_scale_set(ec->frame, state->scale);
+          }
+        if (state->transform && state->transform != ec->comp_data->transform)
+          {
+             ec->comp_data->transform = state->transform;
+             e_comp_object_zoomap_set(ec->frame, 1);
+             e_comp_object_transform_set(ec->frame, state->transform);
+          }
+     }
    if (e_pixmap_usable_get(ec->pixmap) && state->buffer_viewport.changed)
      {
-        _e_comp_wl_map_apply(ec);
+        E_Comp_Wl_Buffer_Viewport *vp = &ec->comp_data->scaler.buffer_viewport;
+
+        e_comp_object_zoomap_set(ec->frame, 1);
+        e_comp_object_viewport_source_set(ec->frame,
+                                          wl_fixed_to_int(vp->buffer.src_x),
+                                          wl_fixed_to_int(vp->buffer.src_y),
+                                          wl_fixed_to_int(vp->buffer.src_width),
+                                          wl_fixed_to_int(vp->buffer.src_height));
+        e_comp_object_viewport_destination_set(ec->frame,
+                                          vp->surface.width,
+                                          vp->surface.height);
+        e_comp_object_viewport_set(ec->frame, 1);
         state->buffer_viewport.changed = 0;
      }
 
@@ -1882,15 +1844,25 @@ _e_comp_wl_surface_cb_commit(struct wl_client *client EINA_UNUSED, struct wl_res
 }
 
 static void
-_e_comp_wl_surface_cb_buffer_transform_set(struct wl_client *client EINA_UNUSED, struct wl_resource *resource EINA_UNUSED, int32_t transform EINA_UNUSED)
+_e_comp_wl_surface_cb_buffer_transform_set(struct wl_client *client EINA_UNUSED, struct wl_resource *resource EINA_UNUSED, int32_t transform)
 {
-   /* DBG("Surface Buffer Transform: %d", wl_resource_get_id(resource)); */
+   E_Client *ec;
+
+   if (!(ec = wl_resource_get_user_data(resource))) return;
+   if (e_object_is_del(E_OBJECT(ec))) return;
+
+   ec->comp_data->pending.transform = transform;
 }
 
 static void
-_e_comp_wl_surface_cb_buffer_scale_set(struct wl_client *client EINA_UNUSED, struct wl_resource *resource EINA_UNUSED, int32_t scale EINA_UNUSED)
+_e_comp_wl_surface_cb_buffer_scale_set(struct wl_client *client EINA_UNUSED, struct wl_resource *resource EINA_UNUSED, int32_t scale)
 {
-   /* DBG("Surface Buffer Scale: %d", wl_resource_get_id(resource)); */
+   E_Client *ec;
+
+   if (!(ec = wl_resource_get_user_data(resource))) return;
+   if (e_object_is_del(E_OBJECT(ec))) return;
+
+   ec->comp_data->pending.scale = scale;
 }
 
 static const struct wl_surface_interface _e_surface_interface =
@@ -2585,8 +2557,8 @@ _e_comp_wl_client_cb_new(void *data EINA_UNUSED, E_Client *ec)
    /* set initial client data properties */
    ec->comp_data->mapped = EINA_FALSE;
 
-   ec->comp_data->scaler.buffer_viewport.buffer.transform = WL_OUTPUT_TRANSFORM_NORMAL;
-   ec->comp_data->scaler.buffer_viewport.buffer.scale = 1;
+   ec->comp_data->transform = WL_OUTPUT_TRANSFORM_NORMAL;
+   ec->comp_data->scale = 1;
    ec->comp_data->scaler.buffer_viewport.buffer.src_width = wl_fixed_from_int(-1);
    ec->comp_data->scaler.buffer_viewport.surface.width = -1;
 

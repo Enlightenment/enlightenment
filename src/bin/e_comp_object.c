@@ -2582,6 +2582,48 @@ e_comp_object_zoomap_set(Evas_Object *obj, Eina_Bool enabled)
    cw->zoomap_disabled = !enabled;
 }
 
+E_API void
+e_comp_object_viewport_source_set(Evas_Object *obj, int src_x, int src_y, int src_width, int src_height)
+{
+   API_ENTRY;
+
+   e_zoomap_viewport_source_set(cw->zoomobj, src_x, src_y, src_width, src_height);
+}
+
+E_API void
+e_comp_object_viewport_destination_set(Evas_Object *obj, int width, int height)
+{
+   API_ENTRY;
+
+   e_zoomap_viewport_destination_set(cw->zoomobj, width, height);
+}
+
+E_API void
+e_comp_object_viewport_set(Evas_Object *obj, Eina_Bool enabled)
+{
+   API_ENTRY;
+
+   e_zoomap_commit(cw->zoomobj);
+}
+
+E_API void
+e_comp_object_scale_set(Evas_Object *obj, int32_t scale)
+{
+   API_ENTRY;
+
+   e_zoomap_scale_set(cw->zoomobj, scale);
+e_zoomap_commit(cw->zoomobj);
+}
+
+E_API void
+e_comp_object_transform_set(Evas_Object *obj, uint32_t transform)
+{
+   API_ENTRY;
+
+   e_zoomap_transform_set(cw->zoomobj, transform);
+e_zoomap_commit(cw->zoomobj);
+}
+
 E_API Eina_Bool
 e_comp_object_mirror_visibility_check(Evas_Object *obj)
 {

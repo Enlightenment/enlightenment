@@ -68,9 +68,6 @@ struct _E_Comp_Wl_Buffer
 struct _E_Comp_Wl_Buffer_Viewport {
    struct
      {
-        uint32_t transform;   /* wl_surface.set_buffer_transform */
-        int32_t scale;        /* wl_surface.set_scaling_factor */
-
         /* If src_width != wl_fixed_from_int(-1), then and only then src_* are used. */
         wl_fixed_t src_x, src_y;
         wl_fixed_t src_width, src_height;
@@ -93,6 +90,8 @@ struct _E_Comp_Wl_Surface_State
    struct wl_listener buffer_destroy_listener;
    Eina_List *damages, *frames;
    Eina_Tiler *input, *opaque;
+   uint32_t transform;
+   int32_t scale;
    E_Comp_Wl_Buffer_Viewport buffer_viewport;
    Eina_Bool new_attach : 1;
    Eina_Bool has_data : 1;
@@ -330,6 +329,9 @@ struct _E_Comp_Wl_Client_Data
      {
         int32_t x, y;
      } popup;
+
+   uint32_t transform;
+   int32_t scale;
 
    struct
      {

@@ -92,6 +92,11 @@ E_API Eina_Bool e_comp_object_effect_stop(Evas_Object *obj, Edje_Signal_Cb end_c
 E_API E_Comp_Object_Mover *e_comp_object_effect_mover_add(int pri, const char *sig, E_Comp_Object_Mover_Cb provider, const void *data);
 E_API void e_comp_object_effect_mover_del(E_Comp_Object_Mover *prov);
 E_API void e_comp_object_map_set(Evas_Object *obj, Evas_Map *map);
+E_API void e_comp_object_viewport_source_set(Evas_Object *obj, int src_x, int src_y, int src_width, int src_height);
+E_API void e_comp_object_viewport_destination_set(Evas_Object *obj, int width, int height);
+E_API void e_comp_object_viewport_set(Evas_Object *obj, Eina_Bool enabled);
+E_API void e_comp_object_scale_set(Evas_Object *obj, int32_t scale);
+E_API void e_comp_object_transform_set(Evas_Object *obj, uint32_t transform);
 
 #endif
 #endif
