@@ -1763,7 +1763,7 @@ _e_comp_intercept_show(void *data, Evas_Object *obj EINA_UNUSED)
              evas_object_event_callback_add(cw->obj, EVAS_CALLBACK_MOUSE_OUT, _e_comp_object_internal_mouse_out, cw);
           }
 #ifdef BORDER_ZOOMAPS
-        e_comp_object_zoomap_set(o, 1);
+        e_comp_object_zoomap_set(cw->obj, 1);
 #else
         cw->zoomap_disabled = 1;
 #endif
