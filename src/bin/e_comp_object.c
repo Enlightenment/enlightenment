@@ -2560,8 +2560,7 @@ e_comp_object_zoomap_set(Evas_Object *obj, Eina_Bool enabled)
 {
    API_ENTRY;
 
-   enabled = !enabled;
-   if (cw->zoomap_disabled == enabled) return;
+   if (cw->zoomap_disabled == !enabled) return;
    if (enabled)
      {
         cw->zoomobj = e_zoomap_add(e_comp->evas);
@@ -2580,7 +2579,7 @@ e_comp_object_zoomap_set(Evas_Object *obj, Eina_Bool enabled)
         E_FREE_FUNC(cw->zoomobj, evas_object_del);
         edje_object_part_swallow(cw->shobj, "e.swallow.content", cw->ec ? cw->frame_object : cw->obj);
      }
-   cw->zoomap_disabled = enabled;
+   cw->zoomap_disabled = !enabled;
 }
 
 E_API Eina_Bool
