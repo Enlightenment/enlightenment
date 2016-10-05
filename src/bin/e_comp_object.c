@@ -2565,7 +2565,7 @@ e_comp_object_zoomap_set(Evas_Object *obj, Eina_Bool enabled)
      {
         cw->zoomobj = e_zoomap_add(e_comp->evas);
         e_zoomap_smooth_set(cw->zoomobj, e_comp_config_get()->smooth_windows);
-        e_zoomap_child_set(cw->zoomobj, cw->ec ? cw->frame_object : cw->obj);
+        e_zoomap_child_set(cw->zoomobj, cw->frame_object ? cw->frame_object : cw->obj);
         edje_object_part_swallow(cw->shobj, "e.swallow.content", cw->zoomobj);
         e_zoomap_child_edje_solid_setup(cw->zoomobj);
         if (cw->ec->override)
