@@ -2686,6 +2686,7 @@ E_API void
 e_client_mouse_wheel(E_Client *ec, Evas_Point *output, E_Binding_Event_Wheel *ev)
 {
    EINA_SAFETY_ON_NULL_RETURN(ec);
+evas_pointer_canvas_xy_get(e_comp->evas, &output->x, &output->y);
    if (action_client) return;
    ec->mouse.current.mx = output->x;
    ec->mouse.current.my = output->y;
@@ -2701,6 +2702,7 @@ e_client_mouse_down(E_Client *ec, int button, Evas_Point *output, E_Binding_Even
    int player;
 
    EINA_SAFETY_ON_NULL_RETURN(ec);
+evas_pointer_canvas_xy_get(e_comp->evas, &output->x, &output->y);
    if (action_client || ec->iconic || e_client_util_ignored_get(ec)) return;
    if ((button >= 1) && (button <= 3))
      {
@@ -2773,6 +2775,7 @@ E_API void
 e_client_mouse_up(E_Client *ec, int button, Evas_Point *output, E_Binding_Event_Mouse_Button* ev)
 {
    EINA_SAFETY_ON_NULL_RETURN(ec);
+evas_pointer_canvas_xy_get(e_comp->evas, &output->x, &output->y);
    if (ec->iconic || e_client_util_ignored_get(ec)) return;
    if ((button >= 1) && (button <= 3))
      {
@@ -2807,6 +2810,7 @@ E_API void
 e_client_mouse_move(E_Client *ec, Evas_Point *output)
 {
    EINA_SAFETY_ON_NULL_RETURN(ec);
+evas_pointer_canvas_xy_get(e_comp->evas, &output->x, &output->y);
    if (ec->iconic || e_client_util_ignored_get(ec)) return;
    ec->mouse.current.mx = output->x;
    ec->mouse.current.my = output->y;

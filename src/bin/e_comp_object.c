@@ -443,6 +443,7 @@ _e_comp_object_cb_mouse_down(void *data, Evas *e EINA_UNUSED, Evas_Object *obj E
    Evas_Event_Mouse_Down *ev = event_info;
    E_Comp_Object *cw = data;
    E_Binding_Event_Mouse_Button ev2;
+evas_pointer_canvas_xy_get(e_comp->evas, &ev->canvas.x, &ev->canvas.y);
 
    if (!cw->ec) return;
    if (e_client_action_get()) return;
@@ -458,6 +459,7 @@ _e_comp_object_cb_mouse_up(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EIN
    E_Comp_Object *cw = data;
    E_Binding_Event_Mouse_Button ev2;
    Eina_Bool acting;
+evas_pointer_canvas_xy_get(e_comp->evas, &ev->canvas.x, &ev->canvas.y);
 
    if (!cw->ec) return;
    if (e_client_action_get() && (e_client_action_get() != cw->ec)) return;
@@ -2565,9 +2567,11 @@ e_comp_object_zoomap_set(Evas_Object *obj, Eina_Bool enabled)
      {
         cw->zoomobj = e_zoomap_add(e_comp->evas);
         e_zoomap_smooth_set(cw->zoomobj, e_comp_config_get()->smooth_windows);
-        e_zoomap_child_set(cw->zoomobj, cw->frame_object ? cw->frame_object : cw->obj);
+//        e_zoomap_child_set(cw->zoomobj, cw->frame_object ? cw->frame_object : cw->obj);
+e_zoomap_child_set(cw->zoomobj, cw->effect_obj);
         edje_object_part_swallow(cw->shobj, "e.swallow.content", cw->zoomobj);
         e_zoomap_child_edje_solid_setup(cw->zoomobj);
+evas_object_clip_set(cw->zoomobj, cw->clip);
         if (cw->ec->override)
           evas_object_name_set(cw->zoomobj, "cw->zoomobj::WINDOW");
         else if (!cw->ec->input_only)

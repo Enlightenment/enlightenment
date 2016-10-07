@@ -8,6 +8,7 @@ typedef struct _E_Smart_Data E_Smart_Data;
 struct _E_Smart_Data
 {
    Evas_Object *smart_obj, *child_obj;
+Evas_Object *clip;
    Evas_Coord   x, y, w, h;
    Evas_Coord   child_w, child_h;
    int32_t      scale;
@@ -93,6 +94,7 @@ e_zoomap_transform_set(Evas_Object *obj, uint32_t transform)
    API_ENTRY return;
 
    sd->transform = transform;
+  _e_zoomap_smart_reconfigure(sd);
 }
 
 E_API Evas_Object *
@@ -148,7 +150,7 @@ e_zoomap_child_resize(Evas_Object *obj, int w, int h)
    API_ENTRY return;
    evas_object_resize(sd->child_obj, w, h);
 fprintf(stderr, "child_resize (%p)'s CHILD (%p) RESIZED... %d %d\n", obj, sd->child_obj, w, h);
-sd->child_w = w; sd->child_h = h;
+//sd->child_w = w; sd->child_h = h;
 }
 
 E_API Evas_Object *
@@ -318,7 +320,6 @@ _e_zoomap_transform_point(E_Smart_Data *sd, int sx, int sy, int *dx, int *dy)
         *dx *= sd->scale;
         *dy *= sd->scale;
      }
-
 fprintf(stderr, "TRANSFORM %d %d rot %d scale %d to %d %d\n", sx, sy, sd->transform, sd->scale, *dx, *dy);
 }
 
@@ -326,7 +327,7 @@ static Eina_Bool
 _e_zoomap_transformed(E_Smart_Data *sd)
 {
    if (sd->scale > 1) return EINA_TRUE;
-fprintf(stderr, "TRANSFORM: %d\n", sd->transform);
+fprintf(stderr, "TRANSFORM (%p): %d\n", sd, sd->transform);
    if (sd->transform != 0) return EINA_TRUE;
 
    return EINA_FALSE;
@@ -373,7 +374,7 @@ _e_zoomap_smart_reconfigure(E_Smart_Data *sd)
         evas_object_color_get(sd->child_obj, &r, &g, &b, &a);
         m = evas_map_new(4);
         _e_zoomap_size(sd, &width, &height);
-fprintf(stderr, "PLZ HALP buffer:(%d, %d)  surface:(%d, %d)\n", sd->child_w, sd->child_h, width, height);
+fprintf(stderr, "PLZ HALP surface at: (%d, %d) buffer:(%d, %d)  surface:(%d, %d)\n", sd->x, sd->y, sd->child_w, sd->child_h, width, height);
         evas_map_util_points_populate_from_geometry(m, sd->x, sd->y,
                                                     width, height, 0);
 
@@ -389,6 +390,12 @@ fprintf(stderr, "PLZ HALP buffer:(%d, %d)  surface:(%d, %d)\n", sd->child_w, sd-
         _e_zoomap_transform_point(sd, 0, height, &x, &y);
         evas_map_point_image_uv_set(m, 3, x, y);
 
+/*
+        evas_map_point_image_uv_set(m, 0, 100, 0);
+        evas_map_point_image_uv_set(m, 1, 200, 100);
+        evas_map_point_image_uv_set(m, 2, 100, 200);
+        evas_map_point_image_uv_set(m, 3, 0, 100);
+*/
         evas_map_smooth_set(m, sd->smooth);
         evas_map_point_color_set(m, 0, r, g, b, a);
         evas_map_point_color_set(m, 1, r, g, b, a);
