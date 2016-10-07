@@ -2562,9 +2562,10 @@ evas_object_clip_set(cw->zoomobj, cw->clip);
      }
    else
      {
-        edje_object_part_unswallow(cw->shobj, cw->zoomobj);
+e_zoomap_child_set(cw->zoomap, NULL);
         E_FREE_FUNC(cw->zoomobj, evas_object_del);
-        edje_object_part_swallow(cw->shobj, "e.swallow.content", cw->ec ? cw->frame_object : cw->obj);
+evas_object_smart_member_add(cw->effect_obj, cw->smart_obj);
+evas_object_clip_set(cw->effect_obj, cw->clip);
      }
    cw->zoomap_disabled = !enabled;
 }
