@@ -1,3 +1,86 @@
+Release 0.21.3:
+---------------------
+Carsten Haitzler (4):
+      update e po files
+      e exec - fix exec of enlightenment_open to use actual e prefix
+      explicitly use eina list types passing into EINA_LIST_FREE()
+
+Cedric BAIL (1):
+      fix text preview to use eina_strbuf_append_length that doesn't call strlen and crash.
+
+Christopher Michael (3):
+      Remove unused variables from ibar_resize_handle function
+      add missing EINA_UNUSED for function parameter
+      Update wayland readme file
+
+Derek Foreman (6):
+      Don't send keyboard leave events to unfocused clients
+      Fix error print when wl_wl fails to start
+      Fix xwayland binary location detection
+      Don't kill self during shutdown
+      NULL out xwayland fd handlers after deleting them
+
+Flavio Ceolin (1):
+      emix: when in alsa mode only operate on master
+
+Marcel Hollerbach (7):
+      ibar: try to get a better min size
+      tiling: place popup on the current active zone
+      tiling: be more accurate on the description
+      mixer: introduce Barrier checks
+      mixer: introduce emix_max_volume_get
+      ibar: multiply size with scale
+      mixer: lock up the slider for the case a drag is in progress
+
+Massimo Maiurana (1):
+      Updating slovenian translation
+
+Mike Blumenkrantz (34):
+      use stringshare_add() for evry files plugin mime types
+      another case of stringshare misuse re:efreet_mime_type_get()
+      ignore xwl clients when flagging wl surfaces as internal
+      add event handler for evry event type, not #define value
+      do not attempt to populate gadgets during type_add if site has not yet been populated
+      add docs for E_Comp struct members
+      move 'unmaximize' smart callback to after geom calc in client_unmaximize
+      use comp canvas win by default for any drop handler with an E_Object
+      handle e_comp deref during e_dnd shutdown to avoid crash
+      always use compositor object stacking when performing internal drags
+      clamp bryces to a lower canvas layer
+      use same layer in bryce editor for "above window" setting
+      set gadget added flag any time a gadget is created or wizarded
+      add separate codepath for handling layout of moving gadgets
+      force smart calc on gadget sites at key points during move operations
+      attempt to retain gadget size when executing move operations
+      adjust gadget drop coords for pointer offset
+      check visibility of gadget site 'events' member to determine drop availability
+      add backspace/delete for clearing all lockscreen gadgets
+      always use largest available size for free-oriented gadgets
+      add gadget doc note for gadget_destroyed callback re:object lifetimes
+      force bgpreview widget to resize after a wallpaper update
+      always delete gadget's display object and ensure gadget object is null
+      do not update bryce layer when restacking to a higher layer than CLIENT_ABOVE
+      remove extraneous recalc trigger when deleting a gadget
+      do not consume key events in comp autoclose key callback if desklock is active
+      add e_util_open(), unify all callers of enlightenment_open
+      remove (wrong) setting of layer for time's clock gadget popup
+      do not show wireless gadget popups if desklock is active
+      force shape queue when gadget util ctxpopups change visibility
+      print object type in shape debug if name does not exist
+      clamp gadget util ctxpopups to E_LAYER_POPUP at the lowest
+      handle "unmaximize" smart callback differently depending on fullscreen state
+      force zone useful geometry recalc on desk flip if prev/next desk has obstacles
+
+Romain Naour (2):
+      configure.ac: wayland only build fix
+      e_xkb: add guard around skip_new_keyboard
+
+Simon Lees (3):
+      Also set QT_STYLE_OVERRIDE
+
+YeongJong Lee (1):
+      fix korean translation mismatch
+
 Release 0.21.2:
 ---------------------
 Carsten Haitzler (6):
