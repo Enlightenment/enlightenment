@@ -742,39 +742,22 @@ _e_comp_object_shadow_setup(E_Comp_Object *cw)
    /* breaks animation counter */
    //if (cw->ec->iconic)
      //e_comp_object_signal_emit(cw->smart_obj, "e,action,iconify", "e");
-   if (!cw->zoomap_disabled)
-     e_zoomap_child_set(cw->zoomobj, NULL);
    if (cw->frame_object)
      {
         edje_object_part_swallow(cw->frame_object, "e.swallow.client", cw->obj);
         edje_object_part_swallow(cw->frame_object, "e.swallow.icon", cw->frame_icon);
-        if (cw->zoomap_disabled)
           edje_object_part_swallow(cw->shobj, "e.swallow.content", cw->frame_object);
-        else
-          {
-             e_zoomap_child_set(cw->zoomobj, cw->frame_object);
-             edje_object_part_swallow(cw->shobj, "e.swallow.content", cw->zoomobj);
-          }
         no_shadow = 1;
      }
    else
      {
         no_shadow = 1;
-        if (cw->zoomobj)
-          {
-             e_zoomap_child_set(cw->zoomobj, cw->obj);
-             edje_object_part_swallow(cw->shobj, "e.swallow.content", cw->zoomobj);
-          }
-        else
           edje_object_part_swallow(cw->shobj, "e.swallow.content", cw->obj);
      }
    if (cw->input_obj)
      evas_object_pass_events_set(cw->obj, 1);
    else
      evas_object_pass_events_set(cw->obj, 0);
-#ifdef BORDER_ZOOMAPS
-   e_zoomap_child_edje_solid_setup(cw->zoomobj);
-#endif
    return EINA_TRUE;
 }
 
@@ -881,7 +864,7 @@ _e_comp_object_setup(E_Comp_Object *cw)
    evas_object_smart_member_add(cw->clip, cw->smart_obj);
    cw->effect_obj = edje_object_add(e_comp->evas);
    evas_object_move(cw->effect_obj, cw->x, cw->y);
-   evas_object_clip_set(cw->effect_obj, cw->clip);
+   evas_object_clip_set(cw->zoomobj ?: cw->effect_obj, cw->clip);
    evas_object_smart_member_add(cw->effect_obj, cw->smart_obj);
    e_theme_edje_object_set(cw->effect_obj, "base/theme/comp", "e/comp/effects/none");
    cw->shobj = edje_object_add(e_comp->evas);
@@ -2308,7 +2291,7 @@ _e_comp_smart_hide(Evas_Object *obj)
    cw->visible = 0;
    evas_object_hide(cw->clip);
    if (cw->input_obj) evas_object_hide(cw->input_obj);
-   evas_object_hide(cw->effect_obj);
+   evas_object_hide(cw->zoomobj ?: cw->effect_obj);
    if (stopping) return;
    if (!cw->ec->input_only)
      {
@@ -2352,7 +2335,7 @@ _e_comp_smart_show(Evas_Object *obj)
         if (cw->frame_object)
           edje_object_play_set(cw->frame_object, 1);
      }
-   evas_object_show(cw->effect_obj);
+   evas_object_show(cw->zoomobj ?: cw->effect_obj);
    if (cw->ec->internal_elm_win && (!evas_object_visible_get(cw->ec->internal_elm_win)))
      evas_object_show(cw->ec->internal_elm_win);
    e_comp_render_queue();
@@ -2445,7 +2428,7 @@ _e_comp_smart_move(Evas_Object *obj, int x, int y)
      evas_object_move(o, cw->ec->x, cw->ec->x);
    cw->agent_updating = 0;
    evas_object_move(cw->clip, 0, 0);
-   evas_object_move(cw->effect_obj, x, y);
+   evas_object_move(cw->zoomobj ?: cw->effect_obj, x, y);
    if (cw->input_obj)
      evas_object_geometry_set(cw->input_obj,
        cw->x + cw->input_rect.x + (!!cw->frame_object * cw->client_inset.l),
@@ -2493,7 +2476,6 @@ _e_comp_smart_resize(Evas_Object *obj, int w, int h)
                CRI("CW RSZ: %dx%d || PX: %dx%d", ww, hh, pw, ph);
           }
         evas_object_resize(cw->effect_obj, w, h);
-        if (cw->zoomobj) e_zoomap_child_resize(cw->zoomobj, pw, ph);
         if (cw->input_obj)
           evas_object_geometry_set(cw->input_obj,
             cw->x + cw->input_rect.x + (!!cw->frame_object * cw->client_inset.l),
@@ -2571,6 +2553,7 @@ e_comp_object_zoomap_set(Evas_Object *obj, Eina_Bool enabled)
 e_zoomap_child_set(cw->zoomobj, cw->effect_obj);
         edje_object_part_swallow(cw->shobj, "e.swallow.content", cw->zoomobj);
         e_zoomap_child_edje_solid_setup(cw->zoomobj);
+evas_object_smart_member_add(cw->zoomobj, cw->smart_obj);
 evas_object_clip_set(cw->zoomobj, cw->clip);
         if (cw->ec->override)
           evas_object_name_set(cw->zoomobj, "cw->zoomobj::WINDOW");
