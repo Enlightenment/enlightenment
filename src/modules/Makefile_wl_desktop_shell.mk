@@ -22,9 +22,12 @@ src_modules_wl_desktop_shell_module_la_LIBADD   = $(MOD_LIBS) @WAYLAND_LIBS@
 src_modules_wl_desktop_shell_module_la_LDFLAGS = $(MOD_LDFLAGS)
 
 src_modules_wl_desktop_shell_module_la_SOURCES = \
-  src/modules/wl_desktop_shell/e_mod_main.c \
-  src/modules/wl_desktop_shell/e_mod_main.h \
-  src/modules/wl_desktop_shell/e_mod_input_panel.c
+src/modules/wl_desktop_shell/e_mod_main.c \
+src/modules/wl_desktop_shell/e_mod_main.h \
+src/modules/wl_desktop_shell/e_mod_input_panel.c \
+src/modules/wl_desktop_shell/wl_shell.c \
+src/modules/wl_desktop_shell/xdg5.c
+
 
 nodist_src_modules_wl_desktop_shell_module_la_SOURCES = \
  $(wl_desktop_shell_wayland_sources)
