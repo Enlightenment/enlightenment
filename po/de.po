@@ -10684,6 +10684,20 @@ msgstr "Variante"
 msgid "NONE"
 msgstr ""
 
+#, fuzzy
+#~ msgid ""
+#~ "Enlightenment sets default mouse bindings for objects.<br>These bindings "
+#~ "provide three operations on click:<br>* <b>Move</b> (left button)<br>* "
+#~ "<b>Resize</b> (middle/wheel button)<br>* <b>Open Menu</b> (right "
+#~ "button)<br>The default key%s which must be held to activate these "
+#~ "bindings<br>is '%s'. Configure the modifiers for this binding below."
+#~ msgstr ""
+#~ "Enlightenment nutzt standart Aktionen für Fenster, gesteuert von der Maus."
+#~ "<br> Diese Aktionen beinhalten:<br>* <b>Bewegen<b> (Linke Taste)<br>* "
+#~ "<b>Größe ändern</b> (Mittlere Taste)<br>* <b>Menu öffnen</b> (Rechte "
+#~ "Taste)<br> Die standart Taste%s um diese Aktionen bei klick zu aktivieren "
+#~ "ist %s.<br>"
+
 #~ msgid "To reset compositor:"
 #~ msgstr "Um den Compositor zurückzusetzen:"
 
