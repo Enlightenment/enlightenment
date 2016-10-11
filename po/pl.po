@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2016-09-26 23:22+0900\n"
+"POT-Creation-Date: 2016-10-11 13:45+0200\n"
 "PO-Revision-Date: 2010-11-28 18:55+0100\n"
 "Last-Translator: Mariusz Kozakowski <11mariom@gmail.com>\n"
 "Language-Team: General\n"
@@ -174,7 +174,7 @@ msgstr "Opcje myszki"
 #: src/bin/e_actions.c:3330 src/bin/e_actions.c:3335 src/bin/e_actions.c:3340
 #: src/bin/e_actions.c:3345 src/bin/e_actions.c:3350 src/bin/e_actions.c:3355
 #: src/bin/e_actions.c:3360 src/bin/e_actions.c:3366 src/bin/e_actions.c:3372
-#: src/bin/e_actions.c:3378 src/modules/shot/e_mod_main.c:1368
+#: src/bin/e_actions.c:3378 src/modules/shot/e_mod_main.c:1370
 msgid "Window : Actions"
 msgstr "Okno : Akcje"
 
@@ -564,7 +564,7 @@ msgstr ""
 #: src/bin/e_actions.c:3324 src/modules/backlight/e_mod_main.c:480
 #: src/modules/conf_display/e_mod_main.c:17
 #: src/modules/conf_randr/e_mod_main.c:35 src/modules/ibox/e_mod_config.c:133
-#: src/modules/shot/e_mod_main.c:750 src/modules/shot/e_mod_main.c:1360
+#: src/modules/shot/e_mod_main.c:750 src/modules/shot/e_mod_main.c:1362
 msgid "Screen"
 msgstr "Ekran"
 
@@ -886,12 +886,12 @@ msgstr ""
 msgid "Set As Background"
 msgstr "Ustaw jako tło"
 
-#: src/bin/e_client.c:4343
+#: src/bin/e_client.c:4347
 #, fuzzy
 msgid "Client Error!"
 msgstr "Enlightenment: Błąd!"
 
-#: src/bin/e_client.c:4343
+#: src/bin/e_client.c:4347
 msgid "Something has attempted to set a border when it shouldn't! Report this!"
 msgstr ""
 
@@ -970,12 +970,12 @@ msgstr "Ukryte"
 msgid "Title"
 msgstr "Tytuł"
 
-#: src/bin/e_comp_x.c:568
+#: src/bin/e_comp_x.c:566
 #, fuzzy
 msgid "Compositor Warning"
 msgstr "Pozycja"
 
-#: src/bin/e_comp_x.c:569
+#: src/bin/e_comp_x.c:567
 msgid ""
 "Your display driver does not support OpenGL, GLSL<br>shaders or no OpenGL "
 "engines were compiled or installed<br>for Evas or Ecore-Evas. Falling back "
@@ -983,11 +983,11 @@ msgid ""
 "capable<br>GPU to use OpenGL with compositing."
 msgstr ""
 
-#: src/bin/e_comp_x.c:5359
+#: src/bin/e_comp_x.c:5337
 msgid "Lock Failed"
 msgstr "Blokada nie powiodła się"
 
-#: src/bin/e_comp_x.c:5360
+#: src/bin/e_comp_x.c:5338
 msgid ""
 "Locking the desktop failed because some application<br>has grabbed either "
 "the keyboard or the mouse or both<br>and their grab is unable to be broken."
@@ -995,35 +995,35 @@ msgstr ""
 "Nie powiodła się blokada ekranu, gdyż jedna<br>z aplikacji przechwyciła "
 "klawiaturę lub mysz<br> i nie udało się tego przechwycenia anulować."
 
-#: src/bin/e_comp_x.c:5376
+#: src/bin/e_comp_x.c:5354
 msgid "Another compositor is already running on your display server."
 msgstr ""
 
-#: src/bin/e_comp_x.c:5396
+#: src/bin/e_comp_x.c:5374
 msgid ""
 "Your display server does not support the compositor overlay window.\n"
 "This is needed for Enlightenment to function."
 msgstr ""
 
-#: src/bin/e_comp_x.c:5520
+#: src/bin/e_comp_x.c:5498
 #, fuzzy
 msgid "Enlightenment cannot initialize Ecore_X!\n"
 msgstr "Enlightenment nie może uruchomić menadżera plików.\n"
 
-#: src/bin/e_comp_x.c:5532
+#: src/bin/e_comp_x.c:5510
 msgid ""
 "Your display server does not support XComposite, or Ecore-X was built "
 "without XComposite support. Note that for composite support you will also "
 "need XRender and XFixes support in X11 and Ecore."
 msgstr ""
 
-#: src/bin/e_comp_x.c:5541
+#: src/bin/e_comp_x.c:5519
 msgid ""
 "Your display server does not support XDamage or Ecore was built without "
 "XDamage support."
 msgstr ""
 
-#: src/bin/e_comp_x.c:5643
+#: src/bin/e_comp_x.c:5621
 #, fuzzy
 msgid "Enlightenment cannot initialize the XSettings system.\n"
 msgstr "Enlightenment nie może ustawić swojego systemu tworzenia miniatur.\n"
@@ -1384,7 +1384,7 @@ msgstr "Plik desktop"
 #: src/modules/pager/e_mod_config.c:127 src/modules/pager/e_mod_config.c:218
 #: src/modules/pager_plain/e_mod_config.c:128
 #: src/modules/pager_plain/e_mod_config.c:226
-#: src/modules/tiling/e_mod_config.c:177
+#: src/modules/tiling/e_mod_config.c:169
 #: src/modules/xkbswitch/e_mod_config.c:359
 msgid "General"
 msgstr "Ogólne"
@@ -6678,7 +6678,7 @@ msgid "Wakeups"
 msgstr ""
 
 #: src/modules/conf_display/e_mod_main.c:21
-#: src/modules/tiling/e_mod_config.c:190
+#: src/modules/tiling/e_mod_config.c:182
 msgid "Virtual Desktops"
 msgstr "Wirtualne pulpity"
 
@@ -9689,9 +9689,11 @@ msgstr ""
 msgid "New volume"
 msgstr "Nowy tom"
 
-#: src/modules/mixer/e_mod_main.c:117
-msgid "Emix"
-msgstr ""
+#: src/modules/mixer/e_mod_main.c:117 src/modules/mixer/e_mod_main.c:496
+#: src/modules/mixer/e_mod_main.c:874
+#, fuzzy
+msgid "Mixer"
+msgstr "mikser"
 
 #: src/modules/mixer/e_mod_main.c:120
 #, fuzzy
@@ -9715,11 +9717,6 @@ msgstr "Nowy tom"
 #, fuzzy
 msgid "Mute Volume"
 msgstr "Nowy tom"
-
-#: src/modules/mixer/e_mod_main.c:496 src/modules/mixer/e_mod_main.c:874
-#, fuzzy
-msgid "Mixer"
-msgstr "mikser"
 
 #: src/modules/music-control/e_mod_main.c:9
 #, fuzzy
@@ -10552,49 +10549,49 @@ msgstr ""
 msgid "Share"
 msgstr "Wyraźny"
 
-#: src/modules/shot/e_mod_main.c:1084 src/modules/shot/e_mod_main.c:1100
-#: src/modules/shot/e_mod_main.c:1109
+#: src/modules/shot/e_mod_main.c:1086 src/modules/shot/e_mod_main.c:1102
+#: src/modules/shot/e_mod_main.c:1111
 #, fuzzy
 msgid "Screenshot Error"
 msgstr "Błąd montowania"
 
-#: src/modules/shot/e_mod_main.c:1085
+#: src/modules/shot/e_mod_main.c:1087
 #, c-format
 msgid ""
 "SHMMAX is too small to take screenshot.<br>Consider increasing /proc/sys/"
 "kernel/shmmax to a value larger than %llu"
 msgstr ""
 
-#: src/modules/shot/e_mod_main.c:1101
+#: src/modules/shot/e_mod_main.c:1103
 #, c-format
 msgid ""
 "SHMMAX is too small to take screenshot.<br>Consider increasing kern.ipc."
 "shmmax to a value larger than %llu"
 msgstr ""
 
-#: src/modules/shot/e_mod_main.c:1110
+#: src/modules/shot/e_mod_main.c:1112
 msgid ""
 "SHM creation failed.<br>Ensure your system has enough RAM free and your user "
 "has sufficient permissions."
 msgstr ""
 
-#: src/modules/shot/e_mod_main.c:1266 src/modules/shot/e_mod_main.c:1368
+#: src/modules/shot/e_mod_main.c:1268 src/modules/shot/e_mod_main.c:1370
 #, fuzzy
 msgid "Take Shot"
 msgstr "Opcje ekranów"
 
-#: src/modules/shot/e_mod_main.c:1277 src/modules/shot/e_mod_main.c:1360
-#: src/modules/shot/e_mod_main.c:1373
+#: src/modules/shot/e_mod_main.c:1279 src/modules/shot/e_mod_main.c:1362
+#: src/modules/shot/e_mod_main.c:1375
 #, fuzzy
 msgid "Take Screenshot"
 msgstr "Opcje ekranów"
 
-#: src/modules/shot/e_mod_main.c:1348
+#: src/modules/shot/e_mod_main.c:1350
 #, fuzzy
 msgid "Shot Error"
 msgstr "Błąd montowania"
 
-#: src/modules/shot/e_mod_main.c:1349
+#: src/modules/shot/e_mod_main.c:1351
 #, fuzzy
 msgid "Cannot initialize network"
 msgstr "Enlightenment nie może uruchomić menadżera plików.\n"
@@ -10815,34 +10812,34 @@ msgstr "Poziomy temperatury"
 msgid "Temperature"
 msgstr "Temperatura"
 
-#: src/modules/tiling/e_mod_config.c:179
+#: src/modules/tiling/e_mod_config.c:171
 #, fuzzy
 msgid "Show window titles"
 msgstr "Pokaż ukryte pliki"
 
-#: src/modules/tiling/e_mod_config.c:181
+#: src/modules/tiling/e_mod_config.c:173
 #, fuzzy
 msgid "Tile dialog windows"
 msgstr "Wszystkim"
 
-#: src/modules/tiling/e_mod_config.c:183
+#: src/modules/tiling/e_mod_config.c:175
 msgid "Enable floating split-mode"
 msgstr ""
 
-#: src/modules/tiling/e_mod_config.c:188
+#: src/modules/tiling/e_mod_config.c:180
 msgid "Enable/disable tiling per desktop."
 msgstr ""
 
-#: src/modules/tiling/e_mod_config.c:221
+#: src/modules/tiling/e_mod_config.c:213
 #, fuzzy
 msgid "Padding between windows"
 msgstr "Zamykanie okna"
 
-#: src/modules/tiling/e_mod_config.c:227
+#: src/modules/tiling/e_mod_config.c:219
 msgid "Help"
 msgstr ""
 
-#: src/modules/tiling/e_mod_config.c:327
+#: src/modules/tiling/e_mod_config.c:319
 #, fuzzy
 msgid "Tiling Configuration"
 msgstr "Konfiguracja Podglądu Pulpitów"
@@ -11123,6 +11120,33 @@ msgstr ""
 #, fuzzy
 msgid "Whenever the mouse enters a window"
 msgstr "Zapamiętaj Blokady dla tego okna i użyj ich następnym razem"
+
+#: src/modules/wizard/page_065.c:84
+#, fuzzy
+msgid "Mouse Modifiers"
+msgstr "Przesuń"
+
+#: src/modules/wizard/page_065.c:104
+#, fuzzy
+msgid "Keys:"
+msgstr "klucze"
+
+#: src/modules/wizard/page_065.c:110
+#, c-format
+msgid ""
+"Enlightenment sets default mouse bindings for objects.<br>These bindings "
+"provide three operations on click:<br>* <b>Move</b> (left button)<br>* "
+"<b>Resize</b> (middle/wheel button)<br>* <b>Open Menu</b> (right "
+"button)<br>The default key which must be held to activate these "
+"bindings<br>is '%s'. Configure the modifiers for this binding below."
+msgid_plural ""
+"Enlightenment sets default mouse bindings for objects.<br>These bindings "
+"provide three operations on click:<br>* <b>Move</b> (left button)<br>* "
+"<b>Resize</b> (middle/wheel button)<br>* <b>Open Menu</b> (right "
+"button)<br>The default keys which must be held to activate these "
+"bindings<br>is '%s'. Configure the modifiers for this binding below."
+msgstr[0] ""
+msgstr[1] ""
 
 #: src/modules/wizard/page_110.c:9
 #, fuzzy
@@ -13027,10 +13051,6 @@ msgstr ""
 #~ msgstr "Skup się przez ..."
 
 #, fuzzy
-#~ msgid "Mouse Over"
-#~ msgstr "Przesuń"
-
-#, fuzzy
 #~ msgid "Module Error"
 #~ msgstr "Błąd API modułu"
 
@@ -14055,10 +14075,6 @@ msgstr ""
 #, fuzzy
 #~ msgid "Popup speed"
 #~ msgstr "popup prędkość"
-
-#, fuzzy
-#~ msgid "Keys"
-#~ msgstr "klucze"
 
 #, fuzzy
 #~ msgid "Hardware Switches"

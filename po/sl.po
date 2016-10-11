@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: enlightenment 0.21.2\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2016-09-26 23:22+0900\n"
+"POT-Creation-Date: 2016-10-11 13:45+0200\n"
 "PO-Revision-Date: 2016-09-21 16:47+0200\n"
 "Last-Translator: Renato Rener <renato.rener@gmail.com>\n"
 "Language-Team: \n"
@@ -160,7 +160,7 @@ msgstr "Miško na ključ"
 #: src/bin/e_actions.c:3330 src/bin/e_actions.c:3335 src/bin/e_actions.c:3340
 #: src/bin/e_actions.c:3345 src/bin/e_actions.c:3350 src/bin/e_actions.c:3355
 #: src/bin/e_actions.c:3360 src/bin/e_actions.c:3366 src/bin/e_actions.c:3372
-#: src/bin/e_actions.c:3378 src/modules/shot/e_mod_main.c:1368
+#: src/bin/e_actions.c:3378 src/modules/shot/e_mod_main.c:1370
 msgid "Window : Actions"
 msgstr "Okno : Dejanja"
 
@@ -538,7 +538,7 @@ msgstr "Skoči na okno... ali začni..."
 #: src/bin/e_actions.c:3324 src/modules/backlight/e_mod_main.c:480
 #: src/modules/conf_display/e_mod_main.c:17
 #: src/modules/conf_randr/e_mod_main.c:35 src/modules/ibox/e_mod_config.c:133
-#: src/modules/shot/e_mod_main.c:750 src/modules/shot/e_mod_main.c:1360
+#: src/modules/shot/e_mod_main.c:750 src/modules/shot/e_mod_main.c:1362
 msgid "Screen"
 msgstr "Zaslon"
 
@@ -834,11 +834,11 @@ msgstr "Prejšnji razpored tipkovnice"
 msgid "Set As Background"
 msgstr "Nastavi kot ozadje"
 
-#: src/bin/e_client.c:4343
+#: src/bin/e_client.c:4347
 msgid "Client Error!"
 msgstr "Napaka klienta!"
 
-#: src/bin/e_client.c:4343
+#: src/bin/e_client.c:4347
 msgid "Something has attempted to set a border when it shouldn't! Report this!"
 msgstr "Nekaj je hotelo nastaviti obrobo, ko je ne bi smelo! Poročajte o tem!"
 
@@ -912,11 +912,11 @@ msgstr "Skrito"
 msgid "Title"
 msgstr "Naslov"
 
-#: src/bin/e_comp_x.c:568
+#: src/bin/e_comp_x.c:566
 msgid "Compositor Warning"
 msgstr "Opozorilo kompozitorja"
 
-#: src/bin/e_comp_x.c:569
+#: src/bin/e_comp_x.c:567
 msgid ""
 "Your display driver does not support OpenGL, GLSL<br>shaders or no OpenGL "
 "engines were compiled or installed<br>for Evas or Ecore-Evas. Falling back "
@@ -928,11 +928,11 @@ msgstr ""
 "pogon.<br><br>Potrebovali boste OpenGL 2.0 (ali OpenGL ES 2.0) GPU,"
 "<br>sposoben uporabiti OpenGL za kompozitiranje."
 
-#: src/bin/e_comp_x.c:5359
+#: src/bin/e_comp_x.c:5337
 msgid "Lock Failed"
 msgstr "Zaklepanje spodletelo"
 
-#: src/bin/e_comp_x.c:5360
+#: src/bin/e_comp_x.c:5338
 msgid ""
 "Locking the desktop failed because some application<br>has grabbed either "
 "the keyboard or the mouse or both<br>and their grab is unable to be broken."
@@ -940,11 +940,11 @@ msgstr ""
 "Zaklepanje namizja ni uspelo, ker je nek program<br>prevzel tipkovnico "
 "oziroma miško ali oboje<br>in se njegov prevzem ne more prekiniti."
 
-#: src/bin/e_comp_x.c:5376
+#: src/bin/e_comp_x.c:5354
 msgid "Another compositor is already running on your display server."
 msgstr "Na serverju za ekran že teče drugi kompozitor."
 
-#: src/bin/e_comp_x.c:5396
+#: src/bin/e_comp_x.c:5374
 msgid ""
 "Your display server does not support the compositor overlay window.\n"
 "This is needed for Enlightenment to function."
@@ -952,11 +952,11 @@ msgstr ""
 "Vaš server za ekran ne podpira prekrivnega okna v kompozitnem načinu.\n"
 "To je potrebno, da bi Enlightenment deloval."
 
-#: src/bin/e_comp_x.c:5520
+#: src/bin/e_comp_x.c:5498
 msgid "Enlightenment cannot initialize Ecore_X!\n"
 msgstr "Enlightenment ne more zagnati Ecore_X!\n"
 
-#: src/bin/e_comp_x.c:5532
+#: src/bin/e_comp_x.c:5510
 msgid ""
 "Your display server does not support XComposite, or Ecore-X was built "
 "without XComposite support. Note that for composite support you will also "
@@ -966,7 +966,7 @@ msgstr ""
 "podporo zanj. Za podporo kompozitorju boste potrebovali tudi podporo XRender "
 "in XFixes za X11 in Ecore."
 
-#: src/bin/e_comp_x.c:5541
+#: src/bin/e_comp_x.c:5519
 msgid ""
 "Your display server does not support XDamage or Ecore was built without "
 "XDamage support."
@@ -974,7 +974,7 @@ msgstr ""
 "Vaš server za ekran ne podpira XDamage ali pa je bil Ecore zgrajen brez "
 "podpore za  XDamage."
 
-#: src/bin/e_comp_x.c:5643
+#: src/bin/e_comp_x.c:5621
 msgid "Enlightenment cannot initialize the XSettings system.\n"
 msgstr "Enlightenment ne more zagnati XSettings sistema.\n"
 
@@ -1312,7 +1312,7 @@ msgstr "Datoteka namizja"
 #: src/modules/pager/e_mod_config.c:127 src/modules/pager/e_mod_config.c:218
 #: src/modules/pager_plain/e_mod_config.c:128
 #: src/modules/pager_plain/e_mod_config.c:226
-#: src/modules/tiling/e_mod_config.c:177
+#: src/modules/tiling/e_mod_config.c:169
 #: src/modules/xkbswitch/e_mod_config.c:359
 msgid "General"
 msgstr "Splošno"
@@ -6294,7 +6294,7 @@ msgid "Wakeups"
 msgstr "Prebuditve"
 
 #: src/modules/conf_display/e_mod_main.c:21
-#: src/modules/tiling/e_mod_config.c:190
+#: src/modules/tiling/e_mod_config.c:182
 msgid "Virtual Desktops"
 msgstr "Navidezna namizja"
 
@@ -9062,9 +9062,10 @@ msgstr ""
 msgid "New volume"
 msgstr "Nova naprava"
 
-#: src/modules/mixer/e_mod_main.c:117
-msgid "Emix"
-msgstr "Emix"
+#: src/modules/mixer/e_mod_main.c:117 src/modules/mixer/e_mod_main.c:496
+#: src/modules/mixer/e_mod_main.c:874
+msgid "Mixer"
+msgstr "Mešalnik"
 
 #: src/modules/mixer/e_mod_main.c:120
 msgid "Volume changed"
@@ -9085,10 +9086,6 @@ msgstr "Onemi glasnost"
 #: src/modules/mixer/e_mod_main.c:294
 msgid "Mute Volume"
 msgstr "Onemi glasnost"
-
-#: src/modules/mixer/e_mod_main.c:496 src/modules/mixer/e_mod_main.c:874
-msgid "Mixer"
-msgstr "Mešalnik"
 
 #: src/modules/music-control/e_mod_main.c:9
 msgid "Music controller"
@@ -9896,12 +9893,12 @@ msgstr "Popolno"
 msgid "Share"
 msgstr "Deli"
 
-#: src/modules/shot/e_mod_main.c:1084 src/modules/shot/e_mod_main.c:1100
-#: src/modules/shot/e_mod_main.c:1109
+#: src/modules/shot/e_mod_main.c:1086 src/modules/shot/e_mod_main.c:1102
+#: src/modules/shot/e_mod_main.c:1111
 msgid "Screenshot Error"
 msgstr "Napaka posnetka zaslona"
 
-#: src/modules/shot/e_mod_main.c:1085
+#: src/modules/shot/e_mod_main.c:1087
 #, c-format
 msgid ""
 "SHMMAX is too small to take screenshot.<br>Consider increasing /proc/sys/"
@@ -9910,7 +9907,7 @@ msgstr ""
 "SHMMAX je premajhen za narediti posnetek zaslona.<br>Razmislite o povečanju /"
 "proc/sys/kernel/shmmax na višjo vrednost kot %llu"
 
-#: src/modules/shot/e_mod_main.c:1101
+#: src/modules/shot/e_mod_main.c:1103
 #, c-format
 msgid ""
 "SHMMAX is too small to take screenshot.<br>Consider increasing kern.ipc."
@@ -9919,7 +9916,7 @@ msgstr ""
 "SHMMAX je premajhen za narediti posnetek zaslona.<br>Razmislite o povečanju "
 "kern.ipc.shmmax na vrednost višjo od %llu"
 
-#: src/modules/shot/e_mod_main.c:1110
+#: src/modules/shot/e_mod_main.c:1112
 msgid ""
 "SHM creation failed.<br>Ensure your system has enough RAM free and your user "
 "has sufficient permissions."
@@ -9927,20 +9924,20 @@ msgstr ""
 "SHM ustvaritev spodletela.<br>Zagotovite, da bo imel vaš sistem dovolj "
 "prostega RAM-a in da bodo imeli vaši uporabniki dovolj dovoljenj."
 
-#: src/modules/shot/e_mod_main.c:1266 src/modules/shot/e_mod_main.c:1368
+#: src/modules/shot/e_mod_main.c:1268 src/modules/shot/e_mod_main.c:1370
 msgid "Take Shot"
 msgstr "Posnemi sliko"
 
-#: src/modules/shot/e_mod_main.c:1277 src/modules/shot/e_mod_main.c:1360
-#: src/modules/shot/e_mod_main.c:1373
+#: src/modules/shot/e_mod_main.c:1279 src/modules/shot/e_mod_main.c:1362
+#: src/modules/shot/e_mod_main.c:1375
 msgid "Take Screenshot"
 msgstr "Posnemi sliko zaslona"
 
-#: src/modules/shot/e_mod_main.c:1348
+#: src/modules/shot/e_mod_main.c:1350
 msgid "Shot Error"
 msgstr "Napaka posnetka"
 
-#: src/modules/shot/e_mod_main.c:1349
+#: src/modules/shot/e_mod_main.c:1351
 msgid "Cannot initialize network"
 msgstr "Ne morem zagnati omrežja"
 
@@ -10137,31 +10134,31 @@ msgstr "Temperature"
 msgid "Temperature"
 msgstr "Temperatura"
 
-#: src/modules/tiling/e_mod_config.c:179
+#: src/modules/tiling/e_mod_config.c:171
 msgid "Show window titles"
 msgstr "Prikaži naslove oken"
 
-#: src/modules/tiling/e_mod_config.c:181
+#: src/modules/tiling/e_mod_config.c:173
 msgid "Tile dialog windows"
 msgstr "Razpostavi okna dialoga"
 
-#: src/modules/tiling/e_mod_config.c:183
+#: src/modules/tiling/e_mod_config.c:175
 msgid "Enable floating split-mode"
 msgstr "Omogoči plavajoči razdeljeni način"
 
-#: src/modules/tiling/e_mod_config.c:188
+#: src/modules/tiling/e_mod_config.c:180
 msgid "Enable/disable tiling per desktop."
 msgstr "Omogoči/onemogoči razpostavljanje za namizje"
 
-#: src/modules/tiling/e_mod_config.c:221
+#: src/modules/tiling/e_mod_config.c:213
 msgid "Padding between windows"
 msgstr "Površine med okni"
 
-#: src/modules/tiling/e_mod_config.c:227
+#: src/modules/tiling/e_mod_config.c:219
 msgid "Help"
 msgstr "Pomoč"
 
-#: src/modules/tiling/e_mod_config.c:327
+#: src/modules/tiling/e_mod_config.c:319
 msgid "Tiling Configuration"
 msgstr "Nastavitve razpostavljanja"
 
@@ -10402,6 +10399,34 @@ msgstr "Kadarkoli se klikne na okno"
 msgid "Whenever the mouse enters a window"
 msgstr "Kadarkoli miška vstopi v območje okna"
 
+#: src/modules/wizard/page_065.c:84
+#, fuzzy
+msgid "Mouse Modifiers"
+msgstr "Zadnjič spremenjeno:"
+
+#: src/modules/wizard/page_065.c:104
+msgid "Keys:"
+msgstr ""
+
+#: src/modules/wizard/page_065.c:110
+#, c-format
+msgid ""
+"Enlightenment sets default mouse bindings for objects.<br>These bindings "
+"provide three operations on click:<br>* <b>Move</b> (left button)<br>* "
+"<b>Resize</b> (middle/wheel button)<br>* <b>Open Menu</b> (right "
+"button)<br>The default key which must be held to activate these "
+"bindings<br>is '%s'. Configure the modifiers for this binding below."
+msgid_plural ""
+"Enlightenment sets default mouse bindings for objects.<br>These bindings "
+"provide three operations on click:<br>* <b>Move</b> (left button)<br>* "
+"<b>Resize</b> (middle/wheel button)<br>* <b>Open Menu</b> (right "
+"button)<br>The default keys which must be held to activate these "
+"bindings<br>is '%s'. Configure the modifiers for this binding below."
+msgstr[0] ""
+msgstr[1] ""
+msgstr[2] ""
+msgstr[3] ""
+
 #: src/modules/wizard/page_110.c:9
 msgid "Network Management"
 msgstr "Upravljanje omrežij"
@@ -10526,6 +10551,9 @@ msgstr "Različica"
 #: src/modules/xkbswitch/e_mod_main.c:191
 msgid "NONE"
 msgstr "BREZ"
+
+#~ msgid "Emix"
+#~ msgstr "Emix"
 
 #~ msgid "Desktop Flip"
 #~ msgstr "Preklop namizij"
