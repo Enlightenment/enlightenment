@@ -107,14 +107,23 @@ wizard_page_show(E_Wizard_Page *pg EINA_UNUSED)
 
    ob = elm_label_add(o);
    elm_object_style_set(ob, "default/left");
-   snprintf(buf, sizeof(buf), _("Enlightenment sets default mouse bindings for objects.<br>"
-                                "These bindings provide three operations on click:<br>"
-                                "* <b>Move</b> (left button)<br>"
-                                "* <b>Resize</b> (middle/wheel button)<br>"
-                                "* <b>Open Menu</b> (right button)<br>"
-                                "The default key%s which must be held to activate these bindings<br>"
-                                "is '%s'. Configure the modifiers for this binding below."),
-                                num > 1 ? "s" : "", eina_strbuf_string_get(sbuf));
+   snprintf(buf, sizeof(buf), P_("Enlightenment sets default mouse bindings for objects.<br>"
+                                 "These bindings provide three operations on click:<br>"
+                                 "* <b>Move</b> (left button)<br>"
+                                 "* <b>Resize</b> (middle/wheel button)<br>"
+                                 "* <b>Open Menu</b> (right button)<br>"
+                                 "The default key which must be held to activate these bindings<br>"
+                                 "is '%s'. Configure the modifiers for this binding below.",
+
+                                 "Enlightenment sets default mouse bindings for objects.<br>"
+                                 "These bindings provide three operations on click:<br>"
+                                 "* <b>Move</b> (left button)<br>"
+                                 "* <b>Resize</b> (middle/wheel button)<br>"
+                                 "* <b>Open Menu</b> (right button)<br>"
+                                 "The default keys which must be held to activate these bindings<br>"
+                                 "is '%s'. Configure the modifiers for this binding below.",
+                                 num)
+                                , eina_strbuf_string_get(sbuf));
    elm_object_text_set(ob, buf);
    evas_object_show(ob);
    E_ALIGN(ob, 0, 0.5);
