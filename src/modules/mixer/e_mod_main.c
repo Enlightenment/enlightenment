@@ -114,7 +114,7 @@ _notify(const int val)
    else
      icon = "audio-volume-high";
 
-   n.app_name = _("Emix");
+   n.app_name = _("Mixer");
    n.replaces_id = mixer_context->notification_id;
    n.icon.icon = icon;
    n.summary = _("Volume changed");
