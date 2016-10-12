@@ -671,7 +671,7 @@ tw_media_add(const char *url, Eina_Binbuf *buf, unsigned long long timestamp, Ei
    if (!media[video]) return -1;
    if (!tw_config->allowed_media_age) return 0; //disk caching disabled
 
-   sha1 = sha1_encode(eina_binbuf_string_get(buf), eina_binbuf_length_get(buf));
+   sha1 = sha1_encode(buf);
    DBG("Media: %s - %s", url, sha1);
 
    list = eet_list(media[video], url, &lsize);

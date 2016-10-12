@@ -16,9 +16,7 @@ src_modules_teamwork_module_la_LDFLAGS = $(MOD_LDFLAGS)
 src_modules_teamwork_module_la_SOURCES = src/modules/teamwork/e_mod_main.c \
 src/modules/teamwork/e_mod_config.c \
 src/modules/teamwork/e_mod_main.h \
-src/modules/teamwork/e_mod_tw.c \
-src/modules/teamwork/sha1.c \
-src/modules/teamwork/sha1.h
+src/modules/teamwork/e_mod_tw.c
 
 if HAVE_WAYLAND
 src_modules_teamwork_module_la_SOURCES += \

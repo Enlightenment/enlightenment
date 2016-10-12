@@ -1,6 +1,9 @@
 #ifndef E_MOD_MAIN_H
 #define E_MOD_MAIN_H
 
+/* We want emil_binbuf_sha1 which is beta API */
+#define EFL_BETA_API_SUPPORT
+
 #include "e.h"
 
 /**
@@ -45,7 +48,7 @@ extern Teamwork_Config *tw_config;
 extern Mod *tw_mod;
 extern int _e_teamwork_log_dom;
 
-EINTERN const char *sha1_encode(const unsigned char *data, size_t len);
+EINTERN const char *sha1_encode(const Eina_Binbuf *data);
 
 EINTERN int e_tw_init(void);
 EINTERN void e_tw_shutdown(void);
