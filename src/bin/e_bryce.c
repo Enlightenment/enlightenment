@@ -945,20 +945,12 @@ e_bryce_add(Evas_Object *parent, const char *name, E_Gadget_Site_Orient orient, 
 E_API void
 e_bryce_orient(Evas_Object *bryce, E_Gadget_Site_Orient orient, E_Gadget_Site_Anchor an)
 {
-   int w, h;
-   E_Gadget_Site_Orient prev;
-
    BRYCE_GET(bryce);
    if ((b->orient == orient) && (b->anchor == an)) return;
-   prev = b->orient;
    b->orient = orient;
    b->anchor = an;
-   evas_object_geometry_get(bryce, NULL, NULL, &w, &h);
    _bryce_orient(b);
-   if (prev == orient)
-     _bryce_autosize(b);
-   else
-     evas_object_resize(bryce, h, w);
+   _bryce_autosize(b);
 }
 
 E_API Evas_Object *
