@@ -63,7 +63,9 @@ _editor_bryce_add(Evas_Object *obj)
    else if (bi->anchor & E_GADGET_SITE_ANCHOR_BOTTOM)
      loc2 = "bottom";
 
-   snprintf(buf, sizeof(buf), "bryce_%s_%s", loc, loc2);
+   zone = e_comp_object_util_zone_get(obj);
+   if (!zone) zone = e_zone_current_get();
+   snprintf(buf, sizeof(buf), "bryce_%s_%s_%d", loc, loc2, zone->num);
    if (bi->orient == E_GADGET_SITE_ORIENT_HORIZONTAL)
      {
         if (bi->anchor & E_GADGET_SITE_ANCHOR_LEFT)
@@ -92,8 +94,7 @@ _editor_bryce_add(Evas_Object *obj)
         e_gadget_site_gadget_add(site, "Digital Clock", 0);
         e_gadget_site_gadget_add(site, "Wireless", 0);
      }
-   zone = e_comp_object_util_zone_get(obj);
-   if (!zone) zone = e_zone_current_get();
+
    evas_object_geometry_get(b, &x, &y, NULL, NULL);
    evas_object_move(b, x + zone->x, y + zone->y);
    e_gadget_site_gravity_set(site, gravity);
