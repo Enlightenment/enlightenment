@@ -23,13 +23,17 @@ static void _editor_add_right(void *data, Evas_Object *obj, const char *sig, con
 static void
 setup_exists(Evas_Object *bryce, Evas_Object *editor, Evas_Object *parent, E_Gadget_Site_Anchor an)
 {
-   if (e_bryce_exists(parent, bryce, E_GADGET_SITE_ORIENT_HORIZONTAL, E_GADGET_SITE_ANCHOR_BOTTOM | an))
+   if ((an != E_GADGET_SITE_ANCHOR_TOP) &&
+       e_bryce_exists(parent, bryce, E_GADGET_SITE_ORIENT_HORIZONTAL, E_GADGET_SITE_ANCHOR_BOTTOM | an))
      elm_object_signal_emit(editor, "e,bryce,exists,bottom", "e");
-   if (e_bryce_exists(parent, bryce, E_GADGET_SITE_ORIENT_HORIZONTAL, E_GADGET_SITE_ANCHOR_TOP | an))
+   if ((an != E_GADGET_SITE_ANCHOR_BOTTOM) &&
+       e_bryce_exists(parent, bryce, E_GADGET_SITE_ORIENT_HORIZONTAL, E_GADGET_SITE_ANCHOR_TOP | an))
      elm_object_signal_emit(editor, "e,bryce,exists,top", "e");
-   if (e_bryce_exists(parent, bryce, E_GADGET_SITE_ORIENT_VERTICAL, E_GADGET_SITE_ANCHOR_LEFT | an))
+   if ((an != E_GADGET_SITE_ANCHOR_RIGHT) &&
+       e_bryce_exists(parent, bryce, E_GADGET_SITE_ORIENT_VERTICAL, E_GADGET_SITE_ANCHOR_LEFT | an))
      elm_object_signal_emit(editor, "e,bryce,exists,left", "e");
-   if (e_bryce_exists(parent, bryce, E_GADGET_SITE_ORIENT_VERTICAL, E_GADGET_SITE_ANCHOR_RIGHT | an))
+   if ((an != E_GADGET_SITE_ANCHOR_LEFT) &&
+       e_bryce_exists(parent, bryce, E_GADGET_SITE_ORIENT_VERTICAL, E_GADGET_SITE_ANCHOR_RIGHT | an))
      elm_object_signal_emit(editor, "e,bryce,exists,right", "e");
 }
 
