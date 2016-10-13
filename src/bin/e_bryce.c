@@ -1054,7 +1054,8 @@ e_bryce_exists(Evas_Object *parent, Evas_Object *bryce, E_Gadget_Site_Orient ori
   if ((orient == E_GADGET_SITE_ORIENT_##ORIENT) && \
     ((an == (E_GADGET_SITE_ANCHOR_##ANCHOR1)) || \
       ((an & E_GADGET_SITE_ANCHOR_##ANCHOR2) && (!es->cfg->fit_along)))) \
-        return EINA_TRUE
+        return EINA_TRUE; \
+  break
                 default: break;
                 case E_GADCON_ORIENT_LEFT:
                   ORIENT_CHECK(VERTICAL, LEFT, LEFT);
