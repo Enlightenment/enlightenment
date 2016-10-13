@@ -3,6 +3,8 @@
 #define DEFAULT_LAYER E_LAYER_CLIENT_ABOVE
 #define E_BRYCE_TYPE 0xE31338
 
+static unsigned int bryce_version = 1;
+
 typedef struct Bryce
 {
    E_Object *e_obj_inherit;
@@ -37,6 +39,7 @@ typedef struct Bryce
    /* config: do not bitfield! */
    Eina_Bool autosize;
    Eina_Bool autohide;
+   unsigned int version;
 
    Eina_Bool hidden : 1;
    Eina_Bool animating : 1;
@@ -1152,6 +1155,7 @@ e_bryce_init(void)
    E_CONFIG_VAL(edd_bryce, Bryce, autohide, UCHAR);
    E_CONFIG_VAL(edd_bryce, Bryce, orient, UINT);
    E_CONFIG_VAL(edd_bryce, Bryce, anchor, UINT);
+   E_CONFIG_VAL(edd_bryce, Bryce, version, UINT);
 
    edd_bryces = E_CONFIG_DD_NEW("Bryces", Bryces);
    E_CONFIG_LIST(edd_bryces, Bryces, bryces, edd_bryce);
@@ -1164,6 +1168,15 @@ e_bryce_init(void)
 
         EINA_LIST_FOREACH(bryces->bryces, l, b)
           {
+             if (b->version < 1)
+               {
+                  char buf[4096];
+
+                  snprintf(buf, sizeof(buf), "%s_%u", b->name, b->zone);
+                  e_gadget_site_rename(b->name, buf);
+                  eina_stringshare_replace(&b->name, buf);
+               }
+             b->version = bryce_version;
              if (!e_comp_zone_number_get(b->zone)) continue;
              b->layer = E_CLAMP(b->layer, E_LAYER_DESKTOP, E_LAYER_CLIENT_ABOVE);
              _bryce_create(b, e_comp->elm);
