@@ -1588,6 +1588,21 @@ e_gadget_save(void)
 }
 
 EINTERN void
+e_gadget_site_rename(const char *name, const char *newname)
+{
+   Eina_List *l;
+   E_Gadget_Site *zgs;
+
+   EINA_LIST_FOREACH(sites->sites, l, zgs)
+     if (eina_streq(zgs->name, name))
+       {
+          eina_stringshare_replace(&zgs->name, newname);
+          e_config_save_queue();
+          break;
+       }
+}
+
+EINTERN void
 e_gadget_init(void)
 {
    gadget_types = eina_hash_string_superfast_new(free);
