@@ -14,6 +14,7 @@
 #include "e_pixmap.h"
 #include "e_comp_object.h"
 #include "e_client.h"
+#include "e_client_volume.h"
 #include "e_pointer.h"
 #include "e_config.h"
 #include "e_config_data.h"

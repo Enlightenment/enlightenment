@@ -1613,6 +1613,8 @@ _e_main_screens_init(void)
 {
    TS("\tscreens: client");
    if (!e_client_init()) return 0;
+   TS("\tscreens: client volume");
+   if (!e_client_volume_init()) return 0;
    TS("\tscreens: win");
    if (!e_win_init()) return 0;
    TS("Compositor Init");
@@ -1647,6 +1649,7 @@ _e_main_screens_shutdown(void)
    e_menu_shutdown();
    e_shelf_shutdown();
    e_comp_shutdown();
+   e_client_volume_shutdown();
    e_client_shutdown();
    e_exehist_shutdown();
    e_backlight_shutdown();

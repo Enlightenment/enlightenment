@@ -72,6 +72,7 @@ src/bin/e_bg.h \
 src/bin/e_bindings.h \
 src/bin/e_bryce.h \
 src/bin/e_client.h \
+src/bin/e_client_volume.h \
 src/bin/e_client.x \
 src/bin/e_color_dialog.h  \
 src/bin/e_color.h \
@@ -243,6 +244,7 @@ src/bin/e_bindings.c \
 src/bin/e_bryce.c \
 src/bin/e_bryce_editor.c \
 src/bin/e_client.c \
+src/bin/e_client_volume.c \
 src/bin/e_color.c \
 src/bin/e_color_dialog.c \
 src/bin/e_comp.c \

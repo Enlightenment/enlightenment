@@ -689,6 +689,13 @@ struct E_Client
 
    Eina_Stringshare *uuid;
 
+   Eina_List *sinks;
+   int volume;
+   int volume_min;
+   int volume_max;
+   unsigned char mute : 1;
+   unsigned char volume_control_enabled : 1;
+
    Eina_Bool override : 1;
    Eina_Bool input_only : 1;
    Eina_Bool dialog : 1;
@@ -745,6 +752,7 @@ E_API extern int E_EVENT_CLIENT_FOCUS_OUT;
 E_API extern int E_EVENT_CLIENT_PROPERTY;
 E_API extern int E_EVENT_CLIENT_FULLSCREEN;
 E_API extern int E_EVENT_CLIENT_UNFULLSCREEN;
+
 
 
 EINTERN void e_client_idler_before(void);

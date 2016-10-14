@@ -578,6 +578,7 @@ static void
 _e_client_del(E_Client *ec)
 {
    E_Client *child;
+   E_Client_Volume_Sink *sink;
 
    ec->changed = 0;
    focus_stack = eina_list_remove(focus_stack, ec);
@@ -661,6 +662,9 @@ _e_client_del(E_Client *ec)
 
    e_comp->clients = eina_list_remove(e_comp->clients, ec);
    e_comp_object_render_update_del(ec->frame);
+
+   EINA_LIST_FREE(ec->sinks, sink)
+      sink->clients = eina_list_remove(sink->clients, ec);
 }
 
 ///////////////////////////////////////////
@@ -5113,3 +5117,4 @@ e_client_layout_cb_set(E_Client_Layout_Cb cb)
      CRI("ATTEMPTING TO OVERWRITE EXISTING CLIENT LAYOUT HOOK!!!");
    _e_client_layout_cb = cb;
 }
+
