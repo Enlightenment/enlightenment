@@ -64,6 +64,7 @@ typedef struct _Emix_Sink_Input {
    Emix_Volume volume;
    Eina_Bool mute;
    Emix_Sink *sink;
+   pid_t pid;
 } Emix_Sink_Input;
 
 typedef struct _Emix_Source {
@@ -109,6 +110,26 @@ typedef struct _Emix_Backend {
 
    Evas_Object*          (*ebackend_advanced_options_add)(Evas_Object *parent);
 } Emix_Backend;
+
+//////////////////////////////////////////////////////////////////////////////
+
+#define VOLSET(vol, srcvol, target, func) \
+   do { \
+      Emix_Volume _v; \
+      int _pvol = srcvol.volumes[0]; \
+      if ((_pvol > 80) && (_pvol <= 100) && \
+          (vol > 100) && (vol < 120)) vol = 100; \
+      _v.channel_count = srcvol.channel_count; \
+      _v.volumes = calloc(srcvol.channel_count, sizeof(int)); \
+      if (_v.volumes) { \
+         unsigned int _i; \
+         for (_i = 0; _i < _v.channel_count; _i++) _v.volumes[_i] = vol; \
+         func(target, _v); \
+         free(_v.volumes); \
+      } \
+   } while (0)
+
+//////////////////////////////////////////////////////////////////////////////
 
 
 E_API Eina_Bool           emix_init(void);

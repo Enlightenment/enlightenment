@@ -14,6 +14,7 @@
 
 int _e_emix_log_domain;
 static Eina_Bool init;
+static Eina_List *_client_sinks = NULL;
 
 /* module requirements */
 E_API E_Module_Api e_modapi =
@@ -62,6 +63,9 @@ struct _Context
       E_Action *incr;
       E_Action *decr;
       E_Action *mute;
+      E_Action *incr_app;
+      E_Action *decr_app;
+      E_Action *mute_app;
    } actions;
 };
 
@@ -242,6 +246,42 @@ _volume_mute_cb(E_Object *obj EINA_UNUSED, const char *params EINA_UNUSED)
 }
 
 static void
+_volume_increase_app_cb(E_Object *obj EINA_UNUSED, const char *params EINA_UNUSED)
+{
+   E_Client *ec;
+
+   ec = e_client_focused_get();
+   if (ec && ec->volume_control_enabled)
+     {
+        e_client_volume_set(ec, ec->volume + VOLUME_STEP);
+     }
+}
+
+static void
+_volume_decrease_app_cb(E_Object *obj EINA_UNUSED, const char *params EINA_UNUSED)
+{
+   E_Client *ec;
+
+   ec = e_client_focused_get();
+   if (ec && ec->volume_control_enabled)
+     {
+        e_client_volume_set(ec, ec->volume - VOLUME_STEP);
+     }
+}
+
+static void
+_volume_mute_app_cb(E_Object *obj EINA_UNUSED, const char *params EINA_UNUSED)
+{
+   E_Client *ec;
+
+   ec = e_client_focused_get();
+   if (ec && ec->volume_control_enabled)
+     {
+        e_client_volume_mute_set(ec, !ec->mute);
+     }
+}
+
+static void
 _actions_register(void)
 {
    mixer_context->actions.incr = e_action_add("volume_increase");
@@ -266,6 +306,30 @@ _actions_register(void)
         mixer_context->actions.mute->func.go = _volume_mute_cb;
         e_action_predef_name_set("Mixer", _("Mute volume"), "volume_mute",
                                  NULL, NULL, 0);
+     }
+   mixer_context->actions.incr_app = e_action_add("volume_increase_app");
+   if (mixer_context->actions.incr_app)
+     {
+        mixer_context->actions.incr_app->func.go = _volume_increase_app_cb;
+        e_action_predef_name_set("Mixer",
+                                 _("Increase Volume of Focused Application"),
+                                 "volume_increase_app", NULL, NULL, 0);
+     }
+   mixer_context->actions.decr_app = e_action_add("volume_decrease_app");
+   if (mixer_context->actions.decr_app)
+     {
+        mixer_context->actions.decr_app->func.go = _volume_decrease_app_cb;
+        e_action_predef_name_set("Mixer",
+                                 _("Decrease Volume of Focused Application"),
+                                 "volume_decrease_app", NULL, NULL, 0);
+     }
+   mixer_context->actions.mute_app = e_action_add("volume_mute_app");
+   if (mixer_context->actions.mute_app)
+     {
+        mixer_context->actions.mute_app->func.go = _volume_mute_app_cb;
+        e_action_predef_name_set("Mixer",
+                                 _("Mute Volume of Focused Application"),
+                                 "volume_mute_app", NULL, NULL, 0);
      }
 
    e_comp_canvas_keys_ungrab();
@@ -294,6 +358,30 @@ _actions_unregister(void)
         e_action_predef_name_del("Mixer", _("Mute Volume"));
         e_action_del("volume_mute");
         mixer_context->actions.mute = NULL;
+     }
+
+   if (mixer_context->actions.incr_app)
+     {
+        e_action_predef_name_del("Mixer",
+                                 _("Increase Volume of Focuse Application"));
+        e_action_del("volume_increase_app");
+        mixer_context->actions.incr_app = NULL;
+     }
+
+   if (mixer_context->actions.decr_app)
+     {
+        e_action_predef_name_del("Mixer",
+                                 _("Decrease Volume of Focuse Application"));
+        e_action_del("volume_decrease_app");
+        mixer_context->actions.decr_app = NULL;
+     }
+
+   if (mixer_context->actions.incr_app)
+     {
+        e_action_predef_name_del("Mixer",
+                                 _("Mute Volume of Focuse Application"));
+        e_action_del("volume_mute_app");
+        mixer_context->actions.mute_app = NULL;
      }
 
    e_comp_canvas_keys_ungrab();
@@ -759,6 +847,126 @@ _ready(void)
 }
 
 static void
+_sink_input_get(int *volume, Eina_Bool *muted, void *data)
+{
+   Emix_Sink_Input *input;
+
+   input = data;
+
+   if (volume) *volume = input->volume.volumes[0];
+   if (muted) *muted = input->mute;
+}
+
+static void
+_sink_input_set(int volume, Eina_Bool muted, void *data)
+{
+   Emix_Sink_Input *input;
+
+   input = data;
+
+   VOLSET(volume, input->volume, input, emix_sink_input_volume_set);
+   emix_sink_input_mute_set(input, muted);
+}
+
+static int
+_sink_input_min_get(void *data)
+{
+   return 0;
+}
+
+static int
+_sink_input_max_get(void *data)
+{
+   return emix_max_volume_get();
+}
+
+static pid_t
+_get_ppid(pid_t pid)
+{
+   int fd;
+   char buf[128];
+   char *s;
+   pid_t ppid;
+
+   /* Open the status info process file provided by kernel to get the parent
+    * process id. 'man 5 proc' and go to /proc/[pid]/stat to get information
+    * about the content of this file.
+    */
+   snprintf(buf, sizeof(buf), "/proc/%d/stat", pid);
+   fd = open(buf, O_RDONLY);
+   if (fd == -1)
+     {
+        ERR("Can't open %s, maybee the process exited.", buf);
+        return -1;
+     }
+   read(fd, buf, sizeof(buf));
+   buf[sizeof(buf) - 1] = '0';
+   s = strrchr(buf, ')');
+   s += 3;
+   ppid = atoi(s);
+   close(fd);
+   return ppid;
+}
+
+static void
+_sink_input_event(int type, Emix_Sink_Input *input)
+{
+   Eina_List *clients, *l, *ll;
+   E_Client *ec;
+   E_Client_Volume_Sink *sink;
+   pid_t pid;
+
+   switch (type)
+     {
+      case EMIX_SINK_INPUT_ADDED_EVENT:
+         pid = input->pid;
+         while (42)
+           {
+              if (pid <= 1 || pid == getpid()) return;
+              clients = e_client_focus_stack_get();
+              EINA_LIST_FOREACH(clients, l, ec)
+                {
+                   if ((ec->netwm.pid == pid) && (!ec->parent))
+                     {
+                        DBG("Sink found the client %s",
+                            e_client_util_name_get(ec));
+                        sink = e_client_volume_sink_new(_sink_input_get,
+                                                 _sink_input_set,
+                                                 _sink_input_min_get,
+                                                 _sink_input_max_get,
+                                                 input);
+                        e_client_volume_sink_append(ec, sink);
+                        _client_sinks = eina_list_append(_client_sinks, sink);
+                        return;
+                     }
+                }
+              pid = _get_ppid(pid);
+           }
+         break;
+      case EMIX_SINK_INPUT_REMOVED_EVENT:
+         EINA_LIST_FOREACH(_client_sinks, l, sink)
+           {
+              if (sink->data == input)
+                {
+                   e_client_volume_sink_del(sink);
+                   _client_sinks = eina_list_remove_list(_client_sinks, l);
+                   break;
+                }
+           }
+         break;
+      case EMIX_SINK_INPUT_CHANGED_EVENT:
+         EINA_LIST_FOREACH(_client_sinks, l, sink)
+           {
+              if (sink->data == input)
+                {
+                   e_client_volume_sink_update(sink);
+                }
+           }
+         break;
+     }
+}
+
+static void
 _events_cb(void *data EINA_UNUSED, enum Emix_Event type, void *event_info)
 {
    switch (type)
@@ -774,6 +982,12 @@ _events_cb(void *data EINA_UNUSED, enum Emix_Event type, void *event_info)
       case EMIX_READY_EVENT:
          _ready();
          break;
+      case EMIX_SINK_INPUT_ADDED_EVENT:
+      case EMIX_SINK_INPUT_REMOVED_EVENT:
+      case EMIX_SINK_INPUT_CHANGED_EVENT:
+         _sink_input_event(type, event_info);
+         break;
+
       default:
          break;
      }
@@ -892,6 +1106,8 @@ err:
 E_API int
 e_modapi_shutdown(E_Module *m EINA_UNUSED)
 {
+   E_Client_Volume_Sink *sink;
+
    _actions_unregister();
    e_gadcon_provider_unregister((const E_Gadcon_Client_Class *)&_gadcon_class);
 
@@ -900,6 +1116,9 @@ e_modapi_shutdown(E_Module *m EINA_UNUSED)
         free(mixer_context->theme);
         E_FREE(mixer_context);
      }
+
+   EINA_LIST_FREE(_client_sinks, sink)
+      e_client_volume_sink_del(sink);
 
    emix_event_callback_del(_events_cb);
    emix_shutdown();

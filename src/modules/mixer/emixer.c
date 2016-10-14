@@ -24,26 +24,6 @@ _backend_init(const char *back)
    return EINA_FALSE;
 }
 
-//////////////////////////////////////////////////////////////////////////////
-
-#define VOLSET(vol, srcvol, target, func) \
-   do { \
-      Emix_Volume _v; \
-      int _pvol = srcvol.volumes[0]; \
-      if ((_pvol > 80) && (_pvol <= 100) && \
-          (vol > 100) && (vol < 120)) vol = 100; \
-      _v.channel_count = srcvol.channel_count; \
-      _v.volumes = calloc(srcvol.channel_count, sizeof(int)); \
-      if (_v.volumes) { \
-         unsigned int _i; \
-         for (_i = 0; _i < _v.channel_count; _i++) _v.volumes[_i] = vol; \
-         func(target, _v); \
-         free(_v.volumes); \
-      } \
-   } while (0)
-
-
-//////////////////////////////////////////////////////////////////////////////
 static void
 _cb_sink_port_change(void *data,
                      Evas_Object *obj,

@@ -308,6 +308,7 @@ _sink_input_cb(pa_context *c EINA_UNUSED, const pa_sink_input_info *info,
    Sink_Input *input;
    Eina_List *l;
    Sink *s;
+   const char *t;
    EINA_SAFETY_ON_NULL_RETURN(ctx);
 
    if (eol < 0)
@@ -340,6 +341,11 @@ _sink_input_cb(pa_context *c EINA_UNUSED, const pa_sink_input_info *info,
    input->icon = eina_stringshare_add(_icon_from_properties(info->proplist));
    ctx->inputs = eina_list_append(ctx->inputs, input);
 
+   if ((t = pa_proplist_gets(info->proplist, PA_PROP_APPLICATION_PROCESS_ID)))
+     {
+        input->base.pid = atoi(t);
+     }
+
    if (ctx->cb)
      ctx->cb((void *)ctx->userdata, EMIX_SINK_INPUT_ADDED_EVENT,
              (Emix_Sink_Input *)input);
@@ -353,6 +359,7 @@ _sink_input_changed_cb(pa_context *c EINA_UNUSED,
    Sink_Input *input = NULL, *i;
    Sink *s = NULL;
    Eina_List *l;
+   const char *t;
 
    EINA_SAFETY_ON_NULL_RETURN(ctx);
    if (eol < 0)
@@ -392,6 +399,10 @@ _sink_input_changed_cb(pa_context *c EINA_UNUSED,
      {
         if (s->idx == (int)info->sink)
           input->base.sink = (Emix_Sink *)s;
+     }
+   if ((t = pa_proplist_gets(info->proplist, PA_PROP_APPLICATION_PROCESS_ID)))
+     {
+        input->base.pid = atoi(t);
      }
 
    if (ctx->cb)
