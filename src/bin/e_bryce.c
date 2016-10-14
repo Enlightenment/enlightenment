@@ -3,7 +3,7 @@
 #define DEFAULT_LAYER E_LAYER_CLIENT_ABOVE
 #define E_BRYCE_TYPE 0xE31338
 
-static unsigned int bryce_version = 1;
+static unsigned int bryce_version = 2;
 
 typedef struct Bryce
 {
@@ -425,6 +425,20 @@ _bryce_zone_setup(Bryce *b)
 }
 
 static void
+_bryce_rename(Bryce *b, int num)
+{
+   char buf[1024], buf2[1024], *name, *p;
+
+   name = strdup(b->name);
+   p = strrchr(name, '_');
+   p[0] = 0;
+   snprintf(buf, sizeof(buf), "__bryce%s", name);
+   snprintf(buf2, sizeof(buf2), "__bryce%s_%d", name, num);
+   e_gadget_site_rename(buf, buf2);
+   free(name);
+}
+
+static void
 _bryce_moveresize(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
    Bryce *b = data;
@@ -511,6 +525,7 @@ _bryce_moveresize(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *event
    if (!zone) return;
    if (b->zone == zone->num) return;
    e_config_save_queue();
+   _bryce_rename(b, zone->num);
    b->zone = zone->num;
    _bryce_zone_setup(b);
    _bryce_autosize(b);
@@ -939,6 +954,7 @@ e_bryce_add(Evas_Object *parent, const char *name, E_Gadget_Site_Orient orient, 
    b->anchor = an;
    b->orient = orient;
    b->layer = DEFAULT_LAYER;
+   b->version = bryce_version;
    _bryce_create(b, parent);
    bryces->bryces = eina_list_append(bryces->bryces, b);
    e_config_save_queue();
@@ -1168,13 +1184,18 @@ e_bryce_init(void)
 
         EINA_LIST_FOREACH(bryces->bryces, l, b)
           {
-             if (b->version < 1)
+             if (b->version < 2)
                {
-                  char buf[4096];
+                  /* I broke this the first time by forgetting the __bryce prefix :(
+                   */
+                  _bryce_rename(b, b->zone);
+                  if (b->version < 1)
+                    {
+                       char buf[1024];
 
-                  snprintf(buf, sizeof(buf), "%s_%u", b->name, b->zone);
-                  e_gadget_site_rename(b->name, buf);
-                  eina_stringshare_replace(&b->name, buf);
+                       snprintf(buf, sizeof(buf), "%s_%u", b->name, b->zone);
+                       eina_stringshare_replace(&b->name, buf);
+                    }
                }
              b->version = bryce_version;
              if (!e_comp_zone_number_get(b->zone)) continue;
