@@ -11,11 +11,11 @@
 #define WRN(...)      EINA_LOG_WARN(__VA_ARGS__)
 
 #define PA_VOLUME_TO_INT(_vol) \
-   ((_vol * EMIX_VOLUME_BARRIER) / \
-    PA_VOLUME_NORM)
+   (((_vol * EMIX_VOLUME_BARRIER) / \
+    (double)PA_VOLUME_NORM) + 0.5)
 #define INT_TO_PA_VOLUME(_vol) \
-   ((PA_VOLUME_NORM * _vol) / \
-    EMIX_VOLUME_BARRIER)
+   (((PA_VOLUME_NORM * _vol) / \
+    (double)EMIX_VOLUME_BARRIER) + 0.5)
 
 typedef struct _Context
 {
