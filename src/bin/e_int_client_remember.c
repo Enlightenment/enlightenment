@@ -12,6 +12,7 @@ static Evas_Object *_advanced_create_widgets(E_Config_Dialog *cfd, Evas *evas, E
 #define MODE_NOTHING        0
 #define MODE_GEOMETRY       E_REMEMBER_APPLY_POS | E_REMEMBER_APPLY_SIZE
 #define MODE_LOCKS          E_REMEMBER_APPLY_LOCKS
+#define MODE_VOLUME         E_REMEMBER_APPLY_VOLUME
 #define MODE_GEOMETRY_LOCKS E_REMEMBER_APPLY_POS | E_REMEMBER_APPLY_SIZE | E_REMEMBER_APPLY_LOCKS
 #define MODE_ALL            E_REMEMBER_APPLY_POS | E_REMEMBER_APPLY_SIZE | E_REMEMBER_APPLY_LAYER | \
   E_REMEMBER_APPLY_LOCKS | E_REMEMBER_APPLY_BORDER | E_REMEMBER_APPLY_STICKY |                      \
@@ -62,6 +63,7 @@ struct _E_Config_Dialog_Data
       int keep_settings;
       int offer_resistance;
       int apply_opacity;
+      int apply_volume;
    } remember;
 
    int applied;
@@ -279,6 +281,8 @@ _fill_data(E_Config_Dialog_Data *cfdata)
           cfdata->remember.offer_resistance = 1;
         if (rem->apply & E_REMEMBER_APPLY_OPACITY)
           cfdata->remember.apply_opacity = 1;
+        if (rem->apply & E_REMEMBER_APPLY_VOLUME)
+          cfdata->remember.apply_volume = 1;
      }
 
    if (!rem) cfdata->mode = MODE_NOTHING;
@@ -610,6 +614,8 @@ _advanced_apply_data(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfd
      rem->apply |= E_REMEMBER_APPLY_OFFER_RESISTANCE;
    if (cfdata->remember.apply_opacity)
      rem->apply |= E_REMEMBER_APPLY_OPACITY;
+   if (cfdata->remember.apply_volume)
+     rem->apply |= E_REMEMBER_APPLY_VOLUME;
 
    if (ec && (!rem->apply && !rem->prop.desktop_file))
      {
@@ -653,6 +659,8 @@ _basic_create_widgets(E_Config_Dialog *cfd EINA_UNUSED, Evas *evas, E_Config_Dia
    ob = e_widget_radio_add(evas, _("Locks"), MODE_LOCKS, rg);
    e_widget_list_object_append(o, ob, 1, 1, 0.5);
    ob = e_widget_radio_add(evas, _("Size, Position and Locks"), MODE_GEOMETRY_LOCKS, rg);
+   e_widget_list_object_append(o, ob, 1, 1, 0.5);
+   ob = e_widget_radio_add(evas, _("Volume"), MODE_VOLUME, rg);
    e_widget_list_object_append(o, ob, 1, 1, 0.5);
    ob = e_widget_radio_add(evas, _("All"), MODE_ALL, rg);
    e_widget_list_object_append(o, ob, 1, 1, 0.5);
@@ -789,10 +797,13 @@ _advanced_create_widgets(E_Config_Dialog *cfd, Evas *evas, E_Config_Dialog_Data 
    e_widget_table_object_append(of, ob, 0, 7, 1, 1, 1, 0, 1, 0);
    oc = e_widget_check_add(evas, _("Application file or name (.desktop)"),
                            &(cfdata->remember.apply_desktop_file));
-   e_widget_table_object_append(of, oc, 0, 8, 1, 1, 1, 0, 1, 0);
+   e_widget_table_object_append(of, ob, 0, 8, 1, 1, 1, 0, 1, 0);
+   oc = e_widget_check_add(evas, _("Volume"),
+                           &(cfdata->remember.apply_volume));
+   e_widget_table_object_append(of, oc, 0, 9, 1, 1, 1, 0, 1, 0);
    ob = e_widget_entry_add(cfd->dia->win, &cfdata->desktop, NULL, NULL, NULL);
    e_widget_check_widget_disable_on_unchecked_add(oc, ob);
-   e_widget_table_object_append(of, ob, 0, 9, 2, 1, 1, 0, 1, 0);
+   e_widget_table_object_append(of, ob, 0, 10, 2, 1, 1, 0, 1, 0);
    e_widget_toolbook_page_append(o, NULL, _("Properties"), of, 1, 1, 1, 1, 0.5, 0.0);
 
    of = e_widget_table_add(e_win_evas_win_get(evas), 0);

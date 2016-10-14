@@ -133,7 +133,8 @@ e_remember_internal_save(void)
                       E_REMEMBER_APPLY_SKIP_PAGER |
                       E_REMEMBER_APPLY_SKIP_TASKBAR |
                       E_REMEMBER_APPLY_OFFER_RESISTANCE |
-                      E_REMEMBER_APPLY_OPACITY);
+                      E_REMEMBER_APPLY_OPACITY |
+                      E_REMEMBER_APPLY_VOLUME);
         _e_remember_update(ec, rem);
 
         remembers->list = eina_list_append(remembers->list, rem);
@@ -552,6 +553,22 @@ e_remember_apply(E_Remember *rem, E_Client *ec)
      ec->want_focus = 1;
    if (rem->apply & E_REMEMBER_APPLY_OPACITY)
      ec->netwm.opacity = rem->prop.opacity;
+   if (rem->apply & E_REMEMBER_APPLY_VOLUME)
+     {
+        if (!ec->volume_control_enabled)
+          {
+             ec->volume_control_enabled = EINA_TRUE;
+             ec->volume = rem->prop.volume;
+             ec->volume_min = rem->prop.volume_min;
+             ec->volume_max = rem->prop.volume_max;
+             ec->mute = rem->prop.mute;
+          }
+        else
+          {
+             e_client_volume_set(ec, rem->prop.volume);
+             e_client_volume_mute_set(ec, rem->prop.mute);
+          }
+     }
 
    if (temporary)
      _e_remember_free(rem);
@@ -788,6 +805,14 @@ _e_remember_update(E_Client *ec, E_Remember *rem)
         rem->pid = ec->netwm.pid;
         rem->apply_first_only = 1;
      }
+   if (rem->apply & E_REMEMBER_APPLY_VOLUME)
+     {
+        rem->prop.volume = ec->volume;
+        rem->prop.volume_min = ec->volume_min;
+        rem->prop.volume_max = ec->volume_max;
+        rem->prop.mute = ec->mute;
+     }
+
    rem->no_reopen = ec->internal_no_reopen;
    {
       E_Event_Remember_Update *ev;

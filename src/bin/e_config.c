@@ -385,6 +385,10 @@ _e_config_edd_init(Eina_Bool old)
    E_CONFIG_VAL(D, T, prop.desktop_file, STR);
    E_CONFIG_VAL(D, T, prop.offer_resistance, UCHAR);
    E_CONFIG_VAL(D, T, prop.opacity, UCHAR);
+   E_CONFIG_VAL(D, T, prop.volume, INT);
+   E_CONFIG_VAL(D, T, prop.volume_min, INT);
+   E_CONFIG_VAL(D, T, prop.volume_max, INT);
+   E_CONFIG_VAL(D, T, prop.mute, UCHAR);
    E_CONFIG_VAL(D, T, uuid, STR);
    E_CONFIG_VAL(D, T, pid, INT);
 

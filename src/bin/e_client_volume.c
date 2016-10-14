@@ -64,6 +64,7 @@ e_client_volume_sink_del(E_Client_Volume_Sink *sink)
    EINA_LIST_FREE(sink->clients, ec)
      {
         ec->sinks = eina_list_remove(ec->sinks, sink);
+        e_comp_object_frame_volume_update(ec->frame);
      }
    free(sink);
 }

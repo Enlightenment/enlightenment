@@ -36,6 +36,7 @@ typedef struct _E_Remember E_Remember;
 #define E_REMEMBER_APPLY_OFFER_RESISTANCE (1 << 16)
 #define E_REMEMBER_APPLY_OPACITY          (1 << 17)
 #define E_REMEMBER_APPLY_UUID             (1 << 18)
+#define E_REMEMBER_APPLY_VOLUME           (1 << 19)
 
 #define E_REMEMBER_INTERNAL_DIALOGS       (1 << 0)
 #define E_REMEMBER_INTERNAL_FM_WINS       (1 << 1)
@@ -109,6 +110,11 @@ struct _E_Remember
       const char   *command;
       const char   *desktop_file;
       unsigned char opacity;
+
+      int           volume;
+      int           volume_min;
+      int           volume_max;
+      unsigned char mute;
    } prop;
    Eina_Stringshare *uuid;
    int pid;
