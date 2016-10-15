@@ -86,6 +86,7 @@ typedef struct _E_Comp_Object
    Evas_Object         *zoomobj; // zoomap
    Evas_Object         *shobj;  // shadow object
    Evas_Object         *effect_obj; // effects object
+   Evas_Object         *frame_volume; // volume level object
    unsigned int         layer; //e_comp_canvas_layer_map(cw->ec->layer)
    Eina_List           *obj_mirror;  // extra mirror objects
    Eina_List           *obj_agent;  // extra agent objects
@@ -746,6 +747,7 @@ _e_comp_object_shadow_setup(E_Comp_Object *cw)
      {
         edje_object_part_swallow(cw->frame_object, "e.swallow.client", cw->obj);
         edje_object_part_swallow(cw->frame_object, "e.swallow.icon", cw->frame_icon);
+        edje_object_part_swallow(cw->frame_object, "e.swallow.volume", cw->frame_volume);
         if (cw->zoomap_disabled)
           edje_object_part_swallow(cw->shobj, "e.swallow.content", cw->frame_object);
         else
@@ -2410,6 +2412,7 @@ _e_comp_smart_del(Evas_Object *obj)
    evas_object_del(cw->effect_obj);
    evas_object_del(cw->shobj);
    evas_object_del(cw->frame_icon);
+   evas_object_del(cw->frame_volume);
    evas_object_del(cw->frame_object);
    evas_object_del(cw->zoomobj);
    evas_object_del(cw->input_obj);
@@ -3271,6 +3274,33 @@ e_comp_object_frame_icon_update(Evas_Object *obj)
      E_FREE_FUNC(cw->frame_icon, evas_object_del);
 }
 
+E_API void
+e_comp_object_frame_volume_update(Evas_Object *obj)
+{
+   Evas_Object *o;
+
+   API_ENTRY;
+
+   if (!cw->frame_object) return;
+   if (edje_object_part_exists(cw->frame_object, "e.swallow.volume"))
+     {
+        if (cw->ec->sinks)
+          {
+             if (!cw->frame_volume)
+               {
+                  cw->frame_volume = e_client_volume_object_add(cw->ec, e_comp->evas);
+                  edje_object_part_swallow(cw->frame_object,
+                                           "e.swallow.volume", cw->frame_volume);
+                  evas_object_show(cw->frame_volume);
+               }
+          }
+        else
+          {
+             E_FREE_FUNC(cw->frame_volume, evas_object_del);
+          }
+     }
+}
+
 E_API Eina_Bool
 e_comp_object_frame_theme_set(Evas_Object *obj, const char *name)
 {
@@ -3309,6 +3339,7 @@ e_comp_object_frame_theme_set(Evas_Object *obj, const char *name)
      {
         cw->frame_object = NULL;
         E_FREE_FUNC(cw->frame_icon, evas_object_del);
+        E_FREE_FUNC(cw->frame_volume, evas_object_del);
         evas_object_del(o);
         eina_stringshare_del(cw->frame_theme);
         cw->frame_theme = theme;
@@ -3348,8 +3379,17 @@ e_comp_object_frame_theme_set(Evas_Object *obj, const char *name)
           {
              if (cw->frame_icon)
                {
-                  if (!edje_object_part_swallow(cw->frame_object, "e.swallow.icon", cw->frame_icon))
+                  if (!edje_object_part_swallow(cw->frame_object,
+                                                "e.swallow.icon",
+                                                cw->frame_icon))
                     E_FREE_FUNC(cw->frame_icon, evas_object_del);
+               }
+             if (cw->frame_volume)
+               {
+                  if (!edje_object_part_swallow(cw->frame_object,
+                                                "e.swallow.volume",
+                                                cw->frame_volume))
+                    E_FREE_FUNC(cw->frame_volume, evas_object_del);
                }
           }
         else
@@ -3357,12 +3397,18 @@ e_comp_object_frame_theme_set(Evas_Object *obj, const char *name)
              cw->ec->changes.icon = 1;
              EC_CHANGED(cw->ec);
           }
+
+        if (cw->ec->volume_control_enabled)
+          {
+             e_comp_object_frame_volume_update(obj);
+          }
      }
    else
      {
         CRI("USER IS USING A SHITTY THEME! ABORT!!!!");
         evas_object_del(o);
         E_FREE_FUNC(cw->frame_icon, evas_object_del);
+        E_FREE_FUNC(cw->frame_volume, evas_object_del);
      }
 reshadow:
    if (cw->shobj)
