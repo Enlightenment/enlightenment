@@ -1061,6 +1061,8 @@ e_zone_edge_new(E_Zone_Edge edge)
                   evas_object_name_set(zone->MEMBER, #MEMBER); \
                   evas_object_move(zone->MEMBER, (X), (Y)); \
                   evas_object_resize(zone->MEMBER, (W), (H)); \
+                  evas_object_repeat_events_set(zone->MEMBER, 1); \
+                  evas_object_data_set(zone->MEMBER, "comp_repeat", (void*)1); \
                   evas_object_color_set(zone->MEMBER, 0, 0, 0, 0); \
                   evas_object_event_callback_add(zone->MEMBER, EVAS_CALLBACK_MOUSE_MOVE, _e_zone_cb_mouse_move, zone); \
                   evas_object_event_callback_add(zone->MEMBER, EVAS_CALLBACK_MOUSE_IN, _e_zone_cb_mouse_in, zone); \

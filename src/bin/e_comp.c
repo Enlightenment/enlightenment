@@ -700,7 +700,8 @@ _e_comp_shapes_update_object_shape_comp_helper(Evas_Object *o, Eina_Tiler *tb)
    int x, y, w, h;
 
    /* ignore hidden and pass-event objects */
-   if ((!evas_object_visible_get(o)) || evas_object_pass_events_get(o) || evas_object_repeat_events_get(o)) return;
+   if ((!evas_object_visible_get(o)) || evas_object_pass_events_get(o)) return;
+   if (evas_object_repeat_events_get(o) && (!evas_object_data_get(o, "comp_repeat"))) return;
    /* ignore canvas objects */
    if (_e_comp_shapes_update_object_checker_function_thingy(o)) return;
    SHAPE_INF("OBJ: %p:%s", o, evas_object_name_get(o) ?: evas_object_type_get(o));
