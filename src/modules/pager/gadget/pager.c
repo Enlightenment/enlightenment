@@ -837,6 +837,7 @@ _button_cb_mouse_down(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNU
    if (ev->button != 3) return;
    if(!pager_config) return;
    if (cfg_dialog) return;
+   ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
    e_gadget_configure(inst->o_pager);
 }
 
