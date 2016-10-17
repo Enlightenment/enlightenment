@@ -610,6 +610,16 @@ _bryce_popup_hide(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *event
 }
 
 static void
+_bryce_popup(Bryce *b, Evas_Object *popup)
+{
+   evas_object_event_callback_add(popup, EVAS_CALLBACK_HIDE, _bryce_popup_hide, b);
+   b->autohide_blocked++;
+   b->popups = eina_list_append(b->popups, popup);
+   if (b->autohide)
+     _bryce_autohide_show(b);
+}
+
+static void
 _bryce_del(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Bryce *b = data;
@@ -714,8 +724,10 @@ static void
 _bryce_wizard_menu(void *data, E_Menu *m EINA_UNUSED, E_Menu_Item *mi EINA_UNUSED)
 {
    Bryce *b = data;
+   Evas_Object *editor;
 
-   e_bryce_edit(b->bryce);
+   editor = e_bryce_edit(b->bryce);
+   _bryce_popup(b, editor);
 }
 
 static void
@@ -763,16 +775,6 @@ _bryce_owner_menu(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
    e_object_unref(E_OBJECT(subm));
 
    _bryce_menu_populate(b, subm);
-}
-
-static void
-_bryce_popup(Bryce *b, Evas_Object *popup)
-{
-   evas_object_event_callback_add(popup, EVAS_CALLBACK_HIDE, _bryce_popup_hide, b);
-   b->autohide_blocked++;
-   b->popups = eina_list_append(b->popups, popup);
-   if (b->autohide)
-     _bryce_autohide_show(b);
 }
 
 static void
