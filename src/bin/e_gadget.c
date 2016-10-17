@@ -716,6 +716,7 @@ _gadget_configure(E_Gadget_Config *zgc)
    zgc->cfg_object = zgc->configure(zgc->gadget);
    if (!zgc->cfg_object) return;
    evas_object_event_callback_add(zgc->cfg_object, EVAS_CALLBACK_DEL, _gadget_act_configure_object_del, zgc);
+   evas_object_smart_callback_call(zgc->display, "gadget_popup", zgc->cfg_object);
 }
 
 static Eina_Bool
