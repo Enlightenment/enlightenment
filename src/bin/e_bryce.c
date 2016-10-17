@@ -784,6 +784,26 @@ _bryce_gadget_popup(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
 }
 
 static void
+_bryce_gadget_locked(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   Bryce *b = data;
+
+   b->autohide_blocked++;
+   if (b->autohide)
+     _bryce_autohide_show(b);
+}
+
+static void
+_bryce_gadget_unlocked(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   Bryce *b = data;
+
+   b->autohide_blocked--;
+   if (b->autohide && (!b->mouse_in))
+     _bryce_autohide_hide(b);
+}
+
+static void
 _bryce_site_anchor(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
    Bryce *b = data;
@@ -814,6 +834,8 @@ _bryce_orient(Bryce *b)
    evas_object_smart_callback_add(b->site, "gadget_site_style_menu", _bryce_style_menu, b);
    evas_object_smart_callback_add(b->site, "gadget_site_owner_menu", _bryce_owner_menu, b);
    evas_object_smart_callback_add(b->site, "gadget_site_popup", _bryce_gadget_popup, b);
+   evas_object_smart_callback_add(b->site, "gadget_site_locked", _bryce_gadget_locked, b);
+   evas_object_smart_callback_add(b->site, "gadget_site_unlocked", _bryce_gadget_unlocked, b);
 }
 
 static void

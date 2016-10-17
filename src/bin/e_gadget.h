@@ -29,6 +29,10 @@
        - the anchor of the gadget site changed
       "gadget_site_gravity"
        - the gravity of the gadget site changed
+      "gadget_site_locked"
+       - the gadget site's visibility has been locked (must be visible)
+      "gadget_site_unlocked"
+       - the gadget site's visibility has been unlocked (can be hidden)
  * }
 
  * have E_Menu as event_info
