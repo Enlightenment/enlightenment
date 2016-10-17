@@ -60,6 +60,9 @@ static E_Action *resize_act;
 static E_Action *menu_act;
 static Eina_List *handlers;
 
+
+static void _bryce_act_menu_job(void *data);
+
 #define BRYCE_GET(obj) \
    Bryce *b; \
    b = evas_object_data_get((obj), "__bryce"); \
@@ -543,7 +546,12 @@ _bryce_mouse_down_post(void *data, Evas *e EINA_UNUSED)
    ev = b->event_info;
    b->event_info = NULL;
    if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return EINA_FALSE;
-   return !!e_bindings_mouse_down_evas_event_handle(E_BINDING_CONTEXT_ANY, b->e_obj_inherit, ev);
+   if (e_bindings_mouse_down_evas_event_handle(E_BINDING_CONTEXT_ANY, b->e_obj_inherit, ev))
+     return EINA_TRUE;
+   if (ev->button != 3) return EINA_FALSE;
+   b->last_timestamp = ev->timestamp;
+   _bryce_act_menu_job(b);
+   return EINA_TRUE;
 }
 
 static void
