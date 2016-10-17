@@ -291,6 +291,7 @@ _gadget_wizard_end(void *data, int id)
    E_Gadget_Config *zgc = data;
 
    zgc->id = id;
+   evas_object_smart_callback_call(zgc->site->layout, "gadget_site_unlocked", NULL);
    _gadget_object_finalize(zgc);
 }
 
@@ -307,6 +308,7 @@ _gadget_object_create(E_Gadget_Config *zgc)
      {
         if (t->wizard)
           {
+             evas_object_smart_callback_call(zgc->site->layout, "gadget_site_locked", NULL);
              t->wizard(_gadget_wizard_end, zgc);
              added = 1;
              return EINA_TRUE;
