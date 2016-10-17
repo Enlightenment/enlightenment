@@ -264,6 +264,7 @@ _clock_cb_mouse_down(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj EINA_U
    Evas_Event_Mouse_Down *ev = event;
 
    if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return;
+   ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
    if (ev->button == 1)
      {
         if (inst->popup) elm_ctxpopup_dismiss(inst->popup);
