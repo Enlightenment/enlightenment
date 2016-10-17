@@ -943,7 +943,7 @@ _bryce_act_menu_job(void *data)
 }
 
 static Eina_Bool
-_bryce_act_menu(E_Object *obj, const char *params EINA_UNUSED, E_Binding_Event_Mouse_Button *ev EINA_UNUSED)
+_bryce_act_menu(E_Object *obj, const char *params EINA_UNUSED, E_Binding_Event_Mouse_Button *ev)
 {
    Bryce *b;
    if (obj->type != E_BRYCE_TYPE) return EINA_FALSE;
