@@ -1461,6 +1461,7 @@ e_gadget_util_layout_style_init(Evas_Object *g, Evas_Object *style)
    evas_object_smart_calculate(style);
    evas_object_size_hint_min_get(style, &zgc->style.minw, &zgc->style.minh);
    evas_object_show(style);
+   evas_object_smart_callback_add(zgc->display, "gadget_popup", _gadget_popup, zgc->site);
    return prev;
 }
 
