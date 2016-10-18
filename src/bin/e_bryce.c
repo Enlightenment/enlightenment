@@ -433,8 +433,11 @@ _bryce_rename(Bryce *b, int num)
    char buf[1024], buf2[1024], *name, *p;
 
    name = strdup(b->name);
-   p = strrchr(name, '_');
-   p[0] = 0;
+   if (b->version >= 2)
+     {
+        p = strrchr(name, '_');
+        p[0] = 0;
+     }
    snprintf(buf, sizeof(buf), "__bryce%s", name);
    snprintf(buf2, sizeof(buf2), "__bryce%s_%d", name, num);
    e_gadget_site_rename(buf, buf2);
