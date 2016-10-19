@@ -454,7 +454,10 @@ _site_layout_orient(Evas_Object *o, E_Gadget_Site *zgs)
    Eina_List *l;
    double ax, ay;
    E_Gadget_Config *zgc;
+   int mw, mh, sw, sh;
 
+   evas_object_size_hint_min_get(o, &mw, &mh);
+   evas_object_size_hint_min_get(zgs->layout, &sw, &sh);
    evas_object_geometry_get(o, &x, &y, &w, &h);
    evas_object_geometry_set(zgs->events, x, y, w, h);
 
@@ -520,9 +523,14 @@ _site_layout_orient(Evas_Object *o, E_Gadget_Site *zgs)
    else if (IS_VERT(zgs->orient))
      zgs->cur_size = abs(yy - y);
 
-   evas_object_size_hint_min_set(o,
-     IS_HORIZ(zgs->orient) ? zgs->cur_size : w,
-     IS_VERT(zgs->orient) ? zgs->cur_size : h);
+   w = IS_HORIZ(zgs->orient) ? zgs->cur_size : w;
+   h = IS_VERT(zgs->orient) ? zgs->cur_size : h;
+   if ((w == mw) && (h == mh) && (sw == sh) && (sw == -1))
+     {
+        /* FIXME: https://phab.enlightenment.org/T4747 */
+        evas_object_size_hint_min_set(o, -1, -1);
+     }
+   evas_object_size_hint_min_set(o, w, h);
 }
 
 static void
@@ -599,7 +607,18 @@ _site_layout(Evas_Object *o, Evas_Object_Box_Data *priv EINA_UNUSED, void *data)
           py = gy + (-ay * oh);
 #endif
         if (eina_list_count(zgs->gadgets) == 1)
-          evas_object_size_hint_min_set(o, ow, oh);
+          {
+             int mw, mh, sw, sh;
+
+             evas_object_size_hint_min_get(o, &mw, &mh);
+             evas_object_size_hint_min_get(zgs->layout, &sw, &sh);
+             if ((ow == mw) && (oh == mh) && (sw == sh) && (sw == -1))
+               {
+                  /* FIXME: https://phab.enlightenment.org/T4747 */
+                  evas_object_size_hint_min_set(o, -1, -1);
+               }
+             evas_object_size_hint_min_set(o, ow, oh);
+          }
      }
 }
 
