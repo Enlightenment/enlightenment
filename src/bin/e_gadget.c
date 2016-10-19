@@ -887,11 +887,16 @@ _site_mouse_down(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *event_
    E_Gadget_Config *zgc;
    E_Action *act;
 
+   if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return;
    zgc = _gadget_at_xy(zgs, ev->output.x, ev->output.y, NULL);
    if (!zgc) return;
-   act = e_bindings_mouse_down_evas_event_handle(E_BINDING_CONTEXT_ANY, zgc->e_obj_inherit, event_info);
-   if (!act) return;
    ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
+   act = e_bindings_mouse_down_evas_event_handle(E_BINDING_CONTEXT_ANY, zgc->e_obj_inherit, event_info);
+   if (!act)
+     {
+        ev->event_flags &= ~EVAS_EVENT_FLAG_ON_HOLD;
+        return;
+     }
    if (act->func.end_mouse)
      {
         int x, y;
