@@ -465,7 +465,8 @@ _bryce_moveresize(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *event
      size = h;
    else
      size = w;
-   if ((w != b->last_w) || (h != b->last_h))
+   if (((b->orient == E_GADGET_SITE_ORIENT_VERTICAL) && (w != b->last_w)) ||
+       ((b->orient == E_GADGET_SITE_ORIENT_HORIZONTAL) && (h != b->last_h)))
      {
         evas_object_smart_need_recalculate_set(b->site, 1);
         evas_object_size_hint_min_set(b->site, -1, -1);
