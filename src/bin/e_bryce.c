@@ -218,20 +218,31 @@ _bryce_autosize(Bryce *b)
      }
    else
      evas_object_geometry_get(b->parent, NULL, NULL, &maxw, &maxh);
-   if (b->size_changed)
+   do
      {
-        evas_object_geometry_get(b->bryce, NULL, NULL, &w, &h);
-        elm_object_content_unset(b->scroller);
-        if (b->orient == E_GADGET_SITE_ORIENT_HORIZONTAL)
-          evas_object_resize(b->bryce, w * b->size * e_scale / h, b->size * e_scale);
-        else if (b->orient == E_GADGET_SITE_ORIENT_VERTICAL)
-          evas_object_resize(b->bryce, b->size * e_scale, h * b->size * e_scale / w);
-        evas_object_smart_need_recalculate_set(b->site, 1);
-        evas_object_size_hint_min_set(b->site, -1, -1);
-        evas_object_smart_calculate(b->site);
-        elm_object_content_set(b->scroller, b->site);
+        if (b->size_changed)
+          {
+             evas_object_geometry_get(b->bryce, NULL, NULL, &w, &h);
+             elm_object_content_unset(b->scroller);
+             if (b->orient == E_GADGET_SITE_ORIENT_HORIZONTAL)
+               {
+                  evas_object_resize(b->bryce, w * b->size * e_scale / h, b->size * e_scale);
+                  evas_object_resize(b->site, w * b->size * e_scale / h, b->size * e_scale);
+               }
+             else if (b->orient == E_GADGET_SITE_ORIENT_VERTICAL)
+               {
+                  evas_object_resize(b->bryce, b->size * e_scale, h * b->size * e_scale / w);
+                  evas_object_resize(b->site, b->size * e_scale, h * b->size * e_scale / w);
+               }
+             evas_object_smart_need_recalculate_set(b->site, 1);
+             evas_object_size_hint_min_set(b->site, -1, -1);
+             evas_object_smart_calculate(b->site);
+             elm_object_content_set(b->scroller, b->site);
+          }
+        evas_object_size_hint_min_get(b->site, &sw, &sh);
+        if ((!sw) && (!sh)) b->size_changed = 1;
      }
-   evas_object_size_hint_min_get(b->site, &sw, &sh);
+   while ((!sw) && (!sh));
    edje_object_size_min_calc(elm_layout_edje_get(b->layout), &lw, &lh);
    _bryce_position(b, lw + sw, lh + sh, &x, &y);
    if (b->orient == E_GADGET_SITE_ORIENT_HORIZONTAL)
