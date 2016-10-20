@@ -1003,10 +1003,35 @@ e_bryce_add(Evas_Object *parent, const char *name, E_Gadget_Site_Orient orient, 
 E_API void
 e_bryce_orient(Evas_Object *bryce, E_Gadget_Site_Orient orient, E_Gadget_Site_Anchor an)
 {
+   const char *loc = NULL, *loc2 = NULL;
+   char buf[1024], buf2[1024];
+
    BRYCE_GET(bryce);
    if ((b->orient == orient) && (b->anchor == an)) return;
+   if (an & E_GADGET_SITE_ANCHOR_TOP)
+     loc = "top";
+   else if (an & E_GADGET_SITE_ANCHOR_BOTTOM)
+     loc = "bottom";
+   else if (an & E_GADGET_SITE_ANCHOR_LEFT)
+     loc = "left";
+   else if (an & E_GADGET_SITE_ANCHOR_RIGHT)
+     loc = "right";
+   if (an & E_GADGET_SITE_ANCHOR_RIGHT)
+     loc2 = "right";
+   else if (an & E_GADGET_SITE_ANCHOR_LEFT)
+     loc2 = "left";
+   else if (an & E_GADGET_SITE_ANCHOR_TOP)
+     loc2 = "top";
+   else if (an & E_GADGET_SITE_ANCHOR_BOTTOM)
+     loc2 = "bottom";
+
+   snprintf(buf, sizeof(buf), "__bryce%s", b->name);
+   snprintf(buf2, sizeof(buf2), "__brycebryce_%s_%s_%d", loc, loc2, b->zone);
+   e_gadget_site_rename(buf, buf2);
    b->orient = orient;
    b->anchor = an;
+   snprintf(buf2, sizeof(buf2), "bryce_%s_%s_%d", loc, loc2, b->zone);
+   eina_stringshare_replace(&b->name, buf2);
    _bryce_orient(b);
    _bryce_autosize(b);
 }
