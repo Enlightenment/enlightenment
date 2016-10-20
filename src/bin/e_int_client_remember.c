@@ -418,7 +418,10 @@ _basic_apply_data(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfdata
 {
    /* Actually take our cfdata settings and apply them in real life */
    E_Client *ec = cfdata->client;
-   E_Remember *rem = cfdata->backup_rem ?: ec->remember;
+   E_Remember *rem = ec->remember;
+
+   if (rem && (rem->apply & E_REMEMBER_APPLY_UUID))
+     rem = cfdata->backup_rem;
 
    if (cfdata->mode == MODE_NOTHING)
      {
@@ -434,14 +437,10 @@ _basic_apply_data(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfdata
    if (!rem)
      {
         rem = e_remember_new();
-        if (rem)
-          {
-             if ((!ec->remember) || (!(ec->remember->apply & E_REMEMBER_APPLY_UUID)))
-               ec->remember = rem;
-             cfdata->applied = 0;
-          }
-        else
-          return 0;
+        if (!rem) return 0;
+        cfdata->applied = 0;
+        if (ec->remember && (ec->remember->apply & E_REMEMBER_APPLY_UUID))
+          cfdata->backup_rem = rem;
      }
 
    e_remember_default_match_set(rem, cfdata->client);
