@@ -37,10 +37,16 @@ _e_comp_wl_session_recovery_get_uuid(struct wl_client *client EINA_UNUSED, struc
    if (ec->internal || ec->uuid) return;
    uuid_generate(u);
    uuid_unparse_lower(u, uuid);
-   eina_stringshare_replace(&ec->uuid, uuid);
    zwp_e_session_recovery_send_create_uuid(resource, surface, uuid);
    if (ec->remember)
      e_remember_unuse(ec->remember);
+   else
+     {
+        ec->remember = e_remember_find_usable(ec);
+        if (ec->remember)
+          e_remember_apply(ec->remember, ec);
+     }
+   eina_stringshare_replace(&ec->uuid, uuid);
    ec->remember = e_remember_new();
    e_remember_use(ec->remember);
    ec->remember->apply = E_REMEMBER_APPLY_POS | E_REMEMBER_APPLY_SIZE | E_REMEMBER_APPLY_DESKTOP |
