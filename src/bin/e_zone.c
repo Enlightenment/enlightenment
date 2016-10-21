@@ -1334,6 +1334,9 @@ e_zone_useful_geometry_dirty(E_Zone *zone)
    E_OBJECT_CHECK(zone);
    E_OBJECT_TYPE_CHECK(zone, E_ZONE_TYPE);
 
+   /* ignore if pending event already exists */
+   if (zone->useful_geometry_dirty) return;
+
    ev = E_NEW(E_Event_Zone_Move_Resize, 1);
    ev->zone = zone;
    e_object_ref(E_OBJECT(ev->zone));
