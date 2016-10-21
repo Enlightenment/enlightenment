@@ -15,6 +15,9 @@
 int _e_emix_log_domain;
 static Eina_Bool init;
 static Eina_List *_client_sinks = NULL;
+static Eina_List *_client_mixers = NULL;
+static Eina_List *_client_handlers = NULL;
+static E_Client_Menu_Hook *_border_hook = NULL;
 
 /* module requirements */
 E_API E_Module_Api e_modapi =
@@ -83,6 +86,15 @@ struct _Instance
    Evas_Object *check;
 
    Eina_Bool mute;
+};
+
+typedef struct _Client_Mixer Client_Mixer;
+struct _Client_Mixer
+{
+   Evas_Object *win;
+   Evas_Object *volume;
+   Evas_Object *mute;
+   E_Client *ec;
 };
 
 static Context *mixer_context = NULL;
@@ -1034,6 +1046,195 @@ _backend_changed(const char *backend, void *data EINA_UNUSED)
      ERR("Could not load backend: %s", backend);
 }
 
+static void
+_bd_hook_volume_changed(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
+{
+   E_Client *ec;
+
+   ec = data;
+
+   e_client_volume_set(ec, elm_slider_value_get(obj));
+}
+
+static void
+_bd_hook_mute_changed(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
+{
+   E_Client *ec;
+
+   ec = data;
+
+   e_client_volume_mute_set(ec, elm_check_state_get(obj));
+}
+
+static Eina_Bool
+_e_client_volume_changed(void *data EINA_UNUSED, int type, void *event)
+{
+   E_Event_Client *ev;
+   Client_Mixer *cm;
+   Eina_List *l;
+
+   ev = event;
+
+   EINA_LIST_FOREACH(_client_mixers, l, cm)
+     {
+        if (cm->ec == ev->ec)
+          {
+             elm_slider_value_set(cm->volume, cm->ec->volume);
+             break;
+          }
+     }
+
+   return ECORE_CALLBACK_PASS_ON;
+}
+
+static Eina_Bool
+_e_client_mute_changed(void *data EINA_UNUSED, int type, void *event)
+{
+   E_Event_Client *ev;
+   Client_Mixer *cm;
+   Eina_List *l;
+
+   ev = event;
+
+   EINA_LIST_FOREACH(_client_mixers, l, cm)
+     {
+        if (cm->ec == ev->ec)
+          {
+             elm_check_state_set(cm->mute, !!cm->ec->mute);
+             break;
+          }
+     }
+
+   return ECORE_CALLBACK_PASS_ON;
+}
+
+static void
+_client_mixer_del(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   Client_Mixer *cm;
+
+   cm = data;
+
+   _client_mixers = eina_list_remove(_client_mixers, cm);
+   free(cm);
+}
+
+static Eina_Bool
+_e_client_remove(void *data EINA_UNUSED, int type, void *event)
+{
+   E_Event_Client *ev;
+   Client_Mixer *cm;
+   Eina_List *l;
+
+   ev = event;
+
+   EINA_LIST_FOREACH(_client_mixers, l, cm)
+     {
+        if (cm->ec == ev->ec)
+          {
+             evas_object_event_callback_del_full(cm->win, EVAS_CALLBACK_DEL,
+                                                 _client_mixer_del, cm);
+             evas_object_del(cm->win);
+             _client_mixers = eina_list_remove_list(_client_mixers, l);
+             free(cm);
+             break;
+          }
+     }
+
+   return ECORE_CALLBACK_PASS_ON;
+}
+
+static void
+_bd_hook_cb(void *data, E_Menu *m EINA_UNUSED, E_Menu_Item *it EINA_UNUSED)
+{
+   E_Client *ec, *c;
+   Client_Mixer *cm;
+   Evas_Object *win, *popup, *bx, *o;
+   Eina_List *l;
+   char buf[4096];
+   int w, h;
+
+   ec = data;
+
+   EINA_LIST_FOREACH(_client_mixers, l, cm)
+     {
+        if (cm->ec == ec)
+          return;
+     }
+   cm = E_NEW(Client_Mixer, 1);
+   cm->ec = ec;
+
+   win = elm_popup_add(e_comp->elm);
+   elm_popup_allow_events_set(win, EINA_TRUE);
+
+   bx = elm_box_add(win);
+   elm_box_horizontal_set(bx, EINA_FALSE);
+   elm_object_content_set(win, bx);
+   evas_object_size_hint_weight_set(bx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+
+   o = elm_slider_add(bx);
+   elm_slider_horizontal_set(o, EINA_TRUE);
+   elm_slider_min_max_set(o, ec->volume_min, ec->volume_max);
+   elm_slider_span_size_set(o, ec->volume_max * elm_config_scale_get());
+   elm_slider_unit_format_set(o, "%.0f");
+   elm_slider_indicator_format_set(o, "%.0f");
+   evas_object_size_hint_weight_set(o, 0.0, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(o, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   elm_slider_value_set(o, ec->volume);
+   evas_object_smart_callback_add(o, "changed", _bd_hook_volume_changed, ec);
+   elm_box_pack_end(bx, o);
+   evas_object_show(o);
+   cm->volume = o;
+
+   o = elm_check_add(bx);
+   elm_object_text_set(o, _("Mute"));
+   evas_object_size_hint_align_set(o, 0.0, EVAS_HINT_FILL);
+   elm_check_state_set(o, !!ec->mute);
+   evas_object_smart_callback_add(o, "changed", _bd_hook_mute_changed, ec);
+   elm_box_pack_end(bx, o);
+   evas_object_show(o);
+   cm->mute = o;
+
+   evas_object_show(bx);
+   evas_object_size_hint_min_get(bx, &w, &h);
+   evas_object_resize(win, w, h);
+   evas_object_show(win);
+   popup = e_comp_object_util_add(win, E_COMP_OBJECT_TYPE_NONE);
+   evas_object_layer_set(popup, E_LAYER_POPUP);
+   e_comp_object_util_center(popup);
+   evas_object_show(popup);
+   e_comp_object_util_autoclose(popup, NULL, NULL, NULL);
+   _client_mixers = eina_list_append(_client_mixers, cm);
+   evas_object_event_callback_add(popup, EVAS_CALLBACK_DEL, _client_mixer_del, cm);
+   cm->win = popup;
+}
+
+static void
+_bd_hook(void *data EINA_UNUSED, E_Client *ec)
+{
+   E_Menu_Item *it;
+   E_Menu *m;
+   Eina_List *l;
+
+   if (!ec->volume_control_enabled) return;
+   m = ec->border_menu;
+
+   /* Find the first separator and add us below him */
+   EINA_LIST_FOREACH(m->items, l, it)
+     {
+        if (it->separator) break;
+     }
+   if ((!it) || (!it->separator)) return;
+
+   it = e_menu_item_new_relative(m, it);
+   e_menu_item_label_set(it, _("Volume"));
+   e_util_menu_item_theme_icon_set(it, "preferences-desktop-mixer");
+   e_menu_item_callback_set(it, _bd_hook_cb, ec);
+
+   it = e_menu_item_new_relative(m, it);
+   e_menu_item_separator_set(it, EINA_TRUE);
+}
+
 E_API void *
 e_modapi_init(E_Module *m)
 {
@@ -1095,6 +1296,16 @@ e_modapi_init(E_Module *m)
    e_gadcon_provider_register(&_gadcon_class);
    _actions_register();
 
+   _border_hook = e_int_client_menu_hook_add(_bd_hook, NULL);
+   E_LIST_HANDLER_APPEND(_client_handlers, E_EVENT_CLIENT_VOLUME,
+                         _e_client_volume_changed, NULL);
+   E_LIST_HANDLER_APPEND(_client_handlers, E_EVENT_CLIENT_MUTE,
+                         _e_client_mute_changed, NULL);
+   E_LIST_HANDLER_APPEND(_client_handlers, E_EVENT_CLIENT_UNMUTE,
+                         _e_client_mute_changed, NULL);
+   E_LIST_HANDLER_APPEND(_client_handlers, E_EVENT_CLIENT_REMOVE,
+                         _e_client_remove, NULL);
+
    return m;
 
 err:
@@ -1107,7 +1318,18 @@ E_API int
 e_modapi_shutdown(E_Module *m EINA_UNUSED)
 {
    E_Client_Volume_Sink *sink;
+   Client_Mixer *cm;
 
+   E_FREE_LIST(_client_handlers, ecore_event_handler_del);
+   EINA_LIST_FREE(_client_mixers, cm)
+     {
+        evas_object_event_callback_del_full(cm->win, EVAS_CALLBACK_DEL,
+                                            _client_mixer_del, cm);
+        evas_object_del(cm->win);
+        free(cm);
+     }
+
+   e_int_client_menu_hook_del(_border_hook);
    _actions_unregister();
    e_gadcon_provider_unregister((const E_Gadcon_Client_Class *)&_gadcon_class);
 
