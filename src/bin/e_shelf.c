@@ -1193,6 +1193,8 @@ _e_shelf_free(E_Shelf *es)
    if (!es->dummy)
      _e_shelf_bindings_del(es);
 
+   evas_object_event_callback_del(es->comp_object, EVAS_CALLBACK_HIDE, _e_shelf_hidden);
+
    E_FREE_LIST(es->handlers, ecore_event_handler_del);
    E_FREE_LIST(es->zone_obstacles, e_object_del);
 
