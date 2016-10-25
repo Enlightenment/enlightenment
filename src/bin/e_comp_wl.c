@@ -2810,6 +2810,9 @@ e_comp_wl_init(void)
         return EINA_FALSE;
      }
 
+   /* Block session recovery for internal windows */
+   ecore_wl2_session_recovery_disable();
+
    /* set gl available if we have ecore_evas support */
    if (ecore_evas_engine_type_supported_get(ECORE_EVAS_ENGINE_WAYLAND_EGL) ||
        ecore_evas_engine_type_supported_get(ECORE_EVAS_ENGINE_OPENGL_DRM))
