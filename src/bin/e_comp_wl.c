@@ -2831,7 +2831,6 @@ e_comp_wl_init(void)
         if (e_randr2_init())
           e_randr2_screens_setup(-1, -1);
         elm_config_preferred_engine_set("wayland_shm");
-        elm_config_softcursor_mode_set(ELM_SOFTCURSOR_MODE_OFF);
      }
    e_util_env_set("WAYLAND_DEBUG", "0");
    e_util_env_set("ELM_DISPLAY", "wl");
