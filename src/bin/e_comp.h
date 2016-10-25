@@ -76,6 +76,16 @@ typedef struct E_Comp_Screen_Iface
    Eina_Bool (*key_up)(Ecore_Event_Key *ev);
 } E_Comp_Screen_Iface;
 
+/* struct to hold canvas objects so that abi doesn't break
+ * when new objects are added
+ */
+typedef struct E_Comp_Canvas
+{
+   Evas_Object *bg_blank_object; //black blocker rect to cover background artifacts
+   Evas_Object *fps_bg;
+   Evas_Object *fps_fg;
+} E_Comp_Canvas;
+
 struct _E_Comp
 {
    E_Object e_obj_inherit;
@@ -85,9 +95,9 @@ struct _E_Comp
    Ecore_Window  root; //x11 root window
    Ecore_Evas     *ee; //canvas
    Ecore_Window  ee_win; //canvas window
+   E_Comp_Canvas *canvas;
    Evas_Object    *elm; //elm win base
    Evas           *evas; //canvas
-   Evas_Object    *bg_blank_object; //black blocker rect to cover background artifacts
    Eina_List      *zones; //list of E_Zones
    E_Pointer      *pointer;
    Eina_List *clients; //list of all E_Clients
@@ -128,8 +138,6 @@ struct _E_Comp
    Ecore_Animator *render_animator; //animator for fixed time rendering
    Ecore_Job      *shape_job; //job to update x11 input shapes
    Ecore_Job      *update_job; //job to trigger render updates
-   Evas_Object    *fps_bg;
-   Evas_Object    *fps_fg;
    Ecore_Timer    *nocomp_delay_timer; //delay before activating nocomp in x11
    Ecore_Timer    *nocomp_override_timer; //delay before overriding nocomp in x11
    int             animating; //number of animating comp objects

@@ -289,12 +289,12 @@ e_comp_canvas_init(int w, int h)
    if (e_first_frame)
      evas_event_callback_add(e_comp->evas, EVAS_CALLBACK_RENDER_POST, _e_comp_canvas_cb_first_frame, NULL);
    o = evas_object_rectangle_add(e_comp->evas);
-   e_comp->bg_blank_object = o;
+   e_comp->canvas->bg_blank_object = o;
    evas_object_layer_set(o, E_LAYER_BOTTOM);
    evas_object_move(o, 0, 0);
    evas_object_resize(o, e_comp->w, e_comp->h);
    evas_object_color_set(o, 0, 0, 0, 255);
-   evas_object_name_set(o, "comp->bg_blank_object");
+   evas_object_name_set(o, "comp->canvas->bg_blank_object");
    evas_object_event_callback_add(o, EVAS_CALLBACK_MOUSE_DOWN, (Evas_Object_Event_Cb)_e_comp_canvas_cb_mouse_down, NULL);
    evas_object_event_callback_add(o, EVAS_CALLBACK_MOUSE_UP, (Evas_Object_Event_Cb)_e_comp_canvas_cb_mouse_up, NULL);
    evas_object_event_callback_add(o, EVAS_CALLBACK_MOUSE_IN, (Evas_Object_Event_Cb)_e_comp_canvas_cb_mouse_in, NULL);
@@ -346,8 +346,8 @@ e_comp_canvas_clear(void)
    evas_event_freeze(e_comp->evas);
    edje_freeze();
 
-   E_FREE_FUNC(e_comp->fps_fg, evas_object_del);
-   E_FREE_FUNC(e_comp->fps_bg, evas_object_del);
+   E_FREE_FUNC(e_comp->canvas->fps_fg, evas_object_del);
+   E_FREE_FUNC(e_comp->canvas->fps_bg, evas_object_del);
    E_FREE_FUNC(e_comp->autoclose.rect, evas_object_del);
    E_FREE_FUNC(e_comp->shape_job, ecore_job_del);
    E_FREE_FUNC(e_comp->pointer, e_object_del);

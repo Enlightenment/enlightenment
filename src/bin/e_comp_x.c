@@ -5457,7 +5457,7 @@ _e_comp_x_setup(Ecore_X_Window root, int w, int h)
      e_pointer_window_add(e_comp->pointer, e_comp->root);
    _e_comp_x_manage_windows();
 
-   return !!e_comp->bg_blank_object;
+   return !!e_comp->canvas->bg_blank_object;
 }
 
 static Eina_Bool

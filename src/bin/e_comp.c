@@ -200,28 +200,28 @@ _e_comp_fps_update(void)
 {
    if (conf->fps_show)
      {
-        if (e_comp->fps_bg) return;
+        if (e_comp->canvas->fps_bg) return;
 
-        e_comp->fps_bg = evas_object_rectangle_add(e_comp->evas);
-        evas_object_color_set(e_comp->fps_bg, 0, 0, 0, 128);
-        evas_object_layer_set(e_comp->fps_bg, E_LAYER_MAX);
-        evas_object_name_set(e_comp->fps_bg, "e_comp->fps_bg");
-        evas_object_lower(e_comp->fps_bg);
-        evas_object_show(e_comp->fps_bg);
+        e_comp->canvas->fps_bg = evas_object_rectangle_add(e_comp->evas);
+        evas_object_color_set(e_comp->canvas->fps_bg, 0, 0, 0, 128);
+        evas_object_layer_set(e_comp->canvas->fps_bg, E_LAYER_MAX);
+        evas_object_name_set(e_comp->canvas->fps_bg, "e_comp->canvas->fps_bg");
+        evas_object_lower(e_comp->canvas->fps_bg);
+        evas_object_show(e_comp->canvas->fps_bg);
 
-        e_comp->fps_fg = evas_object_text_add(e_comp->evas);
-        evas_object_text_font_set(e_comp->fps_fg, "Sans", 10);
-        evas_object_text_text_set(e_comp->fps_fg, "???");
-        evas_object_color_set(e_comp->fps_fg, 255, 255, 255, 255);
-        evas_object_layer_set(e_comp->fps_fg, E_LAYER_MAX);
-        evas_object_name_set(e_comp->fps_bg, "e_comp->fps_fg");
-        evas_object_stack_above(e_comp->fps_fg, e_comp->fps_bg);
-        evas_object_show(e_comp->fps_fg);
+        e_comp->canvas->fps_fg = evas_object_text_add(e_comp->evas);
+        evas_object_text_font_set(e_comp->canvas->fps_fg, "Sans", 10);
+        evas_object_text_text_set(e_comp->canvas->fps_fg, "???");
+        evas_object_color_set(e_comp->canvas->fps_fg, 255, 255, 255, 255);
+        evas_object_layer_set(e_comp->canvas->fps_fg, E_LAYER_MAX);
+        evas_object_name_set(e_comp->canvas->fps_bg, "e_comp->canvas->fps_fg");
+        evas_object_stack_above(e_comp->canvas->fps_fg, e_comp->canvas->fps_bg);
+        evas_object_show(e_comp->canvas->fps_fg);
      }
    else
      {
-        E_FREE_FUNC(e_comp->fps_fg, evas_object_del);
-        E_FREE_FUNC(e_comp->fps_bg, evas_object_del);
+        E_FREE_FUNC(e_comp->canvas->fps_fg, evas_object_del);
+        E_FREE_FUNC(e_comp->canvas->fps_bg, evas_object_del);
      }
 }
 
@@ -425,9 +425,9 @@ _e_comp_cb_update(void)
         if (e_comp->frameskip >= conf->fps_average_range)
           {
              e_comp->frameskip = 0;
-             evas_object_text_text_set(e_comp->fps_fg, buf);
+             evas_object_text_text_set(e_comp->canvas->fps_fg, buf);
           }
-        evas_object_geometry_get(e_comp->fps_fg, NULL, NULL, &w, &h);
+        evas_object_geometry_get(e_comp->canvas->fps_fg, NULL, NULL, &w, &h);
         w += 8;
         h += 8;
         z = e_zone_current_get();
@@ -455,9 +455,9 @@ _e_comp_cb_update(void)
                   break;
                }
           }
-        evas_object_move(e_comp->fps_bg, x, y);
-        evas_object_resize(e_comp->fps_bg, w, h);
-        evas_object_move(e_comp->fps_fg, x + 4, y + 4);
+        evas_object_move(e_comp->canvas->fps_bg, x, y);
+        evas_object_resize(e_comp->canvas->fps_bg, w, h);
+        evas_object_move(e_comp->canvas->fps_fg, x + 4, y + 4);
      }
    if (conf->lock_fps)
      {
@@ -581,7 +581,7 @@ _e_comp_shapes_update_object_checker_function_thingy(Evas_Object *o)
    Eina_List *l;
    E_Zone *zone;
 
-   if (o == e_comp->bg_blank_object) return EINA_TRUE;
+   if (o == e_comp->canvas->bg_blank_object) return EINA_TRUE;
    EINA_LIST_FOREACH(e_comp->zones, l, zone)
      {
         if ((o == zone->over) || (o == zone->base)) return EINA_TRUE;
@@ -851,7 +851,7 @@ _e_comp_free(E_Comp *c)
    if (c->nocomp_delay_timer) ecore_timer_del(c->nocomp_delay_timer);
    if (c->nocomp_override_timer) ecore_timer_del(c->nocomp_override_timer);
    ecore_job_del(c->shape_job);
-
+   free(c->canvas);
    free(c);
 }
 
@@ -1363,6 +1363,7 @@ e_comp_new(void)
      CRI("CANNOT REPLACE EXISTING COMPOSITOR");
    e_comp = E_OBJECT_ALLOC(E_Comp, E_COMP_TYPE, _e_comp_free);
    if (!e_comp) return NULL;
+   e_comp->canvas = E_NEW(E_Comp_Canvas, 1);
 
    e_comp->render_animator = ecore_animator_add(_e_comp_cb_animator, NULL);
    ecore_animator_freeze(e_comp->render_animator);
