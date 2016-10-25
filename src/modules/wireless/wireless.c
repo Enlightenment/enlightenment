@@ -946,6 +946,7 @@ _wireless_gadget_mouse_down(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, v
 
    zone = e_zone_current_get();
    evas_object_resize(wireless_popup.popup, zone->w / 5, zone->h / 3);
+   evas_object_size_hint_min_set(box, zone->w / 5, zone->h / 3);
    evas_object_show(wireless_popup.popup);
    evas_object_event_callback_add(wireless_popup.popup, EVAS_CALLBACK_DEL, _wireless_popup_del, inst);
 }
