@@ -2902,8 +2902,6 @@ e_comp_wl_shutdown(void)
    /*      free(global); */
    /*   } */
 
-   elm_config_softcursor_mode_set(ELM_SOFTCURSOR_MODE_AUTO);
-
    if (e_comp_wl->wl.shm) wl_shm_destroy(e_comp_wl->wl.shm);
    _e_comp_wl_gl_shutdown();
 
