@@ -188,6 +188,8 @@ _gadget_reparent(E_Gadget_Site *zgs, E_Gadget_Config *zgc)
    if (!zgs->orient)
      {
         evas_object_layer_set(zgc->display, evas_object_layer_get(zgs->layout));
+        if (evas_object_visible_get(zgs->events))
+          evas_object_show(zgc->display);
         return;
      }
    switch (zgs->gravity)
@@ -1159,6 +1161,22 @@ _site_style(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUS
 }
 
 static void
+_site_visibility(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
+{
+   E_Gadget_Site *zgs = data;
+   E_Gadget_Config *zgc;
+   Eina_List *l;
+   Eina_Bool vis = evas_object_visible_get(obj);
+
+   EINA_LIST_FOREACH(zgs->gadgets, l, zgc)
+     if (zgc->display)
+       {
+          if (vis) evas_object_show(zgc->display);
+          else evas_object_hide(zgc->display);
+       }
+}
+
+static void
 _site_create(E_Gadget_Site *zgs)
 {
    zgs->layout = elm_box_add(e_comp->elm);
@@ -1183,6 +1201,11 @@ _site_create(E_Gadget_Site *zgs)
    evas_object_repeat_events_set(zgs->events, 1);
    evas_object_show(zgs->events);
    evas_object_event_callback_add(zgs->events, EVAS_CALLBACK_MOUSE_DOWN, _site_mouse_down, zgs);
+   if (!zgs->orient)
+     {
+        evas_object_event_callback_add(zgs->layout, EVAS_CALLBACK_SHOW, _site_visibility, zgs);
+        evas_object_event_callback_add(zgs->layout, EVAS_CALLBACK_HIDE, _site_visibility, zgs);
+     }
 
    evas_object_data_set(zgs->layout, "__e_gadget_site", zgs);
    E_LIST_FOREACH(zgs->gadgets, _gadget_object_create);
