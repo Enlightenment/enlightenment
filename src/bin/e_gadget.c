@@ -96,8 +96,9 @@ typedef struct Gadget_Item
 
 #define DESKLOCK_DEMO_LAYER (E_LAYER_CLIENT_POPUP - 100)
 
-static Eina_List *desklock_handlers;
-static Evas_Object *desklock_rect;
+static Eina_List *desktop_handlers;
+static Evas_Object *desktop_rect;
+static Evas_Object *desktop_editor;
 static Eina_Bool added = 1;
 
 static Evas_Object *pointer_site;
@@ -106,6 +107,8 @@ static Eina_List *handlers;
 static Eina_Hash *gadget_types;
 static E_Gadget_Sites *sites;
 static Ecore_Event_Handler *comp_add_handler;
+
+static Evas_Object *comp_site;
 
 static E_Action *move_act;
 static E_Action *resize_act;
@@ -118,6 +121,12 @@ static E_Config_DD *edd_gadget;
 
 static void _gadget_object_finalize(E_Gadget_Config *zgc);
 static void _editor_pointer_site_init(E_Gadget_Site_Orient orient, Evas_Object *site, Evas_Object *editor, Eina_Bool );
+
+static void
+_comp_site_resize(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   evas_object_resize(data, e_comp->w, e_comp->h);
+}
 
 static void
 _gadget_free(E_Gadget_Config *zgc)
@@ -1793,6 +1802,11 @@ e_gadget_init(void)
    menu_act->func.go_mouse = _gadget_act_menu;
 
    comp_add_handler = ecore_event_handler_add(E_EVENT_COMP_OBJECT_ADD, (Ecore_Event_Handler_Cb)_site_auto_comp_object_handler, NULL);
+
+   comp_site = e_comp->canvas->gadget_site = e_gadget_site_add(E_GADGET_SITE_ORIENT_NONE, "__desktop");
+   evas_object_event_callback_add(e_comp->canvas->bg_blank_object, EVAS_CALLBACK_RESIZE, _comp_site_resize, comp_site);
+   evas_object_layer_set(comp_site, E_LAYER_DESKTOP);
+   evas_object_resize(comp_site, e_comp->w, e_comp->h);
 }
 
 EINTERN void
@@ -2052,18 +2066,28 @@ e_gadget_site_edit(Evas_Object *site)
    return comp_object;
 }
 
+static void
+_edit_end()
+{
+   if (desktop_editor)
+     {
+        E_Action *act;
+
+        act = e_action_find("desk_deskshow_toggle");
+        if (act) act->func.go(E_OBJECT(e_comp_object_util_zone_get(desktop_editor)), NULL);
+        evas_object_hide(desktop_editor);
+        E_FREE_FUNC(desktop_editor, evas_object_del);
+     }
+   E_FREE_FUNC(desktop_rect, evas_object_del);
+   E_FREE_LIST(desktop_handlers, ecore_event_handler_del);
+   e_comp_ungrab_input(1, 1);
+}
 
 static void
 _gadget_desklock_del(void)
 {
    e_desklock_hide();
-}
-
-static void
-_edit_end()
-{
-   E_FREE_LIST(desklock_handlers, ecore_event_handler_del);
-   e_comp_ungrab_input(1, 1);
+   _edit_end();
 }
 
 static void
@@ -2081,7 +2105,7 @@ _gadget_desklock_clear(void)
 }
 
 static Eina_Bool
-_gadget_key_handler(void *d EINA_UNUSED, int t EINA_UNUSED, Ecore_Event_Key *ev)
+_gadget_desklock_key_handler(void *d EINA_UNUSED, int t EINA_UNUSED, Ecore_Event_Key *ev)
 {
    if (eina_streq(ev->key, "Escape"))
      _gadget_desklock_del();
@@ -2091,7 +2115,7 @@ _gadget_key_handler(void *d EINA_UNUSED, int t EINA_UNUSED, Ecore_Event_Key *ev)
 }
 
 static void
-_gadget_mouse_up_handler()
+_gadget_desklock_mouse_up_handler()
 {
    if (!added)
      _gadget_desklock_del();
@@ -2120,7 +2144,6 @@ _gadget_desklock_handler(void *d EINA_UNUSED, int t EINA_UNUSED, E_Event_Comp_Ob
    evas_object_layer_set(site, DESKLOCK_DEMO_LAYER);
    comp_object = e_gadget_site_edit(site);
    e_comp_object_util_del_list_append(ev->comp_object, comp_object);
-   e_comp_object_util_del_list_append(ev->comp_object, desklock_rect);
 
    memset(&n, 0, sizeof(E_Notification_Notify));
    n.timeout = 3000;
@@ -2135,15 +2158,70 @@ _gadget_desklock_handler(void *d EINA_UNUSED, int t EINA_UNUSED, E_Event_Comp_Ob
 E_API void
 e_gadget_site_desklock_edit(void)
 {
-   desklock_rect = evas_object_rectangle_add(e_comp->evas);
-   evas_object_event_callback_add(desklock_rect, EVAS_CALLBACK_DEL, _edit_end, NULL);
-   evas_object_color_set(desklock_rect, 0, 0, 0, 0);
-   evas_object_resize(desklock_rect, e_comp->w, e_comp->h);
-   evas_object_layer_set(desklock_rect, DESKLOCK_DEMO_LAYER);
-   evas_object_show(desklock_rect);
-   E_LIST_HANDLER_APPEND(desklock_handlers, E_EVENT_COMP_OBJECT_ADD, _gadget_desklock_handler, NULL);
-   E_LIST_HANDLER_APPEND(desklock_handlers, ECORE_EVENT_KEY_DOWN, _gadget_key_handler, NULL);
-   E_LIST_HANDLER_APPEND(desklock_handlers, ECORE_EVENT_MOUSE_BUTTON_UP, _gadget_mouse_up_handler, NULL);
+   desktop_rect = evas_object_rectangle_add(e_comp->evas);
+   evas_object_color_set(desktop_rect, 0, 0, 0, 0);
+   evas_object_resize(desktop_rect, e_comp->w, e_comp->h);
+   evas_object_layer_set(desktop_rect, DESKLOCK_DEMO_LAYER);
+   evas_object_show(desktop_rect);
+   E_LIST_HANDLER_APPEND(desktop_handlers, E_EVENT_COMP_OBJECT_ADD, _gadget_desklock_handler, NULL);
+   E_LIST_HANDLER_APPEND(desktop_handlers, ECORE_EVENT_KEY_DOWN, _gadget_desklock_key_handler, NULL);
+   E_LIST_HANDLER_APPEND(desktop_handlers, ECORE_EVENT_MOUSE_BUTTON_UP, _gadget_desklock_mouse_up_handler, NULL);
    e_desklock_demo();
    e_comp_grab_input(1, 1);
+}
+
+static Eina_Bool
+_gadget_desktop_key_handler(void *data, int t EINA_UNUSED, Ecore_Event_Key *ev)
+{
+   if (eina_streq(ev->key, "Escape"))
+     _edit_end();
+   else if (eina_streq(ev->key, "Delete") || eina_streq(ev->key, "Backspace"))
+     {
+        E_Gadget_Site *zgs = data;
+        E_LIST_FOREACH(zgs->gadgets, _gadget_remove);
+     }
+   return ECORE_CALLBACK_DONE;
+}
+
+static void
+_gadget_desktop_mouse_up_handler()
+{
+   if (!added)
+     _edit_end();
+   added = 0;
+}
+
+E_API void
+e_gadget_site_desktop_edit(Evas_Object *site)
+{
+   E_Action *act;
+   E_Notification_Notify n;
+
+   ZGS_GET(site);
+
+   desktop_rect = evas_object_rectangle_add(e_comp->evas);
+   evas_object_event_callback_add(desktop_rect, EVAS_CALLBACK_DEL, _edit_end, NULL);
+   evas_object_color_set(desktop_rect, 0, 0, 0, 0);
+   evas_object_resize(desktop_rect, e_comp->w, e_comp->h);
+   evas_object_layer_set(desktop_rect, E_LAYER_DESKTOP);
+   evas_object_show(desktop_rect);
+   E_LIST_HANDLER_APPEND(desktop_handlers, ECORE_EVENT_KEY_DOWN, _gadget_desktop_key_handler, zgs);
+   E_LIST_HANDLER_APPEND(desktop_handlers, ECORE_EVENT_MOUSE_BUTTON_UP, _gadget_desktop_mouse_up_handler, NULL);
+   evas_object_event_callback_add(site, EVAS_CALLBACK_DEL, _edit_end, NULL);
+
+   desktop_editor = e_gadget_site_edit(site);
+   evas_object_smart_callback_add(site, "gadget_moved", _gadget_moved, NULL);
+   evas_object_show(desktop_editor);
+
+   act = e_action_find("desk_deskshow_toggle");
+   if (act) act->func.go(E_OBJECT(e_comp_object_util_zone_get(desktop_editor)), NULL);
+   e_comp_grab_input(1, 1);
+
+   memset(&n, 0, sizeof(E_Notification_Notify));
+   n.timeout = 3000;
+   n.summary = _("Desktop Gadgets");
+   n.body = _("Press Escape or click the background to exit.<ps/>"
+              "Use Backspace or Delete to remove all gadgets from this site");
+   n.urgency = E_NOTIFICATION_NOTIFY_URGENCY_NORMAL;
+   e_notification_client_send(&n, NULL, NULL);
 }

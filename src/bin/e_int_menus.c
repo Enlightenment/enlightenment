@@ -92,6 +92,12 @@ _e_int_menus_bryce_cb()
    e_bryce_edit(NULL);
 }
 
+static void
+_e_int_menus_desktop_gadget_add_cb()
+{
+   e_gadget_site_desktop_edit(e_comp->canvas->gadget_site);
+}
+
 #ifdef ISCOMFITOR
 static void
 _TEST_ADD(void *data, E_Dialog *dia EINA_UNUSED)
@@ -344,6 +350,11 @@ e_int_menus_desktops_new(void)
         e_menu_item_label_set(mi, _("Add Bryce"));
         e_util_menu_item_theme_icon_set(mi, "list-add");
         e_menu_item_callback_set(mi, _e_int_menus_bryce_cb, NULL);
+
+        mi = e_menu_item_new(m);
+        e_menu_item_label_set(mi, _("Add Gadgets To Desktop"));
+        e_util_menu_item_theme_icon_set(mi, "list-add");
+        e_menu_item_callback_set(mi, _e_int_menus_desktop_gadget_add_cb, NULL);
      }
 
    mi = e_menu_item_new(m);
