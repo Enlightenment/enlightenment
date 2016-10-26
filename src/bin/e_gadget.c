@@ -1557,17 +1557,25 @@ _gadget_util_ctxpopup_visibility(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Ev
    e_comp_shape_queue();
 }
 
+static void
+_gadget_util_ctxpopup_moveresize(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   e_comp_shape_queue();
+}
+
 E_API void
 e_gadget_util_ctxpopup_place(Evas_Object *g, Evas_Object *ctx, Evas_Object *pos_obj)
 {
    int x, y, w, h;
    E_Layer layer;
    E_Gadget_Config *zgc;
+   Evas_Object *content;
 
    EINA_SAFETY_ON_NULL_RETURN(g);
    zgc = evas_object_data_get(g, "__e_gadget");
    EINA_SAFETY_ON_NULL_RETURN(zgc);
 
+   content = elm_object_content_get(ctx);
    elm_ctxpopup_hover_parent_set(ctx, e_comp->elm);
    layer = MAX(evas_object_layer_get(pos_obj ?: g), E_LAYER_POPUP);
    evas_object_layer_set(ctx, layer);
@@ -1590,6 +1598,11 @@ e_gadget_util_ctxpopup_place(Evas_Object *g, Evas_Object *ctx, Evas_Object *pos_
    evas_object_move(ctx, x, y);
    evas_object_event_callback_add(ctx, EVAS_CALLBACK_SHOW, _gadget_util_ctxpopup_visibility, NULL);
    evas_object_event_callback_add(ctx, EVAS_CALLBACK_HIDE, _gadget_util_ctxpopup_visibility, NULL);
+   if (content)
+     {
+        evas_object_event_callback_add(content, EVAS_CALLBACK_MOVE, _gadget_util_ctxpopup_moveresize, NULL);
+        evas_object_event_callback_add(content, EVAS_CALLBACK_RESIZE, _gadget_util_ctxpopup_moveresize, NULL);
+     }
    evas_object_smart_callback_call(zgc->site->layout, "gadget_site_popup", ctx);
    if (evas_object_visible_get(ctx))
      e_comp_shape_queue();
