@@ -319,6 +319,8 @@ _gadget_object_create(E_Gadget_Config *zgc)
    if (zgc->site->style_cb)
      zgc->site->style_cb(zgc->site->layout, zgc->style.name, g);
 
+   if (!zgc->site->orient)
+     evas_object_smart_need_recalculate_set(zgc->site->layout, 1);
    evas_object_event_callback_add(g, EVAS_CALLBACK_DEL, _gadget_del, zgc);
    _gadget_reparent(zgc->site, zgc);
    elm_object_tree_focus_allow_set(zgc->gadget, 0);
