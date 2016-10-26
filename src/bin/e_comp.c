@@ -706,6 +706,12 @@ _e_comp_shapes_update_object_shape_comp_helper(Evas_Object *o, Eina_Tiler *tb)
    if (_e_comp_shapes_update_object_checker_function_thingy(o)) return;
    SHAPE_INF("OBJ: %p:%s", o, evas_object_name_get(o) ?: evas_object_type_get(o));
    evas_object_geometry_get(o, &x, &y, &w, &h);
+   if ((!w) && (!h) && elm_object_widget_check(o))
+     {
+        Evas_Object *content = elm_object_content_get(o);
+        if (content)
+          evas_object_geometry_get(content, &x, &y, &w, &h);
+     }
    eina_tiler_rect_add(tb, &(Eina_Rectangle){x, y, w, h});
    SHAPE_INF("ADD: %d,%d@%dx%d", x, y, w, h);
 }
