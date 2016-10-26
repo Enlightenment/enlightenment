@@ -202,8 +202,8 @@ _bryce_autosize(Bryce *b)
           e_efx_resize(b->bryce, E_EFX_EFFECT_SPEED_LINEAR, E_EFX_POINT(x, y), w, b->size * e_scale, 0.1, NULL, NULL);
         else if (b->orient == E_GADGET_SITE_ORIENT_VERTICAL)
           e_efx_resize(b->bryce, E_EFX_EFFECT_SPEED_LINEAR, E_EFX_POINT(x, y), b->size * e_scale, h, 0.1, NULL, NULL);
+        elm_layout_sizing_eval(b->scroller);
         evas_object_smart_need_recalculate_set(b->site, 1);
-        evas_object_size_hint_min_set(b->site, -1, -1);
         if (b->size_changed)
           elm_object_content_set(b->scroller, b->site);
         b->size_changed = 0;
@@ -234,8 +234,8 @@ _bryce_autosize(Bryce *b)
                   evas_object_resize(b->bryce, b->size * e_scale, h * b->size * e_scale / w);
                   evas_object_resize(b->site, b->size * e_scale, h * b->size * e_scale / w);
                }
+             elm_layout_sizing_eval(b->scroller);
              evas_object_smart_need_recalculate_set(b->site, 1);
-             evas_object_size_hint_min_set(b->site, -1, -1);
              evas_object_smart_calculate(b->site);
              elm_object_content_set(b->scroller, b->site);
           }
@@ -479,8 +479,8 @@ _bryce_moveresize(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *event
    if (((b->orient == E_GADGET_SITE_ORIENT_VERTICAL) && (w != b->last_w)) ||
        ((b->orient == E_GADGET_SITE_ORIENT_HORIZONTAL) && (h != b->last_h)))
      {
+        elm_layout_sizing_eval(b->scroller);
         evas_object_smart_need_recalculate_set(b->site, 1);
-        evas_object_size_hint_min_set(b->site, -1, -1);
      }
    b->last_w = w, b->last_h = h;
 
