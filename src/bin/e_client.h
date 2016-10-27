@@ -671,6 +671,7 @@ struct E_Client
    Ecore_Timer               *raise_timer;
    E_Client_Move_Intercept_Cb move_intercept_cb;
    E_Remember                *remember;
+   E_Remember                *sr_remember;
 
    Efreet_Desktop            *desktop;
    E_Exec_Instance           *exe_inst;

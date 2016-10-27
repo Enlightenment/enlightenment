@@ -16,7 +16,7 @@ struct _E_Remember_List
 /* local subsystem functions */
 static void        _e_remember_free(E_Remember *rem);
 static void        _e_remember_update(E_Client *ec, E_Remember *rem);
-static E_Remember *_e_remember_find(E_Client *ec, int check_usable);
+static E_Remember *_e_remember_find(E_Client *ec, int check_usable, Eina_Bool sr);
 static void        _e_remember_cb_hook_pre_post_fetch(void *data, E_Client *ec);
 static void        _e_remember_cb_hook_eval_post_new_client(void *data, E_Client *ec);
 static void        _e_remember_init_edd(void);
@@ -562,7 +562,7 @@ e_remember_find_usable(E_Client *ec)
 {
    E_Remember *rem;
 
-   rem = _e_remember_find(ec, 1);
+   rem = _e_remember_find(ec, 1, 0);
    return rem;
 }
 
@@ -571,8 +571,14 @@ e_remember_find(E_Client *ec)
 {
    E_Remember *rem;
 
-   rem = _e_remember_find(ec, 0);
+   rem = _e_remember_find(ec, 0, 0);
    return rem;
+}
+
+E_API E_Remember *
+e_remember_sr_find(E_Client *ec)
+{
+   return _e_remember_find(ec, 1, 1);
 }
 
 E_API void
@@ -666,9 +672,9 @@ E_API void
 e_remember_update(E_Client *ec)
 {
    if (ec->new_client) return;
-   if (!ec->remember) return;
-   if (ec->remember->keep_settings) return;
-   _e_remember_update(ec, ec->remember);
+   if (((!ec->remember) || ec->remember->keep_settings) && (!ec->sr_remember)) return;
+   if (ec->remember) _e_remember_update(ec, ec->remember);
+   if (ec->sr_remember) _e_remember_update(ec, ec->sr_remember);
    e_config_save_queue();
 }
 
@@ -797,7 +803,7 @@ _e_remember_update(E_Client *ec, E_Remember *rem)
 
 /* local subsystem functions */
 static E_Remember *
-_e_remember_find(E_Client *ec, int check_usable)
+_e_remember_find(E_Client *ec, int check_usable, Eina_Bool sr)
 {
    Eina_List *l = NULL;
    E_Remember *rem;
@@ -862,11 +868,14 @@ _e_remember_find(E_Client *ec, int check_usable)
         if ((check_usable) && (!e_remember_usable_get(rem)))
           continue;
 
-        if (!eina_streq(rem->uuid, ec->uuid)) continue;
-        if (rem->uuid)
+        if (sr)
           {
-             if (rem->pid != ec->netwm.pid) continue;
-             return rem;
+             if (!eina_streq(rem->uuid, ec->uuid)) continue;
+             if (rem->uuid)
+               {
+                  if (rem->pid != ec->netwm.pid) continue;
+                  return rem;
+               }
           }
 
         if (ec->netwm.name) title = ec->netwm.name;

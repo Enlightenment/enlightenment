@@ -38,18 +38,15 @@ _e_comp_wl_session_recovery_get_uuid(struct wl_client *client EINA_UNUSED, struc
    uuid_generate(u);
    uuid_unparse_lower(u, uuid);
    zwp_e_session_recovery_send_create_uuid(resource, surface, uuid);
-   if (ec->remember)
-     e_remember_unuse(ec->remember);
-   else
+   if (ec->sr_remember)
      {
-        ec->remember = e_remember_find_usable(ec);
-        if (ec->remember)
-          e_remember_apply(ec->remember, ec);
+        e_remember_unuse(ec->sr_remember);
+        e_remember_del(ec->sr_remember);
      }
    eina_stringshare_replace(&ec->uuid, uuid);
-   ec->remember = e_remember_new();
-   e_remember_use(ec->remember);
-   ec->remember->apply = E_REMEMBER_APPLY_POS | E_REMEMBER_APPLY_SIZE | E_REMEMBER_APPLY_DESKTOP |
+   ec->sr_remember = e_remember_new();
+   e_remember_use(ec->sr_remember);
+   ec->sr_remember->apply = E_REMEMBER_APPLY_POS | E_REMEMBER_APPLY_SIZE | E_REMEMBER_APPLY_DESKTOP |
                          E_REMEMBER_APPLY_LAYER | E_REMEMBER_APPLY_ZONE | E_REMEMBER_APPLY_UUID;
    e_remember_update(ec);
 }
@@ -64,11 +61,14 @@ _e_comp_wl_session_recovery_set_uuid(struct wl_client *client EINA_UNUSED, struc
    if (e_object_is_del(E_OBJECT(ec))) return;
    if (ec->internal || ec->uuid) return; //FIXME: error
    eina_stringshare_replace(&ec->uuid, uuid);
-   rem = e_remember_find_usable(ec);
-   if ((!rem) || (rem == ec->remember)) return;
-   if (ec->remember)
-     e_remember_unuse(ec->remember);
-   ec->remember = rem;
+   rem = e_remember_sr_find(ec);
+   if ((!rem) || (rem == ec->sr_remember)) return;
+   if (ec->sr_remember)
+     {
+        e_remember_unuse(ec->sr_remember);
+        e_remember_del(ec->sr_remember);
+     }
+   ec->sr_remember = rem;
    e_remember_use(rem);
    e_remember_apply(rem, ec);
    ec->re_manage = 1;
@@ -82,15 +82,15 @@ _e_comp_wl_session_recovery_destroy_uuid(struct wl_client *client EINA_UNUSED, s
    ec = wl_resource_get_user_data(surface);
    if (!eina_streq(ec->uuid, uuid)) return; //FIXME: error
    eina_stringshare_replace(&ec->uuid, NULL);
-   if (ec->remember)
+   if (ec->sr_remember)
      {
-        e_remember_unuse(ec->remember);
-        e_remember_del(ec->remember);
+        e_remember_unuse(ec->sr_remember);
+        e_remember_del(ec->sr_remember);
      }
-   ec->remember = e_remember_find_usable(ec);
-   if (!ec->remember) return;
-   e_remember_use(ec->remember);
-   e_remember_apply(ec->remember, ec);
+   ec->sr_remember = e_remember_sr_find(ec);
+   if (!ec->sr_remember) return;
+   e_remember_use(ec->sr_remember);
+   e_remember_apply(ec->sr_remember, ec);
 }
 
 static void
