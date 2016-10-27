@@ -23,7 +23,6 @@ struct _E_Config_Dialog_Data
 {
    E_Client *client;
    E_Remember *rem;
-   E_Remember *backup_rem;
    /*- BASIC -*/
    int       mode;
    int       warned;
@@ -141,9 +140,6 @@ _fill_data(E_Config_Dialog_Data *cfdata)
      rem = ec->remember;
    else
      rem = cfdata->rem;
-
-   if (ec && rem && (rem->apply & E_REMEMBER_APPLY_UUID))
-     cfdata->backup_rem = rem = e_remember_find_usable(ec);
 
    if (rem)
      {
@@ -320,11 +316,10 @@ _free_data(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfdata)
 
    if (cfdata->client)
      {
-        E_Remember *rem = cfdata->backup_rem ?: cfdata->client->remember;
-        if (!cfdata->applied && rem)
+        if (!cfdata->applied && cfdata->client->remember)
           {
-             e_remember_unuse(rem);
-             e_remember_del(rem);
+             e_remember_unuse(cfdata->client->remember);
+             e_remember_del(cfdata->client->remember);
              e_config_save_queue();
           }
 
@@ -418,7 +413,7 @@ _basic_apply_data(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfdata
 {
    /* Actually take our cfdata settings and apply them in real life */
    E_Client *ec = cfdata->client;
-   E_Remember *rem = cfdata->backup_rem ?: ec->remember;
+   E_Remember *rem = ec->remember;
 
    if (cfdata->mode == MODE_NOTHING)
      {
@@ -426,8 +421,8 @@ _basic_apply_data(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfdata
           {
              e_remember_unuse(rem);
              e_remember_del(rem);
-             e_config_save_queue();
           }
+        e_config_save_queue();
         return 1;
      }
 
@@ -436,8 +431,7 @@ _basic_apply_data(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfdata
         rem = e_remember_new();
         if (rem)
           {
-             if ((!ec->remember) || (!(ec->remember->apply & E_REMEMBER_APPLY_UUID)))
-               ec->remember = rem;
+             ec->remember = rem;
              cfdata->applied = 0;
           }
         else
@@ -456,8 +450,7 @@ _basic_apply_data(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfdata
    rem->apply = cfdata->mode;
    rem->apply_first_only = 0;
 
-   if (ec->remember == rem)
-     e_remember_use(rem);
+   e_remember_use(rem);
    e_remember_update(ec);
    cfdata->applied = 1;
    e_config_save_queue();
@@ -470,7 +463,7 @@ _advanced_apply_data(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfd
    E_Client *ec = cfdata->client;
    E_Remember *rem;
 
-   if (ec) rem = cfdata->backup_rem ?: ec->remember;
+   if (ec) rem = ec->remember;
    else rem = cfdata->rem;
 
    if (!rem)
@@ -631,9 +624,8 @@ _advanced_apply_data(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfd
      {
         _check_matches(rem, 1);
         rem->keep_settings = 0;
-        if ((!ec->remember) || (!(ec->remember->apply & E_REMEMBER_APPLY_UUID)))
-          ec->remember = rem;
-        e_remember_update(ec);
+        cfdata->client->remember = rem;
+        e_remember_update(cfdata->client);
         cfdata->applied = 1;
      }
    rem->keep_settings = cfdata->remember.keep_settings;
