@@ -867,17 +867,11 @@ _e_remember_find(E_Client *ec, int check_usable)
         if ((check_usable) && (!e_remember_usable_get(rem)))
           continue;
 
-        if (ec->uuid)
+        if (!eina_streq(rem->uuid, ec->uuid)) continue;
+        if (rem->uuid)
           {
-             if ((!ec->remember) || (!(ec->remember->apply & E_REMEMBER_APPLY_UUID)))
-               {
-                  if (!eina_streq(rem->uuid, ec->uuid)) continue;
-                  if (rem->uuid)
-                    {
-                       if (rem->pid != ec->netwm.pid) continue;
-                       return rem;
-                    }
-               }
+             if (rem->pid != ec->netwm.pid) continue;
+             return rem;
           }
 
         if (ec->netwm.name) title = ec->netwm.name;
