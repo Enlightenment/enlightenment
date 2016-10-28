@@ -2155,7 +2155,8 @@ _e_client_frame_update(E_Client *ec)
    const char *bordername;
 
    ec->border.changed = 0;
-   if (!e_comp_object_frame_allowed(ec->frame)) return;
+   if ((!e_comp_object_frame_allowed(ec->frame)) && (!e_comp_object_frame_exists(ec->frame)))
+     return;
    if (ec->fullscreen || ec->borderless)
      bordername = "borderless";
    else if (ec->bordername)
@@ -4341,7 +4342,8 @@ e_client_border_set(E_Client *ec, const char *name)
 
    E_OBJECT_CHECK_RETURN(ec, EINA_FALSE);
    E_OBJECT_TYPE_CHECK_RETURN(ec, E_CLIENT_TYPE, EINA_FALSE);
-   if (!e_comp_object_frame_allowed(ec->frame)) return EINA_FALSE;
+   if ((!e_comp_object_frame_allowed(ec->frame)) && (!e_comp_object_frame_exists(ec->frame)))
+     return EINA_FALSE;
    if (ec->border.changed)
      CRI("CALLING WHEN border.changed SET!");
 
