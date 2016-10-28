@@ -3315,6 +3315,7 @@ e_comp_object_frame_theme_set(Evas_Object *obj, const char *name)
     return edje_object_part_swallow(cw->shobj, "e.swallow.content", cw->frame_object ?: cw->obj);
    if (!e_util_strcmp(name, "COMP_RESHADOW"))
      return _e_comp_object_shadow_setup(cw);
+   if (eina_streq(name, "borderless") && (!cw->frame_object)) return EINA_TRUE;
    pbg = cw->frame_object;
    theme = eina_stringshare_add(name);
 
