@@ -492,16 +492,6 @@ _slider_changed_cb(void *data EINA_UNUSED, Evas_Object *obj,
 }
 
 static void
-_slider_drag_stop_cb(void *data EINA_UNUSED, Evas_Object *obj,
-                     void *event EINA_UNUSED)
-{
-   EINA_SAFETY_ON_NULL_RETURN(mixer_context->sink_default);
-   Emix_Sink *s = (Emix_Sink *)mixer_context->sink_default;
-   int val = s->volume.volumes[0];
-   elm_slider_value_set(obj, val);
-}
-
-static void
 _sink_selected_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Emix_Sink *s = data;
@@ -565,7 +555,6 @@ _popup_new(Instance *inst)
    evas_object_show(slider);
    elm_slider_min_max_set(slider, 0.0, emix_max_volume_get());
    evas_object_smart_callback_add(slider, "changed", _slider_changed_cb, NULL);
-   evas_object_smart_callback_add(slider, "slider,drag,stop", _slider_drag_stop_cb, NULL);
    elm_slider_value_set(slider, volume);
    elm_box_pack_end(bx, slider);
    evas_object_show(slider);

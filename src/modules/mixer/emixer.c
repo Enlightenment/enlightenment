@@ -49,17 +49,6 @@ _cb_sink_volume_change(void *data,
 }
 
 static void
-_cb_sink_volume_drag_stop(void *data,
-                          Evas_Object *obj,
-                          void *event EINA_UNUSED)
-{
-   Evas_Object *bxv = data;
-   Emix_Sink *sink = evas_object_data_get(bxv, "sink");
-   int vol = sink->volume.volumes[0];
-   elm_slider_value_set(obj, vol);
-}
-
-static void
 _cb_sink_mute_change(void *data,
                      Evas_Object *obj,
                      void *event_info EINA_UNUSED)
@@ -134,8 +123,6 @@ _emix_sink_add(Emix_Sink *sink)
    elm_box_pack_end(bx, sl);
    evas_object_show(sl);
    evas_object_smart_callback_add(sl, "changed", _cb_sink_volume_change, bxv);
-   evas_object_smart_callback_add(sl, "slider,drag,stop",
-                                  _cb_sink_volume_drag_stop, bxv);
 
    ck = elm_check_add(win);
    evas_object_data_set(bxv, "mute", ck);
