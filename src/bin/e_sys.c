@@ -713,6 +713,7 @@ _e_sys_cb_logout_timer(void *data EINA_UNUSED)
                   e_dialog_button_focus_num(dia, 1);
                   _e_sys_logout_confirm_dialog_update(E_LOGOUT_AUTO_TIME);
                   elm_win_center(dia->win, 1, 1);
+                  e_win_no_remember_set(dia->win, 1);
                   e_dialog_show(dia);
                   _e_sys_logout_begin_time = now;
                }
@@ -771,6 +772,7 @@ _e_sys_logout_begin(E_Sys_Action a_after, Eina_Bool raw)
                                        _("Logout in progress.<br>"
                                          "<hilight>Please wait.</hilight>"));
         e_obj_dialog_show(od);
+        e_win_no_remember_set(od->win, 1);
         e_obj_dialog_icon_set(od, "system-log-out");
         if (_e_sys_dialog) e_object_del(E_OBJECT(_e_sys_dialog));
         _e_sys_dialog = od;
@@ -839,6 +841,7 @@ _e_sys_current_action(void)
    e_dialog_button_add(dia, _("OK"), NULL, NULL, NULL);
    e_dialog_button_focus_num(dia, 0);
    elm_win_center(dia->win, 1, 1);
+   e_win_no_remember_set(dia->win, 1);
    e_dialog_show(dia);
 }
 
@@ -880,6 +883,7 @@ _e_sys_action_failed(void)
    e_dialog_button_add(dia, _("OK"), NULL, NULL, NULL);
    e_dialog_button_focus_num(dia, 0);
    elm_win_center(dia->win, 1, 1);
+   e_win_no_remember_set(dia->win, 1);
    e_dialog_show(dia);
 }
 
@@ -965,6 +969,7 @@ _e_sys_action_do(E_Sys_Action a, char *param EINA_UNUSED, Eina_Bool raw)
                                                  _("Power off.<br>"
                                                    "<hilight>Please wait.</hilight>"));
                   e_obj_dialog_show(od);
+                  e_win_no_remember_set(od->win, 1);
                   e_obj_dialog_icon_set(od, "system-shutdown");
                   if (_e_sys_dialog) e_object_del(E_OBJECT(_e_sys_dialog));
                   e_obj_dialog_cb_delete_set(od, _e_sys_dialog_cb_delete);
@@ -1010,6 +1015,7 @@ _e_sys_action_do(E_Sys_Action a, char *param EINA_UNUSED, Eina_Bool raw)
                                                  _("Resetting.<br>"
                                                    "<hilight>Please wait.</hilight>"));
                   e_obj_dialog_show(od);
+                  e_win_no_remember_set(od->win, 1);
                   e_obj_dialog_icon_set(od, "system-restart");
                   if (_e_sys_dialog) e_object_del(E_OBJECT(_e_sys_dialog));
                   e_obj_dialog_cb_delete_set(od, _e_sys_dialog_cb_delete);
