@@ -30,7 +30,7 @@ e_modapi_init(E_Module *m)
                                  "user-bookmarks",
                                  e_int_config_apps_favs);
    e_configure_registry_item_add("applications/ibar_applications", 40,
-                                 _("IBar Applications"), NULL,
+                                 _("Launcher Applications"), NULL,
                                  "preferences-applications-ibar",
                                  e_int_config_apps_ibar);
    e_configure_registry_item_add("applications/screen_lock_applications", 45,
@@ -59,7 +59,7 @@ e_modapi_init(E_Module *m)
                                  e_int_config_deskenv);
    e_configure_registry_category_add("internal", -1, _("Internal"), NULL,
                                      "enlightenment/internal");
-   e_configure_registry_item_add("internal/ibar_other", -1, _("IBar Other"),
+   e_configure_registry_item_add("internal/ibar_other", -1, _("Launcher Other"),
                                  NULL, "preferences-system-windows",
                                  e_int_config_apps_ibar_other);
 

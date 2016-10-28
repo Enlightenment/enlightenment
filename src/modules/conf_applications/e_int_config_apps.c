@@ -84,7 +84,7 @@ e_int_config_apps_ibar(Evas_Object *parent EINA_UNUSED, const char *params EINA_
 
    e_user_dir_concat_static(buff, "applications/bar/default/.order");
    data = E_NEW(E_Config_Data, 1);
-   data->title = eina_stringshare_add(_("IBar Applications"));
+   data->title = eina_stringshare_add(_("Launcher Applications"));
    data->dialog = eina_stringshare_add("applications/ibar_applications");
    data->icon = eina_stringshare_add("preferences-applications-ibar");
    data->filename = eina_stringshare_add(buff);
@@ -98,7 +98,7 @@ e_int_config_apps_ibar_other(Evas_Object *parent EINA_UNUSED, const char *path)
 
    if (!path) return NULL;
    data = E_NEW(E_Config_Data, 1);
-   data->title = eina_stringshare_add(_("IBar Applications"));
+   data->title = eina_stringshare_add(_("Launcher Applications"));
    data->dialog = eina_stringshare_add("internal/ibar_other");
    data->icon = eina_stringshare_add("preferences-applications-ibar");
    data->filename = eina_stringshare_add(path);

@@ -1121,6 +1121,7 @@ src/modules/packagekit/module.desktop
 src/modules/wl_desktop_shell/module.desktop
 src/modules/wireless/module.desktop
 src/modules/time/module.desktop
+src/modules/luncher/module.desktop
 data/xsession/enlightenment.desktop
 data/etc/sysactions.conf
 data/units/enlightenment.service

@@ -1009,6 +1009,7 @@ _e_module_whitelist_check(void)
       "ibox",
       "layout",
       "lokker",
+      "luncher",
       "mixer",
       "msgbus",
       "notification",

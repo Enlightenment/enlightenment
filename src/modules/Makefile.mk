@@ -94,6 +94,8 @@ include src/modules/Makefile_teamwork.mk
 
 include src/modules/Makefile_lokker.mk
 
+include src/modules/Makefile_luncher.mk
+
 include src/modules/Makefile_shot.mk
 
 include src/modules/Makefile_backlight.mk
