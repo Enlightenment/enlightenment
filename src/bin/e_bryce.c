@@ -452,10 +452,12 @@ _bryce_rename(Bryce *b, int num)
    snprintf(buf, sizeof(buf), "__bryce%s", name);
    snprintf(buf2, sizeof(buf2), "__bryce%s_%d", name, num);
    e_gadget_site_rename(buf, buf2);
+   if (b->version >= 2)
+     {
+        snprintf(buf, sizeof(buf), "%s_%u", name, num);
+        eina_stringshare_replace(&b->name, buf);
+     }
    free(name);
-   if (b->version < 2) return;
-   snprintf(buf, sizeof(buf), "%s_%u", name, num);
-   eina_stringshare_replace(&b->name, buf);
 }
 
 static void
