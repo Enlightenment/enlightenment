@@ -1720,7 +1720,7 @@ e_zone_for_id_get(const char *id)
 
    EINA_LIST_FOREACH(e_comp->zones, l, zone)
      {
-        if (strcmp(zone->randr2_id, id) == 0)
+        if (eina_streq(zone->randr2_id, id))
           return zone;
      }
 
