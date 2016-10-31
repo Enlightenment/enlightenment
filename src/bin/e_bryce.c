@@ -138,7 +138,9 @@ _bryce_position(Bryce *b, int w, int h, int *nx, int *ny)
    else
      evas_object_geometry_get(b->parent, &ox, &oy, &ow, &oh);
    x = ox + (ow - w) / 2;
+   x = E_CLAMP(x, ox, ox + ow / 2);
    y = oy + (oh - h) / 2;
+   y = E_CLAMP(y, oy, oy + oh / 2);
    an = e_gadget_site_anchor_get(b->site);
    if (an & E_GADGET_SITE_ANCHOR_LEFT)
      x = ox;
