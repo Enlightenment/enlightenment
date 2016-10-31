@@ -2199,7 +2199,12 @@ static Eina_Bool
 _gadget_desklock_key_handler(void *d EINA_UNUSED, int t EINA_UNUSED, Ecore_Event_Key *ev)
 {
    if (eina_streq(ev->key, "Escape"))
-     _gadget_desklock_del();
+     {
+        if (pointer_site)
+          E_FREE_FUNC(pointer_site, evas_object_del);
+        else
+          _gadget_desklock_del();
+     }
    else if (eina_streq(ev->key, "Delete") || eina_streq(ev->key, "Backspace"))
      _gadget_desklock_clear();
    return ECORE_CALLBACK_DONE;
@@ -2265,7 +2270,12 @@ static Eina_Bool
 _gadget_desktop_key_handler(void *data, int t EINA_UNUSED, Ecore_Event_Key *ev)
 {
    if (eina_streq(ev->key, "Escape"))
-     _edit_end();
+     {
+        if (pointer_site)
+          E_FREE_FUNC(pointer_site, evas_object_del);
+        else
+          _edit_end();
+     }
    else if (eina_streq(ev->key, "Delete") || eina_streq(ev->key, "Backspace"))
      {
         E_Gadget_Site *zgs = data;
