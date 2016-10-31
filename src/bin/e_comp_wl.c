@@ -1754,7 +1754,7 @@ _e_comp_wl_surface_destroy(struct wl_resource *resource)
    if (!(ec = wl_resource_get_user_data(resource))) return;
 
    e_pixmap_alias(ec->pixmap, E_PIXMAP_TYPE_WL, wl_resource_get_id(resource));
-   e_object_del(E_OBJECT(ec));
+   if (!ec->internal) e_object_del(E_OBJECT(ec));
    evas_object_hide(ec->frame);
 }
 
