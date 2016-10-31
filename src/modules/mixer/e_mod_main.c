@@ -860,13 +860,13 @@ _sink_input_set(int volume, Eina_Bool muted, void *data)
 }
 
 static int
-_sink_input_min_get(void *data)
+_sink_input_min_get(void *data EINA_UNUSED)
 {
    return 0;
 }
 
 static int
-_sink_input_max_get(void *data)
+_sink_input_max_get(void *data EINA_UNUSED)
 {
    return emix_max_volume_get();
 }
@@ -1046,7 +1046,7 @@ _bd_hook_mute_changed(void *data, Evas_Object *obj, void *event_info EINA_UNUSED
 }
 
 static Eina_Bool
-_e_client_volume_changed(void *data EINA_UNUSED, int type, void *event)
+_e_client_volume_changed(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
 {
    E_Event_Client *ev;
    Client_Mixer *cm;
@@ -1067,7 +1067,7 @@ _e_client_volume_changed(void *data EINA_UNUSED, int type, void *event)
 }
 
 static Eina_Bool
-_e_client_mute_changed(void *data EINA_UNUSED, int type, void *event)
+_e_client_mute_changed(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
 {
    E_Event_Client *ev;
    Client_Mixer *cm;
@@ -1099,7 +1099,7 @@ _client_mixer_del(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
 }
 
 static Eina_Bool
-_e_client_remove(void *data EINA_UNUSED, int type, void *event)
+_e_client_remove(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
 {
    E_Event_Client *ev;
    Client_Mixer *cm;
