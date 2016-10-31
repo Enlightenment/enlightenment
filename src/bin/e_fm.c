@@ -1516,7 +1516,7 @@ e_fm2_all_list_get(Evas_Object *obj)
 E_API E_Fm2_Icon_Info *
 e_fm2_icon_file_get(Evas_Object *obj, const char *file)
 {
-   Eina_List *list = NULL, *l;
+   Eina_List *l;
    E_Fm2_Icon *ic;
 
    EFM_SMART_CHECK(NULL);
