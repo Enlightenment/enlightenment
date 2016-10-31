@@ -393,6 +393,12 @@ _bar_icon_mouse_down(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUS
 
    if (ev->button == 1)
      {
+        if (ic->mouse_in_timer)
+          ecore_timer_del(ic->mouse_in_timer);
+        if (ic->mouse_out_timer)
+          ecore_timer_del(ic->mouse_out_timer);
+        ic->mouse_in_timer = NULL;
+        ic->mouse_out_timer = NULL;
         ic->drag.x = ev->output.x;
         ic->drag.y = ev->output.y;
         if (ic->drag_timer)
@@ -801,7 +807,7 @@ _bar_icon_mouse_in(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *even
         _bar_icon_preview_show(ic);
      }
    else
-     ic->mouse_in_timer = ecore_timer_add(1.0, _bar_icon_preview_show, ic);
+     ic->mouse_in_timer = ecore_timer_add(0.3, _bar_icon_preview_show, ic);
 }
   
 static void
@@ -818,7 +824,7 @@ _bar_icon_mouse_out(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *eve
    ic->mouse_in_timer = NULL;
    if (ic->mouse_out_timer)
      ecore_timer_del(ic->mouse_out_timer);
-   ic->mouse_out_timer = ecore_timer_add(0.45, _bar_icon_preview_hide, ic);
+   ic->mouse_out_timer = ecore_timer_add(0.25, _bar_icon_preview_hide, ic);
 }
 
 static void
@@ -1268,6 +1274,7 @@ _bar_fill(Instance *inst)
    Eina_Iterator *it;
    Eina_List *l, *ll, *lll;   
    E_Exec_Instance *ex;
+   E_Client *ec;
    Icon *ic;
    char buf[4096];
 
@@ -1312,6 +1319,23 @@ _bar_fill(Instance *inst)
                   ic->in_order = EINA_FALSE;
                   inst->icons = eina_list_append(inst->icons, ic);
                }
+          }
+     }
+   E_CLIENT_FOREACH(ec)
+     {
+        Eina_Bool skip = EINA_TRUE;
+
+        if (ec)
+          ic = _bar_icon_match(inst, ec);
+        skip = ec->netwm.state.skip_taskbar;
+        if (!ic)
+          {
+             if (skip) continue;
+             ic = _bar_icon_add(inst, NULL, ec);
+             snprintf(buf, sizeof(buf), "e,state,on,%s", _bar_location_get(inst));
+             elm_layout_signal_emit(ic->o_layout, buf, "e");
+             ic->in_order = EINA_FALSE;
+             inst->icons = eina_list_append(inst->icons, ic);
           }
      }
 }
@@ -1505,6 +1529,7 @@ _bar_drop_leave(void *data, const char *type EINA_UNUSED, void *event_data EINA_
 {
    Instance *inst = data;
 
+   inst->inside = EINA_FALSE;
    evas_object_del(inst->place_holder);
    inst->place_holder = NULL;
 }
@@ -1517,6 +1542,9 @@ _bar_drop_move(void *data, const char *type EINA_UNUSED, void *event_data)
    Evas_Coord x = ev->x, y = ev->y;
    Eina_List *l;
    Icon *ic;
+
+   if (!inst->inside)
+     return;
 
    EINA_LIST_FOREACH(inst->icons, l, ic)
      {
@@ -1535,7 +1563,8 @@ static void
 _bar_drop_enter(void *data, const char *type EINA_UNUSED, void *event_data EINA_UNUSED)
 {
    Instance *inst = data;
-
+   
+   inst->inside = EINA_TRUE;
    inst->place_holder = evas_object_rectangle_add(evas_object_evas_get(inst->o_icon_con));
    evas_object_color_set(inst->place_holder, 0, 0, 0, 0);
    evas_object_size_hint_min_set(inst->place_holder, inst->size, inst->size);
@@ -1602,8 +1631,7 @@ _bar_anchor_changed_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_inf
 
    if (inst && inst->o_icon_con)
      {
-        _bar_empty(inst); 
-        _bar_fill(inst);
+        bar_recalculate(inst);
      }
 }
 
@@ -1694,14 +1722,24 @@ _conf_item_get(int *id)
    return ci;
 }
 
-EINTERN void
-bar_recalculate(Instance *inst)
+static void
+_bar_recalculate_job(void *data)
 {
+   Instance *inst = data;
+
    if (inst && inst->o_icon_con)
      {
         _bar_empty(inst);
         _bar_fill(inst);
      }
+   inst->recalc_job = NULL;
+}
+
+EINTERN void
+bar_recalculate(Instance *inst)
+{
+   if (inst->recalc_job) ecore_job_del(inst->recalc_job);
+   inst->recalc_job = ecore_job_add(_bar_recalculate_job, inst);
 }
 
 EINTERN void
@@ -1711,6 +1749,7 @@ bar_reorder(Instance *inst)
 
    if (inst)
      {
+        if (inst->recalc_job) ecore_job_del(inst->recalc_job);
         _bar_empty(inst);
         if (!inst->cfg->dir)
           inst->cfg->dir = eina_stringshare_add("default");
@@ -1736,6 +1775,7 @@ bar_create(Evas_Object *parent, int *id, E_Gadget_Site_Orient orient EINA_UNUSED
    inst->resize_job = NULL;
    inst->cfg = _conf_item_get(id);
    *id = inst->cfg->id;
+   inst->inside = EINA_FALSE;
    inst->icons_desktop_hash = eina_hash_string_superfast_new(NULL);
    inst->icons_clients_hash = eina_hash_pointer_new(NULL);
    inst->o_main = elm_layout_add(parent);

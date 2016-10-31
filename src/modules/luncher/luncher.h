@@ -45,6 +45,8 @@ struct _Instance
    Evas_Object         *drop_handler;
    Evas_Object         *place_holder;
    Icon                *drop_before;
+   Eina_Bool            inside;
+   Ecore_Job           *recalc_job;
 };
 
 struct _Icon
