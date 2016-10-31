@@ -248,9 +248,6 @@ _pager_orient(Instance *inst, E_Gadget_Site_Orient orient)
              case E_GADGET_SITE_ORIENT_VERTICAL:
                 inst->pager->invert = EINA_TRUE;
                 break;
-             case E_GADGET_SITE_ORIENT_NONE:
-                inst->pager->invert = EINA_TRUE;
-                break;
              default:
                 inst->pager->invert = EINA_FALSE;
           }
@@ -360,9 +357,6 @@ _pager_fill(Pager *p)
                 p->invert = EINA_FALSE;
                 break;
              case E_GADGET_SITE_ORIENT_VERTICAL:
-                p->invert = EINA_TRUE;
-                break;
-             case E_GADGET_SITE_ORIENT_NONE:
                 p->invert = EINA_TRUE;
                 break;
              default:
