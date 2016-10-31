@@ -1970,10 +1970,18 @@ E_API Evas_Object *
 e_gadget_site_edit(Evas_Object *site)
 {
    Evas_Object *comp_object, *popup, *editor;
-   E_Zone *zone;
+   E_Zone *zone, *czone;
 
    zone = e_comp_object_util_zone_get(site);
-   if (!zone) zone = e_zone_current_get();
+   czone = e_zone_current_get();
+   if (zone != czone)
+     {
+        int x, y, w, h;
+
+        evas_object_geometry_get(site, &x, &y, &w, &h);
+        if (E_INTERSECTS(x, y, w, h, czone->x, czone->y, czone->w, czone->h))
+          zone = czone;
+     }
 
    popup = elm_popup_add(e_comp->elm);
    elm_popup_allow_events_set(popup, 1);
@@ -1986,7 +1994,7 @@ e_gadget_site_edit(Evas_Object *site)
    evas_object_layer_set(comp_object, E_LAYER_POPUP);
    evas_object_show(comp_object);
    evas_object_resize(comp_object, zone->w / 2, zone->h / 2);
-   e_comp_object_util_center(comp_object);
+   e_comp_object_util_center_on_zone(comp_object, zone);
    return comp_object;
 }
 
