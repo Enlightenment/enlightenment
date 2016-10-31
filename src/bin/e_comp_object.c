@@ -3277,8 +3277,6 @@ e_comp_object_frame_icon_update(Evas_Object *obj)
 E_API void
 e_comp_object_frame_volume_update(Evas_Object *obj)
 {
-   Evas_Object *o;
-
    API_ENTRY;
 
    if (!cw->frame_object) return;
