@@ -498,6 +498,7 @@ _bryce_moveresize(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *event
           b->save_timer = ecore_timer_add(0.5, _bryce_moveresize_save, b);
      }
 
+   if (starting) return;
    zone = e_comp_object_util_zone_get(obj);
    if (zone)
      {
