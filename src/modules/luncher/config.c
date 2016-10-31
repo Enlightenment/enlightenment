@@ -1,7 +1,7 @@
 #include "luncher.h"
 
 static void
-_config_close(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+_config_close(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    luncher_config->list = NULL;
    evas_object_del(luncher_config->config_dialog);
@@ -113,7 +113,7 @@ _config_source_deleted(void *data)
 }
 
 static void
-_config_source_add(void *data, Evas_Object *obj, void *event_data EINA_UNUSED)
+_config_source_add(void *data, Evas_Object *obj EINA_UNUSED, void *event_data EINA_UNUSED)
 {
    Instance *inst = data;
 
@@ -124,7 +124,7 @@ _config_source_add(void *data, Evas_Object *obj, void *event_data EINA_UNUSED)
 }
 
 static void
-_config_source_del(void *data, Evas_Object *obj, void *event_data EINA_UNUSED)
+_config_source_del(void *data, Evas_Object *obj EINA_UNUSED, void *event_data EINA_UNUSED)
 {
    Instance *inst = data;
    char buf[4096];

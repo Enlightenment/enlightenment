@@ -1596,7 +1596,7 @@ _bar_iconify_start(void *data, Evas_Object *obj, const char *signal EINA_UNUSED)
 }
 
 static void
-_bar_anchor_changed_cb(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
+_bar_anchor_changed_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Instance *inst = data;
 
@@ -1727,7 +1727,7 @@ bar_reorder(Instance *inst)
 }
 
 EINTERN Evas_Object *
-bar_create(Evas_Object *parent, int *id, E_Gadget_Site_Orient orient)
+bar_create(Evas_Object *parent, int *id, E_Gadget_Site_Orient orient EINA_UNUSED)
 {
    Instance *inst;
 
