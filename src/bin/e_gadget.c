@@ -421,6 +421,11 @@ _site_gadget_resize(Evas_Object *g, int w, int h, Evas_Coord *ww, Evas_Coord *hh
         if ((mxw >= 0) && (mxw < *ow)) *ow = mxw;
         if ((mxh >= 0) && (mxh < *oh)) *oh = mxh;
      }
+   if (!zgc->site->orient)
+     {
+        if ((w < (*ow)) || (h < (*oh)))
+          evas_object_smart_need_recalculate_set(zgc->gadget, 1);
+     }
    //fprintf(stderr, "%s: %dx%d\n", zgc->type, *ow, *oh);
    evas_object_resize(zgc->display, *ow, *oh);
 }
