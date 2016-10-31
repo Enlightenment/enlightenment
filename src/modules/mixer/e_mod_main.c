@@ -902,7 +902,7 @@ _get_ppid(pid_t pid)
 static void
 _sink_input_event(int type, Emix_Sink_Input *input)
 {
-   Eina_List *clients, *l, *ll;
+   Eina_List *clients, *l;
    E_Client *ec;
    E_Client_Volume_Sink *sink;
    pid_t pid;
@@ -1126,11 +1126,10 @@ _e_client_remove(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
 static void
 _bd_hook_cb(void *data, E_Menu *m EINA_UNUSED, E_Menu_Item *it EINA_UNUSED)
 {
-   E_Client *ec, *c;
+   E_Client *ec;
    Client_Mixer *cm;
    Evas_Object *win, *popup, *bx, *o;
    Eina_List *l;
-   char buf[4096];
    int w, h;
 
    ec = data;
