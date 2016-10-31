@@ -1,9 +1,56 @@
 #include "e.h"
 #include "e_mod_parse.h"
 
+typedef struct Config_Parse_Label_ {
+   const char *name;
+   Eina_List **list;
+} Config_Parse_Label;
+
 Eina_List *layouts = NULL;
 Eina_List *models = NULL;
+
 Eina_List *optgroups = NULL;
+
+Eina_List *optled = NULL;
+Eina_List *optswitch = NULL;
+Eina_List *optlv3 = NULL;
+Eina_List *optctrl = NULL;
+Eina_List *optkeypad = NULL;
+Eina_List *optdelkeypad = NULL;
+Eina_List *optcapslock = NULL;
+Eina_List *optaltwin = NULL;
+Eina_List *optcompose = NULL;
+Eina_List *optcurrency = NULL;
+Eina_List *optlv5 = NULL;
+Eina_List *optspacebar = NULL;
+Eina_List *optjapan = NULL;
+Eina_List *optkorean = NULL;
+Eina_List *optesperanto = NULL;
+Eina_List *optsolaris = NULL;
+Eina_List *optterminate = NULL;
+Eina_List *optmisc = NULL;
+
+static Config_Parse_Label grplabels[] = {
+{ "grp_led", &optled },
+{ "grp", &optswitch },
+{ "lv3", &optlv3 },
+{ "ctrl", &optctrl },
+{ "keypad", &optkeypad },
+{ "kpdl", &optdelkeypad },
+{ "caps", &optcapslock },
+{ "altwin", &optaltwin },
+{ "compose", &optcompose },
+{ "currencysign", &optcurrency },
+{ "eurosign", &optcurrency },
+{ "rupeesign", &optcurrency },
+{ "lv5", &optlv5 },
+{ "nbsp", &optspacebar },
+{ "jap", &optjapan },
+{ "korean", &optkorean },
+{ "esperanto", &optesperanto },
+{ "solaris", &optsolaris },
+{ "terminate", &optterminate }
+};
 
 static const char *rules_file = NULL;
 
@@ -54,8 +101,8 @@ parse_rules(void)
    E_XKB_Layout *layout = NULL;
    E_XKB_Option *option = NULL;
    E_XKB_Variant *variant = NULL;
-   E_XKB_Option_Group *group = NULL;
    FILE *f;
+   int i;
 
    if (!rules_file) return 0;
 
@@ -211,7 +258,7 @@ parse_rules(void)
      {
         if (fgets(buf, sizeof(buf), f))
           {
-             char *n, *p, *t, *tmp, *name, *txt;
+             char *n, *p, *tmp, *name, *txt;
 
              n = strchr(buf, '\n');
              if (n) *n = '\0';
@@ -226,41 +273,25 @@ parse_rules(void)
              while (p[0] == ' ')
                ++p;
 
-             /* skip "grp" options for switching kbd layouts */
-             //if (strncmp(name, "grp", 3))
-             {
-                if (!strchr(name, ':'))
-                  {
-                     group = E_NEW(E_XKB_Option_Group, 1);
-
-                     /* A hack to get it to parse right if
-                      * the group name contains a space
-                      */
-                     t = strstr(p, "  ");
-                     if (t)
-                       {
-                          while (t[0] == ' ')
-                            ++t;
-                          p = t;
-                       }
-
-                     txt = evas_textblock_text_markup_to_utf8(NULL, p);
-                     group->description = eina_stringshare_add(txt);
-                     E_FREE(txt);
-
-                     optgroups = eina_list_append(optgroups, group);
-                  }
-                else if (group)
-                  {
-                     option = E_NEW(E_XKB_Option, 1);
-                     option->name = eina_stringshare_add(name);
-                     txt = evas_textblock_text_markup_to_utf8(NULL, p);
-                     option->description = eina_stringshare_add(txt);
-                     E_FREE(txt);
-                     group->options = eina_list_append(group->options,
-                                                       option);
-                  }
-             }
+             if (strchr(name, ':'))
+               {
+                  option = E_NEW(E_XKB_Option, 1);
+                  option->name = eina_stringshare_add(name);
+                  txt = evas_textblock_text_markup_to_utf8(NULL, p);
+                  option->description = eina_stringshare_add(txt);
+                  E_FREE(txt);
+                  for (i = 0; i < (sizeof(grplabels) / sizeof(grplabels[0])); ++i)
+                    {
+                       if (!strncasecmp(name, grplabels[i].name, (strlen(grplabels[i].name))))
+                         {
+                            *(grplabels[i].list) = eina_list_append(*(grplabels[i].list), option);
+                            break;
+                         }
+                    }
+                  if (i < (sizeof(grplabels) / sizeof(grplabels[0]))) continue;
+                  optmisc = eina_list_append(optmisc, option);
+               }
+             else continue;
 
              free(tmp);
           }
@@ -277,10 +308,20 @@ err:
    return 1;
 }
 
+static void
+_free_option(E_XKB_Option *o)
+{
+   eina_stringshare_del(o->name);
+   eina_stringshare_del(o->description);
+
+   E_FREE(o);
+}
+
+
+
 void
 clear_rules(void)
 {
-   E_XKB_Option_Group *og;
    E_XKB_Variant *v;
    E_XKB_Option *o;
    E_XKB_Layout *la;
@@ -310,20 +351,23 @@ clear_rules(void)
         E_FREE(m);
      }
 
-   EINA_LIST_FREE(optgroups, og)
-     {
-        eina_stringshare_del(og->description);
-
-        EINA_LIST_FREE(og->options, o)
-          {
-             eina_stringshare_del(o->name);
-             eina_stringshare_del(o->description);
-
-             E_FREE(o);
-          }
-
-        E_FREE(og);
-     }
+   EINA_LIST_FREE(optled, o) _free_option(o);
+   EINA_LIST_FREE(optswitch, o) _free_option(o);
+   EINA_LIST_FREE(optlv3, o) _free_option(o);
+   EINA_LIST_FREE(optctrl, o) _free_option(o);
+   EINA_LIST_FREE(optkeypad, o) _free_option(o);
+   EINA_LIST_FREE(optdelkeypad, o) _free_option(o);
+   EINA_LIST_FREE(optcapslock, o) _free_option(o);
+   EINA_LIST_FREE(optaltwin, o) _free_option(o);
+   EINA_LIST_FREE(optcompose, o) _free_option(o);
+   EINA_LIST_FREE(optcurrency, o) _free_option(o);
+   EINA_LIST_FREE(optlv5, o) _free_option(o);
+   EINA_LIST_FREE(optspacebar, o) _free_option(o);
+   EINA_LIST_FREE(optjapan, o) _free_option(o);
+   EINA_LIST_FREE(optkorean, o) _free_option(o);
+   EINA_LIST_FREE(optesperanto, o) _free_option(o);
+   EINA_LIST_FREE(optsolaris, o) _free_option(o);
+   EINA_LIST_FREE(optterminate, o) _free_option(o);
 
    optgroups = NULL;
    layouts = NULL;

@@ -279,21 +279,6 @@ _xkb_changed_state(void *data EINA_UNUSED, int type EINA_UNUSED, void *event EIN
    return ECORE_CALLBACK_PASS_ON;
 }
 
-#if 0
-static int
-_xkb_menu_items_sort(const void *data1, const void *data2)
-{
-   const E_Config_XKB_Layout *cl1 = data1;
-   const E_Config_XKB_Layout *cl2 = data2;
-   int v;
-
-   v = strcmp(cl1->name, cl2->name);
-   if (!v) v = strcmp(cl1->model, cl2->model);
-   if (!v) v = strcmp(cl1->variant, cl2->variant);
-   return v;
-}
-
-#endif
 static void
 _e_xkb_cb_mouse_down(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event)
 {
