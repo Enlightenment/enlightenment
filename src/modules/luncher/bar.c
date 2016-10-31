@@ -1274,9 +1274,9 @@ _bar_fill(Instance *inst)
    if (inst->order)
      {
         Efreet_Desktop *desktop;
-        Eina_List *l;
+        Eina_List *list;
 
-        EINA_LIST_FOREACH(inst->order->desktops, l, desktop)
+        EINA_LIST_FOREACH(inst->order->desktops, list, desktop)
           {
              ic = _bar_icon_add(inst, desktop, NULL);
              ic->in_order = EINA_TRUE;
