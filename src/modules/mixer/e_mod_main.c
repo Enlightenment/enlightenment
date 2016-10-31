@@ -470,27 +470,14 @@ _slider_changed_cb(void *data EINA_UNUSED, Evas_Object *obj,
                    void *event EINA_UNUSED)
 {
    int val;
-   Emix_Volume v;
-   unsigned int i;
-   int pval;
 
    EINA_SAFETY_ON_NULL_RETURN(mixer_context->sink_default);
    Emix_Sink *s = (Emix_Sink *)mixer_context->sink_default;
 
-   pval = s->volume.volumes[0];
-
    val = (int)elm_slider_value_get(obj);
-   v.volumes = calloc(s->volume.channel_count, sizeof(int));
-   v.channel_count = s->volume.channel_count;
-   if (BARRIER_CHECK(pval, val))
-     val = 100;
-
-   for (i = 0; i < s->volume.channel_count; i++) v.volumes[i] = val;
-   emix_sink_volume_set(s, v);
-   elm_slider_value_set(obj, val);
+   VOLSET(val, s->volume, s, emix_sink_volume_set);
    emix_config_save_state_get();
    if (emix_config_save_get()) e_config_save_queue();
-   free(v.volumes);
 }
 
 static void
