@@ -72,8 +72,8 @@ struct E_Gadget_Config
    Evas_Point offset; //offset from mouse down
    Evas_Point down; //coords from mouse down
    E_Gadget_Config *orig; //gadget is a copy of the original gadget during a move
+   E_Gadget_Site_Anchor resizing;
    Eina_Bool moving : 1;
-   Eina_Bool resizing : 1;
    Eina_Bool display_del : 1; //deleted using ->display
 };
 
@@ -674,8 +674,14 @@ _gadget_mouse_resize(E_Gadget_Config *zgc, int t EINA_UNUSED, Ecore_Event_Mouse_
      evas_object_geometry_get(zgc->site->layout, &x, &y, &w, &h);
    gw = zgc->w * w;
    gh = zgc->h * h;
-   gw += (ev->x - zgc->down.x);
-   gh += (ev->y - zgc->down.y);
+   if (zgc->resizing & E_GADGET_SITE_ANCHOR_LEFT)
+     gw -= (ev->x - zgc->down.x);
+   else
+     gw += (ev->x - zgc->down.x);
+   if (zgc->resizing & E_GADGET_SITE_ANCHOR_TOP)
+     gh -= (ev->y - zgc->down.y);
+   else
+     gh += (ev->y - zgc->down.y);
    zgc->w = gw / w;
    zgc->h = gh / h;
    zgc->down.x = ev->x;
@@ -723,7 +729,7 @@ _gadget_act_resize_end(E_Object *obj, const char *params EINA_UNUSED, E_Binding_
    if (obj->type != E_GADGET_TYPE) return EINA_FALSE;
    g = e_object_data_get(obj);
    zgc = evas_object_data_get(g, "__e_gadget");
-   zgc->moving = 0;
+   zgc->resizing = 0;
 
    E_FREE_FUNC(zgc->site->move_handler, ecore_event_handler_del);
    evas_object_smart_need_recalculate_set(zgc->site->layout, 1);
@@ -756,17 +762,26 @@ _gadget_act_move(E_Object *obj, const char *params EINA_UNUSED, E_Binding_Event_
 }
 
 static Eina_Bool
-_gadget_act_resize(E_Object *obj, const char *params EINA_UNUSED, E_Binding_Event_Mouse_Button *ev EINA_UNUSED)
+_gadget_act_resize(E_Object *obj, const char *params EINA_UNUSED, E_Binding_Event_Mouse_Button *ev)
 {
    E_Gadget_Config *zgc;
    Evas_Object *g;
+   int x, y, w, h;
 
    if (obj->type != E_GADGET_TYPE) return EINA_FALSE;
 
    g = e_object_data_get(obj);
    zgc = evas_object_data_get(g, "__e_gadget");
    if (zgc->site->orient) return EINA_FALSE;
-   zgc->resizing = 1;
+   evas_object_geometry_get(g, &x, &y, &w, &h);
+   if (ev->canvas.x < x + (w / 2))
+     zgc->resizing = E_GADGET_SITE_ANCHOR_LEFT;
+   else
+     zgc->resizing = E_GADGET_SITE_ANCHOR_RIGHT;
+   if (ev->canvas.y < y + (h / 2))
+     zgc->resizing |= E_GADGET_SITE_ANCHOR_TOP;
+   else
+     zgc->resizing |= E_GADGET_SITE_ANCHOR_BOTTOM;
    if (!zgc->site->move_handler)
      zgc->site->move_handler = ecore_event_handler_add(ECORE_EVENT_MOUSE_MOVE, (Ecore_Event_Handler_Cb)_gadget_mouse_resize, zgc);
    return EINA_TRUE;
