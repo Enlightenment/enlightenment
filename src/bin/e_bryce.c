@@ -228,11 +228,13 @@ _bryce_autosize(Bryce *b)
              elm_object_content_unset(b->scroller);
              if (b->orient == E_GADGET_SITE_ORIENT_HORIZONTAL)
                {
+                  if (!h) h = 1;
                   evas_object_resize(b->bryce, w * b->size * e_scale / h, b->size * e_scale);
                   evas_object_resize(b->site, w * b->size * e_scale / h, b->size * e_scale);
                }
              else if (b->orient == E_GADGET_SITE_ORIENT_VERTICAL)
                {
+                  if (!w) w = 1;
                   evas_object_resize(b->bryce, b->size * e_scale, h * b->size * e_scale / w);
                   evas_object_resize(b->site, b->size * e_scale, h * b->size * e_scale / w);
                }
