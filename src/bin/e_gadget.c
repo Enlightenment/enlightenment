@@ -41,6 +41,7 @@ struct E_Gadget_Config
 {
    EINA_INLIST;
    int id;
+   int zone;
    Eina_Stringshare *type;
    E_Object *e_obj_inherit;
    Evas_Object *display;
@@ -120,12 +121,22 @@ static E_Config_DD *edd_site;
 static E_Config_DD *edd_gadget;
 
 static void _gadget_object_finalize(E_Gadget_Config *zgc);
+static Eina_Bool _gadget_object_create(E_Gadget_Config *zgc);
 static void _editor_pointer_site_init(E_Gadget_Site_Orient orient, Evas_Object *site, Evas_Object *editor, Eina_Bool );
 
 static void
 _comp_site_resize(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
+   Eina_List *l;
+   E_Gadget_Config *zgc;
+
    evas_object_resize(data, e_comp->w, e_comp->h);
+   ZGS_GET(comp_site);
+   EINA_LIST_FOREACH(zgs->gadgets, l, zgc)
+     {
+        if (!zgc->display)
+          _gadget_object_create(zgc);
+     }
 }
 
 static void
@@ -325,6 +336,7 @@ _gadget_object_create(E_Gadget_Config *zgc)
              return EINA_TRUE;
           }
      }
+   if ((zgc->zone >= 0) && (!e_comp_zone_number_get(zgc->zone))) return EINA_FALSE;
    /* if id is < 0, gadget creates dummy config for demo use
     * if id is 0, gadget creates new config and returns id
     * otherwise, config of `id` is applied to created object
@@ -550,7 +562,7 @@ static void
 _site_layout(Evas_Object *o, Evas_Object_Box_Data *priv EINA_UNUSED, void *data)
 {
    E_Gadget_Site *zgs = data;
-   Evas_Coord x, y, w, h, xx, yy;//, px, py;
+   Evas_Coord x, y, w, h;//, px, py;
    Eina_List *l;
    double ax, ay;
    E_Gadget_Config *zgc;
@@ -560,8 +572,6 @@ _site_layout(Evas_Object *o, Evas_Object_Box_Data *priv EINA_UNUSED, void *data)
 
    evas_object_box_align_get(o, &ax, &ay);
 
-   xx = x;
-   yy = y;
    if (zgs->orient)
      {
         _site_layout_orient(o, zgs);
@@ -569,23 +579,33 @@ _site_layout(Evas_Object *o, Evas_Object_Box_Data *priv EINA_UNUSED, void *data)
      }
    EINA_LIST_FOREACH(zgs->gadgets, l, zgc)
      {
-        Evas_Coord gx = xx, gy = yy;
+        Evas_Coord gx = x, gy = y;
         int ww, hh, ow, oh;
+        E_Zone *zone;
 
         if (!zgc->display) continue;
         if (zgc->moving)
           _site_gadget_resize(zgc->gadget, w, h, &ww, &hh, &ow, &oh);
         else
           {
+             if (zgc->zone >= 0)
+               {
+                  zone = e_comp_zone_number_get(zgc->zone);
+                  x = gx = zone->x;
+                  y = gy = zone->y;
+                  w = zone->w;
+                  h = zone->h;
+               }
+
              _site_gadget_resize(zgc->gadget, w * zgc->w, h * zgc->h, &ww, &hh, &ow, &oh);
              if (zgc->x > -1.0)
                {
-                  gx = zgc->x * w;
+                  gx = x + zgc->x * w;
                   gx += (Evas_Coord)(((double)(ww - ow)) * 0.5 * -ax);
                }
              if (zgc->y > -1.0)
                {
-                  gy = zgc->y * h;
+                  gy = y + zgc->y * h;
                   gy += (Evas_Coord)(((double)(hh - oh)) * 0.5 * -ay);
                }
           }
@@ -642,8 +662,16 @@ _gadget_mouse_resize(E_Gadget_Config *zgc, int t EINA_UNUSED, Ecore_Event_Mouse_
    int ox, oy, ow, oh;//gadget geom
    double gw, gh;
 
-   evas_object_geometry_get(zgc->site->layout, &x, &y, &w, &h);
    evas_object_geometry_get(zgc->display, &ox, &oy, &ow, &oh);
+   if (zgc->zone >= 0)
+     {
+        E_Zone *zone;
+
+        zone = e_comp_zone_number_get(zgc->zone);
+        x = zone->x, y = zone->y, w = zone->w, h = zone->h;
+     }
+   else
+     evas_object_geometry_get(zgc->site->layout, &x, &y, &w, &h);
    gw = zgc->w * w;
    gh = zgc->h * h;
    gw += (ev->x - zgc->down.x);
@@ -667,13 +695,17 @@ _gadget_util_add(E_Gadget_Site *zgs, const char *type, int id)
    zgc->type = eina_stringshare_add(type);
    zgc->x = zgc->y = -1;
    zgc->site = zgs;
+   zgc->zone = -1;
    if (zgc->site->orient)
      zgc->w = zgc->h = -1;
    else
      {
         int w, h;
+        E_Zone *zone = e_zone_current_get();
 
         evas_object_geometry_get(zgc->site->layout, NULL, NULL, &w, &h);
+        w = MIN(zone->w, w);
+        h = MIN(zone->h, h);
         zgc->w = (96 * e_scale) / (double)w;
         zgc->h = (96 * e_scale) / (double)h;
      }
@@ -1009,6 +1041,7 @@ _site_drop(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
                     zgs->gadgets = eina_list_prepend_relative_list(zgs->gadgets, dzgc, l);
                     dzgc->site = zgs;
                     if (dzgc->id == -1) dzgc->id = 0;
+                    dzgc->zone = -1;
                     _gadget_object_finalize(dzgc);
                  }
              else
@@ -1021,6 +1054,7 @@ _site_drop(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
                     zgs->gadgets = eina_list_append_relative_list(zgs->gadgets, dzgc, l);
                     dzgc->site = zgs;
                     if (dzgc->id == -1) dzgc->id = 0;
+                    dzgc->zone = -1;
                     _gadget_object_finalize(dzgc);
                  }
           }
@@ -1033,9 +1067,18 @@ _site_drop(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
              evas_object_geometry_get(zgs->layout, &x, &y, &w, &h);
              EINA_LIST_FOREACH(drop->gadgets, l, dzgc)
                {
+                  E_Zone *zone;
                   /* calculate positioning offsets and normalize based on drop point */
                   evas_object_geometry_get(dzgc->display, &gx, &gy, &gw, &gh);
                   evas_object_smart_callback_call(zgs->layout, "gadget_moved", dzgc->display);
+                  if ((w == e_comp->w) && (h == e_comp->h))
+                    {
+                       zone = e_comp_object_util_zone_get(dzgc->display);
+                       dzgc->zone = zone->num;
+                       x = zone->x, y = zone->y, w = zone->w, h = zone->h;
+                    }
+                  else
+                    dzgc->zone = -1;
                   evas_object_del(dzgc->gadget);
                   zgs->gadget_list = eina_inlist_append(zgs->gadget_list,
                       EINA_INLIST_GET(dzgc));
@@ -1065,6 +1108,7 @@ _site_drop(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
                        zgs->gadgets = eina_list_append(zgs->gadgets, dzgc);
                        dzgc->site = zgs;
                        if (dzgc->id == -1) dzgc->id = 0;
+                       dzgc->zone = -1;
                        _gadget_object_finalize(dzgc);
                     }
                }
@@ -1079,6 +1123,7 @@ _site_drop(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
                        zgs->gadgets = eina_list_prepend(zgs->gadgets, dzgc);
                        dzgc->site = zgs;
                        if (dzgc->id == -1) dzgc->id = 0;
+                       dzgc->zone = -1;
                        _gadget_object_finalize(dzgc);
                     }
                }
@@ -1091,9 +1136,18 @@ _site_drop(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
              evas_object_geometry_get(zgs->layout, &x, &y, &w, &h);
              EINA_LIST_FOREACH(drop->gadgets, l, dzgc)
                {
+                  E_Zone *zone;
                   /* calculate positioning offsets and normalize based on drop point */
                   evas_object_geometry_get(dzgc->display, &gx, &gy, &gw, &gh);
-                  evas_object_smart_callback_call(zgs->layout, "gadget_moved", dzgc->gadget);
+                  evas_object_smart_callback_call(zgs->layout, "gadget_moved", dzgc->display);
+                  if ((w == e_comp->w) && (h == e_comp->h))
+                    {
+                       zone = e_comp_object_util_zone_get(dzgc->display);
+                       dzgc->zone = zone->num;
+                       x = zone->x, y = zone->y, w = zone->w, h = zone->h;
+                    }
+                  else
+                    dzgc->zone = -1;
                   evas_object_del(dzgc->gadget);
                   zgs->gadget_list = eina_inlist_append(zgs->gadget_list,
                     EINA_INLIST_GET(dzgc));
@@ -1745,6 +1799,7 @@ e_gadget_init(void)
    gadget_types = eina_hash_string_superfast_new(free);
    edd_gadget = E_CONFIG_DD_NEW("E_Gadget_Config", E_Gadget_Config);
    E_CONFIG_VAL(edd_gadget, E_Gadget_Config, id, INT);
+   E_CONFIG_VAL(edd_gadget, E_Gadget_Config, zone, INT);
    E_CONFIG_VAL(edd_gadget, E_Gadget_Config, type, STR);
    E_CONFIG_VAL(edd_gadget, E_Gadget_Config, style.name, STR);
    E_CONFIG_VAL(edd_gadget, E_Gadget_Config, x, DOUBLE);
