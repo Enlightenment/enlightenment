@@ -35,7 +35,6 @@ _e_client_volume_event_simple(E_Client *ec, int type)
 static void
 _e_client_volume_object_mouse_down_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
-   int val;
    E_Client *ec;
 
    ec = data;
@@ -46,7 +45,6 @@ _e_client_volume_object_mouse_down_cb(void *data, Evas *e EINA_UNUSED, Evas_Obje
 static void
 _e_client_volume_object_volume_changed(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
-   int val;
    E_Client *ec;
 
    ec = data;
@@ -55,7 +53,7 @@ _e_client_volume_object_volume_changed(void *data, Evas_Object *obj, void *event
 }
 
 static Eina_Bool
-_e_client_volume_object_changed(void *data, int type, void *event)
+_e_client_volume_object_changed(void *data, int type EINA_UNUSED, void *event)
 {
    E_Event_Client *ev;
    Evas_Object *o;
