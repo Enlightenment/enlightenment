@@ -1880,6 +1880,17 @@ _editor_pointer_move(Gadget_Item *active EINA_UNUSED, int t EINA_UNUSED, Ecore_E
    return ECORE_CALLBACK_RENEW;
 }
 
+static Eina_Bool
+_editor_pointer_wheel(Gadget_Item *active EINA_UNUSED, int t EINA_UNUSED, Ecore_Event_Mouse_Wheel *ev)
+{
+   int w, h;
+
+   evas_object_geometry_get(pointer_site, NULL, NULL, &w, &h);
+   evas_object_resize(pointer_site, w - (ev->z * 10 * e_scale), h - (ev->z * 10 * e_scale));
+   evas_object_smart_need_recalculate_set(pointer_site, 1);
+   return ECORE_CALLBACK_RENEW;
+}
+
 static void
 _editor_pointer_site_init(E_Gadget_Site_Orient orient, Evas_Object *site, Evas_Object *editor, Eina_Bool up)
 {
@@ -1906,6 +1917,8 @@ _editor_pointer_site_init(E_Gadget_Site_Orient orient, Evas_Object *site, Evas_O
    evas_object_event_callback_add(pointer_site, EVAS_CALLBACK_CHANGED_SIZE_HINTS, _editor_site_hints, active);
    evas_object_event_callback_add(pointer_site, EVAS_CALLBACK_DEL, _editor_pointer_site_del, active);
    E_LIST_HANDLER_APPEND(handlers, ECORE_EVENT_MOUSE_MOVE, _editor_pointer_move, active);
+   if (!orient)
+     E_LIST_HANDLER_APPEND(handlers, ECORE_EVENT_MOUSE_WHEEL, _editor_pointer_wheel, active);
    E_LIST_HANDLER_APPEND(handlers,
      up ? ECORE_EVENT_MOUSE_BUTTON_UP : ECORE_EVENT_MOUSE_BUTTON_DOWN, _editor_pointer_button, active);
 
