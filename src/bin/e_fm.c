@@ -1520,7 +1520,7 @@ e_fm2_icon_file_get(Evas_Object *obj, const char *file)
    E_Fm2_Icon *ic;
 
    EFM_SMART_CHECK(NULL);
-   if (!file) return;
+   if (!file) return NULL;
    EINA_LIST_FOREACH(sd->icons, l, ic)
      {
         if ((ic->info.file) && (!strcmp(ic->info.file, file)))
