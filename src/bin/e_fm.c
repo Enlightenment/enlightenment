@@ -1513,6 +1513,22 @@ e_fm2_all_list_get(Evas_Object *obj)
    return list;
 }
 
+E_API E_Fm2_Icon_Info *
+e_fm2_icon_file_get(Evas_Object *obj, const char *file)
+{
+   Eina_List *list = NULL, *l;
+   E_Fm2_Icon *ic;
+
+   EFM_SMART_CHECK(NULL);
+   if (!file) return;
+   EINA_LIST_FOREACH(sd->icons, l, ic)
+     {
+        if ((ic->info.file) && (!strcmp(ic->info.file, file)))
+          return &(ic->info);
+     }
+   return NULL;
+}
+
 E_API void
 e_fm2_deselect_all(Evas_Object *obj)
 {
