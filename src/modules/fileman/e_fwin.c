@@ -41,11 +41,11 @@ struct _E_Fwin
    const char          *overlay_file;
    const char          *scrollframe_file;
    const char          *theme_file;
+   const char          *over_file;
 
    Ecore_Timer *popup_timer;
    Ecore_Job *popup_del_job;
    Eina_List *popup_handlers;
-   E_Fm2_Icon_Info *popup_icon;
    Evas_Object *popup;
 
    Ecore_Timer *spring_timer;
@@ -760,7 +760,8 @@ _e_fwin_icon_popup_handler(void *data)
    evas_object_event_callback_del(fwin->win, EVAS_CALLBACK_MOUSE_IN, (Evas_Object_Event_Cb)_e_fwin_icon_popup_handler);
    evas_object_event_callback_del(fwin->win, EVAS_CALLBACK_MOUSE_OUT, (Evas_Object_Event_Cb)_e_fwin_icon_popup_handler);
    E_FREE_LIST(fwin->popup_handlers, ecore_event_handler_del);
-   fwin->popup_icon = NULL;
+   if (fwin->over_file) eina_stringshare_del(fwin->over_file);
+   fwin->over_file = NULL;
    return ECORE_CALLBACK_RENEW;
 }
 
@@ -788,6 +789,7 @@ _e_fwin_free(E_Fwin *fwin)
    if (fwin->overlay_file) eina_stringshare_del(fwin->overlay_file);
    if (fwin->scrollframe_file) eina_stringshare_del(fwin->scrollframe_file);
    if (fwin->theme_file) eina_stringshare_del(fwin->theme_file);
+   if (fwin->over_file) eina_stringshare_del(fwin->over_file);
    if (fwin->fad)
      {
         e_object_del(E_OBJECT(fwin->fad->dia));
@@ -820,13 +822,15 @@ _e_fwin_icon_hints(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *even
    E_Zone *zone;
    Evas_Object *edje;
    E_Fwin *fwin = data;
+   E_Fm2_Icon_Info *popup_icon;
 
-   if (!fwin->popup_icon) return;
+   popup_icon = e_fm2_icon_file_get(fwin->cur_page->fm_obj, fwin->over_file);
+   if (!popup_icon) return;
    zone = fwin->zone ?: e_comp_object_util_zone_get(fwin->win);
-   e_fm2_icon_geometry_get(fwin->popup_icon->ic, &x, &y, &w, &h);
+   e_fm2_icon_geometry_get(popup_icon->ic, &x, &y, &w, &h);
    if (fwin->zone)
      {
-        evas_object_geometry_get(fwin->popup_icon->fm, &fx, &fy, NULL, NULL);
+        evas_object_geometry_get(popup_icon->fm, &fx, &fy, NULL, NULL);
         fx -= zone->x, fy -= zone->y;
      }
    else
@@ -872,10 +876,12 @@ _e_fwin_icon_popup(void *data)
    E_Zone *zone;
    char buf[4096];
    int mw, mh;
+   E_Fm2_Icon_Info *popup_icon;
 
    fwin->popup_timer = NULL;
-   if (!fwin->popup_icon) return EINA_FALSE;
-   snprintf(buf, sizeof(buf), "%s/%s", e_fm2_real_path_get(fwin->cur_page->fm_obj), fwin->popup_icon->file);
+   popup_icon = e_fm2_icon_file_get(fwin->cur_page->fm_obj, fwin->over_file);
+   if (!popup_icon) return EINA_FALSE;
+   snprintf(buf, sizeof(buf), "%s/%s", e_fm2_real_path_get(fwin->cur_page->fm_obj), popup_icon->file);
    if (!ecore_file_can_read(buf)) return EINA_FALSE;
    if (fwin->popup)
      {
@@ -891,8 +897,8 @@ _e_fwin_icon_popup(void *data)
    mh = zone->h * fileman_config->tooltip.size / 100.0;
 
    edje_object_part_text_set(bg, "e.text.title", 
-                             fwin->popup_icon->label ?
-                             fwin->popup_icon->label : fwin->popup_icon->file);
+                             popup_icon->label ?
+                             popup_icon->label : popup_icon->file);
    
    list = e_widget_list_add(e_comp->evas, 0, 0);
    if (fwin->win)
@@ -900,7 +906,7 @@ _e_fwin_icon_popup(void *data)
    
    o = e_widget_filepreview_add(e_comp->evas, mw, mh, 0);
    e_widget_filepreview_clamp_video_set(o, fileman_config->tooltip.clamp_size);
-   e_widget_filepreview_path_set(o, buf, fwin->popup_icon->mime);
+   e_widget_filepreview_path_set(o, buf, popup_icon->mime);
    e_widget_list_object_append(list, o, 1, 0, 0.5);
    edje_object_part_swallow(bg, "e.swallow.content", list);
    
@@ -952,7 +958,9 @@ _e_fwin_icon_mouse_in(void *data, Evas_Object *obj EINA_UNUSED, void *event_info
    fwin->popup_timer = NULL;
    if (!fileman_config->tooltip.enable) return;
    fwin->popup_timer = ecore_timer_add(fileman_config->tooltip.delay, _e_fwin_icon_popup, fwin);
-   fwin->popup_icon = ici;
+   if (fwin->over_file) eina_stringshare_del(fwin->over_file);
+   fwin->over_file = NULL;
+   if (ici->file) fwin->over_file = eina_stringshare_add(ici->file);
 #ifndef HAVE_WAYLAND_ONLY
    if (!fwin->popup_handlers)
      {
