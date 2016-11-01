@@ -1772,8 +1772,11 @@ _conf_item_get(int *id)
      }
 
    ci = E_NEW(Config_Item, 1);
-   
-   ci->id = eina_list_count(luncher_config->items)+1;
+
+   if (*id != -1)
+     ci->id = eina_list_count(luncher_config->items)+1;
+   else
+     ci->id = -1;
    ci->dir = eina_stringshare_add("default");
    luncher_config->items = eina_list_append(luncher_config->items, ci);
 
