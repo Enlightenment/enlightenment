@@ -132,7 +132,6 @@ _bar_icon_match(Instance *inst, E_Client *ec)
         if (ec->exe_inst->desktop)
           has_desktop = EINA_TRUE;
      }
-
    if (has_desktop)   
      ic = eina_hash_find(inst->icons_desktop_hash, ec->exe_inst->desktop->orig_path);
    if (has_desktop && !ic)
@@ -904,6 +903,8 @@ _bar_icon_add(Instance *inst, Efreet_Desktop *desktop, E_Client *non_desktop_cli
    elm_box_pack_end(inst->o_icon_con, ic->o_layout);
    evas_object_show(ic->o_layout);
 
+   e_util_size_debug_set(ic->o_layout, EINA_TRUE);
+
    ic->o_icon = elm_icon_add(ic->o_layout);
    E_EXPAND(ic->o_icon);
 
@@ -1093,12 +1094,15 @@ _bar_cb_exec_del(void *data EINA_UNUSED, int type EINA_UNUSED, E_Exec_Instance *
              break;
           }
      }
+
    EINA_LIST_FOREACH(luncher_instances, l, inst)
      {
         Icon *ic = NULL;
-        if (!inst || !inst->icons_desktop_hash)
-          return ECORE_CALLBACK_RENEW;
-        ic = eina_hash_find(inst->icons_desktop_hash, ex->desktop->orig_path);
+
+        if (ex->desktop)
+          {
+             ic = eina_hash_find(inst->icons_desktop_hash, ex->desktop->orig_path);
+          }
         if (ic)
           {
              if (ic->starting) elm_layout_signal_emit(ic->o_layout, "e,state,started", "e");
@@ -1363,8 +1367,8 @@ _bar_fill(Instance *inst)
      {
         Eina_Bool skip = EINA_TRUE;
 
-        if (ec)
-          ic = _bar_icon_match(inst, ec);
+        if (e_client_util_ignored_get(ec)) continue;
+        ic = _bar_icon_match(inst, ec);
         skip = ec->netwm.state.skip_taskbar;
         if (!ic)
           {
