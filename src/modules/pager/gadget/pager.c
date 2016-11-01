@@ -102,7 +102,7 @@ static void             _pager_desk_cb_mouse_move(void *data, Evas *e EINA_UNUSE
 static void             _pager_desk_cb_drag_finished(E_Drag *drag, int dropped);
 static void             _pager_desk_cb_mouse_wheel(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info);
 static Eina_Bool        _pager_popup_cb_timeout(void *data);
-static Pager           *_pager_new(Evas *evas, E_Zone *zone);
+static Pager           *_pager_new(Evas *evas);
 static void             _pager_free(Pager *p);
 static void             _pager_fill(Pager *p);
 static void             _pager_orient(Instance *inst, E_Gadget_Site_Orient orient);
@@ -315,9 +315,10 @@ _pager_resize(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, voi
 }
 
 static Pager *
-_pager_new(Evas *evas, E_Zone *zone)
+_pager_new(Evas *evas)
 {
    Pager *p;
+   E_Zone *zone;
 
    p = E_NEW(Pager, 1);
    p->inst = NULL;
@@ -325,7 +326,7 @@ _pager_new(Evas *evas, E_Zone *zone)
    p->o_table = elm_table_add(e_win_evas_win_get(evas));
    evas_object_event_callback_add(p->o_table, EVAS_CALLBACK_RESIZE, _pager_resize, p);
    elm_table_homogeneous_set(p->o_table, 1);
-   p->zone = zone;
+   p->zone = e_comp_object_util_zone_get(p->o_table);
    _pager_fill(p);
    pagers = eina_list_append(pagers, p);
    return p;
@@ -710,7 +711,7 @@ pager_popup_new(int keyaction)
 
    /* Show popup */
 
-   pp->pager = _pager_new(e_comp->evas, zone);
+   pp->pager = _pager_new(e_comp->evas);
    
    pp->pager->popup = pp;
    pp->urgent = 0;
@@ -811,6 +812,17 @@ _pager_cb_obj_show(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED
 
     EINA_LIST_FOREACH(inst->pager->desks, l, pd)
        edje_object_signal_emit(pd->o_desk, "e,state,visible", "e");
+}
+
+static void
+_pager_cb_move(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
+{
+   Instance *inst = data;
+   Pager *p = inst->pager;
+
+   p->zone = e_comp_object_util_zone_get(p->o_table);
+   _pager_empty(p);
+   _pager_fill(p);
 }
 
 static Evas_Object *
@@ -1885,7 +1897,7 @@ pager_create(Evas_Object *parent, int *id EINA_UNUSED, E_Gadget_Site_Orient orie
    Instance *inst;
 
    inst = E_NEW(Instance, 1);
-   p = _pager_new(evas_object_evas_get(parent), e_comp_object_util_zone_get(parent));
+   p = _pager_new(evas_object_evas_get(parent));
    p->inst = inst;
    inst->pager = p;
    o = p->o_table;
@@ -1897,7 +1909,7 @@ pager_create(Evas_Object *parent, int *id EINA_UNUSED, E_Gadget_Site_Orient orie
    evas_object_smart_callback_add(parent, "gadget_created", _pager_gadget_created_cb, inst);
    evas_object_smart_callback_add(parent, "gadget_site_anchor", _pager_gadget_anchor_change_cb, inst);
    evas_object_smart_callback_add(parent, "gadget_destroyed", _pager_gadget_destroyed_cb, inst);
-
+   evas_object_event_callback_add(o, EVAS_CALLBACK_MOVE, _pager_cb_move, inst);
    evas_object_event_callback_add(o, EVAS_CALLBACK_MOUSE_DOWN,
                                   _button_cb_mouse_down, inst);
    evas_object_event_callback_add(o, EVAS_CALLBACK_SHOW,
