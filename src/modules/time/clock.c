@@ -70,6 +70,18 @@ _clock_month_next_cb(void *data, Evas_Object *obj EINA_UNUSED, const char *emiss
 }
 
 static void
+_clock_mouse_wheel_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info)
+{
+   Instance *inst = data;
+   Evas_Event_Mouse_Wheel *ev = event_info;
+
+   if (ev->z < 0)
+     _clock_month_prev_cb(inst, NULL, NULL, NULL);
+   else if (ev->z > 0)
+     _clock_month_next_cb(inst, NULL, NULL, NULL);
+}
+
+static void
 _clock_popup_dismissed(void *data EINA_UNUSED, Evas_Object *obj, void *info EINA_UNUSED)
 {
    evas_object_del(obj);
@@ -221,6 +233,8 @@ clock_popup_new(Instance *inst)
    elm_object_style_set(inst->popup, "noblock");
    evas_object_smart_callback_add(inst->popup, "dismissed", _clock_popup_dismissed, inst);
    evas_object_event_callback_add(inst->popup, EVAS_CALLBACK_DEL, _clock_popup_del, inst);
+   evas_object_event_callback_add(inst->popup, EVAS_CALLBACK_MOUSE_WHEEL,
+                                   _clock_mouse_wheel_cb, inst);
 
    inst->o_table = elm_table_add(inst->popup);
 
