@@ -1061,6 +1061,7 @@ _bar_icon_add(Instance *inst, Efreet_Desktop *desktop, E_Client *non_desktop_cli
    else
      ic->clients = eina_list_append(ic->clients, non_desktop_client);
    elm_layout_sizing_eval(ic->o_layout);
+   _bar_aspect(inst);
    return ic;
 }
 
@@ -1318,9 +1319,10 @@ _bar_empty(Instance *inst)
    if (inst->icons)
      {
         Icon *ic;
+        Eina_List *l;
 
         elm_box_clear(inst->o_icon_con);
-        EINA_LIST_FREE(inst->icons, ic)
+        EINA_LIST_FOREACH(inst->icons, l, ic)
           _bar_icon_del(inst, ic);
         eina_list_free(inst->icons);
         inst->icons = NULL;
@@ -1383,14 +1385,11 @@ _bar_fill(Instance *inst)
      }
    E_CLIENT_FOREACH(ec)
      {
-        Eina_Bool skip = EINA_TRUE;
-
         if (e_client_util_ignored_get(ec)) continue;
+        if (ec->netwm.state.skip_taskbar) continue;
         ic = _bar_icon_match(inst, ec);
-        skip = ec->netwm.state.skip_taskbar;
         if (!ic)
           {
-             if (skip) continue;
              ic = _bar_icon_add(inst, NULL, ec);
              snprintf(buf, sizeof(buf), "e,state,on,%s", _bar_location_get(inst));
              elm_layout_signal_emit(ic->o_layout, buf, "e");
@@ -1794,8 +1793,8 @@ _bar_recalculate_job(void *data)
 
    if (inst && inst->o_icon_con)
      {
-        _bar_empty(inst);
-        _bar_fill(inst);
+       _bar_empty(inst);
+       _bar_fill(inst);
      }
    inst->recalc_job = NULL;
 }
