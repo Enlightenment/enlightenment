@@ -4,6 +4,16 @@ static Evas_Object *current_preview;
 static Eina_Bool current_preview_menu;
 static Eina_Bool _bar_icon_preview_show(void *data);
 
+static Eina_Bool
+_bar_check_modifiers(Evas_Modifier *modifiers)
+{
+   if ((evas_key_modifier_is_set(modifiers, "Alt")) ||
+       (evas_key_modifier_is_set(modifiers, "Control")) ||
+       (evas_key_modifier_is_set(modifiers, "Shift")))
+     return EINA_TRUE;
+   return EINA_FALSE;
+}
+
 static Evas_Object *
 _bar_gadget_configure(Evas_Object *g)
 {
@@ -228,12 +238,8 @@ _bar_icon_menu_action_clicked(void *data, Evas *e EINA_UNUSED, Evas_Object *obj,
 }
 
 static void
-_bar_icon_menu_icon_mouse_out(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj, void *event_data)
+_bar_icon_menu_icon_mouse_out(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj, void *event_data EINA_UNUSED)
 {
-   Evas_Event_Mouse_Out *ev = event_data;
-
-   if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return;
-
    elm_layout_signal_emit(obj, "e,state,unfocused", "e");
 }
 
@@ -243,6 +249,7 @@ _bar_icon_menu_icon_mouse_in(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_O
    Evas_Event_Mouse_In *ev = event_data;
 
    if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return;
+   if (_bar_check_modifiers(ev->modifiers)) return;
 
    elm_layout_signal_emit(obj, "e,state,focused", "e");
 }
@@ -339,6 +346,7 @@ _bar_icon_mouse_move(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUS
    int dx, dy;
 
    if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return;
+   if (_bar_check_modifiers(ev->modifiers)) return;
 
    if (!ic->drag.start) return;
 
@@ -400,6 +408,7 @@ _bar_icon_mouse_down(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUS
    Evas_Event_Mouse_Up *ev = event_data;
 
    if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return;
+   if (_bar_check_modifiers(ev->modifiers)) return;
 
    if (ev->button == 1)
      {
@@ -499,6 +508,7 @@ _bar_icon_mouse_up(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED
    Evas_Event_Mouse_Up *ev = event_data;
 
    if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return;
+   if (_bar_check_modifiers(ev->modifiers)) return;
 
    if (ev->button == 1)
      {
@@ -572,12 +582,8 @@ _bar_icon_preview_hide(void *data)
 }
 
 static void
-_bar_icon_preview_item_mouse_out(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj, void *event_data)
+_bar_icon_preview_item_mouse_out(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj, void *event_data EINA_UNUSED)
 {
-   Evas_Event_Mouse_Out *ev = event_data;
-
-   if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return;
-
    elm_layout_signal_emit(obj, "e,state,unfocused", "e");
 }
 
@@ -587,18 +593,15 @@ _bar_icon_preview_item_mouse_in(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Eva
    Evas_Event_Mouse_In *ev = event_data;
 
    if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return;
+   if (_bar_check_modifiers(ev->modifiers)) return;
 
    elm_layout_signal_emit(obj, "e,state,focused", "e");
 }
 
 static void
-_bar_icon_preview_mouse_out(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_data)
+_bar_icon_preview_mouse_out(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_data EINA_UNUSED)
 {
    Icon *ic = data;
-   Evas_Event_Mouse_Out *ev = event_data;
-
-   if (ev)
-     if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return;
 
    if (current_preview_menu)
      return;
@@ -614,6 +617,7 @@ _bar_icon_preview_mouse_in(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EIN
    Evas_Event_Mouse_In *ev = event_data;
 
    if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return;
+   if (_bar_check_modifiers(ev->modifiers)) return;
 
    if (ic->mouse_out_timer)
      ecore_timer_del(ic->mouse_out_timer);
@@ -644,6 +648,7 @@ _bar_icon_preview_mouse_up(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EIN
    Icon *ic = evas_object_data_get(current_preview, "icon");
 
    if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return;
+   if (_bar_check_modifiers(ev->modifiers)) return;
 
    if (ev->button == 3)
      {
@@ -812,6 +817,7 @@ _bar_icon_mouse_in(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *even
    Evas_Event_Mouse_In *ev = event_data;
 
    if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return;
+   if (_bar_check_modifiers(ev->modifiers)) return;
 
    elm_object_tooltip_show(obj);
    elm_layout_signal_emit(ic->o_layout, "e,state,focused", "e");
@@ -843,12 +849,9 @@ _bar_icon_mouse_in(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *even
 }
   
 static void
-_bar_icon_mouse_out(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *event_data)
+_bar_icon_mouse_out(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *event_data EINA_UNUSED)
 {
    Icon *ic = data;
-   Evas_Event_Mouse_Out *ev = event_data;
-
-   if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return;
 
    elm_object_tooltip_hide(obj);
    elm_layout_signal_emit(ic->o_layout, "e,state,unfocused", "e");
