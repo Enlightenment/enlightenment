@@ -819,10 +819,13 @@ _pager_cb_move(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *event_in
 {
    Instance *inst = data;
    Pager *p = inst->pager;
-
-   p->zone = e_comp_object_util_zone_get(p->o_table);
-   _pager_empty(p);
-   _pager_fill(p);
+   E_Zone *zone =  e_comp_object_util_zone_get(p->o_table);
+   if (zone != p->zone)
+     {
+        p->zone = zone;
+        _pager_empty(p);
+        _pager_fill(p);
+     }
 }
 
 static Evas_Object *
