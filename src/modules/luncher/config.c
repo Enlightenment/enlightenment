@@ -367,7 +367,7 @@ config_luncher(E_Zone *zone, Instance *inst, Eina_Bool bar)
    popup = e_comp_object_util_add(popup, E_COMP_OBJECT_TYPE_NONE);
    evas_object_layer_set(popup, E_LAYER_POPUP);
    evas_object_resize(popup, zone->w / 4, zone->h / 3);
-   e_comp_object_util_center(popup);
+   e_comp_object_util_center_on_zone(popup, zone);
    evas_object_show(popup);
    e_comp_object_util_autoclose(popup, NULL, e_comp_object_util_autoclose_on_escape, NULL);
    evas_object_event_callback_add(popup, EVAS_CALLBACK_DEL, _config_close, NULL);

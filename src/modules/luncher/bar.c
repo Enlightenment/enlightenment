@@ -33,7 +33,7 @@ _bar_gadget_configure(Evas_Object *g)
    if (!luncher_config) return NULL;
    if (luncher_config->config_dialog) return NULL;
    Instance *inst = evas_object_data_get(g, "instance");
-   return config_luncher(e_comp_object_util_zone_get(g), inst, EINA_TRUE);
+   return config_luncher(e_zone_current_get(), inst, EINA_TRUE);
 }
 
 static const char *

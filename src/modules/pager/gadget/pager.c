@@ -102,7 +102,7 @@ static void             _pager_desk_cb_mouse_move(void *data, Evas *e EINA_UNUSE
 static void             _pager_desk_cb_drag_finished(E_Drag *drag, int dropped);
 static void             _pager_desk_cb_mouse_wheel(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info);
 static Eina_Bool        _pager_popup_cb_timeout(void *data);
-static Pager           *_pager_new(Evas *evas);
+static Pager           *_pager_new(Evas *evas, E_Zone *zone);
 static void             _pager_free(Pager *p);
 static void             _pager_fill(Pager *p);
 static void             _pager_orient(Instance *inst, E_Gadget_Site_Orient orient);
@@ -315,7 +315,7 @@ _pager_resize(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, voi
 }
 
 static Pager *
-_pager_new(Evas *evas)
+_pager_new(Evas *evas, E_Zone *zone)
 {
    Pager *p;
 
@@ -325,7 +325,7 @@ _pager_new(Evas *evas)
    p->o_table = elm_table_add(e_win_evas_win_get(evas));
    evas_object_event_callback_add(p->o_table, EVAS_CALLBACK_RESIZE, _pager_resize, p);
    elm_table_homogeneous_set(p->o_table, 1);
-   p->zone = e_comp_object_util_zone_get(p->o_table);
+   p->zone = zone;
    _pager_fill(p);
    pagers = eina_list_append(pagers, p);
    return p;
@@ -710,7 +710,7 @@ pager_popup_new(int keyaction)
 
    /* Show popup */
 
-   pp->pager = _pager_new(e_comp->evas);
+   pp->pager = _pager_new(e_comp->evas, zone);
    
    pp->pager->popup = pp;
    pp->urgent = 0;
@@ -818,7 +818,7 @@ _pager_gadget_configure(Evas_Object *g)
 {
    if (!pager_config) return NULL;
    if (cfg_dialog) return NULL;
-   return config_pager(e_comp_object_util_zone_get(g));
+   return config_pager(e_zone_current_get());
 }
 
 static void
@@ -1885,7 +1885,7 @@ pager_create(Evas_Object *parent, int *id EINA_UNUSED, E_Gadget_Site_Orient orie
    Instance *inst;
 
    inst = E_NEW(Instance, 1);
-   p = _pager_new(evas_object_evas_get(parent));
+   p = _pager_new(evas_object_evas_get(parent), e_comp_object_util_zone_get(parent));
    p->inst = inst;
    inst->pager = p;
    o = p->o_table;
