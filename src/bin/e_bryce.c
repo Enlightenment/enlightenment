@@ -174,7 +174,6 @@ _bryce_position(Bryce *b, int w, int h, int *nx, int *ny)
           }
         else
           e_efx_move(b->bryce, E_EFX_EFFECT_SPEED_LINEAR, E_EFX_POINT(x, y), 0.5, _bryce_autohide_end, b);
-        return;
      }
    else if (b->hidden)
      _bryce_autohide_coords(b, &x, &y);
