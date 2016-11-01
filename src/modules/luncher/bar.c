@@ -4,6 +4,19 @@ static Evas_Object *current_preview;
 static Eina_Bool current_preview_menu;
 static Eina_Bool _bar_icon_preview_show(void *data);
 
+static void
+_bar_aspect(Instance *inst)
+{
+   switch (e_gadget_site_orient_get(e_gadget_site_get(inst->o_main)))
+     {
+      case E_GADGET_SITE_ORIENT_VERTICAL:
+        evas_object_size_hint_aspect_set(inst->o_main, EVAS_ASPECT_CONTROL_BOTH, 1, eina_list_count(inst->icons));
+        break;
+      default:
+        evas_object_size_hint_aspect_set(inst->o_main, EVAS_ASPECT_CONTROL_BOTH, eina_list_count(inst->icons), 1);
+     }
+}
+
 static Eina_Bool
 _bar_check_modifiers(Evas_Modifier *modifiers)
 {
@@ -171,6 +184,7 @@ static void
 _bar_icon_del(Instance *inst, Icon *ic)
 {
    inst->icons = eina_list_remove(inst->icons, ic);
+   _bar_aspect(inst);
    evas_object_del(ic->o_layout);
    evas_object_del(ic->o_icon);
    eina_hash_del_by_data(inst->icons_desktop_hash, ic);
@@ -1201,6 +1215,7 @@ _bar_cb_exec_client_prop(void *data EINA_UNUSED, int type EINA_UNUSED, E_Event_C
                   elm_layout_signal_emit(ic->o_layout, buf, "e");
                   ic->in_order = EINA_FALSE;
                   inst->icons = eina_list_append(inst->icons, ic);
+                  _bar_aspect(inst);
                }
           }
         else
@@ -1287,6 +1302,7 @@ _bar_cb_exec_new(void *data EINA_UNUSED, int type, E_Exec_Instance *ex)
              elm_layout_signal_emit(ic->o_layout, buf, "e");
              ic->in_order = EINA_FALSE;
              inst->icons = eina_list_append(inst->icons, ic);
+             _bar_aspect(inst);
           }
      }
    return ECORE_CALLBACK_RENEW;
@@ -1378,14 +1394,7 @@ _bar_fill(Instance *inst)
              inst->icons = eina_list_append(inst->icons, ic);
           }
      }
-   switch (e_gadget_site_orient_get(e_gadget_site_get(inst->o_main)))
-     {
-      case E_GADGET_SITE_ORIENT_VERTICAL:
-        evas_object_size_hint_aspect_set(inst->o_main, EVAS_ASPECT_CONTROL_BOTH, 1, eina_list_count(inst->icons));
-        break;
-      default:
-        evas_object_size_hint_aspect_set(inst->o_main, EVAS_ASPECT_CONTROL_BOTH, eina_list_count(inst->icons), 1);
-     }
+   _bar_aspect(inst);
 }
 
 static void
