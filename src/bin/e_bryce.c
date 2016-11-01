@@ -352,6 +352,7 @@ _bryce_style(Evas_Object *site, Eina_Stringshare *name, Evas_Object *g)
    e_theme_edje_object_set(ly, NULL, buf);
    prev = e_gadget_util_layout_style_init(g, ly);
    elm_object_part_content_set(ly, "e.swallow.content", g);
+   evas_object_smart_callback_call(g, "gadget_reparent", ly);
    evas_object_del(prev);
 }
 
