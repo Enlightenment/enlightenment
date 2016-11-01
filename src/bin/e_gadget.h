@@ -70,7 +70,12 @@
      - called on a gadget object when the "gadget_menu" action has been triggered
      - event_info is an E_Menu object
      - if a configure callback has been passed with e_gadget_configure_cb_set(),
-     a "Settings" item will be automatically added with this callback
+       a "Settings" item will be automatically added with this callback
+   "gadget_reparent"
+     - called on a gadget object when the gadget has been reparented
+     - parent object is event_info
+     - indicates that the gadget should watch this new object for EVAS_CALLBACK_RESIZE
+     - event_info will be NULL in the case that the reparenting removes the parent
  -------------------------------
  -------------------------------
  * called externally by gadget on gadget object:

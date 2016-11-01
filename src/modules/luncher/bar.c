@@ -4,6 +4,19 @@ static Evas_Object *current_preview;
 static Eina_Bool current_preview_menu;
 static Eina_Bool _bar_icon_preview_show(void *data);
 
+static void
+_bar_aspect(Instance *inst)
+{
+   switch (e_gadget_site_orient_get(e_gadget_site_get(inst->o_main)))
+     {
+      case E_GADGET_SITE_ORIENT_VERTICAL:
+        evas_object_size_hint_aspect_set(inst->o_main, EVAS_ASPECT_CONTROL_BOTH, 1, eina_list_count(inst->icons));
+        break;
+      default:
+        evas_object_size_hint_aspect_set(inst->o_main, EVAS_ASPECT_CONTROL_BOTH, eina_list_count(inst->icons), 1);
+     }
+}
+
 static Eina_Bool
 _bar_check_modifiers(Evas_Modifier *modifiers)
 {
@@ -170,6 +183,7 @@ static void
 _bar_icon_del(Instance *inst, Icon *ic)
 {
    inst->icons = eina_list_remove(inst->icons, ic);
+   _bar_aspect(inst);
    evas_object_del(ic->o_layout);
    evas_object_del(ic->o_icon);
    eina_hash_del_by_data(inst->icons_desktop_hash, ic);
@@ -899,7 +913,9 @@ _bar_icon_add(Instance *inst, Efreet_Desktop *desktop, E_Client *non_desktop_cli
    ic->o_layout = elm_layout_add(inst->o_icon_con);
    e_theme_edje_object_set(ic->o_layout, "e/gadget/luncher/icon",
        "e/gadget/luncher/icon");
-   evas_object_size_hint_min_set(ic->o_layout, inst->size, inst->size);
+   //evas_object_size_hint_min_set(ic->o_layout, inst->size, inst->size);
+   E_EXPAND(ic->o_layout);
+   E_FILL(ic->o_layout);
    elm_box_pack_end(inst->o_icon_con, ic->o_layout);
    evas_object_show(ic->o_layout);
 
@@ -1203,6 +1219,7 @@ _bar_cb_exec_client_prop(void *data EINA_UNUSED, int type EINA_UNUSED, E_Event_C
                   elm_layout_signal_emit(ic->o_layout, buf, "e");
                   ic->in_order = EINA_FALSE;
                   inst->icons = eina_list_append(inst->icons, ic);
+                  _bar_aspect(inst);
                }
           }
         else
@@ -1289,6 +1306,7 @@ _bar_cb_exec_new(void *data EINA_UNUSED, int type, E_Exec_Instance *ex)
              elm_layout_signal_emit(ic->o_layout, buf, "e");
              ic->in_order = EINA_FALSE;
              inst->icons = eina_list_append(inst->icons, ic);
+             _bar_aspect(inst);
           }
      }
    return ECORE_CALLBACK_RENEW;
@@ -1380,6 +1398,7 @@ _bar_fill(Instance *inst)
              inst->icons = eina_list_append(inst->icons, ic);
           }
      }
+   _bar_aspect(inst);
 }
 
 static void
@@ -1393,6 +1412,7 @@ _bar_resize_job(void *data)
 
    if (inst)
      {
+        elm_layout_sizing_eval(inst->o_main);
         evas_object_geometry_get(inst->o_main, &x, &y, &w, &h);
         switch (orient)
           {
@@ -1408,7 +1428,7 @@ _bar_resize_job(void *data)
         inst->size = size;
         EINA_LIST_FOREACH(inst->icons, l, ic)
           {
-	     const char *path = NULL, *key = NULL;
+	            const char *path = NULL, *key = NULL;
              int len = 0;
             
              if (ic->desktop)
@@ -1480,7 +1500,7 @@ _bar_resize_job(void *data)
                   elm_image_file_set(ic->o_overlay, e_theme_edje_file_get("base/theme/icons", "e/icons/unknown"),
                            "e/icons/unknown");
                }
-             evas_object_size_hint_min_set(ic->o_layout, inst->size, inst->size);
+             //evas_object_size_hint_min_set(ic->o_layout, inst->size, inst->size);
           }
         inst->resize_job = NULL;
      }
@@ -1756,8 +1776,11 @@ _conf_item_get(int *id)
      }
 
    ci = E_NEW(Config_Item, 1);
-   
-   ci->id = eina_list_count(luncher_config->items)+1;
+
+   if (*id != -1)
+     ci->id = eina_list_count(luncher_config->items)+1;
+   else
+     ci->id = -1;
    ci->dir = eina_stringshare_add("default");
    luncher_config->items = eina_list_append(luncher_config->items, ci);
 
