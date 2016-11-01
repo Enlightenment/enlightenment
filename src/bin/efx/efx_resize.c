@@ -124,7 +124,7 @@ _e_efx_resize_adjust(E_EFX *e, int *ax, int *ay)
    E_Efx_Resize_Data *erd = e->resize_data;
    int x, y, w, h;
 
-   if (!erd) return;
+   if ((!erd) || (!erd->anim)) return;
    if (e->move_data)
      x = e->x, y = e->y;
    else
