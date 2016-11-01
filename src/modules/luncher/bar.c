@@ -900,7 +900,9 @@ _bar_icon_add(Instance *inst, Efreet_Desktop *desktop, E_Client *non_desktop_cli
    ic->o_layout = elm_layout_add(inst->o_icon_con);
    e_theme_edje_object_set(ic->o_layout, "e/gadget/luncher/icon",
        "e/gadget/luncher/icon");
-   evas_object_size_hint_min_set(ic->o_layout, inst->size, inst->size);
+   //evas_object_size_hint_min_set(ic->o_layout, inst->size, inst->size);
+   E_EXPAND(ic->o_layout);
+   E_FILL(ic->o_layout);
    elm_box_pack_end(inst->o_icon_con, ic->o_layout);
    evas_object_show(ic->o_layout);
 
@@ -1376,6 +1378,14 @@ _bar_fill(Instance *inst)
              inst->icons = eina_list_append(inst->icons, ic);
           }
      }
+   switch (e_gadget_site_orient_get(e_gadget_site_get(inst->o_main)))
+     {
+      case E_GADGET_SITE_ORIENT_VERTICAL:
+        evas_object_size_hint_aspect_set(inst->o_main, EVAS_ASPECT_CONTROL_BOTH, 1, eina_list_count(inst->icons));
+        break;
+      default:
+        evas_object_size_hint_aspect_set(inst->o_main, EVAS_ASPECT_CONTROL_BOTH, eina_list_count(inst->icons), 1);
+     }
 }
 
 static void
@@ -1389,6 +1399,7 @@ _bar_resize_job(void *data)
 
    if (inst)
      {
+        elm_layout_sizing_eval(inst->o_main);
         evas_object_geometry_get(inst->o_main, &x, &y, &w, &h);
         switch (orient)
           {
@@ -1404,7 +1415,7 @@ _bar_resize_job(void *data)
         inst->size = size;
         EINA_LIST_FOREACH(inst->icons, l, ic)
           {
-	     const char *path = NULL, *key = NULL;
+	            const char *path = NULL, *key = NULL;
              int len = 0;
             
              if (ic->desktop)
@@ -1476,7 +1487,7 @@ _bar_resize_job(void *data)
                   elm_image_file_set(ic->o_overlay, e_theme_edje_file_get("base/theme/icons", "e/icons/unknown"),
                            "e/icons/unknown");
                }
-             evas_object_size_hint_min_set(ic->o_layout, inst->size, inst->size);
+             //evas_object_size_hint_min_set(ic->o_layout, inst->size, inst->size);
           }
         inst->resize_job = NULL;
      }
