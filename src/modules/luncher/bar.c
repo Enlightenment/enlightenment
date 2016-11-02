@@ -913,13 +913,10 @@ _bar_icon_add(Instance *inst, Efreet_Desktop *desktop, E_Client *non_desktop_cli
    ic->o_layout = elm_layout_add(inst->o_icon_con);
    e_theme_edje_object_set(ic->o_layout, "e/gadget/luncher/icon",
        "e/gadget/luncher/icon");
-   //evas_object_size_hint_min_set(ic->o_layout, inst->size, inst->size);
    E_EXPAND(ic->o_layout);
    E_FILL(ic->o_layout);
    elm_box_pack_end(inst->o_icon_con, ic->o_layout);
    evas_object_show(ic->o_layout);
-
-   e_util_size_debug_set(ic->o_layout, EINA_TRUE);
 
    ic->o_icon = elm_icon_add(ic->o_layout);
    E_EXPAND(ic->o_icon);
@@ -1390,7 +1387,10 @@ _bar_fill(Instance *inst)
         ic = _bar_icon_match(inst, ec);
         if (!ic)
           {
-             ic = _bar_icon_add(inst, NULL, ec);
+             if (ec->exe_inst && ec->exe_inst->desktop)
+               ic = _bar_icon_add(inst, ec->exe_inst->desktop, NULL);
+             else
+               ic = _bar_icon_add(inst, NULL, ec);
              snprintf(buf, sizeof(buf), "e,state,on,%s", _bar_location_get(inst));
              elm_layout_signal_emit(ic->o_layout, buf, "e");
              ic->in_order = EINA_FALSE;
@@ -1499,7 +1499,6 @@ _bar_resize_job(void *data)
                   elm_image_file_set(ic->o_overlay, e_theme_edje_file_get("base/theme/icons", "e/icons/unknown"),
                            "e/icons/unknown");
                }
-             //evas_object_size_hint_min_set(ic->o_layout, inst->size, inst->size);
           }
         inst->resize_job = NULL;
      }
