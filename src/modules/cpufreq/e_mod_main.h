@@ -49,7 +49,7 @@ struct _Config
    E_Menu       *menu_pstate2;
    Cpu_Status   *status;
    char         *set_exe_path;
-   Ecore_Poller *frequency_check_poller;
+   Ecore_Thread *frequency_check_thread;
    Ecore_Event_Handler *handler;
    E_Config_Dialog *config_dialog;
 };
@@ -66,6 +66,8 @@ void _cpufreq_set_governor(const char *governor);
 void _cpufreq_set_pstate(int min, int max);
 
 extern Config *cpufreq_config;
+
+
 
 /**
  * @addtogroup Optional_Gadgets
