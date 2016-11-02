@@ -266,20 +266,14 @@ _pager_orient(Instance *inst, E_Gadget_Site_Orient orient)
      {
         aspect_w = inst->pager->ynum * inst->pager->zone->w;
         aspect_h = inst->pager->xnum * inst->pager->zone->h;
-        evas_object_size_hint_aspect_set(inst->o_pager, EVAS_ASPECT_CONTROL_HORIZONTAL, aspect_w, aspect_h);
+        evas_object_size_hint_aspect_set(inst->o_pager, EVAS_ASPECT_CONTROL_BOTH, aspect_w, aspect_h);
      }
    else
      {
         aspect_w = inst->pager->xnum * inst->pager->zone->w;
         aspect_h = inst->pager->ynum * inst->pager->zone->h;
-        evas_object_size_hint_aspect_set(inst->o_pager, EVAS_ASPECT_CONTROL_VERTICAL, aspect_w, aspect_h);
+        evas_object_size_hint_aspect_set(inst->o_pager, EVAS_ASPECT_CONTROL_BOTH, aspect_w, aspect_h);
      }
-   aspect_ratio = (double)aspect_w / (double)aspect_h;
-
-   if (aspect_ratio > 1.0)
-     evas_object_size_hint_min_set(inst->o_pager, 4 * aspect_ratio, 4);
-   else
-     evas_object_size_hint_min_set(inst->o_pager, 4, 4 * aspect_ratio);
 }
 
 static void
@@ -308,10 +302,6 @@ _pager_recalc(void *data)
    if ((p->inst) && (p->inst->o_pager))
      {
         _pager_orient(p->inst, e_gadget_site_orient_get(e_gadget_site_get(p->inst->o_pager)));
-        if (p->invert)
-          evas_object_size_hint_min_set(p->inst->o_pager, p->ynum * w, p->xnum * h);
-        else
-          evas_object_size_hint_min_set(p->inst->o_pager, p->xnum * w, p->ynum * h);
      }
 }
 
@@ -442,7 +432,6 @@ _pager_desk_new(Pager *p, E_Desk *desk, int xpos, int ypos, Eina_Bool invert)
      edje_object_signal_emit(o, "e,name,show", "e");
 
    edje_object_size_min_calc(o, &w, &h);
-   evas_object_size_hint_min_set(o, w, h);
 
    E_EXPAND(o);
    E_FILL(o);
