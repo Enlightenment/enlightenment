@@ -65,7 +65,7 @@ static Evas_Object     *_basic_create_widgets(E_Config_Dialog *cfd, Evas *evas, 
 static Evas_Object     *_advanced_create_widgets(E_Config_Dialog *cfd, Evas *evas, E_Config_Dialog_Data *cfdata);
 static Evas_Object     *_dialog_scrolltext_create(Evas *evas, char *title, Ecore_Exe_Event_Data_Line *lines);
 static void             _dialog_save_cb(void *data, void *data2);
-static void             _e_exec_instance_free(E_Exec_Instance *inst);
+static Eina_Bool        _e_exec_instance_free(E_Exec_Instance *inst);
 
 /* local subsystem globals */
 static Eina_List *e_exec_start_pending = NULL;
@@ -211,14 +211,14 @@ e_exec(E_Zone *zone, Efreet_Desktop *desktop, const char *exec,
    return inst;
 }
 
-E_API void
+E_API Eina_Bool
 e_exec_phony_del(E_Exec_Instance *inst)
 {
-   if (!inst) return;
-   EINA_SAFETY_ON_TRUE_RETURN(!inst->phony);
+   if (!inst) return EINA_TRUE;
+   EINA_SAFETY_ON_TRUE_RETURN_VAL(!inst->phony, EINA_FALSE);
    inst->ref--;
    _e_exe_instance_watchers_call(inst, E_EXEC_WATCH_STOPPED);
-   _e_exec_instance_free(inst);
+   return _e_exec_instance_free(inst);
 }
 
 E_API E_Exec_Instance *
@@ -587,13 +587,13 @@ _e_exec_cb_expire_timer(void *data)
    return ECORE_CALLBACK_CANCEL;
 }
 
-static void
+static Eina_Bool
 _e_exec_instance_free(E_Exec_Instance *inst)
 {
    Eina_List *instances;
    E_Client *ec;
 
-   if (inst->ref) return;
+   if (inst->ref) return EINA_FALSE;
    E_FREE_LIST(inst->watchers, free);
    if (inst->key)
      {
@@ -613,7 +613,7 @@ _e_exec_instance_free(E_Exec_Instance *inst)
         inst->deleted = 1;
         inst->ref++;
         ecore_event_add(E_EVENT_EXEC_DEL, inst, _e_exec_cb_exec_del_free, inst);
-        return;
+        return EINA_FALSE;
      }
    if (inst->desktop)
      e_exec_start_pending = eina_list_remove(e_exec_start_pending,
@@ -629,6 +629,7 @@ _e_exec_instance_free(E_Exec_Instance *inst)
         if (inst->exe) ecore_exe_data_set(inst->exe, NULL);
      }
    free(inst);
+   return EINA_TRUE;
 }
 
 /*
