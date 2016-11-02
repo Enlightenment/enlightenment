@@ -141,6 +141,16 @@ static Eina_List *pagers = NULL;
 static E_Action *act_popup_show = NULL;
 static E_Action *act_popup_switch = NULL;
 
+static Eina_Bool
+_pager_check_modifiers(Evas_Modifier *modifiers)
+{
+   if ((evas_key_modifier_is_set(modifiers, "Alt")) ||
+       (evas_key_modifier_is_set(modifiers, "Control")) ||
+       (evas_key_modifier_is_set(modifiers, "Shift")))
+     return EINA_TRUE;
+   return EINA_FALSE;
+}
+
 static Pager_Win *
 _pager_desk_window_find(Pager_Desk *pd, E_Client *client)
 {
@@ -843,6 +853,7 @@ _button_cb_mouse_down(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNU
    Evas_Event_Mouse_Down *ev = event_info;
 
    if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return;
+   if (_pager_check_modifiers(ev->modifiers)) return;
    if (ev->button != 3) return;
    if(!pager_config) return;
    if (cfg_dialog) return;
@@ -1021,9 +1032,13 @@ _pager_window_cb_del(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUS
 }
 
 static void
-_pager_window_cb_mouse_up(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+_pager_window_cb_mouse_up(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info)
 {
+   Evas_Event_Mouse_Up *ev = event_info;
    Pager_Win *pw = data;
+
+   if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return;
+   if (_pager_check_modifiers(ev->modifiers)) return;
 
    pw->drag.button = 0;
 }
@@ -1031,10 +1046,12 @@ _pager_window_cb_mouse_up(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA
 static void
 _pager_window_cb_mouse_down(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info)
 {
-   Evas_Event_Mouse_Down *ev;
+   Evas_Event_Mouse_Down *ev = event_info;
    Pager_Win *pw;
 
-   ev = event_info;
+   if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return;
+   if (_pager_check_modifiers(ev->modifiers)) return;
+
    pw = data;
 
    if (!pw) return;
@@ -1063,7 +1080,7 @@ _pager_window_cb_mouse_down(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EI
 static void
 _pager_window_cb_mouse_move(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info)
 {
-   Evas_Event_Mouse_Move *ev;
+   Evas_Event_Mouse_Move *ev = event_info;
    Pager_Win *pw;
    E_Drag *drag;
    Evas_Object *o;
@@ -1073,9 +1090,10 @@ _pager_window_cb_mouse_move(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EI
    Evas_Coord dx, dy;
    unsigned int resist = 0;
 
-   ev = event_info;
    pw = data;
 
+   if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return;
+   if (_pager_check_modifiers(ev->modifiers)) return;
    if (!pw) return;
    if (pw->client->lock_user_location) return;
    if ((pw->desk->pager->popup) && (!act_popup)) return;
@@ -1365,11 +1383,13 @@ _pager_drop_cb_drop(void *data, const char *type, void *event_info)
 static void
 _pager_desk_cb_mouse_down(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info)
 {
-   Evas_Event_Mouse_Down *ev;
+   Evas_Event_Mouse_Down *ev = event_info;
    Pager_Desk *pd;
    Evas_Coord ox, oy;
 
-   ev = event_info;
+   if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return;
+   if (_pager_check_modifiers(ev->modifiers)) return;
+
    pd = data;
    if (!pd) return;
    if ((!pd->pager->popup) && (ev->button == 3)) return;
@@ -1394,11 +1414,13 @@ _pager_desk_cb_mouse_down(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA
 static void
 _pager_desk_cb_mouse_up(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info)
 {
-   Evas_Event_Mouse_Up *ev;
+   Evas_Event_Mouse_Up *ev = event_info;
    Pager_Desk *pd;
    Pager *p;
 
-   ev = event_info;
+   if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return;
+   if (_pager_check_modifiers(ev->modifiers)) return;
+
    pd = data;
 
    if (!pd) return;
@@ -1426,7 +1448,7 @@ _pager_desk_cb_mouse_up(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_U
 static void
 _pager_desk_cb_mouse_move(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info)
 {
-   Evas_Event_Mouse_Move *ev;
+   Evas_Event_Mouse_Move *ev = event_info;
    Pager_Desk *pd;
    Evas_Coord dx, dy;
    unsigned int resist = 0;
@@ -1435,7 +1457,8 @@ _pager_desk_cb_mouse_move(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA
    Evas_Coord x, y, w, h;
    const char *drag_types[] = { "enlightenment/vdesktop" };
 
-   ev = event_info;
+   if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return;
+   if (_pager_check_modifiers(ev->modifiers)) return;
 
    pd = data;
    if (!pd) return;
@@ -1520,10 +1543,12 @@ _pager_desk_cb_drag_finished(E_Drag *drag, int dropped)
 static void
 _pager_desk_cb_mouse_wheel(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info)
 {
-   Evas_Event_Mouse_Wheel *ev;
+   Evas_Event_Mouse_Wheel *ev = event_info;
    Pager_Desk *pd;
 
-   ev = event_info;
+   if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return;
+   if (_pager_check_modifiers(ev->modifiers)) return;
+
    pd = data;
 
    if (pd->pager->popup) return;
