@@ -36,7 +36,7 @@ EINTERN int  e_exec_shutdown(void);
 E_API void e_exec_executor_set(E_Exec_Instance *(*func) (void *data, E_Zone *zone, Efreet_Desktop *desktop, const char *exec, Eina_List *files, const char *launch_method), const void *data);
 E_API E_Exec_Instance *e_exec(E_Zone *zone, Efreet_Desktop *desktop, const char *exec, Eina_List *files, const char *launch_method);
 E_API E_Exec_Instance *e_exec_phony(E_Client *ec);
-E_API void e_exec_phony_del(E_Exec_Instance *inst);
+E_API Eina_Bool e_exec_phony_del(E_Exec_Instance *inst);
 E_API E_Exec_Instance *e_exec_startup_id_pid_instance_find(int id, pid_t pid);
 E_API Efreet_Desktop *e_exec_startup_id_pid_find(int startup_id, pid_t pid);
 E_API E_Exec_Instance *e_exec_startup_desktop_instance_find(Efreet_Desktop *desktop);

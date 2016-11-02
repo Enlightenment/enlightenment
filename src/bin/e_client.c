@@ -586,15 +586,18 @@ _e_client_del(E_Client *ec)
    if (ec->exe_inst)
      {
         if (ec->exe_inst->phony && (eina_list_count(ec->exe_inst->clients) == 1))
-          e_exec_phony_del(ec->exe_inst);
+          {
+             if (e_exec_phony_del(ec->exe_inst))
+               ec->exe_inst = NULL;
+          }
         else
           {
              if (!ec->exe_inst->deleted)
                ec->exe_inst->clients = eina_list_remove(ec->exe_inst->clients, ec);
           }
-        if (!ec->exe_inst->deleted)
-          ec->exe_inst = NULL;
      }
+   if (ec->exe_inst && (!ec->exe_inst->deleted))
+     ec->exe_inst = NULL;
 
    _e_client_mouse_action_end(ec);
    if (action_client == ec) _e_client_action_finish();
