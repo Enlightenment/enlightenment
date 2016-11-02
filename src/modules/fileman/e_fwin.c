@@ -877,12 +877,18 @@ _e_fwin_icon_popup(void *data)
    char buf[4096];
    int mw, mh;
    E_Fm2_Icon_Info *popup_icon;
+   struct stat st;
 
    fwin->popup_timer = NULL;
    popup_icon = e_fm2_icon_file_get(fwin->cur_page->fm_obj, fwin->over_file);
    if (!popup_icon) return EINA_FALSE;
    snprintf(buf, sizeof(buf), "%s/%s", e_fm2_real_path_get(fwin->cur_page->fm_obj), popup_icon->file);
    if (!ecore_file_can_read(buf)) return EINA_FALSE;
+
+   if (stat(buf, &st) < 0) return EINA_FALSE;
+
+   if (S_ISFIFO(st.st_mode)) return EINA_FALSE;
+
    if (fwin->popup)
      {
         evas_object_hide(fwin->popup);
