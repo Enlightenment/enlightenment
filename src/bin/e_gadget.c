@@ -1613,6 +1613,13 @@ e_gadget_drop_handler_add(Evas_Object *g, void *data,
    return drop_object;
 }
 
+static void
+_gadget_style_hints(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   E_Gadget_Config *zgc = data;
+   evas_object_smart_need_recalculate_set(zgc->site->layout, 1);
+}
+
 E_API Evas_Object *
 e_gadget_util_layout_style_init(Evas_Object *g, Evas_Object *style)
 {
@@ -1647,6 +1654,7 @@ e_gadget_util_layout_style_init(Evas_Object *g, Evas_Object *style)
           elm_box_unpack(zgc->site->layout, prev);
      }
    evas_object_raise(zgc->site->events);
+   evas_object_event_callback_del(prev, EVAS_CALLBACK_CHANGED_SIZE_HINTS, _gadget_style_hints);
    if (!style) return prev;
 
    evas_object_data_set(style, "__e_gadget", zgc);
@@ -1654,6 +1662,7 @@ e_gadget_util_layout_style_init(Evas_Object *g, Evas_Object *style)
    elm_layout_sizing_eval(style);
    evas_object_smart_calculate(style);
    evas_object_size_hint_min_get(style, &zgc->style.minw, &zgc->style.minh);
+   evas_object_event_callback_add(style, EVAS_CALLBACK_CHANGED_SIZE_HINTS, _gadget_style_hints, zgc);
    evas_object_show(style);
    evas_object_smart_callback_add(zgc->display, "gadget_popup", _gadget_popup, zgc->site);
    return prev;
