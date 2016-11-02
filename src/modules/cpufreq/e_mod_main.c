@@ -39,7 +39,6 @@ struct _Instance
 static void      _button_cb_mouse_down(void *data, Evas *e, Evas_Object *obj, void *event_info);
 static void      _menu_cb_post(void *data, E_Menu *m);
 static void      _cpufreq_set_frequency(int frequency);
-static Eina_Bool _cpufreq_cb_check(void *data);
 static Cpu_Status *_cpufreq_status_new(void);
 static void      _cpufreq_status_free(Cpu_Status *s);
 static void      _cpufreq_status_check_available(Cpu_Status *s);
@@ -97,9 +96,6 @@ _gc_init(E_Gadcon *gc, const char *name, const char *id, const char *style)
                                   _button_cb_mouse_down, inst);
    cpufreq_config->instances =
      eina_list_append(cpufreq_config->instances, inst);
-   if (cpufreq_config->status) _cpufreq_status_free(cpufreq_config->status);
-   cpufreq_config->status = _cpufreq_status_new();
-   _cpufreq_cb_check(NULL);
    _cpufreq_face_update_available(inst);
 
    cpufreq_config->handler =
@@ -589,45 +585,6 @@ _cpufreq_set_pstate(int min, int max)
         elm_win_center(dia->win, 1, 1);
         e_dialog_show(dia);
      }
-}
-
-static Eina_Bool
-_cpufreq_cb_check(void *data EINA_UNUSED)
-{
-   Instance *inst;
-   Eina_List *l;
-   int active;
-   static Eina_Bool init_set = EINA_FALSE;
-
-   if (cpufreq_config->menu_poll) return ECORE_CALLBACK_RENEW;
-   active = cpufreq_config->status->active;
-   if (_cpufreq_status_check_current(cpufreq_config->status))
-     {
-        for (l = cpufreq_config->instances; l; l = l->next)
-          {
-             inst = l->data;
-             _cpufreq_face_update_current(inst);
-          }
-     }
-   if (active != cpufreq_config->status->active)
-     {
-        for (l = cpufreq_config->instances; l; l = l->next)
-          {
-             inst = l->data;
-             if (cpufreq_config->status->active == 0)
-               edje_object_signal_emit(inst->o_cpu, "e,state,disabled", "e");
-             else if (cpufreq_config->status->active == 1)
-               edje_object_signal_emit(inst->o_cpu, "e,state,enabled", "e");
-          }
-     }
-   if (!init_set)
-     {
-        _cpufreq_set_pstate(cpufreq_config->pstate_min - 1,
-                            cpufreq_config->pstate_max - 1);
-        init_set = 1;
-     }
-
-   return ECORE_CALLBACK_RENEW;
 }
 
 static Cpu_Status *
@@ -1306,14 +1263,95 @@ _cpufreq_menu_pstate_max(void *data, E_Menu *m EINA_UNUSED, E_Menu_Item *mi EINA
    e_config_save_queue();
 }
 
+typedef struct _Thread_Config Thread_Config;
+
+struct _Thread_Config
+{
+   int interval;
+};
+
+static void
+_cpufreq_cb_frequency_check_main(void *data, Ecore_Thread *th)
+{
+   Thread_Config *thc = data;
+   for (;;)
+     {
+        Cpu_Status *status;
+
+        if (ecore_thread_check(th)) break;
+        status = _cpufreq_status_new();
+        if (_cpufreq_status_check_current(status))
+          ecore_thread_feedback(th, status);
+        else
+          _cpufreq_status_free(status);
+        if (ecore_thread_check(th)) break;
+        usleep((1000000.0 / 8.0) * (double)thc->interval);
+     }
+   free(thc);
+}
+
+static void
+_cpufreq_cb_frequency_check_notify(void *data EINA_UNUSED,
+                                   Ecore_Thread *th EINA_UNUSED,
+                                   void *msg)
+{
+   Cpu_Status *status = msg;
+   Instance *inst;
+   Eina_List *l;
+   int active;
+   static Eina_Bool init_set = EINA_FALSE;
+
+   if (!cpufreq_config)
+     {
+        _cpufreq_status_free(status);
+        return;
+     }
+   if (cpufreq_config->status) _cpufreq_status_free(cpufreq_config->status);
+   active = cpufreq_config->status->active;
+   cpufreq_config->status = status;
+   for (l = cpufreq_config->instances; l; l = l->next)
+     {
+        inst = l->data;
+        _cpufreq_face_update_current(inst);
+     }
+   if (active != cpufreq_config->status->active)
+     {
+        for (l = cpufreq_config->instances; l; l = l->next)
+          {
+             inst = l->data;
+             if (cpufreq_config->status->active == 0)
+               edje_object_signal_emit(inst->o_cpu, "e,state,disabled", "e");
+             else if (cpufreq_config->status->active == 1)
+               edje_object_signal_emit(inst->o_cpu, "e,state,enabled", "e");
+          }
+     }
+   if (!init_set)
+     {
+        _cpufreq_set_pstate(cpufreq_config->pstate_min - 1,
+                            cpufreq_config->pstate_max - 1);
+        init_set = EINA_TRUE;
+     }
+}
+
 void
 _cpufreq_poll_interval_update(void)
 {
-   if (cpufreq_config->frequency_check_poller)
-     ecore_poller_del(cpufreq_config->frequency_check_poller);
-   cpufreq_config->frequency_check_poller =
-     ecore_poller_add(ECORE_POLLER_CORE, cpufreq_config->poll_interval,
-                      _cpufreq_cb_check, NULL);
+   Thread_Config *thc;
+
+   if (cpufreq_config->frequency_check_thread)
+     {
+        ecore_thread_cancel(cpufreq_config->frequency_check_thread);
+        cpufreq_config->frequency_check_thread = NULL;
+     }
+   thc = malloc(sizeof(Thread_Config));
+   if (thc)
+     {
+        thc->interval = cpufreq_config->poll_interval;
+        cpufreq_config->frequency_check_thread =
+          ecore_thread_feedback_run(_cpufreq_cb_frequency_check_main,
+                                    _cpufreq_cb_frequency_check_notify,
+                                    NULL, NULL, thc, EINA_TRUE);
+     }
    e_config_save_queue();
 }
 
@@ -1392,13 +1430,11 @@ e_modapi_init(E_Module *m)
                              "sudo chmod u+s,a+x %s<br>"),
                            buf, buf);
      }
-   
-   cpufreq_config->frequency_check_poller =
-     ecore_poller_add(ECORE_POLLER_CORE, cpufreq_config->poll_interval,
-                      _cpufreq_cb_check, NULL);
    cpufreq_config->status = _cpufreq_status_new();
 
    _cpufreq_status_check_available(cpufreq_config->status);
+   _cpufreq_poll_interval_update();
+
    if ((cpufreq_config->restore_governor) && (cpufreq_config->governor))
      {
         /* If the governor is available, restore it */
@@ -1432,8 +1468,11 @@ e_modapi_shutdown(E_Module *m EINA_UNUSED)
    
    e_gadcon_provider_unregister(&_gadcon_class);
 
-   if (cpufreq_config->frequency_check_poller)
-     ecore_poller_del(cpufreq_config->frequency_check_poller);
+   if (cpufreq_config->frequency_check_thread)
+     {
+        ecore_thread_cancel(cpufreq_config->frequency_check_thread);
+        cpufreq_config->frequency_check_thread = NULL;
+     }
    if (cpufreq_config->menu)
      {
         e_menu_post_deactivate_callback_set(cpufreq_config->menu, NULL, NULL);
