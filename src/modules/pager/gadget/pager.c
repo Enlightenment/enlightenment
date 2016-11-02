@@ -178,9 +178,9 @@ _pager_gadget_anchor_change_cb(void *data, Evas_Object *obj, void *event_info EI
 {
    Instance *inst = data;
 
-   _pager_orient(inst, e_gadget_site_orient_get(obj));
    if (inst->pager && inst->o_pager)
      {
+        _pager_orient(inst, e_gadget_site_orient_get(obj));
         _pager_empty(inst->pager);
         _pager_fill(inst->pager);
      }
@@ -194,10 +194,10 @@ _pager_gadget_created_cb(void *data, Evas_Object *obj, void *event_info EINA_UNU
    Eina_List *l;
    Pager_Desk *pd;
 
-   e_gadget_configure_cb_set(inst->o_pager, _pager_gadget_configure);
-   _pager_orient(inst, e_gadget_site_orient_get(obj));
    if (inst->pager && inst->o_pager)
      {
+        e_gadget_configure_cb_set(inst->o_pager, _pager_gadget_configure);
+        _pager_orient(inst, e_gadget_site_orient_get(obj));
         _pager_empty(inst->pager);
         _pager_fill(inst->pager);
         
@@ -1280,7 +1280,7 @@ _pager_drop_cb_drop(void *data, const char *type, void *event_info)
 {
    E_Event_Dnd_Drop *ev;
    Eina_List *l;
-   Pager_Desk *pd;
+   Pager_Desk *pd, *pdd;
    Pager_Desk *pd2 = NULL;
    E_Client *ec = NULL;
    int dx = 0, dy = 0;
@@ -1356,9 +1356,9 @@ _pager_drop_cb_drop(void *data, const char *type, void *event_info)
              if (fullscreen) e_client_fullscreen(ec, fs);
           }
      }
-   EINA_LIST_FOREACH(pd->pager->desks, l, pd)
+   EINA_LIST_FOREACH(pd->pager->desks, l, pdd)
      {
-        edje_object_signal_emit(pd->o_desk, "e,action,drag,out", "e");
+        edje_object_signal_emit(pdd->o_desk, "e,action,drag,out", "e");
      }
 }
 

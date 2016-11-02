@@ -271,6 +271,7 @@ static Evas_Object *
 _bar_icon_menu_item_new(Icon *ic, Evas_Object *popup, Evas_Object *parent, const char *name, const char *icon)
 {
    const char *path = NULL, *k = NULL;
+   char buf[4096];
    int len = 0;
    Evas_Object *layout, *label, *img;
 
@@ -312,7 +313,6 @@ _bar_icon_menu_item_new(Icon *ic, Evas_Object *popup, Evas_Object *parent, const
      }
    if (!path)
      {
-        char buf[4096];
         snprintf(buf, sizeof(buf), "e/icons/%s", icon);
         if (eina_list_count(e_theme_collection_items_find("base/theme/icons", buf)))
           {
@@ -743,7 +743,9 @@ _bar_icon_preview_show(void *data)
    ic->mouse_in_timer = NULL;
    if (ic->drag.dnd)
      return EINA_FALSE;
-   if (!ic->inst && !ic->inst->o_icon_con)
+   if (!ic->inst)
+     return EINA_FALSE;
+   if (!ic->inst->o_icon_con)
      return EINA_FALSE;
 
    orient = e_gadget_site_orient_get(e_gadget_site_get(ic->inst->o_main));
@@ -893,6 +895,7 @@ static Icon *
 _bar_icon_add(Instance *inst, Efreet_Desktop *desktop, E_Client *non_desktop_client)
 {
    const char *path = NULL, *k = NULL;
+   char buf[4096];
    int len = 0;
    Icon *ic;
    const Eina_List *l;
@@ -943,7 +946,6 @@ _bar_icon_add(Instance *inst, Efreet_Desktop *desktop, E_Client *non_desktop_cli
           }
         if (!path)
           {
-             char buf[4096];
              snprintf(buf, sizeof(buf), "e/icons/%s", desktop->icon);
              if (eina_list_count(e_theme_collection_items_find("base/theme/icons", buf)))
                {
@@ -1079,10 +1081,10 @@ _bar_cb_client_remove(void *data EINA_UNUSED, int type EINA_UNUSED, E_Event_Clie
           {
              if (ic->starting) elm_layout_signal_emit(ic->o_layout, "e,state,started", "e");
              ic->starting = EINA_FALSE;
-             if (ev->ec->exe_inst)
-               ic->execs = eina_list_remove(ic->execs, ev->ec->exe_inst);
              if (ev->ec)
                ic->clients = eina_list_remove(ic->clients, ev->ec);
+             if (ev->ec->exe_inst)
+               ic->execs = eina_list_remove(ic->execs, ev->ec->exe_inst);
              if (!eina_list_count(ic->execs) && !eina_list_count(ic->clients))
                {
                   elm_layout_signal_emit(ic->o_layout, "e,state,off", "e");
@@ -1176,8 +1178,7 @@ _bar_cb_exec_client_prop(void *data EINA_UNUSED, int type EINA_UNUSED, E_Event_C
         Icon *ic = NULL;
         char buf[4096];
 
-        if (ev->ec)
-          ic = _bar_icon_match(inst, ev->ec);
+        ic = _bar_icon_match(inst, ev->ec);
 
         if (skip && !ic) continue;
         if (!skip)
@@ -1362,7 +1363,6 @@ _bar_fill(Instance *inst)
                   if (!ec->netwm.state.skip_taskbar)
                     {
                        skip = EINA_FALSE;
-                       break;
                     }
                   if (skip) continue;
                   ic = _bar_icon_match(inst, ec);
@@ -1406,11 +1406,12 @@ _bar_resize_job(void *data)
    Instance *inst = data;
    Eina_List *l;
    Icon *ic;
-   E_Gadget_Site_Orient orient = e_gadget_site_orient_get(e_gadget_site_get(inst->o_main));
+   E_Gadget_Site_Orient orient;
    Evas_Coord x, y, w, h, size;
 
    if (inst)
      {
+         orient = e_gadget_site_orient_get(e_gadget_site_get(inst->o_main));
         elm_layout_sizing_eval(inst->o_main);
         evas_object_geometry_get(inst->o_main, &x, &y, &w, &h);
         switch (orient)

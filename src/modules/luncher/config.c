@@ -19,7 +19,7 @@ _config_source_changed(void *data, Evas_Object *obj EINA_UNUSED, void *event_inf
      return;
    if (inst->cfg->dir) eina_stringshare_del(inst->cfg->dir);
    inst->cfg->dir = NULL;
-   if (dir) inst->cfg->dir = eina_stringshare_ref(dir); 
+   inst->cfg->dir = eina_stringshare_ref(dir); 
    bar_reorder(inst);
 }
 
@@ -176,6 +176,7 @@ static void
 _icon_theme_file_set(Evas_Object *img, const char *icon)
 {
    const char *path = NULL, *k = NULL;
+   char buf[4096];
    int len = 0;
 
    if (!icon)
@@ -195,7 +196,6 @@ _icon_theme_file_set(Evas_Object *img, const char *icon)
      }
    if (!path)
      {
-        char buf[4096];
         snprintf(buf, sizeof(buf), "e/icons/%s", icon);
         if (eina_list_count(e_theme_collection_items_find("base/theme/icons", buf)))
           {
