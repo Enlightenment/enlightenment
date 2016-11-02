@@ -1824,6 +1824,7 @@ _editor_pointer_button(Gadget_Item *active, int t EINA_UNUSED, Ecore_Event_Mouse
         evas_object_geometry_get(active->site, &x, &y, &w, &h);
         if ((ev->buttons == 1) && E_INSIDE(ev->x, ev->y, x, y, w, h))
           evas_object_smart_callback_call(active->site, "gadget_site_dropped", pointer_site);
+        e_comp_canvas_feed_mouse_up(0);
         evas_object_pass_events_set(active->site, 0);
         elm_object_disabled_set(active->editor, 1);
         e_comp_object_util_del_list_remove(active->editor, pointer_site);
@@ -1851,6 +1852,7 @@ _editor_pointer_button(Gadget_Item *active, int t EINA_UNUSED, Ecore_Event_Mouse
           }
         zgs = evas_object_data_get(pointer_site, "__e_gadget_site");
         zgc = eina_list_data_get(zgs->gadgets);
+        e_comp_canvas_feed_mouse_up(0);
         evas_object_pass_events_set(zgc->orig->site->layout, 0);
         if (zzgs)
           {
