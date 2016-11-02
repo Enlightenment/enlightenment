@@ -387,7 +387,7 @@ _actions_unregister(void)
         mixer_context->actions.decr_app = NULL;
      }
 
-   if (mixer_context->actions.incr_app)
+   if (mixer_context->actions.mute_app)
      {
         e_action_predef_name_del("Mixer",
                                  _("Mute Volume of Focuse Application"));
@@ -890,7 +890,7 @@ _get_ppid(pid_t pid)
         ERR("Can't open %s, maybee the process exited.", buf);
         return -1;
      }
-   read(fd, buf, sizeof(buf));
+   if ((read(fd, buf, sizeof(buf))) < 4) return -1;
    buf[sizeof(buf) - 1] = '0';
    s = strrchr(buf, ')');
    s += 3;
