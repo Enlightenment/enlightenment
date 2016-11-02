@@ -21,7 +21,7 @@ E_CPPFLAGS = \
 -I$(top_srcdir) \
 -I$(top_srcdir)/src/bin \
 -I$(top_srcdir)/src/bin/efx \
--I$(top_srcdir)/src/bin/generated \
+-I$(top_builddir)/src/bin/generated \
 @e_cflags@ \
 @cf_cflags@ \
 @VALGRIND_CFLAGS@ \

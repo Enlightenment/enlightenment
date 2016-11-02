@@ -17,7 +17,8 @@ src_modules_wl_weekeyboard_module_la_DEPENDENCIES = $(MDEPENDENCIES)
 src_modules_wl_weekeyboard_module_la_CPPFLAGS  = \
    $(MOD_CPPFLAGS)               \
    @WAYLAND_CFLAGS@              \
-   -DPKGDATADIR='"$pkgdatadir)"'
+   -DPKGDATADIR='"$pkgdatadir)"' \
+   -I$(top_builddir)/src/modules/wl_weekeyboard
 src_modules_wl_weekeyboard_module_la_LIBADD   = $(MOD_LIBS) @WAYLAND_LIBS@
 src_modules_wl_weekeyboard_module_la_LDFLAGS = $(MOD_LDFLAGS)
 wl_weekeyboard_wayland_sources = \

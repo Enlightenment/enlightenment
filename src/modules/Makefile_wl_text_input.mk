@@ -10,7 +10,8 @@ wl_text_input_wayland_sources = \
   src/modules/wl_text_input/input-method-unstable-v1-protocol.c        \
   src/modules/wl_text_input/input-method-unstable-v1-server-protocol.h
 src_modules_wl_text_input_module_la_DEPENDENCIES = $(MDEPENDENCIES)
-src_modules_wl_text_input_module_la_CPPFLAGS  = $(MOD_CPPFLAGS) @WAYLAND_CFLAGS@
+src_modules_wl_text_input_module_la_CPPFLAGS  = $(MOD_CPPFLAGS) @WAYLAND_CFLAGS@ \
+  -I$(top_builddir)/src/modules/wl_text_input
 src_modules_wl_text_input_module_la_LIBADD   = $(MOD_LIBS) @WAYLAND_LIBS@
 src_modules_wl_text_input_module_la_LDFLAGS = $(MOD_LDFLAGS)
 nodist_src_modules_wl_text_input_module_la_SOURCES = \

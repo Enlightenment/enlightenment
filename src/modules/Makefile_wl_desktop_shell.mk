@@ -17,7 +17,8 @@ wl_desktop_shell_wayland_sources = \
   src/modules/wl_desktop_shell/input-method-unstable-v1-server-protocol.h
 
 src_modules_wl_desktop_shell_module_la_DEPENDENCIES = $(MDEPENDENCIES)
-src_modules_wl_desktop_shell_module_la_CPPFLAGS  = $(MOD_CPPFLAGS) @WAYLAND_CFLAGS@
+src_modules_wl_desktop_shell_module_la_CPPFLAGS  = $(MOD_CPPFLAGS) @WAYLAND_CFLAGS@ \
+  -I$(top_builddir)/src/modules/wl_desktop_shell
 src_modules_wl_desktop_shell_module_la_LIBADD   = $(MOD_LIBS) @WAYLAND_LIBS@
 src_modules_wl_desktop_shell_module_la_LDFLAGS = $(MOD_LDFLAGS)
 

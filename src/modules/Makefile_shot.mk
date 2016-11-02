@@ -12,7 +12,7 @@ shotpkg_LTLIBRARIES = src/modules/shot/module.la
 nodist_src_modules_shot_module_la_SOURCES =
 src_modules_shot_module_la_LIBADD = $(MOD_LIBS) @WAYLAND_LIBS@
 src_modules_shot_module_la_CPPFLAGS = \
-$(MOD_CPPFLAGS) @WAYLAND_CFLAGS@
+$(MOD_CPPFLAGS) @WAYLAND_CFLAGS@ -I$(top_builddir)/src/modules/shot
 src_modules_shot_module_la_LDFLAGS = $(MOD_LDFLAGS)
 src_modules_shot_module_la_SOURCES = \
 src/modules/shot/e_mod_main.c
