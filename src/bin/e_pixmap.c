@@ -898,7 +898,7 @@ e_pixmap_image_is_argb(const E_Pixmap *cp)
 #endif
       case E_PIXMAP_TYPE_WL:
 #ifdef HAVE_WAYLAND
-        return ((cp->buffer != NULL) && (cp->image_argb));
+        return cp->image_argb;
 #endif
         default: break;
      }
