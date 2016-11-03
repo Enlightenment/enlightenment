@@ -245,7 +245,6 @@ static void
 _pager_orient(Instance *inst, E_Gadget_Site_Orient orient)
 {
    int aspect_w, aspect_h;
-   double aspect_ratio;
 
    if (inst->o_pager)
      {
@@ -318,7 +317,6 @@ static Pager *
 _pager_new(Evas *evas)
 {
    Pager *p;
-   E_Zone *zone;
 
    p = E_NEW(Pager, 1);
    p->inst = NULL;
@@ -814,7 +812,7 @@ _pager_cb_obj_show(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED
 }
 
 static void
-_pager_cb_move(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
+_pager_cb_move(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Instance *inst = data;
    Pager *p = inst->pager;
@@ -828,7 +826,7 @@ _pager_cb_move(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *event_in
 }
 
 static Evas_Object *
-_pager_gadget_configure(Evas_Object *g)
+_pager_gadget_configure(Evas_Object *g EINA_UNUSED)
 {
    if (!pager_config) return NULL;
    if (cfg_dialog) return NULL;
