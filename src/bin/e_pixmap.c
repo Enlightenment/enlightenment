@@ -899,7 +899,10 @@ e_pixmap_image_is_argb(const E_Pixmap *cp)
 #endif
       case E_PIXMAP_TYPE_WL:
 #ifdef HAVE_WAYLAND
-        return cp->image_argb;
+        if (cp->usable)
+          return cp->image_argb;
+        if (((E_Comp_Wl_Client_Data*)cp->client->comp_data)->cursor)
+          return EINA_TRUE;
 #endif
         default: break;
      }
