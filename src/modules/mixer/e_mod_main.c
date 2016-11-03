@@ -891,7 +891,7 @@ _get_ppid(pid_t pid)
         return -1;
      }
    if ((read(fd, buf, sizeof(buf))) < 4) return -1;
-   buf[sizeof(buf) - 1] = '0';
+   buf[sizeof(buf) - 1] = 0;
    s = strrchr(buf, ')');
    s += 3;
    ppid = atoi(s);
