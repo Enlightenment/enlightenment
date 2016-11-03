@@ -105,7 +105,7 @@ _editor_bryce_add(Evas_Object *obj)
    e_bryce_style_set(b, bi->style);
    e_bryce_autohide_set(b, bi->autohide);
    e_bryce_autosize_set(b, bi->autosize);
-   evas_object_layer_set(b, bi->stack_under ? E_LAYER_DESKTOP : E_LAYER_CLIENT_ABOVE);
+   evas_object_layer_set(b, bi->stack_under ? E_LAYER_DESKTOP_TOP : E_LAYER_CLIENT_ABOVE);
    evas_object_del(obj);
 }
 
@@ -194,7 +194,7 @@ _editor_style_click(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *eve
    evas_object_smart_callback_add(ck, "changed", _editor_stacking, bi);
    if (bryce)
      {
-        bi->stack_under = evas_object_layer_get(bryce) == E_LAYER_DESKTOP;
+        bi->stack_under = evas_object_layer_get(bryce) == E_LAYER_DESKTOP_TOP;
         elm_check_state_set(ck, bi->stack_under);
      }
    elm_box_pack_end(box, ck);

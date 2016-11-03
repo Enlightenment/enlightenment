@@ -369,7 +369,7 @@ _bryce_site_hints(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *event
 static E_Comp_Object_Type
 _bryce_shadow_type(const Bryce *b)
 {
-   if ((b->layer == E_LAYER_DESKTOP) || b->noshadow)
+   if ((b->layer == E_LAYER_DESKTOP_TOP) || b->noshadow)
      return E_COMP_OBJECT_TYPE_NONE;
    return E_COMP_OBJECT_TYPE_POPUP;
 }
@@ -1280,7 +1280,7 @@ e_bryce_init(void)
                }
              b->version = bryce_version;
              if (!e_comp_zone_number_get(b->zone)) continue;
-             b->layer = E_CLAMP(b->layer, E_LAYER_DESKTOP, E_LAYER_CLIENT_ABOVE);
+             b->layer = E_CLAMP(b->layer, E_LAYER_DESKTOP_TOP, E_LAYER_CLIENT_ABOVE);
              _bryce_create(b, e_comp->elm);
              evas_object_show(b->bryce);
           }
