@@ -880,7 +880,7 @@ e_pixmap_image_exists(const E_Pixmap *cp)
 #endif
 #ifdef HAVE_WAYLAND
    return (!!cp->data) ||
-     cp->buffer && ((e_comp->gl && (!cp->buffer->shm_buffer)) || cp->buffer->dmabuf_buffer);
+     (cp->buffer && ((e_comp->gl && (!cp->buffer->shm_buffer)) || cp->buffer->dmabuf_buffer));
 #endif
 
    return EINA_FALSE;
