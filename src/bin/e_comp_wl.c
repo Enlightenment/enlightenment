@@ -1234,7 +1234,7 @@ _e_comp_wl_surface_state_cb_buffer_destroy(struct wl_listener *listener, void *d
 }
 
 static void
-_e_comp_wl_surface_state_init(E_Comp_Wl_Surface_State *state, int w, int h)
+_e_comp_wl_surface_state_init(E_Comp_Wl_Surface_State *state)
 {
    state->new_attach = EINA_FALSE;
    state->buffer = NULL;
@@ -2271,7 +2271,7 @@ _e_comp_wl_subsurface_create(E_Client *ec, E_Client *epc, uint32_t id, struct wl
    wl_resource_set_implementation(res, &_e_subsurface_interface, ec,
                                   _e_comp_wl_subsurface_destroy);
 
-   _e_comp_wl_surface_state_init(&sdata->cached, ec->w, ec->h);
+   _e_comp_wl_surface_state_init(&sdata->cached);
 
    /* set subsurface data properties */
    sdata->resource = res;
@@ -2397,8 +2397,7 @@ _e_comp_wl_client_cb_new(void *data EINA_UNUSED, E_Client *ec)
      }
 
    wl_signal_init(&ec->comp_data->destroy_signal);
-
-   _e_comp_wl_surface_state_init(&ec->comp_data->pending, ec->w, ec->h);
+   _e_comp_wl_surface_state_init(&ec->comp_data->pending);
 
    /* set initial client properties */
    ec->argb = EINA_TRUE;
