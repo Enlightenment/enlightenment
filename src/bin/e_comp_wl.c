@@ -1242,8 +1242,7 @@ _e_comp_wl_surface_state_init(E_Comp_Wl_Surface_State *state, int w, int h)
      _e_comp_wl_surface_state_cb_buffer_destroy;
    state->sx = state->sy = 0;
 
-   state->input = eina_tiler_new(w, h);
-   eina_tiler_tile_size_set(state->input, 1, 1);
+   state->input = NULL;
 
    state->opaque = eina_tiler_new(w, h);
    eina_tiler_tile_size_set(state->opaque, 1, 1);
@@ -1512,35 +1511,29 @@ _e_comp_wl_surface_state_commit(E_Client *ec, E_Comp_Wl_Surface_State *state)
      }
 
    /* put state input into surface */
-   if ((state->input) &&
-       (!eina_tiler_empty(state->input)))
+   if (state->input)
      {
-        Eina_Tiler *src, *tmp;
-
-        tmp = eina_tiler_new(state->bw, state->bh);
-        eina_tiler_tile_size_set(tmp, 1, 1);
-        eina_tiler_rect_add(tmp,
-                            &(Eina_Rectangle){0, 0, state->bw, state->bh});
-        if ((src = eina_tiler_intersection(state->input, tmp)))
+        if (!eina_tiler_empty(state->input))
           {
              Eina_Rectangle *rect;
              Eina_Iterator *itr;
 
-             itr = eina_tiler_iterator_new(src);
+             /* This is seriously wrong and results in only the last
+              * rectangle in the region being set, but in the usual
+              * case there's only one rectangle.
+              */
+             itr = eina_tiler_iterator_new(state->input);
              EINA_ITERATOR_FOREACH(itr, rect)
                e_comp_object_input_area_set(ec->frame, rect->x, rect->y,
                                             rect->w, rect->h);
 
              eina_iterator_free(itr);
-             eina_tiler_free(src);
           }
         else
-          e_comp_object_input_area_set(ec->frame, 0, 0, ec->w, ec->h);
+          e_comp_object_input_area_set(ec->frame, 1, 1, 0, 0);
 
-        eina_tiler_free(tmp);
-
-        /* clear input tiler */
-        eina_tiler_clear(state->input);
+        eina_tiler_free(state->input);
+        state->input = NULL;
      }
    ec->comp_data->in_commit = 0;
 
@@ -1679,7 +1672,9 @@ _e_comp_wl_surface_cb_input_region_set(struct wl_client *client EINA_UNUSED, str
    if (e_object_is_del(E_OBJECT(ec))) return;
 
    if (ec->comp_data->pending.input)
-     eina_tiler_clear(ec->comp_data->pending.input);
+     eina_tiler_free(ec->comp_data->pending.input);
+   ec->comp_data->pending.input = eina_tiler_new(65535, 65535);
+   eina_tiler_tile_size_set(ec->comp_data->pending.input, 1, 1);
    if (region_resource)
      {
         Eina_Tiler *tmp;
@@ -1692,7 +1687,7 @@ _e_comp_wl_surface_cb_input_region_set(struct wl_client *client EINA_UNUSED, str
    else
      {
         eina_tiler_rect_add(ec->comp_data->pending.input,
-                            &(Eina_Rectangle){0, 0, ec->client.w, ec->client.h});
+                            &(Eina_Rectangle){0, 0, 65535, 65535});
      }
 }
 
@@ -2055,11 +2050,8 @@ _e_comp_wl_subsurface_commit_to_cache(E_Client *ec)
      eina_tiler_rect_add(sdata->cached.opaque, rect);
    eina_iterator_free(itr);
 
-   /* repeat for input */
-   itr = eina_tiler_iterator_new(cdata->pending.input);
-   EINA_ITERATOR_FOREACH(itr, rect)
-     eina_tiler_rect_add(sdata->cached.input, rect);
-   eina_iterator_free(itr);
+   sdata->cached.input = cdata->pending.input;
+   cdata->pending.input = NULL;
 
    sdata->cached.frames = eina_list_merge(sdata->cached.frames,
                                           cdata->pending.frames);
