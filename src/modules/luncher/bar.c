@@ -425,14 +425,11 @@ _bar_icon_mouse_down(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUS
 
    if (ev->button == 1)
      {
-        if (ic->mouse_in_timer)
-          E_FREE_FUNC(ic->mouse_in_timer, ecore_timer_del);
-        if (ic->mouse_out_timer)
-          E_FREE_FUNC(ic->mouse_out_timer, ecore_timer_del);
+        E_FREE_FUNC(ic->mouse_in_timer, ecore_timer_del);
+        E_FREE_FUNC(ic->mouse_out_timer, ecore_timer_del);
         ic->drag.x = ev->output.x;
         ic->drag.y = ev->output.y;
-        if (ic->drag_timer)
-          E_FREE_FUNC(ic->drag_timer, ecore_timer_del);
+        E_FREE_FUNC(ic->drag_timer, ecore_timer_del);
         ic->drag_timer = ecore_timer_add(.35, _bar_drag_timer, ic);
      }
    if (ev->button == 3)
@@ -523,8 +520,7 @@ _bar_icon_mouse_up(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED
 
    if (ev->button == 1)
      {
-        if (ic->drag_timer)
-          E_FREE_FUNC(ic->drag_timer, ecore_timer_del);
+        E_FREE_FUNC(ic->drag_timer, ecore_timer_del);
         if (ic->drag.dnd)
           {
              ic->drag.start = 0;
@@ -616,8 +612,7 @@ _bar_icon_preview_mouse_out(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EI
 
    if (current_preview_menu)
      return;
-   if (ic->mouse_out_timer)
-     E_FREE_FUNC(ic->mouse_out_timer, ecore_timer_del);
+   E_FREE_FUNC(ic->mouse_out_timer, ecore_timer_del);
    ic->mouse_out_timer = ecore_timer_add(0.75, _bar_icon_preview_hide, ic);
 }
 
@@ -630,8 +625,7 @@ _bar_icon_preview_mouse_in(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EIN
    if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return;
    if (_bar_check_modifiers(ev->modifiers)) return;
 
-   if (ic->mouse_out_timer)
-     E_FREE_FUNC(ic->mouse_out_timer, ecore_timer_del);
+   E_FREE_FUNC(ic->mouse_out_timer, ecore_timer_del);
 }
 
 static void
@@ -835,10 +829,8 @@ _bar_icon_mouse_in(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *even
    elm_layout_signal_emit(ic->o_layout, "e,state,focused", "e");
    ic->active = EINA_TRUE;
 
-   if (ic->mouse_out_timer)
-     E_FREE_FUNC(ic->mouse_out_timer, ecore_timer_del);
-   if (ic->mouse_in_timer)
-     E_FREE_FUNC(ic->mouse_in_timer, ecore_timer_del);
+   E_FREE_FUNC(ic->mouse_out_timer, ecore_timer_del);
+   E_FREE_FUNC(ic->mouse_in_timer, ecore_timer_del);
    if (eina_list_count(ic->execs) || eina_list_count(ic->clients))
      clients = EINA_TRUE;
    if (current_preview && clients && !current_preview_menu)
@@ -868,10 +860,8 @@ _bar_icon_mouse_out(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *eve
    elm_layout_signal_emit(ic->o_layout, "e,state,unfocused", "e");
    if (!ic->preview)
      ic->active = EINA_FALSE;
-   if (ic->mouse_in_timer)
-     E_FREE_FUNC(ic->mouse_in_timer, ecore_timer_del);
-   if (ic->mouse_out_timer)
-     E_FREE_FUNC(ic->mouse_out_timer, ecore_timer_del);
+   E_FREE_FUNC(ic->mouse_in_timer, ecore_timer_del);
+   E_FREE_FUNC(ic->mouse_out_timer, ecore_timer_del);
    ic->mouse_out_timer = ecore_timer_add(0.25, _bar_icon_preview_hide, ic);
 }
 
@@ -1528,8 +1518,8 @@ _bar_del(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *ev
 {
    Instance *inst = data;
 
-   if (inst->drop_handler)
-     E_FREE_FUNC(inst->drop_handler, evas_object_del);
+   e_object_del(E_OBJECT(inst->order));
+   E_FREE_FUNC(inst->drop_handler, evas_object_del);
    luncher_instances = eina_list_remove(luncher_instances, inst);
    free(inst);
 }
@@ -1797,7 +1787,7 @@ _bar_recalculate_job(void *data)
 EINTERN void
 bar_recalculate(Instance *inst)
 {
-   if (inst->recalc_job) E_FREE_FUNC(inst->recalc_job, ecore_job_del);
+   E_FREE_FUNC(inst->recalc_job, ecore_job_del);
    inst->recalc_job = ecore_job_add(_bar_recalculate_job, inst);
 }
 
@@ -1808,7 +1798,7 @@ bar_reorder(Instance *inst)
 
    if (inst)
      {
-        if (inst->recalc_job) E_FREE_FUNC(inst->recalc_job, ecore_job_del);
+        E_FREE_FUNC(inst->recalc_job, ecore_job_del);
         _bar_empty(inst);
         if (!inst->cfg->dir)
           inst->cfg->dir = eina_stringshare_add("default");
