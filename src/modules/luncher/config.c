@@ -147,7 +147,7 @@ _config_contents(void *data, Evas_Object *obj, void *event_data EINA_UNUSED)
 
    if (e_configure_registry_exists("applications/ibar_applications"))
      {
-        char path[PATH_MAX];
+        char path[4096];
         e_user_dir_snprintf(path, sizeof(path), "applications/bar/%s/.order",
                        inst->cfg->dir);
         e_configure_registry_call("internal/ibar_other", NULL, path);
@@ -164,7 +164,7 @@ _config_create_icon(void *data, Evas_Object *obj, void *event_data EINA_UNUSED)
 
    if (e_configure_registry_exists("applications/new_application"))
      {
-        char path[PATH_MAX];
+        char path[4096];
         e_user_dir_snprintf(path, sizeof(path), "applications/bar/%s/.order",
                        inst->cfg->dir);
         e_configure_registry_call("applications/new_application", NULL, path);
