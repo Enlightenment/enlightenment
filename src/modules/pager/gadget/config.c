@@ -388,7 +388,7 @@ _config_create_pages(Evas_Object *parent)
    ow = elm_check_add(tb);
    elm_object_text_set(ow, _("Show popup on desktop change"));
    evas_object_size_hint_align_set(ow, 0.0, EVAS_HINT_FILL);
-   elm_check_state_set(ow, pager_config->show_desk_names);
+   elm_check_state_set(ow, pager_config->popup);
    elm_table_pack(tb, ow, 0, 0, 1, 1);
    E_ALIGN(ow, EVAS_HINT_FILL, EVAS_HINT_FILL);
    E_WEIGHT(ow, EVAS_HINT_EXPAND, 0);
