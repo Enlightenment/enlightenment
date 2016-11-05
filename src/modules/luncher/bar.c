@@ -880,7 +880,7 @@ static Icon *
 _bar_icon_add(Instance *inst, Efreet_Desktop *desktop, E_Client *non_desktop_client)
 {
    const char *path = NULL, *k = NULL;
-   char buf[4096];
+   char buf[4096], ori[4096];
    int len = 0;
    Icon *ic;
    const Eina_List *l;
@@ -905,6 +905,9 @@ _bar_icon_add(Instance *inst, Efreet_Desktop *desktop, E_Client *non_desktop_cli
    E_FILL(ic->o_layout);
    elm_box_pack_end(inst->o_icon_con, ic->o_layout);
    evas_object_show(ic->o_layout);
+
+   snprintf(ori, sizeof(ori), "e,state,off,%s", _bar_location_get(inst));
+   elm_layout_signal_emit(ic->o_layout, ori, "e");
 
    ic->o_icon = elm_icon_add(ic->o_layout);
    E_EXPAND(ic->o_icon);
@@ -1054,6 +1057,7 @@ _bar_cb_client_remove(void *data EINA_UNUSED, int type EINA_UNUSED, E_Event_Clie
 {
    Instance *inst = NULL;
    Eina_List *l = NULL;
+   char ori[4096];
 
    EINA_LIST_FOREACH(luncher_instances, l, inst)
      {
@@ -1072,7 +1076,8 @@ _bar_cb_client_remove(void *data EINA_UNUSED, int type EINA_UNUSED, E_Event_Clie
                ic->execs = eina_list_remove(ic->execs, ev->ec->exe_inst);
              if (!eina_list_count(ic->execs) && !eina_list_count(ic->clients))
                {
-                  elm_layout_signal_emit(ic->o_layout, "e,state,off", "e");
+                  snprintf(ori, sizeof(ori), "e,state,off,%s", _bar_location_get(inst));
+                  elm_layout_signal_emit(ic->o_layout, ori, "e");
                   if (!ic->in_order)
                     _bar_icon_del(inst, ic);
                }
@@ -1087,6 +1092,7 @@ _bar_cb_exec_del(void *data EINA_UNUSED, int type EINA_UNUSED, E_Exec_Instance *
    Instance *inst = NULL;
    Eina_List *l = NULL;
    E_Client *ec = NULL;
+   char ori[4096];
 
    EINA_LIST_FOREACH(ex->clients, l, ec)
      {
@@ -1112,7 +1118,8 @@ _bar_cb_exec_del(void *data EINA_UNUSED, int type EINA_UNUSED, E_Exec_Instance *
              ic->clients = eina_list_remove(ic->clients, ec);
              if (!eina_list_count(ic->execs) && !eina_list_count(ic->clients))
                {
-                  elm_layout_signal_emit(ic->o_layout, "e,state,off", "e");
+                  snprintf(ori, sizeof(ori), "e,state,off,%s", _bar_location_get(inst));
+                  elm_layout_signal_emit(ic->o_layout, ori, "e");
                   if (!ic->in_order)
                     _bar_icon_del(inst, ic);
                }
@@ -1161,7 +1168,7 @@ _bar_cb_exec_client_prop(void *data EINA_UNUSED, int type EINA_UNUSED, E_Event_C
    EINA_LIST_FOREACH(luncher_instances, l, inst)
      {
         Icon *ic = NULL;
-        char buf[4096];
+        char buf[4096], ori[4096];
 
         ic = _bar_icon_match(inst, ev->ec);
 
@@ -1217,7 +1224,10 @@ _bar_cb_exec_client_prop(void *data EINA_UNUSED, int type EINA_UNUSED, E_Event_C
                   if (!ic->in_order)
                     _bar_icon_del(inst, ic);
                   else
-                    elm_layout_signal_emit(ic->o_layout, "e,state,off", "e");
+                    {
+                       snprintf(ori, sizeof(ori), "e,state,off,%s", _bar_location_get(inst));
+                       elm_layout_signal_emit(ic->o_layout, ori, "e");
+                    }
                }
           }
      }
@@ -1396,7 +1406,7 @@ _bar_resize_job(void *data)
 
    if (inst)
      {
-         orient = e_gadget_site_orient_get(e_gadget_site_get(inst->o_main));
+        orient = e_gadget_site_orient_get(e_gadget_site_get(inst->o_main));
         elm_layout_sizing_eval(inst->o_main);
         evas_object_geometry_get(inst->o_main, &x, &y, &w, &h);
         switch (orient)
