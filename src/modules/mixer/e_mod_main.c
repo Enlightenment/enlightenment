@@ -1194,7 +1194,7 @@ _bd_hook_cb(void *data, E_Menu *m EINA_UNUSED, E_Menu_Item *it EINA_UNUSED)
    evas_object_show(win);
    popup = e_comp_object_util_add(win, E_COMP_OBJECT_TYPE_NONE);
    evas_object_layer_set(popup, E_LAYER_POPUP);
-   e_comp_object_util_center(popup);
+   e_comp_object_util_center_on_zone(popup, ec->zone);
    evas_object_show(popup);
    e_comp_object_util_autoclose(popup, NULL, NULL, NULL);
    _client_mixers = eina_list_append(_client_mixers, cm);
