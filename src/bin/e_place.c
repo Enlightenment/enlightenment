@@ -210,92 +210,50 @@ _e_place_desk_region_smart_obstacle_add(char *u_x, char *u_y, int **a_x, int **a
 }
 
 static int
+_e_place_desk_region_smart_area_check(Eina_List *skiplist, int x, int y, int w, int h, E_Desk *desk, int area, int *rx, int *ry)
+{
+   int ar = 0;
+
+   ar = _e_place_coverage_client_add(skiplist, ar, x, y, w, h);
+
+   if (e_config->window_placement_policy == E_WINDOW_PLACEMENT_SMART)
+     ar = _e_place_coverage_zone_obstacles_add(desk, ar, x, y, w, h);
+
+   if (ar < area)
+     {
+        *rx = x;
+        *ry = y;
+        if (ar == 0) return ar;
+     }
+   return ar;
+}
+
+static int
 _e_place_desk_region_smart_area_calc(int x, int y, int xx, int yy, int zx, int zy, int zw, int zh, int w, int h, Eina_List *skiplist, E_Desk *desk, int area, int *rx, int *ry)
 {
-   if ((x <= MAX(zx, zx + (zw - w))) &&
-       (y <= MAX(zy, zy + (zh - h))))
+   if ((x <= MAX(zx, zx + (zw - w))) && (y <= MAX(zy, zy + (zh - h))))
      {
-        int ar = 0;
-
-        ar = _e_place_coverage_client_add(skiplist, ar,
-                                          x, y,
-                                          w, h);
-
-        if (e_config->window_placement_policy == E_WINDOW_PLACEMENT_SMART)
-          ar = _e_place_coverage_zone_obstacles_add(desk, ar,
-                                           x, y,
-                                           w, h);
-
-        if (ar < area)
-          {
-             area = ar;
-             *rx = x;
-             *ry = y;
-             if (ar == 0) return ar;
-          }
+        int ar = _e_place_desk_region_smart_area_check(skiplist, x, y, w, h, desk, area, rx, ry);
+        if (!ar) return ar;
+        if (ar < area) area = ar;
      }
    if ((MAX(zx, xx - w) > zx) && (y <= MAX(zy, zy + (zh - h))))
      {
-        int ar = 0;
-
-        ar = _e_place_coverage_client_add(skiplist, ar,
-                                          xx - w, y,
-                                          w, h);
-
-        if (e_config->window_placement_policy == E_WINDOW_PLACEMENT_SMART)
-          ar = _e_place_coverage_zone_obstacles_add(desk, ar,
-                                           xx - w, y,
-                                           w, h);
-
-        if (ar < area)
-          {
-             area = ar;
-             *rx = xx - w;
-             *ry = y;
-             if (ar == 0) return ar;
-          }
+        int ar = _e_place_desk_region_smart_area_check(skiplist, xx - w, y, w, h, desk, area, rx, ry);
+        if (!ar) return ar;
+        if (ar < area) area = ar;
      }
    if ((MAX(zx, xx - w) > zx) && (MAX(zy, yy - h) > zy))
      {
-        int ar = 0;
-
-        ar = _e_place_coverage_client_add(skiplist, ar,
-                                          xx - w, yy - h,
-                                          w, h);
-
-        if (e_config->window_placement_policy == E_WINDOW_PLACEMENT_SMART)
-          ar = _e_place_coverage_zone_obstacles_add(desk, ar,
-                                           xx - w, yy - h,
-                                           w, h);
-
-        if (ar < area)
-          {
-             area = ar;
-             *rx = xx - w;
-             *ry = yy - h;
-             if (ar == 0) return ar;
-          }
+        int ar = _e_place_desk_region_smart_area_check(skiplist, xx - w, yy - h, w, h, desk, area, rx, ry);
+        if (!ar) return ar;
+        if (ar < area) area = ar;
      }
    if ((x <= MAX(zx, zx + (zw - w))) && (MAX(zy, yy - h) > zy))
      {
-        int ar = 0;
-
-        ar = _e_place_coverage_client_add(skiplist, ar,
-                                          x, yy - h,
-                                          w, h);
-
-        if (e_config->window_placement_policy == E_WINDOW_PLACEMENT_SMART)
-          ar = _e_place_coverage_zone_obstacles_add(desk, ar,
-                                           x, yy - h,
-                                           w, h);
-
-        if (ar < area)
-          {
-             area = ar;
-             *rx = x;
-             *ry = yy - h;
-             if (ar == 0) return ar;
-          }
+        int ar = _e_place_desk_region_smart_area_check(skiplist, x, yy - h, w, h, desk, area, rx, ry);
+        if (!ar) return ar;
+        if (ar < area) area = ar;
      }
    return area;
 }
