@@ -339,8 +339,8 @@ e_place_desk_region_smart(E_Desk *desk, Eina_List *skiplist, int x, int y, int w
         {
            for (i = 0; i < a_w - 1; i++)
              {
-                if ((a_x[i] <= zx + (zw - w)) &&
-                    (a_y[j] <= zy + (zh - h)))
+                if ((a_x[i] <= MAX(zx, zx + (zw - w))) &&
+                    (a_y[j] <= MAX(zy, zy + (zh - h))))
                   {
                      int ar = 0;
 
@@ -361,7 +361,7 @@ e_place_desk_region_smart(E_Desk *desk, Eina_List *skiplist, int x, int y, int w
                           if (ar == 0) goto done;
                        }
                   }
-                if ((a_x[i + 1] - w > zx) && (a_y[j] <= zy + (zh - h)))
+                if ((MAX(zx, a_x[i + 1] - w) > zx) && (a_y[j] <= MAX(zy, zy + (zh - h))))
                   {
                      int ar = 0;
 
@@ -382,7 +382,7 @@ e_place_desk_region_smart(E_Desk *desk, Eina_List *skiplist, int x, int y, int w
                           if (ar == 0) goto done;
                        }
                   }
-                if ((a_x[i + 1] - w > zx) && (a_y[j + 1] - h > zy))
+                if ((MAX(zx, a_x[i + 1] - w) > zx) && (MAX(zy, a_y[j + 1] - h) > zy))
                   {
                      int ar = 0;
 
@@ -403,7 +403,7 @@ e_place_desk_region_smart(E_Desk *desk, Eina_List *skiplist, int x, int y, int w
                           if (ar == 0) goto done;
                        }
                   }
-                if ((a_x[i] <= zx + (zw - w)) && (a_y[j + 1] - h > zy))
+                if ((a_x[i] <= MAX(zx, zx + (zw - w))) && (MAX(zy, a_y[j + 1] - h) > zy))
                   {
                      int ar = 0;
 
