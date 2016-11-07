@@ -890,7 +890,11 @@ _get_ppid(pid_t pid)
         ERR("Can't open %s, maybee the process exited.", buf);
         return -1;
      }
-   if ((read(fd, buf, sizeof(buf))) < 4) return -1;
+   if ((read(fd, buf, sizeof(buf))) < 4)
+     {
+        close(fd);
+        return -1;
+     }
    buf[sizeof(buf) - 1] = 0;
    s = strrchr(buf, ')');
    s += 3;
