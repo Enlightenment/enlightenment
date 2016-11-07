@@ -905,6 +905,9 @@ _pager_cb_event_desk_show(void *data EINA_UNUSED, int type EINA_UNUSED, void *ev
    Pager_Popup *pp;
    Pager_Desk *pd;
 
+   if (!eina_list_count(pagers))
+     return ECORE_CALLBACK_PASS_ON;
+
    EINA_LIST_FOREACH(pagers, l, p)
      {
         if (p->zone != ev->desk->zone) continue;
@@ -964,6 +967,7 @@ static Eina_Bool
 _pager_cb_event_client_urgent_change(void *data EINA_UNUSED, int type EINA_UNUSED, E_Event_Client_Property *ev)
 {
    if (!(ev->property & E_CLIENT_PROPERTY_URGENCY)) return ECORE_CALLBACK_RENEW;
+   if (!eina_list_count(pagers)) return ECORE_CALLBACK_RENEW;
 
    if (pager_config->popup_urgent && (!e_client_util_desk_visible(ev->ec, e_desk_current_get(ev->ec->zone))) &&
                                       (pager_config->popup_urgent_focus ||
@@ -1360,10 +1364,10 @@ _pager_drop_cb_drop(void *data, const char *type, void *event_info)
              if (max) e_client_maximize(ec, max);
              if (fullscreen) e_client_fullscreen(ec, fs);
           }
-     }
-   EINA_LIST_FOREACH(pd->pager->desks, l, pdd)
-     {
-        edje_object_signal_emit(pdd->o_desk, "e,action,drag,out", "e");
+        EINA_LIST_FOREACH(pd->pager->desks, l, pdd)
+          {
+             edje_object_signal_emit(pdd->o_desk, "e,action,drag,out", "e");
+          }
      }
 }
 

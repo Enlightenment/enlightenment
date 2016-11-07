@@ -1217,7 +1217,7 @@ _bar_cb_exec_client_prop(void *data EINA_UNUSED, int type EINA_UNUSED, E_Event_C
           {
              if (has_desktop)
                ic->execs = eina_list_remove(ic->execs, ev->ec->exe_inst);
-             if (ev->ec)
+             else
                ic->clients = eina_list_remove(ic->clients, ev->ec);
              if (!eina_list_count(ic->execs) && !eina_list_count(ic->clients))
                {
@@ -1786,12 +1786,15 @@ _bar_recalculate_job(void *data)
 {
    Instance *inst = data;
 
-   if (inst && inst->o_icon_con)
+   if (inst)
      {
-       _bar_empty(inst);
-       _bar_fill(inst);
+        if (inst->o_icon_con)
+          {
+             _bar_empty(inst);
+             _bar_fill(inst);
+          }   
+        inst->recalc_job = NULL;
      }
-   inst->recalc_job = NULL;
 }
 
 EINTERN void
