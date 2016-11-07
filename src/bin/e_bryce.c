@@ -134,6 +134,14 @@ _bryce_position(Bryce *b, int w, int h, int *nx, int *ny)
         
         zone = e_comp_zone_number_get(b->zone);
         ox = zone->x, oy = zone->y, ow = zone->w, oh = zone->h;
+        if (starting)
+          {
+             E_Zone *zone2;
+
+             zone2 = e_comp_object_util_zone_get(b->bryce);
+             if (zone != zone2)
+               evas_object_move(b->bryce, ox, oy);
+          }
      }
    else
      evas_object_geometry_get(b->parent, &ox, &oy, &ow, &oh);
