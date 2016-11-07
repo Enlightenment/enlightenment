@@ -209,6 +209,11 @@ _e_place_desk_region_smart_obstacle_add(char *u_x, char *u_y, int **a_x, int **a
      }
 }
 
+/* determine whether the "overlapping" area for a given geometry
+ * is less than the previous smallest overlapping area.
+ * if this obstacle geometry has less overlap, set it as the current
+ * geometry to use
+ */
 static int
 _e_place_desk_region_smart_area_check(Eina_List *skiplist, int x, int y, int w, int h, E_Desk *desk, int area, int *rx, int *ry)
 {
@@ -228,27 +233,39 @@ _e_place_desk_region_smart_area_check(Eina_List *skiplist, int x, int y, int w, 
    return ar;
 }
 
+/* calculate optimal placement based on "overlapping" area using:
+ * - an obstacle's top-left and bottom-right points
+ * - list of clients to skip
+ * - current desk
+ * - current least overlapping area
+ * - pointers to current coords to use for placement
+ * and then return the new least overlapping area
+ */
 static int
 _e_place_desk_region_smart_area_calc(int x, int y, int xx, int yy, int zx, int zy, int zw, int zh, int w, int h, Eina_List *skiplist, E_Desk *desk, int area, int *rx, int *ry)
 {
+   /* check top-left corner placement */
    if ((x <= MAX(zx, zx + (zw - w))) && (y <= MAX(zy, zy + (zh - h))))
      {
         int ar = _e_place_desk_region_smart_area_check(skiplist, x, y, w, h, desk, area, rx, ry);
         if (!ar) return ar;
         if (ar < area) area = ar;
      }
+   /* check top-right corner placement */
    if ((MAX(zx, xx - w) > zx) && (y <= MAX(zy, zy + (zh - h))))
      {
         int ar = _e_place_desk_region_smart_area_check(skiplist, xx - w, y, w, h, desk, area, rx, ry);
         if (!ar) return ar;
         if (ar < area) area = ar;
      }
+   /* check bottom-right corner placement */
    if ((MAX(zx, xx - w) > zx) && (MAX(zy, yy - h) > zy))
      {
         int ar = _e_place_desk_region_smart_area_check(skiplist, xx - w, yy - h, w, h, desk, area, rx, ry);
         if (!ar) return ar;
         if (ar < area) area = ar;
      }
+   /* check bottom-left corner placement */
    if ((x <= MAX(zx, zx + (zw - w))) && (MAX(zy, yy - h) > zy))
      {
         int ar = _e_place_desk_region_smart_area_check(skiplist, x, yy - h, w, h, desk, area, rx, ry);
@@ -384,6 +401,10 @@ e_place_desk_region_smart(E_Desk *desk, Eina_List *skiplist, int x, int y, int w
              }
         }
 
+      /* loop through all the obstacles in the arrays of coords
+       * (a_x[i], a_y[j]) is top-left corner of obstacle
+       * (a_x[i + 1], a_y[j + 1]) is bottom-right corner of obstacle
+       */
       for (j = 0; j < a_h - 1; j++)
         for (i = 0; i < a_w - 1; i++)
           {
