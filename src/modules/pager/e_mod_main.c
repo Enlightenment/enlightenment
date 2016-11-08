@@ -996,6 +996,8 @@ _pager_cb_event_desk_show(void *data EINA_UNUSED, int type EINA_UNUSED, void *ev
    Pager_Popup *pp;
    Pager_Desk *pd;
 
+   if (!eina_list_count(pagers)) return ECORE_CALLBACK_PASS_ON;
+
    EINA_LIST_FOREACH(pagers, l, p)
      {
         if (p->zone != ev->desk->zone) continue;
@@ -1055,6 +1057,8 @@ static Eina_Bool
 _pager_cb_event_client_urgent_change(void *data EINA_UNUSED, int type EINA_UNUSED, E_Event_Client_Property *ev)
 {
    if (!(ev->property & E_CLIENT_PROPERTY_URGENCY)) return ECORE_CALLBACK_RENEW;
+
+   if (!eina_list_count(pagers)) return ECORE_CALLBACK_RENEW;
 
    if (pager_config->popup_urgent && (!e_client_util_desk_visible(ev->ec, e_desk_current_get(ev->ec->zone))) &&
                                       (pager_config->popup_urgent_focus ||
