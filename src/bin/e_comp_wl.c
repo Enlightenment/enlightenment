@@ -2476,10 +2476,7 @@ _e_comp_wl_client_cb_del(void *data EINA_UNUSED, E_Client *ec)
      wl_resource_destroy(cb);
 
    if (ec->comp_data->surface)
-     {
-        e_pixmap_alias(ec->pixmap, E_PIXMAP_TYPE_WL, wl_resource_get_id(ec->comp_data->surface));
-        wl_resource_set_user_data(ec->comp_data->surface, NULL);
-     }
+     wl_resource_set_user_data(ec->comp_data->surface, NULL);
 
    /* WL clients take an extra ref at startup so they don't get deleted while
     * visible.  Since we drop that in the render loop we need to make sure
