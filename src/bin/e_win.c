@@ -51,6 +51,10 @@ _e_elm_win_trap_hide(void *data, Evas_Object *o)
    if (!ctx->visible) return EINA_FALSE;
    if (strncmp(ecore_evas_engine_name_get(e_win_ee_get(o)), "wayland", 7))
      E_FREE_FUNC(ctx->pointer, e_object_del);
+#ifdef HAVE_WAYLAND
+   else if (ctx->client)
+     e_pixmap_alias(NULL, E_PIXMAP_TYPE_WL, ecore_wl2_window_surface_id_get(elm_win_wl_window_get(o)));
+#endif
 
    if (!ctx->client) return EINA_TRUE;
    ctx->visible = 0;
