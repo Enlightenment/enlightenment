@@ -162,8 +162,6 @@ _e_pixmap_wl_buffers_free(E_Pixmap *cp)
 {
    E_Comp_Wl_Buffer *b;
 
-   if (e_comp->rendering) return;
-
    EINA_LIST_FREE(cp->free_buffers, b)
      {
         wl_list_remove(&b->deferred_destroy_listener.link);
@@ -805,6 +803,8 @@ e_pixmap_image_clear(E_Pixmap *cp, Eina_Bool cache)
                   wl_resource_destroy(cb);
                }
           }
+        else
+          _e_pixmap_wl_buffers_free(cp);
 #endif
         break;
       default:
