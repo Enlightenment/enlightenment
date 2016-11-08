@@ -1558,7 +1558,10 @@ _e_comp_wl_surface_state_commit(E_Client *ec, E_Comp_Wl_Surface_State *state)
 static void
 _e_comp_wl_surface_cb_destroy(struct wl_client *client EINA_UNUSED, struct wl_resource *resource)
 {
+   E_Client *ec;
    DBG("Surface Cb Destroy: %d", wl_resource_get_id(resource));
+   ec = wl_resource_get_user_data(resource);
+   if (ec && (!e_object_is_del(E_OBJECT(ec)))) ec->comp_data->surface = NULL;
    wl_resource_destroy(resource);
 }
 
