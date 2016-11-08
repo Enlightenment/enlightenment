@@ -959,7 +959,13 @@ _e_comp_wl_evas_cb_kill_request(void *data, Evas_Object *obj EINA_UNUSED, void *
 
    evas_object_pass_events_set(ec->frame, EINA_TRUE);
    if (ec->visible) evas_object_hide(ec->frame);
-   if (!ec->internal) e_object_del(E_OBJECT(ec));
+   if (ec->internal)
+     {
+        ec->ignored = 1;
+        if (!e_object_is_del(E_OBJECT(ec)))
+          ec->comp_data->mapped = EINA_FALSE;
+     }
+   else e_object_del(E_OBJECT(ec));
 
    _e_comp_wl_focus_check();
 }
@@ -1759,8 +1765,14 @@ _e_comp_wl_surface_destroy(struct wl_resource *resource)
 
    if (!(ec = wl_resource_get_user_data(resource))) return;
 
-   e_pixmap_alias(ec->pixmap, E_PIXMAP_TYPE_WL, wl_resource_get_id(resource));
-   if (!ec->internal) e_object_del(E_OBJECT(ec));
+   if (ec->internal)
+     {
+        e_pixmap_alias(ec->pixmap, E_PIXMAP_TYPE_WL, wl_resource_get_id(resource));
+        ec->ignored = 1;
+        if (!e_object_is_del(E_OBJECT(ec)))
+          ec->comp_data->mapped = EINA_FALSE;
+     }
+   else e_object_del(E_OBJECT(ec));
    evas_object_hide(ec->frame);
 }
 
