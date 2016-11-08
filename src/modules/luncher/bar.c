@@ -347,6 +347,7 @@ _bar_icon_drag_done(E_Drag *drag, int dropped)
 
    efreet_desktop_unref(drag->data);
    if (!inst) return;
+   evas_object_smart_callback_call(e_gadget_site_get(inst->o_main), "gadget_site_unlocked", NULL);
    if (!dropped)
      bar_recalculate(inst);
 }
@@ -411,6 +412,7 @@ _bar_drag_timer(void *data)
 
    ic->drag_timer = NULL;
    ic->drag.start = 1;
+   evas_object_smart_callback_call(e_gadget_site_get(ic->inst->o_main), "gadget_site_locked", NULL);
    return EINA_FALSE;
 }
 
@@ -1614,6 +1616,7 @@ _bar_drop_move(void *data, const char *type EINA_UNUSED, void *event_data)
    elm_box_unpack(inst->o_icon_con, inst->place_holder);
    if (inst->drop_before)
      elm_box_pack_before(inst->o_icon_con, inst->place_holder, inst->drop_before->o_layout);
+   _bar_aspect(inst);
 }
 
 static void

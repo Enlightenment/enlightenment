@@ -1034,6 +1034,8 @@ _pager_window_cb_mouse_up(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA
    if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return;
    if (_pager_check_modifiers(ev->modifiers)) return;
 
+   evas_object_smart_callback_call(e_gadget_site_get(pw->desk->pager->inst->o_pager), "gadget_site_unlocked", NULL);
+
    pw->drag.button = 0;
 }
 
@@ -1068,6 +1070,7 @@ _pager_window_cb_mouse_down(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EI
         pw->drag.start = 1;
         pw->drag.button = ev->button;
         pw->desk->pager->active_drag_client = pw->client;
+        evas_object_smart_callback_call(e_gadget_site_get(pw->desk->pager->inst->o_pager), "gadget_site_locked", NULL);
      }
 }
 
@@ -1150,6 +1153,7 @@ _pager_window_cb_drag_finished(E_Drag *drag, int dropped)
    if (!pw) return;
    p->active_drag_client = NULL;
    evas_object_show(pw->o_mirror);
+   evas_object_smart_callback_call(e_gadget_site_get(pw->desk->pager->inst->o_pager), "gadget_site_unlocked", NULL);
    if (dropped)
      {
         /* be helpful */
@@ -1397,6 +1401,7 @@ _pager_desk_cb_mouse_down(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA
         pd->drag.x = ev->canvas.x;
         pd->drag.y = ev->canvas.y;
         pd->drag.button = ev->button;
+        evas_object_smart_callback_call(e_gadget_site_get(pd->pager->inst->o_pager), "gadget_site_locked", NULL);
      }
    else
      {
@@ -1434,6 +1439,7 @@ _pager_desk_cb_mouse_up(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_U
         if (pd->pager->dragging) pd->pager->dragging = 0;
         pd->drag.start = 0;
         pd->drag.in_pager = 0;
+        evas_object_smart_callback_call(e_gadget_site_get(p->inst->o_pager), "gadget_site_unlocked", NULL);
      }
 
    if ((p->popup) && (p->popup->urgent)) _pager_popup_free(p->popup);
@@ -1503,6 +1509,7 @@ _pager_desk_cb_drag_finished(E_Drag *drag, int dropped)
 
    pd = drag->data;
    if (!pd) return;
+   evas_object_smart_callback_call(e_gadget_site_get(pd->pager->inst->o_pager), "gadget_site_unlocked", NULL);
    if (!dropped)
      {
         /* wasn't dropped on pager, switch with current desktop */
