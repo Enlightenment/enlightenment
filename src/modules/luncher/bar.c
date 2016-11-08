@@ -1612,7 +1612,8 @@ _bar_drop_move(void *data, const char *type EINA_UNUSED, void *event_data)
           inst->drop_before = ic;
      }
    elm_box_unpack(inst->o_icon_con, inst->place_holder);
-   elm_box_pack_before(inst->o_icon_con, inst->place_holder, inst->drop_before->o_layout);
+   if (inst->drop_before)
+     elm_box_pack_before(inst->o_icon_con, inst->place_holder, inst->drop_before->o_layout);
 }
 
 static void
