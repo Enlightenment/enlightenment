@@ -106,18 +106,18 @@ _bryce_autohide_coords(Bryce *b, int *x, int *y)
         *x = b->x;
 
         if (an & E_GADGET_SITE_ANCHOR_TOP)
-          *y = oy - b->size + b->autohide_size;
+          *y = oy - (e_scale * b->size) + e_scale * (b->autohide_size);
         if (an & E_GADGET_SITE_ANCHOR_BOTTOM)
-          *y = oy + oh - b->autohide_size;
+          *y = oy + oh - (e_scale * b->autohide_size);
      }
    else if (b->orient == E_GADGET_SITE_ORIENT_VERTICAL)
      {
         *y = b->y;
 
         if (an & E_GADGET_SITE_ANCHOR_LEFT)
-          *x = ox - b->size + b->autohide_size;
+          *x = ox - (e_scale * b->size) + e_scale * (b->autohide_size);
         if (an & E_GADGET_SITE_ANCHOR_RIGHT)
-          *x = ox + ow - b->autohide_size;
+          *x = ox + ow - (e_scale * b->autohide_size);
      }
 }
 
@@ -159,14 +159,14 @@ _bryce_position(Bryce *b, int w, int h, int *nx, int *ny)
         if (an & E_GADGET_SITE_ANCHOR_RIGHT)
           x = ox + ow - w;
         if (an & E_GADGET_SITE_ANCHOR_BOTTOM)
-          y = oy + oh - b->size;
+          y = oy + oh - (e_scale * b->size);
         if (!b->autosize)
           x = ox;
      }
    else if (b->orient == E_GADGET_SITE_ORIENT_VERTICAL)
      {
         if (an & E_GADGET_SITE_ANCHOR_RIGHT)
-          x = ox + ow - b->size;
+          x = ox + ow - (e_scale * b->size);
         if (an & E_GADGET_SITE_ANCHOR_BOTTOM)
           y = oy + oh - h;
         if (!b->autosize)
@@ -1014,7 +1014,7 @@ e_bryce_add(Evas_Object *parent, const char *name, E_Gadget_Site_Orient orient, 
    Bryce *b;
 
    b = E_NEW(Bryce, 1);
-   b->size = 48;
+   b->size = e_scale * 48;
    b->name = eina_stringshare_add(name);
    b->anchor = an;
    b->orient = orient;
