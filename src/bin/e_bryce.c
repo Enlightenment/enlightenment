@@ -1014,7 +1014,7 @@ e_bryce_add(Evas_Object *parent, const char *name, E_Gadget_Site_Orient orient, 
    Bryce *b;
 
    b = E_NEW(Bryce, 1);
-   b->size = e_scale * 48;
+   b->size = 48;
    b->name = eina_stringshare_add(name);
    b->anchor = an;
    b->orient = orient;
