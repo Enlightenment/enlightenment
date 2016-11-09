@@ -1041,7 +1041,6 @@ _bar_icon_add(Instance *inst, Efreet_Desktop *desktop, E_Client *non_desktop_cli
         l = e_exec_desktop_instances_find(desktop);
         if (l)
           {
-             char ori[32];
              snprintf(ori, sizeof(ori), "e,state,on,%s", _bar_location_get(inst));
              elm_layout_signal_emit(ic->o_layout, ori, "e");
              ic->execs = eina_list_clone(l);
@@ -1352,7 +1351,6 @@ _bar_fill(Instance *inst)
      {
         EINA_LIST_FOREACH(l, ll, ex)
           {
-             E_Client *ec;
              Eina_Bool skip = EINA_TRUE;
 
              EINA_LIST_FOREACH(ex->clients, lll, ec)
@@ -1616,7 +1614,6 @@ _bar_drop_move(void *data, const char *type EINA_UNUSED, void *event_data)
    elm_box_unpack(inst->o_icon_con, inst->place_holder);
    if (inst->drop_before)
      elm_box_pack_before(inst->o_icon_con, inst->place_holder, inst->drop_before->o_layout);
-   //_bar_aspect(inst);
 }
 
 static void

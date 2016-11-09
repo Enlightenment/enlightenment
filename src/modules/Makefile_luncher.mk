@@ -10,7 +10,7 @@ luncherpkgdir = $(MDIR)/luncher/$(MODULE_ARCH)
 luncherpkg_LTLIBRARIES = src/modules/luncher/module.la
 
 src_modules_luncher_module_la_LIBADD = $(MOD_LIBS)
-src_modules_luncher_module_la_CPPFLAGS = $(MOD_CPPFLAGS) -Wall
+src_modules_luncher_module_la_CPPFLAGS = $(MOD_CPPFLAGS)
 src_modules_luncher_module_la_LDFLAGS = $(MOD_LDFLAGS)
 src_modules_luncher_module_la_SOURCES = src/modules/luncher/mod.c \
 			 src/modules/luncher/luncher.h \
