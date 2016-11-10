@@ -269,7 +269,8 @@ e_int_client_menu_del(E_Client *ec)
    if (!ec->border_menu) return;
    e_menu_post_deactivate_callback_set(ec->border_menu, NULL, NULL);
    E_FREE_FUNC(ec->border_menu, e_object_del);
-   ec->cur_mouse_action = NULL;
+   if (ec->cur_mouse_action && eina_streq(ec->cur_mouse_action->name, "window_menu"))
+     E_FREE_FUNC(ec->cur_mouse_action, e_object_unref);
 }
 
 static void
