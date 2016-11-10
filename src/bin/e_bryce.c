@@ -864,9 +864,15 @@ _bryce_orient(Bryce *b)
    elm_object_content_set(b->scroller, b->site);
    e_gadget_site_owner_setup(b->site, b->anchor, _bryce_style);
    if (b->orient == E_GADGET_SITE_ORIENT_HORIZONTAL)
-     elm_layout_signal_emit(b->layout, "e,state,orient,horizontal", "e");
+     {
+        elm_layout_signal_emit(b->layout, "e,state,orient,horizontal", "e");
+        elm_layout_signal_emit(b->scroller, "e,state,orient,horizontal", "e");
+     }
    else
-     elm_layout_signal_emit(b->layout, "e,state,orient,vertical", "e");
+     {
+        elm_layout_signal_emit(b->layout, "e,state,orient,vertical", "e");
+        elm_layout_signal_emit(b->scroller, "e,state,orient,vertical", "e");
+     }
    evas_object_event_callback_add(b->site, EVAS_CALLBACK_CHANGED_SIZE_HINTS, _bryce_site_hints, b);
    evas_object_smart_callback_add(b->site, "gadget_site_anchor", _bryce_site_anchor, b);
    evas_object_smart_callback_add(b->site, "gadget_site_style_menu", _bryce_style_menu, b);
