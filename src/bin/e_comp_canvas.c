@@ -170,7 +170,14 @@ _e_comp_cb_mouse_up(void *d EINA_UNUSED, int t EINA_UNUSED, Ecore_Event_Mouse_Bu
 {
    if ((e_comp->comp_type == E_PIXMAP_TYPE_X) && (ev->event_window != e_comp->root))
      return ECORE_CALLBACK_PASS_ON;
-   return !e_bindings_mouse_down_ecore_event_handle(E_BINDING_CONTEXT_MANAGER, E_OBJECT(e_comp), ev);
+   if (e_bindings_mouse_down_ecore_event_handle(E_BINDING_CONTEXT_MANAGER, E_OBJECT(e_comp), ev))
+     return ECORE_CALLBACK_DONE;
+
+#ifdef HAVE_WAYLAND
+   return e_comp_wl_grab_client_mouse_button(ev);
+#else
+   return ECORE_CALLBACK_RENEW;
+#endif
 }
 
 static Eina_Bool
@@ -178,7 +185,13 @@ _e_comp_cb_mouse_down(void *d EINA_UNUSED, int t EINA_UNUSED, Ecore_Event_Mouse_
 {
    if ((e_comp->comp_type == E_PIXMAP_TYPE_X) && (ev->event_window != e_comp->root))
      return ECORE_CALLBACK_PASS_ON;
-   return !e_bindings_mouse_down_ecore_event_handle(E_BINDING_CONTEXT_MANAGER, E_OBJECT(e_comp), ev);
+   if (e_bindings_mouse_down_ecore_event_handle(E_BINDING_CONTEXT_MANAGER, E_OBJECT(e_comp), ev))
+     return ECORE_CALLBACK_DONE;
+#ifdef HAVE_WAYLAND
+   return e_comp_wl_grab_client_mouse_button(ev);
+#else
+   return ECORE_CALLBACK_RENEW;
+#endif
 }
 
 static Eina_Bool
@@ -188,6 +201,14 @@ _e_comp_cb_mouse_wheel(void *d EINA_UNUSED, int t EINA_UNUSED, Ecore_Event_Mouse
      return ECORE_CALLBACK_PASS_ON;
    return !e_bindings_wheel_ecore_event_handle(E_BINDING_CONTEXT_MANAGER, E_OBJECT(e_comp), ev);
 }
+
+#ifdef HAVE_WAYLAND
+static Eina_Bool
+_e_comp_cb_mouse_move(void *d EINA_UNUSED, int t EINA_UNUSED, Ecore_Event_Mouse_Move *ev)
+{
+   return e_comp_wl_grab_client_mouse_move(ev);
+}
+#endif
 
 ////////////////////////////////////
 
@@ -794,6 +815,9 @@ e_comp_canvas_intercept(void)
    E_LIST_HANDLER_APPEND(handlers, ECORE_EVENT_MOUSE_BUTTON_DOWN, _e_comp_cb_mouse_down, NULL);
    E_LIST_HANDLER_APPEND(handlers, ECORE_EVENT_MOUSE_BUTTON_UP, _e_comp_cb_mouse_up, NULL);
    E_LIST_HANDLER_APPEND(handlers, ECORE_EVENT_MOUSE_WHEEL, _e_comp_cb_mouse_wheel, NULL);
+#ifdef HAVE_WAYLAND
+   E_LIST_HANDLER_APPEND(handlers, ECORE_EVENT_MOUSE_MOVE, _e_comp_cb_mouse_move, NULL);
+#endif
    E_LIST_HANDLER_APPEND(handlers, ECORE_EVENT_KEY_DOWN, _e_comp_cb_key_down, NULL);
    E_LIST_HANDLER_APPEND(handlers, ECORE_EVENT_KEY_UP, _e_comp_cb_key_up, NULL);
 }

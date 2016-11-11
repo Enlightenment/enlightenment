@@ -13,6 +13,8 @@ wl_desktop_shellpkg_LTLIBRARIES = src/modules/wl_desktop_shell/module.la
 wl_desktop_shell_wayland_sources = \
   src/modules/wl_desktop_shell/xdg-shell-unstable-v5-protocol.c \
   src/modules/wl_desktop_shell/xdg-shell-unstable-v5-server-protocol.h \
+  src/modules/wl_desktop_shell/xdg-shell-unstable-v6-protocol.c \
+  src/modules/wl_desktop_shell/xdg-shell-unstable-v6-server-protocol.h \
   src/modules/wl_desktop_shell/input-method-unstable-v1-protocol.c \
   src/modules/wl_desktop_shell/input-method-unstable-v1-server-protocol.h
 
@@ -27,7 +29,8 @@ src/modules/wl_desktop_shell/e_mod_main.c \
 src/modules/wl_desktop_shell/e_mod_main.h \
 src/modules/wl_desktop_shell/e_mod_input_panel.c \
 src/modules/wl_desktop_shell/wl_shell.c \
-src/modules/wl_desktop_shell/xdg5.c
+src/modules/wl_desktop_shell/xdg5.c \
+src/modules/wl_desktop_shell/xdg6.c
 
 
 nodist_src_modules_wl_desktop_shell_module_la_SOURCES = \
@@ -38,6 +41,7 @@ MAINTAINERCLEANFILES += \
 
 src/modules/wl_desktop_shell/e_mod_main.c: \
  src/modules/wl_desktop_shell/xdg-shell-unstable-v5-server-protocol.h \
+ src/modules/wl_desktop_shell/xdg-shell-unstable-v6-server-protocol.h \
  src/modules/wl_desktop_shell/input-method-unstable-v1-server-protocol.h
 
 PHONIES += wl_desktop_shell install-wl_desktop_shell

@@ -49,6 +49,7 @@ typedef struct _E_Comp_Wl_Client_Data E_Comp_Wl_Client_Data;
 typedef struct _E_Comp_Wl_Data E_Comp_Wl_Data;
 typedef struct _E_Comp_Wl_Output E_Comp_Wl_Output;
 typedef struct E_Shell_Data E_Shell_Data;
+typedef void (*E_Comp_Wl_Grab_End_Cb)(E_Client*);
 
 struct _E_Comp_Wl_Buffer
 {
@@ -287,6 +288,8 @@ struct _E_Comp_Wl_Client_Data
         E_Shell_Data *data;
         struct
         {
+           Evas_Coord_Size min_size;
+           Evas_Coord_Size max_size;
            Eina_Bool fullscreen : 1;
            Eina_Bool unfullscreen : 1;
            Eina_Bool maximize : 1;
@@ -329,6 +332,7 @@ struct _E_Comp_Wl_Client_Data
    Eina_Bool maximizing : 1;
    Eina_Bool in_commit : 1;
    Eina_Bool is_xdg_surface : 1;
+   Eina_Bool grab;
 };
 
 struct _E_Comp_Wl_Output
@@ -368,6 +372,12 @@ EINTERN Eina_Bool e_comp_wl_key_up(Ecore_Event_Key *ev);
 E_API Eina_Bool e_comp_wl_evas_handle_mouse_button(E_Client *ec, uint32_t timestamp, uint32_t button_id, uint32_t state);
 
 E_API extern int E_EVENT_WAYLAND_GLOBAL_ADD;
+
+E_API void e_comp_wl_grab_client_add(E_Client *ec, E_Comp_Wl_Grab_End_Cb cb);
+E_API void e_comp_wl_grab_client_del(E_Client *ec, Eina_Bool dismiss);
+E_API Eina_Bool e_comp_wl_client_is_grabbed(const E_Client *ec);
+E_API Eina_Bool e_comp_wl_grab_client_mouse_move(const Ecore_Event_Mouse_Move *ev);
+E_API Eina_Bool e_comp_wl_grab_client_mouse_button(const Ecore_Event_Mouse_Button *ev);
 
 # ifndef HAVE_WAYLAND_ONLY
 EINTERN void e_comp_wl_xwayland_client_queue(E_Client *ec);

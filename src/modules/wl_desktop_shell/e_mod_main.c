@@ -16,15 +16,27 @@ e_shell_surface_destroy(struct wl_resource *resource)
    /* get the client for this resource */
    ec = wl_resource_get_user_data(resource);
    if (!ec) return;
-   if (!e_object_unref(E_OBJECT(ec))) return;
    if (e_object_is_del(E_OBJECT(ec))) return;
+
+   if (ec->comp_data->grab)
+     {
+        e_comp_wl_grab_client_del(ec, 0);
+        ec->comp_data->grab = 0;
+     }
 
    shd = ec->comp_data->shell.data;
 
    if (shd)
      {
         E_FREE_LIST(shd->pending, free);
-        E_FREE(ec->comp_data->shell.data);
+        if ((resource == ec->comp_data->shell.surface) || (resource == shd->surface))
+          {
+             if (ec->comp_data->shell.surface == resource)
+               ec->comp_data->shell.surface = NULL;
+             else
+               shd->surface = NULL;
+             E_FREE(ec->comp_data->shell.data);
+          }
      }
 
    if (ec->comp_data->mapped)
@@ -38,8 +50,8 @@ e_shell_surface_destroy(struct wl_resource *resource)
         ec->parent->transients =
           eina_list_remove(ec->parent->transients, ec);
      }
-   /* wl_resource_destroy(ec->comp_data->shell.surface); */
-   ec->comp_data->shell.surface = NULL;
+
+   e_object_unref(E_OBJECT(ec));
 }
 
 EINTERN void
@@ -140,6 +152,8 @@ E_API E_Module_Api e_modapi = { E_MODULE_API_VERSION, "Wl_Desktop_Shell" };
 E_API void *
 e_modapi_init(E_Module *m)
 {
+   Eina_Bool have_shell;
+
    /* try to create global shell interface */
    if (!wl_global_create(e_comp_wl->wl.disp, &wl_shell_interface, 1,
                          NULL, wl_shell_cb_bind))
@@ -148,7 +162,9 @@ e_modapi_init(E_Module *m)
         return NULL;
      }
 
-   if (!e_xdg_shell_init()) return NULL;
+   have_shell = e_xdg_shell_v5_init();
+   have_shell &= e_xdg_shell_v6_init();
+   if (!have_shell) return NULL;
 
 #ifdef HAVE_WL_TEXT_INPUT
    if (!e_input_panel_init())

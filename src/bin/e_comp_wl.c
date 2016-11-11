@@ -42,6 +42,9 @@ static double _last_event_time = 0.0;
 
 static int64_t surface_id = 0;
 
+static Eina_List *grab_clients;
+static Eina_List *grab_cbs;
+
 /* local functions */
 
 static Eina_Bool
@@ -116,13 +119,16 @@ _e_comp_wl_surface_outputs_update(E_Client *ec)
 static void
 _e_comp_wl_configure_send(E_Client *ec, Eina_Bool edges)
 {
-   int w, h;
+   int w = 0, h = 0;
 
    if (e_object_is_del(E_OBJECT(ec))) return;
-   if (e_comp_object_frame_exists(ec->frame))
-     w = ec->client.w, h = ec->client.h;
-   else
-     w = ec->w, h = ec->h;
+   if (e_pixmap_usable_get(ec->pixmap))
+     {
+        if (e_comp_object_frame_exists(ec->frame))
+          w = ec->client.w, h = ec->client.h;
+        else
+          w = ec->w, h = ec->h;
+     }
    ec->comp_data->shell.configure_send(ec->comp_data->shell.surface,
                                        edges * e_comp_wl->resize.edges,
                                        w, h);
@@ -1334,6 +1340,26 @@ _e_comp_wl_surface_state_commit(E_Client *ec, E_Comp_Wl_Surface_State *state)
 
    if (ec->comp_data->shell.surface)
      {
+        if (ec->comp_data->shell.set.min_size.w)
+          ec->icccm.min_w = ec->comp_data->shell.set.min_size.w;
+        ec->comp_data->shell.set.min_size.w = 0;
+        if (ec->comp_data->shell.set.min_size.h)
+          ec->icccm.min_h = ec->comp_data->shell.set.min_size.h;
+        ec->comp_data->shell.set.min_size.h = 0;
+        if (ec->comp_data->shell.set.max_size.w)
+          ec->icccm.max_w = ec->comp_data->shell.set.max_size.w;
+        ec->comp_data->shell.set.max_size.w = 0;
+        if (ec->comp_data->shell.set.max_size.h)
+          ec->icccm.max_h = ec->comp_data->shell.set.max_size.h;
+        ec->comp_data->shell.set.max_size.h = 0;
+        if (ec->icccm.min_w && ec->icccm.max_w && (ec->icccm.min_w > ec->icccm.max_w))
+          wl_resource_post_error(ec->comp_data->shell.surface,
+                               WL_DISPLAY_ERROR_INVALID_OBJECT,
+                               "min surface width cannot be larger than max surface width");
+        if (ec->icccm.min_h && ec->icccm.max_h && (ec->icccm.min_h > ec->icccm.max_h))
+          wl_resource_post_error(ec->comp_data->shell.surface,
+                               WL_DISPLAY_ERROR_INVALID_OBJECT,
+                               "min surface height cannot be larger than max surface height");
         if (ec->comp_data->shell.set.fullscreen && (!ec->fullscreen))
           {
              e_client_fullscreen(ec, E_FULLSCREEN_RESIZE);
@@ -1473,6 +1499,8 @@ _e_comp_wl_surface_state_commit(E_Client *ec, E_Comp_Wl_Surface_State *state)
              ec->want_focus |= ec->icccm.accepts_focus && (!ec->override);
           }
      }
+   else if (first && ec->comp_data->shell.surface)
+     _e_comp_wl_configure_send(ec, 0);
 
    state->sx = 0;
    state->sy = 0;
@@ -1839,6 +1867,11 @@ _e_comp_wl_compositor_cb_surface_create(struct wl_client *client, struct wl_reso
      ec->client.w = ec->client.h = 1;
    ec->comp_data->surface = res;
    ec->netwm.pid = pid;
+   if (!ec->internal)
+     {
+        ec->icccm.min_w = ec->icccm.min_h =
+        ec->icccm.max_w = ec->icccm.max_h = 0;
+     }
    if (client != e_comp_wl->xwl_client)
      ec->internal = pid == getpid();
 
@@ -3341,4 +3374,103 @@ EINTERN void
 e_comp_wl_xwayland_client_queue(E_Client *ec)
 {
    e_comp_wl->xwl_pending = eina_list_append(e_comp_wl->xwl_pending, ec);
+}
+
+E_API void
+e_comp_wl_grab_client_add(E_Client *ec, E_Comp_Wl_Grab_End_Cb cb)
+{
+   E_Client *gec, *parent = e_client_util_top_parent_get(ec);
+   E_Comp_Wl_Grab_End_Cb grabcb;
+
+   if (grab_clients && (parent != e_client_util_top_parent_get(eina_list_data_get(grab_clients))))
+     {
+        /* dismiss grabs in order when grabbing from new toplevel */
+        EINA_LIST_FREE(grab_clients, gec)
+          {
+             grabcb = eina_list_data_get(grab_cbs);
+             if (grabcb) grabcb(gec);
+             grab_cbs = eina_list_remove_list(grab_cbs, grab_cbs);
+          }
+     }
+   grab_clients = eina_list_prepend(grab_clients, ec);
+   grab_cbs = eina_list_prepend(grab_cbs, cb);
+   ec->comp_data->grab = 1;
+   if (eina_list_count(grab_clients) == 1) e_bindings_disabled_set(1);
+}
+
+E_API void
+e_comp_wl_grab_client_del(E_Client *ec, Eina_Bool dismiss)
+{
+   Eina_List *l, *ll;
+   E_Client *gec;
+   int n = -1;
+   E_Comp_Wl_Grab_End_Cb cb;
+
+   EINA_LIST_FOREACH(grab_clients, l, gec)
+     {
+        n++;
+        if (gec != ec) continue;
+        ll = eina_list_nth_list(grab_cbs, n);
+        cb = eina_list_data_get(ll);
+        if (dismiss && cb) cb(gec);
+        grab_cbs = eina_list_remove_list(grab_cbs, ll);
+        grab_clients = eina_list_remove_list(grab_clients, l);
+        break;
+     }
+   if (!grab_clients)
+     e_bindings_disabled_set(0);
+}
+
+E_API Eina_Bool
+e_comp_wl_client_is_grabbed(const E_Client *ec)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(ec, EINA_FALSE);
+   if (e_object_is_del(E_OBJECT(ec))) return EINA_FALSE;
+   return ec->comp_data->grab && evas_object_visible_get(ec->frame);
+}
+
+static Eina_Bool
+_check_grab_coords(E_Client *ec, int x, int y)
+{
+   if (e_comp_object_coords_inside_input_area(ec->frame, x, y)) return EINA_TRUE;
+   while (ec->parent)
+     {
+        ec = ec->parent;
+        if (e_comp_object_coords_inside_input_area(ec->frame, x, y)) return EINA_TRUE;
+     }
+   return EINA_FALSE;
+}
+
+E_API Eina_Bool
+e_comp_wl_grab_client_mouse_move(const Ecore_Event_Mouse_Move *ev)
+{
+   E_Client *ec;
+   if (e_comp->comp_type != E_PIXMAP_TYPE_WL) return ECORE_CALLBACK_RENEW;
+   ec = e_client_focused_get();
+   if (!ec) return ECORE_CALLBACK_RENEW;
+   if (!e_client_util_is_popup(ec)) return ECORE_CALLBACK_RENEW;
+   if (!e_comp_wl_client_is_grabbed(ec)) return ECORE_CALLBACK_RENEW;
+   /* reject mouse moves from outside the popup */
+   if (_check_grab_coords(ec, ev->x, ev->y)) return ECORE_CALLBACK_RENEW;
+   /* manually move the pointer since we're about to block the event globally */
+   evas_object_move(e_comp->pointer->o_ptr, ev->x, ev->y);
+   return ECORE_CALLBACK_DONE;
+}
+
+E_API Eina_Bool
+e_comp_wl_grab_client_mouse_button(const Ecore_Event_Mouse_Button *ev)
+{
+   E_Client *ec;
+
+   if (e_comp->comp_type != E_PIXMAP_TYPE_WL) return ECORE_CALLBACK_RENEW;
+   ec = e_client_focused_get();
+   if (!ec) return ECORE_CALLBACK_RENEW;
+   if (!e_client_util_is_popup(ec)) return ECORE_CALLBACK_RENEW;
+   if (!e_comp_wl_client_is_grabbed(ec)) return ECORE_CALLBACK_RENEW;
+   /* reject mouse moves from outside the popup */
+   if (_check_grab_coords(ec, ev->x, ev->y)) return ECORE_CALLBACK_RENEW;
+   e_comp_wl_grab_client_del(ec, 1);
+   while (grab_clients)
+     e_comp_wl_grab_client_del(eina_list_last_data_get(grab_clients), 1);
+   return ECORE_CALLBACK_DONE;
 }

@@ -860,7 +860,7 @@ _e_xdg_shell_cb_dispatch(const void *implementation EINA_UNUSED, void *target, u
    return 1;
 }
 
-EINTERN void
+static void
 _e_xdg_shell_cb_bind(struct wl_client *client, void *data EINA_UNUSED, uint32_t version, uint32_t id)
 {
    struct wl_resource *res;
@@ -877,7 +877,7 @@ _e_xdg_shell_cb_bind(struct wl_client *client, void *data EINA_UNUSED, uint32_t 
 }
 
 EINTERN Eina_Bool
-e_xdg_shell_init(void)
+e_xdg_shell_v5_init(void)
 {
    /* try to create global xdg_shell interface */
    if (!wl_global_create(e_comp_wl->wl.disp, &xdg_shell_interface, 1,
