@@ -11020,7 +11020,7 @@ _e_fm2_file_delete(Evas_Object *obj)
    e_object_del_attach_func_set(E_OBJECT(dialog), _e_fm2_file_delete_delete_cb);
    e_dialog_button_add(dialog, _("Delete"), NULL, _e_fm2_file_delete_yes_cb, ic);
    e_dialog_button_add(dialog, _("No"), NULL, _e_fm2_file_delete_no_cb, ic);
-   e_dialog_button_focus_num(dialog, 1);
+   e_dialog_button_focus_num(dialog, 0);
    e_dialog_title_set(dialog, _("Confirm Delete"));
    e_dialog_icon_set(dialog, "dialog-warning", 64);
    sel = e_fm2_selected_list_get(obj);
