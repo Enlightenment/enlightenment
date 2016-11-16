@@ -1,7 +1,7 @@
 #include "config.h"
 
 #ifdef HAVE_DRM2
-#  define EFL_BETA_API_SUPPORT
+# define EFL_BETA_API_SUPPORT
 #endif
 
 #include <stdio.h>
@@ -20,17 +20,49 @@
 #include <xcb/shape.h>
 #include <X11/keysym.h>
 
-# ifdef HAVE_WL_DRM
-#  include <Ecore_Input.h>
-#  ifdef HAVE_DRM2
-#   include <drm_fourcc.h>
-#   include <Ecore_Drm2.h>
-#  else
-#   include <Ecore_Drm.h>
-#  endif
-#  include <Evas.h>
-#  include <Evas_Engine_Buffer.h>
+#ifdef HAVE_WL_DRM
+# include <Ecore_Input.h>
+# ifdef HAVE_DRM2
+#  include <Ecore_Drm2.h>
+# else
+#  include <Ecore_Drm.h>
 # endif
+# include <Evas.h>
+# include <Evas_Engine_Buffer.h>
+#endif
+
+#ifdef HAVE_WL_DRM
+# ifdef HAVE_DRM2
+/* DRM_FORMAT_XRGB8888 and fourcc_code borrowed from <drm_fourcc.h>
+ *
+ * Copyright 2011 Intel Corporation
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a
+ * copy of this software and associated documentation files (the "Software"),
+ * to deal in the Software without restriction, including without limitation
+ * the rights to use, copy, modify, merge, publish, distribute, sublicense,
+ * and/or sell copies of the Software, and to permit persons to whom the
+ * Software is furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice (including the next
+ * paragraph) shall be included in all copies or substantial portions of the
+ * Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL
+ * VA LINUX SYSTEMS AND/OR ITS SUPPLIERS BE LIABLE FOR ANY CLAIM, DAMAGES OR
+ * OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,
+ * ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+ * OTHER DEALINGS IN THE SOFTWARE.
+ */
+#  define fourcc_code(a, b, c, d) \
+   ((uint32_t)(a) | ((uint32_t)(b) << 8) | \
+       ((uint32_t)(c) << 16) | ((uint32_t)(d) << 24))
+#  define DRM_FORMAT_XRGB8888 \
+   fourcc_code('X', 'R', '2', '4') /* [31:0] x:R:G:B 8:8:8:8 little endian */
+# endif
+#endif
 
 #define WINDOW_WIDTH   320
 #define WINDOW_HEIGHT  240
