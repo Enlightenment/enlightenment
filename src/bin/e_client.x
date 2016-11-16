@@ -164,3 +164,12 @@ e_client_util_name_get(const E_Client *ec)
      return ec->icccm.title;
    return NULL;
 }
+
+static inline E_Client *
+e_client_util_top_parent_get(const E_Client *ec)
+{
+   E_Client *parent = ec->parent;
+
+   while (parent->parent) parent = parent->parent;
+   return parent;
+}
