@@ -3156,6 +3156,16 @@ e_comp_object_input_area_set(Evas_Object *obj, int x, int y, int w, int h)
      }
 }
 
+E_API Eina_Bool
+e_comp_object_coords_inside_input_area(Evas_Object *obj, int x, int y)
+{
+   API_ENTRY EINA_FALSE;
+
+   if (cw->input_obj)
+     return E_INSIDE(x, y, cw->input_rect.x, cw->input_rect.y, cw->input_rect.w, cw->input_rect.h);
+   return E_INSIDE(x, y, cw->ec->x, cw->ec->y, cw->ec->w, cw->ec->h);
+}
+
 E_API void
 e_comp_object_frame_geometry_get(Evas_Object *obj, int *l, int *r, int *t, int *b)
 {
