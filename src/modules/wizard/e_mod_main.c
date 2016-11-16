@@ -53,10 +53,6 @@ e_modapi_init(E_Module *m)
    wiz_module = m;
    e_wizard_init();
 
-   e_config->scale.use_dpi = 0;
-   e_config->scale.use_custom = 1;
-   e_config->scale.factor = 1.2;
-   e_scale_update();
    src_path = getenv("E_MODULE_SRC_PATH");
    if (src_path)
      snprintf(buf, sizeof(buf), "%s/.libs", e_module_dir_get(m));
