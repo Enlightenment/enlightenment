@@ -52,7 +52,7 @@ e_confirm_dialog_show(const char *title, const char *icon, const char *text,
    e_dialog_button_add(dia, !button_text ? _("Yes") : button_text, NULL, _e_confirm_dialog_yes, cd);
    e_dialog_button_add(dia, !button2_text ? _("No") : button2_text, NULL, _e_confirm_dialog_no, cd);
 
-   e_dialog_button_focus_num(dia, 1);
+   e_dialog_button_focus_num(dia, 0);
    elm_win_center(dia->win, 1, 1);
    e_dialog_show(dia);
 
