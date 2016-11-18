@@ -727,7 +727,7 @@ _lokker_cb_key_down(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
    else
      {
         /* here we have to grab a password */
-        if (ev->compose)
+        if (ev->compose && (ev->string[0] >= 0x20) && (ev->string[0] != 0x7f))
           {
              if (lokker_is_pin())
                {
