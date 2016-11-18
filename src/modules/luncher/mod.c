@@ -14,6 +14,7 @@ luncher_init(void)
 #define T Config_Item
 #define D conf_item_edd
    E_CONFIG_VAL(D, T, id, INT);
+   E_CONFIG_VAL(D, T, style, STR);
    E_CONFIG_VAL(D, T, dir, STR);
 
    conf_edd = E_CONFIG_DD_NEW("Luncher_Config", Config);
@@ -32,6 +33,7 @@ luncher_init(void)
         luncher_config = E_NEW(Config, 1);
         ci = E_NEW(Config_Item, 1);
         ci->id = 0;
+        ci->style = eina_stringshare_add("default");
         ci->dir = eina_stringshare_add("default");
         luncher_config->items = eina_list_append(luncher_config->items, ci);
      }
@@ -46,6 +48,7 @@ luncher_shutdown(void)
         Config_Item *ci;
         EINA_LIST_FREE(luncher_config->items, ci)
           {
+             eina_stringshare_del(ci->style);
              eina_stringshare_del(ci->dir);
              free(ci);
           }

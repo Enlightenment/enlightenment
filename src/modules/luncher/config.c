@@ -4,9 +4,24 @@ static void
 _config_close(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    luncher_config->list = NULL;
+   luncher_config->slist = NULL;
    evas_object_del(luncher_config->config_dialog);
    luncher_config->config_dialog = NULL;
    e_config_save_queue();
+}
+
+static void
+_config_style_changed(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   Instance *inst = data;
+   const char *style = elm_object_item_text_get(elm_list_selected_item_get(luncher_config->slist));
+
+   if (eina_streq(inst->cfg->style, style))
+     return;
+   if (inst->cfg->style) eina_stringshare_del(inst->cfg->style);
+   inst->cfg->style = NULL;
+   inst->cfg->style = eina_stringshare_ref(style);
+   bar_reorder(inst);
 }
 
 static void
@@ -15,12 +30,41 @@ _config_source_changed(void *data, Evas_Object *obj EINA_UNUSED, void *event_inf
    Instance *inst = data;
    const char *dir = elm_object_item_text_get(elm_list_selected_item_get(luncher_config->list));
 
-   if (!strcmp(inst->cfg->dir, dir))
+   if (eina_streq(inst->cfg->dir, dir))
      return;
    if (inst->cfg->dir) eina_stringshare_del(inst->cfg->dir);
    inst->cfg->dir = NULL;
    inst->cfg->dir = eina_stringshare_ref(dir); 
    bar_reorder(inst);
+}
+
+static void
+_config_populate_style_list(Evas_Object *list, Instance *inst)
+{
+   const char *str = edje_object_data_get(elm_layout_edje_get(inst->o_main), "styles");
+   const char *s, *b;
+   Elm_Object_Item *it;
+
+   if (!str) return;
+   for (b = s = str; 1; s++)
+     {
+        if ((*s == ' ') || (!*s))
+          {
+             char *t = malloc(s - b + 1);
+             if (t)
+               {
+                  strncpy(t, b, s - b);
+                  t[s - b] = 0;
+                  it = elm_list_item_append(list, t, NULL, NULL, _config_style_changed, inst);
+                  printf("%s x %s\n", inst->cfg->style, t);
+                  if ((inst->cfg->style) && (eina_streq(inst->cfg->style, t)))
+                    elm_list_item_selected_set(it, EINA_TRUE);
+                  free(t);
+               }
+             b = s + 1;
+          }
+        if (!*s) break;
+     }
 }
 
 static void
@@ -48,7 +92,7 @@ _config_populate_order_list(Evas_Object *list, Instance *inst)
         if (ecore_file_is_dir(buf))
           {
              it = elm_list_item_append(list, file, NULL, NULL, _config_source_changed, inst);
-             if ((inst->cfg->dir) && (!strcmp(inst->cfg->dir, file)))
+             if ((inst->cfg->dir) && (eina_streq(inst->cfg->dir, file)))
                elm_list_item_selected_set(it, EINA_TRUE);
           }
         free(file);
@@ -250,6 +294,23 @@ config_luncher(E_Zone *zone, Instance *inst, Eina_Bool bar)
    evas_object_size_hint_align_set(box, EVAS_HINT_FILL, EVAS_HINT_FILL);
    elm_table_pack(tb, box, 0, 1, 1, 1);
    evas_object_show(box);
+
+   fr = elm_frame_add(box);
+   elm_object_text_set(fr, _("Style"));
+   E_EXPAND(fr);
+   evas_object_size_hint_align_set(fr, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   elm_box_pack_end(box, fr);
+   evas_object_show(fr);
+
+   list = elm_list_add(fr);
+   E_ALIGN(list, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   E_WEIGHT(list, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   elm_object_content_set(fr, list);
+   elm_list_select_mode_set(list, ELM_OBJECT_SELECT_MODE_ALWAYS);
+   elm_scroller_content_min_limit(list, 1, 1);
+   evas_object_show(list);
+   luncher_config->slist = list;
+   _config_populate_style_list(list, inst);
 
    fr = elm_frame_add(box);
    elm_object_text_set(fr, _("Icon Order"));

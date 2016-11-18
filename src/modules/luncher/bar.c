@@ -36,6 +36,11 @@ _bar_gadget_configure(Evas_Object *g)
    return config_luncher(e_zone_current_get(), inst, EINA_TRUE);
 }
 
+static void _bar_popup_dismissed(void *data EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
+{
+   E_FREE_FUNC(obj, evas_object_del);
+}
+
 static const char *
 _bar_location_get(Instance *inst)
 {
@@ -184,8 +189,9 @@ _bar_icon_del(Instance *inst, Icon *ic)
 {
    inst->icons = eina_list_remove(inst->icons, ic);
    _bar_aspect(inst);
-   evas_object_del(ic->o_layout);
    evas_object_del(ic->o_icon);
+   evas_object_del(ic->o_overlay);
+   evas_object_del(ic->o_layout);
    eina_hash_del_by_data(inst->icons_desktop_hash, ic);
    eina_hash_del_by_data(inst->icons_clients_hash, ic);
    if (ic->desktop)
@@ -205,7 +211,9 @@ _bar_icon_menu_settings_clicked(void *data, Evas *e EINA_UNUSED, Evas_Object *ob
 {
    Icon *ic = data;
    Evas_Object *popup = evas_object_data_get(obj, "popup");
+   Evas_Object *box = evas_object_data_get(obj, "content");
 
+   evas_object_del(box);
    elm_ctxpopup_dismiss(popup);
    e_gadget_configure(ic->inst->o_main);
 }
@@ -215,7 +223,9 @@ _bar_icon_menu_add_clicked(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, vo
 {
    Icon *ic = data;
    Evas_Object *popup = evas_object_data_get(obj, "popup");
+   Evas_Object *box = evas_object_data_get(obj, "content");
 
+   evas_object_del(box);
    elm_ctxpopup_dismiss(popup);
    e_order_append(ic->inst->order, ic->desktop);
 }
@@ -225,7 +235,9 @@ _bar_icon_menu_remove_clicked(void *data, Evas *e EINA_UNUSED, Evas_Object *obj,
 {
    Icon *ic = data;
    Evas_Object *popup = evas_object_data_get(obj, "popup");
+   Evas_Object *box = evas_object_data_get(obj, "content");
 
+   evas_object_del(box);
    elm_ctxpopup_dismiss(popup);
    e_order_remove(ic->inst->order, ic->desktop);
 }
@@ -235,7 +247,9 @@ _bar_icon_menu_properties_clicked(void *data, Evas *e EINA_UNUSED, Evas_Object *
 {
    Icon *ic = data;
    Evas_Object *popup = evas_object_data_get(obj, "popup");
+   Evas_Object *box = evas_object_data_get(obj, "content");
 
+   evas_object_del(box);
    elm_ctxpopup_dismiss(popup);
    e_desktop_edit(ic->desktop);
 }
@@ -245,7 +259,9 @@ _bar_icon_menu_action_clicked(void *data, Evas *e EINA_UNUSED, Evas_Object *obj,
 {
    Efreet_Desktop_Action *action = (Efreet_Desktop_Action*)data;
    Evas_Object *popup = evas_object_data_get(obj, "popup");
+   Evas_Object *box = evas_object_data_get(obj, "content");
 
+   evas_object_del(box);
    elm_ctxpopup_dismiss(popup);
    e_exec(e_zone_current_get(), NULL, action->exec, NULL, "luncher");
 }
@@ -284,6 +300,7 @@ _bar_icon_menu_item_new(Icon *ic, Evas_Object *popup, Evas_Object *parent, const
    elm_layout_signal_emit(layout, "e,state,icon,menu", "e");
    elm_box_pack_end(parent, layout);
    evas_object_data_set(layout, "popup", popup);
+   evas_object_data_set(layout, "content", parent);
    evas_object_show(layout);
 
    label = elm_label_add(layout);
@@ -377,10 +394,8 @@ _bar_icon_mouse_move(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUS
 
         if (ic->preview)
           {
-             evas_object_del(ic->preview_box);
-             ic->preview_box = NULL;
+             E_FREE_FUNC(ic->preview_box, evas_object_del);
              elm_ctxpopup_dismiss(ic->preview);
-             ic->preview = NULL;
              current_preview = NULL;
              current_preview_menu = EINA_FALSE;
              ic->active = EINA_FALSE;
@@ -445,6 +460,7 @@ _bar_icon_mouse_down(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUS
 
         popup = elm_ctxpopup_add(e_comp->elm);
         elm_object_style_set(popup, "noblock");
+        evas_object_smart_callback_add(ic->preview, "dismissed", _bar_popup_dismissed, NULL);
         evas_object_size_hint_min_set(popup, ic->inst->size, ic->inst->size);
 
         box = elm_box_add(popup);
@@ -556,15 +572,11 @@ _bar_icon_mouse_up(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED
      }
    else if (ev->button == 1 && !ic->in_order)
      {
-        if (ic->preview)
-          {
-             evas_object_del(ic->preview_box);
-             ic->preview_box = NULL;
-             elm_ctxpopup_dismiss(ic->preview);
-             ic->preview = NULL;
-          }
+        E_FREE_FUNC(ic->preview_box, evas_object_del);
+        elm_ctxpopup_dismiss(ic->preview);
         current_preview = NULL;
         current_preview_menu = EINA_FALSE;
+        ic->active = EINA_FALSE;
         _bar_icon_preview_show(ic);
      }
 }
@@ -579,10 +591,8 @@ _bar_icon_preview_hide(void *data)
    if (!ic->preview)
      return EINA_FALSE;
 
-   evas_object_del(ic->preview_box);
-   ic->preview_box = NULL;
+   E_FREE_FUNC(ic->preview_box, evas_object_del);
    elm_ctxpopup_dismiss(ic->preview);
-   ic->preview = NULL;
    current_preview = NULL;
    current_preview_menu = EINA_FALSE;
    ic->active = EINA_FALSE;
@@ -667,10 +677,12 @@ _bar_icon_preview_mouse_up(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EIN
    e_client_activate(ec, 1);
    if (current_preview)
      {
-        elm_ctxpopup_dismiss(current_preview);
+        E_FREE_FUNC(ic->preview_box, evas_object_del);
+        elm_ctxpopup_dismiss(ic->preview);
+        current_preview = NULL;
+        current_preview_menu = EINA_FALSE;
+        ic->active = EINA_FALSE;
      }
-   current_preview = NULL;
-   current_preview_menu = EINA_FALSE;
 }
 
 static void
@@ -745,17 +757,21 @@ _bar_icon_preview_show(void *data)
 
    if (current_preview)
      {
-        elm_ctxpopup_dismiss(current_preview);
-     }
-   current_preview = NULL;
-   current_preview_menu = EINA_FALSE;
+        Icon *ico = evas_object_data_get(current_preview, "icon");
 
+        E_FREE_FUNC(ico->preview_box, evas_object_del);
+        elm_ctxpopup_dismiss(ico->preview);
+        current_preview = NULL;
+        current_preview_menu = EINA_FALSE;
+        ico->active = EINA_FALSE;
+     }
    if (!eina_list_count(ic->execs) && !eina_list_count(ic->clients))
      return EINA_FALSE;
 
    ic->preview = elm_ctxpopup_add(e_comp->elm);
    elm_object_style_set(ic->preview, "noblock");
    evas_object_size_hint_min_set(ic->preview, ic->inst->size, ic->inst->size);
+   evas_object_smart_callback_add(ic->preview, "dismissed", _bar_popup_dismissed, NULL);
    evas_object_event_callback_add(ic->preview, EVAS_CALLBACK_MOUSE_IN,
        _bar_icon_preview_mouse_in, ic);
    evas_object_event_callback_add(ic->preview, EVAS_CALLBACK_MOUSE_OUT,
@@ -797,10 +813,11 @@ _bar_icon_preview_show(void *data)
 
    if (!count)
      {
-        evas_object_del(ic->preview_box);
-        ic->preview_box = NULL;
+        E_FREE_FUNC(ic->preview_box, evas_object_del);
         elm_ctxpopup_dismiss(ic->preview);
-        ic->preview = NULL;
+        current_preview = NULL;
+        current_preview_menu = EINA_FALSE;
+        ic->active = EINA_FALSE;
         return EINA_FALSE;
      }
    elm_object_content_set(ic->preview, ic->preview_box);
@@ -827,8 +844,8 @@ _bar_icon_mouse_in(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *even
    if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return;
    if (_bar_check_modifiers(ev->modifiers)) return;
 
+   evas_object_raise(ic->o_layout);
    elm_object_tooltip_show(obj);
-   elm_layout_signal_emit(ic->o_layout, "e,state,focused", "e");
    ic->active = EINA_TRUE;
 
    E_FREE_FUNC(ic->mouse_out_timer, ecore_timer_del);
@@ -838,15 +855,11 @@ _bar_icon_mouse_in(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *even
    if (current_preview && clients && !current_preview_menu)
      {
         Icon *icon = evas_object_data_get(current_preview, "icon");
-        if (icon->preview)
-          {
-             evas_object_del(icon->preview_box);
-             icon->preview_box = NULL;
-             elm_ctxpopup_dismiss(icon->preview);
-             icon->preview = NULL;
-          }
+        E_FREE_FUNC(ic->preview_box, evas_object_del);
+        elm_ctxpopup_dismiss(ic->preview);
         current_preview = NULL;
         current_preview_menu = EINA_FALSE;
+        ic->active = EINA_FALSE;
         _bar_icon_preview_show(ic);
      }
    else
@@ -859,7 +872,6 @@ _bar_icon_mouse_out(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *eve
    Icon *ic = data;
 
    elm_object_tooltip_hide(obj);
-   elm_layout_signal_emit(ic->o_layout, "e,state,unfocused", "e");
    if (!ic->preview)
      ic->active = EINA_FALSE;
    E_FREE_FUNC(ic->mouse_in_timer, ecore_timer_del);
@@ -878,6 +890,40 @@ _bar_exec_new_show(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *even
    evas_object_event_callback_del_full(ec->frame, EVAS_CALLBACK_SHOW, _bar_exec_new_show, ic);
 }
 
+static void
+_bar_icon_resized(void *data, Evas_Object *obj EINA_UNUSED, const char *emission EINA_UNUSED, const char *source EINA_UNUSED)
+{
+   //This code is supposed to adjust aspect correctly when there is an effect happening.  Uncomment to test.
+   /*Instance *inst = data;
+   Icon *ic = NULL;
+   Eina_List *l = NULL;
+   Evas_Coord aspect = 0, large = 0, w, h;
+
+   if (!inst->effect) return;
+   switch (e_gadget_site_orient_get(e_gadget_site_get(inst->o_main)))
+     {
+      case E_GADGET_SITE_ORIENT_VERTICAL:
+        EINA_LIST_FOREACH(inst->icons, l, ic)
+          {
+             evas_object_geometry_get(ic->o_icon, 0, 0, &w, &h);
+             if (w > large)
+               large = w;
+             aspect += h;
+          }
+        evas_object_size_hint_aspect_set(inst->o_main, EVAS_ASPECT_CONTROL_BOTH, large, aspect);
+        break;
+      default:
+        EINA_LIST_FOREACH(inst->icons, l, ic)
+          {
+             evas_object_geometry_get(ic->o_icon, 0, 0, &w, &h);
+             if (h > large)
+               large = h;
+             aspect += w;
+          }
+        evas_object_size_hint_aspect_set(inst->o_main, EVAS_ASPECT_CONTROL_BOTH, aspect, large);
+     }*/
+}
+
 static Icon *
 _bar_icon_add(Instance *inst, Efreet_Desktop *desktop, E_Client *non_desktop_client)
 {
@@ -886,6 +932,7 @@ _bar_icon_add(Instance *inst, Efreet_Desktop *desktop, E_Client *non_desktop_cli
    int len = 0;
    Icon *ic;
    const Eina_List *l;
+   Edje_Message_String *msg;
 
    ic = E_NEW(Icon, 1);
    if (desktop)
@@ -905,11 +952,15 @@ _bar_icon_add(Instance *inst, Efreet_Desktop *desktop, E_Client *non_desktop_cli
        "e/gadget/luncher/icon");
    E_EXPAND(ic->o_layout);
    E_FILL(ic->o_layout);
+   edje_object_signal_callback_add(elm_layout_edje_get(ic->o_layout), "e,state,resized", "e", _bar_icon_resized, inst);
    elm_box_pack_end(inst->o_icon_con, ic->o_layout);
    evas_object_show(ic->o_layout);
 
    snprintf(ori, sizeof(ori), "e,state,off,%s", _bar_location_get(inst));
    elm_layout_signal_emit(ic->o_layout, ori, "e");
+   msg = alloca(sizeof(Edje_Message_Int_Set));
+   msg->str = strdup(inst->cfg->style);
+   edje_object_message_send(elm_layout_edje_get(ic->o_layout), EDJE_MESSAGE_STRING, 1, msg);
 
    ic->o_icon = elm_icon_add(ic->o_layout);
    E_EXPAND(ic->o_icon);
@@ -1406,6 +1457,7 @@ _bar_resize_job(void *data)
 
    if (inst)
      {
+        if (inst->effect) return;
         orient = e_gadget_site_orient_get(e_gadget_site_get(inst->o_main));
         elm_layout_sizing_eval(inst->o_main);
         evas_object_geometry_get(inst->o_main, &x, &y, &w, &h);
@@ -1521,6 +1573,70 @@ _bar_resize(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void 
 
    if (inst->resize_job) return;
    inst->resize_job = ecore_job_add(_bar_resize_job, inst);
+}
+
+static void
+_bar_mouse_move(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_data EINA_UNUSED)
+{
+   Instance *inst = data;
+   Evas_Coord px, py;
+   Eina_List *l = NULL;
+   Icon *ic = NULL;
+   const char *position = _bar_location_get(inst);
+   int pos;
+
+   inst->effect = EINA_TRUE;
+
+   if (eina_streq(position, "left"))
+     pos = 0;
+   else if (eina_streq(position, "top"))
+     pos = 1;
+   else if (eina_streq(position, "right"))
+     pos = 2;
+   else
+     pos = 3;
+
+   evas_pointer_canvas_xy_get(evas_object_evas_get(inst->o_main), &px, &py);
+
+   EINA_LIST_FOREACH(inst->icons, l, ic)
+     {
+        Edje_Message_Int_Set *msg;
+        Evas_Coord x, y, w, h;
+
+        evas_object_geometry_get(ic->o_layout, &x, &y, &w, &h);
+        msg = alloca(sizeof(Edje_Message_Int_Set) + (7 * sizeof(int)));
+        msg->count = 7;
+        msg->val[0] = px;
+        msg->val[1] = py;
+        msg->val[2] = x;
+        msg->val[3] = y;
+        msg->val[4] = w;
+        msg->val[5] = h;
+        msg->val[6] = pos;
+        edje_object_message_send(elm_layout_edje_get(ic->o_layout), EDJE_MESSAGE_INT_SET, 2, msg);
+     }
+}
+
+static void
+_bar_mouse_out(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_data EINA_UNUSED)
+{
+   Instance *inst = data;
+   Evas_Coord px, py, x, y, w, h;
+   Eina_List *l = NULL;
+   Icon *ic = NULL;
+
+   evas_pointer_canvas_xy_get(evas_object_evas_get(inst->o_main), &px, &py);
+   evas_object_geometry_get(inst->o_main, &x, &y, &w, &h);
+
+   if (E_INSIDE(px, py, x, y, w, h)) return;
+
+   EINA_LIST_FOREACH(inst->icons, l, ic)
+     {
+        elm_layout_signal_emit(ic->o_layout, "e,state,default", "e");
+        elm_layout_signal_emit(ic->o_layout, "e,state,unfocused", "e");
+     }
+   inst->effect = EINA_FALSE;
+   _bar_aspect(inst);
 }
 
 static void
@@ -1640,6 +1756,7 @@ _bar_removed_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_data)
      return;
 
    luncher_config->items = eina_list_remove(luncher_config->items, inst->cfg);
+   eina_stringshare_del(inst->cfg->style);
    eina_stringshare_del(inst->cfg->dir);
    eina_hash_free(inst->icons_desktop_hash);
    eina_hash_free(inst->icons_clients_hash);
@@ -1709,7 +1826,6 @@ _bar_created_cb(void *data, Evas_Object *obj, void *event_data EINA_UNUSED)
    E_Gadget_Site_Orient orient = e_gadget_site_orient_get(e_gadget_site_get(inst->o_main));
 
    inst->o_icon_con = elm_box_add(inst->o_main);
-   elm_box_homogeneous_set(inst->o_icon_con, EINA_TRUE);
    E_EXPAND(inst->o_icon_con);
    switch (orient)
      {
@@ -1738,6 +1854,9 @@ _bar_created_cb(void *data, Evas_Object *obj, void *event_data EINA_UNUSED)
                          inst->cfg->dir);
    else
      eina_strlcpy(buf, inst->cfg->dir, sizeof(buf));
+
+   if (!inst->cfg->style)
+     inst->cfg->style = eina_stringshare_add("default");
 
    inst->order = e_order_new(buf);
    e_order_update_callback_set(inst->order, _bar_order_update, inst);
@@ -1839,11 +1958,14 @@ bar_create(Evas_Object *parent, int *id, E_Gadget_Site_Orient orient EINA_UNUSED
    inst->cfg = _conf_item_get(id);
    *id = inst->cfg->id;
    inst->inside = EINA_FALSE;
+   inst->effect = EINA_FALSE;
    inst->icons_desktop_hash = eina_hash_string_superfast_new(NULL);
    inst->icons_clients_hash = eina_hash_pointer_new(NULL);
    inst->o_main = elm_layout_add(parent);
    e_theme_edje_object_set(inst->o_main, "e/gadget/luncher/bar",
        "e/gadget/luncher/bar");
+   evas_object_event_callback_add(inst->o_main, EVAS_CALLBACK_MOUSE_MOVE, _bar_mouse_move, inst);
+   evas_object_event_callback_add(inst->o_main, EVAS_CALLBACK_MOUSE_OUT, _bar_mouse_out, inst);
    evas_object_event_callback_add(inst->o_main, EVAS_CALLBACK_DEL, _bar_del, inst);
    evas_object_smart_callback_add(parent, "gadget_created", _bar_created_cb, inst);
    evas_object_smart_callback_add(parent, "gadget_site_anchor", _bar_anchor_changed_cb, inst);

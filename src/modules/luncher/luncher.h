@@ -20,6 +20,7 @@ struct _Config
 
    E_Module    *module;
    Evas_Object *config_dialog;
+   Evas_Object *slist;
    Evas_Object *list;
    Eina_Bool    bar;
 };
@@ -27,6 +28,7 @@ struct _Config
 struct _Config_Item
 {
    int               id;
+   Eina_Stringshare *style;
    Eina_Stringshare *dir;
 };
 
@@ -34,19 +36,20 @@ struct _Instance
 {
    Evas_Object         *o_main;
    Evas_Object         *o_icon_con;
+   Evas_Object         *drop_handler;
+   Evas_Object         *place_holder;
    E_Order             *order;
-   Config_Item         *cfg;
    Eina_List           *icons;
    Eina_Hash           *icons_desktop_hash;
    Eina_Hash           *icons_clients_hash;
    Evas_Coord           size;
    Ecore_Job           *resize_job;
-   E_Comp_Object_Mover *iconify_provider;
-   Evas_Object         *drop_handler;
-   Evas_Object         *place_holder;
-   Icon                *drop_before;
-   Eina_Bool            inside;
    Ecore_Job           *recalc_job;
+   E_Comp_Object_Mover *iconify_provider;
+   Eina_Bool            inside;
+   Eina_Bool            effect;
+   Config_Item         *cfg;
+   Icon                *drop_before;
 };
 
 struct _Icon
