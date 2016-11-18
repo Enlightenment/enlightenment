@@ -255,6 +255,7 @@ e_desklock_show(Eina_Bool suspend)
         _e_custom_desklock_exe =
           ecore_exe_run(e_config->desklock_custom_desklock_cmd, NULL);
         _e_desklock_state = EINA_TRUE;
+        e_bindings_disabled_set(1);
         /* TODO: ensure layer is correct on external desklocks? */
         return 1;
      }
@@ -342,6 +343,7 @@ e_desklock_show(Eina_Bool suspend)
    e_util_env_set("E_DESKLOCK_UNLOCKED", NULL);
    e_util_env_set("E_DESKLOCK_LOCKED", "locked");
    _e_desklock_state = EINA_TRUE;
+   e_bindings_disabled_set(1);
    return 1;
 lang_fail:
    if (e_config->desklock_language)
@@ -391,6 +393,7 @@ e_desklock_hide(void)
      }
 
    _e_desklock_state = EINA_FALSE;
+   e_bindings_disabled_set(0);
    ev = E_NEW(E_Event_Desklock, 1);
    ev->on = 0;
    ev->suspend = 1;
