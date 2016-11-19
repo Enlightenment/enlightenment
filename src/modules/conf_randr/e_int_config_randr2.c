@@ -79,6 +79,18 @@ e_int_config_randr2(Evas_Object *parent EINA_UNUSED, const char *params)
 }
 
 /* local functions */
+static double
+_multiplier_for_scale(double scale)
+{
+   return scale / elm_config_scale_get();
+}
+
+static double
+_scale_for_multiplier(double multiplier)
+{
+   return multiplier * elm_config_scale_get();
+}
+
 static void *
 _create_data(E_Config_Dialog *cfd EINA_UNUSED)
 {
@@ -458,13 +470,14 @@ _basic_screen_info_fill(E_Config_Dialog_Data *cfdata, E_Config_Randr2_Screen *cs
           {
              elm_check_state_set(cfdata->scale_custom_obj, EINA_TRUE);
              elm_object_disabled_set(cfdata->scale_value_obj, EINA_FALSE);
-             elm_slider_value_set(cfdata->scale_value_obj, cs->scale_multiplier);
+             elm_slider_value_set(cfdata->scale_value_obj, 
+                                  _scale_for_multiplier(cs->scale_multiplier));
           }
         else
           {
              elm_check_state_set(cfdata->scale_custom_obj, EINA_FALSE);
              elm_object_disabled_set(cfdata->scale_value_obj, EINA_TRUE);
-             elm_slider_value_set(cfdata->scale_value_obj, 1.0);
+             elm_slider_value_set(cfdata->scale_value_obj, elm_config_scale_get());
           }
      }
    else
@@ -606,16 +619,16 @@ _cb_custom_scale_changed(void *data, Evas_Object *obj EINA_UNUSED, void *event E
    E_Config_Dialog_Data *cfdata = data;
    E_Config_Randr2_Screen *cs = _config_screen_find(cfdata);
    if (!cs) return;
+
+   elm_slider_value_set(cfdata->scale_value_obj, elm_config_scale_get());
    if (elm_check_state_get(obj))
      {
         elm_object_disabled_set(cfdata->scale_value_obj, EINA_FALSE);
-        elm_slider_value_set(cfdata->scale_value_obj, 1.0);
         cs->scale_multiplier = 1.0;
      }
    else
      {
         elm_object_disabled_set(cfdata->scale_value_obj, EINA_TRUE);
-        elm_slider_value_set(cfdata->scale_value_obj, 0.0);
         cs->scale_multiplier = 0.0;
      }
    e_config_dialog_changed_set(cfdata->cfd, EINA_TRUE);
@@ -627,7 +640,8 @@ _cb_scale_value_changed(void *data, Evas_Object *obj EINA_UNUSED, void *event EI
    E_Config_Dialog_Data *cfdata = data;
    E_Config_Randr2_Screen *cs = _config_screen_find(cfdata);
    if (!cs) return;
-   cs->scale_multiplier = elm_slider_value_get(cfdata->scale_value_obj);
+   cs->scale_multiplier =
+     _multiplier_for_scale(elm_slider_value_get(cfdata->scale_value_obj));
    e_config_dialog_changed_set(cfdata->cfd, EINA_TRUE);
 }
 
@@ -985,6 +999,7 @@ _basic_create(E_Config_Dialog *cfd, Evas *evas EINA_UNUSED, E_Config_Dialog_Data
    elm_slider_unit_format_set(o, "%1.1f");
    elm_slider_span_size_set(o, 100);
    elm_slider_min_max_set(o, 0.5, 5.5);
+   elm_slider_value_set(o, elm_config_scale_get());
    elm_table_pack(tb, o, 2, 13, 1, 1);
    evas_object_show(o);
    cfdata->scale_value_obj = o;
