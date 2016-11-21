@@ -694,31 +694,33 @@ _connman_technology_parse_prop_changed(Connman_Technology *ct, const char *name,
 
    if (!strcmp(name, "Powered"))
      {
-        eldbus_message_iter_arguments_get(value, "b", &val);
+        if (!eldbus_message_iter_arguments_get(value, "b", &val)) goto exit;
+
         val = !!val;
         if (val != ct->powered) ret = EINA_TRUE;
         ct->powered = !!val;
      }
    else if (!strcmp(name, "Connected"))
      {
-        eldbus_message_iter_arguments_get(value, "b", &val);
+        if (!eldbus_message_iter_arguments_get(value, "b", &val)) goto exit;
         ct->connected = !!val;
      }
    else if (!strcmp(name, "Tethering"))
      {
-        eldbus_message_iter_arguments_get(value, "b", &val);
+        if (!eldbus_message_iter_arguments_get(value, "b", &val)) goto exit;
         ct->tethering = !!val;
      }
    else if (!strcmp(name, "TetheringIdentifier"))
      {
-        eldbus_message_iter_arguments_get(value, "b", &str);
+        if (!eldbus_message_iter_arguments_get(value, "b", &str)) goto exit;
         ct->tethering_ssid = eina_stringshare_add(str);
      }
    else if (!strcmp(name, "TetheringPassphrase"))
      {
-        eldbus_message_iter_arguments_get(value, "b", &str);
+        if (!eldbus_message_iter_arguments_get(value, "b", &str)) goto exit;
         ct->tethering_passwd = eina_stringshare_add(str);
      }
+ exit:
    return ret;
 }
 
