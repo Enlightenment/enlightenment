@@ -855,11 +855,11 @@ _bar_icon_mouse_in(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *even
    if (current_preview && clients && !current_preview_menu)
      {
         Icon *icon = evas_object_data_get(current_preview, "icon");
-        E_FREE_FUNC(ic->preview_box, evas_object_del);
-        elm_ctxpopup_dismiss(ic->preview);
+        E_FREE_FUNC(icon->preview_box, evas_object_del);
+        elm_ctxpopup_dismiss(icon->preview);
         current_preview = NULL;
         current_preview_menu = EINA_FALSE;
-        ic->active = EINA_FALSE;
+        icon->active = EINA_FALSE;
         _bar_icon_preview_show(ic);
      }
    else
