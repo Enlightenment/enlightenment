@@ -369,6 +369,25 @@ _bar_icon_drag_done(E_Drag *drag, int dropped)
      bar_recalculate(inst);
 }
 
+static Eina_Bool
+_bar_icon_preview_hide(void *data)
+{
+   Icon *ic = data;
+
+   ic->mouse_out_timer = NULL;
+
+   if (!ic->preview)
+     return EINA_FALSE;
+
+   E_FREE_FUNC(ic->preview_box, evas_object_del);
+   elm_ctxpopup_dismiss(ic->preview);
+   current_preview = NULL;
+   current_preview_menu = EINA_FALSE;
+   ic->active = EINA_FALSE;
+
+   return EINA_FALSE;
+}
+
 static void
 _bar_icon_mouse_move(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_data)
 {
@@ -392,14 +411,7 @@ _bar_icon_mouse_move(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUS
         unsigned int size;
         const char *drag_types[] = { "enlightenment/desktop" };
 
-        if (ic->preview)
-          {
-             E_FREE_FUNC(ic->preview_box, evas_object_del);
-             elm_ctxpopup_dismiss(ic->preview);
-             current_preview = NULL;
-             current_preview_menu = EINA_FALSE;
-             ic->active = EINA_FALSE;
-          }
+        _bar_icon_preview_hide(ic);
         ic->drag.dnd = 1;
         ic->drag.start = 0;
 
@@ -572,32 +584,9 @@ _bar_icon_mouse_up(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED
      }
    else if (ev->button == 1 && !ic->in_order)
      {
-        E_FREE_FUNC(ic->preview_box, evas_object_del);
-        elm_ctxpopup_dismiss(ic->preview);
-        current_preview = NULL;
-        current_preview_menu = EINA_FALSE;
-        ic->active = EINA_FALSE;
+        _bar_icon_preview_hide(ic);
         _bar_icon_preview_show(ic);
      }
-}
-
-static Eina_Bool
-_bar_icon_preview_hide(void *data)
-{
-   Icon *ic = data;
-
-   ic->mouse_out_timer = NULL;
-
-   if (!ic->preview)
-     return EINA_FALSE;
-
-   E_FREE_FUNC(ic->preview_box, evas_object_del);
-   elm_ctxpopup_dismiss(ic->preview);
-   current_preview = NULL;
-   current_preview_menu = EINA_FALSE;
-   ic->active = EINA_FALSE;
-
-   return EINA_FALSE;
 }
 
 static void
@@ -675,14 +664,7 @@ _bar_icon_preview_mouse_up(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EIN
         return;
      }
    e_client_activate(ec, 1);
-   if (current_preview)
-     {
-        E_FREE_FUNC(ic->preview_box, evas_object_del);
-        elm_ctxpopup_dismiss(ic->preview);
-        current_preview = NULL;
-        current_preview_menu = EINA_FALSE;
-        ic->active = EINA_FALSE;
-     }
+   _bar_icon_preview_hide(ic);
 }
 
 static void
@@ -759,11 +741,7 @@ _bar_icon_preview_show(void *data)
      {
         Icon *ico = evas_object_data_get(current_preview, "icon");
 
-        E_FREE_FUNC(ico->preview_box, evas_object_del);
-        elm_ctxpopup_dismiss(ico->preview);
-        current_preview = NULL;
-        current_preview_menu = EINA_FALSE;
-        ico->active = EINA_FALSE;
+        _bar_icon_preview_hide(ico);
      }
    if (!eina_list_count(ic->execs) && !eina_list_count(ic->clients))
      return EINA_FALSE;
@@ -813,11 +791,7 @@ _bar_icon_preview_show(void *data)
 
    if (!count)
      {
-        E_FREE_FUNC(ic->preview_box, evas_object_del);
-        elm_ctxpopup_dismiss(ic->preview);
-        current_preview = NULL;
-        current_preview_menu = EINA_FALSE;
-        ic->active = EINA_FALSE;
+        _bar_icon_preview_hide(ic);
         return EINA_FALSE;
      }
    elm_object_content_set(ic->preview, ic->preview_box);
@@ -854,12 +828,8 @@ _bar_icon_mouse_in(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *even
      clients = EINA_TRUE;
    if (current_preview && clients && !current_preview_menu)
      {
-        Icon *icon = evas_object_data_get(current_preview, "icon");
-        E_FREE_FUNC(icon->preview_box, evas_object_del);
-        elm_ctxpopup_dismiss(icon->preview);
-        current_preview = NULL;
-        current_preview_menu = EINA_FALSE;
-        icon->active = EINA_FALSE;
+        Icon *ico = evas_object_data_get(current_preview, "icon");
+        _bar_icon_preview_hide(ico);
         _bar_icon_preview_show(ic);
      }
    else
