@@ -891,7 +891,7 @@ _bar_exec_new_show(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *even
 }
 
 static void
-_bar_icon_resized(void *data, Evas_Object *obj EINA_UNUSED, const char *emission EINA_UNUSED, const char *source EINA_UNUSED)
+_bar_icon_resized(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, const char *emission EINA_UNUSED, const char *source EINA_UNUSED)
 {
    //This code is supposed to adjust aspect correctly when there is an effect happening.  Uncomment to test.
    /*Instance *inst = data;
