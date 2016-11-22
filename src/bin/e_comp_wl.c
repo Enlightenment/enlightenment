@@ -1022,7 +1022,7 @@ _e_comp_wl_client_evas_init(E_Client *ec)
                                   _e_comp_wl_evas_cb_hide, ec);
 
    /* setup input callbacks */
-   if (ec->internal)
+   if (ec->internal_elm_win)
      {
         evas_object_smart_callback_add(ec->frame, "mouse_in",
           (Evas_Smart_Cb)_e_comp_wl_cb_internal_mouse_in, ec);
@@ -1796,7 +1796,7 @@ _e_comp_wl_surface_destroy(struct wl_resource *resource)
 
    if (!(ec = wl_resource_get_user_data(resource))) return;
 
-   if (ec->internal)
+   if (ec->internal_elm_win)
      {
         e_pixmap_alias(ec->pixmap, E_PIXMAP_TYPE_WL, wl_resource_get_id(resource));
         ec->ignored = 1;
@@ -1867,7 +1867,7 @@ _e_comp_wl_compositor_cb_surface_create(struct wl_client *client, struct wl_reso
      ec->client.w = ec->client.h = 1;
    ec->comp_data->surface = res;
    ec->netwm.pid = pid;
-   if (!ec->internal)
+   if (!ec->internal_elm_win)
      {
         ec->icccm.min_w = ec->icccm.min_h =
         ec->icccm.max_w = ec->icccm.max_h = 0;
@@ -2456,7 +2456,7 @@ _e_comp_wl_client_cb_new(void *data EINA_UNUSED, E_Client *ec)
    /* NB: could not find a better place to do this, BUT for internal windows,
     * we need to set delete_request else the close buttons on the frames do
     * basically nothing */
-   if ((ec->internal) || (ec->internal_elm_win))
+   if (ec->internal_elm_win)
      {
         ec->icccm.delete_request = EINA_TRUE;
         ec->override = elm_win_override_get(e_win_evas_win_get(ecore_evas_get(ecore_event_window_match(win))));
