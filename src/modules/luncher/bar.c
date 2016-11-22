@@ -584,7 +584,6 @@ _bar_icon_mouse_up(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED
      }
    else if (ev->button == 1 && !ic->in_order)
      {
-        _bar_icon_preview_hide(ic);
         _bar_icon_preview_show(ic);
      }
 }
@@ -614,7 +613,7 @@ _bar_icon_preview_mouse_out(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EI
    if (current_preview_menu)
      return;
    E_FREE_FUNC(ic->mouse_out_timer, ecore_timer_del);
-   ic->mouse_out_timer = ecore_timer_add(0.75, _bar_icon_preview_hide, ic);
+   ic->mouse_out_timer = ecore_timer_add(0.25, _bar_icon_preview_hide, ic);
 }
 
 static void
@@ -738,11 +737,7 @@ _bar_icon_preview_show(void *data)
    orient = e_gadget_site_orient_get(e_gadget_site_get(ic->inst->o_main));
 
    if (current_preview)
-     {
-        Icon *ico = evas_object_data_get(current_preview, "icon");
-
-        _bar_icon_preview_hide(ico);
-     }
+     _bar_icon_preview_hide(evas_object_data_get(current_preview, "icon"));
    if (!eina_list_count(ic->execs) && !eina_list_count(ic->clients))
      return EINA_FALSE;
 
@@ -799,10 +794,10 @@ _bar_icon_preview_show(void *data)
 
    e_gadget_util_ctxpopup_place(ic->inst->o_main, ic->preview, ic->o_layout);
    evas_object_layer_set(ic->preview, E_LAYER_POPUP);
-   evas_object_show(ic->preview);
 
    evas_object_data_del(ic->preview, "icon");
    evas_object_data_set(ic->preview, "icon", ic);
+   evas_object_show(ic->preview);
    current_preview = ic->preview;
 
    return EINA_FALSE;
@@ -826,13 +821,9 @@ _bar_icon_mouse_in(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *even
    E_FREE_FUNC(ic->mouse_in_timer, ecore_timer_del);
    if (eina_list_count(ic->execs) || eina_list_count(ic->clients))
      clients = EINA_TRUE;
-   if (current_preview && clients && !current_preview_menu)
-     {
-        Icon *ico = evas_object_data_get(current_preview, "icon");
-        _bar_icon_preview_hide(ico);
-        _bar_icon_preview_show(ic);
-     }
-   else
+   if (clients && current_preview && !current_preview_menu)
+     _bar_icon_preview_show(ic);
+   else if (clients && !current_preview)
      ic->mouse_in_timer = ecore_timer_add(0.3, _bar_icon_preview_show, ic);
 }
   
@@ -842,8 +833,6 @@ _bar_icon_mouse_out(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *eve
    Icon *ic = data;
 
    elm_object_tooltip_hide(obj);
-   if (!ic->preview)
-     ic->active = EINA_FALSE;
    E_FREE_FUNC(ic->mouse_in_timer, ecore_timer_del);
    E_FREE_FUNC(ic->mouse_out_timer, ecore_timer_del);
    ic->mouse_out_timer = ecore_timer_add(0.25, _bar_icon_preview_hide, ic);
@@ -1784,7 +1773,10 @@ _bar_order_update(void *data, E_Order *eo EINA_UNUSED)
 {
    Instance *inst = data;
 
-   bar_recalculate(inst);
+   if (inst && inst->o_icon_con)
+     {
+        bar_recalculate(inst);
+     }
 }
 
 static void
@@ -1866,6 +1858,7 @@ _conf_item_get(int *id)
    else
      ci->id = -1;
    ci->dir = eina_stringshare_add("default");
+   ci->style = eina_stringshare_add("default");
    luncher_config->items = eina_list_append(luncher_config->items, ci);
 
    return ci;
