@@ -3402,7 +3402,8 @@ e_client_focused_set(E_Client *ec)
         ec_unfocus->want_focus = ec_unfocus->focused = 0;
         if (!e_object_is_del(E_OBJECT(ec_unfocus)))
           e_focus_event_focus_out(ec_unfocus);
-        if (ec_unfocus->mouse.in && ec && (!e_client_util_is_popup(ec)))
+        if (ec_unfocus->mouse.in && ec && (!e_client_util_is_popup(ec)) &&
+            (e_config->focus_policy != E_FOCUS_CLICK) && e_config->pointer_slide)
           e_client_mouse_out(ec_unfocus, ec_unfocus->x - 1, ec_unfocus->y - 1);
 
         E_FREE_FUNC(ec_unfocus->raise_timer, ecore_timer_del);
