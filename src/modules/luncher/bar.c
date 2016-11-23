@@ -918,7 +918,8 @@ _bar_icon_add(Instance *inst, Efreet_Desktop *desktop, E_Client *non_desktop_cli
    snprintf(ori, sizeof(ori), "e,state,off,%s", _bar_location_get(inst));
    elm_layout_signal_emit(ic->o_layout, ori, "e");
    msg = alloca(sizeof(Edje_Message_Int_Set));
-   msg->str = strdup(inst->cfg->style);
+   if (inst->cfg->style)
+     msg->str = strdup(inst->cfg->style);
    edje_object_message_send(elm_layout_edje_get(ic->o_layout), EDJE_MESSAGE_STRING, 1, msg);
 
    ic->o_icon = elm_icon_add(ic->o_layout);
@@ -1074,9 +1075,8 @@ _bar_cb_client_remove(void *data EINA_UNUSED, int type EINA_UNUSED, E_Event_Clie
      {
         Icon *ic = NULL;
 
-        if (ev->ec)
-          ic = _bar_icon_match(inst, ev->ec);
-        
+        if (!inst->bar) continue;
+        if (ev->ec) ic = _bar_icon_match(inst, ev->ec);
         if (ic)
           {
              if (ic->starting) elm_layout_signal_emit(ic->o_layout, "e,state,started", "e");
@@ -1117,6 +1117,7 @@ _bar_cb_exec_del(void *data EINA_UNUSED, int type EINA_UNUSED, E_Exec_Instance *
      {
         Icon *ic = NULL;
 
+        if (!inst->bar) continue;
         if (ex->desktop)
           {
              ic = eina_hash_find(inst->icons_desktop_hash, ex->desktop->orig_path);
@@ -1181,8 +1182,8 @@ _bar_cb_exec_client_prop(void *data EINA_UNUSED, int type EINA_UNUSED, E_Event_C
         Icon *ic = NULL;
         char ori[32];
 
+        if (!inst->bar) continue;
         ic = _bar_icon_match(inst, ev->ec);
-
         if (skip && !ic) continue;
         if (!skip)
           {
@@ -1275,9 +1276,8 @@ _bar_cb_exec_new(void *data EINA_UNUSED, int type, E_Exec_Instance *ex)
         Icon *ic = NULL;
         char ori[32];
 
-        if (ec)
-          ic = _bar_icon_match(inst, ec);
-
+        if (!inst->bar) continue;
+        if (ec) ic = _bar_icon_match(inst, ec);
         if (ic)
           {
              if (skip) continue;
@@ -1519,6 +1519,7 @@ _bar_cb_update_icons(EINA_UNUSED void *data, EINA_UNUSED int ev_type, EINA_UNUSE
 
    EINA_LIST_FOREACH(luncher_instances, l, inst)
      {
+        if (!inst->bar) continue;
         if (inst->resize_job) return ECORE_CALLBACK_RENEW;
         inst->resize_job = ecore_job_add(_bar_resize_job, inst);
      }
@@ -1922,6 +1923,7 @@ bar_create(Evas_Object *parent, int *id, E_Gadget_Site_Orient orient EINA_UNUSED
    *id = inst->cfg->id;
    inst->inside = EINA_FALSE;
    inst->effect = EINA_FALSE;
+   inst->bar = EINA_TRUE;
    inst->icons_desktop_hash = eina_hash_string_superfast_new(NULL);
    inst->icons_clients_hash = eina_hash_pointer_new(NULL);
    inst->o_main = elm_layout_add(parent);

@@ -38,6 +38,7 @@ luncher_init(void)
         luncher_config->items = eina_list_append(luncher_config->items, ci);
      }
    e_gadget_type_add("Luncher Bar", bar_create, NULL);
+   e_gadget_type_add("Luncher Grid", grid_create, NULL);
 }
 
 EINTERN void
@@ -58,6 +59,7 @@ luncher_shutdown(void)
    E_CONFIG_DD_FREE(conf_item_edd);
 
    e_gadget_type_del("Luncher Bar");
+   e_gadget_type_del("Luncher Grid");
 }
 
 E_API E_Module_Api e_modapi =

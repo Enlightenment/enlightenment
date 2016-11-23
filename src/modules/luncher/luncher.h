@@ -46,6 +46,7 @@ struct _Instance
    Ecore_Job           *resize_job;
    Ecore_Job           *recalc_job;
    E_Comp_Object_Mover *iconify_provider;
+   Eina_Bool            bar;
    Eina_Bool            inside;
    Eina_Bool            effect;
    Config_Item         *cfg;
@@ -84,6 +85,9 @@ EINTERN Evas_Object *config_luncher(E_Zone *zone, Instance *inst, Eina_Bool bar)
 EINTERN Evas_Object *bar_create(Evas_Object *parent, int *id, E_Gadget_Site_Orient orient);
 EINTERN void         bar_reorder(Instance *inst);
 EINTERN void         bar_recalculate(Instance *inst);
+EINTERN Evas_Object *grid_create(Evas_Object *parent, int *id, E_Gadget_Site_Orient orient);
+EINTERN void         grid_reorder(Instance *inst);
+EINTERN void         grid_recalculate(Instance *inst);
 
 extern Config *luncher_config;
 extern Eina_List *luncher_instances;
