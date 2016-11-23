@@ -404,7 +404,7 @@ _e_xdg_popup_grab_dismiss(E_Client *ec)
 }
 
 static void
-_e_xdg_popup_cb_grab(struct wl_client *client EINA_UNUSED, struct wl_resource *resource, struct wl_resource *seat, uint32_t serial)
+_e_xdg_popup_cb_grab(struct wl_client *client EINA_UNUSED, struct wl_resource *resource, struct wl_resource *seat EINA_UNUSED, uint32_t serial EINA_UNUSED)
 {
    E_Client *ec;
 
