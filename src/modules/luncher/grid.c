@@ -6,7 +6,7 @@ static void _grid_resize_job(void *data);
 static void
 _grid_aspect(Instance *inst)
 {
-   Evas_Coord w, h, square, root, cell, size;
+   Evas_Coord w, h, square, size;
 
    evas_object_size_hint_aspect_set(inst->o_main, EVAS_ASPECT_CONTROL_BOTH, 1, 1);
    if (!eina_list_count(inst->icons))
@@ -42,7 +42,7 @@ _grid_gadget_configure(Evas_Object *g)
 }
 
 static void
-_grid_instance_watch(void *data, E_Exec_Instance *ex, E_Exec_Watch_Type type)
+_grid_instance_watch(void *data, E_Exec_Instance *ex EINA_UNUSED, E_Exec_Watch_Type type)
 {
    Icon *ic = data;
 
@@ -233,8 +233,7 @@ _grid_icon_mouse_out(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *ev
 }
 
 static Evas_Object *
-_gengrid_icon_get(void *data, Evas_Object *obj,
-    const char *part)
+_gengrid_icon_get(void *data, Evas_Object *obj EINA_UNUSED, const char *part)
 {
    Icon *ic = data;
    if (strcmp(part, "elm.swallow.icon"))
