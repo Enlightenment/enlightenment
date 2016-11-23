@@ -1306,8 +1306,8 @@ _cpufreq_cb_frequency_check_notify(void *data EINA_UNUSED,
         _cpufreq_status_free(status);
         return;
      }
-   if (cpufreq_config->status) _cpufreq_status_free(cpufreq_config->status);
    active = cpufreq_config->status->active;
+   _cpufreq_status_free(cpufreq_config->status);
    cpufreq_config->status = status;
    for (l = cpufreq_config->instances; l; l = l->next)
      {
