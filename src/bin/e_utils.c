@@ -710,6 +710,36 @@ e_util_dir_check(const char *dir)
    return 1;
 }
 
+static Eina_Array *_delay_del_array = NULL;
+static Ecore_Idle_Enterer *_delay_del_idler = NULL;
+
+static Eina_Bool
+_e_util_cb_delayed_del(void *data EINA_UNUSED)
+{
+   while (_delay_del_array)
+     {
+        Eina_Array *arr = _delay_del_array;
+        Eina_Iterator *itr = eina_array_iterator_new(arr);
+        void *ptr;
+
+        _delay_del_array = NULL;
+        while (eina_iterator_next(itr, &ptr))
+          {
+             if (ptr) e_object_del(E_OBJECT(ptr));
+          }
+        eina_array_free(arr);
+     }
+   _delay_del_idler = NULL;
+   return ECORE_CALLBACK_CANCEL;
+}
+
+static void
+_e_util_cb_delayed_cancel(void *data, void *obj EINA_UNUSED)
+{
+   unsigned long c = (unsigned long)data;
+   if (_delay_del_array) eina_array_data_set(_delay_del_array, c, NULL);
+}
+
 E_API void
 e_util_defer_object_del(E_Object *obj)
 {
@@ -717,10 +747,21 @@ e_util_defer_object_del(E_Object *obj)
      e_object_del(obj);
    else
      {
-        Ecore_Idle_Enterer *idler;
-
-        idler = ecore_idle_enterer_before_add(_e_util_cb_delayed_del, obj);
-        if (idler) e_object_delfn_add(obj, _e_util_cb_delayed_cancel, idler);
+        if (!_delay_del_array)
+          {
+             _delay_del_array = eina_array_new(8);
+             if (!_delay_del_idler)
+               _delay_del_idler = ecore_idle_enterer_before_add
+                 (_e_util_cb_delayed_del, NULL);
+          }
+        if (_delay_del_array)
+          {
+             if (eina_array_push(_delay_del_array, obj))
+               {
+                  unsigned long c = eina_array_count_get(_delay_del_array);
+                  e_object_delfn_add(obj, _e_util_cb_delayed_cancel, (void *)c);
+               }
+          }
      }
 }
 
@@ -815,21 +856,6 @@ _e_util_icon_add(const char *path, Evas *evas, int size)
    e_icon_fill_inside_set(o, 1);
 
    return o;
-}
-
-static Eina_Bool
-_e_util_cb_delayed_del(void *data)
-{
-   e_object_del(E_OBJECT(data));
-   return ECORE_CALLBACK_CANCEL;
-}
-
-static void
-_e_util_cb_delayed_cancel(void *data, void *obj EINA_UNUSED)
-{
-   Ecore_Idle_Enterer *idler = data;
-
-   ecore_idle_enterer_del(idler);
 }
 
 static Eina_Bool
