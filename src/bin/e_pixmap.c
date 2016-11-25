@@ -781,13 +781,12 @@ e_pixmap_image_clear(E_Pixmap *cp, Eina_Bool cache)
         break;
       case E_PIXMAP_TYPE_WL:
 #ifdef HAVE_WAYLAND
+        _e_pixmap_wl_buffers_free(cp);
         if (cache)
           {
              E_Comp_Wl_Client_Data *cd;
              struct wl_resource *cb;
              Eina_List *free_list;
-
-             if (!e_comp->rendering) _e_pixmap_wl_buffers_free(cp);
 
              if ((!cp->client) || (!cp->client->comp_data)) return;
              cd = (E_Comp_Wl_Client_Data *)cp->client->comp_data;
@@ -803,8 +802,6 @@ e_pixmap_image_clear(E_Pixmap *cp, Eina_Bool cache)
                   wl_resource_destroy(cb);
                }
           }
-        else
-          _e_pixmap_wl_buffers_free(cp);
 #endif
         break;
       default:
