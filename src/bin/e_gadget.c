@@ -395,7 +395,7 @@ _site_gadget_resize(Evas_Object *g, int w, int h, Evas_Coord *ww, Evas_Coord *hh
                *ww = (*hh * ax / ay);
              else if (IS_VERT(zgc->site->orient))
                *hh = (*ww * ay / ax);
-             else
+             else if (aspect)
                {
                   double ar = ax / (double) ay;
 
