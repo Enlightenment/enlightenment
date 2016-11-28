@@ -27,10 +27,14 @@ e_scale_update(void)
           e_scale = (double)ecore_x_dpi_get() / (double)e_config->scale.base_dpi;
 #endif
 #ifdef HAVE_WAYLAND
-        /* FIXME: This needs to get the DPI from a given output */
         if (e_comp->comp_type == E_PIXMAP_TYPE_WL)
           {
-             e_scale = (double)ecore_wl2_output_dpi_get(NULL) /
+             int xdpi = 0, ydpi = 0;
+
+             ecore_evas_screen_dpi_get(e_comp->ee, &xdpi, &ydpi);
+             if (xdpi == 0) xdpi = 75;
+             if (ydpi == 0) ydpi = 75;
+             e_scale = ((double)(xdpi + ydpi) / 2.0) /
                (double)e_config->scale.base_dpi;
           }
 #endif
