@@ -2819,8 +2819,14 @@ e_comp_wl_init(void)
         return EINA_FALSE;
      }
 
-   /* Block session recovery for internal windows */
-   ecore_wl2_session_recovery_disable();
+   if (E_EFL_VERSION_MINIMUM(1, 18, 99))
+     {
+        E_Comp_Cb wl2_session_recovery_disable;
+
+        wl2_session_recovery_disable = dlsym(NULL, "ecore_wl2_session_recovery_disable");
+        /* Block session recovery for internal windows */
+        if (wl2_session_recovery_disable) wl2_session_recovery_disable();
+     }
 
    /* set gl available if we have ecore_evas support */
    if (ecore_evas_engine_type_supported_get(ECORE_EVAS_ENGINE_WAYLAND_EGL) ||
