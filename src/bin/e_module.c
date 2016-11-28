@@ -1042,6 +1042,7 @@ _e_module_whitelist_check(void)
       "policy_mobile",
       "geolocation",
       "xwayland",
+      "bryce_migration",
       NULL   // end marker
    };
 

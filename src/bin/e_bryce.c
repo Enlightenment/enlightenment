@@ -53,6 +53,9 @@ typedef struct Bryces
    Eina_List *bryces;
 } Bryces;
 
+
+static void _bryce_delete(Bryce *b);
+
 static E_Config_DD *edd_bryces;
 static E_Config_DD *edd_bryce;
 static Bryces *bryces;
@@ -750,13 +753,7 @@ _bryce_autohide_menu(void *data, E_Menu *m EINA_UNUSED, E_Menu_Item *mi EINA_UNU
 static void
 _bryce_remove_menu(void *data, E_Menu *m EINA_UNUSED, E_Menu_Item *mi EINA_UNUSED)
 {
-   Bryce *b = data;
-   bryces->bryces = eina_list_remove(bryces->bryces, data);
-   e_gadget_site_del(b->site);
-   eina_stringshare_del(b->name);
-   eina_stringshare_del(b->style);
-   evas_object_hide(b->bryce);
-   evas_object_del(b->bryce);
+   _bryce_delete(data);
    e_config_save_queue();
 }
 
@@ -940,6 +937,17 @@ _bryce_create(Bryce *b, Evas_Object *parent)
    _bryce_autosize(b);
 }
 
+static void
+_bryce_delete(Bryce *b)
+{
+   bryces->bryces = eina_list_remove(bryces->bryces, b);
+   e_gadget_site_del(b->site);
+   eina_stringshare_del(b->name);
+   eina_stringshare_del(b->style);
+   evas_object_hide(b->bryce);
+   evas_object_del(b->bryce);
+}
+
 static Eina_Bool
 _bryce_act_resize(E_Object *obj, const char *params, E_Binding_Event_Wheel *ev)
 {
@@ -1032,6 +1040,13 @@ e_bryce_add(Evas_Object *parent, const char *name, E_Gadget_Site_Orient orient, 
    bryces->bryces = eina_list_append(bryces->bryces, b);
    e_config_save_queue();
    return b->bryce;
+}
+
+E_API void
+e_bryce_delete(Evas_Object *bryce)
+{
+   BRYCE_GET(bryce);
+   _bryce_delete(b);
 }
 
 E_API void

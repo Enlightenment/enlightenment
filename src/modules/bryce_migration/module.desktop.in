@@ -1,0 +1,7 @@
+[Desktop Entry]
+Encoding=UTF-8
+Type=Link
+Name=Bryce migration
+Comment=Bryce migration wizard
+Icon=e-module-bryce-wizard
+X-Enlightenment-ModuleType=utils

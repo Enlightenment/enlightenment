@@ -132,4 +132,7 @@ include src/modules/Makefile_policy_mobile.mk
 include src/modules/Makefile_geolocation.mk
 
 include src/modules/Makefile_wireless.mk
+
 include src/modules/Makefile_time.mk
+
+include src/modules/Makefile_bryce_migration.mk
