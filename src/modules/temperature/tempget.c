@@ -1,6 +1,6 @@
 #include "e.h"
 
-#ifdef __FreeBSD__
+#if defined (__FreeBSD__) || defined(__DragonFly__)
 # include <sys/types.h>
 # include <sys/sysctl.h>
 # include <errno.h>
@@ -22,10 +22,10 @@ static int poll_interval = 32;
 static int cur_poll_interval = 32;
 
 static char *sensor_path = NULL;
-#if defined (__FreeBSD__) || defined (__OpenBSD__)
+#if defined (__FreeBSD__) || defined(__DragonFly__) || defined (__OpenBSD__)
 static int mib[CTL_MAXNAME];
 #endif
-#ifdef __FreeBSD__
+#if defined (__FreeBSD__) || defined(__DragonFly__)
 static unsigned miblen;
 static const char *sources[] =
   {
@@ -100,7 +100,7 @@ init(void)
 {
    Eina_List *therms;
    char path[PATH_MAX];
-#ifdef __FreeBSD__
+#if defined (__FreeBSD__) || defined(__DragonFly__)
    unsigned i;
    size_t len;
    int rc;
@@ -110,7 +110,7 @@ init(void)
      {
         E_FREE(sensor_name);
         E_FREE(sensor_path);
-#ifdef __FreeBSD__
+#if defined (__FreeBSD__) || defined(__DragonFly__)
         for (i = 0; sources[i]; i++)
           {
              rc = sysctlbyname(sources[i], NULL, NULL, NULL, 0);
@@ -284,7 +284,7 @@ init(void)
              break;
 
            case SENSOR_TYPE_FREEBSD:
-#ifdef __FreeBSD__
+#if defined (__FreeBSD__) || defined(__DragonFly__)
              len = sizeof(mib) / sizeof(mib[0]);
              rc = sysctlnametomib(sensor_name, mib, &len);
              if (rc == 0)
@@ -394,7 +394,7 @@ check(void)
    int ret = 0;
    int temp = 0;
    char buf[4096];
-#ifdef __FreeBSD__
+#if defined (__FreeBSD__) || defined(__DragonFly__)
    size_t len;
    size_t ftemp = 0;
 #endif
@@ -410,7 +410,7 @@ check(void)
         break;
 
       case SENSOR_TYPE_FREEBSD:
-#ifdef __FreeBSD__
+#if defined (__FreeBSD__) || defined(__DragonFly__)
         len = sizeof(ftemp);
         if (sysctl(mib, miblen, &ftemp, &len, NULL, 0) == 0)
           {
