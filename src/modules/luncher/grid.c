@@ -250,8 +250,7 @@ _grid_icon_add(Instance *inst, Efreet_Desktop *desktop)
    Icon *ic;
 
    ic = E_NEW(Icon, 1);
-   if (desktop)
-     efreet_desktop_ref(desktop);
+   efreet_desktop_ref(desktop);
    ic->desktop = desktop;
    ic->inst = inst;
    ic->preview = NULL;
@@ -301,12 +300,6 @@ _grid_icon_add(Instance *inst, Efreet_Desktop *desktop)
           {
              path = e_theme_edje_file_get("base/theme/icons", "e/icons/unknown");
              k =  "e/icons/unknown";
-          }
-        if (path && desktop->icon && !k)
-          {
-             len = strlen(desktop->icon);
-             if ((len > 4) && (!strcasecmp(desktop->icon + len - 4, ".edj")))
-               k = "icon";
           }
      }
    elm_image_file_set(ic->o_icon, path, k);

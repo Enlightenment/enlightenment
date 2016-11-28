@@ -1563,7 +1563,7 @@ _bar_mouse_move(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, v
         Edje_Message_Int_Set *msg;
         Evas_Coord x, y, w, h;
 
-        evas_object_geometry_get(ic->o_layout, &x, &y, &w, &h);
+        evas_object_geometry_get(ic->o_icon, &x, &y, &w, &h);
         msg = alloca(sizeof(Edje_Message_Int_Set) + (7 * sizeof(int)));
         msg->count = 7;
         msg->val[0] = px;
