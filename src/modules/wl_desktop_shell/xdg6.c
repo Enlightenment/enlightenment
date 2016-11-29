@@ -386,7 +386,7 @@ _e_xdg_shell_surface_configure_send(struct wl_resource *resource, uint32_t edges
 
         shd = ec->comp_data->shell.data;
         serial = wl_display_next_serial(e_comp_wl->wl.disp);
-        zxdg_popup_v6_send_configure(resource, ec->x - ec->parent->x, ec->y - ec->parent->y, width, height);
+        zxdg_popup_v6_send_configure(resource, ec->x - ec->parent->x, ec->y - ec->parent->y, width ?: ec->w, height ?: ec->h);
         zxdg_surface_v6_send_configure(shd->surface, serial);
         return;
      }
