@@ -2351,6 +2351,8 @@ _e_comp_wl_subsurface_create(E_Client *ec, E_Client *epc, uint32_t id, struct wl
 
    ec->comp_data->surface = surface_resource;
    ec->comp_data->sub.data = sdata;
+   evas_object_layer_set(ec->frame, evas_object_layer_get(epc->frame));
+   evas_object_stack_above(ec->frame, epc->frame);
 
    return EINA_TRUE;
 
