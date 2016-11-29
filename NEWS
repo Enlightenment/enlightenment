@@ -1,3 +1,138 @@
+Release 0.21.4:
+---------------------
+Al Poole (1):
+      efm - fix popup if file is a fifo
+
+Alexander Pyhalov (1):
+      actually check if PIE is supported for SUID
+
+Carsten Haitzler (3):
+      e fm - fix popup to not crash by referring to possibly deleted data
+      cpufreq - move cpuinfo polling into thread to not block mainloop ever
+      wizard - do not set scale to 1.2 forcibly. use dpi as the def prof says
+
+Christopher Michael (2):
+      check if a client is internal or not before deleting
+      fix missing definition of DRM_FORMAT_XRGB8888
+
+Derek Foreman (6):
+      Block session recovery for internal windows
+      Remove EVAS_CALLBACK_HIDE on shelf when freeing
+      Increase area of tilers for regions
+      Fix massive wayland input region brokenness
+      Fix wayland opaque regions
+      Stop passing dimensions to _e_comp_wl_surface_state_init
+
+Joshua McBeth (1):
+      add dbus message 'org.enlightenment.wm.Window.SendToDesktop'
+
+Marcel Hollerbach (5):
+      wizard: make page 065 translatable
+      mixer: we changed that name when we merged the mixer in
+      update german translation
+      The potfile has changed,
+      mixer: do not set back the value from emix once the drag is finished
+
+Massimo Maiurana (1):
+      Updating italian translation
+
+Michaël Bouchaud (yoz) (2):
+      mixer: fix the volume conversion calc into pulseaudio backend
+      Revert "mixer: lock up the slider for the case a drag is in progress"
+
+Mike Blumenkrantz (80):
+      enforce bryce resizing when orientation changes
+      add EINTERN function for renaming gadget sites
+      fix bryce check for shelf existence on orientation/anchor to break when expected
+      add zone number to bryce names
+      do not check for shelf/bryce existence in opposing anchorages during bryce wizard
+      further improve bryce portability across zones
+      also do full bryce rename when moving between zones
+      add new flag for zone edge objects to allow shape cutting while repeating events
+      force bryce visibility during editor activity
+      add gadget_site_(un)locked smart callbacks for forcing gadget site visibility
+      call gadget_popup smart callback when configuring gadgets
+      handle gadget_popup smart callback on gadget's display object
+      set ON_HOLD flag when triggering gadget mouse buttion actions
+      remove unused attribute from used param
+      trigger bryce menus from right click if event has not been consumed
+      fix bryce upgrade path from 0 -> 2 re:naming
+      set ON_HOLD flag more accurately when activating gadget actions
+      avoid extra recalc when resizing a bryce on its oriented axis
+      add gadget site sizing workaround to avoid elm box sizing desync
+      rename bryces when changing anchors
+      loop bryce autosize recalc when gadget site has not yet calculated its size
+      only find the session recovery remember if ec->remember is not it
+      apply non-session recovery remember to client when creating recovery remember
+      correctly handle applying of non-SR remember in remember config
+      reject successive zone_geometry_dirty() calls
+      trigger zone geometry events when updating zone/desk obstacles
+      force min size on wireless popup during show
+      add workarounds for ctxpopup geometry for use in input shape tiling
+      force recalc on bryce scroller when doing recalc on gadget site
+      handle no-orient gadget visibility based on site->events visibility
+      force gadget site recalc on gadget object creation to ensure sizing
+      copy gadget position from pointer gadget -> drop gadget when executing drop
+      calc new gadget size based on ratio of size:target site size
+      allow client frame changes when switching from frame -> no frame
+      optimize out re-applying of borderless client theme
+      block remembers of e_sys windows
+      use eina_streq for string comparison in e_zone_for_id_get()
+      fix use after free when renaming a bryce
+      clamp bryce position to its parent zone
+      avoid potential divide by zero during bryce startup
+      do not modify bryce zone/name during startup
+      center desktop gadget editor popups upon the zone they have activated
+      attempt to handle non-orient gadget resizes based on anchor corners
+      allow scaling gadgets using wheel events during initial placement
+      attempt to recalc gadgets which overflow their container
+      do not apply efx anchoring to move effects if a resize effect is not active
+      do not return early from _bryce_position()
+      add bool return for e_exec_phony_del() to return deletion success
+      feed mouse-up when dropping a gadget site before enabling events on the site
+      force gadget site recalc from style object if gadget's hints change
+      return correct values from bryce post event callbacks
+      determine wl pixmap argb solely based on image_argb flag
+      avoid crash when calling e_pixmap_image_exists on wl pixmaps without buffers
+      add more parens for previous pixmap commit
+      add special case for returning pixmap argb of unusable wl cursor pixmaps
+      move bryces to E_LAYER_DESKTOP_TOP when not above windows
+      force bryce repositioning onto target zone during startup
+      use only zone coords when moving bryce to its zone during editing
+      clamp e_place calcs to zone geometry
+      break out e_place_desk_region_smart() area calcs into separate function
+      break out repeated code from _e_place_desk_region_smart_area_calc() into separate function
+      reset initial internal wl client states when hiding (but not deleting)
+      unset wl client surface pointer on surface destroy
+      remove wl client pixmap aliasing on del
+      always free wl pixmap buffer list on non-cache image clear
+      unalias internal wl client pixmaps in elm win hide trap callback
+      handle e_scale correctly in bryces
+      keep bryce starting size unscaled
+      unset cur_mouse_action upon deleting client menu
+      send orientation signal to bryce scroller theme
+      only unset cur_mouse_action on client menu delete for the right action
+      focus confirmation option in efm delete dialog
+      disable bindings during desklock
+      reject non-printable characters from lokker entry
+      make confirm dialogs autoselect the confirm option
+      require an elm win to apply auto-visibility for internal wins in wl surface commit
+      clarify some wl surface checks to require elm wins
+      make fake mouse-out upon focus-out conditional on pending pointer warp
+      revise internal window session recovery blocking to compile with older efl
+      prevent divide by zero when calculating gadget aspect sizing
+
+Romain Naour (1):
+      E: fix Wayland without xwayland build
+
+Stefan Schmidt (2):
+      e_fm: fix last commit to compile again with clang
+      e_fm: remove unused variable
+
+Stephen okra Houston (1):
+      Time Gadget: Change the calendar month on mouse wheel.
+
+
 Release 0.21.3:
 ---------------------
 Carsten Haitzler (4):
