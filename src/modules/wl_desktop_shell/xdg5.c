@@ -75,7 +75,7 @@ _xdg_shell_surface_send_configure(struct wl_resource *resource, Eina_Bool fullsc
      {
         if (fullscreen)
           pending |= STATE_FULLSCREEN;
-        else
+        else if (ec->fullscreen)
           pending |= STATE_UNFULLSCREEN;
      }
    shd->fullscreen = fullscreen;
@@ -83,7 +83,7 @@ _xdg_shell_surface_send_configure(struct wl_resource *resource, Eina_Bool fullsc
      {
         if (maximized)
           pending |= STATE_MAXIMIZED;
-        else
+        else if (ec->maximized)
           pending |= STATE_UNMAXIMIZED;
      }
    shd->maximized = maximized;
@@ -349,11 +349,13 @@ _e_xdg_shell_surface_cb_ack_configure(struct wl_client *client EINA_UNUSED, stru
           {
              ec->comp_data->shell.set.maximize = 1;
              ec->comp_data->shell.set.unmaximize = 0;
+             ec->comp_data->max = (e_config->maximize_policy & E_MAXIMIZE_TYPE) | E_MAXIMIZE_BOTH;
           }
         if (ps->state & STATE_UNMAXIMIZED)
           {
              ec->comp_data->shell.set.unmaximize = 1;
              ec->comp_data->shell.set.maximize = 0;
+             ec->comp_data->unmax = (e_config->maximize_policy & E_MAXIMIZE_TYPE) | E_MAXIMIZE_BOTH;
           }
         shd->pending = eina_list_remove_list(shd->pending, l);
         free(ps);
@@ -427,7 +429,6 @@ _e_xdg_shell_surface_cb_maximized_unset(struct wl_client *client EINA_UNUSED, st
    if (e_object_is_del(E_OBJECT(ec))) return;
 
    if (ec->lock_user_maximize) return;
-   ec->comp_data->unmax = (e_config->maximize_policy & E_MAXIMIZE_TYPE) | E_MAXIMIZE_BOTH;
    if (e_config->window_maximize_animate && (!ec->maximize_anims_disabled))
      w = ec->w, h = ec->h;
    else
@@ -489,7 +490,6 @@ _e_xdg_shell_surface_cb_minimized_set(struct wl_client *client EINA_UNUSED, stru
 
    if (ec->lock_user_iconify) return;
    ec->comp_data->shell.set.minimize = 1;
-   ec->comp_data->max = (e_config->maximize_policy & E_MAXIMIZE_TYPE) | E_MAXIMIZE_BOTH;
 }
 
 static const struct xdg_surface_interface _e_xdg_surface_interface =
