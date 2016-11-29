@@ -29,6 +29,7 @@ typedef struct v6_Shell_Data
 typedef struct Positioner
 {
    v6_Shell_Data *v;
+   struct wl_resource *res;
    Evas_Coord_Size size;
    Eina_Rectangle anchor_rect;
    enum zxdg_positioner_v6_anchor anchor;
@@ -147,6 +148,7 @@ _e_xdg_shell_positioner_destroy(struct wl_resource *resource)
    Positioner *p;
 
    p = wl_resource_get_user_data(resource);
+   if (!p) return;
    if (p->v) p->v->positioners = eina_list_remove(p->v->positioners, p);
    free(p);
 }
@@ -162,6 +164,8 @@ _e_xdg_shell_cb_positioner_create(struct wl_client *client, struct wl_resource *
    res = wl_resource_create(client, &zxdg_positioner_v6_interface, 1, id);
    p = E_NEW(Positioner, 1);
    p->v = v;
+   p->res = res;
+   v->positioners = eina_list_append(v->positioners, p);
    wl_resource_set_implementation(res, &_e_xdg_positioner_interface, p, _e_xdg_shell_positioner_destroy);
    wl_resource_set_user_data(res, p);
 }
@@ -1291,10 +1295,16 @@ _e_xdg_shell_cb_surface_get(struct wl_client *client, struct wl_resource *resour
 static void
 _e_xdg_shell_cb_pong(struct wl_client *client EINA_UNUSED, struct wl_resource *resource, uint32_t serial EINA_UNUSED)
 {
-   E_Client *ec;
+   v6_Shell_Data *v;
+   Eina_List *l;
+   struct wl_resource *res;
 
-   if ((ec = wl_resource_get_user_data(resource)))
+   v = wl_resource_get_user_data(resource);
+   EINA_LIST_FOREACH(v->surfaces, l, res)
      {
+        E_Client *ec = wl_resource_get_user_data(res);
+
+        if (!ec) continue;
         ec->ping_ok = EINA_TRUE;
         ec->hung = EINA_FALSE;
      }
@@ -1312,12 +1322,31 @@ static void
 _e_xdg_shell_cb_unbind(struct wl_resource *resource)
 {
    v6_Shell_Data *v;
+   Positioner *p;
+   struct wl_resource *res;
+   Eina_List *l, *ll;
    struct wl_client *client = wl_resource_get_client(resource);
 
    v = wl_resource_get_user_data(resource);
    eina_hash_set(shell_resources, &client, NULL);
-   E_FREE_LIST(v->surfaces, e_shell_surface_cb_destroy);
-   v->positioners = eina_list_free(v->positioners);
+   EINA_LIST_REVERSE_FOREACH_SAFE(v->surfaces, l, ll, res)
+     {
+        E_Client *ec = wl_resource_get_user_data(res);
+        E_Shell_Data *shd;
+
+        if (ec->comp_data->shell.surface)
+          e_shell_surface_cb_destroy(ec->comp_data->shell.surface);
+        shd = ec->comp_data->shell.data;
+        if (shd)
+          e_shell_surface_cb_destroy(shd->surface);
+        v->surfaces = eina_list_remove_list(v->surfaces, l);
+     }
+
+   EINA_LIST_FREE(v->positioners, p)
+     {
+        wl_resource_set_user_data(p->res, NULL);
+        free(p);
+     }
    free(v);
 }
 
