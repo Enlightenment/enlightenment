@@ -734,7 +734,7 @@ _apply_positioner(E_Client *ec, Positioner *p)
    e_zone_useful_geometry_get(ec->parent->zone, &zx, &zy, &zw, &zh);
 
 #define CONSTRAINED(EC, X, Y) \
-   !E_CONTAINS((X), (Y), (EC)->w, (EC)->h, zx, zy, zw, zh)
+   !E_CONTAINS(zx, zy, zw, zh, (X), (Y), (EC)->w, (EC)->h)
 
    if (!CONSTRAINED(ec, ec->x, ec->y)) return;
 
@@ -744,28 +744,28 @@ _apply_positioner(E_Client *ec, Positioner *p)
     - resize
     */
    if ((p->constrain & ZXDG_POSITIONER_V6_CONSTRAINT_ADJUSTMENT_FLIP_X) &&
-       (!E_CONTAINS(ec->x, zy, ec->w, 1, zx, zy, zw, zh)))
+       (!E_CONTAINS(zx, zy, zw, zh, ec->x, zy, ec->w, 1)))
      {
         int fx;
 
         fx = _apply_positioner_x(x, p, 1);
-        if (E_CONTAINS(fx, zy, ec->w, 1, zx, zy, zw, zh))
+        if (E_CONTAINS(zx, zy, zw, zh, fx, zy, ec->w, 1))
           ec->x = fx;
      }
    if (!CONSTRAINED(ec, ec->x, ec->y)) return;
    if ((p->constrain & ZXDG_POSITIONER_V6_CONSTRAINT_ADJUSTMENT_FLIP_Y) &&
-       (!E_CONTAINS(zx, ec->y, 1, ec->h, zx, zy, zw, zh)))
+       (!E_CONTAINS(zx, zy, zw, zh, zx, ec->y, 1, ec->h)))
      {
         int fy;
 
         fy = _apply_positioner_y(y, p, 1);
-        if (E_CONTAINS(zx, fy, 1, ec->h, zx, zy, zw, zh))
+        if (E_CONTAINS(zx, zy, zw, zh, zx, fy, 1, ec->h))
           ec->y = fy;
      }
    if (!CONSTRAINED(ec, ec->x, ec->y)) return;
 
    if ((p->constrain & ZXDG_POSITIONER_V6_CONSTRAINT_ADJUSTMENT_SLIDE_X) &&
-       (!E_CONTAINS(ec->x, zy, ec->w, 1, zx, zy, zw, zh)))
+       (!E_CONTAINS(zx, zy, zw, zh, ec->x, zy, ec->w, 1)))
      {
         int sx = ec->x;
 
@@ -783,12 +783,12 @@ _apply_positioner(E_Client *ec, Positioner *p)
              else if (ec->x + ec->w > zx + zw)
                sx = MAX(zx + zw - ec->w, ec->parent->x);
           }
-        if (E_CONTAINS(sx, zy, ec->w, 1, zx, zy, zw, zh))
+        if (E_CONTAINS(zx, zy, zw, zh, sx, zy, ec->w, 1))
           ec->x = sx;
      }
    if (!CONSTRAINED(ec, ec->x, ec->y)) return;
    if ((p->constrain & ZXDG_POSITIONER_V6_CONSTRAINT_ADJUSTMENT_SLIDE_Y) &&
-       (!E_CONTAINS(zx, ec->y, 1, ec->h, zx, zy, zw, zh)))
+       (!E_CONTAINS(zx, zy, zw, zh, zx, ec->y, 1, ec->h)))
      {
         int sy = ec->y;
 
@@ -806,20 +806,20 @@ _apply_positioner(E_Client *ec, Positioner *p)
              else if (ec->y + ec->h > zy + zh)
                sy = MAX(zy + zh - ec->h, ec->parent->y);
           }
-        if (E_CONTAINS(zx, sy, 1, ec->h, zx, zy, zw, zh))
+        if (E_CONTAINS(zx, zy, zw, zh, zx, sy, 1, ec->h))
           ec->y = sy;
      }
    if (!CONSTRAINED(ec, ec->x, ec->y)) return;
 
    if ((p->constrain & ZXDG_POSITIONER_V6_CONSTRAINT_ADJUSTMENT_RESIZE_X) &&
-       (!E_CONTAINS(ec->x, zy, ec->w, 1, zx, zy, zw, zh)))
+       (!E_CONTAINS(zx, zy, zw, zh, ec->x, zy, ec->w, 1)))
      {
         ec->w = zx + zw - ec->x;
         ec->changes.size = 1;
         if (!CONSTRAINED(ec, ec->x, ec->y)) return;
      }
    if ((p->constrain & ZXDG_POSITIONER_V6_CONSTRAINT_ADJUSTMENT_RESIZE_Y) &&
-       (!E_CONTAINS(zx, ec->y, 1, ec->h, zx, zy, zw, zh)))
+       (!E_CONTAINS(zx, zy, zw, zh, zx, ec->y, 1, ec->h)))
      {
         ec->h = zy + zh - ec->y;
         ec->changes.size = 1;
