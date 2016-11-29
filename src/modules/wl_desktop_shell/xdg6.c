@@ -659,7 +659,7 @@ _apply_positioner_x(int x, Positioner *p, Eina_Bool invert)
    if (grav & ZXDG_POSITIONER_V6_GRAVITY_LEFT)
      x -= p->size.w;
    /* center on anchor */
-   else if (!(an & ZXDG_POSITIONER_V6_GRAVITY_RIGHT))
+   else if (!(grav & ZXDG_POSITIONER_V6_GRAVITY_RIGHT))
      x -= p->size.w / 2;
    return x;
 }
@@ -701,7 +701,7 @@ _apply_positioner_y(int y, Positioner *p, Eina_Bool invert)
    if (grav & ZXDG_POSITIONER_V6_GRAVITY_TOP)
      y -= p->size.h;
    /* center on anchor */
-   else if (!(an & ZXDG_POSITIONER_V6_GRAVITY_BOTTOM))
+   else if (!(grav & ZXDG_POSITIONER_V6_GRAVITY_BOTTOM))
      y -= p->size.h / 2;
    return y;
 }
