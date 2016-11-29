@@ -1217,6 +1217,12 @@ _e_xdg_shell_surface_cb_destroy(struct wl_resource *resource)
 
    if (e_object_is_del(E_OBJECT(ec))) return;
 
+   if (ec->comp_data->shell.surface)
+     {
+        wl_resource_post_error(resource, ZXDG_SHELL_V6_ERROR_DEFUNCT_SURFACES, "shell surface destroyed before role surfaces");
+        e_shell_surface_cb_destroy(ec->comp_data->shell.surface);
+     }
+
    shd = ec->comp_data->shell.data;
    if (shd)
      ((v6_Shell_Data*)shd->shell)->surfaces = eina_list_remove(((v6_Shell_Data*)shd->shell)->surfaces, resource);
