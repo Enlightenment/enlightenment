@@ -246,7 +246,6 @@ _grid_icon_add(Instance *inst, Efreet_Desktop *desktop)
 {
    const char *path = NULL, *k = NULL;
    char buf[4096];
-   int len = 0;
    Icon *ic;
 
    ic = E_NEW(Icon, 1);
