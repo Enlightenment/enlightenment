@@ -24,19 +24,15 @@ e_shell_surface_destroy(struct wl_resource *resource)
         ec->comp_data->grab = 0;
      }
 
-   shd = ec->comp_data->shell.data;
 
+   if (resource == ec->comp_data->shell.surface)
+     ec->comp_data->shell.surface = NULL;
+   shd = ec->comp_data->shell.data;
    if (shd)
      {
         E_FREE_LIST(shd->pending, free);
-        if ((resource == ec->comp_data->shell.surface) || (resource == shd->surface))
-          {
-             if (ec->comp_data->shell.surface == resource)
-               ec->comp_data->shell.surface = NULL;
-             else
-               shd->surface = NULL;
-             E_FREE(ec->comp_data->shell.data);
-          }
+        if (resource == shd->surface)
+          E_FREE(ec->comp_data->shell.data);
      }
 
    if (ec->comp_data->mapped)
