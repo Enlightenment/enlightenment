@@ -594,6 +594,8 @@ _e_comp_wl_evas_cb_focus_in_timer(E_Client *ec)
    Eina_List *l;
    double t;
 
+   if (e_object_is_del(E_OBJECT(ec))) return EINA_FALSE;
+
    ec->comp_data->on_focus_timer = NULL;
 
    if (!e_comp_wl->kbd.focused) return EINA_FALSE;
