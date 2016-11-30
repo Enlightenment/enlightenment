@@ -3434,11 +3434,19 @@ e_comp_wl_client_is_grabbed(const E_Client *ec)
 static Eina_Bool
 _check_grab_coords(E_Client *ec, int x, int y)
 {
-   if (e_comp_object_coords_inside_input_area(ec->frame, x, y)) return EINA_TRUE;
-   while (ec->parent)
+   E_Client *tec, *pec;
+
+   E_CLIENT_REVERSE_FOREACH(tec)
      {
-        ec = ec->parent;
-        if (e_comp_object_coords_inside_input_area(ec->frame, x, y)) return EINA_TRUE;
+        if (!e_comp_object_coords_inside_input_area(tec->frame, x, y)) continue;
+        if (tec == ec) return EINA_TRUE;
+        pec = ec->parent;
+        while (pec)
+          {
+             if (tec == pec) return EINA_TRUE;
+             pec = pec->parent;
+          }
+        return EINA_FALSE;
      }
    return EINA_FALSE;
 }
