@@ -83,7 +83,7 @@ _gc_init(E_Gadcon *gc, const char *name, const char *id, const char *style)
 
    o = edje_object_add(gc->evas);
    e_theme_edje_object_set(o, "base/theme/modules/temperature",
-			   "e/modules/temperature/main");
+                           "e/modules/temperature/main");
 
    gcc = e_gadcon_client_new(gc, name, id, style, o);
    gcc->data = inst;
@@ -92,37 +92,13 @@ _gc_init(E_Gadcon *gc, const char *name, const char *id, const char *style)
    inst->o_temp = o;
    inst->module = temperature_config->module;
    inst->have_temp = EINA_FALSE;
-#ifdef HAVE_EEZE
-   if (inst->backend == TEMPGET)
-     {
-        inst->tempget_data_handler = 
-          ecore_event_handler_add(ECORE_EXE_EVENT_DATA,
-				  _temperature_cb_exe_data, inst);
-        inst->tempget_del_handler = 
-          ecore_event_handler_add(ECORE_EXE_EVENT_DEL,
-				  _temperature_cb_exe_del, inst);
-     }
-   else
-     {
-        eeze_init();
-        inst->temp_poller = 
-	  ecore_poller_add(ECORE_POLLER_CORE, inst->poll_interval, 
-			   temperature_udev_update_poll, inst);
-        temperature_udev_update(inst);
-     }
-#else 
-   inst->tempget_data_handler = 
-     ecore_event_handler_add(ECORE_EXE_EVENT_DATA,
-			     _temperature_cb_exe_data, inst);
-   inst->tempget_del_handler = 
-     ecore_event_handler_add(ECORE_EXE_EVENT_DEL,
-			     _temperature_cb_exe_del, inst);
+#ifdef HAVE_EEEZ_UDEV
+   eeze_init();
 #endif
-
    temperature_face_update_config(inst);
 
    evas_object_event_callback_add(o, EVAS_CALLBACK_MOUSE_DOWN,
-				  _temperature_face_cb_mouse_down, inst);
+                                  _temperature_face_cb_mouse_down, inst);
    return gcc;
 }
 
@@ -133,25 +109,7 @@ _gc_shutdown(E_Gadcon_Client *gcc)
 
    inst = gcc->data;
 
-   if (inst->tempget_exe)
-     {
-	ecore_exe_kill(inst->tempget_exe);
-	ecore_exe_free(inst->tempget_exe);
-	inst->tempget_exe = NULL;
-     }
-   if (inst->tempget_data_handler)
-     {
-        ecore_event_handler_del(inst->tempget_data_handler);
-        inst->tempget_data_handler = NULL;
-     }
-   if (inst->tempget_del_handler)
-     {
-	ecore_event_handler_del(inst->tempget_del_handler);
-	inst->tempget_del_handler = NULL;
-     }
 #ifdef HAVE_EEEZ_UDEV
-   if (inst->temp_poller)
-     ecore_poller_del(inst->temp_poller);
    eeze_shutdown();
 #endif
    if (inst->o_temp) evas_object_del(inst->o_temp);
@@ -181,7 +139,7 @@ _gc_icon(const E_Gadcon_Client_Class *client_class EINA_UNUSED, Evas *evas)
 
    o = edje_object_add(evas);
    snprintf(buf, sizeof(buf), "%s/e-module-temperature.edj",
-	    e_module_dir_get(temperature_config->module));
+            e_module_dir_get(temperature_config->module));
    edje_object_file_set(o, buf, "icon");
    return o;
 }
@@ -242,7 +200,7 @@ _temperature_face_cb_mouse_down(void *data, Evas *e EINA_UNUSED, Evas_Object *ob
      }
 }
 
-void
+static void
 _temperature_face_level_set(Config_Face *inst, double level)
 {
    Edje_Message_Float msg;
@@ -269,17 +227,9 @@ _temperature_face_shutdown(const Eina_Hash *hash EINA_UNUSED, const void *key EI
    Config_Face *inst;
 
    inst = hdata;
+   if (inst->th) ecore_thread_cancel(inst->th);
    if (inst->sensor_name) eina_stringshare_del(inst->sensor_name);
    if (inst->id) eina_stringshare_del(inst->id);
-#ifdef HAVE_EEZE
-   if (inst->tempdevs)
-     {
-        const char *s;
-
-        EINA_LIST_FREE(inst->tempdevs, s)
-          eina_stringshare_del(s);
-     }
-#endif
    E_FREE(inst);
    return EINA_TRUE;
 }
@@ -298,113 +248,105 @@ _temperature_face_id_max(const Eina_Hash *hash EINA_UNUSED, const void *key, voi
    return EINA_TRUE;
 }
 
-void 
-temperature_face_update_config(Config_Face *inst)
+static void
+_temprature_check_main(void *data, Ecore_Thread *th)
 {
-   char buf[8192];
+   Tempthread *tth = data;
+   int ptemp = -500, temp;
 
-   if (inst->tempget_exe)
+   for (;;)
      {
-        ecore_exe_kill(inst->tempget_exe);
-        ecore_exe_free(inst->tempget_exe);
-        inst->tempget_exe = NULL;
-     }
-
+        if (ecore_thread_check(th)) break;
+        temp = -999;
 #ifdef HAVE_EEZE
-   if (inst->backend == TEMPGET)
-     {
-        if (inst->temp_poller)
-          {
-             ecore_poller_del(inst->temp_poller);
-             inst->temp_poller = NULL;
-          }
-	if (!inst->tempget_exe) 
-	  {
-	     snprintf(buf, sizeof(buf),
-		      "exec %s/%s/tempget %i \"%s\" %i", 
-		      e_module_dir_get(temperature_config->module), MODULE_ARCH, 
-		      inst->sensor_type,
-		      (inst->sensor_name ? inst->sensor_name : "(null)"),
-		      inst->poll_interval);
-             inst->tempget_exe =
-               ecore_exe_pipe_run(buf, ECORE_EXE_PIPE_READ |
-                                  ECORE_EXE_PIPE_READ_LINE_BUFFERED |
-                                  ECORE_EXE_NOT_LEADER |
-                                  ECORE_EXE_TERM_WITH_PARENT, inst);
-	  }
-     }
-   else if (inst->backend == UDEV)
-     {
-	/*avoid creating a new poller if possible*/
-        if (inst->temp_poller)
-          ecore_poller_poller_interval_set(inst->temp_poller, 
-					   inst->poll_interval);
-        else 
-	  {
-	     inst->temp_poller = 
-	       ecore_poller_add(ECORE_POLLER_CORE, inst->poll_interval, 
-				temperature_udev_update_poll, inst);
-	  }
-     }
-#else
-   if (!inst->tempget_exe) 
-     {
-	snprintf(buf, sizeof(buf),
-		 "%s/%s/tempget %i \"%s\" %i", 
-		 e_module_dir_get(temperature_config->module), MODULE_ARCH, 
-		 inst->sensor_type,
-		 (inst->sensor_name ? inst->sensor_name : "(null)"),
-		 inst->poll_interval);
-        inst->tempget_exe =
-          ecore_exe_pipe_run(buf, ECORE_EXE_PIPE_READ |
-                             ECORE_EXE_PIPE_READ_LINE_BUFFERED |
-                             ECORE_EXE_NOT_LEADER |
-                             ECORE_EXE_TERM_WITH_PARENT, inst);
-     }
+        if (tth->udev) temp = temperature_udev_get(tth);
+        else
 #endif
+          temp = temperature_tempget_get(tth);
+
+        if (ptemp != temp) ecore_thread_feedback(th, (void *)((long)temp));
+        ptemp = temp;
+        usleep((1000000.0 / 8.0) * (double)tth->poll_interval);
+        if (ecore_thread_check(th)) break;
+     }
 }
 
-Eina_List *
-temperature_get_bus_files(const char *bus)
+static void
+_temprature_check_notify(void *data, Ecore_Thread *th, void *msg)
 {
-   Eina_List *result;
-   Eina_List *therms;
-   char path[PATH_MAX];
-   char busdir[PATH_MAX];
-   char *name;
+   Tempthread *tth  = data;
+   Config_Face *inst = tth->inst;
+   int temp = (int)((long)msg);
+   char buf[64];
 
-   result = NULL;
-
-   snprintf(busdir, sizeof(busdir), "/sys/bus/%s/devices", bus);
-   /* Look through all the devices for the given bus. */
-   therms = ecore_file_ls(busdir);
-
-   EINA_LIST_FREE(therms, name)
+   if (th != inst->th) return;
+   if (temp != -999)
      {
-        Eina_List *files;
-        char *file;
+        if (inst->units == FAHRENHEIT) temp = (temp * 9.0 / 5.0) + 32;
 
-        /* Search each device for temp*_input, these should be
-         * temperature devices. */
-        snprintf(path, sizeof(path), "%s/%s", busdir, name);
-        files = ecore_file_ls(path);
-        EINA_LIST_FREE(files, file)
+        if (!inst->have_temp)
           {
-             if ((!strncmp("temp", file, 4)) &&
-                 (!strcmp("_input", &file[strlen(file) - 6])))
-               {
-                  char *f;
-
-                  snprintf(path, sizeof(path),
-                           "%s/%s/%s", busdir, name, file);
-                  f = strdup(path);
-                  if (f) result = eina_list_append(result, f);
-               }
-             free(file);
+             /* enable therm object */
+             edje_object_signal_emit(inst->o_temp, "e,state,known", "");
+             inst->have_temp = EINA_TRUE;
           }
-        free(name);
+        if (inst->units == FAHRENHEIT)
+          snprintf(buf, sizeof(buf), "%i°F", temp);
+        else
+          snprintf(buf, sizeof(buf), "%i°C", temp);
+
+        _temperature_face_level_set(inst,
+                                    (double)(temp - inst->low) /
+                                    (double)(inst->high - inst->low));
+        edje_object_part_text_set(inst->o_temp, "e.text.reading", buf);
      }
-   return result;
+   else
+     {
+        if (inst->have_temp)
+          {
+             /* disable therm object */
+             edje_object_signal_emit(inst->o_temp, "e,state,unknown", "");
+             edje_object_part_text_set(inst->o_temp, "e.text.reading", "N/A");
+             _temperature_face_level_set(inst, 0.5);
+             inst->have_temp = EINA_FALSE;
+          }
+     }
+}
+
+static void
+_temprature_check_done(void *data, Ecore_Thread *th)
+{
+   Tempthread *tth  = data;
+   const char *s;
+
+   eina_stringshare_del(tth->sensor_name);
+   eina_stringshare_del(tth->sensor_path);
+   EINA_LIST_FREE(tth->tempdevs, s) eina_stringshare_del(s);
+   free(tth->extn);
+   free(tth);
+}
+
+void
+temperature_face_update_config(Config_Face *inst)
+{
+   Tempthread *tth;
+
+   if (inst->th) ecore_thread_cancel(inst->th);
+
+   tth = calloc(1, sizeof(Tempthread));
+   tth->poll_interval = inst->poll_interval;
+#ifdef HAVE_EEZE
+   if (inst->backend != TEMPGET) tth->udev = EINA_TRUE;
+#endif
+   tth->sensor_type = inst->sensor_type;
+   tth->inst = inst;
+   if (inst->sensor_name)
+     tth->sensor_name = eina_stringshare_add(inst->sensor_name);
+   inst->th = ecore_thread_feedback_run(_temprature_check_main,
+                                        _temprature_check_notify,
+                                        _temprature_check_done,
+                                        _temprature_check_done,
+                                        tth, EINA_TRUE);
 }
 
 /* module setup */

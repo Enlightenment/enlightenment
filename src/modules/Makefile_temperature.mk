@@ -22,14 +22,7 @@ if HAVE_EEZE
 src_modules_temperature_module_la_SOURCES += src/modules/temperature/e_mod_udev.c
 endif
 
-src_modules_temperature_tempgetdir = $(temperaturepkgdir)
-src_modules_temperature_tempget_PROGRAMS = src/modules/temperature/tempget
-
-src_modules_temperature_tempget_CPPFLAGS = $(MOD_CPPFLAGS)
-src_modules_temperature_tempget_LDADD = $(MOD_LIBS)
-src_modules_temperature_tempget_SOURCES = src/modules/temperature/tempget.c
-
 PHONIES += temperature install-temperature
-temperature: $(temperaturepkg_LTLIBRARIES) $(temperature_DATA) $(src_modules_temperature_tempget_PROGRAMS)
-install-temperature: install-temperatureDATA install-temperaturepkgLTLIBRARIES install-src_modules_temperature_tempgetPROGRAMS
+temperature: $(temperaturepkg_LTLIBRARIES) $(temperature_DATA)
+install-temperature: install-temperatureDATA install-temperaturepkgLTLIBRARIES
 endif

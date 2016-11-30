@@ -26,6 +26,7 @@ typedef enum _Sensor_Type
 
 typedef struct _Config Config;
 typedef struct _Config_Face Config_Face;
+typedef struct _Tempthread Tempthread;
 
 typedef enum _Unit
 {
@@ -33,36 +34,43 @@ typedef enum _Unit
    FAHRENHEIT
 } Unit;
 
+struct _Tempthread
+{
+   Config_Face *inst;
+   int poll_interval;
+   Sensor_Type sensor_type;
+   const char *sensor_name;
+   const char *sensor_path;
+   void *extn;
+#ifdef HAVE_EEZE
+   Eina_List *tempdevs;
+   Eina_Bool udev : 1;
+#endif
+   Eina_Bool initted : 1;
+};
+
 struct _Config_Face
 {
    const char *id;
    /* saved * loaded config values */
    int poll_interval;
    int low, high;
-#ifdef HAVE_EEZE
-   Eina_List *tempdevs;
-   int backend;
-   Ecore_Poller *temp_poller;
-#endif
    int sensor_type;
    const char *sensor_name;
    Unit units;
    /* config state */
    E_Gadcon_Client *gcc;
    Evas_Object *o_temp;
-
+#ifdef HAVE_EEZE
+   int backend;
+#endif
    E_Module *module;
 
    E_Config_Dialog *config_dialog;
    E_Menu *menu;
-   Ecore_Exe *tempget_exe;
-   Ecore_Event_Handler *tempget_data_handler;
-   Ecore_Event_Handler *tempget_del_handler;
+   Ecore_Thread *th;
 
    Eina_Bool have_temp:1;
-#if defined (__FreeBSD__) || defined (__OpenBSD__)
-   int mib[5];
-#endif
 };
 
 struct _Config
@@ -80,8 +88,7 @@ typedef enum _Backend
    UDEV
 } Backend;
 
-Eina_Bool temperature_udev_update_poll(void *data);
-void temperature_udev_update(void *data);
+int temperature_udev_get(Tempthread *tth);
 #endif
 
 E_API extern E_Module_Api e_modapi;
@@ -90,12 +97,10 @@ E_API void *e_modapi_init(E_Module *m);
 E_API int e_modapi_shutdown(E_Module *m);
 E_API int e_modapi_save(E_Module *m);
 
-Eina_Bool _temperature_cb_exe_data(void *data, int type, void *event);
-Eina_Bool _temperature_cb_exe_del(void *data, int type, void *event);
-void _temperature_face_level_set(Config_Face *inst, double level);
 void config_temperature_module(Config_Face *inst);
 void temperature_face_update_config(Config_Face *inst);
-Eina_List *temperature_get_bus_files(const char* bus);
+
+int temperature_tempget_get(Tempthread *tth);
 
 /**
  * @addtogroup Optional_Gadgets
