@@ -679,14 +679,12 @@ static void
 _e_comp_wl_keyboard_leave(E_Client *ec)
 {
    struct wl_resource *res;
-   struct wl_client *wc;
    Eina_List *l, *ll;
    uint32_t serial, *k;
    double t;
 
    if (!eina_list_count(e_comp_wl->kbd.resources)) return;
    if (!ec->comp_data) return;
-   if (!ec->comp_data->surface) return;
 
    if (ec->comp_data->is_xdg_surface)
      {
@@ -701,16 +699,15 @@ _e_comp_wl_keyboard_leave(E_Client *ec)
         while (ec->parent) ec = ec->parent;
      }
 
-   wc = wl_resource_get_client(ec->comp_data->surface);
    serial = wl_display_next_serial(e_comp_wl->wl.disp);
    t = ecore_time_unix_get();
    EINA_LIST_FOREACH_SAFE(e_comp_wl->kbd.focused, l, ll, res)
      {
-        if (wl_resource_get_client(res) != wc) continue;
         wl_array_for_each(k, &e_comp_wl->kbd.keys)
           wl_keyboard_send_key(res, serial, t,
                                *k, WL_KEYBOARD_KEY_STATE_RELEASED);
-        wl_keyboard_send_leave(res, serial, ec->comp_data->surface);
+        if (ec->comp_data->surface)
+          wl_keyboard_send_leave(res, serial, ec->comp_data->surface);
         e_comp_wl->kbd.focused = eina_list_remove_list(e_comp_wl->kbd.focused, l);
      }
 }
