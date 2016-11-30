@@ -3447,6 +3447,8 @@ E_API Eina_Bool
 e_comp_wl_grab_client_mouse_move(const Ecore_Event_Mouse_Move *ev)
 {
    E_Client *ec;
+   Evas_Object *o;
+
    if (e_comp->comp_type != E_PIXMAP_TYPE_WL) return ECORE_CALLBACK_RENEW;
    ec = e_client_focused_get();
    if (!ec) return ECORE_CALLBACK_RENEW;
@@ -3455,7 +3457,8 @@ e_comp_wl_grab_client_mouse_move(const Ecore_Event_Mouse_Move *ev)
    /* reject mouse moves from outside the popup */
    if (_check_grab_coords(ec, ev->x, ev->y)) return ECORE_CALLBACK_RENEW;
    /* manually move the pointer since we're about to block the event globally */
-   evas_object_move(e_comp->pointer->o_ptr, ev->x, ev->y);
+   ecore_evas_cursor_get(e_comp->ee, &o, NULL, NULL, NULL);
+   evas_object_move(o, ev->x, ev->y);
    return ECORE_CALLBACK_DONE;
 }
 
