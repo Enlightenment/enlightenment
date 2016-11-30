@@ -334,7 +334,7 @@ _xdg_shell_surface_send_configure(struct wl_resource *resource, Eina_Bool fullsc
      {
         if (maximized)
           pending |= STATE_MAXIMIZED;
-        else if (ec->maximized)
+        else if (ec->maximized || ec->comp_data->unmax)
           pending |= STATE_UNMAXIMIZED;
      }
    shd->maximized = maximized;
@@ -479,13 +479,15 @@ _e_xdg_surface_cb_ack_configure(struct wl_client *client EINA_UNUSED, struct wl_
           {
              ec->comp_data->shell.set.maximize = 1;
              ec->comp_data->shell.set.unmaximize = 0;
-             ec->comp_data->max = (e_config->maximize_policy & E_MAXIMIZE_TYPE) | E_MAXIMIZE_BOTH;
+             if (!ec->comp_data->max)
+               ec->comp_data->max = (e_config->maximize_policy & E_MAXIMIZE_TYPE) | E_MAXIMIZE_BOTH;
           }
         if (ps->state & STATE_UNMAXIMIZED)
           {
              ec->comp_data->shell.set.unmaximize = 1;
              ec->comp_data->shell.set.maximize = 0;
-             ec->comp_data->unmax = (e_config->maximize_policy & E_MAXIMIZE_TYPE) | E_MAXIMIZE_BOTH;
+             if (!ec->comp_data->unmax)
+               ec->comp_data->unmax = (e_config->maximize_policy & E_MAXIMIZE_TYPE) | E_MAXIMIZE_BOTH;
           }
         shd->pending = eina_list_remove_list(shd->pending, l);
         free(ps);
