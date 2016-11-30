@@ -1336,11 +1336,14 @@ _e_xdg_shell_cb_unbind(struct wl_resource *resource)
         E_Client *ec = wl_resource_get_user_data(res);
         E_Shell_Data *shd;
 
-        if (ec->comp_data->shell.surface)
-          e_shell_surface_cb_destroy(ec->comp_data->shell.surface);
-        shd = ec->comp_data->shell.data;
-        if (shd)
-          e_shell_surface_cb_destroy(shd->surface);
+        if (!e_object_is_del(E_OBJECT(ec)))
+          {
+             if (ec->comp_data->shell.surface)
+               e_shell_surface_cb_destroy(ec->comp_data->shell.surface);
+             shd = ec->comp_data->shell.data;
+             if (shd)
+               e_shell_surface_cb_destroy(shd->surface);
+          }
         v->surfaces = eina_list_remove_list(v->surfaces, l);
      }
 
