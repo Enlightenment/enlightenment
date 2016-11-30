@@ -52,6 +52,8 @@ _parent_client_contains_pointer(E_Client *ec)
 
    while (top->parent) top = top->parent;
 
+   if (top == ec) return EINA_FALSE;
+
    if (top->mouse.in) return EINA_TRUE;
 
    EINA_LIST_FOREACH(top->comp_data->sub.list, l, c)
