@@ -3486,5 +3486,7 @@ e_comp_wl_grab_client_mouse_button(const Ecore_Event_Mouse_Button *ev)
    e_comp_wl_grab_client_del(ec, 1);
    while (grab_clients)
      e_comp_wl_grab_client_del(eina_list_last_data_get(grab_clients), 1);
+   evas_event_feed_mouse_move(e_comp->evas, ev->x, ev->y, 0, NULL);
+   e_comp_canvas_feed_mouse_up(0);
    return ECORE_CALLBACK_DONE;
 }
