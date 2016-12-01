@@ -16,7 +16,8 @@ e_shell_surface_destroy(struct wl_resource *resource)
    /* get the client for this resource */
    ec = wl_resource_get_user_data(resource);
    if (!ec) return;
-   if (e_object_is_del(E_OBJECT(ec))) return;
+   /* client may be passed here during DEL hook */
+   if (!ec->comp_data) return;
 
    if (ec->comp_data->grab)
      {
@@ -141,6 +142,16 @@ e_shell_surface_mouse_down_helper(E_Client *ec, E_Binding_Event_Mouse_Button *ev
      }
 
    e_focus_event_mouse_down(ec);
+}
+
+EINTERN E_Shell_Data *
+e_shell_data_new(unsigned int version)
+{
+   E_Shell_Data *shd;
+
+   shd = E_NEW(E_Shell_Data, 1);
+   shd->version = version;
+   return shd;
 }
 
 E_API E_Module_Api e_modapi = { E_MODULE_API_VERSION, "Wl_Desktop_Shell" };

@@ -1266,7 +1266,7 @@ _e_xdg_shell_cb_surface_get(struct wl_client *client, struct wl_resource *resour
                                "Client already has XDG shell surface");
         return;
      }
-   shd = cdata->shell.data = E_NEW(E_Shell_Data, 1);
+   shd = cdata->shell.data = e_shell_data_new(6);
    shd->width = shd->height = -1;
 
    /* try to create a shell surface */
@@ -1321,6 +1321,19 @@ static const struct zxdg_shell_v6_interface _e_xdg_shell_interface =
 };
 
 static void
+_xdg6_client_destroy(E_Client *ec)
+{
+   E_Shell_Data *shd;
+
+   shd = ec->comp_data->shell.data;
+   if (shd && (shd->version != 6)) return;
+   if (ec->comp_data->shell.surface)
+     e_shell_surface_cb_destroy(ec->comp_data->shell.surface);
+   if (shd)
+     e_shell_surface_cb_destroy(shd->surface);
+}
+
+static void
 _e_xdg_shell_cb_unbind(struct wl_resource *resource)
 {
    v6_Shell_Data *v;
@@ -1334,16 +1347,9 @@ _e_xdg_shell_cb_unbind(struct wl_resource *resource)
    EINA_LIST_REVERSE_FOREACH_SAFE(v->surfaces, l, ll, res)
      {
         E_Client *ec = wl_resource_get_user_data(res);
-        E_Shell_Data *shd;
 
         if (!e_object_is_del(E_OBJECT(ec)))
-          {
-             if (ec->comp_data->shell.surface)
-               e_shell_surface_cb_destroy(ec->comp_data->shell.surface);
-             shd = ec->comp_data->shell.data;
-             if (shd)
-               e_shell_surface_cb_destroy(shd->surface);
-          }
+          _xdg6_client_destroy(ec);
         v->surfaces = eina_list_remove_list(v->surfaces, l);
      }
 
@@ -1374,6 +1380,12 @@ _e_xdg_shell_cb_bind(struct wl_client *client, void *data EINA_UNUSED, uint32_t 
                                   v, _e_xdg_shell_cb_unbind);
 }
 
+static void
+_xdg6_client_hook_del(void *d EINA_UNUSED, E_Client *ec)
+{
+   _xdg6_client_destroy(ec);
+}
+
 EINTERN Eina_Bool
 e_xdg_shell_v6_init(void)
 {
@@ -1384,5 +1396,6 @@ e_xdg_shell_v6_init(void)
         ERR("Could not create xdg_shell global");
         return EINA_FALSE;
      }
+   e_client_hook_add(E_CLIENT_HOOK_DEL, _xdg6_client_hook_del, NULL);
    return EINA_TRUE;
 }

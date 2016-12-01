@@ -686,7 +686,7 @@ _e_xdg_shell_cb_surface_get(struct wl_client *client, struct wl_resource *resour
    cdata->shell.ping = _e_xdg_shell_surface_ping;
    cdata->shell.map = _e_xdg_shell_surface_map;
    cdata->shell.unmap = _e_xdg_shell_surface_unmap;
-   cdata->shell.data = E_NEW(E_Shell_Data, 1);
+   cdata->shell.data = e_shell_data_new(5);
    cdata->is_xdg_surface = EINA_TRUE;
 
    /* set toplevel client properties */
@@ -776,7 +776,7 @@ _e_xdg_shell_cb_popup_get(struct wl_client *client, struct wl_resource *resource
    cdata->shell.ping = _e_xdg_shell_surface_ping;
    cdata->shell.map = _e_xdg_shell_surface_map;
    cdata->shell.unmap = _e_xdg_shell_surface_unmap;
-   cdata->shell.data = E_NEW(E_Shell_Data, 1);
+   cdata->shell.data = e_shell_data_new(5);
    cdata->is_xdg_surface = EINA_TRUE;
 
    if (!ec->internal)
@@ -878,6 +878,16 @@ _e_xdg_shell_cb_bind(struct wl_client *client, void *data EINA_UNUSED, uint32_t 
                               NULL, NULL);
 }
 
+static void
+_xdg5_client_hook_del(void *d EINA_UNUSED, E_Client *ec)
+{
+   E_Shell_Data *shd = ec->comp_data->shell.data;
+
+   if (shd && (shd->version != 5)) return;
+   if (ec->comp_data->shell.surface)
+     e_shell_surface_cb_destroy(ec->comp_data->shell.surface);
+}
+
 EINTERN Eina_Bool
 e_xdg_shell_v5_init(void)
 {
@@ -888,5 +898,6 @@ e_xdg_shell_v5_init(void)
         ERR("Could not create xdg_shell global");
         return EINA_FALSE;
      }
+   e_client_hook_add(E_CLIENT_HOOK_DEL, _xdg5_client_hook_del, NULL);
    return EINA_TRUE;
 }
