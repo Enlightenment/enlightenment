@@ -32,7 +32,7 @@ e_shell_surface_destroy(struct wl_resource *resource)
    if (shd)
      {
         E_FREE_LIST(shd->pending, free);
-        if (resource == shd->surface)
+        if ((resource == shd->surface) || (!shd->surface))
           E_FREE(ec->comp_data->shell.data);
      }
 
