@@ -811,12 +811,15 @@ _apply_positioner(E_Client *ec, Positioner *p)
         if (E_CONTAINS(zx, zy, zw, zh, zx, sy, 1, ec->h))
           ec->y = sy;
      }
+#if 0
+//resize_x/y is stupid so we're not going to do it
    if (!CONSTRAINED(ec, ec->x, ec->y)) return;
 
    if ((p->constrain & ZXDG_POSITIONER_V6_CONSTRAINT_ADJUSTMENT_RESIZE_X) &&
        (!E_CONTAINS(zx, zy, zw, zh, ec->x, zy, ec->w, 1)))
      {
         ec->w = zx + zw - ec->x;
+        e_client_resize_limit(ec, &ec->w, &ec->h);
         ec->changes.size = 1;
         if (!CONSTRAINED(ec, ec->x, ec->y)) return;
      }
@@ -824,8 +827,10 @@ _apply_positioner(E_Client *ec, Positioner *p)
        (!E_CONTAINS(zx, zy, zw, zh, zx, ec->y, 1, ec->h)))
      {
         ec->h = zy + zh - ec->y;
+        e_client_resize_limit(ec, &ec->w, &ec->h);
         ec->changes.size = 1;
      }
+#endif
 }
 
 static void
