@@ -314,7 +314,7 @@ _temprature_check_notify(void *data, Ecore_Thread *th, void *msg)
 }
 
 static void
-_temprature_check_done(void *data, Ecore_Thread *th)
+_temprature_check_done(void *data, Ecore_Thread *th EINA_UNUSED)
 {
    Tempthread *tth  = data;
    const char *s;
