@@ -1325,6 +1325,7 @@ _xdg6_client_destroy(E_Client *ec)
 {
    E_Shell_Data *shd;
 
+   if (!ec->comp_data) return;
    shd = ec->comp_data->shell.data;
    if (shd && (shd->version != 6)) return;
    if (ec->comp_data->shell.surface)
