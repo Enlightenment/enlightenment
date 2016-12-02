@@ -741,6 +741,9 @@ _bar_icon_preview_show(void *data)
    if (!eina_list_count(ic->execs) && !eina_list_count(ic->clients))
      return EINA_FALSE;
 
+   if (ic->preview)
+     elm_popup_dismiss(ic->preview);
+
    ic->preview = elm_ctxpopup_add(e_comp->elm);
    elm_object_style_set(ic->preview, "noblock");
    evas_object_size_hint_min_set(ic->preview, ic->inst->size, ic->inst->size);
