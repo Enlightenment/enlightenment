@@ -284,6 +284,7 @@ _pager_recalc(void *data)
    int w, h, zw, zh, w2, h2;
 
    p->recalc = NULL;
+   if (!p->zone) return;
    zw = p->zone->w; zh = p->zone->h;
    pd = eina_list_data_get(p->desks);
    if (!pd) return;
