@@ -74,6 +74,7 @@ _e_comp_wl_input_pointer_cb_cursor_set(struct wl_client *client, struct wl_resou
      {
         ec->comp_data->cursor = ec->re_manage = 1;
         ec->ignored = 0;
+        evas_object_layer_set(ec->frame, E_LAYER_CLIENT_PRIO);
 
         ec->lock_focus_out = ec->layer_block = ec->visible = ec->override = 1;
         ec->icccm.title = eina_stringshare_add("noshadow");
