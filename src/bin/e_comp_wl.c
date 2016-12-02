@@ -595,19 +595,12 @@ _e_comp_wl_client_priority_normal(E_Client *ec)
 static Eina_Bool
 _e_comp_wl_evas_cb_focus_in_timer(E_Client *ec)
 {
-   uint32_t serial, *k;
-   struct wl_resource *res;
-   Eina_List *l;
-   double t;
-
    if (e_object_is_del(E_OBJECT(ec))) return EINA_FALSE;
 
    ec->comp_data->on_focus_timer = NULL;
 
    if (!e_comp_wl->kbd.focused) return EINA_FALSE;
    e_comp_wl_input_keyboard_modifiers_update();
-   serial = wl_display_next_serial(e_comp_wl->wl.disp);
-   t = ecore_time_unix_get();
    return EINA_FALSE;
 }
 
@@ -676,8 +669,7 @@ _e_comp_wl_keyboard_leave(E_Client *ec)
 {
    struct wl_resource *res;
    Eina_List *l, *ll;
-   uint32_t serial, *k;
-   double t;
+   uint32_t serial;
 
    if (!eina_list_count(e_comp_wl->kbd.resources)) return;
    if (!ec->comp_data) return;
@@ -696,7 +688,7 @@ _e_comp_wl_keyboard_leave(E_Client *ec)
      }
 
    serial = wl_display_next_serial(e_comp_wl->wl.disp);
-   t = ecore_time_unix_get();
+
    EINA_LIST_FOREACH_SAFE(e_comp_wl->kbd.focused, l, ll, res)
      {
         if (ec->comp_data->surface)
