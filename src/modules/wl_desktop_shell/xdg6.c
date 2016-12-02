@@ -624,6 +624,10 @@ _e_xdg_toplevel_cb_minimized_set(struct wl_client *client EINA_UNUSED, struct wl
    ec->comp_data->shell.set.minimize = 1;
 }
 
+
+#define CONSTRAINED(EC, X, Y) \
+   !E_CONTAINS(zx, zy, zw, zh, (X), (Y), (EC)->w, (EC)->h)
+
 static int
 _apply_positioner_x(int x, Positioner *p, Eina_Bool invert)
 {
@@ -708,6 +712,57 @@ _apply_positioner_y(int y, Positioner *p, Eina_Bool invert)
    return y;
 }
 
+static Eina_Bool
+_apply_positioner_slide(E_Client *ec, Positioner *p, int zx, int zy, int zw, int zh)
+{
+   if ((p->constrain & ZXDG_POSITIONER_V6_CONSTRAINT_ADJUSTMENT_SLIDE_X) &&
+       (!E_CONTAINS(zx, zy, zw, zh, ec->x, zy, ec->w, 1)))
+     {
+        int sx = ec->x;
+
+        if (p->gravity & ZXDG_POSITIONER_V6_GRAVITY_LEFT)
+          {
+             if (ec->x + ec->w > zx + zw)
+               sx = MAX(zx + zw - ec->w, ec->parent->x + p->anchor_rect.x - ec->w);
+             else if (ec->x < zx)
+               sx = MIN(zx, ec->parent->x + p->anchor_rect.x + p->anchor_rect.w);
+          }
+        else if (p->gravity & ZXDG_POSITIONER_V6_GRAVITY_RIGHT)
+          {
+             if (ec->x < zx)
+               sx = MIN(zx, ec->parent->x + p->anchor_rect.x + p->anchor_rect.w);
+             else if (ec->x + ec->w > zx + zw)
+               sx = MAX(zx + zw - ec->w, ec->parent->x + p->anchor_rect.x - ec->w);
+          }
+        if (E_CONTAINS(zx, zy, zw, zh, sx, zy, ec->w, 1))
+          ec->x = sx;
+     }
+   if (!CONSTRAINED(ec, ec->x, ec->y)) return EINA_TRUE;
+   if ((p->constrain & ZXDG_POSITIONER_V6_CONSTRAINT_ADJUSTMENT_SLIDE_Y) &&
+       (!E_CONTAINS(zx, zy, zw, zh, zx, ec->y, 1, ec->h)))
+     {
+        int sy = ec->y;
+
+        if (p->gravity & ZXDG_POSITIONER_V6_GRAVITY_TOP)
+          {
+             if (ec->y + ec->h > zy + zh)
+               sy = MAX(zy + zh - ec->h, ec->parent->y + p->anchor_rect.y - ec->h);
+             else if (ec->y < zy)
+               sy = MIN(zy, ec->parent->y + p->anchor_rect.y + p->anchor_rect.h);
+          }
+        else if (p->gravity & ZXDG_POSITIONER_V6_GRAVITY_BOTTOM)
+          {
+             if (ec->y < zy)
+               sy = MIN(zy, ec->parent->y + p->anchor_rect.y + p->anchor_rect.h);
+             else if (ec->y + ec->h > zy + zh)
+               sy = MAX(zy + zh - ec->h, ec->parent->y + p->anchor_rect.y - ec->h);
+          }
+        if (E_CONTAINS(zx, zy, zw, zh, zx, sy, 1, ec->h))
+          ec->y = sy;
+     }
+   return !CONSTRAINED(ec, ec->x, ec->y);
+}
+
 static void
 _apply_positioner(E_Client *ec, Positioner *p)
 {
@@ -734,9 +789,6 @@ _apply_positioner(E_Client *ec, Positioner *p)
    ec->y = _apply_positioner_y(ec->y, p, 0);
 
    e_zone_useful_geometry_get(ec->parent->zone, &zx, &zy, &zw, &zh);
-
-#define CONSTRAINED(EC, X, Y) \
-   !E_CONTAINS(zx, zy, zw, zh, (X), (Y), (EC)->w, (EC)->h)
 
    if (!CONSTRAINED(ec, ec->x, ec->y)) return;
 
@@ -765,52 +817,9 @@ _apply_positioner(E_Client *ec, Positioner *p)
           ec->y = fy;
      }
    if (!CONSTRAINED(ec, ec->x, ec->y)) return;
+   if (_apply_positioner_slide(ec, p, zx, zy, zw, zh)) return;
+   _apply_positioner_slide(ec, p, ec->zone->x, ec->zone->y, ec->zone->w, ec->zone->h);
 
-   if ((p->constrain & ZXDG_POSITIONER_V6_CONSTRAINT_ADJUSTMENT_SLIDE_X) &&
-       (!E_CONTAINS(zx, zy, zw, zh, ec->x, zy, ec->w, 1)))
-     {
-        int sx = ec->x;
-
-        if (p->gravity & ZXDG_POSITIONER_V6_GRAVITY_LEFT)
-          {
-             if (ec->x + ec->w > zx + zw)
-               sx = MAX(zx + zw - ec->w, ec->parent->x);
-             else if (ec->x + ec->w < zx)
-               sx = zx;
-          }
-        else if (p->gravity & ZXDG_POSITIONER_V6_GRAVITY_RIGHT)
-          {
-             if (ec->x + ec->w < zx)
-               sx = zx;
-             else if (ec->x + ec->w > zx + zw)
-               sx = MAX(zx + zw - ec->w, ec->parent->x);
-          }
-        if (E_CONTAINS(zx, zy, zw, zh, sx, zy, ec->w, 1))
-          ec->x = sx;
-     }
-   if (!CONSTRAINED(ec, ec->x, ec->y)) return;
-   if ((p->constrain & ZXDG_POSITIONER_V6_CONSTRAINT_ADJUSTMENT_SLIDE_Y) &&
-       (!E_CONTAINS(zx, zy, zw, zh, zx, ec->y, 1, ec->h)))
-     {
-        int sy = ec->y;
-
-        if (p->gravity & ZXDG_POSITIONER_V6_GRAVITY_TOP)
-          {
-             if (ec->y + ec->h > zy + zh)
-               sy = MAX(zy + zh - ec->h, ec->parent->y);
-             else if (ec->y + ec->h < zy)
-               sy = zy;
-          }
-        else if (p->gravity & ZXDG_POSITIONER_V6_GRAVITY_BOTTOM)
-          {
-             if (ec->y + ec->h < zy)
-               sy = zy;
-             else if (ec->y + ec->h > zy + zh)
-               sy = MAX(zy + zh - ec->h, ec->parent->y);
-          }
-        if (E_CONTAINS(zx, zy, zw, zh, zx, sy, 1, ec->h))
-          ec->y = sy;
-     }
 #if 0
 //resize_x/y is stupid so we're not going to do it
    if (!CONSTRAINED(ec, ec->x, ec->y)) return;
