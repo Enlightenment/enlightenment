@@ -321,7 +321,9 @@ _temprature_check_done(void *data, Ecore_Thread *th)
 
    eina_stringshare_del(tth->sensor_name);
    eina_stringshare_del(tth->sensor_path);
+#ifdef HAVE_EEZE
    EINA_LIST_FREE(tth->tempdevs, s) eina_stringshare_del(s);
+#endif
    free(tth->extn);
    free(tth);
 }
