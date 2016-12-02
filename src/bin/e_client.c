@@ -1399,7 +1399,8 @@ _e_client_cb_evas_hide(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UN
    if (e_object_is_del(data)) return; //client is about to die
    _e_client_mouse_action_end(ec);
    if (action_client == ec) _e_client_action_finish();
-   e_pointer_type_pop(e_comp->pointer, ec, NULL);
+   if (!evas_object_pass_events_get(ec->frame))
+     e_pointer_type_pop(e_comp->pointer, ec, NULL);
 
    if (!ec->hidden)
      {
