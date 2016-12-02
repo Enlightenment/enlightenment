@@ -1325,6 +1325,9 @@ _xdg6_client_destroy(E_Client *ec)
 {
    E_Shell_Data *shd;
 
+   /* make sure this is a wayland client */
+   if (e_pixmap_type_get(ec->pixmap) != E_PIXMAP_TYPE_WL) return;
+
    shd = ec->comp_data->shell.data;
    if (shd && (shd->version != 6)) return;
    if (ec->comp_data->shell.surface)

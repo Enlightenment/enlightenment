@@ -881,9 +881,13 @@ _e_xdg_shell_cb_bind(struct wl_client *client, void *data EINA_UNUSED, uint32_t 
 static void
 _xdg5_client_hook_del(void *d EINA_UNUSED, E_Client *ec)
 {
-   E_Shell_Data *shd = ec->comp_data->shell.data;
+   E_Shell_Data *shd;
 
-   if (shd && (shd->version != 5)) return;
+   /* make sure this is a wayland client */
+   if (e_pixmap_type_get(ec->pixmap) != E_PIXMAP_TYPE_WL) return;
+
+   shd = ec->comp_data->shell.data;
+     if (shd && (shd->version != 5)) return;
    if (ec->comp_data->shell.surface)
      e_shell_surface_cb_destroy(ec->comp_data->shell.surface);
 }
