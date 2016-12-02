@@ -93,7 +93,7 @@ init(Tempthread *tth)
 #ifdef __OpenBSD__
    int dev, numt;
    struct sensordev snsrdev;
-   c size_t sdlen = sizeof(snsrdev);
+   size_t sdlen = sizeof(snsrdev);
 #endif
 #if defined (__FreeBSD__) || defined(__DragonFly__)
    unsigned i;
@@ -143,14 +143,14 @@ init(Tempthread *tth)
                }
              if (strcmp(snsrdev.xname, "cpu0") == 0)
                {
-                  sensor_type = SENSOR_TYPE_OPENBSD;
-                  sensor_name = strdup("cpu0");
+                  tth->sensor_type = SENSOR_TYPE_OPENBSD;
+                  tth->sensor_name = strdup("cpu0");
                   break;
                }
              else if (strcmp(snsrdev.xname, "km0") == 0)
                {
-                  sensor_type = SENSOR_TYPE_OPENBSD;
-                  sensor_name = strdup("km0");
+                  tth->sensor_type = SENSOR_TYPE_OPENBSD;
+                  tth->sensor_name = strdup("km0");
                   break;
                }
           }
