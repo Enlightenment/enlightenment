@@ -47,6 +47,81 @@ static int uuid = 0;
 
 static Config *temperature_config = NULL;
 
+static void
+_temperature_thread_free(Tempthread *tth)
+{
+   const char *s;
+
+   eina_stringshare_del(tth->sensor_name);
+   eina_stringshare_del(tth->sensor_path);
+#ifdef HAVE_EEZE
+   EINA_LIST_FREE(tth->tempdevs, s) eina_stringshare_del(s);
+#endif
+   free(tth->extn);
+   free(tth);
+}
+
+static void
+_temperature_face_level_set(Config_Face *inst, double level)
+{
+   Edje_Message_Float msg;
+
+   if (level < 0.0) level = 0.0;
+   else if (level > 1.0) level = 1.0;
+   msg.val = level;
+   edje_object_message_send(inst->o_temp, EDJE_MESSAGE_FLOAT, 1, &msg);
+}
+
+static void
+_temperature_apply(Config_Face *inst, int temp)
+{
+   char buf[64];
+
+   if (temp != -999)
+     {
+        if (inst->units == FAHRENHEIT) temp = (temp * 9.0 / 5.0) + 32;
+
+        if (!inst->have_temp)
+          {
+             /* enable therm object */
+             edje_object_signal_emit(inst->o_temp, "e,state,known", "");
+             inst->have_temp = EINA_TRUE;
+          }
+        if (inst->units == FAHRENHEIT)
+          snprintf(buf, sizeof(buf), "%i°F", temp);
+        else
+          snprintf(buf, sizeof(buf), "%i°C", temp);
+
+        _temperature_face_level_set(inst,
+                                    (double)(temp - inst->low) /
+                                    (double)(inst->high - inst->low));
+        edje_object_part_text_set(inst->o_temp, "e.text.reading", buf);
+     }
+   else
+     {
+        if (inst->have_temp)
+          {
+             /* disable therm object */
+             edje_object_signal_emit(inst->o_temp, "e,state,unknown", "");
+             edje_object_part_text_set(inst->o_temp, "e.text.reading", "N/A");
+             _temperature_face_level_set(inst, 0.5);
+             inst->have_temp = EINA_FALSE;
+          }
+     }
+}
+
+#ifdef HAVE_EEZE
+static Eina_Bool
+_temprature_udev_poll(void *data)
+{
+   Tempthread *tth = data;
+   int temp = temperature_udev_get(tth);
+
+   _temperature_apply(tth->inst, temp);
+   return EINA_TRUE;
+}
+#endif
+
 static E_Gadcon_Client *
 _gc_init(E_Gadcon *gc, const char *name, const char *id, const char *style)
 {
@@ -201,17 +276,6 @@ _temperature_face_cb_mouse_down(void *data, Evas *e EINA_UNUSED, Evas_Object *ob
 }
 
 static void
-_temperature_face_level_set(Config_Face *inst, double level)
-{
-   Edje_Message_Float msg;
-
-   if (level < 0.0) level = 0.0;
-   else if (level > 1.0) level = 1.0;
-   msg.val = level;
-   edje_object_message_send(inst->o_temp, EDJE_MESSAGE_FLOAT, 1, &msg);
-}
-
-static void
 _temperature_face_cb_menu_configure(void *data, E_Menu *m EINA_UNUSED, E_Menu_Item *mi EINA_UNUSED)
 {
    Config_Face *inst;
@@ -230,6 +294,13 @@ _temperature_face_shutdown(const Eina_Hash *hash EINA_UNUSED, const void *key EI
    if (inst->th) ecore_thread_cancel(inst->th);
    if (inst->sensor_name) eina_stringshare_del(inst->sensor_name);
    if (inst->id) eina_stringshare_del(inst->id);
+#ifdef HAVE_EEZE
+   if (inst->poller)
+     {
+        ecore_poller_del(inst->poller);
+        _temperature_thread_free(inst->tth);
+     }
+#endif
    E_FREE(inst);
    return EINA_TRUE;
 }
@@ -257,13 +328,7 @@ _temprature_check_main(void *data, Ecore_Thread *th)
    for (;;)
      {
         if (ecore_thread_check(th)) break;
-        temp = -999;
-#ifdef HAVE_EEZE
-        if (tth->udev) temp = temperature_udev_get(tth);
-        else
-#endif
-          temp = temperature_tempget_get(tth);
-
+        temp = temperature_tempget_get(tth);
         if (ptemp != temp) ecore_thread_feedback(th, (void *)((long)temp));
         ptemp = temp;
         usleep((1000000.0 / 8.0) * (double)tth->poll_interval);
@@ -277,55 +342,15 @@ _temprature_check_notify(void *data, Ecore_Thread *th, void *msg)
    Tempthread *tth  = data;
    Config_Face *inst = tth->inst;
    int temp = (int)((long)msg);
-   char buf[64];
 
    if (th != inst->th) return;
-   if (temp != -999)
-     {
-        if (inst->units == FAHRENHEIT) temp = (temp * 9.0 / 5.0) + 32;
-
-        if (!inst->have_temp)
-          {
-             /* enable therm object */
-             edje_object_signal_emit(inst->o_temp, "e,state,known", "");
-             inst->have_temp = EINA_TRUE;
-          }
-        if (inst->units == FAHRENHEIT)
-          snprintf(buf, sizeof(buf), "%i°F", temp);
-        else
-          snprintf(buf, sizeof(buf), "%i°C", temp);
-
-        _temperature_face_level_set(inst,
-                                    (double)(temp - inst->low) /
-                                    (double)(inst->high - inst->low));
-        edje_object_part_text_set(inst->o_temp, "e.text.reading", buf);
-     }
-   else
-     {
-        if (inst->have_temp)
-          {
-             /* disable therm object */
-             edje_object_signal_emit(inst->o_temp, "e,state,unknown", "");
-             edje_object_part_text_set(inst->o_temp, "e.text.reading", "N/A");
-             _temperature_face_level_set(inst, 0.5);
-             inst->have_temp = EINA_FALSE;
-          }
-     }
+   _temperature_apply(inst, temp);
 }
 
 static void
 _temprature_check_done(void *data, Ecore_Thread *th EINA_UNUSED)
 {
-   Tempthread *tth  = data;
-   const char *s;
-
-   eina_stringshare_del(tth->sensor_name);
-   eina_stringshare_del(tth->sensor_path);
-#ifdef HAVE_EEZE
-   EINA_LIST_FREE(tth->tempdevs, s) eina_stringshare_del(s);
-#endif
-   free(tth->extn);
-   free(tth);
+   _temperature_thread_free(data);
 }
 
 void
@@ -337,18 +362,25 @@ temperature_face_update_config(Config_Face *inst)
 
    tth = calloc(1, sizeof(Tempthread));
    tth->poll_interval = inst->poll_interval;
-#ifdef HAVE_EEZE
-   if (inst->backend != TEMPGET) tth->udev = EINA_TRUE;
-#endif
    tth->sensor_type = inst->sensor_type;
    tth->inst = inst;
    if (inst->sensor_name)
      tth->sensor_name = eina_stringshare_add(inst->sensor_name);
-   inst->th = ecore_thread_feedback_run(_temprature_check_main,
-                                        _temprature_check_notify,
-                                        _temprature_check_done,
-                                        _temprature_check_done,
-                                        tth, EINA_TRUE);
+
+#ifdef HAVE_EEZE
+   if (inst->backend != TEMPGET)
+     {
+        inst->poller = ecore_poller_add(ECORE_POLLER_CORE, inst->poll_interval,
+                                        _temprature_udev_poll, tth);
+        inst->tth = tth;
+     }
+   else
+#endif
+     inst->th = ecore_thread_feedback_run(_temprature_check_main,
+                                          _temprature_check_notify,
+                                          _temprature_check_done,
+                                          _temprature_check_done,
+                                          tth, EINA_TRUE);
 }
 
 /* module setup */

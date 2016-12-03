@@ -44,7 +44,6 @@ struct _Tempthread
    void *extn;
 #ifdef HAVE_EEZE
    Eina_List *tempdevs;
-   Eina_Bool udev : 1;
 #endif
    Eina_Bool initted : 1;
 };
@@ -62,6 +61,8 @@ struct _Config_Face
    E_Gadcon_Client *gcc;
    Evas_Object *o_temp;
 #ifdef HAVE_EEZE
+   Ecore_Poller *poller;
+   Tempthread *tth;
    int backend;
 #endif
    E_Module *module;
