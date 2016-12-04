@@ -77,6 +77,8 @@ _temperature_apply(Config_Face *inst, int temp)
 {
    char buf[64];
 
+   if (inst->temp == temp) return;
+   inst->temp = temp;
    if (temp != -999)
      {
         if (inst->units == FAHRENHEIT) temp = (temp * 9.0 / 5.0) + 32;
@@ -139,6 +141,7 @@ _gc_init(E_Gadcon *gc, const char *name, const char *id, const char *style)
         inst->high = 80;
         inst->sensor_type = SENSOR_TYPE_NONE;
         inst->sensor_name = NULL;
+        inst->temp = -900;
         inst->units = CELSIUS;
 #ifdef HAVE_EEZE
         inst->backend = UDEV;

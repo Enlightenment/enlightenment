@@ -55,6 +55,7 @@ struct _Config_Face
    int poll_interval;
    int low, high;
    int sensor_type;
+   int temp;
    const char *sensor_name;
    Unit units;
    /* config state */
