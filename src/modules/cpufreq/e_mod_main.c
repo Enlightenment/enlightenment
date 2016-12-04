@@ -1300,6 +1300,7 @@ _cpufreq_cb_frequency_check_notify(void *data EINA_UNUSED,
    Eina_List *l;
    int active;
    static Eina_Bool init_set = EINA_FALSE;
+   Eina_Bool freq_changed = EINA_FALSE;
 
    if (!cpufreq_config)
      {
@@ -1307,12 +1308,25 @@ _cpufreq_cb_frequency_check_notify(void *data EINA_UNUSED,
         return;
      }
    active = cpufreq_config->status->active;
+   if ((cpufreq_config->status) && (status) &&
+       (
+#ifdef __OpenBSD__
+        (status->cur_percent       != cpufreq_config->status->cur_percent      ) ||
+#endif
+        (status->cur_frequency     != cpufreq_config->status->cur_frequency    ) ||
+        (status->cur_min_frequency != cpufreq_config->status->cur_min_frequency) ||
+        (status->cur_max_frequency != cpufreq_config->status->cur_max_frequency) ||
+        (status->can_set_frequency != cpufreq_config->status->can_set_frequency)))
+     freq_changed = EINA_TRUE;
    _cpufreq_status_free(cpufreq_config->status);
    cpufreq_config->status = status;
-   for (l = cpufreq_config->instances; l; l = l->next)
+   if (freq_changed)
      {
-        inst = l->data;
-        _cpufreq_face_update_current(inst);
+        for (l = cpufreq_config->instances; l; l = l->next)
+          {
+             inst = l->data;
+             _cpufreq_face_update_current(inst);
+          }
      }
    if (active != cpufreq_config->status->active)
      {
