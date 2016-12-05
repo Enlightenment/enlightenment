@@ -898,8 +898,8 @@ e_pixmap_image_is_argb(const E_Pixmap *cp)
 #ifdef HAVE_WAYLAND
         if (cp->usable)
           return cp->image_argb;
-        if (((E_Comp_Wl_Client_Data*)cp->client->comp_data)->cursor)
-          return EINA_TRUE;
+        /* only cursors can be override in wayland */
+        if (cp->client->override) return EINA_TRUE;
 #endif
         default: break;
      }
