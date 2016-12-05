@@ -928,7 +928,8 @@ _e_comp_wl_evas_cb_delete_request(void *data, Evas_Object *obj EINA_UNUSED, void
      {
         if (ec->internal_elm_win)
           E_FREE_FUNC(ec->internal_elm_win, evas_object_del);
-        e_object_del(E_OBJECT(ec));
+        else
+          e_object_del(E_OBJECT(ec));
      }
 
    _e_comp_wl_focus_check();
@@ -1827,6 +1828,7 @@ _e_comp_wl_compositor_cb_surface_create(struct wl_client *client, struct wl_reso
    ec->netwm.pid = pid;
    if (client != e_comp_wl->xwl_client)
      ec->internal = pid == getpid();
+   ec->icccm.delete_request |= ec->internal;
 
    /* set reference to pixmap so we can fetch it later */
    DBG("\tUsing Client: %p", ec);
