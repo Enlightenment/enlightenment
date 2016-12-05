@@ -3163,6 +3163,7 @@ e_comp_object_coords_inside_input_area(Evas_Object *obj, int x, int y)
 
    if (cw->input_obj)
      return E_INSIDE(x, y, cw->x + cw->input_rect.x, cw->y + cw->input_rect.y, cw->input_rect.w, cw->input_rect.h);
+   if (evas_object_pass_events_get(obj)) return EINA_FALSE;
    return E_INSIDE(x, y, cw->ec->x, cw->ec->y, cw->ec->w, cw->ec->h);
 }
 
