@@ -896,7 +896,6 @@ e_pixmap_image_is_argb(const E_Pixmap *cp)
 #endif
       case E_PIXMAP_TYPE_WL:
 #ifdef HAVE_WAYLAND
-        if (e_object_is_del(E_OBJECT(cp->client))) return EINA_FALSE;
         if (cp->usable)
           return cp->image_argb;
         if (((E_Comp_Wl_Client_Data*)cp->client->comp_data)->cursor)
