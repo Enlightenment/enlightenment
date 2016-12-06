@@ -372,32 +372,17 @@ _ibox_cb_empty_mouse_down(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA
 static void
 _ibox_empty_handle(IBox *b)
 {
-   if (!b->icons)
+   if (!b->o_empty)
      {
-        if (!b->o_empty)
-          {
-             Evas_Coord w, h;
-
-             b->o_empty = evas_object_rectangle_add(evas_object_evas_get(b->o_box));
-             evas_object_event_callback_add(b->o_empty, EVAS_CALLBACK_MOUSE_DOWN, _ibox_cb_empty_mouse_down, b);
-             evas_object_color_set(b->o_empty, 0, 0, 0, 0);
-             evas_object_show(b->o_empty);
-             elm_box_pack_end(b->o_box, b->o_empty);
-             evas_object_geometry_get(b->o_box, NULL, NULL, &w, &h);
-             if (elm_box_horizontal_get(b->o_box))
-               w = h;
-             else
-               h = w;
-             E_EXPAND(b->o_empty);
-             E_FILL(b->o_empty);
-             evas_object_size_hint_min_set(b->o_empty, w, h);
-          }
+        b->o_empty = evas_object_rectangle_add(evas_object_evas_get(b->o_box));
+        evas_object_event_callback_add(b->o_empty, EVAS_CALLBACK_MOUSE_DOWN, _ibox_cb_empty_mouse_down, b);
+        evas_object_color_set(b->o_empty, 0, 0, 0, 0);
+        E_EXPAND(b->o_empty);
+        E_FILL(b->o_empty);
      }
-   else if (b->o_empty)
-     {
-        evas_object_del(b->o_empty);
-        b->o_empty = NULL;
-     }
+   if (b->icons) return;
+   evas_object_show(b->o_empty);
+   elm_box_pack_end(b->o_box, b->o_empty);
 }
 
 static void
@@ -480,6 +465,13 @@ _ibox_resize_handle(IBox *b)
      w = h;
    else
      h = w;
+   if (w || h)
+     evas_object_size_hint_min_set(b->o_empty, w, h);
+   if (b->icons && evas_object_visible_get(b->o_empty))
+     {
+        elm_box_unpack(b->o_box, b->o_empty);
+        evas_object_hide(b->o_empty);
+     }
    EINA_LIST_FOREACH(b->icons, l, ic)
      {
         evas_object_size_hint_min_set(ic->o_holder, w, h);
