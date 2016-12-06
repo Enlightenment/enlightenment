@@ -1054,10 +1054,23 @@ e_pixmap_alias(E_Pixmap *cp, E_Pixmap_Type type, ...)
 E_API Eina_Bool
 e_pixmap_dmabuf_test(struct linux_dmabuf_buffer *dmabuf)
 {
+   Evas_Native_Surface ns;
+   Evas_Object *test;
    int size;
    void *data;
 
-   if (e_comp->gl) return EINA_TRUE;
+   if (e_comp->gl)
+     {
+        ns.type = EVAS_NATIVE_SURFACE_WL_DMABUF;
+        ns.version = EVAS_NATIVE_SURFACE_VERSION;
+        ns.data.wl_dmabuf.attr = &dmabuf->attributes;
+        ns.data.wl_dmabuf.resource = NULL;
+        test = evas_object_image_add(e_comp->evas);
+        evas_object_image_native_surface_set(test, &ns);
+        evas_object_del(test);
+        if (!ns.data.wl_dmabuf.attr) return EINA_FALSE;
+        return EINA_TRUE;
+     }
 
    /* TODO: Software rendering for multi-plane formats */
    if (dmabuf->attributes.n_planes != 1) return EINA_FALSE;
