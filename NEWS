@@ -1,3 +1,30 @@
+Release 0.21.5:
+---------------------
+Carsten Haitzler (1):
+      e_util_defer_object_del - ensure order of deferred deletions are right
+
+Christopher Michael (1):
+      remove unused variables in e_comp_wl
+
+Derek Foreman (5):
+      Fix keyboard tracking when leaving an xdg shell window
+      Fix crash when exiting an xdg shell application
+      More aggressively prune keyboard focus list
+      Stop sending key up/down events on focus change under wayland
+      test dmabuf pixmaps properly
+
+Mike Blumenkrantz (10):
+      handle xdg-shell maximize/unmaximize calls correctly
+      stack subsurfaces above their parents upon creation
+      use more accurate determination for applying xdg-shell (un)maximize operations
+      do not pop pointer types on client hide events if the client is pass_events
+      set wl pointer surfaces to E_LAYER_CLIENT_PRIO during setup
+      attempt to re-set wl surface pointer when popping back to "default" pointer type
+      fix internal wl windows to exit when border X is clicked
+      use better check for getting wl surface alpha from cursor pixmaps
+      revert all sizing commits to ibar/ibox for the past year
+      maintain "empty" object's size hints when ibar/ibox resizes
+
 Release 0.21.4:
 ---------------------
 Al Poole (1):
