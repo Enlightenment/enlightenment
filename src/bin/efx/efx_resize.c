@@ -108,6 +108,7 @@ _resize_stop(Evas_Object *obj, Eina_Bool reset)
      {
         INF("stopped resized object %p", obj);
         if (erd->anim) ecore_animator_del(erd->anim);
+        erd->anim = NULL;
         if (erd->moving)
           {
              erd->moving = 0;

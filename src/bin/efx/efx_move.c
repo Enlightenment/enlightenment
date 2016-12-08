@@ -123,6 +123,7 @@ _move_stop(Evas_Object *obj, Eina_Bool reset)
      {
         INF("stopped moved object %p", obj);
         if (emd->anim) ecore_animator_del(emd->anim);
+        emd->anim = NULL;
         if (e_efx_queue_complete(emd->e, emd))
           e_efx_queue_process(emd->e);
      }

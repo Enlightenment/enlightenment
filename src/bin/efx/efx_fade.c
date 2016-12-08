@@ -105,6 +105,7 @@ _fade_stop(Evas_Object *obj, Eina_Bool reset)
      {
         INF("stopped faded object %p", obj);
         if (efd->anim) ecore_animator_del(efd->anim);
+        efd->anim = NULL;
         if (e_efx_queue_complete(efd->e, efd))
           e_efx_queue_process(efd->e);
      }
