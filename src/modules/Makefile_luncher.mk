@@ -15,6 +15,8 @@ src_modules_luncher_module_la_LDFLAGS = $(MOD_LDFLAGS)
 src_modules_luncher_module_la_SOURCES = src/modules/luncher/mod.c \
 			 src/modules/luncher/luncher.h \
 			 src/modules/luncher/bar.c \
+			 src/modules/luncher/config_descriptor.c \
+			 src/modules/luncher/config_descriptor.h \
                          src/modules/luncher/grid.c \
                          src/modules/luncher/config.c
 

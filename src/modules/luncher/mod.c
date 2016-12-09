@@ -1,6 +1,4 @@
 #include "luncher.h"
-static E_Config_DD *conf_edd = NULL;
-static E_Config_DD *conf_item_edd = NULL;
 Eina_List *luncher_instances = NULL;
 E_Module *module = NULL;
 Config *luncher_config = NULL;
@@ -8,23 +6,8 @@ Config *luncher_config = NULL;
 EINTERN void
 luncher_init(void)
 {
-   conf_item_edd = E_CONFIG_DD_NEW("Luncher_Config_Item", Config_Item);
-#undef T
-#undef D
-#define T Config_Item
-#define D conf_item_edd
-   E_CONFIG_VAL(D, T, id, INT);
-   E_CONFIG_VAL(D, T, style, STR);
-   E_CONFIG_VAL(D, T, dir, STR);
-
-   conf_edd = E_CONFIG_DD_NEW("Luncher_Config", Config);
-#undef T
-#undef D
-#define T Config
-#define D conf_edd
-   E_CONFIG_LIST(D, T, items, conf_item_edd);
-
-   luncher_config = e_config_domain_load("module.luncher", conf_edd);
+   config_descriptor_init();
+   luncher_config = e_config_domain_load("module.luncher", config_descriptor_get());
 
    if (!luncher_config)
      {
@@ -55,11 +38,11 @@ luncher_shutdown(void)
           }
         E_FREE(luncher_config);
      }
-   E_CONFIG_DD_FREE(conf_edd);
-   E_CONFIG_DD_FREE(conf_item_edd);
 
    e_gadget_type_del("Luncher Bar");
    e_gadget_type_del("Luncher Grid");
+
+   config_descriptor_shutdown();
 }
 
 E_API E_Module_Api e_modapi =
@@ -87,6 +70,6 @@ e_modapi_shutdown(E_Module *m EINA_UNUSED)
 E_API int
 e_modapi_save(E_Module *m EINA_UNUSED)
 {
-   e_config_domain_save("module.luncher", conf_edd, luncher_config);
+   e_config_domain_save("module.luncher", config_descriptor_get(), luncher_config);
    return 1;
 }

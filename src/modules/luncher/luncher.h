@@ -2,6 +2,7 @@
 #define LUNCHER_H
 
 #include "e.h"
+#include "config_descriptor.h"
 
 E_API extern E_Module_Api e_modapi;
 
@@ -9,28 +10,8 @@ E_API void *e_modapi_init     (E_Module *m);
 E_API int   e_modapi_shutdown (E_Module *m);
 E_API int   e_modapi_save     (E_Module *m);
 
-typedef struct _Config Config;
-typedef struct _Config_Item Config_Item;
 typedef struct _Instance Instance;
 typedef struct _Icon Icon;
-
-struct _Config
-{
-   Eina_List *items;
-
-   E_Module    *module;
-   Evas_Object *config_dialog;
-   Evas_Object *slist;
-   Evas_Object *list;
-   Eina_Bool    bar;
-};
-
-struct _Config_Item
-{
-   int               id;
-   Eina_Stringshare *style;
-   Eina_Stringshare *dir;
-};
 
 struct _Instance
 {
