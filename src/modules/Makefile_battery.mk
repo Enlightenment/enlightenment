@@ -18,9 +18,21 @@ if HAVE_EEZE
 src_modules_battery_module_la_SOURCES += src/modules/battery/e_mod_udev.c
 else
 if HAVE_OPENBSD
-src_modules_battery_module_la_SOURCES += src/modules/battery/e_mod_openbsd.c
+src_modules_battery_module_la_SOURCES += src/modules/battery/e_mod_sysctl.c
+else
+if HAVE_NETBSD
+src_modules_battery_module_la_SOURCES += src/modules/battery/e_mod_sysctl.c
+else 
+if HAVE_DRAGONFLY
+src_modules_battery_module_la_SOURCES += src/modules/battery/e_mod_sysctl.c
+else
+if HAVE_FREEBSD
+src_modules_battery_module_la_SOURCES += src/modules/battery/e_mod_sysctl.c
 else
 src_modules_battery_module_la_SOURCES += src/modules/battery/e_mod_upower.c
+endif
+endif
+endif
 endif
 endif
 

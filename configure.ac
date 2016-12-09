@@ -597,6 +597,8 @@ AC_DEFINE(E_INTERNAL, 1, "This define can be used to wrap internal E stuff, as c
 
 have_openbsd="no"
 have_freebsd="no"
+have_dragonfly="no"
+have_netbsd="no"
 BATTERY_LDFLAGS=
 case "$host_os" in
   darwin*)
@@ -606,15 +608,23 @@ case "$host_os" in
   openbsd*)
     have_openbsd="yes"
   ;;
+  netbsd*)
+    have_netbsd="yes"
+  ;;
   freebsd*)
     have_freebsd="yes"
+  ;;
+  dragonfly*)
+    have_dragonfly="yes"
   ;;
 esac
 
 AC_SUBST([BATTERY_CFLAGS])
 AC_SUBST([BATTERY_LDFLAGS])
 AM_CONDITIONAL([HAVE_OPENBSD], [test "x${have_openbsd}" = "xyes"])
+AM_CONDITIONAL([HAVE_NETBSD], [test "x${have_netbsd}" = "xyes"])
 AM_CONDITIONAL([HAVE_FREEBSD], [test "x${have_freebsd}" = "xyes"])
+AM_CONDITIONAL([HAVE_DRAGONFLY], [test "x${have_dragonfly}" = "xyes"])
 
 ##have_exchange=no
 ##AC_ARG_ENABLE(exchange,

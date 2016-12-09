@@ -368,8 +368,8 @@ _battery_config_updated(void)
      {
 #ifdef HAVE_EEZE
         ok = _battery_udev_start();
-#elif defined __OpenBSD__
-        ok = _battery_openbsd_start();
+#elif defined __OpenBSD__ || defined __DragonFly__ || defined __FreeBSD__ || defined __NetBSD__
+        ok = _battery_sysctl_start();
 #else
         ok = _battery_upower_start();
 #endif
@@ -738,7 +738,7 @@ e_modapi_init(E_Module *m)
    E_CONFIG_VAL(D, T, alert_timeout, INT);
    E_CONFIG_VAL(D, T, suspend_below, INT);
    E_CONFIG_VAL(D, T, force_mode, INT);
-#if defined HAVE_EEZE || defined __OpenBSD__
+#if defined HAVE_EEZE || defined __OpenBSD__ || defined __NetBSD__
    E_CONFIG_VAL(D, T, fuzzy, INT);
 #endif
    E_CONFIG_VAL(D, T, desktop_notifications, INT);
@@ -753,7 +753,7 @@ e_modapi_init(E_Module *m)
         battery_config->alert_timeout = 0;
         battery_config->suspend_below = 0;
         battery_config->force_mode = 0;
-#if defined HAVE_EEZE || defined __OpenBSD__
+#if defined HAVE_EEZE || defined __OpenBSD__ || defined __NetBSD__
         battery_config->fuzzy = 0;
 #endif
         battery_config->desktop_notifications = 0;
@@ -826,8 +826,8 @@ e_modapi_shutdown(E_Module *m EINA_UNUSED)
 
 #ifdef HAVE_EEZE
    _battery_udev_stop();
-#elif defined __OpenBSD__
-   _battery_openbsd_stop();
+#elif defined __OpenBSD__ || defined __DragonFly__ || defined __FreeBSD__ || defined __NetBSD__
+   _battery_sysctl_stop();
 #else
    _battery_upower_stop();
 #endif

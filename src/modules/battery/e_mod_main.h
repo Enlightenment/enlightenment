@@ -53,7 +53,7 @@ struct _Config
    Eeze_Udev_Watch     *acwatch;
    Eeze_Udev_Watch     *batwatch;
 #endif
-#if defined HAVE_EEZE || defined __OpenBSD__
+#if defined HAVE_EEZE || defined __OpenBSD__ || defined __NetBSD__
    Eina_Bool            fuzzy;
    int                  fuzzcount;
 #endif
@@ -65,12 +65,12 @@ typedef struct _Ac_Adapter Ac_Adapter;
 struct _Battery
 {
    const char *udi;
-#if defined HAVE_EEZE || defined __OpenBSD__
+#if defined HAVE_EEZE || defined __OpenBSD__ || defined __DragonFly__ || defined __FreeBSD__ || defined __NetBSD__
    Ecore_Poller *poll;
 #endif
    Eina_Bool present:1;
    Eina_Bool charging:1;
-#if defined HAVE_EEZE || defined __OpenBSD__
+#if defined HAVE_EEZE || defined __OpenBSD__ || defined __DragonFly__ || defined __FreeBSD__ || defined __NetBSD__
    double last_update;
    double percent;
    double current_charge;
@@ -95,8 +95,13 @@ struct _Battery
    const char *vendor;
    Eina_Bool got_prop:1;
    Eldbus_Proxy *proxy;
-#ifdef __OpenBSD__
    int * mib;
+#if defined(__FreeBSD__) || defined(__DragonFly__)
+   int * mib_state; 
+   int * mib_units;
+   int * mib_time;
+   int batteries;
+   int time_min;
 #endif
 };
 
@@ -106,9 +111,7 @@ struct _Ac_Adapter
    Eina_Bool present:1;
    const char *product;
    Eldbus_Proxy *proxy;
-#ifdef __OpenBSD__
    int * mib;
-#endif
 };
 
 Battery *_battery_battery_find(const char *udi);
@@ -119,16 +122,16 @@ void _battery_device_update(void);
 int  _battery_udev_start(void);
 void _battery_udev_stop(void);
 /* end e_mod_udev.c */
-#elif !defined __OpenBSD__
+#elif !defined __OpenBSD__ && !defined __DragonFly__ && !defined __FreeBSD__ && !defined __NetBSD__
 /* in e_mod_dbus.c */
 int _battery_upower_start(void);
 void _battery_upower_stop(void);
 /* end e_mod_dbus.c */
 #else
-/* in e_mod_openbsd.c */
-int _battery_openbsd_start(void);
-void _battery_openbsd_stop(void);
-/* end e_mod_openbsd.c */
+/* in e_mod_sysctl.c */
+int _battery_sysctl_start(void);
+void _battery_sysctl_stop(void);
+/* end e_mod_sysctl.c */
 #endif
 
 E_API extern E_Module_Api e_modapi;

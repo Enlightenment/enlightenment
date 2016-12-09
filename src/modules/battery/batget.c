@@ -1,12 +1,5 @@
 #include "e.h"
 
-#ifdef __FreeBSD__
-# include <sys/ioctl.h>
-# include <sys/sysctl.h>
-# ifdef __i386__
-#  include <machine/apm_bios.h>
-# endif
-#endif
 #ifdef HAVE_CFBASE_H
 # include <CFBase.h>
 # include <CFNumber.h>
@@ -145,177 +138,7 @@ file_str_entry_get(FILE *f,
    return tmp;
 }
 
-#ifdef __FreeBSD__
-
-#define BATTERY_STATE_NONE        0
-#define BATTERY_STATE_DISCHARGING 1
-#define BATTERY_STATE_CHARGING    2
-#define BATTERY_STATE_REMOVED     7
-
-/***---***/
-static void
-bsd_acpi_init(void)
-{
-   /* nothing to do */
-}
-
-static void
-bsd_acpi_check(void)
-{
-   int bat_val = 0;
-   int mib_state[4];
-   int mib_life[4];
-   int mib_time[4];
-   int mib_units[4];
-   size_t len;
-   int state = 0;
-   int level = 0;
-   int time_min = 0;
-   int life = 0;
-   int batteries = 0;
-
-   time_left = -1;
-   battery_full = -1;
-   have_battery = 0;
-   have_power = 0;
-
-   /* Read some information on first run. */
-   len = 4;
-   sysctlnametomib("hw.acpi.battery.state", mib_state, &len);
-   len = sizeof(state);
-   if (sysctl(mib_state, 4, &state, &len, NULL, 0) == -1)
-     /* ERROR */
-     state = -1;
-
-   len = 4;
-   sysctlnametomib("hw.acpi.battery.life", mib_life, &len);
-   len = sizeof(life);
-   if (sysctl(mib_life, 4, &life, &len, NULL, 0) == -1)
-     /* ERROR */
-     level = -1;
-   bat_val = life;
-
-   len = 4;
-   sysctlnametomib("hw.acpi.battery.time", mib_time, &len);
-   len = sizeof(time);
-   if (sysctl(mib_time, 4, &time_min, &len, NULL, 0) == -1)
-     /* ERROR */
-     time_min = -1;
-
-   len = 4;
-   sysctlnametomib("hw.acpi.battery.units", mib_units, &len);
-   len = sizeof(batteries);
-   if (sysctl(mib_time, 4, &batteries, &len, NULL, 0) == -1)
-     /* ERROR */
-     batteries = 1;
-
-   if (time_min >= 0) time_left = time_min * 60;
-
-   if (batteries == 1) /* hw.acpi.battery.units = 1 means NO BATTS */
-     time_left = -1;
-   else if ((state == BATTERY_STATE_CHARGING) ||
-            (state == BATTERY_STATE_DISCHARGING))
-     {
-        have_battery = 1;
-        if (state == BATTERY_STATE_CHARGING) have_power = 1;
-        else if (state == BATTERY_STATE_DISCHARGING)
-          have_power = 0;
-        if (level == -1) time_left = -1;
-        else if (time_min == -1)
-          {
-             time_left = -1;
-             battery_full = bat_val;
-          }
-        else battery_full = bat_val;
-     }
-   else
-     {
-        have_battery = 1;
-        battery_full = 100;
-        time_left = -1;
-        have_power = 1;
-     }
-}
-
-/***---***/
-# ifdef __i386__
-static void
-bsd_apm_init(void)
-{
-   /* nothing to do */
-}
-
-static void
-bsd_apm_check(void)
-{
-   int ac_stat, bat_stat, bat_val, time_val;
-   int apm_fd = -1;
-   struct apm_info info;
-
-   time_left = -1;
-   battery_full = -1;
-   have_battery = 0;
-   have_power = 0;
-
-   apm_fd = open("/dev/apm", O_RDONLY);
-   if ((apm_fd != -1) && (ioctl(apm_fd, APMIO_GETINFO, &info) != -1))
-     {
-        /* set values */
-        ac_stat = info.ai_acline;
-        bat_stat = info.ai_batt_stat;
-        bat_val = info.ai_batt_life;
-        time_val = info.ai_batt_time;
-     }
-   else
-     {
-        if (apm_fd != -1) close(apm_fd);
-        return;
-     }
-
-   close(apm_fd);
-   if (info.ai_batteries == 1) /* ai_batteries == 1 means NO battery,
-                               * ai_batteries == 2 means 1 battery */
-     {
-        have_power = 1;
-        return;
-     }
-
-   if (ac_stat) /* Wallpowered */
-     {
-        have_power = 1;
-        have_battery = 1;
-        switch (bat_stat) /* On FreeBSD the time_val is -1 when AC ist plugged
-                           * in. This means we don't know how long the battery
-                           * will recharge */
-          {
-           case 0:
-             battery_full = 100;
-             break;
-
-           case 1:
-             battery_full = 50;
-             break;
-
-           case 2:
-             battery_full = 25;
-             break;
-
-           case 3:
-             battery_full = 100;
-             break;
-          }
-     }
-   else /* Running on battery */
-     {
-        have_battery = 1;
-        battery_full = bat_val;
-        time_left = time_val;
-     }
-}
-
-# endif
-
-#elif defined(HAVE_CFBASE_H) /* OS X */
+#if defined(HAVE_CFBASE_H) /* OS X */
 /***---***/
 static void darwin_init(void);
 static void darwin_check(void);
@@ -1404,33 +1227,7 @@ dir_has_contents(const char *dir)
 static void
 init(void)
 {
-#ifdef __FreeBSD__
-   int acline;
-   size_t len;
-
-   len = sizeof(acline);
-   if (!sysctlbyname("hw.acpi.acline", &acline, &len, NULL, 0))
-     {
-        int acline_mib[3] = {-1};
-
-        len = 3;
-        if (!sysctlnametomib("hw.acpi.acline", acline_mib, &len))
-          {
-             mode = CHECK_ACPI;
-             bsd_acpi_init();
-          }
-     }
-   else
-     {
-#ifdef __i386__
-        if (ecore_file_exists("/dev/apm"))
-          {
-             mode = CHECK_APM;
-             bsd_apm_init();
-          }
-#endif
-     }
-#elif defined(HAVE_CFBASE_H) /* OS X */
+#if defined(HAVE_CFBASE_H) /* OS X */
    darwin_init();
 #else
    if ((ecore_file_is_dir(sys_power_dir)) && (dir_has_contents(sys_power_dir)))
@@ -1469,27 +1266,7 @@ poll_cb(void *data EINA_UNUSED)
    phave_battery = have_battery;
    phave_power = have_power;
 
-#ifdef __FreeBSD__
-   switch (mode)
-     {
-      case CHECK_ACPI:
-        bsd_acpi_check();
-        break;
-
-#ifdef __i386__
-      case CHECK_APM:
-        bsd_apm_check();
-        break;
-
-#endif
-      default:
-        battery_full = -1;
-        time_left = -1;
-        have_battery = 0;
-        have_power = 0;
-        break;
-     }
-#elif defined(HAVE_CFBASE_H) /* OS X */
+#if defined(HAVE_CFBASE_H) /* OS X */
    darwin_check();
    return ECORE_CALLBACK_RENEW;
 #else
