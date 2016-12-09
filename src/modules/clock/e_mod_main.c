@@ -41,8 +41,6 @@ static Eio_Monitor *clock_tzetc_monitor = NULL;
 static Eina_List *clock_eio_handlers = NULL;
 Config *clock_config = NULL;
 
-static E_Config_DD *conf_edd = NULL;
-static E_Config_DD *conf_item_edd = NULL;
 static Eina_List *clock_instances = NULL;
 static E_Action *act = NULL;
 static Ecore_Timer *update_today = NULL;
@@ -849,28 +847,9 @@ E_API E_Module_Api e_modapi =
 E_API void *
 e_modapi_init(E_Module *m)
 {
-   conf_item_edd = E_CONFIG_DD_NEW("Config_Item", Config_Item);
-#undef T
-#undef D
-#define T Config_Item
-#define D conf_item_edd
-   E_CONFIG_VAL(D, T, id, STR);
-   E_CONFIG_VAL(D, T, weekend.start, INT);
-   E_CONFIG_VAL(D, T, weekend.len, INT);
-   E_CONFIG_VAL(D, T, week.start, INT);
-   E_CONFIG_VAL(D, T, digital_clock, INT);
-   E_CONFIG_VAL(D, T, digital_24h, INT);
-   E_CONFIG_VAL(D, T, show_seconds, INT);
-   E_CONFIG_VAL(D, T, show_date, INT);
+   config_descriptor_init();
 
-   conf_edd = E_CONFIG_DD_NEW("Config", Config);
-#undef T
-#undef D
-#define T Config
-#define D conf_edd
-   E_CONFIG_LIST(D, T, items, conf_item_edd);
-
-   clock_config = e_config_domain_load("module.clock", conf_edd);
+   clock_config = e_config_domain_load("module.clock", config_descriptor_get());
 
    if (!clock_config)
      clock_config = E_NEW(Config, 1);
@@ -932,10 +911,7 @@ e_modapi_shutdown(E_Module *m EINA_UNUSED)
         free(clock_config);
         clock_config = NULL;
      }
-   E_CONFIG_DD_FREE(conf_edd);
-   E_CONFIG_DD_FREE(conf_item_edd);
-   conf_item_edd = NULL;
-   conf_edd = NULL;
+   config_descriptor_shutdown();
 
    e_gadcon_provider_unregister(&_gadcon_class);
 
@@ -957,7 +933,7 @@ e_modapi_shutdown(E_Module *m EINA_UNUSED)
 E_API int
 e_modapi_save(E_Module *m EINA_UNUSED)
 {
-   e_config_domain_save("module.clock", conf_edd, clock_config);
+   e_config_domain_save("module.clock", config_descriptor_get(), clock_config);
    return 1;
 }
 

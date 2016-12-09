@@ -14,6 +14,8 @@ src_modules_clock_module_la_CPPFLAGS = $(MOD_CPPFLAGS)
 src_modules_clock_module_la_LDFLAGS = $(MOD_LDFLAGS)
 src_modules_clock_module_la_SOURCES = src/modules/clock/e_mod_main.h \
 			  src/modules/clock/e_mod_main.c \
+			  src/modules/clock/config_descriptor.c \
+			  src/modules/clock/config_descriptor.h \
 			  src/modules/clock/e_mod_config.c
 
 PHONIES += clock install-clock
