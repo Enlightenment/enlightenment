@@ -58,6 +58,51 @@ e_xinerama_screens_set(Eina_List *screens)
    _e_xinerama_update();
 }
 
+EINTERN void
+e_xinerama_fake_screen_del(int num)
+{
+   Eina_List *l;
+   E_Screen *scr, *lscr;
+   int n = 0, x = 0;
+
+   /* this assumes X number of identical horizontal screens */
+   EINA_SAFETY_ON_NULL_RETURN(fake_screens);
+   l = eina_list_nth_list(fake_screens, num);
+   EINA_SAFETY_ON_NULL_RETURN(l);
+   scr = eina_list_data_get(l);
+   free(scr);
+   fake_screens = eina_list_remove_list(fake_screens, l);
+   EINA_LIST_FOREACH(fake_screens, l, lscr)
+     {
+        lscr->screen = n++;
+        lscr->x = x;
+        lscr->w = e_comp->w / eina_list_count(fake_screens);
+        x = lscr->x + lscr->w;
+     }
+   e_comp_canvas_update();
+   ecore_event_add(E_EVENT_RANDR_CHANGE, NULL, NULL, NULL);
+}
+
+EINTERN void
+e_xinerama_fake_screen_append(void)
+{
+   Eina_List *l;
+   E_Screen *lscr;
+   int n, x = 0;
+
+   /* this assumes X number of identical horizontal screens */
+   n = eina_list_count(fake_screens) + 1;
+   EINA_LIST_FOREACH(fake_screens, l, lscr)
+     {
+        lscr->x = x;
+        lscr->w = e_comp->w / n;
+        x = lscr->x + lscr->w;
+     }
+   e_xinerama_fake_screen_add(e_comp->w - (e_comp->w / n), 0, e_comp->w / n, e_comp->h);
+   e_comp_canvas_update();
+   ecore_event_add(E_EVENT_RANDR_CHANGE, NULL, NULL, NULL);
+}
+
 E_API void
 e_xinerama_fake_screen_add(int x, int y, int w, int h)
 {
