@@ -778,7 +778,7 @@ define([CHECK_MODULE_WL_DRM],
   if test "x${have_wayland}" = "xyes" ; then
     PKG_CHECK_EXISTS([ecore-drm2 >= $efl_ecore_drm2_version], [have_ecore_drm2="yes"], [have_ecore_drm2="no"])
     if test "x${have_ecore_drm2}" = "xyes"; then
-      AC_E_CHECK_PKG(WL_DRM, [ ecore-drm2 >= $efl_ecore_drm2_version ecore >= $efl_version eina >= $efl_version ],
+      AC_E_CHECK_PKG(WL_DRM, [ ecore-drm2 >= $efl_ecore_drm2_version elput >= $efl_version ecore >= $efl_version eina >= $efl_version ],
         [
           WL_DRM=true
           AC_DEFINE_UNQUOTED([HAVE_DRM2],[1],[enable ecore-drm2 support])

@@ -3,6 +3,8 @@
 
 #ifdef HAVE_DRM2
 # include <Ecore_Drm2.h>
+# include <Elput.h>
+static Ecore_Event_Handler *seat_handler;
 #else
 # include <Ecore_Drm.h>
 #endif
@@ -1161,22 +1163,67 @@ _drm_randr_available(void)
    return EINA_TRUE;
 }
 
+#ifndef HAVE_DRM2
 static void
 _drm_randr_stub(void)
 {}
+#endif
+
+#ifdef HAVE_DRM2
+static Eina_Bool
+_drm2_cb_seat_caps(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
+{
+   Elput_Event_Seat_Caps *ev;
+
+   ev = event;
+
+   if (ev->pointer_count <= 0)
+     {
+        e_pointer_hide(e_comp->pointer);
+        e_comp_wl_input_pointer_enabled_set(EINA_FALSE);
+     }
+   else if (ev->pointer_count > 0)
+     {
+        e_comp_wl_input_pointer_enabled_set(EINA_TRUE);
+        e_pointers_size_set(e_config->cursor_size);
+     }
+
+   if (ev->keyboard_count <= 0)
+     e_comp_wl_input_keyboard_enabled_set(EINA_FALSE);
+   else if (ev->keyboard_count > 0)
+     e_comp_wl_input_keyboard_enabled_set(EINA_TRUE);
+
+   return ECORE_CALLBACK_RENEW;
+}
+
+static void
+_drm2_init(void)
+{
+   seat_handler =
+     ecore_event_handler_add(ELPUT_EVENT_SEAT_CAPS, _drm2_cb_seat_caps, NULL);
+}
+
+static void
+_drm2_shutdown(void)
+{
+   ecore_event_handler_del(seat_handler);
+}
+#endif
 
 static E_Comp_Screen_Iface drmiface =
 {
    .available = _drm_randr_available,
-   .init = _drm_randr_stub,
-   .shutdown = _drm_randr_stub,
 #ifdef HAVE_DRM2
+   .init = _drm2_init,
+   .shutdown = _drm2_shutdown,
    .create = _drm2_randr_create,
    .apply = _drm2_randr_apply,
    .dpms = _drm2_dpms,
    .key_down = _drm2_key_down,
    .key_up = _drm2_key_up,
 #else
+   .init = _drm_randr_stub,
+   .shutdown = _drm_randr_stub,
    .create = _drm_randr_create,
    .apply = _drm_randr_apply,
    .dpms = _drm_dpms,
