@@ -1,6 +1,5 @@
 #include "clock.h"
-static E_Config_DD *conf_edd = NULL;
-static E_Config_DD *conf_item_edd = NULL;
+
 static E_Action *act = NULL;
 
 static void
@@ -24,34 +23,8 @@ _e_mod_action_cb(E_Object *obj EINA_UNUSED, const char *params, ...)
 EINTERN void
 clock_init(void)
 {
-   conf_item_edd = E_CONFIG_DD_NEW("Config_Item", Config_Item);
-#undef T
-#undef D
-#define T Config_Item
-#define D conf_item_edd
-   E_CONFIG_VAL(D, T, id, INT);
-   E_CONFIG_VAL(D, T, weekend.start, INT);
-   E_CONFIG_VAL(D, T, weekend.len, INT);
-   E_CONFIG_VAL(D, T, week.start, INT);
-   E_CONFIG_VAL(D, T, digital_clock, INT);
-   E_CONFIG_VAL(D, T, digital_24h, INT);
-   E_CONFIG_VAL(D, T, show_seconds, INT);
-   E_CONFIG_VAL(D, T, show_date, INT);
-   E_CONFIG_VAL(D, T, advanced, UCHAR);
-   E_CONFIG_VAL(D, T, timezone, STR);
-   E_CONFIG_VAL(D, T, time_str[0], STR);
-   E_CONFIG_VAL(D, T, time_str[1], STR);
-   E_CONFIG_VAL(D, T, colorclass[0], STR);
-   E_CONFIG_VAL(D, T, colorclass[1], STR);
-
-   conf_edd = E_CONFIG_DD_NEW("Config", Config);
-#undef T
-#undef D
-#define T Config
-#define D conf_edd
-   E_CONFIG_LIST(D, T, items, conf_item_edd);
-
-   time_config = e_config_domain_load("module.time", conf_edd);
+   config_descriptor_init();
+   time_config = e_config_domain_load("module.time", config_descriptor_get());
 
    if (!time_config)
      time_config = E_NEW(Config, 1);
@@ -103,8 +76,7 @@ clock_shutdown(void)
 
         E_FREE(time_config);
      }
-   E_CONFIG_DD_FREE(conf_edd);
-   E_CONFIG_DD_FREE(conf_item_edd);
+   config_descriptor_shutdown();
 
    e_gadget_type_del("Digital Clock");
    e_gadget_type_del("Analog Clock");
@@ -138,6 +110,6 @@ e_modapi_shutdown(E_Module *m EINA_UNUSED)
 E_API int
 e_modapi_save(E_Module *m EINA_UNUSED)
 {
-   e_config_domain_save("module.time", conf_edd, time_config);
+   e_config_domain_save("module.time", config_descriptor_get(), time_config);
    return 1;
 }

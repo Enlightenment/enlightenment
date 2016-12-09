@@ -15,6 +15,8 @@ src_modules_time_module_la_LDFLAGS = $(MOD_LDFLAGS)
 src_modules_time_module_la_SOURCES = \
 src/modules/time/clock.c \
 src/modules/time/clock.h \
+src/modules/time/config_descriptor.c \
+src/modules/time/config_descriptor.h \
 src/modules/time/config.c \
 src/modules/time/mod.c \
 src/modules/time/time.c

@@ -2,6 +2,7 @@
 #define CLOCK_H
 
 #include "e.h"
+#include "config_descriptor.h"
 
 E_API extern E_Module_Api e_modapi;
 
@@ -9,46 +10,7 @@ E_API void *e_modapi_init     (E_Module *m);
 E_API int   e_modapi_shutdown (E_Module *m);
 E_API int   e_modapi_save     (E_Module *m);
 
-typedef struct _Config Config;
-typedef struct _Config_Item Config_Item;
 typedef struct _Instance Instance;
-
-typedef enum
-{
-   CLOCK_DATE_DISPLAY_NONE,
-   CLOCK_DATE_DISPLAY_FULL,
-   CLOCK_DATE_DISPLAY_NUMERIC,
-   CLOCK_DATE_DISPLAY_DATE_ONLY,
-   CLOCK_DATE_DISPLAY_ISO8601,
-   CLOCK_DATE_DISPLAY_CUSTOM,
-} Clock_Date_Display;
-
-struct _Config
-{
-  Eina_List *items;
-
-  E_Module *module;
-  Evas_Object *config_dialog;
-};
-
-struct _Config_Item
-{
-  int id;
-  struct {
-      int start, len; // 0->6 0 == sun, 6 == sat, number of days
-   } weekend;
-   struct {
-      int start; // 0->6 0 == sun, 6 == sat
-   } week;
-   Eina_Bool  digital_clock;
-   Eina_Bool  digital_24h;
-   Eina_Bool  show_seconds;
-   Clock_Date_Display show_date;
-   Eina_Bool  advanced;
-   Eina_Stringshare *timezone;
-   Eina_Stringshare *time_str[2];
-   Eina_Stringshare *colorclass[2];
-};
 
 
 struct _Instance
