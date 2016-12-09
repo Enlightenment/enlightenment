@@ -13,6 +13,8 @@ src_modules_ibar_module_la_LIBADD = $(MOD_LIBS)
 src_modules_ibar_module_la_CPPFLAGS = $(MOD_CPPFLAGS)
 src_modules_ibar_module_la_LDFLAGS = $(MOD_LDFLAGS)
 src_modules_ibar_module_la_SOURCES = src/modules/ibar/e_mod_main.c \
+			 src/modules/ibar/config_descriptor.c \
+			 src/modules/ibar/config_descriptor.h \
 			 src/modules/ibar/e_mod_main.h \
 			 src/modules/ibar/e_mod_config.c
 

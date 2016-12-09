@@ -141,9 +141,6 @@ static Eina_Bool    _ibar_cb_out_hide_delay(void *data);
 static void         _ibar_icon_menu_show(IBar_Icon *ic, Eina_Bool grab);
 static void         _ibar_icon_menu_hide(IBar_Icon *ic, Eina_Bool grab);
 
-static E_Config_DD *conf_edd = NULL;
-static E_Config_DD *conf_item_edd = NULL;
-
 static Eina_Hash *ibar_orders = NULL;
 static Eina_List *ibars = NULL;
 
@@ -2770,28 +2767,8 @@ E_API E_Module_Api e_modapi =
 E_API void *
 e_modapi_init(E_Module *m)
 {
-   conf_item_edd = E_CONFIG_DD_NEW("IBar_Config_Item", Config_Item);
-#undef T
-#undef D
-#define T Config_Item
-#define D conf_item_edd
-   E_CONFIG_VAL(D, T, id, STR);
-   E_CONFIG_VAL(D, T, dir, STR);
-   E_CONFIG_VAL(D, T, show_label, INT);
-   E_CONFIG_VAL(D, T, eap_label, INT);
-   E_CONFIG_VAL(D, T, lock_move, INT);
-   E_CONFIG_VAL(D, T, dont_add_nonorder, INT);
-   E_CONFIG_VAL(D, T, dont_track_launch, UCHAR);
-   E_CONFIG_VAL(D, T, dont_icon_menu_mouseover, UCHAR);
-   
-   conf_edd = E_CONFIG_DD_NEW("IBar_Config", Config);
-#undef T
-#undef D
-#define T Config
-#define D conf_edd
-   E_CONFIG_LIST(D, T, items, conf_item_edd);
-
-   ibar_config = e_config_domain_load("module.ibar", conf_edd);
+   config_descriptor_init();
+   ibar_config = e_config_domain_load("module.ibar", config_descriptor_get());
 
    if (!ibar_config)
      {
@@ -2870,15 +2847,14 @@ e_modapi_shutdown(E_Module *m EINA_UNUSED)
    ibar_config = NULL;
    eina_hash_free(ibar_orders);
    ibar_orders = NULL;
-   E_CONFIG_DD_FREE(conf_item_edd);
-   E_CONFIG_DD_FREE(conf_edd);
+   config_descriptor_shutdown();
    return 1;
 }
 
 E_API int
 e_modapi_save(E_Module *m EINA_UNUSED)
 {
-   e_config_domain_save("module.ibar", conf_edd, ibar_config);
+   e_config_domain_save("module.ibar", config_descriptor_get(), ibar_config);
    return 1;
 }
 

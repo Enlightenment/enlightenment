@@ -1,31 +1,7 @@
 #ifndef E_MOD_MAIN_H
 #define E_MOD_MAIN_H
 
-typedef struct _Config      Config;
-typedef struct _Config_Item Config_Item;
-
-struct _Config
-{
-   /* saved * loaded config values */
-   Eina_List       *items;
-   /* just config state */
-   E_Module        *module;
-   E_Config_Dialog *config_dialog;
-   Eina_List       *instances;
-   Eina_List       *handlers;
-};
-
-struct _Config_Item
-{
-   const char *id;
-   const char *dir;
-   int show_label;
-   int eap_label;
-   int lock_move;
-   int dont_add_nonorder;
-   unsigned char dont_track_launch;
-   unsigned char dont_icon_menu_mouseover;
-};
+#include "config_descriptor.h"
 
 E_API extern E_Module_Api e_modapi;
 
