@@ -684,6 +684,8 @@ _bryce_del(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *
         evas_object_event_callback_del_full(zone_clip, EVAS_CALLBACK_RESIZE, _bryce_zone_moveresize, b);
      }
    E_FREE(b->e_obj_inherit);
+   b->bryce = NULL;
+   b->site = NULL;
 }
 
 static void
