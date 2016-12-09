@@ -14,6 +14,8 @@ src_modules_pager_module_la_LDFLAGS = $(MOD_LDFLAGS)
 src_modules_pager_module_la_SOURCES = src/modules/pager/e_mod_main.h \
 			  src/modules/pager/e_mod_main.c \
 			  src/modules/pager/e_mod_config.c \
+			  src/modules/pager/gadget/config_descriptor.c \
+			  src/modules/pager/gadget/config_descriptor.h \
                           src/modules/pager/gadget/pager.h \
                           src/modules/pager/gadget/pager.c \
                           src/modules/pager/gadget/mod.c \

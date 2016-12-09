@@ -164,7 +164,6 @@ static Pager_Popup *act_popup = NULL; /* active popup */
 static int hold_count = 0;
 static int hold_mod = 0;
 static E_Desk *current_desk = NULL;
-static E_Config_DD *conf_edd = NULL;
 static Eina_List *pagers = NULL;
 
 EINTERN E_Module *module;
@@ -2052,26 +2051,9 @@ e_modapi_init(E_Module *m)
         e_util_dialog_show(_("Error"), _("Pager module cannot be loaded at the same time as Pager Plain!"));
         return NULL;
      }
-   conf_edd = E_CONFIG_DD_NEW("Pager_Config", Config);
-#undef T
-#undef D
-#define T Config
-#define D conf_edd
-   E_CONFIG_VAL(D, T, popup, UINT);
-   E_CONFIG_VAL(D, T, popup_speed, DOUBLE);
-   E_CONFIG_VAL(D, T, popup_urgent, UINT);
-   E_CONFIG_VAL(D, T, popup_urgent_stick, UINT);
-   E_CONFIG_VAL(D, T, popup_urgent_speed, DOUBLE);
-   E_CONFIG_VAL(D, T, show_desk_names, UINT);
-   E_CONFIG_VAL(D, T, popup_height, INT);
-   E_CONFIG_VAL(D, T, popup_act_height, INT);
-   E_CONFIG_VAL(D, T, drag_resist, UINT);
-   E_CONFIG_VAL(D, T, btn_drag, UCHAR);
-   E_CONFIG_VAL(D, T, btn_noplace, UCHAR);
-   E_CONFIG_VAL(D, T, btn_desk, UCHAR);
-   E_CONFIG_VAL(D, T, flip_desk, UCHAR);
 
-   pager_config = e_config_domain_load("module.pager", conf_edd);
+   config_descriptor_init();
+   pager_config = e_config_domain_load("module.pager", config_descriptor_get());
 
    if (!pager_config)
      {
@@ -2168,7 +2150,7 @@ e_modapi_shutdown(E_Module *m)
    e_action_predef_name_del("Pager", "Popup Desk Previous");
 
    E_FREE(pager_config);
-   E_CONFIG_DD_FREE(conf_edd);
+   config_descriptor_shutdown();
    return 1;
 }
 
@@ -2176,7 +2158,7 @@ E_API int
 e_modapi_save(E_Module *m)
 {
    e_modapi_gadget_save(m);
-   e_config_domain_save("module.pager", conf_edd, pager_config);
+   e_config_domain_save("module.pager", config_descriptor_get(), pager_config);
    return 1;
 }
 
