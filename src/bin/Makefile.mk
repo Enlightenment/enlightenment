@@ -85,6 +85,7 @@ src/bin/e_comp_x_randr.h \
 src/bin/e_config_data.h \
 src/bin/e_config_dialog.h \
 src/bin/e_config.h \
+src/bin/e_config_descriptor.h \
 src/bin/e_configure.h \
 src/bin/e_confirm_dialog.h \
 src/bin/e_datastore.h \
@@ -252,6 +253,7 @@ src/bin/e_comp_canvas.c \
 src/bin/e_comp_cfdata.c \
 src/bin/e_comp_object.c \
 src/bin/e_config.c \
+src/bin/e_config_descriptor.c \
 src/bin/e_config_data.c \
 src/bin/e_config_dialog.c \
 src/bin/e_configure.c \
