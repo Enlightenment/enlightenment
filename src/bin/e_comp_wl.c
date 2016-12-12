@@ -719,10 +719,29 @@ _e_comp_wl_evas_cb_restack(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EIN
 
    if (e_object_is_del(E_OBJECT(ec))) return;
    if (e_client_has_xwindow(ec)) return;
-   EINA_LIST_FOREACH(ec->transients, l, sec)
+   if (ec->stack.prev || ec->stack.next)
      {
-        evas_object_layer_set(sec->frame, evas_object_layer_get(ec->frame));
-        evas_object_stack_above(sec->frame, ec->frame);
+        if (ec->stack.ignore == 0)
+          {
+             Eina_List *l, *list = e_client_stack_list_prepare(ec);
+             E_Client *child;
+
+             EINA_LIST_FOREACH(list, l, child)
+               {
+                  if (child == ec) continue;
+                  evas_object_layer_set(child->frame, layer);
+               }
+             e_client_stack_list_finish(list);
+             evas_object_raise(ec->frame);
+          }
+     }
+   else
+     {
+        EINA_LIST_FOREACH(ec->transients, l, sec)
+          {
+             evas_object_layer_set(sec->frame, evas_object_layer_get(ec->frame));
+             evas_object_stack_above(sec->frame, ec->frame);
+          }
      }
    if (!ec->comp_data->sub.list) return;
    EINA_LIST_FOREACH(ec->comp_data->sub.list, l, sec)

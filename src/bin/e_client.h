@@ -266,6 +266,13 @@ struct E_Client
 
    E_Action                  *cur_mouse_action;
 
+   struct {
+      E_Client               *next;
+      E_Client               *prev;
+      int                     ignore;
+      Eina_Bool               focus_skip : 1;
+   } stack;
+
    int               border_size; //size of client's border
 
    struct
@@ -518,8 +525,9 @@ struct E_Client
             unsigned char     wait_for_done : 1;
             unsigned char     use : 1;
          } profile;
-         unsigned char  centered : 1;
-         unsigned char  video : 1;
+         Ecore_X_Stack_Type stack;
+         unsigned char      centered : 1;
+         unsigned char      video : 1;
       } state;
 
       struct
@@ -528,6 +536,7 @@ struct E_Client
          unsigned char video_parent : 1;
          unsigned char video_position : 1;
          unsigned char profile : 1;
+         unsigned char stack : 1;
       } fetch;
    } e;
 
@@ -840,6 +849,11 @@ E_API Eina_Bool e_client_has_xwindow(const E_Client *ec);
 E_API Eina_Bool e_client_desk_window_profile_available_check(E_Client *ec, const char *profile);
 E_API void      e_client_desk_window_profile_wait_desk_set(E_Client *ec, E_Desk *desk);
 E_API void      e_client_layout_cb_set(E_Client_Layout_Cb cb);
+E_API Eina_List *e_client_stack_list_prepare(E_Client *ec);
+E_API void       e_client_stack_list_finish(Eina_List *list);
+E_API E_Client  *e_client_stack_top_get(E_Client *ec);
+E_API E_Client  *e_client_stack_bottom_get(E_Client *ec);
+E_API E_Client  *e_client_stack_active_adjust(E_Client *ec);
 
 YOLO E_API void e_client_focus_stack_set(Eina_List *l);
 

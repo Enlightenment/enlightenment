@@ -409,7 +409,8 @@ e_desk_last_focused_focus(E_Desk *desk)
             (ec->netwm.type != E_WINDOW_TYPE_TOOLBAR) &&
             (ec->netwm.type != E_WINDOW_TYPE_MENU) &&
             (ec->netwm.type != E_WINDOW_TYPE_SPLASH) &&
-            (ec->netwm.type != E_WINDOW_TYPE_DESKTOP))
+            (ec->netwm.type != E_WINDOW_TYPE_DESKTOP) &&
+            (!e_object_is_del(E_OBJECT(ec))))
           {
              /* this was the window last focused in this desktop */
              if (!ec->lock_focus_out)

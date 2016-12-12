@@ -519,6 +519,8 @@ _e_comp_x_client_new_helper(E_Client *ec)
              /* loop to check for window profile list atom */
              else if (atoms[i] == ECORE_X_ATOM_E_WINDOW_PROFILE_SUPPORTED)
                ec->e.fetch.profile = 1;
+             else if (atoms[i] == ECORE_X_ATOM_E_STACK_TYPE)
+               ec->e.fetch.stack = 1;
              else if (atoms[i] == ATM_GTK_FRAME_EXTENTS)
                ec->comp_data->fetch_gtk_frame_extents = 1;
           }
@@ -3406,6 +3408,11 @@ _e_comp_x_hook_client_fetch(void *d EINA_UNUSED, E_Client *ec)
         ec->e.fetch.state = 0;
         rem_change = 1;
      }
+   if (ec->e.fetch.stack)
+     {
+        ec->e.state.stack = ecore_x_e_stack_type_get(win);
+        ec->e.fetch.stack = 0;
+     }
    if (ec->e.fetch.profile)
      {
         const char **list = NULL;
@@ -3846,6 +3853,16 @@ _e_comp_x_hook_client_fetch(void *d EINA_UNUSED, E_Client *ec)
              if (e_config->focus_setting == E_FOCUS_NEW_DIALOG ||
                  (ec->parent->focused && (e_config->focus_setting == E_FOCUS_NEW_DIALOG_IF_OWNER_FOCUSED)))
                ec->take_focus = 1;
+          }
+        if ((ec_parent) && (ec->e.state.stack != ECORE_X_STACK_NONE))
+          {
+             E_Client *ec2;
+
+             // find last one
+             for (ec2 = ec_parent; ec2->stack.next; ec2 = ec2->stack.next);
+             ec->stack.prev = ec2;
+             ec->stack.next = NULL;
+             ec->stack.prev->stack.next = ec;
           }
         ec->icccm.fetch.transient_for = 0;
         rem_change = 1;

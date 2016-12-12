@@ -1318,6 +1318,7 @@ _e_comp_intercept_layer_set(void *data, Evas_Object *obj, int layer)
    E_Comp_Object *cw = data;
    unsigned int l = e_comp_canvas_layer_map(layer);
    int oldraise;
+   E_Client *ec;
 
    if (cw->ec->layer_block)
      {
@@ -1362,20 +1363,40 @@ _e_comp_intercept_layer_set(void *data, Evas_Object *obj, int layer)
    _e_comp_object_layers_remove(cw);
    /* clamp to valid client layer */
    layer = e_comp_canvas_client_layer_map_nearest(layer);
-   cw->ec->layer = layer;
-   if (e_config->transient.layer)
+   ec = cw->ec;
+   ec->layer = layer;
+   if (ec->stack.prev || ec->stack.next)
      {
-        E_Client *child;
-        Eina_List *list = eina_list_clone(cw->ec->transients);
+        if (ec->stack.ignore == 0)
+          {
+             Eina_List *l, *list = e_client_stack_list_prepare(ec);
+             E_Client *child;
 
-        /* We need to set raise to one, else the child wont
-         * follow to the new layer. It should be like this,
-         * even if the user usually doesn't want to raise
-         * the transients.
-         */
-        e_config->transient.raise = 1;
-        EINA_LIST_FREE(list, child)
-          evas_object_layer_set(child->frame, layer);
+             EINA_LIST_FOREACH(list, l, child)
+               {
+                  if (child == ec) continue;
+                  evas_object_layer_set(child->frame, layer);
+               }
+             e_client_stack_list_finish(list);
+             evas_object_raise(ec->frame);
+          }
+     }
+   else
+     {
+        if (e_config->transient.layer)
+          {
+             E_Client *child;
+             Eina_List *list = eina_list_clone(cw->ec->transients);
+
+             /* We need to set raise to one, else the child wont
+              * follow to the new layer. It should be like this,
+              * even if the user usually doesn't want to raise
+              * the transients.
+              */
+             e_config->transient.raise = 1;
+             EINA_LIST_FREE(list, child)
+               evas_object_layer_set(child->frame, layer);
+          }
      }
    if (!cw->ec->override)
      {
@@ -1780,9 +1801,14 @@ static void
 _e_comp_intercept_focus(void *data, Evas_Object *obj, Eina_Bool focus)
 {
    E_Comp_Object *cw = data;
-   E_Client *ec;
+   E_Client *ec = cw->ec;
 
-   ec = cw->ec;
+   if (focus)
+     {
+        ec = e_client_stack_active_adjust(ec);
+        obj = ec->frame;
+        cw = evas_object_data_get(obj, "comp_obj");
+     }
    /* note: this is here as it seems there are enough apps that do not even
     * expect us to emulate a look of focus but not actually set x input
     * focus as we do - so simply abort any focus set on such windows */
