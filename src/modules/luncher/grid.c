@@ -8,7 +8,6 @@ _grid_aspect(Instance *inst)
 {
    Evas_Coord w, h, square, size;
 
-   evas_object_size_hint_aspect_set(inst->o_main, EVAS_ASPECT_CONTROL_BOTH, 1, 1);
    if (!eina_list_count(inst->icons))
      return;
    evas_object_geometry_get(inst->o_main, 0, 0, &w, &h);
