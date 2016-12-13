@@ -742,7 +742,7 @@ _bar_icon_preview_show(void *data)
      return EINA_FALSE;
 
    if (ic->preview)
-     elm_popup_dismiss(ic->preview);
+     _bar_icon_preview_hide(ic);
 
    ic->preview = elm_ctxpopup_add(e_comp->elm);
    elm_object_style_set(ic->preview, "noblock");
