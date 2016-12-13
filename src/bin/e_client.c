@@ -4415,7 +4415,7 @@ e_client_act_resize_keyboard(E_Client *ec)
    EINA_SAFETY_ON_NULL_RETURN(ec);
    if (!ec->zone) return;
 
-   ec->resize_mode = E_POINTER_RESIZE_TL;
+   ec->resize_mode = E_POINTER_RESIZE_BR;
    ec->keyboard_resizing = 1;
    if (!e_client_resize_begin(ec))
      {
