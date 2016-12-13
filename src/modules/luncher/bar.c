@@ -3,6 +3,7 @@ static Eina_List *handlers;
 static Evas_Object *current_preview;
 static Eina_Bool current_preview_menu;
 static Eina_Bool _bar_icon_preview_show(void *data);
+static Eina_Bool _bar_icon_preview_hide(void *data);
 
 static void
 _bar_aspect(Instance *inst)
@@ -188,6 +189,8 @@ static void
 _bar_icon_del(Instance *inst, Icon *ic)
 {
    inst->icons = eina_list_remove(inst->icons, ic);
+   if (ic->preview)
+     _bar_icon_preview_hide(ic);
    _bar_aspect(inst);
    evas_object_del(ic->o_icon);
    evas_object_del(ic->o_overlay);
