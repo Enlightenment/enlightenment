@@ -73,6 +73,7 @@ struct _Icon
    Eina_Bool         in_order;
    Eina_Bool         active;
    Eina_Bool         starting;
+   Eina_Bool         preview_dismissed;
    struct
    {
       unsigned char start : 1;

@@ -384,6 +384,7 @@ _bar_icon_preview_hide(void *data)
 
    E_FREE_FUNC(ic->preview_box, evas_object_del);
    elm_ctxpopup_dismiss(ic->preview);
+   ic->preview_dismissed = EINA_TRUE;
    current_preview = NULL;
    current_preview_menu = EINA_FALSE;
    ic->active = EINA_FALSE;
@@ -739,13 +740,13 @@ _bar_icon_preview_show(void *data)
 
    orient = e_gadget_site_orient_get(e_gadget_site_get(ic->inst->o_main));
 
-   if (current_preview)
+   if (current_preview && (current_preview != ic->preview))
      _bar_icon_preview_hide(evas_object_data_get(current_preview, "icon"));
+   if (ic->preview && !ic->preview_dismissed)
+     _bar_icon_preview_hide(ic);
+   ic->preview_dismissed = EINA_FALSE;
    if (!eina_list_count(ic->execs) && !eina_list_count(ic->clients))
      return EINA_FALSE;
-
-   if (ic->preview)
-     _bar_icon_preview_hide(ic);
 
    ic->preview = elm_ctxpopup_add(e_comp->elm);
    elm_object_style_set(ic->preview, "noblock");
@@ -910,6 +911,7 @@ _bar_icon_add(Instance *inst, Efreet_Desktop *desktop, E_Client *non_desktop_cli
    ic->mouse_out_timer = NULL;
    ic->active = EINA_FALSE;
    ic->starting = EINA_FALSE;
+   ic->preview_dismissed = EINA_FALSE;
    ic->exec = NULL;
 
    ic->o_layout = elm_layout_add(inst->o_icon_con);
