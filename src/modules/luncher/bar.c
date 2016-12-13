@@ -927,6 +927,7 @@ _bar_icon_add(Instance *inst, Efreet_Desktop *desktop, E_Client *non_desktop_cli
    if (inst->cfg->style)
      msg->str = strdup(inst->cfg->style);
    edje_object_message_send(elm_layout_edje_get(ic->o_layout), EDJE_MESSAGE_STRING, 1, msg);
+   free(msg->str);
 
    ic->o_icon = elm_icon_add(ic->o_layout);
    E_EXPAND(ic->o_icon);
@@ -1391,6 +1392,7 @@ _bar_fill(Instance *inst)
                }
           }
      }
+   eina_iterator_free(it);
    E_CLIENT_FOREACH(ec)
      {
         if (e_client_util_ignored_get(ec)) continue;
