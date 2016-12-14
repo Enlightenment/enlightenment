@@ -1451,6 +1451,30 @@ e_config_load(void)
                e_config->window_maximize_transition = E_EFX_EFFECT_SPEED_SINUSOIDAL;
                e_config->window_maximize_time = 0.15;
             }
+          CONFIG_VERSION_CHECK(22)
+            {
+               Eina_List *l;
+               E_Config_Module *em, *module;
+               Eina_Bool ibar_en = EINA_FALSE, luncher_en = EINA_FALSE;
+
+               CONFIG_VERSION_UPDATE_INFO(22);
+
+               EINA_LIST_FOREACH(e_config->modules, l, em)
+               {
+                  if (!em->enabled) continue;
+                  if (eina_streq(em->name, "ibar"))
+                    ibar_en = EINA_TRUE;
+                  else if (eina_streq(em->name, "luncher"))
+                    luncher_en = EINA_TRUE;
+                  if (ibar_en && !luncher_en)
+                    {
+                       module = E_NEW(E_Config_Module, 1);
+                       module->name = eina_stringshare_add("luncher");
+                       module->enabled = 1;
+                       e_config->modules = eina_list_append(e_config->modules, module);
+                    }
+               }
+            }
      }
    if (!e_config->remember_internal_fm_windows)
      e_config->remember_internal_fm_windows = !!(e_config->remember_internal_windows & E_REMEMBER_INTERNAL_FM_WINS);
