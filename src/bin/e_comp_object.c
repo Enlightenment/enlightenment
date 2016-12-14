@@ -3926,7 +3926,7 @@ e_comp_object_dirty(Evas_Object *obj)
 E_API Eina_Bool
 e_comp_object_render(Evas_Object *obj)
 {
-   Eina_Iterator *it;
+   Eina_Iterator *it = NULL;
    Eina_Rectangle *r;
    Eina_List *l;
    Evas_Object *o;
@@ -4015,8 +4015,8 @@ e_comp_object_render(Evas_Object *obj)
         RENDER_DEBUG("UPDATE [%p]: %d %d %dx%d -- pix = %p", cw->ec, r->x, r->y, r->w, r->h, pix);
      }
    if (!it) pix = NULL;
-   eina_iterator_free(it);
 end:
+   eina_iterator_free(it);
    evas_object_image_data_set(cw->obj, cw->blanked ? NULL : pix);
    _e_comp_object_alpha_set(cw);
 
