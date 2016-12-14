@@ -1298,15 +1298,21 @@ _bar_cb_exec_new(void *data EINA_UNUSED, int type, E_Exec_Instance *ex)
                {
                   if (!eina_list_data_find(ic->execs, ex))
                     ic->execs = eina_list_append(ic->execs, ex);
-                  evas_object_event_callback_add(ec->frame, EVAS_CALLBACK_SHOW,
-                      _bar_exec_new_show, ic);
+                  if (evas_object_visible_get(ec->frame))
+                    _bar_exec_new_show(ic, NULL, NULL, NULL);
+                  else
+                    evas_object_event_callback_add(ec->frame, EVAS_CALLBACK_SHOW,
+                        _bar_exec_new_show, ic);
                }
              else
                {
                   if (!eina_list_data_find(ic->clients, ec))
                     ic->clients = eina_list_append(ic->clients, ec);
-                  evas_object_event_callback_add(ec->frame, EVAS_CALLBACK_SHOW,
-                      _bar_exec_new_show, ic);
+                  if (evas_object_visible_get(ec->frame))
+                    _bar_exec_new_show(ic, NULL, NULL, NULL);
+                  else
+                    evas_object_event_callback_add(ec->frame, EVAS_CALLBACK_SHOW,
+                        _bar_exec_new_show, ic);
                }
           }
         else
