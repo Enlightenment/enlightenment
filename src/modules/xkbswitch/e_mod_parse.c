@@ -30,26 +30,27 @@ Eina_List *optsolaris = NULL;
 Eina_List *optterminate = NULL;
 Eina_List *optmisc = NULL;
 
-static Config_Parse_Label grplabels[] = {
-{ "grp_led", &optled },
-{ "grp", &optswitch },
-{ "lv3", &optlv3 },
-{ "ctrl", &optctrl },
-{ "keypad", &optkeypad },
-{ "kpdl", &optdelkeypad },
-{ "caps", &optcapslock },
-{ "altwin", &optaltwin },
-{ "compose", &optcompose },
-{ "currencysign", &optcurrency },
-{ "eurosign", &optcurrency },
-{ "rupeesign", &optcurrency },
-{ "lv5", &optlv5 },
-{ "nbsp", &optspacebar },
-{ "jap", &optjapan },
-{ "korean", &optkorean },
-{ "esperanto", &optesperanto },
-{ "solaris", &optsolaris },
-{ "terminate", &optterminate }
+static Config_Parse_Label grplabels[] =
+{
+   { "grp_led", &optled },
+   { "grp", &optswitch },
+   { "lv3", &optlv3 },
+   { "ctrl", &optctrl },
+   { "keypad", &optkeypad },
+   { "kpdl", &optdelkeypad },
+   { "caps", &optcapslock },
+   { "altwin", &optaltwin },
+   { "compose", &optcompose },
+   { "currencysign", &optcurrency },
+   { "eurosign", &optcurrency },
+   { "rupeesign", &optcurrency },
+   { "lv5", &optlv5 },
+   { "nbsp", &optspacebar },
+   { "jap", &optjapan },
+   { "korean", &optkorean },
+   { "esperanto", &optesperanto },
+   { "solaris", &optsolaris },
+   { "terminate", &optterminate }
 };
 
 static const char *rules_file = NULL;
@@ -60,26 +61,27 @@ void
 find_rules(void)
 {
    int i = 0;
-   const char *lstfiles[] = {
+   const char *lstfiles[] =
+     {
 #ifdef XKB_BASE
-      XKB_BASE "/rules/xorg.lst",
-      XKB_BASE "/rules/xfree86.lst",
+        XKB_BASE "/rules/xorg.lst",
+        XKB_BASE "/rules/xfree86.lst",
 #endif
 #if defined __NetBSD__
-      "/usr/X11R7/lib/X11/xkb/rules/xorg.lst",
+        "/usr/X11R7/lib/X11/xkb/rules/xorg.lst",
 #elif defined __OpenBSD__
-      "/usr/X11R6/share/X11/xkb/rules/base.lst",
+        "/usr/X11R6/share/X11/xkb/rules/base.lst",
 #endif
-      "/usr/share/X11/xkb/rules/xorg.lst",
-      "/usr/share/X11/xkb/rules/xfree86.lst",
-      "/usr/local/share/X11/xkb/rules/xorg.lst",
-      "/usr/local/share/X11/xkb/rules/xfree86.lst",
-      "/usr/X11R6/lib/X11/xkb/rules/xorg.lst",
-      "/usr/X11R6/lib/X11/xkb/rules/xfree86.lst",
-      "/usr/local/X11R6/lib/X11/xkb/rules/xorg.lst",
-      "/usr/local/X11R6/lib/X11/xkb/rules/xfree86.lst",
-      NULL
-   };
+        "/usr/share/X11/xkb/rules/xorg.lst",
+        "/usr/share/X11/xkb/rules/xfree86.lst",
+        "/usr/local/share/X11/xkb/rules/xorg.lst",
+        "/usr/local/share/X11/xkb/rules/xfree86.lst",
+        "/usr/X11R6/lib/X11/xkb/rules/xorg.lst",
+        "/usr/X11R6/lib/X11/xkb/rules/xfree86.lst",
+        "/usr/local/X11R6/lib/X11/xkb/rules/xorg.lst",
+        "/usr/local/X11R6/lib/X11/xkb/rules/xfree86.lst",
+        NULL
+     };
 
    for (; lstfiles[i]; i++)
      {
@@ -129,7 +131,7 @@ parse_rules(void)
    models = eina_list_append(models, model);
 
    /* read models here */
-   for (;; )
+   for (;;)
      {
         if (fgets(buf, sizeof(buf), f))
           {
@@ -167,7 +169,7 @@ parse_rules(void)
    if (!fgets(buf, sizeof(buf), f)) goto err;
 
    /* read layouts here */
-   for (;; )
+   for (;;)
      {
         if (fgets(buf, sizeof(buf), f))
           {
@@ -209,7 +211,7 @@ parse_rules(void)
    if (!fgets(buf, sizeof(buf), f)) goto err;
 
    /* read variants here */
-   for (;; )
+   for (;;)
      {
         if (fgets(buf, sizeof(buf), f))
           {
@@ -254,7 +256,7 @@ parse_rules(void)
    if (!fgets(buf, sizeof(buf), f)) goto err;
 
    /* read options here */
-   for (;; )
+   for (;;)
      {
         if (fgets(buf, sizeof(buf), f))
           {
@@ -316,8 +318,6 @@ _free_option(E_XKB_Option *o)
 
    E_FREE(o);
 }
-
-
 
 void
 clear_rules(void)
