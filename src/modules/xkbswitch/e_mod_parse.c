@@ -104,7 +104,7 @@ parse_rules(void)
    E_XKB_Option *option = NULL;
    E_XKB_Variant *variant = NULL;
    FILE *f;
-   int i;
+   unsigned int i;
 
    if (!rules_file) return 0;
 
