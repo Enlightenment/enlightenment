@@ -346,7 +346,7 @@ e_pixmap_new(E_Pixmap_Type type, ...)
         else
           {
              pixmaps[type] = eina_hash_int64_new((Eina_Free_Cb)_e_pixmap_free);
-             wayland_time_base = ecore_time_unix_get();
+             wayland_time_base = ecore_time_get();
           }
         cp = _e_pixmap_new(type);
         cp->win = id;
@@ -804,7 +804,7 @@ e_pixmap_image_clear(E_Pixmap *cp, Eina_Bool cache)
              cd->frames = NULL;
              EINA_LIST_FREE(free_list, cb)
                {
-                  double t = ecore_time_unix_get() - wayland_time_base;
+                  double t = ecore_time_get() - wayland_time_base;
                   wl_callback_send_done(cb, t * 1000);
                   wl_resource_destroy(cb);
                }
