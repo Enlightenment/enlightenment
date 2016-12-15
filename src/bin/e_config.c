@@ -1466,14 +1466,14 @@ e_config_load(void)
                     ibar_en = EINA_TRUE;
                   else if (eina_streq(em->name, "luncher"))
                     luncher_en = EINA_TRUE;
-                  if (ibar_en && !luncher_en)
-                    {
-                       module = E_NEW(E_Config_Module, 1);
-                       module->name = eina_stringshare_add("luncher");
-                       module->enabled = 1;
-                       e_config->modules = eina_list_append(e_config->modules, module);
-                    }
                }
+               if (ibar_en && !luncher_en)
+                 {
+                    module = E_NEW(E_Config_Module, 1);
+                    module->name = eina_stringshare_add("luncher");
+                    module->enabled = 1;
+                    e_config->modules = eina_list_append(e_config->modules, module);
+                 }
             }
      }
    if (!e_config->remember_internal_fm_windows)
