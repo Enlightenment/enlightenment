@@ -13,6 +13,7 @@ static void      _e_module_dialog_disable_create(const char *title, const char *
 static void      _e_module_cb_dialog_disable(void *data, E_Dialog *dia);
 static void      _e_module_event_update_free(void *data, void *event);
 static Eina_Bool _e_module_cb_idler(void *data);
+static int       _e_module_sort_name(const void *d1, const void *d2);
 static int       _e_module_sort_priority(const void *d1, const void *d2);
 static void      _e_module_whitelist_check(void);
 static Eina_Bool _e_module_desktop_list_cb(const Eina_Hash *hash EINA_UNUSED, const void *key, void *data, void *fdata);
@@ -264,12 +265,28 @@ E_API void
 e_module_all_load(void)
 {
    Eina_List *l, *ll;
-   E_Config_Module *em;
+   E_Config_Module *em, *em2;
    char buf[128];
 
    _e_modules_initting = EINA_TRUE;
    if (_e_module_path_lists) return;
 
+   // remove duplicate modules in load
+   e_config->modules =
+     eina_list_sort(e_config->modules, 0, _e_module_sort_name);
+   EINA_LIST_FOREACH_SAFE(e_config->modules, l, ll, em)
+     {
+        if ((!em) || (!ll)) continue;
+        em2 = ll->data;
+        if (!em2) continue;
+
+        if (!strcmp(em->name, em2->name))
+          {
+             eina_stringshare_del(em->name);
+             e_config->modules = eina_list_remove_list(e_config->modules, l);
+             free(em);
+          }
+     }
    e_config->modules =
      eina_list_sort(e_config->modules, 0, _e_module_sort_priority);
 
@@ -332,11 +349,11 @@ e_module_new(const char *name)
    char body[4096], title[1024];
    const char *modpath = NULL;
    char *s;
-   Eina_List *l, *ll;
-   E_Config_Module *em;
    int in_list = 0;
 
    if (!name) return NULL;
+   if (eina_hash_find(_e_modules_hash, name)) return NULL;
+
    m = E_OBJECT_ALLOC(E_Module, E_MODULE_TYPE, _e_module_free);
    if (name[0] != '/')
      {
@@ -459,22 +476,6 @@ init_done:
                   m->dir = eina_stringshare_add(s2);
                   free(s2);
                }
-          }
-     }
-   EINA_LIST_FOREACH_SAFE(e_config->modules, l, ll, em)
-     {
-        if (!em) continue;
-        if (em->name == m->name)
-          {
-             if (in_list)
-               {
-                  /* duplicate module config */
-                  e_config->modules = eina_list_remove_list(e_config->modules, l);
-                  eina_stringshare_del(em->name);
-                  free(em);
-               }
-             else
-               in_list = 1;
           }
      }
    if (!in_list)
@@ -888,6 +889,18 @@ _e_module_cb_idler(void *data EINA_UNUSED)
 
    _e_module_idler = NULL;
    return ECORE_CALLBACK_CANCEL;
+}
+
+static int
+_e_module_sort_name(const void *d1, const void *d2)
+{
+   const E_Config_Module *m1, *m2;
+
+   m1 = d1;
+   if (!m1->name) return -1;
+   m2 = d2;
+   if (!m2->name) return 1;
+   return strcmp(m1->name, m2->name);
 }
 
 static int
