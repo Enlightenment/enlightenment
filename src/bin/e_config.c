@@ -1431,6 +1431,7 @@ e_config_load(void)
                        module = E_NEW(E_Config_Module, 1);
                        module->name = eina_stringshare_add("wireless");
                        module->enabled = 1;
+                       module->delayed = 1;
                        e_config->modules = eina_list_append(e_config->modules, module);
                     }
                   else if (eina_streq(em->name, "clock"))
@@ -1438,6 +1439,7 @@ e_config_load(void)
                        module = E_NEW(E_Config_Module, 1);
                        module->name = eina_stringshare_add("time");
                        module->enabled = 1;
+                       module->delayed = 1;
                        e_config->modules = eina_list_append(e_config->modules, module);
                     }
                }
@@ -1460,18 +1462,19 @@ e_config_load(void)
                CONFIG_VERSION_UPDATE_INFO(22);
 
                EINA_LIST_FOREACH(e_config->modules, l, em)
-               {
-                  if (!em->enabled) continue;
-                  if (eina_streq(em->name, "ibar"))
+                 {
+                    if (!em->enabled) continue;
+                    if (eina_streq(em->name, "ibar"))
                     ibar_en = EINA_TRUE;
-                  else if (eina_streq(em->name, "luncher"))
+                    else if (eina_streq(em->name, "luncher"))
                     luncher_en = EINA_TRUE;
-               }
+                 }
                if (ibar_en && !luncher_en)
                  {
                     module = E_NEW(E_Config_Module, 1);
                     module->name = eina_stringshare_add("luncher");
                     module->enabled = 1;
+                    module->delayed = 1;
                     e_config->modules = eina_list_append(e_config->modules, module);
                  }
             }
