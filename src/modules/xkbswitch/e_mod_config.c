@@ -456,7 +456,7 @@ _list_del(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *e
 }
 
 static void
-_option_del(void *data, Evas_Object *obj, void *event)
+_option_del(void *data, Evas_Object *obj, void *event EINA_UNUSED)
 {
    Eina_List **list;
    Eina_List *l;
@@ -930,7 +930,7 @@ _popup_item_clicked(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
 }
 
 static Evas_Object *
-_popup_item_tooltip(void *data, Evas_Object *obj, Evas_Object *tooltip, void *item)
+_popup_item_tooltip(void *data, Evas_Object *obj EINA_UNUSED, Evas_Object *tooltip, void *item EINA_UNUSED)
 {
    E_XKB_Option *option;
    Evas_Object *o;
@@ -944,7 +944,7 @@ _popup_item_tooltip(void *data, Evas_Object *obj, Evas_Object *tooltip, void *it
 }
 
 static void
-_popup_add(const char *title, E_Config_Dialog_Data *cfdata, Eina_List *opts, Eina_List **cfg_opts, Evas_Object *list_objects)
+_popup_add(const char *title, E_Config_Dialog_Data *cfdata, Eina_List *opts, Eina_List **cfg_opts, Evas_Object *list_objects EINA_UNUSED)
 {
    Evas_Object *popup, *fr, *vbx, *bx, *list, *o;
    E_XKB_Option *option, *op;
@@ -1015,7 +1015,7 @@ _popup_add(const char *title, E_Config_Dialog_Data *cfdata, Eina_List *opts, Ein
 }
 
 static void
-_cb_compose_up(void *data, Evas_Object *obj, void *event)
+_cb_compose_up(void *data, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
 {
    E_Config_Dialog_Data *cfdata;
 
@@ -1026,7 +1026,7 @@ _cb_compose_up(void *data, Evas_Object *obj, void *event)
 }
 
 static void
-_cb_lv3_up(void *data, Evas_Object *obj, void *event)
+_cb_lv3_up(void *data, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
 {
    E_Config_Dialog_Data *cfdata;
 
@@ -1037,7 +1037,7 @@ _cb_lv3_up(void *data, Evas_Object *obj, void *event)
 }
 
 static void
-_cb_switch_up(void *data, Evas_Object *obj, void *event)
+_cb_switch_up(void *data, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
 {
    E_Config_Dialog_Data *cfdata;
 
@@ -1048,7 +1048,7 @@ _cb_switch_up(void *data, Evas_Object *obj, void *event)
 }
 
 static void
-_cb_led_up(void *data, Evas_Object *obj, void *event)
+_cb_led_up(void *data, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
 {
    E_Config_Dialog_Data *cfdata;
 
@@ -1060,7 +1060,7 @@ _cb_led_up(void *data, Evas_Object *obj, void *event)
 
 
 static void
-_cb_ctrl_up(void *data, Evas_Object *obj, void *event)
+_cb_ctrl_up(void *data, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
 {
    E_Config_Dialog_Data *cfdata;
 
@@ -1071,7 +1071,7 @@ _cb_ctrl_up(void *data, Evas_Object *obj, void *event)
 }
 
 static void
-_cb_keypad_up(void *data, Evas_Object *obj, void *event)
+_cb_keypad_up(void *data, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
 {
    E_Config_Dialog_Data *cfdata;
 
@@ -1083,7 +1083,7 @@ _cb_keypad_up(void *data, Evas_Object *obj, void *event)
 
 
 static void
-_cb_delkeypad_up(void *data, Evas_Object *obj, void *event)
+_cb_delkeypad_up(void *data, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
 {
    E_Config_Dialog_Data *cfdata;
 
@@ -1094,7 +1094,7 @@ _cb_delkeypad_up(void *data, Evas_Object *obj, void *event)
 }
 
 static void
-_cb_capslock_up(void *data, Evas_Object *obj, void *event)
+_cb_capslock_up(void *data, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
 {
    E_Config_Dialog_Data *cfdata;
 
@@ -1105,7 +1105,7 @@ _cb_capslock_up(void *data, Evas_Object *obj, void *event)
 }
 
 static void
-_cb_altwin_up(void *data, Evas_Object *obj, void *event)
+_cb_altwin_up(void *data, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
 {
    E_Config_Dialog_Data *cfdata;
 
@@ -1116,7 +1116,7 @@ _cb_altwin_up(void *data, Evas_Object *obj, void *event)
 }
 
 static void
-_cb_currency_up(void *data, Evas_Object *obj, void *event)
+_cb_currency_up(void *data, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
 {
    E_Config_Dialog_Data *cfdata;
 
@@ -1127,7 +1127,7 @@ _cb_currency_up(void *data, Evas_Object *obj, void *event)
 }
 
 static void
-_cb_lv5_up(void *data, Evas_Object *obj, void *event)
+_cb_lv5_up(void *data, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
 {
    E_Config_Dialog_Data *cfdata;
 
@@ -1138,7 +1138,7 @@ _cb_lv5_up(void *data, Evas_Object *obj, void *event)
 }
 
 static void
-_cb_spacebar_up(void *data, Evas_Object *obj, void *event)
+_cb_spacebar_up(void *data, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
 {
    E_Config_Dialog_Data *cfdata;
 
@@ -1149,7 +1149,7 @@ _cb_spacebar_up(void *data, Evas_Object *obj, void *event)
 }
 
 static void
-_cb_japan_up(void *data, Evas_Object *obj, void *event)
+_cb_japan_up(void *data, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
 {
    E_Config_Dialog_Data *cfdata;
 
@@ -1160,7 +1160,7 @@ _cb_japan_up(void *data, Evas_Object *obj, void *event)
 }
 
 static void
-_cb_korean_up(void *data, Evas_Object *obj, void *event)
+_cb_korean_up(void *data, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
 {
    E_Config_Dialog_Data *cfdata;
 
@@ -1171,7 +1171,7 @@ _cb_korean_up(void *data, Evas_Object *obj, void *event)
 }
 
 static void
-_cb_esperanto_up(void *data, Evas_Object *obj, void *event)
+_cb_esperanto_up(void *data, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
 {
    E_Config_Dialog_Data *cfdata;
 
@@ -1182,7 +1182,7 @@ _cb_esperanto_up(void *data, Evas_Object *obj, void *event)
 }
 
 static void
-_cb_solaris_up(void *data, Evas_Object *obj, void *event)
+_cb_solaris_up(void *data, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
 {
    E_Config_Dialog_Data *cfdata;
 
@@ -1193,7 +1193,7 @@ _cb_solaris_up(void *data, Evas_Object *obj, void *event)
 }
 
 static void
-_cb_terminate_up(void *data, Evas_Object *obj, void *event)
+_cb_terminate_up(void *data, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
 {
    E_Config_Dialog_Data *cfdata;
 
@@ -1204,7 +1204,7 @@ _cb_terminate_up(void *data, Evas_Object *obj, void *event)
 }
 
 static void
-_cb_misc_up(void *data, Evas_Object *obj, void *event)
+_cb_misc_up(void *data, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
 {
    E_Config_Dialog_Data *cfdata;
 
@@ -1229,7 +1229,7 @@ _dont_touch_my_damn_keyboard_changed(void *data, Evas_Object *obj, void *event E
 }
 
 static void
-_only_label_changed(void *data, Evas_Object *obj, void *event)
+_only_label_changed(void *data, Evas_Object *obj, void *event EINA_UNUSED)
 {
    E_Config_Dialog_Data *cfdata;
 
