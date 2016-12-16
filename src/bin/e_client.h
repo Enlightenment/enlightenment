@@ -854,6 +854,9 @@ E_API void       e_client_stack_list_finish(Eina_List *list);
 E_API E_Client  *e_client_stack_top_get(E_Client *ec);
 E_API E_Client  *e_client_stack_bottom_get(E_Client *ec);
 E_API E_Client  *e_client_stack_active_adjust(E_Client *ec);
+E_API Eina_Bool  e_client_stack_focused_get(E_Client *ec);
+E_API Eina_Bool  e_client_stack_iconified_get(E_Client *ec);
+E_API Eina_Bool  e_client_stack_urgent_get(E_Client *ec);
 
 YOLO E_API void e_client_focus_stack_set(Eina_List *l);
 

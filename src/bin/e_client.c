@@ -1485,6 +1485,45 @@ e_client_stack_active_adjust(E_Client *ec)
    return ec;
 }
 
+E_API Eina_Bool
+e_client_stack_focused_get(E_Client *ec)
+{
+  E_Client *ec2;
+
+   ec2 = e_client_stack_bottom_get(ec);
+   for (; ec2; ec2 = ec2->stack.next)
+     {
+        if (ec2->focused) return EINA_TRUE;
+     }
+   return EINA_FALSE;
+}
+
+E_API Eina_Bool
+e_client_stack_iconified_get(E_Client *ec)
+{
+   E_Client *ec2;
+
+   ec2 = e_client_stack_bottom_get(ec);
+   for (; ec2; ec2 = ec2->stack.next)
+     {
+        if (ec2->iconic) return EINA_TRUE;
+     }
+   return EINA_FALSE;
+}
+
+E_API Eina_Bool
+e_client_stack_urgent_get(E_Client *ec)
+{
+   E_Client *ec2;
+
+   ec2 = e_client_stack_bottom_get(ec);
+   for (; ec2; ec2 = ec2->stack.next)
+     {
+        if (ec2->urgent) return EINA_TRUE;
+     }
+   return EINA_FALSE;
+}
+
 ////////////////////////////////////////////////
 
 static void
@@ -1819,6 +1858,7 @@ _e_client_eval(E_Client *ec)
      {
         int zx = 0, zy = 0, zw = 0, zh = 0;
 
+        _e_client_event_simple(ec, E_EVENT_CLIENT_ADD);
         e_zone_useful_geometry_get(ec->zone, &zx, &zy, &zw, &zh);
         /* enforce wm size hints for initial sizing */
         if (e_config->screen_limits == E_CLIENT_OFFSCREEN_LIMIT_ALLOW_NONE)
@@ -2697,11 +2737,8 @@ e_client_new(E_Pixmap *cp, int first_map, int internal)
    e_comp->clients = eina_list_append(e_comp->clients, ec);
    eina_hash_add(clients_hash[e_pixmap_type_get(cp)], &ec->pixmap, ec);
 
-   if (!ec->ignored)
-     {
-        EC_CHANGED(ec);
-        _e_client_event_simple(ec, E_EVENT_CLIENT_ADD);
-     }
+   if (!ec->ignored) EC_CHANGED(ec);
+
    e_comp_object_client_add(ec);
    if (ec->frame)
      {

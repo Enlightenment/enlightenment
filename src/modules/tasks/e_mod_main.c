@@ -48,6 +48,9 @@ struct _Tasks_Item
    Evas_Object *o_item; // The edje theme object
    Evas_Object *o_icon; // The icon
    Eina_Bool skip_taskbar : 1;
+   Eina_Bool focused : 1;
+   Eina_Bool urgent : 1;
+   Eina_Bool iconified : 1;
 };
 
 static Tasks       *_tasks_new(Evas *e, E_Zone *zone, const char *id);
@@ -55,7 +58,6 @@ static void         _tasks_free(Tasks *tasks);
 static void         _tasks_refill(Tasks *tasks);
 static void         _tasks_refill_all();
 static void         _tasks_refill_border(E_Client *ec);
-static void         _tasks_signal_emit(E_Client *ec, char *sig, char *src);
 
 static Tasks_Item  *_tasks_item_find(Tasks *tasks, E_Client *ec);
 static Tasks_Item  *_tasks_item_new(Tasks *tasks, E_Client *ec);
@@ -341,16 +343,22 @@ _tasks_cb_iconify_provider(void *data, Evas_Object *obj, const char *signal)
    if (ec->zone != tasks->gcc->gadcon->zone) return EINA_FALSE;
    EINA_LIST_FOREACH(tasks->items, l, item)
      {
-        if (item->client == ec)
+        E_Client *ec2;
+
+        ec2 = e_client_stack_bottom_get(item->client);
+        for (; ec2; ec2 = ec2->stack.next)
           {
-             evas_object_geometry_get(item->o_item, &ox, &oy, &ow, &oh);
-             ec->layer_block = 1;
-             evas_object_layer_set(ec->frame, E_LAYER_CLIENT_PRIO);
-             e_comp_object_effect_set(ec->frame, "iconify/tasks");
-             e_comp_object_effect_params_set(ec->frame, 1, (int[]){ec->x, ec->y, ec->w, ec->h, ox, oy, ow, oh}, 8);
-             e_comp_object_effect_params_set(ec->frame, 0, (int[]){!!strcmp(signal, "e,action,iconify")}, 1);
-             e_comp_object_effect_start(ec->frame, _tasks_cb_iconify_end_cb, ec);
-             return EINA_TRUE;
+             if (ec2 == ec)
+               {
+                  evas_object_geometry_get(item->o_item, &ox, &oy, &ow, &oh);
+                  ec->layer_block = 1;
+                  evas_object_layer_set(ec->frame, E_LAYER_CLIENT_PRIO);
+                  e_comp_object_effect_set(ec->frame, "iconify/tasks");
+                  e_comp_object_effect_params_set(ec->frame, 1, (int[]){ec->x, ec->y, ec->w, ec->h, ox, oy, ow, oh}, 8);
+                  e_comp_object_effect_params_set(ec->frame, 0, (int[]){!!strcmp(signal, "e,action,iconify")}, 1);
+                  e_comp_object_effect_start(ec->frame, _tasks_cb_iconify_end_cb, ec);
+                  return EINA_TRUE;
+               }
           }
      }
    return EINA_FALSE;
@@ -486,34 +494,22 @@ _tasks_refill_border(E_Client *ec)
         Tasks_Item *item;
         EINA_LIST_FOREACH(tasks->items, m, item)
           {
-             if (item->client == ec)
+             E_Client *ec2;
+
+             ec2 = e_client_stack_bottom_get(item->client);
+             for (; ec2; ec2 = ec2->stack.next)
                {
-                  _tasks_item_refill(item);
-                  found = EINA_TRUE;
-                  break;
+                  if (ec2 == ec)
+                    {
+                       _tasks_item_refill(item);
+                       found = EINA_TRUE;
+                       goto done;
+                    }
                }
           }
      }
+done:
    if (!found) _tasks_refill_all();
-}
-
-static void
-_tasks_signal_emit(E_Client *ec, char *sig, char *src)
-{
-   const Eina_List *l;
-   Tasks *tasks;
-
-   EINA_LIST_FOREACH(tasks_config->tasks, l, tasks)
-     {
-        const Eina_List *m;
-        Tasks_Item *item;
-
-        EINA_LIST_FOREACH(tasks->items, m, item)
-          {
-             if (item->client == ec)
-               _tasks_item_signal_emit(item, sig, src);
-          }
-     }
 }
 
 static Tasks_Item *
@@ -524,7 +520,13 @@ _tasks_item_find(Tasks *tasks, E_Client *ec)
 
    EINA_LIST_FOREACH(tasks->items, l, item)
      {
-        if (item->client == ec) return item;
+        E_Client *ec2;
+
+        ec2 = e_client_stack_bottom_get(item->client);
+        for (; ec2; ec2 = ec2->stack.next)
+          {
+             if (ec2 == ec) return item;
+          }
      }
    return NULL;
 }
@@ -580,6 +582,7 @@ _tasks_item_check_add(Tasks *tasks, E_Client *ec)
 {
    if (ec->user_skip_winlist) return 1;
    if (ec->netwm.state.skip_taskbar) return 1;
+   if (ec->stack.prev) return 1;
    if (_tasks_item_find(tasks, ec)) return 1;
    if (!tasks->config) return 1;
    if (!(tasks->config->show_all))
@@ -637,15 +640,62 @@ _tasks_item_refill(Tasks_Item *item)
 }
 
 static void
+_tasks_focused_eval(Tasks_Item *item)
+{
+   if (!item) return;
+
+   if (e_client_stack_focused_get(item->client) != item->focused)
+     {
+        item->focused = e_client_stack_focused_get(item->client);
+        if (item->focused)
+          _tasks_item_signal_emit(item, "e,state,focused", "e");
+        else
+          _tasks_item_signal_emit(item, "e,state,unfocused", "e");
+     }
+}
+
+static void
+_tasks_iconified_eval(Tasks_Item *item)
+{
+   if (!item) return;
+
+   if (e_client_stack_iconified_get(item->client) != item->iconified)
+     {
+        item->iconified = e_client_stack_iconified_get(item->client);
+        if (item->iconified)
+          _tasks_item_signal_emit(item, "e,state,iconified", "e");
+        else
+          _tasks_item_signal_emit(item, "e,state,uniconified", "e");
+     }
+}
+
+static void
+_tasks_urgent_eval(Tasks_Item *item)
+{
+   if (!item) return;
+
+   if (e_client_stack_urgent_get(item->client) != item->urgent)
+     {
+        item->urgent = e_client_stack_urgent_get(item->client);
+        if (item->urgent)
+          _tasks_item_signal_emit(item, "e,state,urgent", "e");
+        else
+          _tasks_item_signal_emit(item, "e,state,not_urgent", "e");
+     }
+}
+
+static void
 _tasks_item_fill(Tasks_Item *item)
 {
    const char *label;
+   E_Client *ec;
 
+   ec = e_client_stack_active_adjust(item->client);
    if (item->tasks->config->text_only)
      item->o_icon = NULL;
    else
      {
-        item->o_icon = e_client_icon_add(item->client, evas_object_evas_get(item->tasks->o_items));
+        item->o_icon = e_client_icon_add(ec, evas_object_evas_get(item->tasks->o_items));
         edje_object_part_swallow(item->o_item, "e.swallow.icon", item->o_icon);
         evas_object_pass_events_set(item->o_icon, 1);
         evas_object_show(item->o_icon);
@@ -654,21 +704,12 @@ _tasks_item_fill(Tasks_Item *item)
    if (item->tasks->config->icon_only)
      label = "";
    else
-     label = e_client_util_name_get(item->client);
+     label = e_client_util_name_get(ec);
    edje_object_part_text_set(item->o_item, "e.text.label", label);
 
-   if (item->client->iconic)
-     _tasks_item_signal_emit(item, "e,state,iconified", "e");
-   else
-     _tasks_item_signal_emit(item, "e,state,uniconified", "e");
-   if (item->client->focused)
-     _tasks_item_signal_emit(item, "e,state,focused", "e");
-   else
-     _tasks_item_signal_emit(item, "e,state,unfocused", "e");
-   if (item->client->urgent)
-     _tasks_item_signal_emit(item, "e,state,urgent", "e");
-   else
-     _tasks_item_signal_emit(item, "e,state,not_urgent", "e");
+   _tasks_iconified_eval(item);
+   _tasks_focused_eval(item);
+   _tasks_urgent_eval(item);
 }
 
 static void
@@ -924,7 +965,13 @@ static Eina_Bool
 _tasks_cb_event_client_iconify(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
 {
    E_Event_Client *ev = event;
-   _tasks_signal_emit(ev->ec, "e,state,iconified", "e");
+   Eina_List *l;
+   Tasks *tasks;
+
+   EINA_LIST_FOREACH(tasks_config->tasks, l, tasks)
+     {
+        _tasks_iconified_eval(_tasks_item_find(tasks, ev->ec));
+     }
    return EINA_TRUE;
 }
 
@@ -932,7 +979,13 @@ static Eina_Bool
 _tasks_cb_event_client_uniconify(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
 {
    E_Event_Client *ev = event;
-   _tasks_signal_emit(ev->ec, "e,state,uniconified", "e");
+   Eina_List *l;
+   Tasks *tasks;
+
+   EINA_LIST_FOREACH(tasks_config->tasks, l, tasks)
+     {
+        _tasks_iconified_eval(_tasks_item_find(tasks, ev->ec));
+     }
    return EINA_TRUE;
 }
 
@@ -940,7 +993,13 @@ static Eina_Bool
 _tasks_cb_window_focus_in(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
 {
    E_Event_Client *ev = event;
-   _tasks_signal_emit(ev->ec, "e,state,focused", "e");
+   Eina_List *l;
+   Tasks *tasks;
+
+   EINA_LIST_FOREACH(tasks_config->tasks, l, tasks)
+     {
+        _tasks_focused_eval(_tasks_item_find(tasks, ev->ec));
+     }
    return EINA_TRUE;
 }
 
@@ -948,7 +1007,13 @@ static Eina_Bool
 _tasks_cb_window_focus_out(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
 {
    E_Event_Client *ev = event;
-   _tasks_signal_emit(ev->ec, "e,state,unfocused", "e");
+   Eina_List *l;
+   Tasks *tasks;
+
+   EINA_LIST_FOREACH(tasks_config->tasks, l, tasks)
+     {
+        _tasks_focused_eval(_tasks_item_find(tasks, ev->ec));
+     }
    return EINA_TRUE;
 }
 
@@ -958,10 +1023,13 @@ _tasks_cb_event_client_urgent_change(void *data EINA_UNUSED, int type EINA_UNUSE
    E_Event_Client_Property *ev = event;
 
    if (!(ev->property & E_CLIENT_PROPERTY_URGENCY)) return ECORE_CALLBACK_RENEW;
-   if (ev->ec->urgent)
-     _tasks_signal_emit(ev->ec, "e,state,urgent", "e");
-   else
-     _tasks_signal_emit(ev->ec, "e,state,not_urgent", "e");
+   Eina_List *l;
+   Tasks *tasks;
+
+   EINA_LIST_FOREACH(tasks_config->tasks, l, tasks)
+     {
+        _tasks_urgent_eval(_tasks_item_find(tasks, ev->ec));
+     }
    return EINA_TRUE;
 }
 
