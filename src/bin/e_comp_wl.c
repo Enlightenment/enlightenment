@@ -729,7 +729,7 @@ _e_comp_wl_evas_cb_restack(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EIN
              EINA_LIST_FOREACH(list, l, child)
                {
                   if (child == ec) continue;
-                  evas_object_layer_set(child->frame, layer);
+                  evas_object_layer_set(child->frame, evas_object_layer_get(ec->frame));
                }
              e_client_stack_list_finish(list);
              evas_object_raise(ec->frame);
