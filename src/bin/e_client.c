@@ -5442,7 +5442,7 @@ e_client_pointer_warp_to_center(E_Client *ec)
        (y >= ec->y) && (y <= (ec->y + ec->h)))
      {
         cec = _e_client_under_pointer_helper(ec->desk, ec, x, y);
-        cec = e_client_stack_active_adjust(cec);
+        if (cec) cec = e_client_stack_active_adjust(cec);
         if (cec == ec) return 0;
      }
 
