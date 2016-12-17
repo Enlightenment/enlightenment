@@ -1456,7 +1456,10 @@ _e_int_menus_clients_pre_cb(void *data EINA_UNUSED, E_Menu *m)
         if (ec->user_skip_winlist || e_client_util_ignored_get(ec)) continue;
         if ((ec->zone == zone) || (ec->iconic) ||
             (ec->zone != zone && e_config->clientlist_include_all_zones))
-          clients = eina_list_append(clients, ec);
+          {
+             if (ec->stack.next == NULL)
+               clients = eina_list_append(clients, ec);
+          }
      }
 
    dat = (Main_Data *)e_object_data_get(E_OBJECT(m));
