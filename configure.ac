@@ -1032,12 +1032,12 @@ AC_SUBST([MOUNT])
 AC_SUBST([UMOUNT])
 AC_SUBST([EJECT])
 
-m4_ifndef([v_rel],
+m4_ifdef([v_rev],
    [
-    EFL_COMPILER_FLAG([-Wshadow])
     EFL_COMPILER_FLAG([-Wall])
-    EFL_COMPILER_FLAG([-Wpointer-arith])
     EFL_COMPILER_FLAG([-W])
+    EFL_COMPILER_FLAG([-Wpointer-arith])
+    EFL_COMPILER_FLAG([-Wshadow])
     EFL_COMPILER_FLAG([-Wno-missing-field-initializers])
     EFL_COMPILER_FLAG([-Wfloat-equal])
     EFL_COMPILER_FLAG([-Wuninitialized])
