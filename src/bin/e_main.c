@@ -1786,21 +1786,10 @@ _e_main_cb_idle_after(void *data EINA_UNUSED)
    eet_clearcache();
    edje_freeze();
 
-#ifdef E_RELEASE_BUILD
    if (first_idle)
-     {
-        TS("SLEEP");
-        first_idle = 0;
-        e_precache_end = EINA_TRUE;
-     }
-#else
-   if (first_idle++ < 60)
-     {
-        TS("SLEEP");
-        if (!first_idle)
-          e_precache_end = EINA_TRUE;
-     }
-#endif
+     TS("SLEEP");
+   first_idle = 0;
+   e_precache_end = EINA_TRUE;
 
    return ECORE_CALLBACK_RENEW;
 }
