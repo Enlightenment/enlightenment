@@ -171,12 +171,11 @@ e_winlist_show(E_Zone *zone, E_Winlist_Filter filter)
      {
         Eina_Bool pick;
 
-        // adjust to toplevel client
-        ec = e_client_stack_active_adjust(ec);
         // skip if we already have it in winlist
         EINA_LIST_FOREACH(_wins, ll, ww)
           {
-             if (ww->client == ec) break;
+             if (e_client_stack_bottom_get(ww->client) ==
+                 e_client_stack_bottom_get(ec)) break;
           }
         if (ll) continue;
         switch (filter)
@@ -218,8 +217,6 @@ e_winlist_show(E_Zone *zone, E_Winlist_Filter filter)
 
    if ((eina_list_count(_wins) > 1))
      {
-        E_Winlist_Win *ww;
-
         ww = eina_list_data_get(_win_selected);
         if (ww && (ww->client == _last_client))
           e_winlist_next();
@@ -659,7 +656,9 @@ _e_winlist_client_add(E_Client *ec, E_Zone *zone, E_Desk *desk)
    ww->bg_object = o;
    e_theme_edje_object_set(o, "base/theme/winlist",
                            "e/widgets/winlist/item");
-   edje_object_part_text_set(o, "e.text.label", e_client_util_name_get(ww->client));
+   edje_object_part_text_set(o, "e.text.label",
+                             e_client_util_name_get
+                             (e_client_stack_active_adjust(ww->client)));
    evas_object_show(o);
    if (edje_object_part_exists(ww->bg_object, "e.swallow.icon"))
      {
@@ -727,57 +726,20 @@ _e_winlist_client_replace(E_Client *ec, E_Client *ec_new)
 {
    E_Winlist_Win *ww;
    Eina_List *l;
-   E_Desk *desk;
-   Eina_Bool replace_last = EINA_FALSE;
 
-   desk = e_desk_current_get(_winlist_zone);
-   if (ec == _last_client)
-     {
-        _last_client = NULL;
-        replace_last = EINA_TRUE;
-     }
    EINA_LIST_FOREACH(_wins, l, ww)
      {
         if (ww->client == ec)
           {
-             Evas_Object *o;
              Evas_Coord mw, mh;
 
-             e_object_unref(E_OBJECT(ww->client));
-             ww->client = ec_new;
              edje_object_part_text_set(ww->bg_object, "e.text.label",
-                                       e_client_util_name_get(ww->client));
-             if (ww->icon_object)
-               {
-                  e_comp_object_util_del_list_remove(_winlist, ww->icon_object);
-                  evas_object_del(ww->icon_object);
-                  ww->icon_object = NULL;
-               }
-             if (edje_object_part_exists(ww->bg_object, "e.swallow.icon"))
-               {
-                  o = e_client_icon_add(ww->client, e_comp->evas);
-                  ww->icon_object = o;
-                  e_comp_object_util_del_list_append(_winlist, o);
-                  edje_object_part_swallow(ww->bg_object, "e.swallow.icon", o);
-                  evas_object_show(o);
-               }
-             if (ww->client->shaded)
-               edje_object_signal_emit(ww->bg_object, "e,state,shaded", "e");
-             else if (ww->client)
-               edje_object_signal_emit(ww->bg_object, "e,state,iconified", "e");
-             else if (ww->client->desk != desk)
-               {
-                  if (!((ww->client->sticky) &&
-                        (ww->client->zone == _winlist_zone)))
-                    edje_object_signal_emit(ww->bg_object, "e,state,invisible", "e");
-               }
+                                       e_client_util_name_get(ec_new));
              edje_object_size_min_calc(ww->bg_object, &mw, &mh);
              E_WEIGHT(ww->bg_object, 1, 0);
              E_FILL(ww->bg_object);
              evas_object_size_hint_min_set(ww->bg_object, mw, mh);
              evas_object_size_hint_max_set(ww->bg_object, 9999, mh);
-             e_object_ref(E_OBJECT(ww->client));
-             if (replace_last) _last_client = ec_new;
              return;
           }
      }
@@ -970,12 +932,16 @@ _e_winlist_cb_event_border_add(void *data EINA_UNUSED, int type EINA_UNUSED,
    Eina_List *l;
    E_Winlist_Win *ww;
 
-   // adjust to toplevel client
-   ec = e_client_stack_active_adjust(ec);
+   // get base client
+   ec = e_client_stack_bottom_get(ec);
    // skip if we already have it in winlist
    EINA_LIST_FOREACH(_wins, l, ww)
      {
-        if (ww->client == ec) goto done;
+        if (ww->client == ec)
+          {
+             _e_winlist_client_replace(ec, e_client_stack_active_adjust(ec));
+             goto done;
+          }
      }
    if (_e_winlist_client_add(ec, _winlist_zone,
                              e_desk_current_get(_winlist_zone)))
