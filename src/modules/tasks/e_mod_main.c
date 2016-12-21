@@ -690,6 +690,8 @@ _tasks_item_fill(Tasks_Item *item)
    const char *label;
    E_Client *ec;
 
+   ec = item->client;
+
    if (item->tasks->config->text_only)
      item->o_icon = NULL;
    else
@@ -700,7 +702,7 @@ _tasks_item_fill(Tasks_Item *item)
         evas_object_show(item->o_icon);
      }
 
-   ec = e_client_stack_active_adjust(item->client);
+   ec = e_client_stack_active_adjust(ec);
 
    if (item->tasks->config->icon_only) label = "";
    else label = e_client_util_name_get(ec);
