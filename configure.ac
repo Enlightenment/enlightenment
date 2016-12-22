@@ -1068,7 +1068,7 @@ case "$host_os" in
              AC_MSG_RESULT(yes)],
              AC_MSG_RESULT(no))
         CFLAGS="$OLDCFLAGS"
-        LDFLAGS="$OLDLFDLAGS"
+        LDFLAGS="$OLDLDFLAGS"
       fi
       ;;
 esac
