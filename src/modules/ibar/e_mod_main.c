@@ -1095,6 +1095,7 @@ _ibar_cb_icon_menu_mouse_up(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, v
    Evas_Event_Mouse_Up *ev = event_info;
 
    ic = evas_object_data_get(obj, "ibar_icon");
+   if (!ic) return;
    if (ev->button == 3)
      {
         e_int_client_menu_show(ec, ev->canvas.x, ev->canvas.y, 0, ev->timestamp);
@@ -1236,7 +1237,9 @@ _ibar_cb_icon_menu_img_del(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, vo
    ic = evas_object_data_del(obj, "ibar_icon");
    if (!ic) return; //menu is closing
 
+   evas_object_data_del(obj, "ibar_icon");
    ic->client_objs = eina_list_remove(ic->client_objs, obj);
+
    if (!ic->menu) return; //who knows
    edje_object_part_box_remove(ic->menu->o_bg, "e.box", data);
    ec = evas_object_data_get(obj, "E_Client");
@@ -1281,7 +1284,11 @@ _ibar_cb_icon_frame_del(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void 
 {
    IBar_Icon *ic = evas_object_data_del(obj, "ibar_icon");
 
-   if (ic) ic->client_objs = eina_list_remove(ic->client_objs, obj);
+   if (ic)
+     {
+        evas_object_data_del(obj, "ibar_icon");
+        ic->client_objs = eina_list_remove(ic->client_objs, obj);
+     }
    e_comp_object_signal_callback_del_full(data, "e,state,*focused", "e", _ibar_cb_icon_menu_focus_change, obj);
    evas_object_smart_callback_del_full(data, "desk_change", _ibar_cb_icon_menu_desk_change, obj);
 }
