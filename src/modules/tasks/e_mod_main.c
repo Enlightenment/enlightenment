@@ -408,7 +408,7 @@ _tasks_refill(Tasks *tasks)
    Eina_List *l;
    E_Client *ec;
    Tasks_Item *item;
-   Evas_Coord w, h;
+   Evas_Coord w, h, tw, th;
 
    while (tasks->items)
      {
@@ -422,7 +422,12 @@ _tasks_refill(Tasks *tasks)
    if (tasks->items)
      {
         item = tasks->items->data;
-        edje_object_size_min_calc(item->o_item, &w, &h);
+        evas_object_geometry_get(tasks->o_items, NULL, NULL, &tw, &th);
+//        edje_object_size_min_calc(item->o_item, &w, &h);
+        if (tasks->horizontal)
+          edje_object_size_min_restricted_calc(item->o_item, &w, &h, 0, th);
+        else
+          edje_object_size_min_restricted_calc(item->o_item, &w, &h, tw, 0);
         if (!tasks->config->icon_only)
           {
              if (tasks->horizontal)
