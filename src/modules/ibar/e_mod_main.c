@@ -2628,12 +2628,12 @@ _ibar_cb_client_prop(void *d EINA_UNUSED, int t EINA_UNUSED, E_Event_Client_Prop
           skip = EINA_FALSE;
           break;
        }
-   ec = e_client_stack_active_adjust(ec);
+   ec = e_client_stack_active_adjust(ev->ec);
    EINA_LIST_FOREACH(ibars, l, b)
      {
         IBar_Icon *ic;
 
-        ic = eina_hash_find(b->icon_hash, _desktop_name_get(ev->ec->exe_inst->desktop));
+        ic = eina_hash_find(b->icon_hash, _desktop_name_get(ec->exe_inst->desktop));
         if (skip && (!ic)) continue;
         if (!skip)
           {
@@ -2642,20 +2642,20 @@ _ibar_cb_client_prop(void *d EINA_UNUSED, int t EINA_UNUSED, E_Event_Client_Prop
                   if (ic->starting) _ibar_icon_signal_emit(ic, "e,state,started", "e");
                   ic->starting = EINA_FALSE;
                   if (!ic->exes) _ibar_icon_signal_emit(ic, "e,state,on", "e");
-                  if (!eina_list_data_find(ic->exes, ev->ec->exe_inst))
-                    ic->exes = eina_list_append(ic->exes, ev->ec->exe_inst);
+                  if (!eina_list_data_find(ic->exes, ec->exe_inst))
+                    ic->exes = eina_list_append(ic->exes, ec->exe_inst);
                }
             else if (!b->inst->ci->dont_add_nonorder)
               {
                  _ibar_sep_create(b);
-                 _ibar_icon_notinorder_new(b, ev->ec->exe_inst);
+                 _ibar_icon_notinorder_new(b, ec->exe_inst);
                  _ibar_resize_handle(b);
               }
           }
         else
           {
-             ic->exes = eina_list_remove(ic->exes, ev->ec->exe_inst);
-             if (ic->exe_inst == ev->ec->exe_inst) ic->exe_inst = NULL;
+             ic->exes = eina_list_remove(ic->exes, ec->exe_inst);
+             if (ic->exe_inst == ec->exe_inst) ic->exe_inst = NULL;
              if (!ic->exes)
                {
                   if (ic->not_in_order)
