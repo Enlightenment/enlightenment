@@ -1326,8 +1326,6 @@ _e_comp_intercept_layer_set(void *data, Evas_Object *obj, int layer)
         evas_object_layer_set(obj, layer);
         if (layer == cw->ec->layer) //trying to put layer back
           {
-             E_Client *ec;
-
              if (cw->visible)
                {
                   e_comp_shape_queue();
