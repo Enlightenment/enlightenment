@@ -1367,10 +1367,10 @@ _e_comp_intercept_layer_set(void *data, Evas_Object *obj, int layer)
      {
         if (ec->stack.ignore == 0)
           {
-             Eina_List *l, *list = e_client_stack_list_prepare(ec);
+             Eina_List *ll, *list = e_client_stack_list_prepare(ec);
              E_Client *child;
 
-             EINA_LIST_FOREACH(list, l, child)
+             EINA_LIST_FOREACH(list, ll, child)
                {
                   if (child == ec) continue;
                   evas_object_layer_set(child->frame, layer);
