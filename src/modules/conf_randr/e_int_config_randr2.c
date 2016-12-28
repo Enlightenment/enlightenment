@@ -378,7 +378,7 @@ _basic_screen_info_fill(E_Config_Dialog_Data *cfdata, E_Config_Randr2_Screen *cs
              cfdata->freelist = eina_list_append(cfdata->freelist, mode_cbdata);
              /* printf("mode add %p %p %p\n", mode_cbdata, cfdata->modes_obj, it); */
              if ((cs->mode_w == m->w) && (cs->mode_h == m->h) &&
-                 (cs->mode_refresh == m->refresh))
+                 (fabs(cs->mode_refresh - m->refresh) < 0.01 ))
                it_sel = it;
           }
      }
