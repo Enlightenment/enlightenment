@@ -879,7 +879,7 @@ e_bindings_edge_event_find(E_Binding_Context ctxt, E_Event_Zone_Edge *ev, Eina_B
 E_API E_Action *
 e_bindings_edge_in_event_handle(E_Binding_Context ctxt, E_Object *obj, E_Event_Zone_Edge *ev)
 {
-   E_Binding_Edge *binding;
+   E_Binding_Edge *binding = NULL;
    E_Desk *current = NULL;
    E_Action *act = NULL;
    E_Binding_Edge_Data *ed;
@@ -889,7 +889,7 @@ e_bindings_edge_in_event_handle(E_Binding_Context ctxt, E_Object *obj, E_Event_Z
    current = e_desk_at_xy_get(ev->zone, ev->zone->desk_x_current, ev->zone->desk_y_current);
    if (current->fullscreen_clients && (!e_config->fullscreen_flip)) return NULL;
    act = e_bindings_edge_event_find(ctxt, ev, 0, &binding);
-   if (!act) return NULL;
+   if ((!act) || (!binding)) return NULL;
    ed = E_NEW(E_Binding_Edge_Data, 1);
    ev2 = E_NEW(E_Event_Zone_Edge, 1);
 
@@ -911,7 +911,7 @@ e_bindings_edge_in_event_handle(E_Binding_Context ctxt, E_Object *obj, E_Event_Z
 E_API E_Action *
 e_bindings_edge_out_event_handle(E_Binding_Context ctxt, E_Object *obj, E_Event_Zone_Edge *ev)
 {
-   E_Binding_Edge *binding;
+   E_Binding_Edge *binding = NULL;
    E_Action *act = NULL;
    E_Desk *current = NULL;
 
@@ -919,7 +919,7 @@ e_bindings_edge_out_event_handle(E_Binding_Context ctxt, E_Object *obj, E_Event_
    current = e_desk_at_xy_get(ev->zone, ev->zone->desk_x_current, ev->zone->desk_y_current);
    if (current->fullscreen_clients && (!e_config->fullscreen_flip)) return NULL;
    act = e_bindings_edge_event_find(ctxt, ev, 0, &binding);
-   if (!act) return NULL;
+   if ((!act) || (!binding)) return NULL;
    if (binding->timer)
      {
         E_Binding_Edge_Data *ed;
@@ -942,7 +942,7 @@ e_bindings_edge_out_event_handle(E_Binding_Context ctxt, E_Object *obj, E_Event_
 E_API E_Action *
 e_bindings_edge_down_event_handle(E_Binding_Context ctxt, E_Object *obj, E_Event_Zone_Edge *ev)
 {
-   E_Binding_Edge *binding;
+   E_Binding_Edge *binding = NULL;
    E_Desk *current = NULL;
    E_Action *act = NULL;
 
@@ -950,7 +950,7 @@ e_bindings_edge_down_event_handle(E_Binding_Context ctxt, E_Object *obj, E_Event
    current = e_desk_at_xy_get(ev->zone, ev->zone->desk_x_current, ev->zone->desk_y_current);
    if (current->fullscreen_clients && (!e_config->fullscreen_flip)) return NULL;
    act = e_bindings_edge_event_find(ctxt, ev, 1, &binding);
-   if (!act) return NULL;
+   if ((!act) || (!binding)) return NULL;
    if (act->func.go_edge)
      act->func.go_edge(obj, binding->params, ev);
    else if (act->func.go)
@@ -961,7 +961,7 @@ e_bindings_edge_down_event_handle(E_Binding_Context ctxt, E_Object *obj, E_Event
 E_API E_Action *
 e_bindings_edge_up_event_handle(E_Binding_Context ctxt, E_Object *obj, E_Event_Zone_Edge *ev)
 {
-   E_Binding_Edge *binding;
+   E_Binding_Edge *binding = NULL;
    E_Action *act = NULL;
    E_Desk *current = NULL;
 
@@ -969,7 +969,7 @@ e_bindings_edge_up_event_handle(E_Binding_Context ctxt, E_Object *obj, E_Event_Z
    current = e_desk_at_xy_get(ev->zone, ev->zone->desk_x_current, ev->zone->desk_y_current);
    if (current->fullscreen_clients && (!e_config->fullscreen_flip)) return NULL;
    act = e_bindings_edge_event_find(ctxt, ev, 1, &binding);
-   if (!act) return NULL;
+   if ((!act) || (!binding)) return NULL;
    act = e_action_find(binding->action);
    if (act && act->func.end)
      act->func.end(obj, binding->params);
