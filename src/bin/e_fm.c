@@ -547,7 +547,7 @@ _e_fm2_icon_path(const E_Fm2_Icon *ic, char *buf, int buflen)
 static inline Eina_Bool
 _e_fm2_ext_is_edje(const char *ext)
 {
-#if E_FM2_SIMPLE_STRCASE_FILES
+#ifdef E_FM2_SIMPLE_STRCASE_FILES
    if ((ext[0] == 'e') && (ext[1] == 'd') && (ext[2] == 'j'))
      return 1;
    else if ((ext[0] == 'E') && (ext[1] == 'D') && (ext[2] == 'J'))
@@ -562,7 +562,7 @@ _e_fm2_ext_is_edje(const char *ext)
 static inline Eina_Bool
 _e_fm2_ext_is_desktop(const char *ext)
 {
-#if E_FM2_SIMPLE_STRCASE_FILES
+#ifdef E_FM2_SIMPLE_STRCASE_FILES
    if ((ext[0] == 'd') &&
        ((strcmp(ext + 1, "esktop") == 0) ||
         (strcmp(ext + 1, "irectory") == 0)))
@@ -586,7 +586,7 @@ _e_fm2_ext_is_desktop(const char *ext)
 static inline Eina_Bool
 _e_fm2_ext_is_imc(const char *ext)
 {
-#if E_FM2_SIMPLE_STRCASE_FILES
+#ifdef E_FM2_SIMPLE_STRCASE_FILES
    if ((ext[0] == 'i') && (ext[1] == 'm') && (ext[2] == 'c'))
      return 1;
    else if ((ext[0] == 'I') && (ext[1] == 'M') && (ext[2] == 'C'))
