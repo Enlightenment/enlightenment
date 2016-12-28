@@ -127,7 +127,7 @@ init(Tempthread *tth)
                   break;
                }
           }
-#elif __OpenBSD__
+#elif defined(__OpenBSD__)
         extn->mib[0] = CTL_HW;
         extn->mib[1] = HW_SENSORS;
 
