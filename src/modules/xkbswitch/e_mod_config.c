@@ -818,7 +818,7 @@ _layout_clicked(void *data, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSE
    Evas_Object *popup, *fr, *vbx, *bx, *list, *o;
    E_XKB_Model *model;
    E_Config_Dialog_Data *cfdata;
-   Elm_Object_Item *it, *sel;
+   Elm_Object_Item *it, *sel = NULL;
    Eina_List *l;
 
    if (!(cfdata = data)) return;
