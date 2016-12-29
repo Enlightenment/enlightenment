@@ -75,6 +75,7 @@ static void
 _gc_shutdown(E_Gadcon_Client *gcc)
 {
    E_AppMenu_Instance *inst = gcc->data;
+   appmenu_cancel();
    evas_object_del(inst->box);
    inst->ctx->instances = eina_list_remove(inst->ctx->instances, inst);
    if (!inst->ctx->instances)
@@ -140,7 +141,7 @@ static Eina_Bool
 cb_focus_out(void *data, int type EINA_UNUSED, void *event EINA_UNUSED)
 {
    E_AppMenu_Context *ctxt = data;
-   appmenu_menu_render(ctxt, NULL);
+   if (appmenu_menu_count_get() == 0) appmenu_menu_render(ctxt, NULL);
    return EINA_TRUE;
 }
 

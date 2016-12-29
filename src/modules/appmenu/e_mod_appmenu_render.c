@@ -1,5 +1,45 @@
 #include "e_mod_appmenu_private.h"
 
+static int menu_count = 0;
+static E_Menu *menu_pending = NULL;
+static Ecore_Timer *menu_timer = NULL;
+static int menu_dir = 0;
+static Evas_Coord menu_x = 0, menu_y = 0, menu_w = 0, menu_h = 0;
+
+void
+appmenu_cancel(void)
+{
+   if (menu_pending)
+     {
+        e_object_del(E_OBJECT(menu_pending));
+        menu_pending = NULL;
+     }
+   if (menu_timer)
+     {
+        ecore_timer_del(menu_timer);
+        menu_timer = NULL;
+     }
+}
+
+int
+appmenu_menu_count_get(void)
+{
+   return menu_count;
+}
+
+static void
+item_activate(void *data EINA_UNUSED, E_Menu *m EINA_UNUSED)
+{
+   menu_count++;
+}
+
+static void
+item_deactivate(void *data EINA_UNUSED, E_Menu *m)
+{
+   if (menu_pending == m) menu_pending = NULL;
+   menu_count--;
+}
+
 static void
 menu_deactive(E_Menu *m)
 {
@@ -21,6 +61,7 @@ menu_post_deactivate(void *data, E_Menu *m)
 {
    E_Gadcon *gadcon = data;
 
+   item_deactivate(data, m);
    e_gadcon_locked_set(gadcon, 0);
    menu_deactive(m);
 }
@@ -70,23 +111,64 @@ item_submenu_new(E_DBusMenu_Item *item, E_Menu_Item *mi)
           item_submenu_new(child, submi);
         e_util_menu_item_theme_icon_set(submi, child->icon_name);
      }
+   e_menu_pre_activate_callback_set(m, item_activate, item);
+   e_menu_post_deactivate_callback_set(m, item_deactivate, item);
    return m;
 }
 
+static Eina_Bool
+item_menu_delay(void *data EINA_UNUSED)
+{
+   Evas_Coord x, y, w, h;
+   E_Zone *zone;
+
+   x = menu_x;
+   y = menu_y;
+   w = menu_w;
+   h = menu_h;
+   zone = e_comp_zone_xy_get(x + (w / 2), y + (h / 2));
+   e_menu_activate_mouse(menu_pending, zone, x, y, w, h, menu_dir, 0);
+   menu_pending = NULL;
+   menu_timer = NULL;
+   return EINA_FALSE;
+}
+
 static void
-item_menu_open(E_DBusMenu_Item *item, E_Gadcon *gadcon)
+item_menu_open(E_DBusMenu_Item *item, E_Gadcon *gadcon, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_Coord h)
 {
    E_Menu *m = item_submenu_new(item, NULL);
-   E_Zone *zone;
-   int x, y;
+   int dir = E_MENU_POP_DIRECTION_AUTO;
 
    EINA_SAFETY_ON_NULL_RETURN(m);
    e_gadcon_locked_set(gadcon, 1);
    e_menu_post_deactivate_callback_set(m, menu_post_deactivate, gadcon);
 
-   ecore_evas_pointer_xy_get(e_comp->ee, &x, &y);
-   zone = e_comp_zone_xy_get(x, y);
-   e_menu_activate_mouse(m, zone, x, y, 1, 1, E_MENU_POP_DIRECTION_DOWN, 0);
+   if      ((gadcon->orient == E_GADCON_ORIENT_TOP) ||
+            (gadcon->orient == E_GADCON_ORIENT_CORNER_TL) ||
+            (gadcon->orient == E_GADCON_ORIENT_CORNER_TR))
+     dir = E_MENU_POP_DIRECTION_DOWN;
+   else if ((gadcon->orient == E_GADCON_ORIENT_BOTTOM) ||
+            (gadcon->orient == E_GADCON_ORIENT_CORNER_BL) ||
+            (gadcon->orient == E_GADCON_ORIENT_CORNER_BR))
+     dir = E_MENU_POP_DIRECTION_UP;
+   else if ((gadcon->orient == E_GADCON_ORIENT_LEFT) ||
+            (gadcon->orient == E_GADCON_ORIENT_CORNER_LT) ||
+            (gadcon->orient == E_GADCON_ORIENT_CORNER_LB))
+     dir = E_MENU_POP_DIRECTION_RIGHT;
+   else if ((gadcon->orient == E_GADCON_ORIENT_RIGHT) ||
+            (gadcon->orient == E_GADCON_ORIENT_CORNER_RT) ||
+            (gadcon->orient == E_GADCON_ORIENT_CORNER_RB))
+     dir = E_MENU_POP_DIRECTION_LEFT;
+
+   if (menu_pending) e_object_del(E_OBJECT(menu_pending));
+   menu_pending = m;
+   menu_dir = dir;
+   menu_x = x;
+   menu_y = y;
+   menu_w = w;
+   menu_h = h;
+   if (menu_timer) ecore_timer_del(menu_timer);
+   menu_timer = ecore_timer_add(0.33, item_menu_delay, NULL);
 }
 
 static void
@@ -94,7 +176,10 @@ clicked_toolbar_item(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj, void 
 {
    E_DBusMenu_Item *item = data;
    E_Gadcon *gadcon = evas_object_data_get(obj, "gadcon");
-   item_menu_open(item, gadcon);
+   Evas_Coord x, y, w, h;
+
+   evas_object_geometry_get(obj, &x, &y, &w, &h);
+   item_menu_open(item, gadcon, x, y, w, h);
 }
 
 void
@@ -160,6 +245,8 @@ appmenu_menu_render(E_AppMenu_Context *ctxt, E_AppMenu_Window *window)
 {
    Eina_List *list;
    E_AppMenu_Instance *inst;
+
+   appmenu_cancel();
 
    ctxt->window = window;
 
