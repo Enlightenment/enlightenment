@@ -14,7 +14,6 @@ static void      _e_sys_logout_begin(E_Sys_Action a_after, Eina_Bool raw);
 static void      _e_sys_current_action(void);
 static void      _e_sys_action_failed(void);
 static int       _e_sys_action_do(E_Sys_Action a, char *param, Eina_Bool raw);
-static void      _e_sys_dialog_cb_delete(E_Obj_Dialog *od);
 
 static Ecore_Event_Handler *_e_sys_exe_exit_handler = NULL;
 static Ecore_Exe *_e_sys_halt_check_exe = NULL;
@@ -33,7 +32,6 @@ static Ecore_Exe *_e_sys_exe = NULL;
 static double _e_sys_begin_time = 0.0;
 static double _e_sys_logout_begin_time = 0.0;
 static Ecore_Timer *_e_sys_logout_timer = NULL;
-static E_Obj_Dialog *_e_sys_dialog = NULL;
 static E_Dialog *_e_sys_logout_confirm_dialog = NULL;
 static Ecore_Timer *_e_sys_susp_hib_check_timer = NULL;
 static double _e_sys_susp_hib_check_last_tick = 0.0;
@@ -55,6 +53,8 @@ static Ecore_Timer *action_timeout = NULL;
 
 static Eldbus_Proxy *login1_manger_proxy = NULL;
 
+static int _e_sys_comp_waiting = 0;
+
 E_API int E_EVENT_SYS_SUSPEND = -1;
 E_API int E_EVENT_SYS_HIBERNATE = -1;
 E_API int E_EVENT_SYS_RESUME = -1;
@@ -62,6 +62,7 @@ E_API int E_EVENT_SYS_RESUME = -1;
 static void
 _e_sys_comp_done_cb(void *data, Evas_Object *obj, const char *sig, const char *src)
 {
+   if (_e_sys_comp_waiting == 1) _e_sys_comp_waiting--;
    edje_object_signal_callback_del(obj, sig, src, _e_sys_comp_done_cb);
    e_sys_action_raw_do((E_Sys_Action)(long)data, NULL);
    E_FREE_FUNC(action_timeout, ecore_timer_del);
@@ -75,6 +76,7 @@ _e_sys_comp_action_timeout(void *data)
    E_Sys_Action a = (long)(intptr_t)data;
    const char *sig = NULL;
 
+   if (_e_sys_comp_waiting == 1) _e_sys_comp_waiting--;
    switch (a)
      {
       case E_SYS_LOGOUT:
@@ -112,6 +114,7 @@ _e_sys_comp_emit_cb_wait(E_Sys_Action a, const char *sig, const char *rep, Eina_
    E_Zone *zone;
    Eina_Bool first = EINA_TRUE;
 
+   if (_e_sys_comp_waiting == 0) _e_sys_comp_waiting++;
    if (nocomp_push) e_comp_override_add();
    else e_comp_override_timed_pop();
    printf("_e_sys_comp_emit_cb_wait - [%x] %s %s\n", a, sig, rep);
@@ -468,11 +471,6 @@ _e_sys_susp_hib_check_timer_cb(void *data EINA_UNUSED)
    if ((t - _e_sys_susp_hib_check_last_tick) > 0.2)
      {
         _e_sys_susp_hib_check_timer = NULL;
-        if (_e_sys_dialog)
-          {
-             e_object_del(E_OBJECT(_e_sys_dialog));
-             _e_sys_dialog = NULL;
-          }
         ecore_job_add(_e_sys_resume_job, NULL);
         return EINA_FALSE;
      }
@@ -528,17 +526,6 @@ _e_sys_cb_exit(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
    if ((_e_sys_exe) && (ev->exe == _e_sys_exe))
      {
         if (ev->exit_code != 0) _e_sys_action_failed();
-        if (((_e_sys_action_current != E_SYS_HALT) &&
-             (_e_sys_action_current != E_SYS_HALT_NOW) &&
-             (_e_sys_action_current != E_SYS_REBOOT)) ||
-            (ev->exit_code != 0))
-          {
-             if (_e_sys_dialog)
-               {
-                  e_object_del(E_OBJECT(_e_sys_dialog));
-                  _e_sys_dialog = NULL;
-               }
-          }
         _e_sys_action_current = E_SYS_NONE;
         _e_sys_exe = NULL;
         return ECORE_CALLBACK_RENEW;
@@ -622,11 +609,6 @@ _e_sys_cb_logout_abort(void *data EINA_UNUSED, E_Dialog *dia)
    _e_sys_action_current = E_SYS_NONE;
    _e_sys_action_after = E_SYS_NONE;
    _e_sys_action_after_raw = EINA_FALSE;
-   if (_e_sys_dialog)
-     {
-        e_object_del(E_OBJECT(_e_sys_dialog));
-        _e_sys_dialog = NULL;
-     }
 }
 
 static void
@@ -744,11 +726,6 @@ after:
 static void
 _e_sys_logout_after(void)
 {
-   if (_e_sys_dialog)
-     {
-        e_object_del(E_OBJECT(_e_sys_dialog));
-        _e_sys_dialog = NULL;
-     }
    _e_sys_action_current = _e_sys_action_after;
    _e_sys_action_do(_e_sys_action_after, NULL, _e_sys_action_after_raw);
    _e_sys_action_after = E_SYS_NONE;
@@ -760,23 +737,9 @@ _e_sys_logout_begin(E_Sys_Action a_after, Eina_Bool raw)
 {
    const Eina_List *l;
    E_Client *ec;
-   E_Obj_Dialog *od;
 
    stopping = 1;
    /* start logout - at end do the a_after action */
-   if (!raw)
-     {
-        od = e_obj_dialog_new(_("Logout in progress"), "E", "_sys_logout");
-        e_obj_dialog_obj_theme_set(od, "base/theme/sys", "e/sys/logout");
-        e_obj_dialog_obj_part_text_set(od, "e.textblock.message",
-                                       _("Logout in progress.<br>"
-                                         "<hilight>Please wait.</hilight>"));
-        e_obj_dialog_show(od);
-        e_win_no_remember_set(od->win, 1);
-        e_obj_dialog_icon_set(od, "system-log-out");
-        if (_e_sys_dialog) e_object_del(E_OBJECT(_e_sys_dialog));
-        _e_sys_dialog = od;
-     }
    _e_sys_action_after = a_after;
    _e_sys_action_after_raw = raw;
    EINA_LIST_FOREACH(e_comp->clients, l, ec)
@@ -891,7 +854,6 @@ static int
 _e_sys_action_do(E_Sys_Action a, char *param EINA_UNUSED, Eina_Bool raw)
 {
    char buf[PATH_MAX];
-   E_Obj_Dialog *od;
    int ret = 0;
 
    switch (a)
@@ -926,7 +888,7 @@ _e_sys_action_do(E_Sys_Action a, char *param EINA_UNUSED, Eina_Bool raw)
           {
              _e_sys_logout_after();
           }
-        else
+        else if (!_e_sys_comp_waiting)
           {
              _e_sys_logout_begin(E_SYS_EXIT, raw);
           }
@@ -945,7 +907,7 @@ _e_sys_action_do(E_Sys_Action a, char *param EINA_UNUSED, Eina_Bool raw)
                _e_sys_current_action();
              return 0;
           }
-        else
+        else if (!_e_sys_comp_waiting)
           {
              if (raw)
                {
@@ -962,18 +924,6 @@ _e_sys_action_do(E_Sys_Action a, char *param EINA_UNUSED, Eina_Bool raw)
                {
                   ret = 0;
                   _e_sys_begin_time = ecore_time_get();
-
-                  od = e_obj_dialog_new(_("Power off"), "E", "_sys_halt");
-                  e_obj_dialog_obj_theme_set(od, "base/theme/sys", "e/sys/halt");
-                  e_obj_dialog_obj_part_text_set(od, "e.textblock.message",
-                                                 _("Power off.<br>"
-                                                   "<hilight>Please wait.</hilight>"));
-                  e_obj_dialog_show(od);
-                  e_win_no_remember_set(od->win, 1);
-                  e_obj_dialog_icon_set(od, "system-shutdown");
-                  if (_e_sys_dialog) e_object_del(E_OBJECT(_e_sys_dialog));
-                  e_obj_dialog_cb_delete_set(od, _e_sys_dialog_cb_delete);
-                  _e_sys_dialog = od;
                   _e_sys_logout_begin(a, EINA_TRUE);
                }
              /* FIXME: display halt status */
@@ -992,7 +942,7 @@ _e_sys_action_do(E_Sys_Action a, char *param EINA_UNUSED, Eina_Bool raw)
                _e_sys_current_action();
              return 0;
           }
-        else
+        else if (!_e_sys_comp_waiting)
           {
              if (raw)
                {
@@ -1009,17 +959,6 @@ _e_sys_action_do(E_Sys_Action a, char *param EINA_UNUSED, Eina_Bool raw)
                {
                   ret = 0;
                   _e_sys_begin_time = ecore_time_get();
-                  od = e_obj_dialog_new(_("Resetting"), "E", "_sys_reboot");
-                  e_obj_dialog_obj_theme_set(od, "base/theme/sys", "e/sys/reboot");
-                  e_obj_dialog_obj_part_text_set(od, "e.textblock.message",
-                                                 _("Resetting.<br>"
-                                                   "<hilight>Please wait.</hilight>"));
-                  e_obj_dialog_show(od);
-                  e_win_no_remember_set(od->win, 1);
-                  e_obj_dialog_icon_set(od, "system-restart");
-                  if (_e_sys_dialog) e_object_del(E_OBJECT(_e_sys_dialog));
-                  e_obj_dialog_cb_delete_set(od, _e_sys_dialog_cb_delete);
-                  _e_sys_dialog = od;
                   _e_sys_logout_begin(a, EINA_TRUE);
                }
              /* FIXME: display reboot status */
@@ -1037,7 +976,7 @@ _e_sys_action_do(E_Sys_Action a, char *param EINA_UNUSED, Eina_Bool raw)
                _e_sys_current_action();
              return 0;
           }
-        else
+        else if (!_e_sys_comp_waiting)
           {
              if (raw)
                {
@@ -1074,7 +1013,7 @@ _e_sys_action_do(E_Sys_Action a, char *param EINA_UNUSED, Eina_Bool raw)
                _e_sys_current_action();
              return 0;
           }
-        else
+        else if (!_e_sys_comp_waiting)
           {
              if (raw)
                {
@@ -1105,13 +1044,3 @@ _e_sys_action_do(E_Sys_Action a, char *param EINA_UNUSED, Eina_Bool raw)
      }
    return ret;
 }
-
-static void
-_e_sys_dialog_cb_delete(E_Obj_Dialog *od EINA_UNUSED)
-{
-   /* If we don't NULL out the _e_sys_dialog, then the
-    * ECORE_EXE_EVENT_DEL callback will trigger and segv if the window
-    * is deleted in some other way. */
-   _e_sys_dialog = NULL;
-}
-
