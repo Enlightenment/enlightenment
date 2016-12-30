@@ -455,15 +455,47 @@ _lokker_popup_add(E_Zone *zone)
 }
 
 static void
+_lokker_cb_hide_done(void *data, Evas_Object *obj, const char *sig EINA_UNUSED, const char *src EINA_UNUSED)
+{
+   Evas_Object *comp_object = evas_object_data_get(obj, "comp_object");
+   edje_object_signal_callback_del(obj, "e,action,hide,done", "e",
+                                   _lokker_cb_hide_done);
+   evas_object_del(data);
+   evas_object_del(obj);
+   evas_object_hide(comp_object);
+   evas_object_del(comp_object);
+}
+
+static void
 _lokker_popup_free(Lokker_Popup *lp)
 {
+   const char *s;
    if (!lp) return;
 
-   evas_object_hide(lp->comp_object);
-   evas_object_del(lp->comp_object);
-   evas_object_del(lp->bg_object);
-   evas_object_del(lp->login_box);
-
+   s = edje_object_data_get(lp->bg_object, "hide_signal");
+   if ((s) && (atoi(s) == 1))
+     {
+        evas_object_data_set(lp->bg_object, "comp_object", lp->comp_object);
+        evas_object_data_set(lp->bg_object, "login_box", lp->login_box);
+        edje_object_signal_callback_add(lp->bg_object,
+                                        "e,action,hide,done", "e",
+                                        _lokker_cb_hide_done,
+                                        lp->login_box);
+        edje_object_signal_emit(lp->bg_object, "e,action,hide", "e");
+        edje_object_signal_emit(lp->login_box, "e,action,hide", "e");
+        lp->bg_object = NULL;
+        lp->login_box = NULL;
+     }
+   else
+     {
+        evas_object_del(lp->bg_object);
+        evas_object_del(lp->login_box);
+        evas_object_hide(lp->comp_object);
+        evas_object_del(lp->comp_object);
+        lp->comp_object = NULL;
+        lp->bg_object = NULL;
+        lp->login_box = NULL;
+     }
    free(lp);
 }
 
