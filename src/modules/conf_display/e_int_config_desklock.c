@@ -316,11 +316,7 @@ _basic_create(E_Config_Dialog *cfd, Evas *evas, E_Config_Dialog_Data *cfdata)
           }
         e_xkb_flag_file_get(buf, sizeof(buf), name);
         icon = e_icon_add(evas);
-        if (!e_icon_file_set(icon, buf))
-          {
-             evas_object_del(icon);
-             icon = NULL;
-          }
+        e_icon_file_set(icon, buf);
         if (cl->variant)
           snprintf(buf, sizeof(buf), "%s (%s, %s)", cl->name, cl->model, cl->variant);
         else

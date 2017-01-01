@@ -336,14 +336,8 @@ _icon_new(Evas *evas, const char *theme, const char *icon, unsigned int size)
 
    if (!(path = efreet_icon_path_find(theme, icon, size))) return NULL;
    o = e_icon_add(evas);
-   if (e_icon_file_set(o, path))
-     e_icon_fill_inside_set(o, 1);
-   else
-     {
-        evas_object_del(o);
-        o = NULL;
-     }
-
+   e_icon_file_set(o, path);
+   e_icon_fill_inside_set(o, EINA_TRUE);
    return o;
 }
 
@@ -359,8 +353,8 @@ _populate_icon_preview(E_Config_Dialog_Data *cfdata)
 
         if (!(path = efreet_icon_path_find(t, _icon_previews[i], PREVIEW_SIZE)))
           continue;
-        if (e_icon_file_set(cfdata->gui.icon_preview[i], path))
-          e_icon_fill_inside_set(cfdata->gui.icon_preview[i], EINA_TRUE);
+        e_icon_file_set(cfdata->gui.icon_preview[i], path);
+        e_icon_fill_inside_set(cfdata->gui.icon_preview[i], EINA_TRUE);
      }
 }
 

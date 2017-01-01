@@ -773,8 +773,7 @@ _e_winlist_activate(void)
    ww = _win_selected->data;
    edje_object_signal_emit(ww->bg_object, "e,state,selected", "e");
    if (ww->icon_object && e_icon_edje_get(ww->icon_object))
-     edje_object_signal_emit(e_icon_edje_get(ww->icon_object),
-                             "e,state,selected", "e");
+     e_icon_edje_emit(ww->icon_object, "e,state,selected", "e");
 
    if ((ww->client->iconic) &&
        (e_config->winlist_list_uncover_while_selecting))
@@ -868,8 +867,7 @@ _e_winlist_deactivate(void)
    edje_object_part_text_set(_bg_object, "e.text.label", "");
    edje_object_signal_emit(ww->bg_object, "e,state,unselected", "e");
    if (ww->icon_object && e_icon_edje_get(ww->icon_object))
-     edje_object_signal_emit(e_icon_edje_get(ww->icon_object),
-                             "e,state,unselected", "e");
+     e_icon_edje_emit(ww->icon_object, "e,state,unselected", "e");
    if (!ww->client->lock_focus_in)
      evas_object_focus_set(ww->client->frame, 0);
 }

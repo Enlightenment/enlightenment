@@ -31,6 +31,6 @@ E_API void        *e_icon_data_get         (const Evas_Object *obj, int *w, int 
 E_API void         e_icon_scale_size_set   (Evas_Object *obj, int size);
 E_API int          e_icon_scale_size_get   (const Evas_Object *obj);
 E_API void         e_icon_selected_set     (const Evas_Object *obj, Eina_Bool selected);
-
+E_API void         e_icon_edje_emit        (const Evas_Object *obj, const char *sig, const char *src);
 #endif
 #endif

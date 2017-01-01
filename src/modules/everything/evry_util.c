@@ -441,11 +441,7 @@ evry_icon_theme_get(const char *icon, Evas *e)
 
    if (icon[0] == '/')
      {
-        if (!e_icon_file_set(o, icon))
-          {
-             evas_object_del(o);
-             o = NULL;
-          }
+        e_icon_file_set(o, icon);
      }
    else if (!e_util_icon_theme_set(o, icon))
      {

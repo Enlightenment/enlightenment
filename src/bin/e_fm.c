@@ -11517,9 +11517,9 @@ _update_volume_icon(E_Volume *v, E_Fm2_Icon *ic)
    if (e)
      {
         if (ic->info.removable_full)
-          edje_object_signal_emit(e, "e,state,removable,full", "e");
+          e_icon_edje_emit(ic->obj_icon, "e,state,removable,full", "e");
         else
-          edje_object_signal_emit(e, "e,state,removable,empty", "e");
+          e_icon_edje_emit(ic->obj_icon, "e,state,removable,empty", "e");
      }
 
    if (v)

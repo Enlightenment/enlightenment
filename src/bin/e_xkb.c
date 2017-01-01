@@ -459,6 +459,7 @@ e_xkb_e_icon_flag_setup(Evas_Object *eicon, const char *name)
    char buf[PATH_MAX];
 
    e_xkb_flag_file_get(buf, sizeof(buf), name);
+   e_icon_preload_set(eicon, EINA_FALSE);
    e_icon_file_set(eicon, buf);
    e_icon_size_get(eicon, &w, &h);
    edje_extern_object_aspect_set(eicon, EDJE_ASPECT_CONTROL_BOTH, w, h);

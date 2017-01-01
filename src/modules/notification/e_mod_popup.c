@@ -470,12 +470,11 @@ _notification_popup_refresh(Popup_Data *popup)
              if (!popup->app_icon)
                {
                   popup->app_icon = e_icon_add(popup->e);
-                  if (!e_icon_file_set(popup->app_icon, uri ? uri->path : icon_path))
-                    {
-                       evas_object_del(popup->app_icon);
-                       popup->app_icon = NULL;
-                    }
-                  else e_icon_size_get(popup->app_icon, &w, &h);
+                  e_icon_file_set(popup->app_icon, uri ? uri->path : icon_path);
+                  // XXX: FIXME: this disallows for async to work
+                  // e_icon_size_get(popup->app_icon, &w, &h);
+                  w = width;
+                  h = height;
                }
              efreet_uri_free(uri);
           }

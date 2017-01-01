@@ -93,7 +93,11 @@ image_load(const char *name, const char *path, uint32_t *imgdata, int w, int h, 
                   for (ext = exts; *ext; ext++)
                     {
                        snprintf(buf, sizeof(buf), "%s/%s/%ux%u/apps/%s%s", path, *theme, *i, *i, name, *ext);
-                       if (e_icon_file_set(image, buf)) return;
+                       if (ecore_file_exists(buf))
+                         {
+                            e_icon_file_set(image, buf);
+                            return;
+                         }
                     }
                }
           }

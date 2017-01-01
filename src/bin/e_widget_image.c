@@ -49,19 +49,14 @@ e_widget_image_add_from_file(Evas *evas, const char *file, int minw, int minh)
    Evas_Object *obj, *o;
    E_Widget_Data *wd;
 
+   if (!ecore_file_exists(file)) return NULL;
    obj = e_widget_add(evas);
    wd = calloc(1, sizeof(E_Widget_Data));
    if (!wd) return NULL;
 
    o = e_icon_add(evas);
    e_icon_fill_inside_set(o, 1);
-   if (!e_icon_file_set(o, file))
-     {
-        evas_object_del(o);
-        free(wd);
-        evas_object_del(obj);
-        return NULL;
-     }
+   e_icon_file_set(o, file);
 
    wd->img = o;
    evas_object_show(o);
