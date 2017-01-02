@@ -140,6 +140,8 @@ static void         _ibar_exec_new_client_show(void *data, Evas *e EINA_UNUSED, 
 static Eina_Bool    _ibar_cb_out_hide_delay(void *data);
 static void         _ibar_icon_menu_show(IBar_Icon *ic, Eina_Bool grab);
 static void         _ibar_icon_menu_hide(IBar_Icon *ic, Eina_Bool grab);
+static void         _ibar_cb_icon_menu_img_del(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED);
+static void         _ibar_cb_icon_frame_del(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED);
 
 static E_Config_DD *conf_edd = NULL;
 static E_Config_DD *conf_item_edd = NULL;
@@ -872,7 +874,14 @@ _ibar_icon_free(IBar_Icon *ic)
    E_Exec_Instance *inst;
    Evas_Object *o;
 
-   EINA_LIST_FREE(ic->client_objs, o) evas_object_del(o);
+   EINA_LIST_FREE(ic->client_objs, o)
+     {
+        evas_object_event_callback_del(o, EVAS_CALLBACK_DEL,
+                                       _ibar_cb_icon_frame_del);
+        evas_object_event_callback_del(o, EVAS_CALLBACK_DEL,
+                                       _ibar_cb_icon_menu_img_del);
+        evas_object_del(o);
+     }
    if (ic->ibar->menu_icon == ic) ic->ibar->menu_icon = NULL;
    if (ic->ibar->ic_drop_before == ic) ic->ibar->ic_drop_before = NULL;
    if (ic->menu) e_object_data_set(E_OBJECT(ic->menu), NULL);
