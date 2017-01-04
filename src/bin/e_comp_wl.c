@@ -723,7 +723,7 @@ _e_comp_wl_evas_cb_restack(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EIN
      {
         if (ec->stack.ignore == 0)
           {
-             Eina_List *l, *list = e_client_stack_list_prepare(ec);
+             Eina_List *list = e_client_stack_list_prepare(ec);
              E_Client *child;
 
              EINA_LIST_FOREACH(list, l, child)
