@@ -238,7 +238,8 @@ _pager_gadget_destroyed_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event
 {
    Instance *inst = data;
 
-   inst->destroyed = EINA_TRUE;
+   if (inst)
+     inst->destroyed = EINA_TRUE;
 }
 
 static void

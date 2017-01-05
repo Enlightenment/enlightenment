@@ -219,7 +219,7 @@ _battery_udev_battery_update(const char *syspath, Battery *bat)
    if (!bat->got_prop) /* only need to get these once */
      {
         GET_STR(bat, technology, POWER_SUPPLY_TECHNOLOGY);
-        GET_STR(bat, model, POWER_SUPPLY_MODEL_NAME);
+	GET_STR(bat, model, POWER_SUPPLY_MODEL_NAME);
         GET_STR(bat, vendor, POWER_SUPPLY_MANUFACTURER);
         GET_NUM(bat, design_charge, POWER_SUPPLY_ENERGY_FULL_DESIGN);
         if (eina_dbleq(bat->design_charge, 0))
