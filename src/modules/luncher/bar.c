@@ -925,7 +925,7 @@ _bar_icon_add(Instance *inst, Efreet_Desktop *desktop, E_Client *non_desktop_cli
 
    snprintf(ori, sizeof(ori), "e,state,off,%s", _bar_location_get(inst));
    elm_layout_signal_emit(ic->o_layout, ori, "e");
-   msg = alloca(sizeof(Edje_Message_Int_Set));
+   msg = alloca(sizeof(Edje_Message_String));
    if (inst->cfg->style)
      msg->str = strdup(inst->cfg->style);
    edje_object_message_send(elm_layout_edje_get(ic->o_layout), EDJE_MESSAGE_STRING, 1, msg);
