@@ -476,7 +476,7 @@ _bar_icon_mouse_down(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUS
 
         popup = elm_ctxpopup_add(e_comp->elm);
         elm_object_style_set(popup, "noblock");
-        evas_object_smart_callback_add(ic->preview, "dismissed", _bar_popup_dismissed, NULL);
+        evas_object_smart_callback_add(popup, "dismissed", _bar_popup_dismissed, NULL);
         evas_object_size_hint_min_set(popup, ic->inst->size, ic->inst->size);
 
         box = elm_box_add(popup);
