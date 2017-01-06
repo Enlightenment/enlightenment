@@ -28,7 +28,7 @@ static Eina_List *tasks = NULL;
 static Eina_List *show_hooks = NULL;
 static Eina_List *hide_hooks = NULL;
 
-static Eina_List *block_rects = NULL;
+static Evas_Object *block_rects[32] = {NULL};
 
 static Eina_List *desklock_ifaces = NULL;
 static E_Desklock_Interface *current_iface = NULL;
@@ -238,6 +238,7 @@ e_desklock_show(Eina_Bool suspend)
    E_Event_Desklock *ev;
    E_Desklock_Show_Cb show_cb;
    E_Desklock_Hide_Cb hide_cb;
+   E_Zone *zone;
 
    if (_e_desklock_state) return EINA_TRUE;
 
@@ -274,8 +275,6 @@ e_desklock_show(Eina_Bool suspend)
      {
         if (!e_config->desklock_passwd)
           {
-             E_Zone *zone;
-
              zone = e_zone_current_get();
              if (zone)
                e_configure_registry_call("screen/screen_lock", NULL, NULL);
@@ -289,16 +288,22 @@ e_desklock_show(Eina_Bool suspend)
         if (!show_cb()) goto fail;
      }
 
-   {
-      Evas_Object *o;
+   EINA_LIST_FOREACH(e_comp->zones, l, zone)
+     {
+        Evas_Object *o;
 
-      o = evas_object_rectangle_add(e_comp->evas);
-      block_rects = eina_list_append(block_rects, o);
-      evas_object_color_set(o, 0, 0, 0, 0);
-      evas_object_resize(o, 99999, 99999);
-      evas_object_layer_set(o, E_LAYER_DESKLOCK);
-      evas_object_show(o);
-   }
+        if (zone->num >= EINA_C_ARRAY_LENGTH(block_rects))
+          {
+             CRI("> %lu screens connected????", EINA_C_ARRAY_LENGTH(block_rects));
+             break;
+          }
+        o = evas_object_rectangle_add(e_comp->evas);
+        block_rects[zone->num] = o;
+        evas_object_color_set(o, 0, 0, 0, 255);
+        evas_object_geometry_set(o, zone->x, zone->y, zone->w, zone->h);
+        evas_object_layer_set(o, E_LAYER_DESKLOCK);
+        evas_object_show(o);
+     }
    if (e_config->desklock_language)
      e_intl_language_set(e_config->desklock_language);
 
@@ -381,7 +386,12 @@ e_desklock_hide(void)
 
    e_comp_override_del();
    e_comp_shape_queue();
-   E_FREE_LIST(block_rects, evas_object_del);
+   {
+      unsigned int n;
+
+      for (n = 0; n < EINA_C_ARRAY_LENGTH(block_rects); n++)
+        E_FREE_FUNC(block_rects[n], evas_object_del);
+   }
    //e_comp_block_window_del();
    if (e_config->desklock_language)
      e_intl_language_set(e_config->language);
