@@ -378,18 +378,18 @@ e_winlist_prev(void)
 static int
 point_line_dist(int x, int y, int lx1, int ly1, int lx2, int ly2)
 {
-   double xx, yy, dx, dy, dist;
-   double a = x - lx1;
-   double b = y - ly1;
-   double c = lx2 - lx1;
-   double d = ly2 - ly1;
+   int xx, yy, dx, dy;
+   int a = x - lx1;
+   int b = y - ly1;
+   int c = lx2 - lx1;
+   int d = ly2 - ly1;
 
-   double dot = (a * c) + (b * d);
-   double len_sq = (c * c) + (d * d);
-   double param = -1;
+   int dot = (a * c) + (b * d);
+   int len_sq = (c * c) + (d * d);
+   double dist, param = -1.0;
 
    // if line is 0 length
-   if (len_sq != 0) param = dot / len_sq;
+   if (len_sq) param = (double)dot / len_sq;
 
    if (param < 0)
      {
@@ -403,14 +403,14 @@ point_line_dist(int x, int y, int lx1, int ly1, int lx2, int ly2)
      }
    else
      {
-        xx = lx1 + (param * c);
-        yy = ly1 + (param * d);
+        xx = lx1 + lround(param * c);
+        yy = ly1 + lround(param * d);
    }
 
    dx = x - xx;
    dy = y - yy;
    dist = sqrt((dx * dx) + (dy * dy));
-   return (int)dist;
+   return lround(dist);
 }
 
 void

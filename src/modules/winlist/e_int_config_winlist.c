@@ -146,7 +146,9 @@ static int
 _basic_check_changed(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfdata)
 {
 #define DO(_e_config, _cfdata) \
-  if (e_config->winlist_##_e_config != cfdata->_cfdata) return 1;
+  if (e_config->winlist_##_e_config != cfdata->_cfdata) return 1
+#define DO_DBL(_e_config, _cfdata) \
+  if (!EINA_DBL_CMP(e_config->winlist_##_e_config, cfdata->_cfdata)) return 1
 
    DO(list_show_iconified, iconified);
    DO(list_show_other_desk_iconified, iconified_other_desks);
@@ -160,11 +162,11 @@ _basic_check_changed(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfd
    DO(warp_at_end, warp_at_end);
    DO(no_warp_on_direction, no_warp_on_direction);
    DO(scroll_animate, scroll_animate);
-   DO(scroll_speed, scroll_speed);
+   DO_DBL(scroll_speed, scroll_speed);
    DO(list_focus_while_selecting, focus);
    DO(list_raise_while_selecting, raise);
-   DO(pos_align_x, align_x);
-   DO(pos_align_y, align_y);
+   DO_DBL(pos_align_x, align_x);
+   DO_DBL(pos_align_y, align_y);
    DO(pos_min_w, min_w);
    DO(pos_min_h, min_h);
    DO(pos_max_w, max_w);
