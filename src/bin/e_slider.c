@@ -358,8 +358,9 @@ _e_smart_format_update(E_Smart_Data *sd)
    if (sd->format)
      {
         char buf[256];
-
+DISABLE_WARNING(format-nonliteral, format-nonliteral, format-nonliteral)
         snprintf(buf, sizeof(buf), sd->format, sd->val);
+ENABLE_WARNING(format-nonliteral, format-nonliteral, format-nonliteral)
         edje_object_part_text_set(sd->edje_obj, "e.text.label", buf);
      }
 }
