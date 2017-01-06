@@ -29,6 +29,7 @@ static Eina_List *show_hooks = NULL;
 static Eina_List *hide_hooks = NULL;
 
 static Evas_Object *block_rects[32] = {NULL};
+static Eina_Bool block_zone[32] = {EINA_FALSE};
 
 static Eina_List *desklock_ifaces = NULL;
 static E_Desklock_Interface *current_iface = NULL;
@@ -302,7 +303,8 @@ e_desklock_show(Eina_Bool suspend)
         evas_object_color_set(o, 0, 0, 0, 255);
         evas_object_geometry_set(o, zone->x, zone->y, zone->w, zone->h);
         evas_object_layer_set(o, E_LAYER_DESKLOCK);
-        evas_object_show(o);
+        if (!block_zone[zone->num])
+          evas_object_show(o);
      }
    if (e_config->desklock_language)
      e_intl_language_set(e_config->desklock_language);
@@ -390,7 +392,10 @@ e_desklock_hide(void)
       unsigned int n;
 
       for (n = 0; n < EINA_C_ARRAY_LENGTH(block_rects); n++)
-        E_FREE_FUNC(block_rects[n], evas_object_del);
+        {
+           E_FREE_FUNC(block_rects[n], evas_object_del);
+           block_zone[n] = EINA_FALSE;
+        }
    }
    //e_comp_block_window_del();
    if (e_config->desklock_language)
@@ -697,4 +702,21 @@ _e_desklock_cb_randr(void *data EINA_UNUSED, int type EINA_UNUSED, void *event E
    e_desklock_hide();
    e_desklock_show(EINA_FALSE);
    return ECORE_CALLBACK_PASS_ON;
+}
+
+E_API void
+e_desklock_zone_block_set(const E_Zone *zone, Eina_Bool block)
+{
+   EINA_SAFETY_ON_NULL_RETURN(zone);
+   if (zone->num >= EINA_C_ARRAY_LENGTH(block_rects))
+     {
+        CRI("> %lu screens connected????", EINA_C_ARRAY_LENGTH(block_rects));
+        return;
+     }
+   block_zone[zone->num] = !!block;
+   if (!block_rects[zone->num]) return;
+   if (block)
+     evas_object_show(block_rects[zone->num]);
+   else
+     evas_object_hide(block_rects[zone->num]);
 }

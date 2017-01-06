@@ -56,6 +56,8 @@ E_API void e_desklock_show_hook_del(E_Desklock_Show_Cb cb);
 E_API void e_desklock_hide_hook_add(E_Desklock_Hide_Cb cb);
 E_API void e_desklock_hide_hook_del(E_Desklock_Hide_Cb cb);
 
+E_API void e_desklock_zone_block_set(const E_Zone *zone, Eina_Bool block);
+
 extern E_API int E_EVENT_DESKLOCK;
 
 static inline Eina_Bool

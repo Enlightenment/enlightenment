@@ -16,6 +16,8 @@ typedef struct Lokker_Popup
    Evas_Object *comp_object;
    Evas_Object *bg_object;
    Evas_Object *login_box;
+   Eina_Bool show_anim : 1;
+   Eina_Bool hide_anim : 1;
 } Lokker_Popup;
 
 typedef struct Lokker_Data
@@ -395,6 +397,14 @@ _lokker_popup_add(E_Zone *zone)
    evas_object_move(lp->bg_object, zone->x, zone->y);
    evas_object_resize(lp->bg_object, zone->w, zone->h);
    evas_object_show(lp->bg_object);
+   {
+      const char *s;
+      s = edje_object_data_get(lp->bg_object, "show_signal");
+      lp->show_anim = s && (atoi(s) == 1);
+      e_desklock_zone_block_set(zone, !lp->show_anim);
+      s = edje_object_data_get(lp->bg_object, "hide_signal");
+      lp->hide_anim = s && (atoi(s) == 1);
+   }
    lp->comp_object = e_comp_object_util_add(lp->bg_object, 0);
    {
       char buf[1024];
@@ -469,11 +479,10 @@ _lokker_cb_hide_done(void *data, Evas_Object *obj, const char *sig EINA_UNUSED, 
 static void
 _lokker_popup_free(Lokker_Popup *lp)
 {
-   const char *s;
    if (!lp) return;
 
-   s = edje_object_data_get(lp->bg_object, "hide_signal");
-   if ((s) && (atoi(s) == 1))
+   e_desklock_zone_block_set(lp->zone, !lp->hide_anim);
+   if (lp->hide_anim)
      {
         evas_object_data_set(lp->bg_object, "comp_object", lp->comp_object);
         evas_object_data_set(lp->bg_object, "login_box", lp->login_box);
