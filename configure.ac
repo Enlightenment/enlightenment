@@ -1044,6 +1044,7 @@ m4_ifdef([v_rev],
     EFL_COMPILER_FLAG([-Wundef])
     EFL_COMPILER_FLAG([-Wcast-align])
     EFL_COMPILER_FLAG([-Wformat=2])
+    EFL_COMPILER_FLAG([-Wno-format-y2k])
    ])
 
 SUID_CFLAGS=
