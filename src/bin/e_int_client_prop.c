@@ -137,7 +137,7 @@ _create_data(E_Dialog *cfd, E_Client *ec)
    if ((cfdata->client->icccm.min_aspect > 0.0) &&
        (cfdata->client->icccm.max_aspect > 0.0))
      {
-        if (cfdata->client->icccm.min_aspect == cfdata->client->icccm.max_aspect)
+        if (EINA_DBL_CMP(cfdata->client->icccm.min_aspect, cfdata->client->icccm.max_aspect))
           snprintf(buf, sizeof(buf), _("%1.3f"),
                    cfdata->client->icccm.min_aspect);
         else

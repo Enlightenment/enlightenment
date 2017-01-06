@@ -162,7 +162,7 @@ _e_powersave_mode_eval(void)
         return;
         break;
      }
-   if (t != defer_time)
+   if (!EINA_DBL_CMP(t, defer_time))
      {
         if (deferred_timer) ecore_timer_del(deferred_timer);
         deferred_timer = ecore_timer_add(defer_time,

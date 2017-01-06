@@ -2118,7 +2118,7 @@ e_config_binding_edge_match(E_Config_Binding_Edge *eb_in)
             (eb->modifiers == eb_in->modifiers) &&
             (eb->any_mod == eb_in->any_mod) &&
             (eb->edge == eb_in->edge) &&
-            (eb->delay == eb_in->delay) &&
+            EINA_FLT_CMP(eb->delay, eb_in->delay) &&
             (eb->drag_only == eb_in->drag_only) &&
             (((eb->action) && (eb_in->action) && (!strcmp(eb->action, eb_in->action))) ||
              ((!eb->action) && (!eb_in->action))) &&
