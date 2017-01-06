@@ -2,13 +2,12 @@
  * follows.
  */
 
-#if __clang__
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wunused-parameter"
+#if defined(__clang__)
+# pragma clang diagnostic ignored "-Wunused-parameter"
 #elif (__GNUC__ == 4 && __GNUC_MINOR__ >= 6) || __GNUC__ > 4
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wunused-parameter"
+# pragma GCC diagnostic ignored "-Wunused-parameter"
 #endif
+
 
 /*
  * Copyright © 2014, 2015 Collabora, Ltd.
