@@ -192,7 +192,7 @@ _basic_check_changed(E_Config_Dialog      *cfd EINA_UNUSED,
      (cfdata->show_low != notification_cfg->show_low) ||
      (cfdata->show_normal != notification_cfg->show_normal) ||
      (cfdata->show_critical != notification_cfg->show_critical) ||
-     (cfdata->timeout != notification_cfg->timeout) ||
+     (!EINA_DBL_CMP(cfdata->timeout, notification_cfg->timeout)) ||
      (cfdata->corner != (int)notification_cfg->corner) ||
      (cfdata->force_timeout != notification_cfg->force_timeout) ||
      (cfdata->ignore_replacement != notification_cfg->ignore_replacement) ||

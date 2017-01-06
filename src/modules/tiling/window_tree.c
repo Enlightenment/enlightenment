@@ -405,7 +405,7 @@ _tiling_window_tree_node_resize_direction(Window_Tree *node,
      }
 
    /* If it's at the edge, try the grandpa of the parent. */
-   if (weight == 0.0)
+   if (!EINA_DBL_NONZERO(weight))
      {
         if (parent->parent && parent->parent->parent)
           {
