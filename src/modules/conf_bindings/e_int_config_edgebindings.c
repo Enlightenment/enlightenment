@@ -1426,7 +1426,7 @@ _edge_binding_text_get(E_Zone_Edge edge, float delay, int mod, int drag_only)
           }
      }
 
-   if (delay)
+   if (!eina_flteq(delay, 0.0))
      {
         if (eina_strbuf_length_get(b)) eina_strbuf_append(b, " ");
         if (dblequal(delay, -1.0))

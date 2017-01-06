@@ -127,13 +127,13 @@ _advanced_check_changed(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *
    e_widget_disabled_set(cfdata->backlight_slider_idle, !cfdata->enable_idle_dim);
    e_widget_disabled_set(cfdata->backlight_slider_fade, !cfdata->enable_idle_dim);
 
-   return (e_config->backlight.normal * 100.0 != cfdata->backlight_normal) ||
-          (e_config->backlight.dim * 100.0 != cfdata->backlight_dim) ||
-          (e_config->backlight.transition != cfdata->backlight_transition) ||
-          (e_config->backlight.timer != cfdata->backlight_timeout) ||
+   return (!EINA_DBL_CMP(e_config->backlight.normal * 100.0, cfdata->backlight_normal)) ||
+          (!EINA_DBL_CMP(e_config->backlight.dim * 100.0, cfdata->backlight_dim)) ||
+          (!EINA_DBL_CMP(e_config->backlight.transition, cfdata->backlight_transition)) ||
+          (!EINA_DBL_CMP(e_config->backlight.timer, cfdata->backlight_timeout)) ||
           (e_config->backlight.idle_dim != cfdata->enable_idle_dim) ||
           (e_config->screensaver_ask_presentation != cfdata->ask_presentation) ||
-          (e_config->screensaver_ask_presentation_timeout != cfdata->ask_presentation_timeout);
+          (!EINA_DBL_CMP(e_config->screensaver_ask_presentation_timeout, cfdata->ask_presentation_timeout));
 }
 
 static int

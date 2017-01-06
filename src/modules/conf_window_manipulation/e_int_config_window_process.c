@@ -80,7 +80,7 @@ _basic_check_changed(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfd
 {
    return ((e_config->kill_if_close_not_possible != cfdata->kill_if_close_not_possible) ||
            (e_config->kill_process != cfdata->kill_process) ||
-           (e_config->kill_timer_wait != cfdata->kill_timer_wait) ||
+           (!EINA_DBL_CMP(e_config->kill_timer_wait, cfdata->kill_timer_wait)) ||
            (e_config->ping_clients != cfdata->ping_clients) ||
            (e_config->ping_clients_interval != cfdata->ping_clients_interval));
 }

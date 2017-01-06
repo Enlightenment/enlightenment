@@ -70,8 +70,8 @@ _basic_check_changed(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfd
 {
    return ((cfdata->thumbscroll_enable != e_config->thumbscroll_enable) ||
 	   (cfdata->thumbscroll_threshhold != e_config->thumbscroll_threshhold) ||
-	   (cfdata->thumbscroll_momentum_threshhold != e_config->thumbscroll_momentum_threshhold) ||
-	   (cfdata->thumbscroll_friction != e_config->thumbscroll_friction));
+	   (!EINA_DBL_CMP(cfdata->thumbscroll_momentum_threshhold, e_config->thumbscroll_momentum_threshhold)) ||
+	   (!EINA_DBL_CMP(cfdata->thumbscroll_friction, e_config->thumbscroll_friction)));
 }
 
 static int

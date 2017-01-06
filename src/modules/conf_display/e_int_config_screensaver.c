@@ -145,10 +145,10 @@ _basic_check_changed(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfd
    return ((e_config->screensaver_enable != cfdata->enable_screensaver) ||
 	   (e_config->screensaver_timeout != lround(cfdata->timeout * 60.0)) ||
 	   (e_config->screensaver_ask_presentation != cfdata->ask_presentation) ||
-	   (e_config->screensaver_ask_presentation_timeout != cfdata->ask_presentation_timeout) ||
+	   (!EINA_DBL_CMP(e_config->screensaver_ask_presentation_timeout, cfdata->ask_presentation_timeout)) ||
 	   (e_config->screensaver_suspend != cfdata->screensaver_suspend) ||
 	   (e_config->screensaver_suspend_on_ac != cfdata->screensaver_suspend_on_ac) ||
-	   (e_config->screensaver_suspend_delay != cfdata->screensaver_suspend_delay) ||
+	   (!EINA_DBL_CMP(e_config->screensaver_suspend_delay, cfdata->screensaver_suspend_delay)) ||
 	   (e_config->screensaver_wake_on_notify != cfdata->wake_on_notify) ||
 	   (e_config->screensaver_wake_on_urgent != cfdata->wake_on_urgent) ||
            (e_config->dpms_off_timeout != cfdata->no_dpms_on_fullscreen)

@@ -70,7 +70,7 @@ static int
 _basic_check_changed(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfdata)
 {
    if (cfdata->framerate <= 0.0) cfdata->framerate = 1.0;
-   return ((e_config->framerate != cfdata->framerate) ||
+   return ((!EINA_DBL_CMP(e_config->framerate, cfdata->framerate)) ||
            (e_config->priority != cfdata->priority) ||
            (e_config->no_module_delay != (!cfdata->module_delay)));
 }

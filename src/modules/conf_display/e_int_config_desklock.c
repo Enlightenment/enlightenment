@@ -569,11 +569,10 @@ _basic_check_changed(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfd
    if (e_config->desklock_autolock_screensaver != cfdata->screensaver_lock)
      return 1;
 
-   if (e_config->desklock_post_screensaver_time !=
-       cfdata->post_screensaver_time)
+   if (!EINA_DBL_CMP(e_config->desklock_post_screensaver_time, cfdata->post_screensaver_time))
      return 1;
 
-   if (e_config->desklock_autolock_idle_timeout != cfdata->idle_time * 60)
+   if (!EINA_DBL_CMP(e_config->desklock_autolock_idle_timeout, cfdata->idle_time * 60))
      return 1;
 
    if (cfdata->bg_method_prev != (int)cfdata->bg_method) return 1;
@@ -607,7 +606,7 @@ _basic_check_changed(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfd
      return 1;
 
    return (e_config->desklock_ask_presentation != cfdata->ask_presentation) ||
-          (e_config->desklock_ask_presentation_timeout != cfdata->ask_presentation_timeout);
+          (!EINA_DBL_CMP(e_config->desklock_ask_presentation_timeout, cfdata->ask_presentation_timeout));
 }
 
 static void
