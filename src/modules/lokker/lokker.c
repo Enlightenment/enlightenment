@@ -336,6 +336,14 @@ _text_login_box_add(Lokker_Popup *lp)
 }
 
 static void
+_lokker_cb_show_done(void *data, Evas_Object *obj EINA_UNUSED, const char *sig EINA_UNUSED, const char *src EINA_UNUSED)
+{
+   Lokker_Popup *lp = data;
+
+   e_desklock_zone_block_set(lp->zone, 1);
+}
+
+static void
 _lokker_popup_add(E_Zone *zone)
 {
    E_Zone *current_zone;
@@ -402,6 +410,9 @@ _lokker_popup_add(E_Zone *zone)
       s = edje_object_data_get(lp->bg_object, "show_signal");
       lp->show_anim = s && (atoi(s) == 1);
       e_desklock_zone_block_set(zone, !lp->show_anim);
+      if (lp->show_anim)
+        edje_object_signal_callback_add(lp->bg_object, "e,action,show,done", "e",
+                                        _lokker_cb_show_done, lp);
       s = edje_object_data_get(lp->bg_object, "hide_signal");
       lp->hide_anim = s && (atoi(s) == 1);
    }
