@@ -874,7 +874,7 @@ static void
 _e_client_action_move_timeout_add(void)
 {
    E_FREE_FUNC(action_timer, ecore_timer_del);
-   if (e_config->border_keyboard.timeout)
+   if (EINA_DBL_NONZERO(e_config->border_keyboard.timeout))
      action_timer = ecore_timer_add(e_config->border_keyboard.timeout, _e_client_action_move_timeout, NULL);
 }
 
@@ -1094,7 +1094,7 @@ static void
 _e_client_action_resize_timeout_add(void)
 {
    E_FREE_FUNC(action_timer, ecore_timer_del);
-   if (e_config->border_keyboard.timeout)
+   if (EINA_DBL_NONZERO(e_config->border_keyboard.timeout))
      action_timer = ecore_timer_add(e_config->border_keyboard.timeout, _e_client_action_resize_timeout, NULL);
 }
 
@@ -5303,7 +5303,7 @@ e_client_resize_limit(const E_Client *ec, int *w, int *h)
         if (tw < 1) tw = 1;
         if (th < 1) th = 1;
         a = (double)(tw) / (double)(th);
-        if ((ec->icccm.min_aspect != 0.0) &&
+        if (EINA_DBL_NONZERO(ec->icccm.min_aspect) &&
             (a < ec->icccm.min_aspect))
           {
              if (inc_h)
@@ -5313,7 +5313,7 @@ e_client_resize_limit(const E_Client *ec, int *w, int *h)
              *w = tw + ec->icccm.base_w;
              *h = th + ec->icccm.base_h;
           }
-        else if ((ec->icccm.max_aspect != 0.0) &&
+        else if (EINA_DBL_NONZERO(ec->icccm.max_aspect) &&
                  (a > ec->icccm.max_aspect))
           {
              tw = th * ec->icccm.max_aspect;
@@ -5323,7 +5323,7 @@ e_client_resize_limit(const E_Client *ec, int *w, int *h)
    else
      {
         a = (double)*w / (double)*h;
-        if ((ec->icccm.min_aspect != 0.0) &&
+        if (EINA_DBL_NONZERO(ec->icccm.min_aspect) &&
             (a < ec->icccm.min_aspect))
           {
              if (inc_h)
@@ -5331,7 +5331,7 @@ e_client_resize_limit(const E_Client *ec, int *w, int *h)
              else
                *h = *w / ec->icccm.min_aspect;
           }
-        else if ((ec->icccm.max_aspect != 0.0) &&
+        else if (EINA_DBL_NONZERO(ec->icccm.max_aspect) &&
                  (a > ec->icccm.max_aspect))
           *w = *h * ec->icccm.max_aspect;
      }
