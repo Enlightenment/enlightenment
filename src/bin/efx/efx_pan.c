@@ -372,7 +372,7 @@ e_efx_pan(Evas_Object *obj, E_Efx_Effect_Speed speed, const Evas_Point *distance
    epd->e = e;
    _smart_pan_get(epd->pan, &x, &y);
    INF("pan: %p - (%d,%d) += (%d,%d) over %gs: %s", obj, x, y, distance->x, distance->y, total_time, e_efx_speed_str[speed]);
-   if (!total_time)
+   if (eina_dbleq(total_time, 0))
      {
         _smart_pan_set(epd->pan, x + distance->x, y + distance->y);
         return EINA_TRUE;

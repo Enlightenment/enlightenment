@@ -147,7 +147,7 @@ e_efx_move(Evas_Object *obj, E_Efx_Effect_Speed speed, const Evas_Point *end_poi
 
    evas_object_geometry_get(obj, &x, &y, NULL, NULL);
    INF("move: %p - (%d,%d) -> (%d,%d) over %gs: %s", obj, x, y, end_point->x, end_point->y, total_time, e_efx_speed_str[speed]);
-   if (!total_time)
+   if (eina_dbleq(total_time, 0))
      {
         evas_object_move(obj, end_point->x, end_point->y);
         return EINA_TRUE;
@@ -193,7 +193,7 @@ e_efx_move_circle(Evas_Object *obj, E_Efx_Effect_Speed speed, const Evas_Point *
 
    evas_object_geometry_get(obj, &x, &y, NULL, NULL);
    INF("move: %p - (%d,%d) %d over %gs: %s", obj, x, y, degrees, total_time, e_efx_speed_str[speed]);
-   if (!total_time)
+   if (eina_dbleq(total_time, 0))
      {
      //   evas_object_move(obj, end_point->x, end_point->y);
         return EINA_TRUE;

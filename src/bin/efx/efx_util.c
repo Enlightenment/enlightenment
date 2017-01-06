@@ -32,7 +32,7 @@ e_efx_realize(Evas_Object *obj)
    evas_map_point_coord_get(map, 2, &p2.x, &p2.y, NULL);
    x = lround((double)(p1.x + p2.x) / 2.);
    y = lround((double)(p1.y + p2.y) / 2.);
-   if (e->map_data.zoom)
+   if (!eina_dbleq(e->map_data.zoom, 0))
      zw = e->map_data.zoom * w, zh = e->map_data.zoom * h;
    else
      zw = w, zh = h;
