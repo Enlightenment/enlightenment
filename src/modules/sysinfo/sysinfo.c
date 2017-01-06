@@ -36,9 +36,6 @@ _sysinfo_created_cb(void *data, Evas_Object *obj, void *event_data EINA_UNUSED)
    inst->cfg->sysinfo.o_netstatus = sysinfo_netstatus_create(inst->o_main, inst);
    elm_table_pack(inst->o_main, inst->cfg->sysinfo.o_netstatus, 1, 2, 1, 1);
 
-   E_EXPAND(inst->o_main);
-   E_FILL(inst->o_main);
-
    evas_object_smart_callback_del_full(obj, "gadget_created", _sysinfo_created_cb, data);
 }
 
@@ -107,23 +104,33 @@ Evas_Object *
 sysinfo_create(Evas_Object *parent, int *id, E_Gadget_Site_Orient orient EINA_UNUSED)
 {
    Instance *inst;
+   Evas_Object *scroller;
 
    inst = E_NEW(Instance, 1);
    inst->cfg = _conf_item_get(id);
    *id = inst->cfg->id;
+
+   scroller = elm_scroller_add(parent);
+   elm_object_style_set(scroller, "no_inset_shadow");
+   E_EXPAND(scroller);
+   evas_object_size_hint_aspect_set(scroller, EVAS_ASPECT_CONTROL_BOTH, 1, 1);
+   evas_object_show(scroller);
+
    inst->o_main = elm_table_add(parent);
    elm_table_homogeneous_set(inst->o_main, EINA_TRUE);
    E_EXPAND(inst->o_main);
    evas_object_size_hint_aspect_set(inst->o_main, EVAS_ASPECT_CONTROL_BOTH, 1, 1);
-   evas_object_smart_callback_add(parent, "gadget_created", _sysinfo_created_cb, inst);
-   evas_object_smart_callback_add(parent, "gadget_removed", _sysinfo_removed_cb, inst);
+   elm_object_content_set(scroller, inst->o_main);
    evas_object_show(inst->o_main);
 
-   if (inst->cfg->id < 0) return inst->o_main;
+   evas_object_smart_callback_add(parent, "gadget_created", _sysinfo_created_cb, inst);
+   evas_object_smart_callback_add(parent, "gadget_removed", _sysinfo_removed_cb, inst);
+
+   if (inst->cfg->id < 0) return scroller;
 
    sysinfo_instances =
      eina_list_append(sysinfo_instances, inst);
 
-   return inst->o_main;
+   return scroller;
 }
 
