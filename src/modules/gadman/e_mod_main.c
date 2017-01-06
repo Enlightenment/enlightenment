@@ -218,7 +218,8 @@ gadman_gadget_add_handler(void *d EINA_UNUSED, int type EINA_UNUSED, E_Event_Gad
    if (!Man->waiting) return ECORE_CALLBACK_RENEW;
    l = eina_list_data_find_list(Man->waiting, ev->gcc->gadcon);
    if (!l) return ECORE_CALLBACK_RENEW;
-   if (ev->gcc->cf->geom.pos_x || ev->gcc->cf->geom.pos_y || ev->gcc->cf->geom.size_w || ev->gcc->cf->geom.size_h)
+   if (EINA_DBL_NONZERO(ev->gcc->cf->geom.pos_x) || EINA_DBL_NONZERO(ev->gcc->cf->geom.pos_y) ||
+       EINA_DBL_NONZERO(ev->gcc->cf->geom.size_w) || EINA_DBL_NONZERO(ev->gcc->cf->geom.size_h))
      return ECORE_CALLBACK_RENEW;
    if ((ev->gcc->gadcon->new_gcc) && (ev->gcc->gadcon->new_gcc == ev->gcc))
      return ECORE_CALLBACK_RENEW;

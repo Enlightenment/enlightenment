@@ -1054,8 +1054,8 @@ e_shelf_config_new(E_Zone *zone, E_Config_Shelf *cf_es)
    es = e_shelf_zone_new(zone, cf_es->name, cf_es->style, cf_es->layer, cf_es->id);
    if (!es) return NULL;
 
-   if (!cf_es->hide_timeout) cf_es->hide_timeout = 1.0;
-   if (!cf_es->hide_duration) cf_es->hide_duration = 1.0;
+   if (!EINA_DBL_NONZERO(cf_es->hide_timeout)) cf_es->hide_timeout = 1.0;
+   if (!EINA_DBL_NONZERO(cf_es->hide_duration)) cf_es->hide_duration = 1.0;
    es->cfg = cf_es;
    es->fit_along = cf_es->fit_along;
    es->fit_size = cf_es->fit_size;
