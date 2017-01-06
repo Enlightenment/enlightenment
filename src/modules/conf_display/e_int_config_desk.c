@@ -55,7 +55,7 @@ static void
 _fill_data(E_Config_Dialog_Data *cfdata)
 {
    Eina_List *l;
-   char name[40];
+   char name[1024];
    int ok = 0;
 
    cfdata->bg = e_bg_file_get(cfdata->zone_num, cfdata->desk_x, cfdata->desk_y);
@@ -77,7 +77,7 @@ _fill_data(E_Config_Dialog_Data *cfdata)
      }
    if (!ok)
      {
-        snprintf(name, sizeof(name), _(e_config->desktop_default_name), cfdata->desk_x, cfdata->desk_y);
+        snprintf(name, sizeof(name), "%s: %d,%d", _(e_config->desktop_default_name), cfdata->desk_x, cfdata->desk_y);
         cfdata->name = strdup(name);
      }
 }
@@ -110,7 +110,7 @@ _basic_apply(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfdata)
 
    if ((!cfdata->name) || (!cfdata->name[0]))
      {
-        snprintf(name, sizeof(name), _(e_config->desktop_default_name),
+        snprintf(name, sizeof(name), "%s: %d,%d", _(e_config->desktop_default_name),
                  cfdata->desk_x, cfdata->desk_y);
         free(cfdata->name);
         cfdata->name = strdup(name);
