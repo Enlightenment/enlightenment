@@ -809,7 +809,7 @@ e_bindings_edge_get(const char *action, E_Zone_Edge edge, int click)
    EINA_LIST_FOREACH(edge_bindings, l, binding)
      {
         if ((binding->edge == edge) &&
-            ((click && EINA_DBL_CMP(binding->delay, -1.0 * click))
+            ((click && EINA_FLT_CMP(binding->delay, -1.0 * click))
              || (!click && (binding->delay >= 0.0))) &&
             (binding->action) && (action) &&
             (!strcmp(action, binding->action)))
