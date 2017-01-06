@@ -232,7 +232,7 @@ _e_wid_fprev_preview_video_position(E_Widget_Data *wd, Evas_Object *obj, void *e
 
    if (!wd->o_preview_time) return;
    tot = emotion_object_play_length_get(obj);
-   if (!tot) return;
+   if (!EINA_DBL_NONZERO(tot)) return;
    wd->vid_pct = t = (emotion_object_position_get(obj) * 100.0) / emotion_object_play_length_get(obj);
    e_widget_slider_value_double_set(wd->o_preview_time, t);
 }
