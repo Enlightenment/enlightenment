@@ -119,7 +119,10 @@ time_datestring_format(Instance *inst, char *buf, int bufsz)
         strftime(buf, bufsz, "%F", (const struct tm *)tm);
         break;
       case CLOCK_DATE_DISPLAY_CUSTOM:
+/* disable warning for known-safe code */
+DISABLE_WARNING(format-nonliteral, format-nonliteral, format-nonliteral)
         if (!strftime(buf, bufsz, inst->cfg->time_str[1] ?: default_str, (const struct tm *)tm))
+ENABLE_WARNING(format-nonliteral, format-nonliteral, format-nonliteral)
           strncpy(buf, "ERROR", bufsz - 1);
         break;
       default: break;
@@ -141,7 +144,10 @@ time_string_format(Instance *inst, char *buf, int bufsz)
    tt = (time_t)(timev.tv_sec);
    tm = localtime(&tt);
    TZUNSET();
+/* disable warning for known-safe code */
+DISABLE_WARNING(format-nonliteral, format-nonliteral, format-nonliteral)
    if (!strftime(buf, bufsz, inst->cfg->time_str[0] ?: default_fmt, (const struct tm *)tm))
+ENABLE_WARNING(format-nonliteral, format-nonliteral, format-nonliteral)
      strncpy(buf, "ERROR", bufsz - 1);
    return tm->tm_sec;
 }
