@@ -1038,13 +1038,12 @@ m4_ifdef([v_rev],
     EFL_COMPILER_FLAG([-W])
     EFL_COMPILER_FLAG([-Wpointer-arith])
     EFL_COMPILER_FLAG([-Wshadow])
+    EFL_COMPILER_FLAG([-Wno-missing-field-initializers])
+    EFL_COMPILER_FLAG([-Wfloat-equal])
     EFL_COMPILER_FLAG([-Wuninitialized])
     EFL_COMPILER_FLAG([-Wundef])
     EFL_COMPILER_FLAG([-Wcast-align])
     EFL_COMPILER_FLAG([-Wformat=2])
-    EFL_COMPILER_FLAG([-Wno-missing-field-initializers])
-    EFL_COMPILER_FLAG([-Wno-format-y2k])
-    EFL_COMPILER_FLAG([-Wno-format-nonliteral])
    ])
 
 SUID_CFLAGS=
