@@ -1132,7 +1132,7 @@ _e_fm_op_update_progress(E_Fm_Op_Task *task, off_t _plus_e_fm_op_done, off_t _pl
 
         eta = peta;
 
-        if (!s_time) s_time = ecore_time_get();
+        if (eina_dbleq(s_time, 0)) s_time = ecore_time_get();
 
         /* Update ETA once a second */
         if ((_e_fm_op_done) && (ecore_time_get() - c_time > 1.0))
@@ -1143,7 +1143,7 @@ _e_fm_op_update_progress(E_Fm_Op_Task *task, off_t _plus_e_fm_op_done, off_t _pl
           }
 
         if (!task) return;
-        if ((percent != ppercent) || (eta != peta) || (task != ptask))
+        if ((percent != ppercent) || (!EINA_DBL_CMP(eta, peta)) || (task != ptask))
           {
              ppercent = percent;
              peta = eta;
