@@ -764,7 +764,7 @@ _animator(void *data)
 
    int wait = 0;
 
-   if (!EINA_DBL_CMP(sd->scroll_align, sd->scroll_align_to))
+   if (!EINA_DBL_EQ(sd->scroll_align, sd->scroll_align_to))
      {
         sd->scroll_align = ((sd->scroll_align * (1.0 - spd)) +
                             (sd->scroll_align_to * spd));
@@ -867,7 +867,7 @@ _pan_item_select(Evas_Object *obj, Item *it, int scroll)
      {
         sd->scroll_align_to = align;
 
-        if ((!EINA_DBL_CMP(align, sd->cy)) && !sd->animator)
+        if ((!EINA_DBL_EQ(align, sd->cy)) && !sd->animator)
           sd->animator = ecore_animator_add(_animator, obj);
      }
    else

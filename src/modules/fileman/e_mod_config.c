@@ -250,8 +250,8 @@ _basic_check_changed(E_Config_Dialog *cfd  EINA_UNUSED,
      (fileman_config->icon.icon.w != cfdata->icon.icon.w) ||
      (fileman_config->icon.icon.h != cfdata->icon.icon.w) ||
      (fileman_config->icon.extension.show != cfdata->icon.extension.show) ||
-     (!EINA_DBL_CMP(fileman_config->tooltip.delay, cfdata->tooltip.delay)) ||
-     (!EINA_DBL_CMP(fileman_config->tooltip.size, cfdata->tooltip.size)) ||
+     (!EINA_DBL_EQ(fileman_config->tooltip.delay, cfdata->tooltip.delay)) ||
+     (!EINA_DBL_EQ(fileman_config->tooltip.size, cfdata->tooltip.size)) ||
      (fileman_config->tooltip.enable != cfdata->tooltip.enable) ||
      (fileman_config->tooltip.clamp_size != cfdata->tooltip.clamp_size) ||
      (fileman_config->selection.windows_modifiers != cfdata->selection.windows_modifiers) ||

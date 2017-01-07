@@ -997,7 +997,7 @@ _move_or_resize(E_Client *ec)
          default:
            break;
         }
-      if ((!eina_dbleq(w_diff, 1.0)) || (!eina_dbleq(h_diff, 1.0)))
+      if ((!eina_dbl_exact(w_diff, 1.0)) || (!eina_dbl_exact(h_diff, 1.0)))
         {
            if (!tiling_window_tree_node_resize(item, w_dir, w_diff, h_dir,
                                                h_diff))

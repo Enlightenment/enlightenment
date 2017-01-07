@@ -316,14 +316,14 @@ static int
 _adv_check_changed(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfdata)
 {
    if ((int)pager_config->popup != cfdata->popup.show) return 1;
-   if (!EINA_DBL_CMP(pager_config->popup_speed, cfdata->popup.speed)) return 1;
+   if (!EINA_DBL_EQ(pager_config->popup_speed, cfdata->popup.speed)) return 1;
    if ((int)pager_config->flip_desk != cfdata->flip_desk) return 1;
    if ((int)pager_config->popup_urgent != cfdata->popup.urgent_show) return 1;
    if ((int)pager_config->popup_urgent_stick != cfdata->popup.urgent_stick)
      return 1;
    if ((int)pager_config->popup_urgent_focus != cfdata->popup.urgent_focus)
      return 1;
-   if (!EINA_DBL_CMP(pager_config->popup_urgent_speed, cfdata->popup.urgent_speed))
+   if (!EINA_DBL_EQ(pager_config->popup_urgent_speed, cfdata->popup.urgent_speed))
      return 1;
    if ((int)pager_config->show_desk_names != cfdata->show_desk_names) return 1;
    if (pager_config->popup_height != cfdata->popup.height) return 1;

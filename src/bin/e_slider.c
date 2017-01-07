@@ -375,7 +375,7 @@ _e_smart_signal_cb_drag(void *data, Evas_Object *obj EINA_UNUSED, const char *em
    _e_smart_value_limit(sd);
    _e_smart_format_update(sd);
    if (sd->changing) return;
-   if (!EINA_DBL_CMP(sd->val, pval))
+   if (!EINA_DBL_EQ(sd->val, pval))
      evas_object_smart_callback_call(sd->smart_obj, "changed", NULL);
 }
 
@@ -389,7 +389,7 @@ _e_smart_signal_cb_drag_start(void *data, Evas_Object *obj EINA_UNUSED, const ch
    _e_smart_value_limit(sd);
    _e_smart_format_update(sd);
    if (sd->changing) return;
-   if (!EINA_DBL_CMP(sd->val, pval))
+   if (!EINA_DBL_EQ(sd->val, pval))
      evas_object_smart_callback_call(sd->smart_obj, "changed", NULL);
 }
 
@@ -404,7 +404,7 @@ _e_smart_signal_cb_drag_stop(void *data, Evas_Object *obj EINA_UNUSED, const cha
    _e_smart_format_update(sd);
    _e_smart_value_update(sd);
    if (sd->changing) return;
-   if (!EINA_DBL_CMP(sd->val, pval))
+   if (!EINA_DBL_EQ(sd->val, pval))
      evas_object_smart_callback_call(sd->smart_obj, "changed", NULL);
 }
 

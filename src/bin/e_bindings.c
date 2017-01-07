@@ -809,7 +809,7 @@ e_bindings_edge_get(const char *action, E_Zone_Edge edge, int click)
    EINA_LIST_FOREACH(edge_bindings, l, binding)
      {
         if ((binding->edge == edge) &&
-            ((click && EINA_FLT_CMP(binding->delay, -1.0 * click))
+            ((click && EINA_FLT_EQ(binding->delay, -1.0 * click))
              || (!click && (binding->delay >= 0.0))) &&
             (binding->action) && (action) &&
             (!strcmp(action, binding->action)))
@@ -831,7 +831,7 @@ e_bindings_edge_del(E_Binding_Context ctxt, E_Zone_Edge edge, Eina_Bool drag_onl
           {
              if ((binding->ctxt == ctxt) &&
                  (binding->mod == mod) &&
-                 EINA_FLT_CMP(binding->delay, delay) &&
+                 EINA_FLT_EQ(binding->delay, delay) &&
                  (binding->any_mod == any_mod) &&
                  (binding->drag_only == drag_only) &&
                  (((binding->action) && (action) && (!strcmp(binding->action, action))) ||
@@ -862,7 +862,7 @@ e_bindings_edge_event_find(E_Binding_Context ctxt, E_Event_Zone_Edge *ev, Eina_B
    EINA_LIST_FOREACH(edge_bindings, l, binding)
      /* A value of <= -1.0 for the delay indicates it as a mouse-click binding on that edge */
      if (((binding->edge == ev->edge)) &&
-         ((click && EINA_FLT_CMP(binding->delay, -1.0 * click)) || (!click && (binding->delay >= 0.0))) &&
+         ((click && EINA_FLT_EQ(binding->delay, -1.0 * click)) || (!click && (binding->delay >= 0.0))) &&
          ((binding->drag_only == ev->drag) || ev->drag) &&
          ((binding->any_mod) || (binding->mod == mod)))
        {

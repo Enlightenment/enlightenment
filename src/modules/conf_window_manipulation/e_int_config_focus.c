@@ -215,7 +215,7 @@ _advanced_check_changed(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *
           (e_config->disable_all_pointer_warps != cfdata->disable_all_pointer_warps) ||
           (fabs(e_config->pointer_warp_speed - cfdata->pointer_warp_speed) > DBL_EPSILON) ||
           (e_config->use_auto_raise != cfdata->use_auto_raise) ||
-          (!EINA_DBL_CMP(e_config->auto_raise_delay, cfdata->auto_raise_delay)) ||
+          (!EINA_DBL_EQ(e_config->auto_raise_delay, cfdata->auto_raise_delay)) ||
           (e_config->border_raise_on_mouse_action != cfdata->border_raise_on_mouse_action) ||
           (e_config->raise_on_revert_focus != cfdata->raise_on_revert_focus);
 }

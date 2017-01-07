@@ -335,10 +335,10 @@ _basic_apply(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfdata)
    e_config->menu_eap_comment_show = cfdata->show_comment;
    e_config->menu_gadcon_client_toplevel = cfdata->menu_gadcon_client_toplevel;
 
-   if (EINA_DBL_CMP(cfdata->scroll_speed, 0.0)) e_config->menus_scroll_speed = 1.0;
+   if (EINA_DBL_EQ(cfdata->scroll_speed, 0.0)) e_config->menus_scroll_speed = 1.0;
    else e_config->menus_scroll_speed = cfdata->scroll_speed;
 
-   if (EINA_DBL_CMP(cfdata->fast_mouse_move_threshhold, 0.0))
+   if (EINA_DBL_EQ(cfdata->fast_mouse_move_threshhold, 0.0))
      e_config->menus_fast_mouse_move_threshhold = 1.0;
    else 
      {
@@ -370,12 +370,12 @@ _basic_check_changed(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfd
 {
    double scroll_speed, move_threshold;
 
-   if (EINA_DBL_CMP(cfdata->scroll_speed, 0.0))
+   if (EINA_DBL_EQ(cfdata->scroll_speed, 0.0))
      scroll_speed = 1.0;
    else
      scroll_speed = cfdata->scroll_speed;
 
-   if (EINA_DBL_CMP(cfdata->fast_mouse_move_threshhold, 0.0))
+   if (EINA_DBL_EQ(cfdata->fast_mouse_move_threshhold, 0.0))
      move_threshold = 1.0;
    else
      move_threshold = cfdata->fast_mouse_move_threshhold;
@@ -386,11 +386,11 @@ _basic_check_changed(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfd
 	   (e_config->menu_eap_name_show != cfdata->show_name) ||
 	   (e_config->menu_eap_generic_show != cfdata->show_generic) ||
 	   (e_config->menu_eap_comment_show != cfdata->show_comment) ||
-	   (!EINA_DBL_CMP(e_config->menus_click_drag_timeout, cfdata->click_drag_timeout)) ||
+	   (!EINA_DBL_EQ(e_config->menus_click_drag_timeout, cfdata->click_drag_timeout)) ||
 	   (e_config->menu_autoscroll_margin != cfdata->autoscroll_margin) ||
 	   (e_config->menu_autoscroll_cursor_margin != cfdata->autoscroll_cursor_margin) ||
-	   (!EINA_DBL_CMP(e_config->menus_scroll_speed, scroll_speed)) ||
-	   (!EINA_DBL_CMP(e_config->menus_fast_mouse_move_threshhold, move_threshold)) ||
+	   (!EINA_DBL_EQ(e_config->menus_scroll_speed, scroll_speed)) ||
+	   (!EINA_DBL_EQ(e_config->menus_fast_mouse_move_threshhold, move_threshold)) ||
 	   (e_config->menu_gadcon_client_toplevel != cfdata->menu_gadcon_client_toplevel) ||
            (!((cfdata->default_system_menu) &&
               (e_config->default_system_menu) &&

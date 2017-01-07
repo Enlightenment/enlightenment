@@ -2060,7 +2060,7 @@ _e_comp_object_shade_animator(void *data)
    evas_object_resize(cw->smart_obj, w, h);
 
    /* we're done */
-   if (EINA_DBL_CMP(val, 1))
+   if (EINA_DBL_EQ(val, 1))
      {
         cw->shade.anim = NULL;
 

@@ -86,7 +86,7 @@ e_efx_rotate(Evas_Object *obj, E_Efx_Effect_Speed speed, double degrees, const E
    E_Efx_Rotate_Data *erd;
  
    EINA_SAFETY_ON_NULL_RETURN_VAL(obj, EINA_FALSE);
-   if (eina_dbleq(degrees, 0)) return EINA_FALSE;
+   if (eina_dbl_exact(degrees, 0)) return EINA_FALSE;
    if (total_time < 0.0) return EINA_FALSE;
    if (speed > E_EFX_EFFECT_SPEED_SINUSOIDAL) return EINA_FALSE;
    /* can't rotate a spinning object, so we stop it first */
@@ -121,7 +121,7 @@ e_efx_rotate(Evas_Object *obj, E_Efx_Effect_Speed speed, double degrees, const E
    erd->start_degrees = e->map_data.rotation;
    erd->cb = cb;
    erd->data = (void*)data;
-   if (eina_dbleq(total_time, 0))
+   if (eina_dbl_exact(total_time, 0))
      {
         e->map_data.rotation += degrees;
         _rotate_cb(erd, 1.0);

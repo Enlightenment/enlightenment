@@ -164,7 +164,7 @@ e_efx_fade(Evas_Object *obj, E_Efx_Effect_Speed speed, E_Efx_Color *ec, unsigned
    INF("fade: %p || %d/%d/%d/%d => %d/%d/%d/%d %s over %gs", obj, efd->start.r, efd->start.g, efd->start.b, efd->alpha[0], efd->color.r, efd->color.g, efd->color.b, efd->alpha[1], e_efx_speed_str[speed], total_time);
    if (efd->anim) ecore_animator_del(efd->anim);
    efd->anim = NULL;
-   if (!eina_dbleq(total_time, 0))
+   if (!eina_dbl_exact(total_time, 0))
      efd->anim = ecore_animator_timeline_add(total_time, (Ecore_Timeline_Cb)_fade_cb, efd);
    else
      _fade_cb(efd, 1.0);

@@ -151,11 +151,11 @@ _cb_sort(const void *data1, const void *data2)
    const Evry_Item *it1 = data1;
    const Evry_Item *it2 = data2;
 
-   if ((!eina_dbleq(it1->usage, 0)) && (!eina_dbleq(it2->usage, 0)))
+   if ((!eina_dbl_exact(it1->usage, 0)) && (!eina_dbl_exact(it2->usage, 0)))
      return it1->usage > it2->usage ? -1 : 1;
-   if ((!eina_dbleq(it1->usage, 0)) && eina_dbleq(it2->usage, 0))
+   if ((!eina_dbl_exact(it1->usage, 0)) && eina_dbl_exact(it2->usage, 0))
      return -1;
-   if ((!eina_dbleq(it2->usage, 0)) && eina_dbleq(it1->usage, 0))
+   if ((!eina_dbl_exact(it2->usage, 0)) && eina_dbl_exact(it1->usage, 0))
      return 1;
 
    if (it1->fuzzy_match || it2->fuzzy_match)

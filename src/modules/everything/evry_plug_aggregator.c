@@ -113,7 +113,7 @@ _fetch(Evry_Plugin *plugin, const char *input)
              evry_history_item_usage_set(itp, NULL, NULL);
              itp->usage /= 100.0;
 
-             if ((!eina_dbleq(itp->usage, 0)) && (!eina_dbleq(max_usage, 0)) && (itp->usage < max_usage))
+             if ((!eina_dbl_exact(itp->usage, 0)) && (!eina_dbl_exact(max_usage, 0)) && (itp->usage < max_usage))
                itp->usage = max_usage;
              itp->fuzzy_match = min_fuzz;
 
@@ -195,7 +195,7 @@ _fetch(Evry_Plugin *plugin, const char *input)
                     evry_history_item_usage_set(it, input, context);
 
                   if ((subj_sel) && (top_level) &&
-                      eina_dbleq(it->usage, 0) && ((int) inp_len < plugin->config->min_query))
+                      eina_dbl_exact(it->usage, 0) && ((int) inp_len < plugin->config->min_query))
                     continue;
 
                   items = eina_list_append(items, it);

@@ -457,7 +457,7 @@ tiling_window_tree_node_resize(Window_Tree *node, int w_dir, double w_diff,
         h_parent = parent;
      }
 
-   if ((!eina_dbleq(h_diff, 1.0)) && h_parent)
+   if ((!eina_dbl_exact(h_diff, 1.0)) && h_parent)
      {
         Window_Tree *tmp_node = (h_parent == parent) ? node : parent;
 
@@ -466,7 +466,7 @@ tiling_window_tree_node_resize(Window_Tree *node, int w_dir, double w_diff,
                                                     h_diff, h_dir);
      }
 
-   if ((!eina_dbleq(w_diff, 1.0)) && w_parent)
+   if ((!eina_dbl_exact(w_diff, 1.0)) && w_parent)
      {
         Window_Tree *tmp_node = (w_parent == parent) ? node : parent;
 

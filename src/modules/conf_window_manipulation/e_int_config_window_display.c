@@ -121,7 +121,7 @@ _basic_check_changed(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfd
           (e_config->resize_info_follows != cfdata->resize_info_follows) ||
           (e_config->border_shade_animate != cfdata->border_shade_animate) ||
           (e_config->border_shade_transition != cfdata->border_shade_transition) ||
-          (!EINA_DBL_CMP(e_config->border_shade_speed, cfdata->border_shade_speed)) ||
+          (!EINA_DBL_EQ(e_config->border_shade_speed, cfdata->border_shade_speed)) ||
           (e_config->window_maximize_animate != cfdata->window_maximize_animate) ||
           (e_config->window_maximize_transition != cfdata->window_maximize_transition) ||
           (!dblequal(e_config->window_maximize_time, cfdata->window_maximize_time)) ||

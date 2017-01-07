@@ -47,7 +47,7 @@ _spin_cb(E_Efx_Spin_Data *esd)
    if (esd->frame % (int)fps == 0)
      DBG("frame: %u || rotate: %g", esd->frame, esd->e->map_data.rotation);
 */
-   if (eina_dbleq(fmod(esd->e->map_data.rotation, 360.0), 0)) esd->frame = 0;
+   if (eina_dbl_exact(fmod(esd->e->map_data.rotation, 360.0), 0)) esd->frame = 0;
    esd->frame++; /* FIXME: this may overflow */
 
    return EINA_TRUE;

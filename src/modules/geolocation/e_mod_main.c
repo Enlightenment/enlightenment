@@ -80,21 +80,21 @@ popup_update(Instance *inst)
    snprintf(buf, sizeof(buf), _("Longitude:  %f"), inst->longitude);
    e_widget_label_text_set(inst->popup_longitude, buf);
 
-   if (eina_dbleq(inst->altitude, -DBL_MAX))
+   if (eina_dbl_exact(inst->altitude, -DBL_MAX))
      snprintf(buf, sizeof(buf), _("Altitude:  %f"), inst->altitude);
    else
      snprintf(buf, sizeof(buf), _("Altitude:  N/A"));
 
    e_widget_label_text_set(inst->popup_altitude, buf);
 
-   if (eina_dbleq(inst->speed, -1.0))
+   if (eina_dbl_exact(inst->speed, -1.0))
      snprintf(buf, sizeof(buf), _("Speed:  %f"), inst->speed);
    else
      snprintf(buf, sizeof(buf), _("Speed: N/A"));
 
    e_widget_label_text_set(inst->popup_speed, buf);
 
-   if (eina_dbleq(inst->heading, -1.0))
+   if (eina_dbl_exact(inst->heading, -1.0))
      snprintf(buf, sizeof(buf), _("Heading:  %f"), inst->heading);
    else
      snprintf(buf, sizeof(buf), _("Heading: N/A"));
@@ -146,7 +146,7 @@ popup_new(Instance *inst)
    inst->popup_longitude = e_widget_label_add(evas, buf);
    e_widget_list_object_append(list, inst->popup_longitude, 1, 1, 0.5);
 
-   if (eina_dbleq(inst->altitude, -DBL_MAX))
+   if (eina_dbl_exact(inst->altitude, -DBL_MAX))
      snprintf(buf, sizeof(buf), _("Altitude:  %f"), inst->altitude);
    else
      snprintf(buf, sizeof(buf), _("Altitude:  N/A"));
@@ -154,7 +154,7 @@ popup_new(Instance *inst)
    inst->popup_altitude = e_widget_label_add(evas, buf);
    e_widget_list_object_append(list, inst->popup_altitude, 1, 1, 0.5);
 
-   if (eina_dbleq(inst->speed, -1.0))
+   if (eina_dbl_exact(inst->speed, -1.0))
      snprintf(buf, sizeof(buf), _("Speed:  %f"), inst->speed);
    else
      snprintf(buf, sizeof(buf), _("Speed: N/A"));
@@ -162,7 +162,7 @@ popup_new(Instance *inst)
    inst->popup_speed = e_widget_label_add(evas, buf);
    e_widget_list_object_append(list, inst->popup_speed, 1, 1, 0.5);
 
-   if (eina_dbleq(inst->heading, -1.0))
+   if (eina_dbl_exact(inst->heading, -1.0))
      snprintf(buf, sizeof(buf), _("Heading:  %f"), inst->heading);
    else
      snprintf(buf, sizeof(buf), _("Heading: N/A"));

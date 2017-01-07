@@ -135,7 +135,7 @@ _basic_check_changed(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfd
    if ((cfdata->main.icon_size != e_config->syscon.main.icon_size) ||
        (cfdata->secondary.icon_size != e_config->syscon.secondary.icon_size) ||
        (cfdata->extra.icon_size != e_config->syscon.extra.icon_size) ||
-       (!EINA_DBL_CMP(cfdata->timeout, e_config->syscon.timeout)) ||
+       (!EINA_DBL_EQ(cfdata->timeout, e_config->syscon.timeout)) ||
        (cfdata->do_input != e_config->syscon.do_input))
      return 1;
 

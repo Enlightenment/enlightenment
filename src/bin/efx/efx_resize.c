@@ -225,7 +225,7 @@ e_efx_resize(Evas_Object *obj, E_Efx_Effect_Speed speed, const Evas_Point *posit
         else
           evas_object_move(obj, position->x, position->y);
      }
-   if (!eina_dbleq(total_time, 0))
+   if (!eina_dbl_exact(total_time, 0))
      erd->anim = ecore_animator_timeline_add(total_time, (Ecore_Timeline_Cb)_resize_cb, erd);
    else
      _resize_cb(erd, 1.0);

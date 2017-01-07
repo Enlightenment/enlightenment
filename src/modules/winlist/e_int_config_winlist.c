@@ -148,7 +148,7 @@ _basic_check_changed(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfd
 #define DO(_e_config, _cfdata) \
   if (e_config->winlist_##_e_config != cfdata->_cfdata) return 1
 #define DO_DBL(_e_config, _cfdata) \
-  if (!EINA_DBL_CMP(e_config->winlist_##_e_config, cfdata->_cfdata)) return 1
+  if (!EINA_DBL_EQ(e_config->winlist_##_e_config, cfdata->_cfdata)) return 1
 
    DO(list_show_iconified, iconified);
    DO(list_show_other_desk_iconified, iconified_other_desks);

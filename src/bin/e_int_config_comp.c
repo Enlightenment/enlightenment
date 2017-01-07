@@ -426,7 +426,7 @@ _advanced_apply_data(E_Config_Dialog *cfd  EINA_UNUSED,
        (cfdata->fps_show != conf->fps_show) ||
        (cfdata->fps_corner != conf->fps_corner) ||
        (cfdata->fps_average_range != conf->fps_average_range) ||
-       (!EINA_DBL_CMP(cfdata->first_draw_delay, conf->first_draw_delay)) ||
+       (!EINA_DBL_EQ(cfdata->first_draw_delay, conf->first_draw_delay)) ||
        (conf->match.disable_popups != cfdata->match.disable_popups) ||
        (conf->match.disable_borders != cfdata->match.disable_borders) ||
        (conf->match.disable_overrides != cfdata->match.disable_overrides) ||
@@ -618,7 +618,7 @@ _basic_apply_data(E_Config_Dialog *cfd  EINA_UNUSED,
        (cfdata->fps_show != conf->fps_show) ||
        (cfdata->fps_corner != conf->fps_corner) ||
        (cfdata->fps_average_range != conf->fps_average_range) ||
-       (!EINA_DBL_CMP(cfdata->first_draw_delay, conf->first_draw_delay))
+       (!EINA_DBL_EQ(cfdata->first_draw_delay, conf->first_draw_delay))
        )
      {
         if (cfdata->match.toggle_changed)
