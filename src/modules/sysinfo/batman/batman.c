@@ -10,30 +10,32 @@ static void      _batman_cb_warning_popup_hide(void *data, Evas *e, Evas_Object 
 static void      _batman_warning_popup_destroy(Instance *inst);
 static void      _batman_warning_popup(Instance *inst, int time, double percent);
 
-Battery *
+Eina_List *
 _batman_battery_find(const char *udi)
 {
    Eina_List *l;
    Battery *bat;
+   Eina_List *batteries = NULL;
    EINA_LIST_FOREACH(batman_device_batteries, l, bat)
      { /* these are always stringshared */
-       if (udi == bat->udi) return bat;
+       if (udi == bat->udi) batteries = eina_list_append(batteries, bat);
      }
 
-   return NULL;
+   return batteries;
 }
 
-Ac_Adapter *
+Eina_List *
 _batman_ac_adapter_find(const char *udi)
 {
    Eina_List *l;
    Ac_Adapter *ac;
+   Eina_List *adapters = NULL;
    EINA_LIST_FOREACH(batman_device_ac_adapters, l, ac)
      { /* these are always stringshared */
-       if (udi == ac->udi) return ac;
+       if (udi == ac->udi) adapters = eina_list_append(adapters, ac);
      }
 
-   return NULL;
+   return adapters;
 }
 
 static void

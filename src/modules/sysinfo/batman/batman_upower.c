@@ -304,30 +304,51 @@ _device_added_cb(void *data, const Eldbus_Message *msg)
 }
 
 static void
-_device_removed_cb(void *data EINA_UNUSED, const Eldbus_Message *msg)
+_device_removed_cb(void *data, const Eldbus_Message *msg)
 {
    Battery *bat;
    Ac_Adapter *ac;
    const char *path;
-   Instance *inst;
+   Instance *inst = data;
+   Eina_List *batteries, *adapters, *l;
+   Eina_Bool exists = EINA_FALSE;
 
    if (!eldbus_message_arguments_get(msg, "o", &path))
      return;
-   bat = _batman_battery_find(path);
-   if (bat)
+   batteries = _batman_battery_find(path);
+   if (eina_list_count(batteries))
      {
-        inst = bat->inst;
-        _battery_free(bat);
-        _batman_device_update(inst);
-        return;
+        EINA_LIST_FOREACH(batteries, l, bat)
+          {
+             if (inst == bat->inst)
+               {
+                  inst = bat->inst;
+                  _battery_free(bat);
+                  _batman_device_update(inst);
+                  exists = EINA_TRUE;
+               }
+          }
+        if (exists)
+          {
+             eina_list_free(batteries);
+             return;
+          }
      }
-   ac = _batman_ac_adapter_find(path);
-   if (ac)
+   exists = EINA_FALSE;
+   adapters = _batman_ac_adapter_get(path);
+   if (eina_list_count(adapters))
      {
-        inst = ac->inst;
-        _ac_free(ac);
-        _batman_device_update(inst);
-      
+        EINA_LIST_FOREACH(adapters, l, ac)
+          {
+             if (ac->inst == inst)
+               {
+                  inst = ac->inst;
+                  _ac_free(ac);
+                  _batman_device_update(inst);
+                  exists = EINA_TRUE;
+               }
+          }
+        eina_list_free(adapters);
      }
 }
 
@@ -346,7 +367,7 @@ _batman_upower_start(Instance *inst)
 
    eldbus_proxy_call(upower_proxy, "EnumerateDevices", _enumerate_cb, inst, -1, "");
    eldbus_proxy_signal_handler_add(upower_proxy, "DeviceAdded", _device_added_cb, inst);
-   eldbus_proxy_signal_handler_add(upower_proxy, "DeviceRemoved", _device_removed_cb, NULL);
+   eldbus_proxy_signal_handler_add(upower_proxy, "DeviceRemoved", _device_removed_cb, inst);
    return 1;
 
 proxy_error:

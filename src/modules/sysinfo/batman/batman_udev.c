@@ -4,8 +4,8 @@ static void _batman_udev_event_battery(const char *syspath, Eeze_Udev_Event even
 static void _batman_udev_event_ac(const char *syspath, Eeze_Udev_Event event, void *data, Eeze_Udev_Watch *watch);
 static void _batman_udev_battery_add(const char *syspath, Instance *inst);
 static void _batman_udev_ac_add(const char *syspath, Instance *inst);
-static void _batman_udev_battery_del(const char *syspath);
-static void _batman_udev_ac_del(const char *syspath);
+static void _batman_udev_battery_del(const char *syspath, Instance *inst);
+static void _batman_udev_ac_del(const char *syspath, Instance *inst);
 static Eina_Bool _batman_udev_battery_update_poll(void *data);
 static void _batman_udev_battery_update(const char *syspath, Battery *bat, Instance *inst);
 static void _batman_udev_ac_update(const char *syspath, Ac_Adapter *ac, Instance *inst);
@@ -73,7 +73,7 @@ _batman_udev_event_battery(const char *syspath, Eeze_Udev_Event event, void *dat
      _batman_udev_battery_add(syspath, inst);
    else if ((event & EEZE_UDEV_EVENT_REMOVE) ||
             (event & EEZE_UDEV_EVENT_OFFLINE))
-     _batman_udev_battery_del(syspath);
+     _batman_udev_battery_del(syspath, inst);
    else /* must be change */
      _batman_udev_battery_update(syspath, NULL, inst);
 }
@@ -88,7 +88,7 @@ _batman_udev_event_ac(const char *syspath, Eeze_Udev_Event event, void *data, Ee
      _batman_udev_ac_add(syspath, inst);
    else if ((event & EEZE_UDEV_EVENT_REMOVE) ||
             (event & EEZE_UDEV_EVENT_OFFLINE))
-     _batman_udev_ac_del(syspath);
+     _batman_udev_ac_del(syspath, inst);
    else /* must be change */
      _batman_udev_ac_update(syspath, NULL, inst);
 }
@@ -97,13 +97,25 @@ static void
 _batman_udev_battery_add(const char *syspath, Instance *inst)
 {
    Battery *bat;
+   Eina_List *batteries = _batman_battery_find(syspath), *l;
+   Eina_Bool exists = EINA_FALSE;
 
-   if ((bat = _batman_battery_find(syspath)))
+   if (eina_list_count(batteries))
      {
-        eina_stringshare_del(syspath);
-        bat->inst = inst;
-        _batman_udev_battery_update(NULL, bat, inst);
-        return;
+        EINA_LIST_FOREACH(batteries, l, bat)
+          {
+             if (inst == bat->inst)
+               {
+                  _batman_udev_battery_update(NULL, bat, inst);
+                  exists = EINA_TRUE;
+               }
+          }
+        if (exists)
+          {
+             eina_stringshare_del(syspath);
+             eina_list_free(batteries);
+             return;
+          }
      }
 
    if (!(bat = E_NEW(Battery, 1)))
@@ -125,12 +137,25 @@ static void
 _batman_udev_ac_add(const char *syspath, Instance *inst)
 {
    Ac_Adapter *ac;
+   Eina_List *adapters = _batman_ac_adapter_find(syspath), *l;
+   Eina_Bool exists = EINA_FALSE;
 
-   if ((ac = _batman_ac_adapter_find(syspath)))
+   if (eina_list_count(adapters))
      {
-        eina_stringshare_del(syspath);
-        _batman_udev_ac_update(NULL, ac, inst);
-        return;
+        EINA_LIST_FOREACH(adapters, l, ac)
+          {
+             if (inst == ac->inst)
+               {
+                  _batman_udev_ac_update(NULL, ac, inst);
+                  exists = EINA_TRUE;
+               }
+          }
+        if (exists)
+          {
+             eina_stringshare_del(syspath);
+             eina_list_free(adapters);
+             return;
+          }
      }
 
    if (!(ac = E_NEW(Ac_Adapter, 1)))
@@ -145,40 +170,55 @@ _batman_udev_ac_add(const char *syspath, Instance *inst)
 }
 
 static void
-_batman_udev_battery_del(const char *syspath)
+_batman_udev_battery_del(const char *syspath, Instance *inst)
 {
    Battery *bat;
-
-   if (!(bat = _batman_battery_find(syspath)))
+   Eina_List *batteries = _batman_battery_find(syspath), *l;
+   if (!eina_list_count(batteries))
      {
         eina_stringshare_del(syspath);
         return;
      }
 
-   batman_device_batteries = eina_list_remove(batman_device_batteries, bat);
-   eina_stringshare_del(bat->udi);
-   eina_stringshare_del(bat->technology);
-   eina_stringshare_del(bat->model);
-   eina_stringshare_del(bat->vendor);
-   E_FREE_FUNC(bat->poll, ecore_poller_del);
-   E_FREE_FUNC(bat, free);
+   EINA_LIST_FOREACH(batman_device_batteries, l, bat)
+     {
+        if (inst == bat->inst)
+          {
+             batman_device_batteries = eina_list_remove_list(batman_device_batteries, l);
+             eina_stringshare_del(bat->udi);
+             eina_stringshare_del(bat->technology);
+             eina_stringshare_del(bat->model);
+             eina_stringshare_del(bat->vendor);
+             E_FREE_FUNC(bat->poll, ecore_poller_del);
+             E_FREE_FUNC(bat, free);
+          }
+     }
+   eina_stringshare_del(syspath);
+   eina_list_free(batteries);
 }
 
 static void
-_batman_udev_ac_del(const char *syspath)
+_batman_udev_ac_del(const char *syspath, Instance *inst)
 {
    Ac_Adapter *ac;
+   Eina_List *adapters = _batman_ac_adapter_find(syspath), *l;
 
-   if (!(ac = _batman_ac_adapter_find(syspath)))
+   if (!eina_list_count(adapters))
      {
-        eina_stringshare_del(syspath);
-        _batman_device_update(ac->inst);
+        eina_stringshare_del(syspath);  
         return;
      }
-
-   batman_device_ac_adapters = eina_list_remove(batman_device_ac_adapters, ac);
-   eina_stringshare_del(ac->udi);
-   E_FREE_FUNC(ac, free);
+   EINA_LIST_FOREACH(batman_device_ac_adapters, l, ac)
+     {
+        if (inst == ac->inst)
+          {
+             batman_device_ac_adapters = eina_list_remove_list(batman_device_ac_adapters, l);
+             eina_stringshare_del(ac->udi);
+             E_FREE_FUNC(ac, free);
+          }
+     }
+   eina_stringshare_del(syspath);
+   eina_list_free(adapters);
 }
 
 static Eina_Bool 
@@ -213,11 +253,8 @@ _batman_udev_battery_update(const char *syspath, Battery *bat, Instance *inst)
 
    if (!bat)
      {
-        if (!(bat = _batman_battery_find(syspath)))
-          {
-             _batman_udev_battery_add(syspath, inst);
-             return;
-          }
+        _batman_udev_battery_add(syspath, inst);
+        return;
      }
    /* update the poller interval */
    ecore_poller_poller_interval_set(bat->poll, bat->inst->cfg->batman.poll_interval);
@@ -305,11 +342,8 @@ _batman_udev_ac_update(const char *syspath, Ac_Adapter *ac, Instance *inst)
 
    if (!ac)
      {
-        if (!(ac = _batman_ac_adapter_find(syspath)))
-          {
-             _batman_udev_ac_add(syspath, inst);
-             return;
-          }
+         _batman_udev_ac_add(syspath, inst);
+         return;
      }
 
    GET_NUM(ac, present, POWER_SUPPLY_ONLINE);

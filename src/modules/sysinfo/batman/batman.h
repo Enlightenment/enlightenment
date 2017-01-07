@@ -77,8 +77,8 @@ struct _Ac_Adapter
    int * mib;
 };
 
-Battery *_batman_battery_find(const char *udi);
-Ac_Adapter *_batman_ac_adapter_find(const char *udi);
+Eina_List *_batman_battery_find(const char *udi);
+Eina_List *_batman_ac_adapter_find(const char *udi);
 void _batman_update(Instance *inst, int full, int time_left, int time_full, Eina_Bool have_battery, Eina_Bool have_power);
 void _batman_device_update(Instance *inst);
 /* in batman_fallback.c */
