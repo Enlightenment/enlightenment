@@ -414,11 +414,11 @@ _batman_removed_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_data)
 
    if (inst->o_main != event_data) return;
 
-#ifdef HAVE_EEZE
+#if defined(HAVE_EEZE)
    _batman_udev_stop(inst);
 #elif defined __OpenBSD__ || defined __DragonFly__ || defined __FreeBSD__ || defined __NetBSD__
    _batman_sysctl_stop();
-#elif upower
+#elif defined(upower)
    _batman_upower_stop();
 #else
    _batman_fallback_stop();
@@ -439,7 +439,7 @@ sysinfo_batman_remove(Instance *inst)
    _batman_udev_stop(inst);
 #elif defined __OpenBSD__ || defined __DragonFly__ || defined __FreeBSD__ || defined __NetBSD__
    _batman_sysctl_stop();
-#elif upower
+#elif defined(upower)
    _batman_upower_stop();
 #else
    _batman_fallback_stop();

@@ -1,7 +1,10 @@
 #include "cpuclock.h"
+#if defined(__OpenBSD__) || defined(__NetBSD__)
+#include <sys/param.h>
+#include <sys/sysctl.h>
+#endif
 
 typedef struct _Thread_Config Thread_Config;
-
 struct _Thread_Config
 {
    int interval;
@@ -9,7 +12,6 @@ struct _Thread_Config
 };
 
 typedef struct _Pstate_Config Pstate_Config;
-
 struct _Pstate_Config
 {
    Instance *inst;
@@ -77,7 +79,7 @@ _cpuclock_set_thread_frequency(void *data, Ecore_Thread *th EINA_UNUSED)
    const char *freq = data;
 
 #if defined __FreeBSD__ || defined __OpenBSD__
-   _cpuclock_sysctl_set("frequency", freq);
+   _cpuclock_sysctl_frequency(freq);
    return;
 #endif
    _cpuclock_sysfs_setall("scaling_setspeed", freq);

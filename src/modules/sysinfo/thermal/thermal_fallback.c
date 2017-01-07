@@ -1,3 +1,4 @@
+#if defined(__linux__)
 #include "thermal.h"
 
 typedef struct
@@ -429,3 +430,5 @@ thermal_fallback_get(Tempthread *tth)
    temp = check(tth);
    return temp;
 }
+
+#endif

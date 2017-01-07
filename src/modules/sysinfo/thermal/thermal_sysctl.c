@@ -177,6 +177,7 @@ check(Tempthread *tth)
         else
           goto error;
 #endif
+     }
    else if (tth->sensor_type == SENSOR_TYPE_OPENBSD)
      {
 #ifdef __OpenBSD_
