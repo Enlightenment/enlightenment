@@ -300,7 +300,7 @@ e_desklock_show(Eina_Bool suspend)
           }
         o = evas_object_rectangle_add(e_comp->evas);
         block_rects[zone->num] = o;
-        evas_object_color_set(o, 0, 0, 0, 255);
+        evas_object_color_set(o, 0, 0, 0, 0);
         evas_object_geometry_set(o, zone->x, zone->y, zone->w, zone->h);
         evas_object_layer_set(o, E_LAYER_DESKLOCK);
         if (!block_zone[zone->num])
