@@ -22,6 +22,7 @@ _memusage_face_update(Instance *inst, int mem, int swap)
    msg->val[1] = swap;
    edje_object_message_send(elm_layout_edje_get(inst->cfg->memusage.o_gadget),
                             EDJE_MESSAGE_INT_SET, 1, msg);
+   free(msg);
 }
 
 static void
