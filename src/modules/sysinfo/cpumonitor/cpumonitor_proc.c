@@ -30,9 +30,8 @@ _cpumonitor_proc_getcores(void)
 void
 _cpumonitor_proc_getusage(Instance *inst)
 {
-   long total = 0, idle = 0, use, total_change, idle_change;
-   int percent = 0, i = 0, j = 0, k = 0;
-   char buf[4096], *line, *tok;
+   int k = 0, j = 0;
+   char buf[4096];
    FILE *f;
    CPU_Core *core;
 
@@ -43,10 +42,12 @@ _cpumonitor_proc_getusage(Instance *inst)
           {
              if (k > 0)
                {
-                  total = 0;
-                  percent = 0;
+                  long total = 0, idle = 0, use = 0, total_change = 0, idle_change = 0;
+                  int percent = 0;
                   if (!strncmp(buf, "cpu", 3))
                     {
+                       char *line, *tok;
+                       int i = 0;
                        line = strchr(buf, ' ');
                        tok = strtok(line, " ");
                        while (tok)

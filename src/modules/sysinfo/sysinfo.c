@@ -23,6 +23,13 @@ _sysinfo_created_cb(void *data, Evas_Object *obj, void *event_data EINA_UNUSED)
 {
    Instance *inst = data;
 
+   inst->o_table = elm_table_add(inst->o_main);
+   elm_table_homogeneous_set(inst->o_table, EINA_TRUE);
+   E_EXPAND(inst->o_table);
+   evas_object_size_hint_aspect_set(inst->o_table, EVAS_ASPECT_CONTROL_BOTH, 1, 1);
+   elm_object_content_set(inst->o_main, inst->o_table);
+   evas_object_show(inst->o_table);
+
    inst->cfg->sysinfo.o_batman = sysinfo_batman_create(inst->o_table, inst);
    elm_table_pack(inst->o_table, inst->cfg->sysinfo.o_batman, 0, 0, 1, 1);
    inst->cfg->sysinfo.o_thermal = sysinfo_thermal_create(inst->o_table, inst);
@@ -114,13 +121,6 @@ sysinfo_create(Evas_Object *parent, int *id, E_Gadget_Site_Orient orient EINA_UN
    E_EXPAND(inst->o_main);
    evas_object_size_hint_aspect_set(inst->o_main, EVAS_ASPECT_CONTROL_BOTH, 1, 1);
    evas_object_show(inst->o_main);
-
-   inst->o_table = elm_table_add(inst->o_main);
-   elm_table_homogeneous_set(inst->o_table, EINA_TRUE);
-   E_EXPAND(inst->o_table);
-   evas_object_size_hint_aspect_set(inst->o_table, EVAS_ASPECT_CONTROL_BOTH, 1, 1);
-   elm_object_content_set(inst->o_main, inst->o_table);
-   evas_object_show(inst->o_table);
 
    evas_object_smart_callback_add(parent, "gadget_created", _sysinfo_created_cb, inst);
    evas_object_smart_callback_add(parent, "gadget_removed", _sysinfo_removed_cb, inst);
