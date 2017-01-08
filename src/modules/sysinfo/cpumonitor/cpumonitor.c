@@ -151,6 +151,45 @@ sysinfo_cpumonitor_remove(Instance *inst)
 }
 
 static void
+_cpumonitor_eval_instance_aspect(Instance *inst)
+{
+   Evas_Coord w, h;
+   Evas_Coord sw = 1, sh = 1;
+   Evas_Object *owner, *ed;
+   CPU_Core *first_core;
+   int num_cores = eina_list_count(inst->cfg->cpumonitor.cores);
+
+   if (num_cores < 1)
+     return;
+
+   owner = e_gadget_site_get(inst->o_main);
+   switch (e_gadget_site_orient_get(owner))
+     {
+        case E_GADGET_SITE_ORIENT_HORIZONTAL:
+           evas_object_geometry_get(owner, NULL, NULL, NULL, &sh);
+           break;
+
+        case E_GADGET_SITE_ORIENT_VERTICAL:
+           evas_object_geometry_get(owner, NULL, NULL, &sw, NULL);
+           break;
+
+        default:
+           sw = sh = 48;
+           break;
+     }
+
+   first_core = eina_list_nth(inst->cfg->cpumonitor.cores, 0);
+   evas_object_resize(first_core->layout, sw, sh);
+   ed = elm_layout_edje_get(first_core->layout);
+   edje_object_parts_extends_calc(ed, NULL, NULL, &w, &h);
+   if (e_gadget_site_orient_get(owner) == E_GADGET_SITE_ORIENT_VERTICAL)
+     h *= num_cores;
+   else
+     w *= num_cores;
+   evas_object_size_hint_aspect_set(inst->o_main, EVAS_ASPECT_CONTROL_BOTH, w, h);
+}
+
+static void
 _cpumonitor_created_cb(void *data, Evas_Object *obj, void *event_data EINA_UNUSED)
 {
    Instance *inst = data;
@@ -163,6 +202,7 @@ _cpumonitor_created_cb(void *data, Evas_Object *obj, void *event_data EINA_UNUSE
    evas_object_show(inst->cfg->cpumonitor.o_gadget);
    evas_object_smart_callback_del_full(obj, "gadget_created", _cpumonitor_created_cb, data);
    _cpumonitor_config_updated(inst);
+   _cpumonitor_eval_instance_aspect(inst);
 }
 
 Evas_Object *
@@ -218,7 +258,6 @@ cpumonitor_create(Evas_Object *parent, int *id, E_Gadget_Site_Orient orient EINA
    inst->cfg->cpumonitor.idle = 0;
    inst->o_main = elm_box_add(parent);
    E_EXPAND(inst->o_main);
-   evas_object_size_hint_aspect_set(inst->o_main, EVAS_ASPECT_CONTROL_BOTH, 1, 1);
    evas_object_smart_callback_add(parent, "gadget_created", _cpumonitor_created_cb, inst);
    evas_object_smart_callback_add(parent, "gadget_removed", _cpumonitor_removed_cb, inst);
    evas_object_show(inst->o_main);
