@@ -12,14 +12,14 @@ struct _Thread_Config
 static void
 _cpumonitor_face_update(Instance *inst)
 {
-   Edje_Message_Int_Set *usage_msg;
    Eina_List *l;
    CPU_Core *core;
 
-   usage_msg = malloc(sizeof(Edje_Message_Int_Set) + 1 * sizeof(int));
-   EINA_SAFETY_ON_NULL_RETURN(usage_msg);
    EINA_LIST_FOREACH(inst->cfg->cpumonitor.cores, l, core)
      {
+        Edje_Message_Int_Set *usage_msg;
+        usage_msg = malloc(sizeof(Edje_Message_Int_Set) + 1 * sizeof(int));
+        EINA_SAFETY_ON_NULL_RETURN(usage_msg);
         usage_msg->count = 1;
         usage_msg->val[0] = core->percent;
         edje_object_message_send(elm_layout_edje_get(core->layout), EDJE_MESSAGE_INT_SET, 1,
@@ -162,7 +162,13 @@ _cpumonitor_eval_instance_aspect(Instance *inst)
    if (num_cores < 1)
      return;
 
+   if (!inst->o_main)
+     return;
+
    owner = e_gadget_site_get(inst->o_main);
+   if (!owner)
+     return;
+
    switch (e_gadget_site_orient_get(owner))
      {
         case E_GADGET_SITE_ORIENT_HORIZONTAL:
@@ -171,6 +177,10 @@ _cpumonitor_eval_instance_aspect(Instance *inst)
 
         case E_GADGET_SITE_ORIENT_VERTICAL:
            evas_object_geometry_get(owner, NULL, NULL, &sw, NULL);
+           break;
+
+        case E_GADGET_SITE_ORIENT_NONE:
+           evas_object_geometry_get(owner, NULL, NULL, NULL, &sh);
            break;
 
         default:
@@ -209,10 +219,12 @@ Evas_Object *
 sysinfo_cpumonitor_create(Evas_Object *parent, Instance *inst)
 {
    inst->cfg->cpumonitor.o_gadget = elm_box_add(parent);
+   elm_box_horizontal_set(inst->cfg->cpumonitor.o_gadget, EINA_TRUE);
    E_EXPAND(inst->cfg->cpumonitor.o_gadget);
    E_FILL(inst->cfg->cpumonitor.o_gadget);
    evas_object_show(inst->cfg->cpumonitor.o_gadget);
    _cpumonitor_config_updated(inst);
+   _cpumonitor_eval_instance_aspect(inst);
 
    return inst->cfg->cpumonitor.o_gadget;
 }

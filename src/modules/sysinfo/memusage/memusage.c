@@ -112,7 +112,12 @@ _memusage_eval_instance_aspect(Instance *inst)
    Evas_Coord sw = 0, sh = 0;
    Evas_Object *owner, *ed;
 
+   if (!inst->o_main)
+     return;
+
    owner = e_gadget_site_get(inst->o_main);
+   if (!owner)
+     return;
    switch (e_gadget_site_orient_get(owner))
      {
         case E_GADGET_SITE_ORIENT_HORIZONTAL:
@@ -123,6 +128,11 @@ _memusage_eval_instance_aspect(Instance *inst)
         case E_GADGET_SITE_ORIENT_VERTICAL:
            evas_object_geometry_get(owner, NULL, NULL, &sw, NULL);
            sh = sw;
+           break;
+
+        case E_GADGET_SITE_ORIENT_NONE:
+           evas_object_geometry_get(owner, NULL, NULL, NULL, &sh);
+           sw = sh;
            break;
 
         default:
@@ -162,6 +172,7 @@ sysinfo_memusage_create(Evas_Object *parent, Instance *inst)
    E_EXPAND(inst->cfg->memusage.o_gadget);
    E_FILL(inst->cfg->memusage.o_gadget);
    evas_object_show(inst->cfg->memusage.o_gadget);
+   _memusage_eval_instance_aspect(inst);
    _memusage_config_updated(inst);
 
    return inst->cfg->memusage.o_gadget;

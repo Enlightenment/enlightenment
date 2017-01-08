@@ -211,6 +211,7 @@ struct _Config_Item
 struct _Instance
 {
    Evas_Object         *o_main;
+   Evas_Object         *o_table;
    Evas_Object         *popup_battery;
    Evas_Object         *warning;
    Config_Item         *cfg;
