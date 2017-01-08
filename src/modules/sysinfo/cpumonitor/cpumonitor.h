@@ -4,6 +4,7 @@
 #include "../sysinfo.h"
 
 void _cpuclock_config_updated(Instance *inst);
-int _cpumonitor_proc_getusage(Instance *inst);
+int _cpumonitor_proc_getcores(void);
+void _cpumonitor_proc_getusage(Instance *inst);
 
 #endif

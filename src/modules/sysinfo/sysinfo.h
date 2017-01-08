@@ -54,6 +54,7 @@ typedef enum _Unit
 
 typedef struct _Tempthread Tempthread;
 typedef struct _Cpu_Status       Cpu_Status;
+typedef struct _CPU_Core         CPU_Core;
 typedef struct _Config Config;
 typedef struct _Config_Item Config_Item;
 typedef struct _Instance Instance;
@@ -90,6 +91,14 @@ struct _Cpu_Status
    unsigned char  active;
    unsigned char  pstate;
    unsigned char  pstate_turbo;
+};
+
+struct _CPU_Core
+{
+   int percent;
+   long total;
+   long idle;
+   Evas_Object *layout;
 };
 
 struct _Config
@@ -173,6 +182,7 @@ struct _Config_Item
       long                 total;
       long                 idle;
       Ecore_Thread        *usage_check_thread;
+      Eina_List           *cores;
    } cpumonitor;
    struct
    {
