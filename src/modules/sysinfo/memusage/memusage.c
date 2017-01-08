@@ -11,20 +11,17 @@ struct _Thread_Config
 };
 
 static void
-_memusage_face_update(Instance *inst, Eina_Bool swap, int status)
+_memusage_face_update(Instance *inst, int mem, int swap)
 {
-   Edje_Message_Int_Set *usage_msg;
+   Edje_Message_Int_Set *msg;
 
-   usage_msg = malloc(sizeof(Edje_Message_Int_Set) + 1 * sizeof(int));
-   EINA_SAFETY_ON_NULL_RETURN(usage_msg);
-   usage_msg->count = 1;
-   usage_msg->val[0] = status;
-   if (!swap)
-     edje_object_message_send(elm_layout_edje_get(inst->cfg->memusage.o_gadget), EDJE_MESSAGE_INT_SET, 1,
-                              usage_msg);
-   else
-     edje_object_message_send(elm_layout_edje_get(inst->cfg->memusage.o_gadget), EDJE_MESSAGE_INT_SET, 2,
-                              usage_msg);
+   msg = malloc(sizeof(Edje_Message_Int_Set) + 2 * sizeof(int));
+   EINA_SAFETY_ON_NULL_RETURN(msg);
+   msg->count = 2;
+   msg->val[0] = mem;
+   msg->val[1] = swap;
+   edje_object_message_send(elm_layout_edje_get(inst->cfg->memusage.o_gadget),
+                            EDJE_MESSAGE_INT_SET, 1, msg);
 }
 
 static void
@@ -53,8 +50,7 @@ _memusage_cb_usage_check_notify(void *data,
 
    if (inst->cfg->esm != E_SYSINFO_MODULE_MEMUSAGE && inst->cfg->esm != E_SYSINFO_MODULE_SYSINFO) return;
    if (!inst->cfg) return;
-   _memusage_face_update(inst, EINA_FALSE, thc->memstatus);
-   _memusage_face_update(inst, EINA_TRUE, thc->swapstatus);
+   _memusage_face_update(inst, thc->memstatus, thc->swapstatus);
 }
 
 void
