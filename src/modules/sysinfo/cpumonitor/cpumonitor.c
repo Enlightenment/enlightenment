@@ -24,7 +24,7 @@ _cpumonitor_face_update(Instance *inst)
         usage_msg->val[0] = core->percent;
         edje_object_message_send(elm_layout_edje_get(core->layout), EDJE_MESSAGE_INT_SET, 1,
                             usage_msg);
-        free(msg);
+        free(usage_msg);
      }
 }
 
