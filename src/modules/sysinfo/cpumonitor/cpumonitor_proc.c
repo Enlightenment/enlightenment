@@ -43,6 +43,8 @@ _cpumonitor_proc_getusage(Instance *inst)
           {
              if (k > 0)
                {
+                  total = 0;
+                  percent = 0;
                   if (!strncmp(buf, "cpu", 3))
                     {
                        line = strchr(buf, ' ');
