@@ -63,8 +63,9 @@ _netstatus_cb_usage_check_notify(void *data,
    Thread_Config *thc = data;
    Instance *inst = thc->inst;
 
-   if (inst->cfg->esm != E_SYSINFO_MODULE_NETSTATUS && inst->cfg->esm != E_SYSINFO_MODULE_SYSINFO) return;
    if (!inst->cfg) return;
+   if (inst->cfg->esm != E_SYSINFO_MODULE_NETSTATUS && inst->cfg->esm != E_SYSINFO_MODULE_SYSINFO) return;
+
    _netstatus_face_update(inst, EINA_FALSE, thc->rstatus);
    _netstatus_face_update(inst, EINA_TRUE, thc->tstatus);
 }

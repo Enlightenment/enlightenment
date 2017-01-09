@@ -293,7 +293,7 @@ check(Tempthread *tth)
           {
              char dummy[4096];
 
-
+             if (fgets(buf, sizeof(buf), f) == NULL) goto error;
              fclose(f);
              f = NULL;
              if (sscanf(buf, "%s %s %i", dummy, dummy, &temp) == 3)

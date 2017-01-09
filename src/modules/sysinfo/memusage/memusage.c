@@ -49,8 +49,9 @@ _memusage_cb_usage_check_notify(void *data,
    Thread_Config *thc = data;
    Instance *inst = thc->inst;
 
-   if (inst->cfg->esm != E_SYSINFO_MODULE_MEMUSAGE && inst->cfg->esm != E_SYSINFO_MODULE_SYSINFO) return;
    if (!inst->cfg) return;
+   if (inst->cfg->esm != E_SYSINFO_MODULE_MEMUSAGE && inst->cfg->esm != E_SYSINFO_MODULE_SYSINFO) return;
+
    _memusage_face_update(inst, thc->memstatus, thc->swapstatus);
 }
 

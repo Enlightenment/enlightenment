@@ -709,8 +709,9 @@ _cpuclock_cb_frequency_check_notify(void *data,
    Thread_Config *thc = data;
    Instance *inst = thc->inst;
 
-   if (inst->cfg->esm != E_SYSINFO_MODULE_CPUCLOCK && inst->cfg->esm != E_SYSINFO_MODULE_SYSINFO) return;
    if (!inst->cfg) return;
+   if (inst->cfg->esm != E_SYSINFO_MODULE_CPUCLOCK && inst->cfg->esm != E_SYSINFO_MODULE_SYSINFO) return;
+
    if ((inst->cfg->cpuclock.status) && (status) &&
        (
 #ifdef __OpenBSD__

@@ -74,8 +74,9 @@ _batman_update(Instance *inst, int full, int time_left, int time_full, Eina_Bool
    static double debounce_time = 0.0;
 
    if (!inst) return;
-   if (inst->cfg->esm != E_SYSINFO_MODULE_BATMAN && inst->cfg->esm != E_SYSINFO_MODULE_SYSINFO) return;
    if (!inst->cfg) return;
+   if (inst->cfg->esm != E_SYSINFO_MODULE_BATMAN && inst->cfg->esm != E_SYSINFO_MODULE_SYSINFO) return;
+
    if (have_power != inst->cfg->batman.have_power)
      {
         if (have_power && (full < 100))
@@ -322,7 +323,7 @@ _batman_warning_popup_destroy(Instance *inst)
         ecore_timer_del(inst->cfg->batman.alert_timer);
         inst->cfg->batman.alert_timer = NULL;
      }
-   if ((!inst) || (!inst->warning)) return;
+   if (!inst->warning) return;
    elm_ctxpopup_dismiss(inst->warning);
 }
 

@@ -32,7 +32,8 @@ int _memusage_proc_getswapusage(void)
         fclose(f);
 
         swap_used = swap_total - swap_free;
-        percent = 100 * ((float)swap_used / (float)swap_total);
+        if (swap_total > 0)
+          percent = 100 * ((float)swap_used / (float)swap_total);
      }
    if (percent > 100) percent = 100;
    else if (percent < 0) percent = 0;
@@ -72,7 +73,8 @@ int _memusage_proc_getmemusage(void)
         fclose(f);
 
         mem_used = mem_total - mem_free;
-        percent = 100 * ((float)mem_used / (float)mem_total);
+        if (mem_total > 0)
+          percent = 100 * ((float)mem_used / (float)mem_total);
      }
    if (percent > 100) percent = 100;
    else if (percent < 0) percent = 0;
