@@ -2158,6 +2158,7 @@ e_gadget_site_edit(Evas_Object *site)
      }
 
    popup = elm_popup_add(e_comp->elm);
+   elm_popup_scrollable_set(popup, EINA_TRUE);
    elm_popup_allow_events_set(popup, 1);
 
    editor = e_gadget_editor_add(e_comp->elm, site);
