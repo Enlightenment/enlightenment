@@ -120,9 +120,11 @@ _memusage_eval_instance_aspect(Instance *inst)
    owner = e_gadget_site_get(inst->o_main);
    if (!owner)
      return;
+
    switch (e_gadget_site_orient_get(owner))
      {
         case E_GADGET_SITE_ORIENT_HORIZONTAL:
+        case E_GADGET_SITE_ORIENT_NONE:
            evas_object_geometry_get(owner, NULL, NULL, NULL, &sh);
            sw = sh;
            break;
@@ -130,11 +132,6 @@ _memusage_eval_instance_aspect(Instance *inst)
         case E_GADGET_SITE_ORIENT_VERTICAL:
            evas_object_geometry_get(owner, NULL, NULL, &sw, NULL);
            sh = sw;
-           break;
-
-        case E_GADGET_SITE_ORIENT_NONE:
-           evas_object_geometry_get(owner, NULL, NULL, NULL, &sh);
-           sw = sh;
            break;
 
         default:
@@ -152,10 +149,18 @@ static void
 _memusage_created_cb(void *data, Evas_Object *obj, void *event_data EINA_UNUSED)
 {
    Instance *inst = data;
+   int orient = e_gadget_site_orient_get(e_gadget_site_get(inst->o_main));
 
    inst->cfg->memusage.o_gadget = elm_layout_add(inst->o_main);
-   e_theme_edje_object_set(inst->cfg->memusage.o_gadget, "base/theme/modules/memusage",
-                           "e/modules/memusage/main");
+   if (orient == E_GADGET_SITE_ORIENT_VERTICAL)
+     e_theme_edje_object_set(inst->cfg->memusage.o_gadget,
+                             "base/theme/modules/memusage",
+                             "e/modules/memusage/main_vert");
+   else
+     e_theme_edje_object_set(inst->cfg->memusage.o_gadget,
+                             "base/theme/modules/memusage",
+                             "e/modules/memusage/main");
+
    E_EXPAND(inst->cfg->memusage.o_gadget);
    E_FILL(inst->cfg->memusage.o_gadget);
    elm_box_pack_end(inst->o_main, inst->cfg->memusage.o_gadget);

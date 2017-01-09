@@ -61,10 +61,15 @@ Evas_Object *
 _cpumonitor_add_layout(Instance *inst)
 {
    Evas_Object *layout;
+   int orient = e_gadget_site_orient_get(e_gadget_site_get(inst->o_main));
 
    layout = elm_layout_add(inst->cfg->cpumonitor.o_gadget);
-   e_theme_edje_object_set(layout, "base/theme/modules/cpumonitor",
-                           "e/modules/cpumonitor/main");
+   if (orient == E_GADGET_SITE_ORIENT_VERTICAL)
+     e_theme_edje_object_set(layout, "base/theme/modules/cpumonitor",
+                             "e/modules/cpumonitor/main_vert");
+   else
+     e_theme_edje_object_set(layout, "base/theme/modules/cpumonitor",
+                             "e/modules/cpumonitor/main");
    E_EXPAND(layout);
    E_FILL(layout);
    elm_box_pack_end(inst->cfg->cpumonitor.o_gadget, layout);
@@ -174,15 +179,12 @@ _cpumonitor_eval_instance_aspect(Instance *inst)
    switch (e_gadget_site_orient_get(owner))
      {
         case E_GADGET_SITE_ORIENT_HORIZONTAL:
+        case E_GADGET_SITE_ORIENT_NONE:
            evas_object_geometry_get(owner, NULL, NULL, NULL, &sh);
            break;
 
         case E_GADGET_SITE_ORIENT_VERTICAL:
            evas_object_geometry_get(owner, NULL, NULL, &sw, NULL);
-           break;
-
-        case E_GADGET_SITE_ORIENT_NONE:
-           evas_object_geometry_get(owner, NULL, NULL, NULL, &sh);
            break;
 
         default:
@@ -205,9 +207,13 @@ static void
 _cpumonitor_created_cb(void *data, Evas_Object *obj, void *event_data EINA_UNUSED)
 {
    Instance *inst = data;
+   int orient = e_gadget_site_orient_get(e_gadget_site_get(inst->o_main));
 
    inst->cfg->cpumonitor.o_gadget = elm_box_add(inst->o_main);
-   elm_box_horizontal_set(inst->cfg->cpumonitor.o_gadget, EINA_TRUE);
+   if (orient == E_GADGET_SITE_ORIENT_VERTICAL)
+     elm_box_horizontal_set(inst->cfg->cpumonitor.o_gadget, EINA_FALSE);
+   else
+     elm_box_horizontal_set(inst->cfg->cpumonitor.o_gadget, EINA_TRUE);
    E_EXPAND(inst->cfg->cpumonitor.o_gadget);
    E_FILL(inst->cfg->cpumonitor.o_gadget);
    elm_box_pack_end(inst->o_main, inst->cfg->cpumonitor.o_gadget);
