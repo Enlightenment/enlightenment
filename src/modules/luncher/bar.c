@@ -383,6 +383,7 @@ _bar_icon_preview_hide(void *data)
      return EINA_FALSE;
 
    E_FREE_FUNC(ic->preview_box, evas_object_del);
+   E_FREE_FUNC(ic->preview_scroller, evas_object_del);
    elm_ctxpopup_dismiss(ic->preview);
    ic->preview_dismissed = EINA_TRUE;
    current_preview = NULL;
@@ -726,6 +727,7 @@ _bar_icon_preview_show(void *data)
    E_Exec_Instance *ex;
    Eina_List *clients = NULL;
    E_Gadget_Site_Orient orient;
+   E_Zone *zone = e_zone_current_get();
    int count = 0;
 
    if (!ic)
@@ -749,6 +751,7 @@ _bar_icon_preview_show(void *data)
      return EINA_FALSE;
 
    ic->preview = elm_ctxpopup_add(e_comp->elm);
+   elm_popup_scrollable_set(ic->preview, EINA_TRUE);
    elm_object_style_set(ic->preview, "noblock");
    evas_object_size_hint_min_set(ic->preview, ic->inst->size, ic->inst->size);
    evas_object_smart_callback_add(ic->preview, "dismissed", _bar_popup_dismissed, NULL);
@@ -757,6 +760,12 @@ _bar_icon_preview_show(void *data)
    evas_object_event_callback_add(ic->preview, EVAS_CALLBACK_MOUSE_OUT,
        _bar_icon_preview_mouse_out, ic);
 
+   ic->preview_scroller = elm_scroller_add(ic->preview);
+   elm_scroller_content_min_limit(ic->preview_scroller, EINA_TRUE, EINA_TRUE);
+   evas_object_size_hint_max_set(ic->preview_scroller, zone->w - 15, zone->h - 15);
+   elm_object_style_set(ic->preview_scroller, "no_inset_shadow");
+   E_EXPAND(ic->preview_scroller);
+   
    ic->preview_box = elm_box_add(ic->preview);
    evas_object_size_hint_align_set(ic->preview_box, 0, 0);
    switch (orient)
@@ -796,7 +805,8 @@ _bar_icon_preview_show(void *data)
         _bar_icon_preview_hide(ic);
         return EINA_FALSE;
      }
-   elm_object_content_set(ic->preview, ic->preview_box);
+   elm_object_content_set(ic->preview_scroller, ic->preview_box);
+   elm_object_content_set(ic->preview, ic->preview_scroller);
    evas_object_show(ic->preview_box);
 
    e_gadget_util_ctxpopup_place(ic->inst->o_main, ic->preview, ic->o_layout);
@@ -907,6 +917,7 @@ _bar_icon_add(Instance *inst, Efreet_Desktop *desktop, E_Client *non_desktop_cli
    ic->inst = inst;
    ic->preview = NULL;
    ic->preview_box = NULL;
+   ic->preview_scroller = NULL;
    ic->mouse_in_timer = NULL;
    ic->mouse_out_timer = NULL;
    ic->active = EINA_FALSE;

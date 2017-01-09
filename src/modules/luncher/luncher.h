@@ -61,6 +61,7 @@ struct _Icon
    Evas_Object      *o_overlay;
    Evas_Object      *preview;
    Evas_Object      *preview_box;
+   Evas_Object      *preview_scroller;
    E_Exec_Instance  *exec;
    Efreet_Desktop   *desktop;
    Eina_List        *execs;
