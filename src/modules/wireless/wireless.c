@@ -939,7 +939,6 @@ _wireless_gadget_mouse_down(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, v
    evas_object_smart_callback_add(toggle, "changed", _wireless_popup_toggle, inst);
    elm_box_pack_end(box, toggle);
    elm_object_content_set(ctx, box);
-   e_gadget_util_ctxpopup_place(inst->box, ctx, inst->icon[type]);
    wireless_popup.popup = e_comp_object_util_add(ctx, E_COMP_OBJECT_TYPE_NONE);
    evas_object_layer_set(wireless_popup.popup, E_LAYER_POPUP);
    e_comp_object_util_autoclose(wireless_popup.popup, NULL, e_comp_object_util_autoclose_on_escape, NULL);
@@ -947,6 +946,7 @@ _wireless_gadget_mouse_down(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, v
    zone = e_zone_current_get();
    evas_object_resize(wireless_popup.popup, zone->w / 5, zone->h / 3);
    evas_object_size_hint_min_set(box, zone->w / 5, zone->h / 3);
+   e_gadget_util_ctxpopup_place(inst->box, ctx, inst->icon[type]);
    evas_object_show(wireless_popup.popup);
    evas_object_event_callback_add(wireless_popup.popup, EVAS_CALLBACK_DEL, _wireless_popup_del, inst);
 }
