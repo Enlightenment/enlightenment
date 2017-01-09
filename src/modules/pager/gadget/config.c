@@ -23,6 +23,7 @@ struct _Config_Objects
    Evas_Object     *o_btn_drag;
    Evas_Object     *o_btn_noplace;
    Evas_Object     *o_btn_desk;
+   Evas_Object     *o_btn_virtual;
    Evas_Object     *o_flip_desk;
    E_Grab_Dialog   *grab_dia;
    int              grab_btn;
@@ -245,7 +246,6 @@ _config_grab_cb_key_down(void *data EINA_UNUSED, int type EINA_UNUSED, void *eve
 static void
 _config_grab_window_show(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
-
    evas_object_hide(cfg_dialog);
    pager_gadget_config_objects->grab_btn = 0;
    if ((long)data == BUTTON_DRAG)
@@ -258,11 +258,18 @@ _config_grab_window_show(void *data, Evas_Object *obj EINA_UNUSED, void *event_i
    e_object_del_attach_func_set(E_OBJECT(pager_gadget_config_objects->grab_dia), _config_grab_window_del);
 }
 
+static void
+_config_virtual_desks_show(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   evas_object_del(cfg_dialog);
+   e_configure_registry_call("screen/virtual_desktops", NULL, NULL);
+}
+
 static Evas_Object *
 _config_create_pages(Evas_Object *parent)
 {
    Evas_Object *m, *tb, *ow;
-   int row = 4;
+   int row = 5;
 
    m = elm_table_add(parent);
    E_EXPAND(m);
@@ -273,11 +280,22 @@ _config_create_pages(Evas_Object *parent)
    E_EXPAND(tb);
    evas_object_show(tb);
 
+   ow = elm_button_add(tb);
+   elm_object_text_set(ow, _("Configure virtual deskstops"));
+   evas_object_smart_callback_add(ow, "clicked",
+       _config_virtual_desks_show, NULL);
+   elm_table_pack(tb, ow, 0, 0, 1, 1);
+   E_ALIGN(ow, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   E_WEIGHT(ow, EVAS_HINT_EXPAND, 0);
+   evas_object_show(ow);
+   pager_gadget_config_objects->o_btn_virtual = ow;
+   row++;
+
    ow = elm_check_add(tb);
    elm_object_text_set(ow, _("Flip desktop on mouse wheel"));
    evas_object_size_hint_align_set(ow, 0.0, EVAS_HINT_FILL);
    elm_check_state_set(ow, pager_config->flip_desk);
-   elm_table_pack(tb, ow, 0, 0, 1, 1);
+   elm_table_pack(tb, ow, 0, 1, 1, 1);
    E_ALIGN(ow, EVAS_HINT_FILL, EVAS_HINT_FILL);
    E_WEIGHT(ow, EVAS_HINT_EXPAND, 0);
    evas_object_smart_callback_add(ow, "changed",
@@ -289,7 +307,7 @@ _config_create_pages(Evas_Object *parent)
    elm_object_text_set(ow, _("Always show desktop names"));
    evas_object_size_hint_align_set(ow, 0.0, EVAS_HINT_FILL);
    elm_check_state_set(ow, pager_config->show_desk_names);
-   elm_table_pack(tb, ow, 0, 1, 1, 1);
+   elm_table_pack(tb, ow, 0, 2, 1, 1);
    E_ALIGN(ow, EVAS_HINT_FILL, EVAS_HINT_FILL);
    E_WEIGHT(ow, EVAS_HINT_EXPAND, 0);
    evas_object_smart_callback_add(ow, "changed",
@@ -299,7 +317,7 @@ _config_create_pages(Evas_Object *parent)
 
    ow = elm_label_add(tb);
    elm_object_text_set(ow, _("Resistance to dragging"));
-   elm_table_pack(tb, ow, 0, 2, 1, 1);
+   elm_table_pack(tb, ow, 0, 3, 1, 1);
    E_ALIGN(ow, 0.5, 0.5);
    E_WEIGHT(ow, EVAS_HINT_EXPAND, 0);
    evas_object_show(ow);
@@ -309,7 +327,7 @@ _config_create_pages(Evas_Object *parent)
    elm_slider_step_set(ow, 1);
    elm_slider_value_set(ow, pager_config->drag_resist);
    elm_slider_unit_format_set(ow, _("%.0f pixels"));
-   elm_table_pack(tb, ow, 0, 3, 1, 1);
+   elm_table_pack(tb, ow, 0, 4, 1, 1);
    E_ALIGN(ow, EVAS_HINT_FILL, EVAS_HINT_FILL);
    E_WEIGHT(ow, EVAS_HINT_EXPAND, 0);
    evas_object_smart_callback_add(ow, "delay,changed",
