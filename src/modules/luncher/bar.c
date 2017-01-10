@@ -20,6 +20,29 @@ _bar_aspect(Instance *inst)
 }
 
 static Eina_Bool
+_bar_check_for_duplicates(Icon *ic, E_Client *dupe)
+{
+   Eina_List *l, *ll, *clients = NULL;
+   E_Client *ec;
+   E_Exec_Instance *ex;
+
+   EINA_LIST_FOREACH(ic->execs, l, ex)
+     {
+        EINA_LIST_FOREACH(ex->clients, ll, ec)
+          clients = eina_list_append(clients, ec);
+     }
+   EINA_LIST_FOREACH(ic->clients, l, ec)
+     clients = eina_list_append(clients, ec);
+
+   EINA_LIST_FREE(clients, ec)
+     {
+          if (ec == dupe)
+            return EINA_TRUE;
+     }
+   return EINA_FALSE;
+}
+
+static Eina_Bool
 _bar_check_modifiers(Evas_Modifier *modifiers)
 {
    if ((evas_key_modifier_is_set(modifiers, "Alt")) ||
@@ -1097,7 +1120,10 @@ _bar_icon_add(Instance *inst, Efreet_Desktop *desktop, E_Client *non_desktop_cli
           }
      }
    else
-     ic->clients = eina_list_append(ic->clients, non_desktop_client);
+     {
+        if (!_bar_check_for_duplicates(ic, non_desktop_client))
+          ic->clients = eina_list_append(ic->clients, non_desktop_client);
+     }
    elm_layout_sizing_eval(ic->o_layout);
    _bar_aspect(inst);
    return ic;
@@ -1242,12 +1268,12 @@ _bar_cb_exec_client_prop(void *data EINA_UNUSED, int type EINA_UNUSED, E_Event_C
                   elm_layout_signal_emit(ic->o_layout, ori, "e");
                   if (has_desktop)
                     {
-                       if (!eina_list_data_find(ic->execs, ev->ec->exe_inst))
+                       if (!(_bar_check_for_duplicates(ic, ev->ec)))
                          ic->execs = eina_list_append(ic->execs, ev->ec->exe_inst);
                     }
                   else
                     {
-                       if (!eina_list_data_find(ic->clients, ev->ec))
+                       if (!(_bar_check_for_duplicates(ic, ev->ec)))
                          ic->clients = eina_list_append(ic->clients, ev->ec);
                     }
                }
@@ -1326,7 +1352,7 @@ _bar_cb_exec_new(void *data EINA_UNUSED, int type, E_Exec_Instance *ex)
              elm_layout_signal_emit(ic->o_layout, ori, "e");
              if (ex->desktop)
                {
-                  if (!eina_list_data_find(ic->execs, ex))
+                  if (!(_bar_check_for_duplicates(ic, ec)))
                     ic->execs = eina_list_append(ic->execs, ex);
                   if (evas_object_visible_get(ec->frame))
                     _bar_exec_new_show(ic, NULL, ec->frame, NULL);
@@ -1336,7 +1362,7 @@ _bar_cb_exec_new(void *data EINA_UNUSED, int type, E_Exec_Instance *ex)
                }
              else
                {
-                  if (!eina_list_data_find(ic->clients, ec))
+                  if (!(_bar_check_for_duplicates(ic, ec)))
                     ic->clients = eina_list_append(ic->clients, ec);
                   if (evas_object_visible_get(ec->frame))
                     _bar_exec_new_show(ic, NULL, ec->frame, NULL);
@@ -1418,7 +1444,7 @@ _bar_fill(Instance *inst)
                   ic = _bar_icon_match(inst, ec);
                   if (ic)
                     {
-                       if (!eina_list_data_find(ic->execs, ex))
+                       if (!(_bar_check_for_duplicates(ic, ec)))
                          ic->execs = eina_list_append(ic->execs, ex);
                        continue;
                     }
