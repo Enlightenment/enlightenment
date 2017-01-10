@@ -784,10 +784,16 @@ _bar_icon_preview_show(void *data)
    EINA_LIST_FOREACH(ic->execs, l, ex)
      {
         EINA_LIST_FOREACH(ex->clients, ll, ec)
-          clients = eina_list_append(clients, ec);
+          {
+             if (!eina_list_data_find(clients, ec))
+               clients = eina_list_append(clients, ec);
+          }
      }
    EINA_LIST_FOREACH(ic->clients, l, ec)
-     clients = eina_list_append(clients, ec);
+     {
+        if (!eina_list_data_find(clients, ec))
+          clients = eina_list_append(clients, ec);
+     }
 
    EINA_LIST_FREE(clients, ec)
      {
