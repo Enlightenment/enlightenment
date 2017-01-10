@@ -146,6 +146,7 @@ _bar_icon_match(Instance *inst, E_Client *ec)
 {
    Icon *ic = NULL, *ic2 = NULL;
    Eina_Bool has_desktop = EINA_FALSE;
+   char ori[32];
 
    if (ec->exe_inst)
      {
@@ -155,8 +156,19 @@ _bar_icon_match(Instance *inst, E_Client *ec)
    if (has_desktop)
      {
         ic = eina_hash_find(inst->icons_desktop_hash, ec->exe_inst->desktop->orig_path);
-        if ((ic2 = eina_hash_find(inst->icons_clients_hash, ec)))
-          _bar_icon_del(inst, ic2);
+        if ((ic) && (ic2 = eina_hash_find(inst->icons_clients_hash, ec)))
+          {
+             ic2->execs = eina_list_remove(ic2->execs, ec->exe_inst);
+             ic2->clients = eina_list_remove(ic2->clients, ec);
+             if (!eina_list_count(ic2->execs) && !eina_list_count(ic2->clients))
+               {
+                  eina_hash_del(inst->icons_clients_hash, ec, ic2);
+                  snprintf(ori, sizeof(ori), "e,state,off,%s", _bar_location_get(inst));
+                  elm_layout_signal_emit(ic2->o_layout, ori, "e");
+                  if (!ic2->in_order)
+                    _bar_icon_del(inst, ic2);
+               }
+          }
      }
    if (has_desktop && !ic)
      ic = eina_hash_find(inst->icons_clients_hash, ec);
