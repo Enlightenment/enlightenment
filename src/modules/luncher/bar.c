@@ -4,6 +4,7 @@ static Evas_Object *current_preview;
 static Eina_Bool current_preview_menu;
 static Eina_Bool _bar_icon_preview_show(void *data);
 static Eina_Bool _bar_icon_preview_hide(void *data);
+static void      _bar_icon_del(Instance *inst, Icon *ic);
 
 static void
 _bar_aspect(Instance *inst)
@@ -143,7 +144,7 @@ _bar_location_get(Instance *inst)
 static Icon *
 _bar_icon_match(Instance *inst, E_Client *ec)
 {
-   Icon *ic = NULL;
+   Icon *ic = NULL, *ic2 = NULL;
    Eina_Bool has_desktop = EINA_FALSE;
 
    if (ec->exe_inst)
@@ -151,8 +152,12 @@ _bar_icon_match(Instance *inst, E_Client *ec)
         if (ec->exe_inst->desktop)
           has_desktop = EINA_TRUE;
      }
-   if (has_desktop)   
-     ic = eina_hash_find(inst->icons_desktop_hash, ec->exe_inst->desktop->orig_path);
+   if (has_desktop)
+     {
+        ic = eina_hash_find(inst->icons_desktop_hash, ec->exe_inst->desktop->orig_path);
+        if ((ic2 = eina_hash_find(inst->icons_clients_hash, ec)))
+          _bar_icon_del(inst, ic2);
+     }
    if (has_desktop && !ic)
      ic = eina_hash_find(inst->icons_clients_hash, ec);
    if (!ic)
