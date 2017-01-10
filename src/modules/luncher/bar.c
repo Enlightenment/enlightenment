@@ -206,6 +206,8 @@ _bar_icon_del(Instance *inst, Icon *ic)
    if (ic->exec)
      e_exec_instance_watcher_del(ic->exec, _bar_instance_watch, ic);
    ic->exec = NULL;
+   E_FREE_FUNC(ic->mouse_in_timer, ecore_timer_del);
+   E_FREE_FUNC(ic->mouse_out_timer, ecore_timer_del);
    E_FREE(ic);
 }
 
