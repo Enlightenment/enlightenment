@@ -272,7 +272,8 @@ _bar_icon_menu_add_clicked(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, vo
 
    evas_object_del(box);
    elm_ctxpopup_dismiss(popup);
-   e_order_append(ic->inst->order, ic->desktop);
+   if (ic->desktop)
+     e_order_append(ic->inst->order, ic->desktop);
 }
 
 static void
@@ -284,7 +285,8 @@ _bar_icon_menu_remove_clicked(void *data, Evas *e EINA_UNUSED, Evas_Object *obj,
 
    evas_object_del(box);
    elm_ctxpopup_dismiss(popup);
-   e_order_remove(ic->inst->order, ic->desktop);
+   if (ic->desktop)
+     e_order_remove(ic->inst->order, ic->desktop);
 }
 
 static void
@@ -296,7 +298,8 @@ _bar_icon_menu_properties_clicked(void *data, Evas *e EINA_UNUSED, Evas_Object *
 
    evas_object_del(box);
    elm_ctxpopup_dismiss(popup);
-   e_desktop_edit(ic->desktop);
+   if (ic->desktop)
+     e_desktop_edit(ic->desktop);
 }
 
 static void
@@ -561,14 +564,17 @@ _bar_icon_mouse_down(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUS
                   evas_object_show(sep);
                }
           }
-        item = _bar_icon_menu_item_new(ic, popup, box, _("Icon Properties"), "preferences-applications");
-        evas_object_event_callback_add(item, EVAS_CALLBACK_MOUSE_UP, _bar_icon_menu_properties_clicked, ic);
+        if (ic->desktop)
+          {
+             item = _bar_icon_menu_item_new(ic, popup, box, _("Icon Properties"), "preferences-applications");
+             evas_object_event_callback_add(item, EVAS_CALLBACK_MOUSE_UP, _bar_icon_menu_properties_clicked, ic);
+          }
         if (ic->in_order)
           {
              item = _bar_icon_menu_item_new(ic, popup, box, _("Remove From Bar"), "list-remove");
              evas_object_event_callback_add(item, EVAS_CALLBACK_MOUSE_UP, _bar_icon_menu_remove_clicked, ic);
           }
-        else
+        else if (!ic->in_order && ic->desktop)
           {
              item = _bar_icon_menu_item_new(ic, popup, box, _("Add To Bar"), "list-add");
              evas_object_event_callback_add(item, EVAS_CALLBACK_MOUSE_UP, _bar_icon_menu_add_clicked, ic);
