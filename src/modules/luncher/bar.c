@@ -20,6 +20,29 @@ _bar_aspect(Instance *inst)
 }
 
 static Eina_Bool
+_bar_check_for_iconic(Icon *ic)
+{
+   Eina_List *l, *ll, *clients = NULL;
+   E_Client *ec;
+   E_Exec_Instance *ex;
+
+   EINA_LIST_FOREACH(ic->execs, l, ex)
+     {
+        EINA_LIST_FOREACH(ex->clients, ll, ec)
+          clients = eina_list_append(clients, ec);
+     }
+   EINA_LIST_FOREACH(ic->clients, l, ec)
+     clients = eina_list_append(clients, ec);
+
+   EINA_LIST_FREE(clients, ec)
+     {
+          if (ec->iconic)
+            return EINA_TRUE;
+     }
+   return EINA_FALSE;
+}
+
+static Eina_Bool
 _bar_check_for_duplicates(Icon *ic, E_Client *dupe)
 {
    Eina_List *l, *ll, *clients = NULL;
@@ -886,6 +909,8 @@ _bar_icon_mouse_in(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *even
    if (eina_list_count(ic->execs) || eina_list_count(ic->clients))
      clients = EINA_TRUE;
    if (clients && current_preview && !current_preview_menu)
+     _bar_icon_preview_show(ic);
+   else if (_bar_check_for_iconic(ic))
      _bar_icon_preview_show(ic);
    else if (clients && !current_preview)
      ic->mouse_in_timer = ecore_timer_add(0.3, _bar_icon_preview_show, ic);
@@ -1798,6 +1823,7 @@ _bar_iconify_start(void *data, Evas_Object *obj, const char *signal EINA_UNUSED)
      ic = _bar_icon_match(inst, ec);
 
    if (!ic) return EINA_FALSE;
+
    ec->layer_block = 1;
    evas_object_layer_set(ec->frame, E_LAYER_CLIENT_PRIO);
    evas_object_geometry_get(ic->o_layout, &ox, &oy, &ow, &oh);
