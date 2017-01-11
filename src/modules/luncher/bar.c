@@ -799,7 +799,6 @@ _bar_icon_preview_show(void *data)
      return EINA_FALSE;
 
    ic->preview = elm_ctxpopup_add(e_comp->elm);
-   elm_popup_scrollable_set(ic->preview, EINA_TRUE);
    elm_object_style_set(ic->preview, "noblock");
    evas_object_size_hint_min_set(ic->preview, ic->inst->size, ic->inst->size);
    evas_object_smart_callback_add(ic->preview, "dismissed", _bar_popup_dismissed, NULL);
@@ -1016,6 +1015,7 @@ _bar_icon_add(Instance *inst, Efreet_Desktop *desktop, E_Client *non_desktop_cli
         if (!path)
           {
              snprintf(buf, sizeof(buf), "e/icons/%s", desktop->icon);
+             printf("%s\n", buf);
              if (eina_list_count(e_theme_collection_items_find("base/theme/icons", buf)))
                {
                   path = e_theme_edje_file_get("base/theme/icons", buf);
@@ -1036,43 +1036,15 @@ _bar_icon_add(Instance *inst, Efreet_Desktop *desktop, E_Client *non_desktop_cli
      }
    else if (non_desktop_client)
      {
-        E_Client *ec = non_desktop_client;
-        if (!ec->internal_icon)
-          {
-             eina_stringshare_replace(&ic->icon, e_theme_edje_file_get("base/theme/icons", "e/icons/unknown"));
-             eina_stringshare_replace(&ic->key, "e/icons/unknown");
-          }
-        else
-          {
-             eina_stringshare_replace(&ic->icon, ec->internal_icon);
-             eina_stringshare_replace(&ic->key, ec->internal_icon_key);
-          }
-        if (strncmp(ic->icon, "/", 1))
-          {
-             path = efreet_icon_path_find(e_config->icon_theme, ic->icon, inst->size);
-             if (!path)
-               {
-                  if (e_util_strcmp(e_config->icon_theme, "hicolor"))
-                    path = efreet_icon_path_find("hicolor", ic->icon, inst->size);
-               }
-          }
-        else if (ecore_file_exists(ic->icon))
-          path = ic->icon;
-        if (path && !ic->key)
-          {
-             len = strlen(path);
-             if ((len > 4) && (!strcasecmp(path + len - 4, ".edj")))
-               k = "icon";
-             if (k)
-               eina_stringshare_replace(&ic->key, k);
-          }
-        else if (!path)
-          {
-             path = e_theme_edje_file_get("base/theme/icons", "e/icons/unknown");
-             k =  "e/icons/unknown";
-          }
-        else
-          k = ic->key;
+        Evas_Object *tmp;
+        const char *file, *group;
+        tmp = e_client_icon_add(non_desktop_client, evas_object_evas_get(ic->o_layout));
+        e_icon_file_get(tmp, &file, &group);
+        eina_stringshare_replace(&ic->icon, file);
+        eina_stringshare_replace(&ic->key, group);
+        path = ic->icon;
+        k = ic->key;
+        evas_object_del(tmp);
      }
    elm_image_file_set(ic->o_icon, path, k);
 
@@ -1285,7 +1257,7 @@ _bar_cb_exec_client_prop(void *data EINA_UNUSED, int type EINA_UNUSED, E_Event_C
                }
              else
                {
-                  if (has_desktop)
+                  if (has_desktop && !ev->ec->internal_elm_win)
                     ic = _bar_icon_add(inst, ev->ec->exe_inst->desktop, NULL);
                   else
                     ic = _bar_icon_add(inst, NULL, ev->ec);
@@ -1380,7 +1352,7 @@ _bar_cb_exec_new(void *data EINA_UNUSED, int type, E_Exec_Instance *ex)
         else
           {
              if (skip) continue;
-             if (ex->desktop)
+             if (ex->desktop && !ec->internal_elm_win)
                ic = _bar_icon_add(inst, ex->desktop, NULL);
              else
                ic = _bar_icon_add(inst, NULL, ec);
@@ -1442,7 +1414,7 @@ _bar_fill(Instance *inst)
 
              EINA_LIST_FOREACH(ex->clients, lll, ec)
                {
-                  if (!ec->netwm.state.skip_taskbar)
+                  if (!ec->netwm.state.skip_taskbar && !ec->internal_elm_win)
                     {
                        skip = EINA_FALSE;
                     }
@@ -1470,7 +1442,7 @@ _bar_fill(Instance *inst)
         ic = _bar_icon_match(inst, ec);
         if (!ic)
           {
-             if (ec->exe_inst && ec->exe_inst->desktop)
+             if (ec->exe_inst && ec->exe_inst->desktop && !ec->internal_elm_win)
                ic = _bar_icon_add(inst, ec->exe_inst->desktop, NULL);
              else
                ic = _bar_icon_add(inst, NULL, ec);
