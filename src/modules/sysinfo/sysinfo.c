@@ -1,5 +1,7 @@
 #include "sysinfo.h"
 
+static void _sysinfo_deleted_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_data EINA_UNUSED);
+
 static void
 _sysinfo_removed_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_data)
 {
@@ -7,15 +9,30 @@ _sysinfo_removed_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_data)
 
    if (inst->o_main != event_data) return;
 
-   sysinfo_batman_remove(inst);
-   sysinfo_thermal_remove(inst);
-   sysinfo_cpuclock_remove(inst);
-   sysinfo_cpumonitor_remove(inst);
-   sysinfo_memusage_remove(inst);
-   sysinfo_netstatus_remove(inst);
+   sysinfo_batman_remove(inst, NULL, NULL, NULL);
+   sysinfo_thermal_remove(inst, NULL, NULL, NULL);
+   sysinfo_cpuclock_remove(inst, NULL, NULL, NULL);
+   sysinfo_cpumonitor_remove(inst, NULL, NULL, NULL);
+   sysinfo_memusage_remove(inst, NULL, NULL, NULL);
+   sysinfo_netstatus_remove(inst, NULL, NULL, NULL);
+
+   evas_object_event_callback_del_full(inst->o_main, EVAS_CALLBACK_DEL, _sysinfo_deleted_cb, data);
 
    sysinfo_config->items = eina_list_remove(sysinfo_config->items, inst->cfg);
    E_FREE(inst->cfg);
+}
+
+static void
+_sysinfo_deleted_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_data EINA_UNUSED)
+{
+   Instance *inst = data;
+
+   sysinfo_batman_remove(inst, NULL, NULL, NULL);
+   sysinfo_thermal_remove(inst, NULL, NULL, NULL);
+   sysinfo_cpuclock_remove(inst, NULL, NULL, NULL);
+   sysinfo_cpumonitor_remove(inst, NULL, NULL, NULL);
+   sysinfo_memusage_remove(inst, NULL, NULL, NULL);
+   sysinfo_netstatus_remove(inst, NULL, NULL, NULL);
 }
 
 static void
@@ -120,6 +137,7 @@ sysinfo_create(Evas_Object *parent, int *id, E_Gadget_Site_Orient orient EINA_UN
    elm_object_style_set(inst->o_main, "no_inset_shadow");
    E_EXPAND(inst->o_main);
    evas_object_size_hint_aspect_set(inst->o_main, EVAS_ASPECT_CONTROL_BOTH, 1, 1);
+   evas_object_event_callback_add(inst->o_main, EVAS_CALLBACK_DEL, _sysinfo_deleted_cb, inst);
    evas_object_show(inst->o_main);
 
    evas_object_smart_callback_add(parent, "gadget_created", _sysinfo_created_cb, inst);

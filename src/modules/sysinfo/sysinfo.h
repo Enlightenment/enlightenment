@@ -235,12 +235,12 @@ EINTERN Evas_Object *sysinfo_cpumonitor_create(Evas_Object *parent, Instance *in
 EINTERN Evas_Object *sysinfo_memusage_create(Evas_Object *parent, Instance *inst);
 EINTERN Evas_Object *sysinfo_netstatus_create(Evas_Object *parent, Instance *inst);
 
-EINTERN void sysinfo_batman_remove(Instance *inst);
-EINTERN void sysinfo_thermal_remove(Instance *inst);
-EINTERN void sysinfo_cpuclock_remove(Instance *inst);
-EINTERN void sysinfo_cpumonitor_remove(Instance *inst);
-EINTERN void sysinfo_memusage_remove(Instance *inst);
-EINTERN void sysinfo_netstatus_remove(Instance *inst);
+EINTERN void sysinfo_batman_remove(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_data EINA_UNUSED);
+EINTERN void sysinfo_thermal_remove(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_data EINA_UNUSED);
+EINTERN void sysinfo_cpuclock_remove(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_data EINA_UNUSED);
+EINTERN void sysinfo_cpumonitor_remove(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_data EINA_UNUSED);
+EINTERN void sysinfo_memusage_remove(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_data EINA_UNUSED);
+EINTERN void sysinfo_netstatus_remove(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_data EINA_UNUSED);
 
 extern Config *sysinfo_config;
 extern Eina_List *sysinfo_instances;

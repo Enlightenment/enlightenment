@@ -92,14 +92,17 @@ _memusage_removed_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_data)
         ecore_thread_cancel(inst->cfg->memusage.usage_check_thread);
         inst->cfg->memusage.usage_check_thread = NULL;
      }
+   evas_object_event_callback_del_full(inst->o_main, EVAS_CALLBACK_DEL, sysinfo_memusage_remove, data);
 
    sysinfo_config->items = eina_list_remove(sysinfo_config->items, inst->cfg);
    E_FREE(inst->cfg);
 }
 
 void
-sysinfo_memusage_remove(Instance *inst)
+sysinfo_memusage_remove(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_data EINA_UNUSED)
 {
+   Instance *inst = data;
+
    if (inst->cfg->memusage.usage_check_thread)
      {
         ecore_thread_cancel(inst->cfg->memusage.usage_check_thread);
@@ -224,6 +227,7 @@ memusage_create(Evas_Object *parent, int *id, E_Gadget_Site_Orient orient EINA_U
    E_EXPAND(inst->o_main);
    evas_object_smart_callback_add(parent, "gadget_created", _memusage_created_cb, inst);
    evas_object_smart_callback_add(parent, "gadget_removed", _memusage_removed_cb, inst);
+   evas_object_event_callback_add(inst->o_main, EVAS_CALLBACK_DEL, sysinfo_memusage_remove, inst);
    evas_object_show(inst->o_main);
 
    if (inst->cfg->id < 0) return inst->o_main;

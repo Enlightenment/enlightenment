@@ -195,13 +195,17 @@ _thermal_removed_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_data)
    eeze_shutdown();
 #endif
 
+   evas_object_event_callback_del_full(inst->o_main, EVAS_CALLBACK_DEL, sysinfo_thermal_remove, data);
+
    sysinfo_config->items = eina_list_remove(sysinfo_config->items, inst->cfg);
    E_FREE(inst->cfg);
 }
 
 void
-sysinfo_thermal_remove(Instance *inst)
+sysinfo_thermal_remove(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_data EINA_UNUSED)
 {
+   Instance *inst = data;
+
    _thermal_face_shutdown(inst);
 
 #ifdef HAVE_EEZE
@@ -290,6 +294,7 @@ thermal_create(Evas_Object *parent, int *id, E_Gadget_Site_Orient orient EINA_UN
    evas_object_size_hint_aspect_set(inst->o_main, EVAS_ASPECT_CONTROL_BOTH, 1, 1);
    evas_object_smart_callback_add(parent, "gadget_created", _thermal_created_cb, inst);
    evas_object_smart_callback_add(parent, "gadget_removed", _thermal_removed_cb, inst);
+   evas_object_event_callback_add(inst->o_main, EVAS_CALLBACK_DEL, sysinfo_thermal_remove, inst);
    evas_object_show(inst->o_main);
 
 #ifdef HAVE_EEZE

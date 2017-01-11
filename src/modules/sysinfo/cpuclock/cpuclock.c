@@ -767,7 +767,7 @@ _cpuclock_removed_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_data)
 
    if (inst->o_main != event_data) return;
 
-   if (inst->cfg->cpuclock.handler)
+    if (inst->cfg->cpuclock.handler)
      ecore_event_handler_del(inst->cfg->cpuclock.handler);
 
    if (inst->cfg->cpuclock.frequency_check_thread)
@@ -780,13 +780,17 @@ _cpuclock_removed_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_data)
      eina_stringshare_del(inst->cfg->cpuclock.governor);
    if (inst->cfg->cpuclock.status) _cpuclock_status_free(inst->cfg->cpuclock.status);
 
+   evas_object_event_callback_del_full(inst->o_main, EVAS_CALLBACK_DEL, sysinfo_cpuclock_remove, data);
+
    sysinfo_config->items = eina_list_remove(sysinfo_config->items, inst->cfg);
    E_FREE(inst->cfg);
 }
 
 void
-sysinfo_cpuclock_remove(Instance *inst)
+sysinfo_cpuclock_remove(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_data EINA_UNUSED)
 {
+   Instance *inst = data;
+
    if (inst->cfg->cpuclock.handler)
      ecore_event_handler_del(inst->cfg->cpuclock.handler);
 
@@ -905,6 +909,7 @@ cpuclock_create(Evas_Object *parent, int *id, E_Gadget_Site_Orient orient EINA_U
    evas_object_size_hint_aspect_set(inst->o_main, EVAS_ASPECT_CONTROL_BOTH, 1, 1);
    evas_object_smart_callback_add(parent, "gadget_created", _cpuclock_created_cb, inst);
    evas_object_smart_callback_add(parent, "gadget_removed", _cpuclock_removed_cb, inst);
+   evas_object_event_callback_add(inst->o_main, EVAS_CALLBACK_DEL, sysinfo_cpuclock_remove, inst);
    evas_object_show(inst->o_main);
 
    if (inst->cfg->id < 0) return inst->o_main;
