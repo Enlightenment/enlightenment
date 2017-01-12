@@ -2362,7 +2362,7 @@ static void
 _e_comp_x_mouse_in_job(void *d EINA_UNUSED)
 {
    if (mouse_client)
-     e_client_mouse_in(mouse_client, e_comp_canvas_x_root_adjust(mouse_in_coords.x), e_comp_canvas_x_root_adjust(mouse_in_coords.y));
+     e_client_mouse_in(mouse_client, e_comp_canvas_x_root_adjust(mouse_in_coords.x), e_comp_canvas_y_root_adjust(mouse_in_coords.y));
    mouse_in_job = NULL;
 }
 
@@ -2420,7 +2420,7 @@ _e_comp_x_mouse_out(void *data EINA_UNUSED, int type EINA_UNUSED, Ecore_X_Event_
         E_FREE_FUNC(mouse_in_job, ecore_job_del);
      }
    if (ec->mouse.in)
-     e_client_mouse_out(ec, e_comp_canvas_x_root_adjust(ev->root.x), e_comp_canvas_x_root_adjust(ev->root.y));
+     e_client_mouse_out(ec, e_comp_canvas_x_root_adjust(ev->root.x), e_comp_canvas_y_root_adjust(ev->root.y));
    return ECORE_CALLBACK_RENEW;
 }
 
@@ -2519,7 +2519,7 @@ _e_comp_x_mouse_move(void *d EINA_UNUSED, int t EINA_UNUSED, Ecore_Event_Mouse_M
              if (top == e_comp->ee_win) return ECORE_CALLBACK_RENEW;
 
              x = e_comp_canvas_x_root_adjust(ev->root.x);
-             y = e_comp_canvas_x_root_adjust(ev->root.y);
+             y = e_comp_canvas_y_root_adjust(ev->root.y);
              for (tec = e_client_above_get(ec); tec; tec = e_client_above_get(tec))
                {
                   if (!evas_object_visible_get(tec->frame)) continue;
