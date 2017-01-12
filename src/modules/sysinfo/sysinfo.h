@@ -206,6 +206,12 @@ struct _Config_Item
       int                  poll_interval;
       long                 in;
       long                 out;
+      long                 incurrent;
+      long                 outcurrent;
+      long                 inmax;
+      long                 outmax;
+      int                  inpercent;
+      int                  outpercent;
       Eina_Stringshare    *instring;
       Eina_Stringshare    *outstring;
       Ecore_Thread        *usage_check_thread;

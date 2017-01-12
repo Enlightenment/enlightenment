@@ -104,6 +104,12 @@ sysinfo_init(void)
         ci->netstatus.poll_interval = 32;
         ci->netstatus.in = 0;
         ci->netstatus.out = 0;
+        ci->netstatus.inmax = 0;
+        ci->netstatus.outmax = 0;
+        ci->netstatus.incurrent = 0;
+        ci->netstatus.outcurrent = 0;
+        ci->netstatus.inpercent = 0;
+        ci->netstatus.outpercent = 0;
         ci->netstatus.instring = NULL;
         ci->netstatus.outstring = NULL;
         ci->netstatus.popup = NULL;

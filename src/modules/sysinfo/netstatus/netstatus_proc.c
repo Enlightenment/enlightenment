@@ -1,10 +1,11 @@
 #include "netstatus.h"
 
-const char *
+void
 _netstatus_proc_getrstatus(Instance *inst)
 {
    long in, dummy, tot_in = 0;
    long diffin;
+   int percent = 0;
    char buf[4096], rin[4096], dummys[64];
    FILE *f;
 
@@ -24,13 +25,14 @@ _netstatus_proc_getrstatus(Instance *inst)
      }
    diffin = tot_in - inst->cfg->netstatus.in;
    inst->cfg->netstatus.in = tot_in;
+   if (tot_in > inst->cfg->netstatus.inmax)
+     inst->cfg->netstatus.inmax = tot_in;
    if (!diffin)
      {
         snprintf(rin, sizeof(rin), "%s: 0 B/s", _("Receiving"));
-        return eina_stringshare_add(rin);
      }
    else
-     {
+     {        
         diffin /= 0.5;
         if (diffin > 1048576)
           snprintf(rin, sizeof(rin), "%s: %.2f MB/s", _("Receiving"), ((float)diffin / 1048576));
@@ -39,14 +41,22 @@ _netstatus_proc_getrstatus(Instance *inst)
         else
           snprintf(rin, sizeof(rin), "%s: %lu B/s", _("Receiving"), diffin);
      }
-   return eina_stringshare_add(rin);
+   inst->cfg->netstatus.incurrent = diffin;
+   if (inst->cfg->netstatus.inmax > 0)
+     percent = 100 * ((float)diffin / (float)inst->cfg->netstatus.inmax);
+
+   if (percent > 100) percent = 100;
+   else if (percent < 0) percent = 0;
+   inst->cfg->netstatus.inpercent = percent;
+   eina_stringshare_replace(&inst->cfg->netstatus.instring, rin);
 }
 
-const char *
- _netstatus_proc_gettstatus(Instance *inst)
+void
+_netstatus_proc_gettstatus(Instance *inst)
 {
    long out, dummy, tot_out = 0;
    long diffout;
+   int percent = 0;
    char buf[4096], rout[4096], dummys[64];
    FILE *f;
 
@@ -66,10 +76,11 @@ const char *
      }
    diffout = tot_out - inst->cfg->netstatus.out;
    inst->cfg->netstatus.out = tot_out;
+   if (tot_out > inst->cfg->netstatus.outmax)
+     inst->cfg->netstatus.outmax = tot_out;
    if (!diffout)
      {
         snprintf(rout, sizeof(rout), "%s: 0 B/s", _("Sending"));
-        return eina_stringshare_add(rout);
      }
    else
      {
@@ -81,6 +92,13 @@ const char *
         else
           snprintf(rout, sizeof(rout), "%s: %lu B/s", _("Sending"), diffout);
      }
-   return eina_stringshare_add(rout);
+   inst->cfg->netstatus.outcurrent = diffout;
+   if (inst->cfg->netstatus.outcurrent > 0)
+     percent = 100 * ((float)diffout / (float)inst->cfg->netstatus.outmax);
+
+   if (percent > 100) percent = 100;
+   else if (percent < 0) percent = 0;
+   inst->cfg->netstatus.outpercent = percent;
+   eina_stringshare_replace(&inst->cfg->netstatus.outstring, rout);
 }
 

@@ -6,29 +6,43 @@ struct _Thread_Config
 {
    int interval;
    Instance *inst;
-   const char *rstatus;
-   const char *tstatus;
+   int percent;
+   long current;
 };
 
 static void
-_netstatus_face_update(Instance *inst, Eina_Bool trans, const char *status)
+_netstatus_face_update(Instance *inst)
 {
-   if (!trans && status)
+   Edje_Message_Int_Set *msg;
+
+   if (inst->cfg->netstatus.incurrent > 0)
      {
         elm_layout_signal_emit(inst->cfg->netstatus.o_gadget, "e,state,received,active", "e");
      }
-   else if (trans && status)
-     {
-        elm_layout_signal_emit(inst->cfg->netstatus.o_gadget, "e,state,transmitted,active", "e");
-     }
-   else if (!trans && !status)
+   else
      {
         elm_layout_signal_emit(inst->cfg->netstatus.o_gadget, "e,state,received,idle", "e");
      }
-   else if (trans && !status)
+   if (inst->cfg->netstatus.outcurrent > 0)
+     {
+        elm_layout_signal_emit(inst->cfg->netstatus.o_gadget, "e,state,transmitted,active", "e");
+     }
+   else
      {
         elm_layout_signal_emit(inst->cfg->netstatus.o_gadget, "e,state,transmitted,idle", "e");
      }
+   msg = malloc(sizeof(Edje_Message_Int_Set) + 6 * sizeof(int));
+   EINA_SAFETY_ON_NULL_RETURN(msg);
+   msg->count = 6;
+   msg->val[0] = inst->cfg->netstatus.incurrent;
+   msg->val[1] = inst->cfg->netstatus.inpercent;
+   msg->val[2] = inst->cfg->netstatus.inmax;
+   msg->val[0] = inst->cfg->netstatus.outcurrent;
+   msg->val[1] = inst->cfg->netstatus.outpercent;
+   msg->val[2] = inst->cfg->netstatus.outmax;
+   edje_object_message_send(elm_layout_edje_get(inst->cfg->memusage.o_gadget),
+                            EDJE_MESSAGE_INT_SET, 1, msg);
+   free(msg);
 }
 
 static Evas_Object *
@@ -113,16 +127,12 @@ _netstatus_cb_usage_check_main(void *data, Ecore_Thread *th)
    for (;;)
      {
         if (ecore_thread_check(th)) break;
-        E_FREE_FUNC(thc->rstatus, eina_stringshare_del);
-        E_FREE_FUNC(thc->tstatus, eina_stringshare_del);
-        thc->rstatus = _netstatus_proc_getrstatus(thc->inst);
-        thc->tstatus = _netstatus_proc_gettstatus(thc->inst);
+        _netstatus_proc_getrstatus(thc->inst);
+        _netstatus_proc_gettstatus(thc->inst);
         ecore_thread_feedback(th, NULL);
         if (ecore_thread_check(th)) break;
         usleep((1000000.0 / 8.0) * (double)thc->interval);
      }
-   E_FREE_FUNC(thc->rstatus, eina_stringshare_del);
-   E_FREE_FUNC(thc->tstatus, eina_stringshare_del);
    E_FREE_FUNC(thc, free);
 }
 
@@ -137,10 +147,7 @@ _netstatus_cb_usage_check_notify(void *data,
    if (!inst->cfg) return;
    if (inst->cfg->esm != E_SYSINFO_MODULE_NETSTATUS && inst->cfg->esm != E_SYSINFO_MODULE_SYSINFO) return;
 
-   eina_stringshare_replace(&inst->cfg->netstatus.instring, thc->rstatus);
-   eina_stringshare_replace(&inst->cfg->netstatus.outstring, thc->tstatus);
-   _netstatus_face_update(inst, EINA_FALSE, thc->rstatus);
-   _netstatus_face_update(inst, EINA_TRUE, thc->tstatus);
+   _netstatus_face_update(inst);
 }
 
 void
@@ -265,6 +272,12 @@ _conf_item_get(int *id)
    ci->netstatus.poll_interval = 32;
    ci->netstatus.in = 0;
    ci->netstatus.out = 0;
+   ci->netstatus.inmax = 0;
+   ci->netstatus.outmax = 0;
+   ci->netstatus.incurrent = 0;
+   ci->netstatus.outcurrent = 0;
+   ci->netstatus.inpercent = 0;
+   ci->netstatus.outpercent = 0;
    ci->netstatus.instring = NULL;
    ci->netstatus.outstring = NULL;
    ci->netstatus.popup = NULL;
@@ -284,6 +297,12 @@ netstatus_create(Evas_Object *parent, int *id, E_Gadget_Site_Orient orient EINA_
    *id = inst->cfg->id;
    inst->cfg->netstatus.in = 0;
    inst->cfg->netstatus.out = 0;
+   inst->cfg->netstatus.inmax = 0;
+   inst->cfg->netstatus.outmax = 0;
+   inst->cfg->netstatus.incurrent = 0;
+   inst->cfg->netstatus.outcurrent = 0;
+   inst->cfg->netstatus.inpercent = 0;
+   inst->cfg->netstatus.outpercent = 0;
    inst->cfg->netstatus.instring = NULL;
    inst->cfg->netstatus.outstring = NULL;
    inst->cfg->netstatus.popup = NULL;
