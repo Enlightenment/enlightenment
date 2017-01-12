@@ -125,7 +125,7 @@ e_bindings_ecore_event_mouse_wheel_convert(const Ecore_Event_Mouse_Wheel *ev, E_
    event->direction = ev->direction;
    event->z = ev->z;
    event->canvas.x = e_comp_canvas_x_root_adjust(ev->root.x);
-   event->canvas.y = e_comp_canvas_x_root_adjust(ev->root.y);
+   event->canvas.y = e_comp_canvas_y_root_adjust(ev->root.y);
    event->timestamp = ev->timestamp;
    event->modifiers = _e_bindings_modifiers(ev->modifiers);
 }
@@ -136,7 +136,7 @@ e_bindings_ecore_event_mouse_button_convert(const Ecore_Event_Mouse_Button *ev, 
    memset(event, 0, sizeof(E_Binding_Event_Mouse_Button));
    event->button = ev->buttons;
    event->canvas.x = e_comp_canvas_x_root_adjust(ev->root.x);
-   event->canvas.y = e_comp_canvas_x_root_adjust(ev->root.y);
+   event->canvas.y = e_comp_canvas_y_root_adjust(ev->root.y);
    event->timestamp = ev->timestamp;
    event->modifiers = _e_bindings_modifiers(ev->modifiers);
 

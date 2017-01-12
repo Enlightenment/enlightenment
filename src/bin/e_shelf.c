@@ -1911,10 +1911,10 @@ _e_shelf_cb_mouse_in(void *data, int type, void *event)
          * back to mouse in/out events
          */
         inside = E_INSIDE(e_comp_canvas_x_root_adjust(ev->root.x),
-                          e_comp_canvas_x_root_adjust(ev->root.y),
+                          e_comp_canvas_y_root_adjust(ev->root.y),
                           es->zone->x, es->zone->y, es->zone->w + 4, es->zone->h + 4);
         x = e_comp_canvas_x_root_adjust(ev->root.x) - es->zone->x;
-        y = e_comp_canvas_x_root_adjust(ev->root.y) - es->zone->y;
+        y = e_comp_canvas_y_root_adjust(ev->root.y) - es->zone->y;
         if (inside)
           inside = (
               ((E_INSIDE(x, y, es->x, es->y, es->w, es->h)) ||
