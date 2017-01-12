@@ -39,9 +39,18 @@ _cpumonitor_configure_cb(Evas_Object *g)
 }
 
 static void
-_cpumonitor_popup_dismissed(void *data EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
+_cpumonitor_popup_dismissed(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
+   Instance *inst = data;
    E_FREE_FUNC(obj, evas_object_del);
+   inst->cfg->cpumonitor.popup = NULL;
+}
+
+static void
+_cpumonitor_popup_deleted(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   Instance *inst = data;
+   inst->cfg->cpumonitor.popup = NULL;
 }
 
 static void
@@ -63,7 +72,8 @@ _cpumonitor_mouse_down_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA
           }
         popup = elm_ctxpopup_add(e_comp->elm);
         elm_object_style_set(popup, "noblock");
-        evas_object_smart_callback_add(popup, "dismissed", _cpumonitor_popup_dismissed, NULL);   
+        evas_object_smart_callback_add(popup, "dismissed", _cpumonitor_popup_dismissed, inst);   
+        evas_object_event_callback_add(popup, EVAS_CALLBACK_DEL, _cpumonitor_popup_deleted, inst);
 
         snprintf(text, sizeof(text), "%s: %d%%", _("Total CPU Usage"), inst->cfg->cpumonitor.percent);
         label = elm_label_add(popup);

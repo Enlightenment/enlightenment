@@ -42,9 +42,18 @@ _netstatus_configure_cb(Evas_Object *g)
 }
 
 static void
-_netstatus_popup_dismissed(void *data EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
+_netstatus_popup_dismissed(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
+   Instance *inst = data;
    E_FREE_FUNC(obj, evas_object_del);
+   inst->cfg->netstatus.popup = NULL;
+}
+
+static void
+_netstatus_popup_deleted(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   Instance *inst = data;
+   inst->cfg->netstatus.popup = NULL;
 }
 
 static void
@@ -66,7 +75,8 @@ _netstatus_mouse_down_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_
           }
         popup = elm_ctxpopup_add(e_comp->elm);
         elm_object_style_set(popup, "noblock");
-        evas_object_smart_callback_add(popup, "dismissed", _netstatus_popup_dismissed, NULL);
+        evas_object_smart_callback_add(popup, "dismissed", _netstatus_popup_dismissed, inst);
+        evas_object_event_callback_add(popup, EVAS_CALLBACK_DEL, _netstatus_popup_deleted, inst);
 
         snprintf(text, sizeof(text), "%s<br>%s", inst->cfg->netstatus.instring, inst->cfg->netstatus.outstring);
         label = elm_label_add(popup);

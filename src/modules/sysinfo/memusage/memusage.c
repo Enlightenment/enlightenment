@@ -36,9 +36,18 @@ _memusage_configure_cb(Evas_Object *g)
 }
 
 static void
-_memusage_popup_dismissed(void *data EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
+_memusage_popup_dismissed(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
+   Instance *inst = data;
    E_FREE_FUNC(obj, evas_object_del);
+   inst->cfg->memusage.popup = NULL;
+}
+
+static void
+_memusage_popup_deleted(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   Instance *inst = data;
+   inst->cfg->memusage.popup = NULL;
 }
 
 static void
@@ -60,7 +69,8 @@ _memusage_mouse_down_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_U
           }
         popup = elm_ctxpopup_add(e_comp->elm);
         elm_object_style_set(popup, "noblock");
-        evas_object_smart_callback_add(popup, "dismissed", _memusage_popup_dismissed, NULL);
+        evas_object_smart_callback_add(popup, "dismissed", _memusage_popup_dismissed, inst);
+        evas_object_event_callback_add(popup, EVAS_CALLBACK_DEL, _memusage_popup_deleted, inst);
 
         snprintf(text, sizeof(text), "%s: %d%%<br>%s: %d%%", _("Total Memory Usage"),
                  inst->cfg->memusage.real, _("Total Swap Usage"), inst->cfg->memusage.swap);
