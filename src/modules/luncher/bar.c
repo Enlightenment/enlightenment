@@ -84,7 +84,8 @@ _bar_gadget_configure(Evas_Object *g)
    return config_luncher(e_zone_current_get(), inst, EINA_TRUE);
 }
 
-static void _bar_popup_dismissed(void *data EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
+static void 
+_bar_popup_dismissed(void *data EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
    E_FREE_FUNC(obj, evas_object_del);
 }

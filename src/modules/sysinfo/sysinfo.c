@@ -114,10 +114,21 @@ _conf_item_get(int *id)
    ci->cpumonitor.poll_interval = 32;
    ci->cpumonitor.total = 0;
    ci->cpumonitor.idle = 0;
+   ci->cpumonitor.percent = 0;
+   ci->cpumonitor.popup = NULL;
+   ci->cpumonitor.configure = NULL;
    ci->memusage.poll_interval = 32;
+   ci->memusage.real = 0;
+   ci->memusage.swap = 0;
+   ci->memusage.popup = NULL;
+   ci->memusage.configure = NULL;
    ci->netstatus.poll_interval = 32;
    ci->netstatus.in = 0;
    ci->netstatus.out = 0;
+   ci->netstatus.instring = NULL;
+   ci->netstatus.outstring = NULL;
+   ci->netstatus.popup = NULL;
+   ci->netstatus.configure = NULL;
 
    sysinfo_config->items = eina_list_append(sysinfo_config->items, ci);
 

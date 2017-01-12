@@ -25,12 +25,15 @@ src_modules_sysinfo_module_la_SOURCES = src/modules/sysinfo/mod.c \
                          src/modules/sysinfo/cpuclock/cpuclock_sysfs.c \
                          src/modules/sysinfo/cpumonitor/cpumonitor.h \
                          src/modules/sysinfo/cpumonitor/cpumonitor.c \
+                         src/modules/sysinfo/cpumonitor/cpumonitor_config.c \
                          src/modules/sysinfo/cpumonitor/cpumonitor_proc.c \
                          src/modules/sysinfo/memusage/memusage.h \
                          src/modules/sysinfo/memusage/memusage.c \
+                         src/modules/sysinfo/memusage/memusage_config.c \
                          src/modules/sysinfo/memusage/memusage_proc.c \
                          src/modules/sysinfo/netstatus/netstatus.h \
                          src/modules/sysinfo/netstatus/netstatus.c \
+                         src/modules/sysinfo/netstatus/netstatus_config.c \
                          src/modules/sysinfo/netstatus/netstatus_proc.c \
                          src/modules/sysinfo/sysinfo.c
 if HAVE_EEZE

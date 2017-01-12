@@ -40,6 +40,34 @@ _cpumonitor_proc_getusage(Instance *inst)
      {
         while (fgets(buf, sizeof(buf), f))
           {
+             if (k == 0)
+               {
+                  long total = 0, idle = 0, use = 0, total_change = 0, idle_change = 0;
+                  int percent = 0;
+                  char *line, *tok;
+                  int i = 0;
+
+                  line = strchr(buf, ' ')+1;
+                  tok = strtok(line, " ");
+                  while (tok)
+                    {
+                       use = atol(tok);
+                       total += use;
+                       i++;
+                       if (i == 4)
+                         idle = use;
+                       tok = strtok(NULL, " ");
+                    }
+                  total_change = total - inst->cfg->cpumonitor.total;
+                  idle_change = idle - inst->cfg->cpumonitor.idle;
+                  if (total_change != 0)
+                    percent = 100 * (1 - ((float)idle_change / (float)total_change));
+                  if (percent > 100) percent = 100;
+                  else if (percent < 0) percent = 0;
+                  inst->cfg->cpumonitor.total = total;
+                  inst->cfg->cpumonitor.idle = idle;
+                  inst->cfg->cpumonitor.percent = percent;
+               }
              if (k > 0)
                {
                   long total = 0, idle = 0, use = 0, total_change = 0, idle_change = 0;

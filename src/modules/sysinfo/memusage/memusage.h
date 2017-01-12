@@ -6,5 +6,5 @@
 void _memusage_config_updated(Instance *inst);
 int _memusage_proc_getmemusage();
 int _memusage_proc_getswapusage();
-
+Evas_Object *memusage_configure(Instance *inst);
 #endif

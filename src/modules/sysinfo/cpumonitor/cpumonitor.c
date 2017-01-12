@@ -28,6 +28,71 @@ _cpumonitor_face_update(Instance *inst)
      }
 }
 
+static Evas_Object *
+_cpumonitor_configure_cb(Evas_Object *g)
+{
+   Instance *inst = evas_object_data_get(g, "Instance");
+
+   if (!sysinfo_config) return NULL;
+   if (inst->cfg->cpumonitor.popup) return NULL;
+   return cpumonitor_configure(inst);
+}
+
+static void
+_cpumonitor_popup_dismissed(void *data EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
+{
+   E_FREE_FUNC(obj, evas_object_del);
+}
+
+static void
+_cpumonitor_mouse_down_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_data)
+{
+   Evas_Object *label, *popup;
+   Evas_Event_Mouse_Down *ev = event_data;
+   Instance *inst = data;
+   char text[4096];
+
+   if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return;
+   if (ev->button != 3)
+     {
+        if (inst->cfg->cpumonitor.popup)
+          {
+             elm_ctxpopup_dismiss(inst->cfg->cpumonitor.popup);
+             inst->cfg->cpumonitor.popup = NULL;
+             return;
+          }
+        popup = elm_ctxpopup_add(e_comp->elm);
+        elm_object_style_set(popup, "noblock");
+        evas_object_smart_callback_add(popup, "dismissed", _cpumonitor_popup_dismissed, NULL);   
+
+        snprintf(text, sizeof(text), "%s: %d%%", _("Total CPU Usage"), inst->cfg->cpumonitor.percent);
+        label = elm_label_add(popup);
+        elm_object_style_set(label, "marker");
+        elm_object_text_set(label, text);
+        elm_object_content_set(popup, label);
+        evas_object_show(label);
+   
+        e_comp_object_util_autoclose(popup, NULL, NULL, NULL);
+        evas_object_show(popup);
+        e_gadget_util_ctxpopup_place(inst->o_main, popup, inst->cfg->cpumonitor.o_gadget);
+        inst->cfg->cpumonitor.popup = popup;
+     }
+   else
+     {
+        if (inst->cfg->cpumonitor.popup)
+          {
+             elm_ctxpopup_dismiss(inst->cfg->cpumonitor.popup);
+             inst->cfg->cpumonitor.popup = NULL;
+          }
+        if (!sysinfo_config) return;
+        ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
+        if (inst->cfg->esm != E_SYSINFO_MODULE_CPUMONITOR)
+          cpumonitor_configure(inst);
+        else
+          e_gadget_configure(inst->o_main);
+     }
+}
+
 static void
 _cpumonitor_cb_usage_check_main(void *data, Ecore_Thread *th)
 {
@@ -126,6 +191,10 @@ _cpumonitor_removed_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_dat
 
    if (inst->o_main != event_data) return;
 
+   if (inst->cfg->cpumonitor.popup)
+     E_FREE_FUNC(inst->cfg->cpumonitor.popup, evas_object_del);
+   if (inst->cfg->cpumonitor.configure)
+     E_FREE_FUNC(inst->cfg->cpumonitor.configure, evas_object_del);
    if (inst->cfg->cpumonitor.usage_check_thread)
      {
         ecore_thread_cancel(inst->cfg->cpumonitor.usage_check_thread);
@@ -148,6 +217,10 @@ sysinfo_cpumonitor_remove(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA
    Instance *inst = data;
    CPU_Core *core;
 
+   if (inst->cfg->cpumonitor.popup)
+     E_FREE_FUNC(inst->cfg->cpumonitor.popup, evas_object_del);
+   if (inst->cfg->cpumonitor.configure)
+     E_FREE_FUNC(inst->cfg->cpumonitor.configure, evas_object_del);
    if (inst->cfg->cpumonitor.usage_check_thread)
      {
         ecore_thread_cancel(inst->cfg->cpumonitor.usage_check_thread);
@@ -212,6 +285,8 @@ _cpumonitor_created_cb(void *data, Evas_Object *obj, void *event_data EINA_UNUSE
    Instance *inst = data;
    int orient = e_gadget_site_orient_get(e_gadget_site_get(inst->o_main));
 
+   e_gadget_configure_cb_set(inst->o_main, _cpumonitor_configure_cb);
+
    inst->cfg->cpumonitor.o_gadget = elm_box_add(inst->o_main);
    if (orient == E_GADGET_SITE_ORIENT_VERTICAL)
      elm_box_horizontal_set(inst->cfg->cpumonitor.o_gadget, EINA_FALSE);
@@ -220,6 +295,7 @@ _cpumonitor_created_cb(void *data, Evas_Object *obj, void *event_data EINA_UNUSE
    E_EXPAND(inst->cfg->cpumonitor.o_gadget);
    E_FILL(inst->cfg->cpumonitor.o_gadget);
    elm_box_pack_end(inst->o_main, inst->cfg->cpumonitor.o_gadget);
+   evas_object_event_callback_add(inst->cfg->cpumonitor.o_gadget, EVAS_CALLBACK_MOUSE_DOWN, _cpumonitor_mouse_down_cb, inst);
    evas_object_show(inst->cfg->cpumonitor.o_gadget);
    evas_object_smart_callback_del_full(obj, "gadget_created", _cpumonitor_created_cb, data);
    _cpumonitor_config_updated(inst);
@@ -233,6 +309,7 @@ sysinfo_cpumonitor_create(Evas_Object *parent, Instance *inst)
    elm_box_horizontal_set(inst->cfg->cpumonitor.o_gadget, EINA_TRUE);
    E_EXPAND(inst->cfg->cpumonitor.o_gadget);
    E_FILL(inst->cfg->cpumonitor.o_gadget);
+   evas_object_event_callback_add(inst->cfg->cpumonitor.o_gadget, EVAS_CALLBACK_MOUSE_DOWN, _cpumonitor_mouse_down_cb, inst);
    evas_object_show(inst->cfg->cpumonitor.o_gadget);
    _cpumonitor_config_updated(inst);
    _cpumonitor_eval_instance_aspect(inst);
@@ -262,8 +339,10 @@ _conf_item_get(int *id)
    ci->esm = E_SYSINFO_MODULE_CPUMONITOR;
    ci->cpumonitor.poll_interval = 32;
    ci->cpumonitor.total = 0;
+   ci->cpumonitor.percent = 0;
    ci->cpumonitor.idle = 0;
-
+   ci->cpumonitor.popup = NULL;
+   ci->cpumonitor.configure = NULL;
    sysinfo_config->items = eina_list_append(sysinfo_config->items, ci);
 
    return ci;
@@ -279,8 +358,12 @@ cpumonitor_create(Evas_Object *parent, int *id, E_Gadget_Site_Orient orient EINA
    *id = inst->cfg->id;
    inst->cfg->cpumonitor.total = 0;
    inst->cfg->cpumonitor.idle = 0;
+   inst->cfg->cpumonitor.percent = 0;
+   inst->cfg->cpumonitor.popup = NULL;
+   inst->cfg->cpumonitor.configure = NULL;
    inst->o_main = elm_box_add(parent);
    E_EXPAND(inst->o_main);
+   evas_object_data_set(inst->o_main, "Instance", inst);
    evas_object_smart_callback_add(parent, "gadget_created", _cpumonitor_created_cb, inst);
    evas_object_smart_callback_add(parent, "gadget_removed", _cpumonitor_removed_cb, inst);
    evas_object_event_callback_add(inst->o_main, EVAS_CALLBACK_DEL, sysinfo_cpumonitor_remove, inst);

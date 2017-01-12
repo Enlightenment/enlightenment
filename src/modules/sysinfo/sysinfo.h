@@ -178,24 +178,36 @@ struct _Config_Item
    struct
    {
       Evas_Object         *o_gadget;
+      Evas_Object         *popup;
+      Evas_Object         *configure;
       int                  poll_interval;
+      int                  percent;
       long                 total;
       long                 idle;
+
       Ecore_Thread        *usage_check_thread;
       Eina_List           *cores;
    } cpumonitor;
    struct
    {
       Evas_Object         *o_gadget;
+      Evas_Object         *popup;
+      Evas_Object         *configure;
       int                  poll_interval;
+      int                  real;
+      int                  swap;
       Ecore_Thread        *usage_check_thread;
    } memusage;
    struct
    {
       Evas_Object         *o_gadget;
+      Evas_Object         *popup;
+      Evas_Object         *configure;
       int                  poll_interval;
       long                 in;
       long                 out;
+      Eina_Stringshare    *instring;
+      Eina_Stringshare    *outstring;
       Ecore_Thread        *usage_check_thread;
    } netstatus;
    struct   {
