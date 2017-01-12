@@ -446,9 +446,11 @@ _bar_icon_preview_hide(void *data)
 {
    Icon *ic = data;
 
+   if (!ic) return EINA_FALSE;
+
    ic->mouse_out_timer = NULL;
 
-   if (!ic->preview)
+   if (!ic->preview || ic->preview_dismissed)
      return EINA_FALSE;
 
    E_FREE_FUNC(ic->preview_box, evas_object_del);
