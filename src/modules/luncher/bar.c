@@ -59,6 +59,13 @@ _bar_check_for_duplicates(Icon *ic, E_Client *dupe)
 
    EINA_LIST_FREE(clients, ec)
      {
+          if (ec->internal_elm_win)
+            {
+               if (ec->internal_icon == dupe->internal_icon)
+                 return EINA_TRUE;
+               else
+                 return EINA_FALSE;
+            }
           if (ec == dupe)
             return EINA_TRUE;
      }
@@ -200,7 +207,7 @@ _bar_icon_match(Instance *inst, E_Client *ec)
         if (ec->exe_inst->desktop)
           has_desktop = EINA_TRUE;
      }
-   if (has_desktop)
+   if (has_desktop && !ec->internal_elm_win)
      {
         ic = eina_hash_find(inst->icons_desktop_hash, ec->exe_inst->desktop->orig_path);
         if ((ic) && (ic2 = eina_hash_find(inst->icons_clients_hash, ec)))
@@ -1043,7 +1050,6 @@ _bar_icon_add(Instance *inst, Efreet_Desktop *desktop, E_Client *non_desktop_cli
         if (!path)
           {
              snprintf(buf, sizeof(buf), "e/icons/%s", desktop->icon);
-             printf("%s\n", buf);
              if (eina_list_count(e_theme_collection_items_find("base/theme/icons", buf)))
                {
                   path = e_theme_edje_file_get("base/theme/icons", buf);
