@@ -59,13 +59,6 @@ _bar_check_for_duplicates(Icon *ic, E_Client *dupe)
 
    EINA_LIST_FREE(clients, ec)
      {
-          if (ec->internal_elm_win)
-            {
-               if (ec->internal_icon == dupe->internal_icon)
-                 return EINA_TRUE;
-               else
-                 return EINA_FALSE;
-            }
           if (ec == dupe)
             return EINA_TRUE;
      }
@@ -207,7 +200,7 @@ _bar_icon_match(Instance *inst, E_Client *ec)
         if (ec->exe_inst->desktop)
           has_desktop = EINA_TRUE;
      }
-   if (has_desktop && !ec->internal_elm_win)
+   if (has_desktop)
      {
         ic = eina_hash_find(inst->icons_desktop_hash, ec->exe_inst->desktop->orig_path);
         if ((ic) && (ic2 = eina_hash_find(inst->icons_clients_hash, ec)))
@@ -225,9 +218,9 @@ _bar_icon_match(Instance *inst, E_Client *ec)
           }
      }
    if (has_desktop && !ic)
-     ic = eina_hash_find(inst->icons_clients_hash, ec);
+     ic = eina_hash_find(inst->icons_clients_hash, &ec);
    if (!ic)
-     ic = eina_hash_find(inst->icons_clients_hash, ec);
+     ic = eina_hash_find(inst->icons_clients_hash, &ec);
 
    return ic;
 }
@@ -1068,7 +1061,7 @@ _bar_icon_add(Instance *inst, Efreet_Desktop *desktop, E_Client *non_desktop_cli
                k = "icon";
           }
      }
-   else if (non_desktop_client)
+   else
      {
         Evas_Object *tmp;
         const char *file, *group;
@@ -1119,7 +1112,7 @@ _bar_icon_add(Instance *inst, Efreet_Desktop *desktop, E_Client *non_desktop_cli
    if (desktop)
      eina_hash_add(inst->icons_desktop_hash, eina_stringshare_add(desktop->orig_path), ic);
    else
-     eina_hash_add(inst->icons_clients_hash, non_desktop_client, ic);
+     eina_hash_add(inst->icons_clients_hash, &non_desktop_client, ic);
 
    if (desktop)
      {
@@ -1448,7 +1441,7 @@ _bar_fill(Instance *inst)
 
              EINA_LIST_FOREACH(ex->clients, lll, ec)
                {
-                  if (!ec->netwm.state.skip_taskbar && !ec->internal_elm_win)
+                  if (!ec->netwm.state.skip_taskbar)
                     {
                        skip = EINA_FALSE;
                     }
@@ -1460,7 +1453,10 @@ _bar_fill(Instance *inst)
                          ic->execs = eina_list_append(ic->execs, ex);
                        continue;
                     }
-                  ic = _bar_icon_add(inst, ex->desktop, NULL);
+                  if (!ec->internal_elm_win)
+                    ic = _bar_icon_add(inst, ex->desktop, NULL);
+                  else
+                    ic = _bar_icon_add(inst, NULL, ec);
                   snprintf(ori, sizeof(ori), "e,state,on,%s", _bar_location_get(inst));
                   elm_layout_signal_emit(ic->o_layout, ori, "e");
                   ic->in_order = EINA_FALSE;
