@@ -857,6 +857,13 @@ _e_xdg_surface_cb_popup_get(struct wl_client *client, struct wl_resource *resour
         return;
      }
    if (e_object_is_del(E_OBJECT(ec))) return;
+   if (e_pixmap_usable_get(ec->pixmap))
+     {
+        wl_resource_post_error(resource,
+                               ZXDG_SURFACE_V6_ERROR_UNCONFIGURED_BUFFER,
+                               "buffer attached/committed before configure");
+        return;
+     }
    p = wl_resource_get_user_data(positioner_resource);
    if (!p)
      {
@@ -1177,6 +1184,13 @@ _e_xdg_surface_cb_toplevel_get(struct wl_client *client EINA_UNUSED, struct wl_r
         return;
      }
    if (e_object_is_del(E_OBJECT(ec))) return;
+   if (e_pixmap_usable_get(ec->pixmap))
+     {
+        wl_resource_post_error(resource,
+                               ZXDG_SURFACE_V6_ERROR_UNCONFIGURED_BUFFER,
+                               "buffer attached/committed before configure");
+        return;
+     }
 
    cdata = ec->comp_data;
    if (cdata->shell.surface)
@@ -1268,6 +1282,13 @@ _e_xdg_shell_cb_surface_get(struct wl_client *client, struct wl_resource *resour
         return;
      }
    if (e_object_is_del(E_OBJECT(ec))) return;
+   if (e_pixmap_usable_get(ec->pixmap))
+     {
+        wl_resource_post_error(surface_resource,
+                               ZXDG_SURFACE_V6_ERROR_UNCONFIGURED_BUFFER,
+                               "buffer attached/committed before configure");
+        return;
+     }
 
    ec->netwm.ping = 1;
    cdata = ec->comp_data;
