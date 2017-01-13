@@ -356,7 +356,7 @@ _gadget_object_create(E_Gadget_Config *zgc)
 
    if (!zgc->site->orient)
      evas_object_smart_need_recalculate_set(zgc->site->layout, 1);
-   evas_object_event_callback_add(g, EVAS_CALLBACK_DEL, _gadget_del, zgc);
+   evas_object_event_callback_priority_add(g, EVAS_CALLBACK_DEL, EVAS_CALLBACK_PRIORITY_BEFORE, _gadget_del, zgc);
    _gadget_reparent(zgc->site, zgc);
    elm_object_tree_focus_allow_set(zgc->gadget, 0);
    evas_object_raise(zgc->site->events);
@@ -1637,7 +1637,7 @@ e_gadget_util_layout_style_init(Evas_Object *g, Evas_Object *style)
      {
         elm_layout_file_get(style, NULL, &grp);
         eina_stringshare_replace(&zgc->style.name, strrchr(grp, '/') + 1);
-        evas_object_event_callback_add(style, EVAS_CALLBACK_DEL, _gadget_del, zgc);
+        evas_object_event_callback_priority_add(style, EVAS_CALLBACK_DEL, EVAS_CALLBACK_PRIORITY_BEFORE, _gadget_del, zgc);
      }
    else
      eina_stringshare_replace(&zgc->style.name, NULL);
