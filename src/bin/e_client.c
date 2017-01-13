@@ -1868,7 +1868,7 @@ _e_client_eval(E_Client *ec)
           }
         e_client_resize_limit(ec, &ec->w, &ec->h);
 
-        if (ec->re_manage)
+        if (ec->re_manage && e_comp_object_frame_exists(ec->frame))
           {
              int x = ec->x, y = ec->y;
              if (ec->x) e_comp_object_frame_xy_adjust(ec->frame, ec->x, 0, &ec->x, NULL);
