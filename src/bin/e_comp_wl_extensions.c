@@ -6,6 +6,26 @@
 #include "screenshooter-server-protocol.h"
 #include "session-recovery-server-protocol.h"
 #include "www-server-protocol.h"
+#include "xdg-foreign-unstable-v1-server-protocol.h"
+
+/* mutter uses 32, seems reasonable */
+#define HANDLE_LEN 32
+
+typedef struct Exported
+{
+   E_Client *ec;
+   struct wl_resource *res;
+   char handle[HANDLE_LEN + 1];
+   Eina_List *imported;
+} Exported;
+
+typedef struct Imported
+{
+   /* child */
+   E_Client *ec;
+   struct wl_resource *res;
+   Exported *ex;
+} Imported;
 
 static void
 _e_comp_wl_extensions_client_move_begin(void *d EINA_UNUSED, E_Client *ec)
@@ -207,6 +227,195 @@ _e_comp_wl_www_cb_create(struct wl_client *client, struct wl_resource *resource,
     e_object_ref(E_OBJECT(ec));
 }
 
+///////////////////////////////////////////////////////
+
+static void
+_e_comp_wl_zxdg_exported_v1_destroy(struct wl_client *client EINA_UNUSED, struct wl_resource *resource)
+{
+   wl_resource_destroy(resource);
+}
+
+static void _imported_v1_del(Imported *im);
+static void _exported_del(void *data, Evas *e, Evas_Object *obj, void *event_info);
+
+static void
+_exported_v1_del(Exported *ex)
+{
+   while (ex->imported)
+     {
+        Imported *im = eina_list_data_get(ex->imported);
+
+        zxdg_imported_v1_send_destroyed(im->res);
+        _imported_v1_del(im);
+     }
+   evas_object_event_callback_del(ex->ec->frame, EVAS_CALLBACK_DEL, _exported_del);
+   wl_resource_set_user_data(ex->res, NULL);
+   eina_hash_del_by_key(e_comp_wl->extensions->zxdg_exporter_v1.surfaces, ex->handle);
+   free(ex);
+}
+
+static void
+_e_zxdg_exported_v1_del(struct wl_resource *resource)
+{
+   Exported *ex = wl_resource_get_user_data(resource);
+
+   if (ex) _exported_v1_del(ex);
+}
+
+static void
+_exported_del(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   _exported_v1_del(data);
+}
+
+static void
+_e_comp_wl_zxdg_exporter_v1_exporter_destroy(struct wl_client *client EINA_UNUSED, struct wl_resource *resource)
+{
+   wl_resource_destroy(resource);
+}
+
+static const struct zxdg_exported_v1_interface _e_zxdg_exported_v1_interface =
+{
+   _e_comp_wl_zxdg_exported_v1_destroy,
+};
+
+static void
+_e_comp_wl_zxdg_exporter_v1_export(struct wl_client *client, struct wl_resource *resource, uint32_t id, struct wl_resource *surface)
+{
+   E_Client *ec = wl_resource_get_user_data(surface);
+   Exported *ex;
+
+   if ((!ec) || (!ec->comp_data->is_xdg_surface) || ec->comp_data->cursor)
+     {
+        wl_resource_post_error(resource, WL_DISPLAY_ERROR_INVALID_OBJECT, "invalid role for exported surface");
+        return;
+     }
+
+   ex = E_NEW(Exported, 1);
+   ex->ec = ec;
+   ex->res = wl_resource_create(client, &zxdg_exported_v1_interface, wl_resource_get_version(resource), id);
+   wl_resource_set_implementation(ex->res, &_e_zxdg_exported_v1_interface, ex, _e_zxdg_exported_v1_del);
+   evas_object_event_callback_add(ec->frame, EVAS_CALLBACK_DEL, _exported_del, ex);
+
+   do
+     {
+        int n;
+
+        for (n = 0; n < HANDLE_LEN; n++)
+          {
+             /* only printable ascii */
+             ex->handle[n] = (rand() % (127 - 32)) + 32;
+          }
+     } while (eina_hash_find(e_comp_wl->extensions->zxdg_exporter_v1.surfaces, ex->handle));
+   eina_hash_add(e_comp_wl->extensions->zxdg_exporter_v1.surfaces, ex->handle, ex);
+
+   zxdg_exported_v1_send_handle(ex->res, ex->handle);
+}
+
+
+static void
+_e_comp_wl_zxdg_imported_v1_destroy(struct wl_client *client EINA_UNUSED, struct wl_resource *resource)
+{
+   wl_resource_destroy(resource);
+}
+
+static void _imported_del(void *data, Evas *e, Evas_Object *obj, void *event_info);
+
+static void
+_imported_v1_del(Imported *im)
+{
+   im->ex->imported = eina_list_remove(im->ex->imported, im);
+   if (im->ec)
+     {
+        evas_object_event_callback_del(im->ec->frame, EVAS_CALLBACK_DEL, _imported_del);
+        e_client_parent_set(im->ec, NULL);
+     }
+   if (im->res) wl_resource_set_user_data(im->res, NULL);
+   free(im);
+}
+
+static void
+_e_zxdg_imported_v1_del(struct wl_resource *resource)
+{
+   Imported *im = wl_resource_get_user_data(resource);
+
+   if (im) _imported_v1_del(im);
+}
+
+static void
+_imported_del(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   Imported *im = data;
+
+   im->ec = NULL;
+}
+
+static void
+_e_comp_wl_zxdg_importer_v1_importer_destroy(struct wl_client *client EINA_UNUSED, struct wl_resource *resource)
+{
+   wl_resource_destroy(resource);
+}
+
+static void
+_e_comp_wl_zxdg_imported_v1_set_parent_of(struct wl_client *client EINA_UNUSED, struct wl_resource *resource, struct wl_resource *surface_resource)
+{
+   Imported *im = wl_resource_get_user_data(resource);
+   E_Client *ec = NULL;
+
+   if (surface_resource) ec = wl_resource_get_user_data(surface_resource);
+
+   if (ec && ((ec->netwm.type != E_WINDOW_TYPE_NORMAL) || (!ec->comp_data->is_xdg_surface)))
+     {
+        wl_resource_post_error(im->res, WL_DISPLAY_ERROR_INVALID_OBJECT,
+          "xdg_imported.set_parent_of called with invalid surface");
+        return;
+     }
+
+   if (im->ec)
+     evas_object_event_callback_del(im->ec->frame, EVAS_CALLBACK_DEL, _imported_del);
+
+   im->ec = ec;
+
+   if (ec)
+     {
+        evas_object_event_callback_add(ec->frame, EVAS_CALLBACK_DEL, _imported_del, im);
+        e_client_parent_set(ec, im->ex->ec);
+        ec->parent->modal = ec;
+        ec->parent->lock_close = 1;
+     }
+}
+
+static const struct zxdg_imported_v1_interface _e_zxdg_imported_v1_interface =
+{
+   _e_comp_wl_zxdg_imported_v1_destroy,
+   _e_comp_wl_zxdg_imported_v1_set_parent_of,
+};
+
+static void
+_e_comp_wl_zxdg_importer_v1_import(struct wl_client *client, struct wl_resource *resource, uint32_t id, const char *handle)
+{
+   Imported *im;
+   Exported *ex;
+
+   im = E_NEW(Imported, 1);
+   im->res = wl_resource_create(client, &zxdg_imported_v1_interface, wl_resource_get_version(resource), id);
+   wl_resource_set_implementation(im->res, &_e_zxdg_imported_v1_interface, NULL, _e_zxdg_imported_v1_del);
+
+   ex = eina_hash_find(e_comp_wl->extensions->zxdg_exporter_v1.surfaces, handle);
+   if ((!ex) || (!ex->ec->netwm.type))
+     {
+        zxdg_imported_v1_send_destroyed(im->res);
+        free(im);
+        return;
+     }
+
+   im->ex = ex;
+   wl_resource_set_user_data(im->res, im);
+   ex->imported = eina_list_append(ex->imported, im);
+}
+
+/////////////////////////////////////////////////////////
+
 static const struct zwp_e_session_recovery_interface _e_session_recovery_interface =
 {
    _e_comp_wl_session_recovery_get_uuid,
@@ -222,6 +431,18 @@ static const struct zwp_screenshooter_interface _e_screenshooter_interface =
 static const struct www_interface _e_www_interface =
 {
    _e_comp_wl_www_cb_create
+};
+
+static const struct zxdg_exporter_v1_interface _e_zxdg_exporter_v1_interface =
+{
+   _e_comp_wl_zxdg_exporter_v1_exporter_destroy,
+   _e_comp_wl_zxdg_exporter_v1_export,
+};
+
+static const struct zxdg_importer_v1_interface _e_zxdg_importer_v1_interface =
+{
+   _e_comp_wl_zxdg_importer_v1_importer_destroy,
+   _e_comp_wl_zxdg_importer_v1_import,
 };
 
 
@@ -244,6 +465,8 @@ _e_comp_wl_##NAME##_cb_bind(struct wl_client *client, void *data EINA_UNUSED, ui
 GLOBAL_BIND_CB(session_recovery, zwp_e_session_recovery_interface)
 GLOBAL_BIND_CB(screenshooter, zwp_screenshooter_interface)
 GLOBAL_BIND_CB(www, www_interface)
+GLOBAL_BIND_CB(zxdg_exporter_v1, zxdg_exporter_v1_interface)
+GLOBAL_BIND_CB(zxdg_importer_v1, zxdg_importer_v1_interface)
 
 
 #define GLOBAL_CREATE_OR_RETURN(NAME, IFACE, VERSION) \
@@ -285,6 +508,9 @@ e_comp_wl_extensions_init(void)
    GLOBAL_CREATE_OR_RETURN(session_recovery, zwp_e_session_recovery_interface, 1);
    GLOBAL_CREATE_OR_RETURN(screenshooter, zwp_screenshooter_interface, 1);
    GLOBAL_CREATE_OR_RETURN(www, www_interface, 1);
+   GLOBAL_CREATE_OR_RETURN(zxdg_exporter_v1, zxdg_exporter_v1_interface, 1);
+   e_comp_wl->extensions->zxdg_exporter_v1.surfaces = eina_hash_string_superfast_new(NULL);
+   GLOBAL_CREATE_OR_RETURN(zxdg_importer_v1, zxdg_importer_v1_interface, 1);
 
    ecore_event_handler_add(ECORE_WL2_EVENT_SYNC_DONE, _dmabuf_add, NULL);
 

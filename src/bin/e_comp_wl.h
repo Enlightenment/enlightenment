@@ -110,6 +110,17 @@ typedef struct E_Comp_Wl_Extension_Data
    {
        struct wl_global *global;
    } www;
+   /* begin xdg-foreign */
+   struct
+   {
+      struct wl_global *global;
+      Eina_Hash *surfaces;
+   } zxdg_exporter_v1;
+   struct
+   {
+      struct wl_global *global;
+   } zxdg_importer_v1;
+   /* end xdg-foreign */
 } E_Comp_Wl_Extension_Data;
 
 struct _E_Comp_Wl_Data
