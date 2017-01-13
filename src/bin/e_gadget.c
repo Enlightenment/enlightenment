@@ -272,6 +272,7 @@ _gadget_object_free(E_Object *eobj)
    E_FREE(zgc->e_obj_inherit);
    zgc->configure = NULL;
    zgc->display_del = zgc->moving = zgc->resizing = 0;
+   if (zgc->id == -1) _gadget_free(zgc);
 }
 
 static void
