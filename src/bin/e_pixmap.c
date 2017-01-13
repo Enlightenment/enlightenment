@@ -457,11 +457,6 @@ e_pixmap_refresh(E_Pixmap *cp)
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(cp, EINA_FALSE);
 
-   if (!cp->usable)
-     {
-        cp->failures++;
-        return EINA_FALSE;
-     }
    if (!cp->dirty) return EINA_TRUE;
    switch (cp->type)
      {
@@ -472,6 +467,11 @@ e_pixmap_refresh(E_Pixmap *cp)
            int pw, ph;
            E_Comp_X_Client_Data *cd = NULL;
 
+           if (!cp->usable)
+             {
+                cp->failures++;
+                return EINA_FALSE;
+             }
            pixmap = ecore_x_composite_name_window_pixmap_get(cp->parent ?: (Ecore_X_Window)cp->win);
            if (cp->client)
              {
