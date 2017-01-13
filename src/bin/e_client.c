@@ -5530,3 +5530,51 @@ e_client_layout_cb_set(E_Client_Layout_Cb cb)
    _e_client_layout_cb = cb;
 }
 
+////////////////////////////////////////////
+
+E_API void
+e_client_parent_set(E_Client *ec, E_Client *parent)
+{
+   E_OBJECT_CHECK(ec);
+   E_OBJECT_TYPE_CHECK(ec, E_CLIENT_TYPE);
+   if (parent)
+     {
+        E_OBJECT_CHECK(parent);
+        E_OBJECT_TYPE_CHECK(parent, E_CLIENT_TYPE);
+     }
+
+   if (ec == parent)
+     {
+        ERR("refusing to set client as its own parent");
+        return;
+     }
+
+   if (parent && (parent->parent == ec))
+     {
+        ERR("refusing to set client as its parent's parent");
+        return;
+     }
+
+   if (ec->parent == parent) return;
+
+   /* If we already have a parent, remove it */
+   if (ec->parent)
+     {
+        ec->parent->transients = eina_list_remove(ec->parent->transients, ec);
+        if (ec->parent->modal == ec) ec->parent->modal = NULL;
+        ec->parent = NULL;
+     }
+   if (parent)
+     {
+        parent->transients = eina_list_append(parent->transients, ec);
+        ec->parent = parent;
+     }
+   if (ec->parent && (!e_client_util_ignored_get(ec)))
+     {
+        evas_object_layer_set(ec->frame, ec->parent->layer);
+
+        if ((e_config->focus_setting == E_FOCUS_NEW_DIALOG) ||
+            (ec->parent->focused && (e_config->focus_setting == E_FOCUS_NEW_DIALOG_IF_OWNER_FOCUSED)))
+          ec->take_focus = 1;
+     }
+}

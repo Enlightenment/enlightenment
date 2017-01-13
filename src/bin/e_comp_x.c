@@ -3826,34 +3826,10 @@ _e_comp_x_hook_client_fetch(void *d EINA_UNUSED, E_Client *ec)
         ec->icccm.transient_for = ecore_x_icccm_transient_for_get(win);
         if (ec->icccm.transient_for)
           ec_parent = _e_comp_x_client_find_by_window(ec->icccm.transient_for);
-        /* If we already have a parent, remove it */
-        if (ec->parent)
-          {
-             if (ec_parent != ec->parent)
-               {
-                  ec->parent->transients = eina_list_remove(ec->parent->transients, ec);
-                  if (ec->parent->modal == ec) ec->parent->modal = NULL;
-                  ec->parent = NULL;
-               }
-             else
-               ec_parent = NULL;
-          }
-        if ((ec_parent) && (ec_parent != ec) &&
-            (eina_list_data_find(ec->transients, ec_parent) != ec_parent))
-          {
-             ec_parent->transients = eina_list_append(ec_parent->transients, ec);
-             ec->parent = ec_parent;
-          }
-        if (ec->parent && (!e_client_util_ignored_get(ec)))
-          {
-             evas_object_layer_set(ec->frame, ec->parent->layer);
-             if (ec->netwm.state.modal)
-               _e_comp_x_client_modal_setup(ec);
 
-             if (e_config->focus_setting == E_FOCUS_NEW_DIALOG ||
-                 (ec->parent->focused && (e_config->focus_setting == E_FOCUS_NEW_DIALOG_IF_OWNER_FOCUSED)))
-               ec->take_focus = 1;
-          }
+        e_client_parent_set(ec, ec_parent);
+        if (ec->parent && (!e_client_util_ignored_get(ec)) && ec->netwm.state.modal)
+          _e_comp_x_client_modal_setup(ec);
         if ((ec_parent) && (ec->e.state.stack != ECORE_X_STACK_NONE))
           {
              E_Client *ec2;
