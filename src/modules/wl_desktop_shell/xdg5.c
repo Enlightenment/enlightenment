@@ -237,6 +237,7 @@ _e_xdg_shell_surface_cb_move(struct wl_client *client EINA_UNUSED, struct wl_res
    if (e_object_is_del(E_OBJECT(ec))) return;
 
    if ((ec->maximized) || (ec->fullscreen)) return;
+   if (serial != e_comp_wl->ptr.serial[0]) return;
 
    switch (e_comp_wl->ptr.button)
      {
@@ -280,6 +281,7 @@ _e_xdg_shell_surface_cb_resize(struct wl_client *client EINA_UNUSED, struct wl_r
         return;
      }
    if (e_object_is_del(E_OBJECT(ec))) return;
+   if (serial != e_comp_wl->ptr.serial[0]) return;
 
    if ((edges == 0) || (edges > 15) ||
        ((edges & 3) == 3) || ((edges & 12) == 12)) return;

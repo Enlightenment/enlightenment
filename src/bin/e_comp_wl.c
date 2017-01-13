@@ -3321,7 +3321,7 @@ e_comp_wl_evas_handle_mouse_button(E_Client *ec, uint32_t timestamp, uint32_t bu
 {
    Eina_List *l;
    struct wl_client *wc;
-   uint32_t serial, btn;
+   uint32_t serial, btn, *state_serial;
    struct wl_resource *res;
 
    if (ec->cur_mouse_action || ec->border_menu || e_comp_wl->drag)
@@ -3353,12 +3353,16 @@ e_comp_wl_evas_handle_mouse_button(E_Client *ec, uint32_t timestamp, uint32_t bu
      }
 
    if (state == WL_POINTER_BUTTON_STATE_PRESSED)
-     e_comp_wl->ptr.button_mask |= 1 << button_id;
+     {
+        e_comp_wl->ptr.button_mask |= 1 << button_id;
+        state_serial = &e_comp_wl->ptr.serial[0];
+     }
    else
      {
         /* reject release events if button is not pressed */
         if (!(e_comp_wl->ptr.button_mask & (1 << button_id))) return EINA_FALSE;
         e_comp_wl->ptr.button_mask &= ~(1 << button_id);
+        state_serial = &e_comp_wl->ptr.serial[1];
      }
    e_comp_wl->ptr.button = btn;
 
@@ -3368,7 +3372,7 @@ e_comp_wl_evas_handle_mouse_button(E_Client *ec, uint32_t timestamp, uint32_t bu
      return EINA_TRUE;
 
    wc = wl_resource_get_client(ec->comp_data->surface);
-   serial = wl_display_next_serial(e_comp_wl->wl.disp);
+   *state_serial = serial = wl_display_next_serial(e_comp_wl->wl.disp);
 
    EINA_LIST_FOREACH(e_comp_wl->ptr.resources, l, res)
      {
