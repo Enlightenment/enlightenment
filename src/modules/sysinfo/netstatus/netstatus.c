@@ -15,22 +15,6 @@ _netstatus_face_update(Instance *inst)
 {
    Edje_Message_Int_Set *msg;
 
-   if (inst->cfg->netstatus.incurrent > 0)
-     {
-        elm_layout_signal_emit(inst->cfg->netstatus.o_gadget, "e,state,received,active", "e");
-     }
-   else
-     {
-        elm_layout_signal_emit(inst->cfg->netstatus.o_gadget, "e,state,received,idle", "e");
-     }
-   if (inst->cfg->netstatus.outcurrent > 0)
-     {
-        elm_layout_signal_emit(inst->cfg->netstatus.o_gadget, "e,state,transmitted,active", "e");
-     }
-   else
-     {
-        elm_layout_signal_emit(inst->cfg->netstatus.o_gadget, "e,state,transmitted,idle", "e");
-     }
    msg = malloc(sizeof(Edje_Message_Int_Set) + 6 * sizeof(int));
    EINA_SAFETY_ON_NULL_RETURN(msg);
    msg->count = 6;
