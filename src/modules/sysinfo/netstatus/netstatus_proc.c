@@ -24,9 +24,20 @@ _netstatus_proc_getrstatus(Instance *inst)
         fclose(f);
      }
    diffin = tot_in - inst->cfg->netstatus.in;
-   inst->cfg->netstatus.in = tot_in;
-   if (tot_in > inst->cfg->netstatus.inmax)
-     inst->cfg->netstatus.inmax = tot_in;
+   if (!inst->cfg->netstatus.in)
+     inst->cfg->netstatus.in = tot_in;
+   else
+     {
+        inst->cfg->netstatus.in = tot_in;
+        if (diffin > inst->cfg->netstatus.inmax)
+          inst->cfg->netstatus.inmax = diffin;
+        inst->cfg->netstatus.incurrent = diffin;
+        if (inst->cfg->netstatus.inmax > 0)
+          percent = 100 * ((float)inst->cfg->netstatus.incurrent / (float)inst->cfg->netstatus.inmax);
+        if (percent > 100) percent = 100;
+        else if (percent < 0) percent = 0;
+        inst->cfg->netstatus.inpercent = percent;
+     }
    if (!diffin)
      {
         snprintf(rin, sizeof(rin), "%s: 0 B/s", _("Receiving"));
@@ -41,13 +52,6 @@ _netstatus_proc_getrstatus(Instance *inst)
         else
           snprintf(rin, sizeof(rin), "%s: %lu B/s", _("Receiving"), diffin);
      }
-   inst->cfg->netstatus.incurrent = diffin;
-   if (inst->cfg->netstatus.inmax > 0)
-     percent = 100 * ((float)diffin / (float)inst->cfg->netstatus.inmax);
-
-   if (percent > 100) percent = 100;
-   else if (percent < 0) percent = 0;
-   inst->cfg->netstatus.inpercent = percent;
    eina_stringshare_replace(&inst->cfg->netstatus.instring, rin);
 }
 
@@ -75,9 +79,20 @@ _netstatus_proc_gettstatus(Instance *inst)
         fclose(f);
      }
    diffout = tot_out - inst->cfg->netstatus.out;
-   inst->cfg->netstatus.out = tot_out;
-   if (tot_out > inst->cfg->netstatus.outmax)
-     inst->cfg->netstatus.outmax = tot_out;
+   if (!inst->cfg->netstatus.out)
+     inst->cfg->netstatus.out = tot_out;
+   else
+     {
+        inst->cfg->netstatus.out = tot_out;
+        if (diffout > inst->cfg->netstatus.outmax)
+          inst->cfg->netstatus.outmax = diffout;
+        inst->cfg->netstatus.outcurrent = diffout;
+        if (inst->cfg->netstatus.outcurrent > 0)
+          percent = 100 * ((float)inst->cfg->netstatus.outcurrent / (float)inst->cfg->netstatus.outmax);
+        if (percent > 100) percent = 100;
+        else if (percent < 0) percent = 0;
+        inst->cfg->netstatus.outpercent = percent;
+     }
    if (!diffout)
      {
         snprintf(rout, sizeof(rout), "%s: 0 B/s", _("Sending"));
@@ -92,13 +107,6 @@ _netstatus_proc_gettstatus(Instance *inst)
         else
           snprintf(rout, sizeof(rout), "%s: %lu B/s", _("Sending"), diffout);
      }
-   inst->cfg->netstatus.outcurrent = diffout;
-   if (inst->cfg->netstatus.outcurrent > 0)
-     percent = 100 * ((float)diffout / (float)inst->cfg->netstatus.outmax);
-
-   if (percent > 100) percent = 100;
-   else if (percent < 0) percent = 0;
-   inst->cfg->netstatus.outpercent = percent;
    eina_stringshare_replace(&inst->cfg->netstatus.outstring, rout);
 }
 
