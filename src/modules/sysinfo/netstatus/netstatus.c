@@ -37,10 +37,10 @@ _netstatus_face_update(Instance *inst)
    msg->val[0] = inst->cfg->netstatus.incurrent;
    msg->val[1] = inst->cfg->netstatus.inpercent;
    msg->val[2] = inst->cfg->netstatus.inmax;
-   msg->val[0] = inst->cfg->netstatus.outcurrent;
-   msg->val[1] = inst->cfg->netstatus.outpercent;
-   msg->val[2] = inst->cfg->netstatus.outmax;
-   edje_object_message_send(elm_layout_edje_get(inst->cfg->memusage.o_gadget),
+   msg->val[3] = inst->cfg->netstatus.outcurrent;
+   msg->val[4] = inst->cfg->netstatus.outpercent;
+   msg->val[5] = inst->cfg->netstatus.outmax;
+   edje_object_message_send(elm_layout_edje_get(inst->cfg->netstatus.o_gadget),
                             EDJE_MESSAGE_INT_SET, 1, msg);
    free(msg);
 }
