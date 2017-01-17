@@ -59,8 +59,8 @@ _e_comp_wl_input_pointer_cb_cursor_set(struct wl_client *client, struct wl_resou
        if (client != wl_resource_get_client(ec->comp_data->surface)) continue;
        if (ec->mouse.in)
          {
-           got_mouse = EINA_TRUE;
-           break;
+            got_mouse = EINA_TRUE;
+            break;
          }
      }
    if (!got_mouse) return;
@@ -107,7 +107,6 @@ static const struct wl_touch_interface _e_touch_interface =
 {
    _e_comp_wl_input_cb_resource_destroy
 };
-
 
 static void
 _e_comp_wl_input_cb_pointer_unbind(struct wl_resource *resource)
@@ -348,7 +347,6 @@ _e_comp_wl_input_keymap_fd_get(off_t size)
    return fd;
 }
 
-
 static void
 _e_comp_wl_input_state_update(void)
 {
@@ -370,10 +368,8 @@ _e_comp_wl_input_state_update(void)
    e_comp_wl->xkb.state = xkb_state_new(e_comp_wl->xkb.keymap);
 
    xkb_state_update_mask(e_comp_wl->xkb.state, 0,
-                         latched, locked,
-                         e_comp_wl->kbd.choosen_group,
-                         0,
-                         0);
+                         latched, locked, e_comp_wl->kbd.choosen_group,
+                         0, 0);
 }
 
 static void
@@ -697,8 +693,6 @@ e_comp_wl_input_keymap_index_set(xkb_layout_index_t index)
      }
    else
      choosen_group = index;
-
-
 }
 
 E_API void
