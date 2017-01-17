@@ -1193,6 +1193,11 @@ _drm2_cb_seat_caps(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
    else if (ev->keyboard_count > 0)
      e_comp_wl_input_keyboard_enabled_set(EINA_TRUE);
 
+   if (ev->touch_count <= 0)
+     e_comp_wl_input_touch_enabled_set(EINA_FALSE);
+   else if (ev->touch_count > 0)
+     e_comp_wl_input_touch_enabled_set(EINA_TRUE);
+
    return ECORE_CALLBACK_RENEW;
 }
 
