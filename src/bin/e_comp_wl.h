@@ -381,7 +381,7 @@ E_API void e_comp_wl_output_remove(const char *id);
 
 EINTERN Eina_Bool e_comp_wl_key_down(Ecore_Event_Key *ev);
 EINTERN Eina_Bool e_comp_wl_key_up(Ecore_Event_Key *ev);
-E_API Eina_Bool e_comp_wl_evas_handle_mouse_button(E_Client *ec, uint32_t timestamp, uint32_t button_id, uint32_t state);
+E_API Eina_Bool e_comp_wl_evas_handle_mouse_button(E_Client *ec, uint32_t timestamp, uint32_t button_id, int x, int y, uint32_t state);
 
 E_API extern int E_EVENT_WAYLAND_GLOBAL_ADD;
 

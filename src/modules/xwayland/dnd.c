@@ -93,9 +93,11 @@ _xwayland_drop(E_Drag *drag, int dropped)
    if (e_comp->comp_type != E_PIXMAP_TYPE_WL) return;
    e_comp_wl->drag = NULL;
    if ((!e_comp_wl->ptr.ec) ||
-     (wl_resource_get_client(e_comp_wl->ptr.ec->comp_data->surface) != e_comp_wl->xwl_client))
+       (wl_resource_get_client(e_comp_wl->ptr.ec->comp_data->surface) != e_comp_wl->xwl_client))
      e_comp_wl_evas_handle_mouse_button(e_comp_wl->drag_client, 0,
-       e_comp_wl->ptr.button, WL_POINTER_BUTTON_STATE_RELEASED);
+                                        e_comp_wl->ptr.button,
+                                        e_comp_wl->ptr.x, e_comp_wl->ptr.y,
+                                        WL_POINTER_BUTTON_STATE_RELEASED);
    if (dropped || e_object_is_del(E_OBJECT(drag)) || (!e_comp_wl->selection.target))
      _xdnd_finish(0);
    else

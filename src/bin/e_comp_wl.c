@@ -369,6 +369,15 @@ _e_comp_wl_send_mouse_move(E_Client *ec, int x, int y, unsigned int timestamp)
                                wl_fixed_from_int(x - ec->client.x),
                                wl_fixed_from_int(y - ec->client.y));
      }
+
+   EINA_LIST_FOREACH(e_comp_wl->touch.resources, l, res)
+     {
+        if (!e_comp_wl_input_touch_check(res)) continue;
+        if (wl_resource_get_client(res) != wc) continue;
+        wl_touch_send_motion(res, timestamp, 1,
+                             wl_fixed_from_int(x - ec->client.x),
+                             wl_fixed_from_int(y - ec->client.y));
+     }
 }
 
 static void
@@ -395,6 +404,7 @@ _e_comp_wl_evas_cb_mouse_down(void *data, Evas *evas EINA_UNUSED, Evas_Object *o
    Evas_Event_Mouse_Down *ev = event;
 
    e_comp_wl_evas_handle_mouse_button(ec, ev->timestamp, ev->button,
+                                      ev->canvas.x, ev->canvas.y,
                                       WL_POINTER_BUTTON_STATE_PRESSED);
 }
 
@@ -405,6 +415,7 @@ _e_comp_wl_evas_cb_mouse_up(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj
    Evas_Event_Mouse_Up *ev = event;
 
    e_comp_wl_evas_handle_mouse_button(ec, ev->timestamp, ev->button,
+                                      ev->canvas.x, ev->canvas.y,
                                       WL_POINTER_BUTTON_STATE_RELEASED);
 }
 
@@ -1342,7 +1353,6 @@ _e_comp_wl_surface_state_commit(E_Client *ec, E_Comp_Wl_Surface_State *state)
      _e_comp_wl_surface_state_attach(ec, state);
 
    _e_comp_wl_surface_state_buffer_set(state, NULL);
-
 
    if (ec->comp_data->shell.surface)
      {
@@ -3317,7 +3327,7 @@ e_comp_wl_key_up(Ecore_Event_Key *ev)
 }
 
 E_API Eina_Bool
-e_comp_wl_evas_handle_mouse_button(E_Client *ec, uint32_t timestamp, uint32_t button_id, uint32_t state)
+e_comp_wl_evas_handle_mouse_button(E_Client *ec, uint32_t timestamp, uint32_t button_id, int x, int y, uint32_t state)
 {
    Eina_List *l;
    struct wl_client *wc;
@@ -3368,9 +3378,6 @@ e_comp_wl_evas_handle_mouse_button(E_Client *ec, uint32_t timestamp, uint32_t bu
 
    if (!ec->comp_data->surface) return EINA_FALSE;
 
-   if (!eina_list_count(e_comp_wl->ptr.resources))
-     return EINA_TRUE;
-
    wc = wl_resource_get_client(ec->comp_data->surface);
    *state_serial = serial = wl_display_next_serial(e_comp_wl->wl.disp);
 
@@ -3380,6 +3387,20 @@ e_comp_wl_evas_handle_mouse_button(E_Client *ec, uint32_t timestamp, uint32_t bu
         if (!e_comp_wl_input_pointer_check(res)) continue;
         wl_pointer_send_button(res, serial, timestamp, btn, state);
      }
+
+   EINA_LIST_FOREACH(e_comp_wl->touch.resources, l, res)
+     {
+        if (wl_resource_get_client(res) != wc) continue;
+        if (!e_comp_wl_input_touch_check(res)) continue;
+        if (state == WL_POINTER_BUTTON_STATE_PRESSED)
+          wl_touch_send_down(res, serial, timestamp,
+                             ec->comp_data->surface, 0,
+                             wl_fixed_from_int(x - ec->client.x),
+                             wl_fixed_from_int(y - ec->client.y));
+        else
+          wl_touch_send_up(res, serial, timestamp, 0);
+     }
+
    return EINA_TRUE;
 }
 
