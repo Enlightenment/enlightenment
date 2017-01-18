@@ -1582,28 +1582,7 @@ _e_client_cb_evas_move(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UN
    evas_object_geometry_get(ec->frame, &x, &y, NULL, NULL);
    if (ec->stack.prev || ec->stack.next)
      {
-        if (ec->stack.ignore == 0)
-          {
-             Eina_List *l, *list = e_client_stack_list_prepare(ec);
-             E_Client *child;
-             Evas_Coord bx, by, bw, bh, cw, ch, dx, dy;
-
-             child = e_client_stack_bottom_get(ec);
-             dx = x - ec->pre_cb.x;
-             dy = y - ec->pre_cb.y;
-             if (child != ec)
-               evas_object_move(child->frame, child->x + dx, child->y + dy);
-             evas_object_geometry_get(child->frame, &bx, &by, &bw, &bh);
-             EINA_LIST_FOREACH(list->next, l, child)
-               {
-                  if (child == ec) continue;
-                  evas_object_geometry_get(child->frame, NULL, NULL, &cw, &ch);
-                  evas_object_move(child->frame,
-                                   bx + ((bw - cw) / 2),
-                                   by + ((bh - ch) / 2));
-               }
-             e_client_stack_list_finish(list);
-          }
+        // do nothing - handled by idle enterer eval
      }
    else
      {
@@ -1642,81 +1621,7 @@ _e_client_cb_evas_resize(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_
    evas_object_geometry_get(ec->frame, &x, &y, &w, &h);
    if (ec->stack.prev || ec->stack.next)
      {
-        if (ec->stack.ignore == 0)
-          {
-             Eina_List *l, *list = e_client_stack_list_prepare(ec);
-             E_Client *child;
-             Evas_Coord bx, by, bw, bh, cw, ch;
-
-             if (e_client_util_resizing_get(ec))
-               {
-                  if (ec->dialog)
-                    {
-                       child = list->data;
-                       evas_object_geometry_get(child->frame, &bx, &by, &bw, &bh);
-                       EINA_LIST_FOREACH(list, l, child)
-                         {
-                            if (child == ec) continue;
-                            if (!ec->dialog)
-                              {
-                                 evas_object_resize(child->frame, bw, bh);
-                                 cw = bw;
-                                 ch = bh;
-                              }
-                            else
-                              evas_object_geometry_get(child->frame, NULL, NULL, &cw, &ch);
-                            evas_object_move(child->frame,
-                                             bx + ((bw - cw) / 2),
-                                             by + ((bh - ch) / 2));
-                         }
-                    }
-                  else
-                    {
-                       child = e_client_stack_bottom_get(ec);
-                       evas_object_move(child->frame, x, y);
-                       evas_object_resize(child->frame, w, h);
-                       EINA_LIST_FOREACH(list->next, l, child)
-                         {
-                            if (child == ec) continue;
-                            if (!ec->dialog)
-                              {
-                                 evas_object_move(child->frame, x, y);
-                                 evas_object_resize(child->frame, w, h);
-                                 cw = w;
-                                 ch = h;
-                              }
-                            else
-                              evas_object_geometry_get(child->frame, NULL, NULL, &cw, &ch);
-                            evas_object_move(child->frame,
-                                             x + ((w - cw) / 2),
-                                             y + ((h - ch) / 2));
-                         }
-                    }
-               }
-             else
-               {
-                  if (ec == e_client_stack_bottom_get(ec))
-                    {
-                       EINA_LIST_FOREACH(list->next, l, child)
-                         {
-                            if (child == ec) continue;
-                            if (!ec->dialog)
-                              {
-                                 evas_object_move(child->frame, x, y);
-                                 evas_object_resize(child->frame, w, h);
-                                 cw = w;
-                                 ch = h;
-                              }
-                            else
-                              evas_object_geometry_get(child->frame, NULL, NULL, &cw, &ch);
-                            evas_object_move(child->frame,
-                                             x + ((w - cw) / 2),
-                                             y + ((h - ch) / 2));
-                         }
-                    }
-               }
-             e_client_stack_list_finish(list);
-          }
+        // do nothing - handled by idle enterer eval
      }
    else
      {
@@ -2541,6 +2446,53 @@ e_client_idler_before(void)
           {
              if (e_config->screen_limits != E_CLIENT_OFFSCREEN_LIMIT_ALLOW_FULL)
                _e_client_move_lost_window_to_center(ec);
+          }
+        // handle window stack
+        if (!ec->stack.prev && ec->stack.next)
+          {
+             if (ec->stack.ignore == 0)
+               {
+                  Eina_List *ll, *list = e_client_stack_list_prepare(ec);
+                  E_Client *child, *bottom, *moving = NULL, *rel;
+                  int x, y;
+
+                  bottom = rel = e_client_stack_bottom_get(ec);
+                  EINA_LIST_FOREACH(list, ll, child)
+                    {
+                       if (child->moving)
+                         {
+                            moving = child;
+                            break;
+                         }
+                    }
+                  if (moving)
+                    {
+                       Evas_Coord ox, oy;
+
+                       evas_object_geometry_get(ec->frame, &ox, &oy, NULL, NULL);
+                       rel = moving;
+                    }
+                  EINA_LIST_FOREACH(list, ll, child)
+                    {
+                       if (moving)
+                         {
+                            if (child == moving) continue;
+                         }
+                       else if (child == bottom) continue;
+                       x = rel->x + ((rel->w - child->w) / 2);
+                       y = rel->y + ((rel->h - child->h) / 2);
+                       if ((x != child->x)  || (y != child->y))
+                         {
+                            child->x = x;
+                            child->y = y;
+                            child->pre_cb.x = x;
+                            child->pre_cb.y = y;
+                            child->changes.pos = 1;
+                            child->changed = 1;
+                         }
+                    }
+                  e_client_stack_list_finish(list);
+               }
           }
      }
 
