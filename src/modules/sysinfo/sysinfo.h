@@ -27,6 +27,15 @@ enum _E_Sysinfo_Module
    E_SYSINFO_MODULE_SYSINFO
 };
 
+typedef enum _Netstatus_Unit Netstatus_Unit;
+enum _Netstatus_Unit
+{
+   NETSTATUS_UNIT_BYTES = 0,
+   NETSTATUS_UNIT_KB,
+   NETSTATUS_UNIT_MB,
+   NETSTATUS_UNIT_GB
+};
+
 typedef enum _Sensor_Type
 {
    SENSOR_TYPE_NONE,
@@ -112,6 +121,7 @@ struct _Config
 struct _Config_Item
 {
    int                     id;
+   int                     version;
    E_Sysinfo_Module        esm;
    struct
    {
@@ -203,6 +213,9 @@ struct _Config_Item
       Evas_Object         *o_gadget;
       Evas_Object         *popup;
       Evas_Object         *configure;
+      Eina_Bool            automax;
+      Netstatus_Unit       receive_units;
+      Netstatus_Unit       send_units;
       int                  poll_interval;
       long                 in;
       long                 out;

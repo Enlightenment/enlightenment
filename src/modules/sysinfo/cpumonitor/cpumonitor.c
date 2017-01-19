@@ -298,6 +298,7 @@ _cpumonitor_created_cb(void *data, Evas_Object *obj, void *event_data EINA_UNUSE
    e_gadget_configure_cb_set(inst->o_main, _cpumonitor_configure_cb);
 
    inst->cfg->cpumonitor.o_gadget = elm_box_add(inst->o_main);
+   elm_box_padding_set(inst->cfg->cpumonitor.o_gadget, 0, 0);
    if (orient == E_GADGET_SITE_ORIENT_VERTICAL)
      elm_box_horizontal_set(inst->cfg->cpumonitor.o_gadget, EINA_FALSE);
    else

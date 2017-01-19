@@ -206,9 +206,6 @@ _netstatus_created_cb(void *data, Evas_Object *obj, void *event_data EINA_UNUSED
 
    e_gadget_configure_cb_set(inst->o_main, _netstatus_configure_cb);
 
-   inst->cfg->netstatus.inmax = 0;
-   inst->cfg->netstatus.outmax = 0;
-
    inst->cfg->netstatus.o_gadget = elm_layout_add(inst->o_main);
    e_theme_edje_object_set(inst->cfg->netstatus.o_gadget, "base/theme/modules/netstatus",
                            "e/modules/netstatus/main");
@@ -224,9 +221,6 @@ _netstatus_created_cb(void *data, Evas_Object *obj, void *event_data EINA_UNUSED
 Evas_Object *
 sysinfo_netstatus_create(Evas_Object *parent, Instance *inst)
 {
-   inst->cfg->netstatus.inmax = 0;
-   inst->cfg->netstatus.outmax = 0;
-
    inst->cfg->netstatus.o_gadget = elm_layout_add(parent);
    e_theme_edje_object_set(inst->cfg->netstatus.o_gadget, "base/theme/modules/netstatus",
                            "e/modules/netstatus/main");
@@ -260,10 +254,13 @@ _conf_item_get(int *id)
 
    ci->esm = E_SYSINFO_MODULE_NETSTATUS;
    ci->netstatus.poll_interval = 32;
-   ci->netstatus.in = 0;
-   ci->netstatus.out = 0;
+   ci->netstatus.automax = EINA_TRUE;
    ci->netstatus.inmax = 0;
    ci->netstatus.outmax = 0;
+   ci->netstatus.receive_units = NETSTATUS_UNIT_BYTES;
+   ci->netstatus.send_units = NETSTATUS_UNIT_BYTES;
+   ci->netstatus.in = 0;
+   ci->netstatus.out = 0;
    ci->netstatus.incurrent = 0;
    ci->netstatus.outcurrent = 0;
    ci->netstatus.inpercent = 0;
@@ -287,8 +284,6 @@ netstatus_create(Evas_Object *parent, int *id, E_Gadget_Site_Orient orient EINA_
    *id = inst->cfg->id;
    inst->cfg->netstatus.in = 0;
    inst->cfg->netstatus.out = 0;
-   inst->cfg->netstatus.inmax = 0;
-   inst->cfg->netstatus.outmax = 0;
    inst->cfg->netstatus.incurrent = 0;
    inst->cfg->netstatus.outcurrent = 0;
    inst->cfg->netstatus.inpercent = 0;

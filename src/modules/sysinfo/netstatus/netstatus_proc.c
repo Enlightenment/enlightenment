@@ -29,8 +29,11 @@ _netstatus_proc_getrstatus(Instance *inst)
    else
      {
         inst->cfg->netstatus.in = tot_in;
-        if (diffin > inst->cfg->netstatus.inmax)
-          inst->cfg->netstatus.inmax = diffin;
+        if (inst->cfg->netstatus.automax)
+          {
+             if (diffin > inst->cfg->netstatus.inmax)
+               inst->cfg->netstatus.inmax = diffin;
+          }
         inst->cfg->netstatus.incurrent = diffin;
         if (inst->cfg->netstatus.inmax > 0)
           percent = 100 * ((float)inst->cfg->netstatus.incurrent / (float)inst->cfg->netstatus.inmax);
@@ -84,8 +87,11 @@ _netstatus_proc_gettstatus(Instance *inst)
    else
      {
         inst->cfg->netstatus.out = tot_out;
-        if (diffout > inst->cfg->netstatus.outmax)
-          inst->cfg->netstatus.outmax = diffout;
+        if (inst->cfg->netstatus.automax)
+          {
+             if (diffout > inst->cfg->netstatus.outmax)
+               inst->cfg->netstatus.outmax = diffout;
+          }
         inst->cfg->netstatus.outcurrent = diffout;
         if (inst->cfg->netstatus.outcurrent > 0)
           percent = 100 * ((float)inst->cfg->netstatus.outcurrent / (float)inst->cfg->netstatus.outmax);

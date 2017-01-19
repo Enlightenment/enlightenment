@@ -1,5 +1,7 @@
 #include "sysinfo.h"
 
+#define CONFIG_VERSION 1
+
 static E_Config_DD *conf_edd = NULL;
 static E_Config_DD *conf_item_edd = NULL;
 Eina_List *sysinfo_instances = NULL;
@@ -9,12 +11,16 @@ Config *sysinfo_config = NULL;
 EINTERN void
 sysinfo_init(void)
 {
+   Eina_List *l;
+   Config_Item *ci;
+
    conf_item_edd = E_CONFIG_DD_NEW("Sysinfo_Config_Item", Config_Item);
 #undef T
 #undef D
 #define T Config_Item
 #define D conf_item_edd
    E_CONFIG_VAL(D, T, id, INT);
+   E_CONFIG_VAL(D, T, version, INT);
    E_CONFIG_VAL(D, T, esm, INT);
    E_CONFIG_VAL(D, T, batman.poll_interval, INT);
    E_CONFIG_VAL(D, T, batman.alert, INT);
@@ -22,7 +28,7 @@ sysinfo_init(void)
    E_CONFIG_VAL(D, T, batman.alert_timeout, INT);
    E_CONFIG_VAL(D, T, batman.suspend_below, INT);
    E_CONFIG_VAL(D, T, batman.force_mode, INT);
-   #if defined HAVE_EEZE || defined __OpenBSD__ || defined __NetBSD__
+#if defined HAVE_EEZE || defined __OpenBSD__ || defined __NetBSD__
    E_CONFIG_VAL(D, T, batman.fuzzy, INT);
 #endif
    E_CONFIG_VAL(D, T, batman.desktop_notifications, INT);
@@ -42,6 +48,11 @@ sysinfo_init(void)
    E_CONFIG_VAL(D, T, cpumonitor.poll_interval, INT);
    E_CONFIG_VAL(D, T, memusage.poll_interval, INT);
    E_CONFIG_VAL(D, T, netstatus.poll_interval, INT);
+   E_CONFIG_VAL(D, T, netstatus.automax, INT);
+   E_CONFIG_VAL(D, T, netstatus.inmax, INT);
+   E_CONFIG_VAL(D, T, netstatus.receive_units, INT);
+   E_CONFIG_VAL(D, T, netstatus.outmax, INT);
+   E_CONFIG_VAL(D, T, netstatus.send_units, INT);
 
    conf_edd = E_CONFIG_DD_NEW("Sysinfo_Config", Config);
 #undef T
@@ -54,11 +65,10 @@ sysinfo_init(void)
 
    if (!sysinfo_config)
      {
-        Config_Item *ci;
-
         sysinfo_config = E_NEW(Config, 1);
         ci = E_NEW(Config_Item, 1);
         ci->id = 0;
+        ci->version = CONFIG_VERSION;
         ci->esm = E_SYSINFO_MODULE_NONE;
 
         ci->batman.poll_interval = 512;
@@ -102,6 +112,9 @@ sysinfo_init(void)
         ci->memusage.popup = NULL;
         ci->memusage.configure = NULL;
         ci->netstatus.poll_interval = 32;
+        ci->netstatus.automax = EINA_TRUE;
+        ci->netstatus.receive_units = NETSTATUS_UNIT_BYTES;
+        ci->netstatus.send_units = NETSTATUS_UNIT_BYTES;
         ci->netstatus.in = 0;
         ci->netstatus.out = 0;
         ci->netstatus.inmax = 0;
@@ -132,6 +145,19 @@ sysinfo_init(void)
         E_CONFIG_LIMIT(ci->netstatus.poll_interval, 1, 1024);
 
         sysinfo_config->items = eina_list_append(sysinfo_config->items, ci);
+     }
+   EINA_LIST_FOREACH(sysinfo_config->items, l, ci)
+     {
+        if (ci->esm == E_SYSINFO_MODULE_NETSTATUS || ci->esm == E_SYSINFO_MODULE_SYSINFO)
+          {
+             if (ci->version < CONFIG_VERSION)
+               {
+                  ci->version = CONFIG_VERSION;
+                  ci->netstatus.automax = EINA_TRUE;
+                  ci->netstatus.receive_units = NETSTATUS_UNIT_BYTES;
+                  ci->netstatus.send_units = NETSTATUS_UNIT_BYTES;
+               }
+          }
      }
    e_gadget_type_add("Batman", batman_create, NULL);
    e_gadget_type_add("Thermal", thermal_create, NULL);

@@ -135,6 +135,11 @@ _conf_item_get(int *id)
    ci->netstatus.outstring = NULL;
    ci->netstatus.popup = NULL;
    ci->netstatus.configure = NULL;
+   ci->netstatus.automax = EINA_TRUE;
+   ci->netstatus.inmax = 0;
+   ci->netstatus.outmax = 0;
+   ci->netstatus.receive_units = NETSTATUS_UNIT_BYTES;
+   ci->netstatus.send_units = NETSTATUS_UNIT_BYTES;
 
    sysinfo_config->items = eina_list_append(sysinfo_config->items, ci);
 
