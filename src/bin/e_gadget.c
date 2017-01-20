@@ -1056,12 +1056,12 @@ _site_drop(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
                EINA_LIST_REVERSE_FOREACH(drop->gadgets, ll, dzgc)
                  {
                     evas_object_smart_callback_call(zgs->layout, "gadget_moved", dzgc->gadget);
+                    if (dzgc->id == -1) dzgc->id = 0;
                     evas_object_del(dzgc->gadget);
                     zgs->gadget_list = eina_inlist_prepend_relative(zgs->gadget_list,
                       EINA_INLIST_GET(dzgc), EINA_INLIST_GET(zgc));
                     zgs->gadgets = eina_list_prepend_relative_list(zgs->gadgets, dzgc, l);
                     dzgc->site = zgs;
-                    if (dzgc->id == -1) dzgc->id = 0;
                     dzgc->zone = -1;
                     _gadget_object_finalize(dzgc);
                  }
@@ -1069,12 +1069,12 @@ _site_drop(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
                EINA_LIST_REVERSE_FOREACH(drop->gadgets, ll, dzgc)
                  {
                     evas_object_smart_callback_call(zgs->layout, "gadget_moved", dzgc->gadget);
+                    if (dzgc->id == -1) dzgc->id = 0;
                     evas_object_del(dzgc->gadget);
                     zgs->gadget_list = eina_inlist_append_relative(zgs->gadget_list,
                       EINA_INLIST_GET(dzgc), EINA_INLIST_GET(zgc));
                     zgs->gadgets = eina_list_append_relative_list(zgs->gadgets, dzgc, l);
                     dzgc->site = zgs;
-                    if (dzgc->id == -1) dzgc->id = 0;
                     dzgc->zone = -1;
                     _gadget_object_finalize(dzgc);
                  }
@@ -1123,12 +1123,12 @@ _site_drop(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
                   EINA_LIST_FOREACH(drop->gadgets, l, dzgc)
                     {
                        evas_object_smart_callback_call(zgs->layout, "gadget_moved", dzgc->gadget);
+                       if (dzgc->id == -1) dzgc->id = 0;
                        evas_object_del(dzgc->gadget);
                        zgs->gadget_list = eina_inlist_append(zgs->gadget_list,
                          EINA_INLIST_GET(dzgc));
                        zgs->gadgets = eina_list_append(zgs->gadgets, dzgc);
                        dzgc->site = zgs;
-                       if (dzgc->id == -1) dzgc->id = 0;
                        dzgc->zone = -1;
                        _gadget_object_finalize(dzgc);
                     }
@@ -1169,6 +1169,7 @@ _site_drop(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
                     }
                   else
                     dzgc->zone = -1;
+                  if (dzgc->id == -1) dzgc->id = 0;
                   evas_object_del(dzgc->gadget);
                   zgs->gadget_list = eina_inlist_append(zgs->gadget_list,
                     EINA_INLIST_GET(dzgc));
@@ -1178,7 +1179,6 @@ _site_drop(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
                   dzgc->w = gw / (double)w;
                   dzgc->h = gh / (double)h;
                   dzgc->site = zgs;
-                  if (dzgc->id == -1) dzgc->id = 0;
                   _gadget_object_finalize(dzgc);
                }
           }
