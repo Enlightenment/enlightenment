@@ -1398,13 +1398,9 @@ _bar_empty(Instance *inst)
 {
    if (inst->icons)
      {
-        Icon *ic;
-        Eina_List *l;
-
         elm_box_clear(inst->o_icon_con);
-        EINA_LIST_FOREACH(inst->icons, l, ic)
-          _bar_icon_del(inst, ic);
-        eina_list_free(inst->icons);
+        while (inst->icons)
+          _bar_icon_del(inst, eina_list_data_get(inst->icons));
         inst->icons = NULL;
      }
 }
