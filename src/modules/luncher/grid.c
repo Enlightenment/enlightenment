@@ -336,14 +336,10 @@ _grid_empty(Instance *inst)
 {
    if (inst->icons)
      {
-        Icon *ic;
-        Eina_List *l;
-
         elm_gengrid_clear(inst->o_icon_con);
-        EINA_LIST_FOREACH(inst->icons, l, ic)
-          _grid_icon_del(inst, ic);
-        eina_list_free(inst->icons);
-        inst->icons = NULL;
+        while (inst->icons)
+          _grid_icon_del(inst, eina_list_data_get(inst->icons));
+	inst->icons = NULL;
      }
 }
 
