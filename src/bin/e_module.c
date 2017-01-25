@@ -1033,6 +1033,7 @@ _e_module_whitelist_check(void)
       "shot",
       "start",
       "syscon",
+      "sysinfo",
       "systray",
       "tasks",
       "teamwork",
