@@ -23,6 +23,14 @@ _memusage_face_update(Instance *inst, int mem, int swap)
    edje_object_message_send(elm_layout_edje_get(inst->cfg->memusage.o_gadget),
                             EDJE_MESSAGE_INT_SET, 1, msg);
    free(msg);
+
+   if (inst->cfg->memusage.popup)
+     {
+        char text[4096];
+        snprintf(text, sizeof(text), "%s: %d%%<br>%s: %d%%", _("Total Memory Usage"),
+                 inst->cfg->memusage.real, _("Total Swap Usage"), inst->cfg->memusage.swap);
+        elm_object_text_set(inst->cfg->memusage.popup_label, text);
+     }
 }
 
 static Evas_Object *
@@ -79,6 +87,7 @@ _memusage_mouse_down_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_U
         elm_object_text_set(label, text);
         elm_object_content_set(popup, label);
         evas_object_show(label);
+        inst->cfg->memusage.popup_label = label;
 
         e_comp_object_util_autoclose(popup, NULL, NULL, NULL);
         evas_object_show(popup);
@@ -99,6 +108,17 @@ _memusage_mouse_down_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_U
         else
           e_gadget_configure(inst->o_main);
      }
+}
+
+static void
+_memusage_resize_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_data EINA_UNUSED)
+{
+   Evas_Coord w, h;
+   Instance *inst = data;
+
+   evas_object_geometry_get(inst->cfg->memusage.o_gadget, 0, 0, &w, &h);
+   if (inst->cfg->esm == E_SYSINFO_MODULE_MEMUSAGE)
+     evas_object_size_hint_aspect_set(inst->o_main, EVAS_ASPECT_CONTROL_BOTH, w, h);
 }
 
 static void
@@ -197,44 +217,6 @@ sysinfo_memusage_remove(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_U
 }
 
 static void
-_memusage_eval_instance_aspect(Instance *inst)
-{
-   Evas_Coord w, h;
-   Evas_Coord sw = 0, sh = 0;
-   Evas_Object *owner, *ed;
-
-   if (!inst->o_main)
-     return;
-
-   owner = e_gadget_site_get(inst->o_main);
-   if (!owner)
-     return;
-
-   switch (e_gadget_site_orient_get(owner))
-     {
-        case E_GADGET_SITE_ORIENT_HORIZONTAL:
-        case E_GADGET_SITE_ORIENT_NONE:
-           evas_object_geometry_get(owner, NULL, NULL, NULL, &sh);
-           sw = sh;
-           break;
-
-        case E_GADGET_SITE_ORIENT_VERTICAL:
-           evas_object_geometry_get(owner, NULL, NULL, &sw, NULL);
-           sh = sw;
-           break;
-
-        default:
-           sw = sh = 48;
-           break;
-     }
-
-   evas_object_resize(inst->cfg->memusage.o_gadget, sw, sh);
-   ed = elm_layout_edje_get(inst->cfg->memusage.o_gadget);
-   edje_object_parts_extends_calc(ed, NULL, NULL, &w, &h);
-   evas_object_size_hint_aspect_set(inst->o_main, EVAS_ASPECT_CONTROL_BOTH, w, h);
-}
-
-static void
 _memusage_created_cb(void *data, Evas_Object *obj, void *event_data EINA_UNUSED)
 {
    Instance *inst = data;
@@ -256,9 +238,9 @@ _memusage_created_cb(void *data, Evas_Object *obj, void *event_data EINA_UNUSED)
    E_FILL(inst->cfg->memusage.o_gadget);
    elm_box_pack_end(inst->o_main, inst->cfg->memusage.o_gadget);
    evas_object_event_callback_add(inst->cfg->memusage.o_gadget, EVAS_CALLBACK_MOUSE_DOWN, _memusage_mouse_down_cb, inst);
+   evas_object_event_callback_add(inst->cfg->memusage.o_gadget, EVAS_CALLBACK_RESIZE, _memusage_resize_cb, inst);
    evas_object_show(inst->cfg->memusage.o_gadget);
    evas_object_smart_callback_del_full(obj, "gadget_created", _memusage_created_cb, data);
-   _memusage_eval_instance_aspect(inst);
    _memusage_config_updated(inst);
 }
 
@@ -271,8 +253,8 @@ sysinfo_memusage_create(Evas_Object *parent, Instance *inst)
    E_EXPAND(inst->cfg->memusage.o_gadget);
    E_FILL(inst->cfg->memusage.o_gadget);
    evas_object_event_callback_add(inst->cfg->memusage.o_gadget, EVAS_CALLBACK_MOUSE_DOWN, _memusage_mouse_down_cb, inst);
+   evas_object_event_callback_add(inst->cfg->memusage.o_gadget, EVAS_CALLBACK_RESIZE, _memusage_resize_cb, inst);
    evas_object_show(inst->cfg->memusage.o_gadget);
-   _memusage_eval_instance_aspect(inst);
    _memusage_config_updated(inst);
 
    return inst->cfg->memusage.o_gadget;

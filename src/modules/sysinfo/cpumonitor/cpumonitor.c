@@ -26,6 +26,12 @@ _cpumonitor_face_update(Instance *inst)
                             usage_msg);
         free(usage_msg);
      }
+   if (inst->cfg->cpumonitor.popup)
+     {
+        char text[4096];
+        snprintf(text, sizeof(text), "%s: %d%%", _("Total CPU Usage"), inst->cfg->cpumonitor.percent);
+        elm_object_text_set(inst->cfg->cpumonitor.popup_label, text);
+     }
 }
 
 static Evas_Object *
@@ -81,7 +87,8 @@ _cpumonitor_mouse_down_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA
         elm_object_text_set(label, text);
         elm_object_content_set(popup, label);
         evas_object_show(label);
-   
+        inst->cfg->cpumonitor.popup_label = label;  
+ 
         e_comp_object_util_autoclose(popup, NULL, NULL, NULL);
         evas_object_show(popup);
         e_gadget_util_ctxpopup_place(inst->o_main, popup, inst->cfg->cpumonitor.o_gadget);
@@ -101,6 +108,16 @@ _cpumonitor_mouse_down_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA
         else
           e_gadget_configure(inst->o_main);
      }
+}
+
+static void
+_cpumonitor_resize_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_data EINA_UNUSED)
+{
+   Evas_Coord w, h;
+   Instance *inst = data;
+
+   evas_object_geometry_get(inst->cfg->cpumonitor.o_gadget, 0, 0, &w, &h);
+   evas_object_size_hint_aspect_set(inst->o_main, EVAS_ASPECT_CONTROL_BOTH, w, h);
 }
 
 static void
@@ -244,52 +261,6 @@ sysinfo_cpumonitor_remove(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA
 }
 
 static void
-_cpumonitor_eval_instance_aspect(Instance *inst)
-{
-   Evas_Coord w, h;
-   Evas_Coord sw = 1, sh = 1;
-   Evas_Object *owner, *ed;
-   CPU_Core *first_core;
-   int num_cores = eina_list_count(inst->cfg->cpumonitor.cores);
-
-   if (num_cores < 1)
-     return;
-
-   if (!inst->o_main)
-     return;
-
-   owner = e_gadget_site_get(inst->o_main);
-   if (!owner)
-     return;
-
-   switch (e_gadget_site_orient_get(owner))
-     {
-        case E_GADGET_SITE_ORIENT_HORIZONTAL:
-        case E_GADGET_SITE_ORIENT_NONE:
-           evas_object_geometry_get(owner, NULL, NULL, NULL, &sh);
-           break;
-
-        case E_GADGET_SITE_ORIENT_VERTICAL:
-           evas_object_geometry_get(owner, NULL, NULL, &sw, NULL);
-           break;
-
-        default:
-           sw = sh = 48;
-           break;
-     }
-
-   first_core = eina_list_nth(inst->cfg->cpumonitor.cores, 0);
-   evas_object_resize(first_core->layout, sw, sh);
-   ed = elm_layout_edje_get(first_core->layout);
-   edje_object_parts_extends_calc(ed, NULL, NULL, &w, &h);
-   if (e_gadget_site_orient_get(owner) == E_GADGET_SITE_ORIENT_VERTICAL)
-     h *= num_cores;
-   else
-     w *= num_cores;
-   evas_object_size_hint_aspect_set(inst->o_main, EVAS_ASPECT_CONTROL_BOTH, w, h);
-}
-
-static void
 _cpumonitor_created_cb(void *data, Evas_Object *obj, void *event_data EINA_UNUSED)
 {
    Instance *inst = data;
@@ -299,6 +270,7 @@ _cpumonitor_created_cb(void *data, Evas_Object *obj, void *event_data EINA_UNUSE
 
    inst->cfg->cpumonitor.o_gadget = elm_box_add(inst->o_main);
    elm_box_padding_set(inst->cfg->cpumonitor.o_gadget, 0, 0);
+   elm_box_homogeneous_set(inst->cfg->cpumonitor.o_gadget, EINA_TRUE);
    if (orient == E_GADGET_SITE_ORIENT_VERTICAL)
      elm_box_horizontal_set(inst->cfg->cpumonitor.o_gadget, EINA_FALSE);
    else
@@ -307,10 +279,10 @@ _cpumonitor_created_cb(void *data, Evas_Object *obj, void *event_data EINA_UNUSE
    E_FILL(inst->cfg->cpumonitor.o_gadget);
    elm_box_pack_end(inst->o_main, inst->cfg->cpumonitor.o_gadget);
    evas_object_event_callback_add(inst->cfg->cpumonitor.o_gadget, EVAS_CALLBACK_MOUSE_DOWN, _cpumonitor_mouse_down_cb, inst);
+   evas_object_event_callback_add(inst->cfg->cpumonitor.o_gadget, EVAS_CALLBACK_RESIZE, _cpumonitor_resize_cb, inst);
    evas_object_show(inst->cfg->cpumonitor.o_gadget);
    evas_object_smart_callback_del_full(obj, "gadget_created", _cpumonitor_created_cb, data);
    _cpumonitor_config_updated(inst);
-   _cpumonitor_eval_instance_aspect(inst);
 }
 
 Evas_Object *
@@ -318,12 +290,12 @@ sysinfo_cpumonitor_create(Evas_Object *parent, Instance *inst)
 {
    inst->cfg->cpumonitor.o_gadget = elm_box_add(parent);
    elm_box_horizontal_set(inst->cfg->cpumonitor.o_gadget, EINA_TRUE);
+   elm_box_homogeneous_set(inst->cfg->cpumonitor.o_gadget, EINA_TRUE);
    E_EXPAND(inst->cfg->cpumonitor.o_gadget);
    E_FILL(inst->cfg->cpumonitor.o_gadget);
    evas_object_event_callback_add(inst->cfg->cpumonitor.o_gadget, EVAS_CALLBACK_MOUSE_DOWN, _cpumonitor_mouse_down_cb, inst);
    evas_object_show(inst->cfg->cpumonitor.o_gadget);
    _cpumonitor_config_updated(inst);
-   _cpumonitor_eval_instance_aspect(inst);
 
    return inst->cfg->cpumonitor.o_gadget;
 }

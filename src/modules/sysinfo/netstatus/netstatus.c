@@ -27,6 +27,13 @@ _netstatus_face_update(Instance *inst)
    edje_object_message_send(elm_layout_edje_get(inst->cfg->netstatus.o_gadget),
                             EDJE_MESSAGE_INT_SET, 1, msg);
    free(msg);
+
+   if (inst->cfg->netstatus.popup)
+     {
+        char text[4096];
+        snprintf(text, sizeof(text), "%s<br>%s", inst->cfg->netstatus.instring, inst->cfg->netstatus.outstring);
+        elm_object_text_set(inst->cfg->netstatus.popup_label, text);
+     }
 }
 
 static Evas_Object *
@@ -82,6 +89,7 @@ _netstatus_mouse_down_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_
         elm_object_text_set(label, text);
         elm_object_content_set(popup, label);
         evas_object_show(label);
+        inst->cfg->netstatus.popup_label = label;
 
         e_comp_object_util_autoclose(popup, NULL, NULL, NULL);
         evas_object_show(popup);
