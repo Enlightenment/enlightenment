@@ -201,7 +201,7 @@ netstatus_configure(Instance *inst)
    E_ALIGN(o, 0, 0);
    elm_object_text_set(o, _("Fast (4 ticks)"));
    elm_box_pack_end(box, o);
-   evas_object_smart_callback_add(o, "changed", _poll_changed, inst);
+   evas_object_smart_callback_add(o, "changed", _poll_changed, nc);
    evas_object_show(o);
    group = o;
 
@@ -212,7 +212,7 @@ netstatus_configure(Instance *inst)
    E_ALIGN(o, 0, 0);
    elm_object_text_set(o, _("Medium (8 ticks)"));
    elm_box_pack_end(box, o);
-   evas_object_smart_callback_add(o, "changed", _poll_changed, inst);
+   evas_object_smart_callback_add(o, "changed", _poll_changed, nc);
    evas_object_show(o);
 
    o = elm_radio_add(box);
@@ -222,7 +222,7 @@ netstatus_configure(Instance *inst)
    E_ALIGN(o, 0, 0);
    elm_object_text_set(o, _("Normal (32 ticks)"));
    elm_box_pack_end(box, o);
-   evas_object_smart_callback_add(o, "changed", _poll_changed, inst);
+   evas_object_smart_callback_add(o, "changed", _poll_changed, nc);
    evas_object_show(o);
 
    o = elm_radio_add(box);
@@ -231,7 +231,7 @@ netstatus_configure(Instance *inst)
    E_ALIGN(o, 0, 0);
    elm_object_text_set(o, _("Slow (64 ticks)"));
    elm_box_pack_end(box, o);
-   evas_object_smart_callback_add(o, "changed", _poll_changed, inst);
+   evas_object_smart_callback_add(o, "changed", _poll_changed, nc);
    evas_object_show(o);
 
    o = elm_radio_add(box);
@@ -241,7 +241,7 @@ netstatus_configure(Instance *inst)
    E_ALIGN(o, 0, 0);
    elm_object_text_set(o, _("Very Slow (256 ticks)"));
    elm_box_pack_end(box, o);
-   evas_object_smart_callback_add(o, "changed", _poll_changed, inst);
+   evas_object_smart_callback_add(o, "changed", _poll_changed, nc);
    evas_object_show(o);
 
    switch(inst->cfg->netstatus.poll_interval)
