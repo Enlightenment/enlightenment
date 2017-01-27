@@ -113,10 +113,19 @@ _cpumonitor_mouse_down_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA
 static void
 _cpumonitor_resize_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_data EINA_UNUSED)
 {
-   Evas_Coord w, h;
+   Evas_Coord w = 1, h = 1;
    Instance *inst = data;
+   CPU_Core *first_core;
+   int num_cores = eina_list_count(inst->cfg->cpumonitor.cores);
 
-   evas_object_geometry_get(inst->cfg->cpumonitor.o_gadget, 0, 0, &w, &h);
+   if (!num_cores || !inst->o_main) return;
+
+   first_core = eina_list_nth(inst->cfg->cpumonitor.cores, 0);
+   edje_object_parts_extends_calc(elm_layout_edje_get(first_core->layout), 0, 0, &w, &h);
+   if (e_gadget_site_orient_get(e_gadget_site_get(inst->o_main)) == E_GADGET_SITE_ORIENT_VERTICAL)
+     h *= num_cores;
+   else
+     w *= num_cores;
    evas_object_size_hint_aspect_set(inst->o_main, EVAS_ASPECT_CONTROL_BOTH, w, h);
 }
 
@@ -156,6 +165,7 @@ _cpumonitor_add_layout(Instance *inst)
    int orient = e_gadget_site_orient_get(e_gadget_site_get(inst->o_main));
 
    layout = elm_layout_add(inst->cfg->cpumonitor.o_gadget);
+   edje_object_update_hints_set(elm_layout_edje_get(layout), EINA_TRUE);
    if (orient == E_GADGET_SITE_ORIENT_VERTICAL)
      e_theme_edje_object_set(layout, "base/theme/modules/cpumonitor",
                              "e/modules/cpumonitor/main_vert");
@@ -289,8 +299,9 @@ Evas_Object *
 sysinfo_cpumonitor_create(Evas_Object *parent, Instance *inst)
 {
    inst->cfg->cpumonitor.o_gadget = elm_box_add(parent);
-   elm_box_horizontal_set(inst->cfg->cpumonitor.o_gadget, EINA_TRUE);
+   elm_box_padding_set(inst->cfg->cpumonitor.o_gadget, 0, 0);
    elm_box_homogeneous_set(inst->cfg->cpumonitor.o_gadget, EINA_TRUE);
+   elm_box_horizontal_set(inst->cfg->cpumonitor.o_gadget, EINA_TRUE);
    E_EXPAND(inst->cfg->cpumonitor.o_gadget);
    E_FILL(inst->cfg->cpumonitor.o_gadget);
    evas_object_event_callback_add(inst->cfg->cpumonitor.o_gadget, EVAS_CALLBACK_MOUSE_DOWN, _cpumonitor_mouse_down_cb, inst);
