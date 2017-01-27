@@ -123,6 +123,7 @@ static E_Config_DD *edd_gadget;
 static void _gadget_object_finalize(E_Gadget_Config *zgc);
 static Eina_Bool _gadget_object_create(E_Gadget_Config *zgc);
 static void _editor_pointer_site_init(E_Gadget_Site_Orient orient, Evas_Object *site, Evas_Object *editor, Eina_Bool );
+static void _gadget_drop_handler_moveresize(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED);
 
 static void
 _comp_site_resize(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
@@ -296,6 +297,20 @@ _gadget_object_free(E_Object *eobj)
         E_FREE_FUNC(zgc->display, evas_object_del);
      }
    zgc->gadget = NULL;
+
+   if (zgc->drop_handlers)
+     {
+        Evas_Object *drop_object;
+        Eina_Iterator *it = eina_hash_iterator_key_new(zgc->drop_handlers);
+
+        EINA_ITERATOR_FOREACH(it, drop_object)
+          {
+             evas_object_event_callback_del(drop_object, EVAS_CALLBACK_MOVE, _gadget_drop_handler_moveresize);
+             evas_object_event_callback_del(drop_object, EVAS_CALLBACK_RESIZE, _gadget_drop_handler_moveresize);
+             evas_object_event_callback_del(drop_object, EVAS_CALLBACK_DEL, _gadget_drop_handler_del);
+          }
+        eina_iterator_free(it);
+     }
 
    E_FREE_FUNC(zgc->drop_handlers, eina_hash_free);
    E_FREE_FUNC(zgc->gadget, evas_object_del);
