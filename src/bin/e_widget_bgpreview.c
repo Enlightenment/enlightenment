@@ -10,7 +10,7 @@ struct _E_Widget_Data
 typedef struct _E_Widget_Desk_Data E_Widget_Desk_Data;
 struct _E_Widget_Desk_Data
 {
-   Evas_Object         *icon, *live, *cont;
+   Evas_Object         *icon, *thumb, *live, *cont;
    int                  zone, x, y;
    Ecore_Event_Handler *bg_upd_hdl;
    Ecore_Job           *resize_job;
@@ -19,6 +19,7 @@ struct _E_Widget_Desk_Data
 
 /* local function prototypes */
 static void      _e_wid_data_del(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED);
+static void      _e_wid_livethumb_resize(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED);
 static void      _e_wid_del_hook(Evas_Object *obj);
 static void      _e_wid_reconfigure(E_Widget_Data *wd);
 static void      _e_wid_desk_cb_config(void *data, Evas *evas, Evas_Object *obj, void *event);
@@ -97,9 +98,12 @@ e_widget_bgpreview_desk_add(Evas *e, E_Zone *zone, int x, int y)
 
    if (eina_str_has_extension(bgfile, ".edj"))
      {
-        dd->live = o = edje_object_add(e);
+        dd->live = e_livethumb_add(e);
+        dd->thumb = o = edje_object_add(e_livethumb_evas_get(dd->live));
         edje_object_file_set(o, bgfile, "e/desktop/background");
         _bgpreview_viewport_update(o, zone, x, y);
+        e_livethumb_thumb_set(dd->live, o);
+        evas_object_show(dd->thumb);
      }
    else if ((eina_str_has_extension(bgfile, ".gif")) ||
             (eina_str_has_extension(bgfile, ".png")) ||
@@ -124,6 +128,7 @@ e_widget_bgpreview_desk_add(Evas *e, E_Zone *zone, int x, int y)
 
    evas_object_data_set(dd->cont, "desk_data", dd);
    evas_object_event_callback_add(dd->cont, EVAS_CALLBACK_DEL, _e_wid_data_del, dd);
+   evas_object_event_callback_add(dd->cont, EVAS_CALLBACK_RESIZE, _e_wid_livethumb_resize, dd);
 
    dd->bg_upd_hdl = ecore_event_handler_add(E_EVENT_BG_UPDATE,
                                             _e_wid_cb_bg_update, dd);
@@ -148,6 +153,48 @@ e_widget_bgpreview_desk_configurable_set(Evas_Object *obj, Eina_Bool enable)
      evas_object_event_callback_del_full(dd->icon, EVAS_CALLBACK_MOUSE_UP,
                                          _e_wid_desk_cb_config, dd);
    dd->configurable = enable;
+}
+
+/* local function prototypes */
+static void
+_e_wid_livethumb_resize_job(void *data)
+{
+   E_Widget_Desk_Data *dd = data;
+   E_Zone *zone;
+   int w, h;
+
+   if (dd->thumb)
+     {
+        zone = e_comp_object_util_zone_get(dd->live);
+        if (!zone) zone = eina_list_data_get(e_comp->zones);
+        evas_object_geometry_get(dd->cont, NULL, NULL, &w, &h);
+        if ((w != zone->w) || (h != zone->h))
+          {
+             w *= 2;
+             h *= 2;
+             if (w > 128)
+               {
+                  w = 128;
+                  h = (zone->h * w) / zone->w;
+               }
+             if (h > 128)
+               {
+                  h = 128;
+                  w = (zone->w * h) / zone->h;
+               }
+          }
+        e_livethumb_vsize_set(dd->live, w, h);
+     }
+   dd->resize_job = NULL;
+}
+
+static void
+_e_wid_livethumb_resize(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   E_Widget_Desk_Data *dd = data;
+
+   if (!dd->resize_job)
+     dd->resize_job = ecore_job_add(_e_wid_livethumb_resize_job, dd);
 }
 
 static void
@@ -312,14 +359,19 @@ _e_wid_cb_bg_update(void *data, int type, void *event)
         zone = e_comp_zone_number_get(dd->zone);
         bgfile = e_bg_file_get(dd->zone, dd->x, dd->y);
 
+        if (dd->thumb) evas_object_del(dd->thumb);
+        dd->thumb = NULL;
         if (dd->live) evas_object_del(dd->live);
         dd->live = NULL;
 
         if (eina_str_has_extension(bgfile, ".edj"))
           {
-             dd->live = o = edje_object_add(e);
+             dd->live = e_livethumb_add(e);
+             dd->thumb = o = edje_object_add(e_livethumb_evas_get(dd->live));
              edje_object_file_set(o, bgfile, "e/desktop/background");
              _bgpreview_viewport_update(o, zone, dd->x, dd->y);
+             e_livethumb_thumb_set(dd->live, o);
+             evas_object_show(dd->thumb);
           }
         else if ((eina_str_has_extension(bgfile, ".gif")) ||
                  (eina_str_has_extension(bgfile, ".png")) ||
@@ -335,6 +387,7 @@ _e_wid_cb_bg_update(void *data, int type, void *event)
           {
              dd->live = o = e_video_add(e, bgfile, EINA_TRUE);
           }
+        _e_wid_livethumb_resize_job(dd);
         eina_stringshare_del(bgfile);
 
         evas_object_size_hint_weight_set(dd->live, 1, 1);
