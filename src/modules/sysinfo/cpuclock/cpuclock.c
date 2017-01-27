@@ -680,6 +680,19 @@ _cpuclock_status_check_current(Cpu_Status *s)
 }
 
 static void
+_cpuclock_resize_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_data EINA_UNUSED)
+{
+   Evas_Coord w, h;
+   Instance *inst = data;
+
+   edje_object_parts_extends_calc(elm_layout_edje_get(inst->cfg->cpuclock.o_gadget), 0, 0, &w, &h);
+   if (inst->cfg->esm == E_SYSINFO_MODULE_CPUCLOCK)
+     evas_object_size_hint_aspect_set(inst->o_main, EVAS_ASPECT_CONTROL_BOTH, w, h);
+   else
+     evas_object_size_hint_aspect_set(inst->cfg->cpuclock.o_gadget, EVAS_ASPECT_CONTROL_BOTH, w, h);
+}
+
+static void
 _cpuclock_cb_frequency_check_main(void *data, Ecore_Thread *th)
 {
    Thread_Config *thc = data;
@@ -824,6 +837,7 @@ _cpuclock_created_cb(void *data, Evas_Object *obj, void *event_data EINA_UNUSED)
                                    _cpuclock_face_cb_set_frequency, inst);
    edje_object_signal_callback_add(elm_layout_edje_get(inst->cfg->cpuclock.o_gadget), "e,action,frequency,decrease", "*",
                                    _cpuclock_face_cb_set_frequency, inst);
+   evas_object_event_callback_add(inst->cfg->cpuclock.o_gadget, EVAS_CALLBACK_RESIZE, _cpuclock_resize_cb, inst);
    elm_box_pack_end(inst->o_main, inst->cfg->cpuclock.o_gadget);
    evas_object_show(inst->cfg->cpuclock.o_gadget);
    evas_object_smart_callback_del_full(obj, "gadget_created", _cpuclock_created_cb, data);
@@ -852,6 +866,7 @@ sysinfo_cpuclock_create(Evas_Object *parent, Instance *inst)
                                    _cpuclock_face_cb_set_frequency, inst);
    edje_object_signal_callback_add(elm_layout_edje_get(inst->cfg->cpuclock.o_gadget), "e,action,frequency,decrease", "*",
                                    _cpuclock_face_cb_set_frequency, inst);
+   evas_object_event_callback_add(inst->cfg->cpuclock.o_gadget, EVAS_CALLBACK_RESIZE, _cpuclock_resize_cb, inst);
    evas_object_show(inst->cfg->cpuclock.o_gadget);
    inst->cfg->cpuclock.status = _cpuclock_status_new();
    _cpuclock_status_check_available(inst->cfg->cpuclock.status);

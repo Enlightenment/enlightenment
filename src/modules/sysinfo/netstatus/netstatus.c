@@ -113,6 +113,19 @@ _netstatus_mouse_down_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_
 }
 
 static void
+_netstatus_resize_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_data EINA_UNUSED)
+{
+   Evas_Coord w, h;
+   Instance *inst = data;
+
+   edje_object_parts_extends_calc(elm_layout_edje_get(inst->cfg->netstatus.o_gadget), 0, 0, &w, &h);
+   if (inst->cfg->esm == E_SYSINFO_MODULE_NETSTATUS)
+     evas_object_size_hint_aspect_set(inst->o_main, EVAS_ASPECT_CONTROL_BOTH, w, h);
+   else
+     evas_object_size_hint_aspect_set(inst->cfg->netstatus.o_gadget, EVAS_ASPECT_CONTROL_BOTH, w, h);
+}
+
+static void
 _netstatus_cb_usage_check_main(void *data, Ecore_Thread *th)
 {
    Thread_Config *thc = data;
@@ -221,6 +234,7 @@ _netstatus_created_cb(void *data, Evas_Object *obj, void *event_data EINA_UNUSED
    E_FILL(inst->cfg->netstatus.o_gadget);
    elm_box_pack_end(inst->o_main, inst->cfg->netstatus.o_gadget);
    evas_object_event_callback_add(inst->cfg->netstatus.o_gadget, EVAS_CALLBACK_MOUSE_DOWN, _netstatus_mouse_down_cb, inst);
+   evas_object_event_callback_add(inst->cfg->netstatus.o_gadget, EVAS_CALLBACK_RESIZE, _netstatus_resize_cb, inst);
    evas_object_show(inst->cfg->netstatus.o_gadget);
    evas_object_smart_callback_del_full(obj, "gadget_created", _netstatus_created_cb, data);
    _netstatus_config_updated(inst);
@@ -235,6 +249,7 @@ sysinfo_netstatus_create(Evas_Object *parent, Instance *inst)
    E_EXPAND(inst->cfg->netstatus.o_gadget);
    E_FILL(inst->cfg->netstatus.o_gadget);
    evas_object_event_callback_add(inst->cfg->netstatus.o_gadget, EVAS_CALLBACK_MOUSE_DOWN, _netstatus_mouse_down_cb, inst);
+   evas_object_event_callback_add(inst->cfg->netstatus.o_gadget, EVAS_CALLBACK_RESIZE, _netstatus_resize_cb, inst);
    evas_object_show(inst->cfg->netstatus.o_gadget);
    _netstatus_config_updated(inst);
 

@@ -411,6 +411,19 @@ _batman_warning_popup(Instance *inst, int t, double percent)
 }
 
 static void
+_batman_resize_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_data EINA_UNUSED)
+{
+   Evas_Coord w, h;
+   Instance *inst = data;
+
+   edje_object_parts_extends_calc(elm_layout_edje_get(inst->cfg->batman.o_gadget), 0, 0, &w, &h);
+   if (inst->cfg->esm == E_SYSINFO_MODULE_BATMAN)
+     evas_object_size_hint_aspect_set(inst->o_main, EVAS_ASPECT_CONTROL_BOTH, w, h);
+   else
+     evas_object_size_hint_aspect_set(inst->cfg->batman.o_gadget, EVAS_ASPECT_CONTROL_BOTH, w, h);
+}
+
+static void
 _batman_removed_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_data)
 {
    Instance *inst = data;
@@ -474,6 +487,7 @@ _batman_created_cb(void *data, Evas_Object *obj, void *event_data EINA_UNUSED)
    E_EXPAND(inst->cfg->batman.o_gadget);
    E_FILL(inst->cfg->batman.o_gadget);
    elm_box_pack_end(inst->o_main, inst->cfg->batman.o_gadget);
+   evas_object_event_callback_add(inst->cfg->batman.o_gadget, EVAS_CALLBACK_RESIZE, _batman_resize_cb, inst);
    evas_object_show(inst->cfg->batman.o_gadget);
    evas_object_smart_callback_del_full(obj, "gadget_created", _batman_created_cb, data);
    _batman_config_updated(inst);
@@ -493,6 +507,7 @@ sysinfo_batman_create(Evas_Object *parent, Instance *inst)
                            "e/modules/battery/main");
    E_EXPAND(inst->cfg->batman.o_gadget);
    E_FILL(inst->cfg->batman.o_gadget);
+   evas_object_event_callback_add(inst->cfg->batman.o_gadget, EVAS_CALLBACK_RESIZE, _batman_resize_cb, inst);
    evas_object_show(inst->cfg->batman.o_gadget);
    _batman_config_updated(inst);
 

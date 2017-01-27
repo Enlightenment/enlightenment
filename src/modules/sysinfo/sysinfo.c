@@ -41,22 +41,21 @@ _sysinfo_created_cb(void *data, Evas_Object *obj, void *event_data EINA_UNUSED)
    Instance *inst = data;
 
    inst->o_table = elm_table_add(inst->o_main);
-   elm_table_homogeneous_set(inst->o_table, EINA_TRUE);
+   elm_table_homogeneous_set(inst->o_table, EINA_FALSE);
    E_EXPAND(inst->o_table);
-   evas_object_size_hint_aspect_set(inst->o_table, EVAS_ASPECT_CONTROL_BOTH, 1, 1);
    elm_object_content_set(inst->o_main, inst->o_table);
    evas_object_show(inst->o_table);
 
    inst->cfg->sysinfo.o_batman = sysinfo_batman_create(inst->o_table, inst);
    elm_table_pack(inst->o_table, inst->cfg->sysinfo.o_batman, 0, 0, 1, 1);
-   inst->cfg->sysinfo.o_thermal = sysinfo_thermal_create(inst->o_table, inst);
-   elm_table_pack(inst->o_table, inst->cfg->sysinfo.o_thermal, 1, 0, 1, 1);
    inst->cfg->sysinfo.o_cpuclock = sysinfo_cpuclock_create(inst->o_table, inst);
-   elm_table_pack(inst->o_table, inst->cfg->sysinfo.o_cpuclock, 0, 1, 1, 1);
+   elm_table_pack(inst->o_table, inst->cfg->sysinfo.o_cpuclock, 1, 0, 1, 1);
    inst->cfg->sysinfo.o_cpumonitor = sysinfo_cpumonitor_create(inst->o_table, inst);
-   elm_table_pack(inst->o_table, inst->cfg->sysinfo.o_cpumonitor, 1, 1, 1, 1);
+   elm_table_pack(inst->o_table, inst->cfg->sysinfo.o_cpumonitor, 0, 1, 1, 1);
    inst->cfg->sysinfo.o_memusage = sysinfo_memusage_create(inst->o_table, inst);
-   elm_table_pack(inst->o_table, inst->cfg->sysinfo.o_memusage, 0, 2, 1, 1);
+   elm_table_pack(inst->o_table, inst->cfg->sysinfo.o_memusage, 1, 1, 1, 1);
+   inst->cfg->sysinfo.o_thermal = sysinfo_thermal_create(inst->o_table, inst);
+   elm_table_pack(inst->o_table, inst->cfg->sysinfo.o_thermal, 0, 2, 1, 1);
    inst->cfg->sysinfo.o_netstatus = sysinfo_netstatus_create(inst->o_table, inst);
    elm_table_pack(inst->o_table, inst->cfg->sysinfo.o_netstatus, 1, 2, 1, 1);
 
@@ -158,7 +157,6 @@ sysinfo_create(Evas_Object *parent, int *id, E_Gadget_Site_Orient orient EINA_UN
    inst->o_main = elm_scroller_add(parent);
    elm_object_style_set(inst->o_main, "no_inset_shadow");
    E_EXPAND(inst->o_main);
-   evas_object_size_hint_aspect_set(inst->o_main, EVAS_ASPECT_CONTROL_BOTH, 1, 1);
    evas_object_event_callback_add(inst->o_main, EVAS_CALLBACK_DEL, _sysinfo_deleted_cb, inst);
    evas_object_show(inst->o_main);
 

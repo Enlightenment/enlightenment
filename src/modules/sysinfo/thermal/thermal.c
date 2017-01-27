@@ -189,7 +189,10 @@ _thermal_resize_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED
    Instance *inst = data;
 
    edje_object_parts_extends_calc(elm_layout_edje_get(inst->cfg->thermal.o_gadget), 0, 0, &w, &h);
-   evas_object_size_hint_aspect_set(inst->o_main, EVAS_ASPECT_CONTROL_BOTH, w, h);
+   if (inst->cfg->esm == E_SYSINFO_MODULE_THERMAL)
+     evas_object_size_hint_aspect_set(inst->o_main, EVAS_ASPECT_CONTROL_BOTH, w, h);
+   else
+     evas_object_size_hint_aspect_set(inst->cfg->thermal.o_gadget, EVAS_ASPECT_CONTROL_BOTH, w, h);
 }
 
 static void
@@ -254,6 +257,7 @@ sysinfo_thermal_create(Evas_Object *parent, Instance *inst)
                            "e/modules/temperature/main");
    E_EXPAND(inst->cfg->thermal.o_gadget);
    E_FILL(inst->cfg->thermal.o_gadget);
+   evas_object_event_callback_add(inst->cfg->thermal.o_gadget, EVAS_CALLBACK_RESIZE, _thermal_resize_cb, inst);
    evas_object_show(inst->cfg->thermal.o_gadget);
    _thermal_config_updated(inst);
 

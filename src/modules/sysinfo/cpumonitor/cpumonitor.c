@@ -111,22 +111,23 @@ _cpumonitor_mouse_down_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA
 }
 
 static void
-_cpumonitor_resize_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_data EINA_UNUSED)
+_cpumonitor_resize_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *event_data EINA_UNUSED)
 {
    Evas_Coord w = 1, h = 1;
    Instance *inst = data;
-   CPU_Core *first_core;
    int num_cores = eina_list_count(inst->cfg->cpumonitor.cores);
 
    if (!num_cores || !inst->o_main) return;
 
-   first_core = eina_list_nth(inst->cfg->cpumonitor.cores, 0);
-   edje_object_parts_extends_calc(elm_layout_edje_get(first_core->layout), 0, 0, &w, &h);
+   edje_object_parts_extends_calc(elm_layout_edje_get(obj), 0, 0, &w, &h);
    if (e_gadget_site_orient_get(e_gadget_site_get(inst->o_main)) == E_GADGET_SITE_ORIENT_VERTICAL)
      h *= num_cores;
    else
      w *= num_cores;
-   evas_object_size_hint_aspect_set(inst->o_main, EVAS_ASPECT_CONTROL_BOTH, w, h);
+   if (inst->cfg->esm == E_SYSINFO_MODULE_CPUMONITOR)
+     evas_object_size_hint_aspect_set(inst->o_main, EVAS_ASPECT_CONTROL_BOTH, w, h);
+   else
+     evas_object_size_hint_aspect_set(inst->cfg->cpumonitor.o_gadget, EVAS_ASPECT_CONTROL_BOTH, w, h);
 }
 
 static void
@@ -207,6 +208,8 @@ _cpumonitor_config_updated(Instance *inst)
           {
              core = E_NEW(CPU_Core, 1);
              core->layout = _cpumonitor_add_layout(inst);
+             if (i == 0)
+               evas_object_event_callback_add(core->layout, EVAS_CALLBACK_RESIZE, _cpumonitor_resize_cb, inst);
              core->percent = 0;
              core->total = 0;
              core->idle = 0;
@@ -289,7 +292,6 @@ _cpumonitor_created_cb(void *data, Evas_Object *obj, void *event_data EINA_UNUSE
    E_FILL(inst->cfg->cpumonitor.o_gadget);
    elm_box_pack_end(inst->o_main, inst->cfg->cpumonitor.o_gadget);
    evas_object_event_callback_add(inst->cfg->cpumonitor.o_gadget, EVAS_CALLBACK_MOUSE_DOWN, _cpumonitor_mouse_down_cb, inst);
-   evas_object_event_callback_add(inst->cfg->cpumonitor.o_gadget, EVAS_CALLBACK_RESIZE, _cpumonitor_resize_cb, inst);
    evas_object_show(inst->cfg->cpumonitor.o_gadget);
    evas_object_smart_callback_del_full(obj, "gadget_created", _cpumonitor_created_cb, data);
    _cpumonitor_config_updated(inst);
