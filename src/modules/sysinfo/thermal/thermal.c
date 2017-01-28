@@ -5,6 +5,8 @@ _thermal_thread_free(Tempthread *tth)
 {
    const char *s;
 
+   if (!tth) return;
+
    eina_stringshare_del(tth->sensor_name);
    eina_stringshare_del(tth->sensor_path);
 #ifdef HAVE_EEZE
@@ -176,7 +178,7 @@ _thermal_face_shutdown(Instance *inst)
 #ifdef HAVE_EEZE
    if (inst->cfg->thermal.poller)
      {
-        ecore_poller_del(inst->cfg->thermal.poller);
+        E_FREE_FUNC(inst->cfg->thermal.poller, ecore_poller_del);
         _thermal_thread_free(inst->cfg->thermal.tth);
      }
 #endif
