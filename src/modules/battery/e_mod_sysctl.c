@@ -201,7 +201,7 @@ _battery_sysctl_battery_update()
          }
   
        /* This is a workaround because there's an ACPI bug */ 
-       if ((EINA_FLT_EQ(charge ==, 0.0)) || (EINA_FLT_EQ(bat->last_full_charge ==, 0.0)))
+       if ((EINA_FLT_EQ(charge, 0.0)) || (EINA_FLT_EQ(bat->last_full_charge, 0.0)))
          {
            /* last full capacity */
            bat->mib[3] = 8;

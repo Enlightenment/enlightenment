@@ -229,7 +229,7 @@ _batman_sysctl_battery_update(Instance *inst)
        bat->got_prop = 1;
  
        _time = ecore_time_get();
-       if ((bat->got_prop) && (charge != bat->current_charge))
+       if ((bat->got_prop) && (!EINA_FLT_EQ(charge, bat->current_charge)))
          bat->charge_rate = ((charge - bat->current_charge) / (_time - bat->last_update));
        bat->last_update = _time;
        bat->current_charge = charge;
