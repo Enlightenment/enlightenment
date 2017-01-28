@@ -13,7 +13,7 @@ E_API void                  e_thumb_icon_file_set(Evas_Object *obj, const char *
 E_API void                  e_thumb_icon_size_set(Evas_Object *obj, int w, int h);
 E_API void                  e_thumb_icon_begin(Evas_Object *obj);
 E_API void                  e_thumb_icon_end(Evas_Object *obj);
-E_API void		   e_thumb_icon_rethumb(Evas_Object *obj);
+E_API void                  e_thumb_icon_rethumb(Evas_Object *obj);
 E_API const char           *e_thumb_sort_id_get(Evas_Object *obj);
 
 E_API void                  e_thumb_client_data(Ecore_Ipc_Event_Client_Data *e);
