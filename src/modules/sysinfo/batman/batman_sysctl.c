@@ -10,7 +10,7 @@
 #include "batman.h"
 
 #if defined(__OpenBSD__) || defined(__NetBSD__) || defined(__FreeBSD__) || defined(__DragonFly__)
-static Eina_Bool _batman_sysctl_battery_update_poll(void *data);
+static Eina_Bool _batman_sysctl_battery_update_poll(void *data EINA_UNUSED);
 #endif
 static int       _batman_sysctl_battery_update(Instance *inst);
 
@@ -163,7 +163,7 @@ _batman_sysctl_stop(void)
 
 #if defined(__OpenBSD__) || defined(__NetBSD__) || defined(__FreeBSD__) || defined(__DragonFly__)
 static Eina_Bool
-_batman_sysctl_battery_update_poll(void *data)
+_batman_sysctl_battery_update_poll(void *data EINA_UNUSED)
 {
    Instance *inst = data;
    _batman_sysctl_battery_update(inst);
@@ -207,7 +207,7 @@ _batman_sysctl_battery_update(Instance *inst)
          }
   
        /* This is a workaround because there's an ACPI bug */ 
-       if (charge == 0 || bat->last_full_charge == 0)
+       if ((EINA_FLT_EQ(charge, 0.0)) || (EINA_FLT_EQ(bat->last_full_charge, 0.0)))
          {
            /* last full capacity */
            bat->mib[3] = 8;
@@ -225,6 +225,8 @@ _batman_sysctl_battery_update(Instance *inst)
                 charge = (double)s.value;
              }
          }
+
+       bat->got_prop = 1;
  
        _time = ecore_time_get();
        if ((bat->got_prop) && (charge != bat->current_charge))
@@ -340,7 +342,7 @@ _batman_sysctl_battery_update(Instance *inst)
           _batman_device_update(bat->inst);
         bat->got_prop = 1;
      }
-   return 0;
+   return 1;
 }
 
 

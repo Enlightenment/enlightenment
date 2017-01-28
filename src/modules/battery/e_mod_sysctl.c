@@ -11,7 +11,7 @@
 #include "e.h"
 #include "e_mod_main.h"
 
-static Eina_Bool _battery_sysctl_battery_update_poll(void *data);
+static Eina_Bool _battery_sysctl_battery_update_poll(void *data EINA_UNUSED);
 static int       _battery_sysctl_battery_update();
 
 extern Eina_List *device_batteries;
@@ -160,7 +160,7 @@ _battery_sysctl_stop(void)
 }
 
 static Eina_Bool
-_battery_sysctl_battery_update_poll(void *data)
+_battery_sysctl_battery_update_poll(void *data EINA_UNUSED)
 {
    _battery_sysctl_battery_update();
    return EINA_TRUE;
@@ -201,7 +201,7 @@ _battery_sysctl_battery_update()
          }
   
        /* This is a workaround because there's an ACPI bug */ 
-       if (charge == 0 || bat->last_full_charge == 0)
+       if ((EINA_FLT_EQ(charge ==, 0.0)) || (EINA_FLT_EQ(bat->last_full_charge ==, 0.0)))
          {
            /* last full capacity */
            bat->mib[3] = 8;
@@ -219,9 +219,11 @@ _battery_sysctl_battery_update()
                 charge = (double)s.value;
              }
          }
+
+       bat->got_prop = 1;
  
        _time = ecore_time_get();
-       if ((bat->got_prop) && (charge != bat->current_charge))
+       if ((bat->got_prop) && (!EINA_FLT_EQ(charge, bat->current_charge)))
          bat->charge_rate = ((charge - bat->current_charge) / (_time - bat->last_update));
        bat->last_update = _time;
        bat->current_charge = charge;
@@ -328,12 +330,13 @@ _battery_sysctl_battery_update()
 #endif
      } 
 
-  if (bat)
-    {
-       if (bat->got_prop)
-         _battery_device_update();
-       bat->got_prop = 1;
-    }
+   if (bat)
+     {
+        if (bat->got_prop)
+          _battery_device_update();
+        bat->got_prop = 1;
+     }
+   return 1;  
 }
 
 
