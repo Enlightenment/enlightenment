@@ -734,7 +734,7 @@ _cpuclock_cb_frequency_check_notify(void *data,
    (status->cur_max_frequency != inst->cfg->cpuclock.status->cur_max_frequency) ||
    (status->can_set_frequency != inst->cfg->cpuclock.status->can_set_frequency)))
      freq_changed = EINA_TRUE;
-   _cpuclock_status_free(inst->cfg->cpuclock.status);
+   E_FREE_FUNC(inst->cfg->cpuclock.status, _cpuclock_status_free);
    inst->cfg->cpuclock.status = status;
    if (freq_changed)
      {
@@ -798,7 +798,7 @@ _cpuclock_removed_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_data)
 
     if (inst->cfg->cpuclock.governor)
      eina_stringshare_del(inst->cfg->cpuclock.governor);
-   if (inst->cfg->cpuclock.status) _cpuclock_status_free(inst->cfg->cpuclock.status);
+   E_FREE_FUNC(inst->cfg->cpuclock.status, _cpuclock_status_free);
 
    evas_object_event_callback_del_full(inst->o_main, EVAS_CALLBACK_DEL, sysinfo_cpuclock_remove, data);
 
@@ -822,7 +822,7 @@ sysinfo_cpuclock_remove(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_U
 
     if (inst->cfg->cpuclock.governor)
      eina_stringshare_del(inst->cfg->cpuclock.governor);
-   if (inst->cfg->cpuclock.status) _cpuclock_status_free(inst->cfg->cpuclock.status);
+   E_FREE_FUNC(inst->cfg->cpuclock.status, _cpuclock_status_free);
 }
 
 static void
