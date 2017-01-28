@@ -8,7 +8,6 @@ struct _Thread_Config
    Instance *inst;
    int mem_percent;
    int swp_percent;
-
    unsigned long mem_total;
    unsigned long mem_active;
    unsigned long mem_cached;
@@ -18,15 +17,21 @@ struct _Thread_Config
 };
 
 static void
-_memusage_face_update(Instance *inst, int mem, int swap)
+_memusage_face_update(Instance *inst)
 {
    Edje_Message_Int_Set *msg;
 
-   msg = malloc(sizeof(Edje_Message_Int_Set) + 2 * sizeof(int));
+   msg = malloc(sizeof(Edje_Message_Int_Set) + 8 * sizeof(int));
    EINA_SAFETY_ON_NULL_RETURN(msg);
    msg->count = 2;
-   msg->val[0] = mem;
-   msg->val[1] = swap;
+   msg->val[0] = inst->cfg->memusage.mem_percent;
+   msg->val[1] = inst->cfg->memusage.swp_percent;
+   msg->val[2] = inst->cfg->memusage.mem_total;
+   msg->val[3] = inst->cfg->memusage.mem_active;
+   msg->val[4] = inst->cfg->memusage.mem_cached;
+   msg->val[5] = inst->cfg->memusage.mem_buffers;
+   msg->val[6] = inst->cfg->memusage.swp_total;
+   msg->val[7] = inst->cfg->memusage.swp_active;
    edje_object_message_send(elm_layout_edje_get(inst->cfg->memusage.o_gadget),
                             EDJE_MESSAGE_INT_SET, 1, msg);
    free(msg);
@@ -174,7 +179,13 @@ _memusage_cb_usage_check_notify(void *data,
 
    inst->cfg->memusage.mem_percent = thc->mem_percent;
    inst->cfg->memusage.swp_percent = thc->swp_percent;
-   _memusage_face_update(inst, thc->mem_percent, thc->swp_percent);
+   inst->cfg->memusage.mem_total = thc->mem_total;
+   inst->cfg->memusage.mem_active = thc->mem_active;
+   inst->cfg->memusage.mem_cached = thc->mem_cached;
+   inst->cfg->memusage.mem_buffers = thc->mem_buffers;
+   inst->cfg->memusage.swp_total = thc->swp_total;
+   inst->cfg->memusage.swp_active = thc->swp_active;
+   _memusage_face_update(inst);
 }
 
 void
@@ -318,6 +329,12 @@ _conf_item_get(int *id)
    ci->memusage.poll_interval = 32;
    ci->memusage.mem_percent = 0;
    ci->memusage.swp_percent = 0;
+   ci->memusage.mem_total = 0;
+   ci->memusage.mem_active = 0;
+   ci->memusage.mem_cached = 0;
+   ci->memusage.mem_buffers = 0;
+   ci->memusage.swp_total = 0;
+   ci->memusage.swp_active = 0;
    ci->memusage.popup = NULL;
    ci->memusage.configure = NULL;
 
@@ -336,6 +353,12 @@ memusage_create(Evas_Object *parent, int *id, E_Gadget_Site_Orient orient EINA_U
    *id = inst->cfg->id;
    inst->cfg->memusage.mem_percent = 0;
    inst->cfg->memusage.swp_percent = 0;
+   inst->cfg->memusage.mem_total = 0;
+   inst->cfg->memusage.mem_active = 0;
+   inst->cfg->memusage.mem_cached = 0;
+   inst->cfg->memusage.mem_buffers = 0;
+   inst->cfg->memusage.swp_total = 0;
+   inst->cfg->memusage.swp_active = 0;
    inst->cfg->memusage.popup = NULL;
    inst->cfg->memusage.configure = NULL;
    inst->o_main = elm_box_add(parent);

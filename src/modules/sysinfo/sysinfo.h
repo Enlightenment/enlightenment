@@ -208,6 +208,12 @@ struct _Config_Item
       int                  poll_interval;
       int                  mem_percent;
       int                  swp_percent;
+      unsigned long        mem_total;
+      unsigned long        mem_active;
+      unsigned long        mem_cached;
+      unsigned long        mem_buffers;
+      unsigned long        swp_total;
+      unsigned long        swp_active;
       Ecore_Thread        *usage_check_thread;
    } memusage;
    struct
