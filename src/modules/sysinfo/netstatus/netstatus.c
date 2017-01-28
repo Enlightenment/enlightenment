@@ -138,7 +138,6 @@ _netstatus_cb_usage_check_main(void *data, Ecore_Thread *th)
         if (ecore_thread_check(th)) break;
         usleep((1000000.0 / 8.0) * (double)thc->interval);
      }
-   E_FREE_FUNC(thc, free);
 }
 
 static void
@@ -153,6 +152,13 @@ _netstatus_cb_usage_check_notify(void *data,
    if (inst->cfg->esm != E_SYSINFO_MODULE_NETSTATUS && inst->cfg->esm != E_SYSINFO_MODULE_SYSINFO) return;
 
    _netstatus_face_update(inst);
+}
+
+static void
+_netstatus_cb_usage_check_end(void *data, Ecore_Thread *th EINA_UNUSED)
+{
+   Thread_Config *thc = data;
+   E_FREE_FUNC(thc, free);
 }
 
 void
@@ -173,7 +179,8 @@ _netstatus_config_updated(Instance *inst)
         inst->cfg->netstatus.usage_check_thread =
           ecore_thread_feedback_run(_netstatus_cb_usage_check_main,
                                     _netstatus_cb_usage_check_notify,
-                                    NULL, NULL, thc, EINA_TRUE);
+                                    _netstatus_cb_usage_check_end,
+                                    _netstatus_cb_usage_check_end, thc, EINA_TRUE);
      }
    e_config_save_queue();
 }

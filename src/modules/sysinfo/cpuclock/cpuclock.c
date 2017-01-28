@@ -709,7 +709,6 @@ _cpuclock_cb_frequency_check_main(void *data, Ecore_Thread *th)
         if (ecore_thread_check(th)) break;
         usleep((1000000.0 / 8.0) * (double)thc->interval);
      }
-   E_FREE_FUNC(thc, free);
 }
 
 static void
@@ -750,6 +749,13 @@ _cpuclock_cb_frequency_check_notify(void *data,
                   inst->cfg->cpuclock.pstate_max - 1, inst->cfg->cpuclock.status->pstate_turbo);
 }
 
+static void
+_cpuclock_cb_frequency_check_end(void *data, Ecore_Thread *th EINA_UNUSED)
+{
+   Thread_Config *thc = data;
+   E_FREE_FUNC(thc, free);
+}
+
 void
 _cpuclock_poll_interval_update(Instance *inst)
 {
@@ -768,7 +774,8 @@ _cpuclock_poll_interval_update(Instance *inst)
         inst->cfg->cpuclock.frequency_check_thread =
           ecore_thread_feedback_run(_cpuclock_cb_frequency_check_main,
                                     _cpuclock_cb_frequency_check_notify,
-                                    NULL, NULL, thc, EINA_TRUE);
+                                    _cpuclock_cb_frequency_check_end,
+                                    _cpuclock_cb_frequency_check_end, thc, EINA_TRUE);
      }
    e_config_save_queue();
 }
@@ -844,7 +851,7 @@ _cpuclock_created_cb(void *data, Evas_Object *obj, void *event_data EINA_UNUSED)
    inst->cfg->cpuclock.status = _cpuclock_status_new();
    _cpuclock_status_check_available(inst->cfg->cpuclock.status);
    _cpuclock_poll_interval_update(inst);
-   inst->cfg->cpuclock.handler = ecore_event_handler_add(E_EVENT_POWERSAVE_UPDATE, 
+   inst->cfg->cpuclock.handler = ecore_event_handler_add(E_EVENT_POWERSAVE_UPDATE,
                                                _cpuclock_event_cb_powersave, inst);
    _cpuclock_config_updated(inst);
 }
