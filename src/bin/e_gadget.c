@@ -300,14 +300,14 @@ _gadget_object_free(E_Object *eobj)
 
    if (zgc->drop_handlers)
      {
-        Evas_Object *drop_object;
+        Evas_Object **drop_object;
         Eina_Iterator *it = eina_hash_iterator_key_new(zgc->drop_handlers);
 
         EINA_ITERATOR_FOREACH(it, drop_object)
           {
-             evas_object_event_callback_del(drop_object, EVAS_CALLBACK_MOVE, _gadget_drop_handler_moveresize);
-             evas_object_event_callback_del(drop_object, EVAS_CALLBACK_RESIZE, _gadget_drop_handler_moveresize);
-             evas_object_event_callback_del(drop_object, EVAS_CALLBACK_DEL, _gadget_drop_handler_del);
+             evas_object_event_callback_del(*drop_object, EVAS_CALLBACK_MOVE, _gadget_drop_handler_moveresize);
+             evas_object_event_callback_del(*drop_object, EVAS_CALLBACK_RESIZE, _gadget_drop_handler_moveresize);
+             evas_object_event_callback_del(*drop_object, EVAS_CALLBACK_DEL, _gadget_drop_handler_del);
           }
         eina_iterator_free(it);
      }
