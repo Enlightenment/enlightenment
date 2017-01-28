@@ -1,84 +1,73 @@
 #include "memusage.h"
 
-int _memusage_proc_getswapusage(void)
+
+unsigned long _line_parse(const char *line)
 {
-   long swap_total = 0, swap_free = 0, swap_used = 0;
-   int percent = 0;
-   char buf[4096], *line, *tok;
+   char *p, *tok;
+
+   p = strchr(line, ':') + 1;
+   while(isspace(*p)) p++;
+   tok = strtok(p, " ");
+   return atol(tok);
+}
+
+void _memusage_proc_getusage(unsigned long *mem_total,
+                             unsigned long *mem_active,
+                             unsigned long *mem_cached,
+                             unsigned long *mem_buffers,
+                             unsigned long *swp_total,
+                             unsigned long *swp_active)
+{
+   char line[256];
+   int found = 0;
+   long tmp_swp_total = -1;
+   long tmp_swp_free = -1;
    FILE *f;
 
    f = fopen("/proc/meminfo", "r");
-   if (f)
+   if (!f) return;
+
+   while(fgets(line, sizeof(line), f) != NULL)
      {
-        while(fgets(buf, sizeof(buf), f) != NULL)
+        if (!strncmp("MemTotal:", line, 9))
           {
-             if (!strncmp("SwapTotal:", buf, 10))
-               {
-                  line = strchr(buf, ':')+1;
-                  while(isspace(*line)) line++;
-                  tok = strtok(line, " ");
-                  swap_total = atol(tok);
-               }
-             else if (!strncmp("SwapFree:", buf, 9))
-               {
-                  line = strchr(buf, ':')+1;
-                  while(isspace(*line)) line++;
-                  tok = strtok(line, " ");
-                  swap_free = atol(tok);
-               }
-             if (swap_total && swap_free)
-               break;
+             *mem_total = _line_parse(line);
+             found++;
           }
-        fclose(f);
+        else if (!strncmp("Active:", line, 7))
+          {
+             *mem_active = _line_parse(line);
+             found++;
+          }
+        else if (!strncmp("Cached:", line, 7))
+          {
+             *mem_cached = _line_parse(line);
+             found++;
+          }
+        else if (!strncmp("Buffers:", line, 8))
+          {
+             *mem_buffers = _line_parse(line);
+             found++;
+          }
+        else if (!strncmp("SwapTotal:", line, 10))
+          {
+             tmp_swp_total = _line_parse(line);
+             found++;
+          }
+        else if (!strncmp("SwapFree:", line, 9))
+          {
+             tmp_swp_free = _line_parse(line);
+             found++;
+          }
 
-        swap_used = swap_total - swap_free;
-        if (swap_total > 0)
-          percent = 100 * ((float)swap_used / (float)swap_total);
+         if (found >= 6)
+           break;
      }
-   if (percent > 100) percent = 100;
-   else if (percent < 0) percent = 0;
+   fclose(f);
 
-   return percent;
-}
-
-int _memusage_proc_getmemusage(void)
-{
-   long mem_total = 0, mem_free = 0, mem_used = 0;
-   int percent = 0;
-   char buf[4096], *line, *tok;
-   FILE *f;
-
-   f = fopen("/proc/meminfo", "r");
-   if (f)
+   if ((tmp_swp_total != -1) && (tmp_swp_free != -1))
      {
-        while(fgets(buf, sizeof(buf), f) != NULL)
-          {
-             if (!strncmp("MemTotal:", buf, 9))
-               {
-                  line = strchr(buf, ':')+1;
-                  while(isspace(*line)) line++;
-                  tok = strtok(line, " ");
-                  mem_total = atol(tok);
-               }
-             else if (!strncmp("MemFree:", buf, 8))
-               {
-                  line = strchr(buf, ':')+1;
-                  while(isspace(*line)) line++;
-                  tok = strtok(line, " ");
-                  mem_free = atol(tok);
-               }
-             if (mem_total && mem_free)
-               break;
-          }
-        fclose(f);
-
-        mem_used = mem_total - mem_free;
-        if (mem_total > 0)
-          percent = 100 * ((float)mem_used / (float)mem_total);
+        *swp_total = tmp_swp_total;
+        *swp_active = tmp_swp_total - tmp_swp_free;
      }
-   if (percent > 100) percent = 100;
-   else if (percent < 0) percent = 0;
-
-   return percent;
 }
-

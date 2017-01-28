@@ -8,6 +8,13 @@ struct _Thread_Config
    Instance *inst;
    int memstatus;
    int swapstatus;
+
+   unsigned long mem_total;
+   unsigned long mem_active;
+   unsigned long mem_cached;
+   unsigned long mem_buffers;
+   unsigned long swp_total;
+   unsigned long swp_active;
 };
 
 static void
@@ -130,8 +137,14 @@ _memusage_cb_usage_check_main(void *data, Ecore_Thread *th)
    for (;;)
      {
         if (ecore_thread_check(th)) break;
-        thc->memstatus = _memusage_proc_getmemusage();
-        thc->swapstatus = _memusage_proc_getswapusage();
+        _memusage_proc_getusage(&thc->mem_total, &thc->mem_active,
+                                &thc->mem_cached, &thc->mem_buffers,
+                                &thc->swp_total, &thc->swp_active);
+        if (thc->mem_total > 0)
+          thc->memstatus = 100 * ((float)thc->mem_active / (float)thc->mem_total);
+        if (thc->swp_total > 0)
+          thc->swapstatus = 100 * ((float)thc->swp_active / (float)thc->swp_total);
+
         ecore_thread_feedback(th, NULL);
         if (ecore_thread_check(th)) break;
         usleep((1000000.0 / 8.0) * (double)thc->interval);

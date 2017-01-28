@@ -4,7 +4,13 @@
 #include "../sysinfo.h"
 
 void _memusage_config_updated(Instance *inst);
-int _memusage_proc_getmemusage();
-int _memusage_proc_getswapusage();
 Evas_Object *memusage_configure(Instance *inst);
+
+void _memusage_proc_getusage(unsigned long *mem_total,
+                             unsigned long *mem_active,
+                             unsigned long *mem_cached,
+                             unsigned long *mem_buffers,
+                             unsigned long *swp_total,
+                             unsigned long *swp_active);
+
 #endif
