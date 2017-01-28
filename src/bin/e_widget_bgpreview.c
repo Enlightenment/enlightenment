@@ -27,23 +27,6 @@ static void      _e_wid_desk_cb_config(void *data, Evas *evas, Evas_Object *obj,
 static void      _e_wid_cb_resize(void *data, Evas *evas, Evas_Object *obj, void *event);
 static Eina_Bool _e_wid_cb_bg_update(void *data, int type, void *event);
 
-/*
-static void
-_bgpreview_viewport_update(Evas_Object *o, const E_Zone *zone, int x, int y)
-{
-   Edje_Message_Float_Set *msg;
-
-   msg = alloca(sizeof(Edje_Message_Float_Set) + (4 * sizeof(double)));
-   msg->count = 5;
-   msg->val[0] = 0.2 * (!!e_config->desk_flip_animate_mode);//e_config->desk_flip_animate_time;
-   msg->val[1] = x;
-   msg->val[2] = zone->desk_x_count;
-   msg->val[3] = y;
-   msg->val[4] = zone->desk_y_count;
-   edje_object_message_send(o, EDJE_MESSAGE_FLOAT_SET, 0, msg);
-}
-*/
-
 E_API Evas_Object *
 e_widget_bgpreview_add(Evas *evas, int nx, int ny)
 {
@@ -105,9 +88,9 @@ e_widget_bgpreview_desk_add(Evas *e, E_Zone *zone, int x, int y)
         dd->live = o = e_thumb_icon_add(e);
         e_thumb_icon_size_set(o, zone->w / 8, zone->h / 8);
         e_thumb_icon_file_set(o, bgfile, "e/desktop/background");
+        e_thumb_desk_pan_set(o, x, y, zone->desk_x_count, zone->desk_y_count);
         e_icon_fill_inside_set(o, EINA_FALSE);
         e_thumb_icon_begin(o);
-//        _bgpreview_viewport_update(o, zone, x, y);
         dd->thumb = EINA_TRUE;
      }
    else if ((eina_str_has_extension(bgfile, ".gif")) ||
@@ -379,9 +362,9 @@ _e_wid_cb_bg_update(void *data, int type, void *event)
              dd->live = o = e_thumb_icon_add(e);
              e_thumb_icon_size_set(o, zone->w / 8, zone->h / 8);
              e_thumb_icon_file_set(o, bgfile, "e/desktop/background");
+             e_thumb_desk_pan_set(o, dd->x, dd->y, zone->desk_x_count, zone->desk_y_count);
              e_icon_fill_inside_set(o, EINA_FALSE);
              e_thumb_icon_begin(o);
-//             _bgpreview_viewport_update(o, zone, dd->x, dd->y);
              dd->thumb = EINA_TRUE;
              _e_wid_livethumb_resize_job(dd);
           }

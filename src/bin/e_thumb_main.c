@@ -35,10 +35,12 @@ typedef struct _E_Thumb E_Thumb;
 
 struct _E_Thumb
 {
-   int   objid;
-   int   w, h;
-   char *file;
-   char *key;
+   int        objid;
+   int        w, h;
+   int        desk_x, desk_y, desk_x_count, desk_y_count;
+   Eina_List *sigsrc;
+   char      *file;
+   char      *key;
 };
 
 /* local subsystem functions */
@@ -55,7 +57,12 @@ static Eina_Bool _e_ipc_cb_server_data(void *data,
 static Eina_Bool _e_cb_timer(void *data);
 static void      _e_thumb_generate(E_Thumb *eth);
 static char     *_e_thumb_file_id(char *file,
-                                  char *key);
+                                  char *key,
+                                  int desk_x,
+                                  int desk_y,
+                                  int desk_x_count,
+                                  int desk_y_count,
+                                  Eina_List *sigsrc);
 
 /* local subsystem globals */
 static Ecore_Ipc_Server *_e_ipc_server = NULL;
@@ -184,8 +191,8 @@ _e_ipc_cb_server_data(void *data EINA_UNUSED,
    Ecore_Ipc_Event_Server_Data *e;
    E_Thumb *eth;
    Eina_List *l;
-   char *file = NULL;
-   char *key = NULL;
+   const char *file = NULL;
+   const char *key = NULL;
 
    e = event;
    if (e->major != 5 /*E_IPC_DOMAIN_THUMB*/) return ECORE_CALLBACK_PASS_ON;
@@ -194,14 +201,28 @@ _e_ipc_cb_server_data(void *data EINA_UNUSED,
       case 1:
         if (e->data)
           {
+             const char *s, *start;
+             const int *desk;
+             Eina_List *sigsrc = NULL;
+
              /* begin thumb */
              /* don't check stuff. since this connects TO E it is connecting */
              /* TO a trusted process that WILL send this message properly */
              /* formatted. if the thumbnailer dies anyway - it's not a big loss */
              /* but it is a sign of a bug in e formatting messages maybe */
-             file = e->data;
-             key = file + strlen(file) + 1;
+             s = start = e->data;
+             desk = (const int *)(s);
+             s += (4 * sizeof(int));
+             file = s;
+             s += strlen(s) + 1;
+             key = s;
+             s += strlen(s) + 1;
              if (!key[0]) key = NULL;
+             while ((s - start) < e->size)
+               {
+                  sigsrc = eina_list_append(sigsrc, eina_stringshare_add(s));
+                  s += strlen(s) + 1;
+               }
              eth = calloc(1, sizeof(E_Thumb));
              if (eth)
                {
@@ -209,6 +230,11 @@ _e_ipc_cb_server_data(void *data EINA_UNUSED,
                   eth->w = e->ref_to;
                   eth->h = e->response;
                   eth->file = strdup(file);
+                  eth->desk_x = desk[0];
+                  eth->desk_y = desk[1];
+                  eth->desk_x_count = desk[2];
+                  eth->desk_y_count = desk[3];
+                  eth->sigsrc = sigsrc;
                   if (key) eth->key = strdup(key);
                   _thumblist = eina_list_append(_thumblist, eth);
                   if (!_timer) _timer = ecore_timer_add(0.001, _e_cb_timer, NULL);
@@ -253,9 +279,12 @@ _e_cb_timer(void *data EINA_UNUSED)
    /* take thumb at head of list */
    if (_thumblist)
      {
+        const char *s;
+
         eth = eina_list_data_get(_thumblist);
         _thumblist = eina_list_remove_list(_thumblist, _thumblist);
         _e_thumb_generate(eth);
+        EINA_LIST_FREE(eth->sigsrc, s) eina_stringshare_del(s);
         free(eth->file);
         free(eth->key);
         free(eth);
@@ -290,7 +319,7 @@ _e_thumb_generate(E_Thumb *eth)
    const unsigned int *data = NULL;
    time_t mtime_orig, mtime_thumb;
 
-   id = _e_thumb_file_id(eth->file, eth->key);
+   id = _e_thumb_file_id(eth->file, eth->key, eth->desk_x, eth->desk_y, eth->desk_x_count, eth->desk_y_count, eth->sigsrc);
    if (!id) return;
 
    td = strdup(id);
@@ -338,6 +367,8 @@ _e_thumb_generate(E_Thumb *eth)
             ((!strcasecmp(ext, ".edj")) ||
              (!strcasecmp(ext, ".eap"))))
           {
+             Eina_List *l;
+
              ww = eth->w;
              hh = eth->h;
              im = ecore_evas_object_image_new(ee);
@@ -358,6 +389,37 @@ _e_thumb_generate(E_Thumb *eth)
                   evas_object_resize(edje, ww * 4, hh * 4);
                   evas_object_show(edje);
                }
+             if ((eth->desk_x_count > 0) &&
+                 (eth->desk_y_count > 0))
+               {
+                  Edje_Message_Float_Set *msg;
+
+                  msg = alloca(sizeof(Edje_Message_Float_Set) +
+                               (4 * sizeof(double)));
+                  msg->count = 5;
+                  msg->val[0] = 0.0;
+                  msg->val[1] = eth->desk_x;
+                  msg->val[2] = eth->desk_x_count;
+                  msg->val[3] = eth->desk_y;
+                  msg->val[4] = eth->desk_y_count;
+                  edje_object_message_send(edje, EDJE_MESSAGE_FLOAT_SET,
+                                           0, msg);
+               }
+             l = eth->sigsrc;
+             while (l)
+               {
+                  const char *sig, *src;
+
+                  sig = l->data;
+                  l = l->next;
+                  if (l)
+                    {
+                       src = l->data;
+                       l = l->next;
+                       edje_object_signal_emit(edje, sig, src);
+                    }
+               }
+             edje_object_message_signal_process(edje);
              evas_object_move(im, 0, 0);
              evas_object_resize(im, ww, hh);
              sortkey = EINA_TRUE;
@@ -605,28 +667,32 @@ end:
 
 static char *
 _e_thumb_file_id(char *file,
-                 char *key)
+                 char *key,
+                 int desk_x,
+                 int desk_y,
+                 int desk_x_count,
+                 int desk_y_count,
+                 Eina_List *sigsrc)
 {
    char s[64];
-   const char *chmap = "0123456789abcdef";
-   unsigned char *buf, id[20];
-   int i, len, lenf;
+   const char *chmap = "0123456789abcdef", *str;
+   unsigned char id[20], *st;
+   Eina_Strbuf *sbuf;
+   int i;
+   Eina_List *l;
 
-   len = 0;
-   lenf = strlen(file);
-   len += lenf;
-   len++;
-   if (key)
+   sbuf = eina_strbuf_new();
+   EINA_LIST_FOREACH(sigsrc, l, str)
      {
-        key += strlen(key);
-        len++;
+        eina_strbuf_append_printf(sbuf, "<<%s>>", str);
      }
-   buf = alloca(len);
+   eina_strbuf_append_printf(sbuf, "|%i.%i.%i.%i|",
+                             desk_x, desk_y, desk_x_count, desk_y_count);
+   eina_strbuf_append_printf(sbuf, "///%s", file);
+   if (key) eina_strbuf_append_printf(sbuf, "/%s", key);
 
-   strcpy((char *)buf, file);
-   if (key) strcpy((char *)(buf + lenf + 1), key);
-
-   e_sha1_sum(buf, len, id);
+   st = (unsigned char *)eina_strbuf_string_get(sbuf);
+   e_sha1_sum(st, eina_strbuf_length_get(sbuf), id);
 
    for (i = 0; i < 20; i++)
      {
@@ -634,6 +700,8 @@ _e_thumb_file_id(char *file,
         s[(i * 2) + 1] = chmap[(id[i]) & 0xf];
      }
    s[(i * 2)] = 0;
+   eina_strbuf_free(sbuf);
+
    return strdup(s);
 }
 

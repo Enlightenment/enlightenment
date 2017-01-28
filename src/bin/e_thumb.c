@@ -9,13 +9,17 @@ struct _E_Thumb
    const char   *file;
    const char   *key;
    char         *sort_id;
+   struct {
+      int x, y, x_count, y_count;
+   } desk_pan;
+   Eina_List    *sigsrc;
    unsigned char queued : 1;
    unsigned char busy : 1;
    unsigned char done : 1;
 };
 
 /* local subsystem functions */
-static void         _e_thumb_gen_begin(int objid, const char *file, const char *key, int w, int h);
+static void         _e_thumb_gen_begin(int objid, const char *file, const char *key, int w, int h, int desk_x, int desk_y, int desk_x_count, int desk_y_count, Eina_List *sigsrc);
 static void         _e_thumb_gen_end(int objid);
 static void         _e_thumb_del_hook(void *data, Evas *e, Evas_Object *obj, void *event_info);
 static void         _e_thumb_hash_add(int objid, Evas_Object *obj);
@@ -148,12 +152,20 @@ e_thumb_icon_begin(Evas_Object *obj)
         eth2->busy = 1;
         _pending++;
         if (_pending == 1) _e_thumb_thumbnailers_kill_cancel();
-        _e_thumb_gen_begin(eth2->objid, eth2->file, eth2->key, eth2->w, eth2->h);
+        _e_thumb_gen_begin(eth2->objid, eth2->file, eth2->key,
+                           eth2->w, eth2->h,
+                           eth2->desk_pan.x, eth2->desk_pan.y,
+                           eth2->desk_pan.x_count, eth2->desk_pan.y_count,
+                           eth2->sigsrc);
      }
    eth->busy = 1;
    _pending++;
    if (_pending == 1) _e_thumb_thumbnailers_kill_cancel();
-   _e_thumb_gen_begin(eth->objid, eth->file, eth->key, eth->w, eth->h);
+   _e_thumb_gen_begin(eth->objid, eth->file, eth->key,
+                      eth->w, eth->h,
+                      eth->desk_pan.x, eth->desk_pan.y,
+                      eth->desk_pan.x_count, eth->desk_pan.y_count,
+                      eth->sigsrc);
 }
 
 E_API void
@@ -188,6 +200,28 @@ e_thumb_icon_rethumb(Evas_Object *obj)
    else e_thumb_icon_end(obj);
 
    e_thumb_icon_begin(obj);
+}
+
+E_API void
+e_thumb_desk_pan_set(Evas_Object *obj, int x, int y, int x_count, int y_count)
+{
+   E_Thumb *eth;
+   eth = evas_object_data_get(obj, "e_thumbdata");
+   if (!eth) return;
+   eth->desk_pan.x = x;
+   eth->desk_pan.y = y;
+   eth->desk_pan.x_count = x_count;
+   eth->desk_pan.y_count = y_count;
+}
+
+E_API void
+e_thumb_signal_add(Evas_Object *obj, const char *sig, const char *src)
+{
+   E_Thumb *eth;
+   eth = evas_object_data_get(obj, "e_thumbdata");
+   if (!eth) return;
+   eth->sigsrc = eina_list_append(eth->sigsrc, eina_stringshare_add(sig));
+   eth->sigsrc = eina_list_append(eth->sigsrc, eina_stringshare_add(src));
 }
 
 #define A(v)          (((v) >> 24) & 0xff)
@@ -274,7 +308,11 @@ e_thumb_client_data(Ecore_Ipc_Event_Client_Data *e)
              eth->busy = 1;
              _pending++;
              if (_pending == 1) _e_thumb_thumbnailers_kill_cancel();
-             _e_thumb_gen_begin(eth->objid, eth->file, eth->key, eth->w, eth->h);
+             _e_thumb_gen_begin(eth->objid, eth->file, eth->key,
+                                eth->w, eth->h,
+                                eth->desk_pan.x, eth->desk_pan.y,
+                                eth->desk_pan.x_count, eth->desk_pan.y_count,
+                                eth->sigsrc);
           }
      }
 }
@@ -289,25 +327,75 @@ e_thumb_client_del(Ecore_Ipc_Event_Client_Del *e)
 
 /* local subsystem functions */
 static void
-_e_thumb_gen_begin(int objid, const char *file, const char *key, int w, int h)
+_e_thumb_gen_begin(int objid, const char *file, const char *key, int w, int h,
+                   int desk_x, int desk_y, int desk_x_count, int desk_y_count,
+                   Eina_List *sigsrc)
 {
-   char *buf;
-   int l1, l2;
+   char *buf, *p;
+   int l1, l2, size, *desk;
    Ecore_Ipc_Client *cli;
+   Eina_List *l;
+   const char *s;
 
    /* send thumb req */
+   // figure out buffer size needed
    l1 = strlen(file);
    l2 = 0;
    if (key) l2 = strlen(key);
-   buf = alloca(l1 + 1 + l2 + 1);
-   strcpy(buf, file);
-   if (key) strcpy(buf + l1 + 1, key);
-   else buf[l1 + 1] = 0;
+   size = (4 * sizeof(int)); // desk_x/y/count
+   size += l1 + 1; // file
+   size += l2 + 1; // key
+   EINA_LIST_FOREACH(sigsrc, l, s)
+     {
+        size += strlen(s) + 1;
+     }
+   buf = alloca(size);
+   p = buf;
+
+   // fill in buffer data
+   // data is:
+   //  [int]desk_x
+   //  [int]desk_y
+   //  [int]desk_x_count
+   //  [int]desk_y_count
+   //  [char[]]file
+   //  [char[]]key
+   // optional:
+   //  [char[]]sig1
+   //  [char[]]src1
+   //  [char[]]sig2
+   //  [char[]]src2
+   //  ...
+   desk = (int *)buf;
+   desk[0] = desk_x;
+   desk[1] = desk_y;
+   desk[2] = desk_x_count;
+   desk[3] = desk_y_count;
+   p += (4 * sizeof(int));
+   strcpy(p, file);
+   p += l1 + 1;
+   if (key)
+     {
+        strcpy(p, key);
+        p += l2 + 1;
+     }
+   else
+     {
+        p[0] = 0;
+        p += 1;
+     }
+   EINA_LIST_FOREACH(sigsrc, l, s)
+     {
+        strcpy(p, s);
+        p += strlen(s) + 1;
+     }
+
+   // actually send it off
    cli = eina_list_data_get(_thumbnailers);
    if (!cli) return;
    _thumbnailers = eina_list_remove_list(_thumbnailers, _thumbnailers);
    _thumbnailers = eina_list_append(_thumbnailers, cli);
-   ecore_ipc_client_send(cli, E_IPC_DOMAIN_THUMB, 1, objid, w, h, buf, l1 + 1 + l2 + 1);
+   ecore_ipc_client_send(cli, E_IPC_DOMAIN_THUMB, 1, objid, w, h, buf, size);
 }
 
 static void
@@ -327,6 +415,7 @@ static void
 _e_thumb_del_hook(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
    E_Thumb *eth;
+   const char *s;
 
    eth = evas_object_data_get(obj, "e_thumbdata");
    if (!eth) return;
@@ -344,6 +433,7 @@ _e_thumb_del_hook(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj,
    if (eth->file) eina_stringshare_del(eth->file);
    if (eth->key) eina_stringshare_del(eth->key);
    free(eth->sort_id);
+   EINA_LIST_FREE(eth->sigsrc, s) eina_stringshare_del(s);
    free(eth);
 }
 
