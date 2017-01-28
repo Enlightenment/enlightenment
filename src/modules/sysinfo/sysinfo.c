@@ -117,8 +117,8 @@ _conf_item_get(int *id)
    ci->cpumonitor.popup = NULL;
    ci->cpumonitor.configure = NULL;
    ci->memusage.poll_interval = 32;
-   ci->memusage.real = 0;
-   ci->memusage.swap = 0;
+   ci->memusage.mem_percent = 0;
+   ci->memusage.swp_percent = 0;
    ci->memusage.popup = NULL;
    ci->memusage.configure = NULL;
    ci->netstatus.poll_interval = 32;

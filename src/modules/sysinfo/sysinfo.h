@@ -206,8 +206,8 @@ struct _Config_Item
       Evas_Object         *popup_label;
       Evas_Object         *configure;
       int                  poll_interval;
-      int                  real;
-      int                  swap;
+      int                  mem_percent;
+      int                  swp_percent;
       Ecore_Thread        *usage_check_thread;
    } memusage;
    struct

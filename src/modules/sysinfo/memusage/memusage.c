@@ -6,8 +6,8 @@ struct _Thread_Config
 {
    int interval;
    Instance *inst;
-   int memstatus;
-   int swapstatus;
+   int mem_percent;
+   int swp_percent;
 
    unsigned long mem_total;
    unsigned long mem_active;
@@ -35,8 +35,8 @@ _memusage_face_update(Instance *inst, int mem, int swap)
      {
         char text[4096];
         snprintf(text, sizeof(text), "%s: %d%%<br>%s: %d%%",
-                 _("Total Memory Usage"), inst->cfg->memusage.real,
-                 _("Total Swap Usage"), inst->cfg->memusage.swap);
+                 _("Total Memory Usage"), inst->cfg->memusage.mem_percent,
+                 _("Total Swap Usage"), inst->cfg->memusage.swp_percent);
         elm_object_text_set(inst->cfg->memusage.popup_label, text);
      }
 }
@@ -91,8 +91,8 @@ _memusage_mouse_down_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_U
                                        _memusage_popup_deleted, inst);
 
         snprintf(text, sizeof(text), "%s: %d%%<br>%s: %d%%",
-                 _("Total Memory Usage"), inst->cfg->memusage.real,
-                 _("Total Swap Usage"), inst->cfg->memusage.swap);
+                 _("Total Memory Usage"), inst->cfg->memusage.mem_percent,
+                 _("Total Swap Usage"), inst->cfg->memusage.swp_percent);
         label = elm_label_add(popup);
         elm_object_style_set(label, "marker");
         elm_object_text_set(label, text);
@@ -149,9 +149,9 @@ _memusage_cb_usage_check_main(void *data, Ecore_Thread *th)
                                 &thc->mem_cached, &thc->mem_buffers,
                                 &thc->swp_total, &thc->swp_active);
         if (thc->mem_total > 0)
-          thc->memstatus = 100 * ((float)thc->mem_active / (float)thc->mem_total);
+          thc->mem_percent = 100 * ((float)thc->mem_active / (float)thc->mem_total);
         if (thc->swp_total > 0)
-          thc->swapstatus = 100 * ((float)thc->swp_active / (float)thc->swp_total);
+          thc->swp_percent = 100 * ((float)thc->swp_active / (float)thc->swp_total);
 
         ecore_thread_feedback(th, NULL);
         if (ecore_thread_check(th)) break;
@@ -172,9 +172,9 @@ _memusage_cb_usage_check_notify(void *data,
    if (inst->cfg->esm != E_SYSINFO_MODULE_MEMUSAGE &&
        inst->cfg->esm != E_SYSINFO_MODULE_SYSINFO) return;
 
-   inst->cfg->memusage.real = thc->memstatus;
-   inst->cfg->memusage.swap = thc->swapstatus;
-   _memusage_face_update(inst, thc->memstatus, thc->swapstatus);
+   inst->cfg->memusage.mem_percent = thc->mem_percent;
+   inst->cfg->memusage.swp_percent = thc->swp_percent;
+   _memusage_face_update(inst, thc->mem_percent, thc->swp_percent);
 }
 
 void
@@ -192,8 +192,8 @@ _memusage_config_updated(Instance *inst)
      {
         thc->inst = inst;
         thc->interval = inst->cfg->memusage.poll_interval;
-        thc->memstatus = 0;
-        thc->swapstatus = 0;
+        thc->mem_percent = 0;
+        thc->swp_percent = 0;
         inst->cfg->memusage.usage_check_thread =
           ecore_thread_feedback_run(_memusage_cb_usage_check_main,
                                     _memusage_cb_usage_check_notify,
@@ -316,8 +316,8 @@ _conf_item_get(int *id)
 
    ci->esm = E_SYSINFO_MODULE_MEMUSAGE;
    ci->memusage.poll_interval = 32;
-   ci->memusage.real = 0;
-   ci->memusage.swap = 0;
+   ci->memusage.mem_percent = 0;
+   ci->memusage.swp_percent = 0;
    ci->memusage.popup = NULL;
    ci->memusage.configure = NULL;
 
@@ -334,8 +334,8 @@ memusage_create(Evas_Object *parent, int *id, E_Gadget_Site_Orient orient EINA_U
    inst = E_NEW(Instance, 1);
    inst->cfg = _conf_item_get(id);
    *id = inst->cfg->id;
-   inst->cfg->memusage.real = 0;
-   inst->cfg->memusage.swap = 0;
+   inst->cfg->memusage.mem_percent = 0;
+   inst->cfg->memusage.swp_percent = 0;
    inst->cfg->memusage.popup = NULL;
    inst->cfg->memusage.configure = NULL;
    inst->o_main = elm_box_add(parent);
