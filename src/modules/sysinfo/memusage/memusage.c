@@ -9,11 +9,12 @@ struct _Thread_Config
    int mem_percent;
    int swp_percent;
    unsigned long mem_total;
-   unsigned long mem_active;
+   unsigned long mem_used;
    unsigned long mem_cached;
    unsigned long mem_buffers;
+   unsigned long mem_shared;
    unsigned long swp_total;
-   unsigned long swp_active;
+   unsigned long swp_used;
 };
 
 static void
@@ -28,9 +29,9 @@ _memusage_popup_update(Instance *inst)
 
    if (inst->cfg->memusage.mem_total)
      {
-        pbar = evas_object_data_get(inst->cfg->memusage.popup, "mem_active_pbar");
-        val_mb = inst->cfg->memusage.mem_active / 1024;
-        val_perc = 100 * ((float)inst->cfg->memusage.mem_active /
+        pbar = evas_object_data_get(inst->cfg->memusage.popup, "mem_used_pbar");
+        val_mb = inst->cfg->memusage.mem_used / 1024;
+        val_perc = 100 * ((float)inst->cfg->memusage.mem_used /
                           (float)inst->cfg->memusage.mem_total);
         snprintf(buf, sizeof(buf), "%d MB (%d %%)", val_mb, val_perc);
         elm_progressbar_value_set(pbar, (float)val_perc / 100);
@@ -51,13 +52,21 @@ _memusage_popup_update(Instance *inst)
         snprintf(buf, sizeof(buf), "%d MB (%d %%)", val_mb, val_perc);
         elm_progressbar_value_set(pbar, (float)val_perc / 100);
         elm_progressbar_unit_format_set(pbar, buf);
+
+        pbar = evas_object_data_get(inst->cfg->memusage.popup, "mem_shared_pbar");
+        val_mb = inst->cfg->memusage.mem_shared / 1024;
+        val_perc = 100 * ((float)inst->cfg->memusage.mem_shared /
+                          (float)inst->cfg->memusage.mem_total);
+        snprintf(buf, sizeof(buf), "%d MB (%d %%)", val_mb, val_perc);
+        elm_progressbar_value_set(pbar, (float)val_perc / 100);
+        elm_progressbar_unit_format_set(pbar, buf);
      }
 
    if (inst->cfg->memusage.swp_total)
      {
         pbar = evas_object_data_get(inst->cfg->memusage.popup, "swap_pbar");
-        val_mb = inst->cfg->memusage.swp_active / 1024;
-        val_perc = 100 * ((float)inst->cfg->memusage.swp_active /
+        val_mb = inst->cfg->memusage.swp_used / 1024;
+        val_perc = 100 * ((float)inst->cfg->memusage.swp_used /
                           (float)inst->cfg->memusage.swp_total);
         snprintf(buf, sizeof(buf), "%d MB (%d %%)", val_mb, val_perc);
         elm_progressbar_value_set(pbar, (float)val_perc / 100);
@@ -70,17 +79,18 @@ _memusage_face_update(Instance *inst)
 {
    Edje_Message_Int_Set *msg;
 
-   msg = malloc(sizeof(Edje_Message_Int_Set) + 8 * sizeof(int));
+   msg = malloc(sizeof(Edje_Message_Int_Set) + 9 * sizeof(int));
    EINA_SAFETY_ON_NULL_RETURN(msg);
    msg->count = 2;
    msg->val[0] = inst->cfg->memusage.mem_percent;
    msg->val[1] = inst->cfg->memusage.swp_percent;
    msg->val[2] = inst->cfg->memusage.mem_total;
-   msg->val[3] = inst->cfg->memusage.mem_active;
+   msg->val[3] = inst->cfg->memusage.mem_used;
    msg->val[4] = inst->cfg->memusage.mem_cached;
    msg->val[5] = inst->cfg->memusage.mem_buffers;
-   msg->val[6] = inst->cfg->memusage.swp_total;
-   msg->val[7] = inst->cfg->memusage.swp_active;
+   msg->val[6] = inst->cfg->memusage.mem_cached;
+   msg->val[7] = inst->cfg->memusage.swp_total;
+   msg->val[8] = inst->cfg->memusage.swp_used;
    edje_object_message_send(elm_layout_edje_get(inst->cfg->memusage.o_gadget),
                             EDJE_MESSAGE_INT_SET, 1, msg);
    free(msg);
@@ -150,7 +160,7 @@ _memusage_popup_create(Instance *inst)
 
    label = elm_label_add(table);
    E_EXPAND(label); E_ALIGN(label, 0.0, 0.5);
-   elm_object_text_set(label, _("Active"));
+   elm_object_text_set(label, _("Used"));
    elm_table_pack(table, label, 0, 1, 1, 1);
    evas_object_show(label);
    pbar = elm_progressbar_add(table);
@@ -158,7 +168,7 @@ _memusage_popup_create(Instance *inst)
    elm_progressbar_span_size_set(pbar, 200 * e_scale);
    elm_table_pack(table, pbar, 1, 1, 1, 1);
    evas_object_show(pbar);
-   evas_object_data_set(popup, "mem_active_pbar", pbar);
+   evas_object_data_set(popup, "mem_used_pbar", pbar);
 
    label = elm_label_add(table);
    E_EXPAND(label); E_ALIGN(label, 0.0, 0.5);
@@ -183,6 +193,18 @@ _memusage_popup_create(Instance *inst)
    elm_table_pack(table, pbar, 1, 3, 1, 1);
    evas_object_show(pbar);
    evas_object_data_set(popup, "mem_cached_pbar", pbar);
+
+   label = elm_label_add(table);
+   E_EXPAND(label); E_ALIGN(label, 0.0, 0.5);
+   elm_object_text_set(label, _("Shared"));
+   elm_table_pack(table, label, 0, 4, 1, 1);
+   evas_object_show(label);
+   pbar = elm_progressbar_add(table);
+   E_EXPAND(pbar); E_FILL(pbar);
+   elm_progressbar_span_size_set(pbar, 200 * e_scale);
+   elm_table_pack(table, pbar, 1, 4, 1, 1);
+   evas_object_show(pbar);
+   evas_object_data_set(popup, "mem_shared_pbar", pbar);
 
    // swp frame
    frame = elm_frame_add(popup);
@@ -267,13 +289,13 @@ _memusage_cb_usage_check_main(void *data, Ecore_Thread *th)
    for (;;)
      {
         if (ecore_thread_check(th)) break;
-        _memusage_proc_getusage(&thc->mem_total, &thc->mem_active,
-                                &thc->mem_cached, &thc->mem_buffers,
-                                &thc->swp_total, &thc->swp_active);
+        _memusage_proc_getusage(&thc->mem_total, &thc->mem_used,
+                         &thc->mem_cached, &thc->mem_buffers, &thc->mem_shared,
+                         &thc->swp_total, &thc->swp_used);
         if (thc->mem_total > 0)
-          thc->mem_percent = 100 * ((float)thc->mem_active / (float)thc->mem_total);
+          thc->mem_percent = 100 * ((float)thc->mem_used / (float)thc->mem_total);
         if (thc->swp_total > 0)
-          thc->swp_percent = 100 * ((float)thc->swp_active / (float)thc->swp_total);
+          thc->swp_percent = 100 * ((float)thc->swp_used / (float)thc->swp_total);
 
         ecore_thread_feedback(th, NULL);
         if (ecore_thread_check(th)) break;
@@ -297,11 +319,12 @@ _memusage_cb_usage_check_notify(void *data,
    inst->cfg->memusage.mem_percent = thc->mem_percent;
    inst->cfg->memusage.swp_percent = thc->swp_percent;
    inst->cfg->memusage.mem_total = thc->mem_total;
-   inst->cfg->memusage.mem_active = thc->mem_active;
+   inst->cfg->memusage.mem_used = thc->mem_used;
    inst->cfg->memusage.mem_cached = thc->mem_cached;
    inst->cfg->memusage.mem_buffers = thc->mem_buffers;
+   inst->cfg->memusage.mem_shared = thc->mem_shared;
    inst->cfg->memusage.swp_total = thc->swp_total;
-   inst->cfg->memusage.swp_active = thc->swp_active;
+   inst->cfg->memusage.swp_used = thc->swp_used;
    _memusage_face_update(inst);
 }
 
@@ -447,11 +470,12 @@ _conf_item_get(int *id)
    ci->memusage.mem_percent = 0;
    ci->memusage.swp_percent = 0;
    ci->memusage.mem_total = 0;
-   ci->memusage.mem_active = 0;
+   ci->memusage.mem_used = 0;
    ci->memusage.mem_cached = 0;
    ci->memusage.mem_buffers = 0;
+   ci->memusage.mem_shared = 0;
    ci->memusage.swp_total = 0;
-   ci->memusage.swp_active = 0;
+   ci->memusage.swp_used = 0;
    ci->memusage.popup = NULL;
    ci->memusage.configure = NULL;
 
@@ -471,11 +495,12 @@ memusage_create(Evas_Object *parent, int *id, E_Gadget_Site_Orient orient EINA_U
    inst->cfg->memusage.mem_percent = 0;
    inst->cfg->memusage.swp_percent = 0;
    inst->cfg->memusage.mem_total = 0;
-   inst->cfg->memusage.mem_active = 0;
+   inst->cfg->memusage.mem_used = 0;
    inst->cfg->memusage.mem_cached = 0;
    inst->cfg->memusage.mem_buffers = 0;
+   inst->cfg->memusage.mem_shared = 0;
    inst->cfg->memusage.swp_total = 0;
-   inst->cfg->memusage.swp_active = 0;
+   inst->cfg->memusage.swp_used = 0;
    inst->cfg->memusage.popup = NULL;
    inst->cfg->memusage.configure = NULL;
    inst->o_main = elm_box_add(parent);
