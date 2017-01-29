@@ -18,8 +18,8 @@ extern Eina_List *device_batteries;
 extern Eina_List *device_ac_adapters;
 extern double init_time;
 
-Ac_Adapter *ac = NULL;
-Battery *bat = NULL;
+static Ac_Adapter *ac = NULL;
+static Battery *bat = NULL;
 
 int
 _battery_sysctl_start(void)
@@ -138,8 +138,8 @@ _battery_sysctl_stop(void)
    if (ac)
      {
         eina_stringshare_del(ac->udi);
-        free(ac->mib);
-        free(ac);
+        E_FREE(ac->mib);
+        E_FREE(ac);
      }
 
    if (bat)
@@ -150,12 +150,12 @@ _battery_sysctl_stop(void)
         eina_stringshare_del(bat->vendor);
         ecore_poller_del(bat->poll);
 #if defined(__FreeBSD__) || defined(__DragonFly__)
-        free(bat->mib_state);
-        free(bat->mib_time);
-        free(bat->mib_units);
+        E_FREE(bat->mib_state);
+        E_FREE(bat->mib_time);
+        E_FREE(bat->mib_units);
 #endif
-        free(bat->mib);
-        free(bat);
+        E_FREE(bat->mib);
+        E_FREE(bat);
      }
 }
 

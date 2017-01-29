@@ -18,8 +18,8 @@ extern Eina_List *batman_device_batteries;
 extern Eina_List *batman_device_ac_adapters;
 extern double batman_init_time;
 
-Ac_Adapter *ac = NULL;
-Battery *bat = NULL;
+static Ac_Adapter *ac = NULL;
+static Battery *bat = NULL;
 
 int
 _batman_sysctl_start(Instance *inst)
