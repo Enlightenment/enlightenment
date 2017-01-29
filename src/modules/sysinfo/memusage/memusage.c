@@ -88,7 +88,7 @@ _memusage_face_update(Instance *inst)
    msg->val[3] = inst->cfg->memusage.mem_used;
    msg->val[4] = inst->cfg->memusage.mem_cached;
    msg->val[5] = inst->cfg->memusage.mem_buffers;
-   msg->val[6] = inst->cfg->memusage.mem_cached;
+   msg->val[6] = inst->cfg->memusage.mem_shared;
    msg->val[7] = inst->cfg->memusage.swp_total;
    msg->val[8] = inst->cfg->memusage.swp_used;
    edje_object_message_send(elm_layout_edje_get(inst->cfg->memusage.o_gadget),
