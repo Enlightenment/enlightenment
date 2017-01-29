@@ -17,6 +17,55 @@ struct _Thread_Config
 };
 
 static void
+_memusage_popup_update(Instance *inst)
+{
+   Evas_Object *pbar;
+   int val_mb, val_perc;
+   char buf[128];
+
+   if (!inst->cfg->memusage.popup)
+     return;
+
+   if (inst->cfg->memusage.mem_total)
+     {
+        pbar = evas_object_data_get(inst->cfg->memusage.popup, "mem_active_pbar");
+        val_mb = inst->cfg->memusage.mem_active / 1024;
+        val_perc = 100 * ((float)inst->cfg->memusage.mem_active /
+                          (float)inst->cfg->memusage.mem_total);
+        snprintf(buf, sizeof(buf), "%d MB (%d %%)", val_mb, val_perc);
+        elm_progressbar_value_set(pbar, (float)val_perc / 100);
+        elm_progressbar_unit_format_set(pbar, buf);
+
+        pbar = evas_object_data_get(inst->cfg->memusage.popup, "mem_buffers_pbar");
+        val_mb = inst->cfg->memusage.mem_buffers / 1024;
+        val_perc = 100 * ((float)inst->cfg->memusage.mem_buffers /
+                          (float)inst->cfg->memusage.mem_total);
+        snprintf(buf, sizeof(buf), "%d MB (%d %%)", val_mb, val_perc);
+        elm_progressbar_value_set(pbar, (float)val_perc / 100);
+        elm_progressbar_unit_format_set(pbar, buf);
+
+        pbar = evas_object_data_get(inst->cfg->memusage.popup, "mem_cached_pbar");
+        val_mb = inst->cfg->memusage.mem_cached / 1024;
+        val_perc = 100 * ((float)inst->cfg->memusage.mem_cached /
+                          (float)inst->cfg->memusage.mem_total);
+        snprintf(buf, sizeof(buf), "%d MB (%d %%)", val_mb, val_perc);
+        elm_progressbar_value_set(pbar, (float)val_perc / 100);
+        elm_progressbar_unit_format_set(pbar, buf);
+     }
+
+   if (inst->cfg->memusage.swp_total)
+     {
+        pbar = evas_object_data_get(inst->cfg->memusage.popup, "swap_pbar");
+        val_mb = inst->cfg->memusage.swp_active / 1024;
+        val_perc = 100 * ((float)inst->cfg->memusage.swp_active /
+                          (float)inst->cfg->memusage.swp_total);
+        snprintf(buf, sizeof(buf), "%d MB (%d %%)", val_mb, val_perc);
+        elm_progressbar_value_set(pbar, (float)val_perc / 100);
+        elm_progressbar_unit_format_set(pbar, buf);
+     }
+}
+
+static void
 _memusage_face_update(Instance *inst)
 {
    Edje_Message_Int_Set *msg;
@@ -37,13 +86,7 @@ _memusage_face_update(Instance *inst)
    free(msg);
 
    if (inst->cfg->memusage.popup)
-     {
-        char text[4096];
-        snprintf(text, sizeof(text), "%s: %d%%<br>%s: %d%%",
-                 _("Total Memory Usage"), inst->cfg->memusage.mem_percent,
-                 _("Total Swap Usage"), inst->cfg->memusage.swp_percent);
-        elm_object_text_set(inst->cfg->memusage.popup_label, text);
-     }
+     _memusage_popup_update(inst);
 }
 
 static Evas_Object *
@@ -71,13 +114,105 @@ _memusage_popup_deleted(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_U
    inst->cfg->memusage.popup = NULL;
 }
 
+static Evas_Object *
+_memusage_popup_create(Instance *inst)
+{
+   Evas_Object *popup, *box, *table, *frame, *label, *pbar;
+   char buf[128];
+
+   // popup + vert box
+   popup = elm_ctxpopup_add(e_comp->elm);
+   elm_object_style_set(popup, "noblock");
+   evas_object_smart_callback_add(popup, "dismissed",
+                                  _memusage_popup_dismissed, inst);
+   evas_object_event_callback_add(popup, EVAS_CALLBACK_DEL,
+                                  _memusage_popup_deleted, inst);
+
+   box = elm_box_add(popup);
+   elm_box_horizontal_set(box, EINA_FALSE);
+   E_EXPAND(box); E_FILL(box);
+   elm_object_content_set(popup, box);
+   evas_object_show(box);
+
+   // mem frame + table
+   frame = elm_frame_add(popup);
+   E_EXPAND(frame); E_FILL(frame);
+   snprintf(buf, sizeof(buf), _("Memory usage (available %ld MB)"),
+            inst->cfg->memusage.mem_total / 1024);
+   elm_object_text_set(frame, buf);
+   elm_box_pack_end(box, frame);
+   evas_object_show(frame);
+
+   table = elm_table_add(frame);
+   E_EXPAND(table); E_FILL(table);
+   elm_object_content_set(frame, table);
+   evas_object_show(table);
+
+   label = elm_label_add(table);
+   E_EXPAND(label); E_ALIGN(label, 0.0, 0.5);
+   elm_object_text_set(label, _("Active"));
+   elm_table_pack(table, label, 0, 1, 1, 1);
+   evas_object_show(label);
+   pbar = elm_progressbar_add(table);
+   E_EXPAND(pbar); E_FILL(pbar);
+   elm_progressbar_span_size_set(pbar, 200 * e_scale);
+   elm_table_pack(table, pbar, 1, 1, 1, 1);
+   evas_object_show(pbar);
+   evas_object_data_set(popup, "mem_active_pbar", pbar);
+
+   label = elm_label_add(table);
+   E_EXPAND(label); E_ALIGN(label, 0.0, 0.5);
+   elm_object_text_set(label, _("Buffers"));
+   elm_table_pack(table, label, 0, 2, 1, 1);
+   evas_object_show(label);
+   pbar = elm_progressbar_add(table);
+   E_EXPAND(pbar); E_FILL(pbar);
+   elm_progressbar_span_size_set(pbar, 200 * e_scale);
+   elm_table_pack(table, pbar, 1, 2, 1, 1);
+   evas_object_show(pbar);
+   evas_object_data_set(popup, "mem_buffers_pbar", pbar);
+
+   label = elm_label_add(table);
+   E_EXPAND(label); E_ALIGN(label, 0.0, 0.5);
+   elm_object_text_set(label, _("Cached"));
+   elm_table_pack(table, label, 0, 3, 1, 1);
+   evas_object_show(label);
+   pbar = elm_progressbar_add(table);
+   E_EXPAND(pbar); E_FILL(pbar);
+   elm_progressbar_span_size_set(pbar, 200 * e_scale);
+   elm_table_pack(table, pbar, 1, 3, 1, 1);
+   evas_object_show(pbar);
+   evas_object_data_set(popup, "mem_cached_pbar", pbar);
+
+   // swp frame
+   frame = elm_frame_add(popup);
+   E_EXPAND(frame); E_FILL(frame);
+   snprintf(buf, sizeof(buf), _("Swap usage (available %ld MB)"),
+            inst->cfg->memusage.swp_total / 1024);
+   elm_object_text_set(frame, buf);
+   elm_box_pack_end(box, frame);
+   evas_object_show(frame);
+
+   pbar = elm_progressbar_add(frame);
+   E_EXPAND(pbar); E_FILL(pbar);
+   elm_object_content_set(frame, pbar);
+   evas_object_show(pbar);
+   evas_object_data_set(popup, "swap_pbar", pbar);
+
+   // show and place the popup
+   e_comp_object_util_autoclose(popup, NULL, NULL, NULL);
+   evas_object_show(popup);
+   e_gadget_util_ctxpopup_place(inst->o_main, popup,
+                                inst->cfg->memusage.o_gadget);
+
+   return popup;
+}
+
 static void
 _memusage_mouse_down_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_data)
 {
-   Evas_Object *label, *popup;
    Evas_Event_Mouse_Down *ev = event_data;
    Instance *inst = data;
-   char text[4096];
 
    if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return;
    if (ev->button != 3)
@@ -86,30 +221,12 @@ _memusage_mouse_down_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_U
           {
              elm_ctxpopup_dismiss(inst->cfg->memusage.popup);
              inst->cfg->memusage.popup = NULL;
-             return;
           }
-        popup = elm_ctxpopup_add(e_comp->elm);
-        elm_object_style_set(popup, "noblock");
-        evas_object_smart_callback_add(popup, "dismissed",
-                                       _memusage_popup_dismissed, inst);
-        evas_object_event_callback_add(popup, EVAS_CALLBACK_DEL,
-                                       _memusage_popup_deleted, inst);
-
-        snprintf(text, sizeof(text), "%s: %d%%<br>%s: %d%%",
-                 _("Total Memory Usage"), inst->cfg->memusage.mem_percent,
-                 _("Total Swap Usage"), inst->cfg->memusage.swp_percent);
-        label = elm_label_add(popup);
-        elm_object_style_set(label, "marker");
-        elm_object_text_set(label, text);
-        elm_object_content_set(popup, label);
-        evas_object_show(label);
-        inst->cfg->memusage.popup_label = label;
-
-        e_comp_object_util_autoclose(popup, NULL, NULL, NULL);
-        evas_object_show(popup);
-        e_gadget_util_ctxpopup_place(inst->o_main, popup,
-                                     inst->cfg->memusage.o_gadget);
-        inst->cfg->memusage.popup = popup;
+        else
+          {
+             inst->cfg->memusage.popup = _memusage_popup_create(inst);
+             _memusage_popup_update(inst);
+          }
      }
    else
      {

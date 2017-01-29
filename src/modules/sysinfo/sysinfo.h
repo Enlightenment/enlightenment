@@ -203,7 +203,6 @@ struct _Config_Item
    {
       Evas_Object         *o_gadget;
       Evas_Object         *popup;
-      Evas_Object         *popup_label;
       Evas_Object         *configure;
       int                  poll_interval;
       int                  mem_percent;
