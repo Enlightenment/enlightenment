@@ -257,7 +257,7 @@ e_dialog_show(E_Dialog *dia)
    if (!dia->resizable)
      {
         evas_object_size_hint_weight_set(dia->bg_object, 0, 0);
-        evas_object_size_hint_max_set(dia->bg_object, mw, mh);
+        e_util_win_auto_resize_fill(dia->win);
      }
    else
      {
