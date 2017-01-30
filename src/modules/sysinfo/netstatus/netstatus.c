@@ -91,7 +91,8 @@ _netstatus_mouse_down_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_
         evas_object_show(label);
         inst->cfg->netstatus.popup_label = label;
 
-        e_gadget_util_ctxpopup_place(inst->o_main, popup, NULL);
+        e_gadget_util_ctxpopup_place(inst->o_main, popup,
+                                     inst->cfg->netstatus.o_gadget);
         evas_object_show(popup);
         inst->cfg->netstatus.popup = popup;
      }
