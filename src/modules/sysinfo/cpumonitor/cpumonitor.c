@@ -113,17 +113,32 @@ _cpumonitor_mouse_down_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA
 static void
 _cpumonitor_resize_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *event_data EINA_UNUSED)
 {
-   Evas_Coord w = 1, h = 1;
+   Evas_Coord w = 1, h = 1, sw, sh;
    Instance *inst = data;
    int num_cores = eina_list_count(inst->cfg->cpumonitor.cores);
 
    if (!num_cores || !inst->o_main) return;
 
    edje_object_parts_extends_calc(elm_layout_edje_get(obj), 0, 0, &w, &h);
-   if (e_gadget_site_orient_get(e_gadget_site_get(inst->o_main)) == E_GADGET_SITE_ORIENT_VERTICAL)
-     h *= num_cores;
+   if (inst->cfg->esm == E_SYSINFO_MODULE_CPUMONITOR)
+     {
+        evas_object_geometry_get(inst->o_main, 0, 0, &sw, &sh);
+     }
    else
-     w *= num_cores;
+     {
+        sw = w;
+        sh = h;
+     }
+   if (e_gadget_site_orient_get(e_gadget_site_get(inst->o_main)) == E_GADGET_SITE_ORIENT_VERTICAL)
+     {
+        w = sw;
+        h *= num_cores;
+     }
+   else
+     {
+        w *= num_cores;
+        h = sh;
+     }
    if (inst->cfg->esm == E_SYSINFO_MODULE_CPUMONITOR)
      evas_object_size_hint_aspect_set(inst->o_main, EVAS_ASPECT_CONTROL_BOTH, w, h);
    else
@@ -282,7 +297,6 @@ _cpumonitor_created_cb(void *data, Evas_Object *obj, void *event_data EINA_UNUSE
    e_gadget_configure_cb_set(inst->o_main, _cpumonitor_configure_cb);
 
    inst->cfg->cpumonitor.o_gadget = elm_box_add(inst->o_main);
-   elm_box_padding_set(inst->cfg->cpumonitor.o_gadget, 0, 0);
    elm_box_homogeneous_set(inst->cfg->cpumonitor.o_gadget, EINA_TRUE);
    if (orient == E_GADGET_SITE_ORIENT_VERTICAL)
      elm_box_horizontal_set(inst->cfg->cpumonitor.o_gadget, EINA_FALSE);
@@ -301,7 +315,6 @@ Evas_Object *
 sysinfo_cpumonitor_create(Evas_Object *parent, Instance *inst)
 {
    inst->cfg->cpumonitor.o_gadget = elm_box_add(parent);
-   elm_box_padding_set(inst->cfg->cpumonitor.o_gadget, 0, 0);
    elm_box_homogeneous_set(inst->cfg->cpumonitor.o_gadget, EINA_TRUE);
    elm_box_horizontal_set(inst->cfg->cpumonitor.o_gadget, EINA_TRUE);
    E_EXPAND(inst->cfg->cpumonitor.o_gadget);
