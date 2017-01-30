@@ -21,9 +21,11 @@ void _memusage_proc_getusage(unsigned long *mem_total,
 {
    char line[256];
    int found = 0;
-   long tmp_swp_total = -1;
-   long tmp_swp_free = -1;
-   long tmp_mem_free = -1;
+   unsigned long tmp_swp_total = 0;
+   unsigned long tmp_swp_free = 0;
+   unsigned long tmp_mem_free = 0;
+   unsigned long tmp_mem_cached = 0;
+   unsigned long tmp_mem_slab = 0;
    FILE *f;
 
    *mem_total = 0;
@@ -51,7 +53,12 @@ void _memusage_proc_getusage(unsigned long *mem_total,
           }
         else if (!strncmp("Cached:", line, 7))
           {
-             *mem_cached = _line_parse(line);
+             tmp_mem_cached = _line_parse(line);
+             found++;
+          }
+        else if (!strncmp("Slab:", line, 5))
+          {
+             tmp_mem_slab = _line_parse(line);
              found++;
           }
         else if (!strncmp("Buffers:", line, 8))
@@ -75,20 +82,14 @@ void _memusage_proc_getusage(unsigned long *mem_total,
              found++;
           }
 
-        if (found >= 7)
+        if (found >= 8)
           break;
      }
    fclose(f);
 
-   if ((tmp_mem_free != -1) && (*mem_total))
-     {
-        *mem_used = *mem_total - tmp_mem_free -
-                    *mem_cached - *mem_buffers - *mem_shared;
-     }
+   *mem_cached = tmp_mem_cached + tmp_mem_slab;
+   *mem_used = *mem_total - tmp_mem_free - *mem_cached - *mem_buffers;
 
-   if ((tmp_swp_total != -1) && (tmp_swp_free != -1))
-     {
-        *swp_total = tmp_swp_total;
-        *swp_used = tmp_swp_total - tmp_swp_free;
-     }
+   *swp_total = tmp_swp_total;
+   *swp_used = tmp_swp_total - tmp_swp_free;
 }
