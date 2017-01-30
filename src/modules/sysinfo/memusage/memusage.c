@@ -221,11 +221,9 @@ _memusage_popup_create(Instance *inst)
    evas_object_show(pbar);
    evas_object_data_set(popup, "swap_pbar", pbar);
 
-   // show and place the popup
-   e_comp_object_util_autoclose(popup, NULL, NULL, NULL);
+   // place and show the popup
+   e_gadget_util_ctxpopup_place(inst->o_main, popup, NULL);
    evas_object_show(popup);
-   e_gadget_util_ctxpopup_place(inst->o_main, popup,
-                                inst->cfg->memusage.o_gadget);
 
    return popup;
 }
