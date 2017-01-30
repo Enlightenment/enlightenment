@@ -46,8 +46,8 @@ static void _e_sys_systemd_exists_cb(void *data, const Eldbus_Message *m, Eldbus
 static Eina_Bool systemd_works = EINA_FALSE;
 static int _e_sys_systemd_inhibit_fd = -1;
 
-static const int E_LOGOUT_AUTO_TIME = 60;
-static const int E_LOGOUT_WAIT_TIME = 15;
+static const int E_LOGOUT_AUTO_TIME = 60.0;
+static const int E_LOGOUT_WAIT_TIME = 3.0;
 
 static Ecore_Timer *action_timeout = NULL;
 
@@ -672,9 +672,8 @@ _e_sys_cb_logout_timer(void *data EINA_UNUSED)
      }
    else
      {
-        /* it has taken 15 seconds of waiting and we still have apps that
-         * will not go away
-         */
+        // it has taken E_LOGOUT_WAIT_TIME seconds of waiting and we still
+        // have apps that will not go away
         double now = ecore_loop_time_get();
         if ((now - _e_sys_logout_begin_time) > E_LOGOUT_WAIT_TIME)
           {
@@ -686,6 +685,7 @@ _e_sys_cb_logout_timer(void *data EINA_UNUSED)
                   _e_sys_logout_confirm_dialog = dia;
                   e_dialog_title_set(dia, _("Logout problems"));
                   e_dialog_icon_set(dia, "system-log-out", 64);
+                  _e_sys_logout_confirm_dialog_update(E_LOGOUT_AUTO_TIME);
                   e_dialog_button_add(dia, _("Logout now"), NULL,
                                       _e_sys_cb_logout_logout, NULL);
                   e_dialog_button_add(dia, _("Wait longer"), NULL,
@@ -693,7 +693,6 @@ _e_sys_cb_logout_timer(void *data EINA_UNUSED)
                   e_dialog_button_add(dia, _("Cancel Logout"), NULL,
                                       _e_sys_cb_logout_abort, NULL);
                   e_dialog_button_focus_num(dia, 1);
-                  _e_sys_logout_confirm_dialog_update(E_LOGOUT_AUTO_TIME);
                   elm_win_center(dia->win, 1, 1);
                   e_win_no_remember_set(dia->win, 1);
                   e_dialog_show(dia);
