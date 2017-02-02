@@ -1,30 +1,30 @@
 #include "thermal.h"
 
-#if defined (__FreeBSD__) || defined(__DragonFly__)
+#if defined(__FreeBSD__) || defined(__DragonFly__)
 # include <sys/types.h>
 # include <sys/sysctl.h>
 # include <errno.h>
 #endif
 
-#ifdef __OpenBSD__
-#include <sys/param.h>
-#include <sys/sysctl.h>
-#include <sys/sensors.h>
-#include <errno.h>
-#include <err.h>
+#if defined(__OpenBSD__)
+# include <sys/param.h>
+# include <sys/sysctl.h>
+# include <sys/sensors.h>
+# include <errno.h>
+# include <err.h>
 #endif
 
-#if defined (__FreeBSD__) || defined(__DragonFly__) || defined (__OpenBSD__)
+#if defined(__FreeBSD__) || defined(__DragonFly__) || defined(__OpenBSD__)
 typedef struct
 {
    int mib[CTL_MAXNAME];
-#if defined (__FreeBSD__) || defined(__DragonFly__)
+#if defined(__FreeBSD__) || defined(__DragonFly__)
    unsigned int miblen;
 #endif
    int dummy;
 } Extn;
 
-#if defined (__FreeBSD__) || defined(__DragonFly__)
+#if defined(__FreeBSD__) || defined(__DragonFly__)
 static const char *sources[] =
   {
      "hw.acpi.thermal.tz0.temperature",
@@ -35,7 +35,7 @@ static const char *sources[] =
   };
 #endif
 
-#ifdef __OpenBSD__
+#if defined(__OpenBSD__)
 static struct sensor snsr;
 static size_t slen = sizeof(snsr);
 #endif
@@ -43,20 +43,19 @@ static size_t slen = sizeof(snsr);
 static void
 init(Tempthread *tth)
 {
-   Eina_List *therms;
-   char path[512];
-#ifdef __OpenBSD__
+#if defined(__OpenBSD__)
    int dev, numt;
    struct sensordev snsrdev;
    size_t sdlen = sizeof(snsrdev);
 #endif
+
 #if defined (__FreeBSD__) || defined(__DragonFly__)
    unsigned i;
    size_t len;
    int rc;
 #endif
-   Extn *extn;
 
+   Extn *extn;
    if (tth->initted) return;
    tth->initted = EINA_TRUE;
 
@@ -71,6 +70,7 @@ init(Tempthread *tth)
         tth->sensor_name = NULL;
         eina_stringshare_del(tth->sensor_path);
         tth->sensor_path = NULL;
+
 #if defined (__FreeBSD__) || defined(__DragonFly__)
         for (i = 0; sources[i]; i++)
           {
@@ -82,6 +82,7 @@ init(Tempthread *tth)
                   break;
                }
           }
+
 #elif defined(__OpenBSD__)
         extn->mib[0] = CTL_HW;
         extn->mib[1] = HW_SENSORS;
@@ -99,13 +100,13 @@ init(Tempthread *tth)
              if (strcmp(snsrdev.xname, "cpu0") == 0)
                {
                   tth->sensor_type = SENSOR_TYPE_OPENBSD;
-                  tth->sensor_name = strdup("cpu0");
+                  tth->sensor_name = eina_stringshare_add("cpu0");
                   break;
                }
              else if (strcmp(snsrdev.xname, "km0") == 0)
                {
                   tth->sensor_type = SENSOR_TYPE_OPENBSD;
-                  tth->sensor_name = strdup("km0");
+                  tth->sensor_name = eina_stringshare_add("km0");
                   break;
                }
           }
@@ -113,11 +114,9 @@ init(Tempthread *tth)
      }
    if ((tth->sensor_type) && (tth->sensor_name) && (!tth->sensor_path))
      {
-        char *name;
-
         if (tth->sensor_type == SENSOR_TYPE_FREEBSD)
           {
-#if defined (__FreeBSD__) || defined(__DragonFly__)
+#if defined(__FreeBSD__) || defined(__DragonFly__)
              len = sizeof(extn->mib) / sizeof(extn->mib[0]);
              rc = sysctlnametomib(tth->sensor_name, extn->mib, &len);
              if (rc == 0)
@@ -129,7 +128,7 @@ init(Tempthread *tth)
           }
         else if (tth->sensor_type == SENSOR_TYPE_OPENBSD)
           {
-#ifdef __OpenBSD__
+#if defined(__OpenBSD__)
              for (numt = 0; numt < snsrdev.maxnumt[SENSOR_TEMP]; numt++)
                {
                   extn->mib[4] = numt;
@@ -149,10 +148,8 @@ init(Tempthread *tth)
 static int
 check(Tempthread *tth)
 {
-   FILE *f = NULL;
    int ret = 0;
    int temp = 0;
-   char buf[512];
 #if defined (__FreeBSD__) || defined(__DragonFly__)
    size_t len;
    size_t ftemp = 0;
@@ -180,7 +177,7 @@ check(Tempthread *tth)
      }
    else if (tth->sensor_type == SENSOR_TYPE_OPENBSD)
      {
-#ifdef __OpenBSD_
+#if defined(__OpenBSD__)
         if (sysctl(extn->mib, 5, &snsr, &slen, NULL, 0) != -1)
           {
              temp = (snsr.value - 273150000) / 1000000.0;
@@ -194,7 +191,6 @@ if (ret) return temp;
 
    return -999;
 error:
-   if (f) fclose(f);
    tth->sensor_type = SENSOR_TYPE_NONE;
    eina_stringshare_del(tth->sensor_name);
    tth->sensor_name = NULL;

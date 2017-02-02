@@ -266,9 +266,9 @@ _batman_config_updated(Instance *inst)
    if ((inst->cfg->batman.force_mode == UNKNOWN) ||
        (inst->cfg->batman.force_mode == SUBSYSTEM))
      {
-#ifdef HAVE_EEZE
+#if defined(HAVE_EEZE)
         ok = _batman_udev_start(inst);
-#elif defined __OpenBSD__ || defined __DragonFly__ || defined __FreeBSD__ || defined __NetBSD__
+#elif defined(__OpenBSD__) || defined(__DragonFly__) || defined(__FreeBSD__) || defined(__NetBSD__)
         ok = _batman_sysctl_start(inst);
 #else
         ok = _batman_upower_start();
@@ -430,9 +430,9 @@ _batman_removed_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_data)
 
    if (inst->o_main != event_data) return;
 
-#ifdef HAVE_EEZE
+#if defined(HAVE_EEZE)
    _batman_udev_stop(inst);
-#elif defined __OpenBSD__ || defined __DragonFly__ || defined __FreeBSD__ || defined __NetBSD__
+#elif defined(__OpenBSD__) || defined(__DragonFly__) || defined(__FreeBSD__) || defined(__NetBSD__)
    _batman_sysctl_stop();
 #elif defined(upower)
    _batman_upower_stop();
@@ -440,7 +440,7 @@ _batman_removed_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_data)
    _batman_fallback_stop();
 #endif
 
-#ifdef HAVE_EEZE
+#if defined(HAVE_EEZE)
    eeze_shutdown();
 #endif
 
@@ -454,14 +454,16 @@ void
 sysinfo_batman_remove(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_data EINA_UNUSED)
 {
    Instance *inst = data;
-
 #ifdef HAVE_EEZE
    _batman_udev_stop(inst);
-#elif defined __OpenBSD__ || defined __DragonFly__ || defined __FreeBSD__ || defined __NetBSD__
+#elif defined(__OpenBSD__) || defined(__DragonFly__) || defined(__FreeBSD__) || defined(__NetBSD__)
+   (void) inst;
    _batman_sysctl_stop();
 #elif defined(upower)
+   (void) inst;
    _batman_upower_stop();
 #else
+   (void) inst;
    _batman_fallback_stop();
 #endif
 

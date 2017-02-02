@@ -3,13 +3,14 @@
 static void
 _thermal_thread_free(Tempthread *tth)
 {
+#if defined(HAVE_EEZE)
    const char *s;
-
+#endif
    if (!tth) return;
 
    eina_stringshare_del(tth->sensor_name);
    eina_stringshare_del(tth->sensor_path);
-#ifdef HAVE_EEZE
+#if defined(HAVE_EEZE)
    EINA_LIST_FREE(tth->tempdevs, s) eina_stringshare_del(s);
 #endif
    free(tth->extn);
@@ -67,7 +68,7 @@ _thermal_apply(Instance *inst, int temp)
      }
 }
 
-#ifdef HAVE_EEZE
+#if defined(HAVE_EEZE)
 static Eina_Bool
 _thermal_udev_poll(void *data)
 {
@@ -79,7 +80,7 @@ _thermal_udev_poll(void *data)
 }
 #endif
 
-#if defined __FreeBSD__ || defined __OpenBSD__ || defined __DragonflyBSD__
+#if defined(__FreeBSD__) || defined(__OpenBSD__) || defined(__DragonFly__)
 static void
 _thermal_check_sysctl(void *data, Ecore_Thread *th)
 {
@@ -98,13 +99,12 @@ _thermal_check_sysctl(void *data, Ecore_Thread *th)
 }
 #endif
 
-#if !defined HAVE_EEZE && !defined __FreeBSD__ && !defined __OpenBSD__ && !defined __DragonflyBSD__
+#if !defined(HAVE_EEZE) && !defined(__FreeBSD__) && !defined(__OpenBSD__) && !defined(__DragonFly__)
 static void
 _thermal_check_fallback(void *data, Ecore_Thread *th)
 {
    Tempthread *tth = data;
    int ptemp = -500, temp;
-
    for (;;)
      {
         if (ecore_thread_check(th)) break;
@@ -117,14 +117,13 @@ _thermal_check_fallback(void *data, Ecore_Thread *th)
 }
 #endif
 
-#if !defined HAVE_EEZE
+#if !defined(HAVE_EEZE)
 static void
 _thermal_check_notify(void *data, Ecore_Thread *th, void *msg)
 {
    Tempthread *tth  = data;
    Instance *inst = tth->inst;
    int temp = (int)((long)msg);
-
    if (th != inst->cfg->thermal.th) return;
    _thermal_apply(inst, temp);
 }
@@ -150,12 +149,12 @@ _thermal_config_updated(Instance *inst)
    if (inst->cfg->thermal.sensor_name)
      tth->sensor_name = eina_stringshare_add(inst->cfg->thermal.sensor_name);
 
-#ifdef HAVE_EEZE
+#if defined(HAVE_EEZE)
    _thermal_udev_poll(tth);
    inst->cfg->thermal.poller = ecore_poller_add(ECORE_POLLER_CORE, inst->cfg->thermal.poll_interval,
                                      _thermal_udev_poll, tth);
    inst->cfg->thermal.tth = tth;
-#elif defined __FreeBSD__ || defined __OpenBSD__ || defined __DragonflyBSD__
+#elif defined(__FreeBSD__) || defined(__OpenBSD__) || defined(__DragonFly__)
     inst->cfg->thermal.th = ecore_thread_feedback_run(_thermal_check_sysctl,
                                         _thermal_check_notify,
                                         _thermal_check_done,
@@ -175,7 +174,7 @@ _thermal_face_shutdown(Instance *inst)
 {
    if (inst->cfg->thermal.th) ecore_thread_cancel(inst->cfg->thermal.th);
    if (inst->cfg->thermal.sensor_name) eina_stringshare_del(inst->cfg->thermal.sensor_name);
-#ifdef HAVE_EEZE
+#if defined(HAVE_EEZE)
    if (inst->cfg->thermal.poller)
      {
         E_FREE_FUNC(inst->cfg->thermal.poller, ecore_poller_del);
@@ -206,7 +205,7 @@ _thermal_removed_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_data)
 
    _thermal_face_shutdown(inst);
 
-#ifdef HAVE_EEZE
+#if defined(HAVE_EEZE)
    eeze_shutdown();
 #endif
 
@@ -223,7 +222,7 @@ sysinfo_thermal_remove(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UN
 
    _thermal_face_shutdown(inst);
 
-#ifdef HAVE_EEZE
+#if defined(HAVE_EEZE)
    eeze_shutdown();
 #endif
 }
@@ -313,12 +312,11 @@ thermal_create(Evas_Object *parent, int *id, E_Gadget_Site_Orient orient EINA_UN
    evas_object_event_callback_add(inst->o_main, EVAS_CALLBACK_DEL, sysinfo_thermal_remove, inst);
    evas_object_show(inst->o_main);
 
-#ifdef HAVE_EEZE
+#if defined(HAVE_EEZE)
    eeze_init();
 #endif
 
    if (inst->cfg->id < 0) return inst->o_main;
-
    sysinfo_instances =
      eina_list_append(sysinfo_instances, inst);
 

@@ -78,11 +78,12 @@ _cpuclock_set_thread_frequency(void *data, Ecore_Thread *th EINA_UNUSED)
 {
    const char *freq = data;
 
-#if defined __FreeBSD__ || defined __OpenBSD__
-   _cpuclock_sysctl_frequency(freq);
-   return;
-#endif
+#if defined(__FreeBSD__) || defined(__DragonFly__) || defined (__OpenBSD__)
+   int frequency = atoi(freq);
+   _cpuclock_sysctl_frequency(frequency);
+#else
    _cpuclock_sysfs_setall("scaling_setspeed", freq);
+#endif
 }
 
 static void
@@ -322,8 +323,10 @@ _cpuclock_face_update_current(Instance *inst)
 static void
 _cpuclock_status_check_available(Cpu_Status *s)
 {
+#if !defined(__OpenBSD__)
    char buf[4096];
    Eina_List *l;
+#endif 
    // FIXME: this assumes all cores accept the same freqs/ might be wrong
 
 #if defined (__OpenBSD__)
@@ -337,13 +340,13 @@ _cpuclock_status_check_available(Cpu_Status *s)
 
    /* storing percents */
    p = 100;
-   s->frequencies = eina_list_append(s->frequencies, (void *)p);
+   s->frequencies = eina_list_append(s->frequencies, (void *)(long int)p);
    p = 75;
-   s->frequencies = eina_list_append(s->frequencies, (void *)p);
+   s->frequencies = eina_list_append(s->frequencies, (void *)(long int)p);
    p = 50;
-   s->frequencies = eina_list_append(s->frequencies, (void *)p);
+   s->frequencies = eina_list_append(s->frequencies, (void *)(long int)p);
    p = 25;
-   s->frequencies = eina_list_append(s->frequencies, (void *)p);
+   s->frequencies = eina_list_append(s->frequencies, (void *)(long int)p);
 #elif defined (__FreeBSD__)
    int freq;
    size_t len = sizeof(buf);

@@ -6,7 +6,7 @@
  *       in s->frequencies instead of available frequencies.
  */
 
-#if defined (__FreeBSD__) || defined (__OpenBSD__)
+#if defined(__FreeBSD__) || defined(__DragonFly__) || defined (__OpenBSD__)
 # include <sys/sysctl.h>
 #endif
 
@@ -96,6 +96,7 @@ _gc_init(E_Gadcon *gc, const char *name, const char *id, const char *style)
                                   _button_cb_mouse_down, inst);
    cpufreq_config->instances =
      eina_list_append(cpufreq_config->instances, inst);
+
    _cpufreq_face_update_available(inst);
 
    cpufreq_config->handler =
@@ -488,6 +489,9 @@ _cpufreq_set_governor(const char *governor)
 {
    char buf[4096];
    int ret;
+   struct stat st;
+
+   if (stat(cpufreq_config->set_exe_path, &st) < 0) return;
 
    snprintf(buf, sizeof(buf),
             "%s %s %s", cpufreq_config->set_exe_path, "governor", governor);
@@ -515,7 +519,7 @@ _cpufreq_set_frequency(int frequency)
    char buf[4096];
    int ret;
 
-#ifdef __FreeBSD__
+#if defined(__FreeBSD__) || defined(__DragonFly__)
    frequency /= 1000;
 #endif
    if (!cpufreq_config->status->can_set_frequency)
@@ -564,12 +568,14 @@ _cpufreq_set_frequency(int frequency)
 void
 _cpufreq_set_pstate(int min, int max)
 {
+#if defined(__FreeBSD__) || defined(__OpenBSD__) || defined(__DragonFly__)
+   (void) min;
+   (void) max;
+#else
    char buf[4096];
-   int ret;
-
    snprintf(buf, sizeof(buf),
             "%s %s %i %i %i", cpufreq_config->set_exe_path, "pstate", min, max, cpufreq_config->status->pstate_turbo);
-   ret = system(buf);
+   int ret = system(buf);
    if (ret != 0)
      {
         E_Dialog *dia;
@@ -585,6 +591,7 @@ _cpufreq_set_pstate(int min, int max)
         elm_win_center(dia->win, 1, 1);
         e_dialog_show(dia);
      }
+#endif
 }
 
 static Cpu_Status *
@@ -631,9 +638,11 @@ _cpufreq_cb_sort(const void *item1, const void *item2)
 static void
 _cpufreq_status_check_available(Cpu_Status *s)
 {
+   // FIXME: this assumes all cores accept the same freqs/ might be wrong
+#if !defined(__OpenBSD__)
    char buf[4096];
    Eina_List *l;
-   // FIXME: this assumes all cores accept the same freqs/ might be wrong
+#endif
 
 #if defined (__OpenBSD__)
    int p;
@@ -646,14 +655,14 @@ _cpufreq_status_check_available(Cpu_Status *s)
 
    /* storing percents */
    p = 100;
-   s->frequencies = eina_list_append(s->frequencies, (void *)p);
+   s->frequencies = eina_list_append(s->frequencies, (void *)(long int)p);
    p = 75;
-   s->frequencies = eina_list_append(s->frequencies, (void *)p);
+   s->frequencies = eina_list_append(s->frequencies, (void *)(long int)p);
    p = 50;
-   s->frequencies = eina_list_append(s->frequencies, (void *)p);
+   s->frequencies = eina_list_append(s->frequencies, (void *)(long int)p);
    p = 25;
-   s->frequencies = eina_list_append(s->frequencies, (void *)p);
-#elif defined (__FreeBSD__)
+   s->frequencies = eina_list_append(s->frequencies, (void *)(long int)p);
+#elif defined (__FreeBSD__) || defined(__DragonFly__)
    int freq;
    size_t len = sizeof(buf);
    char *pos, *q;
@@ -847,7 +856,7 @@ _cpufreq_status_check_current(Cpu_Status *s)
    s->can_set_frequency = 1;
    s->cur_governor = NULL;
 
-#elif defined (__FreeBSD__)
+#elif defined (__FreeBSD__) || defined(__DragonFly__)
    size_t len = sizeof(frequency);
    s->active = 0;
 
@@ -1019,6 +1028,10 @@ _cpufreq_face_update_available(Instance *inst)
         edje_object_message_send(inst->o_cpu, EDJE_MESSAGE_STRING_SET, 2, governor_msg);
         free(governor_msg);
      }
+#if defined(__OpenBSD__)
+   _cpufreq_face_update_current(inst);
+#endif
+
 }
 
 static void
@@ -1465,7 +1478,6 @@ e_modapi_init(E_Module *m)
    cpufreq_config->module = m;
 
    e_gadcon_provider_register(&_gadcon_class);
-   
    snprintf(buf, sizeof(buf), "%s/e-module-cpufreq.edj", e_module_dir_get(m));
    e_configure_registry_category_add("advanced", 80, _("Advanced"), NULL,
                                      "preferences-advanced");
