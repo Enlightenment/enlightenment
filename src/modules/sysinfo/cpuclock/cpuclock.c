@@ -928,7 +928,6 @@ cpuclock_create(Evas_Object *parent, int *id, E_Gadget_Site_Orient orient EINA_U
    *id = inst->cfg->id;
    inst->o_main = elm_box_add(parent);
    E_EXPAND(inst->o_main);
-   evas_object_size_hint_aspect_set(inst->o_main, EVAS_ASPECT_CONTROL_BOTH, 1, 1);
    evas_object_smart_callback_add(parent, "gadget_created", _cpuclock_created_cb, inst);
    evas_object_smart_callback_add(parent, "gadget_removed", _cpuclock_removed_cb, inst);
    evas_object_event_callback_add(inst->o_main, EVAS_CALLBACK_DEL, sysinfo_cpuclock_remove, inst);
