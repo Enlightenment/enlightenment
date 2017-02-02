@@ -120,6 +120,7 @@ _cpumonitor_resize_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *e
    if (!num_cores || !inst->o_main) return;
 
    edje_object_parts_extends_calc(elm_layout_edje_get(obj), 0, 0, &w, &h);
+   evas_object_event_callback_del_full(obj, EVAS_CALLBACK_RESIZE, _cpumonitor_resize_cb, inst);
    if (inst->cfg->esm == E_SYSINFO_MODULE_CPUMONITOR)
      {
         evas_object_geometry_get(inst->o_main, 0, 0, &sw, &sh);
