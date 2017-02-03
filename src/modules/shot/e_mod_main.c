@@ -1157,14 +1157,14 @@ static void
 _shot_border(E_Client *ec)
 {
    if (border_timer) ecore_timer_del(border_timer);
-   border_timer = ecore_timer_add(1.0, _shot_delay_border, ec);
+   border_timer = ecore_timer_loop_add(1.0, _shot_delay_border, ec);
 }
 
 static void
 _shot(E_Zone *zone)
 {
    if (timer) ecore_timer_del(timer);
-   timer = ecore_timer_add(1.0, _shot_delay, zone);
+   timer = ecore_timer_loop_add(1.0, _shot_delay, zone);
 }
 
 static void

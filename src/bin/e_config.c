@@ -1020,7 +1020,7 @@ e_config_load(void)
              _e_config_free(e_config);
              e_config = NULL;
              reload = 1;
-             ecore_timer_add(1.0, _e_config_cb_timer,
+             ecore_timer_loop_add(1.0, _e_config_cb_timer,
                              _("Settings data needed upgrading. Your old settings have<br>"
                                "been wiped and a new set of defaults initialized. This<br>"
                                "will happen regularly during development, so don't report a<br>"
@@ -1037,7 +1037,7 @@ e_config_load(void)
              _e_config_free(e_config);
              e_config = NULL;
              reload = 1;
-             ecore_timer_add(1.0, _e_config_cb_timer,
+             ecore_timer_loop_add(1.0, _e_config_cb_timer,
                              _("Your settings are NEWER than Enlightenment. This is very<br>"
                                "strange. This should not happen unless you downgraded<br>"
                                "Enlightenment or copied the settings from a place where<br>"
@@ -1153,7 +1153,7 @@ e_config_load(void)
         e_bindings = e_config_domain_system_load("e_bindings", _e_config_binding_edd);
         e_config_profile_set(prof);
         eina_stringshare_del(prof);
-        ecore_timer_add(1.0, _e_config_cb_timer,
+        ecore_timer_loop_add(1.0, _e_config_cb_timer,
                         _("Your bindings settings version does not match the current settings version.<br>"
                           "As a result, all bindings have been reloaded from defaults.<br>"
                           "Sorry for the inconvenience.<br>"));

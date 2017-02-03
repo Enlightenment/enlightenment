@@ -39,7 +39,7 @@ wizard_page_show(E_Wizard_Page *pg EINA_UNUSED)
 
    /* advance in 1 sec */
    if (!_next_timer)
-     _next_timer = ecore_timer_add(1.0, _next_page, NULL);
+     _next_timer = ecore_timer_loop_add(1.0, _next_page, NULL);
    return 1;
 }
 

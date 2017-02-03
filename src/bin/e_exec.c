@@ -548,7 +548,7 @@ _e_exec_cb_exec(void *data, Efreet_Desktop *desktop, char *exec, int remaining)
    inst->exe = exe;
    inst->startup_id = startup_id;
    inst->launch_time = ecore_time_get();
-   inst->expire_timer = ecore_timer_add(e_config->exec.expire_timeout,
+   inst->expire_timer = ecore_timer_loop_add(e_config->exec.expire_timeout,
                                         _e_exec_cb_expire_timer, inst);
    l = eina_hash_find(e_exec_instances, inst->key);
    lnew = eina_list_append(l, inst);
@@ -750,7 +750,7 @@ _e_exec_cb_exit(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
      {
         inst->exe = NULL;
         if (inst->expire_timer) ecore_timer_del(inst->expire_timer);
-        inst->expire_timer = ecore_timer_add(e_config->exec.expire_timeout, _e_exec_cb_instance_finish, inst);
+        inst->expire_timer = ecore_timer_loop_add(e_config->exec.expire_timeout, _e_exec_cb_instance_finish, inst);
      }
    else
  */

@@ -913,7 +913,7 @@ _e_int_menus_apps_thread_new(E_Menu *m, const char *dir)
    if (_e_int_menus_app_cleaner)
      ecore_timer_reset(_e_int_menus_app_cleaner);
    else
-     _e_int_menus_app_cleaner = ecore_timer_add(300, _e_int_menus_app_cleaner_cb, NULL);
+     _e_int_menus_app_cleaner = ecore_timer_loop_add(300, _e_int_menus_app_cleaner_cb, NULL);
    eina_stringshare_del(dir);
    if (m)
      {

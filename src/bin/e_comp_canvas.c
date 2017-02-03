@@ -258,7 +258,7 @@ _e_comp_canvas_screensaver_active(void *d EINA_UNUSED, Evas_Object *obj EINA_UNU
 {
    if (timer_post_screensaver_on) return;
    /* thawed in _e_comp_screensaver_off() */
-   timer_post_screensaver_on = ecore_timer_add
+   timer_post_screensaver_on = ecore_timer_loop_add
      (1.0, _e_comp_cb_screensaver_active_delay, NULL);
 }
 
@@ -279,7 +279,7 @@ _e_comp_cb_screensaver_on()
         if (e_config->desklock_post_screensaver_time <= 1.0)
           e_desklock_show_autolocked();
         else
-          timer_post_screensaver_lock = ecore_timer_add
+          timer_post_screensaver_lock = ecore_timer_loop_add
               (e_config->desklock_post_screensaver_time,
               _e_comp_cb_timer_post_screensaver_lock, NULL);
      }

@@ -41,7 +41,7 @@ wizard_page_show(E_Wizard_Page *pg EINA_UNUSED)
    extra_desks = ecore_file_ls(buf);
 
    /* advance in 1 sec */
-   _next_timer = ecore_timer_add(1.0, _next_page, NULL);
+   _next_timer = ecore_timer_loop_add(1.0, _next_page, NULL);
    
    EINA_LIST_FREE(extra_desks, file)
      {

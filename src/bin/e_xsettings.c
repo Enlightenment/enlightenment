@@ -166,7 +166,7 @@ static void
 _e_xsettings_retry(Settings_Manager *sm)
 {
    if (sm->timer_retry) return;
-   sm->timer_retry = ecore_timer_add
+   sm->timer_retry = ecore_timer_loop_add
      (RETRY_TIMEOUT, _e_xsettings_activate_retry, sm);
 }
 

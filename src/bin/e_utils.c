@@ -24,7 +24,7 @@ E_API void
 e_util_wakeup(void)
 {
    if (_e_util_dummy_timer) return;
-   _e_util_dummy_timer = ecore_timer_add(0.0, _e_util_wakeup_cb, NULL);
+   _e_util_dummy_timer = ecore_timer_loop_add(0.0, _e_util_wakeup_cb, NULL);
 }
 
 E_API void
@@ -916,13 +916,13 @@ e_util_module_config_check(const char *module_name, int loaded, int current)
 {
    if (loaded > current)
      {
-        ecore_timer_add(1.0, _e_util_conf_timer_new, strdup(module_name));
+        ecore_timer_loop_add(1.0, _e_util_conf_timer_new, strdup(module_name));
         return EINA_FALSE;
      }
    loaded -= loaded % 1000000, current -= current % 1000000;
    if (loaded < current)
      {
-        ecore_timer_add(1.0, _e_util_conf_timer_old, strdup(module_name));
+        ecore_timer_loop_add(1.0, _e_util_conf_timer_old, strdup(module_name));
         return EINA_FALSE;
      }
 

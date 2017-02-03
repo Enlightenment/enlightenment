@@ -1201,7 +1201,7 @@ _e_typebuf_timer_update(Evas_Object *obj)
    if (sd->typebuf.timer)
      ecore_timer_del(sd->typebuf.timer);
 
-   sd->typebuf.timer = ecore_timer_add(3.0, _e_typebuf_timer_cb, obj);
+   sd->typebuf.timer = ecore_timer_loop_add(3.0, _e_typebuf_timer_cb, obj);
 }
 
 static void

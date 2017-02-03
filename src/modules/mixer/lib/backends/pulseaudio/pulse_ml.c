@@ -159,7 +159,7 @@ _ecore_pa_time_new(pa_mainloop_api *api, const struct timeval *tv, pa_time_event
      }
 
    interval = (tv->tv_sec - now.tv_sec) + (tv->tv_usec - now.tv_usec) / 1000;
-   event->timer = ecore_timer_add(interval, _ecore_time_wrapper, event);
+   event->timer = ecore_timer_loop_add(interval, _ecore_time_wrapper, event);
 
    return event;
 }
@@ -189,7 +189,7 @@ _ecore_pa_time_restart(pa_time_event *event, const struct timeval *tv)
    interval = (tv->tv_sec - now.tv_sec) + (tv->tv_usec - now.tv_usec) / 1000;
    if (event->timer)
      {
-        event->timer = ecore_timer_add(interval, _ecore_time_wrapper, event);
+        event->timer = ecore_timer_loop_add(interval, _ecore_time_wrapper, event);
      }
    else
      {

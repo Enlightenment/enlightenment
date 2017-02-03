@@ -751,7 +751,7 @@ _basic_create(E_Config_Dialog *cfd, Evas *evas, E_Config_Dialog_Data *cfdata)
      ecore_timer_del(cfdata->fill_delay);
 
    /* Trigger the fill */
-   cfdata->fill_delay = ecore_timer_add(0.2, _cb_fill_delay, cfdata);
+   cfdata->fill_delay = ecore_timer_loop_add(0.2, _cb_fill_delay, cfdata);
 
    return mainn;
 }
@@ -791,7 +791,7 @@ _advanced_create(E_Config_Dialog *cfd, Evas *evas, E_Config_Dialog_Data *cfdata)
      ecore_timer_del(cfdata->fill_delay);
 
    /* Trigger the fill */
-   cfdata->fill_delay = ecore_timer_add(0.2, _cb_fill_delay, cfdata);
+   cfdata->fill_delay = ecore_timer_loop_add(0.2, _cb_fill_delay, cfdata);
 
    return sc;
 }
@@ -1361,7 +1361,7 @@ _dlg_add_new(E_Config_Dialog_Data *cfdata)
    if (cfdata->dlg_fill_delay) ecore_timer_del(cfdata->dlg_fill_delay);
 
    /* Trigger the fill */
-   cfdata->dlg_fill_delay = ecore_timer_add(0.2, _cb_dlg_fill_delay, cfdata);
+   cfdata->dlg_fill_delay = ecore_timer_loop_add(0.2, _cb_dlg_fill_delay, cfdata);
 
    /* Some buttons */
    e_dialog_button_add(dlg, _("OK"), NULL, _dlg_add_cb_ok, cfdata);

@@ -2686,7 +2686,7 @@ _delayed_action_list_parse(Delayed_Action *da, const char *params)
         eina_strlcpy(a2, a2start, a2stop - a2start + 1);
         _delayed_action_list_parse_action(a2, &delay, &da->delayed.action, &da->delayed.params);
      }
-   da->timer = ecore_timer_add(delay, _delayed_action_cb_timer, da);
+   da->timer = ecore_timer_loop_add(delay, _delayed_action_cb_timer, da);
 }
 
 static void

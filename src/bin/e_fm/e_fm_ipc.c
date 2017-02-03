@@ -1051,7 +1051,7 @@ _e_fm_ipc_file_add_mod(E_Dir *ed, const char *path, E_Fm_Op_Type op, int listing
              ed->recent_mods = eina_list_append(ed->recent_mods, m);
           }
         if ((!ed->recent_clean) && (ed->recent_mods))
-          ed->recent_clean = ecore_timer_add(DEF_MOD_BACKOFF, _e_fm_ipc_cb_recent_clean, ed);
+          ed->recent_clean = ecore_timer_loop_add(DEF_MOD_BACKOFF, _e_fm_ipc_cb_recent_clean, ed);
         if (skip)
           {
 //	     printf("SKIP MOD %s %3.3f\n", path, t_now);
@@ -1372,7 +1372,7 @@ e_fm_ipc_volume_add(E_Volume *v)
    if (_init_timer && (!_init_timer_run))
      ecore_timer_reset(_init_timer);
    else if ((!_init_timer) && (!_init_timer_run))
-     _init_timer = ecore_timer_add(2.0, _e_fm_ipc_timer_cb, NULL);
+     _init_timer = ecore_timer_loop_add(2.0, _e_fm_ipc_timer_cb, NULL);
 
    msg_data = _e_fm_shared_codec_volume_encode(v, &msg_size);
    if (!msg_data) return;

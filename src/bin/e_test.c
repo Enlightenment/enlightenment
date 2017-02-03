@@ -33,7 +33,7 @@ e_test(void)
    _e_test_internal();
 
 #ifdef DESKMIRROR_TEST
-   ecore_timer_add(2.0, deskmirror_test, NULL);
+   ecore_timer_loop_add(2.0, deskmirror_test, NULL);
 #endif
 }
 
@@ -48,14 +48,14 @@ _e_test_timer(void *data)
      {
         e_menu_deactivate(m);
         e_object_del(E_OBJECT(m));
-        ecore_timer_add(0.05, _e_test_timer, NULL);
+        ecore_timer_loop_add(0.05, _e_test_timer, NULL);
         return 0;
      }
    m = e_int_menus_main_new();
    e_menu_activate_mouse(m,
                          eina_list_data_get(e_comp->zones),
                          0, 0, 1, 1, E_MENU_POP_DIRECTION_DOWN, 0);
-   ecore_timer_add(0.05, _e_test_timer, m);
+   ecore_timer_loop_add(0.05, _e_test_timer, m);
    return 0;
 }
 
@@ -131,7 +131,7 @@ _e_test_internal(void)
    e_menu_activate_mouse(m,
                          eina_list_data_get(e_comp->zones),
                          0, 0, 1, 1, E_MENU_POP_DIRECTION_DOWN, 0);
-   ecore_timer_add(0.02, _e_test_timer, m);
+   ecore_timer_loop_add(0.02, _e_test_timer, m);
 }
 
 #elif 0
@@ -230,13 +230,13 @@ _e_test_timer(void *data)
    if (data == NULL)
      {
         dia = _e_test_dia(tcon);
-        ecore_timer_add(0.2, _e_test_timer, dia);
+        ecore_timer_loop_add(0.2, _e_test_timer, dia);
      }
    else
      {
         dia = data;
         e_object_del(E_OBJECT(dia));
-        ecore_timer_add(0.2, _e_test_timer, NULL);
+        ecore_timer_loop_add(0.2, _e_test_timer, NULL);
      }
    return 0;
 }
@@ -744,7 +744,7 @@ _e_test_internal(void)
 static void
 _e_test_internal(void)
 {
-   ecore_timer_add(1.0, _e_test_timer, c);
+   ecore_timer_loop_add(1.0, _e_test_timer, c);
 }
 
 #elif 0
@@ -811,7 +811,7 @@ _e_test_timer(void *data)
 static void
 _e_test_internal(void)
 {
-   ecore_timer_add(1.0, _e_test_timer, c);
+   ecore_timer_loop_add(1.0, _e_test_timer, c);
 }
 
 #elif 0
@@ -878,7 +878,7 @@ _e_test_timer(void *data)
 static void
 _e_test_internal(void)
 {
-   ecore_timer_add(1.0, _e_test_timer, c);
+   ecore_timer_loop_add(1.0, _e_test_timer, c);
 }
 
 #else

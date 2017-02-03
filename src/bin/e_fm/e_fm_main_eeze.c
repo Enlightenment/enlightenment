@@ -312,7 +312,7 @@ _e_fm_main_eeze_volume_eject(E_Volume *v)
         snprintf(buf, sizeof(buf), "%s/enlightenment/utils/enlightenment_sys", eina_prefix_lib_get(pfx));
         eeze_disk_mount_wrapper_set(v->disk, buf);
      }
-   v->guard = ecore_timer_add(E_FM_EJECT_TIMEOUT, (Ecore_Task_Cb)_e_fm_main_eeze_vol_eject_timeout, v);
+   v->guard = ecore_timer_loop_add(E_FM_EJECT_TIMEOUT, (Ecore_Task_Cb)_e_fm_main_eeze_vol_eject_timeout, v);
    eeze_disk_eject(v->disk);
 }
 
@@ -505,7 +505,7 @@ _e_fm_main_eeze_volume_unmount(E_Volume *v)
         snprintf(buf, sizeof(buf), "%s/enlightenment/utils/enlightenment_sys", eina_prefix_lib_get(pfx));
         eeze_disk_mount_wrapper_set(v->disk, buf);
      }
-   v->guard = ecore_timer_add(E_FM_UNMOUNT_TIMEOUT, (Ecore_Task_Cb)_e_fm_main_eeze_vol_unmount_timeout, v);
+   v->guard = ecore_timer_loop_add(E_FM_UNMOUNT_TIMEOUT, (Ecore_Task_Cb)_e_fm_main_eeze_vol_unmount_timeout, v);
    eeze_disk_unmount(v->disk);
 }
 
@@ -541,7 +541,7 @@ _e_fm_main_eeze_volume_mount(E_Volume *v)
         snprintf(buf2, sizeof(buf2), "%s/enlightenment/utils/enlightenment_sys", eina_prefix_lib_get(pfx));
         eeze_disk_mount_wrapper_set(v->disk, buf2);
      }
-   v->guard = ecore_timer_add(E_FM_MOUNT_TIMEOUT, (Ecore_Task_Cb)_e_fm_main_eeze_vol_mount_timeout, v);
+   v->guard = ecore_timer_loop_add(E_FM_MOUNT_TIMEOUT, (Ecore_Task_Cb)_e_fm_main_eeze_vol_mount_timeout, v);
    INF("MOUNT: %s", v->udi);
    if (!eeze_disk_mount(v->disk)) goto error;
    return;

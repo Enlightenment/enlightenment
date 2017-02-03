@@ -535,7 +535,7 @@ _bar_icon_mouse_down(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUS
         ic->drag.x = ev->output.x;
         ic->drag.y = ev->output.y;
         E_FREE_FUNC(ic->drag_timer, ecore_timer_del);
-        ic->drag_timer = ecore_timer_add(.35, _bar_drag_timer, ic);
+        ic->drag_timer = ecore_timer_loop_add(.35, _bar_drag_timer, ic);
      }
    if (ev->button == 3)
      {
@@ -692,7 +692,7 @@ _bar_icon_preview_mouse_out(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EI
    if (current_preview_menu)
      return;
    E_FREE_FUNC(ic->mouse_out_timer, ecore_timer_del);
-   ic->mouse_out_timer = ecore_timer_add(0.25, _bar_icon_preview_hide, ic);
+   ic->mouse_out_timer = ecore_timer_loop_add(0.25, _bar_icon_preview_hide, ic);
 }
 
 static void
@@ -916,7 +916,7 @@ _bar_icon_mouse_in(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *even
    else if (_bar_check_for_iconic(ic))
      _bar_icon_preview_show(ic);
    else if (clients && !current_preview)
-     ic->mouse_in_timer = ecore_timer_add(0.3, _bar_icon_preview_show, ic);
+     ic->mouse_in_timer = ecore_timer_loop_add(0.3, _bar_icon_preview_show, ic);
 }
   
 static void
@@ -927,7 +927,7 @@ _bar_icon_mouse_out(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *eve
    elm_object_tooltip_hide(obj);
    E_FREE_FUNC(ic->mouse_in_timer, ecore_timer_del);
    E_FREE_FUNC(ic->mouse_out_timer, ecore_timer_del);
-   ic->mouse_out_timer = ecore_timer_add(0.25, _bar_icon_preview_hide, ic);
+   ic->mouse_out_timer = ecore_timer_loop_add(0.25, _bar_icon_preview_hide, ic);
 }
 
 static void

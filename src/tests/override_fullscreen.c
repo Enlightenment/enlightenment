@@ -25,7 +25,7 @@ main(void)
    ecore_x_netwm_state_request_send(a, 0,
                                       ECORE_X_WINDOW_STATE_FULLSCREEN, -1, 1);
    ecore_x_icccm_name_class_set(a, "override_fullscreen", "test");
-   ecore_timer_add(1.0, test_state, NULL);
+   ecore_timer_loop_add(1.0, test_state, NULL);
    ecore_main_loop_begin();
    return 0;
 }

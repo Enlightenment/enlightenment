@@ -1423,7 +1423,7 @@ _pager_cb_event_client_urgent_change(void *data EINA_UNUSED, int type EINA_UNUSE
              pp = _pager_popup_new(zone, 0);
 
              if ((pp) && (!pager_config->popup_urgent_stick))
-               pp->timer = ecore_timer_add(pager_config->popup_urgent_speed,
+               pp->timer = ecore_timer_loop_add(pager_config->popup_urgent_speed,
                                            _pager_popup_cb_timeout, pp);
              if (pp) pp->urgent = 1;
           }
@@ -1693,7 +1693,7 @@ _pager_cb_event_desk_show(void *data EINA_UNUSED, int type EINA_UNUSED, void *ev
         if (pp->timer)
           ecore_timer_reset(pp->timer);
         else
-          pp->timer = ecore_timer_add(pager_config->popup_speed,
+          pp->timer = ecore_timer_loop_add(pager_config->popup_speed,
                                       _pager_popup_cb_timeout, pp);
      }
 
@@ -2521,7 +2521,7 @@ _pager_popup_hide(int switch_desk)
         handlers = eina_list_remove_list(handlers, handlers);
      }
 
-   act_popup->timer = ecore_timer_add(0.1, _pager_popup_cb_timeout, act_popup);
+   act_popup->timer = ecore_timer_loop_add(0.1, _pager_popup_cb_timeout, act_popup);
 
    if ((switch_desk) && (current_desk)) e_desk_show(current_desk);
 

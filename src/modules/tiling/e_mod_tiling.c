@@ -888,7 +888,7 @@ _tiling_split_type_changed_popup(void)
 
         evas_object_show(comp_obj);
 
-        _G.split_popup.timer = ecore_timer_add(TILING_POPUP_TIMEOUT, _split_type_popup_timer_del_cb, NULL);
+        _G.split_popup.timer = ecore_timer_loop_add(TILING_POPUP_TIMEOUT, _split_type_popup_timer_del_cb, NULL);
      }
    else
      {

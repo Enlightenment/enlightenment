@@ -177,7 +177,7 @@ _evry_focus_out(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, v
    if (win->delay_hide_action)
      ecore_timer_del(win->delay_hide_action);
 
-   win->delay_hide_action = ecore_timer_add(0.0, _evry_focus_out_timer, win);
+   win->delay_hide_action = ecore_timer_loop_add(0.0, _evry_focus_out_timer, win);
 }
 
 static void
@@ -301,7 +301,7 @@ evry_show(E_Zone *zone, E_Zone_Edge edge, const char *params, Eina_Bool popup)
 
    win->func.hide = &_evry_hide_func;
 
-   win->delay_hide_action = ecore_timer_add(0.2, _evry_delay_hide_timer, win);
+   win->delay_hide_action = ecore_timer_loop_add(0.2, _evry_delay_hide_timer, win);
 
    return win;
 }
@@ -606,7 +606,7 @@ _evry_selector_update_actions(Evry_Selector *sel)
      ecore_timer_del(sel->action_timer);
 
    _evry_selector_item_clear(sel);
-   sel->action_timer = ecore_timer_add(0.2, _evry_timer_cb_actions_get, sel);
+   sel->action_timer = ecore_timer_loop_add(0.2, _evry_timer_cb_actions_get, sel);
 }
 
 void
@@ -2314,7 +2314,7 @@ _evry_update(Evry_Selector *sel, int fetch)
           ecore_timer_del(sel->update_timer);
 
         sel->update_timer =
-          ecore_timer_add(MATCH_LAG, _evry_cb_update_timer, sel);
+          ecore_timer_loop_add(MATCH_LAG, _evry_cb_update_timer, sel);
 
         edje_object_signal_emit(win->o_main, "list:e,signal,update", "e");
      }
@@ -2668,7 +2668,7 @@ _evry_view_hide(Evry_Window *win, Evry_View *v, int slide)
         edje_object_signal_emit(v->o_list, "e,action,hide,list", "e");
 
         /* FIXME get signal from theme when anim finished */
-        v->state->clear_timer = ecore_timer_add(1.5, _clear_timer, win);
+        v->state->clear_timer = ecore_timer_loop_add(1.5, _clear_timer, win);
 
         if (v->o_bar)
           {

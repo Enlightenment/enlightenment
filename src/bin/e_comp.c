@@ -526,7 +526,7 @@ nocomp:
              else if ((!e_comp->nocomp) && (!e_comp->nocomp_override))
                {
                   if (!e_comp->nocomp_delay_timer)
-                    e_comp->nocomp_delay_timer = ecore_timer_add(1.0, _e_comp_cb_nocomp_begin_timeout, NULL);
+                    e_comp->nocomp_delay_timer = ecore_timer_loop_add(1.0, _e_comp_cb_nocomp_begin_timeout, NULL);
                }
           }
      }
@@ -1348,7 +1348,7 @@ e_comp_style_selector_create(Evas *evas, const char **source)
      }
    evas_object_data_set(orec0, "list", style_list);
    evas_object_data_set(oi, "style_shadows", style_shadows);
-   timer = ecore_timer_add(3.0, _style_demo, oi);
+   timer = ecore_timer_loop_add(3.0, _style_demo, oi);
    evas_object_data_set(oi, "style_timer", timer);
    evas_object_data_set(oi, "style_demo_state", (void *)1);
    e_widget_size_min_get(oi, &wmw, &wmh);
@@ -1607,7 +1607,7 @@ e_comp_override_timed_pop(void)
    if (e_comp->nocomp_override_timer)
      e_comp->nocomp_override--;
    else
-     e_comp->nocomp_override_timer = ecore_timer_add(1.0, _e_comp_override_expire, NULL);
+     e_comp->nocomp_override_timer = ecore_timer_loop_add(1.0, _e_comp_override_expire, NULL);
 }
 
 E_API unsigned int

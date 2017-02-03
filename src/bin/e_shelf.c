@@ -489,7 +489,7 @@ e_shelf_toggle(E_Shelf *es, int show)
           {
              _e_shelf_cb_instant_hide_timer(es);
              es->hide_timer =
-               ecore_timer_add(es->cfg->hide_timeout,
+               ecore_timer_loop_add(es->cfg->hide_timeout,
                                _e_shelf_cb_hide_urgent_timer, es);
           }
         else
@@ -517,7 +517,7 @@ e_shelf_toggle(E_Shelf *es, int show)
              es->hidden = 1;
              if (!es->instant_timer)
                es->instant_timer =
-                 ecore_timer_add(es->instant_delay,
+                 ecore_timer_loop_add(es->instant_delay,
                                  _e_shelf_cb_instant_hide_timer, es);
           }
         else
@@ -530,7 +530,7 @@ e_shelf_toggle(E_Shelf *es, int show)
              es->hidden = 1;
              if (es->hide_timer) ecore_timer_del(es->hide_timer);
              es->hide_timer =
-               ecore_timer_add(es->cfg->hide_timeout,
+               ecore_timer_loop_add(es->cfg->hide_timeout,
                                _e_shelf_cb_hide_animator_timer, es);
           }
      }
@@ -1926,7 +1926,7 @@ _e_shelf_cb_mouse_in(void *data, int type, void *event)
              if (es->autohide_timer)
                ecore_timer_reset(es->autohide_timer);
              else
-               es->autohide_timer = ecore_timer_add(0.5, (Ecore_Task_Cb)_e_shelf_cb_mouse_move_autohide_fuck_systray, es);
+               es->autohide_timer = ecore_timer_loop_add(0.5, (Ecore_Task_Cb)_e_shelf_cb_mouse_move_autohide_fuck_systray, es);
           }
         if (inside)
           {
@@ -2143,7 +2143,7 @@ end:
      {
         es->hidden = 1;
         if (!es->hide_timer)
-          es->hide_timer = ecore_timer_add(es->cfg->hide_timeout, _e_shelf_cb_hide_animator_timer, es);
+          es->hide_timer = ecore_timer_loop_add(es->cfg->hide_timeout, _e_shelf_cb_hide_animator_timer, es);
      }
    if (es->hidden && (!es->hide_timer))
      edje_object_signal_emit(es->o_base, "e,state,hidden", "e");

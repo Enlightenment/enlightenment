@@ -219,7 +219,7 @@ _cache_update()
    if (cache_timer)
      ecore_timer_reset(cache_timer);
    else
-     cache_timer = ecore_timer_add(1.0, _cache_update_timer, NULL);
+     cache_timer = ecore_timer_loop_add(1.0, _cache_update_timer, NULL);
    return ECORE_CALLBACK_RENEW;
 }
 
@@ -363,7 +363,7 @@ _basic_create(E_Config_Dialog *cfd, Evas *evas, E_Config_Dialog_Data *cfdata)
    e_widget_toolbook_page_show(otb, 0);
 
    if (cfdata->fill_delay) ecore_timer_del(cfdata->fill_delay);
-   cfdata->fill_delay = ecore_timer_add(0.2, _cb_fill_delay, cfdata);
+   cfdata->fill_delay = ecore_timer_loop_add(0.2, _cb_fill_delay, cfdata);
 
    elm_win_center(cfd->dia->win, 1, 1);
    return otb;

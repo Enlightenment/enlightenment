@@ -413,7 +413,7 @@ _e_config_dialog_changed(E_Config_Dialog *cfd)
         if (cfd->auto_apply_timer) ecore_timer_del(cfd->auto_apply_timer);
         cfd->auto_apply_timer = NULL;
         cfd->auto_apply_timer =
-          ecore_timer_add(0.5, _e_config_dialog_cb_auto_apply_timer, cfd);
+          ecore_timer_loop_add(0.5, _e_config_dialog_cb_auto_apply_timer, cfd);
      }
 }
 

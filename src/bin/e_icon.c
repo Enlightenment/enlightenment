@@ -114,7 +114,7 @@ _frame_anim(void *data)
    fr = (sd->frame % (sd->frame_count)) + 1;
    evas_object_image_animated_frame_set(sd->obj, fr);
    t = evas_object_image_animated_frame_duration_get(sd->obj, fr, 0);
-   sd->timer = ecore_timer_add(t, _frame_anim, sd);
+   sd->timer = ecore_timer_loop_add(t, _frame_anim, sd);
    return EINA_FALSE;
 }
 
@@ -132,7 +132,7 @@ _handle_anim(E_Smart_Data *sd)
    if (sd->frame_count < 2) return 0;
    if (!sd->invalid) evas_object_show(sd->obj);
    t = evas_object_image_animated_frame_duration_get(sd->obj, sd->frame, 0);
-   sd->timer = ecore_timer_add(t, _frame_anim, sd);
+   sd->timer = ecore_timer_loop_add(t, _frame_anim, sd);
    return 1;
 }
 
@@ -864,7 +864,7 @@ _e_icon_smart_resize(Evas_Object *obj, Evas_Coord w, Evas_Coord h)
    if (sd->fdo)
      {
         if (sd->fdo_reload_timer) ecore_timer_del(sd->fdo_reload_timer);
-        sd->fdo_reload_timer = ecore_timer_add(0.1, _e_icon_fdo_reload, sd);
+        sd->fdo_reload_timer = ecore_timer_loop_add(0.1, _e_icon_fdo_reload, sd);
      }
 
    if ((!sd->edje) && ((sd->loading && sd->preload) ||
@@ -874,7 +874,7 @@ _e_icon_smart_resize(Evas_Object *obj, Evas_Coord w, Evas_Coord h)
         evas_object_image_scale_hint_set(sd->obj,
                                          EVAS_IMAGE_SCALE_HINT_DYNAMIC);
         if (!sd->guessing_animation)
-          sd->guessing_animation = ecore_timer_add(0.3,
+          sd->guessing_animation = ecore_timer_loop_add(0.3,
                                                    _e_icon_guess_anim,
                                                    sd);
      }

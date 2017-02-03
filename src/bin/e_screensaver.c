@@ -114,7 +114,7 @@ e_screensaver_update(void)
      {
         E_FREE_FUNC(_e_screensaver_timer, ecore_timer_del);
         if (timeout)
-          _e_screensaver_timer = ecore_timer_add(timeout, _e_screensaver_idle_timeout_cb, (void*)1);
+          _e_screensaver_timer = ecore_timer_loop_add(timeout, _e_screensaver_idle_timeout_cb, (void*)1);
      }
 #endif
 }
@@ -238,7 +238,7 @@ _e_screensaver_handler_powersave_cb(void *data EINA_UNUSED, int type EINA_UNUSED
         if (_e_screensaver_suspend_timer)
           ecore_timer_del(_e_screensaver_suspend_timer);
         _e_screensaver_suspend_timer =
-          ecore_timer_add(e_config->screensaver_suspend_delay,
+          ecore_timer_loop_add(e_config->screensaver_suspend_delay,
                           _e_screensaver_suspend_cb, NULL);
      }
    return ECORE_CALLBACK_PASS_ON;
@@ -257,7 +257,7 @@ _e_screensaver_handler_screensaver_on_cb(void *data EINA_UNUSED, int type EINA_U
      }
    if (e_config->screensaver_suspend)
      _e_screensaver_suspend_timer =
-       ecore_timer_add(e_config->screensaver_suspend_delay,
+       ecore_timer_loop_add(e_config->screensaver_suspend_delay,
                        _e_screensaver_suspend_cb, NULL);
    last_start = ecore_loop_time_get();
    _e_screensaver_ask_presentation_count = 0;
@@ -288,7 +288,7 @@ _e_screensaver_handler_screensaver_off_cb(void *data EINA_UNUSED, int type EINA_
      _e_screensaver_ask_presentation_count = 0;
 #ifdef HAVE_WAYLAND
    if (_e_screensaver_timeout && (e_comp->comp_type == E_PIXMAP_TYPE_WL))
-     _e_screensaver_timer = ecore_timer_add(_e_screensaver_timeout, _e_screensaver_idle_timeout_cb, (void*)1);
+     _e_screensaver_timer = ecore_timer_loop_add(_e_screensaver_timeout, _e_screensaver_idle_timeout_cb, (void*)1);
 #endif
    return ECORE_CALLBACK_PASS_ON;
 }
@@ -499,7 +499,7 @@ e_screensaver_eval(Eina_Bool saver_on)
              if (t < 1.0) t = 1.0;
              E_FREE_FUNC(screensaver_idle_timer, ecore_timer_del);
              if (e_config->screensaver_enable)
-               screensaver_idle_timer = ecore_timer_add
+               screensaver_idle_timer = ecore_timer_loop_add
                    (t, _e_screensaver_idle_timer_cb, NULL);
              if (e_backlight_mode_get(NULL) != E_BACKLIGHT_MODE_DIM)
                {
@@ -543,10 +543,10 @@ e_screensaver_notidle(void)
    if (e_screensaver_on_get())
      {
         ecore_event_add(E_EVENT_SCREENSAVER_OFF_PRE, NULL, NULL, NULL);
-        _e_screensaver_timer = ecore_timer_add(0.2, _e_screensaver_idle_timeout_cb, NULL);
+        _e_screensaver_timer = ecore_timer_loop_add(0.2, _e_screensaver_idle_timeout_cb, NULL);
      }
    else if (_e_screensaver_timeout)
-     _e_screensaver_timer = ecore_timer_add(_e_screensaver_timeout, _e_screensaver_idle_timeout_cb, (void*)1);
+     _e_screensaver_timer = ecore_timer_loop_add(_e_screensaver_timeout, _e_screensaver_idle_timeout_cb, (void*)1);
 #endif
 }
 

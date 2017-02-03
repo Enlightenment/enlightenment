@@ -165,7 +165,7 @@ notification_popup_notify(E_Notification_Notify *n,
 
 
    if (n->timeout > 0)
-     popup->timer = ecore_timer_add(n->timeout, (Ecore_Task_Cb)_notification_timer_cb, popup);
+     popup->timer = ecore_timer_loop_add(n->timeout, (Ecore_Task_Cb)_notification_timer_cb, popup);
 }
 
 void

@@ -1046,7 +1046,7 @@ main(int argc, char **argv)
    TS("Run Startup Apps Done");
 
    if (e_config->show_splash && (!after_restart))
-     ecore_timer_add(2.0, _e_main_cb_startup_fake_end, NULL);
+     ecore_timer_loop_add(2.0, _e_main_cb_startup_fake_end, NULL);
 
    TS("E_Comp Thaw");
    e_comp_all_thaw();

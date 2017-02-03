@@ -235,7 +235,7 @@ _update_timeout_cb(void *data)
         later++;
         t *= (later * later);
      }
-   update_timer = ecore_timer_add(t, _update_timeout_cb, data);
+   update_timer = ecore_timer_loop_add(t, _update_timeout_cb, data);
    return EINA_FALSE;
 }
 

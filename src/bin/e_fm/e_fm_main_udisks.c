@@ -835,7 +835,7 @@ _volume_mount(Eldbus_Proxy *proxy, const char *fstype, Eina_List *opt)
 static Eina_Bool
 _e_fm_main_udisks_cb_vol_ejecting_after_unmount(E_Volume *v)
 {
-   v->guard = ecore_timer_add(E_FM_EJECT_TIMEOUT, (Ecore_Task_Cb)_e_fm_main_udisks_vol_eject_timeout, v);
+   v->guard = ecore_timer_loop_add(E_FM_EJECT_TIMEOUT, (Ecore_Task_Cb)_e_fm_main_udisks_vol_eject_timeout, v);
    v->op = _volume_eject(v->storage->proxy);
 
    return ECORE_CALLBACK_CANCEL;
@@ -847,7 +847,7 @@ _e_fm_main_udisks_cb_vol_unmounted_before_eject(E_Volume      *v)
    _e_fm_main_udisks_cb_vol_unmounted(v);
 
    // delay is required for all message handlers were executed after unmount
-   ecore_timer_add(1.0, (Ecore_Task_Cb)_e_fm_main_udisks_cb_vol_ejecting_after_unmount, v);
+   ecore_timer_loop_add(1.0, (Ecore_Task_Cb)_e_fm_main_udisks_cb_vol_ejecting_after_unmount, v);
 }
 
 static void
@@ -974,12 +974,12 @@ _e_fm_main_udisks_volume_eject(E_Volume *v)
    if (!v || v->guard) return;
    if (v->mounted)
      {
-        v->guard = ecore_timer_add(E_FM_UNMOUNT_TIMEOUT, (Ecore_Task_Cb)_e_fm_main_udisks_vol_unmount_timeout, v);
+        v->guard = ecore_timer_loop_add(E_FM_UNMOUNT_TIMEOUT, (Ecore_Task_Cb)_e_fm_main_udisks_vol_unmount_timeout, v);
         v->op = _volume_umount(v->proxy);
      }
    else
      {
-        v->guard = ecore_timer_add(E_FM_EJECT_TIMEOUT, (Ecore_Task_Cb)_e_fm_main_udisks_vol_eject_timeout, v);
+        v->guard = ecore_timer_loop_add(E_FM_EJECT_TIMEOUT, (Ecore_Task_Cb)_e_fm_main_udisks_vol_eject_timeout, v);
         v->op = _volume_eject(v->storage->proxy);
      }
    v->optype = E_VOLUME_OP_TYPE_EJECT;
@@ -991,7 +991,7 @@ _e_fm_main_udisks_volume_unmount(E_Volume *v)
    if (!v || v->guard) return;
    INF("unmount %s %s", v->udi, v->mount_point);
 
-   v->guard = ecore_timer_add(E_FM_UNMOUNT_TIMEOUT, (Ecore_Task_Cb)_e_fm_main_udisks_vol_unmount_timeout, v);
+   v->guard = ecore_timer_loop_add(E_FM_UNMOUNT_TIMEOUT, (Ecore_Task_Cb)_e_fm_main_udisks_vol_unmount_timeout, v);
    v->op = _volume_umount(v->proxy);
    v->optype = E_VOLUME_OP_TYPE_UNMOUNT;
 }
@@ -1040,7 +1040,7 @@ _e_fm_main_udisks_volume_mount(E_Volume *v)
         opt = eina_list_append(opt, buf2);
      }
 
-   v->guard = ecore_timer_add(E_FM_MOUNT_TIMEOUT, (Ecore_Task_Cb)_e_fm_main_udisks_vol_mount_timeout, v);
+   v->guard = ecore_timer_loop_add(E_FM_MOUNT_TIMEOUT, (Ecore_Task_Cb)_e_fm_main_udisks_vol_mount_timeout, v);
 
    // It was previously noted here that ubuntu 10.04 failed to mount if opt was passed to
    // e_udisks_volume_mount.  The reason at the time was unknown and apparently never found.

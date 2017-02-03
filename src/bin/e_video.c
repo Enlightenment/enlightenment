@@ -123,7 +123,7 @@ vidimg_cb_screensaver_on(void *data, int type EINA_UNUSED, void *event EINA_UNUS
    Vidimg *vi = data;
 
    if (vi->offtimer) ecore_timer_del(vi->offtimer);
-   vi->offtimer = ecore_timer_add(10.0, vidimg_cb_suspend, vi);
+   vi->offtimer = ecore_timer_loop_add(10.0, vidimg_cb_suspend, vi);
    return ECORE_CALLBACK_PASS_ON;
 }
 

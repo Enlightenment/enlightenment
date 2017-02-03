@@ -904,7 +904,7 @@ e_bindings_edge_in_event_handle(E_Binding_Context ctxt, E_Object *obj, E_Event_Z
    ed->obj = obj;
    ed->act = act;
    ed->ev = ev2;
-   binding->timer = ecore_timer_add(((double)binding->delay), _e_bindings_edge_cb_timer, ed);
+   binding->timer = ecore_timer_loop_add(((double)binding->delay), _e_bindings_edge_cb_timer, ed);
    return act;
 }
 

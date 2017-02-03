@@ -824,8 +824,8 @@ e_fm2_init(void)
    efreet_mime_init();
 
    /* XXX: move this to a central/global place? */
-   _e_fm2_mime_flush = ecore_timer_add(60.0, _e_fm2_mime_flush_cb, NULL);
-   _e_fm2_mime_clear = ecore_timer_add(600.0, _e_fm2_mime_clear_cb, NULL);
+   _e_fm2_mime_flush = ecore_timer_loop_add(60.0, _e_fm2_mime_flush_cb, NULL);
+   _e_fm2_mime_clear = ecore_timer_loop_add(600.0, _e_fm2_mime_clear_cb, NULL);
 
    _e_fm2_icon_desktop_str = eina_stringshare_add("DESKTOP");
    _e_fm2_icon_thumb_str = eina_stringshare_add("THUMB");
@@ -2868,7 +2868,7 @@ e_fm2_client_data(Ecore_Ipc_Event_Client_Data *e)
                         if (!sd->scan_timer)
                           {
                              sd->scan_timer =
-                               ecore_timer_add(0.5,
+                               ecore_timer_loop_add(0.5,
                                                _e_fm2_cb_scan_timer,
                                                sd->obj);
                              sd->busy_count++;
@@ -2940,7 +2940,7 @@ e_fm2_client_data(Ecore_Ipc_Event_Client_Data *e)
                      {
                         ecore_timer_del(sd->scan_timer);
                         sd->scan_timer =
-                          ecore_timer_add(0.0001,
+                          ecore_timer_loop_add(0.0001,
                                           _e_fm2_cb_scan_timer,
                                           sd->obj);
                      }
@@ -5961,7 +5961,7 @@ _e_fm2_typebuf_match(Evas_Object *obj, int next)
      ;
 
    if (sd->typebuf.timer) ecore_timer_reset(sd->typebuf.timer);
-   else sd->typebuf.timer = ecore_timer_add(3.5, _e_fm_typebuf_timer_cb, sd);
+   else sd->typebuf.timer = ecore_timer_loop_add(3.5, _e_fm_typebuf_timer_cb, sd);
    return ic_match;
 }
 
@@ -7024,7 +7024,7 @@ _e_fm2_cb_dnd_selection_notify(void *data, const char *type, void *event)
                                                                    NULL, vol);
 
                        if (sd->drop_icon->mount_timer) ecore_timer_reset(sd->drop_icon->mount_timer);
-                       else sd->drop_icon->mount_timer = ecore_timer_add(15., (Ecore_Task_Cb)_e_fm2_cb_dnd_selection_notify_post_mount_timer, sd->drop_icon);
+                       else sd->drop_icon->mount_timer = ecore_timer_loop_add(15., (Ecore_Task_Cb)_e_fm2_cb_dnd_selection_notify_post_mount_timer, sd->drop_icon);
 #ifndef HAVE_WAYLAND_ONLY
                        if ((e_drop_handler_action_get() == ECORE_X_ATOM_XDND_ACTION_ASK) ||
                            ((sd->config->view.link_drop) || (!sd->drop_icon)))
@@ -7482,7 +7482,7 @@ _e_fm2_cb_drag_finished(E_Drag *drag, int dropped EINA_UNUSED)
                                  if (ic->sd->dnd_scroller) ecore_animator_del(ic->sd->dnd_scroller);
                                  ic->sd->dnd_scroller = NULL;
                                  if (ic->drag.dnd_end_timer) ecore_timer_reset(ic->drag.dnd_end_timer);
-                                 else ic->drag.dnd_end_timer = ecore_timer_add(0.2, (Ecore_Task_Cb)_e_fm2_cb_drag_finished_show, ic);
+                                 else ic->drag.dnd_end_timer = ecore_timer_loop_add(0.2, (Ecore_Task_Cb)_e_fm2_cb_drag_finished_show, ic);
                                  /* NOTE:
                                   * do not touch ic after this callback; it's possible that it may have been deleted
                                   */
@@ -8439,7 +8439,7 @@ _e_fm2_cb_scan_timer(void *data)
         return ECORE_CALLBACK_CANCEL;
      }
    if (sd->busy_count > 0)
-     sd->scan_timer = ecore_timer_add(0.2, _e_fm2_cb_scan_timer, sd->obj);
+     sd->scan_timer = ecore_timer_loop_add(0.2, _e_fm2_cb_scan_timer, sd->obj);
    else
      {
         if (!sd->sort_idler)
@@ -11238,7 +11238,7 @@ _e_fm2_live_process_begin(Evas_Object *obj)
    if ((sd->live.idler) || (sd->live.timer) ||
        (sd->listing) || (sd->scan_timer)) return;
    sd->live.idler = ecore_idler_add(_e_fm2_cb_live_idler, obj);
-   sd->live.timer = ecore_timer_add(0.2, _e_fm2_cb_live_timer, obj);
+   sd->live.timer = ecore_timer_loop_add(0.2, _e_fm2_cb_live_timer, obj);
    sd->tmp.last_insert = NULL;
 }
 
@@ -11414,7 +11414,7 @@ _e_fm2_cb_live_timer(void *data)
    sd->live.deletions = EINA_FALSE;
    sd->live.timer = NULL;
    if ((!sd->queue) && (!sd->live.idler)) return ECORE_CALLBACK_CANCEL;
-   sd->live.timer = ecore_timer_add(0.2, _e_fm2_cb_live_timer, data);
+   sd->live.timer = ecore_timer_loop_add(0.2, _e_fm2_cb_live_timer, data);
    return ECORE_CALLBACK_CANCEL;
 }
 

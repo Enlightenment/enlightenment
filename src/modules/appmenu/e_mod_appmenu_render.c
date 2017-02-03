@@ -168,7 +168,7 @@ item_menu_open(E_DBusMenu_Item *item, E_Gadcon *gadcon, Evas_Coord x, Evas_Coord
    menu_w = w;
    menu_h = h;
    if (menu_timer) ecore_timer_del(menu_timer);
-   menu_timer = ecore_timer_add(0.33, item_menu_delay, NULL);
+   menu_timer = ecore_timer_loop_add(0.33, item_menu_delay, NULL);
 }
 
 static void

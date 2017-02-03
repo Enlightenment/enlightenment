@@ -142,7 +142,7 @@ e_modapi_init(E_Module *m)
    e_module_delayed_set(m, 1);
 
    /* cleanup every hour :) */
-   cleanup_timer = ecore_timer_add(3600, _cleanup_history, NULL);
+   cleanup_timer = ecore_timer_loop_add(3600, _cleanup_history, NULL);
 
    return m;
 }

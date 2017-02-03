@@ -273,7 +273,7 @@ e_syscon_show(E_Zone *zone, const char *defact)
 
    if (e_config->syscon.do_input)
      {
-        deftimer = ecore_timer_add(e_config->syscon.timeout,
+        deftimer = ecore_timer_loop_add(e_config->syscon.timeout,
                                    _cb_timeout_defaction, NULL);
         if (defact) do_defact = eina_stringshare_add(defact);
      }

@@ -125,7 +125,7 @@ _tabs_update(Tab_View *v)
 
    if (!w && !v->timer)
      {
-        v->timer = ecore_timer_add(0.001, _timer_cb, v);
+        v->timer = ecore_timer_loop_add(0.001, _timer_cb, v);
         return;
      }
 

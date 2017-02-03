@@ -217,7 +217,7 @@ e_modapi_init(E_Module *m)
    notification_cfg->handler = ecore_event_handler_add
          (E_EVENT_CONFIG_MODE_CHANGED, (Ecore_Event_Handler_Cb)_notification_cb_config_mode_changed,
          notification_cfg);
-   notification_cfg->initial_mode_timer = ecore_timer_add
+   notification_cfg->initial_mode_timer = ecore_timer_loop_add
        (0.1, (Ecore_Task_Cb)_notification_cb_initial_mode_timer, notification_cfg);
 
    notification_mod = m;

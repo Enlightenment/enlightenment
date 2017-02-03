@@ -831,7 +831,7 @@ _e_module_dialog_disable_create(const char *title, const char *body, E_Module *m
    dd->title = strdup(title);
    dd->body = strdup(body);
    dd->m = m;
-   ecore_timer_add(1.5, (Ecore_Task_Cb)_e_module_dialog_disable_timer, dd);
+   ecore_timer_loop_add(1.5, (Ecore_Task_Cb)_e_module_dialog_disable_timer, dd);
 }
 
 static void
@@ -1116,7 +1116,7 @@ _e_module_whitelist_check(void)
 #endif
 
    if (eina_list_count(badl) != known)
-     ecore_timer_add(1.5, _e_module_whitelist_dialog_timer, badl);
+     ecore_timer_loop_add(1.5, _e_module_whitelist_dialog_timer, badl);
    else
      {
         EINA_LIST_FREE(badl, s)

@@ -628,7 +628,7 @@ noflip:
         zone->flip.ev = zev;
         zone->flip.bind = binding;
         zone->flip.switching = edge;
-        binding->timer = ecore_timer_add(((double)binding->delay), _e_zone_cb_edge_timer, zone);
+        binding->timer = ecore_timer_loop_add(((double)binding->delay), _e_zone_cb_edge_timer, zone);
      }
 }
 

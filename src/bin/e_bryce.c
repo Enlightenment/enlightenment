@@ -303,7 +303,7 @@ _bryce_autohide_hide(Bryce *b)
    if (b->autohide_timer)
      ecore_timer_reset(b->autohide_timer);
    else
-     b->autohide_timer = ecore_timer_add(1.0, (Ecore_Task_Cb)_bryce_autohide_timeout, b);
+     b->autohide_timer = ecore_timer_loop_add(1.0, (Ecore_Task_Cb)_bryce_autohide_timeout, b);
 }
 
 static void
@@ -503,7 +503,7 @@ _bryce_moveresize(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *event
         if (b->save_timer)
           ecore_timer_reset(b->save_timer);
         else
-          b->save_timer = ecore_timer_add(0.5, _bryce_moveresize_save, b);
+          b->save_timer = ecore_timer_loop_add(0.5, _bryce_moveresize_save, b);
      }
 
    if (starting) return;

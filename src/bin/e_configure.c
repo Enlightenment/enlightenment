@@ -43,7 +43,7 @@ e_configure_init(void)
         ecore_job_del(update_job);
         update_job = NULL;
      }
-   ecore_timer_add(0.0, _configure_init_timer, NULL);
+   ecore_timer_loop_add(0.0, _configure_init_timer, NULL);
 }
 
 E_API void

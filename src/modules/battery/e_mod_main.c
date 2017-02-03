@@ -500,7 +500,7 @@ _battery_warning_popup(Instance *inst, int t, double percent)
        (!battery_config->alert_timer))
      {
         battery_config->alert_timer =
-          ecore_timer_add(battery_config->alert_timeout,
+          ecore_timer_loop_add(battery_config->alert_timeout,
                           _battery_cb_warning_popup_timeout, inst);
      }
 }

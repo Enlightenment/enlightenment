@@ -722,7 +722,7 @@ _advanced_create(E_Config_Dialog *cfd, Evas *evas, E_Config_Dialog_Data *cfdata)
    ////////////////////////////////////////////////////////////
    e_widget_toolbook_page_show(otb, 0);
    if (cfdata->load_timer) ecore_timer_del(cfdata->load_timer);
-   cfdata->load_timer = ecore_timer_add(0.01, _cb_load_timer, cfdata);
+   cfdata->load_timer = ecore_timer_loop_add(0.01, _cb_load_timer, cfdata);
 
    elm_win_center(cfd->dia->win, 1, 1);
 
@@ -756,7 +756,7 @@ _basic_create(E_Config_Dialog *cfd, Evas *evas, E_Config_Dialog_Data *cfdata)
    e_widget_table_object_append(ot, cfdata->o_del, 1, 1, 1, 1, 1, 1, 1, 0);
 
    if (cfdata->load_timer) ecore_timer_del(cfdata->load_timer);
-   cfdata->load_timer = ecore_timer_add(0.01, _cb_load_timer, cfdata);
+   cfdata->load_timer = ecore_timer_loop_add(0.01, _cb_load_timer, cfdata);
 
    elm_win_center(cfd->dia->win, 1, 1);
 

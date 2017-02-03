@@ -348,7 +348,7 @@ _e_spectrum_update(E_Spectrum *sp)
    if (!sp || !sp->cv) return;
 
    if (sp->draw_timer) ecore_timer_del(sp->draw_timer);
-   sp->draw_timer = ecore_timer_add(.001, _e_spectrum_redraw, sp);
+   sp->draw_timer = ecore_timer_loop_add(.001, _e_spectrum_redraw, sp);
 }
 
 Evas_Object *

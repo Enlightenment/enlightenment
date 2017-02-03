@@ -219,7 +219,7 @@ _queue_queue(Evas_Object *obj)
    if (!wd) return;
    if (!wd->queue.queue) return;
    if (wd->queue.timer) return;
-   wd->queue.timer = ecore_timer_add(0.00001, _queue_timer, obj);
+   wd->queue.timer = ecore_timer_loop_add(0.00001, _queue_timer, obj);
 }
 
 static void

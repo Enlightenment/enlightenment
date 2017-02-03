@@ -27,7 +27,7 @@ main(void)
 
    ecore_evas_init();
    ee = ecore_evas_new(NULL, 0, 0, 200, 200, NULL);
-   ecore_timer_add(2, fs, ee);
+   ecore_timer_loop_add(2, fs, ee);
    ecore_evas_show(ee);
    ecore_event_handler_add(ECORE_EVENT_KEY_DOWN, (Ecore_Event_Handler_Cb)key, ee);
    ecore_main_loop_begin();

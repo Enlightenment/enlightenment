@@ -186,7 +186,7 @@ e_modapi_init(E_Module *m)
    packagekit_mod = m;
    e_gadcon_provider_register(&_gc_class);
    packagekit_dbus_connect(ctxt);
-   ctxt->refresh_timer = ecore_timer_add(60.0, _refresh_timer_cb, ctxt);
+   ctxt->refresh_timer = ecore_timer_loop_add(60.0, _refresh_timer_cb, ctxt);
    return ctxt;
 }
 

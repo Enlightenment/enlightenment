@@ -252,7 +252,7 @@ _e_order_cb_monitor(void *data, Ecore_File_Monitor *em EINA_UNUSED, Ecore_File_E
    E_Order *eo = data;
 
    if (eo->delay) ecore_timer_del(eo->delay);
-   eo->delay = ecore_timer_add(0.2, _e_order_cb_monitor_delay, eo);
+   eo->delay = ecore_timer_loop_add(0.2, _e_order_cb_monitor_delay, eo);
 }
 
 static void

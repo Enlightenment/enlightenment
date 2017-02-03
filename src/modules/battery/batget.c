@@ -327,12 +327,12 @@ linux_sys_class_power_supply_cb_event_fd_active(void *data,
              free(sysev);
 
              if (re_init_timer) ecore_timer_del(re_init_timer);
-             re_init_timer = ecore_timer_add(1.0, linux_sys_class_power_supply_cb_re_init, NULL);
+             re_init_timer = ecore_timer_loop_add(1.0, linux_sys_class_power_supply_cb_re_init, NULL);
           }
         else
           {
              if (sys_class_delay_check) ecore_timer_del(sys_class_delay_check);
-             sys_class_delay_check = ecore_timer_add(0.2, linux_sys_class_power_supply_cb_delay_check, NULL);
+             sys_class_delay_check = ecore_timer_loop_add(0.2, linux_sys_class_power_supply_cb_delay_check, NULL);
           }
      }
    return ECORE_CALLBACK_CANCEL;
@@ -756,7 +756,7 @@ linux_acpi_cb_acpid_data(void *data  EINA_UNUSED,
                          void *event EINA_UNUSED)
 {
    if (delay_check) ecore_timer_del(delay_check);
-   delay_check = ecore_timer_add(0.2, linux_acpi_cb_delay_check, NULL);
+   delay_check = ecore_timer_loop_add(0.2, linux_acpi_cb_delay_check, NULL);
    return ECORE_CALLBACK_PASS_ON;
 }
 
@@ -792,7 +792,7 @@ linux_acpi_cb_event_fd_active(void *data        EINA_UNUSED,
         else
           {
              if (delay_check) ecore_timer_del(delay_check);
-             delay_check = ecore_timer_add(0.2, linux_acpi_cb_delay_check, NULL);
+             delay_check = ecore_timer_loop_add(0.2, linux_acpi_cb_delay_check, NULL);
           }
      }
    return ECORE_CALLBACK_RENEW;

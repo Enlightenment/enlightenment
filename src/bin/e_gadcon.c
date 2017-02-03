@@ -1939,7 +1939,7 @@ e_gadcon_client_autoscroll_update(E_Gadcon_Client *gcc, Evas_Coord x, Evas_Coord
           d = 1.0;
         if (!gcc->scroll_timer)
           gcc->scroll_timer =
-            ecore_timer_add(0.01, _e_gadcon_cb_client_scroll_timer, gcc);
+            ecore_timer_loop_add(0.01, _e_gadcon_cb_client_scroll_timer, gcc);
         if (!gcc->scroll_animator)
           gcc->scroll_animator =
             ecore_animator_add(_e_gadcon_cb_client_scroll_animator, gcc);
@@ -3283,7 +3283,7 @@ _e_gadcon_client_cb_mouse_down(void *data, Evas *e EINA_UNUSED, Evas_Object *obj
              if (gcc->instant_edit_timer)
                ecore_timer_del(gcc->instant_edit_timer);
              gcc->instant_edit_timer =
-               ecore_timer_add(1.0, _e_gadcon_client_cb_instant_edit_timer,
+               ecore_timer_loop_add(1.0, _e_gadcon_client_cb_instant_edit_timer,
                                gcc);
           }
      }

@@ -130,7 +130,7 @@ _e_sys_comp_emit_cb_wait(E_Sys_Action a, const char *sig, const char *rep, Eina_
    if (rep)
      {
         if (action_timeout) ecore_timer_del(action_timeout);
-        action_timeout = ecore_timer_add(ACTION_TIMEOUT, (Ecore_Task_Cb)_e_sys_comp_action_timeout, (intptr_t*)(long)a);
+        action_timeout = ecore_timer_loop_add(ACTION_TIMEOUT, (Ecore_Task_Cb)_e_sys_comp_action_timeout, (intptr_t*)(long)a);
      }
 }
 
@@ -429,7 +429,7 @@ _e_sys_systemd_exists_cb(void *data EINA_UNUSED, const Eldbus_Message *m, Eldbus
 fail:
    systemd_works = EINA_FALSE;
    /* delay this for 1.0 seconds while the rest of e starts up */
-   ecore_timer_add(1.0, _e_sys_cb_timer, NULL);
+   ecore_timer_loop_add(1.0, _e_sys_cb_timer, NULL);
 }
 
 static void
@@ -485,7 +485,7 @@ _e_sys_susp_hib_check(void)
      ecore_timer_del(_e_sys_susp_hib_check_timer);
    _e_sys_susp_hib_check_last_tick = ecore_time_unix_get();
    _e_sys_susp_hib_check_timer =
-     ecore_timer_add(0.1, _e_sys_susp_hib_check_timer_cb, NULL);
+     ecore_timer_loop_add(0.1, _e_sys_susp_hib_check_timer_cb, NULL);
 }
 
 /* local subsystem functions */
@@ -589,7 +589,7 @@ static void
 _e_sys_cb_logout_wait(void *data EINA_UNUSED, E_Dialog *dia)
 {
    if (_e_sys_logout_timer) ecore_timer_del(_e_sys_logout_timer);
-   _e_sys_logout_timer = ecore_timer_add(0.5, _e_sys_cb_logout_timer, NULL);
+   _e_sys_logout_timer = ecore_timer_loop_add(0.5, _e_sys_cb_logout_timer, NULL);
    _e_sys_logout_begin_time = ecore_time_get();
    e_object_del(E_OBJECT(dia));
    _e_sys_logout_confirm_dialog = NULL;
@@ -748,7 +748,7 @@ _e_sys_logout_begin(E_Sys_Action a_after, Eina_Bool raw)
    /* and poll to see if all pending windows are gone yet every 0.5 sec */
    _e_sys_logout_begin_time = ecore_time_get();
    if (_e_sys_logout_timer) ecore_timer_del(_e_sys_logout_timer);
-   _e_sys_logout_timer = ecore_timer_add(0.5, _e_sys_cb_logout_timer, NULL);
+   _e_sys_logout_timer = ecore_timer_loop_add(0.5, _e_sys_cb_logout_timer, NULL);
 }
 
 static void

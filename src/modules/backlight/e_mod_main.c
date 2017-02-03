@@ -399,13 +399,13 @@ _backlight_popup_timer_new(Instance *inst)
           {
              ecore_timer_del(inst->popup_timer);
              e_widget_slider_value_double_set(inst->o_slider, inst->val);
-             inst->popup_timer = ecore_timer_add(1.0, _backlight_popup_timer_cb, inst);
+             inst->popup_timer = ecore_timer_loop_add(1.0, _backlight_popup_timer_cb, inst);
           }
      }
    else
      {
         _backlight_popup_new(inst);
-        inst->popup_timer = ecore_timer_add(1.0, _backlight_popup_timer_cb, inst);
+        inst->popup_timer = ecore_timer_loop_add(1.0, _backlight_popup_timer_cb, inst);
      }
 }
 

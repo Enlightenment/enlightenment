@@ -890,7 +890,7 @@ _e_winlist_show_active(void)
      {
         _scroll_to = 1;
         if (!_scroll_timer)
-          _scroll_timer = ecore_timer_add(0.01, _e_winlist_scroll_timer, NULL);
+          _scroll_timer = ecore_timer_loop_add(0.01, _e_winlist_scroll_timer, NULL);
         if (!_animator)
           _animator = ecore_animator_add(_e_winlist_animator, NULL);
      }

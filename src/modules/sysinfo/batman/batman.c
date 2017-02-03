@@ -405,7 +405,7 @@ _batman_warning_popup(Instance *inst, int t, double percent)
        (!inst->cfg->batman.alert_timer))
      {
         inst->cfg->batman.alert_timer =
-          ecore_timer_add(inst->cfg->batman.alert_timeout,
+          ecore_timer_loop_add(inst->cfg->batman.alert_timeout,
                           _batman_cb_warning_popup_timeout, inst);
      }
 }

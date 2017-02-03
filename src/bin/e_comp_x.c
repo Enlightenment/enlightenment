@@ -1484,7 +1484,7 @@ _e_comp_x_show(void *data EINA_UNUSED, int type EINA_UNUSED, Ecore_X_Event_Windo
              if (c->x_comp_data->retry_timer)
                ecore_timer_reset(c->x_comp_data->retry_timer);
              else
-               c->x_comp_data->retry_timer = ecore_timer_add(0.02, _e_comp_x_show_retry, c);
+               c->x_comp_data->retry_timer = ecore_timer_loop_add(0.02, _e_comp_x_show_retry, c);
              c->x_comp_data->retry_clients = eina_list_append(c->x_comp_data->retry_clients, (uintptr_t*)(unsigned long)ev->win);
              return ECORE_CALLBACK_RENEW;
           }
@@ -2879,7 +2879,7 @@ _e_comp_x_focus_timer(void)
    if (focus_timer)
      ecore_timer_reset(focus_timer);
    else /* focus has changed twice in .002 seconds; .01 seconds should be more than enough delay */
-     focus_timer = ecore_timer_add(0.01, _e_comp_x_focus_timer_cb, NULL);
+     focus_timer = ecore_timer_loop_add(0.01, _e_comp_x_focus_timer_cb, NULL);
 }
 
 static Eina_Bool
@@ -4571,7 +4571,7 @@ _e_comp_x_hook_client_new(void *d EINA_UNUSED, E_Client *ec)
 
    eina_hash_add(clients_win_hash, &win, ec);
    if (!ec->input_only)
-     ec->comp_data->first_draw_delay = ecore_timer_add(e_comp_config_get()->first_draw_delay, _e_comp_x_first_draw_delay_cb, ec);
+     ec->comp_data->first_draw_delay = ecore_timer_loop_add(e_comp_config_get()->first_draw_delay, _e_comp_x_first_draw_delay_cb, ec);
 }
 
 static void
@@ -4895,13 +4895,13 @@ _e_comp_x_screensaver_notify_cb(void *data EINA_UNUSED, int type EINA_UNUSED, Ec
      {
         saver_on = EINA_TRUE;
         E_FREE_FUNC(screensaver_eval_timer, ecore_timer_del);
-        screensaver_eval_timer = ecore_timer_add(0.3, _e_comp_x_screensaver_eval_cb, NULL);
+        screensaver_eval_timer = ecore_timer_loop_add(0.3, _e_comp_x_screensaver_eval_cb, NULL);
      }
    else if ((!ev->on) && (saver_on))
      {
         saver_on = EINA_FALSE;
         E_FREE_FUNC(screensaver_eval_timer, ecore_timer_del);
-        screensaver_eval_timer = ecore_timer_add(0.3, _e_comp_x_screensaver_eval_cb, NULL);
+        screensaver_eval_timer = ecore_timer_loop_add(0.3, _e_comp_x_screensaver_eval_cb, NULL);
      }
    return ECORE_CALLBACK_PASS_ON;
 }

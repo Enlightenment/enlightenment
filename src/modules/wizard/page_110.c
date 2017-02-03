@@ -127,7 +127,7 @@ wizard_page_show(E_Wizard_Page *pg)
                                                _check_connman_owner, pg);
         if (connman_timeout)
           ecore_timer_del(connman_timeout);
-        connman_timeout = ecore_timer_add(0.5, _connman_fail, pg);
+        connman_timeout = ecore_timer_loop_add(0.5, _connman_fail, pg);
         have_connman = EINA_TRUE;
         e_wizard_button_next_enable_set(0);
      }

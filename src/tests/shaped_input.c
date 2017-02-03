@@ -37,7 +37,7 @@ main(void)
    a = ecore_x_window_input_new(0, 0, 0, 100, 100);
    ecore_x_window_show(a);
 
-   ecore_timer_add(0.01, _shape, NULL);
+   ecore_timer_loop_add(0.01, _shape, NULL);
 
 
    ecore_x_icccm_name_class_set(a, "shaped_input", "test");

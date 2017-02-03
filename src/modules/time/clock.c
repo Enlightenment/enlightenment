@@ -205,7 +205,7 @@ _clock_timer(void *d EINA_UNUSED)
    if (clock_timer)
      ecore_timer_interval_set(clock_timer, sec);
    else
-     clock_timer = ecore_timer_add(sec, _clock_timer, NULL);
+     clock_timer = ecore_timer_loop_add(sec, _clock_timer, NULL);
    return EINA_TRUE;
 }
 

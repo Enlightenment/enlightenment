@@ -949,7 +949,7 @@ _e_qa_dia_del(void *data EINA_UNUSED)
    if (qa_mod->help_timeout)
      ecore_timer_reset(qa_mod->help_timeout);
    else
-     qa_mod->help_timeout = ecore_timer_add(20.0, _e_qa_help_timeout, NULL);
+     qa_mod->help_timeout = ecore_timer_loop_add(20.0, _e_qa_help_timeout, NULL);
 }
 
 static void
@@ -1002,7 +1002,7 @@ _e_qa_help5(void *data EINA_UNUSED)
 
    if (_e_qa_entry_find_border(e_win_client_get(qa_mod->demo_dia->win)))
      {
-        qa_mod->help_timer = ecore_timer_add(1, _e_qa_help_timer_cb, NULL);
+        qa_mod->help_timer = ecore_timer_loop_add(1, _e_qa_help_timer_cb, NULL);
         return;
      }
 
@@ -1140,7 +1140,7 @@ _e_qa_help_timer_helper(void)
              qa_mod->demo_state = 0;
              qa_mod->help_timer = NULL;
              if (mi->menu != qa_mod->menu)
-               qa_mod->help_timer = ecore_timer_add(0.2, _e_qa_help_timer2_cb, NULL);
+               qa_mod->help_timer = ecore_timer_loop_add(0.2, _e_qa_help_timer2_cb, NULL);
              return EINA_FALSE;
           }
         items = qa_mod->menu->items;
@@ -1246,7 +1246,7 @@ _e_qa_help3(void *data EINA_UNUSED)
    e_dialog_text_set(dia, _("This is a demo dialog used in the Quickaccess tutorial"));
    e_dialog_show(dia);
 
-   qa_mod->help_timer = ecore_timer_add(1, _e_qa_help_timer_cb, NULL);
+   qa_mod->help_timer = ecore_timer_loop_add(1, _e_qa_help_timer_cb, NULL);
    ecore_timer_reset(qa_mod->help_timeout);
    ecore_timer_freeze(qa_mod->help_timeout);
 

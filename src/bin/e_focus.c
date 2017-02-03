@@ -24,7 +24,7 @@ e_focus_event_mouse_in(E_Client *ec)
                evas_object_raise(ec->frame);
           }
         else
-          ec->raise_timer = ecore_timer_add(e_config->auto_raise_delay, _e_focus_raise_timer, ec);
+          ec->raise_timer = ecore_timer_loop_add(e_config->auto_raise_delay, _e_focus_raise_timer, ec);
      }
 }
 

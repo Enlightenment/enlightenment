@@ -1129,13 +1129,13 @@ _e_fm_main_udisks2_volume_eject(E_Volume *v)
      }
    if (v->mounted)
      {
-        v->guard = ecore_timer_add(E_FM_UNMOUNT_TIMEOUT, (Ecore_Task_Cb)_e_fm_main_udisks2_vol_unmount_timeout, v);
+        v->guard = ecore_timer_loop_add(E_FM_UNMOUNT_TIMEOUT, (Ecore_Task_Cb)_e_fm_main_udisks2_vol_unmount_timeout, v);
         v->op = _volume_umount(v);
         vols_ejecting = eina_list_append(vols_ejecting, v);
      }
    else
      {
-        v->guard = ecore_timer_add(E_FM_EJECT_TIMEOUT, (Ecore_Task_Cb)_e_fm_main_udisks2_vol_eject_timeout, v);
+        v->guard = ecore_timer_loop_add(E_FM_EJECT_TIMEOUT, (Ecore_Task_Cb)_e_fm_main_udisks2_vol_eject_timeout, v);
         v->op = _volume_eject(v->storage->proxy);
      }
    v->optype = E_VOLUME_OP_TYPE_EJECT;
@@ -1147,7 +1147,7 @@ _e_fm_main_udisks2_volume_unmount(E_Volume *v)
    if (!v || v->guard) return;
    INF("unmount %s %s", v->udi, v->mount_point);
 
-   v->guard = ecore_timer_add(E_FM_UNMOUNT_TIMEOUT, (Ecore_Task_Cb)_e_fm_main_udisks2_vol_unmount_timeout, v);
+   v->guard = ecore_timer_loop_add(E_FM_UNMOUNT_TIMEOUT, (Ecore_Task_Cb)_e_fm_main_udisks2_vol_unmount_timeout, v);
    v->op = _volume_umount(v);
    v->optype = E_VOLUME_OP_TYPE_UNMOUNT;
 }
@@ -1178,7 +1178,7 @@ _e_fm_main_udisks2_volume_mount(E_Volume *v)
    else if (!strcmp(v->fstype, "ntfs"))
      snprintf(buf, sizeof(buf), "uid=%i", (int)getuid());
 
-   v->guard = ecore_timer_add(E_FM_MOUNT_TIMEOUT, (Ecore_Task_Cb)_e_fm_main_udisks2_vol_mount_timeout, v);
+   v->guard = ecore_timer_loop_add(E_FM_MOUNT_TIMEOUT, (Ecore_Task_Cb)_e_fm_main_udisks2_vol_mount_timeout, v);
 
    // It was previously noted here that ubuntu 10.04 failed to mount if opt was passed to
    // e_udisks2_volume_mount.  The reason at the time was unknown and apparently never found.

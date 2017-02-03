@@ -94,7 +94,7 @@ _xkb_new_state(void* data EINA_UNUSED, int type EINA_UNUSED, void *event)
 
    ecore_timer_del(save_group);
 
-   save_group = ecore_timer_add(0.5, _e_xkb_save_group, (void*)(intptr_t)ev->group);
+   save_group = ecore_timer_loop_add(0.5, _e_xkb_save_group, (void*)(intptr_t)ev->group);
 
    return ECORE_CALLBACK_PASS_ON;
 }
@@ -118,7 +118,7 @@ e_xkb_init(E_Pixmap_Type comp_type)
    _e_xkb_type_reconfig(comp_type);
 
    if (comp_type == E_PIXMAP_TYPE_X)
-     ecore_timer_add(1.5, _e_xkb_init_timer, NULL);
+     ecore_timer_loop_add(1.5, _e_xkb_init_timer, NULL);
    else if (comp_type == E_PIXMAP_TYPE_WL)
      {
         _eval_cur_group();

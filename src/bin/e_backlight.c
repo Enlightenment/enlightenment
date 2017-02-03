@@ -496,7 +496,7 @@ _e_bl_cb_exit(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
      {
         bl_sys_set_exe_ready = EINA_FALSE;
         bl_sys_set_exe = NULL;
-        ecore_timer_add(0.05, _e_bl_cb_ext_delay, NULL);
+        ecore_timer_loop_add(0.05, _e_bl_cb_ext_delay, NULL);
      }
    return ECORE_CALLBACK_RENEW;
 }

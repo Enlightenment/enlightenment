@@ -221,7 +221,7 @@ _opinfo_op_registry_listener(void *data, const E_Fm2_Op_Registry_Entry *ere)
 static void
 _opinfo_op_registry_free_data(void *data)
 {
-   ecore_timer_add(5.0, _opinfo_op_registry_free_data_delayed, data);
+   ecore_timer_loop_add(5.0, _opinfo_op_registry_free_data_delayed, data);
 }
 
 static Eina_Bool

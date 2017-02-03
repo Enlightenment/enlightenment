@@ -276,7 +276,7 @@ _update_today_timer(void *data EINA_UNUSED)
 
    t_tomorrow = mktime(&today) + 24 * 60 * 60;
    if (update_today) ecore_timer_interval_set(update_today, t_tomorrow - t);
-   else update_today = ecore_timer_add(t_tomorrow - t, _update_today_timer, NULL);
+   else update_today = ecore_timer_loop_add(t_tomorrow - t, _update_today_timer, NULL);
    return EINA_TRUE;
 }
 

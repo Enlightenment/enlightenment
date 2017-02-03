@@ -505,7 +505,7 @@ tw_link_hide(E_Client *ec, const char *uri)
         if (EINA_DBL_NONZERO(tw_config->mouse_out_delay))
           {
              if (tw_hide_timer) ecore_timer_reset(tw_hide_timer);
-             else tw_hide_timer = ecore_timer_add(tw_config->mouse_out_delay, tw_hide, NULL);
+             else tw_hide_timer = ecore_timer_loop_add(tw_config->mouse_out_delay, tw_hide, NULL);
           }
         else
           tw_hide(NULL);
@@ -622,7 +622,7 @@ media_cleaner_cb(void *data)
         if (ic->timestamp >= now)
           {
              /* stop the idler for now to avoid pointless spinning */
-             ecore_timer_add(24 * 60 * 60, (Ecore_Task_Cb)tw_idler_start, NULL);
+             ecore_timer_loop_add(24 * 60 * 60, (Ecore_Task_Cb)tw_idler_start, NULL);
              media_cleaner[mcl->video] = NULL;
              tw_cache_list[mcl->video] = mcl;
              return EINA_FALSE;
@@ -862,7 +862,7 @@ tw_video_closed_cb(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
    evas_object_hide(obj);
    evas_object_hide(data);
    emotion_object_play_set(obj, EINA_FALSE);
-   ecore_timer_add(3.0, stupid_obj_del_workaround_hack, data);
+   ecore_timer_loop_add(3.0, stupid_obj_del_workaround_hack, data);
    if (!tw_tmpfile) return;
    eina_stringshare_replace(&tw_tmpfile, NULL);
 }
@@ -1125,7 +1125,7 @@ tw_handler_hide(void)
    if (EINA_DBL_NONZERO(tw_config->mouse_out_delay))
      {
         if (tw_hide_timer) ecore_timer_reset(tw_hide_timer);
-        else tw_hide_timer = ecore_timer_add(tw_config->mouse_out_delay, tw_hide, NULL);
+        else tw_hide_timer = ecore_timer_loop_add(tw_config->mouse_out_delay, tw_hide, NULL);
      }
    else
      tw_hide(NULL);

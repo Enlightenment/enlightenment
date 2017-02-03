@@ -163,9 +163,9 @@ _e_dpms_off(void *d EINA_UNUSED)
 static Eina_Bool
 _e_dpms_screensaver_on()
 {
-   standby_timer = ecore_timer_add(STANDBY, _e_dpms_standby, NULL);
-   suspend_timer = ecore_timer_add(SUSPEND, _e_dpms_suspend, NULL);
-   off_timer = ecore_timer_add(OFF, _e_dpms_off, NULL);
+   standby_timer = ecore_timer_loop_add(STANDBY, _e_dpms_standby, NULL);
+   suspend_timer = ecore_timer_loop_add(SUSPEND, _e_dpms_suspend, NULL);
+   off_timer = ecore_timer_loop_add(OFF, _e_dpms_off, NULL);
    return ECORE_CALLBACK_RENEW;
 }
 

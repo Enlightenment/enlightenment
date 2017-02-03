@@ -320,7 +320,7 @@ _e_wizard_check_xdg(void)
      {
         /* Advance within 15 secs if no xdg event */
         if (!next_timer)
-          next_timer = ecore_timer_add(7.0, _e_wizard_cb_next_page, NULL);
+          next_timer = ecore_timer_loop_add(7.0, _e_wizard_cb_next_page, NULL);
         next_can = 0;
         _e_wizard_next_eval();
         return 0;
@@ -340,7 +340,7 @@ _e_wizard_check_xdg(void)
           {
              /* Advance within 15 secs if no xdg event */
              if (!next_timer)
-               next_timer = ecore_timer_add(7.0, _e_wizard_cb_next_page, NULL);
+               next_timer = ecore_timer_loop_add(7.0, _e_wizard_cb_next_page, NULL);
              next_can = 0;
              _e_wizard_next_eval();
              return 0;

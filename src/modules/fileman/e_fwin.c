@@ -363,7 +363,7 @@ _e_fwin_dnd_change_cb(E_Fwin *fwin, Evas_Object *obj EINA_UNUSED, void *event_in
    if (fwin->spring_timer)
      ecore_timer_reset(fwin->spring_timer);
    else
-     fwin->spring_timer = ecore_timer_add(fileman_config->view.spring_delay, (Ecore_Task_Cb)_e_fwin_spring_cb, fwin);
+     fwin->spring_timer = ecore_timer_loop_add(fileman_config->view.spring_delay, (Ecore_Task_Cb)_e_fwin_spring_cb, fwin);
 }
 
 static void
@@ -393,7 +393,7 @@ _e_fwin_dnd_leave_cb(E_Fwin *fwin, Evas_Object *obj EINA_UNUSED, void *event_inf
    if (fwin->spring_parent && (!fwin->spring_child))
      {
         if (!fwin->spring_close_timer)
-          fwin->spring_close_timer = ecore_timer_add(0.01, (Ecore_Task_Cb)_e_fwin_dnd_close_cb, fwin);
+          fwin->spring_close_timer = ecore_timer_loop_add(0.01, (Ecore_Task_Cb)_e_fwin_dnd_close_cb, fwin);
      }
    drag_fwin = NULL;
 }
@@ -963,7 +963,7 @@ _e_fwin_icon_mouse_in(void *data, Evas_Object *obj EINA_UNUSED, void *event_info
    if (fwin->popup_timer) ecore_timer_del(fwin->popup_timer);
    fwin->popup_timer = NULL;
    if (!fileman_config->tooltip.enable) return;
-   fwin->popup_timer = ecore_timer_add(fileman_config->tooltip.delay, _e_fwin_icon_popup, fwin);
+   fwin->popup_timer = ecore_timer_loop_add(fileman_config->tooltip.delay, _e_fwin_icon_popup, fwin);
    if (fwin->over_file) eina_stringshare_del(fwin->over_file);
    fwin->over_file = NULL;
    if (ici->file) fwin->over_file = eina_stringshare_add(ici->file);
@@ -3133,7 +3133,7 @@ static void
 _e_fwin_op_registry_free_data(void *data)
 {
    Ecore_Timer *t;
-   t = ecore_timer_add(5.0, _e_fwin_op_registry_free_data_delayed, data);
+   t = ecore_timer_loop_add(5.0, _e_fwin_op_registry_free_data_delayed, data);
    evas_object_data_set(data, "_e_fwin_op_registry_thingy", t);
    evas_object_event_callback_add(data, EVAS_CALLBACK_FREE, _e_fwin_op_registry_free_check, data);
 }

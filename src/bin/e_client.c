@@ -875,7 +875,7 @@ _e_client_action_move_timeout_add(void)
 {
    E_FREE_FUNC(action_timer, ecore_timer_del);
    if (EINA_DBL_NONZERO(e_config->border_keyboard.timeout))
-     action_timer = ecore_timer_add(e_config->border_keyboard.timeout, _e_client_action_move_timeout, NULL);
+     action_timer = ecore_timer_loop_add(e_config->border_keyboard.timeout, _e_client_action_move_timeout, NULL);
 }
 
 static Eina_Bool
@@ -1095,7 +1095,7 @@ _e_client_action_resize_timeout_add(void)
 {
    E_FREE_FUNC(action_timer, ecore_timer_del);
    if (EINA_DBL_NONZERO(e_config->border_keyboard.timeout))
-     action_timer = ecore_timer_add(e_config->border_keyboard.timeout, _e_client_action_resize_timeout, NULL);
+     action_timer = ecore_timer_loop_add(e_config->border_keyboard.timeout, _e_client_action_resize_timeout, NULL);
 }
 
 static Eina_Bool
@@ -4952,7 +4952,7 @@ e_client_act_kill_begin(E_Client *ec)
    if ((ec->netwm.pid > 1) && (e_config->kill_process))
      {
         kill(ec->netwm.pid, SIGINT);
-        ec->kill_timer = ecore_timer_add(e_config->kill_timer_wait,
+        ec->kill_timer = ecore_timer_loop_add(e_config->kill_timer_wait,
                                          _e_client_cb_kill_timer, ec);
      }
    else
@@ -5423,7 +5423,7 @@ e_client_pointer_warp_to_center(E_Client *ec)
    warp_client = ec;
    ecore_evas_pointer_xy_get(e_comp->ee, &warp_x[0], &warp_y[0]);
    if (warp_timer) ecore_timer_del(warp_timer);
-   warp_timer = ecore_timer_add(0.01, _e_client_pointer_warp_to_center_timer, ec);
+   warp_timer = ecore_timer_loop_add(0.01, _e_client_pointer_warp_to_center_timer, ec);
    return 1;
 }
 

@@ -865,7 +865,7 @@ _ibar_cb_icon_menu_client_menu_del(void *data, Evas *e EINA_UNUSED, Evas_Object 
    if (b->menu_icon->hide_timer)
      ecore_timer_reset(b->menu_icon->hide_timer);
    else
-     b->menu_icon->hide_timer = ecore_timer_add(0.5, _ibar_cb_out_hide_delay, b->menu_icon);
+     b->menu_icon->hide_timer = ecore_timer_loop_add(0.5, _ibar_cb_out_hide_delay, b->menu_icon);
 }
 
 static void
@@ -1233,7 +1233,7 @@ _ibar_icon_menu_mouse_out(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA
    if (ic->hide_timer)
      ecore_timer_reset(ic->hide_timer);
    else
-     ic->hide_timer = ecore_timer_add(0.5, _ibar_cb_out_hide_delay, ic);
+     ic->hide_timer = ecore_timer_loop_add(0.5, _ibar_cb_out_hide_delay, ic);
 }
 
 static void
@@ -1517,7 +1517,7 @@ _ibar_cb_icon_mouse_in(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UN
         if (ic->show_timer)
           ecore_timer_reset(ic->show_timer);
         else
-          ic->show_timer = ecore_timer_add(0.2, _ibar_icon_mouse_in_timer, ic);
+          ic->show_timer = ecore_timer_loop_add(0.2, _ibar_icon_mouse_in_timer, ic);
      }
 }
 
@@ -1548,7 +1548,7 @@ _ibar_cb_icon_mouse_out(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_U
         if (ic->hide_timer)
           ecore_timer_reset(ic->hide_timer);
         else
-          ic->hide_timer = ecore_timer_add(0.75, _ibar_cb_out_hide_delay, ic);
+          ic->hide_timer = ecore_timer_loop_add(0.75, _ibar_cb_out_hide_delay, ic);
      }
 }
 
@@ -1578,7 +1578,7 @@ _ibar_cb_icon_mouse_down(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_
         ic->drag.dnd = 0;
         ic->mouse_down = 1;
         if (!ic->timer)
-          ic->timer = ecore_timer_add(0.35, _ibar_cb_icon_menu_cb, ic);
+          ic->timer = ecore_timer_loop_add(0.35, _ibar_cb_icon_menu_cb, ic);
      }
    else if (ev->button == 2)
      {
@@ -1846,7 +1846,7 @@ _ibar_icon_go(IBar_Icon *ic, Eina_Bool keep_going)
      }
    _ibar_icon_signal_emit(ic, "e,action,exec", "e");
    if (keep_going)
-     ic->reset_timer = ecore_timer_add(1.0, _ibar_cb_icon_reset, ic);
+     ic->reset_timer = ecore_timer_loop_add(1.0, _ibar_cb_icon_reset, ic);
 }
 
 static void

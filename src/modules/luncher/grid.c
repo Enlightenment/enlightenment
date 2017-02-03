@@ -154,7 +154,7 @@ _grid_icon_mouse_down(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNU
         ic->drag.x = ev->output.x;
         ic->drag.y = ev->output.y;
         E_FREE_FUNC(ic->drag_timer, ecore_timer_del);
-        ic->drag_timer = ecore_timer_add(.35, _grid_drag_timer, ic);
+        ic->drag_timer = ecore_timer_loop_add(.35, _grid_drag_timer, ic);
      }
    if (ev->button == 3)
      {
