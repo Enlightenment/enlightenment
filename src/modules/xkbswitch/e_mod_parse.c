@@ -293,7 +293,11 @@ parse_rules(void)
                   if (i < (sizeof(grplabels) / sizeof(grplabels[0]))) continue;
                   optmisc = eina_list_append(optmisc, option);
                }
-             else continue;
+             else
+               {
+                  free(tmp);
+                  continue;
+               }
 
              free(tmp);
           }
