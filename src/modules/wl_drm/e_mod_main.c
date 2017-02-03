@@ -781,7 +781,7 @@ _drm2_cb_seat_caps(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
    else if (ev->pointer_count > 0)
      {
         e_comp_wl_input_pointer_enabled_set(EINA_TRUE);
-        e_pointers_size_set(e_config->cursor_size);
+        e_pointer_show(e_comp->pointer);
      }
 
    if (ev->keyboard_count <= 0)
