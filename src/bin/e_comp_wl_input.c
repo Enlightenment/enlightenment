@@ -66,7 +66,8 @@ _e_comp_wl_input_pointer_cb_cursor_set(struct wl_client *client, struct wl_resou
    if (!got_mouse) return;
    if (!surface_resource)
      {
-        e_pointer_object_set(e_comp->pointer, NULL, x, y);
+        ecore_evas_cursor_unset(e_comp->ee);
+        evas_object_hide(e_comp->pointer->o_ptr);
         return;
      }
    ec = wl_resource_get_user_data(surface_resource);
