@@ -208,6 +208,7 @@ _e_comp_cb_mouse_move(void *d EINA_UNUSED, int t EINA_UNUSED, Ecore_Event_Mouse_
 {
    static int x = -9999, y = -9999;
 
+   if (e_comp->comp_type != E_PIXMAP_TYPE_WL) return ECORE_CALLBACK_RENEW;
    if (x == -9999)
      x = ev->x, y = ev->y;
    if ((x == ev->x) && (y == ev->y)) return ECORE_CALLBACK_RENEW;
