@@ -598,6 +598,14 @@ e_pointer_hide(E_Pointer *ptr)
 }
 
 E_API void 
+e_pointer_show(E_Pointer *ptr)
+{
+   if ((!ptr->buffer_evas) && ptr->win) _e_pointer_canvas_add(ptr);
+   if (ptr->canvas)
+     evas_object_show(ptr->o_ptr);
+}
+
+E_API void
 e_pointer_type_push(E_Pointer *ptr, void *obj, const char *type)
 {
    E_Pointer_Stack *stack;
