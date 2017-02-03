@@ -121,6 +121,11 @@ typedef struct E_Comp_Wl_Extension_Data
       struct wl_global *global;
    } zxdg_importer_v1;
    /* end xdg-foreign */
+   struct
+   {
+      struct wl_global *global;
+      Eina_List *resources;
+   } zwp_relative_pointer_manager_v1;
 } E_Comp_Wl_Extension_Data;
 
 struct _E_Comp_Wl_Data
@@ -390,6 +395,8 @@ E_API void e_comp_wl_grab_client_del(E_Client *ec, Eina_Bool dismiss);
 E_API Eina_Bool e_comp_wl_client_is_grabbed(const E_Client *ec);
 E_API Eina_Bool e_comp_wl_grab_client_mouse_move(const Ecore_Event_Mouse_Move *ev);
 E_API Eina_Bool e_comp_wl_grab_client_mouse_button(const Ecore_Event_Mouse_Button *ev);
+
+E_API void e_comp_wl_extension_relative_motion_event(uint64_t time_usec, double dx, double dy, double dx_unaccel, double dy_unaccel);
 
 # ifndef HAVE_WAYLAND_ONLY
 EINTERN void e_comp_wl_xwayland_client_queue(E_Client *ec);

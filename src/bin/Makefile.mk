@@ -445,13 +445,17 @@ src/bin/generated/www-server-protocol.h \
 src/bin/generated/screenshooter-protocol.c \
 src/bin/generated/screenshooter-server-protocol.h \
 src/bin/generated/xdg-foreign-unstable-v1-protocol.c \
-src/bin/generated/xdg-foreign-unstable-v1-server-protocol.h
+src/bin/generated/xdg-foreign-unstable-v1-server-protocol.h \
+src/bin/generated/relative-pointer-unstable-v1-protocol.c \
+src/bin/generated/relative-pointer-unstable-v1-server-protocol.h
 
 src/bin/e_comp_wl_extensions.c: \
  src/bin/generated/screenshooter-server-protocol.h \
  src/bin/generated/session-recovery-server-protocol.h \
  src/bin/generated/xdg-foreign-unstable-v1-protocol.c \
- src/bin/generated/xdg-foreign-unstable-v1-server-protocol.h
+ src/bin/generated/xdg-foreign-unstable-v1-server-protocol.h \
+ src/bin/generated/relative-pointer-unstable-v1-protocol.c \
+ src/bin/generated/relative-pointer-unstable-v1-server-protocol.h
 
 src/bin/e_comp_wl.c: \
  src/bin/generated/www-server-protocol.h

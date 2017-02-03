@@ -7,6 +7,7 @@
 #include "session-recovery-server-protocol.h"
 #include "www-server-protocol.h"
 #include "xdg-foreign-unstable-v1-server-protocol.h"
+#include "relative-pointer-unstable-v1-server-protocol.h"
 
 /* mutter uses 32, seems reasonable */
 #define HANDLE_LEN 32
@@ -416,6 +417,44 @@ _e_comp_wl_zxdg_importer_v1_import(struct wl_client *client, struct wl_resource 
 
 /////////////////////////////////////////////////////////
 
+static void
+_e_comp_wl_zwp_relative_pointer_manager_v1_destroy(struct wl_client *client EINA_UNUSED, struct wl_resource *resource)
+{
+   wl_resource_destroy(resource);
+}
+
+static void
+_relative_pointer_destroy(struct wl_resource *resource)
+{
+   e_comp_wl->extensions->zwp_relative_pointer_manager_v1.resources =
+     eina_list_remove(e_comp_wl->extensions->zwp_relative_pointer_manager_v1.resources, resource);
+}
+
+static void
+_e_comp_wl_zwp_relative_pointer_v1_destroy(struct wl_client *client EINA_UNUSED, struct wl_resource *resource)
+{
+   wl_resource_destroy(resource);
+}
+
+
+static const struct zwp_relative_pointer_v1_interface _e_zwp_relative_pointer_v1_interface =
+{
+   _e_comp_wl_zwp_relative_pointer_v1_destroy,
+};
+
+static void
+_e_comp_wl_zwp_relative_pointer_manager_v1_get_relative_pointer(struct wl_client *client, struct wl_resource *resource, uint32_t id, struct wl_resource *pointer)
+{
+   struct wl_resource *res;
+
+   res = wl_resource_create(client, &zwp_relative_pointer_v1_interface, wl_resource_get_version(resource), id);
+   wl_resource_set_implementation(res, &_e_zwp_relative_pointer_v1_interface, pointer, _relative_pointer_destroy);
+   e_comp_wl->extensions->zwp_relative_pointer_manager_v1.resources =
+     eina_list_append(e_comp_wl->extensions->zwp_relative_pointer_manager_v1.resources, res);
+}
+
+/////////////////////////////////////////////////////////
+
 static const struct zwp_e_session_recovery_interface _e_session_recovery_interface =
 {
    _e_comp_wl_session_recovery_get_uuid,
@@ -445,6 +484,11 @@ static const struct zxdg_importer_v1_interface _e_zxdg_importer_v1_interface =
    _e_comp_wl_zxdg_importer_v1_import,
 };
 
+static const struct zwp_relative_pointer_manager_v1_interface _e_zwp_relative_pointer_manager_v1_interface =
+{
+   _e_comp_wl_zwp_relative_pointer_manager_v1_destroy,
+   _e_comp_wl_zwp_relative_pointer_manager_v1_get_relative_pointer,
+};
 
 #define GLOBAL_BIND_CB(NAME, IFACE, ...) \
 static void \
@@ -467,6 +511,7 @@ GLOBAL_BIND_CB(screenshooter, zwp_screenshooter_interface)
 GLOBAL_BIND_CB(www, www_interface)
 GLOBAL_BIND_CB(zxdg_exporter_v1, zxdg_exporter_v1_interface)
 GLOBAL_BIND_CB(zxdg_importer_v1, zxdg_importer_v1_interface)
+GLOBAL_BIND_CB(zwp_relative_pointer_manager_v1, zwp_relative_pointer_manager_v1_interface)
 
 
 #define GLOBAL_CREATE_OR_RETURN(NAME, IFACE, VERSION) \
@@ -511,6 +556,7 @@ e_comp_wl_extensions_init(void)
    GLOBAL_CREATE_OR_RETURN(zxdg_exporter_v1, zxdg_exporter_v1_interface, 1);
    e_comp_wl->extensions->zxdg_exporter_v1.surfaces = eina_hash_string_superfast_new(NULL);
    GLOBAL_CREATE_OR_RETURN(zxdg_importer_v1, zxdg_importer_v1_interface, 1);
+   GLOBAL_CREATE_OR_RETURN(zwp_relative_pointer_manager_v1, zwp_relative_pointer_manager_v1_interface, 1);
 
    ecore_event_handler_add(ECORE_WL2_EVENT_SYNC_DONE, _dmabuf_add, NULL);
 
@@ -518,4 +564,29 @@ e_comp_wl_extensions_init(void)
    e_client_hook_add(E_CLIENT_HOOK_MOVE_END, _e_comp_wl_extensions_client_move_end, NULL);
 
    return EINA_TRUE;
+}
+
+E_API void
+e_comp_wl_extension_relative_motion_event(uint64_t time_usec, double dx, double dy, double dx_unaccel, double dy_unaccel)
+{
+   Eina_List *l;
+   struct wl_resource *res;
+   E_Client *focused;
+   struct wl_client *wc;
+   uint32_t hi, lo;
+
+   focused = e_client_focused_get();
+   if ((!focused) || e_object_is_del(E_OBJECT(focused))) return;
+
+   wc = wl_resource_get_client(focused->comp_data->surface);
+
+   hi = time_usec >> 32;
+   lo = (uint32_t)time_usec;
+
+   EINA_LIST_FOREACH(e_comp_wl->extensions->zwp_relative_pointer_manager_v1.resources, l, res)
+     {
+        if (wl_resource_get_client(res) != wc) continue;
+        zwp_relative_pointer_v1_send_relative_motion(res, hi, lo, wl_fixed_from_double(dx),
+          wl_fixed_from_double(dy), wl_fixed_from_double(dx_unaccel), wl_fixed_from_double(dy_unaccel));
+     }
 }
