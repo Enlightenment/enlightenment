@@ -259,11 +259,8 @@ _e_comp_wl_mouse_out(E_Client *ec)
    if (ec->cur_mouse_action && e_grabinput_mouse_win_get()) return;
    /* FIXME? this is a hack to just reset the cursor whenever we mouse out. not sure if accurate */
    {
-      Evas_Object *o;
-
-      ecore_evas_cursor_get(e_comp->ee, &o, NULL, NULL, NULL);
-      if (e_comp->pointer->o_ptr != o)
-        e_pointer_object_set(e_comp->pointer, NULL, 0, 0);
+      e_pointer_object_set(e_comp->pointer, NULL, 0, 0);
+      evas_object_show(e_comp->pointer->o_ptr);
    }
    if (e_comp_wl->ptr.ec == ec)
      e_comp_wl->ptr.ec = NULL;
