@@ -47,7 +47,6 @@ _netstatus_proc_getrstatus(Instance *inst)
      }
    else
      {        
-        diffin /= 0.5;
         if (diffin > 1048576)
           snprintf(rin, sizeof(rin), "%s: %.2f MB/s", _("Receiving"), ((float)diffin / 1048576));
         else if ((diffin > 1024) && (diffin < 1048576))
@@ -105,7 +104,6 @@ _netstatus_proc_gettstatus(Instance *inst)
      }
    else
      {
-        diffout /= 0.5;
         if (diffout > 1048576)
           snprintf(rout, sizeof(rout), "%s: %.2f MB/s", _("Sending"), ((float)diffout / 1048576));
         else if ((diffout > 1024) && (diffout < 1048576))
