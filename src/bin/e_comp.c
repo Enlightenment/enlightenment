@@ -1666,11 +1666,16 @@ e_comp_grab_input(Eina_Bool mouse, Eina_Bool kbd)
           {
              if (ec)
                evas_object_focus_set(ec->frame, 0);
+
+#ifdef HAVE_WAYLAND
+             e_comp_wl_extension_pointer_unconstrain(NULL);
+#endif
           }
 
         ret = EINA_TRUE;
         e_comp->input_mouse_grabs += mouse;
         e_comp->input_key_grabs += kbd;
+
         if (e_comp->comp_type == E_PIXMAP_TYPE_WL)
           {
              if (ec && (!e_object_is_del(E_OBJECT(ec))))

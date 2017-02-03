@@ -2490,6 +2490,8 @@ _e_comp_wl_client_cb_del(void *data EINA_UNUSED, E_Client *ec)
    /* make sure this is a wayland client */
    if (e_pixmap_type_get(ec->pixmap) != E_PIXMAP_TYPE_WL) return;
 
+   e_comp_wl_extension_pointer_unconstrain(ec);
+
    /* remove sub list */
    EINA_LIST_FREE(ec->comp_data->sub.list, subc)
      {
@@ -2983,6 +2985,7 @@ e_comp_wl_surface_commit(E_Client *ec)
    _e_comp_wl_surface_state_commit(ec, &ec->comp_data->pending);
    if (!e_comp_object_damage_exists(ec->frame))
      e_pixmap_image_clear(ec->pixmap, 1);
+   e_comp_wl_extension_pointer_constraints_commit(ec);
 
    return EINA_TRUE;
 }

@@ -133,6 +133,7 @@ _e_comp_wl_input_cb_pointer_get(struct wl_client *client, struct wl_resource *re
 
    e_comp_wl->ptr.resources =
      eina_list_append(e_comp_wl->ptr.resources, res);
+   wl_resource_set_user_data(res, resource);
    wl_resource_set_implementation(res, &_e_pointer_interface,
                                   e_comp->wl_comp_data,
                                  _e_comp_wl_input_cb_pointer_unbind);
@@ -198,6 +199,7 @@ _e_comp_wl_input_cb_keyboard_get(struct wl_client *client, struct wl_resource *r
         wl_client_post_no_memory(client);
         return;
      }
+   wl_resource_set_user_data(res, resource);
 
    e_comp_wl->kbd.resources =
      eina_list_append(e_comp_wl->kbd.resources, res);

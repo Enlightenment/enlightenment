@@ -8,6 +8,7 @@
 #include "www-server-protocol.h"
 #include "xdg-foreign-unstable-v1-server-protocol.h"
 #include "relative-pointer-unstable-v1-server-protocol.h"
+#include "pointer-constraints-unstable-v1-server-protocol.h"
 
 /* mutter uses 32, seems reasonable */
 #define HANDLE_LEN 32
@@ -27,6 +28,23 @@ typedef struct Imported
    struct wl_resource *res;
    Exported *ex;
 } Imported;
+
+typedef struct Constraint
+{
+   E_Client *ec;
+   struct wl_resource *res;
+   struct wl_resource *seat;
+   struct wl_resource *surface;
+   Eina_Tiler *region;
+   Eina_Tiler *pending;
+   Evas_Point *pending_xy;
+   Evas_Point *pointer_xy;
+   Eina_Bool lock : 1; // if not lock, confine
+   Eina_Bool persistent : 1;
+   Eina_Bool active : 1;
+} Constraint;
+
+static Eina_List *active_constraints;
 
 static void
 _e_comp_wl_extensions_client_move_begin(void *d EINA_UNUSED, E_Client *ec)
@@ -455,6 +473,162 @@ _e_comp_wl_zwp_relative_pointer_manager_v1_get_relative_pointer(struct wl_client
 
 /////////////////////////////////////////////////////////
 
+static void
+_e_comp_wl_zwp_pointer_constraints_v1_destroy(struct wl_client *client EINA_UNUSED, struct wl_resource *resource)
+{
+   wl_resource_destroy(resource);
+}
+
+static void
+_constraint_destroy(struct wl_resource *resource)
+{
+   Eina_Hash *constraints;
+   Constraint *c = wl_resource_get_user_data(resource);
+
+   constraints = eina_hash_find(e_comp_wl->extensions->zwp_pointer_constraints_v1.constraints, &c->seat);
+   if (constraints)
+     eina_hash_del_by_key(constraints, &c->surface);
+   if (c->active)
+     {
+        active_constraints = eina_list_remove(active_constraints, c);
+        if (c->lock && c->pointer_xy)
+          ecore_evas_pointer_warp(e_comp->ee, c->ec->client.x + c->pointer_xy->x, c->ec->client.y + c->pointer_xy->y);
+     }
+   if (c->ec)
+     {
+        if (c->ec->comp_data->constraints)
+          c->ec->comp_data->constraints = eina_list_remove(c->ec->comp_data->constraints, c);
+     }
+   eina_tiler_free(c->pending);
+   eina_tiler_free(c->region);
+   free(c->pointer_xy);
+   free(c->pending_xy);
+   free(c);
+}
+
+static void
+_constraint_set_pending(Constraint *c)
+{
+   if (c->ec->comp_data->constraints)
+     c->ec->comp_data->constraints = eina_list_remove(c->ec->comp_data->constraints, c);
+   c->ec->comp_data->constraints = eina_list_append(c->ec->comp_data->constraints, c);
+}
+
+static void
+_constraint_set_region(struct wl_resource *resource, struct wl_resource *region)
+{
+   Constraint *c = wl_resource_get_user_data(resource);
+   Eina_Tiler *r = NULL;
+
+   if (region) r = wl_resource_get_user_data(region);
+   else E_FREE_FUNC(c->pending, eina_tiler_free);
+
+   if (c->pending)
+     eina_tiler_clear(c->pending);
+   else
+     {
+        c->pending = eina_tiler_new(65535, 65535);
+        eina_tiler_tile_size_set(c->pending, 1, 1);
+     }
+   if (r)
+     eina_tiler_union(c->pending, r);
+   _constraint_set_pending(c);
+}
+
+static void
+_e_comp_wl_locked_pointer_v1_set_region(struct wl_client *client EINA_UNUSED, struct wl_resource *resource, struct wl_resource *region)
+{
+   _constraint_set_region(resource, region);
+}
+
+static void
+_e_comp_wl_locked_pointer_v1_set_cursor_position_hint(struct wl_client *client EINA_UNUSED, struct wl_resource *resource, wl_fixed_t surface_x, wl_fixed_t surface_y)
+{
+   Constraint *c = wl_resource_get_user_data(resource);
+
+   if (!c->pending_xy)
+     c->pending_xy = E_NEW(Evas_Point, 1);
+   c->pending_xy->x = wl_fixed_to_int(surface_x);
+   c->pending_xy->y = wl_fixed_to_int(surface_y);
+   _constraint_set_pending(c);
+}
+
+static const struct zwp_locked_pointer_v1_interface _e_comp_wl_locked_pointer_v1_interface =
+{
+   _e_comp_wl_zwp_pointer_constraints_v1_destroy,
+   _e_comp_wl_locked_pointer_v1_set_cursor_position_hint,
+   _e_comp_wl_locked_pointer_v1_set_region,
+};
+
+
+static void
+_e_comp_wl_confined_pointer_v1_set_region(struct wl_client *client EINA_UNUSED, struct wl_resource *resource, struct wl_resource *region)
+{
+   _constraint_set_region(resource, region);
+}
+
+static const struct zwp_confined_pointer_v1_interface _e_comp_wl_confined_pointer_v1_interface =
+{
+   _e_comp_wl_zwp_pointer_constraints_v1_destroy,
+   _e_comp_wl_confined_pointer_v1_set_region,
+};
+
+static Constraint *
+do_constraint(const struct wl_interface *interface, const void *impl, struct wl_client *client, struct wl_resource *resource, uint32_t id, struct wl_resource *surface, struct wl_resource *pointer, struct wl_resource *region, uint32_t lifetime)
+{
+   struct wl_resource *res, *seat;
+   Eina_Hash *constraints;
+   Constraint *c;
+
+   seat = wl_resource_get_user_data(pointer);
+   constraints = eina_hash_find(e_comp_wl->extensions->zwp_pointer_constraints_v1.constraints, &seat);
+   if (constraints)
+     {
+        c = eina_hash_find(constraints, &surface);
+        if (c)
+          {
+             wl_resource_post_error(resource, WL_DISPLAY_ERROR_INVALID_OBJECT,
+               "constraint already exists for requested seat+surface");
+             return NULL;
+          }
+     }
+   else
+     {
+        constraints = eina_hash_pointer_new(NULL);
+        eina_hash_add(e_comp_wl->extensions->zwp_pointer_constraints_v1.constraints, &seat, constraints);
+     }
+   c = E_NEW(Constraint, 1);
+   c->seat = seat;
+   c->surface = surface;
+   c->persistent = lifetime == ZWP_POINTER_CONSTRAINTS_V1_LIFETIME_PERSISTENT;
+   c->ec = wl_resource_get_user_data(surface);
+   c->res = res = wl_resource_create(client, interface, wl_resource_get_version(resource), id);
+   wl_resource_set_implementation(res, impl, pointer, _constraint_destroy);
+   wl_resource_set_user_data(res, c);
+   _constraint_set_region(res, region);
+   return c;
+}
+
+static void
+_e_comp_wl_zwp_pointer_constraints_v1_lock_pointer(struct wl_client *client, struct wl_resource *resource, uint32_t id, struct wl_resource *surface, struct wl_resource *pointer, struct wl_resource *region, uint32_t lifetime)
+{
+   Constraint *c;
+
+   c = do_constraint(&zwp_locked_pointer_v1_interface, &_e_comp_wl_locked_pointer_v1_interface,
+     client, resource, id, surface, pointer, region, lifetime);
+   if (c)
+     c->lock = 1;
+}
+
+static void
+_e_comp_wl_zwp_pointer_constraints_v1_confine_pointer(struct wl_client *client, struct wl_resource *resource, uint32_t id, struct wl_resource *surface, struct wl_resource *pointer, struct wl_resource *region, uint32_t lifetime)
+{
+   do_constraint(&zwp_confined_pointer_v1_interface, &_e_comp_wl_confined_pointer_v1_interface,
+     client, resource, id, surface, pointer, region, lifetime);
+}
+
+/////////////////////////////////////////////////////////
+
 static const struct zwp_e_session_recovery_interface _e_session_recovery_interface =
 {
    _e_comp_wl_session_recovery_get_uuid,
@@ -490,6 +664,13 @@ static const struct zwp_relative_pointer_manager_v1_interface _e_zwp_relative_po
    _e_comp_wl_zwp_relative_pointer_manager_v1_get_relative_pointer,
 };
 
+static const struct zwp_pointer_constraints_v1_interface _e_zwp_pointer_constraints_v1_interface =
+{
+   _e_comp_wl_zwp_pointer_constraints_v1_destroy,
+   _e_comp_wl_zwp_pointer_constraints_v1_lock_pointer,
+   _e_comp_wl_zwp_pointer_constraints_v1_confine_pointer,
+};
+
 #define GLOBAL_BIND_CB(NAME, IFACE, ...) \
 static void \
 _e_comp_wl_##NAME##_cb_bind(struct wl_client *client, void *data EINA_UNUSED, uint32_t version EINA_UNUSED, uint32_t id) \
@@ -512,6 +693,7 @@ GLOBAL_BIND_CB(www, www_interface)
 GLOBAL_BIND_CB(zxdg_exporter_v1, zxdg_exporter_v1_interface)
 GLOBAL_BIND_CB(zxdg_importer_v1, zxdg_importer_v1_interface)
 GLOBAL_BIND_CB(zwp_relative_pointer_manager_v1, zwp_relative_pointer_manager_v1_interface)
+GLOBAL_BIND_CB(zwp_pointer_constraints_v1, zwp_pointer_constraints_v1_interface)
 
 
 #define GLOBAL_CREATE_OR_RETURN(NAME, IFACE, VERSION) \
@@ -557,6 +739,8 @@ e_comp_wl_extensions_init(void)
    e_comp_wl->extensions->zxdg_exporter_v1.surfaces = eina_hash_string_superfast_new(NULL);
    GLOBAL_CREATE_OR_RETURN(zxdg_importer_v1, zxdg_importer_v1_interface, 1);
    GLOBAL_CREATE_OR_RETURN(zwp_relative_pointer_manager_v1, zwp_relative_pointer_manager_v1_interface, 1);
+   GLOBAL_CREATE_OR_RETURN(zwp_pointer_constraints_v1, zwp_pointer_constraints_v1_interface, 1);
+   e_comp_wl->extensions->zwp_pointer_constraints_v1.constraints = eina_hash_pointer_new(NULL);
 
    ecore_event_handler_add(ECORE_WL2_EVENT_SYNC_DONE, _dmabuf_add, NULL);
 
@@ -588,5 +772,206 @@ e_comp_wl_extension_relative_motion_event(uint64_t time_usec, double dx, double 
         if (wl_resource_get_client(res) != wc) continue;
         zwp_relative_pointer_v1_send_relative_motion(res, hi, lo, wl_fixed_from_double(dx),
           wl_fixed_from_double(dy), wl_fixed_from_double(dx_unaccel), wl_fixed_from_double(dy_unaccel));
+     }
+}
+
+E_API void
+e_comp_wl_extension_pointer_constraints_commit(E_Client *ec)
+{
+   Eina_List *l;
+   Constraint *c;
+
+   EINA_LIST_FOREACH(ec->comp_data->constraints, l, c)
+     {
+        if (c->pending)
+          {
+             eina_tiler_free(c->region);
+             c->region = c->pending;
+             c->pending = NULL;
+          }
+        if (c->pending_xy)
+          {
+             if (c->pointer_xy)
+               free(c->pointer_xy);
+             c->pointer_xy = c->pending_xy;
+             c->pending_xy = NULL;
+          }
+     }
+}
+
+static Eina_Bool
+_inside_tiler(Eina_Tiler *r, Eina_Bool active, int x, int y, int px, int py, int *ax, int *ay)
+{
+   Eina_Iterator *it;
+   Eina_Rectangle *rect;
+   Eina_Bool ret = EINA_FALSE;
+   Eina_Rectangle prect, arect;
+   Eina_Bool cur = EINA_FALSE, prev = EINA_FALSE;
+
+   if (!r) return EINA_TRUE;
+   it = eina_tiler_iterator_new(r);
+   if (!it) return EINA_TRUE;
+
+   EINA_ITERATOR_FOREACH(it, rect)
+     {
+        Eina_Bool found = EINA_FALSE;
+        if (active && eina_rectangle_coords_inside(rect, px, py))
+          {
+             found = prev = EINA_TRUE;
+             prect = *rect;
+             if (cur) break;
+          }
+        if (eina_rectangle_coords_inside(rect, x, y))
+          {
+             if (active)
+               {
+                  cur = EINA_TRUE;
+                  arect = *rect;
+                  if (found) ret = EINA_TRUE;
+                  if (prev) break;
+               }
+             else
+               ret = EINA_TRUE;
+             if (!active) break;
+          }
+     }
+   eina_iterator_free(it);
+   if ((!ret) && cur && prev)
+     {
+        int dx, dy;
+
+        dx = abs(x - px);
+        dy = abs(y - py);
+        if ((!dx) || (!dy))
+          {
+             /* line motion along a single axis: check for adjacent confine rects */
+             if (dx)
+               ret = (arect.x + arect.w == prect.x) || (prect.x + prect.w == arect.x);
+             else
+               ret = (arect.y + arect.h == prect.y) || (prect.y + prect.h == arect.y);
+          }
+        else
+          {
+             /* check for completely contiguous regions over entire motion vector
+              * use rect of vector points and check for overlap
+              */
+             Eina_Tiler *a;
+             int w, h;
+             unsigned int size, usize = 0;
+
+             eina_tiler_area_size_get(r, &w, &h);
+             a = eina_tiler_new(w, h);
+             eina_tiler_tile_size_set(a, 1, 1);
+             eina_tiler_rect_add(a, &arect);
+             eina_tiler_rect_add(a, &prect);
+             eina_tiler_rect_del(a, &(Eina_Rectangle){MIN(x, px), MIN(y, py), dx, dy});
+             size = (arect.w * arect.h) + (prect.w * prect.h);
+             it = eina_tiler_iterator_new(a);
+             EINA_ITERATOR_FOREACH(it, rect)
+               usize += rect->w * rect->h;
+             ret = size - dx * dy == usize;
+             eina_iterator_free(it);
+             eina_tiler_free(a);
+          }
+     }
+   if (prev && (!ret))
+     {
+        if (!eina_rectangle_xcoord_inside(&prect, x))
+          {
+             if (x < prect.x)
+               *ax = prect.x;
+             else
+               *ax = prect.x + prect.w - 1;
+             if (*ax == px)
+               {
+                  if (eina_rectangle_ycoord_inside(&prect, y))
+                    *ay = y;
+                  else
+                    {
+                       _inside_tiler(r, active, *ax, y, px, py, ax, ay);
+                    }
+               }
+             else
+               *ay = lround(((y - py) / (double)(x - px)) * (*ax - x)) + y;
+          }
+        else
+          {
+             if (y < prect.y)
+               *ay = prect.y;
+             else
+               *ay = prect.y + prect.h - 1;
+             if (*ay == py)
+               *ax = x;
+             else
+               *ax = lround(((double)(x - px) / (y - py)) * (*ay - y)) + x;
+          }
+     }
+
+   return ret;
+}
+
+E_API Eina_Bool
+e_comp_wl_extension_pointer_constraints_update(E_Client *ec, int x, int y)
+{
+   Eina_List *l, *ll;
+   Constraint *c;
+   Eina_Bool inside;
+   int px, py;
+
+   inside = e_comp_object_coords_inside_input_area(ec->frame, x, y);
+   evas_pointer_canvas_xy_get(e_comp->evas, &px, &py);
+
+   /* if constraint is active, check prev canvas coords and lock if */
+
+   EINA_LIST_FOREACH_SAFE(ec->comp_data->constraints, l, ll, c)
+     {
+        int ax = px - ec->client.x, ay = py - ec->client.y;
+        Eina_Bool inside_region = _inside_tiler(c->region, c->active, x - ec->client.x, y - ec->client.y,
+          px - ec->client.x, py - ec->client.y, &ax, &ay);
+        if ((!c->active) && inside && inside_region)
+          {
+             c->active = 1;
+             active_constraints = eina_list_append(active_constraints, c);
+             if (c->lock)
+               zwp_locked_pointer_v1_send_locked(c->res);
+             else
+               zwp_confined_pointer_v1_send_confined(c->res);
+          }
+        if (!c->active) continue;
+        if (c->lock || ((!inside) || (!inside_region)))
+          {
+             ecore_evas_pointer_warp(e_comp->ee, ax + ec->client.x, ay + ec->client.y);
+             return EINA_TRUE;
+          }
+     }
+   return EINA_FALSE;
+}
+
+E_API void
+e_comp_wl_extension_pointer_unconstrain(E_Client *ec)
+{
+   Constraint *c;
+
+   if (ec)
+     {
+        /* deleting client */
+        EINA_LIST_FREE(ec->comp_data->constraints, c)
+          {
+             c->active = EINA_FALSE;
+             if (c->lock)
+               zwp_locked_pointer_v1_send_unlocked(c->res);
+             else
+               zwp_confined_pointer_v1_send_unconfined(c->res);
+             active_constraints = eina_list_remove(active_constraints, c);
+             c->ec = NULL;
+          }
+     }
+   EINA_LIST_FREE(active_constraints, c)
+     {
+        c->active = EINA_FALSE;
+        if (c->lock)
+          zwp_locked_pointer_v1_send_unlocked(c->res);
+        else
+          zwp_confined_pointer_v1_send_unconfined(c->res);
      }
 }

@@ -126,6 +126,11 @@ typedef struct E_Comp_Wl_Extension_Data
       struct wl_global *global;
       Eina_List *resources;
    } zwp_relative_pointer_manager_v1;
+   struct
+   {
+      struct wl_global *global;
+      Eina_Hash *constraints;
+   } zwp_pointer_constraints_v1;
 } E_Comp_Wl_Extension_Data;
 
 struct _E_Comp_Wl_Data
@@ -323,6 +328,7 @@ struct _E_Comp_Wl_Client_Data
    E_Comp_Wl_Surface_State pending;
 
    Eina_List *frames;
+   Eina_List *constraints;
 
    struct
      {
@@ -397,6 +403,9 @@ E_API Eina_Bool e_comp_wl_grab_client_mouse_move(const Ecore_Event_Mouse_Move *e
 E_API Eina_Bool e_comp_wl_grab_client_mouse_button(const Ecore_Event_Mouse_Button *ev);
 
 E_API void e_comp_wl_extension_relative_motion_event(uint64_t time_usec, double dx, double dy, double dx_unaccel, double dy_unaccel);
+E_API void e_comp_wl_extension_pointer_constraints_commit(E_Client *ec);
+E_API Eina_Bool e_comp_wl_extension_pointer_constraints_update(E_Client *ec, int x, int y);
+E_API void e_comp_wl_extension_pointer_unconstrain(E_Client *ec);
 
 # ifndef HAVE_WAYLAND_ONLY
 EINTERN void e_comp_wl_xwayland_client_queue(E_Client *ec);

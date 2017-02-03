@@ -219,6 +219,9 @@ _e_comp_cb_mouse_move(void *d EINA_UNUSED, int t EINA_UNUSED, Ecore_Event_Mouse_
              e_comp_wl_extension_relative_motion_event(ecore_time_unix_get() * 1000ULL,
                ev->x - x, ev->y - y, 0, 0);
           }
+        x = ev->x, y = ev->y;
+        if (e_comp_wl_extension_pointer_constraints_update(e_client_focused_get(), ev->x, ev->y))
+          return ECORE_CALLBACK_CANCEL;
      }
    x = ev->x, y = ev->y;
    return e_comp_wl_grab_client_mouse_move(ev);
