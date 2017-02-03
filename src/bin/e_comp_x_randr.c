@@ -21,7 +21,8 @@ E_Comp_Screen_Iface xiface =
    .init = e_comp_x_randr_init,
    .shutdown = e_comp_x_randr_shutdown,
    .create = e_comp_x_randr_create,
-   .apply = e_comp_x_randr_config_apply
+   .apply = e_comp_x_randr_config_apply,
+   .relative_motion = EINA_FALSE,
 };
 
 static void

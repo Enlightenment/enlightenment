@@ -74,6 +74,7 @@ typedef struct E_Comp_Screen_Iface
    Eina_Bool (*key_down)(Ecore_Event_Key *ev);
    /* is key event eaten */
    Eina_Bool (*key_up)(Ecore_Event_Key *ev);
+   Eina_Bool relative_motion : 1;
 } E_Comp_Screen_Iface;
 
 /* struct to hold canvas objects so that abi doesn't break

@@ -820,6 +820,7 @@ static E_Comp_Screen_Iface drmiface =
    .dpms = _drm2_dpms,
    .key_down = _drm2_key_down,
    .key_up = _drm2_key_up,
+   .relative_motion = EINA_TRUE,
 };
 
 static Eina_Bool
