@@ -206,6 +206,20 @@ _e_comp_cb_mouse_wheel(void *d EINA_UNUSED, int t EINA_UNUSED, Ecore_Event_Mouse
 static Eina_Bool
 _e_comp_cb_mouse_move(void *d EINA_UNUSED, int t EINA_UNUSED, Ecore_Event_Mouse_Move *ev)
 {
+   static int x = -9999, y = -9999;
+
+   if (x == -9999)
+     x = ev->x, y = ev->y;
+   if ((x == ev->x) && (y == ev->y)) return ECORE_CALLBACK_RENEW;
+   if (e_client_focused_get() && (!e_comp_util_mouse_grabbed()))
+     {
+        if ((!e_comp->screen) || (!e_comp->screen->relative_motion))
+          {
+             e_comp_wl_extension_relative_motion_event(ecore_time_unix_get() * 1000ULL,
+               ev->x - x, ev->y - y, 0, 0);
+          }
+     }
+   x = ev->x, y = ev->y;
    return e_comp_wl_grab_client_mouse_move(ev);
 }
 #endif
