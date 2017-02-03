@@ -798,12 +798,27 @@ _drm2_read_pixels(E_Comp_Wl_Output *output, void *pixels)
    out = ecore_drm2_output_find(dev, output->x, output->y);
    if (!out) return;
 
-   fb = ecore_drm2_output_next_fb_get(out);
-   if (!fb)
+#ifdef EFL_VERSION_1_19
+   fb = ecore_drm2_output_latest_fb_get(out);
+   if (!fb) return;
+#else
+   if (E_EFL_VERSION_MINIMUM(1, 18, 99))
      {
-        fb = ecore_drm2_output_current_fb_get(out);
+        void *(*fn)(void*) = dlsym(NULL, "ecore_drm2_output_latest_fb_get");
+        if (!fn) return;
+        fb = fn(out);
         if (!fb) return;
      }
+   else
+     {
+        fb = ecore_drm2_output_next_fb_get(out);
+        if (!fb)
+          {
+             fb = ecore_drm2_output_current_fb_get(out);
+             if (!fb) return;
+          }
+     }
+#endif
 
    data = ecore_drm2_fb_data_get(fb);
    fstride = ecore_drm2_fb_stride_get(fb);

@@ -488,7 +488,17 @@ _e_alert_drm_display(void)
    updates = evas_render_updates(canvas);
    evas_render_updates_free(updates);
 
-   ecore_drm2_fb_flip(buffer, output, NULL);
+#ifdef EFL_VERSION_1_19
+   ecore_drm2_fb_flip(buffer, output);
+#else
+   if (E_EFL_VERSION_MINIMUM(1, 18, 99))
+     {
+        void (*fn)(void*, void*) = dlsym(NULL, "ecore_drm2_fb_flip");
+        if (fn) fn(buffer, output);
+     }
+   else
+     ecore_drm2_fb_flip(buffer, output, NULL);
+#endif
 }
 
 static void
