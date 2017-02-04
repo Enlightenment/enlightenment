@@ -304,15 +304,28 @@ _alsa_cards_refresh(void)
         elem = snd_mixer_first_elem(mixer);
         for (; elem; elem = snd_mixer_elem_next(elem))
           {
+             long min = 0, max = 0;
              if (strncmp(snd_mixer_selem_get_name(elem),
                          "Master", sizeof("Master") - 1))
                 continue;
 
              //check if its a source or a sink
-             if (snd_mixer_selem_has_capture_volume(elem))
-               tmp_source = eina_list_append(tmp_source, elem);
-             else if (snd_mixer_selem_has_playback_volume(elem))
-               tmp_sink = eina_list_append(tmp_sink, elem);
+             snd_mixer_selem_get_capture_volume_range(elem, &min, &max);
+             DBG("Mixer element %p of dev %d has range %ld %ld", elem, card_num, min, max);
+             if (min < max)
+               {
+                  tmp_source = eina_list_append(tmp_source, elem);
+                  continue;
+               }
+
+             min = max = 0;
+             snd_mixer_selem_get_playback_volume_range(elem, &min, &max);
+             DBG("Mixer element %p of dev %d has range %ld %ld", elem, card_num, min, max);
+             if (min < max)
+               {
+                  tmp_sink = eina_list_append(tmp_sink, elem);
+                  continue;
+               }
           }
 
         device_name = _alsa_cards_name_get(buf);
