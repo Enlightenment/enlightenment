@@ -1682,6 +1682,8 @@ _bar_del(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *ev
 
    e_object_del(E_OBJECT(inst->order));
    E_FREE_FUNC(inst->drop_handler, evas_object_del);
+   eina_hash_free(inst->icons_desktop_hash);
+   eina_hash_free(inst->icons_clients_hash);
    luncher_instances = eina_list_remove(luncher_instances, inst);
    free(inst);
 }
@@ -1794,8 +1796,6 @@ _bar_removed_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_data)
    luncher_config->items = eina_list_remove(luncher_config->items, inst->cfg);
    eina_stringshare_del(inst->cfg->style);
    eina_stringshare_del(inst->cfg->dir);
-   eina_hash_free(inst->icons_desktop_hash);
-   eina_hash_free(inst->icons_clients_hash);
    E_FREE(inst->cfg);
 }
 
