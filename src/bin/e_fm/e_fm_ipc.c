@@ -1370,7 +1370,7 @@ e_fm_ipc_volume_add(E_Volume *v)
    int msg_size;
 
    if (_init_timer && (!_init_timer_run))
-     ecore_timer_reset(_init_timer);
+     ecore_timer_loop_reset(_init_timer);
    else if ((!_init_timer) && (!_init_timer_run))
      _init_timer = ecore_timer_loop_add(2.0, _e_fm_ipc_timer_cb, NULL);
 

@@ -129,7 +129,7 @@ _e_pointer_active_handle(E_Pointer *ptr)
 {
    _e_pointer_active(ptr);
    if (ptr->idle_tmr)
-     ecore_timer_reset(ptr->idle_tmr);
+     ecore_timer_loop_reset(ptr->idle_tmr);
    else
      {
         E_FREE_FUNC(ptr->idle_poll, ecore_poller_del);

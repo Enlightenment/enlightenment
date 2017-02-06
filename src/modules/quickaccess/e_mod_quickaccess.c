@@ -947,7 +947,7 @@ _e_qa_dia_del(void *data EINA_UNUSED)
 {
    qa_mod->help_dia = NULL;
    if (qa_mod->help_timeout)
-     ecore_timer_reset(qa_mod->help_timeout);
+     ecore_timer_loop_reset(qa_mod->help_timeout);
    else
      qa_mod->help_timeout = ecore_timer_loop_add(20.0, _e_qa_help_timeout, NULL);
 }
@@ -1247,7 +1247,7 @@ _e_qa_help3(void *data EINA_UNUSED)
    e_dialog_show(dia);
 
    qa_mod->help_timer = ecore_timer_loop_add(1, _e_qa_help_timer_cb, NULL);
-   ecore_timer_reset(qa_mod->help_timeout);
+   ecore_timer_loop_reset(qa_mod->help_timeout);
    ecore_timer_freeze(qa_mod->help_timeout);
 
    e_object_free_attach_func_set(E_OBJECT(qa_mod->demo_dia), _e_qa_demo_dia_del);

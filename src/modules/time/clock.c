@@ -382,7 +382,7 @@ _clock_gadget_created_cb(void *data, Evas_Object *obj, void *event_info EINA_UNU
    if (inst->cfg->advanced)
      {
         _clock_timer(NULL);
-        ecore_timer_reset(clock_timer);
+        ecore_timer_loop_reset(clock_timer);
      }
    _eval_instance_size(inst);
 }
@@ -512,7 +512,7 @@ time_config_update(Config_Item *ci)
               advanced |= inst->cfg->advanced;
               if (!inst->cfg->advanced) continue;
               _clock_timer(NULL);
-              ecore_timer_reset(clock_timer);
+              ecore_timer_loop_reset(clock_timer);
            }
         _eval_instance_size(inst);
      }

@@ -911,7 +911,7 @@ _e_int_menus_apps_thread_new(E_Menu *m, const char *dir)
    e_object_del_attach_func_set(E_OBJECT(mn), NULL);
 
    if (_e_int_menus_app_cleaner)
-     ecore_timer_reset(_e_int_menus_app_cleaner);
+     ecore_timer_loop_reset(_e_int_menus_app_cleaner);
    else
      _e_int_menus_app_cleaner = ecore_timer_loop_add(300, _e_int_menus_app_cleaner_cb, NULL);
    eina_stringshare_del(dir);
@@ -955,7 +955,7 @@ _e_int_menus_apps_start(void *data, E_Menu *m)
      }
    if (!menu) return;
    if (_e_int_menus_app_cleaner)
-     ecore_timer_reset(_e_int_menus_app_cleaner);
+     ecore_timer_loop_reset(_e_int_menus_app_cleaner);
    eina_stringshare_del(dir);
    _e_int_menus_apps_scan(m, menu);
    if (m->pre_activate_cb.func == _e_int_menus_apps_start)

@@ -361,7 +361,7 @@ _e_fwin_dnd_change_cb(E_Fwin *fwin, Evas_Object *obj EINA_UNUSED, void *event_in
 {
    drag_fwin = fwin;
    if (fwin->spring_timer)
-     ecore_timer_reset(fwin->spring_timer);
+     ecore_timer_loop_reset(fwin->spring_timer);
    else
      fwin->spring_timer = ecore_timer_loop_add(fileman_config->view.spring_delay, (Ecore_Task_Cb)_e_fwin_spring_cb, fwin);
 }

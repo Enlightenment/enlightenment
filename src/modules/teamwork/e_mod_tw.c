@@ -504,7 +504,7 @@ tw_link_hide(E_Client *ec, const char *uri)
      {
         if (EINA_DBL_NONZERO(tw_config->mouse_out_delay))
           {
-             if (tw_hide_timer) ecore_timer_reset(tw_hide_timer);
+             if (tw_hide_timer) ecore_timer_loop_reset(tw_hide_timer);
              else tw_hide_timer = ecore_timer_loop_add(tw_config->mouse_out_delay, tw_hide, NULL);
           }
         else
@@ -1124,7 +1124,7 @@ tw_handler_hide(void)
    if (tw_mod->force || tw_mod->sticky) return;
    if (EINA_DBL_NONZERO(tw_config->mouse_out_delay))
      {
-        if (tw_hide_timer) ecore_timer_reset(tw_hide_timer);
+        if (tw_hide_timer) ecore_timer_loop_reset(tw_hide_timer);
         else tw_hide_timer = ecore_timer_loop_add(tw_config->mouse_out_delay, tw_hide, NULL);
      }
    else

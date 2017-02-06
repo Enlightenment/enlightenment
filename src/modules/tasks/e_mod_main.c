@@ -474,7 +474,7 @@ _tasks_refill_all(void)
    if (e_drag_current_get())
      {
         if (task_refill_timer)
-          ecore_timer_reset(task_refill_timer);
+          ecore_timer_loop_reset(task_refill_timer);
         else
           task_refill_timer = ecore_timer_loop_add(0.5, _refill_timer, NULL);
         return;

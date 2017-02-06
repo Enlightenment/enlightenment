@@ -194,7 +194,7 @@ _ecore_pa_time_restart(pa_time_event *event, const struct timeval *tv)
    else
      {
         ecore_timer_interval_set(event->timer, interval);
-        ecore_timer_reset(event->timer);
+        ecore_timer_loop_reset(event->timer);
      }
 }
 

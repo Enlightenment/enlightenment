@@ -2883,7 +2883,7 @@ e_fm2_client_data(Ecore_Ipc_Event_Client_Data *e)
                                    * dramatically improve load times
                                    */
                                   ecore_timer_interval_set(sd->scan_timer, 1.5);
-                                  ecore_timer_reset(sd->scan_timer);
+                                  ecore_timer_loop_reset(sd->scan_timer);
                                }
                           }
                         if (path[0] != 0)
@@ -2919,7 +2919,7 @@ e_fm2_client_data(Ecore_Ipc_Event_Client_Data *e)
                              if (sd->scan_timer)
                                {
                                   ecore_timer_interval_set(sd->scan_timer, 0.0001);
-                                  ecore_timer_reset(sd->scan_timer);
+                                  ecore_timer_loop_reset(sd->scan_timer);
                                }
                              else
                                {
@@ -5960,7 +5960,7 @@ _e_fm2_typebuf_match(Evas_Object *obj, int next)
      } while (0)
      ;
 
-   if (sd->typebuf.timer) ecore_timer_reset(sd->typebuf.timer);
+   if (sd->typebuf.timer) ecore_timer_loop_reset(sd->typebuf.timer);
    else sd->typebuf.timer = ecore_timer_loop_add(3.5, _e_fm_typebuf_timer_cb, sd);
    return ic_match;
 }
@@ -7023,7 +7023,7 @@ _e_fm2_cb_dnd_selection_notify(void *data, const char *type, void *event)
                                                                    (Ecore_Cb)_e_fm2_cb_dnd_selection_notify_post_mount_fail, (Ecore_Cb)_e_fm2_cb_dnd_selection_notify_post_umount,
                                                                    NULL, vol);
 
-                       if (sd->drop_icon->mount_timer) ecore_timer_reset(sd->drop_icon->mount_timer);
+                       if (sd->drop_icon->mount_timer) ecore_timer_loop_reset(sd->drop_icon->mount_timer);
                        else sd->drop_icon->mount_timer = ecore_timer_loop_add(15., (Ecore_Task_Cb)_e_fm2_cb_dnd_selection_notify_post_mount_timer, sd->drop_icon);
 #ifndef HAVE_WAYLAND_ONLY
                        if ((e_drop_handler_action_get() == ECORE_X_ATOM_XDND_ACTION_ASK) ||
@@ -7481,7 +7481,7 @@ _e_fm2_cb_drag_finished(E_Drag *drag, int dropped EINA_UNUSED)
                                  ic->drag.dnd = EINA_FALSE;
                                  if (ic->sd->dnd_scroller) ecore_animator_del(ic->sd->dnd_scroller);
                                  ic->sd->dnd_scroller = NULL;
-                                 if (ic->drag.dnd_end_timer) ecore_timer_reset(ic->drag.dnd_end_timer);
+                                 if (ic->drag.dnd_end_timer) ecore_timer_loop_reset(ic->drag.dnd_end_timer);
                                  else ic->drag.dnd_end_timer = ecore_timer_loop_add(0.2, (Ecore_Task_Cb)_e_fm2_cb_drag_finished_show, ic);
                                  /* NOTE:
                                   * do not touch ic after this callback; it's possible that it may have been deleted

@@ -1691,7 +1691,7 @@ _pager_cb_event_desk_show(void *data EINA_UNUSED, int type EINA_UNUSED, void *ev
         else
           pp = _pager_popup_new(ev->desk->zone, 0);
         if (pp->timer)
-          ecore_timer_reset(pp->timer);
+          ecore_timer_loop_reset(pp->timer);
         else
           pp->timer = ecore_timer_loop_add(pager_config->popup_speed,
                                       _pager_popup_cb_timeout, pp);

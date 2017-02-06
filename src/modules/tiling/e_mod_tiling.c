@@ -894,7 +894,7 @@ _tiling_split_type_changed_popup(void)
      {
         if (desk != _G.split_popup.desk)
           e_comp_object_util_center_on_zone(comp_obj, e_zone_current_get());
-        ecore_timer_reset(_G.split_popup.timer);
+        ecore_timer_loop_reset(_G.split_popup.timer);
      }
 
 

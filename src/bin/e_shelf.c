@@ -1924,7 +1924,7 @@ _e_shelf_cb_mouse_in(void *data, int type, void *event)
         if (inside)
           {
              if (es->autohide_timer)
-               ecore_timer_reset(es->autohide_timer);
+               ecore_timer_loop_reset(es->autohide_timer);
              else
                es->autohide_timer = ecore_timer_loop_add(0.5, (Ecore_Task_Cb)_e_shelf_cb_mouse_move_autohide_fuck_systray, es);
           }

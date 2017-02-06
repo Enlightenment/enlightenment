@@ -217,7 +217,7 @@ static Eina_Bool
 _cache_update()
 {
    if (cache_timer)
-     ecore_timer_reset(cache_timer);
+     ecore_timer_loop_reset(cache_timer);
    else
      cache_timer = ecore_timer_loop_add(1.0, _cache_update_timer, NULL);
    return ECORE_CALLBACK_RENEW;

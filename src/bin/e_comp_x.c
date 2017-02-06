@@ -1482,7 +1482,7 @@ _e_comp_x_show(void *data EINA_UNUSED, int type EINA_UNUSED, Ecore_X_Event_Windo
         if (!ec)
           {
              if (c->x_comp_data->retry_timer)
-               ecore_timer_reset(c->x_comp_data->retry_timer);
+               ecore_timer_loop_reset(c->x_comp_data->retry_timer);
              else
                c->x_comp_data->retry_timer = ecore_timer_loop_add(0.02, _e_comp_x_show_retry, c);
              c->x_comp_data->retry_clients = eina_list_append(c->x_comp_data->retry_clients, (uintptr_t*)(unsigned long)ev->win);
@@ -2877,7 +2877,7 @@ static void
 _e_comp_x_focus_timer(void)
 {
    if (focus_timer)
-     ecore_timer_reset(focus_timer);
+     ecore_timer_loop_reset(focus_timer);
    else /* focus has changed twice in .002 seconds; .01 seconds should be more than enough delay */
      focus_timer = ecore_timer_loop_add(0.01, _e_comp_x_focus_timer_cb, NULL);
 }

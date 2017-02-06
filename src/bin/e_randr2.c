@@ -1105,7 +1105,7 @@ e_randr2_screen_refresh_queue(Eina_Bool lid_event)
    // delay handling of screen shances as they can come in in a series over
    // time and thus we can batch up responding to them by waiting 1.0 sec
    if (_screen_delay_timer)
-     ecore_timer_reset(_screen_delay_timer);
+     ecore_timer_loop_reset(_screen_delay_timer);
    else
      _screen_delay_timer = ecore_timer_loop_add(1.0, _cb_screen_change_delay, NULL);
    event_screen |= !!lid_event;
