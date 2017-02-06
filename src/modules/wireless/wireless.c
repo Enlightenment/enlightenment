@@ -941,7 +941,6 @@ _wireless_gadget_mouse_down(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, v
    elm_object_content_set(ctx, box);
    wireless_popup.popup = e_comp_object_util_add(ctx, E_COMP_OBJECT_TYPE_NONE);
    evas_object_layer_set(wireless_popup.popup, E_LAYER_POPUP);
-   e_comp_object_util_autoclose(wireless_popup.popup, NULL, e_comp_object_util_autoclose_on_escape, NULL);
 
    zone = e_zone_current_get();
    evas_object_resize(wireless_popup.popup, zone->w / 5, zone->h / 3);
