@@ -1159,8 +1159,14 @@ _bar_cb_client_remove(void *data EINA_UNUSED, int type EINA_UNUSED, E_Event_Clie
                {
                   snprintf(ori, sizeof(ori), "e,state,off,%s", _bar_location_get(inst));
                   elm_layout_signal_emit(ic->o_layout, ori, "e");
+                  if (ic->preview)
+                    _bar_icon_preview_hide(ic);
                   if (!ic->in_order)
                     _bar_icon_del(inst, ic);
+               }
+             else if (ic->preview)
+               {
+                  _bar_icon_preview_show(ic);
                }
           }
      }
@@ -1202,8 +1208,14 @@ _bar_cb_exec_del(void *data EINA_UNUSED, int type EINA_UNUSED, E_Exec_Instance *
                {
                   snprintf(ori, sizeof(ori), "e,state,off,%s", _bar_location_get(inst));
                   elm_layout_signal_emit(ic->o_layout, ori, "e");
+                  if (ic->preview)
+                    _bar_icon_preview_hide(ic);
                   if (!ic->in_order)
                     _bar_icon_del(inst, ic);
+               }
+             else if (ic->preview)
+               {
+                  _bar_icon_preview_show(ic);
                }
           }
      }
@@ -1303,6 +1315,8 @@ _bar_cb_exec_client_prop(void *data EINA_UNUSED, int type EINA_UNUSED, E_Event_C
                ic->clients = eina_list_remove(ic->clients, ev->ec);
              if (!eina_list_count(ic->execs) && !eina_list_count(ic->clients))
                {
+                  if (ic->preview)
+                    _bar_icon_preview_hide(ic);
                   if (!ic->in_order)
                     _bar_icon_del(inst, ic);
                   else
@@ -1310,6 +1324,10 @@ _bar_cb_exec_client_prop(void *data EINA_UNUSED, int type EINA_UNUSED, E_Event_C
                        snprintf(ori, sizeof(ori), "e,state,off,%s", _bar_location_get(inst));
                        elm_layout_signal_emit(ic->o_layout, ori, "e");
                     }
+               }
+             else if (ic->preview)
+               {
+                  _bar_icon_preview_show(ic);
                }
           }
      }
