@@ -340,7 +340,7 @@ netstatus_configure(Instance *inst)
    evas_object_show(hover);
    nc->receive_units = hover;
 
-   elm_slider_value_set(nc->receive_max, ceil(inst->cfg->netstatus.inmax / nc->receive_unit_adjust));
+   elm_slider_value_set(nc->receive_max, ceil((double)inst->cfg->netstatus.inmax / (double)nc->receive_unit_adjust));
 
    slider = elm_slider_add(box);
    elm_object_text_set(slider, _("Send:"));
@@ -393,7 +393,7 @@ netstatus_configure(Instance *inst)
    evas_object_show(hover);
    nc->send_units = hover;
 
-   elm_slider_value_set(nc->send_max, ceil(inst->cfg->netstatus.outmax / nc->send_unit_adjust));
+   elm_slider_value_set(nc->send_max, ceil((double)inst->cfg->netstatus.outmax / (double)nc->send_unit_adjust));
 
    elm_object_content_set(frame, box);
    popup = e_comp_object_util_add(popup, E_COMP_OBJECT_TYPE_NONE);
