@@ -624,7 +624,7 @@ _drm2_randr_apply(void)
         /* TODO: cannot support rotations until we support planes
          * and we cannot support planes until Atomic support is in */
 # if (EFL_VERSION_MAJOR > 1) || (EFL_VERSION_MINOR >= 18)
-        int orient;
+        int orient = 0;
 
         if (s->config.rotation == 0)
           orient = ECORE_DRM2_ROTATION_NORMAL;
