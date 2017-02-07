@@ -797,7 +797,7 @@ _e_comp_wl_evas_cb_unmaximize_pre(void *data, Evas_Object *obj EINA_UNUSED, void
      ec->comp_data->maximizing = 1;
    else if (!e_client_has_xwindow(ec))
      {
-        int w, h, ew, eh, *ecw, *ech;
+        int w, h, ew = 0, eh = 0, *ecw, *ech;
         unsigned int pmax = ec->maximized;
         ec->comp_data->unmax = *max;
         if (ec->internal)
@@ -832,7 +832,7 @@ _e_comp_wl_evas_cb_maximize_pre(void *data, Evas_Object *obj EINA_UNUSED, void *
      ec->comp_data->maximizing = 1;
    else if (!e_client_has_xwindow(ec))
      {
-        int w, h, ew, eh, *ecw, *ech;
+        int w, h, ew = 0, eh = 0, *ecw, *ech;
         unsigned int pmax = ec->maximized;
         ec->comp_data->max = *max;
         if (ec->internal)
