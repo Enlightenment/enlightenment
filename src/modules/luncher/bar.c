@@ -1164,8 +1164,8 @@ _bar_cb_client_remove(void *data EINA_UNUSED, int type EINA_UNUSED, E_Event_Clie
                   if (!ic->in_order)
                     _bar_icon_del(inst, ic);
                }
-             else if (ic->preview)
-               {
+             else if (ic->preview && (current_preview == ic->preview))
+               { 
                   _bar_icon_preview_show(ic);
                }
           }
@@ -1213,7 +1213,7 @@ _bar_cb_exec_del(void *data EINA_UNUSED, int type EINA_UNUSED, E_Exec_Instance *
                   if (!ic->in_order)
                     _bar_icon_del(inst, ic);
                }
-             else if (ic->preview)
+             else if (ic->preview && (current_preview == ic->preview))
                {
                   _bar_icon_preview_show(ic);
                }
@@ -1325,7 +1325,7 @@ _bar_cb_exec_client_prop(void *data EINA_UNUSED, int type EINA_UNUSED, E_Event_C
                        elm_layout_signal_emit(ic->o_layout, ori, "e");
                     }
                }
-             else if (ic->preview)
+             else if (ic->preview && (current_preview == ic->preview))
                {
                   _bar_icon_preview_show(ic);
                }
