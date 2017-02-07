@@ -826,7 +826,8 @@ static E_Comp_Screen_Iface drmiface =
 static Eina_Bool
 _pointer_motion(void *d EINA_UNUSED, int t EINA_UNUSED, Elput_Event_Pointer_Motion *ev)
 {
-   e_comp_wl_extension_relative_motion_event(ev->time_usec, ev->dx, ev->dy, ev->dx_unaccel, ev->dy_unaccel);
+   e_comp_wl_extension_relative_motion_event(ev->time_usec, ev->dx, ev->dy,
+                                             ev->dx_unaccel, ev->dy_unaccel);
    return ECORE_CALLBACK_RENEW;
 }
 
@@ -899,7 +900,9 @@ e_modapi_init(E_Module *m)
       ecore_event_handler_add(ECORE_DRM2_EVENT_OUTPUT_CHANGED,
                               _e_mod_drm_cb_output, NULL);
 
-   input_handler = ecore_event_handler_add(ELPUT_EVENT_POINTER_MOTION, (Ecore_Event_Handler_Cb)_pointer_motion, NULL);
+   input_handler =
+     ecore_event_handler_add(ELPUT_EVENT_POINTER_MOTION,
+                             (Ecore_Event_Handler_Cb)_pointer_motion, NULL);
 
    return m;
 }
