@@ -97,40 +97,40 @@ struct _E_Comp_Wl_Subsurf_Data
 typedef struct E_Comp_Wl_Extension_Data
 {
    struct
-   {
-      struct wl_global *global;
-      struct wl_client *client;
-      void (*read_pixels)(E_Comp_Wl_Output *output, void *pixels);
-   } screenshooter;
-    struct
-    {
-       struct wl_global *global;
-    } session_recovery;
+     {
+        struct wl_global *global;
+        struct wl_client *client;
+        void (*read_pixels)(E_Comp_Wl_Output *output, void *pixels);
+     } screenshooter;
    struct
-   {
-       struct wl_global *global;
-   } www;
+     {
+        struct wl_global *global;
+     } session_recovery;
+   struct
+     {
+        struct wl_global *global;
+     } www;
    /* begin xdg-foreign */
    struct
-   {
-      struct wl_global *global;
-      Eina_Hash *surfaces;
-   } zxdg_exporter_v1;
+     {
+        struct wl_global *global;
+        Eina_Hash *surfaces;
+     } zxdg_exporter_v1;
    struct
-   {
-      struct wl_global *global;
-   } zxdg_importer_v1;
+     {
+        struct wl_global *global;
+     } zxdg_importer_v1;
    /* end xdg-foreign */
    struct
-   {
-      struct wl_global *global;
-      Eina_List *resources;
-   } zwp_relative_pointer_manager_v1;
+     {
+        struct wl_global *global;
+        Eina_List *resources;
+     } zwp_relative_pointer_manager_v1;
    struct
-   {
-      struct wl_global *global;
-      Eina_Hash *constraints;
-   } zwp_pointer_constraints_v1;
+     {
+        struct wl_global *global;
+        Eina_Hash *constraints;
+     } zwp_pointer_constraints_v1;
 } E_Comp_Wl_Extension_Data;
 
 struct _E_Comp_Wl_Data
