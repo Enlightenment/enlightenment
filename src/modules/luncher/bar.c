@@ -1065,12 +1065,24 @@ _bar_icon_add(Instance *inst, Efreet_Desktop *desktop, E_Client *non_desktop_cli
      {
         Evas_Object *tmp;
         const char *file, *group;
+        Eina_Bool ret = EINA_FALSE;
+
         tmp = e_client_icon_add(non_desktop_client, evas_object_evas_get(ic->o_layout));
-        e_icon_file_get(tmp, &file, &group);
-        eina_stringshare_replace(&ic->icon, file);
-        eina_stringshare_replace(&ic->key, group);
-        path = ic->icon;
-        k = ic->key;
+        if (isedje(tmp))
+          {
+             edje_object_file_get(tmp, &file, &group);
+             if (file && group)
+               ret = EINA_TRUE;
+          }
+        else
+          ret = e_icon_file_get(tmp, &file, &group);
+        if (ret)
+          {
+             eina_stringshare_replace(&ic->icon, file);
+             eina_stringshare_replace(&ic->key, group);
+             path = ic->icon;
+             k = ic->key;
+          }
         evas_object_del(tmp);
      }
    elm_image_file_set(ic->o_icon, path, k);
