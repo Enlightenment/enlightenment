@@ -1642,7 +1642,7 @@ _e_comp_wl_surface_cb_frame(struct wl_client *client, struct wl_resource *resour
    wl_resource_set_implementation(res, NULL, ec, _e_comp_wl_frame_cb_destroy);
 
    ec->comp_data->pending.frames =
-     eina_list_prepend(ec->comp_data->pending.frames, res);
+     eina_list_append(ec->comp_data->pending.frames, res);
 }
 
 static void
