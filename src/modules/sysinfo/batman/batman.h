@@ -21,7 +21,7 @@
 
 typedef struct _Battery Battery;
 typedef struct _Ac_Adapter Ac_Adapter;
-typedef struct _Battery_Config Battery_Config;
+typedef struct _Batman_Config Batman_Config;
 
 struct _Battery
 {
@@ -77,6 +77,16 @@ struct _Ac_Adapter
    int * mib;
 };
 
+struct _Batman_Config
+{
+   Instance *inst;
+   Evas_Object *alert_check;
+   Evas_Object *alert_desktop;
+   Evas_Object *alert_time;
+   Evas_Object *alert_percent;
+   Evas_Object *alert_timeout;
+};
+
 Eina_List *_batman_battery_find(const char *udi);
 Eina_List *_batman_ac_adapter_find(const char *udi);
 void _batman_update(Instance *inst, int full, int time_left, Eina_Bool have_battery, Eina_Bool have_power);
@@ -102,6 +112,7 @@ void _batman_sysctl_stop(void);
 /* end batman_sysctl.c */
 #endif
 
+Evas_Object *batman_configure(Instance *inst);
 void _batman_config_updated(Instance *inst);
 
 #endif

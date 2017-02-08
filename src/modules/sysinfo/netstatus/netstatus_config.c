@@ -146,7 +146,7 @@ _check_changed(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_U
         elm_object_disabled_set(nc->receive_max, EINA_FALSE);
         elm_object_disabled_set(nc->receive_units, EINA_FALSE);
         elm_object_disabled_set(nc->send_max, EINA_FALSE);
-        elm_object_disabled_set(nc->send_units, EINA_FALSE);\
+        elm_object_disabled_set(nc->send_units, EINA_FALSE);
         inst->cfg->netstatus.automax = EINA_FALSE;
         _update_receive_maximums(nc, NULL, NULL);
         _update_send_maximums(nc, NULL, NULL);

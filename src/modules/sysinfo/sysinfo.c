@@ -96,6 +96,8 @@ _conf_item_get(int *id)
    ci->batman.fuzzy = 0;
 #endif
    ci->batman.desktop_notifications = 0;
+   ci->batman.popup = NULL;
+   ci->batman.configure = NULL;
    ci->thermal.poll_interval = 128;
    ci->thermal.low = 30;
    ci->thermal.high = 80;

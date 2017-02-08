@@ -1,6 +1,6 @@
 #include "sysinfo.h"
 
-#define CONFIG_VERSION 1
+#define CONFIG_VERSION 2
 
 static E_Config_DD *conf_edd = NULL;
 static E_Config_DD *conf_item_edd = NULL;
@@ -27,6 +27,7 @@ sysinfo_init(void)
    E_CONFIG_VAL(D, T, batman.alert_p, INT);
    E_CONFIG_VAL(D, T, batman.alert_timeout, INT);
    E_CONFIG_VAL(D, T, batman.suspend_below, INT);
+   E_CONFIG_VAL(D, T, batman.suspend_method, INT);
    E_CONFIG_VAL(D, T, batman.force_mode, INT);
 #if defined HAVE_EEZE || defined __OpenBSD__ || defined __NetBSD__
    E_CONFIG_VAL(D, T, batman.fuzzy, INT);
@@ -76,6 +77,7 @@ sysinfo_init(void)
         ci->batman.alert_p = 10;
         ci->batman.alert_timeout = 0;
         ci->batman.suspend_below = 0;
+        ci->batman.suspend_method = 0;
         ci->batman.force_mode = 0;
         ci->batman.full = -2;
         ci->batman.time_left = -2;
@@ -85,6 +87,8 @@ sysinfo_init(void)
         ci->batman.fuzzy = 0;
 #endif
         ci->batman.desktop_notifications = 0;
+        ci->batman.popup = NULL;
+        ci->batman.configure = NULL;
         ci->thermal.poll_interval = 128;
         ci->thermal.low = 30;
         ci->thermal.high = 80;

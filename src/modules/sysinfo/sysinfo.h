@@ -127,6 +127,7 @@ struct _Config_Item
    {
       Evas_Object         *o_gadget;
       Evas_Object         *popup;
+      Evas_Object         *configure;
       /* saved * loaded config values */
       int                  poll_interval;
       int                  alert;      /* Alert on minutes remaining */
@@ -136,9 +137,6 @@ struct _Config_Item
       int                  suspend_method; /* Method used to suspend the machine */
       int                  force_mode; /* force use of batget or hal */
       /* just config state */
-      Ecore_Exe           *batget_exe;
-      Ecore_Event_Handler *batget_data_handler;
-      Ecore_Event_Handler *batget_del_handler;
       Ecore_Timer         *alert_timer;
       int                  full;
       int                  time_left;
