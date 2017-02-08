@@ -1235,7 +1235,7 @@ _batman_fallback_poll_cb(void *data)
      }
 #endif
 
-   _batman_update(inst, battery_full, time_left, time_left, have_battery, have_power);
+   _batman_update(inst, battery_full, time_left, have_battery, have_power);
    
    return EINA_TRUE;
 }

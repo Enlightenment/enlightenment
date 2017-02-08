@@ -126,6 +126,7 @@ struct _Config_Item
    struct
    {
       Evas_Object         *o_gadget;
+      Evas_Object         *popup;
       /* saved * loaded config values */
       int                  poll_interval;
       int                  alert;      /* Alert on minutes remaining */
@@ -141,7 +142,6 @@ struct _Config_Item
       Ecore_Timer         *alert_timer;
       int                  full;
       int                  time_left;
-      int                  time_full;
       int                  have_battery;
       int                  have_power;
       int                  desktop_notifications;

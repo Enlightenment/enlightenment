@@ -90,7 +90,6 @@ _conf_item_get(int *id)
    ci->batman.force_mode = 0;
    ci->batman.full = -2;
    ci->batman.time_left = -2;
-   ci->batman.time_full = -2;
    ci->batman.have_battery = -2;
    ci->batman.have_power = -2;
 #if defined HAVE_EEZE || defined __OpenBSD__ || defined __NetBSD__

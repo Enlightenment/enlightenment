@@ -42,10 +42,7 @@ static void
 _batman_face_level_set(Evas_Object *battery, double level)
 {
    Edje_Message_Float msg;
-   char buf[256];
 
-   snprintf(buf, sizeof(buf), "%i", (int)(level * 100.0));
-   elm_layout_text_set(battery, "e.text.reading", buf);
    if (level < 0.0) level = 0.0;
    else if (level > 1.0)
      level = 1.0;
@@ -54,22 +51,92 @@ _batman_face_level_set(Evas_Object *battery, double level)
 }
 
 static void
-_batman_face_time_set(Evas_Object *battery, int t)
+_batman_popup_dismissed(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
-   char buf[256];
-   int hrs, mins;
+   Instance *inst = data;
+   E_FREE_FUNC(obj, evas_object_del);
+   inst->cfg->batman.popup = NULL;
+}
 
-   if (t < 0) return;
+static void
+_batman_popup_deleted(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   Instance *inst = data;
+   inst->cfg->batman.popup = NULL;
+}
 
-   hrs = (t / 3600);
-   mins = ((t) / 60 - (hrs * 60));
+static Evas_Object *
+_batman_popup_create(Instance *inst)
+{
+   Evas_Object *popup, *box, *frame, *pbar;
+   Battery *bat;
+   Eina_List *l;
+   char buf[4096];
+   int hrs = 0, mins = 0;
+
+   hrs = (inst->cfg->batman.time_left / 3600);
+   mins = ((inst->cfg->batman.time_left) / 60 - (hrs * 60));
    if (mins < 0) mins = 0;
-   snprintf(buf, sizeof(buf), "%i:%02i", hrs, mins); 
-   elm_layout_text_set(battery, "e.text.time", buf);
+
+   popup = elm_ctxpopup_add(e_comp->elm);
+   elm_object_style_set(popup, "noblock");
+   evas_object_smart_callback_add(popup, "dismissed",
+                                  _batman_popup_dismissed, inst);
+   evas_object_event_callback_add(popup, EVAS_CALLBACK_DEL,
+                                  _batman_popup_deleted, inst);
+
+   frame = elm_frame_add(popup);
+   E_EXPAND(frame); E_FILL(frame);
+   snprintf(buf, sizeof(buf), _("Time Remaining: %i:%02i"), hrs, mins);
+   elm_object_text_set(frame, buf);
+   elm_object_content_set(popup, frame);
+   evas_object_show(frame);
+
+   box = elm_box_add(frame);
+   elm_box_horizontal_set(box, EINA_FALSE);
+   E_EXPAND(box); E_FILL(box);
+   elm_object_content_set(frame, box);
+   evas_object_show(box);
+
+   EINA_LIST_FOREACH(batman_device_batteries, l, bat)
+     {
+        pbar = elm_progressbar_add(frame);
+        E_EXPAND(pbar); E_FILL(pbar);
+        elm_progressbar_span_size_set(pbar, 200 * e_scale);
+        elm_progressbar_value_set(pbar, bat->percent / 100);
+        elm_object_content_set(frame, pbar);
+        evas_object_show(pbar);
+     }
+   e_gadget_util_ctxpopup_place(inst->o_main, popup,
+                                inst->cfg->batman.o_gadget);
+   evas_object_show(popup);
+
+   return popup;
+}
+
+static void
+_batman_mouse_down_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_data)
+{
+   Evas_Event_Mouse_Down *ev = event_data;
+   Instance *inst = data;
+
+   if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return;
+   if (ev->button != 3)
+     {
+        if (inst->cfg->batman.popup)
+          {
+             elm_ctxpopup_dismiss(inst->cfg->batman.popup);
+             inst->cfg->batman.popup = NULL;
+          }
+        else
+          {
+             inst->cfg->batman.popup = _batman_popup_create(inst);
+          }
+     }
 }
 
 void
-_batman_update(Instance *inst, int full, int time_left, int time_full, Eina_Bool have_battery, Eina_Bool have_power)
+_batman_update(Instance *inst, int full, int time_left, Eina_Bool have_battery, Eina_Bool have_power)
 {
    static double debounce_time = 0.0;
 
@@ -109,24 +176,6 @@ _batman_update(Instance *inst, int full, int time_left, int time_full, Eina_Bool
    else
      {
         _batman_face_level_set(inst->cfg->batman.o_gadget, 0.0);
-        elm_layout_text_set(inst->cfg->batman.o_gadget,
-                                  "e.text.reading",
-                                  _("N/A"));
-     }
-
-   if ((time_full < 0) && (time_left != inst->cfg->batman.time_left))
-     {
-        _batman_face_time_set(inst->cfg->batman.o_gadget, time_left);
-        if (inst->popup_battery)
-          _batman_face_time_set(inst->popup_battery,
-                                 time_left);
-     }
-   else if ((time_left < 0) && (time_full != inst->cfg->batman.time_full))
-     {
-        _batman_face_time_set(inst->cfg->batman.o_gadget, time_full);
-        if (inst->popup_battery)
-          _batman_face_time_set(inst->popup_battery,
-                                  time_full);
      }
    if (have_battery &&
        (!have_power) &&
@@ -203,7 +252,6 @@ _batman_device_update(Instance *inst)
    Ac_Adapter *ac;
    int full = -1;
    int time_left = -1;
-   int time_full = -1;
    int have_battery = 0;
    int have_power = 0;
    int charging = 0;
@@ -233,11 +281,6 @@ _batman_device_update(Instance *inst)
              if (time_left < 0) time_left = bat->time_left;
              else time_left += bat->time_left;
           }
-        if (bat->time_full > 0)
-          {
-             if (time_full < 0) time_full = bat->time_full;
-             else time_full += bat->time_full;
-          }
         charging += bat->charging;
      }
 
@@ -248,12 +291,10 @@ _batman_device_update(Instance *inst)
    if ((full == 100) && have_power)
      {
         time_left = -1;
-        time_full = -1;
      }
    if (time_left < 1) time_left = -1;
-   if (time_full < 1) time_full = -1;
 
-   _batman_update(inst, full, time_left, time_full, have_battery, have_power);
+   _batman_update(inst, full, time_left, have_battery, have_power);
 }
 
 void
@@ -340,6 +381,8 @@ _batman_warning_popup(Instance *inst, int t, double percent)
 {
    Evas_Object *popup_bg = NULL;
    int x, y, w, h;
+   char buf[4096];
+   int hrs = 0, mins = 0;
 
    if ((!inst) || (inst->warning)) return;
 
@@ -351,7 +394,13 @@ _batman_warning_popup(Instance *inst, int t, double percent)
         n.replaces_id = 0;
         n.icon.icon = "battery-low";
         n.summary = _("Your battery is low!");
-        n.body = _("AC power is recommended.");
+
+        hrs = (t / 3600);
+        mins = ((t) / 60 - (hrs * 60));
+        if (mins < 0) mins = 0;
+        snprintf(buf, 4096, _("AC power is recommended. %i:%02i Remaining"), hrs, mins);
+
+        n.body = buf;
         n.timeout = inst->cfg->batman.alert_timeout * 1000;
         e_notification_client_send(&n, _batman_warning_popup_cb, inst);
         return;
@@ -372,12 +421,12 @@ _batman_warning_popup(Instance *inst, int t, double percent)
         return;
      }
 
-   e_theme_edje_object_set(popup_bg, "base/theme/modules/battery/popup",
-                           "e/modules/battery/popup");
-   e_theme_edje_object_set(inst->popup_battery, "base/theme/modules/battery",
-                           "e/modules/battery/main");
-   if (edje_object_part_exists(elm_layout_edje_get(popup_bg), "e.swallow.battery"))
-     elm_layout_content_set(popup_bg, "e.swallow.battery", inst->popup_battery);
+   e_theme_edje_object_set(popup_bg, "base/theme/modules/batman/popup",
+                           "e/modules/batman/popup");
+   e_theme_edje_object_set(inst->popup_battery, "base/theme/modules/batman",
+                           "e/modules/batman/main");
+   if (edje_object_part_exists(elm_layout_edje_get(popup_bg), "e.swallow.batman"))
+     elm_layout_content_set(popup_bg, "e.swallow.batman", inst->popup_battery);
    else
      elm_layout_content_set(popup_bg, "battery", inst->popup_battery);
 
@@ -397,7 +446,6 @@ _batman_warning_popup(Instance *inst, int t, double percent)
    evas_object_event_callback_add(inst->warning, EVAS_CALLBACK_MOUSE_DOWN,
                                _batman_cb_warning_popup_hide, inst);
 
-   _batman_face_time_set(inst->popup_battery, t);
    _batman_face_level_set(inst->popup_battery, percent);
    edje_object_signal_emit(inst->popup_battery, "e,state,discharging", "e");
 
@@ -479,16 +527,18 @@ _batman_created_cb(void *data, Evas_Object *obj, void *event_data EINA_UNUSED)
 
    inst->cfg->batman.full = -2;
    inst->cfg->batman.time_left = -2;
-   inst->cfg->batman.time_full = -2;
    inst->cfg->batman.have_battery = -2;
    inst->cfg->batman.have_power = -2;
 
    inst->cfg->batman.o_gadget = elm_layout_add(inst->o_main);
-   e_theme_edje_object_set(inst->cfg->batman.o_gadget, "base/theme/modules/battery",
-                           "e/modules/battery/main");
+   e_theme_edje_object_set(inst->cfg->batman.o_gadget, "base/theme/modules/batman",
+                           "e/modules/batman/main");
    E_EXPAND(inst->cfg->batman.o_gadget);
    E_FILL(inst->cfg->batman.o_gadget);
    elm_box_pack_end(inst->o_main, inst->cfg->batman.o_gadget);
+   evas_object_event_callback_add(inst->cfg->batman.o_gadget,
+                                  EVAS_CALLBACK_MOUSE_DOWN,
+                                  _batman_mouse_down_cb, inst);
    evas_object_event_callback_add(inst->cfg->batman.o_gadget, EVAS_CALLBACK_RESIZE, _batman_resize_cb, inst);
    evas_object_show(inst->cfg->batman.o_gadget);
    evas_object_smart_callback_del_full(obj, "gadget_created", _batman_created_cb, data);
@@ -500,15 +550,17 @@ sysinfo_batman_create(Evas_Object *parent, Instance *inst)
 {
    inst->cfg->batman.full = -2;
    inst->cfg->batman.time_left = -2;
-   inst->cfg->batman.time_full = -2;
    inst->cfg->batman.have_battery = -2;
    inst->cfg->batman.have_power = -2;
 
    inst->cfg->batman.o_gadget = elm_layout_add(parent);
-   e_theme_edje_object_set(inst->cfg->batman.o_gadget, "base/theme/modules/battery",
-                           "e/modules/battery/main");
+   e_theme_edje_object_set(inst->cfg->batman.o_gadget, "base/theme/modules/batman",
+                           "e/modules/batman/main");
    E_EXPAND(inst->cfg->batman.o_gadget);
    E_FILL(inst->cfg->batman.o_gadget);
+   evas_object_event_callback_add(inst->cfg->batman.o_gadget,
+                                  EVAS_CALLBACK_MOUSE_DOWN,
+                                  _batman_mouse_down_cb, inst);
    evas_object_event_callback_add(inst->cfg->batman.o_gadget, EVAS_CALLBACK_RESIZE, _batman_resize_cb, inst);
    evas_object_show(inst->cfg->batman.o_gadget);
    _batman_config_updated(inst);
@@ -544,7 +596,6 @@ _conf_item_get(int *id)
    ci->batman.force_mode = 0;
    ci->batman.full = -2;
    ci->batman.time_left = -2;
-   ci->batman.time_full = -2;
    ci->batman.have_battery = -2;
    ci->batman.have_power = -2;
 #if defined HAVE_EEZE || defined __OpenBSD__ || defined __NetBSD__
