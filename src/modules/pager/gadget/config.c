@@ -268,7 +268,7 @@ _config_virtual_desks_show(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
 static Evas_Object *
 _config_create_pages(Evas_Object *parent)
 {
-   Evas_Object *m, *tb, *ow;
+   Evas_Object *m, *tb, *ow, *fr;
    int row = 5;
 
    m = elm_table_add(parent);
@@ -276,8 +276,15 @@ _config_create_pages(Evas_Object *parent)
    evas_object_show(m);
 
    /* General Page */
+   fr = elm_frame_add(m);
+   elm_object_text_set(fr, _("General"));
+   E_EXPAND(fr);
+   E_FILL(fr);
+   evas_object_show(fr);
+
    tb = elm_table_add(m);
    E_EXPAND(tb);
+   elm_object_content_set(fr, tb);
    evas_object_show(tb);
 
    ow = elm_button_add(tb);
@@ -318,7 +325,7 @@ _config_create_pages(Evas_Object *parent)
    ow = elm_label_add(tb);
    elm_object_text_set(ow, _("Resistance to dragging"));
    elm_table_pack(tb, ow, 0, 3, 1, 1);
-   E_ALIGN(ow, 0.5, 0.5);
+   E_ALIGN(ow, 0.0, 0.0);
    E_WEIGHT(ow, EVAS_HINT_EXPAND, 0);
    evas_object_show(ow);
 
@@ -339,7 +346,7 @@ _config_create_pages(Evas_Object *parent)
    ow = elm_label_add(tb);
    elm_object_text_set(ow, _("Select and Slide button"));
    elm_table_pack(tb, ow, 0, row, 1, 1);
-   E_ALIGN(ow, 0.5, 0.5);
+   E_ALIGN(ow, 0.0, 0.0);
    E_WEIGHT(ow, EVAS_HINT_EXPAND, 0);
    evas_object_show(ow);
    row++;
@@ -359,7 +366,7 @@ _config_create_pages(Evas_Object *parent)
    ow = elm_label_add(tb);
    elm_object_text_set(ow, _("Drag and Drop button"));
    elm_table_pack(tb, ow, 0, row, 1, 1);
-   E_ALIGN(ow, 0.5, 0.5);
+   E_ALIGN(ow, 0.0, 0.0);
    E_WEIGHT(ow, EVAS_HINT_EXPAND, 0);
    evas_object_show(ow);
    row++;
@@ -378,7 +385,7 @@ _config_create_pages(Evas_Object *parent)
    ow = elm_label_add(tb);
    elm_object_text_set(ow, _("Drag whole desktop"));
    elm_table_pack(tb, ow, 0, row, 1, 1);
-   E_ALIGN(ow, 0.5, 0.5);
+   E_ALIGN(ow, 0.0, 0.0);
    E_WEIGHT(ow, EVAS_HINT_EXPAND, 0);
    evas_object_show(ow);
    row++;
@@ -395,12 +402,19 @@ _config_create_pages(Evas_Object *parent)
 
    _config_update_btns();
 
-   elm_table_pack(m, tb, 0, 0, 1, 1);
-   pager_gadget_config_objects->general_page = tb;
+   elm_table_pack(m, fr, 0, 0, 1, 1);
+   pager_gadget_config_objects->general_page = fr;
 
    /* Popup Page */
-   tb = elm_table_add(m);
+   fr = elm_frame_add(m);
+   elm_object_text_set(fr, _("Popup"));
+   E_EXPAND(fr);
+   E_FILL(fr);
+   evas_object_show(fr);
+
+   tb = elm_table_add(fr);
    E_EXPAND(tb);
+   elm_object_content_set(fr, tb);
    evas_object_show(tb);
 
    ow = elm_check_add(tb);
@@ -419,7 +433,7 @@ _config_create_pages(Evas_Object *parent)
    elm_object_text_set(ow, _("Popup pager height"));
    elm_object_disabled_set(ow, !pager_config->popup);
    elm_table_pack(tb, ow, 0, 1, 1, 1);
-   E_ALIGN(ow, 0.5, 0.5);
+   E_ALIGN(ow, 0.0, 0.0);
    E_WEIGHT(ow, EVAS_HINT_EXPAND, 0);
    evas_object_show(ow);
 
@@ -441,7 +455,7 @@ _config_create_pages(Evas_Object *parent)
    elm_object_text_set(ow, _("Popup duration"));
    elm_object_disabled_set(ow, !pager_config->popup);
    elm_table_pack(tb, ow, 0, 3, 1, 1);
-   E_ALIGN(ow, 0.5, 0.5);
+   E_ALIGN(ow, 0.0, 0.0);
    E_WEIGHT(ow, EVAS_HINT_EXPAND, 0);
    evas_object_show(ow);
 
@@ -463,7 +477,7 @@ _config_create_pages(Evas_Object *parent)
    elm_object_text_set(ow, _("Pager action popup height"));
    elm_object_disabled_set(ow, !pager_config->popup);
    elm_table_pack(tb, ow, 0, 5, 1, 1);
-   E_ALIGN(ow, 0.5, 0.5);
+   E_ALIGN(ow, 0.0, 0.0);
    E_WEIGHT(ow, EVAS_HINT_EXPAND, 0);
    evas_object_show(ow);
 
@@ -481,12 +495,19 @@ _config_create_pages(Evas_Object *parent)
    evas_object_show(ow);
    pager_gadget_config_objects->o_popup_act_height = ow;
 
-   elm_table_pack(m, tb, 0, 0, 1, 1);
-   pager_gadget_config_objects->popup_page = tb;
+   elm_table_pack(m, fr, 0, 0, 1, 1);
+   pager_gadget_config_objects->popup_page = fr;
 
    /* Urgent Page */
-   tb = elm_table_add(m);
+   fr = elm_frame_add(m);
+   elm_object_text_set(fr, _("Urgent"));
+   E_EXPAND(fr);
+   E_FILL(fr);
+   evas_object_show(fr);
+
+   tb = elm_table_add(fr);
    E_EXPAND(tb);
+   elm_object_content_set(fr, tb);
    evas_object_show(tb);
 
    ow = elm_check_add(tb);
@@ -531,7 +552,7 @@ _config_create_pages(Evas_Object *parent)
    elm_object_text_set(ow, _("Urgent Popup Duration"));
    elm_object_disabled_set(ow, !pager_config->popup_urgent);
    elm_table_pack(tb, ow, 0, 3, 1, 1);
-   E_ALIGN(ow, 0.5, 0.5);
+   E_ALIGN(ow, 0.0, 0.0);
    E_WEIGHT(ow, EVAS_HINT_EXPAND, 0);
    evas_object_show(ow);
 
@@ -549,8 +570,8 @@ _config_create_pages(Evas_Object *parent)
    evas_object_show(ow);
    pager_gadget_config_objects->o_popup_urgent_speed = ow;
 
-   elm_table_pack(m, tb, 0, 0, 1, 1);
-   pager_gadget_config_objects->urgent_page = tb;
+   elm_table_pack(m, fr, 0, 0, 1, 1);
+   pager_gadget_config_objects->urgent_page = fr;
 
    return m;
 }
@@ -558,7 +579,7 @@ _config_create_pages(Evas_Object *parent)
 EINTERN Evas_Object *
 config_pager(E_Zone *zone)
 {
-   Evas_Object *popup, *tb, *lbl, *list, *fr;
+   Evas_Object *popup, *tb, *lbl, *list;
    Elm_Object_Item *it;
 
    pager_gadget_config_objects = E_NEW(Config_Objects, 1);
@@ -597,13 +618,8 @@ config_pager(E_Zone *zone)
    elm_list_go(list);
    evas_object_show(list);
 
-   fr = elm_frame_add(tb);
-   E_EXPAND(fr);
-   elm_table_pack(tb, fr, 1, 1, 1, 1);
-   evas_object_show(fr);
-   
-   elm_object_content_set(fr,
-     _config_create_pages(fr));
+   elm_table_pack(tb,
+     _config_create_pages(tb), 1, 1, 1, 1);
    _config_show_general(NULL, NULL, NULL);
 
    popup = e_comp_object_util_add(popup, E_COMP_OBJECT_TYPE_NONE);

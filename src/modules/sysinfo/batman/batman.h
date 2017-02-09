@@ -85,6 +85,9 @@ struct _Batman_Config
    Evas_Object *alert_time;
    Evas_Object *alert_percent;
    Evas_Object *alert_timeout;
+   Evas_Object *general_page;
+   Evas_Object *alert_page;
+   Evas_Object *power_page;
 };
 
 Eina_List *_batman_battery_find(const char *udi);
