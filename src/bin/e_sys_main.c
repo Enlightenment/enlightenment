@@ -179,6 +179,8 @@ main(int argc,
    if (!action) exit(1);
    fprintf(stderr, "action %s %i\n", action, argc);
 
+   eina_init();
+
    uid = getuid();
    gid = getgid();
    egid = getegid();
@@ -198,8 +200,6 @@ main(int argc,
         printf("ERROR: UNABLE TO ASSUME ROOT GROUP PRIVILEGES\n");
         exit(7);
      }
-
-   eina_init();
 
    if (!auth_action_ok(action, gid, gl, gn, egid))
      {
