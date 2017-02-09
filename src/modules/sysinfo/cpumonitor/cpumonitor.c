@@ -29,8 +29,9 @@ _cpumonitor_face_update(Instance *inst)
    if (inst->cfg->cpumonitor.popup)
      {
         char text[4096];
-        snprintf(text, sizeof(text), "%s: %d%%", _("Total CPU Usage"), inst->cfg->cpumonitor.percent);
-        elm_object_text_set(inst->cfg->cpumonitor.popup_label, text);
+        snprintf(text, sizeof(text), "%s (%d%%)", _("Total CPU Usage"), inst->cfg->cpumonitor.percent);
+        elm_object_text_set(inst->cfg->cpumonitor.popup_frame, text);
+        elm_progressbar_value_set(inst->cfg->cpumonitor.popup_pbar, (float)inst->cfg->cpumonitor.percent / 100);
      }
 }
 
@@ -62,7 +63,7 @@ _cpumonitor_popup_deleted(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA
 static void
 _cpumonitor_mouse_down_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_data)
 {
-   Evas_Object *label, *popup;
+   Evas_Object *popup, *frame, *pbar;
    Evas_Event_Mouse_Down *ev = event_data;
    Instance *inst = data;
    char text[4096];
@@ -81,13 +82,21 @@ _cpumonitor_mouse_down_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA
         evas_object_smart_callback_add(popup, "dismissed", _cpumonitor_popup_dismissed, inst);   
         evas_object_event_callback_add(popup, EVAS_CALLBACK_DEL, _cpumonitor_popup_deleted, inst);
 
-        snprintf(text, sizeof(text), "%s: %d%%", _("Total CPU Usage"), inst->cfg->cpumonitor.percent);
-        label = elm_label_add(popup);
-        elm_object_style_set(label, "marker");
-        elm_object_text_set(label, text);
-        elm_object_content_set(popup, label);
-        evas_object_show(label);
-        inst->cfg->cpumonitor.popup_label = label;  
+        frame = elm_frame_add(popup);
+        E_EXPAND(frame); E_FILL(frame);
+        snprintf(text, sizeof(text), "%s (%d%%)", _("Total CPU Usage"), inst->cfg->cpumonitor.percent);
+        elm_object_text_set(frame, text);
+        elm_object_content_set(popup, frame);
+        evas_object_show(frame);
+        inst->cfg->cpumonitor.popup_frame = frame;  
+
+        pbar = elm_progressbar_add(frame);
+        E_EXPAND(pbar); E_FILL(pbar);
+        elm_progressbar_span_size_set(pbar, 200 * e_scale);
+        elm_progressbar_value_set(pbar, (float)inst->cfg->cpumonitor.percent / 100);
+        elm_object_content_set(frame, pbar);
+        evas_object_show(pbar);
+        inst->cfg->cpumonitor.popup_pbar = pbar;
 
         e_gadget_util_ctxpopup_place(inst->o_main, popup,
                                      inst->cfg->cpumonitor.o_gadget);

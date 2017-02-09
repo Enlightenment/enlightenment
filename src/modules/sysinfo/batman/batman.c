@@ -91,7 +91,7 @@ _batman_popup_create(Instance *inst)
    E_EXPAND(frame); E_FILL(frame);
    if (inst->cfg->batman.have_power && (inst->cfg->batman.full < 100))
      elm_object_text_set(frame, _("Battery Charging"));
-   else if (inst->cfg->batman.have_power && (inst->cfg->batman.full == 100))
+   else if (inst->cfg->batman.full >= 100)
      elm_object_text_set(frame, _("Battery Fully Charged"));
    else
      {
