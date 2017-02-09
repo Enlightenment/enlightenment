@@ -89,8 +89,15 @@ _batman_popup_create(Instance *inst)
 
    frame = elm_frame_add(popup);
    E_EXPAND(frame); E_FILL(frame);
-   snprintf(buf, sizeof(buf), _("Time Remaining: %i:%02i"), hrs, mins);
-   elm_object_text_set(frame, buf);
+   if (inst->cfg->batman.have_power && (inst->cfg->batman.full < 100))
+     elm_object_text_set(frame, _("Battery Charging"));
+   else if (inst->cfg->batman.have_power && (inst->cfg->batman.full == 100))
+     elm_object_text_set(frame, _("Battery Fully Charged"));
+   else
+     {
+        snprintf(buf, sizeof(buf), _("Time Remaining: %i:%02i"), hrs, mins);
+        elm_object_text_set(frame, buf);
+     }
    elm_object_content_set(popup, frame);
    evas_object_show(frame);
 
