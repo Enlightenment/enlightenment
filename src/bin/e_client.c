@@ -618,11 +618,12 @@ _e_client_del(E_Client *ec)
         else
           {
              if (!ec->exe_inst->deleted)
-               ec->exe_inst->clients = eina_list_remove(ec->exe_inst->clients, ec);
+               {
+                  ec->exe_inst->clients = eina_list_remove(ec->exe_inst->clients, ec);
+                  ec->exe_inst = NULL;
+               }
           }
      }
-   if (ec->exe_inst && (!ec->exe_inst->deleted))
-     ec->exe_inst = NULL;
 
    _e_client_mouse_action_end(ec);
    if (action_client == ec) _e_client_action_finish();

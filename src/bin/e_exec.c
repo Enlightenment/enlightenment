@@ -612,6 +612,7 @@ _e_exec_instance_free(E_Exec_Instance *inst)
      {
         inst->deleted = 1;
         inst->ref++;
+        E_LIST_FOREACH(inst->clients, e_object_ref);
         ecore_event_add(E_EVENT_EXEC_DEL, inst, _e_exec_cb_exec_del_free, inst);
         return EINA_FALSE;
      }
@@ -622,6 +623,7 @@ _e_exec_instance_free(E_Exec_Instance *inst)
    EINA_LIST_FREE(inst->clients, ec)
      {
         ec->exe_inst = NULL;
+        e_object_unref(E_OBJECT(ec));
      }
    if (inst->desktop) efreet_desktop_free(inst->desktop);
    if (!inst->phony)
