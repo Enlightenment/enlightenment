@@ -1419,8 +1419,12 @@ e_modapi_init(E_Module *m)
 
    _G.handler_client_resize_begin =
       e_client_hook_add(E_CLIENT_HOOK_RESIZE_BEGIN, _resize_begin_hook, NULL);
-   _G.handler_client_add =
-      e_client_hook_add(E_CLIENT_HOOK_EVAL_PRE_FRAME_ASSIGN, _add_hook, NULL);
+   if (e_comp->comp_type == E_PIXMAP_TYPE_X)
+     _G.handler_client_add =
+        e_client_hook_add(E_CLIENT_HOOK_EVAL_PRE_FRAME_ASSIGN, _add_hook, NULL);
+   else
+     _G.handler_client_add =
+        e_client_hook_add(E_CLIENT_HOOK_UNIGNORE, _add_hook, NULL);
    HANDLER(_G.handler_client_resize, CLIENT_RESIZE, _resize_hook);
    HANDLER(_G.handler_client_move, CLIENT_MOVE, _move_hook);
 
