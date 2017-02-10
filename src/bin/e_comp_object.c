@@ -1118,6 +1118,7 @@ _e_comp_intercept_move(void *data, Evas_Object *obj, int x, int y)
      {
         /* only update xy position of client to avoid invalid
          * first damage region if it is not a new_client. */
+        cw->ec->placed = 1;
         if (!cw->ec->shading)
           {
              cw->ec->client.x = ix;
