@@ -2510,6 +2510,8 @@ _e_comp_wl_client_cb_del(void *data EINA_UNUSED, E_Client *ec)
 
    _e_comp_wl_surface_state_finish(&ec->comp_data->pending);
    E_FREE_FUNC(ec->comp_data->on_focus_timer, ecore_timer_del);
+   if (ec->mouse.in)
+     _e_comp_wl_mouse_out(ec);
 
    /* The resource destroy callback will walk the state->frames list,
     * so move the list to a temporary first.
