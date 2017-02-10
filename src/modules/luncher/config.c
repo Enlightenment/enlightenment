@@ -238,7 +238,7 @@ _icon_theme_file_set(Evas_Object *img, const char *icon)
      {
         path = icon;
      }
-   if (!path)
+   if (!path && icon)
      {
         snprintf(buf, sizeof(buf), "e/icons/%s", icon);
         if (eina_list_count(e_theme_collection_items_find("base/theme/icons", buf)))
@@ -251,6 +251,11 @@ _icon_theme_file_set(Evas_Object *img, const char *icon)
              path = e_theme_edje_file_get("base/theme/icons", "e/icons/unknown");
              k =  "e/icons/unknown";
           }
+     }
+   else if (!path && !icon)
+     {
+        path = e_theme_edje_file_get("base/theme/icons", "e/icons/unknown");
+        k =  "e/icons/unknown";
      }
    if (path && icon)
      {

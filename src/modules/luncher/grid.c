@@ -286,7 +286,7 @@ _grid_icon_add(Instance *inst, Efreet_Desktop *desktop)
      {
         path = desktop->icon;
      }
-   if (!path)
+   if (!path && desktop->icon)
      {
         snprintf(buf, sizeof(buf), "e/icons/%s", desktop->icon);
         if (eina_list_count(e_theme_collection_items_find("base/theme/icons", buf)))
@@ -299,6 +299,11 @@ _grid_icon_add(Instance *inst, Efreet_Desktop *desktop)
              path = e_theme_edje_file_get("base/theme/icons", "e/icons/unknown");
              k =  "e/icons/unknown";
           }
+     }
+   else if (!path && !desktop->icon)
+     {
+        path = e_theme_edje_file_get("base/theme/icons", "e/icons/unknown");
+        k =  "e/icons/unknown";
      }
    elm_image_file_set(ic->o_icon, path, k);
    elm_object_tooltip_text_set(ic->o_icon, desktop->name);

@@ -400,7 +400,7 @@ _bar_icon_menu_item_new(Icon *ic, Evas_Object *popup, Evas_Object *parent, const
      {
         path = icon;
      }
-   if (!path)
+   if (!path && icon)
      {
         snprintf(buf, sizeof(buf), "e/icons/%s", icon);
         if (eina_list_count(e_theme_collection_items_find("base/theme/icons", buf)))
@@ -413,6 +413,11 @@ _bar_icon_menu_item_new(Icon *ic, Evas_Object *popup, Evas_Object *parent, const
              path = e_theme_edje_file_get("base/theme/icons", "e/icons/unknown");
              k =  "e/icons/unknown";
           }
+     }
+   else if (!path && !icon)
+     {
+        path = e_theme_edje_file_get("base/theme/icons", "e/icons/unknown");
+        k =  "e/icons/unknown";
      }
    if (path && icon)
      {
@@ -1040,7 +1045,7 @@ _bar_icon_add(Instance *inst, Efreet_Desktop *desktop, E_Client *non_desktop_cli
           {
              path = desktop->icon;
           }
-        if (!path)
+        if (!path && desktop->icon)
           {
              snprintf(buf, sizeof(buf), "e/icons/%s", desktop->icon);
              if (eina_list_count(e_theme_collection_items_find("base/theme/icons", buf)))
@@ -1053,6 +1058,11 @@ _bar_icon_add(Instance *inst, Efreet_Desktop *desktop, E_Client *non_desktop_cli
                   path = e_theme_edje_file_get("base/theme/icons", "e/icons/unknown");
                   k =  "e/icons/unknown";
                }
+          }
+        else if (!path && !desktop->icon)
+          {
+             path = e_theme_edje_file_get("base/theme/icons", "e/icons/unknown");
+             k = "e/icons/unknown";
           }
         if (path && desktop->icon && !k)
           {
