@@ -89,9 +89,10 @@ _batman_popup_create(Instance *inst)
 
    frame = elm_frame_add(popup);
    E_EXPAND(frame); E_FILL(frame);
-   if (inst->cfg->batman.have_power && (inst->cfg->batman.full < 100))
+   printf("%d\n", inst->cfg->batman.full);
+   if (inst->cfg->batman.have_power && (inst->cfg->batman.full < 99))
      elm_object_text_set(frame, _("Battery Charging"));
-   else if (inst->cfg->batman.full >= 100)
+   else if (inst->cfg->batman.full >= 99)
      elm_object_text_set(frame, _("Battery Fully Charged"));
    else
      {
@@ -407,7 +408,7 @@ _batman_cb_warning_popup_hide(void *data, Evas *e EINA_UNUSED, Evas_Object *obj 
 
    inst = (Instance *)data;
    if ((!inst) || (!inst->warning)) return;
-   elm_ctxpopup_dismiss(inst->warning);
+   evas_object_hide(inst->warning);
 }
 
 static void
@@ -444,7 +445,6 @@ _batman_warning_popup(Instance *inst, int t, double percent)
    mins = ((t) / 60 - (hrs * 60));
    if (mins < 0) mins = 0;
    snprintf(buf, 4096, _("AC power is recommended. %i:%02i Remaining"), hrs, mins);
-
 
    if (inst->cfg->batman.desktop_notifications)
      {
