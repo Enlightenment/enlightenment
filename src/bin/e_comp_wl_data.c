@@ -536,7 +536,9 @@ _e_comp_wl_data_device_selection_set(void *data EINA_UNUSED, E_Comp_Wl_Data_Sour
 static void
 _e_comp_wl_data_device_drag_finished(E_Drag *drag, int dropped)
 {
+   struct wl_resource *res = NULL;
    Evas_Object *o, *z;
+   E_Comp_Wl_Data_Source *data_source = e_comp_wl->drag_source;
 
    o = edje_object_part_swallow_get(drag->comp_object, "e.swallow.content");
    if (eina_streq(evas_object_type_get(o), "e_comp_object"))
@@ -554,7 +556,6 @@ _e_comp_wl_data_device_drag_finished(E_Drag *drag, int dropped)
    e_comp_wl->drag_client = NULL;
    e_screensaver_inhibit_toggle(0);
    if (dropped) return;
-   if (e_comp_wl->selection.target)
 #ifndef HAVE_WAYLAND_ONLY
    if (e_comp_wl->selection.target && e_client_has_xwindow(e_comp_wl->selection.target))
      {
@@ -566,40 +567,33 @@ _e_comp_wl_data_device_drag_finished(E_Drag *drag, int dropped)
         return;
      }
 #endif
+
    if (e_comp_wl->selection.target)
+     res = e_comp_wl_data_find_for_client(wl_resource_get_client(e_comp_wl->selection.target->comp_data->surface));
+   if (res && data_source->accepted && data_source->current_dnd_action)
      {
-        struct wl_resource *res;
-        E_Comp_Wl_Data_Source *data_source = e_comp_wl->drag_source;
+        wl_data_device_send_drop(res);
+        if (wl_resource_get_version(data_source->resource) >=
+            WL_DATA_SOURCE_DND_DROP_PERFORMED_SINCE_VERSION)
+          wl_data_source_send_dnd_drop_performed(data_source->resource);
 
-        res = e_comp_wl_data_find_for_client(wl_resource_get_client(e_comp_wl->selection.target->comp_data->surface));
-        if (res)
-          {
-             if (data_source->accepted && data_source->current_dnd_action)
-               {
-                  wl_data_device_send_drop(res);
-                  if (wl_resource_get_version(data_source->resource) >=
-                      WL_DATA_SOURCE_DND_DROP_PERFORMED_SINCE_VERSION)
-                    wl_data_source_send_dnd_drop_performed(data_source->resource);
-
-                  data_source->offer->in_ask = data_source->current_dnd_action ==
-                    WL_DATA_DEVICE_MANAGER_DND_ACTION_ASK;
-               }
-             else if (wl_resource_get_version(data_source->resource) >=
-                      WL_DATA_SOURCE_DND_FINISHED_SINCE_VERSION)
-               wl_data_source_send_cancelled(data_source->resource);
-             wl_data_device_send_leave(res);
-          }
-#ifndef HAVE_WAYLAND_ONLY
-        if (e_comp_util_has_xwayland())
-          {
-             ecore_x_selection_owner_set(0, ECORE_X_ATOM_SELECTION_XDND,
-                                         ecore_x_current_time_get());
-             ecore_x_window_hide(e_comp->cm_selection);
-          }
-#endif
-        e_comp_wl->selection.target = NULL;
-        e_comp_wl->drag_source = NULL;
+        data_source->offer->in_ask = data_source->current_dnd_action ==
+          WL_DATA_DEVICE_MANAGER_DND_ACTION_ASK;
      }
+   else if (wl_resource_get_version(data_source->resource) >=
+                 WL_DATA_SOURCE_DND_FINISHED_SINCE_VERSION)
+     wl_data_source_send_cancelled(data_source->resource);
+   if (res) wl_data_device_send_leave(res);
+#ifndef HAVE_WAYLAND_ONLY
+   if (e_comp_util_has_xwayland())
+     {
+        ecore_x_selection_owner_set(0, ECORE_X_ATOM_SELECTION_XDND,
+                                    ecore_x_current_time_get());
+        ecore_x_window_hide(e_comp->cm_selection);
+     }
+#endif
+   e_comp_wl->selection.target = NULL;
+   e_comp_wl->drag_source = NULL;
 }
 
 static void
