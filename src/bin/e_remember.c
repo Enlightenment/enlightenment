@@ -70,6 +70,11 @@ e_remember_init(E_Startup_Mode mode)
    h = e_client_hook_add(E_CLIENT_HOOK_EVAL_POST_NEW_CLIENT,
                          _e_remember_cb_hook_eval_post_new_client, NULL);
    if (h) hooks = eina_list_append(hooks, h);
+   h = e_client_hook_add(E_CLIENT_HOOK_UNIGNORE,
+                         _e_remember_cb_hook_pre_post_fetch, NULL);
+   h = e_client_hook_add(E_CLIENT_HOOK_UNIGNORE,
+                         _e_remember_cb_hook_eval_post_new_client, NULL);
+   if (h) hooks = eina_list_append(hooks, h);
 
    _e_remember_init_edd();
    remembers = e_config_domain_load("e_remember_restart", e_remember_list_edd);
