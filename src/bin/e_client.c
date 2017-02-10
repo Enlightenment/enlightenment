@@ -1726,6 +1726,8 @@ _e_client_eval(E_Client *ec)
    int rem_change = 0;
    int send_event = 1;
    unsigned int prop = 0;
+   int zx = 0, zy = 0, zw = 0, zh = 0;
+
 
    if (e_object_is_del(E_OBJECT(ec)))
      {
@@ -1738,8 +1740,6 @@ _e_client_eval(E_Client *ec)
 
    if ((ec->new_client) && (!e_client_util_ignored_get(ec)) && (ec->zone))
      {
-        int zx = 0, zy = 0, zw = 0, zh = 0;
-
         _e_client_event_simple(ec, E_EVENT_CLIENT_ADD);
         e_zone_useful_geometry_get(ec->zone, &zx, &zy, &zw, &zh);
         /* enforce wm size hints for initial sizing */
@@ -1769,95 +1769,95 @@ _e_client_eval(E_Client *ec)
              evas_object_resize(ec->frame, ec2->w, ec2->h);
              ec->stack.ignore--;
           }
-        if (!ec->placed)
+     }
+   if ((!e_client_util_ignored_get(ec)) && ec->zone && (!ec->placed))
+     {
+        if (ec->parent)
           {
-             if (ec->parent)
+             Eina_Bool centered = EINA_FALSE;
+             if (ec->parent->zone != e_zone_current_get())
                {
-                  Eina_Bool centered = EINA_FALSE;
-                  if (ec->parent->zone != e_zone_current_get())
-                    {
-                       e_client_zone_set(ec, ec->parent->zone);
-                       e_zone_useful_geometry_get(ec->zone, &zx, &zy, &zw, &zh);
-                    }
-
-                  if (evas_object_visible_get(ec->parent->frame))
-                    {
-                       if ((!E_CONTAINS(ec->x, ec->y, ec->w, ec->h, zx, zy, zw, zh)) ||
-                          (!E_CONTAINS(ec->x, ec->y, ec->w, ec->h, ec->parent->x, ec->parent->y, ec->parent->w, ec->parent->h)))
-                         {
-                            int x, y;
-
-                            e_comp_object_util_center_pos_get(ec->parent->frame, &x, &y);
-                            if (E_CONTAINS(x, y, ec->w, ec->h, zx, zy, zw, zh))
-                              {
-                                 ec->x = x, ec->y = y;
-                              }
-                            else
-                              {
-                                 x = ec->parent->x;
-                                 y = ec->parent->y;
-                                 if (!E_CONTAINS(x, y, ec->w, ec->h, zx, zy, zw, zh))
-                                   {
-                                      e_comp_object_util_center_on(ec->frame,
-                                                                   ec->parent->frame);
-                                      centered = 1;
-                                   }
-                              }
-                            ec->changes.pos = 1;
-                         }
-                    }
-                  else
-                    {
-                       e_comp_object_util_center_on(ec->frame,
-                                                    ec->parent->frame);
-                       centered = 1;
-                    }
-                  if (centered) //test for offscreen
-                    {
-                       if (!E_CONTAINS(ec->x, ec->y, ec->w, ec->h, zx, zy, zw, zh))
-                         {
-                            if (ec->x < zx)
-                              ec->x = ec->parent->x;
-                            if (ec->y < zy)
-                              ec->y = ec->parent->y;
-                            if (ec->x + ec->w > zx + zw)
-                              ec->x = ec->parent->x + ec->parent->w - ec->w;
-                            if (ec->y + ec->h > zy + zh)
-                              ec->y = ec->parent->y + ec->parent->h - ec->h;
-                            ec->changes.pos = 1;
-                         }
-                    }
-                  ec->placed = 1;
-                  ec->pre_cb.x = ec->x; ec->pre_cb.y = ec->y;
+                  e_client_zone_set(ec, ec->parent->zone);
+                  e_zone_useful_geometry_get(ec->zone, &zx, &zy, &zw, &zh);
                }
+
+             if (evas_object_visible_get(ec->parent->frame))
+               {
+                  if ((!E_CONTAINS(ec->x, ec->y, ec->w, ec->h, zx, zy, zw, zh)) ||
+                     (!E_CONTAINS(ec->x, ec->y, ec->w, ec->h, ec->parent->x, ec->parent->y, ec->parent->w, ec->parent->h)))
+                    {
+                       int x, y;
+
+                       e_comp_object_util_center_pos_get(ec->parent->frame, &x, &y);
+                       if (E_CONTAINS(x, y, ec->w, ec->h, zx, zy, zw, zh))
+                         {
+                            ec->x = x, ec->y = y;
+                         }
+                       else
+                         {
+                            x = ec->parent->x;
+                            y = ec->parent->y;
+                            if (!E_CONTAINS(x, y, ec->w, ec->h, zx, zy, zw, zh))
+                              {
+                                 e_comp_object_util_center_on(ec->frame,
+                                                              ec->parent->frame);
+                                 centered = 1;
+                              }
+                         }
+                       ec->changes.pos = 1;
+                    }
+               }
+             else
+               {
+                  e_comp_object_util_center_on(ec->frame,
+                                               ec->parent->frame);
+                  centered = 1;
+               }
+             if (centered) //test for offscreen
+               {
+                  if (!E_CONTAINS(ec->x, ec->y, ec->w, ec->h, zx, zy, zw, zh))
+                    {
+                       if (ec->x < zx)
+                         ec->x = ec->parent->x;
+                       if (ec->y < zy)
+                         ec->y = ec->parent->y;
+                       if (ec->x + ec->w > zx + zw)
+                         ec->x = ec->parent->x + ec->parent->w - ec->w;
+                       if (ec->y + ec->h > zy + zh)
+                         ec->y = ec->parent->y + ec->parent->h - ec->h;
+                       ec->changes.pos = 1;
+                    }
+               }
+             ec->placed = 1;
+             ec->pre_cb.x = ec->x; ec->pre_cb.y = ec->y;
+          }
 #if 0
-             else if ((ec->leader) && (ec->dialog))
-               {
-                  /* TODO: Place in center of group */
-               }
+        else if ((ec->leader) && (ec->dialog))
+          {
+             /* TODO: Place in center of group */
+          }
 #endif
-             else if (ec->dialog)
-               {
-                  E_Client *trans_ec = NULL;
+        else if (ec->dialog)
+          {
+             E_Client *trans_ec = NULL;
 
-                  if (ec->icccm.transient_for)
-                    trans_ec = e_pixmap_find_client(E_PIXMAP_TYPE_X, ec->icccm.transient_for);
-                  if (trans_ec)
-                    {
-                       // if transient for a window and not placed, center on
-                       // transient parent if found
-                       ec->x = trans_ec->x + ((trans_ec->w - ec->w) / 2);
-                       ec->y = trans_ec->y + ((trans_ec->h - ec->h) / 2);
-                    }
-                  else
-                    {
-                       ec->x = zx + ((zw - ec->w) / 2);
-                       ec->y = zy + ((zh - ec->h) / 2);
-                    }
-                  ec->changes.pos = 1;
-                  ec->placed = 1;
-                  ec->pre_cb.x = ec->x; ec->pre_cb.y = ec->y;
+             if (ec->icccm.transient_for)
+               trans_ec = e_pixmap_find_client(E_PIXMAP_TYPE_X, ec->icccm.transient_for);
+             if (trans_ec)
+               {
+                  // if transient for a window and not placed, center on
+                  // transient parent if found
+                  ec->x = trans_ec->x + ((trans_ec->w - ec->w) / 2);
+                  ec->y = trans_ec->y + ((trans_ec->h - ec->h) / 2);
                }
+             else
+               {
+                  ec->x = zx + ((zw - ec->w) / 2);
+                  ec->y = zy + ((zh - ec->h) / 2);
+               }
+             ec->changes.pos = 1;
+             ec->placed = 1;
+             ec->pre_cb.x = ec->x; ec->pre_cb.y = ec->y;
           }
 
         if (!ec->placed)
