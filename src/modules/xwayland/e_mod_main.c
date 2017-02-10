@@ -459,7 +459,8 @@ E_API E_Module_Api e_modapi = { E_MODULE_API_VERSION, "XWayland" };
 E_API void *
 e_modapi_init(E_Module *m)
 {
-   return xwl_init(m);
+   ecore_timer_loop_add(2.0, (Ecore_Task_Cb)xwl_init, m);
+   return m;
 }
 
 E_API int 
