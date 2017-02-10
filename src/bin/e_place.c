@@ -77,6 +77,7 @@ ignore_client(const E_Client *ec, const Eina_List *skiplist)
    if (eina_list_data_find(skiplist, ec)) return EINA_TRUE;
    if (e_client_util_ignored_get(ec)) return EINA_TRUE;
    if (!evas_object_visible_get(ec->frame)) return EINA_TRUE;
+   if ((!e_client_has_xwindow(ec)) && (ec->netwm.type != E_WINDOW_TYPE_NORMAL)) return EINA_TRUE;
 
    return EINA_FALSE;
 }
