@@ -154,6 +154,7 @@ _module_is_important(const char *name)
    const char *list[] =
    {
       "xwayland",
+      "wl_buffer",
       "wl_desktop_shell",
       "wl_drm",
       "wl_fb",
@@ -1043,6 +1044,7 @@ _e_module_whitelist_check(void)
       "winlist",
       "wireless",
       "wizard",
+      "wl_buffer",
       "wl_desktop_shell",
       "wl_x11",
       "wl_wl",

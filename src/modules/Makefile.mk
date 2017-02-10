@@ -113,6 +113,8 @@ include src/modules/Makefile_packagekit.mk
 
 include src/modules/Makefile_wl_drm.mk
 
+include src/modules/Makefile_wl_buffer.mk
+
 include src/modules/Makefile_wl_wl.mk
 
 include src/modules/Makefile_wl_desktop_shell.mk

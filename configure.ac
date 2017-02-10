@@ -760,6 +760,17 @@ define([CHECK_MODULE_WL_WL],
 ])
 AM_CONDITIONAL([HAVE_WL_WL], [test "x${WL_WL}" = "xtrue"])
 
+WL_BUFFER=false
+define([CHECK_MODULE_WL_BUFFER],
+[
+  if test "x${have_wayland}" = "xyes"; then
+    WL_BUFFER=true
+  else
+    WL_BUFFER=false
+  fi
+])
+AM_CONDITIONAL([HAVE_WL_BUFFER], [test "x${WL_BUFFER}" = "xtrue"])
+
 WL_DESKTOP_SHELL=false
 define([CHECK_MODULE_WL_DESKTOP_SHELL],
 [
@@ -893,6 +904,7 @@ AC_E_OPTIONAL_MODULE([packagekit], true)
 AC_E_OPTIONAL_MODULE([wl_desktop_shell], $have_wayland_dep)
 AC_E_OPTIONAL_MODULE([wl_x11], $have_wayland_dep, [CHECK_MODULE_WL_X11])
 AC_E_OPTIONAL_MODULE([wl_wl], $have_wayland_dep)
+AC_E_OPTIONAL_MODULE([wl_buffer], $have_wayland_dep)
 #AC_E_OPTIONAL_MODULE([wl_fb], $have_wayland_dep, [CHECK_MODULE_WL_FB])
 AC_E_OPTIONAL_MODULE([wl_drm], $have_wayland_dep, [CHECK_MODULE_WL_DRM])
 AC_E_OPTIONAL_MODULE([wl_text_input], $have_wayland_dep)
