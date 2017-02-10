@@ -785,8 +785,9 @@ e_pointer_object_set(E_Pointer *ptr, Evas_Object *obj, int x, int y)
 {
    Evas_Object *o;
    E_Client *ec;
+   int px, py;
 
-   ecore_evas_cursor_get(ptr->ee, &o, NULL, NULL, NULL);
+   ecore_evas_cursor_get(ptr->ee, &o, NULL, &px, &py);
    if (o)
      {
         if (o == obj)
@@ -798,17 +799,20 @@ e_pointer_object_set(E_Pointer *ptr, Evas_Object *obj, int x, int y)
         if (ec)
           ec->hidden = 1;
      }
-   ecore_evas_cursor_unset(ptr->ee);
 
    if (obj)
      {
         ec = e_comp_object_client_get(obj);
         if (ec)
           ec->hidden = 1;
+        ecore_evas_cursor_unset(ptr->ee);
         ecore_evas_object_cursor_set(ptr->ee, obj, E_LAYER_MAX - 1, x, y);
      }
-   else if (o != ptr->o_ptr)
-     ecore_evas_object_cursor_set(ptr->ee, ptr->o_ptr, E_LAYER_MAX - 1, ptr->hot.x, ptr->hot.y);
+   else if ((o != ptr->o_ptr) || (x != px) || (y != py))
+     {
+        ecore_evas_cursor_unset(ptr->ee);
+        ecore_evas_object_cursor_set(ptr->ee, ptr->o_ptr, E_LAYER_MAX - 1, ptr->hot.x, ptr->hot.y);
+     }
 }
 
 E_API void
