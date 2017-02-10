@@ -1324,7 +1324,7 @@ _e_comp_wl_surface_state_commit(E_Client *ec, E_Comp_Wl_Surface_State *state)
 #endif
 
    ec->comp_data->in_commit = 1;
-   if (state->new_attach && ec->ignored && (ec->comp_data->shell.surface || ec->internal_elm_win))
+   if (ec->ignored && (ec->comp_data->shell.surface || ec->internal_elm_win))
      {
         EC_CHANGED(ec);
         ec->new_client = 1;
