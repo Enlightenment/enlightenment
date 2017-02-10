@@ -59,11 +59,20 @@ _e_comp_wl_input_pointer_cb_cursor_set(struct wl_client *client, struct wl_resou
        if (client != wl_resource_get_client(ec->comp_data->surface)) continue;
        if (ec->mouse.in)
          {
-            got_mouse = EINA_TRUE;
+            if (e_client_has_xwindow(ec))
+              got_mouse = E_INSIDE(ec->mouse.current.mx, ec->mouse.current.my,
+                ec->client.x, ec->client.y, ec->client.w, ec->client.h);
+            else
+              got_mouse = EINA_TRUE;
             break;
          }
      }
-   if (!got_mouse) return;
+   if (!got_mouse)
+     {
+        if (ec && ec->mouse.in && (!surface_resource))
+          e_pointer_object_set(e_comp->pointer, NULL, 0, 0);
+        return;
+     }
    if (!surface_resource)
      {
         ecore_evas_cursor_unset(e_comp->ee);
