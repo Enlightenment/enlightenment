@@ -122,8 +122,8 @@ time_datestring_format(Instance *inst, char *buf, int bufsz)
 /* disable warning for known-safe code */
 DISABLE_WARNING(format-nonliteral, format-nonliteral, format-nonliteral)
         if (!strftime(buf, bufsz, inst->cfg->time_str[1] ?: default_str, (const struct tm *)tm))
-ENABLE_WARNING(format-nonliteral, format-nonliteral, format-nonliteral)
           strncpy(buf, "ERROR", bufsz - 1);
+ENABLE_WARNING(format-nonliteral, format-nonliteral, format-nonliteral)
         break;
       default: break;
      }
@@ -147,8 +147,8 @@ time_string_format(Instance *inst, char *buf, int bufsz)
 /* disable warning for known-safe code */
 DISABLE_WARNING(format-nonliteral, format-nonliteral, format-nonliteral)
    if (!strftime(buf, bufsz, inst->cfg->time_str[0] ?: default_fmt, (const struct tm *)tm))
-ENABLE_WARNING(format-nonliteral, format-nonliteral, format-nonliteral)
      strncpy(buf, "ERROR", bufsz - 1);
+ENABLE_WARNING(format-nonliteral, format-nonliteral, format-nonliteral)
    return tm->tm_sec;
 }
 
