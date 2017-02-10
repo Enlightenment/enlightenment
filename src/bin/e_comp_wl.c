@@ -1314,7 +1314,6 @@ _e_comp_wl_surface_state_commit(E_Client *ec, E_Comp_Wl_Surface_State *state)
 {
    Eina_Bool first = EINA_FALSE;
    Eina_Rectangle *dmg;
-   Eina_Bool placed = EINA_TRUE;
    int x = 0, y = 0, w, h;
 
    first = !e_pixmap_usable_get(ec->pixmap);
@@ -1393,13 +1392,11 @@ _e_comp_wl_surface_state_commit(E_Client *ec, E_Comp_Wl_Surface_State *state)
         else
           {
              x = ec->client.x, y = ec->client.y;
-             if (ec->new_client)
+             if (first)
                x -= ec->comp_data->shell.window.x, y -= ec->comp_data->shell.window.y;
           }
 
-        if (ec->new_client) placed = ec->placed;
-
-        if (first && e_client_has_xwindow(ec))
+        if ((!ec->comp_data->buffer_commit) && e_client_has_xwindow(ec))
           /* use client geometry to avoid race condition from x11 configure request */
           x = ec->x, y = ec->y;
         else
@@ -1493,9 +1490,10 @@ _e_comp_wl_surface_state_commit(E_Client *ec, E_Comp_Wl_Surface_State *state)
                e_client_util_move_resize_without_frame(ec, x, y, w, h);
           }
 
-        if (ec->new_client)
+        if ((!ec->comp_data->sub.data) && (!ec->comp_data->buffer_commit))
           {
-             ec->placed = placed;
+             if (!ec->internal_elm_win)
+               ec->placed = (!e_client_has_xwindow(ec)) && (ec->netwm.type != E_WINDOW_TYPE_NORMAL);
              ec->want_focus |= ec->icccm.accepts_focus && (!ec->override);
           }
      }
@@ -1504,6 +1502,8 @@ _e_comp_wl_surface_state_commit(E_Client *ec, E_Comp_Wl_Surface_State *state)
 
    state->sx = 0;
    state->sy = 0;
+   if (state->new_attach)
+     ec->comp_data->buffer_commit = 1;
    state->new_attach = EINA_FALSE;
 
    /* insert state frame callbacks into comp_data->frames
