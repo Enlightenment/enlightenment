@@ -119,7 +119,7 @@ _e_comp_wl_configure_send(E_Client *ec, Eina_Bool edges)
    int w = 0, h = 0;
 
    if (e_object_is_del(E_OBJECT(ec))) return;
-   if (e_pixmap_usable_get(ec->pixmap))
+   if (ec->changes.size || e_pixmap_usable_get(ec->pixmap))
      {
         if (e_comp_object_frame_exists(ec->frame))
           w = ec->client.w, h = ec->client.h;
