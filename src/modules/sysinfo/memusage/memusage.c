@@ -127,10 +127,9 @@ _memusage_popup_deleted(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_U
 static Evas_Object *
 _memusage_popup_create(Instance *inst)
 {
-   Evas_Object *popup, *box, *table, *frame, *label, *pbar;
-   char buf[128];
+   Evas_Object *popup, *table, *label, *pbar;
+   char buf[128], buf2[128];
 
-   // popup + vert box
    popup = elm_ctxpopup_add(e_comp->elm);
    elm_object_style_set(popup, "noblock");
    evas_object_smart_callback_add(popup, "dismissed",
@@ -138,28 +137,22 @@ _memusage_popup_create(Instance *inst)
    evas_object_event_callback_add(popup, EVAS_CALLBACK_DEL,
                                   _memusage_popup_deleted, inst);
 
-   box = elm_box_add(popup);
-   elm_box_horizontal_set(box, EINA_FALSE);
-   E_EXPAND(box); E_FILL(box);
-   elm_object_content_set(popup, box);
-   evas_object_show(box);
-
-   // mem frame + table
-   frame = elm_frame_add(popup);
-   E_EXPAND(frame); E_FILL(frame);
-   snprintf(buf, sizeof(buf), _("Memory usage (available %ld MB)"),
-            inst->cfg->memusage.mem_total / 1024);
-   elm_object_text_set(frame, buf);
-   elm_box_pack_end(box, frame);
-   evas_object_show(frame);
-
-   table = elm_table_add(frame);
+   table = elm_table_add(popup);
    E_EXPAND(table); E_FILL(table);
-   elm_object_content_set(frame, table);
+   elm_object_content_set(popup, table);
    evas_object_show(table);
 
+   snprintf(buf, sizeof(buf), _("Memory usage (available %ld MB)"),
+            inst->cfg->memusage.mem_total / 1024);
+   snprintf(buf2, sizeof(buf2), "<big><b>%s</b></big>", buf);
    label = elm_label_add(table);
-   E_EXPAND(label); E_ALIGN(label, 0.0, 0.5);
+   E_EXPAND(label); E_ALIGN(label, 0.5, 0.5);
+   elm_object_text_set(label, buf2);
+   elm_table_pack(table, label, 0, 0, 2, 1);
+   evas_object_show(label);
+
+   label = elm_label_add(table);
+   E_ALIGN(label, 0.0, 0.5);
    elm_object_text_set(label, _("Used"));
    elm_table_pack(table, label, 0, 1, 1, 1);
    evas_object_show(label);
@@ -171,7 +164,7 @@ _memusage_popup_create(Instance *inst)
    evas_object_data_set(popup, "mem_used_pbar", pbar);
 
    label = elm_label_add(table);
-   E_EXPAND(label); E_ALIGN(label, 0.0, 0.5);
+   E_ALIGN(label, 0.0, 0.5);
    elm_object_text_set(label, _("Buffers"));
    elm_table_pack(table, label, 0, 2, 1, 1);
    evas_object_show(label);
@@ -183,7 +176,7 @@ _memusage_popup_create(Instance *inst)
    evas_object_data_set(popup, "mem_buffers_pbar", pbar);
 
    label = elm_label_add(table);
-   E_EXPAND(label); E_ALIGN(label, 0.0, 0.5);
+   E_ALIGN(label, 0.0, 0.5);
    elm_object_text_set(label, _("Cached"));
    elm_table_pack(table, label, 0, 3, 1, 1);
    evas_object_show(label);
@@ -195,7 +188,7 @@ _memusage_popup_create(Instance *inst)
    evas_object_data_set(popup, "mem_cached_pbar", pbar);
 
    label = elm_label_add(table);
-   E_EXPAND(label); E_ALIGN(label, 0.0, 0.5);
+   E_ALIGN(label, 0.0, 0.5);
    elm_object_text_set(label, _("Shared"));
    elm_table_pack(table, label, 0, 4, 1, 1);
    evas_object_show(label);
@@ -206,18 +199,18 @@ _memusage_popup_create(Instance *inst)
    evas_object_show(pbar);
    evas_object_data_set(popup, "mem_shared_pbar", pbar);
 
-   // swp frame
-   frame = elm_frame_add(popup);
-   E_EXPAND(frame); E_FILL(frame);
    snprintf(buf, sizeof(buf), _("Swap usage (available %ld MB)"),
             inst->cfg->memusage.swp_total / 1024);
-   elm_object_text_set(frame, buf);
-   elm_box_pack_end(box, frame);
-   evas_object_show(frame);
+   snprintf(buf2, sizeof(buf2), "<big><b>%s</b></big>", buf);
+   label = elm_label_add(table);
+   E_EXPAND(label); E_ALIGN(label, 0.5, 0.5);
+   elm_object_text_set(label, buf2);
+   elm_table_pack(table, label, 0, 5, 2, 1);
+   evas_object_show(label);
 
-   pbar = elm_progressbar_add(frame);
+   pbar = elm_progressbar_add(table);
    E_EXPAND(pbar); E_FILL(pbar);
-   elm_object_content_set(frame, pbar);
+   elm_table_pack(table, pbar, 0, 6, 2, 1);
    evas_object_show(pbar);
    evas_object_data_set(popup, "swap_pbar", pbar);
 

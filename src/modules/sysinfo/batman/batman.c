@@ -70,10 +70,10 @@ _batman_popup_deleted(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNU
 static Evas_Object *
 _batman_popup_create(Instance *inst)
 {
-   Evas_Object *popup, *box, *frame, *pbar;
+   Evas_Object *popup, *box, *pbar, *label;
    Battery *bat;
    Eina_List *l;
-   char buf[4096];
+   char buf[128], buf2[128];
    int hrs = 0, mins = 0;
 
    hrs = (inst->cfg->batman.time_left / 3600);
@@ -87,33 +87,34 @@ _batman_popup_create(Instance *inst)
    evas_object_event_callback_add(popup, EVAS_CALLBACK_DEL,
                                   _batman_popup_deleted, inst);
 
-   frame = elm_frame_add(popup);
-   E_EXPAND(frame); E_FILL(frame);
-   if (inst->cfg->batman.have_power && (inst->cfg->batman.full < 99))
-     elm_object_text_set(frame, _("Battery Charging"));
-   else if (inst->cfg->batman.full >= 99)
-     elm_object_text_set(frame, _("Battery Fully Charged"));
-   else
-     {
-        snprintf(buf, sizeof(buf), _("Time Remaining: %i:%02i"), hrs, mins);
-        elm_object_text_set(frame, buf);
-     }
-   elm_object_content_set(popup, frame);
-   evas_object_show(frame);
-
-   box = elm_box_add(frame);
+   box = elm_box_add(popup);
    elm_box_horizontal_set(box, EINA_FALSE);
    E_EXPAND(box); E_FILL(box);
-   elm_object_content_set(frame, box);
+   elm_object_content_set(popup, box);
    evas_object_show(box);
+
+   label = elm_label_add(box);
+   E_EXPAND(label); E_ALIGN(label, 0.5, 0.5);
+   elm_object_text_set(label, buf);
+   elm_box_pack_end(box, label);
+   evas_object_show(label);
+
+   if (inst->cfg->batman.have_power && (inst->cfg->batman.full < 99))
+     snprintf(buf, sizeof(buf), _("Battery Charging"));
+   else if (inst->cfg->batman.full >= 99)
+     snprintf(buf, sizeof(buf), _("Battery Fully Charged"));
+   else
+     snprintf(buf, sizeof(buf), _("Time Remaining: %i:%02i"), hrs, mins);
+   snprintf(buf2, sizeof(buf2), "<big><b>%s</b></big>", buf);
+   elm_object_text_set(label, buf2);
 
    EINA_LIST_FOREACH(batman_device_batteries, l, bat)
      {
-        pbar = elm_progressbar_add(frame);
+        pbar = elm_progressbar_add(box);
         E_EXPAND(pbar); E_FILL(pbar);
         elm_progressbar_span_size_set(pbar, 200 * e_scale);
         elm_progressbar_value_set(pbar, bat->percent / 100);
-        elm_object_content_set(frame, pbar);
+        elm_box_pack_end(box, pbar);
         evas_object_show(pbar);
      }
    e_gadget_util_ctxpopup_place(inst->o_main, popup,
