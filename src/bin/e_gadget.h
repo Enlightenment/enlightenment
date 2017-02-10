@@ -16,6 +16,8 @@
       "gadget_destroyed"
        - a gadget object was destroyed on the site; all objects created by the
          gadget infrastructure are now dead
+       - do not watch both this and EVAS_CALLBACK_DEL, as the ordering of these
+         callbacks is not consistent
       "gadget_moved"
        - a gadget is preparing to move from its current site
       "gadget_removed"
