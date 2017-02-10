@@ -408,7 +408,7 @@ _e_comp_cb_update(void)
         Evas_Coord x = 0, y = 0, w = 0, h = 0;
         E_Zone *z;
 
-        t = ecore_time_get();
+        t = ecore_loop_time_get();
         if (conf->fps_average_range < 1)
           conf->fps_average_range = 30;
         else if (conf->fps_average_range > 120)
