@@ -169,6 +169,7 @@ typedef enum _E_Client_Hook_Point
    E_CLIENT_HOOK_DEL,
    E_CLIENT_HOOK_UNREDIRECT,
    E_CLIENT_HOOK_REDIRECT,
+   E_CLIENT_HOOK_UNIGNORE,
    E_CLIENT_HOOK_LAST,
 } E_Client_Hook_Point;
 

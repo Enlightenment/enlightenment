@@ -2568,6 +2568,7 @@ e_client_unignore(E_Client *ec)
           focus_stack = eina_list_append(focus_stack, ec);
      }
    _e_client_event_simple(ec, E_EVENT_CLIENT_ADD);
+   _e_client_hook_call(E_CLIENT_HOOK_UNIGNORE, ec);
 }
 
 E_API E_Client *
