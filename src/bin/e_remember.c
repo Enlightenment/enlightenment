@@ -693,7 +693,6 @@ e_remember_default_match_set(E_Remember *rem, E_Client *ec)
 E_API void
 e_remember_update(E_Client *ec)
 {
-   if (ec->new_client) return;
    if (((!ec->remember) || ec->remember->keep_settings) && (!ec->sr_remember)) return;
    if (ec->remember) _e_remember_update(ec, ec->remember);
    if (ec->sr_remember) _e_remember_update(ec, ec->sr_remember);
