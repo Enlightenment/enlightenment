@@ -2456,6 +2456,14 @@ _e_comp_wl_client_cb_del(void *data EINA_UNUSED, E_Client *ec)
    E_FREE_FUNC(ec->comp_data->on_focus_timer, ecore_timer_del);
    if (ec->mouse.in)
      _e_comp_wl_mouse_out(ec);
+   else if (ec->comp_data->cursor)
+     {
+        Evas_Object *o;
+
+        ecore_evas_cursor_get(e_comp->ee, &o, NULL, NULL, NULL);
+        if (o == ec->frame)
+          e_pointer_object_set(e_comp->pointer, NULL, 0, 0);
+     }
 
    /* The resource destroy callback will walk the state->frames list,
     * so move the list to a temporary first.
