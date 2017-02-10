@@ -1753,6 +1753,12 @@ _e_comp_wl_surface_cb_commit(struct wl_client *client EINA_UNUSED, struct wl_res
    if (!(ec = wl_resource_get_user_data(resource))) return;
    if (e_object_is_del(E_OBJECT(ec))) return;
 
+   if (ec->new_client)
+     {
+        e_client_eval_stage_1_call(ec);
+        e_client_eval(ec);
+     }
+
    if (e_comp_wl_subsurface_commit(ec)) return;
 
    e_comp_wl_surface_commit(ec);
@@ -1867,7 +1873,10 @@ _e_comp_wl_compositor_cb_surface_create(struct wl_client *client, struct wl_reso
      }
    if (ec->new_client)
      e_comp->new_clients--;
-   ec->new_client = 0;
+// this makes things like tiling have to rezize the window after first buffer
+// is drawn - or well doesn't help... why mark it as NOT new? this makes
+// no sense!
+//   ec->new_client = 0;
    if ((!ec->client.w) && (!ec->client.h))
      ec->client.w = ec->client.h = 1;
    ec->comp_data->surface = res;
