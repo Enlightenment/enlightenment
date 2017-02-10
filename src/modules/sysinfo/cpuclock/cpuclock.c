@@ -832,13 +832,19 @@ static void
 _cpuclock_created_cb(void *data, Evas_Object *obj, void *event_data EINA_UNUSED)
 {
    Instance *inst = data;
+   E_Gadget_Site_Orient orient = e_gadget_site_orient_get(e_gadget_site_get(inst->o_main));
 
    if (inst->cfg->cpuclock.pstate_min == 0) inst->cfg->cpuclock.pstate_min = 1;
    if (inst->cfg->cpuclock.pstate_max == 0) inst->cfg->cpuclock.pstate_max = 101;
 
    inst->cfg->cpuclock.o_gadget = elm_layout_add(inst->o_main);
-   e_theme_edje_object_set(inst->cfg->cpuclock.o_gadget, "base/theme/modules/cpufreq",
-                           "e/modules/cpufreq/main");
+   if (orient == E_GADGET_SITE_ORIENT_VERTICAL)
+     e_theme_edje_object_set(inst->cfg->cpuclock.o_gadget,
+                             "base/theme/modules/cpuclock",
+                             "e/modules/cpuclock/main_vert");
+   else
+     e_theme_edje_object_set(inst->cfg->cpuclock.o_gadget, "base/theme/modules/cpuclock",
+                             "e/modules/cpuclock/main");
    E_EXPAND(inst->cfg->cpuclock.o_gadget);
    E_FILL(inst->cfg->cpuclock.o_gadget);
    edje_object_signal_callback_add(elm_layout_edje_get(inst->cfg->cpuclock.o_gadget), "e,action,governor,next", "*",

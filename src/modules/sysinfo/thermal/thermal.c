@@ -231,13 +231,19 @@ static void
 _thermal_created_cb(void *data, Evas_Object *obj, void *event_data EINA_UNUSED)
 {
    Instance *inst = data;
+   E_Gadget_Site_Orient orient = e_gadget_site_orient_get(e_gadget_site_get(inst->o_main));
 
    inst->cfg->thermal.temp = 900;
    inst->cfg->thermal.have_temp = EINA_FALSE;
 
    inst->cfg->thermal.o_gadget = elm_layout_add(inst->o_main);
-   e_theme_edje_object_set(inst->cfg->thermal.o_gadget, "base/theme/modules/temperature",
-                           "e/modules/temperature/main");
+   if (orient == E_GADGET_SITE_ORIENT_VERTICAL)
+     e_theme_edje_object_set(inst->cfg->thermal.o_gadget,
+                               "base/theme/modules/thermal",
+                               "e/modules/thermal/main_vert");
+   else
+     e_theme_edje_object_set(inst->cfg->thermal.o_gadget, "base/theme/modules/thermal",
+                           "e/modules/thermal/main");
    E_EXPAND(inst->cfg->thermal.o_gadget);
    E_FILL(inst->cfg->thermal.o_gadget);
    elm_box_pack_end(inst->o_main, inst->cfg->thermal.o_gadget);

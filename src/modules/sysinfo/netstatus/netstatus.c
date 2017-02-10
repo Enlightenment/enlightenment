@@ -227,12 +227,18 @@ static void
 _netstatus_created_cb(void *data, Evas_Object *obj, void *event_data EINA_UNUSED)
 {
    Instance *inst = data;
+   E_Gadget_Site_Orient orient = e_gadget_site_orient_get(e_gadget_site_get(inst->o_main));
 
    e_gadget_configure_cb_set(inst->o_main, _netstatus_configure_cb);
 
    inst->cfg->netstatus.o_gadget = elm_layout_add(inst->o_main);
-   e_theme_edje_object_set(inst->cfg->netstatus.o_gadget, "base/theme/modules/netstatus",
-                           "e/modules/netstatus/main");
+   if (orient == E_GADGET_SITE_ORIENT_VERTICAL)
+     e_theme_edje_object_set(inst->cfg->netstatus.o_gadget,
+                             "base/theme/modules/netstatus",
+                             "e/modules/netstatus/main_vert");
+   else
+     e_theme_edje_object_set(inst->cfg->netstatus.o_gadget, "base/theme/modules/netstatus",
+                             "e/modules/netstatus/main");
    E_EXPAND(inst->cfg->netstatus.o_gadget);
    E_FILL(inst->cfg->netstatus.o_gadget);
    elm_box_pack_end(inst->o_main, inst->cfg->netstatus.o_gadget);

@@ -578,6 +578,7 @@ static void
 _batman_created_cb(void *data, Evas_Object *obj, void *event_data EINA_UNUSED)
 {
    Instance *inst = data;
+   E_Gadget_Site_Orient orient = e_gadget_site_orient_get(e_gadget_site_get(inst->o_main));
 
    e_gadget_configure_cb_set(inst->o_main, _batman_configure_cb);
 
@@ -587,8 +588,13 @@ _batman_created_cb(void *data, Evas_Object *obj, void *event_data EINA_UNUSED)
    inst->cfg->batman.have_power = -2;
 
    inst->cfg->batman.o_gadget = elm_layout_add(inst->o_main);
-   e_theme_edje_object_set(inst->cfg->batman.o_gadget, "base/theme/modules/batman",
-                           "e/modules/batman/main");
+   if (orient == E_GADGET_SITE_ORIENT_VERTICAL)
+     e_theme_edje_object_set(inst->cfg->batman.o_gadget,
+                             "base/theme/modules/batman",
+                             "e/modules/batman/main_vert");
+   else
+     e_theme_edje_object_set(inst->cfg->batman.o_gadget, "base/theme/modules/batman",
+                             "e/modules/batman/main");
    E_EXPAND(inst->cfg->batman.o_gadget);
    E_FILL(inst->cfg->batman.o_gadget);
    elm_box_pack_end(inst->o_main, inst->cfg->batman.o_gadget);
