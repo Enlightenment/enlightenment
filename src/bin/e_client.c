@@ -1744,8 +1744,8 @@ _e_client_maximize_run(E_Client *ec, int x, int y, int w, int h)
 
 ////////////////////////////////////////////////
 
-E_API void
-e_client_eval(E_Client *ec)
+static void
+_e_client_eval(E_Client *ec)
 {
    int rem_change = 0;
    int send_event = 1;
@@ -1753,7 +1753,7 @@ e_client_eval(E_Client *ec)
 
    if (e_object_is_del(E_OBJECT(ec)))
      {
-        CRI("e_client_eval(%p) with deleted border! - %d\n", ec, ec->new_client);
+        CRI("_e_client_eval(%p) with deleted border! - %d\n", ec, ec->new_client);
         ec->changed = 0;
         return;
      }
@@ -2404,7 +2404,28 @@ e_client_idler_before(void)
 
    EINA_LIST_FOREACH(e_comp->clients, l, ec)
      {
-        e_client_eval_stage_1_call(ec);
+        Eina_Stringshare *title;
+        // pass 1 - eval0. fetch properties on new or on change and
+        // call hooks to decide what to do - maybe move/resize
+        if (ec->ignored || (!ec->changed)) continue;
+
+        if (!_e_client_hook_call(E_CLIENT_HOOK_EVAL_PRE_FETCH, ec)) continue;
+        /* FETCH is hooked by the compositor to get client hints */
+        title = e_client_util_name_get(ec);
+        if (!_e_client_hook_call(E_CLIENT_HOOK_EVAL_FETCH, ec)) continue;
+        if (title != e_client_util_name_get(ec))
+          _e_client_event_property(ec, E_CLIENT_PROPERTY_TITLE);
+        /* PRE_POST_FETCH calls e_remember apply for new client */
+        if (!_e_client_hook_call(E_CLIENT_HOOK_EVAL_PRE_POST_FETCH, ec)) continue;
+        if (!_e_client_hook_call(E_CLIENT_HOOK_EVAL_POST_FETCH, ec)) continue;
+        if (!_e_client_hook_call(E_CLIENT_HOOK_EVAL_PRE_FRAME_ASSIGN, ec)) continue;
+
+        if ((ec->border.changed) && (!ec->shaded) && (!e_client_is_stacking(ec)) &&
+            ((!ec->override) || ec->internal) &&
+            (!(((ec->maximized & E_MAXIMIZE_TYPE) == E_MAXIMIZE_FULLSCREEN))))
+          _e_client_frame_update(ec);
+        ec->border.changed = 0;
+        _e_client_hook_call(E_CLIENT_HOOK_EVAL_POST_FRAME_ASSIGN, ec);
      }
 
    E_CLIENT_FOREACH(ec)
@@ -2491,7 +2512,7 @@ e_client_idler_before(void)
           }
 
         if (ec->changed)
-          e_client_eval(ec);
+          _e_client_eval(ec);
 
         if ((ec->changes.visible) && (ec->visible) && (!ec->changed))
           {
@@ -5029,37 +5050,6 @@ e_client_icon_add(E_Client *ec, Evas *evas)
    o = e_icon_add(evas);
    e_util_icon_theme_set(o, "unknown");
    return o;
-}
-
-////////////////////////////////////////////
-
-E_API Eina_Bool
-e_client_eval_stage_1_call(E_Client *ec)
-{
-   Eina_Stringshare *title;
-
-   // pass 1 - eval0. fetch properties on new or on change and
-   // call hooks to decide what to do - maybe move/resize
-   if (ec->ignored || (!ec->changed)) return EINA_FALSE;
-
-   if (!_e_client_hook_call(E_CLIENT_HOOK_EVAL_PRE_FETCH, ec)) return EINA_FALSE;
-   /* FETCH is hooked by the compositor to get client hints */
-   title = e_client_util_name_get(ec);
-   if (!_e_client_hook_call(E_CLIENT_HOOK_EVAL_FETCH, ec)) return EINA_FALSE;
-   if (title != e_client_util_name_get(ec))
-     _e_client_event_property(ec, E_CLIENT_PROPERTY_TITLE);
-   /* PRE_POST_FETCH calls e_remember apply for new client */
-   if (!_e_client_hook_call(E_CLIENT_HOOK_EVAL_PRE_POST_FETCH, ec)) return EINA_FALSE;
-   if (!_e_client_hook_call(E_CLIENT_HOOK_EVAL_POST_FETCH, ec)) return EINA_FALSE;
-   if (!_e_client_hook_call(E_CLIENT_HOOK_EVAL_PRE_FRAME_ASSIGN, ec)) return EINA_FALSE;
-
-   if ((ec->border.changed) && (!ec->shaded) && (!e_client_is_stacking(ec)) &&
-       ((!ec->override) || ec->internal) &&
-       (!(((ec->maximized & E_MAXIMIZE_TYPE) == E_MAXIMIZE_FULLSCREEN))))
-   _e_client_frame_update(ec);
-   ec->border.changed = 0;
-   _e_client_hook_call(E_CLIENT_HOOK_EVAL_POST_FRAME_ASSIGN, ec);
-   return EINA_TRUE;
 }
 
 ////////////////////////////////////////////
