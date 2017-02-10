@@ -906,7 +906,7 @@ _e_remember_find(E_Client *ec, int check_usable, Eina_Bool sr)
                   return rem;
                }
           }
-        else if (rem->uuid) continue;
+        else if (rem->apply & E_REMEMBER_APPLY_UUID) continue;
 
         if (ec->netwm.name) title = ec->netwm.name;
         else title = ec->icccm.title;
