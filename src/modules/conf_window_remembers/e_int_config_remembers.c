@@ -224,6 +224,7 @@ _fill_remembers(E_Config_Dialog_Data *cfdata)
         if ((rem->name) && (!strcmp(rem->name, "E"))) continue;
         /* Filter out the module config remembers */
         if ((rem->class) && (rem->class[0] == '_')) continue;
+        if (rem->apply & E_REMEMBER_APPLY_UUID) continue;
 
         if (rem->name)
           e_widget_ilist_append(cfdata->list, NULL, rem->name, NULL, rem, NULL);
