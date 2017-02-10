@@ -188,7 +188,7 @@ _cpumonitor_add_layout(Instance *inst)
    Evas_Object *layout;
    int orient = e_gadget_site_orient_get(e_gadget_site_get(inst->o_main));
 
-   layout = elm_layout_add(inst->cfg->cpumonitor.o_gadget);
+   layout = elm_layout_add(inst->cfg->cpumonitor.o_gadget_box);
    edje_object_update_hints_set(elm_layout_edje_get(layout), EINA_TRUE);
    if (orient == E_GADGET_SITE_ORIENT_VERTICAL)
      e_theme_edje_object_set(layout, "base/theme/modules/cpumonitor",
@@ -198,7 +198,7 @@ _cpumonitor_add_layout(Instance *inst)
                              "e/modules/cpumonitor/main");
    E_EXPAND(layout);
    E_FILL(layout);
-   elm_box_pack_end(inst->cfg->cpumonitor.o_gadget, layout);
+   elm_box_pack_end(inst->cfg->cpumonitor.o_gadget_box, layout);
    evas_object_show(layout);
 
    return layout;
@@ -304,17 +304,31 @@ _cpumonitor_created_cb(void *data, Evas_Object *obj, void *event_data EINA_UNUSE
 
    e_gadget_configure_cb_set(inst->o_main, _cpumonitor_configure_cb);
 
-   inst->cfg->cpumonitor.o_gadget = elm_box_add(inst->o_main);
-   elm_box_homogeneous_set(inst->cfg->cpumonitor.o_gadget, EINA_TRUE);
-   if (orient == E_GADGET_SITE_ORIENT_VERTICAL)
-     elm_box_horizontal_set(inst->cfg->cpumonitor.o_gadget, EINA_FALSE);
-   else
-     elm_box_horizontal_set(inst->cfg->cpumonitor.o_gadget, EINA_TRUE);
+   inst->cfg->cpumonitor.o_gadget = elm_table_add(inst->o_main);
    E_EXPAND(inst->cfg->cpumonitor.o_gadget);
    E_FILL(inst->cfg->cpumonitor.o_gadget);
    elm_box_pack_end(inst->o_main, inst->cfg->cpumonitor.o_gadget);
-   evas_object_event_callback_add(inst->cfg->cpumonitor.o_gadget, EVAS_CALLBACK_MOUSE_DOWN, _cpumonitor_mouse_down_cb, inst);
    evas_object_show(inst->cfg->cpumonitor.o_gadget);
+
+   inst->cfg->cpumonitor.o_gadget_box = elm_box_add(inst->cfg->cpumonitor.o_gadget);
+   elm_box_homogeneous_set(inst->cfg->cpumonitor.o_gadget_box, EINA_TRUE);
+   if (orient == E_GADGET_SITE_ORIENT_VERTICAL)
+     elm_box_horizontal_set(inst->cfg->cpumonitor.o_gadget_box, EINA_FALSE);
+   else
+     elm_box_horizontal_set(inst->cfg->cpumonitor.o_gadget_box, EINA_TRUE);
+   E_EXPAND(inst->cfg->cpumonitor.o_gadget_box);
+   E_FILL(inst->cfg->cpumonitor.o_gadget_box);
+   elm_table_pack(inst->cfg->cpumonitor.o_gadget, inst->cfg->cpumonitor.o_gadget_box, 0, 0, 1, 1);
+   evas_object_show(inst->cfg->cpumonitor.o_gadget_box);
+
+   inst->cfg->cpumonitor.event = evas_object_rectangle_add(inst->cfg->cpumonitor.o_gadget);
+   evas_object_color_set(inst->cfg->cpumonitor.event, 0, 0, 0, 0);
+   E_EXPAND(inst->cfg->cpumonitor.event);
+   E_FILL(inst->cfg->cpumonitor.event);
+   evas_object_event_callback_add(inst->cfg->cpumonitor.event, EVAS_CALLBACK_MOUSE_DOWN, _cpumonitor_mouse_down_cb, inst);
+   elm_table_pack(inst->cfg->cpumonitor.o_gadget, inst->cfg->cpumonitor.event, 0, 0, 1, 1);
+   evas_object_show(inst->cfg->cpumonitor.event);
+
    evas_object_smart_callback_del_full(obj, "gadget_created", _cpumonitor_created_cb, data);
    _cpumonitor_config_updated(inst);
 }
@@ -322,16 +336,31 @@ _cpumonitor_created_cb(void *data, Evas_Object *obj, void *event_data EINA_UNUSE
 Evas_Object *
 sysinfo_cpumonitor_create(Evas_Object *parent, Instance *inst)
 {
-   inst->cfg->cpumonitor.o_gadget = elm_box_add(parent);
-   elm_box_homogeneous_set(inst->cfg->cpumonitor.o_gadget, EINA_TRUE);
-   elm_box_horizontal_set(inst->cfg->cpumonitor.o_gadget, EINA_TRUE);
+   inst->cfg->cpumonitor.o_gadget = elm_table_add(parent);
    E_EXPAND(inst->cfg->cpumonitor.o_gadget);
    E_FILL(inst->cfg->cpumonitor.o_gadget);
-   evas_object_event_callback_add(inst->cfg->cpumonitor.o_gadget, EVAS_CALLBACK_MOUSE_DOWN, _cpumonitor_mouse_down_cb, inst);
+   elm_box_pack_end(inst->o_main, inst->cfg->cpumonitor.o_gadget);
    evas_object_show(inst->cfg->cpumonitor.o_gadget);
+
+   inst->cfg->cpumonitor.o_gadget_box = elm_box_add(inst->cfg->cpumonitor.o_gadget);
+   elm_box_homogeneous_set(inst->cfg->cpumonitor.o_gadget_box, EINA_TRUE);
+   elm_box_horizontal_set(inst->cfg->cpumonitor.o_gadget_box, EINA_TRUE);
+   E_EXPAND(inst->cfg->cpumonitor.o_gadget_box);
+   E_FILL(inst->cfg->cpumonitor.o_gadget_box);
+   elm_table_pack(inst->cfg->cpumonitor.o_gadget, inst->cfg->cpumonitor.o_gadget_box, 0, 0, 1, 1);
+   evas_object_show(inst->cfg->cpumonitor.o_gadget_box);
+
+   inst->cfg->cpumonitor.event = evas_object_rectangle_add(inst->cfg->cpumonitor.o_gadget);
+   evas_object_color_set(inst->cfg->cpumonitor.event, 0, 0, 0, 0);
+   E_EXPAND(inst->cfg->cpumonitor.event);
+   E_FILL(inst->cfg->cpumonitor.event);
+   evas_object_event_callback_add(inst->cfg->cpumonitor.event, EVAS_CALLBACK_MOUSE_DOWN, _cpumonitor_mouse_down_cb, inst);
+   elm_table_pack(inst->cfg->cpumonitor.o_gadget, inst->cfg->cpumonitor.event, 0, 0, 1, 1);
+   evas_object_show(inst->cfg->cpumonitor.event);
+
    _cpumonitor_config_updated(inst);
 
-   return inst->cfg->cpumonitor.o_gadget;
+   return inst->cfg->cpumonitor.o_gadget_box;
 }
 
 static Config_Item *

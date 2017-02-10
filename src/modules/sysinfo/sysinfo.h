@@ -186,6 +186,8 @@ struct _Config_Item
    struct
    {
       Evas_Object         *o_gadget;
+      Evas_Object         *o_gadget_box;
+      Evas_Object         *event;
       Evas_Object         *popup;
       Evas_Object         *popup_pbar;
       Evas_Object         *configure;
