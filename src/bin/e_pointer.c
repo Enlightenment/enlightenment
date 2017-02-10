@@ -459,16 +459,7 @@ _e_pointer_type_set(E_Pointer *ptr, const char *type)
         _e_pointer_hot_update(ptr, x, y);
 
         if (ptr->canvas)
-          {
-             E_Client *ec = e_client_top_get();
-
-             if (ec && (e_comp->comp_type == E_PIXMAP_TYPE_WL) &&
-                 (!e_pixmap_is_x(ec->pixmap)) && ec->override &&
-                 eina_streq(type, "default"))
-               e_pointer_object_set(ptr, ec->frame, 0, 0);
-             else
-               e_pointer_object_set(ptr, NULL, 0, 0);
-          }
+          e_pointer_object_set(ptr, NULL, 0, 0);
         else
           evas_object_show(ptr->o_ptr);
 
