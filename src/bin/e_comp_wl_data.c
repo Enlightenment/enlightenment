@@ -967,17 +967,6 @@ e_comp_wl_data_device_send_enter(E_Client *ec)
    if (!e_client_has_xwindow(ec))
      {
         E_Comp_Wl_Data_Source *drag_source = e_comp_wl->drag_source;
-        if (drag_source &&
-            drag_source->offer)
-          {
-             E_Comp_Wl_Data_Offer *offer;
-             /* Unlink the offer from the source */
-             offer = drag_source->offer;
-             offer->source = NULL;
-             drag_source->offer = NULL;
-             drag_source->accepted = 0;
-             wl_list_remove(&offer->source_destroy_listener.link);
-          }
         data_device_res =
           e_comp_wl_data_find_for_client(wl_resource_get_client(ec->comp_data->surface));
         if (!data_device_res) return;
@@ -1065,6 +1054,20 @@ e_comp_wl_data_device_send_leave(E_Client *ec)
         return;
      }
 #endif
+   {
+      E_Comp_Wl_Data_Source *drag_source = e_comp_wl->drag_source;
+      if (drag_source &&
+          drag_source->offer)
+        {
+           E_Comp_Wl_Data_Offer *offer;
+           /* Unlink the offer from the source */
+           offer = drag_source->offer;
+           offer->source = NULL;
+           drag_source->offer = NULL;
+           drag_source->accepted = 0;
+           wl_list_remove(&offer->source_destroy_listener.link);
+        }
+   }
    res = e_comp_wl_data_find_for_client(wl_resource_get_client(ec->comp_data->surface));
    if (res)
      wl_data_device_send_leave(res);
