@@ -290,15 +290,9 @@ parse_rules(void)
                             break;
                          }
                     }
-                  if (i < (sizeof(grplabels) / sizeof(grplabels[0]))) continue;
-                  optmisc = eina_list_append(optmisc, option);
+                  if (i >= EINA_C_ARRAY_LENGTH(grplabels))
+                    optmisc = eina_list_append(optmisc, option);
                }
-             else
-               {
-                  free(tmp);
-                  continue;
-               }
-
              free(tmp);
           }
         else
