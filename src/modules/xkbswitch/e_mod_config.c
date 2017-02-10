@@ -231,11 +231,28 @@ _create_data(E_Config_Dialog *cfd)
 }
 
 static void
+_list_del(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
+{
+   Evas_Object **o;
+
+   o = data;
+
+   *o = NULL;
+}
+
+static void
 _free_data(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfdata)
 {
    E_Config_XKB_Layout *cl;
 
    _xkb.cfd = NULL;
+
+   if (cfdata->compose_list)
+     evas_object_event_callback_del(cfdata->compose_list, EVAS_CALLBACK_DEL, _list_del);
+   if (cfdata->lv3_list)
+     evas_object_event_callback_del(cfdata->lv3_list, EVAS_CALLBACK_DEL, _list_del);
+   if (cfdata->switch_list)
+     evas_object_event_callback_del(cfdata->switch_list, EVAS_CALLBACK_DEL, _list_del);
 
    EINA_LIST_FREE(cfdata->cfg_layouts, cl)
      {
@@ -443,16 +460,6 @@ _basic_apply(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfdata)
    e_xkb_reconfig();
    e_config_save_queue();
    return 1;
-}
-
-static void
-_list_del(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
-{
-   Evas_Object **o;
-
-   o = data;
-
-   *o = NULL;
 }
 
 static void
