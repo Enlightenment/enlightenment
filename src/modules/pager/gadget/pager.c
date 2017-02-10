@@ -12,7 +12,6 @@ struct _Instance
    Evas_Object     *o_pager; /* table */
    Pager           *pager;
    Pager_Popup     *popup;
-   Eina_Bool        destroyed;
 };
 
 struct _Pager
@@ -231,15 +230,6 @@ _pager_gadget_created_cb(void *data, Evas_Object *obj, void *event_info EINA_UNU
           }
      }
    evas_object_smart_callback_del_full(obj, "gadget_created", _pager_gadget_created_cb, data);
-}
-
-static void
-_pager_gadget_destroyed_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
-{
-   Instance *inst = data;
-
-   if (inst)
-     inst->destroyed = EINA_TRUE;
 }
 
 static void
@@ -1933,13 +1923,11 @@ pager_create(Evas_Object *parent, int *id EINA_UNUSED, E_Gadget_Site_Orient orie
    inst->pager = p;
    o = p->o_table;
    inst->o_pager = o;
-   inst->destroyed = EINA_FALSE;
    _pager_orient(inst, e_gadget_site_orient_get(parent));
 
    evas_object_event_callback_add(o, EVAS_CALLBACK_DEL, pager_del, inst);
    evas_object_smart_callback_add(parent, "gadget_created", _pager_gadget_created_cb, inst);
    evas_object_smart_callback_add(parent, "gadget_site_anchor", _pager_gadget_anchor_change_cb, inst);
-   evas_object_smart_callback_add(parent, "gadget_destroyed", _pager_gadget_destroyed_cb, inst);
    evas_object_event_callback_add(o, EVAS_CALLBACK_MOVE, _pager_cb_move, inst);
    evas_object_event_callback_add(o, EVAS_CALLBACK_MOUSE_DOWN,
                                   _button_cb_mouse_down, inst);
