@@ -239,10 +239,7 @@ _memusage_mouse_down_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_U
    if (ev->button != 3)
      {
         if (inst->cfg->memusage.popup)
-          {
-             elm_ctxpopup_dismiss(inst->cfg->memusage.popup);
-             inst->cfg->memusage.popup = NULL;
-          }
+          elm_ctxpopup_dismiss(inst->cfg->memusage.popup);
         else
           {
              inst->cfg->memusage.popup = _memusage_popup_create(inst);
@@ -252,10 +249,7 @@ _memusage_mouse_down_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_U
    else
      {
         if (inst->cfg->memusage.popup)
-          {
-             elm_ctxpopup_dismiss(inst->cfg->memusage.popup);
-             inst->cfg->memusage.popup = NULL;
-          }
+          elm_ctxpopup_dismiss(inst->cfg->memusage.popup);
         if (!sysinfo_config) return;
         ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
         if (inst->cfg->esm != E_SYSINFO_MODULE_MEMUSAGE)

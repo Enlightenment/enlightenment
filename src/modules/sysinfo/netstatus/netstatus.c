@@ -75,7 +75,6 @@ _netstatus_mouse_down_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_
         if (inst->cfg->netstatus.popup)
           {
              elm_ctxpopup_dismiss(inst->cfg->netstatus.popup);
-             inst->cfg->netstatus.popup = NULL;
              return;
           }
         popup = elm_ctxpopup_add(e_comp->elm);
@@ -99,10 +98,7 @@ _netstatus_mouse_down_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_
    else
      {
         if (inst->cfg->netstatus.popup)
-          {
-             elm_ctxpopup_dismiss(inst->cfg->netstatus.popup);
-             inst->cfg->netstatus.popup = NULL;
-          }
+          elm_ctxpopup_dismiss(inst->cfg->netstatus.popup);
         if (!sysinfo_config) return;
         ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
         if (inst->cfg->esm != E_SYSINFO_MODULE_NETSTATUS)

@@ -74,7 +74,6 @@ _cpumonitor_mouse_down_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA
         if (inst->cfg->cpumonitor.popup)
           {
              elm_ctxpopup_dismiss(inst->cfg->cpumonitor.popup);
-             inst->cfg->cpumonitor.popup = NULL;
              return;
           }
         popup = elm_ctxpopup_add(e_comp->elm);
@@ -106,10 +105,7 @@ _cpumonitor_mouse_down_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA
    else
      {
         if (inst->cfg->cpumonitor.popup)
-          {
-             elm_ctxpopup_dismiss(inst->cfg->cpumonitor.popup);
-             inst->cfg->cpumonitor.popup = NULL;
-          }
+          elm_ctxpopup_dismiss(inst->cfg->cpumonitor.popup);
         if (!sysinfo_config) return;
         ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
         if (inst->cfg->esm != E_SYSINFO_MODULE_CPUMONITOR)

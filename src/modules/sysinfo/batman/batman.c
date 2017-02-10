@@ -89,7 +89,6 @@ _batman_popup_create(Instance *inst)
 
    frame = elm_frame_add(popup);
    E_EXPAND(frame); E_FILL(frame);
-   printf("%d\n", inst->cfg->batman.full);
    if (inst->cfg->batman.have_power && (inst->cfg->batman.full < 99))
      elm_object_text_set(frame, _("Battery Charging"));
    else if (inst->cfg->batman.full >= 99)
@@ -144,22 +143,14 @@ _batman_mouse_down_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNU
    if (ev->button != 3)
      {
         if (inst->cfg->batman.popup)
-          {
-             elm_ctxpopup_dismiss(inst->cfg->batman.popup);
-             inst->cfg->batman.popup = NULL;
-          }
+          elm_ctxpopup_dismiss(inst->cfg->batman.popup);
         else
-          {
-             inst->cfg->batman.popup = _batman_popup_create(inst);
-          }
+          inst->cfg->batman.popup = _batman_popup_create(inst);
      }
    else
      {
         if (inst->cfg->batman.popup)
-          {
-             elm_ctxpopup_dismiss(inst->cfg->batman.popup);
-             inst->cfg->batman.popup = NULL;
-          }
+          elm_ctxpopup_dismiss(inst->cfg->batman.popup);
         if (!sysinfo_config) return;
         ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
         if (inst->cfg->esm != E_SYSINFO_MODULE_BATMAN)
