@@ -791,9 +791,9 @@ _event_generate(const char *key, const char *keyname, int mods, Eina_Bool up)
     * /usr/share/X11/xkb/keycodes/evdev is probably what your system is using
     */
    keycode = _xkb_keymap_key_by_name(e_comp_wl->xkb.keymap, keyname ?: key);
-   if (!keycode)
+   if (keycode == -1)
      {
-        ERR("no keycode found for key '%s'", key);
+        ERR("no keycode found for key '%s'", keyname ?: key);
         return;
      }
    ev = calloc(1, sizeof(Ecore_Event_Key) + (2 * (strlen(key) + 1)));
