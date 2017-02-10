@@ -7,12 +7,7 @@
 
 #include "www-server-protocol.h"
 
-/* When a wayland is released with this macro we can remove the ifdefs */
-#ifdef WL_SURFACE_DAMAGE_BUFFER_SINCE_VERSION
-# define COMPOSITOR_VERSION 4
-#else
-# define COMPOSITOR_VERSION 3
-#endif
+#define COMPOSITOR_VERSION 4
 
 E_API int E_EVENT_WAYLAND_GLOBAL_ADD = -1;
 
@@ -1793,10 +1788,7 @@ static const struct wl_surface_interface _e_surface_interface =
    _e_comp_wl_surface_cb_commit,
    _e_comp_wl_surface_cb_buffer_transform_set,
    _e_comp_wl_surface_cb_buffer_scale_set,
-/* remove ifdefs once damage_buffer is officially released */
-#ifdef WL_SURFACE_DAMAGE_BUFFER_SINCE_VERSION
    _e_comp_wl_surface_cb_damage_buffer
-#endif
 };
 
 
