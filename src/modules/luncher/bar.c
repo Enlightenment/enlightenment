@@ -60,7 +60,10 @@ _bar_check_for_duplicates(Icon *ic, E_Client *dupe)
    EINA_LIST_FREE(clients, ec)
      {
           if (ec == dupe)
-            return EINA_TRUE;
+            {
+               eina_list_free(clients);
+               return EINA_TRUE;
+            }
      }
    return EINA_FALSE;
 }
