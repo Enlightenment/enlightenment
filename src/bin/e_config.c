@@ -470,7 +470,6 @@ _e_config_edd_init(Eina_Bool old)
    E_CONFIG_VAL(D, T, config_type, UINT); /**/
    E_CONFIG_VAL(D, T, show_splash, INT); /**/
    E_CONFIG_VAL(D, T, desktop_default_background, STR); /**/
-   E_CONFIG_VAL(D, T, desktop_default_name, STR); /**/
    E_CONFIG_LIST(D, T, desktop_backgrounds, _e_config_desktop_bg_edd); /**/
    E_CONFIG_LIST(D, T, desktop_names, _e_config_desktop_name_edd); /**/
    E_CONFIG_VAL(D, T, menus_scroll_speed, DOUBLE); /**/
@@ -2420,7 +2419,6 @@ _e_config_free(E_Config *ecf)
         E_FREE(cc);
      }
    if (ecf->desktop_default_background) eina_stringshare_del(ecf->desktop_default_background);
-   if (ecf->desktop_default_name) eina_stringshare_del(ecf->desktop_default_name);
    if (ecf->language) eina_stringshare_del(ecf->language);
    eina_stringshare_del(ecf->desklock_language);
    eina_stringshare_del(ecf->xkb.selected_layout);

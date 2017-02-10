@@ -58,7 +58,7 @@ struct _E_Config
    int         show_splash; // GUI
    const char *desktop_default_background; // GUI
    Eina_List  *desktop_backgrounds; // GUI
-   const char *desktop_default_name;
+   const char *desktop_default_name; // DEAD
    Eina_List  *desktop_names; // GUI
    double      menus_scroll_speed; // GUI
    double      menus_fast_mouse_move_threshhold; // GUI

@@ -119,7 +119,7 @@ e_desk_new(E_Zone *zone, int x, int y)
 
    if (!ok)
      {
-        snprintf(name, sizeof(name), "%s: %d,%d", _(e_config->desktop_default_name), x, y);
+        snprintf(name, sizeof(name), "%d,%d", x, y);
         desk->name = eina_stringshare_add(name);
      }
 
@@ -232,9 +232,7 @@ e_desk_name_update(void)
 
                   if (!ok)
                     {
-                       snprintf(name, sizeof(name), "%s: %d,%d",
-                                _(e_config->desktop_default_name),
-                                d_x, d_y);
+                       snprintf(name, sizeof(name), "%d,%d", d_x, d_y);
                        e_desk_name_set(desk, name);
                     }
                }
