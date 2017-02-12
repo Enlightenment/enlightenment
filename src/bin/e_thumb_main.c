@@ -211,7 +211,7 @@ _e_ipc_cb_server_data(void *data EINA_UNUSED,
              /* formatted. if the thumbnailer dies anyway - it's not a big loss */
              /* but it is a sign of a bug in e formatting messages maybe */
              s = start = e->data;
-             desk = (const int *)(s);
+             desk = (const int *)(void *)(s);
              s += (4 * sizeof(int));
              file = s;
              s += strlen(s) + 1;
