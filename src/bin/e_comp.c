@@ -944,7 +944,7 @@ _e_comp_act_opacity_obj_finder(E_Object *obj)
    switch (obj->type)
      {
       case E_CLIENT_TYPE:
-        return ((E_Client*)obj)->frame;
+        return ((E_Client *)(void *)obj)->frame;
       case E_ZONE_TYPE:
       case E_COMP_TYPE:
       case E_MENU_TYPE:
@@ -952,7 +952,7 @@ _e_comp_act_opacity_obj_finder(E_Object *obj)
         return ec ? ec->frame : NULL;
      }
    if (e_obj_is_win(obj))
-     return e_win_client_get((void*)obj)->frame;
+     return e_win_client_get((void *)obj)->frame;
    ec = e_client_focused_get();
    return ec ? ec->frame : NULL;
 }
@@ -1620,7 +1620,7 @@ e_comp_e_object_layer_get(const E_Object *obj)
    switch (obj->type)
      {
       case E_GADCON_CLIENT_TYPE:
-        gc = ((E_Gadcon_Client *)(obj))->gadcon;
+        gc = ((E_Gadcon_Client *)(void *)(obj))->gadcon;
         EINA_SAFETY_ON_NULL_RETURN_VAL(gc, 0);
         /* no break */
       case E_GADCON_TYPE:
@@ -1633,7 +1633,7 @@ e_comp_e_object_layer_get(const E_Object *obj)
         return E_LAYER_DESKTOP;
 
       case E_CLIENT_TYPE:
-        return ((E_Client *)(obj))->layer;
+        return ((E_Client *)(void *)(obj))->layer;
 
       /* FIXME: add more types as needed */
       default:
