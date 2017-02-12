@@ -39,7 +39,7 @@
 #  define container_of(ptr, type, member) \
    ({ \
       const __typeof__( ((type *)0)->member ) *__mptr = (ptr); \
-      (type *)( (char *)__mptr - offsetof(type,member) ); \
+      (type *)(void *)( (char *)__mptr - offsetof(type,member) ); \
    })
 
 typedef struct _E_Comp_Wl_Buffer E_Comp_Wl_Buffer;
