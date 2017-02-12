@@ -184,7 +184,7 @@ download_media_complete(void *data EINA_UNUSED, int type EINA_UNUSED, Ecore_Con_
    void **test = ecore_con_url_data_get(ev->url_con);
 
    if ((!test) || (*test != tw_mod)) return ECORE_CALLBACK_RENEW;
-   i = (Media*)test;
+   i = (void *)test;
    if (!i->valid) return ECORE_CALLBACK_DONE;
    i->timestamp = (unsigned long long)ecore_time_unix_get();
    if (tw_media_add(i->addr, i->buf, i->timestamp, i->video) == 1)
@@ -203,7 +203,7 @@ download_media_data(void *data EINA_UNUSED, int type EINA_UNUSED, Ecore_Con_Even
    void **test = ecore_con_url_data_get(ev->url_con);
 
    if ((!test) || (*test != tw_mod)) return ECORE_CALLBACK_RENEW;
-   i = (Media*)test;
+   i = (void *)test;
    if (i->dummy) return ECORE_CALLBACK_DONE;
    if (!i->buf) i->buf = eina_binbuf_new();
    eina_binbuf_append_length(i->buf, ev->data, ev->size);
@@ -220,7 +220,7 @@ download_media_status(void *data EINA_UNUSED, int t EINA_UNUSED, Ecore_Con_Event
    void **test = ecore_con_url_data_get(ev->url_con);
 
    if ((!test) || (*test != tw_mod)) return ECORE_CALLBACK_RENEW;
-   i = (Media*)test;
+   i = (void *)test;
 
    if (i->valid)
      {
