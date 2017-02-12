@@ -366,7 +366,7 @@ _e_thumb_gen_begin(int objid, const char *file, const char *key, int w, int h,
    //  [char[]]sig2
    //  [char[]]src2
    //  ...
-   desk = (int *)buf;
+   desk = (int *)(void *)buf;
    desk[0] = desk_x;
    desk[1] = desk_y;
    desk[2] = desk_x_count;
