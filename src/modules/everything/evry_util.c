@@ -199,11 +199,19 @@ evry_fuzzy_match(const char *str, const char *match)
                {
                   ii = 0;
                   /* go to next word */
-                  for (; (p[0] && (s_len - (p - str) >= ii)) && !((isspace(*p) || (ip && ispunct(*p)))); p += ii)
-                    if (!eina_unicode_utf8_next_get(p, &ii)) break;
+                  for (; (p[0] && (s_len - (p - str) >= (unsigned int)ii)) &&
+                       !((isspace(*p) || (ip && ispunct(*p))));
+                       p += ii)
+                    {
+                       if (!eina_unicode_utf8_next_get(p, &ii)) break;
+                    }
                   ii = 0;
-                  for (; (p[0] && (s_len - (p - str) >= ii)) && ((isspace(*p) || (ip && ispunct(*p)))); p += ii)
-                    if (!eina_unicode_utf8_next_get(p, &ii)) break;
+                  for (; (p[0] && (s_len - (p - str) >= (unsigned int)ii)) &&
+                       ((isspace(*p) || (ip && ispunct(*p))));
+                       p += ii)
+                    {
+                       if (!eina_unicode_utf8_next_get(p, &ii)) break;
+                    }
                   cnt++;
                   next = p;
                   m_cnt = 0;
