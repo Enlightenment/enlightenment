@@ -800,7 +800,7 @@ _pulse_connect(void *data)
                     "org.enlightenment.volumecontrol");
    pa_proplist_sets(proplist, PA_PROP_APPLICATION_ICON_NAME, "audio-card");
 #if !defined(EMIXER_BUILD) && defined(HAVE_WAYLAND) && !defined(HAVE_WAYLAND_ONLY)
-   char *display;
+   char *display = NULL;
 
    if (e_comp->comp_type != E_PIXMAP_TYPE_X)
      {
@@ -825,8 +825,11 @@ _pulse_connect(void *data)
 #if !defined(EMIXER_BUILD) && defined(HAVE_WAYLAND) && !defined(HAVE_WAYLAND_ONLY)
    if (e_comp->comp_type != E_PIXMAP_TYPE_X)
      {
-        e_env_set("DISPLAY", display);
-        free(display);
+        if (display)
+          {
+             e_env_set("DISPLAY", display);
+             free(display);
+          }
      }
 #endif
 
