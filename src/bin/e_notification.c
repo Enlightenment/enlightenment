@@ -416,7 +416,7 @@ e_notification_notify_raw_image_get(E_Notification_Notify *notify, Evas *evas)
         for (y = 0; y < notify->icon.raw.height; y++)
           {
              s = notify->icon.raw.data + (y * notify->icon.raw.rowstride);
-             d = (int *)(imgdata + (y * rowstride));
+             d = (int *)(void *)(imgdata + (y * rowstride));
 
              for (x = 0; x < notify->icon.raw.width;
                   x++, s += notify->icon.raw.channels, d++)
