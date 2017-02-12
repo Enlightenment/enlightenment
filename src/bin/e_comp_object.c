@@ -3782,7 +3782,7 @@ e_comp_object_native_surface_override(Evas_Object *obj, Evas_Native_Surface *ns)
    if (cw->ec->input_only) return;
    E_FREE(cw->ns);
    if (ns)
-     cw->ns = (Evas_Native_Surface*)eina_memdup((unsigned char*)ns, sizeof(Evas_Native_Surface), 0);
+     cw->ns = (void *)eina_memdup((unsigned char *)ns, sizeof(Evas_Native_Surface), 0);
    _e_comp_object_alpha_set(cw);
    if (cw->native)
      e_comp_object_native_surface_set(obj, cw->native);
