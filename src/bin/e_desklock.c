@@ -295,7 +295,8 @@ e_desklock_show(Eina_Bool suspend)
 
         if (zone->num >= EINA_C_ARRAY_LENGTH(block_rects))
           {
-             CRI("> %lu screens connected????", EINA_C_ARRAY_LENGTH(block_rects));
+             CRI("> %lu screens connected????",
+                 (unsigned long)EINA_C_ARRAY_LENGTH(block_rects));
              break;
           }
         o = evas_object_rectangle_add(e_comp->evas);
@@ -710,7 +711,8 @@ e_desklock_zone_block_set(const E_Zone *zone, Eina_Bool block)
    EINA_SAFETY_ON_NULL_RETURN(zone);
    if (zone->num >= EINA_C_ARRAY_LENGTH(block_rects))
      {
-        CRI("> %lu screens connected????", EINA_C_ARRAY_LENGTH(block_rects));
+        CRI("> %lu screens connected????",
+            (unsigned long)EINA_C_ARRAY_LENGTH(block_rects));
         return;
      }
    block_zone[zone->num] = !!block;
