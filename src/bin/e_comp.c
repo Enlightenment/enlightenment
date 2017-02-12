@@ -775,7 +775,7 @@ _e_comp_shapes_update_job(void *d EINA_UNUSED)
    i = 0;
    EINA_ITERATOR_FOREACH(ti, tr)
      {
-        exr[i++] = *(Eina_Rectangle*)((char*)tr);
+        exr[i++] = *((Eina_Rectangle *)tr);
         if (i == tile_count - 1)
           exr = realloc(exr, sizeof(Eina_Rectangle) * (tile_count *= 2));
 #ifdef SHAPE_DEBUG
