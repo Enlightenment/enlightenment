@@ -718,7 +718,7 @@ _e_fm_ipc_cb_server_data(void *data EINA_UNUSED, int type EINA_UNUSED, void *eve
          relative = p;
          p += strlen(relative) + 1;
 
-         after = *((int *)p);
+         memcpy(&after, p, sizeof(int));
 
          _e_fm_ipc_reorder(file, dst, relative, after);
       }
