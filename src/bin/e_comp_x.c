@@ -4496,16 +4496,14 @@ _e_comp_x_hook_client_fetch(void *d EINA_UNUSED, E_Client *ec)
      }
    if (cd->fetch_gtk_frame_extents)
      {
-        unsigned char *data;
+        unsigned int *extents;
         int count;
 
         if (ecore_x_window_prop_property_get(win,
                                              ATM_GTK_FRAME_EXTENTS,
                                              ECORE_X_ATOM_CARDINAL, 32,
-                                             &data, &count))
+                                             (void *)(&extents), &count))
           {
-             unsigned int *extents = (unsigned int*)data;
-
              /* _GTK_FRAME_EXTENTS describes a region l/r/t/b pixels
               * from the "window" object in which shadows will be drawn.
               * this area should not be accounted for in sizing or
@@ -4517,7 +4515,7 @@ _e_comp_x_hook_client_fetch(void *d EINA_UNUSED, E_Client *ec)
                 (ec->x == ec->comp_data->initial_attributes.x) &&
                 (ec->y == ec->comp_data->initial_attributes.y))
                e_comp_object_frame_xy_adjust(ec->frame, ec->x, ec->y, &ec->x, &ec->y);
-             free(data);
+             free(extents);
           }
         cd->fetch_gtk_frame_extents = 0;
      }
