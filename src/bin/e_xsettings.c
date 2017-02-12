@@ -273,13 +273,16 @@ _e_xsettings_copy(unsigned char *buffer, Setting *s)
 {
    size_t str_len;
    size_t len;
+   C16 tmp16;
+   C32 tmp32;
 
    buffer[0] = s->type;
    buffer[1] = 0;
    buffer += 2;
 
    str_len = strlen(s->name);
-   *(C16 *)(buffer) = str_len;
+   tmp16 = str_len;
+   memcpy(buffer, &tmp16, sizeof(C16));
    buffer += 2;
 
    memcpy(buffer, s->name, str_len);
@@ -289,19 +292,22 @@ _e_xsettings_copy(unsigned char *buffer, Setting *s)
    memset(buffer, 0, len);
    buffer += len;
 
-   *(C32 *)(buffer) = s->last_change;
+   tmp32 = s->last_change;
+   memcpy(buffer, &tmp32, sizeof(C32));
    buffer += 4;
 
    switch (s->type)
      {
       case SETTING_TYPE_INT:
-        *(C32 *)(buffer) = s->i.value;
+        tmp32 = s->i.value;
+        memcpy(buffer, &tmp32, sizeof(C32));
         buffer += 4;
         break;
 
       case SETTING_TYPE_STRING:
         str_len = strlen(s->s.value);
-        *(C32 *)(buffer) = str_len;
+        tmp32 = str_len;
+        memcpy(buffer, &tmp32, sizeof(C32));
         buffer += 4;
 
         memcpy(buffer, s->s.value, str_len);
@@ -313,11 +319,18 @@ _e_xsettings_copy(unsigned char *buffer, Setting *s)
         break;
 
       case SETTING_TYPE_COLOR:
-        *(C16 *)(buffer) = s->c.red;
-        *(C16 *)(buffer + 2) = s->c.green;
-        *(C16 *)(buffer + 4) = s->c.blue;
-        *(C16 *)(buffer + 6) = s->c.alpha;
-        buffer += 8;
+        tmp16 = s->c.red;
+        memcpy(buffer, &tmp16, sizeof(C16));
+        buffer += 2;
+        tmp16 = s->c.green;
+        memcpy(buffer, &tmp16, sizeof(C16));
+        buffer += 2;
+        tmp16 = s->c.blue;
+        memcpy(buffer, &tmp16, sizeof(C16));
+        buffer += 2;
+        tmp16 = s->c.alpha;
+        memcpy(buffer, &tmp16, sizeof(C16));
+        buffer += 2;
         break;
      }
 
@@ -332,6 +345,7 @@ _e_xsettings_apply(Settings_Manager *sm)
    size_t len = 12;
    Setting *s;
    Eina_List *l;
+   C32 tmp32;
 
    EINA_LIST_FOREACH(settings, l, s)
      len += s->length;
@@ -346,9 +360,11 @@ _e_xsettings_apply(Settings_Manager *sm)
 #endif
 
    pos += 4;
-   *(C32 *)pos = sm->serial++;
+   tmp32 = sm->serial++;
+   memcpy(pos, &tmp32, sizeof(C32));
    pos += 4;
-   *(C32 *)pos = eina_list_count(settings);
+   tmp32 = eina_list_count(settings);
+   memcpy(pos, &tmp32, sizeof(C32));
    pos += 4;
 
    EINA_LIST_FOREACH(settings, l, s)
