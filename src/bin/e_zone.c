@@ -1398,13 +1398,13 @@ e_zone_obstacle_modify(E_Zone_Obstacle *obs, Eina_Rectangle *geom, Eina_Bool ver
 
    if (obs->owner->type == E_DESK_TYPE)
      {
-        desk = (E_Desk*)obs->owner;
+        desk = (void *)obs->owner;
         if (desk->visible)
           e_zone_useful_geometry_dirty(desk->zone);
      }
    else
      {
-        zone = (E_Zone*)obs->owner;
+        zone = (void *)obs->owner;
         e_zone_useful_geometry_dirty(zone);
      }
 }
@@ -1696,14 +1696,14 @@ _e_zone_obstacle_free(E_Zone_Obstacle *obs)
 
    if (obs->owner->type == E_DESK_TYPE)
      {
-        desk = (E_Desk*)obs->owner;
+        desk = (void *)obs->owner;
         desk->obstacles = eina_inlist_remove(desk->obstacles, EINA_INLIST_GET(obs));
         if (desk->visible)
           e_zone_useful_geometry_dirty(desk->zone);
      }
    else
      {
-        zone = (E_Zone*)obs->owner;
+        zone = (void *)obs->owner;
         zone->obstacles = eina_inlist_remove(zone->obstacles, EINA_INLIST_GET(obs));
         e_zone_useful_geometry_dirty(zone);
      }

@@ -97,8 +97,8 @@ ACT_FN_GO(window_move, EINA_UNUSED)
      obj = E_OBJECT(e_client_focused_get());
    if (!obj) return;
    if (obj->type != E_CLIENT_TYPE) return;
-   if (!((E_Client *)obj)->lock_user_location)
-     e_client_act_move_begin((E_Client *)obj, NULL);
+   if (!((E_Client *)(void *)obj)->lock_user_location)
+     e_client_act_move_begin((E_Client *)(void *)obj, NULL);
 }
 
 ACT_FN_GO_MOUSE(window_move, EINA_UNUSED)
@@ -106,7 +106,7 @@ ACT_FN_GO_MOUSE(window_move, EINA_UNUSED)
    if (!obj) obj = E_OBJECT(e_client_focused_get());
    if (!obj) return EINA_FALSE;
    if (obj->type != E_CLIENT_TYPE) return EINA_FALSE;
-   e_client_act_move_begin((E_Client *)obj, ev);
+   e_client_act_move_begin((E_Client *)(void *)obj, ev);
    return EINA_TRUE;
 }
 
@@ -115,14 +115,14 @@ ACT_FN_GO_SIGNAL(window_move, )
    if (!obj) obj = E_OBJECT(e_client_focused_get());
    if (!obj) return;
    if (obj->type != E_CLIENT_TYPE) return;
-   if (!((E_Client *)obj)->lock_user_location)
+   if (!((E_Client *)(void *)obj)->lock_user_location)
      {
         if ((params) && (!strcmp(params, "end")))
-          e_client_signal_move_end((E_Client *)obj, sig, src);
+          e_client_signal_move_end((E_Client *)(void *)obj, sig, src);
         else
           {
-             if (!((E_Client *)obj)->moving)
-               e_client_signal_move_begin((E_Client *)obj, sig, src);
+             if (!((E_Client *)(void *)obj)->moving)
+               e_client_signal_move_begin((E_Client *)(void *)obj, sig, src);
           }
      }
 }
@@ -132,7 +132,7 @@ ACT_FN_END(window_move, EINA_UNUSED)
    if (!obj) obj = E_OBJECT(e_client_focused_get());
    if (!obj) return;
    if (obj->type != E_CLIENT_TYPE) return;
-   e_client_act_move_end((E_Client *)obj, NULL);
+   e_client_act_move_end((E_Client *)(void *)obj, NULL);
 }
 
 ACT_FN_END_MOUSE(window_move, EINA_UNUSED)
@@ -140,7 +140,7 @@ ACT_FN_END_MOUSE(window_move, EINA_UNUSED)
    if (!obj) obj = E_OBJECT(e_client_focused_get());
    if (!obj) return EINA_FALSE;
    if (obj->type != E_CLIENT_TYPE) return EINA_FALSE;
-   e_client_act_move_end((E_Client *)obj, ev);
+   e_client_act_move_end((E_Client *)(void *)obj, ev);
    return EINA_TRUE;
 }
 
@@ -148,8 +148,8 @@ ACT_FN_GO_KEY(window_move, EINA_UNUSED, EINA_UNUSED)
 {
    if (!obj) obj = E_OBJECT(e_client_focused_get());
    if (!obj) return;
-   if (!((E_Client *)obj)->lock_user_location)
-     e_client_act_move_keyboard((E_Client *)obj);
+   if (!((E_Client *)(void *)obj)->lock_user_location)
+     e_client_act_move_keyboard((E_Client *)(void *)obj);
 }
 
 /***************************************************************************/
@@ -158,8 +158,8 @@ ACT_FN_GO(window_resize, EINA_UNUSED)
    if ((!obj) || (obj->type != E_CLIENT_TYPE))
      obj = E_OBJECT(e_client_focused_get());
    if (!obj) return;
-   if (!((E_Client *)obj)->lock_user_size)
-     e_client_act_resize_begin((E_Client *)obj, NULL);
+   if (!((E_Client *)(void *)obj)->lock_user_size)
+     e_client_act_resize_begin((E_Client *)(void *)obj, NULL);
 }
 
 ACT_FN_GO_MOUSE(window_resize, EINA_UNUSED)
@@ -167,8 +167,8 @@ ACT_FN_GO_MOUSE(window_resize, EINA_UNUSED)
    if (!obj) obj = E_OBJECT(e_client_focused_get());
    if (!obj) return EINA_FALSE;
    if (obj->type != E_CLIENT_TYPE) return EINA_FALSE;
-   if (!((E_Client *)obj)->lock_user_size)
-     e_client_act_resize_begin((E_Client *)obj, ev);
+   if (!((E_Client *)(void *)obj)->lock_user_size)
+     e_client_act_resize_begin((E_Client *)(void *)obj, ev);
    return EINA_TRUE;
 }
 
@@ -177,17 +177,17 @@ ACT_FN_GO_SIGNAL(window_resize, )
    if (!obj) obj = E_OBJECT(e_client_focused_get());
    if (!obj) return;
    if (obj->type != E_CLIENT_TYPE) return;
-   if (!((E_Client *)obj)->lock_user_size)
+   if (!((E_Client *)(void *)obj)->lock_user_size)
      {
         if ((params) && (!strcmp(params, "end")))
-          e_client_signal_resize_end((E_Client *)obj, params, sig, src);
+          e_client_signal_resize_end((E_Client *)(void *)obj, params, sig, src);
         else
           {
              if (!params) params = "";
-             if (e_client_util_resizing_get((E_Client *)obj))
-               e_client_signal_resize_end((E_Client *)obj, params, sig, src);
+             if (e_client_util_resizing_get((E_Client *)(void *)obj))
+               e_client_signal_resize_end((E_Client *)(void *)obj, params, sig, src);
              else
-               e_client_signal_resize_begin((E_Client *)obj, params, sig, src);
+               e_client_signal_resize_begin((E_Client *)(void *)obj, params, sig, src);
           }
      }
 }
@@ -197,7 +197,7 @@ ACT_FN_END(window_resize, EINA_UNUSED)
    if (!obj) obj = E_OBJECT(e_client_focused_get());
    if (!obj) return;
    if (obj->type != E_CLIENT_TYPE) return;
-   e_client_act_resize_end((E_Client *)obj, NULL);
+   e_client_act_resize_end((E_Client *)(void *)obj, NULL);
 }
 
 ACT_FN_END_MOUSE(window_resize, EINA_UNUSED)
@@ -205,7 +205,7 @@ ACT_FN_END_MOUSE(window_resize, EINA_UNUSED)
    if (!obj) obj = E_OBJECT(e_client_focused_get());
    if (!obj) return EINA_FALSE;
    if (obj->type != E_CLIENT_TYPE) return EINA_FALSE;
-   e_client_act_resize_end((E_Client *)obj, ev);
+   e_client_act_resize_end((E_Client *)(void *)obj, ev);
    return EINA_TRUE;
 }
 
@@ -218,8 +218,8 @@ ACT_FN_GO_KEY(window_resize, EINA_UNUSED, EINA_UNUSED)
         obj = E_OBJECT(e_client_focused_get());
         if (!obj) return;
      }
-   if (!((E_Client *)obj)->lock_user_size)
-     e_client_act_resize_keyboard((E_Client *)obj);
+   if (!((E_Client *)(void *)obj)->lock_user_size)
+     e_client_act_resize_keyboard((E_Client *)(void *)obj);
 }
 
 /***************************************************************************/
@@ -228,7 +228,7 @@ ACT_FN_GO(window_menu, EINA_UNUSED)
    if ((!obj) || (obj->type != E_CLIENT_TYPE))
      obj = E_OBJECT(e_client_focused_get());
    if (!obj) return;
-   e_client_act_menu_begin((E_Client *)obj, NULL, 0);
+   e_client_act_menu_begin((E_Client *)(void *)obj, NULL, 0);
 }
 
 ACT_FN_GO_MOUSE(window_menu, EINA_UNUSED)
@@ -240,7 +240,7 @@ ACT_FN_GO_MOUSE(window_menu, EINA_UNUSED)
         obj = E_OBJECT(e_client_focused_get());
         if (!obj) return EINA_FALSE;
      }
-   e_client_act_menu_begin((E_Client *)obj, ev, 0);
+   e_client_act_menu_begin((E_Client *)(void *)obj, ev, 0);
    return EINA_TRUE;
 }
 
@@ -253,7 +253,7 @@ ACT_FN_GO_KEY(window_menu, EINA_UNUSED, EINA_UNUSED)
         obj = E_OBJECT(e_client_focused_get());
         if (!obj) return;
      }
-   e_client_act_menu_begin((E_Client *)obj, NULL, 1);
+   e_client_act_menu_begin((E_Client *)(void *)obj, NULL, 1);
 }
 
 /***************************************************************************/
@@ -262,8 +262,8 @@ ACT_FN_GO(window_raise, EINA_UNUSED)
    if ((!obj) || (obj->type != E_CLIENT_TYPE))
      obj = E_OBJECT(e_client_focused_get());
    if (!obj) return;
-   if (!((E_Client *)obj)->lock_user_stacking)
-     evas_object_raise(((E_Client *)obj)->frame);
+   if (!((E_Client *)(void *)obj)->lock_user_stacking)
+     evas_object_raise(((E_Client *)(void *)obj)->frame);
 }
 
 /***************************************************************************/
@@ -272,8 +272,8 @@ ACT_FN_GO(window_lower, EINA_UNUSED)
    if ((!obj) || (obj->type != E_CLIENT_TYPE))
      obj = E_OBJECT(e_client_focused_get());
    if (!obj) return;
-   if (!((E_Client *)obj)->lock_user_stacking)
-     evas_object_lower(((E_Client *)obj)->frame);
+   if (!((E_Client *)(void *)obj)->lock_user_stacking)
+     evas_object_lower(((E_Client *)(void *)obj)->frame);
 }
 
 /***************************************************************************/
@@ -282,8 +282,8 @@ ACT_FN_GO(window_close, EINA_UNUSED)
    if ((!obj) || (obj->type != E_CLIENT_TYPE))
      obj = E_OBJECT(e_client_focused_get());
    if (!obj) return;
-   if (!((E_Client *)obj)->lock_close)
-     e_client_act_close_begin((E_Client *)obj);
+   if (!((E_Client *)(void *)obj)->lock_close)
+     e_client_act_close_begin((E_Client *)(void *)obj);
 }
 
 /***************************************************************************/
@@ -300,8 +300,8 @@ _e_actions_cb_kill_dialog_ok(void *data, E_Dialog *dia)
         e_object_del(E_OBJECT(kill_dialog));
         kill_dialog = NULL;
      }
-   if ((!((E_Client *)obj)->lock_close) && (!((E_Client *)obj)->internal))
-     e_client_act_kill_begin((E_Client *)obj);
+   if ((!((E_Client *)(void *)obj)->lock_close) && (!((E_Client *)(void *)obj)->internal))
+     e_client_act_kill_begin((E_Client *)(void *)obj);
 }
 
 static void
@@ -325,7 +325,7 @@ ACT_FN_GO(window_kill, EINA_UNUSED)
    if ((!obj) || (obj->type != E_CLIENT_TYPE))
      obj = E_OBJECT(e_client_focused_get());
    if (!obj) return;
-   ec = (E_Client *)obj;
+   ec = (E_Client *)(void *)obj;
    if ((ec->lock_close) || (ec->internal)) return;
 
    if (kill_dialog) e_object_del(E_OBJECT(kill_dialog));
@@ -367,11 +367,11 @@ ACT_FN_GO(window_sticky_toggle, EINA_UNUSED)
    if ((!obj) || (obj->type != E_CLIENT_TYPE))
      obj = E_OBJECT(e_client_focused_get());
    if (!obj) return;
-   if (!((E_Client *)obj)->lock_user_sticky)
+   if (!((E_Client *)(void *)obj)->lock_user_sticky)
      {
         E_Client *ec;
 
-        ec = (E_Client *)obj;
+        ec = (E_Client *)(void *)obj;
         if (ec->sticky) e_client_unstick(ec);
         else e_client_stick(ec);
      }
@@ -383,11 +383,11 @@ ACT_FN_GO(window_sticky, )
    if ((!obj) || (obj->type != E_CLIENT_TYPE))
      obj = E_OBJECT(e_client_focused_get());
    if (!obj) return;
-   if (!((E_Client *)obj)->lock_user_sticky)
+   if (!((E_Client *)(void *)obj)->lock_user_sticky)
      {
         E_Client *ec;
 
-        ec = (E_Client *)obj;
+        ec = (E_Client *)(void *)obj;
         if (params)
           {
              if (atoi(params) == 1)
@@ -406,7 +406,7 @@ ACT_FN_GO(window_iconic_toggle, EINA_UNUSED)
    if ((!obj) || (obj->type != E_CLIENT_TYPE))
      obj = E_OBJECT(e_client_focused_get());
    if (!obj) return;
-   ec = (E_Client *)obj;
+   ec = (E_Client *)(void *)obj;
 
    if ((!ec->lock_user_iconify) && (!ec->fullscreen) &&
        ((ec->netwm.type == E_WINDOW_TYPE_NORMAL) ||
@@ -423,11 +423,11 @@ ACT_FN_GO(window_iconic, )
    if ((!obj) || (obj->type != E_CLIENT_TYPE))
      obj = E_OBJECT(e_client_focused_get());
    if (!obj) return;
-   if (!((E_Client *)obj)->lock_user_iconify)
+   if (!((E_Client *)(void *)obj)->lock_user_iconify)
      {
         E_Client *ec;
 
-        ec = (E_Client *)obj;
+        ec = (E_Client *)(void *)obj;
         if (params)
           {
              if (atoi(params) == 1)
@@ -444,11 +444,11 @@ ACT_FN_GO(window_fullscreen_toggle, )
    if ((!obj) || (obj->type != E_CLIENT_TYPE))
      obj = E_OBJECT(e_client_focused_get());
    if (!obj) return;
-   if (!((E_Client *)obj)->lock_user_fullscreen)
+   if (!((E_Client *)(void *)obj)->lock_user_fullscreen)
      {
         E_Client *ec;
 
-        ec = (E_Client *)obj;
+        ec = (E_Client *)(void *)obj;
         if (ec->fullscreen)
           e_client_unfullscreen(ec);
         else if (!params || *params == '\0')
@@ -466,11 +466,11 @@ ACT_FN_GO(window_fullscreen, )
    if ((!obj) || (obj->type != E_CLIENT_TYPE))
      obj = E_OBJECT(e_client_focused_get());
    if (!obj) return;
-   if (!((E_Client *)obj)->lock_user_fullscreen)
+   if (!((E_Client *)(void *)obj)->lock_user_fullscreen)
      {
         E_Client *ec;
 
-        ec = (E_Client *)obj;
+        ec = (E_Client *)(void *)obj;
         if (params)
           {
              int v;
@@ -504,7 +504,7 @@ ACT_FN_GO(window_maximized_toggle, )
    if ((!obj) || (obj->type != E_CLIENT_TYPE))
      obj = E_OBJECT(e_client_focused_get());
    if (!obj) return;
-   ec = (E_Client *)obj;
+   ec = (E_Client *)(void *)obj;
 
    /* internal dialog which is resizable */
    if (ec->internal && (ec->netwm.type == E_WINDOW_TYPE_DIALOG))
@@ -568,11 +568,11 @@ ACT_FN_GO(window_maximized, )
    if ((!obj) || (obj->type != E_CLIENT_TYPE))
      obj = E_OBJECT(e_client_focused_get());
    if (!obj) return;
-   if (!((E_Client *)obj)->lock_user_maximize)
+   if (!((E_Client *)(void *)obj)->lock_user_maximize)
      {
         E_Client *ec;
 
-        ec = (E_Client *)obj;
+        ec = (E_Client *)(void *)obj;
         if (params)
           {
              E_Maximize max;
@@ -622,11 +622,11 @@ ACT_FN_GO(window_shaded_toggle, )
    if ((!obj) || (obj->type != E_CLIENT_TYPE))
      obj = E_OBJECT(e_client_focused_get());
    if (!obj) return;
-   if (!((E_Client *)obj)->lock_user_shade)
+   if (!((E_Client *)(void *)obj)->lock_user_shade)
      {
         E_Client *ec;
 
-        ec = (E_Client *)obj;
+        ec = (E_Client *)(void *)obj;
         if (ec->shaded)
           {
              if (!params)
@@ -672,11 +672,11 @@ ACT_FN_GO(window_shaded, )
    if ((!obj) || (obj->type != E_CLIENT_TYPE))
      obj = E_OBJECT(e_client_focused_get());
    if (!obj) return;
-   if (!((E_Client *)obj)->lock_user_shade)
+   if (!((E_Client *)(void *)obj)->lock_user_shade)
      {
         E_Client *ec;
 
-        ec = (E_Client *)obj;
+        ec = (E_Client *)(void *)obj;
         if (!e_comp_object_frame_allowed(ec->frame)) return;
         if (params)
           {
@@ -718,11 +718,11 @@ ACT_FN_GO(window_borderless_toggle, EINA_UNUSED)
    if ((!obj) || (obj->type != E_CLIENT_TYPE))
      obj = E_OBJECT(e_client_focused_get());
    if (!obj) return;
-   if (!((E_Client *)obj)->lock_border)
+   if (!((E_Client *)(void *)obj)->lock_border)
      {
         E_Client *ec;
 
-        ec = (E_Client *)obj;
+        ec = (E_Client *)(void *)obj;
         if (!e_comp_object_frame_allowed(ec->frame)) return;
         ec->borderless = !ec->borderless;
 
@@ -737,11 +737,11 @@ ACT_FN_GO(window_border_set, EINA_UNUSED)
    if ((!obj) || (obj->type != E_CLIENT_TYPE))
      obj = E_OBJECT(e_client_focused_get());
    if (!obj) return;
-   if (!((E_Client *)obj)->lock_border)
+   if (!((E_Client *)(void *)obj)->lock_border)
      {
         E_Client *ec;
 
-        ec = (E_Client *)obj;
+        ec = (E_Client *)(void *)obj;
         if (!e_comp_object_frame_allowed(ec->frame)) return;
         if (ec && params)
           {
@@ -758,11 +758,11 @@ ACT_FN_GO(window_border_cycle, EINA_UNUSED)
    if ((!obj) || (obj->type != E_CLIENT_TYPE))
      obj = E_OBJECT(e_client_focused_get());
    if (!obj) return;
-   if (!((E_Client *)obj)->lock_border)
+   if (!((E_Client *)(void *)obj)->lock_border)
      {
         E_Client *ec;
 
-        ec = (E_Client *)obj;
+        ec = (E_Client *)(void *)obj;
         if (!e_comp_object_frame_allowed(ec->frame)) return;
         if (ec && params)
           {
@@ -817,11 +817,11 @@ ACT_FN_GO(window_pinned_toggle, EINA_UNUSED)
    if ((!obj) || (obj->type != E_CLIENT_TYPE))
      obj = E_OBJECT(e_client_focused_get());
    if (!obj) return;
-   if (!((E_Client *)obj)->lock_border)
+   if (!((E_Client *)(void *)obj)->lock_border)
      {
         E_Client *ec;
 
-        ec = (E_Client *)obj;
+        ec = (E_Client *)(void *)obj;
         if ((ec->netwm.state.stacking == E_STACKING_BELOW) &&
             (ec->user_skip_winlist) && (ec->borderless))
           e_client_pinned_set(ec, 0);
@@ -848,7 +848,7 @@ ACT_FN_GO(window_move_by, )
           {
              E_Client *ec;
 
-             ec = (E_Client *)obj;
+             ec = (E_Client *)(void *)obj;
              evas_object_move(ec->frame, ec->x + dx, ec->y + dy);
 
              e_util_pointer_center(ec);
@@ -868,7 +868,7 @@ ACT_FN_GO(window_move_to, )
         int x, y, zx, zy, zw, zh;
         char cx, cy;
 
-        ec = (E_Client *)obj;
+        ec = (E_Client *)(void *)obj;
         e_zone_useful_geometry_get(ec->zone, &zx, &zy, &zw, &zh);
 
         if (sscanf(params, "%c%i %c%i", &cx, &x, &cy, &y) == 4)
@@ -915,7 +915,7 @@ ACT_FN_GO(window_quick_tile_to_quadrant, )
 
    if (!obj) return;
 
-   ec = (E_Client *)obj;
+   ec = (E_Client *)(void *)obj;
    if((ec->maximized & E_MAXIMIZE_TYPE) != E_MAXIMIZE_NONE)
       e_client_unmaximize(ec, E_MAXIMIZE_BOTH);
    e_zone_useful_geometry_get(ec->zone, &zx, &zy, &zw, &zh);
@@ -959,7 +959,7 @@ ACT_FN_GO(window_move_to_center, EINA_UNUSED)
      obj = E_OBJECT(e_client_focused_get());
    if (!obj) return;
 
-   ec = (E_Client *)obj;
+   ec = (E_Client *)(void *)obj;
    e_comp_object_util_center(ec->frame);
 
    e_util_pointer_center(ec);
@@ -980,7 +980,7 @@ ACT_FN_GO(window_resize_by, )
           {
              E_Client *ec;
 
-             ec = (E_Client *)obj;
+             ec = (E_Client *)(void *)obj;
 
              dw += ec->w;
              dh += ec->h;
@@ -1049,7 +1049,7 @@ ACT_FN_GO(window_push, )
         else
           return;
 
-        ec = (E_Client *)obj;
+        ec = (E_Client *)(void *)obj;
         e_zone_useful_geometry_get(ec->zone, &zx, &zy, &zw, &zh);
 
         if (hdir < 0) x = zx;
@@ -1186,7 +1186,7 @@ ACT_FN_GO(window_drag_icon, EINA_UNUSED)
    {
       E_Client *ec;
 
-      ec = (E_Client *)obj;
+      ec = (E_Client *)(void *)obj;
       ec->drag.start = 1;
       ec->drag.x = -1;
       ec->drag.y = -1;
@@ -1206,7 +1206,7 @@ ACT_FN_GO(window_desk_move_by, )
      obj = E_OBJECT(e_client_action_get());
    if (!obj) return;
 
-   ec = (E_Client *)obj;
+   ec = (E_Client *)(void *)obj;
    if ((!ec->zone) || (!ec->desk)) return;
    if (sscanf(params, "%d %d", &x, &y) == 2)
      {
@@ -1268,7 +1268,7 @@ ACT_FN_GO(window_zone_move_by, )
      obj = E_OBJECT(e_client_action_get());
    if (!obj) return;
 
-   ec = (E_Client *)obj;
+   ec = (E_Client *)(void *)obj;
    /* bad */
    if (!ec->zone) return;
    /* only one screen */
@@ -1308,7 +1308,7 @@ ACT_FN_GO(window_desk_move_to, )
      obj = E_OBJECT(e_client_action_get());
    if (!obj) return;
 
-   ec = (E_Client *)obj;
+   ec = (E_Client *)(void *)obj;
    if ((!ec->zone) || (!ec->desk)) return;
    if (sscanf(params, "%d %d", &x, &y) == 2)
      {
@@ -1328,9 +1328,9 @@ _e_actions_zone_get(E_Object *obj)
         if (obj->type == (int)E_COMP_TYPE)
           return e_zone_current_get();
         else if (obj->type == (int)E_ZONE_TYPE)
-          return (E_Zone *)obj;
+          return (void *)obj;
         else if (obj->type == (int)E_CLIENT_TYPE)
-          return ((E_Client *)obj)->zone;
+          return ((E_Client *)(void *)obj)->zone;
         else if (obj->type == (int)E_SHELF_TYPE)
           return ((E_Shelf *)obj)->zone;
         else if (e_obj_is_win(obj))
@@ -1980,7 +1980,7 @@ ACT_FN_GO(app_new_instance, EINA_UNUSED)
         obj = E_OBJECT(e_client_focused_get());
         if (!obj) return;
      }
-   ec = (E_Client *)obj;
+   ec = (E_Client *)(void *)obj;
 
    if (ec->desktop)
      e_exec(zone, ec->desktop, NULL, NULL, "action/app");
@@ -2436,7 +2436,7 @@ ACT_FN_GO(pointer_resize_push, )
      {
         E_Client *ec;
 
-        ec = (E_Client *)obj;
+        ec = (E_Client *)(void *)obj;
         if ((ec->lock_user_size) || (ec->shaded) || (ec->shading) ||
             (ec->fullscreen) || ((ec->maximized) && (!e_config->allow_manip)))
           return;
@@ -2452,7 +2452,7 @@ ACT_FN_GO(pointer_resize_pop, )
      {
         E_Client *ec;
 
-        ec = (E_Client *)obj;
+        ec = (E_Client *)(void *)obj;
         if ((ec->lock_user_size) || (ec->shaded) || (ec->shading) ||
             (ec->fullscreen) || ((ec->maximized) && (!e_config->allow_manip)))
           return;

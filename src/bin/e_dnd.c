@@ -670,7 +670,7 @@ _e_drag_coords_update(const E_Drop_Handler *h, int *dx, int *dy)
              break;
 
            case E_GADCON_CLIENT_TYPE:
-             gc = ((E_Gadcon_Client *)(h->obj))->gadcon;
+             gc = ((E_Gadcon_Client *)(void *)(h->obj))->gadcon;
              e_gadcon_canvas_zone_geometry_get(gc, &px, &py, NULL, NULL);
              if (!gc->toolbar) break;
              {
@@ -689,8 +689,8 @@ _e_drag_coords_update(const E_Drop_Handler *h, int *dx, int *dy)
              break;
 
            case E_CLIENT_TYPE:
-             px = ((E_Client *)(h->obj))->x;
-             py = ((E_Client *)(h->obj))->y;
+             px = ((E_Client *)(void *)(h->obj))->x;
+             py = ((E_Client *)(void *)(h->obj))->y;
              break;
 
            /* FIXME: add more types as needed */
@@ -716,7 +716,7 @@ _e_drag_win_get(const E_Drop_Handler *h, int xdnd)
         switch (h->obj->type)
           {
            case E_GADCON_CLIENT_TYPE:
-             gc = ((E_Gadcon_Client *)(h->obj))->gadcon;
+             gc = ((E_Gadcon_Client *)(void *)(h->obj))->gadcon;
              if (!gc) return 0;
              /* no break */
            case E_GADCON_TYPE:
@@ -768,7 +768,7 @@ _e_drag_win_show(E_Drop_Handler *h)
              break;
 
            case E_GADCON_CLIENT_TYPE:
-             shelf = e_gadcon_shelf_get(((E_Gadcon_Client *)(h->obj))->gadcon);
+             shelf = e_gadcon_shelf_get(((E_Gadcon_Client *)(void *)(h->obj))->gadcon);
              if (shelf) e_shelf_toggle(shelf, 1);
              break;
 
@@ -795,7 +795,7 @@ _e_drag_win_hide(E_Drop_Handler *h)
              break;
 
            case E_GADCON_CLIENT_TYPE:
-             shelf = e_gadcon_shelf_get(((E_Gadcon_Client *)(h->obj))->gadcon);
+             shelf = e_gadcon_shelf_get(((E_Gadcon_Client *)(void *)(h->obj))->gadcon);
              if (shelf) e_shelf_toggle(shelf, 0);
              break;
 

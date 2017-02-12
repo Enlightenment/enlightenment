@@ -1228,7 +1228,7 @@ _e_mod_action_cb(E_Object *obj, const char *params)
         if (obj->type == E_COMP_TYPE)
           zone = e_zone_current_get();
         else if (obj->type == E_ZONE_TYPE)
-          zone = ((E_Zone *)obj);
+          zone = ((void *)obj);
         else
           zone = e_zone_current_get();
      }
