@@ -50,7 +50,7 @@ struct _CFText_Class
    const char    *font;
    const char    *style;
    Evas_Font_Size size;
-   unsigned char  enabled;
+   int            enabled;
 };
 
 const E_Text_Class_Pair text_class_predefined_names[] = {
@@ -815,7 +815,7 @@ _adv_class_cb_change(void *data, Evas_Object *obj EINA_UNUSED)
      }
    tc = e_widget_ilist_selected_data_get(cfdata->gui.class_list);
    if (!tc) return;
-   e_widget_check_valptr_set(cfdata->gui.enabled, (int*)&tc->enabled);
+   e_widget_check_valptr_set(cfdata->gui.enabled, &tc->enabled);
 
    cfdata->cur_class = tc;
 
