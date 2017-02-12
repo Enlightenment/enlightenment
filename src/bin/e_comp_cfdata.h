@@ -65,16 +65,16 @@ struct _E_Comp_Match
    const char *visibility_effect; // effect to use when showing and hiding
 
    int         primary_type; // Ecore_X_Window_Type - used for borders, overrides, first one found - ECORE_X_WINDOW_TYPE_UNKNOWN if not to be used
-   char        borderless; // used for borders, 0 == dont use, 1 == borderless, -1 == not borderless
-   char        dialog; // used for borders, 0 == don't use, 1 == dialog, -1 == not dialog
-   char        accepts_focus; // used for borders, 0 == don't use, 1 == accepts focus, -1 == does not accept focus
-   char        vkbd; // used for borders, 0 == don't use, 1 == is vkbd, -1 == not vkbd
-   char        argb; // used for borders, overrides, popups, menus, 0 == don't use, 1 == is argb, -1 == not argb
-   char        fullscreen; // used for borders, 0 == don't use, 1 == is fullscreen, -1 == not fullscreen
-   char        modal; // used for borders, 0 == don't use, 1 == is modal, -1 == not modal
-   char        focus; // used for setting focus state (on popups): 1 is focused, unset is use regular logic
-   char        urgent; // used for setting urgent state (on popups): 1 is urgent, unset is use regular logic
-   char        no_shadow; // set whether shadow is disabled
+   signed char borderless; // used for borders, 0 == dont use, 1 == borderless, -1 == not borderless
+   signed char dialog; // used for borders, 0 == don't use, 1 == dialog, -1 == not dialog
+   signed char accepts_focus; // used for borders, 0 == don't use, 1 == accepts focus, -1 == does not accept focus
+   signed char vkbd; // used for borders, 0 == don't use, 1 == is vkbd, -1 == not vkbd
+   signed char argb; // used for borders, overrides, popups, menus, 0 == don't use, 1 == is argb, -1 == not argb
+   signed char fullscreen; // used for borders, 0 == don't use, 1 == is fullscreen, -1 == not fullscreen
+   signed char modal; // used for borders, 0 == don't use, 1 == is modal, -1 == not modal
+   signed char focus; // used for setting focus state (on popups): 1 is focused, unset is use regular logic
+   signed char urgent; // used for setting urgent state (on popups): 1 is urgent, unset is use regular logic
+   signed char  no_shadow; // set whether shadow is disabled
 };
 
 E_API void           e_comp_cfdata_edd_init(E_Config_DD **conf_edd, E_Config_DD **match_edd);
