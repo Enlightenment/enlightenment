@@ -130,6 +130,7 @@ e_efx_fade(Evas_Object *obj, E_Efx_Effect_Speed speed, E_Efx_Color *ec, unsigned
 {
    E_EFX *e;
    E_Efx_Fade_Data *efd;
+   int r, g, b, a;
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(obj, EINA_FALSE);
    e = evas_object_data_get(obj, "e_efx-data");
@@ -152,8 +153,11 @@ e_efx_fade(Evas_Object *obj, E_Efx_Effect_Speed speed, E_Efx_Color *ec, unsigned
    efd->alpha[1] = alpha;
    efd->cb = cb;
    efd->data = (void*)data;
-   evas_object_color_get(efd->clip, (int*)&efd->start.r, (int*)&efd->start.g, (int*)&efd->start.b, (int*)&alpha);
-   efd->alpha[0] = (unsigned char)alpha;
+   evas_object_color_get(efd->clip, &r, &g, &b, &a);
+   efd->start.r = r;
+   efd->start.g = g;
+   efd->start.b = b;
+   efd->alpha[0] = a;
    if (ec)
      {
         efd->color.r = ec->r;
