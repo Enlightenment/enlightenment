@@ -114,7 +114,7 @@ tiling_window_tree_add(Window_Tree *root, Window_Tree *parent,
         parent_split_type = _tiling_window_tree_split_type_get(parent);
         if ((parent_split_type != split_type) && (parent->children))
           {
-             parent = (Window_Tree *)parent->children;
+             parent = (Window_Tree *)(void *)parent->children;
           }
      }
 
@@ -341,7 +341,7 @@ _tiling_window_tree_level_apply(Window_Tree *root, Evas_Coord x, Evas_Coord y,
      }
 
    /* Adjust the last item's weight in case weight < 1.0 */
-   ((Window_Tree *)root->children->last)->weight += 1.0 - total_weight;
+   ((Window_Tree *)(void *)root->children->last)->weight += 1.0 - total_weight;
 }
 
 void
@@ -366,13 +366,13 @@ tiling_window_tree_apply(Window_Tree *root, Evas_Coord x, Evas_Coord y,
 static Window_Tree *
 _inlist_next(Window_Tree *it)
 {
-   return (Window_Tree *)EINA_INLIST_GET(it)->next;
+   return (Window_Tree *)(void *)EINA_INLIST_GET(it)->next;
 }
 
 static Window_Tree *
 _inlist_prev(Window_Tree *it)
 {
-   return (Window_Tree *)EINA_INLIST_GET(it)->prev;
+   return (Window_Tree *)(void *)EINA_INLIST_GET(it)->prev;
 }
 
 static Eina_Bool
@@ -388,12 +388,12 @@ _tiling_window_tree_node_resize_direction(Window_Tree *node,
    if (dir > 0)
      {
         itr_func = _inlist_prev;
-        children_start = (Window_Tree *)parent->children->last;
+        children_start = (Window_Tree *)(void *)parent->children->last;
      }
    else
      {
         itr_func = _inlist_next;
-        children_start = (Window_Tree *)parent->children;
+        children_start = (Window_Tree *)(void *)parent->children;
      }
 
    itr = (Window_Tree *)children_start;
