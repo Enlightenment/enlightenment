@@ -114,7 +114,7 @@ _temperature_apply(Config_Face *inst, int temp)
 
 #ifdef HAVE_EEZE
 static Eina_Bool
-_temprature_udev_poll(void *data)
+_temperature_udev_poll(void *data)
 {
    Tempthread *tth = data;
    int temp = temperature_udev_get(tth);
@@ -323,7 +323,7 @@ _temperature_face_id_max(const Eina_Hash *hash EINA_UNUSED, const void *key, voi
 }
 
 static void
-_temprature_check_main(void *data, Ecore_Thread *th)
+_temperature_check_main(void *data, Ecore_Thread *th)
 {
    Tempthread *tth = data;
    int ptemp = -500, temp;
@@ -340,7 +340,7 @@ _temprature_check_main(void *data, Ecore_Thread *th)
 }
 
 static void
-_temprature_check_notify(void *data, Ecore_Thread *th, void *msg)
+_temperature_check_notify(void *data, Ecore_Thread *th, void *msg)
 {
    Tempthread *tth  = data;
    Config_Face *inst = tth->inst;
@@ -351,7 +351,7 @@ _temprature_check_notify(void *data, Ecore_Thread *th, void *msg)
 }
 
 static void
-_temprature_check_done(void *data, Ecore_Thread *th EINA_UNUSED)
+_temperature_check_done(void *data, Ecore_Thread *th EINA_UNUSED)
 {
    _temperature_thread_free(data);
 }
@@ -374,15 +374,15 @@ temperature_face_update_config(Config_Face *inst)
    if (inst->backend != TEMPGET)
      {
         inst->poller = ecore_poller_add(ECORE_POLLER_CORE, inst->poll_interval,
-                                        _temprature_udev_poll, tth);
+                                        _temperature_udev_poll, tth);
         inst->tth = tth;
      }
    else
 #endif
-     inst->th = ecore_thread_feedback_run(_temprature_check_main,
-                                          _temprature_check_notify,
-                                          _temprature_check_done,
-                                          _temprature_check_done,
+     inst->th = ecore_thread_feedback_run(_temperature_check_main,
+                                          _temperature_check_notify,
+                                          _temperature_check_done,
+                                          _temperature_check_done,
                                           tth, EINA_TRUE);
 }
 
