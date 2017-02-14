@@ -616,21 +616,7 @@ _e_exec_instance_free(E_Exec_Instance *inst)
         ecore_event_add(E_EVENT_EXEC_DEL, inst, _e_exec_cb_exec_del_free, inst);
         return EINA_FALSE;
      }
-   if (inst->desktop)
-     e_exec_start_pending = eina_list_remove(e_exec_start_pending,
-                                             inst->desktop);
-   if (inst->expire_timer) ecore_timer_del(inst->expire_timer);
-   EINA_LIST_FREE(inst->clients, ec)
-     {
-        ec->exe_inst = NULL;
-        e_object_unref(E_OBJECT(ec));
-     }
-   if (inst->desktop) efreet_desktop_free(inst->desktop);
-   if (!inst->phony)
-     {
-        if (inst->exe) ecore_exe_data_set(inst->exe, NULL);
-     }
-   free(inst);
+
    return EINA_TRUE;
 }
 
@@ -668,9 +654,27 @@ static void
 _e_exec_cb_exec_del_free(void *data, void *ev EINA_UNUSED)
 {
    E_Exec_Instance *inst = data;
+   E_Client *ec;
 
    inst->ref--;
-   _e_exec_instance_free(inst);
+
+   if (inst->desktop)
+     e_exec_start_pending = eina_list_remove(e_exec_start_pending,
+                                             inst->desktop);
+   if (inst->expire_timer) ecore_timer_del(inst->expire_timer);
+
+   EINA_LIST_FREE(inst->clients, ec)
+     {
+        ec->exe_inst = NULL;
+        e_object_unref(E_OBJECT(ec));
+     }
+
+   if (inst->desktop) efreet_desktop_free(inst->desktop);
+   if (!inst->phony)
+     {
+        if (inst->exe) ecore_exe_data_set(inst->exe, NULL);
+     }
+   free(inst);
 }
 
 static Eina_Bool
