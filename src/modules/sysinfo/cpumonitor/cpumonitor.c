@@ -360,7 +360,7 @@ sysinfo_cpumonitor_create(Evas_Object *parent, Instance *inst)
 
    _cpumonitor_config_updated(inst);
 
-   return inst->cfg->cpumonitor.o_gadget_box;
+   return inst->cfg->cpumonitor.o_gadget;
 }
 
 static Config_Item *
