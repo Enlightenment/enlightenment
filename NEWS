@@ -1,3 +1,45 @@
+Release 0.21.6:
+---------------------
+Andreas Metzler (1):
+      10_typo_restore_LDFLAGS.diff: Fix typo in configure.ac (upstream), causing empty LDFLAGS.
+
+Carsten Haitzler (8):
+      tasks - calculate min width properly given a known height of a gadget
+      efm - warning - change invalid #if toe #ifdef as this is right
+      efm - fix ifs to be ifdef as they should be
+      e bindings - fix warnings about possible use of undefined var
+      appmenu - make appmenu work with click+release and not hide on focus out
+      ibar - fix seg with ibar icon task menus are up while desktop files change
+      e - wl mode - stop consuming 100 percent cpu
+      e dialog - fix unreszable dialogs to not be 1x1
+
+Christopher Michael (2):
+      Use proper coordinate adjustment
+      re-enable getting and setting output rotations in wl_drm
+
+Derek Foreman (3):
+      Fix wayland frame callback times
+      Use a monotonic clock for frame callback times
+      Stop sending wayland motion events when the mouse is grabbed
+
+Mike Blumenkrantz (11):
+      null out animator pointers in efx stop() operations
+      correctly set E_POINTER_RESIZE_BR mode for client keyboard resizing
+      plug iterator leak in e_comp_object_render()
+      remove extra SLEEP prints during startup on non-release builds
+      free configs for demo gadgets on object free
+      do not perform frame coord adjustments for re_manage wayland clients
+      use persistent clipping for comp object input rects
+      ensure that gadget internal del callbacks are handled before other callbacks
+      handle pixmap_refresh() failure cases more accurately under wayland
+      reset demo gadget id before deleting gadget object during drop operation
+      add conditional updates for latest efl apis
+
+Stephen 'Okra' Houston (2):
+      Enlightenment: Make gadget editor popup scrollable:
+      Enlightenment: Wireless gadget - place the ctxpopup after the size hints are set, not before
+
+
 Release 0.21.5:
 ---------------------
 Carsten Haitzler (1):
