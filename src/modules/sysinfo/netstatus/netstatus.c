@@ -128,8 +128,13 @@ _netstatus_cb_usage_check_main(void *data, Ecore_Thread *th)
    for (;;)
      {
         if (ecore_thread_check(th)) break;
+#if defined(__FreeBSD__) || defined(__DragonFly__) || defined(__OpenBSD__)
+        _netstatus_sysctl_getrstatus(thc->inst);
+        _netstatus_sysctl_gettstatus(thc->inst);
+#else 
         _netstatus_proc_getrstatus(thc->inst);
         _netstatus_proc_gettstatus(thc->inst);
+#endif
         ecore_thread_feedback(th, NULL);
         if (ecore_thread_check(th)) break;
         usleep((1000000.0 / 8.0) * (double)thc->interval);

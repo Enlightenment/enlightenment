@@ -275,9 +275,15 @@ _memusage_cb_usage_check_main(void *data, Ecore_Thread *th)
    for (;;)
      {
         if (ecore_thread_check(th)) break;
+#if defined(__OpenBSD__) || defined(__FreeBSD__) || defined(__DragonFly__)
+        _memusage_sysctl_getusage(&thc->mem_total, &thc->mem_used,
+                         &thc->mem_cached, &thc->mem_buffers, &thc->mem_shared,
+                         &thc->swp_total, &thc->swp_used);
+#else
         _memusage_proc_getusage(&thc->mem_total, &thc->mem_used,
                          &thc->mem_cached, &thc->mem_buffers, &thc->mem_shared,
                          &thc->swp_total, &thc->swp_used);
+#endif 
         if (thc->mem_total > 0)
           thc->mem_percent = 100 * ((float)thc->mem_used / (float)thc->mem_total);
         if (thc->swp_total > 0)

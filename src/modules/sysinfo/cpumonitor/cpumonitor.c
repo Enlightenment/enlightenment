@@ -160,7 +160,11 @@ _cpumonitor_cb_usage_check_main(void *data, Ecore_Thread *th)
    for (;;)
      {
         if (ecore_thread_check(th)) break;
+#if defined(__FreeBSD__) || defined(__DragonFly__) || defined(__OpenBSD__)
+        _cpumonitor_sysctl_getusage(thc->inst);
+#else 
         _cpumonitor_proc_getusage(thc->inst);
+#endif
         ecore_thread_feedback(th, NULL);
         if (ecore_thread_check(th)) break;
         usleep((1000000.0 / 8.0) * (double)thc->interval);
@@ -226,7 +230,11 @@ _cpumonitor_config_updated(Instance *inst)
      {
         thc->inst = inst;
         thc->interval = inst->cfg->cpumonitor.poll_interval;
+#if defined(__FreeBSD__) || defined(__DragonFly__) || defined(__OpenBSD__)
+        thc->cores = _cpumonitor_sysctl_getcores();
+#else
         thc->cores = _cpumonitor_proc_getcores();
+#endif
         for (i = 0; i < thc->cores; i++)
           {
              core = E_NEW(CPU_Core, 1);

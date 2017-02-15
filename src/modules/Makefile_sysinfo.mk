@@ -44,22 +44,34 @@ else
 if HAVE_OPENBSD
 src_modules_sysinfo_module_la_SOURCES += src/modules/sysinfo/batman/batman_sysctl.c \
                                          src/modules/sysinfo/thermal/thermal_sysctl.c \
-                                         src/modules/sysinfo/cpuclock/cpuclock_sysctl.c
+                                         src/modules/sysinfo/cpuclock/cpuclock_sysctl.c \
+                                         src/modules/sysinfo/netstatus/netstatus_sysctl.c \
+                                         src/modules/sysinfo/cpumonitor/cpumonitor_sysctl.c \
+                                         src/modules/sysinfo/memusage/memusage_sysctl.c
 else
 if HAVE_NETBSD
 src_modules_sysinfo_module_la_SOURCES += src/modules/sysinfo/batman/batman_sysctl.c \
                                          src/modules/sysinfo/thermal/thermal_sysctl.c \
-                                         src/modules/sysinfo/cpuclock/cpuclock_sysctl.c
+                                         src/modules/sysinfo/cpuclock/cpuclock_sysctl.c \
+                                         src/modules/sysinfo/netstatus/netstatus_sysctl.c \
+                                         src/modules/sysinfo/cpumonitor/cpumonitor_sysctl.c \
+                                         src/modules/sysinfo/memusage/memusage_sysctl.c
 else
 if HAVE_DRAGONFLY
 src_modules_sysinfo_module_la_SOURCES += src/modules/sysinfo/batman/batman_sysctl.c \
                                          src/modules/sysinfo/thermal/thermal_sysctl.c \
-                                         src/modules/sysinfo/cpuclock/cpuclock_sysctl.c
+                                         src/modules/sysinfo/cpuclock/cpuclock_sysctl.c \
+                                         src/modules/sysinfo/netstatus/netstatus_sysctl.c \
+                                         src/modules/sysinfo/cpumonitor/cpumonitor_sysctl.c \
+                                         src/modules/sysinfo/memusage/memusage_sysctl.c
 else
 if HAVE_FREEBSD
 src_modules_sysinfo_module_la_SOURCES += src/modules/sysinfo/batman/batman_sysctl.c \
                                          src/modules/sysinfo/thermal/thermal_sysctl.c \
-                                         src/modules/sysinfo/cpuclock/cpuclock_sysctl.c
+                                         src/modules/sysinfo/cpuclock/cpuclock_sysctl.c \
+                                         src/modules/sysinfo/netstatus/netstatus_sysctl.c \
+                                         src/modules/sysinfo/cpumonitor/cpumonitor_sysctl.c \
+                                         src/modules/sysinfo/memusage/memusage_sysctl.c
 else
 src_modules_sysinfo_module_la_SOURCES += src/modules/sysinfo/batman/batman_upower.c \
                                          src/modules/sysinfo/thermal/thermal_sysctl.c \
