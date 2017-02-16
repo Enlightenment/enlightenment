@@ -591,7 +591,6 @@ static Eina_Bool
 _e_exec_instance_free(E_Exec_Instance *inst)
 {
    Eina_List *instances;
-   E_Client *ec;
 
    if (inst->ref) return EINA_FALSE;
    E_FREE_LIST(inst->watchers, free);
