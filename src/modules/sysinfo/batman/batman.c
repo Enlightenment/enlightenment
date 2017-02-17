@@ -75,6 +75,7 @@ _batman_popup_create(Instance *inst)
    Eina_List *l;
    char buf[128], buf2[128];
    int hrs = 0, mins = 0;
+   Eina_List *udis = NULL;
 
    hrs = (inst->cfg->batman.time_left / 3600);
    mins = ((inst->cfg->batman.time_left) / 60 - (hrs * 60));
@@ -110,13 +111,19 @@ _batman_popup_create(Instance *inst)
 
    EINA_LIST_FOREACH(batman_device_batteries, l, bat)
      {
-        pbar = elm_progressbar_add(box);
-        E_EXPAND(pbar); E_FILL(pbar);
-        elm_progressbar_span_size_set(pbar, 200 * e_scale);
-        elm_progressbar_value_set(pbar, bat->percent / 100);
-        elm_box_pack_end(box, pbar);
-        evas_object_show(pbar);
+        if (!eina_list_count(udis) || !eina_list_data_find(udis, bat->udi))
+          {
+             udis = eina_list_append(udis, bat->udi);
+             pbar = elm_progressbar_add(box);
+             E_EXPAND(pbar); E_FILL(pbar);
+             elm_progressbar_span_size_set(pbar, 200 * e_scale);
+             elm_progressbar_value_set(pbar, bat->percent / 100);
+             elm_box_pack_end(box, pbar);
+             evas_object_show(pbar);
+          }
      }
+   if (eina_list_count(udis))
+     eina_list_free(udis);
    e_gadget_util_ctxpopup_place(inst->o_main, popup,
                                 inst->cfg->batman.o_gadget);
    evas_object_show(popup);
