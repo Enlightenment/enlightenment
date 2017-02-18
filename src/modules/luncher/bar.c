@@ -247,6 +247,10 @@ _bar_instance_watch(void *data, E_Exec_Instance *ex, E_Exec_Watch_Type type)
         if (!eina_list_data_find(ic->execs, ex))
           ic->execs = eina_list_append(ic->execs, ex);
         break;
+      case E_EXEC_WATCH_TIMEOUT:
+      case E_EXEC_WATCH_STOPPED:
+        ic->exec = NULL;
+        break;
       default:
         break;
      }
