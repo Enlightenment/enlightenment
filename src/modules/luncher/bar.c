@@ -206,7 +206,7 @@ _bar_icon_match(Instance *inst, E_Client *ec)
    if (has_desktop)
      {
         ic = eina_hash_find(inst->icons_desktop_hash, ec->exe_inst->desktop->orig_path);
-        if ((ic) && (ic2 = eina_hash_find(inst->icons_clients_hash, ec)))
+        if ((ic) && (ic2 = eina_hash_find(inst->icons_clients_hash, &ec)))
           {
              ic2->execs = eina_list_remove(ic2->execs, ec->exe_inst);
              ic2->clients = eina_list_remove(ic2->clients, ec);
