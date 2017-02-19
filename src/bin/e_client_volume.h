@@ -2,6 +2,7 @@
 #define E_CLIENT_VOLUME_H_
 
 typedef struct _E_Client_Volume_Sink E_Client_Volume_Sink;
+typedef struct _E_Event_Client_Volume_Sink E_Event_Client_Volume_Sink;
 
 typedef void (*E_Client_Volume_Sink_Get)(int *volume, Eina_Bool *mute, void *data);
 typedef void (*E_Client_Volume_Sink_Set)(int volume, Eina_Bool mute, void *data);
@@ -12,6 +13,9 @@ typedef const char *(*E_Client_Volume_Sink_Name_Get)(void *data);
 E_API extern int E_EVENT_CLIENT_VOLUME;
 E_API extern int E_EVENT_CLIENT_MUTE;
 E_API extern int E_EVENT_CLIENT_UNMUTE;
+E_API extern int E_EVENT_CLIENT_VOLUME_SINK_ADD;
+E_API extern int E_EVENT_CLIENT_VOLUME_SINK_DEL;
+E_API extern int E_EVENT_CLIENT_VOLUME_SINK_CHANGED;
 
 struct _E_Client_Volume_Sink
 {
@@ -22,6 +26,12 @@ struct _E_Client_Volume_Sink
    E_Client_Volume_Sink_Name_Get func_name_get;
    void *data;
    Eina_List *clients;
+};
+
+struct _E_Event_Client_Volume_Sink
+{
+   E_Client *ec;
+   E_Client_Volume_Sink *sink;
 };
 
 

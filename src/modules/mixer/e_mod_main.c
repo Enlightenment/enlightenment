@@ -964,18 +964,7 @@ _sink_input_event(int type, Emix_Sink_Input *input)
            {
               if (sink->data == input)
                 {
-                   Eina_Bool update = EINA_TRUE;
-                   EINA_LIST_FOREACH(sink->clients, l, ec)
-                     {
-                        if (eina_list_count(ec->sinks) > 1)
-                          {
-                             update = EINA_FALSE;
-                             break;
-                          }
-                     }
-                   if (update)
-                     e_client_volume_sink_update(sink);
-
+                   e_client_volume_sink_update(sink);
                 }
            }
          break;

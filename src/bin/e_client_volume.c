@@ -3,6 +3,9 @@
 E_API int E_EVENT_CLIENT_VOLUME = -1;
 E_API int E_EVENT_CLIENT_MUTE = -1;
 E_API int E_EVENT_CLIENT_UNMUTE = -1;
+E_API int E_EVENT_CLIENT_VOLUME_SINK_ADD = -1;
+E_API int E_EVENT_CLIENT_VOLUME_SINK_DEL = -1;
+E_API int E_EVENT_CLIENT_VOLUME_SINK_CHANGED = -1;
 
 static void _e_client_volume_event_simple_free(void *d, E_Event_Client *ev);
 static void _e_client_volume_event_simple(E_Client *ec, int type);
@@ -30,6 +33,28 @@ _e_client_volume_event_simple(E_Client *ec, int type)
    e_object_ref(E_OBJECT(ec));
    ecore_event_add(type, ev,
                    (Ecore_End_Cb)_e_client_volume_event_simple_free, NULL);
+}
+
+static void
+_e_client_volume_sink_event_simple_free(void *d EINA_UNUSED, E_Event_Client_Volume_Sink *ev)
+{
+   UNREFD(ev->ec, 3);
+   e_object_unref(E_OBJECT(ev->ec));
+   free(ev);
+}
+
+static void
+_e_client_volume_sink_event_simple(E_Client *ec, E_Client_Volume_Sink *sink, int type)
+{
+   E_Event_Client_Volume_Sink *ev;
+
+   ev = E_NEW(E_Event_Client_Volume_Sink, 1);
+   ev->ec = ec;
+   ev->sink = sink;
+   REFD(ec, 3);
+   e_object_ref(E_OBJECT(ec));
+   ecore_event_add(type, ev,
+                   (Ecore_End_Cb)_e_client_volume_sink_event_simple_free, NULL);
 }
 
 static void
@@ -107,6 +132,9 @@ e_client_volume_init(void)
    E_EVENT_CLIENT_VOLUME = ecore_event_type_new();
    E_EVENT_CLIENT_MUTE = ecore_event_type_new();
    E_EVENT_CLIENT_UNMUTE = ecore_event_type_new();
+   E_EVENT_CLIENT_VOLUME_SINK_ADD = ecore_event_type_new();
+   E_EVENT_CLIENT_VOLUME_SINK_DEL = ecore_event_type_new();
+   E_EVENT_CLIENT_VOLUME_SINK_CHANGED = ecore_event_type_new();
 
    return EINA_TRUE;
 }
@@ -141,6 +169,8 @@ e_client_volume_sink_del(E_Client_Volume_Sink *sink)
      {
         ec->sinks = eina_list_remove(ec->sinks, sink);
         e_comp_object_frame_volume_update(ec->frame);
+        _e_client_volume_sink_event_simple(ec, sink,
+                                           E_EVENT_CLIENT_VOLUME_SINK_DEL);
      }
    free(sink);
 }
@@ -222,6 +252,8 @@ e_client_volume_sink_append(E_Client *ec, E_Client_Volume_Sink *sink)
         ec->volume_control_enabled = EINA_TRUE;
      }
    e_comp_object_frame_volume_update(ec->frame);
+   _e_client_volume_sink_event_simple(ec, sink,
+                                      E_EVENT_CLIENT_VOLUME_SINK_ADD);
 }
 
 E_API void
@@ -231,6 +263,8 @@ e_client_volume_sink_remove(E_Client *ec, E_Client_Volume_Sink *sink)
    ec->sinks = eina_list_remove(ec->sinks, sink);
    sink->clients = eina_list_remove(sink->clients, ec);
    e_comp_object_frame_volume_update(ec->frame);
+   _e_client_volume_sink_event_simple(ec, sink,
+                                      E_EVENT_CLIENT_VOLUME_SINK_DEL);
 }
 
 E_API void
@@ -246,7 +280,10 @@ e_client_volume_sink_update(E_Client_Volume_Sink *sink)
    e_client_volume_sink_get(sink, &volume, &mute);
    EINA_LIST_FOREACH(sink->clients, l, ec)
      {
-        e_client_volume_display_set(ec, volume, mute);
+        if (eina_list_count(ec->sinks) == 1)
+          e_client_volume_display_set(ec, volume, mute);
+        _e_client_volume_sink_event_simple(ec, sink,
+                                           E_EVENT_CLIENT_VOLUME_SINK_CHANGED);
      }
 }
 
