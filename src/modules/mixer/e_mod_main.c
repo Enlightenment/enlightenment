@@ -871,6 +871,15 @@ _sink_input_max_get(void *data EINA_UNUSED)
    return emix_max_volume_get();
 }
 
+static const char *
+_sink_input_name_get(void *data)
+{
+   Emix_Sink_Input *input;
+
+   input = data;
+   return input->name;
+}
+
 static pid_t
 _get_ppid(pid_t pid)
 {
@@ -926,10 +935,11 @@ _sink_input_event(int type, Emix_Sink_Input *input)
                         DBG("Sink found the client %s",
                             e_client_util_name_get(ec));
                         sink = e_client_volume_sink_new(_sink_input_get,
-                                                 _sink_input_set,
-                                                 _sink_input_min_get,
-                                                 _sink_input_max_get,
-                                                 input);
+                                                        _sink_input_set,
+                                                        _sink_input_min_get,
+                                                        _sink_input_max_get,
+                                                        _sink_input_name_get,
+                                                        input);
                         e_client_volume_sink_append(ec, sink);
                         _client_sinks = eina_list_append(_client_sinks, sink);
                         return;

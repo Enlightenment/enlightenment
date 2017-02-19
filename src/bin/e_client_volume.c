@@ -117,7 +117,7 @@ e_client_volume_shutdown(void)
 }
 
 E_API E_Client_Volume_Sink *
-e_client_volume_sink_new(E_Client_Volume_Sink_Get func_get, E_Client_Volume_Sink_Set func_set, E_Client_Volume_Sink_Min_Get func_min_get, E_Client_Volume_Sink_Max_Get func_max_get, void *data)
+e_client_volume_sink_new(E_Client_Volume_Sink_Get func_get, E_Client_Volume_Sink_Set func_set, E_Client_Volume_Sink_Min_Get func_min_get, E_Client_Volume_Sink_Max_Get func_max_get, E_Client_Volume_Sink_Name_Get func_name_get, void *data)
 {
    E_Client_Volume_Sink *sink;
 
@@ -126,6 +126,7 @@ e_client_volume_sink_new(E_Client_Volume_Sink_Get func_get, E_Client_Volume_Sink
    sink->func_get = func_get;
    sink->func_min_get = func_min_get;
    sink->func_max_get = func_max_get;
+   sink->func_name_get = func_name_get;
    sink->data = data;
 
    return sink;
@@ -177,6 +178,15 @@ e_client_volume_sink_max_get(const E_Client_Volume_Sink *sink)
    if (sink->func_max_get)
      return sink->func_max_get(sink->data);
    return 0;
+}
+
+E_API const char *
+e_client_volume_sink_name_get(const E_Client_Volume_Sink *sink)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(sink, 0);
+   if (sink->func_name_get)
+     return sink->func_name_get(sink->data);
+   return NULL;
 }
 
 E_API void
