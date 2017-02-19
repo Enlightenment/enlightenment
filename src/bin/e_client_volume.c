@@ -199,14 +199,8 @@ e_client_volume_sink_append(E_Client *ec, E_Client_Volume_Sink *sink)
         volume_max = e_client_volume_sink_max_get(sink);
         if (ec->volume_max > volume_max)
           ec->volume_max = volume_max;
-        if ((ec->volume_min > ec->volume)
-            || (ec->volume_max < ec->volume))
-          e_client_volume_set(ec, ec->volume);
         e_client_volume_sink_get(sink, &volume, &mute);
-        if ((ec->volume != volume) || (ec->mute != mute))
-          {
-             e_client_volume_sink_set(sink, ec->volume, ec->mute);
-          }
+        e_client_volume_display_set(ec, volume, mute);
      }
    else
      {
@@ -242,9 +236,20 @@ e_client_volume_sink_update(E_Client_Volume_Sink *sink)
    e_client_volume_sink_get(sink, &volume, &mute);
    EINA_LIST_FOREACH(sink->clients, l, ec)
      {
-        e_client_volume_set(ec, volume);
-        e_client_volume_mute_set(ec, mute);
+        e_client_volume_display_set(ec, volume, mute);
      }
+}
+
+E_API void
+e_client_volume_display_set(E_Client *ec, int volume, Eina_Bool mute)
+{
+   ec->volume = volume;
+   ec->mute = !!mute;
+   if (mute)
+     _e_client_volume_event_simple(ec, E_EVENT_CLIENT_MUTE);
+   else
+     _e_client_volume_event_simple(ec, E_EVENT_CLIENT_UNMUTE);
+   _e_client_volume_event_simple(ec, E_EVENT_CLIENT_VOLUME);
 }
 
 E_API void
