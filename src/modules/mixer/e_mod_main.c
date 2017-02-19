@@ -95,6 +95,8 @@ struct _Client_Mixer
    Evas_Object *volume;
    Evas_Object *mute;
    E_Client *ec;
+   Evas_Object *bx;
+   Eina_List *sinks;
 };
 
 static Context *mixer_context = NULL;
@@ -1059,11 +1061,42 @@ _bd_hook_mute_changed(void *data, Evas_Object *obj, void *event_info EINA_UNUSED
    e_client_volume_mute_set(ec, elm_check_state_get(obj));
 }
 
+static void
+_bd_hook_sink_volume_changed(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
+{
+   E_Client_Volume_Sink *sink;
+   Evas_Object *check;
+
+   sink = data;
+
+   check = evas_object_data_get(obj, "e_sink_check");
+
+   e_client_volume_sink_set(sink,
+                            elm_slider_value_get(obj),
+                            elm_check_state_get(check));
+}
+
+static void
+_bd_hook_sink_mute_changed(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
+{
+   E_Client_Volume_Sink *sink;
+   Evas_Object *slider;
+
+   sink = data;
+   slider = evas_object_data_get(obj, "e_sink_volume");
+
+   e_client_volume_sink_set(sink,
+                            elm_slider_value_get(slider),
+                            elm_check_state_get(obj));
+}
+
 static Eina_Bool
 _e_client_volume_changed(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
 {
    E_Event_Client *ev;
    Client_Mixer *cm;
+   E_Client_Volume_Sink *sink;
+   Evas_Object *o;
    Eina_List *l;
 
    ev = event;
@@ -1073,6 +1106,13 @@ _e_client_volume_changed(void *data EINA_UNUSED, int type EINA_UNUSED, void *eve
         if (cm->ec == ev->ec)
           {
              elm_slider_value_set(cm->volume, cm->ec->volume);
+             EINA_LIST_FOREACH(cm->sinks, l, o)
+               {
+                  int volume;
+                  sink = evas_object_data_get(o, "e_sink");
+                  e_client_volume_sink_get(sink, &volume, NULL);
+                  elm_slider_value_set(o, volume);
+               }
              break;
           }
      }
@@ -1085,7 +1125,10 @@ _e_client_mute_changed(void *data EINA_UNUSED, int type EINA_UNUSED, void *event
 {
    E_Event_Client *ev;
    Client_Mixer *cm;
+   E_Client_Volume_Sink *sink;
+   Evas_Object *o, *check;
    Eina_List *l;
+   Eina_Bool mute;
 
    ev = event;
 
@@ -1094,6 +1137,160 @@ _e_client_mute_changed(void *data EINA_UNUSED, int type EINA_UNUSED, void *event
         if (cm->ec == ev->ec)
           {
              elm_check_state_set(cm->mute, !!cm->ec->mute);
+             elm_object_disabled_set(cm->volume, !!cm->ec->mute);
+             EINA_LIST_FOREACH(cm->sinks, l, o)
+               {
+                  sink = evas_object_data_get(o, "e_sink");
+                  check = evas_object_data_get(o, "e_sink_check");
+                  e_client_volume_sink_get(sink, NULL, &mute);
+                  elm_check_state_set(check, mute);
+                  elm_object_disabled_set(o, mute);
+               }
+             break;
+          }
+     }
+
+   return ECORE_CALLBACK_PASS_ON;
+}
+
+static void
+_e_client_mixer_sink_append(E_Client_Volume_Sink *sink, Client_Mixer *cm)
+{
+   Evas_Object *lbl, *slider, *check, *sep;
+   int volume;
+   int min, max;
+   Eina_Bool mute;
+
+   min = e_client_volume_sink_min_get(sink);
+   max = e_client_volume_sink_max_get(sink);
+   e_client_volume_sink_get(sink, &volume, &mute);
+
+   sep = elm_separator_add(cm->bx);
+   elm_separator_horizontal_set(sep, EINA_TRUE);
+   evas_object_size_hint_weight_set(sep, 0.0, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(sep, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   elm_box_pack_end(cm->bx, sep);
+   evas_object_show(sep);
+
+   lbl = elm_label_add(cm->bx);
+   elm_object_text_set(lbl, e_client_volume_sink_name_get(sink));
+   evas_object_size_hint_align_set(lbl, 0.0, EVAS_HINT_FILL);
+   elm_box_pack_end(cm->bx, lbl);
+   evas_object_show(lbl);
+
+   slider = elm_slider_add(cm->bx);
+   elm_slider_horizontal_set(slider, EINA_TRUE);
+   elm_slider_min_max_set(slider, min, max);
+   elm_slider_span_size_set(slider, max * elm_config_scale_get());
+   elm_slider_unit_format_set(slider, "%.0f");
+   elm_slider_indicator_format_set(slider, "%.0f");
+   evas_object_size_hint_weight_set(slider, 0.0, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(slider, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   elm_slider_value_set(slider, volume);
+   evas_object_smart_callback_add(slider, "changed",
+                                  _bd_hook_sink_volume_changed, sink);
+   elm_box_pack_end(cm->bx, slider);
+   evas_object_show(slider);
+
+   check = elm_check_add(cm->bx);
+   elm_object_text_set(check, _("Mute"));
+   evas_object_size_hint_align_set(check, 0.0, EVAS_HINT_FILL);
+   elm_check_state_set(check, !!mute);
+   elm_object_disabled_set(slider, !!mute);
+   evas_object_smart_callback_add(check, "changed",
+                                  _bd_hook_sink_mute_changed, sink);
+
+   elm_box_pack_end(cm->bx, check);
+   evas_object_show(check);
+
+   evas_object_data_set(slider, "e_sink", sink);
+   evas_object_data_set(slider, "e_sink_check", check);
+   evas_object_data_set(slider, "e_sink_label", lbl);
+   evas_object_data_set(slider, "e_sink_separator", sep);
+   evas_object_data_set(check, "e_sink_volume", slider);
+   cm->sinks = eina_list_append(cm->sinks, slider);
+}
+
+static Eina_Bool
+_e_client_volume_sink_add(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
+{
+   E_Event_Client_Volume_Sink *ev;
+   Client_Mixer *cm;
+   Eina_List *l;
+
+   ev = event;
+
+   EINA_LIST_FOREACH(_client_mixers, l, cm)
+     {
+        if (cm->ec == ev->ec)
+          {
+             _e_client_mixer_sink_append(ev->sink, cm);
+          }
+     }
+   return ECORE_CALLBACK_PASS_ON;
+}
+
+static Eina_Bool
+_e_client_volume_sink_del(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
+{
+   E_Event_Client_Volume_Sink *ev;
+   E_Client_Volume_Sink *sink;
+   Client_Mixer *cm;
+   Evas_Object *o, *lbl, *check;
+   Eina_List *l;
+
+   ev = event;
+
+   EINA_LIST_FOREACH(_client_mixers, l, cm)
+     {
+        if (cm->ec == ev->ec)
+          {
+             EINA_LIST_FOREACH(cm->sinks, l, o)
+               {
+                  sink = evas_object_data_get(o, "e_sink");
+                  if (sink == ev->sink)
+                    {
+                       lbl = evas_object_data_get(o, "e_sink_label");
+                       check = evas_object_data_get(o, "e_sink_check");
+                       evas_object_del(lbl);
+                       evas_object_del(o);
+                       evas_object_del(check);
+                       cm->sinks = eina_list_remove_list(cm->sinks, l);
+                    }
+               }
+             break;
+          }
+     }
+   return ECORE_CALLBACK_PASS_ON;
+}
+
+static Eina_Bool
+_e_client_volume_sink_changed(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
+{
+   E_Event_Client_Volume_Sink *ev;
+   Client_Mixer *cm;
+   E_Client_Volume_Sink *sink;
+   Evas_Object *o, *check;
+   Eina_List *l;
+   int volume;
+   Eina_Bool mute;
+
+   ev = event;
+
+   EINA_LIST_FOREACH(_client_mixers, l, cm)
+     {
+        if (cm->ec == ev->ec)
+          {
+             EINA_LIST_FOREACH(cm->sinks, l, o)
+               {
+                  sink = evas_object_data_get(o, "e_sink");
+                  if (sink != ev->sink) continue;
+                  check = evas_object_data_get(o, "e_sink_check");
+                  e_client_volume_sink_get(sink, &volume, &mute);
+                  elm_slider_value_set(o, volume);
+                  elm_object_disabled_set(o, mute);
+                  elm_check_state_set(check, mute);
+               }
              break;
           }
      }
@@ -1142,6 +1339,7 @@ _bd_hook_cb(void *data, E_Menu *m EINA_UNUSED, E_Menu_Item *it EINA_UNUSED)
 {
    E_Client *ec;
    Client_Mixer *cm;
+   E_Client_Volume_Sink *sink;
    Evas_Object *win, *popup, *bx, *o;
    Eina_List *l;
    int w, h;
@@ -1163,6 +1361,13 @@ _bd_hook_cb(void *data, E_Menu *m EINA_UNUSED, E_Menu_Item *it EINA_UNUSED)
    elm_box_horizontal_set(bx, EINA_FALSE);
    elm_object_content_set(win, bx);
    evas_object_size_hint_weight_set(bx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   cm->bx = bx;
+
+   o = elm_label_add(bx);
+   elm_object_text_set(o, _("Main"));
+   evas_object_size_hint_align_set(o, 0.0, EVAS_HINT_FILL);
+   elm_box_pack_end(bx, o);
+   evas_object_show(o);
 
    o = elm_slider_add(bx);
    elm_slider_horizontal_set(o, EINA_TRUE);
@@ -1182,10 +1387,16 @@ _bd_hook_cb(void *data, E_Menu *m EINA_UNUSED, E_Menu_Item *it EINA_UNUSED)
    elm_object_text_set(o, _("Mute"));
    evas_object_size_hint_align_set(o, 0.0, EVAS_HINT_FILL);
    elm_check_state_set(o, !!ec->mute);
+   elm_object_disabled_set(o, !!ec->mute);
    evas_object_smart_callback_add(o, "changed", _bd_hook_mute_changed, ec);
    elm_box_pack_end(bx, o);
    evas_object_show(o);
    cm->mute = o;
+
+   EINA_LIST_FOREACH(ec->sinks, l, sink)
+     {
+        _e_client_mixer_sink_append(sink, cm);
+     }
 
    evas_object_show(bx);
    evas_object_size_hint_min_get(bx, &w, &h);
@@ -1297,6 +1508,12 @@ e_modapi_init(E_Module *m)
                          _e_client_mute_changed, NULL);
    E_LIST_HANDLER_APPEND(_client_handlers, E_EVENT_CLIENT_REMOVE,
                          _e_client_remove, NULL);
+   E_LIST_HANDLER_APPEND(_client_handlers, E_EVENT_CLIENT_VOLUME_SINK_ADD,
+                         _e_client_volume_sink_add, NULL);
+   E_LIST_HANDLER_APPEND(_client_handlers, E_EVENT_CLIENT_VOLUME_SINK_DEL,
+                         _e_client_volume_sink_del, NULL);
+   E_LIST_HANDLER_APPEND(_client_handlers, E_EVENT_CLIENT_VOLUME_SINK_CHANGED,
+                         _e_client_volume_sink_changed, NULL);
 
    return m;
 
