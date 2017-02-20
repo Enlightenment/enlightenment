@@ -1236,7 +1236,7 @@ _e_client_volume_sink_del(void *data EINA_UNUSED, int type EINA_UNUSED, void *ev
    E_Event_Client_Volume_Sink *ev;
    E_Client_Volume_Sink *sink;
    Client_Mixer *cm;
-   Evas_Object *o, *lbl, *check;
+   Evas_Object *o, *lbl, *check, *sep;
    Eina_List *l;
 
    ev = event;
@@ -1252,6 +1252,8 @@ _e_client_volume_sink_del(void *data EINA_UNUSED, int type EINA_UNUSED, void *ev
                     {
                        lbl = evas_object_data_get(o, "e_sink_label");
                        check = evas_object_data_get(o, "e_sink_check");
+                       sep = evas_object_data_get(o, "e_sink_separator");
+                       evas_object_del(sep);
                        evas_object_del(lbl);
                        evas_object_del(o);
                        evas_object_del(check);
