@@ -3,6 +3,16 @@
 
 #include "e.h"
 
+
+extern int luncher_log;
+
+#define L_DBG(...) EINA_LOG_DOM_DBG(luncher_log, __VA_ARGS__)
+#define L_INF(...) EINA_LOG_DOM_INFO(luncher_log, __VA_ARGS__)
+#define L_WRN(...) EINA_LOG_DOM_WARN(luncher_log, __VA_ARGS__)
+#define L_ERR(...) EINA_LOG_DOM_ERR(luncher_log, __VA_ARGS__)
+#define L_CRI(...) EINA_LOG_DOM_CRIT(luncher_log, __VA_ARGS__)
+
+
 E_API extern E_Module_Api e_modapi;
 
 E_API void *e_modapi_init     (E_Module *m);

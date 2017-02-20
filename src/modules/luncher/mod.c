@@ -5,9 +5,13 @@ Eina_List *luncher_instances = NULL;
 E_Module *module = NULL;
 Config *luncher_config = NULL;
 
+int luncher_log;
+
 EINTERN void
 luncher_init(void)
 {
+   luncher_log = eina_log_domain_register("luncher", "cyan");
+
    conf_item_edd = E_CONFIG_DD_NEW("Luncher_Config_Item", Config_Item);
 #undef T
 #undef D

@@ -259,6 +259,8 @@ _bar_instance_watch(void *data, E_Exec_Instance *ex, E_Exec_Watch_Type type)
 static void
 _bar_icon_del(Instance *inst, Icon *ic)
 {
+   L_INF("Delete Icon %p", ic);
+
    inst->icons = eina_list_remove(inst->icons, ic);
    if (ic->preview)
      _bar_icon_preview_hide(ic);
@@ -1160,6 +1162,9 @@ _bar_icon_add(Instance *inst, Efreet_Desktop *desktop, E_Client *non_desktop_cli
      }
    elm_layout_sizing_eval(ic->o_layout);
    _bar_aspect(inst);
+
+   L_INF("New Icon %p", ic);
+
    return ic;
 }
 
@@ -1169,6 +1174,8 @@ _bar_cb_client_remove(void *data EINA_UNUSED, int type EINA_UNUSED, E_Event_Clie
    Instance *inst = NULL;
    Eina_List *l = NULL;
    char ori[32];
+
+   L_DBG("Remove client %p", ev);
 
    EINA_LIST_FOREACH(luncher_instances, l, inst)
      {
@@ -1210,6 +1217,8 @@ _bar_cb_exec_del(void *data EINA_UNUSED, int type EINA_UNUSED, E_Exec_Instance *
    E_Client *ec = NULL;
    char ori[32];
 
+   L_DBG("E_Exec_Instance got deleted %p", ex);
+
    EINA_LIST_FOREACH(ex->clients, l, ec)
      {
         if (!ec->netwm.state.skip_taskbar)
@@ -1229,6 +1238,7 @@ _bar_cb_exec_del(void *data EINA_UNUSED, int type EINA_UNUSED, E_Exec_Instance *
           }
         if (ic)
           {
+             L_INF("Removing client %p from icon %p", ec, ic);
              if (ic->starting) elm_layout_signal_emit(ic->o_layout, "e,state,started", "e");
              ic->starting = EINA_FALSE;
              ic->execs = eina_list_remove(ic->execs, ex);
@@ -1371,6 +1381,8 @@ _bar_cb_exec_new(void *data EINA_UNUSED, int type, E_Exec_Instance *ex)
    Eina_List *l = NULL;
    Eina_Bool skip;
 
+   L_DBG("New E_Exec_Instance %p", ex);
+
    if (type == E_EVENT_EXEC_NEW_CLIENT)
      {
         ec = eina_list_data_get(ex->clients);
@@ -1398,6 +1410,7 @@ _bar_cb_exec_new(void *data EINA_UNUSED, int type, E_Exec_Instance *ex)
         if (ic)
           {
              if (skip) continue;
+             L_INF("Attaching Client %p to Icon %p", ec, ic);
              if (ic->starting) elm_layout_signal_emit(ic->o_layout, "e,state,started", "e");
              ic->starting = EINA_FALSE;
              snprintf(ori, sizeof(ori), "e,state,on,%s", _bar_location_get(inst));
