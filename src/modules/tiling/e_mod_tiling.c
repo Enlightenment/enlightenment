@@ -51,7 +51,7 @@ struct tiling_g tiling_g = {
 
 static void _client_track(E_Client *ec);
 static void _client_untrack(E_Client *ec);
-static Eina_Bool _add_client(E_Client *ec);
+static Eina_Bool _add_client(E_Client *ec, Tiling_Split_Type type);
 static void             _remove_client(E_Client *ec);
 static void             _client_apply_settings(E_Client *ec, Client_Extra *extra);
 static void             _foreach_desk(void (*func)(E_Desk *desk));
@@ -122,6 +122,16 @@ get_current_desk(void)
    E_Zone *z = e_zone_current_get();
 
    return e_desk_current_get(z);
+}
+
+static Tiling_Split_Type
+_current_tiled_state(void)
+{
+   Tiling_Split_Type type = _G.split_type;
+
+   if (type == TILING_SPLIT_FLOAT)
+     return TILING_SPLIT_HORIZONTAL;
+   return type;
 }
 
 static Tiling_Info *
@@ -509,7 +519,7 @@ _desk_config_apply(E_Desk *d, int old_nb_stacks, int new_nb_stacks)
 
         E_CLIENT_FOREACH(ec)
           {
-             _add_client(ec);
+             _add_client(ec, _G.split_type);
           }
 
         _reapply_tree();
@@ -551,7 +561,7 @@ _e_client_check_based_on_state_cb(void *data, Evas_Object *obj EINA_UNUSED,
 }
 
 static Eina_Bool
-_add_client(E_Client *ec)
+_add_client(E_Client *ec, Tiling_Split_Type type)
 {
    /* Should I need to check that the client is not already added? */
    if (!ec)
@@ -573,7 +583,7 @@ _add_client(E_Client *ec)
    if (is_ignored_window(extra))
       return EINA_FALSE;
 
-   if (_G.split_type == TILING_SPLIT_FLOAT)
+   if (type == TILING_SPLIT_FLOAT)
      {
         extra->floating = EINA_TRUE;
         return EINA_FALSE;
@@ -607,7 +617,7 @@ _add_client(E_Client *ec)
         }
 
       _G.tinfo->tree =
-        tiling_window_tree_add(_G.tinfo->tree, parent, ec, _G.split_type);
+        tiling_window_tree_add(_G.tinfo->tree, parent, ec, type);
    }
 
    if (started)
@@ -690,7 +700,7 @@ toggle_floating(E_Client *ec)
      }
    else
      {
-        _add_client(ec);
+        _add_client(ec, _current_tiled_state());
      }
 }
 
@@ -1234,7 +1244,7 @@ _add_hook(void *data EINA_UNUSED, E_Client *ec)
    if (e_object_is_del(E_OBJECT(ec)))
      return;
 
-   _add_client(ec);
+   _add_client(ec, _G.split_type);
 }
 
 static Eina_Bool
@@ -1263,7 +1273,7 @@ _toggle_tiling_based_on_state(E_Client *ec, Eina_Bool restore)
      }
    else if (!extra->tiled && is_tilable(ec))
      {
-        _add_client(ec);
+        _add_client(ec, _current_tiled_state());
 
         return EINA_TRUE;
      }
@@ -1304,7 +1314,7 @@ _desk_set_hook(void *data EINA_UNUSED, int type EINA_UNUSED,
    if (!desk_should_tile_check(ev->ec->desk))
      return true;
 
-   _add_client(ev->ec);
+   _add_client(ev->ec, _current_tiled_state());
 
    return true;
 }
@@ -1523,7 +1533,7 @@ e_modapi_init(E_Module *m)
 
       E_CLIENT_FOREACH(ec)
       {
-         _add_client(ec);
+         _add_client(ec, _G.split_type);
       }
    }
    started = EINA_TRUE;
