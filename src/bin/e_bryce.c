@@ -573,8 +573,6 @@ _bryce_mouse_down_post(void *data, Evas *e EINA_UNUSED)
    Bryce *b = data;
    Evas_Event_Mouse_Down *ev;
 
-   if (!b->event_info)
-     return EINA_FALSE;
    ev = b->event_info;
    b->event_info = NULL;
    if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return EINA_TRUE;
