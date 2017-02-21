@@ -108,27 +108,34 @@ _e_sys_comp_action_timeout(void *data)
 }
 
 static void
-_e_sys_comp_emit_cb_wait(E_Sys_Action a, const char *sig, const char *rep, Eina_Bool nocomp_push)
+_e_sys_comp_zones_fade(const char *sig, Eina_Bool out)
 {
    const Eina_List *l;
    E_Zone *zone;
-   Eina_Bool first = EINA_TRUE;
+   EINA_LIST_FOREACH(e_comp->zones, l, zone)
+     {
+        e_zone_fade_handle(zone, out, 0.5);
+        edje_object_signal_emit(zone->base, sig, "e");
+        edje_object_signal_emit(zone->over, sig, "e");
+     }
+}
+
+static void
+_e_sys_comp_emit_cb_wait(E_Sys_Action a, const char *sig, const char *rep, Eina_Bool nocomp_push)
+{
+   E_Zone *zone;
 
    if (_e_sys_comp_waiting == 0) _e_sys_comp_waiting++;
    if (nocomp_push) e_comp_override_add();
    else e_comp_override_timed_pop();
    printf("_e_sys_comp_emit_cb_wait - [%x] %s %s\n", a, sig, rep);
-   EINA_LIST_FOREACH(e_comp->zones, l, zone)
-     {
-        e_zone_fade_handle(zone, nocomp_push, 0.5);
-        edje_object_signal_emit(zone->base, sig, "e");
-        edje_object_signal_emit(zone->over, sig, "e");
-        if ((rep) && (first))
-          edje_object_signal_callback_add(zone->over, rep, "e", _e_sys_comp_done_cb, (void *)(long)a);
-        first = EINA_FALSE;
-     }
+
+   _e_sys_comp_zones_fade(sig, nocomp_push);
+
    if (rep)
      {
+        zone = eina_list_data_get(e_comp->zones);
+        if (zone) edje_object_signal_callback_add(zone->over, rep, "e", _e_sys_comp_done_cb, (void *)(long)a);
         if (action_timeout) ecore_timer_del(action_timeout);
         action_timeout = ecore_timer_loop_add(ACTION_TIMEOUT, (Ecore_Task_Cb)_e_sys_comp_action_timeout, (intptr_t*)(long)a);
      }
@@ -168,7 +175,7 @@ static void
 _e_sys_comp_resume(void)
 {
    evas_damage_rectangle_add(e_comp->evas, 0, 0, e_comp->w, e_comp->h);
-   _e_sys_comp_emit_cb_wait(E_SYS_SUSPEND, "e,state,sys,resume", NULL, EINA_FALSE);
+   _e_sys_comp_zones_fade("e,state,sys,resume", EINA_FALSE);
    e_screensaver_deactivate();
 }
 
