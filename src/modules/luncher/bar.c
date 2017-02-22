@@ -954,6 +954,110 @@ _bar_exec_new_show(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *even
 }
 
 static void
+_bar_icon_file_set(Icon *ic, Efreet_Desktop *desktop, E_Client *non_desktop_client)
+{
+   const char *path = NULL, *k = NULL;
+   char buf[4096];
+   int len = 0;
+   if (desktop)
+     {
+        if (!desktop->icon)
+          path = NULL;
+        else if (strncmp(desktop->icon, "/", 1) && !ecore_file_exists(desktop->icon))
+          {
+             path = efreet_icon_path_find(e_config->icon_theme, desktop->icon, ic->inst->size);
+             if (!path)
+               {
+                  if (e_util_strcmp(e_config->icon_theme, "hicolor"))
+                    path = efreet_icon_path_find("hicolor", desktop->icon, ic->inst->size);
+               }
+          }
+        else if (ecore_file_exists(desktop->icon))
+          {
+             path = desktop->icon;
+          }
+        if (!path && desktop->icon)
+          {
+             snprintf(buf, sizeof(buf), "e/icons/%s", desktop->icon);
+             if (eina_list_count(e_theme_collection_items_find("base/theme/icons", buf)))
+               {
+                  path = e_theme_edje_file_get("base/theme/icons", buf);
+                  k = buf;
+               }
+             else
+               {
+                  path = e_theme_edje_file_get("base/theme/icons", "e/icons/unknown");
+                  k =  "e/icons/unknown";
+               }
+          }
+        else if (!path && !desktop->icon)
+          {
+             path = e_theme_edje_file_get("base/theme/icons", "e/icons/unknown");
+             k = "e/icons/unknown";
+          }
+        if (path && desktop->icon && !k)
+          {
+             len = strlen(desktop->icon);
+             if ((len > 4) && (!strcasecmp(desktop->icon + len - 4, ".edj")))
+               k = "icon";
+          }
+     }
+   else if (non_desktop_client)
+     {
+        Evas_Object *tmp;
+        const char *file, *group;
+        Eina_Bool ret = EINA_FALSE;
+
+        tmp = e_client_icon_add(non_desktop_client, evas_object_evas_get(ic->o_layout));
+        if (isedje(tmp))
+          {
+             edje_object_file_get(tmp, &file, &group);
+             if (file && group)
+               ret = EINA_TRUE;
+          }
+        else
+          ret = e_icon_file_get(tmp, &file, &group);
+        if (ret)
+          {
+             eina_stringshare_replace(&ic->icon, file);
+             eina_stringshare_replace(&ic->key, group);
+             path = ic->icon;
+             k = ic->key;
+          }
+        evas_object_del(tmp);
+     }
+   else if (ic->icon)
+     {
+        if (strncmp(ic->icon, "/", 1) && !ecore_file_exists(ic->icon))
+          {
+             path = efreet_icon_path_find(e_config->icon_theme, ic->icon, ic->inst->size);
+             if (!path)
+               {
+                  if (e_util_strcmp(e_config->icon_theme, "hicolor"))
+                    path = efreet_icon_path_find("hicolor", ic->icon, ic->inst->size);
+               }
+          }
+        else if (ecore_file_exists(ic->icon))
+          {
+             path = ic->icon;
+             k = ic->key;
+          }
+        if (!path)
+          {
+             path = e_theme_edje_file_get("base/theme/icons", "e/icons/unknown");
+             k = "e/icons/unknown";
+          }
+     }
+   else
+     {
+        path = e_theme_edje_file_get("base/theme/icons", "e/icons/unknown");
+        k = "e/icons/unknown";
+     }
+   elm_image_file_set(ic->o_icon, path, k);
+   elm_image_file_set(ic->o_overlay, path, k);
+}
+
+static void
 _bar_icon_resized(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, const char *emission EINA_UNUSED, const char *source EINA_UNUSED)
 {
    //This code is supposed to adjust aspect correctly when there is an effect happening.  Uncomment to test.
@@ -990,9 +1094,7 @@ _bar_icon_resized(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, const ch
 static Icon *
 _bar_icon_add(Instance *inst, Efreet_Desktop *desktop, E_Client *non_desktop_client)
 {
-   const char *path = NULL, *k = NULL;
-   char buf[4096], ori[32];
-   int len = 0;
+   char ori[32];
    Icon *ic;
    const Eina_List *l;
    Edje_Message_String *msg;
@@ -1035,74 +1137,7 @@ _bar_icon_add(Instance *inst, Efreet_Desktop *desktop, E_Client *non_desktop_cli
    ic->o_overlay = elm_icon_add(ic->o_layout);
    E_EXPAND(ic->o_overlay);
 
-   if (desktop)
-     {
-        if (!desktop->icon)
-          path = NULL;
-        else if (strncmp(desktop->icon, "/", 1) && !ecore_file_exists(desktop->icon))
-          {
-             path = efreet_icon_path_find(e_config->icon_theme, desktop->icon, inst->size);
-             if (!path)
-               {
-                  if (e_util_strcmp(e_config->icon_theme, "hicolor"))
-                    path = efreet_icon_path_find("hicolor", desktop->icon, inst->size);
-               }
-          }
-        else if (ecore_file_exists(desktop->icon))
-          {
-             path = desktop->icon;
-          }
-        if (!path && desktop->icon)
-          {
-             snprintf(buf, sizeof(buf), "e/icons/%s", desktop->icon);
-             if (eina_list_count(e_theme_collection_items_find("base/theme/icons", buf)))
-               {
-                  path = e_theme_edje_file_get("base/theme/icons", buf);
-                  k = buf;
-               }
-             else
-               {
-                  path = e_theme_edje_file_get("base/theme/icons", "e/icons/unknown");
-                  k =  "e/icons/unknown";
-               }
-          }
-        else if (!path && !desktop->icon)
-          {
-             path = e_theme_edje_file_get("base/theme/icons", "e/icons/unknown");
-             k = "e/icons/unknown";
-          }
-        if (path && desktop->icon && !k)
-          {
-             len = strlen(desktop->icon);
-             if ((len > 4) && (!strcasecmp(desktop->icon + len - 4, ".edj")))
-               k = "icon";
-          }
-     }
-   else
-     {
-        Evas_Object *tmp;
-        const char *file, *group;
-        Eina_Bool ret = EINA_FALSE;
-
-        tmp = e_client_icon_add(non_desktop_client, evas_object_evas_get(ic->o_layout));
-        if (isedje(tmp))
-          {
-             edje_object_file_get(tmp, &file, &group);
-             if (file && group)
-               ret = EINA_TRUE;
-          }
-        else
-          ret = e_icon_file_get(tmp, &file, &group);
-        if (ret)
-          {
-             eina_stringshare_replace(&ic->icon, file);
-             eina_stringshare_replace(&ic->key, group);
-             path = ic->icon;
-             k = ic->key;
-          }
-        evas_object_del(tmp);
-     }
-   elm_image_file_set(ic->o_icon, path, k);
+   _bar_icon_file_set(ic, desktop, non_desktop_client);
 
    if (desktop)
      elm_object_tooltip_text_set(ic->o_icon, desktop->name);
@@ -1133,7 +1168,6 @@ _bar_icon_add(Instance *inst, Efreet_Desktop *desktop, E_Client *non_desktop_cli
        _bar_icon_mouse_out, ic);
    evas_object_show(ic->o_icon);
 
-   elm_image_file_set(ic->o_overlay, path, k);
    evas_object_size_hint_aspect_set(ic->o_overlay, EVAS_ASPECT_CONTROL_BOTH, 1, 1);
    elm_layout_content_set(ic->o_layout, "e.swallow.overlay", ic->o_overlay);
    evas_object_show(ic->o_overlay);
@@ -1556,80 +1590,7 @@ _bar_resize_job(void *data)
           }
         inst->size = size;
         EINA_LIST_FOREACH(inst->icons, l, ic)
-          {
-	            const char *path = NULL, *key = NULL;
-             int len = 0;
-            
-             if (ic->desktop)
-               {
-                  if (!ic->desktop->icon)
-                    path = NULL;
-                  else if (strncmp(ic->desktop->icon, "/", 1) && !ecore_file_exists(ic->desktop->icon))
-                    {
-                       path = efreet_icon_path_find(e_config->icon_theme, ic->desktop->icon, inst->size);
-                       if (!path)
-                         {
-                            if (e_util_strcmp(e_config->icon_theme, "hicolor"))
-                              path = efreet_icon_path_find("hicolor", ic->desktop->icon, inst->size);
-                         }
-                    }
-                  else if (ecore_file_exists(ic->desktop->icon))
-                    {
-                       path = ic->desktop->icon;
-                    }
-                  if (!path)
-                    {
-                       elm_image_file_set(ic->o_icon, e_theme_edje_file_get("base/theme/icons", "e/icons/unknown"),
-                           "e/icons/unknown");
-                       elm_image_file_set(ic->o_overlay, e_theme_edje_file_get("base/theme/icons", "e/icons/unknown"),
-                           "e/icons/unknown");
-                    }
-                  if (path && ic->desktop->icon)
-                    {
-                       len = strlen(ic->desktop->icon);
-                       if ((len > 4) && (!strcasecmp(ic->desktop->icon + len - 4, ".edj")))
-                         key = "icon";
-
-                       elm_image_file_set(ic->o_icon, path, key);
-                       elm_image_file_set(ic->o_overlay, path, key);
-                    }
-               }
-             else if (ic->icon)
-               {
-                  if (strncmp(ic->icon, "/", 1) && !ecore_file_exists(ic->icon))
-                    {
-                       path = efreet_icon_path_find(e_config->icon_theme, ic->icon, inst->size);
-                       if (!path)
-                         {
-                            if (e_util_strcmp(e_config->icon_theme, "hicolor"))
-                              path = efreet_icon_path_find("hicolor", ic->icon, inst->size);
-                         }
-                    }
-                  else if (ecore_file_exists(ic->icon))
-                    {
-                       path = ic->icon;
-                    }
-                  if (!path)
-                    {
-                       elm_image_file_set(ic->o_icon, e_theme_edje_file_get("base/theme/icons", "e/icons/unknown"),
-                           "e/icons/unknown");
-                       elm_image_file_set(ic->o_overlay, e_theme_edje_file_get("base/theme/icons", "e/icons/unknown"),
-                           "e/icons/unknown");
-                    }
-                  else
-                    {
-                       elm_image_file_set(ic->o_icon, path, ic->key);
-                       elm_image_file_set(ic->o_overlay, path, ic->key);
-                    }
-               }
-             else
-               {
-                  elm_image_file_set(ic->o_icon, e_theme_edje_file_get("base/theme/icons", "e/icons/unknown"),
-                           "e/icons/unknown");
-                  elm_image_file_set(ic->o_overlay, e_theme_edje_file_get("base/theme/icons", "e/icons/unknown"),
-                           "e/icons/unknown");
-               }
-          }
+          _bar_icon_file_set(ic, ic->desktop, NULL);
         inst->resize_job = NULL;
      }
 }
