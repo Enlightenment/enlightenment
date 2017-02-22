@@ -1,8 +1,11 @@
 #include <Elementary.h>
 
-#define TITLE  "Enter Your Password"
+#define TITLE_USER  "Enter Your Username"
+#define TITLE_PWD  "Enter Your Password"
+#define SUDO_LBL "[sudo]"
 #define TEXT   "Please enter your user password"
-#define GUIDE  "Password"
+#define GUIDE_USER  "Username"
+#define GUIDE_PWD  "Password"
 #define OK     "OK"
 #define CANCEL "Cancel"
 #define PAD    "pad_medium"
@@ -33,9 +36,25 @@ cb_cancel(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info
 }
 
 EAPI int
-elm_main(int argc EINA_UNUSED, char **argv EINA_UNUSED)
+elm_main(int argc, char **argv)
 {
    Evas_Object *win, *bx, *fr, *lab, *en, *sep, *bx2, *bt;
+   const char *txt = NULL;
+   Eina_Bool askpass = EINA_TRUE;
+
+   if (argc > 1)
+     {
+        /* Git could use SSH_ASKPASS env to query user and password. */
+        /* At least git has no i18n, so this should work for all languages */
+        /* as long as the string is unchanged. */
+        if (!strncmp(argv[1], "Username", sizeof("Username") - 1))
+          askpass = EINA_FALSE;
+        /* Sudo prompt [sudo] at the begining of line */
+        if (!strncmp(argv[1], SUDO_LBL, sizeof(SUDO_LBL) - 1))
+          txt = &argv[1][sizeof(SUDO_LBL)];
+        else
+          txt = argv[1];
+     }
 
    elm_policy_set(ELM_POLICY_QUIT, ELM_POLICY_QUIT_LAST_WINDOW_CLOSED);
 
@@ -45,7 +64,7 @@ elm_main(int argc EINA_UNUSED, char **argv EINA_UNUSED)
    elm_app_info_set(elm_main, "enlightenment", "AUTHORS");
 
    {
-      win = elm_win_util_standard_add("main", TITLE);
+      win = elm_win_util_standard_add("main", askpass ? TITLE_PWD : TITLE_PWD);
       elm_win_autodel_set(win, EINA_TRUE);
       {
          bx = elm_box_add(win);
@@ -60,7 +79,10 @@ elm_main(int argc EINA_UNUSED, char **argv EINA_UNUSED)
             {
                lab = elm_label_add(win);
                evas_object_size_hint_align_set(lab, EVAS_HINT_FILL, 0.5);
-               elm_object_text_set(lab, TEXT);
+               if (txt)
+                 elm_object_text_set(lab, txt);
+               else
+                 elm_object_text_set(lab, TEXT);
                elm_object_content_set(fr, lab);
                evas_object_show(lab);
             }
@@ -78,9 +100,9 @@ elm_main(int argc EINA_UNUSED, char **argv EINA_UNUSED)
                evas_object_size_hint_weight_set(en, EVAS_HINT_EXPAND, 0.0);
                evas_object_size_hint_align_set(en, EVAS_HINT_FILL, 0.5);
                elm_scroller_policy_set(en, ELM_SCROLLER_POLICY_OFF, ELM_SCROLLER_POLICY_OFF);
-               elm_object_part_text_set(en, "guide", GUIDE);
+               elm_object_part_text_set(en, "guide", askpass ? GUIDE_PWD : GUIDE_USER);
                elm_entry_single_line_set(en, EINA_TRUE);
-               elm_entry_password_set(en, EINA_TRUE);
+               elm_entry_password_set(en, askpass);
                evas_object_smart_callback_add(en, "activated", cb_ok, NULL);
                evas_object_smart_callback_add(en, "aborted", cb_cancel, NULL);
                elm_object_content_set(fr, en);
