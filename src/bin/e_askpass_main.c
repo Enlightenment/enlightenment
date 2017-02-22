@@ -64,7 +64,7 @@ elm_main(int argc, char **argv)
    elm_app_info_set(elm_main, "enlightenment", "AUTHORS");
 
    {
-      win = elm_win_util_standard_add("main", askpass ? TITLE_PWD : TITLE_PWD);
+      win = elm_win_util_standard_add("main", askpass ? TITLE_PWD : TITLE_USER);
       elm_win_autodel_set(win, EINA_TRUE);
       {
          bx = elm_box_add(win);
