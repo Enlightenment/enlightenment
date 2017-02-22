@@ -11,6 +11,7 @@ static void _e_client_volume_event_simple_free(void *d, E_Event_Client *ev);
 static void _e_client_volume_event_simple(E_Client *ec, int type);
 static void _e_client_volume_object_mouse_down_cb(void *data, Evas *e, Evas_Object *obj, void *event_info);
 static void _e_client_volume_object_volume_changed(void *data, Evas_Object *obj, void *event_info);
+static void _e_client_volume_object_volume_drag_stop(void *data, Evas_Object *obj, void *event_info);
 static Eina_Bool _e_client_volume_object_changed(void *data, int type, void *event);
 static void _e_client_volume_object_del_cb(void *data, Evas *evas, Evas_Object *obj, void *event_info);
 
@@ -69,6 +70,16 @@ _e_client_volume_object_mouse_down_cb(void *data, Evas *e EINA_UNUSED, Evas_Obje
 
 static void
 _e_client_volume_object_volume_changed(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
+{
+   E_Client *ec;
+
+   ec = data;
+
+   e_client_volume_set(ec, elm_slider_value_get(obj));
+}
+
+static void
+_e_client_volume_object_volume_drag_stop(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
    E_Client *ec;
 
@@ -353,6 +364,7 @@ e_client_volume_set(E_Client *ec, int volume)
         e_client_volume_sink_set(sink, ec->volume, ec->mute);
      }
 
+   _e_client_volume_update(ec);
    _e_client_volume_event_simple(ec, E_EVENT_CLIENT_VOLUME);
 }
 
@@ -422,6 +434,9 @@ e_client_volume_object_add(E_Client *ec, Evas *evas)
         elm_slider_indicator_format_set(o, "%.0f");
         evas_object_smart_callback_add(o, "changed",
                                        _e_client_volume_object_volume_changed,
+                                       ec);
+        evas_object_smart_callback_add(o, "slider,drag,stop",
+                                       _e_client_volume_object_volume_drag_stop,
                                        ec);
         elm_slider_value_set(o, ec->volume);
         edje_object_part_swallow(bx, "e.swallow.volume", o);

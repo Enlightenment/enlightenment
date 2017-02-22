@@ -1050,6 +1050,17 @@ _bd_hook_volume_changed(void *data, Evas_Object *obj, void *event_info EINA_UNUS
 }
 
 static void
+_bd_hook_volume_drag_stop(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   E_Client *ec;
+
+   ec = data;
+
+   elm_slider_value_set(obj, ec->volume);
+}
+
+
+static void
 _bd_hook_mute_changed(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
    E_Client *ec;
@@ -1073,6 +1084,24 @@ _bd_hook_sink_volume_changed(void *data, Evas_Object *obj, void *event_info EINA
                             elm_slider_value_get(obj),
                             elm_check_state_get(check));
 }
+
+static void
+_bd_hook_sink_volume_drag_stop(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
+{
+   E_Client_Volume_Sink *sink;
+   Evas_Object *check;
+   Eina_Bool mute;
+   int vol;
+
+   sink = data;
+
+   check = evas_object_data_get(obj, "e_sink_check");
+
+   e_client_volume_sink_get(sink, &vol, &mute);
+   elm_slider_value_set(obj, vol);
+   elm_check_state_set(check, mute);
+}
+
 
 static void
 _bd_hook_sink_mute_changed(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
@@ -1187,6 +1216,8 @@ _e_client_mixer_sink_append(E_Client_Volume_Sink *sink, Client_Mixer *cm)
    elm_slider_value_set(slider, volume);
    evas_object_smart_callback_add(slider, "changed",
                                   _bd_hook_sink_volume_changed, sink);
+   evas_object_smart_callback_add(slider, "slider,drag,stop",
+                                  _bd_hook_sink_volume_drag_stop, sink);
    elm_box_pack_end(cm->bx, slider);
    evas_object_show(slider);
 
@@ -1379,6 +1410,8 @@ _bd_hook_cb(void *data, E_Menu *m EINA_UNUSED, E_Menu_Item *it EINA_UNUSED)
    evas_object_size_hint_align_set(o, EVAS_HINT_FILL, EVAS_HINT_FILL);
    elm_slider_value_set(o, ec->volume);
    evas_object_smart_callback_add(o, "changed", _bd_hook_volume_changed, ec);
+   evas_object_smart_callback_add(o, "slider,drag,stop",
+                                  _bd_hook_volume_drag_stop, ec);
    elm_box_pack_end(bx, o);
    evas_object_show(o);
    cm->volume = o;
