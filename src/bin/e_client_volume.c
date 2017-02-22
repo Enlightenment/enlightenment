@@ -264,8 +264,15 @@ _e_client_volume_update(E_Client *ec)
      {
         ec->volume_min = volume_min;
         ec->volume_max = volume_max;
-        if (count > 0) ec->volume = volume / count;
-        else ec->volume = volume_max;
+        if (count == 0)
+          {
+             if (ec->volume < volume_min)
+               ec->volume = volume_min;
+             if (ec->volume > volume_max)
+               ec->volume = volume_max;
+          }
+        else
+          ec->volume = volume / count;
         ec->mute = mute;
         ec->volume_control_enabled = EINA_TRUE;
      }
