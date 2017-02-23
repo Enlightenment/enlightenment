@@ -55,7 +55,7 @@ _cb_sink_volume_drag_stop(void *data,
 {
    Evas_Object *bxv = data;
    Emix_Sink *sink = evas_object_data_get(bxv, "sink");
-   int vol = sink->volume.volumes[0];
+   int vol = sink->set_volume.volumes[0];
    elm_slider_value_set(obj, vol);
 }
 

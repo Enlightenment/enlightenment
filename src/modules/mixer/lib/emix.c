@@ -280,6 +280,13 @@ emix_sink_volume_set(Emix_Sink *sink, Emix_Volume volume)
                                 ctx->loaded->ebackend_sink_volume_set &&
                                 sink));
 
+   sink->set_volume.channel_count = volume.channel_count;
+   sink->set_volume.volumes = calloc(volume.channel_count, sizeof(int));
+   for (unsigned int i = 0; i < volume.channel_count; i++)
+     {
+        sink->set_volume.volumes[i] = volume.volumes[i];
+     }
+
    ctx->loaded->ebackend_sink_volume_set(sink, volume);
 }
 

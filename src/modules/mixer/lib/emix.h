@@ -55,6 +55,7 @@ typedef struct _Emix_Port {
 typedef struct _Emix_Sink {
    const char *name;
    Emix_Volume volume;
+   Emix_Volume set_volume;
    Eina_Bool mute;
    Eina_List *ports;
 } Emix_Sink;
