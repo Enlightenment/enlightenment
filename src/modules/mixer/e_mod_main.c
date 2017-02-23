@@ -476,6 +476,7 @@ _slider_changed_cb(void *data EINA_UNUSED, Evas_Object *obj,
 
    val = (int)elm_slider_value_get(obj);
    VOLSET(val, s->volume, s, emix_sink_volume_set);
+   elm_slider_value_set(obj, val);
    emix_config_save_state_get();
    if (emix_config_save_get()) e_config_save_queue();
 }
