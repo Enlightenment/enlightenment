@@ -50,6 +50,7 @@ E_API E_Config_Binding_Key *e_util_binding_match(const Eina_List *bindlist, Ecor
 E_API Eina_Bool e_util_fullscreen_current_any(void);
 E_API Eina_Bool e_util_fullscreen_any(void);
 E_API const char *e_util_time_str_get(long int seconds);
+E_API void e_util_size_debug(Evas_Object *obj);
 E_API void e_util_size_debug_set(Evas_Object *obj, Eina_Bool enable);
 E_API Efreet_Desktop *e_util_terminal_desktop_get(void);
 E_API void e_util_gadcon_orient_icon_set(E_Gadcon_Orient orient, Evas_Object *obj);

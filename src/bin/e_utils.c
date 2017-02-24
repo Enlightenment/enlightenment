@@ -1049,8 +1049,8 @@ _e_util_size_debug_stack(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Objec
    fprintf(stderr, "RESTACK %s %d OBJ[%s%s%p]: (%d,%d) - %dx%d\n", evas_object_visible_get(obj) ? "VIS" : "HID", evas_object_layer_get(obj), name ?: "", name ? "|" : "", obj, x, y, w, h);
 }
 
-static void
-_e_util_size_debug(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
+E_API void
+e_util_size_debug(Evas_Object *obj)
 {
    int x, y, w, h;
    const char *name;
@@ -1058,6 +1058,12 @@ _e_util_size_debug(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj
    evas_object_geometry_get(obj, &x, &y, &w, &h);
    name = evas_object_name_get(obj);
    fprintf(stderr, "%s %d OBJ[%s%s%p]: (%d,%d) - %dx%d\n", evas_object_visible_get(obj) ? "VIS" : "HID", evas_object_layer_get(obj), name ?: "", name ? "|" : "", obj, x, y, w, h);
+}
+
+static void
+_e_util_size_debug(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
+{
+   e_util_size_debug(obj);
 }
 
 E_API void
