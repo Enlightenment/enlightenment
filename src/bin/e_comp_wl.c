@@ -182,13 +182,6 @@ _e_comp_wl_evas_cb_show(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj EIN
    if (e_object_is_del(E_OBJECT(ec))) return;
 
    if (!ec->override) e_hints_window_visible_set(ec);
-
-   if (ec->ignored || ec->comp_data->cursor) return;
-   if (ec->parent && (!ec->parent->focused)) return;
-   if (ec->new_client)
-     ec->take_focus = !starting;
-   else
-     evas_object_focus_set(ec->frame, !starting);
 }
 
 static void
@@ -1332,7 +1325,14 @@ _e_comp_wl_surface_state_commit(E_Client *ec, E_Comp_Wl_Surface_State *state)
      }
 
    if (state->new_attach)
-     _e_comp_wl_surface_state_attach(ec, state);
+     {
+        _e_comp_wl_surface_state_attach(ec, state);
+        if (first && (!ec->comp_data->cursor))
+          {
+             ec->take_focus = !starting || ec->internal_elm_win;
+             ec->want_focus = ec->override;
+          }
+     }
 
    _e_comp_wl_surface_state_buffer_set(state, NULL);
 
