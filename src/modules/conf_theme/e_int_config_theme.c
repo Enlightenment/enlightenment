@@ -761,6 +761,8 @@ _basic_apply_data(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfdata
 
    file = ecore_file_file_get(cfdata->theme);
    name = ecore_file_strip_ext(file);
+   if (!!e_config->show_splash != !!cfdata->show_splash)
+     e_config_save_queue();
    e_config->show_splash = cfdata->show_splash;
    if (name)
      {
