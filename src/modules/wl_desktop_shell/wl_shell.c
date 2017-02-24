@@ -81,8 +81,6 @@ _wl_shell_surface_cb_resize(struct wl_client *client EINA_UNUSED, struct wl_reso
 
    e_comp_wl->resize.resource = resource;
    e_comp_wl->resize.edges = edges;
-   e_comp_wl->ptr.grab_x = wl_fixed_from_int(e_comp_wl->ptr.x) - wl_fixed_from_int(ec->client.x);
-   e_comp_wl->ptr.grab_y = wl_fixed_from_int(e_comp_wl->ptr.y) - wl_fixed_from_int(ec->client.y);
 
    switch (e_comp_wl->ptr.button)
      {
