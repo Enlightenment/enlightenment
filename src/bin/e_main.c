@@ -111,6 +111,7 @@ E_API Eina_Bool starting = EINA_TRUE;
 E_API Eina_Bool stopping = EINA_FALSE;
 E_API Eina_Bool restart = EINA_FALSE;
 E_API Eina_Bool e_nopause = EINA_FALSE;
+E_API Eina_Bool after_restart = EINA_FALSE;
 EINTERN const char *e_first_frame = NULL;
 EINTERN double e_first_frame_start_time = -1;
 
@@ -213,7 +214,6 @@ main(int argc, char **argv)
 {
    Eina_Bool nostartup = EINA_FALSE;
    Eina_Bool safe_mode = EINA_FALSE;
-   Eina_Bool after_restart = EINA_FALSE;
    Eina_Bool waslocked = EINA_FALSE;
    Eina_Stringshare *strshare;
    double t = 0.0, tstart = 0.0;
