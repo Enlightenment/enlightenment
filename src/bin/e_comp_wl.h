@@ -195,7 +195,7 @@ struct _E_Comp_Wl_Data
    struct
      {
         Eina_List *resources;
-        wl_fixed_t x, y;
+        Evas_Coord x, y;
         wl_fixed_t grab_x, grab_y;
         uint32_t button;
         uint32_t serial[2]; //down/up

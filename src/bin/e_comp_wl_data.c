@@ -1017,8 +1017,8 @@ e_comp_wl_data_device_send_enter(E_Client *ec)
         return;
      }
 #endif
-   x = wl_fixed_to_int(e_comp_wl->ptr.x) - e_comp_wl->selection.target->client.x;
-   y = wl_fixed_to_int(e_comp_wl->ptr.y) - e_comp_wl->selection.target->client.y;
+   x = e_comp_wl->ptr.x - e_comp_wl->selection.target->client.x;
+   y = e_comp_wl->ptr.y - e_comp_wl->selection.target->client.y;
    serial = wl_display_next_serial(e_comp_wl->wl.disp);
    wl_data_device_send_enter(data_device_res, serial, ec->comp_data->surface,
                              wl_fixed_from_int(x), wl_fixed_from_int(y),
