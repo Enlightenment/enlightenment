@@ -2871,6 +2871,8 @@ e_comp_object_util_type_set(Evas_Object *obj, E_Comp_Object_Type type)
      edje_object_signal_emit(obj, "e,state,shadow,on", "e");
    else
      edje_object_signal_emit(obj, "e,state,shadow,off", "e");
+   if (evas_object_visible_get(obj))
+     edje_object_signal_emit(obj, "e,state,visible", "e");
    if (content)
      edje_object_part_swallow(obj, "e.swallow.content", content);
 }
