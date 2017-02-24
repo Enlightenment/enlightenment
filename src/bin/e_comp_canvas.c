@@ -59,6 +59,7 @@ _e_comp_canvas_render_post(void *data EINA_UNUSED, Evas *e EINA_UNUSED, void *ev
         ec->on_post_updates = EINA_FALSE;
         if (!e_object_is_del(E_OBJECT(ec)))
           e_pixmap_image_clear(ec->pixmap, 1);
+        evas_object_smart_callback_call(ec->frame, "post_render", NULL);
         UNREFD(ec, 111);
         e_object_unref(E_OBJECT(ec));
      }
