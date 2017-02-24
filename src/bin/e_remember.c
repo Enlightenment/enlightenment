@@ -988,8 +988,8 @@ _e_remember_cb_hook_eval_post_new_client(void *data EINA_UNUSED, E_Client *ec)
         rem->apply = E_REMEMBER_APPLY_POS | E_REMEMBER_APPLY_SIZE | E_REMEMBER_APPLY_BORDER;
 
         e_remember_use(rem);
-        e_remember_update(ec);
         ec->remember = rem;
+        e_remember_update(ec);
      }
 }
 
