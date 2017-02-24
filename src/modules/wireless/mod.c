@@ -17,7 +17,6 @@ E_API E_Module_Api e_modapi =
 E_API void *
 e_modapi_init(E_Module *m)
 {
-   if (!E_EFL_VERSION_MINIMUM(1, 17, 99)) return NULL;
    dbus_conn = eldbus_connection_get(ELDBUS_CONNECTION_TYPE_SYSTEM);
    connman_init();
    wireless_gadget_init();

@@ -451,7 +451,6 @@ _drm2_randr_create(void)
              s->info.can_rot_180 = EINA_FALSE;
              s->info.can_rot_270 = EINA_FALSE;
 
-# if (EFL_VERSION_MAJOR > 1) || (EFL_VERSION_MINOR >= 19)
              int rotations;
 
              rotations =
@@ -465,7 +464,6 @@ _drm2_randr_create(void)
                s->info.can_rot_180 = EINA_TRUE;
              if (rotations & ECORE_DRM2_ROTATION_270)
                s->info.can_rot_270 = EINA_TRUE;
-# endif
 
              if (cs)
                {
@@ -623,7 +621,6 @@ _drm2_randr_apply(void)
 
         /* TODO: cannot support rotations until we support planes
          * and we cannot support planes until Atomic support is in */
-# if (EFL_VERSION_MAJOR > 1) || (EFL_VERSION_MINOR >= 19)
         int orient = 0;
 
         if (s->config.rotation == 0)
@@ -636,7 +633,6 @@ _drm2_randr_apply(void)
           orient = ECORE_DRM2_ROTATION_270;
 
         ecore_drm2_output_rotation_set(output, orient);
-# endif
 
         if (s->config.priority == top_priority)
           _drm2_output_primary_set(outputs, output);

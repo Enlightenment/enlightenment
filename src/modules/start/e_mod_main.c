@@ -324,8 +324,7 @@ e_modapi_init(E_Module *m)
 
    start_module = m;
    e_gadcon_provider_register(&_gadcon_class);
-   if (E_EFL_VERSION_MINIMUM(1, 17, 99))
-     e_gadget_type_add("Start", start_create, NULL);
+   e_gadget_type_add("Start", start_create, NULL);
    return m;
 }
 
@@ -334,8 +333,7 @@ e_modapi_shutdown(E_Module *m EINA_UNUSED)
 {
    start_module = NULL;
    e_gadcon_provider_unregister(&_gadcon_class);
-   if (E_EFL_VERSION_MINIMUM(1, 17, 99))
-     e_gadget_type_del("Start");
+   e_gadget_type_del("Start");
    return 1;
 }
 
