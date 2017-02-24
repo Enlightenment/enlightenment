@@ -1770,7 +1770,7 @@ _e_client_eval(E_Client *ec)
              ec->stack.ignore--;
           }
      }
-   if ((!e_client_util_ignored_get(ec)) && ec->zone && (!ec->placed))
+   if ((!e_client_util_ignored_get(ec)) && ec->zone && ec->visible && (!ec->placed))
      {
         if (ec->parent)
           {
