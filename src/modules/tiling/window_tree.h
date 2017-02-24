@@ -49,4 +49,6 @@ Eina_Bool    tiling_window_tree_node_resize(Window_Tree *node, int w_dir,
                                             double w_diff, int h_dir, double h_diff);
 
 void         tiling_window_tree_node_change_pos(Window_Tree *node, int key);
+
+Eina_Bool    tiling_window_tree_repair(void);
 #endif

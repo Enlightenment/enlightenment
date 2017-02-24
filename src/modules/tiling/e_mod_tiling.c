@@ -560,6 +560,57 @@ _e_client_check_based_on_state_cb(void *data, Evas_Object *obj EINA_UNUSED,
    _toggle_tiling_based_on_state(ec, EINA_TRUE);
 }
 
+/**
+ * Find the next tiled client under the current coordinates
+ */
+static Window_Tree*
+_tilable_client(int x, int y)
+{
+   E_Client *ec;
+
+   E_CLIENT_FOREACH(ec)
+     {
+        Eina_Rectangle c;
+        Window_Tree *wt;
+
+        e_client_geometry_get(ec, &c.x, &c.y, &c.w, &c.h);
+
+        if (!eina_rectangle_coords_inside(&c, x, y)) continue;
+
+        if (!(wt = tiling_window_tree_client_find(_G.tinfo->tree, ec))) continue;
+
+        return wt;
+     }
+  return NULL;
+}
+
+static void
+_insert_client(E_Client *ec, Tiling_Split_Type type)
+{
+   E_Client *ec_focused = e_client_focused_get();
+   Window_Tree *place = NULL;
+
+   if (ec_focused == ec)
+     {
+        //if we are placing the currently focused client, search for client under the focused client
+        Eina_Rectangle c;
+
+        e_client_geometry_get(ec, &c.x, &c.y, &c.w, &c.h);
+
+        place = _tilable_client(c.x + c.w/2, c.y + c.h/2);
+     }
+   else
+     {
+        //otherwise place next to the given client
+        place = tiling_window_tree_client_find(_G.tinfo->tree,
+                                               ec_focused);
+
+     }
+
+   _G.tinfo->tree =
+     tiling_window_tree_add(_G.tinfo->tree, place, ec, type);
+}
+
 static Eina_Bool
 _add_client(E_Client *ec, Tiling_Split_Type type)
 {
@@ -599,26 +650,7 @@ _add_client(E_Client *ec, Tiling_Split_Type type)
    _client_apply_settings(ec, extra);
 
    /* Window tree updating. */
-   {
-      E_Client *ec_focused = e_client_focused_get();
-
-      /* If focused is NULL, it should return the root. */
-      Window_Tree *parent = tiling_window_tree_client_find(_G.tinfo->tree,
-                                                           ec_focused);
-
-      if (!parent && (ec_focused != ec))
-        {
-           Client_Extra *extra_focused =
-             eina_hash_find(_G.client_extras, &ec_focused);
-           if (_G.tinfo->tree && extra_focused && extra_focused->tiled)
-             {
-                ERR("Couldn't find tree item for focused client %p. Using root..", e_client_focused_get());
-             }
-        }
-
-      _G.tinfo->tree =
-        tiling_window_tree_add(_G.tinfo->tree, parent, ec, type);
-   }
+   _insert_client(ec, type);
 
    if (started)
      _reapply_tree();
