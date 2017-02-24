@@ -3252,7 +3252,7 @@ e_comp_wl_key_down(Ecore_Event_Key *ev)
    *k = keycode;
 
    if ((!e_client_action_get()) && (!e_comp->input_key_grabs) &&
-       (!e_menu_grab_window_get()))
+       (!e_menu_is_active()))
      {
         ec = e_client_focused_get();
         if (ec && ec->comp_data->surface && e_comp_wl->kbd.focused)
@@ -3302,7 +3302,7 @@ e_comp_wl_key_up(Ecore_Event_Key *ev)
      (const char *)end - (const char *)e_comp_wl->kbd.keys.data;
 
    if ((!e_client_action_get()) && (!e_comp->input_key_grabs) &&
-       (!e_menu_grab_window_get()))
+       (!e_menu_is_active()))
      {
         ec = e_client_focused_get();
 

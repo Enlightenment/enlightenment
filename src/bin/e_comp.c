@@ -1732,13 +1732,13 @@ e_comp_ungrab_input(Eina_Bool mouse, Eina_Bool kbd)
 E_API Eina_Bool
 e_comp_util_kbd_grabbed(void)
 {
-   return e_menu_grab_window_get() || e_client_action_get() || e_grabinput_key_win_get();
+   return e_menu_is_active() || e_client_action_get() || e_grabinput_key_win_get();
 }
 
 E_API Eina_Bool
 e_comp_util_mouse_grabbed(void)
 {
-   return e_menu_grab_window_get() || e_client_action_get() || e_grabinput_mouse_win_get();
+   return e_menu_is_active() || e_client_action_get() || e_grabinput_mouse_win_get();
 }
 
 E_API void

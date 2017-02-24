@@ -83,7 +83,7 @@ static void         _e_menu_category_free_cb(E_Menu_Category *cat);
 static void         _e_menu_cb_mouse_evas_down(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED);
 
 /* local subsystem globals */
-static Ecore_Window _e_menu_win = 0;
+static Ecore_Window _e_menu_win = UINT_MAX;
 static Eina_List *_e_active_menus = NULL;
 static E_Menu_Item *_e_active_menu_item = NULL;
 static E_Menu_Item *_e_prev_active_menu_item = NULL;
@@ -1182,19 +1182,19 @@ e_menu_idler_before(void)
 
    if (!_e_active_menus)
      {
-        if (_e_menu_win)
+        if (_e_menu_win == e_comp->ee_win)
           {
              e_comp_ungrab_input(1, 1);
-             _e_menu_win = 0;
+             _e_menu_win = UINT_MAX;
              e_bindings_disabled_set(0);
           }
      }
 }
 
-E_API Ecore_Window
-e_menu_grab_window_get(void)
+E_API Eina_Bool
+e_menu_is_active(void)
 {
-   return _e_menu_win;
+   return _e_menu_win == e_comp->ee_win;
 }
 
 /* local subsystem functions */
@@ -1873,12 +1873,12 @@ _e_menu_activate_internal(E_Menu *m, E_Zone *zone)
      m->pre_activate_cb.func(m->pre_activate_cb.data, m);
    m->fast_mouse = 0;
    m->pending_new_submenu = 0;
-   if (!_e_menu_win)
+   if (_e_menu_win != e_comp->ee_win)
      {
         _e_menu_win = e_comp->ee_win;
         if (!e_comp_grab_input(1, 1))
           {
-             _e_menu_win = 0;
+             _e_menu_win = UINT_MAX;
              return;
           }
         e_bindings_disabled_set(1);
