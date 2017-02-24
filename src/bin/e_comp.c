@@ -41,6 +41,7 @@ static int _e_comp_log_dom = -1;
 E_API int E_EVENT_COMPOSITOR_RESIZE = -1;
 E_API int E_EVENT_COMPOSITOR_DISABLE = -1;
 E_API int E_EVENT_COMPOSITOR_ENABLE = -1;
+E_API int E_EVENT_COMPOSITOR_XWAYLAND_INIT = -1;
 
 //////////////////////////////////////////////////////////////////////////
 #undef DBG
@@ -1023,6 +1024,7 @@ e_comp_init(void)
    E_EVENT_COMP_OBJECT_ADD = ecore_event_type_new();
    E_EVENT_COMPOSITOR_DISABLE = ecore_event_type_new();
    E_EVENT_COMPOSITOR_ENABLE = ecore_event_type_new();
+   E_EVENT_COMPOSITOR_XWAYLAND_INIT = ecore_event_type_new();
 
    ignores = eina_hash_pointer_new(NULL);
 

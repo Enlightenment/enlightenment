@@ -53,6 +53,7 @@ typedef enum _E_Layer
 
 extern E_API int E_EVENT_COMPOSITOR_DISABLE;
 extern E_API int E_EVENT_COMPOSITOR_ENABLE;
+extern E_API int E_EVENT_COMPOSITOR_XWAYLAND_INIT;
 
 typedef void (*E_Comp_Cb)(void);
 
