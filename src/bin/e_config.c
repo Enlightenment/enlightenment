@@ -2404,6 +2404,7 @@ _e_config_free(E_Config *ecf)
         if (rem->role) eina_stringshare_del(rem->role);
         if (rem->prop.border) eina_stringshare_del(rem->prop.border);
         if (rem->prop.command) eina_stringshare_del(rem->prop.command);
+        eina_stringshare_del(rem->uuid);
         E_FREE(rem);
      }
    EINA_LIST_FREE(ecf->menu_applications, ema)
