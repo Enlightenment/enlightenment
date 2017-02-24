@@ -415,6 +415,7 @@ xwl_init(void *d EINA_UNUSED)
    snprintf(disp, sizeof(disp), ":%d", exs->disp);
    DBG("XWayland Listening on display: %s", disp);
    setenv("DISPLAY", disp, 1);
+   ecore_event_add(E_EVENT_COMPOSITOR_XWAYLAND_INIT, NULL, NULL, NULL);
 
    /* setup ecore_fd handlers for abstract and unix socket fds */
    exs->abs_hdlr = 
