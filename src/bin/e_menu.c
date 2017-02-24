@@ -1626,6 +1626,7 @@ _e_menu_realize(E_Menu *m)
      }
 
    m->comp_object = e_comp_object_util_add(o, E_COMP_OBJECT_TYPE_MENU);
+   evas_object_data_set(m->comp_object, "E_Menu", m);
    if (!m->parent_item)
      e_comp_object_util_autoclose(m->comp_object, _e_menu_cb_mouse_evas_down, _e_menu_cb_key_down, m);
    evas_object_name_set(m->comp_object, "m->comp_object");
