@@ -821,6 +821,7 @@ static E_Comp_Screen_Iface drmiface =
    .key_down = _drm2_key_down,
    .key_up = _drm2_key_up,
    .relative_motion = EINA_TRUE,
+   .backlight_enabled = EINA_TRUE,
 };
 
 static Eina_Bool

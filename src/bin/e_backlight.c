@@ -121,9 +121,7 @@ e_backlight_level_set(E_Zone *zone, double val, double tim)
    // set backlight associated with zone to val over period of tim
    // if tim == 0.0 - then do it instantnly, if time == -1 use some default
    // transition time
-   if (eina_streq(ecore_evas_engine_name_get(e_comp->ee), "buffer") ||
-       strstr(ecore_evas_engine_name_get(e_comp->ee), "wayland"))
-     return;
+   if ((!e_comp->screen) || (!e_comp->screen->backlight_enabled)) return;
    if (val < 0.0) val = 0.0;
    else if (val > 1.0)
      val = 1.0;

@@ -23,6 +23,7 @@ E_Comp_Screen_Iface xiface =
    .create = e_comp_x_randr_create,
    .apply = e_comp_x_randr_config_apply,
    .relative_motion = EINA_FALSE,
+   .backlight_enabled = EINA_TRUE,
 };
 
 static void
