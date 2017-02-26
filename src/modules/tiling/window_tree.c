@@ -124,7 +124,7 @@ tiling_window_tree_add(Window_Tree *root, Window_Tree *parent,
      {
         if (parent->children)
           {
-             _tiling_window_tree_parent_add(parent, new_node, parent, EINA_TRUE);
+             _tiling_window_tree_parent_add(parent, new_node, NULL, EINA_TRUE);
           }
         else
           {
