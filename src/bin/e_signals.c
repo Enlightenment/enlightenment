@@ -6,12 +6,8 @@
 #include "e.h"
 
 #ifdef HAVE_WAYLAND
-# ifdef HAVE_WL_DRM
-#  ifdef HAVE_DRM2
-#   include <Ecore_Drm2.h>
-#  else
-#   include <Ecore_Drm.h>
-#  endif
+# ifdef USE_MODULE_WL_DRM
+#  include <Ecore_Drm2.h>
 # endif
 #endif
 
@@ -75,9 +71,8 @@ _e_crash(void)
 #ifdef HAVE_WAYLAND
    if (e_comp->comp_type == E_PIXMAP_TYPE_WL)
      {
-#ifdef HAVE_WL_DRM
+# ifdef USE_MODULE_WL_DRM
         if (!strstr(ecore_evas_engine_name_get(e_comp->ee), "drm")) return;
-# ifdef HAVE_DRM2
         Ecore_Drm2_Device *dev;
 
         dev = ecore_evas_data_get(e_comp->ee, "device");
@@ -88,23 +83,7 @@ _e_crash(void)
              ecore_drm2_device_free(dev);
           }
         ecore_drm2_shutdown();
-# else
-        const Eina_List *list, *l, *ll;
-        Ecore_Drm_Device *dev;
-
-        list = ecore_drm_devices_get();
-        EINA_LIST_FOREACH_SAFE(list, l, ll, dev)
-          {
-             ecore_drm_inputs_destroy(dev);
-             ecore_drm_sprites_destroy(dev);
-             ecore_drm_device_close(dev);
-             ecore_drm_launcher_disconnect(dev);
-             ecore_drm_device_free(dev);
-          }
-
-        ecore_drm_shutdown();
 # endif
-#endif
         return;
      }
 #endif
