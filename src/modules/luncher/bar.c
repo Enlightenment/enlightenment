@@ -1215,7 +1215,7 @@ _bar_cb_exec_del(void *data EINA_UNUSED, int type EINA_UNUSED, E_Exec_Instance *
 
    EINA_LIST_FOREACH(ex->clients, l, ec)
      {
-        if (!ec->netwm.state.skip_taskbar)
+        if (!ec->netwm.state.skip_taskbar && !e_client_util_is_popup(ec))
           {
              break;
           }
@@ -1281,7 +1281,7 @@ _bar_cb_exec_client_prop(void *data EINA_UNUSED, int type EINA_UNUSED, E_Event_C
         skip = EINA_TRUE;
         EINA_LIST_FOREACH(ev->ec->exe_inst->clients, l, ec)
           {
-             if (!ec->netwm.state.skip_taskbar)
+             if (!ec->netwm.state.skip_taskbar && !e_client_util_is_popup(ec))
                {
                   skip = EINA_FALSE;
                   break;
@@ -1289,8 +1289,12 @@ _bar_cb_exec_client_prop(void *data EINA_UNUSED, int type EINA_UNUSED, E_Event_C
           }
      }
    else
-     skip = ev->ec->netwm.state.skip_taskbar;
-
+     {
+        if (ev->ec->netwm.state.skip_taskbar || e_client_util_is_popup(ec))
+          skip = EINA_TRUE;
+        else
+          skip = EINA_FALSE;
+     }
    EINA_LIST_FOREACH(luncher_instances, l, inst)
      {
         Icon *ic = NULL;
@@ -1377,14 +1381,17 @@ _bar_cb_exec_new(void *data EINA_UNUSED, int type, E_Exec_Instance *ex)
    if (type == E_EVENT_EXEC_NEW_CLIENT)
      {
         ec = eina_list_data_get(ex->clients);
-        skip = ec->netwm.state.skip_taskbar;
+        if (ec->netwm.state.skip_taskbar || e_client_util_is_popup(ec))
+          skip = EINA_TRUE;
+        else
+          skip = EINA_FALSE;
      }
    else
      {
         skip = EINA_TRUE;
         EINA_LIST_FOREACH(ex->clients, l, ec)
           {
-             if (!ec->netwm.state.skip_taskbar)
+             if (!ec->netwm.state.skip_taskbar && !e_client_util_is_popup(ec))
                {
                   skip = EINA_FALSE;
                   break;
@@ -1492,7 +1499,7 @@ _bar_fill(Instance *inst)
 
              EINA_LIST_FOREACH(ex->clients, lll, ec)
                {
-                  if (!ec->netwm.state.skip_taskbar)
+                  if (!ec->netwm.state.skip_taskbar && !e_client_util_is_popup(ec))
                     {
                        skip = EINA_FALSE;
                     }
@@ -1520,6 +1527,7 @@ _bar_fill(Instance *inst)
      {
         if (e_client_util_ignored_get(ec)) continue;
         if (ec->netwm.state.skip_taskbar) continue;
+        if (e_client_util_is_popup(ec)) continue;
         ic = _bar_icon_match(inst, ec);
         if (!ic)
           {
