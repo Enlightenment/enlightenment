@@ -1290,7 +1290,7 @@ _bar_cb_exec_client_prop(void *data EINA_UNUSED, int type EINA_UNUSED, E_Event_C
      }
    else
      {
-        if (ev->ec->netwm.state.skip_taskbar || e_client_util_is_popup(ec))
+        if (ev->ec->netwm.state.skip_taskbar || e_client_util_is_popup(ev->ec))
           skip = EINA_TRUE;
         else
           skip = EINA_FALSE;
