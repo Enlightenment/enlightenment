@@ -239,12 +239,12 @@ _bar_instance_watch(void *data, E_Exec_Instance *ex, E_Exec_Watch_Type type)
       case E_EXEC_WATCH_STARTED:
         if (ic->starting) elm_layout_signal_emit(ic->o_layout, "e,state,started", "e");
         ic->starting = EINA_FALSE;
-        if (!ic->execs)
+        if (!ic->execs && ic->inst->cfg->type != E_LUNCHER_MODULE_LAUNCH_ONLY)
           {
              snprintf(ori, sizeof(ori), "e,state,on,%s", _bar_location_get(ic->inst));
              elm_layout_signal_emit(ic->o_layout, ori, "e");
           }
-        if (!eina_list_data_find(ic->execs, ex))
+        if (!eina_list_data_find(ic->execs, ex) && ic->inst->cfg->type != E_LUNCHER_MODULE_LAUNCH_ONLY)
           ic->execs = eina_list_append(ic->execs, ex);
         break;
       case E_EXEC_WATCH_TIMEOUT:
@@ -1057,40 +1057,6 @@ _bar_icon_file_set(Icon *ic, Efreet_Desktop *desktop, E_Client *non_desktop_clie
    elm_image_file_set(ic->o_overlay, path, k);
 }
 
-static void
-_bar_icon_resized(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, const char *emission EINA_UNUSED, const char *source EINA_UNUSED)
-{
-   //This code is supposed to adjust aspect correctly when there is an effect happening.  Uncomment to test.
-   /*Instance *inst = data;
-   Icon *ic = NULL;
-   Eina_List *l = NULL;
-   Evas_Coord aspect = 0, large = 0, w, h;
-
-   if (!inst->effect) return;
-   switch (e_gadget_site_orient_get(e_gadget_site_get(inst->o_main)))
-     {
-      case E_GADGET_SITE_ORIENT_VERTICAL:
-        EINA_LIST_FOREACH(inst->icons, l, ic)
-          {
-             evas_object_geometry_get(ic->o_icon, 0, 0, &w, &h);
-             if (w > large)
-               large = w;
-             aspect += h;
-          }
-        evas_object_size_hint_aspect_set(inst->o_main, EVAS_ASPECT_CONTROL_BOTH, large, aspect);
-        break;
-      default:
-        EINA_LIST_FOREACH(inst->icons, l, ic)
-          {
-             evas_object_geometry_get(ic->o_icon, 0, 0, &w, &h);
-             if (h > large)
-               large = h;
-             aspect += w;
-          }
-        evas_object_size_hint_aspect_set(inst->o_main, EVAS_ASPECT_CONTROL_BOTH, aspect, large);
-     }*/
-}
-
 static Icon *
 _bar_icon_add(Instance *inst, Efreet_Desktop *desktop, E_Client *non_desktop_client)
 {
@@ -1119,7 +1085,7 @@ _bar_icon_add(Instance *inst, Efreet_Desktop *desktop, E_Client *non_desktop_cli
        "e/gadget/luncher/icon");
    E_EXPAND(ic->o_layout);
    E_FILL(ic->o_layout);
-   edje_object_signal_callback_add(elm_layout_edje_get(ic->o_layout), "e,state,resized", "e", _bar_icon_resized, inst);
+//   edje_object_signal_callback_add(elm_layout_edje_get(ic->o_layout), "e,state,resized", "e", _bar_icon_resized, inst);
    elm_box_pack_end(inst->o_icon_con, ic->o_layout);
    evas_object_show(ic->o_layout);
 
@@ -1179,12 +1145,15 @@ _bar_icon_add(Instance *inst, Efreet_Desktop *desktop, E_Client *non_desktop_cli
 
    if (desktop)
      {
-        l = e_exec_desktop_instances_find(desktop);
-        if (l)
+        if (inst->cfg->type != E_LUNCHER_MODULE_LAUNCH_ONLY)
           {
-             snprintf(ori, sizeof(ori), "e,state,on,%s", _bar_location_get(inst));
-             elm_layout_signal_emit(ic->o_layout, ori, "e");
-             ic->execs = eina_list_clone(l);
+             l = e_exec_desktop_instances_find(desktop);
+             if (l)
+               {
+                  snprintf(ori, sizeof(ori), "e,state,on,%s", _bar_location_get(inst));
+                  elm_layout_signal_emit(ic->o_layout, ori, "e");
+                  ic->execs = eina_list_clone(l);
+               }
           }
      }
    else
@@ -1497,7 +1466,7 @@ _bar_fill(Instance *inst)
    Icon *ic;
    char ori[32];
 
-   if (inst->order)
+   if (inst->order && inst->cfg->type != E_LUNCHER_MODULE_TASKS_ONLY)
      {
         Efreet_Desktop *desktop;
         Eina_List *list;
@@ -1508,6 +1477,11 @@ _bar_fill(Instance *inst)
              ic->in_order = EINA_TRUE;
              inst->icons = eina_list_append(inst->icons, ic);
           }
+     }
+   if (inst->cfg->type == E_LUNCHER_MODULE_LAUNCH_ONLY)
+     {
+        _bar_aspect(inst);
+        return;
      }
    it = eina_hash_iterator_data_new(execs);
    EINA_ITERATOR_FOREACH(it, l)
@@ -1796,10 +1770,16 @@ _bar_removed_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_data)
 {
    Instance *inst = data;
    char buf[4096];
+   Ecore_Event_Handler *handler;
 
    if (inst->o_main != event_data) return;
    if (e_user_dir_snprintf(buf, sizeof(buf), "applications/bar/%s", inst->cfg->dir) >= sizeof(buf))
      return;
+
+   EINA_LIST_FREE(handlers, handler)
+     E_FREE_FUNC(handler, ecore_event_handler_del);
+
+   E_FREE_FUNC(inst->iconify_provider, e_comp_object_effect_mover_del);
 
    luncher_config->items = eina_list_remove(luncher_config->items, inst->cfg);
    eina_stringshare_del(inst->cfg->style);
@@ -1909,19 +1889,23 @@ _bar_created_cb(void *data, Evas_Object *obj, void *event_data EINA_UNUSED)
    inst->order = e_order_new(buf);
    e_order_update_callback_set(inst->order, _bar_order_update, inst);
 
-   inst->iconify_provider = e_comp_object_effect_mover_add(80, "e,action,*iconify",
-       _bar_iconify_start, inst);
-
+   if (inst->cfg->type != E_LUNCHER_MODULE_LAUNCH_ONLY)
+     {
+        inst->iconify_provider = e_comp_object_effect_mover_add(80, "e,action,*iconify",
+            _bar_iconify_start, inst);
+     }
    _bar_fill(inst);
 
-   inst->drop_handler =
-     e_gadget_drop_handler_add(inst->o_main, inst,
-                        _bar_drop_enter, _bar_drop_move,
-                        _bar_drop_leave, _bar_drop_drop,
-                        drop, 3);
-   elm_layout_content_set(inst->o_main, "e.swallow.drop", inst->drop_handler);
-   evas_object_show(inst->drop_handler);
-
+   if (inst->cfg->type != E_LUNCHER_MODULE_TASKS_ONLY)
+     {
+        inst->drop_handler =
+          e_gadget_drop_handler_add(inst->o_main, inst,
+                             _bar_drop_enter, _bar_drop_move,
+                             _bar_drop_leave, _bar_drop_drop,
+                             drop, 3);
+        elm_layout_content_set(inst->o_main, "e.swallow.drop", inst->drop_handler);
+        evas_object_show(inst->drop_handler);
+     }
    evas_object_event_callback_add(inst->o_main, EVAS_CALLBACK_RESIZE, _bar_resize, inst);
 }
 
@@ -1945,6 +1929,7 @@ _conf_item_get(int *id)
      ci->id = -1;
    ci->dir = eina_stringshare_add("default");
    ci->style = eina_stringshare_add("default");
+   ci->type = E_LUNCHER_MODULE_FULL;
    luncher_config->items = eina_list_append(luncher_config->items, ci);
 
    return ci;
@@ -1996,6 +1981,61 @@ bar_reorder(Instance *inst)
      }
 }
 
+EINTERN void
+bar_config_updated(Instance *inst)
+{
+   Ecore_Event_Handler *handler;
+   const char *drop[] = { "enlightenment/desktop", "enlightenment/border", "text/uri-list" };
+
+   EINA_LIST_FREE(handlers, handler)
+     E_FREE_FUNC(handler, ecore_event_handler_del);
+
+   E_LIST_HANDLER_APPEND(handlers, E_EVENT_CONFIG_ICON_THEME,
+                         _bar_cb_update_icons, NULL);
+   E_LIST_HANDLER_APPEND(handlers, EFREET_EVENT_ICON_CACHE_UPDATE,
+                         _bar_cb_update_icons, NULL);
+   if (inst->cfg->type != E_LUNCHER_MODULE_LAUNCH_ONLY)
+     {
+        E_LIST_HANDLER_APPEND(handlers, E_EVENT_EXEC_NEW,
+                              _bar_cb_exec_new, NULL);
+        E_LIST_HANDLER_APPEND(handlers, E_EVENT_EXEC_NEW_CLIENT,
+                              _bar_cb_exec_new, NULL);
+        E_LIST_HANDLER_APPEND(handlers, E_EVENT_CLIENT_PROPERTY,
+                              _bar_cb_exec_client_prop, NULL);
+        E_LIST_HANDLER_APPEND(handlers, E_EVENT_EXEC_DEL,
+                              _bar_cb_exec_del, NULL);
+        E_LIST_HANDLER_APPEND(handlers, E_EVENT_CLIENT_REMOVE,
+                              _bar_cb_client_remove, NULL);
+     }
+
+   if (!inst->iconify_provider && inst->cfg->type != E_LUNCHER_MODULE_LAUNCH_ONLY)
+     {
+        inst->iconify_provider = e_comp_object_effect_mover_add(80, "e,action,*iconify",
+            _bar_iconify_start, inst);
+     }
+   else if (inst->iconify_provider && inst->cfg->type == E_LUNCHER_MODULE_LAUNCH_ONLY)
+     {
+        E_FREE_FUNC(inst->iconify_provider, e_comp_object_effect_mover_del);
+     }
+
+   bar_reorder(inst);
+
+   if (!inst->drop_handler && inst->cfg->type != E_LUNCHER_MODULE_TASKS_ONLY)
+     {
+        inst->drop_handler =
+          e_gadget_drop_handler_add(inst->o_main, inst,
+                             _bar_drop_enter, _bar_drop_move,
+                             _bar_drop_leave, _bar_drop_drop,
+                             drop, 3);
+        elm_layout_content_set(inst->o_main, "e.swallow.drop", inst->drop_handler);
+        evas_object_show(inst->drop_handler);
+     }
+   else if (inst->drop_handler && inst->cfg->type == E_LUNCHER_MODULE_TASKS_ONLY)
+     {
+        E_FREE_FUNC(inst->drop_handler, evas_object_del);
+     }
+}
+
 EINTERN Evas_Object *
 bar_create(Evas_Object *parent, int *id, E_Gadget_Site_Orient orient EINA_UNUSED)
 {
@@ -2026,17 +2066,19 @@ bar_create(Evas_Object *parent, int *id, E_Gadget_Site_Orient orient EINA_UNUSED
                          _bar_cb_update_icons, NULL);
    E_LIST_HANDLER_APPEND(handlers, EFREET_EVENT_ICON_CACHE_UPDATE,
                          _bar_cb_update_icons, NULL);
-   E_LIST_HANDLER_APPEND(handlers, E_EVENT_EXEC_NEW,
-                         _bar_cb_exec_new, NULL);
-   E_LIST_HANDLER_APPEND(handlers, E_EVENT_EXEC_NEW_CLIENT,
-                         _bar_cb_exec_new, NULL);
-   E_LIST_HANDLER_APPEND(handlers, E_EVENT_CLIENT_PROPERTY,
-                         _bar_cb_exec_client_prop, NULL);
-   E_LIST_HANDLER_APPEND(handlers, E_EVENT_EXEC_DEL,
-                         _bar_cb_exec_del, NULL);
-   E_LIST_HANDLER_APPEND(handlers, E_EVENT_CLIENT_REMOVE,
-                         _bar_cb_client_remove, NULL);
-
+   if (inst->cfg->type != E_LUNCHER_MODULE_LAUNCH_ONLY)
+     {
+        E_LIST_HANDLER_APPEND(handlers, E_EVENT_EXEC_NEW,
+                              _bar_cb_exec_new, NULL);
+        E_LIST_HANDLER_APPEND(handlers, E_EVENT_EXEC_NEW_CLIENT,
+                              _bar_cb_exec_new, NULL);
+        E_LIST_HANDLER_APPEND(handlers, E_EVENT_CLIENT_PROPERTY,
+                              _bar_cb_exec_client_prop, NULL);
+        E_LIST_HANDLER_APPEND(handlers, E_EVENT_EXEC_DEL,
+                              _bar_cb_exec_del, NULL);
+        E_LIST_HANDLER_APPEND(handlers, E_EVENT_CLIENT_REMOVE,
+                              _bar_cb_client_remove, NULL);
+     }
    if (inst->cfg->id < 0) return inst->o_main;
    luncher_instances = eina_list_append(luncher_instances, inst);
 

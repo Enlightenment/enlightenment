@@ -13,6 +13,14 @@ typedef struct _Config Config;
 typedef struct _Config_Item Config_Item;
 typedef struct _Instance Instance;
 typedef struct _Icon Icon;
+typedef enum   _Luncher_Type Luncher_Type;
+
+enum  _Luncher_Type
+{
+   E_LUNCHER_MODULE_FULL = 0,
+   E_LUNCHER_MODULE_LAUNCH_ONLY,
+   E_LUNCHER_MODULE_TASKS_ONLY
+};
 
 struct _Config
 {
@@ -22,14 +30,19 @@ struct _Config
    Evas_Object *config_dialog;
    Evas_Object *slist;
    Evas_Object *list;
+   Evas_Object *general;
+   Evas_Object *contents;
+   Evas_Object *style;
    Eina_Bool    bar;
 };
 
 struct _Config_Item
 {
    int               id;
+   int               version;
    Eina_Stringshare *style;
    Eina_Stringshare *dir;
+   Luncher_Type      type;
 };
 
 struct _Instance
@@ -87,6 +100,7 @@ EINTERN Evas_Object *config_luncher(E_Zone *zone, Instance *inst, Eina_Bool bar)
 EINTERN Evas_Object *bar_create(Evas_Object *parent, int *id, E_Gadget_Site_Orient orient);
 EINTERN void         bar_reorder(Instance *inst);
 EINTERN void         bar_recalculate(Instance *inst);
+EINTERN void         bar_config_updated(Instance *inst);
 EINTERN Evas_Object *grid_create(Evas_Object *parent, int *id, E_Gadget_Site_Orient orient);
 EINTERN void         grid_reorder(Instance *inst);
 EINTERN void         grid_recalculate(Instance *inst);

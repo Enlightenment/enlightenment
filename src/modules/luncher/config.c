@@ -11,6 +11,55 @@ _config_close(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj EINA
 }
 
 static void
+_config_show_general(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   evas_object_hide(luncher_config->contents);
+   evas_object_hide(luncher_config->style);
+   evas_object_show(luncher_config->general);
+}
+
+static void
+_config_show_contents(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   evas_object_hide(luncher_config->general);
+   evas_object_hide(luncher_config->style);
+   evas_object_show(luncher_config->contents);
+}
+
+static void
+_config_show_style(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   evas_object_hide(luncher_config->general);
+   evas_object_hide(luncher_config->contents);
+   evas_object_show(luncher_config->style);
+}
+
+static void
+_type_changed(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
+{
+   Instance *inst = data;
+   int value = elm_radio_value_get(obj);
+
+   switch (value)
+     {
+        case 0:
+          inst->cfg->type = E_LUNCHER_MODULE_FULL;
+          break;
+        case 1:
+          inst->cfg->type = E_LUNCHER_MODULE_LAUNCH_ONLY;
+          break;
+        case 2:
+          inst->cfg->type = E_LUNCHER_MODULE_TASKS_ONLY;
+          break;
+        default:
+          inst->cfg->type = E_LUNCHER_MODULE_FULL;
+     }
+
+   e_config_save_queue();
+   bar_config_updated(inst);
+}
+
+static void
 _config_style_changed(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Instance *inst = data;
@@ -269,8 +318,9 @@ _icon_theme_file_set(Evas_Object *img, const char *icon)
 EINTERN Evas_Object *
 config_luncher(E_Zone *zone, Instance *inst, Eina_Bool bar)
 {
-   Evas_Object *popup, *tb, *lbl, *fr, *box, *list;
-   Evas_Object *butbox, *sep, *hbox, *img, *but;
+   Evas_Object *popup, *tb, *lbl, *fr, *box, *list, *mlist;
+   Evas_Object *butbox, *sep, *hbox, *img, *but, *o, *group;
+   Elm_Object_Item *it;
 
    luncher_config->bar = bar;
 
@@ -291,21 +341,98 @@ config_luncher(E_Zone *zone, Instance *inst, Eina_Bool bar)
    elm_object_style_set(lbl, "marker");
    evas_object_show(lbl);
    elm_object_text_set(lbl, _("Luncher Configuration"));
-   elm_table_pack(tb, lbl, 0, 0, 1, 1);
+   elm_table_pack(tb, lbl, 0, 0, 2, 1);
 
-   box = elm_box_add(tb);
+   mlist = elm_list_add(tb);
+   E_ALIGN(mlist, 0, EVAS_HINT_FILL);
+   E_WEIGHT(mlist, 0, EVAS_HINT_EXPAND);
+   elm_table_pack(tb, mlist, 0, 1, 1, 1);
+   elm_list_select_mode_set(mlist, ELM_OBJECT_SELECT_MODE_ALWAYS);
+   elm_scroller_content_min_limit(mlist, 1, 1);
+   it = elm_list_item_append(mlist, _("General"), NULL, NULL,
+       _config_show_general, inst);
+   elm_list_item_selected_set(it, 1);
+   it = elm_list_item_append(mlist, _("Contents"), NULL, NULL,
+       _config_show_contents, inst);
+   it = elm_list_item_append(mlist, _("Style"), NULL, NULL,
+       _config_show_style, inst);
+   elm_list_go(mlist);
+   evas_object_show(mlist);
+
+   fr = elm_frame_add(tb);
+   elm_object_text_set(fr, _("General"));
+   E_EXPAND(fr);
+   evas_object_size_hint_align_set(fr, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   elm_table_pack(tb, fr, 1, 1, 1, 1);
+   evas_object_show(fr);
+   luncher_config->general = fr;
+
+   box = elm_box_add(fr);
    elm_box_horizontal_set(box, EINA_FALSE);
    E_EXPAND(box);
-   evas_object_size_hint_align_set(box, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   elm_table_pack(tb, box, 0, 1, 1, 1);
    evas_object_show(box);
 
-   fr = elm_frame_add(box);
+   lbl = elm_label_add(box);
+   elm_object_text_set(lbl, _("Luncher Type:"));
+   E_ALIGN(lbl, 0.0, 0.0);
+   E_WEIGHT(lbl, EVAS_HINT_EXPAND, 0);
+   elm_box_pack_end(box, lbl);
+   evas_object_show(lbl);
+
+   o = elm_radio_add(box);
+   elm_radio_state_value_set(o, 0);
+   E_ALIGN(o, 0.0, 0.0);
+   E_WEIGHT(o, EVAS_HINT_EXPAND, 0);
+   elm_object_text_set(o, _("Launcher and Taskbar"));
+   elm_box_pack_end(box, o);
+   evas_object_smart_callback_add(o, "changed", _type_changed, inst);
+   evas_object_show(o);
+   group = o;
+
+   o = elm_radio_add(box);
+   elm_radio_state_value_set(o, 1);
+   elm_radio_group_add(o, group);
+   E_ALIGN(o, 0.0, 0.0);
+   E_WEIGHT(o, EVAS_HINT_EXPAND, 0);
+   elm_object_text_set(o, _("Launcher Only"));
+   elm_box_pack_end(box, o);
+   evas_object_smart_callback_add(o, "changed", _type_changed, inst);
+   evas_object_show(o);
+
+   o = elm_radio_add(box);
+   elm_radio_state_value_set(o, 2);
+   elm_radio_group_add(o, group);
+   E_ALIGN(o, 0.0, 0.0);
+   E_WEIGHT(o, EVAS_HINT_EXPAND, 0);
+   elm_object_text_set(o, _("Taskbar Only"));
+   elm_box_pack_end(box, o);
+   evas_object_smart_callback_add(o, "changed", _type_changed, inst);
+   evas_object_show(o);
+
+   switch(inst->cfg->type)
+     {
+        case E_LUNCHER_MODULE_FULL:
+          elm_radio_value_set(group, 0);
+          break;
+        case E_LUNCHER_MODULE_LAUNCH_ONLY:
+          elm_radio_value_set(group, 1);
+          break;
+        case E_LUNCHER_MODULE_TASKS_ONLY:
+          elm_radio_value_set(group, 2);
+          break;
+        default:
+          elm_radio_value_set(group, 0);
+     }
+
+   elm_object_content_set(fr, box);
+
+   fr = elm_frame_add(tb);
    elm_object_text_set(fr, _("Style"));
    E_EXPAND(fr);
    evas_object_size_hint_align_set(fr, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   elm_box_pack_end(box, fr);
+   elm_table_pack(tb, fr, 1, 1, 1, 1);
    evas_object_show(fr);
+   luncher_config->style = fr;
 
    list = elm_list_add(fr);
    E_ALIGN(list, EVAS_HINT_FILL, EVAS_HINT_FILL);
@@ -317,12 +444,13 @@ config_luncher(E_Zone *zone, Instance *inst, Eina_Bool bar)
    luncher_config->slist = list;
    _config_populate_style_list(list, inst);
 
-   fr = elm_frame_add(box);
-   elm_object_text_set(fr, _("Icon Order"));
+   fr = elm_frame_add(tb);
+   elm_object_text_set(fr, _("Contents"));
    E_EXPAND(fr);
    evas_object_size_hint_align_set(fr, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   elm_box_pack_end(box, fr);
+   elm_table_pack(tb, fr, 1, 1, 1, 1);
    evas_object_show(fr);
+   luncher_config->contents = fr;
 
    box = elm_box_add(fr);
    elm_box_horizontal_set(box, EINA_FALSE);
@@ -429,6 +557,8 @@ config_luncher(E_Zone *zone, Instance *inst, Eina_Bool bar)
    evas_object_show(but);
 
    elm_object_content_set(fr, box);
+
+   _config_show_general(NULL, NULL, NULL);
 
    popup = e_comp_object_util_add(popup, E_COMP_OBJECT_TYPE_NONE);
    evas_object_layer_set(popup, E_LAYER_POPUP);

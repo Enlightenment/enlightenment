@@ -1,4 +1,7 @@
 #include "luncher.h"
+
+#define CONFIG_VERSION 2
+
 static E_Config_DD *conf_edd = NULL;
 static E_Config_DD *conf_item_edd = NULL;
 Eina_List *luncher_instances = NULL;
@@ -8,14 +11,19 @@ Config *luncher_config = NULL;
 EINTERN void
 luncher_init(void)
 {
+   Eina_List *l;
+   Config_Item *ci;
+
    conf_item_edd = E_CONFIG_DD_NEW("Luncher_Config_Item", Config_Item);
 #undef T
 #undef D
 #define T Config_Item
 #define D conf_item_edd
    E_CONFIG_VAL(D, T, id, INT);
+   E_CONFIG_VAL(D, T, version, INT);
    E_CONFIG_VAL(D, T, style, STR);
    E_CONFIG_VAL(D, T, dir, STR);
+   E_CONFIG_VAL(D, T, type, INT);
 
    conf_edd = E_CONFIG_DD_NEW("Luncher_Config", Config);
 #undef T
@@ -28,14 +36,22 @@ luncher_init(void)
 
    if (!luncher_config)
      {
-        Config_Item *ci;
-
         luncher_config = E_NEW(Config, 1);
         ci = E_NEW(Config_Item, 1);
         ci->id = 0;
+        ci->version = CONFIG_VERSION;
         ci->style = eina_stringshare_add("default");
         ci->dir = eina_stringshare_add("default");
+        ci->type = E_LUNCHER_MODULE_FULL;
         luncher_config->items = eina_list_append(luncher_config->items, ci);
+     }
+   EINA_LIST_FOREACH(luncher_config->items, l, ci)
+     {
+        if (ci->version < CONFIG_VERSION)
+          {
+             ci->version = CONFIG_VERSION;
+             ci->type = E_LUNCHER_MODULE_FULL;
+          }
      }
    e_gadget_type_add("Luncher Bar", bar_create, NULL);
    e_gadget_type_add("Luncher Grid", grid_create, NULL);
