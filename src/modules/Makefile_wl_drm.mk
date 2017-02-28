@@ -6,7 +6,7 @@ wl_drmpkg_LTLIBRARIES = src/modules/wl_drm/module.la
 
 src_modules_wl_drm_module_la_DEPENDENCIES = $(MDEPENDENCIES)
 src_modules_wl_drm_module_la_CPPFLAGS  = $(MOD_CPPFLAGS) @WL_DRM_CFLAGS@ @WAYLAND_CFLAGS@
-src_modules_wl_drm_module_la_LIBADD   = $(MOD_LIBS) @WL_DRM_LIBS@ @WAYLAND_LIBS@
+src_modules_wl_drm_module_la_LIBADD   = $(MOD_LIBS) @WL_DRM_LIBS@ @WAYLAND_LIBS@ @dlopen_libs@
 src_modules_wl_drm_module_la_LDFLAGS = $(MOD_LDFLAGS)
 src_modules_wl_drm_module_la_SOURCES = src/modules/wl_drm/e_mod_main.c
 

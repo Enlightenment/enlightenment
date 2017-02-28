@@ -476,6 +476,9 @@ src_bin_enlightenment_alert_SOURCES = \
 src/bin/e_alert_main.c
 
 src_bin_enlightenment_alert_LDADD = @E_ALERT_LIBS@
+if HAVE_WAYLAND
+src_bin_enlightenment_alert_LDADD += @dlopen_libs@
+endif
 src_bin_enlightenment_alert_CPPFLAGS = @E_ALERT_CFLAGS@
 
 src_bin_enlightenment_filemanager_SOURCES = \
