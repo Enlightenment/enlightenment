@@ -161,17 +161,18 @@ e_modapi_init(E_Module *m)
 {
    Eina_Bool have_shell;
 
-   /* try to create global shell interface */
-   if (!wl_global_create(e_comp_wl->wl.disp, &wl_shell_interface, 1,
-                         NULL, wl_shell_cb_bind))
+   have_shell = e_xdg_shell_v6_init();
+   have_shell &= e_xdg_shell_v5_init();
+   if (!have_shell)
      {
-        ERR("Could not create shell global");
-        return NULL;
+        /* try to create global shell interface */
+        if (!wl_global_create(e_comp_wl->wl.disp, &wl_shell_interface, 1,
+                              NULL, wl_shell_cb_bind))
+          {
+             ERR("Could not create shell global");
+             return NULL;
+          }
      }
-
-   have_shell = e_xdg_shell_v5_init();
-   have_shell &= e_xdg_shell_v6_init();
-   if (!have_shell) return NULL;
 
 #ifdef HAVE_WL_TEXT_INPUT
    if (!e_input_panel_init())
