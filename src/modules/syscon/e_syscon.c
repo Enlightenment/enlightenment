@@ -80,8 +80,8 @@ e_syscon_show(E_Zone *zone, const char *defact)
         return 0;
      }
 
-   if (!e_comp_grab_input(1, 1)) return 0;
    if (e_desklock_state_get()) return 0;
+   if (!e_comp_grab_input(1, 1)) return 0;
    evas = e_comp->evas;
    evas_event_freeze(evas);
 
@@ -96,6 +96,13 @@ e_syscon_show(E_Zone *zone, const char *defact)
                                    _cb_signal_syscon, NULL);
 
    popup = e_comp_object_util_add(o_bg, E_COMP_OBJECT_TYPE_POPUP);
+   if (!popup)
+     {
+        evas_object_del(o_bg);
+        evas_event_thaw(evas);
+        e_comp_ungrab_input(1, 1);
+        return 0;
+     }
    evas_object_data_set(popup, "zone", zone);
    evas_object_layer_set(popup, E_LAYER_POPUP);
    e_comp_object_util_autoclose(popup, _cb_del, _cb_key_down, NULL);
@@ -110,6 +117,14 @@ e_syscon_show(E_Zone *zone, const char *defact)
    //  home | close | kill
 
    o = e_flowlayout_add(evas);
+   if (!popup)
+     {
+        evas_object_del(o_bg);
+        evas_object_del(o);
+        evas_event_thaw(evas);
+        e_comp_ungrab_input(1, 1);
+        return 0;
+     }
    e_comp_object_util_del_list_append(popup, o);
    o_flow_main = o;
    e_flowlayout_orientation_set(o, 1);
