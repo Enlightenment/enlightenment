@@ -103,6 +103,9 @@ static int _e_menu_autoscroll_y = 0;
 static Eina_List *handlers = NULL;
 static Eina_Bool _e_menu_lock = EINA_FALSE;
 
+static Eina_Bool pending_feed;
+static unsigned int pending_activate_time;
+
 static Eina_List *
 _e_active_menus_copy_ref(void)
 {
@@ -346,7 +349,8 @@ e_menu_activate_mouse(E_Menu *m, E_Zone *zone, int x, int y, int w, int h, int d
      }
    pmi = _e_menu_item_active_get();
    if (pmi) e_menu_item_active_set(pmi, 0);
-   e_comp_canvas_feed_mouse_up(activate_time);
+   pending_feed = 1;
+   pending_activate_time = activate_time;
 }
 
 E_API void
@@ -1086,6 +1090,12 @@ e_menu_idler_before(void)
    /* level state machine */
    Eina_List *l, *removals = NULL, *tmp;
    E_Menu *m;
+
+   if (pending_feed)
+     {
+        e_comp_canvas_feed_mouse_up(pending_activate_time);
+        pending_feed = 0;
+     }
 
    /* add refcount to all menus we will work with */
    tmp = _e_active_menus_copy_ref();
