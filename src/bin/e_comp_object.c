@@ -103,7 +103,7 @@ typedef struct _E_Comp_Object
    unsigned int         animating;  // it's busy animating
    unsigned int         failures; //number of consecutive e_pixmap_image_draw() failures
    unsigned int         force_visible; //number of visible obj_mirror objects
-   Eina_Bool            delete_pending : 1;  // delete pending
+   Eina_Bool            deleted : 1;  // deleted
    Eina_Bool            defer_hide : 1;  // flag to get hide to work on deferred hide
    Eina_Bool            showing : 1;  // object is currently in "show" animation
    Eina_Bool            visible : 1;  // is visible
@@ -234,7 +234,7 @@ _e_comp_object_cb_mirror_show(void *data, Evas *e EINA_UNUSED, Evas_Object *obj 
 {
    E_Comp_Object *cw = data;
 
-   if ((!cw->force_visible) && (!e_object_is_del(E_OBJECT(cw->ec))))
+   if ((!cw->force_visible) && (!cw->deleted) && (!e_object_is_del(E_OBJECT(cw->ec))))
      evas_object_smart_callback_call(cw->smart_obj, "visibility_force", cw->ec);
    cw->force_visible++;
 }
@@ -245,7 +245,7 @@ _e_comp_object_cb_mirror_hide(void *data, Evas *e EINA_UNUSED, Evas_Object *obj 
    E_Comp_Object *cw = data;
 
    cw->force_visible--;
-   if ((!cw->force_visible) && (!e_object_is_del(E_OBJECT(cw->ec))))
+   if ((!cw->force_visible) && (!cw->deleted) && (!e_object_is_del(E_OBJECT(cw->ec))))
      evas_object_smart_callback_call(cw->smart_obj, "visibility_normal", cw->ec);
 }
 
@@ -2224,7 +2224,7 @@ _e_comp_smart_focus_out(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void 
 {
    E_Comp_Object *cw = data;
 
-   if (!e_object_is_del(E_OBJECT(cw->ec)))
+   if ((!cw->deleted) && (!e_object_is_del(E_OBJECT(cw->ec))))
      e_comp_object_signal_emit(obj, "e,state,unfocused", "e");
 }
 
@@ -2305,6 +2305,9 @@ _e_comp_smart_hide(Evas_Object *obj)
 {
    INTERNAL_ENTRY;
    cw->visible = 0;
+   cw->deleted = e_object_is_del(E_OBJECT(cw->ec));
+   if (cw->deleted)
+     _e_comp_object_layers_remove(cw);
    evas_object_hide(cw->clip);
    if (cw->input_obj) evas_object_hide(cw->input_obj);
    evas_object_hide(cw->effect_obj);
@@ -2386,7 +2389,8 @@ _e_comp_smart_del(Evas_Object *obj)
 
    INTERNAL_ENTRY;
 
-   e_comp_object_render_update_del(cw->smart_obj);
+   if (!cw->deleted)
+     e_comp_object_render_update_del(cw->smart_obj);
    E_FREE_FUNC(cw->updates, eina_tiler_free);
    E_FREE_FUNC(cw->pending_updates, eina_tiler_free);
    free(cw->ns);
@@ -2396,6 +2400,8 @@ _e_comp_smart_del(Evas_Object *obj)
         evas_object_image_data_set(o, NULL);
         evas_object_freeze_events_set(o, 1);
         evas_object_event_callback_del_full(o, EVAS_CALLBACK_DEL, _e_comp_object_cb_mirror_del, cw);
+        evas_object_event_callback_del_full(o, EVAS_CALLBACK_SHOW, _e_comp_object_cb_mirror_show, cw);
+        evas_object_event_callback_del_full(o, EVAS_CALLBACK_HIDE, _e_comp_object_cb_mirror_hide, cw);
         evas_object_del(o);
      }
    EINA_LIST_FREE(cw->obj_agent, o)
@@ -2404,7 +2410,8 @@ _e_comp_smart_del(Evas_Object *obj)
         evas_object_event_callback_del_full(o, EVAS_CALLBACK_DEL, _e_comp_object_cb_agent_del, cw);
         evas_object_del(o);
      }
-   _e_comp_object_layers_remove(cw);
+   if (!cw->deleted)
+     _e_comp_object_layers_remove(cw);
    l = evas_object_data_get(obj, "comp_object-to_del");
    E_FREE_LIST(l, evas_object_del);
    evas_object_del(cw->clip);
