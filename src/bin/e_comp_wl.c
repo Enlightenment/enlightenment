@@ -1008,9 +1008,11 @@ static void
 _e_comp_wl_client_evas_init(E_Client *ec)
 {
    if (ec->comp_data->evas_init) return;
-   evas_object_event_callback_add(ec->frame, EVAS_CALLBACK_SHOW,
+   evas_object_event_callback_priority_add(ec->frame, EVAS_CALLBACK_SHOW,
+                                  EVAS_CALLBACK_PRIORITY_AFTER,
                                   _e_comp_wl_evas_cb_show, ec);
-   evas_object_event_callback_add(ec->frame, EVAS_CALLBACK_HIDE,
+   evas_object_event_callback_priority_add(ec->frame, EVAS_CALLBACK_HIDE,
+                                  EVAS_CALLBACK_PRIORITY_AFTER,
                                   _e_comp_wl_evas_cb_hide, ec);
 
    /* setup input callbacks */
