@@ -20,6 +20,10 @@
 #include <xcb/shape.h>
 #include <X11/keysym.h>
 
+#define E_EFL_VERSION_MINIMUM(MAJ, MIN, MIC) \
+  ((eina_version->major > MAJ) || (eina_version->minor > MIN) ||\
+   ((eina_version->minor == MIN) && (eina_version->micro >= MIC)))
+
 #ifdef HAVE_WL_DRM
 # include <Ecore_Input.h>
 # ifdef HAVE_DRM2
