@@ -1494,7 +1494,7 @@ _e_comp_wl_surface_state_commit(E_Client *ec, E_Comp_Wl_Surface_State *state)
 
         if ((!ec->comp_data->sub.data) && (!ec->comp_data->buffer_commit))
           {
-             if (!ec->internal_elm_win)
+             if ((!ec->internal_elm_win) && (!ec->maximized) && (!ec->fullscreen))
                ec->placed = (!e_client_has_xwindow(ec)) && (ec->netwm.type != E_WINDOW_TYPE_NORMAL);
              ec->want_focus |= ec->icccm.accepts_focus && (!ec->override);
           }
