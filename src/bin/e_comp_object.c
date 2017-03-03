@@ -56,7 +56,7 @@
 
 typedef struct _E_Comp_Object
 {
-   EINA_INLIST;
+   //EINA_INLIST;
 
    int                  x, y, w, h;  // geometry
    Eina_Rectangle       input_rect;
