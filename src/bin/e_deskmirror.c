@@ -717,6 +717,16 @@ _comp_object_add(E_Smart_Data *sd, int type EINA_UNUSED, E_Event_Comp_Object *ev
 }
 
 static Eina_Bool
+_client_del(E_Smart_Data *sd, int type EINA_UNUSED, E_Event_Client *ev)
+{
+   Mirror *m = eina_hash_find(sd->mirror_hash, &ev->ec->frame);
+
+   if (m) m->ec = NULL;
+
+   return ECORE_CALLBACK_RENEW;
+}
+
+static Eina_Bool
 _client_add(E_Smart_Data *sd, int type EINA_UNUSED, E_Event_Client *ev)
 {
    if (!eina_hash_find(sd->mirror_hash, &ev->ec->frame))
@@ -818,6 +828,7 @@ e_deskmirror_add(E_Desk *desk, Eina_Bool pager, Eina_Bool taskbar)
 
    E_LIST_HANDLER_APPEND(sd->handlers, E_EVENT_COMP_OBJECT_ADD, (Ecore_Event_Handler_Cb)_comp_object_add, sd);
    E_LIST_HANDLER_APPEND(sd->handlers, E_EVENT_CLIENT_ADD, (Ecore_Event_Handler_Cb)_client_add, sd);
+   E_LIST_HANDLER_APPEND(sd->handlers, E_EVENT_CLIENT_REMOVE, (Ecore_Event_Handler_Cb)_client_del, sd);
    E_LIST_HANDLER_APPEND(sd->handlers, E_EVENT_CLIENT_PROPERTY, (Ecore_Event_Handler_Cb)_client_property, sd);
    E_LIST_HANDLER_APPEND(sd->handlers, E_EVENT_CLIENT_DESK_SET, (Ecore_Event_Handler_Cb)_client_desk_set, sd);
    return o;
