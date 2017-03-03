@@ -1759,9 +1759,13 @@ _e_comp_wl_surface_destroy(struct wl_resource *resource)
         ec->ignored = 1;
         if (!e_object_is_del(E_OBJECT(ec)))
           ec->comp_data->mapped = EINA_FALSE;
+        evas_object_hide(ec->frame);
      }
-   else e_object_del(E_OBJECT(ec));
-   evas_object_hide(ec->frame);
+   else
+     {
+        evas_object_hide(ec->frame);
+        e_object_del(E_OBJECT(ec));
+     }
 }
 
 static void
