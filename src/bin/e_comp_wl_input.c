@@ -942,6 +942,12 @@ e_comp_wl_input_keyboard_event_generate(const char *key, int mods, Eina_Bool up)
 
            "Mode_switch",
            "ALGR",
+
+           "Return",
+           "RTRN",
+
+           "Caps_Lock",
+           "CAPS",
         };
         unsigned int i;
 
