@@ -1356,7 +1356,7 @@ static const struct zxdg_shell_v6_interface _e_xdg_shell_interface =
 };
 
 static void
-_xdg6_client_destroy(E_Client *ec)
+_xdg6_client_destroy(E_Client *ec, Eina_Bool do_list)
 {
    E_Shell_Data *shd;
 
@@ -1365,10 +1365,21 @@ _xdg6_client_destroy(E_Client *ec)
 
    shd = ec->comp_data->shell.data;
    if (shd && (shd->version != 6)) return;
+   if (do_list && shd)
+     {
+        v6_Shell_Data *v;
+        struct wl_client *client;
+        struct wl_resource *res;
+
+        client = wl_resource_get_client(ec->comp_data->surface);
+        res = eina_hash_find(xdg_shell_resources, &client);
+        v = wl_resource_get_user_data(res);
+        v->surfaces = eina_list_remove(v->surfaces, shd->surface);
+     }
    if (ec->comp_data->shell.surface)
-     e_shell_surface_cb_destroy(ec->comp_data->shell.surface);
+     e_shell_surface_destroy(ec->comp_data->shell.surface);
    if (shd)
-     e_shell_surface_cb_destroy(shd->surface);
+     e_shell_surface_destroy(shd->surface);
 }
 
 static void
@@ -1381,13 +1392,13 @@ _e_xdg_shell_cb_unbind(struct wl_resource *resource)
    struct wl_client *client = wl_resource_get_client(resource);
 
    v = wl_resource_get_user_data(resource);
-   eina_hash_set(shell_resources, &client, NULL);
+   eina_hash_set(xdg_shell_resources, &client, NULL);
    EINA_LIST_REVERSE_FOREACH_SAFE(v->surfaces, l, ll, res)
      {
         E_Client *ec = wl_resource_get_user_data(res);
 
         if (!e_object_is_del(E_OBJECT(ec)))
-          _xdg6_client_destroy(ec);
+          _xdg6_client_destroy(ec, 0);
         v->surfaces = eina_list_remove_list(v->surfaces, l);
      }
 
@@ -1421,7 +1432,7 @@ _e_xdg_shell_cb_bind(struct wl_client *client, void *data EINA_UNUSED, uint32_t 
 static void
 _xdg6_client_hook_del(void *d EINA_UNUSED, E_Client *ec)
 {
-   _xdg6_client_destroy(ec);
+   _xdg6_client_destroy(ec, 1);
 }
 
 EINTERN Eina_Bool

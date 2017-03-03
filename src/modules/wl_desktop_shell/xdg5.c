@@ -830,7 +830,7 @@ static void
 _e_xdg_shell_cb_unbind(struct wl_resource *resource)
 {
    struct wl_client *client = wl_resource_get_client(resource);
-   eina_hash_set(shell_resources, &client, NULL);
+   eina_hash_set(xdg_shell_resources, &client, NULL);
 }
 
 static int
@@ -889,7 +889,7 @@ _xdg5_client_hook_del(void *d EINA_UNUSED, E_Client *ec)
    shd = ec->comp_data->shell.data;
      if (shd && (shd->version != 5)) return;
    if (ec->comp_data->shell.surface)
-     e_shell_surface_cb_destroy(ec->comp_data->shell.surface);
+     wl_resource_destroy(ec->comp_data->shell.surface);
 }
 
 EINTERN Eina_Bool
