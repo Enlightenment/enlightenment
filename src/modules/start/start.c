@@ -161,6 +161,7 @@ _button_cb_mouse_down(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNU
    evas_object_smart_callback_call(inst->o_button, "gadget_popup",
      inst->main_menu->container_object);
    elm_layout_signal_emit(inst->o_button, "e,state,focused", "e");
+   ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
 }
 
 static void
