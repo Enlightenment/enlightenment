@@ -17,11 +17,10 @@ e_order_init(void)
 {
    char *menu_file = NULL;
 
-   handlers =
-     eina_list_append(handlers,
-                      ecore_event_handler_add(EFREET_EVENT_DESKTOP_CACHE_UPDATE,
-                                              _e_order_cb_efreet_cache_update,
-                                              NULL));
+   E_LIST_HANDLER_APPEND(handlers, EFREET_EVENT_DESKTOP_CACHE_UPDATE,
+                         _e_order_cb_efreet_cache_update, NULL);
+   E_LIST_HANDLER_APPEND(handlers, EFREET_EVENT_DESKTOP_CACHE_BUILD,
+                         _e_order_cb_efreet_cache_update, NULL);
    if (e_config->default_system_menu)
      menu_file = strdup(e_config->default_system_menu);
    if (!menu_file)
