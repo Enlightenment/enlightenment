@@ -39,7 +39,7 @@ enum _Netstatus_Unit
 typedef enum _Sensor_Type
 {
    SENSOR_TYPE_NONE,
-#if defined __FreeBSD__ || defined __OpenBSD__ || defined __DragonflyBSD__
+#if defined __FreeBSD__ || defined __OpenBSD__ || defined __DragonFly__
    SENSOR_TYPE_FREEBSD,
    SENSOR_TYPE_OPENBSD,
 #else
