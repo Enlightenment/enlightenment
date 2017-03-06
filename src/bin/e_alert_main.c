@@ -15,6 +15,7 @@
 #include <Eina.h>
 #include <Ecore.h>
 #include <Ecore_Ipc.h>
+#include <dlfcn.h>
 #include <xcb/xcb.h>
 #include <xcb/xcb_keysyms.h>
 #include <xcb/shape.h>
