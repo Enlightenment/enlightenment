@@ -1,3 +1,58 @@
+Release 0.21.7:
+---------------------
+Carsten Haitzler (19):
+      enlightenment_sys - eina_init BEFORE switching uid - safer
+      e ervything md5 code - fix warnings about alignment
+      e fileman config - fix definite alignment bug with cast char to int ptr
+      e theme conf config - fix casting char fileds to int ptrs
+      e ptr cast via void fix to reduce warnings
+      efm ipc - fix unaligned int read on ipc decode
+      e comp x - fix property fetch to use int ptr from the start
+      e xsettings - fix warnings about unaligned ptr access
+      e comp - wl - add void cast to reduce warnings
+      e notification - silence alignment warning
+      efm - fix warnings for progress time display
+      evry module - fix warning about comparing signed to unsigned
+      e mixer pulse backened -f ix warning about use of uninit var
+      e comp object - fix warning where a void cast is as goos as the old one
+      e comp - fix stupid cast to from eina rect* to char* to eina rect* again
+      e comp - quiet some warnings for casts that are ok
+      tiling module - fix some warnings with casts and alignment
+      efx - fix unaligned ptr fill that is actually a bug
+      efm - fix nuisance warning about enlightenment
+
+Derek Foreman (1):
+      Dispatch wayland frame callbacks in the correct order
+
+Marcel Hollerbach (1):
+      tiling: dont use floating state when toggling
+
+Mike Blumenkrantz (24):
+      Revert "re-enable getting and setting output rotations in wl_drm"
+      make e_pointer_object_set() a no-op when passing the existing cursor
+      simplify mouse-out cursor reset for wl clients
+      use 1x1 for unsized (internal) clients
+      hide wl client cursors when set_pointer is passed a null surface
+      add note in doc for "gadget_destroyed" callback re: callback ordering
+      ref clients during exe_inst deletion to avoid invalid access after free
+      start xwayland process 2.0s after module load
+      only unset current pointer cursor object if new one is being set
+      force mouse-out on wl clients during delete if mouse.in is set
+      Revert "attempt to re-set wl surface pointer when popping back to "default" pointer type"
+      reset compositor pointer cursor if wl surface destroy is the current cursor
+      add specific handling for xwl cursor unsetting on mouse-out to ssd
+      move wl data device focus-change handling to data device leave() fn
+      simplify _e_comp_wl_data_device_drag_finished() slightly
+      more correctly handle dnd completion for wl
+      fix return code checking for errors when generating wl key events
+      future-proof client hook inlist initialization
+      always set E_Client->placed when successfully moving a comp object
+      ignore all non-NORMAL type wl windows in e_place
+      save config when toggling option to disable startup splash
+      only move new bryces to zone on create, not existing ones
+      show already-visible comp util objects when changing frame type
+      Revert "e - wl mode - stop consuming 100 percent cpu"
+
 Release 0.21.6:
 ---------------------
 Andreas Metzler (1):
