@@ -263,6 +263,8 @@ _bar_icon_del(Instance *inst, Icon *ic)
    if (ic->preview)
      _bar_icon_preview_hide(ic);
    _bar_aspect(inst);
+   evas_object_del(ic->o_spacera);
+   evas_object_del(ic->o_spacerb);
    evas_object_del(ic->o_icon);
    evas_object_del(ic->o_overlay);
    evas_object_del(ic->o_layout);
@@ -915,7 +917,6 @@ _bar_icon_mouse_in(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *even
    if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return;
    if (_bar_check_modifiers(ev->modifiers)) return;
 
-   evas_object_raise(ic->o_layout);
    elm_object_tooltip_show(obj);
    ic->active = EINA_TRUE;
 
@@ -1057,6 +1058,70 @@ _bar_icon_file_set(Icon *ic, Efreet_Desktop *desktop, E_Client *non_desktop_clie
    elm_image_file_set(ic->o_overlay, path, k);
 }
 
+static void
+_bar_icon_resized(void *data, Evas_Object *obj EINA_UNUSED, const char *emission EINA_UNUSED, const char *source EINA_UNUSED)
+{
+   Instance *inst = data;
+   Icon *ic = NULL;
+   Eina_List *l = NULL;
+   float tot = 0.0;
+
+   if (!inst->effect) return;
+   switch (e_gadget_site_orient_get(e_gadget_site_get(inst->o_main)))
+     {
+      case E_GADGET_SITE_ORIENT_VERTICAL:
+        EINA_LIST_FOREACH(inst->icons, l, ic)
+          {
+             tot += ic->scale;
+          }
+        evas_object_size_hint_aspect_set(inst->o_main, EVAS_ASPECT_CONTROL_BOTH, 1, eina_list_count(inst->icons)+tot);
+        break;
+      default:
+        EINA_LIST_FOREACH(inst->icons, l, ic)
+          tot += (ic->scale - 1.0);
+        evas_object_size_hint_aspect_set(inst->o_main, EVAS_ASPECT_CONTROL_BOTH, ceil(eina_list_count(inst->icons)+tot), 1);
+     }
+}
+
+static void
+_bar_icon_scale_message(void *data, Evas_Object *obj EINA_UNUSED, Edje_Message_Type type EINA_UNUSED, int id EINA_UNUSED, void *msg)
+{
+   Edje_Message_String_Float_Set *mmsg = msg;
+   Evas_Coord add = 0;
+   Icon *ic = data;
+   float total;
+
+
+   ic->scale = mmsg->val[0];
+
+   if (ic->scale > 1.0)
+     {
+        total = (ic->inst->size * ic->scale) - ic->inst->size;
+        add = ceil(ceil(total)/2);
+        switch (e_gadget_site_orient_get(e_gadget_site_get(ic->inst->o_main)))
+          {
+             case E_GADGET_SITE_ORIENT_VERTICAL:
+                evas_object_resize(ic->o_spacerb, ic->inst->size, add);
+                evas_object_size_hint_min_set(ic->o_spacerb, ic->inst->size, add);
+                evas_object_resize(ic->o_spacera, ic->inst->size, add);
+                evas_object_size_hint_min_set(ic->o_spacera, ic->inst->size, add);
+                break;
+             default:
+                evas_object_resize(ic->o_spacerb, add, ic->inst->size);
+                evas_object_size_hint_min_set(ic->o_spacerb, add, ic->inst->size);
+                evas_object_resize(ic->o_spacera, add, ic->inst->size);
+                evas_object_size_hint_min_set(ic->o_spacera, add, ic->inst->size);
+          }
+     }
+   else
+     {
+        evas_object_resize(ic->o_spacerb, 0, 0);
+        evas_object_resize(ic->o_spacera, 0, 0);
+        evas_object_size_hint_min_set(ic->o_spacerb, 0, 0);
+        evas_object_size_hint_min_set(ic->o_spacera, 0, 0);
+     }
+}
+
 static Icon *
 _bar_icon_add(Instance *inst, Efreet_Desktop *desktop, E_Client *non_desktop_client)
 {
@@ -1079,15 +1144,30 @@ _bar_icon_add(Instance *inst, Efreet_Desktop *desktop, E_Client *non_desktop_cli
    ic->starting = EINA_FALSE;
    ic->preview_dismissed = EINA_FALSE;
    ic->exec = NULL;
+   ic->scale = 0.0;
 
    ic->o_layout = elm_layout_add(inst->o_icon_con);
    e_theme_edje_object_set(ic->o_layout, "e/gadget/luncher/icon",
        "e/gadget/luncher/icon");
    E_EXPAND(ic->o_layout);
    E_FILL(ic->o_layout);
-//   edje_object_signal_callback_add(elm_layout_edje_get(ic->o_layout), "e,state,resized", "e", _bar_icon_resized, inst);
+   edje_object_message_handler_set(elm_layout_edje_get(ic->o_layout), _bar_icon_scale_message, ic);
+   edje_object_signal_callback_add(elm_layout_edje_get(ic->o_layout), "e,state,resized", "e", _bar_icon_resized, inst);
    elm_box_pack_end(inst->o_icon_con, ic->o_layout);
    evas_object_show(ic->o_layout);
+
+   ic->o_spacerb = evas_object_rectangle_add(evas_object_evas_get(ic->inst->o_icon_con));
+   ic->o_spacera = evas_object_rectangle_add(evas_object_evas_get(ic->inst->o_icon_con));
+   evas_object_color_set(ic->o_spacerb, 0, 0, 0, 0);
+   evas_object_color_set(ic->o_spacera, 0, 0, 0, 0);
+   evas_object_resize(ic->o_spacerb, 0, 0);
+   evas_object_resize(ic->o_spacera, 0, 0);
+   evas_object_size_hint_min_set(ic->o_spacerb, 0, 0);
+   evas_object_size_hint_min_set(ic->o_spacera, 0, 0);
+   elm_box_pack_before(ic->inst->o_icon_con, ic->o_spacerb, ic->o_layout);
+   elm_box_pack_after(ic->inst->o_icon_con, ic->o_spacera, ic->o_layout);
+   evas_object_show(ic->o_spacerb);
+   evas_object_show(ic->o_spacera);
 
    snprintf(ori, sizeof(ori), "e,state,off,%s", _bar_location_get(inst));
    elm_layout_signal_emit(ic->o_layout, ori, "e");
@@ -1630,6 +1710,12 @@ _bar_mouse_move(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, v
         Evas_Coord x, y, w, h;
 
         evas_object_geometry_get(ic->o_icon, &x, &y, &w, &h);
+        evas_object_resize(ic->o_spacerb, 0, 0);
+        evas_object_resize(ic->o_spacera, 0, 0);
+        evas_object_size_hint_min_set(ic->o_spacerb, 0, 0);
+        evas_object_size_hint_min_set(ic->o_spacera, 0, 0);
+        if (!E_INSIDE(px, py, x, y, w, h))
+          _bar_icon_mouse_out(ic, NULL, ic->o_icon, NULL);
         msg = alloca(sizeof(Edje_Message_Int_Set) + (7 * sizeof(int)));
         msg->count = 7;
         msg->val[0] = px;
@@ -1660,6 +1746,11 @@ _bar_mouse_out(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, vo
      {
         elm_layout_signal_emit(ic->o_layout, "e,state,default", "e");
         elm_layout_signal_emit(ic->o_layout, "e,state,unfocused", "e");
+        evas_object_resize(ic->o_spacerb, 0, 0);
+        evas_object_resize(ic->o_spacera, 0, 0);
+        evas_object_size_hint_min_set(ic->o_spacerb, 0, 0);
+        evas_object_size_hint_min_set(ic->o_spacera, 0, 0);
+        _bar_icon_mouse_out(ic, NULL, ic->o_icon, NULL);
      }
    inst->effect = EINA_FALSE;
    _bar_aspect(inst);

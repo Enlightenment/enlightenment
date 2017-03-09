@@ -72,6 +72,8 @@ struct _Icon
    Evas_Object      *o_layout;
    Evas_Object      *o_icon;
    Evas_Object      *o_overlay;
+   Evas_Object      *o_spacerb;
+   Evas_Object      *o_spacera;
    Evas_Object      *preview;
    Evas_Object      *preview_box;
    Evas_Object      *preview_scroller;
@@ -88,6 +90,7 @@ struct _Icon
    Eina_Bool         active;
    Eina_Bool         starting;
    Eina_Bool         preview_dismissed;
+   float             scale;
    struct
    {
       unsigned char start : 1;
