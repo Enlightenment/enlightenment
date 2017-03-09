@@ -93,16 +93,40 @@ _tiling_window_tree_split_type_get(Window_Tree *node)
    return ret % 2;
 }
 
+#define VERIFY_TYPE(t) if (t > TILING_SPLIT_VERTICAL || t < 0) { ERR("Invalid insert type"); return root; }
+
+#define ROOT_CHECK() \
+   if (!root) \
+     { \
+        new_node->weight = 1.0; \
+        return new_node; \
+     }
 
 Window_Tree *
 tiling_window_tree_insert(Window_Tree *root, Window_Tree *buddy,
                           E_Client *client, Tiling_Split_Type split_type, Eina_Bool before)
 {
-   Window_Tree *new_node = calloc(1, sizeof(*new_node));
-   Window_Tree *parent = buddy->parent;
-   Tiling_Split_Type parent_split_type = _tiling_window_tree_split_type_get(parent);
+   Window_Tree *new_node;
+   Window_Tree *parent;
+   Tiling_Split_Type parent_split_type;
 
+   VERIFY_TYPE(split_type)
+
+   new_node = calloc(1, sizeof(*new_node));
    new_node->client = client;
+
+   ROOT_CHECK()
+
+   parent = buddy->parent;
+
+   if (!parent)
+     {
+        //this means buddy is the root so just set buddy to NULL and parent to buddy
+        parent = buddy;
+        buddy = NULL;
+     }
+
+   parent_split_type = _tiling_window_tree_split_type_get(parent);
 
    if (parent_split_type == split_type)
      {
@@ -121,30 +145,18 @@ tiling_window_tree_add(Window_Tree *root, Window_Tree *parent,
                        E_Client *client, Tiling_Split_Type split_type)
 {
    Window_Tree *orig_parent = parent;
-   Window_Tree *new_node = calloc(1, sizeof(*new_node));
-
-   new_node->client = client;
+   Window_Tree *new_node;
    Tiling_Split_Type parent_split_type;
 
-   if (split_type > TILING_SPLIT_VERTICAL)
-     {
-        free(new_node);
-        return root;
-     }
-   else if (!root)
-     {
-        new_node->weight = 1.0;
-        return new_node;
-     }
-   else if (!parent)
-     {
-        parent = root;
-        parent_split_type = _tiling_window_tree_split_type_get(parent);
-        if ((parent_split_type != split_type) && (parent->children))
-          {
-             parent = (Window_Tree *)(void *)parent->children;
-          }
-     }
+   VERIFY_TYPE(split_type)
+
+   new_node = calloc(1, sizeof(*new_node));
+   new_node->client = client;
+
+   ROOT_CHECK()
+
+   if (!parent)
+     parent = root;
 
    parent_split_type = _tiling_window_tree_split_type_get(parent);
 
