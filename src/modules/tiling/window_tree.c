@@ -3,6 +3,8 @@
 #include "window_tree.h"
 #include "e_mod_tiling.h"
 
+void tiling_window_tree_dump(Window_Tree *root, int level);
+
 void
 tiling_window_tree_walk(Window_Tree *root, void (*func)(void *))
 {
@@ -26,7 +28,7 @@ tiling_window_tree_free(Window_Tree *root)
 }
 
 static void
-_tiling_window_tree_split_add(Window_Tree *parent, Window_Tree *new_node)
+_tiling_window_tree_split_add(Window_Tree *parent, Window_Tree *new_node, Eina_Bool append)
 {
    /* Make a new node for the parent client and split the weights in half. */
    Window_Tree *new_parent_client = calloc(1, sizeof(*new_node));
@@ -38,10 +40,13 @@ _tiling_window_tree_split_add(Window_Tree *parent, Window_Tree *new_node)
    new_parent_client->weight = 0.5;
    new_node->weight = 0.5;
 
-   parent->children =
-     eina_inlist_append(parent->children, EINA_INLIST_GET(new_parent_client));
-   parent->children =
-     eina_inlist_append(parent->children, EINA_INLIST_GET(new_node));
+   parent->children = eina_inlist_append(parent->children, EINA_INLIST_GET(new_parent_client));
+
+   if (append)
+     parent->children = eina_inlist_append(parent->children, EINA_INLIST_GET(new_node));
+   else
+     parent->children = eina_inlist_prepend(parent->children, EINA_INLIST_GET(new_node));
+
 }
 static void
 _tiling_window_tree_parent_add(Window_Tree *parent, Window_Tree *new_node, Window_Tree *rel, Eina_Bool append)
@@ -88,6 +93,29 @@ _tiling_window_tree_split_type_get(Window_Tree *node)
    return ret % 2;
 }
 
+
+Window_Tree *
+tiling_window_tree_insert(Window_Tree *root, Window_Tree *buddy,
+                          E_Client *client, Tiling_Split_Type split_type, Eina_Bool before)
+{
+   Window_Tree *new_node = calloc(1, sizeof(*new_node));
+   Window_Tree *parent = buddy->parent;
+   Tiling_Split_Type parent_split_type = _tiling_window_tree_split_type_get(parent);
+
+   new_node->client = client;
+
+   if (parent_split_type == split_type)
+     {
+        _tiling_window_tree_parent_add(parent, new_node, buddy, !before);
+     }
+   else
+     {
+        _tiling_window_tree_split_add(buddy, new_node, !before);
+     }
+
+   return root;
+}
+
 Window_Tree *
 tiling_window_tree_add(Window_Tree *root, Window_Tree *parent,
                        E_Client *client, Tiling_Split_Type split_type)
@@ -128,7 +156,7 @@ tiling_window_tree_add(Window_Tree *root, Window_Tree *parent,
           }
         else
           {
-             _tiling_window_tree_split_add(parent, new_node);
+             _tiling_window_tree_split_add(parent, new_node, EINA_TRUE);
           }
      }
    else
@@ -142,7 +170,7 @@ tiling_window_tree_add(Window_Tree *root, Window_Tree *parent,
         else
           {
              root = calloc(1, sizeof(*root));
-             _tiling_window_tree_split_add(parent, new_node);
+             _tiling_window_tree_split_add(parent, new_node, EINA_TRUE);
              root->weight = 1.0;
              root->children =
                eina_inlist_append(root->children, EINA_INLIST_GET(parent));
@@ -640,7 +668,7 @@ _tiling_window_tree_node_join(Window_Tree *root, Window_Tree *node, Eina_Bool di
              //unref has not changed the tree
              if (!pn->children)
                {
-                  _tiling_window_tree_split_add(pn, node);
+                  _tiling_window_tree_split_add(pn, node, EINA_TRUE);
                }
              else
                {

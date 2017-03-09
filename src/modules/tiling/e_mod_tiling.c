@@ -18,9 +18,18 @@ typedef struct geom_t
    int x, y, w, h;
 } geom_t;
 
+typedef enum {
+   POSITION_TOP = 0,
+   POSITION_RIGHT = 1,
+   POSITION_BOTTOM = 2,
+   POSITION_LEFT = 3
+} Position_On_Client;
+
 typedef struct Client_Extra
 {
    E_Client *client;
+   Evas_Object *drag_object;
+   Evas_Object *hint_object;
    geom_t    expected;
    struct
    {
@@ -79,8 +88,10 @@ static struct tiling_mod_main_g
    E_Config_DD         *config_edd, *vdesk_edd;
    Ecore_Event_Handler *handler_client_resize, *handler_client_move,
                        *handler_client_iconify, *handler_client_uniconify,
-                       *handler_desk_set, *handler_compositor_resize;
-   E_Client_Hook       *handler_client_resize_begin, *handler_client_add;
+                       *handler_desk_set, *handler_compositor_resize,
+                       *mouse_up;
+   E_Client_Hook       *handler_client_resize_begin, *handler_client_add,
+                       *handler_move_begin, *handler_move_end;
    E_Client_Menu_Hook  *client_menu_hook;
 
    Tiling_Info         *tinfo;
@@ -584,6 +595,96 @@ _tilable_client(int x, int y)
   return NULL;
 }
 
+static Position_On_Client
+_calculate_position_preference(E_Client *ec)
+{
+   int x,y;
+   float bounded_x, bounded_y;
+   Eina_Rectangle rect;
+   evas_pointer_canvas_xy_get(e_comp->evas, &x, &y);
+
+   evas_object_geometry_get(ec->frame, &rect.x, &rect.y, &rect.w, &rect.h);
+
+   if (!eina_rectangle_coords_inside(&ec->client, x, y))
+     {
+        ERR("Coorinates are not in there");
+        return -1;
+     }
+
+   //for the calculation we think of a X cross in the rectangle
+   bounded_x = ((float)x - rect.x)/((float)rect.w);
+   bounded_y = ((float)y - rect.y)/((float)rect.h);
+
+   if (bounded_y < bounded_x)
+     {
+        //right upper part
+        if (bounded_y < (1.0 - bounded_x))
+          {
+             //left upper
+             return POSITION_TOP;
+          }
+        else
+          {
+             //right lower
+             return POSITION_RIGHT;
+          }
+     }
+   else
+     {
+        //lower left part
+        if (bounded_y < (1.0 - bounded_x))
+          {
+             //left upper
+             return POSITION_LEFT;
+          }
+        else
+          {
+             //right lower
+             return POSITION_BOTTOM;
+          }
+     }
+
+
+}
+
+static void
+_insert_client_prefered(E_Client *ec)
+{
+   Window_Tree *parent;
+   Tiling_Split_Type type = TILING_SPLIT_VERTICAL;
+   Window_Tree *item;
+   Eina_Bool before;
+   int x,y;
+
+   evas_pointer_canvas_xy_get(e_comp->evas, &x, &y);
+   parent = _tilable_client(x,y);
+
+   if (parent)
+     {
+        //calculate a good position where we would like to stay
+        Position_On_Client c;
+
+        c = _calculate_position_preference(parent->client);
+        if (c == POSITION_TOP || c == POSITION_BOTTOM)
+          {
+             before = (c == POSITION_TOP);
+             type = TILING_SPLIT_VERTICAL;
+          }
+        else
+          {
+             before = (c == POSITION_LEFT);
+             type = TILING_SPLIT_HORIZONTAL;
+          }
+
+        item = tiling_window_tree_client_find(_G.tinfo->tree, ec);
+        _G.tinfo->tree = tiling_window_tree_insert(_G.tinfo->tree, parent, ec, type, before);
+     }
+   else
+     {
+       _G.tinfo->tree = tiling_window_tree_add(_G.tinfo->tree, NULL, ec, _G.split_type);
+     }
+}
+
 static void
 _insert_client(E_Client *ec, Tiling_Split_Type type)
 {
@@ -592,23 +693,17 @@ _insert_client(E_Client *ec, Tiling_Split_Type type)
 
    if (ec_focused == ec)
      {
-        //if we are placing the currently focused client, search for client under the focused client
-        Eina_Rectangle c;
-
-        e_client_geometry_get(ec, &c.x, &c.y, &c.w, &c.h);
-
-        place = _tilable_client(c.x + c.w/2, c.y + c.h/2);
+        _insert_client_prefered(ec);
      }
    else
      {
         //otherwise place next to the given client
         place = tiling_window_tree_client_find(_G.tinfo->tree,
                                                ec_focused);
+        _G.tinfo->tree = tiling_window_tree_add(_G.tinfo->tree, place, ec, type);
 
      }
 
-   _G.tinfo->tree =
-     tiling_window_tree_add(_G.tinfo->tree, place, ec, type);
 }
 
 static Eina_Bool
@@ -1168,32 +1263,6 @@ _resize_hook(void *data EINA_UNUSED, int type EINA_UNUSED,
    return true;
 }
 
-static Eina_Bool
-_move_hook(void *data EINA_UNUSED, int type EINA_UNUSED, E_Event_Client *event)
-{
-   E_Client *ec = event->ec;
-   Client_Extra *extra = tiling_entry_func(ec);
-
-   if (!extra || !extra->tiled)
-     {
-        return true;
-     }
-
-   /* A hack because e doesn't trigger events for all property changes */
-   if (!is_tilable(ec))
-     {
-        toggle_floating(ec);
-
-        return true;
-     }
-
-   e_client_act_move_end(event->ec, NULL);
-
-   _reapply_tree();
-
-   return true;
-}
-
 static void
 _frame_del_cb(void *data, Evas *evas EINA_UNUSED,
       Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
@@ -1434,6 +1503,140 @@ E_API E_Module_Api e_modapi = {
    "Tiling"
 };
 
+static void
+_center_on_mouse(Evas_Object *obj)
+{
+   Evas *e;
+   int x,y,w,h;
+
+   e = evas_object_evas_get(obj);
+   evas_pointer_canvas_xy_get(e, &x, &y);
+   evas_object_geometry_get(obj, NULL, NULL, &w, &h);
+   evas_object_move(obj, x-w/2, y-h/2);
+}
+
+static void
+_client_drag_mouse_move(void *data, Evas *e EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   Window_Tree *client;
+   int x,y;
+   Client_Extra *extra = tiling_entry_func(data);
+
+   //move the drag object to the center of the object
+   _center_on_mouse(extra->drag_object);
+
+   //now check if we can hint somehow
+   evas_pointer_canvas_xy_get(e_comp->evas, &x, &y);
+   client = _tilable_client(x, y);
+
+   //if there is nothing below, we cannot hint to anything
+   if (!client) return;
+   Position_On_Client c = _calculate_position_preference(client->client);
+
+   if (!extra->hint_object)
+     {
+        extra->hint_object = edje_object_add(e_comp->evas);
+        if (!e_theme_edje_object_set(extra->hint_object,
+                                     "base/theme/modules/tiling",
+                                     "modules/tiling/indicator"))
+          edje_object_file_set(extra->hint_object, _G.edj_path, "modules/tiling/indicator");
+        evas_object_layer_set(extra->hint_object, E_LAYER_CLIENT_DRAG);
+        evas_object_show(extra->hint_object);
+     }
+
+   //set the geometry on the hint object
+   Eina_Rectangle pos = client->client->client;
+   if (c == POSITION_LEFT)
+     evas_object_geometry_set(extra->hint_object, pos.x, pos.y, pos.w/2, pos.h);
+   else if (c == POSITION_RIGHT)
+     evas_object_geometry_set(extra->hint_object, pos.x+pos.w/2, pos.y, pos.w/2, pos.h);
+   else if (c == POSITION_BOTTOM)
+     evas_object_geometry_set(extra->hint_object, pos.x, pos.y + pos.h/2, pos.w, pos.h/2);
+   else if (c == POSITION_TOP)
+     evas_object_geometry_set(extra->hint_object, pos.x, pos.y, pos.w, pos.h/2);
+}
+
+static unsigned char
+_client_drag_mouse_up(void *data, int event EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   E_Client *ec = data;
+   Client_Extra *extra = tiling_entry_func(ec);
+
+   if (!extra)
+     {
+        return ECORE_CALLBACK_PASS_ON;
+     }
+
+   //we grappend the comp when we started the drag
+   e_comp_ungrab_input(EINA_TRUE, EINA_FALSE);
+
+   //insert the client at the position where the up was
+   _insert_client_prefered(ec);
+
+   //remove the hint object
+   evas_object_del(extra->hint_object);
+   extra->hint_object = NULL;
+
+   //delete the icon on the screen
+   evas_object_del(extra->drag_object);
+   evas_event_callback_del_full(evas_object_evas_get(e_comp->elm), EVAS_CALLBACK_MOUSE_MOVE, _client_drag_mouse_move, ec);
+   extra->drag_object = NULL;
+
+   //bring up the client again
+   ec->hidden = EINA_FALSE;
+   e_client_comp_hidden_set(ec, EINA_FALSE);
+   evas_object_show(ec->frame);
+
+   //remove the mouse up
+   ecore_event_handler_del(_G.mouse_up);
+   _G.mouse_up = NULL;
+
+   _reapply_tree();
+
+   evas_object_focus_set(ec->frame, EINA_TRUE);
+
+   return ECORE_CALLBACK_PASS_ON;
+}
+
+static void
+_client_move_begin(void *data EINA_UNUSED, E_Client *ec)
+{
+   Client_Extra *extra = tiling_entry_func(ec);
+   Window_Tree *item;
+
+   if (!extra || !extra->tiled)
+     {
+        return;
+     }
+
+   item = tiling_window_tree_client_find(_G.tinfo->tree, ec);
+   _G.tinfo->tree = tiling_window_tree_remove(_G.tinfo->tree, item);
+
+   e_comp_grab_input(EINA_TRUE, EINA_FALSE);
+
+   //create the drag object
+   extra->drag_object = e_client_icon_add(ec, evas_object_evas_get(e_comp->elm));
+   evas_object_resize(extra->drag_object, 40, 40);
+   evas_object_show(extra->drag_object);
+   evas_object_layer_set(extra->drag_object, E_LAYER_CLIENT_DRAG);
+
+   //listen for mouse moves
+   evas_event_callback_add(evas_object_evas_get(e_comp->elm), EVAS_CALLBACK_MOUSE_MOVE, _client_drag_mouse_move, ec);
+
+   //the up will terminate the whole operation and destroy the drag and restore the client
+   //we cannot use the move_end hook since the move is ending when we are hiding the client
+   _G.mouse_up = ecore_event_handler_add(ECORE_EVENT_MOUSE_BUTTON_UP, _client_drag_mouse_up, ec);
+
+   //center the drag object on the mouse
+   _center_on_mouse(extra->drag_object);
+
+   ec->hidden = EINA_TRUE;
+   e_client_comp_hidden_set(ec, EINA_TRUE);
+   evas_object_hide(ec->frame);
+
+   _reapply_tree();
+}
+
 E_API void *
 e_modapi_init(E_Module *m)
 {
@@ -1461,6 +1664,9 @@ e_modapi_init(E_Module *m)
 
    _G.handler_client_resize_begin =
       e_client_hook_add(E_CLIENT_HOOK_RESIZE_BEGIN, _resize_begin_hook, NULL);
+   _G.handler_move_begin =
+      e_client_hook_add(E_CLIENT_HOOK_MOVE_BEGIN, _client_move_begin, NULL);
+
    if (e_comp->comp_type == E_PIXMAP_TYPE_X)
      _G.handler_client_add =
         e_client_hook_add(E_CLIENT_HOOK_EVAL_PRE_FRAME_ASSIGN, _add_hook, NULL);
@@ -1468,7 +1674,6 @@ e_modapi_init(E_Module *m)
      _G.handler_client_add =
         e_client_hook_add(E_CLIENT_HOOK_UNIGNORE, _add_hook, NULL);
    HANDLER(_G.handler_client_resize, CLIENT_RESIZE, _resize_hook);
-   HANDLER(_G.handler_client_move, CLIENT_MOVE, _move_hook);
 
    HANDLER(_G.handler_client_iconify, CLIENT_ICONIFY, _iconify_hook);
    HANDLER(_G.handler_client_uniconify, CLIENT_UNICONIFY, _iconify_hook);
