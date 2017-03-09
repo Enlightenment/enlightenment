@@ -52,6 +52,11 @@ typedef struct _Instance
    E_Menu           *lmenu;
 } Instance;
 
+typedef struct {
+   E_Desk *desk;
+   Tiling_Split_Type type;
+} Desk_Split_Type;
+
 struct tiling_g tiling_g = {
    .module = NULL,
    .config = NULL,
@@ -89,7 +94,7 @@ static struct tiling_mod_main_g
    Ecore_Event_Handler *handler_client_resize, *handler_client_move,
                        *handler_client_iconify, *handler_client_uniconify,
                        *handler_desk_set, *handler_compositor_resize,
-                       *mouse_up;
+                       *mouse_up, *handler_desk_show;
    E_Client_Hook       *handler_client_resize_begin, *handler_client_add,
                        *handler_move_begin, *handler_move_end;
    E_Client_Menu_Hook  *client_menu_hook;
@@ -97,11 +102,12 @@ static struct tiling_mod_main_g
    Tiling_Info         *tinfo;
    Eina_Hash           *info_hash;
    Eina_Hash           *client_extras;
+   Eina_Hash           *desk_type;
 
    E_Action            *act_togglefloat, *act_move_up, *act_move_down, *act_move_left,
                        *act_move_right, *act_toggle_split_mode, *act_swap_window;
 
-   Tiling_Split_Type    split_type;
+   Desk_Split_Type     *current_split_type;
 
    struct {
         Evas_Object *comp_obj;
@@ -111,7 +117,7 @@ static struct tiling_mod_main_g
    } split_popup;
 } _G =
 {
-   .split_type = TILING_SPLIT_HORIZONTAL,
+
 };
 
 /* Define the class and gadcon functions this module provides */
@@ -136,13 +142,18 @@ get_current_desk(void)
 }
 
 static Tiling_Split_Type
-_current_tiled_state(void)
+_current_tiled_state(Eina_Bool allow_float)
 {
-   Tiling_Split_Type type = _G.split_type;
+   if (!_G.current_split_type)
+     {
+        ERR("Invalid state, the current field can never be NULL");
+        return TILING_SPLIT_HORIZONTAL;
+     }
 
-   if (type == TILING_SPLIT_FLOAT)
+   if (!allow_float &&
+       _G.current_split_type->type == TILING_SPLIT_FLOAT)
      return TILING_SPLIT_HORIZONTAL;
-   return type;
+   return _G.current_split_type->type;
 }
 
 static Tiling_Info *
@@ -530,7 +541,7 @@ _desk_config_apply(E_Desk *d, int old_nb_stacks, int new_nb_stacks)
 
         E_CLIENT_FOREACH(ec)
           {
-             _add_client(ec, _G.split_type);
+             _add_client(ec, _current_tiled_state(EINA_TRUE));
           }
 
         _reapply_tree();
@@ -681,7 +692,7 @@ _insert_client_prefered(E_Client *ec)
      }
    else
      {
-       _G.tinfo->tree = tiling_window_tree_add(_G.tinfo->tree, NULL, ec, _G.split_type);
+       _G.tinfo->tree = tiling_window_tree_add(_G.tinfo->tree, NULL, ec, _current_tiled_state(EINA_FALSE));
      }
 }
 
@@ -827,7 +838,7 @@ toggle_floating(E_Client *ec)
      }
    else
      {
-        _add_client(ec, _current_tiled_state());
+        _add_client(ec, _current_tiled_state(EINA_FALSE));
      }
 }
 
@@ -1043,13 +1054,20 @@ _tiling_split_type_next(void)
 {
    Instance *inst;
    Eina_List *itr;
-   _G.split_type = (_G.split_type + 1) % TILING_SPLIT_LAST;
+
+   if (!_G.current_split_type)
+     {
+        ERR("Invalid state, current split type is NULL");
+        return;
+     }
+
+   _G.current_split_type->type = (_G.current_split_type->type + 1) % TILING_SPLIT_LAST;
 
    /* If we don't allow floating, skip it. */
    if (!tiling_g.config->have_floating_mode &&
-       (_G.split_type == TILING_SPLIT_FLOAT))
+       (_G.current_split_type->type == TILING_SPLIT_FLOAT))
      {
-        _G.split_type = (_G.split_type + 1) % TILING_SPLIT_LAST;
+        _G.current_split_type->type = (_G.current_split_type->type + 1) % TILING_SPLIT_LAST;
      }
 
    EINA_LIST_FOREACH(tiling_g.gadget_instances, itr, inst)
@@ -1345,7 +1363,7 @@ _add_hook(void *data EINA_UNUSED, E_Client *ec)
    if (e_object_is_del(E_OBJECT(ec)))
      return;
 
-   _add_client(ec, _G.split_type);
+   _add_client(ec, _current_tiled_state(EINA_TRUE));
 }
 
 static Eina_Bool
@@ -1374,7 +1392,7 @@ _toggle_tiling_based_on_state(E_Client *ec, Eina_Bool restore)
      }
    else if (!extra->tiled && is_tilable(ec))
      {
-        _add_client(ec, _current_tiled_state());
+        _add_client(ec, _current_tiled_state(EINA_FALSE));
 
         return EINA_TRUE;
      }
@@ -1415,7 +1433,7 @@ _desk_set_hook(void *data EINA_UNUSED, int type EINA_UNUSED,
    if (!desk_should_tile_check(ev->ec->desk))
      return true;
 
-   _add_client(ev->ec, _current_tiled_state());
+   _add_client(ev->ec, _current_tiled_state(EINA_FALSE));
 
    return true;
 }
@@ -1496,6 +1514,12 @@ _clear_border_extras(void *data)
    eina_stringshare_del(extra->orig.bordername);
 
    E_FREE(extra);
+}
+
+static void
+_clear_desk_types(void *data)
+{
+   free(data);
 }
 
 E_API E_Module_Api e_modapi = {
@@ -1637,6 +1661,39 @@ _client_move_begin(void *data EINA_UNUSED, E_Client *ec)
    _reapply_tree();
 }
 
+static void
+_update_current_desk(E_Desk *new)
+{
+   Desk_Split_Type *type;
+
+   type = eina_hash_find(_G.desk_type, &new);
+
+   if (!type)
+     {
+        type = calloc(1, sizeof(Desk_Split_Type));
+        type->desk = new;
+        type->type = TILING_SPLIT_HORIZONTAL;
+        eina_hash_add(_G.desk_type, &new, type);
+     }
+
+   _G.current_split_type = type;
+   printf("Set to %p\n", type);
+}
+
+static void
+_desk_shown(void *data EINA_UNUSED, int types EINA_UNUSED, void *event_info)
+{
+   E_Event_Desk_Show *ev = event_info;
+
+   if (!ev->desk)
+     {
+        ERR("The shown desk can never be NULL!");
+        return;
+     }
+
+   _update_current_desk(ev->desk);
+}
+
 E_API void *
 e_modapi_init(E_Module *m)
 {
@@ -1656,7 +1713,7 @@ e_modapi_init(E_Module *m)
 
    _G.info_hash = eina_hash_pointer_new(_clear_info_hash);
    _G.client_extras = eina_hash_pointer_new(_clear_border_extras);
-
+   _G.desk_type = eina_hash_pointer_new(_clear_desk_types);
 #define HANDLER(_h, _e, _f)                                \
   _h = ecore_event_handler_add(E_EVENT_##_e,               \
                                (Ecore_Event_Handler_Cb)_f, \
@@ -1681,6 +1738,7 @@ e_modapi_init(E_Module *m)
    HANDLER(_G.handler_desk_set, CLIENT_DESK_SET, _desk_set_hook);
    HANDLER(_G.handler_compositor_resize, COMPOSITOR_RESIZE,
            _compositor_resize_hook);
+   HANDLER(_G.handler_desk_show, DESK_SHOW, _desk_shown);
 #undef HANDLER
 
 #define ACTION_ADD(_action, _cb, _title, _value, _params, _example, _editable) \
@@ -1768,18 +1826,21 @@ e_modapi_init(E_Module *m)
    desk = get_current_desk();
    _G.tinfo = _initialize_tinfo(desk);
 
+   _update_current_desk(get_current_desk());
+
    /* Add all the existing windows. */
    {
       E_Client *ec;
 
       E_CLIENT_FOREACH(ec)
       {
-         _add_client(ec, _G.split_type);
+         _add_client(ec, _current_tiled_state(EINA_TRUE));
       }
    }
    started = EINA_TRUE;
    _reapply_tree();
    e_gadcon_provider_register(&_gc_class);
+
 
    return m;
 }
@@ -1913,7 +1974,7 @@ static Eina_Stringshare *_current_gad_id = NULL;
 static void
 _edje_tiling_icon_set(Evas_Object *o)
 {
-   switch (_G.split_type)
+   switch (_current_tiled_state(EINA_TRUE))
      {
       case TILING_SPLIT_HORIZONTAL:
         edje_object_signal_emit(o, "tiling,mode,horizontal", "e");
