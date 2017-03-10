@@ -2891,7 +2891,7 @@ e_comp_wl_init(void)
    /* add event handlers to catch E events */
    if (e_comp->comp_type != E_PIXMAP_TYPE_X)
      {
-        if (e_randr2_init())
+        if (e_randr2_init() && (!e_xinerama_fake_screens_exist()))
           e_randr2_screens_setup(-1, -1);
         elm_config_preferred_engine_set("wayland_shm");
      }
