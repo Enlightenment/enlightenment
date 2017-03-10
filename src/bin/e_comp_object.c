@@ -3878,7 +3878,7 @@ e_comp_object_dirty(Evas_Object *obj)
      }
    cw->update_count = cw->updates_full = cw->updates_exist = 0;
    evas_object_smart_callback_call(obj, "dirty", NULL);
-   if (cw->visible || (!visible) || (!cw->pending_updates) || cw->native) return;
+   if (cw->real_hid || cw->visible || (!visible) || (!cw->pending_updates) || cw->native) return;
    /* force render if main object is hidden but mirrors are visible */
    RENDER_DEBUG("FORCING RENDER %p", cw->ec);
    e_comp_object_render(obj);
