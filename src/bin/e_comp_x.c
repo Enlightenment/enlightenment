@@ -5697,7 +5697,6 @@ e_comp_x_shutdown(void)
      ecore_x_screensaver_custom_blanking_disable();
    if (x_fatal) return;
    e_atoms_shutdown();
-   e_randr2_shutdown();
    /* ecore_x_ungrab(); */
    ecore_x_focus_reset();
    ecore_x_events_allow_all();
