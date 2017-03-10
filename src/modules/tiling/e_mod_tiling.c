@@ -73,6 +73,7 @@ static Eina_Bool _toggle_tiling_based_on_state(E_Client *ec, Eina_Bool restore);
 static void _edje_tiling_icon_set(Evas_Object *o);
 static void _desk_config_apply(E_Desk *d, int old_nb_stacks, int new_nb_stacks);
 static void _update_current_desk(E_Desk *new);
+static void _client_drag_terminate(E_Client *ec);
 
 /* Func Proto Requirements for Gadcon */
 static E_Gadcon_Client *_gc_init(E_Gadcon *gc, const char *name, const char *id, const char *style);
@@ -618,9 +619,9 @@ _calculate_position_preference(E_Client *ec)
    Eina_Rectangle rect;
    evas_pointer_canvas_xy_get(e_comp->evas, &x, &y);
 
-   evas_object_geometry_get(ec->frame, &rect.x, &rect.y, &rect.w, &rect.h);
+   e_client_geometry_get(ec, &rect.x, &rect.y, &rect.w, &rect.h);
 
-   if (!eina_rectangle_coords_inside(&ec->client, x, y))
+   if (!eina_rectangle_coords_inside(&rect, x, y))
      {
         ERR("Coorinates are not in there");
         return -1;
@@ -1432,7 +1433,34 @@ _desk_set_hook(void *data EINA_UNUSED, int type EINA_UNUSED,
 {
    DBG("%p: from (%d,%d) to (%d,%d)", ev->ec, ev->desk->x, ev->desk->y,
        ev->ec->desk->x, ev->ec->desk->y);
+   Client_Extra *extra = eina_hash_find(_G.client_extras, &ev->ec);
 
+   if (!extra)
+     {
+        return true;
+     }
+
+   //check the state of the new desk
+   if (desk_should_tile_check(ev->ec->desk))
+     {
+        if (extra->drag_object)
+          {
+             ev->ec->hidden = EINA_TRUE;
+             e_client_comp_hidden_set(ev->ec, EINA_TRUE);
+             evas_object_hide(ev->ec->frame);
+             return true;
+          }
+     }
+   else
+     {
+        if (extra->drag_object)
+          {
+             _client_drag_terminate(ev->ec);
+             extra->floating = EINA_TRUE;
+          }
+     }
+
+   //check if we should remove that here
    if (desk_should_tile_check(ev->desk))
      {
         if (tiling_window_tree_client_find(_G.tinfo->tree, ev->ec))
@@ -1441,11 +1469,10 @@ _desk_set_hook(void *data EINA_UNUSED, int type EINA_UNUSED,
              _remove_client(ev->ec);
           }
      }
-
-   if (!desk_should_tile_check(ev->ec->desk))
-     return true;
-
-   _add_client(ev->ec, _current_tiled_state(EINA_FALSE));
+   if (desk_should_tile_check(ev->ec->desk))
+     {
+        _add_client(ev->ec, _current_tiled_state(EINA_FALSE));
+     }
 
    return true;
 }
@@ -1556,7 +1583,12 @@ _client_drag_mouse_move(void *data, Evas *e EINA_UNUSED, void *event_info EINA_U
 {
    Window_Tree *client;
    int x,y;
-   Client_Extra *extra = tiling_entry_func(data);
+   Client_Extra *extra = tiling_entry_no_desk_func(data);
+
+   if (!extra)
+     {
+        return;
+     }
 
    //move the drag object to the center of the object
    _center_on_mouse(extra->drag_object);
@@ -1566,7 +1598,11 @@ _client_drag_mouse_move(void *data, Evas *e EINA_UNUSED, void *event_info EINA_U
    client = _tilable_client(x, y);
 
    //if there is nothing below, we cannot hint to anything
-   if (!client) return;
+   if (!client)
+     {
+        evas_object_hide(extra->hint_object);
+        return;
+     }
    Position_On_Client c = _calculate_position_preference(client->client);
 
    if (!extra->hint_object)
@@ -1590,24 +1626,28 @@ _client_drag_mouse_move(void *data, Evas *e EINA_UNUSED, void *event_info EINA_U
      evas_object_geometry_set(extra->hint_object, pos.x, pos.y + pos.h/2, pos.w, pos.h/2);
    else if (c == POSITION_TOP)
      evas_object_geometry_set(extra->hint_object, pos.x, pos.y, pos.w, pos.h/2);
+   evas_object_show(extra->hint_object);
 }
 
-static unsigned char
-_client_drag_mouse_up(void *data, int event EINA_UNUSED, void *event_info EINA_UNUSED)
+static void
+_client_drag_terminate(E_Client *ec)
 {
-   E_Client *ec = data;
-   Client_Extra *extra = tiling_entry_func(ec);
+   Client_Extra *extra = tiling_entry_no_desk_func(ec);
 
    if (!extra)
      {
-        return ECORE_CALLBACK_PASS_ON;
+        return;
      }
 
    //we grappend the comp when we started the drag
    e_comp_ungrab_input(EINA_TRUE, EINA_FALSE);
 
    //insert the client at the position where the up was
-   _insert_client_prefered(ec);
+   if (desk_should_tile_check(get_current_desk()))
+     {
+        _insert_client_prefered(ec);
+        extra->tiled = EINA_TRUE;
+     }
 
    //remove the hint object
    evas_object_del(extra->hint_object);
@@ -1630,7 +1670,12 @@ _client_drag_mouse_up(void *data, int event EINA_UNUSED, void *event_info EINA_U
    _reapply_tree();
 
    evas_object_focus_set(ec->frame, EINA_TRUE);
+}
 
+static unsigned char
+_client_drag_mouse_up(void *data, int event EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   _client_drag_terminate(data);
    return ECORE_CALLBACK_PASS_ON;
 }
 
@@ -1638,16 +1683,13 @@ static void
 _client_move_begin(void *data EINA_UNUSED, E_Client *ec)
 {
    Client_Extra *extra = tiling_entry_func(ec);
-   Window_Tree *item;
 
    if (!extra || !extra->tiled)
      {
         return;
      }
 
-   item = tiling_window_tree_client_find(_G.tinfo->tree, ec);
-   _G.tinfo->tree = tiling_window_tree_remove(_G.tinfo->tree, item);
-
+   _client_remove_no_apply(ec);
    e_comp_grab_input(EINA_TRUE, EINA_FALSE);
 
    //create the drag object
@@ -1689,10 +1731,9 @@ _update_current_desk(E_Desk *new)
      }
 
    _G.current_split_type = type;
-   printf("Set to %p\n", type);
 }
 
-static void
+static bool
 _desk_shown(void *data EINA_UNUSED, int types EINA_UNUSED, void *event_info)
 {
    E_Event_Desk_Show *ev = event_info;
@@ -1700,11 +1741,13 @@ _desk_shown(void *data EINA_UNUSED, int types EINA_UNUSED, void *event_info)
    if (!ev->desk)
      {
         ERR("The shown desk can never be NULL!");
-        return;
+        return ECORE_CALLBACK_PASS_ON;
      }
 
    _update_current_desk(ev->desk);
    _tiling_gadgets_update();
+
+   return ECORE_CALLBACK_PASS_ON;
 }
 
 E_API void *
