@@ -4,6 +4,7 @@
 
 EINTERN Eina_Hash *shell_resources;
 EINTERN Eina_Hash *xdg_shell_resources;
+EINTERN Eina_List *hooks;
 
 EINTERN void
 e_shell_surface_destroy(struct wl_resource *resource)
@@ -194,6 +195,6 @@ e_modapi_shutdown(E_Module *m EINA_UNUSED)
    e_input_panel_shutdown();
    eina_hash_free(shell_resources);
    eina_hash_free(xdg_shell_resources);
-
+   E_FREE_LIST(hooks, e_client_hook_del);
    return 1;
 }

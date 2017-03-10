@@ -6,6 +6,8 @@ EINTERN void        e_input_panel_shutdown(void);
 
 EINTERN Eina_Hash *shell_resources;
 EINTERN Eina_Hash *xdg_shell_resources;
+EINTERN Eina_List *hooks;
+
 
 EINTERN void e_shell_surface_destroy(struct wl_resource *resource);
 EINTERN void e_shell_surface_cb_destroy(struct wl_resource *resource);

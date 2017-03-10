@@ -1445,6 +1445,6 @@ e_xdg_shell_v6_init(void)
         ERR("Could not create xdg_shell global");
         return EINA_FALSE;
      }
-   e_client_hook_add(E_CLIENT_HOOK_DEL, _xdg6_client_hook_del, NULL);
+   hooks = eina_list_append(hooks, e_client_hook_add(E_CLIENT_HOOK_DEL, _xdg6_client_hook_del, NULL));
    return EINA_TRUE;
 }
