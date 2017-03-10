@@ -321,10 +321,23 @@ e_comp_canvas_init(int w, int h)
 {
    Evas_Object *o;
    Eina_List *screens;
+   char *bsize;
 
-   e_comp->evas = ecore_evas_get(e_comp->ee);
    e_comp->w = w;
    e_comp->h = h;
+   bsize = getenv("E_COMP_SIZE");
+   if (bsize)
+     {
+        int ew = w, eh = h;
+
+        if (sscanf(bsize, "%dx%d", &ew, &eh) == 2)
+          {
+             if ((w > 0) && (h > 0))
+               e_comp->w = ew, e_comp->h = eh;
+          }
+     }
+
+   e_comp->evas = ecore_evas_get(e_comp->ee);
 
    if (e_first_frame)
      evas_event_callback_add(e_comp->evas, EVAS_CALLBACK_RENDER_POST, _e_comp_canvas_cb_first_frame, NULL);

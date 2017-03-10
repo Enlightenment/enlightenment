@@ -5,14 +5,9 @@ E_API E_Module_Api e_modapi = { E_MODULE_API_VERSION, "Wl_Buffer" };
 E_API void *
 e_modapi_init(E_Module *m)
 {
-   char *bsize;
    int w = 1024, h = 768;
 
    printf("LOAD Wl_Buffer MODULE\n");
-
-   bsize = getenv("E_WL_SIZE");
-   if (bsize)
-     sscanf(bsize, "%dx%d", &w, &h);
 
    e_comp->ee = ecore_evas_buffer_new(w, h);
 
