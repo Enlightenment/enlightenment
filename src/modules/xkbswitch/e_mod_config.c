@@ -1343,7 +1343,7 @@ _dlg_add_new(E_Config_Dialog_Data *cfdata)
    /* Holds the available layouts */
    available = e_widget_ilist_add(evas, 32, 32, NULL);
 
-   e_widget_size_min_set(available, 220, 160);
+   e_widget_size_min_set(available, 1, 160);
    e_widget_ilist_go(available);
    e_widget_toolbook_page_append(mainn, NULL, _("Available"), available, 1, 1, 1, 1, 0.5, 0.0);
    cfdata->layout_list = available;
