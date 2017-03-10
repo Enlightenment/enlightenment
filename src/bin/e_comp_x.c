@@ -3585,7 +3585,13 @@ _e_comp_x_hook_client_fetch(void *d EINA_UNUSED, E_Client *ec)
                                     &is_urgent))
           {
              if (ec->new_client)
-               ec->icccm.initial_state = ec->icccm.state;
+               {
+                  /* clients may unset iconic state when no wm is present */
+                  if (ec->netwm.state.hidden && (ec->icccm.state == ECORE_X_WINDOW_STATE_HINT_NORMAL))
+                    ec->icccm.initial_state = ECORE_X_WINDOW_STATE_HINT_ICONIC;
+                  else
+                    ec->icccm.initial_state = ec->icccm.state;
+               }
              if (state != ec->icccm.state)
                {
                   if (ec->icccm.state == ECORE_X_WINDOW_STATE_HINT_WITHDRAWN)
