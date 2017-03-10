@@ -1770,6 +1770,8 @@ _e_client_eval(E_Client *ec)
              ec->stack.ignore--;
           }
      }
+   if (ec->new_client && (!ec->override))
+     e_hints_window_init(ec);
    if ((!e_client_util_ignored_get(ec)) && ec->zone && ec->visible && (!ec->placed))
      {
         if (ec->parent)
@@ -1922,8 +1924,6 @@ _e_client_eval(E_Client *ec)
           }
 
         /* Recreate state */
-        if (!ec->override)
-          e_hints_window_init(ec);
         if ((ec->e.state.centered) &&
             ((!ec->remember) ||
              ((ec->remember) && (!(ec->remember->apply & E_REMEMBER_APPLY_POS)))))
