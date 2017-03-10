@@ -3253,7 +3253,7 @@ _e_comp_x_hook_client_pre_frame_assign(void *d EINA_UNUSED, E_Client *ec)
           }
      }
    ecore_x_window_show(win);
-   if (!ec->iconic)
+   if (ec->icccm.state != ECORE_X_WINDOW_STATE_HINT_WITHDRAWN)
      ecore_x_window_show(pwin);
 
    _e_comp_x_focus_init(ec);
