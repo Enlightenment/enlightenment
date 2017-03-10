@@ -110,7 +110,7 @@ e_randr2_shutdown(void)
    if (_screen_delay_timer) ecore_timer_del(_screen_delay_timer);
    _screen_delay_timer = NULL;
    // stop listening to driver info
-   if (e_comp->screen->shutdown)
+   if (e_comp->screen && e_comp->screen->shutdown)
      e_comp->screen->shutdown();
    // clear up all event handlers
    E_FREE_LIST(_ev_handlers, ecore_event_handler_del);
