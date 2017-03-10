@@ -1294,6 +1294,32 @@ _resize_hook(void *data EINA_UNUSED, int type EINA_UNUSED,
    return true;
 }
 
+static Eina_Bool
+_move_hook(void *data EINA_UNUSED, int type EINA_UNUSED, E_Event_Client *event)
+{
+   E_Client *ec = event->ec;
+   Client_Extra *extra = tiling_entry_func(ec);
+
+   if (!extra || !extra->tiled)
+     {
+        return true;
+     }
+
+   /* A hack because e doesn't trigger events for all property changes */
+   if (!is_tilable(ec))
+     {
+        toggle_floating(ec);
+
+        return true;
+     }
+
+   e_client_act_move_end(event->ec, NULL);
+
+   _reapply_tree();
+
+   return true;
+}
+
 static void
 _frame_del_cb(void *data, Evas *evas EINA_UNUSED,
       Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
@@ -1787,6 +1813,7 @@ e_modapi_init(E_Module *m)
      _G.handler_client_add =
         e_client_hook_add(E_CLIENT_HOOK_UNIGNORE, _add_hook, NULL);
    HANDLER(_G.handler_client_resize, CLIENT_RESIZE, _resize_hook);
+   HANDLER(_G.handler_client_move, CLIENT_MOVE, _move_hook);
 
    HANDLER(_G.handler_client_iconify, CLIENT_ICONIFY, _iconify_hook);
    HANDLER(_G.handler_client_uniconify, CLIENT_UNICONIFY, _iconify_hook);

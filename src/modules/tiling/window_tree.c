@@ -134,6 +134,8 @@ tiling_window_tree_insert(Window_Tree *root, Window_Tree *buddy,
      }
    else
      {
+        if (!buddy)
+          buddy = root;
         _tiling_window_tree_split_add(buddy, new_node, !before);
      }
 
