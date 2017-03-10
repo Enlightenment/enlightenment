@@ -4703,6 +4703,11 @@ _e_comp_x_hook_client_del(void *d EINA_UNUSED, E_Client *ec)
    if (unfocus_job_client == ec) unfocus_job_client = NULL;
    if ((!stopping) && cd && (!cd->deleted))
      ecore_x_window_prop_card32_set(win, E_ATOM_MANAGED, &visible, 1);
+   if (stopping && ec->iconic)
+     {
+        e_hints_window_iconic_set(ec);
+        e_hints_window_state_set(ec);
+     }
    if ((!ec->already_unparented) && cd && cd->reparented)
      {
         _e_comp_x_focus_setdown(ec);
