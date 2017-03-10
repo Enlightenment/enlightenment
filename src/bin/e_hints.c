@@ -411,14 +411,6 @@ e_hints_window_init(E_Client *ec)
    if (ec->remember)
      rem = ec->remember;
 
-   if (ec->icccm.initial_state == ECORE_X_WINDOW_STATE_HINT_NONE)
-     {
-        if (ec->netwm.state.hidden)
-          ec->icccm.state = ECORE_X_WINDOW_STATE_HINT_ICONIC;
-        else
-          ec->icccm.state = ECORE_X_WINDOW_STATE_HINT_NORMAL;
-     }
-
    if ((rem) && (rem->apply & E_REMEMBER_APPLY_LAYER))
      {
         ec->layer = rem->prop.layer;
