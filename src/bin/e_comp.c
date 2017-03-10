@@ -850,6 +850,14 @@ _e_comp_free(E_Comp *c)
    E_FREE_LIST(c->zones, e_object_del);
 
    e_comp_canvas_clear();
+#ifdef HAVE_WAYLAND
+   if (c->comp_type == E_PIXMAP_TYPE_WL)
+     e_comp_wl_shutdown();
+#endif
+#ifndef HAVE_WAYLAND_ONLY
+   if (e_comp_util_has_x())
+     e_comp_x_shutdown();
+#endif
 
    ecore_evas_free(c->ee);
 

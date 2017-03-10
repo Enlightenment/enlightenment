@@ -2004,28 +2004,6 @@ _e_comp_wl_compositor_cb_bind(struct wl_client *client, void *data EINA_UNUSED, 
 }
 
 static void
-_e_comp_wl_compositor_cb_del(void *data EINA_UNUSED)
-{
-   E_Comp_Wl_Output *output;
-
-   EINA_LIST_FREE(e_comp_wl->outputs, output)
-     {
-        if (output->id) eina_stringshare_del(output->id);
-        if (output->make) eina_stringshare_del(output->make);
-        if (output->model) eina_stringshare_del(output->model);
-        free(output);
-     }
-   e_comp_wl_shutdown();
-
-   /* delete fd handler */
-   /* if (e_comp_wl->fd_hdlr) ecore_main_fd_handler_del(e_comp_wl->fd_hdlr); */
-
-   /* free allocated data structure */
-   free(e_comp_wl->extensions);
-   free(e_comp_wl);
-}
-
-static void
 _e_comp_wl_subsurface_destroy(struct wl_resource *resource)
 {
    E_Client *ec;
@@ -2703,10 +2681,6 @@ _e_comp_wl_compositor_create(void)
 {
    E_Comp_Wl_Data *cdata;
 
-   /* check for existing compositor. create if needed */
-   if (e_comp->comp_type == E_PIXMAP_TYPE_NONE)
-     E_OBJECT_DEL_SET(e_comp, _e_comp_wl_compositor_cb_del);
-
    /* create new compositor data */
    if (!(cdata = E_NEW(E_Comp_Wl_Data, 1)))
      {
@@ -2948,6 +2922,16 @@ e_comp_wl_surface_create_signal_get(void)
 EINTERN void
 e_comp_wl_shutdown(void)
 {
+   E_Comp_Wl_Output *output;
+
+   EINA_LIST_FREE(e_comp_wl->outputs, output)
+     {
+        if (output->id) eina_stringshare_del(output->id);
+        if (output->make) eina_stringshare_del(output->make);
+        if (output->model) eina_stringshare_del(output->model);
+        free(output);
+     }
+
    /* free handlers */
    E_FREE_LIST(handlers, ecore_event_handler_del);
 
@@ -2972,6 +2956,13 @@ e_comp_wl_shutdown(void)
 
    /* shutdown ecore_wayland */
    ecore_wl2_shutdown();
+
+   /* delete fd handler */
+   /* if (e_comp_wl->fd_hdlr) ecore_main_fd_handler_del(e_comp_wl->fd_hdlr); */
+
+   /* free allocated data structure */
+   free(e_comp_wl->extensions);
+   free(e_comp_wl);
 }
 
 EINTERN struct wl_resource *
