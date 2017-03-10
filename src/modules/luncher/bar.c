@@ -1761,6 +1761,7 @@ _bar_del(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *ev
 {
    Instance *inst = data;
 
+   _bar_empty(inst);
    e_object_del(E_OBJECT(inst->order));
    E_FREE_FUNC(inst->drop_handler, evas_object_del);
    eina_hash_free(inst->icons_desktop_hash);
