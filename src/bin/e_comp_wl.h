@@ -356,6 +356,7 @@ struct _E_Comp_Wl_Client_Data
    Eina_Bool is_xdg_surface : 1;
    Eina_Bool grab : 1;
    Eina_Bool buffer_commit : 1;
+   Eina_Bool need_xdg6_configure : 1;
 };
 
 struct _E_Comp_Wl_Output

@@ -1499,7 +1499,7 @@ _e_comp_wl_surface_state_commit(E_Client *ec, E_Comp_Wl_Surface_State *state)
              ec->want_focus |= ec->icccm.accepts_focus && (!ec->override);
           }
      }
-   else if (first && ec->comp_data->shell.surface)
+   else if (ec->comp_data->need_xdg6_configure && ec->comp_data->shell.surface)
      _e_comp_wl_configure_send(ec, 0);
 
    state->sx = 0;
