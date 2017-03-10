@@ -265,14 +265,16 @@ e_remember_unuse(E_Remember *rem)
 E_API void
 e_remember_del(E_Remember *rem)
 {
-   const Eina_List *l;
    E_Client *ec;
 
-   EINA_LIST_FOREACH(e_comp->clients, l, ec)
+   E_CLIENT_FOREACH(ec)
      {
-        if (ec->remember != rem) continue;
+        if ((ec->remember != rem) && (ec->sr_remember != rem)) continue;
 
-        ec->remember = NULL;
+        if (ec->remember == rem)
+          ec->remember = NULL;
+        else
+          ec->sr_remember = NULL;
         e_remember_unuse(rem);
      }
 
