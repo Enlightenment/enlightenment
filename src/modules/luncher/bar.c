@@ -1071,15 +1071,13 @@ _bar_icon_resized(void *data, Evas_Object *obj EINA_UNUSED, const char *emission
      {
       case E_GADGET_SITE_ORIENT_VERTICAL:
         EINA_LIST_FOREACH(inst->icons, l, ic)
-          {
-             tot += ic->scale;
-          }
-        evas_object_size_hint_aspect_set(inst->o_main, EVAS_ASPECT_CONTROL_BOTH, 1, eina_list_count(inst->icons)+tot);
+          tot += ic->scale * 100;
+        evas_object_size_hint_aspect_set(inst->o_main, EVAS_ASPECT_CONTROL_BOTH, 100, tot);
         break;
       default:
         EINA_LIST_FOREACH(inst->icons, l, ic)
-          tot += (ic->scale - 1.0);
-        evas_object_size_hint_aspect_set(inst->o_main, EVAS_ASPECT_CONTROL_BOTH, ceil(eina_list_count(inst->icons)+tot), 1);
+          tot += ic->scale * 100;
+        evas_object_size_hint_aspect_set(inst->o_main, EVAS_ASPECT_CONTROL_BOTH, tot, 100);
      }
 }
 
@@ -1097,7 +1095,7 @@ _bar_icon_scale_message(void *data, Evas_Object *obj EINA_UNUSED, Edje_Message_T
    if (ic->scale > 1.0)
      {
         total = (ic->inst->size * ic->scale) - ic->inst->size;
-        add = ceil(ceil(total)/2);
+        add = ceil(total/2.0);
         switch (e_gadget_site_orient_get(e_gadget_site_get(ic->inst->o_main)))
           {
              case E_GADGET_SITE_ORIENT_VERTICAL:
