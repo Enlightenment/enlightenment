@@ -389,6 +389,8 @@ e_comp_canvas_init(int w, int h)
 
    evas_event_callback_add(e_comp->evas, EVAS_CALLBACK_RENDER_PRE, _e_comp_canvas_prerender, NULL);
    ecore_evas_resize(e_comp->ee, w, h);
+   if ((!after_restart) || (!e_comp_x))
+     ecore_evas_pointer_warp(e_comp->ee, e_comp->w / 2, e_comp->h / 2);
 
    return EINA_TRUE;
 }
