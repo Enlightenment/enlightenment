@@ -3968,13 +3968,13 @@ e_client_unmaximize(E_Client *ec, E_Maximize max)
                ec->maximize_override = 1;
              if (!fullscreen)
                evas_object_smart_callback_call(ec->frame, "unmaximize", NULL);
-             e_client_resize_limit(ec, &w, &h);
              if (ec->saved.frame &&
                (e_comp_object_frame_exists(ec->frame) || (!e_comp_object_frame_allowed(ec->frame))))
                {
                   e_comp_object_frame_xy_adjust(ec->frame, x, y, &x, &y);
                   e_comp_object_frame_wh_adjust(ec->frame, w, h, &w, &h);
                }
+             e_client_resize_limit(ec, &w, &h);
              if (fullscreen)
                evas_object_smart_callback_call(ec->frame, "unmaximize", NULL);
              if (!_e_client_maximize_run(ec, x, y, w, h))
