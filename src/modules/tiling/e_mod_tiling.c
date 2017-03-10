@@ -72,6 +72,7 @@ static void             _foreach_desk(void (*func)(E_Desk *desk));
 static Eina_Bool _toggle_tiling_based_on_state(E_Client *ec, Eina_Bool restore);
 static void _edje_tiling_icon_set(Evas_Object *o);
 static void _desk_config_apply(E_Desk *d, int old_nb_stacks, int new_nb_stacks);
+static void _update_current_desk(E_Desk *new);
 
 /* Func Proto Requirements for Gadcon */
 static E_Gadcon_Client *_gc_init(E_Gadcon *gc, const char *name, const char *id, const char *style);
@@ -144,6 +145,9 @@ get_current_desk(void)
 static Tiling_Split_Type
 _current_tiled_state(Eina_Bool allow_float)
 {
+   //update the current desk in case something has changed it
+   _update_current_desk(get_current_desk());
+
    if (!_G.current_split_type)
      {
         ERR("Invalid state, the current field can never be NULL");
@@ -1050,10 +1054,22 @@ _tiling_split_type_changed_popup(void)
 }
 
 static void
-_tiling_split_type_next(void)
+_tiling_gadgets_update(void)
 {
    Instance *inst;
    Eina_List *itr;
+
+   EINA_LIST_FOREACH(tiling_g.gadget_instances, itr, inst)
+     {
+        _gadget_icon_set(inst);
+     }
+}
+
+static void
+_tiling_split_type_next(void)
+{
+   //update the current desk in case something has changed it
+   _update_current_desk(get_current_desk());
 
    if (!_G.current_split_type)
      {
@@ -1070,11 +1086,7 @@ _tiling_split_type_next(void)
         _G.current_split_type->type = (_G.current_split_type->type + 1) % TILING_SPLIT_LAST;
      }
 
-   EINA_LIST_FOREACH(tiling_g.gadget_instances, itr, inst)
-     {
-        _gadget_icon_set(inst);
-     }
-
+   _tiling_gadgets_update();
    _tiling_split_type_changed_popup();
 }
 
@@ -1692,6 +1704,7 @@ _desk_shown(void *data EINA_UNUSED, int types EINA_UNUSED, void *event_info)
      }
 
    _update_current_desk(ev->desk);
+   _tiling_gadgets_update();
 }
 
 E_API void *
