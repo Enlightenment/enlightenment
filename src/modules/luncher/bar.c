@@ -1059,25 +1059,25 @@ _bar_icon_file_set(Icon *ic, Efreet_Desktop *desktop, E_Client *non_desktop_clie
 }
 
 static void
-_bar_icon_resized(void *data, Evas_Object *obj EINA_UNUSED, const char *emission EINA_UNUSED, const char *source EINA_UNUSED)
+_bar_resized_cb(void *data, Evas_Object *obj EINA_UNUSED, const char *emission EINA_UNUSED, const char *source EINA_UNUSED)
 {
    Instance *inst = data;
    Icon *ic = NULL;
    Eina_List *l = NULL;
-   float tot = 0.0;
+   Evas_Coord tot = 0;
 
    if (!inst->effect) return;
    switch (e_gadget_site_orient_get(e_gadget_site_get(inst->o_main)))
      {
       case E_GADGET_SITE_ORIENT_VERTICAL:
         EINA_LIST_FOREACH(inst->icons, l, ic)
-          tot += ic->scale * 100;
-        evas_object_size_hint_aspect_set(inst->o_main, EVAS_ASPECT_CONTROL_BOTH, 100, tot);
+          tot += ic->scale * 1000;
+        evas_object_size_hint_aspect_set(inst->o_main, EVAS_ASPECT_CONTROL_BOTH, 1000, tot);
         break;
       default:
         EINA_LIST_FOREACH(inst->icons, l, ic)
-          tot += ic->scale * 100;
-        evas_object_size_hint_aspect_set(inst->o_main, EVAS_ASPECT_CONTROL_BOTH, tot, 100);
+          tot += ic->scale * 1000;
+        evas_object_size_hint_aspect_set(inst->o_main, EVAS_ASPECT_CONTROL_BOTH, tot, 1000);
      }
 }
 
@@ -1094,8 +1094,8 @@ _bar_icon_scale_message(void *data, Evas_Object *obj EINA_UNUSED, Edje_Message_T
 
    if (ic->scale > 1.0)
      {
-        total = (ic->inst->size * ic->scale) - ic->inst->size;
-        add = ceil(total/2.0);
+        total = ic->inst->size * (ic->scale - 1.0);
+        add = (Evas_Coord) total/2.0;
         switch (e_gadget_site_orient_get(e_gadget_site_get(ic->inst->o_main)))
           {
              case E_GADGET_SITE_ORIENT_VERTICAL:
@@ -1150,7 +1150,7 @@ _bar_icon_add(Instance *inst, Efreet_Desktop *desktop, E_Client *non_desktop_cli
    E_EXPAND(ic->o_layout);
    E_FILL(ic->o_layout);
    edje_object_message_handler_set(elm_layout_edje_get(ic->o_layout), _bar_icon_scale_message, ic);
-   edje_object_signal_callback_add(elm_layout_edje_get(ic->o_layout), "e,state,resized", "e", _bar_icon_resized, inst);
+   edje_object_signal_callback_add(elm_layout_edje_get(ic->o_layout), "e,state,resized", "e", _bar_resized_cb, inst);
    elm_box_pack_end(inst->o_icon_con, ic->o_layout);
    evas_object_show(ic->o_layout);
 
@@ -1162,8 +1162,8 @@ _bar_icon_add(Instance *inst, Efreet_Desktop *desktop, E_Client *non_desktop_cli
    evas_object_resize(ic->o_spacera, 0, 0);
    evas_object_size_hint_min_set(ic->o_spacerb, 0, 0);
    evas_object_size_hint_min_set(ic->o_spacera, 0, 0);
-   elm_box_pack_before(ic->inst->o_icon_con, ic->o_spacerb, ic->o_layout);
-   elm_box_pack_after(ic->inst->o_icon_con, ic->o_spacera, ic->o_layout);
+   elm_box_pack_before(inst->o_icon_con, ic->o_spacerb, ic->o_layout);
+   elm_box_pack_after(inst->o_icon_con, ic->o_spacera, ic->o_layout);
    evas_object_show(ic->o_spacerb);
    evas_object_show(ic->o_spacera);
 
