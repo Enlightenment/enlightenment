@@ -22,7 +22,7 @@
 #include <string.h> /* for memcpy() */
 #include "md5.h"
 
-#if (__BYTE_ORDER == 1234)
+#if (__BYTE_ORDER == 1234) || (__BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__)
 #define byteReverse(buf, len) /* Nothing */
 #else
 void byteReverse(unsigned char *buf, unsigned longs);
