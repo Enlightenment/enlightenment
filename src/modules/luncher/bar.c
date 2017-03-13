@@ -262,7 +262,8 @@ _bar_icon_del(Instance *inst, Icon *ic)
    inst->icons = eina_list_remove(inst->icons, ic);
    if (ic->preview)
      _bar_icon_preview_hide(ic);
-   _bar_aspect(inst);
+   if (!inst->main_del)
+     _bar_aspect(inst);
    evas_object_del(ic->o_spacera);
    evas_object_del(ic->o_spacerb);
    evas_object_del(ic->o_icon);
@@ -1761,6 +1762,7 @@ _bar_del(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *ev
 {
    Instance *inst = data;
 
+   inst->main_del = EINA_TRUE;
    _bar_empty(inst);
    e_object_del(E_OBJECT(inst->order));
    E_FREE_FUNC(inst->drop_handler, evas_object_del);
@@ -2149,6 +2151,7 @@ bar_create(Evas_Object *parent, int *id, E_Gadget_Site_Orient orient EINA_UNUSED
    inst->inside = EINA_FALSE;
    inst->effect = EINA_FALSE;
    inst->bar = EINA_TRUE;
+   inst->main_del = EINA_FALSE;
    inst->icons_desktop_hash = eina_hash_string_superfast_new(NULL);
    inst->icons_clients_hash = eina_hash_pointer_new(NULL);
    inst->o_main = elm_layout_add(parent);

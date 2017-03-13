@@ -59,6 +59,7 @@ struct _Instance
    Ecore_Job           *resize_job;
    Ecore_Job           *recalc_job;
    E_Comp_Object_Mover *iconify_provider;
+   Eina_Bool            main_del;
    Eina_Bool            bar;
    Eina_Bool            inside;
    Eina_Bool            effect;
