@@ -1142,7 +1142,7 @@ _bar_icon_add(Instance *inst, Efreet_Desktop *desktop, E_Client *non_desktop_cli
    ic->starting = EINA_FALSE;
    ic->preview_dismissed = EINA_FALSE;
    ic->exec = NULL;
-   ic->scale = 0.0;
+   ic->scale = 1.0;
 
    ic->o_layout = elm_layout_add(inst->o_icon_con);
    e_theme_edje_object_set(ic->o_layout, "e/gadget/luncher/icon",
@@ -1707,6 +1707,7 @@ _bar_mouse_move(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, v
         Edje_Message_Int_Set *msg;
         Evas_Coord x, y, w, h;
 
+        ic->scale = 1.0;
         evas_object_geometry_get(ic->o_icon, &x, &y, &w, &h);
         evas_object_resize(ic->o_spacerb, 0, 0);
         evas_object_resize(ic->o_spacera, 0, 0);
@@ -1744,6 +1745,7 @@ _bar_mouse_out(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, vo
      {
         elm_layout_signal_emit(ic->o_layout, "e,state,default", "e");
         elm_layout_signal_emit(ic->o_layout, "e,state,unfocused", "e");
+        ic->scale = 1.0;
         evas_object_resize(ic->o_spacerb, 0, 0);
         evas_object_resize(ic->o_spacera, 0, 0);
         evas_object_size_hint_min_set(ic->o_spacerb, 0, 0);
