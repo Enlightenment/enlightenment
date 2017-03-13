@@ -28,9 +28,14 @@ typedef enum {
 typedef struct Client_Extra
 {
    E_Client *client;
-   Evas_Object *drag_object;
-   Evas_Object *hint_object;
    geom_t    expected;
+   struct
+   {
+      Evas_Object *ic;
+      Evas_Object *hint;
+      Ecore_Event_Handler *move, *up;
+      int x,y; /* start points */
+   } drag;
    struct
    {
       geom_t      geom;
@@ -96,7 +101,7 @@ static struct tiling_mod_main_g
    Ecore_Event_Handler *handler_client_resize, *handler_client_move,
                        *handler_client_iconify, *handler_client_uniconify,
                        *handler_desk_set, *handler_compositor_resize,
-                       *mouse_up, *handler_desk_show;
+                       *handler_desk_show;
    E_Client_Hook       *handler_client_resize_begin, *handler_client_add,
                        *handler_move_begin, *handler_move_end;
    E_Client_Menu_Hook  *client_menu_hook;
@@ -1469,7 +1474,7 @@ _desk_set_hook(void *data EINA_UNUSED, int type EINA_UNUSED,
    //check the state of the new desk
    if (desk_should_tile_check(ev->ec->desk))
      {
-        if (extra->drag_object)
+        if (extra->drag.ic)
           {
              ev->ec->hidden = EINA_TRUE;
              e_client_comp_hidden_set(ev->ec, EINA_TRUE);
@@ -1479,7 +1484,7 @@ _desk_set_hook(void *data EINA_UNUSED, int type EINA_UNUSED,
      }
    else
      {
-        if (extra->drag_object)
+        if (extra->drag.ic)
           {
              _client_drag_terminate(ev->ec);
              extra->floating = EINA_TRUE;
@@ -1604,20 +1609,63 @@ _center_on_mouse(Evas_Object *obj)
    evas_object_move(obj, x-w/2, y-h/2);
 }
 
-static void
-_client_drag_mouse_move(void *data, Evas *e EINA_UNUSED, void *event_info EINA_UNUSED)
+static unsigned char
+_client_drag_mouse_up(void *data, int event EINA_UNUSED, void *event_info EINA_UNUSED)
 {
+   E_Client *ec = data;
+   Client_Extra *extra = tiling_entry_func(ec);
+
+   if (!evas_object_visible_get(ec->frame))
+     _client_drag_terminate(data);
+
+   //remove the events
+   E_FREE_FUNC(extra->drag.move, ecore_event_handler_del);
+   E_FREE_FUNC(extra->drag.up, ecore_event_handler_del);
+
+   return ECORE_CALLBACK_PASS_ON;
+}
+
+static unsigned char
+_client_drag_mouse_move(void *data, int event EINA_UNUSED, void *event_info)
+{
+   Ecore_Event_Mouse_Move *ev = event_info;
    Window_Tree *client;
    int x,y;
+   E_Client *ec = data;
    Client_Extra *extra = tiling_entry_no_desk_func(data);
 
    if (!extra)
      {
-        return;
+        return ECORE_CALLBACK_PASS_ON;
+     }
+
+
+   if (evas_object_visible_get(ec->frame))
+     {
+        /*only initiaze the drag when x and y is different */
+        if (extra->drag.x == ev->x && extra->drag.y == ev->y) return ECORE_CALLBACK_PASS_ON;
+
+        _client_remove_no_apply(ec);
+        e_comp_grab_input(EINA_TRUE, EINA_FALSE);
+
+        //create the drag object
+        extra->drag.ic = e_client_icon_add(ec, evas_object_evas_get(e_comp->elm));
+        evas_object_resize(extra->drag.ic, 40, 40);
+        evas_object_show(extra->drag.ic);
+        evas_object_layer_set(extra->drag.ic, E_LAYER_CLIENT_DRAG);
+
+        //center the drag object on the mouse
+        _center_on_mouse(extra->drag.ic);
+
+        ec->hidden = EINA_TRUE;
+        e_client_comp_hidden_set(ec, EINA_TRUE);
+        evas_object_hide(ec->frame);
+
+        _reapply_tree();
      }
 
    //move the drag object to the center of the object
-   _center_on_mouse(extra->drag_object);
+   _center_on_mouse(extra->drag.ic);
 
    //now check if we can hint somehow
    evas_pointer_canvas_xy_get(e_comp->evas, &x, &y);
@@ -1626,33 +1674,35 @@ _client_drag_mouse_move(void *data, Evas *e EINA_UNUSED, void *event_info EINA_U
    //if there is nothing below, we cannot hint to anything
    if (!client)
      {
-        evas_object_hide(extra->hint_object);
-        return;
+        evas_object_hide(extra->drag.hint);
+        return ECORE_CALLBACK_PASS_ON;
      }
    Position_On_Client c = _calculate_position_preference(client->client);
 
-   if (!extra->hint_object)
+   if (!extra->drag.hint)
      {
-        extra->hint_object = edje_object_add(e_comp->evas);
-        if (!e_theme_edje_object_set(extra->hint_object,
+        extra->drag.hint = edje_object_add(e_comp->evas);
+        if (!e_theme_edje_object_set(extra->drag.hint,
                                      "base/theme/modules/tiling",
                                      "modules/tiling/indicator"))
-          edje_object_file_set(extra->hint_object, _G.edj_path, "modules/tiling/indicator");
-        evas_object_layer_set(extra->hint_object, E_LAYER_CLIENT_DRAG);
-        evas_object_show(extra->hint_object);
+          edje_object_file_set(extra->drag.hint, _G.edj_path, "modules/tiling/indicator");
+        evas_object_layer_set(extra->drag.hint, E_LAYER_CLIENT_DRAG);
+        evas_object_show(extra->drag.hint);
      }
 
    //set the geometry on the hint object
    Eina_Rectangle pos = client->client->client;
    if (c == POSITION_LEFT)
-     evas_object_geometry_set(extra->hint_object, pos.x, pos.y, pos.w/2, pos.h);
+     evas_object_geometry_set(extra->drag.hint, pos.x, pos.y, pos.w/2, pos.h);
    else if (c == POSITION_RIGHT)
-     evas_object_geometry_set(extra->hint_object, pos.x+pos.w/2, pos.y, pos.w/2, pos.h);
+     evas_object_geometry_set(extra->drag.hint, pos.x+pos.w/2, pos.y, pos.w/2, pos.h);
    else if (c == POSITION_BOTTOM)
-     evas_object_geometry_set(extra->hint_object, pos.x, pos.y + pos.h/2, pos.w, pos.h/2);
+     evas_object_geometry_set(extra->drag.hint, pos.x, pos.y + pos.h/2, pos.w, pos.h/2);
    else if (c == POSITION_TOP)
-     evas_object_geometry_set(extra->hint_object, pos.x, pos.y, pos.w, pos.h/2);
-   evas_object_show(extra->hint_object);
+     evas_object_geometry_set(extra->drag.hint, pos.x, pos.y, pos.w, pos.h/2);
+   evas_object_show(extra->drag.hint);
+
+   return ECORE_CALLBACK_PASS_ON;
 }
 
 static void
@@ -1676,33 +1726,23 @@ _client_drag_terminate(E_Client *ec)
      }
 
    //remove the hint object
-   evas_object_del(extra->hint_object);
-   extra->hint_object = NULL;
+   E_FREE_FUNC(extra->drag.hint, evas_object_del);
 
    //delete the icon on the screen
-   evas_object_del(extra->drag_object);
-   evas_event_callback_del_full(evas_object_evas_get(e_comp->elm), EVAS_CALLBACK_MOUSE_MOVE, _client_drag_mouse_move, ec);
-   extra->drag_object = NULL;
+   E_FREE_FUNC(extra->drag.ic, evas_object_del);
 
    //bring up the client again
    ec->hidden = EINA_FALSE;
    e_client_comp_hidden_set(ec, EINA_FALSE);
    evas_object_show(ec->frame);
 
-   //remove the mouse up
-   ecore_event_handler_del(_G.mouse_up);
-   _G.mouse_up = NULL;
+   //remove the events
+   E_FREE_FUNC(extra->drag.move, ecore_event_handler_del);
+   E_FREE_FUNC(extra->drag.up, ecore_event_handler_del);
 
    _reapply_tree();
 
    evas_object_focus_set(ec->frame, EINA_TRUE);
-}
-
-static unsigned char
-_client_drag_mouse_up(void *data, int event EINA_UNUSED, void *event_info EINA_UNUSED)
-{
-   _client_drag_terminate(data);
-   return ECORE_CALLBACK_PASS_ON;
 }
 
 static void
@@ -1715,30 +1755,11 @@ _client_move_begin(void *data EINA_UNUSED, E_Client *ec)
         return;
      }
 
-   _client_remove_no_apply(ec);
-   e_comp_grab_input(EINA_TRUE, EINA_FALSE);
+   //listen for mouse moves when the move starts we are starting a drag
+   evas_pointer_canvas_xy_get(e_comp->evas, &extra->drag.x, &extra->drag.y);
+   extra->drag.move = ecore_event_handler_add(ECORE_EVENT_MOUSE_MOVE, _client_drag_mouse_move, ec);
+   extra->drag.up = ecore_event_handler_add(ECORE_EVENT_MOUSE_BUTTON_UP, _client_drag_mouse_up, ec);
 
-   //create the drag object
-   extra->drag_object = e_client_icon_add(ec, evas_object_evas_get(e_comp->elm));
-   evas_object_resize(extra->drag_object, 40, 40);
-   evas_object_show(extra->drag_object);
-   evas_object_layer_set(extra->drag_object, E_LAYER_CLIENT_DRAG);
-
-   //listen for mouse moves
-   evas_event_callback_add(evas_object_evas_get(e_comp->elm), EVAS_CALLBACK_MOUSE_MOVE, _client_drag_mouse_move, ec);
-
-   //the up will terminate the whole operation and destroy the drag and restore the client
-   //we cannot use the move_end hook since the move is ending when we are hiding the client
-   _G.mouse_up = ecore_event_handler_add(ECORE_EVENT_MOUSE_BUTTON_UP, _client_drag_mouse_up, ec);
-
-   //center the drag object on the mouse
-   _center_on_mouse(extra->drag_object);
-
-   ec->hidden = EINA_TRUE;
-   e_client_comp_hidden_set(ec, EINA_TRUE);
-   evas_object_hide(ec->frame);
-
-   _reapply_tree();
 }
 
 static void
