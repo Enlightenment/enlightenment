@@ -576,10 +576,10 @@ e_util_size_string_get(off_t size)
 E_API char *
 e_util_file_time_get(time_t ftime)
 {
-   time_t diff, ltime, test;
+   time_t diff, ltime;
    char buf[256];
    char *s = NULL;
-
+   long test;
    ltime = time(NULL);
    diff = ltime - ftime;
    buf[0] = 0;
