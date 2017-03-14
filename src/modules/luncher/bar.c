@@ -897,7 +897,7 @@ _bar_icon_preview_show(void *data)
    elm_object_content_set(ic->preview, ic->preview_scroller);
    evas_object_show(ic->preview_box);
 
-   e_gadget_util_ctxpopup_place(ic->inst->o_main, ic->preview, ic->o_layout);
+   e_gadget_util_ctxpopup_place(ic->inst->o_main, ic->preview, ic->o_icon);
    evas_object_layer_set(ic->preview, E_LAYER_POPUP);
 
    evas_object_data_del(ic->preview, "icon");
@@ -1716,6 +1716,8 @@ _bar_mouse_move(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, v
         evas_object_size_hint_min_set(ic->o_spacera, 0, 0);
         if (!E_INSIDE(px, py, x, y, w, h))
           _bar_icon_mouse_out(ic, NULL, ic->o_icon, NULL);
+        else
+          evas_object_raise(ic->o_layout);
         msg = alloca(sizeof(Edje_Message_Int_Set) + (7 * sizeof(int)));
         msg->count = 7;
         msg->val[0] = px;
@@ -2157,6 +2159,7 @@ bar_create(Evas_Object *parent, int *id, E_Gadget_Site_Orient orient EINA_UNUSED
    inst->o_main = elm_layout_add(parent);
    e_theme_edje_object_set(inst->o_main, "e/gadget/luncher/bar",
        "e/gadget/luncher/bar");
+   edje_object_update_hints_set(elm_layout_edje_get(inst->o_main), EINA_TRUE);
    evas_object_event_callback_add(inst->o_main, EVAS_CALLBACK_MOUSE_MOVE, _bar_mouse_move, inst);
    evas_object_event_callback_add(inst->o_main, EVAS_CALLBACK_MOUSE_OUT, _bar_mouse_out, inst);
    evas_object_event_callback_add(inst->o_main, EVAS_CALLBACK_DEL, _bar_del, inst);
