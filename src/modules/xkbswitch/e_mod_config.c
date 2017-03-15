@@ -60,7 +60,7 @@ struct _E_Config_Dialog_Data
    int          only_label;
    int          dont_touch_my_damn_keyboard;
 
-   E_Dialog    *dlg_add_new;
+   Evas_Object *dlg_add_new;
    E_Config_Dialog *cfd;
 };
 
@@ -105,16 +105,15 @@ static void         _cb_misc_up(void *data, Evas_Object *obj, void *event);
 
 static void         _popup_cancel_clicked(void *data, Evas_Object *obj, void *event_info);
 
-static void         _dlg_add_cb_ok(void *data, E_Dialog *dlg);
-static void         _dlg_add_cb_cancel(void *data, E_Dialog *dlg);
+static void         _dlg_add_cb_ok(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED);
+static void         _dlg_add_cb_cancel(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED);
 
-static E_Dialog    *_dlg_add_new(E_Config_Dialog_Data *cfdata);
-
-static void         _dlg_add_cb_del(void *obj);
+static Evas_Object  *_dlg_add_new(E_Config_Dialog_Data *cfdata);
+static void         _dlg_add_cb_del(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED);
 
 static Eina_Bool    _cb_dlg_fill_delay(void *data);
 
-static void         _cb_layout_select(void *data);
+static void         _cb_layout_select(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED);
 static void         _cb_used_select(void *data, Evas_Object *obj, void *event);
 
 static Eina_Bool    _cb_fill_delay(void *data);
@@ -889,7 +888,7 @@ _cb_add(void *data, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
    E_Config_Dialog_Data *cfdata;
    if (!(cfdata = data)) return;
 
-   if (cfdata->dlg_add_new) elm_win_raise(cfdata->dlg_add_new->win);
+   if (cfdata->dlg_add_new) elm_win_raise(cfdata->dlg_add_new);
    else cfdata->dlg_add_new = _dlg_add_new(cfdata);
 }
 
@@ -1319,84 +1318,166 @@ _cb_dn(void *data, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
    e_config_dialog_changed_set(cfdata->cfd, _check_changed(cfdata));
 }
 
-static E_Dialog *
+static void
+_show_layout(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   E_Config_Dialog_Data *cfdata = data;
+
+   evas_object_hide(cfdata->model_list);
+   evas_object_hide(cfdata->variant_list);
+   evas_object_show(cfdata->layout_list);
+}
+
+static void
+_show_model(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   E_Config_Dialog_Data *cfdata = data;
+
+   evas_object_hide(cfdata->layout_list);
+   evas_object_hide(cfdata->variant_list);
+   evas_object_show(cfdata->model_list);
+}
+
+static void
+_show_variant(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   E_Config_Dialog_Data *cfdata = data;
+
+   evas_object_hide(cfdata->layout_list);
+   evas_object_hide(cfdata->model_list);
+   evas_object_show(cfdata->variant_list);
+}
+
+static Evas_Object *
 _dlg_add_new(E_Config_Dialog_Data *cfdata)
 {
-   E_Dialog *dlg;
-   Evas *evas;
-   Evas_Coord mw, mh;
-   Evas_Object *mainn, *available, *modelss, *variants;
+   Evas_Object *dlg, *but, *tb;
+   Evas_Object *mainn, *list, *layout, *modelss, *variants, *box;
+   E_Zone *zone = e_zone_current_get();
+   Elm_Object_Item *it;
 
-   if (!(dlg = e_dialog_new(e_win_evas_win_get(cfdata->evas), "E", "xkbswitch_config_add_dialog"))) return NULL;
+   if (!(dlg = elm_win_util_dialog_add(e_comp->elm, "xkbswitch_config_add_dialog", _("Add New Configuration")))) return NULL;
+   elm_win_icon_name_set(dlg, "preferences-desktop-keyboard");
+   evas_object_event_callback_add(dlg, EVAS_CALLBACK_FREE, _dlg_add_cb_del, cfdata);
+   elm_win_autodel_set(dlg, EINA_TRUE);
+   elm_win_center(dlg, 1, 1);
 
-   e_dialog_resizable_set(dlg, 1);
-   dlg->data = cfdata;
+   mainn = elm_box_add(dlg);
+   elm_box_horizontal_set(mainn, EINA_FALSE);
+   E_EXPAND(mainn);
+   elm_win_resize_object_add(dlg, mainn);
+   evas_object_show(mainn);
 
-   e_object_del_attach_func_set(E_OBJECT(dlg), _dlg_add_cb_del);
-   elm_win_center(dlg->win, 1, 1);
+   box = elm_box_add(mainn);
+   elm_box_horizontal_set(box, EINA_TRUE);
+   E_EXPAND(box);
+   E_FILL(box);
+   elm_box_pack_end(mainn, box);
+   evas_object_show(box);
 
-   evas = evas_object_evas_get(dlg->win);
-   e_dialog_title_set(dlg, _("Add New Configuration"));
+   list = elm_list_add(box);
+   E_FILL(list);
+   E_WEIGHT(list, 0.0, EVAS_HINT_EXPAND);
+   elm_box_pack_end(box, list);
+   elm_list_select_mode_set(list, ELM_OBJECT_SELECT_MODE_ALWAYS);
+   elm_scroller_content_min_limit(list, 1, 1);
+   it = elm_list_item_append(list, _("Layout"), NULL, NULL,
+       _show_layout, cfdata);
+   elm_list_item_selected_set(it, EINA_TRUE);
+   it = elm_list_item_append(list, _("Model"), NULL, NULL,
+       _show_model,  cfdata);
+   it = elm_list_item_append(list, _("Variant"), NULL, NULL,
+       _show_variant, cfdata);
+   elm_list_go(list);
+   evas_object_show(list);
 
-   /* The main toolbook, holds the lists and tabs */
-   mainn = e_widget_toolbook_add(evas, 24, 24);
-   /* Holds the available layouts */
-   available = e_widget_ilist_add(evas, 32, 32, NULL);
+   tb = elm_table_add(box);
+   E_EXPAND(tb);
+   E_FILL(tb);
+   elm_box_pack_end(box, tb);
+   evas_object_show(tb);
 
-   e_widget_size_min_set(available, 1, 160);
-   e_widget_ilist_go(available);
-   e_widget_toolbook_page_append(mainn, NULL, _("Available"), available, 1, 1, 1, 1, 0.5, 0.0);
-   cfdata->layout_list = available;
+   layout = elm_genlist_add(tb);
+   E_EXPAND(layout);
+   E_FILL(layout);
+   elm_genlist_select_mode_set(layout, ELM_OBJECT_SELECT_MODE_ALWAYS);
+   elm_genlist_mode_set(layout, ELM_LIST_COMPRESS);
+   elm_table_pack(tb, layout, 0, 0, 1, 1);
+   evas_object_show(layout);
+   cfdata->layout_list = layout;
 
-   /* Holds the available models */
-   modelss = e_widget_ilist_add(evas, 32, 32, NULL);
-   e_widget_toolbook_page_append(mainn, NULL, _("Model"), modelss, 1, 1, 1, 1, 0.5, 0.0);
+   modelss = elm_genlist_add(tb);
+   E_EXPAND(modelss);
+   E_FILL(modelss);
+   elm_table_pack(tb, modelss, 0, 0, 1, 1);
+   elm_genlist_select_mode_set(modelss, ELM_OBJECT_SELECT_MODE_ALWAYS);
+   evas_object_show(modelss);
    cfdata->model_list = modelss;
 
-   /* Holds the available variants */
-   variants = e_widget_ilist_add(evas, 32, 32, NULL);
-   e_widget_toolbook_page_append(mainn, NULL, _("Variant"), variants, 1, 1, 1, 1, 0.5, 0.0);
+   variants = elm_genlist_add(tb);
+   E_EXPAND(variants);
+   E_FILL(variants);
+   elm_table_pack(tb, variants, 0, 0, 1, 1);
+   elm_genlist_select_mode_set(variants, ELM_OBJECT_SELECT_MODE_ALWAYS);
+   evas_object_show(variants);
    cfdata->variant_list = variants;
-   e_widget_toolbook_page_show(mainn, 0);
 
-   e_widget_size_min_get(mainn, &mw, &mh);
-   e_dialog_content_set(dlg, mainn, mw, mh);
+   box = elm_box_add(mainn);
+   elm_box_horizontal_set(box, EINA_TRUE);
+   E_WEIGHT(box, 0.0, 0.0);
+   E_ALIGN(box, 0.5, 0.5);
+   elm_box_pack_end(mainn, box);
+   evas_object_show(box);
 
-   cfdata->dlg_evas = evas;
+   but = elm_button_add(box);
+   elm_object_text_set(but, _("OK"));
+   evas_object_smart_callback_add(but, "clicked", _dlg_add_cb_ok, cfdata);
+   elm_box_pack_end(box, but);
+   evas_object_show(but);
 
-   /* Clear up any previous timer */
+   but = elm_button_add(box);
+   elm_object_text_set(but, _("Cancel"));
+   evas_object_smart_callback_add(but, "clicked", _dlg_add_cb_cancel, cfdata);
+   elm_box_pack_end(box, but);
+   evas_object_show(but);
+
+   cfdata->dlg_evas = evas_object_evas_get(dlg);
+   evas_object_resize(dlg, zone->w / 3, zone->h / 3);
+   evas_object_resize(mainn, zone->w / 3, zone->h / 3);
+   evas_object_show(dlg);
+
    if (cfdata->dlg_fill_delay) ecore_timer_del(cfdata->dlg_fill_delay);
-
-   /* Trigger the fill */
    cfdata->dlg_fill_delay = ecore_timer_loop_add(0.2, _cb_dlg_fill_delay, cfdata);
 
-   /* Some buttons */
-   e_dialog_button_add(dlg, _("OK"), NULL, _dlg_add_cb_ok, cfdata);
-   e_dialog_button_add(dlg, _("Cancel"), NULL, _dlg_add_cb_cancel, cfdata);
-
-   e_dialog_button_disable_num_set(dlg, 0, 1);
-   e_dialog_button_disable_num_set(dlg, 1, 0);
-
-   e_dialog_show(dlg);
-
-   e_dialog_border_icon_set(dlg, "preferences-desktop-keyboard");
+   _show_layout(cfdata, NULL, NULL);
 
    return dlg;
 }
 
 static void
-_dlg_add_cb_ok(void *data EINA_UNUSED, E_Dialog *dlg)
+_dlg_add_cb_ok(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
-   E_Config_Dialog_Data *cfdata = dlg->data;
+   E_Config_Dialog_Data *cfdata = data;
+   E_XKB_Layout *l;
+   E_XKB_Model *m;
+   E_XKB_Variant *v;
    E_Config_XKB_Layout *cl;
    char buf[PATH_MAX], icon_buf[PATH_MAX];
    Evas_Object *ic;
+   Elm_Object_Item *it;
    /* Configuration information */
    Eina_Stringshare *layout, *model, *variant;
 
-   layout = e_widget_ilist_selected_value_get(cfdata->layout_list);
-   model = e_widget_ilist_selected_value_get(cfdata->model_list);
-   variant = e_widget_ilist_selected_value_get(cfdata->variant_list);
+   it = elm_genlist_selected_item_get(cfdata->layout_list);
+   l = elm_object_item_data_get(it);
+   it = elm_genlist_selected_item_get(cfdata->model_list);
+   m = elm_object_item_data_get(it);
+   it = elm_genlist_selected_item_get(cfdata->variant_list);
+   v = elm_object_item_data_get(it);
+
+   layout = eina_stringshare_add(l->name);
+   model = eina_stringshare_add(m->name);
+   variant = eina_stringshare_add(v->name);
 
    /* The new configuration */
    cl = E_NEW(E_Config_XKB_Layout, 1);
@@ -1415,25 +1496,48 @@ _dlg_add_cb_ok(void *data EINA_UNUSED, E_Dialog *dlg)
    elm_list_item_append(cfdata->used_list, buf, ic, NULL, NULL, cl);
    elm_list_go(cfdata->used_list);
 
+   evas_object_del(cfdata->dlg_add_new);
    cfdata->dlg_add_new = NULL;
-   e_object_del(E_OBJECT(dlg));
    e_config_dialog_changed_set(cfdata->cfd, _check_changed(cfdata));
 }
 
 static void
-_dlg_add_cb_cancel(void *data EINA_UNUSED, E_Dialog *dlg)
+_dlg_add_cb_cancel(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
-   E_Config_Dialog_Data *cfdata = dlg->data;
+   E_Config_Dialog_Data *cfdata = data;
+   evas_object_del(cfdata->dlg_add_new);
    cfdata->dlg_add_new = NULL;
-   e_object_del(E_OBJECT(dlg));
 }
 
-static void
-_dlg_add_cb_del(void *obj)
+static char *
+_layout_gl_text_get(void *data, Evas_Object *obj EINA_UNUSED, const char *part EINA_UNUSED)
 {
-   E_Dialog *dlg = obj;
-   E_Config_Dialog_Data *cfdata = dlg->data;
-   cfdata->dlg_add_new = NULL;
+   E_XKB_Layout *layout = data;
+   char buf[PATH_MAX];
+
+   snprintf(buf, sizeof(buf), "%s (%s)", layout->description, layout->name);
+   return strdup(buf);
+}
+
+Evas_Object *_layout_gl_content_get(void *data, Evas_Object *obj, const char *part)
+{
+   E_XKB_Layout *layout = data;
+   Evas_Object *ic;
+   char tmp[PATH_MAX];
+
+   if (!strcmp(part, "elm.swallow.end"))
+     return NULL;
+
+   ic = elm_icon_add(obj);
+   e_xkb_flag_file_get(tmp, sizeof(tmp), layout->name);
+   elm_image_file_set(ic, tmp, NULL);
+
+   return ic;
+}
+
+Eina_Bool _layout_gl_state_get(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, const char *part EINA_UNUSED)
+{
+   return EINA_FALSE;
 }
 
 static Eina_Bool
@@ -1442,19 +1546,14 @@ _cb_dlg_fill_delay(void *data)
    E_Config_Dialog_Data *cfdata;
    Eina_List *l;
    E_XKB_Layout *layout;
-   char buf[4096];
    const char *lang;
    E_Locale_Parts *lang_part = NULL;
-   int i = 0, sel = 0;;
+   Elm_Object_Item *it, *sel = NULL;
+   Elm_Genlist_Item_Class *itc;
 
    if (!(cfdata = data)) return ECORE_CALLBACK_RENEW;
 
-   /* Update the list of available layouts */
-   evas_event_freeze(cfdata->dlg_evas);
-   edje_freeze();
-
-   e_widget_ilist_freeze(cfdata->layout_list);
-   e_widget_ilist_clear(cfdata->layout_list);
+   elm_genlist_clear(cfdata->layout_list);
 
    lang = e_intl_language_get();
    if (lang)
@@ -1462,100 +1561,109 @@ _cb_dlg_fill_delay(void *data)
       lang_part = e_intl_locale_parts_get(lang);
    }
 
+   itc = elm_genlist_item_class_new();
+   itc->item_style = "default";
+   itc->func.text_get = _layout_gl_text_get;
+   itc->func.content_get = _layout_gl_content_get;
+   itc->func.state_get = _layout_gl_state_get;
+   itc->func.del = NULL;
    EINA_LIST_FOREACH(layouts, l, layout)
      {
-        Evas_Object *ic;
-
-        ic = e_icon_add(cfdata->dlg_evas);
-        e_xkb_e_icon_flag_setup(ic, layout->name);
-        snprintf(buf, sizeof(buf), "%s (%s)",
-                 layout->description, layout->name);
-        e_widget_ilist_append_full(cfdata->layout_list, ic, NULL, buf,
-                                   _cb_layout_select, cfdata, layout->name);
+        it = elm_genlist_item_append(cfdata->layout_list, itc, layout, NULL, ELM_GENLIST_ITEM_NONE,
+             _cb_layout_select, cfdata);
         if (lang_part)
           {
              if (!strncasecmp(lang_part->region, layout->name, 2))
-               sel = i;
+               sel = it;
           }
-        ++i;
      }
+   elm_genlist_item_class_free(itc);
    if (lang_part) e_intl_locale_parts_free(lang_part);
 
-   e_widget_ilist_go(cfdata->layout_list);
-   e_widget_ilist_thaw(cfdata->layout_list);
-
-   edje_thaw();
-   evas_event_thaw(cfdata->dlg_evas);
-
-   e_widget_ilist_selected_set(cfdata->layout_list, sel);
-
+   if (sel)
+     {
+        elm_genlist_item_selected_set(sel, EINA_TRUE);
+        elm_genlist_item_bring_in(sel, ELM_GENLIST_ITEM_SCROLLTO_TOP);
+        _cb_layout_select(cfdata, NULL, NULL);
+     }
    cfdata->dlg_fill_delay = NULL;
    return ECORE_CALLBACK_CANCEL;
 }
 
+static char *
+_model_gl_text_get(void *data, Evas_Object *obj EINA_UNUSED, const char *part EINA_UNUSED)
+{
+   E_XKB_Model *model = data;
+   char buf[PATH_MAX];
+
+   snprintf(buf, sizeof(buf), "%s (%s)", model->description, model->name);
+
+   return strdup(buf);
+}
+
+static char *
+_variant_gl_text_get(void *data, Evas_Object *obj EINA_UNUSED, const char *part EINA_UNUSED)
+{
+   E_XKB_Variant *variant = data;
+   char buf[PATH_MAX];
+
+   snprintf(buf, sizeof(buf), "%s (%s)", variant->name, variant->description);
+
+   return strdup(buf);
+}
+
+Eina_Bool _gl_state_get(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, const char *part EINA_UNUSED)
+{
+   return EINA_FALSE;
+}
+
 static void
-_cb_layout_select(void *data)
+_cb_layout_select(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    E_Config_Dialog_Data *cfdata;
    E_XKB_Variant *variant;
    E_XKB_Layout *layout;
    E_XKB_Model *model;
    Eina_List *l;
-   const char *label;
-   int n;
-   char buf[4096];
+   Elm_Object_Item *n;
+   Elm_Genlist_Item_Class *itc;
 
    if (!(cfdata = data)) return;
 
-   /* Find the right layout */
-
-   if ((n = e_widget_ilist_selected_get(cfdata->layout_list)) < 0)
+   if (!(n = elm_genlist_selected_item_get(cfdata->layout_list)))
      return;
-   if (!(label = e_widget_ilist_nth_label_get(cfdata->layout_list, n)))
+   if (!(layout = elm_object_item_data_get(n)))
      return;
 
-   if (!(layout = eina_list_search_unsorted
-             (layouts, layout_sort_by_name_cb,
-             e_widget_ilist_nth_value_get(cfdata->layout_list, n)
-             ))) return;
+   elm_genlist_clear(cfdata->model_list);
+   elm_genlist_clear(cfdata->variant_list);
 
-   /* Update the lists */
-   evas_event_freeze(cfdata->dlg_evas);
-   edje_freeze();
-
-   /* Models */
-   e_widget_ilist_freeze(cfdata->model_list);
-   e_widget_ilist_clear(cfdata->model_list);
-
+   itc = elm_genlist_item_class_new();
+   itc->item_style = "default";
+   itc->func.text_get = _model_gl_text_get;
+   itc->func.content_get = NULL;
+   itc->func.state_get = _gl_state_get;
+   itc->func.del = NULL;
    EINA_LIST_FOREACH(models, l, model)
      {
-        snprintf(buf, sizeof(buf), "%s (%s)", model->description, model->name);
-        e_widget_ilist_append(cfdata->model_list, NULL, buf, NULL, cfdata, model->name);
+        elm_genlist_item_append(cfdata->model_list, itc, model, NULL, ELM_GENLIST_ITEM_NONE,
+             NULL, NULL);
      }
-
-   e_widget_ilist_go(cfdata->model_list);
-   e_widget_ilist_thaw(cfdata->model_list);
-
-   /* Variants */
-   e_widget_ilist_freeze(cfdata->variant_list);
-   e_widget_ilist_clear(cfdata->variant_list);
-
+   elm_genlist_item_class_free(itc);
+   itc = elm_genlist_item_class_new();
+   itc->item_style = "default";
+   itc->func.text_get = _variant_gl_text_get;
+   itc->func.content_get = NULL;
+   itc->func.state_get = _gl_state_get;
+   itc->func.del = NULL;
    EINA_LIST_FOREACH(layout->variants, l, variant)
      {
-        snprintf(buf, sizeof(buf), "%s (%s)", variant->name, variant->description);
-        e_widget_ilist_append(cfdata->variant_list, NULL, buf, NULL, cfdata, variant->name);
+        elm_genlist_item_append(cfdata->variant_list, itc, variant, NULL, ELM_GENLIST_ITEM_NONE,
+             NULL, NULL);
      }
-
-   e_widget_ilist_go(cfdata->variant_list);
-   e_widget_ilist_thaw(cfdata->variant_list);
-
-   edje_thaw();
-   evas_event_thaw(cfdata->dlg_evas);
-
-   e_widget_ilist_selected_set(cfdata->model_list, 0);
-   e_widget_ilist_selected_set(cfdata->variant_list, 0);
-
-   e_dialog_button_disable_num_set(cfdata->dlg_add_new, 0, 0);
+   elm_genlist_item_class_free(itc);
+   elm_genlist_item_selected_set(elm_genlist_first_item_get(cfdata->model_list), EINA_TRUE);
+   elm_genlist_item_selected_set(elm_genlist_first_item_get(cfdata->variant_list), EINA_TRUE);
 }
 
 static Eina_Bool
@@ -1569,6 +1677,13 @@ _cb_fill_delay(void *data)
 
    cfdata->fill_delay = NULL;
    return ECORE_CALLBACK_CANCEL;
+}
+
+static void
+_dlg_add_cb_del(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   E_Config_Dialog_Data *cfdata = data;
+   cfdata->dlg_add_new = NULL;
 }
 
 static void
