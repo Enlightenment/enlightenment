@@ -1059,26 +1059,32 @@ _bar_icon_file_set(Icon *ic, Efreet_Desktop *desktop, E_Client *non_desktop_clie
    elm_image_file_set(ic->o_overlay, path, k);
 }
 
+static float
+_bar_size_calc(Instance *inst)
+{
+   Icon *ic;
+   Eina_List *l;
+   float tot = 0.0;
+
+   EINA_LIST_FOREACH(inst->icons, l, ic)
+     tot += ic->scale;
+
+   return tot;
+}
+
 static void
 _bar_resized_cb(void *data, Evas_Object *obj EINA_UNUSED, const char *emission EINA_UNUSED, const char *source EINA_UNUSED)
 {
    Instance *inst = data;
-   Icon *ic = NULL;
-   Eina_List *l = NULL;
-   Evas_Coord tot = 0;
 
    if (!inst->effect) return;
    switch (e_gadget_site_orient_get(e_gadget_site_get(inst->o_main)))
      {
       case E_GADGET_SITE_ORIENT_VERTICAL:
-        EINA_LIST_FOREACH(inst->icons, l, ic)
-          tot += ic->scale * 1000;
-        evas_object_size_hint_aspect_set(inst->o_main, EVAS_ASPECT_CONTROL_BOTH, 1000, tot);
+        evas_object_size_hint_aspect_set(inst->o_main, EVAS_ASPECT_CONTROL_BOTH, 1000, _bar_size_calc(inst) * 1000);
         break;
       default:
-        EINA_LIST_FOREACH(inst->icons, l, ic)
-          tot += ic->scale * 1000;
-        evas_object_size_hint_aspect_set(inst->o_main, EVAS_ASPECT_CONTROL_BOTH, tot, 1000);
+        evas_object_size_hint_aspect_set(inst->o_main, EVAS_ASPECT_CONTROL_BOTH, _bar_size_calc(inst) * 1000, 1000);
      }
 }
 
@@ -1089,7 +1095,6 @@ _bar_icon_scale_message(void *data, Evas_Object *obj EINA_UNUSED, Edje_Message_T
    Evas_Coord add = 0;
    Icon *ic = data;
    float total;
-
 
    ic->scale = mmsg->val[0];
 
@@ -1102,14 +1107,14 @@ _bar_icon_scale_message(void *data, Evas_Object *obj EINA_UNUSED, Edje_Message_T
              case E_GADGET_SITE_ORIENT_VERTICAL:
                 evas_object_resize(ic->o_spacerb, ic->inst->size, add);
                 evas_object_size_hint_min_set(ic->o_spacerb, ic->inst->size, add);
-                evas_object_resize(ic->o_spacera, ic->inst->size, add);
-                evas_object_size_hint_min_set(ic->o_spacera, ic->inst->size, add);
+                evas_object_resize(ic->o_spacera, ic->inst->size, total - add);
+                evas_object_size_hint_min_set(ic->o_spacera, ic->inst->size, total - add);
                 break;
              default:
                 evas_object_resize(ic->o_spacerb, add, ic->inst->size);
                 evas_object_size_hint_min_set(ic->o_spacerb, add, ic->inst->size);
-                evas_object_resize(ic->o_spacera, add, ic->inst->size);
-                evas_object_size_hint_min_set(ic->o_spacera, add, ic->inst->size);
+                evas_object_resize(ic->o_spacera, total - add, ic->inst->size);
+                evas_object_size_hint_min_set(ic->o_spacera, total - add, ic->inst->size);
           }
      }
    else
