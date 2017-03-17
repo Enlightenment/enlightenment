@@ -153,6 +153,7 @@ _e_elm_win_trap_show(void *data, Evas_Object *o)
 //#endif
    evas_object_geometry_get(o, &ctx->client->client.x, &ctx->client->client.y, &ctx->client->client.w, &ctx->client->client.h);
    ecore_evas_show(ee);
+   eina_stringshare_replace(&ctx->client->internal_icon, elm_win_icon_name_get(o));
    if (!ctx->visible)
      {
         ctx->visible = 1;
