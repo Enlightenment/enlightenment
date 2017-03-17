@@ -1761,6 +1761,12 @@ _e_comp_intercept_show(void *data, Evas_Object *obj EINA_UNUSED)
         evas_object_image_colorspace_set(cw->obj, EVAS_COLORSPACE_ARGB8888);
         _e_comp_object_alpha_set(cw);
 
+        if (cw->frame_object)
+          {
+             evas_object_event_callback_add(cw->obj, EVAS_CALLBACK_MOUSE_IN, _e_comp_object_ssd_mouse_in, cw);
+             evas_object_event_callback_add(cw->obj, EVAS_CALLBACK_MOUSE_OUT, _e_comp_object_ssd_mouse_out, cw);
+          }
+
 #ifdef BORDER_ZOOMAPS
         e_comp_object_zoomap_set(o, 1);
 #else
@@ -3437,7 +3443,7 @@ reshadow:
         evas_object_event_callback_del(cw->obj, EVAS_CALLBACK_MOUSE_IN, _e_comp_object_ssd_mouse_in);
         evas_object_event_callback_del(cw->obj, EVAS_CALLBACK_MOUSE_OUT, _e_comp_object_ssd_mouse_out);
      }
-   else
+   else if (cw->obj)
      {
         evas_object_event_callback_add(cw->obj, EVAS_CALLBACK_MOUSE_IN, _e_comp_object_ssd_mouse_in, cw);
         evas_object_event_callback_add(cw->obj, EVAS_CALLBACK_MOUSE_OUT, _e_comp_object_ssd_mouse_out, cw);
