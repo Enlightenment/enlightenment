@@ -237,13 +237,14 @@ _e_comp_wl_mouse_in(E_Client *ec, Evas_Event_Mouse_In *ev)
 }
 
 static void
-_e_comp_wl_evas_cb_mouse_in(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info)
+_e_comp_wl_evas_cb_mouse_in(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *event_info)
 {
+   if (e_comp_object_frame_exists(obj)) return;
    _e_comp_wl_mouse_in(data, event_info);
 }
 
 static void
-_e_comp_wl_cb_internal_mouse_in(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
+_e_comp_wl_cb_ssd_mouse_in(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
 {
    _e_comp_wl_mouse_in(data, event_info);
 }
@@ -287,11 +288,12 @@ _e_comp_wl_mouse_out(E_Client *ec)
 static void
 _e_comp_wl_evas_cb_mouse_out(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
+   if (e_comp_object_frame_exists(obj)) return;
    _e_comp_wl_mouse_out(data);
 }
 
 static void
-_e_comp_wl_cb_internal_mouse_out(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+_e_comp_wl_cb_ssd_mouse_out(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    _e_comp_wl_mouse_out(data);
 }
@@ -1013,22 +1015,16 @@ _e_comp_wl_client_evas_init(E_Client *ec)
                                   _e_comp_wl_evas_cb_hide, ec);
 
    /* setup input callbacks */
-   if (ec->internal_elm_win)
-     {
-        evas_object_smart_callback_add(ec->frame, "mouse_in",
-          (Evas_Smart_Cb)_e_comp_wl_cb_internal_mouse_in, ec);
-        evas_object_smart_callback_add(ec->frame, "mouse_out",
-          (Evas_Smart_Cb)_e_comp_wl_cb_internal_mouse_out, ec);
-     }
-   else
-     {
-        evas_object_event_callback_priority_add(ec->frame, EVAS_CALLBACK_MOUSE_IN,
-                                                EVAS_CALLBACK_PRIORITY_AFTER,
-                                                (Evas_Object_Event_Cb)_e_comp_wl_evas_cb_mouse_in, ec);
-        evas_object_event_callback_priority_add(ec->frame, EVAS_CALLBACK_MOUSE_OUT,
-                                                EVAS_CALLBACK_PRIORITY_AFTER,
-                                                (Evas_Object_Event_Cb)_e_comp_wl_evas_cb_mouse_out, ec);
-     }
+   evas_object_smart_callback_add(ec->frame, "mouse_in",
+     (Evas_Smart_Cb)_e_comp_wl_cb_ssd_mouse_in, ec);
+   evas_object_smart_callback_add(ec->frame, "mouse_out",
+     (Evas_Smart_Cb)_e_comp_wl_cb_ssd_mouse_out, ec);
+   evas_object_event_callback_priority_add(ec->frame, EVAS_CALLBACK_MOUSE_IN,
+                                           EVAS_CALLBACK_PRIORITY_AFTER,
+                                           (Evas_Object_Event_Cb)_e_comp_wl_evas_cb_mouse_in, ec);
+   evas_object_event_callback_priority_add(ec->frame, EVAS_CALLBACK_MOUSE_OUT,
+                                           EVAS_CALLBACK_PRIORITY_AFTER,
+                                           (Evas_Object_Event_Cb)_e_comp_wl_evas_cb_mouse_out, ec);
    evas_object_event_callback_priority_add(ec->frame, EVAS_CALLBACK_MOUSE_MOVE,
                                            EVAS_CALLBACK_PRIORITY_AFTER,
                                            _e_comp_wl_evas_cb_mouse_move, ec);
