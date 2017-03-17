@@ -1019,7 +1019,7 @@ _e_comp_object_pixels_get(void *data, Evas_Object *obj)
 /////////////////////////////////////////////
 
 static void
-_e_comp_object_internal_mouse_in(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info)
+_e_comp_object_ssd_mouse_in(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info)
 {
    E_Comp_Object *cw = data;
 
@@ -1027,7 +1027,7 @@ _e_comp_object_internal_mouse_in(void *data, Evas *e EINA_UNUSED, Evas_Object *o
 }
 
 static void
-_e_comp_object_internal_mouse_out(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info)
+_e_comp_object_ssd_mouse_out(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info)
 {
    E_Comp_Object *cw = data;
 
@@ -1781,11 +1781,7 @@ _e_comp_intercept_show(void *data, Evas_Object *obj EINA_UNUSED)
         evas_object_name_set(cw->obj, "cw->obj");
         evas_object_image_colorspace_set(cw->obj, EVAS_COLORSPACE_ARGB8888);
         _e_comp_object_alpha_set(cw);
-        if (cw->ec->internal)
-          {
-             evas_object_event_callback_add(cw->obj, EVAS_CALLBACK_MOUSE_IN, _e_comp_object_internal_mouse_in, cw);
-             evas_object_event_callback_add(cw->obj, EVAS_CALLBACK_MOUSE_OUT, _e_comp_object_internal_mouse_out, cw);
-          }
+
 #ifdef BORDER_ZOOMAPS
         e_comp_object_zoomap_set(o, 1);
 #else
@@ -3520,6 +3516,16 @@ reshadow:
      }
    else
      cw->frame_extends = 0;
+   if (pbg && (!cw->frame_object))
+     {
+        evas_object_event_callback_del(cw->obj, EVAS_CALLBACK_MOUSE_IN, _e_comp_object_ssd_mouse_in);
+        evas_object_event_callback_del(cw->obj, EVAS_CALLBACK_MOUSE_OUT, _e_comp_object_ssd_mouse_out);
+     }
+   else
+     {
+        evas_object_event_callback_add(cw->obj, EVAS_CALLBACK_MOUSE_IN, _e_comp_object_ssd_mouse_in, cw);
+        evas_object_event_callback_add(cw->obj, EVAS_CALLBACK_MOUSE_OUT, _e_comp_object_ssd_mouse_out, cw);
+     }
    evas_object_del(pbg);
    return EINA_TRUE;
 }
