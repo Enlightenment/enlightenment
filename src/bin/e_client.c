@@ -1774,6 +1774,7 @@ _e_client_eval(E_Client *ec)
      e_hints_window_init(ec);
    if ((!e_client_util_ignored_get(ec)) && ec->zone && ec->visible && (!ec->placed))
      {
+        e_zone_useful_geometry_get(ec->zone, &zx, &zy, &zw, &zh);
         if (ec->parent)
           {
              Eina_Bool centered = EINA_FALSE;
