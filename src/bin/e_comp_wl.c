@@ -2482,7 +2482,7 @@ _e_comp_wl_client_cb_focus_set(void *data EINA_UNUSED, E_Client *ec)
    if (ec->comp_data->shell.configure_send)
      {
         if (ec->comp_data->shell.surface)
-          _e_comp_wl_configure_send(ec, 0);
+          _e_comp_wl_configure_send(ec, 1);
      }
 
    //if ((ec->icccm.take_focus) && (ec->icccm.accepts_focus))
@@ -2506,7 +2506,7 @@ _e_comp_wl_client_cb_focus_unset(void *data EINA_UNUSED, E_Client *ec)
    if (ec->comp_data->shell.configure_send)
      {
         if (ec->comp_data->shell.surface)
-          _e_comp_wl_configure_send(ec, 0);
+          _e_comp_wl_configure_send(ec, 1);
      }
 
    _e_comp_wl_focus_check();
