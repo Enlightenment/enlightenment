@@ -2,6 +2,8 @@
 
 /* intercept elm_win operations so we talk directly to e_client */
 #undef elm_win_add
+#undef elm_win_util_dialog_add
+#undef elm_win_util_standard_add
 
 typedef struct _Elm_Win_Trap_Ctx
 {
@@ -496,6 +498,36 @@ e_elm_win_add(Evas_Object *parent, const char *name, Elm_Win_Type type)
    eng = eina_strdup(getenv("ELM_ACCEL"));
    e_util_env_set("ELM_ACCEL", "none");
    o = elm_win_add(parent, name, type);
+   e_util_env_set("ELM_ACCEL", eng);
+   elm_win_alpha_set(o, 1);
+   free(eng);
+   return o;
+}
+
+E_API Evas_Object *
+elm_win_util_standard_add(const char *name, const char *title)
+{
+   char *eng;
+   Evas_Object *o;
+
+   eng = eina_strdup(getenv("ELM_ACCEL"));
+   e_util_env_set("ELM_ACCEL", "none");
+   o = elm_win_util_standard_add(name, title);
+   e_util_env_set("ELM_ACCEL", eng);
+   elm_win_alpha_set(o, 1);
+   free(eng);
+   return o;
+}
+
+E_API Evas_Object *
+e_elm_win_util_dialog_add(Evas_Object *parent, const char *name, const char *title)
+{
+   char *eng;
+   Evas_Object *o;
+
+   eng = eina_strdup(getenv("ELM_ACCEL"));
+   e_util_env_set("ELM_ACCEL", "none");
+   o = elm_win_util_dialog_add(parent, name, title);
    e_util_env_set("ELM_ACCEL", eng);
    elm_win_alpha_set(o, 1);
    free(eng);
