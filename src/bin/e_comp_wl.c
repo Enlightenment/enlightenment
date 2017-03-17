@@ -250,7 +250,7 @@ _e_comp_wl_mouse_out(E_Client *ec)
    Eina_List *l;
    uint32_t serial;
 
-   if (ec->cur_mouse_action && e_grabinput_mouse_win_get()) return;
+   if ((ec == e_client_action_get()) && e_grabinput_mouse_win_get()) return;
    /* FIXME? this is a hack to just reset the cursor whenever we mouse out. not sure if accurate */
    {
       e_pointer_object_set(e_comp->pointer, NULL, 0, 0);
@@ -362,7 +362,7 @@ _e_comp_wl_evas_cb_mouse_move(void *data, Evas *evas EINA_UNUSED, Evas_Object *o
    E_Client *ec = data;
    Evas_Event_Mouse_Move *ev = event;
 
-   if (ec->cur_mouse_action) return;
+   if (ec == e_client_action_get()) return;
    if (!ec->mouse.in) return;
    if (e_object_is_del(E_OBJECT(ec))) return;
    if (ec->ignored) return;
@@ -406,7 +406,7 @@ _e_comp_wl_evas_cb_mouse_wheel(void *data, Evas *evas EINA_UNUSED, Evas_Object *
 
    ev = event;
    if (!(ec = data)) return;
-   if (ec->cur_mouse_action) return;
+   if (ec == e_client_action_get()) return;
    if (e_object_is_del(E_OBJECT(ec))) return;
    if (ec->ignored) return;
    if (!ec->mouse.in) return;
