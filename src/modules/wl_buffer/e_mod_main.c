@@ -36,6 +36,7 @@ e_modapi_init(E_Module *m)
    e_comp->pointer->color = EINA_TRUE;
 
    e_comp_wl->dmabuf_disable = EINA_TRUE;
+   ecore_evas_title_set(e_comp->ee, "Enlightenment: WL-Buffer");
    ecore_evas_pointer_warp(e_comp->ee, w / 2, h / 2);
    ecore_evas_pointer_xy_get(e_comp->ee, &e_comp_wl->ptr.x,
                              &e_comp_wl->ptr.y);
