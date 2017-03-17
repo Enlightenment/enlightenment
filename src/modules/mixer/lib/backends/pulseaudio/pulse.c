@@ -841,26 +841,18 @@ _pulse_connect(void *data)
    return ECORE_CALLBACK_RENEW;
 }
 
-static Ecore_Exe           *_pulse_exe         = NULL;
-static Ecore_Event_Handler *_pulse_exe_handler = NULL;
+static Eina_Bool pulse_started;
 
 static void
 _shutdown(void)
 {
-   if (_pulse_exe)
-     {
-        ecore_exe_kill(_pulse_exe);
-        ecore_exe_free(_pulse_exe);
-        _pulse_exe = NULL;
-     }
-   if (_pulse_exe_handler)
-     {
-        ecore_event_handler_del(_pulse_exe_handler);
-        _pulse_exe_handler = NULL;
-     }
-
    if (!ctx)
       return;
+   if (pulse_started)
+     {
+        ecore_exe_run("pulseaudio -k", NULL);
+        pulse_started = EINA_FALSE;
+     }
 
    if (ctx->connect)
      {
@@ -873,16 +865,6 @@ _shutdown(void)
       _disconnect_cb();
    free(ctx);
    ctx = NULL;
-}
-
-static Eina_Bool
-_pulse_exe_del(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
-{
-   Ecore_Exe_Event_Del *ev = event;
-
-   if (ev->exe != _pulse_exe) return ECORE_CALLBACK_PASS_ON;
-   _pulse_exe = NULL;
-   return ECORE_CALLBACK_DONE;
 }
 
 static Eina_Bool
@@ -903,11 +885,9 @@ _init(Emix_Event_Cb cb, const void *data)
 
    if (_pulse_connect(ctx) == EINA_TRUE) // true == failed and try again
      {
-        _pulse_exe_handler = ecore_event_handler_add(ECORE_EXE_EVENT_DEL,
-                                                     _pulse_exe_del, NULL);
-        _pulse_exe = ecore_exe_pipe_run
-          ("pulseaudio", ECORE_EXE_NOT_LEADER | ECORE_EXE_TERM_WITH_PARENT,
-           NULL);
+        if (!pulse_started)
+          ecore_exe_run("pulseaudio --start", NULL);
+        pulse_started = 1;
      }
 
    ctx->cb = cb;
