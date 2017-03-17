@@ -764,7 +764,7 @@ _pulse_pa_state_cb(pa_context *context, void *data)
       case PA_CONTEXT_FAILED:
          WRN("PA_CONTEXT_FAILED");
          if (!ctx->connect)
-           ctx->connect = ecore_timer_loop_add(0.2, _pulse_connect, data);
+           ctx->connect = ecore_timer_loop_add(1, _pulse_connect, data);
          goto err;
       case PA_CONTEXT_TERMINATED:
          ERR("PA_CONTEXT_TERMINATE:");
