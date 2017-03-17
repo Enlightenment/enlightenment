@@ -373,8 +373,12 @@ _e_comp_wl_evas_cb_mouse_move(void *data, Evas *evas EINA_UNUSED, Evas_Object *o
    Evas_Event_Mouse_Move *ev = event;
 
    if (ec == e_client_action_get()) return;
-   if (!_e_comp_wl_evas_cb_mouse_internal_check(ec, ev->cur.canvas.x, ev->cur.canvas.y)) return;
    if (!ec->mouse.in) return;
+   if (!_e_comp_wl_evas_cb_mouse_internal_check(ec, ev->cur.canvas.x, ev->cur.canvas.y))
+     {
+        e_client_mouse_move(ec, &(Evas_Point){ev->cur.canvas.x, ev->cur.canvas.y});
+        return;
+     }
    if (e_object_is_del(E_OBJECT(ec))) return;
    if (ec->ignored) return;
    if (!ec->comp_data->surface) return;
