@@ -530,7 +530,7 @@ _e_xdg_toplevel_cb_maximized_set(struct wl_client *client EINA_UNUSED, struct wl
    if (e_object_is_del(E_OBJECT(ec))) return;
 
    if (ec->lock_user_maximize) return;
-   if (e_config->window_maximize_animate && (!ec->maximize_anims_disabled))
+   if (e_config->window_maximize_animate && (!ec->maximize_anims_disabled) && ec->comp_data->buffer_commit)
      w = ec->w, h = ec->h;
    else
      {

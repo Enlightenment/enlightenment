@@ -827,7 +827,8 @@ _e_comp_wl_evas_cb_maximize_pre(void *data, Evas_Object *obj EINA_UNUSED, void *
           ecw = &ec->client.w, ech = &ec->client.h;
         else
           ecw = &ec->w, ech = &ec->h;
-        if ((!e_config->window_maximize_animate) || ec->maximize_anims_disabled)
+        if ((!e_config->window_maximize_animate) ||
+            ec->maximize_anims_disabled || (!ec->comp_data->buffer_commit))
           {
              e_client_maximize_geometry_get(ec, *max, NULL, NULL, &w, &h);
              if (ec->internal)
