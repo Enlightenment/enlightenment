@@ -146,6 +146,8 @@ _e_elm_win_trap_show(void *data, Evas_Object *o)
         ctx->client->internal_elm_win = o;
         elm_win_autodel_set(o, 1);
         evas_object_data_set(o, "E_Client", ctx->client);
+        ctx->client->dialog = elm_win_type_get(o) == ELM_WIN_DIALOG_BASIC;
+        ctx->client->tooltip = elm_win_type_get(o) == ELM_WIN_TOOLTIP;
 
         evas_object_size_hint_min_get(o, &ctx->client->icccm.min_w, &ctx->client->icccm.min_h);
         evas_object_size_hint_max_get(o, &ctx->client->icccm.max_w, &ctx->client->icccm.max_h);
