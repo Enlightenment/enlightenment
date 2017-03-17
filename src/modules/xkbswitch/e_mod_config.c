@@ -1583,7 +1583,7 @@ _cb_dlg_fill_delay(void *data)
    if (sel)
      {
         elm_genlist_item_selected_set(sel, EINA_TRUE);
-        elm_genlist_item_bring_in(sel, ELM_GENLIST_ITEM_SCROLLTO_TOP);
+        elm_genlist_item_show(sel, ELM_GENLIST_ITEM_SCROLLTO_TOP);
         _cb_layout_select(cfdata, NULL, NULL);
      }
    cfdata->dlg_fill_delay = NULL;
