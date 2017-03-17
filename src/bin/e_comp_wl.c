@@ -816,6 +816,8 @@ _e_comp_wl_evas_cb_maximize_pre(void *data, Evas_Object *obj EINA_UNUSED, void *
    E_Maximize *max = event_info;
 
    if (e_object_is_del(E_OBJECT(ec))) return;
+   if (!ec->comp_data->buffer_commit)
+     ec->maximize_anims_disabled = 1;
    if (ec->comp_data->in_commit)
      ec->comp_data->maximizing = 1;
    else if (!e_client_has_xwindow(ec))
@@ -925,8 +927,9 @@ _e_comp_wl_evas_cb_maximize_done(void *data, Evas_Object *obj EINA_UNUSED, void 
 {
    E_Client *ec = data;
 
-   if (!e_object_is_del(E_OBJECT(ec)))
-     ec->comp_data->maximizing = 0;
+   if (e_object_is_del(E_OBJECT(ec))) return;
+   ec->comp_data->maximizing = 0;
+   ec->maximize_anims_disabled = ec->comp_data->maximize_anims_disabled;
 }
 
 static void
