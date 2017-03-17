@@ -356,6 +356,14 @@ _e_comp_wl_send_mouse_move(E_Client *ec, int x, int y, unsigned int timestamp)
      }
 }
 
+static Eina_Bool
+_e_comp_wl_evas_cb_mouse_internal_check(E_Client *ec, int x, int y)
+{
+   if (!e_comp_object_frame_exists(ec->frame)) return EINA_TRUE;
+   if (E_INSIDE(x, y, ec->client.x, ec->client.y, ec->client.w, ec->client.h)) return EINA_TRUE;
+   return EINA_FALSE;
+}
+
 static void
 _e_comp_wl_evas_cb_mouse_move(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event)
 {
@@ -363,6 +371,7 @@ _e_comp_wl_evas_cb_mouse_move(void *data, Evas *evas EINA_UNUSED, Evas_Object *o
    Evas_Event_Mouse_Move *ev = event;
 
    if (ec == e_client_action_get()) return;
+   if (!_e_comp_wl_evas_cb_mouse_internal_check(ec, ev->cur.canvas.x, ev->cur.canvas.y)) return;
    if (!ec->mouse.in) return;
    if (e_object_is_del(E_OBJECT(ec))) return;
    if (ec->ignored) return;
@@ -379,6 +388,7 @@ _e_comp_wl_evas_cb_mouse_down(void *data, Evas *evas EINA_UNUSED, Evas_Object *o
    E_Client *ec = data;
    Evas_Event_Mouse_Down *ev = event;
 
+   if (!_e_comp_wl_evas_cb_mouse_internal_check(ec, ev->output.x, ev->output.y)) return;
    e_comp_wl_evas_handle_mouse_button(ec, ev->timestamp, ev->button,
                                       WL_POINTER_BUTTON_STATE_PRESSED);
 }
@@ -389,6 +399,7 @@ _e_comp_wl_evas_cb_mouse_up(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj
    E_Client *ec = data;
    Evas_Event_Mouse_Up *ev = event;
 
+   if (!_e_comp_wl_evas_cb_mouse_internal_check(ec, ev->output.x, ev->output.y)) return;
    e_comp_wl_evas_handle_mouse_button(ec, ev->timestamp, ev->button,
                                       WL_POINTER_BUTTON_STATE_RELEASED);
 }
