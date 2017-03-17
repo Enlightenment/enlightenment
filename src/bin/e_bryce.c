@@ -34,6 +34,7 @@ typedef struct Bryce
    unsigned int autohide_blocked;
    Eina_List *popups;
    void *event_info;
+   Ecore_Job *menu_job;
    uint64_t last_timestamp;
 
    /* config: do not bitfield! */
@@ -580,7 +581,8 @@ _bryce_mouse_down_post(void *data, Evas *e EINA_UNUSED)
      return EINA_FALSE;
    if (ev->button != 3) return EINA_TRUE;
    b->last_timestamp = ev->timestamp;
-   _bryce_act_menu_job(b);
+   if (!b->menu_job)
+     b->menu_job = ecore_job_add(_bryce_act_menu_job, b);
    return EINA_FALSE;
 }
 
@@ -672,6 +674,7 @@ _bryce_del(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *
      }
    evas_object_del(b->autohide_event);
    E_FREE_FUNC(b->calc_job, ecore_job_del);
+   E_FREE_FUNC(b->menu_job, ecore_job_del);
    E_FREE_FUNC(b->autohide_timer, ecore_timer_del);
    ecore_timer_del(b->save_timer);
    EINA_LIST_FREE(b->popups, p)
@@ -983,6 +986,7 @@ _bryce_act_menu_job(void *data)
 
    m = e_menu_new();
    _bryce_menu_populate(b, m);
+   b->menu_job = NULL;
    evas_pointer_canvas_xy_get(e_comp->evas, &x, &y);
    e_menu_activate_mouse(m, e_zone_current_get(), x, y, 1, 1, E_MENU_POP_DIRECTION_AUTO, b->last_timestamp);
    _bryce_popup(b, m->comp_object);
@@ -995,8 +999,8 @@ _bryce_act_menu(E_Object *obj, const char *params EINA_UNUSED, E_Binding_Event_M
    if (obj->type != E_BRYCE_TYPE) return EINA_FALSE;
    b = e_object_data_get(obj);
    b->last_timestamp = ev->timestamp;
-   /* FIXME: T3144 */
-   ecore_job_add(_bryce_act_menu_job, b);
+   if (!b->menu_job)
+     b->menu_job = ecore_job_add(_bryce_act_menu_job, b);
    return EINA_TRUE;
 }
 
