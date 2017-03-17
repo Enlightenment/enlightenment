@@ -2,12 +2,6 @@
 
 E_API E_Module_Api e_modapi = { E_MODULE_API_VERSION, "Wl_Wl" };
 
-static void
-_cb_delete_request(Ecore_Evas *ee EINA_UNUSED)
-{
-   ecore_main_loop_quit();
-}
-
 static Eina_Bool
 _cb_sync_done(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
 {
@@ -59,7 +53,6 @@ e_modapi_init(E_Module *m)
      }
 
    ecore_evas_data_set(e_comp->ee, "comp", e_comp);
-   ecore_evas_callback_delete_request_set(e_comp->ee, _cb_delete_request);
    ecore_evas_title_set(e_comp->ee, "Enlightenment: WL-WL");
    ecore_evas_name_class_set(e_comp->ee, "E", "compositor");
 

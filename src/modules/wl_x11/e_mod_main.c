@@ -5,12 +5,6 @@ E_API E_Module_Api e_modapi = { E_MODULE_API_VERSION, "Wl_X11" };
 
 static Ecore_Event_Handler *kbd_hdlr;
 
-static void
-_cb_delete_request(Ecore_Evas *ee EINA_UNUSED)
-{
-   ecore_main_loop_quit();
-}
-
 E_API void *
 e_modapi_init(E_Module *m)
 {
@@ -35,7 +29,6 @@ e_modapi_init(E_Module *m)
         ERR("Could not create ecore_evas canvas");
         return NULL;
      }
-   ecore_evas_callback_delete_request_set(e_comp->ee, _cb_delete_request);
    ecore_evas_title_set(e_comp->ee, "Enlightenment: WL-X11");
    ecore_evas_name_class_set(e_comp->ee, "E", "compositor");
 
