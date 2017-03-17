@@ -552,7 +552,10 @@ _e_xdg_shell_surface_configure(struct wl_resource *resource, Evas_Coord x, Evas_
           }
      }
 
-   e_client_util_move_resize_without_frame(ec, x, y, w, h);
+   if (ec->placed || ec->parent)
+     e_client_util_move_resize_without_frame(ec, x, y, w, h);
+   else
+     e_client_util_resize_without_frame(ec, w, h);
 }
 
 static void
