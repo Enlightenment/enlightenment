@@ -68,6 +68,11 @@ _xdg_shell_surface_send_configure(struct wl_resource *resource, Eina_Bool fullsc
        (shd->fullscreen == fullscreen) &&
        (shd->maximized == maximized) &&
        (shd->activated == activated)) return;
+   if (shd->edges && (shd->edges != edges))
+     {
+        if (shd->pending && (!width) && (!height))
+          width = shd->width, height = shd->height;
+     }
    shd->edges = edges;
    shd->width = width;
    shd->height = height;
