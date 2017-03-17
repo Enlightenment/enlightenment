@@ -1542,8 +1542,9 @@ _e_comp_x_hide(void *data EINA_UNUSED, int type EINA_UNUSED, Ecore_X_Event_Windo
      {
         hid = EINA_TRUE;
         evas_object_hide(ec->frame);
-        e_hints_window_hidden_set(ec);
-        if (!ec->internal)
+        if (ec->internal)
+          e_hints_window_hidden_set(ec);
+        else
           {
              if (ec->exe_inst && ec->exe_inst->exe)
                ec->exe_inst->phony = 0;
