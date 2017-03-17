@@ -38,9 +38,17 @@ e_obj_is_win(const void *obj)
 }
 
 E_API Evas_Object *e_elm_win_add(Evas_Object *parent, const char *name, Elm_Win_Type type);
+E_API Evas_Object *elm_win_util_standard_add(const char *name, const char *title);
+E_API Evas_Object *e_elm_win_util_dialog_add(Evas_Object *parent, const char *name, const char *title);
 
 #define elm_win_add(X, Y, Z) \
    e_elm_win_add((X), (Y), (Z))
+
+#define elm_win_util_dialog_add(X, Y, Z) \
+   e_elm_win_util_dialog_add((X), (Y), (Z))
+
+#define elm_win_util_standard_add(X, Y) \
+   e_elm_win_util_standard_add((X), (Y))
 
 #endif
 #endif
