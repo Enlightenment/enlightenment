@@ -120,7 +120,10 @@ _e_comp_x_focus_check(void)
      {
         focus_canvas_time = ecore_x_current_time_get();
         focus_time = 0;
-        e_grabinput_focus(e_comp->ee_win, E_FOCUS_METHOD_PASSIVE);
+        if (e_comp->comp_type == E_PIXMAP_TYPE_X)
+          e_grabinput_focus(e_comp->ee_win, E_FOCUS_METHOD_PASSIVE);
+        else
+          e_grabinput_focus(e_comp->root, E_FOCUS_METHOD_PASSIVE);
      }
 }
 
@@ -2888,6 +2891,22 @@ _e_comp_x_focus_in(void *data EINA_UNUSED, int type EINA_UNUSED, Ecore_X_Event_W
    E_Client *ec, *focused;
 
    ec = _e_comp_x_client_find_by_window(ev->win);
+
+   if (e_comp->comp_type == E_PIXMAP_TYPE_WL)
+     {
+        focused = e_client_focused_get();
+        if (ec && focused)
+          {
+             if ((!ec->override) && (ec != focused))
+               {
+                  ecore_x_window_focus(e_client_util_win_get(focused));
+                  ecore_x_icccm_take_focus_send(e_client_util_win_get(focused), ecore_x_current_time_get());
+               }
+          }
+        else
+          ecore_x_window_focus(e_comp->root);
+        return ECORE_CALLBACK_RENEW;
+     }
    if (!ec)
      {
         if ((ev->win == e_comp->ee_win) && (ev->time >= focus_canvas_time) && (!focus_time))
@@ -4614,7 +4633,7 @@ _e_comp_x_hook_client_focus_set_job(void *d EINA_UNUSED)
    focus_canvas_time = 0;
    if (!e_client_has_xwindow(ec))
      {
-        e_grabinput_focus(e_comp->ee_win, E_FOCUS_METHOD_PASSIVE);
+        e_grabinput_focus(e_comp->root, E_FOCUS_METHOD_PASSIVE);
         return;
      }
    _e_comp_x_focus_setdown(ec);
@@ -5578,7 +5597,8 @@ e_comp_x_init(void)
    E_LIST_HANDLER_APPEND(handlers, ECORE_X_EVENT_MAPPING_CHANGE, _e_comp_x_mapping_change, NULL);
 
    E_LIST_HANDLER_APPEND(handlers, ECORE_X_EVENT_WINDOW_FOCUS_IN, _e_comp_x_focus_in, NULL);
-   E_LIST_HANDLER_APPEND(handlers, ECORE_X_EVENT_WINDOW_FOCUS_OUT, _e_comp_x_focus_out, NULL);
+   if (e_comp->comp_type != E_PIXMAP_TYPE_WL)
+     E_LIST_HANDLER_APPEND(handlers, ECORE_X_EVENT_WINDOW_FOCUS_OUT, _e_comp_x_focus_out, NULL);
 
    E_LIST_HANDLER_APPEND(handlers, ECORE_X_EVENT_WINDOW_MOVE_RESIZE_REQUEST,
                          _e_comp_x_move_resize_request, NULL);
