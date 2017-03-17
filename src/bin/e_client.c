@@ -4793,6 +4793,7 @@ e_client_signal_move_begin(E_Client *ec, const char *sig, const char *src EINA_U
    if (e_client_util_resizing_get(ec) || (ec->moving)) return;
    _e_client_moveinfo_gather(ec, sig);
    if (!_e_client_move_begin(ec)) return;
+   _e_client_action_init(ec);
    e_pointer_mode_push(ec, E_POINTER_MOVE);
    e_zone_edge_disable();
 }
@@ -4807,6 +4808,7 @@ e_client_signal_move_end(E_Client *ec, const char *sig EINA_UNUSED, const char *
    _e_client_move_end(ec);
    e_zone_edge_enable();
    e_zone_flip_coords_handle(ec->zone, -1, -1);
+   _e_client_action_finish();
 }
 
 E_API void
@@ -4854,6 +4856,7 @@ e_client_signal_resize_begin(E_Client *ec, const char *dir, const char *sig, con
    _e_client_moveinfo_gather(ec, sig);
    if (!e_client_resize_begin(ec))
      return;
+   _e_client_action_init(ec);
    e_pointer_mode_push(ec, ec->resize_mode);
 }
 
@@ -4867,6 +4870,7 @@ e_client_signal_resize_end(E_Client *ec, const char *dir EINA_UNUSED, const char
    _e_client_resize_end(ec);
    ec->changes.reset_gravity = 1;
    EC_CHANGED(ec);
+   _e_client_action_finish();
 }
 
 ////////////////////////////////////////////
