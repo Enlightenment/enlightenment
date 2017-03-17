@@ -1022,6 +1022,12 @@ _e_comp_resize(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj, vo
    e_comp_canvas_update();
 }
 
+static void
+_e_comp_delete_request()
+{
+   e_sys_action_do(E_SYS_LOGOUT, NULL);
+}
+
 EINTERN Eina_Bool
 e_comp_init(void)
 {
@@ -1178,6 +1184,9 @@ out:
    e_comp->elm = elm_win_fake_add(e_comp->ee);
    evas_object_event_callback_add(e_comp->elm, EVAS_CALLBACK_RESIZE, _e_comp_resize, NULL);
    elm_win_fullscreen_set(e_comp->elm, 1);
+   elm_win_autodel_set(e_comp->elm, 1);
+   if (!e_comp->screen)
+     evas_object_smart_callback_add(e_comp->elm, "delete,request", _e_comp_delete_request, NULL);
    ecore_evas_focus_set(e_comp->ee, 0);
    ecore_evas_focus_set(e_comp->ee, 1);
    evas_object_show(e_comp->elm);
