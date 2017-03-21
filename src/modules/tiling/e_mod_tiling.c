@@ -31,8 +31,8 @@ typedef struct Client_Extra
    geom_t    expected;
    struct
    {
-      Evas_Object *ic;
-      Evas_Object *hint;
+      Eina_Bool drag;
+      Evas_Object *hint, *ic;
       Ecore_Event_Handler *move, *up;
       int x,y; /* start points */
    } drag;
@@ -793,6 +793,11 @@ _client_remove_no_apply(E_Client *ec)
         return EINA_FALSE;
      }
 
+   if (extra->drag.drag)
+     {
+        _client_drag_terminate(ec);
+     }
+
    if (!extra->tiled)
       return EINA_FALSE;
 
@@ -1474,7 +1479,7 @@ _desk_set_hook(void *data EINA_UNUSED, int type EINA_UNUSED,
    //check the state of the new desk
    if (desk_should_tile_check(ev->ec->desk))
      {
-        if (extra->drag.ic)
+        if (extra->drag.drag)
           {
              ev->ec->hidden = EINA_TRUE;
              e_client_comp_hidden_set(ev->ec, EINA_TRUE);
@@ -1484,7 +1489,7 @@ _desk_set_hook(void *data EINA_UNUSED, int type EINA_UNUSED,
      }
    else
      {
-        if (extra->drag.ic)
+        if (extra->drag.drag)
           {
              _client_drag_terminate(ev->ec);
              extra->floating = EINA_TRUE;
@@ -1597,25 +1602,13 @@ E_API E_Module_Api e_modapi = {
    "Tiling"
 };
 
-static void
-_center_on_mouse(Evas_Object *obj)
-{
-   Evas *e;
-   int x,y,w,h;
-
-   e = evas_object_evas_get(obj);
-   evas_pointer_canvas_xy_get(e, &x, &y);
-   evas_object_geometry_get(obj, NULL, NULL, &w, &h);
-   evas_object_move(obj, x-w/2, y-h/2);
-}
-
 static unsigned char
 _client_drag_mouse_up(void *data, int event EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    E_Client *ec = data;
    Client_Extra *extra = tiling_entry_func(ec);
 
-   if (!evas_object_visible_get(ec->frame))
+   if (extra->drag.drag)
      _client_drag_terminate(data);
 
    //remove the events
@@ -1646,16 +1639,9 @@ _client_drag_mouse_move(void *data, int event EINA_UNUSED, void *event_info)
         if (extra->drag.x == ev->x && extra->drag.y == ev->y) return ECORE_CALLBACK_PASS_ON;
 
         _client_remove_no_apply(ec);
+
+        extra->drag.drag = EINA_TRUE;
         e_comp_grab_input(EINA_TRUE, EINA_FALSE);
-
-        //create the drag object
-        extra->drag.ic = e_client_icon_add(ec, evas_object_evas_get(e_comp->elm));
-        evas_object_resize(extra->drag.ic, 40, 40);
-        evas_object_show(extra->drag.ic);
-        evas_object_layer_set(extra->drag.ic, E_LAYER_CLIENT_DRAG);
-
-        //center the drag object on the mouse
-        _center_on_mouse(extra->drag.ic);
 
         ec->hidden = EINA_TRUE;
         e_client_comp_hidden_set(ec, EINA_TRUE);
@@ -1663,9 +1649,6 @@ _client_drag_mouse_move(void *data, int event EINA_UNUSED, void *event_info)
 
         _reapply_tree();
      }
-
-   //move the drag object to the center of the object
-   _center_on_mouse(extra->drag.ic);
 
    //now check if we can hint somehow
    evas_pointer_canvas_xy_get(e_comp->evas, &x, &y);
@@ -1688,6 +1671,10 @@ _client_drag_mouse_move(void *data, int event EINA_UNUSED, void *event_info)
           edje_object_file_set(extra->drag.hint, _G.edj_path, "modules/tiling/indicator");
         evas_object_layer_set(extra->drag.hint, E_LAYER_CLIENT_DRAG);
         evas_object_show(extra->drag.hint);
+
+        extra->drag.ic = e_client_icon_add(ec, evas_object_evas_get(e_comp->evas));
+        edje_object_part_swallow(extra->drag.hint, "e.client.icon", extra->drag.ic);
+        evas_object_show(extra->drag.ic);
      }
 
    //set the geometry on the hint object
@@ -1727,8 +1714,6 @@ _client_drag_terminate(E_Client *ec)
 
    //remove the hint object
    E_FREE_FUNC(extra->drag.hint, evas_object_del);
-
-   //delete the icon on the screen
    E_FREE_FUNC(extra->drag.ic, evas_object_del);
 
    //bring up the client again
@@ -1743,6 +1728,8 @@ _client_drag_terminate(E_Client *ec)
    _reapply_tree();
 
    evas_object_focus_set(ec->frame, EINA_TRUE);
+
+   extra->drag.drag = EINA_FALSE;
 }
 
 static void
