@@ -11,6 +11,8 @@ static void _e_object_segv(int sig);
 static sigjmp_buf _e_object_segv_buf;
 #endif
 
+E_API void e_bt(void);
+
 /* externally accessible functions */
 E_API void *
 e_object_alloc(int size, int type, E_Object_Cleanup_Func cleanup_func)
@@ -125,7 +127,10 @@ e_object_ref(E_Object *obj)
    E_OBJECT_CHECK_RETURN(obj, -1);
    obj->references++;
    if (obj->ref_debug)
-     INF("[%p] REF (REF: %d)", obj, obj->references);
+     {
+        INF("[%p] REF (REF: %d)", obj, obj->references);
+        e_bt();
+     }
    return obj->references;
 }
 
@@ -140,6 +145,7 @@ e_object_unref(E_Object *obj)
    ref = obj->references;
    if (obj->ref_debug)
      {
+        e_bt();
         if ((ref > 1) && (ref < 1000))
           INF("[%p] UNREF (REF: %d)", obj, ref);
         else if (ref == 1)
@@ -160,7 +166,6 @@ e_object_ref_get(E_Object *obj)
    return obj->references;
 }
 
-#if 0
 E_API void
 e_bt(void)
 {
@@ -182,8 +187,6 @@ e_bt(void)
         free(messages);
      }
 }
-
-#endif
 
 E_API int
 e_object_error(E_Object *obj)
