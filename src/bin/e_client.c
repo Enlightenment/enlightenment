@@ -283,7 +283,8 @@ static Eina_Bool
 _e_client_hook_call(E_Client_Hook_Point hookpoint, E_Client *ec)
 {
    E_Client_Hook *ch;
-
+   Eina_Bool ret;
+e_object_ref_debug_set(ec, 0);
    e_object_ref(E_OBJECT(ec));
    _e_client_hooks_walking++;
    EINA_INLIST_FOREACH(_e_client_hooks[hookpoint], ch)
@@ -300,7 +301,10 @@ _e_client_hook_call(E_Client_Hook_Point hookpoint, E_Client *ec)
    _e_client_hooks_walking--;
    if ((_e_client_hooks_walking == 0) && (_e_client_hooks_delete > 0))
      _e_client_hooks_clean();
-   return !!e_object_unref(E_OBJECT(ec));
+   ret = !!e_object_unref(E_OBJECT(ec));
+   if (ret)
+     e_object_ref_debug_set(ec, 1);
+   return ret;
 }
 
 ///////////////////////////////////////////
@@ -309,7 +313,9 @@ static void
 _e_client_event_simple_free(void *d EINA_UNUSED, E_Event_Client *ev)
 {
    UNREFD(ev->ec, 3);
-   e_object_unref(E_OBJECT(ev->ec));
+   e_object_ref_debug_set(ev->ec, 0);
+   if (e_object_unref(E_OBJECT(ev->ec)))
+     e_object_ref_debug_set(ev->ec, 1);
    free(ev);
 }
 
@@ -321,7 +327,9 @@ _e_client_event_simple(E_Client *ec, int type)
    ev = E_NEW(E_Event_Client, 1);
    ev->ec = ec;
    REFD(ec, 3);
+   e_object_ref_debug_set(ec, 0);
    e_object_ref(E_OBJECT(ec));
+   e_object_ref_debug_set(ec, 1);
    ecore_event_add(type, ev, (Ecore_End_Cb)_e_client_event_simple_free, NULL);
 }
 
@@ -334,7 +342,9 @@ _e_client_event_property(E_Client *ec, int prop)
    ev->ec = ec;
    ev->property = prop;
    REFD(ec, 33);
+   e_object_ref_debug_set(ec, 0);
    e_object_ref(E_OBJECT(ec));
+   e_object_ref_debug_set(ec, 1);
    ecore_event_add(E_EVENT_CLIENT_PROPERTY, ev, (Ecore_End_Cb)_e_client_event_simple_free, NULL);
 }
 
@@ -342,7 +352,9 @@ static void
 _e_client_event_desk_set_free(void *d EINA_UNUSED, E_Event_Client_Desk_Set *ev)
 {
    UNREFD(ev->ec, 4);
-   e_object_unref(E_OBJECT(ev->ec));
+   e_object_ref_debug_set(ev->ec, 0);
+   if (e_object_unref(E_OBJECT(ev->ec)))
+     e_object_ref_debug_set(ev->ec, 1);
    e_object_unref(E_OBJECT(ev->desk));
    free(ev);
 }
@@ -351,7 +363,10 @@ static void
 _e_client_event_zone_set_free(void *d EINA_UNUSED, E_Event_Client_Zone_Set *ev)
 {
    UNREFD(ev->ec, 5);
-   e_object_unref(E_OBJECT(ev->ec));
+   
+   e_object_ref_debug_set(ev->ec, 0);
+   if (e_object_unref(E_OBJECT(ev->ec)))
+     e_object_ref_debug_set(ev->ec, 1);
    e_object_unref(E_OBJECT(ev->zone));
    free(ev);
 }
@@ -2583,6 +2598,8 @@ e_client_new(E_Pixmap *cp, int first_map, int internal)
    if (!ec) return NULL;
    e_object_del_func_set(E_OBJECT(ec), E_OBJECT_CLEANUP_FUNC(_e_client_del));
 
+e_object_ref_debug_set(ec, 1);
+
    ec->focus_policy_override = E_FOCUS_LAST;
    ec->w = 1;
    ec->h = 1;
@@ -2812,7 +2829,9 @@ e_client_desk_set(E_Client *ec, E_Desk *desk)
         ev = E_NEW(E_Event_Client_Desk_Set, 1);
         ev->ec = ec;
         UNREFD(ec, 4);
+        e_object_ref_debug_set(ec, 0);
         e_object_ref(E_OBJECT(ec));
+        e_object_ref_debug_set(ec, 1);
         ev->desk = old_desk;
         e_object_ref(E_OBJECT(old_desk));
         ecore_event_add(E_EVENT_CLIENT_DESK_SET, ev, (Ecore_End_Cb)_e_client_event_desk_set_free, NULL);
@@ -3316,7 +3335,9 @@ e_client_zone_set(E_Client *ec, E_Zone *zone)
    ev = E_NEW(E_Event_Client_Zone_Set, 1);
    ev->ec = ec;
    REFD(ec, 5);
+   e_object_ref_debug_set(ec, 0);
    e_object_ref(E_OBJECT(ec));
+   e_object_ref_debug_set(ec, 1);
    ev->zone = zone;
    e_object_ref(E_OBJECT(zone));
 

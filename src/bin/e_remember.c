@@ -706,7 +706,9 @@ _e_remember_event_free(void *d EINA_UNUSED, void *event)
 {
    E_Event_Remember_Update *ev = event;
    UNREFD(ev->ec, 10);
+e_object_ref_debug_set(ev->ec, 0);
    e_object_unref(E_OBJECT(ev->ec));
+e_object_ref_debug_set(ev->ec, 1);
    free(ev);
 }
 
@@ -827,7 +829,9 @@ _e_remember_update(E_Client *ec, E_Remember *rem)
       if (!ev) return;
       ev->ec = ec;
       REFD(ec, 10);
+e_object_ref_debug_set(ec, 0);
       e_object_ref(E_OBJECT(ec));
+e_object_ref_debug_set(ec, 1);
       ecore_event_add(E_EVENT_REMEMBER_UPDATE, ev, _e_remember_event_free, NULL);
    }
 }
