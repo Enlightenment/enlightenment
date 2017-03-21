@@ -178,11 +178,7 @@ e_bt(void)
      {
         for (i = 1; i < trace_num; i++)
           {
-             int j;
-
-             for (j = 1; j < i; j++)
-               putchar(' ');
-             printf("%s\n", messages[i]);
+             fprintf(stderr, "%s\n", messages[i]);
           }
         free(messages);
      }
