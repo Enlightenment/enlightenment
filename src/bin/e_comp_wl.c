@@ -240,6 +240,10 @@ _e_comp_wl_evas_cb_mouse_in(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, v
 static void
 _e_comp_wl_cb_ssd_mouse_in(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
 {
+   E_Client *ec = data;
+
+   if (!e_object_is_del(data))
+     ec->comp_data->ssd_mouse_in = 1;
    _e_comp_wl_mouse_in(data, event_info);
 }
 
@@ -289,6 +293,10 @@ _e_comp_wl_evas_cb_mouse_out(void *data, Evas *e EINA_UNUSED, Evas_Object *obj E
 static void
 _e_comp_wl_cb_ssd_mouse_out(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
+   E_Client *ec = data;
+
+   if (!e_object_is_del(data))
+     ec->comp_data->ssd_mouse_in = 0;
    _e_comp_wl_mouse_out(data);
 }
 
