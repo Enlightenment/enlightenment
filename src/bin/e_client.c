@@ -4283,11 +4283,8 @@ e_client_fullscreen(E_Client *ec, E_Fullscreen policy)
 
    if ((ec->shaded) || (ec->shading) || ec->fullscreen) return;
    if ((!e_config->allow_above_fullscreen) && (!ec->desk->visible)) return;
-   if (ec->new_client)
-     {
-        ec->need_fullscreen = 1;
-        return;
-     }
+   ec->need_fullscreen = 1;
+   if (ec->new_client) return;
    if (e_comp->nocomp_ec && (ec->desk == e_comp->nocomp_ec->desk))
      e_comp->nocomp_ec = ec;
    ec->desk->fullscreen_clients = eina_list_append(ec->desk->fullscreen_clients, ec);
@@ -4369,6 +4366,7 @@ e_client_fullscreen(E_Client *ec, E_Fullscreen policy)
    _e_client_event_simple(ec, E_EVENT_CLIENT_FULLSCREEN);
 
    e_remember_update(ec);
+   ec->need_fullscreen = 0;
 }
 
 E_API void
