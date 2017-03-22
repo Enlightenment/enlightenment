@@ -4161,6 +4161,7 @@ e_client_unmaximize_geometry_get(const E_Client *ec, E_Maximize max, int *mx, in
 E_API void
 e_client_unmaximize(E_Client *ec, E_Maximize max)
 {
+   E_Maximize unmax = max;
    E_OBJECT_CHECK(ec);
    E_OBJECT_TYPE_CHECK(ec, E_CLIENT_TYPE);
    if (!ec->zone) return;
@@ -4179,10 +4180,11 @@ e_client_unmaximize(E_Client *ec, E_Maximize max)
    if ((ec->shaded) || (ec->shading)) return;
 
    /* Remove directions not used */
-   max &= (ec->maximized & E_MAXIMIZE_DIRECTION);
-   evas_object_smart_callback_call(ec->frame, "unmaximize_pre", &max);
+   unmax &= (ec->maximized & E_MAXIMIZE_DIRECTION);
+   evas_object_smart_callback_call(ec->frame, "unmaximize_pre", &unmax);
    /* Can only remove existing maximization directions */
-   if (!max) return;
+   if ((!unmax) && (!ec->need_fullscreen)) return;
+   if (!unmax) unmax = max & (ec->maximized & E_MAXIMIZE_DIRECTION);
    if (ec->maximized & E_MAXIMIZE_TYPE)
      {
         ec->pre_res_change.valid = 0;
@@ -4213,23 +4215,23 @@ e_client_unmaximize(E_Client *ec, E_Maximize max)
              Eina_Bool horiz = EINA_FALSE, vert = EINA_FALSE;
              Eina_Bool fullscreen = !!eina_list_data_find(ec->desk->fullscreen_clients, ec);
 
-             e_client_unmaximize_geometry_get(ec, max, &x, &y, &w, &h);
-             if (max & E_MAXIMIZE_VERTICAL)
+             e_client_unmaximize_geometry_get(ec, unmax, &x, &y, &w, &h);
+             if (unmax & E_MAXIMIZE_VERTICAL)
                {
                   /* Remove vertical */
                   vert = EINA_TRUE;
-                  if ((max & E_MAXIMIZE_VERTICAL) == E_MAXIMIZE_VERTICAL)
+                  if ((unmax & E_MAXIMIZE_VERTICAL) == E_MAXIMIZE_VERTICAL)
                     {
                        ec->maximized &= ~E_MAXIMIZE_VERTICAL;
                        ec->maximized &= ~E_MAXIMIZE_LEFT;
                        ec->maximized &= ~E_MAXIMIZE_RIGHT;
                     }
-                  if ((max & E_MAXIMIZE_LEFT) == E_MAXIMIZE_LEFT)
+                  if ((unmax & E_MAXIMIZE_LEFT) == E_MAXIMIZE_LEFT)
                     ec->maximized &= ~E_MAXIMIZE_LEFT;
-                  if ((max & E_MAXIMIZE_RIGHT) == E_MAXIMIZE_RIGHT)
+                  if ((unmax & E_MAXIMIZE_RIGHT) == E_MAXIMIZE_RIGHT)
                     ec->maximized &= ~E_MAXIMIZE_RIGHT;
                }
-             if (max & E_MAXIMIZE_HORIZONTAL)
+             if (unmax & E_MAXIMIZE_HORIZONTAL)
                {
                   /* Remove horizontal */
                   horiz = EINA_TRUE;
