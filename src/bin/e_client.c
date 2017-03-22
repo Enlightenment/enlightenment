@@ -1705,7 +1705,11 @@ _e_client_maximize_done(void *data, E_Efx_Map_Data *emd EINA_UNUSED, Evas_Object
 static Eina_Bool
 _e_client_maximize_run(E_Client *ec, int x, int y, int w, int h)
 {
-   if (e_config->window_maximize_animate && (!ec->maximize_anims_disabled) &&
+   int pw, ph;
+   Eina_Bool disabled = EINA_FALSE;
+   if (e_pixmap_size_get(ec->pixmap, &pw, &ph))
+      disabled = (ec->x == x) && (ec->y == y) && (w == pw) && (h == ph);
+   if ((!disabled) && e_config->window_maximize_animate && (!ec->maximize_anims_disabled) &&
        (!starting) && (!ec->changes.need_maximize))
      {
         evas_object_del(ec->agent);
