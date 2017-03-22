@@ -4407,8 +4407,14 @@ e_client_unfullscreen(E_Client *ec)
    ec->saved.frame = 0;
 
    if (ec->saved.maximized)
-     e_client_maximize(ec, (e_config->maximize_policy & E_MAXIMIZE_TYPE) |
-                       ec->saved.maximized);
+     {
+        Eina_Bool maximize_anims_disabled = ec->maximize_anims_disabled;
+        ec->changes.size = 0;
+        ec->maximize_anims_disabled = 1;
+        e_client_maximize(ec,
+          (e_config->maximize_policy & E_MAXIMIZE_TYPE) | ec->saved.maximized);
+        ec->maximize_anims_disabled = maximize_anims_disabled;
+     }
 
    evas_object_layer_set(ec->frame, ec->saved.layer);
 
