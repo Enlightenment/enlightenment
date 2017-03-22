@@ -4056,7 +4056,11 @@ e_client_fullscreen(E_Client *ec, E_Fullscreen policy)
 
    if (ec->maximized)
      {
+        Eina_Bool maximize_anims_disabled = ec->maximize_anims_disabled;
+
+        ec->maximize_anims_disabled = 1;
         e_client_unmaximize(ec, E_MAXIMIZE_BOTH);
+        ec->maximize_anims_disabled = maximize_anims_disabled;
         ec->saved.x = x;
         ec->saved.y = y;
         ec->saved.w = w;
