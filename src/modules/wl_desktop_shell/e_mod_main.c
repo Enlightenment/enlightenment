@@ -17,6 +17,7 @@ e_shell_surface_destroy(struct wl_resource *resource)
    /* get the client for this resource */
    ec = wl_resource_get_user_data(resource);
    if (!ec) return;
+   wl_resource_set_user_data(resource, NULL);
    /* client may be passed here during DEL hook */
    if (!ec->comp_data) return;
 
