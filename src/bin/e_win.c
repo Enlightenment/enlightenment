@@ -166,7 +166,11 @@ _e_elm_win_trap_show(void *data, Evas_Object *o)
    ctx->client->borderless |= borderless;
    e_comp_object_frame_xy_adjust(ctx->client->frame, ctx->client->client.x, ctx->client->client.y, &ctx->client->x, &ctx->client->y);
    e_comp_object_frame_wh_adjust(ctx->client->frame, ctx->client->client.w, ctx->client->client.h, &ctx->client->w, &ctx->client->h);
-   if (ctx->centered) e_comp_object_util_center(ctx->client->frame);
+   if (ctx->centered)
+     {
+        e_comp_object_util_center(ctx->client->frame);
+        ctx->centered =0;
+     }
    else if (ctx->placed) evas_object_move(o, ctx->x, ctx->y);
    if (ctx->sized) evas_object_resize(o, ctx->w, ctx->h);
    return EINA_TRUE;
@@ -218,7 +222,11 @@ _e_elm_win_trap_center(void *data, Evas_Object *o EINA_UNUSED, Eina_Bool h, Eina
    ctx->centered = h | v;
    ctx->placed = 1;
    if (!ctx->client) return EINA_FALSE;
-   if (ctx->centered) e_comp_object_util_center(ctx->client->frame);
+   if (ctx->centered)
+     {
+        e_comp_object_util_center(ctx->client->frame);
+        ctx->centered = 0;
+     }
    return EINA_FALSE;
 }
 
