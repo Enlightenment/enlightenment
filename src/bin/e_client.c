@@ -3794,6 +3794,10 @@ e_client_maximize(E_Client *ec, E_Maximize max)
         EC_CHANGED(ec);
         return;
      }
+   if ((max & E_MAXIMIZE_TYPE) == E_MAXIMIZE_FULLSCREEN)
+     evas_object_smart_callback_call(ec->frame, "fullscreen", NULL);
+   else
+     evas_object_smart_callback_call(ec->frame, "maximize", NULL);
    evas_object_smart_callback_call(ec->frame, "maximize_pre", &max);
    if (!max) return;
    override = ec->maximize_override;
@@ -3827,10 +3831,7 @@ e_client_maximize(E_Client *ec, E_Maximize max)
    ec->saved.frame = e_comp_object_frame_exists(ec->frame) || (!e_comp_object_frame_allowed(ec->frame));
 
    ec->maximize_override = 1;
-   if ((max & E_MAXIMIZE_TYPE) == E_MAXIMIZE_FULLSCREEN)
-     evas_object_smart_callback_call(ec->frame, "fullscreen", NULL);
-   else
-     evas_object_smart_callback_call(ec->frame, "maximize", NULL);
+
    {
       int x, y, w, h;
       e_client_maximize_geometry_get(ec, max, &x, &y, &w, &h);
