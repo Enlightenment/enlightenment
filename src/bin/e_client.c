@@ -1531,7 +1531,10 @@ _e_client_maximize_run(E_Client *ec, int x, int y, int w, int h)
    int pw, ph;
    Eina_Bool disabled = EINA_FALSE;
    if (e_pixmap_size_get(ec->pixmap, &pw, &ph))
-      disabled = (ec->x == x) && (ec->y == y) && (w == pw) && (h == ph);
+      {
+         e_comp_object_frame_wh_adjust(ec->frame, pw, ph, &pw, &ph);
+         disabled = (w == pw) && (h == ph);
+      }
    if ((!disabled) && e_config->window_maximize_animate && (!ec->maximize_anims_disabled) &&
        (!starting) && (!ec->changes.need_maximize))
      {
