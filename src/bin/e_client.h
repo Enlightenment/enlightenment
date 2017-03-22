@@ -319,6 +319,7 @@ struct E_Client
       int          zone;
       E_Maximize   maximized;
       Eina_Bool    frame : 1;
+      Eina_Bool    set : 1;
    } saved;
 
    struct

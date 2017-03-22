@@ -4072,31 +4072,33 @@ e_client_maximize(E_Client *ec, E_Maximize max)
    if (ec->fullscreen)
      e_client_unfullscreen(ec);
    ec->pre_res_change.valid = 0;
-   if (!(ec->maximized & E_MAXIMIZE_HORIZONTAL))
+   if (!ec->saved.set)
      {
-        /* Horizontal hasn't been set */
-        if (ec->changes.pos)
-          e_comp_object_frame_xy_adjust(ec->frame, ec->x, 0, &ec->saved.x, NULL);
-        else
-          ec->saved.x = ec->client.x;
-        ec->saved.x -= ec->zone->x;
-        if (ec->visible)
-          ec->saved.w = ec->client.w;
+        if (!(ec->maximized & E_MAXIMIZE_HORIZONTAL))
+          {
+             /* Horizontal hasn't been set */
+             if (ec->changes.pos)
+               e_comp_object_frame_xy_adjust(ec->frame, ec->x, 0, &ec->saved.x, NULL);
+             else
+               ec->saved.x = ec->client.x;
+             ec->saved.x -= ec->zone->x;
+             if (ec->visible)
+               ec->saved.w = ec->client.w;
+          }
+        if (!(ec->maximized & E_MAXIMIZE_VERTICAL))
+          {
+             /* Vertical hasn't been set */
+             if (ec->changes.pos)
+               e_comp_object_frame_xy_adjust(ec->frame, 0, ec->y, NULL, &ec->saved.y);
+             else
+               ec->saved.y = ec->client.y;
+             ec->saved.y -= ec->zone->y;
+             if (ec->visible)
+               ec->saved.h = ec->client.h;
+          }
+        ec->saved.zone = ec->zone->num;
+        ec->saved.frame = e_comp_object_frame_exists(ec->frame) || (!e_comp_object_frame_allowed(ec->frame));
      }
-   if (!(ec->maximized & E_MAXIMIZE_VERTICAL))
-     {
-        /* Vertical hasn't been set */
-        if (ec->changes.pos)
-          e_comp_object_frame_xy_adjust(ec->frame, 0, ec->y, NULL, &ec->saved.y);
-        else
-          ec->saved.y = ec->client.y;
-        ec->saved.y -= ec->zone->y;
-        if (ec->visible)
-          ec->saved.h = ec->client.h;
-     }
-
-   ec->saved.zone = ec->zone->num;
-   ec->saved.frame = e_comp_object_frame_exists(ec->frame) || (!e_comp_object_frame_allowed(ec->frame));
 
    ec->maximize_override = 1;
 
@@ -4215,6 +4217,7 @@ e_client_unmaximize(E_Client *ec, E_Maximize max)
                                                      ec->saved.y + ec->zone->y,
                                                      ec->saved.w, ec->saved.h);
              ec->saved.x = ec->saved.y = ec->saved.w = ec->saved.h = 0;
+             ec->saved.set = 0;
              e_hints_window_size_unset(ec);
           }
         else
@@ -4272,7 +4275,7 @@ e_client_unmaximize(E_Client *ec, E_Maximize max)
              if (horiz)
                ec->saved.w = ec->saved.x = 0;
              if (vert && horiz)
-               ec->saved.frame = 0;
+               ec->saved.set = ec->saved.frame = 0;
           }
         e_hints_window_maximized_set(ec, ec->maximized & E_MAXIMIZE_HORIZONTAL,
                                      ec->maximized & E_MAXIMIZE_VERTICAL);
@@ -4344,6 +4347,7 @@ e_client_fullscreen(E_Client *ec, E_Fullscreen policy)
      }
 
    ec->saved.layer = ec->layer;
+   ec->saved.set = 1;
    if (!e_config->allow_above_fullscreen)
      evas_object_layer_set(ec->frame, E_LAYER_CLIENT_FULLSCREEN);
    else if (e_config->mode.presentation)
