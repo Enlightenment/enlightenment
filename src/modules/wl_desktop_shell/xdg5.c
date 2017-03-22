@@ -895,8 +895,8 @@ _xdg5_client_hook_del(void *d EINA_UNUSED, E_Client *ec)
    if (e_pixmap_type_get(ec->pixmap) != E_PIXMAP_TYPE_WL) return;
 
    shd = ec->comp_data->shell.data;
-     if (shd && (shd->version != 5)) return;
-   if (ec->comp_data->shell.surface)
+   if (shd && (shd->version != 5)) return;
+   if (ec->internal && ec->comp_data->shell.surface)
      wl_resource_destroy(ec->comp_data->shell.surface);
 }
 
