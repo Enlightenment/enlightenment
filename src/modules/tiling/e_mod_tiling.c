@@ -1632,7 +1632,6 @@ _client_drag_mouse_move(void *data, int event EINA_UNUSED, void *event_info)
         return ECORE_CALLBACK_PASS_ON;
      }
 
-
    if (evas_object_visible_get(ec->frame))
      {
         /*only initiaze the drag when x and y is different */
@@ -1652,16 +1651,9 @@ _client_drag_mouse_move(void *data, int event EINA_UNUSED, void *event_info)
 
    //now check if we can hint somehow
    evas_pointer_canvas_xy_get(e_comp->evas, &x, &y);
-   client = _tilable_client(x, y);
 
-   //if there is nothing below, we cannot hint to anything
-   if (!client)
-     {
-        evas_object_hide(extra->drag.hint);
-        return ECORE_CALLBACK_PASS_ON;
-     }
-   Position_On_Client c = _calculate_position_preference(client->client);
 
+   //create hint if not there
    if (!extra->drag.hint)
      {
         extra->drag.hint = edje_object_add(e_comp->evas);
@@ -1677,17 +1669,34 @@ _client_drag_mouse_move(void *data, int event EINA_UNUSED, void *event_info)
         evas_object_show(extra->drag.ic);
      }
 
-   //set the geometry on the hint object
-   Eina_Rectangle pos = client->client->client;
-   if (c == POSITION_LEFT)
-     evas_object_geometry_set(extra->drag.hint, pos.x, pos.y, pos.w/2, pos.h);
-   else if (c == POSITION_RIGHT)
-     evas_object_geometry_set(extra->drag.hint, pos.x+pos.w/2, pos.y, pos.w/2, pos.h);
-   else if (c == POSITION_BOTTOM)
-     evas_object_geometry_set(extra->drag.hint, pos.x, pos.y + pos.h/2, pos.w, pos.h/2);
-   else if (c == POSITION_TOP)
-     evas_object_geometry_set(extra->drag.hint, pos.x, pos.y, pos.w, pos.h/2);
-   evas_object_show(extra->drag.hint);
+   //if there is nothing below, we cannot hint to anything
+   client = _tilable_client(x, y);
+   if (client)
+     {
+        Position_On_Client c;
+
+        c = _calculate_position_preference(client->client);
+
+        Eina_Rectangle pos = client->client->client;
+        if (c == POSITION_LEFT)
+          evas_object_geometry_set(extra->drag.hint, pos.x, pos.y, pos.w/2, pos.h);
+        else if (c == POSITION_RIGHT)
+          evas_object_geometry_set(extra->drag.hint, pos.x+pos.w/2, pos.y, pos.w/2, pos.h);
+        else if (c == POSITION_BOTTOM)
+          evas_object_geometry_set(extra->drag.hint, pos.x, pos.y + pos.h/2, pos.w, pos.h/2);
+        else if (c == POSITION_TOP)
+          evas_object_geometry_set(extra->drag.hint, pos.x, pos.y, pos.w, pos.h/2);
+        evas_object_show(extra->drag.hint);
+     }
+   else
+     {
+        //if there is no client, just highlight the zone
+        Eina_Rectangle geom;
+        E_Zone *zone = e_zone_current_get();
+        e_zone_useful_geometry_get(zone, &geom.x, &geom.y, &geom.w, &geom.h);
+        evas_object_geometry_set(extra->drag.hint, EINA_RECTANGLE_ARGS(&geom));
+        evas_object_show(extra->drag.hint);
+     }
 
    return ECORE_CALLBACK_PASS_ON;
 }
