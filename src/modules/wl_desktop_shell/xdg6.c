@@ -327,6 +327,7 @@ _xdg_shell_surface_send_configure(struct wl_resource *resource, Eina_Bool fullsc
         if (shd->pending && (!width) && (!height))
           width = shd->width, height = shd->height;
      }
+   //fprintf(stderr, "CONFIGURE %dx%d | max(%d) | full(%d)\n", width, height, maximized, fullscreen);
    shd->edges = edges;
    shd->width = width;
    shd->height = height;
