@@ -4403,25 +4403,29 @@ e_client_unfullscreen(E_Client *ec)
      _e_client_frame_update(ec);
    ec->fullscreen_policy = 0;
    evas_object_smart_callback_call(ec->frame, "unfullscreen", NULL);
-   if (ec->saved.frame &&
-     (e_comp_object_frame_exists(ec->frame) || (!e_comp_object_frame_allowed(ec->frame))))
-     e_client_util_move_resize_without_frame(ec, ec->zone->x + ec->saved.x,
-                                             ec->zone->y + ec->saved.y,
-                                             ec->saved.w, ec->saved.h);
-   else
-      evas_object_geometry_set(ec->frame, ec->zone->x + ec->saved.x,
-                                              ec->zone->y + ec->saved.y,
-                                              ec->saved.w, ec->saved.h);
-   ec->saved.frame = 0;
 
    if (ec->saved.maximized)
      {
         Eina_Bool maximize_anims_disabled = ec->maximize_anims_disabled;
-        ec->changes.size = 0;
+        ec->changes.pos = ec->changes.size = 0;
         ec->maximize_anims_disabled = 1;
         e_client_maximize(ec,
           (e_config->maximize_policy & E_MAXIMIZE_TYPE) | ec->saved.maximized);
         ec->maximize_anims_disabled = maximize_anims_disabled;
+     }
+   else
+     {
+        if (ec->saved.frame &&
+          (e_comp_object_frame_exists(ec->frame) || (!e_comp_object_frame_allowed(ec->frame))))
+          e_client_util_move_resize_without_frame(ec, ec->zone->x + ec->saved.x,
+                                                  ec->zone->y + ec->saved.y,
+                                                  ec->saved.w, ec->saved.h);
+        else
+           evas_object_geometry_set(ec->frame, ec->zone->x + ec->saved.x,
+                                                   ec->zone->y + ec->saved.y,
+                                                   ec->saved.w, ec->saved.h);
+        ec->saved.w = ec->saved.x = ec->saved.h = ec->saved.y = 0;
+        ec->saved.set = ec->saved.frame = 0;
      }
 
    evas_object_layer_set(ec->frame, ec->saved.layer);
