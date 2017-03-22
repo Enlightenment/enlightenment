@@ -804,7 +804,7 @@ _e_comp_wl_evas_cb_unmaximize_pre(void *data, Evas_Object *obj EINA_UNUSED, void
    E_Client *ec = data;
    E_Maximize *max = event_info;
 
-   if (e_object_is_del(E_OBJECT(ec))) return;
+   if (ec->need_fullscreen || e_object_is_del(E_OBJECT(ec))) return;
    if (ec->comp_data->in_commit)
      ec->comp_data->maximizing = 1;
    else if (!e_client_has_xwindow(ec))
