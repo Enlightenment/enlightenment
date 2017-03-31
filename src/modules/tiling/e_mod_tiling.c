@@ -476,8 +476,11 @@ _reapply_tree(void)
      {
         e_zone_desk_useful_geometry_get(_G.tinfo->desk->zone, _G.tinfo->desk, &zx, &zy, &zw, &zh);
 
-        tiling_window_tree_apply(_G.tinfo->tree, zx, zy, zw, zh,
-                                 tiling_g.config->window_padding);
+        if (zw > 0 && zh > 0)
+          tiling_window_tree_apply(_G.tinfo->tree, zx, zy, zw, zh,
+                                   tiling_g.config->window_padding);
+        else
+          ERR("The zone desk geomtry was not usefull at all (%d,%d,%d,%d)", zx, zy, zw, zh);
      }
 }
 
