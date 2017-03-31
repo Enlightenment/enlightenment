@@ -389,7 +389,7 @@ _config_update(E_Randr2 *r, E_Config_Randr2 *cfg)
              cs = calloc(1, sizeof(E_Config_Randr2_Screen));
              if (cs)
                {
-                  cs->id = strdup(s->id);
+                  cs->id = eina_stringshare_add(s->id);
                   cfg->screens = eina_list_prepend(cfg->screens, cs);
                }
           }
