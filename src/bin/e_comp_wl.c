@@ -1431,6 +1431,17 @@ _e_comp_wl_surface_state_commit(E_Client *ec, E_Comp_Wl_Surface_State *state)
           }
         w = ec->client.w;
         h = ec->client.h;
+        if (ec->comp_data->need_center)
+          {
+             Eina_List *l;
+             E_Client *cec;
+             EINA_LIST_FOREACH(ec->transients, l, cec)
+               {
+                  cec->placed = 0;
+                  if (!cec->ignored) EC_CHANGED(cec);
+               }
+             ec->comp_data->need_center = 0;
+          }
      }
    else
      w = state->bw, h = state->bh;

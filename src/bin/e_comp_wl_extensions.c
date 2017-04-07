@@ -403,6 +403,7 @@ _e_comp_wl_zxdg_imported_v1_set_parent_of(struct wl_client *client EINA_UNUSED, 
         evas_object_event_callback_add(ec->frame, EVAS_CALLBACK_DEL, _imported_del, im);
         e_client_parent_set(ec, im->ex->ec);
         ec->parent->lock_close = 1;
+        ec->parent->comp_data->need_center = 1;
      }
 }
 
