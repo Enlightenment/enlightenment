@@ -1570,9 +1570,10 @@ _e_client_cb_evas_move(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UN
 
              EINA_LIST_FREE(list, child)
                {
-                  evas_object_move(child->frame,
-                                   child->x + x - ec->pre_cb.x,
-                                   child->y + y - ec->pre_cb.y);
+                  if (child->placed)
+                    evas_object_move(child->frame,
+                                     child->x + x - ec->pre_cb.x,
+                                     child->y + y - ec->pre_cb.y);
                }
           }
      }
@@ -1610,6 +1611,8 @@ _e_client_cb_evas_resize(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_
              EINA_LIST_FREE(list, child)
                {
                   Evas_Coord nx, ny, nw, nh;
+
+                  if (!child->placed) continue;
 
                   if ((ec->pre_cb.w > 0) && (ec->pre_cb.h > 0))
                     {
