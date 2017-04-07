@@ -705,7 +705,6 @@ _e_xdg_shell_cb_surface_get(struct wl_client *client, struct wl_resource *resour
    if ((!ec->internal) || (!ec->borderless))
      ec->border.changed = ec->changes.border = !ec->borderless;
    ec->netwm.type = E_WINDOW_TYPE_NORMAL;
-   ec->comp_data->set_win_type = EINA_TRUE;
 
    if (ec->internal_elm_win && evas_object_visible_get(ec->internal_elm_win))
      _e_xdg_shell_surface_map(surface_resource);
@@ -794,7 +793,7 @@ _e_xdg_shell_cb_popup_get(struct wl_client *client, struct wl_resource *resource
      ec->border.changed = ec->changes.border = !ec->borderless;
    ec->changes.icon = !!ec->icccm.class;
    ec->netwm.type = E_WINDOW_TYPE_POPUP_MENU;
-   ec->placed = ec->comp_data->set_win_type = EINA_TRUE;
+   ec->placed = EINA_TRUE;
 
    /* set this client as a transient for parent */
    e_shell_surface_parent_set(ec, parent_resource);

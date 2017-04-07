@@ -343,12 +343,8 @@ struct _E_Comp_Wl_Client_Data
    E_Comp_X_Client_Data *xwayland_data;
 #endif
 
-   Eina_Bool keep_buffer : 1;
    Eina_Bool mapped : 1;
-   Eina_Bool change_icon : 1;
    Eina_Bool evas_init : 1;
-   Eina_Bool set_win_type : 1;
-   Eina_Bool frame_update : 1;
    Eina_Bool cursor : 1;
    Eina_Bool moved : 1;
    Eina_Bool maximizing : 1;

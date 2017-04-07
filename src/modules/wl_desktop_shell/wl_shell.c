@@ -130,7 +130,6 @@ _wl_shell_surface_cb_toplevel_set(struct wl_client *client EINA_UNUSED, struct w
    if ((!ec->internal) || (!ec->borderless))
      ec->border.changed = ec->changes.border = !ec->borderless;
    ec->netwm.type = E_WINDOW_TYPE_NORMAL;
-   ec->comp_data->set_win_type = EINA_TRUE;
    if ((!ec->lock_user_maximize) && (ec->maximized))
      e_client_unmaximize(ec, E_MAXIMIZE_BOTH);
    if ((!ec->lock_user_fullscreen) && (ec->fullscreen))
@@ -163,7 +162,6 @@ _wl_shell_surface_cb_transient_set(struct wl_client *client EINA_UNUSED, struct 
      ec->border.changed = ec->changes.border = !ec->borderless;
    ec->netwm.type = E_WINDOW_TYPE_DIALOG;
    ec->dialog = EINA_TRUE;
-   ec->comp_data->set_win_type = EINA_TRUE;
    if ((!ec->lock_user_maximize) && (ec->maximized))
      e_client_unmaximize(ec, E_MAXIMIZE_BOTH);
    if ((!ec->lock_user_fullscreen) && (ec->fullscreen))
@@ -212,7 +210,6 @@ _wl_shell_surface_cb_popup_set(struct wl_client *client EINA_UNUSED, struct wl_r
      ec->border.changed = ec->changes.border = !ec->borderless;
    ec->changes.icon = !!ec->icccm.class;
    ec->netwm.type = E_WINDOW_TYPE_POPUP_MENU;
-   ec->comp_data->set_win_type = EINA_TRUE;
 
    cdata = ec->comp_data;
    if (ec->parent)

@@ -236,7 +236,6 @@ _e_input_panel_cb_surface_get(struct wl_client *client, struct wl_resource *reso
    ec->no_shape_cut = EINA_TRUE;
    ec->border_size = 0;
    ec->netwm.type = E_WINDOW_TYPE_UTILITY;
-   ec->comp_data->set_win_type = EINA_TRUE;
 
 
    cd->surface = surface_resource;
