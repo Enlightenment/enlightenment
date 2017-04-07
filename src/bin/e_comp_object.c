@@ -3100,10 +3100,16 @@ E_API void
 e_comp_object_util_center_on(Evas_Object *obj, Evas_Object *on)
 {
    int x, y, w, h, ow, oh;
+   E_Comp_Object *cw2;
 
    SOFT_ENTRY();
    EINA_SAFETY_ON_NULL_RETURN(on);
-   evas_object_geometry_get(on, &x, &y, &w, &h);
+
+   cw2 = evas_object_smart_data_get(on);
+   if (cw2 && eina_streq(evas_object_type_get(on), SMART_NAME))
+     x = cw2->ec->x, y = cw2->ec->y, w = cw2->ec->w, h = cw2->ec->h;
+   else
+     evas_object_geometry_get(on, &x, &y, &w, &h);
    if (cw && (cw->ec->changes.size || cw->ec->new_client))
      ow = cw->ec->w, oh = cw->ec->h;
    else
