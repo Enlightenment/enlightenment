@@ -745,14 +745,9 @@ _e_comp_wl_evas_cb_restack(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EIN
              evas_object_raise(ec->frame);
           }
      }
-   else
-     {
-        EINA_LIST_FOREACH(ec->transients, l, sec)
-          {
-             evas_object_layer_set(sec->frame, evas_object_layer_get(ec->frame));
-             evas_object_stack_above(sec->frame, ec->frame);
-          }
-     }
+   else if (!e_config->transient.raise)
+     e_client_transients_restack(ec);
+
    if (!ec->comp_data->sub.list) return;
    EINA_LIST_FOREACH(ec->comp_data->sub.list, l, sec)
      evas_object_layer_set(sec->frame, evas_object_layer_get(ec->frame));
