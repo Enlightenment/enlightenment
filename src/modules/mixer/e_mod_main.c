@@ -200,6 +200,8 @@ _volume_increase_cb(E_Object *obj EINA_UNUSED, const char *params EINA_UNUSED)
    EINA_SAFETY_ON_NULL_RETURN(mixer_context->sink_default);
    Emix_Sink *s = (Emix_Sink *)mixer_context->sink_default;
 
+   if (!s->volume.channel_count) return;
+
    if (BARRIER_CHECK(s->volume.volumes[0], s->volume.volumes[0] + VOLUME_STEP))
      return;
 
@@ -758,8 +760,15 @@ _sink_event(int type, void *info)
      {
         if (mixer_context->sink_default == sink)
           {
+             int vol;
+
              _mixer_gadget_update();
-             _notify(sink->mute ? 0 : sink->volume.volumes[0]);
+             if (sink->mute || !sink->volume.channel_count)
+               vol = 0;
+             else
+               vol = sink->volume.volumes[0];
+
+             _notify(vol);
           }
      }
    else
@@ -833,7 +842,10 @@ _sink_input_get(int *volume, Eina_Bool *muted, void *data)
 
    input = data;
 
-   if (volume) *volume = input->volume.volumes[0];
+   if (input->volume.channel_count > 0)
+     {
+        if (volume) *volume = input->volume.volumes[0];
+     }
    if (muted) *muted = input->mute;
 }
 
