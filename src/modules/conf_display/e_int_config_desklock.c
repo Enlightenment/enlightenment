@@ -726,6 +726,11 @@ _cb_method_change(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EIN
                   cfdata->bgs = eina_list_append(cfdata->bgs, desklock_bg_dup(cbg, NULL));
                   ll = ll->next;
                }
+             if (!cfdata->bgs)
+               {
+                  for (x = 0; x < cfdata->zone_count; x++)
+                    cfdata->bgs = eina_list_append(cfdata->bgs, desklock_bg_dup(NULL, "theme_desklock_background"));
+               }
         }
         break;
 
