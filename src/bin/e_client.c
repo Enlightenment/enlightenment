@@ -5554,6 +5554,7 @@ e_client_parent_set(E_Client *ec, E_Client *parent)
    if (ec->parent && (!e_client_util_ignored_get(ec)))
      {
         evas_object_layer_set(ec->frame, ec->parent->layer);
+        evas_object_stack_above(ec->frame, parent->frame);
 
         if ((e_config->focus_setting == E_FOCUS_NEW_DIALOG) ||
             (ec->parent->focused && (e_config->focus_setting == E_FOCUS_NEW_DIALOG_IF_OWNER_FOCUSED)))
