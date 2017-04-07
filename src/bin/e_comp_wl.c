@@ -729,23 +729,9 @@ _e_comp_wl_evas_cb_restack(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EIN
 
    if (e_object_is_del(E_OBJECT(ec))) return;
    if (e_client_has_xwindow(ec)) return;
-   if (ec->stack.prev || ec->stack.next)
-     {
-        if (ec->stack.ignore == 0)
-          {
-             Eina_List *list = e_client_stack_list_prepare(ec);
-             E_Client *child;
 
-             EINA_LIST_FOREACH(list, l, child)
-               {
-                  if (child == ec) continue;
-                  evas_object_layer_set(child->frame, evas_object_layer_get(ec->frame));
-               }
-             e_client_stack_list_finish(list);
-             evas_object_raise(ec->frame);
-          }
-     }
-   else if (!e_config->transient.raise)
+   /* only restack to enforce shell spec if config would otherwise not force restack */
+   if (!e_config->transient.raise)
      e_client_transients_restack(ec);
 
    if (!ec->comp_data->sub.list) return;
