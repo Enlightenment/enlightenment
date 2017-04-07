@@ -174,7 +174,11 @@ _e_sys_comp_logout(void)
 static void
 _e_sys_comp_resume(void)
 {
+   Eina_List *l;
+   E_Zone *zone;
    evas_damage_rectangle_add(e_comp->evas, 0, 0, e_comp->w, e_comp->h);
+   EINA_LIST_FOREACH(e_comp->zones, l, zone)
+     e_backlight_level_set(zone, e_config->backlight.normal, -1.0);
    _e_sys_comp_zones_fade("e,state,sys,resume", EINA_FALSE);
    e_screensaver_deactivate();
 }
