@@ -2432,7 +2432,12 @@ e_client_idler_before(void)
             )
           {
              if (e_config->screen_limits != E_CLIENT_OFFSCREEN_LIMIT_ALLOW_FULL)
-               _e_client_move_lost_window_to_center(ec);
+               {
+                  if (ec->parent)
+                    e_comp_object_util_center_on(ec->frame, ec->parent->frame);
+                  else
+                    _e_client_move_lost_window_to_center(ec);
+               }
           }
         // handle window stack
         if (!ec->stack.prev && ec->stack.next)
