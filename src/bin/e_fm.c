@@ -11110,6 +11110,7 @@ _e_fm2_file_delete_yes_cb(void *data, E_Dialog *dialog)
                          }
                     }
                }
+                evas_object_pass_events_set(ici->ic->obj, 1);
           }
         eina_list_free(sel);
      }
@@ -11118,6 +11119,7 @@ _e_fm2_file_delete_yes_cb(void *data, E_Dialog *dialog)
         if (sel) eina_list_free(sel);
         _e_fm2_icon_realpath(ic, buf, sizeof(buf));
         if (e_filereg_file_protected(buf)) return;
+        evas_object_pass_events_set(ic->obj, 1);
         files = e_util_string_append_quoted(files, &size, &len, buf);
      }
    if (files)
