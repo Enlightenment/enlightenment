@@ -863,5 +863,6 @@ E_API Eina_Bool  e_client_stack_urgent_get(E_Client *ec);
 YOLO E_API void e_client_focus_stack_set(Eina_List *l);
 
 E_API void e_client_parent_set(E_Client *ec, E_Client *parent);
+E_API void e_client_transients_restack(E_Client *ec);
 #include "e_client.x"
 #endif

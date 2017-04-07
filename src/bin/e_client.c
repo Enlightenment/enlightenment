@@ -1668,23 +1668,7 @@ _e_client_cb_evas_restack(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA
    else
      {
         if (e_config->transient.raise && ec->transients)
-          {
-             Eina_List *list = eina_list_clone(ec->transients);
-             E_Client *child, *below = NULL;
-
-             E_LIST_REVERSE_FREE(list, child)
-               {
-                  /* Don't stack iconic transients. If the user wants these shown,
-                   * that's another option.
-                   */
-                  if (child->iconic) continue;
-                  if (below)
-                    evas_object_stack_below(child->frame, below->frame);
-                  else
-                    evas_object_stack_above(child->frame, ec->frame);
-                  below = child;
-               }
-          }
+          e_client_transients_restack(ec);
      }
    if (ec->unredirected_single) return;
    e_remember_update(ec);
@@ -5524,6 +5508,8 @@ e_client_layout_cb_set(E_Client_Layout_Cb cb)
 E_API void
 e_client_parent_set(E_Client *ec, E_Client *parent)
 {
+   E_Client *prev;
+
    E_OBJECT_CHECK(ec);
    E_OBJECT_TYPE_CHECK(ec, E_CLIENT_TYPE);
    if (parent)
@@ -5555,18 +5541,49 @@ e_client_parent_set(E_Client *ec, E_Client *parent)
      }
    if (parent)
      {
+        prev = eina_list_last_data_get(parent->transients);
         parent->transients = eina_list_append(parent->transients, ec);
         ec->parent = parent;
      }
    if (ec->parent && (!e_client_util_ignored_get(ec)))
      {
         evas_object_layer_set(ec->frame, ec->parent->layer);
-        evas_object_stack_above(ec->frame, parent->frame);
+
+        if (prev)
+          evas_object_stack_above(ec->frame, prev->frame);
+        else
+          evas_object_stack_above(ec->frame, parent->frame);
+
         if (e_pixmap_usable_get(ec->pixmap) && (!ec->lock_user_location))
           e_comp_object_util_center_on(ec->frame, parent->frame);
 
         if ((e_config->focus_setting == E_FOCUS_NEW_DIALOG) ||
             (ec->parent->focused && (e_config->focus_setting == E_FOCUS_NEW_DIALOG_IF_OWNER_FOCUSED)))
           ec->take_focus = 1;
+     }
+}
+
+E_API void
+e_client_transients_restack(E_Client *ec)
+{
+   Eina_List *list;
+   E_Client *child, *below = NULL;
+
+   E_OBJECT_CHECK(ec);
+   E_OBJECT_TYPE_CHECK(ec, E_CLIENT_TYPE);
+   if (!ec->transients) return;
+
+   list = eina_list_clone(ec->transients);
+   E_LIST_REVERSE_FREE(list, child)
+     {
+        /* Don't stack iconic transients. If the user wants these shown,
+         * that's another option.
+         */
+        if (child->iconic) continue;
+        if (below)
+          evas_object_stack_below(child->frame, below->frame);
+        else
+          evas_object_stack_above(child->frame, ec->frame);
+        below = child;
      }
 }
