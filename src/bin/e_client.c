@@ -1899,6 +1899,8 @@ _e_client_eval(E_Client *ec)
              else if ((e_config->window_placement_policy == E_WINDOW_PLACEMENT_SMART) || (e_config->window_placement_policy == E_WINDOW_PLACEMENT_ANTIGADGET))
                {
                   skiplist = eina_list_append(skiplist, ec);
+                  if (ec->transients)
+                    skiplist = eina_list_merge(skiplist, eina_list_clone(ec->transients));
                   if (ec->desk)
                     e_place_desk_region_smart(ec->desk, skiplist,
                                               ec->x, ec->y, ec->w, ec->h,
