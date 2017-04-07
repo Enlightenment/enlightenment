@@ -2,7 +2,6 @@
 
 #ifdef HAVE_WAYLAND
 # include "e_comp_wl.h"
-# include <uuid.h>
 # ifndef EGL_TEXTURE_FORMAT
 #  define EGL_TEXTURE_FORMAT		0x3080
 # endif
@@ -53,7 +52,6 @@ struct _E_Pixmap
    struct wl_listener held_buffer_destroy_listener;
    void *data;
    Eina_Rectangle opaque;
-   uuid_t uuid;
    Eina_List *free_buffers;
 #endif
 
@@ -351,7 +349,6 @@ e_pixmap_new(E_Pixmap_Type type, ...)
         cp = _e_pixmap_new(type);
         cp->win = id;
         eina_hash_add(pixmaps[type], &id, cp);
-        uuid_generate(cp->uuid);
 #endif
         break;
       default: break;
