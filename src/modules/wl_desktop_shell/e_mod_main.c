@@ -91,27 +91,7 @@ e_shell_surface_parent_set(E_Client *ec, struct wl_resource *parent_resource)
    pwin = e_pixmap_window_get(pc->pixmap);
 
    e_pixmap_parent_window_set(ec->pixmap, pwin);
-
-   /* If we already have a parent, remove it */
-   if (ec->parent)
-     {
-        if (pc != ec->parent)
-          {
-             ec->parent->transients =
-                eina_list_remove(ec->parent->transients, ec);
-             if (ec->parent->modal == ec) ec->parent->modal = NULL;
-             ec->parent = NULL;
-          }
-     }
-
-   if ((pc != ec) &&
-       (eina_list_data_find(pc->transients, ec) != ec))
-     {
-        pc->transients = eina_list_append(pc->transients, ec);
-        ec->parent = pc;
-        evas_object_layer_set(ec->frame, evas_object_layer_get(pc->frame));
-        evas_object_stack_above(ec->frame, pc->frame);
-     }
+   e_client_parent_set(ec, pc);
 
    ec->icccm.fetch.transient_for = EINA_TRUE;
    ec->icccm.transient_for = pwin;
