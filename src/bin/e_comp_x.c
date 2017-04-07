@@ -68,6 +68,8 @@ static int screen_size_index = -1;
 static Ecore_X_Atom backlight_atom = 0;
 extern double e_bl_val;
 
+static Eina_Hash *dead_wins;
+
 static void _e_comp_x_hook_client_pre_frame_assign(void *d EINA_UNUSED, E_Client *ec);
 
 static inline E_Comp_X_Client_Data *
@@ -1354,8 +1356,11 @@ _e_comp_x_show_request(void *data EINA_UNUSED, int type EINA_UNUSED, Ecore_X_Eve
      (!e_comp_find_by_window(ev->parent)) ||
      (ev->parent != e_comp->root))
      {
-        ecore_x_window_show(ev->win);
-        return ECORE_CALLBACK_RENEW;
+        if ((!ec) && (!eina_hash_find(dead_wins, &ev->parent)))
+          {
+             ecore_x_window_show(ev->win);
+             return ECORE_CALLBACK_RENEW;
+          }
      }
    if (!ec)
      ec = _e_comp_x_client_new(ev->win, 0);
@@ -4712,6 +4717,15 @@ _e_comp_x_hook_client_unredirect(void *d EINA_UNUSED, E_Client *ec)
    ecore_x_window_hide(e_comp->win);
 }
 
+static Eina_Bool
+_e_comp_x_dead_win_timer(void *d)
+{
+   uint32_t pwin = (uintptr_t)(uintptr_t*)d;
+
+   eina_hash_del_by_key(dead_wins, &pwin);
+   return EINA_FALSE;
+}
+
 static void
 _e_comp_x_hook_client_del(void *d EINA_UNUSED, E_Client *ec)
 {
@@ -4776,6 +4790,8 @@ _e_comp_x_hook_client_del(void *d EINA_UNUSED, E_Client *ec)
         eina_hash_del_by_key(clients_win_hash, &pwin);
         e_pixmap_parent_window_set(e_comp_x_client_pixmap_get(ec), 0);
         ecore_x_window_free(pwin);
+        eina_hash_add(dead_wins, &pwin, (void*)1);
+        ecore_timer_add(0.5, _e_comp_x_dead_win_timer, (uintptr_t*)(uintptr_t)pwin);
      }
 
    if (ec->hacks.mapping_change)
@@ -5547,6 +5563,7 @@ e_comp_x_init(void)
    clients_win_hash = eina_hash_int32_new(NULL);
    damages_hash = eina_hash_int32_new(NULL);
    alarm_hash = eina_hash_int32_new(NULL);
+   dead_wins = eina_hash_int32_new(NULL);
    frame_extents = eina_hash_string_superfast_new(free);
 
    h = eina_list_append(h, e_client_hook_add(E_CLIENT_HOOK_DESK_SET, _e_comp_x_hook_client_desk_set, NULL));
