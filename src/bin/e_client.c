@@ -5555,6 +5555,8 @@ e_client_parent_set(E_Client *ec, E_Client *parent)
      {
         evas_object_layer_set(ec->frame, ec->parent->layer);
         evas_object_stack_above(ec->frame, parent->frame);
+        if (e_pixmap_usable_get(ec->pixmap) && (!ec->lock_user_location))
+          e_comp_object_util_center_on(ec->frame, parent->frame);
 
         if ((e_config->focus_setting == E_FOCUS_NEW_DIALOG) ||
             (ec->parent->focused && (e_config->focus_setting == E_FOCUS_NEW_DIALOG_IF_OWNER_FOCUSED)))
