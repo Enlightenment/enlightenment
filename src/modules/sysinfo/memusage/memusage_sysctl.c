@@ -28,6 +28,13 @@ _sysctlfromname(const char *name, void *mib, int depth, size_t *len)
 }
 #endif
 
+#if defined(__OpenBSD__)
+void _memsize_bytes_to_kb(unsigned long *bytes)
+{
+     *bytes = (unsigned int) *bytes >> 10;
+}
+#endif
+
 void _memusage_sysctl_getusage(unsigned long *mem_total,
                              unsigned long *mem_used,
                              unsigned long *mem_cached,
@@ -139,9 +146,17 @@ swap_out:
    if (swdev) free(swdev);
 
    *mem_total /= 1024;
-   *mem_cached  = (uvmexp.pagesize * bcstats.numbufpages) / 1024;
-   *mem_used  = (uvmexp.active * uvmexp.pagesize) / 1024 ;
-   *mem_buffers = (uvmexp.pagesize * (uvmexp.npages - uvmexp.free)) / 1024;
-   *mem_shared = (uvmexp.pagesize * uvmexp.wired) / 1024;
+ 
+   *mem_cached  = (uvmexp.pagesize * bcstats.numbufpages);
+   _memsize_bytes_to_kb(mem_cached);
+
+   *mem_used  = (uvmexp.active * uvmexp.pagesize);
+   _memsize_bytes_to_kb(mem_used);
+
+   *mem_buffers = (uvmexp.pagesize * (uvmexp.npages - uvmexp.free));
+   _memsize_bytes_to_kb(mem_buffers);
+
+   *mem_shared = (uvmexp.pagesize * uvmexp.wired);
+   _memsize_bytes_to_kb(mem_shared);
 #endif 
 }

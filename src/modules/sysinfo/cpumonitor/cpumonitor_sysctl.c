@@ -50,17 +50,23 @@ _cpumonitor_sysctl_getusage(Instance *inst)
         for (j = 0; j < CPU_STATES; j++) 
            total += cpu[j];
 
-        double used = total - (cpu[4]); //  + cpu[2] + cpu[1] + cpu[0]);
-        double ratio = (float) total / 100.0;
+        core = eina_list_nth(inst->cfg->cpumonitor.cores, i);
 
-        double percent = ((double)used / (double)ratio);
+        int diff_total = total - core->total;
+        int diff_idle = cpu[4] - core->idle;
+
+        if (diff_total == 0) diff_total = 1;
+
+        double ratio = diff_total / 100.0;
+        long used = diff_total - diff_idle;
+
+        int percent = used / ratio;
         if (percent > 100) 
            percent = 100;
         else if (percent < 0) 
            percent = 0;
 
-        core = eina_list_nth(inst->cfg->cpumonitor.cores, i);
-        core->percent = (int) percent;
+        core->percent = percent;
         core->total = total;
         core->idle = cpu[4];
 
@@ -86,17 +92,23 @@ _cpumonitor_sysctl_getusage(Instance *inst)
         for (j = 0; j < CPU_STATES; j++) 
           total += cpu_times[j];
         
-        //user", "nice", "system", "interrupt", "idle", NULL
-        long used = total - cpu_times[0] + cpu_times[1] + cpu_times[2] + cpu_times[3];
-        double ratio = (double) total / 100.0;
-        double percent =  100.0 - ((double) used / (double) ratio);
+        long idle = cpu_times[4];
+
+        int diff_total = total - inst->cfg->cpumonitor.total;
+        int diff_idle = idle - inst->cfg->cpumonitor.idle;
+
+        if (diff_total == 0) diff_total = 1;
+
+        double ratio = diff_total / 100.0;
+        long used = diff_total - diff_idle;
+        int percent = used / ratio;
         if (percent > 100)
           percent = 100;
         else if (percent < 0)
           percent = 0;
          
         inst->cfg->cpumonitor.total = total;
-        inst->cfg->cpumonitor.idle = cpu_times[3];
+        inst->cfg->cpumonitor.idle = idle; // cpu_times[3];
         inst->cfg->cpumonitor.percent = (int) percent; 
      }
    else if (ncpu > 1)
@@ -114,25 +126,27 @@ _cpumonitor_sysctl_getusage(Instance *inst)
              for (j = 0; j < CPU_STATES - 1; j++)
                total += cpu_times[j];
 	     
-             long used = total - (cpu_times[4]); 
-             double ratio = (float) total / 100.0;
-             int percent = used / ratio;
-             if (percent > 100) 
-               percent = 100;
-             else if (percent < 0) 
-               percent = 0;
              core = eina_list_nth(inst->cfg->cpumonitor.cores, i);
-             core->percent = (int) percent;
+             int diff_total = total - core->total;
+             int diff_idle  = cpu_times[4] - core->idle;
+
              core->total = total;
              core->idle = cpu_times[4];
+
+             if (diff_total == 0) diff_total = 1;
+             double ratio = diff_total / 100;
+             long used = diff_total - diff_idle;
+             int percent = used / ratio;
+
+             core->percent = percent;
 
              percent_all += (int) percent;
              total_all += total;
              idle_all += core->idle;
           }
    
-        inst->cfg->cpumonitor.total = total_all / ncpu;
-        inst->cfg->cpumonitor.idle = idle_all / ncpu;
+        inst->cfg->cpumonitor.total =  (total_all / ncpu);
+        inst->cfg->cpumonitor.idle =   (idle_all / ncpu);
         inst->cfg->cpumonitor.percent = (percent_all / ncpu) + (percent_all % ncpu);
      }
 #endif
