@@ -51,6 +51,7 @@ e_modapi_init(E_Module *m)
              return NULL;
           }
      }
+   ecore_wl2_window_type_set(ecore_evas_wayland2_window_get(e_comp->ee), ECORE_WL2_WINDOW_TYPE_TOPLEVEL);
 
    ecore_evas_data_set(e_comp->ee, "comp", e_comp);
    ecore_evas_title_set(e_comp->ee, "Enlightenment: WL-WL");
