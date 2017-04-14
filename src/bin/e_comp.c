@@ -1705,7 +1705,7 @@ e_comp_ungrab_input(Eina_Bool mouse, Eina_Bool kbd)
      {
         E_Client *ec = e_client_focused_get();
 
-        if (e_comp->comp_type == E_PIXMAP_TYPE_WL)
+        if ((!e_object_is_del(E_OBJECT(ec))) && (e_comp->comp_type == E_PIXMAP_TYPE_WL))
           {
              Eina_Bool mouse_in = ec->mouse.in;
              int x, y;
