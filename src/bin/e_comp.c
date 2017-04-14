@@ -4,7 +4,6 @@
 #endif
 
 #define OVER_FLOW 1
-//#define SHAPE_DEBUG
 //#define BORDER_ZOOMAPS
 //////////////////////////////////////////////////////////////////////////
 //
@@ -33,6 +32,7 @@ static E_Config_DD *conf_match_edd = NULL;
 
 static Ecore_Timer *action_timeout = NULL;
 static Eina_Bool gl_avail = EINA_FALSE;
+static Eina_Bool shape_debug = EINA_FALSE;
 
 static double ecore_frametime = 0;
 
@@ -50,33 +50,17 @@ E_API int E_EVENT_COMPOSITOR_XWAYLAND_INIT = -1;
 #undef ERR
 #undef CRI
 
-#if 1
-# ifdef SHAPE_DEBUG
-#  define SHAPE_DBG(...)            EINA_LOG_DOM_DBG(_e_comp_log_dom, __VA_ARGS__)
-#  define SHAPE_INF(...)            EINA_LOG_DOM_INFO(_e_comp_log_dom, __VA_ARGS__)
-#  define SHAPE_WRN(...)            EINA_LOG_DOM_WARN(_e_comp_log_dom, __VA_ARGS__)
-#  define SHAPE_ERR(...)            EINA_LOG_DOM_ERR(_e_comp_log_dom, __VA_ARGS__)
-#  define SHAPE_CRI(...)            EINA_LOG_DOM_CRIT(_e_comp_log_dom, __VA_ARGS__)
-# else
-#  define SHAPE_DBG(f, x ...)
-#  define SHAPE_INF(f, x ...)
-#  define SHAPE_WRN(f, x ...)
-#  define SHAPE_ERR(f, x ...)
-#  define SHAPE_CRI(f, x ...)
-# endif
+#define SHAPE_DBG(...) do { if (shape_debug) EINA_LOG_DOM_DBG(_e_comp_log_dom, __VA_ARGS__); } while (0)
+#define SHAPE_INF(...) do { if (shape_debug) EINA_LOG_DOM_INFO(_e_comp_log_dom, __VA_ARGS__); } while (0)
+#define SHAPE_WRN(...) do { if (shape_debug) EINA_LOG_DOM_WARN(_e_comp_log_dom, __VA_ARGS__); } while (0)
+#define SHAPE_ERR(...) do { if (shape_debug) EINA_LOG_DOM_ERR(_e_comp_log_dom, __VA_ARGS__); } while (0)
+#define SHAPE_CRI(...) do { if (shape_debug) EINA_LOG_DOM_CRIT(_e_comp_log_dom, __VA_ARGS__); } while (0)
 
 #define DBG(...)            EINA_LOG_DOM_DBG(_e_comp_log_dom, __VA_ARGS__)
 #define INF(...)            EINA_LOG_DOM_INFO(_e_comp_log_dom, __VA_ARGS__)
 #define WRN(...)            EINA_LOG_DOM_WARN(_e_comp_log_dom, __VA_ARGS__)
 #define ERR(...)            EINA_LOG_DOM_ERR(_e_comp_log_dom, __VA_ARGS__)
 #define CRI(...)            EINA_LOG_DOM_CRIT(_e_comp_log_dom, __VA_ARGS__)
-#else
-#define DBG(f, x ...)
-#define INF(f, x ...)
-#define WRN(f, x ...)
-#define ERR(f, x ...)
-#define CRI(f, x ...)
-#endif
 
 static Eina_Bool
 _e_comp_visible_object_clip_is(Evas_Object *obj)
@@ -553,7 +537,6 @@ _e_comp_cb_animator(void *data EINA_UNUSED)
 //////////////////////////////////////////////////////////////////////////
 
 
-#ifdef SHAPE_DEBUG
 static void
 _e_comp_shape_debug_rect(Eina_Rectangle *rect, E_Color *color)
 {
@@ -574,7 +557,6 @@ _e_comp_shape_debug_rect(Eina_Rectangle *rect, E_Color *color)
    e_comp->debug_rects = eina_list_append(e_comp->debug_rects, o);
    evas_object_show(o);
 }
-#endif
 
 static Eina_Bool
 _e_comp_shapes_update_object_checker_function_thingy(Evas_Object *o)
@@ -595,11 +577,7 @@ _e_comp_shapes_update_object_checker_function_thingy(Evas_Object *o)
 }
 
 static void
-#ifdef SHAPE_DEBUG
 _e_comp_shapes_update_comp_client_shape_comp_helper(E_Client *ec, Eina_Tiler *tb, Eina_List **rl)
-#else
-_e_comp_shapes_update_comp_client_shape_comp_helper(E_Client *ec, Eina_Tiler *tb)
-#endif
 {
    int x, y, w, h;
 
@@ -614,9 +592,8 @@ _e_comp_shapes_update_comp_client_shape_comp_helper(E_Client *ec, Eina_Tiler *tb
         SHAPE_DBG("SKIPPING SHAPE FOR %p", ec);
         return;
      }
-#ifdef SHAPE_DEBUG
-   INF("COMP EC: %p", ec);
-#endif
+
+   SHAPE_INF("COMP EC: %p", ec);
 
    if (ec->shaped || ec->shaped_input)
      {
@@ -669,7 +646,7 @@ _e_comp_shapes_update_comp_client_shape_comp_helper(E_Client *ec, Eina_Tiler *tb
         return;
      }
 
-#ifdef SHAPE_DEBUG
+   if (shape_debug)
      {
         Eina_Rectangle *r;
 
@@ -677,7 +654,6 @@ _e_comp_shapes_update_comp_client_shape_comp_helper(E_Client *ec, Eina_Tiler *tb
         EINA_RECTANGLE_SET(r, ec->client.x, ec->client.y, ec->client.w, ec->client.h);
         *rl = eina_list_append(*rl, r);
      }
-#endif
 
    if (!e_client_util_borderless(ec))
      {
@@ -728,13 +704,11 @@ _e_comp_shapes_update_job(void *d EINA_UNUSED)
    Eina_Rectangle *exr;
    unsigned int i, tile_count;
    Ecore_Window win;
-#ifdef SHAPE_DEBUG
    Eina_Rectangle *r;
    Eina_List *rl = NULL;
    E_Color color = {0};
 
-   INF("---------------------");
-#endif
+   SHAPE_INF("---------------------");
 
    if (e_comp->comp_type == E_PIXMAP_TYPE_X)
      win = e_comp->win;
@@ -761,9 +735,7 @@ _e_comp_shapes_update_job(void *d EINA_UNUSED)
         ec = e_comp_object_client_get(o);
         if (ec && (!ec->no_shape_cut))
           _e_comp_shapes_update_comp_client_shape_comp_helper(ec, tb
-#ifdef SHAPE_DEBUG
                                                            ,&rl
-#endif
                                                           );
 
         else
@@ -779,27 +751,29 @@ _e_comp_shapes_update_job(void *d EINA_UNUSED)
         exr[i++] = *((Eina_Rectangle *)tr);
         if (i == tile_count - 1)
           exr = realloc(exr, sizeof(Eina_Rectangle) * (tile_count *= 2));
-#ifdef SHAPE_DEBUG
-        Eina_List *l;
-
-        _e_comp_shape_debug_rect(&exr[i - 1], &color);
-        INF("%d,%d @ %dx%d", exr[i - 1].x, exr[i - 1].y, exr[i - 1].w, exr[i - 1].h);
-        EINA_LIST_FOREACH(rl, l, r)
+        if (shape_debug)
           {
-             if (E_INTERSECTS(r->x, r->y, r->w, r->h, tr->x, tr->y, tr->w, tr->h))
-               ERR("POSSIBLE RECT FAIL!!!!");
+             Eina_List *l;
+
+             _e_comp_shape_debug_rect(&exr[i - 1], &color);
+             SHAPE_INF("%d,%d @ %dx%d", exr[i - 1].x, exr[i - 1].y, exr[i - 1].w, exr[i - 1].h);
+             EINA_LIST_FOREACH(rl, l, r)
+               {
+                  if (E_INTERSECTS(r->x, r->y, r->w, r->h, tr->x, tr->y, tr->w, tr->h))
+                    SHAPE_ERR("POSSIBLE RECT FAIL!!!!");
+               }
           }
-#endif
      }
 
 #ifndef HAVE_WAYLAND_ONLY
    ecore_x_window_shape_input_rectangles_set(win, (Ecore_X_Rectangle*)exr, i);
 #endif
 
-#ifdef SHAPE_DEBUG
-   E_FREE_LIST(rl, free);
-   printf("\n");
-#endif
+   if (shape_debug)
+     {
+        E_FREE_LIST(rl, free);
+        printf("\n");
+     }
    free(exr);
    eina_iterator_free(ti);
    eina_tiler_free(tb);
@@ -1035,6 +1009,7 @@ e_comp_init(void)
    eina_log_domain_level_set("e_comp", EINA_LOG_LEVEL_INFO);
 
    ecore_frametime = ecore_animator_frametime_get();
+   shape_debug = !!getenv("E_SHAPE_DEBUG");
 
    E_EVENT_COMPOSITOR_RESIZE = ecore_event_type_new();
    E_EVENT_COMP_OBJECT_ADD = ecore_event_type_new();
