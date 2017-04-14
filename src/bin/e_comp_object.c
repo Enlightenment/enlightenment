@@ -48,11 +48,8 @@
 /* enable along with display-specific damage INF calls to enable render tracing
  * SLOW!
  */
-#if 0
-#define RENDER_DEBUG(...) INF(__VA_ARGS__)
-#else
-#define RENDER_DEBUG(...)
-#endif
+static Eina_Bool render_debug_enabled;
+#define RENDER_DEBUG(...) do { if (render_debug_enabled) INF(__VA_ARGS__); } while (0)
 
 typedef struct _E_Comp_Object
 {
@@ -2579,6 +2576,8 @@ static void
 _e_comp_smart_init(void)
 {
    if (_e_comp_smart) return;
+
+   render_debug_enabled = !!getenv("E_RENDER_DEBUG");
    {
       static const Evas_Smart_Class sc =
       {
@@ -3746,7 +3745,7 @@ e_comp_object_shape_apply(Evas_Object *obj)
         unsigned char *spix, *sp;
 
         spix = calloc(w * h, sizeof(unsigned char));
-        DBG("SHAPE [%p] rects %i", cw->ec, cw->ec->shape_rects_num);
+        RENDER_DEBUG("SHAPE [%p] rects %i", cw->ec, cw->ec->shape_rects_num);
         for (i = 0; i < cw->ec->shape_rects_num; i++)
           {
              int rx, ry, rw, rh;
