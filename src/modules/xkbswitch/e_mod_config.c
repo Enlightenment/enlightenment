@@ -60,7 +60,7 @@ struct _E_Config_Dialog_Data
    int          only_label;
    int          dont_touch_my_damn_keyboard;
 
-   Evas_Object *dlg_add_new;
+   E_Dialog *dlg_add_new;
    E_Config_Dialog *cfd;
 };
 
@@ -105,11 +105,11 @@ static void         _cb_misc_up(void *data, Evas_Object *obj, void *event);
 
 static void         _popup_cancel_clicked(void *data, Evas_Object *obj, void *event_info);
 
-static void         _dlg_add_cb_ok(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED);
-static void         _dlg_add_cb_cancel(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED);
+static void         _dlg_add_cb_ok(void *data, E_Dialog *dlg);
+static void         _dlg_add_cb_cancel(void *data EINA_UNUSED, E_Dialog *dlg);
 
-static Evas_Object  *_dlg_add_new(E_Config_Dialog_Data *cfdata);
-static void         _dlg_add_cb_del(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED);
+static E_Dialog  *_dlg_add_new(E_Config_Dialog_Data *cfdata);
+static void         _dlg_add_cb_del(void *object);
 
 static Eina_Bool    _cb_dlg_fill_delay(void *data);
 
@@ -888,7 +888,7 @@ _cb_add(void *data, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
    E_Config_Dialog_Data *cfdata;
    if (!(cfdata = data)) return;
 
-   if (cfdata->dlg_add_new) elm_win_raise(cfdata->dlg_add_new);
+   if (cfdata->dlg_add_new) elm_win_raise(cfdata->dlg_add_new->win);
    else cfdata->dlg_add_new = _dlg_add_new(cfdata);
 }
 
@@ -1348,24 +1348,26 @@ _show_variant(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UN
    evas_object_show(cfdata->variant_list);
 }
 
-static Evas_Object *
+static E_Dialog *
 _dlg_add_new(E_Config_Dialog_Data *cfdata)
 {
-   Evas_Object *dlg, *but, *tb;
-   Evas_Object *mainn, *list, *layout, *modelss, *variants, *box;
+   E_Dialog *dlg;
+   Evas_Object *mainn, *list, *layout, *modelss, *variants, *tb, *box;
    E_Zone *zone = e_zone_current_get();
    Elm_Object_Item *it;
 
-   if (!(dlg = elm_win_util_dialog_add(e_comp->elm, "xkbswitch_config_add_dialog", _("Add New Configuration")))) return NULL;
-   elm_win_icon_name_set(dlg, "preferences-desktop-keyboard");
-   evas_object_event_callback_add(dlg, EVAS_CALLBACK_FREE, _dlg_add_cb_del, cfdata);
-   elm_win_autodel_set(dlg, EINA_TRUE);
-   elm_win_center(dlg, 1, 1);
+   if (!(dlg = e_dialog_new(e_win_evas_win_get(cfdata->evas), "E", "xkbswitch_config_add_dialog"))) return NULL;
+   e_dialog_resizable_set(dlg, 1);
+   dlg->data = cfdata;
+   e_dialog_title_set(dlg, _("Add New Configuration"));
+   e_dialog_border_icon_set(dlg, "preferences-desktop-keyboard");
+   e_object_del_attach_func_set(E_OBJECT(dlg), _dlg_add_cb_del);
+   elm_win_center(dlg->win, 1, 1);
 
-   mainn = elm_box_add(dlg);
+   mainn = elm_box_add(dlg->win);
    elm_box_horizontal_set(mainn, EINA_FALSE);
    E_EXPAND(mainn);
-   elm_win_resize_object_add(dlg, mainn);
+   e_dialog_content_set(dlg, mainn, 0, 0);
    evas_object_show(mainn);
 
    box = elm_box_add(mainn);
@@ -1422,29 +1424,16 @@ _dlg_add_new(E_Config_Dialog_Data *cfdata)
    evas_object_show(variants);
    cfdata->variant_list = variants;
 
-   box = elm_box_add(mainn);
-   elm_box_horizontal_set(box, EINA_TRUE);
-   E_WEIGHT(box, 0.0, 0.0);
-   E_ALIGN(box, 0.5, 0.5);
-   elm_box_pack_end(mainn, box);
-   evas_object_show(box);
+   e_dialog_button_add(dlg, _("OK"), NULL, _dlg_add_cb_ok, cfdata);
+   e_dialog_button_add(dlg, _("Cancel"), NULL, _dlg_add_cb_cancel, cfdata);
 
-   but = elm_button_add(box);
-   elm_object_text_set(but, _("OK"));
-   evas_object_smart_callback_add(but, "clicked", _dlg_add_cb_ok, cfdata);
-   elm_box_pack_end(box, but);
-   evas_object_show(but);
+   e_dialog_button_disable_num_set(dlg, 0, 1);
+   e_dialog_button_disable_num_set(dlg, 1, 0);
 
-   but = elm_button_add(box);
-   elm_object_text_set(but, _("Cancel"));
-   evas_object_smart_callback_add(but, "clicked", _dlg_add_cb_cancel, cfdata);
-   elm_box_pack_end(box, but);
-   evas_object_show(but);
-
-   cfdata->dlg_evas = evas_object_evas_get(dlg);
-   evas_object_resize(dlg, zone->w / 3, zone->h / 3);
+   cfdata->dlg_evas = evas_object_evas_get(dlg->win);
+   evas_object_resize(dlg->win, zone->w / 3, zone->h / 3);
    evas_object_resize(mainn, zone->w / 3, zone->h / 3);
-   evas_object_show(dlg);
+   e_dialog_show(dlg);
 
    if (cfdata->dlg_fill_delay) ecore_timer_del(cfdata->dlg_fill_delay);
    cfdata->dlg_fill_delay = ecore_timer_loop_add(0.2, _cb_dlg_fill_delay, cfdata);
@@ -1455,7 +1444,7 @@ _dlg_add_new(E_Config_Dialog_Data *cfdata)
 }
 
 static void
-_dlg_add_cb_ok(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+_dlg_add_cb_ok(void *data, E_Dialog *dlg)
 {
    E_Config_Dialog_Data *cfdata = data;
    E_XKB_Layout *l;
@@ -1496,17 +1485,14 @@ _dlg_add_cb_ok(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_U
    elm_list_item_append(cfdata->used_list, buf, ic, NULL, NULL, cl);
    elm_list_go(cfdata->used_list);
 
-   evas_object_del(cfdata->dlg_add_new);
-   cfdata->dlg_add_new = NULL;
+   e_object_del(E_OBJECT(dlg));
    e_config_dialog_changed_set(cfdata->cfd, _check_changed(cfdata));
 }
 
 static void
-_dlg_add_cb_cancel(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+_dlg_add_cb_cancel(void *data EINA_UNUSED, E_Dialog *dlg)
 {
-   E_Config_Dialog_Data *cfdata = data;
-   evas_object_del(cfdata->dlg_add_new);
-   cfdata->dlg_add_new = NULL;
+   e_object_del(E_OBJECT(dlg));
 }
 
 static char *
@@ -1664,6 +1650,7 @@ _cb_layout_select(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EIN
    elm_genlist_item_class_free(itc);
    elm_genlist_item_selected_set(elm_genlist_first_item_get(cfdata->model_list), EINA_TRUE);
    elm_genlist_item_selected_set(elm_genlist_first_item_get(cfdata->variant_list), EINA_TRUE);
+   e_dialog_button_disable_num_set(cfdata->dlg_add_new, 0, 0);
 }
 
 static Eina_Bool
@@ -1680,9 +1667,10 @@ _cb_fill_delay(void *data)
 }
 
 static void
-_dlg_add_cb_del(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+_dlg_add_cb_del(void *object)
 {
-   E_Config_Dialog_Data *cfdata = data;
+   E_Dialog *dlg = object;
+   E_Config_Dialog_Data *cfdata = dlg->data;
    cfdata->dlg_add_new = NULL;
 }
 
