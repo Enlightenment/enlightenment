@@ -369,7 +369,12 @@ _e_thumb_generate(E_Thumb *eth)
         if ((ext) &&
             ((!strcasecmp(ext, ".mp4")) ||
              (!strcasecmp(ext, ".m4a")) ||
-             (!strcasecmp(ext, ".mp3"))
+             (!strcasecmp(ext, ".m4v")) ||
+             (!strcasecmp(ext, ".mp3")) ||
+             (!strcasecmp(ext, ".ogg")) ||
+             (!strcasecmp(ext, ".ogv")) ||
+             (!strcasecmp(ext, ".aac")) ||
+             (!strcasecmp(ext, ".flac"))
            ))
           {
              Evas_Object *em;
