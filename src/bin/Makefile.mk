@@ -504,7 +504,7 @@ src/bin/e_sha1.c \
 src/bin/e_thumb_main.c \
 src/bin/e_user.c
 
-src_bin_enlightenment_thumb_LDADD = @E_THUMB_LIBS@
+src_bin_enlightenment_thumb_LDADD = @e_libs@
 src_bin_enlightenment_thumb_CPPFLAGS = $(E_CPPFLAGS)
 
 src_bin_enlightenment_elm_cfgtool_SOURCES = \

@@ -28,6 +28,7 @@ void *alloca(size_t);
 #include <Evas.h>
 #include <Eet.h>
 #include <Edje.h>
+#include <Emotion.h>
 #include "e_sha1.h"
 #include "e_user.h"
 
@@ -110,6 +111,7 @@ main(int argc,
    edje_init();
    ecore_file_init();
    ecore_ipc_init();
+   emotion_init();
 
    e_user_dir_concat_static(_thumbdir, "fileman/thumbnails");
    ecore_file_mkpath(_thumbdir);
@@ -122,6 +124,7 @@ main(int argc,
         _e_ipc_server = NULL;
      }
 
+   emotion_shutdown();
    ecore_ipc_shutdown();
    ecore_file_shutdown();
    ecore_evas_shutdown();
@@ -362,7 +365,32 @@ _e_thumb_generate(E_Thumb *eth)
         ext = strrchr(eth->file, '.');
 
         sortkey = EINA_FALSE;
-        
+
+        if ((ext) &&
+            ((!strcasecmp(ext, ".mp4")) ||
+             (!strcasecmp(ext, ".m4a")) ||
+             (!strcasecmp(ext, ".mp3"))
+           ))
+          {
+             Evas_Object *em;
+
+             em = emotion_object_add(evas);
+             emotion_object_init(em, NULL);
+             emotion_object_file_set(em, eth->file);
+
+             im = emotion_file_meta_artwork_get(em, eth->file, EMOTION_ARTWORK_PREVIEW_IMAGE);
+             if (!im) im = emotion_file_meta_artwork_get(em, eth->file, EMOTION_ARTWORK_IMAGE);
+             if (im)
+               {
+                  evas_object_image_size_get(im, &ww, &hh);
+                  evas_object_image_fill_set(im, 0, 0, ww, hh);
+                  evas_object_move(im, 0, 0);
+                  evas_object_resize(im, ww, hh);
+               }
+             evas_object_del(em);
+             if (im) goto process;
+          }
+
         if ((ext) && (eth->key) &&
             ((!strcasecmp(ext, ".edj")) ||
              (!strcasecmp(ext, ".eap"))))
@@ -505,7 +533,8 @@ _e_thumb_generate(E_Thumb *eth)
           }
         else
           goto end;
-        
+
+process:
         ecore_evas_alpha_set(ee, alpha);
         ecore_evas_resize(ee, ww, hh);
         evas_object_show(im);
