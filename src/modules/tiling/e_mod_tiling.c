@@ -676,7 +676,6 @@ _insert_client_prefered(E_Client *ec)
 {
    Window_Tree *parent;
    Tiling_Split_Type type = TILING_SPLIT_VERTICAL;
-   Window_Tree *item;
    Eina_Bool before;
    int x,y;
 
@@ -700,7 +699,6 @@ _insert_client_prefered(E_Client *ec)
              type = TILING_SPLIT_HORIZONTAL;
           }
 
-        item = tiling_window_tree_client_find(_G.tinfo->tree, ec);
         _G.tinfo->tree = tiling_window_tree_insert(_G.tinfo->tree, parent, ec, type, before);
      }
    else
