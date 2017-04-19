@@ -1611,6 +1611,8 @@ _client_drag_mouse_up(void *data, int event EINA_UNUSED, void *event_info EINA_U
    E_Client *ec = data;
    Client_Extra *extra = tiling_entry_func(ec);
 
+   if (!extra) return ECORE_CALLBACK_PASS_ON;
+
    if (extra->drag.drag)
      _client_drag_terminate(data);
 
