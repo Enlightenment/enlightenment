@@ -1061,15 +1061,17 @@ e_pixmap_dmabuf_test(struct linux_dmabuf_buffer *dmabuf)
 
    if (e_comp->gl)
      {
+        Eina_Bool ret;
         ns.type = EVAS_NATIVE_SURFACE_WL_DMABUF;
         ns.version = EVAS_NATIVE_SURFACE_VERSION;
         ns.data.wl_dmabuf.attr = &dmabuf->attributes;
         ns.data.wl_dmabuf.resource = NULL;
         test = evas_object_image_add(e_comp->evas);
         evas_object_image_native_surface_set(test, &ns);
+        ret = evas_object_image_load_error_get(test) == EVAS_LOAD_ERROR_NONE;
         evas_object_del(test);
         if (!ns.data.wl_dmabuf.attr) return EINA_FALSE;
-        return EINA_TRUE;
+        return ret;
      }
 
    /* TODO: Software rendering for multi-plane formats */
