@@ -5274,7 +5274,7 @@ _e_comp_x_manage_windows(void)
           }
         if (ec)
           {
-             if (ec->override)
+             if (ec->override || (!ec->icccm.fetch.hints))
                {
                   _e_comp_x_client_evas_init(ec);
                   if (!ec->input_only)
