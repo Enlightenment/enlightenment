@@ -414,18 +414,6 @@ _e_comp_wl_input_keymap_update(struct xkb_keymap *keymap)
    /* update the state */
    _e_comp_wl_input_state_update();
 
-   /* fetch updated modifiers */
-   e_comp_wl->kbd.mod_shift =
-     xkb_map_mod_get_index(keymap, XKB_MOD_NAME_SHIFT);
-   e_comp_wl->kbd.mod_caps =
-     xkb_map_mod_get_index(keymap, XKB_MOD_NAME_CAPS);
-   e_comp_wl->kbd.mod_ctrl =
-     xkb_map_mod_get_index(keymap, XKB_MOD_NAME_CTRL);
-   e_comp_wl->kbd.mod_alt =
-     xkb_map_mod_get_index(keymap, XKB_MOD_NAME_ALT);
-   e_comp_wl->kbd.mod_super =
-     xkb_map_mod_get_index(keymap, XKB_MOD_NAME_LOGO);
-
    if (!(tmp = xkb_map_get_as_string(keymap)))
      {
         ERR("Could not get keymap string");

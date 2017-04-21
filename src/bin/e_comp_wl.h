@@ -181,9 +181,6 @@ struct _E_Comp_Wl_Data
         Eina_List *resources;
         Eina_List *focused;
         Eina_Bool enabled : 1;
-        xkb_mod_index_t mod_shift, mod_caps;
-        xkb_mod_index_t mod_ctrl, mod_alt;
-        xkb_mod_index_t mod_super;
         xkb_mod_mask_t mod_depressed, mod_latched, mod_locked;
         xkb_layout_index_t mod_group;
         xkb_layout_index_t choosen_group;
