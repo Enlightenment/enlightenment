@@ -468,8 +468,10 @@ _bar_icon_preview_hide(void *data)
    ic->mouse_out_timer = NULL;
 
    if (!ic->preview || ic->preview_dismissed)
-     return EINA_FALSE;
-
+     {
+        ic->active = EINA_FALSE;
+        return EINA_FALSE;
+     }
    E_FREE_FUNC(ic->preview_box, evas_object_del);
    E_FREE_FUNC(ic->preview_scroller, evas_object_del);
    elm_ctxpopup_dismiss(ic->preview);
@@ -940,6 +942,7 @@ _bar_icon_mouse_out(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *eve
 {
    Icon *ic = data;
 
+   ic->active = EINA_FALSE;
    elm_object_tooltip_hide(obj);
    E_FREE_FUNC(ic->mouse_in_timer, ecore_timer_del);
    E_FREE_FUNC(ic->mouse_out_timer, ecore_timer_del);
