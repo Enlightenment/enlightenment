@@ -93,14 +93,6 @@ _bar_popup_dismissed(void *data EINA_UNUSED, Evas_Object *obj, void *event_info 
    E_FREE_FUNC(obj, evas_object_del);
 }
 
-static void
-_bar_preview_dismissed(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
-{
-   Icon *ic = data;
-
-   E_FREE_FUNC(ic->preview, evas_object_del);
-}
-
 static const char *
 _bar_location_get(Instance *inst)
 {
@@ -193,7 +185,9 @@ _bar_location_get(Instance *inst)
            case E_GADGET_SITE_ORIENT_VERTICAL:
              s = "left";
              break;
-           default: break;
+           default: 
+             s = "bottom";
+             break;
           }
      }
    return s;
@@ -302,7 +296,6 @@ _bar_icon_menu_settings_clicked(void *data, Evas *e EINA_UNUSED, Evas_Object *ob
 
    evas_object_del(box);
    elm_ctxpopup_dismiss(popup);
-   evas_object_pass_events_set(popup, EINA_TRUE);
    e_gadget_configure(ic->inst->o_main);
 }
 
@@ -315,7 +308,6 @@ _bar_icon_menu_add_clicked(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, vo
 
    evas_object_del(box);
    elm_ctxpopup_dismiss(popup);
-   evas_object_pass_events_set(popup, EINA_TRUE);
    if (ic->desktop)
      e_order_append(ic->inst->order, ic->desktop);
 }
@@ -329,7 +321,6 @@ _bar_icon_menu_remove_clicked(void *data, Evas *e EINA_UNUSED, Evas_Object *obj,
 
    evas_object_del(box);
    elm_ctxpopup_dismiss(popup);
-   evas_object_pass_events_set(popup, EINA_TRUE);
    if (ic->desktop)
      e_order_remove(ic->inst->order, ic->desktop);
 }
@@ -343,7 +334,6 @@ _bar_icon_menu_properties_clicked(void *data, Evas *e EINA_UNUSED, Evas_Object *
 
    evas_object_del(box);
    elm_ctxpopup_dismiss(popup);
-   evas_object_pass_events_set(popup, EINA_TRUE);
    if (ic->desktop)
      e_desktop_edit(ic->desktop);
 }
@@ -357,7 +347,6 @@ _bar_icon_menu_action_clicked(void *data, Evas *e EINA_UNUSED, Evas_Object *obj,
 
    evas_object_del(box);
    elm_ctxpopup_dismiss(popup);
-   evas_object_pass_events_set(popup, EINA_TRUE);
    e_exec(e_zone_current_get(), NULL, action->exec, NULL, "luncher");
 }
 
@@ -484,7 +473,6 @@ _bar_icon_preview_hide(void *data)
    E_FREE_FUNC(ic->preview_box, evas_object_del);
    E_FREE_FUNC(ic->preview_scroller, evas_object_del);
    elm_ctxpopup_dismiss(ic->preview);
-   evas_object_pass_events_set(ic->preview, EINA_TRUE);
    ic->preview_dismissed = EINA_TRUE;
    current_preview = NULL;
    current_preview_menu = EINA_FALSE;
@@ -591,7 +579,7 @@ _bar_icon_mouse_down(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUS
                elm_box_horizontal_set(box, EINA_FALSE);
                break;
              default:
-               elm_box_horizontal_set(box, EINA_FALSE);
+               elm_box_horizontal_set(box, EINA_TRUE);
           }
           
         if (ic->desktop)
@@ -613,7 +601,7 @@ _bar_icon_mouse_down(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUS
                          elm_separator_horizontal_set(item, EINA_FALSE);
                          break;
                        default:
-                         elm_separator_horizontal_set(item, EINA_FALSE);
+                         elm_separator_horizontal_set(item, EINA_TRUE);
                     }
                   elm_box_pack_end(box, sep);
                   evas_object_show(sep);
@@ -856,7 +844,7 @@ _bar_icon_preview_show(void *data)
    ic->preview = elm_ctxpopup_add(e_comp->elm);
    elm_object_style_set(ic->preview, "noblock");
    evas_object_size_hint_min_set(ic->preview, ic->inst->size, ic->inst->size);
-   evas_object_smart_callback_add(ic->preview, "dismissed", _bar_preview_dismissed, ic);
+   evas_object_smart_callback_add(ic->preview, "dismissed", _bar_popup_dismissed, ic);
    evas_object_event_callback_add(ic->preview, EVAS_CALLBACK_MOUSE_IN,
        _bar_icon_preview_mouse_in, ic);
    evas_object_event_callback_add(ic->preview, EVAS_CALLBACK_MOUSE_OUT,
@@ -879,7 +867,7 @@ _bar_icon_preview_show(void *data)
           elm_box_horizontal_set(ic->preview_box, EINA_FALSE);
           break;
         default:
-          elm_box_horizontal_set(ic->preview_box, EINA_FALSE);
+          elm_box_horizontal_set(ic->preview_box, EINA_TRUE);
      }
    EINA_LIST_FOREACH(ic->execs, l, ex)
      {
@@ -964,17 +952,13 @@ _bar_exec_new_show(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *even
    Icon *ic = data;
    E_Client *ec = e_comp_object_client_get(obj);
 
-   if (ic->preview)
+   if (ic->preview && (current_preview == ic->preview))
      {
         _bar_icon_preview_client_add(ic, ec);
      }
    else
      {
-        Evas_Coord px, py, x, y, w, h;
-
-        evas_object_geometry_get(ic->o_layout, &x, &y, &w, &h);
-        evas_pointer_canvas_xy_get(evas_object_evas_get(ic->inst->o_main), &px, &py);
-        if (E_INSIDE(px, py, x, y, w, h))
+        if (ic->active)
           {
              E_FREE_FUNC(ic->mouse_out_timer, ecore_timer_del);
              E_FREE_FUNC(ic->mouse_in_timer, ecore_timer_del);
