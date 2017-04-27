@@ -28,12 +28,10 @@ _sysctlfromname(const char *name, void *mib, int depth, size_t *len)
 }
 #endif
 
-#if defined(__OpenBSD__)
 void _memsize_bytes_to_kb(unsigned long *bytes)
 {
      *bytes = (unsigned int) *bytes >> 10;
 }
-#endif
 
 void _memusage_sysctl_getusage(unsigned long *mem_total,
                              unsigned long *mem_used,
@@ -70,19 +68,23 @@ void _memusage_sysctl_getusage(unsigned long *mem_total,
    inactive_pages = _sysctlfromname("vm.stats.vm.v_inactive_count", mib, 4,  &len);
    if (inactive_pages < 0) return;
 
-   *mem_used = (total_pages - free_pages - inactive_pages) * page_size >> 10; 
-  
+   *mem_used = (total_pages - free_pages - inactive_pages) * page_size; 
+   _memsize_bytes_to_kb(mem_used);
+
    result = _sysctlfromname("vfs.bufspace", mib, 2, &len);
    if (result < 0) return;
-   *mem_buffers = (result / 1024);
+   *mem_buffers = (result);
+   _memsize_bytes_to_kb(mem_buffers);
 
    result = _sysctlfromname("vm.stats.vm.v_active_count", mib, 4, &len); 
    if (result < 0) return;
-   *mem_cached = ((result * page_size) / 1024);
+   *mem_cached = (result * page_size);
+   _memsize_bytes_to_kb(mem_cached);
 
    result = _sysctlfromname("vm.stats.vm.v_cache_count", mib, 4, &len);
    if (result < 0) return;
-   *mem_shared = (result * page_size) / 1024;
+   *mem_shared = (result * page_size);
+   _memsize_bytes_to_kb(mem_shared);
 
    result = _sysctlfromname("vm.swap_total", mib, 2, &len);
    if (result < 0) return;
