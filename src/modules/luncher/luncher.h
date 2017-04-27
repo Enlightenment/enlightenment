@@ -51,6 +51,7 @@ struct _Instance
    Evas_Object         *o_icon_con;
    Evas_Object         *drop_handler;
    Evas_Object         *place_holder;
+   Evas_Object *current_preview;
    E_Order             *order;
    Eina_List           *icons;
    Eina_Hash           *icons_desktop_hash;
@@ -62,6 +63,7 @@ struct _Instance
    Eina_Bool            main_del;
    Eina_Bool            bar;
    Eina_Bool            inside;
+   Eina_Bool current_preview_menu;
    Config_Item         *cfg;
    Icon                *drop_before;
 };

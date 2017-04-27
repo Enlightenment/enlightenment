@@ -1,7 +1,5 @@
 #include "luncher.h"
 static Eina_List *handlers;
-static Evas_Object *current_preview;
-static Eina_Bool current_preview_menu;
 static Eina_Bool _bar_icon_preview_show(void *data);
 static Eina_Bool _bar_icon_preview_hide(void *data);
 static void      _bar_icon_del(Instance *inst, Icon *ic);
@@ -489,8 +487,8 @@ _bar_icon_preview_hide(void *data)
    E_FREE_FUNC(ic->preview_scroller, evas_object_del);
    elm_ctxpopup_dismiss(ic->preview);
    ic->preview_dismissed = EINA_TRUE;
-   current_preview = NULL;
-   current_preview_menu = EINA_FALSE;
+   ic->inst->current_preview = NULL;
+   ic->inst->current_preview_menu = EINA_FALSE;
    ic->active = EINA_FALSE;
 
    return EINA_FALSE;
@@ -768,7 +766,7 @@ _bar_icon_preview_mouse_out(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EI
 {
    Icon *ic = data;
 
-   if (current_preview_menu)
+   if (ic->inst->current_preview_menu)
      return;
    E_FREE_FUNC(ic->mouse_out_timer, ecore_timer_del);
    ic->mouse_out_timer = ecore_timer_loop_add(0.25, _bar_icon_preview_hide, ic);
@@ -796,18 +794,18 @@ _bar_icon_preview_menu_hide(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, v
      {
         if (ic->preview)
           {
-             current_preview_menu = EINA_FALSE;
+             ic->inst->current_preview_menu = EINA_FALSE;
              _bar_icon_preview_mouse_out(ic, NULL, NULL, NULL);
           }
      }
 }
 
 static void
-_bar_icon_preview_mouse_up(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_data)
+_bar_icon_preview_mouse_up(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *event_data)
 {
    E_Client *ec = data;
    Evas_Event_Mouse_Up *ev = event_data;
-   Icon *ic = evas_object_data_get(current_preview, "icon");
+   Icon *ic = evas_object_data_get(obj, "icon");
 
    if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return;
    if (_bar_check_modifiers(ev->modifiers)) return;
@@ -817,7 +815,7 @@ _bar_icon_preview_mouse_up(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EIN
         e_int_client_menu_show(ec, ev->canvas.x, ev->canvas.y, 0, ev->timestamp);
         evas_object_event_callback_add(ec->border_menu->comp_object, EVAS_CALLBACK_HIDE,
             _bar_icon_preview_menu_hide, ic);
-        current_preview_menu = EINA_TRUE;
+        ic->inst->current_preview_menu = EINA_TRUE;
         return;
      }
    e_client_activate(ec, 1);
@@ -838,6 +836,7 @@ _bar_icon_preview_client_add(Icon *ic, E_Client *ec)
    Evas_Object *layout, *label, *img;
 
    layout = elm_layout_add(ic->preview_box);
+   evas_object_data_set(layout, "icon", ic);
    e_theme_edje_object_set(layout, "e/gadget/luncher/preview",
        "e/gadget/luncher/preview");
    evas_object_size_hint_weight_set(layout, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
@@ -895,8 +894,8 @@ _bar_icon_preview_show(void *data)
 
    orient = e_gadget_site_orient_get(e_gadget_site_get(ic->inst->o_main));
 
-   if (current_preview && (current_preview != ic->preview))
-     _bar_icon_preview_hide(evas_object_data_get(current_preview, "icon"));
+   if (ic->inst->current_preview && (ic->inst->current_preview != ic->preview))
+     _bar_icon_preview_hide(evas_object_data_get(ic->inst->current_preview, "icon"));
    if (ic->preview && !ic->preview_dismissed)
      _bar_icon_preview_hide(ic);
    ic->preview_dismissed = EINA_FALSE;
@@ -967,7 +966,7 @@ _bar_icon_preview_show(void *data)
    evas_object_data_del(ic->preview, "icon");
    evas_object_data_set(ic->preview, "icon", ic);
    evas_object_show(ic->preview);
-   current_preview = ic->preview;
+   ic->inst->current_preview = ic->preview;
 
    return EINA_FALSE;
 }
@@ -989,11 +988,11 @@ _bar_icon_mouse_in(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *even
    E_FREE_FUNC(ic->mouse_in_timer, ecore_timer_del);
    if (eina_list_count(ic->execs) || eina_list_count(ic->clients))
      clients = EINA_TRUE;
-   if (clients && current_preview && !current_preview_menu)
+   if (clients && ic->inst->current_preview && !ic->inst->current_preview_menu)
      _bar_icon_preview_show(ic);
    else if (_bar_check_for_iconic(ic))
      _bar_icon_preview_show(ic);
-   else if (clients && !current_preview)
+   else if (clients && !ic->inst->current_preview)
      ic->mouse_in_timer = ecore_timer_loop_add(0.3, _bar_icon_preview_show, ic);
 }
   
@@ -1003,7 +1002,7 @@ _bar_exec_new_show(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *even
    Icon *ic = data;
    E_Client *ec = e_comp_object_client_get(obj);
 
-   if (ic->preview && (current_preview == ic->preview))
+   if (ic->preview && (ic->inst->current_preview == ic->preview))
      {
         _bar_icon_preview_client_add(ic, ec);
      }
@@ -1013,11 +1012,11 @@ _bar_exec_new_show(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *even
           {
              E_FREE_FUNC(ic->mouse_out_timer, ecore_timer_del);
              E_FREE_FUNC(ic->mouse_in_timer, ecore_timer_del);
-             if (current_preview && !current_preview_menu)
+             if (ic->inst->current_preview && !ic->inst->current_preview_menu)
                _bar_icon_preview_show(ic);
              else if (_bar_check_for_iconic(ic))
                _bar_icon_preview_show(ic);
-             else if (!current_preview)
+             else if (!ic->inst->current_preview)
                ic->mouse_in_timer = ecore_timer_loop_add(0.3, _bar_icon_preview_show, ic);
           }
      }
@@ -1337,7 +1336,7 @@ _bar_cb_client_remove(void *data EINA_UNUSED, int type EINA_UNUSED, E_Event_Clie
                   if (!ic->in_order)
                     _bar_icon_del(inst, ic);
                }
-             else if (ic->preview && (current_preview == ic->preview))
+             else if (ic->preview && (inst->current_preview == ic->preview))
                { 
                   _bar_icon_preview_show(ic);
                }
@@ -1386,7 +1385,7 @@ _bar_cb_exec_del(void *data EINA_UNUSED, int type EINA_UNUSED, E_Exec_Instance *
                   if (!ic->in_order)
                     _bar_icon_del(inst, ic);
                }
-             else if (ic->preview && (current_preview == ic->preview))
+             else if (ic->preview && (inst->current_preview == ic->preview))
                {
                   _bar_icon_preview_show(ic);
                }
@@ -1502,7 +1501,7 @@ _bar_cb_exec_client_prop(void *data EINA_UNUSED, int type EINA_UNUSED, E_Event_C
                        elm_layout_signal_emit(ic->o_layout, ori, "e");
                     }
                }
-             else if (ic->preview && (current_preview == ic->preview))
+             else if (ic->preview && (inst->current_preview == ic->preview))
                {
                   _bar_icon_preview_show(ic);
                }
@@ -2200,8 +2199,8 @@ bar_create(Evas_Object *parent, int *id, E_Gadget_Site_Orient orient EINA_UNUSED
    if (inst->cfg->id < 0) return inst->o_main;
    luncher_instances = eina_list_append(luncher_instances, inst);
 
-   current_preview = NULL;
-   current_preview_menu = EINA_FALSE;
+   inst->current_preview = NULL;
+   inst->current_preview_menu = EINA_FALSE;
 
    return inst->o_main;
 }
