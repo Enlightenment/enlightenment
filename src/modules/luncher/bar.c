@@ -1149,28 +1149,31 @@ static void
 _bar_icon_scale_message(void *data, Evas_Object *obj EINA_UNUSED, Edje_Message_Type type EINA_UNUSED, int id EINA_UNUSED, void *msg)
 {
    Edje_Message_String_Float_Set *mmsg = msg;
-   Evas_Coord add = 0;
+   Evas_Coord add = 0, w, h;
    Icon *ic = data;
    double total = 0.0;
 
    ic->scale = mmsg->val[0];
    if (ic->scale > 1.0)
-     {
-        total = (((double)ic->inst->size * (double)ic->scale) - (double)ic->inst->size);
-        add = ceil(total / 2.0);
+     { 
+        evas_object_geometry_get(ic->o_layout, 0, 0, &w, &h);
         switch (e_gadget_site_orient_get(e_gadget_site_get(ic->inst->o_main)))
           {
              case E_GADGET_SITE_ORIENT_VERTICAL:
-                evas_object_resize(ic->o_spacerb, ic->inst->size, add);
-                evas_object_size_hint_min_set(ic->o_spacerb, ic->inst->size, add);
-                evas_object_resize(ic->o_spacera, ic->inst->size, total - add);
-                evas_object_size_hint_min_set(ic->o_spacera, ic->inst->size, total - add);
+                total = (((double)h * (double)ic->scale) - (double)h);
+                add = ceil(total / 2.0);
+                evas_object_resize(ic->o_spacerb, w, add);
+                evas_object_size_hint_min_set(ic->o_spacerb, w, add);
+                evas_object_resize(ic->o_spacera, w, add);
+                evas_object_size_hint_min_set(ic->o_spacera, w, add);
                 break;
              default:
-                evas_object_resize(ic->o_spacerb, add, ic->inst->size);
-                evas_object_size_hint_min_set(ic->o_spacerb, add, ic->inst->size);
-                evas_object_resize(ic->o_spacera, add, ic->inst->size);
-                evas_object_size_hint_min_set(ic->o_spacera, add, ic->inst->size);
+                total = (((double)w * (double)ic->scale) - (double)w);
+                add = ceil(total / 2.0);
+                evas_object_resize(ic->o_spacerb, add, h);
+                evas_object_size_hint_min_set(ic->o_spacerb, add, h);
+                evas_object_resize(ic->o_spacera, add, h);
+                evas_object_size_hint_min_set(ic->o_spacera, add, h);
           }
      }
    else
@@ -1267,6 +1270,10 @@ _bar_icon_add(Instance *inst, Efreet_Desktop *desktop, E_Client *non_desktop_cli
    evas_object_event_callback_priority_add(ic->o_icon, EVAS_CALLBACK_MOUSE_DOWN, 0,
        _bar_icon_mouse_down, ic);
    evas_object_event_callback_add(ic->o_icon, EVAS_CALLBACK_MOUSE_MOVE,
+       _bar_icon_mouse_move, ic);
+   evas_object_event_callback_add(ic->o_spacera, EVAS_CALLBACK_MOUSE_MOVE,
+       _bar_icon_mouse_move, ic);
+   evas_object_event_callback_add(ic->o_spacerb, EVAS_CALLBACK_MOUSE_MOVE,
        _bar_icon_mouse_move, ic);
    evas_object_event_callback_add(ic->o_icon, EVAS_CALLBACK_MOUSE_IN,
        _bar_icon_mouse_in, ic);
