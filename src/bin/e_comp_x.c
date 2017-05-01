@@ -3625,7 +3625,8 @@ _e_comp_x_hook_client_fetch(void *d EINA_UNUSED, E_Client *ec)
                     {
                        ec->visible = 1;
                        ec->changes.visible = ec->new_client;
-                       if (!ec->new_client)
+                       if ((!ec->new_client) &&
+                         (ec->icccm.state == ECORE_X_WINDOW_STATE_HINT_NORMAL))
                          evas_object_show(ec->frame);
                     }
                }
