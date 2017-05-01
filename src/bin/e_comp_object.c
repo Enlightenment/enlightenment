@@ -1649,7 +1649,7 @@ _e_comp_intercept_hide(void *data, Evas_Object *obj)
           {
              if (cw->ec->iconic)
                e_comp_object_signal_emit(obj, "e,action,iconify", "e");
-             else
+             if ((!cw->ec->iconic) || (cw->ec->iconic && (!cw->animating)))
                {
                   e_comp_object_signal_emit(obj, "e,state,hidden", "e");
                   if (!cw->showing)
@@ -2395,8 +2395,9 @@ _e_comp_smart_show(Evas_Object *obj)
      }
    if (cw->ec->iconic && (!cw->ec->new_client))
      e_comp_object_signal_emit(cw->smart_obj, "e,action,uniconify", "e");
-   else if (!cw->showing) /* if set, client was ec->hidden during show animation */
+   if ((!cw->showing) && ((!cw->ec->iconic) || cw->ec->new_client || (!cw->animating)))
      {
+        /* if cw->showing set, client was ec->hidden during show animation */
         e_comp_object_signal_emit(cw->smart_obj, "e,state,visible", "e");
         _e_comp_object_animating_begin(cw);
         cw->showing = 1;
