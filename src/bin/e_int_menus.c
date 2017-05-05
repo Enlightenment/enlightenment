@@ -87,6 +87,12 @@ _e_int_menus_augmentation_find(const char *key)
 }
 
 static void
+_e_int_menus_wallpaper_cb()
+{
+   e_configure_registry_call("appearance/wallpaper", NULL, NULL);
+}
+
+static void
 _e_int_menus_bryce_cb()
 {
    e_bryce_edit(NULL);
@@ -343,6 +349,11 @@ e_int_menus_desktops_new(void)
    e_util_menu_item_theme_icon_set(mi, "preferences-desktop-shelf");
    e_menu_pre_activate_callback_set(subm, _e_int_menus_shelves_pre_cb, NULL);
    e_menu_item_submenu_set(mi, subm);
+
+   mi = e_menu_item_new(m);
+   e_menu_item_label_set(mi, _("Change Wallpaper"));
+   e_util_menu_item_theme_icon_set(mi, "preferences-desktop-wallpaper");
+   e_menu_item_callback_set(mi, _e_int_menus_wallpaper_cb, NULL);
 
    mi = e_menu_item_new(m);
    e_menu_item_label_set(mi, _("Add Bryce"));
