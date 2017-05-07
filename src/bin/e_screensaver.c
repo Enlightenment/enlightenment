@@ -75,6 +75,12 @@ e_screensaver_update(void)
    Eina_Bool changed = EINA_FALSE;
 
    timeout = e_screensaver_timeout_get(EINA_TRUE);
+   if (!((e_config->screensaver_enable) &&
+         (!e_config->mode.presentation) &&
+         (!((e_util_fullscreen_current_any()) &&
+            (e_config->no_dpms_on_fullscreen)))))
+     timeout = 0;
+
    if (_e_screensaver_timeout != timeout)
      {
         _e_screensaver_timeout = timeout;
