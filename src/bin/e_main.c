@@ -703,14 +703,6 @@ main(int argc, char **argv)
 
    if (e_config->show_splash)
      e_init_status_set(_("Setup Screensaver"));
-   TS("E_Screensaver Init");
-   if (!e_screensaver_init())
-     {
-        e_error_message_show(_("Enlightenment cannot configure the X screensaver.\n"));
-        _e_main_shutdown(-1);
-     }
-   TS("E_Screensaver Init Done");
-   _e_main_shutdown_push(e_screensaver_shutdown);
 
    if (e_config->show_splash)
      e_init_status_set(_("Setup Screens"));
@@ -1603,6 +1595,8 @@ _e_main_screens_init(void)
 {
    TS("\tscreens: client");
    if (!e_client_init()) return 0;
+   TS("E_Screensaver Init");
+   if (!e_screensaver_init()) return 0;
    TS("\tscreens: win");
    if (!e_win_init()) return 0;
    TS("Compositor Init");
@@ -1637,6 +1631,7 @@ _e_main_screens_shutdown(void)
    e_menu_shutdown();
    e_shelf_shutdown();
    e_comp_shutdown();
+   e_screensaver_shutdown();
    e_client_shutdown();
    e_exehist_shutdown();
    e_backlight_shutdown();
