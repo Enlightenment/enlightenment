@@ -34,8 +34,8 @@ e_dpms_update(void)
 
    enabled = ((e_config->screensaver_enable) &&
               (!e_config->mode.presentation) &&
-              ((!e_util_fullscreen_current_any()) &&
-                  (!e_config->no_dpms_on_fullscreen)));
+              (!((e_util_fullscreen_current_any()) &&
+                 (e_config->no_dpms_on_fullscreen))));
    if (_e_dpms_enabled != enabled)
      {
         _e_dpms_enabled = enabled;
