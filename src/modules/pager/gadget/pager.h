@@ -3,9 +3,9 @@
 
 #include "e.h"
 
-E_API void *e_modapi_gadget_init(E_Module *m);
-E_API int   e_modapi_gadget_shutdown(E_Module *m);
-E_API int   e_modapi_gadget_save(E_Module *m);
+EINTERN void *e_modapi_gadget_init(E_Module *m);
+EINTERN int   e_modapi_gadget_shutdown(E_Module *m);
+EINTERN int   e_modapi_gadget_save(E_Module *m);
 
 typedef struct _Config Config;
 struct _Config

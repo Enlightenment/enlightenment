@@ -34,6 +34,9 @@ src_modules_mixer_module_la_SOURCES = src/modules/mixer/e_mod_main.c \
 			  src/modules/mixer/e_mod_main.h \
 			  src/modules/mixer/e_mod_config.c \
 			  src/modules/mixer/e_mod_config.h \
+                          src/modules/mixer/gadget/mixer.h \
+                          src/modules/mixer/gadget/mixer.c \
+                          src/modules/mixer/gadget/mod.c \
                           $(emixerlib)
 src_modules_mixer_module_la_LIBADD = $(MOD_LIBS) @PULSE_LIBS@ @ALSA_LIBS@
 

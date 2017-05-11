@@ -12,7 +12,10 @@ backlightpkg_LTLIBRARIES = src/modules/backlight/module.la
 src_modules_backlight_module_la_LIBADD = $(MOD_LIBS)
 src_modules_backlight_module_la_CPPFLAGS = $(MOD_CPPFLAGS)
 src_modules_backlight_module_la_LDFLAGS = $(MOD_LDFLAGS)
-src_modules_backlight_module_la_SOURCES = src/modules/backlight/e_mod_main.c
+src_modules_backlight_module_la_SOURCES = src/modules/backlight/e_mod_main.c \
+                                          src/modules/backlight/gadget/backlight.h \
+                                          src/modules/backlight/gadget/backlight.c \
+                                          src/modules/backlight/gadget/mod.c
 
 PHONIES += backlight install-backlight
 backlight: $(backlightpkg_LTLIBRARIES) $(backlight_DATA)

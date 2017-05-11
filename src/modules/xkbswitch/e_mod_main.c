@@ -1,6 +1,7 @@
 #include "e.h"
 #include "e_mod_main.h"
 #include "e_mod_parse.h"
+#include "gadget/xkbswitch.h"
 
 /* GADCON */
 static E_Gadcon_Client *_gc_init(E_Gadcon *gc, const char *name, const char *id, const char *style);
@@ -76,6 +77,7 @@ e_modapi_init(E_Module *m)
                                  _("Keyboard"), NULL,
                                  "preferences-desktop-keyboard",
                                  _xkb_cfg_dialog);
+   e_modapi_gadget_init(m);
 
    _xkb.module = m;
    xkb_change_handle = ecore_event_handler_add(E_EVENT_XKB_CHANGED, _xkb_changed_state, NULL);
@@ -89,10 +91,12 @@ e_modapi_init(E_Module *m)
  * and frees up the config.
  */
 E_API int
-e_modapi_shutdown(E_Module *m EINA_UNUSED)
+e_modapi_shutdown(E_Module *m)
 {
    e_configure_registry_item_del("keyboard_and_mouse/xkbswitch");
    e_configure_registry_category_del("keyboard_and_mouse");
+
+   e_modapi_gadget_shutdown(m);
 
    if (_xkb.evh) ecore_event_handler_del(_xkb.evh);
    if (_xkb.cfd) e_object_del(E_OBJECT(_xkb.cfd));
@@ -108,8 +112,10 @@ e_modapi_shutdown(E_Module *m EINA_UNUSED)
  * Used to save the configuration file.
  */
 E_API int
-e_modapi_save(E_Module *m EINA_UNUSED)
+e_modapi_save(E_Module *m)
 {
+   e_modapi_gadget_save(m);
+
    return 1;
 }
 

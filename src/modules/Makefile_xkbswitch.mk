@@ -16,7 +16,10 @@ src_modules_xkbswitch_module_la_SOURCES = src/modules/xkbswitch/e_mod_main.c \
 			      src/modules/xkbswitch/e_mod_main.h \
 			      src/modules/xkbswitch/e_mod_config.c \
 			      src/modules/xkbswitch/e_mod_parse.c \
-			      src/modules/xkbswitch/e_mod_parse.h
+			      src/modules/xkbswitch/e_mod_parse.h \
+                              src/modules/xkbswitch/gadget/xkbswitch.h \
+                              src/modules/xkbswitch/gadget/xkbswitch.c \
+                              src/modules/xkbswitch/gadget/mod.c
 
 PHONIES += xkbswitch install-xkbswitch
 xkbswitch: $(xkbswitchpkg_LTLIBRARIES) $(xkbswitch_DATA)

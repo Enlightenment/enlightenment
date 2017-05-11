@@ -5,7 +5,7 @@ E_Module *gmodule;
 Evas_Object *cfg_dialog;
 Eina_List *ginstances, *ghandlers;
 
-E_API void *
+EINTERN void *
 e_modapi_gadget_init(E_Module *m)
 {
    conf_edd = E_CONFIG_DD_NEW("Pager_Config", Config);
@@ -69,7 +69,7 @@ e_modapi_gadget_init(E_Module *m)
    return m;
 }
 
-E_API int
+EINTERN int
 e_modapi_gadget_shutdown(E_Module *m EINA_UNUSED)
 {
    if (cfg_dialog)
@@ -96,7 +96,7 @@ e_modapi_gadget_shutdown(E_Module *m EINA_UNUSED)
    return 1;
 }
 
-E_API int
+EINTERN int
 e_modapi_gadget_save(E_Module *m EINA_UNUSED)
 {
    e_config_domain_save("module.pager", conf_edd, pager_config);
