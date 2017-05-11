@@ -1321,7 +1321,7 @@ _cpufreq_cb_frequency_check_notify(void *data EINA_UNUSED,
         return;
      }
    active = cpufreq_config->status->active;
-   if ((cpufreq_config->status) && (status) &&
+   if ((cpufreq_config->status) &&
        (
 #ifdef __OpenBSD__
         (status->cur_percent       != cpufreq_config->status->cur_percent      ) ||
