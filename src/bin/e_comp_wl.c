@@ -2493,6 +2493,7 @@ _e_comp_wl_client_cb_del(void *data EINA_UNUSED, E_Client *ec)
         ec->parent->lock_close = EINA_FALSE;
         ec->parent->modal = NULL;
      }
+   if (e_comp_wl->selection.target == ec) e_comp_wl->selection.target = NULL;
 
    if ((ec == e_client_focused_get()) && ec->visible) _e_comp_wl_keyboard_leave(ec);
 

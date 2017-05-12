@@ -938,15 +938,6 @@ _e_comp_wl_clipboard_create(void)
    wl_signal_add(&e_comp_wl->selection.signal, &e_comp_wl->clipboard.listener);
 }
 
-static void
-_e_comp_wl_data_device_target_del(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
-{
-   E_Client *ec = data;
-
-   if (e_comp_wl->selection.target == ec)
-     e_comp_wl->selection.target = NULL;
-}
-
 E_API void
 e_comp_wl_data_device_send_enter(E_Client *ec)
 {
@@ -974,8 +965,6 @@ e_comp_wl_data_device_send_enter(E_Client *ec)
           }
      }
    e_comp_wl->selection.target = ec;
-   evas_object_event_callback_add(ec->frame, EVAS_CALLBACK_DEL,
-                                  _e_comp_wl_data_device_target_del, ec);
 
 #ifndef HAVE_WAYLAND_ONLY
    if (e_client_has_xwindow(ec))
@@ -1034,8 +1023,6 @@ e_comp_wl_data_device_send_leave(E_Client *ec)
        e_client_has_xwindow(e_comp_wl->drag_client))
      return;
    if (e_comp_wl->drag && (e_comp_wl->drag->object == ec->frame)) return;
-   evas_object_event_callback_del_full(ec->frame, EVAS_CALLBACK_DEL,
-                                       _e_comp_wl_data_device_target_del, ec);
    if (e_comp_wl->selection.target == ec)
      e_comp_wl->selection.target = NULL;
 #ifndef HAVE_WAYLAND_ONLY
