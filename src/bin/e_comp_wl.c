@@ -2577,10 +2577,16 @@ _e_comp_wl_client_cb_focus_unset(void *data EINA_UNUSED, E_Client *ec)
 }
 
 static void
+_e_comp_wl_client_cb_move_begin(void *data EINA_UNUSED, E_Client *ec EINA_UNUSED)
+{
+   e_comp_wl->ptr.button_mask = 0;
+}
+
+static void
 _e_comp_wl_client_cb_resize_begin(void *data EINA_UNUSED, E_Client *ec)
 {
+   e_comp_wl->ptr.button_mask = 0;
    if (e_client_has_xwindow(ec)) return;
-
    e_comp_wl->resize.edges = 0;
    if (ec->keyboard_resizing) return;
    switch (ec->resize_mode)
@@ -2907,6 +2913,8 @@ e_comp_wl_init(void)
    e_client_hook_add(E_CLIENT_HOOK_FOCUS_UNSET,
                      _e_comp_wl_client_cb_focus_unset, NULL);
 
+   e_client_hook_add(E_CLIENT_HOOK_MOVE_BEGIN,
+                     _e_comp_wl_client_cb_move_begin, NULL);
    e_client_hook_add(E_CLIENT_HOOK_RESIZE_BEGIN,
                      _e_comp_wl_client_cb_resize_begin, NULL);
    e_client_hook_add(E_CLIENT_HOOK_RESIZE_END,
