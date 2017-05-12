@@ -129,6 +129,8 @@ _backlight_cb_mouse_down(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj EI
    Instance *inst = data;
    Evas_Event_Mouse_Down *ev = event;
 
+   if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return;
+
    if (ev->button == 1)
      {
         if (inst->popup) elm_ctxpopup_dismiss(inst->popup);
@@ -136,6 +138,7 @@ _backlight_cb_mouse_down(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj EI
      }
    else if (ev->button == 3)
      {
+        ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
         e_gadget_configure(inst->o_main);
      }
 }
