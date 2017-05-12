@@ -218,6 +218,16 @@ _backlight_gadget_configure(Evas_Object *g EINA_UNUSED)
 }
 
 static void
+_backlight_resize_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_data EINA_UNUSED)
+{
+   Evas_Coord w, h;
+   Instance *inst = data;
+
+   edje_object_parts_extends_calc(elm_layout_edje_get(inst->o_backlight), 0, 0, &w, &h);
+   evas_object_size_hint_aspect_set(inst->o_main, EVAS_ASPECT_CONTROL_BOTH, w, h);
+}
+
+static void
 _backlight_gadget_created_cb(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
    Instance *inst = data;
@@ -225,12 +235,16 @@ _backlight_gadget_created_cb(void *data, Evas_Object *obj, void *event_info EINA
    if (inst->o_main)
      {
         e_gadget_configure_cb_set(inst->o_main, _backlight_gadget_configure);
-//        _backlight_orient(inst, e_gadget_site_orient_get(obj));
-
+         
         inst->o_backlight = elm_layout_add(inst->o_main);
         E_EXPAND(inst->o_backlight);
         E_FILL(inst->o_backlight);
-        e_theme_edje_object_set(inst->o_backlight,
+        if (inst->orient == E_GADGET_SITE_ORIENT_VERTICAL)
+          e_theme_edje_object_set(inst->o_backlight,
+                             "base/theme/modules/backlight",
+                             "e/modules/backlight/main_vert");
+        else
+          e_theme_edje_object_set(inst->o_backlight,
                              "base/theme/modules/backlight",
                              "e/modules/backlight/main");
         evas_object_event_callback_add(inst->o_backlight,
@@ -240,6 +254,10 @@ _backlight_gadget_created_cb(void *data, Evas_Object *obj, void *event_info EINA
         evas_object_event_callback_add(inst->o_backlight,
                                   EVAS_CALLBACK_MOUSE_WHEEL,
                                   _backlight_cb_mouse_wheel,
+                                  inst);
+        evas_object_event_callback_add(inst->o_backlight,
+                                  EVAS_CALLBACK_RESIZE,
+                                  _backlight_resize_cb,
                                   inst);
         elm_box_pack_end(inst->o_main, inst->o_backlight);
         evas_object_show(inst->o_backlight);
@@ -268,7 +286,6 @@ backlight_gadget_create(Evas_Object *parent, int *id EINA_UNUSED, E_Gadget_Site_
    inst->orient = orient;
    E_EXPAND(inst->o_main);
    E_FILL(inst->o_main);
-   evas_object_size_hint_aspect_set(inst->o_main, EVAS_ASPECT_CONTROL_BOTH, 1, 1);
    evas_object_smart_callback_add(parent, "gadget_created", _backlight_gadget_created_cb, inst);
    evas_object_event_callback_add(inst->o_main, EVAS_CALLBACK_DEL, backlight_del, inst);
 

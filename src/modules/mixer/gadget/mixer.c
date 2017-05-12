@@ -45,6 +45,7 @@ struct _Instance
    Evas_Object *list;
    Evas_Object *slider;
    Evas_Object *check;
+   E_Gadget_Site_Orient orient;
    Eina_Bool mute;
 };
 
@@ -586,6 +587,16 @@ _mixer_gadget_configure(Evas_Object *g EINA_UNUSED)
 }
 
 static void
+_mixer_resize_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_data EINA_UNUSED)
+{
+   Evas_Coord w, h;
+   Instance *inst = data;
+
+   edje_object_parts_extends_calc(elm_layout_edje_get(inst->o_mixer), 0, 0, &w, &h);
+   evas_object_size_hint_aspect_set(inst->o_main, EVAS_ASPECT_CONTROL_BOTH, w, h);
+}
+
+static void
 _mixer_gadget_created_cb(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
    Instance *inst = data;
@@ -597,11 +608,20 @@ _mixer_gadget_created_cb(void *data, Evas_Object *obj, void *event_info EINA_UNU
         inst->o_mixer = elm_layout_add(inst->o_main);
         E_EXPAND(inst->o_mixer);
         E_FILL(inst->o_mixer);
-        e_theme_edje_object_set(inst->o_mixer, "base/theme/modules/mixer", "e/modules/mixer/main");
+       if (inst->orient == E_GADGET_SITE_ORIENT_VERTICAL)
+          e_theme_edje_object_set(inst->o_mixer,
+                             "base/theme/modules/mixer",
+                             "e/modules/mixer/main_vert");
+        else
+          e_theme_edje_object_set(inst->o_mixer,
+                             "base/theme/modules/mixer",
+                             "e/modules/mixer/main");
         evas_object_event_callback_add(inst->o_mixer, EVAS_CALLBACK_MOUSE_DOWN,
                                   _mouse_down_cb, inst);
         evas_object_event_callback_add(inst->o_mixer, EVAS_CALLBACK_MOUSE_WHEEL,
                                   _mouse_wheel_cb, inst);
+        evas_object_event_callback_add(inst->o_mixer, EVAS_CALLBACK_RESIZE,
+                                  _mixer_resize_cb, inst);
         elm_box_pack_end(inst->o_main, inst->o_mixer);
         evas_object_show(inst->o_mixer);
         gmixer_context->instances = eina_list_append(gmixer_context->instances, inst);
@@ -619,15 +639,15 @@ mixer_del(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *e
 }
 
 EINTERN Evas_Object *
-mixer_gadget_create(Evas_Object *parent, int *id EINA_UNUSED, E_Gadget_Site_Orient orient EINA_UNUSED)
+mixer_gadget_create(Evas_Object *parent, int *id EINA_UNUSED, E_Gadget_Site_Orient orient)
 {
    Instance *inst;
 
    inst = E_NEW(Instance, 1);
    inst->o_main = elm_box_add(parent);
+   inst->orient = orient;
    E_EXPAND(inst->o_main);
    E_FILL(inst->o_main);
-   evas_object_size_hint_aspect_set(inst->o_main, EVAS_ASPECT_CONTROL_BOTH, 1, 1);
    evas_object_show(inst->o_main);   
 
    evas_object_smart_callback_add(parent, "gadget_created", _mixer_gadget_created_cb, inst);
