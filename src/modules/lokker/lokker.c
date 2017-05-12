@@ -722,11 +722,9 @@ _lokker_check_auth(void)
    return 0;
 }
 
-static Eina_Bool
-_lokker_cb_key_down(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
+EINTERN Eina_Bool
+lokker_key_down(Ecore_Event_Key *ev)
 {
-   Ecore_Event_Key *ev = event;
-
    if (!strcmp(ev->key, "Caps_Lock"))
      {
         if(ev->modifiers & ECORE_EVENT_LOCK_CAPS)
@@ -829,7 +827,6 @@ lokker_lock(void)
    total_zone_num = eina_list_count(e_comp->zones);
 
    /* handlers */
-   E_LIST_HANDLER_APPEND(edd->handlers, ECORE_EVENT_KEY_DOWN, _lokker_cb_key_down, NULL);
    E_LIST_HANDLER_APPEND(edd->handlers, E_EVENT_ZONE_ADD, _lokker_cb_zone_add, NULL);
    E_LIST_HANDLER_APPEND(edd->handlers, E_EVENT_ZONE_DEL, _lokker_cb_zone_del, NULL);
    E_LIST_HANDLER_APPEND(edd->handlers, E_EVENT_ZONE_MOVE_RESIZE, _lokker_cb_zone_move_resize, NULL);

@@ -7,7 +7,8 @@ static E_Desklock_Interface lokker_desklock_iface =
 {
    .name = "lokker",
    .show = lokker_lock,
-   .hide = lokker_unlock
+   .hide = lokker_unlock,
+   .key_down = lokker_key_down,
 };
 
 E_API void *

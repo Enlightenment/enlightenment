@@ -25,11 +25,14 @@ typedef struct E_Desklock_Interface E_Desklock_Interface;
 #ifndef E_DESKLOCK_H
 #define E_DESKLOCK_H
 
+typedef Eina_Bool (*E_Desklock_Key_Cb)(Ecore_Event_Key*);
+
 struct E_Desklock_Interface
 {
    const char *name;
    E_Desklock_Show_Cb show;
    E_Desklock_Hide_Cb hide;
+   E_Desklock_Key_Cb key_down;
    Eina_Bool active : 1; //interface is currently being used for locking
 };
 
@@ -50,6 +53,7 @@ E_API Eina_Bool e_desklock_state_get(void);
 
 E_API void e_desklock_interface_append(E_Desklock_Interface *iface);
 E_API void e_desklock_interface_remove(E_Desklock_Interface *iface);
+EINTERN E_Desklock_Interface *e_desklock_interface_current_get(void);
 E_API Eina_Stringshare *e_desklock_user_wallpaper_get(E_Zone *zone);
 E_API void e_desklock_show_hook_add(E_Desklock_Show_Cb cb);
 E_API void e_desklock_show_hook_del(E_Desklock_Show_Cb cb);

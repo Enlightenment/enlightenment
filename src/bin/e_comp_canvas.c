@@ -106,6 +106,12 @@ static Eina_Bool
 _key_down(int ctx, Ecore_Event_Key *ev)
 {
    e_screensaver_notidle();
+   if (e_desklock_state_get() && (ctx == E_BINDING_CONTEXT_MANAGER))
+     {
+        E_Desklock_Interface *iface = e_desklock_interface_current_get();
+        if (iface && iface->key_down)
+          return iface->key_down(ev);
+     }
    if ((e_comp->comp_type == E_PIXMAP_TYPE_X) && (ev->event_window != e_comp->root))
      {
         E_Client *ec;

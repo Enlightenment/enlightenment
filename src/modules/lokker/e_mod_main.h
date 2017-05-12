@@ -27,4 +27,5 @@ typedef enum
 EINTERN Eina_Bool lokker_lock(void);
 EINTERN void lokker_unlock(void);
 E_API E_Config_Dialog *e_int_config_lokker(Evas_Object *parent, const char *params EINA_UNUSED);
+EINTERN Eina_Bool lokker_key_down(Ecore_Event_Key*);
 #endif

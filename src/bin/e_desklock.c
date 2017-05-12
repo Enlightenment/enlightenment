@@ -147,6 +147,12 @@ e_desklock_interface_append(E_Desklock_Interface *iface)
      }
 }
 
+EINTERN E_Desklock_Interface *
+e_desklock_interface_current_get(void)
+{
+   return current_iface;
+}
+
 E_API void
 e_desklock_interface_remove(E_Desklock_Interface *iface)
 {
