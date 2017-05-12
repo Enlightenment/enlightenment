@@ -399,7 +399,7 @@ _xwl_selection_request(void *d EINA_UNUSED, int t EINA_UNUSED, Ecore_X_Event_Sel
                p->fdh = ecore_main_fd_handler_add(fds[0], ECORE_FD_READ, _xwl_pipe_read, p, NULL, NULL);
                p->win = ev->requestor;
                p->source = source;
-               wl_data_source_send_send(source->resource, type, dup(fds[1]));
+               wl_data_source_send_send(source->resource, type, fds[1]);
                close(fds[1]);
                p->atom = ev->target;
                p->selection = ev->selection;
