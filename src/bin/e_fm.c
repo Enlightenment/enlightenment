@@ -7061,7 +7061,7 @@ _e_fm2_cb_dnd_selection_notify(void *data, const char *type, void *event)
                     }
                }
           }
-        else
+        else if (sd->realpath)
           {
              if (_e_fm2_view_mode_get(sd) == E_FM2_VIEW_MODE_LIST && sd->order_file) /* list */
                {
