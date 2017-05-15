@@ -161,7 +161,7 @@ _thermal_config_updated(Instance *inst)
                                         _thermal_check_done,
                                         tth, EINA_TRUE);  
 #else 
-   inst->cfg->thermal.th = ecore_thread_feedback_run(_thermal_check_main,
+   inst->cfg->thermal.th = ecore_thread_feedback_run(_thermal_check_fallback,
                                         _thermal_check_notify,
                                         _thermal_check_done,
                                         _thermal_check_done,

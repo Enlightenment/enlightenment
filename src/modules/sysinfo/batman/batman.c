@@ -366,7 +366,7 @@ _batman_config_updated(Instance *inst)
 #elif defined(__OpenBSD__) || defined(__DragonFly__) || defined(__FreeBSD__) || defined(__NetBSD__)
         ok = _batman_sysctl_start(inst);
 #else
-        ok = _batman_upower_start();
+        ok = _batman_upower_start(inst);
         if (ok)
           upower = EINA_TRUE;
 #endif
