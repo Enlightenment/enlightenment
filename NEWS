@@ -1,3 +1,84 @@
+Release 0.21.8:
+---------------------
+Al Poole (4):
+      Fix macro namings in relation to endianness.
+      Fix compiler type warnings (snprintf)
+      E keyboard settings - use the same icon as the keyboard settings dialog
+      Add user to AUTHORS.
+
+Carsten Haitzler (3):
+      e randr2 - fix freeing of stringshare by making it a stringshare
+      fix fullscreen no blank logic in e's dpms code
+      further fixes to screensaver/banking with window states like fullscreen
+
+Mike Blumenkrantz (65):
+      hide wl clients before deleting them on surface destroy
+      comment out inlist member of E_Comp_Object struct
+      better protect comp object internals from dereferencing freed clients
+      add all wl client frame callbacks with priority AFTER
+      unset deskmirror client's client pointer upon client deletion
+      unset deskmirror client's client pointer upon client deletion
+      defer menu activation mouse-up feed
+      set ON_HOLD when activating start gadget
+      add handler for EFREET_EVENT_DESKTOP_CACHE_BUILD to e_order init
+      do not use saved e_randr screens if fake screens have been added
+      do not force comp objects to render for their proxies if real_hid is set
+      show x11 parent windows during reparent only if not withdrawn
+      return during comp object pixels function if client was deleted during render
+      perform frame adjustments before applying wm spec hints during unmaximize
+      only save client size info on maximize/fullscreen when protocol visible
+      check changes.pos during client maximize/fullscreen and adjust window coords
+      do not start xwayland repeatedly
+      call wl/x compositor shutdown functions directly during comp shutdown
+      force iconic state for iconic x11 clients during shutdown
+      move x11 iconic window init from e_hints -> comp_x initial fetch
+      call e_randr2_shutdown in comp shutdown
+      handle null E_Comp->screen during randr2 shutdown
+      don't set minw for keyboard layout dialog
+      only hide wl clients on surface destroy when surface is mapped
+      handle nested compositor delete requests
+      only set toolbar icon min size if icon exists
+      always use jobs to create bryce menus
+      handle window icons from elm for internal wins
+      only re-set comp object position during show if client has been placed
+      set dialog and tooltip flags for internal clients
+      add wrappers for elm_win util create functions
+      send wl client resize edges during focus-in/out send_configure
+      set signal move/resize clients as action_client internally
+      compare against e_client_action_get() for rejecting wl mouse events
+      Revert "Stop sending wayland motion events when the mouse is grabbed"
+      do not send mouse events to ssd wl clients if mouse is within ssd region
+      use even more accurate wl callbacks for detecting ssd mouse in/out events
+      always feed mouse events for wl client move events
+      block x11 focus eventing under xwayland
+      do not attempt to set window hidden hints on non-internal x11 windows
+      account for late object setup when adding ssd mouse in/out callbacks
+      disable client maximize anims when unmaximizing before a fullscreen
+      always set E_Client->need_fullscreen when fullscreening
+      force e_client_unmaximize() to complete during fullscreen operation
+      slightly optimize maximize -> fullscreen protocol comms for wl clients
+      check pixmap size before triggering maximize animation
+      force animationless re-maximize when unfullscreening
+      only center internal windows once
+      adjust size for frame geometry in no-animation maximize path
+      call "maximize" smart callback before "maximize_pre"
+      re-set backlight level when resuming from suspend
+      add a client's children to the skiplist during place routine
+      do not arbitrarily center "lost" child windows, center them on the parent
+      support clients as positioner objects in e_comp_object_util_center_on()
+      add cache for dead x11 manager windows
+      remove uuid references from e_pixmap.c
+      re-set list of default desklock bgs when changing to custom bg in config
+      set pass events on efm icons when deleting files
+      make RENDER_DEBUG activate with E_RENDER_DEBUG env var
+      make SHAPE_DEBUG activate with E_SHAPE_DEBUG env var
+      explicitly set nested wl output canvas as a toplevel window
+      avoid refocusing deleted wl clients during comp input ungrabbing
+      set initial x11 window geometry for windows which do not have wm hints
+      check image load error when checking dmabuf viability in gl
+      better handling for iconify during comp object show/hide
+      do not show iconic x11 clients on on icccm hint change
+
 Release 0.21.7:
 ---------------------
 Carsten Haitzler (19):
