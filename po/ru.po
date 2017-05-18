@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Enlightenment 0.17\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2016-10-11 13:45+0200\n"
+"POT-Creation-Date: 2017-02-28 11:09+1030\n"
 "PO-Revision-Date: 2014-09-02 19:30+0400\n"
 "Last-Translator: Игорь Мурзов <e-mail@date.by>\n"
 "Language-Team: ru <enlightenment-intl@lists.sourceforge.net>\n"
@@ -32,7 +32,7 @@ msgstr "Об Enlightenment"
 #: src/modules/conf/e_conf.c:157
 #: src/modules/conf_bindings/e_int_config_edgebindings.c:872
 #: src/modules/everything/evry_plug_windows.c:455
-#: src/modules/fileman/e_fwin.c:2572
+#: src/modules/fileman/e_fwin.c:2586
 msgid "Close"
 msgstr "Закрыть"
 
@@ -76,14 +76,14 @@ msgid "Are you sure you want to kill this window?"
 msgstr "Действительно хотите убить это окно?"
 
 #: src/bin/e_actions.c:355 src/bin/e_actions.c:3036
-#: src/bin/e_int_client_menu.c:851
+#: src/bin/e_int_client_menu.c:853
 msgid "Kill"
 msgstr "Убить"
 
 #: src/bin/e_actions.c:357 src/bin/e_actions.c:2062 src/bin/e_actions.c:2153
 #: src/bin/e_actions.c:2213 src/bin/e_actions.c:2270 src/bin/e_actions.c:2332
 #: src/bin/e_actions.c:2422 src/bin/e_confirm_dialog.c:53
-#: src/bin/e_desklock.c:589 src/bin/e_fm.c:10653 src/bin/e_fm.c:11006
+#: src/bin/e_desklock.c:592 src/bin/e_fm.c:10669 src/bin/e_fm.c:11022
 #: src/bin/e_screensaver.c:202 src/modules/quickaccess/e_mod_quickaccess.c:1308
 msgid "No"
 msgstr "Нет"
@@ -103,7 +103,7 @@ msgstr "Действительно хотите выйти из Enlightenment?"
 
 #: src/bin/e_actions.c:2060 src/bin/e_actions.c:2151 src/bin/e_actions.c:2211
 #: src/bin/e_actions.c:2268 src/bin/e_actions.c:2330 src/bin/e_actions.c:2420
-#: src/bin/e_confirm_dialog.c:52 src/bin/e_desklock.c:587 src/bin/e_fm.c:10656
+#: src/bin/e_confirm_dialog.c:52 src/bin/e_desklock.c:590 src/bin/e_fm.c:10672
 #: src/bin/e_screensaver.c:200 src/modules/quickaccess/e_mod_quickaccess.c:1308
 msgid "Yes"
 msgstr "Да"
@@ -116,7 +116,7 @@ msgstr "Завершить сессию"
 msgid "Are you sure you want to logout?"
 msgstr "Действительно хотите завершить сессию?"
 
-#: src/bin/e_actions.c:2207 src/bin/e_sys.c:962
+#: src/bin/e_actions.c:2207 src/bin/e_sys.c:966
 msgid "Power off"
 msgstr "Выключить"
 
@@ -164,11 +164,11 @@ msgstr "Кнопка мыши"
 #: src/bin/e_actions.c:3330 src/bin/e_actions.c:3335 src/bin/e_actions.c:3340
 #: src/bin/e_actions.c:3345 src/bin/e_actions.c:3350 src/bin/e_actions.c:3355
 #: src/bin/e_actions.c:3360 src/bin/e_actions.c:3366 src/bin/e_actions.c:3372
-#: src/bin/e_actions.c:3378 src/modules/shot/e_mod_main.c:1370
+#: src/bin/e_actions.c:3378 src/modules/shot/e_mod_main.c:1368
 msgid "Window : Actions"
 msgstr "Окно : Действия"
 
-#: src/bin/e_actions.c:2991 src/bin/e_fm.c:11782
+#: src/bin/e_actions.c:2991 src/bin/e_fm.c:11798
 msgid "Move"
 msgstr "Переместить"
 
@@ -187,12 +187,12 @@ msgstr "Меню"
 msgid "Window Menu"
 msgstr "Меню Окна"
 
-#: src/bin/e_actions.c:3021 src/bin/e_int_client_menu.c:1393
+#: src/bin/e_actions.c:3021 src/bin/e_int_client_menu.c:1395
 #: src/modules/winlist/e_int_config_winlist.c:208
 msgid "Raise"
 msgstr "Повысить"
 
-#: src/bin/e_actions.c:3026 src/bin/e_int_client_menu.c:1401
+#: src/bin/e_actions.c:3026 src/bin/e_int_client_menu.c:1403
 msgid "Lower"
 msgstr "Понизить"
 
@@ -232,24 +232,24 @@ msgstr "Переключить полноэкранный режим"
 msgid "Fullscreen Mode Enable"
 msgstr "Включить полноэкранный режим"
 
-#: src/bin/e_actions.c:3068 src/bin/e_int_client_menu.c:438
-#: src/bin/e_int_client_menu.c:746
+#: src/bin/e_actions.c:3068 src/bin/e_int_client_menu.c:440
+#: src/bin/e_int_client_menu.c:748
 msgid "Maximize"
 msgstr "Увеличить"
 
-#: src/bin/e_actions.c:3070 src/bin/e_int_client_menu.c:449
+#: src/bin/e_actions.c:3070 src/bin/e_int_client_menu.c:451
 msgid "Maximize Vertically"
 msgstr "Увеличить вертикально"
 
-#: src/bin/e_actions.c:3073 src/bin/e_int_client_menu.c:460
+#: src/bin/e_actions.c:3073 src/bin/e_int_client_menu.c:462
 msgid "Maximize Horizontally"
 msgstr "Увеличить горизонтально"
 
-#: src/bin/e_actions.c:3076 src/bin/e_int_client_menu.c:471
+#: src/bin/e_actions.c:3076 src/bin/e_int_client_menu.c:473
 msgid "Maximize Left"
 msgstr "Увеличить влево"
 
-#: src/bin/e_actions.c:3079 src/bin/e_int_client_menu.c:482
+#: src/bin/e_actions.c:3079 src/bin/e_int_client_menu.c:484
 msgid "Maximize Right"
 msgstr "Увеличить вправо"
 
@@ -543,7 +543,7 @@ msgstr "Перейти к окну... или запуск..."
 #: src/bin/e_actions.c:3324 src/modules/backlight/e_mod_main.c:480
 #: src/modules/conf_display/e_mod_main.c:17
 #: src/modules/conf_randr/e_mod_main.c:35 src/modules/ibox/e_mod_config.c:133
-#: src/modules/shot/e_mod_main.c:750 src/modules/shot/e_mod_main.c:1362
+#: src/modules/shot/e_mod_main.c:750 src/modules/shot/e_mod_main.c:1360
 msgid "Screen"
 msgstr "Экран"
 
@@ -841,12 +841,12 @@ msgstr "Предыдущая раскладка"
 msgid "Set As Background"
 msgstr "Установить как фон"
 
-#: src/bin/e_client.c:4347
+#: src/bin/e_client.c:4331
 #, fuzzy
 msgid "Client Error!"
 msgstr "Ошибка Списка переключения окон"
 
-#: src/bin/e_client.c:4347
+#: src/bin/e_client.c:4331
 msgid "Something has attempted to set a border when it shouldn't! Report this!"
 msgstr ""
 
@@ -865,7 +865,7 @@ msgstr "Выбрать"
 
 #: src/bin/e_color_dialog.c:68 src/bin/e_desktop_editor.c:894
 #: src/bin/e_desktop_editor.c:958 src/bin/e_entry_dialog.c:66
-#: src/bin/e_fm.c:10170 src/bin/e_fm_prop.c:635
+#: src/bin/e_fm.c:10186 src/bin/e_fm_prop.c:635
 #: src/bin/e_import_config_dialog.c:543 src/bin/e_import_dialog.c:197
 #: src/modules/bluez4/agent.c:139 src/modules/bluez4/agent.c:152
 #: src/modules/conf_bindings/e_int_config_signalbindings.c:624
@@ -881,51 +881,51 @@ msgstr "Выбрать"
 msgid "Cancel"
 msgstr "Отменить"
 
-#: src/bin/e_comp.c:1054 src/bin/e_comp.c:1060 src/bin/e_comp.c:1066
-#: src/bin/e_configure.c:33
+#: src/bin/e_comp.c:1063 src/bin/e_comp.c:1069 src/bin/e_comp.c:1075
+#: src/bin/e_comp.c:1375 src/bin/e_configure.c:33
 #: src/modules/conf_bindings/e_int_config_mousebindings.c:351
 msgid "Compositor"
 msgstr "Композитный менеджер"
 
-#: src/bin/e_comp.c:1055
+#: src/bin/e_comp.c:1064
 msgid "Change current window opacity"
 msgstr "Изменить прозрачность текущего окна"
 
-#: src/bin/e_comp.c:1061
+#: src/bin/e_comp.c:1070
 msgid "Set current window opacity"
 msgstr "Задать прозрачность текущего окна"
 
-#: src/bin/e_comp.c:1067
+#: src/bin/e_comp.c:1076
 msgid "Toggle focused client's redirect state"
 msgstr "Переключить состояние перенаправления фокусированного клиента"
 
-#: src/bin/e_comp.c:1199 src/modules/bluez4/e_mod_main.c:204
+#: src/bin/e_comp.c:1208 src/modules/bluez4/e_mod_main.c:204
 msgid "Visible"
 msgstr "Видимый"
 
-#: src/bin/e_comp.c:1204
+#: src/bin/e_comp.c:1213
 msgid "Focus-Out"
 msgstr ""
 
-#: src/bin/e_comp.c:1209
+#: src/bin/e_comp.c:1218
 msgid "Focus-In"
 msgstr ""
 
-#: src/bin/e_comp.c:1214 src/bin/e_int_client_prop.c:515
+#: src/bin/e_comp.c:1223 src/bin/e_int_client_prop.c:515
 msgid "Hidden"
 msgstr "Скрытое"
 
-#: src/bin/e_comp.c:1321 src/bin/e_int_client_prop.c:449
-#: src/bin/e_int_client_remember.c:707 src/bin/e_int_config_comp_match.c:369
+#: src/bin/e_comp.c:1330 src/bin/e_int_client_prop.c:449
+#: src/bin/e_int_client_remember.c:706 src/bin/e_int_config_comp_match.c:369
 #: src/modules/wizard/page_050.c:96
 msgid "Title"
 msgstr "Заголовок"
 
-#: src/bin/e_comp_x.c:566
+#: src/bin/e_comp_x.c:568
 msgid "Compositor Warning"
 msgstr "Предупреждение композитного менеджера"
 
-#: src/bin/e_comp_x.c:567
+#: src/bin/e_comp_x.c:569
 msgid ""
 "Your display driver does not support OpenGL, GLSL<br>shaders or no OpenGL "
 "engines were compiled or installed<br>for Evas or Ecore-Evas. Falling back "
@@ -938,11 +938,11 @@ msgstr ""
 "поддержкой OpenGL 2.0 (или OpenGL ES 2.0)<br>для использования OpenGL в "
 "композитном менеджере."
 
-#: src/bin/e_comp_x.c:5337
+#: src/bin/e_comp_x.c:5357
 msgid "Lock Failed"
 msgstr "Не удалось заблокировать"
 
-#: src/bin/e_comp_x.c:5338
+#: src/bin/e_comp_x.c:5358
 msgid ""
 "Locking the desktop failed because some application<br>has grabbed either "
 "the keyboard or the mouse or both<br>and their grab is unable to be broken."
@@ -950,12 +950,12 @@ msgstr ""
 "Блокировка рабочего стола не удалась, т.к. мышка и/или<br>клавиатура "
 "удерживаются каким-то приложением,<br>и это удерживание не удалось прервать."
 
-#: src/bin/e_comp_x.c:5354
+#: src/bin/e_comp_x.c:5374
 #, fuzzy
 msgid "Another compositor is already running on your display server."
 msgstr "На этом экране уже запущен другой<br>композитный менеджер."
 
-#: src/bin/e_comp_x.c:5374
+#: src/bin/e_comp_x.c:5394
 #, fuzzy
 msgid ""
 "Your display server does not support the compositor overlay window.\n"
@@ -964,11 +964,11 @@ msgstr ""
 "Ваш X-сервер не поддерживает перекрытие<br>окном композитного менеджера. Без "
 "этого<br>композитный менеджер не может работать."
 
-#: src/bin/e_comp_x.c:5498
+#: src/bin/e_comp_x.c:5520
 msgid "Enlightenment cannot initialize Ecore_X!\n"
 msgstr "Enlightenment не может инициализировать Ecore_X!\n"
 
-#: src/bin/e_comp_x.c:5510
+#: src/bin/e_comp_x.c:5532
 msgid ""
 "Your display server does not support XComposite, or Ecore-X was built "
 "without XComposite support. Note that for composite support you will also "
@@ -978,7 +978,7 @@ msgstr ""
 "без поддержки XComposite.<br>Заметьте, что для поддержки композитного "
 "режима<br>вам также понадобится поддержка XRender и XFixes<br>в X11 и Ecore."
 
-#: src/bin/e_comp_x.c:5519
+#: src/bin/e_comp_x.c:5541
 msgid ""
 "Your display server does not support XDamage or Ecore was built without "
 "XDamage support."
@@ -986,7 +986,7 @@ msgstr ""
 "Ваш X-сервер не поддерживает расширение XDamage<br>или Ecore был собран без "
 "поддержки XDamage."
 
-#: src/bin/e_comp_x.c:5621
+#: src/bin/e_comp_x.c:5643
 msgid "Enlightenment cannot initialize the XSettings system.\n"
 msgstr "Enlightenment не может настроить систему XSettings.\n"
 
@@ -1048,18 +1048,18 @@ msgstr ""
 #: src/bin/e_config.c:1895 src/bin/e_config.c:2540
 #: src/bin/e_config_dialog.c:274 src/bin/e_desktop_editor.c:892
 #: src/bin/e_desktop_editor.c:956 src/bin/e_entry_dialog.c:65
-#: src/bin/e_exec.c:717 src/bin/e_fm.c:10169 src/bin/e_fm.c:10926
+#: src/bin/e_exec.c:720 src/bin/e_fm.c:10185 src/bin/e_fm.c:10942
 #: src/bin/e_fm_prop.c:634 src/bin/e_import_config_dialog.c:542
-#: src/bin/e_int_client_remember.c:359 src/bin/e_int_client_remember.c:556
+#: src/bin/e_int_client_remember.c:359 src/bin/e_int_client_remember.c:555
 #: src/bin/e_int_config_comp_match.c:583 src/bin/e_module.c:662
-#: src/bin/e_module.c:964 src/bin/e_sys.c:839 src/bin/e_sys.c:880
+#: src/bin/e_module.c:964 src/bin/e_sys.c:841 src/bin/e_sys.c:883
 #: src/bin/e_update.c:70 src/bin/e_utils.c:400 src/modules/bluez4/agent.c:69
 #: src/modules/bluez4/agent.c:139 src/modules/bluez4/agent.c:152
 #: src/modules/conf_bindings/e_int_config_signalbindings.c:623
 #: src/modules/conf_intl/e_int_config_imc_import.c:119
 #: src/modules/conf_theme/e_int_config_theme_import.c:118
-#: src/modules/cpufreq/e_mod_main.c:510 src/modules/cpufreq/e_mod_main.c:537
-#: src/modules/cpufreq/e_mod_main.c:562 src/modules/cpufreq/e_mod_main.c:588
+#: src/modules/cpufreq/e_mod_main.c:506 src/modules/cpufreq/e_mod_main.c:533
+#: src/modules/cpufreq/e_mod_main.c:558 src/modules/cpufreq/e_mod_main.c:584
 #: src/modules/fileman/e_int_config_mime_edit.c:313
 #: src/modules/xkbswitch/e_mod_config.c:589
 msgid "OK"
@@ -1169,7 +1169,7 @@ msgstr ""
 #: src/modules/conf/e_mod_main.c:284 src/modules/conf_bindings/e_mod_main.c:37
 #: src/modules/conf_paths/e_mod_main.c:17
 #: src/modules/conf_performance/e_mod_main.c:17
-#: src/modules/cpufreq/e_mod_main.c:1420 src/modules/mixer/e_mod_main.c:541
+#: src/modules/cpufreq/e_mod_main.c:1456 src/modules/mixer/e_mod_main.c:520
 #: src/modules/syscon/e_mod_main.c:36
 msgid "Advanced"
 msgstr "Дополнительно"
@@ -1185,7 +1185,7 @@ msgstr "Применить"
 
 #: src/bin/e_configure.c:29 src/modules/conf_shelves/e_mod_main.c:21
 #: src/modules/connman/e_mod_main.c:604 src/modules/gadman/e_mod_main.c:23
-#: src/modules/mixer/e_mod_main.c:872 src/modules/notification/e_mod_main.c:163
+#: src/modules/mixer/e_mod_main.c:851 src/modules/notification/e_mod_main.c:163
 msgid "Extensions"
 msgstr "Расширения"
 
@@ -1217,22 +1217,22 @@ msgstr "Настройки композитного режима"
 msgid "Preferences"
 msgstr "Предпочтения"
 
-#: src/bin/e_desklock.c:265
+#: src/bin/e_desklock.c:266
 msgid "Error - no PAM support"
 msgstr "Ошибка — нет поддержки PAM"
 
-#: src/bin/e_desklock.c:266
+#: src/bin/e_desklock.c:267
 msgid ""
 "No PAM support was built into Enlightenment, so<br>desk locking is disabled."
 msgstr ""
 "Поддержка PAM не была включена при сборке Enlightenment,<br>поэтому "
 "блокировка экрана не работает."
 
-#: src/bin/e_desklock.c:578 src/bin/e_screensaver.c:191
+#: src/bin/e_desklock.c:581 src/bin/e_screensaver.c:191
 msgid "Activate Presentation Mode?"
 msgstr "Активировать режим презентации?"
 
-#: src/bin/e_desklock.c:581
+#: src/bin/e_desklock.c:584
 msgid ""
 "You unlocked your desktop too fast.<br><br>Would you like to enable "
 "<b>presentation</b> mode and temporarily disable screen saver, lock and "
@@ -1242,11 +1242,11 @@ msgstr ""
 "<b>презентации</b> и временно отключить хранитель экрана, блокировку и "
 "энергосбережение?"
 
-#: src/bin/e_desklock.c:591 src/bin/e_screensaver.c:204
+#: src/bin/e_desklock.c:594 src/bin/e_screensaver.c:204
 msgid "No, but increase timeout"
 msgstr "Нет, но увеличить задержку"
 
-#: src/bin/e_desklock.c:593 src/bin/e_screensaver.c:206
+#: src/bin/e_desklock.c:596 src/bin/e_screensaver.c:206
 msgid "No, and stop asking"
 msgstr "Нет, и не спрашивать больше"
 
@@ -1319,7 +1319,7 @@ msgstr "Файл .desktop"
 #: src/modules/conf_applications/e_int_config_defapps.c:358
 #: src/modules/everything/evry_config.c:376
 #: src/modules/everything/evry_plug_files.c:1462
-#: src/modules/pager/e_mod_config.c:127 src/modules/pager/e_mod_config.c:218
+#: src/modules/pager/e_mod_config.c:127 src/modules/pager/e_mod_config.c:217
 #: src/modules/pager_plain/e_mod_config.c:128
 #: src/modules/pager_plain/e_mod_config.c:226
 #: src/modules/tiling/e_mod_config.c:169
@@ -1339,8 +1339,8 @@ msgstr "Запускать в терминале"
 msgid "Show in Menus"
 msgstr "Показывать в меню"
 
-#: src/bin/e_desktop_editor.c:822 src/bin/e_fm.c:8955 src/bin/e_fm.c:9104
-#: src/bin/e_int_client_remember.c:825 src/modules/xkbswitch/e_mod_config.c:405
+#: src/bin/e_desktop_editor.c:822 src/bin/e_fm.c:8971 src/bin/e_fm.c:9120
+#: src/bin/e_int_client_remember.c:824 src/modules/xkbswitch/e_mod_config.c:405
 msgid "Options"
 msgstr "Опции"
 
@@ -1379,11 +1379,11 @@ msgstr "Enlightenment не смог вернуться в каталог:<br><br
 msgid "Enlightenment was unable to fork a child process:<br><br>%s"
 msgstr "Enlightenment не смог запустить дочерний процесс:<br><br>%s"
 
-#: src/bin/e_exec.c:708
+#: src/bin/e_exec.c:711
 msgid "Application run error"
 msgstr "Ошибка запуска приложения"
 
-#: src/bin/e_exec.c:710
+#: src/bin/e_exec.c:713
 #, c-format
 msgid ""
 "Enlightenment was unable to run the application:<br><br>%s<br><br>The "
@@ -1392,106 +1392,106 @@ msgstr ""
 "Enlightenment не смог запустить приложение:<br><br>%s<br><br>Приложение не "
 "запустилось."
 
-#: src/bin/e_exec.c:848
+#: src/bin/e_exec.c:851
 msgid "Application Execution Error"
 msgstr "Ошибка исполнения приложения"
 
-#: src/bin/e_exec.c:861 src/bin/e_exec.c:863
+#: src/bin/e_exec.c:864 src/bin/e_exec.c:866
 #, c-format
 msgid "%s stopped running unexpectedly."
 msgstr "%s неожиданно закончил исполнение."
 
-#: src/bin/e_exec.c:869
+#: src/bin/e_exec.c:872
 #, c-format
 msgid "An exit code of %i was returned from %s."
 msgstr "Код выхода %i был возвращен из %s."
 
-#: src/bin/e_exec.c:877
+#: src/bin/e_exec.c:880
 #, c-format
 msgid "%s was interrupted by an Interrupt Signal."
 msgstr "%s было прервано сигналом прерывания."
 
-#: src/bin/e_exec.c:880
+#: src/bin/e_exec.c:883
 #, c-format
 msgid "%s was interrupted by a Quit Signal."
 msgstr "%s было прервано сигналом выхода."
 
-#: src/bin/e_exec.c:884
+#: src/bin/e_exec.c:887
 #, c-format
 msgid "%s was interrupted by an Abort Signal."
 msgstr "%s было прервано сигналом аварийного прекращения работы."
 
-#: src/bin/e_exec.c:887
+#: src/bin/e_exec.c:890
 #, c-format
 msgid "%s was interrupted by a Floating Point Error."
 msgstr "%s было прервано ошибкой плавающей точки."
 
-#: src/bin/e_exec.c:891
+#: src/bin/e_exec.c:894
 #, c-format
 msgid "%s was interrupted by an Uninterruptable Kill Signal."
 msgstr "%s было прервано сигналом Uninterruptable Kill."
 
-#: src/bin/e_exec.c:895
+#: src/bin/e_exec.c:898
 #, c-format
 msgid "%s was interrupted by a Segmentation Fault."
 msgstr "%s было прервано ошибкой сегментации."
 
-#: src/bin/e_exec.c:899
+#: src/bin/e_exec.c:902
 #, c-format
 msgid "%s was interrupted by a Broken Pipe."
 msgstr "%s было прервано ошибкой Broken Pipe."
 
-#: src/bin/e_exec.c:902
+#: src/bin/e_exec.c:905
 #, c-format
 msgid "%s was interrupted by a Termination Signal."
 msgstr "%s было прервано сигналом завершения."
 
-#: src/bin/e_exec.c:906
+#: src/bin/e_exec.c:909
 #, c-format
 msgid "%s was interrupted by a Bus Error."
 msgstr "%s было прервано ошибкой Bus Error."
 
-#: src/bin/e_exec.c:909
+#: src/bin/e_exec.c:912
 #, c-format
 msgid "%s was interrupted by the signal number %i."
 msgstr "%s было прервано сигналом номер %i."
 
-#: src/bin/e_exec.c:965
+#: src/bin/e_exec.c:968
 msgid ""
 "***The remaining output has been truncated. Save the output to view.***\n"
 msgstr "*** Остаток вывода был обрезан. Сохраните вывод для просмотра. ***\n"
 
-#: src/bin/e_exec.c:1024 src/bin/e_exec.c:1102 src/bin/e_exec.c:1109
+#: src/bin/e_exec.c:1027 src/bin/e_exec.c:1105 src/bin/e_exec.c:1112
 msgid "Error Logs"
 msgstr "Лог ошибки"
 
-#: src/bin/e_exec.c:1030 src/bin/e_exec.c:1110
+#: src/bin/e_exec.c:1033 src/bin/e_exec.c:1113
 msgid "There was no error message."
 msgstr "Не было сообщения ошибки."
 
-#: src/bin/e_exec.c:1034 src/bin/e_exec.c:1117
+#: src/bin/e_exec.c:1037 src/bin/e_exec.c:1120
 msgid "Save This Message"
 msgstr "Сохранить это сообщение"
 
-#: src/bin/e_exec.c:1039 src/bin/e_exec.c:1042 src/bin/e_exec.c:1122
-#: src/bin/e_exec.c:1125
+#: src/bin/e_exec.c:1042 src/bin/e_exec.c:1045 src/bin/e_exec.c:1125
+#: src/bin/e_exec.c:1128
 #, c-format
 msgid "This error log will be saved as %s/%s.log"
 msgstr "Этот лог об ошибке будет сохранён как %s/%s.log"
 
-#: src/bin/e_exec.c:1068
+#: src/bin/e_exec.c:1071
 msgid "Error Information"
 msgstr "Информация об ошибке"
 
-#: src/bin/e_exec.c:1076
+#: src/bin/e_exec.c:1079
 msgid "Error Signal Information"
 msgstr "Информация о сигнале ошибки"
 
-#: src/bin/e_exec.c:1086 src/bin/e_exec.c:1093
+#: src/bin/e_exec.c:1089 src/bin/e_exec.c:1096
 msgid "Output Data"
 msgstr "Выходные данные"
 
-#: src/bin/e_exec.c:1094
+#: src/bin/e_exec.c:1097
 msgid "There was no output."
 msgstr "Не было данных."
 
@@ -1504,7 +1504,7 @@ msgstr "Несуществующий путь"
 msgid "%s doesn't exist."
 msgstr "%s не существует."
 
-#: src/bin/e_fm.c:2894 src/bin/e_fm.c:3887
+#: src/bin/e_fm.c:2910 src/bin/e_fm.c:3903
 #, c-format
 msgid "%u file"
 msgid_plural "%u files"
@@ -1512,115 +1512,115 @@ msgstr[0] "%u файл"
 msgstr[1] "%u файла"
 msgstr[2] "%u файлов"
 
-#: src/bin/e_fm.c:3137
+#: src/bin/e_fm.c:3153
 msgid "Mount Error"
 msgstr "Ошибка подключения"
 
-#: src/bin/e_fm.c:3137
+#: src/bin/e_fm.c:3153
 msgid "Can't mount device"
 msgstr "Не удалось подключить устройство"
 
-#: src/bin/e_fm.c:3153
+#: src/bin/e_fm.c:3169
 msgid "Unmount Error"
 msgstr "Ошибка отключения"
 
-#: src/bin/e_fm.c:3153
+#: src/bin/e_fm.c:3169
 msgid "Can't unmount device"
 msgstr "Не удалось отключить устройство"
 
-#: src/bin/e_fm.c:3168
+#: src/bin/e_fm.c:3184
 msgid "Eject Error"
 msgstr "Ошибка извлечения"
 
-#: src/bin/e_fm.c:3168
+#: src/bin/e_fm.c:3184
 msgid "Can't eject device"
 msgstr "Не удалось извлечь устройство"
 
-#: src/bin/e_fm.c:6672 src/bin/e_fm.c:6707 src/bin/e_fm.c:6810
-#: src/bin/e_fm.c:9667 src/bin/e_fm.c:9682 src/bin/e_fm.c:9817
-#: src/bin/e_fm.c:9822 src/bin/e_fm.c:9838 src/bin/e_fm.c:9843
-#: src/bin/e_fm.c:10493 src/bin/e_fm.c:10497 src/bin/e_fm.c:10501
-#: src/bin/e_fm.c:10529 src/bin/e_fm.c:10534 src/bin/e_fm.c:10538
-#: src/bin/e_fm.c:10597 src/bin/e_fm.c:10827 src/bin/e_fm_prop.c:254
-#: src/bin/e_shelf.c:2258 src/modules/pager/e_mod_main.c:2048
+#: src/bin/e_fm.c:6688 src/bin/e_fm.c:6723 src/bin/e_fm.c:6826
+#: src/bin/e_fm.c:9683 src/bin/e_fm.c:9698 src/bin/e_fm.c:9833
+#: src/bin/e_fm.c:9838 src/bin/e_fm.c:9854 src/bin/e_fm.c:9859
+#: src/bin/e_fm.c:10509 src/bin/e_fm.c:10513 src/bin/e_fm.c:10517
+#: src/bin/e_fm.c:10545 src/bin/e_fm.c:10550 src/bin/e_fm.c:10554
+#: src/bin/e_fm.c:10613 src/bin/e_fm.c:10843 src/bin/e_fm_prop.c:254
+#: src/bin/e_shelf.c:2260 src/modules/pager/e_mod_main.c:2046
 #: src/modules/pager_plain/e_mod_main.c:2836
 msgid "Error"
 msgstr "Ошибка"
 
-#: src/bin/e_fm.c:6672 src/bin/e_fm.c:6707
+#: src/bin/e_fm.c:6688 src/bin/e_fm.c:6723
 #, c-format
 msgid "The recent DND operation requested for '%s' has failed."
 msgstr "Не удалось выполнить запрошенную для '%s' операцию перетаскивания."
 
-#: src/bin/e_fm.c:6810
+#: src/bin/e_fm.c:6826
 msgid "A link to the requested URL already exists!"
 msgstr "Ссылка на указанный URL уже существует!"
 
-#: src/bin/e_fm.c:8875 src/modules/fileman/e_mod_config.c:367
+#: src/bin/e_fm.c:8891 src/modules/fileman/e_mod_config.c:367
 msgid "Case Sensitive"
 msgstr "С учётом регистра"
 
-#: src/bin/e_fm.c:8881 src/modules/fileman/e_mod_config.c:370
+#: src/bin/e_fm.c:8897 src/modules/fileman/e_mod_config.c:370
 msgid "Sort By Extension"
 msgstr "Сортировать по расширению"
 
-#: src/bin/e_fm.c:8887 src/modules/fileman/e_mod_config.c:373
+#: src/bin/e_fm.c:8903 src/modules/fileman/e_mod_config.c:373
 msgid "Sort By Modification Time"
 msgstr "Сортировать по времени изменения"
 
-#: src/bin/e_fm.c:8893 src/modules/fileman/e_mod_config.c:376
+#: src/bin/e_fm.c:8909 src/modules/fileman/e_mod_config.c:376
 msgid "Sort By Size"
 msgstr "Сортировать по размеру"
 
-#: src/bin/e_fm.c:8902 src/modules/fileman/e_mod_config.c:384
+#: src/bin/e_fm.c:8918 src/modules/fileman/e_mod_config.c:384
 msgid "Directories First"
 msgstr "Каталоги в начале"
 
-#: src/bin/e_fm.c:8908 src/modules/fileman/e_mod_config.c:388
+#: src/bin/e_fm.c:8924 src/modules/fileman/e_mod_config.c:388
 msgid "Directories Last"
 msgstr "Каталоги в конце"
 
-#: src/bin/e_fm.c:8939 src/bin/e_fm.c:9088
+#: src/bin/e_fm.c:8955 src/bin/e_fm.c:9104
 #: src/modules/fileman/e_mod_config.c:312
 msgid "View Mode"
 msgstr "Режим отображения"
 
-#: src/bin/e_fm.c:8948 src/bin/e_fm.c:9097
+#: src/bin/e_fm.c:8964 src/bin/e_fm.c:9113
 #: src/modules/everything/evry_config.c:501
 #: src/modules/fileman/e_mod_config.c:392
 msgid "Sorting"
 msgstr "Сортировка"
 
-#: src/bin/e_fm.c:8966 src/bin/e_fm.c:9115
+#: src/bin/e_fm.c:8982 src/bin/e_fm.c:9131
 msgid "Refresh View"
 msgstr "Обновить вид"
 
-#: src/bin/e_fm.c:8977 src/bin/e_fm.c:9127
+#: src/bin/e_fm.c:8993 src/bin/e_fm.c:9143
 msgid "New..."
 msgstr "Новый..."
 
-#: src/bin/e_fm.c:8997 src/bin/e_fm.c:9149 src/bin/e_fm.c:9185
+#: src/bin/e_fm.c:9013 src/bin/e_fm.c:9165 src/bin/e_fm.c:9201
 msgid "Actions..."
 msgstr "Действия..."
 
-#: src/bin/e_fm.c:9016 src/bin/e_fm.c:9233
+#: src/bin/e_fm.c:9032 src/bin/e_fm.c:9249
 msgid "Paste"
 msgstr "Вставить"
 
-#: src/bin/e_fm.c:9024 src/bin/e_fm.c:9241 src/bin/e_fm.c:11790
+#: src/bin/e_fm.c:9040 src/bin/e_fm.c:9257 src/bin/e_fm.c:11806
 msgid "Link"
 msgstr "Ссылка"
 
-#: src/bin/e_fm.c:9206
+#: src/bin/e_fm.c:9222
 msgid "Cut"
 msgstr "Вырезать"
 
-#: src/bin/e_fm.c:9220 src/bin/e_fm.c:11777
+#: src/bin/e_fm.c:9236 src/bin/e_fm.c:11793
 msgid "Copy"
 msgstr "Копировать"
 
-#: src/bin/e_fm.c:9295 src/bin/e_fm.c:11005 src/bin/e_shelf.c:1729
-#: src/bin/e_shelf.c:2390
+#: src/bin/e_fm.c:9311 src/bin/e_fm.c:11021 src/bin/e_shelf.c:1731
+#: src/bin/e_shelf.c:2392
 #: src/modules/conf_bindings/e_int_config_acpibindings.c:201
 #: src/modules/conf_bindings/e_int_config_edgebindings.c:261
 #: src/modules/conf_bindings/e_int_config_keybindings.c:240
@@ -1638,7 +1638,7 @@ msgstr "Копировать"
 msgid "Delete"
 msgstr "Удалить"
 
-#: src/bin/e_fm.c:9303 src/bin/e_fm.c:10655 src/bin/e_shelf.c:2385
+#: src/bin/e_fm.c:9319 src/bin/e_fm.c:10671 src/bin/e_shelf.c:2387
 #: src/modules/conf_shelves/e_int_config_shelf.c:142
 #: src/modules/quickaccess/e_mod_config.c:229
 #: src/modules/quickaccess/e_mod_config.c:276
@@ -1646,215 +1646,215 @@ msgstr "Удалить"
 msgid "Rename"
 msgstr "Переименовать"
 
-#: src/bin/e_fm.c:9322
+#: src/bin/e_fm.c:9338
 msgid "Unmount"
 msgstr "Отключить"
 
-#: src/bin/e_fm.c:9327
+#: src/bin/e_fm.c:9343
 msgid "Mount"
 msgstr "Подключить"
 
-#: src/bin/e_fm.c:9332
+#: src/bin/e_fm.c:9348
 msgid "Eject"
 msgstr "Извлечь"
 
-#: src/bin/e_fm.c:9346 src/bin/e_int_client_remember.c:804
-#: src/modules/ibar/e_mod_main.c:1607
+#: src/bin/e_fm.c:9362 src/bin/e_int_client_remember.c:803
+#: src/modules/ibar/e_mod_main.c:1599
 msgid "Properties"
 msgstr "Свойства"
 
-#: src/bin/e_fm.c:9354
+#: src/bin/e_fm.c:9370
 msgid "Application Properties"
 msgstr "Свойства приложения"
 
-#: src/bin/e_fm.c:9362 src/bin/e_fm_prop.c:115
+#: src/bin/e_fm.c:9378 src/bin/e_fm_prop.c:115
 msgid "File Properties"
 msgstr "Свойства файла"
 
-#: src/bin/e_fm.c:9566
+#: src/bin/e_fm.c:9582
 msgid "Use default"
 msgstr "По умолчанию"
 
-#: src/bin/e_fm.c:9595 src/modules/fileman/e_mod_config.c:317
+#: src/bin/e_fm.c:9611 src/modules/fileman/e_mod_config.c:317
 msgid "Grid Icons"
 msgstr "Сетка значков"
 
-#: src/bin/e_fm.c:9603 src/modules/fileman/e_mod_config.c:319
+#: src/bin/e_fm.c:9619 src/modules/fileman/e_mod_config.c:319
 msgid "Custom Icons"
 msgstr "Пользовательские значки"
 
-#: src/bin/e_fm.c:9611 src/modules/everything/evry_config.c:428
+#: src/bin/e_fm.c:9627 src/modules/everything/evry_config.c:428
 #: src/modules/everything/evry_config.c:458
 #: src/modules/fileman/e_mod_config.c:327
 msgid "List"
 msgstr "Список"
 
-#: src/bin/e_fm.c:9619 src/modules/everything/evry_config.c:456
+#: src/bin/e_fm.c:9635 src/modules/everything/evry_config.c:456
 msgid "Default View"
 msgstr "Вид по умолчанию"
 
-#: src/bin/e_fm.c:9640
+#: src/bin/e_fm.c:9656
 #, c-format
 msgid "Icon Size (%d)"
 msgstr "Размер значка (%d)"
 
-#: src/bin/e_fm.c:9667
+#: src/bin/e_fm.c:9683
 msgid "Could not create a directory!"
 msgstr "Не удалось создать каталог!"
 
-#: src/bin/e_fm.c:9682
+#: src/bin/e_fm.c:9698
 msgid "Could not create a file!"
 msgstr "Не удалось создать файл!"
 
-#: src/bin/e_fm.c:9698 src/bin/e_fm.c:9736
+#: src/bin/e_fm.c:9714 src/bin/e_fm.c:9752
 #: src/modules/conf_paths/e_int_config_paths.c:204
 msgid "New Directory"
 msgstr "Новый каталог"
 
-#: src/bin/e_fm.c:9698 src/bin/e_fm.c:9736
+#: src/bin/e_fm.c:9714 src/bin/e_fm.c:9752
 msgid "New File"
 msgstr "Новый файл"
 
-#: src/bin/e_fm.c:9817 src/bin/e_fm.c:9838
+#: src/bin/e_fm.c:9833 src/bin/e_fm.c:9854
 msgid "Already creating a new file for this directory!"
 msgstr "Уже создается новый файл для этого каталога!"
 
-#: src/bin/e_fm.c:9822 src/bin/e_fm.c:9843
+#: src/bin/e_fm.c:9838 src/bin/e_fm.c:9859
 #, c-format
 msgid "%s can't be written to!"
 msgstr "%s не может быть записан!"
 
-#: src/bin/e_fm.c:9862
+#: src/bin/e_fm.c:9878
 msgid "Directory"
 msgstr "Каталог"
 
-#: src/bin/e_fm.c:9867 src/modules/conf_applications/e_int_config_defapps.c:312
+#: src/bin/e_fm.c:9883 src/modules/conf_applications/e_int_config_defapps.c:312
 msgid "File"
 msgstr "Файл"
 
-#: src/bin/e_fm.c:9898
+#: src/bin/e_fm.c:9914
 msgid "Inherit parent settings"
 msgstr "Наследовать родительские настройки"
 
-#: src/bin/e_fm.c:9907
+#: src/bin/e_fm.c:9923
 msgid "Show Hidden Files"
 msgstr "Показывать скрытые файлы"
 
-#: src/bin/e_fm.c:9919
+#: src/bin/e_fm.c:9935
 msgid "Remember Ordering"
 msgstr "Запомнить очередность"
 
-#: src/bin/e_fm.c:9928
+#: src/bin/e_fm.c:9944
 msgid "Sort Now"
 msgstr "Сортировать"
 
-#: src/bin/e_fm.c:9936
+#: src/bin/e_fm.c:9952
 msgid "Single Click Activation"
 msgstr "Использовать одинарный щелчок"
 
-#: src/bin/e_fm.c:9947 src/modules/fileman/e_mod_config.c:404
+#: src/bin/e_fm.c:9963 src/modules/fileman/e_mod_config.c:404
 msgid "Secure Deletion"
 msgstr "Безопасное удаление"
 
-#: src/bin/e_fm.c:9960 src/modules/fileman/e_mod_config.c:123
+#: src/bin/e_fm.c:9976 src/modules/fileman/e_mod_config.c:123
 msgid "File Manager Settings"
 msgstr "Настройки файлового менеджера"
 
-#: src/bin/e_fm.c:9965
+#: src/bin/e_fm.c:9981
 msgid "File Icon Settings"
 msgstr "Настройки значков файлов"
 
-#: src/bin/e_fm.c:10046 src/bin/e_fm.c:10267
+#: src/bin/e_fm.c:10062 src/bin/e_fm.c:10283
 msgid "Set background..."
 msgstr "Установить фон..."
 
-#: src/bin/e_fm.c:10054
+#: src/bin/e_fm.c:10070
 msgid "Clear background"
 msgstr "Очистить фон"
 
-#: src/bin/e_fm.c:10061 src/bin/e_fm.c:10295
+#: src/bin/e_fm.c:10077 src/bin/e_fm.c:10311
 msgid "Set overlay..."
 msgstr "Установить перекрытие..."
 
-#: src/bin/e_fm.c:10067
+#: src/bin/e_fm.c:10083
 msgid "Clear overlay"
 msgstr "Очистить перекрытие"
 
-#: src/bin/e_fm.c:10389 src/bin/e_fm.c:10752
+#: src/bin/e_fm.c:10405 src/bin/e_fm.c:10768
 #, c-format
 msgid "Rename %s to:"
 msgstr "Переименовать %s в:"
 
-#: src/bin/e_fm.c:10391 src/bin/e_fm.c:10753
+#: src/bin/e_fm.c:10407 src/bin/e_fm.c:10769
 msgid "Rename File"
 msgstr "Переименовать файл"
 
-#: src/bin/e_fm.c:10493 src/bin/e_fm.c:10529
+#: src/bin/e_fm.c:10509 src/bin/e_fm.c:10545
 #, c-format
 msgid "%s already exists!"
 msgstr "%s уже существует!"
 
-#: src/bin/e_fm.c:10497 src/bin/e_fm.c:10534
+#: src/bin/e_fm.c:10513 src/bin/e_fm.c:10550
 #, c-format
 msgid "%s could not be renamed because it is protected"
 msgstr "%s не может быть переименован, так как он защищён"
 
-#: src/bin/e_fm.c:10501 src/bin/e_fm.c:10538
+#: src/bin/e_fm.c:10517 src/bin/e_fm.c:10554
 msgid "Internal filemanager error :("
 msgstr "Внутренняя ошибка файлового менеджера :("
 
-#: src/bin/e_fm.c:10593 src/bin/e_fm.c:10819
+#: src/bin/e_fm.c:10609 src/bin/e_fm.c:10835
 msgid "Retry"
 msgstr "Повторить"
 
-#: src/bin/e_fm.c:10594 src/bin/e_fm.c:10820 src/bin/e_fm.c:11798
+#: src/bin/e_fm.c:10610 src/bin/e_fm.c:10836 src/bin/e_fm.c:11814
 msgid "Abort"
 msgstr "Отменить"
 
-#: src/bin/e_fm.c:10654
+#: src/bin/e_fm.c:10670
 msgid "No to all"
 msgstr "Нет для всего"
 
-#: src/bin/e_fm.c:10657
+#: src/bin/e_fm.c:10673
 msgid "Yes to all"
 msgstr "Да для всего"
 
-#: src/bin/e_fm.c:10660
+#: src/bin/e_fm.c:10676
 msgid "Warning"
 msgstr "Предупреждение"
 
-#: src/bin/e_fm.c:10663
+#: src/bin/e_fm.c:10679
 #, c-format
 msgid "File already exists, overwrite?<br><hilight>%s</hilight>"
 msgstr "Файл уже существует, переписать?<br><hilight>%s</hilight>"
 
-#: src/bin/e_fm.c:10822
+#: src/bin/e_fm.c:10838
 msgid "Move Source"
 msgstr "Переместить источник"
 
-#: src/bin/e_fm.c:10823
+#: src/bin/e_fm.c:10839
 msgid "Ignore this"
 msgstr "Пропустить это"
 
-#: src/bin/e_fm.c:10824
+#: src/bin/e_fm.c:10840
 msgid "Ignore all"
 msgstr "Пропустить все"
 
-#: src/bin/e_fm.c:10829
+#: src/bin/e_fm.c:10845
 #, c-format
 msgid "An error occurred while performing an operation.<br>%s"
 msgstr "Во время исполнения произошла ошибка.<br>%s"
 
-#: src/bin/e_fm.c:11008
+#: src/bin/e_fm.c:11024
 msgid "Confirm Delete"
 msgstr "Подтвердите удаление"
 
-#: src/bin/e_fm.c:11018
+#: src/bin/e_fm.c:11034
 #, c-format
 msgid "Are you sure you want to delete<br><hilight>%s</hilight>?"
 msgstr "Вы действительно хотите удалить<br><hilight>%s</hilight>?"
 
-#: src/bin/e_fm.c:11023
+#: src/bin/e_fm.c:11039
 #, c-format
 msgid ""
 "Are you sure you want to delete<br><hilight>all</hilight> the %d files "
@@ -1863,7 +1863,7 @@ msgstr ""
 "Вы действительно хотите удалить<br><hilight>все</hilight> %d выбранных "
 "файлов из:<br><hilight>%s</hilight>?"
 
-#: src/bin/e_fm.c:11033
+#: src/bin/e_fm.c:11049
 #, c-format
 msgid ""
 "Are you sure you want to delete<br>the %d selected file in<br><hilight>%s</"
@@ -1911,7 +1911,7 @@ msgid "Cannot change permissions: %s"
 msgstr "Не удалось изменить права доступа: %s"
 
 #: src/bin/e_fm_prop.c:392 src/bin/e_int_config_comp_match.c:134
-#: src/bin/e_shelf.c:1090 src/bin/e_shelf.c:2278
+#: src/bin/e_shelf.c:1090 src/bin/e_shelf.c:2280
 #: src/modules/conf_dialogs/e_int_config_profiles.c:316
 #: src/modules/conf_window_remembers/e_int_config_remembers.c:147
 msgid "Name:"
@@ -2129,7 +2129,7 @@ msgstr "Опции заполнения и растягивания"
 msgid "Stretch"
 msgstr "Растянуть"
 
-#: src/bin/e_import_config_dialog.c:499 src/bin/e_int_client_menu.c:1184
+#: src/bin/e_import_config_dialog.c:499 src/bin/e_int_client_menu.c:1186
 #: src/bin/e_int_client_prop.c:240
 #, c-format
 msgid "Center"
@@ -2209,12 +2209,12 @@ msgid "Prevent Changes In:"
 msgstr "Предотвратить изменения в:"
 
 #: src/bin/e_int_client_locks.c:310 src/bin/e_int_client_locks.c:329
-#: src/bin/e_int_client_remember.c:750 src/bin/e_int_shelf_config.c:205
+#: src/bin/e_int_client_remember.c:749 src/bin/e_int_shelf_config.c:205
 msgid "Position"
 msgstr "Позиция"
 
 #: src/bin/e_int_client_locks.c:312 src/bin/e_int_client_locks.c:331
-#: src/bin/e_int_client_remember.c:753 src/bin/e_int_shelf_config.c:216
+#: src/bin/e_int_client_remember.c:752 src/bin/e_int_shelf_config.c:216
 #: src/modules/conf_interaction/e_int_config_mouse.c:149
 #: src/modules/conf_theme/e_int_config_fonts.c:444
 #: src/modules/conf_theme/e_int_config_fonts.c:674
@@ -2222,8 +2222,8 @@ msgid "Size"
 msgstr "Размер"
 
 #: src/bin/e_int_client_locks.c:314 src/bin/e_int_client_locks.c:333
-#: src/bin/e_int_client_menu.c:799 src/bin/e_int_client_prop.c:506
-#: src/bin/e_int_client_remember.c:756 src/bin/e_int_shelf_config.c:163
+#: src/bin/e_int_client_menu.c:801 src/bin/e_int_client_prop.c:506
+#: src/bin/e_int_client_remember.c:755 src/bin/e_int_shelf_config.c:163
 #: src/modules/conf_window_manipulation/e_int_config_focus.c:310
 msgid "Stacking"
 msgstr "Уровень"
@@ -2233,12 +2233,12 @@ msgid "Iconified state"
 msgstr "Уменьшенное состояние"
 
 #: src/bin/e_int_client_locks.c:318 src/bin/e_int_client_locks.c:337
-#: src/bin/e_int_client_remember.c:768
+#: src/bin/e_int_client_remember.c:767
 msgid "Stickiness"
 msgstr "Липкость"
 
 #: src/bin/e_int_client_locks.c:320 src/bin/e_int_client_locks.c:339
-#: src/bin/e_int_client_remember.c:774
+#: src/bin/e_int_client_remember.c:773
 msgid "Shaded state"
 msgstr "Состояние «свёрнут в заголовок»"
 
@@ -2247,7 +2247,7 @@ msgid "Maximized state"
 msgstr "Увеличеное состояние"
 
 #: src/bin/e_int_client_locks.c:324 src/bin/e_int_client_locks.c:343
-#: src/bin/e_int_client_remember.c:777
+#: src/bin/e_int_client_remember.c:776
 msgid "Fullscreen state"
 msgstr "Полноэкранное состояние"
 
@@ -2255,7 +2255,7 @@ msgstr "Полноэкранное состояние"
 msgid "Program Locks"
 msgstr "Программные замки"
 
-#: src/bin/e_int_client_locks.c:345 src/bin/e_int_client_remember.c:762
+#: src/bin/e_int_client_locks.c:345 src/bin/e_int_client_remember.c:761
 msgid "Border style"
 msgstr "Стиль рамки"
 
@@ -2294,7 +2294,7 @@ msgstr "Окно"
 msgid "Align"
 msgstr "Выравнивание"
 
-#: src/bin/e_int_client_menu.c:162 src/bin/e_int_client_menu.c:1353
+#: src/bin/e_int_client_menu.c:162 src/bin/e_int_client_menu.c:1355
 msgid "Always on Top"
 msgstr "Всегда наверху"
 
@@ -2318,117 +2318,117 @@ msgstr "Композитный режим"
 msgid "Unredirected"
 msgstr "Неперенаправляемое"
 
-#: src/bin/e_int_client_menu.c:425 src/bin/e_int_client_prop.c:516
+#: src/bin/e_int_client_menu.c:427 src/bin/e_int_client_prop.c:516
 #: src/bin/e_int_config_comp_match.c:523
 #: src/modules/conf_window_manipulation/e_int_config_window_geometry.c:208
 msgid "Fullscreen"
 msgstr "На весь экран"
 
-#: src/bin/e_int_client_menu.c:493
+#: src/bin/e_int_client_menu.c:495
 msgid "Unmaximize"
 msgstr "Обычный размер"
 
-#: src/bin/e_int_client_menu.c:676
+#: src/bin/e_int_client_menu.c:678
 msgid "Edit Icon"
 msgstr "Редактировать значок"
 
-#: src/bin/e_int_client_menu.c:684
+#: src/bin/e_int_client_menu.c:686
 msgid "Create Icon"
 msgstr "Создать значок"
 
-#: src/bin/e_int_client_menu.c:692
+#: src/bin/e_int_client_menu.c:694
 msgid "Add to Favorites Menu"
 msgstr "Добавить в Избранное"
 
-#: src/bin/e_int_client_menu.c:697
+#: src/bin/e_int_client_menu.c:699
 msgid "Add to IBar"
 msgstr "Добавить в IBar"
 
-#: src/bin/e_int_client_menu.c:705
+#: src/bin/e_int_client_menu.c:707
 msgid "Create Keyboard Shortcut"
 msgstr "Создать комбинацию клавиш"
 
-#: src/bin/e_int_client_menu.c:712
+#: src/bin/e_int_client_menu.c:714
 msgid "Edit Color Scheme"
 msgstr ""
 
-#: src/bin/e_int_client_menu.c:758
+#: src/bin/e_int_client_menu.c:760
 #: src/modules/everything/evry_plug_windows.c:441
 msgid "Iconify"
 msgstr "Уменьшить"
 
-#: src/bin/e_int_client_menu.c:771
+#: src/bin/e_int_client_menu.c:773
 msgid "Move with keyboard"
 msgstr ""
 
-#: src/bin/e_int_client_menu.c:785
+#: src/bin/e_int_client_menu.c:787
 msgid "Resize with keyboard"
 msgstr ""
 
-#: src/bin/e_int_client_menu.c:808
+#: src/bin/e_int_client_menu.c:810
 msgid "Skip"
 msgstr "Игнорировать"
 
-#: src/bin/e_int_client_menu.c:818 src/modules/conf_theme/e_mod_main.c:57
+#: src/bin/e_int_client_menu.c:820 src/modules/conf_theme/e_mod_main.c:57
 msgid "Border"
 msgstr "Рамка"
 
-#: src/bin/e_int_client_menu.c:830 src/bin/e_int_client_remember.c:661
-#: src/bin/e_int_client_remember.c:759
+#: src/bin/e_int_client_menu.c:832 src/bin/e_int_client_remember.c:660
+#: src/bin/e_int_client_remember.c:758
 msgid "Locks"
 msgstr "Замки"
 
-#: src/bin/e_int_client_menu.c:838
+#: src/bin/e_int_client_menu.c:840
 #: src/modules/conf_dialogs/e_int_config_dialogs.c:128
 msgid "Remember"
 msgstr "Запомнить"
 
-#: src/bin/e_int_client_menu.c:860
+#: src/bin/e_int_client_menu.c:862
 msgid "ICCCM/NetWM"
 msgstr "ICCCM/NetWM"
 
-#: src/bin/e_int_client_menu.c:1019 src/bin/e_int_client_menu.c:1178
+#: src/bin/e_int_client_menu.c:1021 src/bin/e_int_client_menu.c:1180
 #: src/modules/winlist/e_int_config_winlist.c:288
 msgid "Alignment"
 msgstr "Выравнивание"
 
-#: src/bin/e_int_client_menu.c:1020
+#: src/bin/e_int_client_menu.c:1022
 msgid "Click an object to align with."
 msgstr ""
 
-#: src/bin/e_int_client_menu.c:1191
+#: src/bin/e_int_client_menu.c:1193
 #, fuzzy
 msgid "On window..."
 msgstr "Перейти к окну..."
 
-#: src/bin/e_int_client_menu.c:1195 src/bin/e_shelf.c:70
+#: src/bin/e_int_client_menu.c:1197 src/bin/e_shelf.c:70
 msgid "Top"
 msgstr "Сверху"
 
-#: src/bin/e_int_client_menu.c:1202 src/bin/e_int_client_menu.c:1213
-#: src/bin/e_int_client_menu.c:1224 src/bin/e_int_client_menu.c:1235
+#: src/bin/e_int_client_menu.c:1204 src/bin/e_int_client_menu.c:1215
+#: src/bin/e_int_client_menu.c:1226 src/bin/e_int_client_menu.c:1237
 #, fuzzy
 msgid "Of window..."
 msgstr "Перейти к окну..."
 
-#: src/bin/e_int_client_menu.c:1206 src/bin/e_shelf.c:68
+#: src/bin/e_int_client_menu.c:1208 src/bin/e_shelf.c:68
 msgid "Left"
 msgstr "Слева"
 
-#: src/bin/e_int_client_menu.c:1217 src/bin/e_shelf.c:69
+#: src/bin/e_int_client_menu.c:1219 src/bin/e_shelf.c:69
 msgid "Right"
 msgstr "Справа"
 
-#: src/bin/e_int_client_menu.c:1228 src/bin/e_shelf.c:71
+#: src/bin/e_int_client_menu.c:1230 src/bin/e_shelf.c:71
 msgid "Bottom"
 msgstr "Снизу"
 
-#: src/bin/e_int_client_menu.c:1262
+#: src/bin/e_int_client_menu.c:1264
 #, c-format
 msgid "Screen %d"
 msgstr "Экран %d"
 
-#: src/bin/e_int_client_menu.c:1364 src/bin/e_int_client_prop.c:159
+#: src/bin/e_int_client_menu.c:1366 src/bin/e_int_client_prop.c:159
 #: src/bin/e_int_client_prop.c:181 src/bin/e_int_config_comp_match.c:97
 #: src/bin/e_int_config_comp_match.c:432
 #: src/modules/conf_theme/e_int_config_fonts.c:100
@@ -2438,47 +2438,47 @@ msgstr "Экран %d"
 msgid "Normal"
 msgstr "Нормально"
 
-#: src/bin/e_int_client_menu.c:1375
+#: src/bin/e_int_client_menu.c:1377
 msgid "Always Below"
 msgstr "Всегда снизу"
 
-#: src/bin/e_int_client_menu.c:1419
+#: src/bin/e_int_client_menu.c:1421
 msgid "Pin to Desktop"
 msgstr "Прикрепить к столу"
 
-#: src/bin/e_int_client_menu.c:1430
+#: src/bin/e_int_client_menu.c:1432
 msgid "Unpin from Desktop"
 msgstr "Открепить от стола"
 
-#: src/bin/e_int_client_menu.c:1518
+#: src/bin/e_int_client_menu.c:1520
 msgid "Select Border Style"
 msgstr "Выбор стиля рамки"
 
-#: src/bin/e_int_client_menu.c:1530
+#: src/bin/e_int_client_menu.c:1532
 msgid "Use Enlightenment Default Icon Preference"
 msgstr "Значок по умолчанию от Enlightenment"
 
-#: src/bin/e_int_client_menu.c:1538
+#: src/bin/e_int_client_menu.c:1540
 msgid "Use Application Provided Icon"
 msgstr "Использовать значок предоставленный приложением"
 
-#: src/bin/e_int_client_menu.c:1546
+#: src/bin/e_int_client_menu.c:1548
 msgid "Use User Defined Icon"
 msgstr "Использовать пользовательский значок"
 
-#: src/bin/e_int_client_menu.c:1555 src/bin/e_int_client_remember.c:792
+#: src/bin/e_int_client_menu.c:1557 src/bin/e_int_client_remember.c:791
 msgid "Offer Resistance"
 msgstr "Предлагать сопротивление"
 
-#: src/bin/e_int_client_menu.c:1616
+#: src/bin/e_int_client_menu.c:1618
 msgid "Window List"
 msgstr "Список окон"
 
-#: src/bin/e_int_client_menu.c:1626 src/modules/pager/e_mod_main.c:292
-#: src/modules/pager/e_mod_main.c:2113 src/modules/pager/e_mod_main.c:2120
-#: src/modules/pager/e_mod_main.c:2127 src/modules/pager/e_mod_main.c:2129
-#: src/modules/pager/e_mod_main.c:2131 src/modules/pager/e_mod_main.c:2133
-#: src/modules/pager/e_mod_main.c:2135 src/modules/pager/e_mod_main.c:2137
+#: src/bin/e_int_client_menu.c:1628 src/modules/pager/e_mod_main.c:291
+#: src/modules/pager/e_mod_main.c:2111 src/modules/pager/e_mod_main.c:2118
+#: src/modules/pager/e_mod_main.c:2125 src/modules/pager/e_mod_main.c:2127
+#: src/modules/pager/e_mod_main.c:2129 src/modules/pager/e_mod_main.c:2131
+#: src/modules/pager/e_mod_main.c:2133 src/modules/pager/e_mod_main.c:2135
 #: src/modules/pager_plain/e_mod_main.c:275
 #: src/modules/pager_plain/e_mod_main.c:2919
 #: src/modules/pager_plain/e_mod_main.c:2926
@@ -2491,7 +2491,7 @@ msgstr "Список окон"
 msgid "Pager"
 msgstr "Пейджер"
 
-#: src/bin/e_int_client_menu.c:1636 src/modules/wizard/page_180.c:23
+#: src/bin/e_int_client_menu.c:1638 src/modules/wizard/page_180.c:23
 msgid "Taskbar"
 msgstr "Панель задач"
 
@@ -2718,24 +2718,24 @@ msgstr "Запрос позиции"
 
 #: src/bin/e_int_client_prop.c:482 src/bin/e_int_client_prop.c:517
 #: src/bin/e_int_config_modules.c:58 src/bin/e_int_menus.c:276
-#: src/bin/e_shelf.c:2356 src/modules/backlight/e_mod_main.c:259
+#: src/bin/e_shelf.c:2358 src/modules/backlight/e_mod_main.c:259
 #: src/modules/battery/e_mod_main.c:186 src/modules/clock/e_mod_main.c:358
 #: src/modules/clock/e_mod_main.c:587 src/modules/conf/e_conf.c:113
 #: src/modules/conf/e_conf.c:124 src/modules/conf/e_mod_main.c:101
 #: src/modules/conf_dialogs/e_mod_main.c:17
 #: src/modules/conf_interaction/e_int_config_mouse.c:146
 #: src/modules/conf_shelves/e_int_config_shelf.c:149
-#: src/modules/connman/e_mod_main.c:430 src/modules/cpufreq/e_mod_main.c:443
+#: src/modules/connman/e_mod_main.c:430 src/modules/cpufreq/e_mod_main.c:439
 #: src/modules/everything/evry_gadget.c:497
 #: src/modules/everything/evry_gadget.c:679
 #: src/modules/everything/evry_plug_settings.c:183
-#: src/modules/ibar/e_mod_main.c:495 src/modules/ibar/e_mod_main.c:1600
-#: src/modules/ibox/e_mod_main.c:356 src/modules/ibox/e_mod_main.c:730
-#: src/modules/mixer/e_mod_main.c:546 src/modules/music-control/ui.c:277
-#: src/modules/packagekit/e_mod_main.c:47 src/modules/pager/e_mod_main.c:886
-#: src/modules/pager_plain/e_mod_main.c:870 src/modules/tasks/e_mod_main.c:770
+#: src/modules/ibar/e_mod_main.c:497 src/modules/ibar/e_mod_main.c:1592
+#: src/modules/ibox/e_mod_main.c:356 src/modules/ibox/e_mod_main.c:722
+#: src/modules/mixer/e_mod_main.c:525 src/modules/music-control/ui.c:277
+#: src/modules/packagekit/e_mod_main.c:47 src/modules/pager/e_mod_main.c:885
+#: src/modules/pager_plain/e_mod_main.c:870 src/modules/tasks/e_mod_main.c:775
 #: src/modules/temperature/e_mod_main.c:230
-#: src/modules/tiling/e_mod_tiling.c:1718 src/modules/wizard/page_150.c:31
+#: src/modules/tiling/e_mod_tiling.c:1728 src/modules/wizard/page_150.c:31
 #: src/modules/xkbswitch/e_mod_main.c:315
 #: src/modules/xkbswitch/e_mod_main.c:349
 msgid "Settings"
@@ -2749,12 +2749,12 @@ msgstr "Модальное"
 msgid "Shaded"
 msgstr "Свёрнутое в заголовок"
 
-#: src/bin/e_int_client_prop.c:513 src/bin/e_int_client_remember.c:789
+#: src/bin/e_int_client_prop.c:513 src/bin/e_int_client_remember.c:788
 #: src/modules/quickaccess/e_mod_config.c:344
 msgid "Skip Taskbar"
 msgstr "Пропуск панели задач"
 
-#: src/bin/e_int_client_prop.c:514 src/bin/e_int_client_remember.c:786
+#: src/bin/e_int_client_prop.c:514 src/bin/e_int_client_remember.c:785
 #: src/modules/quickaccess/e_mod_config.c:347
 msgid "Skip Pager"
 msgstr "Пропуск пейджера"
@@ -2791,11 +2791,11 @@ msgstr ""
 "hilight> или <hilight>OK</hilight><br>и ваш выбор будет принят. Если вы не "
 "уверены,<br>нажмите <hilight>Отмена</hilight>, и ничего не будет затронуто."
 
-#: src/bin/e_int_client_remember.c:547
+#: src/bin/e_int_client_remember.c:546
 msgid "No match properties set"
 msgstr "Не определены свойства совпадения"
 
-#: src/bin/e_int_client_remember.c:550
+#: src/bin/e_int_client_remember.c:549
 msgid ""
 "You are trying to ask Enlightenment to remember to apply<br>properties (such "
 "as size, location, border style etc.) to<br>a window <hilight>without "
@@ -2807,91 +2807,91 @@ msgstr ""
 "запоминания</hilight>.<br><br>Вам нужно определить по крайней мере 1 способ "
 "запомнить это окно."
 
-#: src/bin/e_int_client_remember.c:657
+#: src/bin/e_int_client_remember.c:656
 msgid "Nothing"
 msgstr "Ничего"
 
-#: src/bin/e_int_client_remember.c:659
+#: src/bin/e_int_client_remember.c:658
 msgid "Size and Position"
 msgstr "Размер и позицию"
 
-#: src/bin/e_int_client_remember.c:663
+#: src/bin/e_int_client_remember.c:662
 msgid "Size, Position and Locks"
 msgstr "Размер, позицию и замки"
 
-#: src/bin/e_int_client_remember.c:665 src/modules/conf/e_mod_main.c:252
+#: src/bin/e_int_client_remember.c:664 src/modules/conf/e_mod_main.c:252
 #: src/modules/everything/evry_gadget.c:628
 #: src/modules/everything/evry_plug_aggregator.c:313
 #: src/modules/everything/evry_view.c:1618 src/modules/shot/e_mod_main.c:754
 msgid "All"
 msgstr "Все"
 
-#: src/bin/e_int_client_remember.c:683
+#: src/bin/e_int_client_remember.c:682
 msgid "Window name"
 msgstr "Имя окна"
 
-#: src/bin/e_int_client_remember.c:695
+#: src/bin/e_int_client_remember.c:694
 msgid "Window class"
 msgstr "Класс окна"
 
-#: src/bin/e_int_client_remember.c:719
+#: src/bin/e_int_client_remember.c:718
 msgid "Window Role"
 msgstr "Роль окна"
 
-#: src/bin/e_int_client_remember.c:733
+#: src/bin/e_int_client_remember.c:732
 msgid "Window type"
 msgstr "Тип окна"
 
-#: src/bin/e_int_client_remember.c:741
+#: src/bin/e_int_client_remember.c:740
 msgid "wildcard matches are allowed"
 msgstr "разрешить подстановочные совпадения"
 
-#: src/bin/e_int_client_remember.c:743
+#: src/bin/e_int_client_remember.c:742
 msgid "Transience"
 msgstr "Быстротечность"
 
-#: src/bin/e_int_client_remember.c:747
+#: src/bin/e_int_client_remember.c:746
 msgid "Identifiers"
 msgstr "Идентификаторы"
 
-#: src/bin/e_int_client_remember.c:765
+#: src/bin/e_int_client_remember.c:764
 msgid "Icon Preference"
 msgstr "Предпочтение значка"
 
-#: src/bin/e_int_client_remember.c:771
+#: src/bin/e_int_client_remember.c:770
 msgid "Virtual Desktop"
 msgstr "Виртуальный стол"
 
-#: src/bin/e_int_client_remember.c:780
+#: src/bin/e_int_client_remember.c:779
 msgid "Current Screen"
 msgstr "Текущий экран"
 
-#: src/bin/e_int_client_remember.c:783
+#: src/bin/e_int_client_remember.c:782
 #: src/modules/quickaccess/e_mod_config.c:341
 msgid "Skip Window List"
 msgstr "Список пропуска окон"
 
-#: src/bin/e_int_client_remember.c:795 src/modules/teamwork/e_mod_config.c:122
+#: src/bin/e_int_client_remember.c:794 src/modules/teamwork/e_mod_config.c:122
 msgid "Opacity"
 msgstr "Непрозрачность"
 
-#: src/bin/e_int_client_remember.c:798
+#: src/bin/e_int_client_remember.c:797
 msgid "Application file or name (.desktop)"
 msgstr "Файл приложения или имя (.desktop)"
 
-#: src/bin/e_int_client_remember.c:807
+#: src/bin/e_int_client_remember.c:806
 msgid "Match only one window"
 msgstr "Совпадает только одно окно"
 
-#: src/bin/e_int_client_remember.c:811
+#: src/bin/e_int_client_remember.c:810
 msgid "Always focus on start"
 msgstr "Автоматически фокусировать при запуске"
 
-#: src/bin/e_int_client_remember.c:815
+#: src/bin/e_int_client_remember.c:814
 msgid "Keep current properties"
 msgstr "Сохранить текущие параметры"
 
-#: src/bin/e_int_client_remember.c:821
+#: src/bin/e_int_client_remember.c:820
 msgid "Start this program on login"
 msgstr "Запустить эту программу при логине"
 
@@ -3439,7 +3439,7 @@ msgstr "Приложения"
 #: src/modules/conf_window_manipulation/e_mod_main.c:17
 #: src/modules/conf_window_remembers/e_mod_main.c:14
 #: src/modules/everything/evry_plug_windows.c:428
-#: src/modules/tiling/e_mod_tiling.c:1471 src/modules/winlist/e_mod_main.c:27
+#: src/modules/tiling/e_mod_tiling.c:1481 src/modules/winlist/e_mod_main.c:27
 msgid "Windows"
 msgstr "Окна"
 
@@ -3490,7 +3490,7 @@ msgstr "Нет окон"
 msgid "Untitled window"
 msgstr "Окно без заголовка"
 
-#: src/bin/e_int_menus.c:1759 src/bin/e_shelf.c:1573
+#: src/bin/e_int_menus.c:1759 src/bin/e_shelf.c:1575
 #: src/modules/conf_shelves/e_int_config_shelf.c:193
 #, c-format
 msgid "Shelf %s"
@@ -3604,32 +3604,32 @@ msgstr ""
 "конфигурация<br>методов ввода верна и файл указанный<br>в конфигурации "
 "методов ввода находится в PATH<br>"
 
-#: src/bin/e_main.c:287
+#: src/bin/e_main.c:286
 msgid "Enlightenment cannot initialize Eina!\n"
 msgstr "Enlightenment не может инициализировать Eina!\n"
 
-#: src/bin/e_main.c:293
+#: src/bin/e_main.c:292
 msgid "Enlightenment could not create a logging domain!\n"
 msgstr "Enlightenment не может создать лог домен!\n"
 
-#: src/bin/e_main.c:365
+#: src/bin/e_main.c:355
 msgid "Enlightenment cannot initialize Eet!\n"
 msgstr "Enlightenment не может инициализировать Eet!\n"
 
-#: src/bin/e_main.c:374
+#: src/bin/e_main.c:364
 msgid "Enlightenment cannot initialize Ecore!\n"
 msgstr "Enlightenment не может инициализировать Ecore!\n"
 
-#: src/bin/e_main.c:389
+#: src/bin/e_main.c:379
 #, fuzzy
 msgid "Enlightenment cannot initialize EFX!\n"
 msgstr "Enlightenment не может инициализировать Eet!\n"
 
-#: src/bin/e_main.c:398
+#: src/bin/e_main.c:388
 msgid "Enlightenment cannot initialize EIO!\n"
 msgstr "Enlightenment не может инициализировать EIO!\n"
 
-#: src/bin/e_main.c:410
+#: src/bin/e_main.c:400
 msgid ""
 "Enlightenment cannot set up an exit signal handler.\n"
 "Perhaps you are out of memory?"
@@ -3637,7 +3637,7 @@ msgstr ""
 "Enlightenment не может настроить указатель сигнала выхода.\n"
 "Возможно недостаточно памяти?"
 
-#: src/bin/e_main.c:417
+#: src/bin/e_main.c:407
 msgid ""
 "Enlightenment cannot set up a HUP signal handler.\n"
 "Perhaps you are out of memory?"
@@ -3645,7 +3645,7 @@ msgstr ""
 "Enlightenment не может настроить указатель сигнала HUP.\n"
 "Возможно недостаточно памяти?"
 
-#: src/bin/e_main.c:424
+#: src/bin/e_main.c:414
 msgid ""
 "Enlightenment cannot set up a USER signal handler.\n"
 "Perhaps you are out of memory?"
@@ -3653,31 +3653,31 @@ msgstr ""
 "Enlightenment не может настроить указатель сигнала USER.\n"
 "Возможно недостаточно памяти?"
 
-#: src/bin/e_main.c:433
+#: src/bin/e_main.c:423
 msgid "Enlightenment cannot initialize Ecore_File!\n"
 msgstr "Enlightenment не может инициализировать Ecore_File!\n"
 
-#: src/bin/e_main.c:442
+#: src/bin/e_main.c:432
 msgid "Enlightenment cannot initialize Ecore_Con!\n"
 msgstr "Enlightenment не может инициализировать Ecore_Con!\n"
 
-#: src/bin/e_main.c:451
+#: src/bin/e_main.c:441
 msgid "Enlightenment cannot initialize Ecore_Ipc!\n"
 msgstr "Enlightenment не может инициализировать Ecore_Ipc!\n"
 
-#: src/bin/e_main.c:464
+#: src/bin/e_main.c:454
 msgid "Enlightenment cannot initialize Ecore_Evas!\n"
 msgstr "Enlightenment не может инициализировать Ecore_Evas!\n"
 
-#: src/bin/e_main.c:473
+#: src/bin/e_main.c:463
 msgid "Enlightenment cannot initialize Elementary!\n"
 msgstr "Enlightenment не может инициализировать Elementary!\n"
 
-#: src/bin/e_main.c:484
+#: src/bin/e_main.c:474
 msgid "Enlightenment cannot initialize Emotion!\n"
 msgstr "Enlightenment не может инициализировать Emotion!\n"
 
-#: src/bin/e_main.c:498
+#: src/bin/e_main.c:488
 #, fuzzy
 msgid ""
 "Enlightenment found ecore_evas doesn't support the Wayland SHM\n"
@@ -3688,7 +3688,7 @@ msgstr ""
 "Software X11 в Evas. Пожалуйста, проверьте правильно ли установлены Evas и\n"
 "Ecore и убедитесь, что они поддерживают отрисовку через Software X11."
 
-#: src/bin/e_main.c:508
+#: src/bin/e_main.c:498
 msgid ""
 "Enlightenment found ecore_evas doesn't support the Software X11\n"
 "rendering in Evas. Please check your installation of Evas and\n"
@@ -3698,7 +3698,7 @@ msgstr ""
 "Software X11 в Evas. Пожалуйста, проверьте правильно ли установлены Evas и\n"
 "Ecore и убедитесь, что они поддерживают отрисовку через Software X11."
 
-#: src/bin/e_main.c:517
+#: src/bin/e_main.c:507
 msgid ""
 "Enlightenment found ecore_evas doesn't support the Software Buffer\n"
 "rendering in Evas. Please check your installation of Evas and\n"
@@ -3708,11 +3708,11 @@ msgstr ""
 "Software Buffer в Evas. Пожалуйста, проверьте правильно ли установлены Evas\n"
 "и Ecore и убедитесь, что они поддерживают отрисовку через Software Buffer."
 
-#: src/bin/e_main.c:531
+#: src/bin/e_main.c:521
 msgid "Enlightenment cannot initialize E_Intl!\n"
 msgstr "Enlightenment не может инициализировать E_Intl!\n"
 
-#: src/bin/e_main.c:542
+#: src/bin/e_main.c:532
 msgid ""
 "Enlightenment cannot initialize its emergency alert system.\n"
 "Have you set your DISPLAY variable?"
@@ -3720,7 +3720,7 @@ msgstr ""
 "Enlightenment не может инициализировать систему аварийных сообщений.\n"
 "Вы задали переменную DISPLAY?"
 
-#: src/bin/e_main.c:554
+#: src/bin/e_main.c:544
 msgid ""
 "Enlightenment cannot create directories in your home directory.\n"
 "Perhaps you have no home directory or the disk is full?"
@@ -3728,19 +3728,19 @@ msgstr ""
 "Enlightenment не может создавать каталоги в вашем домашнем каталоге.\n"
 "Возможно, у вас нет домашнего каталога или диск заполнен?"
 
-#: src/bin/e_main.c:564
+#: src/bin/e_main.c:554
 msgid "Enlightenment cannot set up its file registry system.\n"
 msgstr "Enlightenment не может настроить свою систему реестра файлов.\n"
 
-#: src/bin/e_main.c:573
+#: src/bin/e_main.c:563
 msgid "Enlightenment cannot set up its config system.\n"
 msgstr "Enlightenment не может настроить свою систему настроек.\n"
 
-#: src/bin/e_main.c:582
+#: src/bin/e_main.c:572
 msgid "Enlightenment cannot set up its environment.\n"
 msgstr "Enlightenment не может настроить свою рабочую среду.\n"
 
-#: src/bin/e_main.c:599
+#: src/bin/e_main.c:589
 msgid ""
 "Enlightenment cannot set up paths for finding files.\n"
 "Perhaps you are out of memory?"
@@ -3748,19 +3748,19 @@ msgstr ""
 "Enlightenment не может настроить пути для поиска файлов.\n"
 "Возможно недостаточно памяти?"
 
-#: src/bin/e_main.c:616
+#: src/bin/e_main.c:606
 msgid "Enlightenment cannot set up its font system.\n"
 msgstr "Enlightenment не может настроить свою систему шрифтов.\n"
 
-#: src/bin/e_main.c:629
+#: src/bin/e_main.c:619
 msgid "Enlightenment cannot set up its theme system.\n"
 msgstr "Enlightenment не может настроить свою систему тем.\n"
 
-#: src/bin/e_main.c:641
+#: src/bin/e_main.c:631
 msgid "Setup Message Bus"
 msgstr "Настройка шины сообщений"
 
-#: src/bin/e_main.c:647
+#: src/bin/e_main.c:637
 msgid ""
 "Enlightenment cannot create a dbus session connection.\n"
 "At best this will break many things, at worst it will hard lock your "
@@ -3768,7 +3768,7 @@ msgid ""
 "If you're sure you know what you're doing, export E_NO_DBUS_SESSION=1"
 msgstr ""
 
-#: src/bin/e_main.c:660
+#: src/bin/e_main.c:650
 msgid ""
 "Enlightenment cannot initialize the FDO desktop system.\n"
 "Perhaps you lack permissions on ~/.cache/efreet or are\n"
@@ -3778,43 +3778,43 @@ msgstr ""
 "Возможно, у вас недостаточно прав на каталог ~/.cache/efreet,\n"
 "или недостаточно памяти, или дискового пространства?"
 
-#: src/bin/e_main.c:669
+#: src/bin/e_main.c:659
 msgid "Starting International Support"
 msgstr "Запускается языковая поддержка"
 
-#: src/bin/e_main.c:673
+#: src/bin/e_main.c:663
 msgid "Enlightenment cannot set up its intl system.\n"
 msgstr "Enlightenment не может настроить свою систему интернационализации.\n"
 
-#: src/bin/e_main.c:686
+#: src/bin/e_main.c:676
 msgid "Setup Actions"
 msgstr "Настройка действий"
 
-#: src/bin/e_main.c:690
+#: src/bin/e_main.c:680
 msgid "Enlightenment cannot set up its actions system.\n"
 msgstr "Enlightenment не может настроить свою систему действий.\n"
 
-#: src/bin/e_main.c:704
+#: src/bin/e_main.c:694
 msgid "Setup Powersave Modes"
 msgstr "Настройка режима энергосбережения"
 
-#: src/bin/e_main.c:708
+#: src/bin/e_main.c:698
 msgid "Enlightenment cannot set up its powersave modes.\n"
 msgstr "Enlightenment не может настроить режим энергосбережения.\n"
 
-#: src/bin/e_main.c:715
+#: src/bin/e_main.c:705
 msgid "Setup Screensaver"
 msgstr "Настройка хранителя экрана"
 
-#: src/bin/e_main.c:719
+#: src/bin/e_main.c:709
 msgid "Enlightenment cannot configure the X screensaver.\n"
 msgstr "Enlightenment не может настроить хранитель экрана.\n"
 
-#: src/bin/e_main.c:726
+#: src/bin/e_main.c:716
 msgid "Setup Screens"
 msgstr "Настройка экранов"
 
-#: src/bin/e_main.c:730
+#: src/bin/e_main.c:720
 msgid ""
 "Enlightenment set up window management for all the screens on your system\n"
 "failed. Perhaps another window manager is running?\n"
@@ -3822,207 +3822,207 @@ msgstr ""
 "Настройка управления окнами для всех экранов на вашей системе не удалась.\n"
 "Возможно запущен другой менеджер окон?\n"
 
-#: src/bin/e_main.c:740
+#: src/bin/e_main.c:730
 msgid "Enlightenment cannot set up its pointer system.\n"
 msgstr "Enlightenment не может настроить свою систему указателей.\n"
 
-#: src/bin/e_main.c:750
+#: src/bin/e_main.c:740
 msgid "Enlightenment cannot set up its scale system.\n"
 msgstr "Enlightenment не может настроить свою систему масштабирования.\n"
 
-#: src/bin/e_main.c:761
+#: src/bin/e_main.c:751
 msgid "Enlightenment cannot set up its init screen.\n"
 msgstr "Enlightenment не может настроить свою систему заставки.\n"
 
-#: src/bin/e_main.c:785
+#: src/bin/e_main.c:775
 msgid "Setup ACPI"
 msgstr "Настройка ACPI"
 
-#: src/bin/e_main.c:792
+#: src/bin/e_main.c:782
 msgid "Setup Backlight"
 msgstr "Настройка подсветки"
 
-#: src/bin/e_main.c:796
+#: src/bin/e_main.c:786
 msgid "Enlightenment cannot configure the backlight.\n"
 msgstr "Enlightenment не может настроить подсветку.\n"
 
-#: src/bin/e_main.c:802
+#: src/bin/e_main.c:792
 msgid "Setup DPMS"
 msgstr "Настройка DPMS"
 
-#: src/bin/e_main.c:806
+#: src/bin/e_main.c:796
 msgid "Enlightenment cannot configure the DPMS settings.\n"
 msgstr "Enlightenment не может настроить DPMS.\n"
 
-#: src/bin/e_main.c:813
+#: src/bin/e_main.c:803
 msgid "Setup Desklock"
 msgstr "Настройка блокировки"
 
-#: src/bin/e_main.c:817
+#: src/bin/e_main.c:807
 msgid "Enlightenment cannot set up its desk locking system.\n"
 msgstr "Enlightenment не может настроить систему блокировки рабочего стола.\n"
 
-#: src/bin/e_main.c:827
+#: src/bin/e_main.c:817
 msgid "Setup Paths"
 msgstr "Настройка путей"
 
-#: src/bin/e_main.c:833
+#: src/bin/e_main.c:823
 msgid "Setup System Controls"
 msgstr "Настройка системы управления"
 
-#: src/bin/e_main.c:837
+#: src/bin/e_main.c:827
 msgid "Enlightenment cannot initialize the System Command system.\n"
 msgstr "Enlightenment не может настроить систему системных команд.\n"
 
-#: src/bin/e_main.c:844
+#: src/bin/e_main.c:834
 msgid "Setup Execution System"
 msgstr "Настройка системы запуска"
 
-#: src/bin/e_main.c:848
+#: src/bin/e_main.c:838
 msgid "Enlightenment cannot set up its exec system.\n"
 msgstr "Enlightenment не может настроить свою систему запуска.\n"
 
-#: src/bin/e_main.c:858
+#: src/bin/e_main.c:848
 msgid "Setup Filemanager"
 msgstr "Настройки файлового менеджера"
 
-#: src/bin/e_main.c:862
+#: src/bin/e_main.c:852
 msgid "Enlightenment cannot initialize the File manager.\n"
 msgstr "Enlightenment не может инициализировать файловый менеджер.\n"
 
-#: src/bin/e_main.c:869
+#: src/bin/e_main.c:859
 msgid "Setup Message System"
 msgstr "Настройка системы сообщений"
 
-#: src/bin/e_main.c:873
+#: src/bin/e_main.c:863
 msgid "Enlightenment cannot set up its msg system.\n"
 msgstr "Enlightenment не может настроить свою систему сообщений.\n"
 
-#: src/bin/e_main.c:880
+#: src/bin/e_main.c:870
 msgid "Setup Grab Input Handling"
 msgstr "Настройка обработчика захвата ввода"
 
-#: src/bin/e_main.c:884
+#: src/bin/e_main.c:874
 msgid "Enlightenment cannot set up its grab input handling system.\n"
 msgstr ""
 "Enlightenment не может настроить свою систему захвата и обработки ввода.\n"
 
-#: src/bin/e_main.c:891
+#: src/bin/e_main.c:881
 msgid "Setup Modules"
 msgstr "Настройка модулей"
 
-#: src/bin/e_main.c:895 src/bin/e_main.c:1074
+#: src/bin/e_main.c:885 src/bin/e_main.c:1064
 msgid "Enlightenment cannot set up its module system.\n"
 msgstr "Enlightenment не может настроить свою систему модулей.\n"
 
-#: src/bin/e_main.c:902
+#: src/bin/e_main.c:892
 msgid "Setup Remembers"
 msgstr "Настройка запоминаний"
 
-#: src/bin/e_main.c:906
+#: src/bin/e_main.c:896
 msgid "Enlightenment cannot setup remember settings.\n"
 msgstr "Enlightenment не может настроить запоминание настроек.\n"
 
-#: src/bin/e_main.c:915
+#: src/bin/e_main.c:905
 #, fuzzy
 msgid "Setup Gadgets"
 msgstr "Гаджеты рабочего стола"
 
-#: src/bin/e_main.c:924
+#: src/bin/e_main.c:914
 msgid "Setup Gadcon"
 msgstr "Настройка контейнера гаджетов"
 
-#: src/bin/e_main.c:928
+#: src/bin/e_main.c:918
 msgid "Enlightenment cannot set up its gadget control system.\n"
 msgstr "Enlightenment не может настроить свою систему управления гаджетами.\n"
 
-#: src/bin/e_main.c:935
+#: src/bin/e_main.c:925
 msgid "Setup Toolbars"
 msgstr "Настройка панелей инструментов"
 
-#: src/bin/e_main.c:939
+#: src/bin/e_main.c:929
 msgid "Enlightenment cannot set up its toolbars.\n"
 msgstr "Enlightenment не может настроить свои панели инструментов.\n"
 
-#: src/bin/e_main.c:946
+#: src/bin/e_main.c:936
 msgid "Setup Wallpaper"
 msgstr "Настройка фона"
 
-#: src/bin/e_main.c:950
+#: src/bin/e_main.c:940
 msgid "Enlightenment cannot set up its desktop background system.\n"
 msgstr "Enlightenment не может настроить свою систему фона рабочего стола.\n"
 
-#: src/bin/e_main.c:957
+#: src/bin/e_main.c:947
 msgid "Setup Mouse"
 msgstr "Настройка мыши"
 
-#: src/bin/e_main.c:961
+#: src/bin/e_main.c:951
 msgid "Enlightenment cannot configure the mouse settings.\n"
 msgstr "Enlightenment не может настроить параметры мыши.\n"
 
-#: src/bin/e_main.c:967
+#: src/bin/e_main.c:957
 msgid "Setup Bindings"
 msgstr "Настройка привязок"
 
-#: src/bin/e_main.c:971
+#: src/bin/e_main.c:961
 msgid "Enlightenment cannot set up its bindings system.\n"
 msgstr "Enlightenment не может настроить свою систему привязок.\n"
 
-#: src/bin/e_main.c:978
+#: src/bin/e_main.c:968
 msgid "Setup Thumbnailer"
 msgstr "Настройка генератора миниатюр"
 
-#: src/bin/e_main.c:982
+#: src/bin/e_main.c:972
 msgid "Enlightenment cannot initialize the Thumbnailing system.\n"
 msgstr "Enlightenment не может настроить систему Thumbnailing.\n"
 
-#: src/bin/e_main.c:991
+#: src/bin/e_main.c:981
 msgid "Enlightenment cannot initialize the Icon Cache system.\n"
 msgstr "Enlightenment не может настроить систему кэширования значков.\n"
 
-#: src/bin/e_main.c:1000
+#: src/bin/e_main.c:990
 msgid "Enlightenment cannot initialize the Update system.\n"
 msgstr "Enlightenment не может настроить систему обновлений.\n"
 
-#: src/bin/e_main.c:1007
+#: src/bin/e_main.c:997
 msgid "Setup Desktop Environment"
 msgstr "Настройки графической рабочей среды"
 
-#: src/bin/e_main.c:1011
+#: src/bin/e_main.c:1001
 msgid "Enlightenment cannot initialize its desktop environment.\n"
 msgstr "Enlightenment не может инициализировать окружение рабочего среды.\n"
 
-#: src/bin/e_main.c:1018
+#: src/bin/e_main.c:1008
 msgid "Setup File Ordering"
 msgstr "Настрока очередности файлов"
 
-#: src/bin/e_main.c:1022
+#: src/bin/e_main.c:1012
 msgid "Enlightenment cannot set up its order file system.\n"
 msgstr "Enlightenment не может настроить свою систему очередей.\n"
 
-#: src/bin/e_main.c:1033
+#: src/bin/e_main.c:1023
 msgid "Load Modules"
 msgstr "Загрузка модулей"
 
-#: src/bin/e_main.c:1062
+#: src/bin/e_main.c:1052
 #, fuzzy
 msgid "Setup Bryces"
 msgstr "Настройка экранов"
 
-#: src/bin/e_main.c:1070
+#: src/bin/e_main.c:1060
 msgid "Setup Shelves"
 msgstr "Настройка полок"
 
-#: src/bin/e_main.c:1084
+#: src/bin/e_main.c:1074
 msgid "Almost Done"
 msgstr "Почти закончено"
 
-#: src/bin/e_main.c:1228
+#: src/bin/e_main.c:1218
 #, fuzzy, c-format
 msgid "Version: %s\n"
 msgstr "Права доступа"
 
-#: src/bin/e_main.c:1237
+#: src/bin/e_main.c:1227
 #, fuzzy, c-format
 msgid ""
 "Options:\n"
@@ -4076,7 +4076,7 @@ msgstr ""
 "\t-i-really-know-what-i-am-doing-and-accept-full-responsibility-for-it\n"
 "\t\tЕсли вам нужна эта подсказка, то вам не нужна эта опция.\n"
 
-#: src/bin/e_main.c:1291
+#: src/bin/e_main.c:1281
 msgid ""
 "You are executing enlightenment directly. This is\n"
 "bad. Please do not execute the \"enlightenment\"\n"
@@ -4092,11 +4092,11 @@ msgstr ""
 "запустить базовые службы прежде, чем стартует сам\n"
 "enlightenment.\n"
 
-#: src/bin/e_main.c:1544
+#: src/bin/e_main.c:1534
 msgid "Testing Format Support"
 msgstr "Проверка поддержки форматов"
 
-#: src/bin/e_main.c:1548
+#: src/bin/e_main.c:1538
 msgid ""
 "Enlightenment found Evas can't create a buffer canvas. Please check\n"
 "Evas has Software Buffer engine support.\n"
@@ -4105,7 +4105,7 @@ msgstr ""
 "Пожалуйста, проверьте,\n"
 "что Evas поддерживает движок Software Buffer.\n"
 
-#: src/bin/e_main.c:1559
+#: src/bin/e_main.c:1549
 msgid ""
 "Enlightenment found Evas can't load SVG files. Check Evas has SVG loader "
 "support.\n"
@@ -4113,7 +4113,7 @@ msgstr ""
 "Enlightenment обнаружил, что Evas не может загружать файлы SVG. Проверьте,\n"
 "что Evas имеет поддержку загрузчика SVG.\n"
 
-#: src/bin/e_main.c:1569
+#: src/bin/e_main.c:1559
 msgid ""
 "Enlightenment found Evas can't load JPEG files. Check Evas has JPEG loader "
 "support.\n"
@@ -4121,7 +4121,7 @@ msgstr ""
 "Enlightenment обнаружил, что Evas не может загружать файлы JPEG. Проверьте,\n"
 "что Evas имеет поддержку загрузчика JPEG.\n"
 
-#: src/bin/e_main.c:1579
+#: src/bin/e_main.c:1569
 msgid ""
 "Enlightenment found Evas can't load PNG files. Check Evas has PNG loader "
 "support.\n"
@@ -4129,7 +4129,7 @@ msgstr ""
 "Enlightenment обнаружил, что Evas не может загружать файлы PNG. Проверьте,\n"
 "что Evas имеет поддержку загрузчика PNG.\n"
 
-#: src/bin/e_main.c:1589
+#: src/bin/e_main.c:1579
 msgid ""
 "Enlightenment found Evas can't load EET files. Check Evas has EET loader "
 "support.\n"
@@ -4137,7 +4137,7 @@ msgstr ""
 "Enlightenment обнаружил, что Evas не может загружать файлы EET. Проверьте,\n"
 "что Evas имеет поддержку загрузчика EET.\n"
 
-#: src/bin/e_main.c:1603
+#: src/bin/e_main.c:1593
 msgid ""
 "Enlightenment found Evas can't load the 'Sans' font. Check Evas has "
 "fontconfig\n"
@@ -4148,19 +4148,19 @@ msgstr ""
 "имеет ли Evas поддержку fontconfig, и определяет ли fontconfig шрифт "
 "'Sans'.\n"
 
-#: src/bin/e_main.c:1621
+#: src/bin/e_main.c:1611
 msgid "Enlightenment cannot create a compositor.\n"
 msgstr "Enlightenment не может создать композитный менеджер.\n"
 
-#: src/bin/e_main.c:1629
+#: src/bin/e_main.c:1619
 msgid "Setup DND"
 msgstr "Настройка DND"
 
-#: src/bin/e_main.c:1633
+#: src/bin/e_main.c:1623
 msgid "Enlightenment cannot set up its dnd system.\n"
 msgstr "Enlightenment не может настроить свою DND-систему.\n"
 
-#: src/bin/e_main.c:1749
+#: src/bin/e_main.c:1739
 #, c-format
 msgid ""
 "Enlightenment crashed early on start and has<br>been restarted. There was an "
@@ -4170,11 +4170,11 @@ msgstr ""
 "Enlightenment дал сбой при старте и был перезапущен.<br>Произошла ошибка "
 "загрузки модуля: %s.<br>Этот модуль был отключен и не будет загружен."
 
-#: src/bin/e_main.c:1754 src/bin/e_main.c:1770
+#: src/bin/e_main.c:1744 src/bin/e_main.c:1760
 msgid "Enlightenment crashed early on start and has been restarted"
 msgstr "Enlightenment дал сбой при старте и был перезапущен"
 
-#: src/bin/e_main.c:1755
+#: src/bin/e_main.c:1745
 #, c-format
 msgid ""
 "Enlightenment crashed early on start and has been restarted.<br>There was an "
@@ -4184,7 +4184,7 @@ msgstr ""
 "Enlightenment дал сбой при старте и был перезапущен.<br>Произошла ошибка "
 "загрузки модуля: %s.<br><br>Этот модуль был отключен и не будет загружен."
 
-#: src/bin/e_main.c:1763
+#: src/bin/e_main.c:1753
 msgid ""
 "Enlightenment crashed early on start and has<br>been restarted. All modules "
 "have been disabled<br>and will not be loaded to help remove any "
@@ -4196,7 +4196,7 @@ msgstr ""
 "проблему с модулями в вашей конфигурации.<br>Диалог конфигурации модулей "
 "позволит вам выбрать нужные<br>модули заново.\n"
 
-#: src/bin/e_main.c:1771
+#: src/bin/e_main.c:1761
 msgid ""
 "Enlightenment crashed early on start and has been restarted.<br>All modules "
 "have been disabled and will not be loaded to help<br>remove any problem "
@@ -4258,7 +4258,7 @@ msgstr "Модуль %s для Enlightenment"
 msgid "What action should be taken with this module?<br>"
 msgstr "Какие действия следует применить к этому модулю?<br>"
 
-#: src/bin/e_module.c:808 src/bin/e_shelf.c:1729
+#: src/bin/e_module.c:808 src/bin/e_shelf.c:1731
 #: src/modules/conf_dialogs/e_int_config_profiles.c:339
 #: src/modules/conf_shelves/e_int_config_shelf.c:394
 #: src/modules/ibar/e_mod_config.c:209
@@ -4379,47 +4379,47 @@ msgstr "Ошибка полки"
 msgid "A shelf with that name already exists!"
 msgstr "Полка с этим именем уже существует!"
 
-#: src/bin/e_shelf.c:1594 src/bin/e_shelf.c:2401
+#: src/bin/e_shelf.c:1596 src/bin/e_shelf.c:2403
 msgid "Stop Moving Gadgets"
 msgstr "Закончить перемещение гаджетов"
 
-#: src/bin/e_shelf.c:1596 src/bin/e_shelf.c:2403
+#: src/bin/e_shelf.c:1598 src/bin/e_shelf.c:2405
 msgid "Begin Moving Gadgets"
 msgstr "Начать перемещение гаджетов"
 
-#: src/bin/e_shelf.c:1724
+#: src/bin/e_shelf.c:1726
 msgid "Are you sure you want to delete this shelf?"
 msgstr "Вы действительно хотите удалить эту полку?"
 
-#: src/bin/e_shelf.c:1726
+#: src/bin/e_shelf.c:1728
 msgid ""
 "You requested to delete this shelf.<br><br>Are you sure you want to delete "
 "it?"
 msgstr ""
 "Вы запросили удалить эту полку.<br><br>Действительно хотите удалить её?"
 
-#: src/bin/e_shelf.c:2258
+#: src/bin/e_shelf.c:2260
 msgid "A shelf with that name and id already exists!"
 msgstr "Полка с этим именем и id уже существует!"
 
-#: src/bin/e_shelf.c:2277
+#: src/bin/e_shelf.c:2279
 msgid "Rename Shelf"
 msgstr "Переименовать полку"
 
-#: src/bin/e_shelf.c:2351 src/modules/conf_shelves/e_int_config_shelf.c:145
-#: src/modules/ibar/e_mod_main.c:489 src/modules/ibar/e_mod_main.c:1594
+#: src/bin/e_shelf.c:2353 src/modules/conf_shelves/e_int_config_shelf.c:145
+#: src/modules/ibar/e_mod_main.c:491 src/modules/ibar/e_mod_main.c:1586
 msgid "Contents"
 msgstr "Содержимое"
 
-#: src/bin/e_shelf.c:2361
+#: src/bin/e_shelf.c:2363
 msgid "Orientation"
 msgstr "Расположение"
 
-#: src/bin/e_shelf.c:2370 src/modules/quickaccess/e_mod_quickaccess.c:833
+#: src/bin/e_shelf.c:2372 src/modules/quickaccess/e_mod_quickaccess.c:833
 msgid "Autohide"
 msgstr "Автоскрытие"
 
-#: src/bin/e_shelf.c:2377
+#: src/bin/e_shelf.c:2379
 msgid "Refresh"
 msgstr "Обновить"
 
@@ -4464,19 +4464,19 @@ msgstr "Подождите ещё"
 msgid "Cancel Logout"
 msgstr "Отменить выход из сессии"
 
-#: src/bin/e_sys.c:768
+#: src/bin/e_sys.c:769
 msgid "Logout in progress"
 msgstr "Выполняется завершение сессии"
 
-#: src/bin/e_sys.c:771
+#: src/bin/e_sys.c:772
 msgid "Logout in progress.<br><hilight>Please wait.</hilight>"
 msgstr "Завершение сессии.<br><hilight>Пожалуйста подождите.</hilight>"
 
-#: src/bin/e_sys.c:800 src/bin/e_sys.c:855
+#: src/bin/e_sys.c:802 src/bin/e_sys.c:858
 msgid "Enlightenment is busy with another request"
 msgstr "Enlightenment занят другим обращением"
 
-#: src/bin/e_sys.c:805
+#: src/bin/e_sys.c:807
 msgid ""
 "Logging out.<br>You cannot perform other system actions<br>once a logout has "
 "begun."
@@ -4484,7 +4484,7 @@ msgstr ""
 "Завершение сеанса.<br>Вы не можете выполнять другие действия<br>после "
 "завершения сеанса."
 
-#: src/bin/e_sys.c:812
+#: src/bin/e_sys.c:814
 #, fuzzy
 msgid ""
 "Powering off.<br>You cannot perform any other system actions<br>once a "
@@ -4493,7 +4493,7 @@ msgstr ""
 "Выключение.<br>Вы не можете выполнять другие действия<br>после того, как "
 "инициировано выключение."
 
-#: src/bin/e_sys.c:818
+#: src/bin/e_sys.c:820
 #, fuzzy
 msgid ""
 "Resetting.<br>You cannot perform any other system actions<br>once a reboot "
@@ -4502,7 +4502,7 @@ msgstr ""
 "Перезагрузка.<br>Вы не можете выполнять другие действия<br>после того, как "
 "инициирована перезагрузка."
 
-#: src/bin/e_sys.c:824
+#: src/bin/e_sys.c:826
 #, fuzzy
 msgid ""
 "Suspending.<br>You cannot perform any other system actions<br>until suspend "
@@ -4511,7 +4511,7 @@ msgstr ""
 "Переход в спящий режим.<br>Вы не можете выполнять другие действия, пока "
 "это<br>не завершится."
 
-#: src/bin/e_sys.c:830
+#: src/bin/e_sys.c:832
 #, fuzzy
 msgid ""
 "Hibernating.<br>You cannot perform any other system actions<br>until "
@@ -4520,35 +4520,35 @@ msgstr ""
 "Переход в спящий режим.<br>Вы не можете выполнять другие действия, пока "
 "это<br>не завершится."
 
-#: src/bin/e_sys.c:836 src/bin/e_sys.c:877
+#: src/bin/e_sys.c:838 src/bin/e_sys.c:880
 msgid "EEK! This should not happen"
 msgstr "Блиииин! Этого не должно случаться"
 
-#: src/bin/e_sys.c:861
+#: src/bin/e_sys.c:864
 msgid "Power off failed."
 msgstr "Ошибка при отключении питания."
 
-#: src/bin/e_sys.c:865
+#: src/bin/e_sys.c:868
 msgid "Reset failed."
 msgstr "Ошибка при перезагрузке."
 
-#: src/bin/e_sys.c:869
+#: src/bin/e_sys.c:872
 msgid "Suspend failed."
 msgstr "Ошибка при переходе в ждущий режим."
 
-#: src/bin/e_sys.c:873
+#: src/bin/e_sys.c:876
 msgid "Hibernate failed."
 msgstr "Ошибка при переходе в спящий режим."
 
-#: src/bin/e_sys.c:965
+#: src/bin/e_sys.c:969
 msgid "Power off.<br><hilight>Please wait.</hilight>"
 msgstr "Отключение питания.<br><hilight>Пожалуйста подождите.</hilight>"
 
-#: src/bin/e_sys.c:1007
+#: src/bin/e_sys.c:1012
 msgid "Resetting"
 msgstr "Перезагрузка"
 
-#: src/bin/e_sys.c:1010
+#: src/bin/e_sys.c:1015
 msgid "Resetting.<br><hilight>Please wait.</hilight>"
 msgstr "Перезагрузка.<br><hilight>Пожалуйста, подождите.</hilight>"
 
@@ -4701,7 +4701,7 @@ msgid "Failed to create directory: %s .<br>A file of that name already exists."
 msgstr ""
 "Не удалось создать каталог: %s .<br>Файл с таким именем уже существует."
 
-#: src/bin/e_utils.c:847
+#: src/bin/e_utils.c:873
 msgid ""
 "Configuration data needed upgrading. Your old configuration<br>has been "
 "wiped and a new set of defaults initialized. This<br>will happen regularly "
@@ -4718,12 +4718,12 @@ msgstr ""
 "был<br>инициализирован. Можете настроить всё заново. Извините за неудобства."
 "<br>"
 
-#: src/bin/e_utils.c:856 src/bin/e_utils.c:880
+#: src/bin/e_utils.c:882 src/bin/e_utils.c:906
 #, c-format
 msgid "%s Configuration Updated"
 msgstr "%s конфигурация обновлена"
 
-#: src/bin/e_utils.c:869
+#: src/bin/e_utils.c:895
 msgid ""
 "Your module configuration is NEWER than the module version. This is "
 "very<br>strange. This should not happen unless you downgraded<br>the module "
@@ -4737,12 +4737,12 @@ msgstr ""
 "поэтому ваша конфигурация была сброшена на стандартную.<br>Извините за "
 "неудобство.<br>"
 
-#: src/bin/e_utils.c:953 src/modules/packagekit/e_mod_config.c:45
+#: src/bin/e_utils.c:979 src/modules/packagekit/e_mod_config.c:45
 #, c-format
 msgid "Never"
 msgstr "Никогда"
 
-#: src/bin/e_utils.c:957
+#: src/bin/e_utils.c:983
 #, c-format
 msgid "A second"
 msgid_plural "%li Seconds"
@@ -4750,7 +4750,7 @@ msgstr[0] "%li секунда"
 msgstr[1] "%li секунды"
 msgstr[2] "%li секунд"
 
-#: src/bin/e_utils.c:961
+#: src/bin/e_utils.c:987
 #, c-format
 msgid "One year"
 msgid_plural "%li Years"
@@ -4758,7 +4758,7 @@ msgstr[0] "%li год"
 msgstr[1] "%li года"
 msgstr[2] "%li лет"
 
-#: src/bin/e_utils.c:966
+#: src/bin/e_utils.c:992
 #, c-format
 msgid "One month"
 msgid_plural "%li Months"
@@ -4766,7 +4766,7 @@ msgstr[0] "%li месяц"
 msgstr[1] "%li месяца"
 msgstr[2] "%li месяцев"
 
-#: src/bin/e_utils.c:971
+#: src/bin/e_utils.c:997
 #, c-format
 msgid "One week"
 msgid_plural "%li Weeks"
@@ -4774,7 +4774,7 @@ msgstr[0] "%li неделя"
 msgstr[1] "%li недели"
 msgstr[2] "%li недель"
 
-#: src/bin/e_utils.c:976
+#: src/bin/e_utils.c:1002
 #, c-format
 msgid "One day"
 msgid_plural "%li Days"
@@ -4782,7 +4782,7 @@ msgstr[0] "%li день"
 msgstr[1] "%li дня"
 msgstr[2] "%li дней"
 
-#: src/bin/e_utils.c:981
+#: src/bin/e_utils.c:1007
 #, c-format
 msgid "An hour"
 msgid_plural "%li Hours"
@@ -4790,7 +4790,7 @@ msgstr[0] "%li час"
 msgstr[1] "%li часа"
 msgstr[2] "%li часов"
 
-#: src/bin/e_utils.c:986
+#: src/bin/e_utils.c:1012
 #, c-format
 msgid "A minute"
 msgid_plural "%li Minutes"
@@ -4881,7 +4881,7 @@ msgstr "Добавить в избранное"
 msgid "Go up a Directory"
 msgstr "Каталог вверх"
 
-#: src/modules/appmenu/e_mod_main.c:88
+#: src/modules/appmenu/e_mod_main.c:89
 msgid "Application Menu"
 msgstr "Меню управления приложениями"
 
@@ -5520,7 +5520,7 @@ msgid "Vaio"
 msgstr ""
 
 #: src/modules/conf_bindings/e_int_config_acpibindings.c:395
-#: src/modules/mixer/e_mod_main.c:486
+#: src/modules/mixer/e_mod_main.c:465
 msgid "Mute"
 msgstr "Без звука"
 
@@ -5800,7 +5800,7 @@ msgid "Win List"
 msgstr "Список окон"
 
 #: src/modules/conf_bindings/e_int_config_mousebindings.c:343
-#: src/modules/pager/e_mod_config.c:136 src/modules/pager/e_mod_config.c:253
+#: src/modules/pager/e_mod_config.c:136 src/modules/pager/e_mod_config.c:252
 #: src/modules/pager_plain/e_mod_config.c:140
 #: src/modules/pager_plain/e_mod_config.c:261
 msgid "Popup"
@@ -5824,7 +5824,7 @@ msgstr "Колёсико мыши"
 
 #: src/modules/conf_bindings/e_int_config_mousebindings.c:1142
 #: src/modules/conf_bindings/e_int_config_mousebindings.c:1160
-#: src/modules/pager/e_mod_config.c:365 src/modules/pager/e_mod_config.c:391
+#: src/modules/pager/e_mod_config.c:363 src/modules/pager/e_mod_config.c:389
 #: src/modules/pager_plain/e_mod_config.c:374
 #: src/modules/pager_plain/e_mod_config.c:400
 #, c-format
@@ -5833,7 +5833,7 @@ msgstr "Левая кнопка"
 
 #: src/modules/conf_bindings/e_int_config_mousebindings.c:1144
 #: src/modules/conf_bindings/e_int_config_mousebindings.c:1158
-#: src/modules/pager/e_mod_config.c:370 src/modules/pager/e_mod_config.c:386
+#: src/modules/pager/e_mod_config.c:368 src/modules/pager/e_mod_config.c:384
 #: src/modules/pager_plain/e_mod_config.c:379
 #: src/modules/pager_plain/e_mod_config.c:395
 #, c-format
@@ -5842,8 +5842,8 @@ msgstr "Правая кнопка"
 
 #: src/modules/conf_bindings/e_int_config_mousebindings.c:1147
 #: src/modules/conf_bindings/e_int_config_mousebindings.c:1163
-#: src/modules/pager/e_mod_config.c:375 src/modules/pager/e_mod_config.c:396
-#: src/modules/pager/e_mod_config.c:401
+#: src/modules/pager/e_mod_config.c:373 src/modules/pager/e_mod_config.c:394
+#: src/modules/pager/e_mod_config.c:399
 #: src/modules/pager_plain/e_mod_config.c:384
 #: src/modules/pager_plain/e_mod_config.c:405
 #: src/modules/pager_plain/e_mod_config.c:410
@@ -5852,7 +5852,7 @@ msgid "Button %i"
 msgstr "Кнопка %i"
 
 #: src/modules/conf_bindings/e_int_config_mousebindings.c:1153
-#: src/modules/pager/e_mod_config.c:380
+#: src/modules/pager/e_mod_config.c:378
 #: src/modules/pager_plain/e_mod_config.c:389
 #, c-format
 msgid "Middle button"
@@ -6100,8 +6100,8 @@ msgid "Show on screen #:"
 msgstr "Показывать на экране №:"
 
 #: src/modules/conf_display/e_int_config_desklock.c:353
-#: src/modules/conf_display/e_int_config_desks.c:181
-#: src/modules/conf_display/e_int_config_desks.c:186
+#: src/modules/conf_display/e_int_config_desks.c:183
+#: src/modules/conf_display/e_int_config_desks.c:188
 #: src/modules/conf_interaction/e_int_config_mouse.c:199
 #: src/modules/conf_interaction/e_int_config_mouse.c:205
 #: src/modules/everything/evry_config.c:403
@@ -6186,37 +6186,37 @@ msgid "Hide Logo"
 msgstr "Скрыть логотип"
 
 #: src/modules/conf_display/e_int_config_desks.c:48
-#: src/modules/pager/e_mod_main.c:894 src/modules/pager_plain/e_mod_main.c:878
+#: src/modules/pager/e_mod_main.c:893 src/modules/pager_plain/e_mod_main.c:878
 msgid "Virtual Desktops Settings"
 msgstr "Настройки виртуальных рабочих столов"
 
-#: src/modules/conf_display/e_int_config_desks.c:171
+#: src/modules/conf_display/e_int_config_desks.c:173
 msgid "Number of Desktops"
 msgstr "Количество рабочих столов"
 
-#: src/modules/conf_display/e_int_config_desks.c:174
+#: src/modules/conf_display/e_int_config_desks.c:176
 msgid "Click to change wallpaper"
 msgstr "Нажмите для смены обоев"
 
-#: src/modules/conf_display/e_int_config_desks.c:191
-msgid "Desktops"
-msgstr "Рабочие столы"
+#: src/modules/conf_display/e_int_config_desks.c:195
+msgid "Desktop Flip"
+msgstr "Переход по столам"
 
 #: src/modules/conf_display/e_int_config_desks.c:196
 msgid "Flip when dragging objects to the screen edge"
 msgstr "Переход при перетаскивании объектов мышкой к краям экрана"
 
-#: src/modules/conf_display/e_int_config_desks.c:200
+#: src/modules/conf_display/e_int_config_desks.c:199
 msgid "Wrap desktops around when flipping"
 msgstr "Непрерывный рабочий стол (циклический переход)"
 
 #: src/modules/conf_display/e_int_config_desks.c:204
-msgid "Animation"
-msgstr "Анимация"
+msgid "Desktops"
+msgstr "Рабочие столы"
 
-#: src/modules/conf_display/e_int_config_desks.c:225
-msgid "Flip"
-msgstr ""
+#: src/modules/conf_display/e_int_config_desks.c:224
+msgid "Flip Animation"
+msgstr "Анимация перехода"
 
 #: src/modules/conf_display/e_int_config_dpms.c:57
 msgid "Backlight Settings"
@@ -7107,7 +7107,7 @@ msgstr "Байткод"
 
 #: src/modules/conf_theme/e_int_config_fonts.c:699
 #: src/modules/conf_window_manipulation/e_int_config_window_geometry.c:270
-#: src/modules/cpufreq/e_mod_main.c:238 src/modules/cpufreq/e_mod_main.c:274
+#: src/modules/cpufreq/e_mod_main.c:234 src/modules/cpufreq/e_mod_main.c:270
 msgid "Automatic"
 msgstr "Автоматически"
 
@@ -7942,11 +7942,11 @@ msgstr "Настроить"
 msgid "Cpu Frequency Control Settings"
 msgstr "Настройки монитора частоты ЦПУ"
 
-#: src/modules/cpufreq/e_mod_config.c:85 src/modules/cpufreq/e_mod_main.c:259
+#: src/modules/cpufreq/e_mod_config.c:85 src/modules/cpufreq/e_mod_main.c:255
 msgid "Restore CPU Power Policy"
 msgstr "Восстанавливать политику частоты ЦПУ"
 
-#: src/modules/cpufreq/e_mod_config.c:88 src/modules/cpufreq/e_mod_main.c:297
+#: src/modules/cpufreq/e_mod_config.c:88 src/modules/cpufreq/e_mod_main.c:293
 msgid "Automatic powersaving"
 msgstr "Автоматическое энергосбережение"
 
@@ -7954,23 +7954,23 @@ msgstr "Автоматическое энергосбережение"
 msgid "Update poll interval"
 msgstr "Интервал опроса"
 
-#: src/modules/cpufreq/e_mod_config.c:93 src/modules/cpufreq/e_mod_main.c:192
+#: src/modules/cpufreq/e_mod_config.c:93 src/modules/cpufreq/e_mod_main.c:188
 msgid "Fast (4 ticks)"
 msgstr "Быстро (4 тика)"
 
-#: src/modules/cpufreq/e_mod_config.c:95 src/modules/cpufreq/e_mod_main.c:199
+#: src/modules/cpufreq/e_mod_config.c:95 src/modules/cpufreq/e_mod_main.c:195
 msgid "Medium (8 ticks)"
 msgstr "Умеренно (8 тиков)"
 
-#: src/modules/cpufreq/e_mod_config.c:97 src/modules/cpufreq/e_mod_main.c:206
+#: src/modules/cpufreq/e_mod_config.c:97 src/modules/cpufreq/e_mod_main.c:202
 msgid "Normal (32 ticks)"
 msgstr "Нормально (32 тика)"
 
-#: src/modules/cpufreq/e_mod_config.c:99 src/modules/cpufreq/e_mod_main.c:213
+#: src/modules/cpufreq/e_mod_config.c:99 src/modules/cpufreq/e_mod_main.c:209
 msgid "Slow (64 ticks)"
 msgstr "Медленно (64 тика)"
 
-#: src/modules/cpufreq/e_mod_config.c:101 src/modules/cpufreq/e_mod_main.c:220
+#: src/modules/cpufreq/e_mod_config.c:101 src/modules/cpufreq/e_mod_main.c:216
 msgid "Very Slow (256 ticks)"
 msgstr "Очень медленно (256 тиков)"
 
@@ -7982,65 +7982,65 @@ msgstr "Состояние минимальной мощности"
 msgid "Maximum Power State"
 msgstr "Состояние максиальной мощности"
 
-#: src/modules/cpufreq/e_mod_main.c:136
+#: src/modules/cpufreq/e_mod_main.c:132
 msgid "Cpufreq"
 msgstr "Частота ЦПУ"
 
-#: src/modules/cpufreq/e_mod_main.c:236
+#: src/modules/cpufreq/e_mod_main.c:232
 msgid "Manual"
 msgstr "Указать самому"
 
-#: src/modules/cpufreq/e_mod_main.c:240 src/modules/cpufreq/e_mod_main.c:276
+#: src/modules/cpufreq/e_mod_main.c:236 src/modules/cpufreq/e_mod_main.c:272
 msgid "Lower Power Automatic"
 msgstr "Автоматически снижать частоту"
 
-#: src/modules/cpufreq/e_mod_main.c:242 src/modules/cpufreq/e_mod_main.c:278
+#: src/modules/cpufreq/e_mod_main.c:238 src/modules/cpufreq/e_mod_main.c:274
 msgid "Automatic Interactive"
 msgstr "Автоматически интерактивно"
 
-#: src/modules/cpufreq/e_mod_main.c:244 src/modules/cpufreq/e_mod_main.c:280
+#: src/modules/cpufreq/e_mod_main.c:240 src/modules/cpufreq/e_mod_main.c:276
 msgid "Minimum Speed"
 msgstr "Минимальная скорость"
 
-#: src/modules/cpufreq/e_mod_main.c:246 src/modules/cpufreq/e_mod_main.c:282
+#: src/modules/cpufreq/e_mod_main.c:242 src/modules/cpufreq/e_mod_main.c:278
 msgid "Maximum Speed"
 msgstr "Максимальная скорость"
 
-#: src/modules/cpufreq/e_mod_main.c:321
+#: src/modules/cpufreq/e_mod_main.c:317
 #, c-format
 msgid "%i MHz"
 msgstr "%i МГц"
 
-#: src/modules/cpufreq/e_mod_main.c:323
+#: src/modules/cpufreq/e_mod_main.c:319
 #, c-format
 msgid "%'.1f GHz"
 msgstr "%'.1f ГГц"
 
-#: src/modules/cpufreq/e_mod_main.c:385
+#: src/modules/cpufreq/e_mod_main.c:381
 msgid "Time Between Updates"
 msgstr "Время между обновлениями"
 
-#: src/modules/cpufreq/e_mod_main.c:391
+#: src/modules/cpufreq/e_mod_main.c:387
 msgid "Set CPU Power Policy"
 msgstr "Политика частоты ЦПУ"
 
-#: src/modules/cpufreq/e_mod_main.c:398
+#: src/modules/cpufreq/e_mod_main.c:394
 msgid "Set CPU Speed"
 msgstr "Скорость ЦПУ"
 
-#: src/modules/cpufreq/e_mod_main.c:404
+#: src/modules/cpufreq/e_mod_main.c:400
 msgid "Powersaving behavior"
 msgstr "Режим энергосбережения"
 
-#: src/modules/cpufreq/e_mod_main.c:410
+#: src/modules/cpufreq/e_mod_main.c:406
 msgid "Power State Min"
 msgstr "Состояние мин. мощности"
 
-#: src/modules/cpufreq/e_mod_main.c:416
+#: src/modules/cpufreq/e_mod_main.c:412
 msgid "Power State Max"
 msgstr "Состояние макс. мощности"
 
-#: src/modules/cpufreq/e_mod_main.c:507
+#: src/modules/cpufreq/e_mod_main.c:503
 msgid ""
 "There was an error trying to set the<br>cpu frequency governor via the "
 "module's<br>setfreq utility."
@@ -8048,7 +8048,7 @@ msgstr ""
 "Произошла ошибка настройки помощника<br>частоты ЦПУ при помощи "
 "утилиты<br>setfreq этого модуля."
 
-#: src/modules/cpufreq/e_mod_main.c:533
+#: src/modules/cpufreq/e_mod_main.c:529
 msgid ""
 "Your kernel does not support setting the<br>CPU frequency at all. You may be "
 "missing<br>Kernel modules or features, or your CPU<br>simply does not "
@@ -8058,7 +8058,7 @@ msgstr ""
 "вообще. Возможно, вы<br>не подгрузили необходимые модули ядра, или<br>ваш "
 "процессор просто не имеет такой функции."
 
-#: src/modules/cpufreq/e_mod_main.c:559
+#: src/modules/cpufreq/e_mod_main.c:555
 msgid ""
 "There was an error trying to set the<br>cpu frequency setting via the "
 "module's<br>setfreq utility."
@@ -8066,7 +8066,7 @@ msgstr ""
 "Произошла ошибка настройки частоты ЦПУ<br>с помощью утилиты setfreq этого "
 "модуля."
 
-#: src/modules/cpufreq/e_mod_main.c:585
+#: src/modules/cpufreq/e_mod_main.c:581
 msgid ""
 "There was an error trying to set the<br>cpu power state setting via the "
 "module's<br>setfreq utility."
@@ -8074,11 +8074,11 @@ msgstr ""
 "Произошла ошибка при установке режима<br>потребления ЦПУ с помощью утилиты "
 "setfreq<br>этого модуля."
 
-#: src/modules/cpufreq/e_mod_main.c:1377
+#: src/modules/cpufreq/e_mod_main.c:1415
 msgid "Cpufreq Error"
 msgstr "Ошибка Частоты ЦПУ"
 
-#: src/modules/cpufreq/e_mod_main.c:1378
+#: src/modules/cpufreq/e_mod_main.c:1416
 msgid ""
 "The freqset binary in the cpufreq module<br>directory cannot be found (stat "
 "failed)"
@@ -8086,11 +8086,11 @@ msgstr ""
 "Программа freqset не найдена в каталоге<br>модуля Частота ЦПУ (вызов функции "
 "stat<br>завершился неудачей)"
 
-#: src/modules/cpufreq/e_mod_main.c:1385
+#: src/modules/cpufreq/e_mod_main.c:1423
 msgid "Cpufreq Permissions Error"
 msgstr "Ошибка прав доступа в Частоте ЦПУ"
 
-#: src/modules/cpufreq/e_mod_main.c:1386
+#: src/modules/cpufreq/e_mod_main.c:1424
 #, c-format
 msgid ""
 "The freqset binary in the cpufreq module<br>is not owned by root or does not "
@@ -8102,7 +8102,7 @@ msgstr ""
 "исправьте это. Например так:<br><br>sudo chown root %s<br>sudo chmod u+s,a+x "
 "%s<br>"
 
-#: src/modules/cpufreq/e_mod_main.c:1422
+#: src/modules/cpufreq/e_mod_main.c:1458
 msgid "CPU Frequency"
 msgstr "Частота ЦПУ"
 
@@ -8303,7 +8303,7 @@ msgstr ""
 
 #: src/modules/everything/evry_plug_apps.c:1171
 #: src/modules/everything/evry_plug_apps.c:1218
-#: src/modules/fileman/e_fwin.c:2208 src/modules/fileman/e_fwin.c:2569
+#: src/modules/fileman/e_fwin.c:2222 src/modules/fileman/e_fwin.c:2583
 msgid "Open with..."
 msgstr "Открыть с помощью..."
 
@@ -8492,31 +8492,31 @@ msgstr ""
 msgid "Back"
 msgstr "Назад"
 
-#: src/modules/fileman/e_fwin.c:2097
+#: src/modules/fileman/e_fwin.c:2111
 msgid "Other application..."
 msgstr "Другое приложение..."
 
-#: src/modules/fileman/e_fwin.c:2162
+#: src/modules/fileman/e_fwin.c:2176
 msgid "Go To Parent Directory"
 msgstr "Перейти в родительский каталог"
 
-#: src/modules/fileman/e_fwin.c:2172
+#: src/modules/fileman/e_fwin.c:2186
 msgid "Clone Window"
 msgstr "Клонировать окно"
 
-#: src/modules/fileman/e_fwin.c:2178
+#: src/modules/fileman/e_fwin.c:2192
 msgid "Copy Path"
 msgstr "Копировать путь"
 
-#: src/modules/fileman/e_fwin.c:2194
+#: src/modules/fileman/e_fwin.c:2208
 msgid "Run"
 msgstr "Запустить"
 
-#: src/modules/fileman/e_fwin.c:2201 src/modules/fileman/e_fwin.c:2570
+#: src/modules/fileman/e_fwin.c:2215 src/modules/fileman/e_fwin.c:2584
 msgid "Open"
 msgstr "Открыть"
 
-#: src/modules/fileman/e_fwin.c:2599 src/modules/fileman/e_fwin.c:2624
+#: src/modules/fileman/e_fwin.c:2613 src/modules/fileman/e_fwin.c:2638
 #, c-format
 msgid "%d file"
 msgid_plural "%d files"
@@ -8524,101 +8524,101 @@ msgstr[0] "%d файл"
 msgstr[1] "%d файла"
 msgstr[2] "%d файлов"
 
-#: src/modules/fileman/e_fwin.c:2642
+#: src/modules/fileman/e_fwin.c:2656
 msgid "Known Applications"
 msgstr "Известные приложения"
 
-#: src/modules/fileman/e_fwin.c:2652
+#: src/modules/fileman/e_fwin.c:2666
 msgid "Suggested Applications"
 msgstr "Выбранные приложения"
 
-#: src/modules/fileman/e_fwin.c:2687
+#: src/modules/fileman/e_fwin.c:2701
 msgid "All Applications"
 msgstr "Все приложения"
 
-#: src/modules/fileman/e_fwin.c:2710
+#: src/modules/fileman/e_fwin.c:2724
 msgid "Custom Command"
 msgstr "Пользовательская команда"
 
-#: src/modules/fileman/e_fwin.c:3002
+#: src/modules/fileman/e_fwin.c:3016
 #: src/modules/fileman_opinfo/e_mod_main.c:105
 #, c-format
 msgid "Copying is aborted"
 msgstr "Копирование прервано"
 
-#: src/modules/fileman/e_fwin.c:3006
+#: src/modules/fileman/e_fwin.c:3020
 #: src/modules/fileman_opinfo/e_mod_main.c:109
 #, c-format
 msgid "Moving is aborted"
 msgstr "Перемещение прервано"
 
-#: src/modules/fileman/e_fwin.c:3010
+#: src/modules/fileman/e_fwin.c:3024
 #: src/modules/fileman_opinfo/e_mod_main.c:113
 #, c-format
 msgid "Deleting is aborted"
 msgstr "Удаление прервано"
 
-#: src/modules/fileman/e_fwin.c:3014
+#: src/modules/fileman/e_fwin.c:3028
 #: src/modules/fileman_opinfo/e_mod_main.c:117
 #, c-format
 msgid "Secure deletion is aborted"
 msgstr "Безопасное удаление прервано"
 
-#: src/modules/fileman/e_fwin.c:3018
+#: src/modules/fileman/e_fwin.c:3032
 #: src/modules/fileman_opinfo/e_mod_main.c:121
 #, c-format
 msgid "Unknown operation from slave is aborted"
 msgstr "Неизвестная операция от ведомого прервана"
 
-#: src/modules/fileman/e_fwin.c:3028
+#: src/modules/fileman/e_fwin.c:3042
 #: src/modules/fileman_opinfo/e_mod_main.c:131
 #, c-format
 msgid "Copy of %s done"
 msgstr "Копирование %s завершено"
 
-#: src/modules/fileman/e_fwin.c:3030
+#: src/modules/fileman/e_fwin.c:3044
 #: src/modules/fileman_opinfo/e_mod_main.c:133
 #, c-format
 msgid "Copying %s (eta: %s)"
 msgstr "Копирование %s (рвп: %s)"
 
-#: src/modules/fileman/e_fwin.c:3035
+#: src/modules/fileman/e_fwin.c:3049
 #: src/modules/fileman_opinfo/e_mod_main.c:139
 #, c-format
 msgid "Move of %s done"
 msgstr "Перемещение %s завершено"
 
-#: src/modules/fileman/e_fwin.c:3037
+#: src/modules/fileman/e_fwin.c:3051
 #: src/modules/fileman_opinfo/e_mod_main.c:141
 #, c-format
 msgid "Moving %s (eta: %s)"
 msgstr "Перемещение %s (рвп: %s)"
 
-#: src/modules/fileman/e_fwin.c:3042
+#: src/modules/fileman/e_fwin.c:3056
 #: src/modules/fileman_opinfo/e_mod_main.c:147
 #, c-format
 msgid "Delete done"
 msgstr "Удаление завершено"
 
-#: src/modules/fileman/e_fwin.c:3044
+#: src/modules/fileman/e_fwin.c:3058
 #: src/modules/fileman_opinfo/e_mod_main.c:149
 #, c-format
 msgid "Deleting files..."
 msgstr "Идёт удаление файлов..."
 
-#: src/modules/fileman/e_fwin.c:3049
+#: src/modules/fileman/e_fwin.c:3063
 #: src/modules/fileman_opinfo/e_mod_main.c:154
 #, c-format
 msgid "Secure delete done"
 msgstr "Безопасное удаление завершено"
 
-#: src/modules/fileman/e_fwin.c:3051
+#: src/modules/fileman/e_fwin.c:3065
 #: src/modules/fileman_opinfo/e_mod_main.c:156
 #, c-format
 msgid "Securely deleting files..."
 msgstr "Идёт безопасное удаление файлов..."
 
-#: src/modules/fileman/e_fwin.c:3055
+#: src/modules/fileman/e_fwin.c:3069
 #: src/modules/fileman_opinfo/e_mod_main.c:160
 #, c-format
 msgid "Unknown operation from slave %d"
@@ -8971,28 +8971,28 @@ msgstr ""
 msgid "Are you sure you want to delete this bar source?"
 msgstr "Вы действительно хотите удалить источник этого пространства?"
 
-#: src/modules/ibar/e_mod_main.c:368 src/modules/ibar/e_mod_main.c:2853
+#: src/modules/ibar/e_mod_main.c:370 src/modules/ibar/e_mod_main.c:2845
 msgid "IBar"
 msgstr "IBar"
 
-#: src/modules/ibar/e_mod_main.c:478 src/modules/ibar/e_mod_main.c:1583
+#: src/modules/ibar/e_mod_main.c:480 src/modules/ibar/e_mod_main.c:1575
 msgid "Create new Icon"
 msgstr "Создать новый значок"
 
-#: src/modules/ibar/e_mod_main.c:1614
+#: src/modules/ibar/e_mod_main.c:1606
 msgid "Add to bar"
 msgstr "Добавить на панель"
 
-#: src/modules/ibar/e_mod_main.c:1620
+#: src/modules/ibar/e_mod_main.c:1612
 msgid "Remove from bar"
 msgstr "Удалить с панели"
 
-#: src/modules/ibar/e_mod_main.c:1626
+#: src/modules/ibar/e_mod_main.c:1618
 #, c-format
 msgid "Icon %s"
 msgstr "Значок %s"
 
-#: src/modules/ibar/e_mod_main.c:2853
+#: src/modules/ibar/e_mod_main.c:2845
 msgid "Focus IBar"
 msgstr "Фокусирование IBar"
 
@@ -9087,8 +9087,8 @@ msgstr ""
 msgid "New volume"
 msgstr "Новая громкость"
 
-#: src/modules/mixer/e_mod_main.c:117 src/modules/mixer/e_mod_main.c:496
-#: src/modules/mixer/e_mod_main.c:874
+#: src/modules/mixer/e_mod_main.c:117 src/modules/mixer/e_mod_main.c:475
+#: src/modules/mixer/e_mod_main.c:853
 msgid "Mixer"
 msgstr "Микшер"
 
@@ -9096,20 +9096,20 @@ msgstr "Микшер"
 msgid "Volume changed"
 msgstr "Громкость изменена"
 
-#: src/modules/mixer/e_mod_main.c:251 src/modules/mixer/e_mod_main.c:280
+#: src/modules/mixer/e_mod_main.c:250 src/modules/mixer/e_mod_main.c:279
 msgid "Increase Volume"
 msgstr "Прибавить звук"
 
-#: src/modules/mixer/e_mod_main.c:259 src/modules/mixer/e_mod_main.c:287
+#: src/modules/mixer/e_mod_main.c:258 src/modules/mixer/e_mod_main.c:286
 msgid "Decrease Volume"
 msgstr "Убавить звук"
 
-#: src/modules/mixer/e_mod_main.c:267
+#: src/modules/mixer/e_mod_main.c:266
 #, fuzzy
 msgid "Mute volume"
 msgstr "Без звука"
 
-#: src/modules/mixer/e_mod_main.c:294
+#: src/modules/mixer/e_mod_main.c:293
 msgid "Mute Volume"
 msgstr "Без звука"
 
@@ -9347,19 +9347,19 @@ msgstr "Запустить менеджер пакетов"
 msgid "Pager Settings"
 msgstr "Параметры пейджера"
 
-#: src/modules/pager/e_mod_config.c:128 src/modules/pager/e_mod_config.c:184
+#: src/modules/pager/e_mod_config.c:128 src/modules/pager/e_mod_config.c:183
 #: src/modules/pager_plain/e_mod_config.c:129
 #: src/modules/pager_plain/e_mod_config.c:189
 msgid "Flip desktop on mouse wheel"
 msgstr "Переключать рабочие столы колесом мыши"
 
-#: src/modules/pager/e_mod_config.c:131 src/modules/pager/e_mod_config.c:187
+#: src/modules/pager/e_mod_config.c:131 src/modules/pager/e_mod_config.c:186
 #: src/modules/pager_plain/e_mod_config.c:132
 #: src/modules/pager_plain/e_mod_config.c:192
 msgid "Always show desktop names"
 msgstr "Всегда показывать имена рабочих столов"
 
-#: src/modules/pager/e_mod_config.c:137 src/modules/pager/e_mod_config.c:223
+#: src/modules/pager/e_mod_config.c:137 src/modules/pager/e_mod_config.c:222
 #: src/modules/pager_plain/e_mod_config.c:141
 #: src/modules/pager_plain/e_mod_config.c:231
 msgid "Show popup on desktop change"
@@ -9370,13 +9370,13 @@ msgstr "Показывать всплывающее окно при смене �
 msgid "Show popup for urgent windows"
 msgstr "Показывать всплывающее окно для срочных окон"
 
-#: src/modules/pager/e_mod_config.c:190
+#: src/modules/pager/e_mod_config.c:189
 #: src/modules/pager_plain/e_mod_config.c:198
 msgid "Resistance to dragging"
 msgstr "Сопротивление к перетаскиванию"
 
-#: src/modules/pager/e_mod_config.c:192 src/modules/pager/e_mod_config.c:231
-#: src/modules/pager/e_mod_config.c:250
+#: src/modules/pager/e_mod_config.c:191 src/modules/pager/e_mod_config.c:230
+#: src/modules/pager/e_mod_config.c:249
 #: src/modules/pager_plain/e_mod_config.c:200
 #: src/modules/pager_plain/e_mod_config.c:239
 #: src/modules/pager_plain/e_mod_config.c:258
@@ -9384,13 +9384,13 @@ msgstr "Сопротивление к перетаскиванию"
 msgid "%.0f pixels"
 msgstr "%.0f пикселей"
 
-#: src/modules/pager/e_mod_config.c:197
+#: src/modules/pager/e_mod_config.c:196
 #: src/modules/pager_plain/e_mod_config.c:205
 msgid "Select and Slide button"
 msgstr "Кнопка выбора и передвижения"
 
-#: src/modules/pager/e_mod_config.c:199 src/modules/pager/e_mod_config.c:207
-#: src/modules/pager/e_mod_config.c:213 src/modules/pager/e_mod_config.c:360
+#: src/modules/pager/e_mod_config.c:198 src/modules/pager/e_mod_config.c:206
+#: src/modules/pager/e_mod_config.c:212 src/modules/pager/e_mod_config.c:358
 #: src/modules/pager_plain/e_mod_config.c:207
 #: src/modules/pager_plain/e_mod_config.c:215
 #: src/modules/pager_plain/e_mod_config.c:221
@@ -9399,27 +9399,27 @@ msgstr "Кнопка выбора и передвижения"
 msgid "Click to set"
 msgstr "Нажать для установки"
 
-#: src/modules/pager/e_mod_config.c:205
+#: src/modules/pager/e_mod_config.c:204
 #: src/modules/pager_plain/e_mod_config.c:213
 msgid "Drag and Drop button"
 msgstr "Кнопка тащи-и-бросай"
 
-#: src/modules/pager/e_mod_config.c:211
+#: src/modules/pager/e_mod_config.c:210
 #: src/modules/pager_plain/e_mod_config.c:219
 msgid "Drag whole desktop"
 msgstr "Перетаскивание всего рабочего стола"
 
-#: src/modules/pager/e_mod_config.c:227
+#: src/modules/pager/e_mod_config.c:226
 #: src/modules/pager_plain/e_mod_config.c:235
 msgid "Popup pager height"
 msgstr "Высота всплывающего окна пейджера"
 
-#: src/modules/pager/e_mod_config.c:237
+#: src/modules/pager/e_mod_config.c:236
 #: src/modules/pager_plain/e_mod_config.c:245
 msgid "Popup duration"
 msgstr "Продолжительность показа окна"
 
-#: src/modules/pager/e_mod_config.c:241 src/modules/pager/e_mod_config.c:278
+#: src/modules/pager/e_mod_config.c:240 src/modules/pager/e_mod_config.c:277
 #: src/modules/pager_plain/e_mod_config.c:249
 #: src/modules/pager_plain/e_mod_config.c:286
 #: src/modules/teamwork/e_mod_config.c:112
@@ -9427,42 +9427,42 @@ msgstr "Продолжительность показа окна"
 msgid "%1.1f seconds"
 msgstr "%1.1f секунд"
 
-#: src/modules/pager/e_mod_config.c:248
+#: src/modules/pager/e_mod_config.c:247
 #: src/modules/pager_plain/e_mod_config.c:256
 msgid "Pager action popup height"
 msgstr "Высота всплывающего окна для действий пейджера"
 
-#: src/modules/pager/e_mod_config.c:258
+#: src/modules/pager/e_mod_config.c:257
 #: src/modules/pager_plain/e_mod_config.c:266
 msgid "Show popup for urgent window"
 msgstr "Показывать всплывающее окно для срочных окон"
 
-#: src/modules/pager/e_mod_config.c:262
+#: src/modules/pager/e_mod_config.c:261
 #: src/modules/pager_plain/e_mod_config.c:270
 msgid "Urgent popup sticks on screen"
 msgstr "Срочное всплыващее окно залипает на экране"
 
-#: src/modules/pager/e_mod_config.c:268
+#: src/modules/pager/e_mod_config.c:267
 #: src/modules/pager_plain/e_mod_config.c:276
 msgid "Show popup for focused windows"
 msgstr "Показывать всплывающее окно для фокусированных окон"
 
-#: src/modules/pager/e_mod_config.c:274
+#: src/modules/pager/e_mod_config.c:273
 #: src/modules/pager_plain/e_mod_config.c:282
 msgid "Urgent popup duration"
 msgstr "Продолжительность показа срочного окна"
 
-#: src/modules/pager/e_mod_config.c:285
+#: src/modules/pager/e_mod_config.c:284
 #: src/modules/pager_plain/e_mod_config.c:293
 msgid "Urgent Windows"
 msgstr "Срочные окна"
 
-#: src/modules/pager/e_mod_config.c:453
+#: src/modules/pager/e_mod_config.c:451
 #: src/modules/pager_plain/e_mod_config.c:462
 msgid "Attention"
 msgstr "Внимание"
 
-#: src/modules/pager/e_mod_config.c:454
+#: src/modules/pager/e_mod_config.c:452
 #: src/modules/pager_plain/e_mod_config.c:463
 msgid ""
 "You cannot use the right mouse button in the<br>shelf for this as it is "
@@ -9473,43 +9473,43 @@ msgstr ""
 "она уже занята внутренним<br>кодом для контекстных меню.<br>Эта кнопка "
 "работает только для всплывающих окон"
 
-#: src/modules/pager/e_mod_main.c:2048
+#: src/modules/pager/e_mod_main.c:2046
 msgid "Pager module cannot be loaded at the same time as Pager Plain!"
 msgstr ""
 "Модуль Пейджер не может быть загружен, если уже загружен модуль Простой "
 "пейджер!"
 
-#: src/modules/pager/e_mod_main.c:2120
+#: src/modules/pager/e_mod_main.c:2118
 #: src/modules/pager_plain/e_mod_main.c:2926
 msgid "Show Pager Popup"
 msgstr "Показывать всплывающее окно пейджера"
 
-#: src/modules/pager/e_mod_main.c:2127
+#: src/modules/pager/e_mod_main.c:2125
 #: src/modules/pager_plain/e_mod_main.c:2933
 msgid "Popup Desk Right"
 msgstr "Перенестись на стол справа"
 
-#: src/modules/pager/e_mod_main.c:2129
+#: src/modules/pager/e_mod_main.c:2127
 #: src/modules/pager_plain/e_mod_main.c:2935
 msgid "Popup Desk Left"
 msgstr "Перенестись на стол слева"
 
-#: src/modules/pager/e_mod_main.c:2131
+#: src/modules/pager/e_mod_main.c:2129
 #: src/modules/pager_plain/e_mod_main.c:2937
 msgid "Popup Desk Up"
 msgstr "Перенестись на стол сверху"
 
-#: src/modules/pager/e_mod_main.c:2133
+#: src/modules/pager/e_mod_main.c:2131
 #: src/modules/pager_plain/e_mod_main.c:2939
 msgid "Popup Desk Down"
 msgstr "Перенестись на стол снизу"
 
-#: src/modules/pager/e_mod_main.c:2135
+#: src/modules/pager/e_mod_main.c:2133
 #: src/modules/pager_plain/e_mod_main.c:2941
 msgid "Popup Desk Next"
 msgstr "Перенестись на след. стол"
 
-#: src/modules/pager/e_mod_main.c:2137
+#: src/modules/pager/e_mod_main.c:2135
 #: src/modules/pager_plain/e_mod_main.c:2943
 msgid "Popup Desk Previous"
 msgstr "Перенестись на пред. стол"
@@ -9923,12 +9923,12 @@ msgstr "Идеальный"
 msgid "Share"
 msgstr "Поделиться"
 
-#: src/modules/shot/e_mod_main.c:1086 src/modules/shot/e_mod_main.c:1102
-#: src/modules/shot/e_mod_main.c:1111
+#: src/modules/shot/e_mod_main.c:1084 src/modules/shot/e_mod_main.c:1100
+#: src/modules/shot/e_mod_main.c:1109
 msgid "Screenshot Error"
 msgstr "Ошибка Снимка экрана"
 
-#: src/modules/shot/e_mod_main.c:1087
+#: src/modules/shot/e_mod_main.c:1085
 #, c-format
 msgid ""
 "SHMMAX is too small to take screenshot.<br>Consider increasing /proc/sys/"
@@ -9937,7 +9937,7 @@ msgstr ""
 "Значение SHMMAX слишком мало, чтобы<br>сделать снимок экрана. "
 "Попробуйте<br>увеличить /proc/sys/kernel/shmmax<br>до значения больше %llu."
 
-#: src/modules/shot/e_mod_main.c:1103
+#: src/modules/shot/e_mod_main.c:1101
 #, c-format
 msgid ""
 "SHMMAX is too small to take screenshot.<br>Consider increasing kern.ipc."
@@ -9946,7 +9946,7 @@ msgstr ""
 "Значение SHMMAX слишком мало, чтобы<br>сделать снимок экрана. "
 "Попробуйте<br>увеличить kern.ipc.shmmax до<br>значения большего чем %llu."
 
-#: src/modules/shot/e_mod_main.c:1112
+#: src/modules/shot/e_mod_main.c:1110
 msgid ""
 "SHM creation failed.<br>Ensure your system has enough RAM free and your user "
 "has sufficient permissions."
@@ -9954,20 +9954,20 @@ msgstr ""
 "Не удалось создать SHM.<br>Убедитесь, что в системе достаточно<br>свободной "
 "оперативной памяти и,<br>что у вашего пользователя есть<br>необходимые права."
 
-#: src/modules/shot/e_mod_main.c:1268 src/modules/shot/e_mod_main.c:1370
+#: src/modules/shot/e_mod_main.c:1266 src/modules/shot/e_mod_main.c:1368
 msgid "Take Shot"
 msgstr "Сделать снимок"
 
-#: src/modules/shot/e_mod_main.c:1279 src/modules/shot/e_mod_main.c:1362
-#: src/modules/shot/e_mod_main.c:1375
+#: src/modules/shot/e_mod_main.c:1277 src/modules/shot/e_mod_main.c:1360
+#: src/modules/shot/e_mod_main.c:1373
 msgid "Take Screenshot"
 msgstr "Сделать снимок экрана"
 
-#: src/modules/shot/e_mod_main.c:1350
+#: src/modules/shot/e_mod_main.c:1348
 msgid "Shot Error"
 msgstr "Ошибка снимка"
 
-#: src/modules/shot/e_mod_main.c:1351
+#: src/modules/shot/e_mod_main.c:1349
 msgid "Cannot initialize network"
 msgstr "Не удалось инициализировать сеть"
 
@@ -10044,7 +10044,7 @@ msgstr "%1.0f пикс."
 msgid "Item height"
 msgstr "Высота элементов"
 
-#: src/modules/tasks/e_mod_main.c:294 src/modules/tasks/e_mod_main.c:777
+#: src/modules/tasks/e_mod_main.c:294 src/modules/tasks/e_mod_main.c:782
 msgid "Tasks"
 msgstr "Задачи"
 
@@ -10192,42 +10192,42 @@ msgstr "Справка"
 msgid "Tiling Configuration"
 msgstr "Конфигурация мозаичного режима"
 
-#: src/modules/tiling/e_mod_tiling.c:1361
+#: src/modules/tiling/e_mod_tiling.c:1371
 msgid "Floating"
 msgstr "Плавающее"
 
-#: src/modules/tiling/e_mod_tiling.c:1440
-#: src/modules/tiling/e_mod_tiling.c:1473
-#: src/modules/tiling/e_mod_tiling.c:1798
-#: src/modules/tiling/e_mod_tiling.c:1816
+#: src/modules/tiling/e_mod_tiling.c:1450
+#: src/modules/tiling/e_mod_tiling.c:1483
+#: src/modules/tiling/e_mod_tiling.c:1808
+#: src/modules/tiling/e_mod_tiling.c:1826
 msgid "Tiling"
 msgstr "Мозаичный режим"
 
-#: src/modules/tiling/e_mod_tiling.c:1447
+#: src/modules/tiling/e_mod_tiling.c:1457
 msgid "Toggle floating"
 msgstr "Переключить плавающий режим"
 
-#: src/modules/tiling/e_mod_tiling.c:1450
+#: src/modules/tiling/e_mod_tiling.c:1460
 msgid "Move the focused window up"
 msgstr "Переместить фокусированное окно вверх"
 
-#: src/modules/tiling/e_mod_tiling.c:1452
+#: src/modules/tiling/e_mod_tiling.c:1462
 msgid "Move the focused window down"
 msgstr "Переместить фокусированное окно вниз"
 
-#: src/modules/tiling/e_mod_tiling.c:1454
+#: src/modules/tiling/e_mod_tiling.c:1464
 msgid "Move the focused window left"
 msgstr "Переместить фокусированное окно влево"
 
-#: src/modules/tiling/e_mod_tiling.c:1456
+#: src/modules/tiling/e_mod_tiling.c:1466
 msgid "Move the focused window right"
 msgstr "Переместить фокусированное окно вправо"
 
-#: src/modules/tiling/e_mod_tiling.c:1459
+#: src/modules/tiling/e_mod_tiling.c:1469
 msgid "Toggle split mode"
 msgstr "Переключить режим разделения"
 
-#: src/modules/tiling/e_mod_tiling.c:1461
+#: src/modules/tiling/e_mod_tiling.c:1471
 msgid "Swap window"
 msgstr "Поменять окна местами"
 
@@ -10587,6 +10587,9 @@ msgstr "Вариант"
 msgid "NONE"
 msgstr "НЕТ"
 
+#~ msgid "Animation"
+#~ msgstr "Анимация"
+
 #~ msgid "To reset compositor:"
 #~ msgstr "Для сброса композитного менеджера:"
 
@@ -10609,14 +10612,8 @@ msgstr "НЕТ"
 #~ msgid "Profile name"
 #~ msgstr "Имя профиля"
 
-#~ msgid "Desktop Flip"
-#~ msgstr "Переход по столам"
-
 #~ msgid "Use desktop window profile"
 #~ msgstr "Использовать профиль окна рабочего стола"
-
-#~ msgid "Flip Animation"
-#~ msgstr "Анимация перехода"
 
 #~ msgid "X"
 #~ msgstr "X"
