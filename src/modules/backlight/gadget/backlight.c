@@ -261,6 +261,8 @@ _backlight_gadget_created_cb(void *data, Evas_Object *obj, void *event_info EINA
                                   inst);
         elm_box_pack_end(inst->o_main, inst->o_backlight);
         evas_object_show(inst->o_backlight);
+        inst->val = e_backlight_level_get(e_zone_current_get());
+	_backlight_gadget_update(inst);
      }
    evas_object_smart_callback_del_full(obj, "gadget_created", _backlight_gadget_created_cb, data);
 }

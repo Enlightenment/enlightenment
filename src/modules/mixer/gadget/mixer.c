@@ -625,6 +625,7 @@ _mixer_gadget_created_cb(void *data, Evas_Object *obj, void *event_info EINA_UNU
         elm_box_pack_end(inst->o_main, inst->o_mixer);
         evas_object_show(inst->o_mixer);
         gmixer_context->instances = eina_list_append(gmixer_context->instances, inst);
+        _mixer_gadget_update();
      }
    evas_object_smart_callback_del_full(obj, "gadget_created", _mixer_gadget_created_cb, data);
 }
