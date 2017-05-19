@@ -1081,7 +1081,7 @@ e_pixmap_dmabuf_test(struct linux_dmabuf_buffer *dmabuf)
 
    /* This is only legit for ARGB8888 */
    size = dmabuf->attributes.height * dmabuf->attributes.stride[0];
-   data = mmap(NULL, size, PROT_READ | PROT_WRITE, MAP_SHARED, dmabuf->attributes.fd[0], 0);
+   data = mmap(NULL, size, PROT_READ, MAP_SHARED, dmabuf->attributes.fd[0], 0);
    if (data == MAP_FAILED) return EINA_FALSE;
    munmap(data, size);
 
