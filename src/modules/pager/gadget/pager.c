@@ -235,7 +235,7 @@ _pager_gadget_created_cb(void *data, Evas_Object *obj, void *event_info EINA_UNU
 static void
 _pager_orient(Instance *inst, E_Gadget_Site_Orient orient)
 {
-   int aspect_w, aspect_h;
+   int aspect_w, aspect_h, zone_w = 1, zone_h = 1;
 
    if (inst->o_pager)
      {
@@ -252,16 +252,21 @@ _pager_orient(Instance *inst, E_Gadget_Site_Orient orient)
                 inst->pager->invert = EINA_FALSE;
           }
      }
+   if (inst->pager->zone)
+     {
+        zone_w = inst->pager->zone->w;
+        zone_h = inst->pager->zone->h;
+     }
    if (inst->pager->invert)
      {
-        aspect_w = inst->pager->ynum * inst->pager->zone->w;
-        aspect_h = inst->pager->xnum * inst->pager->zone->h;
+        aspect_w = inst->pager->ynum * zone_w;
+        aspect_h = inst->pager->xnum * zone_h;
         evas_object_size_hint_aspect_set(inst->o_pager, EVAS_ASPECT_CONTROL_BOTH, aspect_w, aspect_h);
      }
    else
      {
-        aspect_w = inst->pager->xnum * inst->pager->zone->w;
-        aspect_h = inst->pager->ynum * inst->pager->zone->h;
+        aspect_w = inst->pager->xnum * zone_w;
+        aspect_h = inst->pager->ynum * zone_h;
         evas_object_size_hint_aspect_set(inst->o_pager, EVAS_ASPECT_CONTROL_BOTH, aspect_w, aspect_h);
      }
 }
