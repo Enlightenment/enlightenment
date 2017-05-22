@@ -1298,6 +1298,7 @@ _bar_cb_client_remove(void *data EINA_UNUSED, int type EINA_UNUSED, E_Event_Clie
         Icon *ic = NULL;
 
         if (!inst->bar) continue;
+        if (inst->cfg->type == E_LUNCHER_MODULE_LAUNCH_ONLY) continue;
         if (ev->ec) ic = _bar_icon_match(inst, ev->ec);
         if (ic)
           {
@@ -1346,7 +1347,8 @@ _bar_cb_exec_del(void *data EINA_UNUSED, int type EINA_UNUSED, E_Exec_Instance *
         Icon *ic = NULL;
 
         if (!inst->bar) continue;
-        if (ex->desktop)
+        if (inst->cfg->type == E_LUNCHER_MODULE_LAUNCH_ONLY) continue;
+	if (ex->desktop)
           {
              ic = eina_hash_find(inst->icons_desktop_hash, ex->desktop->orig_path);
           }
@@ -1421,7 +1423,8 @@ _bar_cb_exec_client_prop(void *data EINA_UNUSED, int type EINA_UNUSED, E_Event_C
         char ori[32];
 
         if (!inst->bar) continue;
-        ic = _bar_icon_match(inst, ev->ec);
+        if (inst->cfg->type == E_LUNCHER_MODULE_LAUNCH_ONLY) continue;
+	ic = _bar_icon_match(inst, ev->ec);
         if (skip && !ic) continue;
         if (!skip)
           {
@@ -1524,6 +1527,7 @@ _bar_cb_exec_new(void *data EINA_UNUSED, int type, E_Exec_Instance *ex)
         char ori[32];
 
         if (!inst->bar) continue;
+        if (inst->cfg->type == E_LUNCHER_MODULE_LAUNCH_ONLY) continue;
         if (ec) ic = _bar_icon_match(inst, ec);
         if (ic)
           {
@@ -2145,19 +2149,16 @@ bar_create(Evas_Object *parent, int *id, E_Gadget_Site_Orient orient EINA_UNUSED
                               _bar_cb_update_icons, NULL);
         E_LIST_HANDLER_APPEND(handlers, EFREET_EVENT_ICON_CACHE_UPDATE,
                               _bar_cb_update_icons, NULL);
-        if (inst->cfg->type != E_LUNCHER_MODULE_LAUNCH_ONLY)
-          {
-             E_LIST_HANDLER_APPEND(handlers, E_EVENT_EXEC_NEW,
-                                   _bar_cb_exec_new, NULL);
-             E_LIST_HANDLER_APPEND(handlers, E_EVENT_EXEC_NEW_CLIENT,
-                                   _bar_cb_exec_new, NULL);
-             E_LIST_HANDLER_APPEND(handlers, E_EVENT_CLIENT_PROPERTY,
-                                   _bar_cb_exec_client_prop, NULL);
-             E_LIST_HANDLER_APPEND(handlers, E_EVENT_EXEC_DEL,
-                                   _bar_cb_exec_del, NULL);
-             E_LIST_HANDLER_APPEND(handlers, E_EVENT_CLIENT_REMOVE,
-                                   _bar_cb_client_remove, NULL);
-          }
+        E_LIST_HANDLER_APPEND(handlers, E_EVENT_EXEC_NEW,
+                              _bar_cb_exec_new, NULL);
+        E_LIST_HANDLER_APPEND(handlers, E_EVENT_EXEC_NEW_CLIENT,
+                              _bar_cb_exec_new, NULL);
+        E_LIST_HANDLER_APPEND(handlers, E_EVENT_CLIENT_PROPERTY,
+                              _bar_cb_exec_client_prop, NULL);
+        E_LIST_HANDLER_APPEND(handlers, E_EVENT_EXEC_DEL,
+                              _bar_cb_exec_del, NULL);
+        E_LIST_HANDLER_APPEND(handlers, E_EVENT_CLIENT_REMOVE,
+                              _bar_cb_client_remove, NULL);
      }
    if (inst->cfg->id < 0) return inst->o_main;
    luncher_instances = eina_list_append(luncher_instances, inst);
