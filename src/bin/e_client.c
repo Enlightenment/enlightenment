@@ -1555,7 +1555,7 @@ _e_client_cb_evas_move(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UN
 
    _e_client_event_simple(ec, E_EVENT_CLIENT_MOVE);
 
-   _e_client_zone_update(ec);
+   if (!e_client_util_ignored_get(ec)) _e_client_zone_update(ec);
    evas_object_geometry_get(ec->frame, &x, &y, NULL, NULL);
    if (ec->stack.prev || ec->stack.next)
      {
@@ -1595,7 +1595,7 @@ _e_client_cb_evas_resize(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_
 
    _e_client_event_simple(ec, E_EVENT_CLIENT_RESIZE);
 
-   _e_client_zone_update(ec);
+   if (!e_client_util_ignored_get(ec)) _e_client_zone_update(ec);
    evas_object_geometry_get(ec->frame, &x, &y, &w, &h);
    if (ec->stack.prev || ec->stack.next)
      {
