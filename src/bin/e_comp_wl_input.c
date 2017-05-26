@@ -667,25 +667,19 @@ _e_comp_wl_input_context_keymap_set(struct xkb_keymap *keymap, struct xkb_contex
         cached_keymap = keymap;
      }
 
+   if (!e_comp->ee) return;
 //set the values to the drm devices
 #ifdef HAVE_WL_DRM
 # ifdef HAVE_DRM2
-   if (e_config->xkb.use_cache)
+   if (strstr(ecore_evas_engine_name_get(e_comp->ee), "drm"))
      {
         Ecore_Drm2_Device *dev;
 
         dev = ecore_evas_data_get(e_comp->ee, "device");
         if (dev)
-          {
-             ecore_drm2_device_keyboard_cached_context_set(dev, context);
-             ecore_drm2_device_keyboard_cached_keymap_set(dev, keymap);
-          }
+          ecore_drm2_device_keyboard_info_set(dev, context, keymap,
+            e_comp_wl ? e_comp_wl->kbd.choosen_group : choosen_group);
      }
-# else
-   if (e_config->xkb.use_cache)
-     ecore_drm_device_keyboard_cached_context_set(context);
-   if (e_config->xkb.use_cache)
-     ecore_drm_device_keyboard_cached_keymap_set(keymap);
 # endif
 #endif
 }
@@ -693,6 +687,18 @@ _e_comp_wl_input_context_keymap_set(struct xkb_keymap *keymap, struct xkb_contex
 E_API void
 e_comp_wl_input_keymap_index_set(xkb_layout_index_t index)
 {
+#ifdef HAVE_WL_DRM
+# ifdef HAVE_DRM2
+   if (e_comp && e_comp->ee && strstr(ecore_evas_engine_name_get(e_comp->ee), "drm"))
+     {
+        Ecore_Drm2_Device *dev;
+
+        dev = ecore_evas_data_get(e_comp->ee, "device");
+        if (dev)
+          ecore_drm2_device_keyboard_group_set(dev, index);
+     }
+# endif
+#endif
    if (e_comp_wl)
      {
         e_comp_wl->kbd.choosen_group = index;
