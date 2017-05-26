@@ -91,11 +91,11 @@ extern char **environ;
 AC_DEFINE(HAVE_ENVIRON, 1, [Have environ var])
     ])
 
-efl_version="1.18.99"
+efl_version="1.19.99"
 AC_SUBST(efl_version)
 
 #We use ecore_drm2 beta API
-efl_ecore_drm2_version="1.18.99"
+efl_ecore_drm2_version="1.19.99"
 AC_SUBST(efl_ecore_drm2_version)
 
 AC_CHECK_HEADERS([sys/timerfd.h sys/ptrace.h arpa/inet.h netinet/in.h])
