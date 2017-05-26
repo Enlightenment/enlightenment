@@ -936,7 +936,8 @@ _e_xdg_surface_cb_popup_get(struct wl_client *client, struct wl_resource *resour
    ec->lock_border = EINA_TRUE;
    if (!ec->internal)
      ec->border.changed = ec->changes.border = !ec->borderless;
-   ec->changes.icon = !!ec->icccm.class;
+   ec->changes.icon = 1;
+   EC_CHANGED(ec);
    ec->netwm.type = E_WINDOW_TYPE_POPUP_MENU;
    ec->placed = EINA_TRUE;
 
@@ -1238,6 +1239,8 @@ _e_xdg_surface_cb_toplevel_get(struct wl_client *client EINA_UNUSED, struct wl_r
    if (!ec->internal)
      ec->borderless = 1;
    ec->lock_border = EINA_TRUE;
+   ec->changes.icon  = 1;
+   EC_CHANGED(ec);
    if ((!ec->internal) || (!ec->borderless))
      ec->border.changed = ec->changes.border = !ec->borderless;
    ec->netwm.type = E_WINDOW_TYPE_NORMAL;
