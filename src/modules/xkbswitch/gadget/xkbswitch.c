@@ -99,7 +99,6 @@ _xkbg_cb_menu_set(void *data, Evas_Object *obj, void *event_data EINA_UNUSED)
         if (cl2 == cl) cur_group = grp;
      }
    if (cur_group == -1) return;
-   if (e_config_xkb_layout_eq(cl, e_xkb_layout_get())) return;
    e_xkb_layout_set(cl);
    e_config_xkb_layout_free(e_config->xkb.sel_layout);
    e_config->xkb.sel_layout = e_config_xkb_layout_dup(cl);
