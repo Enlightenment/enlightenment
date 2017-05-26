@@ -1234,8 +1234,13 @@ _e_comp_intercept_resize(void *data, Evas_Object *obj, int w, int h)
           {
              /* client can't be resized if its pixmap isn't usable, try again */
              e_pixmap_dirty(cw->ec->pixmap);
-             e_comp_object_render_update_add(obj);
-             e_comp_render_queue();
+             if (e_comp->nocomp)
+               e_pixmap_refresh(cw->ec->pixmap);
+             else
+               {
+                  e_comp_object_render_update_add(obj);
+                  e_comp_render_queue();
+               }
           }
         cw->ec->changes.size = 1;
         EC_CHANGED(cw->ec);
