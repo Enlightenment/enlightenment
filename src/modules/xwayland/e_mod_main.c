@@ -289,8 +289,10 @@ xinit(void *d, Ecore_Thread *eth)
 
    init_threads = dlsym(NULL, "XInitThreads");
    if (init_threads) init_threads();
+   else ERR("Could not resolve XInitThreads");
    open_display = dlsym(NULL, "XOpenDisplay");
    if (open_display) disp = open_display(d);
+   else ERR("Could not resolve XOpenDisplay");
    free(d);
    ecore_thread_feedback(eth, disp);
 }
