@@ -745,14 +745,14 @@ _e_sys_logout_after(void)
 static void
 _e_sys_logout_begin(E_Sys_Action a_after, Eina_Bool raw)
 {
-   const Eina_List *l;
+   const Eina_List *l, *ll;
    E_Client *ec;
 
    stopping = 1;
    /* start logout - at end do the a_after action */
    _e_sys_action_after = a_after;
    _e_sys_action_after_raw = raw;
-   EINA_LIST_FOREACH(e_comp->clients, l, ec)
+   EINA_LIST_FOREACH_SAFE(e_comp->clients, l, ll, ec)
      {
         e_client_act_close_begin(ec);
      }
