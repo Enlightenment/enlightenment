@@ -58,13 +58,7 @@ _e_mod_drm_cb_activate(void *data EINA_UNUSED, int type EINA_UNUSED, void *event
         session_state = EINA_TRUE;
 
         ecore_evas_show(e_comp->ee);
-        E_CLIENT_FOREACH(ec)
-          {
-             if (ec->visible && (!ec->input_only))
-               e_comp_object_damage(ec->frame, 0, 0, ec->w, ec->h);
-          }
-        e_comp_render_queue();
-        e_comp_shape_queue_block(0);
+        evas_damage_rectangle_add(e_comp->evas, 0, 0, e_comp->w, e_comp->h);
         ecore_event_add(E_EVENT_COMPOSITOR_ENABLE, NULL, NULL, NULL);
      }
    else
