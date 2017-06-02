@@ -71,8 +71,6 @@ _e_mod_drm_cb_activate(void *data EINA_UNUSED, int type EINA_UNUSED, void *event
         evas_font_cache_flush(e_comp->evas);
         evas_render_dump(e_comp->evas);
 
-        e_comp_render_queue();
-        e_comp_shape_queue_block(1);
         ecore_event_add(E_EVENT_COMPOSITOR_DISABLE, NULL, NULL, NULL);
      }
 
