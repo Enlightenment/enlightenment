@@ -17,6 +17,8 @@
 # include "e_comp_x.h"
 #endif
 
+#define E_SUPPORTED_NATIVE_SURFACE_VERSION 4
+
 #include <sys/mman.h>
 
 static Eina_Hash *pixmaps[2] = {NULL};
@@ -704,7 +706,7 @@ e_pixmap_native_surface_init(E_Pixmap *cp, Evas_Native_Surface *ns)
    EINA_SAFETY_ON_NULL_RETURN_VAL(cp, EINA_FALSE);
    EINA_SAFETY_ON_NULL_RETURN_VAL(ns, EINA_FALSE);
 
-   ns->version = EVAS_NATIVE_SURFACE_VERSION;
+   ns->version = E_SUPPORTED_NATIVE_SURFACE_VERSION;
    switch (cp->type)
      {
       case E_PIXMAP_TYPE_X:
@@ -1061,7 +1063,7 @@ e_pixmap_dmabuf_test(struct linux_dmabuf_buffer *dmabuf)
      {
         Eina_Bool ret;
         ns.type = EVAS_NATIVE_SURFACE_WL_DMABUF;
-        ns.version = EVAS_NATIVE_SURFACE_VERSION;
+        ns.version = E_SUPPORTED_NATIVE_SURFACE_VERSION;
         ns.data.wl_dmabuf.attr = &dmabuf->attributes;
         ns.data.wl_dmabuf.resource = NULL;
         test = evas_object_image_add(e_comp->evas);
