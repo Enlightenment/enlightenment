@@ -721,7 +721,6 @@ e_pixmap_native_surface_init(E_Pixmap *cp, Evas_Native_Surface *ns)
         if (cp->buffer->dmabuf_buffer)
           {
              ns->type = EVAS_NATIVE_SURFACE_WL_DMABUF;
-             ns->version = EVAS_NATIVE_SURFACE_VERSION;
 
              ns->data.wl_dmabuf.attr = &cp->buffer->dmabuf_buffer->attributes;
              ns->data.wl_dmabuf.resource = cp->buffer->resource;
@@ -731,7 +730,6 @@ e_pixmap_native_surface_init(E_Pixmap *cp, Evas_Native_Surface *ns)
         else if (!cp->buffer->shm_buffer)
           {
              ns->type = EVAS_NATIVE_SURFACE_WL;
-             ns->version = EVAS_NATIVE_SURFACE_VERSION;
              ns->data.wl.legacy_buffer = cp->buffer->resource;
              ret = EINA_TRUE;
           }
