@@ -52,8 +52,6 @@ _e_mod_drm_cb_activate(void *data EINA_UNUSED, int type EINA_UNUSED, void *event
 
    if (ev->active)
      {
-        E_Client *ec;
-
         if (session_state) goto end;
         session_state = EINA_TRUE;
 
