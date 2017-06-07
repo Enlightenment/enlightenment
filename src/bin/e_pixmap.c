@@ -46,7 +46,6 @@ struct _E_Pixmap
 
 #ifdef HAVE_WAYLAND
    E_Comp_Wl_Buffer *buffer;
-   E_Comp_Wl_Buffer *native_buffer;
    E_Comp_Wl_Buffer *held_buffer;
    struct wl_listener buffer_destroy_listener;
    struct wl_listener held_buffer_destroy_listener;
@@ -724,7 +723,6 @@ e_pixmap_native_surface_init(E_Pixmap *cp, Evas_Native_Surface *ns)
 
              ns->data.wl_dmabuf.attr = &cp->buffer->dmabuf_buffer->attributes;
              ns->data.wl_dmabuf.resource = cp->buffer->resource;
-             cp->native_buffer = cp->buffer;
              ret = EINA_TRUE;
           }
         else if (!cp->buffer->shm_buffer)
