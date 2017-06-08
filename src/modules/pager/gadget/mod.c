@@ -64,7 +64,7 @@ e_modapi_gadget_init(E_Module *m)
 
    pager_init();
 
-   e_gadget_type_add("Pager Gadget", pager_create, NULL);
+   e_gadget_type_add("Pager", pager_create, NULL);
 
    return m;
 }
@@ -89,7 +89,7 @@ e_modapi_gadget_shutdown(E_Module *m EINA_UNUSED)
    e_action_predef_name_del("Pager Gadget", "Popup Desk Next");
    e_action_predef_name_del("Pager Gadget", "Popup Desk Previous");
 
-   e_gadget_type_del("Pager Gadget");
+   e_gadget_type_del("Pager");
 
    E_FREE(pager_config);
    E_CONFIG_DD_FREE(conf_edd);

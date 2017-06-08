@@ -18,7 +18,7 @@ e_modapi_gadget_init(E_Module *m)
    if (!loaded)
      goto err;
 
-   e_gadget_type_add("Mixer Gadget", mixer_gadget_create, NULL);
+   e_gadget_type_add("Mixer", mixer_gadget_create, NULL);
 
    return m;
 err:
@@ -32,7 +32,7 @@ e_modapi_gadget_shutdown(E_Module *m EINA_UNUSED)
 {
    mixer_shutdown();
 
-   e_gadget_type_del("Mixer Gadget");
+   e_gadget_type_del("Mixer");
 
 
    emix_shutdown();
