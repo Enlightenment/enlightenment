@@ -21,6 +21,7 @@ luncher_init(void)
 #define D conf_item_edd
    E_CONFIG_VAL(D, T, id, INT);
    E_CONFIG_VAL(D, T, version, INT);
+   E_CONFIG_VAL(D, T, preview_size, INT);
    E_CONFIG_VAL(D, T, style, STR);
    E_CONFIG_VAL(D, T, dir, STR);
    E_CONFIG_VAL(D, T, type, INT);
@@ -40,7 +41,8 @@ luncher_init(void)
         ci = E_NEW(Config_Item, 1);
         ci->id = 0;
         ci->version = CONFIG_VERSION;
-        ci->style = eina_stringshare_add("default");
+        ci->preview_size = 64;
+	ci->style = eina_stringshare_add("default");
         ci->dir = eina_stringshare_add("default");
         ci->type = E_LUNCHER_MODULE_FULL;
         luncher_config->items = eina_list_append(luncher_config->items, ci);

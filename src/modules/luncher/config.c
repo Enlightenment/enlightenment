@@ -315,11 +315,22 @@ _icon_theme_file_set(Evas_Object *img, const char *icon)
    elm_image_file_set(img, path, k);
 }
 
+static void
+_update_preview_size(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
+{
+   Instance *inst = data;
+   int value = elm_slider_value_get(obj);
+
+   inst->cfg->preview_size = value;
+   e_config_save_queue();
+}
+
 EINTERN Evas_Object *
 config_luncher(E_Zone *zone, Instance *inst, Eina_Bool bar)
 {
    Evas_Object *popup, *tb, *lbl, *fr, *box, *list, *mlist;
    Evas_Object *butbox, *sep, *hbox, *img, *but, *o, *group;
+   Evas_Object *slider;
    Elm_Object_Item *it;
 
    luncher_config->bar = bar;
@@ -374,7 +385,7 @@ config_luncher(E_Zone *zone, Instance *inst, Eina_Bool bar)
 
    lbl = elm_label_add(box);
    elm_object_text_set(lbl, _("Luncher Type:"));
-   E_ALIGN(lbl, 0.0, 0.0);
+   E_ALIGN(lbl, 0.5, 0.5);
    E_WEIGHT(lbl, EVAS_HINT_EXPAND, 0);
    elm_box_pack_end(box, lbl);
    evas_object_show(lbl);
@@ -423,6 +434,33 @@ config_luncher(E_Zone *zone, Instance *inst, Eina_Bool bar)
         default:
           elm_radio_value_set(group, 0);
      }
+
+   o = elm_separator_add(box);
+   elm_separator_horizontal_set(o, EINA_TRUE);
+   E_EXPAND(o);
+   E_FILL(o);
+   elm_box_pack_end(box, o);
+   evas_object_show(o);
+
+   lbl = elm_label_add(box);
+   elm_object_text_set(lbl, _("Preview Size:"));
+   E_ALIGN(lbl, 0.5, 0.5);
+   E_WEIGHT(lbl, EVAS_HINT_EXPAND, 0);
+   elm_box_pack_end(box, lbl);
+   evas_object_show(lbl);
+
+   slider = elm_slider_add(box);
+   elm_slider_unit_format_set(slider, "%1.0f");
+   elm_slider_indicator_format_set(slider, "%1.0f");
+   elm_slider_min_max_set(slider, 1, 256);
+   elm_slider_value_set(slider, inst->cfg->preview_size);
+   elm_slider_step_set(slider, 1);
+   elm_slider_span_size_set(slider, 256);
+   E_ALIGN(slider, 0.0, 0.0);
+   E_WEIGHT(slider, EVAS_HINT_EXPAND, 0);
+   evas_object_smart_callback_add(slider, "delay,changed", _update_preview_size, inst);
+   elm_box_pack_end(box, slider);
+   evas_object_show(slider);
 
    elm_object_content_set(fr, box);
 

@@ -40,6 +40,7 @@ struct _Config_Item
 {
    int               id;
    int               version;
+   int               preview_size;
    Eina_Stringshare *style;
    Eina_Stringshare *dir;
    Luncher_Type      type;

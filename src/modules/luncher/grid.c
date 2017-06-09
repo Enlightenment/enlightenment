@@ -718,6 +718,9 @@ grid_create(Evas_Object *parent, int *id, E_Gadget_Site_Orient orient EINA_UNUSE
    inst->inside = EINA_FALSE;
    inst->bar = EINA_FALSE;
 
+   if (!inst->cfg->preview_size)
+     inst->cfg->preview_size = 64;
+
    _grid_icon_class.item_style = "luncher";
    _grid_icon_class.func.text_get = NULL;
    _grid_icon_class.func.content_get = _gengrid_icon_get;

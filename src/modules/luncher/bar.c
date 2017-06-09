@@ -602,7 +602,7 @@ _bar_icon_mouse_down(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUS
 
         popup = elm_ctxpopup_add(e_comp->elm);
         elm_object_style_set(popup, "noblock");
-        evas_object_smart_callback_add(popup, "dismissed", _bar_popup_dismissed, NULL);
+        evas_object_smart_callback_add(popup, "dismissed", _bar_popup_dismissed, ic);
         evas_object_size_hint_min_set(popup, ic->inst->size, ic->inst->size);
 
         box = elm_box_add(popup);
@@ -811,6 +811,7 @@ static void
 _bar_icon_preview_client_add(Icon *ic, E_Client *ec)
 {
    Evas_Object *layout, *label, *img;
+   Edje_Message_Int_Set *msg;
 
    layout = elm_layout_add(ic->preview_box);
    evas_object_data_set(layout, "icon", ic);
@@ -823,6 +824,11 @@ _bar_icon_preview_client_add(Icon *ic, E_Client *ec)
        _bar_icon_preview_item_mouse_out, ic);
    elm_box_pack_end(ic->preview_box, layout);
    evas_object_show(layout);
+
+   msg = alloca(sizeof(Edje_Message_Int_Set) + (sizeof(int)));
+   msg->count = 1;
+   msg->val[0] = ic->inst->cfg->preview_size;
+   edje_object_message_send(elm_layout_edje_get(layout), EDJE_MESSAGE_INT_SET, 1, msg);
 
    label = elm_label_add(layout);
    elm_object_style_set(label, "luncher_preview");
@@ -900,12 +906,15 @@ _bar_icon_preview_show(void *data)
      {
         case E_GADGET_SITE_ORIENT_HORIZONTAL:
           elm_box_horizontal_set(ic->preview_box, EINA_TRUE);
-          break;
+          elm_box_padding_set(ic->preview_box, 2, 0);
+	  break;
         case E_GADGET_SITE_ORIENT_VERTICAL:
           elm_box_horizontal_set(ic->preview_box, EINA_FALSE);
-          break;
+          elm_box_padding_set(ic->preview_box, 0, 2);
+	  break;
         default:
           elm_box_horizontal_set(ic->preview_box, EINA_TRUE);
+          elm_box_padding_set(ic->preview_box, 2, 0);
      }
    EINA_LIST_FOREACH(ic->execs, l, ex)
      {
@@ -2030,6 +2039,7 @@ _conf_item_get(int *id)
      ci->id = eina_list_count(luncher_config->items)+1;
    else
      ci->id = -1;
+   ci->preview_size = 64;
    ci->dir = eina_stringshare_add("default");
    ci->style = eina_stringshare_add("default");
    ci->type = E_LUNCHER_MODULE_FULL;
@@ -2132,6 +2142,10 @@ bar_create(Evas_Object *parent, int *id, E_Gadget_Site_Orient orient EINA_UNUSED
    inst->main_del = EINA_FALSE;
    inst->icons_desktop_hash = eina_hash_string_superfast_new(NULL);
    inst->icons_clients_hash = eina_hash_pointer_new(NULL);
+
+   if (!inst->cfg->preview_size)
+     inst->cfg->preview_size = 64;
+
    inst->o_main = elm_layout_add(parent);
    e_theme_edje_object_set(inst->o_main, "e/gadget/luncher/bar",
        "e/gadget/luncher/bar");
