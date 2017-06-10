@@ -84,6 +84,7 @@ struct _Icon
    Efreet_Desktop   *desktop;
    Eina_List        *execs;
    Eina_List        *clients;
+   Eina_List        *client_cbs;
    Ecore_Timer      *mouse_in_timer;
    Ecore_Timer      *mouse_out_timer;
    Ecore_Timer      *drag_timer;

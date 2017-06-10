@@ -3,6 +3,7 @@ static Eina_List *handlers;
 static Eina_Bool _bar_icon_preview_show(void *data);
 static Eina_Bool _bar_icon_preview_hide(void *data);
 static void      _bar_icon_del(Instance *inst, Icon *ic);
+static void _bar_exec_new_show(void *data, Evas *e, Evas_Object *obj, void *event_data);
 
 static float
 _bar_size_calc(Instance *inst)
@@ -187,6 +188,11 @@ _bar_icon_match(Instance *inst, E_Client *ec)
           {
              ic2->execs = eina_list_remove(ic2->execs, ec->exe_inst);
              ic2->clients = eina_list_remove(ic2->clients, ec);
+             if (ic2->client_cbs)
+               {
+                  ic2->client_cbs = eina_list_remove(ic2->client_cbs, ec);
+                  evas_object_event_callback_del_full(ec->frame, EVAS_CALLBACK_SHOW, _bar_exec_new_show, ic2);
+               }
              if (!eina_list_count(ic2->execs) && !eina_list_count(ic2->clients))
                {
                   eina_hash_del(inst->icons_clients_hash, ec, ic2);
@@ -236,6 +242,8 @@ _bar_instance_watch(void *data, E_Exec_Instance *ex, E_Exec_Watch_Type type)
 static void
 _bar_icon_del(Instance *inst, Icon *ic)
 {
+   E_Client *ec;
+
    inst->icons = eina_list_remove(inst->icons, ic);
    if (ic->preview)
      _bar_icon_preview_hide(ic);
@@ -250,6 +258,8 @@ _bar_icon_del(Instance *inst, Icon *ic)
      efreet_desktop_unref(ic->desktop);
    eina_list_free(ic->execs);
    eina_list_free(ic->clients);
+   EINA_LIST_FREE(ic->client_cbs, ec)
+     evas_object_event_callback_del_full(ec->frame, EVAS_CALLBACK_SHOW, _bar_exec_new_show, ic);
    eina_stringshare_del(ic->icon);
    eina_stringshare_del(ic->key);
    if (ic->exec)
@@ -987,6 +997,7 @@ _bar_exec_new_show(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *even
                ic->mouse_in_timer = ecore_timer_loop_add(0.3, _bar_icon_preview_show, ic);
           }
      }
+   ic->client_cbs = eina_list_remove(ic->client_cbs, ec);
    evas_object_event_callback_del_full(ec->frame, EVAS_CALLBACK_SHOW, _bar_exec_new_show, ic);
 }
 
@@ -1299,6 +1310,11 @@ _bar_cb_client_remove(void *data EINA_UNUSED, int type EINA_UNUSED, E_Event_Clie
              if (ic->starting) elm_layout_signal_emit(ic->o_layout, "e,state,started", "e");
              ic->starting = EINA_FALSE;
              ic->clients = eina_list_remove(ic->clients, ev->ec);
+             if (ic->client_cbs)
+               {
+                  ic->client_cbs = eina_list_remove(ic->client_cbs, ev->ec);
+                  evas_object_event_callback_del_full(ev->ec->frame, EVAS_CALLBACK_SHOW, _bar_exec_new_show, ic);
+               }
              if (ev->ec->exe_inst)
                ic->execs = eina_list_remove(ic->execs, ev->ec->exe_inst);
              if (!eina_list_count(ic->execs) && !eina_list_count(ic->clients))
@@ -1351,6 +1367,11 @@ _bar_cb_exec_del(void *data EINA_UNUSED, int type EINA_UNUSED, E_Exec_Instance *
              ic->starting = EINA_FALSE;
              ic->execs = eina_list_remove(ic->execs, ex);
              ic->clients = eina_list_remove(ic->clients, ec);
+             if (ic->client_cbs)
+               {
+                  ic->client_cbs = eina_list_remove(ic->client_cbs, ec);
+                  evas_object_event_callback_del_full(ec->frame, EVAS_CALLBACK_SHOW, _bar_exec_new_show, ic);
+               }
              if (!eina_list_count(ic->execs) && !eina_list_count(ic->clients))
                {
                   snprintf(ori, sizeof(ori), "e,state,off,%s", _bar_location_get(inst));
@@ -1465,6 +1486,11 @@ _bar_cb_exec_client_prop(void *data EINA_UNUSED, int type EINA_UNUSED, E_Event_C
                ic->execs = eina_list_remove(ic->execs, ev->ec->exe_inst);
              else
                ic->clients = eina_list_remove(ic->clients, ev->ec);
+             if (ic->client_cbs)
+               {
+                  ic->client_cbs = eina_list_remove(ic->client_cbs, ev->ec);
+                  evas_object_event_callback_del_full(ev->ec->frame, EVAS_CALLBACK_SHOW, _bar_exec_new_show, ic);
+               }
              if (!eina_list_count(ic->execs) && !eina_list_count(ic->clients))
                {
                   if (ic->preview)
@@ -1539,8 +1565,11 @@ _bar_cb_exec_new(void *data EINA_UNUSED, int type, E_Exec_Instance *ex)
              if (evas_object_visible_get(ec->frame))
                _bar_exec_new_show(ic, NULL, ec->frame, NULL);
              else
-               evas_object_event_callback_add(ec->frame, EVAS_CALLBACK_SHOW,
-                   _bar_exec_new_show, ic);
+               {
+                  ic->client_cbs = eina_list_append(ic->client_cbs, ec);
+                  evas_object_event_callback_add(ec->frame, EVAS_CALLBACK_SHOW,
+                    _bar_exec_new_show, ic);
+               }
           }
         else
           {
