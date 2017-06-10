@@ -1293,13 +1293,12 @@ _bar_cb_client_remove(void *data EINA_UNUSED, int type EINA_UNUSED, E_Event_Clie
 
         if (!inst->bar) continue;
         if (inst->cfg->type == E_LUNCHER_MODULE_LAUNCH_ONLY) continue;
-        if (ev->ec) ic = _bar_icon_match(inst, ev->ec);
+        ic = _bar_icon_match(inst, ev->ec);
         if (ic)
           {
              if (ic->starting) elm_layout_signal_emit(ic->o_layout, "e,state,started", "e");
              ic->starting = EINA_FALSE;
-             if (ev->ec)
-               ic->clients = eina_list_remove(ic->clients, ev->ec);
+             ic->clients = eina_list_remove(ic->clients, ev->ec);
              if (ev->ec->exe_inst)
                ic->execs = eina_list_remove(ic->execs, ev->ec->exe_inst);
              if (!eina_list_count(ic->execs) && !eina_list_count(ic->clients))
