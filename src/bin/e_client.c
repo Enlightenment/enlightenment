@@ -4850,7 +4850,6 @@ e_client_act_move_begin(E_Client *ec, E_Binding_Event_Mouse_Button *ev)
      return;
 
    _e_client_action_init(ec);
-   e_zone_edge_disable();
    e_pointer_mode_push(ec, E_POINTER_MOVE);
 }
 
@@ -5201,7 +5200,6 @@ e_client_signal_move_begin(E_Client *ec, const char *sig, const char *src EINA_U
    if (!_e_client_move_begin(ec)) return;
    _e_client_action_init(ec);
    e_pointer_mode_push(ec, E_POINTER_MOVE);
-   e_zone_edge_disable();
 }
 
 E_API void
