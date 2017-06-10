@@ -42,6 +42,7 @@ static Eina_List *focus_stack = NULL;
 static Eina_List *raise_stack = NULL;
 
 static Eina_Bool comp_grabbed = EINA_FALSE;
+static Evas_Object *action_rect;
 
 static Eina_List *handlers = NULL;
 //static Eina_Bool client_grabbed = EINA_FALSE;
@@ -364,6 +365,7 @@ _e_client_action_input_win_del(void)
    if (!comp_grabbed) return 0;
 
    comp_grabbed = 0;
+   E_FREE_FUNC(action_rect, evas_object_del);
    e_comp_ungrab_input(1, 1);
    return 1;
 }
@@ -746,6 +748,25 @@ _e_client_action_input_win_new(void)
 }
 
 static void
+_e_client_action_event_grabber_mouse_up(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   if (action_client && action_client->moving)
+     e_client_act_move_end(action_client, NULL);
+}
+
+static void
+_e_client_action_event_grabber_init(E_Client *ec)
+{
+   action_rect = e_comp_canvas_event_grabber_add();
+   evas_object_event_callback_add(action_rect, EVAS_CALLBACK_MOUSE_UP, _e_client_action_event_grabber_mouse_up, NULL);
+   evas_object_smart_member_add(ec->frame, action_rect);
+   evas_object_resize(action_rect, e_comp->w, e_comp->h);
+   evas_object_layer_set(action_rect, EVAS_LAYER_MAX - 100);
+   evas_object_show(action_rect);
+
+}
+
+static void
 _e_client_action_init(E_Client *ec)
 {
    action_orig.x = ec->x;
@@ -821,6 +842,7 @@ _e_client_move_begin(E_Client *ec)
         return 0;
      }
    E_FREE_FUNC(ec->raise_timer, ecore_timer_del);
+   _e_client_action_event_grabber_init(ec);
    return 1;
 }
 
@@ -5147,6 +5169,7 @@ e_client_resize_begin(E_Client *ec)
         return EINA_FALSE;
      }
    E_FREE_FUNC(ec->raise_timer, ecore_timer_del);
+   _e_client_action_event_grabber_init(ec);
    return EINA_TRUE;
 error:
    ec->resize_mode = E_POINTER_RESIZE_NONE;

@@ -848,6 +848,37 @@ e_comp_canvas_feed_mouse_up(unsigned int activate_time)
      }
 }
 
+E_API Evas_Object *
+e_comp_canvas_event_grabber_add(void)
+{
+   E_Zone *zone;
+   Eina_List *l;
+   Evas_Object *o;
+
+   o = evas_object_event_grabber_add(e_comp->evas);
+   EINA_LIST_FOREACH(e_comp->zones, l, zone)
+     {
+#define EDGE_ADD(E) \
+        if (zone->E) \
+          evas_object_smart_member_add(zone->E, o)
+
+        EDGE_ADD(edge.top);
+        EDGE_ADD(edge.right);
+        EDGE_ADD(edge.bottom);
+        EDGE_ADD(edge.left);
+
+        EDGE_ADD(corner.left_top);
+        EDGE_ADD(corner.right_top);
+        EDGE_ADD(corner.top_left);
+        EDGE_ADD(corner.top_right);
+        EDGE_ADD(corner.left_bottom);
+        EDGE_ADD(corner.right_bottom);
+        EDGE_ADD(corner.bottom_left);
+        EDGE_ADD(corner.bottom_right);
+     }
+   return o;
+}
+
 EINTERN void
 e_comp_canvas_intercept(void)
 {
