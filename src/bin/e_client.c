@@ -807,17 +807,18 @@ _e_client_move_begin(E_Client *ec)
    if (!_e_client_action_input_win_new()) return 0;
    ec->moving = 1;
    ecmove = ec;
+   if (!ec->lock_user_stacking)
+     {
+        if (e_config->border_raise_on_mouse_action)
+          evas_object_raise(ec->frame);
+     }
+
    _e_client_hook_call(E_CLIENT_HOOK_MOVE_BEGIN, ec);
    if (!ec->moving)
      {
         if (ecmove == ec) ecmove = NULL;
         _e_client_action_input_win_del();
         return 0;
-     }
-   if (!ec->lock_user_stacking)
-     {
-        if (e_config->border_raise_on_mouse_action)
-          evas_object_raise(ec->frame);
      }
    return 1;
 }
@@ -5131,6 +5132,11 @@ e_client_resize_begin(E_Client *ec)
        (ec->fullscreen) || (ec->lock_user_size))
      goto error;
    if (!_e_client_action_input_win_new()) goto error;
+   if (!ec->lock_user_stacking)
+     {
+        if (e_config->border_raise_on_mouse_action)
+          evas_object_raise(ec->frame);
+     }
    ecresize = ec;
    _e_client_hook_call(E_CLIENT_HOOK_RESIZE_BEGIN, ec);
    if (!e_client_util_resizing_get(ec))
@@ -5138,11 +5144,6 @@ e_client_resize_begin(E_Client *ec)
         if (ecresize == ec) ecresize = NULL;
         _e_client_action_input_win_del();
         return EINA_FALSE;
-     }
-   if (!ec->lock_user_stacking)
-     {
-        if (e_config->border_raise_on_mouse_action)
-          evas_object_raise(ec->frame);
      }
    return EINA_TRUE;
 error:
