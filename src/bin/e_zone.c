@@ -78,6 +78,7 @@ _e_zone_cb_mouse_in(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *eve
    E_Zone_Edge edge;
    E_Zone *zone = data;
 
+   if (!ev->timestamp) return;
    edge = _e_zone_detect_edge(zone, obj);
    if (edge == E_ZONE_EDGE_NONE) return;
 
@@ -101,6 +102,7 @@ _e_zone_cb_mouse_out(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *ev
    E_Zone_Edge edge;
    E_Zone *zone = data;
 
+   if (!ev->timestamp) return;
    edge = _e_zone_detect_edge(zone, obj);
    if (edge == E_ZONE_EDGE_NONE) return;
 
@@ -124,6 +126,7 @@ _e_zone_cb_mouse_down(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *e
    E_Zone_Edge edge;
    E_Zone *zone = data;
 
+   if (!ev->timestamp) return;
    edge = _e_zone_detect_edge(zone, obj);
    if (edge == E_ZONE_EDGE_NONE) return;
 
@@ -146,6 +149,7 @@ _e_zone_cb_mouse_up(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *eve
    E_Zone_Edge edge;
    E_Zone *zone = data;
 
+   if (!ev->timestamp) return;
    edge = _e_zone_detect_edge(zone, obj);
    if (edge == E_ZONE_EDGE_NONE) return;
 
