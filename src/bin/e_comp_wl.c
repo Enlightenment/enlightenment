@@ -1177,8 +1177,8 @@ _e_comp_wl_cb_mouse_move(void *d EINA_UNUSED, int t EINA_UNUSED, Ecore_Event_Mou
 {
    _last_event_time = ecore_loop_time_get();
 
-   e_comp_wl->ptr.x = wl_fixed_from_int(ev->x);
-   e_comp_wl->ptr.y = wl_fixed_from_int(ev->y);
+   e_comp_wl->ptr.x = ev->x;
+   e_comp_wl->ptr.y = ev->y;
    e_screensaver_notidle();
    if (e_comp_wl->selection.target &&
        (!e_client_has_xwindow(e_comp_wl->selection.target)) &&
