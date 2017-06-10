@@ -1281,7 +1281,7 @@ _bar_icon_add(Instance *inst, Efreet_Desktop *desktop, E_Client *non_desktop_cli
 }
 
 static Eina_Bool
-_bar_cb_client_remove(void *data EINA_UNUSED, int type EINA_UNUSED, E_Event_Client_Property *ev)
+_bar_cb_client_remove(void *data EINA_UNUSED, int type EINA_UNUSED, E_Event_Client *ev)
 {
    Instance *inst = NULL;
    Eina_List *l = NULL;
