@@ -1530,26 +1530,18 @@ _bar_cb_exec_new(void *data EINA_UNUSED, int type, E_Exec_Instance *ex)
              ic->starting = EINA_FALSE;
              snprintf(ori, sizeof(ori), "e,state,on,%s", _bar_location_get(inst));
              elm_layout_signal_emit(ic->o_layout, ori, "e");
-             if (ex->desktop)
+             if (!(_bar_check_for_duplicates(ic, ec)))
                {
-                  if (!(_bar_check_for_duplicates(ic, ec)))
+                  if (ex->desktop)
                     ic->execs = eina_list_append(ic->execs, ex);
-                  if (evas_object_visible_get(ec->frame))
-                    _bar_exec_new_show(ic, NULL, ec->frame, NULL);
                   else
-                    evas_object_event_callback_add(ec->frame, EVAS_CALLBACK_SHOW,
-                        _bar_exec_new_show, ic);
-               }
-             else
-               {
-                  if (!(_bar_check_for_duplicates(ic, ec)))
                     ic->clients = eina_list_append(ic->clients, ec);
-                  if (evas_object_visible_get(ec->frame))
-                    _bar_exec_new_show(ic, NULL, ec->frame, NULL);
-                  else
-                    evas_object_event_callback_add(ec->frame, EVAS_CALLBACK_SHOW,
-                        _bar_exec_new_show, ic);
                }
+             if (evas_object_visible_get(ec->frame))
+               _bar_exec_new_show(ic, NULL, ec->frame, NULL);
+             else
+               evas_object_event_callback_add(ec->frame, EVAS_CALLBACK_SHOW,
+                   _bar_exec_new_show, ic);
           }
         else
           {
