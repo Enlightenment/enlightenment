@@ -3441,6 +3441,7 @@ e_comp_object_frame_theme_set(Evas_Object *obj, const char *name)
    if (ok)
      {
         cw->frame_object = o;
+        edje_object_signal_emit(o, "e,titlebar,nograb", "e");
         eina_stringshare_del(cw->frame_theme);
         cw->frame_theme = theme;
         evas_object_name_set(o, "cw->frame_object");
