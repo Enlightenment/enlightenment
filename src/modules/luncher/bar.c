@@ -35,27 +35,12 @@ _bar_aspect(Instance *inst)
 static Eina_Bool
 _bar_check_for_duplicates(Icon *ic, E_Client *dupe)
 {
-   Eina_List *l, *ll, *clients = NULL;
-   E_Client *ec;
+   Eina_List *l;
    E_Exec_Instance *ex;
 
    EINA_LIST_FOREACH(ic->execs, l, ex)
-     {
-        EINA_LIST_FOREACH(ex->clients, ll, ec)
-          clients = eina_list_append(clients, ec);
-     }
-   EINA_LIST_FOREACH(ic->clients, l, ec)
-     clients = eina_list_append(clients, ec);
-
-   EINA_LIST_FREE(clients, ec)
-     {
-          if (ec == dupe)
-            {
-               eina_list_free(clients);
-               return EINA_TRUE;
-            }
-     }
-   return EINA_FALSE;
+     if (eina_list_data_find(ex->clients, dupe)) return EINA_TRUE;
+   return !!eina_list_data_find(ic->clients, dupe);
 }
 
 static Eina_Bool
