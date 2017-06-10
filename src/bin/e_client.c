@@ -820,6 +820,7 @@ _e_client_move_begin(E_Client *ec)
         _e_client_action_input_win_del();
         return 0;
      }
+   E_FREE_FUNC(ec->raise_timer, ecore_timer_del);
    return 1;
 }
 
@@ -5145,6 +5146,7 @@ e_client_resize_begin(E_Client *ec)
         _e_client_action_input_win_del();
         return EINA_FALSE;
      }
+   E_FREE_FUNC(ec->raise_timer, ecore_timer_del);
    return EINA_TRUE;
 error:
    ec->resize_mode = E_POINTER_RESIZE_NONE;
