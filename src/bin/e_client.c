@@ -4086,6 +4086,11 @@ e_client_maximize(E_Client *ec, E_Maximize max)
      evas_object_smart_callback_call(ec->frame, "maximize", NULL);
    evas_object_smart_callback_call(ec->frame, "maximize_pre", &max);
    if (!max) return;
+   if (ec->moving)
+     {
+        if (ec == action_client)
+          e_comp_canvas_feed_mouse_up(0); //triggers event grabber cb
+     }
    override = ec->maximize_override;
    if (ec->fullscreen)
      e_client_unfullscreen(ec);
