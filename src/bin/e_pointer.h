@@ -34,6 +34,11 @@ struct _E_Pointer
    Evas_Object *o_hot;
    Evas_Object *buffer_o_ptr;
    Evas_Object *buffer_o_hot;
+   struct
+   {
+      E_Client *ec;
+      int x, y;
+   } client;
 
    Ecore_Window win;
 

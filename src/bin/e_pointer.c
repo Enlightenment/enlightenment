@@ -790,7 +790,7 @@ e_pointer_object_set(E_Pointer *ptr, Evas_Object *obj, int x, int y)
         if (ec)
           ec->hidden = 1;
      }
-
+   ec = NULL;
    if (obj)
      {
         ec = e_comp_object_client_get(obj);
@@ -804,6 +804,9 @@ e_pointer_object_set(E_Pointer *ptr, Evas_Object *obj, int x, int y)
         ecore_evas_cursor_unset(ptr->ee);
         ecore_evas_object_cursor_set(ptr->ee, ptr->o_ptr, E_LAYER_MAX - 1, ptr->hot.x, ptr->hot.y);
      }
+   ptr->client.ec = ec;
+   ptr->client.x = x;
+   ptr->client.y = y;
 }
 
 E_API void
