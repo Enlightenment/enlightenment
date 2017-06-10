@@ -58,6 +58,15 @@ _e_mod_drm_cb_activate(void *data EINA_UNUSED, int type EINA_UNUSED, void *event
         ecore_evas_show(e_comp->ee);
         evas_damage_rectangle_add(e_comp->evas, 0, 0, e_comp->w, e_comp->h);
         ecore_event_add(E_EVENT_COMPOSITOR_ENABLE, NULL, NULL, NULL);
+        ecore_evas_pointer_warp(e_comp->ee, e_comp_wl->ptr.x, e_comp_wl->ptr.y);
+        if (e_comp->pointer->client.ec)
+          {
+             ecore_evas_object_cursor_set(e_comp->ee, e_comp->pointer->client.ec->frame,
+               E_LAYER_MAX - 1, e_comp->pointer->client.x, e_comp->pointer->client.y);
+          }
+        else
+          ecore_evas_object_cursor_set(e_comp->pointer->ee, e_comp->pointer->o_ptr,
+            E_LAYER_MAX - 1, e_comp->pointer->hot.x, e_comp->pointer->hot.y);
      }
    else
      {
@@ -818,6 +827,23 @@ _pointer_motion(void *d EINA_UNUSED, int t EINA_UNUSED, Elput_Event_Pointer_Moti
    return ECORE_CALLBACK_RENEW;
 }
 
+static void
+_drm_device_del(void *data EINA_UNUSED, const Efl_Event *event)
+{
+   Eo *seat = event->info;
+
+   if (efl_input_device_type_get(event->info) == EFL_INPUT_DEVICE_CLASS_SEAT) return;
+   seat = efl_input_device_seat_get(event->info);
+
+   if (seat != evas_default_device_get(e_comp->evas, EFL_INPUT_DEVICE_CLASS_SEAT)) return;
+   if (!efl_input_device_has_pointer_caps(event->info)) return;
+   if (efl_input_device_has_pointer_caps(seat) == 1)
+     ecore_evas_cursor_device_unset(e_comp->ee, event->info);
+}
+
+EFL_CALLBACKS_ARRAY_DEFINE(_drm_device_del_cb,
+                           { EFL_CANVAS_EVENT_DEVICE_REMOVED, _drm_device_del });
+
 E_API void *
 e_modapi_init(E_Module *m)
 {
@@ -890,6 +916,9 @@ e_modapi_init(E_Module *m)
    input_handler =
      ecore_event_handler_add(ELPUT_EVENT_POINTER_MOTION,
                              (Ecore_Event_Handler_Cb)_pointer_motion, NULL);
+
+   efl_event_callback_array_priority_add(e_comp->evas, _drm_device_del_cb(),
+                                         EFL_CALLBACK_PRIORITY_BEFORE, NULL);
 
    return m;
 }
