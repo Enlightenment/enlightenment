@@ -832,10 +832,10 @@ _drm_device_del(void *data EINA_UNUSED, const Efl_Event *event)
 {
    Eo *seat = event->info;
 
-   if (efl_input_device_type_get(event->info) == EFL_INPUT_DEVICE_CLASS_SEAT) return;
+   if (efl_input_device_type_get(event->info) == EFL_INPUT_DEVICE_TYPE_SEAT) return;
    seat = efl_input_device_seat_get(event->info);
 
-   if (seat != evas_default_device_get(e_comp->evas, EFL_INPUT_DEVICE_CLASS_SEAT)) return;
+   if (seat != evas_default_device_get(e_comp->evas, EFL_INPUT_DEVICE_TYPE_SEAT)) return;
    if (!efl_input_device_has_pointer_caps(event->info)) return;
    if (efl_input_device_has_pointer_caps(seat) == 1)
      ecore_evas_cursor_device_unset(e_comp->ee, event->info);
