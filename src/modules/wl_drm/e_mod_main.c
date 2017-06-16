@@ -81,56 +81,10 @@ end:
 }
 
 static Eina_Bool
-_e_mod_drm_cb_output(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
+_e_mod_drm_cb_output(void *data EINA_UNUSED, int type EINA_UNUSED, void *event EINA_UNUSED)
 {
-   const Eina_List *l;
-   E_Randr2_Screen *screen;
-   Eina_Bool connected = EINA_FALSE;
-   int subpixel = 0;
-#ifdef HAVE_DRM2
-   Ecore_Drm2_Event_Output_Changed *e;
-#else
-   Ecore_Drm_Event_Output *e;
-#endif
-
-   if (!(e = event)) goto end;
-
-   DBG("WL_DRM OUTPUT CHANGE");
-
-   EINA_LIST_FOREACH(e_randr2->screens, l, screen)
-     {
-        if ((!strcmp(screen->info.name, e->name)) && 
-            (!strcmp(screen->info.screen, e->model)))
-          {
-#ifdef HAVE_DRM2
-             connected = e->enabled;
-             subpixel = e->subpixel;
-#else
-             connected = e->plug;
-             subpixel = e->subpixel_order;
-#endif
-
-             if (connected)
-               {
-                  if (!e_comp_wl_output_init(screen->id, e->make, e->model,
-                                             e->x, e->y, e->w, e->h, 
-                                             e->phys_width, e->phys_height,
-                                             e->refresh, subpixel,
-                                             e->transform))
-                    {
-                       ERR("Could not setup new output: %s", screen->id);
-                    }
-               }
-             else
-               e_comp_wl_output_remove(screen->id);
-
-             break;
-          }
-     }
-
-end:
    if (!e_randr2_cfg->ignore_hotplug_events)
-     e_randr2_screen_refresh_queue(EINA_TRUE);
+     e_randr2_screen_refresh_queue(1);
 
    return ECORE_CALLBACK_PASS_ON;
 }
