@@ -2340,9 +2340,7 @@ _e_comp_smart_hide(Evas_Object *obj)
 {
    INTERNAL_ENTRY;
    cw->visible = 0;
-   cw->deleted = e_object_is_del(E_OBJECT(cw->ec));
-   if (cw->deleted)
-     _e_comp_object_layers_remove(cw);
+   cw->deleted |= cw->ec->delete_requested || e_object_is_del(E_OBJECT(cw->ec));
    evas_object_hide(cw->clip);
    if (cw->input_obj) evas_object_hide(cw->input_obj);
    evas_object_hide(cw->effect_obj);
@@ -2418,6 +2416,15 @@ _e_comp_smart_show(Evas_Object *obj)
 }
 
 static void
+_e_comp_object_client_del(void *d, void *obj EINA_UNUSED)
+{
+   E_Comp_Object *cw = d;
+   cw->deleted = 1;
+   e_comp_object_render_update_del(cw->smart_obj);
+   _e_comp_object_layers_remove(cw);
+}
+
+static void
 _e_comp_smart_del(Evas_Object *obj)
 {
    Eina_List *l;
@@ -2425,8 +2432,6 @@ _e_comp_smart_del(Evas_Object *obj)
 
    INTERNAL_ENTRY;
 
-   if (!cw->deleted)
-     e_comp_object_render_update_del(cw->smart_obj);
    E_FREE_FUNC(cw->updates, eina_tiler_free);
    E_FREE_FUNC(cw->pending_updates, eina_tiler_free);
    free(cw->ns);
@@ -2983,6 +2988,7 @@ e_comp_object_client_add(E_Client *ec)
    cw->ec = ec;
    ec->frame = o;
    evas_object_data_set(o, "comp_object", (void*)1);
+   e_object_delfn_add(E_OBJECT(ec), _e_comp_object_client_del, cw);
 
    _e_comp_object_event_add(o);
 
