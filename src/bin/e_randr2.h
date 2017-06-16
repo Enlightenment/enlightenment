@@ -58,6 +58,7 @@ struct _E_Randr2_Screen
       char                 *name; // name of the output itself
       char                 *edid; // full edid data
       E_Randr2_Connector    connector; // the connector type
+      unsigned int          subpixel; //ecore_drm2_output_subpixel_get
       Eina_Bool             is_lid : 1; // is an internal screen
       Eina_Bool             lid_closed : 1; // is lid closed when screen qury'd
       Eina_Bool             connected : 1; // some screen is plugged in or not

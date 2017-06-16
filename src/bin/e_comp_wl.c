@@ -1154,7 +1154,7 @@ _e_comp_wl_cb_randr_change(void *data EINA_UNUSED, int type EINA_UNUSED, void *e
                                    screen->config.geom.x, screen->config.geom.y,
                                    screen->config.geom.w, screen->config.geom.h,
                                    screen->info.size.w, screen->info.size.h,
-                                   screen->config.mode.refresh, 0, transform, 0))
+                                   screen->config.mode.refresh, screen->info.subpixel, transform, 0))
           ERR("Could not initialize screen %s", screen->info.name);
      }
 

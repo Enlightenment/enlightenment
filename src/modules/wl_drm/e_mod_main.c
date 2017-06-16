@@ -368,6 +368,7 @@ _drm2_randr_create(void)
                s->info.lid_closed, s->info.is_lid, e_acpi_lid_is_closed());
 
         s->info.backlight = ecore_drm2_output_backlight_get(output);
+        s->info.subpixel = ecore_drm2_output_subpixel_get(output);
 
         ecore_drm2_output_physical_size_get(output, &s->info.size.w,
                                             &s->info.size.h);
