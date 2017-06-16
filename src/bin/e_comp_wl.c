@@ -941,7 +941,7 @@ _e_comp_wl_evas_cb_delete_request(void *data, Evas_Object *obj EINA_UNUSED, void
    if (!e_client_has_xwindow(ec))
      {
         if (ec->internal_elm_win)
-          E_FREE_FUNC(ec->internal_elm_win, evas_object_del);
+          evas_object_del(ec->internal_elm_win);
         else
           e_object_del(E_OBJECT(ec));
      }
