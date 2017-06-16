@@ -2806,6 +2806,7 @@ e_client_mouse_move(E_Client *ec, Evas_Point *output)
 {
    EINA_SAFETY_ON_NULL_RETURN(ec);
    if (ec->iconic || e_client_util_ignored_get(ec)) return;
+   if ((ec->mouse.current.mx == output->x) && (ec->mouse.current.my == output->y)) return;
    ec->mouse.current.mx = output->x;
    ec->mouse.current.my = output->y;
    if (ec->moving)
