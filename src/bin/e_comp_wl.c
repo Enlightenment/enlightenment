@@ -1107,12 +1107,23 @@ _e_comp_wl_client_evas_init(E_Client *ec)
 static Eina_Bool
 _e_comp_wl_cb_randr_change(void *data EINA_UNUSED, int type EINA_UNUSED, void *event EINA_UNUSED)
 {
-   Eina_List *l;
+   const Eina_List *l;
    E_Randr2_Screen *screen;
    unsigned int transform = WL_OUTPUT_TRANSFORM_NORMAL;
 
    if (!e_randr2) return ECORE_CALLBACK_RENEW;
 
+   if (e_xinerama_fake_screens_exist())
+     {
+        E_Screen *scr;
+        EINA_LIST_FOREACH(e_xinerama_screens_get(), l, scr)
+          {
+             e_comp_wl_output_init(NULL, NULL, NULL,
+               scr->x, scr->y, scr->w, scr->h,
+               0, 0, 0, 0, 0, scr->escreen);
+          }
+        return ECORE_CALLBACK_RENEW;
+     }
    EINA_LIST_FOREACH(e_randr2->screens, l, screen)
      {
         if (!screen->config.enabled)
@@ -1143,7 +1154,7 @@ _e_comp_wl_cb_randr_change(void *data EINA_UNUSED, int type EINA_UNUSED, void *e
                                    screen->config.geom.x, screen->config.geom.y,
                                    screen->config.geom.w, screen->config.geom.h,
                                    screen->info.size.w, screen->info.size.h,
-                                   screen->config.mode.refresh, 0, transform))
+                                   screen->config.mode.refresh, 0, transform, 0))
           ERR("Could not initialize screen %s", screen->info.name);
      }
 
@@ -3147,7 +3158,7 @@ E_API Eina_Bool
 e_comp_wl_output_init(const char *id, const char *make, const char *model,
                       int x, int y, int w, int h, int pw, int ph,
                       unsigned int refresh, unsigned int subpixel,
-                      unsigned int transform)
+                      unsigned int transform, unsigned int num)
 {
    E_Comp_Wl_Output *output;
    Eina_List *l2;
@@ -3158,7 +3169,10 @@ e_comp_wl_output_init(const char *id, const char *make, const char *model,
    output = _e_comp_wl_output_get(e_comp_wl->outputs, id);
    if (!output)
      {
-        zone = e_zone_for_id_get(id);
+        if (e_xinerama_fake_screens_exist())
+          zone = e_comp_zone_number_get(num);
+        else
+          zone = e_zone_for_id_get(id);
         if (!zone) return EINA_FALSE;
         if (!(output = E_NEW(E_Comp_Wl_Output, 1))) return EINA_FALSE;
 
