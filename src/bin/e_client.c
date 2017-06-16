@@ -755,10 +755,21 @@ _e_client_action_event_grabber_mouse_up(void *data EINA_UNUSED, Evas *e EINA_UNU
 }
 
 static void
+_e_client_action_event_grabber_mouse_move(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info)
+{
+   Evas_Event_Mouse_Move *ev = event_info;
+   if (action_client &&
+     ((ev->cur.output.x != action_client->mouse.current.mx) ||
+      (ev->cur.output.y != action_client->mouse.current.my)))
+     e_client_mouse_move(action_client, &ev->cur.output);
+}
+
+static void
 _e_client_action_event_grabber_init(E_Client *ec)
 {
    action_rect = e_comp_canvas_event_grabber_add();
    evas_object_event_callback_add(action_rect, EVAS_CALLBACK_MOUSE_UP, _e_client_action_event_grabber_mouse_up, NULL);
+   evas_object_event_callback_add(action_rect, EVAS_CALLBACK_MOUSE_MOVE, _e_client_action_event_grabber_mouse_move, NULL);
    evas_object_smart_member_add(ec->frame, action_rect);
    evas_object_resize(action_rect, e_comp->w, e_comp->h);
    evas_object_layer_set(action_rect, EVAS_LAYER_MAX - 100);
