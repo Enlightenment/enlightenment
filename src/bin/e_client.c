@@ -758,9 +758,7 @@ static void
 _e_client_action_event_grabber_mouse_move(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info)
 {
    Evas_Event_Mouse_Move *ev = event_info;
-   if (action_client &&
-     ((ev->cur.output.x != action_client->mouse.current.mx) ||
-      (ev->cur.output.y != action_client->mouse.current.my)))
+   if (action_client)
      e_client_mouse_move(action_client, &ev->cur.output);
 }
 
@@ -3092,6 +3090,7 @@ e_client_mouse_move(E_Client *ec, Evas_Point *output)
 {
    EINA_SAFETY_ON_NULL_RETURN(ec);
    if (ec->iconic || e_client_util_ignored_get(ec)) return;
+   if ((ec->mouse.current.mx == output->x) && (ec->mouse.current.my == output->y)) return;
    ec->mouse.current.mx = output->x;
    ec->mouse.current.my = output->y;
    if (ec->moving)
