@@ -750,8 +750,18 @@ _e_client_action_input_win_new(void)
 static void
 _e_client_action_event_grabber_mouse_up(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
-   if (action_client && action_client->moving)
+   Evas_Event_Mouse_Down *ev = event_info;
+   E_Binding_Event_Mouse_Button ev2;
+
+   if (!action_client) return;
+   e_bindings_evas_event_mouse_button_convert(ev, &ev2);
+   e_client_mouse_up(action_client, ev->button, &ev->output, &ev2);
+   if (!action_client) return;
+   if (action_client->moving)
      e_client_act_move_end(action_client, NULL);
+   if (!action_client) return;
+   if (e_client_util_resizing_get(action_client))
+     e_client_act_resize_end(action_client, NULL);
 }
 
 static void
