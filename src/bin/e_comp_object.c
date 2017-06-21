@@ -2550,7 +2550,7 @@ _e_comp_smart_resize(Evas_Object *obj, int w, int h)
                   //evas_object_size_hint_min_set(cw->obj, pw, ph);
                //}
              if ((ww != pw) || (hh != ph))
-               CRI("CW RSZ: %dx%d || PX: %dx%d", ww, hh, pw, ph);
+               ERR("CW RSZ: %dx%d || PX: %dx%d", ww, hh, pw, ph);
           }
         evas_object_resize(cw->effect_obj, w, h);
         if (cw->zoomobj) e_zoomap_child_resize(cw->zoomobj, pw, ph);
