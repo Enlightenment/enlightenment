@@ -616,40 +616,8 @@ main(int argc, char **argv)
    home = getenv("HOME");
    if (home)
      {
-        const char *tmps;
-#if 1
-        FILE *f;
-        /* mtrack memory tracker support */
-        /* if you have ~/.e-mtrack, then the tracker will be enabled
-         * using the content of this file as the path to the mtrack.so
-         * shared object that is the mtrack preload */
-        snprintf(buf, sizeof(buf), "%s/.e-mtrack", home);
-        f = fopen(buf, "r");
-        if (f)
-          {
-             if (fgets(buf, sizeof(buf), f))
-               {
-                  int len = strlen(buf);
-                  if ((len > 1) && (buf[len - 1] == '\n'))
-                    {
-                       buf[len - 1] = 0;
-                       len--;
-                    }
-                  env_set("LD_PRELOAD", buf);
-//                  env_set("MTRACK", "track");
-//                  env_set("E_START_MTRACK", "track");
-//                  snprintf(buf, sizeof(buf), "%s/.e-mtrack.log", home);
-//                  env_set("MTRACK_TRACE_FILE", buf);
-                  env_set("MTRACK", "debug");
-                  env_set("MTRACK_FREE_FILL", "1");
-                  env_set("MTRACK_ALLOC_FILL", "2");
-                  env_set("MTRACK_CANARY_SIZE", "16");
-                  env_set("MTRACK_CANARY", "3");
-               }
-             fclose(f);
-          }
-#endif
-        tmps = getenv("XDG_DATA_HOME");
+        const char *tmps = getenv("XDG_DATA_HOME");
+
         if (tmps)
           snprintf(buf, sizeof(buf), "%s/Applications/.bin", tmps);
         else
