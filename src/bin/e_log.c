@@ -40,7 +40,8 @@ e_log_init(void)
           eina_log_print_cb_set(_e_log_cb, NULL);
      }
 #ifndef E_RELEASE_BUILD
-   eina_log_abort_on_critical_set(1);
+   if (!getenv("E_DONT_ABORT"))
+     eina_log_abort_on_critical_set(1);
 #endif
    return e_log_dom != -1;
 }
