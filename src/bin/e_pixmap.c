@@ -703,6 +703,17 @@ e_pixmap_native_surface_init(E_Pixmap *cp, Evas_Native_Surface *ns)
    EINA_SAFETY_ON_NULL_RETURN_VAL(cp, EINA_FALSE);
    EINA_SAFETY_ON_NULL_RETURN_VAL(ns, EINA_FALSE);
 
+   /* This structure is stack automatic in the caller, so it's all
+    * uninitialized. Clear it to 0 so we don't have uninit data for
+    * variables only present in a newer version of native surface
+    * than this code was written for.
+    *
+    * The other option would be to set ns->version to whatever version
+    * this code was actually written against, but I've been told all
+    * native surface users are expected to set ns->version to the
+    * version provided in the headers (EVAS_NATIVE_SURFACE_VERSION)
+    */
+   memset(ns, 0, sizeof(*ns));
    ns->version = EVAS_NATIVE_SURFACE_VERSION;
    switch (cp->type)
      {
