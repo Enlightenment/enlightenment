@@ -782,7 +782,7 @@ _e_client_action_event_grabber_init(E_Client *ec)
    evas_object_resize(action_rect, e_comp->w, e_comp->h);
    evas_object_layer_set(action_rect, EVAS_LAYER_MAX - 100);
    evas_object_show(action_rect);
-
+   evas_object_event_grabber_freeze_when_visible_set(action_rect, 1);
 }
 
 static void
