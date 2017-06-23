@@ -549,7 +549,7 @@ _e_comp_shape_debug_rect(Eina_Rectangle *rect, E_Color *color)
      evas_object_color_set(o, 0, (color->g += COLOR_INCREMENT), 0, 255);
    else
      evas_object_color_set(o, 0, 0, (color->b += COLOR_INCREMENT), 255);
-   evas_object_repeat_events_set(o, 1);
+   evas_object_pass_events_set(o, 1);
    evas_object_layer_set(o, E_LAYER_MENU - 1);
    evas_object_move(o, rect->x, rect->y);
    evas_object_resize(o, rect->w, rect->h);
