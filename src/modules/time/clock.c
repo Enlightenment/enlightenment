@@ -467,12 +467,13 @@ _wizard_end(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void 
    free(wi);
 }
 
-static void
+static Evas_Object *
 clock_wizard(E_Gadget_Wizard_End_Cb cb, void *data, Eina_Bool digital)
 {
    int id = 0;
    Config_Item *ci;
    Wizard_Item *wi;
+   Evas_Object *obj;
 
    wi = E_NEW(Wizard_Item, 1);
    wi->cb = cb;
@@ -480,19 +481,21 @@ clock_wizard(E_Gadget_Wizard_End_Cb cb, void *data, Eina_Bool digital)
 
    ci = _conf_item_get(&id, digital);
    wi->id = ci->id;
-   evas_object_event_callback_add(config_clock(ci, NULL), EVAS_CALLBACK_DEL, _wizard_end, wi); 
+   obj = config_clock(ci, NULL);
+   evas_object_event_callback_add(obj, EVAS_CALLBACK_DEL, _wizard_end, wi);
+   return obj;
 }
 
-EINTERN void
+EINTERN Evas_Object *
 digital_clock_wizard(E_Gadget_Wizard_End_Cb cb, void *data)
 {
-   clock_wizard(cb, data, 1);
+   return clock_wizard(cb, data, 1);
 }
 
-EINTERN void
+EINTERN Evas_Object *
 analog_clock_wizard(E_Gadget_Wizard_End_Cb cb, void *data)
 {
-   clock_wizard(cb, data, 0);
+   return clock_wizard(cb, data, 0);
 }
 
 EINTERN void

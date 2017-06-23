@@ -116,7 +116,7 @@ typedef enum
 typedef Evas_Object *(*E_Gadget_Create_Cb)(Evas_Object *parent, int *id, E_Gadget_Site_Orient orient);
 typedef Evas_Object *(*E_Gadget_Configure_Cb)(Evas_Object *gadget);
 typedef void (*E_Gadget_Wizard_End_Cb)(void *data, int id);
-typedef void (*E_Gadget_Wizard_Cb)(E_Gadget_Wizard_End_Cb cb, void *data);
+typedef Evas_Object *(*E_Gadget_Wizard_Cb)(E_Gadget_Wizard_End_Cb cb, void *data);
 typedef void (*E_Gadget_Style_Cb)(Evas_Object *owner, Eina_Stringshare *name, Evas_Object *g);
 
 EINTERN void e_gadget_init(void);

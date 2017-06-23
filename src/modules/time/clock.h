@@ -82,8 +82,8 @@ EINTERN void time_zoneinfo_scan(Evas_Object *obj);
 
 EINTERN Evas_Object *digital_clock_create(Evas_Object *parent, int *id, E_Gadget_Site_Orient orient);
 EINTERN Evas_Object *analog_clock_create(Evas_Object *parent, int *id, E_Gadget_Site_Orient orient);
-EINTERN void digital_clock_wizard(E_Gadget_Wizard_End_Cb cb, void *data);
-EINTERN void analog_clock_wizard(E_Gadget_Wizard_End_Cb cb, void *data);
+EINTERN Evas_Object *digital_clock_wizard(E_Gadget_Wizard_End_Cb cb, void *data);
+EINTERN Evas_Object *analog_clock_wizard(E_Gadget_Wizard_End_Cb cb, void *data);
 EINTERN void clock_popup_new(Instance *inst);
 EINTERN void time_config_update(Config_Item *ci);
 

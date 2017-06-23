@@ -34,6 +34,8 @@ typedef struct E_Gadget_Site
    E_Gadget_Config *action;
    Ecore_Event_Handler *move_handler;
    Ecore_Event_Handler *mouse_up_handler;
+
+   Evas_Object *editor;
 } E_Gadget_Site;
 
 
@@ -125,6 +127,17 @@ static void _gadget_object_finalize(E_Gadget_Config *zgc);
 static Eina_Bool _gadget_object_create(E_Gadget_Config *zgc);
 static void _editor_pointer_site_init(E_Gadget_Site_Orient orient, Evas_Object *site, Evas_Object *editor, Eina_Bool );
 static void _gadget_drop_handler_moveresize(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED);
+
+static Eina_Bool
+_editor_site_visible(void)
+{
+   Eina_List *l;
+   E_Gadget_Site *zgs;
+
+   EINA_LIST_FOREACH(sites->sites, l, zgs)
+     if (zgs->editor && evas_object_visible_get(zgs->editor)) return EINA_TRUE;
+   return EINA_FALSE;
+}
 
 static void
 _comp_site_resize(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
@@ -341,9 +354,21 @@ _gadget_wizard_end(void *data, int id)
    zgc->id = id;
    evas_object_smart_callback_call(zgc->site->layout, "gadget_site_unlocked", NULL);
    if (id)
-     _gadget_object_finalize(zgc);
+     {
+        _gadget_object_finalize(zgc);
+        added = 0;
+     }
    else
      _gadget_remove(zgc);
+}
+
+static void
+_gadget_wizard_del(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
+{
+   E_Gadget_Config *zgc = data;
+
+   if (zgc->cfg_object == obj) zgc->cfg_object = NULL;
+   if (zgc->site->editor) evas_object_show(zgc->site->editor);
 }
 
 static Eina_Bool
@@ -359,12 +384,19 @@ _gadget_object_create(E_Gadget_Config *zgc)
      {
         if (t->wizard)
           {
+             zgc->cfg_object = t->wizard(_gadget_wizard_end, zgc);
+             if (!zgc->cfg_object)
+               {
+                  added = 1;
+                  if (zgc->site->editor) evas_object_show(zgc->site->editor);
+                  return EINA_FALSE;
+               }
+             evas_object_event_callback_add(zgc->cfg_object, EVAS_CALLBACK_DEL, _gadget_wizard_del, zgc);
              evas_object_smart_callback_call(zgc->site->layout, "gadget_site_locked", NULL);
-             t->wizard(_gadget_wizard_end, zgc);
-             added = 1;
              return EINA_TRUE;
           }
      }
+   if (zgc->site->editor) evas_object_show(zgc->site->editor);
    if ((zgc->zone >= 0) && (!e_comp_zone_number_get(zgc->zone))) return EINA_FALSE;
    /* if id is < 0, gadget creates dummy config for demo use
     * if id is 0, gadget creates new config and returns id
@@ -2131,6 +2163,8 @@ _editor_gadget_new(void *data, Evas_Object *obj, void *event_info)
    Gadget_Item *gi = data;
    E_Gadget_Site_Orient orient;
 
+   ZGS_GET(gi->site);
+   evas_object_hide(zgs->editor);
    orient = e_gadget_site_orient_get(gi->site);
    _editor_pointer_site_init(orient, gi->site, gi->editor, 0);
    e_comp_object_util_del_list_append(gi->editor, pointer_site);
@@ -2274,6 +2308,8 @@ e_gadget_site_edit(Evas_Object *site)
    Evas_Object *comp_object, *popup, *editor, *tb, *r;
    E_Zone *zone, *czone;
 
+   ZGS_GET(site);
+   EINA_SAFETY_ON_TRUE_RETURN_VAL(!!zgs->editor, NULL);
    zone = e_comp_object_util_zone_get(site);
    czone = e_zone_current_get();
    if (zone != czone)
@@ -2310,6 +2346,8 @@ e_gadget_site_edit(Evas_Object *site)
    evas_object_show(comp_object);
    evas_object_resize(comp_object, zone->w / 2, zone->h / 2);
    e_comp_object_util_center_on_zone(comp_object, zone);
+   /* FIXME: embedded editors? */
+   zgs->editor = comp_object;
    return comp_object;
 }
 
@@ -2369,6 +2407,7 @@ _gadget_desklock_key_handler(void *d EINA_UNUSED, int t EINA_UNUSED, Ecore_Event
 static void
 _gadget_desklock_mouse_up_handler()
 {
+   if (!_editor_site_visible()) return;
    if (!added)
      _gadget_desklock_del();
    added = 0;
@@ -2443,6 +2482,7 @@ _gadget_desktop_key_handler(void *data, int t EINA_UNUSED, Ecore_Event_Key *ev)
 static void
 _gadget_desktop_mouse_up_handler()
 {
+   if (!_editor_site_visible()) return;
    if (!added)
      _edit_end();
    added = 0;
