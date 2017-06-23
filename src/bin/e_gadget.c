@@ -1150,7 +1150,7 @@ _site_del(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *e
 {
    E_Gadget_Site *zgs = data;
    E_Gadget_Config *zgc;
-   Eina_List *l;
+   Eina_List *l, *ll;
 
    E_FREE_FUNC(zgs->events, evas_object_del);
    zgs->layout = NULL;
@@ -1159,7 +1159,7 @@ _site_del(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *e
    zgs->style_cb = NULL;
    E_FREE_FUNC(zgs->move_handler, ecore_event_handler_del);
    E_FREE_FUNC(zgs->mouse_up_handler, ecore_event_handler_del);
-   EINA_LIST_FOREACH(zgs->gadgets, l, zgc)
+   EINA_LIST_FOREACH_SAFE(zgs->gadgets, l, ll, zgc)
      evas_object_del(zgc->display);
    if (zgs->name) return;
    eina_stringshare_del(zgs->name);
