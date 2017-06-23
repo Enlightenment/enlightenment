@@ -2207,6 +2207,7 @@ e_gadget_editor_add(Evas_Object *parent, Evas_Object *site)
 
    if (orient)
      {
+        orient = E_GADGET_SITE_ORIENT_HORIZONTAL;
         list = elm_genlist_add(parent);
         elm_genlist_homogeneous_set(list, 1);
         elm_genlist_mode_set(list, ELM_LIST_COMPRESS);
