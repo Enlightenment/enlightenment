@@ -325,13 +325,25 @@ _gadget_object_free(E_Object *eobj)
 }
 
 static void
+_gadget_remove(E_Gadget_Config *zgc)
+{
+   evas_object_smart_callback_call(zgc->site->layout, "gadget_removed", zgc->gadget);
+   zgc->site->gadget_list = eina_inlist_remove(zgc->site->gadget_list, EINA_INLIST_GET(zgc));
+   zgc->site->gadgets = eina_list_remove(zgc->site->gadgets, zgc);
+   _gadget_free(zgc);
+}
+
+static void
 _gadget_wizard_end(void *data, int id)
 {
    E_Gadget_Config *zgc = data;
 
    zgc->id = id;
    evas_object_smart_callback_call(zgc->site->layout, "gadget_site_unlocked", NULL);
-   _gadget_object_finalize(zgc);
+   if (id)
+     _gadget_object_finalize(zgc);
+   else
+     _gadget_remove(zgc);
 }
 
 static Eina_Bool
@@ -852,15 +864,6 @@ _gadget_act_configure(E_Object *obj, const char *params EINA_UNUSED, E_Binding_E
    zgc = evas_object_data_get(g, "__e_gadget");
    _gadget_configure(zgc);
    return EINA_TRUE;
-}
-
-static void
-_gadget_remove(E_Gadget_Config *zgc)
-{
-   evas_object_smart_callback_call(zgc->site->layout, "gadget_removed", zgc->gadget);
-   zgc->site->gadget_list = eina_inlist_remove(zgc->site->gadget_list, EINA_INLIST_GET(zgc));
-   zgc->site->gadgets = eina_list_remove(zgc->site->gadgets, zgc);
-   _gadget_free(zgc);
 }
 
 static void
