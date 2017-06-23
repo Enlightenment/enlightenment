@@ -147,9 +147,11 @@ _conf_item_get(int *id)
 }
 
 Evas_Object *
-sysinfo_create(Evas_Object *parent, int *id, E_Gadget_Site_Orient orient EINA_UNUSED)
+sysinfo_create(Evas_Object *parent, int *id, E_Gadget_Site_Orient orient)
 {
    Instance *inst;
+
+   if (orient) return NULL;
 
    inst = E_NEW(Instance, 1);
    inst->cfg = _conf_item_get(id);

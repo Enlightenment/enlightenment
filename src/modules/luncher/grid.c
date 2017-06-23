@@ -706,10 +706,11 @@ grid_reorder(Instance *inst)
 }
 
 EINTERN Evas_Object *
-grid_create(Evas_Object *parent, int *id, E_Gadget_Site_Orient orient EINA_UNUSED)
+grid_create(Evas_Object *parent, int *id, E_Gadget_Site_Orient orient)
 {
    Instance *inst;
 
+   if (orient) return NULL;
    inst = E_NEW(Instance, 1);
    inst->size = 0;
    inst->resize_job = NULL;
