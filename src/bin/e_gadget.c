@@ -100,7 +100,7 @@ typedef struct Gadget_Item
 static Eina_List *desktop_handlers;
 static Evas_Object *desktop_rect;
 static Evas_Object *desktop_editor;
-static Eina_Bool added = 1;
+static Eina_Bool added;
 
 static Evas_Object *pointer_site;
 static Eina_List *handlers;
@@ -2153,6 +2153,7 @@ e_gadget_editor_add(Evas_Object *parent, Evas_Object *site)
    evas_object_data_set(list, "__gadget_items", items);
    evas_object_event_callback_add(list, EVAS_CALLBACK_DEL, _editor_del, items);
    elm_list_go(list);
+   added = 0;
    return list;
 }
 
