@@ -1069,6 +1069,8 @@ e_pixmap_dmabuf_test(struct linux_dmabuf_buffer *dmabuf)
    int size;
    void *data;
 
+   memset(&ns, 0, sizeof(ns));
+
    if (e_comp->gl)
      {
         Eina_Bool ret;
