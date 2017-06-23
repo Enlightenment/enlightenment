@@ -810,17 +810,11 @@ _pulse_connect(void *data)
      }
 #endif
    c->context = pa_context_new_with_proplist(&(c->api), NULL, proplist);
-   if (!c->context)
+   if (c->context)
      {
-        WRN("Could not create the pulseaudio context");
-        goto err;
-     }
-
-   pa_context_set_state_callback(c->context, _pulse_pa_state_cb, c);
-   if (pa_context_connect(c->context, NULL, PA_CONTEXT_NOFLAGS, NULL) < 0)
-     {
-        WRN("Could not connect to pulse");
-        goto err;
+        pa_context_set_state_callback(c->context, _pulse_pa_state_cb, c);
+        if (pa_context_connect(c->context, NULL, PA_CONTEXT_NOFLAGS, NULL) < 0)
+          ERR("Could not connect to pulse");
      }
 #if !defined(EMIXER_BUILD) && defined(HAVE_WAYLAND) && !defined(HAVE_WAYLAND_ONLY)
    if (e_comp->comp_type != E_PIXMAP_TYPE_X)
@@ -835,10 +829,6 @@ _pulse_connect(void *data)
 
    pa_proplist_free(proplist);
    return ECORE_CALLBACK_DONE;
-
- err:
-   pa_proplist_free(proplist);
-   return ECORE_CALLBACK_RENEW;
 }
 
 static Eina_Bool pulse_started;
