@@ -90,6 +90,7 @@ typedef struct E_Gadget_Type
 
 typedef struct Gadget_Item
 {
+   Evas_Object *box;
    Evas_Object *editor;
    Evas_Object *gadget;
    Evas_Object *site;
@@ -1950,10 +1951,25 @@ e_gadget_shutdown(void)
 //////////////////////////////////////////////////////
 
 static void
-_editor_del(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+_editor_resize(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
-   Eina_List *list = data;
-   E_FREE_LIST(list, free);
+   int w, h, size;
+   evas_object_geometry_get(obj, NULL, NULL, &w, &h);
+   size = MAX(w, h);
+   size = MAX(size / 4, 100);
+   elm_gengrid_item_size_set(obj, size, size);
+}
+
+static void
+_editor_del(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
+{
+   evas_object_event_callback_del_full(data, EVAS_CALLBACK_RESIZE, _editor_resize, obj);
+}
+
+static void
+_editor_item_del(void *data, Evas_Object *obj EINA_UNUSED)
+{
+   free(data);
 }
 
 static void
@@ -2101,7 +2117,7 @@ _editor_pointer_site_init(E_Gadget_Site_Orient orient, Evas_Object *site, Evas_O
 }
 
 static void
-_editor_gadget_new(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
+_editor_gadget_new(void *data, Evas_Object *obj, void *event_info)
 {
    Gadget_Item *gi = data;
    E_Gadget_Site_Orient orient;
@@ -2112,7 +2128,62 @@ _editor_gadget_new(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
    
    e_gadget_site_gadget_add(pointer_site, e_gadget_type_get(gi->gadget), 1);
    elm_object_disabled_set(gi->editor, 1);
-   elm_list_item_selected_set(event_info, 0);
+   if (eina_streq(evas_object_type_get(obj), "elm_genlist"))
+     elm_genlist_item_selected_set(event_info, 0);
+   else
+     elm_gengrid_item_selected_set(event_info, 0);
+}
+
+static Evas_Object *
+_editor_content_get(void *data, Evas_Object *obj, const char *part, Evas_Object *old)
+{
+   Gadget_Item *gi = data;
+   Eina_Bool gl = eina_streq(evas_object_type_get(obj), "elm_genlist");
+
+   if (eina_streq(part, "elm.swallow.icon"))
+     {
+        if (gl) return NULL;
+     }
+   else if (!gl) return NULL;
+   if (old)
+     {
+        if (gi->box == old) return old;
+        elm_box_unpack_all(old);
+        elm_box_unpack(gi->box, gi->gadget);
+        elm_box_pack_end(old, gi->gadget);
+        gi->box = old;
+        return old;
+     }
+   gi->box = elm_box_add(obj);
+   elm_box_horizontal_set(gi->box, 1);
+   elm_box_pack_end(gi->box, gi->gadget);
+   return gi->box;
+}
+
+static char *
+_editor_text_get(void *data, Evas_Object *obj EINA_UNUSED, const char *part EINA_UNUSED)
+{
+   char buf[1024];
+   Gadget_Item *gi = data;
+
+   strncpy(buf, e_gadget_type_get(gi->gadget), sizeof(buf) - 1);
+   buf[0] = toupper(buf[0]);
+   return strdup(buf);
+}
+
+static Evas_Object *
+_editor_tooltip_content(void *data, Evas_Object *obj EINA_UNUSED, Evas_Object *tooltip, void *item EINA_UNUSED)
+{
+   Gadget_Item *gi = data;
+   int w, h;
+   Evas_Object *img;
+
+   evas_object_geometry_get(gi->gadget, NULL, NULL, &w, &h);
+   img = evas_object_image_filled_add(evas_object_evas_get(tooltip));
+   evas_object_image_alpha_set(img, 1);
+   evas_object_image_source_set(img, gi->gadget);
+   evas_object_size_hint_min_set(img, w, h);
+   return img;
 }
 
 E_API Evas_Object *
@@ -2120,12 +2191,34 @@ e_gadget_editor_add(Evas_Object *parent, Evas_Object *site)
 {
    Evas_Object *list, *tempsite, *g;
    Eina_Iterator *it;
-   Eina_List *gadgets, *items = NULL;
+   Eina_List *gadgets;
    const char *type;
+   E_Gadget_Site_Orient orient = e_gadget_site_orient_get(site);
+   static Elm_Genlist_Item_Class gli =
+   {
+    .version = ELM_GENLIST_ITEM_CLASS_VERSION,
+    .func =
+    {
+       .text_get = _editor_text_get,
+       .reusable_content_get = _editor_content_get,
+       .del = _editor_item_del,
+    },
+   };
 
-   list = elm_list_add(parent);
-   elm_scroller_content_min_limit(list, 1, 1);
-   tempsite = e_gadget_site_add(E_GADGET_SITE_ORIENT_HORIZONTAL, NULL);
+   if (orient)
+     {
+        list = elm_genlist_add(parent);
+        elm_genlist_homogeneous_set(list, 1);
+        elm_genlist_mode_set(list, ELM_LIST_COMPRESS);
+     }
+   else
+     {
+        list = elm_gengrid_add(parent);
+        evas_object_event_callback_add(list, EVAS_CALLBACK_RESIZE, _editor_resize, NULL);
+     }
+   elm_scroller_bounce_set(list, 0, 0);
+   elm_scroller_policy_set(list, ELM_SCROLLER_POLICY_OFF, ELM_SCROLLER_POLICY_AUTO);
+   tempsite = e_gadget_site_add(orient, NULL);
    e_gadget_site_gravity_set(tempsite, E_GADGET_SITE_GRAVITY_NONE);
 
    it = e_gadget_type_iterator_get();
@@ -2143,29 +2236,24 @@ e_gadget_editor_add(Evas_Object *parent, Evas_Object *site)
    gadgets = e_gadget_site_gadgets_list(tempsite);
    EINA_LIST_FREE(gadgets, g)
      {
-        Evas_Object *box, *button = NULL;
-        char buf[1024];
         Gadget_Item *gi;
+        Elm_Object_Item *item = NULL;
 
         gi = E_NEW(Gadget_Item, 1);
         gi->editor = list;
         gi->gadget = g;
         gi->site = site;
-        items = eina_list_append(items, gi);
-        box = elm_box_add(list);
-        elm_box_horizontal_set(box, 1);
         E_EXPAND(g);
         E_FILL(g);
-        elm_box_pack_end(box, g);
         evas_object_pass_events_set(g, 1);
-        strncpy(buf, e_gadget_type_get(g), sizeof(buf) - 1);
-        buf[0] = toupper(buf[0]);
-        elm_list_item_append(list, buf, box, button, _editor_gadget_new, gi);
-        elm_box_recalculate(box);
+        if (orient)
+          elm_genlist_item_append(list, &gli, gi, NULL, 0, _editor_gadget_new, gi);
+        else
+          item = elm_gengrid_item_append(list, &gli, gi, _editor_gadget_new, gi);
+        if (item)
+          elm_object_item_tooltip_content_cb_set(item, _editor_tooltip_content, gi, NULL);
      }
-   evas_object_data_set(list, "__gadget_items", items);
-   evas_object_event_callback_add(list, EVAS_CALLBACK_DEL, _editor_del, items);
-   elm_list_go(list);
+   evas_object_event_callback_add(list, EVAS_CALLBACK_DEL, _editor_del, parent);
    added = 0;
    return list;
 }
@@ -2173,7 +2261,7 @@ e_gadget_editor_add(Evas_Object *parent, Evas_Object *site)
 E_API Evas_Object *
 e_gadget_site_edit(Evas_Object *site)
 {
-   Evas_Object *comp_object, *popup, *editor;
+   Evas_Object *comp_object, *popup, *editor, *tb, *r;
    E_Zone *zone, *czone;
 
    zone = e_comp_object_util_zone_get(site);
@@ -2188,13 +2276,25 @@ e_gadget_site_edit(Evas_Object *site)
      }
 
    popup = elm_popup_add(e_comp->elm);
-   elm_popup_scrollable_set(popup, EINA_TRUE);
+   elm_popup_scrollable_set(popup, EINA_FALSE);
    elm_popup_allow_events_set(popup, 1);
 
+   tb = elm_table_add(popup);
+   elm_object_content_set(popup, tb);
+   r = evas_object_rectangle_add(e_comp->evas);
+   evas_object_size_hint_min_set(r, zone->w / 2, 1);
+   e_comp_object_util_del_list_append(tb, r);
+   elm_table_pack(tb, r, 0, 0, 2, 1);
+   r = evas_object_rectangle_add(e_comp->evas);
+   evas_object_size_hint_min_set(r, 1, zone->h / 2);
+   e_comp_object_util_del_list_append(tb, r);
+   elm_table_pack(tb, r, 0, 1, 1, 1);
+
    editor = e_gadget_editor_add(e_comp->elm, site);
+   elm_table_pack(tb, editor, 0, 1, 2, 2);
    evas_object_show(editor);
+   E_EXPAND(editor);
    E_FILL(editor);
-   elm_object_content_set(popup, editor);
    comp_object = e_comp_object_util_add(popup, E_COMP_OBJECT_TYPE_NONE);
    evas_object_layer_set(comp_object, E_LAYER_POPUP);
    evas_object_show(comp_object);
