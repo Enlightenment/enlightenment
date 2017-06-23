@@ -457,7 +457,7 @@ e_comp_wl_input_init(void)
 {
    /* set default seat name */
    if (!e_comp_wl->seat.name)
-     e_comp_wl->seat.name = "default";
+     e_comp_wl->seat.name = "seat0";
 
    e_comp_wl->xkb.fd = -1;
 
