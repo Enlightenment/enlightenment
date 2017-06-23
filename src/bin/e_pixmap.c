@@ -144,6 +144,12 @@ _e_pixmap_wl_resource_release(E_Comp_Wl_Buffer *buffer)
         buffer->pool = NULL;
      }
 
+   if (buffer->destroyed)
+     {
+        free(buffer);
+        return;
+     }
+
    wl_resource_queue_event(buffer->resource, WL_BUFFER_RELEASE);
 }
 

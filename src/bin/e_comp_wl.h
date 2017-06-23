@@ -63,6 +63,7 @@ struct _E_Comp_Wl_Buffer
    E_Pixmap *discarding_pixmap;
    int32_t w, h;
    uint32_t busy;
+   Eina_Bool destroyed;
 };
 
 struct _E_Comp_Wl_Surface_State

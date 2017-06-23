@@ -1010,7 +1010,10 @@ _e_comp_wl_buffer_cb_destroy(struct wl_listener *listener, void *data EINA_UNUSE
 
    buffer = container_of(listener, E_Comp_Wl_Buffer, destroy_listener);
    wl_signal_emit(&buffer->destroy_signal, buffer);
-   free(buffer);
+   buffer->destroyed = EINA_TRUE;
+
+   if (!buffer->busy)
+     free(buffer);
 }
 
 static void
