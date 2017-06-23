@@ -133,6 +133,21 @@ _e_pixmap_image_clear_x(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_U
 
 #ifdef HAVE_WAYLAND
 static void
+_e_pixmap_wl_resource_release(E_Comp_Wl_Buffer *buffer)
+{
+   buffer->busy--;
+   if (buffer->busy) return;
+
+   if (buffer->pool)
+     {
+        wl_shm_pool_unref(buffer->pool);
+        buffer->pool = NULL;
+     }
+
+   wl_resource_queue_event(buffer->resource, WL_BUFFER_RELEASE);
+}
+
+static void
 _e_pixmap_wayland_buffer_release(E_Pixmap *cp, E_Comp_Wl_Buffer *buffer)
 {
    if (!buffer) return;
@@ -148,12 +163,7 @@ _e_pixmap_wayland_buffer_release(E_Pixmap *cp, E_Comp_Wl_Buffer *buffer)
         return;
      }
 
-   buffer->busy--;
-   if (buffer->busy) return;
-
-   wl_resource_queue_event(buffer->resource, WL_BUFFER_RELEASE);
-   wl_shm_pool_unref(buffer->pool);
-   buffer->pool = NULL;
+   _e_pixmap_wl_resource_release(buffer);
 }
 
 static void
@@ -649,10 +659,8 @@ e_pixmap_resource_set(E_Pixmap *cp, void *resource)
    if (cp->buffer == resource) return;
 
    if (cp->buffer)
-     {
-        cp->buffer->busy--;
-        if (!cp->buffer->busy) wl_resource_queue_event(cp->buffer->resource, WL_BUFFER_RELEASE);
-     }
+     _e_pixmap_wl_resource_release(cp->buffer);
+
    if (cp->buffer_destroy_listener.notify)
      {
         wl_list_remove(&cp->buffer_destroy_listener.link);
