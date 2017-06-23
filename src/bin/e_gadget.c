@@ -1126,6 +1126,7 @@ _site_drop(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
                     }
                   else
                     dzgc->zone = -1;
+                  if (dzgc->id == -1) dzgc->id = 0;
                   evas_object_del(dzgc->gadget);
                   zgs->gadget_list = eina_inlist_append(zgs->gadget_list,
                       EINA_INLIST_GET(dzgc));
@@ -1135,7 +1136,6 @@ _site_drop(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
                   dzgc->w = gw / (double)w;
                   dzgc->h = gh / (double)h;
                   dzgc->site = zgs;
-                  if (dzgc->id == -1) dzgc->id = 0;
                   _gadget_object_finalize(dzgc);
                }
           }
