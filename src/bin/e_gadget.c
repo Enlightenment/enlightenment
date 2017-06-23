@@ -356,8 +356,15 @@ _gadget_object_create(E_Gadget_Config *zgc)
    /* if id is < 0, gadget creates dummy config for demo use
     * if id is 0, gadget creates new config and returns id
     * otherwise, config of `id` is applied to created object
+    *
+    * a gadget should return NULL for any demo instance where it
+    * should not be shown
     */
    g = t->cb(zgc->site->layout, &zgc->id, zgc->site->orient);
+   if (zgc->id < 0)
+     {
+        if (!g) return EINA_FALSE;
+     }
    EINA_SAFETY_ON_NULL_RETURN_VAL(g, EINA_FALSE);
    added = 1;
 
@@ -2124,7 +2131,13 @@ e_gadget_editor_add(Evas_Object *parent, Evas_Object *site)
    it = e_gadget_type_iterator_get();
    /* FIXME: no types available */
    EINA_ITERATOR_FOREACH(it, type)
-     e_gadget_site_gadget_add(tempsite, type, 1);
+     {
+        E_Gadget_Config *zgc;
+        e_gadget_site_gadget_add(tempsite, type, 1);
+        ZGS_GET(tempsite);
+        zgc = eina_list_last_data_get(zgs->gadgets);
+        if (!zgc->gadget) _gadget_remove(zgc);
+     }
    eina_iterator_free(it);
 
    gadgets = e_gadget_site_gadgets_list(tempsite);
