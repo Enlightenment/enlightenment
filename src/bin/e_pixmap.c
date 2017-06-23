@@ -709,6 +709,31 @@ e_pixmap_is_pixels(E_Pixmap *cp)
      }
 }
 
+#ifdef HAVE_WAYLAND
+static void
+_e_pixmap_scanout_handler(void *data, Evas_Native_Surface_Status status)
+{
+   E_Comp_Wl_Buffer *buffer;
+
+   buffer = data;
+   switch (status)
+     {
+      case EVAS_NATIVE_SURFACE_STATUS_SCANOUT_ON:
+        buffer->busy++;
+        break;
+      case EVAS_NATIVE_SURFACE_STATUS_SCANOUT_OFF:
+        _e_pixmap_wl_resource_release(buffer);
+        break;
+      case EVAS_NATIVE_SURFACE_STATUS_PLANE_ASSIGN:
+        buffer->busy++;
+        break;
+      case EVAS_NATIVE_SURFACE_STATUS_PLANE_RELEASE:
+        _e_pixmap_wl_resource_release(buffer);
+        break;
+     }
+}
+#endif
+
 E_API Eina_Bool
 e_pixmap_native_surface_init(E_Pixmap *cp, Evas_Native_Surface *ns)
 {
@@ -748,6 +773,11 @@ e_pixmap_native_surface_init(E_Pixmap *cp, Evas_Native_Surface *ns)
 
              ns->data.wl_dmabuf.attr = &cp->buffer->dmabuf_buffer->attributes;
              ns->data.wl_dmabuf.resource = cp->buffer->resource;
+             if (getenv("E_USE_HARDWARE_PLANES"))
+               {
+                  ns->data.wl_dmabuf.scanout.handler = _e_pixmap_scanout_handler;
+                  ns->data.wl_dmabuf.scanout.data = cp->buffer;
+               }
              ret = EINA_TRUE;
           }
         else if (!cp->buffer->shm_buffer)
