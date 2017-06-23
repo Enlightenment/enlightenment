@@ -347,7 +347,8 @@ sysinfo_cpumonitor_create(Evas_Object *parent, Instance *inst)
    inst->cfg->cpumonitor.o_gadget = elm_table_add(parent);
    E_EXPAND(inst->cfg->cpumonitor.o_gadget);
    E_FILL(inst->cfg->cpumonitor.o_gadget);
-   elm_box_pack_end(inst->o_main, inst->cfg->cpumonitor.o_gadget);
+   if (inst->cfg->esm != E_SYSINFO_MODULE_SYSINFO)
+     elm_box_pack_end(inst->o_main, inst->cfg->cpumonitor.o_gadget);
    evas_object_show(inst->cfg->cpumonitor.o_gadget);
 
    inst->cfg->cpumonitor.o_gadget_box = elm_box_add(inst->cfg->cpumonitor.o_gadget);
