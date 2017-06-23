@@ -716,11 +716,17 @@ _gadget_mouse_resize(E_Gadget_Config *zgc, int t EINA_UNUSED, Ecore_Event_Mouse_
    gw = zgc->w * w;
    gh = zgc->h * h;
    if (zgc->resizing & E_GADGET_SITE_ANCHOR_LEFT)
-     gw -= (ev->x - zgc->down.x);
+     {
+        gw -= (ev->x - zgc->down.x);
+        zgc->x = ev->x / (double)w;
+     }
    else
      gw += (ev->x - zgc->down.x);
    if (zgc->resizing & E_GADGET_SITE_ANCHOR_TOP)
-     gh -= (ev->y - zgc->down.y);
+     {
+        gh -= (ev->y - zgc->down.y);
+        zgc->y = ev->y / (double)h;
+     }
    else
      gh += (ev->y - zgc->down.y);
    zgc->w = gw / w;
