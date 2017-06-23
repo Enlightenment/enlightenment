@@ -353,6 +353,7 @@ _gadget_wizard_end(void *data, int id)
 
    zgc->id = id;
    evas_object_smart_callback_call(zgc->site->layout, "gadget_site_unlocked", NULL);
+   e_comp_ungrab_input(1, 1);
    if (id)
      {
         _gadget_object_finalize(zgc);
@@ -391,6 +392,7 @@ _gadget_object_create(E_Gadget_Config *zgc)
                   if (zgc->site->editor) evas_object_show(zgc->site->editor);
                   return EINA_FALSE;
                }
+             e_comp_grab_input(1, 1);
              evas_object_event_callback_add(zgc->cfg_object, EVAS_CALLBACK_DEL, _gadget_wizard_del, zgc);
              evas_object_smart_callback_call(zgc->site->layout, "gadget_site_locked", NULL);
              return EINA_TRUE;
