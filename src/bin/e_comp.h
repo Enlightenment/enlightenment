@@ -161,6 +161,7 @@ struct _E_Comp
    Eina_Bool       shape_queue_blocked : 1; //x11 input shape updates are blocked
 
    Eina_Bool       rendering : 1; // we've received a pre-render callback but no post-render yet.
+   Eina_Bool       updating : 1; // running client updates
 };
 
 
