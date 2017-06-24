@@ -376,6 +376,7 @@ _e_comp_cb_update(void)
         if (e_comp->grab_cb) e_comp->grab_cb();
         e_comp->grabbed = 1;
      }
+   e_comp->updating = 1;
    l = e_comp->updates;
    e_comp->updates = NULL;
    EINA_LIST_FREE(l, ec)
@@ -384,6 +385,7 @@ _e_comp_cb_update(void)
         e_comp_object_render_update_del(ec->frame);
         _e_comp_client_update(ec);
      }
+   e_comp->updating = 0;
    _e_comp_fps_update();
    if (conf->fps_show)
      {
