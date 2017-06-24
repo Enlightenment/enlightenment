@@ -475,6 +475,7 @@ _e_comp_object_cb_mouse_move(void *data, Evas *e EINA_UNUSED, Evas_Object *obj E
 
    if (!cw->ec) return;
    if (e_client_action_get() && (e_client_action_get() != cw->ec)) return;
+   if (cw->ec->moving || e_client_util_resizing_get(cw->ec)) return;
    e_client_mouse_move(cw->ec, &ev->cur.output);
 }
 /////////////////////////////////////
