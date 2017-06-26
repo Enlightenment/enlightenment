@@ -366,6 +366,7 @@ _e_client_action_input_win_del(void)
 
    comp_grabbed = 0;
    E_FREE_FUNC(action_rect, evas_object_del);
+   e_comp_shape_queue();
    e_comp_ungrab_input(1, 1);
    return 1;
 }
@@ -783,6 +784,7 @@ _e_client_action_event_grabber_init(E_Client *ec)
    evas_object_layer_set(action_rect, EVAS_LAYER_MAX - 100);
    evas_object_show(action_rect);
    evas_object_event_grabber_freeze_when_visible_set(action_rect, 1);
+   e_comp_shape_queue();
 }
 
 static void
