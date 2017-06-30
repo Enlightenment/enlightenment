@@ -1357,7 +1357,7 @@ _bar_cb_exec_del(void *data EINA_UNUSED, int type EINA_UNUSED, E_Exec_Instance *
 
         if (!inst->bar) continue;
         if (inst->cfg->type == E_LUNCHER_MODULE_LAUNCH_ONLY) continue;
-	if (ex->desktop)
+	       if (ex->desktop)
           {
              ic = eina_hash_find(inst->icons_desktop_hash, ex->desktop->orig_path);
           }
@@ -1366,8 +1366,8 @@ _bar_cb_exec_del(void *data EINA_UNUSED, int type EINA_UNUSED, E_Exec_Instance *
              if (ic->starting) elm_layout_signal_emit(ic->o_layout, "e,state,started", "e");
              ic->starting = EINA_FALSE;
              ic->execs = eina_list_remove(ic->execs, ex);
-             ic->clients = eina_list_remove(ic->clients, ec);
-             if (ic->client_cbs)
+             if (ec) ic->clients = eina_list_remove(ic->clients, ec);
+             if (ec && ic->client_cbs)
                {
                   ic->client_cbs = eina_list_remove(ic->client_cbs, ec);
                   evas_object_event_callback_del_full(ec->frame, EVAS_CALLBACK_SHOW, _bar_exec_new_show, ic);
