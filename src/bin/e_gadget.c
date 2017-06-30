@@ -1635,6 +1635,17 @@ e_gadget_type_iterator_get(void)
    return gadget_types ? eina_hash_iterator_key_new(gadget_types) : NULL;
 }
 
+E_API void
+e_gadget_del(Evas_Object *g)
+{
+   E_Gadget_Config *zgc;
+   EINA_SAFETY_ON_NULL_RETURN(g);
+   zgc = evas_object_data_get(g, "__e_gadget");
+   EINA_SAFETY_ON_NULL_RETURN(zgc);
+   _gadget_remove(zgc);
+   e_config_save_queue();
+}
+
 static void
 _gadget_drop_handler_moveresize(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
 {

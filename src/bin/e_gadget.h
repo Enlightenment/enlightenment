@@ -142,7 +142,8 @@ E_API Eina_Stringshare *e_gadget_type_get(Evas_Object *g);
 E_API void e_gadget_type_add(const char *type, E_Gadget_Create_Cb callback, E_Gadget_Wizard_Cb wizard);
 E_API void e_gadget_type_del(const char *type);
 E_API Eina_Iterator *e_gadget_type_iterator_get(void);
-
+/* delete a gadget and its config */
+E_API void e_gadget_del(Evas_Object *g);
 /* drop region initially matches gadget size, resizes to match returned object's size
  * handler is removed when returned object is deleted
  */
