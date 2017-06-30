@@ -317,7 +317,7 @@ _e_comp_client_update(E_Client *ec)
           {
              WRN("FAIL %p", ec);
              e_comp_object_redirected_set(ec->frame, 0);
-             if (e_pixmap_failures_get(ec->pixmap) < 3)
+             if (e_pixmap_failures_get(ec->pixmap) > 3)
                e_comp_object_render_update_add(ec->frame);
           }
      }
