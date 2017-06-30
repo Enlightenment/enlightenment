@@ -1136,8 +1136,6 @@ _e_comp_wl_cb_randr_change(void *data EINA_UNUSED, int type EINA_UNUSED, void *e
    const Eina_List *l;
    E_Randr2_Screen *screen;
 
-   if (!e_randr2) return ECORE_CALLBACK_RENEW;
-
    if (e_xinerama_fake_screens_exist())
      {
         E_Screen *scr;
@@ -1149,6 +1147,7 @@ _e_comp_wl_cb_randr_change(void *data EINA_UNUSED, int type EINA_UNUSED, void *e
           }
         return ECORE_CALLBACK_RENEW;
      }
+   if (!e_randr2) return ECORE_CALLBACK_RENEW;
    EINA_LIST_FOREACH(e_randr2->screens, l, screen)
      {
         if (!screen->config.enabled)
