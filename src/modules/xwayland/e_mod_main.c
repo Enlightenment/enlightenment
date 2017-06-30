@@ -225,7 +225,7 @@ _cb_xserver_event(void *data EINA_UNUSED, Ecore_Fd_Handler *hdlr EINA_UNUSED)
         snprintf(xserver, sizeof(xserver), "%s", XWAYLAND_BIN);
         DBG("\tLaunching %s: %s", xserver, disp);
         if (execl(xserver, xserver, disp, "-rootless", "-listen", abs_fd,
-                  "-listen", unx_fd, "-terminate", "-shm",
+                  "-listen", unx_fd, "-terminate",
                   NULL) < 0)
           {
              ERR("Failed to exec %s: %m", XWAYLAND_BIN);
