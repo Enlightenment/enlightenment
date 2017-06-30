@@ -1121,7 +1121,6 @@ e_pixmap_dmabuf_test(struct linux_dmabuf_buffer *dmabuf)
    evas_object_image_native_surface_set(test, &ns);
    ret = evas_object_image_load_error_get(test) == EVAS_LOAD_ERROR_NONE;
    evas_object_del(test);
-   if (!ns.data.wl_dmabuf.attr) return EINA_FALSE;
 
    if (e_comp->gl || !ret)
       return ret;
