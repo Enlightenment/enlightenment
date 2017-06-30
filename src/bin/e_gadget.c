@@ -2006,6 +2006,9 @@ _editor_resize(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj, vo
 static void
 _editor_del(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
+   Evas_Object *site = evas_object_data_get(obj, "__gadget_site");
+   ZGS_GET(site);
+   zgs->editor = NULL;
    evas_object_event_callback_del_full(data, EVAS_CALLBACK_RESIZE, _editor_resize, obj);
 }
 
@@ -2300,6 +2303,7 @@ e_gadget_editor_add(Evas_Object *parent, Evas_Object *site)
           elm_object_item_tooltip_content_cb_set(item, _editor_tooltip_content, gi, NULL);
      }
    evas_object_event_callback_add(list, EVAS_CALLBACK_DEL, _editor_del, parent);
+   evas_object_data_set(list, "__gadget_site", site);
    added = 0;
    return list;
 }
