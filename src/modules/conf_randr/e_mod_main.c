@@ -15,6 +15,7 @@ _cb_randr(void *data EINA_UNUSED, int type EINA_UNUSED, void *info EINA_UNUSED)
    Eina_List *l;
    E_Randr2_Screen *s;
 
+   if (!e_randr2) return ECORE_CALLBACK_RENEW;
    EINA_LIST_FOREACH(e_randr2->screens, l, s)
      {
         if (!s->config.configured)
