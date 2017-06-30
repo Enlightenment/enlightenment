@@ -361,7 +361,10 @@ _gadget_wizard_end(void *data, int id)
         added = 0;
      }
    else
-     _gadget_remove(zgc);
+     {
+        _gadget_remove(zgc);
+        e_config_save_queue();
+     }
 }
 
 static void
