@@ -1349,7 +1349,7 @@ _e_comp_wl_surface_state_commit(E_Client *ec, E_Comp_Wl_Surface_State *state)
         if (first && (!ec->comp_data->cursor))
           {
              ec->take_focus = !starting || ec->internal_elm_win;
-             ec->want_focus = ec->override;
+             ec->want_focus = ec->override && !e_client_util_is_popup(ec);
           }
      }
 
