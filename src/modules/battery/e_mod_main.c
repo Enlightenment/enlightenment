@@ -84,10 +84,6 @@ _gc_init(E_Gadcon *gc, const char *name, const char *id, const char *style)
    inst->warning = NULL;
    inst->popup_battery = NULL;
 
-#ifdef HAVE_EEZE
-   eeze_init();
-#endif
-
    evas_object_event_callback_add(o, EVAS_CALLBACK_MOUSE_DOWN,
                                   _button_cb_mouse_down, inst);
    battery_config->instances =
@@ -101,10 +97,6 @@ static void
 _gc_shutdown(E_Gadcon_Client *gcc)
 {
    Instance *inst;
-
-#ifdef HAVE_EEZE
-   eeze_shutdown();
-#endif
 
    inst = gcc->data;
    if (battery_config)

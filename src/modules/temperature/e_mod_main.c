@@ -170,9 +170,6 @@ _gc_init(E_Gadcon *gc, const char *name, const char *id, const char *style)
    inst->o_temp = o;
    inst->module = temperature_config->module;
    inst->have_temp = EINA_FALSE;
-#ifdef HAVE_EEEZ_UDEV
-   eeze_init();
-#endif
    temperature_face_update_config(inst);
 
    evas_object_event_callback_add(o, EVAS_CALLBACK_MOUSE_DOWN,
@@ -187,9 +184,6 @@ _gc_shutdown(E_Gadcon_Client *gcc)
 
    inst = gcc->data;
 
-#ifdef HAVE_EEEZ_UDEV
-   eeze_shutdown();
-#endif
    if (inst->o_temp) evas_object_del(inst->o_temp);
    inst->o_temp = NULL;
    if (inst->config_dialog) e_object_del(E_OBJECT(inst->config_dialog));
