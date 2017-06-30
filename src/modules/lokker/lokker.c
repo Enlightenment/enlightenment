@@ -518,14 +518,14 @@ _lokker_cb_exit(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
 
    _auth_child_pid = -1;
    /* ok */
-   if (ev->exit_code == 0)
+   if (ev->exited && (ev->exit_code == 0))
      {
         /* security - null out passwd string once we are done with it */
         _lokker_null();
         e_desklock_hide();
      }
    /* error */
-   else if (ev->exit_code < 128)
+   else if ((!ev->exited) || (ev->exit_code < 128))
      {
         /* security - null out passwd string once we are done with it */
         _lokker_null();
@@ -534,7 +534,7 @@ _lokker_cb_exit(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
                            _("Authentication via PAM had errors setting up the<br>"
                              "authentication session. The error code was <hilight>%i</hilight>.<br>"
                              "This is bad and should not be happening. Please report this bug.")
-                           , ev->exit_code);
+                           , ev->exited ? ev->exit_code : ev->exit_signal);
      }
    /* failed auth */
    else
