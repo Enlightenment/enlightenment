@@ -445,8 +445,11 @@ _e_client_free(E_Client *ec)
         ec->pixmap = NULL;
      }
 
-   e_comp_object_redirected_set(ec->frame, 0);
-   e_comp_object_render_update_del(ec->frame);
+   if (ec->frame)
+     {
+        e_comp_object_redirected_set(ec->frame, 0);
+        e_comp_object_render_update_del(ec->frame);
+     }
 
    E_OBJECT(ec)->references++;
    if (ec->fullscreen)
