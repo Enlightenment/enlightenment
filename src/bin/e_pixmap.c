@@ -1125,11 +1125,6 @@ e_pixmap_dmabuf_test(struct linux_dmabuf_buffer *dmabuf)
    if (e_comp->gl || !ret)
       return ret;
 
-   /* TODO: Software rendering for multi-plane formats */
-   if (dmabuf->attributes.n_planes != 1) return EINA_FALSE;
-   if (dmabuf->attributes.format != DRM_FORMAT_ARGB8888 &&
-       dmabuf->attributes.format != DRM_FORMAT_XRGB8888) return EINA_FALSE;
-
    /* This is only legit for ARGB8888 */
    size = dmabuf->attributes.height * dmabuf->attributes.stride[0];
    data = mmap(NULL, size, PROT_READ, MAP_SHARED, dmabuf->attributes.fd[0], 0);
