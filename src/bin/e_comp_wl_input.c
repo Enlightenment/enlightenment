@@ -661,8 +661,13 @@ _e_comp_wl_input_context_keymap_set(struct xkb_keymap *keymap, struct xkb_contex
         dev = ecore_evas_data_get(e_comp->ee, "device");
         if (dev)
           {
-             ecore_drm2_device_keyboard_cached_context_set(dev, context);
-             ecore_drm2_device_keyboard_cached_keymap_set(dev, keymap);
+#ifndef EFL_VERSION_1_20
+             if (!E_EFL_VERSION_MINIMUM(1, 19, 99))
+               {
+                  ecore_drm2_device_keyboard_cached_context_set(dev, context);
+                  ecore_drm2_device_keyboard_cached_keymap_set(dev, keymap);
+               }
+#endif
           }
      }
 # else
