@@ -295,12 +295,26 @@ _clock_sizing_changed_cb(void *data, Evas_Object *obj EINA_UNUSED, const char *e
 }
 
 static void
-clock_del(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+_clock_gadget_removed_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
+{
+   Instance *inst = data;
+
+   if (inst->o_clock != event_info) return;
+   time_config->items = eina_list_remove(time_config->items, inst->cfg);
+   eina_stringshare_del(inst->cfg->timezone);
+   eina_stringshare_del(inst->cfg->time_str[0]);
+   eina_stringshare_del(inst->cfg->time_str[1]);
+   E_FREE(inst->cfg);
+}
+
+static void
+clock_del(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
    Instance *inst = data;
    Eina_List *l;
    Eina_Bool advanced = EINA_FALSE, seconds = EINA_FALSE;
 
+   evas_object_smart_callback_del_full(e_gadget_site_get(obj), "gadget_removed", _clock_gadget_removed_cb, inst);
    clock_instances = eina_list_remove(clock_instances, inst);
    evas_object_del(inst->popup);
    time_daynames_clear(inst);
@@ -357,19 +371,6 @@ _clock_gadget_configure(Evas_Object *g)
 {
    Instance *inst = evas_object_data_get(g, "clock");
    return config_clock(inst->cfg, e_comp_object_util_zone_get(g));
-}
-
-static void
-_clock_gadget_removed_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
-{
-   Instance *inst = data;
-
-   if (inst->o_clock != event_info) return;
-   time_config->items = eina_list_remove(time_config->items, inst->cfg);
-   eina_stringshare_del(inst->cfg->timezone);
-   eina_stringshare_del(inst->cfg->time_str[0]);
-   eina_stringshare_del(inst->cfg->time_str[1]);
-   E_FREE(inst->cfg);
 }
 
 static void

@@ -8,7 +8,6 @@ _sysinfo_removed_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_data)
    Instance *inst = data;
 
    if (inst->o_main != event_data) return;
-
    sysinfo_batman_remove(inst, NULL, NULL, NULL);
    sysinfo_thermal_remove(inst, NULL, NULL, NULL);
    sysinfo_cpuclock_remove(inst, NULL, NULL, NULL);
@@ -23,10 +22,11 @@ _sysinfo_removed_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_data)
 }
 
 static void
-_sysinfo_deleted_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_data EINA_UNUSED)
+_sysinfo_deleted_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *event_data EINA_UNUSED)
 {
    Instance *inst = data;
 
+   evas_object_smart_callback_del_full(e_gadget_site_get(obj), "gadget_removed", _sysinfo_removed_cb, inst);
    sysinfo_batman_remove(inst, NULL, NULL, NULL);
    sysinfo_thermal_remove(inst, NULL, NULL, NULL);
    sysinfo_cpuclock_remove(inst, NULL, NULL, NULL);

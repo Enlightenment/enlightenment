@@ -447,10 +447,26 @@ _grid_resize(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void
 }
 
 static void
-_grid_del(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_data EINA_UNUSED)
+_grid_removed_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_data)
+{
+   Instance *inst = data;
+   char buf[4096];
+
+   if (inst->o_main != event_data) return;
+   if (e_user_dir_snprintf(buf, sizeof(buf), "applications/bar/%s", inst->cfg->dir) >= sizeof(buf))
+     return;
+
+   luncher_config->items = eina_list_remove(luncher_config->items, inst->cfg);
+   eina_stringshare_del(inst->cfg->dir);
+   E_FREE(inst->cfg);
+}
+
+static void
+_grid_del(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *event_data EINA_UNUSED)
 {
    Instance *inst = data;
 
+   evas_object_smart_callback_del_full(e_gadget_site_get(obj), "gadget_removed", _grid_removed_cb, inst);
    e_object_del(E_OBJECT(inst->order));
    E_FREE_FUNC(inst->drop_handler, evas_object_del);
    luncher_instances = eina_list_remove(luncher_instances, inst);
@@ -549,21 +565,6 @@ _grid_drop_enter(void *data, const char *type EINA_UNUSED, void *event_data EINA
    evas_object_size_hint_min_set(inst->place_holder, inst->size, inst->size);
    evas_object_size_hint_max_set(inst->place_holder, inst->size, inst->size);
    evas_object_show(inst->place_holder);
-}
-
-static void
-_grid_removed_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_data)
-{
-   Instance *inst = data;
-   char buf[4096];
-
-   if (inst->o_main != event_data) return;
-   if (e_user_dir_snprintf(buf, sizeof(buf), "applications/bar/%s", inst->cfg->dir) >= sizeof(buf))
-     return;
-
-   luncher_config->items = eina_list_remove(luncher_config->items, inst->cfg);
-   eina_stringshare_del(inst->cfg->dir);
-   E_FREE(inst->cfg);
 }
 
 static void
