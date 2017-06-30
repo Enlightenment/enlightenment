@@ -1246,6 +1246,11 @@ _e_comp_intercept_resize(void *data, Evas_Object *obj, int w, int h)
         EC_CHANGED(cw->ec);
         return;
      }
+   if (e_pixmap_failures_get(cw->ec->pixmap) && (!cw->redirected))
+     {
+        e_comp_object_redirected_set(obj, 1);
+        return;
+     }
    prev_w = cw->w, prev_h = cw->h;
    e_comp_object_frame_wh_adjust(obj, 0, 0, &fw, &fh);
    /* check shading and clamp to pixmap size for regular clients */
