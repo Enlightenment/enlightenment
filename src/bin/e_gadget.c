@@ -127,6 +127,7 @@ static void _gadget_object_finalize(E_Gadget_Config *zgc);
 static Eina_Bool _gadget_object_create(E_Gadget_Config *zgc);
 static void _editor_pointer_site_init(E_Gadget_Site_Orient orient, Evas_Object *site, Evas_Object *editor, Eina_Bool );
 static void _gadget_drop_handler_moveresize(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED);
+static void _edit_site_del(void *data, Evas *e, Evas_Object *obj, void *event_info);
 
 static Eina_Bool
 _editor_site_visible(void)
@@ -369,7 +370,7 @@ _gadget_wizard_del(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *even
    E_Gadget_Config *zgc = data;
 
    if (zgc->cfg_object == obj) zgc->cfg_object = NULL;
-   if (zgc->site->editor) evas_object_show(zgc->site->editor);
+   if (desktop_editor) evas_object_show(desktop_editor);
 }
 
 static Eina_Bool
@@ -389,7 +390,7 @@ _gadget_object_create(E_Gadget_Config *zgc)
              if (!zgc->cfg_object)
                {
                   added = 1;
-                  if (zgc->site->editor) evas_object_show(zgc->site->editor);
+                  if (desktop_editor) evas_object_show(desktop_editor);
                   return EINA_FALSE;
                }
              e_comp_grab_input(1, 1);
@@ -398,7 +399,7 @@ _gadget_object_create(E_Gadget_Config *zgc)
              return EINA_TRUE;
           }
      }
-   if (zgc->site->editor) evas_object_show(zgc->site->editor);
+   if (desktop_editor) evas_object_show(desktop_editor);
    if ((zgc->zone >= 0) && (!e_comp_zone_number_get(zgc->zone))) return EINA_FALSE;
    /* if id is < 0, gadget creates dummy config for demo use
     * if id is 0, gadget creates new config and returns id
@@ -2007,8 +2008,12 @@ static void
 _editor_del(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
    Evas_Object *site = evas_object_data_get(obj, "__gadget_site");
-   ZGS_GET(site);
-   zgs->editor = NULL;
+   if (site)
+     {
+        evas_object_event_callback_del(site, EVAS_CALLBACK_DEL, _edit_site_del);
+        ZGS_GET(site);
+        zgs->editor = NULL;
+     }
    evas_object_event_callback_del_full(data, EVAS_CALLBACK_RESIZE, _editor_resize, obj);
 }
 
@@ -2050,6 +2055,7 @@ _editor_pointer_button(Gadget_Item *active, int t EINA_UNUSED, Ecore_Event_Mouse
           evas_object_smart_callback_call(active->site, "gadget_site_dropped", pointer_site);
         e_comp_canvas_feed_mouse_up(0);
         evas_object_pass_events_set(active->site, 0);
+        evas_object_pass_events_set(desktop_editor, 0);
         elm_object_disabled_set(active->editor, 1);
         e_comp_object_util_del_list_remove(active->editor, pointer_site);
      }
@@ -2078,6 +2084,7 @@ _editor_pointer_button(Gadget_Item *active, int t EINA_UNUSED, Ecore_Event_Mouse
         zgc = eina_list_data_get(zgs->gadgets);
         e_comp_canvas_feed_mouse_up(0);
         evas_object_pass_events_set(zgc->orig->site->layout, 0);
+        evas_object_pass_events_set(desktop_editor, 0);
         if (zzgs)
           {
              /* fake the moving gadget as being on the pointer site */
@@ -2169,7 +2176,8 @@ _editor_gadget_new(void *data, Evas_Object *obj, void *event_info)
    E_Gadget_Site_Orient orient;
 
    ZGS_GET(gi->site);
-   evas_object_hide(zgs->editor);
+   evas_object_hide(desktop_editor);
+   evas_object_pass_events_set(desktop_editor, 1);
    orient = e_gadget_site_orient_get(gi->site);
    _editor_pointer_site_init(orient, gi->site, gi->editor, 0);
    e_comp_object_util_del_list_append(gi->editor, pointer_site);
@@ -2303,7 +2311,11 @@ e_gadget_editor_add(Evas_Object *parent, Evas_Object *site)
           elm_object_item_tooltip_content_cb_set(item, _editor_tooltip_content, gi, NULL);
      }
    evas_object_event_callback_add(list, EVAS_CALLBACK_DEL, _editor_del, parent);
+   ZGS_GET(site);
+   evas_object_event_callback_add(site, EVAS_CALLBACK_DEL, _edit_site_del, zgs);
    evas_object_data_set(list, "__gadget_site", site);
+   /* FIXME: embedded editors? */
+   zgs->editor = list;
    added = 0;
    return list;
 }
@@ -2352,8 +2364,7 @@ e_gadget_site_edit(Evas_Object *site)
    evas_object_show(comp_object);
    evas_object_resize(comp_object, zone->w / 2, zone->h / 2);
    e_comp_object_util_center_on_zone(comp_object, zone);
-   /* FIXME: embedded editors? */
-   zgs->editor = comp_object;
+
    return comp_object;
 }
 
@@ -2375,9 +2386,20 @@ _edit_end()
 }
 
 static void
+_edit_site_del(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   E_Gadget_Site *zgs = data;
+
+   evas_object_data_del(zgs->editor, "__gadget_site");
+   zgs->editor = NULL;
+   _edit_end();
+}
+
+static void
 _gadget_desklock_del(void)
 {
    e_desklock_hide();
+   desktop_editor = NULL;
    _edit_end();
 }
 
@@ -2437,9 +2459,13 @@ _gadget_desklock_handler(void *d EINA_UNUSED, int t EINA_UNUSED, E_Event_Comp_Ob
    if (strncmp(name, "desklock", 8)) return ECORE_CALLBACK_RENEW;
    evas_object_layer_set(ev->comp_object, DESKLOCK_DEMO_LAYER - 1);
    site = e_gadget_site_auto_add(E_GADGET_SITE_ORIENT_NONE, name);
+   evas_object_propagate_events_set(site, 0);
+   evas_object_smart_member_add(site, desktop_rect);
    evas_object_smart_callback_add(site, "gadget_moved", _gadget_moved, NULL);
    evas_object_layer_set(site, DESKLOCK_DEMO_LAYER);
-   comp_object = e_gadget_site_edit(site);
+   desktop_editor = comp_object = e_gadget_site_edit(site);
+   evas_object_propagate_events_set(comp_object, 0);
+   evas_object_smart_member_add(comp_object, desktop_rect);
    e_comp_object_util_del_list_append(ev->comp_object, comp_object);
 
    memset(&n, 0, sizeof(E_Notification_Notify));
@@ -2455,14 +2481,13 @@ _gadget_desklock_handler(void *d EINA_UNUSED, int t EINA_UNUSED, E_Event_Comp_Ob
 E_API void
 e_gadget_site_desklock_edit(void)
 {
-   desktop_rect = evas_object_rectangle_add(e_comp->evas);
-   evas_object_color_set(desktop_rect, 0, 0, 0, 0);
+   desktop_rect = evas_object_event_grabber_add(e_comp->evas);
    evas_object_resize(desktop_rect, e_comp->w, e_comp->h);
-   evas_object_layer_set(desktop_rect, DESKLOCK_DEMO_LAYER);
+   evas_object_layer_set(desktop_rect, E_LAYER_MAX - 100);
    evas_object_show(desktop_rect);
    E_LIST_HANDLER_APPEND(desktop_handlers, E_EVENT_COMP_OBJECT_ADD, _gadget_desklock_handler, NULL);
    E_LIST_HANDLER_APPEND(desktop_handlers, ECORE_EVENT_KEY_DOWN, _gadget_desklock_key_handler, NULL);
-   E_LIST_HANDLER_APPEND(desktop_handlers, ECORE_EVENT_MOUSE_BUTTON_UP, _gadget_desklock_mouse_up_handler, NULL);
+   evas_object_event_callback_add(desktop_rect, EVAS_CALLBACK_MOUSE_UP, _gadget_desklock_mouse_up_handler, NULL);
    e_desklock_demo();
    e_comp_grab_input(1, 1);
 }
@@ -2502,17 +2527,21 @@ e_gadget_site_desktop_edit(Evas_Object *site)
 
    ZGS_GET(site);
 
-   desktop_rect = evas_object_rectangle_add(e_comp->evas);
+   desktop_rect = evas_object_event_grabber_add(e_comp->evas);
    evas_object_event_callback_add(desktop_rect, EVAS_CALLBACK_DEL, _edit_end, NULL);
-   evas_object_color_set(desktop_rect, 0, 0, 0, 0);
    evas_object_resize(desktop_rect, e_comp->w, e_comp->h);
-   evas_object_layer_set(desktop_rect, E_LAYER_DESKTOP);
+   evas_object_layer_set(desktop_rect, E_LAYER_MAX - 100);
    evas_object_show(desktop_rect);
+
+   evas_object_propagate_events_set(site, 0);
+   evas_object_smart_member_add(site, desktop_rect);
+
    E_LIST_HANDLER_APPEND(desktop_handlers, ECORE_EVENT_KEY_DOWN, _gadget_desktop_key_handler, zgs);
-   E_LIST_HANDLER_APPEND(desktop_handlers, ECORE_EVENT_MOUSE_BUTTON_UP, _gadget_desktop_mouse_up_handler, NULL);
-   evas_object_event_callback_add(site, EVAS_CALLBACK_DEL, _edit_end, NULL);
+   evas_object_event_callback_add(desktop_rect, EVAS_CALLBACK_MOUSE_UP, _gadget_desktop_mouse_up_handler, NULL);
 
    desktop_editor = e_gadget_site_edit(site);
+   evas_object_propagate_events_set(desktop_editor, 0);
+   evas_object_smart_member_add(desktop_editor, desktop_rect);
    evas_object_smart_callback_add(site, "gadget_moved", _gadget_moved, NULL);
    evas_object_show(desktop_editor);
 
