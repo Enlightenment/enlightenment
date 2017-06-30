@@ -4633,6 +4633,7 @@ _e_comp_x_hook_client_focus_unset(void *d EINA_UNUSED, E_Client *ec)
         focus_job_client = NULL;
         E_FREE_FUNC(focus_job, ecore_job_del);
      }
+   if (ec->override) return;
    unfocus_job_client = ec;
    if (!unfocus_job)
      unfocus_job = ecore_job_add(_e_comp_x_hook_client_focus_unset_job, NULL);
@@ -4677,6 +4678,7 @@ _e_comp_x_hook_client_focus_set(void *d EINA_UNUSED, E_Client *ec)
         unfocus_job_client = NULL;
         E_FREE_FUNC(unfocus_job, ecore_job_del);
      }
+   if (ec->override) return;
    focus_job_client = ec;
    if (!focus_job)
      focus_job = ecore_job_add(_e_comp_x_hook_client_focus_set_job, NULL);
