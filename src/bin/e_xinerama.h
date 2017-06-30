@@ -10,6 +10,7 @@ struct _E_Screen
 {
    int screen, escreen;
    int x, y, w, h;
+   int rotation;
    char *id; // this is the same id we get from randr2 so look it up there
 };
 

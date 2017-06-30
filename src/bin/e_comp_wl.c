@@ -1107,12 +1107,34 @@ _e_comp_wl_client_evas_init(E_Client *ec)
    ec->comp_data->evas_init = EINA_TRUE;
 }
 
+static inline int
+_rotation_get(int rotation)
+{
+   int transform;
+   switch (rotation)
+     {
+      case 90:
+        transform = WL_OUTPUT_TRANSFORM_90;
+        break;
+      case 180:
+        transform = WL_OUTPUT_TRANSFORM_180;
+        break;
+      case 270:
+        transform = WL_OUTPUT_TRANSFORM_270;
+        break;
+      case 0:
+      default:
+        transform = WL_OUTPUT_TRANSFORM_NORMAL;
+        break;
+     }
+   return transform;
+}
+
 static Eina_Bool
 _e_comp_wl_cb_randr_change(void *data EINA_UNUSED, int type EINA_UNUSED, void *event EINA_UNUSED)
 {
    const Eina_List *l;
    E_Randr2_Screen *screen;
-   unsigned int transform = WL_OUTPUT_TRANSFORM_NORMAL;
 
    if (!e_randr2) return ECORE_CALLBACK_RENEW;
 
@@ -1123,7 +1145,7 @@ _e_comp_wl_cb_randr_change(void *data EINA_UNUSED, int type EINA_UNUSED, void *e
           {
              e_comp_wl_output_init(NULL, NULL, NULL,
                scr->x, scr->y, scr->w, scr->h,
-               0, 0, 0, 0, 0, scr->escreen);
+               0, 0, 0, 0, _rotation_get(scr->rotation), scr->escreen);
           }
         return ECORE_CALLBACK_RENEW;
      }
@@ -1135,29 +1157,13 @@ _e_comp_wl_cb_randr_change(void *data EINA_UNUSED, int type EINA_UNUSED, void *e
              continue;
           }
 
-        switch (screen->config.rotation)
-          {
-           case 90:
-             transform = WL_OUTPUT_TRANSFORM_90;
-             break;
-           case 180:
-             transform = WL_OUTPUT_TRANSFORM_180;
-             break;
-           case 270:
-             transform = WL_OUTPUT_TRANSFORM_270;
-             break;
-           case 0:
-           default:
-             transform = WL_OUTPUT_TRANSFORM_NORMAL;
-             break;
-          }
-
         if (!e_comp_wl_output_init(screen->id, screen->info.name,
                                    screen->info.screen,
                                    screen->config.geom.x, screen->config.geom.y,
                                    screen->config.geom.w, screen->config.geom.h,
                                    screen->info.size.w, screen->info.size.h,
-                                   screen->config.mode.refresh, screen->info.subpixel, transform, 0))
+                                   screen->config.mode.refresh, screen->info.subpixel,
+                                   _rotation_get(screen->config.rotation), 0))
           ERR("Could not initialize screen %s", screen->info.name);
      }
 
