@@ -5463,6 +5463,7 @@ e_client_pointer_warp_to_center(E_Client *ec)
    E_Client *cec = NULL;
 
    ec = e_client_stack_active_adjust(ec);
+   if (ec->override) return 0;
    if (!ec->zone) return 0;
    if (e_config->disable_all_pointer_warps) return 0;
    /* Only warp the pointer if it is not already in the area of
