@@ -118,7 +118,7 @@ _e_comp_x_focus_check(void)
    focused = e_client_focused_get();
    /* if there is no new focused or it is a non-X client,
     * focus comp canvas on focus-out */
-   if ((!focused) || (e_pixmap_type_get(focused->pixmap) != E_PIXMAP_TYPE_X))
+   if ((!focused) || (!e_client_has_xwindow(focused)))
      {
         focus_canvas_time = ecore_x_current_time_get();
         focus_time = 0;
