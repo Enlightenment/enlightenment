@@ -441,9 +441,9 @@ _e_comp_wl_evas_cb_mouse_wheel(void *data, Evas *evas EINA_UNUSED, Evas_Object *
      axis = WL_POINTER_AXIS_HORIZONTAL_SCROLL;
 
    if (ev->z < 0)
-     dir = -wl_fixed_from_int(abs(ev->z));
+     dir = -wl_fixed_from_int(abs(10 * ev->z));
    else
-     dir = wl_fixed_from_int(ev->z);
+     dir = wl_fixed_from_int(10 * ev->z);
 
    if (!ec->comp_data->surface) return;
 
