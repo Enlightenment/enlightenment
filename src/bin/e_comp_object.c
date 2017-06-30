@@ -3264,7 +3264,8 @@ E_API Eina_Bool
 e_comp_object_frame_allowed(Evas_Object *obj)
 {
    API_ENTRY EINA_FALSE;
-   return (!cw->ec->mwm.borderless) && (cw->frame_object || (!cw->client_inset.calc));
+   return (!e_client_util_ignored_get(cw->ec)) && (!cw->ec->mwm.borderless) &&
+     (cw->frame_object || (!cw->client_inset.calc));
 }
 
 E_API void
