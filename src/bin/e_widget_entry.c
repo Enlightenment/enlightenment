@@ -6,6 +6,7 @@ struct _E_Widget_Data
    Evas_Object *o_entry, *o_inout;
    char       **text_location;
    void         (*func)(void *data, void *data2);
+   char        *text;
    void        *data;
    void        *data2;
 };
@@ -81,7 +82,16 @@ e_widget_entry_add(Evas_Object *parent, char **text_location, void (*func)(void 
 
    o = wd->o_entry;
    if ((text_location) && (*text_location))
-     elm_object_text_set(o, *text_location);
+     {
+        char *tmp = elm_entry_utf8_to_markup(*text_location);
+
+        if (tmp)
+          {
+             elm_object_text_set(o, tmp);
+             free(tmp);
+          }
+        else elm_object_text_set(wd->o_entry, NULL);
+     }
 
    wd->func = func;
    wd->data = data;
@@ -101,10 +111,17 @@ E_API void
 e_widget_entry_text_set(Evas_Object *entry, const char *text)
 {
    E_Widget_Data *wd;
+   char *tmp;
 
    if (!(entry) || (!(wd = e_widget_data_get(entry))))
      return;
-   elm_object_text_set(wd->o_entry, text);
+   tmp = elm_entry_utf8_to_markup(text);
+   if (tmp)
+     {
+        elm_object_text_set(wd->o_entry, tmp);
+        free(tmp);
+     }
+   else elm_object_text_set(wd->o_entry, NULL);
 }
 
 /**
@@ -117,10 +134,20 @@ E_API const char *
 e_widget_entry_text_get(Evas_Object *entry)
 {
    E_Widget_Data *wd;
+   char *tmp;
 
    if (!(entry) || (!(wd = e_widget_data_get(entry))))
      return NULL;
-   return elm_object_text_get(wd->o_entry);
+   tmp = elm_entry_markup_to_utf8(elm_object_text_get(wd->o_entry));
+   if (tmp)
+     {
+        if (wd->text) free(wd->text);
+        wd->text = tmp;
+        return wd->text;
+     }
+   if (wd->text) free(wd->text);
+   wd->text = NULL;
+   return NULL;
 }
 
 /**
@@ -197,10 +224,12 @@ _e_wid_del_hook(Evas_Object *obj)
 
    if (!(obj) || (!(wd = e_widget_data_get(obj))))
      return;
+   if (wd->text) free(wd->text);
    evas_object_del(wd->o_entry);
    evas_object_del(wd->o_inout);
    wd->o_entry = NULL;
    wd->o_inout = NULL;
+   wd->text = NULL;
    free(wd);
 }
 
@@ -238,15 +267,26 @@ _e_wid_changed_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EIN
    Evas_Object *entry;
    E_Widget_Data *wd;
    const char *text;
+   char *tmp;
 
    if (!(entry = data) || (!(wd = e_widget_data_get(entry))))
      return;
 
+   tmp = elm_entry_markup_to_utf8(elm_object_text_get(wd->o_entry));
+   if (tmp)
+     {
+        if (wd->text) free(wd->text);
+        wd->text = tmp;
+     }
+   else
+     {
+        if (wd->text) free(wd->text);
+        wd->text = NULL;
+     }
    if (wd->text_location)
      {
-        text = elm_object_text_get(wd->o_entry);
         free(*wd->text_location);
-        *wd->text_location = text ? strdup(text) : NULL;
+        *wd->text_location = wd->text ? strdup(wd->text) : NULL;
      }
    e_widget_change(data);
 
