@@ -260,6 +260,8 @@ _memusage_resize_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSE
 
    edje_object_parts_extends_calc(elm_layout_edje_get(inst->cfg->memusage.o_gadget),
                                   0, 0, &w, &h);
+   if (w < 1) w = 1;
+   if (h < 1) h = 1;
    if (inst->cfg->esm == E_SYSINFO_MODULE_MEMUSAGE)
      evas_object_size_hint_aspect_set(inst->o_main,
                                       EVAS_ASPECT_CONTROL_BOTH, w, h);
