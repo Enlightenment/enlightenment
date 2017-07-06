@@ -348,6 +348,7 @@ _wireless_edit_del(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj
         array_clear(wireless_edit[i]->proxy_servers);
         E_FREE(wireless_edit[i]);
      }
+   wireless_popup.popup = NULL;
    wireless_edit_popup = NULL;
 }
 
@@ -709,6 +710,7 @@ _wireless_gadget_edit(int type)
         evas_object_hide(wireless_popup.popup);
         evas_object_del(wireless_popup.popup);
      }
+   printf("Sup hoe\n");
    wireless_edit[0] = E_NEW(Wireless_Connection, 1);
    wireless_edit[1] = E_NEW(Wireless_Connection, 1);
    wn = E_NEW(Wireless_Network, 1);
@@ -902,14 +904,17 @@ _wireless_gadget_mouse_down(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, v
      if (obj == inst->icon[type])
        break;
    if (ev->button == 2) connman_technology_enabled_set(type, !wireless_type_enabled[type]);
-   if (ev->button == 3) _wireless_gadget_edit(type);
+   if (ev->button == 3)
+     {
+        ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
+        _wireless_gadget_edit(type);
+     }
    if (ev->button != 1) return;
    if (wireless_popup.popup)
      {
         evas_object_hide(wireless_popup.popup);
         evas_object_del(wireless_popup.popup);
-        if (wireless_popup.type == type)
-          return;
+        return;
      }
    inst->popup = 1;
    wireless_popup.type = type;
@@ -939,11 +944,9 @@ _wireless_gadget_mouse_down(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, v
    evas_object_smart_callback_add(toggle, "changed", _wireless_popup_toggle, inst);
    elm_box_pack_end(box, toggle);
    elm_object_content_set(ctx, box);
-   wireless_popup.popup = e_comp_object_util_add(ctx, E_COMP_OBJECT_TYPE_NONE);
-   evas_object_layer_set(wireless_popup.popup, E_LAYER_POPUP);
+   wireless_popup.popup = ctx;
 
    zone = e_zone_current_get();
-   evas_object_resize(wireless_popup.popup, zone->w / 5, zone->h / 3);
    evas_object_size_hint_min_set(box, zone->w / 5, zone->h / 3);
    e_gadget_util_ctxpopup_place(inst->box, ctx, inst->icon[type]);
    evas_object_show(wireless_popup.popup);
