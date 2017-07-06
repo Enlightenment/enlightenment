@@ -927,6 +927,19 @@ _e_comp_object_mirror_pixels_get(void *data, Evas_Object *obj)
         return;
      }
 
+   /* This is a big fat hack - ideally we're already on this list
+    * if the parent is visible, but there are some circumstances
+    * where a client receives damage while visible but its own pixels_get
+    * callback doesn't fire (new damage during the start frame of a desk
+    * switch animation).
+    * Thus we can't make this addition conditional on visibility or we can
+    * (under wayland at least) lose a frame callback and stop updating.
+    *
+    * e_comp_client_post_update_add() prevents clients from being
+    * on the list twice, so this is theoretically not harmful.
+    */
+   e_comp_client_post_update_add(ec);
+
    if (cw->native) return;
 
    evas_object_image_data_set(obj, e_pixmap_image_data_get(cw->ec->pixmap));
