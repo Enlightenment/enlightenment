@@ -1447,8 +1447,7 @@ _e_xdg_shell_cb_bind(struct wl_client *client, void *data EINA_UNUSED, uint32_t 
 static void
 _xdg6_client_hook_del(void *d EINA_UNUSED, E_Client *ec)
 {
-   if (ec->internal)
-     _xdg6_client_destroy(ec, 1);
+   _xdg6_client_destroy(ec, 1);
 }
 
 EINTERN Eina_Bool
