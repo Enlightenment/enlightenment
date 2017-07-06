@@ -231,11 +231,11 @@ _thermal_created_cb(void *data, Evas_Object *obj, void *event_data EINA_UNUSED)
    inst->cfg->thermal.o_gadget = elm_layout_add(inst->o_main);
    if (orient == E_GADGET_SITE_ORIENT_VERTICAL)
      e_theme_edje_object_set(inst->cfg->thermal.o_gadget,
-                               "base/theme/modules/thermal",
-                               "e/modules/thermal/main_vert");
+                               "base/theme/gadget/thermal",
+                               "e/gadget/thermal/main_vert");
    else
-     e_theme_edje_object_set(inst->cfg->thermal.o_gadget, "base/theme/modules/thermal",
-                           "e/modules/thermal/main");
+     e_theme_edje_object_set(inst->cfg->thermal.o_gadget, "base/theme/gadget/thermal",
+                           "e/gadget/thermal/main");
    E_EXPAND(inst->cfg->thermal.o_gadget);
    E_FILL(inst->cfg->thermal.o_gadget);
    elm_box_pack_end(inst->o_main, inst->cfg->thermal.o_gadget);
@@ -252,8 +252,8 @@ sysinfo_thermal_create(Evas_Object *parent, Instance *inst)
    inst->cfg->thermal.have_temp = EINA_FALSE;
 
    inst->cfg->thermal.o_gadget = elm_layout_add(parent);
-   e_theme_edje_object_set(inst->cfg->thermal.o_gadget, "base/theme/modules/temperature",
-                           "e/modules/temperature/main");
+   e_theme_edje_object_set(inst->cfg->thermal.o_gadget, "base/theme/gadget/temperature",
+                           "e/gadget/temperature/main");
    E_EXPAND(inst->cfg->thermal.o_gadget);
    E_FILL(inst->cfg->thermal.o_gadget);
    evas_object_event_callback_add(inst->cfg->thermal.o_gadget, EVAS_CALLBACK_RESIZE, _thermal_resize_cb, inst);

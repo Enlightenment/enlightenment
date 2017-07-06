@@ -39,8 +39,8 @@ _xkbg_update_icon(int cur_group)
                inst->layout = e_config->xkb.current_layout;
              E_FREE_FUNC(inst->o_xkbflag, evas_object_del);
              e_theme_edje_object_set(inst->o_xkbswitch,
-                                     "base/theme/modules/xkbswitch",
-                                     "e/modules/xkbswitch/noflag");
+                                     "base/theme/gadget/xkbswitch",
+                                     "e/gadget/xkbswitch/noflag");
              elm_layout_text_set(inst->o_xkbswitch,
                                  "e.text.label", cl->name);
           }
@@ -54,8 +54,8 @@ _xkbg_update_icon(int cur_group)
              if (!inst->o_xkbflag)
                inst->o_xkbflag = e_icon_add(evas_object_evas_get(inst->o_xkbswitch));
              e_theme_edje_object_set(inst->o_xkbswitch,
-                                     "base/theme/modules/xkbswitch",
-                                     "e/modules/xkbswitch/main");
+                                     "base/theme/gadget/xkbswitch",
+                                     "e/gadget/xkbswitch/main");
              e_xkb_e_icon_flag_setup(inst->o_xkbflag, cl->name);
              elm_layout_content_set(inst->o_xkbswitch, "e.swallow.flag",
                                     inst->o_xkbflag);
@@ -225,23 +225,23 @@ _xkbg_gadget_created_cb(void *data, Evas_Object *obj, void *event_info EINA_UNUS
           {
              if (inst->orient == E_GADGET_SITE_ORIENT_VERTICAL)
                e_theme_edje_object_set(inst->o_xkbswitch,
-                                  "base/theme/modules/xkbswitch",
-                                  "e/modules/xkbswitch/noflag_vert");
+                                  "base/theme/gadget/xkbswitch",
+                                  "e/gadget/xkbswitch/noflag_vert");
              else
                e_theme_edje_object_set(inst->o_xkbswitch,
-                                  "base/theme/modules/xkbswitch",
-                                  "e/modules/xkbswitch/noflag");
+                                  "base/theme/gadget/xkbswitch",
+                                  "e/gadget/xkbswitch/noflag");
           }
         else
           {
              if (inst->orient == E_GADGET_SITE_ORIENT_VERTICAL)
                e_theme_edje_object_set(inst->o_xkbswitch,
-                                  "base/theme/modules/xkbswitch",
-                                  "e/modules/xkbswitch/main_vert");
+                                  "base/theme/gadget/xkbswitch",
+                                  "e/gadget/xkbswitch/main_vert");
              else
                e_theme_edje_object_set(inst->o_xkbswitch,
-                                  "base/theme/modules/xkbswitch",
-                                  "e/modules/xkbswitch/main");
+                                  "base/theme/gadget/xkbswitch",
+                                  "e/gadget/xkbswitch/main");
           }
         elm_layout_text_set(inst->o_xkbswitch, "e.text.label",
                                  inst->layout ? e_xkb_layout_name_reduce(inst->layout->name) : _("NONE"));

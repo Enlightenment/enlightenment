@@ -195,11 +195,11 @@ _cpumonitor_add_layout(Instance *inst)
    layout = elm_layout_add(inst->cfg->cpumonitor.o_gadget_box);
    edje_object_update_hints_set(elm_layout_edje_get(layout), EINA_TRUE);
    if (orient == E_GADGET_SITE_ORIENT_VERTICAL)
-     e_theme_edje_object_set(layout, "base/theme/modules/cpumonitor",
-                             "e/modules/cpumonitor/main_vert");
+     e_theme_edje_object_set(layout, "base/theme/gadget/cpumonitor",
+                             "e/gadget/cpumonitor/main_vert");
    else
-     e_theme_edje_object_set(layout, "base/theme/modules/cpumonitor",
-                             "e/modules/cpumonitor/main");
+     e_theme_edje_object_set(layout, "base/theme/gadget/cpumonitor",
+                             "e/gadget/cpumonitor/main");
    E_EXPAND(layout);
    E_FILL(layout);
    elm_box_pack_end(inst->cfg->cpumonitor.o_gadget_box, layout);

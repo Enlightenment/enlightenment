@@ -474,10 +474,10 @@ _batman_warning_popup(Instance *inst, int t, double percent)
         return;
      }
 
-   e_theme_edje_object_set(popup_bg, "base/theme/modules/batman/popup",
-                           "e/modules/batman/popup");
-   e_theme_edje_object_set(inst->popup_battery, "base/theme/modules/batman",
-                           "e/modules/batman/main");
+   e_theme_edje_object_set(popup_bg, "base/theme/gadget/batman/popup",
+                           "e/gadget/batman/popup");
+   e_theme_edje_object_set(inst->popup_battery, "base/theme/gadget/batman",
+                           "e/gadget/batman/main");
    if (edje_object_part_exists(elm_layout_edje_get(popup_bg), "e.swallow.batman"))
      elm_layout_content_set(popup_bg, "e.swallow.batman", inst->popup_battery);
    else
@@ -590,11 +590,11 @@ _batman_created_cb(void *data, Evas_Object *obj, void *event_data EINA_UNUSED)
    inst->cfg->batman.o_gadget = elm_layout_add(inst->o_main);
    if (orient == E_GADGET_SITE_ORIENT_VERTICAL)
      e_theme_edje_object_set(inst->cfg->batman.o_gadget,
-                             "base/theme/modules/batman",
-                             "e/modules/batman/main_vert");
+                             "base/theme/gadget/batman",
+                             "e/gadget/batman/main_vert");
    else
-     e_theme_edje_object_set(inst->cfg->batman.o_gadget, "base/theme/modules/batman",
-                             "e/modules/batman/main");
+     e_theme_edje_object_set(inst->cfg->batman.o_gadget, "base/theme/gadget/batman",
+                             "e/gadget/batman/main");
    E_EXPAND(inst->cfg->batman.o_gadget);
    E_FILL(inst->cfg->batman.o_gadget);
    elm_box_pack_end(inst->o_main, inst->cfg->batman.o_gadget);
@@ -618,8 +618,8 @@ sysinfo_batman_create(Evas_Object *parent, Instance *inst)
    inst->cfg->batman.have_power = -2;
 
    inst->cfg->batman.o_gadget = elm_layout_add(parent);
-   e_theme_edje_object_set(inst->cfg->batman.o_gadget, "base/theme/modules/batman",
-                           "e/modules/batman/main");
+   e_theme_edje_object_set(inst->cfg->batman.o_gadget, "base/theme/gadget/batman",
+                           "e/gadget/batman/main");
    E_EXPAND(inst->cfg->batman.o_gadget);
    E_FILL(inst->cfg->batman.o_gadget);
    evas_object_event_callback_add(inst->cfg->batman.o_gadget,

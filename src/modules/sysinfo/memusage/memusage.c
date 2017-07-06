@@ -395,12 +395,12 @@ _memusage_created_cb(void *data, Evas_Object *obj, void *event_data EINA_UNUSED)
    inst->cfg->memusage.o_gadget = elm_layout_add(inst->o_main);
    if (orient == E_GADGET_SITE_ORIENT_VERTICAL)
      e_theme_edje_object_set(inst->cfg->memusage.o_gadget,
-                             "base/theme/modules/memusage",
-                             "e/modules/memusage/main_vert");
+                             "base/theme/gadget/memusage",
+                             "e/gadget/memusage/main_vert");
    else
      e_theme_edje_object_set(inst->cfg->memusage.o_gadget,
-                             "base/theme/modules/memusage",
-                             "e/modules/memusage/main");
+                             "base/theme/gadget/memusage",
+                             "e/gadget/memusage/main");
 
    E_EXPAND(inst->cfg->memusage.o_gadget);
    E_FILL(inst->cfg->memusage.o_gadget);
@@ -422,8 +422,8 @@ sysinfo_memusage_create(Evas_Object *parent, Instance *inst)
 {
    inst->cfg->memusage.o_gadget = elm_layout_add(parent);
    e_theme_edje_object_set(inst->cfg->memusage.o_gadget,
-                           "base/theme/modules/memusage",
-                           "e/modules/memusage/main");
+                           "base/theme/gadget/memusage",
+                           "e/gadget/memusage/main");
    E_EXPAND(inst->cfg->memusage.o_gadget);
    E_FILL(inst->cfg->memusage.o_gadget);
    evas_object_event_callback_add(inst->cfg->memusage.o_gadget,

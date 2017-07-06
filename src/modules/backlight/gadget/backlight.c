@@ -241,12 +241,12 @@ _backlight_gadget_created_cb(void *data, Evas_Object *obj, void *event_info EINA
         E_FILL(inst->o_backlight);
         if (inst->orient == E_GADGET_SITE_ORIENT_VERTICAL)
           e_theme_edje_object_set(inst->o_backlight,
-                             "base/theme/modules/backlight",
-                             "e/modules/backlight/main_vert");
+                             "base/theme/gadget/backlight",
+                             "e/gadget/backlight/main_vert");
         else
           e_theme_edje_object_set(inst->o_backlight,
-                             "base/theme/modules/backlight",
-                             "e/modules/backlight/main");
+                             "base/theme/gadget/backlight",
+                             "e/gadget/backlight/main");
         evas_object_event_callback_add(inst->o_backlight,
                                   EVAS_CALLBACK_MOUSE_DOWN,
                                   _backlight_cb_mouse_down,

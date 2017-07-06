@@ -423,8 +423,8 @@ _pager_desk_new(Pager *p, E_Desk *desk, int xpos, int ypos, Eina_Bool invert)
    e = evas_object_evas_get(p->o_table);
    o = edje_object_add(e);
    pd->o_desk = o;
-   e_theme_edje_object_set(o, "base/theme/modules/pager",
-                           "e/modules/pager16/desk");
+   e_theme_edje_object_set(o, "base/theme/gadget/pager",
+                           "e/gadget/pager16/desk");
    edje_object_part_text_set(o, "e.text.label", desk->name);
    if (pager_config->show_desk_names)
      edje_object_signal_emit(o, "e,name,show", "e");
@@ -647,8 +647,8 @@ _pager_window_new(Pager_Desk *pd, Evas_Object *mirror, E_Client *client)
 
    //o = edje_object_add(evas_object_evas_get(pd->pager->o_table));
    //pw->o_window = o;
-   //e_theme_edje_object_set(o, "base/theme/modules/pager",
-                           //"e/modules/pager16/window");
+   //e_theme_edje_object_set(o, "base/theme/gadget/pager",
+                           //"e/gadget/pager16/window");
    //if (visible) evas_object_show(o);
 
 
@@ -744,8 +744,8 @@ pager_popup_new(int keyaction)
 
    pp->o_bg = edje_object_add(e_comp->evas);
    evas_object_name_set(pp->o_bg, "pager_gadget_popup");
-   e_theme_edje_object_set(pp->o_bg, "base/theme/modules/pager",
-                           "e/modules/pager16/popup");
+   e_theme_edje_object_set(pp->o_bg, "base/theme/gadget/pager",
+                           "e/gadget/pager16/popup");
    desk = e_desk_current_get(zone);
    if (desk)
      edje_object_part_text_set(pp->o_bg, "e.text.label", desk->name);

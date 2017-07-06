@@ -610,12 +610,12 @@ _mixer_gadget_created_cb(void *data, Evas_Object *obj, void *event_info EINA_UNU
         E_FILL(inst->o_mixer);
        if (inst->orient == E_GADGET_SITE_ORIENT_VERTICAL)
           e_theme_edje_object_set(inst->o_mixer,
-                             "base/theme/modules/mixer",
-                             "e/modules/mixer/main_vert");
+                             "base/theme/gadget/mixer",
+                             "e/gadget/mixer/main_vert");
         else
           e_theme_edje_object_set(inst->o_mixer,
-                             "base/theme/modules/mixer",
-                             "e/modules/mixer/main");
+                             "base/theme/gadget/mixer",
+                             "e/gadget/mixer/main");
         evas_object_event_callback_add(inst->o_mixer, EVAS_CALLBACK_MOUSE_DOWN,
                                   _mouse_down_cb, inst);
         evas_object_event_callback_add(inst->o_mixer, EVAS_CALLBACK_MOUSE_WHEEL,
