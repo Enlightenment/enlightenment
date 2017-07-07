@@ -18,6 +18,18 @@
 #define DBG(...)      EINA_LOG_DBG(__VA_ARGS__)
 #define WRN(...)      EINA_LOG_WARN(__VA_ARGS__)
 
+#define PULSEAUDIO_START \
+   char *disp = NULL; \
+   if (getenv("WAYLAND_DISPLAY")) \
+     { \
+        disp = eina_strdup(getenv("DISPLAY")); \
+        unsetenv("DISPLAY"); \
+     }
+
+#define PULSEAUDIO_END \
+   if (disp) setenv("DISPLAY", disp, 1); \
+   free(disp)
+
 /* Ecore mainloop integration start */
 struct pa_io_event
 {
@@ -71,9 +83,9 @@ _ecore_io_wrapper(void *data, Ecore_Fd_Handler *handler)
       flags |= PA_IO_EVENT_OUTPUT;
    if (ecore_main_fd_handler_active_get(handler, ECORE_FD_ERROR))
       flags |= PA_IO_EVENT_ERROR;
-
+PULSEAUDIO_START;
    event->callback(event->mainloop, event, fd, flags, event->userdata);
-
+PULSEAUDIO_END;
    return ECORE_CALLBACK_RENEW;
 }
 
@@ -133,8 +145,9 @@ _ecore_time_wrapper(void *data)
 {
    pa_time_event *event = (pa_time_event *)data;
 
+PULSEAUDIO_START;
    event->callback(event->mainloop, event, &event->tv, event->userdata);
-
+PULSEAUDIO_END;
    return ECORE_CALLBACK_CANCEL;
 }
 
@@ -231,10 +244,10 @@ Eina_Bool
 _ecore_defer_wrapper(void *data)
 {
    pa_defer_event *event = (pa_defer_event *)data;
-
+PULSEAUDIO_START;
    event->idler = NULL;
    event->callback(event->mainloop, event, event->userdata);
-
+PULSEAUDIO_END;
    return ECORE_CALLBACK_CANCEL;
 }
 
