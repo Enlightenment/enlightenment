@@ -1911,6 +1911,9 @@ _e_comp_wl_compositor_cb_surface_create(struct wl_client *client, struct wl_reso
      }
    if (client != e_comp_wl->xwl_client)
      ec->internal = pid == getpid();
+
+   if (ec->internal && (!e_comp_wl->wl.client_ec))
+     e_comp_wl->wl.client_ec = ec;
    ec->icccm.delete_request |= ec->internal;
 
    /* set reference to pixmap so we can fetch it later */
@@ -2498,6 +2501,8 @@ _e_comp_wl_client_cb_del(void *data EINA_UNUSED, E_Client *ec)
    /* make sure this is a wayland client */
    if (e_pixmap_type_get(ec->pixmap) != E_PIXMAP_TYPE_WL) return;
 
+   if (ec == e_comp_wl->wl.client_ec)
+     e_comp_wl->wl.client_ec = NULL;
    e_comp_wl_extension_pointer_unconstrain(ec);
 
    /* remove sub list */
