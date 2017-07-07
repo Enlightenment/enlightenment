@@ -710,7 +710,6 @@ _wireless_gadget_edit(int type)
         evas_object_hide(wireless_popup.popup);
         evas_object_del(wireless_popup.popup);
      }
-   printf("Sup hoe\n");
    wireless_edit[0] = E_NEW(Wireless_Connection, 1);
    wireless_edit[1] = E_NEW(Wireless_Connection, 1);
    wn = E_NEW(Wireless_Network, 1);
