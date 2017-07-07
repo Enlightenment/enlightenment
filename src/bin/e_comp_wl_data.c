@@ -1080,6 +1080,7 @@ e_comp_wl_data_device_keyboard_focus_set(void)
 {
    struct wl_resource *data_device_res, *offer_res = NULL, *focus;
    E_Comp_Wl_Data_Source *source;
+   E_Client *focused;
 
    if (!e_comp_wl->kbd.enabled)
      {
@@ -1092,6 +1093,7 @@ e_comp_wl_data_device_keyboard_focus_set(void)
         ERR("No focused resource");
         return;
      }
+   focused = wl_resource_get_user_data(focus);
    source = (E_Comp_Wl_Data_Source *)e_comp_wl->selection.data_source;
 
 #ifndef HAVE_WAYLAND_ONLY
@@ -1100,10 +1102,10 @@ e_comp_wl_data_device_keyboard_focus_set(void)
         if (!e_comp_util_has_xwayland()) break;
         if (e_comp_wl->clipboard.xwl_owner)
           {
-             if (e_client_has_xwindow(e_client_focused_get())) return;
+             if (e_client_has_xwindow(focused)) return;
              break;
           }
-        else if (source && e_client_has_xwindow(e_client_focused_get()))
+        else if (source && e_client_has_xwindow(focused))
           {
              /* wl -> x11 */
              ecore_x_selection_owner_set(e_comp->cm_selection,
