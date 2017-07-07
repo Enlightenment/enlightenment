@@ -882,7 +882,7 @@ _bar_icon_preview_show(void *data)
 
    ic->preview = elm_ctxpopup_add(e_comp->elm);
    elm_object_style_set(ic->preview, "noblock");
-   evas_object_size_hint_min_set(ic->preview, ic->inst->size, ic->inst->size);
+   evas_object_size_hint_min_set(ic->preview, ic->inst->cfg->preview_size, ic->inst->cfg->preview_size);
    evas_object_smart_callback_add(ic->preview, "dismissed", _bar_popup_dismissed, ic);
    evas_object_event_callback_add(ic->preview, EVAS_CALLBACK_MOUSE_IN,
        _bar_icon_preview_mouse_in, ic);
