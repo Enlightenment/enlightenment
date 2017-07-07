@@ -874,8 +874,8 @@ sysinfo_cpuclock_create(Evas_Object *parent, Instance *inst)
    if (inst->cfg->cpuclock.pstate_max == 0) inst->cfg->cpuclock.pstate_max = 101;
 
    inst->cfg->cpuclock.o_gadget = elm_layout_add(parent);
-   e_theme_edje_object_set(inst->cfg->cpuclock.o_gadget, "base/theme/gadget/cpufreq",
-                           "e/gadget/cpufreq/main");
+   e_theme_edje_object_set(inst->cfg->cpuclock.o_gadget, "base/theme/gadget/cpuclock",
+                           "e/gadget/cpuclock/main");
    E_EXPAND(inst->cfg->cpuclock.o_gadget);
    E_FILL(inst->cfg->cpuclock.o_gadget);
    edje_object_signal_callback_add(elm_layout_edje_get(inst->cfg->cpuclock.o_gadget), "e,action,governor,next", "*",
