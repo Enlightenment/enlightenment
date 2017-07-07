@@ -487,7 +487,16 @@ _e_comp_wl_data_device_selection_set(void *data EINA_UNUSED, E_Comp_Wl_Data_Sour
 
    sel_source = (E_Comp_Wl_Data_Source *)e_comp_wl->selection.data_source;
    if (sel_source && (e_comp_wl->selection.serial - serial < UINT32_MAX / 2))
-     return;
+     {
+        if (!serial)
+          {
+             /* drm canvas will always have serial 0 */
+             pid_t pid;
+             wl_client_get_credentials(wl_resource_get_client(source->resource), &pid, NULL, NULL);
+             if (pid != getpid()) return;
+          }
+        else return;
+     }
 
    if (sel_source)
      {
