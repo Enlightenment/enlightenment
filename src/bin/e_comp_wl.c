@@ -705,6 +705,10 @@ _e_comp_wl_keyboard_leave(E_Client *ec)
           wl_keyboard_send_leave(res, serial, ec->comp_data->surface);
         e_comp_wl->kbd.focused = eina_list_remove_list(e_comp_wl->kbd.focused, l);
      }
+   if ((!e_comp_wl->wl.client_ec) || e_object_is_del(E_OBJECT(e_comp_wl->wl.client_ec))) return;
+   if (e_client_focused_get()) return;
+   e_comp_wl->kbd.focus = e_comp_wl->wl.client_ec->comp_data->surface;
+   e_comp_wl_data_device_keyboard_focus_set();
 }
 
 static void
@@ -1913,7 +1917,14 @@ _e_comp_wl_compositor_cb_surface_create(struct wl_client *client, struct wl_reso
      ec->internal = pid == getpid();
 
    if (ec->internal && (!e_comp_wl->wl.client_ec))
-     e_comp_wl->wl.client_ec = ec;
+     {
+        e_comp_wl->wl.client_ec = ec;
+        if (!e_client_focused_get())
+          {
+             e_comp_wl->kbd.focus = e_comp_wl->wl.client_ec->comp_data->surface;
+             e_comp_wl_data_device_keyboard_focus_set();
+          }
+     }
    ec->icccm.delete_request |= ec->internal;
 
    /* set reference to pixmap so we can fetch it later */
