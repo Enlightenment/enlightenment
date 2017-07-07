@@ -20,6 +20,7 @@ src_modules_sysinfo_module_la_SOURCES = src/modules/sysinfo/mod.c \
                          src/modules/sysinfo/batman/batman_config.c \
                          src/modules/sysinfo/thermal/thermal.h \
                          src/modules/sysinfo/thermal/thermal.c \
+                         src/modules/sysinfo/thermal/thermal_config.c \
                          src/modules/sysinfo/thermal/thermal_fallback.c \
                          src/modules/sysinfo/cpuclock/cpuclock.h \
                          src/modules/sysinfo/cpuclock/cpuclock.c \

@@ -104,6 +104,7 @@ _conf_item_get(int *id)
    ci->thermal.sensor_type = SENSOR_TYPE_NONE;
    ci->thermal.sensor_name = NULL;
    ci->thermal.units = CELSIUS;
+   ci->thermal.configure = NULL;
    ci->cpuclock.poll_interval = 32;
    ci->cpuclock.restore_governor = 0;
    ci->cpuclock.auto_powersave = 1;

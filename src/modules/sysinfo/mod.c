@@ -96,7 +96,8 @@ sysinfo_init(void)
         ci->thermal.sensor_name = NULL;
         ci->thermal.temp = -900;
         ci->thermal.units = CELSIUS;
-        ci->cpuclock.poll_interval = 32;
+        ci->thermal.configure = NULL;
+	ci->cpuclock.poll_interval = 32;
         ci->cpuclock.restore_governor = 0;
         ci->cpuclock.auto_powersave = 1;
         ci->cpuclock.powersave_governor = NULL;

@@ -135,6 +135,33 @@ _thermal_check_done(void *data, Ecore_Thread *th EINA_UNUSED)
 }
 #endif
 
+static Evas_Object *
+_thermal_configure_cb(Evas_Object *g)
+{
+   Instance *inst = evas_object_data_get(g, "Instance");
+
+   if (!sysinfo_config) return NULL;
+   return thermal_configure(inst);
+}
+
+static void
+_thermal_mouse_down_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_data)
+{
+   Evas_Event_Mouse_Down *ev = event_data;
+   Instance *inst = data;
+
+   if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return;
+   if (ev->button == 3)
+     {
+        if (!sysinfo_config) return;
+        ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
+        if (inst->cfg->esm != E_SYSINFO_MODULE_THERMAL)
+          thermal_configure(inst);
+        else
+          e_gadget_configure(inst->o_main);
+     }
+}
+
 void
 _thermal_config_updated(Instance *inst)
 {
@@ -204,7 +231,8 @@ _thermal_removed_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_data)
    Instance *inst = data;
 
    if (inst->o_main != event_data) return;
-
+   if (inst->cfg->thermal.configure)
+     E_FREE_FUNC(inst->cfg->thermal.configure, evas_object_del);
    _thermal_face_shutdown(inst);
 
    evas_object_event_callback_del_full(inst->o_main, EVAS_CALLBACK_DEL, sysinfo_thermal_remove, data);
@@ -218,6 +246,8 @@ sysinfo_thermal_remove(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UN
 {
    Instance *inst = data;
 
+   if (inst->cfg->thermal.configure)
+     E_FREE_FUNC(inst->cfg->thermal.configure, evas_object_del);
    _thermal_face_shutdown(inst);
 }
 
@@ -226,6 +256,8 @@ _thermal_created_cb(void *data, Evas_Object *obj, void *event_data EINA_UNUSED)
 {
    Instance *inst = data;
    E_Gadget_Site_Orient orient = e_gadget_site_orient_get(e_gadget_site_get(inst->o_main));
+
+   e_gadget_configure_cb_set(inst->o_main, _thermal_configure_cb);
 
    inst->cfg->thermal.temp = 900;
    inst->cfg->thermal.have_temp = EINA_FALSE;
@@ -241,6 +273,9 @@ _thermal_created_cb(void *data, Evas_Object *obj, void *event_data EINA_UNUSED)
    E_EXPAND(inst->cfg->thermal.o_gadget);
    E_FILL(inst->cfg->thermal.o_gadget);
    elm_box_pack_end(inst->o_main, inst->cfg->thermal.o_gadget);
+   evas_object_event_callback_add(inst->cfg->thermal.o_gadget,
+                                  EVAS_CALLBACK_MOUSE_DOWN,
+                                  _thermal_mouse_down_cb, inst);
    evas_object_event_callback_add(inst->cfg->thermal.o_gadget, EVAS_CALLBACK_RESIZE, _thermal_resize_cb, inst);
    evas_object_show(inst->cfg->thermal.o_gadget);
    evas_object_smart_callback_del_full(obj, "gadget_created", _thermal_created_cb, data);
@@ -254,10 +289,13 @@ sysinfo_thermal_create(Evas_Object *parent, Instance *inst)
    inst->cfg->thermal.have_temp = EINA_FALSE;
 
    inst->cfg->thermal.o_gadget = elm_layout_add(parent);
-   e_theme_edje_object_set(inst->cfg->thermal.o_gadget, "base/theme/gadget/temperature",
-                           "e/gadget/temperature/main");
+   e_theme_edje_object_set(inst->cfg->thermal.o_gadget, "base/theme/gadget/thermal",
+                           "e/gadget/thermal/main");
    E_EXPAND(inst->cfg->thermal.o_gadget);
    E_FILL(inst->cfg->thermal.o_gadget);
+   evas_object_event_callback_add(inst->cfg->thermal.o_gadget,
+                                  EVAS_CALLBACK_MOUSE_DOWN,
+                                  _thermal_mouse_down_cb, inst);
    evas_object_event_callback_add(inst->cfg->thermal.o_gadget, EVAS_CALLBACK_RESIZE, _thermal_resize_cb, inst);
    evas_object_show(inst->cfg->thermal.o_gadget);
    _thermal_config_updated(inst);
@@ -291,6 +329,7 @@ _conf_item_get(int *id)
    ci->thermal.sensor_type = SENSOR_TYPE_NONE;
    ci->thermal.sensor_name = NULL;
    ci->thermal.units = CELSIUS;
+   ci->thermal.configure = NULL;
 
    sysinfo_config->items = eina_list_append(sysinfo_config->items, ci);
 
@@ -307,6 +346,7 @@ thermal_create(Evas_Object *parent, int *id, E_Gadget_Site_Orient orient EINA_UN
    *id = inst->cfg->id;
    inst->o_main = elm_box_add(parent);
    E_EXPAND(inst->o_main);
+   evas_object_data_set(inst->o_main, "Instance", inst);
    evas_object_smart_callback_add(parent, "gadget_created", _thermal_created_cb, inst);
    evas_object_smart_callback_add(parent, "gadget_removed", _thermal_removed_cb, inst);
    evas_object_event_callback_add(inst->o_main, EVAS_CALLBACK_DEL, sysinfo_thermal_remove, inst);

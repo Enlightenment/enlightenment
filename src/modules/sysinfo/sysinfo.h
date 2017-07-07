@@ -155,6 +155,7 @@ struct _Config_Item
    struct
    {
       Evas_Object         *o_gadget;
+      Evas_Object         *configure;
       int                  poll_interval;
       int                  low, high;
       int                  sensor_type;
