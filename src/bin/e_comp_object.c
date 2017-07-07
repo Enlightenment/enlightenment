@@ -48,8 +48,8 @@
 /* enable along with display-specific damage INF calls to enable render tracing
  * SLOW!
  */
-static Eina_Bool render_debug_enabled;
-#define RENDER_DEBUG(...) do { if (render_debug_enabled) INF(__VA_ARGS__); } while (0)
+static int render_debug_enabled;
+#define RENDER_DEBUG(...) do { if ((render_debug_enabled == 1) || ((render_debug_enabled == -1) && cw->ec->focused)) INF(__VA_ARGS__); } while (0)
 
 typedef struct _E_Comp_Object
 {
@@ -2605,9 +2605,14 @@ _e_comp_smart_resize(Evas_Object *obj, int w, int h)
 static void
 _e_comp_smart_init(void)
 {
+   const char *env;
    if (_e_comp_smart) return;
 
-   render_debug_enabled = !!getenv("E_RENDER_DEBUG");
+   env = getenv("E_RENDER_DEBUG");
+   if (eina_streq(env, "focus"))
+     render_debug_enabled = -1;
+   else if (env)
+     render_debug_enabled = 1;
    {
       static const Evas_Smart_Class sc =
       {
