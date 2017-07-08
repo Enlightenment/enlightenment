@@ -266,7 +266,6 @@ _e_wid_changed_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EIN
 {
    Evas_Object *entry;
    E_Widget_Data *wd;
-   const char *text;
    char *tmp;
 
    if (!(entry = data) || (!(wd = e_widget_data_get(entry))))
