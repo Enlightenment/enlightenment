@@ -70,6 +70,8 @@ extern double e_bl_val;
 
 static Eina_Hash *dead_wins;
 
+static Ecore_Window _e_comp_x_suspend_grabbed; // window grabber for suspending pointer
+
 static void _e_comp_x_hook_client_pre_frame_assign(void *d EINA_UNUSED, E_Client *ec);
 
 static inline E_Comp_X_Client_Data *
@@ -4925,6 +4927,92 @@ _e_comp_x_cb_ping(void *data EINA_UNUSED, int ev_type EINA_UNUSED, Ecore_X_Event
    return ECORE_CALLBACK_PASS_ON;
 }
 
+static void
+_e_comp_pointer_grab(void)
+{
+   if (_e_comp_x_suspend_grabbed) ecore_x_window_free(_e_comp_x_suspend_grabbed);
+   _e_comp_x_suspend_grabbed = ecore_x_window_input_new(e_comp->root, 0, 0, 1, 1);
+   ecore_x_window_show(_e_comp_x_suspend_grabbed);
+   if (!e_grabinput_get(_e_comp_x_suspend_grabbed, 0, _e_comp_x_suspend_grabbed))
+     {
+        ecore_x_window_free(_e_comp_x_suspend_grabbed);
+        _e_comp_x_suspend_grabbed = 0;
+     }
+}
+
+static void
+_e_comp_pointer_ungrab(void)
+{
+   e_grabinput_release(_e_comp_x_suspend_grabbed, _e_comp_x_suspend_grabbed);
+   ecore_x_window_free(_e_comp_x_suspend_grabbed);
+}
+
+static void
+_e_comp_cb_pointer_suspend_resume_done(void *data, Evas_Object *obj, const char *emission, const char *source)
+{
+   edje_object_signal_callback_del(obj, emission, source,
+                                   _e_comp_cb_pointer_suspend_resume_done);
+   if (!data) _e_comp_pointer_ungrab();
+}
+
+EINTERN Eina_Bool
+_e_comp_x_screensaver_on()
+{
+   _e_comp_pointer_ungrab();
+   _e_comp_pointer_grab();
+   if (!_e_comp_x_suspend_grabbed) return ECORE_CALLBACK_RENEW;
+   if ((e_comp->pointer) && (e_comp->pointer->o_ptr))
+     {
+        const char *s = edje_object_data_get(e_comp->pointer->o_ptr,
+                                             "can_suspend");
+        if ((s) && (atoi(s) == 1))
+          {
+             edje_object_signal_callback_del(e_comp->pointer->o_ptr,
+                                             "e,state,mouse,suspend,done", "e",
+                                             _e_comp_cb_pointer_suspend_resume_done);
+             edje_object_signal_callback_del(e_comp->pointer->o_ptr,
+                                             "e,state,mouse,resume,done", "e",
+                                             _e_comp_cb_pointer_suspend_resume_done);
+             edje_object_signal_callback_add(e_comp->pointer->o_ptr,
+                                             "e,state,mouse,suspend,done",
+                                             "e",
+                                             _e_comp_cb_pointer_suspend_resume_done,
+                                             e_comp);
+             edje_object_signal_emit(e_comp->pointer->o_ptr,
+                                     "e,state,mouse,suspend", "e");
+          }
+     }
+   return ECORE_CALLBACK_RENEW;
+}
+
+EINTERN Eina_Bool
+_e_comp_x_screensaver_off()
+{
+   _e_comp_pointer_ungrab();
+   if ((e_comp->pointer) && (e_comp->pointer->o_ptr))
+     {
+        const char *s = edje_object_data_get(e_comp->pointer->o_ptr,
+                                             "can_suspend");
+        if ((s) && (atoi(s) == 1))
+          {
+             edje_object_signal_callback_del(e_comp->pointer->o_ptr,
+                                             "e,state,mouse,suspend,done", "e",
+                                             _e_comp_cb_pointer_suspend_resume_done);
+             edje_object_signal_callback_del(e_comp->pointer->o_ptr,
+                                             "e,state,mouse,resume,done", "e",
+                                             _e_comp_cb_pointer_suspend_resume_done);
+             edje_object_signal_callback_add(e_comp->pointer->o_ptr,
+                                             "e,state,mouse,resume,done",
+                                             "e",
+                                             _e_comp_cb_pointer_suspend_resume_done,
+                                             NULL);
+             edje_object_signal_emit(e_comp->pointer->o_ptr,
+                                     "e,state,mouse,resume", "e");
+          }
+     }
+   return ECORE_CALLBACK_RENEW;
+}
+
 static Ecore_Timer *screensaver_eval_timer = NULL;
 static Eina_Bool saver_on = EINA_FALSE;
 
@@ -5671,6 +5759,8 @@ e_comp_x_init(void)
    if (e_comp->comp_type != E_PIXMAP_TYPE_WL)
      {
         ecore_x_screensaver_event_listen_set(1);
+        E_LIST_HANDLER_APPEND(handlers, E_EVENT_SCREENSAVER_ON, _e_comp_x_screensaver_on, NULL);
+        E_LIST_HANDLER_APPEND(handlers, E_EVENT_SCREENSAVER_ON, _e_comp_x_screensaver_off, NULL);
         E_LIST_HANDLER_APPEND(handlers, ECORE_X_EVENT_SCREENSAVER_NOTIFY, _e_comp_x_screensaver_notify_cb, NULL);
         ecore_x_screensaver_custom_blanking_enable();
 
