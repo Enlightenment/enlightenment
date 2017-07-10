@@ -1154,7 +1154,9 @@ _cpufreq_event_cb_powersave(void *data EINA_UNUSED, int type, void *event)
              break;
           }
 
+        // fallthrough is intended
       case E_POWERSAVE_MODE_EXTREME:
+      default:
         if (has_powersave)
           _cpufreq_set_governor("powersave");
         break;
@@ -1281,6 +1283,7 @@ typedef struct _Thread_Config Thread_Config;
 struct _Thread_Config
 {
    int interval;
+   E_Powersave_Sleeper *sleeper;
 };
 
 static void
@@ -1298,9 +1301,8 @@ _cpufreq_cb_frequency_check_main(void *data, Ecore_Thread *th)
         else
           _cpufreq_status_free(status);
         if (ecore_thread_check(th)) break;
-        usleep((1000000.0 / 8.0) * (double)thc->interval);
+        e_powersave_sleeper_sleep(thc->sleeper, thc->interval);
      }
-   free(thc);
 }
 
 static void
@@ -1360,6 +1362,15 @@ _cpufreq_cb_frequency_check_notify(void *data EINA_UNUSED,
      }
 }
 
+static void
+_cpufreq_cb_frequency_check_done(void *data,
+                                 Ecore_Thread *th EINA_UNUSED)
+{
+   Thread_Config *thc = data;
+   e_powersave_sleeper_free(thc->sleeper);
+   free(thc);
+}
+
 void
 _cpufreq_poll_interval_update(void)
 {
@@ -1374,10 +1385,13 @@ _cpufreq_poll_interval_update(void)
    if (thc)
      {
         thc->interval = cpufreq_config->poll_interval;
+        thc->sleeper = e_powersave_sleeper_new();
         cpufreq_config->frequency_check_thread =
           ecore_thread_feedback_run(_cpufreq_cb_frequency_check_main,
                                     _cpufreq_cb_frequency_check_notify,
-                                    NULL, NULL, thc, EINA_TRUE);
+                                    _cpufreq_cb_frequency_check_done,
+                                    _cpufreq_cb_frequency_check_done,
+                                    thc, EINA_TRUE);
      }
    e_config_save_queue();
 }

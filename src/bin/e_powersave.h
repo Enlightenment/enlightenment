@@ -6,11 +6,13 @@ typedef enum _E_Powersave_Mode
    E_POWERSAVE_MODE_LOW,
    E_POWERSAVE_MODE_MEDIUM,
    E_POWERSAVE_MODE_HIGH,
-   E_POWERSAVE_MODE_EXTREME
+   E_POWERSAVE_MODE_EXTREME,
+   E_POWERSAVE_MODE_FREEZE
 } E_Powersave_Mode;
 
 typedef struct _E_Powersave_Deferred_Action E_Powersave_Deferred_Action;
 typedef struct _E_Event_Powersave_Update E_Event_Powersave_Update;
+typedef struct _E_Powersave_Sleeper E_Powersave_Sleeper;
 
 #else
 #ifndef E_POWERSAVE_H
@@ -31,6 +33,12 @@ E_API E_Powersave_Deferred_Action *e_powersave_deferred_action_add(void (*func) 
 E_API void                         e_powersave_deferred_action_del(E_Powersave_Deferred_Action *pa);
 E_API void                         e_powersave_mode_set(E_Powersave_Mode mode);
 E_API E_Powersave_Mode             e_powersave_mode_get(void);
+E_API void                         e_powersave_mode_force(E_Powersave_Mode mode);
+E_API void                         e_powersave_mode_unforce(void);
+E_API E_Powersave_Sleeper         *e_powersave_sleeper_new(void);
+E_API void                         e_powersave_sleeper_free(E_Powersave_Sleeper *sleeper);
+// the below function is INTENDED to be called from a thread
+E_API void                         e_powersave_sleeper_sleep(E_Powersave_Sleeper *sleeper, int poll_interval);
 
 /* FIXME: in the powersave system add things like pre-loading entire files
  * int memory for pre-caching to avoid disk spinup, when in an appropriate
