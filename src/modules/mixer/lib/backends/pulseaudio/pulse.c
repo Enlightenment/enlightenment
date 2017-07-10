@@ -337,7 +337,7 @@ _sink_input_cb(pa_context *c EINA_UNUSED, const pa_sink_input_info *info,
    eina_strbuf_append(input_name, pa_proplist_gets(info->proplist, PA_PROP_APPLICATION_NAME));
    eina_strbuf_append(input_name, ":");
    eina_strbuf_append(input_name, info->name);
-   input->base.name = eina_stringshare_add(eina_strbuf_string_steal(input_name));
+   input->base.name = eina_stringshare_add(eina_strbuf_string_get(input_name));
    input->base.volume = _pa_cvolume_convert(&info->volume);
    input->base.mute = !!info->mute;
    EINA_LIST_FOREACH(ctx->sinks, l, s)
