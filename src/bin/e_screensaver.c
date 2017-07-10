@@ -30,6 +30,8 @@ static Ecore_Timer *_e_screensaver_timer;
 static Eina_Bool _e_screensaver_inhibited = EINA_FALSE;
 #endif
 
+static Eina_Bool _screensaver_ignore = EINA_FALSE;
+
 E_API int E_EVENT_SCREENSAVER_ON = -1;
 E_API int E_EVENT_SCREENSAVER_OFF = -1;
 E_API int E_EVENT_SCREENSAVER_OFF_PRE = -1;
@@ -66,6 +68,24 @@ e_screensaver_timeout_get(Eina_Bool use_idle)
           }
      }
    return timeout;
+}
+
+E_API void
+e_screensaver_ignore(void)
+{
+   _screensaver_ignore = EINA_TRUE;
+}
+
+E_API void
+e_screensaver_unignore(void)
+{
+   _screensaver_ignore = EINA_FALSE;
+}
+
+E_API Eina_Bool
+e_screensaver_ignore_get(void)
+{
+   return _screensaver_ignore;
 }
 
 E_API void
@@ -504,19 +524,25 @@ e_screensaver_eval(Eina_Bool saver_on)
 
              if (t < 1.0) t = 1.0;
              E_FREE_FUNC(screensaver_idle_timer, ecore_timer_del);
-             if (e_config->screensaver_enable)
-               screensaver_idle_timer = ecore_timer_loop_add
-                   (t, _e_screensaver_idle_timer_cb, NULL);
-             if (e_backlight_mode_get(NULL) != E_BACKLIGHT_MODE_DIM)
+             if (!_screensaver_ignore)
                {
-                  e_backlight_mode_set(NULL, E_BACKLIGHT_MODE_DIM);
-                  screensaver_dimmed = EINA_TRUE;
+                  if (e_config->screensaver_enable)
+                    screensaver_idle_timer = ecore_timer_loop_add
+                      (t, _e_screensaver_idle_timer_cb, NULL);
+                  if (e_backlight_mode_get(NULL) != E_BACKLIGHT_MODE_DIM)
+                    {
+                       e_backlight_mode_set(NULL, E_BACKLIGHT_MODE_DIM);
+                       screensaver_dimmed = EINA_TRUE;
+                    }
                }
           }
         else
           {
-             if (!e_screensaver_on_get())
-               ecore_event_add(E_EVENT_SCREENSAVER_ON, NULL, NULL, NULL);
+             if (!_screensaver_ignore)
+               {
+                  if (!e_screensaver_on_get())
+                    ecore_event_add(E_EVENT_SCREENSAVER_ON, NULL, NULL, NULL);
+               }
           }
         return;
      }
@@ -536,8 +562,11 @@ e_screensaver_eval(Eina_Bool saver_on)
           e_backlight_mode_set(NULL, E_BACKLIGHT_MODE_NORMAL);
         screensaver_dimmed = EINA_FALSE;
      }
-   if (e_screensaver_on_get())
-     ecore_event_add(E_EVENT_SCREENSAVER_OFF, NULL, NULL, NULL);
+   if (!_screensaver_ignore)
+     {
+        if (e_screensaver_on_get())
+          ecore_event_add(E_EVENT_SCREENSAVER_OFF, NULL, NULL, NULL);
+     }
 }
 
 E_API void

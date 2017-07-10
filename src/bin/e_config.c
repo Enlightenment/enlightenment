@@ -627,6 +627,8 @@ _e_config_edd_init(Eina_Bool old)
    E_CONFIG_VAL(D, T, screensaver_wake_on_notify, INT);
    E_CONFIG_VAL(D, T, screensaver_wake_on_urgent, INT);
 
+   E_CONFIG_VAL(D, T, suspend_connected_standby, UCHAR);
+
    E_CONFIG_VAL(D, T, screensaver_suspend, UCHAR);
    E_CONFIG_VAL(D, T, screensaver_suspend_on_ac, UCHAR);
    E_CONFIG_VAL(D, T, screensaver_suspend_delay, DOUBLE);

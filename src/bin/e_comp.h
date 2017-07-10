@@ -97,6 +97,7 @@ struct _E_Comp
 
    Ecore_Window  win; // input overlay
    Ecore_Window  root; //x11 root window
+   Ecore_Window  suspend_grabbed; // window grabber for suspending pointer
    Ecore_Evas     *ee; //canvas
    Ecore_Window  ee_win; //canvas window
    E_Comp_Canvas *canvas;
@@ -232,6 +233,8 @@ EINTERN Evas_Object *e_comp_style_selector_create(Evas *evas, const char **sourc
 E_API E_Config_Dialog *e_int_config_comp(Evas_Object *parent, const char *params);
 E_API E_Config_Dialog *e_int_config_comp_match(Evas_Object *parent, const char *params);
 
+E_API void e_comp_screen_suspend(void);
+E_API void e_comp_screen_resume(void);
 
 E_API Eina_Bool e_comp_util_kbd_grabbed(void);
 E_API Eina_Bool e_comp_util_mouse_grabbed(void);

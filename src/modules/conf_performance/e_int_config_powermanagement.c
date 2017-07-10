@@ -21,6 +21,7 @@ struct _E_Config_Dialog_Data
    double powersave_extreme;
    E_Powersave_Mode powersave_min;
    E_Powersave_Mode powersave_max;
+   int suspend_connected_standby;
 };
 
 E_Config_Dialog *
@@ -56,6 +57,7 @@ _create_data(E_Config_Dialog *cfd EINA_UNUSED)
    cfdata->powersave_medium = e_config->powersave.medium;
    cfdata->powersave_high = e_config->powersave.high;
    cfdata->powersave_extreme = e_config->powersave.extreme;
+   cfdata->suspend_connected_standby = e_config->suspend_connected_standby;
    return cfdata;
 }
 
@@ -70,6 +72,7 @@ _free_data(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfdata)
 static int
 _basic_apply(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfdata)
 {
+   e_config->suspend_connected_standby = cfdata->suspend_connected_standby;
    e_config->powersave.none = cfdata->powersave_none;
    e_config->powersave.low = cfdata->powersave_low;
    e_config->powersave.medium = cfdata->powersave_medium;
@@ -92,7 +95,8 @@ _basic_apply(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfdata)
 static int
 _basic_check_changed(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfdata)
 {
-   return ((e_config->powersave.min != cfdata->powersave_min) ||
+   return ((e_config->suspend_connected_standby != cfdata->suspend_connected_standby) ||
+           (e_config->powersave.min != cfdata->powersave_min) ||
            (e_config->powersave.max != cfdata->powersave_max) ||
            (!EINA_DBL_EQ(e_config->powersave.none, cfdata->powersave_none)) ||
            (!EINA_DBL_EQ(e_config->powersave.low, cfdata->powersave_low)) ||
@@ -367,6 +371,16 @@ _basic_create(E_Config_Dialog *cfd EINA_UNUSED, Evas *evas, E_Config_Dialog_Data
                                       0.0, 0.5 //align
                                       );
 
+   y++;
+   ob = e_widget_check_add(evas, _("Connected standby instead of suspend"),
+                           &(cfdata->suspend_connected_standby));
+   e_widget_table_object_align_append(ol, ob,
+                                      0, y,    //place
+                                      4, 1,    //span
+                                      1, 1,    //fill
+                                      1, 0,    //expand
+                                      0.0, 0.5 //align
+                                      );
    return ol;
 }
 

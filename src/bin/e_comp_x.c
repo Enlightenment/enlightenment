@@ -4939,6 +4939,7 @@ _e_comp_x_screensaver_eval_cb(void *d EINA_UNUSED)
 static Eina_Bool
 _e_comp_x_screensaver_notify_cb(void *data EINA_UNUSED, int type EINA_UNUSED, Ecore_X_Event_Screensaver_Notify *ev)
 {
+   if (e_screensaver_ignore_get()) return ECORE_CALLBACK_PASS_ON;
    if ((ev->on) && (!saver_on))
      {
         saver_on = EINA_TRUE;

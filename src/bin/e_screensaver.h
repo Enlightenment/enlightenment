@@ -7,6 +7,10 @@ EINTERN void e_screensaver_preinit(void);
 EINTERN int e_screensaver_init(void);
 EINTERN int e_screensaver_shutdown(void);
 
+E_API void e_screensaver_ignore(void);
+E_API void e_screensaver_unignore(void);
+E_API Eina_Bool e_screensaver_ignore_get(void);
+
 E_API void e_screensaver_update(void);
 
 E_API int e_screensaver_timeout_get(Eina_Bool use_idle);

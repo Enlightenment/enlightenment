@@ -36,6 +36,8 @@ static E_Dialog *_e_sys_logout_confirm_dialog = NULL;
 static Ecore_Timer *_e_sys_susp_hib_check_timer = NULL;
 static double _e_sys_susp_hib_check_last_tick = 0.0;
 
+static Ecore_Event_Handler *_e_sys_acpi_handler = NULL;
+
 static void _e_sys_systemd_handle_inhibit(void);
 static void _e_sys_systemd_poweroff(void);
 static void _e_sys_systemd_reboot(void);
@@ -55,16 +57,46 @@ static Eldbus_Proxy *login1_manger_proxy = NULL;
 
 static int _e_sys_comp_waiting = 0;
 
+static Ecore_Timer *_e_sys_screensaver_unignore_timer = NULL;
+
 E_API int E_EVENT_SYS_SUSPEND = -1;
 E_API int E_EVENT_SYS_HIBERNATE = -1;
 E_API int E_EVENT_SYS_RESUME = -1;
+
+static Eina_Bool
+_e_sys_comp_done2_cb(void *data)
+{
+   e_sys_action_raw_do((E_Sys_Action)(long)data, NULL);
+   return EINA_FALSE;
+}
 
 static void
 _e_sys_comp_done_cb(void *data, Evas_Object *obj, const char *sig, const char *src)
 {
    if (_e_sys_comp_waiting == 1) _e_sys_comp_waiting--;
    edje_object_signal_callback_del(obj, sig, src, _e_sys_comp_done_cb);
-   e_sys_action_raw_do((E_Sys_Action)(long)data, NULL);
+   if (_e_sys_screensaver_unignore_timer)
+     {
+        ecore_timer_del(_e_sys_screensaver_unignore_timer);
+        _e_sys_screensaver_unignore_timer = NULL;
+     }
+   e_screensaver_ignore();
+   ecore_evas_manual_render_set(e_comp->ee, EINA_TRUE);
+#ifndef HAVE_WAYLAND_ONLY
+   if (e_comp->comp_type == E_PIXMAP_TYPE_X)
+     {
+        ecore_x_screensaver_suspend();
+        ecore_x_dpms_force(EINA_TRUE);
+     }
+#endif
+#ifdef HAVE_WAYLAND
+   if (e_comp->comp_type != E_PIXMAP_TYPE_X)
+     {
+        if (e_comp->screen && e_comp->screen->dpms)
+          e_comp->screen->dpms(3);
+     }
+#endif
+   ecore_timer_add(0.5, _e_sys_comp_done2_cb, data);
    E_FREE_FUNC(action_timeout, ecore_timer_del);
 }
 
@@ -128,9 +160,9 @@ _e_sys_comp_emit_cb_wait(E_Sys_Action a, const char *sig, const char *rep, Eina_
    if (_e_sys_comp_waiting == 0) _e_sys_comp_waiting++;
    if (nocomp_push) e_comp_override_add();
    else e_comp_override_timed_pop();
-   printf("_e_sys_comp_emit_cb_wait - [%x] %s %s\n", a, sig, rep);
 
    _e_sys_comp_zones_fade(sig, nocomp_push);
+   e_comp_screen_suspend();
 
    if (rep)
      {
@@ -171,16 +203,53 @@ _e_sys_comp_logout(void)
    _e_sys_comp_emit_cb_wait(E_SYS_LOGOUT, "e,state,sys,logout", "e,state,sys,logout,done", EINA_TRUE);
 }
 
-static void
-_e_sys_comp_resume(void)
+static Eina_Bool
+_e_sys_screensaver_unignore_delay(void *data EINA_UNUSED)
+{
+   _e_sys_screensaver_unignore_timer = NULL;
+   e_screensaver_unignore();
+   return EINA_FALSE;
+}
+
+static Eina_Bool
+_e_sys_comp_resume2(void *data EINA_UNUSED)
 {
    Eina_List *l;
    E_Zone *zone;
-   evas_damage_rectangle_add(e_comp->evas, 0, 0, e_comp->w, e_comp->h);
+
+   e_comp_screen_resume();
    EINA_LIST_FOREACH(e_comp->zones, l, zone)
      e_backlight_level_set(zone, e_config->backlight.normal, -1.0);
    _e_sys_comp_zones_fade("e,state,sys,resume", EINA_FALSE);
+   return EINA_FALSE;
+}
+
+static void
+_e_sys_comp_resume(void)
+{
+   ecore_evas_manual_render_set(e_comp->ee, EINA_FALSE);
+   evas_damage_rectangle_add(e_comp->evas, 0, 0, e_comp->w, e_comp->h);
+#ifndef HAVE_WAYLAND_ONLY
+   if (e_comp->comp_type == E_PIXMAP_TYPE_X)
+     {
+        ecore_x_dpms_force(EINA_FALSE);
+        ecore_x_screensaver_resume();
+        ecore_x_screensaver_reset();
+     }
+#endif
+#ifdef HAVE_WAYLAND
+   if (e_comp->comp_type != E_PIXMAP_TYPE_X)
+     {
+        if (e_comp->screen && e_comp->screen->dpms)
+          e_comp->screen->dpms(0);
+     }
+#endif
    e_screensaver_deactivate();
+   if (_e_sys_screensaver_unignore_timer)
+     ecore_timer_del(_e_sys_screensaver_unignore_timer);
+   _e_sys_screensaver_unignore_timer =
+     ecore_timer_add(0.5, _e_sys_screensaver_unignore_delay, NULL);
+   ecore_timer_add(1.5, _e_sys_comp_resume2, NULL);
 }
 
 /* externally accessible functions */
@@ -211,8 +280,14 @@ e_sys_init(void)
 EINTERN int
 e_sys_shutdown(void)
 {
+   if (_e_sys_screensaver_unignore_timer)
+     ecore_timer_del(_e_sys_screensaver_unignore_timer);
+   if (_e_sys_acpi_handler)
+     ecore_event_handler_del(_e_sys_acpi_handler);
    if (_e_sys_exe_exit_handler)
      ecore_event_handler_del(_e_sys_exe_exit_handler);
+   _e_sys_screensaver_unignore_timer = NULL;
+   _e_sys_acpi_handler = NULL;
    _e_sys_exe_exit_handler = NULL;
    _e_sys_halt_check_exe = NULL;
    _e_sys_reboot_check_exe = NULL;
@@ -467,11 +542,12 @@ _e_sys_systemd_hibernate(void)
    eldbus_proxy_call(login1_manger_proxy, "Hibernate", NULL, NULL, -1, "b", 0);
 }
 
-static void
-_e_sys_resume_job(void *d EINA_UNUSED)
+static Eina_Bool
+_e_sys_resume_delay(void *d EINA_UNUSED)
 {
    ecore_event_add(E_EVENT_SYS_RESUME, NULL, NULL, NULL);
    _e_sys_comp_resume();
+   return EINA_FALSE;
 }
 
 static Eina_Bool
@@ -479,10 +555,10 @@ _e_sys_susp_hib_check_timer_cb(void *data EINA_UNUSED)
 {
    double t = ecore_time_unix_get();
 
-   if ((t - _e_sys_susp_hib_check_last_tick) > 0.2)
+   if ((t - _e_sys_susp_hib_check_last_tick) > 0.5)
      {
         _e_sys_susp_hib_check_timer = NULL;
-        ecore_job_add(_e_sys_resume_job, NULL);
+        ecore_timer_add(0.2, _e_sys_resume_delay, NULL);
         return EINA_FALSE;
      }
    _e_sys_susp_hib_check_last_tick = t;
@@ -860,6 +936,32 @@ _e_sys_action_failed(void)
    e_dialog_show(dia);
 }
 
+static Eina_Bool
+_e_sys_cb_acpi_event(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
+{
+   E_Event_Acpi *ev = event;
+
+   if (e_powersave_mode_get() == E_POWERSAVE_MODE_FREEZE)
+     {
+        if (((ev->type == E_ACPI_TYPE_LID) &&
+             (ev->status == E_ACPI_LID_OPEN)) ||
+            (ev->type == E_ACPI_TYPE_POWER) ||
+            (ev->type == E_ACPI_TYPE_SLEEP))
+          {
+             if (_e_sys_acpi_handler)
+               {
+                  ecore_event_handler_del(_e_sys_acpi_handler);
+                  _e_sys_acpi_handler = NULL;
+               }
+             e_powersave_mode_unforce();
+             ecore_timer_add(1.0, _e_sys_resume_delay, NULL);
+             // XXX: need some way of, at the system level, restoring
+             // system and devices back to running normally
+          }
+     }
+   return ECORE_CALLBACK_PASS_ON;
+}
+
 static int
 _e_sys_action_do(E_Sys_Action a, char *param EINA_UNUSED, Eina_Bool raw)
 {
@@ -990,16 +1092,36 @@ _e_sys_action_do(E_Sys_Action a, char *param EINA_UNUSED, Eina_Bool raw)
           {
              if (raw)
                {
-                  _e_sys_susp_hib_check();
                   if (e_config->desklock_on_suspend)
+                  // XXX: this desklock - ensure its instant
                     e_desklock_show(EINA_TRUE);
                   _e_sys_begin_time = ecore_time_get();
-                  if (systemd_works)
-                    _e_sys_systemd_suspend();
+                  if (e_config->suspend_connected_standby == 0)
+                    {
+                       _e_sys_susp_hib_check();
+                       if (systemd_works)
+                         _e_sys_systemd_suspend();
+                       else
+                         {
+                            _e_sys_exe = ecore_exe_run(buf, NULL);
+                            ret = 1;
+                         }
+                    }
                   else
                     {
-                       _e_sys_exe = ecore_exe_run(buf, NULL);
-                       ret = 1;
+                       if (_e_sys_acpi_handler)
+                         ecore_event_handler_del(_e_sys_acpi_handler);
+                       _e_sys_acpi_handler =
+                         ecore_event_handler_add(E_EVENT_ACPI,
+                                                 _e_sys_cb_acpi_event,
+                                                 NULL);
+                       e_powersave_mode_force(E_POWERSAVE_MODE_FREEZE);
+                       // XXX: need some system way of forcing the system
+                       // into a very lowe power level with as many
+                       // devices suspended as possible. below is a simple
+                       // "freeze the cpu/kernel" which is not what we
+                       // want actually
+                       // ecore_exe_run("sleep 2 && echo freeze | sudo tee /sys/power/state", NULL);
                     }
                }
              else
