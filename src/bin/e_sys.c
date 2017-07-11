@@ -162,10 +162,7 @@ _e_sys_comp_emit_cb_wait(E_Sys_Action a, const char *sig, const char *rep, Eina_
    else e_comp_override_timed_pop();
 
    _e_sys_comp_zones_fade(sig, nocomp_push);
-#ifndef HAVE_WAYLAND_ONLY
-   if (e_comp->comp_type == E_PIXMAP_TYPE_X)
-     _e_comp_x_screensaver_on();
-#endif
+   e_comp_screen_suspend();
 
    if (rep)
      {
@@ -220,10 +217,7 @@ _e_sys_comp_resume2(void *data EINA_UNUSED)
    Eina_List *l;
    E_Zone *zone;
 
-#ifndef HAVE_WAYLAND_ONLY
-   if (e_comp->comp_type == E_PIXMAP_TYPE_X)
-     _e_comp_x_screensaver_off();
-#endif
+   e_comp_screen_resume();
    EINA_LIST_FOREACH(e_comp->zones, l, zone)
      e_backlight_level_set(zone, e_config->backlight.normal, -1.0);
    _e_sys_comp_zones_fade("e,state,sys,resume", EINA_FALSE);
