@@ -895,7 +895,6 @@ _e_comp_screensaver_on(void *data EINA_UNUSED, int type EINA_UNUSED, void *event
         edje_object_signal_emit(zone->base, "e,state,screensaver,on", "e");
         edje_object_signal_emit(zone->over, "e,state,screensaver,on", "e");
      }
-   e_comp_screen_suspend();
 
    return ECORE_CALLBACK_PASS_ON;
 }
@@ -909,7 +908,6 @@ _e_comp_screensaver_off(void *data EINA_UNUSED, int type EINA_UNUSED, void *even
 
    ecore_animator_frametime_set(ecore_frametime);
    if (!e_comp->saver) return ECORE_CALLBACK_RENEW;
-   e_comp_screen_resume();
    e_comp_override_del();
    e_comp->saver = EINA_FALSE;
    if (!e_comp->nocomp)
@@ -1803,111 +1801,4 @@ e_comp_util_object_is_above_nocomp(Evas_Object *obj)
    else
      return EINA_TRUE;
    return EINA_FALSE;
-}
-
-#ifndef HAVE_WAYLAND_ONLY
-static void
-_e_comp_pointer_grab(void)
-{
-   if (e_comp->suspend_grabbed) ecore_x_window_free(e_comp->suspend_grabbed);
-   e_comp->suspend_grabbed = ecore_x_window_input_new(e_comp->root, 0, 0, 1, 1);
-   ecore_x_window_show(e_comp->suspend_grabbed);
-   if (!e_grabinput_get(e_comp->suspend_grabbed, 0, e_comp->suspend_grabbed))
-     {
-        ecore_x_window_free(e_comp->suspend_grabbed);
-        e_comp->suspend_grabbed = 0;
-     }
-}
-
-static void
-_e_comp_pointer_ungrab(void)
-{
-   if (e_comp->comp_type == E_PIXMAP_TYPE_X)
-     {
-        if (e_comp->suspend_grabbed)
-          {
-             e_grabinput_release(e_comp->suspend_grabbed, e_comp->suspend_grabbed);
-             ecore_x_window_free(e_comp->suspend_grabbed);
-             e_comp->suspend_grabbed = 0;
-          }
-     }
-}
-
-static void
-_e_comp_cb_pointer_suspend_resume_done(void *data, Evas_Object *obj, const char *emission, const char *source)
-{
-   edje_object_signal_callback_del(obj, emission, source,
-                                   _e_comp_cb_pointer_suspend_resume_done);
-   if (!data) _e_comp_pointer_ungrab();
-}
-#endif
-
-E_API void
-e_comp_screen_suspend(void)
-{
-#ifndef HAVE_WAYLAND_ONLY
-   if (e_comp->comp_type != E_PIXMAP_TYPE_X) return;
-   if (!e_desklock_state_get())
-     {
-        _e_comp_pointer_ungrab();
-        _e_comp_pointer_grab();
-        if (!e_comp->suspend_grabbed) return;
-     }
-   if ((e_comp->pointer) && (e_comp->pointer->o_ptr))
-     {
-        const char *s = edje_object_data_get(e_comp->pointer->o_ptr,
-                                             "can_suspend");
-        if ((s) && (atoi(s) == 1))
-          {
-             edje_object_signal_callback_del(e_comp->pointer->o_ptr,
-                                             "e,state,mouse,suspend,done", "e",
-                                             _e_comp_cb_pointer_suspend_resume_done);
-             edje_object_signal_callback_del(e_comp->pointer->o_ptr,
-                                             "e,state,mouse,resume,done", "e",
-                                             _e_comp_cb_pointer_suspend_resume_done);
-             edje_object_signal_callback_add(e_comp->pointer->o_ptr,
-                                             "e,state,mouse,suspend,done",
-                                             "e",
-                                             _e_comp_cb_pointer_suspend_resume_done,
-                                             e_comp);
-             edje_object_signal_emit(e_comp->pointer->o_ptr,
-                                     "e,state,mouse,suspend", "e");
-          }
-     }
-#endif
-}
-
-E_API void
-e_comp_screen_resume(void)
-{
-#ifndef HAVE_WAYLAND_ONLY
-   if (e_comp->comp_type != E_PIXMAP_TYPE_X) return;
-   if (!e_desklock_state_get())
-     {
-        _e_comp_pointer_ungrab();
-        _e_comp_pointer_grab();
-        if (!e_comp->suspend_grabbed) return;
-     }
-   if ((e_comp->pointer) && (e_comp->pointer->o_ptr))
-     {
-        const char *s = edje_object_data_get(e_comp->pointer->o_ptr,
-                                             "can_suspend");
-        if ((s) && (atoi(s) == 1))
-          {
-             edje_object_signal_callback_del(e_comp->pointer->o_ptr,
-                                             "e,state,mouse,suspend,done", "e",
-                                             _e_comp_cb_pointer_suspend_resume_done);
-             edje_object_signal_callback_del(e_comp->pointer->o_ptr,
-                                             "e,state,mouse,resume,done", "e",
-                                             _e_comp_cb_pointer_suspend_resume_done);
-             edje_object_signal_callback_add(e_comp->pointer->o_ptr,
-                                             "e,state,mouse,resume,done",
-                                             "e",
-                                             _e_comp_cb_pointer_suspend_resume_done,
-                                             NULL);
-             edje_object_signal_emit(e_comp->pointer->o_ptr,
-                                     "e,state,mouse,resume", "e");
-          }
-     }
-#endif
 }
