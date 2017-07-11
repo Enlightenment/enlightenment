@@ -1151,6 +1151,7 @@ _e_sys_action_do(E_Sys_Action a, char *param EINA_UNUSED, Eina_Bool raw)
                {
                   _e_sys_susp_hib_check();
                   if (e_config->desklock_on_suspend)
+                  // XXX: this desklock - ensure its instant
                     e_desklock_show(EINA_TRUE);
                   _e_sys_begin_time = ecore_time_get();
                   if (systemd_works)

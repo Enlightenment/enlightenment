@@ -1822,8 +1822,12 @@ _e_comp_pointer_ungrab(void)
 {
    if (e_comp->comp_type == E_PIXMAP_TYPE_X)
      {
-        e_grabinput_release(e_comp->suspend_grabbed, e_comp->suspend_grabbed);
-        ecore_x_window_free(e_comp->suspend_grabbed);
+        if (e_comp->suspend_grabbed)
+          {
+             e_grabinput_release(e_comp->suspend_grabbed, e_comp->suspend_grabbed);
+             ecore_x_window_free(e_comp->suspend_grabbed);
+             e_comp->suspend_grabbed = 0;
+          }
      }
 }
 
@@ -1841,9 +1845,12 @@ e_comp_screen_suspend(void)
 {
 #ifndef HAVE_WAYLAND_ONLY
    if (e_comp->comp_type != E_PIXMAP_TYPE_X) return;
-   _e_comp_pointer_ungrab();
-   _e_comp_pointer_grab();
-   if (!e_comp->suspend_grabbed) return;
+   if (!e_desklock_state_get())
+     {
+        _e_comp_pointer_ungrab();
+        _e_comp_pointer_grab();
+        if (!e_comp->suspend_grabbed) return;
+     }
    if ((e_comp->pointer) && (e_comp->pointer->o_ptr))
      {
         const char *s = edje_object_data_get(e_comp->pointer->o_ptr,
@@ -1873,9 +1880,12 @@ e_comp_screen_resume(void)
 {
 #ifndef HAVE_WAYLAND_ONLY
    if (e_comp->comp_type != E_PIXMAP_TYPE_X) return;
-   _e_comp_pointer_ungrab();
-   _e_comp_pointer_grab();
-   if (!e_comp->suspend_grabbed) return;
+   if (!e_desklock_state_get())
+     {
+        _e_comp_pointer_ungrab();
+        _e_comp_pointer_grab();
+        if (!e_comp->suspend_grabbed) return;
+     }
    if ((e_comp->pointer) && (e_comp->pointer->o_ptr))
      {
         const char *s = edje_object_data_get(e_comp->pointer->o_ptr,
