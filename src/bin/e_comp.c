@@ -885,6 +885,8 @@ _e_comp_screensaver_on(void *data EINA_UNUSED, int type EINA_UNUSED, void *event
    if (e_comp->saver) return ECORE_CALLBACK_RENEW;
    e_comp_override_add();
    e_comp->saver = EINA_TRUE;
+   // XXX: this is not quite right - need to wait for signals from theme
+   // before freezing render animator
    if (e_comp->render_animator)
      ecore_animator_freeze(e_comp->render_animator);
    EINA_LIST_FOREACH(e_comp->zones, l, zone)

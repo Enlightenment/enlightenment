@@ -272,6 +272,8 @@ _e_comp_canvas_screensaver_active(void *d EINA_UNUSED, Evas_Object *obj EINA_UNU
 static Eina_Bool
 _e_comp_cb_timer_post_screensaver_lock(void *data EINA_UNUSED)
 {
+   // XXX: the below should instntly show desklock and have no transition
+   // or animation
    e_desklock_show_autolocked();
    timer_post_screensaver_lock = NULL;
    return ECORE_CALLBACK_CANCEL;
@@ -280,6 +282,10 @@ _e_comp_cb_timer_post_screensaver_lock(void *data EINA_UNUSED)
 static Eina_Bool
 _e_comp_cb_screensaver_on()
 {
+   // XXX: this is not quite right. this here should be called after e_comp.c
+   // and freinds have emitted "e,state,screensaver,on" AND gotten a signal
+   // reply from the theme to say it's done with this animation before
+   // doing the below
    if (e_config->desklock_autolock_screensaver)
      {
         E_FREE_FUNC(timer_post_screensaver_lock, ecore_timer_del);
