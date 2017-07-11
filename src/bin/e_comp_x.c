@@ -4993,6 +4993,8 @@ EINTERN Eina_Bool
 _e_comp_x_screensaver_off()
 {
    const char *s;
+
+   _e_comp_pointer_ungrab();
    if ((!e_comp->pointer) || (!e_comp->pointer->o_ptr)) return ECORE_CALLBACK_RENEW;
    s = edje_object_data_get(e_comp->pointer->o_ptr, "can_suspend");
 
@@ -5000,7 +5002,6 @@ _e_comp_x_screensaver_off()
      {
         if (!e_desklock_state_get())
           {
-             _e_comp_pointer_ungrab();
              _e_comp_pointer_grab();
              if (!_e_comp_x_suspend_grabbed) return ECORE_CALLBACK_RENEW;
           }
