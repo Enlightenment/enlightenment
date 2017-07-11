@@ -4960,32 +4960,31 @@ _e_comp_cb_pointer_suspend_resume_done(void *data, Evas_Object *obj, const char 
 EINTERN Eina_Bool
 _e_comp_x_screensaver_on()
 {
-   if (!e_desklock_state_get())
+   const char *s;
+   if ((!e_comp->pointer) || (!e_comp->pointer->o_ptr)) return ECORE_CALLBACK_RENEW;
+   s = edje_object_data_get(e_comp->pointer->o_ptr, "can_suspend");
+
+   if ((s) && (atoi(s) == 1))
      {
-        _e_comp_pointer_ungrab();
-        _e_comp_pointer_grab();
-        if (!_e_comp_x_suspend_grabbed) return ECORE_CALLBACK_RENEW;
-     }
-   if ((e_comp->pointer) && (e_comp->pointer->o_ptr))
-     {
-        const char *s = edje_object_data_get(e_comp->pointer->o_ptr,
-                                             "can_suspend");
-        if ((s) && (atoi(s) == 1))
+        if (!e_desklock_state_get())
           {
-             edje_object_signal_callback_del(e_comp->pointer->o_ptr,
-                                             "e,state,mouse,suspend,done", "e",
-                                             _e_comp_cb_pointer_suspend_resume_done);
-             edje_object_signal_callback_del(e_comp->pointer->o_ptr,
-                                             "e,state,mouse,resume,done", "e",
-                                             _e_comp_cb_pointer_suspend_resume_done);
-             edje_object_signal_callback_add(e_comp->pointer->o_ptr,
-                                             "e,state,mouse,suspend,done",
-                                             "e",
-                                             _e_comp_cb_pointer_suspend_resume_done,
-                                             e_comp);
-             edje_object_signal_emit(e_comp->pointer->o_ptr,
-                                     "e,state,mouse,suspend", "e");
+             _e_comp_pointer_ungrab();
+             _e_comp_pointer_grab();
+             if (!_e_comp_x_suspend_grabbed) return ECORE_CALLBACK_RENEW;
           }
+        edje_object_signal_callback_del(e_comp->pointer->o_ptr,
+                                        "e,state,mouse,suspend,done", "e",
+                                        _e_comp_cb_pointer_suspend_resume_done);
+        edje_object_signal_callback_del(e_comp->pointer->o_ptr,
+                                        "e,state,mouse,resume,done", "e",
+                                        _e_comp_cb_pointer_suspend_resume_done);
+        edje_object_signal_callback_add(e_comp->pointer->o_ptr,
+                                        "e,state,mouse,suspend,done",
+                                        "e",
+                                        _e_comp_cb_pointer_suspend_resume_done,
+                                        e_comp);
+        edje_object_signal_emit(e_comp->pointer->o_ptr,
+                                "e,state,mouse,suspend", "e");
      }
    return ECORE_CALLBACK_RENEW;
 }
@@ -4993,32 +4992,31 @@ _e_comp_x_screensaver_on()
 EINTERN Eina_Bool
 _e_comp_x_screensaver_off()
 {
-   if (!e_desklock_state_get())
+   const char *s;
+   if ((!e_comp->pointer) || (!e_comp->pointer->o_ptr)) return ECORE_CALLBACK_RENEW;
+   s = edje_object_data_get(e_comp->pointer->o_ptr, "can_suspend");
+
+   if ((s) && (atoi(s) == 1))
      {
-        _e_comp_pointer_ungrab();
-        _e_comp_pointer_grab();
-        if (!_e_comp_x_suspend_grabbed) return ECORE_CALLBACK_RENEW;
-     }
-   if ((e_comp->pointer) && (e_comp->pointer->o_ptr))
-     {
-        const char *s = edje_object_data_get(e_comp->pointer->o_ptr,
-                                             "can_suspend");
-        if ((s) && (atoi(s) == 1))
+        if (!e_desklock_state_get())
           {
-             edje_object_signal_callback_del(e_comp->pointer->o_ptr,
-                                             "e,state,mouse,suspend,done", "e",
-                                             _e_comp_cb_pointer_suspend_resume_done);
-             edje_object_signal_callback_del(e_comp->pointer->o_ptr,
-                                             "e,state,mouse,resume,done", "e",
-                                             _e_comp_cb_pointer_suspend_resume_done);
-             edje_object_signal_callback_add(e_comp->pointer->o_ptr,
-                                             "e,state,mouse,resume,done",
-                                             "e",
-                                             _e_comp_cb_pointer_suspend_resume_done,
-                                             NULL);
-             edje_object_signal_emit(e_comp->pointer->o_ptr,
-                                     "e,state,mouse,resume", "e");
+             _e_comp_pointer_ungrab();
+             _e_comp_pointer_grab();
+             if (!_e_comp_x_suspend_grabbed) return ECORE_CALLBACK_RENEW;
           }
+        edje_object_signal_callback_del(e_comp->pointer->o_ptr,
+                                        "e,state,mouse,suspend,done", "e",
+                                        _e_comp_cb_pointer_suspend_resume_done);
+        edje_object_signal_callback_del(e_comp->pointer->o_ptr,
+                                        "e,state,mouse,resume,done", "e",
+                                        _e_comp_cb_pointer_suspend_resume_done);
+        edje_object_signal_callback_add(e_comp->pointer->o_ptr,
+                                        "e,state,mouse,resume,done",
+                                        "e",
+                                        _e_comp_cb_pointer_suspend_resume_done,
+                                        NULL);
+        edje_object_signal_emit(e_comp->pointer->o_ptr,
+                                "e,state,mouse,resume", "e");
      }
    return ECORE_CALLBACK_RENEW;
 }
