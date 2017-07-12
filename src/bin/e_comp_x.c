@@ -4933,7 +4933,7 @@ _e_comp_pointer_grab(void)
    if (_e_comp_x_suspend_grabbed) ecore_x_window_free(_e_comp_x_suspend_grabbed);
    _e_comp_x_suspend_grabbed = ecore_x_window_input_new(e_comp->root, 0, 0, 1, 1);
    ecore_x_window_show(_e_comp_x_suspend_grabbed);
-   if (!e_grabinput_get(_e_comp_x_suspend_grabbed, 0, _e_comp_x_suspend_grabbed))
+   if (!e_grabinput_get(_e_comp_x_suspend_grabbed, 0, 0))
      {
         ecore_x_window_free(_e_comp_x_suspend_grabbed);
         _e_comp_x_suspend_grabbed = 0;
@@ -4944,7 +4944,7 @@ static void
 _e_comp_pointer_ungrab(void)
 {
    if (!_e_comp_x_suspend_grabbed) return;
-   e_grabinput_release(_e_comp_x_suspend_grabbed, _e_comp_x_suspend_grabbed);
+   e_grabinput_release(_e_comp_x_suspend_grabbed, 0);
    ecore_x_window_free(_e_comp_x_suspend_grabbed);
    _e_comp_x_suspend_grabbed = 0;
 }
