@@ -96,6 +96,7 @@ sysinfo_init(void)
         ci->thermal.sensor_name = NULL;
         ci->thermal.temp = -900;
         ci->thermal.units = CELSIUS;
+        ci->thermal.popup = NULL;
         ci->thermal.configure = NULL;
 	ci->cpuclock.poll_interval = 32;
         ci->cpuclock.restore_governor = 0;
@@ -104,7 +105,8 @@ sysinfo_init(void)
         ci->cpuclock.governor = NULL;
         ci->cpuclock.pstate_min = 1;
         ci->cpuclock.pstate_max = 101;
-        ci->cpuclock.configure = NULL;
+        ci->cpuclock.popup = NULL;
+	ci->cpuclock.configure = NULL;
 	ci->cpumonitor.poll_interval = 32;
         ci->cpumonitor.total = 0;
         ci->cpumonitor.idle = 0;

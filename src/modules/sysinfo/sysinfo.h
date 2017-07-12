@@ -157,6 +157,8 @@ struct _Config_Item
    {
       Evas_Object         *o_gadget;
       Evas_Object         *configure;
+      Evas_Object         *popup;
+      Evas_Object         *popup_label;
       int                  poll_interval;
       int                  low, high;
       int                  sensor_type;
