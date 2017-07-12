@@ -67,7 +67,8 @@ _cpuclock_set_thread_governor(void *data, Ecore_Thread *th EINA_UNUSED)
 {
    const char *governor = data;
 
-   _cpuclock_sysfs_setall("scaling_governor", governor);
+   if (_cpuclock_sysfs_setall("scaling_governor", governor) == 0)
+     return;
    if (!strcmp(governor, "ondemand"))
      _cpuclock_sysfs_set("ondemand/ignore_nice_load", "0");
    else if (!strcmp(governor, "conservative"))

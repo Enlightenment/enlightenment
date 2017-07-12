@@ -154,7 +154,7 @@ _powersave_changed(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
    Cpuclock_Config *cc = data;
    Instance *inst = cc->inst;
-   const char *value = elm_object_text_get(obj);
+   const char *value = evas_object_data_get(obj, "governor");
 
    if (value)
      eina_stringshare_replace(&inst->cfg->cpuclock.powersave_governor, value);
@@ -167,7 +167,7 @@ _governor_changed(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
    Cpuclock_Config *cc = data;
    Instance *inst = cc->inst;
-   const char *value = elm_object_text_get(obj);
+   const char *value = evas_object_data_get(obj, "governor");
 
    if (value)
      {
@@ -403,7 +403,8 @@ cpuclock_configure(Instance *inst)
           elm_object_text_set(o, _("Maximum Speed"));
         else
           elm_object_text_set(o, l->data);
-        elm_box_pack_end(box, o);
+	evas_object_data_set(o, "governor", (const char *)l->data);
+	elm_box_pack_end(box, o);
         evas_object_smart_callback_add(o, "changed", _governor_changed, cc);
         evas_object_show(o);
 
@@ -472,6 +473,7 @@ cpuclock_configure(Instance *inst)
         else
           elm_object_text_set(o, l->data);
         elm_object_disabled_set(o, inst->cfg->cpuclock.auto_powersave);
+	evas_object_data_set(o, "governor", l->data);
 	elm_box_pack_end(box, o);
         evas_object_smart_callback_add(o, "changed", _powersave_changed, cc);
         evas_object_show(o);
