@@ -5,7 +5,6 @@
 static E_Config_DD *conf_edd = NULL;
 static E_Config_DD *conf_item_edd = NULL;
 Eina_List *sysinfo_instances = NULL;
-E_Module *module = NULL;
 Config *sysinfo_config = NULL;
 
 EINTERN void
@@ -210,7 +209,6 @@ e_modapi_init(E_Module *m)
 {
    sysinfo_init();
 
-   module = m;
    sysinfo_config->module = m;
    return m;
 }

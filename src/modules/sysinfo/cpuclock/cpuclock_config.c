@@ -403,7 +403,7 @@ cpuclock_configure(Instance *inst)
           elm_object_text_set(o, _("Maximum Speed"));
         else
           elm_object_text_set(o, l->data);
-	evas_object_data_set(o, "governor", (const char *)l->data);
+	evas_object_data_set(o, "governor", strdup(l->data));
 	elm_box_pack_end(box, o);
         evas_object_smart_callback_add(o, "changed", _governor_changed, cc);
         evas_object_show(o);
@@ -473,7 +473,7 @@ cpuclock_configure(Instance *inst)
         else
           elm_object_text_set(o, l->data);
         elm_object_disabled_set(o, inst->cfg->cpuclock.auto_powersave);
-	evas_object_data_set(o, "governor", l->data);
+	evas_object_data_set(o, "governor", strdup(l->data));
 	elm_box_pack_end(box, o);
         evas_object_smart_callback_add(o, "changed", _powersave_changed, cc);
         evas_object_show(o);

@@ -62,38 +62,13 @@ _cpuclock_cb_sort(const void *item1, const void *item2)
    return 0;
 }
 
-static void
-_cpuclock_set_thread_governor(void *data, Ecore_Thread *th EINA_UNUSED)
-{
-   const char *governor = data;
-
-   if (_cpuclock_sysfs_setall("scaling_governor", governor) == 0)
-     return;
-   if (!strcmp(governor, "ondemand"))
-     _cpuclock_sysfs_set("ondemand/ignore_nice_load", "0");
-   else if (!strcmp(governor, "conservative"))
-     _cpuclock_sysfs_set("conservative/ignore_nice_load", "0");
-}
-
+#if defined(__FreeBSD__) || defined(__DragonFly__) || defined (__OpenBSD__)
 static void
 _cpuclock_set_thread_frequency(void *data, Ecore_Thread *th EINA_UNUSED)
 {
    const char *freq = data;
-
-#if defined(__FreeBSD__) || defined(__DragonFly__) || defined (__OpenBSD__)
    int frequency = atoi(freq);
    _cpuclock_sysctl_frequency(frequency);
-#else
-   _cpuclock_sysfs_setall("scaling_setspeed", freq);
-#endif
-}
-
-static void
-_cpuclock_set_thread_pstate(void *data, Ecore_Thread *th EINA_UNUSED)
-{
-   Pstate_Config *pc = data;
-
-   _cpuclock_sysfs_pstate(pc->min, pc->max, pc->turbo);
 }
 
 static void
@@ -101,16 +76,7 @@ _cpuclock_set_thread_done(void *data EINA_UNUSED, Ecore_Thread *th EINA_UNUSED)
 {
    return;
 }
-
-static void
-_cpuclock_set_thread_pstate_done(void *data, Ecore_Thread *th EINA_UNUSED)
-{
-   Pstate_Config *pc = data;
-
-   E_FREE_FUNC(pc, free);
-
-   return;
-}
+#endif
 
 void
 _cpuclock_set_governor(const char *governor)
@@ -118,24 +84,44 @@ _cpuclock_set_governor(const char *governor)
 #if defined __FreeBSD__ || defined __OpenBSD__
    return;
 #endif
+   char buf[4096], exe[4096];
+   struct stat st;
 
-   ecore_thread_run(_cpuclock_set_thread_governor, _cpuclock_set_thread_done, NULL, governor);
+   snprintf(exe, 4096, "%s/%s/cpuclock_sysfs",
+            e_module_dir_get(sysinfo_config->module), MODULE_ARCH);
+   printf("%s\n", exe);
+   if (stat(exe, &st) < 0) return;
+
+   snprintf(buf, sizeof(buf),
+            "%s %s %s", exe, "governor", governor);
+   printf("%s\n", buf);
+   system(buf);
 }
 
 void
 _cpuclock_set_frequency(int frequency)
 {
    char buf[4096];
-   const char *freq;
+   struct stat st;
 
 #ifdef __FreeBSD__
    frequency /= 1000;
 #endif
 
    snprintf(buf, sizeof(buf), "%i", frequency);
+#if defined(__FreeBSD__) || defined(__DragonFly__) || defined (__OpenBSD__)
+   const char *freq;
    freq = eina_stringshare_add(buf);
-
    ecore_thread_run(_cpuclock_set_thread_frequency, _cpuclock_set_thread_done, NULL, freq);
+#else
+   char exe[4096];
+   snprintf(exe, 4096, "%s/%s/cpuclock_sysfs",
+            e_module_dir_get(sysinfo_config->module), MODULE_ARCH);
+   if (stat(exe, &st) < 0) return;
+   snprintf(buf, sizeof(buf),
+            "%s %s %i", exe, "frequency", frequency);
+   system(buf);
+#endif
 }
 
 void
@@ -144,16 +130,15 @@ _cpuclock_set_pstate(int min, int max, int turbo)
 #if defined __FreeBSD__ || defined __OpenBSD__
    return;
 #endif
-   Pstate_Config *pc;
+   char buf[4096], exe[4096];
+   struct stat st;
 
-   pc = E_NEW(Pstate_Config, 1);
-   if (!pc) return;
-
-   pc->turbo = turbo;
-   pc->min = min;
-   pc->max = max;
-
-   ecore_thread_run(_cpuclock_set_thread_pstate, _cpuclock_set_thread_pstate_done, NULL, pc);
+   snprintf(exe, 4096, "%s/%s/cpuclock_sysfs",
+            e_module_dir_get(sysinfo_config->module), MODULE_ARCH);
+   if (stat(exe, &st) < 0) return;
+   snprintf(buf, sizeof(buf),
+            "%s %s %i %i %i", exe, "pstate", min, max, turbo);
+   system(buf);
 }
 
 static void
@@ -292,17 +277,19 @@ _cpuclock_popup_create(Instance *inst)
 {
    Evas_Object *popup, *box, *label;
    double f = inst->cfg->cpuclock.status->cur_frequency;
-   char buf[100];
+   char buf[100], *u;
 
    if (f < 1000000)
      {
         f += 500;
         f /= 1000;
+	u = _("MHz");
      }
    else
      {
         f += 50000;
         f /= 1000000;
+	u = _("GHz");
      }
 
    popup = elm_ctxpopup_add(e_comp->elm);
@@ -320,7 +307,7 @@ _cpuclock_popup_create(Instance *inst)
 
    label = elm_label_add(box);
    elm_object_style_set(label, "marker");
-   snprintf(buf, 100, "%s: %1.1f", _("Frequency"), f);
+   snprintf(buf, 100, "%s: %1.1f %s", _("Frequency"), f, u);
    elm_object_text_set(label, buf);
    elm_box_pack_end(box, label);
    evas_object_show(label);
@@ -423,19 +410,21 @@ _cpuclock_face_update_current(Instance *inst)
    if (inst->cfg->cpuclock.popup)
      {
         double f = inst->cfg->cpuclock.status->cur_frequency;
-        char buf[100];
+        char buf[100], *u;
 
         if (f < 1000000)
           {
              f += 500;
              f /= 1000;
+	     u = _("MHz");
           }
         else
           {
              f += 50000;
              f /= 1000000;
+             u = _("GHz");
           }
-        snprintf(buf, 100, "%s: %1.1f", _("Frequency"), f);
+        snprintf(buf, 100, "%s: %1.1f %s", _("Frequency"), f, u);
         elm_object_text_set(inst->cfg->cpuclock.popup_label, buf);
      }
 }
@@ -843,6 +832,7 @@ _cpuclock_cb_frequency_check_notify(void *data,
 {
    Cpu_Status *status = msg;
    Eina_Bool freq_changed = EINA_FALSE;
+   Eina_Bool init_set = EINA_FALSE;
    Thread_Config *thc = data;
    Instance *inst = thc->inst;
 
@@ -870,8 +860,13 @@ _cpuclock_cb_frequency_check_notify(void *data,
    else if (inst->cfg->cpuclock.status->active == 1)
      elm_layout_signal_emit(inst->cfg->cpuclock.o_gadget, "e,state,enabled", "e");
 
-   _cpuclock_set_pstate(inst->cfg->cpuclock.pstate_min - 1,
-                  inst->cfg->cpuclock.pstate_max - 1, inst->cfg->cpuclock.status->pstate_turbo);
+   if (!init_set)
+     {
+        _cpuclock_set_pstate(inst->cfg->cpuclock.pstate_min - 1,
+                             inst->cfg->cpuclock.pstate_max - 1,
+                             inst->cfg->cpuclock.status->pstate_turbo);
+        init_set = EINA_TRUE;
+     }
 }
 
 static void

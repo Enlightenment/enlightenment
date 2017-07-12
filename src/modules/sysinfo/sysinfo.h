@@ -291,6 +291,5 @@ EINTERN void sysinfo_netstatus_remove(void *data, Evas *e EINA_UNUSED, Evas_Obje
 
 extern Config *sysinfo_config;
 extern Eina_List *sysinfo_instances;
-extern E_Module *module;
 
 #endif

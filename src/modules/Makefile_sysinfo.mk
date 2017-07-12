@@ -24,7 +24,6 @@ src_modules_sysinfo_module_la_SOURCES = src/modules/sysinfo/mod.c \
                          src/modules/sysinfo/thermal/thermal_fallback.c \
                          src/modules/sysinfo/cpuclock/cpuclock.h \
                          src/modules/sysinfo/cpuclock/cpuclock.c \
-                         src/modules/sysinfo/cpuclock/cpuclock_sysfs.c \
                          src/modules/sysinfo/cpuclock/cpuclock_config.c \
                          src/modules/sysinfo/cpumonitor/cpumonitor.h \
                          src/modules/sysinfo/cpumonitor/cpumonitor.c \
@@ -84,7 +83,23 @@ endif
 endif
 endif
 
+src_modules_sysinfo_sysfsfreqdir = $(sysinfopkgdir)
+src_modules_sysinfo_sysfsfreq_PROGRAMS = src/modules/sysinfo/cpuclock/cpuclock_sysfs
+
+src_modules_sysinfo_sysfsfreq_SOURCES = src/modules/sysinfo/cpuclock/cpuclock_sysfs.c
+src_modules_sysinfo_sysfsfreq_CPPFLAGS  = $(MOD_CPPFLAGS) @e_cflags@ @SUID_CFLAGS@
+src_modules_sysinfo_sysfsfreq_LDFLAGS = @SUID_LDFLAGS@
+
+sysfsfreq_setuid_root_mode = a=rx,u+xs
+sysfsfreq_setuid_root_user = root
+
+sysfsfreq-install-data-hook:
+	@chown $(sysfsfreq_setuid_root_user) $(DESTDIR)$(src_modules_sysinfo_sysfsfreqdir)/cpuclock_sysfs$(EXEEXT) || true
+	@chmod $(sysfsfreq_setuid_root_mode) $(DESTDIR)$(src_modules_sysinfo_sysfsfreqdir)/cpuclock_sysfs$(EXEEXT) || true
+
+INSTALL_DATA_HOOKS += sysfsfreq-install-data-hook
+
 PHONIES += sysinfo install-sysinfo
-sysinfo: $(sysinfopkg_LTLIBRARIES) $(sysinfo_DATA)
-install-sysinfo: install-sysinfoDATA install-sysinfopkgLTLIBRARIES
+sysinfo: $(sysinfopkg_LTLIBRARIES) $(sysinfo_DATA) $(src_modules_sysinfo_sysfsfreq_PROGRAMS)
+install-sysinfo: install-sysinfoDATA install-sysinfopkgLTLIBRARIES install-src_modules_sysinfo_sysfsfreqPROGRAMS
 endif
