@@ -9,6 +9,7 @@ struct _Thread_Config
 {
    int interval;
    Instance *inst;
+   E_Powersave_Sleeper *sleeper;
 };
 
 typedef struct _Pstate_Config Pstate_Config;
@@ -238,7 +239,6 @@ _cpuclock_event_cb_powersave(void *data, int type, void *event)
         eina_stringshare_del(inst->cfg->cpuclock.status->orig_governor);
         inst->cfg->cpuclock.status->orig_governor = NULL;
         break;
-
       case E_POWERSAVE_MODE_MEDIUM:
       case E_POWERSAVE_MODE_HIGH:
         if ((inst->cfg->cpuclock.powersave_governor) || (has_conservative))
@@ -249,8 +249,8 @@ _cpuclock_event_cb_powersave(void *data, int type, void *event)
                _cpuclock_set_governor("conservative");
              break;
           }
-
       case E_POWERSAVE_MODE_EXTREME:
+      default:
         if (has_powersave)
           _cpuclock_set_governor("powersave");
         break;
@@ -831,7 +831,7 @@ _cpuclock_cb_frequency_check_main(void *data, Ecore_Thread *th)
         else
           _cpuclock_status_free(status);
         if (ecore_thread_check(th)) break;
-        usleep((1000000.0 / 8.0) * (double)thc->interval);
+        e_powersave_sleeper_sleep(thc->sleeper, thc->interval);
      }
 }
 
@@ -877,6 +877,7 @@ static void
 _cpuclock_cb_frequency_check_end(void *data, Ecore_Thread *th EINA_UNUSED)
 {
    Thread_Config *thc = data;
+   e_powersave_sleeper_free(thc->sleeper);
    E_FREE_FUNC(thc, free);
 }
 
@@ -894,6 +895,7 @@ _cpuclock_poll_interval_update(Instance *inst)
    if (thc)
      {
         thc->inst = inst;
+	thc->sleeper = e_powersave_sleeper_new();
         thc->interval = inst->cfg->cpuclock.poll_interval;
         inst->cfg->cpuclock.frequency_check_thread =
           ecore_thread_feedback_run(_cpuclock_cb_frequency_check_main,
