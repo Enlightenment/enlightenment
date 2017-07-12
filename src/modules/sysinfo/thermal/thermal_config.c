@@ -19,7 +19,7 @@ _update_high_temperature(void *data, Evas_Object *obj EINA_UNUSED, void *event_i
 {
    Thermal_Config *tc = data;
    Instance *inst = tc->inst;
-   int value = elm_slider_value_get(tc->high);
+   int value = (int)elm_slider_value_get(tc->high);
 
    inst->cfg->thermal.high = value;
    e_config_save_queue();
@@ -31,7 +31,7 @@ _update_low_temperature(void *data, Evas_Object *obj EINA_UNUSED, void *event_in
 {
    Thermal_Config *tc = data;
    Instance *inst = tc->inst;
-   int value = elm_slider_value_get(tc->low);
+   int value = (int)elm_slider_value_get(tc->low);
 
    inst->cfg->thermal.low = value;
    e_config_save_queue();
@@ -61,10 +61,10 @@ _units_changed(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
      {
         elm_slider_min_max_set(tc->low, 0, 200);
         elm_slider_min_max_set(tc->high, 0, 230);
-        val = elm_slider_value_get(tc->low);
-        elm_slider_value_set(tc->low, CEL_2_FAR(val));
-        val = elm_slider_value_get(tc->high);
-        elm_slider_value_set(tc->high, CEL_2_FAR(val));
+        val = (int)elm_slider_value_get(tc->low);
+        elm_slider_value_set(tc->low, ceil(CEL_2_FAR(val)));
+        val = (int)elm_slider_value_get(tc->high);
+        elm_slider_value_set(tc->high, ceil(CEL_2_FAR(val)));
         elm_slider_unit_format_set(tc->high, "%1.0f F");
         elm_slider_indicator_format_set(tc->high, "%1.0f F");
 	elm_slider_unit_format_set(tc->low, "%1.0f F");
@@ -72,20 +72,20 @@ _units_changed(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
      }
    else
      {
-        elm_slider_min_max_set(tc->low, 0, 95);
-        elm_slider_min_max_set(tc->high, 0, 110);
-        val = elm_slider_value_get(tc->low);
-        elm_slider_value_set(tc->low, FAR_2_CEL(val));
-        val = elm_slider_value_get(tc->high);
-        elm_slider_value_set(tc->high, FAR_2_CEL(val));
+        val = (int)elm_slider_value_get(tc->low);
+        elm_slider_value_set(tc->low, ceil(FAR_2_CEL(val)));
+        val = (int)elm_slider_value_get(tc->high);
+        elm_slider_value_set(tc->high, ceil(FAR_2_CEL(val)));
         elm_slider_unit_format_set(tc->low, "%1.0f C");
         elm_slider_indicator_format_set(tc->low, "%1.0f C");
 	elm_slider_unit_format_set(tc->high, "%1.0f C");
         elm_slider_indicator_format_set(tc->high, "%1.0f C");
+        elm_slider_min_max_set(tc->low, 0, 95);
+        elm_slider_min_max_set(tc->high, 0, 110);
      }
-   val = elm_slider_value_get(tc->high);
+   val = (int)elm_slider_value_get(tc->high);
    inst->cfg->thermal.high = val;
-   val = elm_slider_value_get(tc->low);
+   val = (int)elm_slider_value_get(tc->low);
    inst->cfg->thermal.low = val;
    e_config_save_queue();
    _thermal_config_updated(inst);
