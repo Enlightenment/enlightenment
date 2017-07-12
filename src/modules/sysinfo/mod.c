@@ -104,7 +104,8 @@ sysinfo_init(void)
         ci->cpuclock.governor = NULL;
         ci->cpuclock.pstate_min = 1;
         ci->cpuclock.pstate_max = 101;
-        ci->cpumonitor.poll_interval = 32;
+        ci->cpuclock.configure = NULL;
+	ci->cpumonitor.poll_interval = 32;
         ci->cpumonitor.total = 0;
         ci->cpumonitor.idle = 0;
         ci->cpumonitor.percent = 0;

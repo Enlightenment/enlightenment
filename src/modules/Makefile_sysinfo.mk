@@ -25,6 +25,7 @@ src_modules_sysinfo_module_la_SOURCES = src/modules/sysinfo/mod.c \
                          src/modules/sysinfo/cpuclock/cpuclock.h \
                          src/modules/sysinfo/cpuclock/cpuclock.c \
                          src/modules/sysinfo/cpuclock/cpuclock_sysfs.c \
+                         src/modules/sysinfo/cpuclock/cpuclock_config.c \
                          src/modules/sysinfo/cpumonitor/cpumonitor.h \
                          src/modules/sysinfo/cpumonitor/cpumonitor.c \
                          src/modules/sysinfo/cpumonitor/cpumonitor_config.c \

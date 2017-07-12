@@ -120,7 +120,7 @@ _cpuclock_set_governor(const char *governor)
    ecore_thread_run(_cpuclock_set_thread_governor, _cpuclock_set_thread_done, NULL, governor);
 }
 
-static void
+void
 _cpuclock_set_frequency(int frequency)
 {
    char buf[4096];
@@ -259,6 +259,106 @@ _cpuclock_event_cb_powersave(void *data, int type, void *event)
    return ECORE_CALLBACK_PASS_ON;
 }
 
+static Evas_Object *
+_cpuclock_configure_cb(Evas_Object *g)
+{
+   Instance *inst = evas_object_data_get(g, "Instance");
+
+   if (!sysinfo_config) return NULL;
+   if (inst->cfg->cpuclock.popup) return NULL;
+   return cpuclock_configure(inst);
+}
+
+static void
+_cpuclock_popup_dismissed(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
+{
+   Instance *inst = data;
+   E_FREE_FUNC(obj, evas_object_del);
+
+   inst->cfg->cpuclock.popup = NULL;
+   inst->cfg->cpuclock.popup_label = NULL;
+}
+
+static void
+_cpuclock_popup_deleted(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   Instance *inst = data;
+   inst->cfg->cpuclock.popup = NULL;
+}
+
+static Evas_Object *
+_cpuclock_popup_create(Instance *inst)
+{
+   Evas_Object *popup, *box, *label;
+   double f = inst->cfg->cpuclock.status->cur_frequency;
+   char buf[100];
+
+   if (f < 1000000)
+     {
+        f += 500;
+        f /= 1000;
+     }
+   else
+     {
+        f += 50000;
+        f /= 1000000;
+     }
+
+   popup = elm_ctxpopup_add(e_comp->elm);
+   elm_object_style_set(popup, "noblock");
+   evas_object_smart_callback_add(popup, "dismissed",
+                                  _cpuclock_popup_dismissed, inst);
+   evas_object_event_callback_add(popup, EVAS_CALLBACK_DEL,
+                                  _cpuclock_popup_deleted, inst);
+
+   box = elm_box_add(popup);
+   elm_box_horizontal_set(box, EINA_FALSE);
+   E_EXPAND(box); E_FILL(box);
+   elm_object_content_set(popup, box);
+   evas_object_show(box);
+
+   label = elm_label_add(box);
+   elm_object_style_set(label, "marker");
+   snprintf(buf, 100, "%s: %1.1f", _("Frequency"), f);
+   elm_object_text_set(label, buf);
+   elm_box_pack_end(box, label);
+   evas_object_show(label);
+   inst->cfg->cpuclock.popup_label = label;
+
+   e_gadget_util_ctxpopup_place(inst->o_main, popup,
+                                inst->cfg->cpuclock.o_gadget);
+   evas_object_show(popup);
+
+   return popup;
+}
+
+static void
+_cpuclock_mouse_down_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_data)
+{
+   Evas_Event_Mouse_Down *ev = event_data;
+   Instance *inst = data;
+
+   if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return;
+   if (ev->button != 3)
+     {
+        if (inst->cfg->cpuclock.popup)
+          elm_ctxpopup_dismiss(inst->cfg->cpuclock.popup);
+        else
+          inst->cfg->cpuclock.popup = _cpuclock_popup_create(inst);
+     }
+   else
+     {
+        if (inst->cfg->cpuclock.popup)
+          elm_ctxpopup_dismiss(inst->cfg->cpuclock.popup);
+        if (!sysinfo_config) return;
+        ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
+        if (inst->cfg->esm != E_SYSINFO_MODULE_CPUCLOCK)
+          cpuclock_configure(inst);
+        else
+          e_gadget_configure(inst->o_main);
+     }
+}
+
 void
 _cpuclock_config_updated(Instance *inst)
 {
@@ -317,6 +417,25 @@ _cpuclock_face_update_current(Instance *inst)
         governor_msg.str = inst->cfg->cpuclock.status->cur_governor;
         edje_object_message_send(elm_layout_edje_get(inst->cfg->cpuclock.o_gadget), EDJE_MESSAGE_STRING, 4,
                                  &governor_msg);
+     }
+
+   if (inst->cfg->cpuclock.popup)
+     {
+        double f = inst->cfg->cpuclock.status->cur_frequency;
+        char buf[100];
+
+        if (f < 1000000)
+          {
+             f += 500;
+             f /= 1000;
+          }
+        else
+          {
+             f += 50000;
+             f /= 1000000;
+          }
+        snprintf(buf, 100, "%s: %1.1f", _("Frequency"), f);
+        elm_object_text_set(inst->cfg->cpuclock.popup_label, buf);
      }
 }
 
@@ -792,6 +911,14 @@ _cpuclock_removed_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_data)
 
    if (inst->o_main != event_data) return;
 
+   if (inst->cfg->cpuclock.popup_label)
+     E_FREE_FUNC(inst->cfg->cpuclock.popup, evas_object_del);
+   if (inst->cfg->cpuclock.popup)
+     E_FREE_FUNC(inst->cfg->cpuclock.popup, evas_object_del);
+
+   if (inst->cfg->cpuclock.configure)
+     E_FREE_FUNC(inst->cfg->cpuclock.configure, evas_object_del);
+
     if (inst->cfg->cpuclock.handler)
      ecore_event_handler_del(inst->cfg->cpuclock.handler);
 
@@ -816,6 +943,14 @@ sysinfo_cpuclock_remove(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_U
 {
    Instance *inst = data;
 
+   if (inst->cfg->cpuclock.popup_label)
+     E_FREE_FUNC(inst->cfg->cpuclock.popup, evas_object_del);
+   if (inst->cfg->cpuclock.popup)
+     E_FREE_FUNC(inst->cfg->cpuclock.popup, evas_object_del);
+
+   if (inst->cfg->cpuclock.configure)
+     E_FREE_FUNC(inst->cfg->cpuclock.configure, evas_object_del);
+
    if (inst->cfg->cpuclock.handler)
      ecore_event_handler_del(inst->cfg->cpuclock.handler);
 
@@ -835,6 +970,9 @@ _cpuclock_created_cb(void *data, Evas_Object *obj, void *event_data EINA_UNUSED)
 {
    Instance *inst = data;
    E_Gadget_Site_Orient orient = e_gadget_site_orient_get(e_gadget_site_get(inst->o_main));
+   Eina_List *l = NULL;
+
+   e_gadget_configure_cb_set(inst->o_main, _cpuclock_configure_cb);
 
    if (inst->cfg->cpuclock.pstate_min == 0) inst->cfg->cpuclock.pstate_min = 1;
    if (inst->cfg->cpuclock.pstate_max == 0) inst->cfg->cpuclock.pstate_max = 101;
@@ -857,6 +995,9 @@ _cpuclock_created_cb(void *data, Evas_Object *obj, void *event_data EINA_UNUSED)
                                    _cpuclock_face_cb_set_frequency, inst);
    evas_object_event_callback_add(inst->cfg->cpuclock.o_gadget, EVAS_CALLBACK_RESIZE, _cpuclock_resize_cb, inst);
    elm_box_pack_end(inst->o_main, inst->cfg->cpuclock.o_gadget);
+   evas_object_event_callback_add(inst->cfg->cpuclock.o_gadget,
+                                  EVAS_CALLBACK_MOUSE_DOWN,
+                                  _cpuclock_mouse_down_cb, inst);
    evas_object_show(inst->cfg->cpuclock.o_gadget);
    evas_object_smart_callback_del_full(obj, "gadget_created", _cpuclock_created_cb, data);
    inst->cfg->cpuclock.status = _cpuclock_status_new();
@@ -865,11 +1006,24 @@ _cpuclock_created_cb(void *data, Evas_Object *obj, void *event_data EINA_UNUSED)
    inst->cfg->cpuclock.handler = ecore_event_handler_add(E_EVENT_POWERSAVE_UPDATE,
                                                _cpuclock_event_cb_powersave, inst);
    _cpuclock_config_updated(inst);
+   if ((inst->cfg->cpuclock.restore_governor) && (inst->cfg->cpuclock.governor))
+     {
+        for (l = inst->cfg->cpuclock.status->governors; l; l = l->next)
+          {
+             if (!strcmp(l->data, inst->cfg->cpuclock.governor))
+               {
+                  _cpuclock_set_governor(inst->cfg->cpuclock.governor);
+                  break;
+               }
+	  }
+     }
 }
 
 Evas_Object *
 sysinfo_cpuclock_create(Evas_Object *parent, Instance *inst)
 {
+   Eina_List *l = NULL;
+
    if (inst->cfg->cpuclock.pstate_min == 0) inst->cfg->cpuclock.pstate_min = 1;
    if (inst->cfg->cpuclock.pstate_max == 0) inst->cfg->cpuclock.pstate_max = 101;
 
@@ -878,6 +1032,9 @@ sysinfo_cpuclock_create(Evas_Object *parent, Instance *inst)
                            "e/gadget/cpuclock/main");
    E_EXPAND(inst->cfg->cpuclock.o_gadget);
    E_FILL(inst->cfg->cpuclock.o_gadget);
+   evas_object_event_callback_add(inst->cfg->cpuclock.o_gadget,
+                                  EVAS_CALLBACK_MOUSE_DOWN,
+                                  _cpuclock_mouse_down_cb, inst);
    edje_object_signal_callback_add(elm_layout_edje_get(inst->cfg->cpuclock.o_gadget), "e,action,governor,next", "*",
                                    _cpuclock_face_cb_set_governor, inst);
    edje_object_signal_callback_add(elm_layout_edje_get(inst->cfg->cpuclock.o_gadget), "e,action,frequency,increase", "*",
@@ -892,6 +1049,17 @@ sysinfo_cpuclock_create(Evas_Object *parent, Instance *inst)
    inst->cfg->cpuclock.handler = ecore_event_handler_add(E_EVENT_POWERSAVE_UPDATE,
                                                _cpuclock_event_cb_powersave, inst);
    _cpuclock_config_updated(inst);
+   if ((inst->cfg->cpuclock.restore_governor) && (inst->cfg->cpuclock.governor))
+     {
+        for (l = inst->cfg->cpuclock.status->governors; l; l = l->next)
+          {
+             if (!strcmp(l->data, inst->cfg->cpuclock.governor))
+               {
+                  _cpuclock_set_governor(inst->cfg->cpuclock.governor);
+                  break;
+               }
+          }
+     }
 
    return inst->cfg->cpuclock.o_gadget;
 }
@@ -923,6 +1091,7 @@ _conf_item_get(int *id)
    ci->cpuclock.governor = NULL;
    ci->cpuclock.pstate_min = 1;
    ci->cpuclock.pstate_max = 101;
+   ci->cpuclock.configure = NULL;
 
    sysinfo_config->items = eina_list_append(sysinfo_config->items, ci);
 
@@ -939,6 +1108,7 @@ cpuclock_create(Evas_Object *parent, int *id, E_Gadget_Site_Orient orient EINA_U
    *id = inst->cfg->id;
    inst->o_main = elm_box_add(parent);
    E_EXPAND(inst->o_main);
+   evas_object_data_set(inst->o_main, "Instance", inst);
    evas_object_smart_callback_add(parent, "gadget_created", _cpuclock_created_cb, inst);
    evas_object_smart_callback_add(parent, "gadget_removed", _cpuclock_removed_cb, inst);
    evas_object_event_callback_add(inst->o_main, EVAS_CALLBACK_DEL, sysinfo_cpuclock_remove, inst);

@@ -173,6 +173,9 @@ struct _Config_Item
    struct
    {
       Evas_Object         *o_gadget;
+      Evas_Object         *popup;
+      Evas_Object         *popup_label;
+      Evas_Object         *configure;
       int                  poll_interval;
       int                  restore_governor;
       int                  auto_powersave;
