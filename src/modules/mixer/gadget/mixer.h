@@ -10,8 +10,7 @@ EINTERN void *e_modapi_gadget_init(E_Module *m);
 EINTERN int   e_modapi_gadget_shutdown(E_Module *m);
 EINTERN int   e_modapi_gadget_save(E_Module *m);
 
-extern int _e_gemix_log_domain;
-extern E_Module *gm;
+EINTERN extern int _e_gemix_log_domain;
 
 #undef GDBG
 #undef GINF

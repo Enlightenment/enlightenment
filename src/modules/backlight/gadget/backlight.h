@@ -11,6 +11,4 @@ EINTERN Evas_Object *backlight_gadget_create(Evas_Object *parent, int *id EINA_U
 EINTERN void backlight_init(void);
 EINTERN void backlight_shutdown(void);
 
-extern E_Module *gm;
-
 #endif

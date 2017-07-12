@@ -13,7 +13,7 @@ typedef struct _Xkbg
 void             _xkbg_update_icon(int);
 E_Config_Dialog *_xkbg_cfg_dialog(Evas_Object *, const char *params);
 
-extern Xkbg _xkbg;
+EINTERN extern Xkbg _xkbg;
 
 EINTERN void *e_modapi_gadget_init(E_Module *m);
 EINTERN int e_modapi_gadget_shutdown(E_Module *m EINA_UNUSED);

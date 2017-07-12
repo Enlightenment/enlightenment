@@ -8,8 +8,8 @@
 # include <sys/sensors.h>
 #endif
 
-extern Eina_List *batman_device_batteries;
-extern Eina_List *batman_device_ac_adapters;
+EINTERN extern Eina_List *batman_device_batteries;
+EINTERN extern Eina_List *batman_device_ac_adapters;
 
 #if defined(__OpenBSD__) || defined(__NetBSD__) || defined(__FreeBSD__) || defined(__DragonFly__)
 static Eina_Bool _batman_sysctl_battery_update_poll(void *data);

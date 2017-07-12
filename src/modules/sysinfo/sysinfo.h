@@ -289,7 +289,7 @@ EINTERN void sysinfo_cpumonitor_remove(void *data, Evas *e EINA_UNUSED, Evas_Obj
 EINTERN void sysinfo_memusage_remove(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_data EINA_UNUSED);
 EINTERN void sysinfo_netstatus_remove(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_data EINA_UNUSED);
 
-extern Config *sysinfo_config;
-extern Eina_List *sysinfo_instances;
+EINTERN extern Config *sysinfo_config;
+EINTERN extern Eina_List *sysinfo_instances;
 
 #endif

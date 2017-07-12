@@ -10,9 +10,9 @@ static Eina_Bool _batman_udev_battery_update_poll(void *data);
 static void _batman_udev_battery_update(const char *syspath, Battery *bat, Instance *inst);
 static void _batman_udev_ac_update(const char *syspath, Ac_Adapter *ac, Instance *inst);
 
-extern Eina_List *batman_device_batteries;
-extern Eina_List *batman_device_ac_adapters;
-extern double batman_init_time;
+EINTERN extern Eina_List *batman_device_batteries;
+EINTERN extern Eina_List *batman_device_ac_adapters;
+EINTERN extern double batman_init_time;
 
 int
 _batman_udev_start(Instance *inst)

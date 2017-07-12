@@ -1,11 +1,8 @@
 #include "backlight.h"
 
-E_Module *gm;
-
 EINTERN void *
 e_modapi_gadget_init(E_Module *m)
 {
-   gm = m;
    backlight_init();
    e_gadget_type_add("Backlight", backlight_gadget_create, NULL);
    return m;

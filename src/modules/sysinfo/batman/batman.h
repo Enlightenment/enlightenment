@@ -90,32 +90,32 @@ struct _Batman_Config
    Evas_Object *power_page;
 };
 
-Eina_List *_batman_battery_find(const char *udi);
-Eina_List *_batman_ac_adapter_find(const char *udi);
-void _batman_update(Instance *inst, int full, int time_left, Eina_Bool have_battery, Eina_Bool have_power);
-void _batman_device_update(Instance *inst);
+EINTERN Eina_List *_batman_battery_find(const char *udi);
+EINTERN Eina_List *_batman_ac_adapter_find(const char *udi);
+EINTERN void _batman_update(Instance *inst, int full, int time_left, Eina_Bool have_battery, Eina_Bool have_power);
+EINTERN void _batman_device_update(Instance *inst);
 /* in batman_fallback.c */
-int _batman_fallback_start(Instance *inst);
-void _batman_fallback_stop(void);
+EINTERN int _batman_fallback_start(Instance *inst);
+EINTERN void _batman_fallback_stop(void);
 /* end batman_fallback.c */
 #ifdef HAVE_EEZE
 /* in batman_udev.c */
-int  _batman_udev_start(Instance *inst);
-void _batman_udev_stop(Instance *inst);
+EINTERN int  _batman_udev_start(Instance *inst);
+EINTERN void _batman_udev_stop(Instance *inst);
 /* end batman_udev.c */
 #elif !defined __OpenBSD__ && !defined __DragonFly__ && !defined __FreeBSD__ && !defined __NetBSD__
 /* in batman_upower.c */
-int _batman_upower_start(Instance *inst);
-void _batman_upower_stop(void);
+EINTERN int _batman_upower_start(Instance *inst);
+EINTERNvoid _batman_upower_stop(void);
 /* end batman_upower.c */
 #else
 /* in batman_sysctl.c */
-int _batman_sysctl_start(Instance *inst);
-void _batman_sysctl_stop(void);
+EINTERN int _batman_sysctl_start(Instance *inst);
+EINTERN void _batman_sysctl_stop(void);
 /* end batman_sysctl.c */
 #endif
 
-Evas_Object *batman_configure(Instance *inst);
-void _batman_config_updated(Instance *inst);
+EINTERN Evas_Object *batman_configure(Instance *inst);
+EINTERN void _batman_config_updated(Instance *inst);
 
 #endif

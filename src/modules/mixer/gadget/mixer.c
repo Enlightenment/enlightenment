@@ -1269,7 +1269,6 @@ mixer_init(void)
 
         gmixer_context->desklock_handler =
            ecore_event_handler_add(E_EVENT_DESKLOCK, _desklock_cb, NULL);
-        gmixer_context->module = gm;
         snprintf(buf, sizeof(buf), "%s/mixer.edj",
                  e_module_dir_get(gmixer_context->module));
         gmixer_context->theme = strdup(buf);

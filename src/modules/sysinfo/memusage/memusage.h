@@ -3,10 +3,10 @@
 
 #include "../sysinfo.h"
 
-void _memusage_config_updated(Instance *inst);
-Evas_Object *memusage_configure(Instance *inst);
+EINTERN void _memusage_config_updated(Instance *inst);
+EINTERN Evas_Object *memusage_configure(Instance *inst);
 
-void _memusage_proc_getusage(unsigned long *mem_total,
+EINTERN void _memusage_proc_getusage(unsigned long *mem_total,
                              unsigned long *mem_used,
                              unsigned long *mem_cached,
                              unsigned long *mem_buffers,
@@ -14,7 +14,7 @@ void _memusage_proc_getusage(unsigned long *mem_total,
                              unsigned long *swp_total,
                              unsigned long *swp_used);
 
-void _memusage_sysctl_getusage(unsigned long *mem_total,
+EINTERN void _memusage_sysctl_getusage(unsigned long *mem_total,
                              unsigned long *mem_used,
                              unsigned long *mem_cached,
                              unsigned long *mem_buffers,

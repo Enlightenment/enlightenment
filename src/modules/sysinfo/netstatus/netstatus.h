@@ -16,10 +16,10 @@ struct _Netstatus_Config
    int send_unit_adjust;
 };
 
-void _netstatus_config_updated(Instance *inst);
-void _netstatus_proc_getrstatus(Instance *inst);
-void _netstatus_proc_gettstatus(Instance *inst);
-void _netstatus_sysctl_getrstatus(Instance *inst);
-void _netstatus_sysctl_gettstatus(Instance *inst);
-Evas_Object *netstatus_configure(Instance *inst);
+EINTERN void _netstatus_config_updated(Instance *inst);
+EINTERN void _netstatus_proc_getrstatus(Instance *inst);
+EINTERN void _netstatus_proc_gettstatus(Instance *inst);
+EINTERN void _netstatus_sysctl_getrstatus(Instance *inst);
+EINTERN void _netstatus_sysctl_gettstatus(Instance *inst);
+EINTERN Evas_Object *netstatus_configure(Instance *inst);
 #endif

@@ -112,7 +112,7 @@ EINTERN Evas_Object *grid_create(Evas_Object *parent, int *id, E_Gadget_Site_Ori
 EINTERN void         grid_reorder(Instance *inst);
 EINTERN void         grid_recalculate(Instance *inst);
 
-extern Config *luncher_config;
-extern Eina_List *luncher_instances;
+EINTERN extern Config *luncher_config;
+EINTERN extern Eina_List *luncher_instances;
 
 #endif

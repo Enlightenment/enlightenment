@@ -1,7 +1,6 @@
 #include "mixer.h"
 
 int _e_gemix_log_domain;
-E_Module *gm;
 
 EINTERN void *
 e_modapi_gadget_init(E_Module *m)
@@ -11,8 +10,6 @@ e_modapi_gadget_init(E_Module *m)
    _e_gemix_log_domain = eina_log_domain_register("mixer_gadget", EINA_COLOR_RED);
 
    EINA_SAFETY_ON_FALSE_RETURN_VAL(emix_init(), NULL);
-
-   gm = m;
 
    loaded = mixer_init();
    if (!loaded)

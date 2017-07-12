@@ -4,9 +4,9 @@
 #define PATH "/org/freedesktop/UPower"
 #define IFACE "org.freedesktop.UPower"
 
-extern Eina_List *batman_device_batteries;
-extern Eina_List *batman_device_ac_adapters;
-extern double batman_init_time;
+EINTERN extern Eina_List *batman_device_batteries;
+EINTERN extern Eina_List *batman_device_ac_adapters;
+EINTERN extern double batman_init_time;
 
 static Eldbus_Connection *conn;
 static Eldbus_Proxy *upower_proxy;

@@ -32,10 +32,9 @@ EINTERN void           pager_init(void);
 EINTERN void           _pager_cb_config_gadget_updated(void);
 EINTERN void           _pager_cb_config_updated(void);
 
-extern Config          *pager_config;
-extern E_Module        *gmodule;
-extern Evas_Object     *cfg_dialog;
-extern Eina_List       *ginstances, *ghandlers;
+EINTERN extern Config          *pager_config;
+EINTERN extern Evas_Object     *cfg_dialog;
+EINTERN extern Eina_List       *ginstances, *ghandlers;
 /**
  * @addtogroup Optional_Gadgets
  * @{

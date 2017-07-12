@@ -1,7 +1,6 @@
 #include "pager.h"
 static E_Config_DD *conf_edd = NULL;
 Config *pager_config;
-E_Module *gmodule;
 Evas_Object *cfg_dialog;
 Eina_List *ginstances, *ghandlers;
 
@@ -59,8 +58,6 @@ e_modapi_gadget_init(E_Module *m)
    E_CONFIG_LIMIT(pager_config->btn_drag, 0, 32);
    E_CONFIG_LIMIT(pager_config->btn_noplace, 0, 32);
    E_CONFIG_LIMIT(pager_config->btn_desk, 0, 32);
-
-   gmodule = m;
 
    pager_init();
 
