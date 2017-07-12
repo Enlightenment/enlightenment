@@ -114,6 +114,5 @@ EINTERN void         grid_recalculate(Instance *inst);
 
 extern Config *luncher_config;
 extern Eina_List *luncher_instances;
-extern E_Module *module;
 
 #endif

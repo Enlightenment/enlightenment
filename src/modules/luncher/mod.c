@@ -5,7 +5,6 @@
 static E_Config_DD *conf_edd = NULL;
 static E_Config_DD *conf_item_edd = NULL;
 Eina_List *luncher_instances = NULL;
-E_Module *module = NULL;
 Config *luncher_config = NULL;
 
 EINTERN void
@@ -91,7 +90,7 @@ e_modapi_init(E_Module *m)
 {
    luncher_init();
 
-   module = m;
+   luncher_config->module = m;
    return m;
 }
 
