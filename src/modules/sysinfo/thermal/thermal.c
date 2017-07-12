@@ -290,7 +290,6 @@ _thermal_resize_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED
    Instance *inst = data;
 
    edje_object_parts_extends_calc(elm_layout_edje_get(inst->cfg->thermal.o_gadget), 0, 0, &w, &h);
-   printf("%d x %d\n", w, h);
    if (w < 1) w = 1;
    if (h < 1) h = 1;
    if (inst->cfg->esm == E_SYSINFO_MODULE_THERMAL)
