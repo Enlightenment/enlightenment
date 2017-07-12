@@ -89,12 +89,10 @@ _cpuclock_set_governor(const char *governor)
 
    snprintf(exe, 4096, "%s/%s/cpuclock_sysfs",
             e_module_dir_get(sysinfo_config->module), MODULE_ARCH);
-   printf("%s\n", exe);
    if (stat(exe, &st) < 0) return;
 
    snprintf(buf, sizeof(buf),
             "%s %s %s", exe, "governor", governor);
-   printf("%s\n", buf);
    system(buf);
 }
 
