@@ -358,6 +358,7 @@ e_desklock_show(Eina_Bool suspend)
    e_util_env_set("E_DESKLOCK_LOCKED", "locked");
    _e_desklock_state = EINA_TRUE;
    e_bindings_disabled_set(1);
+   e_screensaver_update();
    return 1;
 lang_fail:
    if (e_config->desklock_language)
@@ -420,6 +421,8 @@ e_desklock_hide(void)
    ev->on = 0;
    ev->suspend = 1;
    ecore_event_add(E_EVENT_DESKLOCK, ev, NULL, NULL);
+
+   e_screensaver_update();
 
    if (e_desklock_is_external())
      {

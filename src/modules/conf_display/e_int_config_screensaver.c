@@ -21,6 +21,7 @@ struct _E_Config_Dialog_Data
 
    int enable_screensaver;
    double timeout;
+   double desklock_timeout;
    int ask_presentation;
    double ask_presentation_timeout;
    
@@ -66,6 +67,7 @@ _fill_data(E_Config_Dialog_Data *cfdata)
 {
    cfdata->enable_screensaver = e_config->screensaver_enable;
    cfdata->timeout = (double)e_config->screensaver_timeout / 60.0;
+   cfdata->desklock_timeout = (double)e_config->screensaver_desklock_timeout;
    cfdata->ask_presentation = e_config->screensaver_ask_presentation;
    cfdata->ask_presentation_timeout = e_config->screensaver_ask_presentation_timeout;
    cfdata->screensaver_suspend = e_config->screensaver_suspend;
@@ -99,6 +101,7 @@ _basic_apply(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfdata)
 {
    e_config->screensaver_enable = cfdata->enable_screensaver;
    e_config->screensaver_timeout = lround(cfdata->timeout * 60.0);
+   e_config->screensaver_desklock_timeout = lround(cfdata->desklock_timeout);
    e_config->screensaver_ask_presentation = cfdata->ask_presentation;
    e_config->screensaver_ask_presentation_timeout = cfdata->ask_presentation_timeout;
    e_config->screensaver_suspend = cfdata->screensaver_suspend;
@@ -144,6 +147,7 @@ _basic_check_changed(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfd
 {
    return ((e_config->screensaver_enable != cfdata->enable_screensaver) ||
 	   (e_config->screensaver_timeout != lround(cfdata->timeout * 60.0)) ||
+	   (e_config->screensaver_desklock_timeout != lround(cfdata->desklock_timeout)) ||
 	   (e_config->screensaver_ask_presentation != cfdata->ask_presentation) ||
 	   (!EINA_DBL_EQ(e_config->screensaver_ask_presentation_timeout, cfdata->ask_presentation_timeout)) ||
 	   (e_config->screensaver_suspend != cfdata->screensaver_suspend) ||
@@ -172,8 +176,16 @@ _basic_create(E_Config_Dialog *cfd EINA_UNUSED, Evas *evas, E_Config_Dialog_Data
    ow = e_widget_label_add(evas, _("Timeout"));
    e_widget_check_widget_disable_on_unchecked_add(oc, ow);
    e_widget_list_object_append(ol, ow, 1, 1, 0.5);
-   ow = e_widget_slider_add(evas, 1, 0, _("%1.0f minutes"),
-			    0.5, 90.0, 1.0, 0, &(cfdata->timeout), NULL, 100);
+   ow = e_widget_slider_add(evas, 1, 0, _("%1.1f minutes"),
+			    0.1, 60.0, 0.1, 0, &(cfdata->timeout), NULL, 100);
+   e_widget_check_widget_disable_on_unchecked_add(oc, ow);
+   e_widget_list_object_append(ol, ow, 1, 1, 0.5);
+   
+   ow = e_widget_label_add(evas, _("Special timeout when locked (0 is off)"));
+   e_widget_check_widget_disable_on_unchecked_add(oc, ow);
+   e_widget_list_object_append(ol, ow, 1, 1, 0.5);
+   ow = e_widget_slider_add(evas, 1, 0, _("%1.0f seconds"),
+			    0.0, 60.0, 1.0, 0, &(cfdata->desklock_timeout), NULL, 100);
    e_widget_check_widget_disable_on_unchecked_add(oc, ow);
    e_widget_list_object_append(ol, ow, 1, 1, 0.5);
    

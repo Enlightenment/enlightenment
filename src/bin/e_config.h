@@ -221,6 +221,7 @@ struct _E_Config
    int                       screensaver_expose; // GUI
    unsigned char             screensaver_ask_presentation; // GUI
    double                    screensaver_ask_presentation_timeout; // GUI
+   int                       screensaver_desklock_timeout; // GUI
 
    int                       screensaver_wake_on_notify; // GUI
    int                       screensaver_wake_on_urgent; // GUI

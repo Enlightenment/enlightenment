@@ -813,7 +813,10 @@ main(int argc, char **argv)
    _e_main_shutdown_push(e_desklock_shutdown);
 
    if (waslocked || (locked && ((!after_restart) || (!getenv("E_DESKLOCK_UNLOCKED")))))
-     e_desklock_show(EINA_TRUE);
+     {
+        e_desklock_show(EINA_TRUE);
+        e_screensaver_update();
+     }
 
    if (e_config->show_splash)
      e_init_status_set(_("Setup Paths"));

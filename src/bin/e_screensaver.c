@@ -52,7 +52,13 @@ e_screensaver_timeout_get(Eina_Bool use_idle)
    int timeout = 0, count = (1 + _e_screensaver_ask_presentation_count);
 
    if ((e_config->screensaver_enable) && (!e_config->mode.presentation))
-     timeout = e_config->screensaver_timeout * count;
+     {
+        if ((e_desklock_state_get()) &&
+            (e_config->screensaver_desklock_timeout > 0))
+          timeout = e_config->screensaver_desklock_timeout;
+        else
+          timeout = e_config->screensaver_timeout * count;
+     }
 
    if ((use_idle) && (!e_config->mode.presentation))
      {
@@ -565,7 +571,10 @@ e_screensaver_eval(Eina_Bool saver_on)
    if (!_screensaver_ignore)
      {
         if (e_screensaver_on_get())
-          ecore_event_add(E_EVENT_SCREENSAVER_OFF, NULL, NULL, NULL);
+          {
+             e_screensaver_update();
+             ecore_event_add(E_EVENT_SCREENSAVER_OFF, NULL, NULL, NULL);
+          }
      }
 }
 
