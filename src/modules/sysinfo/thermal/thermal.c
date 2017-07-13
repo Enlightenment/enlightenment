@@ -102,7 +102,7 @@ _thermal_check_sysctl(void *data, Ecore_Thread *th)
           usleep((1000000.0 / 800.0) * (double)tth->poll_interval);
         else
           usleep((1000000.0 / 8.0) * (double)tth->poll_interval);
-        if (ecore_thread_check(th)) break;
+	if (ecore_thread_check(th)) break;
      }
 }
 #endif
@@ -119,8 +119,12 @@ _thermal_check_fallback(void *data, Ecore_Thread *th)
         temp = thermal_fallback_get(tth);
         if (ptemp != temp) ecore_thread_feedback(th, (void *)((long)temp));
         ptemp = temp;
-        usleep((1000000.0 / 8.0) * (double)tth->poll_interval);
-        if (ecore_thread_check(th)) break;
+        e_powersave_sleeper_sleep(tth->sleeper, tth->poll_interval);
+        if (e_powersave_mode_get() == E_POWERSAVE_MODE_FREEZE)
+          usleep((1000000.0 / 800.0) * (double)tth->poll_interval);
+        else
+          usleep((1000000.0 / 8.0) * (double)tth->poll_interval);
+	if (ecore_thread_check(th)) break;
      }
 }
 #endif
@@ -233,6 +237,29 @@ _thermal_mouse_down_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UN
           e_gadget_configure(inst->o_main);
      }
 }
+static Eina_Bool
+_screensaver_on(void *data)
+{
+   Instance *inst = data;
+
+   if (inst->cfg->thermal.th)
+     {
+        ecore_thread_cancel(inst->cfg->thermal.th);
+        inst->cfg->thermal.th = NULL;
+     }
+   return ECORE_CALLBACK_RENEW;
+}
+
+static Eina_Bool
+_screensaver_off(void *data)
+{
+   Instance *inst = data;
+
+   _thermal_config_updated(inst);
+
+   return ECORE_CALLBACK_RENEW;
+}
+
 
 void
 _thermal_config_updated(Instance *inst)
@@ -302,6 +329,7 @@ static void
 _thermal_removed_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_data)
 {
    Instance *inst = data;
+   Ecore_Event_Handler *handler;
 
    if (inst->o_main != event_data) return;
 
@@ -311,6 +339,8 @@ _thermal_removed_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_data)
      E_FREE_FUNC(inst->cfg->thermal.popup, evas_object_del);
    if (inst->cfg->thermal.configure)
      E_FREE_FUNC(inst->cfg->thermal.configure, evas_object_del);
+   EINA_LIST_FREE(inst->cfg->thermal.handlers, handler)
+     ecore_event_handler_del(handler);
    _thermal_face_shutdown(inst);
 
    evas_object_event_callback_del_full(inst->o_main, EVAS_CALLBACK_DEL, sysinfo_thermal_remove, data);
@@ -323,6 +353,7 @@ void
 sysinfo_thermal_remove(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_data EINA_UNUSED)
 {
    Instance *inst = data;
+   Ecore_Event_Handler *handler;
 
    if (inst->cfg->thermal.popup_label)
      E_FREE_FUNC(inst->cfg->thermal.popup_label, evas_object_del);
@@ -330,6 +361,8 @@ sysinfo_thermal_remove(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UN
      E_FREE_FUNC(inst->cfg->thermal.popup, evas_object_del);
    if (inst->cfg->thermal.configure)
      E_FREE_FUNC(inst->cfg->thermal.configure, evas_object_del);
+   EINA_LIST_FREE(inst->cfg->thermal.handlers, handler)
+     ecore_event_handler_del(handler);
    _thermal_face_shutdown(inst);
 }
 
@@ -361,6 +394,10 @@ _thermal_created_cb(void *data, Evas_Object *obj, void *event_data EINA_UNUSED)
    evas_object_event_callback_add(inst->cfg->thermal.o_gadget, EVAS_CALLBACK_RESIZE, _thermal_resize_cb, inst);
    evas_object_show(inst->cfg->thermal.o_gadget);
    evas_object_smart_callback_del_full(obj, "gadget_created", _thermal_created_cb, data);
+
+   E_LIST_HANDLER_APPEND(inst->cfg->thermal.handlers, E_EVENT_SCREENSAVER_ON, _screensaver_on, inst);
+   E_LIST_HANDLER_APPEND(inst->cfg->thermal.handlers, E_EVENT_SCREENSAVER_OFF, _screensaver_off, inst);
+
    _thermal_config_updated(inst);
 }
 
@@ -380,6 +417,10 @@ sysinfo_thermal_create(Evas_Object *parent, Instance *inst)
                                   _thermal_mouse_down_cb, inst);
    evas_object_event_callback_add(inst->cfg->thermal.o_gadget, EVAS_CALLBACK_RESIZE, _thermal_resize_cb, inst);
    evas_object_show(inst->cfg->thermal.o_gadget);
+
+   E_LIST_HANDLER_APPEND(inst->cfg->thermal.handlers, E_EVENT_SCREENSAVER_ON, _screensaver_on, inst);
+   E_LIST_HANDLER_APPEND(inst->cfg->thermal.handlers, E_EVENT_SCREENSAVER_OFF, _screensaver_off, inst);
+
    _thermal_config_updated(inst);
 
    return inst->cfg->thermal.o_gadget;

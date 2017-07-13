@@ -15,6 +15,7 @@ struct _Thread_Config
    unsigned long mem_shared;
    unsigned long swp_total;
    unsigned long swp_used;
+   E_Powersave_Sleeper *sleeper;
 };
 
 static void
@@ -293,8 +294,20 @@ _memusage_cb_usage_check_main(void *data, Ecore_Thread *th)
 
         ecore_thread_feedback(th, NULL);
         if (ecore_thread_check(th)) break;
-        usleep((1000000.0 / 8.0) * (double)thc->interval);
+        e_powersave_sleeper_sleep(thc->sleeper, thc->interval);
+        if (e_powersave_mode_get() == E_POWERSAVE_MODE_FREEZE)
+          usleep((1000000.0 / 800.0) * (double)thc->interval);
+        else
+          usleep((1000000.0 / 8.0) * (double)thc->interval);
+        if (ecore_thread_check(th)) break;
      }
+}
+
+static void
+_memusage_cb_usage_check_end(void *data, Ecore_Thread *th EINA_UNUSED)
+{
+   Thread_Config *thc = data;
+   e_powersave_sleeper_free(thc->sleeper);
    E_FREE_FUNC(thc, free);
 }
 
@@ -322,6 +335,29 @@ _memusage_cb_usage_check_notify(void *data,
    _memusage_face_update(inst);
 }
 
+static Eina_Bool
+_screensaver_on(void *data)
+{
+   Instance *inst = data;
+
+   if (inst->cfg->memusage.usage_check_thread)
+     {
+        ecore_thread_cancel(inst->cfg->memusage.usage_check_thread);
+        inst->cfg->memusage.usage_check_thread = NULL;
+     }
+   return ECORE_CALLBACK_RENEW;
+}
+
+static Eina_Bool
+_screensaver_off(void *data)
+{
+   Instance *inst = data;
+
+   _memusage_config_updated(inst);
+
+   return ECORE_CALLBACK_RENEW;
+}
+
 void
 _memusage_config_updated(Instance *inst)
 {
@@ -336,13 +372,15 @@ _memusage_config_updated(Instance *inst)
    if (thc)
      {
         thc->inst = inst;
+        thc->sleeper = e_powersave_sleeper_new();
         thc->interval = inst->cfg->memusage.poll_interval;
         thc->mem_percent = 0;
         thc->swp_percent = 0;
         inst->cfg->memusage.usage_check_thread =
           ecore_thread_feedback_run(_memusage_cb_usage_check_main,
                                     _memusage_cb_usage_check_notify,
-                                    NULL, NULL, thc, EINA_TRUE);
+                                    _memusage_cb_usage_check_end,
+                                    _memusage_cb_usage_check_end, thc, EINA_TRUE);
      }
    e_config_save_queue();
 }
@@ -351,6 +389,7 @@ static void
 _memusage_removed_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_data)
 {
    Instance *inst = data;
+   Ecore_Event_Handler *handler;
 
    if (inst->o_main != event_data) return;
 
@@ -363,6 +402,8 @@ _memusage_removed_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_data)
         ecore_thread_cancel(inst->cfg->memusage.usage_check_thread);
         inst->cfg->memusage.usage_check_thread = NULL;
      }
+   EINA_LIST_FREE(inst->cfg->memusage.handlers, handler)
+     ecore_event_handler_del(handler);
    evas_object_event_callback_del_full(inst->o_main, EVAS_CALLBACK_DEL,
                                        sysinfo_memusage_remove, data);
 
@@ -374,6 +415,7 @@ void
 sysinfo_memusage_remove(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_data EINA_UNUSED)
 {
    Instance *inst = data;
+   Ecore_Event_Handler *handler;
 
    if (inst->cfg->memusage.popup)
      E_FREE_FUNC(inst->cfg->memusage.popup, evas_object_del);
@@ -384,6 +426,8 @@ sysinfo_memusage_remove(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_U
         ecore_thread_cancel(inst->cfg->memusage.usage_check_thread);
         inst->cfg->memusage.usage_check_thread = NULL;
      }
+   EINA_LIST_FREE(inst->cfg->memusage.handlers, handler)
+     ecore_event_handler_del(handler);
 }
 
 static void
@@ -416,6 +460,10 @@ _memusage_created_cb(void *data, Evas_Object *obj, void *event_data EINA_UNUSED)
    evas_object_show(inst->cfg->memusage.o_gadget);
    evas_object_smart_callback_del_full(obj, "gadget_created",
                                        _memusage_created_cb, data);
+
+   E_LIST_HANDLER_APPEND(inst->cfg->memusage.handlers, E_EVENT_SCREENSAVER_ON, _screensaver_on, inst);
+   E_LIST_HANDLER_APPEND(inst->cfg->memusage.handlers, E_EVENT_SCREENSAVER_OFF, _screensaver_off, inst);
+
    _memusage_config_updated(inst);
 }
 
@@ -435,6 +483,11 @@ sysinfo_memusage_create(Evas_Object *parent, Instance *inst)
                                   EVAS_CALLBACK_RESIZE,
                                   _memusage_resize_cb, inst);
    evas_object_show(inst->cfg->memusage.o_gadget);
+
+
+   E_LIST_HANDLER_APPEND(inst->cfg->memusage.handlers, E_EVENT_SCREENSAVER_ON, _screensaver_on, inst);
+   E_LIST_HANDLER_APPEND(inst->cfg->memusage.handlers, E_EVENT_SCREENSAVER_OFF, _screensaver_off, inst);
+
    _memusage_config_updated(inst);
 
    return inst->cfg->memusage.o_gadget;

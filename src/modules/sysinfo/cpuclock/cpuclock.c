@@ -4,6 +4,8 @@
 #include <sys/sysctl.h>
 #endif
 
+EINTERN void _cpuclock_poll_interval_update(Instance *inst);
+
 typedef struct _Thread_Config Thread_Config;
 struct _Thread_Config
 {
@@ -376,6 +378,7 @@ _cpuclock_config_updated(Instance *inst)
         edje_object_message_send(elm_layout_edje_get(inst->cfg->cpuclock.o_gadget), EDJE_MESSAGE_STRING_SET, 2, governor_msg);
         free(governor_msg);
      }
+   _cpuclock_poll_interval_update(inst);
 }
 
 static void
@@ -820,6 +823,11 @@ _cpuclock_cb_frequency_check_main(void *data, Ecore_Thread *th)
           _cpuclock_status_free(status);
         if (ecore_thread_check(th)) break;
         e_powersave_sleeper_sleep(thc->sleeper, thc->interval);
+        if (e_powersave_mode_get() == E_POWERSAVE_MODE_FREEZE)
+          usleep((1000000.0 / 800.0) * (double)thc->interval);
+        else
+          usleep((1000000.0 / 8.0) * (double)thc->interval);
+        if (ecore_thread_check(th)) break;
      }
 }
 
@@ -875,7 +883,7 @@ _cpuclock_cb_frequency_check_end(void *data, Ecore_Thread *th EINA_UNUSED)
    E_FREE_FUNC(thc, free);
 }
 
-void
+EINTERN void
 _cpuclock_poll_interval_update(Instance *inst)
 {
    Thread_Config *thc;
@@ -900,10 +908,34 @@ _cpuclock_poll_interval_update(Instance *inst)
    e_config_save_queue();
 }
 
+static Eina_Bool
+_screensaver_on(void *data)
+{
+   Instance *inst = data;
+
+   if (inst->cfg->cpuclock.frequency_check_thread)
+     {
+        ecore_thread_cancel(inst->cfg->cpuclock.frequency_check_thread);
+        inst->cfg->cpuclock.frequency_check_thread = NULL;
+     }
+   return ECORE_CALLBACK_RENEW;
+}
+
+static Eina_Bool
+_screensaver_off(void *data)
+{
+   Instance *inst = data;
+
+   _cpuclock_config_updated(inst);
+
+   return ECORE_CALLBACK_RENEW;
+}
+
 static void
 _cpuclock_removed_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_data)
 {
    Instance *inst = data;
+   Ecore_Event_Handler *handler;
 
    if (inst->o_main != event_data) return;
 
@@ -915,9 +947,10 @@ _cpuclock_removed_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_data)
    if (inst->cfg->cpuclock.configure)
      E_FREE_FUNC(inst->cfg->cpuclock.configure, evas_object_del);
 
-    if (inst->cfg->cpuclock.handler)
+   if (inst->cfg->cpuclock.handler)
      ecore_event_handler_del(inst->cfg->cpuclock.handler);
-
+   EINA_LIST_FREE(inst->cfg->cpuclock.handlers, handler)
+     ecore_event_handler_del(handler);
    if (inst->cfg->cpuclock.frequency_check_thread)
      {
         ecore_thread_cancel(inst->cfg->cpuclock.frequency_check_thread);
@@ -938,6 +971,7 @@ void
 sysinfo_cpuclock_remove(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_data EINA_UNUSED)
 {
    Instance *inst = data;
+   Ecore_Event_Handler *handler;
 
    if (inst->cfg->cpuclock.popup_label)
      E_FREE_FUNC(inst->cfg->cpuclock.popup, evas_object_del);
@@ -949,6 +983,8 @@ sysinfo_cpuclock_remove(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_U
 
    if (inst->cfg->cpuclock.handler)
      ecore_event_handler_del(inst->cfg->cpuclock.handler);
+   EINA_LIST_FREE(inst->cfg->cpuclock.handlers, handler)
+     ecore_event_handler_del(handler);
 
    if (inst->cfg->cpuclock.frequency_check_thread)
      {
@@ -996,9 +1032,12 @@ _cpuclock_created_cb(void *data, Evas_Object *obj, void *event_data EINA_UNUSED)
                                   _cpuclock_mouse_down_cb, inst);
    evas_object_show(inst->cfg->cpuclock.o_gadget);
    evas_object_smart_callback_del_full(obj, "gadget_created", _cpuclock_created_cb, data);
+
+   E_LIST_HANDLER_APPEND(inst->cfg->cpuclock.handlers, E_EVENT_SCREENSAVER_ON, _screensaver_on, inst);
+   E_LIST_HANDLER_APPEND(inst->cfg->cpuclock.handlers, E_EVENT_SCREENSAVER_OFF, _screensaver_off, inst);
+
    inst->cfg->cpuclock.status = _cpuclock_status_new();
    _cpuclock_status_check_available(inst->cfg->cpuclock.status);
-   _cpuclock_poll_interval_update(inst);
    inst->cfg->cpuclock.handler = ecore_event_handler_add(E_EVENT_POWERSAVE_UPDATE,
                                                _cpuclock_event_cb_powersave, inst);
    _cpuclock_config_updated(inst);
@@ -1039,9 +1078,12 @@ sysinfo_cpuclock_create(Evas_Object *parent, Instance *inst)
                                    _cpuclock_face_cb_set_frequency, inst);
    evas_object_event_callback_add(inst->cfg->cpuclock.o_gadget, EVAS_CALLBACK_RESIZE, _cpuclock_resize_cb, inst);
    evas_object_show(inst->cfg->cpuclock.o_gadget);
+
+   E_LIST_HANDLER_APPEND(inst->cfg->cpuclock.handlers, E_EVENT_SCREENSAVER_ON, _screensaver_on, inst);
+   E_LIST_HANDLER_APPEND(inst->cfg->cpuclock.handlers, E_EVENT_SCREENSAVER_OFF, _screensaver_off, inst);
+
    inst->cfg->cpuclock.status = _cpuclock_status_new();
    _cpuclock_status_check_available(inst->cfg->cpuclock.status);
-   _cpuclock_poll_interval_update(inst);
    inst->cfg->cpuclock.handler = ecore_event_handler_add(E_EVENT_POWERSAVE_UPDATE,
                                                _cpuclock_event_cb_powersave, inst);
    _cpuclock_config_updated(inst);

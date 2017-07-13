@@ -351,6 +351,34 @@ _batman_device_update(Instance *inst)
    _batman_update(inst, full, time_left, have_battery, have_power);
 }
 
+static Eina_Bool
+_screensaver_on(void *data)
+{
+   Instance *inst = data;
+
+#if defined(HAVE_EEZE)
+   _batman_udev_stop(inst);
+#elif defined(__OpenBSD__) || defined(__DragonFly__) || defined(__FreeBSD__) || defined(__NetBSD__)
+   _batman_sysctl_stop();
+#elif defined(upower)
+   _batman_upower_stop();
+#else
+   _batman_fallback_stop();
+#endif
+
+   return ECORE_CALLBACK_RENEW;
+}
+
+static Eina_Bool
+_screensaver_off(void *data)
+{
+   Instance *inst = data;
+
+   _batman_config_updated(inst);
+
+   return ECORE_CALLBACK_RENEW;
+}
+
 void
 _batman_config_updated(Instance *inst)
 {
@@ -529,6 +557,7 @@ static void
 _batman_removed_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_data)
 {
    Instance *inst = data;
+   Ecore_Event_Handler *handler;
 
    if (inst->o_main != event_data) return;
    if (_handler)
@@ -537,6 +566,8 @@ _batman_removed_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_data)
      E_FREE_FUNC(inst->cfg->batman.popup, evas_object_del);
    if (inst->cfg->batman.configure)
      E_FREE_FUNC(inst->cfg->batman.configure, evas_object_del);
+   EINA_LIST_FREE(inst->cfg->batman.handlers, handler)
+     ecore_event_handler_del(handler);
 #if defined(HAVE_EEZE)
    _batman_udev_stop(inst);
 #elif defined(__OpenBSD__) || defined(__DragonFly__) || defined(__FreeBSD__) || defined(__NetBSD__)
@@ -557,11 +588,14 @@ void
 sysinfo_batman_remove(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_data EINA_UNUSED)
 {
    Instance *inst = data;
+   Ecore_Event_Handler *handler;
 
    if (inst->cfg->batman.popup)
      E_FREE_FUNC(inst->cfg->batman.popup, evas_object_del);
    if (inst->cfg->batman.configure)
      E_FREE_FUNC(inst->cfg->batman.configure, evas_object_del);
+   EINA_LIST_FREE(inst->cfg->batman.handlers, handler)
+     ecore_event_handler_del(handler);
 #ifdef HAVE_EEZE
    _batman_udev_stop(inst);
 #elif defined(__OpenBSD__) || defined(__DragonFly__) || defined(__FreeBSD__) || defined(__NetBSD__)
@@ -608,6 +642,10 @@ _batman_created_cb(void *data, Evas_Object *obj, void *event_data EINA_UNUSED)
                                       _powersave_cb_config_update, inst);
    evas_object_show(inst->cfg->batman.o_gadget);
    evas_object_smart_callback_del_full(obj, "gadget_created", _batman_created_cb, data);
+
+   E_LIST_HANDLER_APPEND(inst->cfg->batman.handlers, E_EVENT_SCREENSAVER_ON, _screensaver_on, inst);
+   E_LIST_HANDLER_APPEND(inst->cfg->batman.handlers, E_EVENT_SCREENSAVER_OFF, _screensaver_off, inst);
+
    _batman_config_updated(inst);
 }
 
@@ -631,6 +669,10 @@ sysinfo_batman_create(Evas_Object *parent, Instance *inst)
    _handler = ecore_event_handler_add(E_EVENT_POWERSAVE_CONFIG_UPDATE,
                                       _powersave_cb_config_update, inst);
    evas_object_show(inst->cfg->batman.o_gadget);
+
+   E_LIST_HANDLER_APPEND(inst->cfg->batman.handlers, E_EVENT_SCREENSAVER_ON, _screensaver_on, inst);
+   E_LIST_HANDLER_APPEND(inst->cfg->batman.handlers, E_EVENT_SCREENSAVER_OFF, _screensaver_off, inst);
+
    _batman_config_updated(inst);
 
    return inst->cfg->batman.o_gadget; 
@@ -691,7 +733,7 @@ batman_create(Evas_Object *parent, int *id, E_Gadget_Site_Orient orient EINA_UNU
    evas_object_smart_callback_add(parent, "gadget_created", _batman_created_cb, inst);
    evas_object_smart_callback_add(parent, "gadget_removed", _batman_removed_cb, inst);
    evas_object_event_callback_add(inst->o_main, EVAS_CALLBACK_DEL, sysinfo_batman_remove, inst);
-   evas_object_show(inst->o_main);
+   evas_object_show(inst->o_main); 
 
    if (inst->cfg->id < 0) return inst->o_main;
 
