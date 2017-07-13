@@ -41,14 +41,6 @@ _backlight_level_set(Instance *inst, double val, Eina_Bool set_slider)
 }
 
 static void
-_backlight_settings_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_data EINA_UNUSED)
-{
-   Instance *inst = data;
-   e_gadget_configure(inst->o_main);
-   elm_ctxpopup_dismiss(inst->popup);
-}
-
-static void
 _slider_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Instance *inst = data;
@@ -74,7 +66,7 @@ _backlight_popup_deleted(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_
 static void
 _backlight_popup_new(Instance *inst)
 {
-   Evas_Object *ic, *o;
+   Evas_Object *o;
 
    if (inst->popup) return;
 
@@ -107,17 +99,6 @@ _backlight_popup_new(Instance *inst)
    elm_box_pack_end(inst->box, o);
    evas_object_show(o);
    inst->o_slider = o;
-
-   ic = elm_icon_add(inst->box);
-   elm_icon_standard_set(ic, "preferences-system");
-   evas_object_size_hint_aspect_set(ic, EVAS_ASPECT_CONTROL_VERTICAL, 1, 1);
-   evas_object_show(ic);
-
-   o = elm_button_add(inst->box);
-   elm_object_part_content_set(o, "icon", ic);
-   evas_object_smart_callback_add(o, "clicked", _backlight_settings_cb, inst);
-   elm_box_pack_end(inst->box, o);
-   evas_object_show(o);
 
    e_gadget_util_ctxpopup_place(inst->o_main, inst->popup, inst->o_backlight);
    evas_object_show(inst->popup);
