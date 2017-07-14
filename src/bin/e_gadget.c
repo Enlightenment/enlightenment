@@ -258,6 +258,17 @@ _gadget_reparent(E_Gadget_Site *zgs, E_Gadget_Config *zgc)
 }
 
 static void
+_desktop_rect_obj_add(Evas_Object *obj)
+{
+   if (!desktop_rect) return;
+   evas_object_smart_member_add(obj, desktop_rect);
+   evas_object_propagate_events_set(obj, 0);
+   if (e_comp->autoclose.obj != obj) return;
+   evas_object_smart_member_add(e_comp->autoclose.rect, desktop_rect);
+   evas_object_propagate_events_set(e_comp->autoclose.rect, 0);
+}
+
+static void
 _gadget_popup_hide(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    if (desktop_editor) evas_object_show(desktop_editor);
@@ -269,11 +280,7 @@ _gadget_popup(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
    E_Gadget_Site *zgs = data;
 
    if (event_info) elm_object_tree_focus_allow_set(event_info, 0);
-   if (desktop_rect && event_info)
-     {
-        evas_object_smart_member_add(event_info, desktop_rect);
-        evas_object_propagate_events_set(event_info, 0);
-     }
+   if (event_info) _desktop_rect_obj_add(event_info);
    evas_object_smart_callback_call(zgs->layout, "gadget_site_popup", event_info);
    if (!event_info) return;
    evas_object_event_callback_add(event_info, EVAS_CALLBACK_HIDE, _gadget_popup_hide, zgs);
@@ -412,16 +419,7 @@ _gadget_object_create(E_Gadget_Config *zgc)
                }
              e_comp_grab_input(1, 1);
              evas_object_event_callback_add(zgc->cfg_object, EVAS_CALLBACK_DEL, _gadget_wizard_del, zgc);
-             if (desktop_rect)
-               {
-                  evas_object_smart_member_add(zgc->cfg_object, desktop_rect);
-                  evas_object_propagate_events_set(zgc->cfg_object, 0);
-                  if (e_comp->autoclose.obj == zgc->cfg_object)
-                    {
-                       evas_object_smart_member_add(e_comp->autoclose.rect, desktop_rect);
-                       evas_object_propagate_events_set(e_comp->autoclose.rect, 0);
-                    }
-               }
+             _desktop_rect_obj_add(zgc->cfg_object);
              evas_object_smart_callback_call(zgc->site->layout, "gadget_site_popup", zgc->cfg_object);
              evas_object_smart_callback_call(zgc->site->layout, "gadget_site_locked", NULL);
              return EINA_TRUE;
@@ -461,6 +459,7 @@ _gadget_object_create(E_Gadget_Config *zgc)
 
    evas_object_smart_callback_call(zgc->site->layout, "gadget_created", g);
    evas_object_show(zgc->display);
+   if (zgc->site->editor) _desktop_rect_obj_add(zgc->display);
    return EINA_TRUE;
 }
 
@@ -1056,11 +1055,7 @@ _gadget_act_menu(E_Object *obj, const char *params EINA_UNUSED, E_Binding_Event_
                          e_zone_current_get(),
                          x, y, 1, 1,
                          E_MENU_POP_DIRECTION_AUTO, ev->timestamp);
-   if (desktop_rect)
-     {
-        evas_object_smart_member_add(zgc->menu->comp_object, desktop_rect);
-        evas_object_propagate_events_set(zgc->menu->comp_object, 0);
-     }
+   _desktop_rect_obj_add(zgc->menu->comp_object);
    evas_object_smart_callback_call(zgc->site->layout, "gadget_site_popup", zgc->menu->comp_object);
    return EINA_TRUE;
 }
@@ -1844,11 +1839,7 @@ e_gadget_util_ctxpopup_place(Evas_Object *g, Evas_Object *ctx, Evas_Object *pos_
         evas_object_event_callback_add(content, EVAS_CALLBACK_MOVE, _gadget_util_ctxpopup_moveresize, NULL);
         evas_object_event_callback_add(content, EVAS_CALLBACK_RESIZE, _gadget_util_ctxpopup_moveresize, NULL);
      }
-   if (desktop_rect)
-     {
-        evas_object_smart_member_add(ctx, desktop_rect);
-        evas_object_propagate_events_set(ctx, 0);
-     }
+   _desktop_rect_obj_add(ctx);
    evas_object_smart_callback_call(zgc->site->layout, "gadget_site_popup", ctx);
    if (evas_object_visible_get(ctx))
      e_comp_shape_queue();
@@ -2381,6 +2372,14 @@ e_gadget_editor_add(Evas_Object *parent, Evas_Object *site)
    evas_object_data_set(list, "__gadget_site", site);
    /* FIXME: embedded editors? */
    zgs->editor = list;
+   if (desktop_rect)
+     {
+        Eina_List *l;
+        E_Gadget_Config *zgc;
+
+        EINA_LIST_FOREACH(zgs->gadgets, l, zgc)
+          _desktop_rect_obj_add(zgc->display);
+     }
    added = 0;
    return list;
 }
@@ -2604,15 +2603,13 @@ e_gadget_site_desktop_edit(Evas_Object *site)
    evas_object_layer_set(desktop_rect, E_LAYER_MAX - 100);
    evas_object_show(desktop_rect);
 
-   evas_object_propagate_events_set(site, 0);
-   evas_object_smart_member_add(site, desktop_rect);
+   _desktop_rect_obj_add(site);
 
    E_LIST_HANDLER_APPEND(desktop_handlers, ECORE_EVENT_KEY_DOWN, _gadget_desktop_key_handler, zgs);
    evas_object_event_callback_add(desktop_rect, EVAS_CALLBACK_MOUSE_UP, _gadget_desktop_mouse_up_handler, NULL);
 
    desktop_editor = e_gadget_site_edit(site);
-   evas_object_propagate_events_set(desktop_editor, 0);
-   evas_object_smart_member_add(desktop_editor, desktop_rect);
+   _desktop_rect_obj_add(desktop_editor);
    evas_object_smart_callback_add(site, "gadget_moved", _gadget_moved, NULL);
    evas_object_show(desktop_editor);
 
