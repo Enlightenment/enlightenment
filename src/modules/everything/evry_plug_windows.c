@@ -188,94 +188,9 @@ _icon_get(Evry_Item *it, Evas *e)
 {
    GET_BORDER(bi, it);
 
-   Evas_Object *o = NULL;
    E_Client *ec = bi->client;
 
-   if (ec->internal)
-     {
-        if (!ec->internal_icon)
-          {
-             o = e_icon_add(e);
-             e_util_icon_theme_set(o, "enlightenment");
-          }
-        else if (!ec->internal_icon_key)
-          {
-             char *ext;
-             ext = strrchr(ec->internal_icon, '.');
-             if ((ext) && ((!strcmp(ext, ".edj"))))
-               {
-                  o = edje_object_add(e);
-                  if (!edje_object_file_set(o, ec->internal_icon, "icon"))
-                    e_util_icon_theme_set(o, "enlightenment");
-               }
-             else if (ext)
-               {
-                  o = e_icon_add(e);
-                  e_icon_file_set(o, ec->internal_icon);
-               }
-             else
-               {
-                  o = e_icon_add(e);
-                  e_icon_scale_size_set(o, 128);
-                  if (!e_util_icon_theme_set(o, ec->internal_icon))
-                    e_util_icon_theme_set(o, "enlightenment");
-               }
-          }
-        else
-          {
-             o = edje_object_add(e);
-             edje_object_file_set(o, ec->internal_icon, ec->internal_icon_key);
-          }
-
-        return o;
-     }
-
-   if (ec->netwm.icons)
-     {
-        if (e_config->use_app_icon)
-          goto _use_netwm_icon;
-
-        if (ec->remember && (ec->remember->prop.icon_preference == E_ICON_PREF_NETWM))
-          goto _use_netwm_icon;
-     }
-
-   if (ec->desktop)
-     {
-        o = e_util_desktop_icon_add(ec->desktop, 128, e);
-        if (o) return o;
-     }
-
-_use_netwm_icon:
-   if (ec->netwm.icons)
-     {
-        int i, size, tmp, found = 0;
-        o = e_icon_add(e);
-
-        size = ec->netwm.icons[0].width;
-
-        for (i = 1; i < ec->netwm.num_icons; i++)
-          {
-             if ((tmp = ec->netwm.icons[i].width) > size)
-               {
-                  size = tmp;
-                  found = i;
-               }
-          }
-
-        e_icon_data_set(o, ec->netwm.icons[found].data,
-                        ec->netwm.icons[found].width,
-                        ec->netwm.icons[found].height);
-        e_icon_alpha_set(o, 1);
-        return o;
-     }
-
-   o = e_client_icon_add(ec, e);
-   if (o) return o;
-
-   o = edje_object_add(e);
-   e_util_icon_theme_set(o, "unknown");
-
-   return o;
+   return e_client_icon_add(ec, e);
 }
 
 /***************************************************************************/

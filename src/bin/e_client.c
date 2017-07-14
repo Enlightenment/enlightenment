@@ -3169,7 +3169,11 @@ e_client_mouse_move(E_Client *ec, Evas_Point *output)
                  (e_config->drag_resist * e_config->drag_resist))
                {
                   /* start drag! */
-                  if (ec->netwm.icons || ec->desktop || ec->internal_icon)
+                  if (
+#ifndef HAVE_WAYLAND_ONLY
+                    ec->netwm.icons ||
+#endif
+                    ec->desktop || ec->internal_icon)
                     {
                        Evas_Object *o = NULL;
                        int x, y, w, h;
@@ -5087,6 +5091,7 @@ e_client_icon_add(E_Client *ec, Evas *evas)
           }
         return o;
      }
+#ifndef HAVE_WAYLAND_ONLY
    if ((e_config->use_app_icon) && (ec->icon_preference != E_ICON_PREF_USER))
      {
         if (ec->netwm.icons)
@@ -5099,6 +5104,7 @@ e_client_icon_add(E_Client *ec, Evas *evas)
              return o;
           }
      }
+#endif
    if (!o)
      {
         if ((ec->desktop) && (ec->icon_preference != E_ICON_PREF_NETWM))
@@ -5110,6 +5116,7 @@ e_client_icon_add(E_Client *ec, Evas *evas)
                   return o;
                }
           }
+#ifndef HAVE_WAYLAND_ONLY
         else if (ec->netwm.icons)
           {
              o = e_icon_add(evas);
@@ -5119,6 +5126,7 @@ e_client_icon_add(E_Client *ec, Evas *evas)
              e_icon_alpha_set(o, 1);
              return o;
           }
+#endif
      }
 
    o = e_icon_add(evas);

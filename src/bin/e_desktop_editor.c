@@ -165,6 +165,7 @@ e_desktop_client_create(E_Client *ec)
 
 // disable this
 //   if (ec->netwm.startup_id > 0) desktop->startup_notify = 1;
+#ifndef HAVE_WAYLAND_ONLY
    if (ec->netwm.icons)
      {
         /* FIXME
@@ -180,6 +181,7 @@ e_desktop_client_create(E_Client *ec)
         else
           fprintf(stderr, "Could not save file from ARGB: %s\n", path);
      }
+#endif
    return desktop;
 }
 

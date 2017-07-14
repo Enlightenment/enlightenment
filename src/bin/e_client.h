@@ -411,9 +411,9 @@ struct E_Client
       unsigned int  desktop;
       Eina_Stringshare *name;
       Eina_Stringshare *icon_name;
-
+#ifndef HAVE_WAYLAND_ONLY
       Ecore_X_Icon *icons;
-
+#endif
       int           num_icons;
       unsigned int  user_time;
       unsigned char opacity;
@@ -527,7 +527,9 @@ struct E_Client
             unsigned char     wait_for_done : 1;
             unsigned char     use : 1;
          } profile;
+#ifndef HAVE_WAYLAND_ONLY
          Ecore_X_Stack_Type stack;
+#endif
          unsigned char      centered : 1;
          unsigned char      video : 1;
       } state;

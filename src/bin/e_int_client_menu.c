@@ -47,10 +47,11 @@ static void _e_client_menu_cb_ibar_add_pre(void *data, E_Menu *m, E_Menu_Item *m
 static void _e_client_menu_cb_ibar_add(void *data, E_Menu *m, E_Menu_Item *mi);
 static void _e_client_menu_cb_border_pre(void *data, E_Menu *m, E_Menu_Item *mi);
 static void _e_client_menu_cb_iconpref_e(void *data, E_Menu *m, E_Menu_Item *mi);
+#ifndef HAVE_WAYLAND_ONLY
 static void _e_client_menu_cb_iconpref_netwm(void *data, E_Menu *m, E_Menu_Item *mi);
+#endif
 static void _e_client_menu_cb_iconpref_user(void *data, E_Menu *m, E_Menu_Item *mi);
 static void _e_client_menu_cb_default_icon(void *data, E_Menu *m, E_Menu_Item *mi);
-static void _e_client_menu_cb_netwm_icon(void *data, E_Menu *m, E_Menu_Item *mi);
 
 static Eina_List *menu_hooks = NULL;
 
@@ -1479,7 +1480,7 @@ _e_client_menu_cb_default_icon(void *data, E_Menu *m, E_Menu_Item *mi)
    ec->icon_preference = prev_icon_pref;
    mi->icon_object = o;
 }
-
+#ifndef HAVE_WAYLAND_ONLY
 static void
 _e_client_menu_cb_netwm_icon(void *data, E_Menu *m, E_Menu_Item *mi)
 {
@@ -1499,7 +1500,7 @@ _e_client_menu_cb_netwm_icon(void *data, E_Menu *m, E_Menu_Item *mi)
         mi->icon_object = o;
      }
 }
-
+#endif
 static void
 _e_client_menu_cb_border_pre(void *data, E_Menu *m EINA_UNUSED, E_Menu_Item *mi)
 {
@@ -1535,7 +1536,7 @@ _e_client_menu_cb_border_pre(void *data, E_Menu *m EINA_UNUSED, E_Menu_Item *mi)
    e_menu_item_toggle_set(submi, (ec->icon_preference == E_ICON_PREF_E_DEFAULT ? 1 : 0));
    e_menu_item_realize_callback_set(submi, _e_client_menu_cb_default_icon, ec);
    e_menu_item_callback_set(submi, _e_client_menu_cb_iconpref_e, ec);
-
+#ifndef HAVE_WAYLAND_ONLY
    submi = e_menu_item_new(subm);
    e_menu_item_label_set(submi, _("Use Application Provided Icon"));
    e_menu_item_radio_set(submi, 1);
@@ -1543,7 +1544,7 @@ _e_client_menu_cb_border_pre(void *data, E_Menu *m EINA_UNUSED, E_Menu_Item *mi)
    e_menu_item_toggle_set(submi, (ec->icon_preference == E_ICON_PREF_NETWM ? 1 : 0));
    e_menu_item_realize_callback_set(submi, _e_client_menu_cb_netwm_icon, ec);
    e_menu_item_callback_set(submi, _e_client_menu_cb_iconpref_netwm, ec);
-
+#endif
    submi = e_menu_item_new(subm);
    e_menu_item_label_set(submi, _("Use User Defined Icon"));
    e_menu_item_radio_set(submi, 1);
@@ -1587,7 +1588,7 @@ _e_client_menu_cb_iconpref_user(void *data, E_Menu *m EINA_UNUSED, E_Menu_Item *
    ec->changes.icon = 1;
    ec->changed = 1;
 }
-
+#ifndef HAVE_WAYLAND_ONLY
 static void
 _e_client_menu_cb_iconpref_netwm(void *data, E_Menu *m EINA_UNUSED, E_Menu_Item *mi EINA_UNUSED)
 {
@@ -1599,7 +1600,7 @@ _e_client_menu_cb_iconpref_netwm(void *data, E_Menu *m EINA_UNUSED, E_Menu_Item 
    ec->changes.icon = 1;
    ec->changed = 1;
 }
-
+#endif
 static void
 _e_client_menu_cb_skip_pre(void *data, E_Menu *m EINA_UNUSED, E_Menu_Item *mi)
 {
