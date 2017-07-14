@@ -1,4 +1,4 @@
-EXTRA_DIST += src/modules/winlist/module.desktop.in \
+EXTRA_DIST += src/modules/winlist/module.desktop \
 src/modules/winlist/e-module-winlist.edj
 if USE_MODULE_WINLIST
 winlistdir = $(MDIR)/winlist

@@ -1,4 +1,4 @@
-EXTRA_DIST += src/modules/conf_randr/module.desktop.in \
+EXTRA_DIST += src/modules/conf_randr/module.desktop \
 src/modules/conf_randr/e-module-conf_randr.edj
 if USE_MODULE_CONF_RANDR
 conf_randrdir = $(MDIR)/conf_randr

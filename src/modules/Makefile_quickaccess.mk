@@ -1,4 +1,4 @@
-EXTRA_DIST += src/modules/quickaccess/module.desktop.in \
+EXTRA_DIST += src/modules/quickaccess/module.desktop \
 src/modules/quickaccess/e-module-quickaccess.edj
 if USE_MODULE_QUICKACCESS
 quickaccessdir = $(MDIR)/quickaccess

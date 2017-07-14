@@ -1,4 +1,4 @@
-EXTRA_DIST += src/modules/conf_window_manipulation/module.desktop.in \
+EXTRA_DIST += src/modules/conf_window_manipulation/module.desktop \
 src/modules/conf_window_manipulation/e-module-conf_winmanip.edj
 if USE_MODULE_CONF_WINDOW_MANIPULATION
 conf_window_manipulationdir = $(MDIR)/conf_window_manipulation

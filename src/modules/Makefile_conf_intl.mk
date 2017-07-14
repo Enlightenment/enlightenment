@@ -1,4 +1,4 @@
-EXTRA_DIST += src/modules/conf_intl/module.desktop.in
+EXTRA_DIST += src/modules/conf_intl/module.desktop
 if USE_MODULE_CONF_INTL
 conf_intldir = $(MDIR)/conf_intl
 conf_intl_DATA = src/modules/conf_intl/module.desktop

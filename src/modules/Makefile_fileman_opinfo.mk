@@ -1,4 +1,4 @@
-EXTRA_DIST += src/modules/fileman_opinfo/module.desktop.in \
+EXTRA_DIST += src/modules/fileman_opinfo/module.desktop \
 src/modules/fileman_opinfo/e-module-fileman_opinfo.edj
 if USE_MODULE_FILEMAN_OPINFO
 fileman_opinfodir = $(MDIR)/fileman_opinfo

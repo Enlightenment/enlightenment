@@ -1,6 +1,6 @@
-EXTRA_DIST += src/modules/wl_desktop_shell/module.desktop.in \
+EXTRA_DIST += src/modules/wl_desktop_shell/module.desktop \
 src/modules/wl_desktop_shell/e-module-wl_desktop_shell.edj \
-src/modules/wl_desktop_shell/module.desktop.in
+src/modules/wl_desktop_shell/module.desktop
 
 if USE_MODULE_WL_DESKTOP_SHELL
 wl_desktop_shelldir = $(MDIR)/wl_desktop_shell

@@ -1,4 +1,4 @@
-EXTRA_DIST += src/modules/time/module.desktop.in \
+EXTRA_DIST += src/modules/time/module.desktop \
 src/modules/time/e-module-time.edj
 if USE_MODULE_TIME
 timedir = $(MDIR)/time

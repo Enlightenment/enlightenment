@@ -1,4 +1,4 @@
-EXTRA_DIST += src/modules/shot/module.desktop.in \
+EXTRA_DIST += src/modules/shot/module.desktop \
 src/modules/shot/e-module-shot.edj
 
 if USE_MODULE_SHOT

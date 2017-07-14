@@ -1,4 +1,4 @@
-EXTRA_DIST += src/modules/tasks/module.desktop.in \
+EXTRA_DIST += src/modules/tasks/module.desktop \
 src/modules/tasks/e-module-tasks.edj
 if USE_MODULE_TASKS
 tasksdir = $(MDIR)/tasks

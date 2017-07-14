@@ -1,4 +1,4 @@
-EXTRA_DIST += src/modules/teamwork/module.desktop.in \
+EXTRA_DIST += src/modules/teamwork/module.desktop \
 src/modules/teamwork/e-module-teamwork.edj
 if USE_MODULE_TEAMWORK
 teamworkdir = $(MDIR)/teamwork

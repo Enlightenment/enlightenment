@@ -1,4 +1,4 @@
-EXTRA_DIST += src/modules/bluez4/module.desktop.in \
+EXTRA_DIST += src/modules/bluez4/module.desktop \
 src/modules/bluez4/e-module-bluez4.edj
 if USE_MODULE_BLUEZ4
 bluez4dir = $(MDIR)/bluez4

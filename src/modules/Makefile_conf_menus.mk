@@ -1,4 +1,4 @@
-EXTRA_DIST += src/modules/conf_menus/module.desktop.in \
+EXTRA_DIST += src/modules/conf_menus/module.desktop \
 src/modules/conf_menus/e-module-conf_menus.edj
 if USE_MODULE_CONF_MENUS
 conf_menusdir = $(MDIR)/conf_menus

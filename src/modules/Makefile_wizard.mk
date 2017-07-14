@@ -3,7 +3,7 @@ wdd = src/modules/wizard/data/desktop/home.desktop \
 	src/modules/wizard/data/desktop/root.desktop \
 	src/modules/wizard/data/desktop/tmp.desktop
 
-EXTRA_DIST += src/modules/wizard/module.desktop.in \
+EXTRA_DIST += src/modules/wizard/module.desktop \
 src/modules/wizard/e-module-wizard.edj \
 $(wd) \
 $(wdd)

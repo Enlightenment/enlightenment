@@ -1,4 +1,4 @@
-EXTRA_DIST += src/modules/backlight/module.desktop.in \
+EXTRA_DIST += src/modules/backlight/module.desktop \
 src/modules/backlight/e-module-backlight.edj
 if USE_MODULE_BACKLIGHT
 backlightdir = $(MDIR)/backlight

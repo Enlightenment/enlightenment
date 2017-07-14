@@ -1,4 +1,4 @@
-EXTRA_DIST += src/modules/appmenu/module.desktop.in \
+EXTRA_DIST += src/modules/appmenu/module.desktop \
 src/modules/appmenu/e-module-appmenu.edj
 if USE_MODULE_APPMENU
 appmenudir = $(MDIR)/appmenu

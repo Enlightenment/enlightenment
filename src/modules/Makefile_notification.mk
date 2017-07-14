@@ -1,4 +1,4 @@
-EXTRA_DIST += src/modules/notification/module.desktop.in \
+EXTRA_DIST += src/modules/notification/module.desktop \
 src/modules/notification/e-module-notification.edj
 if USE_MODULE_NOTIFICATION
 notificationdir = $(MDIR)/notification

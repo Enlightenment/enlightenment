@@ -1,4 +1,4 @@
-EXTRA_DIST += src/modules/music-control/module.desktop.in \
+EXTRA_DIST += src/modules/music-control/module.desktop \
 src/modules/music-control/e-module-music-control.edj \
 src/modules/music-control/introspect.xml
 

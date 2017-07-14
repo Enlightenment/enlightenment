@@ -1,4 +1,4 @@
-EXTRA_DIST += src/modules/packagekit/module.desktop.in \
+EXTRA_DIST += src/modules/packagekit/module.desktop \
 src/modules/packagekit/e-module-packagekit.edj
 if USE_MODULE_PACKAGEKIT
 packagekitdir = $(MDIR)/packagekit

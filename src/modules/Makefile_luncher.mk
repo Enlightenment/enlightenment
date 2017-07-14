@@ -1,4 +1,4 @@
-EXTRA_DIST += src/modules/luncher/module.desktop.in \
+EXTRA_DIST += src/modules/luncher/module.desktop \
 src/modules/luncher/e-module-luncher.edj
 if USE_MODULE_IBAR
 luncherdir = $(MDIR)/luncher

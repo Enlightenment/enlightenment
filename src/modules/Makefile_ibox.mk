@@ -1,4 +1,4 @@
-EXTRA_DIST += src/modules/ibox/module.desktop.in \
+EXTRA_DIST += src/modules/ibox/module.desktop \
 src/modules/ibox/e-module-ibox.edj
 if USE_MODULE_IBOX
 iboxdir = $(MDIR)/ibox

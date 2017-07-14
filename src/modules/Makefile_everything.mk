@@ -1,4 +1,4 @@
-EXTRA_DIST += src/modules/everything/module.desktop.in \
+EXTRA_DIST += src/modules/everything/module.desktop \
 src/modules/everything/e-module-everything.edj \
 src/modules/everything/e-module-everything-start.edj
 if USE_MODULE_EVERYTHING

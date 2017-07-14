@@ -1,4 +1,4 @@
-EXTRA_DIST += src/modules/clock/module.desktop.in \
+EXTRA_DIST += src/modules/clock/module.desktop \
 src/modules/clock/e-module-clock.edj
 if USE_MODULE_CLOCK
 clockdir = $(MDIR)/clock

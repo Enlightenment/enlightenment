@@ -1,4 +1,4 @@
-EXTRA_DIST += src/modules/sysinfo/module.desktop.in \
+EXTRA_DIST += src/modules/sysinfo/module.desktop \
 src/modules/sysinfo/e-module-sysinfo.edj
 if USE_MODULE_SYSINFO
 sysinfodir = $(MDIR)/sysinfo

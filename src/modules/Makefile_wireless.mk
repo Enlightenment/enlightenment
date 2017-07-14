@@ -1,5 +1,5 @@
 EXTRA_DIST += \
-src/modules/wireless/module.desktop.in \
+src/modules/wireless/module.desktop \
 src/modules/wireless/e-module-wireless.edj
 
 if USE_MODULE_WIRELESS

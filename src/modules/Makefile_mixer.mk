@@ -1,4 +1,4 @@
-EXTRA_DIST += src/modules/mixer/module.desktop.in \
+EXTRA_DIST += src/modules/mixer/module.desktop \
 src/modules/mixer/e-module-mixer.edj \
 src/modules/mixer/emixer.png \
 src/modules/mixer/emixer.desktop

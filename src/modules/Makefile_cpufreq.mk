@@ -1,4 +1,4 @@
-EXTRA_DIST += src/modules/cpufreq/module.desktop.in \
+EXTRA_DIST += src/modules/cpufreq/module.desktop \
 src/modules/cpufreq/e-module-cpufreq.edj
 if USE_MODULE_CPUFREQ
 cpufreqdir = $(MDIR)/cpufreq

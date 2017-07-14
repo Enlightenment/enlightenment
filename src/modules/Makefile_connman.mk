@@ -1,4 +1,4 @@
-EXTRA_DIST += src/modules/connman/module.desktop.in \
+EXTRA_DIST += src/modules/connman/module.desktop \
 src/modules/connman/e-module-connman.edj
 if USE_MODULE_CONNMAN
 connmandir = $(MDIR)/connman

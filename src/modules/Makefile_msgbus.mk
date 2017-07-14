@@ -1,4 +1,4 @@
-EXTRA_DIST += src/modules/msgbus/module.desktop.in \
+EXTRA_DIST += src/modules/msgbus/module.desktop \
 src/modules/msgbus/e-module-msgbus.edj
 if USE_MODULE_MSGBUS
 msgbusdir = $(MDIR)/msgbus

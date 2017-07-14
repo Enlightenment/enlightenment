@@ -1,4 +1,4 @@
-EXTRA_DIST += src/modules/fileman/module.desktop.in \
+EXTRA_DIST += src/modules/fileman/module.desktop \
 src/modules/fileman/e-module-fileman.edj
 if USE_MODULE_FILEMAN
 filemandir = $(MDIR)/fileman

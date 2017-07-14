@@ -1,4 +1,4 @@
-EXTRA_DIST += src/modules/conf_dialogs/module.desktop.in \
+EXTRA_DIST += src/modules/conf_dialogs/module.desktop \
 src/modules/conf_dialogs/e-module-conf_dialogs.edj
 if USE_MODULE_CONF_DIALOGS
 conf_dialogsdir = $(MDIR)/conf_dialogs

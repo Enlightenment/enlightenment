@@ -1,4 +1,4 @@
-EXTRA_DIST += src/modules/temperature/module.desktop.in \
+EXTRA_DIST += src/modules/temperature/module.desktop \
 src/modules/temperature/e-module-temperature.edj
 if USE_MODULE_TEMPERATURE
 temperaturedir = $(MDIR)/temperature

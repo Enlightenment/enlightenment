@@ -1,4 +1,4 @@
-EXTRA_DIST += src/modules/systray/module.desktop.in \
+EXTRA_DIST += src/modules/systray/module.desktop \
 src/modules/systray/e-module-systray.edj
 if USE_MODULE_SYSTRAY
 systraydir = $(MDIR)/systray

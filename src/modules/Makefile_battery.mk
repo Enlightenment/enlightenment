@@ -1,4 +1,4 @@
-EXTRA_DIST += src/modules/battery/module.desktop.in \
+EXTRA_DIST += src/modules/battery/module.desktop \
 src/modules/battery/e-module-battery.edj
 if USE_MODULE_BATTERY
 batterydir = $(MDIR)/battery

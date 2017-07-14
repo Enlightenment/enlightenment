@@ -1,4 +1,4 @@
-EXTRA_DIST += src/modules/syscon/module.desktop.in \
+EXTRA_DIST += src/modules/syscon/module.desktop \
 src/modules/syscon/e-module-syscon.edj
 if USE_MODULE_SYSCON
 syscondir = $(MDIR)/syscon

@@ -1,4 +1,4 @@
-EXTRA_DIST += src/modules/conf_display/module.desktop.in
+EXTRA_DIST += src/modules/conf_display/module.desktop
 if USE_MODULE_CONF_DISPLAY
 conf_displaydir = $(MDIR)/conf_display
 conf_display_DATA = src/modules/conf_display/module.desktop

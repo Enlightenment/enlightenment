@@ -1,4 +1,4 @@
-EXTRA_DIST += src/modules/conf_performance/module.desktop.in \
+EXTRA_DIST += src/modules/conf_performance/module.desktop \
 src/modules/conf_performance/e-module-conf_performance.edj
 if USE_MODULE_CONF_PERFORMANCE
 conf_performancedir = $(MDIR)/conf_performance

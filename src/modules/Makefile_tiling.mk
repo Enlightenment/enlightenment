@@ -1,4 +1,4 @@
-EXTRA_DIST += src/modules/tiling/module.desktop.in \
+EXTRA_DIST += src/modules/tiling/module.desktop \
 src/modules/tiling/e-module-tiling.edj
 if USE_MODULE_TILING
 tilingdir = $(MDIR)/tiling

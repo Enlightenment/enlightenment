@@ -1,4 +1,4 @@
-EXTRA_DIST += src/modules/gadman/module.desktop.in \
+EXTRA_DIST += src/modules/gadman/module.desktop \
 src/modules/gadman/e-module-gadman.edj
 if USE_MODULE_GADMAN
 gadmandir = $(MDIR)/gadman

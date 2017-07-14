@@ -1,4 +1,4 @@
-EXTRA_DIST += src/modules/xkbswitch/module.desktop.in \
+EXTRA_DIST += src/modules/xkbswitch/module.desktop \
 src/modules/xkbswitch/e-module-xkbswitch.edj
 if USE_MODULE_XKBSWITCH
 xkbswitchdir = $(MDIR)/xkbswitch

@@ -1,4 +1,4 @@
-EXTRA_DIST += src/modules/conf_shelves/module.desktop.in \
+EXTRA_DIST += src/modules/conf_shelves/module.desktop \
 src/modules/conf_shelves/e-module-conf_shelves.edj
 if USE_MODULE_CONF_SHELVES
 conf_shelvesdir = $(MDIR)/conf_shelves

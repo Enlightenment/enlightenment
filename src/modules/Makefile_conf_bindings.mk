@@ -1,4 +1,4 @@
-EXTRA_DIST += src/modules/conf_bindings/module.desktop.in
+EXTRA_DIST += src/modules/conf_bindings/module.desktop
 if USE_MODULE_CONF_BINDINGS
 conf_bindingsdir = $(MDIR)/conf_bindings
 conf_bindings_DATA = src/modules/conf_bindings/module.desktop

@@ -1,4 +1,4 @@
-EXTRA_DIST += src/modules/pager/module.desktop.in \
+EXTRA_DIST += src/modules/pager/module.desktop \
 src/modules/pager/e-module-pager.edj
 if USE_MODULE_PAGER
 pagerdir = $(MDIR)/pager

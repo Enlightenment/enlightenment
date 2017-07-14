@@ -1,4 +1,4 @@
-EXTRA_DIST += src/modules/conf_theme/module.desktop.in
+EXTRA_DIST += src/modules/conf_theme/module.desktop
 if USE_MODULE_CONF_THEME
 conf_themedir = $(MDIR)/conf_theme
 conf_theme_DATA = src/modules/conf_theme/module.desktop

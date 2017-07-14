@@ -1,4 +1,4 @@
-EXTRA_DIST += src/modules/geolocation/module.desktop.in \
+EXTRA_DIST += src/modules/geolocation/module.desktop \
 src/modules/geolocation/e-module-geolocation.edj \
 src/modules/geolocation/org.freedesktop.GeoClue2.xml
 

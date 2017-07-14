@@ -1,4 +1,4 @@
-EXTRA_DIST += src/modules/conf_paths/module.desktop.in \
+EXTRA_DIST += src/modules/conf_paths/module.desktop \
 src/modules/conf_paths/e-module-conf_paths.edj
 if USE_MODULE_CONF_PATHS
 conf_pathsdir = $(MDIR)/conf_paths

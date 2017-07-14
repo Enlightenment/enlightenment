@@ -1,4 +1,4 @@
-EXTRA_DIST += src/modules/conf_interaction/module.desktop.in \
+EXTRA_DIST += src/modules/conf_interaction/module.desktop \
 src/modules/conf_interaction/e-module-conf_interaction.edj
 if USE_MODULE_CONF_INTERACTION
 conf_interactiondir = $(MDIR)/conf_interaction

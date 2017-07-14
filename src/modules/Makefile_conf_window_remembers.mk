@@ -1,4 +1,4 @@
-EXTRA_DIST += src/modules/conf_window_remembers/module.desktop.in \
+EXTRA_DIST += src/modules/conf_window_remembers/module.desktop \
 src/modules/conf_window_remembers/e-module-conf_window_remembers.edj
 if USE_MODULE_CONF_WINDOW_REMEMBERS
 conf_window_remembersdir = $(MDIR)/conf_window_remembers

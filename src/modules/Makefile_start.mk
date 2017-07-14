@@ -1,4 +1,4 @@
-EXTRA_DIST += src/modules/start/module.desktop.in \
+EXTRA_DIST += src/modules/start/module.desktop \
 src/modules/start/e-module-start.edj
 if USE_MODULE_START
 startdir = $(MDIR)/start

@@ -1,4 +1,4 @@
-EXTRA_DIST += src/modules/ibar/module.desktop.in \
+EXTRA_DIST += src/modules/ibar/module.desktop \
 src/modules/ibar/e-module-ibar.edj
 if USE_MODULE_IBAR
 ibardir = $(MDIR)/ibar
