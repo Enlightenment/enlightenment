@@ -178,10 +178,10 @@ AC_SUBST([PACKAGE_SYSCONF_DIR])
 #######################################
 ## Simple X11 build/link
 
-AC_ARG_ENABLE(simple-x11,
-  AS_HELP_STRING([--enable-simple-x11], [enable simple x11 linking]),
-  [ want_evas_simple_x11=$enableval ]
-)
+##AC_ARG_ENABLE(simple-x11,
+##  AS_HELP_STRING([--enable-simple-x11], [enable simple x11 linking]),
+##  [ want_evas_simple_x11=$enableval ]
+##)
     
 dnl x_dir=""
 dnl x_cflags=""
