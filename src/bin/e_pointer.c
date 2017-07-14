@@ -807,3 +807,18 @@ e_pointer_window_add(E_Pointer *ptr, Ecore_Window win)
    _e_pointer_theme_buf(ptr, buf);
    _e_pointer_x11_setup(ptr, buf);
 }
+
+EINTERN void
+e_pointers_freeze_set(Eina_Bool set)
+{
+   Eina_List *l;
+   E_Pointer *ptr;
+
+   EINA_LIST_FOREACH(_ptrs, l, ptr)
+     {
+        if (isedje(ptr->o_ptr))
+          edje_object_play_set(ptr->o_ptr, !set);
+        if (isedje(ptr->buffer_o_ptr))
+          edje_object_play_set(ptr->buffer_o_ptr, !set);
+     }
+}

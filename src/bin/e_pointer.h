@@ -60,6 +60,7 @@ struct _E_Pointer
 
 EINTERN int e_pointer_init(void);
 EINTERN int e_pointer_shutdown(void);
+EINTERN void e_pointers_freeze_set(Eina_Bool set);
 
 E_API E_Pointer *e_pointer_window_new(Ecore_Window win, Eina_Bool filled);
 E_API E_Pointer *e_pointer_canvas_new(Ecore_Evas *ee, Eina_Bool filled);
