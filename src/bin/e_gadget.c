@@ -2573,6 +2573,7 @@ _gadget_desktop_key_handler(void *data, int t EINA_UNUSED, Ecore_Event_Key *ev)
      {
         E_Gadget_Site *zgs = data;
         E_LIST_FOREACH(zgs->gadgets, _gadget_remove);
+        e_config_save_queue();
      }
    return ECORE_CALLBACK_DONE;
 }
