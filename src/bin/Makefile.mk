@@ -118,6 +118,7 @@ src/bin/e_gadget.h \
 src/bin/e_grabinput.h \
 src/bin/e_grab_dialog.h \
 src/bin/e.h \
+src/bin/e_macros.h \
 src/bin/e_hints.h \
 src/bin/e_icon.h \
 src/bin/e_ilist.h \
@@ -478,6 +479,7 @@ src_bin_enlightenment_LDADD = @e_libs@ @dlopen_libs@ @cf_libs@ @VALGRIND_LIBS@ @
 
 src_bin_enlightenment_imc_SOURCES = \
 src/bin/e.h \
+src/bin/e_macros.h \
 src/bin/e_config_data.c \
 src/bin/e_imc_main.c \
 src/bin/e_intl_data.c
