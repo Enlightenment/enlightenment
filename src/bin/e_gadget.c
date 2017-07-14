@@ -2491,7 +2491,7 @@ _gadget_desklock_key_handler(void *d EINA_UNUSED, int t EINA_UNUSED, Ecore_Event
         else
           _gadget_desklock_del();
      }
-   else if (eina_streq(ev->key, "Delete") || eina_streq(ev->key, "Backspace"))
+   else if (eina_streq(ev->key, "Delete") || eina_streq(ev->key, "BackSpace"))
      _gadget_desklock_clear();
    return ECORE_CALLBACK_DONE;
 }
@@ -2569,7 +2569,7 @@ _gadget_desktop_key_handler(void *data, int t EINA_UNUSED, Ecore_Event_Key *ev)
         else
           _edit_end();
      }
-   else if (eina_streq(ev->key, "Delete") || eina_streq(ev->key, "Backspace"))
+   else if (eina_streq(ev->key, "Delete") || eina_streq(ev->key, "BackSpace"))
      {
         E_Gadget_Site *zgs = data;
         E_LIST_FOREACH(zgs->gadgets, _gadget_remove);
