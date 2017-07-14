@@ -1595,24 +1595,7 @@ _e_comp_wl_surface_state_commit(E_Client *ec, E_Comp_Wl_Surface_State *state)
    /* put state input into surface */
    if (state->input)
      {
-        if (!eina_tiler_empty(state->input))
-          {
-             Eina_Rectangle *rect;
-             Eina_Iterator *itr;
-
-             /* This is seriously wrong and results in only the last
-              * rectangle in the region being set, but in the usual
-              * case there's only one rectangle.
-              */
-             itr = eina_tiler_iterator_new(state->input);
-             EINA_ITERATOR_FOREACH(itr, rect)
-               e_comp_object_input_area_set(ec->frame, rect->x, rect->y,
-                                            rect->w, rect->h);
-
-             eina_iterator_free(itr);
-          }
-        else
-          e_comp_object_input_area_set(ec->frame, 1, 1, 0, 0);
+        e_comp_object_input_area_set(ec->frame, state->input);
 
         eina_tiler_free(state->input);
         state->input = NULL;
