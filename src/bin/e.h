@@ -106,10 +106,6 @@ void *alloca (size_t);
 // XXX: FIXME: TMP solution for window stack until api is settled
 #define EFL_BETA_API_SUPPORT
 
-/* egl.h must come before Evas_GL.h otherwise they will conflict */
-# ifdef HAVE_WAYLAND_EGL
-#  include <EGL/egl.h>
-# endif
 
 # include <setjmp.h>
 # include <Eo.h>

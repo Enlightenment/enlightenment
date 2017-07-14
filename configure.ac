@@ -682,14 +682,6 @@ AC_SUBST(SHM_OPEN_LIBS)
 AC_SUBST([SOUND_CFLAGS])
 AC_SUBST([SOUND_LIBS])
 
-have_wayland_egl=no
-AC_ARG_ENABLE([wayland-egl],
-  AS_HELP_STRING([--enable-wayland-egl],[enable wayland to render using EGL @<:@default=disabled@:>@]),
-  [e_cv_want_wayland_egl=$enableval],
-  [e_cv_want_wayland_egl=no])
-AC_MSG_CHECKING([whether wayland EGL support is enabled])
-AC_MSG_RESULT([${e_cv_want_wayland_egl}])
-
 if test "x${e_cv_want_wayland_only}" != "xno" ;then
   PKG_CHECK_MODULES([WAYLAND], [ecore-wl2 >= 1.18 wayland-server >= 1.11.0 wayland-client >= 1.11.0 wayland-protocols >= 1.7 wayland-scanner >= 1.11.0 xkbcommon uuid],
     [
@@ -710,21 +702,7 @@ else
   have_wayland=no
 fi
 
-if test "x${have_wayland}" = "xyes"; then
-  if test "x${e_cv_want_wayland_egl}" != "xno";then
-    PKG_CHECK_MODULES([WAYLAND_EGL], [egl >= 7.10],
-      [
-        have_wayland_egl=yes
-        AC_DEFINE_UNQUOTED([HAVE_WAYLAND_EGL],[1],[enable wayland client EGL support])
-      ],
-      [have_wayland_egl=no])
-  else
-    have_wayland_egl=no
-  fi
-fi
-
 AM_CONDITIONAL([HAVE_WAYLAND], [test "x${have_wayland}" = "xyes"])
-AM_CONDITIONAL([HAVE_WAYLAND_EGL], [test "x${have_wayland_egl}" = "xyes"])
 
 if test "x${e_cv_want_wayland_only}" != "xyes"; then
   PKG_CHECK_MODULES([ECORE_X], [ecore-x >= ${efl_version}])

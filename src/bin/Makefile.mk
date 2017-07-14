@@ -27,7 +27,6 @@ E_CPPFLAGS = \
 @VALGRIND_CFLAGS@ \
 @EDJE_DEF@ \
 @WAYLAND_CFLAGS@ \
-@WAYLAND_EGL_CFLAGS@ \
 -DE_BINDIR=\"$(bindir)\" \
 -DPACKAGE_BIN_DIR=\"@PACKAGE_BIN_DIR@\" \
 -DPACKAGE_LIB_DIR=\"@PACKAGE_LIB_DIR@\" \
@@ -469,7 +468,7 @@ src/bin/e_comp_wl_dmabuf.c: \
 
 endif
 
-src_bin_enlightenment_CPPFLAGS = $(E_CPPFLAGS) -DE_LOGGING=1 @WAYLAND_CFLAGS@ @WAYLAND_EGL_CFLAGS@ @ECORE_X_CFLAGS@
+src_bin_enlightenment_CPPFLAGS = $(E_CPPFLAGS) -DE_LOGGING=1 @WAYLAND_CFLAGS@ @ECORE_X_CFLAGS@
 src_bin_enlightenment_SOURCES = \
 src/bin/e_main.c \
 $(enlightenment_src)
@@ -477,7 +476,7 @@ $(enlightenment_src)
 nodist_src_bin_enlightenment_SOURCES = $(enlightenment_gen_src)
 
 src_bin_enlightenment_LDFLAGS = -export-dynamic
-src_bin_enlightenment_LDADD = @e_libs@ @dlopen_libs@ @cf_libs@ @VALGRIND_LIBS@ @WAYLAND_LIBS@ @WL_DRM_LIBS@ @WAYLAND_EGL_LIBS@ -lm @SHM_OPEN_LIBS@ @ECORE_X_LIBS@
+src_bin_enlightenment_LDADD = @e_libs@ @dlopen_libs@ @cf_libs@ @VALGRIND_LIBS@ @WAYLAND_LIBS@ @WL_DRM_LIBS@ -lm @SHM_OPEN_LIBS@ @ECORE_X_LIBS@
 
 src_bin_enlightenment_imc_SOURCES = \
 src/bin/e.h \
