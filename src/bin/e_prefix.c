@@ -1,9 +1,37 @@
-#include "e.h"
-
+#include "config.h"
+#include <Eina.h>
+#include "e_macros.h"
+#ifdef E_LOGGING
+#include "e_log.h"
+#endif
 static Eina_Prefix *pfx = NULL;
 
 static const char *_prefix_path_data = NULL;
 static unsigned int _prefix_path_data_len = 0;
+
+static void
+_env_set(const char *var, const char *val)
+{
+   if (val)
+     {
+#ifdef HAVE_SETENV
+        setenv(var, val, 1);
+#else
+        char buf[8192];
+
+        snprintf(buf, sizeof(buf), "%s=%s", var, val);
+        putenv(strdup(buf));
+#endif
+     }
+   else
+     {
+#ifdef HAVE_UNSETENV
+        unsetenv(var);
+#else
+        if (getenv(var)) putenv(var);
+#endif
+     }
+}
 
 /* externally accessible functions */
 E_API int
@@ -42,11 +70,11 @@ e_prefix_determine(char *argv0)
    printf("LOCALE:  %s\n", eina_prefix_locale_get(pfx));
    printf("=================================\n");
 #endif
-   e_util_env_set("E_PREFIX", eina_prefix_get(pfx));
-   e_util_env_set("E_BIN_DIR", eina_prefix_bin_get(pfx));
-   e_util_env_set("E_LIB_DIR", eina_prefix_lib_get(pfx));
-   e_util_env_set("E_DATA_DIR", eina_prefix_data_get(pfx));
-   e_util_env_set("E_LOCALE_DIR", eina_prefix_locale_get(pfx));
+   _env_set("E_PREFIX", eina_prefix_get(pfx));
+   _env_set("E_BIN_DIR", eina_prefix_bin_get(pfx));
+   _env_set("E_LIB_DIR", eina_prefix_lib_get(pfx));
+   _env_set("E_DATA_DIR", eina_prefix_data_get(pfx));
+   _env_set("E_LOCALE_DIR", eina_prefix_locale_get(pfx));
    return 1;
 }
 

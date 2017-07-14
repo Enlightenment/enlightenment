@@ -1,11 +1,15 @@
-#include "e.h"
+#include "config.h"
+
 #include "e_fm_shared_device.h"
 #include "e_fm_shared_codec.h"
 #include "e_fm_ipc.h"
-#include "e_fm_device.h"
 
+#include "e_macros.h"
 #include "e_fm_main_udisks.h"
 #include "e_fm_main.h"
+
+#define E_TYPEDEFS
+#include "e_fm_op.h"
 
 #define UDISKS_BUS "org.freedesktop.UDisks"
 #define UDISKS_PATH "/org/freedesktop/UDisks"

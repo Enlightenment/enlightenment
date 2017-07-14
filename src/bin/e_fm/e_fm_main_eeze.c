@@ -1,19 +1,24 @@
-#include "e.h"
+#include "config.h"
 #ifdef __linux__
 #include <features.h>
 #endif
+#include <ctype.h>
 #include <Eet.h>
 #include <Eeze.h>
 #include <Eeze_Disk.h>
+#include <Ecore_Con.h>
 
 #include "e_fm_shared_device.h"
 #include "e_fm_shared_codec.h"
 #include "e_fm_ipc.h"
-#include "e_fm_device.h"
 #include <eeze_scanner.h>
 
+#include "e_macros.h"
+#include "e_user.h"
 #include "e_fm_main.h"
 #include "e_fm_main_eeze.h"
+#define E_TYPEDEFS
+#include "e_fm_op.h"
 
 static void _e_fm_main_eeze_storage_rescan(const char *syspath);
 static void _e_fm_main_eeze_volume_rescan(const char *syspath);
