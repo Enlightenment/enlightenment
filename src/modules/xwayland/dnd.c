@@ -212,7 +212,7 @@ _xwl_fixes_selection_notify(void *d EINA_UNUSED, int t EINA_UNUSED, Ecore_X_Even
                e_comp_wl_data_device_send_enter(e_comp_wl->ptr.ec);
              e_comp_canvas_feed_mouse_up(0);
              source = e_comp_wl_data_manager_source_create(e_comp_wl->xwl_client,
-               e_comp_wl->mgr.resource, 1);
+               e_comp_wl->mgr.resource, 0);
              e_comp_wl->drag_source = source;
              source->target = _xwayland_target_send;
              source->send = _xwayland_send_send;
@@ -270,7 +270,7 @@ _xwl_selection_notify(void *d EINA_UNUSED, int t EINA_UNUSED, Ecore_X_Event_Sele
 
              source = e_comp_wl_clipboard_source_create(NULL, 0, -1);
              dsource = e_comp_wl_data_manager_source_create(e_comp_wl->xwl_client,
-               e_comp_wl->mgr.resource, 1);
+               e_comp_wl->mgr.resource, 0);
              source->data_source.mime_types = eina_array_new(tgs->num_targets);
              for (i = 0; i < tgs->num_targets; i++)
                if (tgs->targets[i])
