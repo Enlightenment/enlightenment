@@ -839,6 +839,20 @@ _clock_time_update(void *d EINA_UNUSED, int type EINA_UNUSED, void *event EINA_U
    return ECORE_CALLBACK_PASS_ON;
 }
 
+static Eina_Bool
+_clock_screensaver_on()
+{
+   E_FREE_FUNC(update_today, ecore_timer_del);
+   return ECORE_CALLBACK_RENEW;
+}
+
+static Eina_Bool
+_clock_screensaver_off()
+{
+   if (clock_instances) _update_today_timer(NULL);
+   return ECORE_CALLBACK_RENEW;
+}
+
 /* module setup */
 E_API E_Module_Api e_modapi =
 {
@@ -901,6 +915,8 @@ e_modapi_init(E_Module *m)
    E_LIST_HANDLER_APPEND(handlers, EIO_MONITOR_SELF_RENAME, _clock_eio_update, NULL);
    E_LIST_HANDLER_APPEND(handlers, E_EVENT_SYS_RESUME, _clock_time_update, NULL);
    E_LIST_HANDLER_APPEND(handlers, ECORE_EVENT_SYSTEM_TIMEDATE_CHANGED, _clock_time_update, NULL);
+   E_LIST_HANDLER_APPEND(handlers, E_EVENT_SCREENSAVER_ON, _clock_screensaver_on, NULL);
+   E_LIST_HANDLER_APPEND(handlers, E_EVENT_SCREENSAVER_OFF, _clock_screensaver_off, NULL);
 
    e_gadcon_provider_register(&_gadcon_class);
 
