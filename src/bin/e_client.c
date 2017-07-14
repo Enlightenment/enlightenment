@@ -3146,7 +3146,6 @@ e_client_mouse_move(E_Client *ec, Evas_Point *output)
         ec->shelf_fix.y = 0;
         ec->shelf_fix.modified = 0;
         evas_object_move(ec->frame, new_x, new_y);
-        if (ec->zone) e_zone_flip_coords_handle(ec->zone, output->x, output->y);
      }
    else if (e_client_util_resizing_get(ec))
      {
