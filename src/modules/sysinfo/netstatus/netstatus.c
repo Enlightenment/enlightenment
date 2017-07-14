@@ -168,6 +168,33 @@ _netstatus_cb_usage_check_end(void *data, Ecore_Thread *th EINA_UNUSED)
 {
    Thread_Config *thc = data;
    e_powersave_sleeper_free(thc->sleeper);
+   if (thc->inst->cfg->netstatus.defer)
+     {
+        E_FREE_FUNC(thc->inst->cfg->netstatus.instring, eina_stringshare_del);
+        E_FREE_FUNC(thc->inst->cfg->netstatus.outstring, eina_stringshare_del);
+        thc->inst->cfg->netstatus.defer = EINA_FALSE;
+        thc->inst->cfg->netstatus.done = EINA_TRUE;
+	if (thc->inst->cfg->esm == E_SYSINFO_MODULE_NETSTATUS)
+          {
+             sysinfo_config->items = eina_list_remove(sysinfo_config->items, thc->inst->cfg);
+             if (thc->inst->cfg->id >= 0)
+               sysinfo_instances = eina_list_remove(sysinfo_instances, thc->inst);
+             E_FREE(thc->inst->cfg);
+             E_FREE(thc->inst);
+          }
+        else
+          {
+             if (thc->inst->cfg->memusage.done && thc->inst->cfg->thermal.done &&
+                 thc->inst->cfg->cpumonitor.done && thc->inst->cfg->cpuclock.done && thc->inst->cfg->batman.done)
+               {
+                   sysinfo_config->items = eina_list_remove(sysinfo_config->items, thc->inst->cfg);
+                   if (thc->inst->cfg->id >= 0)
+                     sysinfo_instances = eina_list_remove(sysinfo_instances, thc->inst);
+                   E_FREE(thc->inst->cfg);
+                   E_FREE(thc->inst);
+               }
+          }
+     }
    E_FREE_FUNC(thc, free);
 }
 
@@ -231,19 +258,26 @@ _netstatus_removed_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_data
      E_FREE_FUNC(inst->cfg->netstatus.popup, evas_object_del);
    if (inst->cfg->netstatus.configure)
      E_FREE_FUNC(inst->cfg->netstatus.configure, evas_object_del);
-   if (inst->cfg->netstatus.usage_check_thread)
-     {
-        ecore_thread_cancel(inst->cfg->netstatus.usage_check_thread);
-        inst->cfg->netstatus.usage_check_thread = NULL;
-     }
+   evas_object_smart_callback_del_full(e_gadget_site_get(inst->o_main), "gadget_removed",
+                                       _netstatus_removed_cb, inst);
+   evas_object_event_callback_del_full(inst->o_main, EVAS_CALLBACK_DEL, sysinfo_netstatus_remove, data);
    EINA_LIST_FREE(inst->cfg->netstatus.handlers, handler)
      ecore_event_handler_del(handler);
+   if (inst->cfg->netstatus.usage_check_thread)
+     {
+        inst->cfg->netstatus.defer = EINA_TRUE;
+        ecore_thread_cancel(inst->cfg->netstatus.usage_check_thread);
+        inst->cfg->netstatus.usage_check_thread = NULL;
+        return;
+     }
    E_FREE_FUNC(inst->cfg->netstatus.instring, eina_stringshare_del);
    E_FREE_FUNC(inst->cfg->netstatus.outstring, eina_stringshare_del);
-   evas_object_event_callback_del_full(inst->o_main, EVAS_CALLBACK_DEL, sysinfo_netstatus_remove, data);
 
    sysinfo_config->items = eina_list_remove(sysinfo_config->items, inst->cfg);
+   if (inst->cfg->id >= 0)
+     sysinfo_instances = eina_list_remove(sysinfo_instances, inst);
    E_FREE(inst->cfg);
+   E_FREE(inst);
 }
 
 void
@@ -256,15 +290,30 @@ sysinfo_netstatus_remove(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_
      E_FREE_FUNC(inst->cfg->netstatus.popup, evas_object_del);
    if (inst->cfg->netstatus.configure)
      E_FREE_FUNC(inst->cfg->netstatus.configure, evas_object_del);
-   if (inst->cfg->netstatus.usage_check_thread)
-     {
-        ecore_thread_cancel(inst->cfg->netstatus.usage_check_thread);
-        inst->cfg->netstatus.usage_check_thread = NULL;
-     }
    EINA_LIST_FREE(inst->cfg->netstatus.handlers, handler)
      ecore_event_handler_del(handler);
+   if (inst->cfg->netstatus.usage_check_thread)
+     {
+        inst->cfg->netstatus.defer = EINA_TRUE;
+        ecore_thread_cancel(inst->cfg->netstatus.usage_check_thread);
+        inst->cfg->netstatus.usage_check_thread = NULL;
+        return;
+     }
    E_FREE_FUNC(inst->cfg->netstatus.instring, eina_stringshare_del);
    E_FREE_FUNC(inst->cfg->netstatus.outstring, eina_stringshare_del);
+   inst->cfg->netstatus.done = EINA_TRUE;
+   if (inst->cfg->esm == E_SYSINFO_MODULE_SYSINFO)
+     {
+        if (inst->cfg->memusage.done && inst->cfg->thermal.done &&
+            inst->cfg->cpumonitor.done && inst->cfg->cpuclock.done && inst->cfg->batman.done)
+          {
+              sysinfo_config->items = eina_list_remove(sysinfo_config->items, inst->cfg);
+              if (inst->cfg->id >= 0)
+                sysinfo_instances = eina_list_remove(sysinfo_instances, inst);
+              E_FREE(inst->cfg);
+              E_FREE(inst);
+          }
+     }
 }
 
 static void
@@ -300,6 +349,17 @@ _netstatus_created_cb(void *data, Evas_Object *obj, void *event_data EINA_UNUSED
 Evas_Object *
 sysinfo_netstatus_create(Evas_Object *parent, Instance *inst)
 {
+   inst->cfg->netstatus.defer = EINA_FALSE;
+   inst->cfg->netstatus.done = EINA_FALSE;
+   inst->cfg->netstatus.in = 0;
+   inst->cfg->netstatus.out = 0;
+   inst->cfg->netstatus.incurrent = 0;
+   inst->cfg->netstatus.outcurrent = 0;
+   inst->cfg->netstatus.inpercent = 0;
+   inst->cfg->netstatus.outpercent = 0;
+   inst->cfg->netstatus.instring = NULL;
+   inst->cfg->netstatus.outstring = NULL;
+   inst->cfg->netstatus.popup = NULL;
    inst->cfg->netstatus.o_gadget = elm_layout_add(parent);
    e_theme_edje_object_set(inst->cfg->netstatus.o_gadget, "base/theme/gadget/netstatus",
                            "e/gadget/netstatus/main");
@@ -366,6 +426,8 @@ netstatus_create(Evas_Object *parent, int *id, E_Gadget_Site_Orient orient EINA_
    inst = E_NEW(Instance, 1);
    inst->cfg = _conf_item_get(id);
    *id = inst->cfg->id;
+   inst->cfg->netstatus.defer = EINA_FALSE;
+   inst->cfg->netstatus.done = EINA_FALSE;
    inst->cfg->netstatus.in = 0;
    inst->cfg->netstatus.out = 0;
    inst->cfg->netstatus.incurrent = 0;

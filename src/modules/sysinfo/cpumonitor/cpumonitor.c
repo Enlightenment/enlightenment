@@ -197,7 +197,39 @@ static void
 _cpumonitor_cb_usage_check_end(void *data, Ecore_Thread *th EINA_UNUSED)
 {
    Thread_Config *thc = data;
+   CPU_Core *core;
+
    e_powersave_sleeper_free(thc->sleeper);
+   if (thc->inst->cfg->cpumonitor.defer)
+     {
+	EINA_LIST_FREE(thc->inst->cfg->cpumonitor.cores, core)
+          {
+             evas_object_del(core->layout);
+             E_FREE_FUNC(core, free);
+          }
+        thc->inst->cfg->cpumonitor.defer = EINA_FALSE;
+        thc->inst->cfg->cpumonitor.done = EINA_TRUE;
+        if (thc->inst->cfg->esm == E_SYSINFO_MODULE_CPUMONITOR)
+          {
+             sysinfo_config->items = eina_list_remove(sysinfo_config->items, thc->inst->cfg);
+             if (thc->inst->cfg->id >= 0)
+               sysinfo_instances = eina_list_remove(sysinfo_instances, thc->inst);
+	     E_FREE(thc->inst->cfg);
+             E_FREE(thc->inst);
+          }
+	else
+          {
+             if (thc->inst->cfg->memusage.done && thc->inst->cfg->thermal.done &&
+                 thc->inst->cfg->netstatus.done && thc->inst->cfg->cpuclock.done && thc->inst->cfg->batman.done)
+               {
+                   sysinfo_config->items = eina_list_remove(sysinfo_config->items, thc->inst->cfg);
+                   if (thc->inst->cfg->id >= 0)
+                     sysinfo_instances = eina_list_remove(sysinfo_instances, thc->inst);
+                   E_FREE(thc->inst->cfg);
+                   E_FREE(thc->inst);
+               }
+          }
+     }
    E_FREE_FUNC(thc, free);
 }
 
@@ -313,22 +345,30 @@ _cpumonitor_removed_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_dat
      E_FREE_FUNC(inst->cfg->cpumonitor.popup, evas_object_del);
    if (inst->cfg->cpumonitor.configure)
      E_FREE_FUNC(inst->cfg->cpumonitor.configure, evas_object_del);
-   if (inst->cfg->cpumonitor.usage_check_thread)
-     {
-        ecore_thread_cancel(inst->cfg->cpumonitor.usage_check_thread);
-        inst->cfg->cpumonitor.usage_check_thread = NULL;
-     }
    EINA_LIST_FREE(inst->cfg->cpumonitor.handlers, handler)
      ecore_event_handler_del(handler);
+   EINA_LIST_FREE(inst->cfg->cpumonitor.cores, core)
+   evas_object_smart_callback_del_full(e_gadget_site_get(inst->o_main), "gadget_removed",
+                                       _cpumonitor_removed_cb, inst);
+   evas_object_event_callback_del_full(inst->o_main, EVAS_CALLBACK_DEL, sysinfo_cpumonitor_remove, data);
+   if (inst->cfg->cpumonitor.usage_check_thread)
+     {
+        inst->cfg->cpumonitor.defer = EINA_TRUE;
+        ecore_thread_cancel(inst->cfg->cpumonitor.usage_check_thread);
+        inst->cfg->cpumonitor.usage_check_thread = NULL;
+	return;
+     }
    EINA_LIST_FREE(inst->cfg->cpumonitor.cores, core)
      {
         evas_object_del(core->layout);
         E_FREE_FUNC(core, free);
      }
-   evas_object_event_callback_del_full(inst->o_main, EVAS_CALLBACK_DEL, sysinfo_cpumonitor_remove, data);
 
    sysinfo_config->items = eina_list_remove(sysinfo_config->items, inst->cfg);
+   if (inst->cfg->id >= 0)
+     sysinfo_instances = eina_list_remove(sysinfo_instances, inst);
    E_FREE(inst->cfg);
+   E_FREE(inst);
 }
 
 void
@@ -342,17 +382,32 @@ sysinfo_cpumonitor_remove(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA
      E_FREE_FUNC(inst->cfg->cpumonitor.popup, evas_object_del);
    if (inst->cfg->cpumonitor.configure)
      E_FREE_FUNC(inst->cfg->cpumonitor.configure, evas_object_del);
-   if (inst->cfg->cpumonitor.usage_check_thread)
-     {
-        ecore_thread_cancel(inst->cfg->cpumonitor.usage_check_thread);
-        inst->cfg->cpumonitor.usage_check_thread = NULL;
-     }
    EINA_LIST_FREE(inst->cfg->cpumonitor.handlers, handler)
      ecore_event_handler_del(handler);
+   if (inst->cfg->cpumonitor.usage_check_thread)
+     {
+        inst->cfg->cpumonitor.defer = EINA_TRUE;
+        ecore_thread_cancel(inst->cfg->cpumonitor.usage_check_thread);
+        inst->cfg->cpumonitor.usage_check_thread = NULL;
+	return;
+     }
    EINA_LIST_FREE(inst->cfg->cpumonitor.cores, core)
      {
         evas_object_del(core->layout);
         E_FREE_FUNC(core, free);
+     }
+   inst->cfg->cpumonitor.done = EINA_TRUE;
+   if (inst->cfg->esm == E_SYSINFO_MODULE_SYSINFO)
+     {
+        if (inst->cfg->memusage.done && inst->cfg->thermal.done &&
+            inst->cfg->netstatus.done && inst->cfg->cpuclock.done && inst->cfg->batman.done)
+          {
+              sysinfo_config->items = eina_list_remove(sysinfo_config->items, inst->cfg);
+              if (inst->cfg->id >= 0)
+                sysinfo_instances = eina_list_remove(sysinfo_instances, inst);
+              E_FREE(inst->cfg);
+              E_FREE(inst);
+          }
      }
 }
 
@@ -400,6 +455,13 @@ _cpumonitor_created_cb(void *data, Evas_Object *obj, void *event_data EINA_UNUSE
 Evas_Object *
 sysinfo_cpumonitor_create(Evas_Object *parent, Instance *inst)
 {
+   inst->cfg->cpumonitor.defer = EINA_FALSE;
+   inst->cfg->cpumonitor.done = EINA_FALSE;
+   inst->cfg->cpumonitor.total = 0;
+   inst->cfg->cpumonitor.idle = 0;
+   inst->cfg->cpumonitor.percent = 0;
+   inst->cfg->cpumonitor.popup = NULL;
+   inst->cfg->cpumonitor.configure = NULL;
    inst->cfg->cpumonitor.o_gadget = elm_table_add(parent);
    E_EXPAND(inst->cfg->cpumonitor.o_gadget);
    E_FILL(inst->cfg->cpumonitor.o_gadget);
@@ -470,6 +532,8 @@ cpumonitor_create(Evas_Object *parent, int *id, E_Gadget_Site_Orient orient EINA
    inst = E_NEW(Instance, 1);
    inst->cfg = _conf_item_get(id);
    *id = inst->cfg->id;
+   inst->cfg->cpumonitor.defer = EINA_FALSE;
+   inst->cfg->cpumonitor.done = EINA_FALSE;
    inst->cfg->cpumonitor.total = 0;
    inst->cfg->cpumonitor.idle = 0;
    inst->cfg->cpumonitor.percent = 0;

@@ -133,7 +133,7 @@ _thermal_check_fallback(void *data, Ecore_Thread *th)
 static void
 _thermal_check_notify(void *data, Ecore_Thread *th, void *msg)
 {
-   Tempthread *tth  = data;
+   Tempthread *tth = data;
    Instance *inst = tth->inst;
    int temp = (int)((long)msg);
    if (th != inst->cfg->thermal.th) return;
@@ -143,7 +143,35 @@ _thermal_check_notify(void *data, Ecore_Thread *th, void *msg)
 static void
 _thermal_check_done(void *data, Ecore_Thread *th EINA_UNUSED)
 {
-   _thermal_thread_free(data);
+   TempThread *tth = data;
+   Instance *inst = tth->inst;
+
+   if (inst->cfg->thermal.defer)
+     {
+        _thermal_thread_free(tth);
+        inst->cfg->thermal.defer = EINA_FALSE;
+        inst->cfg->thermal.done = EINA_TRUE;
+        if (inst->cfg->esm == E_SYSINFO_MODULE_THERMAL)
+          {
+             sysinfo_config->items = eina_list_remove(sysinfo_config->items, inst->cfg);
+             if (inst->cfg->id >= 0)
+               sysinfo_instances = eina_list_remove(sysinfo_instances, inst);
+             E_FREE(inst->cfg);
+             E_FREE(inst);
+          }
+        else
+          {
+             if (inst->cfg->memusage.done && inst->cfg->cpumonitor.done &&
+                 inst->cfg->netstatus.done && inst->cfg->cpuclock.done && inst->cfg->batman.done)
+               {
+                   sysinfo_config->items = eina_list_remove(sysinfo_config->items, inst->cfg);
+                   if (inst->cfg->id >= 0)
+                     sysinfo_instances = eina_list_remove(sysinfo_instances, inst);
+                   E_FREE(inst->cfg);
+                   E_FREE(inst);
+               }
+          }
+     }
 }
 #endif
 
@@ -299,8 +327,6 @@ _thermal_config_updated(Instance *inst)
 static void
 _thermal_face_shutdown(Instance *inst)
 {
-   if (inst->cfg->thermal.th) ecore_thread_cancel(inst->cfg->thermal.th);
-   if (inst->cfg->thermal.sensor_name) eina_stringshare_del(inst->cfg->thermal.sensor_name);
 #if defined(HAVE_EEZE)
    if (inst->cfg->thermal.poller)
      {
@@ -308,6 +334,7 @@ _thermal_face_shutdown(Instance *inst)
         _thermal_thread_free(inst->cfg->thermal.tth);
      }
 #endif
+   if (inst->cfg->thermal.sensor_name) eina_stringshare_del(inst->cfg->thermal.sensor_name);
 }
 
 static void
@@ -341,12 +368,22 @@ _thermal_removed_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_data)
      E_FREE_FUNC(inst->cfg->thermal.configure, evas_object_del);
    EINA_LIST_FREE(inst->cfg->thermal.handlers, handler)
      ecore_event_handler_del(handler);
-   _thermal_face_shutdown(inst);
-
    evas_object_event_callback_del_full(inst->o_main, EVAS_CALLBACK_DEL, sysinfo_thermal_remove, data);
-
+   evas_object_smart_callback_del_full(e_gadget_site_get(inst->o_main), "gadget_removed",
+                                       _thermal_removed_cb, inst);
+   if (inst->cfg->thermal.th)
+     {
+        inst->cfg->thermal.defer = EINA_TRUE;
+        ecore_thread_cancel(inst->cfg->thermal.th);
+        inst->cfg->thermal.th = NULL;
+        return;
+     }
+   _thermal_face_shutdown(inst);
    sysinfo_config->items = eina_list_remove(sysinfo_config->items, inst->cfg);
+   if (inst->cfg->id >= 0)
+     sysinfo_instances = eina_list_remove(sysinfo_instances, inst);
    E_FREE(inst->cfg);
+   E_FREE(inst);
 }
 
 void
@@ -362,8 +399,28 @@ sysinfo_thermal_remove(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UN
    if (inst->cfg->thermal.configure)
      E_FREE_FUNC(inst->cfg->thermal.configure, evas_object_del);
    EINA_LIST_FREE(inst->cfg->thermal.handlers, handler)
-     ecore_event_handler_del(handler);
+     ecore_event_handler_del(handler); 
+   if (inst->cfg->thermal.th)
+     {
+        inst->cfg->thermal.defer = EINA_TRUE;
+        ecore_thread_cancel(inst->cfg->thermal.th);
+        inst->cfg->thermal.th = NULL;
+        return;
+     }	 
    _thermal_face_shutdown(inst);
+   inst->cfg->thermal.done = EINA_TRUE;
+   if (inst->cfg->esm == E_SYSINFO_MODULE_SYSINFO)
+     {
+        if (inst->cfg->memusage.done && inst->cfg->cpumonitor.done &&
+            inst->cfg->netstatus.done && inst->cfg->cpuclock.done && inst->cfg->batman.done)
+          {
+              sysinfo_config->items = eina_list_remove(sysinfo_config->items, inst->cfg);
+              if (inst->cfg->id >= 0)
+                sysinfo_instances = eina_list_remove(sysinfo_instances, inst);
+              E_FREE(inst->cfg);
+              E_FREE(inst);
+          }
+     }
 }
 
 static void
@@ -376,6 +433,8 @@ _thermal_created_cb(void *data, Evas_Object *obj, void *event_data EINA_UNUSED)
 
    inst->cfg->thermal.temp = 900;
    inst->cfg->thermal.have_temp = EINA_FALSE;
+   inst->cfg->thermal.defer = EINA_FALSE;
+   inst->cfg->thermal.done = EINA_FALSE;
 
    inst->cfg->thermal.o_gadget = elm_layout_add(inst->o_main);
    if (orient == E_GADGET_SITE_ORIENT_VERTICAL)
@@ -406,6 +465,8 @@ sysinfo_thermal_create(Evas_Object *parent, Instance *inst)
 {
    inst->cfg->thermal.temp = 900;
    inst->cfg->thermal.have_temp = EINA_FALSE;
+   inst->cfg->thermal.defer = EINA_FALSE;
+   inst->cfg->thermal.done = EINA_FALSE;
 
    inst->cfg->thermal.o_gadget = elm_layout_add(parent);
    e_theme_edje_object_set(inst->cfg->thermal.o_gadget, "base/theme/gadget/thermal",
@@ -467,6 +528,8 @@ thermal_create(Evas_Object *parent, int *id, E_Gadget_Site_Orient orient EINA_UN
    inst = E_NEW(Instance, 1);
    inst->cfg = _conf_item_get(id);
    *id = inst->cfg->id;
+   inst->cfg->thermal.defer = EINA_FALSE;
+   inst->cfg->thermal.done = EINA_FALSE;
    inst->o_main = elm_box_add(parent);
    E_EXPAND(inst->o_main);
    evas_object_data_set(inst->o_main, "Instance", inst);

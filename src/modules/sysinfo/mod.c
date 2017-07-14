@@ -88,6 +88,7 @@ sysinfo_init(void)
         ci->batman.desktop_notifications = 0;
         ci->batman.popup = NULL;
         ci->batman.configure = NULL;
+        ci->batman.done = EINA_FALSE;
         ci->thermal.poll_interval = 128;
         ci->thermal.low = 30;
         ci->thermal.high = 80;
@@ -97,6 +98,8 @@ sysinfo_init(void)
         ci->thermal.units = CELSIUS;
         ci->thermal.popup = NULL;
         ci->thermal.configure = NULL;
+        ci->thermal.defer = EINA_FALSE;
+        ci->thermal.done = EINA_FALSE;
 	ci->cpuclock.poll_interval = 32;
         ci->cpuclock.restore_governor = 0;
         ci->cpuclock.auto_powersave = 1;
@@ -106,17 +109,23 @@ sysinfo_init(void)
         ci->cpuclock.pstate_max = 101;
         ci->cpuclock.popup = NULL;
 	ci->cpuclock.configure = NULL;
+        ci->cpuclock.defer = EINA_FALSE;
+        ci->cpuclock.done = EINA_FALSE;
 	ci->cpumonitor.poll_interval = 32;
         ci->cpumonitor.total = 0;
         ci->cpumonitor.idle = 0;
         ci->cpumonitor.percent = 0;
         ci->cpumonitor.popup = NULL;
         ci->cpumonitor.configure = NULL;
+        ci->cpumonitor.defer = EINA_FALSE;
+        ci->cpumonitor.done = EINA_FALSE;
         ci->memusage.poll_interval = 32;
         ci->memusage.mem_percent = 0;
         ci->memusage.swp_percent = 0;
         ci->memusage.popup = NULL;
         ci->memusage.configure = NULL;
+        ci->memusage.defer = EINA_FALSE;
+        ci->memusage.done = EINA_FALSE;
         ci->netstatus.poll_interval = 32;
         ci->netstatus.automax = EINA_TRUE;
         ci->netstatus.receive_units = NETSTATUS_UNIT_BYTES;
@@ -133,6 +142,8 @@ sysinfo_init(void)
         ci->netstatus.outstring = NULL;
         ci->netstatus.popup = NULL;
         ci->netstatus.configure = NULL;
+        ci->netstatus.defer = EINA_FALSE;
+        ci->netstatus.done = EINA_FALSE;
 
         E_CONFIG_LIMIT(ci->batman.poll_interval, 4, 4096);
         E_CONFIG_LIMIT(ci->batman.alert, 0, 60);

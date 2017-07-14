@@ -880,6 +880,36 @@ _cpuclock_cb_frequency_check_end(void *data, Ecore_Thread *th EINA_UNUSED)
 {
    Thread_Config *thc = data;
    e_powersave_sleeper_free(thc->sleeper);
+   if (thc->inst->cfg->cpuclock.defer)
+     {
+        if (thc->inst->cfg->cpuclock.handler)
+          ecore_event_handler_del(thc->inst->cfg->cpuclock.handler);
+        if (thc->inst->cfg->cpuclock.governor)
+          eina_stringshare_del(thc->inst->cfg->cpuclock.governor);
+        E_FREE_FUNC(thc->inst->cfg->cpuclock.status, _cpuclock_status_free);
+        thc->inst->cfg->cpuclock.defer = EINA_FALSE;
+        thc->inst->cfg->cpuclock.done = EINA_TRUE;
+        if (thc->inst->cfg->esm == E_SYSINFO_MODULE_CPUCLOCK)
+          {
+             sysinfo_config->items = eina_list_remove(sysinfo_config->items, thc->inst->cfg);
+             if (thc->inst->cfg->id >= 0)
+               sysinfo_instances = eina_list_remove(sysinfo_instances, thc->inst);
+             E_FREE(thc->inst->cfg);
+             E_FREE(thc->inst);
+          }
+        else
+          {
+             if (thc->inst->cfg->memusage.done && thc->inst->cfg->thermal.done &&
+                 thc->inst->cfg->netstatus.done && thc->inst->cfg->cpumonitor.done && thc->inst->cfg->batman.done)
+               {
+                   sysinfo_config->items = eina_list_remove(sysinfo_config->items, thc->inst->cfg);
+                   if (thc->inst->cfg->id >= 0)
+                     sysinfo_instances = eina_list_remove(sysinfo_instances, thc->inst);
+                   E_FREE(thc->inst->cfg);
+                   E_FREE(thc->inst);
+               }
+          }
+     }
    E_FREE_FUNC(thc, free);
 }
 
@@ -943,28 +973,31 @@ _cpuclock_removed_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_data)
      E_FREE_FUNC(inst->cfg->cpuclock.popup, evas_object_del);
    if (inst->cfg->cpuclock.popup)
      E_FREE_FUNC(inst->cfg->cpuclock.popup, evas_object_del);
-
    if (inst->cfg->cpuclock.configure)
      E_FREE_FUNC(inst->cfg->cpuclock.configure, evas_object_del);
-
-   if (inst->cfg->cpuclock.handler)
-     ecore_event_handler_del(inst->cfg->cpuclock.handler);
    EINA_LIST_FREE(inst->cfg->cpuclock.handlers, handler)
      ecore_event_handler_del(handler);
+   evas_object_event_callback_del_full(inst->o_main, EVAS_CALLBACK_DEL, sysinfo_cpuclock_remove, data);
+   evas_object_smart_callback_del_full(e_gadget_site_get(inst->o_main), "gadget_removed",
+                                       _cpuclock_removed_cb, inst);
    if (inst->cfg->cpuclock.frequency_check_thread)
      {
+        inst->cfg->cpuclock.defer = EINA_TRUE;
         ecore_thread_cancel(inst->cfg->cpuclock.frequency_check_thread);
         inst->cfg->cpuclock.frequency_check_thread = NULL;
+	return;
      }
-
-    if (inst->cfg->cpuclock.governor)
+   if (inst->cfg->cpuclock.handler)
+     ecore_event_handler_del(inst->cfg->cpuclock.handler);
+   if (inst->cfg->cpuclock.governor)
      eina_stringshare_del(inst->cfg->cpuclock.governor);
    E_FREE_FUNC(inst->cfg->cpuclock.status, _cpuclock_status_free);
 
-   evas_object_event_callback_del_full(inst->o_main, EVAS_CALLBACK_DEL, sysinfo_cpuclock_remove, data);
-
    sysinfo_config->items = eina_list_remove(sysinfo_config->items, inst->cfg);
+   if (inst->cfg->id >= 0)
+     sysinfo_instances = eina_list_remove(sysinfo_instances, inst);
    E_FREE(inst->cfg);
+   E_FREE(inst);
 }
 
 void
@@ -977,24 +1010,37 @@ sysinfo_cpuclock_remove(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_U
      E_FREE_FUNC(inst->cfg->cpuclock.popup, evas_object_del);
    if (inst->cfg->cpuclock.popup)
      E_FREE_FUNC(inst->cfg->cpuclock.popup, evas_object_del);
-
    if (inst->cfg->cpuclock.configure)
      E_FREE_FUNC(inst->cfg->cpuclock.configure, evas_object_del);
+   EINA_LIST_FREE(inst->cfg->cpuclock.handlers, handler)
+     ecore_event_handler_del(handler);
+   if (inst->cfg->cpuclock.frequency_check_thread)
+     {
+        inst->cfg->cpuclock.defer = EINA_TRUE;
+        ecore_thread_cancel(inst->cfg->cpuclock.frequency_check_thread);
+        inst->cfg->cpuclock.frequency_check_thread = NULL;
+        return;
+     }
 
    if (inst->cfg->cpuclock.handler)
      ecore_event_handler_del(inst->cfg->cpuclock.handler);
-   EINA_LIST_FREE(inst->cfg->cpuclock.handlers, handler)
-     ecore_event_handler_del(handler);
-
-   if (inst->cfg->cpuclock.frequency_check_thread)
-     {
-        ecore_thread_cancel(inst->cfg->cpuclock.frequency_check_thread);
-        inst->cfg->cpuclock.frequency_check_thread = NULL;
-     }
-
-    if (inst->cfg->cpuclock.governor)
+   if (inst->cfg->cpuclock.governor)
      eina_stringshare_del(inst->cfg->cpuclock.governor);
    E_FREE_FUNC(inst->cfg->cpuclock.status, _cpuclock_status_free);
+
+   inst->cfg->cpuclock.done = EINA_TRUE;
+   if (inst->cfg->esm == E_SYSINFO_MODULE_SYSINFO)
+     {
+        if (inst->cfg->memusage.done && inst->cfg->thermal.done &&
+            inst->cfg->netstatus.done && inst->cfg->cpumonitor.done && inst->cfg->batman.done)
+          {
+              sysinfo_config->items = eina_list_remove(sysinfo_config->items, inst->cfg);
+              if (inst->cfg->id >= 0)
+                sysinfo_instances = eina_list_remove(sysinfo_instances, inst);
+              E_FREE(inst->cfg);
+              E_FREE(inst);
+          }
+     }
 }
 
 static void
@@ -1059,6 +1105,8 @@ sysinfo_cpuclock_create(Evas_Object *parent, Instance *inst)
 {
    Eina_List *l = NULL;
 
+   inst->cfg->cpuclock.defer = EINA_FALSE;
+   inst->cfg->cpuclock.done = EINA_FALSE;
    if (inst->cfg->cpuclock.pstate_min == 0) inst->cfg->cpuclock.pstate_min = 1;
    if (inst->cfg->cpuclock.pstate_max == 0) inst->cfg->cpuclock.pstate_max = 101;
 
@@ -1144,6 +1192,8 @@ cpuclock_create(Evas_Object *parent, int *id, E_Gadget_Site_Orient orient EINA_U
    inst = E_NEW(Instance, 1);
    inst->cfg = _conf_item_get(id);
    *id = inst->cfg->id;
+   inst->cfg->cpuclock.defer = EINA_FALSE;
+   inst->cfg->cpuclock.done = EINA_FALSE;
    inst->o_main = elm_box_add(parent);
    E_EXPAND(inst->o_main);
    evas_object_data_set(inst->o_main, "Instance", inst);

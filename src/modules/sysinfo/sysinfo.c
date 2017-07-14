@@ -15,18 +15,27 @@ _sysinfo_removed_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_data)
    sysinfo_memusage_remove(inst, NULL, NULL, NULL);
    sysinfo_netstatus_remove(inst, NULL, NULL, NULL);
 
+   evas_object_smart_callback_del_full(e_gadget_site_get(obj), "gadget_removed", _sysinfo_removed_cb, inst);
    evas_object_event_callback_del_full(inst->o_main, EVAS_CALLBACK_DEL, _sysinfo_deleted_cb, data);
-
-   sysinfo_config->items = eina_list_remove(sysinfo_config->items, inst->cfg);
-   E_FREE(inst->cfg);
+   if (inst && inst->cfg)
+     {
+        if (inst->cfg->batman.done && inst->cfg->memusage.done && inst->cfg->thermal.done &&
+            inst->cfg->cpumonitor.done && inst->cfg->cpuclock.done && inst->cfg->netstatus.done)
+          {
+              sysinfo_config->items = eina_list_remove(sysinfo_config->items, inst->cfg);
+              if (inst->cfg->id >= 0)
+                sysinfo_instances = eina_list_remove(sysinfo_instances, inst);
+              E_FREE(inst->cfg);
+              E_FREE(inst);
+          }
+     }
 }
 
 static void
-_sysinfo_deleted_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *event_data EINA_UNUSED)
+_sysinfo_deleted_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_data EINA_UNUSED)
 {
    Instance *inst = data;
 
-   evas_object_smart_callback_del_full(e_gadget_site_get(obj), "gadget_removed", _sysinfo_removed_cb, inst);
    sysinfo_batman_remove(inst, NULL, NULL, NULL);
    sysinfo_thermal_remove(inst, NULL, NULL, NULL);
    sysinfo_cpuclock_remove(inst, NULL, NULL, NULL);
@@ -98,6 +107,7 @@ _conf_item_get(int *id)
    ci->batman.desktop_notifications = 0;
    ci->batman.popup = NULL;
    ci->batman.configure = NULL;
+   ci->batman.done = EINA_FALSE;
    ci->thermal.poll_interval = 128;
    ci->thermal.low = 30;
    ci->thermal.high = 80;
@@ -106,6 +116,8 @@ _conf_item_get(int *id)
    ci->thermal.units = CELSIUS;
    ci->thermal.popup = NULL;
    ci->thermal.configure = NULL;
+   ci->thermal.done = EINA_FALSE;
+   ci->thermal.defer = EINA_FALSE;
    ci->cpuclock.poll_interval = 32;
    ci->cpuclock.restore_governor = 0;
    ci->cpuclock.auto_powersave = 1;
@@ -115,6 +127,10 @@ _conf_item_get(int *id)
    ci->cpuclock.pstate_max = 101;
    ci->cpuclock.popup = NULL;
    ci->cpuclock.configure = NULL;
+   ci->cpuclock.done = EINA_FALSE;
+   ci->cpuclock.defer = EINA_FALSE;
+   ci->cpumonitor.done = EINA_FALSE;
+   ci->cpumonitor.defer = EINA_FALSE;
    ci->cpumonitor.poll_interval = 32;
    ci->cpumonitor.total = 0;
    ci->cpumonitor.idle = 0;
@@ -126,6 +142,8 @@ _conf_item_get(int *id)
    ci->memusage.swp_percent = 0;
    ci->memusage.popup = NULL;
    ci->memusage.configure = NULL;
+   ci->memusage.done = EINA_FALSE;
+   ci->memusage.defer = EINA_FALSE;
    ci->netstatus.poll_interval = 32;
    ci->netstatus.in = 0;
    ci->netstatus.out = 0;
@@ -144,6 +162,8 @@ _conf_item_get(int *id)
    ci->netstatus.outmax = 0;
    ci->netstatus.receive_units = NETSTATUS_UNIT_BYTES;
    ci->netstatus.send_units = NETSTATUS_UNIT_BYTES;
+   ci->netstatus.done = EINA_FALSE;
+   ci->netstatus.defer = EINA_FALSE;
 
    sysinfo_config->items = eina_list_append(sysinfo_config->items, ci);
 

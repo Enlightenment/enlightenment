@@ -579,9 +579,14 @@ _batman_removed_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_data)
 #endif
 
    evas_object_event_callback_del_full(inst->o_main, EVAS_CALLBACK_DEL, sysinfo_batman_remove, data);
+   evas_object_smart_callback_del_full(e_gadget_site_get(inst->o_main), "gadget_removed",
+                                       _batman_removed_cb, inst);
 
    sysinfo_config->items = eina_list_remove(sysinfo_config->items, inst->cfg);
+   if (inst->cfg->id >= 0)
+     sysinfo_instances = eina_list_remove(sysinfo_instances, inst);
    E_FREE(inst->cfg);
+   E_FREE(inst);
 }
 
 void
@@ -608,6 +613,19 @@ sysinfo_batman_remove(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNU
    (void) inst;
    _batman_fallback_stop();
 #endif
+   inst->cfg->batman.done = EINA_TRUE;
+   if (inst->cfg->esm == E_SYSINFO_MODULE_SYSINFO)
+     {
+        if (inst->cfg->memusage.done && inst->cfg->thermal.done &&
+            inst->cfg->netstatus.done && inst->cfg->cpuclock.done && inst->cfg->cpumonitor.done)
+          {
+              sysinfo_config->items = eina_list_remove(sysinfo_config->items, inst->cfg);
+              if (inst->cfg->id >= 0)
+                sysinfo_instances = eina_list_remove(sysinfo_instances, inst);
+              E_FREE(inst->cfg);
+              E_FREE(inst);
+          }
+     }
 }
 
 static void
@@ -656,6 +674,7 @@ sysinfo_batman_create(Evas_Object *parent, Instance *inst)
    inst->cfg->batman.time_left = -2;
    inst->cfg->batman.have_battery = -2;
    inst->cfg->batman.have_power = -2;
+   inst->cfg->batman.done = EINA_FALSE;
 
    inst->cfg->batman.o_gadget = elm_layout_add(parent);
    e_theme_edje_object_set(inst->cfg->batman.o_gadget, "base/theme/gadget/batman",
@@ -727,6 +746,7 @@ batman_create(Evas_Object *parent, int *id, E_Gadget_Site_Orient orient EINA_UNU
    inst = E_NEW(Instance, 1);
    inst->cfg = _conf_item_get(id);
    *id = inst->cfg->id;
+   inst->cfg->batman.done = EINA_FALSE;
    inst->o_main = elm_box_add(parent);
    E_EXPAND(inst->o_main);
    evas_object_data_set(inst->o_main, "Instance", inst);

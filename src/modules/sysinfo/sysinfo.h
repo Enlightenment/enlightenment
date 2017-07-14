@@ -145,6 +145,7 @@ struct _Config_Item
       int                  have_power;
       int                  desktop_notifications;
       Eina_List           *handlers;
+      Eina_Bool            done;
 #ifdef HAVE_EEZE
       Eeze_Udev_Watch     *acwatch;
       Eeze_Udev_Watch     *batwatch;
@@ -174,6 +175,8 @@ struct _Config_Item
 
       Eina_Bool            have_temp:1;
       Eina_List           *handlers;
+      Eina_Bool            defer;
+      Eina_Bool            done;
    } thermal;
    struct
    {
@@ -192,6 +195,8 @@ struct _Config_Item
       Ecore_Thread        *frequency_check_thread;
       Ecore_Event_Handler *handler;
       Eina_List           *handlers;
+      Eina_Bool            defer;
+      Eina_Bool            done;
    } cpuclock;
    struct
    {
@@ -209,6 +214,8 @@ struct _Config_Item
       Ecore_Thread        *usage_check_thread;
       Eina_List           *cores;
       Eina_List           *handlers;
+      Eina_Bool            defer;
+      Eina_Bool            done;
    } cpumonitor;
    struct
    {
@@ -227,6 +234,8 @@ struct _Config_Item
       unsigned long        swp_used;
       Ecore_Thread        *usage_check_thread;
       Eina_List           *handlers;
+      Eina_Bool            defer;
+      Eina_Bool            done;
    } memusage;
    struct
    {
@@ -250,6 +259,8 @@ struct _Config_Item
       Eina_Stringshare    *outstring;
       Ecore_Thread        *usage_check_thread;
       Eina_List           *handlers;
+      Eina_Bool            defer;
+      Eina_Bool            done;
    } netstatus;
    struct   {
       Evas_Object *o_batman;
