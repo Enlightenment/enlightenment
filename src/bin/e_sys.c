@@ -96,6 +96,7 @@ _e_sys_comp_done_cb(void *data, Evas_Object *obj, const char *sig, const char *s
           e_comp->screen->dpms(3);
      }
 #endif
+   edje_freeze();
    ecore_timer_add(0.5, _e_sys_comp_done2_cb, data);
    E_FREE_FUNC(action_timeout, ecore_timer_del);
 }
@@ -233,6 +234,7 @@ _e_sys_comp_resume2(void *data EINA_UNUSED)
 static void
 _e_sys_comp_resume(void)
 {
+   edje_thaw();
    ecore_evas_manual_render_set(e_comp->ee, EINA_FALSE);
    evas_damage_rectangle_add(e_comp->evas, 0, 0, e_comp->w, e_comp->h);
 #ifndef HAVE_WAYLAND_ONLY
