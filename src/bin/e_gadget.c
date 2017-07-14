@@ -258,6 +258,12 @@ _gadget_reparent(E_Gadget_Site *zgs, E_Gadget_Config *zgc)
 }
 
 static void
+_gadget_popup_hide(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   if (desktop_editor) evas_object_show(desktop_editor);
+}
+
+static void
 _gadget_popup(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
 {
    E_Gadget_Site *zgs = data;
@@ -269,6 +275,9 @@ _gadget_popup(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
         evas_object_propagate_events_set(event_info, 0);
      }
    evas_object_smart_callback_call(zgs->layout, "gadget_site_popup", event_info);
+   if (!event_info) return;
+   evas_object_event_callback_add(event_info, EVAS_CALLBACK_HIDE, _gadget_popup_hide, zgs);
+   if (desktop_editor) evas_object_hide(desktop_editor);
 }
 
 static void
