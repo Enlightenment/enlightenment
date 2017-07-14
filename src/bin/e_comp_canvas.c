@@ -296,6 +296,7 @@ _e_comp_cb_screensaver_on()
               (e_config->desklock_post_screensaver_time,
               _e_comp_cb_timer_post_screensaver_lock, NULL);
      }
+   e_pointers_freeze_set(1);
    return ECORE_CALLBACK_PASS_ON;
 }
 
@@ -304,6 +305,7 @@ _e_comp_cb_screensaver_off()
 {
    E_FREE_FUNC(timer_post_screensaver_lock, ecore_timer_del);
    E_FREE_FUNC(timer_post_screensaver_on, ecore_timer_del);
+   e_pointers_freeze_set(0);
    return ECORE_CALLBACK_PASS_ON;
 }
 ////////////////////////////////////
