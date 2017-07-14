@@ -279,7 +279,6 @@ _xwl_selection_notify(void *d EINA_UNUSED, int t EINA_UNUSED, Ecore_X_Event_Sele
              e_comp_wl->selection.data_source = &source->data_source;
              source->data_source.resource = dsource->resource;
              source->data_source.send = _xwayland_send_send;
-             free(dsource);
              if (e_client_has_xwindow(e_client_focused_get()))
                e_comp_wl_data_device_keyboard_focus_set();
              return ECORE_CALLBACK_RENEW;
