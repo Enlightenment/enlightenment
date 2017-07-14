@@ -2463,8 +2463,11 @@ _gadget_desklock_key_handler(void *d EINA_UNUSED, int t EINA_UNUSED, Ecore_Event
 }
 
 static void
-_gadget_desklock_mouse_up_handler()
+_gadget_desklock_mouse_up_handler(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info)
 {
+   Evas_Event_Mouse_Down *ev = event_info;
+   if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return;
+   if (ev->button != 1) return;
    if (!_editor_site_visible()) return;
    if (!added)
      _gadget_desklock_del();
@@ -2541,8 +2544,11 @@ _gadget_desktop_key_handler(void *data, int t EINA_UNUSED, Ecore_Event_Key *ev)
 }
 
 static void
-_gadget_desktop_mouse_up_handler()
+_gadget_desktop_mouse_up_handler(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info)
 {
+   Evas_Event_Mouse_Down *ev = event_info;
+   if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return;
+   if (ev->button != 1) return;
    if (!_editor_site_visible()) return;
    if (!added)
      _edit_end();
