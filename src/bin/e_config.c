@@ -1,11 +1,5 @@
 #include "e.h"
 
-#if ((E_PROFILE >= LOWRES_PDA) && (E_PROFILE <= HIRES_PDA))
-#define DEF_MENUCLICK             1.25
-#else
-#define DEF_MENUCLICK             0.25
-#endif
-
 E_API E_Config *e_config = NULL;
 E_API E_Config_Bindings *e_bindings = NULL;
 
