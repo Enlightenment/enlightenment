@@ -2327,6 +2327,7 @@ e_gadget_editor_add(Evas_Object *parent, Evas_Object *site)
           elm_object_item_tooltip_content_cb_set(item, _editor_tooltip_content, gi, NULL);
      }
    evas_object_event_callback_add(list, EVAS_CALLBACK_DEL, _editor_del, parent);
+   e_comp_object_util_del_list_append(list, tempsite);
    ZGS_GET(site);
    evas_object_event_callback_add(site, EVAS_CALLBACK_DEL, _edit_site_del, zgs);
    evas_object_data_set(list, "__gadget_site", site);
