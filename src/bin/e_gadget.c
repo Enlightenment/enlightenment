@@ -263,6 +263,11 @@ _gadget_popup(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
    E_Gadget_Site *zgs = data;
 
    if (event_info) elm_object_tree_focus_allow_set(event_info, 0);
+   if (desktop_rect && event_info)
+     {
+        evas_object_smart_member_add(event_info, desktop_rect);
+        evas_object_propagate_events_set(event_info, 0);
+     }
    evas_object_smart_callback_call(zgs->layout, "gadget_site_popup", event_info);
 }
 
@@ -398,6 +403,17 @@ _gadget_object_create(E_Gadget_Config *zgc)
                }
              e_comp_grab_input(1, 1);
              evas_object_event_callback_add(zgc->cfg_object, EVAS_CALLBACK_DEL, _gadget_wizard_del, zgc);
+             if (desktop_rect)
+               {
+                  evas_object_smart_member_add(zgc->cfg_object, desktop_rect);
+                  evas_object_propagate_events_set(zgc->cfg_object, 0);
+                  if (e_comp->autoclose.obj == zgc->cfg_object)
+                    {
+                       evas_object_smart_member_add(e_comp->autoclose.rect, desktop_rect);
+                       evas_object_propagate_events_set(e_comp->autoclose.rect, 0);
+                    }
+               }
+             evas_object_smart_callback_call(zgc->site->layout, "gadget_site_popup", zgc->cfg_object);
              evas_object_smart_callback_call(zgc->site->layout, "gadget_site_locked", NULL);
              return EINA_TRUE;
           }
@@ -1031,6 +1047,11 @@ _gadget_act_menu(E_Object *obj, const char *params EINA_UNUSED, E_Binding_Event_
                          e_zone_current_get(),
                          x, y, 1, 1,
                          E_MENU_POP_DIRECTION_AUTO, ev->timestamp);
+   if (desktop_rect)
+     {
+        evas_object_smart_member_add(zgc->menu->comp_object, desktop_rect);
+        evas_object_propagate_events_set(zgc->menu->comp_object, 0);
+     }
    evas_object_smart_callback_call(zgc->site->layout, "gadget_site_popup", zgc->menu->comp_object);
    return EINA_TRUE;
 }
@@ -1813,6 +1834,11 @@ e_gadget_util_ctxpopup_place(Evas_Object *g, Evas_Object *ctx, Evas_Object *pos_
      {
         evas_object_event_callback_add(content, EVAS_CALLBACK_MOVE, _gadget_util_ctxpopup_moveresize, NULL);
         evas_object_event_callback_add(content, EVAS_CALLBACK_RESIZE, _gadget_util_ctxpopup_moveresize, NULL);
+     }
+   if (desktop_rect)
+     {
+        evas_object_smart_member_add(ctx, desktop_rect);
+        evas_object_propagate_events_set(ctx, 0);
      }
    evas_object_smart_callback_call(zgc->site->layout, "gadget_site_popup", ctx);
    if (evas_object_visible_get(ctx))
