@@ -522,3 +522,14 @@ time_config_update(Config_Item *ci)
      E_FREE_FUNC(clock_timer, ecore_timer_del);
    e_config_save_queue();
 }
+
+EINTERN void
+clock_timer_set(Eina_Bool set)
+{
+   if (set)
+     {
+        if (clock_instances) _clock_timer(NULL);
+     }
+   else
+     E_FREE_FUNC(clock_timer, ecore_timer_del);
+}

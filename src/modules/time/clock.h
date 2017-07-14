@@ -86,6 +86,7 @@ EINTERN void digital_clock_wizard(E_Gadget_Wizard_End_Cb cb, void *data);
 EINTERN void analog_clock_wizard(E_Gadget_Wizard_End_Cb cb, void *data);
 EINTERN void clock_popup_new(Instance *inst);
 EINTERN void time_config_update(Config_Item *ci);
+EINTERN void clock_timer_set(Eina_Bool set);
 
 extern Config *time_config;
 extern Eina_List *clock_instances;
