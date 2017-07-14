@@ -765,16 +765,19 @@ static void
 _e_comp_wl_data_cb_bind_manager(struct wl_client *client, void *data EINA_UNUSED, uint32_t version EINA_UNUSED, uint32_t id)
 {
    struct wl_resource *res;
+   pid_t pid;
 
    /* try to create data manager resource */
-   e_comp_wl->mgr.resource = res =
-       wl_resource_create(client, &wl_data_device_manager_interface, 3, id);
+   res = wl_resource_create(client, &wl_data_device_manager_interface, 3, id);
    if (!res)
      {
         ERR("Could not create data device manager");
         wl_client_post_no_memory(client);
         return;
      }
+   wl_client_get_credentials(client, &pid, NULL, NULL);
+   if (pid == getpid())
+     e_comp_wl->mgr.resource = res;
 
    wl_resource_set_implementation(res, &_e_manager_interface,
                                   e_comp->wl_comp_data, NULL);
