@@ -199,6 +199,8 @@ _clock_timer(void *d EINA_UNUSED)
         seconds |= inst->cfg->show_seconds;
         sec = time_string_format(inst, buf, sizeof(buf));
         elm_object_part_text_set(inst->o_clock, "e.text", buf);
+        time_datestring_format(inst, buf, sizeof(buf) - 1);
+        elm_object_part_text_set(inst->o_clock, "e.text.sub", buf);
         _eval_instance_size(inst);
      }
    sec = seconds ? 1 : (61 - sec);
