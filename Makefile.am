@@ -44,17 +44,6 @@ enlightenment.pc \
 pkgbuild/PKGBUILD \
 pkgbuild/enlightenment.install
 
-EDJE_CC = $(EDJE_CC_$(V))
-EDJE_CC_ = $(EDJE_CC_$(AM_DEFAULT_VERBOSITY))
-EDJE_CC_0 = @echo "  EDJE_CC " $@; @edje_cc@
-EDJE_CC_1 = @edje_cc@
-
-EDJE_FLAGS_VERBOSE_ = $(EDJE_FLAGS_VERBOSE_$(AM_DEFAULT_VERBOSITY))
-EDJE_FLAGS_VERBOSE_0 = 
-EDJE_FLAGS_VERBOSE_1 = -v
-EDJE_FLAGS = $(EDJE_FLAGS_VERBOSE_$(V)) \
-@EDJE_DEF@
-
 include m4/Makefile.mk
 
 if HAVE_PO

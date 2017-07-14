@@ -589,7 +589,6 @@ EDJE_DEF=$EDJE_DEF" -DE_PROFILE"=$profile
 AC_SUBST([EDJE_DEF])
 
 PKG_CHECK_MODULES(EET, [eet >= ${efl_version}])
-EFL_WITH_BIN([edje], [edje-cc], [edje_cc])
 EFL_WITH_BIN([eet], [eet-eet], [eet])
 EFL_WITH_BIN([eldbus], [eldbus_codegen], [eldbus-codegen])
 
