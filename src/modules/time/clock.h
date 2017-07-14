@@ -87,6 +87,7 @@ EINTERN Evas_Object *analog_clock_wizard(E_Gadget_Wizard_End_Cb cb, void *data);
 EINTERN void clock_popup_new(Instance *inst);
 EINTERN void time_config_update(Config_Item *ci);
 EINTERN void clock_timer_set(Eina_Bool set);
+EINTERN void clock_date_update(void);
 
 extern Config *time_config;
 extern Eina_List *clock_instances;

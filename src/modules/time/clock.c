@@ -537,3 +537,18 @@ clock_timer_set(Eina_Bool set)
    else
      E_FREE_FUNC(clock_timer, ecore_timer_del);
 }
+
+EINTERN void
+clock_date_update(void)
+{
+   Eina_List *l;
+   Instance *inst;
+   char buf[128];
+
+   EINA_LIST_FOREACH(clock_instances, l, inst)
+     {
+        time_datestring_format(inst, buf, sizeof(buf) - 1);
+        elm_object_part_text_set(inst->o_clock, "e.text.sub", buf);
+        _eval_instance_size(inst);
+     }
+}
