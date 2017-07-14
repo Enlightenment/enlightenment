@@ -1370,12 +1370,25 @@ _site_create(E_Gadget_Site *zgs)
 }
 
 static void
+_site_auto_add_comp_object_del(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   E_Gadget_Site *zgs = data;
+   Eina_List *l, *ll;
+   E_Gadget_Config *zgc;
+
+   /* prune unconfigured gadgets */
+   EINA_LIST_FOREACH_SAFE(zgs->gadgets, l, ll, zgc)
+     if (zgc->id <= 0) _gadget_remove(zgc);
+   evas_object_del(zgs->layout);
+}
+
+static void
 _site_auto_add(E_Gadget_Site *zgs, Evas_Object *comp_object)
 {
    int x, y, w, h;
 
    _site_create(zgs);
-   e_comp_object_util_del_list_append(comp_object, zgs->layout);
+   evas_object_event_callback_add(comp_object, EVAS_CALLBACK_DEL, _site_auto_add_comp_object_del, zgs);
    evas_object_layer_set(zgs->layout, evas_object_layer_get(comp_object));
    evas_object_stack_above(zgs->layout, comp_object);
    evas_object_geometry_get(comp_object, &x, &y, &w, &h);
