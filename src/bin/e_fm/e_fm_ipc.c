@@ -32,7 +32,6 @@
 #include <Ecore.h>
 #include <Ecore_Ipc.h>
 #include <Ecore_File.h>
-#include <Evas.h>
 #include <Efreet.h>
 #include <Eet.h>
 
