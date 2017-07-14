@@ -1,7 +1,7 @@
 #ifndef E_H
 # define E_H
 
-# define E_VERSION_MAJOR 21
+# define E_VERSION_MAJOR 22
 
 /**
  * @defgroup API Enlightenment API
