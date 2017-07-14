@@ -1,4 +1,12 @@
-#include "e.h"
+#include <Eina.h>
+#include <Eet.h>
+#define E_TYPEDEFS
+#include "e_config_data.h"
+#undef E_TYPEDEFS
+#ifndef E_API
+# define E_API
+#endif
+#include "e_config_data.h"
 
 static Eina_Hash *config_hash = NULL;
 
