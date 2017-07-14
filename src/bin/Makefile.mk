@@ -49,11 +49,9 @@ src/bin/enlightenment_fm_op \
 src/bin/enlightenment_sys \
 src/bin/enlightenment_thumb \
 src/bin/enlightenment_elm_cfgtool \
-src/bin/enlightenment_static_grabber
+src/bin/enlightenment_static_grabber \
+src/bin/enlightenment_alert
 
-if ! HAVE_WAYLAND_ONLY
-internal_bin_PROGRAMS += src/bin/enlightenment_alert
-endif
 if HAVE_FREEBSD
 internal_bin_PROGRAMS += src/bin/enlightenment_ckpasswd
 endif

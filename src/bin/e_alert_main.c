@@ -15,11 +15,12 @@
 #include <Eina.h>
 #include <Ecore.h>
 #include <Ecore_Ipc.h>
+#ifndef HAVE_WAYLAND_ONLY
 #include <xcb/xcb.h>
 #include <xcb/xcb_keysyms.h>
 #include <xcb/shape.h>
 #include <X11/keysym.h>
-
+#endif
 #ifdef HAVE_WL_DRM
 # include <Ecore_Input.h>
 # ifdef HAVE_DRM2
@@ -67,6 +68,7 @@
 #define WINDOW_WIDTH   320
 #define WINDOW_HEIGHT  240
 
+#ifndef HAVE_WAYLAND_ONLY
 #ifndef XCB_ATOM_NONE
 # define XCB_ATOM_NONE 0
 #endif
@@ -100,9 +102,9 @@ static xcb_window_t btn2 = 0;
 static xcb_font_t font = 0;
 static xcb_gcontext_t gc = 0;
 static int fa = 0, fw = 0;
+#endif
 static int sw = 0, sh = 0;
 static int fh = 0;
-
 static const char *title = NULL, *str1 = NULL, *str2 = NULL;
 static int ret = 0, sig = 0;
 static pid_t pid;
@@ -724,8 +726,11 @@ main(int argc, char **argv)
         _e_alert_drm_run();
         _e_alert_drm_shutdown();
      }
+#endif
+#if defined(HAVE_WL_DRM) && !defined(HAVE_WAYLAND_ONLY)
    else
 #endif
+#ifndef HAVE_WAYLAND_ONLY
      {
         if (!_e_alert_connect())
           {
@@ -738,14 +743,14 @@ main(int argc, char **argv)
         _e_alert_run();
         _e_alert_shutdown();
      }
-
+#endif
    ecore_shutdown();
 
    /* ret == 1 => restart e => exit code 1 */
    /* ret == 2 => exit e => any code will do that */
    return ret;
 }
-
+#ifndef HAVE_WAYLAND_ONLY
 /* local functions */
 static int
 _e_alert_connect(void)
@@ -1296,3 +1301,4 @@ _e_alert_draw_button_text(void)
 
    xcb_image_text_8(conn, strlen(str2), btn2, gc, x, (10 + fa), str2);
 }
+#endif

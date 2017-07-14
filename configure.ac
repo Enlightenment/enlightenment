@@ -904,35 +904,28 @@ AM_CONDITIONAL([HAVE_WAYLAND_ONLY], [test "x${have_wayland_only}" = "xyes"])
 
 e_alert_requires="\
   evas >= $efl_version \
-  ecore >= $efl_version \
-  xcb \
-  xcb-shape \
-  xcb-keysyms \
   eina >= ${efl_version} \
   ecore >= ${efl_version} \
   ecore-ipc >= ${efl_version}"
 
 if test "x${have_wayland}" = "xyes"; then
   if test "x${HAVE_WL_DRM}" = "xyes"; then
-    if test "x${have_ecore_drm2}" = "xyes"; then
       e_alert_requires="\
         $e_alert_requires \
         ecore-input >= ${efl_version} \
-        ecore-drm2 >= ${efl_ecore_drm2_version} \
-        evas >= ${efl_version}"
-    else
-      e_alert_requires="\
-        $e_alert_requires \
-        ecore-input >= ${efl_version} \
-        ecore-drm >= ${efl_version} \
-        evas >= ${efl_version}"
-    fi
+        ecore-drm2 >= ${efl_ecore_drm2_version}"
  fi
 fi
 
 if test "x${have_wayland_only}" != "xyes"; then
-  PKG_CHECK_MODULES(E_ALERT, [$e_alert_requires])
+  e_alert_requires="\
+    $e_alert_requires \
+    xcb \
+    xcb-shape \
+    xcb-keysyms"
 fi
+
+PKG_CHECK_MODULES(E_ALERT, [$e_alert_requires])
 
 if test "x${have_wayland_only}" != "xyes"; then
   e_requires="$e_requires ecore-x >= $efl_version"
