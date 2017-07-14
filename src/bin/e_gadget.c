@@ -2034,6 +2034,8 @@ _editor_del(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *event_info 
 static void
 _editor_item_del(void *data, Evas_Object *obj EINA_UNUSED)
 {
+   Gadget_Item *gi = data;
+   elm_box_unpack_all(gi->box);
    free(data);
 }
 
