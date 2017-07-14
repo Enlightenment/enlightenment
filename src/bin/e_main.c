@@ -327,22 +327,6 @@ main(int argc, char **argv)
    e_util_env_set("DESKTOP", "Enlightenment");
    TS("Environment Variables Done");
 
-   /* KDE5 applications don't understand anything other then gnome or kde     */
-   /* They expect everyone else to set QT_QPA_PLATFORMTHEME to tell them how  */
-   /* to theme there apps otherwise they use a fallback mode which results in */
-   /* missing icons and a inability to change the appearance of applications  */
-   /* see https://bugzilla.suse.com/show_bug.cgi?id=920792 for more info.     */
-   /* There are two sensible defaults for this variable, "kde" which will     */
-   /* make apps appear the same as they do if they are run in kde. and gtk2   */
-   /* which will make kde applications follow the gtk/gnome theme, we have    */
-   /* decided on choosing gtk2 as it means that kde/qt apps will follow the   */
-   /* app and icon theme set in the enlightenment settings dialog. Some users */
-   /* who wish to use Qt apps without any gnome or gtk usage may choose to    */
-   /* install qt5ct and overwrite this variable with qt5ct and use that to    */
-   /* configure there Qt5 applications.                                       */
-   e_util_env_set("QT_QPA_PLATFORMTHEME", "gtk2");
-   e_util_env_set("QT_STYLE_OVERRIDE", "gtk2");
-
    TS("Parse Arguments");
    _e_main_parse_arguments(argc, argv);
    TS("Parse Arguments Done");
@@ -565,6 +549,26 @@ main(int argc, char **argv)
      }
    TS("E_Config Init Done");
    _e_main_shutdown_push(e_config_shutdown);
+
+   if (e_config->xsettings.match_e17_theme)
+     {
+
+        /* KDE5 applications don't understand anything other then gnome or kde     */
+        /* They expect everyone else to set QT_QPA_PLATFORMTHEME to tell them how  */
+        /* to theme there apps otherwise they use a fallback mode which results in */
+        /* missing icons and a inability to change the appearance of applications  */
+        /* see https://bugzilla.suse.com/show_bug.cgi?id=920792 for more info.     */
+        /* There are two sensible defaults for this variable, "kde" which will     */
+        /* make apps appear the same as they do if they are run in kde. and gtk2   */
+        /* which will make kde applications follow the gtk/gnome theme, we have    */
+        /* decided on choosing gtk2 as it means that kde/qt apps will follow the   */
+        /* app and icon theme set in the enlightenment settings dialog. Some users */
+        /* who wish to use Qt apps without any gnome or gtk usage may choose to    */
+        /* install qt5ct and overwrite this variable with qt5ct and use that to    */
+        /* configure there Qt5 applications.                                       */
+        e_util_env_set("QT_QPA_PLATFORMTHEME", "gtk2");
+        e_util_env_set("QT_STYLE_OVERRIDE", "gtk2");
+     }
 
    TS("E_Env Init");
    if (!e_env_init())
