@@ -605,7 +605,7 @@ sysinfo_batman_remove(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNU
      E_FREE_FUNC(inst->cfg->batman.configure, evas_object_del);
    EINA_LIST_FREE(inst->cfg->batman.handlers, handler)
      ecore_event_handler_del(handler);
-#ifdef HAVE_EEZE
+#if defined(HAVE_EEZE)
    _batman_udev_stop(inst);
 #elif defined(__OpenBSD__) || defined(__DragonFly__) || defined(__FreeBSD__) || defined(__NetBSD__)
    (void) inst;
@@ -731,7 +731,7 @@ _conf_item_get(int *id)
    ci->batman.time_left = -2;
    ci->batman.have_battery = -2;
    ci->batman.have_power = -2;
-#if defined HAVE_EEZE || defined __OpenBSD__ || defined __NetBSD__
+#if defined(HAVE_EEZE) || defined(__OpenBSD__) || defined(__NetBSD__)
    ci->batman.fuzzy = 0;
 #endif
    ci->batman.desktop_notifications = 0;

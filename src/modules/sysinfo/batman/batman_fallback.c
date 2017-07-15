@@ -1,6 +1,6 @@
 #include "batman.h"
 
-#ifdef HAVE_CFBASE_H
+#if defined(HAVE_CFBASE_H)
 # include <CFBase.h>
 # include <CFNumber.h>
 # include <CFArray.h>

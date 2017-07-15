@@ -27,12 +27,12 @@ struct _Battery
 {
    Instance *inst;
    const char *udi;
-#if defined HAVE_EEZE || defined __OpenBSD__ || defined __DragonFly__ || defined __FreeBSD__ || defined __NetBSD__
+#if defined(HAVE_EEZE) || defined(__OpenBSD__) || defined(__DragonFly__) || defined(__FreeBSD__) || defined(__NetBSD__)
    Ecore_Poller *poll;
 #endif
    Eina_Bool present:1;
    Eina_Bool charging:1;
-#if defined HAVE_EEZE || defined __OpenBSD__ || defined __DragonFly__ || defined __FreeBSD__ || defined __NetBSD__
+#if defined(HAVE_EEZE) || defined(__OpenBSD__) || defined(__DragonFly__) || defined(__FreeBSD__) || defined(__NetBSD__)
    double last_update;
    double percent;
    double current_charge;
@@ -98,12 +98,12 @@ EINTERN void _batman_device_update(Instance *inst);
 EINTERN int _batman_fallback_start(Instance *inst);
 EINTERN void _batman_fallback_stop(void);
 /* end batman_fallback.c */
-#ifdef HAVE_EEZE
+#if defined(HAVE_EEZE)
 /* in batman_udev.c */
 EINTERN int  _batman_udev_start(Instance *inst);
 EINTERN void _batman_udev_stop(Instance *inst);
 /* end batman_udev.c */
-#elif !defined __OpenBSD__ && !defined __DragonFly__ && !defined __FreeBSD__ && !defined __NetBSD__
+#elif !defined(__OpenBSD__) && !defined(__DragonFly__) && !defined(__FreeBSD__) && !defined(__NetBSD__)
 /* in batman_upower.c */
 EINTERN int _batman_upower_start(Instance *inst);
 EINTERNvoid _batman_upower_stop(void);

@@ -2,7 +2,7 @@
 #define SYSINFO_H
 
 #include "e.h"
-#ifdef HAVE_EEZE
+#if defined(HAVE_EEZE)
 # include <Eeze.h>
 #else
 # include <Eldbus.h>
@@ -39,7 +39,7 @@ enum _Netstatus_Unit
 typedef enum _Sensor_Type
 {
    SENSOR_TYPE_NONE,
-#if defined __FreeBSD__ || defined __OpenBSD__ || defined __DragonFly__
+#if defined(__FreeBSD__) || defined(__OpenBSD__) || defined(__DragonFly__)
    SENSOR_TYPE_FREEBSD,
    SENSOR_TYPE_OPENBSD,
 #else
@@ -77,7 +77,7 @@ struct _Tempthread
    const char *sensor_path;
    void *extn;
    E_Powersave_Sleeper *sleeper;
-#ifdef HAVE_EEZE
+#if defined(HAVE_EEZE)
    Eina_List *tempdevs;
 #endif
    Eina_Bool initted : 1;
@@ -88,7 +88,7 @@ struct _Cpu_Status
    Eina_List     *frequencies;
    Eina_List     *governors;
    int            cur_frequency;
-#ifdef __OpenBSD__
+#if defined(__OpenBSD__)
    int            cur_percent;
 #endif
    int            cur_min_frequency;
@@ -146,11 +146,11 @@ struct _Config_Item
       int                  desktop_notifications;
       Eina_List           *handlers;
       Eina_Bool            done;
-#ifdef HAVE_EEZE
+#if defined(HAVE_EEZE)
       Eeze_Udev_Watch     *acwatch;
       Eeze_Udev_Watch     *batwatch;
 #endif
-#if defined HAVE_EEZE || defined __OpenBSD__ || defined __NetBSD__
+#if defined(HAVE_EEZE) || defined(__OpenBSD__) || defined(__NetBSD__)
       Eina_Bool            fuzzy;
       int                  fuzzcount;
 #endif
@@ -167,7 +167,7 @@ struct _Config_Item
       int                  temp;
       const char          *sensor_name;
       Unit                 units;
-#ifdef HAVE_EEZE
+#if defined(HAVE_EEZE)
       Ecore_Poller        *poller;
       Tempthread          *tth;
 #endif

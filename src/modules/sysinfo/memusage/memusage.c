@@ -462,10 +462,10 @@ sysinfo_memusage_remove(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_U
      }
    EINA_LIST_FREE(inst->cfg->memusage.handlers, handler)
      ecore_event_handler_del(handler);
-   inst->cfg->thermal.done = EINA_TRUE;
+   inst->cfg->memusage.done = EINA_TRUE;
    if (inst->cfg->esm == E_SYSINFO_MODULE_SYSINFO)
      {
-        if (inst->cfg->memusage.done && inst->cfg->cpumonitor.done &&
+        if (inst->cfg->thermal.done && inst->cfg->cpumonitor.done &&
             inst->cfg->netstatus.done && inst->cfg->cpuclock.done && inst->cfg->batman.done)
           {
               sysinfo_config->items = eina_list_remove(sysinfo_config->items, inst->cfg);

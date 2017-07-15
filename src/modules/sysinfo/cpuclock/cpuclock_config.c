@@ -567,7 +567,7 @@ cpuclock_configure(Instance *inst)
              elm_radio_state_value_set(o, i);
              E_ALIGN(o, 0.0, 0.0);
              E_WEIGHT(o, EVAS_HINT_EXPAND, 0);
-#ifdef __OpenBSD__
+#if defined(__OpenBSD__)
              snprintf(buf, sizeof(buf), "%i %%", frequency);
 #else
              if (frequency < 1000000)
@@ -581,7 +581,7 @@ cpuclock_configure(Instance *inst)
              evas_object_smart_callback_add(o, "changed", _frequency_changed, cc);
              evas_object_show(o);
 
-#ifdef __OpenBSD__
+#if defined(__OpenBSD__)
              if (inst->cfg->cpuclock.status->cur_percent == frequency)
                value = i;
 #else

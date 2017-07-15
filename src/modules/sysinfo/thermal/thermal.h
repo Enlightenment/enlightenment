@@ -13,11 +13,11 @@ struct _Thermal_Config
 };
 
 
-#ifdef HAVE_EEZE
+#if defined(HAVE_EEZE)
 EINTERN int thermal_udev_get(Tempthread *tth);
 #endif
 
-#if defined __OpenBSD__ || defined __DragonFly__ || defined __FreeBSD__
+#if defined(__OpenBSD__) || defined(__DragonFly__) || defined(__FreeBSD__)
 EINTERN int thermal_sysctl_get(Tempthread *tth);
 #endif
 

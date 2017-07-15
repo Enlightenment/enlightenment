@@ -49,7 +49,7 @@ init(Tempthread *tth)
    size_t sdlen = sizeof(snsrdev);
 #endif
 
-#if defined (__FreeBSD__) || defined(__DragonFly__)
+#if defined(__FreeBSD__) || defined(__DragonFly__)
    unsigned i;
    size_t len;
    int rc;
@@ -71,7 +71,7 @@ init(Tempthread *tth)
         eina_stringshare_del(tth->sensor_path);
         tth->sensor_path = NULL;
 
-#if defined (__FreeBSD__) || defined(__DragonFly__)
+#if defined(__FreeBSD__) || defined(__DragonFly__)
         for (i = 0; sources[i]; i++)
           {
              rc = sysctlbyname(sources[i], NULL, NULL, NULL, 0);
@@ -150,11 +150,11 @@ check(Tempthread *tth)
 {
    int ret = 0;
    int temp = 0;
-#if defined (__FreeBSD__) || defined(__DragonFly__)
+#if defined(__FreeBSD__) || defined(__DragonFly__)
    size_t len;
    size_t ftemp = 0;
 #endif
-#if defined (__FreeBSD__) || defined(__DragonFly__) || defined (__OpenBSD__)
+#if defined(__FreeBSD__) || defined(__DragonFly__) || defined(__OpenBSD__)
    Extn *extn = tth->extn;
 #endif
 
@@ -164,7 +164,7 @@ check(Tempthread *tth)
     */
    if (tth->sensor_type == SENSOR_TYPE_FREEBSD)
      {
-#if defined (__FreeBSD__) || defined(__DragonFly__)
+#if defined(__FreeBSD__) || defined(__DragonFly__)
         len = sizeof(ftemp);
         if (sysctl(extn->mib, extn->miblen, &ftemp, &len, NULL, 0) == 0)
           {

@@ -28,7 +28,7 @@ sysinfo_init(void)
    E_CONFIG_VAL(D, T, batman.suspend_below, INT);
    E_CONFIG_VAL(D, T, batman.suspend_method, INT);
    E_CONFIG_VAL(D, T, batman.force_mode, INT);
-#if defined HAVE_EEZE || defined __OpenBSD__ || defined __NetBSD__
+#if defined(HAVE_EEZE) || defined(__OpenBSD__) || defined(__NetBSD__)
    E_CONFIG_VAL(D, T, batman.fuzzy, INT);
 #endif
    E_CONFIG_VAL(D, T, batman.desktop_notifications, INT);
@@ -82,7 +82,7 @@ sysinfo_init(void)
         ci->batman.time_left = -2;
         ci->batman.have_battery = -2;
         ci->batman.have_power = -2;
-#if defined HAVE_EEZE || defined __OpenBSD__ || defined __NetBSD__
+#if defined(HAVE_EEZ)E || defined(__OpenBSD__) || defined(__NetBSD__)
         ci->batman.fuzzy = 0;
 #endif
         ci->batman.desktop_notifications = 0;

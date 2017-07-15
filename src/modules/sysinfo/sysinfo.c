@@ -101,7 +101,7 @@ _conf_item_get(int *id)
    ci->batman.time_left = -2;
    ci->batman.have_battery = -2;
    ci->batman.have_power = -2;
-#if defined HAVE_EEZE || defined __OpenBSD__ || defined __NetBSD__
+#if defined(HAVE_EEZE) || defined(__OpenBSD__) || defined(__NetBSD__)
    ci->batman.fuzzy = 0;
 #endif
    ci->batman.desktop_notifications = 0;
