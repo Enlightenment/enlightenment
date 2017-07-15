@@ -354,7 +354,11 @@ _batman_device_update(Instance *inst)
 static Eina_Bool
 _screensaver_on(void *data)
 {
+#if defined(HAVE_EEZE)
    Instance *inst = data;
+#else
+   (void) data;
+#endif
 
 #if defined(HAVE_EEZE)
    _batman_udev_stop(inst);

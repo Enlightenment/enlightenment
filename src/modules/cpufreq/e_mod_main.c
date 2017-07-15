@@ -687,7 +687,7 @@ _cpufreq_status_check_available(Cpu_Status *s)
              *q = '\0';
              freq = atoi(pos);
              freq *= 1000;
-             s->frequencies = eina_list_append(s->frequencies, (void *)freq);
+             s->frequencies = eina_list_append(s->frequencies, (void *)(long)freq);
 
              pos = q + 1;
              pos = strchr(pos, ' ');

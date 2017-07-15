@@ -50,11 +50,12 @@ static Config *temperature_config = NULL;
 static void
 _temperature_thread_free(Tempthread *tth)
 {
+#if defined(HAVE_EEZE)
    const char *s;
-
+#endif
    eina_stringshare_del(tth->sensor_name);
    eina_stringshare_del(tth->sensor_path);
-#ifdef HAVE_EEZE
+#if defined(HAVE_EEZE)
    EINA_LIST_FREE(tth->tempdevs, s) eina_stringshare_del(s);
 #endif
    e_powersave_sleeper_free(tth->sleeper);

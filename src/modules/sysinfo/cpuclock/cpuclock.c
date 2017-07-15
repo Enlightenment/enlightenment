@@ -4,6 +4,11 @@
 #include <sys/sysctl.h>
 #endif
 
+#if defined(__FreeBSD__) || defined(__DragonFly__)
+ #include <sys/types.h>
+ #include <sys/sysctl.h>
+#endif
+
 EINTERN void _cpuclock_poll_interval_update(Instance *inst);
 
 typedef struct _Thread_Config Thread_Config;
@@ -102,9 +107,8 @@ void
 _cpuclock_set_frequency(int frequency)
 {
    char buf[4096];
-   struct stat st;
 
-#ifdef __FreeBSD__
+#if defined(__FreeBSD__)
    frequency /= 1000;
 #endif
 
@@ -114,6 +118,7 @@ _cpuclock_set_frequency(int frequency)
    freq = eina_stringshare_add(buf);
    ecore_thread_run(_cpuclock_set_thread_frequency, _cpuclock_set_thread_done, NULL, freq);
 #else
+   struct stat st;
    char exe[4096];
    snprintf(exe, 4096, "%s/%s/cpuclock_sysfs",
             e_module_dir_get(sysinfo_config->module), MODULE_ARCH);
@@ -482,7 +487,7 @@ _cpuclock_status_check_available(Cpu_Status *s)
              *q = '\0';
              freq = atoi(pos);
              freq *= 1000;
-             s->frequencies = eina_list_append(s->frequencies, (void *)freq);
+             s->frequencies = eina_list_append(s->frequencies, (void *)(long)freq);
 
              pos = q + 1;
              pos = strchr(pos, ' ');

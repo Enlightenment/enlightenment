@@ -15,6 +15,11 @@
 #include <time.h>
 #include <sys/mman.h>
 
+#if defined(__FreeBSD__) || defined(__DragonFly__)
+#include <sys/types.h>
+#include <sys/sysctl.h>
+#endif
+
 static E_Module *shot_module = NULL;
 
 static E_Action *border_act = NULL, *act = NULL;
@@ -1091,7 +1096,7 @@ _x_shot_now(E_Zone *zone, E_Client *ec, const char *params)
                }
              fclose(f);
           }
-#elif defined(__FreeBSD__) || defined(__FreeBSD_kernel__)
+#elif defined(__FreeBSD__) || defined(__DragonFly__)
         int max;
         size_t len = sizeof(max);
 

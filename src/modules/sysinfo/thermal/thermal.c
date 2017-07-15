@@ -143,7 +143,7 @@ _thermal_check_notify(void *data, Ecore_Thread *th, void *msg)
 static void
 _thermal_check_done(void *data, Ecore_Thread *th EINA_UNUSED)
 {
-   TempThread *tth = data;
+   Tempthread *tth = data;
    Instance *inst = tth->inst;
 
    if (inst->cfg->thermal.defer)

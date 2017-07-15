@@ -30,7 +30,6 @@ _battery_sysctl_start(void)
    struct sensordev snsrdev;
    size_t sdlen = sizeof(struct sensordev);
 #elif defined(__FreeBSD__) || defined(__DragonFly__)
-   int result;
    size_t len;
 #endif
 
@@ -169,8 +168,9 @@ _battery_sysctl_battery_update_poll(void *data EINA_UNUSED)
 static int
 _battery_sysctl_battery_update()
 {
-   double _time, charge;
+   double _time;
 #if defined(__OpenBSD__) || defined(__NetBSD__)
+   double charge;
    struct sensor s;
    size_t slen = sizeof(struct sensor);
 #elif defined(__FreeBSD__) || defined(__DragonFly__)
