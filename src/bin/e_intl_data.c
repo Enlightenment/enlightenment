@@ -1,17 +1,4 @@
-#include <Eina.h>
-#include <Eet.h>
-#define E_TYPEDEFS
-#include "e_config_data.h"
-#include "e_intl_data.h"
-#undef E_TYPEDEFS
-#ifndef E_API
-# define E_API
-#endif
-#ifndef EINTERN
-# define EINTERN
-#endif
-#include "e_config_data.h"
-#include "e_intl_data.h"
+#include "e.h"
 
 /* This file is the counterpart for data storage of e_intl */
 /* This only needs to be separate because the e_imc binary and other third parties
@@ -82,7 +69,7 @@ e_intl_input_method_config_free(E_Input_Method_Config *imc)
         if (imc->ecore_imf_module) eina_stringshare_del(imc->ecore_imf_module);
         if (imc->e_im_exec) eina_stringshare_del(imc->e_im_exec);
         if (imc->e_im_setup_exec) eina_stringshare_del(imc->e_im_setup_exec);
-        free(imc);
+        E_FREE(imc);
      }
 }
 

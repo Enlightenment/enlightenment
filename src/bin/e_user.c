@@ -1,14 +1,4 @@
-#ifdef HAVE_CONFIG_H
-#include "config.h"
-#endif
-#include <stdio.h>
-#include <string.h>
-#include <limits.h>
-#include <Efreet.h>
-
-#ifndef E_API
-#define E_API
-#endif
+#include "e.h"
 
 static const char *_e_user_homedir = NULL;
 static size_t _e_user_homedir_len = 0;
