@@ -27,7 +27,7 @@ _cpumonitor_sysctl_getcores(void)
 
 
 void
-_cpumonitor_sysctl_getusage(Instance *inst)
+_cpumonitor_sysctl_getusage(unsigned long *prev_total, unsigned long *prev_idle, int *prev_precent, Eina_List *cores)
 {
    CPU_Core *core;
    size_t size;
@@ -36,21 +36,21 @@ _cpumonitor_sysctl_getusage(Instance *inst)
 #if defined(__FreeBSD__) || defined(__DragonFly__)
    int ncpu = _cpumonitor_sysctl_getcores();
    if (!ncpu) return;
-   size =  sizeof(long) * (CPU_STATES * ncpu);
-   long cpu_times[ncpu][CPU_STATES];
+   size =  sizeof(unsigned long) * (CPU_STATES * ncpu);
+   unsigned long cpu_times[ncpu][CPU_STATES];
 
    if (sysctlbyname("kern.cp_times", cpu_times, &size, NULL, 0) < 0)
      return;
  
    for (i = 0; i < ncpu; i++)
      {
-        long *cpu = cpu_times[i];
+        unsigned long *cpu = cpu_times[i];
         double total = 0;
 
         for (j = 0; j < CPU_STATES; j++) 
            total += cpu[j];
 
-        core = eina_list_nth(inst->cfg->cpumonitor.cores, i);
+        core = eina_list_nth(cores, i);
 
         int diff_total = total - core->total;
         int diff_idle = cpu[4] - core->idle;
@@ -58,7 +58,7 @@ _cpumonitor_sysctl_getusage(Instance *inst)
         if (diff_total == 0) diff_total = 1;
 
         double ratio = diff_total / 100.0;
-        long used = diff_total - diff_idle;
+        unsigned long used = diff_total - diff_idle;
 
         int percent = used / ratio;
         if (percent > 100) 
@@ -74,59 +74,59 @@ _cpumonitor_sysctl_getusage(Instance *inst)
         total_all += total;
         idle_all += core->idle;
      }
-   inst->cfg->cpumonitor.total = total_all / ncpu;
-   inst->cfg->cpumonitor.idle = idle_all / ncpu;
-   inst->cfg->cpumonitor.percent = (int) (percent_all / ncpu);
+   *prev_total = total_all / ncpu;
+   *prev_idle = idle_all / ncpu;
+   *prev_percent = (int) (percent_all / ncpu);
 #elif defined(__OpenBSD__)
    int ncpu = _cpumonitor_sysctl_getcores();
    if (!ncpu) return;
    if (ncpu == 1)
      {
-        long cpu_times[CPU_STATES];
+        unsigned long cpu_times[CPU_STATES];
         int cpu_time_mib[] = { CTL_KERN, KERN_CPTIME };
-        size = CPU_STATES * sizeof(long);
+        size = CPU_STATES * sizeof(unsigned long);
         if (sysctl(cpu_time_mib, 2, &cpu_times, &size, NULL, 0) < 0)
           return;
 
-        long total = 0;
+        unsigned long total = 0;
         for (j = 0; j < CPU_STATES; j++) 
           total += cpu_times[j];
         
-        long idle = cpu_times[4];
+        unsigned long idle = cpu_times[4];
 
-        int diff_total = total - inst->cfg->cpumonitor.total;
-        int diff_idle = idle - inst->cfg->cpumonitor.idle;
+        int diff_total = total - *prev_total;
+        int diff_idle = idle - *prev_idle;
 
         if (diff_total == 0) diff_total = 1;
 
         double ratio = diff_total / 100.0;
-        long used = diff_total - diff_idle;
+        unsigned long used = diff_total - diff_idle;
         int percent = used / ratio;
         if (percent > 100)
           percent = 100;
         else if (percent < 0)
           percent = 0;
          
-        inst->cfg->cpumonitor.total = total;
-        inst->cfg->cpumonitor.idle = idle; // cpu_times[3];
-        inst->cfg->cpumonitor.percent = (int) percent; 
+        *prev_total = total;
+        *prev_idle = idle; // cpu_times[3];
+        *prev_percent = (int) percent; 
      }
    else if (ncpu > 1)
      {
         for (i = 0; i < ncpu; i++)        
           {
-             long cpu_times[CPU_STATES];
-             size = CPU_STATES * sizeof(long);
+             unsigned long cpu_times[CPU_STATES];
+             size = CPU_STATES * sizeof(unsigned long);
              int cpu_time_mib[] = { CTL_KERN, KERN_CPTIME2, 0 };
              cpu_time_mib[2] = i;
              if (sysctl(cpu_time_mib, 3, &cpu_times, &size, NULL, 0) < 0)
                return;
 
-             long total = 0;
+             unsigned long total = 0;
              for (j = 0; j < CPU_STATES - 1; j++)
                total += cpu_times[j];
 	     
-             core = eina_list_nth(inst->cfg->cpumonitor.cores, i);
+             core = eina_list_nth(cores, i);
              int diff_total = total - core->total;
              int diff_idle  = cpu_times[4] - core->idle;
 
@@ -135,7 +135,7 @@ _cpumonitor_sysctl_getusage(Instance *inst)
 
              if (diff_total == 0) diff_total = 1;
              double ratio = diff_total / 100;
-             long used = diff_total - diff_idle;
+             unsigned long used = diff_total - diff_idle;
              int percent = used / ratio;
 
              core->percent = percent;
@@ -145,9 +145,9 @@ _cpumonitor_sysctl_getusage(Instance *inst)
              idle_all += core->idle;
           }
    
-        inst->cfg->cpumonitor.total =  (total_all / ncpu);
-        inst->cfg->cpumonitor.idle =   (idle_all / ncpu);
-        inst->cfg->cpumonitor.percent = (percent_all / ncpu) + (percent_all % ncpu);
+        *prev_total =  (total_all / ncpu);
+        *prev_idle =   (idle_all / ncpu);
+        *prev_percent = (percent_all / ncpu) + (percent_all % ncpu);
      }
 #endif
 }

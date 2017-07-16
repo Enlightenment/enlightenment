@@ -6,34 +6,43 @@ struct _Thread_Config
 {
    int interval;
    Instance *inst;
-   int percent;
-   long current;
+   Eina_Bool automax;
+   int inpercent;
+   unsigned long in;
+   unsigned long incurrent;
+   unsigned long inmax;
+   Eina_Stringshare *instring;
+   int outpercent;
+   unsigned long out;
+   unsigned long outcurrent;
+   unsigned long outmax;
+   Eina_Stringshare *outstring;
    E_Powersave_Sleeper *sleeper;
 };
 
 static void
-_netstatus_face_update(Instance *inst)
+_netstatus_face_update(Thread_Config *thc)
 {
    Edje_Message_Int_Set *msg;
 
    msg = malloc(sizeof(Edje_Message_Int_Set) + 6 * sizeof(int));
    EINA_SAFETY_ON_NULL_RETURN(msg);
    msg->count = 6;
-   msg->val[0] = inst->cfg->netstatus.incurrent;
-   msg->val[1] = inst->cfg->netstatus.inpercent;
-   msg->val[2] = inst->cfg->netstatus.inmax;
-   msg->val[3] = inst->cfg->netstatus.outcurrent;
-   msg->val[4] = inst->cfg->netstatus.outpercent;
-   msg->val[5] = inst->cfg->netstatus.outmax;
-   edje_object_message_send(elm_layout_edje_get(inst->cfg->netstatus.o_gadget),
+   msg->val[0] = thc->incurrent;
+   msg->val[1] = thc->inpercent;
+   msg->val[2] = thc->inmax;
+   msg->val[3] = thc->outcurrent;
+   msg->val[4] = thc->outpercent;
+   msg->val[5] = thc->outmax;
+   edje_object_message_send(elm_layout_edje_get(thc->inst->cfg->netstatus.o_gadget),
                             EDJE_MESSAGE_INT_SET, 1, msg);
-   free(msg);
+   E_FREE(msg);
 
-   if (inst->cfg->netstatus.popup)
+   if (thc->inst->cfg->netstatus.popup)
      {
         char text[4096];
-        snprintf(text, sizeof(text), "%s<br>%s", inst->cfg->netstatus.instring, inst->cfg->netstatus.outstring);
-        elm_object_text_set(inst->cfg->netstatus.popup_label, text);
+        snprintf(text, sizeof(text), "%s<br>%s", thc->instring, thc->outstring);
+        elm_object_text_set(thc->inst->cfg->netstatus.popup_label, text);
      }
 }
 
@@ -130,15 +139,45 @@ _netstatus_cb_usage_check_main(void *data, Ecore_Thread *th)
    Thread_Config *thc = data;
    for (;;)
      {
+        char rin[4096], rout[4096];
+
         if (ecore_thread_check(th)) break;
 #if defined(__FreeBSD__) || defined(__DragonFly__) || defined(__OpenBSD__)
-        _netstatus_sysctl_getrstatus(thc->inst);
-        _netstatus_sysctl_gettstatus(thc->inst);
+        _netstatus_sysctl_getrstatus(thc->automax, &thc->in, &thc->incurrent, &thc->inmax, &thc->inpercent);
+        _netstatus_sysctl_gettstatus(thc->automax, &thc->out, &thc->outcurrent, &thc->outmax, &thc->outpercent);
 #else 
-        _netstatus_proc_getrstatus(thc->inst);
-        _netstatus_proc_gettstatus(thc->inst);
+        _netstatus_proc_getrstatus(thc->automax, &thc->in, &thc->incurrent, &thc->inmax, &thc->inpercent);
+        _netstatus_proc_gettstatus(thc->automax, &thc->out, &thc->outcurrent, &thc->outmax, &thc->outpercent);
 #endif
-        ecore_thread_feedback(th, NULL);
+        if (!thc->incurrent)
+          {
+             snprintf(rin, sizeof(rin), "%s: 0 B/s", _("Receiving"));
+          }
+        else
+          {
+             if (thc->incurrent > 1048576)
+               snprintf(rin, sizeof(rin), "%s: %.2f MB/s", _("Receiving"), ((float)thc->incurrent / 1048576));
+             else if ((thc->incurrent > 1024) && (thc->incurrent < 1048576))
+               snprintf(rin, sizeof(rin), "%s: %lu KB/s", _("Receiving"), (thc->incurrent / 1024));
+             else
+               snprintf(rin, sizeof(rin), "%s: %lu B/s", _("Receiving"), thc->incurrent);
+          }
+        eina_stringshare_replace(&thc->instring, rin);
+        if (!thc->outcurrent)
+          {
+             snprintf(rout, sizeof(rout), "%s: 0 B/s", _("Receiving"));
+          }
+        else
+          {
+             if (thc->outcurrent > 1048576)
+               snprintf(rout, sizeof(rout), "%s: %.2f MB/s", _("Receiving"), ((float)thc->outcurrent / 1048576));
+             else if ((thc->outcurrent > 1024) && (thc->outcurrent < 1048576))
+               snprintf(rout, sizeof(rout), "%s: %lu KB/s", _("Receiving"), (thc->outcurrent / 1024));
+             else
+               snprintf(rout, sizeof(rout), "%s: %lu B/s", _("Receiving"), thc->outcurrent);
+          }
+        eina_stringshare_replace(&thc->outstring, rout);
+	ecore_thread_feedback(th, NULL);
         if (ecore_thread_check(th)) break;
         e_powersave_sleeper_sleep(thc->sleeper, thc->interval);
         if (e_powersave_mode_get() == E_POWERSAVE_MODE_FREEZE)
@@ -155,12 +194,13 @@ _netstatus_cb_usage_check_notify(void *data,
                                    void *msg EINA_UNUSED)
 {
    Thread_Config *thc = data;
-   Instance *inst = thc->inst;
 
-   if (!inst->cfg) return;
-   if (inst->cfg->esm != E_SYSINFO_MODULE_NETSTATUS && inst->cfg->esm != E_SYSINFO_MODULE_SYSINFO) return;
+   if (!thc->inst->cfg) return;
+   if (thc->inst->cfg->esm != E_SYSINFO_MODULE_NETSTATUS && thc->inst->cfg->esm != E_SYSINFO_MODULE_SYSINFO) return;
 
-   _netstatus_face_update(inst);
+  eina_stringshare_replace(&thc->inst->cfg->netstatus.instring, thc->instring);
+  eina_stringshare_replace(&thc->inst->cfg->netstatus.outstring, thc->outstring);
+   _netstatus_face_update(thc);
 }
 
 static void
@@ -168,34 +208,9 @@ _netstatus_cb_usage_check_end(void *data, Ecore_Thread *th EINA_UNUSED)
 {
    Thread_Config *thc = data;
    e_powersave_sleeper_free(thc->sleeper);
-   if (thc->inst->cfg->netstatus.defer)
-     {
-        E_FREE_FUNC(thc->inst->cfg->netstatus.instring, eina_stringshare_del);
-        E_FREE_FUNC(thc->inst->cfg->netstatus.outstring, eina_stringshare_del);
-        thc->inst->cfg->netstatus.defer = EINA_FALSE;
-        thc->inst->cfg->netstatus.done = EINA_TRUE;
-	if (thc->inst->cfg->esm == E_SYSINFO_MODULE_NETSTATUS)
-          {
-             sysinfo_config->items = eina_list_remove(sysinfo_config->items, thc->inst->cfg);
-             if (thc->inst->cfg->id >= 0)
-               sysinfo_instances = eina_list_remove(sysinfo_instances, thc->inst);
-             E_FREE(thc->inst->cfg);
-             E_FREE(thc->inst);
-          }
-        else
-          {
-             if (thc->inst->cfg->memusage.done && thc->inst->cfg->thermal.done &&
-                 thc->inst->cfg->cpumonitor.done && thc->inst->cfg->cpuclock.done && thc->inst->cfg->batman.done)
-               {
-                   sysinfo_config->items = eina_list_remove(sysinfo_config->items, thc->inst->cfg);
-                   if (thc->inst->cfg->id >= 0)
-                     sysinfo_instances = eina_list_remove(sysinfo_instances, thc->inst);
-                   E_FREE(thc->inst->cfg);
-                   E_FREE(thc->inst);
-               }
-          }
-     }
-   E_FREE_FUNC(thc, free);
+   E_FREE_FUNC(thc->instring, eina_stringshare_del);
+   E_FREE_FUNC(thc->outstring, eina_stringshare_del);
+   E_FREE(thc);
 }
 
 static Eina_Bool
@@ -237,7 +252,18 @@ _netstatus_config_updated(Instance *inst)
         thc->inst = inst;
         thc->sleeper = e_powersave_sleeper_new();
         thc->interval = inst->cfg->netstatus.poll_interval;
-        inst->cfg->netstatus.usage_check_thread =
+        thc->in = 0;
+        thc->inmax = inst->cfg->netstatus.inmax;
+        thc->incurrent = 0;
+        thc->inpercent = 0;
+        thc->instring = NULL;
+        thc->out = 0;
+        thc->outmax = inst->cfg->netstatus.outmax;
+        thc->outcurrent = 0;
+        thc->outpercent = 0;
+        thc->outstring = NULL;
+        thc->automax = inst->cfg->netstatus.automax;
+	inst->cfg->netstatus.usage_check_thread =
           ecore_thread_feedback_run(_netstatus_cb_usage_check_main,
                                     _netstatus_cb_usage_check_notify,
                                     _netstatus_cb_usage_check_end,
@@ -265,10 +291,8 @@ _netstatus_removed_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_data
      ecore_event_handler_del(handler);
    if (inst->cfg->netstatus.usage_check_thread)
      {
-        inst->cfg->netstatus.defer = EINA_TRUE;
         ecore_thread_cancel(inst->cfg->netstatus.usage_check_thread);
         inst->cfg->netstatus.usage_check_thread = NULL;
-        return;
      }
    E_FREE_FUNC(inst->cfg->netstatus.instring, eina_stringshare_del);
    E_FREE_FUNC(inst->cfg->netstatus.outstring, eina_stringshare_del);
@@ -294,26 +318,12 @@ sysinfo_netstatus_remove(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_
      ecore_event_handler_del(handler);
    if (inst->cfg->netstatus.usage_check_thread)
      {
-        inst->cfg->netstatus.defer = EINA_TRUE;
         ecore_thread_cancel(inst->cfg->netstatus.usage_check_thread);
         inst->cfg->netstatus.usage_check_thread = NULL;
         return;
      }
    E_FREE_FUNC(inst->cfg->netstatus.instring, eina_stringshare_del);
    E_FREE_FUNC(inst->cfg->netstatus.outstring, eina_stringshare_del);
-   inst->cfg->netstatus.done = EINA_TRUE;
-   if (inst->cfg->esm == E_SYSINFO_MODULE_SYSINFO)
-     {
-        if (inst->cfg->memusage.done && inst->cfg->thermal.done &&
-            inst->cfg->cpumonitor.done && inst->cfg->cpuclock.done && inst->cfg->batman.done)
-          {
-              sysinfo_config->items = eina_list_remove(sysinfo_config->items, inst->cfg);
-              if (inst->cfg->id >= 0)
-                sysinfo_instances = eina_list_remove(sysinfo_instances, inst);
-              E_FREE(inst->cfg);
-              E_FREE(inst);
-          }
-     }
 }
 
 static void
@@ -323,6 +333,9 @@ _netstatus_created_cb(void *data, Evas_Object *obj, void *event_data EINA_UNUSED
    E_Gadget_Site_Orient orient = e_gadget_site_orient_get(e_gadget_site_get(inst->o_main));
 
    e_gadget_configure_cb_set(inst->o_main, _netstatus_configure_cb);
+
+   inst->cfg->netstatus.instring = NULL;
+   inst->cfg->netstatus.outstring = NULL;
 
    inst->cfg->netstatus.o_gadget = elm_layout_add(inst->o_main);
    if (orient == E_GADGET_SITE_ORIENT_VERTICAL)
@@ -349,17 +362,9 @@ _netstatus_created_cb(void *data, Evas_Object *obj, void *event_data EINA_UNUSED
 Evas_Object *
 sysinfo_netstatus_create(Evas_Object *parent, Instance *inst)
 {
-   inst->cfg->netstatus.defer = EINA_FALSE;
-   inst->cfg->netstatus.done = EINA_FALSE;
-   inst->cfg->netstatus.in = 0;
-   inst->cfg->netstatus.out = 0;
-   inst->cfg->netstatus.incurrent = 0;
-   inst->cfg->netstatus.outcurrent = 0;
-   inst->cfg->netstatus.inpercent = 0;
-   inst->cfg->netstatus.outpercent = 0;
+   inst->cfg->netstatus.popup = NULL;
    inst->cfg->netstatus.instring = NULL;
    inst->cfg->netstatus.outstring = NULL;
-   inst->cfg->netstatus.popup = NULL;
    inst->cfg->netstatus.o_gadget = elm_layout_add(parent);
    e_theme_edje_object_set(inst->cfg->netstatus.o_gadget, "base/theme/gadget/netstatus",
                            "e/gadget/netstatus/main");
@@ -399,16 +404,8 @@ _conf_item_get(int *id)
    ci->esm = E_SYSINFO_MODULE_NETSTATUS;
    ci->netstatus.poll_interval = 32;
    ci->netstatus.automax = EINA_TRUE;
-   ci->netstatus.inmax = 0;
-   ci->netstatus.outmax = 0;
    ci->netstatus.receive_units = NETSTATUS_UNIT_BYTES;
    ci->netstatus.send_units = NETSTATUS_UNIT_BYTES;
-   ci->netstatus.in = 0;
-   ci->netstatus.out = 0;
-   ci->netstatus.incurrent = 0;
-   ci->netstatus.outcurrent = 0;
-   ci->netstatus.inpercent = 0;
-   ci->netstatus.outpercent = 0;
    ci->netstatus.instring = NULL;
    ci->netstatus.outstring = NULL;
    ci->netstatus.popup = NULL;
@@ -426,14 +423,6 @@ netstatus_create(Evas_Object *parent, int *id, E_Gadget_Site_Orient orient EINA_
    inst = E_NEW(Instance, 1);
    inst->cfg = _conf_item_get(id);
    *id = inst->cfg->id;
-   inst->cfg->netstatus.defer = EINA_FALSE;
-   inst->cfg->netstatus.done = EINA_FALSE;
-   inst->cfg->netstatus.in = 0;
-   inst->cfg->netstatus.out = 0;
-   inst->cfg->netstatus.incurrent = 0;
-   inst->cfg->netstatus.outcurrent = 0;
-   inst->cfg->netstatus.inpercent = 0;
-   inst->cfg->netstatus.outpercent = 0;
    inst->cfg->netstatus.instring = NULL;
    inst->cfg->netstatus.outstring = NULL;
    inst->cfg->netstatus.popup = NULL;

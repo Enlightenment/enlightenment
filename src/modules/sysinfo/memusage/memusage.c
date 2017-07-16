@@ -94,7 +94,7 @@ _memusage_face_update(Instance *inst)
    msg->val[8] = inst->cfg->memusage.swp_used;
    edje_object_message_send(elm_layout_edje_get(inst->cfg->memusage.o_gadget),
                             EDJE_MESSAGE_INT_SET, 1, msg);
-   free(msg);
+   E_FREE(msg);
 
    if (inst->cfg->memusage.popup)
      _memusage_popup_update(inst);
@@ -308,32 +308,7 @@ _memusage_cb_usage_check_end(void *data, Ecore_Thread *th EINA_UNUSED)
 {
    Thread_Config *thc = data;
    e_powersave_sleeper_free(thc->sleeper);
-   if (thc->inst->cfg->memusage.defer)
-     {
-        thc->inst->cfg->memusage.defer = EINA_FALSE;
-        thc->inst->cfg->memusage.done = EINA_TRUE;
-        if (thc->inst->cfg->esm == E_SYSINFO_MODULE_MEMUSAGE)
-          {
-             sysinfo_config->items = eina_list_remove(sysinfo_config->items, thc->inst->cfg);
-             if (thc->inst->cfg->id >= 0)
-               sysinfo_instances = eina_list_remove(sysinfo_instances, thc->inst);
-	     E_FREE(thc->inst->cfg);
-             E_FREE(thc->inst);
-          }
-        else
-          {
-             if (thc->inst->cfg->cpumonitor.done && thc->inst->cfg->thermal.done &&
-                 thc->inst->cfg->netstatus.done && thc->inst->cfg->cpuclock.done && thc->inst->cfg->batman.done)
-               {
-                   sysinfo_config->items = eina_list_remove(sysinfo_config->items, thc->inst->cfg);
-                   if (thc->inst->cfg->id >= 0)
-                     sysinfo_instances = eina_list_remove(sysinfo_instances, thc->inst);
-                   E_FREE(thc->inst->cfg);
-                   E_FREE(thc->inst);
-               }
-          }
-     }
-   E_FREE_FUNC(thc, free);
+   E_FREE(thc);
 }
 
 static void
@@ -342,22 +317,21 @@ _memusage_cb_usage_check_notify(void *data,
                                    void *msg EINA_UNUSED)
 {
    Thread_Config *thc = data;
-   Instance *inst = thc->inst;
 
-   if (!inst->cfg) return;
-   if (inst->cfg->esm != E_SYSINFO_MODULE_MEMUSAGE &&
-       inst->cfg->esm != E_SYSINFO_MODULE_SYSINFO) return;
+   if (!thc->inst->cfg) return;
+   if (thc->inst->cfg->esm != E_SYSINFO_MODULE_MEMUSAGE &&
+       thc->inst->cfg->esm != E_SYSINFO_MODULE_SYSINFO) return;
 
-   inst->cfg->memusage.mem_percent = thc->mem_percent;
-   inst->cfg->memusage.swp_percent = thc->swp_percent;
-   inst->cfg->memusage.mem_total = thc->mem_total;
-   inst->cfg->memusage.mem_used = thc->mem_used;
-   inst->cfg->memusage.mem_cached = thc->mem_cached;
-   inst->cfg->memusage.mem_buffers = thc->mem_buffers;
-   inst->cfg->memusage.mem_shared = thc->mem_shared;
-   inst->cfg->memusage.swp_total = thc->swp_total;
-   inst->cfg->memusage.swp_used = thc->swp_used;
-   _memusage_face_update(inst);
+   thc->inst->cfg->memusage.mem_percent = thc->mem_percent;
+   thc->inst->cfg->memusage.swp_percent = thc->swp_percent;
+   thc->inst->cfg->memusage.mem_total = thc->mem_total;
+   thc->inst->cfg->memusage.mem_used = thc->mem_used;
+   thc->inst->cfg->memusage.mem_cached = thc->mem_cached;
+   thc->inst->cfg->memusage.mem_buffers = thc->mem_buffers;
+   thc->inst->cfg->memusage.mem_shared = thc->mem_shared;
+   thc->inst->cfg->memusage.swp_total = thc->swp_total;
+   thc->inst->cfg->memusage.swp_used = thc->swp_used;
+   _memusage_face_update(thc->inst);
 }
 
 static Eina_Bool
@@ -431,10 +405,8 @@ _memusage_removed_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_data)
      ecore_event_handler_del(handler);
    if (inst->cfg->memusage.usage_check_thread)
      {
-        inst->cfg->memusage.defer = EINA_TRUE;
         ecore_thread_cancel(inst->cfg->memusage.usage_check_thread);
         inst->cfg->memusage.usage_check_thread = NULL;
-	return;
      }
    sysinfo_config->items = eina_list_remove(sysinfo_config->items, inst->cfg);
    if (inst->cfg->id >= 0)
@@ -455,26 +427,11 @@ sysinfo_memusage_remove(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_U
      E_FREE_FUNC(inst->cfg->memusage.configure, evas_object_del);
    if (inst->cfg->memusage.usage_check_thread)
      {
-        inst->cfg->memusage.defer = EINA_TRUE;
         ecore_thread_cancel(inst->cfg->memusage.usage_check_thread);
         inst->cfg->memusage.usage_check_thread = NULL;
-        return;
      }
    EINA_LIST_FREE(inst->cfg->memusage.handlers, handler)
      ecore_event_handler_del(handler);
-   inst->cfg->memusage.done = EINA_TRUE;
-   if (inst->cfg->esm == E_SYSINFO_MODULE_SYSINFO)
-     {
-        if (inst->cfg->thermal.done && inst->cfg->cpumonitor.done &&
-            inst->cfg->netstatus.done && inst->cfg->cpuclock.done && inst->cfg->batman.done)
-          {
-              sysinfo_config->items = eina_list_remove(sysinfo_config->items, inst->cfg);
-              if (inst->cfg->id >= 0)
-                sysinfo_instances = eina_list_remove(sysinfo_instances, inst);
-              E_FREE(inst->cfg);
-              E_FREE(inst);
-          }
-     }
 }
 
 static void
@@ -517,8 +474,6 @@ _memusage_created_cb(void *data, Evas_Object *obj, void *event_data EINA_UNUSED)
 Evas_Object *
 sysinfo_memusage_create(Evas_Object *parent, Instance *inst)
 {
-   inst->cfg->memusage.defer = EINA_FALSE;
-   inst->cfg->memusage.done = EINA_FALSE;
    inst->cfg->memusage.mem_percent = 0;
    inst->cfg->memusage.swp_percent = 0;
    inst->cfg->memusage.mem_total = 0;
@@ -599,8 +554,6 @@ memusage_create(Evas_Object *parent, int *id, E_Gadget_Site_Orient orient EINA_U
    inst = E_NEW(Instance, 1);
    inst->cfg = _conf_item_get(id);
    *id = inst->cfg->id;
-   inst->cfg->memusage.defer = EINA_FALSE;
-   inst->cfg->memusage.done = EINA_FALSE;
    inst->cfg->memusage.mem_percent = 0;
    inst->cfg->memusage.swp_percent = 0;
    inst->cfg->memusage.mem_total = 0;

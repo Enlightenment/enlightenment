@@ -193,10 +193,7 @@ struct _Config_Item
       int                  pstate_max;
       Cpu_Status          *status;
       Ecore_Thread        *frequency_check_thread;
-      Ecore_Event_Handler *handler;
       Eina_List           *handlers;
-      Eina_Bool            defer;
-      Eina_Bool            done;
    } cpuclock;
    struct
    {
@@ -208,14 +205,10 @@ struct _Config_Item
       Evas_Object         *configure;
       int                  poll_interval;
       int                  percent;
-      long                 total;
-      long                 idle;
+      int                  cores;
 
       Ecore_Thread        *usage_check_thread;
-      Eina_List           *cores;
       Eina_List           *handlers;
-      Eina_Bool            defer;
-      Eina_Bool            done;
    } cpumonitor;
    struct
    {
@@ -234,8 +227,6 @@ struct _Config_Item
       unsigned long        swp_used;
       Ecore_Thread        *usage_check_thread;
       Eina_List           *handlers;
-      Eina_Bool            defer;
-      Eina_Bool            done;
    } memusage;
    struct
    {
@@ -247,20 +238,12 @@ struct _Config_Item
       Netstatus_Unit       receive_units;
       Netstatus_Unit       send_units;
       int                  poll_interval;
-      long                 in;
-      long                 out;
-      long                 incurrent;
-      long                 outcurrent;
-      long                 inmax;
-      long                 outmax;
-      int                  inpercent;
-      int                  outpercent;
-      Eina_Stringshare    *instring;
-      Eina_Stringshare    *outstring;
+      unsigned long        inmax;
+      unsigned long        outmax;
       Ecore_Thread        *usage_check_thread;
       Eina_List           *handlers;
-      Eina_Bool            defer;
-      Eina_Bool            done;
+      Eina_Stringshare    *instring;
+      Eina_Stringshare    *outstring;
    } netstatus;
    struct   {
       Evas_Object *o_batman;

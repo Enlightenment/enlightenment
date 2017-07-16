@@ -104,7 +104,7 @@ void _memusage_sysctl_getusage(unsigned long *mem_total,
 
    *swp_used >>= 10;
 
-   free(mib);
+   E_FREE(mib);
 #elif defined(__OpenBSD__)
    static int mib[] = { CTL_HW, HW_PHYSMEM64 };
    static int bcstats_mib[] = { CTL_VFS, VFS_GENERIC, VFS_BCACHESTAT };
@@ -145,7 +145,7 @@ void _memusage_sysctl_getusage(unsigned long *mem_total,
            }
       }
 swap_out:
-   if (swdev) free(swdev);
+   if (swdev) E_FREE(swdev);
 
    *mem_total /= 1024;
  

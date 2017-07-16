@@ -31,7 +31,7 @@ _battery_free(Battery *bat)
      eina_stringshare_del(bat->model);
    if (bat->vendor)
      eina_stringshare_del(bat->vendor);
-   free(bat);
+   E_FREE(bat);
 }
 
 static void
@@ -43,7 +43,7 @@ _ac_free(Ac_Adapter *ac)
 
    batman_device_ac_adapters = eina_list_remove(batman_device_ac_adapters, ac);
    eina_stringshare_del(ac->udi);
-   free(ac);
+   E_FREE(ac);
 }
 
 static void
@@ -244,7 +244,7 @@ _device_type_cb(void *data, const Eldbus_Message *msg, Eldbus_Pending *pending E
    else
      goto error;
 
-   free(ud);
+   E_FREE(ud);
 
    return;
 
@@ -252,7 +252,7 @@ error:
    obj = eldbus_proxy_object_get(ud->proxy);
    eldbus_proxy_unref(ud->proxy);
    eldbus_object_unref(obj);
-   free(ud);
+   E_FREE(ud);
    return;
 }
 

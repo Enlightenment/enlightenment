@@ -50,7 +50,7 @@ _batman_udev_stop(Instance *inst)
 
    EINA_LIST_FREE(batman_device_ac_adapters, ac)
      {
-        E_FREE_FUNC(ac, free);
+        E_FREE(ac);
      }
    EINA_LIST_FREE(batman_device_batteries, bat)
      {
@@ -59,7 +59,7 @@ _batman_udev_stop(Instance *inst)
 	eina_stringshare_del(bat->model);
 	eina_stringshare_del(bat->vendor);
         E_FREE_FUNC(bat->poll, ecore_poller_del);
-        E_FREE_FUNC(bat, free);
+        E_FREE(bat);
      }
 }
 
@@ -190,7 +190,7 @@ _batman_udev_battery_del(const char *syspath, Instance *inst)
              eina_stringshare_del(bat->model);
              eina_stringshare_del(bat->vendor);
              E_FREE_FUNC(bat->poll, ecore_poller_del);
-             E_FREE_FUNC(bat, free);
+             E_FREE(bat);
           }
      }
    eina_stringshare_del(syspath);
@@ -214,7 +214,7 @@ _batman_udev_ac_del(const char *syspath, Instance *inst)
           {
              batman_device_ac_adapters = eina_list_remove_list(batman_device_ac_adapters, l);
              eina_stringshare_del(ac->udi);
-             E_FREE_FUNC(ac, free);
+             E_FREE(ac);
           }
      }
    eina_stringshare_del(syspath);

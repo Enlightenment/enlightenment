@@ -28,7 +28,10 @@ _cpumonitor_proc_getcores(void)
 }
 
 void
-_cpumonitor_proc_getusage(Instance *inst)
+_cpumonitor_proc_getusage(unsigned long *prev_total,
+                          unsigned long *prev_idle,
+                          int *prev_percent,
+                          Eina_List *cores)
 {
    int k = 0, j = 0;
    char buf[4096];
@@ -42,7 +45,7 @@ _cpumonitor_proc_getusage(Instance *inst)
           {
              if (k == 0)
                {
-                  long total = 0, idle = 0, use = 0, total_change = 0, idle_change = 0;
+                  unsigned long total = 0, idle = 0, use = 0, total_change = 0, idle_change = 0;
                   int percent = 0;
                   char *line, *tok;
                   int i = 0;
@@ -58,19 +61,19 @@ _cpumonitor_proc_getusage(Instance *inst)
                          idle = use;
                        tok = strtok(NULL, " ");
                     }
-                  total_change = total - inst->cfg->cpumonitor.total;
-                  idle_change = idle - inst->cfg->cpumonitor.idle;
+                  total_change = total - *prev_total;
+                  idle_change = idle - *prev_idle;
                   if (total_change != 0)
                     percent = 100 * (1 - ((float)idle_change / (float)total_change));
                   if (percent > 100) percent = 100;
                   else if (percent < 0) percent = 0;
-                  inst->cfg->cpumonitor.total = total;
-                  inst->cfg->cpumonitor.idle = idle;
-                  inst->cfg->cpumonitor.percent = percent;
+                  *prev_total = total;
+                  *prev_idle = idle;
+                  *prev_percent = percent;
                }
              if (k > 0)
                {
-                  long total = 0, idle = 0, use = 0, total_change = 0, idle_change = 0;
+                  unsigned long total = 0, idle = 0, use = 0, total_change = 0, idle_change = 0;
                   int percent = 0;
                   if (!strncmp(buf, "cpu", 3))
                     {
@@ -89,7 +92,7 @@ _cpumonitor_proc_getusage(Instance *inst)
                          }
                     }
                   else break;
-                  core = eina_list_nth(inst->cfg->cpumonitor.cores, j);
+                  core = eina_list_nth(cores, j);
                   total_change = total - core->total;
                   idle_change = idle - core->idle;
                   if (total_change != 0)

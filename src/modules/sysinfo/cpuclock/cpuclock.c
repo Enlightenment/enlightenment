@@ -44,16 +44,16 @@ _cpuclock_status_free(Cpu_Status *s)
 {
    Eina_List *l;
 
-   if (s->frequencies) eina_list_free(s->frequencies);
+   if (eina_list_count(s->frequencies)) eina_list_free(s->frequencies);
    if (s->governors)
      {
         for (l = s->governors; l; l = l->next)
-          E_FREE_FUNC(l->data, free);
+          E_FREE(l->data);
         eina_list_free(s->governors);
      }
-   E_FREE_FUNC(s->cur_governor, free);
+   E_FREE(s->cur_governor);
    if (s->orig_governor) eina_stringshare_del(s->orig_governor);
-   E_FREE_FUNC(s, free);
+   E_FREE(s);
 }
 
 static int
@@ -370,7 +370,7 @@ _cpuclock_config_updated(Instance *inst)
         for (l = inst->cfg->cpuclock.status->frequencies, i = 0; l; l = l->next, i++)
           frequency_msg->val[i] = (long)l->data;
         edje_object_message_send(elm_layout_edje_get(inst->cfg->cpuclock.o_gadget), EDJE_MESSAGE_INT_SET, 1, frequency_msg);
-        free(frequency_msg);
+        E_FREE(frequency_msg);
      }
 
    if (inst->cfg->cpuclock.status->governors)
@@ -381,7 +381,7 @@ _cpuclock_config_updated(Instance *inst)
         for (l = inst->cfg->cpuclock.status->governors, i = 0; l; l = l->next, i++)
           governor_msg->str[i] = (char *)l->data;
         edje_object_message_send(elm_layout_edje_get(inst->cfg->cpuclock.o_gadget), EDJE_MESSAGE_STRING_SET, 2, governor_msg);
-        free(governor_msg);
+        E_FREE(governor_msg);
      }
    _cpuclock_poll_interval_update(inst);
 }
@@ -402,7 +402,7 @@ _cpuclock_face_update_current(Instance *inst)
    frequency_msg->val[4] = 0; // pad
    edje_object_message_send(elm_layout_edje_get(inst->cfg->cpuclock.o_gadget), EDJE_MESSAGE_INT_SET, 3,
                             frequency_msg);
-   free(frequency_msg);
+   E_FREE(frequency_msg);
 
    /* BSD crashes here without the if-condition
     * since it has no governors (yet) */
@@ -499,7 +499,7 @@ _cpuclock_status_check_available(Cpu_Status *s)
    if (s->governors)
      {
         for (l = s->governors; l; l = l->next)
-          free(l->data);
+          E_FREE(l->data);
         eina_list_free(s->governors);
         s->governors = NULL;
      }
@@ -586,7 +586,7 @@ _cpuclock_status_check_available(Cpu_Status *s)
         if (s->governors)
           {
              for (l = s->governors; l; l = l->next)
-               free(l->data);
+               E_FREE(l->data);
              eina_list_free(s->governors);
              s->governors = NULL;
           }
@@ -749,7 +749,7 @@ _cpuclock_status_check_current(Cpu_Status *s)
           {
              ret = 1;
 
-             free(s->cur_governor);
+             E_FREE(s->cur_governor);
              s->cur_governor = strdup(buf);
 
              for (i = strlen(s->cur_governor) - 1; i >= 0; i--)
@@ -845,37 +845,36 @@ _cpuclock_cb_frequency_check_notify(void *data,
    Eina_Bool freq_changed = EINA_FALSE;
    Eina_Bool init_set = EINA_FALSE;
    Thread_Config *thc = data;
-   Instance *inst = thc->inst;
 
-   if (!inst->cfg) return;
-   if (inst->cfg->esm != E_SYSINFO_MODULE_CPUCLOCK && inst->cfg->esm != E_SYSINFO_MODULE_SYSINFO) return;
+   if (!thc->inst && !thc->inst->cfg) return;
+   if (thc->inst->cfg->esm != E_SYSINFO_MODULE_CPUCLOCK && thc->inst->cfg->esm != E_SYSINFO_MODULE_SYSINFO) return;
 
-   if ((inst->cfg->cpuclock.status) && (status) &&
+   if ((thc->inst->cfg->cpuclock.status) && (status) &&
        (
 #if defined(__OpenBSD__)
-   (status->cur_percent       != inst->cfg->cpuclock.status->cur_percent      ) ||
+   (status->cur_percent       != thc->inst->cfg->cpuclock.status->cur_percent      ) ||
 #endif
-   (status->cur_frequency     != inst->cfg->cpuclock.status->cur_frequency    ) ||
-   (status->cur_min_frequency != inst->cfg->cpuclock.status->cur_min_frequency) ||
-   (status->cur_max_frequency != inst->cfg->cpuclock.status->cur_max_frequency) ||
-   (status->can_set_frequency != inst->cfg->cpuclock.status->can_set_frequency)))
+   (status->cur_frequency     != thc->inst->cfg->cpuclock.status->cur_frequency    ) ||
+   (status->cur_min_frequency != thc->inst->cfg->cpuclock.status->cur_min_frequency) ||
+   (status->cur_max_frequency != thc->inst->cfg->cpuclock.status->cur_max_frequency) ||
+   (status->can_set_frequency != thc->inst->cfg->cpuclock.status->can_set_frequency)))
      freq_changed = EINA_TRUE;
-   E_FREE_FUNC(inst->cfg->cpuclock.status, _cpuclock_status_free);
-   inst->cfg->cpuclock.status = status;
+   E_FREE_FUNC(thc->inst->cfg->cpuclock.status, _cpuclock_status_free);
+   thc->inst->cfg->cpuclock.status = status;
    if (freq_changed)
      {
-        _cpuclock_face_update_current(inst);
+        _cpuclock_face_update_current(thc->inst);
      }
-   if (inst->cfg->cpuclock.status->active == 0)
-     elm_layout_signal_emit(inst->cfg->cpuclock.o_gadget, "e,state,disabled", "e");
-   else if (inst->cfg->cpuclock.status->active == 1)
-     elm_layout_signal_emit(inst->cfg->cpuclock.o_gadget, "e,state,enabled", "e");
+   if (thc->inst->cfg->cpuclock.status->active == 0)
+     elm_layout_signal_emit(thc->inst->cfg->cpuclock.o_gadget, "e,state,disabled", "e");
+   else if (thc->inst->cfg->cpuclock.status->active == 1)
+     elm_layout_signal_emit(thc->inst->cfg->cpuclock.o_gadget, "e,state,enabled", "e");
 
    if (!init_set)
      {
-        _cpuclock_set_pstate(inst->cfg->cpuclock.pstate_min - 1,
-                             inst->cfg->cpuclock.pstate_max - 1,
-                             inst->cfg->cpuclock.status->pstate_turbo);
+        _cpuclock_set_pstate(thc->inst->cfg->cpuclock.pstate_min - 1,
+                             thc->inst->cfg->cpuclock.pstate_max - 1,
+                             thc->inst->cfg->cpuclock.status->pstate_turbo);
         init_set = EINA_TRUE;
      }
 }
@@ -884,38 +883,9 @@ static void
 _cpuclock_cb_frequency_check_end(void *data, Ecore_Thread *th EINA_UNUSED)
 {
    Thread_Config *thc = data;
+
    e_powersave_sleeper_free(thc->sleeper);
-   if (thc->inst->cfg->cpuclock.defer)
-     {
-        if (thc->inst->cfg->cpuclock.handler)
-          ecore_event_handler_del(thc->inst->cfg->cpuclock.handler);
-        if (thc->inst->cfg->cpuclock.governor)
-          eina_stringshare_del(thc->inst->cfg->cpuclock.governor);
-        E_FREE_FUNC(thc->inst->cfg->cpuclock.status, _cpuclock_status_free);
-        thc->inst->cfg->cpuclock.defer = EINA_FALSE;
-        thc->inst->cfg->cpuclock.done = EINA_TRUE;
-        if (thc->inst->cfg->esm == E_SYSINFO_MODULE_CPUCLOCK)
-          {
-             sysinfo_config->items = eina_list_remove(sysinfo_config->items, thc->inst->cfg);
-             if (thc->inst->cfg->id >= 0)
-               sysinfo_instances = eina_list_remove(sysinfo_instances, thc->inst);
-             E_FREE(thc->inst->cfg);
-             E_FREE(thc->inst);
-          }
-        else
-          {
-             if (thc->inst->cfg->memusage.done && thc->inst->cfg->thermal.done &&
-                 thc->inst->cfg->netstatus.done && thc->inst->cfg->cpumonitor.done && thc->inst->cfg->batman.done)
-               {
-                   sysinfo_config->items = eina_list_remove(sysinfo_config->items, thc->inst->cfg);
-                   if (thc->inst->cfg->id >= 0)
-                     sysinfo_instances = eina_list_remove(sysinfo_instances, thc->inst);
-                   E_FREE(thc->inst->cfg);
-                   E_FREE(thc->inst);
-               }
-          }
-     }
-   E_FREE_FUNC(thc, free);
+   E_FREE(thc);
 }
 
 EINTERN void
@@ -987,13 +957,10 @@ _cpuclock_removed_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_data)
                                        _cpuclock_removed_cb, inst);
    if (inst->cfg->cpuclock.frequency_check_thread)
      {
-        inst->cfg->cpuclock.defer = EINA_TRUE;
         ecore_thread_cancel(inst->cfg->cpuclock.frequency_check_thread);
         inst->cfg->cpuclock.frequency_check_thread = NULL;
 	return;
      }
-   if (inst->cfg->cpuclock.handler)
-     ecore_event_handler_del(inst->cfg->cpuclock.handler);
    if (inst->cfg->cpuclock.governor)
      eina_stringshare_del(inst->cfg->cpuclock.governor);
    E_FREE_FUNC(inst->cfg->cpuclock.status, _cpuclock_status_free);
@@ -1021,31 +988,13 @@ sysinfo_cpuclock_remove(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_U
      ecore_event_handler_del(handler);
    if (inst->cfg->cpuclock.frequency_check_thread)
      {
-        inst->cfg->cpuclock.defer = EINA_TRUE;
         ecore_thread_cancel(inst->cfg->cpuclock.frequency_check_thread);
         inst->cfg->cpuclock.frequency_check_thread = NULL;
-        return;
      }
-
-   if (inst->cfg->cpuclock.handler)
-     ecore_event_handler_del(inst->cfg->cpuclock.handler);
    if (inst->cfg->cpuclock.governor)
      eina_stringshare_del(inst->cfg->cpuclock.governor);
    E_FREE_FUNC(inst->cfg->cpuclock.status, _cpuclock_status_free);
 
-   inst->cfg->cpuclock.done = EINA_TRUE;
-   if (inst->cfg->esm == E_SYSINFO_MODULE_SYSINFO)
-     {
-        if (inst->cfg->memusage.done && inst->cfg->thermal.done &&
-            inst->cfg->netstatus.done && inst->cfg->cpumonitor.done && inst->cfg->batman.done)
-          {
-              sysinfo_config->items = eina_list_remove(sysinfo_config->items, inst->cfg);
-              if (inst->cfg->id >= 0)
-                sysinfo_instances = eina_list_remove(sysinfo_instances, inst);
-              E_FREE(inst->cfg);
-              E_FREE(inst);
-          }
-     }
 }
 
 static void
@@ -1084,13 +1033,13 @@ _cpuclock_created_cb(void *data, Evas_Object *obj, void *event_data EINA_UNUSED)
    evas_object_show(inst->cfg->cpuclock.o_gadget);
    evas_object_smart_callback_del_full(obj, "gadget_created", _cpuclock_created_cb, data);
 
-   E_LIST_HANDLER_APPEND(inst->cfg->cpuclock.handlers, E_EVENT_SCREENSAVER_ON, _screensaver_on, inst);
-   E_LIST_HANDLER_APPEND(inst->cfg->cpuclock.handlers, E_EVENT_SCREENSAVER_OFF, _screensaver_off, inst);
-
    inst->cfg->cpuclock.status = _cpuclock_status_new();
    _cpuclock_status_check_available(inst->cfg->cpuclock.status);
-   inst->cfg->cpuclock.handler = ecore_event_handler_add(E_EVENT_POWERSAVE_UPDATE,
-                                               _cpuclock_event_cb_powersave, inst);
+
+   E_LIST_HANDLER_APPEND(inst->cfg->cpuclock.handlers, E_EVENT_SCREENSAVER_ON, _screensaver_on, inst);
+   E_LIST_HANDLER_APPEND(inst->cfg->cpuclock.handlers, E_EVENT_SCREENSAVER_OFF, _screensaver_off, inst);
+   E_LIST_HANDLER_APPEND(inst->cfg->cpuclock.handlers, E_EVENT_POWERSAVE_UPDATE, _cpuclock_event_cb_powersave, inst);
+
    _cpuclock_config_updated(inst);
    if ((inst->cfg->cpuclock.restore_governor) && (inst->cfg->cpuclock.governor))
      {
@@ -1110,8 +1059,6 @@ sysinfo_cpuclock_create(Evas_Object *parent, Instance *inst)
 {
    Eina_List *l = NULL;
 
-   inst->cfg->cpuclock.defer = EINA_FALSE;
-   inst->cfg->cpuclock.done = EINA_FALSE;
    if (inst->cfg->cpuclock.pstate_min == 0) inst->cfg->cpuclock.pstate_min = 1;
    if (inst->cfg->cpuclock.pstate_max == 0) inst->cfg->cpuclock.pstate_max = 101;
 
@@ -1132,13 +1079,13 @@ sysinfo_cpuclock_create(Evas_Object *parent, Instance *inst)
    evas_object_event_callback_add(inst->cfg->cpuclock.o_gadget, EVAS_CALLBACK_RESIZE, _cpuclock_resize_cb, inst);
    evas_object_show(inst->cfg->cpuclock.o_gadget);
 
-   E_LIST_HANDLER_APPEND(inst->cfg->cpuclock.handlers, E_EVENT_SCREENSAVER_ON, _screensaver_on, inst);
-   E_LIST_HANDLER_APPEND(inst->cfg->cpuclock.handlers, E_EVENT_SCREENSAVER_OFF, _screensaver_off, inst);
-
    inst->cfg->cpuclock.status = _cpuclock_status_new();
    _cpuclock_status_check_available(inst->cfg->cpuclock.status);
-   inst->cfg->cpuclock.handler = ecore_event_handler_add(E_EVENT_POWERSAVE_UPDATE,
-                                               _cpuclock_event_cb_powersave, inst);
+   
+   E_LIST_HANDLER_APPEND(inst->cfg->cpuclock.handlers, E_EVENT_SCREENSAVER_ON, _screensaver_on, inst);
+   E_LIST_HANDLER_APPEND(inst->cfg->cpuclock.handlers, E_EVENT_SCREENSAVER_OFF, _screensaver_off, inst);
+   E_LIST_HANDLER_APPEND(inst->cfg->cpuclock.handlers, E_EVENT_POWERSAVE_UPDATE, _cpuclock_event_cb_powersave, inst);
+
    _cpuclock_config_updated(inst);
    if ((inst->cfg->cpuclock.restore_governor) && (inst->cfg->cpuclock.governor))
      {
@@ -1197,8 +1144,6 @@ cpuclock_create(Evas_Object *parent, int *id, E_Gadget_Site_Orient orient EINA_U
    inst = E_NEW(Instance, 1);
    inst->cfg = _conf_item_get(id);
    *id = inst->cfg->id;
-   inst->cfg->cpuclock.defer = EINA_FALSE;
-   inst->cfg->cpuclock.done = EINA_FALSE;
    inst->o_main = elm_box_add(parent);
    E_EXPAND(inst->o_main);
    evas_object_data_set(inst->o_main, "Instance", inst);

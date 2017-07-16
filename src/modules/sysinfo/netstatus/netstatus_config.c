@@ -7,7 +7,7 @@ _config_close(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, voi
    Instance *inst = nc->inst;
 
    E_FREE_FUNC(inst->cfg->netstatus.configure, evas_object_del);
-   E_FREE_FUNC(nc, free);
+   E_FREE(nc);
    e_config_save_queue();
 }
 

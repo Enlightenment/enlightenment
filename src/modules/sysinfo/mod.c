@@ -50,8 +50,8 @@ sysinfo_init(void)
    E_CONFIG_VAL(D, T, netstatus.poll_interval, INT);
    E_CONFIG_VAL(D, T, netstatus.automax, INT);
    E_CONFIG_VAL(D, T, netstatus.inmax, INT);
-   E_CONFIG_VAL(D, T, netstatus.receive_units, INT);
    E_CONFIG_VAL(D, T, netstatus.outmax, INT);
+   E_CONFIG_VAL(D, T, netstatus.receive_units, INT);
    E_CONFIG_VAL(D, T, netstatus.send_units, INT);
 
    conf_edd = E_CONFIG_DD_NEW("Sysinfo_Config", Config);
@@ -82,7 +82,7 @@ sysinfo_init(void)
         ci->batman.time_left = -2;
         ci->batman.have_battery = -2;
         ci->batman.have_power = -2;
-#if defined(HAVE_EEZ)E || defined(__OpenBSD__) || defined(__NetBSD__)
+#if defined(HAVE_EEZE) || defined(__OpenBSD__) || defined(__NetBSD__)
         ci->batman.fuzzy = 0;
 #endif
         ci->batman.desktop_notifications = 0;
@@ -98,8 +98,6 @@ sysinfo_init(void)
         ci->thermal.units = CELSIUS;
         ci->thermal.popup = NULL;
         ci->thermal.configure = NULL;
-        ci->thermal.defer = EINA_FALSE;
-        ci->thermal.done = EINA_FALSE;
 	ci->cpuclock.poll_interval = 32;
         ci->cpuclock.restore_governor = 0;
         ci->cpuclock.auto_powersave = 1;
@@ -109,41 +107,25 @@ sysinfo_init(void)
         ci->cpuclock.pstate_max = 101;
         ci->cpuclock.popup = NULL;
 	ci->cpuclock.configure = NULL;
-        ci->cpuclock.defer = EINA_FALSE;
-        ci->cpuclock.done = EINA_FALSE;
 	ci->cpumonitor.poll_interval = 32;
-        ci->cpumonitor.total = 0;
-        ci->cpumonitor.idle = 0;
         ci->cpumonitor.percent = 0;
         ci->cpumonitor.popup = NULL;
         ci->cpumonitor.configure = NULL;
-        ci->cpumonitor.defer = EINA_FALSE;
-        ci->cpumonitor.done = EINA_FALSE;
         ci->memusage.poll_interval = 32;
         ci->memusage.mem_percent = 0;
         ci->memusage.swp_percent = 0;
         ci->memusage.popup = NULL;
         ci->memusage.configure = NULL;
-        ci->memusage.defer = EINA_FALSE;
-        ci->memusage.done = EINA_FALSE;
         ci->netstatus.poll_interval = 32;
         ci->netstatus.automax = EINA_TRUE;
-        ci->netstatus.receive_units = NETSTATUS_UNIT_BYTES;
-        ci->netstatus.send_units = NETSTATUS_UNIT_BYTES;
-        ci->netstatus.in = 0;
-        ci->netstatus.out = 0;
         ci->netstatus.inmax = 0;
         ci->netstatus.outmax = 0;
-        ci->netstatus.incurrent = 0;
-        ci->netstatus.outcurrent = 0;
-        ci->netstatus.inpercent = 0;
-        ci->netstatus.outpercent = 0;
+	ci->netstatus.receive_units = NETSTATUS_UNIT_BYTES;
+        ci->netstatus.send_units = NETSTATUS_UNIT_BYTES;
         ci->netstatus.instring = NULL;
         ci->netstatus.outstring = NULL;
         ci->netstatus.popup = NULL;
         ci->netstatus.configure = NULL;
-        ci->netstatus.defer = EINA_FALSE;
-        ci->netstatus.done = EINA_FALSE;
 
         E_CONFIG_LIMIT(ci->batman.poll_interval, 4, 4096);
         E_CONFIG_LIMIT(ci->batman.alert, 0, 60);
@@ -193,7 +175,7 @@ sysinfo_shutdown(void)
         Config_Item *ci;
         EINA_LIST_FREE(sysinfo_config->items, ci)
           {
-             free(ci);
+             E_FREE(ci);
           }
         E_FREE(sysinfo_config);
      }

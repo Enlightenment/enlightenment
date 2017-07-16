@@ -144,8 +144,8 @@ _batman_sysctl_stop(void)
    EINA_LIST_FREE(batman_device_ac_adapters, ac) 
      {
         E_FREE_FUNC(ac->udi, eina_stringshare_del);
-        E_FREE_FUNC(ac->mib, free);
-        E_FREE_FUNC(ac, free);
+        E_FREE(ac->mib);
+        E_FREE(ac);
      }
    
    EINA_LIST_FREE(batman_device_batteries, bat)
@@ -156,12 +156,12 @@ _batman_sysctl_stop(void)
         E_FREE_FUNC(bat->vendor, eina_stringshare_del);
         E_FREE_FUNC(bat->poll, ecore_poller_del);
 #if defined(__FreeBSD__) || defined(__DragonFly__)
-        E_FREE_FUNC(bat->mib_state, free);
-        E_FREE_FUNC(bat->mib_time, free);
-        E_FREE_FUNC(bat->mib_units, free);
+        E_FREE(bat->mib_state);
+        E_FREE(bat->mib_time);
+        E_FREE(bat->mib_units);
 #endif
-        E_FREE_FUNC(bat->mib, free);
-        E_FREE_FUNC(bat, free);
+        E_FREE(bat->mib);
+        E_FREE(bat);
      }
 }
 

@@ -7,7 +7,7 @@ _config_close(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, voi
    Instance *inst = bc->inst;
 
    E_FREE_FUNC(inst->cfg->batman.configure, evas_object_del);
-   E_FREE_FUNC(bc, free);
+   E_FREE(bc);
    e_config_save_queue();
 }
 

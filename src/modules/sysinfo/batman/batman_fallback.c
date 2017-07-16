@@ -277,8 +277,8 @@ linux_sys_class_power_supply_cb_re_init(void *data)
 //           if (sysev->fd_handler)
 //             ecore_main_fd_handler_del(sysev->fd_handler);
 //           if (sysev->fd >= 0) close(sysev->fd);
-             free(sysev->name);
-             free(sysev);
+             E_FREE(sysev->name);
+             E_FREE(sysev);
           }
      }
    linux_sys_class_power_supply_init();
@@ -319,8 +319,8 @@ linux_sys_class_power_supply_cb_event_fd_active(void *data,
 //           if (sysev->fd_handler)
 //             ecore_main_fd_handler_del(sysev->fd_handler);
 //           if (sysev->fd >= 0) close(sysev->fd);
-             free(sysev->name);
-             free(sysev);
+             E_FREE(sysev->name);
+             E_FREE(sysev);
 
              if (re_init_timer) ecore_timer_del(re_init_timer);
              re_init_timer = ecore_timer_loop_add(1.0, linux_sys_class_power_supply_cb_re_init, NULL);
@@ -476,7 +476,7 @@ linux_sys_class_power_supply_init(void)
 
                   if (!(linux_sys_class_power_supply_is_battery(name)))
                     {
-                       free(name);
+                       E_FREE(name);
                        continue;
                     }
                   sysev = (Sys_Class_Power_Supply_Uevent *)calloc(1, sizeof(Sys_Class_Power_Supply_Uevent));
@@ -573,7 +573,7 @@ linux_sys_class_power_supply_check(void)
                        full = 1;
                        charging = 0;
                     }
-                  free(tmp);
+                  E_FREE(tmp);
                }
              /* some batteries can/will/want to predict how long they will
               * last. if so - take what the battery says. too bad if it's
@@ -825,7 +825,7 @@ linux_acpi_init(void)
                        if (tmp)
                          {
                             if (!strcmp(tmp, "on-line")) have_power = 1;
-                            free(tmp);
+                            E_FREE(tmp);
                          }
                        fclose(f);
                     }
@@ -853,7 +853,7 @@ linux_acpi_init(void)
                   if (tmp)
                     {
                        if (!strcmp(tmp, "yes")) have_battery = 1;
-                       free(tmp);
+                       E_FREE(tmp);
                     }
                   /* design cap */
                   tmp = fgets(buf, sizeof(buf), f);
@@ -861,7 +861,7 @@ linux_acpi_init(void)
                   if (tmp)
                     {
                        if (strcmp(tmp, "unknown")) acpi_max_design += atoi(tmp);
-                       free(tmp);
+                       E_FREE(tmp);
                     }
                   /* last full cap */
                   tmp = fgets(buf, sizeof(buf), f);
@@ -869,7 +869,7 @@ linux_acpi_init(void)
                   if (tmp)
                     {
                        if (strcmp(tmp, "unknown")) acpi_max_full += atoi(tmp);
-                       free(tmp);
+                       E_FREE(tmp);
                     }
                   fclose(f);
                }
@@ -930,34 +930,34 @@ linux_acpi_check(void)
              FILE *f;
 
              snprintf(buf, sizeof(buf), "/proc/acpi/battery/%s/state", name);
-             free(name);
+             E_FREE(name);
              f = fopen(buf, "r");
              if (!f) continue;
 
              tmp = file_str_entry_get(f, "present:");
              if (!tmp) goto fclose_and_continue;
              if (!strcasecmp(tmp, "yes")) have_battery = 1;
-             free(tmp);
+             E_FREE(tmp);
 
              tmp = file_str_entry_get(f, "capacity state:");
              if (!tmp) goto fclose_and_continue;
-             free(tmp);
+             E_FREE(tmp);
 
              tmp = file_str_entry_get(f, "charging state:");
              if (!tmp) goto fclose_and_continue;
              if ((have_power == 0) && (!strcasecmp(tmp, "charging")))
                have_power = 1;
-             free(tmp);
+             E_FREE(tmp);
 
              tmp = file_str_entry_get(f, "present rate:");
              if (!tmp) goto fclose_and_continue;
              if (strcasecmp(tmp, "unknown")) rate += atoi(tmp);
-             free(tmp);
+             E_FREE(tmp);
 
              tmp = file_str_entry_get(f, "remaining capacity:");
              if (!tmp) goto fclose_and_continue;
              if (strcasecmp(tmp, "unknown")) capacity += atoi(tmp);
-             free(tmp);
+             E_FREE(tmp);
 
 fclose_and_continue:
              fclose(f);
@@ -1182,7 +1182,7 @@ fclose_and_continue:
                     }
                }
 
-             free(name);
+             E_FREE(name);
           }
         if (max_charge > 0) battery_full = ((long long)charge * 100) / max_charge;
         else battery_full = 0;
@@ -1251,7 +1251,7 @@ dir_has_contents(const char *dir)
 
    count = eina_list_count(bats);
    EINA_LIST_FREE(bats, file)
-     free(file);
+     E_FREE(file);
    if (count > 0) return 1;
    return 0;
 }

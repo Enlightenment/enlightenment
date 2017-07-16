@@ -42,9 +42,9 @@ temperature_get_bus_files(const char *bus)
                   f = strdup(path);
                   if (f) result = eina_list_append(result, f);
                }
-             free(file);
+             E_FREE(file);
           }
-        free(name);
+        E_FREE(name);
      }
    return result;
 }
@@ -228,7 +228,7 @@ init(Tempthread *tth)
                         * one for the default. */
                        break;
                     }
-                  free(name);
+                  E_FREE(name);
                }
              break;
 
@@ -247,7 +247,7 @@ init(Tempthread *tth)
                         * one for the default. */
                        break;
                     }
-                  free(name);
+                  E_FREE(name);
                }
              break;
 

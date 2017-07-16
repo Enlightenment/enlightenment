@@ -8,7 +8,7 @@ _config_close(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, voi
 
    E_FREE_FUNC(inst->cfg->cpuclock.configure, evas_object_del);
    E_FREE_FUNC(cc->powersaves, eina_list_free);
-   E_FREE_FUNC(cc, free);
+   E_FREE(cc);
    e_config_save_queue();
 }
 
