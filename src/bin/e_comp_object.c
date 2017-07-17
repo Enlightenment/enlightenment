@@ -56,7 +56,7 @@ typedef struct _E_Comp_Object
    //EINA_INLIST;
 
    int                  x, y, w, h;  // geometry
-   Eina_Rectangle       input_rect;
+   Eina_Tiler          *input_area;
 
    E_Client *ec;
 
@@ -76,7 +76,7 @@ typedef struct _E_Comp_Object
 
    Evas_Object         *smart_obj;  // smart object
    Evas_Object         *clip; // clipper over effect object
-   Evas_Object         *input_obj; // input rect
+   Eina_Array          *input_objs; // input rect
    Evas_Object         *obj;  // composite object
    Evas_Object         *frame_object; // for client frames
    Evas_Object         *frame_icon; // for client frames
@@ -765,7 +765,7 @@ _e_comp_object_shadow_setup(E_Comp_Object *cw)
         else
           edje_object_part_swallow(cw->shobj, "e.swallow.content", cw->obj);
      }
-   if (cw->input_obj)
+   if (cw->input_objs)
      evas_object_pass_events_set(cw->obj, 1);
    else
      evas_object_pass_events_set(cw->obj, 0);
@@ -1937,7 +1937,7 @@ _e_comp_object_frame_recalc(E_Comp_Object *cw)
         cw->client_inset.b = MAX(h, 50) - (oy + oh);
         if (cw->obj) edje_object_part_swallow(cw->frame_object, "e.swallow.client", cw->obj);
         evas_object_resize(cw->frame_object, w, h);
-        if (cw->input_rect.w && (!cw->input_obj))
+        if (!cw->input_objs)
           evas_object_pass_events_set(cw->obj, 0);
      }
    else
@@ -2361,7 +2361,6 @@ _e_comp_smart_hide(Evas_Object *obj)
    cw->visible = 0;
    cw->deleted |= cw->ec->delete_requested || e_object_is_del(E_OBJECT(cw->ec));
    evas_object_hide(cw->clip);
-   if (cw->input_obj) evas_object_hide(cw->input_obj);
    evas_object_hide(cw->effect_obj);
    if (stopping) return;
    if (!cw->ec->input_only)
@@ -2397,7 +2396,6 @@ _e_comp_smart_show(Evas_Object *obj)
      evas_object_show(tmp->frame);
 
    evas_object_show(cw->clip);
-   if (cw->input_obj) evas_object_show(cw->input_obj);
    if (!cw->ec->input_only)
      {
         edje_object_thaw(cw->effect_obj);
@@ -2444,6 +2442,19 @@ _e_comp_object_client_del(void *d, void *obj EINA_UNUSED)
 }
 
 static void
+_e_comp_input_objs_free(E_Comp_Object *cw)
+{
+   Evas_Object *rect;
+   if (!cw->input_objs) return;
+   while ((rect = eina_array_pop(cw->input_objs)))
+     {
+        evas_object_smart_member_del(rect);
+        evas_object_freeze_events_set(rect, 1);
+        evas_object_del(rect);
+     }
+}
+
+static void
 _e_comp_smart_del(Evas_Object *obj)
 {
    Eina_List *l;
@@ -2481,7 +2492,9 @@ _e_comp_smart_del(Evas_Object *obj)
    evas_object_del(cw->frame_volume);
    evas_object_del(cw->frame_object);
    evas_object_del(cw->zoomobj);
-   evas_object_del(cw->input_obj);
+   _e_comp_input_objs_free(cw);
+   eina_array_free(cw->input_objs);
+   eina_tiler_free(cw->input_area);
    evas_object_del(cw->obj);
    e_comp_shape_queue();
    eina_stringshare_del(cw->frame_theme);
@@ -2502,15 +2515,25 @@ static void
 _e_comp_object_input_rect_update(E_Comp_Object *cw)
 {
    int x, y, w, h;
+   Eina_Iterator *it;
+   Eina_Rectangle *rect;
+   Evas_Object *o;
+   int i = 0;
 
-   if (!cw->input_obj) return;
-   x = cw->input_rect.x, y = cw->input_rect.y, w = cw->input_rect.w, h = cw->input_rect.h;
+   if (!cw->input_area) return;
+   it = eina_tiler_iterator_new(cw->input_area);
+   EINA_ITERATOR_FOREACH(it, rect)
+     {
+        o = eina_array_data_get(cw->input_objs, i++);
+        x = rect->x, y = rect->y, w = rect->w, h = rect->h;
 
-   E_RECTS_CLIP_TO_RECT(x, y, w, h, 0, 0, cw->ec->client.w, cw->ec->client.h);
-   evas_object_geometry_set(cw->input_obj,
-       cw->x + x + (!!cw->frame_object * cw->client_inset.l),
-       cw->y + y + (!!cw->frame_object * cw->client_inset.t),
-       w, h);
+        E_RECTS_CLIP_TO_RECT(x, y, w, h, 0, 0, cw->ec->client.w, cw->ec->client.h);
+        evas_object_geometry_set(o,
+            cw->x + x + (!!cw->frame_object * cw->client_inset.l),
+            cw->y + y + (!!cw->frame_object * cw->client_inset.t),
+            w, h);
+     }
+   eina_iterator_free(it);
 }
 
 static void
@@ -2528,7 +2551,7 @@ _e_comp_smart_move(Evas_Object *obj, int x, int y)
    cw->agent_updating = 0;
    evas_object_move(cw->clip, 0, 0);
    evas_object_move(cw->effect_obj, x, y);
-   if (cw->input_obj)
+   if (cw->input_area)
      _e_comp_object_input_rect_update(cw);
    /* this gets called once during setup to init coords offscreen and guarantee first move */
    if (e_comp && cw->visible)
@@ -2573,7 +2596,7 @@ _e_comp_smart_resize(Evas_Object *obj, int w, int h)
           }
         evas_object_resize(cw->effect_obj, w, h);
         if (cw->zoomobj) e_zoomap_child_resize(cw->zoomobj, pw, ph);
-        if (cw->input_obj)
+        if (cw->input_area)
           _e_comp_object_input_rect_update(cw);
         /* resize render update tiler */
         if (!first)
@@ -3212,36 +3235,49 @@ e_comp_object_util_center_pos_get(Evas_Object *obj, int *x, int *y)
 }
 
 E_API void
-e_comp_object_input_area_set(Evas_Object *obj, int x, int y, int w, int h)
+e_comp_object_input_area_set(Evas_Object *obj, const Eina_Tiler *area)
 {
+   Eina_Rectangle *rect;
+   Eina_Iterator *it;
+
    API_ENTRY;
 
-   //INF("%d,%d %dx%d", x, y, w, h);
-   if ((cw->input_rect.x == x) && (cw->input_rect.y == y) &&
-       (cw->input_rect.w == w) && (cw->input_rect.h == h)) return;
-   EINA_RECTANGLE_SET(&cw->input_rect, x, y, w, h);
-   if (x || y || (w != cw->ec->client.w) || (h != cw->ec->client.h))
+   if ((!area) && (!cw->input_area)) return;
+   if (area && cw->input_area && eina_tiler_equal(area, cw->input_area)) return;
+   _e_comp_input_objs_free(cw);
+   evas_object_pass_events_set(cw->obj, 1);
+   if ((!area) || eina_tiler_empty(area))
      {
-        if (!cw->input_obj)
-          {
-             cw->input_obj = evas_object_rectangle_add(e_comp->evas);
-             //e_util_size_debug_set(cw->input_obj, 1);
-             evas_object_name_set(cw->input_obj, "cw->input_obj");
-             evas_object_color_set(cw->input_obj, 0, 0, 0, 0);
-             evas_object_clip_set(cw->input_obj, cw->clip);
-             evas_object_smart_member_add(cw->input_obj, obj);
-          }
-        _e_comp_object_input_rect_update(cw);
-        evas_object_pass_events_set(cw->obj, 1);
-        if (cw->visible) evas_object_show(cw->input_obj);
+        E_FREE_FUNC(cw->input_area, eina_tiler_free);
+        E_FREE_FUNC(cw->input_objs, eina_array_free);
+        return;
      }
+   if (cw->input_area)
+     eina_tiler_clear(cw->input_area);
    else
      {
-        evas_object_smart_member_del(cw->input_obj);
-        evas_object_freeze_events_set(cw->input_obj, 1);
-        E_FREE_FUNC(cw->input_obj, evas_object_del);
-        evas_object_pass_events_set(cw->obj, 0);
+        cw->input_area = eina_tiler_new(99999, 99999);
+        eina_tiler_tile_size_set(cw->input_area, 1, 1);
      }
+   if (!cw->input_objs)
+     cw->input_objs = eina_array_new(1);
+   it = eina_tiler_iterator_new(area);
+   EINA_ITERATOR_FOREACH(it, rect)
+     {
+        Evas_Object *o = evas_object_rectangle_add(e_comp->evas);
+        //e_util_size_debug_set(o, 1);
+        evas_object_name_set(o, "cw->input_rect");
+        evas_object_color_set(o, 0, 0, 0, 0);
+        evas_object_clip_set(o, cw->clip);
+        evas_object_smart_member_add(o, obj);
+        evas_object_event_callback_add(o, EVAS_CALLBACK_MOUSE_IN, _e_comp_object_ssd_mouse_in, cw);
+        evas_object_event_callback_add(o, EVAS_CALLBACK_MOUSE_OUT, _e_comp_object_ssd_mouse_out, cw);
+        evas_object_show(o);
+        eina_array_push(cw->input_objs, o);
+        eina_tiler_rect_add(cw->input_area, rect);
+     }
+   eina_iterator_free(it);
+   _e_comp_object_input_rect_update(cw);
 }
 
 E_API Eina_Bool
@@ -3249,12 +3285,16 @@ e_comp_object_coords_inside_input_area(Evas_Object *obj, int x, int y)
 {
    API_ENTRY EINA_FALSE;
 
-   if (cw->input_obj)
+   if (cw->input_area)
      {
-        int xx, yy, ww, hh;
+        unsigned int i;
+        Evas_Object *rect;
+        Eina_Array_Iterator it;
 
-        evas_object_geometry_get(cw->input_obj, &xx, &yy, &ww, &hh);
-        return E_INSIDE(x, y, xx, yy, ww, hh);
+        EINA_ARRAY_ITER_NEXT(cw->input_objs, i, rect, it)
+          if (evas_object_pointer_coords_inside_get(rect, x, y)) return EINA_TRUE;
+
+        return EINA_FALSE;
      }
    if (evas_object_pass_events_get(obj)) return EINA_FALSE;
    return E_INSIDE(x, y, cw->ec->x, cw->ec->y, cw->ec->w, cw->ec->h);
