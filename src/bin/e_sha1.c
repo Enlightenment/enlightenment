@@ -1,5 +1,9 @@
-#include "e.h"
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#endif
 #include <string.h>
+
+#include "e_macros.h"
 
 #ifdef HAVE_ARPA_INET_H
 # include <arpa/inet.h>

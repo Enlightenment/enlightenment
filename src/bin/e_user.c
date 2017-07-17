@@ -1,4 +1,12 @@
-#include "e.h"
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#endif
+#include <stdio.h>
+#include <string.h>
+#include <limits.h>
+#include <Efreet.h>
+
+#include "e_macros.h"
 
 static const char *_e_user_homedir = NULL;
 static size_t _e_user_homedir_len = 0;
