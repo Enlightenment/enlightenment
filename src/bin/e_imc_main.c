@@ -1,4 +1,14 @@
-#include "e.h"
+#include <Eina.h>
+#include <Eet.h>
+#include <Ecore_File.h>
+#include "e_macros.h"
+#define E_TYPEDEFS
+#include "e_config_data.h"
+#include "e_intl_data.h"
+#undef E_TYPEDEFS
+#include "e_config_data.h"
+#include "e_intl_data.h"
+
 
 static void _e_help(void);
 
@@ -181,7 +191,7 @@ main(int argc, char **argv)
      }
 
    e_intl_input_method_config_free(read_imc);
-   E_FREE(write_imc);
+   free(write_imc);
    eet_close(ef);
    e_intl_data_shutdown();
    eet_shutdown();
