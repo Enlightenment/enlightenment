@@ -2626,6 +2626,34 @@ _e_comp_smart_resize(Evas_Object *obj, int w, int h)
 }
 
 static void
+_e_comp_object_move_end(void *d EINA_UNUSED, E_Client *ec)
+{
+   E_Comp_Object *cw = evas_object_smart_data_get(ec->frame);
+   unsigned int i;
+   Evas_Object *rect;
+   Eina_Array_Iterator it;
+
+   if (!cw->input_objs) return;
+
+   EINA_ARRAY_ITER_NEXT(cw->input_objs, i, rect, it)
+     evas_object_pointer_mode_set(rect, EVAS_OBJECT_POINTER_MODE_AUTOGRAB);
+}
+
+static void
+_e_comp_object_move_begin(void *d EINA_UNUSED, E_Client *ec)
+{
+   E_Comp_Object *cw = evas_object_smart_data_get(ec->frame);
+   unsigned int i;
+   Evas_Object *rect;
+   Eina_Array_Iterator it;
+
+   if (!cw->input_objs) return;
+
+   EINA_ARRAY_ITER_NEXT(cw->input_objs, i, rect, it)
+     evas_object_pointer_mode_set(rect, EVAS_OBJECT_POINTER_MODE_NOGRAB);
+}
+
+static void
 _e_comp_smart_init(void)
 {
    const char *env;
@@ -2636,6 +2664,8 @@ _e_comp_smart_init(void)
      render_debug_enabled = -1;
    else if (env)
      render_debug_enabled = 1;
+   e_client_hook_add(E_CLIENT_HOOK_MOVE_BEGIN, _e_comp_object_move_begin, NULL);
+   e_client_hook_add(E_CLIENT_HOOK_MOVE_END, _e_comp_object_move_end, NULL);
    {
       static const Evas_Smart_Class sc =
       {
@@ -3272,6 +3302,8 @@ e_comp_object_input_area_set(Evas_Object *obj, const Eina_Tiler *area)
         evas_object_smart_member_add(o, obj);
         evas_object_event_callback_add(o, EVAS_CALLBACK_MOUSE_IN, _e_comp_object_ssd_mouse_in, cw);
         evas_object_event_callback_add(o, EVAS_CALLBACK_MOUSE_OUT, _e_comp_object_ssd_mouse_out, cw);
+        if (cw->ec->moving)
+          evas_object_pointer_mode_set(o, EVAS_OBJECT_POINTER_MODE_NOGRAB);
         evas_object_show(o);
         eina_array_push(cw->input_objs, o);
         eina_tiler_rect_add(cw->input_area, rect);
