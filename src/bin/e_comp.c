@@ -321,7 +321,8 @@ _e_comp_client_update(E_Client *ec)
                e_comp_object_render_update_add(ec->frame);
           }
      }
-   if ((!e_comp->saver) && e_pixmap_size_get(ec->pixmap, &pw, &ph))
+   if (!(e_comp->saver && ecore_evas_manual_render_get(e_comp->ee)) &&
+       e_pixmap_size_get(ec->pixmap, &pw, &ph))
      {
         //INF("PX DIRTY: PX(%dx%d) CLI(%dx%d)", pw, ph, ec->client.w, ec->client.h);
         e_pixmap_image_refresh(ec->pixmap);
