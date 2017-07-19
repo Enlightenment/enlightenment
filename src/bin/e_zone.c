@@ -1303,7 +1303,7 @@ e_zone_useful_geometry_get(E_Zone *zone,
         zone->useful_geometry[1].h = zh;
         zone->useful_geometry_changed =
           !!memcmp(&zone->useful_geometry[0], &zone->useful_geometry[1], sizeof(Eina_Rectangle));
-        
+
      }
    zone->useful_geometry_dirty = 0;
 
@@ -1729,4 +1729,32 @@ e_zone_for_id_get(const char *id)
      }
 
    return NULL;
+}
+
+EAPI void
+_debug_code(void)
+{
+   E_Zone *zone;
+   Eina_List *n;
+
+   EINA_LIST_FOREACH(e_comp->zones, n, zone)
+     {
+        printf("%p: %d %d\n", zone,
+          evas_object_layer_get(zone->bg_event_object),
+          evas_object_layer_get(zone->bg_clip_object));
+     }
+}
+
+EAPI void
+_repair_code(void)
+{
+   E_Zone *zone;
+   Eina_List *n;
+
+   EINA_LIST_FOREACH(e_comp->zones, n, zone)
+     {
+        evas_object_layer_set(zone->bg_event_object, E_LAYER_BG);
+        evas_object_layer_set(zone->bg_clip_object, E_LAYER_BG);
+     }
+
 }
