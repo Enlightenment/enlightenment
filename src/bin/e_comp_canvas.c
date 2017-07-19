@@ -3,6 +3,7 @@
 static Eina_List *handlers;
 static Ecore_Timer *timer_post_screensaver_lock = NULL;
 static Ecore_Timer *timer_post_screensaver_on = NULL;
+static Ecore_Timer *timer_pointer_freeze = NULL;
 
 static void
 _e_comp_canvas_cb_del()
@@ -10,6 +11,7 @@ _e_comp_canvas_cb_del()
    E_FREE_LIST(handlers, ecore_event_handler_del);
    E_FREE_FUNC(timer_post_screensaver_lock, ecore_timer_del);
    E_FREE_FUNC(timer_post_screensaver_on, ecore_timer_del);
+   E_FREE_FUNC(timer_pointer_freeze, ecore_timer_del);
 }
 
 static void
@@ -280,6 +282,14 @@ _e_comp_cb_timer_post_screensaver_lock(void *data EINA_UNUSED)
 }
 
 static Eina_Bool
+_e_comp_cb_screensaver_ponter_freeze_cb(void *data EINA_UNUSED)
+{
+   e_pointers_freeze_set(EINA_TRUE);
+   timer_pointer_freeze = NULL;
+   return EINA_FALSE;
+}
+
+static Eina_Bool
 _e_comp_cb_screensaver_on()
 {
    // XXX: this is not quite right. this here should be called after e_comp.c
@@ -296,7 +306,9 @@ _e_comp_cb_screensaver_on()
               (e_config->desklock_post_screensaver_time,
               _e_comp_cb_timer_post_screensaver_lock, NULL);
      }
-   e_pointers_freeze_set(1);
+   if (timer_pointer_freeze) ecore_timer_del(timer_pointer_freeze);
+   timer_pointer_freeze = ecore_timer_add
+     (10.0, _e_comp_cb_screensaver_ponter_freeze_cb, NULL);
    return ECORE_CALLBACK_PASS_ON;
 }
 
@@ -305,7 +317,12 @@ _e_comp_cb_screensaver_off()
 {
    E_FREE_FUNC(timer_post_screensaver_lock, ecore_timer_del);
    E_FREE_FUNC(timer_post_screensaver_on, ecore_timer_del);
-   e_pointers_freeze_set(0);
+   e_pointers_freeze_set(EINA_FALSE);
+   if (timer_pointer_freeze)
+     {
+        ecore_timer_del(timer_pointer_freeze);
+        timer_pointer_freeze = NULL;
+     }
    return ECORE_CALLBACK_PASS_ON;
 }
 ////////////////////////////////////
