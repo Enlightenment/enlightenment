@@ -27,7 +27,7 @@ _cpumonitor_sysctl_getcores(void)
 
 
 void
-_cpumonitor_sysctl_getusage(unsigned long *prev_total, unsigned long *prev_idle, int *prev_precent, Eina_List *cores)
+_cpumonitor_sysctl_getusage(unsigned long *prev_total, unsigned long *prev_idle, int *prev_percent, Eina_List *cores)
 {
    CPU_Core *core;
    size_t size;
