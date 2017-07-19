@@ -295,10 +295,6 @@ _memusage_cb_usage_check_main(void *data, Ecore_Thread *th)
         ecore_thread_feedback(th, NULL);
         if (ecore_thread_check(th)) break;
         e_powersave_sleeper_sleep(thc->sleeper, thc->interval);
-        if (e_powersave_mode_get() == E_POWERSAVE_MODE_FREEZE)
-          usleep((1000000.0 / 800.0) * (double)thc->interval);
-        else
-          usleep((1000000.0 / 8.0) * (double)thc->interval);
         if (ecore_thread_check(th)) break;
      }
 }

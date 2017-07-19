@@ -331,10 +331,6 @@ _temperature_check_main(void *data, Ecore_Thread *th)
         if (ptemp != temp) ecore_thread_feedback(th, (void *)((long)temp));
         ptemp = temp;
         e_powersave_sleeper_sleep(tth->sleeper, tth->poll_interval);
-        if (e_powersave_mode_get() == E_POWERSAVE_MODE_FREEZE)
-          usleep((1000000.0 / 800.0) * (double)tth->poll_interval);
-        else
-          usleep((1000000.0 / 8.0) * (double)tth->poll_interval);
         if (ecore_thread_check(th)) break;
      }
 }
