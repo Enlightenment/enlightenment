@@ -455,7 +455,7 @@ _basic_screen_info_fill(E_Config_Dialog_Data *cfdata, E_Config_Randr2_Screen *cs
    else if (cs->rel_mode == E_RANDR2_RELATIVE_TO_BELOW)
      elm_object_text_set(cfdata->rel_mode_obj, _("Below"));
    else
-     elm_object_text_set(cfdata->rel_mode_obj, "???");
+     elm_object_text_set(cfdata->rel_mode_obj, _("Unconfigured"));
 
    elm_slider_value_set(cfdata->rel_align_obj, cs->rel_align);
 
