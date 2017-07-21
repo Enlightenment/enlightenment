@@ -1332,7 +1332,6 @@ _e_comp_intercept_resize(void *data, Evas_Object *obj, int w, int h)
        e_win_centered_get(cw->ec->internal_elm_win))
      {
         e_comp_object_util_center(obj);
-        elm_win_center(cw->ec->internal_elm_win, 0, 0);
      }
    cw->force_move = 0;
 }
