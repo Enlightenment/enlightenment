@@ -4,6 +4,11 @@ project('enlightenment', 'c',
 	default_options: [ 'c_std=gnu99', 'warning_level=2' ],
 	meson_version: '>= 0.40.0')
 
+clean_check = run_command('meson/clean_check.sh')
+if clean_check.returncode() == 0
+	error('Meson build requires a clean source tree')
+endif
+
 e_version = meson.project_version().split('.')
 git_version = '0'
 git = find_program('git')
