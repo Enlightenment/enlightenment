@@ -208,6 +208,7 @@ _bryce_autosize(Bryce *b)
         if (b->size_changed)
           elm_object_content_unset(b->scroller);
         _bryce_position(b, w, h, &x, &y);
+        evas_object_move(b->bryce, x, y);
         if (b->orient == E_GADGET_SITE_ORIENT_HORIZONTAL)
           e_efx_resize(b->bryce, E_EFX_EFFECT_SPEED_LINEAR, E_EFX_POINT(x, y), w, b->size * e_scale, 0.1, NULL, NULL);
         else if (b->orient == E_GADGET_SITE_ORIENT_VERTICAL)
@@ -261,6 +262,7 @@ _bryce_autosize(Bryce *b)
      w = MIN(MAX(lw + sw, b->size * e_scale), maxw), h = b->size * e_scale;
    else if (b->orient == E_GADGET_SITE_ORIENT_VERTICAL)
      w = b->size * e_scale, h = MIN(MAX(lh + sh, b->size * e_scale), maxh);
+   evas_object_move(b->bryce, x, y);
    e_efx_resize(b->bryce, E_EFX_EFFECT_SPEED_LINEAR, E_EFX_POINT(x, y), w, h, 0.1, NULL, NULL);
    b->size_changed = 0;
 }
