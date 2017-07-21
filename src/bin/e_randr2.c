@@ -179,32 +179,6 @@ _screen_closed(E_Randr2_Screen *s)
 }
 
 static void
-_screen_check_unconfigured(E_Randr2 *r, E_Config_Randr2 *cfg)
-{
-   Eina_List *l;
-   E_Randr2_Screen *s;
-   E_Config_Randr2_Screen *cs;
-
-   printf("RRR: check for unconfigured screens....\n");
-   EINA_LIST_FOREACH(r->screens, l, s)
-     {
-        cs = NULL;
-        printf("RRR: looking at %s ...\n", s->info.name);
-        if ((!_screen_closed(s)) && (s->info.connected))
-          {
-             cs = e_randr2_config_screen_find(s, cfg);
-             if (!cs)
-               {
-                  printf("RRR: unconfig display on: %s\n", s->info.name);
-                  e_configure_registry_call("screen/screen_setup",
-                                            NULL, s->info.name);
-                  return;
-               }
-          }
-     }
-}
-
-static void
 _animated_apply_abort(void)
 {
    if (_apply_delay) ecore_timer_del(_apply_delay);
@@ -246,7 +220,6 @@ _cb_fade_animator(void *data EINA_UNUSED)
           {
              _apply_delay = ecore_timer_loop_add(1.0, _cb_delay_timer, NULL);
              _do_apply();
-             _screen_check_unconfigured(e_randr2, e_randr2_cfg);
           }
         else
           {
@@ -383,9 +356,10 @@ _config_save(E_Randr2 *r, E_Config_Randr2 *cfg)
 }
 
 static Eina_Bool
-_config_ask_dialog()
+_config_ask_dialog(void *data)
 {
-   e_configure_registry_call("screen/screen_setup", NULL, NULL);
+   e_configure_registry_call("screen/screen_setup", NULL, data);
+   free(data);
    return EINA_FALSE;
 }
 
@@ -429,7 +403,10 @@ _config_update(E_Randr2 *r, E_Config_Randr2 *cfg, Eina_Bool update_only)
                        cs->rel_mode = E_RANDR2_RELATIVE_CLONE;
                        break;
                      case E_RANDR2_POLICY_ASK:
-                       ecore_timer_loop_add(2, _config_ask_dialog, NULL);
+                       if (starting)
+                         ecore_timer_loop_add(2, _config_ask_dialog, eina_strdup(s->info.name));
+                       else
+                         ecore_timer_loop_add(0.01, _config_ask_dialog, eina_strdup(s->info.name));
                      case E_RANDR2_POLICY_NONE:
                        cs->rel_mode = E_RANDR2_RELATIVE_NONE;
                        break;
