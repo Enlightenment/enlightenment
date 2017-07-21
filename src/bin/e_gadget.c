@@ -2010,7 +2010,7 @@ e_gadget_init(void)
    comp_add_handler = ecore_event_handler_add(E_EVENT_COMP_OBJECT_ADD, (Ecore_Event_Handler_Cb)_site_auto_comp_object_handler, NULL);
 
    comp_site = e_comp->canvas->gadget_site = e_gadget_site_add(E_GADGET_SITE_ORIENT_NONE, "__desktop");
-   evas_object_event_callback_add(e_comp->canvas->bg_blank_object, EVAS_CALLBACK_RESIZE, _comp_site_resize, comp_site);
+   evas_object_event_callback_add(e_comp->canvas->resize_object, EVAS_CALLBACK_RESIZE, _comp_site_resize, comp_site);
    evas_object_layer_set(comp_site, E_LAYER_DESKTOP);
    evas_object_resize(comp_site, e_comp->w, e_comp->h);
 }

@@ -373,12 +373,12 @@ e_comp_canvas_init(int w, int h)
    if (e_first_frame)
      evas_event_callback_add(e_comp->evas, EVAS_CALLBACK_RENDER_POST, _e_comp_canvas_cb_first_frame, NULL);
    o = evas_object_rectangle_add(e_comp->evas);
-   e_comp->canvas->bg_blank_object = o;
+   e_comp->canvas->resize_object = o;
    evas_object_layer_set(o, E_LAYER_BOTTOM);
    evas_object_move(o, 0, 0);
    evas_object_resize(o, e_comp->w, e_comp->h);
    evas_object_color_set(o, 0, 0, 0, 255);
-   evas_object_name_set(o, "comp->canvas->bg_blank_object");
+   evas_object_name_set(o, "comp->canvas->resize_object");
    evas_object_event_callback_add(o, EVAS_CALLBACK_MOUSE_DOWN, (Evas_Object_Event_Cb)_e_comp_canvas_cb_mouse_down, NULL);
    evas_object_event_callback_add(o, EVAS_CALLBACK_MOUSE_UP, (Evas_Object_Event_Cb)_e_comp_canvas_cb_mouse_up, NULL);
    evas_object_event_callback_add(o, EVAS_CALLBACK_MOUSE_IN, (Evas_Object_Event_Cb)_e_comp_canvas_cb_mouse_in, NULL);
@@ -720,7 +720,7 @@ e_comp_canvas_update(void)
           }
         e_comp_canvas_zone_update(zone);
      }
-   evas_object_resize(e_comp->canvas->bg_blank_object, e_comp->w, e_comp->h);
+   evas_object_resize(e_comp->canvas->resize_object, e_comp->w, e_comp->h);
 }
 
 E_API void

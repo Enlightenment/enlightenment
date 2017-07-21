@@ -567,7 +567,7 @@ _e_comp_shapes_update_object_checker_function_thingy(Evas_Object *o)
    Eina_List *l;
    E_Zone *zone;
 
-   if (o == e_comp->canvas->bg_blank_object) return EINA_TRUE;
+   if (o == e_comp->canvas->resize_object) return EINA_TRUE;
    EINA_LIST_FOREACH(e_comp->zones, l, zone)
      {
         if ((o == zone->over) || (o == zone->base)) return EINA_TRUE;

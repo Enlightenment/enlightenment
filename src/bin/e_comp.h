@@ -84,7 +84,7 @@ typedef struct E_Comp_Screen_Iface
  */
 typedef struct E_Comp_Canvas
 {
-   Evas_Object *bg_blank_object; //black blocker rect to cover background artifacts
+   Evas_Object *resize_object; //object to monitor for comp canvas resizes
    Evas_Object *fps_bg;
    Evas_Object *fps_fg;
    Evas_Object *gadget_site; //desktop gadget site
