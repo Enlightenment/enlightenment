@@ -636,6 +636,7 @@ e_comp_canvas_update(void)
           }
         e_comp_canvas_zone_update(zone);
      }
+   evas_object_resize(e_comp->bg_blank_object, e_comp->w, e_comp->h);
 }
 
 E_API void
