@@ -780,7 +780,10 @@ e_pointer_object_set(E_Pointer *ptr, Evas_Object *obj, int x, int y)
           }
         ec = e_comp_object_client_get(o);
         if (ec)
-          ec->hidden = 1;
+          {
+             ec->hidden = 1;
+             evas_object_hide(ec->frame);
+          }
      }
 
    if (obj)
