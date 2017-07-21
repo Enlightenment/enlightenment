@@ -684,41 +684,6 @@ _drm2_key_up(Ecore_Event_Key *ev)
    return EINA_FALSE;
 }
 
-static void
-_drm2_read_pixels(E_Comp_Wl_Output *output, void *pixels)
-{
-   Ecore_Drm2_Device *dev;
-   Ecore_Drm2_Output *out;
-   Ecore_Drm2_Fb *fb;
-   int i = 0, bstride;
-   unsigned char *s, *d = pixels;
-   unsigned int fstride = 0;
-   void *data;
-
-   dev = ecore_evas_data_get(e_comp->ee, "device");
-   if (!dev) return;
-
-   out = ecore_drm2_output_find(dev, output->x, output->y);
-   if (!out) return;
-
-   fb = ecore_drm2_output_latest_fb_get(out);
-   if (!fb) return;
-
-   data = ecore_drm2_fb_data_get(fb);
-   fstride = ecore_drm2_fb_stride_get(fb);
-
-   bstride = output->w * sizeof(int);
-
-   for (i = output->y; i < output->y + output->h; i++)
-     {
-        s = data;
-        s += (fstride * i) + (output->x * sizeof(int));
-        memcpy(d, s, (output->w * sizeof(int)));
-        d += bstride;
-     }
-
-}
-
 static Eina_Bool
 _drm_randr_available(void)
 {
@@ -855,8 +820,6 @@ e_modapi_init(E_Module *m)
 
    if (!e_comp_wl_init()) return NULL;
    if (!e_comp_canvas_init(w, h)) return NULL;
-
-   e_comp_wl->extensions->screenshooter.read_pixels = _drm2_read_pixels;
 
    ecore_evas_pointer_xy_get(e_comp->ee, &e_comp_wl->ptr.x,
                              &e_comp_wl->ptr.y);
