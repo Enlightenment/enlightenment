@@ -377,7 +377,6 @@ _e_alert_drm_run(void)
 static Ecore_Drm2_Device *dev = NULL;
 static Ecore_Drm2_Fb *buffer = NULL;
 static Ecore_Drm2_Output *output = NULL;
-static int fd = 0;
 
 static int
 _e_alert_drm_connect(void)
@@ -396,19 +395,13 @@ _e_alert_drm_connect(void)
         return 0;
      }
 
-   dev = ecore_drm2_device_find("seat0", 0);
+   dev = ecore_drm2_device_open("seat0", 0);
    if (!dev)
      {
         printf("\tCannot find drm device\n");
         return 0;
      }
 
-   fd = ecore_drm2_device_open(dev);
-   if (fd < 0)
-     {
-        printf("\tCannot open drm device\n");
-        return 0;
-     }
 
    if (!ecore_drm2_outputs_create(dev))
      {
@@ -417,7 +410,7 @@ _e_alert_drm_connect(void)
      }
 
    output = ecore_drm2_output_find(dev, 0, 0);
-   if (output) ecore_drm2_output_crtc_size_get(output, &sw, &sh);
+   if (output) ecore_drm2_output_info_get(output, NULL, NULL, &sw, &sh, NULL);
    fprintf(stderr, "\tOutput Size: %d %d\n", sw, sh);
 
    ecore_event_handler_add(ECORE_EVENT_KEY_DOWN,
@@ -436,7 +429,7 @@ _e_alert_drm_create(void)
 
    fh = 13;
 
-   buffer = ecore_drm2_fb_create(fd, sw, sh, 24, 32, DRM_FORMAT_XRGB8888);
+   buffer = ecore_drm2_fb_create(dev, sw, sh, 24, 32, DRM_FORMAT_XRGB8888);
 
    method = evas_render_method_lookup("buffer");
    if (method <= 0)
@@ -504,7 +497,6 @@ _e_alert_drm_shutdown(void)
      {
         ecore_drm2_outputs_destroy(dev);
         ecore_drm2_device_close(dev);
-        ecore_drm2_device_free(dev);
      }
 
    ecore_drm2_shutdown();

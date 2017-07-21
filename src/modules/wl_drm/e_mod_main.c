@@ -391,15 +391,14 @@ _drm2_randr_create(void)
                {
                   unsigned int refresh;
 
-                  ecore_drm2_output_geometry_get(output, &s->config.geom.x,
-                                                 &s->config.geom.y, NULL, NULL);
-                  ecore_drm2_output_crtc_size_get(output, &s->config.geom.w,
-                                                  &s->config.geom.h);
-                  ecore_drm2_output_resolution_get(output,
-                                                   &s->config.mode.w,
-                                                   &s->config.mode.h,
-                                                   &refresh);
-
+                  ecore_drm2_output_info_get(output,
+                                             &s->config.geom.x,
+                                             &s->config.geom.y,
+                                             &s->config.mode.w,
+                                             &s->config.mode.h,
+                                             &refresh);
+                  s->config.mode.w = s->config.geom.w;
+                  s->config.mode.h = s->config.geom.h;
                   s->config.mode.refresh = refresh;
                   s->config.enabled = 
                     ((s->config.mode.w != 0) && (s->config.mode.h != 0));
@@ -548,7 +547,7 @@ _drm2_randr_apply(void)
         if (!ecore_drm2_output_enabled_get(output)) continue;
         if (ecore_drm2_output_cloned_get(output)) continue;
 
-        ecore_drm2_output_geometry_get(output, NULL, NULL, &ow, &oh);
+        ecore_drm2_output_info_get(output, NULL, NULL, &ow, &oh, NULL);
         pw += MAX(pw, ow);
         ph = MAX(ph, oh);
      }

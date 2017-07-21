@@ -80,7 +80,6 @@ _e_crash(void)
           {
              ecore_drm2_outputs_destroy(dev);
              ecore_drm2_device_close(dev);
-             ecore_drm2_device_free(dev);
           }
         ecore_drm2_shutdown();
 # endif
