@@ -152,6 +152,8 @@ _comp_site_resize(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
      {
         if (!zgc->display)
           _gadget_object_create(zgc);
+        else if (!e_comp_zone_number_get(zgc->zone))
+          evas_object_del(zgc->display);
      }
 }
 
