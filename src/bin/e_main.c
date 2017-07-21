@@ -1534,6 +1534,14 @@ _e_main_test_formats(void)
    Evas_Object *im, *txt;
    Evas_Coord tw, th;
    char buff[PATH_MAX];
+   char *types[] =
+   {
+      "svg",
+      "jpg",
+      "png",
+      "edj"
+   };
+   unsigned int i, t_edj = 3;
 
    if (e_config->show_splash)
      e_init_status_set(_("Testing Format Support"));
@@ -1547,45 +1555,32 @@ _e_main_test_formats(void)
    evas = ecore_evas_get(ee);
    im = evas_object_image_add(evas);
 
-   e_prefix_data_concat_static(buff, "data/images/test.svg");
-   evas_object_image_file_set(im, buff, NULL);
-   if (evas_object_image_load_error_get(im) != EVAS_LOAD_ERROR_NONE)
+   for (i = 0; i < EINA_C_ARRAY_LENGTH(types); i++)
      {
-        e_error_message_show(_("Enlightenment found Evas can't load SVG files. "
-                               "Check Evas has SVG loader support.\n"));
-     }
-   else
-     efreet_icon_extension_add(".svg");
+        char b[128], *t = types[i];
 
-   e_prefix_data_concat_static(buff, "data/images/test.jpg");
-   evas_object_image_file_set(im, buff, NULL);
-   if (evas_object_image_load_error_get(im) != EVAS_LOAD_ERROR_NONE)
-     {
-        e_error_message_show(_("Enlightenment found Evas can't load JPEG files. "
-                               "Check Evas has JPEG loader support.\n"));
-        _e_main_shutdown(-1);
+        snprintf(b, sizeof(b), "data/images/test.%s", types[i]);
+        e_prefix_data_concat_static(buff, b);
+        evas_object_image_file_set(im, buff, NULL);
+        if (i == t_edj) t = "eet";
+        switch (evas_object_image_load_error_get(im))
+          {
+           default:
+             e_error_message_show(_("Enlightenment found Evas can't load '%s' files. "
+                                    "Check Evas has '%s' loader support.\n"), t, t);
+             if (i) _e_main_shutdown(-1);
+             break;
+           case EVAS_LOAD_ERROR_CORRUPT_FILE:
+           case EVAS_LOAD_ERROR_DOES_NOT_EXIST:
+           case EVAS_LOAD_ERROR_PERMISSION_DENIED:
+             e_error_message_show(_("Enlightenment cannot access test image for '%s' filetype. "
+                                    "Check your install for setup issues.\n"), t);
+           case EVAS_LOAD_ERROR_NONE:
+             snprintf(b, sizeof(b), ".%s", types[i]);
+             efreet_icon_extension_add(b);
+             break;
+          }
      }
-   efreet_icon_extension_add(".jpg");
-
-   e_prefix_data_concat_static(buff, "data/images/test.png");
-   evas_object_image_file_set(im, buff, NULL);
-   if (evas_object_image_load_error_get(im) != EVAS_LOAD_ERROR_NONE)
-     {
-        e_error_message_show(_("Enlightenment found Evas can't load PNG files. "
-                               "Check Evas has PNG loader support.\n"));
-        _e_main_shutdown(-1);
-     }
-   efreet_icon_extension_add(".png");
-
-   e_prefix_data_concat_static(buff, "data/images/test.edj");
-   evas_object_image_file_set(im, buff, "images/0");
-   if (evas_object_image_load_error_get(im) != EVAS_LOAD_ERROR_NONE)
-     {
-        e_error_message_show(_("Enlightenment found Evas can't load EET files. "
-                               "Check Evas has EET loader support.\n"));
-        _e_main_shutdown(-1);
-     }
-   efreet_icon_extension_add(".edj");
 
    evas_object_del(im);
 
