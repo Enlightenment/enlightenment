@@ -1010,7 +1010,6 @@ EINTERN Eina_Bool
 e_comp_init(void)
 {
    _e_comp_log_dom = eina_log_domain_register("e_comp", EINA_COLOR_YELLOW);
-   eina_log_domain_level_set("e_comp", EINA_LOG_LEVEL_INFO);
 
    ecore_frametime = ecore_animator_frametime_get();
    shape_debug = !!getenv("E_SHAPE_DEBUG");
