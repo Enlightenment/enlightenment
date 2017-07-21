@@ -17,21 +17,6 @@ src_modules_shot_module_la_LDFLAGS = $(MOD_LDFLAGS)
 src_modules_shot_module_la_SOURCES = \
 src/modules/shot/e_mod_main.c
 
-if HAVE_WAYLAND
-shot_wayland_sources = \
-src/modules/shot/screenshooter-protocol.c \
-src/modules/shot/screenshooter-client-protocol.h
-
-nodist_src_modules_shot_module_la_SOURCES += \
-$(shot_wayland_sources)
-
-MAINTAINERCLEANFILES += \
-$(shot_wayland_sources)
-
-src/modules/shot/e_mod_main.c: \
- src/modules/shot/screenshooter-client-protocol.h
-endif
-
 PHONIES += shot install-shot
 shot: $(shotpkg_LTLIBRARIES) $(shot_DATA)
 install-shot: install-shotDATA install-shotpkgLTLIBRARIES
