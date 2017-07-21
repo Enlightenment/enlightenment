@@ -1,6 +1,12 @@
 #include "e.h"
 #include <Ecore_X.h>
 
+
+#define RANDR_VERSION_1_1 ((1 << 16) | 1)
+#define RANDR_VERSION_1_2 ((1 << 16) | 2)
+#define RANDR_VERSION_1_3 ((1 << 16) | 3)
+#define RANDR_VERSION_1_4 ((1 << 16) | 4)
+
 static char *_output_screen_get(Ecore_X_Window root, Ecore_X_Randr_Output o);
 static Ecore_X_Randr_Edid_Display_Interface_Type _output_conn_type_get(Ecore_X_Window root, Ecore_X_Randr_Output o);
 static char *_output_name_get(Ecore_X_Window root, Ecore_X_Randr_Output o);
@@ -436,7 +442,7 @@ e_comp_x_randr_init(void)
    E_LIST_HANDLER_APPEND(handlers, ECORE_X_EVENT_RANDR_OUTPUT_CHANGE,
                          _cb_output_change, NULL);
    // if it's 1.2 or better then we can select for these events
-   if (ecore_x_randr_version_get() >= E_RANDR_VERSION_1_2)
+   if (ecore_x_randr_version_get() >= RANDR_VERSION_1_2)
      {
         Ecore_X_Window root = ecore_x_window_root_first_get();
         ecore_x_randr_events_select(root, EINA_TRUE);
@@ -447,7 +453,7 @@ E_API void
 e_comp_x_randr_shutdown(void)
 {
    // clear up event listening
-   if (ecore_x_randr_version_get() >= E_RANDR_VERSION_1_2)
+   if (ecore_x_randr_version_get() >= RANDR_VERSION_1_2)
      {
         Ecore_X_Window root = ecore_x_window_root_first_get();
         ecore_x_randr_events_select(root, EINA_FALSE);

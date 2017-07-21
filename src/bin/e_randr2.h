@@ -11,11 +11,6 @@ typedef struct _E_Config_Randr2_Screen E_Config_Randr2_Screen;
 #ifndef E_RANDR2_H
 #define E_RAND2R_H
 
-#define E_RANDR_VERSION_1_1 ((1 << 16) | 1)
-#define E_RANDR_VERSION_1_2 ((1 << 16) | 2)
-#define E_RANDR_VERSION_1_3 ((1 << 16) | 3)
-#define E_RANDR_VERSION_1_4 ((1 << 16) | 4)
-
 typedef enum _E_Randr2_Relative
 {
    E_RANDR2_RELATIVE_UNKNOWN,
