@@ -22,14 +22,14 @@ static Ecore_Timer *update_today = NULL;
    if (tzenv) \
      strncpy(prevtz, tzenv, sizeof(prevtz) - 1); \
    if (inst->cfg->timezone) \
-     setenv("TZ", inst->cfg->timezone, 1); \
+     e_util_env_set("TZ", inst->cfg->timezone); \
    tzset()
 
 #define TZUNSET() \
    if (prevtz[0]) \
-     setenv("TZ", prevtz, 1); \
+     e_util_env_set("TZ", prevtz); \
    else \
-     unsetenv("TZ"); \
+     e_util_env_set("TZ", NULL); \
    tzset()
 
 static void
