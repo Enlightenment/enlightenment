@@ -235,7 +235,7 @@ _cb_fade_animator(void *data EINA_UNUSED)
      {
         if (_target_to == 255)
           {
-             _apply_delay = ecore_timer_loop_add(5.0, _cb_delay_timer, NULL);
+             _apply_delay = ecore_timer_loop_add(1.0, _cb_delay_timer, NULL);
              _do_apply();
              _screen_check_unconfigured(e_randr2, e_randr2_cfg);
           }
