@@ -1083,7 +1083,6 @@ Summary:
  * prefix..........: $(txt_strip $prefix)
  * CFLAGS..........: $(txt_strip $CFLAGS)
  * LDFLAGS.........: $(txt_strip $LDFLAGS)
- * edje_cc.........: ${edje_cc}
  * eet.............: ${eet_eet}
  * eldbus-codegen..: ${eldbus_codegen}
 SUMMARY_EOF
