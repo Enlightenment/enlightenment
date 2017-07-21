@@ -17,4 +17,4 @@ Requires: @requirements_e@
 Version: @VERSION@
 Libs: -L${libdir}
 Libs.private:  -lm
-Cflags: -I${includedir} @e_configflags@
+Cflags: -I${includedir}

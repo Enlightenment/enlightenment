@@ -958,12 +958,10 @@ if test "x${have_wayland_only}" != "xyes"; then
 fi
 
 e_libs="$E_LIBS $LIBINTL $fnmatch_libs $execinfo_libs"
-e_cflags="-DUSE_E_CONFIG_H $E_CFLAGS"
-e_configflags="-DUSE_E_CONFIG_H"
+e_cflags="$E_CFLAGS"
 
 AC_SUBST([e_libs])
 AC_SUBST([e_cflags])
-AC_SUBST([e_configflags])
 AC_SUBST([requirements_e])
 
 HALT="/sbin/shutdown -h now"
