@@ -11,6 +11,14 @@ typedef struct _E_Config_Randr2_Screen E_Config_Randr2_Screen;
 #ifndef E_RANDR2_H
 #define E_RAND2R_H
 
+typedef enum
+{
+   E_RANDR2_POLICY_NONE,
+   E_RANDR2_POLICY_EXTEND,
+   E_RANDR2_POLICY_CLONE,
+   E_RANDR2_POLICY_ASK,
+} E_Randr2_Policy;
+
 typedef enum _E_Randr2_Relative
 {
    E_RANDR2_RELATIVE_UNKNOWN,
@@ -92,6 +100,7 @@ struct _E_Config_Randr2
    unsigned char  restore;
    unsigned char  ignore_hotplug_events;
    unsigned char  ignore_acpi_events;
+   E_Randr2_Policy default_policy;
 };
 
 struct _E_Config_Randr2_Screen
@@ -128,6 +137,6 @@ E_API E_Config_Randr2_Screen *e_randr2_config_screen_find(E_Randr2_Screen *s, E_
 E_API void                    e_randr2_screens_setup(int rw, int rh);
 E_API E_Randr2_Screen        *e_randr2_screen_id_find(const char *id);
 E_API double                  e_randr2_screen_dpi_get(E_Randr2_Screen *s);
-
+E_API void                     e_randr2_screen_modes_sort(E_Randr2_Screen *s);
 #endif
 #endif

@@ -1,6 +1,6 @@
 #include "e.h"
 
-#define E_RANDR_CONFIG_VERSION 1
+#define E_RANDR_CONFIG_VERSION 2
 
 /////////////////////////////////////////////////////////////////////////
 static Eina_Bool               _screen_closed(E_Randr2_Screen *s);
@@ -13,7 +13,7 @@ static void                    _info_free(E_Randr2 *r);
 static E_Config_Randr2        *_config_load(void);
 static void                    _config_free(E_Config_Randr2 *cfg);
 static Eina_Bool               _config_save(E_Randr2 *r, E_Config_Randr2 *cfg);
-static void                    _config_update(E_Randr2 *r, E_Config_Randr2 *cfg);
+static Eina_Bool               _config_update(E_Randr2 *r, E_Config_Randr2 *cfg, Eina_Bool );
 static void                    _config_apply(E_Randr2 *r, E_Config_Randr2 *cfg);
 static int                     _config_screen_match_count(E_Randr2 *r, E_Config_Randr2 *cfg);
 static char                   *_screens_fingerprint(E_Randr2 *r);
@@ -44,6 +44,8 @@ E_API int              E_EVENT_RANDR_CHANGE = 0;
 EINTERN Eina_Bool
 e_randr2_init(void)
 {
+   int count;
+
    if (!E_EVENT_RANDR_CHANGE) E_EVENT_RANDR_CHANGE = ecore_event_type_new();
    if ((!e_comp->screen) || (!e_comp->screen->available) || (!e_comp->screen->available())) return EINA_FALSE;
    // create data descriptors for config storage
@@ -76,6 +78,7 @@ e_randr2_init(void)
    E_CONFIG_VAL(D, T, restore, UCHAR);
    E_CONFIG_VAL(D, T, ignore_hotplug_events, UCHAR);
    E_CONFIG_VAL(D, T, ignore_acpi_events, UCHAR);
+   E_CONFIG_VAL(D, T, default_policy, UINT);
 
    // set up events from the driver
    if (e_comp->screen->init)
@@ -88,14 +91,20 @@ e_randr2_init(void)
    e_randr2_cfg = _config_load();
    // only apply if restore is set AND at least one configured screen
    // matches one we have
-   if ((e_randr2_cfg->restore) &&
-       (_config_screen_match_count(e_randr2, e_randr2_cfg) > 0))
+
+   count = _config_screen_match_count(e_randr2, e_randr2_cfg);
+   if (e_randr2_cfg->restore && count)
      {
+        if (count != (int)eina_list_count(e_randr2->screens))
+          {
+             if (_config_update(e_randr2, e_randr2_cfg, 1))
+               e_randr2_config_save();
+          }
         _do_apply();
      }
    else
      {
-        _config_update(e_randr2, e_randr2_cfg);
+        _config_update(e_randr2, e_randr2_cfg, 0);
         e_randr2_config_save();
      }
    ecore_event_add(E_EVENT_RANDR_CHANGE, NULL, NULL, NULL);
@@ -314,6 +323,13 @@ _info_free(E_Randr2 *r)
    free(r);
 }
 
+static void
+_config_upgrade(E_Config_Randr2 *cfg)
+{
+   if (cfg->version < 2)
+     cfg->default_policy = E_RANDR2_POLICY_EXTEND;
+}
+
 static E_Config_Randr2 *
 _config_load(void)
 {
@@ -324,15 +340,9 @@ _config_load(void)
    if (cfg)
      {
         if (cfg->version < E_RANDR_CONFIG_VERSION)
-          {
-             _config_free(cfg);
-             cfg = NULL;
-          }
-        else
-          {
-             printf("RRR: loaded existing config\n");
-             return cfg;
-          }
+          _config_upgrade(cfg);
+        printf("RRR: loaded existing config\n");
+        return cfg;
      }
 
    // need new config
@@ -342,6 +352,7 @@ _config_load(void)
    cfg->restore = 1;
    cfg->ignore_hotplug_events = 0;
    cfg->ignore_acpi_events = 0;
+   cfg->default_policy = E_RANDR2_POLICY_EXTEND;
    printf("RRR: fresh config\n");
    return cfg;
 }
@@ -371,12 +382,20 @@ _config_save(E_Randr2 *r, E_Config_Randr2 *cfg)
    return e_config_domain_save("e_randr2", _e_randr2_cfg_edd, cfg);
 }
 
-static void
-_config_update(E_Randr2 *r, E_Config_Randr2 *cfg)
+static Eina_Bool
+_config_ask_dialog()
+{
+   e_configure_registry_call("screen/screen_setup", NULL, NULL);
+   return EINA_FALSE;
+}
+
+static Eina_Bool
+_config_update(E_Randr2 *r, E_Config_Randr2 *cfg, Eina_Bool update_only)
 {
    Eina_List *l;
    E_Randr2_Screen *s;
    E_Config_Randr2_Screen *cs;
+   Eina_Bool ret = EINA_FALSE;
 
    printf("--------------------------------------------------\n");
    EINA_LIST_FOREACH(r->screens, l, s)
@@ -384,6 +403,7 @@ _config_update(E_Randr2 *r, E_Config_Randr2 *cfg)
         printf("RRR: out id=%s:  connected=%i\n", s->id, s->info.connected);
         if ((!s->id) || (!s->info.connected) || (_screen_closed(s))) continue;
         cs = e_randr2_config_screen_find(s, cfg);
+        if (cs && update_only) continue;
         if (!cs)
           {
              cs = calloc(1, sizeof(E_Config_Randr2_Screen));
@@ -395,16 +415,60 @@ _config_update(E_Randr2 *r, E_Config_Randr2 *cfg)
           }
         if (cs)
           {
-             if (s->config.relative.to)
-               cs->rel_to = eina_stringshare_add(s->config.relative.to);
-             cs->rel_align = s->config.relative.align;
-             cs->mode_refresh = s->config.mode.refresh;
-             cs->mode_w = s->config.mode.w;
-             cs->mode_h = s->config.mode.h;
+             if (update_only)
+               {
+                  switch (cfg->default_policy)
+                    {
+                     case E_RANDR2_POLICY_EXTEND:
+                       if (s->config.relative.mode < E_RANDR2_RELATIVE_TO_LEFT)
+                         cs->rel_mode = E_RANDR2_RELATIVE_TO_RIGHT;
+                       else
+                         cs->rel_mode = s->config.relative.mode;
+                       break;
+                     case E_RANDR2_POLICY_CLONE:
+                       cs->rel_mode = E_RANDR2_RELATIVE_CLONE;
+                       break;
+                     case E_RANDR2_POLICY_ASK:
+                       ecore_timer_loop_add(2, _config_ask_dialog, NULL);
+                     case E_RANDR2_POLICY_NONE:
+                       cs->rel_mode = E_RANDR2_RELATIVE_NONE;
+                       break;
+                    }
+               }
+             else
+               cs->rel_mode = s->config.relative.mode;
+             if (update_only &&
+               ((cfg->default_policy == E_RANDR2_POLICY_CLONE) ||
+                (cfg->default_policy == E_RANDR2_POLICY_EXTEND)))
+               {
+                  E_Randr2_Mode *m = eina_list_data_get(s->info.modes);
+
+                  cs->enabled = !!m;
+                  cs->mode_refresh = m->refresh;
+                  cs->mode_w = m->w;
+                  cs->mode_h = m->h;
+                  if (s->config.relative.to)
+                    cs->rel_to = eina_stringshare_add(s->config.relative.to);
+                  else
+                    {
+                       /* find right-most screen */
+                       E_Zone *zone = eina_list_last_data_get(e_comp->zones);
+                       eina_stringshare_replace(&cs->rel_to, zone->randr2_id);
+                    }
+                  cs->rel_align = 0;
+               }
+             else
+               {
+                  cs->enabled = s->config.enabled;
+                  cs->mode_refresh = s->config.mode.refresh;
+                  cs->mode_w = s->config.mode.w;
+                  cs->mode_h = s->config.mode.h;
+                  if (s->config.relative.to)
+                    cs->rel_to = eina_stringshare_add(s->config.relative.to);
+                  cs->rel_align = s->config.relative.align;
+               }
              cs->rotation = s->config.rotation;
              cs->priority = s->config.priority;
-             cs->rel_mode = s->config.relative.mode;
-             cs->enabled = s->config.enabled;
              if (cs->profile)
                {
                   printf("RRR: store config profile '%s'\n", cs->profile);
@@ -418,9 +482,11 @@ _config_update(E_Randr2 *r, E_Config_Randr2 *cfg)
                }
              printf("RRR: store scale mul %1.5f\n", cs->scale_multiplier);
              s->config.scale_multiplier = cs->scale_multiplier;
+             ret = EINA_TRUE;
           }
      }
    printf("--------------------------------------------------\n");
+   return ret;
 }
 
 static void
@@ -591,19 +657,28 @@ _screens_differ(E_Randr2 *r1, E_Randr2 *r2)
 static Eina_Bool
 _cb_screen_change_delay(void *data EINA_UNUSED)
 {
+   Eina_Bool change = EINA_FALSE;
    _screen_delay_timer = NULL;
    printf("RRR: ... %i %i\n", event_screen, event_ignore);
    // if we had a screen plug/unplug etc. event and we shouldnt ignore it...
    if ((event_screen) && (!event_ignore))
      {
         E_Randr2 *rtemp;
-        Eina_Bool change = EINA_FALSE;
 
         printf("RRR: reconfigure screens due to event...\n");
         rtemp = e_comp->screen->create();
         if (rtemp)
           {
              if (_screens_differ(e_randr2, rtemp)) change = EINA_TRUE;
+             if (e_randr2_cfg->default_policy != E_RANDR2_POLICY_NONE)
+               {
+                  if (_config_update(rtemp, e_randr2_cfg, 1))
+                    {
+                       e_randr2_config_save();
+                       if (e_randr2_cfg->default_policy != E_RANDR2_POLICY_ASK)
+                         change = EINA_TRUE;
+                    }
+               }
              _info_free(rtemp);
           }
         printf("RRR: change = %i\n", change);
@@ -1267,4 +1342,23 @@ e_randr2_screen_dpi_get(E_Randr2_Screen *s)
    dpi1 = (25.4 * (double)(s->config.mode.w)) / (double)(s->info.size.w);
    dpi2 = (25.4 * (double)(s->config.mode.h)) / (double)(s->info.size.h);
    return (dpi1 + dpi2) / 2.0;
+}
+
+static int
+_modelist_sort(const void *a, const void *b)
+{
+   const E_Randr2_Mode *ma = a, *mb = b;
+
+   /* largest resolutions first */
+   if ((ma->w * ma->h) > (mb->w * mb->h)) return -1;
+   /* highest refresh first */
+   if (ma->refresh > mb->refresh) return -1;
+   return 1;
+}
+
+EAPI void
+e_randr2_screen_modes_sort(E_Randr2_Screen *s)
+{
+   EINA_SAFETY_ON_NULL_RETURN(s);
+   s->info.modes = eina_list_sort(s->info.modes, 0, _modelist_sort);
 }

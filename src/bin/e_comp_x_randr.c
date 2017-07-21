@@ -752,6 +752,7 @@ e_comp_x_randr_create(void)
                     }
                }
              free(modes);
+             e_randr2_screen_modes_sort(s);
           }
         cs = NULL;
         priority = 0;
