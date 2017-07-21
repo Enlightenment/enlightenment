@@ -1471,7 +1471,7 @@ _e_comp_wl_surface_state_commit(E_Client *ec, E_Comp_Wl_Surface_State *state)
           {
              if ((ec->comp_data->shell.surface) && (ec->comp_data->shell.map))
                ec->comp_data->shell.map(ec->comp_data->shell.surface);
-             else if (ec->comp_data->cursor || e_client_has_xwindow(ec) || ec->internal_elm_win ||
+             else if ((ec == e_comp->pointer->client.ec) || e_client_has_xwindow(ec) || ec->internal_elm_win ||
                       (ec->comp_data->sub.data && ec->comp_data->sub.data->parent->comp_data->mapped) ||
                       (ec == e_comp_wl->drag_client))
                {
