@@ -429,7 +429,7 @@ executable('enlightenment',
 	include_directories: include_directories('.', 'efx', 'generated', '../..'),
 	dependencies: deps_e,
 	c_args: '-DE_LOGGING=1',
-	link_args: '-export-dynamic',
+	link_args: '-rdynamic',
 	install_dir: dir_bin,
 	install: true
 )
