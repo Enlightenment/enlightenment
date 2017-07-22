@@ -1,10 +1,17 @@
 #include "e.h"
+#include <sys/select.h>
 
 struct _E_Powersave_Deferred_Action
 {
    void          (*func)(void *data);
    const void   *data;
    unsigned char delete_me : 1;
+};
+
+struct _E_Powersave_Sleeper
+{
+   Ecore_Pipe *pipe;
+   int         fd;
 };
 
 /* local subsystem functions */
@@ -130,35 +137,57 @@ e_powersave_mode_unforce(void)
 E_API E_Powersave_Sleeper *
 e_powersave_sleeper_new(void)
 {
-   Ecore_Pipe *pipe;
+   E_Powersave_Sleeper *sleeper;
 
-   pipe = ecore_pipe_add(_e_powersave_sleeper_cb_dummy, NULL);
-   powersave_sleepers = eina_list_append(powersave_sleepers, pipe);
-   return (E_Powersave_Sleeper *)pipe;
+   sleeper = E_NEW(E_Powersave_Sleeper, 1);
+   sleeper->pipe = ecore_pipe_add(_e_powersave_sleeper_cb_dummy, NULL);
+   ecore_pipe_freeze(sleeper->pipe);
+   powersave_sleepers = eina_list_append(powersave_sleepers, sleeper);
+   return (E_Powersave_Sleeper *)sleeper;
 }
 
 E_API void
 e_powersave_sleeper_free(E_Powersave_Sleeper *sleeper)
 {
-   Ecore_Pipe *pipe = (Ecore_Pipe *)sleeper;
-
-   if (!pipe) return;
-   powersave_sleepers = eina_list_remove(powersave_sleepers, pipe);
-   ecore_pipe_del(pipe);
+   if (!sleeper) return;
+   ecore_pipe_del(sleeper->pipe);
+   powersave_sleepers = eina_list_remove(powersave_sleepers, sleeper);
+   eina_freeq_ptr_add(eina_freeq_main_get(), sleeper, free, sizeof(*sleeper));
 }
 
 E_API void
 e_powersave_sleeper_sleep(E_Powersave_Sleeper *sleeper, int poll_interval)
 {
-   Ecore_Pipe *pipe = (Ecore_Pipe *)sleeper;
-   double tim, now;
+   unsigned int tim;
+   fd_set rfds, wfds, exfds;
+   struct timeval tv;
+   int ret;
+   char buf[1] = { 1 };
 
-   if (!pipe) return;
+   if (!sleeper) return;
    if (e_powersave_mode_get() == E_POWERSAVE_MODE_FREEZE) tim = 3600;
    else tim = (double)poll_interval / 8.0;
-   now = ecore_time_get();
-   tim = fmod(now, tim);
-   ecore_pipe_wait(pipe, 1, tim);
+   FD_ZERO(&rfds);
+   FD_ZERO(&wfds);
+   FD_ZERO(&exfds);
+   FD_SET(sleeper->fd, &rfds);
+
+   tim = (fmod(ecore_time_get(), tim) * 1000000.0);
+   tv.tv_sec = tim / 1000000;
+   tv.tv_usec = tim % 1000000;
+   for (;;)
+     {
+        ret = select(sleeper->fd + 1, &rfds, &wfds, &exfds, &tv);
+        if ((ret == 1) && (FD_ISSET(sleeper->fd, &rfds)))
+          {
+             read(sleeper->fd, buf, 1);
+             return;
+          }
+        else if (ret == 0)
+          {
+             return;
+          }
+     }
 }
 
 /* local subsystem functions */
@@ -166,13 +195,14 @@ e_powersave_sleeper_sleep(E_Powersave_Sleeper *sleeper, int poll_interval)
 static void
 _e_powersave_sleepers_wake(void)
 {
-   Ecore_Pipe *pipe;
+   E_Powersave_Sleeper *sleeper;
    Eina_List *l;
    char buf[1] = { 1 };
 
-   EINA_LIST_FOREACH(powersave_sleepers, l, pipe)
+   EINA_LIST_FOREACH(powersave_sleepers, l, sleeper)
      {
-        ecore_pipe_write(pipe, buf, 1);
+        write(ecore_pipe_write_fd(sleeper->pipe), buf, 1);
+        ecore_pipe_write(sleeper->pipe, buf, 1);
      }
 }
 
