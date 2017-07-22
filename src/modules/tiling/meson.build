@@ -6,7 +6,8 @@ tiling_src = [
 	'window_tree.h',
 ]
 
-tiling_dir = join_paths(dir_module_e, 'tiling', module_arch)
+tiling_mod_dir = join_paths(dir_module_e, 'tiling')
+tiling_dir = join_paths(tiling_mod_dir, module_arch)
 if get_option('tiling') == true
 	config_h.set('USE_MODULE_TILING', '1')
 
@@ -21,3 +22,4 @@ if get_option('tiling') == true
         )
 endif
 
+install_data('e-module-tiling.edj', install_dir: tiling_mod_dir, install : true)
