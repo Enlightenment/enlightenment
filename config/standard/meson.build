@@ -27,7 +27,7 @@ foreach cd: config_standard
 		command: [eet, '-e', '@OUTPUT@', 'config', '@INPUT@', '1'],
 		output: config_standard_output[i],
 		install: true,
-		install_dir: dir_config
+		install_dir: join_paths(dir_config, 'standard')
 	)
 	i += 1
 endforeach
@@ -36,3 +36,7 @@ config_dist_standard = ['enlightenment-standard.png', 'profile.desktop']
 install_data(config_dist_standard,
 	install_dir: join_paths(dir_config, 'standard')
 )
+foreach cd: config_standard_output
+	out = join_paths(dir_config, 'standard', cd)
+	meson.add_install_script(chmod, 'a+r', out)
+endforeach

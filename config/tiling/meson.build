@@ -29,7 +29,7 @@ foreach cd: config_tiling
 		command: [eet, '-e', '@OUTPUT@', 'config', '@INPUT@', '1'],
 		output: config_tiling_output[i],
 		install: true,
-		install_dir: dir_config
+		install_dir: join_paths(dir_config, 'tiling')
 	)
 	i += 1
 endforeach
@@ -38,3 +38,7 @@ config_dist_tiling = ['enlightenment-tiling.png', 'profile.desktop']
 install_data(config_dist_tiling,
 	install_dir: join_paths(dir_config, 'tiling')
 )
+foreach cd: config_tiling_output
+        out = join_paths(dir_config, 'tiling', cd)
+	meson.add_install_script(chmod, 'a+r', out)
+endforeach

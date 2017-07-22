@@ -9,7 +9,11 @@ foreach cd: config_default
 		command: [eet, '-e', '@OUTPUT@', 'config', '@INPUT@', '1'],
 		output: config_default_output[i],
 		install: true,
-		install_dir: dir_config
+		install_dir: join_paths(dir_config, 'default')
 	)
 	i += 1
+endforeach
+foreach cd: config_default_output
+	out = join_paths(dir_config, 'default', cd)
+	meson.add_install_script(chmod, 'a+r', out)
 endforeach

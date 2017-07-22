@@ -7,6 +7,8 @@ custom_target('profile.src',
 	install: true,
 	install_dir: dir_config
 )
+out = join_paths(dir_config, 'profile.cfg')
+meson.add_install_script(chmod, 'a+r', out)
 
 subdir('default')
 subdir('mobile')

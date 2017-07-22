@@ -4,6 +4,8 @@ project('enlightenment', 'c',
 	default_options: [ 'c_std=gnu99', 'warning_level=2' ],
 	meson_version: '>= 0.40.0')
 
+chmod = join_paths(meson.source_root(), 'meson-chmod.sh')
+
 clean_check = run_command('meson/clean_check.sh')
 if clean_check.returncode() == 0
 	error('Meson build requires a clean source tree')
