@@ -23,14 +23,14 @@ if get_option('mixer') == true
 	config_h.set('USE_MODULE_MIXER', '1')
 
 	dep_alsa = dependency('alsa', version: '>= 1.0.8', required: false)
-	config_h.set10('HAVE_ALSA', dep_alsa.found())
+	config_h.set('HAVE_ALSA', dep_alsa.found())
 	dep_pulse = dependency('libpulse', required: false)
 	dep_pulse_simple = dependency('libpulse-simple', required: false)
-	config_h.set10('HAVE_PULSE', dep_pulse.found() and dep_pulse_simple.found())
-	if config_h.has('HAVE_ALSA') == true
+	config_h.set('HAVE_PULSE', dep_pulse.found() and dep_pulse_simple.found())
+	if config_h.get('HAVE_ALSA') == true
 		mixer_lib += ['lib/backends/alsa/alsa.c']
 	endif
-	if config_h.has('HAVE_PULSE') == true
+	if config_h.get('HAVE_PULSE') == true
 		mixer_lib += [
 			'lib/backends/pulseaudio/pulse_ml.c',
 			'lib/backends/pulseaudio/pulse.c'
