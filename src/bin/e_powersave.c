@@ -141,6 +141,12 @@ e_powersave_sleeper_new(void)
 
    sleeper = E_NEW(E_Powersave_Sleeper, 1);
    sleeper->pipe = ecore_pipe_add(_e_powersave_sleeper_cb_dummy, NULL);
+   if (!sleeper->pipe)
+     {
+        eina_freeq_ptr_add(eina_freeq_main_get(), sleeper, free, sizeof(*sleeper));
+        return NULL;
+     }
+   sleeper->fd = ecore_pipe_read_fd(sleeper->pipe);
    ecore_pipe_freeze(sleeper->pipe);
    powersave_sleepers = eina_list_append(powersave_sleepers, sleeper);
    return (E_Powersave_Sleeper *)sleeper;
