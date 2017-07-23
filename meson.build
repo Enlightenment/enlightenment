@@ -4,7 +4,9 @@ project('enlightenment', 'c',
 	default_options: [ 'c_std=gnu99', 'warning_level=2' ],
 	meson_version: '>= 0.40.0')
 
-chmod = join_paths(meson.source_root(), 'meson-chmod.sh')
+proj     = meson.project_name()
+ver      = meson.project_version()
+chmod    = join_paths(meson.source_root(), 'meson-chmod.sh')
 
 clean_check = run_command('meson/clean_check.sh')
 if clean_check.returncode() == 0
@@ -35,10 +37,10 @@ dir_bin = join_paths(dir_prefix, get_option('bindir'))
 dir_sysconf = get_option('sysconfdir')
 dir_data = join_paths(dir_prefix, get_option('datadir'))
 dir_include = join_paths(dir_prefix, get_option('includedir'))
-dir_include_e = join_paths(dir_include, 'enlightenment')
+dir_include_e = join_paths(dir_include, proj)
 dir_lib = join_paths(dir_prefix, get_option('libdir'))
-dir_module_e = join_paths(dir_lib, 'enlightenment/modules')
-dir_util_e = join_paths(dir_lib, 'enlightenment/utils')
+dir_module_e = join_paths(dir_lib, proj, 'modules')
+dir_util_e = join_paths(dir_lib, proj, 'utils')
 dir_pc = join_paths(dir_data, 'pkgconfig')
 
 suid_exes = []
@@ -123,21 +125,21 @@ endif
 module_arch = '@0@-@1@-@2@'.format(host_os, host_machine.cpu_family(), release)
 config_h.set_quoted('MODULE_ARCH', module_arch)
 
-config_h.set_quoted('PACKAGE', 'enlightenment')
+config_h.set_quoted('PACKAGE', proj)
 config_h.set_quoted('PACKAGE_VERSION', e_version_rev)
 config_h.set_quoted('VERSION', e_version_rev)
 
 add_global_arguments('-DPACKAGE_BIN_DIR="@0@"'.format(dir_bin), language: 'c')
 add_global_arguments('-DPACKAGE_LIB_DIR="@0@"'.format(dir_lib), language: 'c')
-add_global_arguments('-DPACKAGE_DATA_DIR="@0@"'.format(dir_data), language: 'c')
+add_global_arguments('-DPACKAGE_DATA_DIR="@0@"'.format(join_paths(dir_data, proj)), language: 'c')
 add_global_arguments('-DPACKAGE_SYSCONF_DIR="@0@"'.format(dir_sysconf), language: 'c')
 
 config_h.set_quoted('LOCALE_DIR', join_paths([dir_prefix, 'share/locale']))
 config_h.set_quoted('PACKAGE_URL', 'https://www.enlightenment.org')
-config_h.set_quoted('PACKAGE_TARNAME', 'enlightenment')
+config_h.set_quoted('PACKAGE_TARNAME', proj)
 config_h.set_quoted('PACKAGE_BUGREPORT', 'enlightenment-devel@lists.sourceforge.net')
-config_h.set_quoted('PACKAGE_STRING', 'enlightenment '.join([e_version_rev]))
-config_h.set_quoted('PACKAGE_NAME', 'enlightenment')
+config_h.set_quoted('PACKAGE_STRING', proj + ' ' + e_version_rev)
+config_h.set_quoted('PACKAGE_NAME', proj)
 
 config_h.set_quoted('BINDIR', dir_bin)
 config_h.set_quoted('DATADIR', dir_data)
@@ -483,10 +485,10 @@ meson.add_install_script('meson/meson_inst.sh', suid_exes)
 meson.add_install_script('meson/meson_modules.sh', module_files)
 configure_file(output: 'config.h', install: false, configuration: config_h)
 pkgconfig.generate(
-	name: 'enlightenment',
+	name: proj,
 	description: 'Enlightenment Window Manager',
-	filebase: 'enlightenment',
-	subdirs: 'enlightenment',
+	filebase: proj,
+	subdirs: proj,
 	#requires: deps_e,
 	requires: requires_e,
 	version: e_version_rev,
@@ -497,7 +499,7 @@ pkgconfig.generate(
 		'datarootdir=@0@'.format(dir_data),
 		'datadir=${datarootdir}',
 		'modules=@0@/enlightenment/modules'.format(dir_lib),
-		'pkgdatadir=${datarootdir}/enlightenment/data',
+		'pkgdatadir=${datarootdir}/'+ proj + '/data',
 		'themes=${pkgdatadir}/themes',
 		'backgrounds=${pkgdatadir}/backgrounds',
 		'release=@0@'.format(release)
