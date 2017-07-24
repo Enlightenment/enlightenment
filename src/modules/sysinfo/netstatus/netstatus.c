@@ -165,16 +165,16 @@ _netstatus_cb_usage_check_main(void *data, Ecore_Thread *th)
         eina_stringshare_replace(&thc->instring, rin);
         if (!thc->outcurrent)
           {
-             snprintf(rout, sizeof(rout), "%s: 0 B/s", _("Receiving"));
+             snprintf(rout, sizeof(rout), "%s: 0 B/s", _("Sending"));
           }
         else
           {
              if (thc->outcurrent > 1048576)
-               snprintf(rout, sizeof(rout), "%s: %.2f MB/s", _("Receiving"), ((float)thc->outcurrent / 1048576));
+               snprintf(rout, sizeof(rout), "%s: %.2f MB/s", _("Sending"), ((float)thc->outcurrent / 1048576));
              else if ((thc->outcurrent > 1024) && (thc->outcurrent < 1048576))
-               snprintf(rout, sizeof(rout), "%s: %lu KB/s", _("Receiving"), (thc->outcurrent / 1024));
+               snprintf(rout, sizeof(rout), "%s: %lu KB/s", _("Sending"), (thc->outcurrent / 1024));
              else
-               snprintf(rout, sizeof(rout), "%s: %lu B/s", _("Receiving"), thc->outcurrent);
+               snprintf(rout, sizeof(rout), "%s: %lu B/s", _("Sending"), thc->outcurrent);
           }
         eina_stringshare_replace(&thc->outstring, rout);
 	ecore_thread_feedback(th, NULL);
