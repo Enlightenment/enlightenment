@@ -1212,7 +1212,8 @@ _e_comp_intercept_resize(void *data, Evas_Object *obj, int w, int h)
         /* do nothing until client idler loops */
         if (!cw->ec->maximized)
           {
-             if ((w != cw->ec->w) || (h != cw->ec->h))
+             /* NO. DO NOT DO THIS OR YOU WILL BREAK WINDOW RESIZING. */
+             //if ((w != cw->ec->w) || (h != cw->ec->h))
                {
                   cw->ec->w = w, cw->ec->h = h;
                   cw->ec->changes.size = 1;
