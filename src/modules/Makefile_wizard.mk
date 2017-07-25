@@ -3,10 +3,7 @@ wdd = src/modules/wizard/data/desktop/home.desktop \
 	src/modules/wizard/data/desktop/root.desktop \
 	src/modules/wizard/data/desktop/tmp.desktop
 
-EXTRA_DIST += src/modules/wizard/module.desktop \
-src/modules/wizard/e-module-wizard.edj \
-$(wd) \
-$(wdd)
+EXTRA_DIST += $(wd) $(wdd)
 if USE_MODULE_WIZARD
 wizarddir = $(MDIR)/wizard
 wizard_DATA = $(wd)

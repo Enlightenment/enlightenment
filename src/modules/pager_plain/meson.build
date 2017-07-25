@@ -1,21 +1,33 @@
-pager_plain_src = [
-	'e_mod_config.c',
-	'e_mod_main.c',
-	'e_mod_main.h',
+module = 'pager_plain'
+opt    = 'pager-plain'
+conf   = 'USE_MODULE_PAGER_PLAIN'
+
+src = [
+  'e_mod_main.c',
+  'e_mod_config.c',
+  'e_mod_main.h'
 ]
 
-pager_plain_dir = join_paths(dir_module_e, 'pager_plain', module_arch)
-if get_option('pager-plain') == true
-	config_h.set('USE_MODULE_PAGER_PLAIN', '1')
+icon = [
+## XXX: bad pttern with module icon name
+  'e-module-' + opt + '.edj',
+  'module.desktop'
+]
 
-        module_files += join_paths(pager_plain_dir, 'pager_plain.so')
-	shared_module('pager_plain',
-                pager_plain_src,
+dir_mod     = join_paths(dir_module_e, module)
+dir_mod_bin = join_paths(dir_mod, module_arch)
+
+if get_option(opt) == true
+  config_h.set(conf, '1')
+  module_files += join_paths(dir_mod_bin, module + '.so')
+
+  install_data(icon, install_dir: dir_mod)
+
+  shared_module(module, src,
                 include_directories: include_directories(module_includes),
-                name_prefix: '',
-                dependencies: module_deps,
-                install_dir: pager_plain_dir,
-                install: true
-        )
+                name_prefix        : '',
+                dependencies       : module_deps,
+                install_dir        : dir_mod_bin,
+                install            : true
+               )
 endif
-

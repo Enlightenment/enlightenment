@@ -1,23 +1,35 @@
-temperature_src = [
-	'e_mod_config.c',
-	'e_mod_main.c',
-	'e_mod_tempget.c',
-	'e_mod_udev.c',
-	'e_mod_main.h',
+module = 'temperature'
+opt    = 'temperature'
+conf   = 'USE_MODULE_TEMPERATURE'
+
+src = [
+  'e_mod_main.c',
+  'e_mod_config.c',
+  'e_mod_tempget.c',
+  'e_mod_udev.c',
+  'e_mod_main.h'
 ]
 
-temperature_dir = join_paths(dir_module_e, 'temperature', module_arch)
-if get_option('temperature') == true
-	config_h.set('USE_MODULE_TEMPERATURE', '1')
+icon = [
+  'e-module-' + module + '.edj',
+  'module.desktop'
+]
 
-        module_files += join_paths(temperature_dir, 'temperature.so')
-	shared_module('temperature',
-                temperature_src,
+dir_mod     = join_paths(dir_module_e, module)
+dir_mod_bin = join_paths(dir_mod, module_arch)
+
+if get_option(opt) == true
+  config_h.set(conf, '1')
+  module_files += join_paths(dir_mod_bin, module + '.so')
+
+  install_data(icon, install_dir: dir_mod)
+
+  shared_module(module, src,
                 include_directories: include_directories(module_includes),
-                name_prefix: '',
-                dependencies: module_deps,
-                install_dir: temperature_dir,
-                install: true
-        )
+                name_prefix        : '',
+                dependencies       : module_deps,
+                install_dir        : dir_mod_bin,
+                install            : true
+               )
 endif
 

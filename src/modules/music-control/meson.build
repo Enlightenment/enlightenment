@@ -1,34 +1,45 @@
-music_control_src = [
-	'e_mod_main.c',
-	'ui.c',
-	'e_mod_main.h',
-	'private.h',
+module = 'music_control'
+opt    = 'music-control'
+conf   = 'USE_MODULE_MUSIC_CONTROL'
+
+src = [
+  'e_mod_main.c',
+  'ui.c',
+  'e_mod_main.h',
+  'private.h'
 ]
 
-music_control_dir = join_paths(dir_module_e, 'music-control', module_arch)
-if get_option('music-control') == true
-	config_h.set('USE_MODULE_MUSIC_CONTROL', '1')
+icon = [
+## XXX: bad pttern with module icon name
+  'e-module-' + opt + '.edj',
+  'module.desktop'
+]
 
-	gen_music_control = custom_target('music_control_gen',
-		input: 'introspect.xml',
-		command: [eldbus_codegen, '@INPUT@', '-O', '@OUTDIR@'],
-		output: [
-			'eldbus_media_player2_player.c',
-			'eldbus_mpris_media_player2.c',
-			'eldbus_media_player2_player.h',
-			'eldbus_mpris_media_player2.h',
-			'eldbus_utils.h',
-		],
-	)
+dir_mod     = join_paths(dir_module_e, module)
+dir_mod_bin = join_paths(dir_mod, module_arch)
 
-        module_files += join_paths(music_control_dir, 'music-control.so')
-	shared_module('music-control',
-                [music_control_src, gen_music_control],
+if get_option(opt) == true
+  config_h.set(conf, '1')
+  module_files += join_paths(dir_mod_bin, module + '.so')
+
+  install_data(icon, install_dir: dir_mod)
+
+  gen_dbus = custom_target('gen-dbus',
+                           input  : 'introspect.xml',
+                           command: [eldbus_codegen, '@INPUT@', '-O', '@OUTDIR@'],
+                           output : [
+                             'eldbus_media_player2_player.c',
+                             'eldbus_mpris_media_player2.c',
+                             'eldbus_media_player2_player.h',
+                             'eldbus_mpris_media_player2.h',
+                             'eldbus_utils.h'
+                             ]
+                            )
+  shared_module(module, [src, gen_dbus] ,
                 include_directories: include_directories(module_includes),
-                name_prefix: '',
-                dependencies: module_deps,
-                install_dir: music_control_dir,
-                install: true
-        )
+                name_prefix        : '',
+                dependencies       : module_deps,
+                install_dir        : dir_mod_bin,
+                install            : true
+               )
 endif
-

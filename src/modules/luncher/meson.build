@@ -1,23 +1,35 @@
-luncher_src = [
-	'bar.c',
-	'config.c',
-	'grid.c',
-	'mod.c',
-	'luncher.h',
+module = 'luncher'
+opt    = 'luncher'
+conf   = 'USE_MODULE_LUNCHER'
+
+src = [
+  'mod.c',
+  'bar.c',
+  'config.c',
+  'grid.c',
+  'luncher.h'
 ]
 
-luncher_dir = join_paths(dir_module_e, 'luncher', module_arch)
-if get_option('luncher') == true
-	config_h.set('USE_MODULE_LUNCHER', '1')
+icon = [
+  'e-module-' + module + '.edj',
+  'module.desktop'
+]
 
-        module_files += join_paths(luncher_dir, 'luncher.so')
-	shared_module('luncher',
-                luncher_src,
+dir_mod     = join_paths(dir_module_e, module)
+dir_mod_bin = join_paths(dir_mod, module_arch)
+
+if get_option(opt) == true
+  config_h.set(conf, '1')
+  module_files += join_paths(dir_mod_bin, module + '.so')
+
+  install_data(icon, install_dir: dir_mod)
+
+  shared_module(module, src,
                 include_directories: include_directories(module_includes),
-                name_prefix: '',
-                dependencies: module_deps,
-                install_dir: luncher_dir,
-                install: true
-        )
+                name_prefix        : '',
+                dependencies       : module_deps,
+                install_dir        : dir_mod_bin,
+                install            : true
+               )
 endif
 

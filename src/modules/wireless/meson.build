@@ -1,22 +1,34 @@
-wireless_src = [
-	'connman.c',
-	'mod.c',
-	'wireless.c',
-	'wireless.h',
+module = 'wireless'
+opt    = 'wireless'
+conf   = 'USE_MODULE_WIRELESS'
+
+src = [
+  'mod.c',
+  'connman.c',
+  'wireless.c',
+  'wireless.h'
 ]
 
-wireless_dir = join_paths(dir_module_e, 'wireless', module_arch)
-if get_option('wireless') == true
-	config_h.set('USE_MODULE_WIRELESS', '1')
+icon = [
+  'e-module-' + module + '.edj',
+  'module.desktop'
+]
 
-        module_files += join_paths(wireless_dir, 'wireless.so')
-	shared_module('wireless',
-                wireless_src,
+dir_mod     = join_paths(dir_module_e, module)
+dir_mod_bin = join_paths(dir_mod, module_arch)
+
+if get_option(opt) == true
+  config_h.set(conf, '1')
+  module_files += join_paths(dir_mod_bin, module + '.so')
+
+  install_data(icon, install_dir: dir_mod)
+
+  shared_module(module, src,
                 include_directories: include_directories(module_includes),
-                name_prefix: '',
-                dependencies: module_deps,
-                install_dir: wireless_dir,
-                install: true
-        )
+                name_prefix        : '',
+                dependencies       : module_deps,
+                install_dir        : dir_mod_bin,
+                install            : true
+               )
 endif
 

@@ -1,25 +1,34 @@
-tiling_src = [
-	'e_mod_config.c',
-	'e_mod_tiling.c',
-	'window_tree.c',
-	'e_mod_tiling.h',
-	'window_tree.h',
+module = 'tiling'
+opt    = 'tiling'
+conf   = 'USE_MODULE_TILING'
+
+src = [
+  'e_mod_tiling.c',
+  'e_mod_config.c',
+  'window_tree.c',
+  'e_mod_tiling.h',
+  'window_tree.h'
 ]
 
-tiling_mod_dir = join_paths(dir_module_e, 'tiling')
-tiling_dir = join_paths(tiling_mod_dir, module_arch)
-if get_option('tiling') == true
-	config_h.set('USE_MODULE_TILING', '1')
+icon = [
+  'e-module-' + module + '.edj',
+  'module.desktop'
+]
 
-        module_files += join_paths(tiling_dir, 'tiling.so')
-	shared_module('tiling',
-                tiling_src,
+dir_mod     = join_paths(dir_module_e, module)
+dir_mod_bin = join_paths(dir_mod, module_arch)
+
+if get_option(opt) == true
+  config_h.set(conf, '1')
+  module_files += join_paths(dir_mod_bin, module + '.so')
+
+  install_data(icon, install_dir: dir_mod)
+
+  shared_module(module, src,
                 include_directories: include_directories(module_includes),
-                name_prefix: '',
-                dependencies: module_deps,
-                install_dir: tiling_dir,
-                install: true
-        )
+                name_prefix        : '',
+                dependencies       : module_deps,
+                install_dir        : dir_mod_bin,
+                install            : true
+               )
 endif
-
-install_data('e-module-tiling.edj', install_dir: tiling_mod_dir, install : true)

@@ -1,19 +1,30 @@
-shot_src = [
-	'e_mod_main.c',
+module = 'shot'
+opt    = 'shot'
+conf   = 'USE_MODULE_SHOT'
+
+src = [
+  'e_mod_main.c'
 ]
 
-shot_dir = join_paths(dir_module_e, 'shot', module_arch)
-if get_option('shot') == true
-	config_h.set('USE_MODULE_SHOT', '1')
+icon = [
+  'e-module-' + module + '.edj',
+  'module.desktop'
+]
 
-        module_files += join_paths(shot_dir, 'shot.so')
-	shared_module('shot',
-                shot_src,
+dir_mod     = join_paths(dir_module_e, module)
+dir_mod_bin = join_paths(dir_mod, module_arch)
+
+if get_option(opt) == true
+  config_h.set(conf, '1')
+  module_files += join_paths(dir_mod_bin, module + '.so')
+
+  install_data(icon, install_dir: dir_mod)
+
+  shared_module(module, src,
                 include_directories: include_directories(module_includes),
-                name_prefix: '',
-                dependencies: module_deps,
-                install_dir: shot_dir,
-                install: true
-        )
+                name_prefix        : '',
+                dependencies       : module_deps,
+                install_dir        : dir_mod_bin,
+                install            : true
+               )
 endif
-

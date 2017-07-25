@@ -1,7 +1,5 @@
-EXTRA_DIST += src/modules/policy_mobile/e-module-policy-mobile.edj
 if USE_MODULE_POLICY_MOBILE
 policy_mobiledir = $(MDIR)/policy_mobile
-policy_mobile_DATA = src/modules/policy_mobile/e-module-policy-mobile.edj
 
 policy_mobilepkgdir = $(MDIR)/policy_mobile/$(MODULE_ARCH)
 policy_mobilepkg_LTLIBRARIES = src/modules/policy_mobile/module.la

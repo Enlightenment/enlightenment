@@ -1,23 +1,35 @@
-winlist_src = [
-	'e_int_config_winlist.c',
-	'e_mod_main.c',
-	'e_winlist.c',
-	'e_mod_main.h',
-	'e_winlist.h',
+module = 'winlist'
+opt    = 'winlist'
+conf   = 'USE_MODULE_WINLIST'
+
+src = [
+  'e_mod_main.c',
+  'e_int_config_winlist.c',
+  'e_winlist.c',
+  'e_mod_main.h',
+  'e_winlist.h'
 ]
 
-winlist_dir = join_paths(dir_module_e, 'winlist', module_arch)
-if get_option('winlist') == true
-	config_h.set('USE_MODULE_WINLIST', '1')
+icon = [
+  'e-module-' + module + '.edj',
+  'module.desktop'
+]
 
-        module_files += join_paths(winlist_dir, 'winlist.so')
-	shared_module('winlist',
-                winlist_src,
+dir_mod     = join_paths(dir_module_e, module)
+dir_mod_bin = join_paths(dir_mod, module_arch)
+
+if get_option(opt) == true
+  config_h.set(conf, '1')
+  module_files += join_paths(dir_mod_bin, module + '.so')
+
+  install_data(icon, install_dir: dir_mod)
+
+  shared_module(module, src,
                 include_directories: include_directories(module_includes),
-                name_prefix: '',
-                dependencies: module_deps,
-                install_dir: winlist_dir,
-                install: true
-        )
+                name_prefix        : '',
+                dependencies       : module_deps,
+                install_dir        : dir_mod_bin,
+                install            : true
+               )
 endif
 

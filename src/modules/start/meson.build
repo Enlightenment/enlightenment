@@ -1,20 +1,31 @@
-start_src = [
-	'e_mod_main.c',
-	'start.c',
+module = 'start'
+opt    = 'start'
+conf   = 'USE_MODULE_START'
+
+src = [
+  'e_mod_main.c',
+  'start.c'
 ]
 
-start_dir = join_paths(dir_module_e, 'start', module_arch)
-if get_option('start') == true
-	config_h.set('USE_MODULE_START', '1')
+icon = [
+  'e-module-' + module + '.edj',
+  'module.desktop'
+]
 
-        module_files += join_paths(start_dir, 'start.so')
-	shared_module('start',
-                start_src,
+dir_mod     = join_paths(dir_module_e, module)
+dir_mod_bin = join_paths(dir_mod, module_arch)
+
+if get_option(opt) == true
+  config_h.set(conf, '1')
+  module_files += join_paths(dir_mod_bin, module + '.so')
+
+  install_data(icon, install_dir: dir_mod)
+
+  shared_module(module, src,
                 include_directories: include_directories(module_includes),
-                name_prefix: '',
-                dependencies: module_deps,
-                install_dir: start_dir,
-                install: true
-        )
+                name_prefix        : '',
+                dependencies       : module_deps,
+                install_dir        : dir_mod_bin,
+                install            : true
+               )
 endif
-

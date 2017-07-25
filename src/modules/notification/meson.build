@@ -1,22 +1,33 @@
-notification_src = [
-	'e_mod_config.c',
-	'e_mod_main.c',
-	'e_mod_popup.c',
-	'e_mod_main.h',
+module = 'notification'
+opt    = 'notification'
+conf   = 'USE_MODULE_NOTIFICATION'
+
+src = [
+  'e_mod_main.c',
+  'e_mod_config.c',
+  'e_mod_popup.c',
+  'e_mod_main.h'
 ]
 
-notification_dir = join_paths(dir_module_e, 'notification', module_arch)
-if get_option('notification') == true
-	config_h.set('USE_MODULE_NOTIFICATION', '1')
+icon = [
+  'e-module-' + module + '.edj',
+  'module.desktop'
+]
 
-        module_files += join_paths(notification_dir, 'notification.so')
-	shared_module('notification',
-                notification_src,
+dir_mod     = join_paths(dir_module_e, module)
+dir_mod_bin = join_paths(dir_mod, module_arch)
+
+if get_option(opt) == true
+  config_h.set(conf, '1')
+  module_files += join_paths(dir_mod_bin, module + '.so')
+
+  install_data(icon, install_dir: dir_mod)
+
+  shared_module(module, src,
                 include_directories: include_directories(module_includes),
-                name_prefix: '',
-                dependencies: module_deps,
-                install_dir: notification_dir,
-                install: true
-        )
+                name_prefix        : '',
+                dependencies       : module_deps,
+                install_dir        : dir_mod_bin,
+                install            : true
+               )
 endif
-
