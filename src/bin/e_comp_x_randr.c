@@ -104,6 +104,8 @@ _is_lid_name(const char *name)
    else if (strstr(name, "eDP"))  return EINA_TRUE;
    else if (strstr(name, "edp"))  return EINA_TRUE;
    else if (strstr(name, "EDP"))  return EINA_TRUE;
+   else if (strstr(name, "DSI"))  return EINA_TRUE;
+   else if (strstr(name, "dsi"))  return EINA_TRUE;
    return EINA_FALSE;
 }
 
