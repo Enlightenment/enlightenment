@@ -7,18 +7,4 @@ systray_src = [
 	'e_mod_notifier_host_private.h',
 ]
 
-systray_dir = join_paths(dir_module_e, 'systray', module_arch)
-if get_option('systray') == true
-	config_h.set('USE_MODULE_SYSTRAY', '1')
-
-        module_files += join_paths(systray_dir, 'systray.so')
-	shared_module('systray',
-                systray_src,
-                include_directories: include_directories(module_includes),
-                name_prefix: '',
-                dependencies: module_deps,
-                install_dir: systray_dir,
-                install: true
-        )
-endif
-
+module += [systray_src, 'e-module-systray.edj']

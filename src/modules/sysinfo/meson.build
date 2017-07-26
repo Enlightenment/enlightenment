@@ -44,29 +44,17 @@ else
 	]
 endif
 
+module += [sysinfo_src, 'e-module-sysinfo.edj']
+
 sysinfo_dir = join_paths(dir_module_e, 'sysinfo', module_arch)
-if get_option('sysinfo') == true
-	config_h.set('USE_MODULE_SYSINFO', '1')
 
-        module_files += join_paths(sysinfo_dir, 'sysinfo.so')
-	shared_module('sysinfo',
-                sysinfo_src,
-                include_directories: include_directories(module_includes),
-                name_prefix: '',
-                dependencies: module_deps,
-                install_dir: sysinfo_dir,
-                install: true
-        )
-
-	executable('cpuclock_sysfs',
-		'cpuclock/cpuclock_sysfs.c',
-		include_directories: include_directories(module_includes),
-		dependencies: dep_crypt,
-		c_args: suid_cflags,
-		link_args: suid_ldflags,
-		install_dir: join_paths(dir_module_e, 'sysinfo'),
-		install: true
-	)
-	suid_exes == join_paths(sysinfo_dir, 'cpuclock_sysfs')
-endif
-
+executable('cpuclock_sysfs',
+	'cpuclock/cpuclock_sysfs.c',
+	include_directories: include_directories(module_includes),
+	dependencies: dep_crypt,
+	c_args: suid_cflags,
+	link_args: suid_ldflags,
+	install_dir: join_paths(dir_module_e, 'sysinfo'),
+	install: true
+)
+suid_exes == join_paths(sysinfo_dir, 'cpuclock_sysfs')

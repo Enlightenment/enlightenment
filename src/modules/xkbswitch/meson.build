@@ -9,18 +9,4 @@ xkbswitch_src = [
 	'gadget/mod.c'
 ]
 
-xkbswitch_dir = join_paths(dir_module_e, 'xkbswitch', module_arch)
-if get_option('xkbswitch') == true
-	config_h.set('USE_MODULE_XKBSWITCH', '1')
-
-        module_files += join_paths(xkbswitch_dir, 'xkbswitch.so')
-	shared_module('xkbswitch',
-                xkbswitch_src,
-                include_directories: include_directories(module_includes),
-                name_prefix: '',
-                dependencies: module_deps,
-                install_dir: xkbswitch_dir,
-                install: true
-        )
-endif
-
+module += [xkbswitch_src, 'e-module-xkbswitch.edj']

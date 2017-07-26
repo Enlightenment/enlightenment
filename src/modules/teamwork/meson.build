@@ -18,18 +18,4 @@ if config_h.has('HAVE_WAYLAND_ONLY') == false
 	]
 endif
 
-teamwork_dir = join_paths(dir_module_e, 'teamwork', module_arch)
-if get_option('teamwork') == true
-	config_h.set('USE_MODULE_TEAMWORK', '1')
-
-        module_files += join_paths(teamwork_dir, 'teamwork.so')
-	shared_module('teamwork',
-                teamwork_src,
-                include_directories: include_directories(module_includes),
-                name_prefix: '',
-                dependencies: module_deps,
-                install_dir: teamwork_dir,
-                install: true
-        )
-endif
-
+module += [teamwork_src, 'e-module-teamwork.edj']

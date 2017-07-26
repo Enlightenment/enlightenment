@@ -1,7 +1,6 @@
 everything_dist = [
 	'e-module-everything.edj',
 	'e-module-everything-start.edj',
-	'module.desktop',
 ]
 
 everything_src = [
@@ -32,23 +31,14 @@ everything_src = [
 	'md5.h',
 ]
 
+module += [everything_src]
+
 everything_dir = join_paths(dir_module_e, 'everything', module_arch)
 if get_option('everything') == true
-	config_h.set('USE_MODULE_EVERYTHING', '1')
 
 	install_data(everything_dist,
 		install_dir: join_paths(dir_module_e, 'everything')
 	)
-
-        module_files += join_paths(everything_dir, 'everything.so')
-	shared_module('everything',
-                everything_src,
-                include_directories: include_directories(module_includes),
-                name_prefix: '',
-                dependencies: module_deps,
-                install_dir: everything_dir,
-                install: true
-        )
 
 	install_headers(['evry_api.h', 'evry_types.h'],
 		subdir: 'enlightenment'
