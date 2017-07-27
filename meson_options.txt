@@ -185,10 +185,6 @@ option('quickaccess',
 	type: 'boolean',
 	default: true,
 	description: 'enable quickaccess module: (default=true)')
-option('policy-mobile',
-	type: 'boolean',
-	default: true,
-	description: 'enable policy-mobile module: (default=true)')
 option('start',
 	type: 'boolean',
 	default: true,
