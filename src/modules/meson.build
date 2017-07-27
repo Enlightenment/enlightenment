@@ -6,27 +6,27 @@ mods = [
 foreach m: mods
   subdir(m)
 
-  _module = m
-  _opt    = '-'.join(m.split('_'))
-  _conf   = 'USE_MODULE_' + m.to_upper()
-  _src = [ ]
-  foreach s: src
-    _src += [ join_paths(m, s) ]
-  endforeach
-  _icon = [
-    join_paths(m, 'e-module-' + _module + '.edj'),
-    join_paths(m, 'module.desktop')
-  ]
-  _dir     = join_paths(dir_module_e, _module)
-  _dir_bin = join_paths(_dir, module_arch)
+  opt = '-'.join(m.split('_'))
 
-  if get_option(_opt) == true
+  if get_option(opt) == true
+    _icon         = [
+      join_paths(m, 'e-module-' + m + '.edj'),
+      join_paths(m, 'module.desktop')
+    ]
+    _conf         = 'USE_MODULE_' + m.to_upper()
+    _dir          = join_paths(dir_module_e, m)
+    _dir_bin      = join_paths(_dir, module_arch)
+    _inc          = include_directories(module_includes2, join_paths('.', m))
+    module_files += join_paths(_dir_bin, m + '.so')
+
+    _src = [ ]
+    foreach s: src
+      _src += [ join_paths(m, s) ]
+    endforeach
+
     config_h.set(_conf, '1')
-    module_files += join_paths(_dir_bin, _module + '.so')
     install_data(_icon, install_dir: _dir)
-    _inc = include_directories(module_includes2,
-                               join_paths('.', m))
-    shared_module(_module, _src,
+    shared_module(m, _src,
                   include_directories: _inc,
                   name_prefix        : '',
                   dependencies       : module_deps,
