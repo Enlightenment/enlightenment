@@ -7,7 +7,7 @@ foreach m: mods
   subdir(m)
 
   _module = m
-  _opt    = m
+  _opt    = '-'.join(m.split('_'))
   _conf   = 'USE_MODULE_' + m.to_upper()
   _src = [ ]
   foreach s: src
