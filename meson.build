@@ -480,6 +480,7 @@ subdir('data/tools')
 subdir('data/units')
 subdir('data/xsession')
 
+subdir('doc')
 
 meson.add_install_script('meson/meson_inst.sh', suid_exes)
 meson.add_install_script('meson/meson_modules.sh', module_files)
