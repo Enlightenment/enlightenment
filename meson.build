@@ -400,10 +400,12 @@ subdir('src/bin')
 module_files = []
 module_ldflags = '-module -avoid-version'
 module_includes = ['../../..', '../../bin', '../../bin/efx']
+module_includes2 = [ '../..', '../bin', '../bin/efx' ]
 module_deps = [deps_e, dep_dl]
 
-subdir('src/modules/ibar')
-subdir('src/modules/clock')
+subdir('src/modules')
+#subdir('src/modules/ibar')
+#subdir('src/modules/clock')
 subdir('src/modules/pager')
 subdir('src/modules/pager_plain')
 subdir('src/modules/battery')
