@@ -404,8 +404,10 @@ module_includes2 = [ '../..', '../bin', '../bin/efx' ]
 module_deps = [deps_e, dep_dl]
 
 subdir('src/modules')
+#### the below now use the gneric build above
 #subdir('src/modules/ibar')
 #subdir('src/modules/clock')
+
 subdir('src/modules/pager')
 subdir('src/modules/pager_plain')
 subdir('src/modules/battery')
