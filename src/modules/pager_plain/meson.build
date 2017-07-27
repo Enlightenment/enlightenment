@@ -9,8 +9,7 @@ src = [
 ]
 
 icon = [
-## XXX: bad pttern with module icon name
-  'e-module-' + opt + '.edj',
+  'e-module-' + module + '.edj',
   'module.desktop'
 ]
 

@@ -1,8 +1,8 @@
 EXTRA_DIST += src/modules/pager_plain/module.desktop \
-src/modules/pager_plain/e-module-pager-plain.edj
+src/modules/pager_plain/e-module-pager_plain.edj
 if USE_MODULE_PAGER_PLAIN
 pager_plaindir = $(MDIR)/pager_plain
-pager_plain_DATA = src/modules/pager_plain/e-module-pager-plain.edj \
+pager_plain_DATA = src/modules/pager_plain/e-module-pager_plain.edj \
 	     src/modules/pager_plain/module.desktop
 
 

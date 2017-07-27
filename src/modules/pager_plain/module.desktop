@@ -32,5 +32,5 @@ Comment[pt]=Permite-lhe visualizar as áreas virtuais e as janelas que nelas exi
 Comment[ru]=Гаджет для отображения виртуальных столов и содержащихся на них окон.
 Comment[sr]=Справица која дочарава нестварне површи и прозоре које оне садрже.
 Comment[tr]=Sanal masaüstlerini ve içerisindeki pencereleri görselleştirmenizi sağlayan araç.
-Icon=e-module-pager-plain
+Icon=e-module-pager_plain
 X-Enlightenment-ModuleType=utils
