@@ -1,30 +1,32 @@
-ibar_dist = [
-	'e-module-ibar.edj',
-	'module.desktop',
+module = 'ibar'
+opt    = 'ibar'
+conf   = 'USE_MODULE_IBAR'
+
+src = [
+  'e_mod_main.c',
+  'e_mod_config.c',
+  'e_mod_main.h'
 ]
 
-ibar_src = [
-	'e_mod_config.c',
-	'e_mod_main.c',
-	'e_mod_main.h',
+icon = [
+  'e-module-' + module + '.edj',
+  'module.desktop'
 ]
 
-ibar_dir = join_paths(dir_module_e, 'ibar', module_arch)
-if get_option('ibar') == true
-	config_h.set('USE_MODULE_IBAR', '1')
+dir_mod     = join_paths(dir_module_e, module)
+dir_mod_bin = join_paths(dir_mod, module_arch)
 
-	install_data(ibar_dist,
-		install_dir: join_paths(dir_module_e, 'ibar')
-	)
+if get_option(opt) == true
+  config_h.set(conf, '1')
+  module_files += join_paths(dir_mod_bin, module + '.so')
 
-        module_files += join_paths(ibar_dir, 'ibar.so')
-	shared_module('ibar',
-                ibar_src,
+  install_data(icon, install_dir: dir_mod)
+
+  shared_module(module, src,
                 include_directories: include_directories(module_includes),
-                name_prefix: '',
-                dependencies: module_deps,
-                install_dir: ibar_dir,
-                install: true
-        )
+                name_prefix        : '',
+                dependencies       : module_deps,
+                install_dir        : dir_mod_bin,
+                install            : true
+               )
 endif
-
