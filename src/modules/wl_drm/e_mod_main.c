@@ -579,8 +579,7 @@ _drm2_randr_apply(void)
         if (s->config.priority > top_priority)
           top_priority = s->config.priority;
 
-        ecore_drm2_output_mode_set(output, mode,
-                                   s->config.geom.x, s->config.geom.y);
+        ecore_drm2_output_mode_set(output, mode, 0, 0);
 
         /* TODO: cannot support rotations until we support planes
          * and we cannot support planes until Atomic support is in */
