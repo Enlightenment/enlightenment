@@ -30,6 +30,7 @@ typedef struct E_Gadget_Site
    Evas_Object *events;
    E_Gadget_Style_Cb style_cb;
    int cur_size;
+   Ecore_Job *calc_job;
 
    E_Gadget_Config *action;
    Ecore_Event_Handler *move_handler;
@@ -128,6 +129,20 @@ static Eina_Bool _gadget_object_create(E_Gadget_Config *zgc);
 static void _editor_pointer_site_init(E_Gadget_Site_Orient orient, Evas_Object *site, Evas_Object *editor, Eina_Bool );
 static void _gadget_drop_handler_moveresize(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED);
 static void _edit_site_del(void *data, Evas *e, Evas_Object *obj, void *event_info);
+
+static void
+_site_recalc_job_cb(E_Gadget_Site *zgs)
+{
+   zgs->calc_job = NULL;
+   evas_object_smart_need_recalculate_set(zgs->layout, 1);
+}
+
+static void
+_site_recalc_job(E_Gadget_Site *zgs)
+{
+   if (zgs->calc_job) return;
+   zgs->calc_job = ecore_job_add((Ecore_Cb)_site_recalc_job_cb, zgs);
+}
 
 static Eina_Bool
 _editor_site_visible(void)
@@ -453,7 +468,7 @@ _gadget_object_create(E_Gadget_Config *zgc)
      zgc->site->style_cb(zgc->site->layout, zgc->style.name, g);
 
    if (!zgc->site->orient)
-     evas_object_smart_need_recalculate_set(zgc->site->layout, 1);
+     _site_recalc_job(zgc->site);
    evas_object_event_callback_priority_add(g, EVAS_CALLBACK_DEL, EVAS_CALLBACK_PRIORITY_AFTER, _gadget_del, zgc);
    _gadget_reparent(zgc->site, zgc);
    elm_object_tree_focus_allow_set(zgc->gadget, 0);
@@ -564,7 +579,7 @@ _site_gadget_resize(Evas_Object *g, int w, int h, Evas_Coord *ww, Evas_Coord *hh
    if (!zgc->site->orient)
      {
         if ((w < (*ow)) || (h < (*oh)))
-          evas_object_smart_need_recalculate_set(zgc->gadget, 1);
+          _site_recalc_job(zgc->site);
      }
    //fprintf(stderr, "%s: %dx%d\n", zgc->type, *ow, *oh);
    evas_object_resize(zgc->display, *ow, *oh);
@@ -580,7 +595,7 @@ _site_move(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *event_info E
    evas_object_geometry_set(zgs->events, x, y, w, h);
    evas_object_raise(zgs->events);
    if (!zgs->orient)
-     evas_object_smart_need_recalculate_set(zgs->layout, 1);
+     _site_recalc_job(zgs);
 }
 
 static void
@@ -1372,6 +1387,7 @@ _site_del(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *e
    E_FREE_FUNC(zgs->events, evas_object_del);
    E_FREE_FUNC(zgs->move_handler, ecore_event_handler_del);
    E_FREE_FUNC(zgs->mouse_up_handler, ecore_event_handler_del);
+   E_FREE_FUNC(zgs->calc_job, ecore_job_del);
    EINA_LIST_FOREACH_SAFE(zgs->gadgets, l, ll, zgc)
      evas_object_del(zgc->display);
    zgs->layout = NULL;
@@ -1791,7 +1807,7 @@ static void
 _gadget_style_hints(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    E_Gadget_Config *zgc = data;
-   evas_object_smart_need_recalculate_set(zgc->site->layout, 1);
+   _site_recalc_job(zgc->site);
 }
 
 E_API Evas_Object *
