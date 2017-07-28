@@ -2365,21 +2365,6 @@ _editor_text_get(void *data, Evas_Object *obj EINA_UNUSED, const char *part EINA
    return strdup(buf);
 }
 
-static Evas_Object *
-_editor_tooltip_content(void *data, Evas_Object *obj EINA_UNUSED, Evas_Object *tooltip, void *item EINA_UNUSED)
-{
-   Gadget_Item *gi = data;
-   int w, h;
-   Evas_Object *img;
-
-   evas_object_geometry_get(gi->gadget, NULL, NULL, &w, &h);
-   img = evas_object_image_filled_add(evas_object_evas_get(tooltip));
-   evas_object_image_alpha_set(img, 1);
-   evas_object_image_source_set(img, gi->gadget);
-   evas_object_size_hint_min_set(img, w, h);
-   return img;
-}
-
 E_API Evas_Object *
 e_gadget_editor_add(Evas_Object *parent, Evas_Object *site)
 {
@@ -2432,7 +2417,6 @@ e_gadget_editor_add(Evas_Object *parent, Evas_Object *site)
    EINA_LIST_FREE(gadgets, g)
      {
         Gadget_Item *gi;
-        Elm_Object_Item *item = NULL;
 
         gi = E_NEW(Gadget_Item, 1);
         gi->editor = list;
@@ -2444,9 +2428,7 @@ e_gadget_editor_add(Evas_Object *parent, Evas_Object *site)
         if (orient)
           elm_genlist_item_append(list, &gli, gi, NULL, 0, _editor_gadget_new, gi);
         else
-          item = elm_gengrid_item_append(list, &gli, gi, _editor_gadget_new, gi);
-        if (item)
-          elm_object_item_tooltip_content_cb_set(item, _editor_tooltip_content, gi, NULL);
+          elm_gengrid_item_append(list, &gli, gi, _editor_gadget_new, gi);
      }
    evas_object_event_callback_add(list, EVAS_CALLBACK_DEL, _editor_del, parent);
    e_comp_object_util_del_list_append(list, tempsite);
