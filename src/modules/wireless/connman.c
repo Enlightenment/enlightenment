@@ -628,7 +628,7 @@ _connman_service_parse_prop_changed(Connman_Service *cs, const char *prop_name, 
      _connman_service_parse_stringarray(value, &cs->domain_servers);
 }
 
-static void
+static Eina_Bool
 _connman_service_prop_dict_changed(Connman_Service *cs, Eldbus_Message_Iter *props)
 {
    Eldbus_Message_Iter *dict;
@@ -641,8 +641,15 @@ _connman_service_prop_dict_changed(Connman_Service *cs, Eldbus_Message_Iter *pro
         if (eldbus_message_iter_arguments_get(dict, "sv", &name, &var))
           _connman_service_parse_prop_changed(cs, name, var);
      }
-   if (_connman_service_is_connected(cs))
-     _connman_update_current_network(cs, cs->type);
+   if ((cs->type <= CONNMAN_SERVICE_TYPE_NONE) ||
+       (cs->type >= CONNMAN_SERVICE_TYPE_LAST))
+     return EINA_FALSE;
+   else
+     {
+        if (_connman_service_is_connected(cs))
+          _connman_update_current_network(cs, cs->type);
+     }
+   return EINA_TRUE;
 }
 
 static void
@@ -672,7 +679,12 @@ _connman_service_new(const char *path, Eldbus_Message_Iter *props)
    cs->handler = eldbus_proxy_signal_handler_add(cs->proxy, "PropertyChanged",
                                   _connman_service_property, cs);
 
-   _connman_service_prop_dict_changed(cs, props);
+   if (!_connman_service_prop_dict_changed(cs, props))
+     {
+        ERR("Service added of invalid type");
+        _connman_service_free(cs);
+        return NULL;
+     }
    connman_services_list[cs->type] = eina_inlist_append(connman_services_list[cs->type], EINA_INLIST_GET(cs));
    eina_hash_add(connman_services[cs->type], cs->path, cs);
    DBG("Added service: %p %s || proxy %p", cs, path, cs->proxy);
@@ -833,7 +845,7 @@ _connman_manager_getservices(void *data EINA_UNUSED, const Eldbus_Message *msg, 
           continue;
 
         cs = _connman_service_new(path, inner_array);
-        update[cs->type] = 1;
+        if (cs) update[cs->type] = 1;
      }
    CONNMAN_SERVICE_TYPE_ITER(i)
      if (update[i]) _connman_update_networks(i);
@@ -950,7 +962,13 @@ _connman_manager_event_services(void *data EINA_UNUSED, const Eldbus_Message *ms
           {
              cs = eina_hash_find(connman_services[i], path);
              if (!cs) continue;
-             _connman_service_prop_dict_changed(cs, array);
+             if (!_connman_service_prop_dict_changed(cs, array))
+               {
+                  ERR("Service became an invalid type");
+                  cs->type = i;
+                  _connman_service_free(cs);
+                  continue;
+               }
              found = update[cs->type] = 1;
              DBG("Changed service: %p %s", cs, path);
              break;
@@ -958,7 +976,7 @@ _connman_manager_event_services(void *data EINA_UNUSED, const Eldbus_Message *ms
         if (!found)
           {
              cs = _connman_service_new(path, array);
-             update[cs->type] = 1;
+             if (cs) update[cs->type] = 1;
           }
      }
    CONNMAN_SERVICE_TYPE_ITER(i)
