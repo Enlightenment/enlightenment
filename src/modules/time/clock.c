@@ -302,6 +302,7 @@ _clock_gadget_removed_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_i
    Instance *inst = data;
 
    if (inst->o_clock != event_info) return;
+   if (!inst->cfg) return;
    time_config->items = eina_list_remove(time_config->items, inst->cfg);
    eina_stringshare_del(inst->cfg->timezone);
    eina_stringshare_del(inst->cfg->time_str[0]);
