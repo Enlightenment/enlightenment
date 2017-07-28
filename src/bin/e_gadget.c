@@ -2127,10 +2127,17 @@ static void
 _editor_resize(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
    int w, h, size;
+   Elm_Object_Item *it;
+
    evas_object_geometry_get(obj, NULL, NULL, &w, &h);
    size = MAX(w, h);
    size = MAX(size / 4, 100);
    elm_gengrid_item_size_set(obj, size, size);
+   for (it = elm_gengrid_first_item_get(obj); it; it = elm_gengrid_item_next_get(it))
+     {
+        Gadget_Item *gi = elm_object_item_data_get(it);
+        evas_object_size_hint_max_set(gi->gadget, lround(size * 0.95), lround(size * 0.95));
+     }
 }
 
 static void
