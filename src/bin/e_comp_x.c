@@ -3927,8 +3927,10 @@ _e_comp_x_hook_client_fetch(void *d EINA_UNUSED, E_Client *ec)
                   ec->netwm.opacity = val;
                   rem_change = 1;
                }
+             ec->netwm.fetch.opacity = !ec->netwm.opacity;
           }
-        ec->netwm.fetch.opacity = 0;
+        else
+          ec->netwm.fetch.opacity = 0;
      }
    if (ec->netwm.fetch.icon)
      {
