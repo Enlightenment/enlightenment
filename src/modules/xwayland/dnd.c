@@ -401,7 +401,7 @@ _xwl_selection_request(void *d EINA_UNUSED, int t EINA_UNUSED, Ecore_X_Event_Sel
         ecore_x_window_prop_property_set(ev->requestor, ev->property, int_atom, 32, (void*)&timestamp, 1);
         ecore_x_selection_notify_send(ev->requestor, ev->selection, ev->target, ev->property, 0);
      }
-   else
+   else if (ev->requestor != e_comp->cm_selection)
      {
         const char *name;
         Pipe *p;
