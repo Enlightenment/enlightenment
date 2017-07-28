@@ -312,6 +312,8 @@ _e_comp_client_update(E_Client *ec)
           {
              e_pixmap_image_clear(ec->pixmap, 0);
              e_comp_object_render_update_del(ec->frame); //clear update
+             if (ec->changes.visible && (!evas_object_visible_get(ec->frame)))
+               evas_object_show(ec->frame);
           }
         else if (!e_pixmap_size_get(ec->pixmap, NULL, NULL))
           {
