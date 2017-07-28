@@ -938,13 +938,13 @@ _gadget_act_resize(E_Object *obj, const char *params EINA_UNUSED, E_Binding_Even
    zgc = evas_object_data_get(g, "__e_gadget");
    if (zgc->site->orient) return EINA_FALSE;
    evas_object_geometry_get(g, &x, &y, &w, &h);
-   if (ev->canvas.x < x + (w / 2))
+   if (ev->canvas.x < x + (w / 3))
      zgc->resizing = E_GADGET_SITE_ANCHOR_LEFT;
-   else
+   else if (ev->canvas.x > x + (w * 2 / 3))
      zgc->resizing = E_GADGET_SITE_ANCHOR_RIGHT;
-   if (ev->canvas.y < y + (h / 2))
+   if (ev->canvas.y < y + (h / 3))
      zgc->resizing |= E_GADGET_SITE_ANCHOR_TOP;
-   else
+   else if (ev->canvas.y > y + (h * 2 / 3))
      zgc->resizing |= E_GADGET_SITE_ANCHOR_BOTTOM;
    if (!zgc->site->move_handler)
      zgc->site->move_handler = ecore_event_handler_add(ECORE_EVENT_MOUSE_MOVE, (Ecore_Event_Handler_Cb)_gadget_mouse_resize, zgc);
