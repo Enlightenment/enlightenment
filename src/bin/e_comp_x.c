@@ -5554,7 +5554,10 @@ _e_comp_x_setup(Ecore_X_Window root, int w, int h)
         if (!e_comp_canvas_init(w, h)) return EINA_FALSE;
      }
 
-   e_grabinput_focus(e_comp->ee_win, E_FOCUS_METHOD_PASSIVE);
+   if (e_comp->comp_type == E_PIXMAP_TYPE_X)
+     e_grabinput_focus(e_comp->ee_win, E_FOCUS_METHOD_PASSIVE);
+   else
+     e_grabinput_focus(e_comp->root, E_FOCUS_METHOD_PASSIVE);
 
    /* init layers */
    for (i = e_comp_canvas_layer_map(E_LAYER_CLIENT_DESKTOP); i <= e_comp_canvas_layer_map(E_LAYER_CLIENT_PRIO); i++)
