@@ -3917,17 +3917,32 @@ e_comp_object_dirty(Evas_Object *obj)
         return;
      }
    e_comp_object_native_surface_set(obj, 1);
-   it = eina_tiler_iterator_new(cw->updates);
-   EINA_ITERATOR_FOREACH(it, rect)
+   if (cw->updates_full)
      {
-        RENDER_DEBUG("UPDATE ADD [%p]: %d %d %dx%d", cw->ec, rect->x, rect->y, rect->w, rect->h);
-        evas_object_image_data_update_add(cw->obj, rect->x, rect->y, rect->w, rect->h);
+        Eina_Rectangle r = {0};
+
+        eina_tiler_area_size_get(cw->updates, &r.w, &r.h);
+        RENDER_DEBUG("UPDATE ADD [%p]: %d %d %dx%d", cw->ec, r.x, r.y, r.w, r.h);
+        evas_object_image_data_update_add(cw->obj, r.x, r.y, r.w, r.h);
         EINA_LIST_FOREACH(cw->obj_mirror, ll, o)
-          evas_object_image_data_update_add(o, rect->x, rect->y, rect->w, rect->h);
+          evas_object_image_data_update_add(o, r.x, r.y, r.w, r.h);
         if (cw->pending_updates)
-          eina_tiler_rect_add(cw->pending_updates, rect);
+          eina_tiler_rect_add(cw->pending_updates, &r);
      }
-   eina_iterator_free(it);
+   else
+     {
+        it = eina_tiler_iterator_new(cw->updates);
+        EINA_ITERATOR_FOREACH(it, rect)
+          {
+             RENDER_DEBUG("UPDATE ADD [%p]: %d %d %dx%d", cw->ec, rect->x, rect->y, rect->w, rect->h);
+             evas_object_image_data_update_add(cw->obj, rect->x, rect->y, rect->w, rect->h);
+             EINA_LIST_FOREACH(cw->obj_mirror, ll, o)
+               evas_object_image_data_update_add(o, rect->x, rect->y, rect->w, rect->h);
+             if (cw->pending_updates)
+               eina_tiler_rect_add(cw->pending_updates, rect);
+          }
+        eina_iterator_free(it);
+     }
    if (cw->pending_updates)
      eina_tiler_clear(cw->updates);
    else
