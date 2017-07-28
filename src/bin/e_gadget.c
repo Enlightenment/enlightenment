@@ -483,37 +483,8 @@ _gadget_object_finalize(E_Gadget_Config *zgc)
 }
 
 static void
-_site_gadget_resize(Evas_Object *g, int w, int h, Evas_Coord *ww, Evas_Coord *hh, Evas_Coord *ow, Evas_Coord *oh)
+_site_gadget_aspect(E_Gadget_Config *zgc, Evas_Coord *ww, Evas_Coord *hh, int ax, int ay, Evas_Aspect_Control aspect)
 {
-   Evas_Coord mnw, mnh, mxw, mxh;
-   E_Gadget_Config *zgc;
-   Evas_Aspect_Control aspect;
-   int ax, ay;
-
-   zgc = evas_object_data_get(g, "__e_gadget");
-   w -= zgc->style.minw;
-   h -= zgc->style.minh;
-
-   evas_object_size_hint_min_get(g, &mnw, &mnh);
-   evas_object_size_hint_max_get(g, &mxw, &mxh);
-   evas_object_size_hint_aspect_get(g, &aspect, &ax, &ay);
-
-   if (IS_HORIZ(zgc->site->orient))
-     {
-        *ww = mnw, *hh = h;
-        if (!(*ww)) *ww = *hh;
-     }
-   else if (IS_VERT(zgc->site->orient))
-     {
-        *hh = mnh, *ww = w;
-        if (!(*hh)) *hh = *ww;
-     }
-   else
-     {
-        *ww = mnw, *hh = mnh;
-        if ((!(*ww)) || ((*ww) < w)) *ww = w;
-        if ((!(*hh)) || ((*hh) < h)) *hh = h;
-     }
    if (aspect && ax && ay)
      {
         switch (aspect)
@@ -547,6 +518,41 @@ _site_gadget_resize(Evas_Object *g, int w, int h, Evas_Coord *ww, Evas_Coord *hh
                }
           }
      }
+}
+
+static void
+_site_gadget_resize(Evas_Object *g, int w, int h, Evas_Coord *ww, Evas_Coord *hh, Evas_Coord *ow, Evas_Coord *oh)
+{
+   Evas_Coord mnw, mnh, mxw, mxh;
+   E_Gadget_Config *zgc;
+   Evas_Aspect_Control aspect;
+   int ax, ay;
+
+   zgc = evas_object_data_get(g, "__e_gadget");
+   w -= zgc->style.minw;
+   h -= zgc->style.minh;
+
+   evas_object_size_hint_min_get(g, &mnw, &mnh);
+   evas_object_size_hint_max_get(g, &mxw, &mxh);
+   evas_object_size_hint_aspect_get(g, &aspect, &ax, &ay);
+
+   if (IS_HORIZ(zgc->site->orient))
+     {
+        *ww = mnw, *hh = h;
+        if (!(*ww)) *ww = *hh;
+     }
+   else if (IS_VERT(zgc->site->orient))
+     {
+        *hh = mnh, *ww = w;
+        if (!(*hh)) *hh = *ww;
+     }
+   else
+     {
+        *ww = mnw, *hh = mnh;
+        if ((!(*ww)) || ((*ww) < w)) *ww = w;
+        if ((!(*hh)) || ((*hh) < h)) *hh = h;
+     }
+   _site_gadget_aspect(zgc, ww, hh, ax, ay, aspect);
    *ww += zgc->style.minw;
    *hh += zgc->style.minh;
    *ow = *ww, *oh = *hh;
