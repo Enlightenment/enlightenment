@@ -168,9 +168,9 @@ _xwl_fixes_selection_notify(void *d EINA_UNUSED, int t EINA_UNUSED, Ecore_X_Even
      {
         if (ev->owner)
           {
-             int x, y, num;
+             int x, y, num, i;
              unsigned char *data;
-             const char **names = NULL;
+             char **names = NULL;
              Eina_Array *namelist = NULL;
              E_Comp_Wl_Data_Source *source;
 
@@ -181,22 +181,22 @@ _xwl_fixes_selection_notify(void *d EINA_UNUSED, int t EINA_UNUSED, Ecore_X_Even
                                                   &data,
                                                   &num))
                {
-                  int i;
                   Ecore_X_Atom *types = (void*)data;
 
                   names = malloc(num * sizeof(void*));
                   namelist = eina_array_new(num);
                   for (i = 0; i < num; i++)
                     {
-                       const char *name;
+                       char *name;
 
                        if (types[i] == string_atom)
                          {
-                            name = names[i] = "UTF8_STRING";
+                            name = names[i] = strdup("UTF8_STRING");
                             eina_array_push(namelist, eina_stringshare_add(WL_TEXT_STR));
                          }
                        else
                          names[i] = name = ecore_x_atom_name_get(types[i]);
+                       DBG("XWL TARGET: %s", name);
                        eina_array_push(namelist, eina_stringshare_add(name));
                     }
                   if (num > 3)
@@ -209,7 +209,7 @@ _xwl_fixes_selection_notify(void *d EINA_UNUSED, int t EINA_UNUSED, Ecore_X_Even
                }
              evas_pointer_canvas_xy_get(e_comp->evas, &x, &y);
              e_comp_wl->drag_client = e_pixmap_find_client(E_PIXMAP_TYPE_X, ev->owner);
-             e_comp_wl->drag = e_drag_new(x, y, names, num, NULL, 0, NULL, _xwayland_drop);
+             e_comp_wl->drag = e_drag_new(x, y, (const char**)names, num, NULL, 0, NULL, _xwayland_drop);
              e_comp_wl->drag->button_mask = evas_pointer_button_down_mask_get(e_comp->evas);
              ecore_x_window_move_resize(e_comp->cm_selection, 0, 0, e_comp->w, e_comp->h);
              ecore_x_window_show(e_comp->cm_selection);
@@ -224,6 +224,8 @@ _xwl_fixes_selection_notify(void *d EINA_UNUSED, int t EINA_UNUSED, Ecore_X_Even
              source->send = _xwayland_send_send;
              source->cancelled = _xwayland_cancelled_send;
              source->mime_types = namelist;
+             for (i = 0; i < num; i++)
+               free(names[i]);
              free(names);
           }
         else
