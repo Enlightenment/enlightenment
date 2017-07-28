@@ -1531,6 +1531,7 @@ e_gadget_util_layout_style_init(Evas_Object *g, Evas_Object *style)
    EINA_SAFETY_ON_NULL_RETURN_VAL(zgc, NULL);
 
    prev = zgc->style.obj;
+   if ((!prev) && (!style)) return NULL;
    zgc->style.obj = style;
    if (style)
      {
