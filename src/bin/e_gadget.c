@@ -2486,6 +2486,7 @@ _gadget_desklock_clear(void)
 static Eina_Bool
 _gadget_desklock_key_handler(void *d EINA_UNUSED, int t EINA_UNUSED, Ecore_Event_Key *ev)
 {
+   if (!_editor_site_visible()) return ECORE_CALLBACK_RENEW;
    if (eina_streq(ev->key, "Escape"))
      {
         if (pointer_site)
@@ -2564,6 +2565,7 @@ e_gadget_site_desklock_edit(void)
 static Eina_Bool
 _gadget_desktop_key_handler(void *data, int t EINA_UNUSED, Ecore_Event_Key *ev)
 {
+   if (!_editor_site_visible()) return ECORE_CALLBACK_RENEW;
    if (eina_streq(ev->key, "Escape"))
      {
         if (pointer_site)
