@@ -144,6 +144,12 @@ _xwayland_send_send(E_Comp_Wl_Data_Source *source EINA_UNUSED, const char* mime_
 }
 
 static void
+_xwayland_send_cancelled(E_Comp_Wl_Data_Source *source)
+{
+   e_comp_wl_clipboard_source_unref((void*)source);
+}
+
+static void
 _xwayland_cancelled_send(E_Comp_Wl_Data_Source *source EINA_UNUSED)
 {
    DBG("XWL Data Source Cancelled Send");
@@ -234,9 +240,14 @@ _xwl_fixes_selection_notify(void *d EINA_UNUSED, int t EINA_UNUSED, Ecore_X_Even
      {
         if (ev->owner)
           {
-             if (e_comp_wl->clipboard.source)
-               e_comp_wl_clipboard_source_unref(e_comp_wl->clipboard.source);
+             if (e_comp_wl->selection.data_source)
+               {
+                  E_Comp_Wl_Data_Source *psource = e_comp_wl->selection.data_source;
+                  if (psource->cancelled)
+                    psource->cancelled(psource);
+               }
              e_comp_wl->clipboard.source = NULL;
+             e_comp_wl->selection.data_source = NULL;
              e_comp_wl->clipboard.xwl_owner = ev->owner;
              xconvertselection(ecore_x_display_get(), ECORE_X_ATOM_SELECTION_CLIPBOARD,
                ECORE_X_ATOM_SELECTION_TARGETS, xwl_dnd_atom, e_comp->cm_selection, 0);
@@ -279,6 +290,7 @@ _xwl_selection_notify(void *d EINA_UNUSED, int t EINA_UNUSED, Ecore_X_Event_Sele
              e_comp_wl->selection.data_source = &source->data_source;
              source->data_source.resource = dsource->resource;
              source->data_source.send = _xwayland_send_send;
+             source->data_source.cancelled = _xwayland_send_cancelled;
              if (e_client_has_xwindow(e_client_focused_get()))
                e_comp_wl_data_device_keyboard_focus_set();
              return ECORE_CALLBACK_RENEW;
