@@ -219,6 +219,8 @@ _xwl_fixes_selection_notify(void *d EINA_UNUSED, int t EINA_UNUSED, Ecore_X_Even
              e_comp_canvas_feed_mouse_up(0);
              source = e_comp_wl_data_manager_source_create(e_comp_wl->xwl_client,
                e_comp_wl->mgr.resource, 0);
+             source->current_dnd_action = WL_DATA_DEVICE_MANAGER_DND_ACTION_COPY;
+             source->dnd_actions = WL_DATA_DEVICE_MANAGER_DND_ACTION_COPY;
              e_comp_wl->drag_source = source;
              source->target = _xwayland_target_send;
              source->send = _xwayland_send_send;
