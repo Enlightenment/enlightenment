@@ -962,6 +962,11 @@ e_comp_wl_data_device_send_enter(E_Client *ec)
         if (!data_device_res) return;
         offer_res = e_comp_wl_data_device_send_offer(ec);
         if (e_comp_wl->drag_source && (!offer_res)) return;
+        if (e_client_has_xwindow(e_comp_wl->drag_client))
+          {
+             drag_source->offer->dnd_actions = drag_source->dnd_actions;
+             drag_source->offer->preferred_dnd_action = drag_source->current_dnd_action;
+          }
         data_offer_update_action(drag_source->offer);
         if (offer_res)
           {
