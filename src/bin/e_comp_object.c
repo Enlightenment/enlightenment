@@ -949,6 +949,20 @@ _e_comp_object_mirror_pixels_get(void *data, Evas_Object *obj)
 
 /////////////////////////////////////////////
 
+static void
+_e_comp_object_updates_reset(E_Comp_Object *cw)
+{
+   if (cw->pending_updates)
+     eina_tiler_clear(cw->updates);
+   else
+     {
+        cw->pending_updates = cw->updates;
+        cw->updates = eina_tiler_new(cw->ec->client.w, cw->ec->client.h);
+        eina_tiler_tile_size_set(cw->updates, 1, 1);
+     }
+   cw->update_count = cw->updates_full = cw->updates_exist = 0;
+}
+
 /* for fast path evas rendering; only called during render */
 static void
 _e_comp_object_pixels_get(void *data, Evas_Object *obj)
@@ -961,6 +975,7 @@ _e_comp_object_pixels_get(void *data, Evas_Object *obj)
    if ((!ec->pixmap) || (!e_pixmap_size_get(ec->pixmap, &pw, &ph)))
      {
         evas_object_image_data_set(obj, NULL);
+        _e_comp_object_updates_reset(cw);
         return;
      }
    //INF("PIXEL GET %p: %dx%d || %dx%d", ec, ec->w, ec->h, pw, ph);
@@ -995,6 +1010,7 @@ _e_comp_object_pixels_get(void *data, Evas_Object *obj)
       msg2.val = id;
       edje_object_message_send(cw->shobj, EDJE_MESSAGE_INT, 0, &msg2);
    }
+   _e_comp_object_updates_reset(cw);
    if (cw->native)
      {
         E_FREE_FUNC(cw->pending_updates, eina_tiler_free);
@@ -4104,20 +4120,12 @@ e_comp_object_dirty(Evas_Object *obj)
           }
         eina_iterator_free(it);
      }
-   if (cw->pending_updates)
-     eina_tiler_clear(cw->updates);
-   else
-     {
-        cw->pending_updates = cw->updates;
-        cw->updates = eina_tiler_new(w, h);
-        eina_tiler_tile_size_set(cw->updates, 1, 1);
-     }
-   cw->update_count = cw->updates_full = cw->updates_exist = 0;
    evas_object_smart_callback_call(obj, "dirty", NULL);
-   if (cw->real_hid || cw->visible || (!visible) || (!cw->pending_updates) || cw->native) return;
+   if (cw->real_hid || cw->visible || (!visible) || (!cw->updates) || cw->native) return;
    /* force render if main object is hidden but mirrors are visible */
    RENDER_DEBUG("FORCING RENDER %p", cw->ec);
    e_comp_object_render(obj);
+   _e_comp_object_updates_reset(cw);
 }
 
 E_API Eina_Bool
