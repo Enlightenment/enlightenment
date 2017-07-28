@@ -3913,15 +3913,15 @@ _e_comp_x_hook_client_fetch(void *d EINA_UNUSED, E_Client *ec)
      {
         unsigned int val;
 
-        if (ecore_x_window_prop_card32_get(win, ECORE_X_ATOM_NET_WM_WINDOW_OPACITY, &val, 1) > 0)
+        if (ecore_x_netwm_opacity_get(win, &val))
           {
-             val = (val >> 24);
              if (ec->netwm.opacity != val)
                {
                   ec->netwm.opacity = val;
                   rem_change = 1;
                }
           }
+        ec->netwm.fetch.opacity = 0;
      }
    if (ec->netwm.fetch.icon)
      {
