@@ -289,7 +289,13 @@ _xwl_selection_notify(void *d EINA_UNUSED, int t EINA_UNUSED, Ecore_X_Event_Sele
              source->data_source.mime_types = eina_array_new(tgs->num_targets);
              for (i = 0; i < tgs->num_targets; i++)
                if (tgs->targets[i])
-                 eina_array_push(source->data_source.mime_types, eina_stringshare_add(tgs->targets[i]));
+                 {
+                    DBG("XWL TARGET: %s", tgs->targets[i]);
+                    if (eina_streq(tgs->targets[i], "UTF8_STRING"))
+                      eina_array_push(source->data_source.mime_types, eina_stringshare_add(WL_TEXT_STR));
+                    eina_array_push(source->data_source.mime_types, eina_stringshare_add(tgs->targets[i]));
+                 }
+
              e_comp_wl->clipboard.source = source;
              e_comp_wl->selection.data_source = &source->data_source;
              source->data_source.resource = dsource->resource;
