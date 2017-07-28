@@ -414,6 +414,13 @@ _gadget_wizard_del(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *even
    if (desktop_editor) evas_object_show(desktop_editor);
 }
 
+static void
+_gadget_object_hints(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   E_Gadget_Config *zgc = data;
+   _site_recalc_job(zgc->site);
+}
+
 static Eina_Bool
 _gadget_object_create(E_Gadget_Config *zgc)
 {
@@ -462,6 +469,7 @@ _gadget_object_create(E_Gadget_Config *zgc)
    zgc->e_obj_inherit = E_OBJECT_ALLOC(E_Object, E_GADGET_TYPE, _gadget_object_free);
    e_object_data_set(zgc->e_obj_inherit, g);
    zgc->gadget = zgc->display = g;
+   evas_object_event_callback_add(g, EVAS_CALLBACK_CHANGED_SIZE_HINTS, _gadget_object_hints, zgc);
    evas_object_smart_callback_add(g, "gadget_popup", _gadget_popup, zgc->site);
    evas_object_data_set(g, "__e_gadget", zgc);
    if (zgc->site->style_cb)
