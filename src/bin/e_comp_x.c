@@ -3918,6 +3918,8 @@ _e_comp_x_hook_client_fetch(void *d EINA_UNUSED, E_Client *ec)
              if (ec->netwm.opacity != val)
                {
                   ec->netwm.opacity = val;
+                  evas_object_color_set(ec->frame,
+                    ec->netwm.opacity, ec->netwm.opacity, ec->netwm.opacity, ec->netwm.opacity);
                   rem_change = 1;
                }
              ec->netwm.fetch.opacity = !ec->netwm.opacity;
