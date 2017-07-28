@@ -772,8 +772,12 @@ _gadget_mouse_resize(E_Gadget_Config *zgc, int t EINA_UNUSED, Ecore_Event_Mouse_
    int x, y, w, h;//site geom
    int ox, oy, ow, oh;//gadget geom
    double gw, gh;
+   int dx, dy;
+   int ax, ay;
+   Evas_Aspect_Control aspect;
 
    evas_object_geometry_get(zgc->display, &ox, &oy, &ow, &oh);
+   evas_object_size_hint_aspect_get(zgc->gadget, &aspect, &ax, &ay);
    if (zgc->zone >= 0)
      {
         E_Zone *zone;
@@ -783,27 +787,70 @@ _gadget_mouse_resize(E_Gadget_Config *zgc, int t EINA_UNUSED, Ecore_Event_Mouse_
      }
    else
      evas_object_geometry_get(zgc->site->layout, &x, &y, &w, &h);
+   /* restore screen-based geometry to canvas size */
    gw = zgc->w * w;
    gh = zgc->h * h;
+
+   /* apply mouse movement to canvas size */
+   dx = ev->x - zgc->down.x, dy = ev->y - zgc->down.y;
+   if (zgc->resizing & E_GADGET_SITE_ANCHOR_LEFT)
+     gw -= dx;
+   else
+     gw += dx;
+   if (zgc->resizing & E_GADGET_SITE_ANCHOR_TOP)
+     gh -= dy;
+   else
+     gh += dy;
+
+   /* apply aspect based on mouse position change */
+   dx = abs(ev->x - zgc->down.x);
+   dy = abs(ev->y - zgc->down.y);
+   if (dx > dy)
+     {
+        /* use horizontal motion if most of event is horizontal */
+        int ww = lround(gw), hh = lround(gh);
+        _site_gadget_aspect(zgc, &ww, &hh, ax, ay, EVAS_ASPECT_CONTROL_HORIZONTAL);
+        gh = hh;
+     }
+   else if (dy > dx)
+     {
+        /* use vertical motion if most of event is vertical */
+        int ww = lround(gw), hh = lround(gh);
+        _site_gadget_aspect(zgc, &ww, &hh, ax, ay, EVAS_ASPECT_CONTROL_VERTICAL);
+        gw = ww;
+     }
+   else if ((dx == dy) && (ax != ay))
+     {
+        /* use aspect values to calculate equal motion on both axes */
+        int ww = lround(gw), hh = lround(gh);
+        if (ax > ay)
+          {
+             _site_gadget_aspect(zgc, &ww, &hh, ax, ay, EVAS_ASPECT_CONTROL_VERTICAL);
+             gw = ww;
+          }
+        else
+          {
+             _site_gadget_aspect(zgc, &ww, &hh, ax, ay, EVAS_ASPECT_CONTROL_HORIZONTAL);
+             gh = hh;
+          }
+     }
+
+   /* calculate new position based on resize amount */
+   dx = ev->x - zgc->down.x, dy = ev->y - zgc->down.y;
    if (zgc->resizing & E_GADGET_SITE_ANCHOR_LEFT)
      {
-        gw -= (ev->x - zgc->down.x);
-        zgc->x = ev->x / (double)w;
+        zgc->x = (((zgc->x + zgc->w) * (double)w) - gw) / (double)w;
      }
-   else
-     gw += (ev->x - zgc->down.x);
    if (zgc->resizing & E_GADGET_SITE_ANCHOR_TOP)
      {
-        gh -= (ev->y - zgc->down.y);
-        zgc->y = ev->y / (double)h;
+        zgc->y = (((zgc->y + zgc->h) * (double)h) - gh) / (double)h;
      }
-   else
-     gh += (ev->y - zgc->down.y);
+
    zgc->w = gw / w;
    zgc->h = gh / h;
    zgc->down.x = ev->x;
    zgc->down.y = ev->y;
-   elm_box_recalculate(zgc->site->layout);
+   evas_object_smart_need_recalculate_set(zgc->site->layout, 1);
    e_config_save_queue();
    return ECORE_CALLBACK_RENEW;
 }
