@@ -894,14 +894,9 @@ _gadget_util_add(E_Gadget_Site *zgs, const char *type, int id)
      zgc->w = zgc->h = -1;
    else
      {
-        int w, h;
         E_Zone *zone = e_zone_current_get();
-
-        evas_object_geometry_get(zgc->site->layout, NULL, NULL, &w, &h);
-        w = MIN(zone->w, w);
-        h = MIN(zone->h, h);
-        zgc->w = (96 * e_scale) / (double)w;
-        zgc->h = (96 * e_scale) / (double)h;
+        zgc->w = (96 * e_scale) / (double)zone->w;
+        zgc->h = (96 * e_scale) / (double)zone->h;
      }
    zgc->site->gadgets = eina_list_append(zgc->site->gadgets, zgc);
    zgs->gadget_list = eina_inlist_append(zgs->gadget_list, EINA_INLIST_GET(zgc));
