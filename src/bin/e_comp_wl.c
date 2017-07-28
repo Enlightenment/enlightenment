@@ -131,17 +131,6 @@ _e_comp_wl_configure_send(E_Client *ec, Eina_Bool edges)
                                        w, h);
 }
 
-static void
-_e_comp_wl_focus_check(void)
-{
-   E_Client *ec;
-
-   if (stopping) return;
-   ec = e_client_focused_get();
-   if ((!ec) || e_pixmap_is_x(ec->pixmap))
-     e_grabinput_focus(e_comp->ee_win, E_FOCUS_METHOD_PASSIVE);
-}
-
 /* static void */
 /* _e_comp_wl_log_cb_print(const char *format, va_list args) */
 /* { */
@@ -957,8 +946,6 @@ _e_comp_wl_evas_cb_delete_request(void *data, Evas_Object *obj EINA_UNUSED, void
         else
           e_object_del(E_OBJECT(ec));
      }
-
-   _e_comp_wl_focus_check();
 }
 
 static void
@@ -979,8 +966,6 @@ _e_comp_wl_evas_cb_kill_request(void *data, Evas_Object *obj EINA_UNUSED, void *
           ec->comp_data->mapped = EINA_FALSE;
      }
    else e_object_del(E_OBJECT(ec));
-
-   _e_comp_wl_focus_check();
 }
 
 static void
@@ -2551,8 +2536,6 @@ _e_comp_wl_client_cb_del(void *data EINA_UNUSED, E_Client *ec)
 
    if (ec->internal_elm_win)
      evas_object_hide(ec->frame);
-
-   _e_comp_wl_focus_check();
 }
 
 static void
@@ -2590,8 +2573,6 @@ _e_comp_wl_client_cb_focus_unset(void *data EINA_UNUSED, E_Client *ec)
         if (ec->comp_data->shell.surface)
           _e_comp_wl_configure_send(ec, 1);
      }
-
-   _e_comp_wl_focus_check();
 
    if (e_comp_wl->kbd.focus == ec->comp_data->surface)
      e_comp_wl->kbd.focus = NULL;
