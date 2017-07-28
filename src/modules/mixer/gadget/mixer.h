@@ -12,16 +12,16 @@ EINTERN int   e_modapi_gadget_save(E_Module *m);
 
 EINTERN extern int _e_gemix_log_domain;
 
-#undef GDBG
-#undef GINF
-#undef GWRN
-#undef GERR
-#undef GCRIT
-#define GDBG(...) EINA_LOG_DOM_DBG(_e_gemix_log_domain, __VA_ARGS__)
-#define GINF(...) EINA_LOG_DOM_INF(_e_gemix_log_domain, __VA_ARGS__)
-#define GWRN(...) EINA_LOG_DOM_WARN(_e_gemix_log_domain, __VA_ARGS__)
-#define GERR(...) EINA_LOG_DOM_ERR(_e_gemix_log_domain, __VA_ARGS__)
-#define GCRIT(...) EINA_LOG_DOM_CRIT(_e_gemix_log_domain, __VA_ARGS__)
+#undef DBG
+#undef INF
+#undef WRN
+#undef ERR
+#undef CRIT
+#define DBG(...) EINA_LOG_DOM_DBG(_e_gemix_log_domain, __VA_ARGS__)
+#define INF(...) EINA_LOG_DOM_INF(_e_gemix_log_domain, __VA_ARGS__)
+#define WRN(...) EINA_LOG_DOM_WARN(_e_gemix_log_domain, __VA_ARGS__)
+#define ERR(...) EINA_LOG_DOM_ERR(_e_gemix_log_domain, __VA_ARGS__)
+#define CRIT(...) EINA_LOG_DOM_CRIT(_e_gemix_log_domain, __VA_ARGS__)
 
 EINTERN Eina_Bool mixer_init(void);
 EINTERN void mixer_shutdown(void);

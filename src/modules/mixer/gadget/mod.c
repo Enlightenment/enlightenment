@@ -1,6 +1,6 @@
 #include "mixer.h"
 
-int _e_gemix_log_domain;
+EINTERN int _e_gemix_log_domain;
 
 EINTERN void *
 e_modapi_gadget_init(E_Module *m)
