@@ -41,7 +41,7 @@
       const __typeof__( ((type *)0)->member ) *__mptr = (ptr); \
       (type *)(void *)( (char *)__mptr - offsetof(type,member) ); \
    })
-
+typedef struct _E_Comp_Wl_Aux_Hint  E_Comp_Wl_Aux_Hint;
 typedef struct _E_Comp_Wl_Buffer E_Comp_Wl_Buffer;
 typedef struct _E_Comp_Wl_Subsurf_Data E_Comp_Wl_Subsurf_Data;
 typedef struct _E_Comp_Wl_Surface_State E_Comp_Wl_Surface_State;
@@ -50,6 +50,15 @@ typedef struct _E_Comp_Wl_Data E_Comp_Wl_Data;
 typedef struct _E_Comp_Wl_Output E_Comp_Wl_Output;
 typedef struct E_Shell_Data E_Shell_Data;
 typedef void (*E_Comp_Wl_Grab_End_Cb)(E_Client*);
+
+struct _E_Comp_Wl_Aux_Hint
+{
+   int           id;
+   const char   *hint;
+   const char   *val;
+   Eina_Bool     changed;
+   Eina_Bool     deleted;
+};
 
 struct _E_Comp_Wl_Buffer
 {
@@ -126,6 +135,10 @@ typedef struct E_Comp_Wl_Extension_Data
         struct wl_global *global;
         Eina_Hash *constraints;
      } zwp_pointer_constraints_v1;
+   struct
+     {
+        struct wl_global *global;
+     } efl_aux_hints;
 } E_Comp_Wl_Extension_Data;
 
 struct _E_Comp_Wl_Data
@@ -327,6 +340,13 @@ struct _E_Comp_Wl_Client_Data
         int32_t x, y;
      } popup;
 
+   struct
+     {
+        Eina_Bool  changed : 1;
+        Eina_List *hints;
+        Eina_Bool  use_msg : 1;
+     } aux_hint;
+
    int32_t on_outputs; /* Bitfield of the outputs this client is present on */
 
    E_Maximize max;
@@ -399,6 +419,12 @@ E_API void e_comp_wl_extension_relative_motion_event(uint64_t time_usec, double 
 E_API void e_comp_wl_extension_pointer_constraints_commit(E_Client *ec);
 E_API Eina_Bool e_comp_wl_extension_pointer_constraints_update(E_Client *ec, int x, int y);
 E_API void e_comp_wl_extension_pointer_unconstrain(E_Client *ec);
+
+E_API void
+e_policy_wl_aux_message_send(E_Client *ec,
+                             const char *key,
+                             const char *val,
+                             Eina_List *options);
 
 # ifndef HAVE_WAYLAND_ONLY
 EINTERN void e_comp_wl_xwayland_client_queue(E_Client *ec);

@@ -431,7 +431,8 @@ src/bin/e_comp_wl_data.c \
 src/bin/e_comp_wl_input.c \
 src/bin/e_comp_wl_dmabuf.c \
 src/bin/e_comp_wl.c \
-src/bin/e_comp_wl_extensions.c
+src/bin/e_comp_wl_extensions.c \
+src/bin/e_comp_wl_extensions_tizen.c
 
 enlightenment_gen_src += \
 src/bin/generated/linux-dmabuf-unstable-v1-server-protocol.h \
@@ -445,16 +446,12 @@ src/bin/generated/xdg-foreign-unstable-v1-server-protocol.h \
 src/bin/generated/relative-pointer-unstable-v1-protocol.c \
 src/bin/generated/relative-pointer-unstable-v1-server-protocol.h \
 src/bin/generated/pointer-constraints-unstable-v1-protocol.c \
-src/bin/generated/pointer-constraints-unstable-v1-server-protocol.h
+src/bin/generated/pointer-constraints-unstable-v1-server-protocol.h \
+src/bin/generated/efl-aux-hints-protocol.c \
+src/bin/generated/efl-aux-hints-server-protocol.h
 
 src/bin/e_comp_wl_extensions.c: \
- src/bin/generated/session-recovery-server-protocol.h \
- src/bin/generated/xdg-foreign-unstable-v1-protocol.c \
- src/bin/generated/xdg-foreign-unstable-v1-server-protocol.h \
- src/bin/generated/relative-pointer-unstable-v1-protocol.c \
- src/bin/generated/relative-pointer-unstable-v1-server-protocol.h \
- src/bin/generated/pointer-constraints-unstable-v1-protocol.c \
- src/bin/generated/pointer-constraints-unstable-v1-server-protocol.h
+ $(enlightenment_gen_src)
 
 src/bin/e_comp_wl.c: \
  src/bin/generated/www-server-protocol.h

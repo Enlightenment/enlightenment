@@ -2517,6 +2517,17 @@ _e_comp_wl_client_cb_del(void *data EINA_UNUSED, E_Client *ec)
           e_pointer_object_set(e_comp->pointer, NULL, 0, 0);
      }
 
+   if (ec->comp_data->aux_hint.hints)
+     {
+        E_Comp_Wl_Aux_Hint *hint;
+        EINA_LIST_FREE(ec->comp_data->aux_hint.hints, hint)
+          {
+             eina_stringshare_del(hint->hint);
+             eina_stringshare_del(hint->val);
+             E_FREE(hint);
+          }
+     }
+
    /* The resource destroy callback will walk the state->frames list,
     * so move the list to a temporary first.
     */

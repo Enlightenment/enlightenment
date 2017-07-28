@@ -9,6 +9,7 @@
 #include "relative-pointer-unstable-v1-server-protocol.h"
 #include "pointer-constraints-unstable-v1-server-protocol.h"
 
+
 /* mutter uses 32, seems reasonable */
 #define HANDLE_LEN 32
 
@@ -661,6 +662,8 @@ _dmabuf_add(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
    return ECORE_CALLBACK_PASS_ON;
 }
 
+EINTERN Eina_Bool e_comp_wl_extensions_tizen_init(void);
+
 EINTERN Eina_Bool
 e_comp_wl_extensions_init(void)
 {
@@ -680,6 +683,8 @@ e_comp_wl_extensions_init(void)
 
    e_client_hook_add(E_CLIENT_HOOK_MOVE_BEGIN, _e_comp_wl_extensions_client_move_begin, NULL);
    e_client_hook_add(E_CLIENT_HOOK_MOVE_END, _e_comp_wl_extensions_client_move_end, NULL);
+
+   e_comp_wl_extensions_tizen_init();
 
    return EINA_TRUE;
 }
