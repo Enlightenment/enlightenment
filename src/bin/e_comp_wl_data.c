@@ -501,7 +501,7 @@ _e_comp_wl_data_device_selection_set(void *data EINA_UNUSED, E_Comp_Wl_Data_Sour
      }
 
    e_comp_wl->selection.data_source = sel_source = source;
-   e_comp_wl->clipboard.xwl_owner = NULL;
+   e_comp_wl->clipboard.xwl_owner = 0;
    source->serial = e_comp_wl->selection.serial = serial;
 
    if (e_comp_wl->kbd.enabled)

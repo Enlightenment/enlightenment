@@ -155,7 +155,7 @@ _xwl_fixes_selection_notify(void *d EINA_UNUSED, int t EINA_UNUSED, Ecore_X_Even
 {
    if (ev->owner == e_comp->cm_selection)
      {
-        e_comp_wl->clipboard.xwl_owner = NULL;
+        e_comp_wl->clipboard.xwl_owner = 0;
         return ECORE_CALLBACK_RENEW;
      }
    if (ev->atom == ECORE_X_ATOM_SELECTION_XDND)
@@ -237,12 +237,12 @@ _xwl_fixes_selection_notify(void *d EINA_UNUSED, int t EINA_UNUSED, Ecore_X_Even
              if (e_comp_wl->clipboard.source)
                e_comp_wl_clipboard_source_unref(e_comp_wl->clipboard.source);
              e_comp_wl->clipboard.source = NULL;
-             e_comp_wl->clipboard.xwl_owner = ev->owner ? e_pixmap_find_client(E_PIXMAP_TYPE_X, ev->owner) : NULL;
+             e_comp_wl->clipboard.xwl_owner = ev->owner;
              xconvertselection(ecore_x_display_get(), ECORE_X_ATOM_SELECTION_CLIPBOARD,
                ECORE_X_ATOM_SELECTION_TARGETS, xwl_dnd_atom, e_comp->cm_selection, 0);
           }
         else
-          e_comp_wl->clipboard.xwl_owner = NULL;
+          e_comp_wl->clipboard.xwl_owner = 0;
      }
    return ECORE_CALLBACK_RENEW;
 }
