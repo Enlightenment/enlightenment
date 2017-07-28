@@ -3617,7 +3617,7 @@ E_API Eina_Bool
 e_comp_object_damage_exists(Evas_Object *obj)
 {
    API_ENTRY EINA_FALSE;
-   return cw->updates_exist;
+   return cw->updates_exist || cw->updates_full;
 }
 
 E_API void
