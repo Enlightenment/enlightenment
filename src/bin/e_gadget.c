@@ -552,6 +552,7 @@ _site_layout(Evas_Object *o, Evas_Object_Box_Data *priv EINA_UNUSED, void *data)
    E_Gadget_Config *zgc;
 
    evas_object_geometry_get(o, &x, &y, &w, &h);
+   if ((!w) || (!h)) return;
    evas_object_geometry_set(zgs->events, x, y, w, h);
 
    evas_object_box_align_get(o, &ax, &ay);
