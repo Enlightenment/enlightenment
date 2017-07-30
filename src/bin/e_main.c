@@ -1558,11 +1558,16 @@ _e_main_test_formats(void)
    for (i = 0; i < EINA_C_ARRAY_LENGTH(types); i++)
      {
         char b[128], *t = types[i];
+        const char *key = NULL;
 
         snprintf(b, sizeof(b), "data/images/test.%s", types[i]);
         e_prefix_data_concat_static(buff, b);
-        evas_object_image_file_set(im, buff, NULL);
-        if (i == t_edj) t = "eet";
+        if (i == t_edj)
+          {
+             t = "eet";
+             key = "images/0";
+          }
+        evas_object_image_file_set(im, buff, key);
         switch (evas_object_image_load_error_get(im))
           {
            default:
