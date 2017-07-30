@@ -578,13 +578,13 @@ static void _manager_get_prop_cb(void *data, const Eldbus_Message *msg,
 
    if (eldbus_message_error_get(msg, &name, &text))
      {
-        ERR("Could not get properties. %s: %s", name, text);
+        WRN("Could not get properties. %s: %s", name, text);
         return;
      }
 
    if (!eldbus_message_arguments_get(msg, "a{sv}", &array))
      {
-        ERR("Error getting arguments.");
+        WRN("Error getting arguments.");
         return;
      }
 
@@ -635,13 +635,13 @@ static void _manager_get_wifi_prop_cb(void *data, const Eldbus_Message *msg,
 
    if (eldbus_message_error_get(msg, &name, &message))
      {
-        ERR("Could not get properties. %s: %s", name, message);
+        WRN("Could not get properties. %s: %s", name, message);
         return;
      }
 
    if (!eldbus_message_arguments_get(msg, "a{sv}", &array))
      {
-        ERR("Error getting arguments.");
+        WRN("Error getting arguments.");
         return;
      }
 
