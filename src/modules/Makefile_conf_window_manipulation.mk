@@ -1,5 +1,5 @@
 EXTRA_DIST += src/modules/conf_window_manipulation/module.desktop \
-src/modules/conf_window_manipulation/e-module-conf_winmanip.edj
+src/modules/conf_window_manipulation/e-module-conf_window_manipulation.edj
 if USE_MODULE_CONF_WINDOW_MANIPULATION
 conf_window_manipulationdir = $(MDIR)/conf_window_manipulation
 conf_window_manipulation_DATA = src/modules/conf_window_manipulation/module.desktop
