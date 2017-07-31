@@ -140,7 +140,7 @@ _site_recalc_job_cb(E_Gadget_Site *zgs)
 static void
 _site_recalc_job(E_Gadget_Site *zgs)
 {
-   if (zgs->calc_job) return;
+   if (zgs->calc_job) ecore_job_del(zgs->calc_job);
    zgs->calc_job = ecore_job_add((Ecore_Cb)_site_recalc_job_cb, zgs);
 }
 
