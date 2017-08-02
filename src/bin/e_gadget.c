@@ -476,7 +476,7 @@ _gadget_object_create(E_Gadget_Config *zgc)
      zgc->site->style_cb(zgc->site->layout, zgc->style.name, g);
 
    if (!zgc->site->orient)
-     _site_recalc_job(zgc->site);
+     evas_object_smart_need_recalculate_set(zgc->site->layout, 1);
    evas_object_event_callback_priority_add(g, EVAS_CALLBACK_DEL, EVAS_CALLBACK_PRIORITY_AFTER, _gadget_del, zgc);
    _gadget_reparent(zgc->site, zgc);
    elm_object_tree_focus_allow_set(zgc->gadget, 0);
@@ -587,7 +587,12 @@ _site_gadget_resize(Evas_Object *g, int w, int h, Evas_Coord *ww, Evas_Coord *hh
    if (!zgc->site->orient)
      {
         if ((w < (*ow)) || (h < (*oh)))
-          _site_recalc_job(zgc->site);
+          {
+             if (evas_smart_objects_calculating_get(e_comp->evas))
+               _site_recalc_job(zgc->site);
+             else
+               evas_object_smart_need_recalculate_set(zgc->site->layout, 1);
+          }
      }
    //fprintf(stderr, "%s: %dx%d\n", zgc->type, *ow, *oh);
    evas_object_resize(zgc->display, *ow, *oh);
@@ -603,7 +608,7 @@ _site_move(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *event_info E
    evas_object_geometry_set(zgs->events, x, y, w, h);
    evas_object_raise(zgs->events);
    if (!zgs->orient)
-     _site_recalc_job(zgs);
+     evas_object_smart_need_recalculate_set(zgs->layout, 1);
 }
 
 static void
@@ -1811,7 +1816,7 @@ static void
 _gadget_style_hints(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    E_Gadget_Config *zgc = data;
-   _site_recalc_job(zgc->site);
+   evas_object_smart_need_recalculate_set(zgc->site->layout, 1);
 }
 
 E_API Evas_Object *
