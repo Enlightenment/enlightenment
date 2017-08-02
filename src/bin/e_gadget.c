@@ -620,9 +620,10 @@ _site_layout_orient(Evas_Object *o, E_Gadget_Site *zgs)
    E_Gadget_Config *zgc;
    int mw, mh, sw, sh;
 
+   evas_object_geometry_get(o, &x, &y, &w, &h);
+   if ((!w) && (!h)) return;
    evas_object_size_hint_min_get(o, &mw, &mh);
    evas_object_size_hint_min_get(zgs->layout, &sw, &sh);
-   evas_object_geometry_get(o, &x, &y, &w, &h);
    evas_object_geometry_set(zgs->events, x, y, w, h);
 
    evas_object_box_align_get(o, &ax, &ay);
@@ -707,7 +708,6 @@ _site_layout(Evas_Object *o, Evas_Object_Box_Data *priv EINA_UNUSED, void *data)
    E_Gadget_Config *zgc;
 
    evas_object_geometry_get(o, &x, &y, &w, &h);
-   if ((!w) || (!h)) return;
    evas_object_geometry_set(zgs->events, x, y, w, h);
 
    evas_object_box_align_get(o, &ax, &ay);
@@ -717,6 +717,7 @@ _site_layout(Evas_Object *o, Evas_Object_Box_Data *priv EINA_UNUSED, void *data)
         _site_layout_orient(o, zgs);
         return;
      }
+   if ((!w) || (!h)) return;
    EINA_LIST_FOREACH(zgs->gadgets, l, zgc)
      {
         Evas_Coord gx = x, gy = y;
