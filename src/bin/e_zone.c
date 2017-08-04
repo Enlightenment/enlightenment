@@ -1296,12 +1296,13 @@ e_zone_useful_geometry_dirty(E_Zone *zone)
    /* ignore if pending event already exists */
    if (zone->useful_geometry_dirty) return;
 
+   zone->useful_geometry_dirty = 1;
+   if (!e_zone_useful_geometry_get(zone, NULL, NULL, NULL, NULL)) return;
    ev = E_NEW(E_Event_Zone_Move_Resize, 1);
    ev->zone = zone;
    e_object_ref(E_OBJECT(ev->zone));
    ecore_event_add(E_EVENT_ZONE_USEFUL_GEOMETRY_CHANGED, ev, _e_zone_event_generic_free, NULL);
 
-   zone->useful_geometry_dirty = 1;
    e_comp_clients_rescale();
 }
 
