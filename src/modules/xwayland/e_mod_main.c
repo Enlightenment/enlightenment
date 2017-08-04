@@ -329,6 +329,7 @@ setup_lock(void)
           {
            case EEXIST:
              exs->disp++;
+             EINA_FALLTHROUGH;
            case EAGAIN:
              continue;
            case 0:
