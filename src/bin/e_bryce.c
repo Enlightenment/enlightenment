@@ -202,7 +202,13 @@ _bryce_autosize(Bryce *b)
    if (!b->autosize)
      {
         if (b->parent == e_comp->elm)
-          w = e_comp_zone_number_get(b->zone)->w, h = e_comp_zone_number_get(b->zone)->h;
+          {
+             w = e_comp_zone_number_get(b->zone)->w;
+             if (b->orient == E_GADGET_SITE_ORIENT_VERTICAL)
+               e_zone_useful_geometry_get(e_comp_zone_number_get(b->zone), NULL, NULL, NULL, &h);
+             else
+               h = e_comp_zone_number_get(b->zone)->h;
+          }
         else
           evas_object_geometry_get(b->parent, NULL, NULL, &w, &h);
         if (b->size_changed)
@@ -225,7 +231,11 @@ _bryce_autosize(Bryce *b)
         E_Zone *zone;
 
         zone = e_comp_zone_number_get(b->zone);
-        maxw = zone->w, maxh = zone->h;
+        maxw = zone->w;
+        if (b->orient == E_GADGET_SITE_ORIENT_VERTICAL)
+          e_zone_useful_geometry_get(e_comp_zone_number_get(b->zone), NULL, NULL, NULL, &maxh);
+        else
+          maxh = zone->h;
      }
    else
      evas_object_geometry_get(b->parent, NULL, NULL, &maxw, &maxh);
