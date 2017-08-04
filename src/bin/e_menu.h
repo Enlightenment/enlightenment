@@ -204,6 +204,7 @@ E_API void         e_menu_item_disabled_set(E_Menu_Item *mi, int disable);
 E_API void         e_menu_idler_before(void);
 
 E_API Eina_Bool    e_menu_is_active(void);
+E_API E_Menu      *e_menu_active_get(void);
 
 #endif
 #endif

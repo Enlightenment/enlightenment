@@ -1207,6 +1207,12 @@ e_menu_is_active(void)
    return _e_menu_win == e_comp->ee_win;
 }
 
+E_API E_Menu *
+e_menu_active_get(void)
+{
+   return _e_active_menus ? eina_list_last_data_get(_e_active_menus) : NULL;
+}
+
 /* local subsystem functions */
 static void
 _e_menu_dangling_cb(void *data)
