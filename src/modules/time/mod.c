@@ -67,8 +67,8 @@ clock_init(void)
         e_action_predef_name_set(N_("Clock"), N_("Toggle calendar"), "clock", "show_calendar", NULL, 0);
      }
 
-   e_gadget_type_add("Digital Clock", digital_clock_create, digital_clock_wizard);
-   e_gadget_type_add("Analog Clock", analog_clock_create, analog_clock_wizard);
+   e_gadget_type_add("Digital Clock", digital_clock_create, NULL);
+   e_gadget_type_add("Analog Clock", analog_clock_create, NULL);
    time_init();
 }
 

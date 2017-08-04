@@ -455,53 +455,6 @@ analog_clock_create(Evas_Object *parent, int *id, E_Gadget_Site_Orient orient)
    return clock_create(parent, inst, orient);
 }
 
-typedef struct Wizard_Item
-{
-   E_Gadget_Wizard_End_Cb cb;
-   void *data;
-   int id;
-} Wizard_Item;
-
-static void
-_wizard_end(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
-{
-   Wizard_Item *wi = data;
-
-   wi->cb(wi->data, wi->id);
-   free(wi);
-}
-
-static Evas_Object *
-clock_wizard(E_Gadget_Wizard_End_Cb cb, void *data, Eina_Bool digital)
-{
-   int id = 0;
-   Config_Item *ci;
-   Wizard_Item *wi;
-   Evas_Object *obj;
-
-   wi = E_NEW(Wizard_Item, 1);
-   wi->cb = cb;
-   wi->data = data;
-
-   ci = _conf_item_get(&id, digital);
-   wi->id = ci->id;
-   obj = config_clock(ci, NULL);
-   evas_object_event_callback_add(obj, EVAS_CALLBACK_DEL, _wizard_end, wi);
-   return obj;
-}
-
-EINTERN Evas_Object *
-digital_clock_wizard(E_Gadget_Wizard_End_Cb cb, void *data)
-{
-   return clock_wizard(cb, data, 1);
-}
-
-EINTERN Evas_Object *
-analog_clock_wizard(E_Gadget_Wizard_End_Cb cb, void *data)
-{
-   return clock_wizard(cb, data, 0);
-}
-
 EINTERN void
 time_config_update(Config_Item *ci)
 {
