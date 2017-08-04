@@ -2319,7 +2319,6 @@ _editor_gadget_new(void *data, Evas_Object *obj, void *event_info)
    Gadget_Item *gi = data;
    E_Gadget_Site_Orient orient;
 
-   ZGS_GET(gi->site);
    evas_object_hide(desktop_editor);
    evas_object_pass_events_set(desktop_editor, 1);
    orient = e_gadget_site_orient_get(gi->site);
@@ -2327,6 +2326,11 @@ _editor_gadget_new(void *data, Evas_Object *obj, void *event_info)
    e_comp_object_util_del_list_append(gi->editor, pointer_site);
    
    e_gadget_site_gadget_add(pointer_site, e_gadget_type_get(gi->gadget), 1);
+   ZGS_GET(pointer_site);
+   {
+      E_Gadget_Config *zgc = eina_list_data_get(zgs->gadgets);
+      zgc->moving = 1;
+   }
    elm_object_disabled_set(gi->editor, 1);
    if (eina_streq(evas_object_type_get(obj), "elm_genlist"))
      elm_genlist_item_selected_set(event_info, 0);
