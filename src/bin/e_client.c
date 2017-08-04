@@ -5325,82 +5325,19 @@ e_client_signal_resize_end(E_Client *ec, const char *dir EINA_UNUSED, const char
 E_API void
 e_client_resize_limit(const E_Client *ec, int *w, int *h)
 {
-   double a;
-   Eina_Bool inc_h;
-
+   int dw, dh;
    E_OBJECT_CHECK(ec);
    E_OBJECT_TYPE_CHECK(ec, E_CLIENT_TYPE);
 
-   inc_h = (*h - ec->h > 0);
    if (ec->frame)
-     e_comp_object_frame_wh_unadjust(ec->frame, *w, *h, w, h);
-   if (*h < 1) *h = 1;
-   if (*w < 1) *w = 1;
-   if ((ec->icccm.base_w >= 0) &&
-       (ec->icccm.base_h >= 0))
      {
-        int tw, th;
-
-        tw = *w - ec->icccm.base_w;
-        th = *h - ec->icccm.base_h;
-        if (tw < 1) tw = 1;
-        if (th < 1) th = 1;
-        a = (double)(tw) / (double)(th);
-        if (EINA_DBL_NONZERO(ec->icccm.min_aspect) &&
-            (a < ec->icccm.min_aspect))
-          {
-             if (inc_h)
-               tw = th * ec->icccm.min_aspect;
-             else
-               th = tw / ec->icccm.max_aspect;
-             *w = tw + ec->icccm.base_w;
-             *h = th + ec->icccm.base_h;
-          }
-        else if (EINA_DBL_NONZERO(ec->icccm.max_aspect) &&
-                 (a > ec->icccm.max_aspect))
-          {
-             tw = th * ec->icccm.max_aspect;
-             *w = tw + ec->icccm.base_w;
-          }
+        e_comp_object_frame_wh_unadjust(ec->frame, ec->w, ec->h, &dw, &dh);
+        e_comp_object_frame_wh_unadjust(ec->frame, *w, *h, w, h);
      }
    else
-     {
-        a = (double)*w / (double)*h;
-        if (EINA_DBL_NONZERO(ec->icccm.min_aspect) &&
-            (a < ec->icccm.min_aspect))
-          {
-             if (inc_h)
-               *w = *h * ec->icccm.min_aspect;
-             else
-               *h = *w / ec->icccm.min_aspect;
-          }
-        else if (EINA_DBL_NONZERO(ec->icccm.max_aspect) &&
-                 (a > ec->icccm.max_aspect))
-          *w = *h * ec->icccm.max_aspect;
-     }
-   if (ec->icccm.step_w > 0)
-     {
-        if (ec->icccm.base_w >= 0)
-          *w = ec->icccm.base_w +
-            (((*w - ec->icccm.base_w) / ec->icccm.step_w) *
-             ec->icccm.step_w);
-        else
-          *w = ec->icccm.min_w +
-            (((*w - ec->icccm.min_w) / ec->icccm.step_w) *
-             ec->icccm.step_w);
-     }
-   if (ec->icccm.step_h > 0)
-     {
-        if (ec->icccm.base_h >= 0)
-          *h = ec->icccm.base_h +
-            (((*h - ec->icccm.base_h) / ec->icccm.step_h) *
-             ec->icccm.step_h);
-        else
-          *h = ec->icccm.min_h +
-            (((*h - ec->icccm.min_h) / ec->icccm.step_h) *
-             ec->icccm.step_h);
-     }
-
+     dw = ec->w, dh = ec->h;
+   dw = abs(*w - dw);
+   dh = abs(*h - dh);
    if (*h < 1) *h = 1;
    if (*w < 1) *w = 1;
 
@@ -5410,6 +5347,103 @@ e_client_resize_limit(const E_Client *ec, int *w, int *h)
    if ((ec->icccm.max_h > 0) && (*h > ec->icccm.max_h)) *h = ec->icccm.max_h;
    else if (*h < ec->icccm.min_h)
      *h = ec->icccm.min_h;
+
+   if (ec->icccm.step_w > 0)
+     {
+        int bw = ec->icccm.base_w ?: ec->icccm.min_w;
+
+        bw = bw + (((*w - bw) / ec->icccm.step_w) * ec->icccm.step_w);
+        if ((bw > ec->icccm.min_w) && ((ec->icccm.max_w < 1) || (bw < ec->icccm.max_w)))
+          *w = bw;
+     }
+   if (ec->icccm.step_h > 0)
+     {
+        int bh = ec->icccm.base_h ?: ec->icccm.min_h;
+
+        bh = bh + (((*h - bh) / ec->icccm.step_h) * ec->icccm.step_h);
+        if ((bh > ec->icccm.min_h) && ((ec->icccm.max_h < 1) || (bh < ec->icccm.max_h)))
+          *h = bh;
+     }
+
+   if (EINA_DBL_NONZERO(ec->icccm.min_aspect) ||
+       EINA_DBL_NONZERO(ec->icccm.max_aspect))
+     {
+        double a = (double)*w / *h;
+        Evas_Aspect_Control aspect;
+        int aw, ah;
+        double val;
+
+        if (a < ec->icccm.min_aspect)
+          {
+             if (dw)
+               aspect = EVAS_ASPECT_CONTROL_HORIZONTAL;
+             else if (dh)
+               aspect = EVAS_ASPECT_CONTROL_VERTICAL;
+             else
+               aspect = EVAS_ASPECT_CONTROL_BOTH;
+             switch (aspect)
+               {
+                case EVAS_ASPECT_CONTROL_HORIZONTAL:
+                  val = ((*h - (*w / ec->icccm.min_aspect)) * ec->icccm.step_h) / ec->icccm.step_h;
+                  if (val > 0)
+                    ah = ceil(val);
+                  else
+                    ah = floor(val);
+                  if (*h - ah > ec->icccm.min_h)
+                    {
+                       *h -= ah;
+                       break;
+                    }
+                default:
+                  val = (((*h * ec->icccm.min_aspect) - *w) * ec->icccm.step_w) / ec->icccm.step_w;
+                  if (val > 0)
+                    aw = ceil(val);
+                  else
+                    aw = floor(val);
+                  if (*w + aw < ec->icccm.max_w)
+                    *w += aw;
+                  break;
+               }
+          }
+        a = (double)*w / *h;
+        if (a < ec->icccm.min_aspect) abort();
+        if (a > ec->icccm.max_aspect)
+          {
+             if (dw)
+               aspect = EVAS_ASPECT_CONTROL_HORIZONTAL;
+             else if (dh)
+               aspect = EVAS_ASPECT_CONTROL_VERTICAL;
+             else
+               aspect = EVAS_ASPECT_CONTROL_BOTH;
+             switch (aspect)
+               {
+                case EVAS_ASPECT_CONTROL_HORIZONTAL:
+                  val = (((*w / ec->icccm.max_aspect) - *h) * ec->icccm.step_h) / ec->icccm.step_h;
+                  if (val > 0)
+                    ah = ceil(val);
+                  else
+                    ah = floor(val);
+                  if (*h + ah > ec->icccm.max_h)
+                    {
+                       *h += ah;
+                       break;
+                    }
+                default:
+                  val = ((*w - (*h * ec->icccm.max_aspect)) * ec->icccm.step_w) / ec->icccm.step_w;
+                  if (val > 0)
+                    aw = ceil(val);
+                  else
+                    aw = floor(val);
+                  if (*w - aw > ec->icccm.min_w)
+                    *w -= aw;
+                  break;
+               }
+          }
+     }
+
+   if (*h < 1) *h = 1;
+   if (*w < 1) *w = 1;
+
 
    if (ec->frame)
      e_comp_object_frame_wh_adjust(ec->frame, *w, *h, w, h);
