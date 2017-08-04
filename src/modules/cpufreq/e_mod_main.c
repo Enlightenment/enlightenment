@@ -1153,10 +1153,16 @@ _cpufreq_event_cb_powersave(void *data EINA_UNUSED, int type, void *event)
                _cpufreq_set_governor("conservative");
              break;
           }
+        EINA_FALLTHROUGH;
+        /* no break */
 
       case E_POWERSAVE_MODE_EXTREME:
+      case E_POWERSAVE_MODE_FREEZE:
         if (has_powersave)
           _cpufreq_set_governor("powersave");
+        break;
+
+      default:
         break;
      }
 

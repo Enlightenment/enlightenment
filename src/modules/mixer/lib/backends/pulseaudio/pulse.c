@@ -716,66 +716,68 @@ _pulse_pa_state_cb(pa_context *context, void *data)
          break;
 
       case PA_CONTEXT_READY:
-         {
-            ctx->connect = NULL;
-            ctx->connected = EINA_TRUE;
-            pa_context_set_subscribe_callback(context, _subscribe_cb, ctx);
-            if (!(o = pa_context_subscribe(context, (pa_subscription_mask_t)
-                                           (PA_SUBSCRIPTION_MASK_SINK|
-                                            PA_SUBSCRIPTION_MASK_SOURCE|
-                                            PA_SUBSCRIPTION_MASK_SINK_INPUT|
-                                            PA_SUBSCRIPTION_MASK_SOURCE_OUTPUT|
-                                            PA_SUBSCRIPTION_MASK_CLIENT|
-                                            PA_SUBSCRIPTION_MASK_SERVER|
-                                            PA_SUBSCRIPTION_MASK_CARD),
-                                           NULL, NULL)))
-              {
-                 ERR("pa_context_subscribe() failed");
-                 return;
-              }
-            pa_operation_unref(o);
+        ctx->connect = NULL;
+        ctx->connected = EINA_TRUE;
+        pa_context_set_subscribe_callback(context, _subscribe_cb, ctx);
+        if (!(o = pa_context_subscribe(context, (pa_subscription_mask_t)
+                                       (PA_SUBSCRIPTION_MASK_SINK|
+                                        PA_SUBSCRIPTION_MASK_SOURCE|
+                                        PA_SUBSCRIPTION_MASK_SINK_INPUT|
+                                        PA_SUBSCRIPTION_MASK_SOURCE_OUTPUT|
+                                        PA_SUBSCRIPTION_MASK_CLIENT|
+                                        PA_SUBSCRIPTION_MASK_SERVER|
+                                        PA_SUBSCRIPTION_MASK_CARD),
+                                       NULL, NULL)))
+          {
+             ERR("pa_context_subscribe() failed");
+             return;
+          }
+        pa_operation_unref(o);
 
-            if (!(o = pa_context_get_sink_info_list(context, _sink_cb, ctx)))
-              {
-                 ERR("pa_context_get_sink_info_list() failed");
-                 return;
-              }
-            pa_operation_unref(o);
+        if (!(o = pa_context_get_sink_info_list(context, _sink_cb, ctx)))
+          {
+             ERR("pa_context_get_sink_info_list() failed");
+             return;
+          }
+        pa_operation_unref(o);
 
-            if (!(o = pa_context_get_sink_input_info_list(context,
-                                                          _sink_input_cb,
-                                                          ctx)))
-              {
-                 ERR("pa_context_get_sink_input_info_list() failed");
-                 return;
-              }
-            pa_operation_unref(o);
-
-            if (!(o = pa_context_get_source_info_list(context, _source_cb,
+        if (!(o = pa_context_get_sink_input_info_list(context,
+                                                      _sink_input_cb,
                                                       ctx)))
-              {
-                 ERR("pa_context_get_source_info_list() failed");
-                 return;
-              }
-            pa_operation_unref(o);
+          {
+             ERR("pa_context_get_sink_input_info_list() failed");
+             return;
+          }
+        pa_operation_unref(o);
 
-            if (!(o = pa_context_get_server_info(context, _server_info_cb,
-                                                 ctx)))
-              {
-                 ERR("pa_context_get_server_info() failed");
-                 return;
-              }
-            pa_operation_unref(o);
-            break;
-         }
+        if (!(o = pa_context_get_source_info_list(context, _source_cb,
+                                                  ctx)))
+          {
+             ERR("pa_context_get_source_info_list() failed");
+             return;
+          }
+        pa_operation_unref(o);
+
+        if (!(o = pa_context_get_server_info(context, _server_info_cb,
+                                             ctx)))
+          {
+             ERR("pa_context_get_server_info() failed");
+             return;
+          }
+        pa_operation_unref(o);
+        break;
 
       case PA_CONTEXT_FAILED:
          WRN("PA_CONTEXT_FAILED");
          if (!ctx->connect)
            ctx->connect = ecore_timer_loop_add(1, _pulse_connect, data);
          goto err;
+
       case PA_CONTEXT_TERMINATED:
          ERR("PA_CONTEXT_TERMINATE:");
+         EINA_FALLTHROUGH;
+        /* no break */
+
       default:
          if (ctx->connect)
            {

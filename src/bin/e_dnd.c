@@ -718,7 +718,9 @@ _e_drag_win_get(const E_Drop_Handler *h, int xdnd)
            case E_GADCON_CLIENT_TYPE:
              gc = ((E_Gadcon_Client *)(void *)(h->obj))->gadcon;
              if (!gc) return 0;
+             EINA_FALLTHROUGH;
              /* no break */
+
            case E_GADCON_TYPE:
              if (!gc) gc = (E_Gadcon *)h->obj;
 
@@ -821,7 +823,9 @@ _e_dnd_object_layer_get(E_Drop_Handler *h)
       case E_GADCON_CLIENT_TYPE:
         /* add 1 to ensure we're above a potential receiving gadcon */
         adjust = 1;
+        EINA_FALLTHROUGH;
         /* no break */
+
       default:
         adjust += e_comp_e_object_layer_get(obj);
      }

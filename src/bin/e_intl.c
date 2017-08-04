@@ -713,17 +713,25 @@ e_intl_locale_parts_get(const char *locale)
       case 0:
         language[tmp_idx] = 0;
         tmp_idx = 0;
+        EINA_FALLTHROUGH;
+        /* no break */
 
       case 1:
         territory[tmp_idx] = 0;
         tmp_idx = 0;
+        EINA_FALLTHROUGH;
+        /* no break */
 
       case 2:
         codeset[tmp_idx] = 0;
         tmp_idx = 0;
+        EINA_FALLTHROUGH;
+        /* no break */
 
       case 3:
         modifier[tmp_idx] = 0;
+        EINA_FALLTHROUGH;
+        /* no break */
 
       default:
         break;

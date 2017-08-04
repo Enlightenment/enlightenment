@@ -1624,7 +1624,9 @@ e_comp_e_object_layer_get(const E_Object *obj)
       case E_GADCON_CLIENT_TYPE:
         gc = ((E_Gadcon_Client *)(void *)(obj))->gadcon;
         EINA_SAFETY_ON_NULL_RETURN_VAL(gc, 0);
+        EINA_FALLTHROUGH;
         /* no break */
+
       case E_GADCON_TYPE:
         if (!gc) gc = (E_Gadcon *)obj;
         if (gc->shelf) return gc->shelf->layer;

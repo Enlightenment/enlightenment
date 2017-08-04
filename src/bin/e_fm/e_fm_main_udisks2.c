@@ -1000,6 +1000,9 @@ _e_fm_main_udisks2_volume_mounts_update(E_Volume *v, Eldbus_Message_Iter *arr3, 
                   if (m) mounts = eina_list_append(mounts, m);
                }
              while (eldbus_message_iter_next(fuckyouglib));
+             EINA_FALLTHROUGH;
+             /* no break */
+
            default: continue;
           }
      }

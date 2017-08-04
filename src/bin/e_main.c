@@ -1570,19 +1570,23 @@ _e_main_test_formats(void)
         evas_object_image_file_set(im, buff, key);
         switch (evas_object_image_load_error_get(im))
           {
-           default:
-             e_error_message_show(_("Enlightenment found Evas can't load '%s' files. "
-                                    "Check Evas has '%s' loader support.\n"), t, t);
-             if (i) _e_main_shutdown(-1);
-             break;
            case EVAS_LOAD_ERROR_CORRUPT_FILE:
            case EVAS_LOAD_ERROR_DOES_NOT_EXIST:
            case EVAS_LOAD_ERROR_PERMISSION_DENIED:
              e_error_message_show(_("Enlightenment cannot access test image for '%s' filetype. "
                                     "Check your install for setup issues.\n"), t);
+             EINA_FALLTHROUGH;
+             // fallthrough anyway as normally these files should work
+
            case EVAS_LOAD_ERROR_NONE:
              snprintf(b, sizeof(b), ".%s", types[i]);
              efreet_icon_extension_add(b);
+             break;
+
+           default:
+             e_error_message_show(_("Enlightenment found Evas can't load '%s' files. "
+                                    "Check Evas has '%s' loader support.\n"), t, t);
+             if (i) _e_main_shutdown(-1);
              break;
           }
      }

@@ -240,6 +240,9 @@ _cpuclock_event_cb_powersave(void *data, int type, void *event)
                _cpuclock_set_governor("conservative");
              break;
           }
+        EINA_FALLTHROUGH;
+        /* no break */
+
       case E_POWERSAVE_MODE_EXTREME:
       default:
         if (has_powersave)

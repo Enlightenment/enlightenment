@@ -5945,6 +5945,8 @@ _e_fm2_typebuf_match(Evas_Object *obj, int next)
                   x++;
                   break;
                }
+             EINA_FALLTHROUGH;
+             /* no break */
 
            case 1:
              _e_fm2_icon_desel_any(obj);

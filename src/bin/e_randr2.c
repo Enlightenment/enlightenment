@@ -407,6 +407,8 @@ _config_update(E_Randr2 *r, E_Config_Randr2 *cfg, Eina_Bool update_only)
                          ecore_timer_loop_add(2, _config_ask_dialog, eina_strdup(s->info.name));
                        else
                          ecore_timer_loop_add(0.01, _config_ask_dialog, eina_strdup(s->info.name));
+                       EINA_FALLTHROUGH;
+                       /* no break */
                      case E_RANDR2_POLICY_NONE:
                        cs->rel_mode = E_RANDR2_RELATIVE_NONE;
                        break;
