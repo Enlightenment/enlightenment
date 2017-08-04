@@ -150,6 +150,7 @@ _editor_site_visible(void)
    Eina_List *l;
    E_Gadget_Site *zgs;
 
+   if (desktop_editor) return evas_object_visible_get(desktop_editor);
    EINA_LIST_FOREACH(sites->sites, l, zgs)
      if (zgs->editor && evas_object_visible_get(zgs->editor)) return EINA_TRUE;
    return EINA_FALSE;
