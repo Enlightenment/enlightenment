@@ -442,6 +442,8 @@ src/bin/generated/session-recovery-protocol.c \
 src/bin/generated/session-recovery-server-protocol.h \
 src/bin/generated/www-protocol.c \
 src/bin/generated/www-server-protocol.h \
+src/bin/generated/action_route-protocol.c \
+src/bin/generated/action_route-server-protocol.h \
 src/bin/generated/xdg-foreign-unstable-v1-protocol.c \
 src/bin/generated/xdg-foreign-unstable-v1-server-protocol.h \
 src/bin/generated/relative-pointer-unstable-v1-protocol.c \

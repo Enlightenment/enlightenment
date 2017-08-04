@@ -8,6 +8,7 @@
 #include "xdg-foreign-unstable-v1-server-protocol.h"
 #include "relative-pointer-unstable-v1-server-protocol.h"
 #include "pointer-constraints-unstable-v1-server-protocol.h"
+#include "action_route-server-protocol.h"
 
 
 /* mutter uses 32, seems reasonable */
@@ -570,6 +571,218 @@ _e_comp_wl_zwp_pointer_constraints_v1_confine_pointer(struct wl_client *client, 
 }
 
 /////////////////////////////////////////////////////////
+extern E_Action *(*e_binding_key_list_cb)(E_Binding_Context, Ecore_Event_Key*, E_Binding_Modifier, E_Binding_Key **);
+static Eina_Hash *key_bindings;
+
+typedef struct Action_Route
+{
+   union
+   {
+      E_Binding_Key key;
+   } binding;
+   uint32_t mode;
+   uint32_t state;
+   struct wl_resource *res;
+   struct wl_resource *surface;
+} Action_Route;
+
+static E_Action *
+_action_route_key_list_cb(E_Binding_Context ctxt, Ecore_Event_Key *ev, E_Binding_Modifier mod, E_Binding_Key **bind_ret)
+{
+   Eina_List *l, *ll;
+   Action_Route *ar;
+   E_Binding_Key *binding;
+
+   if (bind_ret) *bind_ret = NULL;
+   l = eina_hash_find(key_bindings, ev->key);
+   EINA_LIST_FOREACH(l, ll, ar)
+     {
+        E_Client *ec;
+
+        if (ar->state != ACTION_ROUTE_KEY_GRAB_STATE_ACTIVE) break;
+        binding = &ar->binding.key;
+        if ((!binding->any_mod) && (binding->mod != mod)) continue;
+        if (!e_bindings_context_match(binding->ctxt, ctxt)) continue;
+        ec = wl_resource_get_user_data(ar->surface);
+        if (!ec) continue;//wtf?
+        if (bind_ret) *bind_ret = binding;
+        switch (ar->mode)
+          {
+             /* if exclusive client has grab, activate. otherwise, no actions allowed */
+             case ACTION_ROUTE_MODE_EXCLUSIVE:
+               if (!ec->focused) return NULL;
+               return e_action_find(binding->action);
+             /* all surfaces for wl_client share the grab; if any surface has focus, activate. */
+             case ACTION_ROUTE_MODE_FOCUS_SHARED:
+               {
+                  struct wl_client *client;
+
+                  client = wl_resource_get_client(ar->surface);
+                  if (!e_client_focused_get()) continue;
+                  if (wl_resource_get_client(e_client_focused_get()->comp_data->surface) != client)
+                    continue;
+                  return e_action_find(binding->action);
+               }
+             /* only activate if surface has focus and is on top */
+             case ACTION_ROUTE_MODE_FOCUS_TOPMOST:
+             if (!ec->focused) continue;
+             {
+                E_Client *aec;
+                Eina_Bool valid = EINA_TRUE;
+
+                for (aec = e_client_above_get(ec); aec; aec = e_client_above_get(aec))
+                  {
+                     if (aec->layer > E_LAYER_CLIENT_PRIO)
+                       return e_action_find(binding->action);
+                     if (evas_object_visible_get(aec->frame))
+                       {
+                          valid = EINA_FALSE;
+                          break;
+                       }
+                  }
+                if (valid)
+                  return e_action_find(binding->action);
+                continue;
+              }
+          }
+     }
+   if (bind_ret) *bind_ret = NULL;
+   return NULL;
+}
+
+static Eina_Bool
+_action_route_is_allowed(const char *action, const char *params)
+{
+   /* FIXME: allow 1-2 bindings maybe */
+   return EINA_FALSE;
+}
+
+static Eina_Bool
+_action_route_can_override(const E_Binding_Key *binding)
+{
+   if (!binding) return EINA_TRUE;
+   /* FIXME: determine full list of overridable binding contexts */
+   if ((binding->ctxt == E_BINDING_CONTEXT_ANY) ||
+       (binding->ctxt == E_BINDING_CONTEXT_WINLIST))
+     return EINA_TRUE;
+   return EINA_FALSE;
+}
+
+static void
+_e_comp_wl_action_route_grab_del(struct wl_resource *resource)
+{
+   Eina_List *l, *ll;
+   Action_Route *ar;
+   Eina_Bool update;
+
+   /* FIXME: delete active actions? */
+   ar = wl_resource_get_user_data(resource);
+   if (!ar) return;
+   eina_hash_list_remove(key_bindings, ar->binding.key.key, ar);
+   update = (ar->mode == ACTION_ROUTE_MODE_EXCLUSIVE) && (ar->state == ACTION_ROUTE_KEY_GRAB_STATE_ACTIVE);
+   l = eina_hash_find(key_bindings, ar->binding.key.key);
+   eina_stringshare_del(ar->binding.key.key);
+   eina_stringshare_del(ar->binding.key.action);
+   eina_stringshare_del(ar->binding.key.params);
+   free(ar);
+   if (!update) return;
+   EINA_LIST_FOREACH(l, ll, ar)
+     {
+        /* all action routes are active until an exclusive or active grab has been reached */
+        if (ar->state == ACTION_ROUTE_KEY_GRAB_STATE_ACTIVE) break;//futureproofing...
+        ar->state = ACTION_ROUTE_KEY_GRAB_STATE_ACTIVE;
+        action_route_key_grab_send_status(ar->res, ar->state);
+        if (ar->mode == ACTION_ROUTE_MODE_EXCLUSIVE) break;
+     }
+}
+
+static void
+_e_comp_wl_action_route_grab_destroy(struct wl_client *client EINA_UNUSED, struct wl_resource *resource)
+{
+   _e_comp_wl_action_route_grab_del(resource);
+}
+
+static const struct action_route_key_grab_interface _e_action_route_grab_interface =
+{
+   _e_comp_wl_action_route_grab_destroy,
+};
+
+static void
+_e_comp_wl_action_route_grab_key(struct wl_client *client, struct wl_resource *resource EINA_UNUSED,
+                                                           uint32_t id,
+                                                           struct wl_resource *surface,
+                                                           const char *key,
+                                                           uint32_t mode,
+                                                           uint32_t modifiers,
+                                                           const char *action,
+                                                           const char *params)
+{
+   struct wl_resource *rt;
+   E_Binding_Key *binding;
+   Eina_List *l, *ll;
+   Action_Route *ar, *lar;
+   E_Binding_Context ctxt = E_BINDING_CONTEXT_WINDOW;
+
+   rt = wl_resource_create(client, &action_route_key_grab_interface, 1, id);
+   if (!rt)
+     {
+        ERR("Could not create action route");
+        wl_client_post_no_memory(client);
+        return;
+     }
+   wl_resource_set_implementation(rt, &_e_action_route_grab_interface, NULL,
+                                  _e_comp_wl_action_route_grab_del);
+   binding = e_bindings_key_find(key, modifiers, 0);
+   if ((!_action_route_is_allowed(action, params)) || (!_action_route_can_override(binding)))
+     {
+        action_route_key_grab_send_status(rt, ACTION_ROUTE_KEY_GRAB_STATE_REJECTED);
+        wl_resource_destroy(rt);
+        return;
+     }
+   ar = E_NEW(Action_Route, 1);
+   ar->mode = mode;
+   ar->res = rt;
+   ar->surface = surface;
+   binding = &ar->binding.key;
+   switch (mode)
+     {
+      case ACTION_ROUTE_MODE_EXCLUSIVE:
+        ctxt = E_BINDING_CONTEXT_ANY;
+        break;
+      case ACTION_ROUTE_MODE_FOCUS_SHARED:
+        ctxt = E_BINDING_CONTEXT_WINDOW;
+        break;
+      case ACTION_ROUTE_MODE_FOCUS_TOPMOST:
+        ctxt = E_BINDING_CONTEXT_WINDOW;
+        break;
+     }
+   binding->ctxt = ctxt;
+   binding->key = eina_stringshare_add(key);
+   binding->mod = modifiers;
+   binding->any_mod = 0;
+   binding->action = eina_stringshare_add(action);
+   binding->params = eina_stringshare_add(params);
+   wl_resource_set_user_data(rt, ar);
+   l = eina_hash_find(key_bindings, key);
+   EINA_LIST_FOREACH(l, ll, lar)
+     {
+        if (lar->mode == ACTION_ROUTE_MODE_EXCLUSIVE)
+          {
+             ar->state = ACTION_ROUTE_KEY_GRAB_STATE_QUEUED;
+             continue;
+          }
+        ar->state = ACTION_ROUTE_KEY_GRAB_STATE_ACTIVE;
+        if (ar->mode == ACTION_ROUTE_MODE_EXCLUSIVE)
+          l = eina_list_prepend_relative(l, ar, ll);
+        else
+          l = eina_list_append(l, ar);
+        break;
+     }
+   eina_hash_set(key_bindings, key, l);
+   action_route_key_grab_send_status(ar->res, ar->state);
+}
+
+/////////////////////////////////////////////////////////
 
 static const struct zwp_e_session_recovery_interface _e_session_recovery_interface =
 {
@@ -608,6 +821,11 @@ static const struct zwp_pointer_constraints_v1_interface _e_zwp_pointer_constrai
    _e_comp_wl_zwp_pointer_constraints_v1_confine_pointer,
 };
 
+static const struct action_route_interface _e_action_route_interface =
+{
+   _e_comp_wl_action_route_grab_key,
+};
+
 #define GLOBAL_BIND_CB(NAME, IFACE, ...) \
 static void \
 _e_comp_wl_##NAME##_cb_bind(struct wl_client *client, void *data EINA_UNUSED, uint32_t version EINA_UNUSED, uint32_t id) \
@@ -622,6 +840,7 @@ _e_comp_wl_##NAME##_cb_bind(struct wl_client *client, void *data EINA_UNUSED, ui
      }\
 \
    wl_resource_set_implementation(res, &_e_##NAME##_interface, NULL, NULL);\
+   __VA_ARGS__ \
 }
 
 GLOBAL_BIND_CB(session_recovery, zwp_e_session_recovery_interface)
@@ -630,6 +849,10 @@ GLOBAL_BIND_CB(zxdg_exporter_v1, zxdg_exporter_v1_interface)
 GLOBAL_BIND_CB(zxdg_importer_v1, zxdg_importer_v1_interface)
 GLOBAL_BIND_CB(zwp_relative_pointer_manager_v1, zwp_relative_pointer_manager_v1_interface)
 GLOBAL_BIND_CB(zwp_pointer_constraints_v1, zwp_pointer_constraints_v1_interface)
+GLOBAL_BIND_CB(action_route, action_route_interface,
+     e_binding_key_list_cb = _action_route_key_list_cb;
+     key_bindings = eina_hash_string_superfast_new(NULL);
+)
 
 
 #define GLOBAL_CREATE_OR_RETURN(NAME, IFACE, VERSION) \
@@ -678,6 +901,7 @@ e_comp_wl_extensions_init(void)
    GLOBAL_CREATE_OR_RETURN(zwp_relative_pointer_manager_v1, zwp_relative_pointer_manager_v1_interface, 1);
    GLOBAL_CREATE_OR_RETURN(zwp_pointer_constraints_v1, zwp_pointer_constraints_v1_interface, 1);
    e_comp_wl->extensions->zwp_pointer_constraints_v1.constraints = eina_hash_pointer_new(NULL);
+   GLOBAL_CREATE_OR_RETURN(action_route, action_route_interface, 1);
 
    ecore_event_handler_add(ECORE_WL2_EVENT_SYNC_DONE, _dmabuf_add, NULL);
 

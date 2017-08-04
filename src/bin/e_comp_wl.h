@@ -137,6 +137,10 @@ typedef struct E_Comp_Wl_Extension_Data
         Eina_Hash *constraints;
      } zwp_pointer_constraints_v1;
    struct
+   {
+     struct wl_global *global;
+   } action_route;
+   struct
      {
         struct wl_global *global;
      } efl_aux_hints;
