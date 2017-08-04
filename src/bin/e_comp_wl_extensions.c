@@ -227,11 +227,11 @@ static const struct www_interface _e_www_interface =
 
 #define GLOBAL_BIND_CB(NAME, IFACE, ...) \
 static void \
-_e_comp_wl_##NAME##_cb_bind(struct wl_client *client, void *data EINA_UNUSED, uint32_t version EINA_UNUSED, uint32_t id) \
+_e_comp_wl_##NAME##_cb_bind(struct wl_client *client, void *data EINA_UNUSED, uint32_t version, uint32_t id) \
 { \
    struct wl_resource *res; \
 \
-   if (!(res = wl_resource_create(client, &(IFACE), 1, id))) \
+   if (!(res = wl_resource_create(client, &(IFACE), version, id))) \
      { \
         ERR("Could not create %s interface", #NAME);\
         wl_client_post_no_memory(client);\
