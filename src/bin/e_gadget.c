@@ -380,10 +380,13 @@ _gadget_object_free(E_Object *eobj)
 static void
 _gadget_remove(E_Gadget_Config *zgc)
 {
+   int id = zgc->id;
    evas_object_smart_callback_call(zgc->site->layout, "gadget_removed", zgc->gadget);
    zgc->site->gadget_list = eina_inlist_remove(zgc->site->gadget_list, EINA_INLIST_GET(zgc));
    zgc->site->gadgets = eina_list_remove(zgc->site->gadgets, zgc);
    _gadget_free(zgc);
+   if (id >= 0)
+     e_config_save_queue();
 }
 
 static void
@@ -400,10 +403,7 @@ _gadget_wizard_end(void *data, int id)
         added = 0;
      }
    else
-     {
-        _gadget_remove(zgc);
-        e_config_save_queue();
-     }
+     _gadget_remove(zgc);
 }
 
 static void
@@ -1021,7 +1021,6 @@ _gadget_menu_remove(void *data, E_Menu *m EINA_UNUSED, E_Menu_Item *mi EINA_UNUS
    E_Gadget_Config *zgc = data;
 
    _gadget_remove(zgc);
-   e_config_save_queue();
 }
 
 static void
@@ -1486,6 +1485,7 @@ _site_auto_add_comp_object_del(void *data, Evas *e EINA_UNUSED, Evas_Object *obj
    /* prune unconfigured gadgets */
    EINA_LIST_FOREACH_SAFE(zgs->gadgets, l, ll, zgc)
      if (zgc->id <= 0) _gadget_remove(zgc);
+   e_config_save_queue();
    evas_object_del(zgs->layout);
 }
 
@@ -1763,7 +1763,6 @@ e_gadget_del(Evas_Object *g)
    zgc = evas_object_data_get(g, "__e_gadget");
    EINA_SAFETY_ON_NULL_RETURN(zgc);
    _gadget_remove(zgc);
-   e_config_save_queue();
 }
 
 static void
@@ -2554,7 +2553,6 @@ _gadget_desklock_clear(void)
        {
           E_LIST_FOREACH(zgs->gadgets, _gadget_remove);
        }
-   e_config_save_queue();
 }
 
 static Eina_Bool
@@ -2651,7 +2649,6 @@ _gadget_desktop_key_handler(void *data, int t EINA_UNUSED, Ecore_Event_Key *ev)
      {
         E_Gadget_Site *zgs = data;
         E_LIST_FOREACH(zgs->gadgets, _gadget_remove);
-        e_config_save_queue();
      }
    return ECORE_CALLBACK_DONE;
 }
