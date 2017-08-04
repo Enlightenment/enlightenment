@@ -574,9 +574,9 @@ _e_comp_wl_zwp_pointer_constraints_v1_confine_pointer(struct wl_client *client, 
 extern E_Action *(*e_binding_key_list_cb)(E_Binding_Context, Ecore_Event_Key*, E_Binding_Modifier, E_Binding_Key **);
 static Eina_Hash *key_bindings;
 
-typedef struct Action_Route
+typedef struct Action_Route_Key
 {
-   union
+   struct
    {
       E_Binding_Key key;
    } binding;
@@ -584,13 +584,23 @@ typedef struct Action_Route
    uint32_t state;
    struct wl_resource *res;
    struct wl_resource *surface;
-} Action_Route;
+} Action_Route_Key;
+
+typedef struct Action_Route_Bind
+{
+   E_Action *action;
+   uint32_t state;
+   struct wl_resource *res;
+   Evas_Object *end_obj;
+} Action_Route_Bind;
+
+static Eina_Hash *allowed_pids;
 
 static E_Action *
 _action_route_key_list_cb(E_Binding_Context ctxt, Ecore_Event_Key *ev, E_Binding_Modifier mod, E_Binding_Key **bind_ret)
 {
    Eina_List *l, *ll;
-   Action_Route *ar;
+   Action_Route_Key *ar;
    E_Binding_Key *binding;
 
    if (bind_ret) *bind_ret = NULL;
@@ -651,9 +661,9 @@ _action_route_key_list_cb(E_Binding_Context ctxt, Ecore_Event_Key *ev, E_Binding
 }
 
 static Eina_Bool
-_action_route_is_allowed(const char *action, const char *params)
+_action_route_key_is_allowed(const char *action EINA_UNUSED, const char *params EINA_UNUSED)
 {
-   /* FIXME: allow 1-2 bindings maybe */
+   /* FIXME: no users of this yet... */
    return EINA_FALSE;
 }
 
@@ -669,10 +679,10 @@ _action_route_can_override(const E_Binding_Key *binding)
 }
 
 static void
-_e_comp_wl_action_route_grab_del(struct wl_resource *resource)
+_e_comp_wl_action_route_key_grab_del(struct wl_resource *resource)
 {
    Eina_List *l, *ll;
-   Action_Route *ar;
+   Action_Route_Key *ar;
    Eina_Bool update;
 
    /* FIXME: delete active actions? */
@@ -697,14 +707,14 @@ _e_comp_wl_action_route_grab_del(struct wl_resource *resource)
 }
 
 static void
-_e_comp_wl_action_route_grab_destroy(struct wl_client *client EINA_UNUSED, struct wl_resource *resource)
+_e_comp_wl_action_route_key_grab_destroy(struct wl_client *client EINA_UNUSED, struct wl_resource *resource)
 {
-   _e_comp_wl_action_route_grab_del(resource);
+   wl_resource_destroy(resource);
 }
 
-static const struct action_route_key_grab_interface _e_action_route_grab_interface =
+static const struct action_route_key_grab_interface _e_action_route_key_grab_interface =
 {
-   _e_comp_wl_action_route_grab_destroy,
+   _e_comp_wl_action_route_key_grab_destroy,
 };
 
 static void
@@ -720,7 +730,7 @@ _e_comp_wl_action_route_grab_key(struct wl_client *client, struct wl_resource *r
    struct wl_resource *rt;
    E_Binding_Key *binding;
    Eina_List *l, *ll;
-   Action_Route *ar, *lar;
+   Action_Route_Key *ar, *lar;
    E_Binding_Context ctxt = E_BINDING_CONTEXT_WINDOW;
 
    rt = wl_resource_create(client, &action_route_key_grab_interface, 1, id);
@@ -730,16 +740,16 @@ _e_comp_wl_action_route_grab_key(struct wl_client *client, struct wl_resource *r
         wl_client_post_no_memory(client);
         return;
      }
-   wl_resource_set_implementation(rt, &_e_action_route_grab_interface, NULL,
-                                  _e_comp_wl_action_route_grab_del);
+   wl_resource_set_implementation(rt, &_e_action_route_key_grab_interface, NULL,
+                                  _e_comp_wl_action_route_key_grab_del);
    binding = e_bindings_key_find(key, modifiers, 0);
-   if ((!_action_route_is_allowed(action, params)) || (!_action_route_can_override(binding)))
+   if ((!_action_route_key_is_allowed(action, params)) || (!_action_route_can_override(binding)))
      {
         action_route_key_grab_send_status(rt, ACTION_ROUTE_KEY_GRAB_STATE_REJECTED);
         wl_resource_destroy(rt);
         return;
      }
-   ar = E_NEW(Action_Route, 1);
+   ar = E_NEW(Action_Route_Key, 1);
    ar->mode = mode;
    ar->res = rt;
    ar->surface = surface;
@@ -780,6 +790,126 @@ _e_comp_wl_action_route_grab_key(struct wl_client *client, struct wl_resource *r
      }
    eina_hash_set(key_bindings, key, l);
    action_route_key_grab_send_status(ar->res, ar->state);
+}
+
+static void
+_e_comp_wl_action_route_bind_menu_end(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   Action_Route_Bind *ar = data;
+   evas_object_event_callback_del_full(obj, EVAS_CALLBACK_HIDE,
+          _e_comp_wl_action_route_bind_menu_end, ar);
+   action_route_bind_send_end(ar->res);
+}
+
+static void
+_e_comp_wl_action_route_bind_action_del(struct wl_resource *resource)
+{
+   Action_Route_Bind *ar = wl_resource_get_user_data(resource);
+
+   if (strstr(ar->action->name, "menu"))
+     {
+        E_Menu *m = e_menu_active_get();
+        if (!m) return;
+        evas_object_event_callback_del_full(m->comp_object, EVAS_CALLBACK_HIDE,
+          _e_comp_wl_action_route_bind_menu_end, ar);
+     }
+
+   e_object_unref(E_OBJECT(ar->action));
+   free(ar);
+}
+
+static void
+_e_comp_wl_action_route_bind_action_activate(struct wl_client *client EINA_UNUSED, struct wl_resource *resource, const char *params)
+{
+   Action_Route_Bind *ar = wl_resource_get_user_data(resource);
+   if (!ar) return;
+   ar->action->func.go(NULL, params);
+   if (strstr(ar->action->name, "menu"))
+     {
+        E_Menu *m = e_menu_active_get();
+        if (!m) return;
+        evas_object_event_callback_add(m->comp_object, EVAS_CALLBACK_HIDE,
+          _e_comp_wl_action_route_bind_menu_end, ar);
+     }
+}
+
+static void
+_e_comp_wl_action_route_bind_action_destroy(struct wl_client *client EINA_UNUSED, struct wl_resource *resource)
+{
+   wl_resource_destroy(resource);
+}
+
+static const struct action_route_bind_interface _e_action_route_bind_action_interface =
+{
+   _e_comp_wl_action_route_bind_action_activate,
+   _e_comp_wl_action_route_bind_action_destroy,
+};
+
+static E_Action *
+_action_route_bind_is_allowed(int32_t pid, const char *action)
+{
+   const char **b, *blacklist[] =
+   {
+    "exit_now",
+    "halt_now",
+    "suspend_now",
+    "hibernate_now",
+    NULL,
+   };
+   if (!allowed_pids) return NULL;
+   if (!eina_hash_find(allowed_pids, &pid)) return NULL;
+   if ((!action[0])) return NULL;
+   if (!strncmp(action, "module_", sizeof("module_") - 1)) return NULL;
+   for (b = blacklist; *b; b++)
+     if (eina_streq(*b, action)) return NULL;
+   return e_action_find(action);
+}
+
+static void
+_e_comp_wl_action_route_bind_action(struct wl_client *client, struct wl_resource *resource EINA_UNUSED,
+                                                           uint32_t id,
+                                                           const char *action)
+{
+   struct wl_resource *rt;
+   Action_Route_Bind *ar;
+   E_Action *act;
+   int32_t pid;
+
+   rt = wl_resource_create(client, &action_route_bind_interface, 1, id);
+   if (!rt)
+     {
+        ERR("Could not create action route");
+        wl_client_post_no_memory(client);
+        return;
+     }
+   wl_resource_set_implementation(rt, &_e_action_route_bind_action_interface, NULL,
+                                  _e_comp_wl_action_route_bind_action_del);
+   wl_client_get_credentials(client, &pid, NULL, NULL);
+   act = _action_route_bind_is_allowed(pid, action);
+   if (!act)
+     {
+        action_route_bind_send_status(rt, ACTION_ROUTE_BIND_STATE_REJECTED);
+        wl_resource_destroy(rt);
+        return;
+     }
+   ar = E_NEW(Action_Route_Bind, 1);
+   ar->res = rt;
+   ar->action = act;
+   e_object_ref(E_OBJECT(act));
+   ar->state = ACTION_ROUTE_BIND_STATE_ACTIVE;
+   wl_resource_set_user_data(rt, ar);
+   action_route_bind_send_status(ar->res, ar->state);
+}
+
+E_API void
+e_comp_wl_extension_action_route_pid_allowed_set(uint32_t pid, Eina_Bool allow)
+{
+   if (!allowed_pids)
+     allowed_pids = eina_hash_int32_new(NULL);
+   if (allow)
+     eina_hash_add(allowed_pids, &pid, (void*)1);
+   else
+     eina_hash_del_by_key(allowed_pids, &pid);
 }
 
 /////////////////////////////////////////////////////////
@@ -823,6 +953,7 @@ static const struct zwp_pointer_constraints_v1_interface _e_zwp_pointer_constrai
 
 static const struct action_route_interface _e_action_route_interface =
 {
+   _e_comp_wl_action_route_bind_action,
    _e_comp_wl_action_route_grab_key,
 };
 

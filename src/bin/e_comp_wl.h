@@ -425,6 +425,9 @@ E_API void e_comp_wl_extension_relative_motion_event(uint64_t time_usec, double 
 E_API void e_comp_wl_extension_pointer_constraints_commit(E_Client *ec);
 E_API Eina_Bool e_comp_wl_extension_pointer_constraints_update(E_Client *ec, int x, int y);
 E_API void e_comp_wl_extension_pointer_unconstrain(E_Client *ec);
+E_API void e_comp_wl_extension_action_route_pid_allowed_set(uint32_t pid, Eina_Bool allow);
+
+
 
 E_API void
 e_policy_wl_aux_message_send(E_Client *ec,

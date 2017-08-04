@@ -19,6 +19,12 @@
        <entry name="win" value="8"></entry>
        <entry name="altgr" value="16"></entry>
     </enum>
+    <request name="bind_action">
+      <description summary="Request a new grab for a key press">
+      </description>
+      <arg name="id" type="new_id" interface="action_route_bind"/>
+      <arg name="action" type="string"/>
+    </request>
     <request name="grab_key">
       <description summary="Request a new grab for a key press">
       </description>
@@ -28,8 +34,30 @@
       <arg name="mode" type="uint"/>
       <arg name="modifiers" type="uint"/>
       <arg name="action" type="string"/>
-      <arg name="params" type="string"/>
+      <arg name="params" type="string" allow-null="true"/>
     </request>
+  </interface>
+  <interface name="action_route_bind" version="1">
+   <enum name="state">
+       <entry name="Rejected" value="0"></entry>
+       <entry name="Active" value="1"></entry>
+       <entry name="Queued" value="2"></entry>
+    </enum>
+    <event name="status">
+       <description summary="Status update on a bind request"></description>
+       <arg name="state" type="uint"/>
+    </event>
+    <request name="activate">
+      <description summary="Activate a bind"/>
+      <arg name="params" type="string" allow-null="true"/>
+    </request>
+    <request name="destroy" type="destructor">
+      <description summary="Destroy a requested bind">
+      </description>
+    </request>
+    <event name="end">
+     <description summary="The bind has completed execution"/>
+    </event>
   </interface>
   <interface name="action_route_key_grab" version="1">
     <enum name="state">
