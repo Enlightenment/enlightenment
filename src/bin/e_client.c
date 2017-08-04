@@ -5613,7 +5613,7 @@ e_client_parent_set(E_Client *ec, E_Client *parent)
         parent->transients = eina_list_append(parent->transients, ec);
         ec->parent = parent;
      }
-   if (ec->parent && (!e_client_util_ignored_get(ec)))
+   if (ec->parent)
      {
         evas_object_layer_set(ec->frame, ec->parent->layer);
 
@@ -5622,6 +5622,7 @@ e_client_parent_set(E_Client *ec, E_Client *parent)
         else
           evas_object_stack_above(ec->frame, parent->frame);
 
+        if (e_client_util_ignored_get(ec)) return;
         if (e_pixmap_usable_get(ec->pixmap) && (!ec->lock_user_location))
           e_comp_object_util_center_on(ec->frame, parent->frame);
 
