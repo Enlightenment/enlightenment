@@ -107,18 +107,18 @@ _bryce_autohide_coords(Bryce *b, int *x, int *y)
         *x = b->x;
 
         if (an & E_GADGET_SITE_ANCHOR_TOP)
-          *y = oy - (e_scale * b->size) + e_scale * (b->autohide_size);
+          *y = oy - lround(e_scale * b->size) + lround(e_scale * b->autohide_size);
         if (an & E_GADGET_SITE_ANCHOR_BOTTOM)
-          *y = oy + oh - (e_scale * b->autohide_size);
+          *y = oy + oh - lround(e_scale * b->autohide_size);
      }
    else if (b->orient == E_GADGET_SITE_ORIENT_VERTICAL)
      {
         *y = b->y;
 
         if (an & E_GADGET_SITE_ANCHOR_LEFT)
-          *x = ox - (e_scale * b->size) + e_scale * (b->autohide_size);
+          *x = ox - lround(e_scale * b->size) + lround(e_scale * b->autohide_size);
         if (an & E_GADGET_SITE_ANCHOR_RIGHT)
-          *x = ox + ow - (e_scale * b->autohide_size);
+          *x = ox + ow - lround(e_scale * b->autohide_size);
      }
 }
 
@@ -160,14 +160,14 @@ _bryce_position(Bryce *b, int w, int h, int *nx, int *ny)
         if (an & E_GADGET_SITE_ANCHOR_RIGHT)
           x = ox + ow - w;
         if (an & E_GADGET_SITE_ANCHOR_BOTTOM)
-          y = oy + oh - (e_scale * b->size);
+          y = oy + oh - lround(e_scale * b->size);
         if (!b->autosize)
           x = ox;
      }
    else if (b->orient == E_GADGET_SITE_ORIENT_VERTICAL)
      {
         if (an & E_GADGET_SITE_ANCHOR_RIGHT)
-          x = ox + ow - (e_scale * b->size);
+          x = ox + ow - lround(e_scale * b->size);
         if (an & E_GADGET_SITE_ANCHOR_BOTTOM)
           y = oy + oh - h;
         if (!b->autosize)
@@ -216,9 +216,9 @@ _bryce_autosize(Bryce *b)
         _bryce_position(b, w, h, &x, &y);
         evas_object_move(b->bryce, x, y);
         if (b->orient == E_GADGET_SITE_ORIENT_HORIZONTAL)
-          e_efx_resize(b->bryce, E_EFX_EFFECT_SPEED_LINEAR, E_EFX_POINT(x, y), w, b->size * e_scale, 0.1, NULL, NULL);
+          e_efx_resize(b->bryce, E_EFX_EFFECT_SPEED_LINEAR, E_EFX_POINT(x, y), w, lround(b->size * e_scale), 0.1, NULL, NULL);
         else if (b->orient == E_GADGET_SITE_ORIENT_VERTICAL)
-          e_efx_resize(b->bryce, E_EFX_EFFECT_SPEED_LINEAR, E_EFX_POINT(x, y), b->size * e_scale, h, 0.1, NULL, NULL);
+          e_efx_resize(b->bryce, E_EFX_EFFECT_SPEED_LINEAR, E_EFX_POINT(x, y), lround(b->size * e_scale), h, 0.1, NULL, NULL);
         elm_layout_sizing_eval(b->scroller);
         evas_object_smart_need_recalculate_set(b->site, 1);
         if (b->size_changed)
@@ -248,14 +248,14 @@ _bryce_autosize(Bryce *b)
              if (b->orient == E_GADGET_SITE_ORIENT_HORIZONTAL)
                {
                   if (!h) h = 1;
-                  evas_object_resize(b->bryce, w * b->size * e_scale / h, b->size * e_scale);
-                  evas_object_resize(b->site, w * b->size * e_scale / h, b->size * e_scale);
+                  evas_object_resize(b->bryce, w * lround(b->size * e_scale) / h, lround(b->size * e_scale));
+                  evas_object_resize(b->site, w * lround(b->size * e_scale) / h, lround(b->size * e_scale));
                }
              else if (b->orient == E_GADGET_SITE_ORIENT_VERTICAL)
                {
                   if (!w) w = 1;
-                  evas_object_resize(b->bryce, b->size * e_scale, h * b->size * e_scale / w);
-                  evas_object_resize(b->site, b->size * e_scale, h * b->size * e_scale / w);
+                  evas_object_resize(b->bryce, lround(b->size * e_scale), h * lround(b->size * e_scale) / w);
+                  evas_object_resize(b->site, lround(b->size * e_scale), h * lround(b->size * e_scale) / w);
                }
              elm_layout_sizing_eval(b->scroller);
              evas_object_smart_need_recalculate_set(b->site, 1);
@@ -269,9 +269,9 @@ _bryce_autosize(Bryce *b)
    edje_object_size_min_calc(elm_layout_edje_get(b->layout), &lw, &lh);
    _bryce_position(b, lw + sw, lh + sh, &x, &y);
    if (b->orient == E_GADGET_SITE_ORIENT_HORIZONTAL)
-     w = MIN(MAX(lw + sw, b->size * e_scale), maxw), h = b->size * e_scale;
+     w = MIN(MAX(lw + sw, lround(b->size * e_scale)), maxw), h = lround(b->size * e_scale);
    else if (b->orient == E_GADGET_SITE_ORIENT_VERTICAL)
-     w = b->size * e_scale, h = MIN(MAX(lh + sh, b->size * e_scale), maxh);
+     w = lround(b->size * e_scale), h = MIN(MAX(lh + sh, lround(b->size * e_scale)), maxh);
    evas_object_move(b->bryce, x, y);
    e_efx_resize(b->bryce, E_EFX_EFFECT_SPEED_LINEAR, E_EFX_POINT(x, y), w, h, 0.1, NULL, NULL);
    b->size_changed = 0;
