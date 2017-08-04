@@ -1340,6 +1340,7 @@ e_zone_useful_geometry_dirty(E_Zone *zone)
    ecore_event_add(E_EVENT_ZONE_USEFUL_GEOMETRY_CHANGED, ev, _e_zone_event_generic_free, NULL);
 
    zone->useful_geometry_dirty = 1;
+   e_comp_clients_rescale();
 }
 
 E_API E_Zone_Obstacle *
