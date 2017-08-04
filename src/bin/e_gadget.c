@@ -435,7 +435,7 @@ _gadget_object_create(E_Gadget_Config *zgc)
      {
         if (t->wizard)
           {
-             zgc->cfg_object = t->wizard(_gadget_wizard_end, zgc);
+             zgc->cfg_object = t->wizard(_gadget_wizard_end, zgc, zgc->site->layout);
              if (!zgc->cfg_object)
                {
                   added = 1;
