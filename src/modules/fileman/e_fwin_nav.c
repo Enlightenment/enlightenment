@@ -30,8 +30,6 @@ struct _Instance
    Eina_List          *history, *current;
    int                 ignore_dir;
 
-   const char         *theme;
-
    Ecore_Idle_Enterer *idler;
 };
 
@@ -59,7 +57,6 @@ static void _cb_fm_mouse_down(void *data, Evas *e EINA_UNUSED, Evas_Object *obj 
 
 
 static Eina_List *instances = NULL;
-static const char *_nav_mod_dir = NULL;
 
 /* local gadcon functions */
 static const E_Gadcon_Client_Class _gc_class =
@@ -290,7 +287,6 @@ static E_Gadcon_Client *
 _gc_init(E_Gadcon *gc, const char *name, const char *id, const char *style)
 {
    Instance *inst = NULL;
-   char buf[PATH_MAX];
    int x, y, w, h;
    E_Toolbar *tbar;
    Eina_List *l;
@@ -314,9 +310,6 @@ _gc_init(E_Gadcon *gc, const char *name, const char *id, const char *style)
    inst->o_fm = o_fm;
 
    evas_object_event_callback_add(o_fm, EVAS_CALLBACK_MOUSE_DOWN, _cb_fm_mouse_down, inst);
-
-   snprintf(buf, sizeof(buf), "%s/e-module-efm_nav.edj", _nav_mod_dir);
-   inst->theme = eina_stringshare_add(buf);
 
    inst->o_base = edje_object_add(gc->evas);
    e_theme_edje_object_set(inst->o_base, "base/theme/modules/efm_navigation",
@@ -443,8 +436,6 @@ _gc_shutdown(E_Gadcon_Client *gcc)
    if (inst->o_scroll) evas_object_del(inst->o_scroll);
    e_drop_handler_del(inst->dnd_handler);
    E_FREE(inst->dnd_path);
-
-   eina_stringshare_del(inst->theme);
 
    E_FREE(inst);
 }
