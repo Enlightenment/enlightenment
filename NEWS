@@ -1,3 +1,117 @@
+Amitesh Singh (1):
+      e widget entry: fix the compilation warning
+
+Carsten Haitzler (2):
+      e - fix entry wrapper - e entry was plain. elm is markup. do it properly
+      randr - discovered new output names that are display panels in laptops
+
+Derek Foreman (13):
+      Don't require dmabuf buffers to be writeable
+      Fix wl_drm session activation callback
+      Fix wl_drm session (de)activation callback
+      Remove some duplicate operations
+      Fix unused var compiler warning in wl_drm
+      clean up some code
+      Clear the native surface structure before initializing it
+      Initialize the Evas_Native_Surface to 0 for dmabuf tests
+      Test dmabuf via native_surface_set even in software render
+      Make wayland clients render when only visible from mirrors
+      Fix xwayland selection crash
+      Don't block wayland client updates during screen saver fade out
+      Fix geometry for drm outputs
+
+Jean-Philippe ANDRÉ (1):
+      pulse: do not leak strbuf
+
+Marcel Hollerbach (3):
+      emixer: use a better name for the sink inputs
+      mixer: the name has to be a stringshare
+      mixer: do not leak a allocated string
+
+Mike Blumenkrantz (81):
+      check efm path existence before using it during dnd selections
+      unset wl button mask when beginning a move/resize operation
+      unset wl selection target client if that client is deleted
+      don't dup fds during xwl bridged selection transfer, this happens in libwayland
+      add error messages when symbols fail to resolve in xwl init
+      force client pixmap refresh immediately during resize if nocomp is active
+      do not perform zone updates on ignored clients during evas callbacks
+      use FOREACH_SAFE when walking client list during logout
+      another fix for e_comp_wl->ptr.x/y coords being wl_fixed instead of ints
+      perform client raise before triggering move/resize BEGIN client hook
+      delete client raise timer when beginning a move/resize operation
+      do not trigger events/bindings on zone object events with timestamp==0
+      only remove left/right maximize when removing vertical if left/right is set
+      don't null pointer after deleting internal win during wl delete request
+      hook client object unref callback to cleanup comp object internals
+      use fake xinerama screens when initializing wl outputs
+      reject client mouse move if coords match previous position
+      try only 1 reconnect to pulse when mixer fails to init
+      set pass events on shape debug rects
+      print object type if name is null during shape debug
+      if gadget wizard returns a zero id, remove gadget from site and destroy
+- have your system administrator add LIBDIR to '/etc/ld.so.conf'
+      update gadget position during a resize from top/left edge
+      use seat0 as default seat name instead of default
+      use safe list iterating when clearing a gadget site during shutdown
+      block "user" client resizes during comp client updating phase
+      perform move after resize during comp object show
+      multiply pointer axis values by 10 for wl clients
+      check exit status from auth subprocess
+      make e_comp_object_frame_allowed() return false for ignored clients
+      use xwayland check for clients when checking whether to reset focus to root
+      don't run x11 focus (un)set callbacks for override clients
+      don't force shm for xwayland launch and enable gl
+      don't call comp object cleanup functions for clients without comp objects
+      only unredirect clients during comp update after 3 failures
+      try redirecting failed clients again during resize
+      don't crash in randr module when using fake xinerama screens
+      simplify drm output update event by using randr screen refresh queuing
+      only call old ecore_drm2 functions if built and run against < 1.20 efl
+      add "focus" mode for render debug
+      unset DISPLAY in mixer when performing pulseaudio operations under wl
+      use kbd focus resource's client instead of "focused" client in data device
+      unset gadget site's layout pointer after destroying gadgets
+      move gadget del callbacks to AFTER priority
+      update time gadget date string during clock timer
+      only set qt theme override env vars if option to do theme matching is enabled
+      rename clock+time module event handler lists
+      disable clock+time gadget updating during dpms
+      freeze pointer animations while screensaver is active
+      prune unconfigured gadgets from comp object sites upon site del
+      only store the compositor's own data manager resource to e_comp_wl->mgr.resource
+      don't free x11 clipboard source immediately
+      check for different types of load errors during startup image load tests
+      hide pointer cursor clients when unsetting them
+      use more descriptive label than '???' for unconfigured outputs in scren config
+      use real sizing for screen config mode list, not 1xheight
+      do not set e_comp log level
+      use e_util env functions in time module
+      perform immediate move on bryce during autosize
+      do not use elm api to unset centered flag during resize
+      rework internal win centering
+      resize comp bg_blank_object on zone update
+      save xwindow of x11 selection owner, not client
+      add special case for xwl-originating drags to set dnd actions
+      focus x11 root window on init when starting with xwayland
+      handle xwl data source cleanup more effectively
+      free xwl selection atom names after creating selection source
+      set xwl-originating data source dnd actions during source creation
+      add text/plain;charset=utf-8 to xwl-created wl clipboard data source
+      don't create xwl receive pipe for SelectionRequest when getting the selection
+      reject invalid comp object resizes
+      apply gadget aspects with greater precision
+      abort gadget site layouts if the gadget site has not been sized
+      return immediately when setting a null gadget style if current style is null
+      show clients immediately after pixmap refresh if visibility is pending
+      return updates_full state from e_comp_object_damage_exists()
+      use ecore_x_netwm_opacity_get() for x11 opacity checking
+      handle updates_full when adding comp object update regions
+      reset comp object update regions when a render occurs
+      continue to fetch netwm opacity hint if it changed since the last fetch
+      set client opacity any time netwm hint has changed in fetch
+      remove left/right maximize before removing vertical maximize
+
 Release 0.21.8:
 ---------------------
 Al Poole (4):
@@ -46,7 +160,6 @@ Mike Blumenkrantz (65):
       send wl client resize edges during focus-in/out send_configure
       set signal move/resize clients as action_client internally
       compare against e_client_action_get() for rejecting wl mouse events
-      Revert "Stop sending wayland motion events when the mouse is grabbed"
       do not send mouse events to ssd wl clients if mouse is within ssd region
       use even more accurate wl callbacks for detecting ssd mouse in/out events
       always feed mouse events for wl client move events
@@ -156,7 +269,6 @@ Christopher Michael (2):
 Derek Foreman (3):
       Fix wayland frame callback times
       Use a monotonic clock for frame callback times
-      Stop sending wayland motion events when the mouse is grabbed
 
 Mike Blumenkrantz (11):
       null out animator pointers in efx stop() operations
