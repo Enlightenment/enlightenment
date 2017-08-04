@@ -284,12 +284,6 @@ e_zone_reconfigure_clients(E_Zone *zone, int dx, int dy, int dw, int dh)
 
         if ((dx != 0) || (dy != 0))
           evas_object_move(ec->frame, ec->x + dx, ec->y + dy);
-        // we shrank the zone - adjust windows more
-        if ((dw < 0) || (dh < 0))
-          {
-             e_client_res_change_geometry_save(ec);
-             e_client_res_change_geometry_restore(ec);
-          }
      }
 }
 
@@ -329,15 +323,12 @@ e_zone_resize(E_Zone *zone,
               int h)
 {
    E_Event_Zone_Move_Resize *ev;
-   int dw, dh;
 
    E_OBJECT_CHECK(zone);
    E_OBJECT_TYPE_CHECK(zone, E_ZONE_TYPE);
 
    if ((w == zone->w) && (h == zone->h)) return;
 
-   dw = w - zone->w;
-   dh = h - zone->h;
    zone->w = w;
    zone->h = h;
    evas_object_resize(zone->bg_object, w, h);
@@ -363,7 +354,7 @@ e_zone_move_resize(E_Zone *zone,
                    int h)
 {
    E_Event_Zone_Move_Resize *ev;
-   int dx, dy, dw, dh;
+   int dx, dy;
 
    E_OBJECT_CHECK_RETURN(zone, EINA_FALSE);
    E_OBJECT_TYPE_CHECK_RETURN(zone, E_ZONE_TYPE, EINA_FALSE);
@@ -373,8 +364,6 @@ e_zone_move_resize(E_Zone *zone,
 
    dx = x - zone->x;
    dy = y - zone->y;
-   dw = w - zone->w;
-   dh = h - zone->h;
    zone->x = x;
    zone->y = y;
    zone->w = w;
