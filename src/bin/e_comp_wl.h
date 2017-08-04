@@ -49,6 +49,7 @@ typedef struct _E_Comp_Wl_Client_Data E_Comp_Wl_Client_Data;
 typedef struct _E_Comp_Wl_Data E_Comp_Wl_Data;
 typedef struct _E_Comp_Wl_Output E_Comp_Wl_Output;
 typedef struct E_Shell_Data E_Shell_Data;
+typedef struct Tizen_Extensions Tizen_Extensions;
 typedef void (*E_Comp_Wl_Grab_End_Cb)(E_Client*);
 
 struct _E_Comp_Wl_Aux_Hint
@@ -340,6 +341,7 @@ struct _E_Comp_Wl_Client_Data
         int32_t x, y;
      } popup;
 
+   Tizen_Extensions *tizen;
    struct
      {
         Eina_Bool  changed : 1;

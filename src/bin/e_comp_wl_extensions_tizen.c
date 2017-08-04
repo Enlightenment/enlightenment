@@ -3,15 +3,27 @@
 
 #include "efl-aux-hints-server-protocol.h"
 
+struct Tizen_Extensions
+{
+   Eina_Stringshare *stack_id;
+};
 
 enum _E_Policy_Hint_Type
 {
    E_POLICY_HINT_MSG_USE = 0,
+   E_POLICY_HINT_STACK_BASE,
+   E_POLICY_HINT_STACK_ID,
+   E_POLICY_HINT_STACK_MASTER_ID,
+   E_POLICY_HINT_STACK_POP_TO,
 };
 
 static const char *hint_names[] =
 {
    "wm.policy.win.msg.use",
+   "stack_base",
+   "stack_id",
+   "stack_master_id",
+   "stack_pop_to",
 };
 static Eina_List *aux_hints;
 
@@ -34,25 +46,114 @@ _e_policy_wl_allowed_aux_hint_send(E_Client *ec, int id)
 }
 
 static void
+_tizen_del(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   Tizen_Extensions *tizen = data;
+   eina_stringshare_del(tizen->stack_id);
+   free(tizen);
+}
+
+static void
+_tizen_alloc(E_Client *ec)
+{
+   if (ec->comp_data->tizen) return;
+   ec->comp_data->tizen = E_NEW(Tizen_Extensions, 1);
+   evas_object_event_callback_add(ec->frame, EVAS_CALLBACK_DEL, _tizen_del, ec->comp_data->tizen);
+}
+
+static void
+_tizen_del_request(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   E_Client *ec = data;
+
+   e_policy_wl_aux_message_send(ec, "stack_del", "1", NULL);
+}
+
+static void
 _e_policy_wl_aux_hint_apply(E_Client *ec)
 {
    E_Comp_Wl_Aux_Hint *hint;
    Eina_List *l;
    Eina_Bool send;
+   Tizen_Extensions *tizen;
 
    if (!ec->comp_data) return;
    if (!ec->comp_data->aux_hint.changed) return;
-
+   _tizen_alloc(ec);
+   tizen = ec->comp_data->tizen;
    EINA_LIST_FOREACH(ec->comp_data->aux_hint.hints, l, hint)
      {
         if (!hint->changed) continue;
         send = EINA_FALSE;
+        hint->changed = EINA_FALSE;
         if (!strcmp(hint->hint, hint_names[E_POLICY_HINT_MSG_USE]))
           {
              if ((hint->deleted) || (!strcmp(hint->val, "0")))
                ec->comp_data->aux_hint.use_msg = EINA_FALSE;
              else if (!strcmp(hint->val, "1"))
                ec->comp_data->aux_hint.use_msg = EINA_TRUE;
+          }
+        else if (!strcmp(hint->hint, hint_names[E_POLICY_HINT_STACK_BASE]))
+          {
+             if (hint->deleted)
+               ec->e.state.stack = 0;
+             else
+               ec->e.state.stack = 1;
+          }
+        else if (!strcmp(hint->hint, hint_names[E_POLICY_HINT_STACK_ID]))
+          {
+             ec->icccm.delete_request = 1;
+             if (hint->deleted)
+               eina_stringshare_replace(&tizen->stack_id, NULL);
+             else
+               {
+                  pid_t pid;
+                  int stack_pid;
+                  wl_client_get_credentials(wl_resource_get_client(ec->comp_data->surface), &pid, NULL, NULL);
+                  stack_pid = strtol(hint->val, NULL, 10);
+                  if (stack_pid != pid)
+                    wl_client_post_no_memory(wl_resource_get_client(ec->comp_data->surface));
+                  if (!tizen->stack_id)
+                    evas_object_smart_callback_add(ec->frame, "delete_request", _tizen_del_request, ec);
+                  eina_stringshare_replace(&tizen->stack_id, hint->val);
+               }
+          }
+        else if (!strcmp(hint->hint, hint_names[E_POLICY_HINT_STACK_MASTER_ID]))
+          {
+             if (hint->deleted)
+               e_client_parent_set(ec, NULL);
+             else
+               {
+                  E_Client *pec;
+                  E_CLIENT_FOREACH(pec)
+                    {
+                       Tizen_Extensions *ptizen;
+                       if (e_client_util_ignored_get(pec)) continue;
+                       if (e_client_has_xwindow(pec)) continue;
+                       if (e_object_is_del(E_OBJECT(pec))) continue;
+                       ptizen = pec->comp_data->tizen;
+                       if (!ptizen) continue;
+                       if (!eina_streq(hint->val, ptizen->stack_id)) continue;
+                       if (ec->parent) abort();
+
+                       e_client_parent_set(ec, pec);
+                       // find last one
+                       for (; pec->stack.next; pec = pec->stack.next);
+                       ec->stack.prev = pec;
+                       ec->stack.next = NULL;
+                       ec->stack.prev->stack.next = ec;
+                       break;
+                    }
+               }
+          }
+        else if (!strcmp(hint->hint, hint_names[E_POLICY_HINT_STACK_POP_TO]))
+          {
+             E_Client *tec;
+             if (hint->deleted) continue;
+             eina_stringshare_replace(&hint->val, NULL);
+             if (!ec->parent) continue;
+             tec = ec->stack.next;
+             if (tec) e_policy_wl_aux_message_send(tec, "stack_del", "1", NULL);
           }
         if (send)
           _e_policy_wl_allowed_aux_hint_send(ec, hint->id);
