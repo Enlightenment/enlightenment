@@ -96,7 +96,6 @@ _editor_bryce_add(Evas_Object *obj)
         e_gadget_site_gadget_add(site, "Start", 0);
         e_gadget_site_gadget_add(site, "Digital Clock", 0);
         e_gadget_site_gadget_add(site, "Wireless", 0);
-        evas_object_move(b, zone->x, zone->y);
      }
 
    e_gadget_site_gravity_set(site, gravity);
