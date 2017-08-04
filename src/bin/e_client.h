@@ -527,9 +527,7 @@ struct E_Client
             unsigned char     wait_for_done : 1;
             unsigned char     use : 1;
          } profile;
-#ifndef HAVE_WAYLAND_ONLY
-         Ecore_X_Stack_Type stack;
-#endif
+         Eina_Bool stack : 1;
          unsigned char      centered : 1;
          unsigned char      video : 1;
       } state;

@@ -3437,7 +3437,8 @@ _e_comp_x_hook_client_fetch(void *d EINA_UNUSED, E_Client *ec)
      }
    if (ec->e.fetch.stack)
      {
-        ec->e.state.stack = ecore_x_e_stack_type_get(win);
+        cd->stack = ecore_x_e_stack_type_get(win);
+        ec->e.state.stack = !!cd->stack;
         ec->e.fetch.stack = 0;
      }
    if (ec->e.fetch.profile)
@@ -3864,7 +3865,7 @@ _e_comp_x_hook_client_fetch(void *d EINA_UNUSED, E_Client *ec)
         e_client_parent_set(ec, ec_parent);
         if (ec->parent && (!e_client_util_ignored_get(ec)) && ec->netwm.state.modal)
           _e_comp_x_client_modal_setup(ec);
-        if ((ec_parent) && (ec->e.state.stack != ECORE_X_STACK_NONE))
+        if ((ec_parent) && (cd->stack != ECORE_X_STACK_NONE))
           {
              E_Client *ec2;
 

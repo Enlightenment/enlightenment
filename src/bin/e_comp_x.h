@@ -89,6 +89,7 @@ struct _E_Comp_X_Client_Data
          Ecore_X_Illume_Window_State state;
       } win_state;
    } illume;
+   Ecore_X_Stack_Type stack;
 #ifdef HAVE_WAYLAND
    uint32_t surface_id;
 #endif
