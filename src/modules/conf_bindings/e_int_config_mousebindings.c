@@ -688,7 +688,7 @@ static void
 _update_mouse_binding_list(E_Config_Dialog_Data *cfdata)
 {
    char *icon = NULL, *button, *mods;
-   char label[1024], val[10];
+   char label[1024], val[16];
    int i = 0;
    Eina_List *l;
    E_Config_Binding_Mouse *eb;
