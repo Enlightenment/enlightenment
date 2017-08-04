@@ -1819,7 +1819,7 @@ ACT_FN_GO(menu_show, )
                   ecore_evas_pointer_xy_get(e_comp->ee, &x, &y);
                   e_menu_post_deactivate_callback_set(m, _e_actions_cb_menu_end, NULL);
                   e_menu_activate_mouse(m, zone, x, y, 1, 1,
-                                        E_MENU_POP_DIRECTION_DOWN, 0);
+                                        E_MENU_POP_DIRECTION_AUTO, 0);
                }
           }
      }
@@ -1844,7 +1844,7 @@ ACT_FN_GO_MOUSE(menu_show, )
    y = ev->canvas.y;
    e_menu_post_deactivate_callback_set(m, _e_actions_cb_menu_end, NULL);
    e_menu_activate_mouse(m, zone, x, y, 1, 1,
-                         E_MENU_POP_DIRECTION_DOWN, ev->timestamp);
+                         E_MENU_POP_DIRECTION_AUTO, ev->timestamp);
    return EINA_TRUE;
 }
 
