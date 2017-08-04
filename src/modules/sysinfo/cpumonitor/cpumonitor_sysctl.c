@@ -89,7 +89,7 @@ _cpumonitor_sysctl_getusage(unsigned long *prev_total, unsigned long *prev_idle,
           return;
 
         unsigned long total = 0;
-        for (j = 0; j < CPU_STATES; j++) 
+        for (j = 0; j < CPU_STATES - 1; j++)
           total += cpu_times[j];
         
         unsigned long idle = cpu_times[4];
