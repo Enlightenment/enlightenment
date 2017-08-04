@@ -3776,9 +3776,11 @@ _e_comp_x_hook_client_fetch(void *d EINA_UNUSED, E_Client *ec)
                        ec->placed = 1;
                     }
                }
-          }
-        else
-          {
+             if (ec->placed && (!e_client_util_resizing_get(ec)))
+               {
+                  e_client_res_change_geometry_save(ec);
+                  e_client_res_change_geometry_restore(ec);
+               }
           }
         if (ec->icccm.min_w > 32767) ec->icccm.min_w = 32767;
         if (ec->icccm.min_h > 32767) ec->icccm.min_h = 32767;
