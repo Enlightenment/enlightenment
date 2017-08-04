@@ -87,31 +87,7 @@
      - event_info is the Evas_Object of the popup
  */
 
-typedef enum
-{
-   E_GADGET_SITE_GRAVITY_NONE = 0,
-   E_GADGET_SITE_GRAVITY_LEFT,
-   E_GADGET_SITE_GRAVITY_RIGHT,
-   E_GADGET_SITE_GRAVITY_TOP,
-   E_GADGET_SITE_GRAVITY_BOTTOM,
-   E_GADGET_SITE_GRAVITY_CENTER,
-} E_Gadget_Site_Gravity;
-
-typedef enum
-{
-   E_GADGET_SITE_ORIENT_NONE = 0,
-   E_GADGET_SITE_ORIENT_HORIZONTAL,
-   E_GADGET_SITE_ORIENT_VERTICAL,
-} E_Gadget_Site_Orient;
-
-typedef enum
-{
-   E_GADGET_SITE_ANCHOR_NONE = 0,
-   E_GADGET_SITE_ANCHOR_LEFT = (1 << 0),
-   E_GADGET_SITE_ANCHOR_RIGHT = (1 << 1),
-   E_GADGET_SITE_ANCHOR_TOP = (1 << 2),
-   E_GADGET_SITE_ANCHOR_BOTTOM = (1 << 3),
-} E_Gadget_Site_Anchor;
+#include "e_gadget_types.h"
 
 typedef Evas_Object *(*E_Gadget_Create_Cb)(Evas_Object *parent, int *id, E_Gadget_Site_Orient orient);
 typedef Evas_Object *(*E_Gadget_Configure_Cb)(Evas_Object *gadget);

@@ -115,6 +115,7 @@ src/bin/e_font.h \
 src/bin/e_gadcon.h \
 src/bin/e_gadcon_popup.h \
 src/bin/e_gadget.h \
+src/bin/e_gadget_types.h \
 src/bin/e_grabinput.h \
 src/bin/e_grab_dialog.h \
 src/bin/e.h \

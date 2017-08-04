@@ -283,6 +283,7 @@ headers_e = [
 	'e_gadcon.h',
 	'e_gadcon_popup.h',
 	'e_gadget.h',
+	'e_gadget_types.h',
 	'e_grabinput.h',
 	'e_grab_dialog.h',
 	'e.h',
