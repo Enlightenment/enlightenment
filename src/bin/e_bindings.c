@@ -1336,10 +1336,10 @@ E_API E_Action *
 e_bindings_acpi_event_handle(E_Binding_Context ctxt, E_Object *obj, E_Event_Acpi *ev)
 {
    E_Action *act;
-   E_Binding_Acpi *binding;
+   E_Binding_Acpi *binding = NULL;
 
    act = e_bindings_acpi_find(ctxt, ev, &binding);
-   if (act)
+   if ((act) && (binding))
      {
         if (act->func.go_acpi)
           act->func.go_acpi(obj, binding->params, ev);
