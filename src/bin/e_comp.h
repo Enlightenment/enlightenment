@@ -235,6 +235,8 @@ E_API E_Config_Dialog *e_int_config_comp_match(Evas_Object *parent, const char *
 E_API Eina_Bool e_comp_util_kbd_grabbed(void);
 E_API Eina_Bool e_comp_util_mouse_grabbed(void);
 
+E_API void e_comp_clients_rescale(void);
+
 static inline Eina_Bool
 e_comp_util_client_is_fullscreen(const E_Client *ec)
 {

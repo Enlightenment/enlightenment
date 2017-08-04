@@ -1806,3 +1806,30 @@ e_comp_util_object_is_above_nocomp(Evas_Object *obj)
      return EINA_TRUE;
    return EINA_FALSE;
 }
+
+E_API void
+e_comp_clients_rescale(void)
+{
+   int i;
+
+   for (i = 0; i < 11; i++)
+     {
+        Eina_List *tmp = NULL;
+        E_Client *ec;
+
+        if (!e_comp->layers[i].clients) continue;
+        /* Make temporary list as e_client_res_change_geometry_restore
+         * rearranges the order. */
+        EINA_INLIST_FOREACH(e_comp->layers[i].clients, ec)
+          {
+             if ((!e_client_util_ignored_get(ec)) && (!e_object_is_del(E_OBJECT(ec))))
+               tmp = eina_list_append(tmp, ec);
+          }
+
+        EINA_LIST_FREE(tmp, ec)
+          {
+             e_client_res_change_geometry_save(ec);
+             e_client_res_change_geometry_restore(ec);
+          }
+     }
+}
