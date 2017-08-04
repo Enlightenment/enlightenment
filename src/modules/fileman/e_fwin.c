@@ -436,7 +436,7 @@ e_fwin_zone_new(E_Zone *zone, void *p)
 
    /* Add Event Handler for zone move/resize & del */
    fwin->zone_handler =
-     ecore_event_handler_add(E_EVENT_ZONE_MOVE_RESIZE,
+     ecore_event_handler_add(E_EVENT_ZONE_USEFUL_GEOMETRY_CHANGED,
                              _e_fwin_zone_move_resize, fwin);
    fwin->zone_del_handler =
      ecore_event_handler_add(E_EVENT_ZONE_DEL,

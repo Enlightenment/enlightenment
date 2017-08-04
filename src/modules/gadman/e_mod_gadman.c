@@ -1585,6 +1585,7 @@ _e_gadman_handlers_add(void)
 {
    E_LIST_HANDLER_APPEND(_gadman_hdls, E_EVENT_ZONE_ADD, _e_gadman_cb_zone_change, NULL);
    E_LIST_HANDLER_APPEND(_gadman_hdls, E_EVENT_ZONE_MOVE_RESIZE, _e_gadman_cb_zone_change, NULL);
+   E_LIST_HANDLER_APPEND(_gadman_hdls, E_EVENT_ZONE_USEFUL_GEOMETRY_CHANGED, _e_gadman_cb_zone_change, NULL);
    E_LIST_HANDLER_APPEND(_gadman_hdls, E_EVENT_ZONE_DEL, _e_gadman_cb_zone_change, NULL);
    E_LIST_HANDLER_APPEND(_gadman_hdls, E_EVENT_MODULE_UPDATE, _gadman_module_cb, NULL);
    E_LIST_HANDLER_APPEND(_gadman_hdls, E_EVENT_MODULE_INIT_END, _gadman_module_init_end_cb, NULL);
@@ -1637,7 +1638,7 @@ _e_gadman_cb_zone_change(void *data EINA_UNUSED, int type, void *event)
 
    if (!Man) return ECORE_CALLBACK_RENEW;
    if (gadman_locked) return ECORE_CALLBACK_RENEW;
-   if (type == E_EVENT_ZONE_MOVE_RESIZE)
+   if ((type == E_EVENT_ZONE_MOVE_RESIZE) || (type == E_EVENT_ZONE_USEFUL_GEOMETRY_CHANGED))
      {
         /* probably zone dirty being set */
         EINA_LIST_FOREACH(Man->gadcons[GADMAN_LAYER_BG], l, gc)

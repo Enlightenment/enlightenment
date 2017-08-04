@@ -240,12 +240,8 @@ _e_comp_cb_mouse_move(void *d EINA_UNUSED, int t EINA_UNUSED, Ecore_Event_Mouse_
 ////////////////////////////////////
 
 static Eina_Bool
-_e_comp_cb_zone_change(void *d EINA_UNUSED, int t, E_Event_Zone_Move_Resize *ev)
+_e_comp_cb_zone_change()
 {
-   if (ev->zone->useful_geometry_dirty && (t == E_EVENT_ZONE_MOVE_RESIZE))
-     {
-        if (!e_zone_useful_geometry_get(ev->zone, NULL, NULL, NULL, NULL)) return ECORE_CALLBACK_RENEW;
-     }
    e_comp_canvas_update();
    return ECORE_CALLBACK_PASS_ON;
 }

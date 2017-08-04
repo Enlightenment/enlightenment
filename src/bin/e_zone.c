@@ -22,6 +22,7 @@ static void _e_zone_obstacle_free(E_Zone_Obstacle *obs);
 
 E_API int E_EVENT_ZONE_DESK_COUNT_SET = 0;
 E_API int E_EVENT_POINTER_WARP = 0;
+E_API int E_EVENT_ZONE_USEFUL_GEOMETRY_CHANGED = 0;
 E_API int E_EVENT_ZONE_MOVE_RESIZE = 0;
 E_API int E_EVENT_ZONE_ADD = 0;
 E_API int E_EVENT_ZONE_DEL = 0;
@@ -44,6 +45,7 @@ e_zone_init(void)
    E_EVENT_ZONE_DESK_COUNT_SET = ecore_event_type_new();
    E_EVENT_POINTER_WARP = ecore_event_type_new();
    E_EVENT_ZONE_MOVE_RESIZE = ecore_event_type_new();
+   E_EVENT_ZONE_USEFUL_GEOMETRY_CHANGED = ecore_event_type_new();
    E_EVENT_ZONE_ADD = ecore_event_type_new();
    E_EVENT_ZONE_DEL = ecore_event_type_new();
    E_EVENT_ZONE_EDGE_IN = ecore_event_type_new();
@@ -274,7 +276,7 @@ e_zone_name_set(E_Zone *zone,
 }
 
 static void
-e_zone_reconfigure_clients(E_Zone *zone, int dx, int dy, int dw, int dh)
+e_zone_reconfigure_clients(E_Zone *zone, int dx, int dy)
 {
    E_Client *ec;
 
@@ -314,7 +316,7 @@ e_zone_move(E_Zone *zone,
 
    _e_zone_edge_move_resize(zone);
    e_zone_bg_reconfigure(zone);
-   e_zone_reconfigure_clients(zone, dx, dy, 0, 0);
+   e_zone_reconfigure_clients(zone, dx, dy);
 }
 
 E_API void
@@ -343,7 +345,7 @@ e_zone_resize(E_Zone *zone,
 
    _e_zone_edge_move_resize(zone);
    e_zone_bg_reconfigure(zone);
-   e_zone_reconfigure_clients(zone, 0, 0, dw, dh);
+   e_zone_reconfigure_clients(zone, 0, 0);
 }
 
 E_API Eina_Bool
@@ -384,7 +386,7 @@ e_zone_move_resize(E_Zone *zone,
 
    _e_zone_edge_move_resize(zone);
    e_zone_bg_reconfigure(zone);
-   e_zone_reconfigure_clients(zone, dx, dy, dw, dh);
+   e_zone_reconfigure_clients(zone, dx, dy);
    return EINA_TRUE;
 }
 
@@ -1335,7 +1337,7 @@ e_zone_useful_geometry_dirty(E_Zone *zone)
    ev = E_NEW(E_Event_Zone_Move_Resize, 1);
    ev->zone = zone;
    e_object_ref(E_OBJECT(ev->zone));
-   ecore_event_add(E_EVENT_ZONE_MOVE_RESIZE, ev, _e_zone_event_generic_free, NULL);
+   ecore_event_add(E_EVENT_ZONE_USEFUL_GEOMETRY_CHANGED, ev, _e_zone_event_generic_free, NULL);
 
    zone->useful_geometry_dirty = 1;
 }
