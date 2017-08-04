@@ -348,6 +348,7 @@ e_zone_move_resize(E_Zone *zone,
    _e_zone_edge_move_resize(zone);
    e_zone_bg_reconfigure(zone);
    e_zone_reconfigure_clients(zone, dx, dy);
+   e_zone_useful_geometry_dirty(zone);
    return EINA_TRUE;
 }
 
