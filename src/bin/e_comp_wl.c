@@ -1082,11 +1082,14 @@ _e_comp_wl_client_evas_init(E_Client *ec)
                                            EVAS_CALLBACK_PRIORITY_AFTER,
                                            _e_comp_wl_evas_cb_restack, ec);
 
-   /* setup delete/kill callbacks */
-   evas_object_smart_callback_add(ec->frame, "delete_request",
-                                  _e_comp_wl_evas_cb_delete_request, ec);
-   evas_object_smart_callback_add(ec->frame, "kill_request",
-                                  _e_comp_wl_evas_cb_kill_request, ec);
+   if (ec->internal_elm_win)
+     {
+        /* setup delete/kill callbacks */
+        evas_object_smart_callback_add(ec->frame, "delete_request",
+                                       _e_comp_wl_evas_cb_delete_request, ec);
+        evas_object_smart_callback_add(ec->frame, "kill_request",
+                                       _e_comp_wl_evas_cb_kill_request, ec);
+     }
 
    /* setup ping callback */
    evas_object_smart_callback_add(ec->frame, "ping",
