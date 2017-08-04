@@ -1322,6 +1322,8 @@ e_zone_desk_useful_geometry_get(const E_Zone *zone, const E_Desk *desk, int *x, 
    E_OBJECT_CHECK(desk);
    E_OBJECT_TYPE_CHECK(desk, E_DESK_TYPE);
 
+   if (desk->zone != zone) CRI("zone/desk mismatch!");
+
    _e_zone_useful_geometry_calc(zone, desk->x, desk->y, x, y, w, h);
 }
 
