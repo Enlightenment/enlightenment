@@ -31,6 +31,7 @@ struct _E_Module
    E_Module_Api        *api;
 
    Eina_Stringshare    *name;
+   Eina_Stringshare    *file;
    Eina_Stringshare    *dir;
    void                *handle;
 

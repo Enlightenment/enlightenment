@@ -405,6 +405,7 @@ e_module_new(const char *name)
         m->error = 1;
         goto init_done;
      }
+   m->file = eina_stringshare_ref(modpath);
    m->api = dlsym(m->handle, "e_modapi");
    m->func.init = dlsym(m->handle, "e_modapi_init");
    m->func.shutdown = dlsym(m->handle, "e_modapi_shutdown");
