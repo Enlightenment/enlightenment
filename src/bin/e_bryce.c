@@ -1017,19 +1017,35 @@ _bryce_act_menu(E_Object *obj, const char *params EINA_UNUSED, E_Binding_Event_M
 }
 
 static Eina_Bool
-_bryce_zone_add(void *d EINA_UNUSED, int t EINA_UNUSED, E_Event_Zone_Add *ev)
+_bryce_zone_useful_geometry_changed(void *d EINA_UNUSED, int t EINA_UNUSED, E_Event_Zone_Move_Resize *ev)
 {
    Eina_List *l;
    Bryce *b;
 
    EINA_LIST_FOREACH(bryces->bryces, l, b)
      {
-        if (b->bryce) continue;
-        if (b->zone != ev->zone->num) continue;
-        _bryce_create(b, e_comp->elm);
-        evas_object_show(b->bryce);
+        if (b->bryce && (b->zone == ev->zone->num) &&
+            (b->orient == E_GADGET_SITE_ORIENT_VERTICAL))
+          _bryce_autosize(b);
      }
    return ECORE_CALLBACK_RENEW;
+}
+
+static void
+_bryce_comp_resize(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   Eina_List *l;
+   Bryce *b;
+
+   EINA_LIST_FOREACH(bryces->bryces, l, b)
+     {
+        if (e_comp_zone_number_get(b->zone))
+          {
+             if (b->bryce) continue;
+             _bryce_create(b, e_comp->elm);
+             evas_object_show(b->bryce);
+          }
+     }
 }
 
 E_API Evas_Object *
@@ -1321,7 +1337,8 @@ e_bryce_init(void)
    else
      bryces = E_NEW(Bryces, 1);
 
-   E_LIST_HANDLER_APPEND(handlers, E_EVENT_ZONE_ADD, _bryce_zone_add, NULL);
+   evas_object_event_callback_add(e_comp->canvas->resize_object, EVAS_CALLBACK_RESIZE, _bryce_comp_resize, NULL);
+   E_LIST_HANDLER_APPEND(handlers, E_EVENT_ZONE_USEFUL_GEOMETRY_CHANGED, _bryce_zone_useful_geometry_changed, NULL);
 }
 
 EINTERN void
