@@ -5394,6 +5394,8 @@ e_client_resize_limit(const E_Client *ec, int *w, int *h)
                        *h -= ah;
                        break;
                     }
+                  EINA_FALLTHROUGH;
+                  /* No break */
                 default:
                   val = (((*h * ec->icccm.min_aspect) - *w) * ec->icccm.step_w) / ec->icccm.step_w;
                   if (val > 0)
@@ -5428,6 +5430,8 @@ e_client_resize_limit(const E_Client *ec, int *w, int *h)
                        *h += ah;
                        break;
                     }
+                  EINA_FALLTHROUGH;
+                  /* No break */
                 default:
                   val = ((*w - (*h * ec->icccm.max_aspect)) * ec->icccm.step_w) / ec->icccm.step_w;
                   if (val > 0)
