@@ -68,6 +68,8 @@ static int screen_size_index = -1;
 static Ecore_X_Atom backlight_atom = 0;
 extern double e_bl_val;
 
+static Ecore_Timer *mouse_in_fix_check_timer = NULL;
+
 static Eina_Hash *dead_wins;
 
 static Ecore_Window _e_comp_x_suspend_grabbed; // window grabber for suspending pointer
@@ -2378,33 +2380,55 @@ _e_comp_x_mouse_in_job(void *d EINA_UNUSED)
 }
 
 static Eina_Bool
+_e_comp_x_mouse_in_fix_check_timer_cb(void *data EINA_UNUSED)
+{
+   E_Client *ec;
+
+   mouse_in_fix_check_timer = NULL;
+   ec = e_client_under_pointer_get
+     (e_desk_current_get(e_zone_current_get()), NULL);
+   if (ec)
+     {
+        mouse_client = ec;
+        if (mouse_in_job) ecore_job_del(mouse_in_job);
+        mouse_in_job = ecore_job_add(_e_comp_x_mouse_in_job, NULL);
+     }
+   return EINA_FALSE;
+}
+
+static Eina_Bool
 _e_comp_x_mouse_in(void *data EINA_UNUSED, int type EINA_UNUSED, Ecore_X_Event_Mouse_In *ev)
 {
    E_Client *ec;
 
    if (e_comp->comp_type != E_PIXMAP_TYPE_X) return ECORE_CALLBACK_RENEW;
    ec = _e_comp_x_client_find_by_window(ev->win);
-   if (!ec) return ECORE_CALLBACK_RENEW;
+   if (!ec) goto done;
    if (ev->mode == ECORE_X_EVENT_MODE_NORMAL)
      {
         if (ev->detail == ECORE_X_EVENT_DETAIL_INFERIOR)
           {
-             if (ev->win != e_client_util_pwin_get(ec)) return ECORE_CALLBACK_RENEW;
-             if (ev->event_win != e_client_util_win_get(ec)) return ECORE_CALLBACK_RENEW;
+             if (ev->win != e_client_util_pwin_get(ec)) goto done;
+             if (ev->event_win != e_client_util_win_get(ec)) goto done;
           }
         if (ev->detail == ECORE_X_EVENT_DETAIL_VIRTUAL)
           {
-             if (ev->win != e_client_util_win_get(ec)) return ECORE_CALLBACK_RENEW;
-             if (ev->event_win != e_client_util_pwin_get(ec)) return ECORE_CALLBACK_RENEW;
+             if (ev->win != e_client_util_win_get(ec)) goto done;
+             if (ev->event_win != e_client_util_pwin_get(ec)) goto done;
           }
-        if (!evas_object_visible_get(ec->frame)) return ECORE_CALLBACK_RENEW;
+        if (!evas_object_visible_get(ec->frame)) goto done;
      }
-   if (_e_comp_x_client_data_get(ec)->deleted) return ECORE_CALLBACK_RENEW;
+   if (_e_comp_x_client_data_get(ec)->deleted) goto done;
    mouse_client = ec;
-   if (!mouse_in_job)
-     mouse_in_job = ecore_job_add(_e_comp_x_mouse_in_job, NULL);
+   if (mouse_in_job) ecore_job_del(mouse_in_job);
+   mouse_in_job = ecore_job_add(_e_comp_x_mouse_in_job, NULL);
    mouse_in_coords.x = ev->root.x;
    mouse_in_coords.y = ev->root.y;
+done:
+   if (mouse_in_fix_check_timer)
+     ecore_timer_del(mouse_in_fix_check_timer);
+   mouse_in_fix_check_timer =
+     ecore_timer_add(0.1, _e_comp_x_mouse_in_fix_check_timer_cb, NULL);
    return ECORE_CALLBACK_RENEW;
 }
 
@@ -5812,6 +5836,7 @@ e_comp_x_shutdown(void)
    E_FREE_FUNC(damages_hash, eina_hash_free);
    E_FREE_FUNC(alarm_hash, eina_hash_free);
    E_FREE_FUNC(frame_extents, eina_hash_free);
+   E_FREE_FUNC(mouse_in_fix_check_timer, ecore_timer_del);
    e_xsettings_shutdown();
    if (e_comp->comp_type == E_PIXMAP_TYPE_X)
      ecore_x_screensaver_custom_blanking_disable();
