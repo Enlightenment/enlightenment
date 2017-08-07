@@ -1341,8 +1341,13 @@ e_gadget_site_auto_add(E_Gadget_Site_Orient orient, const char *name)
 E_API void
 e_gadget_site_del(Evas_Object *obj)
 {
+   Eina_List *l, *ll;
+   E_Gadget_Config *zgc;
+
    ZGS_GET(obj);
 
+   EINA_LIST_FOREACH_SAFE(zgs->gadgets, l, ll, zgc)
+     _gadget_remove(zgc);
    sites->sites = eina_list_remove(sites->sites, zgs);
    evas_object_del(zgs->layout);
    eina_stringshare_del(zgs->name);
