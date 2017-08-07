@@ -333,9 +333,11 @@ _conf_item_get(int *id, Eina_Bool digital)
 
    ci = E_NEW(Config_Item, 1);
    if (!*id)
-     ci->id = time_config->items ? eina_list_count(time_config->items) + 1 : 1;
-   else
+     *id = ci->id = time_config->items ? eina_list_count(time_config->items) + 1 : 1;
+   else if (*id < 0)
      ci->id = -1;
+   else
+     ci->id = *id;
 
    ci->weekend.start = 6;
    ci->weekend.len = 2;
