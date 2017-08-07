@@ -152,7 +152,11 @@ _e_elm_win_trap_show(void *data, Evas_Object *o)
         ctx->client->tooltip = elm_win_type_get(o) == ELM_WIN_TOOLTIP;
 
         evas_object_size_hint_min_get(o, &ctx->client->icccm.min_w, &ctx->client->icccm.min_h);
+        ctx->client->icccm.min_w = MAX(ctx->client->icccm.min_w, 0);
+        ctx->client->icccm.min_h = MAX(ctx->client->icccm.min_h, 0);
         evas_object_size_hint_max_get(o, &ctx->client->icccm.max_w, &ctx->client->icccm.max_h);
+        ctx->client->icccm.max_w = MAX(ctx->client->icccm.max_w, 0);
+        ctx->client->icccm.max_h = MAX(ctx->client->icccm.max_h, 0);
      }
 //#endif
    evas_object_geometry_get(o, &ctx->client->client.x, &ctx->client->client.y, &ctx->client->client.w, &ctx->client->client.h);
@@ -289,6 +293,8 @@ _e_elm_win_trap_size_max_set(void *data, Evas_Object *o EINA_UNUSED, int w, int 
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(ctx, EINA_TRUE);
    if (!ctx->client) return EINA_TRUE;
+   w = MAX(w, 0);
+   h = MAX(h, 0);
    ctx->client->icccm.max_w = w;
    ctx->client->icccm.max_h = h;
    e_client_resize_limit(ctx->client, &mw, &mh);
