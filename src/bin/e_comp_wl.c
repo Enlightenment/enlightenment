@@ -2792,9 +2792,9 @@ _e_comp_wl_gl_shutdown(void)
 }
 
 static void
-_e_comp_wl_gl_init(void *d EINA_UNUSED)
+_e_comp_wl_gl_init(void)
 {
-   e_comp_wl->wl.gl = evas_gl_new(e_comp->evas);
+   e_comp_wl->wl.gl = evas_gl_new(ecore_evas_get(e_comp->ee));
    if (!e_comp_wl->wl.gl) return;
    e_comp_wl->wl.glctx = evas_gl_context_create(e_comp_wl->wl.gl, NULL);
    e_comp_wl->wl.glcfg = evas_gl_config_new();
@@ -2863,7 +2863,7 @@ e_comp_wl_init(void)
    e_util_env_set("WAYLAND_DEBUG", "0");
    e_util_env_set("ELM_DISPLAY", "wl");
    if (e_comp_gl_get())
-     ecore_job_add(_e_comp_wl_gl_init, NULL);
+     _e_comp_wl_gl_init();
 
    E_LIST_HANDLER_APPEND(handlers, E_EVENT_RANDR_CHANGE,
                                 _e_comp_wl_cb_randr_change, NULL);
