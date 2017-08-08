@@ -81,7 +81,7 @@ foreach m: mods
 
   if get_option(opt) == true and disable == false
 
-    _conf         = 'USE_MODULE_' + m.to_upper()
+    _conf         = 'USE_MODULE_' + m.underscorify()
     _dir          = join_paths(dir_module_e, m)
     _dir_bin      = join_paths(_dir, module_arch)
     _inc          = include_directories(module_includes2, join_paths('.', m))
