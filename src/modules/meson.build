@@ -7,7 +7,6 @@ subdir('teamwork')
 subdir('wl_desktop_shell')
 subdir('wl_text_input')
 subdir('wl_weekeyboard')
-subdir('geolocation')
 subdir('sysinfo')
 
 # disabled for now
@@ -39,6 +38,7 @@ mods = [
   'conf_paths',
   'conf_interaction',
   'gadman',
+  'geolocation',
   'connman',
   'bluez4',
   'syscon',
