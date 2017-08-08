@@ -4,7 +4,6 @@ subdir('wizard')
 subdir('mixer')
 subdir('everything')
 subdir('teamwork')
-subdir('music-control')
 subdir('wl_desktop_shell')
 subdir('wl_text_input')
 subdir('wl_weekeyboard')
@@ -29,6 +28,7 @@ mods = [
   'fileman_opinfo',
   'conf',
   'msgbus',
+  'music-control',
   'conf_applications',
   'conf_shelves',
   'conf_window_remembers',
