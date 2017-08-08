@@ -2,7 +2,6 @@
 #define E_MOD_MAIN_H
 #include "gadget/pager.h"
 
-typedef struct _Config Config;
 typedef struct _Config_Item Config_Item;
 
 #define PAGER_RESIZE_NONE 0
