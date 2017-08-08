@@ -539,7 +539,7 @@ endif
 src_bin_enlightenment_alert_SOURCES = \
 src/bin/e_alert_main.c
 
-src_bin_enlightenment_alert_LDADD = @E_ALERT_LIBS@
+src_bin_enlightenment_alert_LDADD = @E_ALERT_LIBS@ @dlopen_libs@
 src_bin_enlightenment_alert_CPPFLAGS = @E_ALERT_CFLAGS@
 
 src_bin_enlightenment_filemanager_SOURCES = \

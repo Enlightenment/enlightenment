@@ -4,6 +4,8 @@
 
 #include <Ecore_Drm2.h>
 #include <Elput.h>
+#include "e_drm2.x"
+
 static Ecore_Event_Handler *seat_handler;
 
 E_API E_Module_Api e_modapi = { E_MODULE_API_VERSION, "Wl_Drm" };
@@ -391,12 +393,12 @@ _drm2_randr_create(void)
                {
                   unsigned int refresh;
 
-                  ecore_drm2_output_info_get(output,
-                                             &s->config.geom.x,
-                                             &s->config.geom.y,
-                                             &s->config.mode.w,
-                                             &s->config.mode.h,
-                                             &refresh);
+                  e_drm2_output_info_get(output,
+                                         &s->config.geom.x,
+                                         &s->config.geom.y,
+                                         &s->config.mode.w,
+                                         &s->config.mode.h,
+                                         &refresh);
                   s->config.mode.w = s->config.geom.w;
                   s->config.mode.h = s->config.geom.h;
                   s->config.mode.refresh = refresh;
@@ -547,7 +549,7 @@ _drm2_randr_apply(void)
         if (!ecore_drm2_output_enabled_get(output)) continue;
         if (ecore_drm2_output_cloned_get(output)) continue;
 
-        ecore_drm2_output_info_get(output, NULL, NULL, &ow, &oh, NULL);
+        e_drm2_output_info_get(output, NULL, NULL, &ow, &oh, NULL);
         pw += MAX(pw, ow);
         ph = MAX(ph, oh);
      }
@@ -785,6 +787,8 @@ e_modapi_init(E_Module *m)
    /*      return NULL; */
    /*   } */
 
+   if (!e_drm2_compat_init()) return NULL;
+
    if (e_comp_config_get()->engine == E_COMP_ENGINE_GL)
      {
         e_comp->ee = ecore_evas_new("gl_drm", 0, 0, 1, 1, NULL);
@@ -858,6 +862,6 @@ e_modapi_shutdown(E_Module *m EINA_UNUSED)
    activate_handler = NULL;
 
    E_FREE_FUNC(input_handler, ecore_event_handler_del);
-
+   e_drm2_compat_shutdown();
    return 1;
 }
