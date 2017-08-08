@@ -70,21 +70,7 @@ _e_crash(void)
 {
 #ifdef HAVE_WAYLAND
    if (e_comp->comp_type == E_PIXMAP_TYPE_WL)
-     {
-# ifdef USE_MODULE_WL_DRM
-        if (!strstr(ecore_evas_engine_name_get(e_comp->ee), "drm")) return;
-        Ecore_Drm2_Device *dev;
-
-        dev = ecore_evas_data_get(e_comp->ee, "device");
-        if (dev)
-          {
-             ecore_drm2_outputs_destroy(dev);
-             ecore_drm2_device_close(dev);
-          }
-        ecore_drm2_shutdown();
-# endif
         return;
-     }
 #endif
 #ifndef HAVE_WAYLAND_ONLY
    _e_x_composite_shutdown();
