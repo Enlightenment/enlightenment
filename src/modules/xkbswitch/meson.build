@@ -1,4 +1,4 @@
-src = [
+src = files(
   'e_mod_main.c',
   'e_mod_config.c',
   'e_mod_parse.c',
@@ -7,4 +7,4 @@ src = [
   'gadget/xkbswitch.h',
   'gadget/xkbswitch.c',
   'gadget/mod.c'
-]
+)

@@ -1,4 +1,4 @@
-src = [
+src = files(
   'e_mod_main.c',
   'e_int_config_borders.c',
   'e_int_config_color_classes.c',
@@ -10,6 +10,6 @@ src = [
   'e_int_config_wallpaper.c',
   'e_int_config_xsettings.c',
   'e_mod_main.h'
-]
+ )
 
 desktop_only = true

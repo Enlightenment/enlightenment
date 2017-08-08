@@ -1,5 +1,4 @@
-src = [
-  'e_mod_main.c',
+src = files(
   'e_int_config_desk.c',
   'e_int_config_desklock.c',
   'e_int_config_desklock_fsel.c',
@@ -7,6 +6,6 @@ src = [
   'e_int_config_dpms.c',
   'e_int_config_screensaver.c',
   'e_mod_main.h'
-]
+ )
 
 desktop_only = true

@@ -2,11 +2,11 @@ module = 'wizard'
 opt    = 'wizard'
 conf   = 'USE_MODULE_WIZARD'
 
-src = [
+src = files(
   'e_mod_main.c',
   'e_wizard.c',
   'e_wizard.h'
-]
+ )
 
 pages = [
   'page_000',

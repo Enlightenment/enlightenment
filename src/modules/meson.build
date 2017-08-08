@@ -99,14 +99,9 @@ foreach m: mods
                    install_dir: _dir)
     endif
 
-    _src = [ ]
-    foreach s: src
-      _src += [ join_paths(m, s) ]
-    endforeach
-
     config_h.set(_conf, '1')
     if cargs == ''
-      shared_module(m, _src,
+      shared_module(m, src,
                     include_directories: _inc,
                     name_prefix        : '',
                     dependencies       : module_deps,
@@ -114,7 +109,7 @@ foreach m: mods
                     install            : true
                    )
     else
-      shared_module(m, _src,
+      shared_module(m, src,
                     include_directories: _inc,
                     c_args             : cargs,
                     name_prefix        : '',

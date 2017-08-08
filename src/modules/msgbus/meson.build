@@ -1,4 +1,4 @@
-src = [
+src = files(
   'e_mod_main.c',
   'msgbus_audit.c',
   'msgbus_desktop.c',
@@ -7,4 +7,4 @@ src = [
   'msgbus_profile.c',
   'msgbus_window.c',
   'e_mod_main.h'
-]
+ )

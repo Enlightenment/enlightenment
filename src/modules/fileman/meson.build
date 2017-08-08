@@ -1,4 +1,4 @@
-src = [
+src = files(
   'e_mod_main.c',
   'e_fwin.c',
   'e_fwin_nav.c',
@@ -8,4 +8,4 @@ src = [
   'e_mod_dbus.c',
   'e_mod_menu.c',
   'e_mod_main.h'
-]
+ )
