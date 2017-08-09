@@ -9,11 +9,11 @@ created_file = [
 ]
 
 src = [files(
-	'e_mod_main.c'
+  'e_mod_main.c'
 )]
 
 src += custom_target('geolocation_gen',
-  input: 'org.freedesktop.GeoClue2.xml',
-  command: [eldbus_codegen, '@INPUT@', '-O', '@OUTDIR@'],
-  output: created_file
-)
+                     input  : 'org.freedesktop.GeoClue2.xml',
+                     command: [eldbus_codegen, '@INPUT@', '-O', '@OUTDIR@'],
+                     output : created_file
+                    )
