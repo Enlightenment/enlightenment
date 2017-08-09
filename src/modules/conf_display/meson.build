@@ -1,4 +1,5 @@
 src = files(
+  'e_mod_main.c',
   'e_int_config_desk.c',
   'e_int_config_desklock.c',
   'e_int_config_desklock_fsel.c',
