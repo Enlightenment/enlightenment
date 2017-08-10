@@ -244,6 +244,13 @@ if get_option('mount-eeze') == true
   endif
 endif
 
+if get_option('wayland') == true
+  if get_option('wl-drm')
+    dep_ecore_drm2 = dependency('ecore-drm2', required : true)
+    config_h.set('HAVE_DRM2', '1')
+  endif
+endif
+
 dep_rt               = cc.find_library('rt', required: false)
 dep_eina             = dependency('eina'            , required: true, version: efl_version)
 dep_eet              = dependency('eet'             , required: true)
