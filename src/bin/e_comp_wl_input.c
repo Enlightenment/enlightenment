@@ -3,11 +3,7 @@
 #include "e.h"
 #include <sys/mman.h>
 #ifdef HAVE_WL_DRM
-# ifdef HAVE_DRM2
-#  include <Ecore_Drm2.h>
-# else
-#  include <Ecore_Drm.h>
-# endif
+#include <Ecore_Drm2.h>
 #endif
 
 E_API int E_EVENT_TEXT_INPUT_PANEL_VISIBILITY_CHANGE = -1;
@@ -670,7 +666,6 @@ _e_comp_wl_input_context_keymap_set(struct xkb_keymap *keymap, struct xkb_contex
    if (!e_comp->ee) return;
 //set the values to the drm devices
 #ifdef HAVE_WL_DRM
-# ifdef HAVE_DRM2
    if (strstr(ecore_evas_engine_name_get(e_comp->ee), "drm"))
      {
         Ecore_Drm2_Device *dev;
@@ -680,7 +675,6 @@ _e_comp_wl_input_context_keymap_set(struct xkb_keymap *keymap, struct xkb_contex
           ecore_drm2_device_keyboard_info_set(dev, context, keymap,
             e_comp_wl ? e_comp_wl->kbd.choosen_group : choosen_group);
      }
-# endif
 #endif
 }
 
@@ -688,7 +682,6 @@ E_API void
 e_comp_wl_input_keymap_index_set(xkb_layout_index_t index)
 {
 #ifdef HAVE_WL_DRM
-# ifdef HAVE_DRM2
    if (e_comp && e_comp->ee && strstr(ecore_evas_engine_name_get(e_comp->ee), "drm"))
      {
         Ecore_Drm2_Device *dev;
@@ -697,7 +690,6 @@ e_comp_wl_input_keymap_index_set(xkb_layout_index_t index)
         if (dev)
           ecore_drm2_device_keyboard_group_set(dev, index);
      }
-# endif
 #endif
    if (e_comp_wl)
      {

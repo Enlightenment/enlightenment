@@ -779,7 +779,6 @@ define([CHECK_MODULE_WL_DRM],
       AC_E_CHECK_PKG(WL_DRM, [ ecore-drm2 >= $efl_ecore_drm2_version elput >= $efl_version ecore >= $efl_version eina >= $efl_version ],
         [
           WL_DRM=true
-          AC_DEFINE_UNQUOTED([HAVE_DRM2],[1],[enable ecore-drm2 support])
         ], [WL_DRM=false])
     else
       WL_DRM=false

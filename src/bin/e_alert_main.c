@@ -1,6 +1,6 @@
 #include "config.h"
 
-#ifdef HAVE_DRM2
+#ifdef HAVE_WL_DRM
 # define EFL_BETA_API_SUPPORT
 #endif
 
@@ -23,11 +23,7 @@
 #endif
 #ifdef HAVE_WL_DRM
 # include <Ecore_Input.h>
-# ifdef HAVE_DRM2
-#  include <Ecore_Drm2.h>
-# else
-#  include <Ecore_Drm.h>
-# endif
+# include <Ecore_Drm2.h>
 # include <Evas.h>
 # include <Evas_Engine_Buffer.h>
 #endif
@@ -35,7 +31,6 @@
 #include "e_drm2.x"
 
 #ifdef HAVE_WL_DRM
-# ifdef HAVE_DRM2
 
 /* DRM_FORMAT_XRGB8888 and fourcc_code borrowed from <drm_fourcc.h>
  *
@@ -60,12 +55,11 @@
  * ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  */
-#  define fourcc_code(a, b, c, d) \
+# define fourcc_code(a, b, c, d) \
    ((uint32_t)(a) | ((uint32_t)(b) << 8) | \
        ((uint32_t)(c) << 16) | ((uint32_t)(d) << 24))
-#  define DRM_FORMAT_XRGB8888 \
+# define DRM_FORMAT_XRGB8888 \
    fourcc_code('X', 'R', '2', '4') /* [31:0] x:R:G:B 8:8:8:8 little endian */
-# endif
 #endif
 
 #define WINDOW_WIDTH   320

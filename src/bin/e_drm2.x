@@ -1,4 +1,3 @@
-# ifdef HAVE_DRM2
 # include <dlfcn.h>
 
 static int crude_hack_fd;
@@ -114,4 +113,3 @@ e_drm2_fb_create(Ecore_Drm2_Device *device, int width, int height, int depth, in
 }
 
 #undef E_DRM2_EFL_VERSION_MINIMUM
-#endif
