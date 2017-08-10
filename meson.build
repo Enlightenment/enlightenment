@@ -213,67 +213,6 @@ if get_option('systemd') == true
   endif
 endif
 
-
-HALT      = '/sbin/shutdown -h now'
-REBOOT    = '/sbin/shutdown -r now'
-SUSPEND   = ''
-HIBERNATE = ''
-MOUNT     = '/bin/mount'
-UMOUNT    = '/bin/umount'
-EJECT     = '/usr/bin/eject'
-
-if host_machine.system().contains('bsd') == true
-  #SUSPEND = 'acpiconf -s3'
-  SUSPEND   = '/usr/sbin/zzz'
-  HIBERNATE = 'acpiconf -s4'
-  HALT      = '/sbin/shutdown -p now'
-  MOUNT     = '/sbin/mount'
-  UMOUNT    = '/sbin/umount'
-  EJECT     = '/usr/sbin/cdcontrol eject'
-else
-  if systemd_unitdir != ''
-    HALT      = '/usr/bin/systemctl poweroff'
-    REBOOT    = '/usr/bin/systemctl reboot'
-    SUSPEND   = '/usr/bin/systemctl suspend'
-    HIBERNATE = '/usr/bin/systemctl hibernate'
-  else
-    sleep = find_program('sleep.sh', '/etc/acpi/sleep.sh', '/sbin/sleep.sh', '/usr/sbin/sleep.sh')
-    if sleep.found() == true
-      SUSPEND = sleep.path()
-      if sleep.path() == '/etc/acpi/sleep.sh'
-        SUSPEND = '/etc/acpi/sleep.sh force'
-      endif
-    else
-      suspend = find_program('pm-suspend', '/etc/acpi/pm-suspend', '/sbin/pm-suspend', '/usr/sbin/pm-suspend')
-      if suspend.found()
-        SUSPEND = suspend.path()
-      endif
-    endif
-
-    hibernate_sh = find_program('hibernate.sh', '/etc/acpi/hibernate.sh', '/sbin/hibernate.sh', '/usr/sbin/hibernate.sh')
-    if hibernate_sh.found() == true
-      HIBERNATE = hibernate_sh.path()
-      if hibernate_sh.path() == '/etc/acpi/hibernate.sh'
-        SUSPEND = '/etc/acpi/hibernate.sh force'
-      endif
-    else
-      hibernate = find_program('pm-hibernate', '/etc/acpi/pm-hibernate', '/sbin/pm-hibernate', '/usr/sbin/pm-hibernate')
-      if hibernate.found()
-        HIBERNATE = hibernate.path()
-      endif
-    endif
-  endif
-endif
-
-sysactions = configuration_data()
-sysactions.set('HALT'    , HALT)
-sysactions.set('REBOOT'   , REBOOT)
-sysactions.set('SUSPEND'  , SUSPEND)
-sysactions.set('HIBERNATE', HIBERNATE)
-sysactions.set('MOUNT'    , MOUNT)
-sysactions.set('UMOUNT'   , UMOUNT)
-sysactions.set('EJECT'    , EJECT)
-
 if cc.has_function('eeze_disk_function', dependencies: dependency('eeze')) == true
   config_h.set('HAVE_EEZE_MOUNT', '1')
   eeze_mount = true
