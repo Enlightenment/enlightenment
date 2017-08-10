@@ -533,7 +533,7 @@ executable('enlightenment_static_grabber',
 
 deps_e_alert = []
 if config_h.has('HAVE_WAYLAND') == true
-	deps_e_alert += [dep_ecore_drm2, dep_ecore_input]
+	deps_e_alert += [dep_ecore_drm2, dep_ecore_input, dep_dl]
 endif
 if config_h.has('HAVE_WAYLAND_ONLY') == false
 	deps_e_alert += [
