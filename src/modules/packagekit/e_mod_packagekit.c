@@ -55,7 +55,8 @@ packagekit_icon_update(E_PackageKit_Module_Context *ctxt,
 }
 
 static void
-_update_button_cb(void *data, void *data2 EINA_UNUSED)
+_update_button_cb(void *data, Evas_Object *obj EINA_UNUSED,
+                  void *event EINA_UNUSED)
 {
    E_PackageKit_Instance *inst = data;
    packagekit_popup_del(inst);
@@ -63,7 +64,8 @@ _update_button_cb(void *data, void *data2 EINA_UNUSED)
 }
 
 static void
-_run_button_cb(void *data, void *data2 EINA_UNUSED)
+_run_button_cb(void *data, Evas_Object *obj EINA_UNUSED, 
+               void *event EINA_UNUSED)
 {
    E_PackageKit_Instance *inst = data;
    E_PackageKit_Module_Context *ctxt = inst->ctxt;
@@ -93,13 +95,13 @@ packagekit_popup_update(E_PackageKit_Instance *inst)
 
    if (ctxt->error)
      {
-        e_widget_label_text_set(inst->popup_label, _("No information available"));
-        e_widget_ilist_append(inst->popup_ilist, NULL, ctxt->error, NULL, NULL, NULL);
+        elm_object_text_set(inst->popup_label, _("No information available"));
+        elm_list_item_append(inst->popup_ilist, ctxt->error, NULL, NULL, NULL, NULL);
         if ((ctxt->v_maj != -1) && (ctxt->v_min != -1) && (ctxt->v_mic != -1))
           {
              snprintf(buf, sizeof(buf), "PackageKit version: %d.%d.%d",
                       ctxt->v_maj, ctxt->v_min, ctxt->v_mic);
-             e_widget_ilist_append(inst->popup_ilist, NULL, buf, NULL, NULL, NULL);
+             elm_list_item_append(inst->popup_ilist, buf, NULL, NULL, NULL, NULL);
           }
         return;
      }
@@ -143,9 +145,10 @@ packagekit_popup_update(E_PackageKit_Instance *inst)
              end = edje_object_add(evas);
              e_theme_edje_object_set(end, "base/theme/modules/packagekit", emblem_name);
 
-             e_widget_ilist_append_full(inst->popup_ilist, icon, end,
+             elm_list_item_append(inst->popup_ilist, 
                      ctxt->config->show_description ? pkg->summary : pkg->name,
-                     NULL, NULL, NULL);
+                     icon, end, NULL, NULL);
+            
              num_updates++;
           }
      }
@@ -154,7 +157,7 @@ packagekit_popup_update(E_PackageKit_Instance *inst)
      snprintf(buf, sizeof(buf), P_("One update available", "%d updates available", num_updates), num_updates);
    else
      snprintf(buf, sizeof(buf), _("Your system is updated"));
-   e_widget_label_text_set(inst->popup_label, buf);
+   elm_object_text_set(inst->popup_label, buf);
 }
 
 static void
@@ -172,28 +175,48 @@ _popup_autoclose_cb(void *data, Evas_Object *obj EINA_UNUSED)
 void
 packagekit_popup_new(E_PackageKit_Instance *inst)
 {
-   Evas_Object *table, *bt;
-   Evas *evas;
+   Evas_Object *table, *bt, *ic, *lb, *li, *size_rect;
 
    inst->popup = e_gadcon_popup_new(inst->gcc, EINA_FALSE);
-   evas = e_comp->evas;
 
-   table = e_widget_table_add(e_win_evas_win_get(evas), 0);
+   table = elm_table_add(e_comp->elm);
+   evas_object_show(table);
 
-   inst->popup_label = e_widget_label_add(evas, NULL);
-   e_widget_table_object_append(table, inst->popup_label, 0,0, 1,1, 1,0,1,0);
+   lb = inst->popup_label = elm_label_add(table);
+   evas_object_size_hint_expand_set(lb, EVAS_HINT_EXPAND, 0.0);
+   evas_object_size_hint_align_set(lb, 0.0, 0.5);
+   elm_table_pack(table, lb, 0, 0, 1, 1);
+   evas_object_show(lb);
 
-   bt = e_widget_button_add(evas, NULL, "view-refresh",
-                            _update_button_cb, inst, NULL);
-   e_widget_table_object_append(table, bt, 1,0, 1,1, 0,0,0,0);
+   ic = elm_icon_add(table);
+   evas_object_size_hint_min_set(ic, 16 * elm_config_scale_get(), 
+                                     16 * elm_config_scale_get());
+   elm_icon_standard_set(ic, "view-refresh");
+   bt = elm_button_add(table);
+   evas_object_size_hint_align_set(bt, 1.0, 0.5);
+   elm_object_content_set(bt, ic);
+   evas_object_smart_callback_add(bt, "clicked", _update_button_cb, inst);
+   elm_table_pack(table, bt, 1, 0, 1, 1);
+   evas_object_show(bt);
 
-   inst->popup_ilist = e_widget_ilist_add(evas, 24, 24, NULL);
-   e_widget_size_min_set(inst->popup_ilist, 240, 200);
-   e_widget_table_object_append(table, inst->popup_ilist, 0,1, 2,1, 1,1,0,0);
 
-   bt = e_widget_button_add(evas, _("Run the package manager"), NULL,
-                            _run_button_cb, inst, NULL);
-   e_widget_table_object_append(table, bt, 0,3, 2,1, 1,0,0,0);
+   size_rect = evas_object_rectangle_add(e_comp->evas);
+   evas_object_size_hint_min_set(size_rect, 300 * elm_config_scale_get(),
+                                            300 * elm_config_scale_get());
+   elm_table_pack(table, size_rect, 0, 1, 2, 1);
+
+   li = inst->popup_ilist = elm_list_add(table);
+   E_EXPAND(li);
+   E_FILL(li);
+   elm_table_pack(table, li, 0, 1, 2, 1);
+   evas_object_show(li);
+
+   bt = elm_button_add(table);
+   evas_object_size_hint_fill_set(bt, EVAS_HINT_FILL, 0.0);
+   elm_object_text_set(bt, _("Run the package manager"));
+   evas_object_smart_callback_add(bt, "clicked", _run_button_cb, inst);
+   elm_table_pack(table, bt, 0, 2, 2, 1);
+   evas_object_show(bt);
 
    packagekit_popup_update(inst);
 
