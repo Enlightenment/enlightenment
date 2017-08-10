@@ -20,11 +20,6 @@ option('pam',
 	default: true,
 	description: 'enable PAM support: (default=true)')
 
-option('nls',
-	type: 'boolean',
-	default: true,
-	description: 'enable NLS support: (default=true)')
-
 option('device-udev',
 	type: 'boolean',
 	default: true,
