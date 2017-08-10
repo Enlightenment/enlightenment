@@ -1,42 +1,35 @@
-config_standard = ['e.src', 'e_bindings.src',
-	'module.battery.src',
-	'module.cpufreq.src',
-	'module.fileman.src',
-	'module.ibar.src',
-	'module.ibox.src',
-	'module.pager.src',
-	'module.temperature.src',
-	'module.conf.src'
+dir = 'standard'
+src = [
+  'e',
+  'e_bindings',
+  'module.battery',
+  'module.cpufreq',
+  'module.fileman',
+  'module.ibar',
+  'module.ibox',
+  'module.pager',
+  'module.temperature',
+  'module.conf'
 ]
 
-config_standard_output = ['e.cfg', 'e_bindings.cfg',
-	'module.battery.cfg',
-	'module.cpufreq.cfg',
-	'module.fileman.cfg',
-	'module.ibar.cfg',
-	'module.ibox.cfg',
-	'module.pager.cfg',
-	'module.temperature.cfg',
-	'module.conf.cfg'
-]
-
+##### boilerplate config build + install of icons/dirs
 i = 0
-foreach cd: config_standard
-	custom_target(' '.join(['config_dist_standard', cd]),
-		input: cd,
-		command: [eet, '-e', '@OUTPUT@', 'config', '@INPUT@', '1'],
-		output: config_standard_output[i],
-		install: true,
-		install_dir: join_paths(dir_config, 'standard')
-	)
-	i += 1
+foreach cd: src
+  custom_target(' '.join(['config_dist', dir, cd]),
+		input      : cd + '.src',
+		output     : cd + '.cfg',
+		command    : [eet, '-e', '@OUTPUT@', 'config', '@INPUT@', '1'],
+		install    : true,
+		install_dir: join_paths(dir_config, dir)
+               )
+  i += 1
 endforeach
-
-config_dist_standard = ['enlightenment-standard.png', 'profile.desktop']
-install_data(config_dist_standard,
-	install_dir: join_paths(dir_config, 'standard')
-)
-foreach cd: config_standard_output
-	out = join_paths(dir_config, 'standard', cd)
-	meson.add_install_script(chmod, 'a+r', out)
+install_data([ 'enlightenment-' + dir + '.png',
+               'profile.desktop'
+             ],
+             install_dir: join_paths(dir_config, dir)
+            )
+foreach cd: src
+  o = join_paths(dir_config, dir, cd + '.cfg')
+  meson.add_install_script(chmod, 'a+r', o)
 endforeach

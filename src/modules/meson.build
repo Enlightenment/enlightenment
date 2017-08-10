@@ -1,3 +1,9 @@
+module_files     = []
+module_ldflags   = '-module -avoid-version'
+module_includes  = [ '../../..', '../../bin', '../../bin/efx' ]
+module_includes2 = [ '../..'   , '../bin'   , '../bin/efx'  ]
+module_deps      = [ deps_e, dep_dl ]
+
 subdir('battery')
 subdir('cpufreq')
 subdir('wizard')

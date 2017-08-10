@@ -82,7 +82,7 @@ config_h.set('_ALL_SOURCE'             , '1')
 config_h.set('_POSIX_PTHREAD_SEMANTICS', '1')
 config_h.set('_TANDEM_SOURCE'          , '1')
 config_h.set('__EXTENSIONS__'          , '1')
-#config_h.set('E_RELEASE_BUILD', '1')
+#config_h.set('E_RELEASE_BUILD'         , '1')
 
 if get_option('nls') == true
   subdir('po')
@@ -302,13 +302,13 @@ if get_option('wayland') == true
                               ])
   wayland_scanner = find_program('wayland-scanner')
   gen_scanner_client = generator(wayland_scanner,
-                                 output: '@BASENAME@-client-protocol.h',
+                                 output   : '@BASENAME@-client-protocol.h',
                                  arguments: ['client-header', '@INPUT@', '@OUTPUT@'])
   gen_scanner_server = generator(wayland_scanner,
-                                 output: '@BASENAME@-server-protocol.h',
+                                 output   : '@BASENAME@-server-protocol.h',
                                  arguments: ['server-header', '@INPUT@', '@OUTPUT@'])
   gen_scanner_impl = generator(wayland_scanner,
-                               output: '@BASENAME@-protocol.c',
+                               output   : '@BASENAME@-protocol.c',
                                arguments: ['code', '@INPUT@', '@OUTPUT@'])
   config_h.set('HAVE_WAYLAND', '1')
 endif
@@ -325,11 +325,6 @@ if dep_xkeyboard_config.found() == true
   config_h.set_quoted('XKB_BASE', dep_xkeyboard_config.get_pkgconfig_variable('xkb_base'))
 endif
 
-eet = find_program('eet')
-gen_eet = generator(eet,
-                    output: '@BASENAME@.cfg',
-                    arguments: ['-e', '@OUTPUT@', 'config', '@INPUT@', '1'])
-
 eldbus_codegen = find_program('eldbus-codegen')
 
 requires_e = []
@@ -340,12 +335,6 @@ if freebsd == true
 endif
 
 subdir('src/bin')
-
-module_files     = []
-module_ldflags   = '-module -avoid-version'
-module_includes  = [ '../../..', '../../bin', '../../bin/efx' ]
-module_includes2 = [ '../..'   , '../bin'   , '../bin/efx'  ]
-module_deps      = [ deps_e, dep_dl ]
 
 subdir('src/modules')
 
@@ -376,7 +365,6 @@ pkgconfig.generate(name             : proj,
                    description      : 'Enlightenment Window Manager',
                    filebase         : proj,
                    subdirs          : proj,
-                   #requires: deps_e,
                    requires         : requires_e,
                    version          : e_version_rev,
                    libraries_private: '-lm',

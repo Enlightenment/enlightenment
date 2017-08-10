@@ -1,44 +1,36 @@
-config_tiling = ['e.src', 'e_bindings.src',
-	'module.battery.src',
-	'module.cpufreq.src',
-	'module.fileman.src',
-	'module.ibar.src',
-	'module.ibox.src',
-	'module.pager.src',
-	'module.temperature.src',
-	'module.tiling.src',
-	'module.conf.src'
+dir = 'tiling'
+src = [
+  'e',
+  'e_bindings',
+  'module.battery',
+  'module.cpufreq',
+  'module.fileman',
+  'module.ibar',
+  'module.ibox',
+  'module.pager',
+  'module.temperature',
+  'module.tiling',
+  'module.conf'
 ]
 
-config_tiling_output = ['e.cfg', 'e_bindings.cfg',
-	'module.battery.cfg',
-	'module.cpufreq.cfg',
-	'module.fileman.cfg',
-	'module.ibar.cfg',
-	'module.ibox.cfg',
-	'module.pager.cfg',
-	'module.temperature.cfg',
-	'module.tiling.cfg',
-	'module.conf.cfg'
-]
-
+##### boilerplate config build + install of icons/dirs
 i = 0
-foreach cd: config_tiling
-	custom_target(' '.join(['config_dist_tiling', cd]),
-		input: cd,
-		command: [eet, '-e', '@OUTPUT@', 'config', '@INPUT@', '1'],
-		output: config_tiling_output[i],
-		install: true,
-		install_dir: join_paths(dir_config, 'tiling')
-	)
-	i += 1
+foreach cd: src
+  custom_target(' '.join(['config_dist', dir, cd]),
+		input      : cd + '.src',
+		output     : cd + '.cfg',
+		command    : [eet, '-e', '@OUTPUT@', 'config', '@INPUT@', '1'],
+		install    : true,
+		install_dir: join_paths(dir_config, dir)
+               )
+  i += 1
 endforeach
-
-config_dist_tiling = ['enlightenment-tiling.png', 'profile.desktop']
-install_data(config_dist_tiling,
-	install_dir: join_paths(dir_config, 'tiling')
-)
-foreach cd: config_tiling_output
-        out = join_paths(dir_config, 'tiling', cd)
-	meson.add_install_script(chmod, 'a+r', out)
+install_data([ 'enlightenment-' + dir + '.png',
+               'profile.desktop'
+             ],
+             install_dir: join_paths(dir_config, dir)
+            )
+foreach cd: src
+  o = join_paths(dir_config, dir, cd + '.cfg')
+  meson.add_install_script(chmod, 'a+r', o)
 endforeach
