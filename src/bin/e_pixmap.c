@@ -1133,4 +1133,21 @@ e_pixmap_dmabuf_test(struct linux_dmabuf_buffer *dmabuf)
 
    return EINA_TRUE;
 }
+
+E_API Eina_Bool
+e_pixmap_dmabuf_formats_query(int **formats EINA_UNUSED, int *num_formats)
+{
+   *num_formats = 0;
+
+   return EINA_TRUE;
+}
+
+E_API Eina_Bool
+e_pixmap_dmabuf_modifiers_query(int format EINA_UNUSED, uint64_t **modifiers EINA_UNUSED, int *num_modifiers)
+{
+   *num_modifiers = 0;
+
+   return EINA_TRUE;
+}
+
 #endif

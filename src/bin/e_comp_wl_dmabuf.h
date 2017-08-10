@@ -29,6 +29,9 @@
 #include <stdint.h>
 
 #define MAX_DMABUF_PLANES 4
+#ifndef DRM_FORMAT_MOD_INVALID
+#define DRM_FORMAT_MOD_INVALID ((1ULL<<56) - 1)
+#endif
 
 struct linux_dmabuf_buffer;
 typedef void (*dmabuf_user_data_destroy_func)(
@@ -50,7 +53,7 @@ struct dmabuf_attributes {
 struct linux_dmabuf_buffer {
 	struct wl_resource *buffer_resource;
 	struct wl_resource *params_resource;
-	struct weston_compositor *compositor;
+	void *compositor;
 	struct dmabuf_attributes attributes;
 
 	void *user_data;
