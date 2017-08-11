@@ -2785,7 +2785,7 @@ _e_comp_object_util_show(void *data EINA_UNUSED, Evas_Object *obj)
      e_comp_shape_queue();
    
    evas_object_show(obj);
-   if (ref)
+   if (ref && (!stopping))
      {
         evas_object_ref(obj);
         evas_object_data_set(obj, "comp_ref", (void*)1);
@@ -2813,7 +2813,7 @@ _e_comp_object_util_hide(void *data EINA_UNUSED, Evas_Object *obj)
           evas_object_unref(obj);
         return;
      }
-   if (!evas_object_data_del(obj, "comp_showing"))
+   if ((!stopping) && (!evas_object_data_del(obj, "comp_showing")))
      {
         evas_object_ref(obj);
         evas_object_data_set(obj, "comp_ref", (void*)1);
