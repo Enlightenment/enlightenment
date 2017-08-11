@@ -1,13 +1,19 @@
-src = files(
-  'e_mod_main.c'
-)
+if get_option('wayland') != true
+  disable = true
+else
+  config_h.set('HAVE_WL_DRM', '1')
 
-foreach p: [
-  '@0@/unstable/input-method/input-method-unstable-v1.xml'.format(dir_wayland_protocols),
-  '@0@/unstable/text-input/text-input-unstable-v1.xml'.format(dir_wayland_protocols)
-]
-  src += gen_scanner_server.process(p)
-  src += gen_scanner_impl.process(p)
-endforeach
+  src = files(
+    'e_mod_main.c'
+  )
 
-no_icon = true
+  foreach p: [
+    '@0@/unstable/input-method/input-method-unstable-v1.xml'.format(dir_wayland_protocols),
+    '@0@/unstable/text-input/text-input-unstable-v1.xml'.format(dir_wayland_protocols)
+  ]
+    src += gen_scanner_server.process(p)
+    src += gen_scanner_impl.process(p)
+  endforeach
+
+  no_icon = true
+endif
