@@ -6,12 +6,12 @@ created_file = [
   'eldbus_utils.h'
 ]
 
-src = [files(
+src = files(
   'e_mod_main.c',
   'ui.c',
   'e_mod_main.h',
   'private.h'
-)]
+)
 
 src += custom_target('gen-dbus',
                      input  : 'introspect.xml',

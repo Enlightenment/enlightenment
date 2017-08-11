@@ -8,9 +8,9 @@ created_file = [
   'eldbus_utils.h'
 ]
 
-src = [files(
+src = files(
   'e_mod_main.c'
-)]
+)
 
 src += custom_target('geolocation_gen',
                      input  : 'org.freedesktop.GeoClue2.xml',
