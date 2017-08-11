@@ -54,9 +54,9 @@ _cfg_widgets_create(E_Config_Dialog *cfd, Evas *evas, E_Config_Dialog_Data *cfda
 
    of = e_widget_framelist_add(evas, _("Package list"), 0);
    rg = e_widget_radio_group_new(&(cfdata->show_description));
-   ob = e_widget_radio_add(evas, _("Show package name"), 0, rg);
+   ob = e_widget_radio_add(evas, _("Compact (package name)"), 0, rg);
    e_widget_framelist_object_append(of, ob);
-   ob = e_widget_radio_add(evas, _("Show package description"), 1, rg);
+   ob = e_widget_radio_add(evas, _("Extended (name and description)"), 1, rg);
    e_widget_framelist_object_append(of, ob);
    e_widget_list_object_append(list, of, 1, 0, 0.5);
 

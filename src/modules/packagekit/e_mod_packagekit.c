@@ -85,72 +85,28 @@ packagekit_popup_update(E_PackageKit_Instance *inst)
 {
    E_PackageKit_Module_Context *ctxt = inst->ctxt;
    E_PackageKit_Package *pkg;
-   Eina_List *l;
    unsigned num_updates = 0;
-   const char *emblem_name;
-   Efreet_Desktop *desktop;
-   Evas *evas = e_comp->evas;
-   Evas_Object *icon, *end;
-   char buf[PATH_MAX];
+   char buf[1024];
+   Eina_List *l;
 
    if (ctxt->error)
      {
         elm_object_text_set(inst->popup_label, _("No information available"));
-        elm_list_item_append(inst->popup_ilist, ctxt->error, NULL, NULL, NULL, NULL);
+        elm_object_text_set(inst->popup_error_label, ctxt->error);
         if ((ctxt->v_maj != -1) && (ctxt->v_min != -1) && (ctxt->v_mic != -1))
           {
-             snprintf(buf, sizeof(buf), "PackageKit version: %d.%d.%d",
+             snprintf(buf, sizeof(buf), "<br>PackageKit version: %d.%d.%d",
                       ctxt->v_maj, ctxt->v_min, ctxt->v_mic);
-             elm_list_item_append(inst->popup_ilist, buf, NULL, NULL, NULL, NULL);
+             elm_entry_entry_append(inst->popup_error_label, buf);
           }
         return;
      }
 
    EINA_LIST_FOREACH(ctxt->packages, l, pkg)
      {
-        switch (pkg->info)
-          {
-             case PK_INFO_ENUM_LOW:
-               emblem_name = "e/modules/packagekit/icon/low"; break;
-             case PK_INFO_ENUM_ENHANCEMENT:
-               emblem_name = "e/modules/packagekit/icon/enhancement"; break;
-             case PK_INFO_ENUM_NORMAL:
-               emblem_name = "e/modules/packagekit/icon/normal"; break;
-             case PK_INFO_ENUM_BUGFIX:
-               emblem_name = "e/modules/packagekit/icon/bugfix"; break;
-             case PK_INFO_ENUM_IMPORTANT:
-               emblem_name = "e/modules/packagekit/icon/important"; break;
-             case PK_INFO_ENUM_SECURITY:
-               emblem_name = "e/modules/packagekit/icon/security"; break;
-             default:
-               emblem_name = NULL; break;
-          }
-        if (emblem_name)
-          {
-             // try to find a desktop file that match the executable or the name
-             desktop = efreet_util_desktop_exec_find(pkg->name);
-             if (!desktop)
-               desktop = efreet_util_desktop_name_find(pkg->name);
-
-             if (desktop && desktop->icon)
-               {
-                  icon = e_icon_add(evas);
-                  e_icon_fdo_icon_set(icon, desktop->icon);
-                  efreet_desktop_free(desktop);
-               }
-             else
-               icon = NULL;
-
-             // get the priority icon from the theme
-             end = edje_object_add(evas);
-             e_theme_edje_object_set(end, "base/theme/modules/packagekit", emblem_name);
-
-             elm_list_item_append(inst->popup_ilist, 
-                     ctxt->config->show_description ? pkg->summary : pkg->name,
-                     icon, end, NULL, NULL);
-            
-             num_updates++;
-          }
+        elm_genlist_item_append(inst->popup_genlist, inst->popup_genlist_itc, 
+                                pkg, NULL, ELM_GENLIST_ITEM_NONE, NULL, NULL);
+        num_updates++;
      }
 
    if (num_updates >= 1)
@@ -170,6 +126,95 @@ static void
 _popup_autoclose_cb(void *data, Evas_Object *obj EINA_UNUSED)
 {
    packagekit_popup_del((E_PackageKit_Instance *)data);
+}
+
+static char *
+_gl_item_single_text_get(void *data, Evas_Object *obj EINA_UNUSED, const char *part)
+{
+   E_PackageKit_Package *pkg = data;
+
+   if (!strcmp(part, "elm.text"))
+     {
+        char *s = malloc(strlen(pkg->name) + strlen(pkg->version) + 2);
+        sprintf(s, "%s %s", pkg->name, pkg->version);
+        return s;
+     }
+
+   return NULL;
+}
+
+static char *
+_gl_item_double_text_get(void *data, Evas_Object *obj EINA_UNUSED, const char *part)
+{
+   E_PackageKit_Package *pkg = data;
+
+   if (!strcmp(part, "elm.text"))
+     {
+        return strdup(pkg->summary);
+     }
+   else
+     {
+        char *s = malloc(strlen(pkg->name) + strlen(pkg->version) + 2);
+        sprintf(s, "%s %s", pkg->name, pkg->version);
+        return s;
+     }
+
+   return NULL;
+}
+
+static Evas_Object *
+_gl_item_content_get(void *data, Evas_Object *obj, const char *part)
+{
+   E_PackageKit_Package *pkg = data;
+   Efreet_Desktop *desktop;
+   Evas_Object *icon;
+
+   if (!strcmp(part, "elm.swallow.icon"))
+     {
+        // get the priority icon from the theme
+        const char *emblem_name;
+
+        switch (pkg->info)
+          {
+             case PK_INFO_ENUM_LOW:
+               emblem_name = "e/modules/packagekit/icon/low"; break;
+             case PK_INFO_ENUM_ENHANCEMENT:
+               emblem_name = "e/modules/packagekit/icon/enhancement"; break;
+             case PK_INFO_ENUM_NORMAL:
+               emblem_name = "e/modules/packagekit/icon/normal"; break;
+             case PK_INFO_ENUM_BUGFIX:
+               emblem_name = "e/modules/packagekit/icon/bugfix"; break;
+             case PK_INFO_ENUM_IMPORTANT:
+               emblem_name = "e/modules/packagekit/icon/important"; break;
+             case PK_INFO_ENUM_SECURITY:
+               emblem_name = "e/modules/packagekit/icon/security"; break;
+             default:
+               emblem_name = NULL; break;
+          }
+        if (emblem_name)
+          {
+            icon = edje_object_add(evas_object_evas_get(obj));
+            e_theme_edje_object_set(icon, "base/theme/modules/packagekit", emblem_name);
+            return icon;
+          }
+     }
+   else if (!strcmp(part, "elm.swallow.end"))
+     {
+        // try to find a desktop file that match the executable or the name
+        desktop = efreet_util_desktop_exec_find(pkg->name);
+        if (!desktop)
+          desktop = efreet_util_desktop_name_find(pkg->name);
+
+        if (desktop && desktop->icon)
+          {
+             icon = elm_icon_add(obj);
+             elm_icon_standard_set(icon, desktop->icon);
+             efreet_desktop_free(desktop);
+             return icon;
+          }
+     }
+
+   return NULL;
 }
 
 void
@@ -199,13 +244,35 @@ packagekit_popup_new(E_PackageKit_Instance *inst)
    elm_table_pack(table, bt, 1, 0, 1, 1);
    evas_object_show(bt);
 
-
    size_rect = evas_object_rectangle_add(e_comp->evas);
    evas_object_size_hint_min_set(size_rect, 300 * elm_config_scale_get(),
                                             300 * elm_config_scale_get());
    elm_table_pack(table, size_rect, 0, 1, 2, 1);
 
-   li = inst->popup_ilist = elm_list_add(table);
+   inst->popup_genlist_itc = elm_genlist_item_class_new();
+   if (inst->ctxt->config->show_description)
+     {
+        inst->popup_genlist_itc->item_style = "double_label";
+        inst->popup_genlist_itc->func.text_get = _gl_item_double_text_get;
+     }
+   else
+     {
+        inst->popup_genlist_itc->item_style = "default";
+        inst->popup_genlist_itc->func.text_get = _gl_item_single_text_get;
+     }
+   inst->popup_genlist_itc->func.content_get = _gl_item_content_get;
+
+   lb = inst->popup_error_label = elm_entry_add(table);
+   elm_entry_editable_set(lb, EINA_FALSE);
+   E_EXPAND(lb);
+   E_FILL(lb);
+   elm_table_pack(table, lb, 0, 1, 2, 1);
+   evas_object_show(lb);
+
+   li = inst->popup_genlist = elm_genlist_add(table);
+   elm_genlist_homogeneous_set(li, EINA_TRUE);
+   elm_genlist_mode_set(li, ELM_LIST_COMPRESS);
+   elm_genlist_multi_select_set(li, EINA_TRUE);
    E_EXPAND(li);
    E_FILL(li);
    elm_table_pack(table, li, 0, 1, 2, 1);
@@ -233,7 +300,12 @@ void
 packagekit_popup_del(E_PackageKit_Instance *inst)
 {
    E_FREE_FUNC(inst->popup, e_object_del);
-   inst->popup_ilist = inst->popup_label = NULL;
+   inst->popup_genlist = inst->popup_label = NULL;
+   if (inst->popup_genlist_itc)
+     {
+        elm_genlist_item_class_free(inst->popup_genlist_itc);
+        inst->popup_genlist_itc = NULL;
+     }
 }
 
 
@@ -354,8 +426,8 @@ _signal_package_cb(void *data, const Eldbus_Message *msg)
    //else
      //{ DBG("PKGKIT: Package: (%d) %s [ %s ]", info, pkg_id, summary); }
 
-   splitted = eina_str_split_full(pkg_id, ";", 2, &num_elements);
-   if (num_elements == 2)
+   splitted = eina_str_split_full(pkg_id, ";", 3, &num_elements);
+   if (num_elements >= 2)
      {
         E_PackageKit_Package *pkg = E_NEW(E_PackageKit_Package, 1);
         pkg->name = eina_stringshare_add(splitted[0]);

@@ -70,8 +70,10 @@ typedef struct _E_PackageKit_Instance
    E_Gadcon_Client *gcc;
    Evas_Object *gadget;
    E_Gadcon_Popup *popup;
-   Evas_Object *popup_ilist;
    Evas_Object *popup_label;
+   Evas_Object *popup_error_label;
+   Evas_Object *popup_genlist;
+   Elm_Genlist_Item_Class *popup_genlist_itc;
 } E_PackageKit_Instance;
 
 typedef struct _E_PackageKit_Package
