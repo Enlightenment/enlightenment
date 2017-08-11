@@ -2856,10 +2856,9 @@ _e_comp_wl_gl_init(void)
    evas_gl_make_current(e_comp_wl->wl.gl, e_comp_wl->wl.glsfc, e_comp_wl->wl.glctx);
    e_comp_wl->wl.glapi = evas_gl_context_api_get(e_comp_wl->wl.gl, e_comp_wl->wl.glctx);
    if (e_comp_wl->wl.glapi->evasglBindWaylandDisplay)
-     {
-        e_util_env_set("ELM_ACCEL", "gl");
-        e_comp->gl = e_comp_wl->wl.glapi->evasglBindWaylandDisplay(e_comp_wl->wl.gl, e_comp_wl->wl.disp);
-     }
+     e_comp->gl = e_comp_wl->wl.glapi->evasglBindWaylandDisplay(e_comp_wl->wl.gl, e_comp_wl->wl.disp);
+   if (e_comp->gl)
+     e_util_env_set("ELM_ACCEL", "gl");
    else
      _e_comp_wl_gl_shutdown();
 }
