@@ -10,6 +10,7 @@ themes=${pkgdatadir}/themes
 backgrounds=${pkgdatadir}/backgrounds
 config_apps=@datadir@/@PACKAGE@/config-apps
 release=@release@
+wayland=@WAYLAND@
 
 Name: enlightenment
 Description: Enlightenment Window Manager

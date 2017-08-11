@@ -350,6 +350,11 @@ subdir('doc')
 meson.add_install_script('meson/meson_inst.sh'   , suid_exes)
 meson.add_install_script('meson/meson_modules.sh', module_files)
 
+wayland = 'false'
+if config_h.has('HAVE_WAYLAND') == true
+	wayland = 'true'
+endif
+
 configure_file(output       : 'config.h',
                install      : false,
                configuration: config_h)
@@ -369,7 +374,8 @@ pkgconfig.generate(name             : proj,
                                         'pkgdatadir=${datarootdir}/' + proj + '/data',
                                         'themes=${pkgdatadir}/themes',
                                         'backgrounds=${pkgdatadir}/backgrounds',
-                                        'release=@0@'.format(release)
+                                        'release=@0@'.format(release),
+                                        'wayland=@0@'.format(wayland)
                                       ]
                   )
 

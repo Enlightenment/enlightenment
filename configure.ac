@@ -694,7 +694,7 @@ if test "x${e_cv_want_wayland_only}" != "xno" ;then
       fi
       ac_wayland_protocols_pkgdatadir=`$PKG_CONFIG --variable=pkgdatadir wayland-protocols`
       AC_SUBST(WAYLAND_PROTOCOLS_DATADIR, $ac_wayland_protocols_pkgdatadir)
-
+      AC_SUBST(WAYLAND, "true")
       AC_DEFINE_UNQUOTED([HAVE_WAYLAND],[1],[enable wayland support])
     ])
 else
