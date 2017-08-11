@@ -1,9 +1,11 @@
 #include "e.h"
 #include "e_mod_main.h"
 
-#define BUS "org.freedesktop.UPower"
-#define PATH "/org/freedesktop/UPower"
-#define IFACE "org.freedesktop.UPower"
+#if !(defined(HAVE_EEZE) || defined(__OpenBSD__) || defined(__DragonFly__) || defined(__FreeBSD__) || defined(__NetBSD__))
+
+# define BUS "org.freedesktop.UPower"
+# define PATH "/org/freedesktop/UPower"
+# define IFACE "org.freedesktop.UPower"
 
 extern Eina_List *device_batteries;
 extern Eina_List *device_ac_adapters;
@@ -348,3 +350,4 @@ _battery_upower_stop(void)
    eldbus_object_unref(obj);
    eldbus_connection_unref(conn);
 }
+#endif

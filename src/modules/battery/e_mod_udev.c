@@ -1,6 +1,8 @@
 #include "e.h"
 #include "e_mod_main.h"
 
+#ifdef HAVE_EEZE
+
 static void _battery_udev_event_battery(const char *syspath, Eeze_Udev_Event event, void *data, Eeze_Udev_Watch *watch);
 static void _battery_udev_event_ac(const char *syspath, Eeze_Udev_Event event, void *data, Eeze_Udev_Watch *watch);
 static void _battery_udev_battery_add(const char *syspath);
@@ -110,8 +112,8 @@ _battery_udev_battery_add(const char *syspath)
    bat->last_update = ecore_time_get();
    bat->udi = eina_stringshare_add(syspath);
    bat->poll = ecore_poller_add(ECORE_POLLER_CORE, 
-				battery_config->poll_interval, 
-				_battery_udev_battery_update_poll, bat);
+                                battery_config->poll_interval, 
+                                _battery_udev_battery_update_poll, bat);
    device_batteries = eina_list_append(device_batteries, bat);
    _battery_udev_battery_update(syspath, bat);
 }
@@ -184,7 +186,7 @@ _battery_udev_battery_update_poll(void *data)
    return EINA_TRUE;
 }
 
-#define GET_NUM(TYPE, VALUE, PROP) \
+# define GET_NUM(TYPE, VALUE, PROP) \
   do                                                                                        \
     {                                                                                       \
       test = eeze_udev_syspath_get_property(TYPE->udi, #PROP);                              \
@@ -196,7 +198,7 @@ _battery_udev_battery_update_poll(void *data)
     }                                                                                       \
   while (0)
 
-#define GET_STR(TYPE, VALUE, PROP) TYPE->VALUE = eeze_udev_syspath_get_property(TYPE->udi, #PROP)
+# define GET_STR(TYPE, VALUE, PROP) TYPE->VALUE = eeze_udev_syspath_get_property(TYPE->udi, #PROP)
 
 static void
 _battery_udev_battery_update(const char *syspath, Battery *bat)
@@ -219,7 +221,7 @@ _battery_udev_battery_update(const char *syspath, Battery *bat)
    if (!bat->got_prop) /* only need to get these once */
      {
         GET_STR(bat, technology, POWER_SUPPLY_TECHNOLOGY);
-	GET_STR(bat, model, POWER_SUPPLY_MODEL_NAME);
+        GET_STR(bat, model, POWER_SUPPLY_MODEL_NAME);
         GET_STR(bat, vendor, POWER_SUPPLY_MANUFACTURER);
         GET_NUM(bat, design_charge, POWER_SUPPLY_ENERGY_FULL_DESIGN);
         if (eina_dbl_exact(bat->design_charge, 0))
@@ -310,4 +312,4 @@ _battery_udev_ac_update(const char *syspath, Ac_Adapter *ac)
 
    _battery_device_update();
 }
-
+#endif

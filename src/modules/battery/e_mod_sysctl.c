@@ -1,15 +1,12 @@
-
-#include <err.h>
-#include <sys/types.h>
-#include <sys/sysctl.h>
-
-#if defined(__OpenBSD__) || defined(__NetBSD__)
-#include <sys/param.h>
-#include <sys/sensors.h>
-#endif
-
 #include "e.h"
 #include "e_mod_main.h"
+
+#if defined(__OpenBSD__) || defined(__NetBSD__) || defined(__FreeBSD__) || defined(__DragonFly__)
+# include <err.h>
+# include <sys/types.h>
+# include <sys/sysctl.h>
+# include <sys/param.h>
+# include <sys/sensors.h>
 
 static Eina_Bool _battery_sysctl_battery_update_poll(void *data EINA_UNUSED);
 static int       _battery_sysctl_battery_update();
@@ -24,16 +21,16 @@ static Battery *bat = NULL;
 int
 _battery_sysctl_start(void)
 {
-#if defined(__OpenBSD__) || defined(__NetBSD__)
+# if defined(__OpenBSD__) || defined(__NetBSD__)
    int mib[] = {CTL_HW, HW_SENSORS, 0, 0, 0};
    int devn;
    struct sensordev snsrdev;
    size_t sdlen = sizeof(struct sensordev);
-#elif defined(__FreeBSD__) || defined(__DragonFly__)
+# elif defined(__FreeBSD__) || defined(__DragonFly__)
    size_t len;
-#endif
+# endif
 
-#if defined(__OpenBSD__) || defined(__NetBSD__)
+# if defined(__OpenBSD__) || defined(__NetBSD__)
    for (devn = 0;; devn++) {
         mib[2] = devn;
         if (sysctl(mib, 3, &snsrdev, &sdlen, NULL, 0) == -1)
@@ -75,12 +72,12 @@ _battery_sysctl_start(void)
              device_ac_adapters = eina_list_append(device_ac_adapters, ac);
           }
      }
-#elif defined(__FreeBSD__) || defined(__DragonFly__)
+# elif defined(__FreeBSD__) || defined(__DragonFly__)
      if ((sysctlbyname("hw.acpi.battery.life", NULL, &len, NULL, 0)) != -1)
        {
           if (!(bat = E_NEW(Battery, 1)))
             return 0;
-          
+
           bat->mib = malloc(sizeof(int) * 4);
           if (!bat->mib) return 0;
           sysctlnametomib("hw.acpi.battery.life", bat->mib, &len); 
@@ -103,7 +100,7 @@ _battery_sysctl_start(void)
           bat->vendor = eina_stringshare_add("Unknown");
 
           bat->poll = ecore_poller_add(ECORE_POLLER_CORE,
-		                       battery_config->poll_interval,
+                                       battery_config->poll_interval,
                                        _battery_sysctl_battery_update_poll, NULL);
 
           device_batteries = eina_list_append(device_batteries, bat);
@@ -123,7 +120,7 @@ _battery_sysctl_start(void)
 
            device_ac_adapters = eina_list_append(device_ac_adapters, ac);
         }
-#endif
+# endif
    _battery_sysctl_battery_update();
 
    bat->last_update = ecore_time_get();
@@ -148,11 +145,11 @@ _battery_sysctl_stop(void)
         eina_stringshare_del(bat->model);
         eina_stringshare_del(bat->vendor);
         ecore_poller_del(bat->poll);
-#if defined(__FreeBSD__) || defined(__DragonFly__)
+# if defined(__FreeBSD__) || defined(__DragonFly__)
         E_FREE(bat->mib_state);
         E_FREE(bat->mib_time);
         E_FREE(bat->mib_units);
-#endif
+# endif
         E_FREE(bat->mib);
         E_FREE(bat);
      }
@@ -169,21 +166,21 @@ static int
 _battery_sysctl_battery_update()
 {
    double _time;
-#if defined(__OpenBSD__) || defined(__NetBSD__)
+# if defined(__OpenBSD__) || defined(__NetBSD__)
    double charge;
    struct sensor s;
    size_t slen = sizeof(struct sensor);
-#elif defined(__FreeBSD__) || defined(__DragonFly__)
+# elif defined(__FreeBSD__) || defined(__DragonFly__)
    int value;
    size_t len;
-#endif
+# endif
 
    if (bat)
      {
        /* update the poller interval */
        ecore_poller_poller_interval_set(bat->poll,
                                         battery_config->poll_interval);
-#if defined(__OpenBSD__) || defined(__NetBSD__)
+# if defined(__OpenBSD__) || defined(__NetBSD__)
        /* last full capacity */
        bat->mib[3] = 7;
        bat->mib[4] = 0;
@@ -191,7 +188,7 @@ _battery_sysctl_battery_update()
          {
             bat->last_full_charge = (double)s.value;
          }
-    
+
        /* remaining capacity */
        bat->mib[3] = 7;
        bat->mib[4] = 3;
@@ -199,7 +196,7 @@ _battery_sysctl_battery_update()
          {
             charge = (double)s.value;
          }
-  
+
        /* This is a workaround because there's an ACPI bug */ 
        if ((EINA_FLT_EQ(charge, 0.0)) || (EINA_FLT_EQ(bat->last_full_charge, 0.0)))
          {
@@ -221,7 +218,7 @@ _battery_sysctl_battery_update()
          }
 
        bat->got_prop = 1;
- 
+
        _time = ecore_time_get();
        if ((bat->got_prop) && (!EINA_FLT_EQ(charge, bat->current_charge)))
          bat->charge_rate = ((charge - bat->current_charge) / (_time - bat->last_update));
@@ -255,7 +252,7 @@ _battery_sysctl_battery_update()
             bat->time_full = -1;
             bat->time_left = -1;
          }
-    
+
        /* battery state 1: discharge, 2: charge */
        bat->mib[3] = 10;
        bat->mib[4] = 0;
@@ -267,13 +264,13 @@ _battery_sysctl_battery_update()
               bat->charging = 0;
          }
 
-#elif defined(__FreeBSD__) || defined(__DragonFly__)
+# elif defined(__FreeBSD__) || defined(__DragonFly__)
        len = sizeof(value);
        if ((sysctl(bat->mib, 4, &value, &len, NULL, 0)) == -1)
          {
            return 0;
          }
-    
+
        bat->percent = value;
 
        _time = ecore_time_get();
@@ -305,12 +302,12 @@ _battery_sysctl_battery_update()
 
        if (bat->time_min >= 0) bat->time_left = bat->time_min * 60;
        if (bat->batteries == 1) bat->time_left = -1;
-#endif 
-   } 
+# endif
+   }
 
    if (ac)
      {
-#if defined(__OpenBSD__) || defined(__NetBSD__)
+# if defined(__OpenBSD__) || defined(__NetBSD__)
        /* AC State */
        ac->mib[3] = 9;
        ac->mib[4] = 0;
@@ -321,14 +318,14 @@ _battery_sysctl_battery_update()
             else
               ac->present = 0;
          }
-#elif defined(__FreeBSD__) || defined(__DragonFly__)
+# elif defined(__FreeBSD__) || defined(__DragonFly__)
        len = sizeof(value);
        if ((sysctl(ac->mib, 3, &value, &len, NULL, 0)) != -1)
          {
             ac->present = value;
          }
-#endif
-     } 
+# endif
+     }
 
    if (bat)
      {
@@ -336,8 +333,9 @@ _battery_sysctl_battery_update()
           _battery_device_update();
         bat->got_prop = 1;
      }
-   return 1;  
+   return 1;
 }
+#endif
 
 
 

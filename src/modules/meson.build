@@ -4,8 +4,6 @@ module_includes  = [ '../../..', '../../bin', '../../bin/efx' ]
 module_includes2 = [ '../..'   , '../bin'   , '../bin/efx'  ]
 module_deps      = [ deps_e, dep_dl ]
 
-subdir('battery')
-subdir('cpufreq')
 subdir('wizard')
 subdir('mixer')
 subdir('everything')
@@ -13,14 +11,16 @@ subdir('teamwork')
 subdir('wl_desktop_shell')
 subdir('wl_text_input')
 subdir('wl_weekeyboard')
-subdir('sysinfo')
 
 # disabled for now
 ####subdir('wl_fb')
 
 mods = [
 # standard run of the mill modules with cion and desktop
+  'battery',
+  'cpufreq',
   'clock',
+  'sysinfo',
   'ibar',
   'pager',
   'pager_plain',
@@ -80,7 +80,9 @@ foreach m: mods
   no_icon      = false
   disable      = false
   cargs        = ''
-
+  _dir         = join_paths(dir_module_e, m)
+  _dir_bin     = join_paths(_dir, module_arch)
+  _inc         = include_directories(module_includes2, join_paths('.', m))
   subdir(m)
 
   opt = '-'.join(m.split('_'))
@@ -88,9 +90,6 @@ foreach m: mods
   if get_option(opt) == true and disable == false
 
     _conf         = 'USE_MODULE_' + m.underscorify().to_upper()
-    _dir          = join_paths(dir_module_e, m)
-    _dir_bin      = join_paths(_dir, module_arch)
-    _inc          = include_directories(module_includes2, join_paths('.', m))
     module_files += join_paths(_dir_bin, m + '.so')
 
     if desktop_only == true

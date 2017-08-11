@@ -818,7 +818,7 @@ e_modapi_shutdown(E_Module *m EINA_UNUSED)
 
 #ifdef HAVE_EEZE
    _battery_udev_stop();
-#elif defined __OpenBSD__ || defined __DragonFly__ || defined __FreeBSD__ || defined __NetBSD__
+#elif defined (__OpenBSD__) || defined (__DragonFly__) || defined (__FreeBSD__) || defined (__NetBSD__)
    _battery_sysctl_stop();
 #else
    _battery_upower_stop();
