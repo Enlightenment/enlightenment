@@ -97,6 +97,7 @@ typedef struct Gadget_Item
    Evas_Object *editor;
    Evas_Object *gadget;
    Evas_Object *site;
+   Elm_Object_Item *it;
 } Gadget_Item;
 
 #define DESKLOCK_DEMO_LAYER (E_LAYER_CLIENT_POPUP - 100)
@@ -2380,6 +2381,13 @@ _editor_text_get(void *data, Evas_Object *obj EINA_UNUSED, const char *part EINA
    return strdup(buf);
 }
 
+static void
+_editor_gadget_del(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   Gadget_Item *gi = data;
+   elm_object_item_del(gi->it);
+}
+
 E_API Evas_Object *
 e_gadget_editor_add(Evas_Object *parent, Evas_Object *site)
 {
@@ -2440,10 +2448,11 @@ e_gadget_editor_add(Evas_Object *parent, Evas_Object *site)
         E_EXPAND(g);
         E_FILL(g);
         evas_object_pass_events_set(g, 1);
+        evas_object_event_callback_add(g, EVAS_CALLBACK_DEL, _editor_gadget_del, gi);
         if (orient)
-          elm_genlist_item_append(list, &gli, gi, NULL, 0, _editor_gadget_new, gi);
+          gi->it = elm_genlist_item_append(list, &gli, gi, NULL, 0, _editor_gadget_new, gi);
         else
-          elm_gengrid_item_append(list, &gli, gi, _editor_gadget_new, gi);
+          gi->it = elm_gengrid_item_append(list, &gli, gi, _editor_gadget_new, gi);
      }
    evas_object_event_callback_add(list, EVAS_CALLBACK_DEL, _editor_del, parent);
    e_comp_object_util_del_list_append(list, tempsite);
