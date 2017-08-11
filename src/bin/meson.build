@@ -35,7 +35,7 @@ deps_e = [
   dep_elementary
 ]
 
-req = ' '.join([
+requires_e = ' '.join([
   'eina >= 1.19.99',
   'eet',
   'ecore',
@@ -407,7 +407,7 @@ if config_h.has('HAVE_WAYLAND') == true
     'e_comp_wl.h'
   ]
   deps_e += dep_wayland
-  req = ' '.join([req, requires_wayland])
+  requires_e = ' '.join([requires_e, requires_wayland])
 endif
 
 if config_h.has('HAVE_WAYLAND_ONLY') == false
@@ -418,7 +418,7 @@ if config_h.has('HAVE_WAYLAND_ONLY') == false
     'e_xsettings.c'
   ]
   deps_e += dep_ecore_x
-  req = ' '.join([req, 'ecore-x'])
+  requires_e = ' '.join([requires_e, 'ecore-x'])
 endif
 
 install_headers( hdr, subdir: 'enlightenment' )
