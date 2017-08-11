@@ -26,9 +26,8 @@
 # include <Ecore_Drm2.h>
 # include <Evas.h>
 # include <Evas_Engine_Buffer.h>
+# include "e_drm2.x"
 #endif
-
-#include "e_drm2.x"
 
 #ifdef HAVE_WL_DRM
 
