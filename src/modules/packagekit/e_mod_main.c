@@ -180,8 +180,11 @@ e_modapi_init(E_Module *m)
    E_CONFIG_VAL(D, T, show_description, INT);
    ctxt->config = e_config_domain_load(PACKAGEKIT_DOMAIN, ctxt->conf_edd);
    if (!ctxt->config)
-     ctxt->config = E_NEW(PackageKit_Config, 1);
-
+     {
+        ctxt->config = E_NEW(PackageKit_Config, 1);
+        ctxt->config->update_interval = 60 * 24;  // once a day
+        ctxt->config->show_description = 1;  // extended list
+     }
    ctxt->module = m;
    packagekit_mod = m;
    e_gadcon_provider_register(&_gc_class);
