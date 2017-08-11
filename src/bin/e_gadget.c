@@ -385,9 +385,13 @@ _gadget_remove(E_Gadget_Config *zgc)
    evas_object_smart_callback_call(zgc->site->layout, "gadget_removed", zgc->gadget);
    zgc->site->gadget_list = eina_inlist_remove(zgc->site->gadget_list, EINA_INLIST_GET(zgc));
    zgc->site->gadgets = eina_list_remove(zgc->site->gadgets, zgc);
-   _gadget_free(zgc);
    if (id >= 0)
-     e_config_save_queue();
+     {
+        _gadget_free(zgc);
+        e_config_save_queue();
+     }
+   else
+     evas_object_del(zgc->display);
 }
 
 static void
