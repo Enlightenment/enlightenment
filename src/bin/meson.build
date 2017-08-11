@@ -448,7 +448,7 @@ executable('enlightenment_imc',
 executable('enlightenment_start',
            [ 'e_start_main.c' ],
            include_directories: include_directories('../..'),
-           dependencies       : [ dep_eina, dep_evas ],
+           dependencies       : dep_eina,
            install_dir        : dir_bin,
            install            : true
           )

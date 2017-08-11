@@ -32,7 +32,6 @@
 #include <errno.h>
 
 #include <Eina.h>
-#include <Evas.h>
 
 # ifdef E_API
 #  undef E_API
@@ -58,8 +57,6 @@
 #   define E_API
 #  endif
 # endif
-
-# define E_CSERVE
 
 static Eina_Bool stop_ptrace = EINA_FALSE;
 
@@ -277,32 +274,6 @@ _sigusr1(int x EINA_UNUSED, siginfo_t *info EINA_UNUSED, void *data EINA_UNUSED)
    sigaction(SIGUSR1, &action, NULL);
 }
 
-#ifdef E_CSERVE
-static pid_t
-_cserve2_start()
-{
-   pid_t cs_child;
-   cs_child = fork();
-   if (cs_child == 0)
-     {
-        char *cs_args[2] = { NULL, NULL };
-
-        cs_args[0] = (char *)evas_cserve_path_get();
-        execv(cs_args[0], cs_args);
-        exit(-1);
-     }
-   else if (cs_child > 0)
-     {
-        putenv("EVAS_CSERVE2=1");
-     }
-   else
-     {
-        unsetenv("EVAS_CSERVE2");
-     }
-   return cs_child;
-}
-#endif
-
 static void
 _print_usage(const char *hstr)
 {
@@ -507,10 +478,6 @@ main(int argc, char **argv)
    Eina_Bool really_know = EINA_FALSE;
    struct sigaction action;
    pid_t child = -1;
-#ifdef E_CSERVE
-   pid_t cs_child = -1;
-   Eina_Bool cs_use = EINA_FALSE;
-#endif
    Eina_Bool restart = EINA_TRUE;
 
    unsetenv("NOTIFY_SOCKET");
@@ -642,15 +609,6 @@ main(int argc, char **argv)
    if (valgrind_tool || valgrind_mode)
      really_know = EINA_TRUE;
 
-   /* not run at the moment !! */
-#ifdef E_CSERVE
-   if (getenv("E_CSERVE"))
-     {
-        cs_use = EINA_TRUE;
-        cs_child = _cserve2_start();
-     }
-#endif
-
    /* Now looping until */
    while (restart)
      {
@@ -676,7 +634,7 @@ main(int argc, char **argv)
         /* now loop until done */
 not_done:
         result = waitpid(child, &status, WNOHANG);
-        /* Wait for evas_cserve2 and E */
+        /* Wait for E */
         if (!result)
           result = waitpid(-1, &status, 0);
 
@@ -736,43 +694,9 @@ not_done:
                   _e_ptrace_detach(child, 0, really_know);
                }
           }
-#ifdef E_CSERVE
-        else if (cs_use && (result == cs_child))
-          {
-             if (WIFSIGNALED(status))
-               {
-                  printf("E - cserve2 terminated with signal %d\n",
-                         WTERMSIG(status));
-                  cs_child = _cserve2_start();
-               }
-             else if (WIFEXITED(status))
-               {
-                  printf("E - cserve2 exited with code %d\n",
-                         WEXITSTATUS(status));
-                  cs_child = -1;
-               }
-          }
-#endif
         if (!done)
           goto not_done;
      }
-
-#ifdef E_CSERVE
-   if (cs_child > 0)
-     {
-        pid_t result;
-        int status;
-
-        alarm(2);
-        kill(cs_child, SIGINT);
-        result = waitpid(cs_child, &status, 0);
-        if (result != cs_child)
-          {
-             printf("E - cserve2 did not shutdown in 2 seconds, killing!\n");
-             kill(cs_child, SIGKILL);
-          }
-     }
-#endif
 
    return -1;
 }
