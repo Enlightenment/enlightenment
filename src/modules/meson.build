@@ -8,9 +8,6 @@ subdir('wizard')
 subdir('mixer')
 subdir('everything')
 subdir('teamwork')
-subdir('wl_desktop_shell')
-subdir('wl_text_input')
-subdir('wl_weekeyboard')
 
 # disabled for now
 ####subdir('wl_fb')
@@ -72,6 +69,9 @@ mods = [
   'wl_wl',
   'wl_buffer',
   'wl_drm',
+  'wl_text_input',
+  'wl_desktop_shell',
+  'wl_weekeyboard',
   'xwayland'
 ]
 
@@ -80,9 +80,11 @@ foreach m: mods
   no_icon      = false
   disable      = false
   cargs        = ''
+  data         = []
   _dir         = join_paths(dir_module_e, m)
   _dir_bin     = join_paths(_dir, module_arch)
   _inc         = include_directories(module_includes2, join_paths('.', m))
+
   subdir(m)
 
   opt = '-'.join(m.split('_'))
@@ -93,14 +95,20 @@ foreach m: mods
     module_files += join_paths(_dir_bin, m + '.so')
 
     if desktop_only == true
-      install_data([ join_paths(m, 'module.desktop')
-                   ],
-                   install_dir: _dir)
+      _data = [ join_paths(m, 'module.desktop') ]
     elif no_icon == true
+      _data = []
     else
-      install_data([ join_paths(m, 'e-module-' + m + '.edj'),
-                     join_paths(m, 'module.desktop')
-                   ],
+      _data = [ join_paths(m, 'e-module-' + m + '.edj'),
+                join_paths(m, 'module.desktop') ]
+    endif
+
+    foreach d: data
+      _data += join_paths(m, d)
+    endforeach
+
+    if _data.length() > 0
+      install_data(_data,
                    install_dir: _dir)
     endif
 
