@@ -1,7 +1,4 @@
 #ifdef E_TYPEDEFS
-#  ifndef HAVE_WAYLAND_ONLY
-#   include "e_comp_x.h"
-#  endif
 #else
 # ifndef E_COMP_WL_H
 #  define E_COMP_WL_H
