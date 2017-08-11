@@ -398,7 +398,7 @@ _gadget_wizard_end(void *data, int id)
    zgc->id = id;
    evas_object_smart_callback_call(zgc->site->layout, "gadget_site_unlocked", NULL);
    e_comp_ungrab_input(1, 1);
-   if (id)
+   if (id > 0)
      {
         _gadget_object_finalize(zgc);
         added = 0;
