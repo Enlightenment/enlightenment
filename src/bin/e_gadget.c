@@ -44,6 +44,11 @@ struct E_Gadget_Config
 {
    EINA_INLIST;
    int id;
+   struct
+   {
+      Eina_Stringshare *domain;
+      Eina_Stringshare *type;
+   } external;
    int zone;
    Eina_Stringshare *type;
    E_Object *e_obj_inherit;
@@ -85,6 +90,13 @@ typedef struct E_Gadget_Sites
    Eina_List *sites;
 } E_Gadget_Sites;
 
+typedef struct E_Gadget_External_Type
+{
+   E_Gadget_External_Create_Cb cb;
+   E_Gadget_External_Wizard_Cb wizard;
+   E_Gadget_External_Name_Cb name;
+} E_Gadget_External_Type;
+
 typedef struct E_Gadget_Type
 {
    E_Gadget_Create_Cb cb;
@@ -110,6 +122,7 @@ static Eina_Bool added;
 static Evas_Object *pointer_site;
 static Eina_List *handlers;
 
+static Eina_Hash *gadget_external_domains;
 static Eina_Hash *gadget_types;
 static E_Gadget_Sites *sites;
 static Ecore_Event_Handler *comp_add_handler;
@@ -143,6 +156,16 @@ _site_recalc_job(E_Gadget_Site *zgs)
 {
    if (zgs->calc_job) ecore_job_del(zgs->calc_job);
    zgs->calc_job = ecore_job_add((Ecore_Cb)_site_recalc_job_cb, zgs);
+}
+
+static E_Gadget_External_Type *
+_gadget_external_type_get(const char *domain, const char *type)
+{
+   Eina_Hash *h;
+   if (!gadget_external_domains) return NULL;
+   h = eina_hash_find(gadget_external_domains, domain);
+   if (!h) return NULL;
+   return eina_hash_find(h, type);
 }
 
 static Eina_Bool
@@ -179,6 +202,8 @@ _gadget_free(E_Gadget_Config *zgc)
 {
    evas_object_del(zgc->display);
    eina_stringshare_del(zgc->type);
+   eina_stringshare_del(zgc->external.type);
+   eina_stringshare_del(zgc->external.domain);
    eina_stringshare_del(zgc->style.name);
    free(zgc);
 }
@@ -430,17 +455,29 @@ _gadget_object_hints(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUS
 static Eina_Bool
 _gadget_object_create(E_Gadget_Config *zgc)
 {
-   E_Gadget_Type *t;
+   E_Gadget_Type *t = NULL;
+   E_Gadget_External_Type *te = NULL;
    Evas_Object *g;
 
-   t = eina_hash_find(gadget_types, zgc->type);
-   if (!t) return EINA_TRUE; //can't create yet
+   if (zgc->external.domain)
+     {
+        te = _gadget_external_type_get(zgc->external.domain, zgc->external.type);
+        if (!te) return EINA_TRUE; //can't create yet
+     }
+   else
+     {
+        t = eina_hash_find(gadget_types, zgc->type);
+        if (!t) return EINA_TRUE; //can't create yet
+     }
 
    if (!zgc->id)
      {
-        if (t->wizard)
+        if ((t && t->wizard) || (te && te->wizard))
           {
-             zgc->cfg_object = t->wizard(_gadget_wizard_end, zgc, zgc->site->layout);
+             if (t)
+               zgc->cfg_object = t->wizard(_gadget_wizard_end, zgc, zgc->site->layout);
+             else
+               zgc->cfg_object = te->wizard(_gadget_wizard_end, zgc, zgc->external.type, zgc->site->layout);
              if (!zgc->cfg_object)
                {
                   added = 1;
@@ -464,7 +501,10 @@ _gadget_object_create(E_Gadget_Config *zgc)
     * a gadget should return NULL for any demo instance where it
     * should not be shown
     */
-   g = t->cb(zgc->site->layout, &zgc->id, zgc->site->orient);
+   if (t)
+     g = t->cb(zgc->site->layout, &zgc->id, zgc->site->orient);
+   else
+     g = te->cb(zgc->site->layout, zgc->external.type, &zgc->id, zgc->site->orient);
    if (zgc->id < 0)
      {
         if (!g) return EINA_FALSE;
@@ -508,6 +548,8 @@ _gadget_object_finalize(E_Gadget_Config *zgc)
    zgc->site->gadgets = eina_list_remove(zgc->site->gadgets, zgc);
    zgc->site->gadget_list = eina_inlist_remove(zgc->site->gadget_list, EINA_INLIST_GET(zgc));
    eina_stringshare_del(zgc->type);
+   eina_stringshare_del(zgc->external.type);
+   eina_stringshare_del(zgc->external.domain);
    free(zgc);
 }
 
@@ -892,13 +934,19 @@ _gadget_mouse_resize(E_Gadget_Config *zgc, int t EINA_UNUSED, Ecore_Event_Mouse_
 }
 
 static void
-_gadget_util_add(E_Gadget_Site *zgs, const char *type, int id)
+_gadget_util_add(E_Gadget_Site *zgs, const char *domain, const char *type, int id)
 {
    E_Gadget_Config *zgc;
 
    zgc = E_NEW(E_Gadget_Config, 1);
    zgc->id = id;
-   zgc->type = eina_stringshare_add(type);
+   if (domain)
+     {
+        zgc->external.domain = eina_stringshare_add(domain);
+        zgc->external.type = eina_stringshare_add(type);
+     }
+   else
+     zgc->type = eina_stringshare_add(type);
    zgc->x = zgc->y = -1;
    zgc->site = zgs;
    zgc->zone = -1;
@@ -947,7 +995,10 @@ _gadget_act_move(E_Object *obj, const char *params EINA_UNUSED, E_Binding_Event_
    _editor_pointer_site_init(zgc->site->orient, NULL, NULL, 1);
    e_gadget_site_owner_setup(pointer_site, zgc->site->anchor, NULL);
    ZGS_GET(pointer_site);
-   _gadget_util_add(zgs, zgc->type, zgc->id);
+   if (zgc->external.domain)
+     _gadget_util_add(zgs, zgc->external.domain, zgc->external.type, zgc->id);
+   else
+     _gadget_util_add(zgs, NULL, zgc->type, zgc->id);
    z = eina_list_data_get(zgs->gadgets);
    evas_object_geometry_get(g, NULL, NULL, &w, &h);
    evas_object_resize(pointer_site, w, h);
@@ -1671,7 +1722,19 @@ e_gadget_site_gadget_add(Evas_Object *obj, const char *type, Eina_Bool demo)
    id -= demo;
    EINA_SAFETY_ON_NULL_RETURN(gadget_types);
    ZGS_GET(obj);
-   _gadget_util_add(zgs, type, id);
+   _gadget_util_add(zgs, NULL, type, id);
+}
+
+E_API void
+e_gadget_site_gadget_external_add(Evas_Object *obj, const char *domain, const char *type, Eina_Bool demo)
+{
+   int id = 0;
+
+   demo = !!demo;
+   id -= demo;
+   EINA_SAFETY_ON_NULL_RETURN(gadget_types);
+   ZGS_GET(obj);
+   _gadget_util_add(zgs, domain, type, id);
 }
 
 E_API Evas_Object *
@@ -1715,7 +1778,7 @@ e_gadget_type_get(Evas_Object *g)
    EINA_SAFETY_ON_NULL_RETURN_VAL(g, NULL);
    zgc = evas_object_data_get(g, "__e_gadget");
    EINA_SAFETY_ON_NULL_RETURN_VAL(zgc, NULL);
-   return zgc->type;
+   return zgc->external.type ?: zgc->type;
 }
 
 E_API void
@@ -1757,6 +1820,82 @@ e_gadget_type_del(const char *type)
             evas_object_del(zgc->gadget);
      }
    eina_hash_del_by_key(gadget_types, type);
+}
+
+E_API void
+e_gadget_external_type_add(const char *domain, const char *type, E_Gadget_External_Create_Cb callback, E_Gadget_External_Wizard_Cb wizard)
+{
+   E_Gadget_External_Type *te;
+   Eina_List *l, *ll;
+   E_Gadget_Site *zgs;
+   E_Gadget_Config *zgc;
+   Eina_Hash *h = NULL;
+
+   if (gadget_external_domains)
+     {
+        h = eina_hash_find(gadget_external_domains, domain);
+        if (h)
+          EINA_SAFETY_ON_TRUE_RETURN(!!eina_hash_find(h, type));
+     }
+   else
+     gadget_external_domains = eina_hash_string_superfast_new((Eina_Free_Cb)eina_hash_free);
+   if (!h)
+     {
+        h = eina_hash_string_superfast_new(free);
+        eina_hash_add(gadget_external_domains, domain, h);
+     }
+   te = E_NEW(E_Gadget_External_Type, 1);
+   te->cb = callback;
+   te->wizard = wizard;
+   eina_hash_add(h, type, te);
+   EINA_LIST_FOREACH(sites->sites, l, zgs)
+     if (zgs->layout)
+       EINA_LIST_FOREACH(zgs->gadgets, ll, zgc)
+         if (eina_streq(domain, zgc->external.domain) && eina_streq(type, zgc->external.type))
+           _gadget_object_create(zgc);
+}
+
+E_API void
+e_gadget_external_type_name_cb_set(const char *domain, const char *type, E_Gadget_External_Name_Cb name)
+{
+   E_Gadget_External_Type *te;
+
+   te = _gadget_external_type_get(domain, type);
+   EINA_SAFETY_ON_NULL_RETURN(te);
+   te->name = name;
+}
+
+E_API void
+e_gadget_external_type_del(const char *domain, const char *type)
+{
+   Eina_List *l, *ll;
+   E_Gadget_Site *zgs;
+   E_Gadget_Config *zgc;
+
+   if (!gadget_external_domains) return;
+   if (!sites) return;
+
+   EINA_LIST_FOREACH(sites->sites, l, zgs)
+     {
+        EINA_LIST_FOREACH(zgs->gadgets, ll, zgc)
+          if (eina_streq(domain, zgc->external.domain))
+            {
+               if ((!type) || eina_streq(type, zgc->external.type))
+                 evas_object_del(zgc->gadget);
+            }
+     }
+   if (type)
+     {
+        Eina_Hash *h;
+
+        h = eina_hash_find(gadget_external_domains, domain);
+        EINA_SAFETY_ON_NULL_RETURN(h);
+        eina_hash_del_by_key(h, type);
+        if (!eina_hash_population(h))
+          eina_hash_del_by_key(gadget_external_domains, domain);
+     }
+   else
+     eina_hash_del_by_key(gadget_external_domains, domain);
 }
 
 E_API Eina_Iterator *
@@ -2042,6 +2181,8 @@ e_gadget_init(void)
    E_CONFIG_VAL(edd_gadget, E_Gadget_Config, id, INT);
    E_CONFIG_VAL(edd_gadget, E_Gadget_Config, zone, INT);
    E_CONFIG_VAL(edd_gadget, E_Gadget_Config, type, STR);
+   E_CONFIG_VAL(edd_gadget, E_Gadget_Config, external.domain, STR);
+   E_CONFIG_VAL(edd_gadget, E_Gadget_Config, external.type, STR);
    E_CONFIG_VAL(edd_gadget, E_Gadget_Config, style.name, STR);
    E_CONFIG_VAL(edd_gadget, E_Gadget_Config, x, DOUBLE);
    E_CONFIG_VAL(edd_gadget, E_Gadget_Config, y, DOUBLE);
@@ -2133,6 +2274,7 @@ e_gadget_shutdown(void)
    e_action_predef_name_del(_("Gadgets"), _("Gadget menu"));
    move_act = resize_act = configure_act = menu_act = NULL;
    E_FREE_FUNC(gadget_types, eina_hash_free);
+   E_FREE_FUNC(gadget_external_domains, eina_hash_free);
 }
 
 //////////////////////////////////////////////////////
@@ -2328,17 +2470,23 @@ _editor_gadget_new(void *data, Evas_Object *obj, void *event_info)
 {
    Gadget_Item *gi = data;
    E_Gadget_Site_Orient orient;
+   E_Gadget_Config *zgc;
+
+   zgc = evas_object_data_get(gi->gadget, "__e_gadget");
 
    evas_object_hide(desktop_editor);
    evas_object_pass_events_set(desktop_editor, 1);
    orient = e_gadget_site_orient_get(gi->site);
    _editor_pointer_site_init(orient, gi->site, gi->editor, 0);
    e_comp_object_util_del_list_append(gi->editor, pointer_site);
-   
-   e_gadget_site_gadget_add(pointer_site, e_gadget_type_get(gi->gadget), 1);
+
+   if (zgc->external.domain)
+     e_gadget_site_gadget_external_add(pointer_site, zgc->external.domain, e_gadget_type_get(gi->gadget), 1);
+   else
+     e_gadget_site_gadget_add(pointer_site, e_gadget_type_get(gi->gadget), 1);
    ZGS_GET(pointer_site);
    {
-      E_Gadget_Config *zgc = eina_list_data_get(zgs->gadgets);
+      zgc = eina_list_data_get(zgs->gadgets);
       zgc->moving = 1;
    }
    elm_object_disabled_set(gi->editor, 1);
@@ -2379,7 +2527,19 @@ _editor_text_get(void *data, Evas_Object *obj EINA_UNUSED, const char *part EINA
 {
    char buf[1024];
    Gadget_Item *gi = data;
+   E_Gadget_Config *zgc;
 
+   zgc = evas_object_data_get(gi->gadget, "__e_gadget");
+   if (zgc->external.domain)
+     {
+        E_Gadget_External_Type *te;
+
+        te = _gadget_external_type_get(zgc->external.domain, zgc->external.type);
+        if (te->name)
+          return te->name(zgc->external.type);
+        ERR("No name cb for external gadget provider!");
+        return strdup(_("ERROR: NO NAME PROVIDED"));
+     }
    strncpy(buf, e_gadget_type_get(gi->gadget), sizeof(buf) - 1);
    buf[0] = toupper(buf[0]);
    return strdup(buf);
@@ -2439,6 +2599,30 @@ e_gadget_editor_add(Evas_Object *parent, Evas_Object *site)
         if (!zgc->gadget) _gadget_remove(zgc);
      }
    eina_iterator_free(it);
+
+   if (gadget_external_domains)
+     {
+        Eina_Hash_Tuple *tup;
+
+        it = eina_hash_iterator_tuple_new(gadget_external_domains);
+        EINA_ITERATOR_FOREACH(it, tup)
+          {
+             const char *domain = tup->key;
+             Eina_Hash *h = tup->data;
+             E_Gadget_Config *zgc;
+             Eina_Iterator *typeit = eina_hash_iterator_key_new(h);
+
+             EINA_ITERATOR_FOREACH(typeit, type)
+               {
+                  e_gadget_site_gadget_external_add(tempsite, domain, type, 1);
+                  ZGS_GET(tempsite);
+                  zgc = eina_list_last_data_get(zgs->gadgets);
+                  if (!zgc->gadget) _gadget_remove(zgc);
+               }
+             eina_iterator_free(typeit);
+          }
+        eina_iterator_free(it);
+     }
 
    gadgets = e_gadget_site_gadgets_list(tempsite);
    EINA_LIST_FREE(gadgets, g)

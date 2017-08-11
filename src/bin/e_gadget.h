@@ -90,10 +90,13 @@
 #include "e_gadget_types.h"
 
 typedef Evas_Object *(*E_Gadget_Create_Cb)(Evas_Object *parent, int *id, E_Gadget_Site_Orient orient);
+typedef Evas_Object *(*E_Gadget_External_Create_Cb)(Evas_Object *parent, const char *type, int *id, E_Gadget_Site_Orient orient);
 typedef Evas_Object *(*E_Gadget_Configure_Cb)(Evas_Object *gadget);
 typedef void (*E_Gadget_Wizard_End_Cb)(void *data, int id);
 typedef Evas_Object *(*E_Gadget_Wizard_Cb)(E_Gadget_Wizard_End_Cb cb, void *data, Evas_Object *site);
+typedef Evas_Object *(*E_Gadget_External_Wizard_Cb)(E_Gadget_Wizard_End_Cb cb, void *data, const char *type, Evas_Object *site);
 typedef void (*E_Gadget_Style_Cb)(Evas_Object *owner, Eina_Stringshare *name, Evas_Object *g);
+typedef char *(*E_Gadget_External_Name_Cb)(const char *type);
 
 EINTERN void e_gadget_init(void);
 EINTERN void e_gadget_shutdown(void);
@@ -108,6 +111,7 @@ E_API E_Gadget_Site_Orient e_gadget_site_orient_get(Evas_Object *obj);
 E_API E_Gadget_Site_Gravity e_gadget_site_gravity_get(Evas_Object *obj);
 E_API void e_gadget_site_gravity_set(Evas_Object *obj, E_Gadget_Site_Gravity gravity);
 E_API void e_gadget_site_gadget_add(Evas_Object *obj, const char *type, Eina_Bool demo);
+E_API void e_gadget_site_gadget_external_add(Evas_Object *obj, const char *domain, const char *type, Eina_Bool demo);
 E_API Eina_List *e_gadget_site_gadgets_list(Evas_Object *obj);
 
 E_API void e_gadget_configure_cb_set(Evas_Object *g, E_Gadget_Configure_Cb cb);
@@ -117,6 +121,9 @@ E_API Eina_Stringshare *e_gadget_type_get(Evas_Object *g);
 
 E_API void e_gadget_type_add(const char *type, E_Gadget_Create_Cb callback, E_Gadget_Wizard_Cb wizard);
 E_API void e_gadget_type_del(const char *type);
+E_API void e_gadget_external_type_add(const char *domain, const char *type, E_Gadget_External_Create_Cb callback, E_Gadget_External_Wizard_Cb wizard);
+E_API void e_gadget_external_type_del(const char *domain, const char *type);
+E_API void e_gadget_external_type_name_cb_set(const char *domain, const char *type, E_Gadget_External_Name_Cb name);
 E_API Eina_Iterator *e_gadget_type_iterator_get(void);
 /* delete a gadget and its config */
 E_API void e_gadget_del(Evas_Object *g);
