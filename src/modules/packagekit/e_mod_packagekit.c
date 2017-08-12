@@ -63,6 +63,111 @@ _update_button_cb(void *data, Evas_Object *obj EINA_UNUSED,
    packagekit_create_transaction_and_exec(inst->ctxt, packagekit_refresh_cache);
 }
 
+static char *
+_help_gl_text_get(void *data, Evas_Object *obj EINA_UNUSED, const char *part)
+{
+   PackageKit_Package_Info info = (PackageKit_Package_Info)data;
+
+   if (strcmp(part, "elm.text"))
+      return NULL;
+
+   switch (info)
+     {
+        case PK_INFO_ENUM_LOW:
+          return strdup(_("Low priority update"));
+        case PK_INFO_ENUM_ENHANCEMENT:
+          return strdup(_("Enhancement update"));
+        case PK_INFO_ENUM_NORMAL:
+          return strdup(_("Normal update"));
+        case PK_INFO_ENUM_BUGFIX:
+          return strdup(_("Bugfix update"));
+        case PK_INFO_ENUM_IMPORTANT:
+          return strdup(_("High priority update"));
+        case PK_INFO_ENUM_SECURITY:
+          return strdup(_("Security update"));
+        default:
+          return NULL;
+     }
+}
+
+static Evas_Object *
+_help_gl_content_get(void *data, Evas_Object *obj, const char *part)
+{
+   PackageKit_Package_Info info = (PackageKit_Package_Info)data;
+   const char *emblem_name;
+   Evas_Object *icon;
+
+   if (strcmp(part, "elm.swallow.icon"))
+      return NULL;
+
+   switch (info)
+     {
+        case PK_INFO_ENUM_LOW:
+          emblem_name = "e/modules/packagekit/icon/low"; break;
+        case PK_INFO_ENUM_ENHANCEMENT:
+          emblem_name = "e/modules/packagekit/icon/enhancement"; break;
+        case PK_INFO_ENUM_NORMAL:
+          emblem_name = "e/modules/packagekit/icon/normal"; break;
+        case PK_INFO_ENUM_BUGFIX:
+          emblem_name = "e/modules/packagekit/icon/bugfix"; break;
+        case PK_INFO_ENUM_IMPORTANT:
+          emblem_name = "e/modules/packagekit/icon/important"; break;
+        case PK_INFO_ENUM_SECURITY:
+          emblem_name = "e/modules/packagekit/icon/security"; break;
+        default:
+          return NULL; break;
+     }
+
+   icon = edje_object_add(evas_object_evas_get(obj));
+   e_theme_edje_object_set(icon, "base/theme/modules/packagekit", emblem_name);
+
+   return icon;
+}
+
+static void
+_help_button_cb(void *data, Evas_Object *obj EINA_UNUSED,
+                void *event EINA_UNUSED)
+{
+   E_PackageKit_Instance *inst = data;
+   Elm_Genlist_Item_Class *help_itc;
+   char buf[1024];
+   long i;
+
+   if (inst->popup_help_mode)
+     {
+        inst->popup_help_mode = EINA_FALSE;
+        packagekit_popup_update(inst, EINA_TRUE);
+        return;
+     }
+   inst->popup_help_mode = EINA_TRUE;
+
+   // special item class for help items
+   help_itc = elm_genlist_item_class_new();
+   help_itc->item_style = "default";
+   help_itc->func.text_get = _help_gl_text_get;
+   help_itc->func.content_get = _help_gl_content_get;
+
+   // repopulate the genlist
+   elm_genlist_clear(inst->popup_genlist);
+   for (i = PK_INFO_ENUM_LOW; i <= PK_INFO_ENUM_SECURITY; i++)
+     {
+        Elm_Genlist_Item *it;
+        it = elm_genlist_item_append(inst->popup_genlist, help_itc, (void*)i,
+                                     NULL, ELM_GENLIST_ITEM_NONE, NULL, NULL);
+        elm_genlist_item_select_mode_set(it, ELM_OBJECT_SELECT_MODE_DISPLAY_ONLY);
+     }
+
+   elm_genlist_item_class_free(help_itc);
+
+   // update title label
+   if (inst->ctxt->v_maj != -1)
+     snprintf(buf, sizeof(buf), "PackageKit version: %d.%d.%d",
+              inst->ctxt->v_maj, inst->ctxt->v_min, inst->ctxt->v_mic);
+   else
+     snprintf(buf, sizeof(buf), _("Unknow PackageKit version"));
+   elm_object_text_set(inst->popup_label, buf);
+}
+
 static void
 _install_button_cb(void *data, Evas_Object *obj EINA_UNUSED,
                    void *event EINA_UNUSED)
@@ -122,8 +227,11 @@ packagekit_popup_update(E_PackageKit_Instance *inst, Eina_Bool rebuild_list)
    char buf[1024];
    Eina_List *l;
 
+   if (inst->popup_help_mode)
+     inst->popup_help_mode = EINA_FALSE;
+
    if (rebuild_list)
-      elm_genlist_clear(inst->popup_genlist);
+     elm_genlist_clear(inst->popup_genlist);
 
    if (ctxt->error)
      {
@@ -329,7 +437,7 @@ _genlist_selunsel_cb(void *data, Evas_Object *obj EINA_UNUSED,
 void
 packagekit_popup_new(E_PackageKit_Instance *inst)
 {
-   Evas_Object *table, *bt, *ic, *lb, *li, *pb, *fr, *size_rect;
+   Evas_Object *table, *bt, *ic, *lb, *li, *pb, *fr, *bx, *size_rect;
 
    inst->popup = e_gadcon_popup_new(inst->gcc, EINA_FALSE);
 
@@ -337,11 +445,19 @@ packagekit_popup_new(E_PackageKit_Instance *inst)
    table = elm_table_add(e_comp->elm);
    evas_object_show(table);
 
+   // horiz box for title and buttons
+   bx = elm_box_add(table);
+   elm_box_horizontal_set(bx, EINA_TRUE);
+   evas_object_size_hint_expand_set(bx, EVAS_HINT_EXPAND, 0.0);
+   evas_object_size_hint_fill_set(bx, EVAS_HINT_FILL, 0.0);
+   elm_table_pack(table, bx, 0, 0, 1, 1);
+   evas_object_show(bx);
+
    // title label
    lb = inst->popup_label = elm_label_add(table);
    evas_object_size_hint_expand_set(lb, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(lb, 0.0, 0.5);
-   elm_table_pack(table, lb, 0, 0, 1, 1);
+   elm_box_pack_end(bx, lb);
    evas_object_show(lb);
 
    // refresh button
@@ -350,24 +466,34 @@ packagekit_popup_new(E_PackageKit_Instance *inst)
                                      16 * elm_config_scale_get());
    elm_icon_standard_set(ic, "view-refresh");
    bt = elm_button_add(table);
-   evas_object_size_hint_align_set(bt, 1.0, 0.5);
    elm_object_content_set(bt, ic);
    evas_object_smart_callback_add(bt, "clicked", _update_button_cb, inst);
-   elm_table_pack(table, bt, 1, 0, 1, 1);
+   elm_box_pack_end(bx, bt);
+   evas_object_show(bt);
+
+   // help button
+   ic = elm_icon_add(table);
+   evas_object_size_hint_min_set(ic, 16 * elm_config_scale_get(), 
+                                     16 * elm_config_scale_get());
+   elm_icon_standard_set(ic, "help-contents");
+   bt = elm_button_add(table);
+   elm_object_content_set(bt, ic);
+   evas_object_smart_callback_add(bt, "clicked", _help_button_cb, inst);
+   elm_box_pack_end(bx, bt);
    evas_object_show(bt);
 
    // central area (sizer)
    size_rect = evas_object_rectangle_add(e_comp->evas);
    evas_object_size_hint_min_set(size_rect, 300 * elm_config_scale_get(),
                                             300 * elm_config_scale_get());
-   elm_table_pack(table, size_rect, 0, 1, 2, 1);
+   elm_table_pack(table, size_rect, 0, 1, 1, 1);
 
    // central area (error label)
    lb = inst->popup_error_label = elm_entry_add(table);
    elm_entry_editable_set(lb, EINA_FALSE);
    E_EXPAND(lb);
    E_FILL(lb);
-   elm_table_pack(table, lb, 0, 1, 2, 1);
+   elm_table_pack(table, lb, 0, 1, 1, 1);
    evas_object_show(lb);
 
    // central area (genlist)
@@ -392,7 +518,7 @@ packagekit_popup_new(E_PackageKit_Instance *inst)
    E_FILL(li);
    evas_object_smart_callback_add(li, "selected", _genlist_selunsel_cb, inst);
    evas_object_smart_callback_add(li, "unselected", _genlist_selunsel_cb, inst);
-   elm_table_pack(table, li, 0, 1, 2, 1);
+   elm_table_pack(table, li, 0, 1, 1, 1);
    evas_object_show(li);
 
    // central area (progress bar) (inside a padding frame)
@@ -400,7 +526,7 @@ packagekit_popup_new(E_PackageKit_Instance *inst)
    elm_object_style_set(fr, "pad_large");
    E_EXPAND(fr);
    E_FILL(fr);
-   elm_table_pack(table, fr, 0, 1, 2, 1);
+   elm_table_pack(table, fr, 0, 1, 1, 1);
    evas_object_show(fr);
 
    pb = inst->popup_progressbar = elm_progressbar_add(table);
@@ -412,7 +538,7 @@ packagekit_popup_new(E_PackageKit_Instance *inst)
    bt = inst->popup_install_button = elm_button_add(table);
    evas_object_size_hint_fill_set(bt, EVAS_HINT_FILL, 0.0);
    evas_object_smart_callback_add(bt, "clicked", _install_button_cb, inst);
-   elm_table_pack(table, bt, 0, 2, 2, 1);
+   elm_table_pack(table, bt, 0, 2, 1, 1);
    evas_object_show(bt);
 
    // run package manager button
@@ -420,7 +546,7 @@ packagekit_popup_new(E_PackageKit_Instance *inst)
    evas_object_size_hint_fill_set(bt, EVAS_HINT_FILL, 0.0);
    elm_object_text_set(bt, _("Run the package manager"));
    evas_object_smart_callback_add(bt, "clicked", _run_button_cb, inst);
-   elm_table_pack(table, bt, 0, 3, 2, 1);
+   elm_table_pack(table, bt, 0, 3, 1, 1);
    evas_object_show(bt);
 
    // setup and show the popup

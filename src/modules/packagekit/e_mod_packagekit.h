@@ -84,6 +84,7 @@ typedef struct _E_PackageKit_Instance
    Evas_Object *popup_progressbar;
    Evas_Object *popup_genlist;
    Elm_Genlist_Item_Class *popup_genlist_itc;
+   Eina_Bool popup_help_mode;
 } E_PackageKit_Instance;
 
 typedef struct _E_PackageKit_Package
