@@ -396,8 +396,6 @@ packagekit_popup_del(E_PackageKit_Instance *inst)
      }
 }
 
-
-/* DBus PackageKit */
 static void
 _store_error(E_PackageKit_Module_Context *ctxt, const char *err)
 {
@@ -410,6 +408,8 @@ _store_error(E_PackageKit_Module_Context *ctxt, const char *err)
    packagekit_all_popups_update(ctxt);
 }
 
+/* DBus PackageKit method calls */
+
 static void
 null_cb(void *data, const Eldbus_Message *msg, Eldbus_Pending *pending EINA_UNUSED)
 {
@@ -420,9 +420,10 @@ null_cb(void *data, const Eldbus_Message *msg, Eldbus_Pending *pending EINA_UNUS
      _store_error(ctxt, error_msg);
 }
 
-/* RefreshCache() */
+
+/* RefreshCache(in'b'force) */
 static void
-signal_repo_detail_cb(void *data, const Eldbus_Message *msg)
+_signal_repo_detail_cb(void *data, const Eldbus_Message *msg)
 { /* RepoDetail ('s'repo_id, 's'description, 'b'enabled) */
    E_PackageKit_Module_Context *ctxt = data;
    const char *error, *error_msg, *repo_id, *desc;
@@ -442,7 +443,7 @@ signal_repo_detail_cb(void *data, const Eldbus_Message *msg)
 }
 
 static void
-signal_cache_finished_cb(void *data, const Eldbus_Message *msg)
+_signal_cache_finished_cb(void *data, const Eldbus_Message *msg)
 {  /* Finished ('u'exit, 'u'runtime) */
    E_PackageKit_Module_Context *ctxt = data;
    const char *error, *error_msg;
@@ -479,13 +480,15 @@ packagekit_refresh_cache(E_PackageKit_Module_Context *ctxt, const char *transact
         _store_error(ctxt, "could not call RefreshCache()");
         return;
      }
-   eldbus_proxy_signal_handler_add(proxy, "Finished", signal_cache_finished_cb, ctxt);
-   eldbus_proxy_signal_handler_add(proxy, "RepoDetail", signal_repo_detail_cb, ctxt);
+   eldbus_proxy_signal_handler_add(proxy, "Finished", 
+                                   _signal_cache_finished_cb, ctxt);
+   eldbus_proxy_signal_handler_add(proxy, "RepoDetail", 
+                                   _signal_repo_detail_cb, ctxt);
    ctxt->transaction = proxy;
 }
 
 
-/* GetUpdates() */
+/* GetUpdates(in't'filter) */
 static void
 _signal_package_cb(void *data, const Eldbus_Message *msg)
 {  /* Package ('u'info, 's'package_id, 's'summary) */
@@ -602,7 +605,7 @@ packagekit_get_updates(E_PackageKit_Module_Context *ctxt, const char *transactio
 }
 
 
-/* UpdatePackages */
+/* UpdatePackages(in't'transaction_flags, in'as'package_ids) */
 static void
 _signal_update_error_code_cb(void *data, const Eldbus_Message *msg)
 {  /* ErrorCode ('u'code, 's'details) */
@@ -683,8 +686,10 @@ packagekit_update_packages(E_PackageKit_Module_Context *ctxt, const char *transa
    
    // TODO: monitor the PropertiesChanged for "Percentage" on the Transaction
    //       object and show a progress bar!
-   eldbus_proxy_signal_handler_add(proxy, "ErrorCode", _signal_update_error_code_cb, ctxt);
-   eldbus_proxy_signal_handler_add(proxy, "Finished", _signal_update_finished_cb, ctxt);
+   eldbus_proxy_signal_handler_add(proxy, "ErrorCode", 
+                                   _signal_update_error_code_cb, ctxt);
+   eldbus_proxy_signal_handler_add(proxy, "Finished", 
+                                   _signal_update_finished_cb, ctxt);
    ctxt->transaction = proxy;
 }
 
