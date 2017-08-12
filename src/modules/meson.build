@@ -9,9 +9,6 @@ subdir('mixer')
 subdir('everything')
 subdir('teamwork')
 
-# disabled for now
-####subdir('wl_fb')
-
 mods = [
 # standard run of the mill modules with cion and desktop
   'battery',
@@ -72,6 +69,8 @@ mods = [
   'wl_text_input',
   'wl_desktop_shell',
   'wl_weekeyboard',
+### XXX: disabled for now
+#  'wl_fb',
   'xwayland'
 ]
 

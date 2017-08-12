@@ -8,7 +8,8 @@ else
     'xdg5.c',
     'xdg6.c',
     'e_mod_main.h'
-  )
+   )
+
   foreach p: [
     '@0@/unstable/xdg-shell/xdg-shell-unstable-v5.xml'.format(dir_wayland_protocols),
     '@0@/unstable/xdg-shell/xdg-shell-unstable-v6.xml'.format(dir_wayland_protocols),
