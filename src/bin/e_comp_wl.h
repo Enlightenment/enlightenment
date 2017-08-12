@@ -4,7 +4,6 @@ typedef struct _E_Comp_Wl_Buffer E_Comp_Wl_Buffer;
 typedef struct _E_Comp_Wl_Subsurf_Data E_Comp_Wl_Subsurf_Data;
 typedef struct _E_Comp_Wl_Surface_State E_Comp_Wl_Surface_State;
 typedef struct _E_Comp_Wl_Client_Data E_Comp_Wl_Client_Data;
-typedef struct _E_Comp_Wl_Data E_Comp_Wl_Data;
 typedef struct _E_Comp_Wl_Output E_Comp_Wl_Output;
 typedef struct E_Shell_Data E_Shell_Data;
 typedef struct Tizen_Extensions Tizen_Extensions;
