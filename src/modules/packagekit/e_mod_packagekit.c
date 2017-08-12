@@ -64,6 +64,39 @@ _update_button_cb(void *data, Evas_Object *obj EINA_UNUSED,
 }
 
 static void
+_install_button_cb(void *data, Evas_Object *obj EINA_UNUSED,
+                   void *event EINA_UNUSED)
+{
+   E_PackageKit_Instance *inst = data;
+   E_PackageKit_Package *pkg;
+   const Eina_List *selected;
+   Elm_Genlist_Item *item;
+   Eina_List *l;
+
+   selected = elm_genlist_selected_items_get(inst->popup_genlist);
+   if (!selected)
+     {
+        // nothing selected, update all packages
+        EINA_LIST_FOREACH(inst->ctxt->packages, l, pkg)
+          pkg->to_be_installed = EINA_TRUE;
+     }
+   else
+     {
+        // only updated selected packages
+        EINA_LIST_FOREACH(inst->ctxt->packages, l, pkg)
+          pkg->to_be_installed = EINA_FALSE;
+        EINA_LIST_FOREACH((Eina_List*)selected, l, item)
+          {
+             pkg = elm_object_item_data_get(item);
+             pkg->to_be_installed = EINA_TRUE;
+          }
+     }
+
+   packagekit_create_transaction_and_exec(inst->ctxt, packagekit_update_packages);
+   packagekit_popup_del(inst);
+}
+
+static void
 _run_button_cb(void *data, Evas_Object *obj EINA_UNUSED, 
                void *event EINA_UNUSED)
 {
@@ -81,13 +114,17 @@ _run_button_cb(void *data, Evas_Object *obj EINA_UNUSED,
 }
 
 void
-packagekit_popup_update(E_PackageKit_Instance *inst)
+packagekit_popup_update(E_PackageKit_Instance *inst, Eina_Bool rebuild_list)
 {
    E_PackageKit_Module_Context *ctxt = inst->ctxt;
    E_PackageKit_Package *pkg;
+   const Eina_List *selected;
    unsigned num_updates = 0;
    char buf[1024];
    Eina_List *l;
+
+   if (rebuild_list)
+      elm_genlist_clear(inst->popup_genlist);
 
    if (ctxt->error)
      {
@@ -104,16 +141,52 @@ packagekit_popup_update(E_PackageKit_Instance *inst)
 
    EINA_LIST_FOREACH(ctxt->packages, l, pkg)
      {
-        elm_genlist_item_append(inst->popup_genlist, inst->popup_genlist_itc, 
-                                pkg, NULL, ELM_GENLIST_ITEM_NONE, NULL, NULL);
+        if (rebuild_list)
+          elm_genlist_item_append(inst->popup_genlist, inst->popup_genlist_itc, 
+                                  pkg, NULL, ELM_GENLIST_ITEM_NONE, NULL, NULL);
         num_updates++;
      }
 
+   // update title and error lables
    if (num_updates >= 1)
      snprintf(buf, sizeof(buf), P_("One update available", "%d updates available", num_updates), num_updates);
    else
      snprintf(buf, sizeof(buf), _("Your system is updated"));
    elm_object_text_set(inst->popup_label, buf);
+   elm_object_text_set(inst->popup_error_label, "");
+   
+   // update the status of the install button
+   selected = elm_genlist_selected_items_get(inst->popup_genlist);
+   if (num_updates < 1)
+     {
+        elm_object_text_set(inst->popup_install_button, _("Nothing to do"));
+        elm_object_disabled_set(inst->popup_install_button, EINA_TRUE);
+     }
+   else if ((selected == NULL) || (eina_list_count(selected) == 0))
+     {
+        elm_object_text_set(inst->popup_install_button, 
+                           _("Install all available updates"));
+        elm_object_disabled_set(inst->popup_install_button, EINA_FALSE);
+     }
+   else if (eina_list_count(selected) > 0)
+     {
+        snprintf(buf, sizeof(buf), P_("Install the selected update",
+                                      "Install %d selected updates",
+                                      eina_list_count(selected)),
+                                      eina_list_count(selected));
+        elm_object_text_set(inst->popup_install_button, buf);
+        elm_object_disabled_set(inst->popup_install_button, EINA_FALSE);
+     }
+}
+
+void
+packagekit_all_popups_update(E_PackageKit_Module_Context *ctxt)
+{
+   E_PackageKit_Instance *inst;
+   Eina_List *l;
+   
+   EINA_LIST_FOREACH(ctxt->instances, l, inst)
+     packagekit_popup_update(inst, EINA_TRUE);
 }
 
 static void
@@ -217,6 +290,13 @@ _gl_item_content_get(void *data, Evas_Object *obj, const char *part)
    return NULL;
 }
 
+static void
+_genlist_selunsel_cb(void *data, Evas_Object *obj EINA_UNUSED, 
+                     void *event EINA_UNUSED)
+{
+   packagekit_popup_update(data, EINA_FALSE);
+}
+
 void
 packagekit_popup_new(E_PackageKit_Instance *inst)
 {
@@ -275,17 +355,25 @@ packagekit_popup_new(E_PackageKit_Instance *inst)
    elm_genlist_multi_select_set(li, EINA_TRUE);
    E_EXPAND(li);
    E_FILL(li);
+   evas_object_smart_callback_add(li, "selected", _genlist_selunsel_cb, inst);
+   evas_object_smart_callback_add(li, "unselected", _genlist_selunsel_cb, inst);
    elm_table_pack(table, li, 0, 1, 2, 1);
    evas_object_show(li);
+
+   bt = inst->popup_install_button = elm_button_add(table);
+   evas_object_size_hint_fill_set(bt, EVAS_HINT_FILL, 0.0);
+   evas_object_smart_callback_add(bt, "clicked", _install_button_cb, inst);
+   elm_table_pack(table, bt, 0, 2, 2, 1);
+   evas_object_show(bt);
 
    bt = elm_button_add(table);
    evas_object_size_hint_fill_set(bt, EVAS_HINT_FILL, 0.0);
    elm_object_text_set(bt, _("Run the package manager"));
    evas_object_smart_callback_add(bt, "clicked", _run_button_cb, inst);
-   elm_table_pack(table, bt, 0, 2, 2, 1);
+   elm_table_pack(table, bt, 0, 3, 2, 1);
    evas_object_show(bt);
 
-   packagekit_popup_update(inst);
+   packagekit_popup_update(inst, EINA_TRUE);
 
    e_gadcon_popup_content_set(inst->popup, table);
    e_comp_object_util_autoclose(inst->popup->comp_object,
@@ -309,6 +397,7 @@ packagekit_popup_del(E_PackageKit_Instance *inst)
 }
 
 
+/* DBus PackageKit */
 static void
 _store_error(E_PackageKit_Module_Context *ctxt, const char *err)
 {
@@ -318,10 +407,9 @@ _store_error(E_PackageKit_Module_Context *ctxt, const char *err)
    else
       ctxt->error = eina_stringshare_add(err);
    packagekit_icon_update(ctxt, EINA_FALSE);
+   packagekit_all_popups_update(ctxt);
 }
 
-
-/* RefreshCache() */
 static void
 null_cb(void *data, const Eldbus_Message *msg, Eldbus_Pending *pending EINA_UNUSED)
 {
@@ -332,6 +420,7 @@ null_cb(void *data, const Eldbus_Message *msg, Eldbus_Pending *pending EINA_UNUS
      _store_error(ctxt, error_msg);
 }
 
+/* RefreshCache() */
 static void
 signal_repo_detail_cb(void *data, const Eldbus_Message *msg)
 { /* RepoDetail ('s'repo_id, 's'description, 'b'enabled) */
@@ -430,6 +519,7 @@ _signal_package_cb(void *data, const Eldbus_Message *msg)
    if (num_elements >= 2)
      {
         E_PackageKit_Package *pkg = E_NEW(E_PackageKit_Package, 1);
+        pkg->pkg_id = eina_stringshare_add(pkg_id);
         pkg->name = eina_stringshare_add(splitted[0]);
         pkg->version = eina_stringshare_add(splitted[1]);
         pkg->summary = eina_stringshare_add(summary);
@@ -475,6 +565,7 @@ _signal_finished_cb(void *data, const Eldbus_Message *msg)
 
    //DBG("PKGKIT: PackageFinished");
    packagekit_icon_update(ctxt, EINA_FALSE);
+   packagekit_all_popups_update(ctxt);
 }
 
 void
@@ -503,12 +594,99 @@ packagekit_get_updates(E_PackageKit_Module_Context *ctxt, const char *transactio
 
    EINA_LIST_FREE(ctxt->packages, pkg)
      {
+        E_FREE_FUNC(pkg->pkg_id, eina_stringshare_del);
         E_FREE_FUNC(pkg->name, eina_stringshare_del);
         E_FREE_FUNC(pkg->version, eina_stringshare_del);
         E_FREE_FUNC(pkg->summary, eina_stringshare_del);
      }
 }
 
+
+/* UpdatePackages */
+static void
+_signal_update_error_code_cb(void *data, const Eldbus_Message *msg)
+{  /* ErrorCode ('u'code, 's'details) */
+   const char *error, *error_msg, *details;
+   E_PackageKit_Module_Context *ctxt = data;
+   Eina_Bool ret;
+   int err_code;
+
+   if (eldbus_message_error_get(msg, &error, &error_msg))
+     {
+        _store_error(ctxt, error_msg);
+        return;
+     }
+
+   ret = eldbus_message_arguments_get(msg, "us", &err_code, &details);
+   if (!ret)
+     {
+        _store_error(ctxt, "could not get error code arguments");
+        return;
+     }
+   
+   if (details)
+     _store_error(ctxt, details);
+}
+
+static void
+_signal_update_finished_cb(void *data, const Eldbus_Message *msg)
+{  /* Finished ('u'exit, 'u'runtime) */
+   const char *error, *error_msg;
+   E_PackageKit_Module_Context *ctxt = data;
+
+   if (eldbus_message_error_get(msg, &error, &error_msg))
+     _store_error(ctxt, error_msg);
+   else
+     E_FREE_FUNC(ctxt->error, eina_stringshare_del);
+
+   Eldbus_Object *obj = eldbus_proxy_object_get(ctxt->transaction);
+   E_FREE_FUNC(ctxt->transaction, eldbus_proxy_unref);
+   E_FREE_FUNC(obj, eldbus_object_unref);
+}
+
+void
+packagekit_update_packages(E_PackageKit_Module_Context *ctxt, const char *transaction)
+{
+   Eldbus_Object *obj;
+   Eldbus_Proxy *proxy;
+   Eldbus_Message *msg;
+   Eldbus_Message_Iter *iter, *array_of_string;
+   Eldbus_Pending *pending;
+   E_PackageKit_Package *pkg;
+   Eina_List *l;
+
+   fprintf(stderr, "PKIT: UpdatePackages (t:%s)\n", transaction);
+
+   obj = eldbus_object_get(ctxt->conn, "org.freedesktop.PackageKit", transaction);
+   proxy = eldbus_proxy_get(obj, "org.freedesktop.PackageKit.Transaction");
+   msg = eldbus_proxy_method_call_new(proxy, "UpdatePackages");
+   iter = eldbus_message_iter_get(msg);
+   eldbus_message_iter_arguments_append(iter, "tas", 
+                                        PK_TRANSACTION_FLAG_ENUM_ONLY_TRUSTED, 
+                                        &array_of_string);
+   EINA_LIST_FOREACH(ctxt->packages, l, pkg)
+     {
+        if (pkg->to_be_installed)
+          {
+             DBG("Install: %s %s", pkg->pkg_id, pkg->version);
+             eldbus_message_iter_arguments_append(array_of_string, "s", pkg->pkg_id);
+          }
+     }
+   eldbus_message_iter_container_close(iter, array_of_string);
+
+   pending = eldbus_proxy_send(proxy, msg, null_cb, ctxt, -1);
+   if (!pending)
+     {
+        _store_error(ctxt, "could not call UpdatePackages()");
+        return;
+     }
+   
+   // TODO: monitor the PropertiesChanged for "Percentage" on the Transaction
+   //       object and show a progress bar!
+   eldbus_proxy_signal_handler_add(proxy, "ErrorCode", _signal_update_error_code_cb, ctxt);
+   eldbus_proxy_signal_handler_add(proxy, "Finished", _signal_update_finished_cb, ctxt);
+   ctxt->transaction = proxy;
+}
 
 /* CreateTransaction() */
 static void
