@@ -34,9 +34,6 @@ int          tiling_window_tree_edges_get(Window_Tree *node);
 void         tiling_window_tree_free(Window_Tree *root);
 void         tiling_window_tree_walk(Window_Tree *root, void (*func)(void *));
 
-Window_Tree *tiling_window_tree_add(Window_Tree *root, Window_Tree *parent,
-                                    E_Client *client, Tiling_Split_Type split_type);
-
 Window_Tree *tiling_window_tree_insert(Window_Tree *root, Window_Tree *buddy,
                                        E_Client *client, Tiling_Split_Type split_type, Eina_Bool before);
 

@@ -142,59 +142,6 @@ tiling_window_tree_insert(Window_Tree *root, Window_Tree *buddy,
    return root;
 }
 
-Window_Tree *
-tiling_window_tree_add(Window_Tree *root, Window_Tree *parent,
-                       E_Client *client, Tiling_Split_Type split_type)
-{
-   Window_Tree *orig_parent = parent;
-   Window_Tree *new_node;
-   Tiling_Split_Type parent_split_type;
-
-   VERIFY_TYPE(split_type)
-
-   new_node = calloc(1, sizeof(*new_node));
-   new_node->client = client;
-
-   ROOT_CHECK()
-
-   if (!parent)
-     parent = root;
-
-   parent_split_type = _tiling_window_tree_split_type_get(parent);
-
-   if (parent_split_type == split_type)
-     {
-        if (parent->children)
-          {
-             _tiling_window_tree_parent_add(parent, new_node, NULL, EINA_TRUE);
-          }
-        else
-          {
-             _tiling_window_tree_split_add(parent, new_node, EINA_TRUE);
-          }
-     }
-   else
-     {
-        Window_Tree *grand_parent = parent->parent;
-
-        if (grand_parent && grand_parent->children)
-          {
-             _tiling_window_tree_parent_add(grand_parent, new_node, orig_parent, EINA_TRUE);
-          }
-        else
-          {
-             root = calloc(1, sizeof(*root));
-             _tiling_window_tree_split_add(parent, new_node, EINA_TRUE);
-             root->weight = 1.0;
-             root->children =
-               eina_inlist_append(root->children, EINA_INLIST_GET(parent));
-             parent->parent = root;
-          }
-     }
-
-   return root;
-}
-
 static Window_Tree *
 tiling_window_tree_unref(Window_Tree *root, Window_Tree *item)
 {
