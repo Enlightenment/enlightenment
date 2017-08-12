@@ -5,8 +5,11 @@
 # include <err.h>
 # include <sys/types.h>
 # include <sys/sysctl.h>
+
+#if defined(__OpenBSD_) || defined(__NetBSD__)
 # include <sys/param.h>
 # include <sys/sensors.h>
+#endif
 
 static Eina_Bool _battery_sysctl_battery_update_poll(void *data EINA_UNUSED);
 static int       _battery_sysctl_battery_update();
