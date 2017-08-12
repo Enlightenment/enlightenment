@@ -4,7 +4,6 @@ module_includes  = [ '../../..', '../../bin', '../../bin/efx' ]
 module_includes2 = [ '../..'   , '../bin'   , '../bin/efx'  ]
 module_deps      = [ deps_e, dep_dl ]
 
-subdir('mixer')
 subdir('everything')
 
 mods = [
@@ -13,6 +12,7 @@ mods = [
   'pager',
   'pager_plain',
   'temperature',
+  'mixer',
   'notification',
   'ibox',
   'start',
@@ -82,9 +82,10 @@ foreach m: mods
   disable      = false
   cargs        = ''
   data         = []
+  deps         = []
+  inc          = []
   _dir         = join_paths(dir_module_e, m)
   _dir_bin     = join_paths(_dir, module_arch)
-  _inc         = include_directories(module_includes2, join_paths('.', m))
 
   subdir(m)
 
@@ -92,6 +93,13 @@ foreach m: mods
 
   if get_option(opt) == true and disable == false
 
+    _inc2 = []
+    foreach i: inc
+      _inc2 +=  join_paths('.', m, i)
+    endforeach
+    _inc          = include_directories(module_includes2,
+                                        join_paths('.', m),
+                                        _inc2)
     _conf         = 'USE_MODULE_' + m.underscorify().to_upper()
     module_files += join_paths(_dir_bin, m + '.so')
 
@@ -118,7 +126,7 @@ foreach m: mods
       shared_module(m, src,
                     include_directories: _inc,
                     name_prefix        : '',
-                    dependencies       : module_deps,
+                    dependencies       : [ module_deps, deps ],
                     install_dir        : _dir_bin,
                     install            : true
                    )
@@ -127,7 +135,7 @@ foreach m: mods
                     include_directories: _inc,
                     c_args             : cargs,
                     name_prefix        : '',
-                    dependencies       : module_deps,
+                    dependencies       : [ module_deps, deps ],
                     install_dir        : _dir_bin,
                     install            : true
                    )
