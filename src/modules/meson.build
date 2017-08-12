@@ -4,16 +4,11 @@ module_includes  = [ '../../..', '../../bin', '../../bin/efx' ]
 module_includes2 = [ '../..'   , '../bin'   , '../bin/efx'  ]
 module_deps      = [ deps_e, dep_dl ]
 
-subdir('wizard')
 subdir('mixer')
 subdir('everything')
 
 mods = [
 # standard run of the mill modules with cion and desktop
-  'battery',
-  'cpufreq',
-  'clock',
-  'sysinfo',
   'ibar',
   'pager',
   'pager_plain',
@@ -55,6 +50,13 @@ mods = [
   'time',
   'luncher',
   'teamwork',
+# modules have a custom binary as well
+  'battery',
+  'cpufreq',
+  'clock',
+  'sysinfo',
+# custyom sub modules and custom data
+  'wizard',
 # also standard modules, just with only a desktop file using a generic icon
   'conf_theme',
   'conf_intl',
