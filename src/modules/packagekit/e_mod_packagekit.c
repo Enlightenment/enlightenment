@@ -59,7 +59,7 @@ _update_button_cb(void *data, Evas_Object *obj EINA_UNUSED,
                   void *event EINA_UNUSED)
 {
    E_PackageKit_Instance *inst = data;
-   packagekit_popup_del(inst);
+
    packagekit_create_transaction_and_exec(inst->ctxt, packagekit_refresh_cache);
 }
 
@@ -93,7 +93,6 @@ _install_button_cb(void *data, Evas_Object *obj EINA_UNUSED,
      }
 
    packagekit_create_transaction_and_exec(inst->ctxt, packagekit_update_packages);
-   packagekit_popup_del(inst);
 }
 
 static void
@@ -146,9 +145,20 @@ packagekit_popup_update(E_PackageKit_Instance *inst, Eina_Bool rebuild_list)
                                   pkg, NULL, ELM_GENLIST_ITEM_NONE, NULL, NULL);
         num_updates++;
      }
+   
+   // show the progress bar if an operation is in progress
+   if (ctxt->transaction)
+     {
+        elm_genlist_clear(inst->popup_genlist);
+        evas_object_show(inst->popup_progressbar);
+     }
+   else
+     evas_object_hide(inst->popup_progressbar);
 
    // update title and error lables
-   if (num_updates >= 1)
+   if (ctxt->transaction)
+      snprintf(buf, sizeof(buf), _("Operation in progress"));
+   else if (num_updates >= 1)
      snprintf(buf, sizeof(buf), P_("One update available", "%d updates available", num_updates), num_updates);
    else
      snprintf(buf, sizeof(buf), _("Your system is updated"));
@@ -157,7 +167,12 @@ packagekit_popup_update(E_PackageKit_Instance *inst, Eina_Bool rebuild_list)
    
    // update the status of the install button
    selected = elm_genlist_selected_items_get(inst->popup_genlist);
-   if (num_updates < 1)
+   if (ctxt->transaction)
+     {
+        elm_object_text_set(inst->popup_install_button, _("Please wait"));
+        elm_object_disabled_set(inst->popup_install_button, EINA_TRUE);
+     }
+   else if (num_updates < 1)
      {
         elm_object_text_set(inst->popup_install_button, _("Nothing to do"));
         elm_object_disabled_set(inst->popup_install_button, EINA_TRUE);
@@ -180,13 +195,27 @@ packagekit_popup_update(E_PackageKit_Instance *inst, Eina_Bool rebuild_list)
 }
 
 void
-packagekit_all_popups_update(E_PackageKit_Module_Context *ctxt)
+packagekit_all_popups_update(E_PackageKit_Module_Context *ctxt, 
+                             Eina_Bool rebuild_list)
 {
    E_PackageKit_Instance *inst;
    Eina_List *l;
    
    EINA_LIST_FOREACH(ctxt->instances, l, inst)
-     packagekit_popup_update(inst, EINA_TRUE);
+     packagekit_popup_update(inst, rebuild_list);
+}
+
+void 
+packagekit_progress_percentage_update(E_PackageKit_Module_Context *ctxt, 
+                                      int percent)
+{
+   E_PackageKit_Instance *inst;
+   Eina_List *l;
+   double val = (double)percent / 100.0;
+
+   EINA_LIST_FOREACH(ctxt->instances, l, inst)
+     if (inst->popup_progressbar)
+       elm_progressbar_value_set(inst->popup_progressbar, val);
 }
 
 static void
@@ -300,19 +329,22 @@ _genlist_selunsel_cb(void *data, Evas_Object *obj EINA_UNUSED,
 void
 packagekit_popup_new(E_PackageKit_Instance *inst)
 {
-   Evas_Object *table, *bt, *ic, *lb, *li, *size_rect;
+   Evas_Object *table, *bt, *ic, *lb, *li, *pb, *fr, *size_rect;
 
    inst->popup = e_gadcon_popup_new(inst->gcc, EINA_FALSE);
 
+   // main table
    table = elm_table_add(e_comp->elm);
    evas_object_show(table);
 
+   // title label
    lb = inst->popup_label = elm_label_add(table);
    evas_object_size_hint_expand_set(lb, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(lb, 0.0, 0.5);
    elm_table_pack(table, lb, 0, 0, 1, 1);
    evas_object_show(lb);
 
+   // refresh button
    ic = elm_icon_add(table);
    evas_object_size_hint_min_set(ic, 16 * elm_config_scale_get(), 
                                      16 * elm_config_scale_get());
@@ -324,11 +356,21 @@ packagekit_popup_new(E_PackageKit_Instance *inst)
    elm_table_pack(table, bt, 1, 0, 1, 1);
    evas_object_show(bt);
 
+   // central area (sizer)
    size_rect = evas_object_rectangle_add(e_comp->evas);
    evas_object_size_hint_min_set(size_rect, 300 * elm_config_scale_get(),
                                             300 * elm_config_scale_get());
    elm_table_pack(table, size_rect, 0, 1, 2, 1);
 
+   // central area (error label)
+   lb = inst->popup_error_label = elm_entry_add(table);
+   elm_entry_editable_set(lb, EINA_FALSE);
+   E_EXPAND(lb);
+   E_FILL(lb);
+   elm_table_pack(table, lb, 0, 1, 2, 1);
+   evas_object_show(lb);
+
+   // central area (genlist)
    inst->popup_genlist_itc = elm_genlist_item_class_new();
    if (inst->ctxt->config->show_description)
      {
@@ -342,13 +384,6 @@ packagekit_popup_new(E_PackageKit_Instance *inst)
      }
    inst->popup_genlist_itc->func.content_get = _gl_item_content_get;
 
-   lb = inst->popup_error_label = elm_entry_add(table);
-   elm_entry_editable_set(lb, EINA_FALSE);
-   E_EXPAND(lb);
-   E_FILL(lb);
-   elm_table_pack(table, lb, 0, 1, 2, 1);
-   evas_object_show(lb);
-
    li = inst->popup_genlist = elm_genlist_add(table);
    elm_genlist_homogeneous_set(li, EINA_TRUE);
    elm_genlist_mode_set(li, ELM_LIST_COMPRESS);
@@ -360,12 +395,27 @@ packagekit_popup_new(E_PackageKit_Instance *inst)
    elm_table_pack(table, li, 0, 1, 2, 1);
    evas_object_show(li);
 
+   // central area (progress bar) (inside a padding frame)
+   fr = elm_frame_add(table);
+   elm_object_style_set(fr, "pad_large");
+   E_EXPAND(fr);
+   E_FILL(fr);
+   elm_table_pack(table, fr, 0, 1, 2, 1);
+   evas_object_show(fr);
+
+   pb = inst->popup_progressbar = elm_progressbar_add(table);
+   E_EXPAND(pb);
+   E_FILL(pb);
+   elm_object_content_set(fr, pb);
+
+   // install button
    bt = inst->popup_install_button = elm_button_add(table);
    evas_object_size_hint_fill_set(bt, EVAS_HINT_FILL, 0.0);
    evas_object_smart_callback_add(bt, "clicked", _install_button_cb, inst);
    elm_table_pack(table, bt, 0, 2, 2, 1);
    evas_object_show(bt);
 
+   // run package manager button
    bt = elm_button_add(table);
    evas_object_size_hint_fill_set(bt, EVAS_HINT_FILL, 0.0);
    elm_object_text_set(bt, _("Run the package manager"));
@@ -373,22 +423,23 @@ packagekit_popup_new(E_PackageKit_Instance *inst)
    elm_table_pack(table, bt, 0, 3, 2, 1);
    evas_object_show(bt);
 
-   packagekit_popup_update(inst, EINA_TRUE);
-
+   // setup and show the popup
    e_gadcon_popup_content_set(inst->popup, table);
    e_comp_object_util_autoclose(inst->popup->comp_object,
                                 _popup_autoclose_cb, NULL, inst);
    e_object_data_set(E_OBJECT(inst->popup), inst);
    E_OBJECT_DEL_SET(inst->popup, _popup_del_cb);
-
    e_gadcon_popup_show(inst->popup);
+
+   // update the popup state and contents
+   packagekit_popup_update(inst, EINA_TRUE);
 }
 
 void
 packagekit_popup_del(E_PackageKit_Instance *inst)
 {
    E_FREE_FUNC(inst->popup, e_object_del);
-   inst->popup_genlist = inst->popup_label = NULL;
+   inst->popup_genlist = inst->popup_label = inst->popup_progressbar = NULL;
    if (inst->popup_genlist_itc)
      {
         elm_genlist_item_class_free(inst->popup_genlist_itc);
@@ -405,7 +456,7 @@ _store_error(E_PackageKit_Module_Context *ctxt, const char *err)
    else
       ctxt->error = eina_stringshare_add(err);
    packagekit_icon_update(ctxt, EINA_FALSE);
-   packagekit_all_popups_update(ctxt);
+   packagekit_all_popups_update(ctxt, EINA_FALSE);
 }
 
 /* DBus PackageKit method calls */
@@ -568,7 +619,7 @@ _signal_finished_cb(void *data, const Eldbus_Message *msg)
 
    //DBG("PKGKIT: PackageFinished");
    packagekit_icon_update(ctxt, EINA_FALSE);
-   packagekit_all_popups_update(ctxt);
+   packagekit_all_popups_update(ctxt, EINA_TRUE);
 }
 
 void
@@ -683,9 +734,6 @@ packagekit_update_packages(E_PackageKit_Module_Context *ctxt, const char *transa
         _store_error(ctxt, "could not call UpdatePackages()");
         return;
      }
-   
-   // TODO: monitor the PropertiesChanged for "Percentage" on the Transaction
-   //       object and show a progress bar!
    eldbus_proxy_signal_handler_add(proxy, "ErrorCode", 
                                    _signal_update_error_code_cb, ctxt);
    eldbus_proxy_signal_handler_add(proxy, "Finished", 
@@ -695,11 +743,55 @@ packagekit_update_packages(E_PackageKit_Module_Context *ctxt, const char *transa
 
 /* CreateTransaction() */
 static void
+_transaction_changed_props_iter(void *data, const void *key, 
+                                Eldbus_Message_Iter *val)
+{
+   E_PackageKit_Module_Context *ctxt = data;
+
+   if (!strcmp(key, "Percentage"))
+     {
+        int val_int;
+        eldbus_message_iter_basic_get(val, &val_int);
+        packagekit_progress_percentage_update(ctxt, val_int);
+     }
+}
+
+static void
+_signal_transaction_props_changed_cb(void *data, const Eldbus_Message *msg)
+{ /* PropertiesChanged('s'interface_name, 'a{sv}'changed_properties,
+                       'as' invalidated_properties) */
+   E_PackageKit_Module_Context *ctxt = data;
+   const char *error, *error_msg, *interface_name;
+   Eldbus_Message_Iter *changed_properties, *invalidated_properties;
+   Eina_Bool ret;
+
+   if (eldbus_message_error_get(msg, &error, &error_msg))
+     {
+        _store_error(ctxt, error_msg);
+        return;
+     }
+
+   ret = eldbus_message_arguments_get(msg, "sa{sv}as", &interface_name,
+                                      &changed_properties, 
+                                      &invalidated_properties);
+   if (!ret)
+     {
+        _store_error(ctxt, "could not get signal arguments");
+        return;
+     }
+
+   eldbus_message_iter_dict_iterate(changed_properties, "sv", 
+                                    _transaction_changed_props_iter, ctxt);
+}
+
+static void
 _transaction_created_cb(void *data, const Eldbus_Message *msg, Eldbus_Pending *pending)
 {
    const char *error, *error_msg, *trans_path;
    E_PackageKit_Module_Context *ctxt = data;
    E_PackageKit_Transaction_Func func;
+   Eldbus_Proxy *proxy;
+   Eldbus_Object *obj;
    Eina_Bool ret;
 
    if (eldbus_message_error_get(msg, &error, &error_msg))
@@ -718,8 +810,19 @@ _transaction_created_cb(void *data, const Eldbus_Message *msg, Eldbus_Pending *p
         return;
      }
 
+   // monitor the "Percentage" property to update the progress bar
+   obj = eldbus_object_get(ctxt->conn, "org.freedesktop.PackageKit", trans_path);
+   proxy = eldbus_proxy_get(obj, "org.freedesktop.DBus.Properties");
+   eldbus_proxy_signal_handler_add(proxy, "PropertiesChanged", 
+                                   _signal_transaction_props_changed_cb, ctxt);
+
+   // call the operation function
    func = eldbus_pending_data_get(pending, "func");
    func(ctxt, trans_path);
+   
+   // update all the faces
+   packagekit_icon_update(ctxt, EINA_TRUE);
+   packagekit_all_popups_update(ctxt, EINA_FALSE);
 }
 
 void
@@ -745,7 +848,6 @@ packagekit_create_transaction_and_exec(E_PackageKit_Module_Context *ctxt,
         return;
      }
    eldbus_pending_data_set(pending, "func", func);
-   packagekit_icon_update(ctxt, EINA_TRUE);
 }
 
 

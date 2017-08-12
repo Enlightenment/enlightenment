@@ -81,6 +81,7 @@ typedef struct _E_PackageKit_Instance
    Evas_Object *popup_label;
    Evas_Object *popup_error_label;
    Evas_Object *popup_install_button;
+   Evas_Object *popup_progressbar;
    Evas_Object *popup_genlist;
    Elm_Genlist_Item_Class *popup_genlist_itc;
 } E_PackageKit_Instance;
