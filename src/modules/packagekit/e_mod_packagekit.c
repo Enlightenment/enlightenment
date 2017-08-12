@@ -208,13 +208,9 @@ _run_button_cb(void *data, Evas_Object *obj EINA_UNUSED,
    E_PackageKit_Module_Context *ctxt = inst->ctxt;
    packagekit_popup_del(inst);
 
-   if (ctxt->config->manager_command && ctxt->config->manager_command[0])
-     e_exec(inst->gcc->gadcon->zone, NULL, inst->ctxt->config->manager_command, NULL, NULL);
-   else
-     e_util_dialog_show(_("No package manager configured"),
-                        _("You need to set your preferred package manager.<br>"
-                          "Please open the module configuration and set<br>"
-                          "the program to run.<br>"));
+   e_exec(inst->gcc->gadcon->zone, NULL,
+          inst->ctxt->config->manager_command,
+          NULL, NULL);
 }
 
 void
@@ -438,6 +434,7 @@ void
 packagekit_popup_new(E_PackageKit_Instance *inst)
 {
    Evas_Object *table, *bt, *ic, *lb, *li, *pb, *fr, *bx, *size_rect;
+   const char *p;
 
    inst->popup = e_gadcon_popup_new(inst->gcc, EINA_FALSE);
 
@@ -541,13 +538,17 @@ packagekit_popup_new(E_PackageKit_Instance *inst)
    elm_table_pack(table, bt, 0, 2, 1, 1);
    evas_object_show(bt);
 
-   // run package manager button
-   bt = elm_button_add(table);
-   evas_object_size_hint_fill_set(bt, EVAS_HINT_FILL, 0.0);
-   elm_object_text_set(bt, _("Run the package manager"));
-   evas_object_smart_callback_add(bt, "clicked", _run_button_cb, inst);
-   elm_table_pack(table, bt, 0, 3, 1, 1);
-   evas_object_show(bt);
+   // run package manager button (only if configured)
+   p = inst->ctxt->config->manager_command;
+   if (p && p[0])
+     {
+        bt = elm_button_add(table);
+        evas_object_size_hint_fill_set(bt, EVAS_HINT_FILL, 0.0);
+        elm_object_text_set(bt, _("Run the package manager"));
+        evas_object_smart_callback_add(bt, "clicked", _run_button_cb, inst);
+        elm_table_pack(table, bt, 0, 3, 1, 1);
+        evas_object_show(bt);
+     }
 
    // setup and show the popup
    e_gadcon_popup_content_set(inst->popup, table);
