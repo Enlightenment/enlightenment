@@ -4,8 +4,6 @@ module_includes  = [ '../../..', '../../bin', '../../bin/efx' ]
 module_includes2 = [ '../..'   , '../bin'   , '../bin/efx'  ]
 module_deps      = [ deps_e, dep_dl ]
 
-subdir('everything')
-
 mods = [
 # standard run of the mill modules with cion and desktop
   'ibar',
@@ -14,6 +12,7 @@ mods = [
   'temperature',
   'mixer',
   'notification',
+  'everything',
   'ibox',
   'start',
   'winlist',
@@ -63,6 +62,7 @@ mods = [
   'conf_display',
   'conf_bindings',
 # also standard modules with no icon or desktop file
+  'xwayland',
   'lokker',
   'wl_x11',
   'wl_wl',
@@ -72,8 +72,7 @@ mods = [
   'wl_desktop_shell',
   'wl_weekeyboard',
 ### XXX: disabled for now
-#  'wl_fb',
-  'xwayland'
+#  'wl_fb'
 ]
 
 foreach m: mods
