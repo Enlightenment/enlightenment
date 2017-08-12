@@ -4,7 +4,6 @@ typedef struct _E_Comp E_Comp;
 #ifdef E_COMP_WL
 typedef struct _E_Comp_Wl_Client_Data E_Comp_Client_Data;
 #endif
-typedef struct _E_Comp_Wl_Data E_Comp_Wl_Data;
 
 #ifdef E_COMP_X
 typedef struct _E_Comp_X_Client_Data E_Comp_Client_Data;
