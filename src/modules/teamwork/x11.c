@@ -1,6 +1,7 @@
 #define E_COMP_X
 #include "e_mod_main.h"
 
+#ifndef HAVE_WAYLAND_ONLY
 enum
 {
    TEAMWORK_PRELOAD,
@@ -139,3 +140,4 @@ x11_tw_shutdown(void)
    tw_signal_link_progress[E_PIXMAP_TYPE_X] = NULL;
    tw_signal_link_downloading[E_PIXMAP_TYPE_X] = NULL;
 }
+#endif

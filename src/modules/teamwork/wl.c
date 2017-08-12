@@ -1,5 +1,6 @@
 #define E_COMP_WL
 #include "e_mod_main.h"
+#ifdef HAVE_WAYLAND
 #include "wl_teamwork.h"
 
 static struct wl_resource *tw_resource;
@@ -134,3 +135,4 @@ wl_tw_shutdown(void)
    tw_signal_link_progress[E_PIXMAP_TYPE_WL] = NULL;
    tw_signal_link_downloading[E_PIXMAP_TYPE_WL] = NULL;
 }
+#endif

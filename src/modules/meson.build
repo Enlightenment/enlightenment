@@ -7,7 +7,6 @@ module_deps      = [ deps_e, dep_dl ]
 subdir('wizard')
 subdir('mixer')
 subdir('everything')
-subdir('teamwork')
 
 mods = [
 # standard run of the mill modules with cion and desktop
@@ -55,6 +54,7 @@ mods = [
   'wireless',
   'time',
   'luncher',
+  'teamwork',
 # also standard modules, just with only a desktop file using a generic icon
   'conf_theme',
   'conf_intl',
