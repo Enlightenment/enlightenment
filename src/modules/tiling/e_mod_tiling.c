@@ -703,7 +703,7 @@ _insert_client_prefered(E_Client *ec)
      }
    else
      {
-        _G.tinfo->tree = tiling_window_tree_insert(_G.tinfo->tree, _G.tinfo->tree, ec, _current_tiled_state(EINA_FALSE), EINA_FALSE);
+        _G.tinfo->tree = tiling_window_tree_insert(_G.tinfo->tree, NULL, ec, _current_tiled_state(EINA_FALSE), EINA_FALSE);
      }
 }
 

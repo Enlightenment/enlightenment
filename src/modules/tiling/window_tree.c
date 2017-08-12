@@ -95,13 +95,6 @@ _tiling_window_tree_split_type_get(Window_Tree *node)
 
 #define VERIFY_TYPE(t) if (t > TILING_SPLIT_VERTICAL || t < 0) { ERR("Invalid insert type"); return root; }
 
-#define ROOT_CHECK() \
-   if (!root) \
-     { \
-        new_node->weight = 1.0; \
-        return new_node; \
-     }
-
 Window_Tree *
 tiling_window_tree_insert(Window_Tree *root, Window_Tree *buddy,
                           E_Client *client, Tiling_Split_Type split_type, Eina_Bool before)
@@ -115,28 +108,42 @@ tiling_window_tree_insert(Window_Tree *root, Window_Tree *buddy,
    new_node = calloc(1, sizeof(*new_node));
    new_node->client = client;
 
-   ROOT_CHECK()
-
-   parent = buddy->parent;
-
-   if (!parent)
+   if (!root)
      {
-        //this means buddy is the root so just set buddy to NULL and parent to buddy
-        parent = buddy;
-        buddy = NULL;
-     }
+        root = calloc(1, sizeof(*root));
+        root->weight = 1.0;
 
-   parent_split_type = _tiling_window_tree_split_type_get(parent);
-
-   if (parent_split_type == split_type)
-     {
-        _tiling_window_tree_parent_add(parent, new_node, buddy, !before);
+        _tiling_window_tree_parent_add(root, new_node, NULL, !before);
      }
    else
      {
+        //if there is no buddy we are going to take the last child of the root
         if (!buddy)
-          buddy = root;
-        _tiling_window_tree_split_add(buddy, new_node, !before);
+          {
+             buddy = root;
+             do
+               {
+                  buddy = EINA_INLIST_CONTAINER_GET(eina_inlist_last(buddy->children), Window_Tree);
+               }
+             while (!buddy->client);
+          }
+        else
+          {
+             //make sure this buddy has a client,
+             EINA_SAFETY_ON_TRUE_RETURN_VAL(!buddy->client, root);
+          }
+
+        parent = buddy->parent;
+        parent_split_type = _tiling_window_tree_split_type_get(parent);
+
+        if (parent_split_type == split_type)
+          {
+             _tiling_window_tree_parent_add(parent, new_node, buddy, !before);
+          }
+        else
+          {
+             _tiling_window_tree_split_add(buddy, new_node, !before);
+          }
      }
 
    return root;

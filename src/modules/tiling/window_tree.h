@@ -34,6 +34,16 @@ int          tiling_window_tree_edges_get(Window_Tree *node);
 void         tiling_window_tree_free(Window_Tree *root);
 void         tiling_window_tree_walk(Window_Tree *root, void (*func)(void *));
 
+/**
+ * Insert a new client into the tree
+ *
+ * @param root the root node where to insert in some subtree
+ * @param buddy the buddy where you want to place client to, buddy MUST be a node with a associated client OR NULL
+ * @param split_type the split type you want to insert the client
+ * @param before true to insert the client before the buddy false to insert it after the buddy
+ *
+ * @return the new root node
+ */
 Window_Tree *tiling_window_tree_insert(Window_Tree *root, Window_Tree *buddy,
                                        E_Client *client, Tiling_Split_Type split_type, Eina_Bool before);
 
