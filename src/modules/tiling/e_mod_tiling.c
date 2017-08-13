@@ -707,7 +707,21 @@ toggle_floating(E_Client *ec)
 void
 tiling_e_client_does_not_fit(E_Client *ec)
 {
+   E_Notification_Notify n;
+   Eina_Strbuf *buf;
+
+   buf = eina_strbuf_new();
+   eina_strbuf_append_printf(buf, "Window %s cannot be tiled\n", ec->netwm.name);
+
+   n.app_name = _("Tiling");
+   n.icon.icon = "dialog-error";
+   n.summary = _("Window cannot be tiled");
+   n.body = eina_strbuf_string_get(buf);
+   n.timeout = 2000;
+   e_notification_client_send(&n, NULL, NULL);
    toggle_floating(ec);
+
+   eina_strbuf_string_free(buf);
 }
 
 static void
