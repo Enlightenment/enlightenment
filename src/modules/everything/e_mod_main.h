@@ -81,6 +81,7 @@ struct _Evry_Selector
 
   Evas_Object *o_icon;
   Evas_Object *o_thumb;
+  Evas_Object *event_object;
   Eina_Bool    do_thumb;
 
   Ecore_Timer *update_timer;
