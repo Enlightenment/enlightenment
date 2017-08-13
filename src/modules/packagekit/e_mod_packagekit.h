@@ -78,7 +78,7 @@ typedef struct _E_PackageKit_Instance
    E_Gadcon_Client *gcc;
    Evas_Object *gadget;
    E_Gadcon_Popup *popup;
-   Evas_Object *popup_label;
+   Evas_Object *popup_title_entry;
    Evas_Object *popup_error_label;
    Evas_Object *popup_install_button;
    Evas_Object *popup_progressbar;

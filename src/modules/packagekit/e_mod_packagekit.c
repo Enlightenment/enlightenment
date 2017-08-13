@@ -165,7 +165,7 @@ _help_button_cb(void *data, Evas_Object *obj EINA_UNUSED,
               inst->ctxt->v_maj, inst->ctxt->v_min, inst->ctxt->v_mic);
    else
      snprintf(buf, sizeof(buf), _("Unknow PackageKit version"));
-   elm_object_text_set(inst->popup_label, buf);
+   elm_object_text_set(inst->popup_title_entry, buf);
 }
 
 static void
@@ -205,7 +205,6 @@ _run_button_cb(void *data, Evas_Object *obj EINA_UNUSED,
                void *event EINA_UNUSED)
 {
    E_PackageKit_Instance *inst = data;
-   E_PackageKit_Module_Context *ctxt = inst->ctxt;
    packagekit_popup_del(inst);
 
    e_exec(inst->gcc->gadcon->zone, NULL,
@@ -231,7 +230,7 @@ packagekit_popup_update(E_PackageKit_Instance *inst, Eina_Bool rebuild_list)
 
    if (ctxt->error)
      {
-        elm_object_text_set(inst->popup_label, _("No information available"));
+        elm_object_text_set(inst->popup_title_entry, _("No information available"));
         elm_object_text_set(inst->popup_error_label, ctxt->error);
         if ((ctxt->v_maj != -1) && (ctxt->v_min != -1) && (ctxt->v_mic != -1))
           {
@@ -266,7 +265,7 @@ packagekit_popup_update(E_PackageKit_Instance *inst, Eina_Bool rebuild_list)
      snprintf(buf, sizeof(buf), P_("One update available", "%d updates available", num_updates), num_updates);
    else
      snprintf(buf, sizeof(buf), _("Your system is updated"));
-   elm_object_text_set(inst->popup_label, buf);
+   elm_object_text_set(inst->popup_title_entry, buf);
    elm_object_text_set(inst->popup_error_label, "");
    
    // update the status of the install button
@@ -451,9 +450,10 @@ packagekit_popup_new(E_PackageKit_Instance *inst)
    evas_object_show(bx);
 
    // title label
-   lb = inst->popup_label = elm_label_add(table);
+   lb = inst->popup_title_entry = elm_entry_add(table);
    evas_object_size_hint_expand_set(lb, EVAS_HINT_EXPAND, 0.0);
-   evas_object_size_hint_align_set(lb, 0.0, 0.5);
+   evas_object_size_hint_align_set(lb, EVAS_HINT_FILL, 0.5);
+   elm_entry_text_style_user_push(lb, "DEFAULT='font_weight=Bold'");
    elm_box_pack_end(bx, lb);
    evas_object_show(lb);
 
@@ -566,7 +566,7 @@ void
 packagekit_popup_del(E_PackageKit_Instance *inst)
 {
    E_FREE_FUNC(inst->popup, e_object_del);
-   inst->popup_genlist = inst->popup_label = inst->popup_progressbar = NULL;
+   inst->popup_genlist = inst->popup_title_entry = inst->popup_progressbar = NULL;
    if (inst->popup_genlist_itc)
      {
         elm_genlist_item_class_free(inst->popup_genlist_itc);
