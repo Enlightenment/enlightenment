@@ -1135,8 +1135,9 @@ _evry_selector_new(Evry_Window *win, int type)
         sel->edje_part = "object_selector";
      }
 
-   if ((o = edje_object_part_swallow_get(win->o_main, sel->edje_part)))
+   if ((o = edje_object_part_object_get(win->o_main, sel->edje_part)))
      {
+        sel->event_object = o;
         evas_object_event_callback_add(o, EVAS_CALLBACK_MOUSE_DOWN,
                                        _evry_selector_cb_down, sel);
         evas_object_event_callback_add(o, EVAS_CALLBACK_MOUSE_UP,
@@ -1162,15 +1163,14 @@ static void
 _evry_selector_free(Evry_Selector *sel)
 {
    Evry_Window *win = sel->win;
-   Evas_Object *o;
 
-   if ((o = edje_object_part_swallow_get(win->o_main, sel->edje_part)))
+   if (sel->event_object)
      {
-        evas_object_event_callback_del_full(o, EVAS_CALLBACK_MOUSE_DOWN,
+        evas_object_event_callback_del_full(sel->event_object, EVAS_CALLBACK_MOUSE_DOWN,
                                        _evry_selector_cb_down, sel);
-        evas_object_event_callback_del_full(o, EVAS_CALLBACK_MOUSE_UP,
+        evas_object_event_callback_del_full(sel->event_object, EVAS_CALLBACK_MOUSE_UP,
                                        _evry_selector_cb_up, sel);
-        evas_object_event_callback_del_full(o, EVAS_CALLBACK_MOUSE_WHEEL,
+        evas_object_event_callback_del_full(sel->event_object, EVAS_CALLBACK_MOUSE_WHEEL,
                                        _evry_selector_cb_wheel, sel);
      }
 
