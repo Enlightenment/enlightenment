@@ -49,6 +49,7 @@ mods = [
   'time',
   'luncher',
   'teamwork',
+  'vkbd',
 # modules have a custom binary as well
   'battery',
   'cpufreq',

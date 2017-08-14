@@ -15,6 +15,10 @@ option('nls',
 	default: true,
 	description: 'enable localization: (default=true)')
 
+option('edje-cc',
+       type       : 'string',
+       description: 'A path to a edje_cc. Defaults to system edje_cc')
+
 option('pam',
 	type: 'boolean',
 	default: true,
@@ -236,6 +240,10 @@ option('xkbswitch',
 	type: 'boolean',
 	default: true,
 	description: 'enable xkbswitch module: (default=true)')
+option('vkbd',
+	type: 'boolean',
+	default: true,
+	description: 'enable vkbd module: (default=true)')
 
 
 option('conf',

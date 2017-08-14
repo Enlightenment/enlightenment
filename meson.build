@@ -327,6 +327,13 @@ if freebsd == true
   dir_pkgconfig = join_paths(dir_lib, 'data/pkgconfig')
 endif
 
+##### edje_cc binary compiler tool
+edje_cmd = get_option('edje-cc')
+if edje_cmd == ''
+  edje_cmd = join_paths(dep_edje.get_pkgconfig_variable('prefix'),
+                        'bin', 'edje_cc')
+endif
+
 subdir('src/bin')
 
 subdir('src/modules')
