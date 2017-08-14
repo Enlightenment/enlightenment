@@ -333,9 +333,17 @@ _sink_input_cb(pa_context *c EINA_UNUSED, const pa_sink_input_info *info,
    Eina_Strbuf *input_name;
 
    input_name = eina_strbuf_new();
-   eina_strbuf_append(input_name, pa_proplist_gets(info->proplist, PA_PROP_APPLICATION_NAME));
-   eina_strbuf_append(input_name, ":");
-   eina_strbuf_append(input_name, info->name);
+   const char *application = pa_proplist_gets(info->proplist, PA_PROP_APPLICATION_NAME);
+   if (application)
+     {
+        eina_strbuf_append(input_name, application);
+        eina_strbuf_append(input_name, ":");
+        eina_strbuf_append(input_name, info->name);
+     }
+   else if (info->name)
+     {
+        eina_strbuf_append(input_name, info->name);
+     }
    input->base.name = eina_stringshare_add(eina_strbuf_string_get(input_name));
    eina_strbuf_free(input_name);
    input->base.volume = _pa_cvolume_convert(&info->volume);
