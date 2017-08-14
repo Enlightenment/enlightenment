@@ -1882,7 +1882,7 @@ e_modapi_init(E_Module *m)
               N_("Move the focused window right"), "move_right", NULL, NULL, 0);
 
    ACTION_ADD(_G.act_toggle_split_mode, _e_mod_action_toggle_split_mode,
-              N_("Toggle split mode"), "toggle_split_mode", NULL, NULL, 0);
+              N_("Toggle split mode for new windows."), "toggle_split_mode", NULL, NULL, 0);
 
    ACTION_ADD(_G.act_swap_window, NULL, N_("Swap window"), "swap_window", NULL,
               NULL, 0);
