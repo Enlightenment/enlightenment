@@ -267,7 +267,7 @@ dep_elementary       = dependency('elementary'      , required: true)
 
 dep_wayland = []
 if get_option('wayland') == true
-  wayland_protocols = dependency('wayland-protocols', version: '>= 1.7')
+  wayland_protocols = dependency('wayland-protocols', version: '>= 1.10')
   dir_wayland_protocols = wayland_protocols.get_pkgconfig_variable('pkgdatadir')
   wayland_version = '>= 1.11.0'
   dep_wayland = [ dependency('ecore-wl2'),
@@ -284,7 +284,7 @@ if get_option('wayland') == true
     requires_drm = 'ecore-drm2'
     dep_wayland += dep_ecore_drm2
   endif
-  requires_wayland = ' '.join([ 'wayland-protocols >= 1.7',
+  requires_wayland = ' '.join([ 'wayland-protocols >= 1.10',
                                 'ecore-wl2',
                                 requires_drm,
                                 ' '.join(['wayland-server' , wayland_version]),
