@@ -2382,11 +2382,24 @@ _e_comp_x_mouse_in_job(void *d EINA_UNUSED)
 static Eina_Bool
 _e_comp_x_mouse_in_fix_check_timer_cb(void *data EINA_UNUSED)
 {
-   E_Client *ec;
+   E_Client *ec = NULL, *cec;
+   int x, y;
 
    mouse_in_fix_check_timer = NULL;
-   ec = e_client_under_pointer_get
-     (e_desk_current_get(e_zone_current_get()), NULL);
+   ecore_evas_pointer_xy_get(e_comp->ee, &x, &y);
+   E_CLIENT_REVERSE_FOREACH(cec)
+     {
+        /* If a border was specified which should be excluded from the list
+         * (because it will be closed shortly for example), skip */
+        if ((!e_client_util_desk_visible(cec, e_desk_current_get(e_zone_current_get())))) continue;
+        if (!evas_object_visible_get(cec->frame)) continue;
+        if (!E_INSIDE(x, y, cec->x, cec->y, cec->w, cec->h))
+          continue;
+        /* If the layer is higher, the position of the window is higher
+         * (always on top vs always below) */
+        if (!ec || (cec->layer > ec->layer))
+          ec = cec;
+     }
    if (ec)
      {
         mouse_client = ec;
