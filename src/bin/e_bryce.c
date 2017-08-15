@@ -1033,10 +1033,13 @@ E_API Evas_Object *
 e_bryce_add(Evas_Object *parent, const char *name, E_Gadget_Site_Orient orient, E_Gadget_Site_Anchor an)
 {
    Bryce *b;
+   const char *z;
 
    b = E_NEW(Bryce, 1);
    b->size = 48;
    b->name = eina_stringshare_add(name);
+   z = strrchr(name, '_');
+   b->zone = strtoul(z + 1, NULL, 10);
    b->anchor = an;
    b->orient = orient;
    b->layer = DEFAULT_LAYER;
