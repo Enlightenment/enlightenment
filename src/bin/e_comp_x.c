@@ -2422,6 +2422,8 @@ _e_comp_x_mouse_in_fix_check_timer_cb(void *data EINA_UNUSED)
    int x, y;
 
    mouse_in_fix_check_timer = NULL;
+   if (e_grabinput_key_win_get() || e_grabinput_mouse_win_get())
+     return EINA_FALSE;
    ecore_evas_pointer_xy_get(e_comp->ee, &x, &y);
    E_CLIENT_REVERSE_FOREACH(cec)
      {
