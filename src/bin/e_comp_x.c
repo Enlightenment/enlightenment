@@ -2438,10 +2438,10 @@ _e_comp_x_mouse_in(void *data EINA_UNUSED, int type EINA_UNUSED, Ecore_X_Event_M
    mouse_in_coords.x = ev->root.x;
    mouse_in_coords.y = ev->root.y;
 done:
-   if (mouse_in_fix_check_timer)
-     ecore_timer_del(mouse_in_fix_check_timer);
-   mouse_in_fix_check_timer =
-     ecore_timer_add(0.1, _e_comp_x_mouse_in_fix_check_timer_cb, NULL);
+   E_FREE_FUNC(mouse_in_fix_check_timer, ecore_timer_del);
+   if ((!e_grabinput_mouse_win_get()) && (!e_grabinput_key_win_get()))
+     mouse_in_fix_check_timer =
+       ecore_timer_add(0.1, _e_comp_x_mouse_in_fix_check_timer_cb, NULL);
    return ECORE_CALLBACK_RENEW;
 }
 
