@@ -625,6 +625,8 @@ e_comp_wl_input_pointer_enabled_set(Eina_Bool enabled)
         return;
      }
 
+   if (e_comp_wl->ptr.enabled == !!enabled) return;
+
    e_comp_wl->ptr.enabled = !!enabled;
    _e_comp_wl_input_update_seat_caps();
 }
@@ -638,6 +640,8 @@ e_comp_wl_input_keyboard_enabled_set(Eina_Bool enabled)
         ERR("No compositor data");
         return;
      }
+
+   if (e_comp_wl->kbd.enabled == !!enabled) return;
 
    e_comp_wl->kbd.enabled = !!enabled;
    _e_comp_wl_input_update_seat_caps();
@@ -753,6 +757,8 @@ e_comp_wl_input_touch_enabled_set(Eina_Bool enabled)
         ERR("No compositor data");
         return;
      }
+
+   if (e_comp_wl->touch.enabled == !!enabled) return;
 
    e_comp_wl->touch.enabled = !!enabled;
    _e_comp_wl_input_update_seat_caps();
