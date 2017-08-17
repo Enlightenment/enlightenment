@@ -1115,7 +1115,7 @@ _evry_selector_new(Evry_Window *win, int type)
    Plugin_Config *pc;
    Eina_List *l, *pcs = NULL;
    Evry_Selector *sel = E_NEW(Evry_Selector, 1);
-   Evas_Object *o = NULL;
+   const Evas_Object *o = NULL;
 
    sel->aggregator = evry_aggregator_new(type);
 
@@ -1138,11 +1138,11 @@ _evry_selector_new(Evry_Window *win, int type)
    if ((o = edje_object_part_object_get(win->o_main, sel->edje_part)))
      {
         sel->event_object = o;
-        evas_object_event_callback_add(o, EVAS_CALLBACK_MOUSE_DOWN,
+        evas_object_event_callback_add((Evas_Object*) o, EVAS_CALLBACK_MOUSE_DOWN,
                                        _evry_selector_cb_down, sel);
-        evas_object_event_callback_add(o, EVAS_CALLBACK_MOUSE_UP,
+        evas_object_event_callback_add((Evas_Object*) o, EVAS_CALLBACK_MOUSE_UP,
                                        _evry_selector_cb_up, sel);
-        evas_object_event_callback_add(o, EVAS_CALLBACK_MOUSE_WHEEL,
+        evas_object_event_callback_add((Evas_Object*) o, EVAS_CALLBACK_MOUSE_WHEEL,
                                        _evry_selector_cb_wheel, sel);
      }
 
@@ -1166,11 +1166,11 @@ _evry_selector_free(Evry_Selector *sel)
 
    if (sel->event_object)
      {
-        evas_object_event_callback_del_full(sel->event_object, EVAS_CALLBACK_MOUSE_DOWN,
+        evas_object_event_callback_del_full((Evas_Object*)sel->event_object, EVAS_CALLBACK_MOUSE_DOWN,
                                        _evry_selector_cb_down, sel);
-        evas_object_event_callback_del_full(sel->event_object, EVAS_CALLBACK_MOUSE_UP,
+        evas_object_event_callback_del_full((Evas_Object*)sel->event_object, EVAS_CALLBACK_MOUSE_UP,
                                        _evry_selector_cb_up, sel);
-        evas_object_event_callback_del_full(sel->event_object, EVAS_CALLBACK_MOUSE_WHEEL,
+        evas_object_event_callback_del_full((Evas_Object*)sel->event_object, EVAS_CALLBACK_MOUSE_WHEEL,
                                        _evry_selector_cb_wheel, sel);
      }
 
