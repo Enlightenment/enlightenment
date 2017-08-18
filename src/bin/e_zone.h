@@ -94,6 +94,7 @@ struct _E_Zone
    Eina_Bool useful_geometry_changed : 1;
    Eina_Bool useful_geometry_dirty : 1;
    Eina_Bool      stowed : 1;
+   Eina_Bool desk_flip_sync : 1;
 };
 
 struct _E_Event_Zone_Generic
