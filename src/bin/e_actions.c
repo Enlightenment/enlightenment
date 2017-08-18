@@ -1877,6 +1877,44 @@ ACT_FN_GO_KEY(menu_show, , EINA_UNUSED)
      }
 }
 
+ACT_FN_GO(menu_show_object,)
+{
+   E_Zone *zone;
+
+   /* menu is active - abort */
+   if (e_comp_util_kbd_grabbed() || e_comp_util_mouse_grabbed()) return;
+   zone = _e_actions_zone_get(obj);
+   if (zone)
+     {
+        if (params)
+          {
+             E_Menu *m = NULL;
+
+             m = _e_actions_menu_find(params);
+             if (m)
+               {
+                  int x, y, w, h;
+                  Eina_List *l, *ll;
+                  Evas_Object *o;
+
+                  ecore_evas_pointer_xy_get(e_comp->ee, &x, &y);
+                  l = evas_objects_at_xy_get(e_comp->evas, x, y, 0, 0);
+                  EINA_LIST_REVERSE_FOREACH(l, ll, o)
+                    {
+                       if (evas_object_repeat_events_get(o) && ll->prev) continue;
+                       evas_object_geometry_get(o, &x, &y, &w, &h);
+                       m->zone = e_comp_object_util_zone_get(o);
+                       e_menu_post_deactivate_callback_set(m, _e_actions_cb_menu_end, NULL);
+                       e_menu_activate_mouse(m, zone, x, y, w, h,
+                                             E_MENU_POP_DIRECTION_AUTO, 0);
+                       break;
+                    }
+                  eina_list_free(l);
+               }
+          }
+     }
+}
+
 /***************************************************************************/
 ACT_FN_GO(exec, )
 {
@@ -3411,6 +3449,9 @@ e_actions_init(void)
                             "syntax: MenuName, example: MyMenu", 1);
    ACT_GO_MOUSE(menu_show);
    ACT_GO_KEY(menu_show);
+
+   /* internal: for showing a menu from an object */
+   ACT_GO(menu_show_object);
 
    /* exec */
    ACT_GO(exec);
