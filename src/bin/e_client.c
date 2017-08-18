@@ -2398,7 +2398,7 @@ e_client_new(E_Pixmap *cp, int first_map, int internal)
 
    if (ec->override)
      _e_client_zone_update(ec);
-   else
+   else if (!ec->desk)
      e_client_desk_set(ec, e_desk_current_get(e_zone_current_get()));
 
    ec->icccm.title = NULL;
