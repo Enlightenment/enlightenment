@@ -1544,12 +1544,17 @@ ACT_FN_GO(desk_linear_flip_to, )
 }
 
 #define DESK_ACTION_ALL(zone, act) \
-   E_Zone *zone; \
-   const Eina_List *lz; \
-   \
-   EINA_LIST_FOREACH(e_comp->zones, lz, zone) { \
-      act; \
-   }
+   do { \
+     E_Zone *zone; \
+     const Eina_List *lz; \
+     \
+     EINA_LIST_FOREACH(e_comp->zones, lz, zone) { \
+        { \
+           zone->desk_flip_sync = 1; \
+           act; \
+        } \
+     } \
+   } while (0)
 
 /***************************************************************************/
 ACT_FN_GO(desk_linear_flip_to_screen, )

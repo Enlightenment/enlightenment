@@ -401,7 +401,9 @@ e_desk_last_focused_focus(E_Desk *desk)
    EINA_LIST_FOREACH(e_client_focus_stack_get(), l, ec)
      {
         if ((!ec->iconic) && (evas_object_visible_get(ec->frame) || ec->changes.visible) &&
-            ((ec->desk == desk) || ((ec->zone == desk->zone) && ec->sticky)) &&
+            ((desk &&
+            ((ec->desk == desk) || ((ec->zone == desk->zone) && ec->sticky))) ||
+            ((!desk) && ec->desk->visible)) &&
             (ec->icccm.accepts_focus || ec->icccm.take_focus) &&
             (ec->netwm.type != E_WINDOW_TYPE_DOCK) &&
             (ec->netwm.type != E_WINDOW_TYPE_TOOLBAR) &&
@@ -617,6 +619,7 @@ e_desk_flip_end(E_Desk *desk)
 {
    E_Event_Desk_After_Show *ev;
    E_Client *ec;
+   Eina_Bool do_global_focus = EINA_FALSE;
 
    ev = E_NEW(E_Event_Desk_After_Show, 1);
    ev->desk = desk;
@@ -625,6 +628,21 @@ e_desk_flip_end(E_Desk *desk)
                    _e_desk_event_desk_after_show_free, NULL);
 
    e_comp_shape_queue();
+   if (desk->zone->desk_flip_sync)
+     {
+        Eina_List *l;
+        E_Zone *zone;
+        Eina_Bool sync = EINA_FALSE;
+
+        EINA_LIST_FOREACH(e_comp->zones, l, zone)
+          {
+             if (zone != desk->zone)
+               sync |= zone->desk_flip_sync;
+          }
+        do_global_focus = !sync;
+        desk->zone->desk_flip_sync = 0;
+        if (!do_global_focus) return;
+     }
    if (!e_config->focus_last_focused_per_desktop) return;
    if ((e_config->focus_policy == E_FOCUS_MOUSE) ||
        (e_config->focus_policy == E_FOCUS_SLOPPY))
@@ -633,10 +651,17 @@ e_desk_flip_end(E_Desk *desk)
         /* only set focus/warp pointer if currently focused window
          * is on same screen (user hasn't switched screens during transition)
          */
-        if (ec && ec->desk && (ec->desk->zone != desk->zone)) return;
+        if (do_global_focus)
+          {
+             if (ec && e_client_util_desk_visible(ec, ec->desk)) return;
+          }
+        else
+          {
+             if (ec && ec->desk && (ec->desk->zone != desk->zone)) return;
+          }
      }
    if (starting) return;
-   ec = e_desk_last_focused_focus(desk);
+   ec = e_desk_last_focused_focus(do_global_focus ? NULL : desk);
    if ((e_config->focus_policy != E_FOCUS_MOUSE) && (!ec))
      {
         /* we didn't previously have a focused window on this desk
@@ -648,7 +673,7 @@ e_desk_flip_end(E_Desk *desk)
            {
               /* start with top and go down... */
               if (e_client_util_ignored_get(ec)) continue;
-              if (!e_client_util_desk_visible(ec, desk)) continue;
+              if (!evas_object_visible_get(ec->frame)) continue;
               if (ec->iconic) continue;
               evas_object_focus_set(ec->frame, 1);
               if (e_config->raise_on_revert_focus)
