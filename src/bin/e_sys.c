@@ -59,6 +59,8 @@ static int _e_sys_comp_waiting = 0;
 
 static Ecore_Timer *_e_sys_screensaver_unignore_timer = NULL;
 
+static double resume_backlight;
+
 E_API int E_EVENT_SYS_SUSPEND = -1;
 E_API int E_EVENT_SYS_HIBERNATE = -1;
 E_API int E_EVENT_SYS_RESUME = -1;
@@ -180,12 +182,14 @@ _e_sys_comp_emit_cb_wait(E_Sys_Action a, const char *sig, const char *rep, Eina_
 static void
 _e_sys_comp_suspend(void)
 {
+   resume_backlight = e_config->backlight.normal;
    _e_sys_comp_emit_cb_wait(E_SYS_SUSPEND, "e,state,sys,suspend", "e,state,sys,suspend,done", EINA_TRUE);
 }
 
 static void
 _e_sys_comp_hibernate(void)
 {
+   resume_backlight = e_config->backlight.normal;
    _e_sys_comp_emit_cb_wait(E_SYS_HIBERNATE, "e,state,sys,hibernate", "e,state,sys,hibernate,done", EINA_TRUE);
 }
 
@@ -226,7 +230,7 @@ _e_sys_comp_resume2(void *data EINA_UNUSED)
      _e_comp_x_screensaver_off();
 #endif
    EINA_LIST_FOREACH(e_comp->zones, l, zone)
-     e_backlight_level_set(zone, e_config->backlight.normal, -1.0);
+     e_backlight_level_set(zone, resume_backlight, -1.0);
    _e_sys_comp_zones_fade("e,state,sys,resume", EINA_FALSE);
    return EINA_FALSE;
 }
@@ -792,6 +796,7 @@ _e_sys_cb_logout_timer(void *data EINA_UNUSED)
                   e_win_no_remember_set(dia->win, 1);
                   e_dialog_show(dia);
                   _e_sys_logout_begin_time = now;
+                  resume_backlight = e_config->backlight.normal;
                }
              _e_sys_comp_resume();
              return ECORE_CALLBACK_RENEW;
