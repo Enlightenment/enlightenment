@@ -1845,7 +1845,7 @@ _e_comp_intercept_focus(void *data, Evas_Object *obj, Eina_Bool focus)
     * expect us to emulate a look of focus but not actually set x input
     * focus as we do - so simply abort any focus set on such windows */
    /* be strict about accepting focus hint */
-   if (e_pixmap_is_x(ec->pixmap))
+   if (e_client_has_xwindow(ec))
      {
         /* be strict about accepting focus hint */
         if ((!ec->icccm.accepts_focus) &&
