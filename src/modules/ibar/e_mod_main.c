@@ -425,10 +425,10 @@ _ibar_new(Evas_Object *parent, Instance *inst)
    elm_box_align_set(b->o_outerbox, 0.5, 0.5);
    b->o_box = elm_box_add(e_win_evas_object_win_get(parent));
    E_EXPAND(b->o_box);
-   E_FILL(b->o_box);
+   E_ALIGN(b->o_box, 0, EVAS_HINT_FILL);
    elm_box_homogeneous_set(b->o_box, 1);
    elm_box_horizontal_set(b->o_box, 1);
-   elm_box_align_set(b->o_box, 0.5, 0.5);
+   elm_box_align_set(b->o_box, 0, 0.5);
    elm_box_pack_end(b->o_outerbox, b->o_box);
    if (inst->ci->dir[0] != '/')
      e_user_dir_snprintf(buf, sizeof(buf), "applications/bar/%s/.order",
