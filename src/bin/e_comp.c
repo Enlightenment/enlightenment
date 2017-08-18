@@ -1828,6 +1828,7 @@ e_comp_clients_rescale(void)
 
         EINA_LIST_FREE(tmp, ec)
           {
+             ec->pre_res_change.valid = 0;
              e_client_res_change_geometry_save(ec);
              e_client_res_change_geometry_restore(ec);
           }
