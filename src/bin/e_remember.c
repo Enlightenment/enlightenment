@@ -307,7 +307,7 @@ e_remember_apply(E_Remember *rem, E_Client *ec)
 
    if (!rem)
      return;
-
+   rem->applying = 1;
    if (rem->apply & E_REMEMBER_APPLY_ZONE)
      {
         E_Zone *zone;
@@ -577,6 +577,7 @@ e_remember_apply(E_Remember *rem, E_Client *ec)
           }
      }
 
+   rem->applying = 0;
    if (temporary)
      _e_remember_free(rem);
 }
@@ -713,6 +714,7 @@ _e_remember_event_free(void *d EINA_UNUSED, void *event)
 static void
 _e_remember_update(E_Client *ec, E_Remember *rem)
 {
+   if (rem->applying) return;
    if (rem->apply & E_REMEMBER_APPLY_POS ||
        rem->apply & E_REMEMBER_APPLY_SIZE)
      {
