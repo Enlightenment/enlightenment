@@ -2549,10 +2549,7 @@ _e_menu_item_ensure_onscreen(E_Menu_Item *mi)
 
    if (!mi->menu) return;
    if (!mi->menu->zone) return;
-   x = mi->menu->cur.x;
-   y = mi->menu->cur.y;
-   w = mi->menu->cur.w;
-   h = mi->menu->cur.h;
+   evas_object_geometry_get(mi->container_object, &x, &y, &w, &h);
    if ((x + w) > (mi->menu->zone->x + mi->menu->zone->w))
      dx = (mi->menu->zone->x + mi->menu->zone->w) - (x + w);
    else if (x < mi->menu->zone->x)
