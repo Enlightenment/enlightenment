@@ -949,7 +949,10 @@ _e_client_menu_cb_skip_winlist(void *data, E_Menu *m EINA_UNUSED, E_Menu_Item *m
 
    if (((ec->icccm.accepts_focus) || (ec->icccm.take_focus)) &&
        (!ec->netwm.state.skip_taskbar))
-     ec->user_skip_winlist = e_menu_item_toggle_get(mi);
+     {
+        ec->user_skip_winlist = e_menu_item_toggle_get(mi);
+        e_client_prop_misc_changed(ec);
+     }
    else
      ec->user_skip_winlist = 0;
    EC_CHANGED(ec);
@@ -964,7 +967,10 @@ _e_client_menu_cb_skip_pager(void *data, E_Menu *m EINA_UNUSED, E_Menu_Item *mi)
    if (!(ec = data)) return;
 
    if ((ec->icccm.accepts_focus) || (ec->icccm.take_focus))
-     ec->netwm.state.skip_pager = e_menu_item_toggle_get(mi);
+     {
+        ec->netwm.state.skip_pager = e_menu_item_toggle_get(mi);
+        e_client_prop_misc_changed(ec);
+     }
    else
      ec->netwm.state.skip_pager = 0;
    EC_CHANGED(ec);
@@ -979,7 +985,10 @@ _e_client_menu_cb_skip_taskbar(void *data, E_Menu *m EINA_UNUSED, E_Menu_Item *m
    if (!(ec = data)) return;
 
    if ((ec->icccm.accepts_focus) || (ec->icccm.take_focus))
-     ec->netwm.state.skip_taskbar = e_menu_item_toggle_get(mi);
+     {
+        ec->netwm.state.skip_taskbar = e_menu_item_toggle_get(mi);
+        e_client_prop_misc_changed(ec);
+     }
    else
      ec->netwm.state.skip_taskbar = 0;
    EC_CHANGED(ec);

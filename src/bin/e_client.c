@@ -4775,6 +4775,13 @@ e_client_pinned_set(E_Client *ec, Eina_Bool set)
    EC_CHANGED(ec);
 }
 
+E_API void
+e_client_prop_misc_changed(E_Client *ec)
+{
+   EINA_SAFETY_ON_NULL_RETURN(ec);
+   _e_client_event_property(ec, E_CLIENT_PROPERTY_MISC);
+}
+
 ///////////////////////////////////////
 
 E_API Eina_Bool

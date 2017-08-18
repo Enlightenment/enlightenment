@@ -859,6 +859,7 @@ e_hints_window_state_update(E_Client *ec, int state, int action)
                   ec->netwm.state.skip_taskbar = 0;
                   ec->netwm.update.state = 1;
                   EC_CHANGED(ec);
+                  e_client_prop_misc_changed(ec);
                }
              break;
 
@@ -868,6 +869,7 @@ e_hints_window_state_update(E_Client *ec, int state, int action)
                   ec->netwm.state.skip_taskbar = 1;
                   ec->netwm.update.state = 1;
                   EC_CHANGED(ec);
+                  e_client_prop_misc_changed(ec);
                }
              break;
 
@@ -875,6 +877,7 @@ e_hints_window_state_update(E_Client *ec, int state, int action)
              ec->netwm.state.skip_taskbar = !ec->netwm.state.skip_taskbar;
              ec->netwm.update.state = 1;
              EC_CHANGED(ec);
+             e_client_prop_misc_changed(ec);
              break;
           }
         break;
@@ -888,6 +891,7 @@ e_hints_window_state_update(E_Client *ec, int state, int action)
                   ec->netwm.state.skip_pager = 0;
                   ec->netwm.update.state = 1;
                   EC_CHANGED(ec);
+                  e_client_prop_misc_changed(ec);
                }
              break;
 
@@ -897,6 +901,7 @@ e_hints_window_state_update(E_Client *ec, int state, int action)
                   ec->netwm.state.skip_pager = 1;
                   ec->netwm.update.state = 1;
                   EC_CHANGED(ec);
+                  e_client_prop_misc_changed(ec);
                }
              break;
 
@@ -904,6 +909,7 @@ e_hints_window_state_update(E_Client *ec, int state, int action)
              ec->netwm.state.skip_pager = !ec->netwm.state.skip_pager;
              ec->netwm.update.state = 1;
              EC_CHANGED(ec);
+             e_client_prop_misc_changed(ec);
              break;
           }
         break;

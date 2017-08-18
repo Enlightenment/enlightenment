@@ -134,6 +134,7 @@ typedef enum E_Client_Property
    E_CLIENT_PROPERTY_GRAVITY = (1 << 5),
    E_CLIENT_PROPERTY_NETWM_STATE = (1 << 6),
    E_CLIENT_PROPERTY_STICKY = (1 << 7),
+   E_CLIENT_PROPERTY_MISC = (1 << 31),
 } E_Client_Property;
 
 typedef struct E_Client E_Client;
@@ -820,6 +821,7 @@ E_API void e_client_urgent_set(E_Client *ec, Eina_Bool urgent);
 E_API void e_client_stick(E_Client *ec);
 E_API void e_client_unstick(E_Client *ec);
 E_API void e_client_pinned_set(E_Client *ec, Eina_Bool set);
+E_API void e_client_prop_misc_changed(E_Client *ec);
 E_API void e_client_comp_hidden_set(E_Client *ec, Eina_Bool hidden);
 E_API Eina_Bool e_client_border_set(E_Client *ec, const char *name);
 E_API void e_client_act_move_keyboard(E_Client *ec);
