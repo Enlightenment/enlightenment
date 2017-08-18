@@ -462,6 +462,43 @@ _basic_create_widgets(E_Config_Dialog *cfd EINA_UNUSED, Evas *evas, E_Config_Dia
 }
 
 static void
+_basic_font_list_select(E_Config_Dialog_Data *cfdata, const char *cur_font)
+{
+   const char *f;
+   Eina_List *next;
+   int n;
+   /* Select Current Font */
+   n = 0;
+   EINA_LIST_FOREACH(cfdata->font_list, next, f)
+     {
+        if (!strcasecmp(f, cur_font))
+          {
+             e_widget_ilist_selected_set(cfdata->gui.font_list, n);
+             break;
+          }
+        n++;
+     }
+}
+
+static void
+_basic_size_list_select(Evas_Object *ob, int cur_size)
+{
+   int n;
+
+   for (n = 0; n < e_widget_ilist_count(ob); n++)
+     {
+        E_Font_Size_Data *size_data;
+
+        if (!(size_data = e_widget_ilist_nth_data_get(ob, n))) continue;
+        if (cur_size == size_data->size)
+          {
+             e_widget_ilist_selected_set(ob, n);
+             break;
+          }
+     }
+}
+
+static void
 _basic_font_cb_change(void *data, Evas_Object *obj EINA_UNUSED)
 {
    E_Config_Dialog_Data *cfdata;
@@ -482,7 +519,9 @@ _basic_enable_cb_change(void *data, Evas_Object *obj EINA_UNUSED)
    e_widget_disabled_set(cfdata->gui.font_list, !cfdata->cur_enabled);
    e_widget_disabled_set(cfdata->gui.size_list, !cfdata->cur_enabled);
 
-   if (!cfdata->cur_enabled)
+   if (cfdata->cur_enabled)
+     _basic_size_list_select(cfdata->gui.size_list, cfdata->cur_size);
+   else
      {
         e_widget_ilist_unselect(cfdata->gui.font_list);
         e_widget_ilist_unselect(cfdata->gui.size_list);
@@ -991,7 +1030,6 @@ _size_list_load(E_Config_Dialog_Data *cfdata, Eina_List *size_list, Evas_Font_Si
    Eina_List *next;
    Evas_Object *ob;
    Evas *evas;
-   int n;
 
    ob = cfdata->gui.size_list;
    evas = evas_object_evas_get(ob);
@@ -1015,17 +1053,7 @@ _size_list_load(E_Config_Dialog_Data *cfdata, Eina_List *size_list, Evas_Font_Si
    edje_thaw();
    evas_event_thaw(evas);
 
-   for (n = 0; n < e_widget_ilist_count(ob); n++)
-     {
-        E_Font_Size_Data *size_data;
-
-        if (!(size_data = e_widget_ilist_nth_data_get(ob, n))) continue;
-        if (cur_size == size_data->size)
-          {
-             e_widget_ilist_selected_set(ob, n);
-             break;
-          }
-     }
+   _basic_size_list_select(ob, cur_size);
 }
 
 static void
@@ -1036,7 +1064,6 @@ _font_list_load(E_Config_Dialog_Data *cfdata, const char *cur_font)
    Evas_Object *ob;
    Evas *evas;
    Evas_Coord w;
-   int n;
 
    ob = cfdata->gui.font_list;
    evas = evas_object_evas_get(ob);
@@ -1079,19 +1106,7 @@ _font_list_load(E_Config_Dialog_Data *cfdata, const char *cur_font)
    edje_thaw();
    evas_event_thaw(evas);
 
-   if (!cur_font) return;
-
-   /* Select Current Font */
-   n = 0;
-   EINA_LIST_FOREACH(cfdata->font_list, next, f)
-     {
-        if (!strcasecmp(f, cur_font))
-          {
-             e_widget_ilist_selected_set(ob, n);
-             break;
-          }
-        n++;
-     }
+   if (cur_font) _basic_font_list_select(cfdata, cur_font);
 }
 
 static void
