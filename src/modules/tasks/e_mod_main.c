@@ -1034,6 +1034,8 @@ _tasks_cb_event_client_prop_change(void *data EINA_UNUSED, int type EINA_UNUSED,
    else if (((ev->property & E_CLIENT_PROPERTY_TITLE) == E_CLIENT_PROPERTY_TITLE) ||
             ((ev->property & E_CLIENT_PROPERTY_TITLE) == E_CLIENT_PROPERTY_ICON))
      _tasks_refill_border(ev->ec);
+   else if (ev->property & E_CLIENT_PROPERTY_MISC)
+     _tasks_refill_all();
    return EINA_TRUE;
 }
 
