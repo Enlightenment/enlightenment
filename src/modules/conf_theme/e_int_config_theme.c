@@ -28,6 +28,7 @@ struct _E_Config_Dialog_Data
 
    /* Dialog */
    Evas_Object      *win_import;
+   Ecore_Job *theme_check;
 };
 
 static void
@@ -567,12 +568,25 @@ _fill_data(E_Config_Dialog_Data *cfdata)
 }
 
 static void
-_open_test_cb(void *file)
+_open_test_cb(void *data)
 {
-   if (!edje_file_group_exists(eet_file_get(file), "e/desktop/background"))
-     e_util_dialog_show(_("Theme File Error"),
-                        _("%s is probably not an E theme!"),
-                        eet_file_get(file));
+   E_Config_Dialog_Data *cfdata = data;
+   Eina_List *l, *fails = NULL;
+   Eet_File *file;
+   Eina_Strbuf *buf;
+
+   cfdata->theme_check = NULL;
+   EINA_LIST_FOREACH(cfdata->themes, l, file)
+     if (!edje_file_group_exists(eet_file_get(file), "e/desktop/background"))
+       fails = eina_list_append(fails, file);
+   if (!fails) return;
+   buf = eina_strbuf_new();
+   EINA_LIST_FREE(fails, file)
+     eina_strbuf_append_printf(buf, "<b>%s</b><ps/>", eet_file_get(file));
+   e_util_dialog_show(_("Theme File Error"),
+                      _("The listed files are probably not E themes:<ps/>%s"),
+                      eina_strbuf_string_get(buf));
+   eina_strbuf_free(buf);
 }
 
 static void
@@ -581,7 +595,8 @@ _open_done_cb(void *data, Eio_File *handler, Eet_File *file)
    E_Config_Dialog_Data *cfdata = data;
    cfdata->themes = eina_list_append(cfdata->themes, file);
    cfdata->theme_init = eina_list_remove(cfdata->theme_init, handler);
-   ecore_job_add(_open_test_cb, file);
+   if (!cfdata->theme_init)
+     cfdata->theme_check = ecore_job_add(_open_test_cb, cfdata);
 }
 
 static void
@@ -652,6 +667,7 @@ _free_data(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfdata)
      eio_file_cancel(ls);
    EINA_LIST_FREE(cfdata->themes, ef)
      eet_close(ef);
+   E_FREE_FUNC(cfdata->theme_check, ecore_job_del);
    if (cfdata->eio[0] || cfdata->eio[1] || cfdata->themes || cfdata->theme_init)
      cfdata->free = EINA_TRUE;
    else
