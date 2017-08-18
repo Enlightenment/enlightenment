@@ -951,7 +951,7 @@ _e_client_menu_cb_skip_winlist(void *data, E_Menu *m EINA_UNUSED, E_Menu_Item *m
      ec->user_skip_winlist = e_menu_item_toggle_get(mi);
    else
      ec->user_skip_winlist = 0;
-   ec->changed = 1;
+   EC_CHANGED(ec);
    e_remember_update(ec);
 }
 
@@ -966,7 +966,7 @@ _e_client_menu_cb_skip_pager(void *data, E_Menu *m EINA_UNUSED, E_Menu_Item *mi)
      ec->netwm.state.skip_pager = e_menu_item_toggle_get(mi);
    else
      ec->netwm.state.skip_pager = 0;
-   ec->changed = 1;
+   EC_CHANGED(ec);
    e_remember_update(ec);
 }
 
@@ -981,7 +981,7 @@ _e_client_menu_cb_skip_taskbar(void *data, E_Menu *m EINA_UNUSED, E_Menu_Item *m
      ec->netwm.state.skip_taskbar = e_menu_item_toggle_get(mi);
    else
      ec->netwm.state.skip_taskbar = 0;
-   ec->changed = 1;
+   EC_CHANGED(ec);
    e_remember_update(ec);
 }
 
@@ -1573,7 +1573,7 @@ _e_client_menu_cb_iconpref_e(void *data, E_Menu *m EINA_UNUSED, E_Menu_Item *mi 
 
    ec->icon_preference = E_ICON_PREF_E_DEFAULT;
    ec->changes.icon = 1;
-   ec->changed = 1;
+   EC_CHANGED(ec);
 }
 
 static void
@@ -1585,7 +1585,7 @@ _e_client_menu_cb_iconpref_user(void *data, E_Menu *m EINA_UNUSED, E_Menu_Item *
 
    ec->icon_preference = E_ICON_PREF_USER;
    ec->changes.icon = 1;
-   ec->changed = 1;
+   EC_CHANGED(ec);
 }
 
 static void
@@ -1597,7 +1597,7 @@ _e_client_menu_cb_iconpref_netwm(void *data, E_Menu *m EINA_UNUSED, E_Menu_Item 
 
    ec->icon_preference = E_ICON_PREF_NETWM;
    ec->changes.icon = 1;
-   ec->changed = 1;
+   EC_CHANGED(ec);
 }
 
 static void
