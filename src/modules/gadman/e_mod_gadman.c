@@ -434,6 +434,11 @@ gadman_gadget_edit_start(E_Gadcon_Client *gcc)
    else if (Man->drag_gcc[gcc->gadcon->id - ID_GADMAN_LAYER_BASE])
      e_object_unref(E_OBJECT(Man->drag_gcc[gcc->gadcon->id - ID_GADMAN_LAYER_BASE]));
 
+   if (gcc->gadcon->id - ID_GADMAN_LAYER_BASE == 1)
+     {
+        /* don't set edit if overlay isn't visible */
+        if (!Man->visible) return;
+     }
    EINA_LIST_FOREACH(Man->gadcons[gcc->gadcon->id - ID_GADMAN_LAYER_BASE], l, gc)
      gc->editing = 1;
    gc = gcc->gadcon;
