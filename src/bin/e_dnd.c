@@ -48,6 +48,7 @@ static Ecore_Window _drag_win_root = 0;
 
 static Eina_List *_drag_list = NULL;
 static E_Drag *_drag_current = NULL;
+static Ecore_Window drop_win;
 
 static XDnd *_xdnd = NULL;
 static Ecore_X_Atom _text_atom = 0;
@@ -1013,6 +1014,8 @@ _e_drag_end(int x, int y)
           {
              if (!(dropped = ecore_x_dnd_drop()))
                break;
+             else
+               drop_win = win;
           }
         else
 #endif
@@ -1161,6 +1164,7 @@ _e_drag_free(E_Drag *drag)
         if (drag->cb.finished)
           drag->cb.finished(drag, 0);
         drag->cb.finished = NULL;
+        drop_win = 0;
      }
 
    _drag_current = NULL;
@@ -1342,7 +1346,12 @@ _e_dnd_cb_event_hide(void *data EINA_UNUSED, int type EINA_UNUSED, Ecore_X_Event
    const Eina_List *l;
 
    id = e_util_winid_str_get(ev->win);
-   if (!eina_hash_find(_drop_win_hash, id)) return ECORE_CALLBACK_PASS_ON;
+   if (!eina_hash_find(_drop_win_hash, id))
+     {
+        if (_drag_current && _drag_current->ended && (drop_win == ev->win))
+          e_object_del(E_OBJECT(_drag_current));
+        return ECORE_CALLBACK_RENEW;
+     }
    leave_ev.x = 0;
    leave_ev.y = 0;
 
