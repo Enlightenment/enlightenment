@@ -9,6 +9,7 @@ static E_Desklock_Interface lokker_desklock_iface =
    .show = lokker_lock,
    .hide = lokker_unlock,
    .key_down = lokker_key_down,
+   .key_up = lokker_key_up,
 };
 
 E_API void *

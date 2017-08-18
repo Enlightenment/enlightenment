@@ -152,6 +152,12 @@ static Eina_Bool
 _key_up(int ctx, Ecore_Event_Key *ev)
 {
    e_screensaver_notidle();
+   if (e_desklock_state_get() && (ctx == E_BINDING_CONTEXT_MANAGER))
+     {
+        E_Desklock_Interface *iface = e_desklock_interface_current_get();
+        if (iface && iface->key_up)
+          return iface->key_up(ev);
+     }
    if ((e_comp->comp_type == E_PIXMAP_TYPE_X) && (ev->event_window != e_comp->root)) return ECORE_CALLBACK_PASS_ON;
    return ((!e_comp->screen) ||
            (!e_comp->screen->key_up) || (!e_comp->screen->key_up(ev))) &&

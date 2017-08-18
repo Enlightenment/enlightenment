@@ -723,17 +723,34 @@ _lokker_check_auth(void)
 }
 
 EINTERN Eina_Bool
-lokker_key_down(Ecore_Event_Key *ev)
+lokker_key_up(Ecore_Event_Key *ev)
 {
+   if (e_comp->comp_type == E_PIXMAP_TYPE_X) return ECORE_CALLBACK_DONE;
    if (!strcmp(ev->key, "Caps_Lock"))
      {
-        if(ev->modifiers & ECORE_EVENT_LOCK_CAPS)
-          _lokker_caps_hint_update("");
-        else
+        if ((ev->modifiers & ECORE_EVENT_LOCK_CAPS) == ECORE_EVENT_LOCK_CAPS)
           _lokker_caps_hint_update(_("Caps Lock is On"));
+        else
+          _lokker_caps_hint_update("");
         return ECORE_CALLBACK_DONE;
      }
+   return ECORE_CALLBACK_DONE;
+}
 
+EINTERN Eina_Bool
+lokker_key_down(Ecore_Event_Key *ev)
+{
+   if (e_comp->comp_type == E_PIXMAP_TYPE_X)
+     {
+        if (!strcmp(ev->key, "Caps_Lock"))
+          {
+             if(ev->modifiers & ECORE_EVENT_LOCK_CAPS)
+               _lokker_caps_hint_update("");
+             else
+               _lokker_caps_hint_update(_("Caps Lock is On"));
+             return ECORE_CALLBACK_DONE;
+          }
+     }
    if (edd->state == LOKKER_STATE_CHECKING) return ECORE_CALLBACK_DONE;
 
    if (!strcmp(ev->key, "Escape"))
