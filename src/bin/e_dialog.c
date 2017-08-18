@@ -41,6 +41,7 @@ _e_dialog_internal_new(Evas_Object *parent, const char *name, const char *class,
    elm_win_resize_object_add(dia->win, o);
    e_theme_edje_object_set(o, "base/theme/dialog",
                            "e/widgets/dialog/main");
+   elm_layout_signal_emit(dia->bg_object, "e,state,buttons,off", "e");
    evas_object_show(o);
 
    o = e_widget_list_add(evas_object_evas_get(dia->win), 1, 1);
@@ -97,6 +98,7 @@ e_dialog_button_add(E_Dialog *dia, const char *label, const char *icon, E_Dialog
    if (!func) func = _e_dialog_del_func_cb;
    o = e_widget_button_add(evas_object_evas_get(dia->win), label, icon, (void (*)(void *, void *))func, data, dia);
    e_widget_list_object_append(dia->box_object, o, 1, 0, 0.5);
+   elm_layout_signal_emit(dia->bg_object, "e,state,buttons,on", "e");
    dia->buttons = eina_list_append(dia->buttons, o);
 }
 
