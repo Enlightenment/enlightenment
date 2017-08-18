@@ -81,14 +81,12 @@ static Eina_Bool    _tasks_cb_event_client_add(void *data, int type, void *event
 static Eina_Bool    _tasks_cb_event_client_remove(void *data, int type, void *event);
 static Eina_Bool    _tasks_cb_event_client_iconify(void *data, int type, void *event);
 static Eina_Bool    _tasks_cb_event_client_uniconify(void *data, int type, void *event);
-static Eina_Bool    _tasks_cb_event_client_icon_change(void *data, int type, void *event);
-static Eina_Bool    _tasks_cb_event_client_title_change(void *data, int type, void *event);
+static Eina_Bool    _tasks_cb_event_client_prop_change(void *data, int type, void *event);
 static Eina_Bool    _tasks_cb_event_client_zone_set(void *data, int type, void *event);
 static Eina_Bool    _tasks_cb_event_client_desk_set(void *data, int type, E_Event_Client *ev);
 static Eina_Bool    _tasks_cb_window_focus_in(void *data, int type, void *event);
 static Eina_Bool    _tasks_cb_window_focus_out(void *data, int type, void *event);
 static Eina_Bool    _tasks_cb_event_desk_show(void *data, int type, void *event);
-static Eina_Bool    _tasks_cb_event_client_urgent_change(void *data, int type, void *event);
 
 static E_Config_DD *conf_edd = NULL;
 static E_Config_DD *conf_item_edd = NULL;
@@ -149,14 +147,12 @@ e_modapi_init(E_Module *m)
    E_LIST_HANDLER_APPEND(tasks_config->handlers, E_EVENT_CLIENT_REMOVE, _tasks_cb_event_client_remove, NULL);
    E_LIST_HANDLER_APPEND(tasks_config->handlers, E_EVENT_CLIENT_ICONIFY, _tasks_cb_event_client_iconify, NULL);
    E_LIST_HANDLER_APPEND(tasks_config->handlers, E_EVENT_CLIENT_UNICONIFY, _tasks_cb_event_client_uniconify, NULL);
-   E_LIST_HANDLER_APPEND(tasks_config->handlers, E_EVENT_CLIENT_PROPERTY, _tasks_cb_event_client_icon_change, NULL);
+   E_LIST_HANDLER_APPEND(tasks_config->handlers, E_EVENT_CLIENT_PROPERTY, _tasks_cb_event_client_prop_change, NULL);
    E_LIST_HANDLER_APPEND(tasks_config->handlers, E_EVENT_CLIENT_DESK_SET, _tasks_cb_event_client_desk_set, NULL);
    E_LIST_HANDLER_APPEND(tasks_config->handlers, E_EVENT_CLIENT_ZONE_SET, _tasks_cb_event_client_zone_set, NULL);
    E_LIST_HANDLER_APPEND(tasks_config->handlers, E_EVENT_CLIENT_FOCUS_IN, _tasks_cb_window_focus_in, NULL);
    E_LIST_HANDLER_APPEND(tasks_config->handlers, E_EVENT_CLIENT_FOCUS_OUT, _tasks_cb_window_focus_out, NULL);
-   E_LIST_HANDLER_APPEND(tasks_config->handlers, E_EVENT_CLIENT_PROPERTY, _tasks_cb_event_client_title_change, NULL);
    E_LIST_HANDLER_APPEND(tasks_config->handlers, E_EVENT_DESK_SHOW, _tasks_cb_event_desk_show, NULL);
-   E_LIST_HANDLER_APPEND(tasks_config->handlers, E_EVENT_CLIENT_PROPERTY, _tasks_cb_event_client_urgent_change, NULL);
 
    e_gadcon_provider_register(&_gadcon_class);
    return m;
@@ -1024,38 +1020,20 @@ _tasks_cb_window_focus_out(void *data EINA_UNUSED, int type EINA_UNUSED, void *e
 }
 
 static Eina_Bool
-_tasks_cb_event_client_urgent_change(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
+_tasks_cb_event_client_prop_change(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
 {
    E_Event_Client_Property *ev = event;
-
-   if (!(ev->property & E_CLIENT_PROPERTY_URGENCY)) return ECORE_CALLBACK_RENEW;
    Eina_List *l;
    Tasks *tasks;
 
-   EINA_LIST_FOREACH(tasks_config->tasks, l, tasks)
+   if ((ev->property & E_CLIENT_PROPERTY_URGENCY) == E_CLIENT_PROPERTY_URGENCY)
      {
-        _tasks_urgent_eval(_tasks_item_find(tasks, ev->ec));
+        EINA_LIST_FOREACH(tasks_config->tasks, l, tasks)
+          _tasks_urgent_eval(_tasks_item_find(tasks, ev->ec));
      }
-   return EINA_TRUE;
-}
-
-static Eina_Bool
-_tasks_cb_event_client_title_change(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
-{
-   E_Event_Client_Property *ev = event;
-
-   if (!(ev->property & E_CLIENT_PROPERTY_TITLE)) return ECORE_CALLBACK_RENEW;
-   _tasks_refill_border(ev->ec);
-   return EINA_TRUE;
-}
-
-static Eina_Bool
-_tasks_cb_event_client_icon_change(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
-{
-   E_Event_Client_Property *ev = event;
-
-   if (!(ev->property & E_CLIENT_PROPERTY_ICON)) return ECORE_CALLBACK_RENEW;
-   _tasks_refill_border(ev->ec);
+   else if (((ev->property & E_CLIENT_PROPERTY_TITLE) == E_CLIENT_PROPERTY_TITLE) ||
+            ((ev->property & E_CLIENT_PROPERTY_TITLE) == E_CLIENT_PROPERTY_ICON))
+     _tasks_refill_border(ev->ec);
    return EINA_TRUE;
 }
 
