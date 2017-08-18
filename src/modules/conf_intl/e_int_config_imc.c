@@ -382,7 +382,6 @@ _basic_create_widgets(E_Config_Dialog *cfd EINA_UNUSED, Evas *evas, E_Config_Dia
    evas_event_thaw(evas_object_evas_get(ob));
 
    e_widget_frametable_object_append(of, ob, 0, 1, 1, 1, 1, 1, 1, 1);
-   e_widget_framelist_content_align_set(of, 0.0, 0.0);
    e_widget_list_object_append(o, of, 1, 1, 0.5);
    return o;
 }
