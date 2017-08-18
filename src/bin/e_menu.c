@@ -2556,6 +2556,28 @@ _e_menu_item_ensure_onscreen(E_Menu_Item *mi)
      _e_menu_scroll_by(dx, dy);
 }
 
+static void
+_e_menu_auto_place_vert(E_Menu *m, int x, int y, int w, int h)
+{
+   int zx, zy, zw, zh;
+
+   e_zone_useful_geometry_get(m->zone, &zx, &zy, &zw, &zh);
+   if (E_CONTAINS(zx, zy, zw, zh, m->cur.x, y, m->cur.w, m->cur.h))
+     {
+        if (w + h > 2)
+          {
+             if (E_INTERSECTS(m->cur.x, y, m->cur.w, m->cur.h, x, y, w, h))
+               m->cur.y = y + h - m->cur.h;
+             else
+               m->cur.y = y;
+          }
+        else
+          m->cur.y = y;
+     }
+   else
+     m->cur.y = y + h - m->cur.h;
+}
+
 static int
 _e_menu_auto_place(E_Menu *m, int x, int y, int w, int h)
 {
@@ -2582,18 +2604,14 @@ _e_menu_auto_place(E_Menu *m, int x, int y, int w, int h)
        (double)(m->zone->h - h);
    else
      yr = 0.0;
+
    if ((xr + yr) < 0.99) /* top or left */
      {
         if (((1.0 - yr) + xr) <= 1.0)
           {
              /* L */
              m->cur.x = x + w;
-             if (y < (m->zone->y + ((m->zone->h * 1) / 3)))
-               m->cur.y = y;
-             else if (y < (m->zone->y + ((m->zone->h * 2) / 3)))
-               m->cur.y = y + ((h - m->cur.h) / 2);
-             else
-               m->cur.y = y + h - m->cur.h;
+             _e_menu_auto_place_vert(m, x, y, w, h);
              return 1;
           }
         else
@@ -2627,12 +2645,7 @@ _e_menu_auto_place(E_Menu *m, int x, int y, int w, int h)
           {
              /* R */
              m->cur.x = x - m->cur.w;
-             if (y < (m->zone->y + ((m->zone->h * 1) / 3)))
-               m->cur.y = y;
-             else if (y < (m->zone->y + ((m->zone->h * 2) / 3)))
-               m->cur.y = y + ((h - m->cur.h) / 2);
-             else
-               m->cur.y = y + h - m->cur.h;
+             _e_menu_auto_place_vert(m, x, y, w, h);
              return 2;
           }
      }
