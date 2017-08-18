@@ -1154,8 +1154,9 @@ e_menu_idler_before(void)
                }
              m->prev.x = m->cur.x;
              m->prev.y = m->cur.y;
+             _e_menu_lock = 1;
              evas_object_move(m->comp_object, m->cur.x, m->cur.y);
-
+             _e_menu_lock = 0;
           }
      }
    /* phase 3. show all the menus that want to be shown */
