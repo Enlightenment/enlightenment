@@ -1972,6 +1972,7 @@ static void
 _e_menu_submenu_activate(E_Menu_Item *mi)
 {
    if (!mi->menu->active) return;
+   if (mi->submenu && mi->submenu->active) return;
    if (mi->menu->fast_mouse)
      {
         mi->menu->pending_new_submenu = 1;
