@@ -2798,45 +2798,43 @@ _e_comp_x_move_resize_request(void *data EINA_UNUSED, int type EINA_UNUSED, Ecor
    e_object_ref(E_OBJECT(ec->cur_mouse_action));
    ec->cur_mouse_action->func.go(E_OBJECT(ec), NULL);
 
+   if (ev->direction != E_POINTER_RESIZE_NONE)
+     {
+        e_pointer_mode_pop(ec, ec->resize_mode);
+        ec->resize_mode = ev->direction;
+        e_pointer_mode_push(ec, ec->resize_mode);
+     }
    switch (ev->direction)
      {
       case E_POINTER_RESIZE_TL:
-        ec->resize_mode = E_POINTER_RESIZE_TL;
         GRAV_SET(ec, ECORE_X_GRAVITY_SE);
         break;
 
       case E_POINTER_RESIZE_T:
-        ec->resize_mode = E_POINTER_RESIZE_T;
         GRAV_SET(ec, ECORE_X_GRAVITY_S);
         break;
 
       case E_POINTER_RESIZE_TR:
-        ec->resize_mode = E_POINTER_RESIZE_TR;
         GRAV_SET(ec, ECORE_X_GRAVITY_SW);
         break;
 
       case E_POINTER_RESIZE_R:
-        ec->resize_mode = E_POINTER_RESIZE_R;
         GRAV_SET(ec, ECORE_X_GRAVITY_W);
         break;
 
       case E_POINTER_RESIZE_BR:
-        ec->resize_mode = E_POINTER_RESIZE_BR;
         GRAV_SET(ec, ECORE_X_GRAVITY_NW);
         break;
 
       case E_POINTER_RESIZE_B:
-        ec->resize_mode = E_POINTER_RESIZE_B;
         GRAV_SET(ec, ECORE_X_GRAVITY_N);
         break;
 
       case E_POINTER_RESIZE_BL:
-        ec->resize_mode = E_POINTER_RESIZE_BL;
         GRAV_SET(ec, ECORE_X_GRAVITY_NE);
         break;
 
       case E_POINTER_RESIZE_L:
-        ec->resize_mode = E_POINTER_RESIZE_L;
         GRAV_SET(ec, ECORE_X_GRAVITY_E);
         break;
 
