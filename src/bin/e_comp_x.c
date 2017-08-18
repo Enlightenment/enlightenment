@@ -40,6 +40,15 @@ struct _E_Comp_X_Data
    Eina_Bool restack : 1;
 };
 
+typedef struct Pending_Configure
+{
+   Evas_Point point;
+   Ecore_X_Window win;
+   Ecore_Timer *timer;
+} Pending_Configure;
+
+static Eina_Hash *pending_configures;
+
 static unsigned int focus_time = 0;
 static unsigned int focus_canvas_time = 0;
 static Ecore_Timer *focus_timer;
@@ -1652,6 +1661,15 @@ _e_comp_x_configure(void *data EINA_UNUSED, int type EINA_UNUSED, Ecore_X_Event_
 }
 
 static Eina_Bool
+_e_comp_x_configure_request_timer(void *d)
+{
+   Pending_Configure *pc = d;
+   eina_hash_list_remove(pending_configures, &pc->win, pc);
+   free(pc);
+   return EINA_FALSE;
+}
+
+static Eina_Bool
 _e_comp_x_configure_request(void *data  EINA_UNUSED, int type EINA_UNUSED, Ecore_X_Event_Window_Configure_Request *ev)
 {
    E_Client *ec;
@@ -1675,6 +1693,16 @@ _e_comp_x_configure_request(void *data  EINA_UNUSED, int type EINA_UNUSED, Ecore
      }
    if (!ec)
      {
+        if ((ev->value_mask & ECORE_X_WINDOW_CONFIGURE_MASK_X) ||
+            (ev->value_mask & ECORE_X_WINDOW_CONFIGURE_MASK_Y))
+          {
+             Pending_Configure *pc = E_NEW(Pending_Configure, 1);
+             pc->point.x = ev->x;
+             pc->point.y = ev->y;
+             pc->timer = ecore_timer_loop_add(5.0, _e_comp_x_configure_request_timer, pc);
+             pc->win = ev->win;
+             eina_hash_list_append(pending_configures, &ev->win, pc);
+          }
         ecore_x_window_configure(ev->win, ev->value_mask,
                                  ev->x, ev->y, ev->w, ev->h, ev->border,
                                  ev->abovewin, ev->detail);
@@ -4622,6 +4650,8 @@ static void
 _e_comp_x_hook_client_new(void *d EINA_UNUSED, E_Client *ec)
 {
    Ecore_X_Window win;
+   Eina_List *pending;
+   Pending_Configure *pc;
 
    E_COMP_X_PIXMAP_CHECK;
    win = e_pixmap_window_get(ec->pixmap);
@@ -4640,6 +4670,27 @@ _e_comp_x_hook_client_new(void *d EINA_UNUSED, E_Client *ec)
 
    if (!_e_comp_x_client_new_helper(ec)) return;
    ec->ignored |= e_comp->comp_type == E_PIXMAP_TYPE_WL;
+   pending = eina_hash_set(pending_configures, &win, NULL);
+   if (pending)
+     {
+        Eina_List *l;
+        E_Zone *zone;
+        pc = eina_list_last_data_get(pending);
+        EINA_LIST_FOREACH(e_comp->zones, l, zone)
+          {
+             if (E_INTERSECTS(pc->point.x, pc->point.y, ec->w, ec->h,
+                              zone->x, zone->y, zone->w, zone->h))
+               {
+                  e_client_zone_set(ec, zone);
+                  break;
+               }
+          }
+     }
+   EINA_LIST_FREE(pending, pc)
+     {
+        ecore_timer_del(pc->timer);
+        free(pc);
+     }
 
    ec->comp_data->first_damage = ec->internal;
 
@@ -5710,6 +5761,7 @@ e_comp_x_init(void)
    damages_hash = eina_hash_int32_new(NULL);
    alarm_hash = eina_hash_int32_new(NULL);
    dead_wins = eina_hash_int32_new(NULL);
+   pending_configures = eina_hash_int32_new(NULL);
    frame_extents = eina_hash_string_superfast_new(free);
 
    h = eina_list_append(h, e_client_hook_add(E_CLIENT_HOOK_DESK_SET, _e_comp_x_hook_client_desk_set, NULL));
@@ -5846,6 +5898,7 @@ e_comp_x_shutdown(void)
    E_FREE_FUNC(clients_win_hash, eina_hash_free);
    E_FREE_FUNC(damages_hash, eina_hash_free);
    E_FREE_FUNC(alarm_hash, eina_hash_free);
+   E_FREE_FUNC(pending_configures, eina_hash_free);
    E_FREE_FUNC(frame_extents, eina_hash_free);
    E_FREE_FUNC(mouse_in_fix_check_timer, ecore_timer_del);
    e_xsettings_shutdown();
