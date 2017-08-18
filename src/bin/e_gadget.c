@@ -2037,6 +2037,7 @@ e_gadget_util_ctxpopup_place(Evas_Object *g, Evas_Object *ctx, Evas_Object *pos_
    E_Layer layer;
    E_Gadget_Config *zgc;
    Evas_Object *content;
+   Elm_Ctxpopup_Direction first, second;
 
    EINA_SAFETY_ON_NULL_RETURN(g);
    zgc = evas_object_data_get(g, "__e_gadget");
@@ -2055,12 +2056,18 @@ e_gadget_util_ctxpopup_place(Evas_Object *g, Evas_Object *ctx, Evas_Object *pos_
    if (zgc->site->orient == E_GADGET_SITE_ORIENT_HORIZONTAL)
      {
         x += w / 2;
-        elm_ctxpopup_direction_priority_set(ctx, ELM_CTXPOPUP_DIRECTION_UP, ELM_CTXPOPUP_DIRECTION_DOWN, 0, 0);
+        first = ELM_CTXPOPUP_DIRECTION_UP, second = ELM_CTXPOPUP_DIRECTION_DOWN;
+        if (zgc->site->anchor & E_GADGET_SITE_ANCHOR_TOP)
+          first = ELM_CTXPOPUP_DIRECTION_DOWN, second = ELM_CTXPOPUP_DIRECTION_UP;
+        elm_ctxpopup_direction_priority_set(ctx, first, second, 0, 0);
      }
    else if (zgc->site->orient == E_GADGET_SITE_ORIENT_VERTICAL)
      {
         y += h / 2;
-        elm_ctxpopup_direction_priority_set(ctx, ELM_CTXPOPUP_DIRECTION_RIGHT, ELM_CTXPOPUP_DIRECTION_LEFT, 0, 0);
+        first = ELM_CTXPOPUP_DIRECTION_LEFT, second = ELM_CTXPOPUP_DIRECTION_RIGHT;
+        if (zgc->site->anchor & E_GADGET_SITE_ANCHOR_LEFT)
+          first = ELM_CTXPOPUP_DIRECTION_RIGHT, second = ELM_CTXPOPUP_DIRECTION_LEFT;
+        elm_ctxpopup_direction_priority_set(ctx, first, second, 0, 0);
      }
    evas_object_move(ctx, x, y);
    evas_object_event_callback_add(ctx, EVAS_CALLBACK_SHOW, _gadget_util_ctxpopup_visibility, NULL);
