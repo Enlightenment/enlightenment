@@ -792,37 +792,44 @@ e_hints_window_state_update(E_Client *ec, int state, int action)
 
       case ECORE_X_WINDOW_STATE_MAXIMIZED_VERT:
       case ECORE_X_WINDOW_STATE_MAXIMIZED_HORZ:
+      case INT_MAX:
       {
          E_Maximize max[] =
          {
             [ECORE_X_WINDOW_STATE_MAXIMIZED_VERT] = E_MAXIMIZE_VERTICAL,
             [ECORE_X_WINDOW_STATE_MAXIMIZED_HORZ] = E_MAXIMIZE_HORIZONTAL,
          };
+         E_Maximize m;
+
+         if (state > ECORE_X_WINDOW_STATE_MAXIMIZED_HORZ)
+           m = E_MAXIMIZE_BOTH;
+         else
+           m = max[state];
          if (ec->lock_client_maximize) return;
          switch (action)
            {
             case ECORE_X_WINDOW_STATE_ACTION_REMOVE:
-              if ((ec->maximized & max[state]) == max[state])
-                e_client_unmaximize(ec, max[state]);
+              if ((ec->maximized & m) == m)
+                e_client_unmaximize(ec, m);
               break;
 
             case ECORE_X_WINDOW_STATE_ACTION_ADD:
-              if ((ec->maximized & max[state]) == max[state]) break;
+              if ((ec->maximized & m) == m) break;
               ec->changes.need_maximize = 1;
               ec->maximized &= ~E_MAXIMIZE_TYPE;
-              ec->maximized |= (e_config->maximize_policy & E_MAXIMIZE_TYPE) | max[state];
+              ec->maximized |= (e_config->maximize_policy & E_MAXIMIZE_TYPE) | m;
               EC_CHANGED(ec);
               break;
 
             case ECORE_X_WINDOW_STATE_ACTION_TOGGLE:
-              if ((ec->maximized & max[state]) == max[state])
+              if ((ec->maximized & m) == m)
                 {
-                   e_client_unmaximize(ec, max[state]);
+                   e_client_unmaximize(ec, m);
                    break;
                 }
               ec->changes.need_maximize = 1;
               ec->maximized &= ~E_MAXIMIZE_TYPE;
-              ec->maximized |= (e_config->maximize_policy & E_MAXIMIZE_TYPE) | max[state];
+              ec->maximized |= (e_config->maximize_policy & E_MAXIMIZE_TYPE) | m;
               EC_CHANGED(ec);
               break;
            }

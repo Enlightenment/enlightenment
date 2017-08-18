@@ -2356,12 +2356,20 @@ _e_comp_x_state_request(void *data EINA_UNUSED, int type EINA_UNUSED, Ecore_X_Ev
 {
    int i;
    E_Client *ec;
+   int max;
 
    ec = _e_comp_x_client_find_by_window(ev->win);
    if (!ec) return ECORE_CALLBACK_RENEW;
 
-   for (i = 0; i < 2; i++)
-     e_hints_window_state_update(ec, ev->state[i], ev->action);
+   max = (1 << ev->state[0]) | (1 << ev->state[1]);
+   if ((max & (1 << ECORE_X_WINDOW_STATE_MAXIMIZED_VERT)) &&
+       (max & (1 << ECORE_X_WINDOW_STATE_MAXIMIZED_HORZ)))
+     e_hints_window_state_update(ec, INT_MAX, ev->action);
+   else
+     {
+        for (i = 0; i < 2; i++)
+          e_hints_window_state_update(ec, ev->state[i], ev->action);
+     }
 
    return ECORE_CALLBACK_RENEW;
 }
