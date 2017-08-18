@@ -529,9 +529,10 @@ _e_xsettings_font_set(void)
              const char *p;
 
              /* TODO better way to convert evas font sizes? */
-             if (size < 0) size /= -10;
-             if (size < 5) size = 5;
-             if (size > 25) size = 25;
+             if (!size) size = 12;
+             else if (size < 0) size /= -10;
+             else if (size < 5) size = 5;
+             else if (size > 25) size = 25;
              snprintf(size_buf, sizeof(size_buf), "%d", size);
 
              buf = eina_strbuf_new();
