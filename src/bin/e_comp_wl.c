@@ -383,7 +383,8 @@ _e_comp_wl_evas_cb_mouse_move(void *data, Evas *evas EINA_UNUSED, Evas_Object *o
    if (!ec->comp_data->surface) return;
 
    if ((!e_comp_wl->drag_client) ||
-       (!e_client_has_xwindow(e_comp_wl->drag_client)))
+       (!e_client_has_xwindow(e_comp_wl->drag_client)) ||
+       e_comp_wl->drag_client->override)
      _e_comp_wl_send_mouse_move(ec, ev->cur.canvas.x, ev->cur.canvas.y, ev->timestamp);
 }
 
@@ -1207,7 +1208,8 @@ _e_comp_wl_cb_mouse_move(void *d EINA_UNUSED, int t EINA_UNUSED, Ecore_Event_Mou
      }
    if (e_comp_wl->drag &&
        e_comp_wl->drag_client &&
-       e_client_has_xwindow(e_comp_wl->drag_client))
+       e_client_has_xwindow(e_comp_wl->drag_client) &&
+       (!e_comp_wl->drag_client->override))
      _e_comp_wl_send_mouse_move(e_comp_wl->drag_client, ev->x, ev->y, ev->timestamp);
    return ECORE_CALLBACK_RENEW;
 }
