@@ -712,6 +712,12 @@ _sink_event(int type, void *info)
 static void
 _disconnected(void)
 {
+   E_Client_Volume_Sink *sink;
+
+   EINA_LIST_FREE(_client_sinks, sink)
+     {
+        e_client_volume_sink_del(sink);
+     }
    if (gmixer_context) gmixer_context->sink_default = NULL;
    _mixer_gadget_update();
 }

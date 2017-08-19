@@ -585,6 +585,8 @@ _e_client_del(E_Client *ec)
    E_Client *child;
    E_Client_Volume_Sink *sink;
 
+   EINA_LIST_FREE(ec->sinks, sink)
+     e_client_volume_sink_remove(ec, sink);
    for (child = ec->stack.next; child; child = child->stack.next)
      e_client_act_close_begin(child);
    ec->changed = 0;
@@ -673,9 +675,6 @@ _e_client_del(E_Client *ec)
 
    e_comp->clients = eina_list_remove(e_comp->clients, ec);
    e_comp_object_render_update_del(ec->frame);
-
-   EINA_LIST_FREE(ec->sinks, sink)
-      sink->clients = eina_list_remove(sink->clients, ec);
 }
 
 ///////////////////////////////////////////
