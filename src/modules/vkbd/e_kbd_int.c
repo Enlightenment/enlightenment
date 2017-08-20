@@ -753,10 +753,10 @@ _e_kbd_int_cb_mouse_move(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj EI
      {
         ky = ki->layout.pressed;
         if (ky) _e_kbd_int_key_release(ki, ky);
-        EINA_LIST_FREE(ki->layout.multis, inf)
+        while (ki->layout.multis)
           {
+             inf = ki->layout.multis->data;
              _e_kbd_int_key_release(ki, inf->ky);
-             free(inf);
           }
      }
 }
