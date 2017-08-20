@@ -726,13 +726,8 @@ _e_kbd_int_cb_mouse_move(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj EI
 
    if (ki->down.stroke)
      {
-        if ((ki->down.down) &&
-            (// 2 finger drag
-             (eina_list_count(ki->layout.multis) == 1) ||
-             // or ctrl is held
-             (evas_key_modifier_is_set(ev->modifiers, "Control"))))
+        if (ki->down.twofinger)
           {
-             ki->down.twofinger = 1;
              if (il_kbd_cfg->fill_mode == 3)
                {
                   ki->x = ki->x0 + ev->cur.canvas.x - ki->down.x;
@@ -751,6 +746,12 @@ _e_kbd_int_cb_mouse_move(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj EI
    else if ((dy < 0) && (-dy > il_kbd_cfg->slide_dim)) ki->down.stroke = 1;
    if (ki->down.stroke)
      {
+        if ((ki->down.down) &&
+            (// 2 finger drag
+             (eina_list_count(ki->layout.multis) == 1) ||
+             // or ctrl is held
+             (evas_key_modifier_is_set(ev->modifiers, "Control"))))
+          ki->down.twofinger = 1;
         ky = ki->layout.pressed;
         if (ky) _e_kbd_int_key_release(ki, ky);
         while (ki->layout.multis)
@@ -839,12 +840,9 @@ _e_kbd_int_cb_mouse_up(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj EINA
             (il_kbd_cfg->fill_mode != 3))
           {
              // handle 2 finger gesture
-             if (dir == DOWN)
-               {
-                  e_kbd_int_hide(ki);
-               }
+             if (dir == DOWN) e_kbd_int_hide(ki);
           }
-        else
+        else if (!ki->down.twofinger)
           _e_kbd_int_stroke_handle(ki, dir);
      }
    if (il_kbd_cfg->fill_mode == 3)
