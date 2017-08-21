@@ -1,12 +1,11 @@
 #include "e.h"
 
-#define TEXT_PRESS_KEY_SEQUENCE            _("Please press key combination,<ps/><ps/>" \
-                                             "or <hilight>Escape</hilight> to abort.")
-#define TEXT_PRESS_MOUSE_BINIDING_SEQUENCE _("Please hold any modifier you want<ps/>"            \
-                                             "and press any button on your mouse,<ps/>or roll a" \
-                                             " wheel, to assign mouse binding."                 \
-                                             "<ps/>Press <hilight>Escape</hilight> to abort.")
-
+#define TEXT_PRESS_KEY_SEQUENCE            _("Please press a key combination.<ps/><ps/>" \
+                                             "Press <hilight>Escape</hilight> to abort.")
+#define TEXT_PRESS_MOUSE_BINDING_SEQUENCE _("Please hold any modifier you want<ps/>"            \
+                                             "and press any button on your mouse<ps/>" \
+                                             "or roll a wheel to assign mouse binding.<ps/><ps/>"      \
+                                             "Press <hilight>Escape</hilight> to abort.")
 static Eina_Bool
 _e_grab_dialog_key_handler(void *data, int type EINA_UNUSED, Ecore_Event_Key *ev)
 {
@@ -117,7 +116,7 @@ e_grab_dialog_show(Evas_Object *parent, Eina_Bool is_mouse, Ecore_Event_Handler_
         eg->dia = e_dialog_new(parent, "E", "_mousebind_getmouse_dialog");
         e_dialog_title_set(eg->dia, _("Mouse Binding Combination"));
         e_dialog_icon_set(eg->dia, "preferences-desktop-mouse", 48);
-        e_dialog_text_set(eg->dia, TEXT_PRESS_MOUSE_BINIDING_SEQUENCE);
+        e_dialog_text_set(eg->dia, TEXT_PRESS_MOUSE_BINDING_SEQUENCE);
      }
    else
      {

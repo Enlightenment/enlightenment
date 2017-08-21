@@ -3,11 +3,6 @@
 #define TEXT_NO_PARAMS                     _("<None>")
 #define EXAMPLE_STRING                     "example : "
 
-#define TEXT_PRESS_MOUSE_BINIDING_SEQUENCE _("Please hold any modifier you want<ps/>"            \
-                                             "and press any button on your mouse,<ps/>or roll a" \
-                                             " wheel, to assign mouse binding."                 \
-                                             "<ps/>Press <hilight>Escape</hilight> to abort.")
-
 static void        *_create_data(E_Config_Dialog *cfd);
 static void         _free_data(E_Config_Dialog *cfd, E_Config_Dialog_Data *cfdata);
 static int          _basic_apply_data(E_Config_Dialog *cfd, E_Config_Dialog_Data *cfdata);
