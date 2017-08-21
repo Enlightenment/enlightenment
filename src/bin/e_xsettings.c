@@ -525,7 +525,7 @@ _e_xsettings_font_set(void)
              Eina_Strbuf *buf;
              Eina_List *l;
              int size = efd->size;
-             char size_buf[8];
+             char size_buf[12];
              const char *p;
 
              /* TODO better way to convert evas font sizes? */
