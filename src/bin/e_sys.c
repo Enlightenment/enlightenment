@@ -264,6 +264,28 @@ _e_sys_comp_resume(void)
    ecore_timer_add(1.5, _e_sys_comp_resume2, NULL);
 }
 
+static void
+_e_sys_systemd_signal_prepare_shutdown(void *data EINA_UNUSED, const Eldbus_Message *msg)
+{
+   EINA_SAFETY_ON_TRUE_RETURN(eldbus_message_error_get(msg, NULL, NULL));
+   Eina_Bool b = EINA_FALSE;
+
+   if (!eldbus_message_arguments_get(msg, "b", &b)) return;
+   fprintf(stderr, "SSS: systemd said to prepare for shutdown! bool=%i @%1.8f\n", (int)b, ecore_time_get());
+}
+
+static void
+_e_sys_systemd_signal_prepare_sleep(void *data EINA_UNUSED, const Eldbus_Message *msg)
+{
+   EINA_SAFETY_ON_TRUE_RETURN(eldbus_message_error_get(msg, NULL, NULL));
+   Eina_Bool b = EINA_FALSE;
+
+   if (!eldbus_message_arguments_get(msg, "b", &b)) return;
+   // b == 1 -> suspending
+   // b == 0 -> resuming
+   fprintf(stderr, "SSS: systemd said to prepare for sleep! bool=%i @%1.8f\n", (int)b, ecore_time_get());
+}
+
 /* externally accessible functions */
 EINTERN int
 e_sys_init(void)
@@ -276,10 +298,16 @@ e_sys_init(void)
                            "/org/freedesktop/login1");
    login1_manger_proxy = eldbus_proxy_get(obj,
                                           "org.freedesktop.login1.Manager");
+   eldbus_proxy_signal_handler_add(login1_manger_proxy, "PrepareForShutdown",
+                                   _e_sys_systemd_signal_prepare_shutdown,
+                                   NULL);
+   eldbus_proxy_signal_handler_add(login1_manger_proxy, "PrepareForSleep",
+                                   _e_sys_systemd_signal_prepare_sleep,
+                                   NULL);
    eldbus_name_owner_get(conn, "org.freedesktop.login1",
                          _e_sys_systemd_exists_cb, NULL);
    _e_sys_systemd_handle_inhibit();
-   
+
    E_EVENT_SYS_SUSPEND = ecore_event_type_new();
    E_EVENT_SYS_HIBERNATE = ecore_event_type_new();
    E_EVENT_SYS_RESUME = ecore_event_type_new();
