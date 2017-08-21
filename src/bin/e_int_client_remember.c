@@ -341,18 +341,18 @@ _warning_dialog_show(void)
    e_dialog_title_set(dia, _("Window properties are not a unique match"));
    e_dialog_text_set
      (dia,
-     _("You are trying to ask Enlightenment to remember to apply<br>"
-       "properties (such as size, location, border style etc.) to<br>"
-       "a window that <hilight>does not have unique properties</hilight>.<br>"
-       "<br>"
-       "This means it shares Name/Class, Transience, Role etc. properties<br>"
-       "with more than 1 other window on the screen and remembering<br>"
-       "properties for this window will apply to all other windows<br>"
-       "that match these properties.<br>"
-       "<br>"
-       "This is just a warning in case you did not intend this to happen.<br>"
-       "If you did, simply press <hilight>Apply</hilight> or <hilight>OK</hilight> buttons<br>"
-       "and your settings will be accepted. Press <hilight>Cancel</hilight> if you<br>"
+     _("You are trying to ask Enlightenment to remember to apply<ps/>"
+       "properties (such as size, location, border style etc.) to<ps/>"
+       "a window that <hilight>does not have unique properties</hilight>.<ps/>"
+       "<ps/>"
+       "This means it shares Name/Class, Transience, Role etc. properties<ps/>"
+       "with more than 1 other window on the screen and remembering<ps/>"
+       "properties for this window will apply to all other windows<ps/>"
+       "that match these properties.<ps/>"
+       "<ps/>"
+       "This is just a warning in case you did not intend this to happen.<ps/>"
+       "If you did, simply press <hilight>Apply</hilight> or <hilight>OK</hilight> buttons<ps/>"
+       "and your settings will be accepted. Press <hilight>Cancel</hilight> if you<ps/>"
        "are not sure and nothing will be affected.")
      );
    e_dialog_button_add(dia, _("OK"), NULL, NULL, NULL);
@@ -544,10 +544,10 @@ _advanced_apply_data(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfd
         e_dialog_title_set(dia, _("No match properties set"));
         e_dialog_text_set
           (dia,
-          _("You are trying to ask Enlightenment to remember to apply<br>"
-            "properties (such as size, location, border style etc.) to<br>"
-            "a window <hilight>without specifying how to remember it</hilight>.<br>"
-            "<br>"
+          _("You are trying to ask Enlightenment to remember to apply<ps/>"
+            "properties (such as size, location, border style etc.) to<ps/>"
+            "a window <hilight>without specifying how to remember it</hilight>.<ps/>"
+            "<ps/>"
             "You must specify at least 1 way of remembering this window.")
           );
         e_dialog_button_add(dia, _("OK"), NULL, NULL, NULL);

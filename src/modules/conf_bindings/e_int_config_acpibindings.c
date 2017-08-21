@@ -522,7 +522,7 @@ _cb_add_binding(void *data,
    e_dialog_icon_set(grab_dlg, "preferences-system-power-management", 48);
    e_dialog_text_set(grab_dlg,
                      _("Please trigger the ACPI event you wish to bind to, "
-                       "<br><br>or <hilight>Escape</hilight> to abort."));
+                       "<ps/><ps/>or <hilight>Escape</hilight> to abort."));
    elm_win_center(grab_dlg->win, 1, 1);
    elm_win_borderless_set(grab_dlg->win, EINA_TRUE);
 

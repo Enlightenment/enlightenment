@@ -252,9 +252,9 @@ _e_int_theme_preview_set(Evas_Object *preview, const char *file)
    o = edje_object_add(e);
    _e_int_theme_edje_file_set(o, file, "e/widgets/dialog/text");
    edje_object_part_text_set(o, "e.textblock.message", 
-                             "<hilight>Welcome to enlightenment.</hilight><br>"
-                             "<br>"
-                             "This is a sample set of content for a<br>"
+                             "<hilight>Welcome to enlightenment.</hilight><ps/>"
+                             "<ps/>"
+                             "This is a sample set of content for a<ps/>"
                              "theme to test to see what it looks like.");
    evas_object_show(o);
    edje_object_part_swallow(po, "e.swallow.content", o);

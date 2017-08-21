@@ -261,7 +261,7 @@ _theme_import_cb_ok(void *data, void *data2 EINA_UNUSED)
           {
              e_util_dialog_show(_("Theme Import Error"),
                                 _("Enlightenment was unable to import "
-                                  "the theme.<br><br>Are you sure this "
+                                  "the theme.<ps/><ps/>Are you sure this "
                                   "is really a valid theme?"));
           }
         else
@@ -270,7 +270,7 @@ _theme_import_cb_ok(void *data, void *data2 EINA_UNUSED)
                {
                   e_util_dialog_show(_("Theme Import Error"),
                                      _("Enlightenment was unable to import "
-                                       "the theme<br>due to a copy error."));
+                                       "the theme<ps/>due to a copy error."));
                }
              else
                e_int_config_theme_update(import->parent, buf);

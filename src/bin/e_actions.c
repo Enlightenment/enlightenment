@@ -337,9 +337,9 @@ ACT_FN_GO(window_kill, EINA_UNUSED)
      }
 
    snprintf(dialog_text, sizeof(dialog_text),
-            _("You are about to kill %s.<br><br>"
-              "Please keep in mind that all data from this window<br>"
-              "which has not yet been saved will be lost!<br><br>"
+            _("You are about to kill %s.<ps/><ps/>"
+              "Please keep in mind that all data from this window<ps/>"
+              "which has not yet been saved will be lost!<ps/><ps/>"
               "Are you sure you want to kill this window?"),
             ec->icccm.name);
 
@@ -1972,10 +1972,10 @@ ACT_FN_GO(app, )
                        if (!dia) return;
 
                        snprintf(dialog_text, sizeof(dialog_text),
-                                "%s<br><br>"
-                                "Check syntax. You should not put a whitespace right after colon in action params.<br>"
-                                "syntax: [file:file.desktop|name:App Name|generic:Generic Name|exe:exename]<br><br>"
-                                "exe:terminology (O)<br>"
+                                "%s<ps/><ps/>"
+                                "Check syntax. You should not put a whitespace right after colon in action params.<ps/>"
+                                "syntax: [file:file.desktop|name:App Name|generic:Generic Name|exe:exename]<ps/><ps/>"
+                                "exe:terminology (O)<ps/>"
                                 "exe: terminology (X)", params);
 
                        e_dialog_title_set(dia, _("Action Params Syntax Error"));

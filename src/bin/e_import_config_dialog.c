@@ -291,7 +291,7 @@ _import_cb_edje_cc_exit(void *data, EINA_UNUSED int type, void *event)
    if (ev->exit_code != 0)
      {
         e_util_dialog_show(_("Picture Import Error"),
-                           _("Enlightenment was unable to import the picture<br>"
+                           _("Enlightenment was unable to import the picture<ps/>"
                              "due to conversion errors."));
         r = 0;
      }
@@ -349,7 +349,7 @@ _import_cb_ok(void *data, E_Dialog *dia EINA_UNUSED)
           {
              e_util_dialog_show(_("Import Error"),
                                 _("Enlightenment was unable to "
-                                  "import the image<br>due to a "
+                                  "import the image<ps/>due to a "
                                   "copy error."));
           }
         else
@@ -359,7 +359,7 @@ _import_cb_ok(void *data, E_Dialog *dia EINA_UNUSED)
      {
         e_util_dialog_show(_("Import Error"),
                            _("Enlightenment was unable to "
-                             "import the image.<br><br>"
+                             "import the image.<ps/><ps/>"
                              "Are you sure this is a valid "
                              "image?"));
      }

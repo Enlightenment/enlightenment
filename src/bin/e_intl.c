@@ -353,11 +353,11 @@ e_intl_input_method_set(const char *imc_path)
                        if ((!_e_intl_input_method_exec) ||
                            (!ecore_exe_pid_get(_e_intl_input_method_exec)))
                          e_util_dialog_show(_("Input Method Error"),
-                                            _("Error starting the input method executable<br><br>"
-                                              "please make sure that your input<br>"
-                                              "method configuration is correct and<br>"
-                                              "that your configuration's<br>"
-                                              "executable is in your PATH<br>"));
+                                            _("Error starting the input method executable<ps/><ps/>"
+                                              "please make sure that your input<ps/>"
+                                              "method configuration is correct and<ps/>"
+                                              "that your configuration's<ps/>"
+                                              "executable is in your PATH<ps/>"));
                     }
                   e_intl_input_method_config_free(imc);
                }

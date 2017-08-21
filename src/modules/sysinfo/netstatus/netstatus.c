@@ -41,7 +41,7 @@ _netstatus_face_update(Thread_Config *thc)
    if (thc->inst->cfg->netstatus.popup)
      {
         char text[4096];
-        snprintf(text, sizeof(text), "%s<br>%s", thc->instring, thc->outstring);
+        snprintf(text, sizeof(text), "%s<ps/>%s", thc->instring, thc->outstring);
         elm_object_text_set(thc->inst->cfg->netstatus.popup_label, text);
      }
 }
@@ -92,7 +92,7 @@ _netstatus_mouse_down_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_
         evas_object_smart_callback_add(popup, "dismissed", _netstatus_popup_dismissed, inst);
         evas_object_event_callback_add(popup, EVAS_CALLBACK_DEL, _netstatus_popup_deleted, inst);
 
-        snprintf(text, sizeof(text), "%s<br>%s", inst->cfg->netstatus.instring, inst->cfg->netstatus.outstring);
+        snprintf(text, sizeof(text), "%s<ps/>%s", inst->cfg->netstatus.instring, inst->cfg->netstatus.outstring);
         label = elm_label_add(popup);
         elm_object_style_set(label, "marker");
         elm_object_text_set(label, text);

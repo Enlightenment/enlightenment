@@ -150,8 +150,8 @@ _advanced_features_changed(E_Comp_Config *conf)
    conf->enable_advanced_features = !conf->enable_advanced_features;
    if (conf->enable_advanced_features)
      e_util_dialog_internal(_("WARNING"),
-                            _("This option WILL break your desktop if you don't know what you're doing.<br>"
-                              "Do not file bugs about anything that occurs with this option enabled.<br>"
+                            _("This option WILL break your desktop if you don't know what you're doing.<ps/>"
+                              "Do not file bugs about anything that occurs with this option enabled.<ps/>"
                               "You have been warned."));
 }
 

@@ -451,9 +451,9 @@ _grab_cb_mouse_down(void *data, EINA_UNUSED int type, void *event)
    if (ev->buttons == 3)
      {
         e_util_dialog_show(_("Attention"),
-                           _("You cannot use the right mouse button in the<br>"
-                             "shelf for this as it is already taken by internal<br>"
-                             "code for context menus.<br>"
+                           _("You cannot use the right mouse button in the<ps/>"
+                             "shelf for this as it is already taken by internal<ps/>"
+                             "code for context menus.<ps/>"
                              "This button only works in the popup."));
      }
    else

@@ -504,8 +504,8 @@ _cpufreq_set_governor(const char *governor)
           return;
         e_dialog_title_set(dia, "Enlightenment Cpufreq Module");
         e_dialog_icon_set(dia, "enlightenment", 64);
-        e_dialog_text_set(dia, _("There was an error trying to set the<br>"
-                                 "cpu frequency governor via the module's<br>"
+        e_dialog_text_set(dia, _("There was an error trying to set the<ps/>"
+                                 "cpu frequency governor via the module's<ps/>"
                                  "setfreq utility."));
         e_dialog_button_add(dia, _("OK"), NULL, NULL, NULL);
         elm_win_center(dia->win, 1, 1);
@@ -530,9 +530,9 @@ _cpufreq_set_frequency(int frequency)
           return;
         e_dialog_title_set(dia, "Enlightenment Cpufreq Module");
         e_dialog_icon_set(dia, "enlightenment", 64);
-        e_dialog_text_set(dia, _("Your kernel does not support setting the<br>"
-                                 "CPU frequency at all. You may be missing<br>"
-                                 "Kernel modules or features, or your CPU<br>"
+        e_dialog_text_set(dia, _("Your kernel does not support setting the<ps/>"
+                                 "CPU frequency at all. You may be missing<ps/>"
+                                 "Kernel modules or features, or your CPU<ps/>"
                                  "simply does not support this feature."));
         e_dialog_button_add(dia, _("OK"), NULL, NULL, NULL);
         elm_win_center(dia->win, 1, 1);
@@ -556,8 +556,8 @@ _cpufreq_set_frequency(int frequency)
           return;
         e_dialog_title_set(dia, "Enlightenment Cpufreq Module");
         e_dialog_icon_set(dia, "enlightenment", 64);
-        e_dialog_text_set(dia, _("There was an error trying to set the<br>"
-                                 "cpu frequency setting via the module's<br>"
+        e_dialog_text_set(dia, _("There was an error trying to set the<ps/>"
+                                 "cpu frequency setting via the module's<ps/>"
                                  "setfreq utility."));
         e_dialog_button_add(dia, _("OK"), NULL, NULL, NULL);
         elm_win_center(dia->win, 1, 1);
@@ -584,8 +584,8 @@ _cpufreq_set_pstate(int min, int max)
           return;
         e_dialog_title_set(dia, "Enlightenment Cpufreq Module");
         e_dialog_icon_set(dia, "enlightenment", 64);
-        e_dialog_text_set(dia, _("There was an error trying to set the<br>"
-                                 "cpu power state setting via the module's<br>"
+        e_dialog_text_set(dia, _("There was an error trying to set the<ps/>"
+                                 "cpu power state setting via the module's<ps/>"
                                  "setfreq utility."));
         e_dialog_button_add(dia, _("OK"), NULL, NULL, NULL);
         elm_win_center(dia->win, 1, 1);
@@ -1446,7 +1446,7 @@ e_modapi_init(E_Module *m)
    if (stat(buf, &st) < 0)
      {
         e_util_dialog_show(_("Cpufreq Error"),
-                           _("The freqset binary in the cpufreq module<br>"
+                           _("The freqset binary in the cpufreq module<ps/>"
                              "directory cannot be found (stat failed)"));
      }
    else if ((st.st_uid != 0) ||
@@ -1454,13 +1454,13 @@ e_modapi_init(E_Module *m)
             ((st.st_mode & (S_IXOTH)) != (S_IXOTH)))
      {
         e_util_dialog_show(_("Cpufreq Permissions Error"),
-                           _("The freqset binary in the cpufreq module<br>"
-                             "is not owned by root or does not have the<br>"
-                             "setuid bit set. Please ensure this is the<br>"
-                             "case. For example:<br>"
-                             "<br>"
-                             "sudo chown root %s<br>"
-                             "sudo chmod u+s,a+x %s<br>"),
+                           _("The freqset binary in the cpufreq module<ps/>"
+                             "is not owned by root or does not have the<ps/>"
+                             "setuid bit set. Please ensure this is the<ps/>"
+                             "case. For example:<ps/>"
+                             "<ps/>"
+                             "sudo chown root %s<ps/>"
+                             "sudo chmod u+s,a+x %s<ps/>"),
                            buf, buf);
      }
    cpufreq_config->status = _cpufreq_status_new();

@@ -2,10 +2,10 @@
 #include "e.h"
 
 #define TEXT_NONE_ACTION_EDGE    _("<None>")
-#define TEXT_PRESS_EDGE_SEQUENCE _("Please select an edge,<br>"                               \
-                                   "or click <hilight>Close</hilight> to abort.<br><br>"      \
-                                   "You can either specify a delay of this<br> action using " \
-                                   "the slider, or make it<br>respond to edge clicks:"        \
+#define TEXT_PRESS_EDGE_SEQUENCE _("Please select an edge,<ps/>"                               \
+                                   "or click <hilight>Close</hilight> to abort.<ps/><ps/>"      \
+                                   "You can either specify a delay of this<ps/> action using " \
+                                   "the slider, or make it<ps/>respond to edge clicks:"        \
                                    )
 
 #define TEXT_NO_PARAMS           _("<None>")
@@ -1229,8 +1229,8 @@ _edge_grab_wnd_selection_apply(E_Config_Dialog_Data *cfdata)
         if (actd) label = _(actd->act_name);
 
         e_util_dialog_show(_("Edge Binding Error"),
-                           _("The edge binding that you chose is already used by<br>"
-                             "<hilight>%s</hilight> action.<br>"
+                           _("The edge binding that you chose is already used by<ps/>"
+                             "<hilight>%s</hilight> action.<ps/>"
                              "Please choose another edge to bind."),
                            label ? label : _("Unknown"));
      }

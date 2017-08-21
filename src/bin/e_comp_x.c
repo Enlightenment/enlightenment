@@ -584,11 +584,11 @@ _e_comp_x_add_fail_job(void *d EINA_UNUSED)
 {
    e_util_dialog_internal
      (_("Compositor Warning"),
-      _("Your display driver does not support OpenGL, GLSL<br>"
-        "shaders or no OpenGL engines were compiled or installed<br>"
-        "for Evas or Ecore-Evas. Falling back to software engine.<br>"
-        "<br>"
-        "You will need an OpenGL 2.0 (or OpenGL ES 2.0) capable<br>"
+      _("Your display driver does not support OpenGL, GLSL<ps/>"
+        "shaders or no OpenGL engines were compiled or installed<ps/>"
+        "for Evas or Ecore-Evas. Falling back to software engine.<ps/>"
+        "<ps/>"
+        "You will need an OpenGL 2.0 (or OpenGL ES 2.0) capable<ps/>"
         "GPU to use OpenGL with compositing."));
 }
 
@@ -5577,8 +5577,8 @@ works:
 fail:
    /* everything failed - can't lock */
    e_util_dialog_show(_("Lock Failed"),
-                      _("Locking the desktop failed because some application<br>"
-                        "has grabbed either the keyboard or the mouse or both<br>"
+                      _("Locking the desktop failed because some application<ps/>"
+                        "has grabbed either the keyboard or the mouse or both<ps/>"
                         "and their grab is unable to be broken."));
    return EINA_FALSE;
 }
@@ -5626,8 +5626,8 @@ _e_comp_x_setup(Ecore_X_Window root, int w, int h)
      {
         /*
                   e_util_dialog_internal
-                  (_("Compositor Error"), _("Your screen is not in 24/32bit display mode.<br>"
-                  "This is required to be your default depth<br>"
+                  (_("Compositor Error"), _("Your screen is not in 24/32bit display mode.<ps/>"
+                  "This is required to be your default depth<ps/>"
                   "setting for the compositor to work properly."));
                   ecore_x_composite_render_window_disable(e_comp->win);
                   free(e_comp);

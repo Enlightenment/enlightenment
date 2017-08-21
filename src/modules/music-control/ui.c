@@ -39,11 +39,11 @@ _metadata_update(E_Music_Control_Instance *inst)
    str = eina_strbuf_new();
 
    if (inst->ctxt->meta_title)
-     eina_strbuf_append_printf(str, "<title>%s</><br>", inst->ctxt->meta_title);
+     eina_strbuf_append_printf(str, "<title>%s</><ps/>", inst->ctxt->meta_title);
    if (inst->ctxt->meta_artist)
-     eina_strbuf_append_printf(str, "<tag>by</> %s<br>", inst->ctxt->meta_artist);
+     eina_strbuf_append_printf(str, "<tag>by</> %s<ps/>", inst->ctxt->meta_artist);
    if (inst->ctxt->meta_album)
-     eina_strbuf_append_printf(str, "<tag>from</> %s<br>", inst->ctxt->meta_album);
+     eina_strbuf_append_printf(str, "<tag>from</> %s<ps/>", inst->ctxt->meta_album);
    edje_object_part_text_set(inst->content_popup, "metadata", eina_strbuf_string_get(str));
    eina_strbuf_free(str);
 

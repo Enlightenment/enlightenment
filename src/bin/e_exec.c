@@ -452,8 +452,8 @@ _e_exec_cb_exec(void *data, Efreet_Desktop *desktop, char *exec, int remaining)
              free(inst);
              e_util_dialog_show
                (_("Run Error"),
-               _("Enlightenment was unable to change to directory:<br>"
-                 "<br>"
+               _("Enlightenment was unable to change to directory:<ps/>"
+                 "<ps/>"
                  "%s"),
                desktop->path);
              return NULL;
@@ -463,8 +463,8 @@ _e_exec_cb_exec(void *data, Efreet_Desktop *desktop, char *exec, int remaining)
           {
              e_util_dialog_show
                (_("Run Error"),
-               _("Enlightenment was unable to restore to directory:<br>"
-                 "<br>"
+               _("Enlightenment was unable to restore to directory:<ps/>"
+                 "<ps/>"
                  "%s"),
                buf);
              free(inst);
@@ -522,8 +522,8 @@ _e_exec_cb_exec(void *data, Efreet_Desktop *desktop, char *exec, int remaining)
      {
         free(inst);
         e_util_dialog_show(_("Run Error"),
-                           _("Enlightenment was unable to fork a child process:<br>"
-                             "<br>"
+                           _("Enlightenment was unable to fork a child process:<ps/>"
+                             "<ps/>"
                              "%s"),
                            exec);
         return NULL;
@@ -713,10 +713,10 @@ _e_exec_cb_exit(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
 
                   e_dialog_title_set(dia, _("Application run error"));
                   snprintf(buf, sizeof(buf),
-                           _("Enlightenment was unable to run the application:<br>"
-                             "<br>"
-                             "%s<br>"
-                             "<br>"
+                           _("Enlightenment was unable to run the application:<ps/>"
+                             "<ps/>"
+                             "%s<ps/>"
+                             "<ps/>"
                              "The application failed to start."),
                            ecore_exe_cmd_get(ev->exe));
                   e_dialog_text_set(dia, buf);

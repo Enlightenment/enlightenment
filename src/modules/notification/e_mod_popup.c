@@ -600,7 +600,7 @@ _notification_format_message(Popup_Data *popup)
    edje_object_part_text_unescaped_set(o, "notification.text.title",
                              popup->notif->summary);
    /* FIXME: Filter to only include allowed markup? */
-   /* We need to replace \n with <br>. FIXME: We need to handle all the
+   /* We need to replace \n with <ps/>. FIXME: We need to handle all the
    * newline kinds, and paragraph separator. ATM this will suffice. */
    eina_strbuf_append(buf, popup->notif->body);
    eina_strbuf_replace_all(buf, "\n", "<br/>");

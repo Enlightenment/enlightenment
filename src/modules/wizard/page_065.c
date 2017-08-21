@@ -107,20 +107,20 @@ wizard_page_show(E_Wizard_Page *pg EINA_UNUSED)
 
    ob = elm_label_add(o);
    elm_object_style_set(ob, "default/left");
-   snprintf(buf, sizeof(buf), P_("Enlightenment sets default mouse bindings for objects.<br>"
-                                 "These bindings provide three operations on click:<br>"
-                                 "* <b>Move</b> (left button)<br>"
-                                 "* <b>Resize</b> (middle/wheel button)<br>"
-                                 "* <b>Open Menu</b> (right button)<br>"
-                                 "The default key which must be held to activate these bindings<br>"
+   snprintf(buf, sizeof(buf), P_("Enlightenment sets default mouse bindings for objects.<ps/>"
+                                 "These bindings provide three operations on click:<ps/>"
+                                 "* <b>Move</b> (left button)<ps/>"
+                                 "* <b>Resize</b> (middle/wheel button)<ps/>"
+                                 "* <b>Open Menu</b> (right button)<ps/>"
+                                 "The default key which must be held to activate these bindings<ps/>"
                                  "is '%s'. Configure the modifiers for this binding below.",
 
-                                 "Enlightenment sets default mouse bindings for objects.<br>"
-                                 "These bindings provide three operations on click:<br>"
-                                 "* <b>Move</b> (left button)<br>"
-                                 "* <b>Resize</b> (middle/wheel button)<br>"
-                                 "* <b>Open Menu</b> (right button)<br>"
-                                 "The default keys which must be held to activate these bindings<br>"
+                                 "Enlightenment sets default mouse bindings for objects.<ps/>"
+                                 "These bindings provide three operations on click:<ps/>"
+                                 "* <b>Move</b> (left button)<ps/>"
+                                 "* <b>Resize</b> (middle/wheel button)<ps/>"
+                                 "* <b>Open Menu</b> (right button)<ps/>"
+                                 "The default keys which must be held to activate these bindings<ps/>"
                                  "is '%s'. Configure the modifiers for this binding below.",
                                  num)
                                 , eina_strbuf_string_get(sbuf));

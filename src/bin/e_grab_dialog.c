@@ -1,11 +1,11 @@
 #include "e.h"
 
-#define TEXT_PRESS_KEY_SEQUENCE            _("Please press key combination,<br><br>" \
+#define TEXT_PRESS_KEY_SEQUENCE            _("Please press key combination,<ps/><ps/>" \
                                              "or <hilight>Escape</hilight> to abort.")
-#define TEXT_PRESS_MOUSE_BINIDING_SEQUENCE _("Please hold any modifier you want<br>"            \
-                                             "and press any button on your mouse,<br>or roll a" \
+#define TEXT_PRESS_MOUSE_BINIDING_SEQUENCE _("Please hold any modifier you want<ps/>"            \
+                                             "and press any button on your mouse,<ps/>or roll a" \
                                              " wheel, to assign mouse binding."                 \
-                                             "<br>Press <hilight>Escape</hilight> to abort.")
+                                             "<ps/>Press <hilight>Escape</hilight> to abort.")
 
 static Eina_Bool
 _e_grab_dialog_key_handler(void *data, int type EINA_UNUSED, Ecore_Event_Key *ev)

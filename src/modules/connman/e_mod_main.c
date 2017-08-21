@@ -189,7 +189,7 @@ _econnman_app_launch(E_Connman_Instance *inst)
         e_util_dialog_internal
           (_("Missing Application"),
           _("This module wants to execute an external application "
-            "EConnMan that does not exist.<br>"
+            "EConnMan that does not exist.<ps/>"
             "Please install <b>EConnMan</b> application."));
         return;
      }

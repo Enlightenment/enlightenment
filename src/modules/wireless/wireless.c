@@ -1467,9 +1467,9 @@ wireless_authenticate_external(Wireless_Network *wn, const char *url)
           evas_object_del(wireless_popup.popup);
        }
    if (wn->type == WIRELESS_SERVICE_TYPE_ETHERNET)
-     snprintf(buf, sizeof(buf), _("Ethernet connection wants to open a url:<br>%s"), url);
+     snprintf(buf, sizeof(buf), _("Ethernet connection wants to open a url:<ps/>%s"), url);
    else
-     snprintf(buf, sizeof(buf), _("Network '%s' wants to open a url:<br>%s"), wn->name, url);
+     snprintf(buf, sizeof(buf), _("Network '%s' wants to open a url:<ps/>%s"), wn->name, url);
    EINA_LIST_FOREACH(instances, l, inst)
      {
         if (!inst->icon[wn->type]) continue;

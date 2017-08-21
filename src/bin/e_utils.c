@@ -132,9 +132,9 @@ e_util_immortal_check(void)
    if (wins)
      {
         e_util_dialog_show(_("Cannot exit - immortal windows."),
-                           _("Some windows are left still around with the Lifespan lock enabled. This means<br>"
-                             "that Enlightenment will not allow itself to exit until these windows have<br>"
-                             "been closed or have the lifespan lock removed.<br>"));
+                           _("Some windows are left still around with the Lifespan lock enabled. This means<ps/>"
+                             "that Enlightenment will not allow itself to exit until these windows have<ps/>"
+                             "been closed or have the lifespan lock removed.<ps/>"));
         /* FIXME: should really display a list of these lifespan locked */
         /* windows in a dialog and let the user disable their locks in */
         /* this dialog */
@@ -696,7 +696,7 @@ e_util_dir_check(const char *dir)
      {
         if (!ecore_file_mkpath(dir))
           {
-             e_util_dialog_show(_("Error creating directory"), _("Failed to create directory: %s .<br>Check that you have correct permissions set."), dir);
+             e_util_dialog_show(_("Error creating directory"), _("Failed to create directory: %s .<ps/>Check that you have correct permissions set."), dir);
              return 0;
           }
      }
@@ -704,7 +704,7 @@ e_util_dir_check(const char *dir)
      {
         if (!ecore_file_is_dir(dir))
           {
-             e_util_dialog_show(_("Error creating directory"), _("Failed to create directory: %s .<br>A file of that name already exists."), dir);
+             e_util_dialog_show(_("Error creating directory"), _("Failed to create directory: %s .<ps/>A file of that name already exists."), dir);
              return 0;
           }
      }
@@ -871,14 +871,14 @@ _e_util_conf_timer_old(void *data)
 {
    char *module_name = data;
    char buf[4096];
-   char *msg = _("Configuration data needed upgrading. Your old configuration<br>"
-                 "has been wiped and a new set of defaults initialized. This<br>"
-                 "will happen regularly during development, so don't report a<br>"
-                 "bug. This means the module needs new configuration<br>"
-                 "data by default for usable functionality that your old<br>"
-                 "configuration lacked. This new set of defaults will fix<br>"
-                 "that by adding it in. You can re-configure things now to your<br>"
-                 "liking. Sorry for the hiccup in your configuration.<br>");
+   char *msg = _("Configuration data needed upgrading. Your old configuration<ps/>"
+                 "has been wiped and a new set of defaults initialized. This<ps/>"
+                 "will happen regularly during development, so don't report a<ps/>"
+                 "bug. This means the module needs new configuration<ps/>"
+                 "data by default for usable functionality that your old<ps/>"
+                 "configuration lacked. This new set of defaults will fix<ps/>"
+                 "that by adding it in. You can re-configure things now to your<ps/>"
+                 "liking. Sorry for the hiccup in your configuration.<ps/>");
 
    snprintf(buf, sizeof(buf), N_("%s Configuration Updated"), module_name);
    e_util_dialog_internal(buf, msg);
@@ -895,14 +895,14 @@ _e_util_conf_timer_new(void *data)
    char *msg =
      _("Your module configuration is NEWER "
        "than the module version. This is "
-       "very<br>strange. This should not happen unless"
-       " you downgraded<br>the module or "
+       "very<ps/>strange. This should not happen unless"
+       " you downgraded<ps/>the module or "
        "copied the configuration from a place where"
-       "<br>a newer version of the module "
-       "was running. This is bad and<br>as a "
+       "<ps/>a newer version of the module "
+       "was running. This is bad and<ps/>as a "
        "precaution your configuration has been now "
-       "restored to<br>defaults. Sorry for the "
-       "inconvenience.<br>");
+       "restored to<ps/>defaults. Sorry for the "
+       "inconvenience.<ps/>");
 
    snprintf(buf, sizeof(buf), _("%s Configuration Updated"), module_name);
    e_util_dialog_internal(buf, msg);

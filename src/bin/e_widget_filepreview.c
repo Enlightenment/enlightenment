@@ -1089,28 +1089,28 @@ _e_wid_fprev_preview_font(E_Widget_Data *wd)
                       "<font=%s>"
                       
                       "<font_size=28>"
-                      "28 - ABC abc 0123 @!?#$*{}<br>"
-                      "The quick brown fox jumps.<br>"
+                      "28 - ABC abc 0123 @!?#$*{}<ps/>"
+                      "The quick brown fox jumps.<ps/>"
 
                       "<font_size=20>"
-                      "20 - ABC abc 0123 @!?#$*{}<br>"
-                      "The quick brown fox jumps.<br>"
+                      "20 - ABC abc 0123 @!?#$*{}<ps/>"
+                      "The quick brown fox jumps.<ps/>"
                       
                       "<font_size=16>"
-                      "16 - ABC abc 0123 @!?#$*{}<br>"
-                      "The quick brown fox jumps.<br>"
+                      "16 - ABC abc 0123 @!?#$*{}<ps/>"
+                      "The quick brown fox jumps.<ps/>"
                       
                       "<font_size=12>"
-                      "12 - ABC abc 0123 @!?#$*{}<br>"
-                      "The quick brown fox jumps.<br>"
+                      "12 - ABC abc 0123 @!?#$*{}<ps/>"
+                      "The quick brown fox jumps.<ps/>"
                       
                       "<font_size=10>"
-                      "10 - ABC abc 0123 @!?#$*{}<br>"
-                      "The quick brown fox jumps.<br>"
+                      "10 - ABC abc 0123 @!?#$*{}<ps/>"
+                      "The quick brown fox jumps.<ps/>"
                       
                       "<font_size=8>"
-                      "8 - ABC abc 0123 @!?#$*{}<br>"
-                      "The quick brown fox jumps.<br>"
+                      "8 - ABC abc 0123 @!?#$*{}<ps/>"
+                      "The quick brown fox jumps.<ps/>"
                       , escaped
                      );
              edje_object_part_text_set(o, "e.textblock.message", buf);

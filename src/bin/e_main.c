@@ -1751,32 +1751,32 @@ _e_main_modules_load(Eina_Bool safe_mode)
              e_object_del(E_OBJECT(m));
 
              e_error_message_show
-               (_("Enlightenment crashed early on start and has<br>"
-                  "been restarted. There was an error loading the<br>"
-                  "module named: %s. This module has been disabled<br>"
+               (_("Enlightenment crashed early on start and has<ps/>"
+                  "been restarted. There was an error loading the<ps/>"
+                  "module named: %s. This module has been disabled<ps/>"
                   "and will not be loaded."), crashmodule);
              e_util_dialog_show
                (_("Enlightenment crashed early on start and has been restarted"),
-               _("Enlightenment crashed early on start and has been restarted.<br>"
-                 "There was an error loading the module named: %s<br><br>"
+               _("Enlightenment crashed early on start and has been restarted.<ps/>"
+                 "There was an error loading the module named: %s<ps/><ps/>"
                  "This module has been disabled and will not be loaded."), crashmodule);
              e_module_all_load();
           }
         else
           {
              e_error_message_show
-               (_("Enlightenment crashed early on start and has<br>"
-                  "been restarted. All modules have been disabled<br>"
-                  "and will not be loaded to help remove any problem<br>"
-                  "modules from your configuration. The module<br>"
-                  "configuration dialog should let you select your<br>"
+               (_("Enlightenment crashed early on start and has<ps/>"
+                  "been restarted. All modules have been disabled<ps/>"
+                  "and will not be loaded to help remove any problem<ps/>"
+                  "modules from your configuration. The module<ps/>"
+                  "configuration dialog should let you select your<ps/>"
                   "modules again.\n"));
              e_util_dialog_show
                (_("Enlightenment crashed early on start and has been restarted"),
-               _("Enlightenment crashed early on start and has been restarted.<br>"
-                 "All modules have been disabled and will not be loaded to help<br>"
-                 "remove any problem modules from your configuration.<br><br>"
-                 "The module configuration dialog should let you select your<br>"
+               _("Enlightenment crashed early on start and has been restarted.<ps/>"
+                 "All modules have been disabled and will not be loaded to help<ps/>"
+                 "remove any problem modules from your configuration.<ps/><ps/>"
+                 "The module configuration dialog should let you select your<ps/>"
                  "modules again."));
           }
         mod_init_end = ecore_event_handler_add(E_EVENT_MODULE_INIT_END, _e_main_modules_load_after, NULL);

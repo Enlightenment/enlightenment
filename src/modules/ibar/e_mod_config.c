@@ -201,7 +201,7 @@ _cb_del(void *data, void *data2 EINA_UNUSED)
    cfdata = data;
    if (cfdata->dialog_delete) return;
 
-   snprintf(buf, sizeof(buf), _("You requested to delete \"%s\".<br><br>"
+   snprintf(buf, sizeof(buf), _("You requested to delete \"%s\".<ps/><ps/>"
                                 "Are you sure you want to delete this bar source?"),
             cfdata->dir);
 

@@ -234,7 +234,7 @@ packagekit_popup_update(E_PackageKit_Instance *inst, Eina_Bool rebuild_list)
         elm_object_text_set(inst->popup_error_label, ctxt->error);
         if ((ctxt->v_maj != -1) && (ctxt->v_min != -1) && (ctxt->v_mic != -1))
           {
-             snprintf(buf, sizeof(buf), "<br>PackageKit version: %d.%d.%d",
+             snprintf(buf, sizeof(buf), "<ps/>PackageKit version: %d.%d.%d",
                       ctxt->v_maj, ctxt->v_min, ctxt->v_mic);
              elm_entry_entry_append(inst->popup_error_label, buf);
           }

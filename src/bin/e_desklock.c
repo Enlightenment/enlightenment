@@ -272,7 +272,7 @@ e_desklock_show(Eina_Bool suspend)
    if (e_desklock_is_system())
      {
         e_util_dialog_show(_("Error - no PAM support"),
-                           _("No PAM support was built into Enlightenment, so<br>"
+                           _("No PAM support was built into Enlightenment, so<ps/>"
                              "desk locking is disabled."));
         return 0;
      }
@@ -606,7 +606,7 @@ _e_desklock_ask_presentation_mode(void)
    e_dialog_title_set(dia, _("Activate Presentation Mode?"));
    e_dialog_icon_set(dia, "dialog-ask", 64);
    e_dialog_text_set(dia,
-                     _("You unlocked your desktop too fast.<br><br>"
+                     _("You unlocked your desktop too fast.<ps/><ps/>"
                        "Would you like to enable <b>presentation</b> mode and "
                        "temporarily disable screen saver, lock and power saving?"));
 

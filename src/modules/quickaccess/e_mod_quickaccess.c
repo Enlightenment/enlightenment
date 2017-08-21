@@ -313,17 +313,17 @@ _e_qa_entry_relaunch_setup_help(void *data, E_Dialog *dia)
    entry->dia = NULL;
    entry->dia = dia = e_dialog_new(NULL, "E", "_quickaccess_cmd_help_dialog");
 
-   snprintf(buf, sizeof(buf), _("The relaunch option is meant to be used<br>"
-                               "with terminal applications to create a persistent<br>"
-                               "terminal which reopens when closed, generally seen<br>"
-                               "in quake-style drop-down terminals.<br>"
-                               "Either the selected application is not a terminal<br>"
-                               "or the cmdline flag for changing the terminal's window<br>"
-                               "name is not known. Feel free to submit a bug report if this<br>"
-                               "is a terminal which can change its window name.<br>"
-                               "Alternatively, you can add a data.item to<br>"
-                               "%s/e-module-quickaccess.edj<br>"
-                               "Like so:<br>"
+   snprintf(buf, sizeof(buf), _("The relaunch option is meant to be used<ps/>"
+                               "with terminal applications to create a persistent<ps/>"
+                               "terminal which reopens when closed, generally seen<ps/>"
+                               "in quake-style drop-down terminals.<ps/>"
+                               "Either the selected application is not a terminal<ps/>"
+                               "or the cmdline flag for changing the terminal's window<ps/>"
+                               "name is not known. Feel free to submit a bug report if this<ps/>"
+                               "is a terminal which can change its window name.<ps/>"
+                               "Alternatively, you can add a data.item to<ps/>"
+                               "%s/e-module-quickaccess.edj<ps/>"
+                               "Like so:<ps/>"
                                "data.item: \"%s\" \"--OPT\";"),
                                e_module_dir_get(qa_mod->module),
                                entry->class);
@@ -380,11 +380,11 @@ _e_qa_entry_relaunch_setup(E_Quick_Access_Entry *entry)
         entry->dia = dia = e_dialog_new(NULL, "E", "_quickaccess_cmd_dialog");
 
         snprintf(buf, sizeof(buf),
-                 _("The selected window created with name:<br>%s<br>"
-                   "and class:<br>%s<br>"
-                   "could not be found in the Quickaccess app database<br>"
-                   "This means that either the app is unknown to us<br>"
-                   "or it is not intended for use with this option.<br>"
+                 _("The selected window created with name:<ps/>%s<ps/>"
+                   "and class:<ps/>%s<ps/>"
+                   "could not be found in the Quickaccess app database<ps/>"
+                   "This means that either the app is unknown to us<ps/>"
+                   "or it is not intended for use with this option.<ps/>"
                    "Please choose an action to take:"),
                  entry->name, entry->class);
 
@@ -974,11 +974,11 @@ e_qa_help(void)
    if (qa_mod->help_dia) return;
    snprintf(buf, sizeof(buf), "%s/e-module-quickaccess.edj", e_module_dir_get(qa_mod->module));
    qa_mod->help_dia = (E_Object*)e_util_dialog_internal(_("Quickaccess Help"),
-                                                        _("The options found in the Quickaccess menu are as follows:<br>"
-                                                          "<hilight>Autohide</hilight> - hide the window whenever it loses focus<br>"
-                                                          "<hilight>Hide Instead of Raise</hilight> - Hide window when activated without focus<br>"
-                                                          "<hilight>Jump Mode</hilight> - Switch to window's desk and raise instead of showing/hiding<br>"
-                                                          "<hilight>Relaunch When Closed</hilight> - Run the entry's command again when its window exits<br>"
+                                                        _("The options found in the Quickaccess menu are as follows:<ps/>"
+                                                          "<hilight>Autohide</hilight> - hide the window whenever it loses focus<ps/>"
+                                                          "<hilight>Hide Instead of Raise</hilight> - Hide window when activated without focus<ps/>"
+                                                          "<hilight>Jump Mode</hilight> - Switch to window's desk and raise instead of showing/hiding<ps/>"
+                                                          "<hilight>Relaunch When Closed</hilight> - Run the entry's command again when its window exits<ps/>"
                                                           "<hilight>Transient</hilight> - Remember only this instance of the window (not permanent)"));
    if (qa_mod->help_timeout) ecore_timer_freeze(qa_mod->help_timeout);
    e_object_free_attach_func_set(qa_mod->help_dia, _e_qa_dia_end_del);
@@ -1013,7 +1013,7 @@ _e_qa_help5(void *data EINA_UNUSED)
      }
    snprintf(buf, sizeof(buf), "%s/e-module-quickaccess.edj", e_module_dir_get(qa_mod->module));   
    qa_mod->help_dia = (E_Object*)e_confirm_dialog_show(_("Quickaccess Help"), buf,
-                                                        _("You deleted it on your own, you rascal!<br>"
+                                                        _("You deleted it on your own, you rascal!<ps/>"
                                                           "Way to go!"),
                                                         _("Continue"), _("Stop"),
                                                         _e_qa_help6, _e_qa_help_cancel, NULL, NULL, NULL, NULL);
@@ -1054,7 +1054,7 @@ _e_qa_help_activate_hook(E_Quick_Access_Entry *entry)
         if (entry->config.hidden)
           _e_qa_border_activate(_e_qa_entry_find_border(e_win_client_get(qa_mod->demo_dia->win)));
         qa_mod->help_dia = (E_Object*)e_confirm_dialog_show(_("Quickaccess Help"), buf,
-                                                             _("Well done.<br>"
+                                                             _("Well done.<ps/>"
                                                                "Now to delete the entry we just made..."),
                                                              _("Continue"), _("Stop"),
                                                              _e_qa_help5, _e_qa_help_cancel, NULL, NULL, NULL, NULL);
@@ -1070,7 +1070,7 @@ _e_qa_help4(void *data EINA_UNUSED)
 
    snprintf(buf, sizeof(buf), "%s/e-module-quickaccess.edj", e_module_dir_get(qa_mod->module));   
    qa_mod->help_dia = (E_Object*)e_util_dialog_internal(_("Quickaccess Help"),
-                                                         _("The demo dialog has been bound to the keys you pressed.<br>"
+                                                         _("The demo dialog has been bound to the keys you pressed.<ps/>"
                                                            "Try pressing the same keys!"));
    e_object_free_attach_func_set(qa_mod->help_dia, _e_qa_dia_del);
 }
@@ -1235,7 +1235,7 @@ _e_qa_help3(void *data EINA_UNUSED)
    snprintf(buf, sizeof(buf), "%s/e-module-quickaccess.edj", e_module_dir_get(qa_mod->module));
 
    qa_mod->help_dia = (E_Object*)e_util_dialog_internal(_("Quickaccess Help"),
-                                                        _("The newly displayed window will activate<br>"
+                                                        _("The newly displayed window will activate<ps/>"
                                                           "the Quickaccess binding sequence."));
    e_object_free_attach_func_set(qa_mod->help_dia, _e_qa_dia_del);
 
@@ -1265,8 +1265,8 @@ _e_qa_help2(void *data EINA_UNUSED)
      }
    snprintf(buf, sizeof(buf), "%s/e-module-quickaccess.edj", e_module_dir_get(qa_mod->module));   
    qa_mod->help_dia = (E_Object*)e_confirm_dialog_show(_("Quickaccess Help"), buf,
-                                                        _("Quickaccess entries can be created from<br>"
-                                                          "the border menu of any window.<br>"
+                                                        _("Quickaccess entries can be created from<ps/>"
+                                                          "the border menu of any window.<ps/>"
                                                           "Click Continue to see a demonstration."),
                                                         _("Continue"), _("Stop"),
                                                         _e_qa_help3, _e_qa_help_cancel, NULL, NULL, NULL, NULL);
@@ -1286,10 +1286,10 @@ _e_qa_help(void *data)
    if (qa_mod->help_dia) return;
    snprintf(buf, sizeof(buf), "%s/e-module-quickaccess.edj", e_module_dir_get(qa_mod->module));   
    qa_mod->help_dia = (E_Object*)e_confirm_dialog_show(_("Quickaccess Help"), buf,
-                                                        _("Quickaccess is a way of binding user-selected<br>"
-                                                          "windows and applications to keyboard shortcuts.<br>"
-                                                          "Once a Quickaccess entry has been created,<br>"
-                                                          "the associated window can be returned to immediately<br>"
+                                                        _("Quickaccess is a way of binding user-selected<ps/>"
+                                                          "windows and applications to keyboard shortcuts.<ps/>"
+                                                          "Once a Quickaccess entry has been created,<ps/>"
+                                                          "the associated window can be returned to immediately<ps/>"
                                                           "on demand by pushing the keyboard shortcut."),
                                                         _("Continue"), _("Stop"),
                                                         _e_qa_help2, _e_qa_help_cancel, NULL, NULL, NULL, NULL);
@@ -1303,7 +1303,7 @@ _e_qa_first_run(void)
 
    snprintf(buf, sizeof(buf), "%s/e-module-quickaccess.edj", e_module_dir_get(qa_mod->module));
    qa_mod->help_dia = (E_Object*)e_confirm_dialog_show(_("Quickaccess Help"), buf,
-                                                        _("This appears to be your first time using the Quickaccess module.<br>"
+                                                        _("This appears to be your first time using the Quickaccess module.<ps/>"
                                                           "Would you like some usage tips?"),
                                                         _("Yes"), _("No"),
                                                         _e_qa_help, _e_qa_help_cancel, (void*)1, NULL, NULL, NULL);

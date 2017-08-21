@@ -49,9 +49,9 @@ e_remember_init(E_Startup_Mode mode)
                   if (!ecore_exe_run(rem->prop.command, NULL))
                     {
                        e_util_dialog_show(_("Run Error"),
-                                          _("Enlightenment was unable to fork a child process:<br>"
-                                            "<br>"
-                                            "%s<br>"),
+                                          _("Enlightenment was unable to fork a child process:<ps/>"
+                                            "<ps/>"
+                                            "%s<ps/>"),
                                           rem->prop.command);
                     }
                }

@@ -61,7 +61,7 @@ e_widget_textblock_plain_set(Evas_Object *obj, const char *text)
      }
    mlen = strlen(text);
    /* need to look for these and replace with a new string (on the right)
-    * '\n' -> "<br>"
+    * '\n' -> "<ps/>"
     * '\t' -> "        "
     * '<'  -> "&lt;"
     * '>'  -> "&gt;"
@@ -86,7 +86,7 @@ e_widget_textblock_plain_set(Evas_Object *obj, const char *text)
      {
         if (*p == '\n')
           {
-             strcpy(d, "<br>");
+             strcpy(d, "<ps/>");
              d += 4 - 1;
           }
         else if (*p == '\t')

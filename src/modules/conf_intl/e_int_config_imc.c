@@ -269,8 +269,8 @@ _e_imc_setup_cb(void *data, void *data2 EINA_UNUSED)
              if (!exe)
                {
                   e_util_dialog_show(_("Run Error"),
-                                     _("Enlightenment was unable to fork a child process:<br>"
-                                       "<br>%s<br>"),
+                                     _("Enlightenment was unable to fork a child process:<ps/>"
+                                       "<ps/>%s<ps/>"),
                                      cmd);
                }
           }
@@ -523,8 +523,8 @@ _e_imc_adv_setup_cb(void *data, void *data2 EINA_UNUSED)
         if (!exe)
           {
              e_util_dialog_show(_("Run Error"),
-                                _("Enlightenment was unable to fork a child process:<br>"
-                                  "<br>%s<br>"), cmd);
+                                _("Enlightenment was unable to fork a child process:<ps/>"
+                                  "<ps/>%s<ps/>"), cmd);
           }
      }
 }

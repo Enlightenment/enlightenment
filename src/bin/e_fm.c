@@ -10678,7 +10678,7 @@ _e_fm_overwrite_dialog(int pid, const char *str)
    e_dialog_title_set(dialog, _("Warning"));
    e_dialog_icon_set(dialog, "dialog-warning", 64);
    snprintf(text, sizeof(text),
-            _("File already exists, overwrite?<br><hilight>%s</hilight>"), str);
+            _("File already exists, overwrite?<ps/><hilight>%s</hilight>"), str);
 
    e_dialog_text_set(dialog, text);
    elm_win_center(dialog->win, 1, 1);
@@ -10844,7 +10844,7 @@ _e_fm_error_dialog(int pid, const char *str)
    e_dialog_button_focus_num(dialog, 0);
    e_dialog_title_set(dialog, _("Error"));
    snprintf(text, sizeof(text),
-            _("An error occurred while performing an operation.<br>"
+            _("An error occurred while performing an operation.<ps/>"
               "%s"),
             str);
 
@@ -10950,7 +10950,7 @@ _e_fm_device_error_dialog(const char *title, const char *msg, const char *pstr)
    n = pstr;
    pstr += strlen(pstr) + 1;
    m = pstr;
-   snprintf(text, sizeof(text), "%s<br>%s<br>%s<br>%s<br>%s", msg, u, d, n, m);
+   snprintf(text, sizeof(text), "%s<ps/>%s<ps/>%s<ps/>%s<ps/>%s", msg, u, d, n, m);
    e_dialog_text_set(dialog, text);
 
    elm_win_center(dialog->win, 1, 1);
@@ -11033,13 +11033,13 @@ _e_fm2_file_delete(Evas_Object *obj)
      }
    if ((!sel) || (n == 1))
      snprintf(text, sizeof(text),
-              _("Are you sure you want to delete<br>"
+              _("Are you sure you want to delete<ps/>"
                 "<hilight>%s</hilight>?"),
               ic->info.file);
    else if (n == folder_count)
      snprintf(text, sizeof(text),
-              _("Are you sure you want to delete<br>"
-                "<hilight>all</hilight> the %d files in<br>"
+              _("Are you sure you want to delete<ps/>"
+                "<hilight>all</hilight> the %d files in<ps/>"
                 "<hilight>%s</hilight>?"),
               n, ic->sd->realpath);
    else
@@ -11048,11 +11048,11 @@ _e_fm2_file_delete(Evas_Object *obj)
          * is nonetheless needed for languages who have multiple plurals
          * depending on the number of files. */
         snprintf(text, sizeof(text),
-                 P_("Are you sure you want to delete<br>"
-                    "the %d selected file in<br>"
+                 P_("Are you sure you want to delete<ps/>"
+                    "the %d selected file in<ps/>"
                     "<hilight>%s</hilight>?",
-                    "Are you sure you want to delete<br>"
-                    "the %d selected files in<br>"
+                    "Are you sure you want to delete<ps/>"
+                    "the %d selected files in<ps/>"
                     "<hilight>%s</hilight>?", n),
                  n, ic->sd->realpath);
      }

@@ -583,8 +583,8 @@ _lokker_cb_exit(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
         _lokker_null();
         e_desklock_hide();
         e_util_dialog_show(_("Authentication System Error"),
-                           _("Authentication via PAM had errors setting up the<br>"
-                             "authentication session. The error code was <hilight>%i</hilight>.<br>"
+                           _("Authentication via PAM had errors setting up the<ps/>"
+                             "authentication session. The error code was <hilight>%i</hilight>.<ps/>"
                              "This is bad and should not be happening. Please report this bug.")
                            , ev->exited ? ev->exit_code : ev->exit_signal);
      }

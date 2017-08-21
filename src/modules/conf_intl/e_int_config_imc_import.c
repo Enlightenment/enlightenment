@@ -262,7 +262,7 @@ _imc_import_cb_ok(void *data, void *data2 EINA_UNUSED)
           {
              e_util_dialog_show(_("Input Method Config Import Error"),
                                 _("Enlightenment was unable to import "
-                                  "the configuration.<br><br>Are "
+                                  "the configuration.<ps/><ps/>Are "
                                   "you sure this is really a valid "
                                   "configuration?"));
           }
@@ -278,7 +278,7 @@ _imc_import_cb_ok(void *data, void *data2 EINA_UNUSED)
                {
                   e_util_dialog_show(_("Input Method Config Import Error"),
                                      _("Enlightenment was unable to import "
-                                       "the configuration<br>due to a copy "
+                                       "the configuration<ps/>due to a copy "
                                        "error."));
                }
              else

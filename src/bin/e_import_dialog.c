@@ -72,7 +72,7 @@ _fsel_cb_ok(void *data, E_Dialog *dia EINA_UNUSED)
           {
              e_util_dialog_show(_("Import Error"),
                                 _("Enlightenment was unable to "
-                                  "import the image<br>due to a "
+                                  "import the image<ps/>due to a "
                                   "copy error."));
           }
         else
@@ -82,7 +82,7 @@ _fsel_cb_ok(void *data, E_Dialog *dia EINA_UNUSED)
      {
         e_util_dialog_show(_("Import Error"),
                            _("Enlightenment was unable to "
-                             "import the image.<br><br>"
+                             "import the image.<ps/><ps/>"
                              "Are you sure this is a valid "
                              "image?"));
      }

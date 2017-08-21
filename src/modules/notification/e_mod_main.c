@@ -60,14 +60,14 @@ _notification_show_presentation(Eina_Bool enabled)
      {
         summary = _("Entered Presentation Mode");
         body = _("Enlightenment has now entered <b>presentation</b> mode."
-                 "<br>During presentation mode, screen saver, lock and "
+                 "<ps/>During presentation mode, screen saver, lock and "
                  "power saving will be disabled so you are not interrupted.");
      }
    else
      {
         summary = _("Exited Presentation Mode");
         body = _("Presentation mode has been exited."
-                 "<br>Now screen saver, lock and "
+                 "<ps/>Now screen saver, lock and "
                  "power saving settings will be restored.");
      }
 
@@ -82,14 +82,14 @@ _notification_show_offline(Eina_Bool enabled)
    if (enabled)
      {
         summary = _("Enter Offline Mode");
-        body = _("Enlightenment is in <b>offline</b> mode.<br>"
+        body = _("Enlightenment is in <b>offline</b> mode.<ps/>"
                  "During offline mode, modules that use network will stop "
                  "polling remote services.");
      }
    else
      {
         summary = _("Exited Offline Mode");
-        body = _("Now in <b>online</b> mode.<br>"
+        body = _("Now in <b>online</b> mode.<ps/>"
                  "Now modules that use network will "
                  "resume regular tasks.");
      }

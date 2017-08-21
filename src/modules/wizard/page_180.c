@@ -34,7 +34,7 @@ wizard_page_show(E_Wizard_Page *pg EINA_UNUSED)
    evas_object_show(ob);
    elm_box_pack_end(o, ob);
    elm_object_text_set(ob,
-     _("A taskbar can be added to<br>"
+     _("A taskbar can be added to<ps/>"
        "show open windows and applications."
        )
      );

@@ -978,8 +978,8 @@ _grab_key_down_cb(void *data,
 
              e_util_dialog_show(_("Binding Key Error"),
                                 _("The binding key combination that you chose"
-                                  " is already used by <br>"
-                                  "<hilight>%s</hilight> action.<br>"
+                                  " is already used by <ps/>"
+                                  "<hilight>%s</hilight> action.<ps/>"
                                   "Please choose another binding key combination."),
                                 label ? label : _("Unknown"));
 #endif

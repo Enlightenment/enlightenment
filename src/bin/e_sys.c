@@ -751,11 +751,11 @@ _e_sys_logout_confirm_dialog_update(int remaining)
      }
 
    snprintf(txt, sizeof(txt),
-            _("Logout is taking too long.<br>"
-              "Some applications refuse to close.<br>"
-              "Do you want to finish the logout<br>"
-              "anyway without closing these<br>"
-              "applications first?<br><br>"
+            _("Logout is taking too long.<ps/>"
+              "Some applications refuse to close.<ps/>"
+              "Do you want to finish the logout<ps/>"
+              "anyway without closing these<ps/>"
+              "applications first?<ps/><ps/>"
               "Auto logout in %d seconds."), remaining);
 
    e_dialog_text_set(_e_sys_logout_confirm_dialog, txt);
@@ -894,33 +894,33 @@ _e_sys_current_action(void)
    switch (_e_sys_action_current)
      {
       case E_SYS_LOGOUT:
-        e_dialog_text_set(dia, _("Logging out.<br>"
-                                 "You cannot perform other system actions<br>"
+        e_dialog_text_set(dia, _("Logging out.<ps/>"
+                                 "You cannot perform other system actions<ps/>"
                                  "once a logout has begun."));
         break;
 
       case E_SYS_HALT:
       case E_SYS_HALT_NOW:
-        e_dialog_text_set(dia, _("Powering off.<br>"
-                                 "You cannot perform any other system actions<br>"
+        e_dialog_text_set(dia, _("Powering off.<ps/>"
+                                 "You cannot perform any other system actions<ps/>"
                                  "once a shutdown has been started."));
         break;
 
       case E_SYS_REBOOT:
-        e_dialog_text_set(dia, _("Resetting.<br>"
-                                 "You cannot perform any other system actions<br>"
+        e_dialog_text_set(dia, _("Resetting.<ps/>"
+                                 "You cannot perform any other system actions<ps/>"
                                  "once a reboot has begun."));
         break;
 
       case E_SYS_SUSPEND:
-        e_dialog_text_set(dia, _("Suspending.<br>"
-                                 "You cannot perform any other system actions<br>"
+        e_dialog_text_set(dia, _("Suspending.<ps/>"
+                                 "You cannot perform any other system actions<ps/>"
                                  "until suspend is complete."));
         break;
 
       case E_SYS_HIBERNATE:
-        e_dialog_text_set(dia, _("Hibernating.<br>"
-                                 "You cannot perform any other system actions<br>"
+        e_dialog_text_set(dia, _("Hibernating.<ps/>"
+                                 "You cannot perform any other system actions<ps/>"
                                  "until hibernation is complete."));
         break;
 

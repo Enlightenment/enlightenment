@@ -899,8 +899,8 @@ e_shelf_position_calc(E_Shelf *es)
              break;
           }
         if (err)
-          e_util_dialog_show(_("Shelf Autohide Error"), _("Shelf autohiding will not work properly<br>"
-                                                          "with the current configuration; set your shelf to<br>"
+          e_util_dialog_show(_("Shelf Autohide Error"), _("Shelf autohiding will not work properly<ps/>"
+                                                          "with the current configuration; set your shelf to<ps/>"
                                                           "\"Below Everything\" or disable autohiding."));
         break;
      } while (0);
@@ -1725,8 +1725,8 @@ _e_shelf_cb_menu_delete(void *data, E_Menu *m EINA_UNUSED, E_Menu_Item *mi EINA_
    e_object_ref(E_OBJECT(es));
    e_confirm_dialog_show(_("Are you sure you want to delete this shelf?"),
                          "enlightenment",
-                         _("You requested to delete this shelf.<br>"
-                           "<br>"
+                         _("You requested to delete this shelf.<ps/>"
+                           "<ps/>"
                            "Are you sure you want to delete it?"),
                          _("Delete"), _("Keep"),
                          _e_shelf_cb_confirm_dialog_yes, NULL, data, NULL,

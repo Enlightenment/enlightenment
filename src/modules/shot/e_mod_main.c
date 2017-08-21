@@ -230,9 +230,9 @@ _file_select_ok_cb(void *data EINA_UNUSED, E_Dialog *dia)
      {
         e_util_dialog_show
         (_("Error - Unknown format"),
-            _("File has an unspecified extension.<br>"
-              "Please use '.jpg' or '.png' extensions<br>"
-              "only as other formats are not<br>"
+            _("File has an unspecified extension.<ps/>"
+              "Please use '.jpg' or '.png' extensions<ps/>"
+              "only as other formats are not<ps/>"
               "supported currently."));
         return;
      }
@@ -405,7 +405,7 @@ _upload_complete_cb(void *data, int ev_type EINA_UNUSED, void *event)
    if (status != 200)
      {
         e_util_dialog_show(_("Error - Upload Failed"),
-                           _("Upload failed with status code:<br>"
+                           _("Upload failed with status code:<ps/>"
                              "%i"), status);
         _share_done();
         return EINA_FALSE;
@@ -558,7 +558,7 @@ _win_share_confirm_cb(void *d EINA_UNUSED, void *d2 EINA_UNUSED)
 {
    if (cd) return;
    cd = e_confirm_dialog_show(_("Confirm Share"), NULL,
-                              _("This image will be uploaded<br>"
+                              _("This image will be uploaded<ps/>"
                                 "to enlightenment.org. It will be publicly visible."),
                               _("Confirm"), _("Cancel"),
                               _win_share_confirm_yes, NULL,

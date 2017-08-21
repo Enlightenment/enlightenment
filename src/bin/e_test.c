@@ -152,7 +152,7 @@ _e_test_internal(void)
    dia = e_dialog_new(c, "E", "_test");
    e_object_del_attach_func_set(E_OBJECT(dia), _e_test_dialog_del);
    e_dialog_title_set(dia, "A Test Dialog");
-   e_dialog_text_set(dia, "A Test Dialog<br>And another line<br><hilight>Hilighted Text</hilight>");
+   e_dialog_text_set(dia, "A Test Dialog<ps/>And another line<ps/><hilight>Hilighted Text</hilight>");
    e_dialog_icon_set(dia, "preference-plugin", 64);
    e_dialog_button_add(dia, "OK", NULL, NULL, NULL);
    e_dialog_button_add(dia, "Apply", "system-restart", NULL, NULL);
@@ -411,16 +411,16 @@ _e_test_internal(void)
 #if 0
    e_widget_textblock_markup_set(o,
                                  "<title>A title</title>"
-                                 "This is some text<br>"
-                                 "Blah blah<br>"
-                                 "<hilight>hilighted text</hilight><br>"
-                                 "<br>"
-                                 "More lines of text<br>"
-                                 "And yet more lines of text<br>"
-                                 "A very very long line of text that SHOULD be getting word wrapped because it is so long.<br>"
-                                 "And another line<br>"
-                                 "Some more<br>"
-                                 "Smelly fish on a stick<br>"
+                                 "This is some text<ps/>"
+                                 "Blah blah<ps/>"
+                                 "<hilight>hilighted text</hilight><ps/>"
+                                 "<ps/>"
+                                 "More lines of text<ps/>"
+                                 "And yet more lines of text<ps/>"
+                                 "A very very long line of text that SHOULD be getting word wrapped because it is so long.<ps/>"
+                                 "And another line<ps/>"
+                                 "Some more<ps/>"
+                                 "Smelly fish on a stick<ps/>"
                                  "Whatever."
                                  );
 #else

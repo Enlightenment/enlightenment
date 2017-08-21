@@ -223,7 +223,7 @@ _config_source_del(void *data, Evas_Object *obj EINA_UNUSED, void *event_data EI
    char buf[4096];
 
    evas_object_del(luncher_config->config_dialog);
-   snprintf(buf, sizeof(buf), _("You requested to delete \"%s\".<br><br>"
+   snprintf(buf, sizeof(buf), _("You requested to delete \"%s\".<ps/><ps/>"
                                 "Are you sure you want to delete this bar source?"),
             inst->cfg->dir);
    e_confirm_dialog_show(_("Are you sure you want to delete this bar source?"),

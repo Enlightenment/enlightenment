@@ -333,7 +333,7 @@ _cb_delete(void *data, void *data2 EINA_UNUSED)
    d->cfdata = data;
 
    snprintf(buf, sizeof(buf),
-            _("You want to delete the \"%s\" profile.<br><br>"
+            _("You want to delete the \"%s\" profile.<ps/><ps/>"
               "Are you sure?"), d->cfdata->sel_profile);
    e_confirm_dialog_show(_("Are you sure you want to delete this profile?"),
                          "dialog-warning", buf, _("Delete"), _("Keep"),

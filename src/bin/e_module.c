@@ -385,9 +385,9 @@ e_module_new(const char *name)
    if (!modpath)
      {
         snprintf(body, sizeof(body),
-                 _("There was an error loading the module named: %s<br>"
-                   "No module named %s could be found in the<br>"
-                   "module search directories.<br>"), name, buf);
+                 _("There was an error loading the module named: %s<ps/>"
+                   "No module named %s could be found in the<ps/>"
+                   "module search directories.<ps/>"), name, buf);
         _e_module_dialog_disable_create(_("Error loading Module"), body, m);
         m->error = 1;
         goto init_done;
@@ -396,11 +396,11 @@ e_module_new(const char *name)
    if (!m->handle)
      {
         snprintf(body, sizeof(body),
-                 _("There was an error loading the module named: %s<br>"
-                   "The full path to this module is:<br>"
-                   "%s<br>"
-                   "The error reported was:<br>"
-                   "%s<br>"), name, buf, dlerror());
+                 _("There was an error loading the module named: %s<ps/>"
+                   "The full path to this module is:<ps/>"
+                   "%s<ps/>"
+                   "The error reported was:<ps/>"
+                   "%s<ps/>"), name, buf, dlerror());
         _e_module_dialog_disable_create(_("Error loading Module"), body, m);
         m->error = 1;
         goto init_done;
@@ -414,11 +414,11 @@ e_module_new(const char *name)
    if ((!m->func.init) || (!m->api))
      {
         snprintf(body, sizeof(body),
-                 _("There was an error loading the module named: %s<br>"
-                   "The full path to this module is:<br>"
-                   "%s<br>"
-                   "The error reported was:<br>"
-                   "%s<br>"),
+                 _("There was an error loading the module named: %s<ps/>"
+                   "The full path to this module is:<ps/>"
+                   "%s<ps/>"
+                   "The error reported was:<ps/>"
+                   "%s<ps/>"),
                  name, buf, _("Module does not contain all needed functions"));
         _e_module_dialog_disable_create(_("Error loading Module"), body, m);
         m->api = NULL;
@@ -434,9 +434,9 @@ e_module_new(const char *name)
    if (m->api->version != E_MODULE_API_VERSION)
      {
         snprintf(body, sizeof(body),
-                 _("Module API Error<br>Error initializing Module: %s<br>"
-                   "It requires a module API version of: %i.<br>"
-                   "The module API advertized by Enlightenment is: %i.<br>"),
+                 _("Module API Error<ps/>Error initializing Module: %s<ps/>"
+                   "It requires a module API version of: %i.<ps/>"
+                   "The module API advertized by Enlightenment is: %i.<ps/>"),
                  _(m->api->name), m->api->version, E_MODULE_API_VERSION);
 
         snprintf(title, sizeof(title), _("Enlightenment %s Module"),
@@ -801,8 +801,8 @@ _e_module_dialog_disable_show(const char *title, const char *body, E_Module *m)
 
    dia = e_dialog_new(NULL, "E", "_module_unload_dialog");
 
-   snprintf(buf, sizeof(buf), "%s<br>%s", body,
-            _("What action should be taken with this module?<br>"));
+   snprintf(buf, sizeof(buf), "%s<ps/>%s", body,
+            _("What action should be taken with this module?<ps/>"));
 
    e_dialog_title_set(dia, title);
    e_dialog_icon_set(dia, "enlightenment", 64);
@@ -961,16 +961,16 @@ _e_module_whitelist_dialog_timer(void *badl)
                       "E", "_module_whitelist_dialog");
    sbuf = eina_strbuf_new();
    eina_strbuf_append
-     (sbuf, _("The following modules are not standard ones for<br>"
-              "Enlightenment and may cause bugs and crashes.<br>"
-              "Please remove them before reporting any bugs.<br>"
-              "<br>"
-              "The module list is as follows:<br>"
-              "<br>"));
+     (sbuf, _("The following modules are not standard ones for<ps/>"
+              "Enlightenment and may cause bugs and crashes.<ps/>"
+              "Please remove them before reporting any bugs.<ps/>"
+              "<ps/>"
+              "The module list is as follows:<ps/>"
+              "<ps/>"));
    EINA_LIST_FOREACH(badl, l, s)
      {
         eina_strbuf_append(sbuf, s);
-        eina_strbuf_append(sbuf, "<br>");
+        eina_strbuf_append(sbuf, "<ps/>");
      }
 
    e_dialog_title_set(dia, _("Unstable module tainting"));

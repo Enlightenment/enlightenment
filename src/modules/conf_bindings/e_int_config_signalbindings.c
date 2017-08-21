@@ -569,8 +569,8 @@ _signal_add_cb_ok(void *data, E_Dialog *dia)
              eina_stringshare_del(sig);
              eina_stringshare_del(src);
              e_util_dialog_show(_("Signal Binding Error"),
-                                _("The signal and source that you entered are already used by<br>"
-                                  "<hilight>%s</hilight> action.<br>"),
+                                _("The signal and source that you entered are already used by<ps/>"
+                                  "<hilight>%s</hilight> action.<ps/>"),
                                 bi->action ?: _("Unknown"));
              e_object_del(E_OBJECT(dia));
              return;

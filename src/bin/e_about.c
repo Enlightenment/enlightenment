@@ -24,28 +24,28 @@ e_about_new(void)
      (buf, sizeof(buf), "%s%s",
      _(
        "<title>Copyright &copy; 2000-2016, by the Enlightenment "
-       "Development Team</><br>"
-       "<br>"
+       "Development Team</><ps/>"
+       "<ps/>"
        "We hope you enjoy using this software as much as we enjoyed "
-       "writing it.<br>"
-       "<br>"
-       "To contact us please visit:<br>"
-       "<hilight>http://www.enlightenment.org</><br>"
-       "<br>"
+       "writing it.<ps/>"
+       "<ps/>"
+       "To contact us please visit:<ps/>"
+       "<hilight>http://www.enlightenment.org</><ps/>"
+       "<ps/>"
        ),
-     "All rights reserved.<br>"
-     "<br>"
+     "All rights reserved.<ps/>"
+     "<ps/>"
      "Redistribution and use in source and binary forms, with or without "
      "modification, are permitted provided that the following conditions "
-     "are met:<br>"
-     "<br>"
+     "are met:<ps/>"
+     "<ps/>"
      "1. Redistributions of source code must retain the above copyright "
-     "notice, this list of conditions and the following disclaimer.<br>"
+     "notice, this list of conditions and the following disclaimer.<ps/>"
      "2. Redistributions in binary form must reproduce the above copyright "
      "notice, this list of conditions and the following disclaimer in the "
      "documentation and/or other materials provided with the "
-     "distribution.<br>"
-     "<br>"
+     "distribution.<ps/>"
+     "<ps/>"
      "<hilight>THIS SOFTWARE IS PROVIDED “AS IS” AND ANY EXPRESS OR "
      "IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED "
      "WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE "
@@ -57,7 +57,7 @@ e_about_new(void)
      "AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT "
      "LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN "
      "ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE "
-     "POSSIBILITY OF SUCH DAMAGE.</><br>"
+     "POSSIBILITY OF SUCH DAMAGE.</><ps/>"
      );
    e_obj_dialog_obj_part_text_set(od, "e.textblock.about", buf);
 
@@ -66,7 +66,7 @@ e_about_new(void)
    if (f)
      {
         tbuf = eina_strbuf_new();
-        eina_strbuf_append(tbuf, _("<title>The Team</><br><br>"));
+        eina_strbuf_append(tbuf, _("<title>The Team</><ps/><ps/>"));
         while (fgets(buf, sizeof(buf), f))
           {
              int len;
@@ -95,7 +95,7 @@ e_about_new(void)
                             if (p) *p = 0;
                          }
                        while (p);
-                       eina_strbuf_append_printf(tbuf, "%s<br>", buf);
+                       eina_strbuf_append_printf(tbuf, "%s<ps/>", buf);
                     }
                }
           }

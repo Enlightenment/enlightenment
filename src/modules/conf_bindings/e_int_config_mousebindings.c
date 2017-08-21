@@ -3,10 +3,10 @@
 #define TEXT_NO_PARAMS                     _("<None>")
 #define EXAMPLE_STRING                     "example : "
 
-#define TEXT_PRESS_MOUSE_BINIDING_SEQUENCE _("Please hold any modifier you want<br>"            \
-                                             "and press any button on your mouse,<br>or roll a" \
+#define TEXT_PRESS_MOUSE_BINIDING_SEQUENCE _("Please hold any modifier you want<ps/>"            \
+                                             "and press any button on your mouse,<ps/>or roll a" \
                                              " wheel, to assign mouse binding."                 \
-                                             "<br>Press <hilight>Escape</hilight> to abort.")
+                                             "<ps/>Press <hilight>Escape</hilight> to abort.")
 
 static void        *_create_data(E_Config_Dialog *cfd);
 static void         _free_data(E_Config_Dialog *cfd, E_Config_Dialog_Data *cfdata);
@@ -243,8 +243,8 @@ _basic_apply_data(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfdata
      {
         if ((!bw->modifiers) && ((bw->context == E_BINDING_CONTEXT_WINDOW) || (bw->context == E_BINDING_CONTEXT_ANY)))
           {
-             const char *msg = _("Unable to set a mouse wheel binding without modifiers<br>"
-                                  "on a window: conflict with existing edje signal bindings.<br>"
+             const char *msg = _("Unable to set a mouse wheel binding without modifiers<ps/>"
+                                  "on a window: conflict with existing edje signal bindings.<ps/>"
                                   "FIXME!!!");
              e_util_dialog_internal(_("Mouse Binding Error"), msg);
              cfdata->binding.wheel = eina_list_remove_list(cfdata->binding.wheel, l);

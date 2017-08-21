@@ -210,12 +210,12 @@ e_desktop_client_edit(E_Client *ec)
    if ((!bname) && (!bclass))
      {
         e_util_dialog_show(_("Incomplete Window Properties"),
-                           _("The window you are creating an icon for<br>"
-                             "does not contain window name and class<br>"
-                             "properties. Without these, you will have to<br>"
-                             "use the window title instead. This will only<br>"
-                             "work if the window title is the same at<br>"
-                             "the time the window starts up, and does not<br>"
+                           _("The window you are creating an icon for<ps/>"
+                             "does not contain window name and class<ps/>"
+                             "properties. Without these, you will have to<ps/>"
+                             "use the window title instead. This will only<ps/>"
+                             "work if the window title is the same at<ps/>"
+                             "the time the window starts up, and does not<ps/>"
                              "change."));
      }
 #endif
