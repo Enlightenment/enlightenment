@@ -53,7 +53,7 @@ if get_option(m) == true
              include_directories: include_directories(module_includes, '.', './lib'),
              dependencies       : [ dep_elementary, deps ],
              c_args             : '-DEMIXER_BUILD',
-             install_dir        : _dir_bin,
+             install_dir        : dir_bin,
              install            : true
             )
 endif
