@@ -39,6 +39,7 @@ struct _Context
 typedef struct _Instance Instance;
 struct _Instance
 {
+   int id;
    Evas_Object *o_main;
    Evas_Object *o_mixer;
    Evas_Object *popup;
@@ -626,8 +627,22 @@ _mixer_gadget_created_cb(void *data, Evas_Object *obj, void *event_info EINA_UNU
                                   _mixer_resize_cb, inst);
         elm_box_pack_end(inst->o_main, inst->o_mixer);
         evas_object_show(inst->o_mixer);
-        gmixer_context->instances = eina_list_append(gmixer_context->instances, inst);
-        _mixer_gadget_update();
+        if (inst->id != -1)
+	  gmixer_context->instances = eina_list_append(gmixer_context->instances, inst);
+        if (inst->id == -1)
+          {
+             Edje_Message_Int_Set *msg;
+
+             msg = alloca(sizeof(Edje_Message_Int_Set) + (2 * sizeof(int)));
+             msg->count = 3;
+             msg->val[0] = EINA_FALSE;
+             msg->val[1] = 60;
+             msg->val[2] = 60;
+             edje_object_message_send(elm_layout_edje_get(inst->o_mixer), EDJE_MESSAGE_INT_SET, 0, msg);
+             elm_layout_signal_emit(inst->o_mixer, "e,action,volume,change", "e");
+          }
+        else
+	  _mixer_gadget_update();
      }
    evas_object_smart_callback_del_full(obj, "gadget_created", _mixer_gadget_created_cb, data);
 }
@@ -642,13 +657,21 @@ mixer_del(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *e
 }
 
 EINTERN Evas_Object *
-mixer_gadget_create(Evas_Object *parent, int *id EINA_UNUSED, E_Gadget_Site_Orient orient)
+mixer_gadget_create(Evas_Object *parent, int *id, E_Gadget_Site_Orient orient)
 {
    Instance *inst;
 
+   if (*id != -1)
+     {
+        EINA_SAFETY_ON_FALSE_RETURN_VAL(emix_init(), NULL);
+
+        if (!mixer_init())
+          return NULL;
+     }
    inst = E_NEW(Instance, 1);
    inst->o_main = elm_box_add(parent);
    inst->orient = orient;
+   inst->id = *id;
    E_EXPAND(inst->o_main);
    E_FILL(inst->o_main);
    evas_object_show(inst->o_main);   

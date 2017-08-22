@@ -284,7 +284,8 @@ backlight_gadget_create(Evas_Object *parent, int *id, E_Gadget_Site_Orient orien
    evas_object_smart_callback_add(parent, "gadget_created", _backlight_gadget_created_cb, inst);
    evas_object_event_callback_add(inst->o_main, EVAS_CALLBACK_DEL, backlight_del, inst);
 
-   ginstances = eina_list_append(ginstances, inst);
+   if (*id != -1)
+     ginstances = eina_list_append(ginstances, inst);
    return inst->o_main;
 }
 
