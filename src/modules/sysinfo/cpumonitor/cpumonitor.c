@@ -200,10 +200,7 @@ _cpumonitor_cb_usage_check_end(void *data, Ecore_Thread *th EINA_UNUSED)
 
    e_powersave_sleeper_free(thc->sleeper);
    EINA_LIST_FREE(thc->cores, core)
-     {
-        evas_object_del(core->layout);
-        E_FREE(core);
-     }
+     E_FREE(core);
    E_FREE(thc);
 }
 
@@ -229,15 +226,22 @@ _cpumonitor_add_layout(Instance *inst)
    return layout;
 }
 
+static void
+_cpumonitor_del_layouts(Instance *inst)
+{
+   elm_box_clear(inst->cfg->cpumonitor.o_gadget_box);
+}
+
 static Eina_Bool
 _screensaver_on(void *data)
 {
    Instance *inst = data;
 
-   if (inst->cfg->cpumonitor.usage_check_thread)
+   if (!ecore_thread_check(inst->cfg->cpumonitor.usage_check_thread))
      {
+        _cpumonitor_del_layouts(inst);
         ecore_thread_cancel(inst->cfg->cpumonitor.usage_check_thread);
-        inst->cfg->cpumonitor.usage_check_thread = NULL;
+	inst->cfg->cpumonitor.usage_check_thread = NULL;
      }
    return ECORE_CALLBACK_RENEW;
 }
@@ -259,8 +263,9 @@ _cpumonitor_config_updated(Instance *inst)
    CPU_Core *core;
    int i = 0;
    
-   if (inst->cfg->cpumonitor.usage_check_thread)
+   if (!ecore_thread_check(inst->cfg->cpumonitor.usage_check_thread))
      {
+        _cpumonitor_del_layouts(inst);
         ecore_thread_cancel(inst->cfg->cpumonitor.usage_check_thread);
         inst->cfg->cpumonitor.usage_check_thread = NULL;
      }
@@ -315,8 +320,9 @@ _cpumonitor_removed_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_dat
    evas_object_smart_callback_del_full(e_gadget_site_get(inst->o_main), "gadget_removed",
                                        _cpumonitor_removed_cb, inst);
    evas_object_event_callback_del_full(inst->o_main, EVAS_CALLBACK_DEL, sysinfo_cpumonitor_remove, data);
-   if (inst->cfg->cpumonitor.usage_check_thread)
+   if (!ecore_thread_check(inst->cfg->cpumonitor.usage_check_thread))
      {
+        _cpumonitor_del_layouts(inst);
         ecore_thread_cancel(inst->cfg->cpumonitor.usage_check_thread);
         inst->cfg->cpumonitor.usage_check_thread = NULL;
      }
@@ -339,8 +345,9 @@ sysinfo_cpumonitor_remove(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA
      E_FREE_FUNC(inst->cfg->cpumonitor.configure, evas_object_del);
    EINA_LIST_FREE(inst->cfg->cpumonitor.handlers, handler)
      ecore_event_handler_del(handler);
-   if (inst->cfg->cpumonitor.usage_check_thread)
+   if (!ecore_thread_check(inst->cfg->cpumonitor.usage_check_thread))
      {
+        _cpumonitor_del_layouts(inst);
         ecore_thread_cancel(inst->cfg->cpumonitor.usage_check_thread);
         inst->cfg->cpumonitor.usage_check_thread = NULL;
      }
