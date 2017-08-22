@@ -677,7 +677,8 @@ mixer_gadget_create(Evas_Object *parent, int *id, E_Gadget_Site_Orient orient)
    evas_object_show(inst->o_main);   
 
    evas_object_smart_callback_add(parent, "gadget_created", _mixer_gadget_created_cb, inst);
-   evas_object_event_callback_add(inst->o_main, EVAS_CALLBACK_DEL, mixer_del, inst);
+   if (*id != -1)
+     evas_object_event_callback_add(inst->o_main, EVAS_CALLBACK_DEL, mixer_del, inst);
    return inst->o_main;
 }
 
