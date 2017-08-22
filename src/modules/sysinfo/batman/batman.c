@@ -390,6 +390,11 @@ _batman_config_updated(Instance *inst)
 
    if (!inst->cfg) return;
 
+   if (inst->cfg->id == -1)
+     {
+        _batman_face_level_set(inst->cfg->batman.o_gadget, .60);
+        return;
+     }
    if ((inst->cfg->batman.force_mode == UNKNOWN) ||
        (inst->cfg->batman.force_mode == SUBSYSTEM))
      {

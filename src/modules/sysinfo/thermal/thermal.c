@@ -259,6 +259,11 @@ _thermal_config_updated(Instance *inst)
 {
    Tempthread *tth;
 
+   if (inst->cfg->id == -1)
+     {
+        _thermal_face_level_set(inst, .60);
+        return;
+     }
    if (inst->cfg->thermal.th) ecore_thread_cancel(inst->cfg->thermal.th);
 
    tth = calloc(1, sizeof(Tempthread));

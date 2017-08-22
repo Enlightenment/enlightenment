@@ -237,6 +237,19 @@ _netstatus_config_updated(Instance *inst)
 {
    Thread_Config *thc;
 
+   if (inst->cfg->id == -1)
+     {
+        thc = E_NEW(Thread_Config, 1);
+        if (thc)
+          {
+             thc->inst = inst;
+             thc->inpercent = 75;
+             thc->outpercent = 30;
+             _netstatus_face_update(thc);
+             E_FREE(thc);
+	  }
+        return;
+     }
    if (inst->cfg->netstatus.usage_check_thread)
      {
         ecore_thread_cancel(inst->cfg->netstatus.usage_check_thread);

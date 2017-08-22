@@ -262,7 +262,36 @@ _cpumonitor_config_updated(Instance *inst)
    Thread_Config *thc;
    CPU_Core *core;
    int i = 0;
-   
+ 
+   if (inst->cfg->id == -1)
+     {
+        int percent = 15;
+        thc = E_NEW(Thread_Config, 1);
+        if (thc)
+          {
+             thc->inst = inst;
+             thc->total = 0;
+             thc->idle = 0;
+             thc->percent = 60;
+             for (i = 0; i < 4; i++)
+               {
+                  core = E_NEW(CPU_Core, 1);
+                  core->layout = _cpumonitor_add_layout(inst);
+                  if (i == 0)
+                    evas_object_event_callback_add(core->layout, EVAS_CALLBACK_RESIZE, _cpumonitor_resize_cb, inst);
+                  core->percent = percent;
+                  core->total = 0;
+                  core->idle = 0;
+                  thc->cores = eina_list_append(thc->cores, core);
+	          percent += 15;
+               }
+             _cpumonitor_face_update(thc);
+             EINA_LIST_FREE(thc->cores, core)
+               E_FREE(core);
+             E_FREE(thc);
+	  }
+	return;
+     }
    if (!ecore_thread_check(inst->cfg->cpumonitor.usage_check_thread))
      {
         _cpumonitor_del_layouts(inst);

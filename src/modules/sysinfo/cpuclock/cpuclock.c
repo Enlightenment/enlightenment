@@ -364,6 +364,14 @@ _cpuclock_config_updated(Instance *inst)
    int i;
    unsigned int count;
 
+   if (inst->cfg->id == -1)
+     {
+        inst->cfg->cpuclock.status->cur_frequency = 3.0;
+        inst->cfg->cpuclock.status->can_set_frequency = 1;
+        inst->cfg->cpuclock.status->cur_min_frequency = 0.5;
+        inst->cfg->cpuclock.status->cur_max_frequency = 3.5;
+        return;
+     }
    if (inst->cfg->cpuclock.status->frequencies)
      {
         count = eina_list_count(inst->cfg->cpuclock.status->frequencies);

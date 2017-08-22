@@ -358,6 +358,13 @@ _memusage_config_updated(Instance *inst)
 {
    Thread_Config *thc;
 
+   if (inst->cfg->id == -1)
+     {
+        inst->cfg->memusage.mem_percent = 75;
+        inst->cfg->memusage.swp_percent = 30;
+        _memusage_face_update(inst);
+	return;
+     }
    if (inst->cfg->memusage.usage_check_thread)
      {
         ecore_thread_cancel(inst->cfg->memusage.usage_check_thread);
