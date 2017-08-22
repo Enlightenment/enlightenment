@@ -20,7 +20,10 @@ _backlight_gadget_update(Instance *inst)
 {
    Edje_Message_Float msg;
 
-   msg.val = inst->val;
+   if (EINA_FLT_EQ(inst->val, -1.0))
+     msg.val = .75;
+   else
+     msg.val = inst->val;
    if (msg.val < 0.0) msg.val = 0.0;
    else if (msg.val > 1.0) msg.val = 1.0;
    edje_object_message_send(elm_layout_edje_get(inst->o_backlight), EDJE_MESSAGE_FLOAT, 0, &msg);
@@ -244,7 +247,8 @@ _backlight_gadget_created_cb(void *data, Evas_Object *obj, void *event_info EINA
                                   inst);
         elm_box_pack_end(inst->o_main, inst->o_backlight);
         evas_object_show(inst->o_backlight);
-        inst->val = e_backlight_level_get(e_zone_current_get());
+        if (!EINA_FLT_EQ(inst->val, -1.0))
+	  inst->val = e_backlight_level_get(e_zone_current_get());
 	_backlight_gadget_update(inst);
      }
    evas_object_smart_callback_del_full(obj, "gadget_created", _backlight_gadget_created_cb, data);
@@ -257,18 +261,24 @@ backlight_del(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, voi
 
    if (inst->popup)
      elm_ctxpopup_dismiss(inst->popup);
+   backlight_shutdown();
    ginstances = eina_list_remove(ginstances, inst);
    free(inst);
 }
 
 EINTERN Evas_Object *
-backlight_gadget_create(Evas_Object *parent, int *id EINA_UNUSED, E_Gadget_Site_Orient orient)
+backlight_gadget_create(Evas_Object *parent, int *id, E_Gadget_Site_Orient orient)
 {
    Instance *inst;
 
    inst = E_NEW(Instance, 1);
    inst->o_main = elm_box_add(parent);
    inst->orient = orient;
+   if (*id != -1)
+     backlight_init();
+   else
+     inst->val = -1.0;
+
    E_EXPAND(inst->o_main);
    E_FILL(inst->o_main);
    evas_object_smart_callback_add(parent, "gadget_created", _backlight_gadget_created_cb, inst);

@@ -3,7 +3,6 @@
 EINTERN void *
 e_modapi_gadget_init(E_Module *m)
 {
-   backlight_init();
    e_gadget_type_add("Backlight", backlight_gadget_create, NULL);
    return m;
 }
@@ -11,7 +10,6 @@ e_modapi_gadget_init(E_Module *m)
 EINTERN int
 e_modapi_gadget_shutdown(E_Module *m EINA_UNUSED)
 {
-   backlight_shutdown();
    e_gadget_type_del("Backlight");
    return 1;
 }
