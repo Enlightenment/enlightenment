@@ -11,5 +11,7 @@ typedef enum _Kbd_Mod
 
 EAPI void e_kbd_send_string_press(const char *str, Kbd_Mod mod);
 EAPI void e_kbd_send_keysym_press(const char *key, Kbd_Mod mod);
+EAPI void e_kbd_send_init(void);
+EAPI void e_kbd_send_shutdown(void);
 
 #endif

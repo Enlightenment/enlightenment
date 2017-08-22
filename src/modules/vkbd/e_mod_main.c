@@ -1,6 +1,7 @@
 #include "e.h"
 #include "e_mod_main.h"
 #include "e_kbd_int.h"
+#include "e_kbd_send.h"
 
 /* local function prototypes */
 static void _il_kbd_stop(void);
@@ -86,12 +87,14 @@ e_modapi_init(E_Module *m)
 
    e_module_delayed_set(m, 1);
    ki_delay_timer = ecore_timer_add(1.0, _il_ki_delay_cb, NULL);
+   e_kbd_send_init();
    return m;
 }
 
 E_API int
 e_modapi_shutdown(E_Module *m EINA_UNUSED)
 {
+   e_kbd_send_shutdown();
    e_config_domain_save("module.vkbd", cd, il_kbd_cfg);
    if (ki_delay_timer)
      {

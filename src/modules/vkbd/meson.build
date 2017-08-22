@@ -14,6 +14,17 @@ src = files(
  )
 
 if get_option(m) == true
+  if get_option('wayland') == true
+    foreach p: [
+      '@0@/unstable/input-method/input-method-unstable-v1.xml'.format(dir_wayland_protocols),
+      '@0@/unstable/text-input/text-input-unstable-v1.xml'.format(dir_wayland_protocols),
+    ]
+      src += gen_scanner_server.process(p)
+      src += gen_scanner_client.process(p)
+      src += gen_scanner_impl.process(p)
+    endforeach
+  endif
+
   cmd = [ edje_cmd,
           '-id', join_paths(meson.source_root(), 'src' , 'modules', m,
                             'images'),
