@@ -1367,10 +1367,10 @@ mixer_shutdown(void)
         free(cm);
      }
 
-   _actions_unregister();
-
    if (gmixer_context)
      {
+        _actions_unregister();
+
         free(gmixer_context->theme);
         E_FREE(gmixer_context);
      }
