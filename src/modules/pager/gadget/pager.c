@@ -140,6 +140,108 @@ static Eina_List *pagers = NULL;
 static E_Action *act_popup_show = NULL;
 static E_Action *act_popup_switch = NULL;
 
+static const char *
+_pager_location_get(Instance *inst)
+{
+   const char *s = "float";
+
+   if (!inst) return NULL;
+
+   E_Gadget_Site_Orient orient = e_gadget_site_orient_get(e_gadget_site_get(inst->o_pager));
+   E_Gadget_Site_Anchor anchor = e_gadget_site_anchor_get(e_gadget_site_get(inst->o_pager));
+
+   if (anchor & E_GADGET_SITE_ANCHOR_LEFT)
+     {
+        if (anchor & E_GADGET_SITE_ANCHOR_TOP)
+          {
+             switch (orient)
+               {
+                case E_GADGET_SITE_ORIENT_HORIZONTAL:
+                  s = "top";
+                  break;
+                case E_GADGET_SITE_ORIENT_VERTICAL:
+                  s = "left";
+                  break;
+                case E_GADGET_SITE_ORIENT_NONE:
+                  s = "left";
+                  break;
+               }
+          }
+        else if (anchor & E_GADGET_SITE_ANCHOR_BOTTOM)
+          {
+             switch (orient)
+               {
+                case E_GADGET_SITE_ORIENT_HORIZONTAL:
+                  s = "bottom";
+                  break;
+                case E_GADGET_SITE_ORIENT_VERTICAL:
+                  s = "left";
+                  break;
+                case E_GADGET_SITE_ORIENT_NONE:
+                  s = "left";
+                  break;
+               }
+          }
+        else
+          s = "left";
+     }
+   else if (anchor & E_GADGET_SITE_ANCHOR_RIGHT)
+     {
+        if (anchor & E_GADGET_SITE_ANCHOR_TOP)
+          {
+             switch (orient)
+               {
+                case E_GADGET_SITE_ORIENT_HORIZONTAL:
+                  s = "top";
+                  break;
+                case E_GADGET_SITE_ORIENT_VERTICAL:
+                  s = "right";
+                  break;
+                case E_GADGET_SITE_ORIENT_NONE:
+                  s = "right";
+                  break;
+               }
+          }
+        else if (anchor & E_GADGET_SITE_ANCHOR_BOTTOM)
+          {
+             switch (orient)
+               {
+                case E_GADGET_SITE_ORIENT_HORIZONTAL:
+                  s = "bottom";
+                  break;
+                case E_GADGET_SITE_ORIENT_VERTICAL:
+                  s = "right";
+                  break;
+                case E_GADGET_SITE_ORIENT_NONE:
+                  s = "right";
+                  break;
+               }
+          }
+        else
+          s = "right";
+     }
+   else if (anchor & E_GADGET_SITE_ANCHOR_TOP)
+     s = "top";
+   else if (anchor & E_GADGET_SITE_ANCHOR_BOTTOM)
+     s = "bottom";
+   else
+     {
+        switch (orient)
+          {
+           case E_GADGET_SITE_ORIENT_HORIZONTAL:
+             s = "bottom";
+             break;
+           case E_GADGET_SITE_ORIENT_VERTICAL:
+             s = "left";
+             break;
+           default:
+             s = "bottom";
+             break;
+          }
+     }
+   return s;
+}
+
 static Eina_Bool
 _pager_check_modifiers(Evas_Modifier *modifiers)
 {
@@ -502,6 +604,8 @@ _pager_desk_free(Pager_Desk *pd)
 static void
 _pager_desk_select(Pager_Desk *pd)
 {
+   char ori[32];
+   const char *s = _pager_location_get(pd->pager->inst);
    if (pd->current) return;
    if (pd->pager->active_pd)
      {
@@ -510,7 +614,11 @@ _pager_desk_select(Pager_Desk *pd)
      }
    pd->current = 1;
    evas_object_raise(pd->o_desk);
-   edje_object_signal_emit(pd->o_desk, "e,state,selected", "e");
+   if (s) 
+     snprintf(ori, sizeof(ori), "e,state,selected,%s", s);
+   else
+     snprintf(ori, sizeof(ori), "e,state,selected,bottom");
+   edje_object_signal_emit(pd->o_desk, ori, "e");
    pd->pager->active_pd = pd;
 }
 
@@ -859,7 +967,15 @@ _pager_cb_config_gadget_updated(void)
      EINA_LIST_FOREACH(p->desks, ll, pd)
        {
           if (pd->current)
-            edje_object_signal_emit(pd->o_desk, "e,state,selected", "e");
+            {
+               char ori[32];
+	       const char *s = _pager_location_get(pd->pager->inst);
+               if (s)
+                 snprintf(ori, sizeof(ori), "e,state,selected,%s", s);
+               else
+                 snprintf(ori, sizeof(ori), "e,state,selected,bottom");
+               edje_object_signal_emit(pd->o_desk, ori, "e");
+            }
           else
             edje_object_signal_emit(pd->o_desk, "e,state,unselected", "e");
           if (pager_config->show_desk_names)
