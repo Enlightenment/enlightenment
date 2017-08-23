@@ -436,7 +436,6 @@ netstatus_create(Evas_Object *parent, int *id, E_Gadget_Site_Orient orient EINA_
    inst->cfg->netstatus.outstring = NULL;
    inst->cfg->netstatus.popup = NULL;
    inst->o_main = elm_box_add(parent);
-   E_EXPAND(inst->o_main);
    evas_object_data_set(inst->o_main, "Instance", inst);
    evas_object_smart_callback_add(parent, "gadget_created", _netstatus_created_cb, inst);
    evas_object_smart_callback_add(parent, "gadget_removed", _netstatus_removed_cb, inst);

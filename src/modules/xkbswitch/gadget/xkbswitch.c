@@ -282,8 +282,6 @@ xkbg_gadget_create(Evas_Object *parent, int *id EINA_UNUSED, E_Gadget_Site_Orien
    inst = E_NEW(Instance, 1);
    inst->o_main = elm_box_add(parent);
    inst->orient = orient;
-   E_EXPAND(inst->o_main);
-   E_FILL(inst->o_main);
    evas_object_smart_callback_add(parent, "gadget_created", _xkbg_gadget_created_cb, inst);
    evas_object_event_callback_add(inst->o_main, EVAS_CALLBACK_DEL, xkbg_del, inst);
 

@@ -672,8 +672,6 @@ mixer_gadget_create(Evas_Object *parent, int *id, E_Gadget_Site_Orient orient)
    inst->o_main = elm_box_add(parent);
    inst->orient = orient;
    inst->id = *id;
-   E_EXPAND(inst->o_main);
-   E_FILL(inst->o_main);
    evas_object_show(inst->o_main);   
 
    evas_object_smart_callback_add(parent, "gadget_created", _mixer_gadget_created_cb, inst);

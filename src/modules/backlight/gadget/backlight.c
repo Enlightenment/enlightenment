@@ -278,9 +278,6 @@ backlight_gadget_create(Evas_Object *parent, int *id, E_Gadget_Site_Orient orien
      backlight_init();
    else
      inst->val = -1.0;
-
-   E_EXPAND(inst->o_main);
-   E_FILL(inst->o_main);
    evas_object_smart_callback_add(parent, "gadget_created", _backlight_gadget_created_cb, inst);
    if (*id != -1)
      {
