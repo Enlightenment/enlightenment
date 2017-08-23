@@ -38,11 +38,7 @@ config.rpath \
 README \
 AUTHORS \
 COPYING \
-enlightenment.spec.in \
-enlightenment.spec \
-enlightenment.pc \
-pkgbuild/PKGBUILD \
-pkgbuild/enlightenment.install
+enlightenment.pc
 
 include m4/Makefile.mk
 

@@ -1056,7 +1056,6 @@ AC_SUBST([SUID_LDFLAGS])
 
 AC_OUTPUT([
 Makefile
-enlightenment.spec
 enlightenment.pc
 src/bin/e_fm_shared_types.h
 src/modules/everything/everything.pc
