@@ -74,7 +74,6 @@ struct _Icon
    Instance         *inst;
    Evas_Object      *o_layout;
    Evas_Object      *o_icon;
-   Evas_Object      *o_overlay;
    Evas_Object      *o_spacera;
    Evas_Object      *o_spacerb;
    Evas_Object      *preview;

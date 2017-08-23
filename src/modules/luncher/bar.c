@@ -250,7 +250,6 @@ _bar_icon_del(Instance *inst, Icon *ic)
    if (!inst->main_del)
      _bar_aspect(inst);
    evas_object_del(ic->o_icon);
-   evas_object_del(ic->o_overlay);
    evas_object_del(ic->o_layout);
    eina_hash_del_by_data(inst->icons_desktop_hash, ic);
    eina_hash_del_by_data(inst->icons_clients_hash, ic);
@@ -1106,7 +1105,6 @@ _bar_icon_file_set(Icon *ic, Efreet_Desktop *desktop, E_Client *non_desktop_clie
         k = "e/icons/unknown";
      }
    elm_image_file_set(ic->o_icon, path, k);
-   elm_image_file_set(ic->o_overlay, path, k);
 }
 
 static void
@@ -1223,8 +1221,6 @@ _bar_icon_add(Instance *inst, Efreet_Desktop *desktop, E_Client *non_desktop_cli
    ic->o_icon = elm_icon_add(ic->o_layout);
    E_EXPAND(ic->o_icon);
 
-   ic->o_overlay = elm_icon_add(ic->o_layout);
-   E_EXPAND(ic->o_overlay);
 
    _bar_icon_file_set(ic, desktop, non_desktop_client);
 
@@ -1260,10 +1256,6 @@ _bar_icon_add(Instance *inst, Efreet_Desktop *desktop, E_Client *non_desktop_cli
    evas_object_event_callback_add(ic->o_icon, EVAS_CALLBACK_MOUSE_OUT,
        _bar_icon_mouse_out, ic);
    evas_object_show(ic->o_icon);
-
-   evas_object_size_hint_aspect_set(ic->o_overlay, EVAS_ASPECT_CONTROL_BOTH, 1, 1);
-   elm_layout_content_set(ic->o_layout, "e.swallow.overlay", ic->o_overlay);
-   evas_object_show(ic->o_overlay);
 
    if (desktop)
      eina_hash_add(inst->icons_desktop_hash, eina_stringshare_add(desktop->orig_path), ic);

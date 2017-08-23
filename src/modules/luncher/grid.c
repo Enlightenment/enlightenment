@@ -61,7 +61,6 @@ _grid_icon_del(Instance *inst, Icon *ic)
 {
    inst->icons = eina_list_remove(inst->icons, ic);
    evas_object_del(ic->o_icon);
-   evas_object_del(ic->o_overlay);
    evas_object_del(ic->o_layout);
    if (ic->desktop)
      efreet_desktop_unref(ic->desktop);
@@ -311,7 +310,6 @@ _grid_icon_file_set(Icon *ic, Efreet_Desktop *desktop)
         k =  "e/icons/unknown";
      }
    elm_image_file_set(ic->o_icon, path, k);
-   elm_image_file_set(ic->o_overlay, path, k);
 }
 
 static Icon *
@@ -340,8 +338,6 @@ _grid_icon_add(Instance *inst, Efreet_Desktop *desktop)
    ic->o_icon = elm_icon_add(ic->o_layout);
    E_EXPAND(ic->o_icon);
 
-   ic->o_overlay = elm_icon_add(ic->o_layout);
-   E_EXPAND(ic->o_overlay);
 
    _grid_icon_file_set(ic, desktop);
 
@@ -361,10 +357,6 @@ _grid_icon_add(Instance *inst, Efreet_Desktop *desktop)
    evas_object_event_callback_add(ic->o_icon, EVAS_CALLBACK_MOUSE_OUT,
        _grid_icon_mouse_out, ic);
    evas_object_show(ic->o_icon);
-
-   evas_object_size_hint_aspect_set(ic->o_overlay, EVAS_ASPECT_CONTROL_BOTH, 1, 1);
-   elm_layout_content_set(ic->o_layout, "e.swallow.overlay", ic->o_overlay);
-   evas_object_show(ic->o_overlay);
 
    elm_layout_sizing_eval(ic->o_layout);
 
