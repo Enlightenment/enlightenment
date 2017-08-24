@@ -154,10 +154,9 @@ _cpumonitor_resize_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *e
      }
    if (w < 1) w = 1;
    if (h < 1) h = 1;
+   evas_object_size_hint_aspect_set(inst->cfg->cpumonitor.o_gadget_box, EVAS_ASPECT_CONTROL_BOTH, w, h);
    if (inst->cfg->esm == E_SYSINFO_MODULE_CPUMONITOR)
      evas_object_size_hint_aspect_set(inst->o_main, EVAS_ASPECT_CONTROL_BOTH, w, h);
-   else
-     evas_object_size_hint_aspect_set(inst->cfg->cpumonitor.o_gadget, EVAS_ASPECT_CONTROL_BOTH, w, h);
 }
 
 static void
@@ -273,6 +272,8 @@ _cpumonitor_config_updated(Instance *inst)
              thc->total = 0;
              thc->idle = 0;
              thc->percent = 60;
+             thc->num_cores = 4;
+             inst->cfg->cpumonitor.cores = thc->num_cores;
              for (i = 0; i < 4; i++)
                {
                   core = E_NEW(CPU_Core, 1);
@@ -312,6 +313,7 @@ _cpumonitor_config_updated(Instance *inst)
 #else
         thc->num_cores = _cpumonitor_proc_getcores();
 #endif
+        inst->cfg->cpumonitor.cores = thc->num_cores;
         for (i = 0; i < thc->num_cores; i++)
           {
              core = E_NEW(CPU_Core, 1);
