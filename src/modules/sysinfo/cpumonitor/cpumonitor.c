@@ -214,10 +214,10 @@ _cpumonitor_add_layout(Instance *inst)
    edje_object_update_hints_set(elm_layout_edje_get(layout), EINA_TRUE);
    if (orient == E_GADGET_SITE_ORIENT_VERTICAL)
      e_theme_edje_object_set(layout, "base/theme/gadget/cpumonitor",
-                             "e/gadget/cpumonitor/main_vert");
+                             "e/gadget/cpumonitor/core/main_vert");
    else
      e_theme_edje_object_set(layout, "base/theme/gadget/cpumonitor",
-                             "e/gadget/cpumonitor/main");
+                             "e/gadget/cpumonitor/core/main");
    E_EXPAND(layout);
    E_FILL(layout);
    elm_box_pack_end(inst->cfg->cpumonitor.o_gadget_box, layout);
@@ -390,10 +390,20 @@ _cpumonitor_created_cb(void *data, Evas_Object *obj, void *event_data EINA_UNUSE
 
    e_gadget_configure_cb_set(inst->o_main, _cpumonitor_configure_cb);
 
-   inst->cfg->cpumonitor.o_gadget = elm_table_add(inst->o_main);
+   inst->cfg->cpumonitor.o_gadget = elm_layout_add(inst->o_main);
+   if (orient == E_GADGET_SITE_ORIENT_VERTICAL)
+     e_theme_edje_object_set(inst->cfg->cpumonitor.o_gadget,
+                             "base/theme/gadget/cpumonitor",
+                             "e/gadget/cpumonitor/main_vert");
+   else
+     e_theme_edje_object_set(inst->cfg->cpumonitor.o_gadget,
+                             "base/theme/gadget/cpumonitor",
+                             "e/gadget/cpumonitor/main");
    E_EXPAND(inst->cfg->cpumonitor.o_gadget);
    E_FILL(inst->cfg->cpumonitor.o_gadget);
    elm_box_pack_end(inst->o_main, inst->cfg->cpumonitor.o_gadget);
+   evas_object_event_callback_add(inst->cfg->cpumonitor.o_gadget, EVAS_CALLBACK_MOUSE_DOWN,
+                                  _cpumonitor_mouse_down_cb, inst);
    evas_object_show(inst->cfg->cpumonitor.o_gadget);
 
    inst->cfg->cpumonitor.o_gadget_box = elm_box_add(inst->cfg->cpumonitor.o_gadget);
@@ -404,16 +414,8 @@ _cpumonitor_created_cb(void *data, Evas_Object *obj, void *event_data EINA_UNUSE
      elm_box_horizontal_set(inst->cfg->cpumonitor.o_gadget_box, EINA_TRUE);
    E_EXPAND(inst->cfg->cpumonitor.o_gadget_box);
    E_FILL(inst->cfg->cpumonitor.o_gadget_box);
-   elm_table_pack(inst->cfg->cpumonitor.o_gadget, inst->cfg->cpumonitor.o_gadget_box, 0, 0, 1, 1);
+   elm_layout_content_set(inst->cfg->cpumonitor.o_gadget, "e.swallow.content", inst->cfg->cpumonitor.o_gadget_box);
    evas_object_show(inst->cfg->cpumonitor.o_gadget_box);
-
-   inst->cfg->cpumonitor.event = evas_object_rectangle_add(inst->cfg->cpumonitor.o_gadget);
-   evas_object_color_set(inst->cfg->cpumonitor.event, 0, 0, 0, 0);
-   E_EXPAND(inst->cfg->cpumonitor.event);
-   E_FILL(inst->cfg->cpumonitor.event);
-   evas_object_event_callback_add(inst->cfg->cpumonitor.event, EVAS_CALLBACK_MOUSE_DOWN, _cpumonitor_mouse_down_cb, inst);
-   elm_table_pack(inst->cfg->cpumonitor.o_gadget, inst->cfg->cpumonitor.event, 0, 0, 1, 1);
-   evas_object_show(inst->cfg->cpumonitor.event);
 
    evas_object_smart_callback_del_full(obj, "gadget_created", _cpumonitor_created_cb, data);
 
@@ -429,11 +431,15 @@ sysinfo_cpumonitor_create(Evas_Object *parent, Instance *inst)
    inst->cfg->cpumonitor.percent = 0;
    inst->cfg->cpumonitor.popup = NULL;
    inst->cfg->cpumonitor.configure = NULL;
-   inst->cfg->cpumonitor.o_gadget = elm_table_add(parent);
+   inst->cfg->cpumonitor.o_gadget = elm_layout_add(parent);
+   e_theme_edje_object_set(inst->cfg->cpumonitor.o_gadget,
+                           "base/theme/gadget/cpumonitor",
+                           "e/gadget/cpumonitor/main");
    E_EXPAND(inst->cfg->cpumonitor.o_gadget);
    E_FILL(inst->cfg->cpumonitor.o_gadget);
-   if (inst->cfg->esm != E_SYSINFO_MODULE_SYSINFO)
-     elm_box_pack_end(inst->o_main, inst->cfg->cpumonitor.o_gadget);
+   elm_box_pack_end(inst->o_main, inst->cfg->cpumonitor.o_gadget);
+   evas_object_event_callback_add(inst->cfg->cpumonitor.o_gadget, EVAS_CALLBACK_MOUSE_DOWN,
+                                  _cpumonitor_mouse_down_cb, inst);
    evas_object_show(inst->cfg->cpumonitor.o_gadget);
 
    inst->cfg->cpumonitor.o_gadget_box = elm_box_add(inst->cfg->cpumonitor.o_gadget);
@@ -441,16 +447,8 @@ sysinfo_cpumonitor_create(Evas_Object *parent, Instance *inst)
    elm_box_horizontal_set(inst->cfg->cpumonitor.o_gadget_box, EINA_TRUE);
    E_EXPAND(inst->cfg->cpumonitor.o_gadget_box);
    E_FILL(inst->cfg->cpumonitor.o_gadget_box);
-   elm_table_pack(inst->cfg->cpumonitor.o_gadget, inst->cfg->cpumonitor.o_gadget_box, 0, 0, 1, 1);
+   elm_layout_content_set(inst->cfg->cpumonitor.o_gadget, "e.swallow.content", inst->cfg->cpumonitor.o_gadget_box);
    evas_object_show(inst->cfg->cpumonitor.o_gadget_box);
-
-   inst->cfg->cpumonitor.event = evas_object_rectangle_add(inst->cfg->cpumonitor.o_gadget);
-   evas_object_color_set(inst->cfg->cpumonitor.event, 0, 0, 0, 0);
-   E_EXPAND(inst->cfg->cpumonitor.event);
-   E_FILL(inst->cfg->cpumonitor.event);
-   evas_object_event_callback_add(inst->cfg->cpumonitor.event, EVAS_CALLBACK_MOUSE_DOWN, _cpumonitor_mouse_down_cb, inst);
-   elm_table_pack(inst->cfg->cpumonitor.o_gadget, inst->cfg->cpumonitor.event, 0, 0, 1, 1);
-   evas_object_show(inst->cfg->cpumonitor.event);
 
    E_LIST_HANDLER_APPEND(inst->cfg->cpumonitor.handlers, E_EVENT_SCREENSAVER_ON, _screensaver_on, inst);
    E_LIST_HANDLER_APPEND(inst->cfg->cpumonitor.handlers, E_EVENT_SCREENSAVER_OFF, _screensaver_off, inst);
