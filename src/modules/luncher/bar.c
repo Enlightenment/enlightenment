@@ -1014,7 +1014,7 @@ _bar_icon_file_set(Icon *ic, Efreet_Desktop *desktop, E_Client *non_desktop_clie
           path = NULL;
         else if (strncmp(desktop->icon, "/", 1) && !ecore_file_exists(desktop->icon))
           {
-             clamp = (4 * round((double)ic->inst->size/4));
+             clamp = MAX((4 * round((double)ic->inst->size/4)), 8);
              path = efreet_icon_path_find(e_config->icon_theme, desktop->icon, clamp);
              if (!path)
                {
