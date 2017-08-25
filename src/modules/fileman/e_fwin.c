@@ -826,15 +826,19 @@ _e_fwin_icon_hints(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *even
 
    popup_icon = e_fm2_icon_file_get(fwin->cur_page->fm_obj, fwin->over_file);
    if (!popup_icon) return;
-   zone = fwin->zone ?: e_comp_object_util_zone_get(fwin->win);
    e_fm2_icon_geometry_get(popup_icon->ic, &x, &y, &w, &h);
    if (fwin->zone)
      {
+        zone = fwin->zone;
         evas_object_geometry_get(popup_icon->fm, &fx, &fy, NULL, NULL);
         fx -= zone->x, fy -= zone->y;
      }
    else
-     evas_object_geometry_get(fwin->win, &fx, &fy, NULL, NULL);
+     {
+        E_Client *ec = e_win_client_get(fwin->win);
+        fx = ec->x, fy = ec->y;
+        zone = ec->zone;
+     }
    edje = evas_object_smart_parent_get(obj);
    /* failing to unswallow here causes edje to fail its min size calculations */
    edje_object_part_unswallow(edje, obj);
@@ -915,7 +919,8 @@ _e_fwin_icon_popup(void *data)
    e_widget_filepreview_path_set(o, buf, popup_icon->mime);
    e_widget_list_object_append(list, o, 1, 0, 0.5);
    edje_object_part_swallow(bg, "e.swallow.content", list);
-   
+
+   _e_fwin_icon_hints(fwin, NULL, list, NULL);
    evas_object_event_callback_add(list, EVAS_CALLBACK_CHANGED_SIZE_HINTS, _e_fwin_icon_hints, fwin);
 
    fwin->popup = e_comp_object_util_add(bg, E_COMP_OBJECT_TYPE_POPUP);
