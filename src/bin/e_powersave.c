@@ -186,7 +186,8 @@ e_powersave_sleeper_sleep(E_Powersave_Sleeper *sleeper, int poll_interval)
         ret = select(sleeper->fd + 1, &rfds, &wfds, &exfds, &tv);
         if ((ret == 1) && (FD_ISSET(sleeper->fd, &rfds)))
           {
-             read(sleeper->fd, buf, 1);
+             if (read(sleeper->fd, buf, 1) < 0)
+               fprintf(stderr, "%s: ERROR READING FROM FD\n", __func__);
              return;
           }
         else if (ret == 0)
@@ -207,7 +208,8 @@ _e_powersave_sleepers_wake(void)
 
    EINA_LIST_FOREACH(powersave_sleepers, l, sleeper)
      {
-        write(ecore_pipe_write_fd(sleeper->pipe), buf, 1);
+        if (write(ecore_pipe_write_fd(sleeper->pipe), buf, 1) < 0)
+          fprintf(stderr, "%s: ERROR WRITING TO FD\n", __func__);
         ecore_pipe_write(sleeper->pipe, buf, 1);
      }
 }
