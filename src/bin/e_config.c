@@ -874,6 +874,7 @@ e_config_init(void)
         if (!getenv("E_CONF_PROFILE"))
           e_util_env_set("E_CONF_PROFILE", _e_config_profile);
      }
+   e_util_env_set("ELM_PROFILE", _e_config_profile);
 
    _e_config_bindings_mouse_edd = E_CONFIG_DD_NEW("E_Config_Binding_Mouse",
                                                   E_Config_Binding_Mouse);
@@ -1497,7 +1498,15 @@ e_config_load(void)
                     e_config->modules = eina_list_append(e_config->modules, module);
                  }
             }
+          CONFIG_VERSION_CHECK(24)
+            {
+               CONFIG_VERSION_UPDATE_INFO(24);
+
+               if (!elm_config_profile_exists(_e_config_profile))
+                 elm_config_profile_save(_e_config_profile);
+            }
      }
+   elm_config_profile_set(_e_config_profile);
    if (!e_config->remember_internal_fm_windows)
      e_config->remember_internal_fm_windows = !!(e_config->remember_internal_windows & E_REMEMBER_INTERNAL_FM_WINS);
 
