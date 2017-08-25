@@ -439,7 +439,6 @@ sysinfo_cpumonitor_create(Evas_Object *parent, Instance *inst)
                            "e/gadget/cpumonitor/main");
    E_EXPAND(inst->cfg->cpumonitor.o_gadget);
    E_FILL(inst->cfg->cpumonitor.o_gadget);
-   elm_box_pack_end(inst->o_main, inst->cfg->cpumonitor.o_gadget);
    evas_object_event_callback_add(inst->cfg->cpumonitor.o_gadget, EVAS_CALLBACK_MOUSE_DOWN,
                                   _cpumonitor_mouse_down_cb, inst);
    evas_object_show(inst->cfg->cpumonitor.o_gadget);
