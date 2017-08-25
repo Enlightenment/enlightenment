@@ -55,6 +55,7 @@ struct _E_Widget_Data
    Eina_Bool     clamp_video : 1;
    Eina_Bool     delete_me : 1;
    Eina_Bool     preview_text_file_next : 1;
+   Eina_Bool     vid_sized : 1;
 };
 
 static void  _e_wid_fprev_preview_update(void *data, Evas_Object *obj, void *event_info);
@@ -226,6 +227,36 @@ _e_wid_fprev_clear_widgets(E_Widget_Data *wd)
 }
 
 static void
+_fprev_video_size(E_Widget_Data *wd, Evas_Object *obj)
+{
+   double ratio;
+   int iw, ih;
+   Evas_Coord w, h, mw, mh, ow, oh;
+
+   if (wd->vid_sized) return;
+   evas_object_geometry_get(wd->o_preview_properties_table, NULL, NULL, &w, &h);
+   if (w < 10) return;
+   evas_object_geometry_get(wd->o_preview_preview, NULL, NULL, &ow, &oh);
+   wd->vid_sized = 1;
+   w -= 4;
+   emotion_object_size_get(obj, &iw, &ih);
+   ratio = emotion_object_ratio_get(obj);
+   if (ratio > 0.0) iw = (ih * ratio) + 0.5;
+   if (iw < 1) iw = 1;
+   if (ih < 1) ih = 1;
+
+   h = (w * ih) / iw;
+   e_widget_size_min_set(wd->o_preview_preview, w, h);
+   e_widget_table_object_repack(wd->o_preview_properties_table,
+                                wd->o_preview_preview, 0, 0, 2, 2, 1, 1, 1, 1);
+   e_widget_list_object_repack(wd->o_preview_list,
+                               wd->o_preview_properties_table,
+                               1, 1, 0.5);
+   e_widget_size_min_get(wd->o_preview_list, &mw, &mh);
+   e_widget_size_min_set(wd->obj, mw, mh);
+}
+
+static void
 _e_wid_fprev_preview_video_position(E_Widget_Data *wd, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
    double t, tot;
@@ -235,43 +266,14 @@ _e_wid_fprev_preview_video_position(E_Widget_Data *wd, Evas_Object *obj, void *e
    if (!EINA_DBL_NONZERO(tot)) return;
    wd->vid_pct = t = (emotion_object_position_get(obj) * 100.0) / emotion_object_play_length_get(obj);
    e_widget_slider_value_double_set(wd->o_preview_time, t);
+   _fprev_video_size(wd, obj);
 }
 
 static void
 _e_wid_fprev_preview_video_opened(E_Widget_Data *wd, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
-   double ratio;
-   int iw, ih;
-   Evas_Coord w, h, mw, mh, ow, oh;
-
-   evas_object_geometry_get(wd->o_preview_preview, NULL, NULL, &ow, &oh);
-   evas_object_geometry_get(wd->o_preview_properties_table, NULL, NULL, &w, &h);
-
    e_widget_entry_text_set(wd->o_preview_extra_entry, e_util_time_str_get(emotion_object_play_length_get(obj)));
-
-   if (w < 10) return;
-   w -= 4;
-   emotion_object_size_get(obj, &iw, &ih);
-   ratio = emotion_object_ratio_get(obj);
-   if (ratio > 0.0) iw = (ih * ratio) + 0.5;
-   if (iw < 1) iw = 1;
-   if (ih < 1) ih = 1;
-
-   h = (w * ih) / iw;
-   e_widget_preview_vsize_set(wd->o_preview_preview, w, h);
-   if (h > oh)
-     {
-        w = (w * oh) / h;
-        h = oh;
-     }
-   e_widget_size_min_set(wd->o_preview_preview, w, h);
-   e_widget_table_object_repack(wd->o_preview_properties_table,
-                                wd->o_preview_preview, 0, 0, 2, 2, 0, 0, 1, 1);
-   e_widget_list_object_repack(wd->o_preview_list,
-                               wd->o_preview_properties_table,
-                               1, 1, 0.5);
-   e_widget_size_min_get(wd->o_preview_list, &mw, &mh);
-   e_widget_size_min_set(wd->obj, mw, mh);
+   _fprev_video_size(wd, obj);
 }
 
 static void
@@ -280,6 +282,7 @@ _e_wid_fprev_preview_video_resize(E_Widget_Data *wd, Evas_Object *obj, void *eve
    int w, h;
    char buf[128];
 
+   _fprev_video_size(wd, obj);
    emotion_object_size_get(obj, &w, &h);
 
    snprintf(buf, sizeof(buf), "%dx%d", w, h);
@@ -343,13 +346,11 @@ _e_wid_fprev_preview_video_widgets(E_Widget_Data *wd)
    e_widget_table_object_append(wd->o_preview_properties_table,
                                 o, 0, 0, 2, 2, 1, 1, 1, 1);
 
-   wd->o_preview_preview = e_widget_preview_add(evas, 4, 4);
-   em = o = emotion_object_add(e_widget_preview_evas_get(wd->o_preview_preview));
-   emotion_object_init(o, "gstreamer1");
+   em = o = emotion_object_add(evas);
    emotion_object_file_set(o, wd->path);
    emotion_object_play_set(o, EINA_TRUE);
-   evas_object_size_hint_aspect_set(o, EVAS_ASPECT_CONTROL_BOTH, wd->w, wd->h);
-   e_widget_preview_extern_object_set(wd->o_preview_preview, o);
+   emotion_object_init(o, "gstreamer1");
+   wd->o_preview_preview = e_widget_image_add_from_object(evas, o, 4, 4);
    e_widget_table_object_append(wd->o_preview_properties_table,
                                 wd->o_preview_preview, 0, 0, 2, 2, 1, 1, 1, 1);
 
