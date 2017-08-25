@@ -794,7 +794,7 @@ e_hints_window_state_update(E_Client *ec, int state, int action)
       case ECORE_X_WINDOW_STATE_MAXIMIZED_HORZ:
       case INT_MAX:
       {
-         E_Maximize max[] =
+         int max[] =
          {
             [ECORE_X_WINDOW_STATE_MAXIMIZED_VERT] = E_MAXIMIZE_VERTICAL,
             [ECORE_X_WINDOW_STATE_MAXIMIZED_HORZ] = E_MAXIMIZE_HORIZONTAL,
