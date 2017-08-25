@@ -593,13 +593,15 @@ _site_gadget_aspect(E_Gadget_Config *zgc, Evas_Coord *ww, Evas_Coord *hh, int ax
      }
 }
 
-static void
+static Eina_Bool
 _site_gadget_resize(Evas_Object *g, int w, int h, Evas_Coord *ww, Evas_Coord *hh, Evas_Coord *ow, Evas_Coord *oh)
 {
    Evas_Coord mnw, mnh, mxw, mxh;
    E_Gadget_Config *zgc;
    Evas_Aspect_Control aspect;
    int ax, ay;
+   double ex, ey;
+   Eina_Bool ret = EINA_FALSE;
 
    zgc = evas_object_data_get(g, "__e_gadget");
    w -= zgc->style.minw;
@@ -608,16 +610,19 @@ _site_gadget_resize(Evas_Object *g, int w, int h, Evas_Coord *ww, Evas_Coord *hh
    evas_object_size_hint_min_get(g, &mnw, &mnh);
    evas_object_size_hint_max_get(g, &mxw, &mxh);
    evas_object_size_hint_aspect_get(g, &aspect, &ax, &ay);
+   evas_object_size_hint_weight_get(g, &ex, &ey);
 
    if (IS_HORIZ(zgc->site->orient))
      {
         *ww = mnw, *hh = h;
         if (!(*ww)) *ww = *hh;
+        if (dblequal(ex, EVAS_HINT_EXPAND) && (!aspect)) ret = EINA_TRUE;
      }
    else if (IS_VERT(zgc->site->orient))
      {
         *hh = mnh, *ww = w;
         if (!(*hh)) *hh = *ww;
+        if (dblequal(ey, EVAS_HINT_EXPAND) && (!aspect)) ret = EINA_TRUE;
      }
    else
      {
@@ -646,6 +651,7 @@ _site_gadget_resize(Evas_Object *g, int w, int h, Evas_Coord *ww, Evas_Coord *hh
      }
    //fprintf(stderr, "%s: %dx%d\n", zgc->type, *ow, *oh);
    evas_object_resize(zgc->display, *ow, *oh);
+   return ret;
 }
 
 static void
@@ -668,10 +674,21 @@ _site_layout_orient(Evas_Object *o, E_Gadget_Site *zgs)
    Eina_List *l;
    double ax, ay;
    E_Gadget_Config *zgc;
-   int mw, mh, sw, sh;
+   int mw, mh, sw, sh, rw, rh, bw, bh;
+   int expand_count;
+   struct Size
+   {
+      Evas_Coord_Size size;
+      Evas_Coord_Size clipped;
+      Eina_Bool expand;
+      Evas_Object *obj;
+   } *size;
+   Eina_List *expand = NULL, *gadgets = NULL;
 
    evas_object_geometry_get(o, &x, &y, &w, &h);
    if ((!w) && (!h)) return;
+   evas_object_geometry_get(elm_object_parent_widget_get(zgs->layout), NULL, NULL, &bw, &bh);
+   rw = bw, rh = bh;
    evas_object_size_hint_min_get(o, &mw, &mh);
    evas_object_size_hint_min_get(zgs->layout, &sw, &sh);
    evas_object_geometry_set(zgs->events, x, y, w, h);
@@ -681,27 +698,70 @@ _site_layout_orient(Evas_Object *o, E_Gadget_Site *zgs)
    xx = x;
    yy = y;
 
+   EINA_LIST_FOREACH(zgs->gadgets, l, zgc)
+     {
+        int ww, hh, ow, oh;
+        Eina_Bool ex;
+
+        if (!zgc->display) continue;
+        ex = _site_gadget_resize(zgc->gadget, w, h, &ww, &hh, &ow, &oh);
+        size = E_NEW(struct Size, 1);
+        size->size.w = ww;
+        size->size.h = hh;
+        size->clipped.w = ow;
+        size->clipped.h = oh;
+        size->expand = ex;
+        size->obj = zgc->display;
+        gadgets = eina_list_append(gadgets, size);
+        if (ex)
+          {
+             expand = eina_list_append(expand, size);
+             continue;
+          }
+        if (IS_HORIZ(zgs->orient))
+          rw = MAX(rw - ow, 0);
+        else if (IS_VERT(zgs->orient))
+          rh = MAX(rh - oh, 0);
+     }
+
+   expand_count = eina_list_count(expand);
+   EINA_LIST_FREE(expand, size)
+     {
+        if (IS_HORIZ(zgs->orient))
+          {
+             if (rw)
+               size->size.w = size->clipped.w = rw / expand_count;
+             else
+               size->size.w = size->clipped.w = 0;
+          }
+        else if (IS_VERT(zgs->orient))
+          {
+             if (rh)
+               size->size.h = size->clipped.h = rh / expand_count;
+             else
+               size->size.h = size->clipped.h = 0;
+          }
+        evas_object_resize(size->obj, size->clipped.w, size->clipped.h);
+     }
+
    if (zgs->gravity % 2)//left/top
      {
-        EINA_LIST_FOREACH(zgs->gadgets, l, zgc)
+        EINA_LIST_FREE(gadgets, size)
           {
              Evas_Coord gx = xx, gy = yy;
-             int ww, hh, ow, oh;
 
-             if (!zgc->display) continue;
-
-             _site_gadget_resize(zgc->gadget, w, h, &ww, &hh, &ow, &oh);
              if (IS_HORIZ(zgs->orient))
-               gx += (Evas_Coord)(((double)(ww - ow)) * 0.5),
-               gy += (h / 2) - (oh / 2);
+               gx += (Evas_Coord)(((double)(size->size.w - size->clipped.w)) * 0.5),
+               gy += (h / 2) - (size->clipped.h / 2);
              else if (IS_VERT(zgs->orient))
-               gy += (Evas_Coord)(((double)(hh - oh)) * 0.5),
-               gx += (w / 2) - (ow / 2);
-             evas_object_move(zgc->display, gx, gy);
+               gy += (Evas_Coord)(((double)(size->size.h - size->clipped.h)) * 0.5),
+               gx += (w / 2) - (size->clipped.w / 2);
+             evas_object_move(size->obj, gx, gy);
              if (IS_HORIZ(zgs->orient))
-               xx += ow;
+               xx += size->clipped.w;
              else
-               yy += oh;
+               yy += size->clipped.h;
+             free(size);
           }
      }
    else if (zgs->gravity)
@@ -711,25 +771,22 @@ _site_layout_orient(Evas_Object *o, E_Gadget_Site *zgs)
         else
           yy += h;
 
-        EINA_LIST_REVERSE_FOREACH(zgs->gadgets, l, zgc)
+        E_LIST_REVERSE_FREE(gadgets, size)
           {
              Evas_Coord gx = xx, gy = yy;
-             int ww, hh, ow, oh;
 
-             if (!zgc->display) continue;
-
-             _site_gadget_resize(zgc->gadget, w, h, &ww, &hh, &ow, &oh);
              if (IS_HORIZ(zgs->orient))
-               gx -= (Evas_Coord)(((double)(ww - ow)) * 0.5) + ow,
-               gy += (h / 2) - (oh / 2);
+               gx -= (Evas_Coord)(((double)(size->size.w - size->clipped.w)) * 0.5) + size->clipped.w,
+               gy += (h / 2) - (size->clipped.h / 2);
              else
-               gy -= (Evas_Coord)(((double)(hh - oh)) * 0.5) + oh,
-               gx += (w / 2) - (ow / 2);
-             evas_object_move(zgc->display, gx, gy);
+               gy -= (Evas_Coord)(((double)(size->size.h - size->clipped.h)) * 0.5) + size->clipped.h,
+               gx += (w / 2) - (size->clipped.w / 2);
+             evas_object_move(size->obj, gx, gy);
              if (IS_HORIZ(zgs->orient))
-               xx -= ow;
+               xx -= size->clipped.w;
              else
-               yy -= oh;
+               yy -= size->clipped.h;
+             free(size);
           }
      }
 

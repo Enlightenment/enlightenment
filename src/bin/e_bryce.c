@@ -16,6 +16,7 @@ typedef struct Bryce
    Evas_Object *scroller;
    Evas_Object *autohide_event;
    Eina_List *zone_obstacles;
+   Eina_List *spacers;
 
    Evas_Object *parent; //comp_object is not an elm widget
    Eina_Stringshare *style;
@@ -47,6 +48,7 @@ typedef struct Bryce
    Eina_Bool mouse_in : 1;
    Eina_Bool noshadow : 1;
    Eina_Bool size_changed : 1;
+   Eina_Bool editing : 1;
 } Bryce;
 
 typedef struct Bryces
@@ -731,6 +733,7 @@ _bryce_gadgets_menu_close(void *data, Evas_Object *obj)
    Bryce *b = data;
 
    b->autohide_blocked--;
+   b->editing = 0;
    evas_object_layer_set(b->bryce, b->layer);
    evas_object_hide(obj);
    evas_object_del(obj);
@@ -745,6 +748,7 @@ _bryce_gadgets_menu(void *data, E_Menu *m EINA_UNUSED, E_Menu_Item *mi EINA_UNUS
    Evas_Object *comp_object;
 
    b->autohide_blocked++;
+   b->editing = 1;
    comp_object = e_gadget_site_edit(b->site);
    evas_object_layer_set(b->bryce, E_LAYER_POPUP);
    e_comp_object_util_autoclose(comp_object, _bryce_gadgets_menu_close, e_comp_object_util_autoclose_on_escape, b);
@@ -1132,7 +1136,11 @@ e_bryce_autosize_set(Evas_Object *bryce, Eina_Bool set)
 
    if (b->autosize == set) return;
    b->autosize = set;
-
+   if (set)
+     {
+        while (b->spacers)
+          e_gadget_del(eina_list_data_get(b->spacers));
+     }
    e_config_save_queue();
    _bryce_autosize(b);
 }
@@ -1287,6 +1295,46 @@ e_bryce_save(void)
    e_config_domain_save("e_bryces", edd_bryces, bryces);
 }
 
+static void
+bryce_spacer_del(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
+{
+   Bryce *b = data;
+
+   b->spacers = eina_list_remove(b->spacers, obj);
+}
+
+static Evas_Object *
+bryce_spacer_create(Evas_Object *parent, int *id, E_Gadget_Site_Orient orient)
+{
+   Bryce *b;
+   Eina_List *l;
+   Evas_Object *r;
+
+   if (!orient) return NULL;
+
+   /* only allow on bryces */
+   EINA_LIST_FOREACH(bryces->bryces, l, b)
+     {
+        if (b->editing || (parent == b->site)) break;
+     }
+   if (!b) return NULL;
+   if (b->autosize) return NULL;
+   r = evas_object_rectangle_add(e_comp->evas);
+   evas_object_event_callback_add(r, EVAS_CALLBACK_DEL, bryce_spacer_del, b);
+   b->spacers = eina_list_append(b->spacers, r);
+   E_EXPAND(r);
+   E_FILL(r);
+   /* FIXME: this should be better for demo gadgets... */
+   if (*id < 0)
+     {
+        evas_object_size_hint_aspect_set(r, EVAS_ASPECT_CONTROL_BOTH, 1, 1);
+        evas_object_color_set(r, 255, 0, 0, 255);
+     }
+   else
+     evas_object_color_set(r, 0, 0, 0, 0);
+   return r;
+}
+
 EINTERN void
 e_bryce_init(void)
 {
@@ -1346,6 +1394,7 @@ e_bryce_init(void)
 
    evas_object_event_callback_add(e_comp->canvas->resize_object, EVAS_CALLBACK_RESIZE, _bryce_comp_resize, NULL);
    E_LIST_HANDLER_APPEND(handlers, E_EVENT_ZONE_USEFUL_GEOMETRY_CHANGED, _bryce_zone_useful_geometry_changed, NULL);
+   e_gadget_type_add("Spacer Bar", bryce_spacer_create, NULL);
 }
 
 EINTERN void
@@ -1388,4 +1437,5 @@ e_bryce_shutdown(void)
      }
    E_FREE_LIST(handlers, ecore_event_handler_del);
    E_FREE(bryces);
+   e_gadget_type_del("Spacer Bar");
 }
