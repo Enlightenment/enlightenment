@@ -2418,12 +2418,12 @@ _editor_pointer_button(Gadget_Item *active, int t EINA_UNUSED, Ecore_Event_Mouse
                evas_object_smart_calculate(zzgs->layout);
              evas_object_geometry_get(zgc->display, &x, &y, NULL, NULL);
              evas_object_move(z->display, x, y);
-             _gadget_free(zgc);
              z->site->gadget_list = eina_inlist_remove(z->site->gadget_list, EINA_INLIST_GET(z));
              z->site->gadgets = eina_list_remove(z->site->gadgets, z);
              zgs->gadgets = eina_list_append(zgs->gadgets, z);
              z->site = zgs;
              evas_object_smart_callback_call(zzgs->layout, "gadget_site_dropped", pointer_site);
+             _gadget_free(zgc);
           }
           
      }
