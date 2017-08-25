@@ -1032,7 +1032,7 @@ _tasks_cb_event_client_prop_change(void *data EINA_UNUSED, int type EINA_UNUSED,
           _tasks_urgent_eval(_tasks_item_find(tasks, ev->ec));
      }
    else if (((ev->property & E_CLIENT_PROPERTY_TITLE) == E_CLIENT_PROPERTY_TITLE) ||
-            ((ev->property & E_CLIENT_PROPERTY_TITLE) == E_CLIENT_PROPERTY_ICON))
+            ((ev->property & E_CLIENT_PROPERTY_ICON) == E_CLIENT_PROPERTY_ICON))
      _tasks_refill_border(ev->ec);
    else if (ev->property & E_CLIENT_PROPERTY_MISC)
      _tasks_refill_all();
