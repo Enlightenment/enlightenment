@@ -983,8 +983,7 @@ _site_drop(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
    evas_pointer_canvas_xy_get(e_comp->evas, &mx, &my);
    evas_object_geometry_get(zgs->layout, &x, &y, &w, &h);
    if (!E_INSIDE(mx, my, x, y, w, h)) return;
-   if (evas_object_smart_need_recalculate_get(event_info))
-     evas_object_smart_calculate(event_info);
+
    EINA_LIST_FOREACH(zgs->gadgets, l, zgc)
      {
         if (!zgc->display) continue;
@@ -1888,6 +1887,8 @@ _editor_pointer_button(Gadget_Item *active, int t EINA_UNUSED, Ecore_Event_Mouse
    if (active->site)
      {
         evas_object_geometry_get(active->site, &x, &y, &w, &h);
+        if (evas_object_smart_need_recalculate_get(active->site))
+          evas_object_smart_calculate(active->site);
         if ((ev->buttons == 1) && E_INSIDE(ev->x, ev->y, x, y, w, h))
           evas_object_smart_callback_call(active->site, "gadget_site_dropped", pointer_site);
         e_comp_canvas_feed_mouse_up(0);
@@ -1926,6 +1927,8 @@ _editor_pointer_button(Gadget_Item *active, int t EINA_UNUSED, Ecore_Event_Mouse
              z = zgc->orig;
              zgc->site->gadget_list = eina_inlist_remove(zgc->site->gadget_list, EINA_INLIST_GET(zgc));
              zgc->site->gadgets = eina_list_remove(zgc->site->gadgets, zgc);
+             if (evas_object_smart_need_recalculate_get(zzgs->layout))
+               evas_object_smart_calculate(zzgs->layout);
              evas_object_geometry_get(zgc->display, &x, &y, NULL, NULL);
              evas_object_move(z->display, x, y);
              _gadget_free(zgc);
