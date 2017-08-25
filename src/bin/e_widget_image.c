@@ -32,7 +32,10 @@ e_widget_image_add_from_object(Evas *evas, Evas_Object *object, int minw, int mi
    e_widget_can_focus_set(obj, 0);
    wd->minw = minw <= 0 ? minw : 0;
    wd->minh = minh <= 0 ? minh : 0;
-   edje_object_size_min_get(object, &mw, &mh);
+   if (isedje(object))
+     edje_object_size_min_get(object, &mw, &mh);
+   else
+     evas_object_size_hint_min_get(object, &mw, &mh);
    if (minw || minh)
      e_widget_size_min_set(obj, minw, minh);
    else
