@@ -413,8 +413,10 @@ _wl_shell_surface_map(struct wl_resource *resource)
      {
         ec->visible = EINA_TRUE;
         evas_object_geometry_set(ec->frame, ec->x, ec->y, ec->w, ec->h);
-        evas_object_show(ec->frame);
         ec->comp_data->mapped = EINA_TRUE;
+        evas_object_show(ec->frame);
+        if (!e_client_util_desk_visible(ec, e_desk_current_get(ec->zone)))
+          evas_object_hide(ec->frame);
      }
 }
 

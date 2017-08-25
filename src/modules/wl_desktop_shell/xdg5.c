@@ -609,8 +609,10 @@ _e_xdg_shell_surface_map(struct wl_resource *resource)
      {
         /* map this surface if needed */
         ec->visible = EINA_TRUE;
-        evas_object_show(ec->frame);
         ec->comp_data->mapped = EINA_TRUE;
+        evas_object_show(ec->frame);
+        if (!e_client_util_desk_visible(ec, e_desk_current_get(ec->zone)))
+          evas_object_hide(ec->frame);
 
         /* FIXME: sometimes popup surfaces Do Not raise above their
          * respective parents... */
