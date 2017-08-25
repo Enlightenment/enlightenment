@@ -422,7 +422,7 @@ _config_update(E_Randr2 *r, E_Config_Randr2 *cfg, Eina_Bool update_only)
                {
                   E_Randr2_Mode *m = eina_list_data_get(s->info.modes);
 
-                  cs->enabled = !!m;
+                  cs->enabled = 1;
                   cs->mode_refresh = m->refresh;
                   cs->mode_w = m->w;
                   cs->mode_h = m->h;
