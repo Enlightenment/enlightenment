@@ -7,6 +7,8 @@ static void _e_xkb_type_reconfig(E_Pixmap_Type comp_type);
 static int _e_xkb_cur_group = -1;
 static Ecore_Event_Handler *xkb_state_handler = NULL, *xkb_new_keyboard_handler = NULL;
 
+static Ecore_Exe *cur_exe;
+
 #ifndef HAVE_WAYLAND_ONLY
 static int skip_new_keyboard = 0;
 static Ecore_Timer *save_group;
@@ -99,12 +101,23 @@ _xkb_new_state(void* data EINA_UNUSED, int type EINA_UNUSED, void *event)
 }
 #endif
 
+static Eina_Bool
+kb_exe_del(void *d EINA_UNUSED, int t EINA_UNUSED, Ecore_Exe_Event_Del *ev)
+{
+   if (ev->exe == cur_exe)
+     cur_exe = NULL;
+   return ECORE_CALLBACK_RENEW;
+}
+
 /* externally accessible functions */
 E_API int
 e_xkb_init(E_Pixmap_Type comp_type)
 {
    if (!E_EVENT_XKB_CHANGED)
-     E_EVENT_XKB_CHANGED = ecore_event_type_new();
+     {
+        E_EVENT_XKB_CHANGED = ecore_event_type_new();
+        ecore_event_handler_add(ECORE_EXE_EVENT_DEL, (Ecore_Event_Handler_Cb)kb_exe_del, NULL);
+     }
 #ifndef HAVE_WAYLAND_ONLY
    if (comp_type == E_PIXMAP_TYPE_X)
      {
@@ -217,7 +230,8 @@ _e_x_xkb_reconfig(void)
    skip_new_keyboard ++;
 #endif
    INF("SET XKB RUN: %s", eina_strbuf_string_get(buf));
-   ecore_exe_run(eina_strbuf_string_get(buf), NULL);
+   E_FREE_FUNC(cur_exe, ecore_exe_kill);
+   cur_exe = ecore_exe_run(eina_strbuf_string_get(buf), NULL);
    eina_strbuf_free(buf);
 }
 
