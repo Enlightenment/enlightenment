@@ -1421,7 +1421,7 @@ _e_client_cb_evas_move(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UN
 
    _e_client_event_simple(ec, E_EVENT_CLIENT_MOVE);
 
-   if (!e_client_util_ignored_get(ec)) _e_client_zone_update(ec);
+   if (!ec->ignored) _e_client_zone_update(ec);
    evas_object_geometry_get(ec->frame, &x, &y, NULL, NULL);
    if ((e_config->transient.move) && (ec->transients))
      {
@@ -1453,7 +1453,7 @@ _e_client_cb_evas_resize(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_
 
    _e_client_event_simple(ec, E_EVENT_CLIENT_RESIZE);
 
-   if (!e_client_util_ignored_get(ec)) _e_client_zone_update(ec);
+   if (!ec->ignored) _e_client_zone_update(ec);
    evas_object_geometry_get(ec->frame, &x, &y, &w, &h);
    if ((e_config->transient.resize) && (ec->transients))
      {
