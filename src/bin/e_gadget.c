@@ -1498,6 +1498,7 @@ static void
 _site_create(E_Gadget_Site *zgs)
 {
    zgs->layout = elm_box_add(e_comp->elm);
+   evas_object_name_set(zgs->layout, zgs->name);
    elm_box_horizontal_set(zgs->layout, zgs->orient == E_GADGET_SITE_ORIENT_HORIZONTAL);
    _gravity_apply(zgs, zgs->gravity);
    if (!zgs->orient)
@@ -1746,6 +1747,15 @@ e_gadget_site_get(Evas_Object *g)
    zgc = evas_object_data_get(g, "__e_gadget");
    EINA_SAFETY_ON_NULL_RETURN_VAL(zgc, NULL);
    return zgc->site->layout;
+}
+
+E_API Eina_Bool
+e_gadget_site_is_desklock(Evas_Object *obj)
+{
+   const char *name;
+   ZGS_GET(obj);
+   name = evas_object_name_get(obj);
+   return name && strstr(name, "desklock");
 }
 
 E_API void
@@ -2615,6 +2625,7 @@ e_gadget_editor_add(Evas_Object *parent, Evas_Object *site)
    elm_scroller_bounce_set(list, 0, 0);
    elm_scroller_policy_set(list, ELM_SCROLLER_POLICY_OFF, ELM_SCROLLER_POLICY_AUTO);
    tempsite = e_gadget_site_add(orient, NULL);
+   evas_object_name_set(tempsite, evas_object_name_get(site));
    e_gadget_site_gravity_set(tempsite, E_GADGET_SITE_GRAVITY_NONE);
 
    it = e_gadget_type_iterator_get();

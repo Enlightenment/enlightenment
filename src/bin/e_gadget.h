@@ -113,6 +113,7 @@ E_API void e_gadget_site_gravity_set(Evas_Object *obj, E_Gadget_Site_Gravity gra
 E_API void e_gadget_site_gadget_add(Evas_Object *obj, const char *type, Eina_Bool demo);
 E_API void e_gadget_site_gadget_external_add(Evas_Object *obj, const char *domain, const char *type, Eina_Bool demo);
 E_API Eina_List *e_gadget_site_gadgets_list(Evas_Object *obj);
+E_API Eina_Bool e_gadget_site_is_desklock(Evas_Object *obj);
 
 E_API void e_gadget_configure_cb_set(Evas_Object *g, E_Gadget_Configure_Cb cb);
 E_API void e_gadget_configure(Evas_Object *g);
