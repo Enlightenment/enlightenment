@@ -32,10 +32,10 @@ _basic_create_widgets(E_Config_Dialog *cfd, Evas *evas EINA_UNUSED, E_Config_Dia
 
    e_dialog_resizable_set(cfd->dia, 1);
    o = elm_color_class_editor_add(cfd->dia->win);
-   elm_win_resize_object_add(cfd->dia->win, o);
 
    e_util_win_auto_resize_fill(cfd->dia->win);
    elm_win_center(cfd->dia->win, 1, 1);
+   evas_object_size_hint_min_set(cfd->dia->win, 400, 280);
 
    return o;
 }
