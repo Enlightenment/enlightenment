@@ -85,6 +85,7 @@ _apply_cfdata(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfdata)
 
    e_config_save_flush();
    e_config_profile_set(cfdata->sel_profile);
+   elm_config_profile_set(cfdata->sel_profile);
    e_config_profile_save();
    e_config_save_block_set(1);
 
@@ -421,6 +422,9 @@ _new_profile_cb_ok(void *data, char *text)
         e_config_profile_set(text);
         e_config_save();
         e_config_profile_set(cur_profile);
+
+        if (!elm_config_profile_exists(cur_profile))
+          elm_config_profile_save(cur_profile);
      }
 
    _ilist_fill(cfdata);
