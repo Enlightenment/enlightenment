@@ -704,6 +704,7 @@ grid_create(Evas_Object *parent, int *id, E_Gadget_Site_Orient orient)
    Instance *inst;
 
    if (orient) return NULL;
+   if (e_gadget_site_is_desklock(parent)) return NULL;
    inst = E_NEW(Instance, 1);
    inst->size = 0;
    inst->resize_job = NULL;
