@@ -130,6 +130,7 @@ tiling_window_tree_insert(Window_Tree *root, Window_Tree *buddy,
         else
           {
              //make sure this buddy has a client,
+             if (!buddy->client) free(new_node);
              EINA_SAFETY_ON_TRUE_RETURN_VAL(!buddy->client, root);
           }
 
