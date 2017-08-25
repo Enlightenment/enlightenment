@@ -7,6 +7,7 @@ _sysinfo_removed_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_data)
 {
    Instance *inst = data;
 
+   if (!inst) return;
    if (inst->o_main != event_data) return;
    sysinfo_batman_remove(inst, NULL, NULL, NULL);
    sysinfo_thermal_remove(inst, NULL, NULL, NULL);
@@ -17,7 +18,7 @@ _sysinfo_removed_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_data)
 
    evas_object_smart_callback_del_full(e_gadget_site_get(obj), "gadget_removed", _sysinfo_removed_cb, inst);
    evas_object_event_callback_del_full(inst->o_main, EVAS_CALLBACK_DEL, _sysinfo_deleted_cb, data);
-   if (inst && inst->cfg)
+   if (inst->cfg)
      {
         sysinfo_config->items = eina_list_remove(sysinfo_config->items, inst->cfg);
         if (inst->cfg->id >= 0)

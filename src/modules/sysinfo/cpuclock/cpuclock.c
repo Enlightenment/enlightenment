@@ -853,7 +853,8 @@ _cpuclock_cb_frequency_check_notify(void *data,
    Eina_Bool init_set = EINA_FALSE;
    Thread_Config *thc = data;
 
-   if (!thc->inst && !thc->inst->cfg) return;
+   if (!thc->inst) return;
+   if (!thc->inst->cfg) return;
    if (thc->inst->cfg->esm != E_SYSINFO_MODULE_CPUCLOCK && thc->inst->cfg->esm != E_SYSINFO_MODULE_SYSINFO) return;
 
    if ((thc->inst->cfg->cpuclock.status) && (status) &&
