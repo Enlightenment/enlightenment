@@ -619,10 +619,10 @@ e_intl_locale_parts_get(const char *locale)
 {
    /* Parse Results */
    E_Locale_Parts *locale_parts;
-   char language[4];
+   char language[4] = {0};
    char territory[4] = {0};
-   char codeset[32];
-   char modifier[32];
+   char codeset[32] = {0};
+   char modifier[32] = {0};
 
    /* Parse State */
    int state = 0;   /* start out looking for the language */
