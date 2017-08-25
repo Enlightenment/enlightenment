@@ -3810,7 +3810,7 @@ _e_comp_x_hook_client_fetch(void *d EINA_UNUSED, E_Client *ec)
                        ec->placed = 1;
                     }
                }
-             if (ec->placed && (!e_client_util_resizing_get(ec)))
+             if (ec->placed && (!e_client_util_resizing_get(ec)) && (!ec->override))
                {
                   e_client_res_change_geometry_save(ec);
                   e_client_res_change_geometry_restore(ec);
