@@ -323,7 +323,8 @@ _gadget_popup(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
 {
    E_Gadget_Site *zgs = data;
 
-   if (event_info) elm_object_tree_focus_allow_set(event_info, 0);
+   if (event_info && elm_object_widget_check(event_info))
+     elm_object_tree_focus_allow_set(event_info, 0);
    if (event_info) _desktop_rect_obj_add(event_info);
    evas_object_smart_callback_call(zgs->layout, "gadget_site_popup", event_info);
    if (!event_info) return;
@@ -525,7 +526,8 @@ _gadget_object_create(E_Gadget_Config *zgc)
      evas_object_smart_need_recalculate_set(zgc->site->layout, 1);
    evas_object_event_callback_priority_add(g, EVAS_CALLBACK_DEL, EVAS_CALLBACK_PRIORITY_AFTER, _gadget_del, zgc);
    _gadget_reparent(zgc->site, zgc);
-   elm_object_tree_focus_allow_set(zgc->gadget, 0);
+   if (elm_object_widget_check(zgc->gadget))
+     elm_object_tree_focus_allow_set(zgc->gadget, 0);
    evas_object_raise(zgc->site->events);
 
    evas_object_smart_callback_call(zgc->site->layout, "gadget_created", g);
