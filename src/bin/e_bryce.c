@@ -369,7 +369,11 @@ _bryce_style(Evas_Object *site, Eina_Stringshare *name, Evas_Object *g)
    
    ly = elm_layout_add(b->site);
    snprintf(buf, sizeof(buf), "e/bryce/%s/%s", b->style ?: "default", name ?: "plain");
-   e_theme_edje_object_set(ly, NULL, buf);
+   if (!e_theme_edje_object_set(ly, NULL, buf))
+     {
+        evas_object_del(ly);
+        return;
+     }
    prev = e_gadget_util_layout_style_init(g, ly);
    elm_object_part_content_set(ly, "e.swallow.content", g);
    evas_object_smart_callback_call(g, "gadget_reparent", ly);
