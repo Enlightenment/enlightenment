@@ -235,6 +235,8 @@ _e_comp_object_cb_mirror_show(void *data, Evas *e EINA_UNUSED, Evas_Object *obj 
    if ((!cw->force_visible) && (!cw->deleted) && (!e_object_is_del(E_OBJECT(cw->ec))))
      evas_object_smart_callback_call(cw->smart_obj, "visibility_force", cw->ec);
    cw->force_visible++;
+   if ((!cw->native) && cw->pending_updates && (!cw->update) && cw->real_hid)
+     e_comp_object_render(cw->smart_obj);
 }
 
 static void
