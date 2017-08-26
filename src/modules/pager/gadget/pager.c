@@ -28,6 +28,7 @@ struct _Pager
    E_Client       *active_drag_client;
    Ecore_Job      *recalc;
    Eina_Bool       invert : 1;
+   Eina_Bool       plain : 1;
 };
 
 struct _Pager_Desk
@@ -55,6 +56,7 @@ struct _Pager_Win
    Pager_Desk   *desk;
    Evas_Object  *o_window;
    Evas_Object  *o_mirror;
+   Evas_Object  *o_icon;
    unsigned char skip_winlist : 1;
    struct
    {
@@ -81,9 +83,26 @@ static void             _pager_cb_obj_show(void *data, Evas *e EINA_UNUSED, Evas
 static void             _pager_cb_obj_hide(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED);
 static void             _button_cb_mouse_down(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info);
 static Evas_Object     *_pager_gadget_configure(Evas_Object *g);
+static Eina_Bool        _pager_cb_event_powersave_change(void *data EINA_UNUSED, int type EINA_UNUSED, void *event);
 static Eina_Bool        _pager_cb_event_desk_show(void *data EINA_UNUSED, int type EINA_UNUSED, void *event);
 static Eina_Bool        _pager_cb_event_desk_name_change(void *data EINA_UNUSED, int type EINA_UNUSED, void *event);
 static Eina_Bool        _pager_cb_event_compositor_resize(void *data EINA_UNUSED, int type EINA_UNUSED, void *event);
+static Eina_Bool        _pager_cb_event_client_resize(void *data EINA_UNUSED, int type EINA_UNUSED, void *event);
+static Eina_Bool        _pager_cb_event_client_move(void *data EINA_UNUSED, int type EINA_UNUSED, void *event);
+static Eina_Bool        _pager_cb_event_client_add(void *data EINA_UNUSED, int type EINA_UNUSED, void *event);
+static Eina_Bool        _pager_cb_event_client_remove(void *data EINA_UNUSED, int type EINA_UNUSED, void *event);
+static Eina_Bool        _pager_cb_event_client_iconify(void *data EINA_UNUSED, int type EINA_UNUSED, void *event);
+static Eina_Bool        _pager_cb_event_client_uniconify(void *data EINA_UNUSED, int type EINA_UNUSED, void *event);
+static Eina_Bool        _pager_cb_event_client_stick(void *data EINA_UNUSED, int type EINA_UNUSED, void *event);
+static Eina_Bool        _pager_cb_event_client_unstick(void *data EINA_UNUSED, int type EINA_UNUSED, void *event);
+static Eina_Bool        _pager_cb_event_client_desk_set(void *data EINA_UNUSED, int type EINA_UNUSED, void *event);
+static Eina_Bool        _pager_cb_event_client_stack(void *data EINA_UNUSED, int type EINA_UNUSED, void *event);
+static Eina_Bool        _pager_cb_event_client_icon_change(void *data EINA_UNUSED, int type EINA_UNUSED, void *event);
+static Eina_Bool        _pager_cb_event_client_focus_in(void *data EINA_UNUSED, int type EINA_UNUSED, void *event);
+static Eina_Bool        _pager_cb_event_client_focus_out(void *data EINA_UNUSED, int type EINA_UNUSED, void *event);
+static Eina_Bool        _pager_cb_event_client_property(void *data EINA_UNUSED, int type EINA_UNUSED, void *event);
+static Eina_Bool        _pager_cb_event_client_urgent_change(void *data EINA_UNUSED, int type EINA_UNUSED, E_Event_Client_Property *ev);
+static void             _pager_window_move(Pager_Win *pw);
 static void             _pager_window_cb_del(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED);
 static void             _pager_window_cb_mouse_down(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info);
 static void             _pager_window_cb_mouse_up(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info);
@@ -304,7 +323,6 @@ _pager_gadget_created_cb(void *data, Evas_Object *obj, void *event_info EINA_UNU
    Instance *inst = data;
    Eina_List *l;
    Pager_Desk *pd;
-
    if (inst->pager && inst->o_pager)
      {
         e_gadget_configure_cb_set(inst->o_pager, _pager_gadget_configure);
@@ -420,6 +438,23 @@ _pager_new(Evas *evas, Eina_Bool popup)
    p = E_NEW(Pager, 1);
    p->inst = NULL;
    p->popup = NULL;
+   if (pager_config->plain)
+     {
+        switch (e_powersave_mode_get())
+          {
+             case E_POWERSAVE_MODE_HIGH:
+                p->plain = EINA_TRUE;
+                break;
+             case E_POWERSAVE_MODE_EXTREME:
+                p->plain = EINA_TRUE;
+                break;
+             case E_POWERSAVE_MODE_FREEZE:
+                p->plain = EINA_TRUE;
+		break;
+             default:
+                p->plain = EINA_FALSE;
+          }
+     }
    p->o_table = elm_table_add(e_win_evas_win_get(evas));
    evas_object_event_callback_add(p->o_table, EVAS_CALLBACK_RESIZE, _pager_resize, p);
    elm_table_homogeneous_set(p->o_table, 1);
@@ -468,6 +503,26 @@ _pager_fill(Pager *p)
    if (p->ynum != 1) p->invert = EINA_FALSE;
    for (x = 0; x < p->xnum; x++)
      {
+	if ((p->plain) || (pager_config->permanent_plain))
+          {
+             if (!eina_list_count(phandlers))
+               {
+                  E_LIST_HANDLER_APPEND(phandlers, E_EVENT_CLIENT_RESIZE, _pager_cb_event_client_resize, NULL);
+                  E_LIST_HANDLER_APPEND(phandlers, E_EVENT_CLIENT_MOVE, _pager_cb_event_client_move, NULL);
+                  E_LIST_HANDLER_APPEND(phandlers, E_EVENT_CLIENT_ADD, _pager_cb_event_client_add, NULL);
+                  E_LIST_HANDLER_APPEND(phandlers, E_EVENT_CLIENT_REMOVE, _pager_cb_event_client_remove, NULL);
+                  E_LIST_HANDLER_APPEND(phandlers, E_EVENT_CLIENT_ICONIFY, _pager_cb_event_client_iconify, NULL);
+                  E_LIST_HANDLER_APPEND(phandlers, E_EVENT_CLIENT_UNICONIFY, _pager_cb_event_client_uniconify, NULL);
+                  E_LIST_HANDLER_APPEND(phandlers, E_EVENT_CLIENT_PROPERTY, _pager_cb_event_client_stick, NULL);
+                  E_LIST_HANDLER_APPEND(phandlers, E_EVENT_CLIENT_PROPERTY, _pager_cb_event_client_unstick, NULL);
+                  E_LIST_HANDLER_APPEND(phandlers, E_EVENT_CLIENT_DESK_SET, _pager_cb_event_client_desk_set, NULL);
+                  E_LIST_HANDLER_APPEND(phandlers, E_EVENT_CLIENT_STACK, _pager_cb_event_client_stack, NULL);
+                  E_LIST_HANDLER_APPEND(phandlers, E_EVENT_CLIENT_PROPERTY, _pager_cb_event_client_icon_change, NULL);
+                  E_LIST_HANDLER_APPEND(phandlers, E_EVENT_CLIENT_FOCUS_IN, _pager_cb_event_client_focus_in, NULL);
+                  E_LIST_HANDLER_APPEND(phandlers, E_EVENT_CLIENT_FOCUS_OUT, _pager_cb_event_client_focus_out, NULL);
+                  E_LIST_HANDLER_APPEND(phandlers, E_EVENT_CLIENT_PROPERTY, _pager_cb_event_client_property, NULL);
+               }
+          }
         for (y = 0; y < p->ynum; y++)
           {
              Pager_Desk *pd;
@@ -492,6 +547,15 @@ static void
 _pager_empty(Pager *p)
 {
    p->active_pd = NULL;
+   if (!(p->plain) && !(pager_config->permanent_plain))
+     {
+        if (eina_list_count(phandlers))
+          {
+             Ecore_Event_Handler *handler;
+             EINA_LIST_FREE(phandlers, handler)
+               ecore_event_handler_del(handler);
+          }
+     }
    E_FREE_LIST(p->desks, _pager_desk_free);
 }
 
@@ -525,8 +589,12 @@ _pager_desk_new(Pager *p, E_Desk *desk, int xpos, int ypos, Eina_Bool invert)
    e = evas_object_evas_get(p->o_table);
    o = edje_object_add(e);
    pd->o_desk = o;
-   e_theme_edje_object_set(o, "base/theme/gadget/pager",
-                           "e/gadget/pager16/desk");
+   if (p->plain || pager_config->permanent_plain)
+     e_theme_edje_object_set(o, "base/theme/gadgets/pager",
+                             "e/gadget/pager/plain/desk");
+   else
+     e_theme_edje_object_set(o, "base/theme/gadgets/pager",
+                             "e/gadget/pager/default/desk");
    edje_object_part_text_set(o, "e.text.label", desk->name);
    if (pager_config->show_desk_names)
      edje_object_signal_emit(o, "e,name,show", "e");
@@ -553,24 +621,44 @@ _pager_desk_new(Pager *p, E_Desk *desk, int xpos, int ypos, Eina_Bool invert)
                                   _pager_desk_cb_mouse_wheel, pd);
    evas_object_show(o);
 
-   pd->o_layout = e_deskmirror_add(desk, 1, 0);
-   evas_object_smart_callback_add(pd->o_layout, "mirror_add", (Evas_Smart_Cb)_pager_cb_mirror_add, pd);
-
-   l = e_deskmirror_mirror_list(pd->o_layout);
-   EINA_LIST_FREE(l, o)
+   if (p->plain || pager_config->permanent_plain)
      {
-        ec = evas_object_data_get(o, "E_Client");
-        if (ec)
+        pd->o_layout = e_layout_add(e);
+        e_layout_virtual_size_set(pd->o_layout, desk->zone->w, desk->zone->h);
+        edje_object_part_swallow(pd->o_desk, "e.swallow.content", pd->o_layout);
+        evas_object_show(pd->o_layout);	
+        E_CLIENT_FOREACH(ec)
           {
              Pager_Win *pw;
 
-             pw = _pager_window_new(pd, o, ec);
+             if (e_client_util_ignored_get(ec)) continue;
+             if ((ec->new_client) || (ec->zone != desk->zone) ||
+                 ((ec->desk != desk) && (!ec->sticky)))
+               continue;
+             pw = _pager_window_new(pd, NULL, ec);
              if (pw) pd->wins = eina_list_append(pd->wins, pw);
           }
      }
-   edje_object_part_swallow(pd->o_desk, "e.swallow.content", pd->o_layout);
-   evas_object_show(pd->o_layout);
+   else
+     {
+        pd->o_layout = e_deskmirror_add(desk, 1, 0);
+        evas_object_smart_callback_add(pd->o_layout, "mirror_add", (Evas_Smart_Cb)_pager_cb_mirror_add, pd);
 
+        l = e_deskmirror_mirror_list(pd->o_layout);
+        EINA_LIST_FREE(l, o)
+          {
+             ec = evas_object_data_get(o, "E_Client");
+             if (ec)
+               {
+                  Pager_Win *pw;
+
+                  pw = _pager_window_new(pd, o, ec);
+                  if (pw) pd->wins = eina_list_append(pd->wins, pw);
+               }
+          }
+        edje_object_part_swallow(pd->o_desk, "e.swallow.content", pd->o_layout);
+        evas_object_show(pd->o_layout);
+     }
    if (pd->pager->inst)
      {
         pd->drop_handler =
@@ -739,55 +827,83 @@ static Pager_Win *
 _pager_window_new(Pager_Desk *pd, Evas_Object *mirror, E_Client *client)
 {
    Pager_Win *pw;
-   //Evas_Object *o;
-   //int visible;
+   Evas_Object *o;
+   int visible;
 
    if (!client) return NULL;
    pw = E_NEW(Pager_Win, 1);
    if (!pw) return NULL;
 
    pw->client = client;
-   pw->o_mirror = mirror;
-
-   //visible = evas_object_visible_get(mirror);
-   //pw->skip_winlist = client->netwm.state.skip_pager;
    pw->desk = pd;
+   if ((pd->pager->plain) || (pager_config->permanent_plain))
+     {
+        visible = ((!client->iconic) && (!client->netwm.state.skip_pager));
+        pw->skip_winlist = client->netwm.state.skip_pager;
 
-   //o = edje_object_add(evas_object_evas_get(pd->pager->o_table));
-   //pw->o_window = o;
-   //e_theme_edje_object_set(o, "base/theme/gadget/pager",
-                           //"e/gadget/pager16/window");
-   //if (visible) evas_object_show(o);
-
-
-   evas_object_event_callback_add(mirror, EVAS_CALLBACK_MOUSE_DOWN,
+        o = edje_object_add(evas_object_evas_get(pd->pager->o_table));
+	pw->o_window = o;
+        e_theme_edje_object_set(o, "base/theme/gadgets/pager",
+                                "e/gadget/pager/plain/window");
+        if (visible) evas_object_show(o);
+	e_layout_pack(pd->o_layout, pw->o_window);
+        e_layout_child_raise(pw->o_window);
+        o = e_client_icon_add(client, evas_object_evas_get(pd->pager->o_table));
+        if (o)
+          {
+             pw->o_icon = o;
+             evas_object_show(o);
+             edje_object_part_swallow(pw->o_window, "e.swallow.icon", o);
+          }
+        e_layout_child_move(pw->o_window,
+                            pw->client->x - pw->client->zone->x,
+                            pw->client->y - pw->client->zone->y);
+        e_layout_child_resize(pw->o_window, pw->client->w, pw->client->h);
+        evas_object_show(o);
+	o = pw->o_window;
+     }
+   else
+     {
+        pw->o_mirror = mirror;
+        o = mirror;
+     }   
+   evas_object_event_callback_add(o, EVAS_CALLBACK_MOUSE_DOWN,
                                   _pager_window_cb_mouse_down, pw);
-   evas_object_event_callback_add(mirror, EVAS_CALLBACK_MOUSE_UP,
+   evas_object_event_callback_add(o, EVAS_CALLBACK_MOUSE_UP,
                                   _pager_window_cb_mouse_up, pw);
-   evas_object_event_callback_add(mirror, EVAS_CALLBACK_MOUSE_MOVE,
+   evas_object_event_callback_add(o, EVAS_CALLBACK_MOUSE_MOVE,
                                   _pager_window_cb_mouse_move, pw);
-   evas_object_event_callback_add(mirror, EVAS_CALLBACK_DEL,
+   evas_object_event_callback_add(o, EVAS_CALLBACK_DEL,
                                   _pager_window_cb_del, pw);
 
    if (client->urgent)
      {
         if (!(client->iconic))
-          edje_object_signal_emit(pd->o_desk, "e,state,urgent", "e");
-        //edje_object_signal_emit(pw->o_window, "e,state,urgent", "e");
+          {
+             if ((pd->pager->plain) || (pager_config->permanent_plain))
+               edje_object_signal_emit(pw->o_window, "e,state,urgent", "e");
+             else
+               edje_object_signal_emit(pd->o_desk, "e,state,urgent", "e");
+          }
      }
 
-   //evas_object_show(o);
    return pw;
 }
 
 static void
 _pager_window_free(Pager_Win *pw)
 {
+   Evas_Object *o;
    if ((pw->drag.from_pager) && (pw->desk->pager->dragging))
      pw->desk->pager->dragging = 0;
    if (pw->o_mirror)
-     evas_object_event_callback_del_full(pw->o_mirror, EVAS_CALLBACK_DEL,
+     o = pw->o_mirror;
+   else
+     o = pw->o_window;
+   if (o)
+     evas_object_event_callback_del_full(o, EVAS_CALLBACK_DEL,
                                     _pager_window_cb_del, pw);
+   if (pw->o_icon) evas_object_del(pw->o_icon);
    if (pw->o_window) evas_object_del(pw->o_window);
    free(pw);
 }
@@ -852,8 +968,8 @@ pager_popup_new(int keyaction)
 
    pp->o_bg = edje_object_add(e_comp->evas);
    evas_object_name_set(pp->o_bg, "pager_gadget_popup");
-   e_theme_edje_object_set(pp->o_bg, "base/theme/gadget/pager",
-                           "e/gadget/pager16/popup");
+   e_theme_edje_object_set(pp->o_bg, "base/theme/gadgets/pager",
+                           "e/gadget/pager/popup");
    desk = e_desk_current_get(zone);
    if (desk)
      edje_object_part_text_set(pp->o_bg, "e.text.label", desk->name);
@@ -957,32 +1073,56 @@ _button_cb_mouse_down(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNU
 }
 
 EINTERN void
-_pager_cb_config_gadget_updated(void)
+_pager_cb_config_gadget_updated(Eina_Bool style_changed)
 {
    Pager *p;
    Pager_Desk *pd;
    Eina_List *l, *ll;
    if (!pager_config) return;
    EINA_LIST_FOREACH(pagers, l, p)
-     EINA_LIST_FOREACH(p->desks, ll, pd)
-       {
-          if (pd->current)
-            {
-               char ori[32];
-	       const char *s = _pager_location_get(pd->pager->inst);
-               if (s)
-                 snprintf(ori, sizeof(ori), "e,state,selected,%s", s);
-               else
-                 snprintf(ori, sizeof(ori), "e,state,selected,bottom");
-               edje_object_signal_emit(pd->o_desk, ori, "e");
-            }
-          else
-            edje_object_signal_emit(pd->o_desk, "e,state,unselected", "e");
-          if (pager_config->show_desk_names)
-            edje_object_signal_emit(pd->o_desk, "e,name,show", "e");
-          else
-            edje_object_signal_emit(pd->o_desk, "e,name,hide", "e");
-       }
+     {
+        if (style_changed)
+          {
+             if (pager_config->plain)
+               {
+                  switch (e_powersave_mode_get())
+                    {
+                       case E_POWERSAVE_MODE_HIGH:
+                          p->plain = EINA_TRUE;
+                          break;
+                       case E_POWERSAVE_MODE_EXTREME:
+                          p->plain = EINA_TRUE;
+                          break;
+                       case E_POWERSAVE_MODE_FREEZE:
+                          p->plain = EINA_TRUE;
+                          break;
+                       default:
+                          p->plain = EINA_FALSE;
+                    }
+               }
+             _pager_empty(p);
+             _pager_fill(p);
+          }
+        EINA_LIST_FOREACH(p->desks, ll, pd)
+          {
+             if (pd->current)
+               {
+                  char ori[32];
+                  const char *s = _pager_location_get(pd->pager->inst);
+                  if (s)
+                    snprintf(ori, sizeof(ori), "e,state,selected,%s", s);
+                  else
+                    snprintf(ori, sizeof(ori), "e,state,selected,bottom");
+                  edje_object_signal_emit(pd->o_desk, ori, "e");
+               }
+             else
+               edje_object_signal_emit(pd->o_desk, "e,state,unselected", "e");
+             if (pager_config->show_desk_names)
+               edje_object_signal_emit(pd->o_desk, "e,name,show", "e");
+             else
+               edje_object_signal_emit(pd->o_desk, "e,name,hide", "e");
+          }
+     }
 }
 
 static void
@@ -993,6 +1133,607 @@ _pager_cb_mirror_add(Pager_Desk *pd, Evas_Object *obj EINA_UNUSED, Evas_Object *
    pw = _pager_window_new(pd, mirror, evas_object_data_get(mirror, "E_Client"));
    if (pw) pd->wins = eina_list_append(pd->wins, pw);
 }
+
+static Eina_Bool
+_pager_cb_event_client_resize(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
+{
+   E_Event_Client *ev = event;
+   Eina_List *l, *l2;
+   Pager *p;
+
+   EINA_LIST_FOREACH(pagers, l, p)
+     {
+        Pager_Desk *pd;
+
+        if (p->zone != ev->ec->zone) continue;
+        EINA_LIST_FOREACH(p->desks, l2, pd)
+          {
+             Pager_Win *pw;
+
+             pw = _pager_desk_window_find(pd, ev->ec);
+             if (pw) _pager_window_move(pw);
+          }
+     }
+   return ECORE_CALLBACK_PASS_ON;
+}
+
+static Eina_Bool
+_pager_cb_event_client_move(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
+{
+   E_Event_Client *ev = event;
+   Eina_List *l;
+   Pager_Win *pw;
+   Pager_Desk *pd;
+   Pager *p;
+
+   EINA_LIST_FOREACH(pagers, l, p)
+     {
+        Eina_List *l2;
+
+        if (p->zone != ev->ec->zone) continue;
+        EINA_LIST_FOREACH(p->desks, l2, pd)
+          {
+             pw = _pager_desk_window_find(pd, ev->ec);
+             if (pw) _pager_window_move(pw);
+          }
+     }
+
+   if ((act_popup) && (act_popup->pager->zone == ev->ec->zone))
+     {
+        EINA_LIST_FOREACH(act_popup->pager->desks, l, pd)
+          {
+             pw = _pager_desk_window_find(pd, ev->ec);
+             if (pw) _pager_window_move(pw);
+          }
+     }
+
+   return ECORE_CALLBACK_PASS_ON;
+}
+
+static Eina_Bool
+_pager_cb_event_client_add(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
+{
+   E_Event_Client *ev = event;
+   Eina_List *l;
+   Pager *p;
+
+   EINA_LIST_FOREACH(pagers, l, p)
+     {
+        Pager_Desk *pd;
+        Pager_Win *pw;
+
+        if ((p->zone != ev->ec->zone) ||
+            (_pager_window_find(p, ev->ec)))
+          continue;
+        pd = _pager_desk_find(p, ev->ec->desk);
+        if (!pd) continue;
+        pw = _pager_window_new(pd, NULL, ev->ec);
+        if (pw) pd->wins = eina_list_append(pd->wins, pw);
+     }
+
+   return ECORE_CALLBACK_PASS_ON;
+}
+
+static Eina_Bool
+_pager_cb_event_client_remove(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
+{
+   E_Event_Client *ev = event;
+   Eina_List *l;
+   Pager *p;
+
+   EINA_LIST_FOREACH(pagers, l, p)
+     {
+        Eina_List *l2;
+        Pager_Desk *pd;
+
+        if (p->zone != ev->ec->zone) continue;
+
+        EINA_LIST_FOREACH(p->desks, l2, pd)
+          {
+             Pager_Win *pw;
+
+             pw = _pager_desk_window_find(pd, ev->ec);
+             if (!pw) continue;
+             pd->wins = eina_list_remove(pd->wins, pw);
+             _pager_window_free(pw);
+          }
+     }
+   return ECORE_CALLBACK_PASS_ON;
+}
+
+static Eina_Bool
+_pager_cb_event_client_iconify(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
+{
+   E_Event_Client *ev = event;
+   Eina_List *l;
+   Pager *p;
+
+   EINA_LIST_FOREACH(pagers, l, p)
+     {
+        Eina_List *l2;
+        Pager_Desk *pd;
+
+        if (p->zone != ev->ec->zone) continue;
+
+        EINA_LIST_FOREACH(p->desks, l2, pd)
+          {
+             Pager_Win *pw;
+
+             pw = _pager_desk_window_find(pd, ev->ec);
+             if (!pw) continue;
+             if ((pw->drag.from_pager) && (pw->desk->pager->dragging))
+               pw->desk->pager->dragging = 0;
+             evas_object_hide(pw->o_window);
+          }
+     }
+
+   return ECORE_CALLBACK_PASS_ON;
+}
+
+static Eina_Bool
+_pager_cb_event_client_uniconify(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
+{
+   E_Event_Client *ev = event;
+   Eina_List *l;
+   Pager *p;
+
+   EINA_LIST_FOREACH(pagers, l, p)
+     {
+        Eina_List *l2;
+        Pager_Desk *pd;
+
+        if (p->zone != ev->ec->zone) continue;
+
+        EINA_LIST_FOREACH(p->desks, l2, pd)
+          {
+             Pager_Win *pw;
+
+             pw = _pager_desk_window_find(pd, ev->ec);
+             if ((pw) && (!pw->skip_winlist)) evas_object_show(pw->o_window);
+          }
+     }
+
+   return ECORE_CALLBACK_PASS_ON;
+}
+
+static Eina_Bool
+_pager_cb_event_client_stick(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
+{
+   E_Event_Client_Property *ev = event;
+   Eina_List *l;
+   Pager *p;
+
+   if ((!(ev->property & E_CLIENT_PROPERTY_STICKY)) || (!ev->ec->sticky)) return ECORE_CALLBACK_RENEW;
+   EINA_LIST_FOREACH(pagers, l, p)
+     {
+        Eina_List *l2;
+        Pager_Desk *pd;
+        Pager_Win *pw;
+
+        if (p->zone != ev->ec->zone) continue;
+        pw = _pager_window_find(p, ev->ec);
+        if (!pw) continue;
+
+        EINA_LIST_FOREACH(p->desks, l2, pd)
+          if ((ev->ec->desk != pd->desk) && (!_pager_desk_window_find(pd, ev->ec)))
+            {
+               pw = _pager_window_new(pd, NULL, ev->ec);
+               if (pw) pd->wins = eina_list_append(pd->wins, pw);
+            }
+     }
+
+   return ECORE_CALLBACK_PASS_ON;
+}
+
+static Eina_Bool
+_pager_cb_event_client_unstick(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
+{
+   E_Event_Client_Property *ev = event;
+   Eina_List *l;
+   Pager *p;
+
+   if ((!(ev->property & E_CLIENT_PROPERTY_STICKY)) || (ev->ec->sticky)) return ECORE_CALLBACK_RENEW;
+   EINA_LIST_FOREACH(pagers, l, p)
+     {
+        Pager_Desk *pd;
+        Eina_List *l2;
+
+        if (p->zone != ev->ec->zone) continue;
+
+        EINA_LIST_FOREACH(p->desks, l2, pd)
+          if (ev->ec->desk != pd->desk)
+            {
+               Pager_Win *pw;
+
+               pw = _pager_desk_window_find(pd, ev->ec);
+               if (pw)
+                 {
+                    pd->wins = eina_list_remove(pd->wins, pw);
+                    _pager_window_free(pw);
+                 }
+            }
+     }
+   return ECORE_CALLBACK_PASS_ON;
+}
+
+static void
+_pager_window_desk_change(Pager *pager, E_Client *ec)
+{
+   Eina_List *l;
+   Pager_Win *pw;
+   Pager_Desk *pd;
+
+   /* if this pager is not for the zone of the client */
+   if (pager->zone != ec->zone)
+     {
+        /* look at all desks in the pager */
+        EINA_LIST_FOREACH(pager->desks, l, pd)
+          {
+             /* find this client in this desk */
+             pw = _pager_desk_window_find(pd, ec);
+             if (!pw) continue;
+             /* if it is found - remove it. it does not belong in this
+              * pager as it probably moves zones */
+             pd->wins = eina_list_remove(pd->wins, pw);
+             _pager_window_free(pw);
+          }
+        return;
+     }
+   /* and this pager zone is for this client */
+   /* see if the window is in this pager at all */
+   pw = _pager_window_find(pager, ec);
+   if (pw)
+     {        /* is it sticky */
+        if (ec->sticky)
+          {
+             /* if its sticky and in this pager - its already everywhere, so abort
+              * doing anything else */
+             return;
+          }
+        /* move it to the right desk */
+        /* find the pager desk of the target desk */
+        pd = _pager_desk_find(pager, ec->desk);
+        if (pd)
+          {
+             Pager_Win *pw2 = NULL;
+             E_Client *ec_above;
+
+             /* remove it from whatever desk it was on */
+             pw->desk->wins = eina_list_remove(pw->desk->wins, pw);
+             e_layout_unpack(pw->o_window);
+
+             /* add it to the one its MEANT to be on */
+             pw->desk = pd;
+             pd->wins = eina_list_append(pd->wins, pw);
+             e_layout_pack(pd->o_layout, pw->o_window);
+
+             ec_above = e_util_desk_client_above(pw->client);
+             if (ec_above)
+               pw2 = _pager_desk_window_find(pd, ec_above);
+             if (pw2)
+               e_layout_child_lower_below(pw->o_window, pw2->o_window);
+             else
+               e_layout_child_raise(pw->o_window);
+
+             _pager_window_move(pw);
+          }
+     }
+   /* the client isn't in this pager at all - it must have moved zones */
+   else
+     {
+        if (!ec->sticky)
+          {
+             /* find the pager desk it needs to go to */
+             pd = _pager_desk_find(pager, ec->desk);
+             if ((pd) && (!_pager_desk_window_find(pd, ec)))
+               {
+                  /* create it and add it */
+                  pw = _pager_window_new(pd, NULL, ec);
+                  if (pw)
+                    {
+                       Pager_Win *pw2 = NULL;
+                       E_Client *ec_above;
+
+                       pd->wins = eina_list_append(pd->wins, pw);
+                       ec_above = e_util_desk_client_above(pw->client);
+                       if (ec_above)
+                         pw2 = _pager_desk_window_find(pd, ec_above);
+                       if (pw2)
+                         e_layout_child_lower_below(pw->o_window, pw2->o_window);
+                       else
+                         e_layout_child_raise(pw->o_window);
+                       _pager_window_move(pw);
+                    }
+               }
+          }
+        else
+          {
+             /* go through all desks */
+             EINA_LIST_FOREACH(pager->desks, l, pd)
+               {
+                  /* create it and add it */
+                  if (_pager_desk_window_find(pd, ec)) continue;
+                  pw = _pager_window_new(pd, NULL, ec);
+                  if (pw)
+                    {
+                       Pager_Win *pw2 = NULL;
+                       E_Client *ec_above;
+
+                       pd->wins = eina_list_append(pd->wins, pw);
+                       ec_above = e_util_desk_client_above(pw->client);
+                       if (ec_above)
+                         pw2 = _pager_desk_window_find(pd, ec_above);
+                       if (pw2)
+                         e_layout_child_lower_below(pw->o_window, pw2->o_window);
+                       else
+                         e_layout_child_raise(pw->o_window);
+                       _pager_window_move(pw);
+                    }
+               }
+          }
+     }
+}
+
+static Eina_Bool
+_pager_cb_event_client_desk_set(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
+{
+   E_Event_Client_Desk_Set *ev = event;
+   Eina_List *l;
+   Pager *p;
+
+   EINA_LIST_FOREACH(pagers, l, p)
+     _pager_window_desk_change(p, ev->ec);
+
+   return ECORE_CALLBACK_PASS_ON;
+}
+
+static Eina_Bool
+_pager_cb_event_client_stack(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
+{
+   E_Event_Client *ev = event;
+   Eina_List *l;
+   Pager *p;
+
+   EINA_LIST_FOREACH(pagers, l, p)
+     {
+        Eina_List *l2;
+        Pager_Desk *pd;
+
+        if (p->zone != ev->ec->zone) continue;
+        EINA_LIST_FOREACH(p->desks, l2, pd)
+          {
+             Pager_Win *pw, *pw2 = NULL;
+
+             pw = _pager_desk_window_find(pd, ev->ec);
+             if (pw)
+               {
+                  E_Client *ec;
+
+                  ec = e_util_desk_client_below(ev->ec);
+                  if (ec) pw2 = _pager_desk_window_find(pd, ec);
+                  if (pw2)
+                    {
+                       e_layout_child_raise_above(pw->o_window, pw2->o_window);
+                       continue;
+                    }
+                  ec = e_util_desk_client_above(ev->ec);
+                  if (ec) pw2 = _pager_desk_window_find(pd, ec);
+                  if (pw2)
+                    {
+                       e_layout_child_lower_below(pw->o_window, pw2->o_window);
+                       continue;
+                    }
+               }
+          }
+     }
+
+   return ECORE_CALLBACK_PASS_ON;
+}
+
+static Eina_Bool
+_pager_cb_event_client_icon_change(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
+{
+   E_Event_Client_Property *ev = event;
+   Eina_List *l;
+   Pager *p;
+
+   if (!(ev->property & E_CLIENT_PROPERTY_ICON)) return ECORE_CALLBACK_RENEW;
+   EINA_LIST_FOREACH(pagers, l, p)
+     {
+        Eina_List *l2;
+        Pager_Desk *pd;
+
+        if (p->zone != ev->ec->zone) continue;
+        EINA_LIST_FOREACH(p->desks, l2, pd)
+          {
+             Pager_Win *pw;
+
+             pw = _pager_desk_window_find(pd, ev->ec);
+             if (pw)
+               {
+                  Evas_Object *o;
+
+                  if (pw->o_icon)
+                    {
+                       evas_object_del(pw->o_icon);
+                       pw->o_icon = NULL;
+                    }
+                  o = e_client_icon_add(ev->ec,
+                                        evas_object_evas_get(p->o_table));
+                  if (o)
+                    {
+                       pw->o_icon = o;
+                       evas_object_show(o);
+                       edje_object_part_swallow(pw->o_window,
+                                                "e.swallow.icon", o);
+                    }
+               }
+          }
+     }
+
+   return ECORE_CALLBACK_PASS_ON;
+}
+
+static Eina_Bool
+_pager_cb_event_client_focus_in(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
+{
+   E_Event_Client *ev = event;
+   Pager *pager;
+   Eina_List *l, *l2;
+   Pager_Popup *pp;
+   Pager_Desk *pd;
+   Pager_Win *pw;
+   E_Zone *zone;
+
+   zone = ev->ec->zone;
+
+   EINA_LIST_FOREACH(pagers, l, pager)
+     {
+        if (pager->zone != zone) continue;
+
+        EINA_LIST_FOREACH(pager->desks, l2, pd)
+          {
+             pw = _pager_desk_window_find(pd, ev->ec);
+             if (pw)
+               {
+                  edje_object_signal_emit(pw->o_window,
+                                          "e,state,focused", "e");
+                  break;
+               }
+          }
+     }
+
+   pp = _pager_popup_find(zone);
+   if (!pp) return ECORE_CALLBACK_PASS_ON;
+
+   EINA_LIST_FOREACH(pp->pager->desks, l, pd)
+     {
+        pw = _pager_desk_window_find(pd, ev->ec);
+        if (pw)
+          {
+             edje_object_signal_emit(pw->o_window,
+                                     "e,state,focused", "e");
+             break;
+          }
+     }
+
+   return ECORE_CALLBACK_PASS_ON;
+}
+
+static Eina_Bool
+_pager_cb_event_client_focus_out(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
+{
+   E_Event_Client *ev = event;
+   Pager *pager;
+   Pager_Popup *pp;
+   Pager_Desk *pd;
+   Pager_Win *pw;
+   E_Zone *zone;
+   Eina_List *l;
+
+   zone = ev->ec->zone;
+
+   EINA_LIST_FOREACH(pagers, l, pager)
+     {
+        Eina_List *l2;
+
+        if (pager->zone != zone) continue;
+
+        EINA_LIST_FOREACH(pager->desks, l2, pd)
+          {
+             pw = _pager_desk_window_find(pd, ev->ec);
+             if (pw)
+               {
+                  edje_object_signal_emit(pw->o_window,
+                                          "e,state,unfocused", "e");
+                  break;
+               }
+          }
+     }
+
+   pp = _pager_popup_find(zone);
+   if (!pp) return ECORE_CALLBACK_PASS_ON;
+
+   EINA_LIST_FOREACH(pp->pager->desks, l, pd)
+     {
+        pw = _pager_desk_window_find(pd, ev->ec);
+        if (pw)
+          {
+             edje_object_signal_emit(pw->o_window,
+                                     "e,state,unfocused", "e");
+             break;
+          }
+     }
+
+   return ECORE_CALLBACK_PASS_ON;
+}
+
+static Eina_Bool
+_pager_cb_event_client_property(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
+{
+   E_Event_Client_Property *ev = event;
+   Eina_List *l, *l2;
+   int found = 0;
+   Pager *p;
+   Pager_Win *pw;
+   Pager_Desk *pd;
+
+   if (!(ev->property & E_CLIENT_PROPERTY_NETWM_STATE)) return ECORE_CALLBACK_RENEW;
+   EINA_LIST_FOREACH(pagers, l, p)
+     {
+        if (p->zone != ev->ec->zone) continue;
+
+        EINA_LIST_FOREACH(p->desks, l2, pd)
+          {
+             pw = _pager_desk_window_find(pd, ev->ec);
+             if (pw)
+               {
+                  found = 1;
+                  if (ev->ec->netwm.state.skip_pager)
+                    {
+                       pd->wins = eina_list_remove(pd->wins, pw);
+                       _pager_window_free(pw);
+                    }
+               }
+          }
+     }
+   if (found) return ECORE_CALLBACK_PASS_ON;
+
+   /* If we did not find this window in the pager, then add it because
+    * the skip_pager state may have changed to 1 */
+   EINA_LIST_FOREACH(pagers, l, p)
+     {
+        if ((p->zone != ev->ec->zone) ||
+            (_pager_window_find(p, ev->ec)))
+          continue;
+        if (!ev->ec->sticky)
+          {
+             pd = _pager_desk_find(p, ev->ec->desk);
+             if ((pd) && (!_pager_desk_window_find(pd, ev->ec)))
+               {
+                  pw = _pager_window_new(pd, NULL, ev->ec);
+                  if (pw)
+                    {
+                       Pager_Win *pw2 = NULL;
+                       E_Client *ec;
+
+                       pd->wins = eina_list_append(pd->wins, pw);
+                       ec = e_util_desk_client_above(pw->client);
+                       if (ec)
+                         pw2 = _pager_desk_window_find(pd, ec);
+                       if (pw2)
+                         e_layout_child_lower_below(pw->o_window, pw2->o_window);
+                       else
+                         e_layout_child_raise(pw->o_window);
+                       _pager_window_move(pw);
+                    }
+               }
+          }
+     }
+
+   return ECORE_CALLBACK_PASS_ON;
+}
+
 
 static Eina_Bool
 _pager_cb_event_zone_desk_count_set(void *data EINA_UNUSED, int type EINA_UNUSED, E_Event_Zone_Desk_Count_Set *ev)
@@ -1082,6 +1823,11 @@ _pager_cb_event_desk_name_change(void *data EINA_UNUSED, int type EINA_UNUSED, v
 static Eina_Bool
 _pager_cb_event_client_urgent_change(void *data EINA_UNUSED, int type EINA_UNUSED, E_Event_Client_Property *ev)
 {
+   Eina_List *l, *l2;
+   Pager *p;
+   Pager_Desk *pd;
+   Pager_Win *pw;
+
    if (!(ev->property & E_CLIENT_PROPERTY_URGENCY)) return ECORE_CALLBACK_RENEW;
    if (!eina_list_count(pagers)) return ECORE_CALLBACK_RENEW;
 
@@ -1102,6 +1848,38 @@ _pager_cb_event_client_urgent_change(void *data EINA_UNUSED, int type EINA_UNUSE
                pp->timer = ecore_timer_loop_add(pager_config->popup_urgent_speed,
                                            _pager_popup_cb_timeout, pp);
              pp->urgent = 1;
+          }
+     }
+   EINA_LIST_FOREACH(pagers, l, p)
+     {
+        if (p->zone != ev->ec->zone) continue;
+
+        EINA_LIST_FOREACH(p->desks, l2, pd)
+          {
+             pw = _pager_desk_window_find(pd, ev->ec);
+             if (pw)
+               {
+                  if (ev->ec->urgent)
+                    {
+                       if (!(ev->ec->iconic))
+                         {
+                            if ((pd->pager) && (pd->pager->inst) &&
+                                (!pager_config->popup_urgent))
+                            edje_object_signal_emit(pd->o_desk,
+                                                    "e,state,urgent", "e");
+                         }
+                       edje_object_signal_emit(pw->o_window,
+                                               "e,state,urgent", "e");
+                    }
+                  else
+                    {
+                       if (!(ev->ec->iconic))
+                         edje_object_signal_emit(pd->o_desk,
+                                                 "e,state,not_urgent", "e");
+                       edje_object_signal_emit(pw->o_window,
+                                               "e,state,not_urgent", "e");
+                    }
+               }
           }
      }
    return ECORE_CALLBACK_RENEW;
@@ -1127,6 +1905,26 @@ _pager_cb_event_compositor_resize(void *data EINA_UNUSED, int type EINA_UNUSED, 
      }
 
    return ECORE_CALLBACK_PASS_ON;
+}
+
+static Eina_Bool
+_pager_cb_event_powersave_change(void *data EINA_UNUSED, int type EINA_UNUSED, void *event EINA_UNUSED)
+{
+   if (!pager_config->plain)
+     return ECORE_CALLBACK_PASS_ON;
+
+   _pager_cb_config_gadget_updated(EINA_TRUE);
+
+   return ECORE_CALLBACK_PASS_ON;
+}
+
+static void
+_pager_window_move(Pager_Win *pw)
+{
+   e_layout_child_move(pw->o_window,
+                       pw->client->x - pw->client->zone->x,
+                       pw->client->y - pw->client->zone->y);
+   e_layout_child_resize(pw->o_window, pw->client->w, pw->client->h);
 }
 
 static void
@@ -1157,7 +1955,6 @@ _pager_window_cb_mouse_down(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EI
 {
    Evas_Event_Mouse_Down *ev = event_info;
    Pager_Win *pw;
-
    if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return;
    if (_pager_check_modifiers(ev->modifiers)) return;
 
@@ -1173,8 +1970,10 @@ _pager_window_cb_mouse_down(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EI
        (ev->button == (int)pager_config->btn_noplace))
      {
         Evas_Coord ox, oy;
-
-        evas_object_geometry_get(pw->o_mirror, &ox, &oy, NULL, NULL);
+        if ((pw->desk->pager->plain) || (pager_config->permanent_plain))
+          evas_object_geometry_get(pw->o_window, &ox, &oy, NULL, NULL);
+        else
+          evas_object_geometry_get(pw->o_mirror, &ox, &oy, NULL, NULL);
         pw->drag.in_pager = 1;
         pw->drag.x = ev->canvas.x;
         pw->drag.y = ev->canvas.y;
@@ -1193,13 +1992,12 @@ _pager_window_cb_mouse_move(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EI
    Evas_Event_Mouse_Move *ev = event_info;
    Pager_Win *pw;
    E_Drag *drag;
-   Evas_Object *o;
+   Evas_Object *o, *oo;
    Evas_Coord x, y, w, h;
    const char *drag_types[] =
    { "enlightenment/pager_win", "enlightenment/border" };
    Evas_Coord dx, dy;
    unsigned int resist = 0;
-
    pw = data;
 
    if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return;
@@ -1225,22 +2023,46 @@ _pager_window_cb_mouse_move(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EI
    e_comp_object_effect_clip(pw->client->frame);
    edje_object_signal_emit(pw->desk->o_desk, "e,action,drag,in", "e");
 
-   evas_object_geometry_get(pw->o_mirror, &x, &y, &w, &h);
-   evas_object_hide(pw->o_mirror);
-
+   if ((pw->desk->pager->plain) || (pager_config->permanent_plain))
+     {
+        evas_object_geometry_get(pw->o_window, &x, &y, &w, &h);
+        evas_object_hide(pw->o_window);
+     }
+   else
+     {   
+        evas_object_geometry_get(pw->o_mirror, &x, &y, &w, &h);
+        evas_object_hide(pw->o_mirror);
+     }
    drag = e_drag_new(x, y, drag_types, 2, pw->desk->pager, -1,
                      _pager_window_cb_drag_convert,
                      _pager_window_cb_drag_finished);
    drag->button_mask = evas_pointer_button_down_mask_get(e_comp->evas);
+   if ((pw->desk->pager->plain) || (pager_config->permanent_plain))
+     {
+        o = edje_object_add(drag->evas);
+        e_theme_edje_object_set(o, "base/theme/gadgets/pager/plain",
+                                     "e/gadget/pager/plain/window");
+        evas_object_show(o);
 
-   /* this is independent of the original mirror */
-   o = e_deskmirror_mirror_copy(pw->o_mirror);
-   evas_object_show(o);
-
+        oo = e_client_icon_add(pw->client, drag->evas);
+        if (oo)
+          {
+             evas_object_show(oo);
+             edje_object_part_swallow(o, "e.swallow.icon", oo);
+	  }
+     }
+   else
+     {
+        /* this is independent of the original mirror */
+        o = e_deskmirror_mirror_copy(pw->o_mirror);
+        evas_object_show(o);
+     }
    e_drag_object_set(drag, o);
    e_drag_resize(drag, w, h);
    e_drag_show(drag);
    e_drag_start(drag, x - pw->drag.dx, y - pw->drag.dy);
+   if (oo)
+     e_comp_object_util_del_list_append(drag->comp_object, oo);
 }
 
 static void *
@@ -1259,13 +2081,15 @@ _pager_window_cb_drag_finished(E_Drag *drag, int dropped)
 {
    Pager_Win *pw;
    Pager *p;
-
    p = drag->data;
    if (!p) return;
    pw = _pager_window_find(p, p->active_drag_client);
    if (!pw) return;
    p->active_drag_client = NULL;
-   evas_object_show(pw->o_mirror);
+   if ((p->plain) || (pager_config->permanent_plain))
+     evas_object_show(pw->o_window);
+   else
+     evas_object_show(pw->o_mirror);
    evas_object_smart_callback_call(e_gadget_site_get(pw->desk->pager->inst->o_pager), "gadget_site_unlocked", NULL);
    if (dropped)
      {
@@ -1336,6 +2160,12 @@ _pager_update_drop_position(Pager *p, Pager_Desk *pd, Evas_Coord x, Evas_Coord y
 {
    Pager_Win *pw = NULL;
 
+   if ((p->plain) || (pager_config->permanent_plain))
+     {
+        if (pd)
+          edje_object_signal_emit(pd->o_desk, "e,action,drag,in", "e");
+        return;
+     }
    if (pd)
      pw = _pager_desk_window_find(pd, p->active_drag_client);
    else
@@ -1351,8 +2181,8 @@ _pager_update_drop_position(Pager *p, Pager_Desk *pd, Evas_Coord x, Evas_Coord y
         zx = pd->desk->zone->x, zy = pd->desk->zone->y;
         zw = pd->desk->zone->w, zh = pd->desk->zone->h;
         e_deskmirror_coord_canvas_to_virtual(pd->o_layout,
-                                         x + pw->drag.dx,
-                                         y + pw->drag.dy, &vx, &vy);
+                                             x + pw->drag.dx,
+                                             y + pw->drag.dy, &vx, &vy);
         pw->client->hidden = !pd->desk->visible;
         e_client_desk_set(pw->client, pd->desk);
         x = E_CLAMP(vx + zx, zx, zx + zw - pw->client->w);
@@ -1436,10 +2266,20 @@ _pager_drop_cb_drop(void *data, const char *type, void *event_info)
         else if (!strcmp(type, "enlightenment/border"))
           {
              ec = ev->data;
-             e_deskmirror_coord_virtual_to_canvas(pd->o_layout, ec->x, ec->y,
-                                              &wx, &wy);
-             e_deskmirror_coord_virtual_to_canvas(pd->o_layout, ec->x + ec->w,
-                                              ec->y + ec->h, &wx2, &wy2);
+             if ((pd->pager->plain) || (pager_config->permanent_plain))
+               {
+                  e_layout_coord_virtual_to_canvas(pd->o_layout, ec->x, ec->y,
+                                                   &wx, &wy);
+                  e_layout_coord_virtual_to_canvas(pd->o_layout, ec->x + ec->w,
+                                                   ec->y + ec->h, &wx2, &wy2);
+               }
+             else
+               {
+                  e_deskmirror_coord_virtual_to_canvas(pd->o_layout, ec->x, ec->y,
+                                                       &wx, &wy);
+                  e_deskmirror_coord_virtual_to_canvas(pd->o_layout, ec->x + ec->w,
+                                                       ec->y + ec->h, &wx2, &wy2);
+               }
              dx = (wx - wx2) / 2;
              dy = (wy - wy2) / 2;
           }
@@ -1469,11 +2309,18 @@ _pager_drop_cb_drop(void *data, const char *type, void *event_info)
              if ((!max) && (!fullscreen))
                {
                   int zx, zy, zw, zh, mx, my;
-
-                  e_deskmirror_coord_canvas_to_virtual(pd->o_layout,
-                                                   ev->x + dx,
-                                                   ev->y + dy,
+                  if ((pd->pager->plain) || (pager_config->permanent_plain))
+                    {
+                       e_layout_coord_canvas_to_virtual(pd->o_layout, ev->x + dx, ev->y + dy,
                                                    &nx, &ny);
+                    }
+                  else
+                    {
+		       e_deskmirror_coord_canvas_to_virtual(pd->o_layout,
+                                                        ev->x + dx,
+                                                        ev->y + dy,
+                                                        &nx, &ny);
+                    }
                   e_zone_useful_geometry_get(pd->desk->zone,
                                              &zx, &zy, &zw, &zh);
 
@@ -1596,9 +2443,18 @@ _pager_desk_cb_mouse_move(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA
         drag = e_drag_new(x, y, drag_types, 1, pd, -1,
                           NULL, _pager_desk_cb_drag_finished);
         drag->button_mask = evas_pointer_button_down_mask_get(e_comp->evas);
-        
         /* redraw the desktop theme above */
-        o = e_comp_object_util_mirror_add(pd->o_layout);
+        if ((pd->pager->plain) || (pager_config->permanent_plain))
+          {
+             o = edje_object_add(drag->evas);
+             e_theme_edje_object_set(o, "base/theme/gadgets/pager",
+                                          "e/gadget/pager/plain/desk");
+             evas_object_show(o);
+          }
+        else
+          {
+             o = e_comp_object_util_mirror_add(pd->o_layout);
+          }
         e_drag_object_set(drag, o);
 
         e_drag_resize(drag, w, h);
@@ -2038,7 +2894,6 @@ pager_create(Evas_Object *parent, int *id EINA_UNUSED, E_Gadget_Site_Orient orie
    Evas_Object *o;
    Instance *inst;
 
-   if (e_gadget_site_is_desklock(parent)) return NULL;
    inst = E_NEW(Instance, 1);
    p = _pager_new(evas_object_evas_get(parent), EINA_FALSE);
    p->inst = inst;
@@ -2069,6 +2924,7 @@ pager_init(void)
    E_LIST_HANDLER_APPEND(ghandlers, E_EVENT_DESK_NAME_CHANGE, _pager_cb_event_desk_name_change, NULL);
    E_LIST_HANDLER_APPEND(ghandlers, E_EVENT_COMPOSITOR_RESIZE, _pager_cb_event_compositor_resize, NULL);
    E_LIST_HANDLER_APPEND(ghandlers, E_EVENT_CLIENT_PROPERTY, _pager_cb_event_client_urgent_change, NULL);
+   E_LIST_HANDLER_APPEND(ghandlers, E_EVENT_POWERSAVE_UPDATE, _pager_cb_event_powersave_change, NULL);
 
    act_popup_show = e_action_add("pager_gadget_show");
    if (act_popup_show)

@@ -24,17 +24,19 @@ struct _Config
    unsigned int btn_noplace;
    unsigned int btn_desk;
    unsigned int flip_desk;
+   unsigned int plain;
+   unsigned int permanent_plain;
 };
 
 EINTERN Evas_Object    *pager_create(Evas_Object *parent, int *id, E_Gadget_Site_Orient orient);
 EINTERN Evas_Object    *config_pager(E_Zone *zone);
 EINTERN void           pager_init(void);
-EINTERN void           _pager_cb_config_gadget_updated(void);
+EINTERN void           _pager_cb_config_gadget_updated(Eina_Bool style_changed);
 EINTERN void           _pager_cb_config_updated(void);
 
 EINTERN extern Config          *pager_config;
 EINTERN extern Evas_Object     *cfg_dialog;
-EINTERN extern Eina_List       *ginstances, *ghandlers;
+EINTERN extern Eina_List       *ginstances, *ghandlers, *phandlers;
 /**
  * @addtogroup Optional_Gadgets
  * @{

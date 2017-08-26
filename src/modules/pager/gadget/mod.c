@@ -2,7 +2,7 @@
 static E_Config_DD *conf_edd = NULL;
 Config *pager_config;
 Evas_Object *cfg_dialog;
-Eina_List *ginstances, *ghandlers;
+Eina_List *ginstances, *ghandlers, *phandlers;
 
 EINTERN void *
 e_modapi_gadget_init(E_Module *m)
@@ -25,6 +25,8 @@ e_modapi_gadget_init(E_Module *m)
    E_CONFIG_VAL(D, T, btn_noplace, UCHAR);
    E_CONFIG_VAL(D, T, btn_desk, UCHAR);
    E_CONFIG_VAL(D, T, flip_desk, UCHAR);
+   E_CONFIG_VAL(D, T, plain, UCHAR);
+   E_CONFIG_VAL(D, T, permanent_plain, UCHAR);
 
    pager_config = e_config_domain_load("module.pager", conf_edd);
 
@@ -44,6 +46,8 @@ e_modapi_gadget_init(E_Module *m)
         pager_config->btn_noplace = 2;
         pager_config->btn_desk = 2;
         pager_config->flip_desk = 0;
+        pager_config->plain = 0;
+        pager_config->permanent_plain = 0;
      }
    E_CONFIG_LIMIT(pager_config->popup, 0, 1);
    E_CONFIG_LIMIT(pager_config->popup_speed, 0.1, 10.0);
@@ -58,6 +62,8 @@ e_modapi_gadget_init(E_Module *m)
    E_CONFIG_LIMIT(pager_config->btn_drag, 0, 32);
    E_CONFIG_LIMIT(pager_config->btn_noplace, 0, 32);
    E_CONFIG_LIMIT(pager_config->btn_desk, 0, 32);
+   E_CONFIG_LIMIT(pager_config->plain, 0, 1);
+   E_CONFIG_LIMIT(pager_config->permanent_plain, 0, 1);
 
    pager_init();
 

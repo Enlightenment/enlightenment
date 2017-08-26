@@ -153,7 +153,7 @@ _basic_apply(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfdata)
    pager_config->show_desk_names = cfdata->show_desk_names;
    pager_config->popup_urgent = cfdata->popup.urgent_show;
    _pager_cb_config_updated();
-   _pager_cb_config_gadget_updated();
+   _pager_cb_config_gadget_updated(EINA_FALSE);
    e_config_save_queue();
    return 1;
 }
@@ -307,7 +307,7 @@ _adv_apply(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfdata)
    pager_config->btn_noplace = cfdata->btn.noplace;
    pager_config->btn_desk = cfdata->btn.desk;
    _pager_cb_config_updated();
-   _pager_cb_config_gadget_updated();
+   _pager_cb_config_gadget_updated(EINA_FALSE);
    e_config_save_queue();
    return 1;
 }

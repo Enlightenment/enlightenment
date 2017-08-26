@@ -10,6 +10,7 @@ struct _Config_Objects
    Evas_Object     *general_page;
    Evas_Object     *popup_page;
    Evas_Object     *urgent_page;
+   Evas_Object     *style_page;
    Evas_Object     *o_popup;
    Evas_Object     *o_popup_speed;
    Evas_Object     *o_popup_urgent;
@@ -25,6 +26,8 @@ struct _Config_Objects
    Evas_Object     *o_btn_desk;
    Evas_Object     *o_btn_virtual;
    Evas_Object     *o_flip_desk;
+   Evas_Object     *o_permanent;
+   Evas_Object     *o_plain;
    E_Grab_Dialog   *grab_dia;
    int              grab_btn;
    int              w, h;
@@ -43,6 +46,7 @@ _config_show_general(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void 
 {
    evas_object_hide(pager_gadget_config_objects->popup_page);
    evas_object_hide(pager_gadget_config_objects->urgent_page);
+   evas_object_hide(pager_gadget_config_objects->style_page);
    evas_object_show(pager_gadget_config_objects->general_page);
 }
 
@@ -51,6 +55,7 @@ _config_show_popup(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *e
 {
    evas_object_hide(pager_gadget_config_objects->general_page);
    evas_object_hide(pager_gadget_config_objects->urgent_page);
+   evas_object_hide(pager_gadget_config_objects->style_page);
    evas_object_show(pager_gadget_config_objects->popup_page);
 }
 
@@ -59,12 +64,23 @@ _config_show_urgent(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *
 {
    evas_object_hide(pager_gadget_config_objects->general_page);
    evas_object_hide(pager_gadget_config_objects->popup_page);
+   evas_object_hide(pager_gadget_config_objects->style_page);
    evas_object_show(pager_gadget_config_objects->urgent_page);
+}
+
+static void
+_config_show_style(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   evas_object_hide(pager_gadget_config_objects->general_page);
+   evas_object_hide(pager_gadget_config_objects->popup_page);
+   evas_object_hide(pager_gadget_config_objects->urgent_page);
+   evas_object_show(pager_gadget_config_objects->style_page);
 }
 
 static void
 _config_value_changed(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_data EINA_UNUSED)
 {
+   Eina_Bool val, changed = EINA_FALSE;
    pager_config->popup =
        elm_check_state_get(pager_gadget_config_objects->o_popup);
    pager_config->popup_speed =
@@ -87,7 +103,15 @@ _config_value_changed(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void
        elm_slider_value_get(pager_gadget_config_objects->o_popup_act_height);
    pager_config->drag_resist = 
        elm_slider_value_get(pager_gadget_config_objects->o_drag_resist);
-   _pager_cb_config_gadget_updated();
+   val = elm_check_state_get(pager_gadget_config_objects->o_permanent);
+   if (val != pager_config->permanent_plain)
+     changed = EINA_TRUE;
+   pager_config->permanent_plain = val;
+   val = elm_check_state_get(pager_gadget_config_objects->o_plain);
+   if (val != pager_config->plain)
+     changed = EINA_TRUE;
+   pager_config->plain = val;
+   _pager_cb_config_gadget_updated(changed);
    _pager_cb_config_updated();
    e_config_save_queue();
 
@@ -322,7 +346,7 @@ _config_create_pages(Evas_Object *parent)
    evas_object_show(ow);
    pager_gadget_config_objects->o_show_desk_names = ow;
 
-   ow = elm_label_add(tb);
+   ow = elm_label_add(m);
    elm_object_text_set(ow, _("Resistance to dragging"));
    elm_table_pack(tb, ow, 0, 3, 1, 1);
    E_ALIGN(ow, 0.0, 0.0);
@@ -343,7 +367,7 @@ _config_create_pages(Evas_Object *parent)
    pager_gadget_config_objects->o_drag_resist = ow;
 
 #if 0
-   ow = elm_label_add(tb);
+   ow = elm_label_add(m);
    elm_object_text_set(ow, _("Select and Slide button"));
    elm_table_pack(tb, ow, 0, row, 1, 1);
    E_ALIGN(ow, 0.0, 0.0);
@@ -363,7 +387,7 @@ _config_create_pages(Evas_Object *parent)
    row++;
 #endif
 
-   ow = elm_label_add(tb);
+   ow = elm_label_add(m);
    elm_object_text_set(ow, _("Drag and Drop button"));
    elm_table_pack(tb, ow, 0, row, 1, 1);
    E_ALIGN(ow, 0.0, 0.0);
@@ -382,7 +406,7 @@ _config_create_pages(Evas_Object *parent)
    pager_gadget_config_objects->o_btn_noplace = ow;
    row++;
 
-   ow = elm_label_add(tb);
+   ow = elm_label_add(m);
    elm_object_text_set(ow, _("Drag whole desktop"));
    elm_table_pack(tb, ow, 0, row, 1, 1);
    E_ALIGN(ow, 0.0, 0.0);
@@ -429,7 +453,7 @@ _config_create_pages(Evas_Object *parent)
    evas_object_show(ow);
    pager_gadget_config_objects->o_popup = ow;
 
-   ow = elm_label_add(tb);
+   ow = elm_label_add(m);
    elm_object_text_set(ow, _("Popup pager height"));
    elm_object_disabled_set(ow, !pager_config->popup);
    elm_table_pack(tb, ow, 0, 1, 1, 1);
@@ -451,7 +475,7 @@ _config_create_pages(Evas_Object *parent)
    evas_object_show(ow);
    pager_gadget_config_objects->o_popup_height = ow;
    
-   ow = elm_label_add(tb);
+   ow = elm_label_add(m);
    elm_object_text_set(ow, _("Popup duration"));
    elm_object_disabled_set(ow, !pager_config->popup);
    elm_table_pack(tb, ow, 0, 3, 1, 1);
@@ -473,7 +497,7 @@ _config_create_pages(Evas_Object *parent)
    evas_object_show(ow);
    pager_gadget_config_objects->o_popup_speed = ow;
 
-   ow = elm_label_add(tb);
+   ow = elm_label_add(m);
    elm_object_text_set(ow, _("Pager action popup height"));
    elm_object_disabled_set(ow, !pager_config->popup);
    elm_table_pack(tb, ow, 0, 5, 1, 1);
@@ -548,7 +572,7 @@ _config_create_pages(Evas_Object *parent)
    evas_object_show(ow);
    pager_gadget_config_objects->o_popup_urgent_focus = ow;
 
-   ow = elm_label_add(tb);
+   ow = elm_label_add(m);
    elm_object_text_set(ow, _("Urgent Popup Duration"));
    elm_object_disabled_set(ow, !pager_config->popup_urgent);
    elm_table_pack(tb, ow, 0, 3, 1, 1);
@@ -572,6 +596,45 @@ _config_create_pages(Evas_Object *parent)
 
    elm_table_pack(m, fr, 0, 0, 1, 1);
    pager_gadget_config_objects->urgent_page = fr;
+
+   /* Style Page */
+   fr = elm_frame_add(m);
+   elm_object_text_set(fr, _("Style"));
+   E_EXPAND(fr);
+   E_FILL(fr);
+   evas_object_show(fr);
+
+   tb = elm_table_add(m);
+   E_EXPAND(tb);
+   elm_object_content_set(fr, tb);
+   evas_object_show(tb);
+
+   ow = elm_check_add(tb);
+   elm_object_text_set(ow, _("Always Use Plain Style"));
+   evas_object_size_hint_align_set(ow, 0.0, EVAS_HINT_FILL);
+   elm_check_state_set(ow, pager_config->permanent_plain);
+   elm_table_pack(tb, ow, 0, 0, 1, 1);
+   E_ALIGN(ow, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   E_WEIGHT(ow, EVAS_HINT_EXPAND, 0);
+   evas_object_smart_callback_add(ow, "changed",
+       _config_value_changed, NULL);
+   evas_object_show(ow);
+   pager_gadget_config_objects->o_permanent = ow;
+
+   ow = elm_check_add(tb);
+   elm_object_text_set(ow, _("Switch to Plain Style When Saving Power"));
+   evas_object_size_hint_align_set(ow, 0.0, EVAS_HINT_FILL);
+   elm_check_state_set(ow, pager_config->plain);
+   elm_table_pack(tb, ow, 0, 1, 1, 1);
+   E_ALIGN(ow, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   E_WEIGHT(ow, EVAS_HINT_EXPAND, 0);
+   evas_object_smart_callback_add(ow, "changed",
+       _config_value_changed, NULL);
+   evas_object_show(ow);
+   pager_gadget_config_objects->o_plain = ow;
+
+   elm_table_pack(m, fr, 0, 0, 1, 1);
+   pager_gadget_config_objects->style_page = fr;
 
    return m;
 }
@@ -615,6 +678,8 @@ config_pager(E_Zone *zone)
        _config_show_popup,  NULL);
    it = elm_list_item_append(list, _("Urgent"), NULL, NULL,
        _config_show_urgent, NULL);
+   it = elm_list_item_append(list, _("Style"), NULL, NULL,
+       _config_show_style, NULL);
    elm_list_go(list);
    evas_object_show(list);
 
