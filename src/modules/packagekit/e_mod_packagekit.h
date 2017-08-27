@@ -66,6 +66,7 @@ typedef struct _E_PackageKit_Module_Context
    Eldbus_Connection *conn;
    Eldbus_Proxy *packagekit;
    Eldbus_Proxy *transaction;
+   double transaction_progress;
 
    E_Config_DD *conf_edd;
    PackageKit_Config *config;

@@ -253,6 +253,8 @@ packagekit_popup_update(E_PackageKit_Instance *inst, Eina_Bool rebuild_list)
    if (ctxt->transaction)
      {
         elm_genlist_clear(inst->popup_genlist);
+        elm_progressbar_value_set(inst->popup_progressbar,
+                                  ctxt->transaction_progress);
         evas_object_show(inst->popup_progressbar);
      }
    else
@@ -316,6 +318,7 @@ packagekit_progress_percentage_update(E_PackageKit_Module_Context *ctxt,
    Eina_List *l;
    double val = (double)percent / 100.0;
 
+   ctxt->transaction_progress = val;
    EINA_LIST_FOREACH(ctxt->instances, l, inst)
      if (inst->popup_progressbar)
        elm_progressbar_value_set(inst->popup_progressbar, val);
