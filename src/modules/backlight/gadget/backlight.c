@@ -4,11 +4,11 @@ typedef struct _Instance Instance;
 
 struct _Instance
 {
-   Evas_Object     *o_main;
-   Evas_Object     *o_backlight, *o_table, *o_slider;
-   Evas_Object     *popup, *box;
+   Evas_Object         *o_main;
+   Evas_Object         *o_backlight, *o_table, *o_slider;
+   Evas_Object         *popup, *box;
    E_Gadget_Site_Orient orient;
-   double           val;
+   double               val;
 };
 
 static Eina_List *ginstances = NULL;
@@ -25,7 +25,8 @@ _backlight_gadget_update(Instance *inst)
    else
      msg.val = inst->val;
    if (msg.val < 0.0) msg.val = 0.0;
-   else if (msg.val > 1.0) msg.val = 1.0;
+   else if (msg.val > 1.0)
+     msg.val = 1.0;
    edje_object_message_send(elm_layout_edje_get(inst->o_backlight), EDJE_MESSAGE_FLOAT, 0, &msg);
 }
 
@@ -221,35 +222,35 @@ _backlight_gadget_created_cb(void *data, Evas_Object *obj, void *event_info EINA
    if (inst->o_main)
      {
         e_gadget_configure_cb_set(inst->o_main, _backlight_gadget_configure);
-         
+
         inst->o_backlight = elm_layout_add(inst->o_main);
         E_EXPAND(inst->o_backlight);
         E_FILL(inst->o_backlight);
         if (inst->orient == E_GADGET_SITE_ORIENT_VERTICAL)
           e_theme_edje_object_set(inst->o_backlight,
-                             "base/theme/gadget/backlight",
-                             "e/gadget/backlight/main_vert");
+                                  "base/theme/gadget/backlight",
+                                  "e/gadget/backlight/main_vert");
         else
           e_theme_edje_object_set(inst->o_backlight,
-                             "base/theme/gadget/backlight",
-                             "e/gadget/backlight/main");
+                                  "base/theme/gadget/backlight",
+                                  "e/gadget/backlight/main");
         evas_object_event_callback_add(inst->o_backlight,
-                                  EVAS_CALLBACK_MOUSE_DOWN,
-                                  _backlight_cb_mouse_down,
-                                  inst);
+                                       EVAS_CALLBACK_MOUSE_DOWN,
+                                       _backlight_cb_mouse_down,
+                                       inst);
         evas_object_event_callback_add(inst->o_backlight,
-                                  EVAS_CALLBACK_MOUSE_WHEEL,
-                                  _backlight_cb_mouse_wheel,
-                                  inst);
+                                       EVAS_CALLBACK_MOUSE_WHEEL,
+                                       _backlight_cb_mouse_wheel,
+                                       inst);
         evas_object_event_callback_add(inst->o_backlight,
-                                  EVAS_CALLBACK_RESIZE,
-                                  _backlight_resize_cb,
-                                  inst);
+                                       EVAS_CALLBACK_RESIZE,
+                                       _backlight_resize_cb,
+                                       inst);
         elm_box_pack_end(inst->o_main, inst->o_backlight);
         evas_object_show(inst->o_backlight);
         if (!EINA_FLT_EQ(inst->val, -1.0))
-	  inst->val = e_backlight_level_get(e_zone_current_get());
-	_backlight_gadget_update(inst);
+          inst->val = e_backlight_level_get(e_zone_current_get());
+        _backlight_gadget_update(inst);
      }
    evas_object_smart_callback_del_full(obj, "gadget_created", _backlight_gadget_created_cb, data);
 }
@@ -312,3 +313,4 @@ backlight_shutdown(void)
      }
    E_FREE_LIST(handlers, ecore_event_handler_del);
 }
+

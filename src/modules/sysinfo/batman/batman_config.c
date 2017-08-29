@@ -137,17 +137,20 @@ _suspend_changed(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
 
    switch (value)
      {
-        case 0:
-           inst->cfg->batman.suspend_method = SUSPEND;
-           break;
-        case 1:
-           inst->cfg->batman.suspend_method = HIBERNATE;
-           break;
-        case 2:
-           inst->cfg->batman.suspend_method = SHUTDOWN;
-           break;
-        default:
-           inst->cfg->batman.suspend_method = SUSPEND;
+      case 0:
+        inst->cfg->batman.suspend_method = SUSPEND;
+        break;
+
+      case 1:
+        inst->cfg->batman.suspend_method = HIBERNATE;
+        break;
+
+      case 2:
+        inst->cfg->batman.suspend_method = SHUTDOWN;
+        break;
+
+      default:
+        inst->cfg->batman.suspend_method = SUSPEND;
      }
 
    e_config_save_queue();
@@ -163,23 +166,28 @@ _poll_changed(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
 
    switch (value)
      {
-        case 0:
-          inst->cfg->batman.poll_interval = 4;
-          break; 
-        case 1:
-          inst->cfg->batman.poll_interval = 8;
-          break;
-        case 2:
-          inst->cfg->batman.poll_interval = 32;
-          break;
-        case 3:
-          inst->cfg->batman.poll_interval = 64;
-          break;
-        case 4:
-          inst->cfg->batman.poll_interval = 256;
-          break;
-        default:
-          inst->cfg->batman.poll_interval = 32;
+      case 0:
+        inst->cfg->batman.poll_interval = 4;
+        break;
+
+      case 1:
+        inst->cfg->batman.poll_interval = 8;
+        break;
+
+      case 2:
+        inst->cfg->batman.poll_interval = 32;
+        break;
+
+      case 3:
+        inst->cfg->batman.poll_interval = 64;
+        break;
+
+      case 4:
+        inst->cfg->batman.poll_interval = 256;
+        break;
+
+      default:
+        inst->cfg->batman.poll_interval = 32;
      }
 
    e_config_save_queue();
@@ -210,7 +218,7 @@ _icon_theme_file_set(Evas_Object *img, const char *icon)
         if (!path)
           {
              if (e_util_strcmp(e_config->icon_theme, "hicolor"))
-             path = efreet_icon_path_find("hicolor", icon, 48);
+               path = efreet_icon_path_find("hicolor", icon, 48);
           }
      }
    else if (ecore_file_exists(icon))
@@ -228,20 +236,20 @@ _icon_theme_file_set(Evas_Object *img, const char *icon)
         else
           {
              path = e_theme_edje_file_get("base/theme/icons", "e/icons/unknown");
-             k =  "e/icons/unknown";
+             k = "e/icons/unknown";
           }
      }
    else if (!path && !icon)
      {
         path = e_theme_edje_file_get("base/theme/icons", "e/icons/unknown");
-        k =  "e/icons/unknown";
+        k = "e/icons/unknown";
      }
 
    if (path && icon)
      {
         len = strlen(icon);
         if ((len > 4) && (!strcasecmp(icon + len - 4, ".edj")))
-        k = "icon";
+          k = "icon";
      }
    elm_image_file_set(img, path, k);
 }
@@ -288,12 +296,12 @@ batman_configure(Instance *inst)
    elm_list_select_mode_set(list, ELM_OBJECT_SELECT_MODE_ALWAYS);
    elm_scroller_content_min_limit(list, 1, 1);
    it = elm_list_item_append(list, _("General"), NULL, NULL,
-       _config_show_general, bc);
+                             _config_show_general, bc);
    elm_list_item_selected_set(it, 1);
    it = elm_list_item_append(list, _("Alert"), NULL, NULL,
-       _config_show_alert,  bc);
+                             _config_show_alert, bc);
    it = elm_list_item_append(list, _("Power"), NULL, NULL,
-       _config_show_power, bc);
+                             _config_show_power, bc);
    elm_list_go(list);
    evas_object_show(list);
 
@@ -367,25 +375,30 @@ batman_configure(Instance *inst)
    evas_object_smart_callback_add(o, "changed", _poll_changed, bc);
    evas_object_show(o);
 
-   switch(inst->cfg->batman.poll_interval)
+   switch (inst->cfg->batman.poll_interval)
      {
-        case 4:
-          elm_radio_value_set(group, 0);
-          break;
-        case 8:
-          elm_radio_value_set(group, 1);
-          break;
-        case 32:
-          elm_radio_value_set(group, 2);
-          break;
-        case 64:
-          elm_radio_value_set(group, 3);
-          break;
-        case 256:
-          elm_radio_value_set(group, 4);
-          break;
-        default:
-          elm_radio_value_set(group, 2);
+      case 4:
+        elm_radio_value_set(group, 0);
+        break;
+
+      case 8:
+        elm_radio_value_set(group, 1);
+        break;
+
+      case 32:
+        elm_radio_value_set(group, 2);
+        break;
+
+      case 64:
+        elm_radio_value_set(group, 3);
+        break;
+
+      case 256:
+        elm_radio_value_set(group, 4);
+        break;
+
+      default:
+        elm_radio_value_set(group, 2);
      }
 
    elm_object_content_set(frame, box);
@@ -534,19 +547,22 @@ batman_configure(Instance *inst)
    evas_object_smart_callback_add(o, "changed", _suspend_changed, bc);
    evas_object_show(o);
 
-   switch(inst->cfg->batman.suspend_method)
+   switch (inst->cfg->batman.suspend_method)
      {
-        case SUSPEND:
-          elm_radio_value_set(groupy, 0);
-          break;
-        case HIBERNATE:
-          elm_radio_value_set(groupy, 1);
-          break;
-        case SHUTDOWN:
-          elm_radio_value_set(groupy, 2);
-          break;
-        default:
-          elm_radio_value_set(groupy, 0);
+      case SUSPEND:
+        elm_radio_value_set(groupy, 0);
+        break;
+
+      case HIBERNATE:
+        elm_radio_value_set(groupy, 1);
+        break;
+
+      case SHUTDOWN:
+        elm_radio_value_set(groupy, 2);
+        break;
+
+      default:
+        elm_radio_value_set(groupy, 0);
      }
 
    slider = elm_slider_add(box);

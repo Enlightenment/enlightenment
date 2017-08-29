@@ -202,16 +202,16 @@ _batman_update(Instance *inst, int full, int time_left, Eina_Bool have_battery, 
      {
         if (have_power && (full < 100))
           elm_layout_signal_emit(inst->cfg->batman.o_gadget,
-                                  "e,state,charging",
-                                  "e");
+                                 "e,state,charging",
+                                 "e");
         else
           {
              elm_layout_signal_emit(inst->cfg->batman.o_gadget,
-                                     "e,state,discharging",
-                                     "e");
+                                    "e,state,discharging",
+                                    "e");
              if (inst->popup_battery)
                elm_layout_signal_emit(inst->popup_battery,
-                                       "e,state,discharging", "e");
+                                      "e,state,discharging", "e");
           }
      }
    if (have_battery)
@@ -357,7 +357,7 @@ _screensaver_on(void *data)
 #if defined(HAVE_EEZE)
    Instance *inst = data;
 #else
-   (void) data;
+   (void)data;
 #endif
 
 #if defined(HAVE_EEZE)
@@ -417,14 +417,14 @@ _batman_config_updated(Instance *inst)
      }
 }
 
-static void _warning_popup_dismissed(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+static void
+_warning_popup_dismissed(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Instance *inst = data;
 
    E_FREE_FUNC(inst->popup_battery, evas_object_del);
    E_FREE_FUNC(inst->warning, evas_object_del);
 }
-
 
 static Eina_Bool
 _batman_cb_warning_popup_timeout(void *data)
@@ -521,7 +521,7 @@ _batman_warning_popup(Instance *inst, int t, double percent)
      elm_layout_content_set(popup_bg, "battery", inst->popup_battery);
 
    elm_layout_text_set(popup_bg, "e.text.title",
-                             _("Your battery is low!"));
+                       _("Your battery is low!"));
    elm_layout_text_set(popup_bg, "e.text.label", buf);
    evas_object_show(inst->popup_battery);
    evas_object_show(popup_bg);
@@ -533,7 +533,7 @@ _batman_warning_popup(Instance *inst, int t, double percent)
 
    evas_object_geometry_get(inst->warning, &x, &y, &w, &h);
    evas_object_event_callback_add(inst->warning, EVAS_CALLBACK_MOUSE_DOWN,
-                               _batman_cb_warning_popup_hide, inst);
+                                  _batman_cb_warning_popup_hide, inst);
 
    _batman_face_level_set(inst->popup_battery, percent);
    edje_object_signal_emit(inst->popup_battery, "e,state,discharging", "e");
@@ -543,7 +543,7 @@ _batman_warning_popup(Instance *inst, int t, double percent)
      {
         inst->cfg->batman.alert_timer =
           ecore_timer_loop_add(inst->cfg->batman.alert_timeout,
-                          _batman_cb_warning_popup_timeout, inst);
+                               _batman_cb_warning_popup_timeout, inst);
      }
 }
 
@@ -613,13 +613,13 @@ sysinfo_batman_remove(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNU
 #if defined(HAVE_EEZE)
    _batman_udev_stop(inst);
 #elif defined(__OpenBSD__) || defined(__DragonFly__) || defined(__FreeBSD__) || defined(__NetBSD__)
-   (void) inst;
+   (void)inst;
    _batman_sysctl_stop();
 #elif defined(upower)
-   (void) inst;
+   (void)inst;
    _batman_upower_stop();
 #else
-   (void) inst;
+   (void)inst;
    _batman_fallback_stop();
 #endif
 }
@@ -689,7 +689,7 @@ sysinfo_batman_create(Evas_Object *parent, Instance *inst)
 
    _batman_config_updated(inst);
 
-   return inst->cfg->batman.o_gadget; 
+   return inst->cfg->batman.o_gadget;
 }
 
 static Config_Item *
@@ -707,7 +707,7 @@ _conf_item_get(int *id)
    ci = E_NEW(Config_Item, 1);
 
    if (*id != -1)
-     ci->id = eina_list_count(sysinfo_config->items)+1;
+     ci->id = eina_list_count(sysinfo_config->items) + 1;
    else
      ci->id = -1;
 
@@ -746,7 +746,7 @@ batman_create(Evas_Object *parent, int *id, E_Gadget_Site_Orient orient EINA_UNU
    evas_object_smart_callback_add(parent, "gadget_created", _batman_created_cb, inst);
    evas_object_smart_callback_add(parent, "gadget_removed", _batman_removed_cb, inst);
    evas_object_event_callback_add(inst->o_main, EVAS_CALLBACK_DEL, sysinfo_batman_remove, inst);
-   evas_object_show(inst->o_main); 
+   evas_object_show(inst->o_main);
 
    if (inst->cfg->id < 0) return inst->o_main;
 
@@ -755,3 +755,4 @@ batman_create(Evas_Object *parent, int *id, E_Gadget_Site_Orient orient EINA_UNU
 
    return inst->o_main;
 }
+

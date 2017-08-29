@@ -22,7 +22,7 @@ _cpumonitor_proc_getcores(void)
                }
              i++;
           }
-        fclose (f);
+        fclose(f);
      }
    return cores;
 }
@@ -50,7 +50,7 @@ _cpumonitor_proc_getusage(unsigned long *prev_total,
                   char *line, *tok;
                   int i = 0;
 
-                  line = strchr(buf, ' ')+1;
+                  line = strchr(buf, ' ') + 1;
                   tok = strtok(line, " ");
                   while (tok)
                     {
@@ -66,7 +66,8 @@ _cpumonitor_proc_getusage(unsigned long *prev_total,
                   if (total_change != 0)
                     percent = 100 * (1 - ((float)idle_change / (float)total_change));
                   if (percent > 100) percent = 100;
-                  else if (percent < 0) percent = 0;
+                  else if (percent < 0)
+                    percent = 0;
                   *prev_total = total;
                   *prev_idle = idle;
                   *prev_percent = percent;
@@ -98,7 +99,8 @@ _cpumonitor_proc_getusage(unsigned long *prev_total,
                   if (total_change != 0)
                     percent = 100 * (1 - ((float)idle_change / (float)total_change));
                   if (percent > 100) percent = 100;
-                  else if (percent < 0) percent = 0;
+                  else if (percent < 0)
+                    percent = 0;
                   core->percent = percent;
                   core->total = total;
                   core->idle = idle;

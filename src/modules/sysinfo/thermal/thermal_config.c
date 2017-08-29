@@ -36,7 +36,6 @@ _update_low_temperature(void *data, Evas_Object *obj EINA_UNUSED, void *event_in
    inst->cfg->thermal.low = value;
    e_config_save_queue();
    _thermal_config_updated(inst);
-
 }
 
 static void
@@ -48,14 +47,16 @@ _units_changed(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
 
    switch (value)
      {
-        case 0:
-          inst->cfg->thermal.units = CELSIUS;
-          break;
-        case 1:
-          inst->cfg->thermal.units = FAHRENHEIT;
-          break;
-        default:
-          inst->cfg->thermal.units = CELSIUS;
+      case 0:
+        inst->cfg->thermal.units = CELSIUS;
+        break;
+
+      case 1:
+        inst->cfg->thermal.units = FAHRENHEIT;
+        break;
+
+      default:
+        inst->cfg->thermal.units = CELSIUS;
      }
    if (inst->cfg->thermal.units == FAHRENHEIT)
      {
@@ -67,7 +68,7 @@ _units_changed(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
         elm_slider_value_set(tc->high, ceil(CEL_2_FAR(val)));
         elm_slider_unit_format_set(tc->high, "%1.0f F");
         elm_slider_indicator_format_set(tc->high, "%1.0f F");
-	elm_slider_unit_format_set(tc->low, "%1.0f F");
+        elm_slider_unit_format_set(tc->low, "%1.0f F");
         elm_slider_indicator_format_set(tc->low, "%1.0f F");
      }
    else
@@ -78,7 +79,7 @@ _units_changed(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
         elm_slider_value_set(tc->high, ceil(FAR_2_CEL(val)));
         elm_slider_unit_format_set(tc->low, "%1.0f C");
         elm_slider_indicator_format_set(tc->low, "%1.0f C");
-	elm_slider_unit_format_set(tc->high, "%1.0f C");
+        elm_slider_unit_format_set(tc->high, "%1.0f C");
         elm_slider_indicator_format_set(tc->high, "%1.0f C");
         elm_slider_min_max_set(tc->low, 0, 95);
         elm_slider_min_max_set(tc->high, 0, 110);
@@ -100,23 +101,28 @@ _poll_changed(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
 
    switch (value)
      {
-        case 0:
-          inst->cfg->thermal.poll_interval = 4;
-          break;
-        case 1:
-          inst->cfg->thermal.poll_interval = 8;
-          break;
-        case 2:
-          inst->cfg->thermal.poll_interval = 32;
-          break;
-        case 3:
-          inst->cfg->thermal.poll_interval = 64;
-          break;
-        case 4:
-          inst->cfg->thermal.poll_interval = 256;
-          break;
-        default:
-          inst->cfg->thermal.poll_interval = 32;
+      case 0:
+        inst->cfg->thermal.poll_interval = 4;
+        break;
+
+      case 1:
+        inst->cfg->thermal.poll_interval = 8;
+        break;
+
+      case 2:
+        inst->cfg->thermal.poll_interval = 32;
+        break;
+
+      case 3:
+        inst->cfg->thermal.poll_interval = 64;
+        break;
+
+      case 4:
+        inst->cfg->thermal.poll_interval = 256;
+        break;
+
+      default:
+        inst->cfg->thermal.poll_interval = 32;
      }
 
    e_config_save_queue();
@@ -182,16 +188,18 @@ thermal_configure(Instance *inst)
    evas_object_smart_callback_add(o, "changed", _units_changed, tc);
    evas_object_show(o);
 
-   switch(inst->cfg->thermal.units)
+   switch (inst->cfg->thermal.units)
      {
-        case CELSIUS:
-          elm_radio_value_set(groupu, 0);
-          break;
-        case FAHRENHEIT:
-          elm_radio_value_set(groupu, 1);
-          break;
-        default:
-          elm_radio_value_set(groupu, 0);
+      case CELSIUS:
+        elm_radio_value_set(groupu, 0);
+        break;
+
+      case FAHRENHEIT:
+        elm_radio_value_set(groupu, 1);
+        break;
+
+      default:
+        elm_radio_value_set(groupu, 0);
      }
 
    elm_object_content_set(frame, box);
@@ -258,25 +266,30 @@ thermal_configure(Instance *inst)
    evas_object_smart_callback_add(o, "changed", _poll_changed, tc);
    evas_object_show(o);
 
-   switch(inst->cfg->thermal.poll_interval)
+   switch (inst->cfg->thermal.poll_interval)
      {
-        case 4:
-          elm_radio_value_set(group, 0);
-          break;
-        case 8:
-          elm_radio_value_set(group, 1);
-          break;
-        case 32:
-          elm_radio_value_set(group, 2);
-          break;
-        case 64:
-          elm_radio_value_set(group, 3);
-          break;
-        case 256:
-          elm_radio_value_set(group, 4);
-          break;
-        default:
-          elm_radio_value_set(group, 2);
+      case 4:
+        elm_radio_value_set(group, 0);
+        break;
+
+      case 8:
+        elm_radio_value_set(group, 1);
+        break;
+
+      case 32:
+        elm_radio_value_set(group, 2);
+        break;
+
+      case 64:
+        elm_radio_value_set(group, 3);
+        break;
+
+      case 256:
+        elm_radio_value_set(group, 4);
+        break;
+
+      default:
+        elm_radio_value_set(group, 2);
      }
 
    elm_object_content_set(frame, box);

@@ -17,22 +17,22 @@
 #if defined(__FreeBSD__) || defined(__DragonFly__) || defined(__OpenBSD__)
 typedef struct
 {
-   int mib[CTL_MAXNAME];
+   int          mib[CTL_MAXNAME];
 #if defined(__FreeBSD__) || defined(__DragonFly__)
    unsigned int miblen;
 #endif
-   int dummy;
+   int          dummy;
 } Extn;
 
 #if defined(__FreeBSD__) || defined(__DragonFly__)
 static const char *sources[] =
-  {
-     "hw.acpi.thermal.tz0.temperature",
-     "dev.cpu.0.temperature",
-     "dev.aibs.0.temp.0",
-     "dev.lm75.0.temperature",
-     NULL
-  };
+{
+   "hw.acpi.thermal.tz0.temperature",
+   "dev.cpu.0.temperature",
+   "dev.aibs.0.temp.0",
+   "dev.lm75.0.temperature",
+   NULL
+};
 #endif
 
 #if defined(__OpenBSD__)
@@ -187,7 +187,7 @@ check(Tempthread *tth)
           goto error;
 #endif
      }
-if (ret) return temp;
+   if (ret) return temp;
 
    return -999;
 error:
@@ -208,4 +208,5 @@ thermal_sysctl_get(Tempthread *tth)
    temp = check(tth);
    return temp;
 }
+
 #endif

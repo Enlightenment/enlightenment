@@ -2,11 +2,11 @@
 
 typedef struct _Instance
 {
-   Evas_Object     *o_main;
-   Evas_Object     *o_xkbswitch;
-   Evas_Object     *o_xkbflag;
-   Evas_Object     *menu;
-   Evas_Object     *popup;
+   Evas_Object         *o_main;
+   Evas_Object         *o_xkbswitch;
+   Evas_Object         *o_xkbflag;
+   Evas_Object         *menu;
+   Evas_Object         *popup;
    E_Gadget_Site_Orient orient;
    E_Config_XKB_Layout *layout;
 } Instance;
@@ -202,8 +202,8 @@ _xkbg_resize_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, v
    Instance *inst = data;
 
    /* This does not work properly yet
-   edje_object_parts_extends_calc(elm_layout_edje_get(inst->o_xkbswitch), 0, 0, &w, &h);
-   evas_object_size_hint_aspect_set(inst->o_xkbswitch, EVAS_ASPECT_CONTROL_BOTH, w, h);*/
+      edje_object_parts_extends_calc(elm_layout_edje_get(inst->o_xkbswitch), 0, 0, &w, &h);
+      evas_object_size_hint_aspect_set(inst->o_xkbswitch, EVAS_ASPECT_CONTROL_BOTH, w, h);*/
    evas_object_size_hint_aspect_set(inst->o_main, EVAS_ASPECT_CONTROL_BOTH, 1, 1);
 }
 
@@ -225,26 +225,26 @@ _xkbg_gadget_created_cb(void *data, Evas_Object *obj, void *event_info EINA_UNUS
           {
              if (inst->orient == E_GADGET_SITE_ORIENT_VERTICAL)
                e_theme_edje_object_set(inst->o_xkbswitch,
-                                  "base/theme/gadget/xkbswitch",
-                                  "e/gadget/xkbswitch/noflag_vert");
+                                       "base/theme/gadget/xkbswitch",
+                                       "e/gadget/xkbswitch/noflag_vert");
              else
                e_theme_edje_object_set(inst->o_xkbswitch,
-                                  "base/theme/gadget/xkbswitch",
-                                  "e/gadget/xkbswitch/noflag");
+                                       "base/theme/gadget/xkbswitch",
+                                       "e/gadget/xkbswitch/noflag");
           }
         else
           {
              if (inst->orient == E_GADGET_SITE_ORIENT_VERTICAL)
                e_theme_edje_object_set(inst->o_xkbswitch,
-                                  "base/theme/gadget/xkbswitch",
-                                  "e/gadget/xkbswitch/main_vert");
+                                       "base/theme/gadget/xkbswitch",
+                                       "e/gadget/xkbswitch/main_vert");
              else
                e_theme_edje_object_set(inst->o_xkbswitch,
-                                  "base/theme/gadget/xkbswitch",
-                                  "e/gadget/xkbswitch/main");
+                                       "base/theme/gadget/xkbswitch",
+                                       "e/gadget/xkbswitch/main");
           }
         elm_layout_text_set(inst->o_xkbswitch, "e.text.label",
-                                 inst->layout ? e_xkb_layout_name_reduce(inst->layout->name) : _("NONE"));
+                            inst->layout ? e_xkb_layout_name_reduce(inst->layout->name) : _("NONE"));
         if (inst->layout && (!e_config->xkb.only_label))
           {
              inst->o_xkbflag = e_icon_add(evas_object_evas_get(inst->o_xkbswitch));
@@ -256,7 +256,7 @@ _xkbg_gadget_created_cb(void *data, Evas_Object *obj, void *event_info EINA_UNUS
         evas_object_event_callback_add(inst->o_xkbswitch, EVAS_CALLBACK_MOUSE_DOWN,
                                        _xkbg_cb_mouse_down, inst);
         evas_object_event_callback_add(inst->o_xkbswitch, EVAS_CALLBACK_RESIZE,
-                                  _xkbg_resize_cb, inst);
+                                       _xkbg_resize_cb, inst);
         elm_box_pack_end(inst->o_main, inst->o_xkbswitch);
         evas_object_show(inst->o_xkbswitch);
      }

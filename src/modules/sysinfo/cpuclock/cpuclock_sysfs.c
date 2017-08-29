@@ -51,7 +51,7 @@ main(int argc, char *argv[])
    else if (!strcmp(argv[1], "pstate"))
      {
         int min, max, turbo;
-        
+
         if (argc < 5)
           {
              fprintf(stderr, "Invalid number of arguments.\n");
@@ -134,16 +134,17 @@ sys_cpu_pstate(int min, int max, int turbo)
    if (!f) return 0;
    fprintf(f, "%i\n", min);
    fclose(f);
-   
+
    f = fopen("/sys/devices/system/cpu/intel_pstate/max_perf_pct", "w");
    if (!f) return 0;
    fprintf(f, "%i\n", max);
    fclose(f);
-   
+
    f = fopen("/sys/devices/system/cpu/intel_pstate/no_turbo", "w");
    if (!f) return 0;
    fprintf(f, "%i\n", turbo ? 0 : 1);
    fclose(f);
-   
+
    return 1;
 }
+

@@ -1,7 +1,7 @@
 #include "batman.h"
 
-#define BUS "org.freedesktop.UPower"
-#define PATH "/org/freedesktop/UPower"
+#define BUS   "org.freedesktop.UPower"
+#define PATH  "/org/freedesktop/UPower"
 #define IFACE "org.freedesktop.UPower"
 
 EINTERN extern Eina_List *batman_device_batteries;
@@ -15,7 +15,7 @@ typedef struct _Upower_Data Upower_Data;
 struct _Upower_Data
 {
    Eldbus_Proxy *proxy;
-   Instance *inst;
+   Instance     *inst;
 };
 
 static void
@@ -123,25 +123,25 @@ _bat_get_all_cb(void *data, const Eldbus_Message *msg, Eldbus_Pending *pending E
      {
         const char *key;
         union
-          {
-             Eina_Bool b;
-             int64_t i64;
-             unsigned u;
-             double d;
-             const char *s;
-          } val;
+        {
+           Eina_Bool   b;
+           int64_t     i64;
+           unsigned    u;
+           double      d;
+           const char *s;
+        } val;
 
         if (!eldbus_message_iter_arguments_get(dict, "sv", &key, &variant))
           continue;
         if (!strcmp(key, "IsPresent"))
-           {
-              eldbus_message_iter_arguments_get(variant, "b", &val.b);
-              bat->present = val.b;
-           }
+          {
+             eldbus_message_iter_arguments_get(variant, "b", &val.b);
+             bat->present = val.b;
+          }
         else if (!strcmp(key, "TimeToEmpty"))
           {
              eldbus_message_iter_arguments_get(variant, "x", &val.i64);
-             bat->time_left = (int) val.i64;
+             bat->time_left = (int)val.i64;
              if (bat->time_left > 0)
                bat->charging = EINA_FALSE;
              else
@@ -150,27 +150,27 @@ _bat_get_all_cb(void *data, const Eldbus_Message *msg, Eldbus_Pending *pending E
         else if (!strcmp(key, "Percentage"))
           {
              eldbus_message_iter_arguments_get(variant, "d", &val.d);
-             bat->percent = (int) val.d;
+             bat->percent = (int)val.d;
           }
         else if (!strcmp(key, "Energy"))
           {
              eldbus_message_iter_arguments_get(variant, "d", &val.d);
-             bat->current_charge = (int) val.d;
+             bat->current_charge = (int)val.d;
           }
         else if (!strcmp(key, "EnergyFullDesign"))
           {
              eldbus_message_iter_arguments_get(variant, "d", &val.d);
-             bat->design_charge = (int) val.d;
+             bat->design_charge = (int)val.d;
           }
         else if (!strcmp(key, "EnergyFull"))
           {
              eldbus_message_iter_arguments_get(variant, "d", &val.d);
-             bat->last_full_charge = (int) val.d;
+             bat->last_full_charge = (int)val.d;
           }
         else if (!strcmp(key, "TimeToFull"))
           {
              eldbus_message_iter_arguments_get(variant, "x", &val.i64);
-             bat->time_full = (int) val.i64;
+             bat->time_full = (int)val.i64;
           }
         else if (!strcmp(key, "Technology"))
           {
@@ -395,3 +395,4 @@ _batman_upower_stop(void)
    E_FREE_FUNC(obj, eldbus_object_unref);
    E_FREE_FUNC(conn, eldbus_connection_unref);
 }
+

@@ -98,7 +98,7 @@ sysinfo_init(void)
         ci->thermal.units = CELSIUS;
         ci->thermal.popup = NULL;
         ci->thermal.configure = NULL;
-	ci->cpuclock.poll_interval = 32;
+        ci->cpuclock.poll_interval = 32;
         ci->cpuclock.restore_governor = 0;
         ci->cpuclock.auto_powersave = 1;
         ci->cpuclock.powersave_governor = NULL;
@@ -106,8 +106,8 @@ sysinfo_init(void)
         ci->cpuclock.pstate_min = 1;
         ci->cpuclock.pstate_max = 101;
         ci->cpuclock.popup = NULL;
-	ci->cpuclock.configure = NULL;
-	ci->cpumonitor.poll_interval = 32;
+        ci->cpuclock.configure = NULL;
+        ci->cpumonitor.poll_interval = 32;
         ci->cpumonitor.percent = 0;
         ci->cpumonitor.popup = NULL;
         ci->cpumonitor.configure = NULL;
@@ -120,7 +120,7 @@ sysinfo_init(void)
         ci->netstatus.automax = EINA_TRUE;
         ci->netstatus.inmax = 0;
         ci->netstatus.outmax = 0;
-	ci->netstatus.receive_units = NETSTATUS_UNIT_BYTES;
+        ci->netstatus.receive_units = NETSTATUS_UNIT_BYTES;
         ci->netstatus.send_units = NETSTATUS_UNIT_BYTES;
         ci->netstatus.instring = NULL;
         ci->netstatus.outstring = NULL;

@@ -4,19 +4,19 @@ typedef struct _Thread_Config Thread_Config;
 
 struct _Thread_Config
 {
-   int interval;
-   Instance *inst;
-   Eina_Bool automax;
-   int inpercent;
-   unsigned long in;
-   unsigned long incurrent;
-   unsigned long inmax;
-   Eina_Stringshare *instring;
-   int outpercent;
-   unsigned long out;
-   unsigned long outcurrent;
-   unsigned long outmax;
-   Eina_Stringshare *outstring;
+   int                  interval;
+   Instance            *inst;
+   Eina_Bool            automax;
+   int                  inpercent;
+   unsigned long        in;
+   unsigned long        incurrent;
+   unsigned long        inmax;
+   Eina_Stringshare    *instring;
+   int                  outpercent;
+   unsigned long        out;
+   unsigned long        outcurrent;
+   unsigned long        outmax;
+   Eina_Stringshare    *outstring;
    E_Powersave_Sleeper *sleeper;
 };
 
@@ -137,7 +137,7 @@ static void
 _netstatus_cb_usage_check_main(void *data, Ecore_Thread *th)
 {
    Thread_Config *thc = data;
-   for (;;)
+   for (;; )
      {
         char rin[4096], rout[4096];
 
@@ -145,7 +145,7 @@ _netstatus_cb_usage_check_main(void *data, Ecore_Thread *th)
 #if defined(__FreeBSD__) || defined(__DragonFly__) || defined(__OpenBSD__)
         _netstatus_sysctl_getrstatus(thc->automax, &thc->in, &thc->incurrent, &thc->inmax, &thc->inpercent);
         _netstatus_sysctl_gettstatus(thc->automax, &thc->out, &thc->outcurrent, &thc->outmax, &thc->outpercent);
-#else 
+#else
         _netstatus_proc_getrstatus(thc->automax, &thc->in, &thc->incurrent, &thc->inmax, &thc->inpercent);
         _netstatus_proc_gettstatus(thc->automax, &thc->out, &thc->outcurrent, &thc->outmax, &thc->outpercent);
 #endif
@@ -177,7 +177,7 @@ _netstatus_cb_usage_check_main(void *data, Ecore_Thread *th)
                snprintf(rout, sizeof(rout), "%s: %lu B/s", _("Sending"), thc->outcurrent);
           }
         eina_stringshare_replace(&thc->outstring, rout);
-	ecore_thread_feedback(th, NULL);
+        ecore_thread_feedback(th, NULL);
         if (ecore_thread_check(th)) break;
         e_powersave_sleeper_sleep(thc->sleeper, thc->interval);
         if (ecore_thread_check(th)) break;
@@ -186,16 +186,16 @@ _netstatus_cb_usage_check_main(void *data, Ecore_Thread *th)
 
 static void
 _netstatus_cb_usage_check_notify(void *data,
-                                   Ecore_Thread *th EINA_UNUSED,
-                                   void *msg EINA_UNUSED)
+                                 Ecore_Thread *th EINA_UNUSED,
+                                 void *msg EINA_UNUSED)
 {
    Thread_Config *thc = data;
 
    if (!thc->inst->cfg) return;
    if (thc->inst->cfg->esm != E_SYSINFO_MODULE_NETSTATUS && thc->inst->cfg->esm != E_SYSINFO_MODULE_SYSINFO) return;
 
-  eina_stringshare_replace(&thc->inst->cfg->netstatus.instring, thc->instring);
-  eina_stringshare_replace(&thc->inst->cfg->netstatus.outstring, thc->outstring);
+   eina_stringshare_replace(&thc->inst->cfg->netstatus.instring, thc->instring);
+   eina_stringshare_replace(&thc->inst->cfg->netstatus.outstring, thc->outstring);
    _netstatus_face_update(thc);
 }
 
@@ -247,7 +247,7 @@ _netstatus_config_updated(Instance *inst)
              thc->outpercent = 30;
              _netstatus_face_update(thc);
              E_FREE(thc);
-	  }
+          }
         return;
      }
    if (inst->cfg->netstatus.usage_check_thread)
@@ -272,7 +272,7 @@ _netstatus_config_updated(Instance *inst)
         thc->outpercent = 0;
         thc->outstring = NULL;
         thc->automax = inst->cfg->netstatus.automax;
-	inst->cfg->netstatus.usage_check_thread =
+        inst->cfg->netstatus.usage_check_thread =
           ecore_thread_feedback_run(_netstatus_cb_usage_check_main,
                                     _netstatus_cb_usage_check_notify,
                                     _netstatus_cb_usage_check_end,
@@ -406,7 +406,7 @@ _conf_item_get(int *id)
    ci = E_NEW(Config_Item, 1);
 
    if (*id != -1)
-     ci->id = eina_list_count(sysinfo_config->items)+1;
+     ci->id = eina_list_count(sysinfo_config->items) + 1;
    else
      ci->id = -1;
 

@@ -11,7 +11,7 @@
 # define CPU_STATES 6
 #endif
 
- int
+int
 _cpumonitor_sysctl_getcores(void)
 {
    int cores = 0;
@@ -20,11 +20,10 @@ _cpumonitor_sysctl_getcores(void)
    int mib[2] = { CTL_HW, HW_NCPU };
 
    len = sizeof(cores);
-   if (sysctl(mib, 2, &cores, &len, NULL, 0) < 0) return 0; 
+   if (sysctl(mib, 2, &cores, &len, NULL, 0) < 0) return 0;
 #endif
    return cores;
 }
-
 
 void
 _cpumonitor_sysctl_getusage(unsigned long *prev_total, unsigned long *prev_idle, int *prev_percent, Eina_List *cores)
@@ -36,19 +35,19 @@ _cpumonitor_sysctl_getusage(unsigned long *prev_total, unsigned long *prev_idle,
 #if defined(__FreeBSD__) || defined(__DragonFly__)
    int ncpu = _cpumonitor_sysctl_getcores();
    if (!ncpu) return;
-   size =  sizeof(unsigned long) * (CPU_STATES * ncpu);
+   size = sizeof(unsigned long) * (CPU_STATES * ncpu);
    unsigned long cpu_times[ncpu][CPU_STATES];
 
    if (sysctlbyname("kern.cp_times", cpu_times, &size, NULL, 0) < 0)
      return;
- 
+
    for (i = 0; i < ncpu; i++)
      {
         unsigned long *cpu = cpu_times[i];
         double total = 0;
 
-        for (j = 0; j < CPU_STATES; j++) 
-           total += cpu[j];
+        for (j = 0; j < CPU_STATES; j++)
+          total += cpu[j];
 
         core = eina_list_nth(cores, i);
 
@@ -61,22 +60,22 @@ _cpumonitor_sysctl_getusage(unsigned long *prev_total, unsigned long *prev_idle,
         unsigned long used = diff_total - diff_idle;
 
         int percent = used / ratio;
-        if (percent > 100) 
-           percent = 100;
-        else if (percent < 0) 
-           percent = 0;
+        if (percent > 100)
+          percent = 100;
+        else if (percent < 0)
+          percent = 0;
 
         core->percent = percent;
         core->total = total;
         core->idle = cpu[4];
 
-        percent_all += (int) percent;
+        percent_all += (int)percent;
         total_all += total;
         idle_all += core->idle;
      }
    *prev_total = total_all / ncpu;
    *prev_idle = idle_all / ncpu;
-   *prev_percent = (int) (percent_all / ncpu);
+   *prev_percent = (int)(percent_all / ncpu);
 #elif defined(__OpenBSD__)
    int ncpu = _cpumonitor_sysctl_getcores();
    if (!ncpu) return;
@@ -91,7 +90,7 @@ _cpumonitor_sysctl_getusage(unsigned long *prev_total, unsigned long *prev_idle,
         unsigned long total = 0;
         for (j = 0; j < CPU_STATES - 1; j++)
           total += cpu_times[j];
-        
+
         unsigned long idle = cpu_times[4];
 
         int diff_total = total - *prev_total;
@@ -106,14 +105,14 @@ _cpumonitor_sysctl_getusage(unsigned long *prev_total, unsigned long *prev_idle,
           percent = 100;
         else if (percent < 0)
           percent = 0;
-         
+
         *prev_total = total;
         *prev_idle = idle; // cpu_times[3];
-        *prev_percent = (int) percent; 
+        *prev_percent = (int)percent;
      }
    else if (ncpu > 1)
      {
-        for (i = 0; i < ncpu; i++)        
+        for (i = 0; i < ncpu; i++)
           {
              unsigned long cpu_times[CPU_STATES];
              size = CPU_STATES * sizeof(unsigned long);
@@ -125,10 +124,10 @@ _cpumonitor_sysctl_getusage(unsigned long *prev_total, unsigned long *prev_idle,
              unsigned long total = 0;
              for (j = 0; j < CPU_STATES - 1; j++)
                total += cpu_times[j];
-	     
+
              core = eina_list_nth(cores, i);
              int diff_total = total - core->total;
-             int diff_idle  = cpu_times[4] - core->idle;
+             int diff_idle = cpu_times[4] - core->idle;
 
              core->total = total;
              core->idle = cpu_times[4];
@@ -140,13 +139,13 @@ _cpumonitor_sysctl_getusage(unsigned long *prev_total, unsigned long *prev_idle,
 
              core->percent = percent;
 
-             percent_all += (int) percent;
+             percent_all += (int)percent;
              total_all += total;
              idle_all += core->idle;
           }
-   
-        *prev_total =  (total_all / ncpu);
-        *prev_idle =   (idle_all / ncpu);
+
+        *prev_total = (total_all / ncpu);
+        *prev_idle = (idle_all / ncpu);
         *prev_percent = (percent_all / ncpu) + (percent_all % ncpu);
      }
 #endif

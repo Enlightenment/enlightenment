@@ -2,11 +2,11 @@
 
 #define VOLUME_STEP 5
 
-#define BARRIER_CHECK(old_val, new_val) \
-   (old_val > EMIX_VOLUME_BARRIER - 20) && \
-   (old_val <= EMIX_VOLUME_BARRIER) && \
-   (new_val > EMIX_VOLUME_BARRIER) && \
-   (new_val < EMIX_VOLUME_BARRIER + 20)
+#define BARRIER_CHECK(old_val, new_val)   \
+  (old_val > EMIX_VOLUME_BARRIER - 20) && \
+  (old_val <= EMIX_VOLUME_BARRIER) &&     \
+  (new_val > EMIX_VOLUME_BARRIER) &&      \
+  (new_val < EMIX_VOLUME_BARRIER + 20)
 
 static Eina_Bool init;
 static Eina_List *_client_sinks = NULL;
@@ -16,17 +16,18 @@ static Eina_List *_client_handlers = NULL;
 typedef struct _Context Context;
 struct _Context
 {
-   char *theme;
-   Ecore_Exe *emixer;
+   char                *theme;
+   Ecore_Exe           *emixer;
    Ecore_Event_Handler *desklock_handler;
    Ecore_Event_Handler *emix_event_handler;
-   const Emix_Sink *sink_default;
-   E_Module *module;
-   Eina_List *instances;
-   E_Menu *menu;
-   unsigned int notification_id;
+   const Emix_Sink     *sink_default;
+   E_Module            *module;
+   Eina_List           *instances;
+   E_Menu              *menu;
+   unsigned int         notification_id;
 
-   struct {
+   struct
+   {
       E_Action *incr;
       E_Action *decr;
       E_Action *mute;
@@ -39,15 +40,15 @@ struct _Context
 typedef struct _Instance Instance;
 struct _Instance
 {
-   int id;
-   Evas_Object *o_main;
-   Evas_Object *o_mixer;
-   Evas_Object *popup;
-   Evas_Object *list;
-   Evas_Object *slider;
-   Evas_Object *check;
+   int                  id;
+   Evas_Object         *o_main;
+   Evas_Object         *o_mixer;
+   Evas_Object         *popup;
+   Evas_Object         *list;
+   Evas_Object         *slider;
+   Evas_Object         *check;
    E_Gadget_Site_Orient orient;
-   Eina_Bool mute;
+   Eina_Bool            mute;
 };
 
 typedef struct _Client_Mixer Client_Mixer;
@@ -56,9 +57,9 @@ struct _Client_Mixer
    Evas_Object *win;
    Evas_Object *volume;
    Evas_Object *mute;
-   E_Client *ec;
+   E_Client    *ec;
    Evas_Object *bx;
-   Eina_List *sinks;
+   Eina_List   *sinks;
 };
 
 static Context *gmixer_context = NULL;
@@ -144,7 +145,7 @@ _mixer_gadget_update(void)
              msg->val[2] = msg->val[1];
              if (inst->popup)
                _mixer_popup_update(inst, gmixer_context->sink_default->mute,
-                                    msg->val[1]);
+                                   msg->val[1]);
           }
         edje_object_message_send(elm_layout_edje_get(inst->o_mixer), EDJE_MESSAGE_INT_SET, 0, msg);
         elm_layout_signal_emit(inst->o_mixer, "e,action,volume,change", "e");
@@ -369,7 +370,7 @@ _emixer_del_cb(void *data EINA_UNUSED, int type EINA_UNUSED,
 {
    gmixer_context->emixer = NULL;
    if (gmixer_context->emix_event_handler)
-      ecore_event_handler_del(gmixer_context->emix_event_handler);
+     ecore_event_handler_del(gmixer_context->emix_event_handler);
 
    return EINA_TRUE;
 }
@@ -384,9 +385,9 @@ _emixer_exec_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_
 
    gmixer_context->emixer = ecore_exe_run("emixer", NULL);
    if (gmixer_context->emix_event_handler)
-      ecore_event_handler_del(gmixer_context->emix_event_handler);
+     ecore_event_handler_del(gmixer_context->emix_event_handler);
    gmixer_context->emix_event_handler =
-      ecore_event_handler_add(ECORE_EXE_EVENT_DEL, _emixer_del_cb, NULL);
+     ecore_event_handler_add(ECORE_EXE_EVENT_DEL, _emixer_del_cb, NULL);
 }
 
 static void
@@ -399,7 +400,7 @@ _check_changed_cb(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
    emix_config_save_state_get();
    if (emix_config_save_get()) e_config_save_queue();
    /*
-    *TODO: is it really necessary ? or it will be update
+    * TODO: is it really necessary ? or it will be update
     *      with the sink changed hanlder
     */
    _mixer_gadget_update();
@@ -528,8 +529,8 @@ _popup_new(Instance *inst)
    evas_object_show(button);
 
    evas_object_size_hint_min_set(list, 208, 208);
-   
-   e_gadget_util_ctxpopup_place(inst->o_main, inst->popup, inst->o_mixer); 
+
+   e_gadget_util_ctxpopup_place(inst->o_main, inst->popup, inst->o_mixer);
    evas_object_show(inst->popup);
 
    if (default_it)
@@ -611,24 +612,24 @@ _mixer_gadget_created_cb(void *data, Evas_Object *obj, void *event_info EINA_UNU
         inst->o_mixer = elm_layout_add(inst->o_main);
         E_EXPAND(inst->o_mixer);
         E_FILL(inst->o_mixer);
-       if (inst->orient == E_GADGET_SITE_ORIENT_VERTICAL)
+        if (inst->orient == E_GADGET_SITE_ORIENT_VERTICAL)
           e_theme_edje_object_set(inst->o_mixer,
-                             "base/theme/gadget/mixer",
-                             "e/gadget/mixer/main_vert");
+                                  "base/theme/gadget/mixer",
+                                  "e/gadget/mixer/main_vert");
         else
           e_theme_edje_object_set(inst->o_mixer,
-                             "base/theme/gadget/mixer",
-                             "e/gadget/mixer/main");
+                                  "base/theme/gadget/mixer",
+                                  "e/gadget/mixer/main");
         evas_object_event_callback_add(inst->o_mixer, EVAS_CALLBACK_MOUSE_DOWN,
-                                  _mouse_down_cb, inst);
+                                       _mouse_down_cb, inst);
         evas_object_event_callback_add(inst->o_mixer, EVAS_CALLBACK_MOUSE_WHEEL,
-                                  _mouse_wheel_cb, inst);
+                                       _mouse_wheel_cb, inst);
         evas_object_event_callback_add(inst->o_mixer, EVAS_CALLBACK_RESIZE,
-                                  _mixer_resize_cb, inst);
+                                       _mixer_resize_cb, inst);
         elm_box_pack_end(inst->o_main, inst->o_mixer);
         evas_object_show(inst->o_mixer);
         if (inst->id != -1)
-	  gmixer_context->instances = eina_list_append(gmixer_context->instances, inst);
+          gmixer_context->instances = eina_list_append(gmixer_context->instances, inst);
         if (inst->id == -1)
           {
              Edje_Message_Int_Set *msg;
@@ -642,7 +643,7 @@ _mixer_gadget_created_cb(void *data, Evas_Object *obj, void *event_info EINA_UNU
              elm_layout_signal_emit(inst->o_mixer, "e,action,volume,change", "e");
           }
         else
-	  _mixer_gadget_update();
+          _mixer_gadget_update();
      }
    evas_object_smart_callback_del_full(obj, "gadget_created", _mixer_gadget_created_cb, data);
 }
@@ -672,7 +673,7 @@ mixer_gadget_create(Evas_Object *parent, int *id, E_Gadget_Site_Orient orient)
    inst->o_main = elm_box_add(parent);
    inst->orient = orient;
    inst->id = *id;
-   evas_object_show(inst->o_main);   
+   evas_object_show(inst->o_main);
 
    evas_object_smart_callback_add(parent, "gadget_created", _mixer_gadget_created_cb, inst);
    if (*id != -1)
@@ -719,10 +720,10 @@ _sink_event(int type, void *info)
         DBG("Sink added");
      }
    /*
-     Only safe the state if we are not in init mode,
-     If we are in init mode, this is a result of the restore call.
-     Restore iterates over a list of sinks which would get deleted in the
-     save_state_get call.
+      Only safe the state if we are not in init mode,
+      If we are in init mode, this is a result of the restore call.
+      Restore iterates over a list of sinks which would get deleted in the
+      save_state_get call.
     */
    if (!init)
      {
@@ -872,51 +873,53 @@ _sink_input_event(int type, Emix_Sink_Input *input)
    switch (type)
      {
       case EMIX_SINK_INPUT_ADDED_EVENT:
-         pid = input->pid;
-         while (42)
-           {
-              if (pid <= 1 || pid == getpid()) return;
-              clients = e_client_focus_stack_get();
-              EINA_LIST_FOREACH(clients, l, ec)
-                {
-                   if ((ec->netwm.pid == pid) && (!ec->parent))
-                     {
-                        DBG("Sink found the client %s",
-                            e_client_util_name_get(ec));
-                        sink = e_client_volume_sink_new(_sink_input_get,
-                                                        _sink_input_set,
-                                                        _sink_input_min_get,
-                                                        _sink_input_max_get,
-                                                        _sink_input_name_get,
-                                                        input);
-                        e_client_volume_sink_append(ec, sink);
-                        _client_sinks = eina_list_append(_client_sinks, sink);
-                        return;
-                     }
-                }
-              pid = _get_ppid(pid);
-           }
-         break;
+        pid = input->pid;
+        while (42)
+          {
+             if (pid <= 1 || pid == getpid()) return;
+             clients = e_client_focus_stack_get();
+             EINA_LIST_FOREACH(clients, l, ec)
+               {
+                  if ((ec->netwm.pid == pid) && (!ec->parent))
+                    {
+                       DBG("Sink found the client %s",
+                           e_client_util_name_get(ec));
+                       sink = e_client_volume_sink_new(_sink_input_get,
+                                                       _sink_input_set,
+                                                       _sink_input_min_get,
+                                                       _sink_input_max_get,
+                                                       _sink_input_name_get,
+                                                       input);
+                       e_client_volume_sink_append(ec, sink);
+                       _client_sinks = eina_list_append(_client_sinks, sink);
+                       return;
+                    }
+               }
+             pid = _get_ppid(pid);
+          }
+        break;
+
       case EMIX_SINK_INPUT_REMOVED_EVENT:
-         EINA_LIST_FOREACH(_client_sinks, l, sink)
-           {
-              if (sink->data == input)
-                {
-                   e_client_volume_sink_del(sink);
-                   _client_sinks = eina_list_remove_list(_client_sinks, l);
-                   break;
-                }
-           }
-         break;
+        EINA_LIST_FOREACH(_client_sinks, l, sink)
+          {
+             if (sink->data == input)
+               {
+                  e_client_volume_sink_del(sink);
+                  _client_sinks = eina_list_remove_list(_client_sinks, l);
+                  break;
+               }
+          }
+        break;
+
       case EMIX_SINK_INPUT_CHANGED_EVENT:
-         EINA_LIST_FOREACH(_client_sinks, l, sink)
-           {
-              if (sink->data == input)
-                {
-                   e_client_volume_sink_update(sink);
-                }
-           }
-         break;
+        EINA_LIST_FOREACH(_client_sinks, l, sink)
+          {
+             if (sink->data == input)
+               {
+                  e_client_volume_sink_update(sink);
+               }
+          }
+        break;
      }
 }
 
@@ -928,22 +931,25 @@ _events_cb(void *data EINA_UNUSED, enum Emix_Event type, void *event_info)
       case EMIX_SINK_ADDED_EVENT:
       case EMIX_SINK_CHANGED_EVENT:
       case EMIX_SINK_REMOVED_EVENT:
-         _sink_event(type, event_info);
-         break;
+        _sink_event(type, event_info);
+        break;
+
       case EMIX_DISCONNECTED_EVENT:
-         _disconnected();
-         break;
+        _disconnected();
+        break;
+
       case EMIX_READY_EVENT:
-         _ready();
-         break;
+        _ready();
+        break;
+
       case EMIX_SINK_INPUT_ADDED_EVENT:
       case EMIX_SINK_INPUT_REMOVED_EVENT:
       case EMIX_SINK_INPUT_CHANGED_EVENT:
-         _sink_input_event(type, event_info);
-         break;
+        _sink_input_event(type, event_info);
+        break;
 
       default:
-         break;
+        break;
      }
 }
 
@@ -1082,7 +1088,6 @@ _bd_hook_sink_volume_drag_stop(void *data, Evas_Object *obj, void *event_info EI
    elm_slider_value_set(obj, vol);
    elm_check_state_set(check, mute);
 }
-
 
 static void
 _bd_hook_sink_mute_changed(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
@@ -1296,7 +1301,7 @@ mixer_init(void)
         gmixer_context = E_NEW(Context, 1);
 
         gmixer_context->desklock_handler =
-           ecore_event_handler_add(E_EVENT_DESKLOCK, _desklock_cb, NULL);
+          ecore_event_handler_add(E_EVENT_DESKLOCK, _desklock_cb, NULL);
         snprintf(buf, sizeof(buf), "%s/mixer.edj",
                  e_module_dir_get(gmixer_context->module));
         gmixer_context->theme = strdup(buf);
@@ -1307,13 +1312,13 @@ mixer_init(void)
 
    backend = emix_config_backend_get();
    if (backend && emix_backend_set(backend))
-      backend_loaded = EINA_TRUE;
+     backend_loaded = EINA_TRUE;
    else
      {
         if (backend)
-           WRN("Could not load %s, trying another one ...", backend);
+          WRN("Could not load %s, trying another one ...", backend);
         EINA_LIST_FOREACH((Eina_List *)emix_backends_available(), l,
-                          backend)
+                           backend)
           {
              if (emix_backend_set(backend) == EINA_TRUE)
                {
@@ -1373,7 +1378,7 @@ mixer_shutdown(void)
         E_FREE(gmixer_context);
      }
    EINA_LIST_FREE(_client_sinks, sink)
-      e_client_volume_sink_del(sink);
+     e_client_volume_sink_del(sink);
    emix_event_callback_del(_events_cb);
 }
 

@@ -555,7 +555,7 @@ linux_sys_class_power_supply_check(void)
                }
 
              /* FIXME: do we get a uevent on going from charging to full?
-               * if so, move this to init */
+              * if so, move this to init */
              snprintf(buf, sizeof(buf), "%s/%s/status", dir, name);
              tmp = str_file_get(buf);
              if (tmp)
@@ -720,17 +720,16 @@ linux_acpi_cb_delay_check(void *data EINA_UNUSED)
 }
 
 static Eina_Bool
-linux_acpi_cb_acpid_add(void *data  EINA_UNUSED,
-                        int type    EINA_UNUSED,
+linux_acpi_cb_acpid_add(void *data EINA_UNUSED,
+                        int type EINA_UNUSED,
                         void *event EINA_UNUSED)
 {
    return ECORE_CALLBACK_PASS_ON;
 }
 
-
 static Eina_Bool
-linux_acpi_cb_acpid_del(void *data  EINA_UNUSED,
-                        int type    EINA_UNUSED,
+linux_acpi_cb_acpid_del(void *data EINA_UNUSED,
+                        int type EINA_UNUSED,
                         void *event EINA_UNUSED)
 {
    ecore_con_server_del(acpid);
@@ -745,8 +744,8 @@ linux_acpi_cb_acpid_del(void *data  EINA_UNUSED,
 }
 
 static Eina_Bool
-linux_acpi_cb_acpid_data(void *data  EINA_UNUSED,
-                         int type    EINA_UNUSED,
+linux_acpi_cb_acpid_data(void *data EINA_UNUSED,
+                         int type EINA_UNUSED,
                          void *event EINA_UNUSED)
 {
    if (delay_check) ecore_timer_del(delay_check);
@@ -755,7 +754,7 @@ linux_acpi_cb_acpid_data(void *data  EINA_UNUSED,
 }
 
 static Eina_Bool
-linux_acpi_cb_event_fd_active(void *data        EINA_UNUSED,
+linux_acpi_cb_event_fd_active(void *data EINA_UNUSED,
                               Ecore_Fd_Handler *fd_handler)
 {
    if (ecore_main_fd_handler_active_get(fd_handler, ECORE_FD_READ))
@@ -1229,7 +1228,7 @@ _batman_fallback_poll_cb(void *data)
 #endif
 
    _batman_update(inst, battery_full, time_left, have_battery, have_power);
-   
+
    return EINA_TRUE;
 }
 

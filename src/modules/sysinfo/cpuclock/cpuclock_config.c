@@ -89,7 +89,7 @@ _update_max_power(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EIN
 
    inst->cfg->cpuclock.pstate_max = value;
    _cpuclock_set_pstate(inst->cfg->cpuclock.pstate_min - 1,
-                  inst->cfg->cpuclock.pstate_max - 1, inst->cfg->cpuclock.status->pstate_turbo);
+                        inst->cfg->cpuclock.pstate_max - 1, inst->cfg->cpuclock.status->pstate_turbo);
    e_config_save_queue();
    _cpuclock_config_updated(inst);
 }
@@ -103,7 +103,7 @@ _update_min_power(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EIN
 
    inst->cfg->cpuclock.pstate_min = value;
    _cpuclock_set_pstate(inst->cfg->cpuclock.pstate_min - 1,
-                  inst->cfg->cpuclock.pstate_max - 1, inst->cfg->cpuclock.status->pstate_turbo);
+                        inst->cfg->cpuclock.pstate_max - 1, inst->cfg->cpuclock.status->pstate_turbo);
    e_config_save_queue();
    _cpuclock_config_updated(inst);
 }
@@ -130,7 +130,7 @@ _restore_governor(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
    Instance *inst = cc->inst;
 
    inst->cfg->cpuclock.restore_governor = elm_check_state_get(obj);
-   if ((!inst->cfg->cpuclock.governor) || 
+   if ((!inst->cfg->cpuclock.governor) ||
        (strcmp(inst->cfg->cpuclock.status->cur_governor, inst->cfg->cpuclock.governor)))
      {
         eina_stringshare_replace(&inst->cfg->cpuclock.governor, inst->cfg->cpuclock.status->cur_governor);
@@ -188,23 +188,28 @@ _poll_changed(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
 
    switch (value)
      {
-        case 0:
-          inst->cfg->cpuclock.poll_interval = 4;
-          break;
-        case 1:
-          inst->cfg->cpuclock.poll_interval = 8;
-          break;
-        case 2:
-          inst->cfg->cpuclock.poll_interval = 32;
-          break;
-        case 3:
-          inst->cfg->cpuclock.poll_interval = 64;
-          break;
-        case 4:
-          inst->cfg->cpuclock.poll_interval = 256;
-          break;
-        default:
-          inst->cfg->cpuclock.poll_interval = 32;
+      case 0:
+        inst->cfg->cpuclock.poll_interval = 4;
+        break;
+
+      case 1:
+        inst->cfg->cpuclock.poll_interval = 8;
+        break;
+
+      case 2:
+        inst->cfg->cpuclock.poll_interval = 32;
+        break;
+
+      case 3:
+        inst->cfg->cpuclock.poll_interval = 64;
+        break;
+
+      case 4:
+        inst->cfg->cpuclock.poll_interval = 256;
+        break;
+
+      default:
+        inst->cfg->cpuclock.poll_interval = 32;
      }
 
    e_config_save_queue();
@@ -263,18 +268,18 @@ cpuclock_configure(Instance *inst)
    elm_list_select_mode_set(list, ELM_OBJECT_SELECT_MODE_ALWAYS);
    elm_scroller_content_min_limit(list, 1, 1);
    it = elm_list_item_append(list, _("General"), NULL, NULL,
-       _config_show_general, cc);
+                             _config_show_general, cc);
    elm_list_item_selected_set(it, 1);
    it = elm_list_item_append(list, _("Power Policy"), NULL, NULL,
-       _config_show_policy, cc);
+                             _config_show_policy, cc);
    it = elm_list_item_append(list, _("Power Saving"), NULL, NULL,
-       _config_show_saving, cc);
+                             _config_show_saving, cc);
    if (cc->pstate)
      it = elm_list_item_append(list, _("Power State"), NULL, NULL,
-       _config_show_pstate, cc);
+                               _config_show_pstate, cc);
    if (cc->frequencies)
      it = elm_list_item_append(list, _("Frequencies"), NULL, NULL,
-       _config_show_frequencies, cc);
+                               _config_show_frequencies, cc);
    elm_list_go(list);
    evas_object_show(list);
 
@@ -348,25 +353,30 @@ cpuclock_configure(Instance *inst)
    evas_object_smart_callback_add(o, "changed", _poll_changed, cc);
    evas_object_show(o);
 
-   switch(inst->cfg->cpuclock.poll_interval)
+   switch (inst->cfg->cpuclock.poll_interval)
      {
-        case 4:
-          elm_radio_value_set(group, 0);
-          break;
-        case 8:
-          elm_radio_value_set(group, 1);
-          break;
-        case 32:
-          elm_radio_value_set(group, 2);
-          break;
-        case 64:
-          elm_radio_value_set(group, 3);
-          break;
-        case 256:
-          elm_radio_value_set(group, 4);
-          break;
-        default:
-          elm_radio_value_set(group, 2);
+      case 4:
+        elm_radio_value_set(group, 0);
+        break;
+
+      case 8:
+        elm_radio_value_set(group, 1);
+        break;
+
+      case 32:
+        elm_radio_value_set(group, 2);
+        break;
+
+      case 64:
+        elm_radio_value_set(group, 3);
+        break;
+
+      case 256:
+        elm_radio_value_set(group, 4);
+        break;
+
+      default:
+        elm_radio_value_set(group, 2);
      }
 
    elm_object_content_set(frame, box);
@@ -389,7 +399,7 @@ cpuclock_configure(Instance *inst)
      {
         o = elm_radio_add(box);
         elm_radio_state_value_set(o, i);
-	E_ALIGN(o, 0.0, 0.0);
+        E_ALIGN(o, 0.0, 0.0);
         E_WEIGHT(o, EVAS_HINT_EXPAND, 0);
         if (!strcmp(l->data, "ondemand"))
           elm_object_text_set(o, _("Automatic"));
@@ -403,17 +413,17 @@ cpuclock_configure(Instance *inst)
           elm_object_text_set(o, _("Maximum Speed"));
         else
           elm_object_text_set(o, l->data);
-	evas_object_data_set(o, "governor", strdup(l->data));
-	elm_box_pack_end(box, o);
+        evas_object_data_set(o, "governor", strdup(l->data));
+        elm_box_pack_end(box, o);
         evas_object_smart_callback_add(o, "changed", _governor_changed, cc);
         evas_object_show(o);
 
         if (!strcmp(inst->cfg->cpuclock.status->cur_governor, l->data))
           value = i;
 
-	if (!groupg)
+        if (!groupg)
           groupg = o;
-	else
+        else
           elm_radio_group_add(o, groupg);
         i++;
      }
@@ -473,8 +483,8 @@ cpuclock_configure(Instance *inst)
         else
           elm_object_text_set(o, l->data);
         elm_object_disabled_set(o, inst->cfg->cpuclock.auto_powersave);
-	evas_object_data_set(o, "governor", strdup(l->data));
-	elm_box_pack_end(box, o);
+        evas_object_data_set(o, "governor", strdup(l->data));
+        elm_box_pack_end(box, o);
         evas_object_smart_callback_add(o, "changed", _powersave_changed, cc);
         evas_object_show(o);
         cc->powersaves = eina_list_append(cc->powersaves, o);
@@ -555,7 +565,7 @@ cpuclock_configure(Instance *inst)
         E_EXPAND(box);
         evas_object_show(box);
 
-	i = 0;
+        i = 0;
         for (l = inst->cfg->cpuclock.status->frequencies; l; l = l->next)
           {
              char buf[4096];
@@ -574,7 +584,7 @@ cpuclock_configure(Instance *inst)
                snprintf(buf, sizeof(buf), _("%i MHz"), frequency / 1000);
              else
                snprintf(buf, sizeof(buf), _("%'.1f GHz"),
-                       frequency / 1000000.);
+                        frequency / 1000000.);
 #endif
              elm_object_text_set(o, buf);
              elm_box_pack_end(box, o);
@@ -588,7 +598,7 @@ cpuclock_configure(Instance *inst)
              if (inst->cfg->cpuclock.status->cur_frequency == frequency)
                value = i;
 #endif
-	     if (!groupf)
+             if (!groupf)
                groupf = o;
              else
                elm_radio_group_add(o, groupf);

@@ -1,23 +1,25 @@
 #include "memusage.h"
 
-
-unsigned long _line_parse(const char *line)
+unsigned long
+_line_parse(const char *line)
 {
    char *p, *tok;
 
    p = strchr(line, ':') + 1;
-   while(isspace(*p)) p++;
+   while (isspace(*p))
+     p++;
    tok = strtok(p, " ");
    return atol(tok);
 }
 
-void _memusage_proc_getusage(unsigned long *mem_total,
-                             unsigned long *mem_used,
-                             unsigned long *mem_cached,
-                             unsigned long *mem_buffers,
-                             unsigned long *mem_shared,
-                             unsigned long *swp_total,
-                             unsigned long *swp_used)
+void
+_memusage_proc_getusage(unsigned long *mem_total,
+                        unsigned long *mem_used,
+                        unsigned long *mem_cached,
+                        unsigned long *mem_buffers,
+                        unsigned long *mem_shared,
+                        unsigned long *swp_total,
+                        unsigned long *swp_used)
 {
    char line[256];
    int found = 0;
@@ -39,7 +41,7 @@ void _memusage_proc_getusage(unsigned long *mem_total,
    f = fopen("/proc/meminfo", "r");
    if (!f) return;
 
-   while(fgets(line, sizeof(line), f) != NULL)
+   while (fgets(line, sizeof(line), f) != NULL)
      {
         if (!strncmp("MemTotal:", line, 9))
           {
@@ -93,3 +95,4 @@ void _memusage_proc_getusage(unsigned long *mem_total,
    *swp_total = tmp_swp_total;
    *swp_used = tmp_swp_total - tmp_swp_free;
 }
+

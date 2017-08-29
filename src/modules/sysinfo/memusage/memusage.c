@@ -4,17 +4,17 @@ typedef struct _Thread_Config Thread_Config;
 
 struct _Thread_Config
 {
-   int interval;
-   Instance *inst;
-   int mem_percent;
-   int swp_percent;
-   unsigned long mem_total;
-   unsigned long mem_used;
-   unsigned long mem_cached;
-   unsigned long mem_buffers;
-   unsigned long mem_shared;
-   unsigned long swp_total;
-   unsigned long swp_used;
+   int                  interval;
+   Instance            *inst;
+   int                  mem_percent;
+   int                  swp_percent;
+   unsigned long        mem_total;
+   unsigned long        mem_used;
+   unsigned long        mem_cached;
+   unsigned long        mem_buffers;
+   unsigned long        mem_shared;
+   unsigned long        swp_total;
+   unsigned long        swp_used;
    E_Powersave_Sleeper *sleeper;
 };
 
@@ -275,18 +275,18 @@ static void
 _memusage_cb_usage_check_main(void *data, Ecore_Thread *th)
 {
    Thread_Config *thc = data;
-   for (;;)
+   for (;; )
      {
         if (ecore_thread_check(th)) break;
 #if defined(__OpenBSD__) || defined(__FreeBSD__) || defined(__DragonFly__)
         _memusage_sysctl_getusage(&thc->mem_total, &thc->mem_used,
-                         &thc->mem_cached, &thc->mem_buffers, &thc->mem_shared,
-                         &thc->swp_total, &thc->swp_used);
+                                  &thc->mem_cached, &thc->mem_buffers, &thc->mem_shared,
+                                  &thc->swp_total, &thc->swp_used);
 #else
         _memusage_proc_getusage(&thc->mem_total, &thc->mem_used,
-                         &thc->mem_cached, &thc->mem_buffers, &thc->mem_shared,
-                         &thc->swp_total, &thc->swp_used);
-#endif 
+                                &thc->mem_cached, &thc->mem_buffers, &thc->mem_shared,
+                                &thc->swp_total, &thc->swp_used);
+#endif
         if (thc->mem_total > 0)
           thc->mem_percent = 100 * ((float)thc->mem_used / (float)thc->mem_total);
         if (thc->swp_total > 0)
@@ -309,8 +309,8 @@ _memusage_cb_usage_check_end(void *data, Ecore_Thread *th EINA_UNUSED)
 
 static void
 _memusage_cb_usage_check_notify(void *data,
-                                   Ecore_Thread *th EINA_UNUSED,
-                                   void *msg EINA_UNUSED)
+                                Ecore_Thread *th EINA_UNUSED,
+                                void *msg EINA_UNUSED)
 {
    Thread_Config *thc = data;
 
@@ -363,7 +363,7 @@ _memusage_config_updated(Instance *inst)
         inst->cfg->memusage.mem_percent = 75;
         inst->cfg->memusage.swp_percent = 30;
         _memusage_face_update(inst);
-	return;
+        return;
      }
    if (inst->cfg->memusage.usage_check_thread)
      {
@@ -394,7 +394,6 @@ _memusage_removed_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_data)
    Ecore_Event_Handler *handler;
 
    if (inst->o_main != event_data) return;
-
 
    if (inst->cfg->memusage.popup)
      E_FREE_FUNC(inst->cfg->memusage.popup, evas_object_del);
@@ -502,7 +501,6 @@ sysinfo_memusage_create(Evas_Object *parent, Instance *inst)
                                   _memusage_resize_cb, inst);
    evas_object_show(inst->cfg->memusage.o_gadget);
 
-
    E_LIST_HANDLER_APPEND(inst->cfg->memusage.handlers, E_EVENT_SCREENSAVER_ON, _screensaver_on, inst);
    E_LIST_HANDLER_APPEND(inst->cfg->memusage.handlers, E_EVENT_SCREENSAVER_OFF, _screensaver_off, inst);
 
@@ -526,7 +524,7 @@ _conf_item_get(int *id)
    ci = E_NEW(Config_Item, 1);
 
    if (*id != -1)
-     ci->id = eina_list_count(sysinfo_config->items)+1;
+     ci->id = eina_list_count(sysinfo_config->items) + 1;
    else
      ci->id = -1;
 

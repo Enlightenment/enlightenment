@@ -14,8 +14,8 @@ EINTERN void _cpuclock_poll_interval_update(Instance *inst);
 typedef struct _Thread_Config Thread_Config;
 struct _Thread_Config
 {
-   int interval;
-   Instance *inst;
+   int                  interval;
+   Instance            *inst;
    E_Powersave_Sleeper *sleeper;
 };
 
@@ -23,9 +23,9 @@ typedef struct _Pstate_Config Pstate_Config;
 struct _Pstate_Config
 {
    Instance *inst;
-   int min;
-   int max;
-   int turbo;
+   int       min;
+   int       max;
+   int       turbo;
 };
 
 static Cpu_Status *
@@ -83,6 +83,7 @@ _cpuclock_set_thread_done(void *data EINA_UNUSED, Ecore_Thread *th EINA_UNUSED)
 {
    return;
 }
+
 #endif
 
 void
@@ -230,6 +231,7 @@ _cpuclock_event_cb_powersave(void *data, int type, void *event)
         eina_stringshare_del(inst->cfg->cpuclock.status->orig_governor);
         inst->cfg->cpuclock.status->orig_governor = NULL;
         break;
+
       case E_POWERSAVE_MODE_MEDIUM:
       case E_POWERSAVE_MODE_HIGH:
         if ((inst->cfg->cpuclock.powersave_governor) || (has_conservative))
@@ -241,7 +243,7 @@ _cpuclock_event_cb_powersave(void *data, int type, void *event)
              break;
           }
         EINA_FALLTHROUGH;
-        /* no break */
+      /* no break */
 
       case E_POWERSAVE_MODE_EXTREME:
       default:
@@ -291,13 +293,13 @@ _cpuclock_popup_create(Instance *inst)
      {
         f += 500;
         f /= 1000;
-	u = _("MHz");
+        u = _("MHz");
      }
    else
      {
         f += 50000;
         f /= 1000000;
-	u = _("GHz");
+        u = _("GHz");
      }
 
    popup = elm_ctxpopup_add(e_comp->elm);
@@ -433,7 +435,7 @@ _cpuclock_face_update_current(Instance *inst)
           {
              f += 500;
              f /= 1000;
-	     u = _("MHz");
+             u = _("MHz");
           }
         else
           {
@@ -452,7 +454,7 @@ _cpuclock_status_check_available(Cpu_Status *s)
 #if !defined(__OpenBSD__)
    char buf[4096];
    Eina_List *l;
-#endif 
+#endif
    // FIXME: this assumes all cores accept the same freqs/ might be wrong
 
 #if defined(__OpenBSD__)
@@ -574,15 +576,15 @@ _cpuclock_status_check_available(Cpu_Status *s)
                eina_list_free(s->frequencies);
                s->frequencies = NULL;
             }
-#define CPUFREQ_ADDF(filename) \
-          f = fopen(CPUFREQ_SYSFSDIR filename, "r"); \
-          if (f) \
-            { \
-               if (fgets(buf, sizeof(buf), f) != NULL) \
-                 s->frequencies = eina_list_append(s->frequencies, \
-                                                   (void *)(long)(atoi(buf))); \
-               fclose(f); \
-            }
+#define CPUFREQ_ADDF(filename)                                          \
+  f = fopen(CPUFREQ_SYSFSDIR filename, "r");                            \
+  if (f)                                                                \
+    {                                                                   \
+       if (fgets(buf, sizeof(buf), f) != NULL)                          \
+         s->frequencies = eina_list_append(s->frequencies,              \
+                                           (void *)(long)(atoi(buf)));  \
+       fclose(f);                                                       \
+    }
           CPUFREQ_ADDF("/cpuinfo_min_freq");
           CPUFREQ_ADDF("/cpuinfo_max_freq");
        }
@@ -827,7 +829,7 @@ static void
 _cpuclock_cb_frequency_check_main(void *data, Ecore_Thread *th)
 {
    Thread_Config *thc = data;
-   for (;;)
+   for (;; )
      {
         Cpu_Status *status;
 
@@ -845,8 +847,8 @@ _cpuclock_cb_frequency_check_main(void *data, Ecore_Thread *th)
 
 static void
 _cpuclock_cb_frequency_check_notify(void *data,
-                                   Ecore_Thread *th EINA_UNUSED,
-                                   void *msg)
+                                    Ecore_Thread *th EINA_UNUSED,
+                                    void *msg)
 {
    Cpu_Status *status = msg;
    Eina_Bool freq_changed = EINA_FALSE;
@@ -860,12 +862,12 @@ _cpuclock_cb_frequency_check_notify(void *data,
    if ((thc->inst->cfg->cpuclock.status) && (status) &&
        (
 #if defined(__OpenBSD__)
-   (status->cur_percent       != thc->inst->cfg->cpuclock.status->cur_percent      ) ||
+         (status->cur_percent != thc->inst->cfg->cpuclock.status->cur_percent) ||
 #endif
-   (status->cur_frequency     != thc->inst->cfg->cpuclock.status->cur_frequency    ) ||
-   (status->cur_min_frequency != thc->inst->cfg->cpuclock.status->cur_min_frequency) ||
-   (status->cur_max_frequency != thc->inst->cfg->cpuclock.status->cur_max_frequency) ||
-   (status->can_set_frequency != thc->inst->cfg->cpuclock.status->can_set_frequency)))
+         (status->cur_frequency != thc->inst->cfg->cpuclock.status->cur_frequency) ||
+         (status->cur_min_frequency != thc->inst->cfg->cpuclock.status->cur_min_frequency) ||
+         (status->cur_max_frequency != thc->inst->cfg->cpuclock.status->cur_max_frequency) ||
+         (status->can_set_frequency != thc->inst->cfg->cpuclock.status->can_set_frequency)))
      freq_changed = EINA_TRUE;
    E_FREE_FUNC(thc->inst->cfg->cpuclock.status, _cpuclock_status_free);
    thc->inst->cfg->cpuclock.status = status;
@@ -910,7 +912,7 @@ _cpuclock_poll_interval_update(Instance *inst)
    if (thc)
      {
         thc->inst = inst;
-	thc->sleeper = e_powersave_sleeper_new();
+        thc->sleeper = e_powersave_sleeper_new();
         thc->interval = inst->cfg->cpuclock.poll_interval;
         inst->cfg->cpuclock.frequency_check_thread =
           ecore_thread_feedback_run(_cpuclock_cb_frequency_check_main,
@@ -967,7 +969,7 @@ _cpuclock_removed_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_data)
      {
         ecore_thread_cancel(inst->cfg->cpuclock.frequency_check_thread);
         inst->cfg->cpuclock.frequency_check_thread = NULL;
-	return;
+        return;
      }
    if (inst->cfg->cpuclock.governor)
      eina_stringshare_del(inst->cfg->cpuclock.governor);
@@ -1002,7 +1004,6 @@ sysinfo_cpuclock_remove(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_U
    if (inst->cfg->cpuclock.governor)
      eina_stringshare_del(inst->cfg->cpuclock.governor);
    E_FREE_FUNC(inst->cfg->cpuclock.status, _cpuclock_status_free);
-
 }
 
 static void
@@ -1058,7 +1059,7 @@ _cpuclock_created_cb(void *data, Evas_Object *obj, void *event_data EINA_UNUSED)
                   _cpuclock_set_governor(inst->cfg->cpuclock.governor);
                   break;
                }
-	  }
+          }
      }
 }
 
@@ -1089,7 +1090,7 @@ sysinfo_cpuclock_create(Evas_Object *parent, Instance *inst)
 
    inst->cfg->cpuclock.status = _cpuclock_status_new();
    _cpuclock_status_check_available(inst->cfg->cpuclock.status);
-   
+
    E_LIST_HANDLER_APPEND(inst->cfg->cpuclock.handlers, E_EVENT_SCREENSAVER_ON, _screensaver_on, inst);
    E_LIST_HANDLER_APPEND(inst->cfg->cpuclock.handlers, E_EVENT_SCREENSAVER_OFF, _screensaver_off, inst);
    E_LIST_HANDLER_APPEND(inst->cfg->cpuclock.handlers, E_EVENT_POWERSAVE_UPDATE, _cpuclock_event_cb_powersave, inst);
@@ -1125,7 +1126,7 @@ _conf_item_get(int *id)
    ci = E_NEW(Config_Item, 1);
 
    if (*id != -1)
-     ci->id = eina_list_count(sysinfo_config->items)+1;
+     ci->id = eina_list_count(sysinfo_config->items) + 1;
    else
      ci->id = -1;
 
@@ -1166,3 +1167,4 @@ cpuclock_create(Evas_Object *parent, int *id, E_Gadget_Site_Orient orient EINA_U
 
    return inst->o_main;
 }
+

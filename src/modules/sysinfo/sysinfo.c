@@ -83,7 +83,7 @@ _conf_item_get(int *id)
    ci = E_NEW(Config_Item, 1);
 
    if (*id != -1)
-     ci->id = eina_list_count(sysinfo_config->items)+1;
+     ci->id = eina_list_count(sysinfo_config->items) + 1;
    else
      ci->id = -1;
 

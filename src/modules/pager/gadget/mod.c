@@ -105,3 +105,4 @@ e_modapi_gadget_save(E_Module *m EINA_UNUSED)
    e_config_domain_save("module.pager", conf_edd, pager_config);
    return 1;
 }
+

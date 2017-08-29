@@ -26,3 +26,4 @@ e_modapi_gadget_save(E_Module *m EINA_UNUSED)
 {
    return 1;
 }
+

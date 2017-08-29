@@ -15,30 +15,35 @@ _config_changed(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
    Instance *inst = data;
    int value = elm_radio_value_get(obj);
 
-   switch(value)
+   switch (value)
      {
-        case 0:
-          inst->cfg->cpumonitor.poll_interval = 4;
-          break; 
-        case 1:
-          inst->cfg->cpumonitor.poll_interval = 8;
-          break;
-        case 2:
-          inst->cfg->cpumonitor.poll_interval = 32;
-          break;
-        case 3:
-          inst->cfg->cpumonitor.poll_interval = 64;
-          break;
-        case 4:
-          inst->cfg->cpumonitor.poll_interval = 256;
-          break;
-        default:
-           inst->cfg->cpumonitor.poll_interval = 32;
+      case 0:
+        inst->cfg->cpumonitor.poll_interval = 4;
+        break;
+
+      case 1:
+        inst->cfg->cpumonitor.poll_interval = 8;
+        break;
+
+      case 2:
+        inst->cfg->cpumonitor.poll_interval = 32;
+        break;
+
+      case 3:
+        inst->cfg->cpumonitor.poll_interval = 64;
+        break;
+
+      case 4:
+        inst->cfg->cpumonitor.poll_interval = 256;
+        break;
+
+      default:
+        inst->cfg->cpumonitor.poll_interval = 32;
      }
    e_config_save_queue();
    _cpumonitor_config_updated(inst);
 }
-   
+
 Evas_Object *
 cpumonitor_configure(Instance *inst)
 {
@@ -126,25 +131,30 @@ cpumonitor_configure(Instance *inst)
    evas_object_smart_callback_add(o, "changed", _config_changed, inst);
    evas_object_show(o);
 
-   switch(inst->cfg->cpumonitor.poll_interval)
+   switch (inst->cfg->cpumonitor.poll_interval)
      {
-        case 4:
-          elm_radio_value_set(group, 0);
-          break;
-        case 8:
-          elm_radio_value_set(group, 1);
-          break;
-        case 32:
-          elm_radio_value_set(group, 2);
-          break;
-        case 64:
-          elm_radio_value_set(group, 3);
-          break;
-        case 256:
-          elm_radio_value_set(group, 4);
-          break;
-        default:
-          elm_radio_value_set(group, 2);
+      case 4:
+        elm_radio_value_set(group, 0);
+        break;
+
+      case 8:
+        elm_radio_value_set(group, 1);
+        break;
+
+      case 32:
+        elm_radio_value_set(group, 2);
+        break;
+
+      case 64:
+        elm_radio_value_set(group, 3);
+        break;
+
+      case 256:
+        elm_radio_value_set(group, 4);
+        break;
+
+      default:
+        elm_radio_value_set(group, 2);
      }
 
    elm_object_content_set(frame, box);

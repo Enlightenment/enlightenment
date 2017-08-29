@@ -16,12 +16,12 @@ _netstatus_proc_getrstatus(Eina_Bool automax,
    f = fopen("/proc/net/dev", "r");
    if (f)
      {
-        while(fgets(buf, sizeof(buf), f) != NULL)
+        while (fgets(buf, sizeof(buf), f) != NULL)
           {
-             if (sscanf (buf, "%s %lu %lu %lu %lu %lu %lu %lu %lu %lu %lu %lu %lu "
-                    "%lu %lu %lu %lu\n", dummys, &in, &dummy, &dummy,
-                    &dummy, &dummy, &dummy, &dummy, &dummy, &dummy, &dummy,
-                    &dummy, &dummy, &dummy, &dummy, &dummy, &dummy) < 17)
+             if (sscanf(buf, "%s %lu %lu %lu %lu %lu %lu %lu %lu %lu %lu %lu %lu "
+                             "%lu %lu %lu %lu\n", dummys, &in, &dummy, &dummy,
+                        &dummy, &dummy, &dummy, &dummy, &dummy, &dummy, &dummy,
+                        &dummy, &dummy, &dummy, &dummy, &dummy, &dummy) < 17)
                continue;
              tot_in += in;
           }
@@ -42,7 +42,8 @@ _netstatus_proc_getrstatus(Eina_Bool automax,
         if (*prev_inmax > 0)
           percent = 100 * ((float)*prev_incurrent / (float)*prev_inmax);
         if (percent > 100) percent = 100;
-        else if (percent < 0) percent = 0;
+        else if (percent < 0)
+          percent = 0;
         *prev_inpercent = percent;
      }
 }
@@ -63,12 +64,12 @@ _netstatus_proc_gettstatus(Eina_Bool automax,
    f = fopen("/proc/net/dev", "r");
    if (f)
      {
-        while(fgets(buf, sizeof(buf), f) != NULL)
+        while (fgets(buf, sizeof(buf), f) != NULL)
           {
-             if (sscanf (buf, "%s %lu %lu %lu %lu %lu %lu %lu %lu %lu %lu %lu %lu "
-                    "%lu %lu %lu %lu\n", dummys, &dummy, &dummy, &dummy,
-                    &dummy, &dummy, &dummy, &dummy, &dummy, &out, &dummy,
-                    &dummy, &dummy, &dummy, &dummy, &dummy, &dummy) < 17)
+             if (sscanf(buf, "%s %lu %lu %lu %lu %lu %lu %lu %lu %lu %lu %lu %lu "
+                             "%lu %lu %lu %lu\n", dummys, &dummy, &dummy, &dummy,
+                        &dummy, &dummy, &dummy, &dummy, &dummy, &out, &dummy,
+                        &dummy, &dummy, &dummy, &dummy, &dummy, &dummy) < 17)
                continue;
              tot_out += out;
           }
@@ -89,7 +90,8 @@ _netstatus_proc_gettstatus(Eina_Bool automax,
         if (*prev_outcurrent > 0)
           percent = 100 * ((float)*prev_outcurrent / (float)*prev_outmax);
         if (percent > 100) percent = 100;
-        else if (percent < 0) percent = 0;
+        else if (percent < 0)
+          percent = 0;
         *prev_outpercent = percent;
      }
 }

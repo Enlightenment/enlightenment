@@ -4,14 +4,14 @@ typedef struct _Thread_Config Thread_Config;
 
 struct _Thread_Config
 {
-   int interval;
-   int num_cores;
-   int percent;
-   unsigned long total;
-   unsigned long idle;
-   Instance *inst;
+   int                  interval;
+   int                  num_cores;
+   int                  percent;
+   unsigned long        total;
+   unsigned long        idle;
+   Instance            *inst;
    E_Powersave_Sleeper *sleeper;
-   Eina_List *cores;
+   Eina_List           *cores;
 };
 
 static void
@@ -28,7 +28,7 @@ _cpumonitor_face_update(Thread_Config *thc)
         usage_msg->count = 1;
         usage_msg->val[0] = core->percent;
         edje_object_message_send(elm_layout_edje_get(core->layout), EDJE_MESSAGE_INT_SET, 1,
-                            usage_msg);
+                                 usage_msg);
         E_FREE(usage_msg);
      }
    if (thc->inst->cfg->cpumonitor.popup)
@@ -81,7 +81,7 @@ _cpumonitor_mouse_down_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA
           }
         popup = elm_ctxpopup_add(e_comp->elm);
         elm_object_style_set(popup, "noblock");
-        evas_object_smart_callback_add(popup, "dismissed", _cpumonitor_popup_dismissed, inst);   
+        evas_object_smart_callback_add(popup, "dismissed", _cpumonitor_popup_dismissed, inst);
         evas_object_event_callback_add(popup, EVAS_CALLBACK_DEL, _cpumonitor_popup_deleted, inst);
 
         box = elm_box_add(popup);
@@ -95,7 +95,7 @@ _cpumonitor_mouse_down_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA
         elm_object_text_set(label, text);
         elm_box_pack_end(box, label);
         evas_object_show(label);
-       
+
         pbar = elm_progressbar_add(box);
         E_EXPAND(pbar); E_FILL(pbar);
         elm_progressbar_span_size_set(pbar, 200 * e_scale);
@@ -163,25 +163,25 @@ static void
 _cpumonitor_cb_usage_check_main(void *data, Ecore_Thread *th)
 {
    Thread_Config *thc = data;
-   for (;;)
+   for (;; )
      {
         if (ecore_thread_check(th)) break;
 #if defined(__FreeBSD__) || defined(__DragonFly__) || defined(__OpenBSD__)
         _cpumonitor_sysctl_getusage(&thc->total, &thc->idle, &thc->percent, thc->cores);
-#else 
+#else
         _cpumonitor_proc_getusage(&thc->total, &thc->idle, &thc->percent, thc->cores);
 #endif
         ecore_thread_feedback(th, NULL);
         if (ecore_thread_check(th)) break;
-         e_powersave_sleeper_sleep(thc->sleeper, thc->interval);
+        e_powersave_sleeper_sleep(thc->sleeper, thc->interval);
         if (ecore_thread_check(th)) break;
      }
 }
 
 static void
 _cpumonitor_cb_usage_check_notify(void *data,
-                                   Ecore_Thread *th EINA_UNUSED,
-                                   void *msg EINA_UNUSED)
+                                  Ecore_Thread *th EINA_UNUSED,
+                                  void *msg EINA_UNUSED)
 {
    Thread_Config *thc = data;
 
@@ -240,7 +240,7 @@ _screensaver_on(void *data)
      {
         _cpumonitor_del_layouts(inst);
         ecore_thread_cancel(inst->cfg->cpumonitor.usage_check_thread);
-	inst->cfg->cpumonitor.usage_check_thread = NULL;
+        inst->cfg->cpumonitor.usage_check_thread = NULL;
      }
    return ECORE_CALLBACK_RENEW;
 }
@@ -261,7 +261,7 @@ _cpumonitor_config_updated(Instance *inst)
    Thread_Config *thc;
    CPU_Core *core;
    int i = 0;
- 
+
    if (inst->cfg->id == -1)
      {
         int percent = 15;
@@ -284,14 +284,14 @@ _cpumonitor_config_updated(Instance *inst)
                   core->total = 0;
                   core->idle = 0;
                   thc->cores = eina_list_append(thc->cores, core);
-	          percent += 15;
+                  percent += 15;
                }
              _cpumonitor_face_update(thc);
              EINA_LIST_FREE(thc->cores, core)
                E_FREE(core);
              E_FREE(thc);
-	  }
-	return;
+          }
+        return;
      }
    if (!ecore_thread_check(inst->cfg->cpumonitor.usage_check_thread))
      {
@@ -474,7 +474,7 @@ _conf_item_get(int *id)
    ci = E_NEW(Config_Item, 1);
 
    if (*id != -1)
-     ci->id = eina_list_count(sysinfo_config->items)+1;
+     ci->id = eina_list_count(sysinfo_config->items) + 1;
    else
      ci->id = -1;
 

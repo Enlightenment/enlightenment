@@ -1,14 +1,14 @@
 #include "batman.h"
 
-static void _batman_udev_event_battery(const char *syspath, Eeze_Udev_Event event, void *data, Eeze_Udev_Watch *watch);
-static void _batman_udev_event_ac(const char *syspath, Eeze_Udev_Event event, void *data, Eeze_Udev_Watch *watch);
-static void _batman_udev_battery_add(const char *syspath, Instance *inst);
-static void _batman_udev_ac_add(const char *syspath, Instance *inst);
-static void _batman_udev_battery_del(const char *syspath, Instance *inst);
-static void _batman_udev_ac_del(const char *syspath, Instance *inst);
+static void      _batman_udev_event_battery(const char *syspath, Eeze_Udev_Event event, void *data, Eeze_Udev_Watch *watch);
+static void      _batman_udev_event_ac(const char *syspath, Eeze_Udev_Event event, void *data, Eeze_Udev_Watch *watch);
+static void      _batman_udev_battery_add(const char *syspath, Instance *inst);
+static void      _batman_udev_ac_add(const char *syspath, Instance *inst);
+static void      _batman_udev_battery_del(const char *syspath, Instance *inst);
+static void      _batman_udev_ac_del(const char *syspath, Instance *inst);
 static Eina_Bool _batman_udev_battery_update_poll(void *data);
-static void _batman_udev_battery_update(const char *syspath, Battery *bat, Instance *inst);
-static void _batman_udev_ac_update(const char *syspath, Ac_Adapter *ac, Instance *inst);
+static void      _batman_udev_battery_update(const char *syspath, Battery *bat, Instance *inst);
+static void      _batman_udev_ac_update(const char *syspath, Ac_Adapter *ac, Instance *inst);
 
 EINTERN extern Eina_List *batman_device_batteries;
 EINTERN extern Eina_List *batman_device_ac_adapters;
@@ -54,10 +54,10 @@ _batman_udev_stop(Instance *inst)
      }
    EINA_LIST_FREE(batman_device_batteries, bat)
      {
-	eina_stringshare_del(bat->udi);
-	eina_stringshare_del(bat->technology);
-	eina_stringshare_del(bat->model);
-	eina_stringshare_del(bat->vendor);
+        eina_stringshare_del(bat->udi);
+        eina_stringshare_del(bat->technology);
+        eina_stringshare_del(bat->model);
+        eina_stringshare_del(bat->vendor);
         E_FREE_FUNC(bat->poll, ecore_poller_del);
         E_FREE(bat);
      }
@@ -126,9 +126,9 @@ _batman_udev_battery_add(const char *syspath, Instance *inst)
    bat->inst = inst;
    bat->last_update = ecore_time_get();
    bat->udi = eina_stringshare_add(syspath);
-   bat->poll = ecore_poller_add(ECORE_POLLER_CORE, 
-				bat->inst->cfg->batman.poll_interval, 
-				_batman_udev_battery_update_poll, bat);
+   bat->poll = ecore_poller_add(ECORE_POLLER_CORE,
+                                bat->inst->cfg->batman.poll_interval,
+                                _batman_udev_battery_update_poll, bat);
    batman_device_batteries = eina_list_append(batman_device_batteries, bat);
    _batman_udev_battery_update(syspath, bat, inst);
 }
@@ -205,7 +205,7 @@ _batman_udev_ac_del(const char *syspath, Instance *inst)
 
    if (!eina_list_count(adapters))
      {
-        eina_stringshare_del(syspath);  
+        eina_stringshare_del(syspath);
         return;
      }
    EINA_LIST_FOREACH(batman_device_ac_adapters, l, ac)
@@ -221,7 +221,7 @@ _batman_udev_ac_del(const char *syspath, Instance *inst)
    eina_list_free(adapters);
 }
 
-static Eina_Bool 
+static Eina_Bool
 _batman_udev_battery_update_poll(void *data)
 {
    Battery *bat = data;
@@ -231,16 +231,16 @@ _batman_udev_battery_update_poll(void *data)
    return EINA_TRUE;
 }
 
-#define GET_NUM(TYPE, VALUE, PROP) \
-  do                                                                                        \
-    {                                                                                       \
-      test = eeze_udev_syspath_get_property(TYPE->udi, #PROP);                              \
-      if (test)                                                                             \
-        {                                                                                   \
-           TYPE->VALUE = strtod(test, NULL);                                                \
-           eina_stringshare_del(test);                                                      \
-        }                                                                                   \
-    }                                                                                       \
+#define GET_NUM(TYPE, VALUE, PROP)                              \
+  do                                                            \
+    {                                                           \
+       test = eeze_udev_syspath_get_property(TYPE->udi, #PROP); \
+       if (test)                                                \
+         {                                                      \
+            TYPE->VALUE = strtod(test, NULL);                   \
+            eina_stringshare_del(test);                         \
+         }                                                      \
+    }                                                           \
   while (0)
 
 #define GET_STR(TYPE, VALUE, PROP) TYPE->VALUE = eeze_udev_syspath_get_property(TYPE->udi, #PROP)
@@ -285,11 +285,11 @@ _batman_udev_battery_update(const char *syspath, Battery *bat, Instance *inst)
         if ((bat->got_prop) && (!eina_dbl_exact(charge, bat->current_charge)) && (!eina_dbl_exact(bat->current_charge, 0)))
           charge_rate = ((charge - bat->current_charge) / (t - bat->last_update));
         if ((!eina_dbl_exact(charge_rate, 0)) || eina_dbl_exact(bat->last_update, 0) || eina_dbl_exact(bat->current_charge, 0))
-	  {
-	    bat->last_update = t;
-	    bat->current_charge = charge;
-	    bat->charge_rate = charge_rate;
-	  }
+          {
+             bat->last_update = t;
+             bat->current_charge = charge;
+             bat->charge_rate = charge_rate;
+          }
         bat->percent = 100 * (bat->current_charge / bat->last_full_charge);
         if (bat->got_prop)
           {
@@ -342,8 +342,8 @@ _batman_udev_ac_update(const char *syspath, Ac_Adapter *ac, Instance *inst)
 
    if (!ac)
      {
-         _batman_udev_ac_add(syspath, inst);
-         return;
+        _batman_udev_ac_add(syspath, inst);
+        return;
      }
 
    GET_NUM(ac, present, POWER_SUPPLY_ONLINE);

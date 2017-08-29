@@ -11,7 +11,8 @@ _thermal_thread_free(Tempthread *tth)
    eina_stringshare_del(tth->sensor_name);
    eina_stringshare_del(tth->sensor_path);
 #if defined(HAVE_EEZE)
-   EINA_LIST_FREE(tth->tempdevs, s) eina_stringshare_del(s);
+   EINA_LIST_FREE(tth->tempdevs, s)
+     eina_stringshare_del(s);
 #endif
    e_powersave_sleeper_free(tth->sleeper);
    E_FREE(tth->extn);
@@ -24,7 +25,8 @@ _thermal_face_level_set(Instance *inst, double level)
    Edje_Message_Float msg;
 
    if (level < 0.0) level = 0.0;
-   else if (level > 1.0) level = 1.0;
+   else if (level > 1.0)
+     level = 1.0;
    msg.val = level;
    edje_object_message_send(elm_layout_edje_get(inst->cfg->thermal.o_gadget), EDJE_MESSAGE_FLOAT, 1, &msg);
 }
@@ -32,7 +34,6 @@ _thermal_face_level_set(Instance *inst, double level)
 static void
 _thermal_apply(Instance *inst, int temp)
 {
-
    if (inst->cfg->thermal.temp == temp) return;
    inst->cfg->thermal.temp = temp;
    if (temp != -999)
@@ -47,8 +48,8 @@ _thermal_apply(Instance *inst, int temp)
           }
 
         _thermal_face_level_set(inst,
-                                    (double)(temp - inst->cfg->thermal.low) /
-                                    (double)(inst->cfg->thermal.high - inst->cfg->thermal.low));
+                                (double)(temp - inst->cfg->thermal.low) /
+                                (double)(inst->cfg->thermal.high - inst->cfg->thermal.low));
      }
    else
      {
@@ -69,7 +70,7 @@ _thermal_apply(Instance *inst, int temp)
         else
           snprintf(buf, 100, "%s: %d C", _("Temperature"), inst->cfg->thermal.temp);
         elm_object_text_set(inst->cfg->thermal.popup_label, buf);
-     } 
+     }
 }
 
 #if defined(HAVE_EEZE)
@@ -82,6 +83,7 @@ _thermal_udev_poll(void *data)
    _thermal_apply(tth->inst, temp);
    return EINA_TRUE;
 }
+
 #endif
 
 #if defined(__FreeBSD__) || defined(__OpenBSD__) || defined(__DragonFly__)
@@ -91,16 +93,17 @@ _thermal_check_sysctl(void *data, Ecore_Thread *th)
    Tempthread *tth = data;
    int ptemp = -500, temp;
 
-   for (;;)
+   for (;; )
      {
         if (ecore_thread_check(th)) break;
         temp = thermal_sysctl_get(tth);
         if (ptemp != temp) ecore_thread_feedback(th, (void *)((long)temp));
         ptemp = temp;
         e_powersave_sleeper_sleep(tth->sleeper, tth->poll_interval);
-	if (ecore_thread_check(th)) break;
+        if (ecore_thread_check(th)) break;
      }
 }
+
 #endif
 
 #if !defined(HAVE_EEZE) && !defined(__FreeBSD__) && !defined(__OpenBSD__) && !defined(__DragonFly__)
@@ -109,16 +112,17 @@ _thermal_check_fallback(void *data, Ecore_Thread *th)
 {
    Tempthread *tth = data;
    int ptemp = -500, temp;
-   for (;;)
+   for (;; )
      {
         if (ecore_thread_check(th)) break;
         temp = thermal_fallback_get(tth);
         if (ptemp != temp) ecore_thread_feedback(th, (void *)((long)temp));
         ptemp = temp;
         e_powersave_sleeper_sleep(tth->sleeper, tth->poll_interval);
-	if (ecore_thread_check(th)) break;
+        if (ecore_thread_check(th)) break;
      }
 }
+
 #endif
 
 #if !defined(HAVE_EEZE)
@@ -136,8 +140,8 @@ _thermal_check_done(void *data, Ecore_Thread *th EINA_UNUSED)
 {
    Tempthread *tth = data;
    _thermal_thread_free(tth);
-
 }
+
 #endif
 
 static Evas_Object *
@@ -230,6 +234,7 @@ _thermal_mouse_down_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UN
           e_gadget_configure(inst->o_main);
      }
 }
+
 static Eina_Bool
 _screensaver_on(void *data)
 {
@@ -252,7 +257,6 @@ _screensaver_off(void *data)
 
    return ECORE_CALLBACK_RENEW;
 }
-
 
 void
 _thermal_config_updated(Instance *inst)
@@ -277,20 +281,20 @@ _thermal_config_updated(Instance *inst)
 #if defined(HAVE_EEZE)
    _thermal_udev_poll(tth);
    inst->cfg->thermal.poller = ecore_poller_add(ECORE_POLLER_CORE, inst->cfg->thermal.poll_interval,
-                                     _thermal_udev_poll, tth);
+                                                _thermal_udev_poll, tth);
    inst->cfg->thermal.tth = tth;
 #elif defined(__FreeBSD__) || defined(__OpenBSD__) || defined(__DragonFly__)
-    inst->cfg->thermal.th = ecore_thread_feedback_run(_thermal_check_sysctl,
-                                        _thermal_check_notify,
-                                        _thermal_check_done,
-                                        _thermal_check_done,
-                                        tth, EINA_TRUE);  
-#else 
+   inst->cfg->thermal.th = ecore_thread_feedback_run(_thermal_check_sysctl,
+                                                     _thermal_check_notify,
+                                                     _thermal_check_done,
+                                                     _thermal_check_done,
+                                                     tth, EINA_TRUE);
+#else
    inst->cfg->thermal.th = ecore_thread_feedback_run(_thermal_check_fallback,
-                                        _thermal_check_notify,
-                                        _thermal_check_done,
-                                        _thermal_check_done,
-                                        tth, EINA_TRUE);
+                                                     _thermal_check_notify,
+                                                     _thermal_check_done,
+                                                     _thermal_check_done,
+                                                     tth, EINA_TRUE);
 #endif
 }
 
@@ -367,12 +371,12 @@ sysinfo_thermal_remove(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UN
    if (inst->cfg->thermal.configure)
      E_FREE_FUNC(inst->cfg->thermal.configure, evas_object_del);
    EINA_LIST_FREE(inst->cfg->thermal.handlers, handler)
-     ecore_event_handler_del(handler); 
+     ecore_event_handler_del(handler);
    if (inst->cfg->thermal.th)
      {
         ecore_thread_cancel(inst->cfg->thermal.th);
         inst->cfg->thermal.th = NULL;
-     }	 
+     }
    _thermal_face_shutdown(inst);
 }
 
@@ -390,11 +394,11 @@ _thermal_created_cb(void *data, Evas_Object *obj, void *event_data EINA_UNUSED)
    inst->cfg->thermal.o_gadget = elm_layout_add(inst->o_main);
    if (orient == E_GADGET_SITE_ORIENT_VERTICAL)
      e_theme_edje_object_set(inst->cfg->thermal.o_gadget,
-                               "base/theme/gadget/thermal",
-                               "e/gadget/thermal/main_vert");
+                             "base/theme/gadget/thermal",
+                             "e/gadget/thermal/main_vert");
    else
      e_theme_edje_object_set(inst->cfg->thermal.o_gadget, "base/theme/gadget/thermal",
-                           "e/gadget/thermal/main");
+                             "e/gadget/thermal/main");
    E_EXPAND(inst->cfg->thermal.o_gadget);
    E_FILL(inst->cfg->thermal.o_gadget);
    elm_box_pack_end(inst->o_main, inst->cfg->thermal.o_gadget);
@@ -451,7 +455,7 @@ _conf_item_get(int *id)
    ci = E_NEW(Config_Item, 1);
 
    if (*id != -1)
-     ci->id = eina_list_count(sysinfo_config->items)+1;
+     ci->id = eina_list_count(sysinfo_config->items) + 1;
    else
      ci->id = -1;
 

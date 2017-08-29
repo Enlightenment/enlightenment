@@ -193,6 +193,7 @@ init(Tempthread *tth)
           {
            case SENSOR_TYPE_NONE:
              break;
+
            case SENSOR_TYPE_OMNIBOOK:
              tth->sensor_path = eina_stringshare_add("/proc/omnibook/temperature");
              break;

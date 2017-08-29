@@ -15,7 +15,7 @@
 # include <net/if.h>
 # include <net/if_types.h>
 # include <ifaddrs.h>
-#endif 
+#endif
 
 #if defined(__FreeBSD__) || defined(__DragonFly__)
 
@@ -47,17 +47,17 @@ _freebsd_generic_network_status(unsigned long int *in, unsigned long int *out)
    len = sizeof(count);
    if (sysctlbyname("net.link.generic.system.ifcount", &count, &len, NULL, 0) < 0)
      return;
-  
+
    ifmd = malloc(sizeof(struct ifmibdata));
    if (!ifmd)
      return;
 
    for (i = 1; i <= count; i++)
-      {
-         get_ifmib_general(i, ifmd);
-         *in += ifmd->ifmd_data.ifi_ibytes;
-         *out += ifmd->ifmd_data.ifi_obytes;
-      }
+     {
+        get_ifmib_general(i, ifmd);
+        *in += ifmd->ifmd_data.ifi_ibytes;
+        *out += ifmd->ifmd_data.ifi_obytes;
+     }
 
    free(ifmd);
 }
@@ -69,26 +69,26 @@ static void
 _openbsd_generic_network_status(unsigned long int *in, unsigned long int *out)
 {
    struct ifaddrs *interfaces, *ifa;
-   
+
    if (getifaddrs(&interfaces) < 0)
      return;
 
    int sock = socket(AF_INET, SOCK_STREAM, 0);
-   if (sock < 0) 
+   if (sock < 0)
      return;
 
    for (ifa = interfaces; ifa; ifa = ifa->ifa_next)
      {
         struct ifreq ifreq;
         struct if_data if_data;
- 
+
         ifreq.ifr_data = (void *)&if_data;
-        strncpy(ifreq.ifr_name, ifa->ifa_name, IFNAMSIZ-1);
+        strncpy(ifreq.ifr_name, ifa->ifa_name, IFNAMSIZ - 1);
         if (ioctl(sock, SIOCGIFDATA, &ifreq) < 0)
           return;
-	 
-        struct if_data * const ifi = &if_data;
-        if (ifi->ifi_type == IFT_ETHER || ifi->ifi_type == IFT_IEEE80211) 
+
+        struct if_data *const ifi = &if_data;
+        if (ifi->ifi_type == IFT_ETHER || ifi->ifi_type == IFT_IEEE80211)
           {
              if (ifi->ifi_ibytes)
                *in += ifi->ifi_ibytes;
@@ -99,18 +99,19 @@ _openbsd_generic_network_status(unsigned long int *in, unsigned long int *out)
                *out += ifi->ifi_obytes;
              else
                *out += 0;
-         }
+          }
      }
    close(sock);
 }
+
 #endif
 
 void
 _netstatus_sysctl_getrstatus(Eina_Bool automax,
-                           unsigned long *prev_in,
-                           unsigned long *prev_incurrent,
-                           unsigned long *prev_inmax,
-                           int *prev_inpercent)
+                             unsigned long *prev_in,
+                             unsigned long *prev_incurrent,
+                             unsigned long *prev_inmax,
+                             int *prev_inpercent)
 {
    unsigned long tot_in = 0, diffin;
    int percent = 0;
@@ -137,17 +138,18 @@ _netstatus_sysctl_getrstatus(Eina_Bool automax,
         if (*prev_inmax > 0)
           percent = 100 * ((float)*prev_incurrent / (float)*prev_inmax);
         if (percent > 100) percent = 100;
-        else if (percent < 0) percent = 0;
+        else if (percent < 0)
+          percent = 0;
         *prev_inpercent = percent;
      }
 }
 
 void
 _netstatus_sysctl_gettstatus(Eina_Bool automax,
-                           unsigned long *prev_out,
-                           unsigned long *prev_outcurrent,
-                           unsigned long *prev_outmax,
-                           int *prev_outpercent)
+                             unsigned long *prev_out,
+                             unsigned long *prev_outcurrent,
+                             unsigned long *prev_outmax,
+                             int *prev_outpercent)
 {
    unsigned long tot_out = 0, diffout;
    int percent = 0;
@@ -174,7 +176,8 @@ _netstatus_sysctl_gettstatus(Eina_Bool automax,
         if (*prev_outcurrent > 0)
           percent = 100 * ((float)*prev_outcurrent / (float)*prev_outmax);
         if (percent > 100) percent = 100;
-        else if (percent < 0) percent = 0;
+        else if (percent < 0)
+          percent = 0;
         *prev_outpercent = percent;
      }
 }

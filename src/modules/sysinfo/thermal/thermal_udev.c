@@ -48,3 +48,4 @@ thermal_udev_get(Tempthread *tth)
      }
    return -999;
 }
+
