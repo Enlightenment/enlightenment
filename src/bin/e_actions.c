@@ -2991,6 +2991,197 @@ ACT_FN_GO(screen_redo, EINA_UNUSED)
 #endif
 }
 
+/***************************************************************************/
+static Eina_Bool
+_skip_win(E_Client *ec, E_Zone *zone, E_Desk *desk)
+{
+   if ((!ec->icccm.accepts_focus) && (!ec->icccm.take_focus)) return EINA_TRUE;
+   if (ec->netwm.state.skip_taskbar) return EINA_TRUE;
+   if (ec->user_skip_winlist) return EINA_TRUE;
+   if (ec->iconic) return EINA_TRUE;
+   if (ec->zone != zone) return EINA_TRUE;
+   if (!((ec->sticky) || (ec->desk == desk))) return EINA_TRUE;
+   return EINA_FALSE;
+}
+
+static int
+_point_line_dist(int x, int y, int lx1, int ly1, int lx2, int ly2)
+{
+   int xx, yy, dx, dy;
+   int a = x - lx1;
+   int b = y - ly1;
+   int c = lx2 - lx1;
+   int d = ly2 - ly1;
+   int dot = (a * c) + (b * d);
+   int len_sq = (c * c) + (d * d);
+   double dist, param = -1.0;
+
+   // if line is 0 length
+   if (len_sq) param = (double)dot / len_sq;
+
+   if (param < 0)
+     {
+        xx = lx1;
+        yy = ly1;
+     }
+   else if (param > 1)
+     {
+        xx = lx2;
+        yy = ly2;
+     }
+   else
+     {
+        xx = lx1 + lround(param * c);
+        yy = ly1 + lround(param * d);
+     }
+
+   dx = x - xx;
+   dy = y - yy;
+   dist = sqrt((dx * dx) + (dy * dy));
+   return lround(dist);
+}
+
+ACT_FN_GO(window_focus, EINA_UNUSED)
+{
+   E_Zone *zone = e_zone_current_get();
+   E_Desk *desk = e_desk_current_get(zone);
+   E_Client *ec, *ec_orig,
+     *ec_prev = NULL, *ec_last = NULL, *ec_first = NULL, *ec_next = NULL;
+   Eina_List *l;
+   int distance = INT_MAX, cx, cy, dir = -1, found = 0;
+
+   if (!params) return;
+   ec_orig = e_client_focused_get();
+   if (!ec_orig)
+     {
+        // XXX: just pick any window to focus
+        EINA_LIST_FOREACH(e_client_focus_stack_get(), l, ec)
+          {
+             if (_skip_win(ec, zone, desk)) continue;
+             e_client_focus_set_with_pointer(ec);
+             return;
+          }
+        return;
+     }
+
+   if      (!strcmp(params, "next"))  dir = -1;
+   else if (!strcmp(params, "prev"))  dir = -2;
+   else if (!strcmp(params, "up"))    dir =  0;
+   else if (!strcmp(params, "down"))  dir =  1;
+   else if (!strcmp(params, "left"))  dir =  2;
+   else if (!strcmp(params, "right")) dir =  3;
+   else
+     {
+        e_util_dialog_show(_("Error: window_focus action"),
+                           _("Invalid parameter: %s"), params);
+        return;
+     }
+   if (dir < 0)
+     {
+        EINA_LIST_FOREACH(e_client_focus_stack_get(), l, ec)
+          {
+             if (_skip_win(ec, zone, desk)) continue;
+
+             if (ec == ec_orig)
+               {
+                  found = 1;
+                  return;
+               }
+             else if (!found) ec_prev = ec;
+             else if ((found) && (!ec_next)) ec_next = ec;
+
+             if (!ec_first) ec_first = ec;
+             ec_last = ec;
+          }
+        if (dir == -1) /* next */
+          {
+             if (ec_next) e_client_focus_set_with_pointer(ec_next);
+             else if (ec_first) e_client_focus_set_with_pointer(ec_first);
+          }
+        else if (dir == -2)
+          {
+             if (ec_prev) e_client_focus_set_with_pointer(ec_prev);
+             else if (ec_last) e_client_focus_set_with_pointer(ec_last);
+          }
+        return;
+     }
+
+   cx = ec_orig->x + (ec_orig->w / 2);
+   cy = ec_orig->y + (ec_orig->h / 2);
+
+   EINA_LIST_FOREACH(e_client_focus_stack_get(), l, ec)
+     {
+        int a = 0, d = 0;
+
+        if (ec == ec_orig) continue;
+        if (_skip_win(ec, zone, desk)) continue;
+
+        switch (dir)
+          {
+           case 0: /* up */
+             d = _point_line_dist(cx, cy,
+                                  ec->x,         ec->y + ec->h,
+                                  ec->x + ec->w, ec->y + ec->h);
+             if (d >= distance) continue;
+             d = _point_line_dist(cx, cy,
+                                  ec->x,         ec->y + (ec->h / 2),
+                                  ec->x + ec->w, ec->y + (ec->h / 2));
+             if (d >= distance) continue;
+             if (cy <= (ec->y + (ec->h / 2))) continue;
+             a = abs(cx - (ec->x + (ec->w / 2)));
+             d += (a * a) / d;
+             if (d >= distance) continue;
+             break;
+           case 1: /* down */
+             d = _point_line_dist(cx, cy,
+                                  ec->x,         ec->y,
+                                  ec->x + ec->w, ec->y);
+             if (d >= distance) continue;
+             d = _point_line_dist(cx, cy,
+                                  ec->x,         ec->y + (ec->h / 2),
+                                  ec->x + ec->w, ec->y + (ec->h / 2));
+             if (d >= distance) continue;
+             if (cy >= (ec->y + (ec->h / 2))) continue;
+             a = abs(cx - (ec->x + (ec->w / 2)));
+             d += (a * a) / d;
+             if (d >= distance) continue;
+             break;
+           case 2: /* left */
+             d = _point_line_dist(cx, cy,
+                                  ec->x + ec->w, ec->y,
+                                  ec->x + ec->w, ec->y + ec->h);
+             if (d >= distance) continue;
+             d = _point_line_dist(cx, cy,
+                                  ec->x + (ec->w / 2), ec->y,
+                                  ec->x + (ec->w / 2), ec->y + ec->h);
+             if (d >= distance) continue;
+             if (cx <= (ec->x + (ec->w / 2))) continue;
+             a = abs(cy - (ec->y + (ec->h / 2)));
+             d += (a * a) / d;
+             if (d >= distance) continue;
+             break;
+           case 3: /* right */
+             d = _point_line_dist(cx, cy,
+                                  ec->x, ec->y,
+                                  ec->x, ec->y + ec->h);
+             if (d >= distance) continue;
+             d = _point_line_dist(cx, cy,
+                                  ec->x + (ec->w / 2), ec->y,
+                                  ec->x + (ec->w / 2), ec->y + ec->h);
+             if (d >= distance) continue;
+             if (cx >= (ec->x + (ec->w / 2))) continue;
+             a = abs(cy - (ec->y + (ec->h / 2)));
+             d += (a * a) / d;
+             if (d >= distance) continue;
+             break;
+          }
+        ec_next = ec;
+        distance = d;
+     }
+
+   if (ec_next) e_client_focus_set_with_pointer(ec_next);
+}
+
 /* local subsystem globals */
 static Eina_Hash *actions = NULL;
 static Eina_List *action_list = NULL;
@@ -3439,6 +3630,27 @@ e_actions_init(void)
                             "window_zone_move_by", "1", NULL, 0);
    e_action_predef_name_set(N_("Window : Moving"), N_("To Previous Screen"),
                             "window_zone_move_by", "-1", NULL, 0);
+
+   /* Move window focus somewhere */
+   ACT_GO(window_focus);
+   e_action_predef_name_set(N_("Window : Focus"),
+                            N_("Focus next window"),
+                            "window_focus", "next", NULL, 0);
+   e_action_predef_name_set(N_("Window : Focus"),
+                            N_("Focus previous window"),
+                            "window_focus", "prev", NULL, 0);
+   e_action_predef_name_set(N_("Window : Focus"),
+                            N_("Focus window above"),
+                            "window_focus", "up", NULL, 0);
+   e_action_predef_name_set(N_("Window : Focus"),
+                            N_("Focus window below"),
+                            "window_focus", "down", NULL, 0);
+   e_action_predef_name_set(N_("Window : Focus"),
+                            N_("Focus window left"),
+                            "window_focus", "left", NULL, 0);
+   e_action_predef_name_set(N_("Window : Focus"),
+                            N_("Focus window right"),
+                            "window_focus", "right", NULL, 0);
 
    /* menu_show */
    ACT_GO(menu_show);
