@@ -604,7 +604,8 @@ _drm2_randr_apply(void)
         ecore_drm2_output_enabled_set(output, s->config.enabled);
 
         printf("\tDRM2 RRR: Mode\n");
-        printf("\t\tDRM2 RRR: Geom: %d %d\n",
+        printf("\t\tDRM2 RRR: Geom: %d %d %dx%d\n",
+               s->config.geom.x, s->config.geom.y,
                s->config.mode.w, s->config.mode.h);
         printf("\t\tDRM2 RRR: Refresh: %f\n", s->config.mode.refresh);
         printf("\t\tDRM2 RRR: Preferred: %d\n", s->config.mode.preferred);
