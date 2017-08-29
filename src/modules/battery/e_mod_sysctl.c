@@ -6,7 +6,7 @@
 # include <sys/types.h>
 # include <sys/sysctl.h>
 
-#if defined(__OpenBSD_) || defined(__NetBSD__)
+#if defined(__OpenBSD__) || defined(__NetBSD__)
 # include <sys/param.h>
 # include <sys/sensors.h>
 #endif
