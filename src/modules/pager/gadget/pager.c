@@ -317,12 +317,29 @@ static void
 _pager_gadget_anchor_change_cb(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
    Instance *inst = data;
+   Eina_Bool invert;
 
    if (inst->pager && inst->o_pager)
      {
-        _pager_orient(inst, e_gadget_site_orient_get(obj));
-        _pager_empty(inst->pager);
-        _pager_fill(inst->pager);
+        switch (e_gadget_site_orient_get(obj))
+          {
+           case E_GADGET_SITE_ORIENT_HORIZONTAL:
+             invert = EINA_FALSE;
+             break;
+
+           case E_GADGET_SITE_ORIENT_VERTICAL:
+             invert = EINA_TRUE;
+             break;
+
+           default:
+             invert = EINA_FALSE;
+          }
+        if (invert != inst->pager->invert)
+          {
+             _pager_orient(inst, e_gadget_site_orient_get(obj));
+             _pager_empty(inst->pager);
+             _pager_fill(inst->pager);
+          }
      }
 }
 
@@ -697,8 +714,11 @@ _pager_desk_free(Pager_Desk *pd)
    pd->drop_handler = NULL;
    evas_object_del(pd->o_desk);
    evas_object_del(pd->o_layout);
-   EINA_LIST_FREE(pd->wins, w)
-     _pager_window_free(w);
+   if (pd->wins)
+     {
+        EINA_LIST_FREE(pd->wins, w)
+          _pager_window_free(w);
+     }
    e_object_unref(E_OBJECT(pd->desk));
    free(pd);
 }
@@ -1754,18 +1774,57 @@ _pager_cb_event_client_property(void *data EINA_UNUSED, int type EINA_UNUSED, vo
 static Eina_Bool
 _pager_cb_event_zone_desk_count_set(void *data EINA_UNUSED, int type EINA_UNUSED, E_Event_Zone_Desk_Count_Set *ev)
 {
+   E_Desk *desk;
    Eina_List *l;
    Pager *p;
+   Pager_Desk *pd = NULL;
+   int x, y, xx, yy;
 
+   xx = ev->zone->desk_x_count;
+   yy = ev->zone->desk_y_count;
    EINA_LIST_FOREACH(pagers, l, p)
      {
-        if ((ev->zone->desk_x_count == p->xnum) &&
-            (ev->zone->desk_y_count == p->ynum)) continue;
-        _pager_empty(p);
-        _pager_fill(p);
+        if ((xx == p->xnum) && (yy == p->ynum))
+          continue;
+        for (x = 0; x < xx; x++)
+          {
+             for (y = 0; y < yy; y++)
+               {
+                  if ((x >= p->xnum) || (y >= p->ynum))
+                    {
+                       desk = e_desk_at_xy_get(p->zone, x, y);
+                       if (desk)
+                         pd = _pager_desk_new(p, desk, x, y, p->invert);
+                       if (pd)
+                         p->desks = eina_list_append(p->desks, pd);
+                    }
+               }
+          }
+        if (xx < p->xnum)
+          {
+             for (y = 0; y < yy; y++)
+               {
+                  for (x = xx; x < p->xnum; x++)
+                    {
+                       pd = eina_list_nth(p->desks, x + (y * p->xnum));
+                       _pager_desk_free(pd);
+                    }
+               }
+          }
+        if (yy < p->ynum)
+          {
+             for (x = 0; x < xx; x++)
+               {
+                  for (y = yy; y  < p->ynum; y++)
+                    {
+                       pd = eina_list_nth(p->desks, x + (y * p->xnum));
+                       _pager_desk_free(pd);
+                    }
+               }
+          }
+        e_zone_desk_count_get(p->zone, &(p->xnum), &(p->ynum));
         if (p->inst) _pager_orient(p->inst, e_gadget_site_orient_get(e_gadget_site_get(p->inst->o_pager)));
      }
-
    return ECORE_CALLBACK_PASS_ON;
 }
 
