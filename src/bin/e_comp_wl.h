@@ -358,6 +358,9 @@ struct _E_Comp_Wl_Client_Data
    E_Comp_X_Client_Data *xwayland_data;
 #endif
 
+   Ecore_Animator *early_frame_animator;
+   int early_frame;
+
    Eina_Bool mapped : 1;
    Eina_Bool evas_init : 1;
    Eina_Bool cursor : 1;

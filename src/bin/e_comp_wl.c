@@ -2126,6 +2126,44 @@ _e_comp_wl_subsurface_commit_to_cache(E_Client *ec)
    sdata->cached.has_data = EINA_TRUE;
 }
 
+static Eina_Bool
+_cb_early_frame_animator(void *data EINA_UNUSED)
+{
+   E_Client *ec;
+
+   ec = data;
+   if (ec->comp_data->early_frame == 1)
+     e_pixmap_image_clear(ec->pixmap, 1);
+
+   /* If some client does a surface frame and never follows with
+    * a render, it's just an idiot, so stop trying to help it with
+    * timing.
+    */
+   if (ec->comp_data->early_frame++ > 15)
+     {
+       ec->comp_data->early_frame_animator = NULL;
+       ec->comp_data->early_frame = 0;
+       return EINA_FALSE;
+     }
+   return EINA_TRUE;
+}
+
+static void
+_e_comp_wl_surface_early_frame(E_Client *ec)
+{
+   if (e_comp_object_damage_exists(ec->frame))
+     {
+        ecore_animator_del(ec->comp_data->early_frame_animator);
+        ec->comp_data->early_frame_animator = NULL;
+        ec->comp_data->early_frame = 0;
+        return;
+     }
+   if (ec->on_post_updates) return;
+   ec->comp_data->early_frame = 1;
+   if (ec->comp_data->early_frame_animator) return;
+   ec->comp_data->early_frame_animator = ecore_animator_add(_cb_early_frame_animator, ec);
+}
+
 static void
 _e_comp_wl_subsurface_commit_from_cache(E_Client *ec)
 {
@@ -2138,8 +2176,7 @@ _e_comp_wl_subsurface_commit_from_cache(E_Client *ec)
    DBG("Subsurface Commit from Cache");
 
    _e_comp_wl_surface_state_commit(ec, &sdata->cached);
-   if (!e_comp_object_damage_exists(ec->frame))
-     e_pixmap_image_clear(ec->pixmap, 1);
+   _e_comp_wl_surface_early_frame(ec);
 }
 
 static void
@@ -2494,6 +2531,10 @@ _e_comp_wl_client_cb_del(void *data EINA_UNUSED, E_Client *ec)
 
    /* make sure this is a wayland client */
    if (e_pixmap_type_get(ec->pixmap) != E_PIXMAP_TYPE_WL) return;
+
+   ecore_animator_del(ec->comp_data->early_frame_animator);
+   ec->comp_data->early_frame_animator = NULL;
+   ec->comp_data->early_frame = 0;
 
    if (ec == e_comp_wl->wl.client_ec)
      e_comp_wl->wl.client_ec = NULL;
@@ -3028,8 +3069,7 @@ EINTERN Eina_Bool
 e_comp_wl_surface_commit(E_Client *ec)
 {
    _e_comp_wl_surface_state_commit(ec, &ec->comp_data->pending);
-   if (!e_comp_object_damage_exists(ec->frame))
-     e_pixmap_image_clear(ec->pixmap, 1);
+   _e_comp_wl_surface_early_frame(ec);
    e_comp_wl_extension_pointer_constraints_commit(ec);
 
    return EINA_TRUE;
