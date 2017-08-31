@@ -836,7 +836,7 @@ _bar_icon_preview_client_add(Icon *ic, E_Client *ec)
    edje_extern_object_aspect_set(img, EDJE_ASPECT_CONTROL_BOTH, ec->client.w, ec->client.h);
    elm_layout_content_set(layout, "e.swallow.icon", img);
    if (evas_object_image_alpha_get(img))
-     elm_layout_signal_emit(layout, "e,state,icon,menu", "e");
+     elm_layout_signal_emit(layout, "e,state,icon,alpha", "e");
    evas_object_show(img);
 
    if (!(ec->desk->visible) || (ec->iconic))
@@ -927,7 +927,6 @@ _bar_icon_preview_show(void *data)
              if (!e_client_util_is_popup(ec))
                {
                   _bar_icon_preview_client_add(ic, ec);
-
                   count++;
                }
           }
