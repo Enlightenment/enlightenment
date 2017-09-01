@@ -3701,14 +3701,11 @@ e_comp_object_shape_apply(Evas_Object *obj)
 
    //INF("SHAPE RENDER %p", cw->ec);
 
-   _e_comp_object_alpha_set(cw);
-   EINA_LIST_FOREACH(cw->obj_mirror, l, o)
-     evas_object_image_alpha_set(o, 1);
-
    p = pix = evas_object_image_data_get(cw->obj, 1);
    if (!pix)
      {
         evas_object_image_data_set(cw->obj, pix);
+        _e_comp_object_alpha_set(cw);
         return;
      }
    if (cw->ec->shaped)
@@ -3763,11 +3760,13 @@ e_comp_object_shape_apply(Evas_Object *obj)
            }
       }
    evas_object_image_data_set(cw->obj, pix);
+   _e_comp_object_alpha_set(cw);
    evas_object_image_data_update_add(cw->obj, 0, 0, w, h);
    EINA_LIST_FOREACH(cw->obj_mirror, l, o)
      {
         evas_object_image_data_set(o, pix);
         evas_object_image_data_update_add(o, 0, 0, w, h);
+        evas_object_image_alpha_set(o, 1);
      }
 // don't need to fix alpha chanel as blending
 // should be totally off here regardless of
