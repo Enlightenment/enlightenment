@@ -2554,9 +2554,18 @@ _e_comp_smart_resize(Evas_Object *obj, int w, int h)
         /* resize render update tiler */
         if (!first)
           {
-             RENDER_DEBUG("DAMAGE UNFULL: %p", cw->ec);
-             cw->updates_full = 0;
-             if (cw->updates) eina_tiler_clear(cw->updates);
+             if (cw->updates)
+               {
+                  int tw, th;
+
+                  eina_tiler_area_size_get(cw->updates, &tw, &th);
+                  if ((tw != pw) || (th != ph))
+                    {
+                       RENDER_DEBUG("DAMAGE UNFULL: %p", cw->ec);
+                       cw->updates_full = 0;
+                       eina_tiler_clear(cw->updates);
+                    }
+               }
           }
         else
           {
