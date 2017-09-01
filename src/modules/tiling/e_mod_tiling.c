@@ -1856,7 +1856,7 @@ e_modapi_init(E_Module *m)
    HANDLER(_G.handler_client_uniconify, CLIENT_UNICONIFY, _iconify_hook);
 
    HANDLER(_G.handler_desk_set, CLIENT_DESK_SET, _desk_set_hook);
-   HANDLER(_G.handler_compositor_resize, COMPOSITOR_RESIZE,
+   HANDLER(_G.handler_compositor_resize, COMPOSITOR_UPDATE,
            _compositor_resize_hook);
    HANDLER(_G.handler_desk_show, DESK_SHOW, _desk_shown);
 #undef HANDLER

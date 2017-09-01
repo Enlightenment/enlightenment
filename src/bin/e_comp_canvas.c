@@ -684,7 +684,7 @@ e_comp_canvas_update(void)
    if (!starting)
      {
         e_object_ref(E_OBJECT(e_comp));
-        ecore_event_add(E_EVENT_COMPOSITOR_RESIZE, NULL, _e_comp_canvas_event_compositor_resize_free, NULL);
+        ecore_event_add(E_EVENT_COMPOSITOR_UPDATE, NULL, _e_comp_canvas_event_compositor_resize_free, NULL);
      }
 
    EINA_LIST_FOREACH(e_comp->zones, l, zone)

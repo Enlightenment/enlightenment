@@ -6,7 +6,7 @@
 #ifndef E_COMP_CANVAS_H
 #define E_COMP_CANVAS_H
 
-extern E_API int E_EVENT_COMPOSITOR_RESIZE;
+extern E_API int E_EVENT_COMPOSITOR_UPDATE;
 
 E_API Eina_Bool e_comp_canvas_init(int w, int h);
 EINTERN void e_comp_canvas_clear(void);

@@ -2923,7 +2923,7 @@ e_modapi_init(E_Module *m)
    E_LIST_HANDLER_APPEND(pager_config->handlers, E_EVENT_ZONE_DESK_COUNT_SET, _pager_cb_event_zone_desk_count_set, NULL);
    E_LIST_HANDLER_APPEND(pager_config->handlers, E_EVENT_DESK_SHOW, _pager_cb_event_desk_show, NULL);
    E_LIST_HANDLER_APPEND(pager_config->handlers, E_EVENT_DESK_NAME_CHANGE, _pager_cb_event_desk_name_change, NULL);
-   E_LIST_HANDLER_APPEND(pager_config->handlers, E_EVENT_COMPOSITOR_RESIZE, _pager_cb_event_compositor_resize, NULL);
+   E_LIST_HANDLER_APPEND(pager_config->handlers, E_EVENT_COMPOSITOR_UPDATE, _pager_cb_event_compositor_resize, NULL);
    E_LIST_HANDLER_APPEND(pager_config->handlers, E_EVENT_BG_UPDATE, _pager_cb_event_bg_update, NULL);
 
    pager_config->module = m;

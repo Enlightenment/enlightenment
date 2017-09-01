@@ -38,7 +38,7 @@ static double ecore_frametime = 0;
 
 static int _e_comp_log_dom = -1;
 
-E_API int E_EVENT_COMPOSITOR_RESIZE = -1;
+E_API int E_EVENT_COMPOSITOR_UPDATE = -1;
 E_API int E_EVENT_COMPOSITOR_DISABLE = -1;
 E_API int E_EVENT_COMPOSITOR_ENABLE = -1;
 E_API int E_EVENT_COMPOSITOR_XWAYLAND_INIT = -1;
@@ -1017,7 +1017,7 @@ e_comp_init(void)
    ecore_frametime = ecore_animator_frametime_get();
    shape_debug = !!getenv("E_SHAPE_DEBUG");
 
-   E_EVENT_COMPOSITOR_RESIZE = ecore_event_type_new();
+   E_EVENT_COMPOSITOR_UPDATE = ecore_event_type_new();
    E_EVENT_COMP_OBJECT_ADD = ecore_event_type_new();
    E_EVENT_COMPOSITOR_DISABLE = ecore_event_type_new();
    E_EVENT_COMPOSITOR_ENABLE = ecore_event_type_new();

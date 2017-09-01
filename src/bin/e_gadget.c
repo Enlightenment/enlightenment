@@ -2387,7 +2387,7 @@ e_gadget_init(void)
    menu_act->func.go_mouse = _gadget_act_menu;
 
    E_LIST_HANDLER_APPEND(handlers, E_EVENT_COMP_OBJECT_ADD, _site_auto_comp_object_handler, NULL);
-   E_LIST_HANDLER_APPEND(handlers, E_EVENT_COMPOSITOR_RESIZE, _site_auto_comp_update, NULL);
+   E_LIST_HANDLER_APPEND(handlers, E_EVENT_COMPOSITOR_UPDATE, _site_auto_comp_update, NULL);
 
    comp_site = e_comp->canvas->gadget_site = e_gadget_site_add(E_GADGET_SITE_ORIENT_NONE, "__desktop");
    evas_object_event_callback_add(e_comp->canvas->resize_object, EVAS_CALLBACK_RESIZE, _comp_site_resize, comp_site);

@@ -2993,7 +2993,7 @@ pager_init(void)
    E_LIST_HANDLER_APPEND(ghandlers, E_EVENT_ZONE_DESK_COUNT_SET, _pager_cb_event_zone_desk_count_set, NULL);
    E_LIST_HANDLER_APPEND(ghandlers, E_EVENT_DESK_SHOW, _pager_cb_event_desk_show, NULL);
    E_LIST_HANDLER_APPEND(ghandlers, E_EVENT_DESK_NAME_CHANGE, _pager_cb_event_desk_name_change, NULL);
-   E_LIST_HANDLER_APPEND(ghandlers, E_EVENT_COMPOSITOR_RESIZE, _pager_cb_event_compositor_resize, NULL);
+   E_LIST_HANDLER_APPEND(ghandlers, E_EVENT_COMPOSITOR_UPDATE, _pager_cb_event_compositor_resize, NULL);
    E_LIST_HANDLER_APPEND(ghandlers, E_EVENT_CLIENT_PROPERTY, _pager_cb_event_client_urgent_change, NULL);
    E_LIST_HANDLER_APPEND(ghandlers, E_EVENT_POWERSAVE_UPDATE, _pager_cb_event_powersave_change, NULL);
 
