@@ -125,7 +125,7 @@ static Eina_List *handlers;
 static Eina_Hash *gadget_external_domains;
 static Eina_Hash *gadget_types;
 static E_Gadget_Sites *sites;
-static Ecore_Event_Handler *comp_add_handler;
+static Eina_List *handlers;
 
 static Evas_Object *comp_site;
 
@@ -1637,6 +1637,23 @@ _site_auto_comp_object_handler(void *d EINA_UNUSED, int t EINA_UNUSED, E_Event_C
    return ECORE_CALLBACK_RENEW;
 }
 
+static Eina_Bool
+_site_auto_comp_update()
+{
+   E_Gadget_Site *zgs;
+   Eina_List *l;
+
+   EINA_LIST_FOREACH(sites->sites, l, zgs)
+     {
+        E_Gadget_Config *zgc = eina_list_data_get(zgs->gadgets);
+
+        if (!zgc) continue;
+        if (zgc->zone == -1) continue;
+        evas_object_smart_need_recalculate_set(zgs->layout, 1);
+     }
+   return ECORE_CALLBACK_RENEW;
+}
+
 static Evas_Object *
 _site_util_add(E_Gadget_Site_Orient orient, const char *name, Eina_Bool autoadd)
 {
@@ -2369,7 +2386,8 @@ e_gadget_init(void)
    e_action_predef_name_set(_("Gadgets"), _("Gadget menu"), "gadget_menu", NULL, NULL, 0);
    menu_act->func.go_mouse = _gadget_act_menu;
 
-   comp_add_handler = ecore_event_handler_add(E_EVENT_COMP_OBJECT_ADD, (Ecore_Event_Handler_Cb)_site_auto_comp_object_handler, NULL);
+   E_LIST_HANDLER_APPEND(handlers, E_EVENT_COMP_OBJECT_ADD, _site_auto_comp_object_handler, NULL);
+   E_LIST_HANDLER_APPEND(handlers, E_EVENT_COMPOSITOR_RESIZE, _site_auto_comp_update, NULL);
 
    comp_site = e_comp->canvas->gadget_site = e_gadget_site_add(E_GADGET_SITE_ORIENT_NONE, "__desktop");
    evas_object_event_callback_add(e_comp->canvas->resize_object, EVAS_CALLBACK_RESIZE, _comp_site_resize, comp_site);
@@ -2382,7 +2400,7 @@ e_gadget_shutdown(void)
 {
    E_Gadget_Site *zgs;
 
-   E_FREE_FUNC(comp_add_handler, ecore_event_handler_del);
+   E_FREE_LIST(handlers, ecore_event_handler_del);
    E_CONFIG_DD_FREE(edd_gadget);
    E_CONFIG_DD_FREE(edd_site);
    E_CONFIG_DD_FREE(edd_sites);
