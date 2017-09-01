@@ -1244,13 +1244,13 @@ _e_comp_intercept_resize(void *data, Evas_Object *obj, int w, int h)
    if ((!cw->ec->shading) && (!cw->ec->shaded))
      {
         /* client geom never changes when shading since the client is never altered */
-        //INF("%p: CUR(%dx%d) || REQ(%dx%d)", cw->ec, cw->ec->client.w, cw->ec->client.h, iw, ih);
+        INF("%p: CUR(%dx%d) || REQ(%dx%d)", cw->ec, cw->ec->client.w, cw->ec->client.h, iw, ih);
         cw->ec->client.w = iw;
         cw->ec->client.h = ih;
         if ((cw->ec->client.w < 0) || (cw->ec->client.h < 0)) CRI("WTF");
      }
-   if ((!cw->ec->input_only) && cw->redirected && (e_pixmap_dirty_get(cw->ec->pixmap) ||
-       (!e_pixmap_size_get(cw->ec->pixmap, &pw, &ph))))
+   if ((!cw->ec->input_only) && cw->redirected && (!cw->ec->shading) && (!cw->ec->shaded) &&
+       (e_pixmap_dirty_get(cw->ec->pixmap) || (!e_pixmap_size_get(cw->ec->pixmap, &pw, &ph))))
      {
         if (e_comp->comp_type != E_PIXMAP_TYPE_X) return;
         if (e_object_is_del(E_OBJECT(cw->ec))) return;
