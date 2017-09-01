@@ -739,9 +739,11 @@ _screen_fuzzy_fallback_find(E_Config_Randr2 *cfg, const char *id)
    // strip out everythng in the string from / on as that is edid
    // and fall back to finding just the output name in the rel
    // to identifier, rather than the specific screen id
-   name = alloca(strlen(id) + 1);
-   strcpy(name, id);
-   if ((p = strchr(name, '/'))) *p = 0;
+   p = strchr(id, '/');
+   if (!p) return NULL;
+   name = alloca((p - id) + 1);
+   strncpy(name, id, p - id);
+   name[p - id] = 0;
 
    s = _screen_id_find(id);
    if (!s) s = _screen_output_find(name);
