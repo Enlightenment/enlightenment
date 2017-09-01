@@ -147,7 +147,9 @@ _config_color_setup(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
    elm_ctxpopup_hover_parent_set(ctx, e_comp->elm);
    evas_object_layer_set(ctx, E_LAYER_MENU);
    elm_object_style_set(ctx, "noblock");
-   e_comp_object_util_del_list_append(ctx, _config_autoclose_rect_add(ctx));
+   rect = _config_autoclose_rect_add(ctx);
+   evas_object_smart_callback_call(ci->inst->o_clock, "gadget_popup", rect);
+   e_comp_object_util_del_list_append(ctx, rect);
    evas_object_smart_callback_add(ctx, "dismissed", _clock_color_dismissed, NULL);
    elm_object_content_set(ctx, bx);
    evas_pointer_canvas_xy_get(e_comp->evas, &x, &y);
@@ -317,7 +319,8 @@ _config_weekend_end_populate(void *data, Evas_Object *obj, void *event_info EINA
 static void
 _config_timezone_setup(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
-   Evas_Object *hover, *gl;
+   Evas_Object *hover, *gl, *r;
+   Config_Item *ci = data;
 
    hover = elm_hover_add(e_comp->elm);
    evas_object_layer_set(hover, E_LAYER_MENU);
@@ -335,7 +338,9 @@ _config_timezone_setup(void *data, Evas_Object *obj, void *event_info EINA_UNUSE
    elm_object_part_content_set(hover, "middle", gl);
    time_zoneinfo_scan(gl);
    e_comp_object_util_del_list_append(gl, hover);
-   e_comp_object_util_del_list_append(gl, _config_autoclose_rect_add(gl));
+   r = _config_autoclose_rect_add(gl);
+   evas_object_smart_callback_call(ci->inst->o_clock, "gadget_popup", r);
+   e_comp_object_util_del_list_append(gl, r);
    evas_object_show(hover);
 }
 
