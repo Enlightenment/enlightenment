@@ -2050,7 +2050,7 @@ _pager_window_cb_mouse_move(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EI
    Evas_Event_Mouse_Move *ev = event_info;
    Pager_Win *pw;
    E_Drag *drag;
-   Evas_Object *o, *oo;
+   Evas_Object *o, *oo = NULL;
    Evas_Coord x, y, w, h;
    const char *drag_types[] =
    { "enlightenment/pager_win", "enlightenment/border" };
