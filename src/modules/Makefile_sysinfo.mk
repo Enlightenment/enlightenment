@@ -86,9 +86,9 @@ endif
 src_modules_sysinfo_sysfsfreqdir = $(sysinfopkgdir)
 src_modules_sysinfo_sysfsfreq_PROGRAMS = src/modules/sysinfo/cpuclock/cpuclock_sysfs
 
-src_modules_sysinfo_sysfsfreq_SOURCES = src/modules/sysinfo/cpuclock/cpuclock_sysfs.c
-src_modules_sysinfo_sysfsfreq_CPPFLAGS  = $(MOD_CPPFLAGS) @e_cflags@ @SUID_CFLAGS@
-src_modules_sysinfo_sysfsfreq_LDFLAGS = @SUID_LDFLAGS@
+src_modules_sysinfo_cpuclock_cpuclock_sysfs_SOURCES = src/modules/sysinfo/cpuclock/cpuclock_sysfs.c
+src_modules_sysinfo_cpuclock_cpuclock_sysfs_CPPFLAGS  = $(MOD_CPPFLAGS) @e_cflags@ @SUID_CFLAGS@
+src_modules_sysinfo_cpuclock_cpuclock_sysfsLDFLAGS = @SUID_LDFLAGS@
 
 sysfsfreq_setuid_root_mode = a=rx,u+xs
 sysfsfreq_setuid_root_user = root
@@ -101,5 +101,5 @@ INSTALL_DATA_HOOKS += sysfsfreq-install-data-hook
 
 PHONIES += sysinfo install-sysinfo
 sysinfo: $(sysinfopkg_LTLIBRARIES) $(sysinfo_DATA) $(src_modules_sysinfo_sysfsfreq_PROGRAMS)
-install-sysinfo: install-sysinfoDATA install-sysinfopkgLTLIBRARIES install-src_modules_sysinfo_sysfsfreqPROGRAMS
+install-sysinfo: install-sysinfoDATA install-sysinfopkgLTLIBRARIES install-src_modules_sysinfo_cpuclock_cpuclock_sysfsPROGRAMS
 endif
