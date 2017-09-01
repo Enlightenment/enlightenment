@@ -2961,13 +2961,13 @@ _gadget_desklock_handler(void *d EINA_UNUSED, int t EINA_UNUSED, E_Event_Comp_Ob
    if (strncmp(name, "desklock", 8)) return ECORE_CALLBACK_RENEW;
    evas_object_layer_set(ev->comp_object, DESKLOCK_DEMO_LAYER - 1);
    site = e_gadget_site_auto_add(E_GADGET_SITE_ORIENT_NONE, name);
-   evas_object_propagate_events_set(site, 0);
-   evas_object_smart_member_add(site, desktop_rect);
+   _desktop_rect_obj_add(site);
    evas_object_smart_callback_add(site, "gadget_moved", _gadget_moved, NULL);
    evas_object_layer_set(site, DESKLOCK_DEMO_LAYER);
+   ZGS_GET(site);
    desktop_editor = comp_object = e_gadget_site_edit(site);
-   evas_object_propagate_events_set(comp_object, 0);
-   evas_object_smart_member_add(comp_object, desktop_rect);
+   _desktop_rect_obj_add(zgs->events);
+   _desktop_rect_obj_add(comp_object);
    e_comp_object_util_del_list_append(ev->comp_object, comp_object);
 
    memset(&n, 0, sizeof(E_Notification_Notify));
