@@ -998,7 +998,11 @@ _e_comp_object_pixels_get(void *data, Evas_Object *obj)
 
    /* queue another render if client is still dirty; cannot refresh here. */
    if (e_pixmap_dirty_get(ec->pixmap) && e_pixmap_size_get(ec->pixmap, &pw, &ph))
-     e_comp_object_damage(ec->frame, 0, 0, ec->w, ec->h);
+     {
+        e_comp_object_damage(ec->frame, 0, 0, ec->w, ec->h);
+        /* if updates for existing pixmap don't exist then avoid unsetting existing image */
+        if ((!cw->pending_updates) || eina_tiler_empty(cw->pending_updates)) return;
+     }
 
    if (cw->native)
      {
