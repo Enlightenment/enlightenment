@@ -321,7 +321,13 @@ clock_del(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *event_info EI
    clock_instances = eina_list_remove(clock_instances, inst);
    evas_object_del(inst->popup);
    time_daynames_clear(inst);
+   if (inst->cfg)
+     {
+        advanced |= !!inst->cfg->advanced;
+        seconds |= !!inst->cfg->show_seconds;
+     }
    free(inst);
+   if ((!advanced) && (!seconds)) return;
    EINA_LIST_FOREACH(clock_instances, l, inst)
      {
         advanced |= !!inst->cfg->advanced;
