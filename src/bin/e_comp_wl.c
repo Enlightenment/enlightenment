@@ -2127,7 +2127,7 @@ _e_comp_wl_subsurface_commit_to_cache(E_Client *ec)
 }
 
 static Eina_Bool
-_cb_early_frame_animator(void *data EINA_UNUSED)
+_cb_early_frame_animator(void *data)
 {
    E_Client *ec;
 
