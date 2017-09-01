@@ -997,6 +997,11 @@ _e_comp_object_pixels_get(void *data, Evas_Object *obj)
       msg2.val = id;
       edje_object_message_send(cw->shobj, EDJE_MESSAGE_INT, 0, &msg2);
    }
+
+   /* queue another render if client is still dirty; cannot refresh here. */
+   if (e_pixmap_dirty_get(ec->pixmap) && e_pixmap_size_get(ec->pixmap, &pw, &ph))
+     e_comp_object_damage(ec->frame, 0, 0, ec->w, ec->h);
+
    if (cw->native)
      {
         E_FREE_FUNC(cw->pending_updates, eina_tiler_free);
@@ -1013,9 +1018,6 @@ _e_comp_object_pixels_get(void *data, Evas_Object *obj)
    /* shaped clients get precise mouse events to handle transparent pixels */
    evas_object_precise_is_inside_set(cw->obj, ec->shaped || ec->shaped_input);
 
-   /* queue another render if client is still dirty; cannot refresh here. */
-   if (e_pixmap_dirty_get(ec->pixmap) && e_pixmap_size_get(ec->pixmap, &pw, &ph))
-     e_comp_object_damage(ec->frame, 0, 0, ec->w, ec->h);
    //INF("%p PX(%dx%d) EC(%dx%d) CW(%dx%d)", ec, pw, ph, ec->w, ec->h, cw->w, cw->h);
    //e_comp_object_frame_wh_adjust(cw->smart_obj, pw, ph, &pw, &ph);
    //if ((ec->w != pw) || (ec->h != ph))
