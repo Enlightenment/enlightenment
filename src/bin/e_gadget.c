@@ -2094,8 +2094,38 @@ _gadget_util_ctxpopup_visibility(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Ev
 }
 
 static void
-_gadget_util_ctxpopup_moveresize(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+_gadget_util_ctxpopup_move(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
+   e_comp_shape_queue();
+}
+
+static void
+_gadget_util_ctxpopup_resize(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
+{
+   int x, y, w, h;
+   int zx, zy, zw, zh;
+
+   evas_object_geometry_get(obj, &x, &y, &w, &h);
+   e_zone_useful_geometry_get(e_comp_object_util_zone_get(obj), &zx, &zy, &zw, &zh);
+   if (!E_CONTAINS(zx, zy, zw, zh, x, y, w, h))
+     {
+        evas_object_hide(obj);
+        if (!E_CONTAINS(zx, zy, zw, zh, x, y, 1, h))
+          {
+             if (!E_CONTAINS(zx, zy, zw, zh, x, y, 1, 1))
+               evas_object_move(data, x, zy + (h / 2) + 10);
+             else
+               evas_object_move(data, x, zy + zh - (h / 2) - 10);
+          }
+        else
+          {
+             if (!E_CONTAINS(zx, zy, zw, zh, x, y, 1, 1))
+               evas_object_move(data, zx + (w / 2) + 10, y);
+             else
+               evas_object_move(data, zx + zw - (w / 2) - 10, y);
+          }
+        evas_object_show(obj);
+     }
    e_comp_shape_queue();
 }
 
@@ -2103,9 +2133,12 @@ E_API void
 e_gadget_util_ctxpopup_place(Evas_Object *g, Evas_Object *ctx, Evas_Object *pos_obj)
 {
    int x, y, w, h;
+   int zx, zy, zw, zh;
+   int pw = 1, ph = 1;
    E_Layer layer;
    E_Gadget_Config *zgc;
    Evas_Object *content;
+   E_Zone *zone;
    Elm_Ctxpopup_Direction first, second;
 
    EINA_SAFETY_ON_NULL_RETURN(g);
@@ -2117,7 +2150,11 @@ e_gadget_util_ctxpopup_place(Evas_Object *g, Evas_Object *ctx, Evas_Object *pos_
    layer = MAX(evas_object_layer_get(pos_obj ?: g), E_LAYER_POPUP);
    evas_object_layer_set(ctx, layer);
 
+   if (content) evas_object_geometry_get(content, NULL, NULL, &pw, &ph);
+
    evas_object_geometry_get(pos_obj ?: g, &x, &y, &w, &h);
+   zone = e_comp_object_util_zone_get(pos_obj ?: g);
+   e_zone_useful_geometry_get(zone, &zx, &zy, &zw, &zh);
    if (zgc->site->anchor & E_GADGET_SITE_ANCHOR_TOP)
      y += h;
    if (zgc->site->anchor & E_GADGET_SITE_ANCHOR_LEFT)
@@ -2125,6 +2162,7 @@ e_gadget_util_ctxpopup_place(Evas_Object *g, Evas_Object *ctx, Evas_Object *pos_
    if (zgc->site->orient == E_GADGET_SITE_ORIENT_HORIZONTAL)
      {
         x += w / 2;
+        x = E_CLAMP(x, zx, zx + zw - MAX(pw, w));
         first = ELM_CTXPOPUP_DIRECTION_UP, second = ELM_CTXPOPUP_DIRECTION_DOWN;
         if (zgc->site->anchor & E_GADGET_SITE_ANCHOR_TOP)
           first = ELM_CTXPOPUP_DIRECTION_DOWN, second = ELM_CTXPOPUP_DIRECTION_UP;
@@ -2132,14 +2170,13 @@ e_gadget_util_ctxpopup_place(Evas_Object *g, Evas_Object *ctx, Evas_Object *pos_
    else if (zgc->site->orient == E_GADGET_SITE_ORIENT_VERTICAL)
      {
         y += h / 2;
+        y = E_CLAMP(y, zy, zy + zh - MAX(ph, h));
         first = ELM_CTXPOPUP_DIRECTION_LEFT, second = ELM_CTXPOPUP_DIRECTION_RIGHT;
         if (zgc->site->anchor & E_GADGET_SITE_ANCHOR_LEFT)
           first = ELM_CTXPOPUP_DIRECTION_RIGHT, second = ELM_CTXPOPUP_DIRECTION_LEFT;
      }
    else
      {
-        int zx, zy, zw, zh;
-        e_zone_useful_geometry_get(e_comp_object_util_zone_get(pos_obj ?: g), &zx, &zy, &zw, &zh);
         if (x < zx + (zw / 2))
           {
              second = ELM_CTXPOPUP_DIRECTION_RIGHT;
@@ -2161,8 +2198,8 @@ e_gadget_util_ctxpopup_place(Evas_Object *g, Evas_Object *ctx, Evas_Object *pos_
    evas_object_event_callback_add(ctx, EVAS_CALLBACK_HIDE, _gadget_util_ctxpopup_visibility, NULL);
    if (content)
      {
-        evas_object_event_callback_add(content, EVAS_CALLBACK_MOVE, _gadget_util_ctxpopup_moveresize, NULL);
-        evas_object_event_callback_add(content, EVAS_CALLBACK_RESIZE, _gadget_util_ctxpopup_moveresize, NULL);
+        evas_object_event_callback_add(content, EVAS_CALLBACK_MOVE, _gadget_util_ctxpopup_move, NULL);
+        evas_object_event_callback_add(content, EVAS_CALLBACK_RESIZE, _gadget_util_ctxpopup_resize, ctx);
      }
    _desktop_rect_obj_add(ctx);
    evas_object_smart_callback_call(zgc->site->layout, "gadget_site_popup", ctx);
