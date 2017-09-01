@@ -448,6 +448,7 @@ packagekit_popup_new(E_PackageKit_Instance *inst)
 
    // title label
    lb = inst->popup_title_entry = elm_entry_add(table);
+   elm_entry_editable_set(lb, 0);
    evas_object_size_hint_expand_set(lb, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(lb, EVAS_HINT_FILL, 0.5);
    elm_entry_text_style_user_push(lb, "DEFAULT='font_weight=Bold'");
