@@ -1623,11 +1623,7 @@ _e_int_menus_clients_item_cb(void *data, E_Menu *m EINA_UNUSED, E_Menu_Item *mi 
 
    if (!ec->iconic) e_desk_show(ec->desk);
    if (!ec->lock_user_stacking) evas_object_raise(ec->frame);
-   if (!ec->lock_focus_out)
-     {
-        e_util_pointer_center(ec);
-        evas_object_focus_set(ec->frame, 1);
-     }
+   e_client_focus_set_with_pointer(ec);
 }
 
 static void
