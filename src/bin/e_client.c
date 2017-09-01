@@ -2805,7 +2805,6 @@ e_client_desk_set(E_Client *ec, E_Desk *desk)
 {
    E_Event_Client_Desk_Set *ev;
    E_Desk *old_desk;
-   Eina_Bool was_focused = ec->focused;
 
    E_OBJECT_CHECK(ec);
    E_OBJECT_TYPE_CHECK(ec, E_CLIENT_TYPE);
@@ -2872,11 +2871,6 @@ e_client_desk_set(E_Client *ec, E_Desk *desk)
              e_client_res_change_geometry_save(ec);
              e_client_res_change_geometry_restore(ec);
              ec->pre_res_change.valid = 0;
-          }
-        if (was_focused)
-          {
-             E_Client *ec_focus = e_desk_last_focused_focus(old_desk);
-             if (ec_focus) e_client_focus_set_with_pointer(ec_focus);
           }
      }
 

@@ -1318,10 +1318,18 @@ _e_client_menu_cb_sendto(void *data, E_Menu *m, E_Menu_Item *mi EINA_UNUSED)
 
    desk = data;
    ec = e_object_data_get(E_OBJECT(m));
-   if ((ec) && (desk))
+   if ((ec) && (desk) && (ec->desk != desk))
      {
+        E_Desk *old_desk = ec->desk;
+        Eina_Bool was_focused = e_client_stack_focused_get(ec);
+
         ec->hidden = 0;
         e_client_desk_set(ec, desk);
+        if (was_focused)
+          {
+             E_Client *ec_focus = e_desk_last_focused_focus(old_desk);
+             if (ec_focus) e_client_focus_set_with_pointer(ec_focus);
+          }
      }
 }
 

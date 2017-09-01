@@ -1889,6 +1889,7 @@ _pager_window_cb_mouse_move(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EI
         if (pd)
           {
              int zx, zy, zw, zh;
+             E_Client *ec = pw->client;
 
              e_zone_useful_geometry_get(pd->desk->zone, &zx, &zy, &zw, &zh);
              e_layout_coord_canvas_to_virtual(pd->o_layout,
@@ -1896,15 +1897,23 @@ _pager_window_cb_mouse_move(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EI
                                               my + pw->drag.dy, &vx, &vy);
              if (pd != pw->desk)
                {
+                  E_Desk *old_desk = ec->desk;
+                  Eina_Bool was_focused = e_client_stack_focused_get(ec);
+
                   edje_object_signal_emit(pw->desk->o_desk, "e,action,drag,out", "e");
-                  pw->client->hidden = 0;
-                  e_client_desk_set(pw->client, pd->desk);
+                  ec->hidden = 0;
+                  e_client_desk_set(ec, pd->desk);
+                  if (was_focused)
+                    {
+                       E_Client *ec_focus = e_desk_last_focused_focus(old_desk);
+                       if (ec_focus) e_client_focus_set_with_pointer(ec_focus);
+                    }
                   edje_object_signal_emit(pd->o_desk, "e,action,drag,in", "e");
                   pd->pager->active_drop_pd = pd;
                }
-             mx = E_CLAMP(vx + zx, zx, zx + zw - pw->client->w);
-             my = E_CLAMP(vy + zy, zy, zy + zh - pw->client->h);
-             evas_object_move(pw->client->frame, mx, my);
+             mx = E_CLAMP(vx + zx, zx, zx + zw - ec->w);
+             my = E_CLAMP(vy + zy, zy, zy + zh - ec->h);
+             evas_object_move(ec->frame, mx, my);
           }
         else
           {
@@ -1966,24 +1975,25 @@ _pager_window_cb_drag_finished(E_Drag *drag, int dropped)
    if (!dropped)
      {
         int zx, zy, zw, zh;
+        E_Client *ec = pw->client;
 
         /* wasn't dropped (on pager). move it to position of mouse on screen */
         zone = e_zone_current_get();
         desk = e_desk_current_get(zone);
 
-        e_client_zone_set(pw->client, zone);
-        if ((pw->client->desk != desk) && desk->visible)
+        e_client_zone_set(ec, zone);
+        if ((ec->desk != desk) && desk->visible)
           {
-             pw->client->hidden = 0;
-             e_client_desk_set(pw->client, desk);
+             ec->hidden = 0;
+             e_client_desk_set(ec, desk);
           }
 
 #ifndef HAVE_WAYLAND_ONLY
         ecore_x_pointer_last_xy_get(&x, &y);
 #endif
 
-        dx = (pw->client->w / 2);
-        dy = (pw->client->h / 2);
+        dx = (ec->w / 2);
+        dy = (ec->h / 2);
 
         e_zone_useful_geometry_get(zone, &zx, &zy, &zw, &zh);
 
@@ -1991,24 +2001,21 @@ _pager_window_cb_drag_finished(E_Drag *drag, int dropped)
         if (dx < x)
           {
              x -= dx;
-             if ((pw->client->w < zw) &&
-                 (x + pw->client->w > zx + zw))
-               x -= x + pw->client->w - (zx + zw);
+             if ((ec->w < zw) && (x + ec->w > zx + zw))
+               x -= x + ec->w - (zx + zw);
           }
         else x = 0;
 
         if (dy < y)
           {
              y -= dy;
-             if ((pw->client->h < zh) &&
-                 (y + pw->client->h > zy + zh))
-               y -= y + pw->client->h - (zy + zh);
+             if ((ec->h < zh) && (y + ec->h > zy + zh))
+               y -= y + ec->h - (zy + zh);
           }
         else y = 0;
-        evas_object_move(pw->client->frame, x, y);
+        evas_object_move(ec->frame, x, y);
 
-        if (!(pw->client->lock_user_stacking))
-          evas_object_raise(pw->client->frame);
+        if (!(ec->lock_user_stacking)) evas_object_raise(ec->frame);
      }
    if (pw->desk->pager->active_drop_pd)
      {
@@ -2156,6 +2163,8 @@ _pager_drop_cb_drop(void *data, const char *type, void *event_info)
              E_Maximize max = ec->maximized;
              E_Fullscreen fs = ec->fullscreen_policy;
              Eina_Bool fullscreen = ec->fullscreen;
+             E_Desk *old_desk = ec->desk;
+             Eina_Bool was_focused = e_client_stack_focused_get(ec);
 
              if (ec->iconic) e_client_uniconify(ec);
              if (ec->maximized)
@@ -2164,6 +2173,11 @@ _pager_drop_cb_drop(void *data, const char *type, void *event_info)
              if (pd->desk->visible)
                ec->hidden = 0;
              e_client_desk_set(ec, pd->desk);
+             if (was_focused)
+               {
+                  E_Client *ec_focus = e_desk_last_focused_focus(old_desk);
+                  if (ec_focus) e_client_focus_set_with_pointer(ec_focus);
+               }
              evas_object_raise(ec->frame);
 
              if ((!max) && (!fullscreen))

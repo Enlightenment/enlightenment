@@ -1283,16 +1283,16 @@ ACT_FN_GO(window_zone_move_by, )
      move = 0;
    zone = e_comp_zone_number_get(move);
    if (!zone) return;
+   if (ec->zone == zone) return;
    max = ec->maximized;
    fs = ec->fullscreen_policy;
    fullscreen = ec->fullscreen;
    if (ec->maximized) e_client_unmaximize(ec, E_MAXIMIZE_BOTH);
    if (fullscreen) e_client_unfullscreen(ec);
    e_client_zone_set(ec, zone);
-//   e_client_desk_set(ec, e_desk_current_get(zone));
    if (max) e_client_maximize(ec, max);
    if (fullscreen) e_client_fullscreen(ec, fs);
-   evas_object_focus_set(ec->frame, 1);
+   e_client_focus_set_with_pointer(ec);
 }
 
 /***************************************************************************/
@@ -1313,9 +1313,19 @@ ACT_FN_GO(window_desk_move_to, )
    if (sscanf(params, "%d %d", &x, &y) == 2)
      {
         E_Desk *desk;
+        E_Desk *old_desk = ec->desk;
+        Eina_Bool was_focused = e_client_stack_focused_get(ec);
 
         desk = e_desk_at_xy_get(ec->zone, x, y);
-        if (desk) e_client_desk_set(ec, desk);
+        if ((desk) && (desk != old_desk))
+          {
+             e_client_desk_set(ec, desk);
+             if (was_focused)
+               {
+                  E_Client *ec_focus = e_desk_last_focused_focus(old_desk);
+                  if (ec_focus) e_client_focus_set_with_pointer(ec_focus);
+               }
+          }
      }
 }
 

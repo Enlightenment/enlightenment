@@ -2170,8 +2170,19 @@ _e_comp_x_message(void *data EINA_UNUSED, int type EINA_UNUSED, Ecore_X_Event_Cl
                {
                   if (e_util_strcmp(p, ec->desk->window_profile))
                     {
+                       E_Desk *old_desk = ec->desk;
                        E_Desk *desk = e_comp_desk_window_profile_get(p);
-                       if (desk) e_client_desk_set(ec, desk);
+                       Eina_Bool was_focused = e_client_stack_focused_get(ec);
+
+                       if ((desk) && (desk != old_desk))
+                         {
+                            e_client_desk_set(ec, desk);
+                            if (was_focused)
+                              {
+                                 E_Client *ec_focus = e_desk_last_focused_focus(old_desk);
+                                 if (ec_focus) e_client_focus_set_with_pointer(ec_focus);
+                              }
+                         }
                     }
                }
              free(p);
@@ -2245,14 +2256,22 @@ _e_comp_x_message(void *data EINA_UNUSED, int type EINA_UNUSED, Ecore_X_Event_Cl
              char *p = ecore_x_atom_name_get(ev->data.l[1]);
              if (!e_util_strcmp(ec->e.state.profile.wait, p))
                {
+                  E_Desk *old_desk = ec->desk;
+                  E_Desk *desk = ec->e.state.profile.wait_desk;
+                  Eina_Bool was_focused = e_client_stack_focused_get(ec);
+
                   eina_stringshare_replace(&ec->e.state.profile.wait, NULL);
                   ec->e.state.profile.wait_for_done = 0;
-                  E_Desk *desk = ec->e.state.profile.wait_desk;
-                  if ((desk) && (desk != ec->desk))
+                  if ((desk) && (desk != old_desk))
                     {
                        eina_stringshare_replace(&ec->e.state.profile.name,
                                                 desk->window_profile);
                        e_client_desk_set(ec, desk);
+                       if (was_focused)
+                         {
+                            E_Client *ec_focus = e_desk_last_focused_focus(old_desk);
+                            if (ec_focus) e_client_focus_set_with_pointer(ec_focus);
+                         }
                     }
                   e_client_desk_window_profile_wait_desk_set(ec, NULL);
                }

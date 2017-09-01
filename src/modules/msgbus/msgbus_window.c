@@ -141,8 +141,19 @@ _e_msgbus_window_sendtodesktop_cb( const Eldbus_Service_Interface *iface EINA_UN
                {
                   if (xdesk < zone->desk_x_count && ydesk < zone->desk_y_count)
                     {
+                       E_Desk *old_desk = ec->desk;
+                       Eina_Bool was_focused = e_client_stack_focused_get(ec);
+
                        desk = e_desk_at_xy_get(zone, xdesk, ydesk);
-                       if (desk) e_client_desk_set(ec, desk);
+                       if ((desk) && (desk != old_desk))
+                         {
+                            e_client_desk_set(ec, desk);
+                            if (was_focused)
+                              {
+                                 E_Client *ec_focus = e_desk_last_focused_focus(old_desk);
+                                 if (ec_focus) e_client_focus_set_with_pointer(ec_focus);
+                              }
+                         }
                     }
                }
           }

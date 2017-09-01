@@ -1240,11 +1240,13 @@ _pager_window_cb_drag_finished(E_Drag *drag, int dropped)
    else
      {
         int dx, dy, x, y, zx, zy, zw, zh;
-        pw->client->hidden = !p->active_pd->desk->visible;
-        e_client_desk_set(pw->client, p->active_pd->desk);
+        E_Client *ec = pw->client;
 
-        dx = (pw->client->w / 2);
-        dy = (pw->client->h / 2);
+        ec->hidden = !p->active_pd->desk->visible;
+        e_client_desk_set(ec, p->active_pd->desk);
+
+        dx = (ec->w / 2);
+        dy = (ec->h / 2);
 
         evas_pointer_canvas_xy_get(evas_object_evas_get(p->o_table), &x, &y);
         e_zone_useful_geometry_get(p->zone, &zx, &zy, &zw, &zh);
@@ -1253,26 +1255,22 @@ _pager_window_cb_drag_finished(E_Drag *drag, int dropped)
         if (dx < x)
           {
              x -= dx;
-             if ((pw->client->w < zw) &&
-                 (x + pw->client->w > zx + zw))
-               x -= x + pw->client->w - (zx + zw);
+             if ((ec->w < zw) && (x + ec->w > zx + zw))
+               x -= x + ec->w - (zx + zw);
           }
         else x = 0;
 
         if (dy < y)
           {
              y -= dy;
-             if ((pw->client->h < zh) &&
-                 (y + pw->client->h > zy + zh))
-               y -= y + pw->client->h - (zy + zh);
+             if ((ec->h < zh) && (y + ec->h > zy + zh))
+               y -= y + ec->h - (zy + zh);
           }
         else y = 0;
-        evas_object_move(pw->client->frame, x, y);
+        evas_object_move(ec->frame, x, y);
 
-
-        if (!(pw->client->lock_user_stacking))
-          evas_object_raise(pw->client->frame);
-        evas_object_focus_set(pw->client->frame, 1);
+        if (!(ec->lock_user_stacking)) evas_object_raise(ec->frame);
+        evas_object_focus_set(ec->frame, 1);
      }
    if (p->active_drop_pd)
      {
@@ -1338,6 +1336,9 @@ _pager_update_drop_position(Pager *p, Evas_Coord x, Evas_Coord y)
    if (pd)
      {
         int zx, zy, zw, zh, vx, vy;
+        E_Client *ec = pw->client;
+        E_Desk *old_desk = ec->desk;
+        Eina_Bool was_focused = e_client_stack_focused_get(ec);
 
         pw->drag.in_pager = 1;
         //makes drags look weird
@@ -1347,11 +1348,16 @@ _pager_update_drop_position(Pager *p, Evas_Coord x, Evas_Coord y)
         e_deskmirror_coord_canvas_to_virtual(pd->o_layout,
                                          x + pw->drag.dx,
                                          y + pw->drag.dy, &vx, &vy);
-        pw->client->hidden = !pd->desk->visible;
-        e_client_desk_set(pw->client, pd->desk);
-        x = E_CLAMP(vx + zx, zx, zx + zw - pw->client->w);
-        y = E_CLAMP(vy + zy, zy, zy + zh - pw->client->h);
-        evas_object_move(pw->client->frame, x, y);
+        ec->hidden = !pd->desk->visible;
+        e_client_desk_set(ec, pd->desk);
+        x = E_CLAMP(vx + zx, zx, zx + zw - ec->w);
+        y = E_CLAMP(vy + zy, zy, zy + zh - ec->h);
+        evas_object_move(ec->frame, x, y);
+        if (was_focused)
+          {
+             E_Client *ec_focus = e_desk_last_focused_focus(old_desk);
+             if (ec_focus) e_client_focus_set_with_pointer(ec_focus);
+          }
      }
    else
      {
@@ -1465,6 +1471,8 @@ _pager_drop_cb_drop(void *data, const char *type, void *event_info)
              E_Maximize max = ec->maximized;
              E_Fullscreen fs = ec->fullscreen_policy;
              Eina_Bool fullscreen = ec->fullscreen;
+             E_Desk *old_desk = ec->desk;
+             Eina_Bool was_focused = e_client_stack_focused_get(ec);
 
              if (ec->iconic) e_client_uniconify(ec);
              if (ec->maximized)
@@ -1472,8 +1480,13 @@ _pager_drop_cb_drop(void *data, const char *type, void *event_info)
              if (fullscreen) e_client_unfullscreen(ec);
                ec->hidden = 0;
              e_client_desk_set(ec, pd->desk);
+             if (was_focused)
+               {
+                  E_Client *ec_focus = e_desk_last_focused_focus(old_desk);
+                  if (ec_focus) e_client_focus_set_with_pointer(ec_focus);
+               }
              evas_object_raise(ec->frame);
-                  
+
              if ((!max) && (!fullscreen))
                {
                   int zx, zy, zw, zh, mx, my;
