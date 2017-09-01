@@ -881,11 +881,17 @@ _wireless_popup_list_populate(void)
 }
 
 static void
+_wireless_popup_dismissed(void *data EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
+{
+   evas_object_del(obj);
+}
+
+static void
 _wireless_gadget_mouse_down(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *event_info)
 {
    Evas_Event_Mouse_Down *ev = event_info;
    Instance *inst = data;
-   Evas_Object *ctx, *box, *list, *toggle;
+   Evas_Object *ctx, *tb, *list, *toggle;
    int type;
    E_Zone *zone;
    const char *names[] =
@@ -911,28 +917,30 @@ _wireless_gadget_mouse_down(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, v
    if (ev->button != 1) return;
    if (wireless_popup.popup)
      {
-        evas_object_hide(wireless_popup.popup);
-        evas_object_del(wireless_popup.popup);
+        elm_ctxpopup_dismiss(wireless_popup.popup);
+        wireless_popup.popup = NULL;
         return;
      }
    inst->popup = 1;
    wireless_popup.type = type;
    wireless_popup.items = eina_hash_pointer_new(NULL);
+
    ctx = elm_ctxpopup_add(e_comp->elm);
+   evas_object_smart_callback_add(ctx, "dismissed", _wireless_popup_dismissed, NULL);
    elm_object_style_set(ctx, "noblock");
 
-   box = elm_box_add(ctx);
-   E_EXPAND(box);
-   E_FILL(box);
+   tb = elm_table_add(ctx);
+   E_EXPAND(tb);
+   E_FILL(tb);
 
    wireless_popup.content = list = elm_list_add(ctx);
-   elm_list_mode_set(list, ELM_LIST_LIMIT);
+   elm_list_mode_set(list, ELM_LIST_EXPAND);
    E_EXPAND(list);
    E_FILL(list);
    _wireless_popup_list_populate();
    elm_list_go(list);
    evas_object_show(list);
-   elm_box_pack_end(box, list);
+   elm_table_pack(tb, list, 0, 0, 1, 1);
    toggle = elm_check_add(ctx);
    evas_object_show(toggle);
    elm_object_style_set(toggle, "toggle");
@@ -941,12 +949,23 @@ _wireless_gadget_mouse_down(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, v
    elm_object_part_text_set(toggle, "off", _("Off"));
    elm_check_state_set(toggle, wireless_type_enabled[type]);
    evas_object_smart_callback_add(toggle, "changed", _wireless_popup_toggle, inst);
-   elm_box_pack_end(box, toggle);
-   elm_object_content_set(ctx, box);
+   elm_table_pack(tb, toggle, 0, 1, 1, 1);
+   elm_object_content_set(ctx, tb);
    wireless_popup.popup = ctx;
 
-   zone = e_zone_current_get();
-   evas_object_size_hint_min_set(box, zone->w / 5, zone->h / 3);
+   {
+      Evas_Object *r = evas_object_rectangle_add(e_comp->evas);
+      e_comp_object_util_del_list_append(list, r);
+      elm_table_pack(tb, r, 1, 0, 1, 1);
+      zone = e_zone_current_get();
+      evas_object_size_hint_min_set(r, 1, zone->h / 3);
+
+      r = evas_object_rectangle_add(e_comp->evas);
+      e_comp_object_util_del_list_append(list, r);
+      elm_table_pack(tb, r, 0, 2, 2, 1);
+      evas_object_size_hint_min_set(r, zone->w / 5, 1);
+   }
+
    e_gadget_util_ctxpopup_place(inst->box, ctx, inst->icon[type]);
    evas_object_show(wireless_popup.popup);
    evas_object_event_callback_add(wireless_popup.popup, EVAS_CALLBACK_DEL, _wireless_popup_del, inst);
