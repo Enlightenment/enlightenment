@@ -310,6 +310,7 @@ clock_del(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *e
      {
         advanced |= !!inst->cfg->advanced;
         seconds |= !!inst->cfg->show_seconds;
+        if (inst->cfg->inst == inst) inst->cfg->inst = NULL;
      }
    free(inst);
    if ((!advanced) && (!seconds)) return;
@@ -366,6 +367,7 @@ static Evas_Object *
 _clock_gadget_configure(Evas_Object *g)
 {
    Instance *inst = evas_object_data_get(g, "clock");
+   inst->cfg->inst = inst;
    return config_clock(inst->cfg, e_comp_object_util_zone_get(g));
 }
 

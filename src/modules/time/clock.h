@@ -34,6 +34,7 @@ struct _Config
 struct _Config_Item
 {
   int id;
+  Instance *inst;
   struct {
       int start, len; // 0->6 0 == sun, 6 == sat, number of days
    } weekend;
