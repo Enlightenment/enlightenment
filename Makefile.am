@@ -69,6 +69,9 @@ pkgconfig_DATA = enlightenment.pc
 
 include doc/Makefile.mk
 
+include meson_dist.mk
+EXTRA_DIST += $(meson_dist)
+
 .PHONY: $(PHONIES)
 
 clean-local: doc-clean
