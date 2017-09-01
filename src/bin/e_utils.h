@@ -68,19 +68,6 @@ E_API void e_util_memclear(void *s, size_t n);
 
 E_API Ecore_Exe *e_util_open(const char *exe, void *data);
 
-static inline void
-e_util_pointer_center(const E_Client *ec)
-{
-   int x = 0, y = 0;
-
-   if (ec->zone)
-     x = ec->zone->x, y = ec->zone->y;
-   if ((e_config->focus_policy != E_FOCUS_CLICK) && (!e_config->disable_all_pointer_warps))
-     ecore_evas_pointer_warp(e_comp->ee,
-                             x + ec->x + (ec->w / 2),
-                             y + ec->y + (ec->h / 2));
-}
-
 static inline Eina_Bool
 isedje(const Evas_Object *obj)
 {

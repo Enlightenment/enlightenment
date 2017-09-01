@@ -851,7 +851,8 @@ ACT_FN_GO(window_move_by, )
              ec = (E_Client *)(void *)obj;
              evas_object_move(ec->frame, ec->x + dx, ec->y + dy);
 
-             e_util_pointer_center(ec);
+             if (!e_client_focus_policy_click(ec))
+               e_client_pointer_warp_to_center_now(ec);
           }
      }
 }
@@ -899,7 +900,8 @@ ACT_FN_GO(window_move_to, )
           {
              evas_object_move(ec->frame, x, y);
 
-             e_util_pointer_center(ec);
+             if (!e_client_focus_policy_click(ec))
+               e_client_pointer_warp_to_center_now(ec);
           }
      }
 }
@@ -962,7 +964,8 @@ ACT_FN_GO(window_move_to_center, EINA_UNUSED)
    ec = (E_Client *)(void *)obj;
    e_comp_object_util_center(ec->frame);
 
-   e_util_pointer_center(ec);
+   if (!e_client_focus_policy_click(ec))
+     e_client_pointer_warp_to_center_now(ec);
 }
 
 /***************************************************************************/
@@ -987,7 +990,8 @@ ACT_FN_GO(window_resize_by, )
              e_client_resize_limit(ec, &dw, &dh);
              evas_object_resize(ec->frame, dw, dh);
 
-             e_util_pointer_center(ec);
+             if (!e_client_focus_policy_click(ec))
+               e_client_pointer_warp_to_center_now(ec);
           }
      }
 }
@@ -1091,7 +1095,8 @@ ACT_FN_GO(window_push, )
         if ((x != ec->x) || (y != ec->y))
           {
              evas_object_move(ec->frame, x, y);
-             e_util_pointer_center(ec);
+             if (!e_client_focus_policy_click(ec))
+               e_client_pointer_warp_to_center_now(ec);
           }
      }
 }
@@ -1135,7 +1140,10 @@ window_jump_to(const char *params)
 
         evas_object_raise(ec->frame);
         if (ec->zone != current_zone)
-          e_util_pointer_center(ec);
+          {
+             if (!e_client_focus_policy_click(ec))
+               e_client_pointer_warp_to_center_now(ec);
+          }               
         evas_object_focus_set(ec->frame, 1);
         return 1;
      }
