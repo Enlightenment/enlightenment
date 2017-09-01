@@ -275,10 +275,11 @@ xkbg_del(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *ev
 }
 
 EINTERN Evas_Object *
-xkbg_gadget_create(Evas_Object *parent, int *id EINA_UNUSED, E_Gadget_Site_Orient orient)
+xkbg_gadget_create(Evas_Object *parent, int *id, E_Gadget_Site_Orient orient)
 {
    Instance *inst;
 
+   if (*id == 0) *id = 1;
    inst = E_NEW(Instance, 1);
    inst->o_main = elm_box_add(parent);
    inst->orient = orient;

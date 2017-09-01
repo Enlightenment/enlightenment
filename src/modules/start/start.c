@@ -195,12 +195,13 @@ _gadget_created(void *data, Evas_Object *obj, void *event_info)
 }
 
 EINTERN Evas_Object *
-start_create(Evas_Object *parent, int *id EINA_UNUSED, E_Gadget_Site_Orient orient)
+start_create(Evas_Object *parent, int *id, E_Gadget_Site_Orient orient)
 {
    Evas_Object *o;
    Instance *inst;
 
    if (e_gadget_site_is_desklock(parent)) return NULL;
+   if (*id == 0) *id = 1;
    inst = E_NEW(Instance, 1);
 
    o = elm_layout_add(parent);

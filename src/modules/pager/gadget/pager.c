@@ -2959,12 +2959,13 @@ pager_del(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *e
 }
 
 EINTERN Evas_Object *
-pager_create(Evas_Object *parent, int *id EINA_UNUSED, E_Gadget_Site_Orient orient EINA_UNUSED)
+pager_create(Evas_Object *parent, int *id, E_Gadget_Site_Orient orient EINA_UNUSED)
 {
    Pager *p;
    Evas_Object *o;
    Instance *inst;
 
+   if (*id == 0) *id = 1;
    inst = E_NEW(Instance, 1);
    p = _pager_new(evas_object_evas_get(parent), EINA_FALSE);
    p->inst = inst;
