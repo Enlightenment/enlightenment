@@ -2123,26 +2123,44 @@ _gadget_util_ctxpopup_resize(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, 
    int x, y, w, h;
    int zx, zy, zw, zh;
 
-   evas_object_geometry_get(obj, &x, &y, &w, &h);
+   e_comp_shape_queue();
+   return;
+
+   evas_object_geometry_get(obj, NULL, NULL, &w, &h);
+   evas_object_geometry_get(data, &x, &y, NULL, NULL);
+   fprintf(stderr, "%d,%d %dx%d\n", x, y, w, h);
+
    e_zone_useful_geometry_get(e_comp_object_util_zone_get(obj), &zx, &zy, &zw, &zh);
+   zx -= ELM_SCALE_SIZE(5);
+   zy -= ELM_SCALE_SIZE(5);
+   zw += ELM_SCALE_SIZE(10);
+   zh += ELM_SCALE_SIZE(10);
    if (!E_CONTAINS(zx, zy, zw, zh, x, y, w, h))
      {
         evas_object_hide(obj);
         if (!E_CONTAINS(zx, zy, zw, zh, x, y, 1, h))
           {
+             /* not inside vertically */
              if (!E_CONTAINS(zx, zy, zw, zh, x, y, 1, 1))
-               evas_object_move(data, x, zy + (h / 2) + 10);
+               /* not inside on top edge */
+               evas_object_move(data, x, y + abs(y - zy));
              else
-               evas_object_move(data, x, zy + zh - (h / 2) - 10);
+               /* not inside on bottom edge */
+               evas_object_move(data, x, y - abs((y + h) - (zy + zh)));
           }
         else
           {
+             /* not inside horizontally */
              if (!E_CONTAINS(zx, zy, zw, zh, x, y, 1, 1))
-               evas_object_move(data, zx + (w / 2) + 10, y);
+               /* not inside on left edge */
+               evas_object_move(data, x + abs(x - zx), y);
              else
-               evas_object_move(data, zx + zw - (w / 2) - 10, y);
+               /* not inside on right edge */
+               evas_object_move(data, x - abs((x + w) - (zx + zw)), y);
           }
         evas_object_show(obj);
+        evas_object_geometry_get(data, &x, &y, NULL, NULL);
+   fprintf(stderr, "MV %d,%d\n", x, y);
      }
    e_comp_shape_queue();
 }
@@ -2169,7 +2187,7 @@ e_gadget_util_ctxpopup_place(Evas_Object *g, Evas_Object *ctx, Evas_Object *pos_
    evas_object_layer_set(ctx, layer);
 
    if (content) evas_object_geometry_get(content, NULL, NULL, &pw, &ph);
-
+e_util_size_debug_set(content, 1);
    evas_object_geometry_get(pos_obj ?: g, &x, &y, &w, &h);
    zone = e_comp_object_util_zone_get(pos_obj ?: g);
    e_zone_useful_geometry_get(zone, &zx, &zy, &zw, &zh);
@@ -2211,6 +2229,7 @@ e_gadget_util_ctxpopup_place(Evas_Object *g, Evas_Object *ctx, Evas_Object *pos_
           first = ELM_CTXPOPUP_DIRECTION_UP;
      }
    elm_ctxpopup_direction_priority_set(ctx, first, second, 0, 0);
+   fprintf(stderr, "INIT %d,%d\n", x, y);
    evas_object_move(ctx, x, y);
    evas_object_event_callback_add(ctx, EVAS_CALLBACK_SHOW, _gadget_util_ctxpopup_visibility, NULL);
    evas_object_event_callback_add(ctx, EVAS_CALLBACK_HIDE, _gadget_util_ctxpopup_visibility, NULL);
