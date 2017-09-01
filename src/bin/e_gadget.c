@@ -268,6 +268,7 @@ _gadget_reparent(E_Gadget_Site *zgs, E_Gadget_Config *zgc)
    if (!zgs->orient)
      {
         evas_object_layer_set(zgc->display, evas_object_layer_get(zgs->layout));
+        evas_object_stack_below(zgc->display, zgs->events);
         if (evas_object_visible_get(zgs->events))
           evas_object_show(zgc->display);
         return;
