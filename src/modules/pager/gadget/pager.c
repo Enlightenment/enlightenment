@@ -2248,10 +2248,7 @@ _pager_update_drop_position(Pager *p, Pager_Desk *pd, Evas_Coord x, Evas_Coord y
         y = E_CLAMP(vy + zy, zy, zy + zh - ec->h);
         evas_object_move(ec->frame, x, y);
         if (was_focused)
-          {
-             E_Client *ec_focus = e_desk_last_focused_focus(old_desk);
-             if (ec_focus) e_client_focus_set_with_pointer(ec_focus);
-          }
+          e_desk_last_focused_focus(old_desk);
      }
    else
      {
@@ -2371,10 +2368,7 @@ _pager_drop_cb_drop(void *data, const char *type, void *event_info)
              ec->hidden = 0;
              e_client_desk_set(ec, pd->desk);
              if (was_focused)
-               {
-                  E_Client *ec_focus = e_desk_last_focused_focus(old_desk);
-                  if (ec_focus) e_client_focus_set_with_pointer(ec_focus);
-               }
+               e_desk_last_focused_focus(old_desk);
              evas_object_raise(ec->frame);
 
              if ((!max) && (!fullscreen))

@@ -2178,10 +2178,7 @@ _e_comp_x_message(void *data EINA_UNUSED, int type EINA_UNUSED, Ecore_X_Event_Cl
                          {
                             e_client_desk_set(ec, desk);
                             if (was_focused)
-                              {
-                                 E_Client *ec_focus = e_desk_last_focused_focus(old_desk);
-                                 if (ec_focus) e_client_focus_set_with_pointer(ec_focus);
-                              }
+                              e_desk_last_focused_focus(old_desk);
                          }
                     }
                }
@@ -2268,10 +2265,7 @@ _e_comp_x_message(void *data EINA_UNUSED, int type EINA_UNUSED, Ecore_X_Event_Cl
                                                 desk->window_profile);
                        e_client_desk_set(ec, desk);
                        if (was_focused)
-                         {
-                            E_Client *ec_focus = e_desk_last_focused_focus(old_desk);
-                            if (ec_focus) e_client_focus_set_with_pointer(ec_focus);
-                         }
+                         e_desk_last_focused_focus(old_desk);
                     }
                   e_client_desk_window_profile_wait_desk_set(ec, NULL);
                }

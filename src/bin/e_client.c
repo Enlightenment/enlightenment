@@ -4514,12 +4514,10 @@ e_client_iconify(E_Client *ec)
              e_client_iconify(child);
           }
         e_client_stack_list_finish(list);
-        E_Client *pec;
         E_Desk *desk;
 
         desk = e_desk_current_get(ec->zone);
-        pec = e_desk_last_focused_focus(desk);
-        if (pec) evas_object_focus_set(pec->frame, 1);
+        e_desk_last_focused_focus(desk);
         return;
      }
    ec->iconic = 1;

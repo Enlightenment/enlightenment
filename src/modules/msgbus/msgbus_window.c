@@ -149,10 +149,7 @@ _e_msgbus_window_sendtodesktop_cb( const Eldbus_Service_Interface *iface EINA_UN
                          {
                             e_client_desk_set(ec, desk);
                             if (was_focused)
-                              {
-                                 E_Client *ec_focus = e_desk_last_focused_focus(old_desk);
-                                 if (ec_focus) e_client_focus_set_with_pointer(ec_focus);
-                              }
+                              e_desk_last_focused_focus(old_desk);
                          }
                     }
                }
