@@ -646,7 +646,6 @@ _conf_item_get(int *id)
    else
      ci->id = -1;
    ci->dir = eina_stringshare_add("default");
-   ci->style = NULL;
    luncher_config->items = eina_list_append(luncher_config->items, ci);
 
    return ci;

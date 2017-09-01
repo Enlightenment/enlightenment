@@ -32,7 +32,6 @@ struct _Config
    Evas_Object *list;
    Evas_Object *general;
    Evas_Object *contents;
-   Evas_Object *style;
    Eina_Bool    bar;
 };
 
@@ -41,7 +40,6 @@ struct _Config_Item
    int               id;
    int               version;
    int               preview_size;
-   Eina_Stringshare *style;
    Eina_Stringshare *dir;
    Luncher_Type      type;
 };
@@ -74,8 +72,6 @@ struct _Icon
    Instance         *inst;
    Evas_Object      *o_layout;
    Evas_Object      *o_icon;
-   Evas_Object      *o_spacera;
-   Evas_Object      *o_spacerb;
    Evas_Object      *preview;
    Evas_Object      *preview_box;
    Evas_Object      *preview_scroller;
@@ -93,7 +89,6 @@ struct _Icon
    Eina_Bool         active;
    Eina_Bool         starting;
    Eina_Bool         preview_dismissed;
-   double            scale;
    struct
    {
       unsigned char start : 1;

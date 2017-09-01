@@ -14,7 +14,6 @@ static void
 _config_show_general(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    evas_object_hide(luncher_config->contents);
-   evas_object_hide(luncher_config->style);
    evas_object_show(luncher_config->general);
 }
 
@@ -22,16 +21,7 @@ static void
 _config_show_contents(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    evas_object_hide(luncher_config->general);
-   evas_object_hide(luncher_config->style);
    evas_object_show(luncher_config->contents);
-}
-
-static void
-_config_show_style(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
-{
-   evas_object_hide(luncher_config->general);
-   evas_object_hide(luncher_config->contents);
-   evas_object_show(luncher_config->style);
 }
 
 static void
@@ -60,20 +50,6 @@ _type_changed(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
 }
 
 static void
-_config_style_changed(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
-{
-   Instance *inst = data;
-   const char *style = elm_object_item_text_get(elm_list_selected_item_get(luncher_config->slist));
-
-   if (eina_streq(inst->cfg->style, style))
-     return;
-   if (inst->cfg->style) eina_stringshare_del(inst->cfg->style);
-   inst->cfg->style = NULL;
-   inst->cfg->style = eina_stringshare_ref(style);
-   bar_reorder(inst);
-}
-
-static void
 _config_source_changed(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Instance *inst = data;
@@ -85,35 +61,6 @@ _config_source_changed(void *data, Evas_Object *obj EINA_UNUSED, void *event_inf
    inst->cfg->dir = NULL;
    inst->cfg->dir = eina_stringshare_ref(dir); 
    bar_reorder(inst);
-}
-
-static void
-_config_populate_style_list(Evas_Object *list, Instance *inst)
-{
-   const char *str = edje_object_data_get(elm_layout_edje_get(inst->o_main), "styles");
-   const char *s, *b;
-   Elm_Object_Item *it;
-
-   if (!str) return;
-   for (b = s = str; 1; s++)
-     {
-        if ((*s == ' ') || (!*s))
-          {
-             char *t = malloc(s - b + 1);
-             if (t)
-               {
-                  strncpy(t, b, s - b);
-                  t[s - b] = 0;
-                  it = elm_list_item_append(list, t, NULL, NULL, _config_style_changed, inst);
-                  printf("%s x %s\n", inst->cfg->style, t);
-                  if ((inst->cfg->style) && (eina_streq(inst->cfg->style, t)))
-                    elm_list_item_selected_set(it, EINA_TRUE);
-                  free(t);
-               }
-             b = s + 1;
-          }
-        if (!*s) break;
-     }
 }
 
 static void
@@ -365,8 +312,6 @@ config_luncher(E_Zone *zone, Instance *inst, Eina_Bool bar)
    elm_list_item_selected_set(it, 1);
    it = elm_list_item_append(mlist, _("Contents"), NULL, NULL,
        _config_show_contents, inst);
-   it = elm_list_item_append(mlist, _("Style"), NULL, NULL,
-       _config_show_style, inst);
    elm_list_go(mlist);
    evas_object_show(mlist);
 
@@ -463,24 +408,6 @@ config_luncher(E_Zone *zone, Instance *inst, Eina_Bool bar)
    evas_object_show(slider);
 
    elm_object_content_set(fr, box);
-
-   fr = elm_frame_add(tb);
-   elm_object_text_set(fr, _("Style"));
-   E_EXPAND(fr);
-   evas_object_size_hint_align_set(fr, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   elm_table_pack(tb, fr, 1, 1, 1, 1);
-   evas_object_show(fr);
-   luncher_config->style = fr;
-
-   list = elm_list_add(fr);
-   E_ALIGN(list, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   E_WEIGHT(list, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   elm_object_content_set(fr, list);
-   elm_list_select_mode_set(list, ELM_OBJECT_SELECT_MODE_ALWAYS);
-   elm_scroller_content_min_limit(list, 1, 1);
-   evas_object_show(list);
-   luncher_config->slist = list;
-   _config_populate_style_list(list, inst);
 
    fr = elm_frame_add(tb);
    elm_object_text_set(fr, _("Contents"));
