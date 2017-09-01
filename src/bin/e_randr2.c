@@ -697,7 +697,7 @@ _screen_fuzzy_fallback_find(E_Config_Randr2 *cfg, const char *id)
      {
         E_Config_Randr2_Screen *cs;
 
-        cs = _config_screen_string_find(cfg, id);
+        cs = _config_screen_string_find(cfg, name);
         if ((cs) && (cs->id)) return _screen_fuzzy_fallback_find(cfg, cs->id);
      }
    return s;
