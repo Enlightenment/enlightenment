@@ -643,7 +643,8 @@ _drm2_dpms(int set)
              if (!strcmp(name, s->info.name))
                {
                   if ((!s->config.configured) || s->config.enabled)
-                    ecore_drm2_output_dpms_set(output, set);
+                    if (ecore_drm2_output_dpms_get(output) != set)
+                      ecore_drm2_output_dpms_set(output, set);
                }
 
              free(name);
