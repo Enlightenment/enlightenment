@@ -1,0 +1,35 @@
+EXTRA_DIST += \
+src/modules/vkbd/e_kbd_send.c \
+src/modules/vkbd/e_kbd_dict.c \
+src/modules/vkbd/e_kbd_send.h \
+src/modules/vkbd/e-module-vkbd.edj \
+src/modules/vkbd/e_kbd_cfg.c \
+src/modules/vkbd/e_kbd_cfg.h \
+src/modules/vkbd/keyboards/down.png \
+src/modules/vkbd/keyboards/tab.png \
+src/modules/vkbd/keyboards/backspace.png \
+src/modules/vkbd/keyboards/Terminal.kbd \
+src/modules/vkbd/keyboards/alpha.png \
+src/modules/vkbd/keyboards/spanner.png \
+src/modules/vkbd/keyboards/qwerty.png \
+src/modules/vkbd/keyboards/numeric.png \
+src/modules/vkbd/keyboards/enter.png \
+src/modules/vkbd/keyboards/up.png \
+src/modules/vkbd/keyboards/left.png \
+src/modules/vkbd/keyboards/shift.png \
+src/modules/vkbd/keyboards/Default.kbd \
+src/modules/vkbd/keyboards/right.png \
+src/modules/vkbd/keyboards/Numbers.kbd \
+src/modules/vkbd/e_kbd_buf.h \
+src/modules/vkbd/e_kbd_int.h \
+src/modules/vkbd/module.desktop \
+src/modules/vkbd/e_mod_main.h \
+src/modules/vkbd/.gitignore \
+src/modules/vkbd/e_kbd_int.c \
+src/modules/vkbd/dicts/English_US_Small.dic \
+src/modules/vkbd/dicts/English_US.dic \
+src/modules/vkbd/meson.build \
+src/modules/vkbd/e_kbd_dict.h \
+src/modules/vkbd/e_mod_main.c \
+src/modules/vkbd/e_kbd_buf.c \
+src/modules/vkbd/theme.edc
