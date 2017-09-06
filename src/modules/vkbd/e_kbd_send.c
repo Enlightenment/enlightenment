@@ -5,7 +5,284 @@
 #include "input-method-unstable-v1-client-protocol.h"
 #include "text-input-unstable-v1-client-protocol.h"
 
+/*
+struct weekeyboard
+{
+   E_Module *module;
+   Ecore_Evas *ee;
+   Ecore_Wl2_Window *win;
+   Evas_Object *edje_obj;
+   const char *ee_engine;
+   char **ignore_keys;
 
+   struct wl_surface *surface;
+   struct zwp_input_panel_v1 *ip;
+   struct zwp_input_method_v1 *im;
+   struct wl_output *output;
+   struct zwp_input_method_context_v1 *im_ctx;
+
+   char *surrounding_text;
+   char *preedit_str;
+   char *language;
+   char *theme;
+
+   uint32_t text_direction;
+   uint32_t preedit_style;
+   uint32_t content_hint;
+   uint32_t content_purpose;
+   uint32_t serial;
+   uint32_t surrounding_cursor;
+
+   Eina_Bool context_changed;
+};
+
+static char *
+_wkb_insert_text(const char *text, uint32_t offset, const char *insert)
+{
+   char *new_text = malloc(strlen(text) + strlen(insert) + 1);
+   uint32_t text_len = 0;
+
+   if (!new_text) return NULL;
+
+   if ((!text) || (!insert))
+     {
+        free(new_text);
+        return NULL;
+     }
+
+   text_len = strlen(text);
+   if (offset > text_len) offset = text_len;
+
+   new_text = malloc(text_len + strlen(insert) + 1);
+   if (!new_text) return NULL;
+
+   strncpy(new_text, text, offset);
+   new_text[offset] = '\0';
+   strcat(new_text, insert);
+   strcat(new_text, text + offset);
+
+   return new_text;
+}
+
+static void
+_wkb_commit_preedit_str(struct weekeyboard *wkb)
+{
+   char *surrounding_text;
+
+   if ((!wkb->preedit_str) || (strlen(wkb->preedit_str) == 0)) return;
+
+   zwp_input_method_context_v1_cursor_position(wkb->im_ctx, 0, 0);
+   zwp_input_method_context_v1_commit_string(wkb->im_ctx, wkb->serial,
+                                             wkb->preedit_str);
+   if (wkb->surrounding_text)
+     {
+        surrounding_text =
+        _wkb_insert_text(wkb->surrounding_text, wkb->surrounding_cursor,
+                         wkb->preedit_str);
+        free(wkb->surrounding_text);
+        wkb->surrounding_text = surrounding_text;
+        wkb->surrounding_cursor += strlen(wkb->preedit_str);
+     }
+   else
+     {
+        wkb->surrounding_text = strdup(wkb->preedit_str);
+        wkb->surrounding_cursor = strlen(wkb->preedit_str);
+     }
+
+   free(wkb->preedit_str);
+   wkb->preedit_str = strdup("");
+}
+
+static void
+_wkb_send_preedit_str(struct weekeyboard *wkb, int cursor)
+{
+   unsigned int index = strlen(wkb->preedit_str);
+
+   if (wkb->preedit_style)
+     zwp_input_method_context_v1_preedit_styling(wkb->im_ctx, 0,
+                                                 strlen(wkb->preedit_str),
+                                                 wkb->preedit_style);
+   if (cursor > 0) index = cursor;
+   zwp_input_method_context_v1_preedit_cursor(wkb->im_ctx, index);
+   zwp_input_method_context_v1_preedit_string(wkb->im_ctx, wkb->serial,
+                                              wkb->preedit_str,
+                                              wkb->preedit_str);
+}
+
+static void
+_wkb_update_preedit_str(struct weekeyboard *wkb, const char *key)
+{
+   char *tmp;
+
+   if (!wkb->preedit_str) wkb->preedit_str = strdup("");
+
+   tmp = _wkb_insert_text(wkb->preedit_str, strlen(wkb->preedit_str), key);
+   free(wkb->preedit_str);
+   wkb->preedit_str = tmp;
+
+   if (eina_streq(key, " ")) _wkb_commit_preedit_str(wkb);
+   else _wkb_send_preedit_str(wkb, -1);
+}
+
+static Eina_Bool
+_wkb_ignore_key(struct weekeyboard *wkb, const char *key)
+{
+   int i;
+
+   if (!wkb->ignore_keys) return EINA_FALSE;
+
+   for (i = 0; wkb->ignore_keys[i] != NULL; i++)
+     {
+        if (eina_streq(key, wkb->ignore_keys[i])) return EINA_TRUE;
+     }
+
+   return EINA_FALSE;
+}
+
+static void
+_cb_wkb_on_key_down(void *data, Evas_Object *obj EINA_UNUSED, const char *emission EINA_UNUSED, const char *source)
+{
+   struct weekeyboard *wkb = data;
+   char *src;
+   const char *key;
+
+   EINA_SAFETY_ON_FALSE_RETURN(wkb);
+   EINA_SAFETY_ON_FALSE_RETURN(source);
+
+   src = strdup(source);
+   if (!src) return NULL;
+
+   key = strtok(src, ":");
+   key = strtok(NULL, ":");
+   if (key == NULL) key = ":";
+
+   if (_wkb_ignore_key(wkb, key)) goto end;
+   else if (eina_streq(key, "backspace"))
+     {
+        if (strlen(wkb->preedit_str) == 0)
+          {
+             zwp_input_method_context_v1_delete_surrounding_text(wkb->im_ctx,
+                                                                 -1, 1);
+             zwp_input_method_context_v1_commit_string(wkb->im_ctx,
+                                                       wkb->serial, "");
+          }
+        else
+          {
+             wkb->preedit_str[strlen(wkb->preedit_str) -1] = '\0';
+             _wkb_send_preedit_str(wkb, -1);
+          }
+        goto end;
+     }
+   else if (eina_streq(key, "enter"))
+     {
+        _wkb_commit_preedit_str(wkb);
+        zwp_input_method_context_v1_keysym(wkb->im_ctx, wkb->serial, 0,
+                                           XKB_KEY_Return,
+                                           WL_KEYBOARD_KEY_STATE_PRESSED, 0);
+        goto end;
+     }
+   else if (eina_streq(key, "space")) key = " ";
+
+   _wkb_update_preedit_str(wkb, key);
+end:
+   free(src);
+}
+
+static void
+_wkb_im_ctx_surrounding_text(void *data, struct zwp_input_method_context_v1 *im_ctx, const char *text, uint32_t cursor, uint32_t anchor)
+{
+   struct weekeyboard *wkb = data;
+
+   EINA_SAFETY_ON_NULL_RETURN(text);
+   free(wkb->surrounding_text);
+   wkb->surrounding_text = strdup(text);
+   if (!wkb->surrounding_text) return;
+   wkb->surrounding_cursor = cursor;
+}
+
+static void
+_wkb_im_ctx_reset(void *data, struct zwp_input_method_context_v1 *im_ctx)
+{
+   struct weekeyboard *wkb = data;
+
+   if (strlen(wkb->preedit_str))
+     {
+        free(wkb->preedit_str);
+        wkb->preedit_str = strdup("");
+     }
+}
+
+static void
+_wkb_im_ctx_content_type(void *data, struct zwp_input_method_context_v1 *im_ctx, uint32_t hint, uint32_t purpose)
+{
+   struct weekeyboard *wkb = data;
+
+   if (!wkb->context_changed) return;
+
+   switch (purpose)
+     {
+      case ZWP_TEXT_INPUT_V1_CONTENT_PURPOSE_DIGITS:
+      case ZWP_TEXT_INPUT_V1_CONTENT_PURPOSE_NUMBER:
+          {
+             if (wkb->edje_obj)
+             edje_object_signal_emit(wkb->edje_obj, "show,numeric", "");
+             break;
+          }
+      default:
+          {
+             if (wkb->edje_obj)
+             edje_object_signal_emit(wkb->edje_obj, "show,alphanumeric", "");
+             break;
+          }
+     }
+
+   wkb->content_hint = hint;
+   wkb->content_purpose = purpose;
+   wkb->context_changed = EINA_FALSE;
+}
+
+static void
+_wkb_im_ctx_invoke_action(void *data, struct zwp_input_method_context_v1 *im_ctx, uint32_t button, uint32_t index)
+{
+   struct weekeyboard *wkb = data;
+
+   if (button != BTN_LEFT) return;
+   _wkb_send_preedit_str(wkb, index);
+}
+
+static void
+_wkb_im_ctx_commit_state(void *data, struct zwp_input_method_context_v1 *im_ctx, uint32_t serial)
+{
+   struct weekeyboard *wkb = data;
+
+   wkb->serial = serial;
+   zwp_input_method_context_v1_language(im_ctx, wkb->serial, "en");
+   zwp_input_method_context_v1_text_direction(im_ctx, wkb->serial,
+                                              ZWP_TEXT_INPUT_V1_TEXT_DIRECTION_LTR);
+}
+
+static void
+_wkb_im_ctx_preferred_language(void *data, struct zwp_input_method_context_v1 *im_ctx, const char *language)
+{
+   struct weekeyboard *wkb = data;
+
+   if ((language) && (wkb->language) && (eina_streq(language, wkb->language))) return;
+     E_FREE_FUNC(wkb->language, free);
+
+   if (language) wkb->language = strdup(language);
+}
+
+static const struct zwp_input_method_context_v1_listener
+wkb_im_context_listener =
+{
+   _wkb_im_ctx_surrounding_text,
+   _wkb_im_ctx_reset,
+   _wkb_im_ctx_content_type,
+   _wkb_im_ctx_invoke_action,
+   _wkb_im_ctx_commit_state,
+   _wkb_im_ctx_preferred_language,
+};
+*/
 #endif
 
 #ifndef HAVE_WAYLAND_ONLY
@@ -108,6 +385,41 @@ e_kbd_send_init(void)
 #ifdef HAVE_WAYLAND
    if (!e_comp_util_has_x())
      {
+/*
+        void *data;
+        struct wl_registry *registry =
+          e_comp_wl->wl.registry ? :
+          ecore_wl2_display_registry_get(e_comp_wl->ewd);
+
+        itr = ecore_wl2_display_globals_get(e_comp_wl->ewd);
+        EINA_ITERATOR_FOREACH(itr, data)
+          {
+             Ecore_Wl2_Global *global = data;
+
+             if (eina_streq(global->interface, "zwp_input_panel_v1"))
+               {
+                  wkb->ip =
+                    wl_registry_bind(registry, global->id,
+                                     &zwp_input_panel_v1_interface, 1);
+               }
+             else if (eina_streq(global->interface, "zwp_input_method_v1"))
+               {
+                  wkb->im =
+                    wl_registry_bind(registry, global->id,
+                                     &zwp_input_method_v1_interface, 1);
+               }
+             else if (eina_streq(global->interface, "wl_output"))
+               {
+                  wkb->output =
+                    wl_registry_bind(registry, global->id,
+                                     &wl_output_interface, 1);
+               }
+          }
+        eina_iterator_free(itr);
+        if ((!wkb->ip) || (!wkb->im) || (!wkb->output)) return;
+
+        zwp_input_method_v1_add_listener(wkb->im, &wkb_im_listener, wkb);
+ */
      }
 #endif
 }
@@ -125,6 +437,21 @@ e_kbd_send_shutdown(void)
 #ifdef HAVE_WAYLAND
    if (!e_comp_util_has_x())
      {
+/*
+        E_FREE_FUNC(wkb->im_ctx, zwp_input_method_context_v1_destroy);
+        E_FREE_FUNC(wkb->edje_obj, evas_object_del);
+
+        if (wkb->ignore_keys)
+          {
+             free(*wkb->ignore_keys);
+             free(wkb->ignore_keys);
+          }
+
+        free(wkb->preedit_str);
+        free(wkb->surrounding_text);
+        free(wkb->theme);
+        free(wkb);
+ */
      }
 #endif
 }
