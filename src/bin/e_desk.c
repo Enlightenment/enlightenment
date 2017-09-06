@@ -255,6 +255,7 @@ e_desk_show(E_Desk *desk)
    E_OBJECT_CHECK(desk);
    E_OBJECT_TYPE_CHECK(desk, E_DESK_TYPE);
    if (desk->visible) return;
+   if (e_client_action_get() && e_client_util_resizing_get(e_client_action_get())) return;
 
    desk2 = e_desk_at_xy_get(desk->zone, desk->zone->desk_x_current, desk->zone->desk_y_current);
    if ((!starting) && (!desk2->visible)) return;

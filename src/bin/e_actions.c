@@ -1417,6 +1417,7 @@ ACT_FN_GO_EDGE(desk_flip_in_direction, )
    int x, y, offset = 25;
 
    if (!ev) return;  // with flip on _e_zone_cb_edge_timer we don't have ev!!!
+   if (e_client_action_get() && e_client_util_resizing_get(e_client_action_get())) return;
    zone = _e_actions_zone_get(obj);
    if (!zone) return;
    wev = E_NEW(E_Event_Pointer_Warp, 1);
