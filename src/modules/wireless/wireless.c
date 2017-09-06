@@ -940,7 +940,7 @@ _wireless_gadget_mouse_down(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, v
    _wireless_popup_list_populate();
    elm_list_go(list);
    evas_object_show(list);
-   elm_table_pack(tb, list, 0, 0, 1, 1);
+   elm_table_pack(tb, list, 0, 0, 2, 1);
    toggle = elm_check_add(ctx);
    evas_object_show(toggle);
    elm_object_style_set(toggle, "toggle");
@@ -949,14 +949,14 @@ _wireless_gadget_mouse_down(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, v
    elm_object_part_text_set(toggle, "off", _("Off"));
    elm_check_state_set(toggle, wireless_type_enabled[type]);
    evas_object_smart_callback_add(toggle, "changed", _wireless_popup_toggle, inst);
-   elm_table_pack(tb, toggle, 0, 1, 1, 1);
+   elm_table_pack(tb, toggle, 0, 1, 2, 1);
    elm_object_content_set(ctx, tb);
    wireless_popup.popup = ctx;
 
    {
       Evas_Object *r = evas_object_rectangle_add(e_comp->evas);
       e_comp_object_util_del_list_append(list, r);
-      elm_table_pack(tb, r, 1, 0, 1, 1);
+      elm_table_pack(tb, r, 2, 0, 1, 1);
       zone = e_zone_current_get();
       evas_object_size_hint_min_set(r, 1, zone->h / 3);
 
