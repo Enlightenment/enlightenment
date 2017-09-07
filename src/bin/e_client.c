@@ -2832,7 +2832,8 @@ e_client_desk_set(E_Client *ec, E_Desk *desk)
 
    if (ec->fullscreen)
      {
-        ec->desk->fullscreen_clients = eina_list_remove(ec->desk->fullscreen_clients, ec);
+        if (ec->desk)
+          ec->desk->fullscreen_clients = eina_list_remove(ec->desk->fullscreen_clients, ec);
         desk->fullscreen_clients = eina_list_append(desk->fullscreen_clients, ec);
      }
    old_desk = ec->desk;
