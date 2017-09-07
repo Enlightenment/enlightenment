@@ -4293,6 +4293,8 @@ e_client_stick(E_Client *ec)
    if (ec->sticky) return;
    desk = ec->desk;
    ec->desk = NULL;
+   if (desk && ec->fullscreen)
+     desk->fullscreen_clients = eina_list_remove(desk->fullscreen_clients, ec);
    ec->sticky = 1;
    ec->hidden = 0;
    e_hints_window_sticky_set(ec, 1);
@@ -4327,6 +4329,8 @@ e_client_unstick(E_Client *ec)
    /* Set the desk before we unstick the client */
    if (!ec->sticky) return;
    desk = e_desk_current_get(ec->zone);
+   if (ec->desk && ec->fullscreen)
+     ec->desk->fullscreen_clients = eina_list_remove(ec->desk->fullscreen_clients, ec);
    ec->desk = NULL;
    ec->hidden = ec->sticky = 0;
    e_hints_window_sticky_set(ec, 0);
