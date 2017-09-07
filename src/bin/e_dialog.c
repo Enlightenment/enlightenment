@@ -264,6 +264,11 @@ e_dialog_show(E_Dialog *dia)
 
    if (!e_widget_focus_get(dia->box_object))
      e_widget_focus_set(dia->box_object, 1);
+   {
+      E_Client *ec = e_win_client_get(dia->win);
+      if (ec->focused && (e_config->pointer_slide || (!e_client_focus_policy_click(ec))))
+        e_client_pointer_warp_to_center_now(ec);
+   }
 }
 
 /* local subsystem functions */
