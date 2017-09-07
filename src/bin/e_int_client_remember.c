@@ -797,7 +797,7 @@ _advanced_create_widgets(E_Config_Dialog *cfd, Evas *evas, E_Config_Dialog_Data 
    e_widget_table_object_append(of, ob, 0, 7, 1, 1, 1, 0, 1, 0);
    oc = e_widget_check_add(evas, _("Application file or name (.desktop)"),
                            &(cfdata->remember.apply_desktop_file));
-   e_widget_table_object_append(of, ob, 0, 8, 1, 1, 1, 0, 1, 0);
+   e_widget_table_object_append(of, oc, 0, 8, 1, 1, 1, 0, 1, 0);
    oc = e_widget_check_add(evas, _("Volume"),
                            &(cfdata->remember.apply_volume));
    e_widget_table_object_append(of, oc, 0, 9, 1, 1, 1, 0, 1, 0);
