@@ -81,8 +81,9 @@ e_configure_show(const char *params)
         e_client_desk_set(ec, e_desk_current_get(ec->zone));
         e_client_unshade(ec, ec->shade_dir);
         if ((e_config->focus_setting == E_FOCUS_NEW_DIALOG) ||
-            (e_config->focus_setting == E_FOCUS_NEW_WINDOW))
-          evas_object_focus_set(ec->frame, 1);
+            (e_config->focus_setting == E_FOCUS_NEW_WINDOW) ||
+            (e_config->focus_setting == E_FOCUS_NEW_DIALOG_IF_OWNER_FOCUSED))
+          e_client_focus_set_with_pointer(ec);
         EINA_LIST_FOREACH(e_widget_toolbar_items_get(eco->cat_list), l, it)
           {
              if (e_widget_toolbar_item_label_get(it) == params)
