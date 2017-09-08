@@ -14,11 +14,14 @@ _netstatus_proc_getrstatus(Eina_Bool automax,
    char buf[4096], dummys[64];
    FILE *f;
    time_t current = time(NULL);
+   time_t diff = 0;
 
    if (!*last_checked)
      *last_checked = current;
    else if ((current - *last_checked) < 1)
      return;
+   else
+     diff = current - *last_checked;
    f = fopen("/proc/net/dev", "r");
    if (f)
      {
@@ -34,6 +37,8 @@ _netstatus_proc_getrstatus(Eina_Bool automax,
         fclose(f);
      }
    diffin = tot_in - *prev_in;
+   if (diff > 1)
+     diffin /= diff;
    if (!*prev_in)
      *prev_in = tot_in;
    else
@@ -69,11 +74,14 @@ _netstatus_proc_gettstatus(Eina_Bool automax,
    char buf[4096], dummys[64];
    FILE *f;
    time_t current = time(NULL);
+   time_t diff = 0;
 
    if (!*last_checked)
      *last_checked = current;
    else if ((current - *last_checked) < 1)
      return;
+   else
+     diff = current - *last_checked;
    f = fopen("/proc/net/dev", "r");
    if (f)
      {
@@ -89,6 +97,8 @@ _netstatus_proc_gettstatus(Eina_Bool automax,
         fclose(f);
      }
    diffout = tot_out - *prev_out;
+   if (diff > 1)
+     diffout /= diff;
    if (!*prev_out)
      *prev_out = tot_out;
    else

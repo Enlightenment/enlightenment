@@ -118,6 +118,7 @@ _netstatus_sysctl_getrstatus(Eina_Bool automax,
    int percent = 0;
    unsigned long int incoming = 0, outgoing = 0;
    time_t current = time(NULL);
+   time_t diff = 0;
 #if defined(__OpenBSD__)
    _openbsd_generic_network_status(&incoming, &outgoing);
 #elif defined(__FreeBSD__) || defined(__DragonFly__)
@@ -128,9 +129,12 @@ _netstatus_sysctl_getrstatus(Eina_Bool automax,
      *last_checked = current;
    else if ((current - *last_checked) < 1)
      return;
-
+   else
+     diff = current - *last_checked;
    tot_in = incoming;
    diffin = tot_in - *prev_in;
+   if (diff > 1)
+     diffin /= diff;
    if (!*prev_in)
      *prev_in = tot_in;
    else
@@ -164,6 +168,7 @@ _netstatus_sysctl_gettstatus(Eina_Bool automax,
    int percent = 0;
    unsigned long int incoming = 0, outgoing = 0;
    time_t current = time(NULL);
+   time_t diff = 0;
 #if defined(__OpenBSD__)
    _openbsd_generic_network_status(&incoming, &outgoing);
 #elif defined(__FreeBSD__) || defined(__DragonFly__)
@@ -175,8 +180,12 @@ _netstatus_sysctl_gettstatus(Eina_Bool automax,
      *last_checked = current;
    else if ((current - *last_checked) < 1)
      return;
+   else
+     diff = current - *last_checked;
 
    diffout = tot_out - *prev_out;
+   if (diff > 1)
+     diffout /= diff;
    if (!*prev_out)
      *prev_out = tot_out;
    else
