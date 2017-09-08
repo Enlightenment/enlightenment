@@ -278,7 +278,7 @@ netstatus_configure(Instance *inst)
    elm_object_content_set(frame, box);
 
    frame = elm_frame_add(main_box);
-   elm_object_text_set(frame, _("Maximum Transfer Speed"));
+   elm_object_text_set(frame, _("Maximum Throughput"));
    E_EXPAND(frame);
    E_FILL(frame);
    elm_box_pack_end(main_box, frame);
