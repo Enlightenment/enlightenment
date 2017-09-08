@@ -103,6 +103,8 @@ static Eina_Bool auth_popup;
 #define ERR(...) EINA_LOG_DOM_ERR(_wireless_gadget_log_dom, __VA_ARGS__)
 static int _wireless_gadget_log_dom = -1;
 
+static void _wireless_gadget_refresh(Instance *inst);
+
 static void
 _wifi_icon_signal(Evas_Object *icon, int state, int strength)
 {
@@ -597,6 +599,7 @@ _wireless_gadget_edit_services_type(Evas_Object *obj, Wireless_Service_Type type
    else
      wireless_config->disabled_types &= ~(1 << type);
    e_config_save_queue();
+   E_LIST_FOREACH(instances, _wireless_gadget_refresh);
 }
 
 static void
