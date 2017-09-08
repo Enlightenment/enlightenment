@@ -151,30 +151,30 @@ _netstatus_cb_usage_check_main(void *data, Ecore_Thread *th)
 #endif
         if (!thc->incurrent)
           {
-             snprintf(rin, sizeof(rin), "%s: 0 B/s", _("Receiving"));
+             snprintf(rin, sizeof(rin), "%s: 0 B", _("Receiving"));
           }
         else
           {
              if (thc->incurrent > 1048576)
-               snprintf(rin, sizeof(rin), "%s: %.2f MB/s", _("Receiving"), ((float)thc->incurrent / 1048576));
+               snprintf(rin, sizeof(rin), "%s: %.2f MB", _("Receiving"), ((float)thc->incurrent / 1048576));
              else if ((thc->incurrent > 1024) && (thc->incurrent < 1048576))
-               snprintf(rin, sizeof(rin), "%s: %lu KB/s", _("Receiving"), (thc->incurrent / 1024));
+               snprintf(rin, sizeof(rin), "%s: %lu KB", _("Receiving"), (thc->incurrent / 1024));
              else
-               snprintf(rin, sizeof(rin), "%s: %lu B/s", _("Receiving"), thc->incurrent);
+               snprintf(rin, sizeof(rin), "%s: %lu B", _("Receiving"), thc->incurrent);
           }
         eina_stringshare_replace(&thc->instring, rin);
         if (!thc->outcurrent)
           {
-             snprintf(rout, sizeof(rout), "%s: 0 B/s", _("Sending"));
+             snprintf(rout, sizeof(rout), "%s: 0 B", _("Sending"));
           }
         else
           {
              if (thc->outcurrent > 1048576)
-               snprintf(rout, sizeof(rout), "%s: %.2f MB/s", _("Sending"), ((float)thc->outcurrent / 1048576));
+               snprintf(rout, sizeof(rout), "%s: %.2f MB", _("Sending"), ((float)thc->outcurrent / 1048576));
              else if ((thc->outcurrent > 1024) && (thc->outcurrent < 1048576))
-               snprintf(rout, sizeof(rout), "%s: %lu KB/s", _("Sending"), (thc->outcurrent / 1024));
+               snprintf(rout, sizeof(rout), "%s: %lu KB", _("Sending"), (thc->outcurrent / 1024));
              else
-               snprintf(rout, sizeof(rout), "%s: %lu B/s", _("Sending"), thc->outcurrent);
+               snprintf(rout, sizeof(rout), "%s: %lu B", _("Sending"), thc->outcurrent);
           }
         eina_stringshare_replace(&thc->outstring, rout);
         ecore_thread_feedback(th, NULL);
