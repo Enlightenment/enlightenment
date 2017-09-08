@@ -653,7 +653,9 @@ _wireless_gadget_edit_services(void)
    elm_check_state_set(ck, (wireless_config->disabled_types &
      (1 << WIRELESS_SERVICE_TYPE_WIFI)) == (1 << WIRELESS_SERVICE_TYPE_WIFI));
    evas_object_smart_callback_add(ck, "changed", _wireless_gadget_edit_services_wifi, NULL);
-   evas_object_show(ck);
+   if ((!wireless_current[WIRELESS_SERVICE_TYPE_WIFI]) || (!wireless_current[WIRELESS_SERVICE_TYPE_WIFI]->wn) ||
+       (wireless_current[WIRELESS_SERVICE_TYPE_WIFI]->wn->state != WIRELESS_NETWORK_STATE_ONLINE))
+     evas_object_show(ck);
    elm_box_pack_end(bx, ck);
 
    ck = elm_check_add(tb);
@@ -663,7 +665,9 @@ _wireless_gadget_edit_services(void)
    elm_check_state_set(ck, (wireless_config->disabled_types &
      (1 << WIRELESS_SERVICE_TYPE_BLUETOOTH)) == (1 << WIRELESS_SERVICE_TYPE_BLUETOOTH));
    evas_object_smart_callback_add(ck, "changed", _wireless_gadget_edit_services_bluetooth, NULL);
-   evas_object_show(ck);
+   if ((!wireless_current[WIRELESS_SERVICE_TYPE_BLUETOOTH]) || (!wireless_current[WIRELESS_SERVICE_TYPE_BLUETOOTH]->wn) ||
+       (wireless_current[WIRELESS_SERVICE_TYPE_BLUETOOTH]->wn->state != WIRELESS_NETWORK_STATE_ONLINE))
+     evas_object_show(ck);
    elm_box_pack_end(bx, ck);
 
    ck = elm_check_add(tb);
@@ -673,7 +677,9 @@ _wireless_gadget_edit_services(void)
    elm_check_state_set(ck, (wireless_config->disabled_types &
      (1 << WIRELESS_SERVICE_TYPE_CELLULAR)) == (1 << WIRELESS_SERVICE_TYPE_CELLULAR));
    evas_object_smart_callback_add(ck, "changed", _wireless_gadget_edit_services_cellular, NULL);
-   evas_object_show(ck);
+   if ((!wireless_current[WIRELESS_SERVICE_TYPE_CELLULAR]) || (!wireless_current[WIRELESS_SERVICE_TYPE_CELLULAR]->wn) ||
+       (wireless_current[WIRELESS_SERVICE_TYPE_CELLULAR]->wn->state != WIRELESS_NETWORK_STATE_ONLINE))
+     evas_object_show(ck);
    elm_box_pack_end(bx, ck);
 
    r = evas_object_rectangle_add(e_comp->evas);
