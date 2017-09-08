@@ -1,8 +1,8 @@
 #include "pager.h"
 static E_Config_DD *conf_edd = NULL;
-Config *pager_config;
-Evas_Object *cfg_dialog;
-Eina_List *ginstances, *ghandlers, *phandlers;
+EINTERN Config *pager_config;
+EINTERN Evas_Object *cfg_dialog;
+EINTERN Eina_List *ginstances, *ghandlers, *phandlers;
 
 EINTERN void *
 e_modapi_gadget_init(E_Module *m)
