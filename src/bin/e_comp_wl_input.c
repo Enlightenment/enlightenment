@@ -79,6 +79,12 @@ _e_comp_wl_input_pointer_cb_cursor_set(struct wl_client *client, struct wl_resou
         return;
      }
    ec = wl_resource_get_user_data(surface_resource);
+   /* I think this only happens when we've deleted the resource from
+    * the client del callback - so the client is gone and shouldn't be
+    * setting a cursor, but the surface still exists so stale requests
+    * are being processed... let's BAIL.
+    */
+   if (!ec) return;
    if (!ec->re_manage)
      {
         ec->comp_data->cursor = ec->re_manage = 1;
