@@ -66,6 +66,11 @@ typedef struct Wireless_Network Wireless_Network;
 
 typedef Eina_Bool (*Wireless_Network_Connect_Cb)(Wireless_Network *);
 
+typedef struct Wireless_Config
+{
+   unsigned int disabled_types;
+} Wireless_Config;
+
 struct Wireless_Network
 {
    Eina_Stringshare *path;//dbus path
@@ -112,6 +117,7 @@ typedef struct Wireless_Connection
 typedef void (*Wireless_Auth_Cb)(void *data, const Eina_Array *fields);
 
 extern Eldbus_Connection *dbus_conn;
+extern Wireless_Config *wireless_config;
 
 EINTERN void wireless_service_type_available_set(Eina_Bool *avail);
 EINTERN void wireless_service_type_enabled_set(Eina_Bool *enabled);

@@ -587,6 +587,96 @@ _wireless_gadget_edit_dnstime(void)
    evas_object_hide(elm_table_child_get(tb, 0, 6));
 }
 
+static void
+_wireless_gadget_edit_services_type(Evas_Object *obj, Wireless_Service_Type type)
+{
+   Eina_Bool state = elm_check_state_get(obj);
+
+   if (state)
+     wireless_config->disabled_types |= (1 << type);
+   else
+     wireless_config->disabled_types &= ~(1 << type);
+   e_config_save_queue();
+}
+
+static void
+_wireless_gadget_edit_services_wifi(void *data EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
+{
+   _wireless_gadget_edit_services_type(obj, WIRELESS_SERVICE_TYPE_WIFI);
+}
+
+static void
+_wireless_gadget_edit_services_bluetooth(void *data EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
+{
+   _wireless_gadget_edit_services_type(obj, WIRELESS_SERVICE_TYPE_BLUETOOTH);
+}
+
+static void
+_wireless_gadget_edit_services_cellular(void *data EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
+{
+   _wireless_gadget_edit_services_type(obj, WIRELESS_SERVICE_TYPE_CELLULAR);
+}
+
+static void
+_wireless_gadget_edit_services(void)
+{
+   Evas_Object *tb, *bx, *ck, *fr, *r;
+   int row = 0;
+
+   wireless_popup.content = tb = elm_table_add(wireless_popup.popup);
+   elm_table_homogeneous_set(tb, 1);
+   E_FILL(tb);
+   E_EXPAND(tb);
+   evas_object_show(tb);
+   elm_box_pack_end(wireless_popup.box, tb);
+
+   fr = elm_frame_add(tb);
+   E_EXPAND(fr);
+   E_FILL(fr);
+   evas_object_show(fr);
+   elm_object_text_set(fr, _("Hide Service Types"));
+   elm_table_pack(tb, fr, 0, row++, 2, 1);
+
+   bx = elm_box_add(fr);
+   E_EXPAND(bx);
+   E_FILL(bx);
+   evas_object_show(bx);
+   elm_object_content_set(fr, bx);
+
+   ck = elm_check_add(tb);
+   E_EXPAND(ck);
+   E_FILL(ck);
+   elm_object_text_set(ck, _("Hide Wifi"));
+   elm_check_state_set(ck, (wireless_config->disabled_types &
+     (1 << WIRELESS_SERVICE_TYPE_WIFI)) == (1 << WIRELESS_SERVICE_TYPE_WIFI));
+   evas_object_smart_callback_add(ck, "changed", _wireless_gadget_edit_services_wifi, NULL);
+   evas_object_show(ck);
+   elm_box_pack_end(bx, ck);
+
+   ck = elm_check_add(tb);
+   E_EXPAND(ck);
+   E_FILL(ck);
+   elm_object_text_set(ck, _("Hide Bluetooth"));
+   elm_check_state_set(ck, (wireless_config->disabled_types &
+     (1 << WIRELESS_SERVICE_TYPE_BLUETOOTH)) == (1 << WIRELESS_SERVICE_TYPE_BLUETOOTH));
+   evas_object_smart_callback_add(ck, "changed", _wireless_gadget_edit_services_bluetooth, NULL);
+   evas_object_show(ck);
+   elm_box_pack_end(bx, ck);
+
+   ck = elm_check_add(tb);
+   E_EXPAND(ck);
+   E_FILL(ck);
+   elm_object_text_set(ck, _("Hide Cellular"));
+   elm_check_state_set(ck, (wireless_config->disabled_types &
+     (1 << WIRELESS_SERVICE_TYPE_CELLULAR)) == (1 << WIRELESS_SERVICE_TYPE_CELLULAR));
+   evas_object_smart_callback_add(ck, "changed", _wireless_gadget_edit_services_cellular, NULL);
+   evas_object_show(ck);
+   elm_box_pack_end(bx, ck);
+
+   r = evas_object_rectangle_add(e_comp->evas);
+   elm_table_pack(tb, r, 0, row++, 2, 1);
+}
+
 static Evas_Object *
 _wireless_gadget_edit_basic(void)
 {
@@ -694,6 +784,13 @@ _wireless_gadget_edit_select_dnstime(void *data EINA_UNUSED, Evas_Object *obj EI
 }
 
 static void
+_wireless_gadget_edit_select_services(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   _wireless_gadget_edit_select_pre();
+   _wireless_gadget_edit_services();
+}
+
+static void
 _wireless_gadget_edit(int type)
 {
    Evas_Object *popup, *entry, *box1, *box, *list, *lbl, *bt;
@@ -798,6 +895,7 @@ _wireless_gadget_edit(int type)
    elm_list_item_selected_set(it, 1);
    elm_list_item_append(list, _("Proxy"), NULL, NULL, _wireless_gadget_edit_select_proxy, NULL);
    elm_list_item_append(list, _("DNS/Time"), NULL, NULL, _wireless_gadget_edit_select_dnstime, NULL);
+   elm_list_item_append(list, _("Services"), NULL, NULL, _wireless_gadget_edit_select_services, NULL);
    elm_list_go(list);
    evas_object_show(list);
 
@@ -1124,6 +1222,7 @@ _wireless_gadget_refresh(Instance *inst)
    for (type = WIRELESS_SERVICE_TYPE_WIFI; type < WIRELESS_SERVICE_TYPE_LAST; type++)
      {
         if (!inst->icon[type]) continue;
+        if ((wireless_config->disabled_types & (1U << type)) == (1U << type)) continue;
         if (wireless_type_enabled[type] && (!wireless_network_count[type])) continue;
         
         elm_box_pack_end(inst->box, inst->icon[type]);
