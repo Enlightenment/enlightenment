@@ -8,11 +8,13 @@ struct _Thread_Config
    Instance            *inst;
    Eina_Bool            automax;
    int                  inpercent;
+   time_t               intime;
    unsigned long        in;
    unsigned long        incurrent;
    unsigned long        inmax;
    Eina_Stringshare    *instring;
    int                  outpercent;
+   time_t               outtime;
    unsigned long        out;
    unsigned long        outcurrent;
    unsigned long        outmax;
@@ -143,38 +145,38 @@ _netstatus_cb_usage_check_main(void *data, Ecore_Thread *th)
 
         if (ecore_thread_check(th)) break;
 #if defined(__FreeBSD__) || defined(__DragonFly__) || defined(__OpenBSD__)
-        _netstatus_sysctl_getrstatus(thc->automax, &thc->in, &thc->incurrent, &thc->inmax, &thc->inpercent);
-        _netstatus_sysctl_gettstatus(thc->automax, &thc->out, &thc->outcurrent, &thc->outmax, &thc->outpercent);
+        _netstatus_sysctl_getrstatus(thc->automax, &thc->in, &thc->incurrent, &thc->inmax, &thc->intime, &thc->inpercent);
+        _netstatus_sysctl_gettstatus(thc->automax, &thc->out, &thc->outcurrent, &thc->outmax, &thc->outtime, &thc->outpercent);
 #else
-        _netstatus_proc_getrstatus(thc->automax, &thc->in, &thc->incurrent, &thc->inmax, &thc->inpercent);
-        _netstatus_proc_gettstatus(thc->automax, &thc->out, &thc->outcurrent, &thc->outmax, &thc->outpercent);
+        _netstatus_proc_getrstatus(thc->automax, &thc->in, &thc->incurrent, &thc->inmax, &thc->intime, &thc->inpercent);
+        _netstatus_proc_gettstatus(thc->automax, &thc->out, &thc->outcurrent, &thc->outmax, &thc->outtime, &thc->outpercent);
 #endif
         if (!thc->incurrent)
           {
-             snprintf(rin, sizeof(rin), "%s: 0 B", _("Receiving"));
+             snprintf(rin, sizeof(rin), "%s: 0 B/s", _("Receiving"));
           }
         else
           {
              if (thc->incurrent > 1048576)
-               snprintf(rin, sizeof(rin), "%s: %.2f MB", _("Receiving"), ((float)thc->incurrent / 1048576));
+               snprintf(rin, sizeof(rin), "%s: %.2f MB/s", _("Receiving"), ((float)thc->incurrent / 1048576));
              else if ((thc->incurrent > 1024) && (thc->incurrent < 1048576))
-               snprintf(rin, sizeof(rin), "%s: %lu KB", _("Receiving"), (thc->incurrent / 1024));
+               snprintf(rin, sizeof(rin), "%s: %lu KB/s", _("Receiving"), (thc->incurrent / 1024));
              else
-               snprintf(rin, sizeof(rin), "%s: %lu B", _("Receiving"), thc->incurrent);
+               snprintf(rin, sizeof(rin), "%s: %lu B/s", _("Receiving"), thc->incurrent);
           }
         eina_stringshare_replace(&thc->instring, rin);
         if (!thc->outcurrent)
           {
-             snprintf(rout, sizeof(rout), "%s: 0 B", _("Sending"));
+             snprintf(rout, sizeof(rout), "%s: 0 B/s", _("Sending"));
           }
         else
           {
              if (thc->outcurrent > 1048576)
-               snprintf(rout, sizeof(rout), "%s: %.2f MB", _("Sending"), ((float)thc->outcurrent / 1048576));
+               snprintf(rout, sizeof(rout), "%s: %.2f MB/s", _("Sending"), ((float)thc->outcurrent / 1048576));
              else if ((thc->outcurrent > 1024) && (thc->outcurrent < 1048576))
-               snprintf(rout, sizeof(rout), "%s: %lu KB", _("Sending"), (thc->outcurrent / 1024));
+               snprintf(rout, sizeof(rout), "%s: %lu KB/s", _("Sending"), (thc->outcurrent / 1024));
              else
-               snprintf(rout, sizeof(rout), "%s: %lu B", _("Sending"), thc->outcurrent);
+               snprintf(rout, sizeof(rout), "%s: %lu B/s", _("Sending"), thc->outcurrent);
           }
         eina_stringshare_replace(&thc->outstring, rout);
         ecore_thread_feedback(th, NULL);

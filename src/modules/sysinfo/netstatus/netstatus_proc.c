@@ -5,6 +5,7 @@ _netstatus_proc_getrstatus(Eina_Bool automax,
                            unsigned long *prev_in,
                            unsigned long *prev_incurrent,
                            unsigned long *prev_inmax,
+                           time_t *last_checked,
                            int *prev_inpercent)
 {
    unsigned long in, dummy, tot_in = 0;
@@ -12,7 +13,12 @@ _netstatus_proc_getrstatus(Eina_Bool automax,
    int percent = 0;
    char buf[4096], dummys[64];
    FILE *f;
+   time_t current = time(NULL);
 
+   if (!*last_checked)
+     *last_checked = current;
+   else if ((current - *last_checked) < 1)
+     return;
    f = fopen("/proc/net/dev", "r");
    if (f)
      {
@@ -46,6 +52,7 @@ _netstatus_proc_getrstatus(Eina_Bool automax,
           percent = 0;
         *prev_inpercent = percent;
      }
+   *last_checked = current;
 }
 
 void
@@ -53,6 +60,7 @@ _netstatus_proc_gettstatus(Eina_Bool automax,
                            unsigned long *prev_out,
                            unsigned long *prev_outcurrent,
                            unsigned long *prev_outmax,
+                           time_t *last_checked,
                            int *prev_outpercent)
 {
    unsigned long out, dummy, tot_out = 0;
@@ -60,7 +68,12 @@ _netstatus_proc_gettstatus(Eina_Bool automax,
    int percent = 0;
    char buf[4096], dummys[64];
    FILE *f;
+   time_t current = time(NULL);
 
+   if (!*last_checked)
+     *last_checked = current;
+   else if ((current - *last_checked) < 1)
+     return;
    f = fopen("/proc/net/dev", "r");
    if (f)
      {
@@ -94,5 +107,6 @@ _netstatus_proc_gettstatus(Eina_Bool automax,
           percent = 0;
         *prev_outpercent = percent;
      }
+   *last_checked = current;
 }
 

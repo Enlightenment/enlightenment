@@ -17,9 +17,9 @@ struct _Netstatus_Config
 };
 
 EINTERN void _netstatus_config_updated(Instance *inst);
-EINTERN void _netstatus_proc_getrstatus(Eina_Bool automax, unsigned long *prev_in, unsigned long *prev_incurrent, unsigned long *prev_inmax, int *prev_inpercent);
-EINTERN void _netstatus_proc_gettstatus(Eina_Bool automax, unsigned long *prev_out, unsigned long *prev_outcurrent, unsigned long *prev_outmax, int *prev_outpercent);
-EINTERN void _netstatus_sysctl_getrstatus(Eina_Bool automax, unsigned long *prev_in, unsigned long *prev_incurrent, unsigned long *prev_inmax, int *prev_inpercent);
-EINTERN void _netstatus_sysctl_gettstatus(Eina_Bool automax, unsigned long *prev_out, unsigned long *prev_outcurrent, unsigned long *prev_outmax, int *prev_outpercent);
+EINTERN void _netstatus_proc_getrstatus(Eina_Bool automax, unsigned long *prev_in, unsigned long *prev_incurrent, unsigned long *prev_inmax, time_t *last_checked, int *prev_inpercent);
+EINTERN void _netstatus_proc_gettstatus(Eina_Bool automax, unsigned long *prev_out, unsigned long *prev_outcurrent, unsigned long *prev_outmax, time_t *last_checked, int *prev_outpercent);
+EINTERN void _netstatus_sysctl_getrstatus(Eina_Bool automax, unsigned long *prev_in, unsigned long *prev_incurrent, unsigned long *prev_inmax, time_t *last_checked, int *prev_inpercent);
+EINTERN void _netstatus_sysctl_gettstatus(Eina_Bool automax, unsigned long *prev_out, unsigned long *prev_outcurrent, unsigned long *prev_outmax, time_t *last_checked, int *prev_outpercent);
 EINTERN Evas_Object *netstatus_configure(Instance *inst);
 #endif

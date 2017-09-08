@@ -111,16 +111,23 @@ _netstatus_sysctl_getrstatus(Eina_Bool automax,
                              unsigned long *prev_in,
                              unsigned long *prev_incurrent,
                              unsigned long *prev_inmax,
+                             time_t *last_checked,
                              int *prev_inpercent)
 {
    unsigned long tot_in = 0, diffin;
    int percent = 0;
    unsigned long int incoming = 0, outgoing = 0;
+   time_t current = time(NULL);
 #if defined(__OpenBSD__)
    _openbsd_generic_network_status(&incoming, &outgoing);
 #elif defined(__FreeBSD__) || defined(__DragonFly__)
    _freebsd_generic_network_status(&incoming, &outgoing);
 #endif
+
+   if (!*last_checked)
+     *last_checked = current;
+   else if ((current - *last_checked) < 1)
+     return;
 
    tot_in = incoming;
    diffin = tot_in - *prev_in;
@@ -142,6 +149,7 @@ _netstatus_sysctl_getrstatus(Eina_Bool automax,
           percent = 0;
         *prev_inpercent = percent;
      }
+   *last_checked = current;
 }
 
 void
@@ -149,17 +157,24 @@ _netstatus_sysctl_gettstatus(Eina_Bool automax,
                              unsigned long *prev_out,
                              unsigned long *prev_outcurrent,
                              unsigned long *prev_outmax,
+                             time_t *last_checked,
                              int *prev_outpercent)
 {
    unsigned long tot_out = 0, diffout;
    int percent = 0;
    unsigned long int incoming = 0, outgoing = 0;
+   time_t current = time(NULL);
 #if defined(__OpenBSD__)
    _openbsd_generic_network_status(&incoming, &outgoing);
 #elif defined(__FreeBSD__) || defined(__DragonFly__)
    _freebsd_generic_network_status(&incoming, &outgoing);
 #endif
    tot_out = outgoing;
+
+   if (!*last_checked)
+     *last_checked = current;
+   else if ((current - *last_checked) < 1)
+     return;
 
    diffout = tot_out - *prev_out;
    if (!*prev_out)
@@ -180,5 +195,6 @@ _netstatus_sysctl_gettstatus(Eina_Bool automax,
           percent = 0;
         *prev_outpercent = percent;
      }
+   *last_checked = current;
 }
 
