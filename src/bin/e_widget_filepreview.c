@@ -26,6 +26,7 @@ struct _E_Widget_Data
    Evas_Object  *o_preview_time_entry;
    Evas_Object  *o_preview_preview;
    Evas_Object  *o_preview_scrollframe;
+   Evas_Object  *o_preview_artwork;
 
    Evas_Coord    preview_w, preview_h;
    int           w, h;
@@ -220,6 +221,7 @@ _e_wid_fprev_clear_widgets(E_Widget_Data *wd)
    CLRWID(o_preview_time_entry);
    CLRWID(o_preview_preview);
    CLRWID(o_preview_scrollframe);
+   CLRWID(o_preview_artwork);
    wd->is_dir = wd->is_txt = wd->is_font = wd->prev_is_fm = wd->prev_is_video = EINA_FALSE;
    wd->vid_pct = 0;
 
@@ -309,8 +311,10 @@ static void
 _e_wid_fprev_preview_video_widgets(E_Widget_Data *wd)
 {
    Evas *evas = evas_object_evas_get(wd->obj);
-   Evas_Object *o, *em, *win;
-   int mw, mh, y = 3;
+   Evas_Object *table, *o, *em, *art, *win;
+   char *ext;
+   Eina_Bool prev_is_audio;
+   int mw, mh, iw, ih, y = 3;
 
    win = e_win_evas_win_get(evas);
    _e_wid_fprev_clear_widgets(wd);
@@ -341,15 +345,48 @@ _e_wid_fprev_preview_video_widgets(E_Widget_Data *wd)
        y++;                                                                       \
     } while (0)
 
-   o = e_widget_table_add(e_win_evas_win_get(evas), 0);
+   table = o = e_widget_table_add(e_win_evas_win_get(evas), 0);
    e_widget_size_min_set(o, wd->w, wd->h);
    e_widget_table_object_append(wd->o_preview_properties_table,
                                 o, 0, 0, 2, 2, 1, 1, 1, 1);
+
+   ext = strrchr(wd->path, '.');
+   if ((ext) &&
+       ((!strcasecmp(ext, ".mp3")) ||
+        (!strcasecmp(ext, ".m4a")) ||
+        (!strcasecmp(ext, ".ogg")) ||
+        (!strcasecmp(ext, ".aac")) ||
+        (!strcasecmp(ext, ".flac"))
+      )) prev_is_audio = EINA_TRUE;
+   else
+     prev_is_audio = EINA_FALSE;
+
+   wd->prev_is_video = !prev_is_audio;
 
    em = o = emotion_object_add(evas);
    emotion_object_file_set(o, wd->path);
    emotion_object_play_set(o, EINA_TRUE);
    emotion_object_init(o, "gstreamer1");
+
+   if (prev_is_audio)
+     {
+        art = emotion_file_meta_artwork_get(o, wd->path, EMOTION_ARTWORK_PREVIEW_IMAGE);
+        if (!art) art = emotion_file_meta_artwork_get(o, wd->path, EMOTION_ARTWORK_IMAGE);
+        if (art)
+          {
+             evas_object_image_size_get(art, &iw, &ih);
+             iw = (iw / 2) + (iw % 2) * elm_config_scale_get();
+             ih = (ih / 2) + (ih % 2) * elm_config_scale_get();
+             e_widget_size_min_set(table, iw, ih);
+             evas_object_image_filled_set(art, EINA_TRUE);
+             evas_object_resize(art, iw, ih);
+             wd->o_preview_artwork = art;
+             e_widget_table_object_append(wd->o_preview_properties_table,
+                                          wd->o_preview_artwork, 0, 0, 2, 2, 1, 1, 1, 1);
+             evas_object_show(wd->o_preview_artwork);
+          }
+     }
+
    wd->o_preview_preview = e_widget_image_add_from_object(evas, o, 4, 4);
    e_widget_table_object_append(wd->o_preview_properties_table,
                                 wd->o_preview_preview, 0, 0, 2, 2, 1, 1, 1, 1);
@@ -389,7 +426,6 @@ _e_wid_fprev_preview_video_widgets(E_Widget_Data *wd)
    evas_object_show(wd->o_preview_time);
    evas_object_show(wd->o_preview_time_entry);
    evas_object_show(wd->o_preview_properties_table);
-   wd->prev_is_video = EINA_TRUE;
 #undef WIDROW
 }
 
@@ -888,7 +924,8 @@ _e_wid_fprev_preview_reset(E_Widget_Data *wd)
    Evas_Object *o;
 
    evas_object_del(wd->o_preview_scrollframe);
-   wd->o_preview_scrollframe = wd->o_preview_preview = NULL;
+   if (wd->o_preview_artwork) evas_object_del(wd->o_preview_artwork);
+   wd->o_preview_scrollframe = wd->o_preview_preview = wd->o_preview_artwork = NULL;
    if (wd->preview_text_file_thread) eio_file_cancel(wd->preview_text_file_thread);
    wd->preview_text_file_thread = NULL;
    if (wd->is_dir || wd->is_txt || wd->is_font) return;
