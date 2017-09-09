@@ -1708,7 +1708,7 @@ _e_comp_x_configure_request(void *data  EINA_UNUSED, int type EINA_UNUSED, Ecore
                                  ev->abovewin, ev->detail);
         return ECORE_CALLBACK_PASS_ON;
      }
-
+   
    x = ox = ec->client.x;
    y = oy = ec->client.y;
    w = ow = ec->client.w;
@@ -4689,23 +4689,45 @@ _e_comp_x_hook_client_new(void *d EINA_UNUSED, E_Client *ec)
    ec->changes.shape_input = 1;
 
    ec->netwm.type = E_WINDOW_TYPE_UNKNOWN;
-   ec->icccm.state =ec->icccm.initial_state = ECORE_X_WINDOW_STATE_HINT_NONE;
+   ec->icccm.state = ec->icccm.initial_state = ECORE_X_WINDOW_STATE_HINT_NONE;
 
    if (!_e_comp_x_client_new_helper(ec)) return;
    ec->ignored |= e_comp->comp_type == E_PIXMAP_TYPE_WL;
    pending = eina_hash_set(pending_configures, &win, NULL);
    if (pending)
      {
-        Eina_List *l;
-        E_Zone *zone;
-        pc = eina_list_last_data_get(pending);
-        EINA_LIST_FOREACH(e_comp->zones, l, zone)
+        Eina_Bool request_pos = EINA_FALSE;
+
+        /* UGLY: round trip, but necessary to work around bad clients
+         * positioning windows anyway AND libreoffice trying to hack
+         * getting its windows across multiple screens this way
+         * which isnt really right either... */
+        ecore_x_icccm_size_pos_hints_get(win,
+                                         &request_pos,
+                                         &ec->icccm.gravity,
+                                         &ec->icccm.min_w,
+                                         &ec->icccm.min_h,
+                                         &ec->icccm.max_w,
+                                         &ec->icccm.max_h,
+                                         &ec->icccm.base_w,
+                                         &ec->icccm.base_h,
+                                         &ec->icccm.step_w,
+                                         &ec->icccm.step_h,
+                                         &ec->icccm.min_aspect,
+                                         &ec->icccm.max_aspect);
+        if (request_pos)
           {
-             if (E_INTERSECTS(pc->point.x, pc->point.y, ec->w, ec->h,
-                              zone->x, zone->y, zone->w, zone->h))
+             Eina_List *l;
+             E_Zone *zone;
+             pc = eina_list_last_data_get(pending);
+             EINA_LIST_FOREACH(e_comp->zones, l, zone)
                {
-                  e_client_zone_set(ec, zone);
-                  break;
+                  if (E_INTERSECTS(pc->point.x, pc->point.y, ec->w, ec->h,
+                                   zone->x, zone->y, zone->w, zone->h))
+                    {
+                       e_client_zone_set(ec, zone);
+                       break;
+                    }
                }
           }
      }
