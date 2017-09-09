@@ -3098,15 +3098,11 @@ ACT_FN_GO(window_focus, EINA_UNUSED)
           {
              if (_skip_win(ec, zone, desk)) continue;
 
-             if (ec == ec_orig)
-               {
-                  found = 1;
-                  return;
-               }
-             else if (!found) ec_prev = ec;
+             if (ec == ec_orig)              found = 1;
+             else if (!found)                ec_prev = ec;
              else if ((found) && (!ec_next)) ec_next = ec;
 
-             if (!ec_first) ec_first = ec;
+             if (!ec_first)                  ec_first = ec;
              ec_last = ec;
           }
         if (dir == -1) /* next */
