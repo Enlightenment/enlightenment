@@ -790,6 +790,8 @@ e_gadcon_canvas_zone_geometry_get(E_Gadcon *gc, int *x, int *y, int *w, int *h)
    E_OBJECT_TYPE_CHECK_RETURN(gc, E_GADCON_TYPE, 0);
    if (!gc->ecore_evas) return 0;
    ecore_evas_geometry_get(gc->ecore_evas, x, y, w, h);
+   *x = 0;
+   *y = 0;
 // so much relies on this down here to have been broken... ie return comp-relative coords.
 //   if (gc->zone)
 //     {
