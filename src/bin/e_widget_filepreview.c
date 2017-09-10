@@ -312,6 +312,7 @@ _e_wid_fprev_preview_video_widgets(E_Widget_Data *wd)
 {
    Evas *evas = evas_object_evas_get(wd->obj);
    Evas_Object *table, *o, *em, *art, *win;
+   const char *mime, *path;
    char *ext;
    Eina_Bool prev_is_audio;
    int mw, mh, iw, ih, y = 3;
@@ -368,19 +369,32 @@ _e_wid_fprev_preview_video_widgets(E_Widget_Data *wd)
    emotion_object_play_set(o, EINA_TRUE);
    emotion_object_init(o, "gstreamer1");
 
-   if (prev_is_audio)
+   mime = efreet_mime_type_get(wd->path);
+   if (mime)
      {
-        art = emotion_file_meta_artwork_get(o, wd->path, EMOTION_ARTWORK_PREVIEW_IMAGE);
-        if (!art) art = emotion_file_meta_artwork_get(o, wd->path, EMOTION_ARTWORK_IMAGE);
-        if (art)
+        path = efreet_mime_type_icon_get(mime, e_config->icon_theme, 256);
+        if (path && !prev_is_audio)
           {
-             evas_object_image_size_get(art, &iw, &ih);
-             iw = (iw / 2) + (iw % 2) * elm_config_scale_get();
-             ih = (ih / 2) + (ih % 2) * elm_config_scale_get();
-             e_widget_size_min_set(table, iw, ih);
-             evas_object_image_filled_set(art, EINA_TRUE);
-             evas_object_resize(art, iw, ih);
-             wd->o_preview_artwork = art;
+             wd->o_preview_artwork = elm_icon_add(o);
+             elm_image_file_set(wd->o_preview_artwork, path, NULL);
+          }
+        else
+          {
+             art = emotion_file_meta_artwork_get(o, wd->path, EMOTION_ARTWORK_PREVIEW_IMAGE);
+             if (!art) art = emotion_file_meta_artwork_get(o, wd->path, EMOTION_ARTWORK_IMAGE);
+             if (art)
+               {
+                  evas_object_image_size_get(art, &iw, &ih);
+                  iw = (iw / 3) + (iw % 3) * elm_config_scale_get();
+                  ih = (ih / 3) + (ih % 3) * elm_config_scale_get();
+                  evas_object_image_filled_set(art, EINA_TRUE);
+                  evas_object_resize(art, iw, ih);
+                  wd->o_preview_artwork = art;
+                  e_widget_size_min_set(table, iw, ih);
+               }
+          }
+        if (wd->o_preview_artwork)
+          {
              e_widget_table_object_append(wd->o_preview_properties_table,
                                           wd->o_preview_artwork, 0, 0, 2, 2, 1, 1, 1, 1);
              evas_object_show(wd->o_preview_artwork);
