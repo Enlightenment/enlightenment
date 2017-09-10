@@ -311,11 +311,11 @@ static void
 _e_wid_fprev_preview_video_widgets(E_Widget_Data *wd)
 {
    Evas *evas = evas_object_evas_get(wd->obj);
-   Evas_Object *table, *o, *em, *art, *win;
+   Evas_Object *table, *o, *em, *win;
    const char *mime, *path;
    char *ext;
-   Eina_Bool prev_is_audio;
-   int mw, mh, iw, ih, y = 3;
+   Eina_Bool audio_artwork;
+   int mw, mh, y = 3;
 
    win = e_win_evas_win_get(evas);
    _e_wid_fprev_clear_widgets(wd);
@@ -358,11 +358,9 @@ _e_wid_fprev_preview_video_widgets(E_Widget_Data *wd)
         (!strcasecmp(ext, ".ogg")) ||
         (!strcasecmp(ext, ".aac")) ||
         (!strcasecmp(ext, ".flac"))
-      )) prev_is_audio = EINA_TRUE;
+      )) audio_artwork = EINA_TRUE;
    else
-     prev_is_audio = EINA_FALSE;
-
-   wd->prev_is_video = !prev_is_audio;
+     audio_artwork = EINA_FALSE;
 
    em = o = emotion_object_add(evas);
    emotion_object_file_set(o, wd->path);
@@ -372,33 +370,28 @@ _e_wid_fprev_preview_video_widgets(E_Widget_Data *wd)
    mime = efreet_mime_type_get(wd->path);
    if (mime)
      {
-        path = efreet_mime_type_icon_get(mime, e_config->icon_theme, 256);
-        if (path && !prev_is_audio)
+        path = efreet_mime_type_icon_get(mime, e_config->icon_theme, 128);
+        if (path && !audio_artwork)
           {
              wd->o_preview_artwork = elm_icon_add(o);
              elm_image_file_set(wd->o_preview_artwork, path, NULL);
           }
         else
           {
-             art = emotion_file_meta_artwork_get(o, wd->path, EMOTION_ARTWORK_PREVIEW_IMAGE);
-             if (!art) art = emotion_file_meta_artwork_get(o, wd->path, EMOTION_ARTWORK_IMAGE);
-             if (art)
-               {
-                  evas_object_image_size_get(art, &iw, &ih);
-                  iw = (iw / 3) + (iw % 3) * elm_config_scale_get();
-                  ih = (ih / 3) + (ih % 3) * elm_config_scale_get();
-                  evas_object_image_filled_set(art, EINA_TRUE);
-                  evas_object_resize(art, iw, ih);
-                  wd->o_preview_artwork = art;
-                  e_widget_size_min_set(table, iw, ih);
-               }
+             wd->o_preview_artwork = emotion_file_meta_artwork_get(o, wd->path, EMOTION_ARTWORK_PREVIEW_IMAGE);
+             if (!wd->o_preview_artwork)
+               wd->o_preview_artwork = emotion_file_meta_artwork_get(o, wd->path, EMOTION_ARTWORK_IMAGE);
           }
-        if (wd->o_preview_artwork)
-          {
-             e_widget_table_object_append(wd->o_preview_properties_table,
-                                          wd->o_preview_artwork, 0, 0, 2, 2, 1, 1, 1, 1);
-             evas_object_show(wd->o_preview_artwork);
-          }
+     }
+
+   if (wd->o_preview_artwork)
+     {
+        if (mime && !strncmp(mime, "audio/",6))
+          e_widget_size_min_set(table, 192, 190);
+        evas_object_image_filled_set(wd->o_preview_artwork, EINA_TRUE);
+        e_widget_table_object_append(wd->o_preview_properties_table,
+                                     wd->o_preview_artwork, 0, 0, 2, 2, 1, 1, 1, 1);
+        evas_object_show(wd->o_preview_artwork);
      }
 
    wd->o_preview_preview = e_widget_image_add_from_object(evas, o, 4, 4);
@@ -440,6 +433,7 @@ _e_wid_fprev_preview_video_widgets(E_Widget_Data *wd)
    evas_object_show(wd->o_preview_time);
    evas_object_show(wd->o_preview_time_entry);
    evas_object_show(wd->o_preview_properties_table);
+   wd->prev_is_video =  EINA_TRUE;
 #undef WIDROW
 }
 
