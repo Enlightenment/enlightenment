@@ -75,6 +75,7 @@ struct _Icon
    Evas_Object      *preview;
    Evas_Object      *preview_box;
    Evas_Object      *preview_scroller;
+   Evas_Object      *client_menu;
    E_Exec_Instance  *exec;
    Efreet_Desktop   *desktop;
    Eina_List        *execs;

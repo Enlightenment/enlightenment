@@ -4,6 +4,7 @@ static Eina_Bool _bar_icon_preview_show(void *data);
 static Eina_Bool _bar_icon_preview_hide(void *data);
 static void      _bar_icon_del(Instance *inst, Icon *ic);
 static void _bar_exec_new_show(void *data, Evas *e, Evas_Object *obj, void *event_data);
+static void _bar_icon_preview_menu_hide(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *event_data EINA_UNUSED);
 
 static void
 _bar_aspect(Instance *inst)
@@ -235,6 +236,8 @@ _bar_icon_del(Instance *inst, Icon *ic)
    E_Client *ec;
 
    inst->icons = eina_list_remove(inst->icons, ic);
+   if (ic->client_menu)
+     evas_object_event_callback_del_full(ic->client_menu, EVAS_CALLBACK_HIDE, _bar_icon_preview_menu_hide, ic);
    if (ic->preview)
      _bar_icon_preview_hide(ic);
    if (!inst->main_del)
@@ -719,7 +722,7 @@ _bar_icon_preview_menu_hide(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, v
    Icon *ic = data;
 
    evas_object_event_callback_del_full(obj, EVAS_CALLBACK_HIDE, _bar_icon_preview_menu_hide, ic);
-   evas_object_event_callback_del_full(obj, EVAS_CALLBACK_DEL, _bar_icon_preview_menu_hide, ic);
+   ic->client_menu = NULL;
    if (ic)
      {
         if (ic->preview)
@@ -743,10 +746,9 @@ _bar_icon_preview_mouse_up(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, vo
    if (ev->button == 3)
      {
         e_int_client_menu_show(ec, ev->canvas.x, ev->canvas.y, 0, ev->timestamp);
-        evas_object_event_callback_add(ec->border_menu->comp_object, EVAS_CALLBACK_DEL,
-            _bar_icon_preview_menu_hide, ic);
         evas_object_event_callback_add(ec->border_menu->comp_object, EVAS_CALLBACK_HIDE,
             _bar_icon_preview_menu_hide, ic);
+        ic->client_menu = ec->border_menu->comp_object;
         ic->inst->current_preview_menu = EINA_TRUE;
         return;
      }
@@ -1093,6 +1095,7 @@ _bar_icon_add(Instance *inst, Efreet_Desktop *desktop, E_Client *non_desktop_cli
    ic->preview = NULL;
    ic->preview_box = NULL;
    ic->preview_scroller = NULL;
+   ic->client_menu = NULL;
    ic->mouse_in_timer = NULL;
    ic->mouse_out_timer = NULL;
    ic->active = EINA_FALSE;
