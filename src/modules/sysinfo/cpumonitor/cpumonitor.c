@@ -10,7 +10,6 @@ struct _Thread_Config
    unsigned long        total;
    unsigned long        idle;
    Instance            *inst;
-   E_Powersave_Sleeper *sleeper;
    Eina_List           *cores;
 };
 
@@ -173,7 +172,7 @@ _cpumonitor_cb_usage_check_main(void *data, Ecore_Thread *th)
 #endif
         ecore_thread_feedback(th, NULL);
         if (ecore_thread_check(th)) break;
-        e_powersave_sleeper_sleep(thc->sleeper, thc->interval);
+        usleep((1000000.0 / 8.0) * (double)thc->interval);
         if (ecore_thread_check(th)) break;
      }
 }
@@ -197,7 +196,6 @@ _cpumonitor_cb_usage_check_end(void *data, Ecore_Thread *th EINA_UNUSED)
    Thread_Config *thc = data;
    CPU_Core *core;
 
-   e_powersave_sleeper_free(thc->sleeper);
    EINA_LIST_FREE(thc->cores, core)
      E_FREE(core);
    E_FREE(thc);
@@ -307,7 +305,6 @@ _cpumonitor_config_updated(Instance *inst)
         thc->idle = 0;
         thc->percent = 0;
         thc->interval = inst->cfg->cpumonitor.poll_interval;
-        thc->sleeper = e_powersave_sleeper_new();
 #if defined(__FreeBSD__) || defined(__DragonFly__) || defined(__OpenBSD__)
         thc->num_cores = _cpumonitor_sysctl_getcores();
 #else

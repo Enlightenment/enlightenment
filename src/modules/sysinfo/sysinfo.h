@@ -76,7 +76,6 @@ struct _Tempthread
    const char *sensor_name;
    const char *sensor_path;
    void *extn;
-   E_Powersave_Sleeper *sleeper;
 #if defined(HAVE_EEZE)
    Eina_List *tempdevs;
 #endif

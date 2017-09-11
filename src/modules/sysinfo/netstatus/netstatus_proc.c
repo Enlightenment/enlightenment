@@ -18,7 +18,7 @@ _netstatus_proc_getrstatus(Eina_Bool automax,
 
    if (!*last_checked)
      *last_checked = current;
-   else if ((current - *last_checked) < 1)
+   if ((current - *last_checked) < 1)
      return;
    else
      diff = current - *last_checked;
@@ -73,15 +73,15 @@ _netstatus_proc_gettstatus(Eina_Bool automax,
    int percent = 0;
    char buf[4096], dummys[64];
    FILE *f;
-   time_t current = time(NULL);
+   time_t last = *last_checked, current = time(NULL);
    time_t diff = 0;
 
-   if (!*last_checked)
+   if (!last)
      *last_checked = current;
-   else if ((current - *last_checked) < 1)
+   else if ((current - last) < 1)
      return;
    else
-     diff = current - *last_checked;
+     diff = current - last;
    f = fopen("/proc/net/dev", "r");
    if (f)
      {

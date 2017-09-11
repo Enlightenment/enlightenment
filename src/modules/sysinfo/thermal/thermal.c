@@ -14,7 +14,6 @@ _thermal_thread_free(Tempthread *tth)
    EINA_LIST_FREE(tth->tempdevs, s)
      eina_stringshare_del(s);
 #endif
-   e_powersave_sleeper_free(tth->sleeper);
    E_FREE(tth->extn);
    E_FREE(tth);
 }
@@ -99,7 +98,7 @@ _thermal_check_sysctl(void *data, Ecore_Thread *th)
         temp = thermal_sysctl_get(tth);
         if (ptemp != temp) ecore_thread_feedback(th, (void *)((long)temp));
         ptemp = temp;
-        e_powersave_sleeper_sleep(tth->sleeper, tth->poll_interval);
+        usleep((1000000.0 / 8.0) * (double)thc->poll_interval);
         if (ecore_thread_check(th)) break;
      }
 }
@@ -118,7 +117,7 @@ _thermal_check_fallback(void *data, Ecore_Thread *th)
         temp = thermal_fallback_get(tth);
         if (ptemp != temp) ecore_thread_feedback(th, (void *)((long)temp));
         ptemp = temp;
-        e_powersave_sleeper_sleep(tth->sleeper, tth->poll_interval);
+        usleep((1000000.0 / 8.0) * (double)thc->poll_interval);
         if (ecore_thread_check(th)) break;
      }
 }
@@ -274,7 +273,6 @@ _thermal_config_updated(Instance *inst)
    tth->poll_interval = inst->cfg->thermal.poll_interval;
    tth->sensor_type = inst->cfg->thermal.sensor_type;
    tth->inst = inst;
-   tth->sleeper = e_powersave_sleeper_new();
    if (inst->cfg->thermal.sensor_name)
      tth->sensor_name = eina_stringshare_add(inst->cfg->thermal.sensor_name);
 
