@@ -58,7 +58,6 @@ _temperature_thread_free(Tempthread *tth)
 #if defined(HAVE_EEZE)
    EINA_LIST_FREE(tth->tempdevs, s) eina_stringshare_del(s);
 #endif
-   e_powersave_sleeper_free(tth->sleeper);
    free(tth->extn);
    free(tth);
 }
@@ -294,7 +293,7 @@ _temperature_face_shutdown(const Eina_Hash *hash EINA_UNUSED, const void *key EI
    if (inst->sensor_name) eina_stringshare_del(inst->sensor_name);
    if (inst->id) eina_stringshare_del(inst->id);
 #ifdef HAVE_EEZE
-   if (inst->poller)
+    if (inst->poller)
      {
         ecore_poller_del(inst->poller);
         _temperature_thread_free(inst->tth);
@@ -330,7 +329,7 @@ _temperature_check_main(void *data, Ecore_Thread *th)
         temp = temperature_tempget_get(tth);
         if (ptemp != temp) ecore_thread_feedback(th, (void *)((long)temp));
         ptemp = temp;
-        e_powersave_sleeper_sleep(tth->sleeper, tth->poll_interval);
+        usleep((1000000.0 / 8.0) * (double)tth->poll_interval);
         if (ecore_thread_check(th)) break;
      }
 }
@@ -363,7 +362,6 @@ temperature_face_update_config(Config_Face *inst)
    tth->poll_interval = inst->poll_interval;
    tth->sensor_type = inst->sensor_type;
    tth->inst = inst;
-   tth->sleeper = e_powersave_sleeper_new();
    if (inst->sensor_name)
      tth->sensor_name = eina_stringshare_add(inst->sensor_name);
 
