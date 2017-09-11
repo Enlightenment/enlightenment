@@ -719,6 +719,7 @@ _bar_icon_preview_menu_hide(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, v
    Icon *ic = data;
 
    evas_object_event_callback_del_full(obj, EVAS_CALLBACK_HIDE, _bar_icon_preview_menu_hide, ic);
+   evas_object_event_callback_del_full(obj, EVAS_CALLBACK_DEL, _bar_icon_preview_menu_hide, ic);
    if (ic)
      {
         if (ic->preview)
@@ -742,6 +743,8 @@ _bar_icon_preview_mouse_up(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, vo
    if (ev->button == 3)
      {
         e_int_client_menu_show(ec, ev->canvas.x, ev->canvas.y, 0, ev->timestamp);
+        evas_object_event_callback_add(ec->border_menu->comp_object, EVAS_CALLBACK_DEL,
+            _bar_icon_preview_menu_hide, ic);
         evas_object_event_callback_add(ec->border_menu->comp_object, EVAS_CALLBACK_HIDE,
             _bar_icon_preview_menu_hide, ic);
         ic->inst->current_preview_menu = EINA_TRUE;
