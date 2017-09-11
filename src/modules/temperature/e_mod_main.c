@@ -293,7 +293,7 @@ _temperature_face_shutdown(const Eina_Hash *hash EINA_UNUSED, const void *key EI
    if (inst->sensor_name) eina_stringshare_del(inst->sensor_name);
    if (inst->id) eina_stringshare_del(inst->id);
 #ifdef HAVE_EEZE
-    if (inst->poller)
+   if (inst->poller)
      {
         ecore_poller_del(inst->poller);
         _temperature_thread_free(inst->tth);
