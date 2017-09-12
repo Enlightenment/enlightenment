@@ -675,15 +675,18 @@ _site_layout_orient(Evas_Object *o, E_Gadget_Site *zgs)
    Eina_List *l;
    double ax, ay;
    E_Gadget_Config *zgc;
-   int mw, mh, sw, sh, rw, rh, bw, bh;
-   int expand_count;
+   int mw, mh, sw, sh, rw, rh, bw, bh, prev_w = 0, prev_h = 0;
+   int groups = 0, avg;
+   Eina_Bool prev_ex = 0, after = 0;
    struct Size
    {
       Evas_Coord_Size size;
       Evas_Coord_Size clipped;
+      Evas_Coord_Size before;
+      Evas_Coord_Size after;
       Eina_Bool expand;
       Evas_Object *obj;
-   } *size;
+   } *size, *psize = NULL;
    Eina_List *expand = NULL, *gadgets = NULL;
 
    evas_object_geometry_get(o, &x, &y, &w, &h);
@@ -706,13 +709,34 @@ _site_layout_orient(Evas_Object *o, E_Gadget_Site *zgs)
 
         if (!zgc->display) continue;
         ex = _site_gadget_resize(zgc->gadget, w, h, &ww, &hh, &ow, &oh);
+        if (ex && prev_ex)
+          {
+             /* multiple spacers */
+             evas_object_resize(zgc->display, 0, 0);
+             continue;
+          }
         size = E_NEW(struct Size, 1);
         size->size.w = ww;
         size->size.h = hh;
         size->clipped.w = ow;
         size->clipped.h = oh;
         size->expand = ex;
+        if (ex)
+          {
+             if (psize)
+               {
+                  psize->after.w = prev_w, psize->after.h = prev_h;
+                  groups++;
+               }
+             psize = size;
+             size->before.w = prev_w;
+             size->before.h = prev_h;
+             prev_w = prev_h = 0;
+          }
         size->obj = zgc->display;
+        prev_w += ow;
+        prev_h += oh;
+        prev_ex = ex;
         gadgets = eina_list_append(gadgets, size);
         if (ex)
           {
@@ -724,21 +748,76 @@ _site_layout_orient(Evas_Object *o, E_Gadget_Site *zgs)
         else if (IS_VERT(zgs->orient))
           rh = MAX(rh - oh, 0);
      }
+   if (expand)
+     {
+        size = eina_list_last_data_get(expand);
+        psize = eina_list_last_data_get(gadgets);
+        if (size != psize)
+          {
+             if ((!size->after.w) && (!size->after.h))
+               {
+                  size->after.w = prev_w, size->after.h = prev_h;
+                  groups++;
+               }
+          }
 
-   expand_count = eina_list_count(expand);
+        size = eina_list_data_get(expand);
+        if (IS_HORIZ(zgs->orient))
+          {
+             after = !size->before.w;
+             avg = (bw - rw) / groups;
+          }
+        else
+          {
+             after = !size->before.h;
+             avg = (bh - rh) / groups;
+          }
+     }
    EINA_LIST_FREE(expand, size)
      {
         if (IS_HORIZ(zgs->orient))
           {
              if (rw)
-               size->size.w = size->clipped.w = rw / expand_count;
+               {
+                  size->size.w = size->clipped.w = rw / eina_list_count(expand);
+                  if (eina_list_count(expand) > 1)
+                    {
+                       int gw;
+                       if (after)
+                         gw = size->after.w;
+                       else
+                         gw = size->before.w;
+                       if (gw > avg)
+                         size->size.w = size->clipped.w -= (gw - avg);
+                       else
+                         size->size.w = size->clipped.w += abs(gw - avg);
+                       size->size.w = size->clipped.w -= size->after.w / 2;
+                       rw -= size->size.w;
+                    }
+               }
              else
                size->size.w = size->clipped.w = 0;
           }
         else if (IS_VERT(zgs->orient))
           {
              if (rh)
-               size->size.h = size->clipped.h = rh / expand_count;
+               {
+                  size->size.h = size->clipped.h = rh / eina_list_count(expand);
+                  if (eina_list_count(expand) > 1)
+                    {
+                       int gh;
+                       if (after)
+                         gh = size->after.h;
+                       else
+                         gh = size->before.h;
+                       if (gh > avg)
+                         size->size.h = size->clipped.h -= (gh - avg);
+                       else
+                         size->size.h = size->clipped.h += abs(gh - avg);
+                       size->size.h = size->clipped.h -= size->after.h / 2;
+                       rh -= size->size.h;
+                    }
+               }
              else
                size->size.h = size->clipped.h = 0;
           }
