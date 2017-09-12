@@ -164,6 +164,7 @@ e_powersave_sleeper_free(E_Powersave_Sleeper *sleeper)
 E_API void
 e_powersave_sleeper_sleep(E_Powersave_Sleeper *sleeper, int poll_interval)
 {
+   double timf;
    unsigned int tim;
    fd_set rfds, wfds, exfds;
    struct timeval tv;
@@ -171,14 +172,14 @@ e_powersave_sleeper_sleep(E_Powersave_Sleeper *sleeper, int poll_interval)
    char buf[1] = { 1 };
 
    if (!sleeper) return;
-   if (e_powersave_mode_get() == E_POWERSAVE_MODE_FREEZE) tim = 3600;
-   else tim = (double)poll_interval / 8.0;
+   if (e_powersave_mode_get() == E_POWERSAVE_MODE_FREEZE) timf = 3600;
+   else timf = (double)poll_interval / 8.0;
    FD_ZERO(&rfds);
    FD_ZERO(&wfds);
    FD_ZERO(&exfds);
    FD_SET(sleeper->fd, &rfds);
 
-   tim = (fmod(ecore_time_get(), tim) * 1000000.0);
+   tim = ((timf - fmod(ecore_time_get(), timf)) * 1000000.0);
    tv.tv_sec = tim / 1000000;
    tv.tv_usec = tim % 1000000;
    for (;;)
