@@ -16,6 +16,7 @@ struct _Thread_Config
 {
    int                  interval;
    Instance            *inst;
+   E_Powersave_Sleeper *sleeper;
 };
 
 typedef struct _Pstate_Config Pstate_Config;
@@ -839,7 +840,7 @@ _cpuclock_cb_frequency_check_main(void *data, Ecore_Thread *th)
         else
           _cpuclock_status_free(status);
         if (ecore_thread_check(th)) break;
-        usleep((1000000.0 / 8.0) * (double)thc->interval);
+        e_powersave_sleeper_sleep(thc->sleeper, thc->interval);
         if (ecore_thread_check(th)) break;
      }
 }
@@ -893,6 +894,7 @@ _cpuclock_cb_frequency_check_end(void *data, Ecore_Thread *th EINA_UNUSED)
 {
    Thread_Config *thc = data;
 
+   e_powersave_sleeper_free(thc->sleeper);
    E_FREE(thc);
 }
 
@@ -910,6 +912,7 @@ _cpuclock_poll_interval_update(Instance *inst)
    if (thc)
      {
         thc->inst = inst;
+        thc->sleeper = e_powersave_sleeper_new();
         thc->interval = inst->cfg->cpuclock.poll_interval;
         inst->cfg->cpuclock.frequency_check_thread =
           ecore_thread_feedback_run(_cpuclock_cb_frequency_check_main,

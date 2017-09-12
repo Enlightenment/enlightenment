@@ -15,6 +15,7 @@ struct _Thread_Config
    unsigned long        mem_shared;
    unsigned long        swp_total;
    unsigned long        swp_used;
+   E_Powersave_Sleeper *sleeper;
 };
 
 static void
@@ -293,7 +294,7 @@ _memusage_cb_usage_check_main(void *data, Ecore_Thread *th)
 
         ecore_thread_feedback(th, NULL);
         if (ecore_thread_check(th)) break;
-        usleep((1000000.0 / 8.0) * (double)thc->interval);
+        e_powersave_sleeper_sleep(thc->sleeper, thc->interval);
         if (ecore_thread_check(th)) break;
      }
 }
@@ -302,6 +303,7 @@ static void
 _memusage_cb_usage_check_end(void *data, Ecore_Thread *th EINA_UNUSED)
 {
    Thread_Config *thc = data;
+   e_powersave_sleeper_free(thc->sleeper);
    E_FREE(thc);
 }
 
@@ -372,6 +374,7 @@ _memusage_config_updated(Instance *inst)
    if (thc)
      {
         thc->inst = inst;
+        thc->sleeper = e_powersave_sleeper_new();
         thc->interval = inst->cfg->memusage.poll_interval;
         thc->mem_percent = 0;
         thc->swp_percent = 0;
