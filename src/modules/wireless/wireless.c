@@ -1228,15 +1228,18 @@ _wireless_gadget_refresh(Instance *inst)
              avail++;
           }
      }
-   for (type = WIRELESS_SERVICE_TYPE_WIFI; type < WIRELESS_SERVICE_TYPE_LAST; type++)
+   if (!avail)
      {
-        if (!inst->icon[type]) continue;
-        if ((wireless_config->disabled_types & (1U << type)) == (1U << type)) continue;
-        if (wireless_type_enabled[type] && (!wireless_network_count[type])) continue;
-        
-        elm_box_pack_end(inst->box, inst->icon[type]);
-        evas_object_show(inst->icon[type]);
-        avail++;
+        for (type = WIRELESS_SERVICE_TYPE_WIFI; type < WIRELESS_SERVICE_TYPE_LAST; type++)
+          {
+             if (!inst->icon[type]) continue;
+             if ((wireless_config->disabled_types & (1U << type)) == (1U << type)) continue;
+             if (wireless_type_enabled[type] && (!wireless_network_count[type])) continue;
+
+             elm_box_pack_end(inst->box, inst->icon[type]);
+             evas_object_show(inst->icon[type]);
+             avail++;
+          }
      }
    if (!avail)
      {
