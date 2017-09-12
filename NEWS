@@ -61,7 +61,7 @@ Andy Williams (6):
       luncher: Fix some wobble
       Add Change Wallpaper item in Desktop menu.
 
-Carsten Haitzler (194):
+Carsten Haitzler (196):
       e ibar/ibox fix starrting/started signal emittion
       e temp module - kill tempget process not terminate to ensure death
       e - fix dnd problems coming from getting top object in comp canvas
@@ -256,6 +256,8 @@ Carsten Haitzler (194):
       e powerszve - fix sleep timeout for select to be correct
       pkgkit unknown string - fix typo
       e start - fix path prepend/append if already in path assuming clue
+      tiling - ensure notification struct is 0'd before use
+      use safer ecore_exe flags that close stdin/out/err if possible
 
 Cedric BAIL (6):
       filepreview: avoid race condition when destroying txt file preview with slow hard drive.
@@ -265,12 +267,15 @@ Cedric BAIL (6):
       wl_drm: do not say you have wl_drm backend in config.h when you have not.
       alert: protect use of drm code inside the proper ifdef.
 
-Chidambar Zinnoury (5):
+Chidambar Zinnoury (8):
       e desks config: Bring some flip settings back.
       e desks config: Group all flip-related settings to their own tab.
       e: Don’t show two consecutive menu separators if there is no need in client menu.
       e fm: Add a separator only if there is something before.
       e fm: Don’t check every other line whether the location is writable when creating menu.
+      e remote: Fix script’s execution rights.
+      e about: Year++.
+      e menu: Fix missing realize when using key-activation to the right.
 
 Christopher Michael (58):
       'cur_group' variable is unused here if we are not building for wayland
@@ -363,7 +368,7 @@ Davide Andreoli (29):
       pkit gadget: do not autoclose the popup
       PKit gadget: more accurate progress bar
 
-Derek Foreman (76):
+Derek Foreman (81):
       Properly send kbd focus to xdg_shell popups
       Make sure the same keyboard resource doesn't end up on the focus list twice
       Fix xdg_shell focus logic
@@ -440,6 +445,11 @@ Derek Foreman (76):
       Remove bogus EINA_UNUSED
       Fix video explosion on rpi3 during screen blank
       Fix crash when processing a wayland client cursor set after death
+      Fix wayland frame callback failure
+      Set close on exec for stdin
+      use safer ecore_exe flags that close stdin/out/err more often
+      Stop queuing wl_buffer release events
+      Revert "Set close on exec for stdin"
 
 Flavio Ceolin (1):
       emix: when in alsa mode only operate on master
@@ -455,7 +465,10 @@ JengHyun Kang (1):
 Joshua McBeth (1):
       add dbus message 'org.enlightenment.wm.Window.SendToDesktop'
 
-Marcel Hollerbach (76):
+Leif Middelschulte (1):
+      support proxy settings provided by Connman.
+
+Marcel Hollerbach (80):
       e_comp_wl: introduce api to set index of keymap
       e_xkb: use the new e_comp_wl_input_index_set api
       readme: update keyboard entry
@@ -532,6 +545,10 @@ Marcel Hollerbach (76):
       tiling: give a better error message if a client doesnt fit
       everything:declare this object as const
       meson: install emixer correctly
+      meson: specify that modules have unresolved apis
+      meson: teamwork uses emile
+      meson: wl_drm uses elput
+      meson: wizard also link_with here
 
 Mariusz Bialonczyk (1):
       modules/temperature: cosmetics: typo fix (celcius -> celsius)
@@ -572,7 +589,7 @@ Michaël Bouchaud (yoz) (14):
       mixer: use VOLSET macro in volume output set
       Revert "mixer: do not set back the value from emix once the drag is finished"
 
-Mike Blumenkrantz (787):
+Mike Blumenkrantz (823):
       unset release mode
       handle e_comp_x init failure more effectively and perform cleanups
       set x11 randr iface for wl_x11 based on wm presence, not composited state
@@ -1360,6 +1377,42 @@ Mike Blumenkrantz (787):
       revert gadget ctxpopup autopositioning attempts
       resolve desktop spec issues with emixer.desktop
       22.0-alpha release
+      0.22.0-alpha NEWS updates
+      unset release mode
+      install wayland session file
+      install session files conditionally based on the available session types
+      use EC_CHANGED when setting changed flag in client idler
+      hide clients again after show in idler if clients are on hidden desk
+      add some hidden boxes to use as gadget popup hover parents
+      block recursive mouse eventing in bryce action handlers
+      handle unmovable gadgets in gadget move action
+      flag zone/edge mouse binding activation with ON_HOLD
+      fix clickable edge binding activation with other mouse buttons
+      remove futile null check
+      avoid div by 0 in gadget layout
+      fix meson wayland build without drm
+      remove fdo interfaces from music control dbus xml
+      don't perform zone updates on client resize
+      make e_bindings_modifiers_from_ecore() an externally usable function
+      store the currently active key binding as an accessible variable
+      add a client parameter to wl key down/up event processing functions
+      add action router action to route specific key presses to specified clients
+      add fd passing to aux hints protocol
+      move meson-chmod.sh into meson/
+      require efl 1.20.4+
+      fix typo in finding chmod meson script
+      fix meson wayland-only detection when xwayland is enabled
+      do not perform client moves during comp updates
+      remove input-only client fastpath to resize crashes
+      fix undefined variable warnings for meson build
+      fix proxy_excludes handling for connman in previous commit
+      don't do full client rescale on x11 hint change if not maximized/fullscreen
+      use correct env vars for connman proxy setting
+      use client geometry for visibility effect geometry, not comp object geometry
+      emit E_EVENT_EXEC_NEW_CLIENT with phony exes
+      Revert "do not perform client moves during comp updates"
+      block client rescales during render updates
+      do not unnecessarily rescale clients
 
 Romain Naour (4):
       E: include uuid.h only when Wayland support is enabled.
@@ -1385,7 +1438,7 @@ Stefan Schmidt (10):
       e_client_colume: remove unused variables and add EINA_UNSED where needed
       meson: remove double entry for NLS support option
 
-Stephen 'Okra' Houston (156):
+Stephen 'Okra' Houston (158):
       Luncher: Make sure previews are hidden and destroyed.
       Luncher: Make sure to delete preview when icon is deleted.
       Luncher: Fix leaking caused by luncher.
@@ -1542,12 +1595,15 @@ Stephen 'Okra' Houston (156):
       Fix bad formatting.
       Update netstatus in/out in the same file read. Fix cpufreq to use powersave again.
       Pager gadget config: Don't add icon to an evas, add it to an elm widget.
+      E Exe: Since we no longer ref clients in the phony cb, don't free them after reffing them in instance_client_add.
+      E Exe: Semi revert 2082bb51d3abffd991b4d791ace2567888e2e9fb. The ref count was off to begin with.
 
-Stephen Houston (4):
+Stephen Houston (5):
       Introduce pager gadget using new gadget api.
       Enlightenment - Luncher Grid Gadget - Do not double-free lists during empty.
       Enlightenment - Sysinfo Gadget - Size cpumonitor correctly wrt to bryce.
       Nothing to see here. debug--
+      Sysinfo: Cpuclock, Netstatus, and Thermal now use progressbars in the popups to unify and match all sysinfo gadgets.
 
 Stephen okra Houston (35):
       Luncher: Introduce Enlightenment's new launcher/taskbar/iconify manager: Luncher
