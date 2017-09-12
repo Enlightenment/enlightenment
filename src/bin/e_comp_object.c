@@ -2088,22 +2088,6 @@ _e_comp_object_shade_animator(void *data)
 }
 
 static void
-_e_comp_smart_cb_shading(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
-{
-   E_Comp_Object *cw = data;
-
-   if (!cw->ec) return; //NYI
-   E_FREE_FUNC(cw->shade.anim, ecore_animator_del);
-
-   cw->shade.x = cw->x;
-   cw->shade.y = cw->y;
-   e_comp_object_signal_emit(cw->smart_obj, "e,state,shading", "e");
-   cw->shade.start = ecore_loop_time_get();
-   cw->shade.dir = (E_Direction)event_info;
-   cw->shade.anim = ecore_animator_add(_e_comp_object_shade_animator, cw);
-}
-
-static void
 _e_comp_smart_cb_shaded(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
 {
    E_Comp_Object *cw = data;
@@ -2118,16 +2102,24 @@ _e_comp_smart_cb_shaded(void *data, Evas_Object *obj EINA_UNUSED, void *event_in
 }
 
 static void
-_e_comp_smart_cb_unshading(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
+_e_comp_smart_cb_shading(void *data, Evas_Object *obj, void *event_info)
 {
    E_Comp_Object *cw = data;
 
    if (!cw->ec) return; //NYI
+   if (cw->shade.anim && EINA_DBL_EQ(cw->shade.val, 0.0))
+     {
+        cw->ec->shaded = 0;
+        _e_comp_smart_cb_shaded(data, obj, event_info);
+        return;
+     }
    E_FREE_FUNC(cw->shade.anim, ecore_animator_del);
 
-   cw->shade.dir = (E_Direction)event_info;
-   e_comp_object_signal_emit(cw->smart_obj, "e,state,unshading", "e");
+   cw->shade.x = cw->x;
+   cw->shade.y = cw->y;
+   e_comp_object_signal_emit(cw->smart_obj, "e,state,shading", "e");
    cw->shade.start = ecore_loop_time_get();
+   cw->shade.dir = (E_Direction)event_info;
    cw->shade.anim = ecore_animator_add(_e_comp_object_shade_animator, cw);
 }
 
@@ -2154,6 +2146,26 @@ _e_comp_smart_cb_unshaded(void *data, Evas_Object *obj EINA_UNUSED, void *event_
    e_comp_object_signal_emit(cw->smart_obj, "e,state,unshaded", "e");
    cw->shade.start = -100;
    _e_comp_object_shade_animator(cw);
+}
+
+static void
+_e_comp_smart_cb_unshading(void *data, Evas_Object *obj, void *event_info)
+{
+   E_Comp_Object *cw = data;
+
+   if (!cw->ec) return; //NYI
+   if (cw->shade.anim && EINA_DBL_EQ(cw->shade.val, 0.0))
+     {
+        cw->ec->shaded = 1;
+        _e_comp_smart_cb_unshaded(data, obj, event_info);
+        return;
+     }
+   E_FREE_FUNC(cw->shade.anim, ecore_animator_del);
+
+   cw->shade.dir = (E_Direction)event_info;
+   e_comp_object_signal_emit(cw->smart_obj, "e,state,unshading", "e");
+   cw->shade.start = ecore_loop_time_get();
+   cw->shade.anim = ecore_animator_add(_e_comp_object_shade_animator, cw);
 }
 
 static void
