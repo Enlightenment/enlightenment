@@ -2123,7 +2123,7 @@ _e_comp_smart_cb_shading(void *data, Evas_Object *obj EINA_UNUSED, void *event_i
    E_Comp_Object *cw = data;
 
    if (!cw->ec) return; //NYI
-   E_FREE_FUNC(cw->shade.anim, ecore_timer_del);
+   E_FREE_FUNC(cw->shade.anim, ecore_animator_del);
 
    cw->shade.x = cw->x;
    cw->shade.y = cw->y;
@@ -2139,7 +2139,7 @@ _e_comp_smart_cb_shaded(void *data, Evas_Object *obj EINA_UNUSED, void *event_in
    E_Comp_Object *cw = data;
 
    if (!cw->ec) return; //NYI
-   E_FREE_FUNC(cw->shade.anim, ecore_timer_del);
+   E_FREE_FUNC(cw->shade.anim, ecore_animator_del);
 
    e_comp_object_signal_emit(cw->smart_obj, "e,state,shaded", "e");
    cw->shade.start = -100;
@@ -2153,7 +2153,7 @@ _e_comp_smart_cb_unshading(void *data, Evas_Object *obj EINA_UNUSED, void *event
    E_Comp_Object *cw = data;
 
    if (!cw->ec) return; //NYI
-   E_FREE_FUNC(cw->shade.anim, ecore_timer_del);
+   E_FREE_FUNC(cw->shade.anim, ecore_animator_del);
 
    cw->shade.dir = (E_Direction)event_info;
    e_comp_object_signal_emit(cw->smart_obj, "e,state,unshading", "e");
@@ -2167,7 +2167,7 @@ _e_comp_smart_cb_unshaded(void *data, Evas_Object *obj EINA_UNUSED, void *event_
    E_Comp_Object *cw = data;
 
    if (!cw->ec) return; //NYI
-   E_FREE_FUNC(cw->shade.anim, ecore_timer_del);
+   E_FREE_FUNC(cw->shade.anim, ecore_animator_del);
 
    cw->shade.dir = (E_Direction)event_info;
    if (cw->shade.dir == E_DIRECTION_UP ||
