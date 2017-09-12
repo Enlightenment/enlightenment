@@ -191,7 +191,7 @@ _config_update_btn(Evas_Object *button, const int mouse_button)
    elm_object_text_set(button, lbl);
    if (icon)
      {
-        ic = elm_icon_add(evas_object_evas_get(button));
+        ic = elm_icon_add(button);
         elm_icon_standard_set(ic, icon);
         evas_object_size_hint_aspect_set(ic, EVAS_ASPECT_CONTROL_BOTH, 1, 1);
      }
