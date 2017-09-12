@@ -785,6 +785,7 @@ E_API void e_client_mouse_up(E_Client *ec, int button, Evas_Point *output, E_Bin
 E_API void e_client_mouse_move(E_Client *ec, Evas_Point *output);
 E_API void e_client_res_change_geometry_save(E_Client *bd);
 E_API void e_client_res_change_geometry_restore(E_Client *ec);
+E_API void e_client_rescale(E_Client *ec);
 E_API void e_client_zone_set(E_Client *ec, E_Zone *zone);
 E_API void e_client_geometry_get(E_Client *ec, int *x, int *y, int *w, int *h);
 E_API E_Client *e_client_above_get(const E_Client *ec);

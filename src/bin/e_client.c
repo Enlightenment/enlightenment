@@ -2868,11 +2868,7 @@ e_client_desk_set(E_Client *ec, E_Desk *desk)
         ecore_event_add(E_EVENT_CLIENT_DESK_SET, ev, (Ecore_End_Cb)_e_client_event_desk_set_free, NULL);
 
         if (old_desk->zone == ec->zone)
-          {
-             e_client_res_change_geometry_save(ec);
-             e_client_res_change_geometry_restore(ec);
-             ec->pre_res_change.valid = 0;
-          }
+          e_client_rescale(ec);
      }
 
    if (ec->stack.prev || ec->stack.next)
@@ -3322,6 +3318,23 @@ e_client_res_change_geometry_restore(E_Client *ec)
 }
 
 E_API void
+e_client_rescale(E_Client *ec)
+{
+   Eina_Bool shaded;
+   int shade_dir;
+   E_OBJECT_CHECK(ec);
+   E_OBJECT_TYPE_CHECK(ec, E_CLIENT_TYPE);
+
+   shaded = ec->shaded;
+   shade_dir = ec->shade_dir;
+   if (shaded) e_client_unshade(ec, shade_dir);
+   ec->pre_res_change.valid = 0;
+   e_client_res_change_geometry_save(ec);
+   e_client_res_change_geometry_restore(ec);
+   if (shaded) e_client_shade(ec, shade_dir);
+}
+
+E_API void
 e_client_zone_set(E_Client *ec, E_Zone *zone)
 {
    E_Event_Client_Zone_Set *ev;
@@ -3380,9 +3393,7 @@ e_client_zone_set(E_Client *ec, E_Zone *zone)
    ecore_event_add(E_EVENT_CLIENT_ZONE_SET, ev, (Ecore_End_Cb)_e_client_event_zone_set_free, NULL);
 
    e_remember_update(ec);
-   e_client_res_change_geometry_save(ec);
-   e_client_res_change_geometry_restore(ec);
-   ec->pre_res_change.valid = 0;
+   e_client_rescale(ec);
 }
 
 E_API void
@@ -3866,7 +3877,7 @@ e_client_shade(E_Client *ec, E_Direction dir)
 {
    E_OBJECT_CHECK(ec);
    E_OBJECT_TYPE_CHECK(ec, E_CLIENT_TYPE);
-   if ((ec->shaded) || (ec->shading) || (ec->fullscreen) ||
+   if (((!ec->shaded) && ec->shading) || (ec->shaded && (!ec->shading)) || (ec->fullscreen) ||
        ((ec->maximized) && (!e_config->allow_manip))) return;
    if (!e_util_strcmp("borderless", ec->bordername)) return;
    if (!e_comp_object_frame_allowed(ec->frame)) return;
