@@ -2192,56 +2192,8 @@ _gadget_util_ctxpopup_visibility(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Ev
 }
 
 static void
-_gadget_util_ctxpopup_move(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+_gadget_util_ctxpopup_moveresize(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
-   e_comp_shape_queue();
-}
-
-static void
-_gadget_util_ctxpopup_resize(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
-{
-   int x, y, w, h;
-   int zx, zy, zw, zh;
-
-   e_comp_shape_queue();
-   return;
-
-   evas_object_geometry_get(obj, NULL, NULL, &w, &h);
-   evas_object_geometry_get(data, &x, &y, NULL, NULL);
-   fprintf(stderr, "%d,%d %dx%d\n", x, y, w, h);
-
-   e_zone_useful_geometry_get(e_comp_object_util_zone_get(obj), &zx, &zy, &zw, &zh);
-   zx -= ELM_SCALE_SIZE(5);
-   zy -= ELM_SCALE_SIZE(5);
-   zw += ELM_SCALE_SIZE(10);
-   zh += ELM_SCALE_SIZE(10);
-   if (!E_CONTAINS(zx, zy, zw, zh, x, y, w, h))
-     {
-        evas_object_hide(obj);
-        if (!E_CONTAINS(zx, zy, zw, zh, x, y, 1, h))
-          {
-             /* not inside vertically */
-             if (!E_CONTAINS(zx, zy, zw, zh, x, y, 1, 1))
-               /* not inside on top edge */
-               evas_object_move(data, x, y + abs(y - zy));
-             else
-               /* not inside on bottom edge */
-               evas_object_move(data, x, y - abs((y + h) - (zy + zh)));
-          }
-        else
-          {
-             /* not inside horizontally */
-             if (!E_CONTAINS(zx, zy, zw, zh, x, y, 1, 1))
-               /* not inside on left edge */
-               evas_object_move(data, x + abs(x - zx), y);
-             else
-               /* not inside on right edge */
-               evas_object_move(data, x - abs((x + w) - (zx + zw)), y);
-          }
-        evas_object_show(obj);
-        evas_object_geometry_get(data, &x, &y, NULL, NULL);
-   fprintf(stderr, "MV %d,%d\n", x, y);
-     }
    e_comp_shape_queue();
 }
 
@@ -2249,12 +2201,9 @@ E_API void
 e_gadget_util_ctxpopup_place(Evas_Object *g, Evas_Object *ctx, Evas_Object *pos_obj)
 {
    int x, y, w, h;
-   int zx, zy, zw, zh;
-   int pw = 1, ph = 1;
    E_Layer layer;
    E_Gadget_Config *zgc;
    Evas_Object *content;
-   E_Zone *zone;
    Elm_Ctxpopup_Direction first, second;
 
    EINA_SAFETY_ON_NULL_RETURN(g);
@@ -2266,11 +2215,7 @@ e_gadget_util_ctxpopup_place(Evas_Object *g, Evas_Object *ctx, Evas_Object *pos_
    layer = MAX(evas_object_layer_get(pos_obj ?: g), E_LAYER_POPUP);
    evas_object_layer_set(ctx, layer);
 
-   if (content) evas_object_geometry_get(content, NULL, NULL, &pw, &ph);
-e_util_size_debug_set(content, 1);
    evas_object_geometry_get(pos_obj ?: g, &x, &y, &w, &h);
-   zone = e_comp_object_util_zone_get(pos_obj ?: g);
-   e_zone_useful_geometry_get(zone, &zx, &zy, &zw, &zh);
    if (zgc->site->anchor & E_GADGET_SITE_ANCHOR_TOP)
      y += h;
    if (zgc->site->anchor & E_GADGET_SITE_ANCHOR_LEFT)
@@ -2278,7 +2223,6 @@ e_util_size_debug_set(content, 1);
    if (zgc->site->orient == E_GADGET_SITE_ORIENT_HORIZONTAL)
      {
         x += w / 2;
-        x = E_CLAMP(x, zx, zx + zw - MAX(pw, w));
         first = ELM_CTXPOPUP_DIRECTION_UP, second = ELM_CTXPOPUP_DIRECTION_DOWN;
         if (zgc->site->anchor & E_GADGET_SITE_ANCHOR_TOP)
           first = ELM_CTXPOPUP_DIRECTION_DOWN, second = ELM_CTXPOPUP_DIRECTION_UP;
@@ -2286,13 +2230,14 @@ e_util_size_debug_set(content, 1);
    else if (zgc->site->orient == E_GADGET_SITE_ORIENT_VERTICAL)
      {
         y += h / 2;
-        y = E_CLAMP(y, zy, zy + zh - MAX(ph, h));
         first = ELM_CTXPOPUP_DIRECTION_LEFT, second = ELM_CTXPOPUP_DIRECTION_RIGHT;
         if (zgc->site->anchor & E_GADGET_SITE_ANCHOR_LEFT)
           first = ELM_CTXPOPUP_DIRECTION_RIGHT, second = ELM_CTXPOPUP_DIRECTION_LEFT;
      }
    else
      {
+        int zx, zy, zw, zh;
+        e_zone_useful_geometry_get(e_comp_object_util_zone_get(pos_obj ?: g), &zx, &zy, &zw, &zh);
         if (x < zx + (zw / 2))
           {
              second = ELM_CTXPOPUP_DIRECTION_RIGHT;
@@ -2309,14 +2254,13 @@ e_util_size_debug_set(content, 1);
           first = ELM_CTXPOPUP_DIRECTION_UP;
      }
    elm_ctxpopup_direction_priority_set(ctx, first, second, 0, 0);
-   fprintf(stderr, "INIT %d,%d\n", x, y);
    evas_object_move(ctx, x, y);
    evas_object_event_callback_add(ctx, EVAS_CALLBACK_SHOW, _gadget_util_ctxpopup_visibility, NULL);
    evas_object_event_callback_add(ctx, EVAS_CALLBACK_HIDE, _gadget_util_ctxpopup_visibility, NULL);
    if (content)
      {
-        evas_object_event_callback_add(content, EVAS_CALLBACK_MOVE, _gadget_util_ctxpopup_move, NULL);
-        evas_object_event_callback_add(content, EVAS_CALLBACK_RESIZE, _gadget_util_ctxpopup_resize, ctx);
+        evas_object_event_callback_add(content, EVAS_CALLBACK_MOVE, _gadget_util_ctxpopup_moveresize, NULL);
+        evas_object_event_callback_add(content, EVAS_CALLBACK_RESIZE, _gadget_util_ctxpopup_moveresize, NULL);
      }
    _desktop_rect_obj_add(ctx);
    evas_object_smart_callback_call(zgc->site->layout, "gadget_site_popup", ctx);
