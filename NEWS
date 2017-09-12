@@ -1,3 +1,2232 @@
+Release 0.22.0:
+---------------------
+Highlights:
+      * Greatly improved Wayland support
+      * Improvements to new gadget infrastructure
+      * Added a sudo/ssh askpass utility gui
+      * meson build system
+      * tiling policy improvements
+      * integrated per-window volume controls
+
+
+Al 'netstar' Poole (7):
+      Enlightenment - BSD - Cleanup sysctl code for batteries.
+      Enlightenment - BSD - Fix typos in battery sysctl float compares.
+      Sysinfo Gadgets: Add sysctl/bsd support to the remaining sysinfo gadgets.
+      Batman: Add multi-battery support for bsd based distros.
+      Sysinfo: Make memusage and cpumonitor work better on BSD.
+      Sysinfo: Fix interger overflow on BSD.
+      Modules: Fix compilation and remove warnings for BSD
+
+Al Poole (21):
+      fwin: prevent segv when the vaarg abi messup with unused parameter.
+      OpenBSD non-PAM lokker authentication.
+      efm - fix popup if file is a fifo
+      Add temperature support for DragonFly BSD.
+      bsd patch from netstar fixing threaded tempget
+      Enlightenment: Factor all sysctl battery code for bsd into e_mod_sysctl.c
+      Fixes issues w/battery and batman living together
+      modules: temperature: Fix spelling for temperature module.
+      Fix macro namings in relation to endianness.
+      Fix compiler type warnings (snprintf)
+      E keyboard settings - use the same icon as the keyboard settings dialog
+      Add user to AUTHORS.
+      E -> Enlightenment_thumb -> Media -> Thumbnail Creation.
+      sysinfo: Fix BSD build.
+      sysinfo: fix single-core OpenBSD results.
+      FreeBSD: fix broken build.
+      Efm: file properties, fix widget sizing issue.
+      battery: fix typo.
+      filepreview: add support for album artwork in preview when applicable.
+      filepreview: show mime type icon when not video and no artwork.
+      filepreview: unbreak netstar's changes.
+
+Al netstar Poole (1):
+      Make sysinfo gadgets work with BSD
+
+Alexander Pyhalov (1):
+      actually check if PIE is supported for SUID
+
+Amitesh Singh (1):
+      e widget entry: fix the compilation warning
+
+Andreas Metzler (1):
+      10_typo_restore_LDFLAGS.diff: Fix typo in configure.ac (upstream), causing empty LDFLAGS.
+
+Andy Williams (6):
+      Fix compiling with WL off
+      scale: Allow user to choose scale not multiplier
+      luncher: update aspect ratio calculations
+      luncher: Smoothing animations
+      luncher: Fix some wobble
+      Add Change Wallpaper item in Desktop menu.
+
+Carsten Haitzler (194):
+      e ibar/ibox fix starrting/started signal emittion
+      e temp module - kill tempget process not terminate to ensure death
+      e - fix dnd problems coming from getting top object in comp canvas
+      e ibar/ibox port to elm box - fix assumption on resize
+      e ibar - fix devilhorns fix to use the right widght and hight for separator
+      e - fix major memory bloat when in gl mode - dont create shm segments
+      e comp - set alpha after setting native surface to avoid random crash
+      Revert "Fix getting top object in comp canvas"
+      e sudo gui support - add askpass util for sudo askpass support
+      e askpass - also set SSH_ASKPASS like with sudo
+      askpass env var - dont use 32byte buffer for path but use stringshare
+      ok - make pwople who \have not stared at c macros as long as i have happy
+      e ipc - fix cleanup of ipc socket on shutdown
+      update e po files
+      protect against non-nul terminated string from mmap in filepreview
+      e exec - fix exec of enlightenment_open to use actual e prefix
+      po - upate
+      explicitly use eina list types passing into EINA_LIST_FREE()
+      e fm - fix popup to not crash by referring to possibly deleted data
+      cpufreq - move cpuinfo polling into thread to not block mainloop ever
+      wizard - do not set scale to 1.2 forcibly. use dpi as the def prof says
+      e_util_defer_object_del - ensure order of deferred deletions are right
+      e tempget module - mode to using threads instead of tempget binary
+      temperature module - more non-eeze system fixes
+      temp - udev pol - do in mainloop and suffer as appropriate
+      e cpufreq - dont emit message for min/max/cur freq if they didnt change
+      temp module - avoid a bit of cpu sendingh edje message if temp same
+      client handling - add support for window stacks needed for views/manager
+      e config - don't keep adding lunchers until you burst. only if not found
+      e module - remove duplicate modules at load all time from config
+      tasks - add stack "hiding" support and only show top stack item
+      stacks - fix crash for pointer warp when client is null
+      e wl - fix build break with wl.
+      e window menu now skips stack windows except top one
+      e winlist/at tab - understand stacks and filter accordingly
+      tasks + stacks - use base icon not top one to be simpler to implement
+      e winlist/alt tab - use bottom/base win for icon but active for title
+      ibar - support window stacks
+      tasks - fix fresh segv added in stack support
+      ibar - protect against getting invalid icon ptr on obj deletion
+      tasks - calculate min width properly given a known height of a gadget
+      ibar - fix segv on prop change after adding stack support
+      efm - warning - change invalid #if toe #ifdef as this is right
+      e - fix float warnings cmp where they actually may cause issues
+      temp module - fix #if to be #if defined as it should be
+      xkb module - fix possible use of uninitialized var
+      efm - fix ifs to be ifdef as they should be
+      e bindings - fix warnings about possible use of undefined var
+      e comp object - fix shadow var warning (valid) for ec
+      e comp object - fix valid warning of shadowed var (ambiguous)
+      warnings - disable y2k and format non literal and float comparison
+      e sys - remove system action dialogs as comp actually does this
+      appmenu - make appmenu work with click+release and not hide on focus out
+      desklock - allow for fadein/out effects in theme for locking/unlocking
+      e icon header - clean up formatting
+      e icon - use new skip header async preload to make icon loads async
+      ibar - fix seg with ibar icon task menus are up while desktop files change
+      e - BLOODY BUILD AGAIN - DAMN FLOAT WARNINGS...
+      desklock - make blocker transparent again - a theme issue not code
+      e_icon - handle load failure and dont display icon object
+      e_icon - remove icon cache code - its disabled anyway with ifdefs
+      e - wl mode - stop consuming 100 percent cpu
+      e window stakcs - fix bugs with stacks by doing stack stuff in idle eval
+      e widget bgpreview - stop using livethumb as it cuases performance issues
+      Revert "e widget bgpreview - stop using livethumb as it cuases performance issues"
+      e widget bgpreview - use e thumb to get quality back and speed too
+      e_thumb header - remove tabs
+      e thumb - support signal emits and desk pan msgs for thumbs
+      e dialog - fix unreszable dialogs to not be 1x1
+      e sys - make timeout for sys loging 3 instead of 15 seconds
+      enlightenment_sys - eina_init BEFORE switching uid - safer
+      e - wayland - fix double-resize if e wants a different initial size
+      e ervything md5 code - fix warnings about alignment
+      e fileman config - fix definite alignment bug with cast char to int ptr
+      e theme conf config - fix casting char fileds to int ptrs
+      e ptr cast via void fix to reduce warnings
+      efm ipc - fix unaligned int read on ipc decode
+      e comp x - fix property fetch to use int ptr from the start
+      e xsettings - fix warnings about unaligned ptr access
+      e comp - wl - add void cast to reduce warnings
+      e thumb - silence alignment warning - valid code
+      e notification - silence alignment warning
+      efm - fix warnings for progress time display
+      e desklock logging - fix types for critical error logs
+      evry module - fix warning about comparing signed to unsigned
+      e mixer pulse backened -f ix warning about use of uninit var
+      e comp object - fix warning where a void cast is as goos as the old one
+      e comp - fix stupid cast to from eina rect* to char* to eina rect* again
+      e comp - quiet some warnings for casts that are ok
+      tiling module - fix some warnings with casts and alignment
+      efx - fix unaligned ptr fill that is actually a bug
+      efm - fix nuisance warning about enlightenment
+      e thumb - fix alignment warning nuisance
+      e client mixer - stop messing with mute + volume state just for display
+      e mixer module - run pulseaudio if connect fails
+      e client volume - use the overall state of all sinks for display
+      fix crash in syscon when you press pr 2x in a row quickly to shutdown
+      e stacking support - enable beta api to get access as quick fix
+      e randr2 - fix freeing of stringshare by making it a stringshare
+      e thumb - extend extension that might have media metadata image thumbs
+      fix fullscreen no blank logic in e's dpms code
+      further fixes to screensaver/banking with window states like fullscreen
+      e cpufreq - stop checking status nullness - silence coverity
+      e start - remove mtrack ... no one using it (not even me)
+      e comp object - stop being cricical where pixmap and win size dont match
+      Revert "e comp object - stop being cricical where pixmap and win size dont match"
+      e - allow env var to turn off aborting at any CRI issue
+      e - remove doofus-like code from mike with regards to making e crash or not
+      e - fix entry wrapper - e entry was plain. elm is markup. do it properly
+      add new powersave features for supporting a live sleep mode
+      support connected standby (non-s3 sleep/freeze) that new lpatops sport
+      Revert "move x11 suspend window grabbing to comp_x, ungrab on resume"
+      e - fix desklock + grabs with hiding pointer on screen powerdown/up
+      e - make some comment notes on broken lock display on saver etc.
+      mouse hiding - only grab pointer not pointer and keyboard - simple
+      e blanking - add new special "locked timeout" that can be shorter
+      Revert "reduce include deps for enlightenment_imc binary" This reverts commit ee71ea63ec02a1bd7acfb11d9dea38eb3e499147.
+      powersave usage - dont use usleep at all. pwoersave sleep replaces it
+      pointer freeze - delay by 10 sec... because anim is used for hiding
+      fix meson build for appmenu module - missing src files
+      add build dir to ignore
+      meson - fix config install to install cfg files in right places and perms
+      meson build - fix mixer build because the defines are only for existence
+      powersave sleep - use fd's and seletc. ecore pipe cant be used
+      e comp - stop trying to set size again and again to the same
+      e meson build - fix PACKAGE_DATA_DIR to include project name at end
+      e powerrsave sleep - add fd get
+      module build - clean up and fix meson install of pretty much all modules
+      randr - discovered new output names that are display panels in laptops
+      doc - add doc dir content to meson install to match prev autofoo
+      e build - make 2 modules (music contrl and pager plain) consistent
+      meson - clock and ibar - use same template as most modules now
+      e module build - make ibar and clock really simple and generic
+      meson build generics - ooops. missed files. add now
+      meson generic module build - dashify the  option string
+      build - remove policy mobile module
+      move option if further out in generic module build foreach
+      e module build - make build files far more generic and far smaller
+      wireless module - dont segv e if connman daemon restarts
+      meosn build modules - more modules build with the generic builder harness
+      meson build - do a little tidying of the main meson.build in root
+      e - fix eet image format test to actually use key when loading
+      connman module - lower err's to warns as this actually happens
+      fix autofoo build to match renaming scheme used for meson
+      gadget recalc - if you add a job...del and add again
+      xwayland module - fix fallthrough annotation
+      fix fallthrough warnings
+      batman - fix buffer warning by hanving big enough stack buffer
+      e bindings - fix warning about uninitialized val
+      batget - fix warnings about buffer sizes
+      mod filemane - remove ancient instance theme path code not used...
+      mouse cinbings config dialog - fix warnings
+      fix fallthrough warnings and tag as fallthrough
+      e - do workaround with in events due to flags to get ptr focus right
+      e - conf_display - fix meson build break which dropped a src file
+      meson build - geolocation - indent the same as other files
+      meson build - fix use module defines to be upper case again
+      move sysaction specific configure val detection to the etc subdir
+      e meson build - refactor and clean up config and some module only cfg
+      meson build - trim down some data file build files a little
+      meson build - reformat and trim build files a bit to be more compact
+      meosn build - go back to requires_e it's uses in main meson.build
+      e_start - remove evas deps - don't need them.
+      meson - make modules with helper binaries simpelr to build
+      meson build - simplify 3 more wl modules to use generic parent harness
+      meson - remove uneeded array definition for files
+      meson - wl module builds - make them all consistent
+      meson build - minimize teamwork meson build too like other modules
+      meson build - simplify wizard module build like others
+      meson build - mixer - simplify for module build setup
+      meson build - simplify and cleanup evrything module
+      e - add vkbd for convertibles (tablets, laptops ... phones)
+      e x11 focus fixup - dont do the fixup if input grabbed
+      filepreview - properly set min size on cells not in a broken way
+      e mixer - handle pulse exit/disconnect and not keep e client sinks
+      vkbd - fix seg with multi touch
+      vkbd - fix 2 finger floating drag
+      xsettings - fix warning for buffer that could be a bit small
+      e sys - add listening to prepare for shutdown/suspend from systemd
+      vkbd - forgot to mark text in vkbd to scale... do that
+      vkbd - begin someinfra to support wayland
+      mixer - fix segv on shutdown
+      e actions - add actions for moving focus around - feature request
+      e client focus - fix focus if moving focused window to new desk
+      e client focus - fix focus if moving focused window to new desk - long
+      vkbd - merge in commented out wl code from weekeyboard
+      window focus - fix focus switch action next/prev walk dead code
+      fix up window+screen positioning fixup so it doesnt catch other clients
+      fix nested wayland in x11 mode with getting canvas zone geometry
+      Revert "Sysinfo gadgets: Revert all uses of faulty e_powersave_sleeper."
+      Revert "Temperature module: Don't use e_powersave_sleep.  It doesn't work for ticks faster than a second."
+      e powerszve - fix sleep timeout for select to be correct
+      pkgkit unknown string - fix typo
+      e start - fix path prepend/append if already in path assuming clue
+
+Cedric BAIL (6):
+      filepreview: avoid race condition when destroying txt file preview with slow hard drive.
+      fix text preview to use eina_strbuf_append_length that doesn't call strlen and crash.
+      Revert "protect against non-nul terminated string from mmap in filepreview"
+      connman: avoid random memory walk in case dbus data aren't provided by connman.
+      wl_drm: do not say you have wl_drm backend in config.h when you have not.
+      alert: protect use of drm code inside the proper ifdef.
+
+Chidambar Zinnoury (5):
+      e desks config: Bring some flip settings back.
+      e desks config: Group all flip-related settings to their own tab.
+      e: Don’t show two consecutive menu separators if there is no need in client menu.
+      e fm: Add a separator only if there is something before.
+      e fm: Don’t check every other line whether the location is writable when creating menu.
+
+Christopher Michael (58):
+      'cur_group' variable is unused here if we are not building for wayland
+      add missing EINA_UNUSED for unused function params
+      remove unused variables from _ibar_resize_handle
+      use proper variables to set size_hint_max on ibar
+      e ibar - fix "old man" fat finger typo ;)
+      remove need to create different dialog windows under wayland
+      Revert "e - fix major memory bloat when in gl mode - dont create shm segments"
+      wl_fb: Check that e_comp_wl_init does not fail.
+      add key_up and key_down methods to sreen interface
+      Remove unused variables from ibar_resize_handle function
+      add missing EINA_UNUSED for function parameter
+      Update wayland readme file
+      update wayland readme for gl-drm
+      disable elementary softcursor mode for wayland compositing
+      reset elementary softcursor config on shutdown
+      Revert "disable elementary softcursor mode for wayland compositing"
+      Revert "reset elementary softcursor config on shutdown"
+      don't crash is surface resource has no e_client
+      Revert "don't crash is surface resource has no e_client"
+      check if a client is internal or not before deleting
+      cleanup unused variables and parameters for pager module
+      fix missing definition of DRM_FORMAT_XRGB8888
+      mark unused function parameter in Luncher as EINA_UNUSED
+      add missing EINA_UNUSED for unused function parameters
+      removed unused variable from luncher code and add missing EINA_UNUSED
+      use ecore_evas_screen_dpi_get when updating e_scale value
+      use ecore_evas_screen_dpi_get to get screen dpi under wayland
+      remove unused variable in Luncher module
+      verify valid client comp_data before accessing it directly
+      Revert "verify valid client comp_data before accessing it directly"
+      verify shell client delete functions are operating on wayland clients.
+      mark Ecore_Thread parameter as EINA_UNUSED
+      remove unused variables in e_comp_wl
+      make mouse pointer visibility syn with hotplug/un-plug
+      add missing EINA_UNUSED for unused function parameters
+      fix formatting
+      fix comparison between signed and unsigned int expressions in xkbswitch module
+      fix shadowed variable declaration
+      Use proper coordinate adjustment
+      remove EINA_UNUSED for used function parameter
+      update touch enabled/disabled based on seat capabilities
+      fix formatting
+      send wl_touch events when we handle mouse buttons
+      Revert "send wl_touch events when we handle mouse buttons"
+      remove old ecore_drm1 code from wl_drm module
+      re-enable getting and setting output rotations in wl_drm
+      minor formatting fix
+      minor formatting fix
+      minor formatting fix
+      wl_drm: Fix potentially uninitialized variable
+      fix potentially uninitialized variables
+      remove unused variable in e_exec.c
+      bump efl minor version check for ecore_drm2 API function usage
+      fix wl_drm detection in e_signals.c
+      reverse order of shell binding in wl_desktop_shell module
+      Revert "reverse order of shell binding in wl_desktop_shell module"
+      wl-drm: Properly retrieve output geometry and propertly set output mode
+      wl-drm: Add screen position to debug output
+
+Davide Andreoli (29):
+      mem gadget: respect the aspect ratio of the theme
+      mem gadget: no need to send 2 consecutive int_set msgs
+      cpu gadget: fix orientation of the box
+      cpu gadget: fetch aspect ratio from the theme
+      cpu + mem gadget: use new vertical layouts
+      net gadget: fix 2 obvious cnp errors
+      net gadget: those signals are not used/needed anymore
+      mem gadget: improve proc info fetching
+      mem gadget: formatting, fit into 80 cols
+      mem gadget cleanup: rename vars
+      mem gadget: pass the new fetched info to the theme
+      mem gadget: implemented a new info popup
+      mem gadget: try to improve values calculation
+      mem gadget: fix a typo
+      mem gadget: adjust a little bit the values calculation
+      sysinfo: do not use autoclose on popups
+      sysinfo: fix popup position when using the cumulative sysinfo gadget
+      sysinfo gadget: remove frames in popups
+      pkit gadget: use elm widgets directly
+      pkit gadget: use genlist instead of list
+      pkit gadget: a better initial config
+      pkit gadget: add ability to install updated directly from the gadget !
+      pkit gadget: cosmetics, no functional changes
+      pkit gadget: show a nice progress bar while working
+      pkit gadget: a new help "mode" that show the icon meanings
+      pkit gadget: show the button only if a packager manager is configured
+      pkit gadget: popup title in bold
+      pkit gadget: do not autoclose the popup
+      PKit gadget: more accurate progress bar
+
+Derek Foreman (76):
+      Properly send kbd focus to xdg_shell popups
+      Make sure the same keyboard resource doesn't end up on the focus list twice
+      Fix xdg_shell focus logic
+      Fix wayland clients not deleting when they're hidden
+      Fix test for object visibility when deleting wayland clients
+      Fix getting top object in comp canvas
+      Fix wayland extension global creation
+      Add versions to wayland extension setup macros
+      Don't send keyboard leave events to unfocused clients
+      bump ecore_drm2 dependency, update to latest beta API
+      Fix error print when wl_wl fails to start
+      Fix xwayland binary location detection
+      Don't kill self during shutdown
+      NULL out xwayland fd handlers after deleting them
+      Add myself to the AUTHORS file
+      Find wayland protocols and wayland scanner at configure time
+      Add the capability to auto-generate protocol code and headers
+      Auto generate wayland protocol
+      Block session recovery for internal windows
+      Remove EVAS_CALLBACK_HIDE on shelf when freeing
+      Fix out of tree builds
+      Increase area of tilers for regions
+      Fix massive wayland input region brokenness
+      Fix wayland opaque regions
+      Stop passing dimensions to _e_comp_wl_surface_state_init
+      Fix wayland deferred buffer free crash
+      Check for deleted client in e_pixmap_image_is_argb
+      teamwork: Use emile SHA1 functions
+      Fix crash on xdg shell unbind
+      Fix keyboard tracking when leaving an xdg shell window
+      Fix crash when exiting an xdg shell application
+      More aggressively prune keyboard focus list
+      Stop sending key up/down events on focus change under wayland
+      test dmabuf pixmaps properly
+      Fix wayland frame callback times
+      Use a monotonic clock for frame callback times
+      Stop sending wayland motion events when the mouse is grabbed
+      Replace all timer_add with timer_loop_add
+      Replace all timer_reset with timer_loop_reset
+      Dispatch wayland frame callbacks in the correct order
+      Remove tests for wayland damage_buffer presence
+      Replace some ecore_time_get users with ecore_loop_time_get
+      Don't require dmabuf buffers to be writeable
+      Fix wl_drm session activation callback
+      Fix wl_drm session (de)activation callback
+      Remove some duplicate operations
+      Stop misuing EVAS_NATIVE_SURFACE_VERSION macro
+      Revert "Stop misuing EVAS_NATIVE_SURFACE_VERSION macro"
+      Fix unused var compiler warning in wl_drm
+      clean up some code
+      Clear the native surface structure before initializing it
+      Refactor wayland buffer releasing
+      Don't delete busy E_Comp_Wl_Buffers
+      Allow enabling experimental hardware plane support
+      Initialize the Evas_Native_Surface to 0 for dmabuf tests
+      Test dmabuf via native_surface_set even in software render
+      Remove old test for dmabuf validity
+      Remove some duplicate dmabuf validity checks
+      also apply xdg-shell v6 client del hooks to external clients
+      Make wayland clients render when only visible from mirrors
+      Fix clamping on screen blanker timeout
+      Fix xwayland selection crash
+      Don't block wayland client updates during screen saver fade out
+      Fix geometry for drm outputs
+      Update to recent ecore_drm2 changes
+      Add a compatibility layer to protect against ecore_drm2 api change
+      Stop doing complicated things after a segfault
+      Remove ecore_drm support
+      Resynch with weston's dmabuf implementation
+      Remove more pre-ecore-drm2 stuff
+      Bump wayland-protocols requirement
+      Handle wayland frame commits with no surface damage better
+      Drop wayland-protocols requirement to 1.9
+      Remove bogus EINA_UNUSED
+      Fix video explosion on rpi3 during screen blank
+      Fix crash when processing a wayland client cursor set after death
+
+Flavio Ceolin (1):
+      emix: when in alsa mode only operate on master
+
+Jean-Philippe ANDRÉ (3):
+      bg: Fix bg with single jpeg images (no edj)
+      pulse: do not leak strbuf
+      config: Add env var to skip profile save
+
+JengHyun Kang (1):
+      e_comp_wl: break from meaningless loop
+
+Joshua McBeth (1):
+      add dbus message 'org.enlightenment.wm.Window.SendToDesktop'
+
+Marcel Hollerbach (76):
+      e_comp_wl: introduce api to set index of keymap
+      e_xkb: use the new e_comp_wl_input_index_set api
+      readme: update keyboard entry
+      e_comp_data: NULL out source once it is freed
+      e_comp_wl: destroy e_drag when source disappears
+      e_alert: define EFL_BETA_API_SUPPORT before any include
+      e_dnd: move the ungrab to the object free
+      xwayland: show the dialog after ecore_wl2 is in sync
+      ibar: try to get a better min size
+      tiling: place popup on the current active zone
+      tiling: be more accurate on the description
+      mixer: introduce Barrier checks
+      mixer: introduce emix_max_volume_get
+      ibar: multiply size with scale
+      mixer: lock up the slider for the case a drag is in progress
+      wizard: make page 065 translatable
+      mixer: we changed that name when we merged the mixer in
+      update german translation
+      The potfile has changed,
+      mixer: do not set back the value from emix once the drag is finished
+      luncher: delete the popup if there is already one
+      luncher: do not add clients twice
+      luncher: free the timers
+      luncher: do not add clients twice
+      e_gadget: fix destroying of drop_objects
+      gadgets: free that data when notify and main is done
+      cpuclock: NULL status if its freed
+      e_exec: split up the free of the instance
+      luncher: fix hash table usage
+      luncher: null out the watchter when the watcher is stopped
+      e_sys: bring back system actions after resume was called
+      tiling: dont use floating state when toggling
+      Revert "Revert "mixer: do not set back the value from emix once the drag is finished""
+      tiling: insert a client in the place where it is currently placed
+      tiling: do not pass parent as relative
+      tiling: make windows placable by dragging them arround
+      tiling: refactor the window tree
+      tiling: save the split type per desk
+      tiling: handle the tiling state correctly when on multimonitor
+      tiling: handling dragging from desk to desk
+      tiling: drop move requests from tiled clients
+      tiling: only start a drag when the cursor is really moved
+      tiling: update the indicator where the icons are dropped
+      tiling: display the hint on the zone if there is no client below
+      tiling: fix zero sized zone
+      enlightenment_askpass: do not appear in a menu
+      mixer: be prepared for sinks without any volume
+      tiling: extra can be NULL here
+      tiling: fix compile warning
+      emixer: use a better name for the sink inputs
+      mixer: the name has to be a stringshare
+      mixer: do not leak a allocated string
+      meson: we need -rdynamic here not -export-dynamic
+      meson: also install the tiling-theme
+      e_startup: check for efreet errors
+      meson: we should probebly configure the xsession file correctly
+      meson: use file instead of doing the relative path by hand
+      meson: port music-control
+      meson: port geolocation
+      meson: underscrorify the module name
+      pager: do not define Config twice
+      meson: add HAVE_DRM2 and HAVE_WL_DRM
+      meson: we need to link dl
+      meson: build again without wayland
+      e_comp: stop including e_comp_x here without a reason
+      e_comp_wl: move types into typedef section
+      tiling: only use the insert function
+      tiling: fix insertion in the tree
+      leave the E_Comp_Wl_Data define in e_comp.h
+      tiling: show notification if a client cannot be tiled
+      everything: use correct edje api
+      tiling: change description
+      mixer: find a better name
+      tiling: give a better error message if a client doesnt fit
+      everything:declare this object as const
+      meson: install emixer correctly
+
+Mariusz Bialonczyk (1):
+      modules/temperature: cosmetics: typo fix (celcius -> celsius)
+
+Massimo Maiurana (8):
+      Updating italian and spanish translations
+      Updating italian translation
+      Updating slovenian translation
+      Updating italian translation
+      Updating italian translation
+      Updating danish translation
+      Updating danish translation
+      Updating italian translation
+
+Michael Bouchaud (8):
+      e_client_volume: add sink_name_get API to e_client_volume
+      e_client_volume: add E_EVENT_CLIENT_VOLUME_SINK handler
+      e_client_volume: display a control per stream in the popup volume
+      e_client_volume: forget to remove the separator
+      e_askpass: compliant with GIT_ASKPASS for querying username
+      e_askpass: fix a typo
+      e_client_volume: check volume setted after a slider drag
+      e_client_volume: Don't set client volume to max after a mute.
+
+Michaël Bouchaud (yoz) (14):
+      mixer: fix the volume conversion calc into pulseaudio backend
+      E_Client: add an abstraction api to control volume by app
+      mixer: use the new e_client api to export volume control by app.
+      e_remember: add e_client sound volume support
+      e_client: add a volume control to the window theme
+      mixer: add volume control to e_client menu
+      Revert "mixer: lock up the slider for the case a drag is in progress"
+      mixer: fix coverity issues
+      mixer: fix a typo spotted by coverity
+      mixer: Don't sync volume sink with e_client if they have more than one.
+      mixer: close the file descriptor on error.
+      xkbswitch: rewrite the config panel to improve the gui design
+      mixer: use VOLSET macro in volume output set
+      Revert "mixer: do not set back the value from emix once the drag is finished"
+
+Mike Blumenkrantz (787):
+      unset release mode
+      handle e_comp_x init failure more effectively and perform cleanups
+      set x11 randr iface for wl_x11 based on wm presence, not composited state
+      match wl_wl output sizing in wl_x11 when running in an existing wm session
+      set unmax flag for xdg shell unmaximize
+      set/unset smart parent as e_widget when adding sub-objects
+      adjust xdg-shell window menu coords by client's coords
+      only check x11 configurerequest geometry changes when applicable
+      improve quickaccess relaunch help dialog text
+      move new version of e_comp_top_window_at_xy_get() to dnd, restore old version
+      clear wl subsurface data during delete only if subsurface is not also deleted
+      add xwayland compat for efl 1.19+
+      bump efl wayland req to 1.18 now that it's out
+      Revert "track/manage size hints for zoomap child objects"
+      track current bryce geom, force recalc on gadget site upon change
+      clean up some string leaks in wireless gadget popups
+      delete previous wireless popup when activating editor from connection list
+      use stringshare_add() for evry files plugin mime types
+      another case of stringshare misuse re:efreet_mime_type_get()
+      ignore xwl clients when flagging wl surfaces as internal
+      add drop handlers for gadgets
+      add event handler for evry event type, not #define value
+      do not attempt to populate gadgets during type_add if site has not yet been populated
+      add docs for E_Comp struct members
+      remove E_Comp->name
+      remove more useless E_Comp struct members
+      bump modapi
+      move 'unmaximize' smart callback to after geom calc in client_unmaximize
+      use comp canvas win by default for any drop handler with an E_Object
+      set the spacer rect as the drop handler base when creating gadget drop handlers
+      handle e_comp deref during e_dnd shutdown to avoid crash
+      always use compositor object stacking when performing internal drags
+      clamp bryces to a lower canvas layer
+      use same layer in bryce editor for "above window" setting
+      set gadget added flag any time a gadget is created or wizarded
+      add separate codepath for handling layout of moving gadgets
+      force smart calc on gadget sites at key points during move operations
+      attempt to retain gadget size when executing move operations
+      adjust gadget drop coords for pointer offset
+      check visibility of gadget site 'events' member to determine drop availability
+      add backspace/delete for clearing all lockscreen gadgets
+      always use largest available size for free-oriented gadgets
+      add gadget doc note for gadget_destroyed callback re:object lifetimes
+      force bgpreview widget to resize after a wallpaper update
+      always delete gadget's display object and ensure gadget object is null
+      clean up gadget drop handlers correctly
+      do not update bryce layer when restacking to a higher layer than CLIENT_ABOVE
+      remove extraneous recalc trigger when deleting a gadget
+      bump to require efl 1.18.99
+      do not consume key events in comp autoclose key callback if desklock is active
+      add e_util_open(), unify all callers of enlightenment_open
+      remove x11 input window from desklock grab process
+      remove (wrong) setting of layer for time's clock gadget popup
+      do not show wireless gadget popups if desklock is active
+      force shape queue when gadget util ctxpopups change visibility
+      print object type in shape debug if name does not exist
+      clamp gadget util ctxpopups to E_LAYER_POPUP at the lowest
+      handle "unmaximize" smart callback differently depending on fullscreen state
+      remove unused variable
+      force zone useful geometry recalc on desk flip if prev/next desk has obstacles
+      split wl_desktop_shell into separate files per shell
+      enforce bryce resizing when orientation changes
+      add EINTERN function for renaming gadget sites
+      fix bryce check for shelf existence on orientation/anchor to break when expected
+      add zone number to bryce names
+      do not check for shelf/bryce existence in opposing anchorages during bryce wizard
+      further improve bryce portability across zones
+      also do full bryce rename when moving between zones
+      add new flag for zone edge objects to allow shape cutting while repeating events
+      force bryce visibility during editor activity
+      add gadget_site_(un)locked smart callbacks for forcing gadget site visibility
+      call gadget_popup smart callback when configuring gadgets
+      handle gadget_popup smart callback on gadget's display object
+      set ON_HOLD flag when triggering gadget mouse buttion actions
+      remove unused attribute from used param
+      trigger bryce menus from right click if event has not been consumed
+      fix bryce upgrade path from 0 -> 2 re:naming
+      set ON_HOLD flag more accurately when activating gadget actions
+      avoid extra recalc when resizing a bryce on its oriented axis
+      add gadget site sizing workaround to avoid elm box sizing desync
+      rename bryces when changing anchors
+      loop bryce autosize recalc when gadget site has not yet calculated its size
+      only find the session recovery remember if ec->remember is not it
+      apply non-session recovery remember to client when creating recovery remember
+      correctly handle applying of non-SR remember in remember config
+      reject successive zone_geometry_dirty() calls
+      trigger zone geometry events when updating zone/desk obstacles
+      force min size on wireless popup during show
+      create substruct for E_Comp to put canvas objects into
+      bump modapi
+      add workarounds for ctxpopup geometry for use in input shape tiling
+      force recalc on bryce scroller when doing recalc on gadget site
+      handle no-orient gadget visibility based on site->events visibility
+      force gadget site recalc on gadget object creation to ensure sizing
+      copy gadget position from pointer gadget -> drop gadget when executing drop
+      calc new gadget size based on ratio of size:target site size
+      add generic handler for desktop gadget layers
+      Revert "correctly handle applying of non-SR remember in remember config"
+      Revert "only find the session recovery remember if ec->remember is not it"
+      Revert "update secondary remembers when a session recovery remember is updated"
+      Revert "prevent editing of session recovery remembers"
+      redo session recovery handling to use separate E_Remember
+      bump modapi
+      allow client frame changes when switching from frame -> no frame
+      optimize out re-applying of borderless client theme
+      block remembers of e_sys windows
+      use eina_streq for string comparison in e_zone_for_id_get()
+      fix use after free when renaming a bryce
+      clamp bryce position to its parent zone
+      avoid potential divide by zero during bryce startup
+      do not modify bryce zone/name during startup
+      center desktop gadget editor popups upon the zone they have activated
+      track desktop gadgets based on their zones
+      attempt to handle non-orient gadget resizes based on anchor corners
+      allow scaling gadgets using wheel events during initial placement
+      delete current dragging gadget during edit if escape is pressed
+      attempt to recalc gadgets which overflow their container
+      do not apply pager rotation when placed on desktop
+      do not apply efx anchoring to move effects if a resize effect is not active
+      use only aspect sizing in luncher
+      update luncher aspect hints whenever icon list is modified
+      do not create new luncher cfg id for demo gadgets
+      add smart callback for when gadgets get reparented
+      do not return early from _bryce_position()
+      add bool return for e_exec_phony_del() to return deletion success
+      feed mouse-up when dropping a gadget site before enabling events on the site
+      use only aspect hints for new pager gadget
+      force gadget site recalc from style object if gadget's hints change
+      return correct values from bryce post event callbacks
+      determine wl pixmap argb solely based on image_argb flag
+      avoid crash when calling e_pixmap_image_exists on wl pixmaps without buffers
+      add more parens for previous pixmap commit
+      add special case for returning pixmap argb of unusable wl cursor pixmaps
+      move bryces to E_LAYER_DESKTOP_TOP when not above windows
+      center menu-triggered volume popup on same zone as client
+      force bryce repositioning onto target zone during startup
+      use only zone coords when moving bryce to its zone during editing
+      clamp e_place calcs to zone geometry
+      break out e_place_desk_region_smart() area calcs into separate function
+      break out repeated code from _e_place_desk_region_smart_area_calc() into separate function
+      add docs for e_place_desk_region_smart() calc code
+      reset initial internal wl client states when hiding (but not deleting)
+      unset wl client surface pointer on surface destroy
+      remove wl client pixmap aliasing on del
+      always free wl pixmap buffer list on non-cache image clear
+      unalias internal wl client pixmaps in elm win hide trap callback
+      handle e_scale correctly in bryces
+      keep bryce starting size unscaled
+      unset cur_mouse_action upon deleting client menu
+      send orientation signal to bryce scroller theme
+      only unset cur_mouse_action on client menu delete for the right action
+      focus confirmation option in efm delete dialog
+      disable bindings during desklock
+      reject non-printable characters from lokker entry
+      make confirm dialogs autoselect the confirm option
+      add e_client_util_top_parent_get()
+      add e_comp_object_coords_inside_input_area()
+      xdg6 support
+      require an elm win to apply auto-visibility for internal wins in wl surface commit
+      clarify some wl surface checks to require elm wins
+      make fake mouse-out upon focus-out conditional on pending pointer warp
+      prevent divide by zero when calculating gadget aspect sizing
+      handle xdg-shell maximize/unmaximize calls correctly
+      stack subsurfaces above their parents upon creation
+      correctly handle xdg surface deletion and pointer clearing
+      destroy xdg role surfaces if base surface is destroyed
+      handle illegal xdg-shell resource unbinds
+      fix use of E_CONTAINS macro for xdg-shell positioners
+      always send valid size geom when configuring xdg6 popups
+      check gravity variable for gravities when applying xdg6 positioners
+      use more accurate determination for applying xdg-shell (un)maximize operations
+      use correct coords for determining input region calcs on comp objects
+      move the comp canvas cursor object during wl surface grabs
+      handle input detection for wl surface grabs more accurately using stacking
+      feed mouse move and canvas mouse up upon breaking a wl surface grab
+      add handler for triggering xdg-shell data cleanup on client del
+      free xdg-shell data for xdg5 surfaces
+      disable xdg6 positioner resize hints
+      apply better algorithm during xdg6 positioner slide calc
+      do not pop pointer types on client hide events if the client is pass_events
+      set wl pointer surfaces to E_LAYER_CLIENT_PRIO during setup
+      attempt to re-set wl surface pointer when popping back to "default" pointer type
+      fix internal wl windows to exit when border X is clicked
+      handle pass_event clients in e_comp_object_coords_inside_input_area
+      Revert "Check for deleted client in e_pixmap_image_is_argb"
+      use better check for getting wl surface alpha from cursor pixmaps
+      revert all sizing commits to ibar/ibox for the past year
+      maintain "empty" object's size hints when ibar/ibox resizes
+      null out animator pointers in efx stop() operations
+      null out bryce and site pointers when deleting bryce object
+      add some internal functions for triggering fake screen hotplug events
+      don't track gadget drop handler objects for deletion
+      do not set aspect on luncher grid gadgets
+      correctly set E_POINTER_RESIZE_BR mode for client keyboard resizing
+      plug iterator leak in e_comp_object_render()
+      remove extra SLEEP prints during startup on non-release builds
+      fix auto-enabling of compiler warnings on non-release builds
+      bump modapi
+      revert desklock block_rect opacity change
+      add method for unblocking zones during desklock show/hide
+      handle desklock show animation unblocking in lokker
+      resolve certain double/float comparisons in with increased correctness
+      resolve battery float-equal warnings
+      resolve efm float-equal warnings
+      resolve efx float-equal warnings
+      resolve compositor float-equal warnings
+      fix selective disabling of -Wunused-parameter under clang in copied weston code
+      resolve conf_* module float-equal warnings
+      resolve evry float-equal warnings
+      resolve winlist float-equal warnings
+      resolve widget-related float-equal warnings
+      resolve gadcon-related float-equal warnings
+      resolve client float-equal warnings
+      resolve misc module float-equal warnings
+      resolve binding+action float-equal warnings
+      resolve misc float-equal warnings
+      specify format string for desk names in desk config
+      add global macros for easily toggling warning flags
+      mark strftime calls using struct tm in time module as safe
+      mark strftime calls using struct tm in e_slider as safe
+      Revert "warnings - disable y2k and format non literal and float comparison"
+      use -Wno-format-y2k for non-release builds
+      break out code to set clients as transients for a parent
+      implement xdg-foreign v1
+      free configs for demo gadgets on object free
+      do not return sr window remembers if not looking for sr remembers
+      do not perform frame coord adjustments for re_manage wayland clients
+      use persistent clipping for comp object input rects
+      use geometry from comp object input rect when determining if coords intersect
+      ensure that gadget internal del callbacks are handled before other callbacks
+      handle pixmap_refresh() failure cases more accurately under wayland
+      throw xdg6 errors for unconfigured buffers as spec requires
+      validate xdg-shell move/resize requests against latest button serial
+      reset demo gadget id before deleting gadget object during drop operation
+      do not double-free lists during luncher bar empty
+      remove gadget drop object event callbacks during object deletion
+      implement relative-pointer v1
+      add flag for comp screen iface to indicate relative motion eventing
+      generically handle relative motion eventing for non-featureful backends
+      ignore intercepted mouse events for non-wl compositing
+      implement pointer-constraints v1
+      free string pointer in xkbswitch parsing
+      add e_pointer_show()
+      use e_pointer_show() when updating wl-drm seat caps to enable pointer
+      make e_pointer_object_set() a no-op when passing the existing cursor
+      simplify mouse-out cursor reset for wl clients
+      use 1x1 for unsized (internal) clients
+      hide wl client cursors when set_pointer is passed a null surface
+      simplify xkbswitch rule parsing, ensure resource freeing
+      remove del callbacks for xkbswitch list config objects
+      remove callback for "gadget_destroyed" in pager
+      add note in doc for "gadget_destroyed" callback re: callback ordering
+      wrap time module strftime calls more loosely when disabling -Wflags
+      remove E_Config->desktop_default_name
+      plug list leak in luncher
+      ref clients during exe_inst deletion to avoid invalid access after free
+      start xwayland process 2.0s after module load
+      only unset current pointer cursor object if new one is being set
+      force mouse-out on wl clients during delete if mouse.in is set
+      Revert "attempt to re-set wl surface pointer when popping back to "default" pointer type"
+      reset compositor pointer cursor if wl surface destroy is the current cursor
+      add specific handling for xwl cursor unsetting on mouse-out to ssd
+      move wl data device focus-change handling to data device leave() fn
+      simplify _e_comp_wl_data_device_drag_finished() slightly
+      more correctly handle dnd completion for wl
+      add wl_buffer output module
+      fix return code checking for errors when generating wl key events
+      Revert "e - wayland - fix double-resize if e wants a different initial size"
+      future-proof client hook inlist initialization
+      add client hook for UNIGNORE
+      use E_Client->changes.size for validating wl client geom during configure
+      unignore wl clients on first commit regardless of buffer attachment
+      watch UNIGNORE hook for hooking window remembers
+      allow new_clients to update their remembers
+      never return remembers which apply uuid if not looking for sr remembers
+      do not display sr rememebers in remember config dialog
+      watch client UNIGNORE hook for adding new tiling clients
+      make client placement eval not dependent on new_client flag
+      always set E_Client->placed when successfully moving a comp object
+      do not use new_client to determine placement-related paths during wl client commit
+      ignore all non-NORMAL type wl windows in e_place
+      fix wl_drm detection in e_mouse.c
+      make wl key input generator take keynames instead of keycodes
+      add client smart callback for post_render
+      make e_comp_wl->ptr.x/y ints and fix usage to be consistent
+      remove e_comp_wl->ptr.grab_x/y
+      center pointer on wl_buffer output init
+      block backlight changing for nested/buffer compositors
+      add event for xwayland init
+      save config when toggling option to disable startup splash
+      register wl_buffer output canvas for input events
+      e_menu_grab_window_get() -> e_menu_is_active()
+      only attempt to place clients which are protocol-visible
+      unadjust wl surface coords before applying position during commit
+      set E_Client->remember before calling e_remember_update()
+      redo wl client setting of E_Client->take_focus and E_Client->want_focus
+      do not shortcut wl surface commit unignore path for internal wins
+      free E_Remember->uuid on shutdown
+      enable abort on critical error for non-release builds
+      add new explicit method for enabling backlight depending on output type
+      add function for printing debug info on an evas object
+      only move new bryces to zone on create, not existing ones
+      show already-visible comp util objects when changing frame type
+      add E_Menu access from its comp object
+      make 'after_restart' variable global
+      remove all unnecessary efl version checks
+      typo--
+      hide wl clients before deleting them on surface destroy
+      comment out inlist member of E_Comp_Object struct
+      better protect comp object internals from dereferencing freed clients
+      add all wl client frame callbacks with priority AFTER
+      unset deskmirror client's client pointer upon client deletion
+      fix dangling pointers in xdg-shell deletion
+      Revert "e - wl mode - stop consuming 100 percent cpu"
+      add Return and Caps_Lock handling to wl key event generation
+      do not unset E_Client->placed for fullscreen/maximize clients
+      defer menu activation mouse-up feed
+      set ON_HOLD when activating start gadget
+      add handler for EFREET_EVENT_DESKTOP_CACHE_BUILD to e_order init
+      track and delete xdg-shell client hooks
+      make E_COMP_SIZE a global comp resizing env var
+      do not use saved e_randr screens if fake screens have been added
+      manually center pointer using compositor size on init when not restarting
+      run e_hints_window_init() on new_client eval and not during placement
+      do not force comp objects to render for their proxies if real_hid is set
+      show x11 parent windows during reparent only if not withdrawn
+      return during comp object pixels function if client was deleted during render
+      add wl client flag to indicate status of xdg6 pre-buffer configure
+      make e_remember_del() work with sr remembers
+      perform frame adjustments before applying wm spec hints during unmaximize
+      only save client size info on maximize/fullscreen when protocol visible
+      check changes.pos during client maximize/fullscreen and adjust window coords
+      do not start xwayland repeatedly
+      call wl/x compositor shutdown functions directly during comp shutdown
+      force iconic state for iconic x11 clients during shutdown
+      move x11 iconic window init from e_hints -> comp_x initial fetch
+      call e_randr2_shutdown in comp shutdown
+      handle null E_Comp->screen during randr2 shutdown
+      don't set minw for keyboard layout dialog
+      clear luncher instance icons on bar deletion
+      only hide wl clients on surface destroy when surface is mapped
+      handle nested compositor delete requests
+      set title for buffer output canvas
+      only set toolbar icon min size if icon exists
+      always use jobs to create bryce menus
+      use maximized geometry for shell maximize calls on wl clients if !buffer_commit
+      do not use animations for wl clients with initial maximize state
+      slow down mixer's pulse reconnect rate
+      rework how pulseaudio is started in mixer backend
+      handle window icons from elm for internal wins
+      use show instead of bring_in for xkbswitch layout add dialog
+      always get zone geometry when placing clients
+      only re-set comp object position during show if client has been placed
+      set dialog and tooltip flags for internal clients
+      do not accidentally place unplaced clients during wl *shell configure
+      add wrappers for elm_win util create functions
+      send wl client resize edges during focus-in/out send_configure
+      force sending of last-used geometry when terminating a resize in wl shell send_configure
+      set signal move/resize clients as action_client internally
+      compare against e_client_action_get() for rejecting wl mouse events
+      Revert "Stop sending wayland motion events when the mouse is grabbed"
+      do not send mouse events to ssd wl clients if mouse is within ssd region
+      use even more accurate wl callbacks for detecting ssd mouse in/out events
+      always feed mouse events for wl client move events
+      block x11 focus eventing under xwayland
+      do not attempt to set window hidden hints on non-internal x11 windows
+      account for late object setup when adding ssd mouse in/out callbacks
+      add flag for wl clients to determine ssd mouse-in vs client mouse-in
+      use compositor win object for client volume slider
+      disable client maximize anims when unmaximizing before a fullscreen
+      only apply xdg-shell client del hooks to internal clients
+      unset wl shell resource data on destroy
+      always set E_Client->need_fullscreen when fullscreening
+      force e_client_unmaximize() to complete during fullscreen operation
+      slightly optimize maximize -> fullscreen protocol comms for wl clients
+      add debug for xdg6 configure
+      check pixmap size before triggering maximize animation
+      force animationless re-maximize when unfullscreening
+      only center internal windows once
+      adjust size for frame geometry in no-animation maximize path
+      call "maximize" smart callback before "maximize_pre"
+      add E_Client->saved.set
+      do not set intermediate client geometry when doing fullscreen -> maximized
+      re-set backlight level when resuming from suspend
+      explicitly stack child client above parent when calling parent_set
+      center child clients on parent in parent_set()
+      don't set wl xdg-foreign clients as modal
+      use e_client_parent_set() in wl *shell parent setting methods
+      add a client's children to the skiplist during place routine
+      do not arbitrarily center "lost" child windows, center them on the parent
+      support clients as positioner objects in e_comp_object_util_center_on()
+      re-place transient wl clients when parent is first sized
+      break out client transient restacking into function
+      apply transient stacking to wl clients when restack would not otherwise occur
+      remove duplicated client stacking code from wl restack callback
+      do not adjust unplaced transient client position on parent move/resize
+      add cache for dead x11 manager windows
+      remove uuid references from e_pixmap.c
+      re-set list of default desklock bgs when changing to custom bg in config
+      set pass events on efm icons when deleting files
+      remove unused struct members from wl E_Comp_Wl_Client_Data
+      make RENDER_DEBUG activate with E_RENDER_DEBUG env var
+      make SHAPE_DEBUG activate with E_SHAPE_DEBUG env var
+      explicitly set nested wl output canvas as a toplevel window
+      avoid refocusing deleted wl clients during comp input ungrabbing
+      set initial x11 window geometry for windows which do not have wm hints
+      remove unused struct members
+      check image load error when checking dmabuf viability in gl
+      better handling for iconify during comp object show/hide
+      do not show iconic x11 clients on on icccm hint change
+      add desklock interface handler for key press
+      remove check for desklock in comp object autoclose handler
+      check efm path existence before using it during dnd selections
+      unset wl button mask when beginning a move/resize operation
+      unset wl selection target client if that client is deleted
+      don't dup fds during xwl bridged selection transfer, this happens in libwayland
+      always run client icon update path when creating xdg6 role surface
+      add error messages when symbols fail to resolve in xwl init
+      force client pixmap refresh immediately during resize if nocomp is active
+      do not perform zone updates on ignored clients during evas callbacks
+      remove unnecessary comparison when applying new keyboard layout in gadget
+      update wl input to use new keyboard context/keymap api
+      bump efl version
+      use FOREACH_SAFE when walking client list during logout
+      another fix for e_comp_wl->ptr.x/y coords being wl_fixed instead of ints
+      store current pointer client into pointer struct
+      preserve cursor state in drm output during vt switch
+      simplify _bar_check_for_duplicates() in luncher
+      simplify handling of new exec clients when adding luncher icons
+      use correct event struct in luncher's _bar_cb_client_remove()
+      remove misleading null checks from _bar_cb_client_remove()
+      remove client callback from luncher icon when necessary
+      perform client raise before triggering move/resize BEGIN client hook
+      delete client raise timer when beginning a move/resize operation
+      do not trigger events/bindings on zone object events with timestamp==0
+      use event_grabber to simulate explicit grab during window move/resize actions
+      re-enable zone edges during window_move action
+      send nograb signal to ssd theme on creation
+      feed mouse up during window maximize if the current window is being dragged
+      update wl_drm for recent efl_input_device api changes
+      only remove left/right maximize when removing vertical if left/right is set
+      route all mouse movements to action_client during action grab
+      don't null pointer after deleting internal win during wl delete request
+      hook client object unref callback to cleanup comp object internals
+      use fake xinerama screens when initializing wl outputs
+      store output subpixel value to randr2 screen data during drm init
+      simplify drm output update event by using randr screen refresh queuing
+      send version edje signal to ssd theme
+      reject client mouse move if coords match previous position
+      feed mouse-up to action client from event grabber, then attempt to end actions
+      try only 1 reconnect to pulse when mixer fails to init
+      set pass events on shape debug rects
+      print object type if name is null during shape debug
+      ensure flag to preserve gadget editor is unset after setup
+      allow gadgets to return a null object for demo objects
+      do not advertise luncher grid or sysinfo for gadget sites with orient
+      do not attempt to pack cpumonitor into box in sysinfo mode
+      redo the gadget editor (again)
+      force horizontal orient for all gadget editors with orientation
+      if gadget wizard returns a zero id, remove gadget from site and destroy
+      reset demo gadget id before deleting gadget object during drop operation
+      update gadget position during a resize from top/left edge
+      use seat0 as default seat name instead of default
+      Revert "e - allow env var to turn off aborting at any CRI issue"
+      hide gadget editor when dragging/wizarding a new gadget
+      always grab input when showing a gadget wizard
+      use safe list iterating when clearing a gadget site during shutdown
+      freeze client action event grabber stacking
+      do not enable abort on critical in development builds for raster only
+      block client mouse move calls from comp object during move/resize
+      Revert "block client mouse move calls from comp object during move/resize"
+      block "user" client resizes during comp client updating phase
+      force shape queue when adding/deleting action client event grabber
+      perform move after resize during comp object show
+      unset gadget editor pointer on editor delete
+      remove eeze init/shutdown calls from modules
+      use event grabber for gadget editors to improve event detection
+      multiply pointer axis values by 10 for wl clients
+      check exit status from auth subprocess
+      block pointer warping on override clients
+      make e_comp_object_frame_allowed() return false for ignored clients
+      only set E_Client->want_focus for wl override clients if not popup client
+      use xwayland check for clients when checking whether to reset focus to root
+      don't run x11 focus (un)set callbacks for override clients
+      don't force shm for xwayland launch and enable gl
+      check ec pointer before deref in luncher's E_EVENT_EXEC_DEL handler
+      don't call comp object cleanup functions for clients without comp objects
+      only unredirect clients during comp update after 3 failures
+      try redirecting failed clients again during resize
+      handle rotations with fake xinerama screens
+      don't crash in randr module when using fake xinerama screens
+      process screen events in wl when using fake screens
+      save gadget site config when deleting gadget after wizard failure
+      add function for a gadget to remove itself
+      remove "gadget_removed" smart callback from gadgets which use it upon deletion
+      add "focus" mode for render debug
+      add handler to catch (new) fake elm win wl2 window client
+      focus comp canvas's client when no real client is focused
+      don't reject internal wl selections based on serial value
+      unset DISPLAY in mixer when performing pulseaudio operations under wl
+      use kbd focus resource's client instead of "focused" client in data device
+      don't set E_Client->want_focus for wl overrides with parents
+      move x11 suspend window grabbing to comp_x, ungrab on resume
+      Revert "Revert "move x11 suspend window grabbing to comp_x, ungrab on resume""
+      do not perform input grabbing during (un)blank if pointer will not animate
+      always perform initial input ungrab when waking screen
+      unset gadget site's layout pointer after destroying gadgets
+      unpack gadget from site editor box on content_item del
+      delete gadget editor site when editor is deleted
+      move gadget del callbacks to AFTER priority
+      update time gadget date string during clock timer
+      handle multiple input regions for csd clients
+      toggle NOGRAB on client input rects during move operations
+      don't attempt desk flips from client move handler
+      only set qt theme override env vars if option to do theme matching is enabled
+      rename clock+time module event handler lists
+      freeze edje during dpms
+      disable clock+time gadget updating during dpms
+      freeze pointer animations while screensaver is active
+      prune unconfigured gadgets from comp object sites upon site del
+      don't close gadget editor if ON_HOLD is set or click is not button 1
+      add better handling for interacting with gadget popups while editor is up
+      hide gadget editor if gadget triggers a popup
+      always check for autoclose object when adding gadget objs to edit grabber
+      use correct key name for BackSpace in desktop gadget key handler
+      save config after clearing desktop gadget site
+      update date for time gadgets when day timer ticks
+      remove nonfunctional --enable-simple-x11 configure flag
+      remove edje-cc from build
+      remove egl from build
+      remove unused defines
+      fix wayland-only build
+      fix e_alert build with wayland only
+      reduce include deps for enlightenment_imc binary
+      reduce include deps for enlightenment_thumb binary
+      only store the compositor's own data manager resource to e_comp_wl->mgr.resource
+      don't free x11 clipboard source immediately
+      remove unused Evas.h include from e_fm_ipc.c
+      bump E_VERSION_MAJOR
+      split macros out of e.h into separate file
+      make efm build without elm includes
+      do not generate module.desktop files
+      Revert "toggle NOGRAB on client input rects during move operations"
+      Revert "handle multiple input regions for csd clients"
+      handle multiple input regions for csd clients
+      toggle NOGRAB on client input rects during move operations
+      reduce include deps for enlightenment_imc binary
+      reduce include deps for enlightenment_thumb binary
+      fix E_API definition
+      do not include e.h in batget.c
+      check for different types of load errors during startup image load tests
+      remove unused define from cflags and pc file
+      use snapshot object for shot module
+      remove wl screenshooter protocol
+      only map wl pointer clients if they are the active cursor
+      hide pointer cursor clients when unsetting them
+      meson.
+      move x11 randr defines to e_comp_x_randr.c
+      use more descriptive label than '???' for unconfigured outputs in scren config
+      use real sizing for screen config mode list, not 1xheight
+      use 1 second for screen config apply delay
+      add a configurable default policy (default: extend) for screen hotplugging
+      pass screen id when opening config dialog with ASK hotplug policy
+      do not set e_comp log level
+      use e_util env functions in time module
+      perform immediate move on bryce during autosize
+      do not use elm api to unset centered flag during resize
+      rework internal win centering
+      resize comp bg_blank_object on zone update
+      destroy desktop gadgets when the parent zone is removed
+      rename bg_blank_object -> resize_object for a more accurate name
+      abort meson build if source tree is not clean
+      remove edje_cc results from configure output
+      Revert "e comp - stop trying to set size again and again to the same"
+      ignore wl client ssd mouse events for windows without ssd
+      only do configure for wl clients in commit when a buffer is attached
+      Revert "only do configure for wl clients in commit when a buffer is attached"
+      remove wl focus check function
+      save xwindow of x11 selection owner, not client
+      add special case for xwl-originating drags to set dnd actions
+      focus x11 root window on init when starting with xwayland
+      handle xwl data source cleanup more effectively
+      free xwl selection atom names after creating selection source
+      set xwl-originating data source dnd actions during source creation
+      add text/plain;charset=utf-8 to xwl-created wl clipboard data source
+      don't create xwl receive pipe for SelectionRequest when getting the selection
+      fix mixer logging to use mixer log domain
+      reject invalid comp object resizes
+      ignore desktop gadget editor keybinds while editor is hidden
+      break out gadget aspecting into separate function
+      handle time gadget removals for unconfigured gadgets without crashing
+      apply gadget aspects with greater precision
+      position desktop gadgets more accurately during resize
+      make gadget resize anchoring able to omit axes
+      defer setting recalc on gadget sites
+      trigger gadget site recalc job if gadget object hints change
+      abort gadget site layouts if the gadget site has not been sized
+      use zone size for un-oriented new gadgets
+      return immediately when setting a null gadget style if current style is null
+      set max size hint on desktop gadget editor gadgets when editor is resized
+      remove tooltips from desktop gadget editors
+      partially revert "add new powersave features for supporting a live sleep mode"
+      show clients immediately after pixmap refresh if visibility is pending
+      return updates_full state from e_comp_object_damage_exists()
+      use ecore_x_netwm_opacity_get() for x11 opacity checking
+      handle updates_full when adding comp object update regions
+      reset comp object update regions when a render occurs
+      continue to fetch netwm opacity hint if it changed since the last fetch
+      set client opacity any time netwm hint has changed in fetch
+      remove left/right maximize before removing vertical maximize
+      implement support for wl aux hints
+      Revert "reset comp object update regions when a render occurs"
+      set gadget recalc immediately when not in canvas smart calc
+      reject gadget site layout attempts only when it would be impossible
+      do not reposition new bryces after using editor
+      check for desk/zone mismatch in e_zone_desk_useful_geometry_get()
+      clamp vertical bryce size to useful zone geometry
+      do not immediately rescale windows when changing zone geometry
+      add and use new event for zone useful geometry changing
+      break out client rescaling into separate function
+      rescale clients on useful geometry dirty
+      deduplicate zone move/resize code
+      mark zone useful geometry as dirty when applying move/resize
+      track zone states and modify bryces accordingly
+      use explicit rounding for bryce scaling
+      remove wizards from time module gadgets
+      restack child windows on parent_set() even if child is ignored
+      do not add delete/kill request smart callbacks for non-internal wl clients
+      center wl clients on their parent when doing first commit
+      move Ecore_X_Stack_Type member from client to x11 comp_data
+      finish wl window stacks
+      set gadgets in the editor's pointer site as moving
+      more accurately determine gadget editor visibility
+      add module file to E_Module struct
+      apply client hints when rescaling a client
+      optimize setting zone useful geometry as dirty
+      rescale x11 clients after fetching hints
+      make client size hints apply more accurately
+      save config automatically when removing gadgets
+      add gadget site as param for gadget wizard callbacks
+      split out gadget enums into separate header
+      add function to return a currently-active menu
+      implement action routing for wayland clients
+      extend key action routing for general action contexts
+      make action routes usable in subcompositors
+      don't arbitrarily bind version=1 for wl extension resources
+      make menu_show action pop the menu in automatically-calculated direction
+      make mouse-activated menus function as expected with 0 passed as activate time
+      do not defer wl gl init
+      clamp internal win min/max size hints to 0
+      set clock gadget id on creation
+      destroy gadget configs when deleting a gadget site
+      don't center wl popups on their parents
+      add wayland variable to pkgconfig
+      avoid object hide animations during shutdown
+      handle case where eglBindWaylandDisplay fails during wl init
+      prune gadgets from editor if destroyed while editor is active
+      disallow demo gadget ids from counting towards wizard success
+      further improve keyboard handling while gadget editor is active
+      handle destruction of demo gadgets without crashing
+      add support for external gadget providers in the gadget editor
+      manually get client under pointer for checking x11 pointer focus
+      do not apply x11 pointer focus if key/mouse grabs exist
+      capture zone for newly-added bryces based on name
+      make menu autoplacement more consistent by preferring DOWN placement
+      add internal action for showing a menu using object geometry
+      set gadget ctxpopup priority based on anchor
+      end xdnd operations on window hide if no FINISHED event is received
+      don't force xwl drag client motion for override drag clients
+      use xwindow check to determine whether to check icccm accept/take focus attrs
+      don't set focus attrs in wl surface commit for xwl clients
+      always align ibar inner box to the left
+      set transparent state for luncher preview wins when win has alpha
+      do not center xwl clients on their parent during first commit
+      send theme signal for dialogs when no buttons are present
+      only pop a single dialog to notify about all fail themes in theme dialog
+      block updating window remembers while applying them
+      use EC_CHANGED for client menu attr changes
+      add separate desklock key up handler to correctly handle caps lock on wayland
+      ensure client rescale picks up current geometry
+      unify tasks module client property handlers
+      avoid hiding->showing->hiding->etc submenus for active menu items
+      add MISC client property event to be manually triggered whenever misc props change
+      refill tasks gadgets on MISC client property events
+      re-select previously selected font+size in font class config
+      clamp xsettings font size to 12 when size is 0
+      only update wl client window size on commit if no pending resize exists
+      handle focus reverting correctly when using desk flip all actions
+      replace existing resize pointer mode for x11 client-initiated resizes
+      lock menu eventing during menu idler positioning
+      use menu item geometry to determine whether menu item is onscreen
+      only set new clients to current desk if desk has not yet been set
+      temporarily cache x11 configure requests which reposition hidden windows
+      remove invalid framelist call on frametable object in imc dialog
+      check imc exe existence before showing in imc dialog list
+      locally store the backlight level when suspending/hibernating
+      don't set gadman overlay gadgets as editing if overlay not visible
+      batch x11 maximize state change requests
+      force min size calc on dialog show
+      replace <br> with <ps/> for all text
+      make grab dialog text read a bit more clearly
+      always use client geometry for comp object centering functions
+      do not add del callback for demo mixer gadgets
+      remove distro packaging files
+      handle gadget ctxpopup placement for desktop gadgets
+      set moving gadgets in pointer site to have moving state
+      perform gadget site layout before calling drop callback
+      destroy dropped gadgets after drop operation completes
+      fix color class dialog sizing
+      use client geometry for fileman popup positioning instead of win object geometry
+      use evas size hints for image widget internals if internal obj is not edje obj
+      go back to image widget for video filepreviews
+      use client frame for internal win geometry setting on show
+      perform client zone updates on canvas move/resize when not ignored
+      do not rescale override x11 clients during hint fetching
+      use clone of remembers list in window remember config
+      simplify placed flag setting during wl surface commit
+      handle xdg "autostart" directories in apps dialogs
+      handle bryce setup when theme is broken
+      add gadget api for determining if a gadget site is a desklock site
+      block some gadgets from appearing on desklock gadget sites
+      hide wl shell clients again after mapping if clients are on a hidden desk
+      track setxkbmap processes and allow only one to run at a time
+      check whether gadgets are elm objects before calling elm functions
+      add spacer gadgets for bryces
+      clamp luncher icon size to 8x8
+      Revert "force recalc on bryce scroller when doing recalc on gadget site"
+      manage corresponding elm profiles when changing e profiles in cfg dialog
+      set elm profile to match e profile during startup
+      Revert "handle updates_full when adding comp object update regions"
+      force client render on mirror show for clients which have not yet been rendered
+      don't pretend randr mode can be null when it can't
+      check correct client prop bitflag in tasks module event
+      initialize stack variables
+      check returns for read/write to powersave fds
+      prevent leak on tiling insert failure
+      use int array for client maximize hint state update
+      formatting
+      use focus_set_with_pointer to focus from clients menu (middle click)
+      remove e_util_pointer_center()
+      set packagekit popup title entry as non-editable
+      track gadget ctxpopups and reposition within zone on resize
+      redo wireless gadget network list popup to use a table
+      do not reset existing client damage on resize if tiler size matches pixmap size
+      move pending client render queue in pixel callback to before render call
+      return during client pixel callback if pixmap is dirty and no updates exist
+      avoid adding render updates on client resize while shading the client
+      recalc desktop gadget sites on compositor update event
+      rename E_EVENT_COMPOSITOR_RESIZE -> E_EVENT_COMPOSITOR_UPDATE
+      check for matching '/' in screen edid before fuzzy matching in randr init
+      use correct string for randr screen fuzzy matching
+      set shaped client image alpha after setting image data
+      don't update clock timer for time gadgets when deleting a non-advanced gadget
+      stack gadgets below site event rect when reparenting gadget
+      add desklock gadget site event rect to event grabber while editor is visible
+      add time config event rects to gadget popups list
+      always set gadget ids when creating new non-demo gadgets
+      block pager gadgets on desklock sites
+      do not force client focus setting after calling e_desk_last_focused_focus()
+      fix autotools sysinfo module build
+      fix uninitialized var warning in pager
+      use tar-ustar for autotools dist
+      add meson files to autotools dist
+      reset zone edge objects after comp canvas update
+      disable auto positioning of gadget ctxpopups for now
+      block all desk flips during window resize
+      add more files to autotools dist
+      further improve wireless gadget popup sizing
+      warp pointer to center of internal dialog on show if dialog has focus
+      apply pointer focus to existing config dialogs from settings window
+      handle first time desk setting for fullscreen clients without crashing
+      remove fullscreen clients from vdesk clients list when toggling sticky state
+      restore 'application name' remember setting in dialog
+      make some pager global vars EINTERN
+      add options for hiding service types in wireless gadget
+      refresh wireless gadgets upon toggling hide for services types
+      only show options for hiding non-active wireless services in gadgets
+      make spacer gadgets smarter when multiple spacers exist
+      always hide wireless non-wired icons in gadget if wired connection exists
+      use animator del function to delete comp object animators
+      handle shade <-> unshade toggling in same frame
+      add/use helper function for rescaling individual clients
+      bump efl version reqs to 1.20.3
+      handle gadget site layout when last gadget in site is a spacer
+      revert gadget ctxpopup autopositioning attempts
+      resolve desktop spec issues with emixer.desktop
+      22.0-alpha release
+
+Romain Naour (4):
+      E: include uuid.h only when Wayland support is enabled.
+      configure.ac: wayland only build fix
+      e_xkb: add guard around skip_new_keyboard
+      E: fix Wayland without xwayland build
+
+Simon Lees (4):
+      README.wayland --enable-elput is required for building wayland efl
+      Also set QT_STYLE_OVERRIDE
+      I should probably be in the Authors list
+      More mailmapping
+
+Stefan Schmidt (10):
+      mailmap: sync updated file from efl repo
+      e_fm: fix last commit to compile again with clang
+      luncher: fix shadowed local variable
+      luncher: mark unused function parameters as such
+      mixer: mark unused function parameter as such
+      mixer: remove unused variables
+      e_fm: remove unused variable
+      e_comp_object: remove unused variable
+      e_client_colume: remove unused variables and add EINA_UNSED where needed
+      meson: remove double entry for NLS support option
+
+Stephen 'Okra' Houston (156):
+      Luncher: Make sure previews are hidden and destroyed.
+      Luncher: Make sure to delete preview when icon is deleted.
+      Luncher: Fix leaking caused by luncher.
+      Luncher: Be aware when a ctxpopup has been dismissed but not yet deleted.
+      Luncher: Add preview windows to the popup on exec if they are already visible.
+      Luncher: Pass the e_comp client to the preview add callback.
+      E_Config: Auto load luncher if ibar is enabled and bump config.
+      E_Config: Fix auto load of luncher
+      Fix luncher crash on right click
+      Sysinfo: Add sysinfo to the configure list.
+      Luncher: Fix right click menu popup crash.
+      E gadgets: Prepare for sysinfo to arrive.
+      Enlightenment: Add the sysinfo gadget that includes battery, temp, frequency, cpu, mem, and net
+      Enlightenment: Sysinfo gadget supporting files
+      Enlightenment: Add the necessary Makefile for sysinfo.
+      Enlightenment: Add a scroller to the sysinfo gadget.
+      Enlightenment: Make sure to compile sysinfo gadget for bsd correctly
+      Enlightenment: Fix double compare in batman and fix compilation on bsd.
+      Batman: Allow multiple instances of batman to work correctly.
+      Enlightenment: Fix cpumonitor gadget to do per core.
+      Enlightenment: Fix cpumonitor gadget core usage calc
+      Enlightenment: Sysinfo gadget: Calculate aspects correctly.
+      Enlightenment: Improve cpumonitor calculation
+      Enlightenment: Sysinfo gadget. Free edje messages.
+      Enlightenment: Sysinfo gadget: Free up the edje message correctly.
+      Enlightenment: Pager gadget - Add a button to configure virtual desktops.
+      Enlightenment: Fix coverity issues related to new sysinfo gadget
+      Enlightenment: Make gadget editor popup scrollable:
+      Enlightenment: Luncher gadget - Scroll the window previews when the extend beyond the current screen.
+      Enlightenment: Wireless gadget - place the ctxpopup after the size hints are set, not before
+      Revert "luncher: do not add clients twice"
+      Revert "luncher: do not add clients twice"
+      Enlightenment: Fix luncher to not duplicate clients who report as both having and not having a .desktop.
+      Enlightenment: Luncher gadget - Don't delete the hash if there is more than one client using it.
+      Enlightenment: Luncher gadget - Add more duplicate checking.
+      Enlightenment: Sysinfo gadgets - Remove temporary gadgets correctly.
+      Enlightenment: Luncher gadget - don't allow .desktop actions on non .desktop icons.
+      Enlightenment: Luncher - Use internal icons for non .desktop clients.
+      Enlightenment - Luncher Gadget - Show preview immediately for icons that have iconified windows.
+      Enlightenment: Sysinfo Gadget - Add an informative popup, as well as a config panel to memusage, cpumonitor, and netstatus.
+      Enlightenment: Sysinfo Gadget - Properly mark popup as deleted.
+      Enlightenment: Luncher gadget - Don't proceed with hiding the preview if the preview's icon is NULL.
+      Enlightenment: Sysinfo gadget - Calculate netstatus max automatically and send percentages to the theme.
+      Enlightenment - Luncher gadget - Don't assume all internal windows are the same.
+      Enlightenment - Luncher Gadget - This fixes a massive bug in client comparisons within luncher.
+      Enlightenment: - Sysinfo gadget - Calculate net percentages correctly.
+      Enlightenment - Sysinfo Gadget - Allow configuring of max speeds for netstatus gadget.
+      Enlightenment: Whitelist and autoload the sysinfo gadgets.
+      Enlightenment - Sysinfo Netstatus Gadget - Use proper data passed to callback to avoid crash.
+      Enlightenment: Sysinfo Gadget - Show real time data in popups and fix sizing of memusage and cpumonitor.
+      Enlightenment: Sysinfo Gadget - Base size on edje extends calcs.
+      Enlightenment - Sysinfo Gadget - Size all sysinfo gadgets by aspect - should allow for proper theming.
+      Enlightenment - Sysinfo Gadget - Add some safety fallbacks for thermal - Fixes a dnd crash.
+      Sysinfo Gadget - Cpumonitor gadget resize callback needs to be removed after resize to prevent looping.
+      Sysinfo Gadget: Don't set aspect to 1:1 out of the box. Let edje determine aspect.
+      Sysinfo - Netstatus gadget - Fix netstatus calculation.
+      Enlightenment - Fix Coverity issues CID 1369051 and 1369052
+      Luncher - Free hashes at the appropriate time.
+      Luncher: Remove closed clients from the preview popup if visible, and close the popup if no more clients are active.
+      Wireless: Don't autoclose left click popup in order to be on the same page with other gadgets.
+      Luncher: Don't update and show the preview on client del unless the preview exists.
+      Batman - Don't show hard to read and redundant text in the gadget itself - Move it to a popup on left click.
+      Batman - Add the config popup to configure batman.
+      Luncher: Determine if client icon is an evas_object_image or edje_object.
+      Batman: Don't show time left in the popup when battery is charged.
+      Pager and Batman: Use pages in config popup and standardize look.
+      Cpumonitor: Add a similar popup to memusage.
+      Batman - Don't destroy the popup on hide.
+      Sysinfo gadgets: Prevent info popup from getting stuck.
+      Sysinfo Gadgets: Allow for vertical themes for all sysinfo gadgets
+      Use an event rect to better handle mouse events in cpumonitor.
+      Luncher/Batman: Don't access an invalid icon structure.
+      Cpumonitor: Return the correct object.
+      Batman: Only show unique batteries.
+      Bryce: Don't proceed to process the mouse down event structure if it is null in the post callback.
+      Revert "Bryce: Don't proceed to process the mouse down event structure if it is null in the post callback."
+      Luncher: Unify icon image file setting code.
+      Luncher: Add config options to function only as a launcher, only as a taskbar, or as both.
+      Luncher: Check for popups when determining clients to add to the tasks.
+      Merge branch 'master' of git+ssh://git.enlightenment.org/core/enlightenment
+      Luncher: Check popup status on the correct client.
+      Sysinfo: Use the correct define for DragonFly.
+      Luncher: Begin work to handle engage sizing correctly.
+      Luncher: Reset scale on mouse out or new effect.
+      Luncher: Don't try to perform aspect set on a deleted bar.
+      Luncher: Show the preview popup based on icon placement.
+      xkbswitch: Remove e_widgets from the add dialog and replacing them with elm
+      Xkbswitch: Use E_Dialog (which uses elm) instead of elm_win directly to make use of built in extra features.
+      Luncher: Show previews on client creation if the point is inside of the corresponding icon.  Pass events on popups once they are deleted.
+      Luncher: Improve mouse in/preview management and fix luncher bar on the desktop.
+      Luncher - Set an icon to inactive when the preview is dismissed as well as on mouse out.
+      Luncher: Improve sizing, animations (including engage), and the functionality of a bar on the desktop.
+      Luncher: Make current preview tracking per instance.
+      Luncher: Make transitions such as engage smoother by including the icon spacers in events.
+      Bryce/Gadgets:  Add backlight, xkbswitch, and mixer gadgets.  This should round out the core gadget ports.
+      Backlight Gadget: Properly set on hold events.
+      Gadgets: Send proper theme strings, and set aspect/size correctly.
+      Sysinfo: Fix use for non linux/bsd os's.
+      Mixer/Backlight: Set correct levels on creation.
+      Luncher Improvements: Don't add multiple global handlers for the same events and don't show preview immediately for iconic.
+      Pager Gadget: Fix potential crash on screen changes such as screen size change.
+      Luncher: make sure all global handlers get created -- check for different luncher types in the callbacks.
+      Gadgets: Remove the word "Gadget" from the name of gadgets.
+      Luncher: Allow the size of previews to be configurable.
+      Gadgets: Follow gadget theme naming conventions.
+      Gadgets: Clamp aspect sets to a minimum of width and height minimum of 1.
+      Wireless Gadget: Make the network list popup and right click popup work correctly.
+      Luncher: Hint the preview popup to have the same min size as the preview windows.
+      Thermal Gadget: Add configuration popup.
+      Cpuclock: Fix sysinfo cpuclock theme name.
+      Thermal config: Fix rounding and math issues when switching between units.
+      Sysinfo - Cpuclock: Add the left click info and right click config popup.
+      Sysinfo: Update Cpuclock and Thermal to the powersave api.
+      Thermal: Add left click info popup
+      Cpuclock: Clean up some governor handling code.
+      CPUClock: Allow setting of governors.
+      Luncher: Remove useless and dangerous global.
+      Thermal: Add units.
+      Gadgets: Make sure to avoid conflicts with functions and globals.
+      Cpuclock: Don't debug print the exec string.
+      Backlight Gadget: No need for a settings button as the uniform right click does the same.
+      Gitignore the sysfs frequency bin.
+      Sysinfo Gadgets: Thread handling improvement. Pause on Screensaver. Follow powersave.
+      Sysinfo Gadget: Thread Lifetime vs Object Lifetime management.
+      Sysinfo Gadget: Unify define macro checking.
+      Sysinfo Gadget: More thread vs object lifetime work: Make threads no longer dependent on the main loop objects and vice versa.
+      Netstatus - Fix dupclicate Receiving labels.
+      CPUMonitor: Don't try and delete objects after the gadget has been removed.
+      Sysinfo Gadgets: Provide only demo data and don't poll/thread when gadgets are in demo mode.
+      Backlight: Use a static number for demo purposes.
+      Mixer Gadget: Use demo gadget in places where demo gadgets are used.
+      Backlight: Don't add del callback for demo gadgets.
+      Gadgets: Don't set gadgets to expand.
+      Pager gadget: Take advantage of new theme. For this to work, you must update EFL first.
+      Luncher: Don't use a second object for the overlay. This requires EFL updating due to theme.
+      CPUMonitor: Fix aspect by using correct theme names.  This requires an EFL update too.
+      CPUMonitor: Make sure to set the number of cores so aspect calcs.
+      Batman: Set the demo gadget to have full battery.
+      CPUMonitor: Don't pack the box in sysinfo mode.
+      Don't dereference NULL pointers in sysinfo and cpuclock.
+      Pager: Add the option to switch between live and plain pagers as well as switch to plain pager when saving power.
+      Pager: Don't empty/fill pager unecessarily.
+      Pager: Remember to remove deleted desks.
+      Luncher: Don't set preview state to menu. Set to alpha. Requires EFL update.
+      Luncher: Remove the engage feature
+      Netstatus: Don't show an incorrect unit on the popup label.
+      Netstatus: Use proper label for throughput in config.
+      Show netstatus output in bits per second while still polling based on ticks to avoid unnecessary wake ups.
+      Netstatus: Average out throughput when time elapsed is greater than 1 second.
+      Luncher: Don't keep callbacks placed on dead objects hanging around.
+      Luncher: When the icon is deleted, don't leave client menu callbacks hanging.
+      Sysinfo gadgets: Revert all uses of faulty e_powersave_sleeper.
+      Temperature module: Don't use e_powersave_sleep.  It doesn't work for ticks faster than a second.
+      Fix bad formatting.
+      Update netstatus in/out in the same file read. Fix cpufreq to use powersave again.
+      Pager gadget config: Don't add icon to an evas, add it to an elm widget.
+
+Stephen Houston (4):
+      Introduce pager gadget using new gadget api.
+      Enlightenment - Luncher Grid Gadget - Do not double-free lists during empty.
+      Enlightenment - Sysinfo Gadget - Size cpumonitor correctly wrt to bryce.
+      Nothing to see here. debug--
+
+Stephen okra Houston (35):
+      Luncher: Introduce Enlightenment's new launcher/taskbar/iconify manager: Luncher
+      Luncher: Preview popup should have a shorter delay.
+      Luncher: Respect events when on hold.
+      Luncher: Don't send mouse events when modifiers are set.
+      Luncher: Improve client tracking.
+      Merge branch 'master' of git+ssh://git.enlightenment.org/core/enlightenment
+      Luncher: Improve client/exec count.
+      Luncher and Pager gadgets: Handle multi head and use the correct zone.
+      Time Gadget: Change the calendar month on mouse wheel.
+      Pager: Fix gadget zone.
+      Pager Gadget: Only empty/fill pager if zone has changed.
+      Luncher: Use the desktop for client population if exists.
+      Luncher/Pager Gadget: Fix coverity issues.
+      Pager Gadget: Respect HOLD flag as well as modifiers on mouse events.
+      Luncher: Use E_FREE_FUNC to del variables that are checked for null.
+      Luncher: Remove useless if statements and make sure to delete an order when instance is deleted.
+      Luncher: Send the off signal with orientation detail so themers can theme icons based on orientation.
+      Luncher: Use more accurate buffer sizes.
+      Pager Gadget: Use the correct value for the popup checkbox when config window is opened.
+      Luncher/Pager Gadgets: Fix coverity warnings for CID 1365330, CID 1365332 and CID 1365405
+      Pager Gadget: Use the current zone for popups.
+      Gadcon Pager: Don't show popup if no gadcon pagers exist.
+      Luncher: Make sure that there is a valid drop before object on dnd.
+      Luncher/Pager gadgets: Make sure to lock/unlock the gadget site on dnd.
+      Luncher Gadget: Don't set aspect twice.
+      Luncher: Fix shadowed declarations.
+      Luncher: Fix ctxpopup delete leak -- Add the style chooser to the config and the engage style.
+      Luncher: Make sure to free the previous window preview, not the current one on mouse in.
+      Luncher module: Use the correct icon for the .desktop.
+      Luncher: Share common code for dismissing the window preview.
+      Luncher: Make sure to correctly create config.
+      Luncher: Add the second gadget to luncher: Luncher Grid.
+      Cpufreq: Don't check for NULL then depend on the value not being NULL. Fixes CID 1365406
+      Luncher: Fix Coverity Issues: CID 1366276 1366275
+      Pager Gadget: Don't recalculate the pager if the zone is NULL.
+
+YeongJong Lee (1):
+      fix korean translation mismatch
+
+
+Release 0.21.9:
+---------------------
+Amitesh Singh (1):
+      e widget entry: fix the compilation warning
+
+Carsten Haitzler (2):
+      e - fix entry wrapper - e entry was plain. elm is markup. do it properly
+      randr - discovered new output names that are display panels in laptops
+
+Derek Foreman (13):
+      Don't require dmabuf buffers to be writeable
+      Fix wl_drm session activation callback
+      Fix wl_drm session (de)activation callback
+      Remove some duplicate operations
+      Fix unused var compiler warning in wl_drm
+      clean up some code
+      Clear the native surface structure before initializing it
+      Initialize the Evas_Native_Surface to 0 for dmabuf tests
+      Test dmabuf via native_surface_set even in software render
+      Make wayland clients render when only visible from mirrors
+      Fix xwayland selection crash
+      Don't block wayland client updates during screen saver fade out
+      Fix geometry for drm outputs
+
+Jean-Philippe ANDRÉ (1):
+      pulse: do not leak strbuf
+
+Marcel Hollerbach (3):
+      emixer: use a better name for the sink inputs
+      mixer: the name has to be a stringshare
+      mixer: do not leak a allocated string
+
+Mike Blumenkrantz (81):
+      check efm path existence before using it during dnd selections
+      unset wl button mask when beginning a move/resize operation
+      unset wl selection target client if that client is deleted
+      don't dup fds during xwl bridged selection transfer, this happens in libwayland
+      add error messages when symbols fail to resolve in xwl init
+      force client pixmap refresh immediately during resize if nocomp is active
+      do not perform zone updates on ignored clients during evas callbacks
+      use FOREACH_SAFE when walking client list during logout
+      another fix for e_comp_wl->ptr.x/y coords being wl_fixed instead of ints
+      perform client raise before triggering move/resize BEGIN client hook
+      delete client raise timer when beginning a move/resize operation
+      do not trigger events/bindings on zone object events with timestamp==0
+      only remove left/right maximize when removing vertical if left/right is set
+      don't null pointer after deleting internal win during wl delete request
+      hook client object unref callback to cleanup comp object internals
+      use fake xinerama screens when initializing wl outputs
+      reject client mouse move if coords match previous position
+      try only 1 reconnect to pulse when mixer fails to init
+      set pass events on shape debug rects
+      print object type if name is null during shape debug
+      if gadget wizard returns a zero id, remove gadget from site and destroy
+- have your system administrator add LIBDIR to '/etc/ld.so.conf'
+      update gadget position during a resize from top/left edge
+      use seat0 as default seat name instead of default
+      use safe list iterating when clearing a gadget site during shutdown
+      block "user" client resizes during comp client updating phase
+      perform move after resize during comp object show
+      multiply pointer axis values by 10 for wl clients
+      check exit status from auth subprocess
+      make e_comp_object_frame_allowed() return false for ignored clients
+      use xwayland check for clients when checking whether to reset focus to root
+      don't run x11 focus (un)set callbacks for override clients
+      don't force shm for xwayland launch and enable gl
+      don't call comp object cleanup functions for clients without comp objects
+      only unredirect clients during comp update after 3 failures
+      try redirecting failed clients again during resize
+      don't crash in randr module when using fake xinerama screens
+      simplify drm output update event by using randr screen refresh queuing
+      only call old ecore_drm2 functions if built and run against < 1.20 efl
+      add "focus" mode for render debug
+      unset DISPLAY in mixer when performing pulseaudio operations under wl
+      use kbd focus resource's client instead of "focused" client in data device
+      unset gadget site's layout pointer after destroying gadgets
+      move gadget del callbacks to AFTER priority
+      update time gadget date string during clock timer
+      only set qt theme override env vars if option to do theme matching is enabled
+      rename clock+time module event handler lists
+      disable clock+time gadget updating during dpms
+      freeze pointer animations while screensaver is active
+      prune unconfigured gadgets from comp object sites upon site del
+      only store the compositor's own data manager resource to e_comp_wl->mgr.resource
+      don't free x11 clipboard source immediately
+      check for different types of load errors during startup image load tests
+      hide pointer cursor clients when unsetting them
+      use more descriptive label than '???' for unconfigured outputs in scren config
+      use real sizing for screen config mode list, not 1xheight
+      do not set e_comp log level
+      use e_util env functions in time module
+      perform immediate move on bryce during autosize
+      do not use elm api to unset centered flag during resize
+      rework internal win centering
+      resize comp bg_blank_object on zone update
+      save xwindow of x11 selection owner, not client
+      add special case for xwl-originating drags to set dnd actions
+      focus x11 root window on init when starting with xwayland
+      handle xwl data source cleanup more effectively
+      free xwl selection atom names after creating selection source
+      set xwl-originating data source dnd actions during source creation
+      add text/plain;charset=utf-8 to xwl-created wl clipboard data source
+      don't create xwl receive pipe for SelectionRequest when getting the selection
+      reject invalid comp object resizes
+      apply gadget aspects with greater precision
+      abort gadget site layouts if the gadget site has not been sized
+      return immediately when setting a null gadget style if current style is null
+      show clients immediately after pixmap refresh if visibility is pending
+      return updates_full state from e_comp_object_damage_exists()
+      use ecore_x_netwm_opacity_get() for x11 opacity checking
+      handle updates_full when adding comp object update regions
+      reset comp object update regions when a render occurs
+      continue to fetch netwm opacity hint if it changed since the last fetch
+      set client opacity any time netwm hint has changed in fetch
+      remove left/right maximize before removing vertical maximize
+
+Release 0.21.8:
+---------------------
+Al Poole (4):
+      Fix macro namings in relation to endianness.
+      Fix compiler type warnings (snprintf)
+      E keyboard settings - use the same icon as the keyboard settings dialog
+      Add user to AUTHORS.
+
+Carsten Haitzler (3):
+      e randr2 - fix freeing of stringshare by making it a stringshare
+      fix fullscreen no blank logic in e's dpms code
+      further fixes to screensaver/banking with window states like fullscreen
+
+Mike Blumenkrantz (65):
+      hide wl clients before deleting them on surface destroy
+      comment out inlist member of E_Comp_Object struct
+      better protect comp object internals from dereferencing freed clients
+      add all wl client frame callbacks with priority AFTER
+      unset deskmirror client's client pointer upon client deletion
+      unset deskmirror client's client pointer upon client deletion
+      defer menu activation mouse-up feed
+      set ON_HOLD when activating start gadget
+      add handler for EFREET_EVENT_DESKTOP_CACHE_BUILD to e_order init
+      do not use saved e_randr screens if fake screens have been added
+      do not force comp objects to render for their proxies if real_hid is set
+      show x11 parent windows during reparent only if not withdrawn
+      return during comp object pixels function if client was deleted during render
+      perform frame adjustments before applying wm spec hints during unmaximize
+      only save client size info on maximize/fullscreen when protocol visible
+      check changes.pos during client maximize/fullscreen and adjust window coords
+      do not start xwayland repeatedly
+      call wl/x compositor shutdown functions directly during comp shutdown
+      force iconic state for iconic x11 clients during shutdown
+      move x11 iconic window init from e_hints -> comp_x initial fetch
+      call e_randr2_shutdown in comp shutdown
+      handle null E_Comp->screen during randr2 shutdown
+      don't set minw for keyboard layout dialog
+      only hide wl clients on surface destroy when surface is mapped
+      handle nested compositor delete requests
+      only set toolbar icon min size if icon exists
+      always use jobs to create bryce menus
+      handle window icons from elm for internal wins
+      only re-set comp object position during show if client has been placed
+      set dialog and tooltip flags for internal clients
+      add wrappers for elm_win util create functions
+      send wl client resize edges during focus-in/out send_configure
+      set signal move/resize clients as action_client internally
+      compare against e_client_action_get() for rejecting wl mouse events
+      do not send mouse events to ssd wl clients if mouse is within ssd region
+      use even more accurate wl callbacks for detecting ssd mouse in/out events
+      always feed mouse events for wl client move events
+      block x11 focus eventing under xwayland
+      do not attempt to set window hidden hints on non-internal x11 windows
+      account for late object setup when adding ssd mouse in/out callbacks
+      disable client maximize anims when unmaximizing before a fullscreen
+      always set E_Client->need_fullscreen when fullscreening
+      force e_client_unmaximize() to complete during fullscreen operation
+      slightly optimize maximize -> fullscreen protocol comms for wl clients
+      check pixmap size before triggering maximize animation
+      force animationless re-maximize when unfullscreening
+      only center internal windows once
+      adjust size for frame geometry in no-animation maximize path
+      call "maximize" smart callback before "maximize_pre"
+      re-set backlight level when resuming from suspend
+      add a client's children to the skiplist during place routine
+      do not arbitrarily center "lost" child windows, center them on the parent
+      support clients as positioner objects in e_comp_object_util_center_on()
+      add cache for dead x11 manager windows
+      remove uuid references from e_pixmap.c
+      re-set list of default desklock bgs when changing to custom bg in config
+      set pass events on efm icons when deleting files
+      make RENDER_DEBUG activate with E_RENDER_DEBUG env var
+      make SHAPE_DEBUG activate with E_SHAPE_DEBUG env var
+      explicitly set nested wl output canvas as a toplevel window
+      avoid refocusing deleted wl clients during comp input ungrabbing
+      set initial x11 window geometry for windows which do not have wm hints
+      check image load error when checking dmabuf viability in gl
+      better handling for iconify during comp object show/hide
+      do not show iconic x11 clients on on icccm hint change
+
+Release 0.21.7:
+---------------------
+Carsten Haitzler (19):
+      enlightenment_sys - eina_init BEFORE switching uid - safer
+      e ervything md5 code - fix warnings about alignment
+      e fileman config - fix definite alignment bug with cast char to int ptr
+      e theme conf config - fix casting char fileds to int ptrs
+      e ptr cast via void fix to reduce warnings
+      efm ipc - fix unaligned int read on ipc decode
+      e comp x - fix property fetch to use int ptr from the start
+      e xsettings - fix warnings about unaligned ptr access
+      e comp - wl - add void cast to reduce warnings
+      e notification - silence alignment warning
+      efm - fix warnings for progress time display
+      evry module - fix warning about comparing signed to unsigned
+      e mixer pulse backened -f ix warning about use of uninit var
+      e comp object - fix warning where a void cast is as goos as the old one
+      e comp - fix stupid cast to from eina rect* to char* to eina rect* again
+      e comp - quiet some warnings for casts that are ok
+      tiling module - fix some warnings with casts and alignment
+      efx - fix unaligned ptr fill that is actually a bug
+      efm - fix nuisance warning about enlightenment
+
+Derek Foreman (1):
+      Dispatch wayland frame callbacks in the correct order
+
+Marcel Hollerbach (1):
+      tiling: dont use floating state when toggling
+
+Mike Blumenkrantz (24):
+      Revert "re-enable getting and setting output rotations in wl_drm"
+      make e_pointer_object_set() a no-op when passing the existing cursor
+      simplify mouse-out cursor reset for wl clients
+      use 1x1 for unsized (internal) clients
+      hide wl client cursors when set_pointer is passed a null surface
+      add note in doc for "gadget_destroyed" callback re: callback ordering
+      ref clients during exe_inst deletion to avoid invalid access after free
+      start xwayland process 2.0s after module load
+      only unset current pointer cursor object if new one is being set
+      force mouse-out on wl clients during delete if mouse.in is set
+      Revert "attempt to re-set wl surface pointer when popping back to "default" pointer type"
+      reset compositor pointer cursor if wl surface destroy is the current cursor
+      add specific handling for xwl cursor unsetting on mouse-out to ssd
+      move wl data device focus-change handling to data device leave() fn
+      simplify _e_comp_wl_data_device_drag_finished() slightly
+      more correctly handle dnd completion for wl
+      fix return code checking for errors when generating wl key events
+      future-proof client hook inlist initialization
+      always set E_Client->placed when successfully moving a comp object
+      ignore all non-NORMAL type wl windows in e_place
+      save config when toggling option to disable startup splash
+      only move new bryces to zone on create, not existing ones
+      show already-visible comp util objects when changing frame type
+      Revert "e - wl mode - stop consuming 100 percent cpu"
+
+Release 0.21.6:
+---------------------
+Andreas Metzler (1):
+      10_typo_restore_LDFLAGS.diff: Fix typo in configure.ac (upstream), causing empty LDFLAGS.
+
+Carsten Haitzler (8):
+      tasks - calculate min width properly given a known height of a gadget
+      efm - warning - change invalid #if toe #ifdef as this is right
+      efm - fix ifs to be ifdef as they should be
+      e bindings - fix warnings about possible use of undefined var
+      appmenu - make appmenu work with click+release and not hide on focus out
+      ibar - fix seg with ibar icon task menus are up while desktop files change
+      e - wl mode - stop consuming 100 percent cpu
+      e dialog - fix unreszable dialogs to not be 1x1
+
+Christopher Michael (2):
+      Use proper coordinate adjustment
+      re-enable getting and setting output rotations in wl_drm
+
+Derek Foreman (3):
+      Fix wayland frame callback times
+      Use a monotonic clock for frame callback times
+
+Mike Blumenkrantz (11):
+      null out animator pointers in efx stop() operations
+      correctly set E_POINTER_RESIZE_BR mode for client keyboard resizing
+      plug iterator leak in e_comp_object_render()
+      remove extra SLEEP prints during startup on non-release builds
+      free configs for demo gadgets on object free
+      do not perform frame coord adjustments for re_manage wayland clients
+      use persistent clipping for comp object input rects
+      ensure that gadget internal del callbacks are handled before other callbacks
+      handle pixmap_refresh() failure cases more accurately under wayland
+      reset demo gadget id before deleting gadget object during drop operation
+      add conditional updates for latest efl apis
+
+Stephen 'Okra' Houston (2):
+      Enlightenment: Make gadget editor popup scrollable:
+      Enlightenment: Wireless gadget - place the ctxpopup after the size hints are set, not before
+
+
+Release 0.21.5:
+---------------------
+Carsten Haitzler (1):
+      e_util_defer_object_del - ensure order of deferred deletions are right
+
+Christopher Michael (1):
+      remove unused variables in e_comp_wl
+
+Derek Foreman (5):
+      Fix keyboard tracking when leaving an xdg shell window
+      Fix crash when exiting an xdg shell application
+      More aggressively prune keyboard focus list
+      Stop sending key up/down events on focus change under wayland
+      test dmabuf pixmaps properly
+
+Mike Blumenkrantz (10):
+      handle xdg-shell maximize/unmaximize calls correctly
+      stack subsurfaces above their parents upon creation
+      use more accurate determination for applying xdg-shell (un)maximize operations
+      do not pop pointer types on client hide events if the client is pass_events
+      set wl pointer surfaces to E_LAYER_CLIENT_PRIO during setup
+      attempt to re-set wl surface pointer when popping back to "default" pointer type
+      fix internal wl windows to exit when border X is clicked
+      use better check for getting wl surface alpha from cursor pixmaps
+      revert all sizing commits to ibar/ibox for the past year
+      maintain "empty" object's size hints when ibar/ibox resizes
+
+Release 0.21.4:
+---------------------
+Al Poole (1):
+      efm - fix popup if file is a fifo
+
+Alexander Pyhalov (1):
+      actually check if PIE is supported for SUID
+
+Carsten Haitzler (3):
+      e fm - fix popup to not crash by referring to possibly deleted data
+      cpufreq - move cpuinfo polling into thread to not block mainloop ever
+      wizard - do not set scale to 1.2 forcibly. use dpi as the def prof says
+
+Christopher Michael (2):
+      check if a client is internal or not before deleting
+      fix missing definition of DRM_FORMAT_XRGB8888
+
+Derek Foreman (6):
+      Block session recovery for internal windows
+      Remove EVAS_CALLBACK_HIDE on shelf when freeing
+      Increase area of tilers for regions
+      Fix massive wayland input region brokenness
+      Fix wayland opaque regions
+      Stop passing dimensions to _e_comp_wl_surface_state_init
+
+Joshua McBeth (1):
+      add dbus message 'org.enlightenment.wm.Window.SendToDesktop'
+
+Marcel Hollerbach (5):
+      wizard: make page 065 translatable
+      mixer: we changed that name when we merged the mixer in
+      update german translation
+      The potfile has changed,
+      mixer: do not set back the value from emix once the drag is finished
+
+Massimo Maiurana (1):
+      Updating italian translation
+
+Michaël Bouchaud (yoz) (2):
+      mixer: fix the volume conversion calc into pulseaudio backend
+      Revert "mixer: lock up the slider for the case a drag is in progress"
+
+Mike Blumenkrantz (80):
+      enforce bryce resizing when orientation changes
+      add EINTERN function for renaming gadget sites
+      fix bryce check for shelf existence on orientation/anchor to break when expected
+      add zone number to bryce names
+      do not check for shelf/bryce existence in opposing anchorages during bryce wizard
+      further improve bryce portability across zones
+      also do full bryce rename when moving between zones
+      add new flag for zone edge objects to allow shape cutting while repeating events
+      force bryce visibility during editor activity
+      add gadget_site_(un)locked smart callbacks for forcing gadget site visibility
+      call gadget_popup smart callback when configuring gadgets
+      handle gadget_popup smart callback on gadget's display object
+      set ON_HOLD flag when triggering gadget mouse buttion actions
+      remove unused attribute from used param
+      trigger bryce menus from right click if event has not been consumed
+      fix bryce upgrade path from 0 -> 2 re:naming
+      set ON_HOLD flag more accurately when activating gadget actions
+      avoid extra recalc when resizing a bryce on its oriented axis
+      add gadget site sizing workaround to avoid elm box sizing desync
+      rename bryces when changing anchors
+      loop bryce autosize recalc when gadget site has not yet calculated its size
+      only find the session recovery remember if ec->remember is not it
+      apply non-session recovery remember to client when creating recovery remember
+      correctly handle applying of non-SR remember in remember config
+      reject successive zone_geometry_dirty() calls
+      trigger zone geometry events when updating zone/desk obstacles
+      force min size on wireless popup during show
+      add workarounds for ctxpopup geometry for use in input shape tiling
+      force recalc on bryce scroller when doing recalc on gadget site
+      handle no-orient gadget visibility based on site->events visibility
+      force gadget site recalc on gadget object creation to ensure sizing
+      copy gadget position from pointer gadget -> drop gadget when executing drop
+      calc new gadget size based on ratio of size:target site size
+      allow client frame changes when switching from frame -> no frame
+      optimize out re-applying of borderless client theme
+      block remembers of e_sys windows
+      use eina_streq for string comparison in e_zone_for_id_get()
+      fix use after free when renaming a bryce
+      clamp bryce position to its parent zone
+      avoid potential divide by zero during bryce startup
+      do not modify bryce zone/name during startup
+      center desktop gadget editor popups upon the zone they have activated
+      attempt to handle non-orient gadget resizes based on anchor corners
+      allow scaling gadgets using wheel events during initial placement
+      attempt to recalc gadgets which overflow their container
+      do not apply efx anchoring to move effects if a resize effect is not active
+      do not return early from _bryce_position()
+      add bool return for e_exec_phony_del() to return deletion success
+      feed mouse-up when dropping a gadget site before enabling events on the site
+      force gadget site recalc from style object if gadget's hints change
+      return correct values from bryce post event callbacks
+      determine wl pixmap argb solely based on image_argb flag
+      avoid crash when calling e_pixmap_image_exists on wl pixmaps without buffers
+      add more parens for previous pixmap commit
+      add special case for returning pixmap argb of unusable wl cursor pixmaps
+      move bryces to E_LAYER_DESKTOP_TOP when not above windows
+      force bryce repositioning onto target zone during startup
+      use only zone coords when moving bryce to its zone during editing
+      clamp e_place calcs to zone geometry
+      break out e_place_desk_region_smart() area calcs into separate function
+      break out repeated code from _e_place_desk_region_smart_area_calc() into separate function
+      reset initial internal wl client states when hiding (but not deleting)
+      unset wl client surface pointer on surface destroy
+      remove wl client pixmap aliasing on del
+      always free wl pixmap buffer list on non-cache image clear
+      unalias internal wl client pixmaps in elm win hide trap callback
+      handle e_scale correctly in bryces
+      keep bryce starting size unscaled
+      unset cur_mouse_action upon deleting client menu
+      send orientation signal to bryce scroller theme
+      only unset cur_mouse_action on client menu delete for the right action
+      focus confirmation option in efm delete dialog
+      disable bindings during desklock
+      reject non-printable characters from lokker entry
+      make confirm dialogs autoselect the confirm option
+      require an elm win to apply auto-visibility for internal wins in wl surface commit
+      clarify some wl surface checks to require elm wins
+      make fake mouse-out upon focus-out conditional on pending pointer warp
+      revise internal window session recovery blocking to compile with older efl
+      prevent divide by zero when calculating gadget aspect sizing
+
+Romain Naour (1):
+      E: fix Wayland without xwayland build
+
+Stefan Schmidt (2):
+      e_fm: fix last commit to compile again with clang
+      e_fm: remove unused variable
+
+Stephen okra Houston (1):
+      Time Gadget: Change the calendar month on mouse wheel.
+
+
+Release 0.21.3:
+---------------------
+Carsten Haitzler (4):
+      update e po files
+      e exec - fix exec of enlightenment_open to use actual e prefix
+      explicitly use eina list types passing into EINA_LIST_FREE()
+
+Cedric BAIL (1):
+      fix text preview to use eina_strbuf_append_length that doesn't call strlen and crash.
+
+Christopher Michael (3):
+      Remove unused variables from ibar_resize_handle function
+      add missing EINA_UNUSED for function parameter
+      Update wayland readme file
+
+Derek Foreman (6):
+      Don't send keyboard leave events to unfocused clients
+      Fix error print when wl_wl fails to start
+      Fix xwayland binary location detection
+      Don't kill self during shutdown
+      NULL out xwayland fd handlers after deleting them
+
+Flavio Ceolin (1):
+      emix: when in alsa mode only operate on master
+
+Marcel Hollerbach (7):
+      ibar: try to get a better min size
+      tiling: place popup on the current active zone
+      tiling: be more accurate on the description
+      mixer: introduce Barrier checks
+      mixer: introduce emix_max_volume_get
+      ibar: multiply size with scale
+      mixer: lock up the slider for the case a drag is in progress
+
+Massimo Maiurana (1):
+      Updating slovenian translation
+
+Mike Blumenkrantz (34):
+      use stringshare_add() for evry files plugin mime types
+      another case of stringshare misuse re:efreet_mime_type_get()
+      ignore xwl clients when flagging wl surfaces as internal
+      add event handler for evry event type, not #define value
+      do not attempt to populate gadgets during type_add if site has not yet been populated
+      add docs for E_Comp struct members
+      move 'unmaximize' smart callback to after geom calc in client_unmaximize
+      use comp canvas win by default for any drop handler with an E_Object
+      handle e_comp deref during e_dnd shutdown to avoid crash
+      always use compositor object stacking when performing internal drags
+      clamp bryces to a lower canvas layer
+      use same layer in bryce editor for "above window" setting
+      set gadget added flag any time a gadget is created or wizarded
+      add separate codepath for handling layout of moving gadgets
+      force smart calc on gadget sites at key points during move operations
+      attempt to retain gadget size when executing move operations
+      adjust gadget drop coords for pointer offset
+      check visibility of gadget site 'events' member to determine drop availability
+      add backspace/delete for clearing all lockscreen gadgets
+      always use largest available size for free-oriented gadgets
+      add gadget doc note for gadget_destroyed callback re:object lifetimes
+      force bgpreview widget to resize after a wallpaper update
+      always delete gadget's display object and ensure gadget object is null
+      do not update bryce layer when restacking to a higher layer than CLIENT_ABOVE
+      remove extraneous recalc trigger when deleting a gadget
+      do not consume key events in comp autoclose key callback if desklock is active
+      add e_util_open(), unify all callers of enlightenment_open
+      remove (wrong) setting of layer for time's clock gadget popup
+      do not show wireless gadget popups if desklock is active
+      force shape queue when gadget util ctxpopups change visibility
+      print object type in shape debug if name does not exist
+      clamp gadget util ctxpopups to E_LAYER_POPUP at the lowest
+      handle "unmaximize" smart callback differently depending on fullscreen state
+      force zone useful geometry recalc on desk flip if prev/next desk has obstacles
+
+Romain Naour (2):
+      configure.ac: wayland only build fix
+      e_xkb: add guard around skip_new_keyboard
+
+Simon Lees (3):
+      Also set QT_STYLE_OVERRIDE
+
+YeongJong Lee (1):
+      fix korean translation mismatch
+
+Release 0.21.2:
+---------------------
+Carsten Haitzler (6):
+      e - fix dnd problems coming from getting top object in comp canvas
+      e ibar/ibox port to elm box - fix assumption on resize
+      e temp module - kill tempget process not terminate to ensure death
+      e ibar - fix devilhorns fix to use the right widght and hight for separator
+      e comp - set alpha after setting native surface to avoid random crash
+      e ipc - fix cleanup of ipc socket on shutdown
+
+Chidambar Zinnoury (3):
+      e: Don’t show two consecutive menu separators if there is no need in client menu.
+      e fm: Add a separator only if there is something before.
+      e fm: Don’t check every other line whether the location is writable when creating menu.
+
+Christopher Michael (6):
+      remove unused variables from _ibar_resize_handle
+      use proper variables to set size_hint_max on ibar
+      e ibar - fix "old man" fat finger typo ;)
+      remove need to create different dialog windows under wayland
+      wl_fb: Check that e_comp_wl_init does not fail.
+      add key_up and key_down methods to sreen interface
+
+Derek Foreman (2):
+      Fix wayland clients not deleting when they're hidden
+      Fix wayland extension global creation
+
+Jean-Philippe ANDRÉ (1):
+      bg: Fix bg with single jpeg images (no edj)
+
+JengHyun Kang (1):
+      e_comp_wl: break from meaningless loop
+
+Marcel Hollerbach (4):
+      e_comp_wl: destroy e_drag when source disappears
+      e_alert: define EFL_BETA_API_SUPPORT before any include
+      e_dnd: move the ungrab to the object free
+      xwayland: show the dialog after ecore_wl2 is in sync
+
+Massimo Maiurana (2):
+      Updating italian and spanish translations
+      Updating italian translation
+
+Mike Blumenkrantz (9):
+      only check x11 configurerequest geometry changes when applicable
+      improve quickaccess relaunch help dialog text
+      move new version of e_comp_top_window_at_xy_get() to dnd, restore old version
+      clear wl subsurface data during delete only if subsurface is not also deleted
+      add xwayland compat for efl 1.19+
+      bump efl wayland req to 1.18 now that it's out
+      Revert "track/manage size hints for zoomap child objects"
+      track current bryce geom, force recalc on gadget site upon change
+      clean up some string leaks in wireless gadget popups
+
+Romain Naour (1):
+      E: include uuid.h only when Wayland support is enabled.
+
+Simon Lees (1):
+      README.wayland --enable-elput is required for building wayland efl
+
+Stefan Schmidt (1):
+      mailmap: sync updated file from efl repo
+
+Release 0.21.1:
+---------------------
+Al Poole (1):
+      fwin: prevent segv when the vaarg abi messup with unused parameter.
+
+Carsten Haitzler (1):
+      e ibar/ibox fix starrting/started signal emittion
+
+Cedric BAIL (1):
+      filepreview: avoid race condition when destroying txt file preview with slow hard drive.
+
+Chidambar Zinnoury (1):
+      e desks config: Bring some flip settings back.
+
+Chris Michael (1):
+      add missing EINA_UNUSED for unused function params
+
+Derek Foreman (3):
+      Properly send kbd focus to xdg_shell popups
+      Make sure the same keyboard resource doesn't end up on the focus list twice
+      Fix xdg_shell focus logic
+
+Marcel Hollerbach (1):
+      e_comp_data: NULL out source once it is freed
+
+Mariusz Bialonczyk (1):
+      modules/temperature: cosmetics: typo fix (celcius -> celsius)
+
+Mike Blumenkrantz (6):
+      handle e_comp_x init failure more effectively and perform cleanups
+      set x11 randr iface for wl_x11 based on wm presence, not composited state
+      match wl_wl output sizing in wl_x11 when running in an existing wm session
+      set unmax flag for xdg shell unmaximize
+      set/unset smart parent as e_widget when adding sub-objects
+      adjust xdg-shell window menu coords by client's coords
+
+
 Release 0.21.0:
 ---------------------
 Highlights:
