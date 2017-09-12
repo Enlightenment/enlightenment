@@ -760,6 +760,7 @@ _site_layout_orient(Evas_Object *o, E_Gadget_Site *zgs)
                   groups++;
                }
           }
+        else if (!groups) groups++;
 
         size = eina_list_data_get(expand);
         if (IS_HORIZ(zgs->orient))
