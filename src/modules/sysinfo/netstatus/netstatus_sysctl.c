@@ -107,14 +107,18 @@ _openbsd_generic_network_status(unsigned long int *in, unsigned long int *out)
 #endif
 
 void
-_netstatus_sysctl_getrstatus(Eina_Bool automax,
-                             unsigned long *prev_in,
-                             unsigned long *prev_incurrent,
-                             unsigned long *prev_inmax,
-                             time_t *last_checked,
-                             int *prev_inpercent)
+_netstatus_sysctl_getstatus(Eina_Bool automax,
+                            time_t *last_checked,
+                            unsigned long *prev_in,
+                            unsigned long *prev_incurrent,
+                            unsigned long *prev_inmax,
+                            int *prev_inpercent,
+                            unsigned long *prev_out,
+                            unsigned long *prev_outcurrent,
+                            unsigned long *prev_outmax,
+                            int *prev_outpercent)
 {
-   unsigned long tot_in = 0, diffin;
+   unsigned long tot_out = 0, tot_in = 0, diffin, diffout;
    int percent = 0;
    unsigned long int incoming = 0, outgoing = 0;
    time_t current = time(NULL);
@@ -124,14 +128,16 @@ _netstatus_sysctl_getrstatus(Eina_Bool automax,
 #elif defined(__FreeBSD__) || defined(__DragonFly__)
    _freebsd_generic_network_status(&incoming, &outgoing);
 #endif
-
    if (!*last_checked)
      *last_checked = current;
-   else if ((current - *last_checked) < 1)
+   if ((current - *last_checked) < 1)
      return;
    else
      diff = current - *last_checked;
+
    tot_in = incoming;
+   tot_out = outgoing;
+
    diffin = tot_in - *prev_in;
    if (diff > 1)
      diffin /= diff;
@@ -153,35 +159,8 @@ _netstatus_sysctl_getrstatus(Eina_Bool automax,
           percent = 0;
         *prev_inpercent = percent;
      }
-   *last_checked = current;
-}
-
-void
-_netstatus_sysctl_gettstatus(Eina_Bool automax,
-                             unsigned long *prev_out,
-                             unsigned long *prev_outcurrent,
-                             unsigned long *prev_outmax,
-                             time_t *last_checked,
-                             int *prev_outpercent)
-{
-   unsigned long tot_out = 0, diffout;
-   int percent = 0;
-   unsigned long int incoming = 0, outgoing = 0;
-   time_t current = time(NULL);
-   time_t diff = 0;
-#if defined(__OpenBSD__)
-   _openbsd_generic_network_status(&incoming, &outgoing);
-#elif defined(__FreeBSD__) || defined(__DragonFly__)
-   _freebsd_generic_network_status(&incoming, &outgoing);
-#endif
-   tot_out = outgoing;
-
-   if (!*last_checked)
-     *last_checked = current;
-   else if ((current - *last_checked) < 1)
-     return;
-   else
-     diff = current - *last_checked;
+   
+   percent = 0;
 
    diffout = tot_out - *prev_out;
    if (diff > 1)

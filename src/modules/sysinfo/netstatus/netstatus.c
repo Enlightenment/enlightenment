@@ -7,14 +7,13 @@ struct _Thread_Config
    int                  interval;
    Instance            *inst;
    Eina_Bool            automax;
+   time_t               checktime;
    int                  inpercent;
-   time_t               intime;
    unsigned long        in;
    unsigned long        incurrent;
    unsigned long        inmax;
    Eina_Stringshare    *instring;
    int                  outpercent;
-   time_t               outtime;
    unsigned long        out;
    unsigned long        outcurrent;
    unsigned long        outmax;
@@ -145,11 +144,13 @@ _netstatus_cb_usage_check_main(void *data, Ecore_Thread *th)
 
         if (ecore_thread_check(th)) break;
 #if defined(__FreeBSD__) || defined(__DragonFly__) || defined(__OpenBSD__)
-        _netstatus_sysctl_getrstatus(thc->automax, &thc->in, &thc->incurrent, &thc->inmax, &thc->intime, &thc->inpercent);
-        _netstatus_sysctl_gettstatus(thc->automax, &thc->out, &thc->outcurrent, &thc->outmax, &thc->outtime, &thc->outpercent);
+        _netstatus_sysctl_getstatus(thc->automax, &thc->checktime, &thc->in, &thc->incurrent,
+            &thc->inmax, &thc->inpercent, &thc->out, &thc->outcurrent, &thc->outmax,
+            &thc->outpercent);
 #else
-        _netstatus_proc_getrstatus(thc->automax, &thc->in, &thc->incurrent, &thc->inmax, &thc->intime, &thc->inpercent);
-        _netstatus_proc_gettstatus(thc->automax, &thc->out, &thc->outcurrent, &thc->outmax, &thc->outtime, &thc->outpercent);
+        _netstatus_proc_getstatus(thc->automax, &thc->checktime, &thc->in, &thc->incurrent,
+            &thc->inmax, &thc->inpercent, &thc->out, &thc->outcurrent, &thc->outmax,
+            &thc->outpercent);
 #endif
         if (!thc->incurrent)
           {
