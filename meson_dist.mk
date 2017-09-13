@@ -14,7 +14,7 @@ data/images/meson.build \
 data/input_methods/meson.build \
 data/tools/meson.build \
 data/units/meson.build \
-data/xsession/meson.build \
+data/session/meson.build \
 doc/meson.build \
 meson.build \
 meson-chmod.sh \

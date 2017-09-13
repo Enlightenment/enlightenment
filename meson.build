@@ -350,7 +350,7 @@ subdir('data/images')
 subdir('data/input_methods')
 subdir('data/tools')
 subdir('data/units')
-subdir('data/xsession')
+subdir('data/session')
 
 subdir('doc')
 

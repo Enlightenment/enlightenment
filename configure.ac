@@ -1059,7 +1059,7 @@ Makefile
 enlightenment.pc
 src/bin/e_fm_shared_types.h
 src/modules/everything/everything.pc
-data/xsession/enlightenment.desktop
+data/session/enlightenment.desktop
 data/etc/sysactions.conf
 data/units/enlightenment.service
 doc/Doxyfile
