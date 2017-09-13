@@ -1,6 +1,6 @@
 ##### project
 project('enlightenment', 'c',
-        version        : '0.22.0-alpha',
+        version        : '0.21.99',
         license        : 'BSD 2 clause',
         default_options: [ 'c_std=gnu99', 'warning_level=2' ],
         meson_version  : '>= 0.40.0')
@@ -16,22 +16,22 @@ if clean_check.returncode() == 0
   error('Meson build requires a clean source tree')
 endif
 
-#e_version   = ver.split('.')
-#git_version = '0'
-#git         = find_program('git')
-#if git.found() == true
-  #git_cmd = run_command(git.path(), 'rev-list', '--count', 'HEAD')
-  #if git_cmd.returncode() == 0
-    #git_version = git_cmd.stdout().strip()
-  #endif
-#endif
+e_version   = ver.split('.')
+git_version = '0'
+git         = find_program('git')
+if git.found() == true
+  git_cmd = run_command(git.path(), 'rev-list', '--count', 'HEAD')
+  if git_cmd.returncode() == 0
+    git_version = git_cmd.stdout().strip()
+  endif
+endif
 
-#e_version_rev = '.'.join([ver, git_version])
-e_version_rev = ver
+e_version_rev = '.'.join([ver, git_version])
+#e_version_rev = e_version
 
 efl_version = '>= 1.20.3'
 
-release = '0.22'
+release = 'ver-0.22'
 #for releases
 #release = '@0@.@1@.@2@'.format(e_version[0], e_version[1], e_version[2])
 
@@ -82,7 +82,7 @@ config_h.set('_ALL_SOURCE'             , '1')
 config_h.set('_POSIX_PTHREAD_SEMANTICS', '1')
 config_h.set('_TANDEM_SOURCE'          , '1')
 config_h.set('__EXTENSIONS__'          , '1')
-config_h.set('E_RELEASE_BUILD'         , '1')
+#config_h.set('E_RELEASE_BUILD'         , '1')
 
 if get_option('nls') == true
   subdir('po')
