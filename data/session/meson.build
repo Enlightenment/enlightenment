@@ -5,8 +5,12 @@ e_desktop = configure_file(input        : 'enlightenment.desktop.in',
                configuration: desktop_config
               )
 
-install_data(e_desktop,
-	install_dir  : join_paths(dir_data, 'xsessions'))
+if config_h.has('HAVE_WAYLAND_ONLY') == false
+	install_data(e_desktop,
+		install_dir  : join_paths(dir_data, 'xsessions'))
+endif
 
-install_data(e_desktop,
-	install_dir  : join_paths(dir_data, 'wayland-sessions'))
+if config_h.has('HAVE_WAYLAND') == false
+	install_data(e_desktop,
+		install_dir  : join_paths(dir_data, 'wayland-sessions'))
+endif
