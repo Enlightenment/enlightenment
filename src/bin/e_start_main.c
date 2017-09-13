@@ -1,6 +1,7 @@
 #include "config.h"
 #include <stdio.h>
 #include <unistd.h>
+#include <limits.h>
 #include <stdlib.h>
 #include <string.h>
 #include <dlfcn.h>
@@ -466,6 +467,56 @@ _e_call_alert(int child, siginfo_t sig, int exit_gdb, const char *backtrace_str,
    return system(buf);
 }
 
+static int
+path_contains(const char *path)
+{
+   char *realp, *realp2, *env2 = NULL, *p, *p2;
+   char buf[PATH_MAX], buf2[PATH_MAX];
+   const char *env;
+   ssize_t p_len;
+   int ret = 0;
+
+   if (!path) return ret;
+   realp = realpath(path, buf);
+   if (!realp) realp = (char *)path;
+
+   env = getenv("PATH");
+   if (!env) goto done;
+   env2 = strdup(env);
+   if (!env2) goto done;
+
+   p = env2;
+   while (p)
+     {
+        p2 = strchr(p, ':');
+
+        if (p2) p_len = p2 - p;
+        else p_len = strlen(p);
+
+        if (p_len <= 0) goto next;
+        if (p2) *p2 = 0;
+        realp2 = realpath(p, buf2);
+        if (realp2)
+          {
+             if (!strcmp(realp, realp2)) goto ok;
+          }
+        else
+          {
+             if (!strcmp(realp, p)) goto ok;
+          }
+next:
+        if (p2) p = p2 + 1;
+        else break;
+     }
+   // failed to find
+   goto done;
+ok:
+   ret = 1;
+done:
+   free(env2);
+   return ret;
+}
+
 int
 main(int argc, char **argv)
 {
@@ -475,6 +526,7 @@ main(int argc, char **argv)
    char buf[16384], **args, *home;
    char valgrind_path[PATH_MAX] = "";
    const char *valgrind_log = NULL;
+   const char *bindir;
    Eina_Bool really_know = EINA_FALSE;
    struct sigaction action;
    pid_t child = -1;
@@ -559,10 +611,12 @@ main(int argc, char **argv)
           }
      }
 
-   if (really_know)
-     _env_path_append("PATH", eina_prefix_bin_get(pfx));
-   else
-     _env_path_prepend("PATH", eina_prefix_bin_get(pfx));
+   bindir = eina_prefix_bin_get(pfx);
+   if (!path_contains(bindir))
+     {
+        if (really_know) _env_path_append("PATH", bindir);
+        else _env_path_prepend("PATH", bindir);
+     }
 
    if ((valgrind_mode || valgrind_tool) &&
        !find_valgrind(valgrind_path, sizeof(valgrind_path)))
