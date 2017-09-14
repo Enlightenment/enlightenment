@@ -79,6 +79,7 @@ _e_zone_cb_mouse_in(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *eve
    E_Zone *zone = data;
 
    if (!ev->timestamp) return;
+   if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return;
    edge = _e_zone_detect_edge(zone, obj);
    if (edge == E_ZONE_EDGE_NONE) return;
 
@@ -91,7 +92,8 @@ _e_zone_cb_mouse_in(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *eve
    zev->drag = !!evas_pointer_button_down_mask_get(e_comp->evas);
 
    ecore_event_add(E_EVENT_ZONE_EDGE_IN, zev, NULL, NULL);
-   e_bindings_edge_in_event_handle(E_BINDING_CONTEXT_ZONE, E_OBJECT(zone), zev);
+   if (e_bindings_edge_in_event_handle(E_BINDING_CONTEXT_ZONE, E_OBJECT(zone), zev))
+     ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
 }
 
 static void
@@ -103,6 +105,7 @@ _e_zone_cb_mouse_out(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *ev
    E_Zone *zone = data;
 
    if (!ev->timestamp) return;
+   if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return;
    edge = _e_zone_detect_edge(zone, obj);
    if (edge == E_ZONE_EDGE_NONE) return;
 
@@ -115,7 +118,8 @@ _e_zone_cb_mouse_out(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *ev
    zev->drag = !!evas_pointer_button_down_mask_get(e_comp->evas);
 
    ecore_event_add(E_EVENT_ZONE_EDGE_OUT, zev, NULL, NULL);
-   e_bindings_edge_out_event_handle(E_BINDING_CONTEXT_ZONE, E_OBJECT(zone), zev);
+   if (e_bindings_edge_out_event_handle(E_BINDING_CONTEXT_ZONE, E_OBJECT(zone), zev))
+     ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
 }
 
 static void
@@ -127,6 +131,7 @@ _e_zone_cb_mouse_down(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *e
    E_Zone *zone = data;
 
    if (!ev->timestamp) return;
+   if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return;
    edge = _e_zone_detect_edge(zone, obj);
    if (edge == E_ZONE_EDGE_NONE) return;
 
@@ -138,7 +143,8 @@ _e_zone_cb_mouse_down(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *e
    zev->button = ev->button;
    zev->modifiers = e_bindings_evas_modifiers_convert(ev->modifiers);
    ecore_event_add(E_EVENT_ZONE_EDGE_OUT, zev, NULL, NULL);
-   e_bindings_edge_down_event_handle(E_BINDING_CONTEXT_ZONE, E_OBJECT(zone), zev);
+   if (e_bindings_edge_down_event_handle(E_BINDING_CONTEXT_ZONE, E_OBJECT(zone), zev))
+     ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
 }
 
 static void
@@ -150,6 +156,7 @@ _e_zone_cb_mouse_up(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *eve
    E_Zone *zone = data;
 
    if (!ev->timestamp) return;
+   if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return;
    edge = _e_zone_detect_edge(zone, obj);
    if (edge == E_ZONE_EDGE_NONE) return;
 
@@ -161,7 +168,8 @@ _e_zone_cb_mouse_up(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *eve
    zev->button = ev->button;
    zev->modifiers = e_bindings_evas_modifiers_convert(ev->modifiers);
    ecore_event_add(E_EVENT_ZONE_EDGE_OUT, zev, NULL, NULL);
-   e_bindings_edge_up_event_handle(E_BINDING_CONTEXT_ZONE, E_OBJECT(zone), zev);
+   if (e_bindings_edge_up_event_handle(E_BINDING_CONTEXT_ZONE, E_OBJECT(zone), zev))
+     ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
 }
 
 static void
@@ -172,6 +180,7 @@ _e_zone_cb_mouse_move(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *e
    E_Zone_Edge edge;
    E_Zone *zone = data;
 
+   if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return;
    edge = _e_zone_detect_edge(zone, obj);
    if (edge == E_ZONE_EDGE_NONE) return;
 
@@ -1521,10 +1530,11 @@ _e_zone_cb_bg_mouse_down(void *data,
                          Evas_Object *obj EINA_UNUSED,
                          void *event_info)
 {
-   E_Zone *zone;
+   E_Zone *zone = data;
+   Evas_Event_Mouse_Down *ev = event_info;
 
-   zone = data;
    if (e_comp_util_mouse_grabbed()) return;
+   if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return;
 
    if (!zone->cur_mouse_action)
      {
@@ -1548,9 +1558,10 @@ _e_zone_cb_bg_mouse_up(void *data,
                        Evas_Object *obj EINA_UNUSED,
                        void *event_info)
 {
-   E_Zone *zone;
+   E_Zone *zone = data;
+   Evas_Event_Mouse_Up *ev = event_info;
 
-   zone = data;
+   if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return;
    if (zone->cur_mouse_action)
      {
         E_Binding_Event_Mouse_Button event;
