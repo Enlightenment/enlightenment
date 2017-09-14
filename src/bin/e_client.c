@@ -2275,6 +2275,8 @@ e_client_idler_before(void)
              evas_object_show(ec->frame);
              ec->changes.visible = !evas_object_visible_get(ec->frame);
              if (ec->changes.visible) EC_CHANGED(ec);
+             if (!e_client_util_desk_visible(ec, e_desk_current_get(ec->zone)))
+               evas_object_hide(ec->frame);
           }
      }
 }
