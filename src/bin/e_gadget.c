@@ -721,13 +721,19 @@ _gadget_act_move(E_Object *obj, const char *params EINA_UNUSED, E_Binding_Event_
    g = e_object_data_get(obj);
    zgc = evas_object_data_get(g, "__e_gadget");
    zgc->moving = 1;
-   evas_object_pass_events_set(zgc->site->layout, 1);
    _editor_pointer_site_init(zgc->site->orient, NULL, NULL, 1);
    e_gadget_site_owner_setup(pointer_site, zgc->site->anchor, NULL);
    ZGS_GET(pointer_site);
    _gadget_util_add(zgs, zgc->type, zgc->id);
    z = eina_list_data_get(zgs->gadgets);
+   if (!z)
+     {
+        E_FREE_FUNC(pointer_site, evas_object_del);
+        zgc->moving = 0;
+        return EINA_TRUE;
+     }
    z->moving = 1;
+   evas_object_pass_events_set(zgc->site->layout, 1);
    evas_object_geometry_get(g, NULL, NULL, &w, &h);
    evas_object_resize(pointer_site, w, h);
    eina_stringshare_refplace(&z->style.name, zgc->style.name);
