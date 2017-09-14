@@ -606,6 +606,7 @@ _bryce_mouse_down(void *data, Evas *e, Evas_Object *obj EINA_UNUSED, void *event
 {
    Bryce *b = data;
 
+   if (b->event_info == event_info) return;
    b->event_info = event_info;
    evas_post_event_callback_push(e, _bryce_mouse_down_post, b);
 }
@@ -627,6 +628,7 @@ _bryce_mouse_up(void *data, Evas *e, Evas_Object *obj EINA_UNUSED, void *event_i
 {
    Bryce *b = data;
 
+   if (b->event_info == event_info) return;
    b->event_info = event_info;
    evas_post_event_callback_push(e, _bryce_mouse_up_post, b);
 }
@@ -648,6 +650,7 @@ _bryce_mouse_wheel(void *data, Evas *e, Evas_Object *obj EINA_UNUSED, void *even
 {
    Bryce *b = data;
 
+   if (b->event_info == event_info) return;
    b->event_info = event_info;
    evas_post_event_callback_push(e, _bryce_mouse_wheel_post, b);
 }
