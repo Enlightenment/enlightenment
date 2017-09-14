@@ -2544,7 +2544,7 @@ e_client_idler_before(void)
           {
              evas_object_show(ec->frame);
              ec->changes.visible = !evas_object_visible_get(ec->frame);
-             ec->changed = ec->changes.visible;
+             if (ec->changes.visible) EC_CHANGED(ec);
           }
      }
 }
