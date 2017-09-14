@@ -1718,11 +1718,41 @@ _site_auto_comp_object_handler(void *d EINA_UNUSED, int t EINA_UNUSED, E_Event_C
    return ECORE_CALLBACK_RENEW;
 }
 
+static void
+_site_zone_hover_update(Evas_Object *r, E_Zone *zone)
+{
+   int zx, zy, zw, zh;
+
+   e_zone_useful_geometry_get(zone, &zx, &zy, &zw, &zh);
+   evas_object_geometry_set(r, zx, zy, zw, zh);
+}
+
+static void
+_site_zone_hover_rect_new(E_Zone *zone)
+{
+   Evas_Object *r = elm_box_add(e_comp->elm);
+   _site_zone_hover_update(r, zone);
+   e_comp_object_util_del_list_append(zone->bg_event_object, r);
+   evas_object_data_set(zone->bg_event_object, "gadget_hover_rect", r);
+}
+
+static Eina_Bool
+_site_zones_update(void *d EINA_UNUSED, int t EINA_UNUSED, E_Event_Zone_Move_Resize *ev)
+{
+   Evas_Object *r;
+
+   r = evas_object_data_get(ev->zone->bg_event_object, "gadget_hover_rect");
+   _site_zone_hover_update(r, ev->zone);
+   return ECORE_CALLBACK_RENEW;
+}
+
 static Eina_Bool
 _site_auto_comp_update()
 {
    E_Gadget_Site *zgs;
    Eina_List *l;
+   Evas_Object *r;
+   E_Zone *zone;
 
    EINA_LIST_FOREACH(sites->sites, l, zgs)
      {
@@ -1731,6 +1761,11 @@ _site_auto_comp_update()
         if (!zgc) continue;
         if (zgc->zone == -1) continue;
         evas_object_smart_need_recalculate_set(zgs->layout, 1);
+     }
+   EINA_LIST_FOREACH(e_comp->zones, l, zone)
+     {
+        r = evas_object_data_get(zone->bg_event_object, "gadget_hover_rect");
+        if (!r) _site_zone_hover_rect_new(zone);
      }
    return ECORE_CALLBACK_RENEW;
 }
@@ -2204,6 +2239,7 @@ e_gadget_util_ctxpopup_place(Evas_Object *g, Evas_Object *ctx, Evas_Object *pos_
    E_Layer layer;
    E_Gadget_Config *zgc;
    Evas_Object *content;
+   E_Zone *zone;
    Elm_Ctxpopup_Direction first, second;
 
    EINA_SAFETY_ON_NULL_RETURN(g);
@@ -2211,7 +2247,8 @@ e_gadget_util_ctxpopup_place(Evas_Object *g, Evas_Object *ctx, Evas_Object *pos_
    EINA_SAFETY_ON_NULL_RETURN(zgc);
 
    content = elm_object_content_get(ctx);
-   elm_ctxpopup_hover_parent_set(ctx, e_comp->elm);
+   zone = e_comp_object_util_zone_get(g);
+   elm_ctxpopup_hover_parent_set(ctx, evas_object_data_get(zone->bg_event_object, "gadget_hover_rect"));
    layer = MAX(evas_object_layer_get(pos_obj ?: g), E_LAYER_POPUP);
    evas_object_layer_set(ctx, layer);
 
@@ -2432,6 +2469,9 @@ e_gadget_init(void)
 
    E_LIST_HANDLER_APPEND(handlers, E_EVENT_COMP_OBJECT_ADD, _site_auto_comp_object_handler, NULL);
    E_LIST_HANDLER_APPEND(handlers, E_EVENT_COMPOSITOR_UPDATE, _site_auto_comp_update, NULL);
+   E_LIST_HANDLER_APPEND(handlers, E_EVENT_ZONE_USEFUL_GEOMETRY_CHANGED, _site_zones_update, NULL);
+
+   E_LIST_FOREACH(e_comp->zones, _site_zone_hover_rect_new);
 
    comp_site = e_comp->canvas->gadget_site = e_gadget_site_add(E_GADGET_SITE_ORIENT_NONE, "__desktop");
    evas_object_event_callback_add(e_comp->canvas->resize_object, EVAS_CALLBACK_RESIZE, _comp_site_resize, comp_site);
