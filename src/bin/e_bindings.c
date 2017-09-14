@@ -862,7 +862,7 @@ e_bindings_edge_event_find(E_Binding_Context ctxt, E_Event_Zone_Edge *ev, Eina_B
    EINA_LIST_FOREACH(edge_bindings, l, binding)
      /* A value of <= -1.0 for the delay indicates it as a mouse-click binding on that edge */
      if (((binding->edge == ev->edge)) &&
-         ((click && (binding->delay == -1.0 * click)) || (!click && (binding->delay >= 0.0))) &&
+         ((click && (binding->delay == -1.0 * ev->button)) || (!click && (binding->delay >= 0.0))) &&
          ((binding->drag_only == ev->drag) || ev->drag) &&
          ((binding->any_mod) || (binding->mod == mod)))
        {
