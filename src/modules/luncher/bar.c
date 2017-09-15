@@ -723,13 +723,10 @@ _bar_icon_preview_menu_hide(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, v
 
    evas_object_event_callback_del_full(obj, EVAS_CALLBACK_HIDE, _bar_icon_preview_menu_hide, ic);
    ic->client_menu = NULL;
-   if (ic)
+   if (ic->preview)
      {
-        if (ic->preview)
-          {
-             ic->inst->current_preview_menu = EINA_FALSE;
-             _bar_icon_preview_mouse_out(ic, NULL, NULL, NULL);
-          }
+        ic->inst->current_preview_menu = EINA_FALSE;
+        _bar_icon_preview_mouse_out(ic, NULL, NULL, NULL);
      }
 }
 
