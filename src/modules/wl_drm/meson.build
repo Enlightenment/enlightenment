@@ -1,4 +1,4 @@
-if get_option('wayland') != true
+if get_option('wayland') != true or dep_ecore_drm2.found() != true
   disable = true
 else
   src = files(
