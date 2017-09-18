@@ -716,6 +716,7 @@ tiling_e_client_does_not_fit(E_Client *ec)
    else
      eina_strbuf_append(buf, "A Window cannot be tiled\n");
 
+   memset(&n, 0, sizeof(n));
    n.app_name = _("Tiling");
    n.icon.icon = "dialog-error";
    n.summary = _("Window cannot be tiled");
