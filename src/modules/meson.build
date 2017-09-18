@@ -128,7 +128,8 @@ foreach m: mods
                     name_prefix        : '',
                     dependencies       : [ module_deps, deps ],
                     install_dir        : _dir_bin,
-                    install            : true
+                    install            : true,
+                    link_args          : '-Wl,--unresolved-symbols=ignore-in-object-files'
                    )
     else
       shared_module(m, src,
@@ -137,7 +138,8 @@ foreach m: mods
                     name_prefix        : '',
                     dependencies       : [ module_deps, deps ],
                     install_dir        : _dir_bin,
-                    install            : true
+                    install            : true,
+                    link_args          : '-Wl,--unresolved-symbols=ignore-in-object-files'
                    )
     endif
   endif
