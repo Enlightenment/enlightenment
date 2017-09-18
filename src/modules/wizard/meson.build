@@ -34,7 +34,8 @@ if get_option(m) == true
                   name_prefix        : '',
                   dependencies       : module_deps,
                   install_dir        : _dir_bin,
-                  install            : true
+                  install            : true,
+                  link_args          : '-Wl,--unresolved-symbols=ignore-in-object-files'
                  )
   endforeach
 
