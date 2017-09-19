@@ -241,6 +241,7 @@ e_menu_activate_key(E_Menu *m, E_Zone *zone, int x, int y, int w, int h, int dir
         break;
 
       case E_MENU_POP_DIRECTION_RIGHT:
+        _e_menu_realize(m);
         m->cur.x = x + w;
         m->cur.y = y;
         _e_menu_activate_first();
