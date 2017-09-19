@@ -410,24 +410,10 @@ _drm2_randr_create(void)
                          s->config.geom.w, s->config.geom.h);
                }
 
-             s->info.can_rot_0 = EINA_FALSE;
-             s->info.can_rot_90 = EINA_FALSE;
-             s->info.can_rot_180 = EINA_FALSE;
-             s->info.can_rot_270 = EINA_FALSE;
-
-             int rotations;
-
-             rotations =
-               ecore_drm2_output_supported_rotations_get(output);
-
-             if (rotations & ECORE_DRM2_ROTATION_NORMAL)
-               s->info.can_rot_0 = EINA_TRUE;
-             if (rotations & ECORE_DRM2_ROTATION_90)
-               s->info.can_rot_90 = EINA_TRUE;
-             if (rotations & ECORE_DRM2_ROTATION_180)
-               s->info.can_rot_180 = EINA_TRUE;
-             if (rotations & ECORE_DRM2_ROTATION_270)
-               s->info.can_rot_270 = EINA_TRUE;
+             s->info.can_rot_0 = EINA_TRUE;
+             s->info.can_rot_90 = EINA_TRUE;
+             s->info.can_rot_180 = EINA_TRUE;
+             s->info.can_rot_270 = EINA_TRUE;
 
              if (cs)
                {
@@ -583,25 +569,12 @@ _drm2_randr_apply(void)
         ecore_drm2_output_mode_set(output, mode, s->config.geom.x,
                                    s->config.geom.y);
 
-        /* TODO: cannot support rotations until we support planes
-         * and we cannot support planes until Atomic support is in */
-        int orient = 0;
-
-        if (s->config.rotation == 0)
-          orient = ECORE_DRM2_ROTATION_NORMAL;
-        else if (s->config.rotation == 90)
-          orient = ECORE_DRM2_ROTATION_90;
-        else if (s->config.rotation == 180)
-          orient = ECORE_DRM2_ROTATION_180;
-        else if (s->config.rotation == 270)
-          orient = ECORE_DRM2_ROTATION_270;
-
-        ecore_drm2_output_rotation_set(output, orient);
+        ecore_drm2_output_enabled_set(output, s->config.enabled);
 
         if (s->config.priority == top_priority)
           _drm2_output_primary_set(outputs, output);
 
-        ecore_drm2_output_enabled_set(output, s->config.enabled);
+        if (!s->config.enabled) continue;
 
         printf("\tDRM2 RRR: Mode\n");
         printf("\t\tDRM2 RRR: Geom: %d %d %dx%d\n",
@@ -613,7 +586,15 @@ _drm2_randr_apply(void)
         printf("\tDRM2 RRR: Relative Mode: %d\n", s->config.relative.mode);
         printf("\tDRM2 RRR: Relative To: %s\n", s->config.relative.to);
         printf("\tDRM2 RRR: Align: %f\n", s->config.relative.align);
+
+        ecore_evas_rotation_with_resize_set(e_comp->ee, s->config.rotation);
+
+        /* TODO: rotate e_comp pointer to match screen ?? */
+        /* ecore_drm2_device_pointer_rotation_set(dev, s->config.rotation); */
      }
+
+   ecore_drm2_device_calibrate(dev, vw, vh);
+   ecore_drm2_device_pointer_max_set(dev, vw, vh);
 }
 
 static void
