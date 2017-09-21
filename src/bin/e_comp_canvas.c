@@ -131,7 +131,7 @@ _key_down(int ctx, Ecore_Event_Key *ev)
            (!e_comp->screen->key_down) || (!e_comp->screen->key_down(ev))) &&
      !e_bindings_key_down_event_handle(ctx, E_OBJECT(e_comp), ev)
 #ifdef HAVE_WAYLAND
-       && !e_comp_wl_key_down(ev)
+       && !e_comp_wl_key_down(ev, NULL)
 #endif
          ;
 }
@@ -163,7 +163,7 @@ _key_up(int ctx, Ecore_Event_Key *ev)
            (!e_comp->screen->key_up) || (!e_comp->screen->key_up(ev))) &&
      !e_bindings_key_up_event_handle(ctx, E_OBJECT(e_comp), ev)
 #ifdef HAVE_WAYLAND
-       && !e_comp_wl_key_up(ev)
+       && !e_comp_wl_key_up(ev, NULL)
 #endif
          ;
 }

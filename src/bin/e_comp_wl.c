@@ -3304,9 +3304,8 @@ e_comp_wl_output_remove(const char *id)
 }
 
 EINTERN Eina_Bool
-e_comp_wl_key_down(Ecore_Event_Key *ev)
+e_comp_wl_key_down(Ecore_Event_Key *ev, E_Client *ec)
 {
-   E_Client *ec = NULL;
    uint32_t serial, *end, *k, keycode;
 
    if ((e_comp->comp_type != E_PIXMAP_TYPE_WL) || (ev->window != e_comp->ee_win)) return EINA_FALSE;
@@ -3342,7 +3341,7 @@ e_comp_wl_key_down(Ecore_Event_Key *ev)
    if ((!e_client_action_get()) && (!e_comp->input_key_grabs) &&
        (!e_menu_is_active()))
      {
-        ec = e_client_focused_get();
+        if (!ec) ec = e_client_focused_get();
         if (ec && ec->comp_data->surface && e_comp_wl->kbd.focused)
           {
              struct wl_resource *res;
@@ -3361,9 +3360,8 @@ e_comp_wl_key_down(Ecore_Event_Key *ev)
 }
 
 EINTERN Eina_Bool
-e_comp_wl_key_up(Ecore_Event_Key *ev)
+e_comp_wl_key_up(Ecore_Event_Key *ev, E_Client *ec)
 {
-   E_Client *ec = NULL;
    uint32_t serial, *end, *k, keycode;
    struct wl_resource *res;
    Eina_List *l;
@@ -3392,7 +3390,7 @@ e_comp_wl_key_up(Ecore_Event_Key *ev)
    if ((!e_client_action_get()) && (!e_comp->input_key_grabs) &&
        (!e_menu_is_active()))
      {
-        ec = e_client_focused_get();
+        if (!ec) ec = e_client_focused_get();
 
         if (e_comp_wl->kbd.focused)
           {
