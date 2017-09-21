@@ -8,7 +8,7 @@ project('enlightenment', 'c',
 ##### convenience variables for later
 proj     = meson.project_name()
 ver      = meson.project_version()
-chmod    = join_paths(meson.source_root(), 'meson-chmod.sh')
+chmod    = join_paths(meson.source_root(), '/meson/meson-chmod.sh')
 
 #### check for mixed autofoo and meson build tree mess
 clean_check = run_command('meson/clean_check.sh')

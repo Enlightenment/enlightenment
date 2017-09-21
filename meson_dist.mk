@@ -17,7 +17,7 @@ data/units/meson.build \
 data/session/meson.build \
 doc/meson.build \
 meson.build \
-meson-chmod.sh \
+meson/meson-chmod.sh \
 meson/clean_check.sh \
 meson/meson_inst.sh \
 meson/meson_modules.sh \
