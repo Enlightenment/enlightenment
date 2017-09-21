@@ -1026,11 +1026,55 @@ _dmabuf_add(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
    return ECORE_CALLBACK_PASS_ON;
 }
 
+extern E_Binding_Key *e_binding_key_current;
+
+static void
+_e_comp_wl_action_route_act_key_route_go_end(E_Object *obj EINA_UNUSED, const char *params EINA_UNUSED, Ecore_Event_Key *ev)
+{
+   Eina_List *l, *ll;
+   Action_Route_Key *ar;
+   E_Binding_Key *binding;
+
+   l = eina_hash_find(key_bindings, ev->key);
+   EINA_LIST_FOREACH(l, ll, ar)
+     {
+        E_Client *ec = wl_resource_get_user_data(ar->surface);
+        if (!ec) continue;
+        binding = &ar->binding.key;
+        if (((e_binding_key_current->mod != binding->mod) && (e_binding_key_current->any_mod != binding->any_mod)) ||
+          (e_binding_key_current->ctxt != binding->ctxt)) continue;
+        e_comp_wl_key_up(ev, ec);
+        break;
+     }
+}
+
+static void
+_e_comp_wl_action_route_act_key_route_go(E_Object *obj EINA_UNUSED, const char *params EINA_UNUSED, Ecore_Event_Key *ev)
+{
+   Eina_List *l, *ll;
+   Action_Route_Key *ar;
+   E_Binding_Key *binding;
+
+   l = eina_hash_find(key_bindings, ev->key);
+   EINA_LIST_FOREACH(l, ll, ar)
+     {
+        E_Client *ec = wl_resource_get_user_data(ar->surface);
+        if (!ec) continue;
+        binding = &ar->binding.key;
+        if (((e_binding_key_current->mod != binding->mod) && (e_binding_key_current->any_mod != binding->any_mod)) ||
+          (e_binding_key_current->ctxt != binding->ctxt)) continue;
+        e_comp_wl_key_down(ev, ec);
+        break;
+     }
+}
+
 EINTERN Eina_Bool e_comp_wl_extensions_tizen_init(void);
 
 EINTERN Eina_Bool
 e_comp_wl_extensions_init(void)
 {
+   E_Action *act;
+
    e_comp_wl->extensions = E_NEW(E_Comp_Wl_Extension_Data, 1);
 
    /* try to add session_recovery to wayland globals */
@@ -1048,6 +1092,10 @@ e_comp_wl_extensions_init(void)
 
    e_client_hook_add(E_CLIENT_HOOK_MOVE_BEGIN, _e_comp_wl_extensions_client_move_begin, NULL);
    e_client_hook_add(E_CLIENT_HOOK_MOVE_END, _e_comp_wl_extensions_client_move_end, NULL);
+
+   act = e_action_add("key_route");
+   act->func.go_key = _e_comp_wl_action_route_act_key_route_go;
+   act->func.end_key = _e_comp_wl_action_route_act_key_route_go_end;
 
    e_comp_wl_extensions_tizen_init();
 
