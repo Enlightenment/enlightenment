@@ -660,6 +660,8 @@ e_bindings_key_ungrab(E_Binding_Context ctxt, Ecore_X_Window win)
 #endif
 }
 
+EINTERN E_Binding_Key *e_binding_key_current;
+
 E_API E_Action *
 e_bindings_key_down_event_handle(E_Binding_Context ctxt, E_Object *obj, Ecore_Event_Key *ev)
 {
@@ -669,10 +671,12 @@ e_bindings_key_down_event_handle(E_Binding_Context ctxt, E_Object *obj, Ecore_Ev
    if (bindings_disabled) return NULL;
    act = e_bindings_key_event_find(ctxt, ev, &binding);
    if (!act) return NULL;
+   e_binding_key_current = binding;
    if (act->func.go_key)
      act->func.go_key(obj, binding->params, ev);
    else if (act->func.go)
      act->func.go(obj, binding->params);
+   e_binding_key_current = NULL;
    return act;
 }
 
@@ -685,10 +689,12 @@ e_bindings_key_up_event_handle(E_Binding_Context ctxt, E_Object *obj, Ecore_Even
    if (bindings_disabled) return NULL;
    act = e_bindings_key_event_find(ctxt, ev, &binding);
    if (!act) return NULL;
+   e_binding_key_current = binding;
    if (act->func.end_key)
      act->func.end_key(obj, binding->params, ev);
    else if (act->func.end)
      act->func.end(obj, binding->params);
+   e_binding_key_current = NULL;
    return act;
 }
 
