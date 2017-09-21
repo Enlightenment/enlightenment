@@ -53,6 +53,7 @@ struct _E_Comp_Wl_Aux_Hint
    int           id;
    const char   *hint;
    const char   *val;
+   int32_t       fd;
    Eina_Bool     changed;
    Eina_Bool     deleted;
 };

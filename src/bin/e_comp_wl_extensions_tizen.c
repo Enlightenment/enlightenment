@@ -181,6 +181,26 @@ _tzpol_iface_cb_aux_hint_add(struct wl_client *client EINA_UNUSED, struct wl_res
 }
 
 static void
+_tzpol_iface_cb_aux_hint_add_fd(struct wl_client *client EINA_UNUSED, struct wl_resource *res_tzpol, struct wl_resource *surf, int32_t id, const char *name, int32_t fd)
+{
+   E_Client *ec;
+   Eina_Bool res = EINA_FALSE;
+
+
+   ec = wl_resource_get_user_data(surf);
+   EINA_SAFETY_ON_NULL_RETURN(ec);
+
+   res = e_hints_aux_hint_add_fd(ec, id, name, fd);
+
+   if (res)
+     {
+        _e_policy_wl_aux_hint_apply(ec);
+        efl_aux_hints_send_allowed_aux_hint(res_tzpol, surf, id);
+        EC_CHANGED(ec);
+     }
+}
+
+static void
 _tzpol_iface_cb_aux_hint_change(struct wl_client *client EINA_UNUSED, struct wl_resource *res_tzpol, struct wl_resource *surf, int32_t id, const char *value)
 {
    E_Client *ec;
@@ -190,6 +210,25 @@ _tzpol_iface_cb_aux_hint_change(struct wl_client *client EINA_UNUSED, struct wl_
    EINA_SAFETY_ON_NULL_RETURN(ec);
 
    res = e_hints_aux_hint_change(ec, id, value);
+
+   if (res)
+     {
+        _e_policy_wl_aux_hint_apply(ec);
+        efl_aux_hints_send_allowed_aux_hint(res_tzpol, surf, id);
+        EC_CHANGED(ec);
+     }
+}
+
+static void
+_tzpol_iface_cb_aux_hint_change_fd(struct wl_client *client EINA_UNUSED, struct wl_resource *res_tzpol, struct wl_resource *surf, int32_t id, int32_t fd)
+{
+   E_Client *ec;
+   Eina_Bool res = EINA_FALSE;
+
+   ec = wl_resource_get_user_data(surf);
+   EINA_SAFETY_ON_NULL_RETURN(ec);
+
+   res = e_hints_aux_hint_change_fd(ec, id, fd);
 
    if (res)
      {
@@ -330,6 +369,8 @@ static const struct efl_aux_hints_interface _e_efl_aux_hints_interface =
    _tzpol_iface_cb_aux_hint_change,
    _tzpol_iface_cb_aux_hint_del,
    _tzpol_iface_cb_supported_aux_hints_get,
+   _tzpol_iface_cb_aux_hint_add_fd,
+   _tzpol_iface_cb_aux_hint_change_fd,
 };
 
 static void
@@ -339,11 +380,11 @@ _efl_aux_hints_destroy(struct wl_resource *res)
 }
 
 static void
-_e_comp_wl_efl_aux_hints_cb_bind(struct wl_client *client, void *data EINA_UNUSED, uint32_t version EINA_UNUSED, uint32_t id)
+_e_comp_wl_efl_aux_hints_cb_bind(struct wl_client *client, void *data EINA_UNUSED, uint32_t version, uint32_t id)
 {
    struct wl_resource *res;
 
-   if (!(res = wl_resource_create(client, &efl_aux_hints_interface, 1, id)))
+   if (!(res = wl_resource_create(client, &efl_aux_hints_interface, MIN(version, 2), id)))
      {
         ERR("Could not create %s interface", "efl-aux-hints");
         wl_client_post_no_memory(client);

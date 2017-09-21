@@ -1,6 +1,6 @@
 <protocol name="efl_aux_hints">
 
-  <interface name="efl_aux_hints" version="1">
+  <interface name="efl_aux_hints" version="2">
     <request name="add_aux_hint">
       <arg name="surface" type="object" interface="wl_surface"/>
       <arg name="id" type="int"/>
@@ -34,6 +34,17 @@
       <arg name="val" type="string"/>
       <arg name="options" type="array"/>
     </event>
+    <request name="add_aux_hint_fd">
+      <arg name="surface" type="object" interface="wl_surface"/>
+      <arg name="id" type="int"/>
+      <arg name="hint" type="string"/>
+      <arg name="val" type="fd"/>
+    </request>
+    <request name="change_aux_hint_fd">
+      <arg name="surface" type="object" interface="wl_surface"/>
+      <arg name="id" type="int"/>
+      <arg name="val" type="fd"/>
+    </request>
   </interface>
 
 </protocol>

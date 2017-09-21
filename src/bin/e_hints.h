@@ -67,11 +67,13 @@ E_API const Eina_List * e_hints_aux_hint_supported_get(void);
 
 E_API Eina_Bool e_hints_aux_hint_add(E_Client *ec, int32_t id, const char *name, const char *val);
 E_API Eina_Bool e_hints_aux_hint_change(E_Client *ec, int32_t id, const char *val);
+E_API Eina_Bool e_hints_aux_hint_add_fd(E_Client *ec, int32_t id, const char *name, int32_t fd);
+E_API Eina_Bool e_hints_aux_hint_change_fd(E_Client *ec, int32_t id, int32_t fd);
 E_API Eina_Bool e_hints_aux_hint_del(E_Client *ec, int32_t id);
 E_API const char * e_hints_aux_hint_value_get(E_Client *ec, const char *name);
 
-E_API Eina_Bool e_hints_aux_hint_add_with_pixmap(E_Pixmap *cp, int32_t id, const char *name, const char *val);
-E_API Eina_Bool e_hints_aux_hint_change_with_pixmap(E_Pixmap *cp, int32_t id, const char *val);
+E_API Eina_Bool e_hints_aux_hint_add_with_pixmap(E_Pixmap *cp, int32_t id, const char *name, const char *val, int32_t fd);
+E_API Eina_Bool e_hints_aux_hint_change_with_pixmap(E_Pixmap *cp, int32_t id, const char *val, int32_t fd);
 E_API Eina_Bool e_hints_aux_hint_del_with_pixmap(E_Pixmap *cp, int32_t id);
 E_API const char * e_hints_aux_hint_value_get_with_pixmap(E_Pixmap *cp, const char *name);
 #endif

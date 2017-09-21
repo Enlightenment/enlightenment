@@ -1736,14 +1736,28 @@ E_API Eina_Bool
 e_hints_aux_hint_add(E_Client *ec, int32_t id, const char *name, const char *val)
 {
    if (!ec) return EINA_FALSE;
-   return e_hints_aux_hint_add_with_pixmap(ec->pixmap, id, name, val);
+   return e_hints_aux_hint_add_with_pixmap(ec->pixmap, id, name, val, -1);
+}
+
+E_API Eina_Bool
+e_hints_aux_hint_add_fd(E_Client *ec, int32_t id, const char *name, int32_t fd)
+{
+   if (!ec) return EINA_FALSE;
+   return e_hints_aux_hint_add_with_pixmap(ec->pixmap, id, name, NULL, fd);
 }
 
 E_API Eina_Bool
 e_hints_aux_hint_change(E_Client *ec, int32_t id, const char *val)
 {
    if (!ec) return EINA_FALSE;
-   return e_hints_aux_hint_change_with_pixmap(ec->pixmap, id, val);
+   return e_hints_aux_hint_change_with_pixmap(ec->pixmap, id, val, -1);
+}
+
+E_API Eina_Bool
+e_hints_aux_hint_change_fd(E_Client *ec, int32_t id, int32_t fd)
+{
+   if (!ec) return EINA_FALSE;
+   return e_hints_aux_hint_change_with_pixmap(ec->pixmap, id, NULL, fd);
 }
 
 E_API Eina_Bool
@@ -1761,7 +1775,7 @@ e_hints_aux_hint_value_get(E_Client *ec, const char *name)
 }
 
 E_API Eina_Bool
-e_hints_aux_hint_add_with_pixmap(E_Pixmap *cp, int32_t id, const char *name, const char *val)
+e_hints_aux_hint_add_with_pixmap(E_Pixmap *cp, int32_t id, const char *name, const char *val, int32_t fd)
 {
    E_Comp_Wl_Client_Data *cdata;
    Eina_Bool found = EINA_FALSE;
@@ -1780,6 +1794,7 @@ e_hints_aux_hint_add_with_pixmap(E_Pixmap *cp, int32_t id, const char *name, con
                {
                   eina_stringshare_del(hint->val);
                   hint->val = eina_stringshare_add(val);
+                  hint->fd = fd;
                   hint->changed = EINA_TRUE;
                   if (hint->deleted)
                     hint->deleted = EINA_FALSE;
@@ -1800,6 +1815,7 @@ e_hints_aux_hint_add_with_pixmap(E_Pixmap *cp, int32_t id, const char *name, con
         hint->id = id;
         hint->hint = eina_stringshare_add(name);
         hint->val = eina_stringshare_add(val);
+        hint->fd = fd;
         hint->changed = EINA_TRUE;
         hint->deleted = EINA_FALSE;
         cdata->aux_hint.hints = eina_list_append(cdata->aux_hint.hints, hint);
@@ -1813,7 +1829,7 @@ e_hints_aux_hint_add_with_pixmap(E_Pixmap *cp, int32_t id, const char *name, con
 }
 
 E_API Eina_Bool
-e_hints_aux_hint_change_with_pixmap(E_Pixmap *cp, int32_t id, const char *val)
+e_hints_aux_hint_change_with_pixmap(E_Pixmap *cp, int32_t id, const char *val, int32_t fd)
 {
    E_Comp_Wl_Client_Data *cdata;
    Eina_List *l;
@@ -1832,6 +1848,7 @@ e_hints_aux_hint_change_with_pixmap(E_Pixmap *cp, int32_t id, const char *val)
                {
                   eina_stringshare_del(hint->val);
                   hint->val = eina_stringshare_add(val);
+                  hint->fd = fd;
                   hint->changed = EINA_TRUE;
                   cdata->aux_hint.changed = 1;
                }
