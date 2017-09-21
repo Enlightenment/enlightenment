@@ -7,7 +7,6 @@ static void               _e_bindings_edge_free(E_Binding_Edge *bind);
 static void               _e_bindings_signal_free(E_Binding_Signal *bind);
 static void               _e_bindings_wheel_free(E_Binding_Wheel *bind);
 static void               _e_bindings_acpi_free(E_Binding_Acpi *bind);
-static E_Binding_Modifier _e_bindings_modifiers(unsigned int modifiers);
 static Eina_Bool          _e_bindings_edge_cb_timer(void *data);
 
 /* local subsystem globals */
@@ -128,7 +127,7 @@ e_bindings_ecore_event_mouse_wheel_convert(const Ecore_Event_Mouse_Wheel *ev, E_
    event->canvas.x = e_comp_canvas_x_root_adjust(ev->root.x);
    event->canvas.y = e_comp_canvas_y_root_adjust(ev->root.y);
    event->timestamp = ev->timestamp;
-   event->modifiers = _e_bindings_modifiers(ev->modifiers);
+   event->modifiers = e_bindings_modifiers_from_ecore(ev->modifiers);
 }
 
 E_API void
@@ -139,7 +138,7 @@ e_bindings_ecore_event_mouse_button_convert(const Ecore_Event_Mouse_Button *ev, 
    event->canvas.x = e_comp_canvas_x_root_adjust(ev->root.x);
    event->canvas.y = e_comp_canvas_y_root_adjust(ev->root.y);
    event->timestamp = ev->timestamp;
-   event->modifiers = _e_bindings_modifiers(ev->modifiers);
+   event->modifiers = e_bindings_modifiers_from_ecore(ev->modifiers);
 
    event->double_click = !!ev->double_click;
    event->triple_click = !!ev->triple_click;
@@ -701,7 +700,7 @@ e_bindings_key_event_find(E_Binding_Context ctxt, Ecore_Event_Key *ev, E_Binding
    Eina_List *l;
    E_Action *act = NULL;
 
-   mod = _e_bindings_modifiers(ev->modifiers);
+   mod = e_bindings_modifiers_from_ecore(ev->modifiers);
    if (e_binding_key_list_cb)
      {
         act = e_binding_key_list_cb(ctxt, ev, mod, bind_ret);
@@ -865,7 +864,7 @@ e_bindings_edge_event_find(E_Binding_Context ctxt, E_Event_Zone_Edge *ev, Eina_B
    E_Action *act = NULL;
    Eina_List *l;
 
-   mod = _e_bindings_modifiers(ev->modifiers);
+   mod = e_bindings_modifiers_from_ecore(ev->modifiers);
    EINA_LIST_FOREACH(edge_bindings, l, binding)
      /* A value of <= -1.0 for the delay indicates it as a mouse-click binding on that edge */
      if (((binding->edge == ev->edge)) &&
@@ -1459,8 +1458,8 @@ e_bindings_context_match(E_Binding_Context bctxt, E_Binding_Context ctxt)
    return 0;
 }
 
-static E_Binding_Modifier
-_e_bindings_modifiers(unsigned int modifiers)
+E_API E_Binding_Modifier
+e_bindings_modifiers_from_ecore(unsigned int modifiers)
 {
    E_Binding_Modifier mod = 0;
 

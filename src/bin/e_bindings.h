@@ -203,6 +203,7 @@ E_API void e_bindings_ecore_event_mouse_button_convert(const Ecore_Event_Mouse_B
 E_API void e_bindings_ecore_event_mouse_wheel_convert(const Ecore_Event_Mouse_Wheel *ev, E_Binding_Event_Wheel *event);
 
 E_API int e_bindings_context_match(E_Binding_Context bctxt, E_Binding_Context ctxt);
+E_API E_Binding_Modifier e_bindings_modifiers_from_ecore(unsigned int modifiers);
 
 E_API void e_bindings_disabled_set(Eina_Bool disabled);
 #endif
