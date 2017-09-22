@@ -307,7 +307,7 @@ if get_option('wayland') == true
 endif
 
 dep_ecore_x = []
-if get_option('wayland') == true and get_option('wl-x11') == false and get_option('xwayland')
+if get_option('wayland') == true and get_option('wl-x11') == false and get_option('xwayland') == false
   config_h.set('HAVE_WAYLAND_ONLY', '1')
 else
   dep_ecore_x = dependency('ecore-x')
