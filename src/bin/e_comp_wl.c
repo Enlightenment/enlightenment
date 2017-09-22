@@ -2126,8 +2126,8 @@ _e_comp_wl_subsurface_commit_to_cache(E_Client *ec)
    sdata->cached.has_data = EINA_TRUE;
 }
 
-static Eina_Bool
-_cb_early_frame_animator(void *data)
+static void
+_cb_early_frame_cb(void *data, const Efl_Event *event EINA_UNUSED)
 {
    E_Client *ec;
 
@@ -2141,11 +2141,10 @@ _cb_early_frame_animator(void *data)
     */
    if (ec->comp_data->early_frame++ > 15)
      {
-       ec->comp_data->early_frame_animator = NULL;
        ec->comp_data->early_frame = 0;
-       return EINA_FALSE;
+       efl_event_callback_del(e_comp->evas, EFL_EVENT_ANIMATOR_TICK,
+                              _cb_early_frame_cb, data);
      }
-   return EINA_TRUE;
 }
 
 static void
@@ -2153,15 +2152,16 @@ _e_comp_wl_surface_early_frame(E_Client *ec)
 {
    if (e_comp_object_damage_exists(ec->frame))
      {
-        ecore_animator_del(ec->comp_data->early_frame_animator);
-        ec->comp_data->early_frame_animator = NULL;
+        efl_event_callback_del(e_comp->evas, EFL_EVENT_ANIMATOR_TICK,
+                               _cb_early_frame_cb, ec);
         ec->comp_data->early_frame = 0;
         return;
      }
    if (ec->on_post_updates) return;
+   if (!ec->comp_data->early_frame)
+       efl_event_callback_add(e_comp->evas, EFL_EVENT_ANIMATOR_TICK,
+                              _cb_early_frame_cb, ec);
    ec->comp_data->early_frame = 1;
-   if (ec->comp_data->early_frame_animator) return;
-   ec->comp_data->early_frame_animator = ecore_animator_add(_cb_early_frame_animator, ec);
 }
 
 static void
@@ -2532,8 +2532,8 @@ _e_comp_wl_client_cb_del(void *data EINA_UNUSED, E_Client *ec)
    /* make sure this is a wayland client */
    if (e_pixmap_type_get(ec->pixmap) != E_PIXMAP_TYPE_WL) return;
 
-   ecore_animator_del(ec->comp_data->early_frame_animator);
-   ec->comp_data->early_frame_animator = NULL;
+   efl_event_callback_del(e_comp->evas, EFL_EVENT_ANIMATOR_TICK,
+                          _cb_early_frame_cb, ec);
    ec->comp_data->early_frame = 0;
 
    if (ec == e_comp_wl->wl.client_ec)
