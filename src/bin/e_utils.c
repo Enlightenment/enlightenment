@@ -1487,7 +1487,21 @@ e_util_open(const char *exe, void *data)
    snprintf(sb, size, "%s/enlightenment_open ", e_prefix_bin_get());
    len = strlen(sb);
    sb = e_util_string_append_quoted(sb, &size, &len, exe);
-   ret = ecore_exe_run(sb, data);
+   ret = e_util_exe_safe_run(sb, data);
    free(sb);
    return ret;
+}
+
+E_API Ecore_Exe *
+e_util_exe_safe_run(const char *cmd, void *data)
+{
+   Ecore_Exe_Flags flags = ECORE_EXE_NONE;
+
+#if (ECORE_VERSION_MAJOR >= 1) && (ECORE_VERSION_MINOR >= 21)
+   flags |= ECORE_EXE_ISOLATE_IO;
+#else
+   flags |= 1024; // isolate_io is bit 10 .... it will be ignored if
+                  // efl doesnt do it, so harmless
+#endif
+   return ecore_exe_pipe_run(cmd, flags, data);
 }

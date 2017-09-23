@@ -46,7 +46,7 @@ e_remember_init(E_Startup_Mode mode)
           {
              if ((rem->apply & E_REMEMBER_APPLY_RUN) && (rem->prop.command))
                {
-                  if (!ecore_exe_run(rem->prop.command, NULL))
+                  if (!e_util_exe_safe_run(rem->prop.command, NULL))
                     {
                        e_util_dialog_show(_("Run Error"),
                                           _("Enlightenment was unable to fork a child process:<ps/>"

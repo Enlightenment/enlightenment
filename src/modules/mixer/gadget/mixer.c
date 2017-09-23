@@ -383,7 +383,7 @@ _emixer_exec_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_
    elm_ctxpopup_dismiss(inst->popup);
    if (gmixer_context->emixer) return;
 
-   gmixer_context->emixer = ecore_exe_run("emixer", NULL);
+   gmixer_context->emixer = e_util_exe_safe_run("emixer", NULL);
    if (gmixer_context->emix_event_handler)
      ecore_event_handler_del(gmixer_context->emix_event_handler);
    gmixer_context->emix_event_handler =

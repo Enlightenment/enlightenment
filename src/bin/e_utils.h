@@ -68,6 +68,8 @@ E_API void e_util_memclear(void *s, size_t n);
 
 E_API Ecore_Exe *e_util_open(const char *exe, void *data);
 
+E_API Ecore_Exe *e_util_exe_safe_run(const char *cmd, void *data);
+
 static inline Eina_Bool
 isedje(const Evas_Object *obj)
 {

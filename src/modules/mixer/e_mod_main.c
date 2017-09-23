@@ -445,7 +445,7 @@ _emixer_exec_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_
    _popup_del(inst);
    if (mixer_context->emixer) return;
 
-   mixer_context->emixer = ecore_exe_run("emixer", NULL);
+   mixer_context->emixer = e_util_exe_safe_run("emixer", NULL);
    if (mixer_context->emix_event_handler)
       ecore_event_handler_del(mixer_context->emix_event_handler);
    mixer_context->emix_event_handler =
