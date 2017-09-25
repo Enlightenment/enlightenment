@@ -458,7 +458,7 @@ _e_exec_cb_exec(void *data, Efreet_Desktop *desktop, char *exec, int remaining)
                desktop->path);
              return NULL;
           }
-        exe = ecore_exe_run(exec, inst);
+        exe = e_util_exe_safe_run(exec, inst);
         if (chdir(buf))
           {
              e_util_dialog_show
@@ -496,11 +496,11 @@ _e_exec_cb_exec(void *data, Efreet_Desktop *desktop, char *exec, int remaining)
                          }
                     }
                   else
-                    exe = ecore_exe_run(exec, inst);
+                    exe = e_util_exe_safe_run(exec, inst);
                   efreet_desktop_free(tdesktop);
                }
              else
-               exe = ecore_exe_run(exec, inst);
+               exe = e_util_exe_safe_run(exec, inst);
           }
         else if (desktop && desktop->url)
           {
