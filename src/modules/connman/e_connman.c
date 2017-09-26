@@ -246,22 +246,21 @@ static void _service_parse_prop_changed(struct Connman_Service *cs,
                   }
                if (eina_array_count(proxy_excludes) > 0)
                   {
-                     char buf[256], concatinated_proxy_exceptions[256];
-                     size_t concatinated_string_length;
-                     concatinated_proxy_exceptions[0] = '\0';
-                     for (unsigned int i = 0; i < eina_array_count(proxy_excludes); i++)
+                     Eina_Strbuf *buf;
+                     Eina_Array_Iterator it;
+                     unsigned int i;
+                     const char *p;
+
+                     buf = eina_strbuf_new();
+                     EINA_ARRAY_ITER_NEXT(proxy_excludes, i, p, it)
                         {
-                           snprintf(buf, (sizeof(buf) - 1), "%s ",
-                               (const char*)eina_array_data_get(proxy_excludes, i));
-                           concatinated_string_length = eina_strlcat(concatinated_proxy_exceptions, buf,
-                               sizeof(concatinated_proxy_exceptions));
+                           if (i)
+                             eina_strbuf_append_char(buf, ',');
+                           eina_strbuf_append(buf, p);
                         }
-                     if ((concatinated_string_length < sizeof(concatinated_proxy_exceptions)) && (concatinated_string_length > 0))
-                        {
-                           concatinated_proxy_exceptions[concatinated_string_length - 1] = '\0';
-                        }
-                     DBG("New no_proxy: %s", (const char*)concatinated_proxy_exceptions);
-                     e_env_set("no_proxy", concatinated_proxy_exceptions);
+                     DBG("New no_proxy: %s", eina_strbuf_string_get(buf));
+                     e_env_set("no_proxy", eina_strbuf_string_get(buf));
+                     eina_strbuf_free(buf);
                   }
             }
          else if (strcmp(method, "direct") == 0)
