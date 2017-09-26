@@ -1740,15 +1740,6 @@ _e_comp_intercept_show_helper(E_Comp_Object *cw)
         EC_CHANGED(cw->ec);
         return;
      }
-   if (cw->ec->input_only)
-     {
-        /* who cares */
-        cw->real_hid = 0;
-        evas_object_move(cw->smart_obj, cw->ec->x, cw->ec->y);
-        evas_object_resize(cw->smart_obj, cw->ec->w, cw->ec->h);
-        evas_object_show(cw->smart_obj);
-        return;
-     }
    /* ensure that some kind of frame calc has occurred if there's a frame */
    if (e_pixmap_is_x(cw->ec->pixmap) && cw->frame_object &&
        (cw->ec->h == cw->ec->client.h) && (cw->ec->w == cw->ec->client.w))
