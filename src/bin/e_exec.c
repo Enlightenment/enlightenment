@@ -270,8 +270,6 @@ e_exec_phony(E_Client *ec)
         return NULL;
      }
    inst->used = 1;
-   ec->exe_inst = inst;
-   inst->clients = eina_list_append(inst->clients, ec);
    if (ec->zone) inst->screen = ec->zone->num;
    if (ec->desk)
      {
@@ -282,8 +280,8 @@ e_exec_phony(E_Client *ec)
    lnew = eina_list_append(l, inst);
    if (l) eina_hash_modify(e_exec_instances, inst->key, lnew);
    else eina_hash_add(e_exec_instances, inst->key, lnew);
-   inst->ref++;
    ecore_event_add(E_EVENT_EXEC_NEW, inst, _e_exec_cb_exec_new_free, inst);
+   e_exec_instance_client_add(inst, ec);
    return inst;
 }
 
