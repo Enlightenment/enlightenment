@@ -3871,7 +3871,17 @@ _e_comp_x_hook_client_fetch(void *d EINA_UNUSED, E_Client *ec)
                     }
                }
              if (ec->placed && (!e_client_util_resizing_get(ec)) && (!ec->override))
-               e_client_rescale(ec);
+               {
+                  if (ec->fullscreen || ec->maximized)
+                    e_client_rescale(ec);
+                  else
+                    {
+                       int rw = ec->w, rh = ec->h;
+
+                       e_client_resize_limit(ec, &rw, &rh);
+                       evas_object_resize(ec->frame, rw, rh);
+                    }
+               }
           }
         if (ec->icccm.min_w > 32767) ec->icccm.min_w = 32767;
         if (ec->icccm.min_h > 32767) ec->icccm.min_h = 32767;
