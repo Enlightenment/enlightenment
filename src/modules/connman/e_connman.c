@@ -240,9 +240,9 @@ static void _service_parse_prop_changed(struct Connman_Service *cs,
                   {
                      DBG("New {all,http{,s}}_proxy: %s",
                          (const char*)eina_array_data_get(proxy_servers, 0));
-                     e_env_set("all_proxy", eina_array_data_get(proxy_servers, 0));
+                     e_env_set("ALL_PROXY", eina_array_data_get(proxy_servers, 0));
                      e_env_set("http_proxy", eina_array_data_get(proxy_servers, 0));
-                     e_env_set("https_proxy", eina_array_data_get(proxy_servers, 0));
+                     e_env_set("HTTPS_PROXY", eina_array_data_get(proxy_servers, 0));
                   }
                if (eina_array_count(proxy_excludes) > 0)
                   {
@@ -259,16 +259,16 @@ static void _service_parse_prop_changed(struct Connman_Service *cs,
                            eina_strbuf_append(buf, p);
                         }
                      DBG("New no_proxy: %s", eina_strbuf_string_get(buf));
-                     e_env_set("no_proxy", eina_strbuf_string_get(buf));
+                     e_env_set("NO_PROXY", eina_strbuf_string_get(buf));
                      eina_strbuf_free(buf);
                   }
             }
          else if (strcmp(method, "direct") == 0)
             {
-               e_env_unset("all_proxy");
+               e_env_unset("ALL_PROXY");
                e_env_unset("http_proxy");
-               e_env_unset("https_proxy");
-               e_env_unset("no_proxy");
+               e_env_unset("HTTPS_PROXY");
+               e_env_unset("NO_PROXY");
             }
 
          if (proxy_excludes)
