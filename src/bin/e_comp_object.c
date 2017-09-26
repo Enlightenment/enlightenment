@@ -851,8 +851,8 @@ _e_comp_object_effect_visibility_start(E_Comp_Object *cw, Eina_Bool state)
      ecore_evas_pointer_xy_get(e_comp->ee, &x, &y);
    else
      evas_pointer_canvas_xy_get(e_comp->evas, &x, &y);
-   x -= cw->x;
-   y -= cw->y;
+   x -= cw->ec->x;
+   y -= cw->ec->y;
    if (cw->ec->zone)
      zw = cw->ec->zone->w, zh = cw->ec->zone->h;
    else
@@ -863,8 +863,8 @@ _e_comp_object_effect_visibility_start(E_Comp_Object *cw, Eina_Bool state)
         if (!zone) zone = e_zone_current_get();
         zw = zone->w, zh = zone->h;
      }
-   e_comp_object_effect_params_set(cw->smart_obj, 1, (int[]){cw->x, cw->y,
-      cw->w, cw->h, zw, zh, x, y}, 8);
+   e_comp_object_effect_params_set(cw->smart_obj, 1, (int[]){cw->ec->x, cw->ec->y,
+      cw->ec->w, cw->ec->h, zw, zh, x, y}, 8);
    e_comp_object_effect_params_set(cw->smart_obj, 0, (int[]){state}, 1);
    e_comp_object_effect_start(cw->smart_obj, _e_comp_object_done_defer, cw);
    return EINA_TRUE;
