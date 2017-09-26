@@ -233,16 +233,6 @@ main(int argc, char **argv)
 #endif
    TS("Begin Startup");
 
-   /* When running as a wayland compositor, if a child process has
-    * access to stdin it can issue some pretty sketchy ioctl()s
-    * and mess with the console.  So let's just set close_on_exec.
-    * It may be better to fix this in EFL's ecore_exe_run in some
-    * way, but it will be a while until a stable EFL release has
-    * it sorted...
-    */
-   eina_file_close_on_exec(STDIN_FILENO, EINA_TRUE);
-   /* </HULK SMASH> */
-
    /* trap deadly bug signals and allow some form of sane recovery */
    /* or ability to gdb attach and debug at this point - better than your */
    /* wm/desktop vanishing and not knowing what happened */
