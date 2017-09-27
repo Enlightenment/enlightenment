@@ -139,13 +139,15 @@ _memusage_popup_create(Instance *inst)
                                   _memusage_popup_deleted, inst);
 
    table = elm_table_add(popup);
-   E_EXPAND(table); E_FILL(table);
+   E_EXPAND(table);
+   E_FILL(table);
    elm_object_content_set(popup, table);
    evas_object_show(table);
 
-   snprintf(buf, sizeof(buf), _("Memory usage (available %ld MB)"),
+   snprintf(buf, sizeof(buf), _("Memory Usage (Available %ld MB)"),
             inst->cfg->memusage.mem_total / 1024);
    snprintf(buf2, sizeof(buf2), "<big><b>%s</b></big>", buf);
+
    label = elm_label_add(table);
    E_EXPAND(label); E_ALIGN(label, 0.5, 0.5);
    elm_object_text_set(label, buf2);
@@ -157,8 +159,10 @@ _memusage_popup_create(Instance *inst)
    elm_object_text_set(label, _("Used"));
    elm_table_pack(table, label, 0, 1, 1, 1);
    evas_object_show(label);
+
    pbar = elm_progressbar_add(table);
-   E_EXPAND(pbar); E_FILL(pbar);
+   E_EXPAND(pbar);
+   E_FILL(pbar);
    elm_progressbar_span_size_set(pbar, 200 * e_scale);
    elm_table_pack(table, pbar, 1, 1, 1, 1);
    evas_object_show(pbar);
@@ -169,8 +173,10 @@ _memusage_popup_create(Instance *inst)
    elm_object_text_set(label, _("Buffers"));
    elm_table_pack(table, label, 0, 2, 1, 1);
    evas_object_show(label);
+
    pbar = elm_progressbar_add(table);
-   E_EXPAND(pbar); E_FILL(pbar);
+   E_EXPAND(pbar);
+   E_FILL(pbar);
    elm_progressbar_span_size_set(pbar, 200 * e_scale);
    elm_table_pack(table, pbar, 1, 2, 1, 1);
    evas_object_show(pbar);
@@ -181,8 +187,10 @@ _memusage_popup_create(Instance *inst)
    elm_object_text_set(label, _("Cached"));
    elm_table_pack(table, label, 0, 3, 1, 1);
    evas_object_show(label);
+
    pbar = elm_progressbar_add(table);
-   E_EXPAND(pbar); E_FILL(pbar);
+   E_EXPAND(pbar);
+   E_FILL(pbar);
    elm_progressbar_span_size_set(pbar, 200 * e_scale);
    elm_table_pack(table, pbar, 1, 3, 1, 1);
    evas_object_show(pbar);
@@ -193,24 +201,29 @@ _memusage_popup_create(Instance *inst)
    elm_object_text_set(label, _("Shared"));
    elm_table_pack(table, label, 0, 4, 1, 1);
    evas_object_show(label);
+
    pbar = elm_progressbar_add(table);
-   E_EXPAND(pbar); E_FILL(pbar);
+   E_EXPAND(pbar);
+   E_FILL(pbar);
    elm_progressbar_span_size_set(pbar, 200 * e_scale);
    elm_table_pack(table, pbar, 1, 4, 1, 1);
    evas_object_show(pbar);
    evas_object_data_set(popup, "mem_shared_pbar", pbar);
 
-   snprintf(buf, sizeof(buf), _("Swap usage (available %ld MB)"),
+   snprintf(buf, sizeof(buf), _("Swap Usage (Available %ld MB)"),
             inst->cfg->memusage.swp_total / 1024);
    snprintf(buf2, sizeof(buf2), "<big><b>%s</b></big>", buf);
+
    label = elm_label_add(table);
-   E_EXPAND(label); E_ALIGN(label, 0.5, 0.5);
+   E_EXPAND(label);
+   E_ALIGN(label, 0.5, 0.5);
    elm_object_text_set(label, buf2);
    elm_table_pack(table, label, 0, 5, 2, 1);
    evas_object_show(label);
 
    pbar = elm_progressbar_add(table);
-   E_EXPAND(pbar); E_FILL(pbar);
+   E_EXPAND(pbar);
+   E_FILL(pbar);
    elm_table_pack(table, pbar, 0, 6, 2, 1);
    evas_object_show(pbar);
    evas_object_data_set(popup, "swap_pbar", pbar);

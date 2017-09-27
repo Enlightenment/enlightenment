@@ -272,7 +272,7 @@ _cpuclock_popup_dismissed(void *data, Evas_Object *obj, void *event_info EINA_UN
    E_FREE_FUNC(obj, evas_object_del);
 
    inst->cfg->cpuclock.popup = NULL;
-   inst->cfg->cpuclock.popup_label = NULL;
+   inst->cfg->cpuclock.popup_pbar = NULL;
 }
 
 static void
@@ -285,9 +285,9 @@ _cpuclock_popup_deleted(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_U
 static Evas_Object *
 _cpuclock_popup_create(Instance *inst)
 {
-   Evas_Object *popup, *box, *label;
+   Evas_Object *popup, *table, *label, *pbar;
    double f = inst->cfg->cpuclock.status->cur_frequency;
-   char buf[100], *u;
+   char buf[4096], text[4096], *u;
 
    if (f < 1000000)
      {
@@ -309,19 +309,33 @@ _cpuclock_popup_create(Instance *inst)
    evas_object_event_callback_add(popup, EVAS_CALLBACK_DEL,
                                   _cpuclock_popup_deleted, inst);
 
-   box = elm_box_add(popup);
-   elm_box_horizontal_set(box, EINA_FALSE);
-   E_EXPAND(box); E_FILL(box);
-   elm_object_content_set(popup, box);
-   evas_object_show(box);
+   table = elm_table_add(popup);
+   E_EXPAND(table);
+   E_FILL(table);
+   elm_object_content_set(popup, table);
+   evas_object_show(table);
 
-   label = elm_label_add(box);
-   elm_object_style_set(label, "marker");
-   snprintf(buf, 100, "%s: %1.1f %s", _("Frequency"), f, u);
-   elm_object_text_set(label, buf);
-   elm_box_pack_end(box, label);
-   evas_object_show(label);
-   inst->cfg->cpuclock.popup_label = label;
+   snprintf(text, sizeof(text), "<big><b>%s</b></big>", _("Frequency"));
+
+   label = elm_label_add(table);
+   E_EXPAND(label);
+   E_ALIGN(label, 0.5, 0.5);
+   elm_object_text_set(label, text);
+   elm_table_pack(table, label, 0, 0, 2, 1);
+   evas_object_show(label);    
+
+   snprintf(buf, sizeof(buf), "%1.1f %s (%d %%)", f, u,
+                 inst->cfg->cpuclock.percent);
+
+   pbar = elm_progressbar_add(table);
+   E_EXPAND(pbar);
+   E_FILL(pbar);
+   elm_progressbar_span_size_set(pbar, 200 * e_scale);
+   elm_progressbar_value_set(pbar, (float)inst->cfg->cpuclock.percent / 100);
+   elm_progressbar_unit_format_set(pbar, buf);
+   elm_table_pack(table, pbar, 0, 1, 2, 1);
+   evas_object_show(pbar);
+   inst->cfg->cpuclock.popup_pbar = pbar;
 
    e_gadget_util_ctxpopup_place(inst->o_main, popup,
                                 inst->cfg->cpuclock.o_gadget);
@@ -416,7 +430,31 @@ _cpuclock_face_update_current(Instance *inst)
    edje_object_message_send(elm_layout_edje_get(inst->cfg->cpuclock.o_gadget), EDJE_MESSAGE_INT_SET, 3,
                             frequency_msg);
    E_FREE(frequency_msg);
-
+   if (inst->cfg->cpuclock.tot_min_frequency == 0)
+     inst->cfg->cpuclock.tot_min_frequency = inst->cfg->cpuclock.status->cur_frequency;
+   if (inst->cfg->cpuclock.status->cur_frequency >
+       inst->cfg->cpuclock.tot_max_frequency)
+     {
+        inst->cfg->cpuclock.tot_max_frequency = inst->cfg->cpuclock.status->cur_frequency;
+        inst->cfg->cpuclock.percent = 100;
+     }
+   if (inst->cfg->cpuclock.status->cur_frequency <
+            inst->cfg->cpuclock.tot_min_frequency)
+     {
+        inst->cfg->cpuclock.tot_min_frequency = inst->cfg->cpuclock.status->cur_frequency;
+        inst->cfg->cpuclock.percent = 0;
+     }
+   if ((inst->cfg->cpuclock.tot_min_frequency > 0) &&
+       (inst->cfg->cpuclock.tot_max_frequency >=
+        inst->cfg->cpuclock.tot_min_frequency))
+     {
+        inst->cfg->cpuclock.percent = ((double)(inst->cfg->cpuclock.status->cur_frequency -
+                                                inst->cfg->cpuclock.tot_min_frequency) /
+                                       (double)(inst->cfg->cpuclock.tot_max_frequency -
+                                                inst->cfg->cpuclock.tot_min_frequency)) * 100;
+     }
+   else
+     inst->cfg->cpuclock.percent = 0;
    /* BSD crashes here without the if-condition
     * since it has no governors (yet) */
    if (inst->cfg->cpuclock.status->cur_governor)
@@ -429,7 +467,7 @@ _cpuclock_face_update_current(Instance *inst)
    if (inst->cfg->cpuclock.popup)
      {
         double f = inst->cfg->cpuclock.status->cur_frequency;
-        char buf[100], *u;
+        char buf[4096], *u;
 
         if (f < 1000000)
           {
@@ -443,8 +481,11 @@ _cpuclock_face_update_current(Instance *inst)
              f /= 1000000;
              u = _("GHz");
           }
-        snprintf(buf, 100, "%s: %1.1f %s", _("Frequency"), f, u);
-        elm_object_text_set(inst->cfg->cpuclock.popup_label, buf);
+        snprintf(buf, sizeof(buf), "%1.1f %s (%d %%)", f, u,
+                 inst->cfg->cpuclock.percent);
+        elm_progressbar_unit_format_set(inst->cfg->cpuclock.popup_pbar, buf);
+        elm_progressbar_value_set(inst->cfg->cpuclock.popup_pbar,
+                                  (float)inst->cfg->cpuclock.percent / 100);
      }
 }
 
@@ -954,8 +995,8 @@ _cpuclock_removed_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_data)
 
    if (inst->o_main != event_data) return;
 
-   if (inst->cfg->cpuclock.popup_label)
-     E_FREE_FUNC(inst->cfg->cpuclock.popup, evas_object_del);
+   if (inst->cfg->cpuclock.popup_pbar)
+     E_FREE_FUNC(inst->cfg->cpuclock.popup_pbar, evas_object_del);
    if (inst->cfg->cpuclock.popup)
      E_FREE_FUNC(inst->cfg->cpuclock.popup, evas_object_del);
    if (inst->cfg->cpuclock.configure)
@@ -988,8 +1029,8 @@ sysinfo_cpuclock_remove(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_U
    Instance *inst = data;
    Ecore_Event_Handler *handler;
 
-   if (inst->cfg->cpuclock.popup_label)
-     E_FREE_FUNC(inst->cfg->cpuclock.popup, evas_object_del);
+   if (inst->cfg->cpuclock.popup_pbar)
+     E_FREE_FUNC(inst->cfg->cpuclock.popup_pbar, evas_object_del);
    if (inst->cfg->cpuclock.popup)
      E_FREE_FUNC(inst->cfg->cpuclock.popup, evas_object_del);
    if (inst->cfg->cpuclock.configure)
@@ -1017,6 +1058,9 @@ _cpuclock_created_cb(void *data, Evas_Object *obj, void *event_data EINA_UNUSED)
 
    if (inst->cfg->cpuclock.pstate_min == 0) inst->cfg->cpuclock.pstate_min = 1;
    if (inst->cfg->cpuclock.pstate_max == 0) inst->cfg->cpuclock.pstate_max = 101;
+   inst->cfg->cpuclock.percent = 0;
+   inst->cfg->cpuclock.tot_min_frequency = 0;
+   inst->cfg->cpuclock.tot_max_frequency = 0;
 
    inst->cfg->cpuclock.o_gadget = elm_layout_add(inst->o_main);
    if (orient == E_GADGET_SITE_ORIENT_VERTICAL)
@@ -1070,6 +1114,9 @@ sysinfo_cpuclock_create(Evas_Object *parent, Instance *inst)
 
    if (inst->cfg->cpuclock.pstate_min == 0) inst->cfg->cpuclock.pstate_min = 1;
    if (inst->cfg->cpuclock.pstate_max == 0) inst->cfg->cpuclock.pstate_max = 101;
+   inst->cfg->cpuclock.percent = 0;
+   inst->cfg->cpuclock.tot_min_frequency = 0;
+   inst->cfg->cpuclock.tot_max_frequency = 0;
 
    inst->cfg->cpuclock.o_gadget = elm_layout_add(parent);
    e_theme_edje_object_set(inst->cfg->cpuclock.o_gadget, "base/theme/gadget/cpuclock",

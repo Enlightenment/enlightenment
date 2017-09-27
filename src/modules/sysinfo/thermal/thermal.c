@@ -27,6 +27,7 @@ _thermal_face_level_set(Instance *inst, double level)
    if (level < 0.0) level = 0.0;
    else if (level > 1.0)
      level = 1.0;
+   inst->cfg->thermal.percent = level * 100;
    msg.val = level;
    edje_object_message_send(elm_layout_edje_get(inst->cfg->thermal.o_gadget), EDJE_MESSAGE_FLOAT, 1, &msg);
 }
@@ -63,13 +64,18 @@ _thermal_apply(Instance *inst, int temp)
      }
    if (inst->cfg->thermal.popup)
      {
-        char buf[100];
+        char buf[4096];
 
         if (inst->cfg->thermal.units == FAHRENHEIT)
-          snprintf(buf, 100, "%s: %d F", _("Temperature"), (int)((inst->cfg->thermal.temp * 9.0 / 5.0) + 32));
+          snprintf(buf, sizeof(buf), "%d F (%d %%)",
+                   (int)((inst->cfg->thermal.temp * 9.0 / 5.0) + 32),
+                   inst->cfg->thermal.percent);
         else
-          snprintf(buf, 100, "%s: %d C", _("Temperature"), inst->cfg->thermal.temp);
-        elm_object_text_set(inst->cfg->thermal.popup_label, buf);
+          snprintf(buf, sizeof(buf), "%d C (%d %%)",
+                   (int)inst->cfg->thermal.temp,
+                   inst->cfg->thermal.percent);
+        elm_progressbar_value_set(inst->cfg->thermal.popup_pbar,
+                                  (float)inst->cfg->thermal.percent / 100);
      }
 }
 
@@ -161,7 +167,7 @@ _thermal_popup_dismissed(void *data, Evas_Object *obj, void *event_info EINA_UNU
    E_FREE_FUNC(obj, evas_object_del);
 
    inst->cfg->thermal.popup = NULL;
-   inst->cfg->thermal.popup_label = NULL;
+   inst->cfg->thermal.popup_pbar = NULL;
 }
 
 static void
@@ -174,8 +180,8 @@ _thermal_popup_deleted(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UN
 static Evas_Object *
 _thermal_popup_create(Instance *inst)
 {
-   Evas_Object *popup, *box, *label;
-   char buf[100];
+   Evas_Object *popup, *table, *label, *pbar;
+   char text[4096], buf[100];
 
    popup = elm_ctxpopup_add(e_comp->elm);
    elm_object_style_set(popup, "noblock");
@@ -184,22 +190,37 @@ _thermal_popup_create(Instance *inst)
    evas_object_event_callback_add(popup, EVAS_CALLBACK_DEL,
                                   _thermal_popup_deleted, inst);
 
-   box = elm_box_add(popup);
-   elm_box_horizontal_set(box, EINA_FALSE);
-   E_EXPAND(box); E_FILL(box);
-   elm_object_content_set(popup, box);
-   evas_object_show(box);
+   table = elm_table_add(popup);
+   E_EXPAND(table);
+   E_FILL(table);
+   elm_object_content_set(popup, table);
+   evas_object_show(table);
 
-   label = elm_label_add(box);
-   elm_object_style_set(label, "marker");
-   if (inst->cfg->thermal.units == FAHRENHEIT)
-     snprintf(buf, 100, "%s: %d F", _("Temperature"), (int)((inst->cfg->thermal.temp * 9.0 / 5.0) + 32));
-   else
-     snprintf(buf, 100, "%s: %d C", _("Temperature"), inst->cfg->thermal.temp);
-   elm_object_text_set(label, buf);
-   elm_box_pack_end(box, label);
+   snprintf(text, sizeof(text), "<big><b>%s</b></big>", _("Temperature"));
+
+   label = elm_label_add(table);
+   E_EXPAND(label); E_ALIGN(label, 0.5, 0.5);
+   elm_object_text_set(label, text);
+   elm_table_pack(table, label, 0, 0, 2, 1);
    evas_object_show(label);
-   inst->cfg->thermal.popup_label = label;
+
+   if (inst->cfg->thermal.units == FAHRENHEIT)
+     snprintf(buf, sizeof(buf), "%d F (%d %%)",
+              (int)((inst->cfg->thermal.temp * 9.0 / 5.0) + 32),
+              inst->cfg->thermal.percent);
+   else
+     snprintf(buf, sizeof(buf), "%d C (%d %%)",
+              (int)inst->cfg->thermal.temp,
+              inst->cfg->thermal.percent);
+
+   pbar = elm_progressbar_add(table);
+   E_EXPAND(pbar); E_FILL(pbar);
+   elm_progressbar_span_size_set(pbar, 200 * e_scale);
+   elm_progressbar_value_set(pbar, (float)inst->cfg->thermal.percent / 100);
+   elm_progressbar_unit_format_set(pbar, buf);
+   elm_table_pack(table, pbar, 0, 1, 2, 1);
+   evas_object_show(pbar);
+   inst->cfg->thermal.popup_pbar = pbar;
 
    e_gadget_util_ctxpopup_place(inst->o_main, popup,
                                 inst->cfg->thermal.o_gadget);
@@ -334,8 +355,8 @@ _thermal_removed_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_data)
 
    if (inst->o_main != event_data) return;
 
-   if (inst->cfg->thermal.popup_label)
-     E_FREE_FUNC(inst->cfg->thermal.popup_label, evas_object_del);
+   if (inst->cfg->thermal.popup_pbar)
+     E_FREE_FUNC(inst->cfg->thermal.popup_pbar, evas_object_del);
    if (inst->cfg->thermal.popup)
      E_FREE_FUNC(inst->cfg->thermal.popup, evas_object_del);
    if (inst->cfg->thermal.configure)
@@ -364,8 +385,8 @@ sysinfo_thermal_remove(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UN
    Instance *inst = data;
    Ecore_Event_Handler *handler;
 
-   if (inst->cfg->thermal.popup_label)
-     E_FREE_FUNC(inst->cfg->thermal.popup_label, evas_object_del);
+   if (inst->cfg->thermal.popup_pbar)
+     E_FREE_FUNC(inst->cfg->thermal.popup_pbar, evas_object_del);
    if (inst->cfg->thermal.popup)
      E_FREE_FUNC(inst->cfg->thermal.popup, evas_object_del);
    if (inst->cfg->thermal.configure)
@@ -389,6 +410,7 @@ _thermal_created_cb(void *data, Evas_Object *obj, void *event_data EINA_UNUSED)
    e_gadget_configure_cb_set(inst->o_main, _thermal_configure_cb);
 
    inst->cfg->thermal.temp = 900;
+   inst->cfg->thermal.percent = 0;
    inst->cfg->thermal.have_temp = EINA_FALSE;
 
    inst->cfg->thermal.o_gadget = elm_layout_add(inst->o_main);
@@ -419,6 +441,7 @@ Evas_Object *
 sysinfo_thermal_create(Evas_Object *parent, Instance *inst)
 {
    inst->cfg->thermal.temp = 900;
+   inst->cfg->thermal.percent = 0;
    inst->cfg->thermal.have_temp = EINA_FALSE;
 
    inst->cfg->thermal.o_gadget = elm_layout_add(parent);

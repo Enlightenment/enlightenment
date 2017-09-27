@@ -41,9 +41,20 @@ _netstatus_face_update(Thread_Config *thc)
 
    if (thc->inst->cfg->netstatus.popup)
      {
-        char text[4096];
-        snprintf(text, sizeof(text), "%s<ps/>%s", thc->instring, thc->outstring);
-        elm_object_text_set(thc->inst->cfg->netstatus.popup_label, text);
+        char buf[4096];
+        snprintf(buf, sizeof(buf), "%s (%d %%)",
+                thc->inst->cfg->netstatus.instring,
+                thc->inst->cfg->netstatus.inpercent);
+        elm_progressbar_value_set(thc->inst->cfg->netstatus.popup_inpbar,
+                                  (float)thc->inst->cfg->netstatus.inpercent / 100);
+        elm_progressbar_unit_format_set(thc->inst->cfg->netstatus.popup_inpbar, buf);
+        memset(buf, 0x00, sizeof(buf));
+        snprintf(buf, sizeof(buf), "%s (%d %%)",
+                thc->inst->cfg->netstatus.outstring,
+                thc->inst->cfg->netstatus.outpercent);
+        elm_progressbar_value_set(thc->inst->cfg->netstatus.popup_outpbar,
+                                  (float)thc->inst->cfg->netstatus.outpercent / 100);
+        elm_progressbar_unit_format_set(thc->inst->cfg->netstatus.popup_outpbar, buf);
      }
 }
 
@@ -75,10 +86,10 @@ _netstatus_popup_deleted(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_
 static void
 _netstatus_mouse_down_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_data)
 {
-   Evas_Object *label, *popup;
+   Evas_Object *label, *popup, *table, *pbar;
    Evas_Event_Mouse_Down *ev = event_data;
    Instance *inst = data;
-   char text[4096];
+   char text[4096], buf[4096];
 
    if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return;
    if (ev->button != 3)
@@ -93,13 +104,59 @@ _netstatus_mouse_down_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_
         evas_object_smart_callback_add(popup, "dismissed", _netstatus_popup_dismissed, inst);
         evas_object_event_callback_add(popup, EVAS_CALLBACK_DEL, _netstatus_popup_deleted, inst);
 
-        snprintf(text, sizeof(text), "%s<ps/>%s", inst->cfg->netstatus.instring, inst->cfg->netstatus.outstring);
-        label = elm_label_add(popup);
-        elm_object_style_set(label, "marker");
+        table = elm_table_add(popup);
+        E_EXPAND(table);
+        E_FILL(table);
+        elm_object_content_set(popup, table);
+        evas_object_show(table);
+
+        snprintf(text, sizeof(text), "<big><b>%s</b></big>", _("Network Throughput"));
+
+        label = elm_label_add(table);
+        E_EXPAND(label); E_ALIGN(label, 0.5, 0.5);
         elm_object_text_set(label, text);
-        elm_object_content_set(popup, label);
+        elm_table_pack(table, label, 0, 0, 2, 1);
         evas_object_show(label);
-        inst->cfg->netstatus.popup_label = label;
+
+        label = elm_label_add(table);
+        E_ALIGN(label, 0.0, 0.5);
+        elm_object_text_set(label, _("Receiving"));
+        elm_table_pack(table, label, 0, 1, 1, 1);
+        evas_object_show(label);
+
+        snprintf(buf, sizeof(buf), "%s (%d %%)",
+                inst->cfg->netstatus.instring,
+                inst->cfg->netstatus.inpercent);
+
+        pbar = elm_progressbar_add(table);
+        E_EXPAND(pbar);
+        E_FILL(pbar);
+        elm_progressbar_span_size_set(pbar, 200 * e_scale);
+        elm_progressbar_value_set(pbar, (float)inst->cfg->netstatus.inpercent / 100);
+        elm_table_pack(table, pbar, 1, 1, 1, 1);
+        evas_object_show(pbar);
+        inst->cfg->netstatus.popup_inpbar = pbar;
+
+        label = elm_label_add(table);
+        E_ALIGN(label, 0.0, 0.5);
+        elm_object_text_set(label, _("Sending"));
+        elm_table_pack(table, label, 0, 2, 1, 1);
+        evas_object_show(label);
+
+        memset(buf, 0x00, sizeof(buf));
+        snprintf(buf, sizeof(buf), "%s (%d %%)",
+                inst->cfg->netstatus.outstring,
+                inst->cfg->netstatus.outpercent);
+
+        pbar = elm_progressbar_add(table);
+        E_EXPAND(pbar);
+        E_FILL(pbar);
+        elm_progressbar_span_size_set(pbar, 200 * e_scale);
+        elm_progressbar_value_set(pbar, (float)inst->cfg->netstatus.outpercent / 100);
+        elm_progressbar_unit_format_set(pbar, buf);
+        elm_table_pack(table, pbar, 1, 2, 1, 1);
+        evas_object_show(pbar);
+        inst->cfg->netstatus.popup_outpbar = pbar;
 
         e_gadget_util_ctxpopup_place(inst->o_main, popup,
                                      inst->cfg->netstatus.o_gadget);
@@ -154,30 +211,30 @@ _netstatus_cb_usage_check_main(void *data, Ecore_Thread *th)
 #endif
         if (!thc->incurrent)
           {
-             snprintf(rin, sizeof(rin), "%s: 0 B/s", _("Receiving"));
+             snprintf(rin, sizeof(rin), "0 B/s");
           }
         else
           {
              if (thc->incurrent > 1048576)
-               snprintf(rin, sizeof(rin), "%s: %.2f MB/s", _("Receiving"), ((float)thc->incurrent / 1048576));
+               snprintf(rin, sizeof(rin), "%.2f MB/s", ((float)thc->incurrent / 1048576));
              else if ((thc->incurrent > 1024) && (thc->incurrent < 1048576))
-               snprintf(rin, sizeof(rin), "%s: %lu KB/s", _("Receiving"), (thc->incurrent / 1024));
+               snprintf(rin, sizeof(rin), "%lu KB/s", (thc->incurrent / 1024));
              else
-               snprintf(rin, sizeof(rin), "%s: %lu B/s", _("Receiving"), thc->incurrent);
+               snprintf(rin, sizeof(rin), "%lu B/s", thc->incurrent);
           }
         eina_stringshare_replace(&thc->instring, rin);
         if (!thc->outcurrent)
           {
-             snprintf(rout, sizeof(rout), "%s: 0 B/s", _("Sending"));
+             snprintf(rout, sizeof(rout), "0 B/s");
           }
         else
           {
              if (thc->outcurrent > 1048576)
-               snprintf(rout, sizeof(rout), "%s: %.2f MB/s", _("Sending"), ((float)thc->outcurrent / 1048576));
+               snprintf(rout, sizeof(rout), "%.2f MB/s", ((float)thc->outcurrent / 1048576));
              else if ((thc->outcurrent > 1024) && (thc->outcurrent < 1048576))
-               snprintf(rout, sizeof(rout), "%s: %lu KB/s", _("Sending"), (thc->outcurrent / 1024));
+               snprintf(rout, sizeof(rout), "%lu KB/s", (thc->outcurrent / 1024));
              else
-               snprintf(rout, sizeof(rout), "%s: %lu B/s", _("Sending"), thc->outcurrent);
+               snprintf(rout, sizeof(rout), "%lu B/s", thc->outcurrent);
           }
         eina_stringshare_replace(&thc->outstring, rout);
         ecore_thread_feedback(th, NULL);
@@ -199,6 +256,8 @@ _netstatus_cb_usage_check_notify(void *data,
 
    eina_stringshare_replace(&thc->inst->cfg->netstatus.instring, thc->instring);
    eina_stringshare_replace(&thc->inst->cfg->netstatus.outstring, thc->outstring);
+   thc->inst->cfg->netstatus.inpercent = thc->inpercent;
+   thc->inst->cfg->netstatus.outpercent = thc->outpercent;
    _netstatus_face_update(thc);
 }
 
@@ -346,8 +405,11 @@ _netstatus_created_cb(void *data, Evas_Object *obj, void *event_data EINA_UNUSED
 
    e_gadget_configure_cb_set(inst->o_main, _netstatus_configure_cb);
 
+   inst->cfg->netstatus.popup = NULL;
    inst->cfg->netstatus.instring = NULL;
    inst->cfg->netstatus.outstring = NULL;
+   inst->cfg->netstatus.inpercent = 0;
+   inst->cfg->netstatus.outpercent = 0;
 
    inst->cfg->netstatus.o_gadget = elm_layout_add(inst->o_main);
    if (orient == E_GADGET_SITE_ORIENT_VERTICAL)
@@ -377,6 +439,9 @@ sysinfo_netstatus_create(Evas_Object *parent, Instance *inst)
    inst->cfg->netstatus.popup = NULL;
    inst->cfg->netstatus.instring = NULL;
    inst->cfg->netstatus.outstring = NULL;
+   inst->cfg->netstatus.inpercent = 0;
+   inst->cfg->netstatus.outpercent = 0;
+
    inst->cfg->netstatus.o_gadget = elm_layout_add(parent);
    e_theme_edje_object_set(inst->cfg->netstatus.o_gadget, "base/theme/gadget/netstatus",
                            "e/gadget/netstatus/main");

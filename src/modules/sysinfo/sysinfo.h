@@ -160,11 +160,12 @@ struct _Config_Item
       Evas_Object         *o_gadget;
       Evas_Object         *configure;
       Evas_Object         *popup;
-      Evas_Object         *popup_label;
+      Evas_Object         *popup_pbar;
       int                  poll_interval;
       int                  low, high;
       int                  sensor_type;
       int                  temp;
+      int                  percent;
       const char          *sensor_name;
       Unit                 units;
 #if defined(HAVE_EEZE)
@@ -182,11 +183,14 @@ struct _Config_Item
    {
       Evas_Object         *o_gadget;
       Evas_Object         *popup;
-      Evas_Object         *popup_label;
+      Evas_Object         *popup_pbar;
       Evas_Object         *configure;
       int                  poll_interval;
       int                  restore_governor;
       int                  auto_powersave;
+      int                  percent;
+      int                  tot_min_frequency;
+      int                  tot_max_frequency;
       const char          *powersave_governor;
       const char          *governor;
       int                  pstate_min;
@@ -232,12 +236,15 @@ struct _Config_Item
    {
       Evas_Object         *o_gadget;
       Evas_Object         *popup;
-      Evas_Object         *popup_label;
+      Evas_Object         *popup_inpbar;
+      Evas_Object         *popup_outpbar;
       Evas_Object         *configure;
       Eina_Bool            automax;
       Netstatus_Unit       receive_units;
       Netstatus_Unit       send_units;
       int                  poll_interval;
+      int                  inpercent;
+      int                  outpercent;
       unsigned long        inmax;
       unsigned long        outmax;
       Ecore_Thread        *usage_check_thread;
