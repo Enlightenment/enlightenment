@@ -361,7 +361,6 @@ e_exec_instance_client_add(E_Exec_Instance *inst, E_Client *ec)
    e_object_ref(E_OBJECT(ec));
    ec->exe_inst = inst;
    inst->ref++;
-   ecore_event_add(E_EVENT_EXEC_NEW_CLIENT, inst, _e_exec_cb_exec_new_client_free, ec);
 }
 
 E_API void
