@@ -586,6 +586,7 @@ struct E_Client
       Eina_Bool internal_state : 1;
       Eina_Bool need_maximize : 1;
       Eina_Bool need_unmaximize : 1;
+      Eina_Bool need_rescale : 1;
    } changes;
 
    unsigned int       visible : 1; // client is set to be visible by display server (never use this)

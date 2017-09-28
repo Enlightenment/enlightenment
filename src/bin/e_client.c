@@ -2107,6 +2107,11 @@ _e_client_eval(E_Client *ec)
         rem_change = 1;
         prop |= E_CLIENT_PROPERTY_POS;
      }
+   if (ec->changes.need_rescale)
+     {
+        e_client_rescale(ec);
+        ec->changes.need_rescale = 0;
+     }
 
    if (ec->changes.reset_gravity)
      {
@@ -3325,6 +3330,14 @@ e_client_rescale(E_Client *ec)
    int shade_dir;
    E_OBJECT_CHECK(ec);
    E_OBJECT_TYPE_CHECK(ec, E_CLIENT_TYPE);
+
+   if (e_comp->updating)
+     {
+        ec->changes.need_rescale = 1;
+        EC_CHANGED(ec);
+        return;
+     }
+   ec->changes.need_rescale = 0;
 
    shaded = ec->shaded;
    shade_dir = ec->shade_dir;
