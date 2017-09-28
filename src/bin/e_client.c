@@ -2874,7 +2874,10 @@ e_client_desk_set(E_Client *ec, E_Desk *desk)
         ecore_event_add(E_EVENT_CLIENT_DESK_SET, ev, (Ecore_End_Cb)_e_client_event_desk_set_free, NULL);
 
         if (old_desk->zone == ec->zone)
-          e_client_rescale(ec);
+          {
+             if (ec->maximized || ec->fullscreen)
+               e_client_rescale(ec);
+          }
      }
 
    if (ec->stack.prev || ec->stack.next)
@@ -3407,7 +3410,8 @@ e_client_zone_set(E_Client *ec, E_Zone *zone)
    ecore_event_add(E_EVENT_CLIENT_ZONE_SET, ev, (Ecore_End_Cb)_e_client_event_zone_set_free, NULL);
 
    e_remember_update(ec);
-   e_client_rescale(ec);
+   if (ec->maximized || ec->fullscreen)
+     e_client_rescale(ec);
 }
 
 E_API void
