@@ -1,7 +1,7 @@
 # SOME DESCRIPTIVE TITLE.
-# Copyright (C) YEAR Enlightenment development team
+# Copyright (C) 2000-2017 Enlightenment development team
 # This file is distributed under the same license as the PACKAGE package.
-# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2000-2017.
 #
 msgid ""
 msgstr ""
@@ -50,7 +50,7 @@ msgid ""
 "it.<br><br>To contact us please visit:<br><hilight>http://www.enlightenment."
 "org</><br><br>"
 msgstr ""
-"<title>Bản quyền &copy; 2000-2015, thuộc về nhóm phát triển Enlightenment</"
+"<title>Bản quyền &copy; 2000-2017, thuộc về nhóm phát triển Enlightenment</"
 "><br><br>Chúng tôi hy vọng bạn sẽ cảm thấy thích thú với việc sử dụng phần "
 "mềm này nhiều như cách chúng tôi đã tạo ra nó.<br><br>Để liên lạc với chúng "
 "tôi, xin hãy truy cập:<br><hilight>http://www.enlightenment.org</><br><br>"

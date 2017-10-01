@@ -1,6 +1,6 @@
 # This is the Japanese locale definition for Enlightenment DR 17
 # This file is put in the public domain.
-# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2000-2017.
 #   David Stevenson <david.35472@gmail.com>
 #
 msgid ""

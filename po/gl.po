@@ -1,5 +1,5 @@
 # Galician translation of e18
-# Copyright (C) 2012 Enlightenment development team
+# Copyright (C) 2000-2017, by the Enlightenment Development Team
 # This file is distributed under the same license as the e18 package.
 # Aníbal Garrido <khany@member.trisquel.info>, 2012-2013.
 #
@@ -52,7 +52,7 @@ msgid ""
 "it.<br><br>To contact us please visit:<br><hilight>http://www.enlightenment."
 "org</><br><br>"
 msgstr ""
-"<title>Copyright &copy; 2000-2012, polo Equipo de Desenvolvemento de  "
+"<title>Copyright &copy; 2000-2017, polo Equipo de Desenvolvemento de  "
 "Enlightenment</><br><br>Esperamos que gozara empregando este software tanto "
 "como nos gozamos escribíndoo.<br><br>Para contactar connosco visite:"
 "<br><hilight>http://www.enlightenment.org</><br><br>"
@@ -11215,12 +11215,12 @@ msgstr "NINGÚN"
 #~ msgstr "Enriba"
 
 #~ msgid ""
-#~ "<title>Copyright &copy; 2000-2013, by the Enlightenment Development Team</"
+#~ "<title>Copyright &copy; 2000-2017, by the Enlightenment Development Team</"
 #~ "><br><br>We hope you enjoy using this software as much as we enjoyed "
 #~ "writing it.<br><br>To contact us please visit:<br><hilight>http://www."
 #~ "enlightenment.org</><br><br>"
 #~ msgstr ""
-#~ "<title>Copyright &copy; 2000-2013, polo Equipo de Desenvolvemento de  "
+#~ "<title>Copyright &copy; 2000-2017, polo Equipo de Desenvolvemento de  "
 #~ "Enlightenment</><br><br>Esperamos que gozara empregando este software "
 #~ "tanto como nos gozamos escribíndoo.<br><br>Para contactar connosco visite:"
 #~ "<br><hilight>http://www.enlightenment.org</><br><br>"

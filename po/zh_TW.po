@@ -51,7 +51,7 @@ msgid ""
 "it.<br><br>To contact us please visit:<br><hilight>http://www.enlightenment."
 "org</><br><br>"
 msgstr ""
-"<title>Copyright &copy; 2000-2012, by the Enlightenment Development Team</"
+"<title>Copyright &copy; 2000-2017, by the Enlightenment Development Team</"
 "><br><br>我們希望您享受使用此軟體的樂趣，如我們享受撰寫它一般。<br><br>要連繫"
 "我們，請造訪：<br><hilight>http://www.enlightenment.org</><br><br>"
 

@@ -53,7 +53,7 @@ msgid ""
 "it.<br><br>To contact us please visit:<br><hilight>http://www.enlightenment."
 "org</><br><br>"
 msgstr ""
-"<title>版权 &copy; 2000-2012 Enlightenment 开发团队</><br><br>我们希望您向我"
+"<title>版权 &copy; 2000-2017 Enlightenment 开发团队</><br><br>我们希望您向我"
 "们编写这个软件时一样喜欢使用它。<br><br>联系我们请访问：<br><hilight>http://"
 "www.enlightenment.org</><br><br>"
 
