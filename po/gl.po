@@ -11214,17 +11214,6 @@ msgstr "NINGÚN"
 #~ msgid "Over"
 #~ msgstr "Enriba"
 
-#~ msgid ""
-#~ "<title>Copyright &copy; 2000-2017, by the Enlightenment Development Team</"
-#~ "><br><br>We hope you enjoy using this software as much as we enjoyed "
-#~ "writing it.<br><br>To contact us please visit:<br><hilight>http://www."
-#~ "enlightenment.org</><br><br>"
-#~ msgstr ""
-#~ "<title>Copyright &copy; 2000-2017, polo Equipo de Desenvolvemento de  "
-#~ "Enlightenment</><br><br>Esperamos que gozara empregando este software "
-#~ "tanto como nos gozamos escribíndoo.<br><br>Para contactar connosco visite:"
-#~ "<br><hilight>http://www.enlightenment.org</><br><br>"
-
 #~ msgid "Setup Popups"
 #~ msgstr "Configurar xanelas emerxentes"
 

@@ -12394,17 +12394,6 @@ msgstr "Nenhuma"
 #~ msgid "xkb layouts"
 #~ msgstr "Esquemas xkb"
 
-#~ msgid ""
-#~ "<title>Copyright &copy; 2000-2017, by the Enlightenment Development Team</"
-#~ "><br><br>We hope you enjoy using this software as much as we enjoyed "
-#~ "writing it.<br><br>To contact us please visit:<br><hilight>http://www."
-#~ "enlightenment.org</><br><br>"
-#~ msgstr ""
-#~ "<title>Direitos de autor &copy; 2000-2017, pela equipa de desenvolvimento "
-#~ "do Enlightenment</><br><br>Esperamos que goste de utilizar esta aplicação "
-#~ "tanto quanto nós gostamos de a desenvolver<br><br>Para nos contactar, "
-#~ "consulte:<br><hilight>http://www.enlightenment.org</><br><br>"
-
 #~ msgid "Configure Shelves"
 #~ msgstr "Configurar painéis"
 
