@@ -799,6 +799,7 @@ _site_layout_orient(Evas_Object *o, E_Gadget_Site *zgs)
                        else
                          size->size.w = size->clipped.w += abs(gw - avg);
                        size->size.w = size->clipped.w -= size->after.w / 2;
+                       size->size.w = size->clipped.w = MAX(size->size.w, 0);
                        rw -= size->size.w;
                     }
                }
@@ -822,6 +823,7 @@ _site_layout_orient(Evas_Object *o, E_Gadget_Site *zgs)
                        else
                          size->size.h = size->clipped.h += abs(gh - avg);
                        size->size.h = size->clipped.h -= size->after.h / 2;
+                       size->size.h = size->clipped.h = MAX(size->size.h, 0);
                        rh -= size->size.h;
                     }
                }
