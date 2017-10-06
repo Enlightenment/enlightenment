@@ -136,6 +136,22 @@ e_shell_data_new(unsigned int version)
    return shd;
 }
 
+static Eina_Bool
+desktop_xwayland_startup()
+{
+   e_startup();
+   return ECORE_CALLBACK_RENEW;
+}
+
+static void
+desktop_startup()
+{
+   if (e_module_find("xwayland"))
+     ecore_event_handler_add(E_EVENT_COMPOSITOR_XWAYLAND_INIT, desktop_xwayland_startup, NULL);
+   else
+     e_startup();
+}
+
 E_API E_Module_Api e_modapi = { E_MODULE_API_VERSION, "Wl_Desktop_Shell" };
 
 E_API void *
@@ -162,7 +178,7 @@ e_modapi_init(E_Module *m)
         return NULL;
      }
 #endif
-   e_startup();
+   ecore_job_add(desktop_startup, NULL);
 
    shell_resources = eina_hash_pointer_new(NULL);
    xdg_shell_resources = eina_hash_pointer_new(NULL);
