@@ -451,6 +451,8 @@ xwl_shutdown(void)
    if (exs->sig_hdlr) ecore_event_handler_del(exs->sig_hdlr);
 
    free(exs);
+   e_comp_x_shutdown();
+   ecore_x_shutdown();
    e_util_env_set("DISPLAY", NULL);
 }
 
