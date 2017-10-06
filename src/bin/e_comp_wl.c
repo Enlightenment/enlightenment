@@ -2521,6 +2521,10 @@ _e_comp_wl_client_cb_new(void *data EINA_UNUSED, E_Client *ec)
 
    /* set initial client data properties */
    ec->comp_data->mapped = EINA_FALSE;
+   ec->comp_data->pending.input = eina_tiler_new(65535, 65535);
+   eina_tiler_tile_size_set(ec->comp_data->pending.input, 1, 1);
+   eina_tiler_rect_add(ec->comp_data->pending.input,
+                            &(Eina_Rectangle){0, 0, 65535, 65535});
 
    /* add this client to the hash */
    /* eina_hash_add(clients_win_hash, &win, ec); */
