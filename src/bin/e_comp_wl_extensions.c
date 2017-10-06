@@ -1112,7 +1112,8 @@ e_comp_wl_extension_relative_motion_event(uint64_t time_usec, double dx, double 
    uint32_t hi, lo;
 
    focused = e_client_focused_get();
-   if ((!focused) || e_object_is_del(E_OBJECT(focused))) return;
+   if ((!focused) || e_object_is_del(E_OBJECT(focused)) || (!focused->mouse.in)) return;
+   if (e_comp_object_frame_exists(focused->frame) && (!focused->comp_data->ssd_mouse_in)) return;
 
    wc = wl_resource_get_client(focused->comp_data->surface);
 
