@@ -1461,6 +1461,7 @@ e_gadget_configure(Evas_Object *g)
 {
    E_Gadget_Config *zgc;
 
+   if (e_desklock_state_get()) return;
    EINA_SAFETY_ON_NULL_RETURN(g);
    zgc = evas_object_data_get(g, "__e_gadget");
    EINA_SAFETY_ON_NULL_RETURN(zgc);
