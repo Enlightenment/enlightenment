@@ -140,10 +140,11 @@ _basic_create_widgets(E_Config_Dialog *cfd EINA_UNUSED, Evas *evas, E_Config_Dia
    /* Cursor */
    ol = e_widget_list_add(evas, 0, 0);
 
-   oc = e_widget_check_add(evas, _("Show Cursor"), &(cfdata->show_cursor));
-   e_widget_list_object_append(ol, oc, 1, 0, 0.5);
-
    of = e_widget_framelist_add(evas, _("Settings"), 0);
+
+   oc = e_widget_check_add(evas, _("Show Cursor"), &(cfdata->show_cursor));
+   e_widget_framelist_object_append(of, oc);
+
    rg = e_widget_radio_group_new(&cfdata->use_e_cursor);
 
    ob = e_widget_label_add(evas, _("Size"));
