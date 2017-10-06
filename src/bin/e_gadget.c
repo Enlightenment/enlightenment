@@ -688,10 +688,16 @@ _site_layout_orient(Evas_Object *o, E_Gadget_Site *zgs)
       Evas_Object *obj;
    } *size, *psize = NULL;
    Eina_List *expand = NULL, *gadgets = NULL;
+   Evas_Coord_Size parent_size;
 
    evas_object_geometry_get(o, &x, &y, &w, &h);
    if ((!w) && (!h)) return;
-   evas_object_geometry_get(elm_object_parent_widget_get(zgs->layout), NULL, NULL, &bw, &bh);
+   parent_size.w = parent_size.h = -1;
+   evas_object_smart_callback_call(elm_object_parent_widget_get(zgs->layout), "gadget_site_parent_size_request", &parent_size);
+   if ((parent_size.w < 0) || (parent_size.h < 0))
+     evas_object_geometry_get(elm_object_parent_widget_get(zgs->layout), NULL, NULL, &bw, &bh);
+   else
+     bw = parent_size.w, bh = parent_size.h;
    rw = bw, rh = bh;
    evas_object_size_hint_min_get(o, &mw, &mh);
    evas_object_size_hint_min_get(zgs->layout, &sw, &sh);

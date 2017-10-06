@@ -878,6 +878,15 @@ _bryce_site_anchor(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
 }
 
 static void
+_bryce_gadget_size_request(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
+{
+   Evas_Coord_Size *size = event_info;
+   Bryce *b = data;
+
+   edje_object_part_geometry_get(elm_layout_edje_get(b->layout), "e.swallow.content", NULL, NULL, &size->w, &size->h);
+}
+
+static void
 _bryce_orient(Bryce *b)
 {
    char buf[1024];
@@ -908,6 +917,7 @@ _bryce_orient(Bryce *b)
    evas_object_smart_callback_add(b->site, "gadget_site_popup", _bryce_gadget_popup, b);
    evas_object_smart_callback_add(b->site, "gadget_site_locked", _bryce_gadget_locked, b);
    evas_object_smart_callback_add(b->site, "gadget_site_unlocked", _bryce_gadget_unlocked, b);
+   evas_object_smart_callback_add(b->site, "gadget_site_parent_size_request", _bryce_gadget_size_request, b);
 }
 
 static void
