@@ -615,7 +615,7 @@ _e_xdg_toplevel_cb_fullscreen_unset(struct wl_client *client EINA_UNUSED, struct
    if (e_object_is_del(E_OBJECT(ec))) return;
 
    if (ec->lock_user_fullscreen) return;
-   _xdg_shell_surface_send_configure(resource, 0, !!ec->maximized || ec->comp_data->max, 0, ec->saved.w, ec->saved.h);
+   e_client_unfullscreen(ec);
 }
 
 static void
