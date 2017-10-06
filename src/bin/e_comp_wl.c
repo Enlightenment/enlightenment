@@ -1598,7 +1598,24 @@ _e_comp_wl_surface_state_commit(E_Client *ec, E_Comp_Wl_Surface_State *state)
      }
 
    /* put state input into surface */
-   if (state->input)
+   if (e_client_has_xwindow(ec))
+     {
+        Eina_Tiler *t = eina_tiler_new(ec->client.w, ec->client.h);
+        eina_tiler_tile_size_set(t, 1, 1);
+        if (ec->shaped_input)
+          {
+             Eina_Rectangle *r;
+             unsigned int i;
+
+             for (i = 0, r = ec->shape_input_rects; i < ec->shape_input_rects_num; i++, r++)
+               eina_tiler_rect_add(t, r);
+          }
+        else
+          eina_tiler_rect_add(t, &(Eina_Rectangle){0, 0, 65535, 65535});
+        e_comp_object_input_area_set(ec->frame, t);
+        eina_tiler_free(t);
+     }
+   else if (state->input)
      {
         e_comp_object_input_area_set(ec->frame, state->input);
 
