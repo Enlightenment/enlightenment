@@ -41,6 +41,7 @@ E_API Evas_Object *e_comp_object_client_add(E_Client *ec);
 E_API Evas_Object *e_comp_object_util_mirror_add(Evas_Object *obj);
 E_API void e_comp_object_util_type_set(Evas_Object *obj, E_Comp_Object_Type type);
 E_API Evas_Object *e_comp_object_util_add(Evas_Object *obj, E_Comp_Object_Type type);
+E_API Evas_Object *e_comp_object_util_get(Evas_Object *obj);
 E_API void e_comp_object_frame_xy_adjust(Evas_Object *obj, int x, int y, int *ax, int *ay);
 E_API void e_comp_object_frame_xy_unadjust(Evas_Object *obj, int x, int y, int *ax, int *ay);
 E_API void e_comp_object_frame_wh_adjust(Evas_Object *obj, int w, int h, int *aw, int *ah);

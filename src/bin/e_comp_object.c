@@ -3045,6 +3045,17 @@ e_comp_object_util_add(Evas_Object *obj, E_Comp_Object_Type type)
    return o;
 }
 
+E_API Evas_Object *
+e_comp_object_util_get(Evas_Object *obj)
+{
+   Evas_Object *z;
+   SOFT_ENTRY(NULL);
+   if (cw) return NULL;
+   z = edje_object_part_swallow_get(obj, "e.swallow.content");
+   EINA_SAFETY_ON_NULL_RETURN_VAL(z, NULL);
+   return e_zoomap_child_get(z);
+}
+
 /* utility functions for deleting objects when their "owner" is deleted */
 E_API void
 e_comp_object_util_del_list_append(Evas_Object *obj, Evas_Object *to_del)
