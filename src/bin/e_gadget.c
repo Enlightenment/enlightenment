@@ -99,7 +99,7 @@ static Evas_Object *desklock_rect;
 static Eina_Bool added = 1;
 
 static Evas_Object *pointer_site;
-static Eina_List *handlers;
+static Eina_List *pointer_site_handlers;
 
 static Eina_Hash *gadget_types;
 static E_Gadget_Sites *sites;
@@ -1909,7 +1909,7 @@ _editor_pointer_site_del(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_
    e_comp_ungrab_input(1, 1);
    free(data);
    pointer_site = NULL;
-   E_FREE_LIST(handlers, ecore_event_handler_del);
+   E_FREE_LIST(pointer_site_handlers, ecore_event_handler_del);
 }
 
 static void
@@ -2036,10 +2036,10 @@ _editor_pointer_site_init(E_Gadget_Site_Orient orient, Evas_Object *site, Evas_O
      evas_object_pass_events_set(active->site, 1);
    evas_object_event_callback_add(pointer_site, EVAS_CALLBACK_CHANGED_SIZE_HINTS, _editor_site_hints, active);
    evas_object_event_callback_add(pointer_site, EVAS_CALLBACK_DEL, _editor_pointer_site_del, active);
-   E_LIST_HANDLER_APPEND(handlers, ECORE_EVENT_MOUSE_MOVE, _editor_pointer_move, active);
+   E_LIST_HANDLER_APPEND(pointer_site_handlers, ECORE_EVENT_MOUSE_MOVE, _editor_pointer_move, active);
    if (!orient)
-     E_LIST_HANDLER_APPEND(handlers, ECORE_EVENT_MOUSE_WHEEL, _editor_pointer_wheel, active);
-   E_LIST_HANDLER_APPEND(handlers,
+     E_LIST_HANDLER_APPEND(pointer_site_handlers, ECORE_EVENT_MOUSE_WHEEL, _editor_pointer_wheel, active);
+   E_LIST_HANDLER_APPEND(pointer_site_handlers,
      up ? ECORE_EVENT_MOUSE_BUTTON_UP : ECORE_EVENT_MOUSE_BUTTON_DOWN, _editor_pointer_button, active);
 
    rect = evas_object_rectangle_add(e_comp->evas);
