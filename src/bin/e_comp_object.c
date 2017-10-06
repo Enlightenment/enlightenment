@@ -4023,6 +4023,7 @@ e_comp_object_native_surface_set(Evas_Object *obj, Eina_Bool set)
    if ((!set) && (!cw->native)) return;
 
    cw->native = set;
+   _e_comp_object_alpha_set(cw);
 
    evas_object_image_native_surface_set(cw->obj, set && (!cw->blanked) ? (cw->ns ?: &ns) : NULL);
    EINA_LIST_FOREACH(cw->obj_mirror, l, o)
