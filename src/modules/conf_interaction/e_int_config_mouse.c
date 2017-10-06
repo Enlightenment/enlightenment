@@ -160,16 +160,19 @@ _basic_create_widgets(E_Config_Dialog *cfd EINA_UNUSED, Evas *evas, E_Config_Dia
    e_widget_framelist_object_append(of, ob);
    e_widget_check_widget_disable_on_unchecked_add(oc, ob);
 
-   ob = e_widget_radio_add(evas, _("Application"), 0, rg);
-   e_widget_on_change_hook_set(ob, _use_e_cursor_cb_change, cfdata);
-   e_widget_framelist_object_append(of, ob);
-   e_widget_check_widget_disable_on_unchecked_add(oc, ob);
+   if (e_comp->comp_type == E_PIXMAP_TYPE_X)
+     {
+        ob = e_widget_radio_add(evas, _("Application"), 0, rg);
+        e_widget_on_change_hook_set(ob, _use_e_cursor_cb_change, cfdata);
+        e_widget_framelist_object_append(of, ob);
+        e_widget_check_widget_disable_on_unchecked_add(oc, ob);
 
-   ob = e_widget_radio_add(evas, _("Enlightenment"), 1, rg);
-   e_widget_on_change_hook_set(ob, _use_e_cursor_cb_change, cfdata);
-   e_widget_framelist_object_append(of, ob);
-   e_widget_check_widget_disable_on_unchecked_add(oc, ob);
-   e_widget_on_disable_hook_set(ob, _use_e_cursor_cb_change, cfdata);
+        ob = e_widget_radio_add(evas, _("Enlightenment"), 1, rg);
+        e_widget_on_change_hook_set(ob, _use_e_cursor_cb_change, cfdata);
+        e_widget_framelist_object_append(of, ob);
+        e_widget_check_widget_disable_on_unchecked_add(oc, ob);
+        e_widget_on_disable_hook_set(ob, _use_e_cursor_cb_change, cfdata);
+     }
 
    ob = e_widget_check_add(evas, _("Idle effects"),
                            &(cfdata->idle_cursor));
