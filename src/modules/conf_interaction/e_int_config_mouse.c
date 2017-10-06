@@ -156,9 +156,8 @@ _basic_create_widgets(E_Config_Dialog *cfd EINA_UNUSED, Evas *evas, E_Config_Dia
    e_widget_framelist_object_append(of, ob);
    e_widget_check_widget_disable_on_unchecked_add(oc, ob);
 
-   ob = e_widget_label_add(evas, _("E Theme"));
-   e_widget_framelist_object_append(of, ob);
-   e_widget_check_widget_disable_on_unchecked_add(oc, ob);
+   e_widget_list_object_append(ol, of, 1, 0, 0.5);
+   of = e_widget_framelist_add(evas, _("E Theme"), 0);
 
    if (e_comp->comp_type == E_PIXMAP_TYPE_X)
      {
