@@ -11,6 +11,7 @@ typedef struct Bryce
    Eina_Stringshare *name;
 
    Evas_Object *bryce;
+   Evas_Object *events;
    Evas_Object *layout;
    Evas_Object *site;
    Evas_Object *scroller;
@@ -34,7 +35,6 @@ typedef struct Bryce
    unsigned int autohide_blocked;
    Eina_List *popups;
    void *event_info;
-   Ecore_Job *menu_job;
    uint64_t last_timestamp;
 
    /* config: do not bitfield! */
@@ -62,7 +62,7 @@ static E_Action *menu_act;
 static Eina_List *handlers;
 
 
-static void _bryce_act_menu_job(void *data);
+static void _bryce_menu(Bryce *b);
 
 #define BRYCE_GET(obj) \
    Bryce *b; \
@@ -496,12 +496,13 @@ _bryce_moveresize(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *event
    E_Zone *zone;
    int size;
 
+   evas_object_geometry_get(obj, &x, &y, &w, &h);
+   evas_object_geometry_set(b->events, x, y, w, h);
    if (b->autohide)
      {
         E_FREE_LIST(b->zone_obstacles, e_object_del);
         return;
      }
-   evas_object_geometry_get(obj, &x, &y, &w, &h);
    if (b->orient == E_GADGET_SITE_ORIENT_HORIZONTAL)
      size = h;
    else
@@ -583,76 +584,44 @@ _bryce_moveresize(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *event
    _bryce_autosize(b);
 }
 
-static Eina_Bool
-_bryce_mouse_down_post(void *data, Evas *e EINA_UNUSED)
+static void
+_bryce_mouse_down(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info)
 {
    Bryce *b = data;
-   Evas_Event_Mouse_Down *ev;
+   Evas_Event_Mouse_Down *ev = event_info;
 
-   ev = b->event_info;
-   b->event_info = NULL;
-   if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return EINA_TRUE;
+   if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return;
    if (e_bindings_mouse_down_evas_event_handle(E_BINDING_CONTEXT_ANY, b->e_obj_inherit, ev))
-     return EINA_FALSE;
-   if (ev->button != 3) return EINA_TRUE;
+     {
+        ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
+        return;
+     }
+   if (ev->button != 3) return;
    b->last_timestamp = ev->timestamp;
-   if (!b->menu_job)
-     b->menu_job = ecore_job_add(_bryce_act_menu_job, b);
-   return EINA_FALSE;
+   _bryce_menu(b);
+   ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
 }
 
 static void
-_bryce_mouse_down(void *data, Evas *e, Evas_Object *obj EINA_UNUSED, void *event_info)
+_bryce_mouse_up(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info)
 {
    Bryce *b = data;
+   Evas_Event_Mouse_Up *ev = event_info;
 
-   if (b->event_info == event_info) return;
-   b->event_info = event_info;
-   evas_post_event_callback_push(e, _bryce_mouse_down_post, b);
-}
-
-static Eina_Bool
-_bryce_mouse_up_post(void *data, Evas *e EINA_UNUSED)
-{
-   Bryce *b = data;
-   Evas_Event_Mouse_Up *ev;
-
-   ev = b->event_info;
-   b->event_info = NULL;
-   if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return EINA_TRUE;
-   return !e_bindings_mouse_up_evas_event_handle(E_BINDING_CONTEXT_ANY, b->e_obj_inherit, ev);
+   if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return;
+   if (e_bindings_mouse_up_evas_event_handle(E_BINDING_CONTEXT_ANY, b->e_obj_inherit, ev))
+     ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
 }
 
 static void
-_bryce_mouse_up(void *data, Evas *e, Evas_Object *obj EINA_UNUSED, void *event_info)
+_bryce_mouse_wheel(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info)
 {
    Bryce *b = data;
+   Evas_Event_Mouse_Wheel *ev = event_info;
 
-   if (b->event_info == event_info) return;
-   b->event_info = event_info;
-   evas_post_event_callback_push(e, _bryce_mouse_up_post, b);
-}
-
-static Eina_Bool
-_bryce_mouse_wheel_post(void *data, Evas *e EINA_UNUSED)
-{
-   Bryce *b = data;
-   Evas_Event_Mouse_Wheel *ev;
-
-   ev = b->event_info;
-   b->event_info = NULL;
-   if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return EINA_TRUE;
-   return !e_bindings_wheel_evas_event_handle(E_BINDING_CONTEXT_ANY, b->e_obj_inherit, ev);
-}
-
-static void
-_bryce_mouse_wheel(void *data, Evas *e, Evas_Object *obj EINA_UNUSED, void *event_info)
-{
-   Bryce *b = data;
-
-   if (b->event_info == event_info) return;
-   b->event_info = event_info;
-   evas_post_event_callback_push(e, _bryce_mouse_wheel_post, b);
+   if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return;
+   if (e_bindings_wheel_evas_event_handle(E_BINDING_CONTEXT_ANY, b->e_obj_inherit, ev))
+     ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
 }
 
 static void
@@ -691,8 +660,8 @@ _bryce_del(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *
         e_object_del(obs);
      }
    evas_object_del(b->autohide_event);
+   E_FREE_FUNC(b->events, evas_object_del);
    E_FREE_FUNC(b->calc_job, ecore_job_del);
-   E_FREE_FUNC(b->menu_job, ecore_job_del);
    E_FREE_FUNC(b->autohide_timer, ecore_timer_del);
    ecore_timer_del(b->save_timer);
    EINA_LIST_FREE(b->popups, p)
@@ -923,6 +892,10 @@ _bryce_create(Bryce *b, Evas_Object *parent)
    Evas_Object *ly, *bryce, *scr;
 
    b->e_obj_inherit = E_OBJECT_ALLOC(E_Object, E_BRYCE_TYPE, _bryce_object_free);
+   b->events = evas_object_rectangle_add(e_comp->evas);
+   evas_object_color_set(b->events, 0, 0, 0, 0);
+   evas_object_name_set(b->events, "b->events");
+   evas_object_show(b->events);
    e_object_data_set(b->e_obj_inherit, b);
    b->layout = ly = elm_layout_add(parent);
    _bryce_style_apply(b);
@@ -933,6 +906,9 @@ _bryce_create(Bryce *b, Evas_Object *parent)
    elm_object_part_content_set(ly, "e.swallow.content", scr);
    evas_object_show(ly);
    b->bryce = bryce = e_comp_object_util_add(ly, _bryce_shadow_type(b));
+   evas_object_repeat_events_set(evas_object_smart_parent_get(ly), 1);
+   evas_object_smart_member_add(b->events, bryce);
+   evas_object_lower(b->events);
    evas_object_data_set(bryce, "comp_skip", (void*)1);
    evas_object_layer_set(bryce, b->layer);
    evas_object_lower(bryce);
@@ -950,9 +926,9 @@ _bryce_create(Bryce *b, Evas_Object *parent)
    evas_object_event_callback_add(bryce, EVAS_CALLBACK_RESTACK, _bryce_restack, b);
    evas_object_event_callback_add(bryce, EVAS_CALLBACK_MOVE, _bryce_moveresize, b);
    evas_object_event_callback_add(bryce, EVAS_CALLBACK_RESIZE, _bryce_moveresize, b);
-   evas_object_event_callback_add(bryce, EVAS_CALLBACK_MOUSE_DOWN, _bryce_mouse_down, b);
-   evas_object_event_callback_add(bryce, EVAS_CALLBACK_MOUSE_UP, _bryce_mouse_up, b);
-   evas_object_event_callback_add(bryce, EVAS_CALLBACK_MOUSE_WHEEL, _bryce_mouse_wheel, b);
+   evas_object_event_callback_add(b->events, EVAS_CALLBACK_MOUSE_DOWN, _bryce_mouse_down, b);
+   evas_object_event_callback_add(b->events, EVAS_CALLBACK_MOUSE_UP, _bryce_mouse_up, b);
+   evas_object_event_callback_add(b->events, EVAS_CALLBACK_MOUSE_WHEEL, _bryce_mouse_wheel, b);
 
   _bryce_zone_setup(b);
    _bryce_autohide_setup(b);
@@ -994,15 +970,13 @@ _bryce_act_resize(E_Object *obj, const char *params, E_Binding_Event_Wheel *ev)
 }
 
 static void
-_bryce_act_menu_job(void *data)
+_bryce_menu(Bryce *b)
 {
-   Bryce *b = data;
    E_Menu *m;
    int x, y;
 
    m = e_menu_new();
    _bryce_menu_populate(b, m);
-   b->menu_job = NULL;
    evas_pointer_canvas_xy_get(e_comp->evas, &x, &y);
    e_menu_activate_mouse(m, e_zone_current_get(), x, y, 1, 1, E_MENU_POP_DIRECTION_AUTO, b->last_timestamp);
    _bryce_popup(b, m->comp_object);
@@ -1015,8 +989,7 @@ _bryce_act_menu(E_Object *obj, const char *params EINA_UNUSED, E_Binding_Event_M
    if (obj->type != E_BRYCE_TYPE) return EINA_FALSE;
    b = e_object_data_get(obj);
    b->last_timestamp = ev->timestamp;
-   if (!b->menu_job)
-     b->menu_job = ecore_job_add(_bryce_act_menu_job, b);
+   _bryce_menu(b);
    return EINA_TRUE;
 }
 
