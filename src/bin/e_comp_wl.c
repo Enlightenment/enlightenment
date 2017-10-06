@@ -1431,6 +1431,11 @@ _e_comp_wl_surface_state_commit(E_Client *ec, E_Comp_Wl_Surface_State *state)
                   ec->ignored = 0;
                   evas_object_show(ec->frame);
                   ec->comp_data->mapped = 1;
+                  if (e_client_has_xwindow(ec))
+                    {
+                       if (!e_client_util_desk_visible(ec, e_desk_current_get(ec->zone)))
+                         evas_object_hide(ec->frame);
+                    }
                }
           }
      }
