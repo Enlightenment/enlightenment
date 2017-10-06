@@ -366,7 +366,7 @@ _e_pointer_cb_free(E_Pointer *ptr)
 static void
 _e_pointer_x11_setup(E_Pointer *ptr, const char *cursor)
 {
-   if (ptr->e_cursor)
+   if (ptr->e_cursor && (e_comp->comp_type == E_PIXMAP_TYPE_X))
      {
         /* create a pointer canvas if we need to */
         if ((!ptr->buffer_evas) && ptr->win) _e_pointer_canvas_add(ptr);
@@ -815,11 +815,8 @@ e_pointer_object_set(E_Pointer *ptr, Evas_Object *obj, int x, int y)
 E_API void
 e_pointer_window_add(E_Pointer *ptr, Ecore_Window win)
 {
-   char buf[1024];
-
    ptr->win = win;
-   _e_pointer_theme_buf(ptr, buf);
-   _e_pointer_x11_setup(ptr, buf);
+   _e_pointer_x11_setup(ptr, "default");
 }
 
 EINTERN void
