@@ -502,7 +502,7 @@ e_pointer_window_new(Ecore_Window win, Eina_Bool filled)
 
    /* set default pointer properties */
    ptr->w = ptr->h = e_config->cursor_size;
-   ptr->e_cursor = e_config->use_e_cursor;
+   ptr->e_cursor = e_config->use_e_cursor && e_comp->comp_type == E_PIXMAP_TYPE_X;
    ptr->win = win;
    ptr->color = EINA_FALSE;
    if (e_comp->pointer)
@@ -532,7 +532,7 @@ e_pointer_canvas_new(Ecore_Evas *ee, Eina_Bool filled)
    ptr->color = EINA_TRUE;
    ptr->canvas = EINA_TRUE;
    ptr->w = ptr->h = e_config->cursor_size;
-   ptr->e_cursor = e_config->use_e_cursor;
+   ptr->e_cursor = e_config->use_e_cursor || e_comp->comp_type != E_PIXMAP_TYPE_X;
 
    ptr->ee = ee;
    ptr->evas = ecore_evas_get(ee);
