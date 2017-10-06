@@ -112,7 +112,13 @@ _key_down(int ctx, Ecore_Event_Key *ev)
      {
         E_Desklock_Interface *iface = e_desklock_interface_current_get();
         if (iface && iface->key_down)
-          return iface->key_down(ev);
+          {
+#ifdef HAVE_WAYLAND
+             if (e_comp->comp_type == E_PIXMAP_TYPE_WL)
+               e_comp_wl_key_up(ev, NULL);
+#endif
+             return iface->key_down(ev);
+          }
      }
    if ((e_comp->comp_type == E_PIXMAP_TYPE_X) && (ev->event_window != e_comp->root))
      {
@@ -156,7 +162,13 @@ _key_up(int ctx, Ecore_Event_Key *ev)
      {
         E_Desklock_Interface *iface = e_desklock_interface_current_get();
         if (iface && iface->key_up)
-          return iface->key_up(ev);
+          {
+#ifdef HAVE_WAYLAND
+             if (e_comp->comp_type == E_PIXMAP_TYPE_WL)
+               e_comp_wl_key_up(ev, NULL);
+#endif
+             return iface->key_up(ev);
+          }
      }
    if ((e_comp->comp_type == E_PIXMAP_TYPE_X) && (ev->event_window != e_comp->root)) return ECORE_CALLBACK_PASS_ON;
    return ((!e_comp->screen) ||
