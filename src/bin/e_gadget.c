@@ -3038,10 +3038,22 @@ _gadget_moved()
    added = 1;
 }
 
+static void
+_desktop_editor_text_add(void)
+{
+   Evas_Object *txt, *tb, *popup = e_comp_object_util_get(desktop_editor);
+
+   tb = elm_object_content_get(popup);
+   txt = elm_label_add(tb);
+   evas_object_show(txt);
+   elm_object_text_set(txt, _("Press <hilight>Escape</hilight> or click the background to exit.<ps/>"
+              "Use <hilight>Backspace</hilight> or <hilight>Delete</hilight> to remove all gadgets from this screen"));
+   elm_table_pack(tb, txt, 0, 3, 2, 1);
+}
+
 static Eina_Bool
 _gadget_desklock_handler(void *d EINA_UNUSED, int t EINA_UNUSED, E_Event_Comp_Object *ev)
 {
-   E_Notification_Notify n;
    const char *name;
    Evas_Object *site, *comp_object;
 
@@ -3055,17 +3067,11 @@ _gadget_desklock_handler(void *d EINA_UNUSED, int t EINA_UNUSED, E_Event_Comp_Ob
    evas_object_layer_set(site, DESKLOCK_DEMO_LAYER);
    ZGS_GET(site);
    desktop_editor = comp_object = e_gadget_site_edit(site);
+   _desktop_editor_text_add();
    _desktop_rect_obj_add(zgs->events);
    _desktop_rect_obj_add(comp_object);
    e_comp_object_util_del_list_append(ev->comp_object, comp_object);
 
-   memset(&n, 0, sizeof(E_Notification_Notify));
-   n.timeout = 3000;
-   n.summary = _("Lockscreen Gadgets");
-   n.body = _("Press Escape or click the background to exit.<ps/>"
-              "Use Backspace or Delete to remove all gadgets from this screen");
-   n.urgency = E_NOTIFICATION_NOTIFY_URGENCY_NORMAL;
-   e_notification_client_send(&n, NULL, NULL);
    return ECORE_CALLBACK_RENEW;
 }
 
@@ -3121,7 +3127,6 @@ E_API void
 e_gadget_site_desktop_edit(Evas_Object *site)
 {
    E_Action *act;
-   E_Notification_Notify n;
 
    ZGS_GET(site);
 
@@ -3137,6 +3142,7 @@ e_gadget_site_desktop_edit(Evas_Object *site)
    evas_object_event_callback_add(desktop_rect, EVAS_CALLBACK_MOUSE_UP, _gadget_desktop_mouse_up_handler, NULL);
 
    desktop_editor = e_gadget_site_edit(site);
+   _desktop_editor_text_add();
    _desktop_rect_obj_add(desktop_editor);
    evas_object_smart_callback_add(site, "gadget_moved", _gadget_moved, NULL);
    evas_object_show(desktop_editor);
@@ -3144,12 +3150,4 @@ e_gadget_site_desktop_edit(Evas_Object *site)
    act = e_action_find("desk_deskshow_toggle");
    if (act) act->func.go(E_OBJECT(e_comp_object_util_zone_get(desktop_editor)), NULL);
    e_comp_grab_input(1, 1);
-
-   memset(&n, 0, sizeof(E_Notification_Notify));
-   n.timeout = 3000;
-   n.summary = _("Desktop Gadgets");
-   n.body = _("Press Escape or click the background to exit.<ps/>"
-              "Use Backspace or Delete to remove all gadgets from this site");
-   n.urgency = E_NOTIFICATION_NOTIFY_URGENCY_NORMAL;
-   e_notification_client_send(&n, NULL, NULL);
 }
