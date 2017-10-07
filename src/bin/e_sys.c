@@ -35,6 +35,7 @@ static Ecore_Timer *_e_sys_logout_timer = NULL;
 static E_Dialog *_e_sys_logout_confirm_dialog = NULL;
 static Ecore_Timer *_e_sys_susp_hib_check_timer = NULL;
 static double _e_sys_susp_hib_check_last_tick = 0.0;
+static Ecore_Timer *_e_sys_phantom_wake_check_timer = NULL;
 
 static Ecore_Event_Handler *_e_sys_acpi_handler = NULL;
 
@@ -220,6 +221,20 @@ _e_sys_screensaver_unignore_delay(void *data EINA_UNUSED)
 }
 
 static Eina_Bool
+_e_sys_phantom_wake_check_cb(void *data EINA_UNUSED)
+{
+   E_Action *act = e_action_find("suspend_smart");
+
+   _e_sys_phantom_wake_check_timer = NULL;
+   if ((e_acpi_lid_is_closed()) && (act))
+     {
+        ERR("Phantom wake/resume while lid still closed? Suspending again");
+        if (act->func.go) act->func.go(E_OBJECT(e_zone_current_get()), NULL);
+     }
+   return EINA_FALSE;
+}
+
+static Eina_Bool
 _e_sys_comp_resume2(void *data EINA_UNUSED)
 {
    Eina_List *l;
@@ -232,6 +247,13 @@ _e_sys_comp_resume2(void *data EINA_UNUSED)
    EINA_LIST_FOREACH(e_comp->zones, l, zone)
      e_backlight_level_set(zone, resume_backlight, -1.0);
    _e_sys_comp_zones_fade("e,state,sys,resume", EINA_FALSE);
+   if (e_acpi_lid_is_closed())
+     {
+        if (_e_sys_phantom_wake_check_timer)
+          ecore_timer_del(_e_sys_phantom_wake_check_timer);
+        _e_sys_phantom_wake_check_timer =
+          ecore_timer_add(1.0, _e_sys_phantom_wake_check_cb, NULL);
+     }
    return EINA_FALSE;
 }
 
@@ -260,8 +282,8 @@ _e_sys_comp_resume(void)
    if (_e_sys_screensaver_unignore_timer)
      ecore_timer_del(_e_sys_screensaver_unignore_timer);
    _e_sys_screensaver_unignore_timer =
-     ecore_timer_add(0.5, _e_sys_screensaver_unignore_delay, NULL);
-   ecore_timer_add(1.5, _e_sys_comp_resume2, NULL);
+     ecore_timer_add(0.3, _e_sys_screensaver_unignore_delay, NULL);
+   ecore_timer_add(0.6, _e_sys_comp_resume2, NULL);
 }
 
 static void
@@ -1131,6 +1153,9 @@ _e_sys_action_do(E_Sys_Action a, char *param EINA_UNUSED, Eina_Bool raw)
           }
         else if (!_e_sys_comp_waiting)
           {
+             if (_e_sys_phantom_wake_check_timer)
+               ecore_timer_del(_e_sys_phantom_wake_check_timer);
+             _e_sys_phantom_wake_check_timer = NULL;
              if (raw)
                {
                   if (e_config->desklock_on_suspend)
@@ -1188,6 +1213,9 @@ _e_sys_action_do(E_Sys_Action a, char *param EINA_UNUSED, Eina_Bool raw)
           }
         else if (!_e_sys_comp_waiting)
           {
+             if (_e_sys_phantom_wake_check_timer)
+               ecore_timer_del(_e_sys_phantom_wake_check_timer);
+             _e_sys_phantom_wake_check_timer = NULL;
              if (raw)
                {
                   _e_sys_susp_hib_check();
