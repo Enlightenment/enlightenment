@@ -366,7 +366,7 @@ _e_pointer_cb_free(E_Pointer *ptr)
 static void
 _e_pointer_x11_setup(E_Pointer *ptr, const char *cursor)
 {
-   if (ptr->e_cursor && (e_comp->comp_type == E_PIXMAP_TYPE_X))
+   if (ptr->e_cursor && (e_comp->comp_type != E_PIXMAP_TYPE_WL))
      {
         /* create a pointer canvas if we need to */
         if ((!ptr->buffer_evas) && ptr->win) _e_pointer_canvas_add(ptr);
