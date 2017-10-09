@@ -532,7 +532,7 @@ e_pointer_canvas_new(Ecore_Evas *ee, Eina_Bool filled)
    ptr->color = EINA_TRUE;
    ptr->canvas = EINA_TRUE;
    ptr->w = ptr->h = e_config->cursor_size;
-   ptr->e_cursor = e_config->use_e_cursor;
+   ptr->e_cursor = 1;
 
    ptr->ee = ee;
    ptr->evas = ecore_evas_get(ee);
