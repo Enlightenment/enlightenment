@@ -765,7 +765,7 @@ static void
 _bar_icon_preview_client_add(Icon *ic, E_Client *ec)
 {
    Evas_Object *layout, *label, *img;
-   Edje_Message_Int_Set *msg;
+   double aspect = 1.0;
 
    layout = elm_layout_add(ic->preview_box);
    evas_object_data_set(layout, "icon", ic);
@@ -779,11 +779,6 @@ _bar_icon_preview_client_add(Icon *ic, E_Client *ec)
    elm_box_pack_end(ic->preview_box, layout);
    evas_object_show(layout);
 
-   msg = alloca(sizeof(Edje_Message_Int_Set) + (sizeof(int)));
-   msg->count = 1;
-   msg->val[0] = ic->inst->cfg->preview_size;
-   edje_object_message_send(elm_layout_edje_get(layout), EDJE_MESSAGE_INT_SET, 1, msg);
-
    label = elm_label_add(layout);
    elm_object_style_set(label, "luncher_preview");
    elm_label_ellipsis_set(label, EINA_TRUE);
@@ -792,8 +787,11 @@ _bar_icon_preview_client_add(Icon *ic, E_Client *ec)
    elm_layout_content_set(layout, "e.swallow.title", label);
    evas_object_show(label);
 
+   aspect = (double)ec->client.w / (double)ec->client.h;
+
    img = e_comp_object_util_mirror_add(ec->frame);
    edje_extern_object_aspect_set(img, EDJE_ASPECT_CONTROL_BOTH, ec->client.w, ec->client.h);
+   evas_object_size_hint_min_set(img, ic->inst->cfg->preview_size * aspect, ic->inst->cfg->preview_size);
    elm_layout_content_set(layout, "e.swallow.icon", img);
    if (evas_object_image_alpha_get(img))
      elm_layout_signal_emit(layout, "e,state,icon,alpha", "e");
@@ -843,7 +841,6 @@ _bar_icon_preview_show(void *data)
 
    ic->preview = elm_ctxpopup_add(e_comp->elm);
    elm_object_style_set(ic->preview, "noblock");
-   evas_object_size_hint_min_set(ic->preview, ic->inst->cfg->preview_size, ic->inst->cfg->preview_size);
    evas_object_smart_callback_add(ic->preview, "dismissed", _bar_popup_dismissed, ic);
    evas_object_event_callback_add(ic->preview, EVAS_CALLBACK_MOUSE_IN,
        _bar_icon_preview_mouse_in, ic);
