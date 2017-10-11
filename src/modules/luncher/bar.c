@@ -767,10 +767,12 @@ _bar_icon_preview_client_add(Icon *ic, E_Client *ec)
    Evas_Object *layout, *label, *img;
 
    layout = elm_layout_add(ic->preview_box);
+   edje_object_update_hints_set(elm_layout_edje_get(layout), EINA_TRUE);
    evas_object_data_set(layout, "icon", ic);
    e_theme_edje_object_set(layout, "e/gadget/luncher/preview",
        "e/gadget/luncher/preview");
    evas_object_size_hint_weight_set(layout, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(layout, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_event_callback_add(layout, EVAS_CALLBACK_MOUSE_IN,
        _bar_icon_preview_item_mouse_in, ic);
    evas_object_event_callback_add(layout, EVAS_CALLBACK_MOUSE_OUT,
@@ -787,6 +789,7 @@ _bar_icon_preview_client_add(Icon *ic, E_Client *ec)
    evas_object_show(label);
 
    img = e_comp_object_util_mirror_add(ec->frame);
+   edje_object_update_hints_set(elm_layout_edje_get(img), EINA_TRUE);
    edje_extern_object_aspect_set(img, EDJE_ASPECT_CONTROL_BOTH, ec->client.w, ec->client.h);
    evas_object_size_hint_min_set(img, ic->inst->cfg->preview_size, ic->inst->cfg->preview_size);
    elm_layout_content_set(layout, "e.swallow.icon", img);
