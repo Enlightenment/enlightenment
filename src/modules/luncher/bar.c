@@ -765,7 +765,6 @@ static void
 _bar_icon_preview_client_add(Icon *ic, E_Client *ec)
 {
    Evas_Object *layout, *label, *img;
-   double aspect = 1.0;
 
    layout = elm_layout_add(ic->preview_box);
    evas_object_data_set(layout, "icon", ic);
@@ -787,11 +786,9 @@ _bar_icon_preview_client_add(Icon *ic, E_Client *ec)
    elm_layout_content_set(layout, "e.swallow.title", label);
    evas_object_show(label);
 
-   aspect = (double)ec->client.w / (double)ec->client.h;
-
    img = e_comp_object_util_mirror_add(ec->frame);
    edje_extern_object_aspect_set(img, EDJE_ASPECT_CONTROL_BOTH, ec->client.w, ec->client.h);
-   evas_object_size_hint_min_set(img, ic->inst->cfg->preview_size * aspect, ic->inst->cfg->preview_size);
+   evas_object_size_hint_min_set(img, ic->inst->cfg->preview_size, ic->inst->cfg->preview_size);
    elm_layout_content_set(layout, "e.swallow.icon", img);
    if (evas_object_image_alpha_get(img))
      elm_layout_signal_emit(layout, "e,state,icon,alpha", "e");
