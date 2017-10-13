@@ -2403,6 +2403,8 @@ _e_comp_smart_show(Evas_Object *obj)
      }
    if (cw->ec->iconic && (!cw->ec->new_client))
      e_comp_object_signal_emit(cw->smart_obj, "e,action,uniconify", "e");
+   if (cw->updates_exist)
+     e_comp_object_render_update_add(obj);
    if ((!cw->showing) && ((!cw->ec->iconic) || cw->ec->new_client || (!cw->animating)))
      {
         /* if cw->showing set, client was ec->hidden during show animation */
