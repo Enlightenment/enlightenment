@@ -21,7 +21,7 @@ else
     SUSPEND   = '/usr/bin/systemctl suspend'
     HIBERNATE = '/usr/bin/systemctl hibernate'
   else
-    sleep = find_program('sleep.sh', '/etc/acpi/sleep.sh', '/sbin/sleep.sh', '/usr/sbin/sleep.sh')
+    sleep = find_program('sleep.sh', '/etc/acpi/sleep.sh', '/sbin/sleep.sh', '/usr/sbin/sleep.sh', required : false)
     if sleep.found() == true
       SUSPEND = sleep.path()
       if sleep.path() == '/etc/acpi/sleep.sh'
@@ -34,7 +34,7 @@ else
       endif
     endif
 
-    hibernate_sh = find_program('hibernate.sh', '/etc/acpi/hibernate.sh', '/sbin/hibernate.sh', '/usr/sbin/hibernate.sh')
+    hibernate_sh = find_program('hibernate.sh', '/etc/acpi/hibernate.sh', '/sbin/hibernate.sh', '/usr/sbin/hibernate.sh', required : false)
     if hibernate_sh.found() == true
       HIBERNATE = hibernate_sh.path()
       if hibernate_sh.path() == '/etc/acpi/hibernate.sh'
