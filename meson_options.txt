@@ -1,18 +1,18 @@
 option('install-sysactions',
 	type: 'boolean',
-	default: true,
+	value: true,
 	description: 'install /etc/enlightenment/sysactions.conf: (default=true)')
 option('install-enlightenment-menu',
 	type: 'boolean',
-	default: true,
+	value: true,
 	description: 'install /etc/xdg/menus/e-applications.menu: (default=true)')
 option('files',
 	type: 'boolean',
-	default: true,
+	value: true,
 	description: 'enable Files menu item: (default=true)')
 option('nls',
 	type: 'boolean',
-	default: true,
+	value: true,
 	description: 'enable localization: (default=true)')
 
 option('edje-cc',
@@ -21,288 +21,287 @@ option('edje-cc',
 
 option('pam',
 	type: 'boolean',
-	default: true,
+	value: true,
 	description: 'enable PAM support: (default=true)')
 
 option('device-udev',
 	type: 'boolean',
-	default: true,
+	value: true,
 	description: 'enable udev device backend: (default=true)')
 option('mount-udisks',
 	type: 'boolean',
-	default: true,
+	value: true,
 	description: 'enable udisks mounting support: (default=true)')
 option('mount-eeze',
 	type: 'boolean',
-	default: false,
+	value: false,
 	description: 'enable eeze mounting support: (default=false)')
 
 option('wayland',
 	type: 'boolean',
-	default: false,
 	value: false,
 	description: 'enable wayland support: (default=false)')
 option('xwayland',
 	type: 'boolean',
-	default: true,
+	value: true,
 	description: 'enable xwayland support: (default=true)')
 option('xwayland-bin',
 	type: 'string',
-	default: '',
+	value: '',
 	description: 'set the path to Xwayland: (default=)')
 option('wl-buffer',
 	type: 'boolean',
-	default: true,
+	value: true,
 	description: 'enable buffer wayland output: (default=true)')
 option('wl-drm',
 	type: 'boolean',
-	default: true,
+	value: true,
 	description: 'enable drm wayland output: (default=true)')
 option('wl-wl',
 	type: 'boolean',
-	default: true,
+	value: true,
 	description: 'enable nested wayland output: (default=true)')
 option('wl-x11',
 	type: 'boolean',
-	default: true,
+	value: true,
 	description: 'enable x11 wayland output: (default=true)')
 option('wl-desktop-shell',
 	type: 'boolean',
-	default: true,
+	value: true,
 	description: 'enable wayland desktop shell support: (default=true)')
 option('wl-text-input',
 	type: 'boolean',
-	default: true,
+	value: true,
 	description: 'enable wayland vkbd support: (default=true)')
 option('wl-weekeyboard',
 	type: 'boolean',
-	default: true,
+	value: true,
 	description: 'enable internal wayland vkbd: (default=true)')
 
 option('systemd',
 	type: 'boolean',
-	default: true,
+	value: true,
 	description: 'enable systemd support: (default=true)')
 option('systemdunitdir',
 	type: 'string',
-	default: '',
+	value: '',
 	description: 'path to systemd user services directory')
 
 option('appmenu',
 	type: 'boolean',
-	default: true,
+	value: true,
 	description: 'enable appmenu module: (default=true)')
 option('backlight',
 	type: 'boolean',
-	default: true,
+	value: true,
 	description: 'enable backlight module: (default=true)')
 option('battery',
 	type: 'boolean',
-	default: true,
+	value: true,
 	description: 'enable battery module: (default=true)')
 option('bluez4',
 	type: 'boolean',
-	default: true,
+	value: true,
 	description: 'enable bluez4 module: (default=true)')
 option('clock',
 	type: 'boolean',
-	default: true,
+	value: true,
 	description: 'enable clock module: (default=true)')
 option('connman',
 	type: 'boolean',
-	default: true,
+	value: true,
 	description: 'enable connman module: (default=true)')
 option('cpufreq',
 	type: 'boolean',
-	default: true,
+	value: true,
 	description: 'enable cpufreq module: (default=true)')
 option('everything',
 	type: 'boolean',
-	default: true,
+	value: true,
 	description: 'enable everything module: (default=true)')
 option('fileman',
 	type: 'boolean',
-	default: true,
+	value: true,
 	description: 'enable fileman module: (default=true)')
 option('fileman-opinfo',
 	type: 'boolean',
-	default: true,
+	value: true,
 	description: 'enable fileman-opinfo module: (default=true)')
 option('gadman',
 	type: 'boolean',
-	default: true,
+	value: true,
 	description: 'enable gadman module: (default=true)')
 option('geolocation',
 	type: 'boolean',
-	default: true,
+	value: true,
 	description: 'enable geolocation module: (default=true)')
 option('ibar',
 	type: 'boolean',
-	default: true,
+	value: true,
 	description: 'enable ibar module: (default=true)')
 option('ibox',
 	type: 'boolean',
-	default: true,
+	value: true,
 	description: 'enable ibox module: (default=true)')
 option('lokker',
 	type: 'boolean',
-	default: true,
+	value: true,
 	description: 'enable lokker module: (default=true)')
 option('luncher',
 	type: 'boolean',
-	default: true,
+	value: true,
 	description: 'enable luncher module: (default=true)')
 option('mixer',
 	type: 'boolean',
-	default: true,
+	value: true,
 	description: 'enable mixer module: (default=true)')
 option('msgbus',
 	type: 'boolean',
-	default: true,
+	value: true,
 	description: 'enable msgbus module: (default=true)')
 option('music-control',
 	type: 'boolean',
-	default: true,
+	value: true,
 	description: 'enable music-control module: (default=true)')
 option('notification',
 	type: 'boolean',
-	default: true,
+	value: true,
 	description: 'enable notification module: (default=true)')
 option('packagekit',
 	type: 'boolean',
-	default: true,
+	value: true,
 	description: 'enable packagekit module: (default=true)')
 option('pager',
 	type: 'boolean',
-	default: true,
+	value: true,
 	description: 'enable pager module: (default=true)')
 option('pager-plain',
 	type: 'boolean',
-	default: true,
+	value: true,
 	description: 'enable pager_plain module: (default=true)')
 option('quickaccess',
 	type: 'boolean',
-	default: true,
+	value: true,
 	description: 'enable quickaccess module: (default=true)')
 option('start',
 	type: 'boolean',
-	default: true,
+	value: true,
 	description: 'enable start module: (default=true)')
 option('shot',
 	type: 'boolean',
-	default: true,
+	value: true,
 	description: 'enable shot module: (default=true)')
 option('syscon',
 	type: 'boolean',
-	default: true,
+	value: true,
 	description: 'enable syscon module: (default=true)')
 option('sysinfo',
 	type: 'boolean',
-	default: true,
+	value: true,
 	description: 'enable sysinfo module: (default=true)')
 option('systray',
 	type: 'boolean',
-	default: true,
+	value: true,
 	description: 'enable systray module: (default=true)')
 option('tasks',
 	type: 'boolean',
-	default: true,
+	value: true,
 	description: 'enable tasks module: (default=true)')
 option('teamwork',
 	type: 'boolean',
-	default: true,
+	value: true,
 	description: 'enable teamwork module: (default=true)')
 option('temperature',
 	type: 'boolean',
-	default: true,
+	value: true,
 	description: 'enable temperature module: (default=true)')
 option('tiling',
 	type: 'boolean',
-	default: true,
+	value: true,
 	description: 'enable tiling module: (default=true)')
 option('time',
 	type: 'boolean',
-	default: true,
+	value: true,
 	description: 'enable time module: (default=true)')
 option('winlist',
 	type: 'boolean',
-	default: true,
+	value: true,
 	description: 'enable winlist module: (default=true)')
 option('wireless',
 	type: 'boolean',
-	default: true,
+	value: true,
 	description: 'enable wireless module: (default=true)')
 option('wizard',
 	type: 'boolean',
-	default: true,
+	value: true,
 	description: 'enable wizard module: (default=true)')
 option('xkbswitch',
 	type: 'boolean',
-	default: true,
+	value: true,
 	description: 'enable xkbswitch module: (default=true)')
 option('vkbd',
 	type: 'boolean',
-	default: true,
+	value: true,
 	description: 'enable vkbd module: (default=true)')
 
 
 option('conf',
 	type: 'boolean',
-	default: true,
+	value: true,
 	description: 'enable conf module: (default=true)')
 option('conf-applications',
 	type: 'boolean',
-	default: true,
+	value: true,
 	description: 'enable conf-applications module: (default=true)')
 option('conf-bindings',
 	type: 'boolean',
-	default: true,
+	value: true,
 	description: 'enable conf-bindings module: (default=true)')
 option('conf-dialogs',
 	type: 'boolean',
-	default: true,
+	value: true,
 	description: 'enable conf-dialogs module: (default=true)')
 option('conf-display',
 	type: 'boolean',
-	default: true,
+	value: true,
 	description: 'enable conf-display module: (default=true)')
 option('conf-interaction',
 	type: 'boolean',
-	default: true,
+	value: true,
 	description: 'enable conf-interaction module: (default=true)')
 option('conf-intl',
 	type: 'boolean',
-	default: true,
+	value: true,
 	description: 'enable conf-intl module: (default=true)')
 option('conf-menus',
 	type: 'boolean',
-	default: true,
+	value: true,
 	description: 'enable conf-menus module: (default=true)')
 option('conf-paths',
 	type: 'boolean',
-	default: true,
+	value: true,
 	description: 'enable conf-paths module: (default=true)')
 option('conf-performance',
 	type: 'boolean',
-	default: true,
+	value: true,
 	description: 'enable conf-performance module: (default=true)')
 option('conf-randr',
 	type: 'boolean',
-	default: true,
+	value: true,
 	description: 'enable conf-randr module: (default=true)')
 option('conf-shelves',
 	type: 'boolean',
-	default: true,
+	value: true,
 	description: 'enable conf-shelves module: (default=true)')
 option('conf-theme',
 	type: 'boolean',
-	default: true,
+	value: true,
 	description: 'enable conf-theme module: (default=true)')
 option('conf-window-manipulation',
 	type: 'boolean',
-	default: true,
+	value: true,
 	description: 'enable conf-window-manipulation module: (default=true)')
 option('conf-window-remembers',
 	type: 'boolean',
-	default: true,
+	value: true,
 	description: 'enable conf-window-remembers module: (default=true)')
