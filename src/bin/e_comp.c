@@ -221,6 +221,7 @@ _e_comp_cb_nocomp_begin(void)
 
    ecf = _e_comp_fullscreen_check();
    if (!ecf) return;
+   e_object_ref(E_OBJECT(ecf));
    e_comp->nocomp_ec = ecf;
    E_CLIENT_FOREACH(ec)
      if (ec != ecf) e_client_redirected_set(ec, 0);
@@ -357,7 +358,7 @@ _e_comp_nocomp_end(void)
         evas_object_layer_set(e_comp->nocomp_ec->frame, layer);
         e_comp->nocomp_ec->fullscreen = fs;
      }
-   e_comp->nocomp_ec = NULL;
+   E_FREE_FUNC(e_comp->nocomp_ec, e_object_unref);
 }
 
 static Eina_Bool
