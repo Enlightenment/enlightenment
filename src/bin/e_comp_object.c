@@ -3844,12 +3844,6 @@ e_comp_object_render_update_del(Evas_Object *obj)
    /* this gets called during comp animating to clear the update flag */
    if (e_comp->grabbed) return;
    e_comp->updates = eina_list_remove(e_comp->updates, cw->ec);
-   if (!e_comp->updates)
-     {
-        E_FREE_FUNC(e_comp->update_job, ecore_job_del);
-        if (e_comp->render_animator)
-          ecore_animator_freeze(e_comp->render_animator);
-     }
 }
 
 E_API void
