@@ -500,10 +500,10 @@ _e_comp_wl_data_device_selection_set(void *data EINA_UNUSED, E_Comp_Wl_Data_Sour
 
    if (sel_source)
      {
-        if (sel_source->cancelled)
-          sel_source->cancelled(sel_source);
         if (!e_comp_wl->clipboard.xwl_owner)
           wl_list_remove(&e_comp_wl->selection.data_source_listener.link);
+        if (sel_source->cancelled)
+          sel_source->cancelled(sel_source);
         e_comp_wl->selection.data_source = NULL;
      }
 
