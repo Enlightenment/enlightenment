@@ -314,7 +314,13 @@ _batman_device_update(Instance *inst)
    int acnum = 0;
 
    EINA_LIST_FOREACH(batman_device_ac_adapters, l, ac)
-     if (ac->present) acnum++;
+     {
+        if (ac->present)
+          {
+             acnum++;
+             have_power = 1;
+          }
+     }
 
    EINA_LIST_FOREACH(batman_device_batteries, l, bat)
      {

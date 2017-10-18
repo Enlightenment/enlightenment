@@ -289,7 +289,13 @@ _battery_device_update(void)
    int acnum = 0;
 
    EINA_LIST_FOREACH(device_ac_adapters, l, ac)
-     if (ac->present) acnum++;
+     {
+        if (ac->present)
+          {
+             acnum++;
+             have_power = 1;
+          }
+     }
 
    EINA_LIST_FOREACH(device_batteries, l, bat)
      {
