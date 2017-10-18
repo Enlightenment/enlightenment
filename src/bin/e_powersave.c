@@ -33,6 +33,8 @@ static E_Powersave_Mode powersave_mode_force = E_POWERSAVE_MODE_NONE;
 static double defer_time = 5.0;
 static Eina_Bool powersave_force = EINA_FALSE;
 static Eina_List *powersave_sleepers = NULL;
+static Eina_Bool powersave_deferred_suspend = EINA_FALSE;
+static Eina_Bool powersave_deferred_hibernate = EINA_FALSE;
 
 /* externally accessible functions */
 EINTERN int
@@ -198,6 +200,25 @@ e_powersave_sleeper_sleep(E_Powersave_Sleeper *sleeper, int poll_interval)
      }
 }
 
+E_API void
+e_powersave_defer_suspend(void)
+{
+   powersave_deferred_suspend = EINA_TRUE;
+}
+
+E_API void
+e_powersave_defer_hibernate(void)
+{
+   powersave_deferred_hibernate = EINA_TRUE;
+}
+
+E_API void
+e_powersave_defer_cancel(void)
+{
+   powersave_deferred_suspend = EINA_FALSE;
+   powersave_deferred_hibernate = EINA_FALSE;
+}
+
 /* local subsystem functions */
 
 static void
@@ -288,7 +309,21 @@ _e_powersave_mode_eval(void)
 static void
 _e_powersave_event_update_free(void *data EINA_UNUSED, void *event)
 {
+   E_Powersave_Mode mode;
+
+   if (powersave_force) mode = powersave_mode_force;
+   else mode = powersave_mode;
    free(event);
+
+   if (mode > E_POWERSAVE_MODE_LOW)
+     {
+        if (powersave_deferred_hibernate)
+          e_sys_action_do(E_SYS_HIBERNATE, NULL);
+        else if (powersave_deferred_suspend)
+          e_sys_action_do(E_SYS_SUSPEND, NULL);
+     }
+   powersave_deferred_hibernate = EINA_FALSE;
+   powersave_deferred_suspend = EINA_FALSE;
 }
 
 static void

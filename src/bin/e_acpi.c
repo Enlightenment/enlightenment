@@ -351,6 +351,7 @@ _e_acpi_cb_server_data(void *data EINA_UNUSED, int type EINA_UNUSED, void *event
                   printf("RRR: lid event for lid %i\n", lid_is_closed);
                   if (!e_randr2_cfg->ignore_acpi_events)
                     e_randr2_screen_refresh_queue(EINA_TRUE);
+                  if (!lid_is_closed) e_powersave_defer_cancel();
                   break;
 
                 default:

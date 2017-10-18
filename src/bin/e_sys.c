@@ -306,6 +306,11 @@ _e_sys_systemd_signal_prepare_sleep(void *data EINA_UNUSED, const Eldbus_Message
    // b == 1 -> suspending
    // b == 0 -> resuming
    fprintf(stderr, "SSS: systemd said to prepare for sleep! bool=%i @%1.8f\n", (int)b, ecore_time_get());
+   if (b == EINA_FALSE)
+     {
+        ecore_event_add(E_EVENT_SYS_RESUME, NULL, NULL, NULL);
+        _e_sys_comp_resume();
+     }
 }
 
 /* externally accessible functions */

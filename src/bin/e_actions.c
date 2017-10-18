@@ -2413,10 +2413,24 @@ _have_lid_and_external_screens_on(void)
    return EINA_FALSE;
 }
 
+static Eina_Bool
+_should_suspend_if_plugged_in(void)
+{
+   if ((e_config->screensaver_suspend_on_ac) ||
+       (e_powersave_mode_get() > E_POWERSAVE_MODE_LOW))
+     return EINA_TRUE;
+   return EINA_FALSE;
+}
+
 ACT_FN_GO(suspend_smart, EINA_UNUSED)
 {
    if (!_have_lid_and_external_screens_on())
-     e_sys_action_do(E_SYS_SUSPEND, NULL);
+     {
+        if (_should_suspend_if_plugged_in())
+          e_sys_action_do(E_SYS_SUSPEND, NULL);
+        else
+          e_powersave_defer_suspend();
+     }
 }
 
 /***************************************************************************/
@@ -2484,7 +2498,12 @@ ACT_FN_GO(hibernate, )
 ACT_FN_GO(hibernate_smart, EINA_UNUSED)
 {
    if (!_have_lid_and_external_screens_on())
-     e_sys_action_do(E_SYS_HIBERNATE, NULL);
+     {
+        if (_should_suspend_if_plugged_in())
+          e_sys_action_do(E_SYS_HIBERNATE, NULL);
+        else
+          e_powersave_defer_hibernate();
+     }
 }
 
 /***************************************************************************/

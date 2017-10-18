@@ -37,6 +37,9 @@ E_API void                         e_powersave_mode_force(E_Powersave_Mode mode)
 E_API void                         e_powersave_mode_unforce(void);
 E_API E_Powersave_Sleeper         *e_powersave_sleeper_new(void);
 E_API void                         e_powersave_sleeper_free(E_Powersave_Sleeper *sleeper);
+E_API void                         e_powersave_defer_suspend(void);
+E_API void                         e_powersave_defer_hibernate(void);
+E_API void                         e_powersave_defer_cancel(void);
 // the below function is INTENDED to be called from a thread
 E_API void                         e_powersave_sleeper_sleep(E_Powersave_Sleeper *sleeper, int poll_interval);
 
