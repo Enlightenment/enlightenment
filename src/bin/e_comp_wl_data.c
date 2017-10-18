@@ -1283,6 +1283,10 @@ e_comp_wl_clipboard_source_unref(E_Comp_Wl_Clipboard_Source *source)
      }
 
    _mime_types_free(&source->data_source);
+   if (source == e_comp_wl->clipboard.source)
+     e_comp_wl->clipboard.source = NULL;
+   if (&source->data_source == e_comp_wl->selection.data_source)
+     e_comp_wl->selection.data_source = NULL;
 
    wl_signal_emit(&source->data_source.destroy_signal, &source->data_source);
    wl_array_release(&source->contents);
