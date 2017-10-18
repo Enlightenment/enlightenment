@@ -654,6 +654,13 @@ _e_comp_wl_data_device_cb_drag_start(struct wl_client *client, struct wl_resourc
              EC_CHANGED(ec);
              e_comp_wl->drag_client = ec;
           }
+        if (ec->comp_data->pending.input)
+          eina_tiler_clear(ec->comp_data->pending.input);
+        else
+          {
+             ec->comp_data->pending.input = eina_tiler_new(65535, 65535);
+             eina_tiler_tile_size_set(ec->comp_data->pending.input, 1, 1);
+          }
      }
 
    EINA_LIST_FOREACH(e_comp_wl->ptr.resources, l, res)

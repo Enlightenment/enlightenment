@@ -89,6 +89,13 @@ _e_comp_wl_input_pointer_cb_cursor_set(struct wl_client *client, struct wl_resou
     * are being processed... let's BAIL.
     */
    if (!ec) return;
+   if (ec->comp_data->pending.input)
+     eina_tiler_clear(ec->comp_data->pending.input);
+   else
+     {
+        ec->comp_data->pending.input = eina_tiler_new(65535, 65535);
+        eina_tiler_tile_size_set(ec->comp_data->pending.input, 1, 1);
+     }
    if (!ec->re_manage)
      {
         ec->comp_data->cursor = ec->re_manage = 1;
