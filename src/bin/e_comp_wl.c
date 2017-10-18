@@ -1762,6 +1762,7 @@ _e_comp_wl_surface_cb_input_region_set(struct wl_client *client EINA_UNUSED, str
 
    if (!(ec = wl_resource_get_user_data(resource))) return;
    if (e_object_is_del(E_OBJECT(ec))) return;
+   if (ec->comp_data->cursor || (ec == e_comp_wl->drag_client)) return;
 
    if (ec->comp_data->pending.input)
      eina_tiler_free(ec->comp_data->pending.input);
