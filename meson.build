@@ -18,7 +18,7 @@ endif
 
 e_version   = ver.split('.')
 git_version = '0'
-git         = find_program('git')
+git         = find_program('git', required: false)
 if git.found() == true
   git_cmd = run_command(git.path(), 'rev-list', '--count', 'HEAD')
   if git_cmd.returncode() == 0

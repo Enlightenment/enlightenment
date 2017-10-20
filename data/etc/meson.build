@@ -28,7 +28,7 @@ else
         SUSPEND = '/etc/acpi/sleep.sh force'
       endif
     else
-      suspend = find_program('pm-suspend', '/etc/acpi/pm-suspend', '/sbin/pm-suspend', '/usr/sbin/pm-suspend')
+      suspend = find_program('pm-suspend', '/etc/acpi/pm-suspend', '/sbin/pm-suspend', '/usr/sbin/pm-suspend', required: false)
       if suspend.found()
         SUSPEND = suspend.path()
       endif
@@ -41,7 +41,7 @@ else
         SUSPEND = '/etc/acpi/hibernate.sh force'
       endif
     else
-      hibernate = find_program('pm-hibernate', '/etc/acpi/pm-hibernate', '/sbin/pm-hibernate', '/usr/sbin/pm-hibernate')
+      hibernate = find_program('pm-hibernate', '/etc/acpi/pm-hibernate', '/sbin/pm-hibernate', '/usr/sbin/pm-hibernate', required: false)
       if hibernate.found()
         HIBERNATE = hibernate.path()
       endif
