@@ -8,7 +8,6 @@ Highlights:
       * tiling policy improvements
       * integrated per-window volume controls
 
-
 Al 'netstar' Poole (7):
       Enlightenment - BSD - Cleanup sysctl code for batteries.
       Enlightenment - BSD - Fix typos in battery sysctl float compares.
@@ -61,7 +60,11 @@ Andy Williams (6):
       luncher: Fix some wobble
       Add Change Wallpaper item in Desktop menu.
 
-Carsten Haitzler (196):
+Bertrand Jacquin (2):
+      po: Bump copyright extension
+      po: Bump copyright extension
+
+Carsten Haitzler (199):
       e ibar/ibox fix starrting/started signal emittion
       e temp module - kill tempget process not terminate to ensure death
       e - fix dnd problems coming from getting top object in comp canvas
@@ -258,6 +261,9 @@ Carsten Haitzler (196):
       e start - fix path prepend/append if already in path assuming clue
       tiling - ensure notification struct is 0'd before use
       use safer ecore_exe flags that close stdin/out/err if possible
+      e sys - handle phantom wakeups from sleep on some devices
+      battery modules - actually set ac power flag based on ac presence
+      smart suspend - honor suspend on ac or not flag as it should
 
 Cedric BAIL (6):
       filepreview: avoid race condition when destroying txt file preview with slow hard drive.
@@ -468,7 +474,7 @@ Joshua McBeth (1):
 Leif Middelschulte (1):
       support proxy settings provided by Connman.
 
-Marcel Hollerbach (80):
+Marcel Hollerbach (81):
       e_comp_wl: introduce api to set index of keymap
       e_xkb: use the new e_comp_wl_input_index_set api
       readme: update keyboard entry
@@ -549,6 +555,7 @@ Marcel Hollerbach (80):
       meson: teamwork uses emile
       meson: wl_drm uses elput
       meson: wizard also link_with here
+      meson: the keyword is value, not default!
 
 Mariusz Bialonczyk (1):
       modules/temperature: cosmetics: typo fix (celcius -> celsius)
@@ -589,7 +596,7 @@ Michaël Bouchaud (yoz) (14):
       mixer: use VOLSET macro in volume output set
       Revert "mixer: do not set back the value from emix once the drag is finished"
 
-Mike Blumenkrantz (823):
+Mike Blumenkrantz (864):
       unset release mode
       handle e_comp_x init failure more effectively and perform cleanups
       set x11 randr iface for wl_x11 based on wm presence, not composited state
@@ -1413,6 +1420,47 @@ Mike Blumenkrantz (823):
       Revert "do not perform client moves during comp updates"
       block client rescales during render updates
       do not unnecessarily rescale clients
+      22.0-beta release
+      0.22.0-beta NEWS updates
+      unset release mode
+      unbreak nls build
+      don't show xwayland clients unconditionally on commit
+      defer wl startup apps until after xwayland init completes
+      add comp object function to get the content of a util_add object
+      move gadget editor help text onto the editor popup
+      pass keys through xkbcommon under wayland lockscreen
+      do not set E_Client->take_focus for popup wl clients
+      simplify focus on commit block for wl clients
+      handle gadget site layouts using accurate parent geometry
+      clamp expanding gadget size to 0 to prevent sizing overflows
+      do ecore-x shutdown on xwayland shutdown
+      redo bryce eventing
+      deduplicate global gadget handler variables
+      block gadget configuration unconditionally while desklock is active
+      set comp object alpha state when applying native surface
+      add max size input rects for wl clients on creation
+      handle x11 shaped input under xwayland
+      set default cursor on root window for xwl pointer
+      Revert "disable option for mouse to use Application theme if we are running in Wayland"
+      move 'show cursor' option in mouse settings inside frame
+      do not show cursor theme options in wayland compositor mode
+      move cursor theme options into separate frame
+      do not apply enlightenment cursor theme for xwayland clients
+      block relative motion event sending when pointer is outside input area
+      use e_client_unfullscreen() to handle xdg-shell unfullscreen requests
+      Revert "do not apply enlightenment cursor theme for xwayland clients"
+      check for non-wl compositor when forcing application cursors onto pointers
+      always use e cursor theme for canvas pointers
+      recreate x11 root pointer when changing application<->enlightenment theme
+      add render update when showing clients if damages exist
+      add client refs for the nocomp client
+      do not unqueue render when deleting a client's render update
+      ignore set_input_region requests for wl surfaces which are cursors or drags
+      set null input regions for surfaces upon calling set_cursor or start_drag
+      null wl clipboard+selection source pointers when destroying clipboard source
+      cancel wl selections after removing destroy listener
+      make some find_program() calls non-required in meson build
+      require efl 1.20.5
 
 Romain Naour (4):
       E: include uuid.h only when Wayland support is enabled.
@@ -1598,12 +1646,15 @@ Stephen 'Okra' Houston (158):
       E Exe: Since we no longer ref clients in the phony cb, don't free them after reffing them in instance_client_add.
       E Exe: Semi revert 2082bb51d3abffd991b4d791ace2567888e2e9fb. The ref count was off to begin with.
 
-Stephen Houston (5):
+Stephen Houston (8):
       Introduce pager gadget using new gadget api.
       Enlightenment - Luncher Grid Gadget - Do not double-free lists during empty.
       Enlightenment - Sysinfo Gadget - Size cpumonitor correctly wrt to bryce.
       Nothing to see here. debug--
       Sysinfo: Cpuclock, Netstatus, and Thermal now use progressbars in the popups to unify and match all sysinfo gadgets.
+      Luncher: Keep aspect on previews - don't force max sizes.
+      Luncher: Don't manually apply min sized aspect - The edje aspect set call handles this.
+      Align the preview properly.
 
 Stephen okra Houston (35):
       Luncher: Introduce Enlightenment's new launcher/taskbar/iconify manager: Luncher
@@ -1642,8 +1693,116 @@ Stephen okra Houston (35):
       Luncher: Fix Coverity Issues: CID 1366276 1366275
       Pager Gadget: Don't recalculate the pager if the zone is NULL.
 
+William L. Thomson Jr (1):
+      meson: Make sleep.sh and hibernate.sh not required, fixes T6210
+
 YeongJong Lee (1):
       fix korean translation mismatch
+
+
+Release 0.21.10:
+---------------------
+Al Poole (1):
+      Efm: file properties, fix widget sizing issue.
+
+Carsten Haitzler (5):
+      wireless module - dont segv e if connman daemon restarts
+      e - fix eet image format test to actually use key when loading
+      filepreview - properly set min size on cells not in a broken way
+      xsettings - fix warning for buffer that could be a bit small
+      batget - fix warnings about buffer sizes
+
+Derek Foreman (1):
+      Remove ecore_drm support
+
+Marcel Hollerbach (6):
+      e_startup: check for efreet errors
+      tiling: show notification if a client cannot be tiled
+      everything: use correct edje api
+      mixer: find a better name
+      tiling: give a better error message if a client doesnt fit
+      everything:declare this object as const
+
+Mike Blumenkrantz (79):
+      reject gadget site layout attempts only when it would be impossible
+      do not reposition new bryces after using editor
+      clamp vertical bryce size to useful zone geometry
+      use explicit rounding for bryce scaling
+      do not add delete/kill request smart callbacks for non-internal wl clients
+      apply client hints when rescaling a client
+      rescale x11 clients after fetching hints
+      don't arbitrarily bind version=1 for wl extension resources
+      make mouse-activated menus function as expected with 0 passed as activate time
+      do not defer wl gl init
+      clamp internal win min/max size hints to 0
+      set clock gadget id on creation
+      destroy gadget configs when deleting a gadget site
+      avoid object hide animations during shutdown
+      handle case where eglBindWaylandDisplay fails during wl init
+      capture zone for newly-added bryces based on name
+      make menu autoplacement more consistent by preferring DOWN placement
+      set gadget ctxpopup priority based on anchor
+      end xdnd operations on window hide if no FINISHED event is received
+      don't force xwl drag client motion for override drag clients
+      use xwindow check to determine whether to check icccm accept/take focus attrs
+      always align ibar inner box to the left
+      send theme signal for dialogs when no buttons are present
+      only pop a single dialog to notify about all fail themes in theme dialog
+      block updating window remembers while applying them
+      use EC_CHANGED for client menu attr changes
+      avoid hiding->showing->hiding->etc submenus for active menu items
+      re-select previously selected font+size in font class config
+      clamp xsettings font size to 12 when size is 0
+      only update wl client window size on commit if no pending resize exists
+      handle focus reverting correctly when using desk flip all actions
+      replace existing resize pointer mode for x11 client-initiated resizes
+      lock menu eventing during menu idler positioning
+      use menu item geometry to determine whether menu item is onscreen
+      only set new clients to current desk if desk has not yet been set
+      temporarily cache x11 configure requests which reposition hidden windows
+      remove invalid framelist call on frametable object in imc dialog
+      check imc exe existence before showing in imc dialog list
+      don't set gadman overlay gadgets as editing if overlay not visible
+      batch x11 maximize state change requests
+      force min size calc on dialog show
+      always use client geometry for comp object centering functions
+      handle gadget ctxpopup placement for desktop gadgets
+      set moving gadgets in pointer site to have moving state
+      perform gadget site layout before calling drop callback
+      destroy dropped gadgets after drop operation completes
+      fix color class dialog sizing
+      use client geometry for fileman popup positioning instead of win object geometry
+      use evas size hints for image widget internals if internal obj is not edje obj
+      use client frame for internal win geometry setting on show
+      perform client zone updates on canvas move/resize when not ignored
+      do not rescale override x11 clients during hint fetching
+      use clone of remembers list in window remember config
+      handle xdg "autostart" directories in apps dialogs
+      handle bryce setup when theme is broken
+      track setxkbmap processes and allow only one to run at a time
+      Revert "force recalc on bryce scroller when doing recalc on gadget site"
+      Revert "handle updates_full when adding comp object update regions"
+      force client render on mirror show for clients which have not yet been rendered
+      initialize stack variables
+      use int array for client maximize hint state update
+      use focus_set_with_pointer to focus from clients menu (middle click)
+      track gadget ctxpopups and reposition within zone on resize
+      do not reset existing client damage on resize if tiler size matches pixmap size
+      move pending client render queue in pixel callback to before render call
+      return during client pixel callback if pixmap is dirty and no updates exist
+      avoid adding render updates on client resize while shading the client
+      check for matching '/' in screen edid before fuzzy matching in randr init
+      use correct string for randr screen fuzzy matching
+      set shaped client image alpha after setting image data
+      don't update clock timer for time gadgets when deleting a non-advanced gadget
+      stack gadgets below site event rect when reparenting gadget
+      add time config event rects to gadget popups list
+      reset zone edge objects after comp canvas update
+      block all desk flips during window resize
+      warp pointer to center of internal dialog on show if dialog has focus
+      apply pointer focus to existing config dialogs from settings window
+      handle first time desk setting for fullscreen clients without crashing
+      remove fullscreen clients from vdesk clients list when toggling sticky state
 
 
 Release 0.21.9:
