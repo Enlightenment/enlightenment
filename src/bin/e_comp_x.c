@@ -5244,6 +5244,7 @@ _e_comp_x_del(E_Comp *c)
    E_FREE_FUNC(focus_job, ecore_job_del);
    E_FREE_FUNC(unfocus_job, ecore_job_del);
    free(c->x_comp_data);
+   c->x_comp_data = e_comp_x = NULL;
 }
 
 static void
@@ -5511,7 +5512,6 @@ _e_comp_x_setup(Ecore_X_Window root, int w, int h)
      }
    if (!ecore_x_window_manage(root)) return EINA_FALSE;
 
-   E_OBJECT_DEL_SET(e_comp, _e_comp_x_del);
    e_comp_x = e_comp->x_comp_data = E_NEW(E_Comp_X_Data, 1);
    ecore_x_e_window_profile_supported_set(root, EINA_TRUE);
    e_comp->cm_selection = ecore_x_window_input_new(root, 0, 0, 1, 1);
@@ -5817,6 +5817,7 @@ e_comp_x_init(void)
 E_API void
 e_comp_x_shutdown(void)
 {
+   _e_comp_x_del(e_comp);
    E_FREE_LIST(handlers, ecore_event_handler_del);
    E_FREE_FUNC(clients_win_hash, eina_hash_free);
    E_FREE_FUNC(damages_hash, eina_hash_free);
