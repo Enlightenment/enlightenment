@@ -856,6 +856,11 @@ e_pixmap_image_refresh(E_Pixmap *cp)
 
            if (cp->held_buffer) _e_pixmap_wayland_image_clear(cp);
 
+           /* This catches the case where a client (*cough* xwayland)
+            * deletes a buffer we haven't released
+            */
+           if (!cp->buffer) return EINA_FALSE;
+
            if (!cp->buffer->shm_buffer) return EINA_TRUE;
 
            cp->held_buffer = cp->buffer;
