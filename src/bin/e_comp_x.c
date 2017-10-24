@@ -5394,6 +5394,7 @@ _e_comp_x_del(E_Comp *c)
    E_FREE_FUNC(unfocus_job, ecore_job_del);
    free(c->x_comp_data);
    c->x_comp_data = e_comp_x = NULL;
+   c->root = 0;
 }
 
 static void
