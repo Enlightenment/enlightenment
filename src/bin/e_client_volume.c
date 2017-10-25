@@ -182,6 +182,7 @@ e_client_volume_sink_del(E_Client_Volume_Sink *sink)
         e_comp_object_frame_volume_update(ec->frame);
         _e_client_volume_sink_event_simple(ec, sink,
                                            E_EVENT_CLIENT_VOLUME_SINK_DEL);
+        e_object_unref(E_OBJECT(ec));
      }
    free(sink);
 }
@@ -301,6 +302,7 @@ e_client_volume_sink_append(E_Client *ec, E_Client_Volume_Sink *sink)
 
    ec->sinks = eina_list_append(ec->sinks, sink);
    sink->clients = eina_list_append(sink->clients, ec);
+   e_object_ref(E_OBJECT(ec));
    if (!ec->volume_control_enabled)
      {
         ec->volume_min = e_client_volume_sink_min_get(sink);
@@ -324,6 +326,7 @@ e_client_volume_sink_remove(E_Client *ec, E_Client_Volume_Sink *sink)
    _e_client_volume_update(ec);
    _e_client_volume_sink_event_simple(ec, sink,
                                       E_EVENT_CLIENT_VOLUME_SINK_DEL);
+   e_object_unref(E_OBJECT(ec));
 }
 
 E_API void
