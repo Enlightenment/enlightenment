@@ -5075,11 +5075,13 @@ _e_comp_x_cb_ping(void *data EINA_UNUSED, int ev_type EINA_UNUSED, Ecore_X_Event
 static void
 _e_comp_pointer_grab(void)
 {
+   fprintf(stderr, "E_COMP_X: 06 create grab win and grab pointer\n");
    if (_e_comp_x_suspend_grabbed) ecore_x_window_free(_e_comp_x_suspend_grabbed);
    _e_comp_x_suspend_grabbed = ecore_x_window_input_new(e_comp->root, 0, 0, 1, 1);
    ecore_x_window_show(_e_comp_x_suspend_grabbed);
    if (!e_grabinput_get(_e_comp_x_suspend_grabbed, 0, 0))
      {
+        fprintf(stderr, "E_COMP_X: 07 grab failed\n");
         ecore_x_window_free(_e_comp_x_suspend_grabbed);
         _e_comp_x_suspend_grabbed = 0;
      }
@@ -5089,6 +5091,7 @@ static void
 _e_comp_pointer_ungrab(void)
 {
    if (!_e_comp_x_suspend_grabbed) return;
+   fprintf(stderr, "E_COMP_X: 6 really ungrab input and free window\n");
    e_grabinput_release(_e_comp_x_suspend_grabbed, 0);
    ecore_x_window_free(_e_comp_x_suspend_grabbed);
    _e_comp_x_suspend_grabbed = 0;
@@ -5097,6 +5100,7 @@ _e_comp_pointer_ungrab(void)
 static void
 _e_comp_cb_pointer_suspend_resume_done(void *data, Evas_Object *obj, const char *emission, const char *source)
 {
+   fprintf(stderr, "E_COMP_X: 5 cursor suspend/resume done\n");
    edje_object_signal_callback_del(obj, emission, source,
                                    _e_comp_cb_pointer_suspend_resume_done);
    if (!data) _e_comp_pointer_ungrab();
@@ -5106,6 +5110,7 @@ EINTERN Eina_Bool
 _e_comp_x_screensaver_on()
 {
    const char *s;
+   fprintf(stderr, "E_COMP_X: 01 screensaver on\n");
    if ((!e_comp->pointer) || (!e_comp->pointer->o_ptr)) return ECORE_CALLBACK_RENEW;
    s = edje_object_data_get(e_comp->pointer->o_ptr, "can_suspend");
 
@@ -5113,10 +5118,13 @@ _e_comp_x_screensaver_on()
      {
         if (!e_desklock_state_get())
           {
+             fprintf(stderr, "E_COMP_X: 02 ungrab then grab pointer\n");
              _e_comp_pointer_ungrab();
              _e_comp_pointer_grab();
+             fprintf(stderr, "E_COMP_X: 03 no desklock but abort pointer suspend\n");
              if (!_e_comp_x_suspend_grabbed) return ECORE_CALLBACK_RENEW;
           }
+        fprintf(stderr, "E_COMP_X: 04 emit suspend signals to pointer\n");
         edje_object_signal_callback_del(e_comp->pointer->o_ptr,
                                         "e,state,mouse,suspend,done", "e",
                                         _e_comp_cb_pointer_suspend_resume_done);
@@ -5139,6 +5147,7 @@ _e_comp_x_screensaver_off()
 {
    const char *s;
 
+   fprintf(stderr, "E_COMP_X: 1 screensaver off\n");
    _e_comp_pointer_ungrab();
    if ((!e_comp->pointer) || (!e_comp->pointer->o_ptr)) return ECORE_CALLBACK_RENEW;
    s = edje_object_data_get(e_comp->pointer->o_ptr, "can_suspend");
@@ -5147,9 +5156,15 @@ _e_comp_x_screensaver_off()
      {
         if (!e_desklock_state_get())
           {
+             fprintf(stderr, "E_COMP_X: 2 re-grab pointer because desklock not on\n");
              _e_comp_pointer_grab();
-             if (!_e_comp_x_suspend_grabbed) return ECORE_CALLBACK_RENEW;
+             if (!_e_comp_x_suspend_grabbed)
+               {
+                  fprintf(stderr, "E_COMP_X: 3 no desklock but abort pointer unsuspend\n");
+                  return ECORE_CALLBACK_RENEW;
+               }
           }
+        fprintf(stderr, "E_COMP_X: 4 emit resume signals to pointer\n");
         edje_object_signal_callback_del(e_comp->pointer->o_ptr,
                                         "e,state,mouse,suspend,done", "e",
                                         _e_comp_cb_pointer_suspend_resume_done);
