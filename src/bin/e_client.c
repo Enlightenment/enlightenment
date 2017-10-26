@@ -2674,14 +2674,14 @@ E_API void
 e_client_mouse_out(E_Client *ec, int x, int y)
 {
    if (comp_grabbed) return;
-   if (ec->fullscreen) return;
-   if (e_object_is_del(E_OBJECT(ec))) return;
    if (ec->desk && ec->desk->animate_count) return;
    if (e_pixmap_is_x(ec->pixmap) && E_INSIDE(x, y, ec->x, ec->y, ec->w, ec->h)) return;
 
    ec->mouse.current.mx = x;
    ec->mouse.current.my = y;
    ec->mouse.in = 0;
+   if (ec->fullscreen) return;
+   if (e_object_is_del(E_OBJECT(ec))) return;
    if ((!ec->iconic) && (!e_client_util_ignored_get(ec)))
      e_focus_event_mouse_out(ec);
 }
