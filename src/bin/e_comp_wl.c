@@ -253,7 +253,7 @@ _e_comp_wl_mouse_out(E_Client *ec)
    }
    if (e_comp_wl->ptr.ec == ec)
      e_comp_wl->ptr.ec = NULL;
-   if (e_object_is_del(E_OBJECT(ec))) return;
+   if (!ec->comp_data) return;
 
    if (!ec->comp_data->surface) return;
    if (e_comp_wl->drag)
