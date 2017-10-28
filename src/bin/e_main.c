@@ -188,9 +188,11 @@ _xdg_data_dirs_augment(void)
         if (!dir) dir = "/tmp";
         else
           {
+             char buf2[4096];
+
              e_util_env_set("XDG_RUNTIME_DIR", dir);
-             snprintf(buf, sizeof(buf), "%s/.e-deleteme", dir);
-             ecore_file_mkdir(buf);
+             snprintf(buf2, sizeof(buf2), "%s/.e-deleteme", dir);
+             ecore_file_mkdir(buf2);
           }
      }
 
