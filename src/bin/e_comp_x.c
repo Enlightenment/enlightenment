@@ -6055,6 +6055,7 @@ e_comp_x_xwayland_client_setup(E_Client *ec, E_Client *wc)
    e_hints_window_visible_set(wc);
    _e_comp_x_client_stack(wc);
    wc->placed = placed;
+   if (!placed) wc->changes.pos = 0;
 }
 #endif
 
