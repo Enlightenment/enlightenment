@@ -3367,11 +3367,17 @@ e_comp_wl_evas_handle_mouse_button(E_Client *ec, uint32_t timestamp, uint32_t bu
         btn = BTN_RIGHT;
         break;
       case 4:
+        btn = BTN_SIDE;
+        break;
       case 5:
+        btn = BTN_EXTRA;
+        break;
       case 6:
+        btn = BTN_FORWARD;
+        break;
       case 7:
-        /* these are supposedly axis events */
-        return EINA_FALSE;
+        btn = BTN_BACK;
+        break;
       default:
         btn = button_id + BTN_SIDE - 8;
         break;
