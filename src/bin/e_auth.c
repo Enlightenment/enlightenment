@@ -236,7 +236,7 @@ e_auth_begin(char *passwd)
    if (pamerr != PAM_SUCCESS)
      {
         free(current_user);
-        exit(1);
+        _exit(1);
      }
    pamerr = pam_authenticate(da.pam.handle, 0);
    pam_end(da.pam.handle, pamerr);
@@ -246,10 +246,10 @@ e_auth_begin(char *passwd)
    if (pamerr == PAM_SUCCESS)
      {
         free(current_user);
-        exit(0);
+        _exit(0);
      }
    free(current_user);
-   exit(-1);
+   _exit(-1);
 
    return 0;
 }
