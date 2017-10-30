@@ -2574,7 +2574,7 @@ _e_comp_wl_client_cb_del(void *data EINA_UNUSED, E_Client *ec)
           subc->comp_data->sub.data->parent = NULL;
      }
 
-   if ((ec->parent) && (ec->parent->modal == ec))
+   if ((!e_client_has_xwindow(ec)) && (ec->parent) && (ec->parent->modal == ec))
      {
         ec->parent->lock_close = EINA_FALSE;
         ec->parent->modal = NULL;
