@@ -4082,6 +4082,7 @@ e_client_fullscreen(E_Client *ec, E_Fullscreen policy)
              ec->saved.h = ec->client.h;
           }
      }
+   E_FREE_FUNC(ec->agent, evas_object_del);
    ec->saved.maximized = ec->maximized;
    ec->saved.zone = ec->zone->num;
    ec->saved.frame = e_comp_object_frame_exists(ec->frame) || (!e_comp_object_frame_allowed(ec->frame));
