@@ -115,7 +115,7 @@ _key_down(int ctx, Ecore_Event_Key *ev)
           {
 #ifdef HAVE_WAYLAND
              if (e_comp->comp_type == E_PIXMAP_TYPE_WL)
-               e_comp_wl_key_up(ev, NULL);
+               e_comp_wl_key_down(ev, NULL);
 #endif
              return iface->key_down(ev);
           }
