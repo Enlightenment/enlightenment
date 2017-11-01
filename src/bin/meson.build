@@ -16,7 +16,6 @@ deps_e = [
   dep_rt,
   dep_m,
   dep_dl,
-  dep_pam,
   dep_eina,
   dep_eet,
   dep_eeze,
@@ -34,6 +33,10 @@ deps_e = [
   dep_emotion,
   dep_elementary
 ]
+
+if config_h.has('HAVE_PAM') == true
+  deps_e += dep_pam
+endif
 
 requires_e = ' '.join([
   'eina >= 1.19.99',
