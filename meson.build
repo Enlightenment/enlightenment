@@ -1,6 +1,6 @@
 ##### project
 project('enlightenment', 'c',
-        version        : '0.21.99',
+        version        : '0.22.99',
         license        : 'BSD 2 clause',
         default_options: [ 'c_std=gnu99', 'warning_level=2' ],
         meson_version  : '>= 0.40.0')
@@ -31,7 +31,7 @@ e_version_rev = '.'.join([ver, git_version])
 
 efl_version = '>= 1.20.5'
 
-release = 'ver-0.22'
+release = 'ver-0.23'
 #for releases
 #release = '@0@.@1@.@2@'.format(e_version[0], e_version[1], e_version[2])
 
