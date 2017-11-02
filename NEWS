@@ -64,7 +64,7 @@ Bertrand Jacquin (2):
       po: Bump copyright extension
       po: Bump copyright extension
 
-Carsten Haitzler (199):
+Carsten Haitzler (202):
       e ibar/ibox fix starrting/started signal emittion
       e temp module - kill tempget process not terminate to ensure death
       e - fix dnd problems coming from getting top object in comp canvas
@@ -264,6 +264,9 @@ Carsten Haitzler (199):
       e sys - handle phantom wakeups from sleep on some devices
       battery modules - actually set ac power flag based on ac presence
       smart suspend - honor suspend on ac or not flag as it should
+      ptr grab/ungrab for blank/unblank - log stages and work done for debug
+      e main - xdg runtime dir fixup - dont overwrite same buffer
+      nvidia driver workaround atexit handlers for pam auth
 
 Cedric BAIL (6):
       filepreview: avoid race condition when destroying txt file preview with slow hard drive.
@@ -283,7 +286,7 @@ Chidambar Zinnoury (8):
       e about: Year++.
       e menu: Fix missing realize when using key-activation to the right.
 
-Christopher Michael (58):
+Christopher Michael (60):
       'cur_group' variable is unused here if we are not building for wayland
       add missing EINA_UNUSED for unused function params
       remove unused variables from _ibar_resize_handle
@@ -342,6 +345,8 @@ Christopher Michael (58):
       Revert "reverse order of shell binding in wl_desktop_shell module"
       wl-drm: Properly retrieve output geometry and propertly set output mode
       wl-drm: Add screen position to debug output
+      wl-drm: Fix issue of not being able to set output mode
+      Revert "wl-drm: Fix issue of not being able to set output mode"
 
 Davide Andreoli (29):
       mem gadget: respect the aspect ratio of the theme
@@ -374,7 +379,7 @@ Davide Andreoli (29):
       pkit gadget: do not autoclose the popup
       PKit gadget: more accurate progress bar
 
-Derek Foreman (81):
+Derek Foreman (84):
       Properly send kbd focus to xdg_shell popups
       Make sure the same keyboard resource doesn't end up on the focus list twice
       Fix xdg_shell focus logic
@@ -456,6 +461,9 @@ Derek Foreman (81):
       use safer ecore_exe flags that close stdin/out/err more often
       Stop queuing wl_buffer release events
       Revert "Set close on exec for stdin"
+      Fix xwayland related crash when mousing out of a window
+      Clear stored root window id when shutting down X
+      Fix crash on wayland logout if xwayland hasn't started yet
 
 Flavio Ceolin (1):
       emix: when in alsa mode only operate on master
@@ -560,7 +568,7 @@ Marcel Hollerbach (81):
 Mariusz Bialonczyk (1):
       modules/temperature: cosmetics: typo fix (celcius -> celsius)
 
-Massimo Maiurana (8):
+Massimo Maiurana (9):
       Updating italian and spanish translations
       Updating italian translation
       Updating slovenian translation
@@ -568,6 +576,7 @@ Massimo Maiurana (8):
       Updating italian translation
       Updating danish translation
       Updating danish translation
+      Updating italian translation
       Updating italian translation
 
 Michael Bouchaud (8):
@@ -596,7 +605,7 @@ Michaël Bouchaud (yoz) (14):
       mixer: use VOLSET macro in volume output set
       Revert "mixer: do not set back the value from emix once the drag is finished"
 
-Mike Blumenkrantz (864):
+Mike Blumenkrantz (879):
       unset release mode
       handle e_comp_x init failure more effectively and perform cleanups
       set x11 randr iface for wl_x11 based on wm presence, not composited state
@@ -1461,6 +1470,21 @@ Mike Blumenkrantz (864):
       cancel wl selections after removing destroy listener
       make some find_program() calls non-required in meson build
       require efl 1.20.5
+      22.0-rc release
+      0.22.0-rc NEWS updates
+      unset release mode
+      move x11 compositor cleanup into shutdown function
+      add client refs for volume control sinks
+      unset client's mouse-in state on mouse out even while fullscreen or deleted
+      send wl pointer leave for deleted clients if viable
+      unset xwayland client changes.pos flag during xwl->wl switch if client is unplaced
+      block wl modal window destructor from intercepting xwl modal windows
+      handle more mouse buttons under wayland
+      explicitly free client animation agent object during fullscreen operation
+      pass key downs through xkbcommon
+      fix non-pam build with meson
+      disable cpuclock powersave updating for demo gadgets
+      correct some edje api usage in luncher preview setup
 
 Romain Naour (4):
       E: include uuid.h only when Wayland support is enabled.
@@ -1698,6 +1722,9 @@ William L. Thomson Jr (1):
 
 YeongJong Lee (1):
       fix korean translation mismatch
+
+scootergrisen (1):
+      Update danish translation
 
 
 Release 0.21.10:
