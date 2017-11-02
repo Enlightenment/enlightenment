@@ -789,8 +789,7 @@ _bar_icon_preview_client_add(Icon *ic, E_Client *ec)
    evas_object_show(label);
 
    img = e_comp_object_util_mirror_add(ec->frame);
-   edje_object_update_hints_set(elm_layout_edje_get(img), EINA_TRUE);
-   edje_extern_object_aspect_set(img, EDJE_ASPECT_CONTROL_BOTH, ec->client.w, ec->client.h);
+   evas_object_size_hint_aspect_set(img, EDJE_ASPECT_CONTROL_BOTH, ec->client.w, ec->client.h);
    evas_object_size_hint_min_set(img, ic->inst->cfg->preview_size, ic->inst->cfg->preview_size);
    elm_layout_content_set(layout, "e.swallow.icon", img);
    if (evas_object_image_alpha_get(img))
