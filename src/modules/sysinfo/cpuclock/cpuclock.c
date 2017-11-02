@@ -208,6 +208,7 @@ _cpuclock_event_cb_powersave(void *data, int type, void *event)
 
    if (type != E_EVENT_POWERSAVE_UPDATE) return ECORE_CALLBACK_PASS_ON;
    if (!inst->cfg->cpuclock.auto_powersave) return ECORE_CALLBACK_PASS_ON;
+   if (inst->cfg->id == -1) return ECORE_CALLBACK_RENEW;
 
    ev = event;
    if (!inst->cfg->cpuclock.status->orig_governor)
