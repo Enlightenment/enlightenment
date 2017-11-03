@@ -1,3 +1,74 @@
+Release 0.21.11:
+---------------------
+Carsten Haitzler (6):
+      fix up window+screen positioning fixup so it doesnt catch other clients
+      e start - fix path prepend/append if already in path assuming clue
+      tiling - ensure notification struct is 0'd before use
+      battery modules - actually set ac power flag based on ac presence
+      e main - xdg runtime dir fixup - dont overwrite same buffer
+      nvidia driver workaround atexit handlers for pam auth
+
+Chidambar Zinnoury (2):
+      e remote: Fix script’s execution rights.
+      e menu: Fix missing realize when using key-activation to the right.
+
+Derek Foreman (4):
+      Fix crash when processing a wayland client cursor set after death
+      Fix xwayland related crash when mousing out of a window
+      Clear stored root window id when shutting down X
+      Fix crash on wayland logout if xwayland hasn't started yet
+
+Mike Blumenkrantz (46):
+      use animator del function to delete comp object animators
+      handle shade <-> unshade toggling in same frame
+      resolve desktop spec issues with emixer.desktop
+      use EC_CHANGED when setting changed flag in client idler
+      hide clients again after show in idler if clients are on hidden desk
+      block recursive mouse eventing in bryce action handlers
+      handle unmovable gadgets in gadget move action
+      flag zone/edge mouse binding activation with ON_HOLD
+      fix clickable edge binding activation with other mouse buttons
+      remove fdo interfaces from music control dbus xml
+      don't perform zone updates on client resize
+      remove input-only client fastpath to resize crashes
+      use client geometry for visibility effect geometry, not comp object geometry
+      emit E_EVENT_EXEC_NEW_CLIENT with phony exes
+      don't show xwayland clients unconditionally on commit
+      defer wl startup apps until after xwayland init completes
+      do ecore-x shutdown on xwayland shutdown
+      redo bryce eventing
+      deduplicate global gadget handler variables
+      block gadget configuration unconditionally while desklock is active
+      set comp object alpha state when applying native surface
+      add max size input rects for wl clients on creation
+      handle x11 shaped input under xwayland
+      set default cursor on root window for xwl pointer
+      Revert "disable option for mouse to use Application theme if we are running in Wayland"
+      move 'show cursor' option in mouse settings inside frame
+      do not show cursor theme options in wayland compositor mode
+      move cursor theme options into separate frame
+      check for non-wl compositor when forcing application cursors onto pointers
+      always use e cursor theme for canvas pointers
+      recreate x11 root pointer when changing application<->enlightenment theme
+      add render update when showing clients if damages exist
+      add client refs for the nocomp client
+      do not unqueue render when deleting a client's render update
+      ignore set_input_region requests for wl surfaces which are cursors or drags
+      set null input regions for surfaces upon calling set_cursor or start_drag
+      null wl clipboard+selection source pointers when destroying clipboard source
+      cancel wl selections after removing destroy listener
+      move x11 compositor cleanup into shutdown function
+      unset client's mouse-in state on mouse out even while fullscreen or deleted
+      send wl pointer leave for deleted clients if viable
+      unset xwayland client changes.pos flag during xwl->wl switch if client is unplaced
+      block wl modal window destructor from intercepting xwl modal windows
+      handle more mouse buttons under wayland
+      explicitly free client animation agent object during fullscreen operation
+      Revert "handle x11 shaped input under xwayland"
+
+Stephen 'Okra' Houston (1):
+      E Exe: Semi revert 2082bb51d3abffd991b4d791ace2567888e2e9fb. The ref count was off to begin with.
+
 Release 0.21.10:
 ---------------------
 Al Poole (1):
