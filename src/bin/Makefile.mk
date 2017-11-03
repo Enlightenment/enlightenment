@@ -460,8 +460,16 @@ src/bin/generated/efl-aux-hints-server-protocol.h \
 src/bin/generated/e-gadget-protocol.c \
 src/bin/generated/e-gadget-server-protocol.h
 
+protocol_files = \
+src/protocol/action_route.xml \
+src/protocol/e-gadget.xml \
+src/protocol/efl-aux-hints.xml \
+src/protocol/session-recovery.xml \
+src/protocol/www.xml
+
 src/bin/e_comp_wl_extensions.c: \
- $(enlightenment_gen_src)
+ $(enlightenment_gen_src) \
+ $(protocol_files)
 
 src/bin/e_comp_wl.c: \
  src/bin/generated/www-server-protocol.h
