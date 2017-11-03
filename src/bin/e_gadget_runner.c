@@ -42,6 +42,8 @@ typedef struct RConfig
    Evas_Object *config_dialog;
 } RConfig;
 
+static Eina_Bool runner_enabled;
+
 static E_Config_DD *conf_edd = NULL;
 static E_Config_DD *conf_item_edd = NULL;
 
@@ -861,6 +863,11 @@ list_error_cb(void *d EINA_UNUSED, Eio_File *ls EINA_UNUSED, int error EINA_UNUS
 EINTERN void
 e_gadget_runner_init(void)
 {
+   char buf[PATH_MAX];
+
+   snprintf(buf, sizeof(buf), "%s/enlightenment/gadgets/%s/loader.so", e_prefix_lib_get(), MODULE_ARCH);
+   if (!ecore_file_exists(buf)) return;
+   runner_enabled = EINA_TRUE;
    conf_item_edd = E_CONFIG_DD_NEW("Config_Item", Config_Item);
 #undef T
 #undef D
@@ -882,8 +889,6 @@ e_gadget_runner_init(void)
 
    e_gadget_type_add("runner", runner_create, runner_wizard);
    {
-      char buf[PATH_MAX];
-
       snprintf(buf, sizeof(buf), "%s/enlightenment/gadgets/%s", e_prefix_lib_get(), MODULE_ARCH);
       gadget_monitor = eio_monitor_add(buf);
       gadget_lister = eio_file_direct_ls(buf, list_filter_cb, list_main_cb, list_done_cb, list_error_cb, NULL);
@@ -895,8 +900,6 @@ e_gadget_runner_init(void)
 
    sandbox_gadgets = eina_hash_string_superfast_new((Eina_Free_Cb)efreet_desktop_free);
    {
-      char buf[PATH_MAX];
-
       snprintf(buf, sizeof(buf), "/proc/%d/ns/pid", getpid());
       ns_fd = open(buf, O_RDONLY);
    }
@@ -905,6 +908,7 @@ e_gadget_runner_init(void)
 EINTERN void
 e_gadget_runner_shutdown(void)
 {
+   if (!runner_enabled) return;
    e_gadget_type_del("runner");
    e_gadget_external_type_del("runner_sandbox", NULL);
 
@@ -936,7 +940,8 @@ e_gadget_runner_shutdown(void)
 }
 
 EINTERN void
-runner_save(void)
+e_gadget_runner_save(void)
 {
+   if (!runner_enabled) return;
    e_config_domain_save("e_gadget_runner", conf_edd, rconfig);
 }
