@@ -806,6 +806,7 @@ e_pointer_object_set(E_Pointer *ptr, Evas_Object *obj, int x, int y)
      {
         ecore_evas_cursor_unset(ptr->ee);
         ecore_evas_object_cursor_set(ptr->ee, ptr->o_ptr, E_LAYER_MAX - 1, ptr->hot.x, ptr->hot.y);
+        evas_object_show(ptr->o_ptr);
      }
    ptr->client.ec = ec;
    ptr->client.x = x;
