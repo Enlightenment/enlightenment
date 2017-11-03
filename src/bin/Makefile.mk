@@ -2,7 +2,6 @@ DISTCLEANFILES += src/bin/e_fm_shared_types.h
 
 EXTRA_DIST += \
 src/bin/e_drm2.x \
-src/bin/e_gadget_runner.c \
 src/bin/e_gadget_loader.c
 
 efx_files = \
@@ -438,7 +437,8 @@ src/bin/e_comp_wl_input.c \
 src/bin/e_comp_wl_dmabuf.c \
 src/bin/e_comp_wl.c \
 src/bin/e_comp_wl_extensions.c \
-src/bin/e_comp_wl_extensions_tizen.c
+src/bin/e_comp_wl_extensions_tizen.c \
+src/bin/e_gadget_runner.c
 
 enlightenment_gen_src += \
 src/bin/generated/linux-dmabuf-unstable-v1-server-protocol.h \
@@ -456,7 +456,9 @@ src/bin/generated/relative-pointer-unstable-v1-server-protocol.h \
 src/bin/generated/pointer-constraints-unstable-v1-protocol.c \
 src/bin/generated/pointer-constraints-unstable-v1-server-protocol.h \
 src/bin/generated/efl-aux-hints-protocol.c \
-src/bin/generated/efl-aux-hints-server-protocol.h
+src/bin/generated/efl-aux-hints-server-protocol.h \
+src/bin/generated/e-gadget-protocol.c \
+src/bin/generated/e-gadget-server-protocol.h
 
 src/bin/e_comp_wl_extensions.c: \
  $(enlightenment_gen_src)
