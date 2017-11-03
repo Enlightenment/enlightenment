@@ -5,6 +5,7 @@ typedef struct _E_Comp_Wl_Subsurf_Data E_Comp_Wl_Subsurf_Data;
 typedef struct _E_Comp_Wl_Surface_State E_Comp_Wl_Surface_State;
 typedef struct _E_Comp_Wl_Client_Data E_Comp_Wl_Client_Data;
 typedef struct _E_Comp_Wl_Output E_Comp_Wl_Output;
+typedef struct _E_Comp_Wl_Pointer E_Comp_Wl_Pointer;
 typedef struct E_Shell_Data E_Shell_Data;
 typedef struct Tizen_Extensions Tizen_Extensions;
 typedef void (*E_Comp_Wl_Grab_End_Cb)(E_Client*);
@@ -392,6 +393,14 @@ struct _E_Comp_Wl_Output
    struct wl_output *wl_output;
    struct wl_buffer *buffer;
    void *data;
+};
+
+struct _E_Comp_Wl_Pointer
+{
+   E_Client *cursor;
+   Evas_Point offset;
+   Eina_Bool entered : 1;
+   Eina_Bool cursor_set : 1;
 };
 
 E_API Eina_Bool e_comp_wl_init(void);

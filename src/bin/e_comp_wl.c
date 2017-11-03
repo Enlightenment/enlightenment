@@ -211,11 +211,15 @@ _e_comp_wl_mouse_in(E_Client *ec, Evas_Event_Mouse_In *ev)
    serial = wl_display_next_serial(e_comp_wl->wl.disp);
    EINA_LIST_FOREACH(e_comp_wl->ptr.resources, l, res)
      {
+        E_Comp_Wl_Pointer *ptr = wl_resource_get_user_data(res);
+
         if (!e_comp_wl_input_pointer_check(res)) continue;
         if (wl_resource_get_client(res) != wc) continue;
+        ptr->entered = 1;
         wl_pointer_send_enter(res, serial, ec->comp_data->surface,
                               wl_fixed_from_int(ev->canvas.x - ec->client.x),
                               wl_fixed_from_int(ev->canvas.y - ec->client.y));
+        e_comp_wl_input_pointer_cursor_update(ptr);
      }
 }
 
@@ -267,8 +271,10 @@ _e_comp_wl_mouse_out(E_Client *ec)
    serial = wl_display_next_serial(e_comp_wl->wl.disp);
    EINA_LIST_FOREACH(e_comp_wl->ptr.resources, l, res)
      {
+        E_Comp_Wl_Pointer *ptr = wl_resource_get_user_data(res);
         if (!e_comp_wl_input_pointer_check(res)) continue;
         if (wl_resource_get_client(res) != wc) continue;
+        ptr->entered = 0;
         wl_pointer_send_leave(res, serial, ec->comp_data->surface);
      }
 }
@@ -2591,11 +2597,21 @@ _e_comp_wl_client_cb_del(void *data EINA_UNUSED, E_Client *ec)
      _e_comp_wl_mouse_out(ec);
    else if (ec->comp_data->cursor)
      {
-        Evas_Object *o;
+        Eina_List *l;
+        struct wl_resource *res;
 
-        ecore_evas_cursor_get(e_comp->ee, &o, NULL, NULL, NULL);
-        if (o == ec->frame)
-          e_pointer_object_set(e_comp->pointer, NULL, 0, 0);
+        EINA_LIST_FOREACH(e_comp_wl->ptr.resources, l, res)
+          {
+             E_Comp_Wl_Pointer *ptr = wl_resource_get_user_data(res);
+
+             if (ptr->cursor_set && (ptr->cursor == ec))
+               {
+                  ptr->cursor = NULL;
+                  ptr->cursor_set = 0;
+                  if (ptr->entered)
+                    e_comp_wl_input_pointer_cursor_update(ptr);
+               }
+          }
      }
 
    if (ec->comp_data->aux_hint.hints)
