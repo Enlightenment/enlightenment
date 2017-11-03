@@ -4,6 +4,7 @@
 #ifdef HAVE_WAYLAND
 EINTERN void e_gadget_runner_init(void);
 EINTERN void e_gadget_runner_shutdown(void);
+EINTERN void e_gadget_runner_save(void);
 #endif
 
 #define SNAP_DISTANCE 5
@@ -2406,6 +2407,9 @@ EINTERN void
 e_gadget_save(void)
 {
    e_config_domain_save("e_gadget_sites", edd_sites, sites);
+#ifdef HAVE_WAYLAND
+   e_gadget_runner_save();
+#endif
 }
 
 EINTERN void
