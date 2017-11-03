@@ -605,6 +605,7 @@ _save_dialog_show(E_Zone *zone, E_Client *ec, const char *params, void *dst, int
    Evas_Modifier_Mask mask;
    E_Radio_Group *rg;
    int w, h;
+   char smode[128], squal[128], sscreen[128];
 
    win = elm_win_add(NULL, NULL, ELM_WIN_BASIC);
 
@@ -768,27 +769,23 @@ _save_dialog_show(E_Zone *zone, E_Client *ec, const char *params, void *dst, int
    evas_object_size_hint_min_set(win, w, h);
    evas_object_size_hint_max_set(win, 99999, 99999);
 
-   if (params)
+   if ((params) &&
+       (sscanf(params, "%100s %100s %100s", smode, squal, sscreen) == 3))
      {
-        char smode[128], squal[128], sscreen[128];
+        screen = -1;
+        if ((zone) && (!strcmp(sscreen, "current"))) screen = zone->num;
+        else if (!strcmp(sscreen, "all")) screen = -1;
+        else screen = atoi(sscreen);
 
-        if (sscanf(params, "%100s %100s %100s", smode, squal, sscreen) == 3)
-          {
-             screen = -1;
-             if ((zone) && (!strcmp(sscreen, "current"))) screen = zone->num;
-             else if (!strcmp(sscreen, "all")) screen = -1;
-             else screen = atoi(sscreen);
+        quality = 90;
+        if (!strcmp(squal, "perfect")) quality = 100;
+        else if (!strcmp(squal, "high")) quality = 90;
+        else if (!strcmp(squal, "medium")) quality = 70;
+        else if (!strcmp(squal, "low")) quality = 50;
+        else quality = atoi(squal);
 
-             quality = 90;
-             if (!strcmp(squal, "perfect")) quality = 100;
-             else if (!strcmp(squal, "high")) quality = 90;
-             else if (!strcmp(squal, "medium")) quality = 70;
-             else if (!strcmp(squal, "low")) quality = 50;
-             else quality = atoi(squal);
-
-             if (!strcmp(smode, "save")) _win_save_cb(NULL, NULL);
-             else if (!strcmp(smode, "share"))  _win_share_cb(NULL, NULL);
-          }
+        if (!strcmp(smode, "save")) _win_save_cb(NULL, NULL);
+        else if (!strcmp(smode, "share"))  _win_share_cb(NULL, NULL);
      }
    else
      {
@@ -832,7 +829,22 @@ _shot_now(E_Zone *zone, E_Client *ec, const char *params)
      }
    else
      {
-        x = ec->x, y = ec->y, w = ec->w, h = ec->h;
+        int pad = 0;
+
+        if (params)
+          {
+             const char *p = strstr(params, "pad ");
+
+             if (p)
+               {
+                  pad = atoi(p + 4);
+                  if (pad < 0) pad = 0;
+               }
+          }
+        x = ec->x - pad;
+        y = ec->y - pad;
+        w = ec->w + (pad * 2);
+        h = ec->h + (pad * 2);
         x = E_CLAMP(x, 0, e_comp->w);
         y = E_CLAMP(y, 0, e_comp->h);
         w = E_CLAMP(w, 1, e_comp->w);
@@ -876,11 +888,30 @@ _shot_delay_border(void *data)
    return EINA_FALSE;
 }
 
+static Eina_Bool
+_shot_delay_border_padded(void *data)
+{
+   char buf[128];
+
+   border_timer = NULL;
+   snprintf(buf, sizeof(buf), "pad %i", (int)(64 * e_scale));
+   _shot_now(NULL, data, buf);
+
+   return EINA_FALSE;
+}
+
 static void
 _shot_border(E_Client *ec)
 {
    if (border_timer) ecore_timer_del(border_timer);
    border_timer = ecore_timer_loop_add(1.0, _shot_delay_border, ec);
+}
+
+static void
+_shot_border_padded(E_Client *ec)
+{
+   if (border_timer) ecore_timer_del(border_timer);
+   border_timer = ecore_timer_loop_add(1.0, _shot_delay_border_padded, ec);
 }
 
 static void
@@ -897,13 +928,19 @@ _e_mod_menu_border_cb(void *data, E_Menu *m EINA_UNUSED, E_Menu_Item *mi EINA_UN
 }
 
 static void
+_e_mod_menu_border_padded_cb(void *data, E_Menu *m EINA_UNUSED, E_Menu_Item *mi EINA_UNUSED)
+{
+   _shot_border_padded(data);
+}
+
+static void
 _e_mod_menu_cb(void *data EINA_UNUSED, E_Menu *m, E_Menu_Item *mi EINA_UNUSED)
 {
    if (m->zone) _shot(m->zone);
 }
 
 static void
-_e_mod_action_border_cb(E_Object *obj EINA_UNUSED, const char *params EINA_UNUSED)
+_e_mod_action_border_cb(E_Object *obj EINA_UNUSED, const char *params)
 {
    E_Client *ec;
 
@@ -914,7 +951,7 @@ _e_mod_action_border_cb(E_Object *obj EINA_UNUSED, const char *params EINA_UNUSE
         ecore_timer_del(border_timer);
         border_timer = NULL;
      }
-   _shot_now(NULL, ec, NULL);
+   _shot_now(NULL, ec, params);
 }
 
 typedef struct
@@ -985,6 +1022,10 @@ _bd_hook(void *d EINA_UNUSED, E_Client *ec)
    e_menu_item_label_set(mi, _("Take Shot"));
    e_util_menu_item_theme_icon_set(mi, "screenshot");
    e_menu_item_callback_set(mi, _e_mod_menu_border_cb, ec);
+   mi = e_menu_item_new_relative(m, mi);
+   e_menu_item_label_set(mi, _("Take Padded Shot"));
+   e_util_menu_item_theme_icon_set(mi, "screenshot");
+   e_menu_item_callback_set(mi, _e_mod_menu_border_padded_cb, ec);
 }
 
 static void
@@ -1032,7 +1073,7 @@ e_modapi_init(E_Module *m)
         border_act->func.go = _e_mod_action_border_cb;
         e_action_predef_name_set(N_("Window : Actions"), N_("Take Shot"),
                                  "border_shot", NULL,
-                                 "syntax: [share|save perfect|high|medium|low|QUALITY all|current]", 1);
+                                 "syntax: [share|save perfect|high|medium|low|QUALITY all|current] [pad N]", 1);
      }
    maug = e_int_menus_menu_augmentation_add_sorted
      ("main/2",  _("Take Screenshot"), _e_mod_menu_add, NULL, NULL, NULL);
