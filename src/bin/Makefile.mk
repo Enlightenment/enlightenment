@@ -1,6 +1,9 @@
 DISTCLEANFILES += src/bin/e_fm_shared_types.h
 
-EXTRA_DIST += src/bin/e_drm2.x
+EXTRA_DIST += \
+src/bin/e_drm2.x \
+src/bin/e_gadget_runner.c \
+src/bin/e_gadget_loader.c
 
 efx_files = \
 src/bin/efx/efx_bumpmapping.c \

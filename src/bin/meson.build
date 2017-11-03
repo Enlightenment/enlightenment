@@ -400,6 +400,7 @@ if config_h.has('HAVE_WAYLAND') == true
     'e_comp_wl.c',
     'e_comp_wl_extensions.c',
     'e_comp_wl_extensions_tizen.c',
+    'e_gadget_runner.c',
     wayland_proto_c,
     wayland_proto_h
   ]
@@ -563,4 +564,17 @@ if freebsd == true
   suid_exes += join_paths(dir_e_utils, 'enlightenment_ckpasswd')
 endif
 
+if config_h.has('HAVE_WAYLAND') == true
+	shared_library('loader',
+			['e_gadget_loader.c', gadget_loader_proto_files],
+		name_prefix: '',
+		include_directories: include_directories('../..'),
+		dependencies: [
+			dependency('elementary'),
+			dependency('ecore-wl2'),
+			dependency('wayland-client'),
+			cc.find_library('uuid')],
+		install_dir: join_paths([dir_lib, 'enlightenment/gadgets/', module_arch]),
+		install: true)
+endif
 subdir('e_fm')

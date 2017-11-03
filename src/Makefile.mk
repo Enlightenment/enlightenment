@@ -7,4 +7,5 @@ src/protocol/session-recovery.xml \
 src/protocol/efl-aux-hints.xml \
 src/protocol/www.xml \
 src/protocol/action_route.xml \
+src/protocol/e-gadget.xml \
 src/protocol/xdg-foreign-unstable-v1.xml

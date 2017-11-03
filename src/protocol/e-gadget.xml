@@ -1,0 +1,38 @@
+<protocol name="e_gadget">
+
+  <interface name="e_gadget" version="1">
+    <enum name="orient">
+      <entry name="none" value="0"/>
+      <entry name="horizontal" value="1"/>
+      <entry name="vertical" value="2"/>
+    </enum>
+    <enum name="gravity">
+      <entry name="none" value="0"/>
+      <entry name="left" value="1"/>
+      <entry name="right" value="2"/>
+      <entry name="top" value="3"/>
+      <entry name="bottom" value="4"/>
+      <entry name="center" value="5"/>
+    </enum>
+    <enum name="anchor" bitfield="true">
+      <entry name="none" value="0"/>
+      <entry name="left" value="1"/>
+      <entry name="right" value="2"/>
+      <entry name="top" value="4"/>
+      <entry name="bottom" value="8"/>
+    </enum>
+    <event name="gadget_anchor">
+      <arg name="anchor" type="uint" enum="anchor"/>
+    </event>
+    <event name="gadget_orient">
+      <arg name="orient" type="uint" enum="orient"/>
+    </event>
+    <event name="gadget_gravity">
+      <arg name="gravity" type="uint" enum="gravity"/>
+    </event>
+    <request name="open_uri">
+      <arg name="uri" type="string"/>
+    </request>
+  </interface>
+
+</protocol>

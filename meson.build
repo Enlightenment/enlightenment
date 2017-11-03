@@ -271,6 +271,7 @@ if get_option('wayland') == true
   dir_wayland_protocols = wayland_protocols.get_pkgconfig_variable('pkgdatadir')
   wayland_version = '>= 1.11.0'
   dep_wayland = [ dependency('ecore-wl2'),
+                  dependency('efl-wl'),
                   dependency('wayland-server' , version: wayland_version),
                   dependency('wayland-client' , version: wayland_version),
                   wayland_protocols,
@@ -286,6 +287,7 @@ if get_option('wayland') == true
   endif
   requires_wayland = ' '.join([ 'wayland-protocols >= 1.9',
                                 'ecore-wl2',
+                                'efl-wl',
                                 requires_drm,
                                 ' '.join(['wayland-server' , wayland_version]),
                                 ' '.join(['wayland-client' , wayland_version]),

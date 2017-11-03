@@ -1,5 +1,11 @@
 #include "e.h"
 
+
+#ifdef HAVE_WAYLAND
+EINTERN void e_gadget_runner_init(void);
+EINTERN void e_gadget_runner_shutdown(void);
+#endif
+
 #define SNAP_DISTANCE 5
 #define E_GADGET_TYPE 0xE31337
 
@@ -2492,6 +2498,9 @@ e_gadget_init(void)
    evas_object_event_callback_add(e_comp->canvas->resize_object, EVAS_CALLBACK_RESIZE, _comp_site_resize, comp_site);
    evas_object_layer_set(comp_site, E_LAYER_DESKTOP);
    evas_object_resize(comp_site, e_comp->w, e_comp->h);
+#ifdef HAVE_WAYLAND
+   e_gadget_runner_init();
+#endif
 }
 
 EINTERN void
@@ -2499,6 +2508,9 @@ e_gadget_shutdown(void)
 {
    E_Gadget_Site *zgs;
 
+#ifdef HAVE_WAYLAND
+   e_gadget_runner_shutdown();
+#endif
    E_FREE_LIST(handlers, ecore_event_handler_del);
    E_CONFIG_DD_FREE(edd_gadget);
    E_CONFIG_DD_FREE(edd_site);
