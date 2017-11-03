@@ -16,6 +16,9 @@ _cb_sync_done(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
    if ((w < 1) || (h < 1)) return ECORE_CALLBACK_PASS_ON;
 
    e_comp_canvas_resize(w * 2 / 3, h * 2 / 3);
+   e_comp_wl_output_init(NULL, NULL, NULL,
+               0, 0, w * 2 / 3, h * 2 / 3,
+               0, 0, 0, 0, 0, 0);
 
    if (!ecore_wl2_display_dmabuf_get(e_comp_wl->wl.client_disp))
      e_comp_wl->dmabuf_disable = EINA_TRUE;
