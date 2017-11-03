@@ -79,7 +79,6 @@ mods = [
 foreach m: mods
   desktop_only = false
   no_icon      = false
-  disable      = false
   cargs        = ''
   data         = []
   deps         = []
@@ -87,11 +86,14 @@ foreach m: mods
   _dir         = join_paths(dir_module_e, m)
   _dir_bin     = join_paths(_dir, module_arch)
 
-  subdir(m)
-
   opt = '-'.join(m.split('_'))
+  disable = get_option(opt)
 
-  if get_option(opt) == true and disable == false
+  if disable == true
+    subdir(m)
+  endif
+
+  if disable == true
 
     _inc2 = []
     foreach i: inc
