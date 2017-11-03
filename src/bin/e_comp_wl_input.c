@@ -43,39 +43,18 @@ _e_comp_wl_input_cb_resource_destroy(struct wl_client *client EINA_UNUSED, struc
 }
 
 static void
-_e_comp_wl_input_pointer_cb_cursor_set(struct wl_client *client, struct wl_resource *resource EINA_UNUSED, uint32_t serial EINA_UNUSED, struct wl_resource *surface_resource, int32_t x, int32_t y)
+_e_comp_wl_input_pointer_cb_cursor_set(struct wl_client *client EINA_UNUSED, struct wl_resource *resource, uint32_t serial EINA_UNUSED, struct wl_resource *surface_resource, int32_t x, int32_t y)
 {
    E_Client *ec;
-   Eina_Bool got_mouse = EINA_FALSE;
+   E_Comp_Wl_Pointer *ptr = wl_resource_get_user_data(resource);
 
-   E_CLIENT_FOREACH(ec)
-     {
-       if (e_object_is_del(E_OBJECT(ec))) continue;
-       if (e_pixmap_type_get(ec->pixmap) != E_PIXMAP_TYPE_WL) continue;
-       if (!ec->comp_data->surface) continue;
-       if (client != wl_resource_get_client(ec->comp_data->surface)) continue;
-       if (ec->mouse.in)
-         {
-            if (e_client_has_xwindow(ec))
-              got_mouse = E_INSIDE(ec->mouse.current.mx, ec->mouse.current.my,
-                ec->client.x, ec->client.y, ec->client.w, ec->client.h);
-            else
-              got_mouse = EINA_TRUE;
-            break;
-         }
-     }
-   if (!got_mouse)
-     {
-        if (ec && ec->mouse.in && (!surface_resource))
-          e_pointer_object_set(e_comp->pointer, NULL, 0, 0);
-        return;
-     }
    if (!surface_resource)
      {
-        if (e_comp_object_frame_exists(ec->frame) &&
-            ec->mouse.in && (!ec->comp_data->ssd_mouse_in))
-          e_pointer_object_set(e_comp->pointer, NULL, 0, 0);
-        else
+        ptr->cursor_set = 1;
+        ptr->cursor = NULL;
+        ptr->offset.x = x;
+        ptr->offset.y = y;
+        if (ptr->entered)
           {
              ecore_evas_cursor_unset(e_comp->ee);
              evas_object_hide(e_comp->pointer->o_ptr);
@@ -89,6 +68,10 @@ _e_comp_wl_input_pointer_cb_cursor_set(struct wl_client *client, struct wl_resou
     * are being processed... let's BAIL.
     */
    if (!ec) return;
+   ptr->cursor_set = 1;
+   ptr->cursor = ec;
+   ptr->offset.x = x;
+   ptr->offset.y = y;
    if (ec->comp_data->pending.input)
      eina_tiler_clear(ec->comp_data->pending.input);
    else
@@ -113,9 +96,8 @@ _e_comp_wl_input_pointer_cb_cursor_set(struct wl_client *client, struct wl_resou
         EC_CHANGED(ec);
      }
 
-   /* ignore cursor changes during resize/move I guess */
-   if (e_client_action_get()) return;
-   e_pointer_object_set(e_comp->pointer, ec->frame, x, y);
+   if (ptr->entered)
+     e_comp_wl_input_pointer_cursor_update(ptr);
 }
 
 static const struct wl_pointer_interface _e_pointer_interface =
@@ -137,14 +119,20 @@ static const struct wl_touch_interface _e_touch_interface =
 static void
 _e_comp_wl_input_cb_pointer_unbind(struct wl_resource *resource)
 {
+   E_Comp_Wl_Pointer *ptr = wl_resource_get_user_data(resource);
+
+   if (ptr->cursor_set && ptr->entered)
+     e_pointer_object_set(e_comp->pointer, NULL, 0, 0);
    e_comp_wl->ptr.resources =
      eina_list_remove(e_comp_wl->ptr.resources, resource);
+   free(ptr);
 }
 
 static void
 _e_comp_wl_input_cb_pointer_get(struct wl_client *client, struct wl_resource *resource, uint32_t id)
 {
    struct wl_resource *res;
+   E_Comp_Wl_Pointer *ptr;
 
    /* try to create pointer resource */
    res = wl_resource_create(client, &wl_pointer_interface,
@@ -156,12 +144,12 @@ _e_comp_wl_input_cb_pointer_get(struct wl_client *client, struct wl_resource *re
         wl_client_post_no_memory(client);
         return;
      }
+   ptr = E_NEW(E_Comp_Wl_Pointer, 1);
 
    e_comp_wl->ptr.resources =
      eina_list_append(e_comp_wl->ptr.resources, res);
-   wl_resource_set_user_data(res, resource);
    wl_resource_set_implementation(res, &_e_pointer_interface,
-                                  e_comp->wl_comp_data,
+                                 ptr,
                                  _e_comp_wl_input_cb_pointer_unbind);
 }
 
@@ -545,6 +533,24 @@ e_comp_wl_input_shutdown(void)
    if (e_comp_wl->seat.global)
      wl_global_destroy(e_comp_wl->seat.global);
    e_comp_wl->seat.global = NULL;
+}
+
+EINTERN void
+e_comp_wl_input_pointer_cursor_update(E_Comp_Wl_Pointer *ptr)
+{
+   EINA_SAFETY_ON_TRUE_RETURN(!ptr->entered);
+   if (ptr->cursor_set && (!e_comp_util_mouse_grabbed()))
+     {
+        if (ptr->cursor)
+          e_pointer_object_set(e_comp->pointer, ptr->cursor->frame, ptr->offset.x, ptr->offset.y);
+        else
+          {
+             ecore_evas_cursor_unset(e_comp->ee);
+             evas_object_hide(e_comp->pointer->o_ptr);
+          }
+     }
+   else
+     e_pointer_object_set(e_comp->pointer, NULL, 0, 0);
 }
 
 EINTERN Eina_Bool
