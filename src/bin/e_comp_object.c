@@ -827,7 +827,11 @@ _e_comp_object_done_defer(void *data, Evas_Object *obj EINA_UNUSED, const char *
    if (cw->defer_hide && ((!strcmp(emission, "e,action,hide,done")) || (!strcmp(emission, "e,action,done"))))
      evas_object_hide(cw->smart_obj);
    else
-     e_comp_shape_queue();
+     {
+        e_comp_shape_queue();
+        if (cw->visible && cw->updates_exist)
+          e_comp_object_render_update_add(cw->smart_obj);
+     }
 }
 
 /* run a visibility compositor effect if available, return false if object is dead */
