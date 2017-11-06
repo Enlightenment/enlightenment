@@ -80,7 +80,7 @@ struct _Tempthread
 #if defined(HAVE_EEZE)
    Eina_List *tempdevs;
 #endif
-   Eina_Bool initted : 1;
+   Eina_Bool initted E_BITFIELD;
 };
 
 struct _Cpu_Status
@@ -174,7 +174,7 @@ struct _Config_Item
 #endif
       Ecore_Thread        *th;
 
-      Eina_Bool            have_temp:1;
+      Eina_Bool            have_temp E_BITFIELD;
       Eina_List           *handlers;
       Eina_Bool            defer;
       Eina_Bool            done;

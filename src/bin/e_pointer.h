@@ -49,7 +49,7 @@ struct _E_Pointer
    struct 
      {
         int x, y;
-        Eina_Bool update : 1;
+        Eina_Bool update E_BITFIELD;
      } hot;
 
    Ecore_Timer *idle_tmr;
@@ -57,10 +57,10 @@ struct _E_Pointer
 
    Eina_List *stack;
 
-   Eina_Bool e_cursor : 1;
-   Eina_Bool color : 1;
-   Eina_Bool idle : 1;
-   Eina_Bool canvas : 1;
+   Eina_Bool e_cursor E_BITFIELD;
+   Eina_Bool color E_BITFIELD;
+   Eina_Bool idle E_BITFIELD;
+   Eina_Bool canvas E_BITFIELD;
 };
 
 EINTERN int e_pointer_init(void);

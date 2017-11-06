@@ -110,8 +110,8 @@ typedef struct Wireless_Connection
    Eina_Stringshare *proxy_url;
    Eina_Array *proxy_servers;
    Eina_Array *proxy_excludes;
-   Eina_Bool ipv6 : 1;
-   Eina_Bool favorite : 1;
+   Eina_Bool ipv6 E_BITFIELD;
+   Eina_Bool favorite E_BITFIELD;
 } Wireless_Connection;
 
 typedef void (*Wireless_Auth_Cb)(void *data, const Eina_Array *fields);

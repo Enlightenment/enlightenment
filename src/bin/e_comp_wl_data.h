@@ -53,8 +53,8 @@ struct _E_Comp_Wl_Data_Source
    enum wl_data_device_manager_dnd_action compositor_action;
    uint32_t serial;
 
-   Eina_Bool accepted : 1;
-   Eina_Bool actions_set : 1;
+   Eina_Bool accepted E_BITFIELD;
+   Eina_Bool actions_set E_BITFIELD;
 };
 
 struct _E_Comp_Wl_Data_Offer
@@ -65,7 +65,7 @@ struct _E_Comp_Wl_Data_Offer
    struct wl_listener source_destroy_listener; //listener for destroy of source
    uint32_t dnd_actions;
    enum wl_data_device_manager_dnd_action preferred_dnd_action;
-   Eina_Bool in_ask : 1;
+   Eina_Bool in_ask E_BITFIELD;
 };
 
 struct _E_Comp_Wl_Clipboard_Source

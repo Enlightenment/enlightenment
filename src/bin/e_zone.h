@@ -91,10 +91,10 @@ struct _E_Zone
 
    Eina_Rectangle useful_geometry[2];
    char *randr2_id; // same id we get from randr2 so look it up there
-   Eina_Bool useful_geometry_changed : 1;
-   Eina_Bool useful_geometry_dirty : 1;
-   Eina_Bool      stowed : 1;
-   Eina_Bool desk_flip_sync : 1;
+   Eina_Bool useful_geometry_changed E_BITFIELD;
+   Eina_Bool useful_geometry_dirty E_BITFIELD;
+   Eina_Bool      stowed E_BITFIELD;
+   Eina_Bool desk_flip_sync E_BITFIELD;
 };
 
 struct _E_Event_Zone_Generic
@@ -121,7 +121,7 @@ struct _E_Event_Zone_Edge
    int         x, y;
    int         modifiers;
    int         button;
-   Eina_Bool  drag : 1;
+   Eina_Bool  drag E_BITFIELD;
 };
 
 struct _E_Zone_Obstacle
@@ -130,7 +130,7 @@ struct _E_Zone_Obstacle
    EINA_INLIST;
    int x, y, w, h;
    E_Object *owner;
-   Eina_Bool vertical : 1;
+   Eina_Bool vertical E_BITFIELD;
 };
 
 EINTERN int    e_zone_init(void);

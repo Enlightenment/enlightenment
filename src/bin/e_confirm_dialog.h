@@ -29,7 +29,7 @@ struct _E_Confirm_Dialog
       void *data;
       void  (*func)(void *data);
    } del;
-   Eina_Bool no_run : 1;
+   Eina_Bool no_run E_BITFIELD;
 };
 
 /*

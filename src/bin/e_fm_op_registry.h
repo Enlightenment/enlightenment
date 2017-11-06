@@ -30,9 +30,9 @@ struct _E_Fm2_Op_Registry_Entry
    int eta; /* XXX use double? */
    E_Fm_Op_Type op;
    E_Fm2_Op_Status status;
-   Eina_Bool needs_attention:1;
+   Eina_Bool needs_attention E_BITFIELD;
    E_Dialog *dialog;
-   Eina_Bool finished:1;
+   Eina_Bool finished E_BITFIELD;
 
    // service callbacks
    struct

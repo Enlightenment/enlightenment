@@ -125,7 +125,7 @@ struct _E_Gadcon
    } urgent_show;
 
    E_Config_Dialog   *config_dialog;
-   unsigned char      editing : 1;
+   unsigned char      editing E_BITFIELD;
    Ecore_X_Window     dnd_win, xdnd_win;
    E_Shelf           *shelf;
    E_Toolbar         *toolbar;
@@ -137,10 +137,10 @@ struct _E_Gadcon
 
    E_Config_Gadcon   *cf;
 
-   unsigned char      instant_edit : 1;
-   unsigned char      dummy : 1;
-   Eina_Bool          custom : 1;
-   Eina_Bool          cfg_delete : 1;
+   unsigned char      instant_edit E_BITFIELD;
+   unsigned char      dummy E_BITFIELD;
+   Eina_Bool          custom E_BITFIELD;
+   Eina_Bool          cfg_delete E_BITFIELD;
 };
 
 #define GADCON_CLIENT_CLASS_VERSION 3
@@ -194,7 +194,7 @@ struct _E_Gadcon_Client
       int seq, flags;   /* goes to save */
       int state, resist;
       int prev_pos, prev_size;
-      Eina_Bool want_save : 1;
+      Eina_Bool want_save E_BITFIELD;
    } state_info;
 
    struct
@@ -215,12 +215,12 @@ struct _E_Gadcon_Client
 
    E_Menu                 *menu;
    const char             *style;
-   unsigned char           autoscroll : 1;
-   unsigned char           resizable : 1;
-   unsigned char           moving : 1;
-   unsigned char           resizing : 1;
-   unsigned char           autoscroll_set : 1;
-   unsigned char           autoscroll_disabled : 1;
+   unsigned char           autoscroll E_BITFIELD;
+   unsigned char           resizable E_BITFIELD;
+   unsigned char           moving E_BITFIELD;
+   unsigned char           resizing E_BITFIELD;
+   unsigned char           autoscroll_set E_BITFIELD;
+   unsigned char           autoscroll_disabled E_BITFIELD;
    Evas_Coord              dx, dy;
 
    struct
@@ -229,7 +229,7 @@ struct _E_Gadcon_Client
       E_Drag *drag;
    } drag;
 
-   unsigned char           hidden : 1;
+   unsigned char           hidden E_BITFIELD;
 
    E_Config_Gadcon_Client *cf;
    char                    pscrollstate;

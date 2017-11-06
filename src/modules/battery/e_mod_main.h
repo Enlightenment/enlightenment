@@ -68,8 +68,8 @@ struct _Battery
 #if defined HAVE_EEZE || defined __OpenBSD__ || defined __DragonFly__ || defined __FreeBSD__ || defined __NetBSD__
    Ecore_Poller *poll;
 #endif
-   Eina_Bool present:1;
-   Eina_Bool charging:1;
+   Eina_Bool present E_BITFIELD;
+   Eina_Bool charging E_BITFIELD;
 #if defined HAVE_EEZE || defined __OpenBSD__ || defined __DragonFly__ || defined __FreeBSD__ || defined __NetBSD__
    double last_update;
    double percent;
@@ -93,7 +93,7 @@ struct _Battery
    const char *technology;
    const char *model;
    const char *vendor;
-   Eina_Bool got_prop:1;
+   Eina_Bool got_prop E_BITFIELD;
    Eldbus_Proxy *proxy;
    int * mib;
 #if defined(__FreeBSD__) || defined(__DragonFly__)
@@ -108,7 +108,7 @@ struct _Battery
 struct _Ac_Adapter
 {
    const char *udi;
-   Eina_Bool present:1;
+   Eina_Bool present E_BITFIELD;
    const char *product;
    Eldbus_Proxy *proxy;
    int * mib;

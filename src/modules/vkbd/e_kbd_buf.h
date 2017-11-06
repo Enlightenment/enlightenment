@@ -41,8 +41,8 @@ struct _E_Kbd_Buf_Keystroke
    const char       *key;
    int               x, y;
    E_Kbd_Buf_Layout *layout;
-   unsigned char     shift : 1;
-   unsigned char     capslock : 1;
+   unsigned char     shift E_BITFIELD;
+   unsigned char     capslock E_BITFIELD;
 };
 
 struct _E_Kbd_Buf_Layout 

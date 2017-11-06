@@ -19,10 +19,10 @@ struct _E_Gadcon_Popup
    Evas_Object        *content;
    Ecore_Event_Handler *autoclose_handlers[2];
 
-   Eina_Bool            pinned : 1;
-   Eina_Bool            gadcon_lock : 1;
-   Eina_Bool            gadcon_was_locked : 1;
-   Eina_Bool            visible : 1;
+   Eina_Bool            pinned E_BITFIELD;
+   Eina_Bool            gadcon_lock E_BITFIELD;
+   Eina_Bool            gadcon_was_locked E_BITFIELD;
+   Eina_Bool            visible E_BITFIELD;
 };
 
 E_API E_Gadcon_Popup *e_gadcon_popup_new(E_Gadcon_Client *gcc, Eina_Bool noshadow);

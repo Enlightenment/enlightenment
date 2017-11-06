@@ -13,9 +13,9 @@ struct _E_Ilist_Item
    Evas_Object *o_base;
    Evas_Object *o_icon;
    Evas_Object *o_end;
-   unsigned char header : 1;
-   unsigned char selected : 1;
-   unsigned char queued : 1;
+   unsigned char header E_BITFIELD;
+   unsigned char selected E_BITFIELD;
+   unsigned char queued E_BITFIELD;
 
    void (*func) (void *data, void *data2);
    void (*func_hilight) (void *data, void *data2);

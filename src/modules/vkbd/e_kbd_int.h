@@ -59,14 +59,14 @@ struct _E_Kbd_Int
    struct {
       Evas_Coord        x, y;
       int               lx, ly;
-      unsigned char     down : 1;
-      unsigned char     stroke : 1;
-      unsigned char     zoom : 1;
-      unsigned char     twofinger : 1;
+      unsigned char     down E_BITFIELD;
+      unsigned char     stroke E_BITFIELD;
+      unsigned char     zoom E_BITFIELD;
+      unsigned char     twofinger E_BITFIELD;
    } down;
 
    E_Kbd_Buf           *kbuf;
-   Eina_Bool            visible : 1;
+   Eina_Bool            visible E_BITFIELD;
 };
 
 struct _E_Kbd_Int_Key
@@ -76,15 +76,15 @@ struct _E_Kbd_Int_Key
    Eina_List *states;
    Evas_Object *obj, *zoom_obj, *icon_obj, *zoom_icon_obj;
 
-   unsigned char pressed : 1;
-   unsigned char selected : 1;
+   unsigned char pressed E_BITFIELD;
+   unsigned char selected E_BITFIELD;
 
-   unsigned char is_shift : 1;
-   unsigned char is_multi_shift : 1;
-   unsigned char is_ctrl : 1;
-   unsigned char is_alt : 1;
-   unsigned char is_altgr : 1;
-   unsigned char is_capslock : 1;
+   unsigned char is_shift E_BITFIELD;
+   unsigned char is_multi_shift E_BITFIELD;
+   unsigned char is_ctrl E_BITFIELD;
+   unsigned char is_alt E_BITFIELD;
+   unsigned char is_altgr E_BITFIELD;
+   unsigned char is_capslock E_BITFIELD;
 };
 
 struct _E_Kbd_Int_Key_State

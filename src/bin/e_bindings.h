@@ -51,10 +51,10 @@ struct E_Binding_Event_Mouse_Button
 
    unsigned int modifiers; /**< modifier keys pressed during the event */
    unsigned int timestamp;
-   Eina_Bool double_click : 1;
-   Eina_Bool triple_click : 1;
-   Eina_Bool hold : 1;
-   Eina_Bool scroll : 1;
+   Eina_Bool double_click E_BITFIELD;
+   Eina_Bool triple_click E_BITFIELD;
+   Eina_Bool hold E_BITFIELD;
+   Eina_Bool scroll E_BITFIELD;
 };
 
 struct E_Binding_Event_Wheel
@@ -73,7 +73,7 @@ struct _E_Binding_Mouse
    E_Binding_Context ctxt;
    int button;
    E_Binding_Modifier mod;
-   unsigned char any_mod : 1;
+   unsigned char any_mod E_BITFIELD;
    const char *action;
    const char *params;
 };
@@ -83,7 +83,7 @@ struct _E_Binding_Key
    E_Binding_Context ctxt;
    const char *key;
    E_Binding_Modifier mod;
-   unsigned char any_mod : 1;
+   unsigned char any_mod E_BITFIELD;
    const char *action;
    const char *params;
 };
@@ -98,8 +98,8 @@ struct _E_Binding_Edge
 
    float delay;
    Ecore_Timer *timer;
-   Eina_Bool any_mod : 1;
-   Eina_Bool drag_only : 1;
+   Eina_Bool any_mod E_BITFIELD;
+   Eina_Bool drag_only E_BITFIELD;
 };
 
 struct _E_Binding_Signal
@@ -108,7 +108,7 @@ struct _E_Binding_Signal
    const char *sig;
    const char *src;
    E_Binding_Modifier mod;
-   unsigned char any_mod : 1;
+   unsigned char any_mod E_BITFIELD;
    const char *action;
    const char *params;
 };
@@ -119,7 +119,7 @@ struct _E_Binding_Wheel
    int direction;
    int z;
    E_Binding_Modifier mod;
-   unsigned char any_mod : 1;
+   unsigned char any_mod E_BITFIELD;
    const char *action;
    const char *params;
 };

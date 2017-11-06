@@ -17,7 +17,7 @@ typedef struct _E_Music_Control_Module_Context
 {
    Eina_List *instances;
    Eldbus_Connection *conn;
-   Eina_Bool playing:1;
+   Eina_Bool playing E_BITFIELD;
    Eina_Stringshare *meta_artist;
    Eina_Stringshare *meta_album;
    Eina_Stringshare *meta_title;
@@ -26,7 +26,7 @@ typedef struct _E_Music_Control_Module_Context
    Eldbus_Proxy *mpris2_player;
    E_Config_DD *conf_edd;
    Music_Control_Config *config;
-   Eina_Bool actions_set:1;
+   Eina_Bool actions_set E_BITFIELD;
 } E_Music_Control_Module_Context;
 
 typedef struct _E_Music_Control_Instance

@@ -47,8 +47,8 @@ struct _E_Drag
    unsigned int       button_mask;
 
    E_Layer            layer;
-   unsigned char      visible : 1;
-   Eina_Bool          ended : 1;
+   unsigned char      visible E_BITFIELD;
+   Eina_Bool          ended E_BITFIELD;
 
    unsigned int       num_types;
    const char        *types[];
@@ -72,9 +72,9 @@ struct _E_Drop_Handler
    int           x, y, w, h;
 
    const char   *active_type;
-   Eina_Bool active : 1;
-   Eina_Bool entered : 1;
-   Eina_Bool hidden : 1;
+   Eina_Bool active E_BITFIELD;
+   Eina_Bool entered E_BITFIELD;
+   Eina_Bool hidden E_BITFIELD;
    unsigned int  num_types;
    Eina_Stringshare *types[];
 };

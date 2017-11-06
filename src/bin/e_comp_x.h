@@ -34,7 +34,7 @@ struct _E_Comp_X_Client_Data
    unsigned int internal_props_set; //don't need to refetch our own internal props
 
    Ecore_Timer *first_draw_delay; //configurable placebo
-   Eina_Bool first_damage : 1; //ignore first damage on non-re_manage clients
+   Eina_Bool first_damage E_BITFIELD; //ignore first damage on non-re_manage clients
 
    unsigned int parent_activate_count; //number of times a win has activated itself when parent was focused
 
@@ -44,47 +44,47 @@ struct _E_Comp_X_Client_Data
       {
          struct
          {
-            unsigned char conformant : 1;
+            unsigned char conformant E_BITFIELD;
          } fetch;
-         unsigned char conformant : 1;
+         unsigned char conformant E_BITFIELD;
       } conformant;
       struct
       {
          struct
          {
-            unsigned char state : 1;
+            unsigned char state E_BITFIELD;
             struct
             {
-               unsigned int major : 1;
-               unsigned int minor : 1;
+               unsigned int major E_BITFIELD;
+               unsigned int minor E_BITFIELD;
             } priority;
-            unsigned char quickpanel : 1;
-            unsigned char zone : 1;
+            unsigned char quickpanel E_BITFIELD;
+            unsigned char zone E_BITFIELD;
          } fetch;
          Ecore_X_Illume_Quickpanel_State state;
          struct
          {
-            unsigned int major : 1;
-            unsigned int minor : 1;
+            unsigned int major E_BITFIELD;
+            unsigned int minor E_BITFIELD;
          } priority;
-         unsigned char                   quickpanel : 1;
+         unsigned char                   quickpanel E_BITFIELD;
          int                             zone;
       } quickpanel;
       struct
       {
          struct
          {
-            unsigned char drag : 1;
-            unsigned char locked : 1;
+            unsigned char drag E_BITFIELD;
+            unsigned char locked E_BITFIELD;
          } fetch;
-         unsigned char drag : 1;
-         unsigned char locked : 1;
+         unsigned char drag E_BITFIELD;
+         unsigned char locked E_BITFIELD;
       } drag;
       struct
       {
          struct
          {
-            unsigned char state : 1;
+            unsigned char state E_BITFIELD;
          } fetch;
          Ecore_X_Illume_Window_State state;
       } win_state;
@@ -94,20 +94,20 @@ struct _E_Comp_X_Client_Data
    uint32_t surface_id;
 #endif
 
-   Eina_Bool moving : 1;
-   Eina_Bool first_map : 1;
-   Eina_Bool change_icon : 1;
-   Eina_Bool need_reparent : 1;
-   Eina_Bool reparented : 1;
-   Eina_Bool deleted : 1;
-   Eina_Bool button_grabbed : 1;
-   Eina_Bool fetch_exe : 1;
-   Eina_Bool set_win_type : 1;
-   Eina_Bool frame_update : 1;
-   Eina_Bool evas_init : 1;
-   Eina_Bool unredirected_single : 1;
-   Eina_Bool fetch_gtk_frame_extents : 1;
-   Eina_Bool iconic : 1;
+   Eina_Bool moving E_BITFIELD;
+   Eina_Bool first_map E_BITFIELD;
+   Eina_Bool change_icon E_BITFIELD;
+   Eina_Bool need_reparent E_BITFIELD;
+   Eina_Bool reparented E_BITFIELD;
+   Eina_Bool deleted E_BITFIELD;
+   Eina_Bool button_grabbed E_BITFIELD;
+   Eina_Bool fetch_exe E_BITFIELD;
+   Eina_Bool set_win_type E_BITFIELD;
+   Eina_Bool frame_update E_BITFIELD;
+   Eina_Bool evas_init E_BITFIELD;
+   Eina_Bool unredirected_single E_BITFIELD;
+   Eina_Bool fetch_gtk_frame_extents E_BITFIELD;
+   Eina_Bool iconic E_BITFIELD;
 };
 
 E_API Eina_Bool e_comp_x_init(void);

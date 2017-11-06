@@ -46,7 +46,7 @@ struct _Tempthread
 #ifdef HAVE_EEZE
    Eina_List *tempdevs;
 #endif
-   Eina_Bool initted : 1;
+   Eina_Bool initted E_BITFIELD;
 };
 
 struct _Config_Face
@@ -73,7 +73,7 @@ struct _Config_Face
    E_Menu *menu;
    Ecore_Thread *th;
 
-   Eina_Bool have_temp:1;
+   Eina_Bool have_temp E_BITFIELD;
 };
 
 struct _Config

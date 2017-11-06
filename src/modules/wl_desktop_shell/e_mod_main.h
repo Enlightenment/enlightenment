@@ -28,9 +28,9 @@ struct E_Shell_Data
    struct wl_resource *surface;
    void *shell;
    unsigned int version;
-   Eina_Bool fullscreen : 1;
-   Eina_Bool maximized : 1;
-   Eina_Bool activated : 1;
+   Eina_Bool fullscreen E_BITFIELD;
+   Eina_Bool maximized E_BITFIELD;
+   Eina_Bool activated E_BITFIELD;
 };
 
 #endif

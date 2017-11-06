@@ -118,7 +118,7 @@ struct _E_Remember
    } prop;
    Eina_Stringshare *uuid;
    int pid;
-   Eina_Bool applying : 1;
+   Eina_Bool applying E_BITFIELD;
 };
 
 EINTERN int      e_remember_init(E_Startup_Mode mode);

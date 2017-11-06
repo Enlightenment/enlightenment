@@ -214,7 +214,7 @@ struct _E_Client_Hook
    E_Client_Hook_Point hookpoint;
    E_Client_Hook_Cb func;
    void               *data;
-   unsigned char       delete_me : 1;
+   unsigned char       delete_me E_BITFIELD;
 };
 
 struct _E_Client_Pending_Resize
@@ -272,7 +272,7 @@ struct E_Client
       E_Client               *next;
       E_Client               *prev;
       int                     ignore;
-      Eina_Bool               focus_skip : 1;
+      Eina_Bool               focus_skip E_BITFIELD;
    } stack;
 
    int               border_size; //size of client's border
@@ -284,7 +284,7 @@ struct E_Client
          int x, y, w, h;
          int mx, my;
       } current, last_down[3], last_up[3];
-      Eina_Bool in : 1;
+      Eina_Bool in E_BITFIELD;
    } mouse;
 
    struct
@@ -302,14 +302,14 @@ struct E_Client
 
    struct
    {
-      Eina_Bool mapping_change : 1;
-      Eina_Bool iconic_shading : 1;
+      Eina_Bool mapping_change E_BITFIELD;
+      Eina_Bool iconic_shading E_BITFIELD;
    } hacks;
 
    struct
    {
-      unsigned char changed : 1;
-      unsigned char user_selected : 1;
+      unsigned char changed E_BITFIELD;
+      unsigned char user_selected E_BITFIELD;
       Eina_Stringshare *name;
    } border;
 
@@ -319,13 +319,13 @@ struct E_Client
       E_Layer      layer;
       int          zone;
       E_Maximize   maximized;
-      Eina_Bool    frame : 1;
-      Eina_Bool    set : 1;
+      Eina_Bool    frame E_BITFIELD;
+      Eina_Bool    set E_BITFIELD;
    } saved;
 
    struct
    {
-      unsigned char valid : 1;
+      unsigned char valid E_BITFIELD;
       int           x, y, w, h;
       struct
       {
@@ -333,8 +333,8 @@ struct E_Client
       } saved;
    } pre_res_change;
 
-   unsigned char  shaped : 1;
-   unsigned char  argb : 1;
+   unsigned char  shaped E_BITFIELD;
+   unsigned char  argb E_BITFIELD;
 
    /* ICCCM */
    struct
@@ -362,11 +362,11 @@ struct E_Client
       Ecore_X_Gravity           gravity;
 #endif
       Eina_Stringshare         *window_role;
-      unsigned char             take_focus : 1;
-      unsigned char             accepts_focus : 1;
-      unsigned char             urgent : 1;
-      unsigned char             delete_request : 1;
-      unsigned char             request_pos : 1;
+      unsigned char             take_focus E_BITFIELD;
+      unsigned char             accepts_focus E_BITFIELD;
+      unsigned char             urgent E_BITFIELD;
+      unsigned char             delete_request E_BITFIELD;
+      unsigned char             request_pos E_BITFIELD;
       struct
       {
          int    argc;
@@ -374,18 +374,18 @@ struct E_Client
       } command;
       struct
       {
-         unsigned char title : 1;
-         unsigned char name_class : 1;
-         unsigned char icon_name : 1;
-         unsigned char machine : 1;
-         unsigned char hints : 1;
-         unsigned char size_pos_hints : 1;
-         unsigned char protocol : 1;
-         unsigned char transient_for : 1;
-         unsigned char client_leader : 1;
-         unsigned char window_role : 1;
-         unsigned char state : 1;
-         unsigned char command : 1;
+         unsigned char title E_BITFIELD;
+         unsigned char name_class E_BITFIELD;
+         unsigned char icon_name E_BITFIELD;
+         unsigned char machine E_BITFIELD;
+         unsigned char hints E_BITFIELD;
+         unsigned char size_pos_hints E_BITFIELD;
+         unsigned char protocol E_BITFIELD;
+         unsigned char transient_for E_BITFIELD;
+         unsigned char client_leader E_BITFIELD;
+         unsigned char window_role E_BITFIELD;
+         unsigned char state E_BITFIELD;
+         unsigned char command E_BITFIELD;
       } fetch;
    } icccm;
 
@@ -397,11 +397,11 @@ struct E_Client
       Ecore_X_MWM_Hint_Decor decor;
       Ecore_X_MWM_Hint_Input input;
 #endif
-      unsigned char          exists : 1;
-      unsigned char          borderless : 1;
+      unsigned char          exists E_BITFIELD;
+      unsigned char          borderless E_BITFIELD;
       struct
       {
-         unsigned char hints : 1;
+         unsigned char hints E_BITFIELD;
       } fetch;
    } mwm;
 
@@ -418,7 +418,7 @@ struct E_Client
       int           num_icons;
       unsigned int  user_time;
       unsigned char opacity;
-      Eina_Bool     opacity_changed : 1; // prevent fetching opacity next prop change
+      Eina_Bool     opacity_changed E_BITFIELD; // prevent fetching opacity next prop change
       struct
       {
          int left;
@@ -434,11 +434,11 @@ struct E_Client
          int bottom_start_x;
          int bottom_end_x;
       } strut;
-      unsigned char ping : 1;
+      unsigned char ping E_BITFIELD;
       struct
       {
-         unsigned char        request : 1;
-         unsigned char        alarm : 1;
+         unsigned char        request E_BITFIELD;
+         unsigned char        alarm E_BITFIELD;
          unsigned int         wait;
          unsigned int         serial;
          double               send_time;
@@ -447,31 +447,31 @@ struct E_Client
       /* NetWM Window state */
       struct
       {
-         unsigned char modal : 1;
-         unsigned char sticky : 1;
-         unsigned char maximized_v : 1;
-         unsigned char maximized_h : 1;
-         unsigned char shaded : 1;
-         unsigned char skip_taskbar : 1;
-         unsigned char skip_pager : 1;
-         unsigned char hidden : 1;
-         unsigned char fullscreen : 1;
+         unsigned char modal E_BITFIELD;
+         unsigned char sticky E_BITFIELD;
+         unsigned char maximized_v E_BITFIELD;
+         unsigned char maximized_h E_BITFIELD;
+         unsigned char shaded E_BITFIELD;
+         unsigned char skip_taskbar E_BITFIELD;
+         unsigned char skip_pager E_BITFIELD;
+         unsigned char hidden E_BITFIELD;
+         unsigned char fullscreen E_BITFIELD;
          E_Stacking    stacking;
       } state;
 
       /* NetWM Window allowed actions */
       struct
       {
-         unsigned char move : 1;
-         unsigned char resize : 1;
-         unsigned char minimize : 1;
-         unsigned char shade : 1;
-         unsigned char stick : 1;
-         unsigned char maximized_h : 1;
-         unsigned char maximized_v : 1;
-         unsigned char fullscreen : 1;
-         unsigned char change_desktop : 1;
-         unsigned char close : 1;
+         unsigned char move E_BITFIELD;
+         unsigned char resize E_BITFIELD;
+         unsigned char minimize E_BITFIELD;
+         unsigned char shade E_BITFIELD;
+         unsigned char stick E_BITFIELD;
+         unsigned char maximized_h E_BITFIELD;
+         unsigned char maximized_v E_BITFIELD;
+         unsigned char fullscreen E_BITFIELD;
+         unsigned char change_desktop E_BITFIELD;
+         unsigned char close E_BITFIELD;
       } action;
       E_Window_Type  type;
       E_Window_Type *extra_types;
@@ -480,25 +480,25 @@ struct E_Client
 
       struct
       {
-         unsigned char name : 1;
-         unsigned char icon_name : 1;
-         unsigned char icon : 1;
-         unsigned char user_time : 1;
-         unsigned char strut : 1;
-         unsigned char type : 1;
-         unsigned char state : 1;
-         unsigned char opacity : 1;
+         unsigned char name E_BITFIELD;
+         unsigned char icon_name E_BITFIELD;
+         unsigned char icon E_BITFIELD;
+         unsigned char user_time E_BITFIELD;
+         unsigned char strut E_BITFIELD;
+         unsigned char type E_BITFIELD;
+         unsigned char state E_BITFIELD;
+         unsigned char opacity E_BITFIELD;
          /* No, fetch on new_client, shouldn't be changed after map.
-            unsigned char pid : 1;
+            unsigned char pid E_BITFIELD;
           */
          /* No, ignore this
-            unsigned char desktop : 1;
+            unsigned char desktop E_BITFIELD;
           */
       } fetch;
 
       struct
       {
-         unsigned char state : 1;
+         unsigned char state E_BITFIELD;
       } update;
    } netwm;
 
@@ -511,7 +511,7 @@ struct E_Client
          {
             int           x, y;
 
-            unsigned char updated : 1;
+            unsigned char updated E_BITFIELD;
          } video_position;
          Ecore_Window video_parent;
          E_Client      *video_parent_client;
@@ -525,21 +525,21 @@ struct E_Client
             E_Desk           *wait_desk;
             E_Object_Delfn   *wait_desk_delfn;
             int               num;
-            unsigned char     wait_for_done : 1;
-            unsigned char     use : 1;
+            unsigned char     wait_for_done E_BITFIELD;
+            unsigned char     use E_BITFIELD;
          } profile;
-         Eina_Bool stack : 1;
-         unsigned char      centered : 1;
-         unsigned char      video : 1;
+         Eina_Bool stack E_BITFIELD;
+         unsigned char      centered E_BITFIELD;
+         unsigned char      video E_BITFIELD;
       } state;
 
       struct
       {
-         unsigned char state : 1;
-         unsigned char video_parent : 1;
-         unsigned char video_position : 1;
-         unsigned char profile : 1;
-         unsigned char stack : 1;
+         unsigned char state E_BITFIELD;
+         unsigned char video_parent E_BITFIELD;
+         unsigned char video_position E_BITFIELD;
+         unsigned char profile E_BITFIELD;
+         unsigned char stack E_BITFIELD;
       } fetch;
    } e;
 
@@ -547,116 +547,116 @@ struct E_Client
    {
       struct
       {
-         unsigned char soft_menu : 1;
-         unsigned char soft_menus : 1;
+         unsigned char soft_menu E_BITFIELD;
+         unsigned char soft_menus E_BITFIELD;
       } fetch;
 
-      unsigned char soft_menu : 1;
-      unsigned char soft_menus : 1;
+      unsigned char soft_menu E_BITFIELD;
+      unsigned char soft_menus E_BITFIELD;
    } qtopia;
 
    struct
    {
       struct
       {
-         unsigned char state : 1;
-         unsigned char vkbd : 1;
+         unsigned char state E_BITFIELD;
+         unsigned char vkbd E_BITFIELD;
       } fetch;
 #ifndef HAVE_WAYLAND_ONLY
       Ecore_X_Virtual_Keyboard_State state;
 #endif
-      unsigned char                  have_property : 1;
-      unsigned char                  vkbd : 1;
+      unsigned char                  have_property E_BITFIELD;
+      unsigned char                  vkbd E_BITFIELD;
    } vkbd;
 
    struct
    {
-      unsigned char visible : 1;
-      unsigned char pos : 1;
-      unsigned char size : 1;
-      unsigned char stack : 1;
-      unsigned char prop : 1;
-      unsigned char border : 1;
-      unsigned char reset_gravity : 1;
-      unsigned char shading : 1;
-      unsigned char shaded : 1;
-      unsigned char shape : 1;
-      unsigned char shape_input : 1;
-      unsigned char icon : 1;
-      Eina_Bool internal_state : 1;
-      Eina_Bool need_maximize : 1;
-      Eina_Bool need_unmaximize : 1;
-      Eina_Bool need_rescale : 1;
+      unsigned char visible E_BITFIELD;
+      unsigned char pos E_BITFIELD;
+      unsigned char size E_BITFIELD;
+      unsigned char stack E_BITFIELD;
+      unsigned char prop E_BITFIELD;
+      unsigned char border E_BITFIELD;
+      unsigned char reset_gravity E_BITFIELD;
+      unsigned char shading E_BITFIELD;
+      unsigned char shaded E_BITFIELD;
+      unsigned char shape E_BITFIELD;
+      unsigned char shape_input E_BITFIELD;
+      unsigned char icon E_BITFIELD;
+      Eina_Bool internal_state E_BITFIELD;
+      Eina_Bool need_maximize E_BITFIELD;
+      Eina_Bool need_unmaximize E_BITFIELD;
+      Eina_Bool need_rescale E_BITFIELD;
    } changes;
 
-   unsigned int       visible : 1; // client is set to be visible by display server (never use this)
-   unsigned int       hidden : 1; // set when window has been hidden by api and should not be shown
-   unsigned int       moving : 1;
-   unsigned int       focused : 1;
-   unsigned int       new_client : 1;
-   unsigned int       re_manage : 1; // client is persisting from before E restart
-   unsigned int       placed : 1;
-   unsigned int       shading : 1;
-   unsigned int       shaded : 1;
-   unsigned int       iconic : 1;
-   unsigned int       deskshow : 1;
-   unsigned int       sticky : 1;
-   unsigned int       urgent : 1;
-   unsigned int       shaped_input : 1;
-   unsigned int       need_shape_merge : 1;
-   unsigned int       need_shape_export : 1;
-   unsigned int       fullscreen : 1;
-   unsigned int       need_fullscreen : 1;
-   unsigned int       already_unparented : 1;
-   unsigned int       need_reparent : 1;
-   unsigned int       button_grabbed : 1;
-   unsigned int       delete_requested : 1;
-   unsigned int       ping_ok : 1;
-   unsigned int       hung : 1;
-   unsigned int       take_focus : 1;
-   unsigned int       want_focus : 1;
-   unsigned int       user_skip_winlist : 1;
+   unsigned int       visible E_BITFIELD; // client is set to be visible by display server (never use this)
+   unsigned int       hidden E_BITFIELD; // set when window has been hidden by api and should not be shown
+   unsigned int       moving E_BITFIELD;
+   unsigned int       focused E_BITFIELD;
+   unsigned int       new_client E_BITFIELD;
+   unsigned int       re_manage E_BITFIELD; // client is persisting from before E restart
+   unsigned int       placed E_BITFIELD;
+   unsigned int       shading E_BITFIELD;
+   unsigned int       shaded E_BITFIELD;
+   unsigned int       iconic E_BITFIELD;
+   unsigned int       deskshow E_BITFIELD;
+   unsigned int       sticky E_BITFIELD;
+   unsigned int       urgent E_BITFIELD;
+   unsigned int       shaped_input E_BITFIELD;
+   unsigned int       need_shape_merge E_BITFIELD;
+   unsigned int       need_shape_export E_BITFIELD;
+   unsigned int       fullscreen E_BITFIELD;
+   unsigned int       need_fullscreen E_BITFIELD;
+   unsigned int       already_unparented E_BITFIELD;
+   unsigned int       need_reparent E_BITFIELD;
+   unsigned int       button_grabbed E_BITFIELD;
+   unsigned int       delete_requested E_BITFIELD;
+   unsigned int       ping_ok E_BITFIELD;
+   unsigned int       hung E_BITFIELD;
+   unsigned int       take_focus E_BITFIELD;
+   unsigned int       want_focus E_BITFIELD;
+   unsigned int       user_skip_winlist E_BITFIELD;
    E_Maximize         maximized;
    E_Fullscreen       fullscreen_policy;
-   unsigned int       borderless : 1;
-   unsigned char      offer_resistance : 1;
+   unsigned int       borderless E_BITFIELD;
+   unsigned char      offer_resistance E_BITFIELD;
    Eina_Stringshare  *bordername;
 
-   unsigned int       lock_user_location : 1; /*DONE*/
-   unsigned int       lock_client_location : 1; /*DONE*/
-   unsigned int       lock_user_size : 1; /*DONE*/
-   unsigned int       lock_client_size : 1; /*DONE*/
-   unsigned int       lock_user_stacking : 1; /*DONE*/
-   unsigned int       lock_client_stacking : 1; /*DONE*/
-   unsigned int       lock_user_iconify : 1; /*DONE*/
-   unsigned int       lock_client_iconify : 1; /*DONE*/
-   unsigned int       lock_user_desk : 1;
-   unsigned int       lock_client_desk : 1;
-   unsigned int       lock_user_sticky : 1; /*DONE*/
-   unsigned int       lock_client_sticky : 1; /*DONE*/
-   unsigned int       lock_user_shade : 1; /*DONE*/
-   unsigned int       lock_client_shade : 1; /*DONE*/
-   unsigned int       lock_user_maximize : 1; /*DONE*/
-   unsigned int       lock_client_maximize : 1; /*DONE*/
-   unsigned int       lock_user_fullscreen : 1; /*DONE*/
-   unsigned int       lock_client_fullscreen : 1; /*DONE*/
-   unsigned int       lock_border : 1; /*DONE*/
-   unsigned int       lock_close : 1; /*DONE*/
-   unsigned int       lock_focus_in : 1; /*DONE*/
-   unsigned int       lock_focus_out : 1; /*DONE*/
-   unsigned int       lock_life : 1; /*DONE*/
+   unsigned int       lock_user_location E_BITFIELD; /*DONE*/
+   unsigned int       lock_client_location E_BITFIELD; /*DONE*/
+   unsigned int       lock_user_size E_BITFIELD; /*DONE*/
+   unsigned int       lock_client_size E_BITFIELD; /*DONE*/
+   unsigned int       lock_user_stacking E_BITFIELD; /*DONE*/
+   unsigned int       lock_client_stacking E_BITFIELD; /*DONE*/
+   unsigned int       lock_user_iconify E_BITFIELD; /*DONE*/
+   unsigned int       lock_client_iconify E_BITFIELD; /*DONE*/
+   unsigned int       lock_user_desk E_BITFIELD;
+   unsigned int       lock_client_desk E_BITFIELD;
+   unsigned int       lock_user_sticky E_BITFIELD; /*DONE*/
+   unsigned int       lock_client_sticky E_BITFIELD; /*DONE*/
+   unsigned int       lock_user_shade E_BITFIELD; /*DONE*/
+   unsigned int       lock_client_shade E_BITFIELD; /*DONE*/
+   unsigned int       lock_user_maximize E_BITFIELD; /*DONE*/
+   unsigned int       lock_client_maximize E_BITFIELD; /*DONE*/
+   unsigned int       lock_user_fullscreen E_BITFIELD; /*DONE*/
+   unsigned int       lock_client_fullscreen E_BITFIELD; /*DONE*/
+   unsigned int       lock_border E_BITFIELD; /*DONE*/
+   unsigned int       lock_close E_BITFIELD; /*DONE*/
+   unsigned int       lock_focus_in E_BITFIELD; /*DONE*/
+   unsigned int       lock_focus_out E_BITFIELD; /*DONE*/
+   unsigned int       lock_life E_BITFIELD; /*DONE*/
 
-   unsigned int       stolen : 1;
+   unsigned int       stolen E_BITFIELD;
 
-   unsigned int       internal : 1;
-   unsigned int       internal_no_remember : 1;
-   unsigned int       internal_no_reopen : 1;
+   unsigned int       internal E_BITFIELD;
+   unsigned int       internal_no_remember E_BITFIELD;
+   unsigned int       internal_no_reopen E_BITFIELD;
 
    Evas_Object       *internal_elm_win;
 
    double             ping;
 
-   unsigned char      changed : 1;
+   unsigned char      changed E_BITFIELD;
 
    unsigned char      icon_preference;
 
@@ -677,7 +677,7 @@ struct E_Client
 
    struct
    {
-      unsigned char start : 1;
+      unsigned char start E_BITFIELD;
       int           x, y;
    } drag;
 
@@ -689,12 +689,12 @@ struct E_Client
    Efreet_Desktop            *desktop;
    E_Exec_Instance           *exe_inst;
 
-   unsigned char              comp_hidden   : 1;
+   unsigned char              comp_hidden   E_BITFIELD;
 
-   unsigned char              post_move   : 1;
-   unsigned char              post_resize : 1;
-   unsigned char              post_show : 1;
-   unsigned char              during_lost : 1;
+   unsigned char              post_move   E_BITFIELD;
+   unsigned char              post_resize E_BITFIELD;
+   unsigned char              post_show E_BITFIELD;
+   unsigned char              during_lost E_BITFIELD;
 
    Ecore_Idle_Enterer        *post_job;
 
@@ -706,24 +706,24 @@ struct E_Client
    int volume;
    int volume_min;
    int volume_max;
-   unsigned char mute : 1;
-   unsigned char volume_control_enabled : 1;
+   unsigned char mute E_BITFIELD;
+   unsigned char volume_control_enabled E_BITFIELD;
 
-   Eina_Bool override : 1;
-   Eina_Bool input_only : 1;
-   Eina_Bool dialog : 1;
-   Eina_Bool tooltip : 1;
-   Eina_Bool redirected : 1;
-   Eina_Bool unredirected_single : 1; //window has been selectively unredirected
-   Eina_Bool shape_changed : 1;
-   Eina_Bool layer_block : 1; // client is doing crazy stuff and should not be relayered in protocol
-   Eina_Bool ignored : 1; // client is comp-ignored
-   Eina_Bool no_shape_cut : 1; // client shape should not be cut
-   Eina_Bool maximize_override : 1; // client is doing crazy stuff and should "just do it" when moving/resizing
-   Eina_Bool maximize_anims_disabled : 1; // client cannot invoke anims or it will break
-   Eina_Bool keyboard_resizing : 1;
+   Eina_Bool override E_BITFIELD;
+   Eina_Bool input_only E_BITFIELD;
+   Eina_Bool dialog E_BITFIELD;
+   Eina_Bool tooltip E_BITFIELD;
+   Eina_Bool redirected E_BITFIELD;
+   Eina_Bool unredirected_single E_BITFIELD; //window has been selectively unredirected
+   Eina_Bool shape_changed E_BITFIELD;
+   Eina_Bool layer_block E_BITFIELD; // client is doing crazy stuff and should not be relayered in protocol
+   Eina_Bool ignored E_BITFIELD; // client is comp-ignored
+   Eina_Bool no_shape_cut E_BITFIELD; // client shape should not be cut
+   Eina_Bool maximize_override E_BITFIELD; // client is doing crazy stuff and should "just do it" when moving/resizing
+   Eina_Bool maximize_anims_disabled E_BITFIELD; // client cannot invoke anims or it will break
+   Eina_Bool keyboard_resizing E_BITFIELD;
 
-   Eina_Bool on_post_updates : 1; // client is on the post update list
+   Eina_Bool on_post_updates E_BITFIELD; // client is on the post update list
 };
 
 #define e_client_focus_policy_click(ec) \

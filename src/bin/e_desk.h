@@ -30,8 +30,8 @@ struct _E_Desk
    Eina_Stringshare    *name;
    Eina_Stringshare    *window_profile;
    int                  x, y;
-   unsigned char        visible : 1;
-   unsigned int         deskshow_toggle : 1;
+   unsigned char        visible E_BITFIELD;
+   unsigned int         deskshow_toggle E_BITFIELD;
    Eina_List            *fullscreen_clients;
 
    Evas_Object         *bg_object;

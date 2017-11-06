@@ -75,8 +75,8 @@ typedef struct E_Comp_Screen_Iface
    Eina_Bool (*key_down)(Ecore_Event_Key *ev);
    /* is key event eaten */
    Eina_Bool (*key_up)(Ecore_Event_Key *ev);
-   Eina_Bool relative_motion : 1;
-   Eina_Bool backlight_enabled : 1;
+   Eina_Bool relative_motion E_BITFIELD;
+   Eina_Bool backlight_enabled E_BITFIELD;
 } E_Comp_Screen_Iface;
 
 /* struct to hold canvas objects so that abi doesn't break
@@ -162,15 +162,15 @@ struct _E_Comp
    E_Comp_Cb        bindings_grab_cb; //callback for triggering binding input grab
    E_Comp_Cb        bindings_ungrab_cb; //callback for triggering binding input ungrab
 
-   Eina_Bool       gl : 1; //gl is active
-   Eina_Bool       grabbed : 1; //xserver is grabbed
-   Eina_Bool       nocomp : 1; //nocomp is active
-   Eina_Bool       nocomp_want : 1; //nocomp is pending
-   Eina_Bool       saver : 1; //screensaver is active
-   Eina_Bool       shape_queue_blocked : 1; //x11 input shape updates are blocked
+   Eina_Bool       gl E_BITFIELD; //gl is active
+   Eina_Bool       grabbed E_BITFIELD; //xserver is grabbed
+   Eina_Bool       nocomp E_BITFIELD; //nocomp is active
+   Eina_Bool       nocomp_want E_BITFIELD; //nocomp is pending
+   Eina_Bool       saver E_BITFIELD; //screensaver is active
+   Eina_Bool       shape_queue_blocked E_BITFIELD; //x11 input shape updates are blocked
 
-   Eina_Bool       rendering : 1; // we've received a pre-render callback but no post-render yet.
-   Eina_Bool       updating : 1; // running client updates
+   Eina_Bool       rendering E_BITFIELD; // we've received a pre-render callback but no post-render yet.
+   Eina_Bool       updating E_BITFIELD; // running client updates
 };
 
 

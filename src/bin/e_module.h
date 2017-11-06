@@ -21,7 +21,7 @@ extern E_API int E_EVENT_MODULE_INIT_END;
 struct _E_Event_Module_Update
 {
    const char *name;
-   Eina_Bool enabled : 1;
+   Eina_Bool enabled E_BITFIELD;
 };
 
 struct _E_Module
@@ -41,8 +41,8 @@ struct _E_Module
       int    (*save)        (E_Module *m);
    } func;
 
-   Eina_Bool        enabled : 1;
-   Eina_Bool        error : 1;
+   Eina_Bool        enabled E_BITFIELD;
+   Eina_Bool        error E_BITFIELD;
 
    /* the module is allowed to modify these */
    void                *data;

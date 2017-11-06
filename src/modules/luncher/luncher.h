@@ -92,8 +92,8 @@ struct _Icon
    Eina_Bool         preview_dismissed;
    struct
    {
-      unsigned char start : 1;
-      unsigned char dnd : 1;
+      unsigned char start E_BITFIELD;
+      unsigned char dnd E_BITFIELD;
       int           x, y;
    } drag;
 };

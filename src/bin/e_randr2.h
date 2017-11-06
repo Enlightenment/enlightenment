@@ -50,7 +50,7 @@ struct _E_Randr2_Mode
 {
    int    w, h; // resolution width and height
    double refresh; // refresh in hz
-   Eina_Bool preferred : 1; // is this the preferred mode for the device?
+   Eina_Bool preferred E_BITFIELD; // is this the preferred mode for the device?
 };
 
 struct _E_Randr2_Screen
@@ -62,14 +62,14 @@ struct _E_Randr2_Screen
       char                 *edid; // full edid data
       E_Randr2_Connector    connector; // the connector type
       unsigned int          subpixel; //ecore_drm2_output_subpixel_get
-      Eina_Bool             is_lid : 1; // is an internal screen
-      Eina_Bool             lid_closed : 1; // is lid closed when screen qury'd
-      Eina_Bool             connected : 1; // some screen is plugged in or not
-      Eina_Bool             backlight : 1; // does it have backlight controls?
-      Eina_Bool             can_rot_0 : 1; // can it do this rotation?
-      Eina_Bool             can_rot_90 : 1; // can it do this rotation?
-      Eina_Bool             can_rot_180 : 1; // can it do this rotation?
-      Eina_Bool             can_rot_270 : 1; // can it do this rotation?
+      Eina_Bool             is_lid E_BITFIELD; // is an internal screen
+      Eina_Bool             lid_closed E_BITFIELD; // is lid closed when screen qury'd
+      Eina_Bool             connected E_BITFIELD; // some screen is plugged in or not
+      Eina_Bool             backlight E_BITFIELD; // does it have backlight controls?
+      Eina_Bool             can_rot_0 E_BITFIELD; // can it do this rotation?
+      Eina_Bool             can_rot_90 E_BITFIELD; // can it do this rotation?
+      Eina_Bool             can_rot_180 E_BITFIELD; // can it do this rotation?
+      Eina_Bool             can_rot_270 E_BITFIELD; // can it do this rotation?
       Eina_List            *modes; // available screen modes here
       struct {
          int                w, h; // physical width and height in mm
@@ -85,8 +85,8 @@ struct _E_Randr2_Screen
       E_Randr2_Mode         mode; // screen res/refresh to use
       int                   rotation; // 0, 90, 180, 270
       int                   priority; // larger num == more important
-      Eina_Bool             enabled : 1; // should this monitor be enabled?
-      Eina_Bool             configured : 1; // has screen been configured by e?
+      Eina_Bool             enabled E_BITFIELD; // should this monitor be enabled?
+      Eina_Bool             configured E_BITFIELD; // has screen been configured by e?
 
       char                 *profile; // profile name to use on this screen
       double                scale_multiplier; // if 0.0 - then dont multiply scale

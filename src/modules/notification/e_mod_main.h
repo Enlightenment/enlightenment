@@ -67,7 +67,7 @@ struct _Popup_Data
   const char  *app_name;
   Evas_Object *app_icon;
   Ecore_Timer *timer;
-  Eina_Bool pending : 1;
+  Eina_Bool pending E_BITFIELD;
 };
 
 

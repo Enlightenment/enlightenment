@@ -82,8 +82,8 @@ struct _E_Comp_Wl_Surface_State
    struct wl_listener buffer_destroy_listener;
    Eina_List *damages, *frames;
    Eina_Tiler *input, *opaque;
-   Eina_Bool new_attach : 1;
-   Eina_Bool has_data : 1;
+   Eina_Bool new_attach E_BITFIELD;
+   Eina_Bool has_data E_BITFIELD;
 };
 
 struct _E_Comp_Wl_Subsurf_Data
@@ -192,7 +192,7 @@ struct _E_Comp_Wl_Data
      {
         Eina_List *resources;
         Eina_List *focused;
-        Eina_Bool enabled : 1;
+        Eina_Bool enabled E_BITFIELD;
         xkb_mod_mask_t mod_depressed, mod_latched, mod_locked;
         xkb_layout_index_t mod_group;
         xkb_layout_index_t choosen_group;
@@ -209,13 +209,13 @@ struct _E_Comp_Wl_Data
         uint32_t serial[2]; //down/up
         uint32_t button_mask;
         E_Client *ec;
-        Eina_Bool enabled : 1;
+        Eina_Bool enabled E_BITFIELD;
      } ptr;
 
    struct
      {
         Eina_List *resources;
-        Eina_Bool enabled : 1;
+        Eina_Bool enabled E_BITFIELD;
      } touch;
 
    struct
@@ -285,8 +285,8 @@ struct _E_Comp_Wl_Data
    E_Client *drag_client;
    void *drag_source;
 
-   Eina_Bool dmabuf_disable : 1;
-   Eina_Bool dmabuf_proxy : 1;
+   Eina_Bool dmabuf_disable E_BITFIELD;
+   Eina_Bool dmabuf_proxy E_BITFIELD;
 };
 
 struct _E_Comp_Wl_Client_Data
@@ -320,11 +320,11 @@ struct _E_Comp_Wl_Client_Data
         {
            Evas_Coord_Size min_size;
            Evas_Coord_Size max_size;
-           Eina_Bool fullscreen : 1;
-           Eina_Bool unfullscreen : 1;
-           Eina_Bool maximize : 1;
-           Eina_Bool unmaximize : 1;
-           Eina_Bool minimize : 1;
+           Eina_Bool fullscreen E_BITFIELD;
+           Eina_Bool unfullscreen E_BITFIELD;
+           Eina_Bool maximize E_BITFIELD;
+           Eina_Bool unmaximize E_BITFIELD;
+           Eina_Bool minimize E_BITFIELD;
         } set;
      } shell;
    struct
@@ -346,9 +346,9 @@ struct _E_Comp_Wl_Client_Data
    Tizen_Extensions *tizen;
    struct
      {
-        Eina_Bool  changed : 1;
+        Eina_Bool  changed E_BITFIELD;
         Eina_List *hints;
-        Eina_Bool  use_msg : 1;
+        Eina_Bool  use_msg E_BITFIELD;
      } aux_hint;
 
    int32_t on_outputs; /* Bitfield of the outputs this client is present on */
@@ -362,19 +362,19 @@ struct _E_Comp_Wl_Client_Data
 
    int early_frame;
 
-   Eina_Bool mapped : 1;
-   Eina_Bool evas_init : 1;
-   Eina_Bool cursor : 1;
-   Eina_Bool moved : 1;
-   Eina_Bool maximizing : 1;
-   Eina_Bool in_commit : 1;
-   Eina_Bool is_xdg_surface : 1;
-   Eina_Bool grab : 1;
-   Eina_Bool buffer_commit : 1;
-   Eina_Bool need_xdg6_configure : 1;
-   Eina_Bool maximize_anims_disabled : 1;
-   Eina_Bool ssd_mouse_in : 1;
-   Eina_Bool need_center : 1;
+   Eina_Bool mapped E_BITFIELD;
+   Eina_Bool evas_init E_BITFIELD;
+   Eina_Bool cursor E_BITFIELD;
+   Eina_Bool moved E_BITFIELD;
+   Eina_Bool maximizing E_BITFIELD;
+   Eina_Bool in_commit E_BITFIELD;
+   Eina_Bool is_xdg_surface E_BITFIELD;
+   Eina_Bool grab E_BITFIELD;
+   Eina_Bool buffer_commit E_BITFIELD;
+   Eina_Bool need_xdg6_configure E_BITFIELD;
+   Eina_Bool maximize_anims_disabled E_BITFIELD;
+   Eina_Bool ssd_mouse_in E_BITFIELD;
+   Eina_Bool need_center E_BITFIELD;
 };
 
 struct _E_Comp_Wl_Output
@@ -399,8 +399,8 @@ struct _E_Comp_Wl_Pointer
 {
    E_Client *cursor;
    Evas_Point offset;
-   Eina_Bool entered : 1;
-   Eina_Bool cursor_set : 1;
+   Eina_Bool entered E_BITFIELD;
+   Eina_Bool cursor_set E_BITFIELD;
 };
 
 E_API Eina_Bool e_comp_wl_init(void);

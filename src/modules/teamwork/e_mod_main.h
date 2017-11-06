@@ -39,9 +39,9 @@ typedef struct Mod
    Eina_Inlist *media_list;
    Eina_Hash *media;
    Evas_Object *pop;
-   Eina_Bool sticky : 1;
-   Eina_Bool force : 1;
-   Eina_Bool hidden : 1;
+   Eina_Bool sticky E_BITFIELD;
+   Eina_Bool force E_BITFIELD;
+   Eina_Bool hidden E_BITFIELD;
 } Mod;
 
 extern Teamwork_Config *tw_config;

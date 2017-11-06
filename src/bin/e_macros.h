@@ -134,4 +134,10 @@
 #define E_EXPAND(X) E_WEIGHT((X), EVAS_HINT_EXPAND, EVAS_HINT_EXPAND)
 #define E_FILL(X) E_ALIGN((X), EVAS_HINT_FILL, EVAS_HINT_FILL)
 
+#ifdef E_RELEASE_BUILD
+# define E_BITFIELD :1
+#else
+# define E_BITFIELD
+#endif
+
 #endif

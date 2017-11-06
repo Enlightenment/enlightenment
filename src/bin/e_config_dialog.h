@@ -19,10 +19,10 @@ typedef struct _E_Config_Dialog_Data E_Config_Dialog_Data;
 
 struct _E_Config_Dialog_View
 {
-   unsigned char override_auto_apply : 1;
-   unsigned char basic_only : 1;
-   unsigned char normal_win : 1;
-   unsigned char scroll : 1;
+   unsigned char override_auto_apply E_BITFIELD;
+   unsigned char basic_only E_BITFIELD;
+   unsigned char normal_win E_BITFIELD;
+   unsigned char scroll E_BITFIELD;
 
    void           *(*create_cfdata)     (E_Config_Dialog *cfd);
    void            (*free_cfdata)       (E_Config_Dialog *cfd, E_Config_Dialog_Data *cfdata);
@@ -50,9 +50,9 @@ struct _E_Config_Dialog
    E_Dialog                    *dia;
    void                        *data;
    Ecore_Timer                 *auto_apply_timer;
-   unsigned char                hide_buttons : 1;
-   unsigned char                cfg_changed : 1;
-   unsigned char                cfg_changed_auto : 1;
+   unsigned char                hide_buttons E_BITFIELD;
+   unsigned char                cfg_changed E_BITFIELD;
+   unsigned char                cfg_changed_auto E_BITFIELD;
 };
 
 E_API E_Config_Dialog *e_config_dialog_new(Evas_Object *parent, const char *title, const char *name, const char *class, const char *icon, int icon_size, E_Config_Dialog_View *view, void *data);

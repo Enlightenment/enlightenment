@@ -20,8 +20,8 @@ struct _E_Exec_Instance
    int             used;
    int             ref;
    Eina_List      *watchers;
-   Eina_Bool       phony : 1;
-   Eina_Bool       deleted : 1;
+   Eina_Bool       phony E_BITFIELD;
+   Eina_Bool       deleted E_BITFIELD;
 };
 
 typedef enum

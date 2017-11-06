@@ -41,16 +41,16 @@ struct _E_Shelf
    Eina_List           *handlers;
    Ecore_Event_Handler *autohide;
    Eina_List           *zone_obstacles;
-   unsigned char        fit_along   : 1;
-   unsigned char        fit_size    : 1;
-   unsigned char        hidden      : 1;
-   unsigned char        toggle      : 1;
-   unsigned char        edge        : 1;
-   unsigned char        urgent_show : 1;
-   unsigned char        dummy : 1;
-   Eina_Bool            cfg_delete : 1;
+   unsigned char        fit_along   E_BITFIELD;
+   unsigned char        fit_size    E_BITFIELD;
+   unsigned char        hidden      E_BITFIELD;
+   unsigned char        toggle      E_BITFIELD;
+   unsigned char        edge        E_BITFIELD;
+   unsigned char        urgent_show E_BITFIELD;
+   unsigned char        dummy E_BITFIELD;
+   Eina_Bool            cfg_delete E_BITFIELD;
    unsigned int         locked;
-   Eina_Bool hiding : 1;
+   Eina_Bool hiding E_BITFIELD;
 };
 
 typedef struct E_Event_Shelf

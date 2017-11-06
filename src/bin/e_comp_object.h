@@ -29,7 +29,7 @@ struct E_Event_Comp_Object
 struct E_Comp_Object_Frame
 {
    int l, r, t, b;
-   Eina_Bool calc : 1; // inset has been calculated
+   Eina_Bool calc E_BITFIELD; // inset has been calculated
 };
 
 

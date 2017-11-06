@@ -34,7 +34,7 @@ struct E_Desklock_Interface
    E_Desklock_Hide_Cb hide;
    E_Desklock_Key_Cb key_down;
    E_Desklock_Key_Cb key_up;
-   Eina_Bool active : 1; //interface is currently being used for locking
+   Eina_Bool active E_BITFIELD; //interface is currently being used for locking
 };
 
 struct _E_Event_Desklock

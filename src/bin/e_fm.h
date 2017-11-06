@@ -61,16 +61,16 @@ struct _E_Fm2_Config
    struct
    {
       E_Fm2_View_Mode mode;
-      Eina_Bool       open_dirs_in_place : 1;
-      Eina_Bool       selector : 1;
-      Eina_Bool       single_click : 1;
-      Eina_Bool       no_subdir_jump : 1;
-      Eina_Bool       no_subdir_drop : 1;
-      Eina_Bool       always_order : 1;
-      Eina_Bool       link_drop : 1;
-      Eina_Bool       fit_custom_pos : 1;
-      Eina_Bool       no_typebuf_set : 1;
-      Eina_Bool       no_click_rename : 1;
+      Eina_Bool       open_dirs_in_place E_BITFIELD;
+      Eina_Bool       selector E_BITFIELD;
+      Eina_Bool       single_click E_BITFIELD;
+      Eina_Bool       no_subdir_jump E_BITFIELD;
+      Eina_Bool       no_subdir_drop E_BITFIELD;
+      Eina_Bool       always_order E_BITFIELD;
+      Eina_Bool       link_drop E_BITFIELD;
+      Eina_Bool       fit_custom_pos E_BITFIELD;
+      Eina_Bool       no_typebuf_set E_BITFIELD;
+      Eina_Bool       no_click_rename E_BITFIELD;
       unsigned int    single_click_delay;
    } view;
    /* display of icons */
@@ -87,7 +87,7 @@ struct _E_Fm2_Config
       } fixed;
       struct
       {
-         Eina_Bool show : 1;
+         Eina_Bool show E_BITFIELD;
       } extension;
       const char *key_hint;
       unsigned int max_thumb_size;
@@ -97,31 +97,31 @@ struct _E_Fm2_Config
    {
       struct
       {
-         Eina_Bool no_case : 1;
-         Eina_Bool size : 1;
-         Eina_Bool extension : 1;
-         Eina_Bool mtime : 1;
+         Eina_Bool no_case E_BITFIELD;
+         Eina_Bool size E_BITFIELD;
+         Eina_Bool extension E_BITFIELD;
+         Eina_Bool mtime E_BITFIELD;
          struct
          {
-            Eina_Bool first : 1;
-            Eina_Bool last : 1;
+            Eina_Bool first E_BITFIELD;
+            Eina_Bool last E_BITFIELD;
          } dirs;
       } sort;
    } list;
    /* control how you can select files */
    struct
    {
-      Eina_Bool single : 1;
-      Eina_Bool windows_modifiers : 1;
+      Eina_Bool single E_BITFIELD;
+      Eina_Bool windows_modifiers E_BITFIELD;
    } selection;
    /* the background - if any, and how to handle it */
    /* FIXME: not implemented yet */
    struct
    {
       const char *background, *frame, *icons;
-      Eina_Bool   fixed : 1;
+      Eina_Bool   fixed E_BITFIELD;
    } theme;
-   Eina_Bool secure_rm : 1;
+   Eina_Bool secure_rm E_BITFIELD;
 };
 
 struct _E_Fm2_Icon_Info
@@ -139,11 +139,11 @@ struct _E_Fm2_Icon_Info
    const char   *category;
    struct stat   statinfo;
    unsigned char icon_type;
-   Eina_Bool     mount : 1;
-   Eina_Bool     removable : 1;
-   Eina_Bool     removable_full : 1;
-   Eina_Bool     deleted : 1;
-   Eina_Bool     broken_link : 1;
+   Eina_Bool     mount E_BITFIELD;
+   Eina_Bool     removable E_BITFIELD;
+   Eina_Bool     removable_full E_BITFIELD;
+   Eina_Bool     deleted E_BITFIELD;
+   Eina_Bool     broken_link E_BITFIELD;
 };
 
 typedef void (*E_Fm_Cb)(void *data, Evas_Object *obj, E_Menu *m, E_Fm2_Icon_Info *info);

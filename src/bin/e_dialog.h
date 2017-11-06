@@ -23,7 +23,7 @@ struct _E_Dialog
    Eina_List           *buttons;
    void                *data;
    int                  min_w, min_h;
-   unsigned char        resizable : 1;
+   unsigned char        resizable E_BITFIELD;
 };
 
 typedef void (*E_Dialog_Cb)(void *data, E_Dialog *dia);
