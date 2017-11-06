@@ -1312,7 +1312,8 @@ e_zone_useful_geometry_dirty(E_Zone *zone)
    e_object_ref(E_OBJECT(ev->zone));
    ecore_event_add(E_EVENT_ZONE_USEFUL_GEOMETRY_CHANGED, ev, _e_zone_event_generic_free, NULL);
 
-   e_comp_clients_rescale();
+   if (!stopping)
+     e_comp_clients_rescale();
 }
 
 E_API E_Zone_Obstacle *

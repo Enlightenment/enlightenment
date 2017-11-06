@@ -3331,6 +3331,8 @@ e_client_rescale(E_Client *ec)
 {
    Eina_Bool shaded;
    int shade_dir;
+
+   if (stopping) return;
    E_OBJECT_CHECK(ec);
    E_OBJECT_TYPE_CHECK(ec, E_CLIENT_TYPE);
 
