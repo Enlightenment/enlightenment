@@ -1813,6 +1813,7 @@ e_comp_clients_rescale(void)
 {
    int i;
 
+   if (stopping) return;
    for (i = 0; i < 11; i++)
      {
         Eina_List *tmp = NULL;
