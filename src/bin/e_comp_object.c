@@ -172,7 +172,6 @@ _e_comp_object_event_add(Evas_Object *obj)
    E_Event_Comp_Object *ev;
    E_Client *ec;
 
-   if (stopping) return;
    ev = E_NEW(E_Event_Comp_Object, 1);
    evas_object_ref(obj);
    ev->comp_object = obj;
