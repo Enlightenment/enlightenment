@@ -585,7 +585,7 @@ _e_intl_locale_alias_hash_get(void)
              char alias[4096], locale[4096];
 
              /* read locale alias lines */
-             while (fscanf(f, "%4090s %[^\n]\n", alias, locale) == 2)
+             while (fscanf(f, "%4095s %4095[^\n]\n", alias, locale) == 2)
                {
                   /* skip comments */
                   if ((alias[0] == '!') || (alias[0] == '#'))
@@ -873,7 +873,7 @@ _e_intl_locale_system_locales_get(void)
    if (output)
      {
         char line[32];
-        while (fscanf(output, "%[^\n]\n", line) == 1)
+        while (fscanf(output, "%31[^\n]\n", line) == 1)
           locales = eina_list_append(locales, strdup(line));
 
         pclose(output);
