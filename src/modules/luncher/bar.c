@@ -1403,7 +1403,7 @@ _bar_cb_exec_new(void *data EINA_UNUSED, int type, E_Exec_Instance *ex)
 
    if (type == E_EVENT_EXEC_NEW_CLIENT)
      {
-        ec = eina_list_data_get(ex->clients);
+        ec = eina_list_last_data_get(ex->clients);
         if (ec->netwm.state.skip_taskbar || e_client_util_is_popup(ec))
           skip = EINA_TRUE;
         else
