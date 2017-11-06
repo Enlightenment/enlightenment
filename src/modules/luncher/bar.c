@@ -1880,8 +1880,9 @@ _bar_created_cb(void *data, Evas_Object *obj, void *event_data EINA_UNUSED)
 
    if (inst->cfg->type != E_LUNCHER_MODULE_LAUNCH_ONLY)
      {
-        inst->iconify_provider = e_comp_object_effect_mover_add(80, "e,action,*iconify",
-            _bar_iconify_start, inst);
+        if (inst->cfg->id != -1)
+          inst->iconify_provider = e_comp_object_effect_mover_add(80, "e,action,*iconify",
+              _bar_iconify_start, inst);
      }
    _bar_fill(inst);
 
