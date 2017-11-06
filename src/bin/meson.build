@@ -39,7 +39,7 @@ if config_h.has('HAVE_PAM') == true
 endif
 
 requires_e = ' '.join([
-  'eina >= 1.20.5',
+  ' '.join(['eina', efl_version]),
   'eet',
   'ecore',
   'ecore-ipc',
