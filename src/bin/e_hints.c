@@ -1782,7 +1782,7 @@ e_hints_aux_hint_add_with_pixmap(E_Pixmap *cp, int32_t id, const char *name, con
    E_Comp_Wl_Aux_Hint *hint;
    Eina_List *l;
 
-   if (!cp) return EINA_FALSE;
+   if ((!cp) || (!val) || (!name)) return EINA_FALSE;
    cdata = (E_Comp_Wl_Client_Data*)e_pixmap_cdata_get(cp);
    if (!cdata) return EINA_FALSE;
 
@@ -1836,7 +1836,7 @@ e_hints_aux_hint_change_with_pixmap(E_Pixmap *cp, int32_t id, const char *val, i
    E_Comp_Wl_Aux_Hint *hint;
    Eina_Bool found = EINA_FALSE;
 
-   if (!cp) return EINA_FALSE;
+   if ((!cp) || (!val)) return EINA_FALSE;
    cdata = (E_Comp_Wl_Client_Data*)e_pixmap_cdata_get(cp);
    if (!cdata) return EINA_FALSE;
 
