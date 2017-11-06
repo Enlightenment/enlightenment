@@ -1656,8 +1656,6 @@ _bar_removed_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_data)
    if (e_user_dir_snprintf(buf, sizeof(buf), "applications/bar/%s", inst->cfg->dir) >= sizeof(buf))
      return;
 
-   E_FREE_FUNC(inst->iconify_provider, e_comp_object_effect_mover_del);
-
    luncher_config->items = eina_list_remove(luncher_config->items, inst->cfg);
    eina_stringshare_del(inst->cfg->dir);
    E_FREE(inst->cfg);
@@ -1670,6 +1668,7 @@ _bar_del(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *event_data EIN
    Ecore_Event_Handler *handler;
 
    evas_object_smart_callback_del_full(e_gadget_site_get(obj), "gadget_removed", _bar_removed_cb, inst);
+   E_FREE_FUNC(inst->iconify_provider, e_comp_object_effect_mover_del);
    inst->main_del = EINA_TRUE;
    _bar_empty(inst);
    e_object_del(E_OBJECT(inst->order));
