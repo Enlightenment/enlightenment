@@ -115,7 +115,7 @@ main(int argc,
    char *output = NULL;
 #ifdef HAVE_EEZE_MOUNT
    Eina_Bool mnt = EINA_FALSE;
-   const char *act;
+   const char *act = NULL;
 #endif
    gid_t gid, gl[65536], egid;
 
@@ -355,6 +355,7 @@ main(int argc,
         const char *mp = NULL;
         Eina_Strbuf *buf = NULL;
 
+        if (!act) exit(40);
         if (!mount_args_check(argc, argv, act)) exit(40);
         /* all options are deemed safe at this point, so away we go! */
         if (!strcmp(act, "mount"))
