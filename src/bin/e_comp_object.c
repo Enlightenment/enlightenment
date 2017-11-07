@@ -3489,6 +3489,43 @@ e_comp_object_frame_icon_update(Evas_Object *obj)
      E_FREE_FUNC(cw->frame_icon, evas_object_del);
 }
 
+static void
+_e_comp_object_volume_update(Evas_Object *obj)
+{
+   API_ENTRY;
+
+   if (cw->ec->focused)
+     e_client_volume_object_emit(cw->ec, "e,state,focused", "e");
+   else
+     e_client_volume_object_emit(cw->ec, "e,state,unfocused", "e");
+   if (cw->ec->urgent)
+     e_client_volume_object_emit(cw->ec, "e,state,urgent", "e");
+   else
+     e_client_volume_object_emit(cw->ec, "e,state,not_urgent", "e");
+   if (cw->ec->shaded)
+     e_client_volume_object_emit(cw->ec, "e,state,shaded", "e");
+   if (cw->ec->sticky)
+     e_client_volume_object_emit(cw->ec, "e,state,sticky", "e");
+   if (cw->ec->hung)
+     e_client_volume_object_emit(cw->ec, "e,state,hung", "e");
+   /* visibility must always be enabled for re_manage clients to prevent
+    * pop-in animations every time the user sees a persistent client again;
+    * applying visibility for iconic clients prevents the client from getting
+    * stuck as hidden
+    */
+   if (cw->visible || cw->ec->iconic || cw->ec->re_manage)
+     {
+        if ((cw->w > 0) && (cw->h > 0))
+          e_client_volume_object_emit(cw->ec, "e,state,visible", "e");
+     }
+   else
+     e_client_volume_object_emit(cw->ec, "e,state,hidden", "e");
+   if (e_comp_object_frame_allowed(cw->smart_obj))
+     e_client_volume_object_emit(cw->ec, "e,state,focus,enabled", "e");
+   else
+     e_client_volume_object_emit(cw->ec, "e,state,focus,disabled", "e");
+}
+
 E_API void
 e_comp_object_frame_volume_update(Evas_Object *obj)
 {
@@ -3504,6 +3541,7 @@ e_comp_object_frame_volume_update(Evas_Object *obj)
                   cw->frame_volume = e_client_volume_object_add(cw->ec, e_comp->evas);
                   edje_object_part_swallow(cw->frame_object,
                                            "e.swallow.volume", cw->frame_volume);
+                  _e_comp_object_volume_update(obj);
                   evas_object_show(cw->frame_volume);
                }
           }
