@@ -3700,6 +3700,7 @@ e_comp_object_signal_emit(Evas_Object *obj, const char *sig, const char *src)
    API_ENTRY;
    //INF("EMIT %p: %s %s", cw->ec, sig, src);
    edje_object_signal_emit(cw->shobj, sig, src);
+   e_client_volume_object_emit(cw->ec, sig, src);
    if (cw->frame_object) edje_object_signal_emit(cw->frame_object, sig, src);
    if (cw->frame_icon && e_icon_edje_get(cw->frame_icon))
      edje_object_signal_emit(e_icon_edje_get(cw->frame_icon), sig, src);
@@ -4629,4 +4630,18 @@ e_comp_object_util_autoclose(Evas_Object *obj, E_Comp_Object_Autoclose_Cb del_cb
    else
      evas_object_event_callback_add(obj, EVAS_CALLBACK_SHOW, _e_comp_object_autoclose_show, e_comp);
    evas_object_event_callback_add(obj, EVAS_CALLBACK_DEL, _e_comp_object_autoclose_del, e_comp);
+}
+
+E_API Evas_Object *
+e_comp_object_frame_icon_get(Evas_Object *obj)
+{
+   API_ENTRY NULL;
+   return cw->frame_icon;
+}
+
+E_API Evas_Object *
+e_comp_object_frame_volume_get(Evas_Object *obj)
+{
+   API_ENTRY NULL;
+   return cw->frame_volume;
 }

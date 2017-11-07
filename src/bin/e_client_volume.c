@@ -430,7 +430,6 @@ e_client_volume_object_add(E_Client *ec, Evas *evas)
         edje_object_message_send(o, EDJE_MESSAGE_INT_SET, 0, msg);
         edje_object_signal_emit(o,  "e,action,volume,change", "e");
         evas_object_show(o);
-
      }
    if (edje_object_part_exists(bx, "e.swallow.volume"))
      {
@@ -463,4 +462,19 @@ e_client_volume_object_add(E_Client *ec, Evas *evas)
    evas_object_event_callback_add(bx, EVAS_CALLBACK_DEL,
                             _e_client_volume_object_del_cb, handlers);
    return bx;
+}
+
+E_API void
+e_client_volume_object_emit(E_Client *ec, const char *sig, const char *src)
+{
+   Evas_Object *o;
+
+   EINA_SAFETY_ON_NULL_RETURN(ec);
+   o = e_comp_object_frame_volume_get(ec->frame);
+   if (o)
+     {
+        edje_object_signal_emit(o, sig, src);
+        o = edje_object_part_swallow_get(o, "e.swallow.volume_icon");
+        if (o) edje_object_signal_emit(o,  sig, src);
+     }
 }

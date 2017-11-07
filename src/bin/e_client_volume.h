@@ -55,5 +55,6 @@ E_API void         e_client_volume_sink_remove(E_Client *ec, E_Client_Volume_Sin
 E_API void         e_client_volume_sink_update(E_Client_Volume_Sink *mixer);
 
 E_API void         e_client_volume_display_set(E_Client *ec, int volume, Eina_Bool mute);
+E_API void         e_client_volume_object_emit(E_Client *ec, const char *sig, const char *src);
 
 #endif

@@ -94,6 +94,8 @@ E_API Eina_Bool e_comp_object_effect_stop(Evas_Object *obj, Edje_Signal_Cb end_c
 E_API E_Comp_Object_Mover *e_comp_object_effect_mover_add(int pri, const char *sig, E_Comp_Object_Mover_Cb provider, const void *data);
 E_API void e_comp_object_effect_mover_del(E_Comp_Object_Mover *prov);
 E_API void e_comp_object_frame_volume_update(Evas_Object *obj);
+E_API Evas_Object *e_comp_object_frame_icon_get(Evas_Object *obj);
+E_API Evas_Object *e_comp_object_frame_volume_get(Evas_Object *obj);
 
 #endif
 #endif
