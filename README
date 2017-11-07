@@ -21,11 +21,7 @@ MESON BUILD:
 optional:
 	mesonconf --options OR meson configure --options
 
-	cd build && sudo ninja install
-
-AUTOTOOLS BUILD:
-	./configure --prefix=/usr/local/e
-	sudo make install
+	sudo ninja -C build install
 
 You will, as usual, need to add the subsequent bin dir to your $PATH etc.
 

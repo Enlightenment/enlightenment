@@ -41,21 +41,10 @@ existing applications.
 Compiling:
 -------------
 
-Next, you will need to adjust the options that you pass to
-Enlightenment during the compile phase.
-
 In order for Enlightenment to be compiled as Wayland compositor you will need to
 pass an option to the configure stage of Enlightenment:
 
-  --enable-wayland
-
-If you also want support for running X applications under Wayland you might want
-to try out XWayland support:
-
-  --enable-xwayland
-
-NOTE: DO NOT DISABLE THE MIXER MODULE BUILD IF YOU ARE USING XWAYLAND.
-You have been warned.
+  -Dwayland=true
 
 At this stage, you should have EFL properly built, and Enlightenment
 properly built. Let's move on to running it...
@@ -90,9 +79,5 @@ Known Issues
  - Requires upstream external protocol support, XWayland improvements
 * XWayland clients do not smoothly resize
  - Requires upstream XWayland improvements
-* The first-launched X11 client will sometimes fail to show
- - Requires upstream XWayland improvements
 * There are not more than 4 keyboard layouts possible
  - Requires libxkbcommon changes - https://github.com/xkbcommon/libxkbcommon/issues/37
-* XWayland crashes on start
- - Requires XWayland release - https://bugs.freedesktop.org/show_bug.cgi?id=95337
