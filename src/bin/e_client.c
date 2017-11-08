@@ -2672,11 +2672,6 @@ e_client_new(E_Pixmap *cp, int first_map, int internal)
         return NULL;
      }
 
-   if (ec->override)
-     _e_client_zone_update(ec);
-   else if (!ec->desk)
-     e_client_desk_set(ec, e_desk_current_get(e_zone_current_get()));
-
    ec->icccm.title = NULL;
    ec->icccm.name = NULL;
    ec->icccm.class = NULL;
@@ -2725,6 +2720,13 @@ e_client_new(E_Pixmap *cp, int first_map, int internal)
    if (!ec->ignored) EC_CHANGED(ec);
 
    e_comp_object_client_add(ec);
+
+   if (ec->override)
+     _e_client_zone_update(ec);
+   else if (!ec->desk)
+     e_client_desk_set(ec, e_desk_current_get(e_zone_current_get()));
+   if (!ec->re_manage)
+     ec->placed = ec->changes.pos = 0; //ensure placement is run
    if (ec->frame)
      {
         evas_object_event_callback_add(ec->frame, EVAS_CALLBACK_SHOW, _e_client_cb_evas_show, ec);
