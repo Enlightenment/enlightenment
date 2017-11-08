@@ -54,9 +54,9 @@ struct _E_Pixmap
    Eina_List *free_buffers;
 #endif
 
-   Eina_Bool usable : 1;
-   Eina_Bool dirty : 1;
-   Eina_Bool image_argb : 1;
+   Eina_Bool usable E_BITFIELD;
+   Eina_Bool dirty E_BITFIELD;
+   Eina_Bool image_argb E_BITFIELD;
 };
 
 #ifdef HAVE_WAYLAND

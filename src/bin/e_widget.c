@@ -22,10 +22,10 @@ struct _E_Smart_Data
    void          (*on_disable_func)(void *data, Evas_Object *obj);
    void         *on_disable_data;
    void         *data;
-   unsigned char can_focus : 1;
-   unsigned char child_can_focus : 1;
-   unsigned char focused : 1;
-   unsigned char disabled : 1;
+   unsigned char can_focus E_BITFIELD;
+   unsigned char child_can_focus E_BITFIELD;
+   unsigned char focused E_BITFIELD;
+   unsigned char disabled E_BITFIELD;
 };
 
 /* local subsystem functions */

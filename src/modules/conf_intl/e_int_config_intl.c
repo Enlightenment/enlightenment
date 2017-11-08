@@ -98,7 +98,7 @@ struct _E_Config_Dialog_Data
 
       Evas_Object *locale_entry;
    } gui;
-   Eina_Bool desklock : 1;
+   Eina_Bool desklock E_BITFIELD;
 };
 
 const E_Intl_Pair basic_language_predefined_pairs[] = {

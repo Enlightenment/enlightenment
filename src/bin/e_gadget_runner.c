@@ -20,7 +20,7 @@ typedef struct Config_Item
    int exit_mode;
    Eina_Stringshare *cmd;
    void *inst;
-   Eina_Bool cmd_changed : 1;
+   Eina_Bool cmd_changed E_BITFIELD;
 } Config_Item;
 
 typedef struct Instance
@@ -66,7 +66,7 @@ typedef struct Wizard_Item
    E_Gadget_Wizard_End_Cb cb;
    void *data;
    int id;
-   Eina_Bool sandbox : 1;
+   Eina_Bool sandbox E_BITFIELD;
 } Wizard_Item;
 
 static void

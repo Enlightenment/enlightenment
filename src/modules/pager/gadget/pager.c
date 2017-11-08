@@ -23,12 +23,12 @@ struct _Pager
    int           xnum, ynum;
    Eina_List    *desks;
    Pager_Desk   *active_pd;
-   unsigned char dragging : 1;
-   unsigned char just_dragged : 1;
+   unsigned char dragging E_BITFIELD;
+   unsigned char just_dragged E_BITFIELD;
    E_Client     *active_drag_client;
    Ecore_Job    *recalc;
-   Eina_Bool     invert : 1;
-   Eina_Bool     plain : 1;
+   Eina_Bool     invert E_BITFIELD;
+   Eina_Bool     plain E_BITFIELD;
 };
 
 struct _Pager_Desk
@@ -40,12 +40,12 @@ struct _Pager_Desk
    Evas_Object *o_layout;
    Evas_Object *drop_handler;
    int          xpos, ypos, urgent;
-   int          current : 1;
+   int          current E_BITFIELD;
    struct
    {
       Pager        *from_pager;
-      unsigned char in_pager : 1;
-      unsigned char start : 1;
+      unsigned char in_pager E_BITFIELD;
+      unsigned char start E_BITFIELD;
       int           x, y, dx, dy, button;
    } drag;
 };
@@ -57,13 +57,13 @@ struct _Pager_Win
    Evas_Object  *o_window;
    Evas_Object  *o_mirror;
    Evas_Object  *o_icon;
-   unsigned char skip_winlist : 1;
+   unsigned char skip_winlist E_BITFIELD;
    struct
    {
       Pager        *from_pager;
-      unsigned char start : 1;
-      unsigned char in_pager : 1;
-      unsigned char desktop  : 1;
+      unsigned char start E_BITFIELD;
+      unsigned char in_pager E_BITFIELD;
+      unsigned char desktop  E_BITFIELD;
       int           x, y, dx, dy, button;
    } drag;
 };
@@ -74,7 +74,7 @@ struct _Pager_Popup
    Evas_Object  *o_bg;
    Pager        *pager;
    Ecore_Timer  *timer;
-   unsigned char urgent : 1;
+   unsigned char urgent E_BITFIELD;
 };
 
 static void         _pager_cb_mirror_add(Pager_Desk *pd, Evas_Object *obj, Evas_Object *mirror);

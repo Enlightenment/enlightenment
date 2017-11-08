@@ -23,7 +23,7 @@ struct _E_Smart_Data
    Evas_Coord   minw, minh;
    Ecore_Timer *set_timer;
    Eina_List   *special_values;
-   Eina_Bool    disabled : 1;
+   Eina_Bool    disabled E_BITFIELD;
 };
 
 struct _E_Slider_Special_Value

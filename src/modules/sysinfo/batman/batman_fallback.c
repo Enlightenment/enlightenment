@@ -245,8 +245,8 @@ struct _Sys_Class_Power_Supply_Uevent
    int               basis_empty;
    int               basis_full;
 
-   unsigned char     have_current_avg : 1;
-   unsigned char     have_current_now : 1;
+   unsigned char     have_current_avg E_BITFIELD;
+   unsigned char     have_current_now E_BITFIELD;
 };
 
 static Eina_List *events = NULL;

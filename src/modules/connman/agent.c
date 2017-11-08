@@ -37,7 +37,7 @@ struct _E_Connman_Agent
    Eldbus_Service_Interface *iface;
    Eldbus_Message *msg;
    Eldbus_Connection *conn;
-   Eina_Bool canceled:1;
+   Eina_Bool canceled E_BITFIELD;
 };
 
 static void

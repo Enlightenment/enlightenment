@@ -30,11 +30,11 @@ struct _E_Smart_Data
       double          anim_start;
       Ecore_Animator *momentum_animator;
       Evas_Coord      locked_x, locked_y;
-      unsigned char   now : 1;
-      unsigned char   dragged : 1;
-      unsigned char   dir_x : 1;
-      unsigned char   dir_y : 1;
-      unsigned char   locked : 1;
+      unsigned char   now E_BITFIELD;
+      unsigned char   dragged E_BITFIELD;
+      unsigned char   dir_x E_BITFIELD;
+      unsigned char   dir_y E_BITFIELD;
+      unsigned char   locked E_BITFIELD;
    } down;
 
    struct
@@ -55,14 +55,14 @@ struct _E_Smart_Data
    } pan_func;
    struct
    {
-      Eina_Bool forced : 1;
+      Eina_Bool forced E_BITFIELD;
    } thumbscroll;
 
-   unsigned char hbar_visible : 1;
-   unsigned char vbar_visible : 1;
-   unsigned char extern_pan : 1;
-   unsigned char one_dir_at_a_time : 1;
-   Eina_Bool     key_nav : 1;
+   unsigned char hbar_visible E_BITFIELD;
+   unsigned char vbar_visible E_BITFIELD;
+   unsigned char extern_pan E_BITFIELD;
+   unsigned char one_dir_at_a_time E_BITFIELD;
+   Eina_Bool     key_nav E_BITFIELD;
 };
 
 /* local subsystem functions */

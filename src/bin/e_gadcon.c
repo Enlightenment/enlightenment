@@ -3461,9 +3461,9 @@ struct _E_Smart_Data
 {
    Evas_Coord    x, y, w, h;
    Evas_Object  *obj, *clip;
-   unsigned char horizontal : 1;
-   unsigned char doing_config : 1;
-   unsigned char redo_config : 1;
+   unsigned char horizontal E_BITFIELD;
+   unsigned char doing_config E_BITFIELD;
+   unsigned char redo_config E_BITFIELD;
    Eina_List    *items;
    int           frozen;
    Evas_Coord    minw, minh, req;
@@ -3486,7 +3486,7 @@ struct _E_Gadcon_Layout_Item
 
    Evas_Coord       x, y, w, h;
    Evas_Object     *obj;
-   unsigned char    can_move : 1;
+   unsigned char    can_move E_BITFIELD;
 };
 
 /* local subsystem functions */

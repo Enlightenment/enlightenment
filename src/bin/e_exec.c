@@ -31,7 +31,7 @@ struct _E_Exec_Watch
 {
    void        (*func)(void *data, E_Exec_Instance *inst, E_Exec_Watch_Type type);
    const void *data;
-   Eina_Bool   delete_me : 1;
+   Eina_Bool   delete_me E_BITFIELD;
 };
 
 struct _E_Config_Dialog_Data

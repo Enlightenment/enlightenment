@@ -6,7 +6,7 @@ struct _Video
 {
    Evas_Object_Smart_Clipped_Data __clipped_data;
    Evas_Object *clip, *o_vid;
-   Eina_Bool lowqual : 1;
+   Eina_Bool lowqual E_BITFIELD;
 };
 
 typedef struct _Vidimg Vidimg;

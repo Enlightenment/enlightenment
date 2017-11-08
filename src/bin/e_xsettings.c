@@ -27,7 +27,7 @@ struct _Settings_Manager
    Ecore_Timer   *timer_retry;
    unsigned long  serial;
    Ecore_X_Atom   _atom_xsettings_screen;
-   Eina_Bool enabled : 1;
+   Eina_Bool enabled E_BITFIELD;
 };
 
 struct _Setting

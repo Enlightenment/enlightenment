@@ -9,7 +9,7 @@ struct _E_DBusMenu_Ctx
    void                     *data;
    E_DBusMenu_Pop_Request_Cb pop_request_cb;
    E_DBusMenu_Update_Cb      update_cb;
-   Eina_Bool  hacks : 1;
+   Eina_Bool  hacks E_BITFIELD;
 };
 
 static const char *Menu_Item_Type_Names[] =

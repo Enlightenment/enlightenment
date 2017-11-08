@@ -45,18 +45,18 @@ struct _E_Widget_Data
    const char   *mime;
    double        vid_pct;
 
-   Eina_Bool     mime_icon : 1;
-   Eina_Bool     is_dir : 1;
-   Eina_Bool     is_txt : 1;
-   Eina_Bool     is_font : 1;
-   Eina_Bool     prev_is_fm : 1;
-   Eina_Bool     prev_is_txt : 1;
-   Eina_Bool     prev_is_font : 1;
-   Eina_Bool     prev_is_video : 1;
-   Eina_Bool     clamp_video : 1;
-   Eina_Bool     delete_me : 1;
-   Eina_Bool     preview_text_file_next : 1;
-   Eina_Bool     vid_sized : 1;
+   Eina_Bool     mime_icon E_BITFIELD;
+   Eina_Bool     is_dir E_BITFIELD;
+   Eina_Bool     is_txt E_BITFIELD;
+   Eina_Bool     is_font E_BITFIELD;
+   Eina_Bool     prev_is_fm E_BITFIELD;
+   Eina_Bool     prev_is_txt E_BITFIELD;
+   Eina_Bool     prev_is_font E_BITFIELD;
+   Eina_Bool     prev_is_video E_BITFIELD;
+   Eina_Bool     clamp_video E_BITFIELD;
+   Eina_Bool     delete_me E_BITFIELD;
+   Eina_Bool     preview_text_file_next E_BITFIELD;
+   Eina_Bool     vid_sized E_BITFIELD;
 };
 
 static void  _e_wid_fprev_preview_update(void *data, Evas_Object *obj, void *event_info);

@@ -60,7 +60,7 @@ typedef struct Wireless_Auth_Popup
    Evas_Object *popup;
    Wireless_Auth_Cb cb;
    void *data;
-   Eina_Bool sent : 1;
+   Eina_Bool sent E_BITFIELD;
 } Wireless_Auth_Popup;
 
 static Eina_Array *wireless_networks;

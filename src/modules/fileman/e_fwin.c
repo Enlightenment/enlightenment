@@ -37,7 +37,7 @@ struct _E_Fwin
    Evas_Object         *over_obj;
 
    const char          *wallpaper_file;
-   Eina_Bool            wallpaper_is_edj : 1;
+   Eina_Bool            wallpaper_is_edj E_BITFIELD;
    const char          *overlay_file;
    const char          *scrollframe_file;
    const char          *theme_file;
@@ -75,7 +75,7 @@ struct _E_Fwin_Page
    } fm_pan, fm_pan_last;
 
    int                  index;
-   Eina_Bool           setting : 1;
+   Eina_Bool           setting E_BITFIELD;
 };
 
 struct _E_Fwin_Apps_Dialog

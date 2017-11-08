@@ -9,8 +9,8 @@ struct _E_Winlist_Win
    Evas_Object  *bg_object;
    Evas_Object  *icon_object;
    E_Client     *client;
-   unsigned char was_iconified : 1;
-   unsigned char was_shaded : 1;
+   unsigned char was_iconified E_BITFIELD;
+   unsigned char was_shaded E_BITFIELD;
 };
 
 static void      _e_winlist_size_adjust(void);

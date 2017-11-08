@@ -25,8 +25,8 @@ struct _E_Widget_Data
    void         (*chg_func)(void *data, Evas_Object *obj);
    void        *chg_data;
    int          preview;
-   Eina_Bool    nochange : 1; // block changing of entry
-   Eina_Bool    fprev : 1; // current fprev is dir
+   Eina_Bool    nochange E_BITFIELD; // block changing of entry
+   Eina_Bool    fprev E_BITFIELD; // current fprev is dir
 };
 
 static void _e_wid_del_hook(Evas_Object *obj);

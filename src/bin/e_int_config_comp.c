@@ -21,7 +21,7 @@ struct _E_Config_Dialog_Data
       int disable_menus;
       int disable_objects;
       int disable_all;
-      int toggle_changed : 1;
+      int toggle_changed E_BITFIELD;
    } match;
 
    Evas_Object *styles_il;
@@ -49,7 +49,7 @@ struct _E_Config_Dialog_Data
    int fast_objects;
    int fast;
    Evas_Object *fast_ob;
-   int fast_changed : 1;
+   int fast_changed E_BITFIELD;
 };
 
 /* Protos */

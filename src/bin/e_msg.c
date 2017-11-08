@@ -6,7 +6,7 @@ struct _E_Msg_Handler
 {
    void          (*func)(void *data, const char *name, const char *info, int val, E_Object *obj, void *msgdata);
    void         *data;
-   unsigned char delete_me : 1;
+   unsigned char delete_me E_BITFIELD;
 };
 
 struct _E_Msg_Event

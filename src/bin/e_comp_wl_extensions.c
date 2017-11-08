@@ -40,9 +40,9 @@ typedef struct Constraint
    Eina_Tiler *pending;
    Evas_Point *pending_xy;
    Evas_Point *pointer_xy;
-   Eina_Bool lock : 1; // if not lock, confine
-   Eina_Bool persistent : 1;
-   Eina_Bool active : 1;
+   Eina_Bool lock E_BITFIELD; // if not lock, confine
+   Eina_Bool persistent E_BITFIELD;
+   Eina_Bool active E_BITFIELD;
 } Constraint;
 
 static Eina_List *active_constraints;

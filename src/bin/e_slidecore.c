@@ -18,7 +18,7 @@ struct _E_Smart_Data
    Ecore_Animator *slide_animator;
    Evas_Coord      dist, pos, slide_pos, slide_start_pos;
    int             p1, p2, pn;
-   unsigned char   down : 1;
+   unsigned char   down E_BITFIELD;
 };
 
 struct _E_Smart_Item

@@ -56,9 +56,9 @@ typedef struct Connman_Technology
    Eldbus_Proxy *proxy;
    Eina_Stringshare *tethering_ssid;
    Eina_Stringshare *tethering_passwd;
-   Eina_Bool powered : 1;
-   Eina_Bool connected : 1;
-   Eina_Bool tethering : 1;
+   Eina_Bool powered E_BITFIELD;
+   Eina_Bool connected E_BITFIELD;
+   Eina_Bool tethering E_BITFIELD;
 } Connman_Technology;
 
 typedef struct
@@ -110,8 +110,8 @@ typedef struct
    Eina_Stringshare *proxy_url;
    Eina_Array *proxy_servers;
    Eina_Array *proxy_excludes;
-   Eina_Bool ipv6 : 1;
-   Eina_Bool favorite : 1;
+   Eina_Bool ipv6 E_BITFIELD;
+   Eina_Bool favorite E_BITFIELD;
 } Connman_Service;
 
 typedef enum

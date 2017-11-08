@@ -37,7 +37,7 @@ struct _E_Comp_X_Data
 
    Eina_List *retry_clients;
    Ecore_Timer *retry_timer;
-   Eina_Bool restack : 1;
+   Eina_Bool restack E_BITFIELD;
 };
 
 typedef struct Pending_Configure

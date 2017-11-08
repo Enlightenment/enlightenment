@@ -13,9 +13,9 @@ struct _E_Thumb
       int x, y, x_count, y_count;
    } desk_pan;
    Eina_List    *sigsrc;
-   unsigned char queued : 1;
-   unsigned char busy : 1;
-   unsigned char done : 1;
+   unsigned char queued E_BITFIELD;
+   unsigned char busy E_BITFIELD;
+   unsigned char done E_BITFIELD;
 };
 
 /* local subsystem functions */

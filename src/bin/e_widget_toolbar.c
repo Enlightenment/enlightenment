@@ -7,8 +7,8 @@ struct _E_Widget_Data
    Evas_Object *o_base, *o_box;
    int          icon_w, icon_h;
    Eina_List   *items;
-   Eina_Bool    scrollable : 1;
-   Eina_Bool    focus_steal : 1;
+   Eina_Bool    scrollable E_BITFIELD;
+   Eina_Bool    focus_steal E_BITFIELD;
 };
 
 struct _Item
@@ -16,7 +16,7 @@ struct _Item
    Evas_Object *o_toolbar, *o_base, *o_icon;
    void         (*func)(void *data1, void *data2);
    const void  *data1, *data2;
-   Eina_Bool    selected : 1;
+   Eina_Bool    selected E_BITFIELD;
 };
 
 static void _e_wid_del_hook(Evas_Object *obj);

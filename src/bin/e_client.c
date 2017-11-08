@@ -3238,7 +3238,7 @@ e_client_res_change_geometry_restore(E_Client *ec)
 {
    struct
    {
-      unsigned char valid : 1;
+      unsigned char valid E_BITFIELD;
       int           x, y, w, h;
       struct
       {

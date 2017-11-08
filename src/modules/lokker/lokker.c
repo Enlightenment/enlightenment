@@ -16,8 +16,8 @@ typedef struct Lokker_Popup
    Evas_Object *comp_object;
    Evas_Object *bg_object;
    Evas_Object *login_box;
-   Eina_Bool show_anim : 1;
-   Eina_Bool hide_anim : 1;
+   Eina_Bool show_anim E_BITFIELD;
+   Eina_Bool hide_anim E_BITFIELD;
 } Lokker_Popup;
 
 typedef struct Lokker_Data
@@ -27,7 +27,7 @@ typedef struct Lokker_Data
    Ecore_Event_Handler *move_handler;
    char                 passwd[PASSWD_LEN];
    int                  state;
-   Eina_Bool            selected : 1;
+   Eina_Bool            selected E_BITFIELD;
 } Lokker_Data;
 
 static pid_t _auth_child_pid = -1;

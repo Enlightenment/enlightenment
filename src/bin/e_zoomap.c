@@ -11,9 +11,9 @@ struct _E_Smart_Data
    Evas_Coord   x, y, w, h;
    Evas_Coord   child_w, child_h;
    unsigned int recurse;
-   Eina_Bool    solid : 1;
-   Eina_Bool    smooth : 1;
-   Eina_Bool    always : 1;
+   Eina_Bool    solid E_BITFIELD;
+   Eina_Bool    smooth E_BITFIELD;
+   Eina_Bool    always E_BITFIELD;
 };
 
 /* local subsystem functions */

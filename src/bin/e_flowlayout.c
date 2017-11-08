@@ -9,12 +9,12 @@ struct _E_Smart_Data
    Evas_Object  *obj;
    Evas_Object  *clip;
    int           frozen;
-   unsigned char changed : 1;
-   unsigned char horizontal : 1;
-   unsigned char homogenous : 1;
-   unsigned char fill : 1;
-   unsigned char flowright : 1;
-   unsigned char flowbottom : 1;
+   unsigned char changed E_BITFIELD;
+   unsigned char horizontal E_BITFIELD;
+   unsigned char homogenous E_BITFIELD;
+   unsigned char fill E_BITFIELD;
+   unsigned char flowright E_BITFIELD;
+   unsigned char flowbottom E_BITFIELD;
    Eina_List    *items;
    struct
    {
@@ -31,10 +31,10 @@ struct _E_Smart_Data
 struct _E_Flowlayout_Item
 {
    E_Smart_Data *sd;
-   unsigned char fill_w : 1;
-   unsigned char fill_h : 1;
-   unsigned char expand_w : 1;
-   unsigned char expand_h : 1;
+   unsigned char fill_w E_BITFIELD;
+   unsigned char fill_h E_BITFIELD;
+   unsigned char expand_w E_BITFIELD;
+   unsigned char expand_h E_BITFIELD;
    struct
    {
       Evas_Coord w, h;

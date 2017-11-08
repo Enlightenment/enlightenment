@@ -101,34 +101,34 @@ typedef struct _E_Comp_Object
    unsigned int         animating;  // it's busy animating
    unsigned int         failures; //number of consecutive e_pixmap_image_draw() failures
    unsigned int         force_visible; //number of visible obj_mirror objects
-   Eina_Bool            deleted : 1;  // deleted
-   Eina_Bool            defer_hide : 1;  // flag to get hide to work on deferred hide
-   Eina_Bool            showing : 1;  // object is currently in "show" animation
-   Eina_Bool            visible : 1;  // is visible
+   Eina_Bool            deleted E_BITFIELD;  // deleted
+   Eina_Bool            defer_hide E_BITFIELD;  // flag to get hide to work on deferred hide
+   Eina_Bool            showing E_BITFIELD;  // object is currently in "show" animation
+   Eina_Bool            visible E_BITFIELD;  // is visible
 
-   Eina_Bool            shaped : 1;  // is shaped
-   Eina_Bool            update : 1;  // has updates to fetch
-   Eina_Bool            redirected : 1;  // has updates to fetch
-   Eina_Bool            native : 1;  // native
+   Eina_Bool            shaped E_BITFIELD;  // is shaped
+   Eina_Bool            update E_BITFIELD;  // has updates to fetch
+   Eina_Bool            redirected E_BITFIELD;  // has updates to fetch
+   Eina_Bool            native E_BITFIELD;  // native
 
-   Eina_Bool            nocomp : 1;  // nocomp applied
-   Eina_Bool            nocomp_need_update : 1;  // nocomp in effect, but this window updated while in nocomp mode
-   Eina_Bool            real_hid : 1;  // last hide was a real window unmap
+   Eina_Bool            nocomp E_BITFIELD;  // nocomp applied
+   Eina_Bool            nocomp_need_update E_BITFIELD;  // nocomp in effect, but this window updated while in nocomp mode
+   Eina_Bool            real_hid E_BITFIELD;  // last hide was a real window unmap
 
-   Eina_Bool            effect_set : 1; //effect_obj has a valid group
-   Eina_Bool            effect_running : 1; //effect_obj is playing an animation
-   Eina_Bool            effect_clip : 1; //effect_obj is clipped
-   Eina_Bool            effect_clip_able : 1; //effect_obj will be clipped for effects
+   Eina_Bool            effect_set E_BITFIELD; //effect_obj has a valid group
+   Eina_Bool            effect_running E_BITFIELD; //effect_obj is playing an animation
+   Eina_Bool            effect_clip E_BITFIELD; //effect_obj is clipped
+   Eina_Bool            effect_clip_able E_BITFIELD; //effect_obj will be clipped for effects
 
-   Eina_Bool            zoomap_disabled : 1; //whether zoomap is usable
-   Eina_Bool            updates_exist : 1;
-   Eina_Bool            updates_full : 1; // entire object will be updated
+   Eina_Bool            zoomap_disabled E_BITFIELD; //whether zoomap is usable
+   Eina_Bool            updates_exist E_BITFIELD;
+   Eina_Bool            updates_full E_BITFIELD; // entire object will be updated
 
-   Eina_Bool            force_move : 1;
-   Eina_Bool            frame_extends : 1; //frame may extend beyond object size
-   Eina_Bool            blanked : 1; //window is rendering blank content (externally composited)
+   Eina_Bool            force_move E_BITFIELD;
+   Eina_Bool            frame_extends E_BITFIELD; //frame may extend beyond object size
+   Eina_Bool            blanked E_BITFIELD; //window is rendering blank content (externally composited)
 
-   Eina_Bool            agent_updating : 1; //updating agents
+   Eina_Bool            agent_updating E_BITFIELD; //updating agents
 } E_Comp_Object;
 
 

@@ -12,7 +12,7 @@ struct _CFModule
    E_Module    *module;
    Evas_Object *end;
    int          idx;
-   Eina_Bool    enabled : 1;
+   Eina_Bool    enabled E_BITFIELD;
 };
 
 struct _CFType

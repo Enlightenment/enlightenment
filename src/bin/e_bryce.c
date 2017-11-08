@@ -43,12 +43,12 @@ typedef struct Bryce
    Eina_Bool autohide;
    unsigned int version;
 
-   Eina_Bool hidden : 1;
-   Eina_Bool animating : 1;
-   Eina_Bool mouse_in : 1;
-   Eina_Bool noshadow : 1;
-   Eina_Bool size_changed : 1;
-   Eina_Bool editing : 1;
+   Eina_Bool hidden E_BITFIELD;
+   Eina_Bool animating E_BITFIELD;
+   Eina_Bool mouse_in E_BITFIELD;
+   Eina_Bool noshadow E_BITFIELD;
+   Eina_Bool size_changed E_BITFIELD;
+   Eina_Bool editing E_BITFIELD;
 } Bryce;
 
 typedef struct Bryces

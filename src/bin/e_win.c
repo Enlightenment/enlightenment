@@ -10,13 +10,13 @@ typedef struct _Elm_Win_Trap_Ctx
    E_Client      *client;
    E_Pointer     *pointer;
    int x, y, w, h;
-   Eina_Bool      centered : 1;
-   Eina_Bool      placed : 1;
-   Eina_Bool      sized : 1;
-   Eina_Bool      internal_no_remember : 1;
-   Eina_Bool      internal_no_reopen : 1;
-   Eina_Bool      visible : 1;
-   Eina_Bool      override : 1;
+   Eina_Bool      centered E_BITFIELD;
+   Eina_Bool      placed E_BITFIELD;
+   Eina_Bool      sized E_BITFIELD;
+   Eina_Bool      internal_no_remember E_BITFIELD;
+   Eina_Bool      internal_no_reopen E_BITFIELD;
+   Eina_Bool      visible E_BITFIELD;
+   Eina_Bool      override E_BITFIELD;
 } Elm_Win_Trap_Ctx;
 
 

@@ -88,8 +88,8 @@ struct E_Gadget_Config
    Evas_Point down; //coords from mouse down
    E_Gadget_Config *orig; //gadget is a copy of the original gadget during a move
    E_Gadget_Site_Anchor resizing;
-   Eina_Bool moving : 1;
-   Eina_Bool display_del : 1; //deleted using ->display
+   Eina_Bool moving E_BITFIELD;
+   Eina_Bool display_del E_BITFIELD; //deleted using ->display
 };
 
 typedef struct E_Gadget_Sites

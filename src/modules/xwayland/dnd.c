@@ -39,7 +39,7 @@ typedef struct
    Ecore_X_Atom selection;
    Ecore_X_Atom property;
    Eina_Binbuf *buf;
-   Eina_Bool incr : 1;
+   Eina_Bool incr E_BITFIELD;
 } Pipe;
 
 static void

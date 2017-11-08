@@ -69,7 +69,7 @@ struct _E_Config_Dialog_Data
       const char    *binding, *action, *cur;
       char          *params;
       int            cur_act, add;
-      Eina_Bool     changed : 1;
+      Eina_Bool     changed E_BITFIELD;
 
       E_Grab_Dialog *eg;
    } locals;

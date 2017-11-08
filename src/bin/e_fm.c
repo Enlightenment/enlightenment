@@ -84,7 +84,7 @@ struct _E_Fm2_Smart_Data
    {
       Ecore_Thread *thread;
       const char   *filename;
-      Eina_Bool done : 1;
+      Eina_Bool done E_BITFIELD;
    } new_file;
 
    E_Fm2_Icon      *last_selected;
@@ -102,12 +102,12 @@ struct _E_Fm2_Smart_Data
    Eina_List       *rename_dialogs;
    E_Entry_Dialog  *entry_dialog;
    E_Dialog        *image_dialog;
-   Eina_Bool        iconlist_changed : 1;
-   Eina_Bool        order_file : 1;
-   Eina_Bool        typebuf_visible : 1;
-   Eina_Bool        show_hidden_files : 1;
-   Eina_Bool        listing : 1;
-   Eina_Bool        inherited_dir_props : 1;
+   Eina_Bool        iconlist_changed E_BITFIELD;
+   Eina_Bool        order_file E_BITFIELD;
+   Eina_Bool        typebuf_visible E_BITFIELD;
+   Eina_Bool        show_hidden_files E_BITFIELD;
+   Eina_Bool        listing E_BITFIELD;
+   Eina_Bool        inherited_dir_props E_BITFIELD;
    signed char      view_mode;  /* -1 = unset */
    signed short     icon_size;  /* -1 = unset */
    E_Fm2_View_Flags view_flags;
@@ -130,7 +130,7 @@ struct _E_Fm2_Smart_Data
       Eina_List   *actions;
       Ecore_Idler *idler;
       Ecore_Timer *timer;
-      Eina_Bool    deletions : 1;
+      Eina_Bool    deletions E_BITFIELD;
    } live;
 
    struct
@@ -139,8 +139,8 @@ struct _E_Fm2_Smart_Data
       const char  *start;
       Ecore_Timer *timer;
       unsigned int wildcard;
-      Eina_Bool    setting : 1;
-      Eina_Bool    disabled : 1;
+      Eina_Bool    setting E_BITFIELD;
+      Eina_Bool    disabled E_BITFIELD;
    } typebuf;
 
    int                  busy_count;
@@ -154,12 +154,12 @@ struct _E_Fm2_Smart_Data
    Eina_List           *mount_ops;
    E_Fm2_Mount         *mount;
    signed char          drop_after;
-   Eina_Bool            drop_show : 1;
-   Eina_Bool            drop_in_show : 1;
-   Eina_Bool            drop_all : 1;
-   Eina_Bool            drag : 1;
-   Eina_Bool            selecting : 1;
-   Eina_Bool            toomany : 1;
+   Eina_Bool            drop_show E_BITFIELD;
+   Eina_Bool            drop_in_show E_BITFIELD;
+   Eina_Bool            drop_all E_BITFIELD;
+   Eina_Bool            drag E_BITFIELD;
+   Eina_Bool            selecting E_BITFIELD;
+   Eina_Bool            toomany E_BITFIELD;
    struct
    {
       int ox, oy;
@@ -177,7 +177,7 @@ struct _E_Fm2_Region
    E_Fm2_Smart_Data *sd;
    Evas_Coord        x, y, w, h;
    Eina_List        *list;
-   Eina_Bool         realized : 1;
+   Eina_Bool         realized E_BITFIELD;
 };
 
 struct _E_Fm2_Icon
@@ -205,24 +205,24 @@ struct _E_Fm2_Icon
    {
       Evas_Coord   x, y;
       Ecore_Timer *dnd_end_timer; //we need this for XDirectSave drops so we don't lose the icon
-      Eina_Bool    start : 1;
-      Eina_Bool    dnd : 1; // currently dragging
-      Eina_Bool    src : 1; // drag source
-      Eina_Bool    hidden : 1; // dropped into different dir
+      Eina_Bool    start E_BITFIELD;
+      Eina_Bool    dnd E_BITFIELD; // currently dragging
+      Eina_Bool    src E_BITFIELD; // drag source
+      Eina_Bool    hidden E_BITFIELD; // dropped into different dir
    } drag;
 
    int       saved_rel;
 
-   Eina_Bool realized : 1;
-   Eina_Bool selected : 1;
-   Eina_Bool last_selected : 1;
-   Eina_Bool saved_pos : 1;
-   Eina_Bool odd : 1;
-   Eina_Bool down_sel : 1;
-   Eina_Bool removable_state_change : 1;
-   Eina_Bool thumb_failed : 1;
-   Eina_Bool queued : 1;
-   Eina_Bool inserted : 1;
+   Eina_Bool realized E_BITFIELD;
+   Eina_Bool selected E_BITFIELD;
+   Eina_Bool last_selected E_BITFIELD;
+   Eina_Bool saved_pos E_BITFIELD;
+   Eina_Bool odd E_BITFIELD;
+   Eina_Bool down_sel E_BITFIELD;
+   Eina_Bool removable_state_change E_BITFIELD;
+   Eina_Bool thumb_failed E_BITFIELD;
+   Eina_Bool queued E_BITFIELD;
+   Eina_Bool inserted E_BITFIELD;
 };
 
 struct _E_Fm2_Finfo

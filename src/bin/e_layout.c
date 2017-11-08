@@ -13,7 +13,7 @@ struct _E_Smart_Data
    Evas_Object  *obj;
    Evas_Object  *clip;
    int           frozen;
-   unsigned char changed : 1;
+   unsigned char changed E_BITFIELD;
    Eina_Inlist  *items;
 };
 

@@ -13,9 +13,9 @@ struct _E_Smart_Data
    Eina_List    *selected_items;
    int           selected;
    const char   *theme;
-   unsigned char selector : 1;
-   unsigned char multi_select : 1;
-   unsigned char on_hold : 1;
+   unsigned char selector E_BITFIELD;
+   unsigned char multi_select E_BITFIELD;
+   unsigned char on_hold E_BITFIELD;
 
    struct
    {
@@ -23,7 +23,7 @@ struct _E_Smart_Data
       unsigned int size;
       Ecore_Timer *timer;
    } typebuf;
-   Eina_Bool disabled : 1;
+   Eina_Bool disabled E_BITFIELD;
 };
 
 static void          _e_smart_init(void);

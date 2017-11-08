@@ -14,8 +14,8 @@ struct _E_Widget_Desk_Data
    int                  zone, x, y;
    Ecore_Event_Handler *bg_upd_hdl;
    Ecore_Job           *resize_job;
-   Eina_Bool            configurable : 1;
-   Eina_Bool            thumb : 1;
+   Eina_Bool            configurable E_BITFIELD;
+   Eina_Bool            thumb E_BITFIELD;
 };
 
 /* local function prototypes */

@@ -47,10 +47,10 @@ struct _Tasks_Item
    E_Client    *client; // The client this item points to
    Evas_Object *o_item; // The edje theme object
    Evas_Object *o_icon; // The icon
-   Eina_Bool skip_taskbar : 1;
-   Eina_Bool focused : 1;
-   Eina_Bool urgent : 1;
-   Eina_Bool iconified : 1;
+   Eina_Bool skip_taskbar E_BITFIELD;
+   Eina_Bool focused E_BITFIELD;
+   Eina_Bool urgent E_BITFIELD;
+   Eina_Bool iconified E_BITFIELD;
 };
 
 static Tasks       *_tasks_new(Evas *e, E_Zone *zone, const char *id);

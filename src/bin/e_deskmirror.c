@@ -27,10 +27,10 @@ typedef struct E_Smart_Data
    E_Desk *desk;
    E_Object_Delfn *desk_delfn;
 
-   Eina_Bool pager : 1;
-   Eina_Bool taskbar : 1;
+   Eina_Bool pager E_BITFIELD;
+   Eina_Bool taskbar E_BITFIELD;
 
-   Eina_Bool resize : 1;
+   Eina_Bool resize E_BITFIELD;
 } E_Smart_Data;
 
 typedef struct Mirror
@@ -42,7 +42,7 @@ typedef struct Mirror
    Evas_Object *mirror;
    int x, y, w, h;
    int ref;
-   Eina_Bool added : 1;
+   Eina_Bool added E_BITFIELD;
 } Mirror;
 
 typedef struct Mirror_Border

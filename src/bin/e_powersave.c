@@ -5,7 +5,7 @@ struct _E_Powersave_Deferred_Action
 {
    void          (*func)(void *data);
    const void   *data;
-   unsigned char delete_me : 1;
+   unsigned char delete_me E_BITFIELD;
 };
 
 struct _E_Powersave_Sleeper

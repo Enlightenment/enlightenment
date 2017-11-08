@@ -18,8 +18,8 @@ struct _E_Smart_Data
    Evas_Coord    down_x, down_y;
    E_Smart_Item *cur;
    double        down_time;
-   unsigned char down : 1;
-   unsigned char down_cancel : 1;
+   unsigned char down E_BITFIELD;
+   unsigned char down_cancel E_BITFIELD;
 };
 
 struct _E_Smart_Item

@@ -43,9 +43,9 @@ typedef struct Client_Extra
       const char *bordername;
    } orig;
    int       last_frame_adjustment; // FIXME: Hack for frame resize bug.
-   Eina_Bool floating : 1;
-   Eina_Bool tiled : 1;
-   Eina_Bool tracked : 1;
+   Eina_Bool floating E_BITFIELD;
+   Eina_Bool tiled E_BITFIELD;
+   Eina_Bool tracked E_BITFIELD;
 } Client_Extra;
 
 typedef struct _Instance

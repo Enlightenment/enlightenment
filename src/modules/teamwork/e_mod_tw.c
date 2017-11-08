@@ -32,9 +32,9 @@ typedef struct Media
    Eina_List *clients;
    Eina_Stringshare *tmpfile;
    Eina_Bool video;
-   Eina_Bool dummy : 1;
-   Eina_Bool valid : 1;
-   Eina_Bool show : 1;
+   Eina_Bool dummy E_BITFIELD;
+   Eina_Bool valid E_BITFIELD;
+   Eina_Bool show E_BITFIELD;
 } Media;
 
 typedef enum
