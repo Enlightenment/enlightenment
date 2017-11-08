@@ -2657,7 +2657,6 @@ e_client_new(E_Pixmap *cp, int first_map, int internal)
    if (first_map)
      {
         // printf("##- FIRST MAP\n");
-        ec->changes.pos = 1;
         ec->re_manage = 1;
         // needed to be 1 for internal windw and on restart.
         // ec->ignore_first_unmap = 2;
