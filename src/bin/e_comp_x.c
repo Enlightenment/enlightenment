@@ -415,6 +415,8 @@ _e_comp_x_client_new_helper(E_Client *ec)
      {
         Eina_Bool video_parent = EINA_FALSE;
         Eina_Bool video_position = EINA_FALSE;
+        Eina_Bool found_desk = EINA_FALSE;
+        Eina_Bool found_zone = EINA_FALSE;
 
         /* icccm */
         for (i = 0; i < at_num; i++)
@@ -541,6 +543,23 @@ _e_comp_x_client_new_helper(E_Client *ec)
                ec->e.fetch.stack = 1;
              else if (atoms[i] == ATM_GTK_FRAME_EXTENTS)
                ec->comp_data->fetch_gtk_frame_extents = 1;
+             else if (ec->re_manage)
+               {
+                  if (atoms[i] == E_ATOM_DESKTOP_FILE)
+                    {
+                       char *path = ecore_x_window_prop_string_get(win,
+                                                             E_ATOM_DESKTOP_FILE);
+                       if (path)
+                         {
+                            ec->desktop = efreet_desktop_get(path);
+                            free(path);
+                         }
+                    }
+                  else if (atoms[i] == E_ATOM_DESK)
+                    found_desk = 1;
+                  else if (atoms[i] == E_ATOM_ZONE)
+                    found_zone = 1;
+               }
           }
         if (video_position && video_parent)
           {
@@ -550,6 +569,34 @@ _e_comp_x_client_new_helper(E_Client *ec)
              fprintf(stderr, "We found a video window \\o/ %x\n", win);
           }
         free(atoms);
+
+        if (ec->re_manage && found_desk && found_zone)
+          {
+             E_Zone *zone = NULL;
+             E_Desk *desk = NULL;
+             unsigned int id, deskxy[2];
+             int ret;
+
+             /* get all information from window before it is
+              * reset by e_client_new */
+             ret = ecore_x_window_prop_card32_get(win,
+                                                  E_ATOM_ZONE,
+                                                  &id, 1);
+             if (ret == 1)
+               zone = e_comp_zone_number_get(id);
+             if (!zone)
+               zone = e_zone_current_get();
+             ret = ecore_x_window_prop_card32_get(win,
+                                                  E_ATOM_DESK,
+                                                  deskxy, 2);
+             if (ret == 2)
+               desk = e_desk_at_xy_get(zone,
+                                       deskxy[0],
+                                       deskxy[1]);
+
+             if (desk) e_client_desk_set(ec, desk);
+             
+          }
      }
 
    return EINA_TRUE;
@@ -5439,7 +5486,7 @@ _e_comp_x_manage_windows(void)
    atom_kwm_dockwindow = atoms[2];
    for (i = 0; i < wnum; i++)
      {
-        unsigned int ret_val, deskxy[2];
+        unsigned int ret_val;
         unsigned char *data = NULL;
         int ret;
         E_Client *ec = NULL;
@@ -5472,55 +5519,7 @@ _e_comp_x_manage_windows(void)
                                              E_ATOM_MANAGED,
                                              &ret_val, 1);
 
-        /* we have seen this window before */
-        if ((ret > -1) && (ret_val == 1))
-          {
-             E_Zone *zone = NULL;
-             E_Desk *desk = NULL;
-             unsigned int id;
-             char *path;
-             Efreet_Desktop *desktop = NULL;
-
-             /* get all information from window before it is
-              * reset by e_client_new */
-             ret = ecore_x_window_prop_card32_get(windows[i],
-                                                  E_ATOM_ZONE,
-                                                  &id, 1);
-             if (ret == 1)
-               zone = e_comp_zone_number_get(id);
-             if (!zone)
-               zone = e_zone_current_get();
-             ret = ecore_x_window_prop_card32_get(windows[i],
-                                                  E_ATOM_DESK,
-                                                  deskxy, 2);
-             if (ret == 2)
-               desk = e_desk_at_xy_get(zone,
-                                       deskxy[0],
-                                       deskxy[1]);
-
-             path = ecore_x_window_prop_string_get(windows[i],
-                                                   E_ATOM_DESKTOP_FILE);
-             if (path)
-               {
-                  desktop = efreet_desktop_get(path);
-                  free(path);
-               }
-
-             {
-                ec = _e_comp_x_client_new(windows[i], 1);
-                if (ec)
-                  {
-                     if (desk) e_client_desk_set(ec, desk);
-                     ec->desktop = desktop;
-                  }
-             }
-          }
-        else
-          {
-             /* We have not seen this window, and X tells us it
-              * should be seen */
-             ec = _e_comp_x_client_new(windows[i], 1);
-          }
+        ec = _e_comp_x_client_new(windows[i], (ret > -1) && (ret_val == 1));
         if (ec && (!_e_comp_x_client_data_get(ec)->initial_attributes.visible))
           {
              DELD(ec, 3);
