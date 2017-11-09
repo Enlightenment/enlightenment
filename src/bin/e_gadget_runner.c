@@ -8,6 +8,26 @@
 # pragma GCC diagnostic ignored "-Wformat-truncation"
 #endif
 
+#ifndef EFL_VERSION_1_21
+static void efl_wl_aspect_set(Evas_Object *obj EINA_UNUSED, Eina_Bool set EINA_UNUSED)
+{
+}
+
+static void efl_wl_minmax_set(Evas_Object *obj EINA_UNUSED, Eina_Bool set EINA_UNUSED)
+{
+}
+
+static void *efl_wl_global_add(Evas_Object *obj EINA_UNUSED, const void *interface EINA_UNUSED, uint32_t version EINA_UNUSED, void *data EINA_UNUSED, void *bind_cb EINA_UNUSED)
+{
+   return NULL;
+}
+
+static Eina_Bool efl_wl_surface_extract(Evas_Object *surface EINA_UNUSED)
+{
+   return EINA_FALSE;
+}
+#endif
+
 typedef enum
 {
    EXIT_MODE_RESTART,
