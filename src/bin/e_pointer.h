@@ -45,6 +45,7 @@ struct _E_Pointer
    int *pixels;
    int x, y, w, h;
    const char *type;
+   const char *deferred_type;
 
    struct 
      {
@@ -56,6 +57,8 @@ struct _E_Pointer
    Ecore_Poller *idle_poll;
 
    Eina_List *stack;
+
+   unsigned short grabcount;
 
    Eina_Bool e_cursor : 1;
    Eina_Bool color : 1;
@@ -80,5 +83,6 @@ E_API void e_pointer_mode_pop(void *obj, E_Pointer_Mode mode);
 E_API void e_pointer_idler_before(void);
 E_API void e_pointer_object_set(E_Pointer *ptr, Evas_Object *obj, int x, int y);
 E_API void e_pointer_window_add(E_Pointer *ptr, Ecore_Window win);
+E_API void e_pointer_grab_set(E_Pointer *ptr, Eina_Bool grab);
 # endif
 #endif

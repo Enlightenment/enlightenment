@@ -354,6 +354,7 @@ _e_pointer_cb_free(E_Pointer *ptr)
    E_FREE_LIST(ptr->stack, _e_pointer_stack_free);
 
    eina_stringshare_del(ptr->type);
+   eina_stringshare_del(ptr->deferred_type);
 
    E_FREE_FUNC(ptr->idle_tmr, ecore_timer_del);
    E_FREE_FUNC(ptr->idle_poll, ecore_poller_del);
@@ -431,6 +432,11 @@ _e_pointer_type_set(E_Pointer *ptr, const char *type)
    /* check if pointer type is already set */
    if (!e_util_strcmp(ptr->type, type)) return;
 
+   if (ptr->grabcount > 0)
+     {
+        eina_stringshare_replace(&(ptr->deferred_type), type);
+        return;
+     }
    eina_stringshare_replace(&ptr->type, type);
 
    /* don't show cursor if in hidden mode */
@@ -462,7 +468,6 @@ _e_pointer_type_set(E_Pointer *ptr, const char *type)
           e_pointer_object_set(ptr, NULL, 0, 0);
         else
           evas_object_show(ptr->o_ptr);
-
      }
    else
      _e_pointer_x11_setup(ptr, NULL);
@@ -641,7 +646,7 @@ e_pointer_type_pop(E_Pointer *ptr, void *obj, const char *type)
 
    _e_pointer_type_set(ptr, stack->type);
 
-   eina_stringshare_refplace(&ptr->type, stack->type);
+   eina_stringshare_replace(&ptr->type, stack->type);
 }
 
 E_API void 
@@ -818,6 +823,25 @@ e_pointer_window_add(E_Pointer *ptr, Ecore_Window win)
 {
    ptr->win = win;
    _e_pointer_x11_setup(ptr, "default");
+}
+
+E_API void
+e_pointer_grab_set(E_Pointer *ptr, Eina_Bool grab)
+{
+   if (grab) ptr->grabcount++;
+   else
+     {
+        if (ptr->grabcount > 0)
+          {
+             ptr->grabcount--;
+             if ((ptr->grabcount == 0) && (ptr->deferred_type))
+               {
+                  _e_pointer_type_set(ptr, ptr->deferred_type);
+                  eina_stringshare_del(ptr->deferred_type);
+                  ptr->deferred_type = NULL;
+               }
+          }
+     }
 }
 
 EINTERN void
