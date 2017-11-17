@@ -25,6 +25,7 @@ const Player music_player_players[] =
    {"Pithos", "org.mpris.MediaPlayer2.pithos"},
    {"Tomahawk", "org.mpris.MediaPlayer2.tomahawk"},
    {"Spotify", "org.mpris.MediaPlayer2.spotify"},
+   {"Rage", "org.mpris.MediaPlayer2.rage"},
    {NULL, NULL}
 };
 
