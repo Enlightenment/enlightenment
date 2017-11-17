@@ -18,5 +18,3 @@ src += custom_target('gen-dbus',
                      command: [eldbus_codegen, '@INPUT@', '-O', '@OUTDIR@'],
                      output : created_file
                     )
-
-no_icon = true

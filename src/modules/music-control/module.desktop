@@ -27,5 +27,5 @@ Comment[nl]=Beheers uw muziek op uw plank
 Comment[ru]=Модуль для управления воспроизведением музыки
 Comment[sr]=Управљајте музиком са полице
 Comment[tr]=Müziğinizi rafta kontrol edin
-Icon=e-module-music_control
+Icon=e-module-music-control
 X-Enlightenment-ModuleType=utils
