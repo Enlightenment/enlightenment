@@ -1,11 +1,11 @@
 EXTRA_DIST += src/modules/music-control/module.desktop \
-src/modules/music-control/e-module-music_control.edj \
+src/modules/music-control/e-module-music-control.edj \
 src/modules/music-control/introspect.xml
 
 if USE_MODULE_MUSIC_CONTROL
 music_controldir = $(MDIR)/music-control
 music_control_DATA = src/modules/music-control/module.desktop \
-src/modules/music-control/e-module-music_control.edj
+src/modules/music-control/e-module-music-control.edj
 
 MUSIC_GEN = \
 src/modules/music-control/eldbus_media_player2_player.c \
