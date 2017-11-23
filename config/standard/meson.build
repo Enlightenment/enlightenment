@@ -18,7 +18,7 @@ foreach cd: src
   custom_target(' '.join(['config_dist', dir, cd]),
 		input      : cd + '.src',
 		output     : cd + '.cfg',
-		command    : [eet, '-e', '@OUTPUT@', 'config', '@INPUT@', '1'],
+		command    : [eet_cmd, '-e', '@OUTPUT@', 'config', '@INPUT@', '1'],
 		install    : true,
 		install_dir: join_paths(dir_config, dir)
                )
