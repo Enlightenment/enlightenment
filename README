@@ -6,7 +6,7 @@ Requirements:
 -------------
 
 Must:
-  efl elementary
+  efl
   libc libm libX11 libXext
   xcb xcb-shape xcb-keysyms
 
