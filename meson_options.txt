@@ -19,6 +19,10 @@ option('edje-cc',
        type       : 'string',
        description: 'A path to a edje_cc. Defaults to system edje_cc')
 
+option('eldbus-codegen',
+       type       : 'string',
+       description: 'A path to a eldbus-codegen. Defaults to system eldbus-codegen')
+
 option('pam',
 	type: 'boolean',
 	value: true,

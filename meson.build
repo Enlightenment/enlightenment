@@ -318,7 +318,11 @@ if dep_xkeyboard_config.found() == true
   config_h.set_quoted('XKB_BASE', dep_xkeyboard_config.get_pkgconfig_variable('xkb_base'))
 endif
 
-eldbus_codegen = find_program('eldbus-codegen')
+eldbus_codegen_cmd = get_option('eldbus-codegen')
+if eldbus_codegen_cmd == ''
+  eldbus_codegen_cmd = join_paths(dep_eldbus.get_pkgconfig_variable('prefix'),
+                        'bin', 'eldbus-codegen')
+endif
 
 requires_e = []
 
