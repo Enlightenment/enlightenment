@@ -23,6 +23,10 @@ option('eldbus-codegen',
        type       : 'string',
        description: 'A path to a eldbus-codegen. Defaults to system eldbus-codegen')
 
+option('eet',
+       type       : 'string',
+       description: 'A path to a eet. Defaults to system eet')
+
 option('pam',
 	type: 'boolean',
 	value: true,
