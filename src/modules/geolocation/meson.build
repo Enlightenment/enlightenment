@@ -14,6 +14,6 @@ src = files(
 
 src += custom_target('geolocation_gen',
                      input  : 'org.freedesktop.GeoClue2.xml',
-                     command: [eldbus_codegen, '@INPUT@', '-O', '@OUTDIR@'],
+                     command: [eldbus_codegen_cmd, '@INPUT@', '-O', '@OUTDIR@'],
                      output : created_file
                     )

@@ -15,6 +15,6 @@ src = files(
 
 src += custom_target('gen-dbus',
                      input  : 'introspect.xml',
-                     command: [eldbus_codegen, '@INPUT@', '-O', '@OUTDIR@'],
+                     command: [eldbus_codegen_cmd, '@INPUT@', '-O', '@OUTDIR@'],
                      output : created_file
                     )
