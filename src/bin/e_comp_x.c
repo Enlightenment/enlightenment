@@ -3803,6 +3803,7 @@ _e_comp_x_hook_client_fetch(void *d EINA_UNUSED, E_Client *ec)
                                              &ec->icccm.max_aspect))
           {
              ec->icccm.request_pos = request_pos;
+             if (ec->override) ec->placed = EINA_TRUE;
              if (request_pos && (!ec->placed) && (!ec->re_manage))
                {
                   Ecore_X_Window_Attributes *att;
