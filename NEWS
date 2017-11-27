@@ -1,3 +1,35 @@
+Release 0.22.1:
+---------------------
+Carsten Haitzler (4):
+      e sys - frix warning for less noise
+      hits: silence warnings about possible null string for strcmp
+      fix mouse hangs after unblank
+      music-control - install properly with meson build with icon
+
+Marcel Hollerbach (2):
+      meson: make those scripts executable
+      meson: this version is enough for the things we use in the moment
+
+Massimo Maiurana (1):
+      Adding danish strings to desktop files
+
+Mike Blumenkrantz (15):
+      create wl output resource when running in wl nested
+      unset wayland cursor for all pointers when running nested in wl
+      show internal pointer cursor whenever resetting to internal cursor
+      make wl_pointer cursor handling state-based to correctly handle cursor visuals
+      update README with meson instructions
+      check meson module option state before executing subdir
+      improve meson build module disabling
+      add field width limits to all fscanf params in e_intlc.
+      destroy luncher iconify provider on gadget delete
+      do not add iconify provider for luncher when creating a demo gadget
+      requeue client for render if show animation completes and damages exist
+      avoid performing client rescales during shutdown
+      prevent double shutdown of x11 compositor in xwayland mode
+      always emit E_EVENT_COMP_OBJECT_ADD events
+      use last client from E_Exec_Instance list when updating luncher popups
+
 Release 0.22.0:
 ---------------------
 Highlights:
