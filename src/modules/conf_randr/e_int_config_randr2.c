@@ -1155,7 +1155,6 @@ _basic_apply(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfdata)
         printf("APPLY %s .... rel to %s\n", cs->id, cs2->rel_to);
         if (cs2->rel_to) cs->rel_to = eina_stringshare_add(cs2->rel_to);
         cs->rel_align = cs2->rel_align;
-        cs->mode_refresh = cs2->mode_refresh;
         cs->mode_w = cs2->mode_w;
         cs->mode_h = cs2->mode_h;
         cs->mode_refresh = cs2->mode_refresh;
