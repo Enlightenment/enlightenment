@@ -45,7 +45,7 @@ struct _E_Kbd_Buf_Keystroke
    unsigned char     capslock : 1;
 };
 
-struct _E_Kbd_Buf_Layout 
+struct _E_Kbd_Buf_Layout
 {
    int        ref;
    int        w, h;
@@ -69,5 +69,5 @@ EAPI void e_kbd_buf_backspace(E_Kbd_Buf *kb);
 EAPI void e_kbd_buf_lookup(E_Kbd_Buf *kb, void (*func) (void *data), const void *data);
 EAPI void e_kbd_buf_lookup_cancel(E_Kbd_Buf *kb);
 EAPI void e_kbd_buf_word_use(E_Kbd_Buf *kb, const char *word);
-    
+
 #endif
