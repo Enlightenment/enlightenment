@@ -73,14 +73,14 @@ e_modapi_init(E_Module *m)
    il_kbd_cfg->act_kbd_hide = e_action_add("vkbd_hide");
    if (il_kbd_cfg->act_kbd_hide)
      {
-        il_kbd_cfg->act_kbd_show->func.go = _cb_act_vkbd_hide;
+        il_kbd_cfg->act_kbd_hide->func.go = _cb_act_vkbd_hide;
         e_action_predef_name_set("Virtual Keyboard", _("Hide"),
                                  "vkbd_hide", NULL, NULL, 0);
      }
    il_kbd_cfg->act_kbd_toggle = e_action_add("vkbd_toggle");
    if (il_kbd_cfg->act_kbd_toggle)
      {
-        il_kbd_cfg->act_kbd_show->func.go = _cb_act_vkbd_toggle;
+        il_kbd_cfg->act_kbd_toggle->func.go = _cb_act_vkbd_toggle;
         e_action_predef_name_set("Virtual Keyboard", _("Toggle"),
                                  "vkbd_toggle", NULL, NULL, 0);
      }
