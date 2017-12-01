@@ -450,7 +450,7 @@ e_kbd_dict_save(E_Kbd_Dict *kd)
    if (_e_kbd_dict_open(kd)) _e_kbd_dict_lookup_build(kd);
 }
 
-static Eina_Bool 
+static Eina_Bool
 _e_kbd_dict_cb_save_flush(void *data)
 {
    E_Kbd_Dict *kd;
@@ -479,7 +479,7 @@ _e_kbd_dict_changed_write_add(E_Kbd_Dict *kd, const char *word, int usage)
      {
         if (kd->changed.flush_timer)
           ecore_timer_del(kd->changed.flush_timer);
-        kd->changed.flush_timer = 
+        kd->changed.flush_timer =
           ecore_timer_add(5.0, _e_kbd_dict_cb_save_flush, kd);
      }
 }
