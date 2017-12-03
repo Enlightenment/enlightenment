@@ -31,7 +31,8 @@ deps_e = [
   dep_eio,
   dep_eldbus,
   dep_emotion,
-  dep_elementary
+  dep_elementary,
+  dep_intl
 ]
 
 if config_h.has('HAVE_PAM') == true

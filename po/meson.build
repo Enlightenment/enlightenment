@@ -1,3 +1,5 @@
+dep_intl = []
+
 if get_option('nls')
   i18n = import('i18n')
   i18n.gettext('enlightenment',
@@ -12,4 +14,5 @@ if get_option('nls')
                 '--foreign-user'
               ])
   config_h.set('HAVE_GETTEXT', '1')
+  dep_intl = cc.find_library('intl', required : false)
 endif
