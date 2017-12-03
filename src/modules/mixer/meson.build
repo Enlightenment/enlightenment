@@ -18,7 +18,7 @@ if get_option(m) == true
   dep_pulse        = dependency('libpulse', required: false)
   dep_pulse_simple = dependency('libpulse-simple', required: false)
 
-  deps = [ dep_alsa, dep_pulse, dep_pulse_simple ]
+  deps += [ dep_alsa, dep_pulse, dep_pulse_simple ]
   inc = [ 'lib' ]
 
   config_h.set('HAVE_ALSA' , dep_alsa.found())

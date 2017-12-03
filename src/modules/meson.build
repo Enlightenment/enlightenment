@@ -82,12 +82,14 @@ foreach m: mods
   no_icon      = false
   cargs        = ''
   data         = []
-  deps         = []
+  deps         = deps_e
   inc          = []
   _dir         = join_paths(dir_module_e, m)
   _dir_bin     = join_paths(_dir, module_arch)
 
   opt = '-'.join(m.split('_'))
+
+  
 
   if get_option(opt) == true
     subdir(m)
