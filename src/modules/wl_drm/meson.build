@@ -1,7 +1,7 @@
 if get_option('wayland') != true or dep_ecore_drm2.found() != true
   disable = true
 else
-  deps = [dependency('elput')]
+  deps = [dependency('elput'), dependency('libdrm')]
 
   src = files(
     'e_mod_main.c'
