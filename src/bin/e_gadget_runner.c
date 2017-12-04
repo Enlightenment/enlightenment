@@ -527,7 +527,6 @@ popup_del(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *event_info EI
    Instance *inst = data;
    Evas_Object *ext;
 
-   inst->ctxpopup = NULL;
    ext = evas_object_data_get(obj, "extracted");
    elm_box_unpack_all(obj);
    inst->extracted = eina_list_remove(inst->extracted, ext);
@@ -544,8 +543,13 @@ static void
 popup_hide(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Instance *inst = data;
-   elm_ctxpopup_dismiss(inst->ctxpopup);
-   evas_object_del(elm_object_content_get(inst->ctxpopup));
+   if (obj == inst->ctxpopup)
+     {
+        elm_ctxpopup_dismiss(inst->ctxpopup);
+        evas_object_del(elm_object_content_get(inst->ctxpopup));
+        inst->ctxpopup = NULL;      
+     }
+
 }
 
 static void
@@ -588,6 +592,9 @@ popup_added(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
 
    if (!efl_wl_surface_extract(event_info)) return;
    inst->extracted = eina_list_append(inst->extracted, event_info);
+
+   if (inst->ctxpopup)
+     evas_object_del(inst->ctxpopup);
 
    inst->ctxpopup = elm_ctxpopup_add(inst->box);
    elm_object_style_set(inst->ctxpopup, "noblock");
