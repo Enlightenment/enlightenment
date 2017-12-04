@@ -343,9 +343,12 @@ _grid_icon_add(Instance *inst, Efreet_Desktop *desktop)
 
    _grid_icon_file_set(ic, desktop);
 
-   elm_object_tooltip_text_set(ic->o_icon, desktop->name);
-   elm_object_tooltip_orient_set(ic->o_icon, ELM_TOOLTIP_ORIENT_CENTER);
-   elm_object_tooltip_style_set(ic->o_icon, "luncher");
+   if (!inst->cfg->hide_tooltips)
+     {
+        elm_object_tooltip_text_set(ic->o_icon, desktop->name);
+        elm_object_tooltip_orient_set(ic->o_icon, ELM_TOOLTIP_ORIENT_CENTER);
+        elm_object_tooltip_style_set(ic->o_icon, "luncher");
+     }
    evas_object_size_hint_aspect_set(ic->o_icon, EVAS_ASPECT_CONTROL_BOTH, 1, 1);
    elm_layout_content_set(ic->o_layout, "e.swallow.icon", ic->o_icon);
    evas_object_event_callback_add(ic->o_icon, EVAS_CALLBACK_MOUSE_UP,

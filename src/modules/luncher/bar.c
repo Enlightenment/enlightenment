@@ -1117,21 +1117,23 @@ _bar_icon_add(Instance *inst, Efreet_Desktop *desktop, E_Client *non_desktop_cli
 
    _bar_icon_file_set(ic, desktop, non_desktop_client);
 
-   if (desktop)
-     elm_object_tooltip_text_set(ic->o_icon, desktop->name);
-   else if (non_desktop_client && non_desktop_client->icccm.class)
-     elm_object_tooltip_text_set(ic->o_icon, non_desktop_client->icccm.class);
-   else if (non_desktop_client && non_desktop_client->icccm.name)
-     elm_object_tooltip_text_set(ic->o_icon, non_desktop_client->icccm.name);
-   else if (non_desktop_client && non_desktop_client->icccm.title)
-     elm_object_tooltip_text_set(ic->o_icon, non_desktop_client->icccm.title);
-   else if (non_desktop_client && non_desktop_client->netwm.name)
-     elm_object_tooltip_text_set(ic->o_icon, non_desktop_client->netwm.name);
-   else
-     elm_object_tooltip_text_set(ic->o_icon, _("Unknown"));
-
-   elm_object_tooltip_orient_set(ic->o_icon, ELM_TOOLTIP_ORIENT_CENTER);
-   elm_object_tooltip_style_set(ic->o_icon, "luncher");
+   if (!inst->cfg->hide_tooltips)
+     {
+        if (desktop)
+          elm_object_tooltip_text_set(ic->o_icon, desktop->name);
+        else if (non_desktop_client && non_desktop_client->icccm.class)
+          elm_object_tooltip_text_set(ic->o_icon, non_desktop_client->icccm.class);
+        else if (non_desktop_client && non_desktop_client->icccm.name)
+          elm_object_tooltip_text_set(ic->o_icon, non_desktop_client->icccm.name);
+        else if (non_desktop_client && non_desktop_client->icccm.title)
+          elm_object_tooltip_text_set(ic->o_icon, non_desktop_client->icccm.title);
+        else if (non_desktop_client && non_desktop_client->netwm.name)
+          elm_object_tooltip_text_set(ic->o_icon, non_desktop_client->netwm.name);
+        else
+          elm_object_tooltip_text_set(ic->o_icon, _("Unknown"));
+        elm_object_tooltip_orient_set(ic->o_icon, ELM_TOOLTIP_ORIENT_CENTER);
+        elm_object_tooltip_style_set(ic->o_icon, "luncher");
+     }
    evas_object_size_hint_aspect_set(ic->o_icon, EVAS_ASPECT_CONTROL_BOTH, 1, 1);
    elm_layout_content_set(ic->o_layout, "e.swallow.icon", ic->o_icon);
    evas_object_event_callback_add(ic->o_icon, EVAS_CALLBACK_MOUSE_UP,
