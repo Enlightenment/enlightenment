@@ -466,7 +466,8 @@ _bar_icon_mouse_out(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *eve
    elm_layout_signal_emit(ic->o_layout, "e,state,default", "e");
    elm_layout_signal_emit(ic->o_layout, "e,state,unfocused", "e");
    ic->active = EINA_FALSE;
-   elm_object_tooltip_hide(obj);
+   if (!ic->inst->cfg->hide_tooltips)
+     elm_object_tooltip_hide(obj);
    E_FREE_FUNC(ic->mouse_in_timer, ecore_timer_del);
    E_FREE_FUNC(ic->mouse_out_timer, ecore_timer_del);
    ic->mouse_out_timer = ecore_timer_loop_add(0.25, _bar_icon_preview_hide, ic);
@@ -920,7 +921,8 @@ _bar_icon_mouse_in(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *even
 
    if (!ic->active)
      {
-        elm_object_tooltip_show(obj);
+        if (!ic->inst->cfg->hide_tooltips)
+          elm_object_tooltip_show(obj);
         ic->active = EINA_TRUE;
         elm_layout_signal_emit(ic->o_layout, "e,state,focused", "e");
      }

@@ -216,7 +216,8 @@ _grid_icon_mouse_in(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *eve
    if (_grid_check_modifiers(ev->modifiers)) return;
 
    evas_object_raise(ic->o_layout);
-   elm_object_tooltip_show(obj);
+   if (!ic->inst->cfg->hide_tooltips)
+     elm_object_tooltip_show(obj);
    ic->active = EINA_TRUE;
    elm_layout_signal_emit(ic->o_layout, "e,state,focused", "e");
 }
@@ -226,7 +227,8 @@ _grid_icon_mouse_out(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *ev
 {
    Icon *ic = data;
 
-   elm_object_tooltip_hide(obj);
+   if (!ic->inst->cfg->hide_tooltips)
+     elm_object_tooltip_hide(obj);
    elm_layout_signal_emit(ic->o_layout, "e,state,unfocused", "e");
 }
 

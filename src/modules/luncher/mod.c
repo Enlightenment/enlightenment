@@ -23,6 +23,7 @@ luncher_init(void)
    E_CONFIG_VAL(D, T, preview_size, INT);
    E_CONFIG_VAL(D, T, dir, STR);
    E_CONFIG_VAL(D, T, type, INT);
+   E_CONFIG_VAL(D, T, hide_tooltips, INT);
 
    conf_edd = E_CONFIG_DD_NEW("Luncher_Config", Config);
 #undef T
@@ -42,6 +43,7 @@ luncher_init(void)
         ci->preview_size = 64;
         ci->dir = eina_stringshare_add("default");
         ci->type = E_LUNCHER_MODULE_FULL;
+        ci->hide_tooltips = 0;
         luncher_config->items = eina_list_append(luncher_config->items, ci);
      }
    EINA_LIST_FOREACH(luncher_config->items, l, ci)

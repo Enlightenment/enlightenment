@@ -50,6 +50,17 @@ _type_changed(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
 }
 
 static void
+_check_changed(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
+{
+   Instance *inst = data;
+
+   inst->cfg->hide_tooltips = elm_check_state_get(obj);
+
+   e_config_save_queue();
+   bar_config_updated(inst);
+}
+
+static void
 _config_source_changed(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Instance *inst = data;
@@ -277,7 +288,7 @@ config_luncher(E_Zone *zone, Instance *inst, Eina_Bool bar)
 {
    Evas_Object *popup, *tb, *lbl, *fr, *box, *list, *mlist;
    Evas_Object *butbox, *sep, *hbox, *img, *but, *o, *group;
-   Evas_Object *slider;
+   Evas_Object *slider, *check;
    Elm_Object_Item *it;
 
    luncher_config->bar = bar;
@@ -379,6 +390,29 @@ config_luncher(E_Zone *zone, Instance *inst, Eina_Bool bar)
         default:
           elm_radio_value_set(group, 0);
      }
+
+   o = elm_separator_add(box);
+   elm_separator_horizontal_set(o, EINA_TRUE);
+   E_EXPAND(o);
+   E_FILL(o);
+   elm_box_pack_end(box, o);
+   evas_object_show(o);
+
+   lbl = elm_label_add(box);
+   elm_object_text_set(lbl, _("Tooltips:"));
+   E_ALIGN(lbl, 0.5, 0.5);
+   E_WEIGHT(lbl, EVAS_HINT_EXPAND, 0);
+   elm_box_pack_end(box, lbl);
+   evas_object_show(lbl);
+
+   check = elm_check_add(box);
+   elm_object_text_set(check, _("Hide tooltips"));
+   elm_check_state_set(check, inst->cfg->hide_tooltips);
+   E_ALIGN(check, 0.0, 0.0);
+   E_WEIGHT(check, EVAS_HINT_EXPAND, 0);
+   evas_object_smart_callback_add(check, "changed", _check_changed, inst);
+   elm_box_pack_end(box, check);
+   evas_object_show(check);
 
    o = elm_separator_add(box);
    elm_separator_horizontal_set(o, EINA_TRUE);
