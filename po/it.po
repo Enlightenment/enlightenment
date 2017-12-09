@@ -5,9 +5,9 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Enlightenment\n"
-"Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2017-10-27 10:44+0200\n"
-"PO-Revision-Date: 2017-10-27 14:42+0200\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2017-12-09 20:00+0100\n"
+"PO-Revision-Date: 2017-12-09 20:05+0100\n"
 "Last-Translator: Massimo Maiurana <maiurana@gmail.com>\n"
 "Language-Team: General\n"
 "Language: it\n"
@@ -48,8 +48,8 @@ msgid ""
 msgstr ""
 "<title>Copyright &copy; 2000-2017, dell'Enlightenment Development Team.</"
 "><ps/><ps/>Ci auguriamo che vi piacerà usare questo software tanto quanto a "
-"noi è piaciuto scriverlo.<ps/><ps/>Per contattarci visitate:"
-"<ps/><hilight>http://www.enlightenment.org</><ps/><ps/>"
+"noi è piaciuto scriverlo.<ps/><ps/>Per contattarci visitate:<ps/"
+"><hilight>http://www.enlightenment.org</><ps/><ps/>"
 
 #: src/bin/e_about.c:69
 msgid "<title>The Team</><ps/><ps/>"
@@ -63,8 +63,8 @@ msgid ""
 "sure you want to kill this window?"
 msgstr ""
 "State per uccidere %s.<ps/><ps/>Tenete presente che tutti i dati di questa "
-"finestra<ps/>che non sono ancora stati salvati verranno persi!<ps/><ps/>Siete "
-"sicuri di voler uccidere questa finestra?"
+"finestra<ps/>che non sono ancora stati salvati verranno persi!<ps/><ps/"
+">Siete sicuri di voler uccidere questa finestra?"
 
 #: src/bin/e_actions.c:352
 msgid "Are you sure you want to kill this window?"
@@ -165,7 +165,7 @@ msgstr "Da mouse a chiave"
 #: src/bin/e_actions.c:3591 src/bin/e_actions.c:3596 src/bin/e_actions.c:3601
 #: src/bin/e_actions.c:3606 src/bin/e_actions.c:3611 src/bin/e_actions.c:3616
 #: src/bin/e_actions.c:3621 src/bin/e_actions.c:3627 src/bin/e_actions.c:3633
-#: src/bin/e_actions.c:3639 src/modules/shot/e_mod_main.c:1033
+#: src/bin/e_actions.c:3639 src/modules/shot/e_mod_main.c:1074
 msgid "Window : Actions"
 msgstr "Finestre : Azioni"
 
@@ -543,7 +543,7 @@ msgstr "Salta alla finestra... o avvia..."
 #: src/bin/e_actions.c:3585 src/modules/backlight/e_mod_main.c:483
 #: src/modules/conf_display/e_mod_main.c:17
 #: src/modules/conf_randr/e_mod_main.c:36 src/modules/ibox/e_mod_config.c:133
-#: src/modules/shot/e_mod_main.c:683 src/modules/shot/e_mod_main.c:1025
+#: src/modules/shot/e_mod_main.c:684 src/modules/shot/e_mod_main.c:1066
 msgid "Screen"
 msgstr "Schermo"
 
@@ -868,11 +868,11 @@ msgstr "Layout di tastiera precedente"
 msgid "Set As Background"
 msgstr "Imposta come sfondo"
 
-#: src/bin/e_client.c:4837
+#: src/bin/e_client.c:4841
 msgid "Client Error!"
 msgstr "Errore del client!"
 
-#: src/bin/e_client.c:4837
+#: src/bin/e_client.c:4841
 msgid "Something has attempted to set a border when it shouldn't! Report this!"
 msgstr "Qualcosa ha tentato indebitamente di impostare un bordo! Riportatelo!"
 
@@ -901,7 +901,7 @@ msgstr "Seleziona"
 #: src/modules/quickaccess/e_mod_quickaccess.c:334
 #: src/modules/quickaccess/e_mod_quickaccess.c:396
 #: src/modules/shot/e_mod_main.c:288 src/modules/shot/e_mod_main.c:535
-#: src/modules/shot/e_mod_main.c:563 src/modules/shot/e_mod_main.c:741
+#: src/modules/shot/e_mod_main.c:563 src/modules/shot/e_mod_main.c:742
 #: src/modules/syscon/e_syscon.c:92 src/modules/xkbswitch/e_mod_config.c:872
 #: src/modules/xkbswitch/e_mod_config.c:1003
 #: src/modules/xkbswitch/e_mod_config.c:1428
@@ -948,11 +948,11 @@ msgstr "Nascosto"
 msgid "Title"
 msgstr "Titolo"
 
-#: src/bin/e_comp_x.c:586
+#: src/bin/e_comp_x.c:633
 msgid "Compositor Warning"
 msgstr "Avvertimento del compositor"
 
-#: src/bin/e_comp_x.c:587
+#: src/bin/e_comp_x.c:634
 msgid ""
 "Your display driver does not support OpenGL, GLSL<ps/>shaders or no OpenGL "
 "engines were compiled or installed<ps/>for Evas or Ecore-Evas. Falling back "
@@ -965,21 +965,24 @@ msgstr ""
 "compositing è necessaria<ps/>una GPU in grado di supportare OpenGL 2.0 (o "
 "OpenGL<ps/>ES 2.0)."
 
-#: src/bin/e_comp_x.c:5638
+#: src/bin/e_comp_x.c:5632
 msgid "Lock Failed"
 msgstr "Blocco fallito"
 
-#: src/bin/e_comp_x.c:5639
+#: src/bin/e_comp_x.c:5633
 msgid ""
 "Locking the desktop failed because some application<ps/>has grabbed either "
 "the keyboard or the mouse or both<ps/>and their grab is unable to be broken."
-msgstr "Il blocco del desktop è fallito perché alcune<ps/>applicazioni hanno catturato la tastiera e/o il<ps/>mouse e questa cattura non può essere sciolta."
+msgstr ""
+"Il blocco del desktop è fallito perché alcune<ps/>applicazioni hanno "
+"catturato la tastiera e/o il<ps/>mouse e questa cattura non può essere "
+"sciolta."
 
-#: src/bin/e_comp_x.c:5655
+#: src/bin/e_comp_x.c:5649
 msgid "Another compositor is already running on your display server."
 msgstr "Un altro compositor è già in esecuzione sul vostro server grafico."
 
-#: src/bin/e_comp_x.c:5674
+#: src/bin/e_comp_x.c:5668
 msgid ""
 "Your display server does not support the compositor overlay window.\n"
 "This is needed for Enlightenment to function."
@@ -987,11 +990,11 @@ msgstr ""
 "Il vostro server grafico non supporta la finestra overlay del compositor. "
 "Ciò è necessario per il funzionamento di Enlightenment."
 
-#: src/bin/e_comp_x.c:5801
+#: src/bin/e_comp_x.c:5795
 msgid "Enlightenment cannot initialize Ecore_X!\n"
 msgstr "Enlightenment non riesce ad inizializzare Ecore_X!\n"
 
-#: src/bin/e_comp_x.c:5813
+#: src/bin/e_comp_x.c:5807
 msgid ""
 "Your display server does not support XComposite, or Ecore-X was built "
 "without XComposite support. Note that for composite support you will also "
@@ -1001,7 +1004,7 @@ msgstr ""
 "compilato senza supporto per XComposite. Notare che il supporto per il "
 "compositing richiede anche il supporto per XRender e XFixes in X11 ed Ecore."
 
-#: src/bin/e_comp_x.c:5822
+#: src/bin/e_comp_x.c:5816
 msgid ""
 "Your display server does not support XDamage or Ecore was built without "
 "XDamage support."
@@ -1009,7 +1012,7 @@ msgstr ""
 "Il vostro server grafico non supporta XDamage o Ecore è stato compilato "
 "senza il supporto per XDamage."
 
-#: src/bin/e_comp_x.c:5927
+#: src/bin/e_comp_x.c:5921
 msgid "Enlightenment cannot initialize the XSettings system.\n"
 msgstr "Enlightenment non riesce a inizializzare il suo sistema XSettings.\n"
 
@@ -1023,14 +1026,14 @@ msgid ""
 "adding it in. You can re-configure things now to your<ps/>liking. Sorry for "
 "the hiccup in your settings.<ps/>"
 msgstr ""
-"I dati di configurazione avevano bisogno di essere aggiornati.<ps/>La vecchia "
-"configurazione è stata sostituita con un nuovo set<ps/>di impostazioni "
-"predefinite. Questo avverrà spesso durante lo<ps/>sviluppo, quindi non "
-"riportate bug in proposito. Significa<ps/>semplicemente che Enlightenment ha "
-"bisogno di nuovi dati di<ps/>configurazione da usare per funzionalità che non "
-"erano presenti<ps/>nella vecchia configurazione. Questo nuovo set di "
-"impostazioni<ps/>predefinite sistemerà il tutto aggiungendo le nuove "
-"funzionalità.<ps/>Adesso è possibile riconfigurare le cose a proprio "
+"I dati di configurazione avevano bisogno di essere aggiornati.<ps/>La "
+"vecchia configurazione è stata sostituita con un nuovo set<ps/>di "
+"impostazioni predefinite. Questo avverrà spesso durante lo<ps/>sviluppo, "
+"quindi non riportate bug in proposito. Significa<ps/>semplicemente che "
+"Enlightenment ha bisogno di nuovi dati di<ps/>configurazione da usare per "
+"funzionalità che non erano presenti<ps/>nella vecchia configurazione. Questo "
+"nuovo set di impostazioni<ps/>predefinite sistemerà il tutto aggiungendo le "
+"nuove funzionalità.<ps/>Adesso è possibile riconfigurare le cose a proprio "
 "piacimento.<ps/>Ci scusiamo per il disagio.<ps/>"
 
 #: src/bin/e_config.c:1038
@@ -1046,7 +1049,8 @@ msgstr ""
 "precedente di Enlightenment o si abbia copiato la<ps/>configurazione da una "
 "macchina su cui gira una versione più recente<ps/>di Enlightenment. Questo è "
 "male, quindi la vostra configurazione è<ps/>stata ripristinata a scopo "
-"precauzionale ai valori predefiniti. Ci<ps/>scusiamo per l'inconveniente.<ps/>"
+"precauzionale ai valori predefiniti. Ci<ps/>scusiamo per l'inconveniente.<ps/"
+">"
 
 #: src/bin/e_config.c:1154
 msgid ""
@@ -1054,10 +1058,9 @@ msgid ""
 "<ps/>As a result, all bindings have been reloaded from defaults.<ps/>Sorry "
 "for the inconvenience.<ps/>"
 msgstr ""
-"La versione delle vostre associazioni non corrisponde alla "
-"versione<ps/>dell'attuale configurazione, quindi tutte le associazioni sono "
-"state<ps/>riportate ai valori predefiniti.<ps/> Ci scusiamo per "
-"l'inconveniente."
+"La versione delle vostre associazioni non corrisponde alla versione<ps/"
+">dell'attuale configurazione, quindi tutte le associazioni sono state<ps/"
+">riportate ai valori predefiniti.<ps/> Ci scusiamo per l'inconveniente."
 
 #: src/bin/e_config.c:1941 src/bin/e_config.c:2587
 msgid "Enlightenment Settings Write Problems"
@@ -1071,8 +1074,8 @@ msgid ""
 "<ps/>"
 msgstr ""
 "Enlightenment ha restituito un errore nello spostamento<ps/>dei file di "
-"configurazione da:<ps/>%s<ps/><ps/>a:<ps/>%s<ps/><ps/>Il resto della scrittura è "
-"stato annullato per sicurezza.<ps/>"
+"configurazione da:<ps/>%s<ps/><ps/>a:<ps/>%s<ps/><ps/>Il resto della "
+"scrittura è stato annullato per sicurezza.<ps/>"
 
 #: src/bin/e_config.c:1954 src/bin/e_config.c:2600
 #: src/bin/e_config_dialog.c:274 src/bin/e_desktop_editor.c:894
@@ -1110,7 +1113,9 @@ msgstr "Il file non contiene dati."
 msgid ""
 "The file is not writable. Perhaps the disk is read-only<ps/>or you lost "
 "permissions to your files."
-msgstr "Il file non è scrivibile. Forse il disco è montato in sola<ps/>lettura o non si hanno più i permessi sui propri file."
+msgstr ""
+"Il file non è scrivibile. Forse il disco è montato in sola<ps/>lettura o non "
+"si hanno più i permessi sui propri file."
 
 #: src/bin/e_config.c:2509
 msgid "Memory ran out while preparing the write.<ps/>Please free up memory."
@@ -1191,9 +1196,8 @@ msgid ""
 "been deleted to avoid corrupt data.<ps/>"
 msgstr ""
 "Enlightenment ha avuto un errore mentre<ps/>scriveva il suo file di "
-"configurazione<ps/>%s<ps/><ps/>Il file dove è avvenuto l'errore è:<ps/>"
-"%s<ps/><ps/>Questo file è stato cancellato per evitare<ps/>corruzione di dati."
-"<ps/>"
+"configurazione<ps/>%s<ps/><ps/>Il file dove è avvenuto l'errore è:<ps/>%s<ps/"
+"><ps/>Questo file è stato cancellato per evitare<ps/>corruzione di dati.<ps/>"
 
 #: src/bin/e_config_dialog.c:222 src/modules/battery/e_mod_main.c:786
 #: src/modules/conf/e_mod_main.c:284 src/modules/conf_bindings/e_mod_main.c:37
@@ -1292,10 +1296,10 @@ msgid ""
 "title instead. This will only<ps/>work if the window title is the same at<ps/"
 ">the time the window starts up, and does not<ps/>change."
 msgstr ""
-"La finestra per la quale state creando un'icona<ps/>non contiene le proprietà "
-"\"nome finestra\" e<ps/>\"classe\". Senza di queste dovrete utilizzare<ps/>"
-"\"titolo finestra\". Questo funzionerà solo se<ps/>il titolo sarà identico "
-"all'avvio della finestra<ps/>e non cambierà in seguito."
+"La finestra per la quale state creando un'icona<ps/>non contiene le "
+"proprietà \"nome finestra\" e<ps/>\"classe\". Senza di queste dovrete "
+"utilizzare<ps/>\"titolo finestra\". Questo funzionerà solo se<ps/>il titolo "
+"sarà identico all'avvio della finestra<ps/>e non cambierà in seguito."
 
 #: src/bin/e_desktop_editor.c:265
 msgid "Desktop Entry Editor"
@@ -1421,8 +1425,8 @@ msgid ""
 "Enlightenment was unable to run the application:<ps/><ps/>%s<ps/><ps/>The "
 "application failed to start."
 msgstr ""
-"Enlightenment non ha potuto avviare l'applicazione:<ps/><ps/>"
-"%s<ps/><ps/>L'applicazione non è partita"
+"Enlightenment non ha potuto avviare l'applicazione:<ps/><ps/>%s<ps/><ps/"
+">L'applicazione non è partita"
 
 #: src/bin/e_exec.c:853
 msgid "Application Execution Error"
@@ -1892,8 +1896,8 @@ msgid ""
 "Are you sure you want to delete<ps/><hilight>all</hilight> the %d files "
 "in<ps/><hilight>%s</hilight>?"
 msgstr ""
-"Siete sicuri di voler eliminare<ps/><hilight>tutti</hilight>i %d file "
-"in<ps/><hilight>%s</hilight>?"
+"Siete sicuri di voler eliminare<ps/><hilight>tutti</hilight>i %d file in<ps/"
+"><hilight>%s</hilight>?"
 
 #: src/bin/e_fm.c:11051
 #, c-format
@@ -1904,11 +1908,11 @@ msgid_plural ""
 "Are you sure you want to delete<ps/>the %d selected files in<ps/><hilight>"
 "%s</hilight>?"
 msgstr[0] ""
-"Siete sicuri di voler eliminare<ps/>il %d file selezionato in<ps/><hilight>%s</"
-"hilight>?"
+"Siete sicuri di voler eliminare<ps/>il %d file selezionato in<ps/><hilight>"
+"%s</hilight>?"
 msgstr[1] ""
-"Siete sicuri di voler eliminare<ps/>i %d file selezionati in<ps/><hilight>%s</"
-"hilight>?"
+"Siete sicuri di voler eliminare<ps/>i %d file selezionati in<ps/><hilight>"
+"%s</hilight>?"
 
 #: src/bin/e_fm_device.c:59
 #, c-format
@@ -2087,14 +2091,19 @@ msgstr "Il modulo %s ha bisogno del supporto %s"
 msgid ""
 "Please press a key combination.<ps/><ps/>Press <hilight>Escape</hilight> to "
 "abort."
-msgstr "Premere una combinazione di tasti.<ps/><ps/>Premere <hilight>Esc</hilight> per abortire."
+msgstr ""
+"Premere una combinazione di tasti.<ps/><ps/>Premere <hilight>Esc</hilight> "
+"per abortire."
 
 #: src/bin/e_grab_dialog.c:5
 msgid ""
 "Please hold any modifier you want<ps/>and press any button on your mouse<ps/"
 ">or roll a wheel to assign mouse binding.<ps/><ps/>Press <hilight>Escape</"
 "hilight> to abort."
-msgstr "Tenere premuto il modificatore desiderato<ps/>e premere un bottone del mouse, o girare<ps/>una rotella, per assegnare un'associazione.<ps/>Premere <hilight>Esc</highlight> per abortire."
+msgstr ""
+"Tenere premuto il modificatore desiderato<ps/>e premere un bottone del "
+"mouse, o girare<ps/>una rotella, per assegnare un'associazione.<ps/>Premere "
+"<hilight>Esc</highlight> per abortire."
 
 #: src/bin/e_grab_dialog.c:117
 msgid "Mouse Binding Combination"
@@ -2804,15 +2813,15 @@ msgid ""
 msgstr ""
 "State cercando di chiedere ad Enlightenment di ricordarsi di<ps/>applicare "
 "caratteristiche (come dimensione, locazione, stile<ps/>di bordo ecc.) ad una "
-"finestra che <hilight>non ha proprietà<ps/>univoche</hilight>.<ps/><ps/>Questo "
-"significa che condivide proprietà come nome/classe,<ps/>transitorietà, ruolo, "
-"eccetera con più di un'altra finestra<ps/>presente sullo schermo, e quindi le "
-"stesse caratteristiche<ps/>saranno ricordate anche per le altre finestre con "
-"le stesse<ps/>proprietà.<ps/><ps/>Questo è solo un avvertimento per il caso in "
-"cui non si voglia<ps/>che questo accada. Se lo si desidera, basta premere il "
-"bottone<ps/><hilight>Applica</hilight> o <hilight>OK</hilight> e le "
-"impostazioni saranno accettate. Nel dubbio<ps/>premere <hilight>Annulla</"
-"hilight> e nulla cambierà."
+"finestra che <hilight>non ha proprietà<ps/>univoche</hilight>.<ps/><ps/"
+">Questo significa che condivide proprietà come nome/classe,<ps/"
+">transitorietà, ruolo, eccetera con più di un'altra finestra<ps/>presente "
+"sullo schermo, e quindi le stesse caratteristiche<ps/>saranno ricordate "
+"anche per le altre finestre con le stesse<ps/>proprietà.<ps/><ps/>Questo è "
+"solo un avvertimento per il caso in cui non si voglia<ps/>che questo accada. "
+"Se lo si desidera, basta premere il bottone<ps/><hilight>Applica</hilight> o "
+"<hilight>OK</hilight> e le impostazioni saranno accettate. Nel dubbio<ps/"
+">premere <hilight>Annulla</hilight> e nulla cambierà."
 
 #: src/bin/e_int_client_remember.c:544
 msgid "No match properties set"
@@ -2824,7 +2833,11 @@ msgid ""
 "(such as size, location, border style etc.) to<ps/>a window <hilight>without "
 "specifying how to remember it</hilight>.<ps/><ps/>You must specify at least "
 "1 way of remembering this window."
-msgstr "State cercando di chiedere a Enlightenment di ricordarsi di<ps/>applicare caratteristiche (come dimensione, locazione, stile<ps/>di bordo ecc.) ad una finestra <hilight>senza specificare come farlo</hilight>.<ps/><ps/>Occorre specificare almeno un modo per ricordare questa finestra."
+msgstr ""
+"State cercando di chiedere a Enlightenment di ricordarsi di<ps/>applicare "
+"caratteristiche (come dimensione, locazione, stile<ps/>di bordo ecc.) ad una "
+"finestra <hilight>senza specificare come farlo</hilight>.<ps/><ps/>Occorre "
+"specificare almeno un modo per ricordare questa finestra."
 
 #: src/bin/e_int_client_remember.c:655
 msgid "Nothing"
@@ -2847,7 +2860,7 @@ msgstr "Volume"
 #: src/bin/e_int_client_remember.c:665 src/modules/conf/e_mod_main.c:252
 #: src/modules/everything/evry_gadget.c:628
 #: src/modules/everything/evry_plug_aggregator.c:313
-#: src/modules/everything/evry_view.c:1618 src/modules/shot/e_mod_main.c:687
+#: src/modules/everything/evry_view.c:1618 src/modules/shot/e_mod_main.c:688
 msgid "All"
 msgstr "Tutto"
 
@@ -3633,34 +3646,34 @@ msgid ""
 "configuration's<ps/>executable is in your PATH<ps/>"
 msgstr ""
 "Errore nell'esecuzione del metodo di input<ps/><ps/>Si prega di assicurarsi "
-"che la configurazione<ps/>del metodo di input sia giusta e "
-"che<ps/>l'eseguibile di configurazione sia nel<ps/>proprio PATH<ps/>"
+"che la configurazione<ps/>del metodo di input sia giusta e che<ps/"
+">l'eseguibile di configurazione sia nel<ps/>proprio PATH<ps/>"
 
-#: src/bin/e_main.c:287
+#: src/bin/e_main.c:289
 msgid "Enlightenment cannot initialize Eina!\n"
 msgstr "Enlightenment non riesce ad inizializzare Eina!\n"
 
-#: src/bin/e_main.c:293
+#: src/bin/e_main.c:295
 msgid "Enlightenment could not create a logging domain!\n"
 msgstr "Enlightenment non riesce a creare un dominio di logging!\n"
 
-#: src/bin/e_main.c:349
+#: src/bin/e_main.c:351
 msgid "Enlightenment cannot initialize Eet!\n"
 msgstr "Enlightenment non riesce ad inizializzare Eet!\n"
 
-#: src/bin/e_main.c:358
+#: src/bin/e_main.c:360
 msgid "Enlightenment cannot initialize Ecore!\n"
 msgstr "Enlightenment non riesce ad inizializzare Ecore!\n"
 
-#: src/bin/e_main.c:373
+#: src/bin/e_main.c:375
 msgid "Enlightenment cannot initialize EFX!\n"
 msgstr "Enlightenment non riesce ad inizializzare EFX!\n"
 
-#: src/bin/e_main.c:382
+#: src/bin/e_main.c:384
 msgid "Enlightenment cannot initialize EIO!\n"
 msgstr "Enlightenment non riesce ad inizializzare EIO!\n"
 
-#: src/bin/e_main.c:394
+#: src/bin/e_main.c:396
 msgid ""
 "Enlightenment cannot set up an exit signal handler.\n"
 "Perhaps you are out of memory?"
@@ -3668,7 +3681,7 @@ msgstr ""
 "Enlightenment non riesce a configurare un gestore di segnali d'uscita.\n"
 "Forse siete a corto di memoria?"
 
-#: src/bin/e_main.c:401
+#: src/bin/e_main.c:403
 msgid ""
 "Enlightenment cannot set up a HUP signal handler.\n"
 "Perhaps you are out of memory?"
@@ -3676,7 +3689,7 @@ msgstr ""
 "Enlightenment non riesce a configurare un gestore di segnali HUP.\n"
 "Forse siete a corto di memoria?"
 
-#: src/bin/e_main.c:408
+#: src/bin/e_main.c:410
 msgid ""
 "Enlightenment cannot set up a USER signal handler.\n"
 "Perhaps you are out of memory?"
@@ -3684,31 +3697,31 @@ msgstr ""
 "Enlightenment non riesce a configurare un gestore di segnali USER.\n"
 "Forse siete a corto di memoria?"
 
-#: src/bin/e_main.c:417
+#: src/bin/e_main.c:419
 msgid "Enlightenment cannot initialize Ecore_File!\n"
 msgstr "Enlightenment non riesce ad inizializzare Ecore_File!\n"
 
-#: src/bin/e_main.c:426
+#: src/bin/e_main.c:428
 msgid "Enlightenment cannot initialize Ecore_Con!\n"
 msgstr "Enlightenment non riesce ad inizializzare Ecore_Con!\n"
 
-#: src/bin/e_main.c:435
+#: src/bin/e_main.c:437
 msgid "Enlightenment cannot initialize Ecore_Ipc!\n"
 msgstr "Enlightenment non riesce ad inizializzare Ecore_Ipc!\n"
 
-#: src/bin/e_main.c:448
+#: src/bin/e_main.c:450
 msgid "Enlightenment cannot initialize Ecore_Evas!\n"
 msgstr "Enlightenment non riesce ad inizializzare Ecore_Evas!\n"
 
-#: src/bin/e_main.c:457
+#: src/bin/e_main.c:459
 msgid "Enlightenment cannot initialize Elementary!\n"
 msgstr "Enlightenment non riesce ad inizializzare Elementary!\n"
 
-#: src/bin/e_main.c:468
+#: src/bin/e_main.c:470
 msgid "Enlightenment cannot initialize Emotion!\n"
 msgstr "Enlightenment non riesce ad inizializzare Emotion!\n"
 
-#: src/bin/e_main.c:482
+#: src/bin/e_main.c:484
 msgid ""
 "Enlightenment found ecore_evas doesn't support the Wayland SHM\n"
 "rendering in Evas. Please check your installation of Evas and\n"
@@ -3718,7 +3731,7 @@ msgstr ""
 "Wayland SHM in Evas. Controllate le vostre installazioni di Evas e\n"
 "Ecore e il loro supporto per il motore di rendering Wayland SHM."
 
-#: src/bin/e_main.c:492
+#: src/bin/e_main.c:494
 msgid ""
 "Enlightenment found ecore_evas doesn't support the Software X11\n"
 "rendering in Evas. Please check your installation of Evas and\n"
@@ -3728,7 +3741,7 @@ msgstr ""
 "software X11 in Evas. Controllate le vostre installazioni di Evas e\n"
 "Ecore e il loro supporto per il motore di rendering software X11."
 
-#: src/bin/e_main.c:501
+#: src/bin/e_main.c:503
 msgid ""
 "Enlightenment found ecore_evas doesn't support the Software Buffer\n"
 "rendering in Evas. Please check your installation of Evas and\n"
@@ -3738,11 +3751,11 @@ msgstr ""
 "software Buffer in Evas. Controllate le vostre installazioni di Evas e\n"
 "Ecore e il loro supporto per il motore di rendering software Buffer."
 
-#: src/bin/e_main.c:515
+#: src/bin/e_main.c:517
 msgid "Enlightenment cannot initialize E_Intl!\n"
 msgstr "Enlightenment non riesce ad inizializzare E_Intl!\n"
 
-#: src/bin/e_main.c:526
+#: src/bin/e_main.c:528
 msgid ""
 "Enlightenment cannot initialize its emergency alert system.\n"
 "Have you set your DISPLAY variable?"
@@ -3751,7 +3764,7 @@ msgstr ""
 "di allarme d'emergenza.\n"
 "Avete impostato la variabile DISPLAY?"
 
-#: src/bin/e_main.c:538
+#: src/bin/e_main.c:540
 msgid ""
 "Enlightenment cannot create directories in your home directory.\n"
 "Perhaps you have no home directory or the disk is full?"
@@ -3759,23 +3772,23 @@ msgstr ""
 "Enlightenment non riesce a creare directory nella vostra home.\n"
 "Forse non avete home directory, o il disco è pieno?"
 
-#: src/bin/e_main.c:548
+#: src/bin/e_main.c:550
 msgid "Enlightenment cannot set up its file registry system.\n"
 msgstr ""
 "Enlightenment non riesce a configurare il suo\n"
 "sistema di file registry.\n"
 
-#: src/bin/e_main.c:557
+#: src/bin/e_main.c:559
 msgid "Enlightenment cannot set up its config system.\n"
 msgstr ""
 "Enlightenment non riesce a configurare il suo\n"
 "sistema di configurazione.\n"
 
-#: src/bin/e_main.c:586
+#: src/bin/e_main.c:588
 msgid "Enlightenment cannot set up its environment.\n"
 msgstr "Enlightenment non riesce ad impostare il suo ambiente.\n"
 
-#: src/bin/e_main.c:603
+#: src/bin/e_main.c:605
 msgid ""
 "Enlightenment cannot set up paths for finding files.\n"
 "Perhaps you are out of memory?"
@@ -3783,23 +3796,23 @@ msgstr ""
 "Enlightenment non riesce a configurare i percorsi per la\n"
 "ricerca dei file. Forse siete a corto di memoria?"
 
-#: src/bin/e_main.c:620
+#: src/bin/e_main.c:622
 msgid "Enlightenment cannot set up its font system.\n"
 msgstr ""
 "Enlightenment non riesce a configurare il suo\n"
 "sistema di font.\n"
 
-#: src/bin/e_main.c:633
+#: src/bin/e_main.c:635
 msgid "Enlightenment cannot set up its theme system.\n"
 msgstr ""
 "Enlightenment non riesce a configurare il suo\n"
 "sistema di temi.\n"
 
-#: src/bin/e_main.c:645
+#: src/bin/e_main.c:647
 msgid "Setup Message Bus"
 msgstr "Bus dei messaggi"
 
-#: src/bin/e_main.c:651
+#: src/bin/e_main.c:653
 msgid ""
 "Enlightenment cannot create a dbus session connection.\n"
 "At best this will break many things, at worst it will hard lock your "
@@ -3811,7 +3824,7 @@ msgstr ""
 "arriverà al blocco della macchina.\n"
 "Se siete sicuri di sapere cosa state facendo esportate E_NO_DBUS_SESSION=1"
 
-#: src/bin/e_main.c:664
+#: src/bin/e_main.c:666
 msgid ""
 "Enlightenment cannot initialize the FDO desktop system.\n"
 "Perhaps you lack permissions on ~/.cache/efreet or are\n"
@@ -3821,45 +3834,45 @@ msgstr ""
 "Forse non avete permessi per accedere a ~/.cache/efreet o\n"
 "siete a corto di spazio su disco?"
 
-#: src/bin/e_main.c:673
+#: src/bin/e_main.c:675
 msgid "Starting International Support"
 msgstr "Avvio supporto internazionalizzazione"
 
-#: src/bin/e_main.c:677
+#: src/bin/e_main.c:679
 msgid "Enlightenment cannot set up its intl system.\n"
 msgstr ""
 "Enlightenment non riesce a configurare il suo\n"
 "sistema di intl (internazionalizzazione).\n"
 
-#: src/bin/e_main.c:690
+#: src/bin/e_main.c:692
 msgid "Setup Actions"
 msgstr "Impostazione azioni"
 
-#: src/bin/e_main.c:694
+#: src/bin/e_main.c:696
 msgid "Enlightenment cannot set up its actions system.\n"
 msgstr ""
 "Enlightenment non riesce a configurare il suo\n"
 "sistema di azioni.\n"
 
-#: src/bin/e_main.c:708
+#: src/bin/e_main.c:710
 msgid "Setup Powersave Modes"
 msgstr "Modalità risparmio energetico"
 
-#: src/bin/e_main.c:712
+#: src/bin/e_main.c:714
 msgid "Enlightenment cannot set up its powersave modes.\n"
 msgstr ""
 "Enlightenment non riesce a configurare il suo\n"
 "sistema di modi risparmio energetico.\n"
 
-#: src/bin/e_main.c:719
+#: src/bin/e_main.c:721
 msgid "Setup Screensaver"
 msgstr "Impostazione screensaver"
 
-#: src/bin/e_main.c:722
+#: src/bin/e_main.c:724
 msgid "Setup Screens"
 msgstr "Impostazione schermi"
 
-#: src/bin/e_main.c:726
+#: src/bin/e_main.c:728
 msgid ""
 "Enlightenment set up window management for all the screens on your system\n"
 "failed. Perhaps another window manager is running?\n"
@@ -3868,248 +3881,248 @@ msgstr ""
 "da parte di Enlightenment è fallita. Forse c'è un altro window\n"
 "manager in esecuzione?\n"
 
-#: src/bin/e_main.c:736
+#: src/bin/e_main.c:738
 msgid "Enlightenment cannot set up its pointer system.\n"
 msgstr ""
 "Enlightenment non riesce a configurare il suo\n"
 "sistema di puntatore.\n"
 
-#: src/bin/e_main.c:746
+#: src/bin/e_main.c:748
 msgid "Enlightenment cannot set up its scale system.\n"
 msgstr ""
 "Enlightenment non riesce a configurare il suo\n"
 "sistema di scaling.\n"
 
-#: src/bin/e_main.c:757
+#: src/bin/e_main.c:759
 msgid "Enlightenment cannot set up its init screen.\n"
 msgstr ""
 "Enlightenment non riesce a configurare la sua\n"
 "schermata di iniziazione.\n"
 
-#: src/bin/e_main.c:781
+#: src/bin/e_main.c:783
 msgid "Setup ACPI"
 msgstr "Impostazione ACPI"
 
-#: src/bin/e_main.c:788
+#: src/bin/e_main.c:790
 msgid "Setup Backlight"
 msgstr "Impostazione retroilluminazione"
 
-#: src/bin/e_main.c:792
+#: src/bin/e_main.c:794
 msgid "Enlightenment cannot configure the backlight.\n"
 msgstr ""
 "Enlightenment non riesce a configurare la\n"
 "retroilluminazione.\n"
 
-#: src/bin/e_main.c:798
+#: src/bin/e_main.c:800
 msgid "Setup DPMS"
 msgstr "Impostazione DPMS"
 
-#: src/bin/e_main.c:802
+#: src/bin/e_main.c:804
 msgid "Enlightenment cannot configure the DPMS settings.\n"
 msgstr ""
 "Enlightenment non riesce a configurare le\n"
 "impostazioni DPMS.\n"
 
-#: src/bin/e_main.c:809
+#: src/bin/e_main.c:811
 msgid "Setup Desklock"
 msgstr "Impostazione bloccashermo"
 
-#: src/bin/e_main.c:813
+#: src/bin/e_main.c:815
 msgid "Enlightenment cannot set up its desk locking system.\n"
 msgstr ""
 "Enlightenment non riesce a configurare il suo\n"
 "sistema di blocco dello schermo.\n"
 
-#: src/bin/e_main.c:826
+#: src/bin/e_main.c:828
 msgid "Setup Paths"
 msgstr "Impostazione percorsi"
 
-#: src/bin/e_main.c:832
+#: src/bin/e_main.c:834
 msgid "Setup System Controls"
 msgstr "Controlli di sistema"
 
-#: src/bin/e_main.c:836
+#: src/bin/e_main.c:838
 msgid "Enlightenment cannot initialize the System Command system.\n"
 msgstr ""
 "Enlightenment non riesce a il sistema di comandi di sistema.\n"
 "\n"
 
-#: src/bin/e_main.c:843
+#: src/bin/e_main.c:845
 msgid "Setup Execution System"
 msgstr "Sistema di esecuzione"
 
-#: src/bin/e_main.c:847
+#: src/bin/e_main.c:849
 msgid "Enlightenment cannot set up its exec system.\n"
 msgstr ""
 "Enlightenment non riesce a configurare il suo\n"
 "sistema di esecuzione.\n"
 
-#: src/bin/e_main.c:857
+#: src/bin/e_main.c:859
 msgid "Setup Filemanager"
 msgstr "File manager"
 
-#: src/bin/e_main.c:861
+#: src/bin/e_main.c:863
 msgid "Enlightenment cannot initialize the File manager.\n"
 msgstr "Enlightenment non riesce ad inizializzare il File manager.\n"
 
-#: src/bin/e_main.c:868
+#: src/bin/e_main.c:870
 msgid "Setup Message System"
 msgstr "Sistema di messaggi"
 
-#: src/bin/e_main.c:872
+#: src/bin/e_main.c:874
 msgid "Enlightenment cannot set up its msg system.\n"
 msgstr ""
 "Enlightenment non riesce a configurare il suo\n"
 "sistema di messaggi.\n"
 
-#: src/bin/e_main.c:879
+#: src/bin/e_main.c:881
 msgid "Setup Grab Input Handling"
 msgstr "Impostazioni gestione cattura dell'input"
 
-#: src/bin/e_main.c:883
+#: src/bin/e_main.c:885
 msgid "Enlightenment cannot set up its grab input handling system.\n"
 msgstr ""
 "Enlightenment non riesce a configurare il suo\n"
 "sistema di gestione della cattura dell'input.\n"
 
-#: src/bin/e_main.c:890
+#: src/bin/e_main.c:892
 msgid "Setup Modules"
 msgstr "Impostazione moduli"
 
-#: src/bin/e_main.c:894 src/bin/e_main.c:1069
+#: src/bin/e_main.c:896 src/bin/e_main.c:1071
 msgid "Enlightenment cannot set up its module system.\n"
 msgstr ""
 "Enlightenment non riesce a configurare il suo\n"
 "sistema di moduli.\n"
 
-#: src/bin/e_main.c:901
+#: src/bin/e_main.c:903
 msgid "Setup Remembers"
 msgstr "Ripristino impostazioni da ricordare"
 
-#: src/bin/e_main.c:905
+#: src/bin/e_main.c:907
 msgid "Enlightenment cannot setup remember settings.\n"
 msgstr ""
 "Enlightenment non riesce a configurare le\n"
 "impostazioni da ricordare.\n"
 
-#: src/bin/e_main.c:912
+#: src/bin/e_main.c:914
 msgid "Setup Gadgets"
 msgstr "Impostazione dei gadget"
 
-#: src/bin/e_main.c:919
+#: src/bin/e_main.c:921
 msgid "Setup Gadcon"
 msgstr "Impostazioni contenitore dei gadget"
 
-#: src/bin/e_main.c:923
+#: src/bin/e_main.c:925
 msgid "Enlightenment cannot set up its gadget control system.\n"
 msgstr ""
 "Enlightenment non riesce a configurare il suo\n"
 "sistema di controllo dei gadget.\n"
 
-#: src/bin/e_main.c:930
+#: src/bin/e_main.c:932
 msgid "Setup Toolbars"
 msgstr "Imposta barre strumenti"
 
-#: src/bin/e_main.c:934
+#: src/bin/e_main.c:936
 msgid "Enlightenment cannot set up its toolbars.\n"
 msgstr ""
 "Enlightenment non riesce a configurare le sue\n"
 "barre degli strumenti.\n"
 
-#: src/bin/e_main.c:941
+#: src/bin/e_main.c:943
 msgid "Setup Wallpaper"
 msgstr "Impostazione sfondo"
 
-#: src/bin/e_main.c:945
+#: src/bin/e_main.c:947
 msgid "Enlightenment cannot set up its desktop background system.\n"
 msgstr ""
 "Enlightenment non riesce a configurare il suo\n"
 "sistema di sfondi del desktop.\n"
 
-#: src/bin/e_main.c:952
+#: src/bin/e_main.c:954
 msgid "Setup Mouse"
 msgstr "Impostazione mouse"
 
-#: src/bin/e_main.c:956
+#: src/bin/e_main.c:958
 msgid "Enlightenment cannot configure the mouse settings.\n"
 msgstr ""
 "Enlightenment non riesce a configurare le\n"
 "impostazioni del mouse.\n"
 
-#: src/bin/e_main.c:962
+#: src/bin/e_main.c:964
 msgid "Setup Bindings"
 msgstr "Combinazioni tastiera e mouse"
 
-#: src/bin/e_main.c:966
+#: src/bin/e_main.c:968
 msgid "Enlightenment cannot set up its bindings system.\n"
 msgstr ""
 "Enlightenment non riesce a configurare il suo\n"
 "sistema di binding (associazioni).\n"
 
-#: src/bin/e_main.c:973
+#: src/bin/e_main.c:975
 msgid "Setup Thumbnailer"
 msgstr "Generatore miniature"
 
-#: src/bin/e_main.c:977
+#: src/bin/e_main.c:979
 msgid "Enlightenment cannot initialize the Thumbnailing system.\n"
 msgstr ""
 "Enlightenment non riesce a configurare il suo\n"
 "sistema di thumbnailing (anteprime).\n"
 
-#: src/bin/e_main.c:986
+#: src/bin/e_main.c:988
 msgid "Enlightenment cannot initialize the Icon Cache system.\n"
 msgstr ""
 "Enlightenment non riesce a inizializzare il suo sistema di\n"
 "cache delle icone.\n"
 
-#: src/bin/e_main.c:995
+#: src/bin/e_main.c:997
 msgid "Enlightenment cannot initialize the Update system.\n"
 msgstr ""
 "Enlightenment non riesce a inizializzare il suo sistema di\n"
 "aggiornamenti.\n"
 
-#: src/bin/e_main.c:1002
+#: src/bin/e_main.c:1004
 msgid "Setup Desktop Environment"
 msgstr "Ambienti desktop"
 
-#: src/bin/e_main.c:1006
+#: src/bin/e_main.c:1008
 msgid "Enlightenment cannot initialize its desktop environment.\n"
 msgstr ""
 "Enlightenment non riesce a configurare il suo\n"
 "ambiente desktop.\n"
 
-#: src/bin/e_main.c:1013
+#: src/bin/e_main.c:1015
 msgid "Setup File Ordering"
 msgstr "Ordinamento dei file"
 
-#: src/bin/e_main.c:1017
+#: src/bin/e_main.c:1019
 msgid "Enlightenment cannot set up its order file system.\n"
 msgstr ""
 "Enlightenment non riesce a configurare il suo\n"
 "sistema di ordinamento file.\n"
 
-#: src/bin/e_main.c:1028
+#: src/bin/e_main.c:1030
 msgid "Load Modules"
 msgstr "Carica moduli"
 
-#: src/bin/e_main.c:1057
+#: src/bin/e_main.c:1059
 msgid "Setup Bryces"
 msgstr "Impostazione Bryce"
 
-#: src/bin/e_main.c:1065
+#: src/bin/e_main.c:1067
 msgid "Setup Shelves"
 msgstr "Impostazione mensole porta-gadget"
 
-#: src/bin/e_main.c:1079
+#: src/bin/e_main.c:1081
 msgid "Almost Done"
 msgstr "Quasi fatto"
 
-#: src/bin/e_main.c:1223
+#: src/bin/e_main.c:1225
 #, c-format
 msgid "Version: %s\n"
 msgstr "Versione: %s\n"
 
-#: src/bin/e_main.c:1232
+#: src/bin/e_main.c:1234
 #, c-format
 msgid ""
 "Options:\n"
@@ -4164,7 +4177,7 @@ msgstr ""
 "\t\tSe hai bisogno di questo aiuto non hai bisogno di questa opzione.\n"
 "\t-versione\n"
 
-#: src/bin/e_main.c:1286
+#: src/bin/e_main.c:1288
 msgid ""
 "You are executing enlightenment directly. This is\n"
 "bad. Please do not execute the \"enlightenment\"\n"
@@ -4181,11 +4194,11 @@ msgstr ""
 "altre cose simili prima di cominciare l'esecuzione di\n"
 "enlightenment stesso.\n"
 
-#: src/bin/e_main.c:1547
+#: src/bin/e_main.c:1549
 msgid "Testing Format Support"
 msgstr "Test supporto formato"
 
-#: src/bin/e_main.c:1551
+#: src/bin/e_main.c:1553
 msgid ""
 "Enlightenment found Evas can't create a buffer canvas. Please check\n"
 "Evas has Software Buffer engine support.\n"
@@ -4194,7 +4207,7 @@ msgstr ""
 "buffer. Controllare che Evas abbia il supporto per il motore di\n"
 "rendering software Buffer.\n"
 
-#: src/bin/e_main.c:1576
+#: src/bin/e_main.c:1578
 #, c-format
 msgid ""
 "Enlightenment cannot access test image for '%s' filetype. Check your install "
@@ -4203,7 +4216,7 @@ msgstr ""
 "Enlightenment non riesce ad accedere all'immagine di test per i file di "
 "tipo'%s'. Controllare l'installazione per problemi di configurazione.\n"
 
-#: src/bin/e_main.c:1587
+#: src/bin/e_main.c:1589
 #, c-format
 msgid ""
 "Enlightenment found Evas can't load '%s' files. Check Evas has '%s' loader "
@@ -4212,7 +4225,7 @@ msgstr ""
 "Enlightenment ha riscontrato che Evas non può caricare file '%s'.\n"
 "Controllare che Evas abbia il supporto per il loader '%s'.\n"
 
-#: src/bin/e_main.c:1602
+#: src/bin/e_main.c:1604
 msgid ""
 "Enlightenment found Evas can't load the 'Sans' font. Check Evas has "
 "fontconfig\n"
@@ -4222,21 +4235,21 @@ msgstr ""
 "Controllare che Evas abbia il supporto per fontconfig e che il\n"
 "fontconfig di sistema definisca un font 'Sans'.\n"
 
-#: src/bin/e_main.c:1624
+#: src/bin/e_main.c:1626
 msgid "Enlightenment cannot create a compositor.\n"
 msgstr "Enlightenment non riesce a creare un compositor.\n"
 
-#: src/bin/e_main.c:1632
+#: src/bin/e_main.c:1634
 msgid "Setup DND"
 msgstr "Impostazione drag and drop"
 
-#: src/bin/e_main.c:1636
+#: src/bin/e_main.c:1638
 msgid "Enlightenment cannot set up its dnd system.\n"
 msgstr ""
 "Enlightenment non riesce a configurare il suo\n"
 "sistema di 'drag & drop'.\n"
 
-#: src/bin/e_main.c:1754
+#: src/bin/e_main.c:1756
 #, c-format
 msgid ""
 "Enlightenment crashed early on start and has<ps/>been restarted. There was "
@@ -4247,22 +4260,22 @@ msgstr ""
 "C'è stato un errore nel<ps/>caricamento del modulo: %s. Questo modulo è "
 "stato<ps/>disabilitato e non verrà caricato."
 
-#: src/bin/e_main.c:1759 src/bin/e_main.c:1775
+#: src/bin/e_main.c:1761 src/bin/e_main.c:1777
 msgid "Enlightenment crashed early on start and has been restarted"
 msgstr "Enlightenment è andato subito in crash ed è stato riavviato"
 
-#: src/bin/e_main.c:1760
+#: src/bin/e_main.c:1762
 #, c-format
 msgid ""
 "Enlightenment crashed early on start and has been restarted.<ps/>There was "
 "an error loading the module named: %s<ps/><ps/>This module has been disabled "
 "and will not be loaded."
 msgstr ""
-"Enlightenment è andato subito in crash all'avvio ed è stato riavviato."
-"<ps/>C'è stato un errore nel caricamento del modulo: %s.<ps/><ps/>Questo modulo "
+"Enlightenment è andato subito in crash all'avvio ed è stato riavviato.<ps/"
+">C'è stato un errore nel caricamento del modulo: %s.<ps/><ps/>Questo modulo "
 "è stato disabilitato e non verrà caricato."
 
-#: src/bin/e_main.c:1768
+#: src/bin/e_main.c:1770
 msgid ""
 "Enlightenment crashed early on start and has<ps/>been restarted. All modules "
 "have been disabled<ps/>and will not be loaded to help remove any problem<ps/"
@@ -4275,7 +4288,7 @@ msgstr ""
 "finestra di configurazione<ps/>dei moduli dovrebbe permettervi di "
 "selezionare<ps/>nuovamente i vostri moduli.\n"
 
-#: src/bin/e_main.c:1776
+#: src/bin/e_main.c:1778
 msgid ""
 "Enlightenment crashed early on start and has been restarted.<ps/>All modules "
 "have been disabled and will not be loaded to help<ps/>remove any problem "
@@ -4298,7 +4311,9 @@ msgstr "Caricamento modulo: %s"
 msgid ""
 "There was an error loading the module named: %s<ps/>No module named %s could "
 "be found in the<ps/>module search directories.<ps/>"
-msgstr "C'è stato un errore nel caricamento del modulo: %s<ps/>Non è stato trovato nessun modulo di nome %s nelle<ps/>directory di ricerca dei moduli.<ps/>"
+msgstr ""
+"C'è stato un errore nel caricamento del modulo: %s<ps/>Non è stato trovato "
+"nessun modulo di nome %s nelle<ps/>directory di ricerca dei moduli.<ps/>"
 
 #: src/bin/e_module.c:391 src/bin/e_module.c:404 src/bin/e_module.c:423
 msgid "Error loading Module"
@@ -4367,7 +4382,8 @@ msgstr "Lo so"
 #, c-format
 msgid "Enlightenment was unable to fork a child process:<ps/><ps/>%s<ps/>"
 msgstr ""
-"Enlightenment non ha potuto fare il fork di un processo figlio:<ps/><ps/>%s<ps/>"
+"Enlightenment non ha potuto fare il fork di un processo figlio:<ps/><ps/>"
+"%s<ps/>"
 
 #: src/bin/e_screensaver.c:226
 msgid ""
@@ -4375,9 +4391,9 @@ msgid ""
 "<b>presentation</b> mode and temporarily disable screen saver, lock and "
 "power saving?"
 msgstr ""
-"Avete disabilitato lo screensaver troppo presto.<ps/><ps/>Volete abilitare la "
-"modalità <b>presentazione</b> e disabilitare temporaneamente lo screensaver, "
-"il bloccaschermo e la gestione energetica?"
+"Avete disabilitato lo screensaver troppo presto.<ps/><ps/>Volete abilitare "
+"la modalità <b>presentazione</b> e disabilitare temporaneamente lo "
+"screensaver, il bloccaschermo e la gestione energetica?"
 
 #: src/bin/e_shelf.c:65
 msgid "Float"
@@ -4444,9 +4460,9 @@ msgid ""
 "set your shelf to<ps/>\"Below Everything\" or disable autohiding."
 msgstr ""
 "La scomparsa automatica della mensola non<ps/>funziona correttamente con "
-"l'attuale<ps/>configurazione, si prega di impostare<ps/>\"Al di sotto di tutto"
-"\" o di disabilitare<ps/>la scomparsa automatica nelle proprietà<ps/>della "
-"mensola."
+"l'attuale<ps/>configurazione, si prega di impostare<ps/>\"Al di sotto di "
+"tutto\" o di disabilitare<ps/>la scomparsa automatica nelle proprietà<ps/"
+">della mensola."
 
 #: src/bin/e_shelf.c:1089
 msgid "Add New Shelf"
@@ -4527,9 +4543,9 @@ msgid ""
 "first?<ps/><ps/>Auto logout in %d seconds."
 msgstr ""
 "La chiusura della sessione sta prendendo troppo tempo.<ps/>Alcune "
-"applicazioni rifiutano di chiudersi.<ps/>Volete chiudere comunque la sessione "
-"senza aspettare<ps/>prima la chiusura di queste applicazioni?<ps/><ps/>Chiusura "
-"automatica tra %d secondi."
+"applicazioni rifiutano di chiudersi.<ps/>Volete chiudere comunque la "
+"sessione senza aspettare<ps/>prima la chiusura di queste applicazioni?<ps/"
+"><ps/>Chiusura automatica tra %d secondi."
 
 #: src/bin/e_sys.c:840
 msgid "Logout problems"
@@ -4555,7 +4571,9 @@ msgstr "Enlightenment è occupato con un'altra richiesta"
 msgid ""
 "Logging out.<ps/>You cannot perform other system actions<ps/>once a logout "
 "has begun."
-msgstr "Chiusura in corso.<ps/>Non è possibile richiedere ulteriori azioni di sistema<ps/>una volta che è stata richiesta la chiusura di sessione."
+msgstr ""
+"Chiusura in corso.<ps/>Non è possibile richiedere ulteriori azioni di "
+"sistema<ps/>una volta che è stata richiesta la chiusura di sessione."
 
 #: src/bin/e_sys.c:931
 msgid ""
@@ -4640,9 +4658,9 @@ msgid ""
 "latest version is:<ps/><ps/>%s<ps/><ps/>Please visit www.enlightenment."
 "org<ps/>or update your system packages<ps/>to get a new version."
 msgstr ""
-"La vostra versione di Enlightenment<ps/>non è quella più recente<ps/>L'ultima "
-"versione è:<ps/><ps/>%s<ps/><ps/>Potete visitare www.enlightenment.org<ps/>o "
-"aggiornare i vostri pacchetti di<ps/>sistema per ottenere una "
+"La vostra versione di Enlightenment<ps/>non è quella più recente<ps/"
+">L'ultima versione è:<ps/><ps/>%s<ps/><ps/>Potete visitare www.enlightenment."
+"org<ps/>o aggiornare i vostri pacchetti di<ps/>sistema per ottenere una "
 "nuova<ps/>versione."
 
 #: src/bin/e_utils.c:134
@@ -4655,9 +4673,9 @@ msgid ""
 "means<ps/>that Enlightenment will not allow itself to exit until these "
 "windows have<ps/>been closed or have the lifespan lock removed.<ps/>"
 msgstr ""
-"Alcune finestre sono ancora in giro con il blocco Perpetua abilitato."
-"<ps/>Questo significa che Enlightenment non uscirà finchè queste "
-"finestre<ps/>non saranno chiuse o avranno il blocco Perpetua disabilitato.<ps/>"
+"Alcune finestre sono ancora in giro con il blocco Perpetua abilitato.<ps/"
+">Questo significa che Enlightenment non uscirà finchè queste finestre<ps/"
+">non saranno chiuse o avranno il blocco Perpetua disabilitato.<ps/>"
 
 #: src/bin/e_utils.c:553
 #, c-format
@@ -4767,8 +4785,8 @@ msgid ""
 "adding it in. You can re-configure things now to your<ps/>liking. Sorry for "
 "the hiccup in your configuration.<ps/>"
 msgstr ""
-"I dati di configurazione avevano bisogno di essere aggiornati.<ps/>La vecchia "
-"configurazione è stata sostituita con un nuovo set di impostazioni "
+"I dati di configurazione avevano bisogno di essere aggiornati.<ps/>La "
+"vecchia configurazione è stata sostituita con un nuovo set di impostazioni "
 "predefinite.<ps/>Questo avverrà spesso durante lo sviluppo, quindi non "
 "riportate bug in proposito. Significa<ps/>semplicemente che il modulo ha "
 "bisogno di nuovi dati di configurazione predefinita da usare<ps/>per "
@@ -4795,7 +4813,8 @@ msgstr ""
 "versione<ps/>precedente del modulo o si abbia copiato la configurazione da "
 "una macchina su cui<ps/>gira una versione più recente del modulo. Questo è "
 "male, quindi la vostra<ps/>configurazione è stata ripristinata a scopo "
-"precauzionale ai valori predefiniti. Ci scusiamo<ps/>per l'inconveniente.<ps/>"
+"precauzionale ai valori predefiniti. Ci scusiamo<ps/>per l'inconveniente.<ps/"
+">"
 
 #: src/bin/e_utils.c:980 src/modules/packagekit/e_mod_config.c:45
 #, c-format
@@ -5641,14 +5660,20 @@ msgstr "Associazioni ACPI"
 msgid ""
 "Please trigger the ACPI event you wish to bind to, <ps/><ps/>or "
 "<hilight>Escape</hilight> to abort."
-msgstr "Causare l'evento ACPI che si desidera impostare,<ps/><ps/>o premere <hilight>Esc</hilight> per abortire"
+msgstr ""
+"Causare l'evento ACPI che si desidera impostare,<ps/><ps/>o premere "
+"<hilight>Esc</hilight> per abortire"
 
 #: src/modules/conf_bindings/e_int_config_edgebindings.c:5
 msgid ""
 "Please select an edge,<ps/>or click <hilight>Close</hilight> to abort.<ps/"
 "><ps/>You can either specify a delay of this<ps/> action using the slider, "
 "or make it<ps/>respond to edge clicks:"
-msgstr "Selezionare un bordo dello schermo<ps/>o cliccare <hilight>Chiudi</hilight> per abortire.<ps/><ps/>Si può anche specificare un ritardo<ps/> per questa azione usando il cursore,<ps/>oppure fare in modo che risponda ai<ps/>clic del mouse sul bordo:"
+msgstr ""
+"Selezionare un bordo dello schermo<ps/>o cliccare <hilight>Chiudi</hilight> "
+"per abortire.<ps/><ps/>Si può anche specificare un ritardo<ps/> per questa "
+"azione usando il cursore,<ps/>oppure fare in modo che risponda ai<ps/>clic "
+"del mouse sul bordo:"
 
 #: src/modules/conf_bindings/e_int_config_edgebindings.c:106
 msgid "Edge Bindings Settings"
@@ -5941,8 +5966,8 @@ msgid ""
 "The signal and source that you entered are already used by<ps/><hilight>%s</"
 "hilight> action.<ps/>"
 msgstr ""
-"Il segnale e la sorgente che avete scelto è già usata "
-"dall'azione<ps/><hilight>%s</hilight>."
+"Il segnale e la sorgente che avete scelto è già usata dall'azione<ps/"
+"><hilight>%s</hilight>."
 
 #: src/modules/conf_bindings/e_int_config_signalbindings.c:621
 msgid "Add Signal Binding"
@@ -6045,8 +6070,8 @@ msgstr "Aggiungi nuovo profilo"
 #, c-format
 msgid "You want to delete the \"%s\" profile.<ps/><ps/>Are you sure?"
 msgstr ""
-"Avete chiesto di eliminare il profilo \"%s\".<ps/><ps/>Siete sicuri di volerlo "
-"fare?"
+"Avete chiesto di eliminare il profilo \"%s\".<ps/><ps/>Siete sicuri di "
+"volerlo fare?"
 
 #: src/modules/conf_dialogs/e_int_config_profiles.c:339
 msgid "Are you sure you want to delete this profile?"
@@ -6508,7 +6533,9 @@ msgstr "Errore importazione configurazione metodo di input"
 msgid ""
 "Enlightenment was unable to import the configuration.<ps/><ps/>Are you sure "
 "this is really a valid configuration?"
-msgstr "Enlightenment non ha potuto importare la configurazione.<ps/><ps/>Siete sicuri che sia realmente una configurazione valida?"
+msgstr ""
+"Enlightenment non ha potuto importare la configurazione.<ps/><ps/>Siete "
+"sicuri che sia realmente una configurazione valida?"
 
 #: src/modules/conf_intl/e_int_config_imc_import.c:280
 msgid ""
@@ -6536,9 +6563,9 @@ msgid ""
 ">The variables that may affect you are<ps/>as follows:<ps/>%s"
 msgstr ""
 "Attualmente sono impostate alcune variabili<ps/>d'ambiente extra per la "
-"localizzazione che<ps/>potrebbero interferire con la "
-"corretta<ps/>visualizzazione della lingua scelta.<ps/>Se non volete che questo "
-"si verifichi<ps/>rimuovete le variabili tramite l'apposita<ps/>voce del "
+"localizzazione che<ps/>potrebbero interferire con la corretta<ps/"
+">visualizzazione della lingua scelta.<ps/>Se non volete che questo si "
+"verifichi<ps/>rimuovete le variabili tramite l'apposita<ps/>voce del "
 "pannello impostazioni.<ps/>Le variabili in questione sono le seguenti:<ps/>%s"
 
 #: src/modules/conf_intl/e_int_config_intl.c:966
@@ -6795,12 +6822,12 @@ msgstr "%1.1f s"
 
 #: src/modules/conf_performance/e_int_config_powermanagement.c:239
 #: src/modules/notification/e_mod_config.c:102
-#: src/modules/shot/e_mod_main.c:669
+#: src/modules/shot/e_mod_main.c:670
 msgid "Low"
 msgstr "Bassa"
 
 #: src/modules/conf_performance/e_int_config_powermanagement.c:278
-#: src/modules/shot/e_mod_main.c:667
+#: src/modules/shot/e_mod_main.c:668
 msgid "Medium"
 msgstr "Media"
 
@@ -6812,7 +6839,7 @@ msgid "%.0f s"
 msgstr "%.0f s"
 
 #: src/modules/conf_performance/e_int_config_powermanagement.c:317
-#: src/modules/shot/e_mod_main.c:665
+#: src/modules/shot/e_mod_main.c:666
 msgid "High"
 msgstr "Alta"
 
@@ -7292,7 +7319,9 @@ msgstr "Errore importazione tema"
 msgid ""
 "Enlightenment was unable to import the theme.<ps/><ps/>Are you sure this is "
 "really a valid theme?"
-msgstr "Enlightenment non ha potuto importare il tema.<ps/><ps/>Siete sicuri che sia un tema realmente valido?"
+msgstr ""
+"Enlightenment non ha potuto importare il tema.<ps/><ps/>Siete sicuri che sia "
+"un tema realmente valido?"
 
 #: src/modules/conf_theme/e_int_config_theme_import.c:272
 msgid "Enlightenment was unable to import the theme<ps/>due to a copy error."
@@ -8131,8 +8160,8 @@ msgid ""
 "There was an error trying to set the<ps/>cpu frequency setting via the "
 "module's<ps/>setfreq utility."
 msgstr ""
-"C'è stato un errore nell'impostazione dei parametri<ps/>della frequenza della "
-"cpu attraverso l'utilità<ps/>setfreq del modulo."
+"C'è stato un errore nell'impostazione dei parametri<ps/>della frequenza "
+"della cpu attraverso l'utilità<ps/>setfreq del modulo."
 
 #: src/modules/cpufreq/e_mod_main.c:587
 msgid ""
@@ -8151,8 +8180,8 @@ msgid ""
 "The freqset binary in the cpufreq module<ps/>directory cannot be found (stat "
 "failed)"
 msgstr ""
-"Non è stato trovato il binario freqset nella<ps/>directory del modulo Cpufreq "
-"(stat fallito)."
+"Non è stato trovato il binario freqset nella<ps/>directory del modulo "
+"Cpufreq (stat fallito)."
 
 #: src/modules/cpufreq/e_mod_main.c:1467
 msgid "Cpufreq Permissions Error"
@@ -8165,10 +8194,10 @@ msgid ""
 "not have the<ps/>setuid bit set. Please ensure this is the<ps/>case. For "
 "example:<ps/><ps/>sudo chown root %s<ps/>sudo chmod u+s,a+x %s<ps/>"
 msgstr ""
-"Il binario freqset del modulo Cpufreq non<ps/>è di proprietà di root o non ha "
-"il bit<ps/>setuid impostato. Si prega di fare in modo<ps/>che sia così, ad "
-"esempio con questi comandi:<ps/><ps/>sudo chown root %s<ps/>sudo chmod u+s,a+x "
-"%s<ps/>"
+"Il binario freqset del modulo Cpufreq non<ps/>è di proprietà di root o non "
+"ha il bit<ps/>setuid impostato. Si prega di fare in modo<ps/>che sia così, "
+"ad esempio con questi comandi:<ps/><ps/>sudo chown root %s<ps/>sudo chmod u"
+"+s,a+x %s<ps/>"
 
 #: src/modules/cpufreq/e_mod_main.c:1501
 msgid "CPU Frequency"
@@ -8545,11 +8574,11 @@ msgstr ""
 "<hilight>&lt;?&gt;</hilight> mostra questa pagina<ps/>    <hilight>&lt;"
 "invio&gt;</hilight> esegue l'azione<ps/>    <hilight>&lt;ctrl+invio&gt;</"
 "hilight> esegue l'azione e continua<ps/>    <hilight>&lt;tab&gt;</hilight> "
-"cambia selettore<ps/>    <hilight>&lt;ctrl+tab&gt;</hilight> completa l'input "
-"(dipende dal plugin)<ps/>    <hilight>&lt;ctrl+'x'&gt;</hilight> va al plugin "
-"che inizia con 'x'<ps/>    <hilight>&lt;ctrl+sinistra/destra&gt;</hilight> "
-"cicla tra i plugin<ps/>    <hilight>&lt;ctrl+su/giù&gt;</hilight> va alla "
-"prima/ultima voce<ps/>    <hilight>&lt;ctrl+1&gt;</hilight> cambia "
+"cambia selettore<ps/>    <hilight>&lt;ctrl+tab&gt;</hilight> completa "
+"l'input (dipende dal plugin)<ps/>    <hilight>&lt;ctrl+'x'&gt;</hilight> va "
+"al plugin che inizia con 'x'<ps/>    <hilight>&lt;ctrl+sinistra/destra&gt;</"
+"hilight> cicla tra i plugin<ps/>    <hilight>&lt;ctrl+su/giù&gt;</hilight> "
+"va alla prima/ultima voce<ps/>    <hilight>&lt;ctrl+1&gt;</hilight> cambia "
 "visualizzazione (esce da questa pagina ;)<ps/>    <hilight>&lt;ctrl+2&gt;</"
 "hilight> cambia visualizzazione a elenco<ps/>    <hilight>&lt;ctrl+3&gt;</"
 "hilight> cambia visualizzazione a miniature"
@@ -9027,7 +9056,9 @@ msgstr "Inserire nome per la nuova sorgente:"
 msgid ""
 "You requested to delete \"%s\".<ps/><ps/>Are you sure you want to delete "
 "this bar source?"
-msgstr "Avete chiesto di eliminare \"%s\".<ps/><ps/>Siete sicuri di voler rimuovere questa sorgente per Ibar?"
+msgstr ""
+"Avete chiesto di eliminare \"%s\".<ps/><ps/>Siete sicuri di voler rimuovere "
+"questa sorgente per Ibar?"
 
 #: src/modules/ibar/e_mod_config.c:208
 msgid "Are you sure you want to delete this bar source?"
@@ -9143,8 +9174,8 @@ msgid ""
 "happening. Please report this bug."
 msgstr ""
 "L'autenticazione tramite PAM ha fallito<ps/>l'impostazione della sessione di "
-"autenticazione.<ps/>L'errore riportato è <hilight>%i</hilight>.<ps/>Questo non "
-"dovrebbe succedere, si prega di<ps/>segnalare questo bug."
+"autenticazione.<ps/>L'errore riportato è <hilight>%i</hilight>.<ps/>Questo "
+"non dovrebbe succedere, si prega di<ps/>segnalare questo bug."
 
 #: src/modules/mixer/e_mod_main.c:123
 msgid "New volume"
@@ -9333,7 +9364,9 @@ msgstr "Uscita da modalità non in linea"
 msgid ""
 "Now in <b>online</b> mode.<ps/>Now modules that use network will resume "
 "regular tasks."
-msgstr "Adesso si è in modalità <b>in linea</b>.<ps/>Da ora in poi i moduli che usano la rete riprenderanno i loro compiti normali."
+msgstr ""
+"Adesso si è in modalità <b>in linea</b>.<ps/>Da ora in poi i moduli che "
+"usano la rete riprenderanno i loro compiti normali."
 
 #: src/modules/notification/e_mod_main.c:187
 msgid "Notification Module"
@@ -9590,7 +9623,10 @@ msgid ""
 "You cannot use the right mouse button in the<ps/>shelf for this as it is "
 "already taken by internal<ps/>code for context menus.<ps/>This button only "
 "works in the popup."
-msgstr "Non potete usare il tasto destro del mouse<ps/>nella mensola poichè è già usato dal codice<ps/>interno per il menù contestuale.<ps/>Questo tasto funziona solo nel popup."
+msgstr ""
+"Non potete usare il tasto destro del mouse<ps/>nella mensola poichè è già "
+"usato dal codice<ps/>interno per il menù contestuale.<ps/>Questo tasto "
+"funziona solo nel popup."
 
 #: src/modules/pager/e_mod_main.c:2058
 msgid "Pager module cannot be loaded at the same time as Pager Plain!"
@@ -9713,7 +9749,16 @@ msgid ""
 "this<ps/>is a terminal which can change its window name.<ps/>Alternatively, "
 "you can add a data.item to<ps/>%s/e-module-quickaccess.edj<ps/>Like so:<ps/"
 ">data.item: \"%s\" \"--OPT\";"
-msgstr "L'opzione di riesecuzione è concepita<ps/>per l'uso con applicazioni terminale,<ps/>per creare un terminale persistente che<ps/>riparte quando viene chiuso, generalmente<ps/>vista in terminali drop-down in stile<ps/>Quake. O l'applicazione selezionata non<ps/>è un terminale o l'opzione da riga di<ps/>comando per cambiare il nome della<ps/>finestra del terminale è sconosciuta.<ps/>Potete inviare un bug report se questo<ps/>è un terminale che può cambiare nome<ps/>alla sua finestra. In alternativa potete<ps/>aggiungere un oggetto data.item in<ps/>%s/e-module-quickaccess.edj<ps/> in questo modo:<ps/>data.item: \"%s\" \"--OPT\";"
+msgstr ""
+"L'opzione di riesecuzione è concepita<ps/>per l'uso con applicazioni "
+"terminale,<ps/>per creare un terminale persistente che<ps/>riparte quando "
+"viene chiuso, generalmente<ps/>vista in terminali drop-down in stile<ps/"
+">Quake. O l'applicazione selezionata non<ps/>è un terminale o l'opzione da "
+"riga di<ps/>comando per cambiare il nome della<ps/>finestra del terminale è "
+"sconosciuta.<ps/>Potete inviare un bug report se questo<ps/>è un terminale "
+"che può cambiare nome<ps/>alla sua finestra. In alternativa potete<ps/"
+">aggiungere un oggetto data.item in<ps/>%s/e-module-quickaccess.edj<ps/> in "
+"questo modo:<ps/>data.item: \"%s\" \"--OPT\";"
 
 #: src/modules/quickaccess/e_mod_quickaccess.c:331
 #: src/modules/quickaccess/e_mod_quickaccess.c:876
@@ -9747,10 +9792,11 @@ msgid ""
 "either the app is unknown to us<ps/>or it is not intended for use with this "
 "option.<ps/>Please choose an action to take:"
 msgstr ""
-"La finestra selezionata creata con nome:<ps/>%s<ps/>e classe:<ps/>%s<ps/>non è "
-"stata trovata nel database di Quickaccess.<ps/>Questo significa che "
+"La finestra selezionata creata con nome:<ps/>%s<ps/>e classe:<ps/>%s<ps/>non "
+"è stata trovata nel database di Quickaccess.<ps/>Questo significa che "
 "l'applicazione non è a noi<ps/>nota o che non è intesa per essere usata "
-"con<ps/>questa opzione. Si prega di scegliere una<ps/>azione da intraprendere:"
+"con<ps/>questa opzione. Si prega di scegliere una<ps/>azione da "
+"intraprendere:"
 
 #: src/modules/quickaccess/e_mod_quickaccess.c:394
 #: src/modules/quickaccess/e_mod_quickaccess.c:1018
@@ -9816,14 +9862,13 @@ msgid ""
 "(not permanent)"
 msgstr ""
 "Le opzioni del menù di Quickaccess sono le seguenti:<ps/><hilight>Scomparsa "
-"automatica</hilight> - nasconde la finestra quando perde il "
-"fuoco<ps/><hilight>Nascondi invece di alzare</hilight> - nasconde la finestra "
-"se attivata senza fuoco<ps/><hilight>Modalità salto</hilight> - passa al "
-"desktop della finestra e la alza invece di mostrarla/"
-"nasconderla<ps/><hilight>Riesegui alla chiusura</hilight> - esegue nuovamente "
-"il comando della voce quando viene chiusa la sua "
-"finestra<ps/><hilight>Transitoria</hilight> - ricorda solo questa istanza "
-"della finestra (non permanente)"
+"automatica</hilight> - nasconde la finestra quando perde il fuoco<ps/"
+"><hilight>Nascondi invece di alzare</hilight> - nasconde la finestra se "
+"attivata senza fuoco<ps/><hilight>Modalità salto</hilight> - passa al "
+"desktop della finestra e la alza invece di mostrarla/nasconderla<ps/"
+"><hilight>Riesegui alla chiusura</hilight> - esegue nuovamente il comando "
+"della voce quando viene chiusa la sua finestra<ps/><hilight>Transitoria</"
+"hilight> - ricorda solo questa istanza della finestra (non permanente)"
 
 #: src/modules/quickaccess/e_mod_quickaccess.c:1016
 msgid "You deleted it on your own, you rascal!<ps/>Way to go!"
@@ -9877,8 +9922,8 @@ msgid ""
 "Quickaccess entries can be created from<ps/>the border menu of any window."
 "<ps/>Click Continue to see a demonstration."
 msgstr ""
-"Le voci Quickaccess possono essere<ps/>create dal bordo di qualunque finestra."
-"<ps/>Premere Continua per vedere una dimostrazione."
+"Le voci Quickaccess possono essere<ps/>create dal bordo di qualunque "
+"finestra.<ps/>Premere Continua per vedere una dimostrazione."
 
 #: src/modules/quickaccess/e_mod_quickaccess.c:1289
 msgid ""
@@ -9929,7 +9974,7 @@ msgstr ""
 msgid "Select screenshot save location"
 msgstr "Selezionare la directory di salvataggio"
 
-#: src/modules/shot/e_mod_main.c:286 src/modules/shot/e_mod_main.c:736
+#: src/modules/shot/e_mod_main.c:286 src/modules/shot/e_mod_main.c:737
 msgid "Save"
 msgstr "Salva"
 
@@ -10015,38 +10060,44 @@ msgstr "Conferma condivisione"
 msgid ""
 "This image will be uploaded<ps/>to enlightenment.org. It will be publicly "
 "visible."
-msgstr "Questa immagine verrà caricata su enlightenment.org.<ps/>Sarà visibile al pubblico."
+msgstr ""
+"Questa immagine verrà caricata su enlightenment.org.<ps/>Sarà visibile al "
+"pubblico."
 
-#: src/modules/shot/e_mod_main.c:612
+#: src/modules/shot/e_mod_main.c:613
 msgid "Where to put Screenshot..."
 msgstr "Dove salvare l'immagine"
 
-#: src/modules/shot/e_mod_main.c:659
+#: src/modules/shot/e_mod_main.c:660
 msgid "Quality"
 msgstr "Qualità"
 
-#: src/modules/shot/e_mod_main.c:663
+#: src/modules/shot/e_mod_main.c:664
 msgid "Perfect"
 msgstr "Perfetta"
 
-#: src/modules/shot/e_mod_main.c:738
+#: src/modules/shot/e_mod_main.c:739
 msgid "Share"
 msgstr "Condivisione"
 
-#: src/modules/shot/e_mod_main.c:985 src/modules/shot/e_mod_main.c:1033
+#: src/modules/shot/e_mod_main.c:1022 src/modules/shot/e_mod_main.c:1074
 msgid "Take Shot"
 msgstr "Scatta istantanea"
 
-#: src/modules/shot/e_mod_main.c:996 src/modules/shot/e_mod_main.c:1025
-#: src/modules/shot/e_mod_main.c:1038
+#: src/modules/shot/e_mod_main.c:1026
+msgid "Take Padded Shot"
+msgstr "Scatta istantanea con contorno"
+
+#: src/modules/shot/e_mod_main.c:1037 src/modules/shot/e_mod_main.c:1066
+#: src/modules/shot/e_mod_main.c:1079
 msgid "Take Screenshot"
 msgstr "Scatta istantanea"
 
-#: src/modules/shot/e_mod_main.c:1013
+#: src/modules/shot/e_mod_main.c:1054
 msgid "Shot Error"
 msgstr "Errore di Shot"
 
-#: src/modules/shot/e_mod_main.c:1014
+#: src/modules/shot/e_mod_main.c:1055
 msgid "Cannot initialize network"
 msgstr "Non riesco ad inizializzare la rete"
 
@@ -10548,7 +10599,13 @@ msgstr[0] ""
 "centrale/rotella)<ps/>* <b>Apri menù</b> (pulsante destro)<ps/>Il tasto "
 "predefinito da tenere schiacciato per attivare queste<ps/>associazioni è "
 "'%s'. Configurate i modificatori per questa<ps/>associazione qui sotto."
-msgstr[1] "Enlightenment imposta le associazioni predefinite del mouse<ps/>per gli oggetti. Queste associazioni forniscono tre operazioni<ps/>al click:<ps/>* <b>Sposta</b> (pulsante sinistro)<ps/>* <b>Ridimensiona</b> (pulsante centrale/rotella)<ps/>* <b>Apri menù</b> (pulsante destro)<ps/>I tasti predefiniti da tenere schiacciati per attivare queste<ps/>associazioni sono '%s'. Configurate i modificatori per questa<ps/>associazione qui sotto."
+msgstr[1] ""
+"Enlightenment imposta le associazioni predefinite del mouse<ps/>per gli "
+"oggetti. Queste associazioni forniscono tre operazioni<ps/>al click:<ps/>* "
+"<b>Sposta</b> (pulsante sinistro)<ps/>* <b>Ridimensiona</b> (pulsante "
+"centrale/rotella)<ps/>* <b>Apri menù</b> (pulsante destro)<ps/>I tasti "
+"predefiniti da tenere schiacciati per attivare queste<ps/>associazioni sono "
+"'%s'. Configurate i modificatori per questa<ps/>associazione qui sotto."
 
 #: src/modules/wizard/page_110.c:9
 msgid "Network Management"
@@ -10606,16 +10663,16 @@ msgid ""
 ">please disable this below. It is highly<ps/>advised that you do not disable "
 "this as it<ps/>may leave you vulnerable or having to live<ps/>with bugs."
 msgstr ""
-"Enlightenement può controllare<ps/>l'esistenza di nuove versioni,"
-"<ps/>aggiornamenti, bugfix e add-on<ps/>disponibili.<ps/><ps/>Questo è molto "
+"Enlightenement può controllare<ps/>l'esistenza di nuove versioni,<ps/"
+">aggiornamenti, bugfix e add-on<ps/>disponibili.<ps/><ps/>Questo è molto "
 "utile perché<ps/>consente di sapere se sono<ps/>stati risolti bug e problemi "
-"di<ps/>sicurezza in tempo reale. Per<ps/>farlo Enlightenment "
-"effettuerà<ps/>connessioni a enlightenment.org<ps/>per trasmettere alcune "
-"informazioni,<ps/>come potrebbe fare qualunque<ps/>browser. Nessuna "
-"informazione<ps/>personale come nomi utente,<ps/>password o file personali "
-"verrà<ps/>trasmessa. Se non gradite questo<ps/>potete disabilitare la "
-"funzionalità,<ps/>ma consigliamo di non farlo poiché<ps/>ciò può rendere il "
-"sistema<ps/>vulnerabile o esposto a bug."
+"di<ps/>sicurezza in tempo reale. Per<ps/>farlo Enlightenment effettuerà<ps/"
+">connessioni a enlightenment.org<ps/>per trasmettere alcune informazioni,<ps/"
+">come potrebbe fare qualunque<ps/>browser. Nessuna informazione<ps/"
+">personale come nomi utente,<ps/>password o file personali verrà<ps/"
+">trasmessa. Se non gradite questo<ps/>potete disabilitare la funzionalità,"
+"<ps/>ma consigliamo di non farlo poiché<ps/>ciò può rendere il sistema<ps/"
+">vulnerabile o esposto a bug."
 
 #: src/modules/wizard/page_170.c:59
 msgid "Enable update checking"
