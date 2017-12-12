@@ -3365,7 +3365,17 @@ e_comp_object_coords_inside_input_area(Evas_Object *obj, int x, int y)
         Eina_Array_Iterator it;
 
         EINA_ARRAY_ITER_NEXT(cw->input_objs, i, rect, it)
-          if (evas_object_pointer_coords_inside_get(rect, x, y)) return EINA_TRUE;
+          {
+#ifndef EFL_VERSION_1_21
+             if (evas_object_pointer_coords_inside_get(rect, x, y))
+               return EINA_TRUE;
+#else
+             Eina_Position2D pos = {x, y};
+
+             if (evas_object_coords_inside_get(rect, pos))
+               return EINA_TRUE;
+#endif
+          }
 
         return EINA_FALSE;
      }
