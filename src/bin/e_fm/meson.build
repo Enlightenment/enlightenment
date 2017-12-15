@@ -1,6 +1,7 @@
 deps = [
   dep_eina,
   dep_ecore,
+  dep_eet,
   dep_ecore_con,
   dep_ecore_file,
   dep_ecore_ipc,

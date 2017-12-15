@@ -213,7 +213,7 @@ if get_option('systemd') == true
   endif
 endif
 
-if cc.has_function('eeze_disk_function', dependencies: dependency('eeze')) == true
+if host_os.startswith('linux') and cc.has_function('eeze_disk_function', dependencies: dependency('eeze')) == true
   config_h.set('HAVE_EEZE_MOUNT', '1')
   eeze_mount = true
 endif
