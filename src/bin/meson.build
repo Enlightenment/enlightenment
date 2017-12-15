@@ -557,10 +557,11 @@ suid_exes += join_paths(dir_e_utils, 'enlightenment_sys')
 if freebsd == true
   executable('enlightenment_ckpasswd',
              'e_ckpasswd_main.c',
-             c_args     : suid_cflags,
-             link_args  : suid_ldflags,
-             install_dir: dir_e_utils,
-             install    : true
+             dependencies : [ dep_crypt ],
+             c_args       : suid_cflags,
+             link_args    : suid_ldflags,
+             install_dir  : dir_e_utils,
+             install      : true
             )
   suid_exes += join_paths(dir_e_utils, 'enlightenment_ckpasswd')
 endif

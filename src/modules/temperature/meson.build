@@ -2,6 +2,11 @@ src = files(
   'e_mod_main.c',
   'e_mod_config.c',
   'e_mod_tempget.c',
-  'e_mod_udev.c',
   'e_mod_main.h'
  )
+
+if get_option('device-udev') == true
+   src += files(
+    'e_mod_udev.c'
+   )
+endif
