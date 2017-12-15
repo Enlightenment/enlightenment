@@ -799,12 +799,12 @@ e_modapi_init(E_Module *m)
 
    ecore_evas_data_set(e_comp->ee, "comp", e_comp);
 
-   /* get the current screen geometry */
-   ecore_evas_screen_geometry_get(e_comp->ee, NULL, NULL, &w, &h);
-
    e_comp->screen = &drmiface;
 
    if (!e_comp_wl_init()) return NULL;
+
+   /* get the current screen geometry */
+   ecore_evas_screen_geometry_get(e_comp->ee, NULL, NULL, &w, &h);
    if (!e_comp_canvas_init(w, h)) return NULL;
 
    ecore_evas_pointer_xy_get(e_comp->ee, &e_comp_wl->ptr.x,
