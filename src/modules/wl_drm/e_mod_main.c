@@ -434,7 +434,9 @@ _drm2_randr_create(void)
                   s->config.rotation = 0;
                }
 
-            printf("DRM2 RRR: drm output rotation=%i\n", s->config.rotation);
+             printf("DRM2 RRR: drm output rotation=%i\n", s->config.rotation);
+             /* TODO: get current output rotation and store in
+              * s->config.rotation */
 
              s->info.can_rot_0 = EINA_FALSE;
              s->info.can_rot_90 = EINA_FALSE;
