@@ -392,6 +392,8 @@ _drm2_randr_create(void)
 
         if (ok)
           {
+             int rotations;
+
              if (!possible)
                {
                   unsigned int refresh;
@@ -413,12 +415,13 @@ _drm2_randr_create(void)
                          s->config.geom.w, s->config.geom.h);
                }
 
+             /* TODO: get current output rotation and store in
+              * s->config.rotation */
+
              s->info.can_rot_0 = EINA_FALSE;
              s->info.can_rot_90 = EINA_FALSE;
              s->info.can_rot_180 = EINA_FALSE;
              s->info.can_rot_270 = EINA_FALSE;
-
-             int rotations;
 
              rotations =
                ecore_drm2_output_supported_rotations_get(output);
