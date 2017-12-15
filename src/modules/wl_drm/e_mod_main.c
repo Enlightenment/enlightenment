@@ -271,6 +271,7 @@ _drm2_randr_create(void)
    const Eina_List *outputs;
    Ecore_Drm2_Output *output;
    unsigned int type;
+   E_Zone *zone;
 
    dev = ecore_evas_data_get(e_comp->ee, "device");
    if (!dev) return NULL;
@@ -355,6 +356,8 @@ _drm2_randr_create(void)
              s->info.modes = eina_list_append(s->info.modes, rmode);
           }
 
+        e_randr2_screen_modes_sort(s);
+
         if (e_randr2_cfg)
           cs = e_randr2_config_screen_find(s, e_randr2_cfg);
         if (cs)
@@ -438,6 +441,9 @@ _drm2_randr_create(void)
                   s->config.scale_multiplier = cs->scale_multiplier;
                }
           }
+
+        zone = e_zone_for_id_get(s->id);
+        if ((zone) && (!zone->output)) zone->output = s;
 
         r->screens = eina_list_append(r->screens, s);
      }
