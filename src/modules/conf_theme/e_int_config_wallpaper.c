@@ -480,6 +480,12 @@ _basic_create(E_Config_Dialog *cfd EINA_UNUSED, Evas *evas, E_Config_Dialog_Data
    evas_object_show(ow);
    e_widget_table_object_append(ot, oa, 0, 2, 2, 1, 1, 1, 1, 1);
    e_widget_list_object_append(o, ot, 1, 1, 0.5);
+
+   if (!cfdata->bg || cfdata->fmdir == 1)
+     e_widget_radio_toggle_set(cfdata->o_system, EINA_TRUE);
+   else
+     e_widget_radio_toggle_set(cfdata->o_personal, EINA_TRUE);
+
    return o;
 }
 
