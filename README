@@ -16,16 +16,6 @@ Heavily suggested:
 NOTE: Users of DR16 will need to rename the $prefix/bin/enlightenment
 file prior to installing this release or it will be overwritten.
 
-MESON BUILD:
-	meson . build
-optional:
-	mesonconf --options OR meson configure --options
-
-	sudo ninja -C build install
-
-You will, as usual, need to add the subsequent bin dir to your $PATH etc.
-
-
 NOTES:
 
 * if you do not want security issues make sure sysactions.conf is in
