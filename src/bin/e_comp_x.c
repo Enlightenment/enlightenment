@@ -5728,6 +5728,7 @@ _e_comp_x_setup(Ecore_X_Window root, int w, int h)
         if (i >= e_comp_canvas_layer_map(E_LAYER_CLIENT_ABOVE))
           ecore_x_window_raise(e_comp->layers[i].win);
         ec = _e_comp_x_client_new(e_comp->layers[i].win, 0);
+        if (!ec) continue;
         evas_object_name_set(ec->frame, "layer_obj");
         ec->lock_client_stacking = 1;
         ec->internal = 1;
