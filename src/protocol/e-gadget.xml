@@ -33,6 +33,9 @@
     <request name="open_uri">
       <arg name="uri" type="string"/>
     </request>
+    <request name="set_tooltip">
+      <arg name="surface" type="object" interface="wl_surface"/>
+    </request>
   </interface>
 
 </protocol>

@@ -13,6 +13,7 @@ static Eina_Hash *wins;
 static Eina_Hash *gadget_globals;
 static Eina_Hash *ar_globals;
 static Eina_Hash *display_actions;
+static Eina_List *tooltips;
 
 typedef struct Gadget_Action
 {
@@ -70,9 +71,14 @@ static const struct e_gadget_listener _gadget_listener =
 static void
 _gadget_global_bind(Ecore_Wl2_Display *d, uint32_t id)
 {
+   Eina_List *l;
+   Evas_Object *tt;
+
    struct e_gadget *gadget_global = wl_registry_bind(ecore_wl2_display_registry_get(d), id, &e_gadget_interface, 1);
    e_gadget_add_listener(gadget_global, &_gadget_listener, d);
    eina_hash_add(gadget_globals, &d, gadget_global);
+   EINA_LIST_FOREACH(tooltips, l, tt)
+     e_gadget_set_tooltip(gadget_global, ecore_wl2_window_surface_get(elm_win_wl_window_get(tt)));
 }
 
 static void
@@ -256,6 +262,7 @@ win_del(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj, void *eve
 {
    Ecore_Wl2_Display *d = win_display_get(obj);
    eina_hash_list_remove(wins, &d, obj);
+   tooltips = eina_list_remove(tooltips, obj);
 }
 
 static Evas_Object *
@@ -265,6 +272,16 @@ win_add(Evas_Object *win)
    if (!win) return NULL;
    d = win_display_get(win);
    _gadget_init(d);
+   if (elm_win_type_get(win) == ELM_WIN_TOOLTIP)
+     {
+        tooltips = eina_list_append(tooltips, win);
+        if (eina_hash_population(gadget_globals))
+          {
+             struct e_gadget *gadget_global = eina_hash_find(gadget_globals, &d);
+             if (gadget_global)
+               e_gadget_set_tooltip(gadget_global, ecore_wl2_window_surface_get(elm_win_wl_window_get(win)));
+          }
+     }
    if (!wins)
      wins = eina_hash_pointer_new(NULL);
    eina_hash_list_append(wins, &d, win);

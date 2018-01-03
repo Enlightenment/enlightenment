@@ -43,6 +43,14 @@ typedef struct Config_Item
    Eina_Bool cmd_changed E_BITFIELD;
 } Config_Item;
 
+typedef struct Tooltip
+{
+   Evas_Object *obj;
+   Evas_Object *content;
+   Evas_Object *tooltip_content;
+   struct wl_resource *tooltip_surface;
+} Tooltip;
+
 typedef struct Instance
 {
    Evas_Object *box;
@@ -50,9 +58,9 @@ typedef struct Instance
    Ecore_Exe *exe;
    Config_Item *ci;
    Eina_Hash *allowed_pids;
+   Eina_List *tooltip_surfaces;
    void *gadget_resource;
-   Evas_Object *popup;
-   Evas_Object *ctxpopup;
+   Tooltip popup, ctxpopup, base;
    Eina_List *extracted;
 } Instance;
 
@@ -379,6 +387,7 @@ runner_del(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *event_info E
      E_FREE_FUNC(inst->exe, ecore_exe_terminate);
    instances = eina_list_remove(instances, inst);
    eina_hash_free(inst->allowed_pids);
+   eina_list_free(inst->tooltip_surfaces);
    free(inst);
 }
 
@@ -415,9 +424,18 @@ gadget_open_uri(struct wl_client *client EINA_UNUSED, struct wl_resource *resour
    e_util_open(uri, NULL);
 }
 
+static void
+gadget_set_tooltip(struct wl_client *client EINA_UNUSED, struct wl_resource *resource, struct wl_resource *surface)
+{
+   Instance *inst = wl_resource_get_user_data(resource);
+
+   inst->tooltip_surfaces = eina_list_append(inst->tooltip_surfaces, surface);
+}
+
 static const struct e_gadget_interface _gadget_interface =
 {
    .open_uri = gadget_open_uri,
+   .set_tooltip = gadget_set_tooltip,
 };
 
 static void
@@ -476,7 +494,8 @@ child_close(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *event_info 
    Instance *inst = data;
    Evas_Object *ext;
 
-   inst->popup = NULL;
+   inst->popup.obj = NULL;
+   inst->popup.content = NULL;
    ext = evas_object_data_get(obj, "extracted");
    elm_box_unpack_all(obj);
    inst->extracted = eina_list_remove(inst->extracted, ext);
@@ -492,6 +511,7 @@ child_added(void *data, Evas_Object *obj, void *event_info)
 
    if (!efl_wl_surface_extract(event_info)) return;
    inst->extracted = eina_list_append(inst->extracted, event_info);
+   inst->popup.content = event_info;
 
    popup = elm_popup_add(e_comp->elm);
    e_comp_object_util_del_list_append(event_info, popup);
@@ -508,7 +528,7 @@ child_added(void *data, Evas_Object *obj, void *event_info)
    elm_box_pack_end(bx, event_info);
    elm_object_content_set(popup, bx);
 
-   inst->popup = popup = e_comp_object_util_add(popup, E_COMP_OBJECT_TYPE_NONE);
+   inst->popup.obj = popup = e_comp_object_util_add(popup, E_COMP_OBJECT_TYPE_NONE);
    evas_object_layer_set(popup, E_LAYER_POPUP);
    evas_object_move(popup, zone->x, zone->y);
    evas_object_resize(popup, zone->w / 4, zone->h / 3);
@@ -522,16 +542,23 @@ child_added(void *data, Evas_Object *obj, void *event_info)
 }
 
 static void
+extracted_del(Instance *inst, Evas_Object *ext)
+{
+   inst->extracted = eina_list_remove(inst->extracted, ext);
+   evas_object_hide(ext);
+}
+
+static void
 popup_del(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
    Instance *inst = data;
    Evas_Object *ext;
 
-   inst->ctxpopup = NULL;
+   inst->ctxpopup.obj = NULL;
+   inst->ctxpopup.content = NULL;
    ext = evas_object_data_get(obj, "extracted");
    elm_box_unpack_all(obj);
-   inst->extracted = eina_list_remove(inst->extracted, ext);
-   evas_object_hide(ext);
+   extracted_del(inst, ext);
 }
 
 static void
@@ -544,8 +571,8 @@ static void
 popup_hide(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Instance *inst = data;
-   elm_ctxpopup_dismiss(inst->ctxpopup);
-   evas_object_del(elm_object_content_get(inst->ctxpopup));
+   elm_ctxpopup_dismiss(inst->ctxpopup.obj);
+   evas_object_del(elm_object_content_get(inst->ctxpopup.obj));
 }
 
 static void
@@ -581,6 +608,46 @@ popup_hints(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *event_info 
 }
 
 static void
+tooltip_del(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
+{
+   Tooltip *tt = data;
+   Instance *inst = evas_object_data_get(tt->tooltip_content, "instance");
+
+   tt->tooltip_content = NULL;
+   inst->tooltip_surfaces = eina_list_remove(inst->tooltip_surfaces, tt->tooltip_surface);
+   tt->tooltip_surface = NULL;
+   elm_object_tooltip_unset(tt->obj);
+   extracted_del(inst, obj);
+}
+
+static void
+tooltip_hide(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
+{
+   Tooltip *tt = data;
+
+   elm_box_unpack_all(obj);
+   tt->tooltip_content = NULL;
+   tt->tooltip_surface = NULL;
+   evas_object_hide(data);
+}
+
+static Evas_Object *
+tooltip_content_cb(void *data, Evas_Object *obj EINA_UNUSED, Evas_Object *tooltip)
+{
+   Evas_Object *bx;
+   Tooltip *tt = data;
+
+   bx = elm_box_add(tooltip);
+   evas_object_pass_events_set(bx, 1);
+   evas_object_event_callback_add(bx, EVAS_CALLBACK_DEL, tooltip_hide, tt->tooltip_content);
+   elm_box_pack_end(bx, tt->tooltip_content);
+   evas_object_show(tt->tooltip_content);
+   elm_box_recalculate(bx);
+   evas_object_show(bx);
+   return bx;
+}
+
+static void
 popup_added(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
 {
    Instance *inst = data;
@@ -588,13 +655,54 @@ popup_added(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
 
    if (!efl_wl_surface_extract(event_info)) return;
    inst->extracted = eina_list_append(inst->extracted, event_info);
+   if (inst->tooltip_surfaces)
+     {
+        Eina_List *l;
+        struct wl_resource *surface;
 
-   inst->ctxpopup = elm_ctxpopup_add(inst->box);
-   elm_object_style_set(inst->ctxpopup, "noblock");
-   evas_object_smart_callback_add(inst->ctxpopup, "dismissed", popup_dismissed, inst);
+        EINA_LIST_FOREACH(inst->tooltip_surfaces, l, surface)
+          if (event_info == efl_wl_extracted_surface_object_find(surface))
+            {
+               Evas_Object *base = efl_wl_extracted_surface_extracted_parent_get(event_info);
+               Tooltip *tt;
+
+               //FIXME: if (inst->tooltip_content) error
+               if (base)
+                 {
+                    if (base == inst->popup.content)
+                      tt = &inst->popup;
+                    else if (base == inst->ctxpopup.content)
+                      tt = &inst->ctxpopup;
+                 }
+               else // base tooltip
+                 tt = &inst->base;
+               if (tt)
+                 {
+                    tt->tooltip_surface = surface;
+                    tt->tooltip_content = event_info;
+                    evas_object_data_set(event_info, "instance", inst);
+                    evas_object_pass_events_set(event_info, 1);
+                    evas_object_event_callback_add(event_info, EVAS_CALLBACK_DEL, tooltip_del, tt);
+                    elm_object_tooltip_content_cb_set(tt->obj, tooltip_content_cb, tt, NULL);
+                 }
+               else
+                 {
+                    inst->extracted = eina_list_remove(inst->extracted, event_info);
+                    evas_object_hide(event_info);
+                 }
+               return;
+            }
+     }
+
+   //FIXME: if (inst->ctxpopup.obj) error
+
+   inst->ctxpopup.obj = elm_ctxpopup_add(inst->box);
+   inst->ctxpopup.content = event_info;
+   elm_object_style_set(inst->ctxpopup.obj, "noblock");
+   evas_object_smart_callback_add(inst->ctxpopup.obj, "dismissed", popup_dismissed, inst);
    evas_object_event_callback_add(event_info, EVAS_CALLBACK_DEL, popup_hide, inst);
 
-   bx = elm_box_add(inst->ctxpopup);
+   bx = elm_box_add(inst->ctxpopup.obj);
    popup_hints_update(event_info);
    E_FILL(event_info);
    evas_object_event_callback_add(event_info, EVAS_CALLBACK_CHANGED_SIZE_HINTS, popup_hints, inst);
@@ -603,10 +711,10 @@ popup_added(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
    elm_box_recalculate(bx);
    evas_object_data_set(bx, "extracted", event_info);
    evas_object_event_callback_add(bx, EVAS_CALLBACK_DEL, popup_del, inst);
-   elm_object_content_set(inst->ctxpopup, bx);
+   elm_object_content_set(inst->ctxpopup.obj, bx);
 
-   e_gadget_util_ctxpopup_place(inst->box, inst->ctxpopup, NULL);
-   evas_object_show(inst->ctxpopup);
+   e_gadget_util_ctxpopup_place(inst->box, inst->ctxpopup.obj, NULL);
+   evas_object_show(inst->ctxpopup.obj);
    evas_object_focus_set(event_info, 1);
 }
 
@@ -657,7 +765,7 @@ gadget_create(Evas_Object *parent, Config_Item *ci, int *id, E_Gadget_Site_Orien
    evas_object_smart_callback_add(parent, "gadget_site_gravity", runner_site_gravity, inst);
    runner_run(inst);
    ecore_exe_data_set(inst->exe, inst);
-   inst->box = elm_box_add(e_comp->elm);
+   inst->base.obj = inst->box = elm_box_add(e_comp->elm);
    evas_object_event_callback_add(inst->box, EVAS_CALLBACK_DEL, runner_del, inst);
    evas_object_event_callback_add(inst->obj, EVAS_CALLBACK_CHANGED_SIZE_HINTS, runner_hints, inst);
    elm_box_homogeneous_set(inst->box, 1);
