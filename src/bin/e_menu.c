@@ -1505,7 +1505,7 @@ no_submenu_item:
                        o = e_icon_add(mi->menu->evas);
                        evas_object_name_set(o, "mi->icon_object");
                        mi->icon_object = o;
-                       e_icon_scale_size_set(o, e_util_icon_size_normalize(24 * e_scale));
+                       e_icon_scale_size_set(o, e_util_icon_size_normalize(96 * e_scale));
                        e_icon_preload_set(mi->icon_object, 1);
                        e_icon_file_set(o, mi->icon);
                        e_icon_fill_inside_set(mi->icon_object, 1);
