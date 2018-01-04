@@ -418,7 +418,7 @@ _alsa_sources_volume_set(Emix_Source *source, Emix_Volume v)
 
    if (v.channel_count != eina_list_count(s->channels))
      {
-        ERR("Volume struct doesnt have the same length than the channels");
+        ERR("Volume struct doesn't have the same length than the channels");
         return;
      }
 
@@ -490,7 +490,7 @@ _alsa_sink_volume_set(Emix_Sink *sink, Emix_Volume v)
 
    if (v.channel_count != eina_list_count(s->channels))
      {
-        ERR("Volume struct doesnt have the same length than the channels");
+        ERR("Volume struct doesn't have the same length than the channels");
         return;
      }
 

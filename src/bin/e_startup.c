@@ -138,7 +138,7 @@ _e_startup_event_cb(void *data, int ev_type EINA_UNUSED, void *ev)
 static Eina_Bool
 _e_startup_time_exceeded(void *data EINA_UNUSED)
 {
-   fprintf(stderr, "E: efreet didnt notify about cache update\n");
+   fprintf(stderr, "E: efreet didn't notify about cache update\n");
    _e_startup_error_dialog("E: Efreet did not update cache. "
                            "Please check your Efreet setup");
    return ECORE_CALLBACK_CANCEL;

@@ -788,7 +788,7 @@ _advanced_create(E_Config_Dialog *cfd, Evas *evas, E_Config_Dialog_Data *cfdata)
    FRAME_ADD(_("Esperanto"), cfdata->esperanto_list);
    FRAME_ADD(_("Solaris"), cfdata->solaris_list);
    FRAME_ADD(_("Terminate X"), cfdata->terminate_list);
-   FRAME_ADD(_("Miscelaneous"), cfdata->misc_list);
+   FRAME_ADD(_("Miscellaneous"), cfdata->misc_list);
 
    elm_object_content_set(sc, mainn);
 
@@ -1216,7 +1216,7 @@ _cb_misc_up(void *data, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
 
    if (!(cfdata = data)) return;
 
-   _popup_add(_("Miscelaneous"), cfdata, optmisc,
+   _popup_add(_("Miscellaneous"), cfdata, optmisc,
               &cfdata->cfg_misc_options, cfdata->misc_list);
 }
 
