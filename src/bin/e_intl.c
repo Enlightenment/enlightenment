@@ -218,7 +218,7 @@ e_intl_language_set(const char *lang)
                           "An error occurred setting your locale. \n\n"
 
                           "The locale you have chosen '%s' appears to \n"
-                          "be an alias, however, it can not be resloved.\n"
+                          "be an alias, however, it can not be resolved.\n"
                           "Please make sure you have a 'locale.alias' \n"
                           "file in your 'messages' path which can resolve\n"
                           "this alias.\n\n"

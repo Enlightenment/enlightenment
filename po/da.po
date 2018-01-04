@@ -6621,6 +6621,8 @@ msgstr "%2.2f s"
 #: src/modules/conf_menus/e_int_config_menus.c:320
 #: src/modules/conf_window_manipulation/e_int_config_focus.c:377
 #: src/modules/notification/e_mod_config.c:161
+#: src/modules/xkbswitch/e_mod_config.c:791
+#: src/modules/xkbswitch/e_mod_config.c:1219
 msgid "Miscellaneous"
 msgstr "Diverse"
 
@@ -10695,11 +10697,6 @@ msgstr "Solaris"
 #: src/modules/xkbswitch/e_mod_config.c:1208
 msgid "Terminate X"
 msgstr "Terminér X"
-
-#: src/modules/xkbswitch/e_mod_config.c:791
-#: src/modules/xkbswitch/e_mod_config.c:1219
-msgid "Miscelaneous"
-msgstr "Diverse"
 
 #: src/modules/xkbswitch/e_mod_config.c:1052
 #: src/modules/xkbswitch/e_mod_config.c:1075
