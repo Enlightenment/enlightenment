@@ -59,11 +59,21 @@ _gadget_gravity(void *data, struct e_gadget *e_gadget EINA_UNUSED, uint32_t grav
    win_emit(data, "gadget_site_gravity", gravity);
 }
 
+static void
+_gadget_removed(void *data, struct e_gadget *e_gadget EINA_UNUSED)
+{
+   Evas_Object *win;
+
+   win = eina_list_data_get(eina_hash_find(wins, &data));
+   evas_object_smart_callback_call(win, "gadget_removed", NULL);
+}
+
 static const struct e_gadget_listener _gadget_listener =
 {
    _gadget_anchor,
    _gadget_orient,
    _gadget_gravity,
+   _gadget_removed,
 };
 
 static void

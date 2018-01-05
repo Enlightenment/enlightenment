@@ -30,6 +30,7 @@
     <event name="gadget_gravity">
       <arg name="gravity" type="uint" enum="gravity"/>
     </event>
+    <event name="gadget_removed"/>
     <request name="open_uri">
       <arg name="uri" type="string"/>
     </request>
