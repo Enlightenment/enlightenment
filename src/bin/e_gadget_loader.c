@@ -33,32 +33,30 @@ win_display_get(Evas_Object *win)
 }
 
 static void
-wins_emit(Ecore_Wl2_Display *d, const char *sig, uint32_t val)
+win_emit(Ecore_Wl2_Display *d, const char *sig, uint32_t val)
 {
-   Eina_List *l, *ll;
    Evas_Object *win;
 
-   l = eina_hash_find(wins, &d);
-   EINA_LIST_FOREACH(l, ll, win)
-     evas_object_smart_callback_call(win, sig, (uintptr_t*)(uintptr_t)val);
+   win = eina_list_data_get(eina_hash_find(wins, &d));
+   evas_object_smart_callback_call(win, sig, (uintptr_t*)(uintptr_t)val);
 }
 
 static void
 _gadget_anchor(void *data, struct e_gadget *e_gadget EINA_UNUSED, uint32_t anchor)
 {
-   wins_emit(data, "gadget_site_anchor", anchor);
+   win_emit(data, "gadget_site_anchor", anchor);
 }
 
 static void
 _gadget_orient(void *data, struct e_gadget *e_gadget EINA_UNUSED, uint32_t orient)
 {
-   wins_emit(data, "gadget_site_orient", orient);
+   win_emit(data, "gadget_site_orient", orient);
 }
 
 static void
 _gadget_gravity(void *data, struct e_gadget *e_gadget EINA_UNUSED, uint32_t gravity)
 {
-   wins_emit(data, "gadget_site_gravity", gravity);
+   win_emit(data, "gadget_site_gravity", gravity);
 }
 
 static const struct e_gadget_listener _gadget_listener =
@@ -269,6 +267,7 @@ static Evas_Object *
 win_add(Evas_Object *win)
 {
    Ecore_Wl2_Display *d;
+   Eina_Bool first;
    if (!win) return NULL;
    d = win_display_get(win);
    _gadget_init(d);
@@ -284,9 +283,13 @@ win_add(Evas_Object *win)
      }
    if (!wins)
      wins = eina_hash_pointer_new(NULL);
+   first = !eina_hash_find(wins, &d);
    eina_hash_list_append(wins, &d, win);
-   evas_object_smart_callback_add(win, "gadget_action_request", action_request, d);
-   evas_object_smart_callback_add(win, "gadget_open_uri", uriopen_request, d);
+   if (first)
+     {
+        evas_object_smart_callback_add(win, "gadget_action_request", action_request, d);
+        evas_object_smart_callback_add(win, "gadget_open_uri", uriopen_request, d);
+     }
    evas_object_event_callback_add(win, EVAS_CALLBACK_DEL, win_del, NULL);
    elm_win_borderless_set(win, 1);
    return win;
