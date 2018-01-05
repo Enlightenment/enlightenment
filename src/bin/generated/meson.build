@@ -25,7 +25,7 @@ gadget_loader_protos = [
 
 gadget_loader_proto_files = []
 
-foreach p: protos
+foreach p: gadget_loader_protos
   gadget_loader_proto_files += gen_scanner_client.process(p)
   gadget_loader_proto_files += gen_scanner_impl.process(p)
 endforeach
