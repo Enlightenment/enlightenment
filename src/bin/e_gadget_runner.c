@@ -760,7 +760,6 @@ gadget_create(Evas_Object *parent, Config_Item *ci, int *id, E_Gadget_Site_Orien
    evas_object_smart_callback_add(inst->obj, "popup_added", popup_added, inst);
    e_comp_wl_extension_action_route_interface_get(&ar_version);
    efl_wl_global_add(inst->obj, &action_route_interface, ar_version, inst, ar_bind);
-   evas_object_data_set(inst->obj, "runner", inst);
    evas_object_event_callback_add(inst->obj, EVAS_CALLBACK_MOUSE_DOWN, mouse_down, inst);
    evas_object_smart_callback_add(parent, "gadget_created", runner_created, inst);
    evas_object_smart_callback_add(parent, "gadget_removed", runner_removed, inst);
@@ -769,6 +768,7 @@ gadget_create(Evas_Object *parent, Config_Item *ci, int *id, E_Gadget_Site_Orien
    runner_run(inst);
    ecore_exe_data_set(inst->exe, inst);
    inst->base.obj = inst->box = elm_box_add(e_comp->elm);
+   evas_object_data_set(inst->box, "runner", inst);
    evas_object_event_callback_add(inst->box, EVAS_CALLBACK_DEL, runner_del, inst);
    evas_object_event_callback_add(inst->obj, EVAS_CALLBACK_CHANGED_SIZE_HINTS, runner_hints, inst);
    elm_box_homogeneous_set(inst->box, 1);
