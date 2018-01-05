@@ -398,7 +398,14 @@ static Evas_Object *
 runner_gadget_configure(Evas_Object *g)
 {
    Instance *inst = evas_object_data_get(g, "runner");
-   return config_runner(inst->ci, e_comp_object_util_zone_get(g));
+   if (inst->ci->sandbox)
+     {
+        if (inst->gadget_resource)
+          e_gadget_send_gadget_configure(inst->gadget_resource);
+        return NULL;
+     }
+   else
+     return config_runner(inst->ci, e_comp_object_util_zone_get(g));
 }
 
 static void
