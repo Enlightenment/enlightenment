@@ -41,6 +41,7 @@ typedef struct Config_Item
    Eina_Stringshare *cmd;
    void *inst;
    Eina_Bool cmd_changed E_BITFIELD;
+   Eina_Bool sandbox E_BITFIELD;
 } Config_Item;
 
 typedef struct Tooltip
@@ -900,6 +901,7 @@ sandbox_create(Evas_Object *parent, const char *type, int *id, E_Gadget_Site_Ori
         ci->cmd = eina_stringshare_add(ed->exec);
         ci->exit_mode = EXIT_MODE_RESTART;
      }
+   ci->sandbox = 1;
    return gadget_create(parent, ci, id, orient);
 }
 
