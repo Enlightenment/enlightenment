@@ -108,14 +108,17 @@ _e_fm_main_eeze_format_error_msg(char     **buf,
    char *tmp;
 
    vu = strlen(v->udi) + 1;
-   vm = strlen(v->mount_point) + 1;
+   vm = (v->mount_point ? strlen(v->mount_point) : 0) + 1;
    en = strlen(name) + 1;
    size = vu + vm + en + strlen(msg) + 1;
    tmp = *buf = malloc(size);
 
    strcpy(tmp, v->udi);
    tmp += vu;
-   strcpy(tmp, v->mount_point);
+   if (v->mount_point)
+     strcpy(tmp, v->mount_point);
+   else
+     tmp[0] = 0;
    tmp += vm;
    strcpy(tmp, name);
    tmp += en;
