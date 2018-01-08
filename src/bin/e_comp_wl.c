@@ -1559,7 +1559,7 @@ _e_comp_wl_surface_state_commit(E_Client *ec, E_Comp_Wl_Surface_State *state)
              ec->want_focus |= ec->icccm.accepts_focus && (!ec->override);
           }
      }
-   else if (ec->comp_data->need_xdg6_configure && ec->comp_data->shell.surface)
+   else if (ec->comp_data->need_xdg_configure && ec->comp_data->shell.surface)
      _e_comp_wl_configure_send(ec, 0);
 
    state->sx = 0;
@@ -1663,6 +1663,11 @@ _e_comp_wl_surface_cb_attach(struct wl_client *client EINA_UNUSED, struct wl_res
 
    if (!(ec = wl_resource_get_user_data(resource))) return;
    if (e_object_is_del(E_OBJECT(ec))) return;
+   if (ec->comp_data->need_xdg_configure)
+     {
+        ec->comp_data->shell.buffer_attach_error(ec);
+        return;
+     }
 
    if (buffer_resource)
      {

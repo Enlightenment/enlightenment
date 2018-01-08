@@ -374,7 +374,7 @@ _xdg_shell_surface_send_configure(struct wl_resource *resource, Eina_Bool fullsc
    zxdg_surface_v6_send_configure(shd->surface, serial);
 
    wl_array_release(&states);
-   ec->comp_data->need_xdg6_configure = 0;
+   ec->comp_data->need_xdg_configure = 0;
 }
 
 static void
@@ -400,7 +400,7 @@ _e_xdg_shell_surface_configure_send(struct wl_resource *resource, uint32_t edges
         serial = wl_display_next_serial(e_comp_wl->wl.disp);
         zxdg_popup_v6_send_configure(resource, ec->x - ec->parent->x, ec->y - ec->parent->y, width ?: ec->w, height ?: ec->h);
         zxdg_surface_v6_send_configure(shd->surface, serial);
-        ec->comp_data->need_xdg6_configure = 0;
+        ec->comp_data->need_xdg_configure = 0;
         return;
      }
 
@@ -942,7 +942,7 @@ _e_xdg_surface_cb_popup_get(struct wl_client *client, struct wl_resource *resour
    cdata->shell.configure = _e_xdg_shell_surface_configure;
    cdata->shell.map = _e_xdg_shell_surface_map;
    cdata->shell.unmap = _e_xdg_shell_surface_unmap;
-   cdata->need_xdg6_configure = 1;
+   cdata->need_xdg_configure = 1;
 
    if (!ec->internal)
      ec->borderless = !ec->internal_elm_win;
@@ -1245,7 +1245,7 @@ _e_xdg_surface_cb_toplevel_get(struct wl_client *client EINA_UNUSED, struct wl_r
    cdata->shell.configure = _e_xdg_shell_surface_configure;
    cdata->shell.map = _e_xdg_shell_surface_map;
    cdata->shell.unmap = _e_xdg_shell_surface_unmap;
-   cdata->need_xdg6_configure = 1;
+   cdata->need_xdg_configure = 1;
 
    /* set toplevel client properties */
    ec->icccm.accepts_focus = 1;
@@ -1289,6 +1289,14 @@ _e_xdg_shell_surface_cb_destroy(struct wl_resource *resource)
    if (shd)
      ((v6_Shell_Data*)shd->shell)->surfaces = eina_list_remove(((v6_Shell_Data*)shd->shell)->surfaces, resource);
    e_shell_surface_cb_destroy(resource);
+}
+
+static void
+_e_xdg_shell_surface_buffer_attach_error(E_Client *ec)
+{
+   wl_resource_post_error(ec->comp_data->surface,
+                               ZXDG_SURFACE_V6_ERROR_UNCONFIGURED_BUFFER,
+                               "buffer attached/committed before configure");
 }
 
 static void
@@ -1351,6 +1359,7 @@ _e_xdg_shell_cb_surface_get(struct wl_client *client, struct wl_resource *resour
    e_object_ref(E_OBJECT(ec));
 
    cdata->shell.ping = _e_xdg_shell_surface_ping;
+   cdata->shell.buffer_attach_error = _e_xdg_shell_surface_buffer_attach_error;
    cdata->is_xdg_surface = EINA_TRUE;
 
    if (!ec->internal)

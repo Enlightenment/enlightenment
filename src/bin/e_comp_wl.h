@@ -314,6 +314,7 @@ struct _E_Comp_Wl_Client_Data
         void (*ping)(struct wl_resource *resource);
         void (*map)(struct wl_resource *resource);
         void (*unmap)(struct wl_resource *resource);
+        void (*buffer_attach_error)(E_Client *ec);
         Eina_Rectangle window;
         E_Shell_Data *data;
         struct
@@ -372,7 +373,7 @@ struct _E_Comp_Wl_Client_Data
    Eina_Bool is_xdg_surface E_BITFIELD;
    Eina_Bool grab E_BITFIELD;
    Eina_Bool buffer_commit E_BITFIELD;
-   Eina_Bool need_xdg6_configure E_BITFIELD;
+   Eina_Bool need_xdg_configure E_BITFIELD;
    Eina_Bool maximize_anims_disabled E_BITFIELD;
    Eina_Bool ssd_mouse_in E_BITFIELD;
    Eina_Bool need_center E_BITFIELD;
