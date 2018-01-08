@@ -175,12 +175,10 @@ _e_kbd_int_layout_state_update(E_Kbd_Int *ki)
              if (st->icon)
                {
                   char buf[PATH_MAX];
-                  char *p;
 
                   snprintf(buf, sizeof(buf), "%s/%s",
                            ki->layout.directory, st->icon);
-                  p = strrchr(st->icon, '.');
-                  if (!strcmp(p, ".edj"))
+                  if (eina_str_has_extension(st->icon, ".edj"))
                     e_icon_file_edje_set(ky->icon_obj, buf, "icon");
                   else
                     e_icon_file_set(ky->icon_obj, buf);
@@ -975,7 +973,6 @@ _e_kbd_int_layout_parse(E_Kbd_Int *ki, const char *layout)
         if ((!strcmp(str, "normal")) || (!strcmp(str, "shift")) ||
             (!strcmp(str, "capslock")) || (!strcmp(str, "altgr")))
           {
-             char *p;
              char label[4096];
 
              if (sscanf(buf, "%*s %4000s", label) != 1) continue;
@@ -986,10 +983,7 @@ _e_kbd_int_layout_parse(E_Kbd_Int *ki, const char *layout)
              if (!strcmp(str, "shift")) st->state = SHIFT;
              if (!strcmp(str, "capslock")) st->state = CAPSLOCK;
              if (!strcmp(str, "altgr")) st->state = ALTGR;
-             p = strrchr(label, '.');
-             if ((p) && (!strcmp(p, ".png")))
-               st->icon = eina_stringshare_add(label);
-             else if ((p) && (!strcmp(p, ".edj")))
+             if (eina_str_has_extension(label, ".png") || eina_str_has_extension(label, ".edj"))
                st->icon = eina_stringshare_add(label);
              else
                st->label = eina_stringshare_add(label);
