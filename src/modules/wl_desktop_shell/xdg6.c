@@ -582,7 +582,7 @@ _e_xdg_toplevel_cb_maximized_unset(struct wl_client *client EINA_UNUSED, struct 
 }
 
 static void
-_e_xdg_toplevel_cb_fullscreen_set(struct wl_client *client EINA_UNUSED, struct wl_resource *resource, struct wl_resource *output_resource EINA_UNUSED)
+_e_xdg_toplevel_cb_fullscreen_set(struct wl_client *client EINA_UNUSED, struct wl_resource *resource, struct wl_resource *output_resource)
 {
    E_Client *ec;
 
@@ -596,6 +596,17 @@ _e_xdg_toplevel_cb_fullscreen_set(struct wl_client *client EINA_UNUSED, struct w
      }
 
    if (ec->lock_user_fullscreen) return;
+   if (output_resource)
+     {
+        Eina_List *l;
+        E_Zone *zone;
+        E_Comp_Wl_Output *wlo = wl_resource_get_user_data(output_resource);
+        EINA_LIST_FOREACH(e_comp->zones, l, zone)
+          if (zone->output == wlo)
+            ec->comp_data->shell.set.fs_zone = zone->id;
+     }
+   else
+     ec->comp_data->shell.set.fs_zone = ec->zone->id;
    _xdg_shell_surface_send_configure(resource, 1, !!ec->maximized || ec->comp_data->max, 0, ec->zone->w, ec->zone->h);
 }
 

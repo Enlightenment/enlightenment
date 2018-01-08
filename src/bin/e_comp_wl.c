@@ -1392,6 +1392,10 @@ _e_comp_wl_surface_state_commit(E_Client *ec, E_Comp_Wl_Surface_State *state)
                                "min surface height cannot be larger than max surface height");
         if (ec->comp_data->shell.set.fullscreen && (!ec->fullscreen))
           {
+             E_Zone *zone = e_comp_zone_id_get(ec->comp_data->shell.set.fs_zone);
+
+             if (zone && (zone != ec->zone))
+               e_client_zone_set(ec, zone);
              e_client_fullscreen(ec, E_FULLSCREEN_RESIZE);
           }
         if (ec->comp_data->shell.set.unfullscreen)

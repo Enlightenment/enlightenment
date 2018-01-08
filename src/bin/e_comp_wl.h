@@ -325,6 +325,7 @@ struct _E_Comp_Wl_Client_Data
            Eina_Bool maximize E_BITFIELD;
            Eina_Bool unmaximize E_BITFIELD;
            Eina_Bool minimize E_BITFIELD;
+           int fs_zone;
         } set;
      } shell;
    struct
