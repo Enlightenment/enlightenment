@@ -404,18 +404,19 @@ _e_fm_main_eeze_volume_add(const char *syspath,
         v->partition_label = eeze_disk_udev_get_property(v->disk, "ID_FS_LABEL");
      }
 
-   /* if we have dev/sda ANd dev/sda1 - ia a parent vol - del the parent vol
-    * since we actually have real child partition volumes to mount */
-   if ((v->partition != 0) && (v->parent))
+   if (v->parent)
      {
-        E_Volume *v2 = _e_fm_main_eeze_volume_find_fast(v->parent);
-        
-        if ((v2) && (v2->partition == 0))
-          _e_fm_main_eeze_volume_del(v2->udi);
-     }
+        E_Storage *s;
+
+        if (v->partition)
+          {
+             /* prevent having storage and volume from same device */
+             E_Volume *v2 = _e_fm_main_eeze_volume_find_fast(v->parent);
+
+             if ((v2) && (v2->partition == 0))
+               _e_fm_main_eeze_volume_del(v2->udi);
+          }
    
-   {
-      E_Storage *s;
       s = e_storage_find(v->parent);
       INF("++VOL:\n  syspath: %s\n  uuid: %s\n  fstype: %s\n  size: %llu\n label: %s\n"
           "  partition: %d\n  partition_number: %d\n partition_label: %s\n  mounted: %d\n  mount_point: %s",
@@ -423,7 +424,7 @@ _e_fm_main_eeze_volume_add(const char *syspath,
           v->partition ? v->partition_label : "(not a partition)", v->mounted, v->mount_point);
       if (s)
         v->storage = s;
-      else if (v->parent)
+      else
         s = v->storage = _e_fm_main_eeze_storage_add(v->parent);
 
       if (s)
