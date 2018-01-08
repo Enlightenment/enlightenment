@@ -17,6 +17,7 @@ EINTERN E_Shell_Data *e_shell_data_new(unsigned int version);
 
 EINTERN Eina_Bool e_xdg_shell_v5_init(void);
 EINTERN Eina_Bool e_xdg_shell_v6_init(void);
+EINTERN Eina_Bool e_xdg_shell_init(void);
 EINTERN void wl_shell_cb_bind(struct wl_client *client, void *data EINA_UNUSED, uint32_t version, uint32_t id);
 
 struct E_Shell_Data

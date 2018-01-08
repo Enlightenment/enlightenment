@@ -167,8 +167,7 @@ e_modapi_init(E_Module *m)
         return NULL;
      }
 
-   have_shell = e_xdg_shell_v5_init();
-   have_shell &= e_xdg_shell_v6_init();
+   have_shell = e_xdg_shell_v5_init() | e_xdg_shell_v6_init() | e_xdg_shell_init();
    if (!have_shell) return NULL;
 
 #ifdef HAVE_WL_TEXT_INPUT
