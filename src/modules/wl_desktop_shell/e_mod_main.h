@@ -15,7 +15,6 @@ EINTERN void e_shell_surface_parent_set(E_Client *ec, struct wl_resource *parent
 EINTERN void e_shell_surface_mouse_down_helper(E_Client *ec, E_Binding_Event_Mouse_Button *ev, Eina_Bool move);
 EINTERN E_Shell_Data *e_shell_data_new(unsigned int version);
 
-EINTERN Eina_Bool e_xdg_shell_v5_init(void);
 EINTERN Eina_Bool e_xdg_shell_v6_init(void);
 EINTERN Eina_Bool e_xdg_shell_init(void);
 EINTERN void wl_shell_cb_bind(struct wl_client *client, void *data EINA_UNUSED, uint32_t version, uint32_t id);
