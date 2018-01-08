@@ -236,7 +236,7 @@ static void _service_parse_prop_changed(struct Connman_Service *cs,
 
          if (strcmp(method, "manual") == 0)
             {
-               if (eina_array_count(proxy_servers) > 0)
+               if (proxy_servers && (eina_array_count(proxy_servers) > 0))
                   {
                      DBG("New {all,http{,s}}_proxy: %s",
                          (const char*)eina_array_data_get(proxy_servers, 0));
@@ -244,7 +244,7 @@ static void _service_parse_prop_changed(struct Connman_Service *cs,
                      e_env_set("http_proxy", eina_array_data_get(proxy_servers, 0));
                      e_env_set("HTTPS_PROXY", eina_array_data_get(proxy_servers, 0));
                   }
-               if (eina_array_count(proxy_excludes) > 0)
+               if (proxy_excludes && (eina_array_count(proxy_excludes) > 0))
                   {
                      Eina_Strbuf *buf;
                      Eina_Array_Iterator it;
