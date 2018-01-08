@@ -244,7 +244,8 @@ _e_fm_main_eeze_cb_vol_unmounted(void *user_data EINA_UNUSED,
    v->mounted = EINA_FALSE;
    INF("UNMOUNT: %s from %s", v->udi, v->mount_point);
    if (!strncmp(v->mount_point, e_user_dir_get(), strlen(e_user_dir_get())))
-     unlink(v->mount_point);
+     if (unlink(v->mount_point))
+       printf("Error unlinking mount point!\n");
    size = strlen(v->udi) + 1 + strlen(v->mount_point) + 1;
    buf = alloca(size);
    strcpy(buf, v->udi);
