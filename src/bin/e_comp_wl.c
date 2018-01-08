@@ -1341,6 +1341,14 @@ _e_comp_wl_surface_state_commit(E_Client *ec, E_Comp_Wl_Surface_State *state)
      first = !e_pixmap_usable_get(e_comp_x_client_pixmap_get(ec));
 #endif
 
+   if (e_client_util_is_popup(ec) && (!ec->parent))
+     {
+        wl_resource_post_error(ec->comp_data->surface,
+                               WL_DISPLAY_ERROR_INVALID_OBJECT,
+                               "Popup requires a parent shell surface before commit");
+        return;
+     }
+
    ec->comp_data->in_commit = 1;
    if (ec->ignored && ec->comp_data->shell.surface)
      {
