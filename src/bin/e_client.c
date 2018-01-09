@@ -4127,6 +4127,7 @@ e_client_maximize(E_Client *ec, E_Maximize max)
         ec->maximized &= ~E_MAXIMIZE_TYPE;
         ec->maximized |= max;
         EC_CHANGED(ec);
+        if (ec->re_manage) ec->changes.pos = 0;
         return;
      }
    if ((max & E_MAXIMIZE_TYPE) == E_MAXIMIZE_FULLSCREEN)
