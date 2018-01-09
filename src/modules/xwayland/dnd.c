@@ -262,11 +262,42 @@ _xwl_fixes_selection_notify(void *d EINA_UNUSED, int t EINA_UNUSED, Ecore_X_Even
    return ECORE_CALLBACK_RENEW;
 }
 
+typedef struct Xfer_Data
+{
+   EINA_INLIST;
+   Eina_Binbuf *buf;
+   Eina_Bool xdnd E_BITFIELD;
+   unsigned int offset;
+   Ecore_Fd_Handler *fdh;
+} Xfer_Data;
+
+static Eina_Inlist *xfer_data_list;
+
+static Eina_Bool
+_xfer_data_write(Xfer_Data *xd, Ecore_Fd_Handler *fdh)
+{
+   int fd = ecore_main_fd_handler_fd_get(fdh);
+   xd->offset += write(fd, eina_binbuf_string_get(xd->buf) + xd->offset, eina_binbuf_length_get(xd->buf) - xd->offset);
+   if (xd->offset == eina_binbuf_length_get(xd->buf))
+     {
+        if (xd->xdnd)
+          _xdnd_finish(1);
+        close(fd);
+        ecore_main_fd_handler_del(fdh);
+        _xwayland_dnd_finish();
+        eina_binbuf_free(xd->buf);
+        xfer_data_list = eina_inlist_remove(xfer_data_list, EINA_INLIST_GET(xd));
+        free(xd);
+        return EINA_FALSE;
+     }
+   return EINA_TRUE;
+}
+
 static Eina_Bool
 _xwl_selection_notify(void *d EINA_UNUSED, int t EINA_UNUSED, Ecore_X_Event_Selection_Notify *ev)
 {
    Ecore_X_Selection_Data *sd;
-   int wrote = 0;
+   Xfer_Data *xd;
 
    DBG("XWL SELECTION NOTIFY");
    if ((ev->selection != ECORE_X_SELECTION_XDND) && (ev->selection != ECORE_X_SELECTION_CLIPBOARD))
@@ -308,16 +339,15 @@ _xwl_selection_notify(void *d EINA_UNUSED, int t EINA_UNUSED, Ecore_X_Event_Sele
      }
    if (ev->property != xwl_dnd_atom) return ECORE_CALLBACK_RENEW;
    sd = ev->data;
+   xd = E_NEW(Xfer_Data, 1);
+   /* steal event data */
+   xd->buf = eina_binbuf_manage_new(eina_memdup(sd->data, sd->length, 0), sd->length, EINA_FALSE);
+   xd->xdnd = ev->selection == ECORE_X_SELECTION_XDND;
 
-   do
-     {
-        wrote += write(cur_fd, sd->data, sd->length);
-     } while (wrote < sd->length);
-   if (ev->selection == ECORE_X_SELECTION_XDND)
-     _xdnd_finish(1);
-   close(cur_fd);
+   xd->fdh = ecore_main_fd_handler_add(cur_fd, ECORE_FD_WRITE, (void*)_xfer_data_write, xd, NULL, NULL);
+   xfer_data_list = eina_inlist_append(xfer_data_list, EINA_INLIST_GET(xd));
    cur_fd = -1;
-   _xwayland_dnd_finish();
+
    return ECORE_CALLBACK_RENEW;
 }
 
@@ -472,6 +502,17 @@ dnd_init(void)
 EINTERN void
 dnd_shutdown(void)
 {
+   Xfer_Data *xd;
+
    E_FREE_LIST(handlers, ecore_event_handler_del);
    E_FREE_FUNC(pipes, eina_hash_free);
+   while (xfer_data_list)
+     {
+        xd = EINA_INLIST_CONTAINER_GET(xfer_data_list, Xfer_Data);
+        xfer_data_list = eina_inlist_remove(xfer_data_list, xfer_data_list);
+        close(ecore_main_fd_handler_fd_get(xd->fdh));
+        ecore_main_fd_handler_del(xd->fdh);
+        eina_binbuf_free(xd->buf);
+        free(xd);
+     }
 }
