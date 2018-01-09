@@ -349,8 +349,6 @@ runner_removed(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
 {
    Instance *inst = data;
    if (inst->box != event_info) return;
-   if (inst->ci->sandbox && inst->gadget_resource)
-     e_gadget_send_gadget_removed(inst->gadget_resource);
    rconfig->items = eina_list_remove(rconfig->items, inst->ci);
    eina_stringshare_del(inst->ci->cmd);
    E_FREE(inst->ci);
