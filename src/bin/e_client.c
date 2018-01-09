@@ -4003,19 +4003,7 @@ e_client_maximize_geometry_get(const E_Client *ec, E_Maximize max, int *mx, int 
 
       case E_MAXIMIZE_SMART:
       case E_MAXIMIZE_EXPAND:
-        if (ec->desk->visible)
-          e_zone_useful_geometry_get(ec->zone, &zx, &zy, &zw, &zh);
-        else
-          {
-             x1 = ec->zone->x;
-             yy1 = ec->zone->y;
-             x2 = ec->zone->x + ec->zone->w;
-             y2 = ec->zone->y + ec->zone->h;
-             e_maximize_client_shelf_fill(ec, &x1, &yy1, &x2, &y2, max);
-             zx = x1, zy = yy1;
-             zw = x2 - x1;
-             zh = y2 - yy1;
-          }
+        e_zone_desk_useful_geometry_get(ec->zone, ec->desk, &zx, &zy, &zw, &zh);
         w = zw, h = zh;
 
         e_comp_object_frame_xy_unadjust(ec->frame, ec->x, ec->y, &ecx, &ecy);
@@ -4071,11 +4059,8 @@ e_client_maximize_geometry_get(const E_Client *ec, E_Maximize max, int *mx, int 
         x2 = ec->zone->x + ec->zone->w;
         y2 = ec->zone->y + ec->zone->h;
 
-        /* walk through all shelves */
-        e_maximize_client_shelf_fill(ec, &x1, &yy1, &x2, &y2, max);
-
-        /* walk through all windows */
-        e_maximize_client_client_fill(ec, &x1, &yy1, &x2, &y2, max);
+        e_zone_desk_useful_geometry_get(ec->zone, ec->desk, &zx, &zy, &zw, &zh);
+        x1 = zx, yy1 = zy, x2 = x1 + zw, y2 = yy1 + zh;
 
         w = x2 - x1;
         h = y2 - yy1;
