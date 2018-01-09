@@ -382,7 +382,7 @@ runner_del(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *event_info E
    if (inst->ci)
      {
         inst->ci->inst = NULL;
-        E_FREE_FUNC(inst->exe, ecore_exe_quit);
+        E_FREE_FUNC(inst->exe, ecore_exe_interrupt);
      }
    else
      E_FREE_FUNC(inst->exe, ecore_exe_terminate);
