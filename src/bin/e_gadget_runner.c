@@ -531,6 +531,7 @@ child_added(void *data, Evas_Object *obj, void *event_info)
    E_FILL(event_info);
    elm_box_homogeneous_set(bx, 1);
    evas_object_show(bx);
+   evas_object_show(event_info);
    elm_box_pack_end(bx, event_info);
    elm_object_content_set(popup, bx);
 
@@ -715,6 +716,7 @@ popup_added(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
    evas_object_show(bx);
    elm_box_pack_end(bx, event_info);
    elm_box_recalculate(bx);
+   evas_object_show(event_info);
    evas_object_data_set(bx, "extracted", event_info);
    evas_object_event_callback_add(bx, EVAS_CALLBACK_DEL, popup_del, inst);
    elm_object_content_set(inst->ctxpopup.obj, bx);
