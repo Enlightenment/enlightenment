@@ -638,6 +638,14 @@ tooltip_hide(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *event_info
    tt->tooltip_surface = NULL;
 }
 
+static void
+tooltip_hints(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
+{
+   int w, h;
+   evas_object_size_hint_aspect_get(obj, NULL, &w, &h);
+   evas_object_size_hint_min_set(obj, w, h);
+}
+
 static Evas_Object *
 tooltip_content_cb(void *data, Evas_Object *obj EINA_UNUSED, Evas_Object *tooltip)
 {
@@ -685,11 +693,15 @@ popup_added(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
                  tt = &inst->base;
                if (tt)
                  {
+                    int w, h;
                     tt->tooltip_surface = surface;
                     tt->tooltip_content = event_info;
                     evas_object_data_set(event_info, "instance", inst);
                     evas_object_pass_events_set(event_info, 1);
+                    E_FILL(event_info);
+                    tooltip_hints(NULL, NULL, event_info, NULL);
                     evas_object_event_callback_add(event_info, EVAS_CALLBACK_DEL, tooltip_del, tt);
+                    evas_object_event_callback_add(event_info, EVAS_CALLBACK_CHANGED_SIZE_HINTS, tooltip_hints, tt);
                     elm_object_tooltip_content_cb_set(tt->obj, tooltip_content_cb, tt, NULL);
                  }
                else

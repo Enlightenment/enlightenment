@@ -273,6 +273,15 @@ win_del(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj, void *eve
    tooltips = eina_list_remove(tooltips, obj);
 }
 
+static void
+_tooltip_resize(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
+{
+   int w, h;
+
+   evas_object_geometry_get(obj, NULL, NULL, &w, &h);
+   evas_object_size_hint_aspect_set(obj, EVAS_ASPECT_CONTROL_BOTH, w, h);
+}
+
 static Evas_Object *
 win_add(Evas_Object *win)
 {
@@ -284,6 +293,7 @@ win_add(Evas_Object *win)
    if (elm_win_type_get(win) == ELM_WIN_TOOLTIP)
      {
         tooltips = eina_list_append(tooltips, win);
+        evas_object_event_callback_add(win, EVAS_CALLBACK_RESIZE, _tooltip_resize, d);
         if (eina_hash_population(gadget_globals))
           {
              struct e_gadget *gadget_global = eina_hash_find(gadget_globals, &d);
