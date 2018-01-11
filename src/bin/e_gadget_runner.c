@@ -633,9 +633,9 @@ tooltip_hide(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *event_info
    Tooltip *tt = data;
 
    elm_box_unpack_all(obj);
+   if (tt->tooltip_content) evas_object_hide(tt->tooltip_content);
    tt->tooltip_content = NULL;
    tt->tooltip_surface = NULL;
-   evas_object_hide(data);
 }
 
 static Evas_Object *
@@ -646,7 +646,7 @@ tooltip_content_cb(void *data, Evas_Object *obj EINA_UNUSED, Evas_Object *toolti
 
    bx = elm_box_add(tooltip);
    evas_object_pass_events_set(bx, 1);
-   evas_object_event_callback_add(bx, EVAS_CALLBACK_DEL, tooltip_hide, tt->tooltip_content);
+   evas_object_event_callback_add(bx, EVAS_CALLBACK_DEL, tooltip_hide, tt);
    elm_box_pack_end(bx, tt->tooltip_content);
    evas_object_show(tt->tooltip_content);
    elm_box_recalculate(bx);
