@@ -639,7 +639,7 @@ tooltip_hide(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *event_info
 }
 
 static void
-tooltip_hints(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
+tooltip_hints(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
    int w, h;
    evas_object_size_hint_aspect_get(obj, NULL, &w, &h);
@@ -693,7 +693,6 @@ popup_added(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
                  tt = &inst->base;
                if (tt)
                  {
-                    int w, h;
                     tt->tooltip_surface = surface;
                     tt->tooltip_content = event_info;
                     evas_object_data_set(event_info, "instance", inst);
