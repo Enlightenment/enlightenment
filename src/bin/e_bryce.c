@@ -803,7 +803,7 @@ _bryce_owner_menu(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
    E_Menu_Item *mi = event_info;
    E_Menu *subm;
 
-   e_menu_item_label_set(mi, _("Bryce"));
+   e_menu_item_label_set(mi, _("Gadget Bar"));
 
    subm = e_menu_new();
    e_menu_item_submenu_set(mi, subm);
@@ -1325,11 +1325,11 @@ EINTERN void
 e_bryce_init(void)
 {
    resize_act = e_action_add("bryce_resize");
-   e_action_predef_name_set(_("Bryces"), _("Resize Bryce"), "bryce_resize", NULL, "syntax: step, example: 4", 1);
+   e_action_predef_name_set(_("Bryces"), _("Resize Gadget Bar"), "bryce_resize", NULL, "syntax: step, example: 4", 1);
    resize_act->func.go_wheel = _bryce_act_resize;
 
    menu_act = e_action_add("bryce_menu");
-   e_action_predef_name_set(_("Bryces"), _("Bryce menu"), "bryce_menu", NULL, NULL, 0);
+   e_action_predef_name_set(_("Bryces"), _("Gadget Bar Menu"), "bryce_menu", NULL, NULL, 0);
    menu_act->func.go_mouse = _bryce_act_menu;
 
    edd_bryce = E_CONFIG_DD_NEW("Bryce", Bryce);
