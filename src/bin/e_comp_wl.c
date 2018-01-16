@@ -2929,10 +2929,12 @@ static void
 _e_comp_wl_gl_shutdown(void)
 {
    if (!e_comp->gl) return;
-   if (e_comp_wl->wl.glapi->evasglUnbindWaylandDisplay)
+   if (e_comp_wl->wl.glapi && e_comp_wl->wl.glapi->evasglUnbindWaylandDisplay)
      e_comp_wl->wl.glapi->evasglUnbindWaylandDisplay(e_comp_wl->wl.gl, e_comp_wl->wl.disp);
-   evas_gl_surface_destroy(e_comp_wl->wl.gl, e_comp_wl->wl.glsfc);
-   evas_gl_context_destroy(e_comp_wl->wl.gl, e_comp_wl->wl.glctx);
+   if (e_comp_wl->wl.glsfc)
+     evas_gl_surface_destroy(e_comp_wl->wl.gl, e_comp_wl->wl.glsfc);
+   if (e_comp_wl->wl.glctx)
+     evas_gl_context_destroy(e_comp_wl->wl.gl, e_comp_wl->wl.glctx);
    evas_gl_free(e_comp_wl->wl.gl);
    evas_gl_config_free(e_comp_wl->wl.glcfg);
 }
@@ -2943,16 +2945,22 @@ _e_comp_wl_gl_init(void)
    e_comp_wl->wl.gl = evas_gl_new(ecore_evas_get(e_comp->ee));
    if (!e_comp_wl->wl.gl) return;
    e_comp_wl->wl.glctx = evas_gl_context_create(e_comp_wl->wl.gl, NULL);
+   if (!e_comp_wl->wl.glctx) goto end;
    e_comp_wl->wl.glcfg = evas_gl_config_new();
+   if (!e_comp_wl->wl.glcfg) goto end;
    e_comp_wl->wl.glsfc = evas_gl_surface_create(e_comp_wl->wl.gl, e_comp_wl->wl.glcfg, 1, 1);
-   evas_gl_make_current(e_comp_wl->wl.gl, e_comp_wl->wl.glsfc, e_comp_wl->wl.glctx);
+   if (!e_comp_wl->wl.glsfc) goto end;
+   if (!evas_gl_make_current(e_comp_wl->wl.gl, e_comp_wl->wl.glsfc, e_comp_wl->wl.glctx)) goto end;
    e_comp_wl->wl.glapi = evas_gl_context_api_get(e_comp_wl->wl.gl, e_comp_wl->wl.glctx);
    if (e_comp_wl->wl.glapi->evasglBindWaylandDisplay)
      e_comp->gl = e_comp_wl->wl.glapi->evasglBindWaylandDisplay(e_comp_wl->wl.gl, e_comp_wl->wl.disp);
    if (e_comp->gl)
-     e_util_env_set("ELM_ACCEL", "gl");
-   else
-     _e_comp_wl_gl_shutdown();
+     {
+        e_util_env_set("ELM_ACCEL", "gl");
+        return;
+     }
+end:
+   _e_comp_wl_gl_shutdown();
 }
 
 /* public functions */
