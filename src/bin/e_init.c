@@ -23,6 +23,19 @@ _e_init_cb_signal_done_ok(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, 
    e_init_hide();
 }
 
+static void
+_e_init_render_pre(void *data EINA_UNUSED, Evas *e, void *info EINA_UNUSED)
+{
+   Eina_List *l;
+   Evas_Object *o;
+
+   evas_event_callback_del(e, EVAS_CALLBACK_RENDER_PRE, _e_init_render_pre);
+   EINA_LIST_FOREACH(splash_objs, l, o)
+     {
+        evas_object_show(o);
+     }
+}
+
 /* public functions */
 EINTERN int
 e_init_init(void)
@@ -67,9 +80,10 @@ e_init_show(void)
         evas_object_move(o, zone->x, zone->y);
         evas_object_resize(o, zone->w, zone->h);
         evas_object_layer_set(o, E_LAYER_MAX - 1000);
-        evas_object_show(o);
         splash_objs = eina_list_append(splash_objs, o);
      }
+   evas_event_callback_add
+     (e_comp->evas, EVAS_CALLBACK_RENDER_PRE, _e_init_render_pre, NULL);
    edje_object_part_text_set(_e_init_object, "e.text.disable_text",
                              "Disable splash screen");
    edje_object_signal_callback_add(_e_init_object, "e,state,done_ok", "e",
@@ -112,12 +126,20 @@ e_init_status_set(const char *str)
 E_API void
 e_init_done(void)
 {
+   Eina_List *l;
+   Evas_Object *o;
+
    undone--;
    if (undone > 0) return;
-   done = 1;
-   ecore_event_add(E_EVENT_INIT_DONE, NULL, NULL, NULL);
-//   printf("---DONE %p\n", client);
-   edje_object_signal_emit(_e_init_object, "e,state,done", "e");
+   if (!done)
+     {
+        done = 1;
+        ecore_event_add(E_EVENT_INIT_DONE, NULL, NULL, NULL);
+        EINA_LIST_FOREACH(splash_objs, l, o)
+          {
+             edje_object_signal_emit(o, "e,state,done", "e");
+          }
+     }
 }
 
 E_API void
