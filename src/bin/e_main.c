@@ -1042,9 +1042,6 @@ main(int argc, char **argv)
      }
    TS("Run Startup Apps Done");
 
-   if (e_config->show_splash && (!after_restart))
-     ecore_timer_loop_add(2.0, _e_main_cb_startup_fake_end, NULL);
-
    TS("E_Comp Thaw");
    e_comp_all_thaw();
    TS("E_Comp Thaw Done");
@@ -1084,6 +1081,9 @@ main(int argc, char **argv)
    inloop = EINA_TRUE;
 
    e_util_env_set("E_RESTART", "1");
+
+   if (e_config->show_splash && (!after_restart))
+     ecore_timer_add(2.0, _e_main_cb_startup_fake_end, NULL);
 
    TS("MAIN LOOP AT LAST");
    if (!setjmp(x_fatal_buff))
@@ -1814,6 +1814,6 @@ _e_main_cb_idle_after(void *data EINA_UNUSED)
 static Eina_Bool
 _e_main_cb_startup_fake_end(void *data EINA_UNUSED)
 {
-   e_init_hide();
+   e_init_done();
    return ECORE_CALLBACK_CANCEL;
 }
