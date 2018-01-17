@@ -87,6 +87,7 @@ _gadget_global_bind(Ecore_Wl2_Display *d, uint32_t id)
    eina_hash_add(gadget_globals, &d, gadget_global);
    EINA_LIST_FOREACH(tooltips, l, tt)
      e_gadget_set_tooltip(gadget_global, ecore_wl2_window_surface_get(elm_win_wl_window_get(tt)));
+   ecore_wl2_display_flush(d);
 }
 
 static void
@@ -94,6 +95,7 @@ _ar_global_bind(Ecore_Wl2_Display *d, uint32_t id)
 {
    struct action_route *ar_global = wl_registry_bind(ecore_wl2_display_registry_get(d), id, &action_route_interface, 1);
    eina_hash_add(ar_globals, &d, ar_global);
+   ecore_wl2_display_flush(d);
 }
 
 static Eina_Bool
@@ -142,6 +144,7 @@ _ar_bind_activate(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
 
    if (params && (!params[0])) params = NULL;
    action_route_bind_activate(ga->ar_bind, params);
+   ecore_wl2_display_flush(ga->d);
 }
 
 static void
@@ -209,6 +212,7 @@ uriopen_request(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
    struct e_gadget *gadget_global = eina_hash_find(gadget_globals, &d);
 
    e_gadget_open_uri(gadget_global, uri);
+   ecore_wl2_display_flush(d);
 }
 
 static void
