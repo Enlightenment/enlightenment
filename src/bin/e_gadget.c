@@ -2315,7 +2315,7 @@ e_gadget_util_ctxpopup_place(Evas_Object *g, Evas_Object *ctx, Evas_Object *pos_
         evas_object_event_callback_add(content, EVAS_CALLBACK_RESIZE, _gadget_util_ctxpopup_moveresize, NULL);
      }
    _desktop_rect_obj_add(ctx);
-   evas_object_smart_callback_call(zgc->site->layout, "gadget_site_popup", ctx);
+   evas_object_smart_callback_call(g, "gadget_popup", ctx);
    if (evas_object_visible_get(ctx))
      e_comp_shape_queue();
 }
