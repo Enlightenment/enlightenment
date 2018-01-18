@@ -5,6 +5,7 @@ typedef struct _Instance Instance;
 
 struct _Instance
 {
+   Evas_Object     *site;
    Evas_Object     *o_button;
    E_Menu          *main_menu;
 };
@@ -165,6 +166,14 @@ _button_cb_mouse_down(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNU
 }
 
 static void
+_anchor_change(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
+{
+   Instance *inst = data;
+
+   do_orient(inst, e_gadget_site_orient_get(obj), e_gadget_site_anchor_get(obj));
+}
+
+static void
 start_del(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Instance *inst = data;
@@ -174,15 +183,8 @@ start_del(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *e
         e_menu_post_deactivate_callback_set(inst->main_menu, NULL, NULL);
         e_object_del(E_OBJECT(inst->main_menu));
      }
+   evas_object_smart_callback_del_full(inst->site, "gadget_site_anchor", _anchor_change, inst);
    free(inst);
-}
-
-static void
-_anchor_change(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
-{
-   Instance *inst = data;
-
-   do_orient(inst, e_gadget_site_orient_get(obj), e_gadget_site_anchor_get(obj));
 }
 
 static void
@@ -190,8 +192,9 @@ _gadget_created(void *data, Evas_Object *obj, void *event_info)
 {
    Instance *inst = data;
 
-   if (event_info == inst->o_button)
-     do_orient(inst, e_gadget_site_orient_get(obj), e_gadget_site_anchor_get(obj));
+   if (event_info != inst->o_button) return;
+   do_orient(inst, e_gadget_site_orient_get(obj), e_gadget_site_anchor_get(obj));
+   evas_object_smart_callback_del_full(obj, "gadget_created", _gadget_created, inst);
 }
 
 EINTERN Evas_Object *
@@ -203,6 +206,7 @@ start_create(Evas_Object *parent, int *id, E_Gadget_Site_Orient orient)
    if (e_gadget_site_is_desklock(parent)) return NULL;
    if (*id == 0) *id = 1;
    inst = E_NEW(Instance, 1);
+   inst->site = parent;
 
    o = elm_layout_add(parent);
 
