@@ -69,6 +69,7 @@ struct E_Gadget_Config
    } style;
    E_Gadget_Configure_Cb configure;
    Evas_Object *cfg_object;
+   Eina_List *popups;
    E_Gadget_Site *site;
    E_Menu *menu;
 
@@ -321,23 +322,29 @@ _desktop_rect_obj_add(Evas_Object *obj)
 }
 
 static void
-_gadget_popup_hide(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+_gadget_popup_hide(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
+   E_Gadget_Config *zgc = data;
    if (desktop_editor) evas_object_show(desktop_editor);
+   zgc->popups = eina_list_remove(zgc->popups, event_info);
 }
 
 static void
 _gadget_popup(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
 {
-   E_Gadget_Site *zgs = data;
+   E_Gadget_Config *zgc = data;
+   E_Gadget_Site *zgs = zgc->site;
 
    if (event_info && elm_object_widget_check(event_info))
      elm_object_tree_focus_allow_set(event_info, 0);
    if (event_info) _desktop_rect_obj_add(event_info);
    evas_object_smart_callback_call(zgs->layout, "gadget_site_popup", event_info);
    if (!event_info) return;
-   evas_object_event_callback_add(event_info, EVAS_CALLBACK_HIDE, _gadget_popup_hide, zgs);
+   evas_object_event_callback_add(event_info, EVAS_CALLBACK_HIDE, _gadget_popup_hide, zgc);
    if (desktop_editor) evas_object_hide(desktop_editor);
+   if (eina_list_data_find(zgc->popups, event_info))
+     ERR("gadget_popup called multiple times for same popup");
+   zgc->popups = eina_list_append(zgc->popups, event_info);
 }
 
 static void
@@ -525,7 +532,7 @@ _gadget_object_create(E_Gadget_Config *zgc)
    e_object_data_set(zgc->e_obj_inherit, g);
    zgc->gadget = zgc->display = g;
    evas_object_event_callback_add(g, EVAS_CALLBACK_CHANGED_SIZE_HINTS, _gadget_object_hints, zgc);
-   evas_object_smart_callback_add(g, "gadget_popup", _gadget_popup, zgc->site);
+   evas_object_smart_callback_add(g, "gadget_popup", _gadget_popup, zgc);
    evas_object_data_set(g, "__e_gadget", zgc);
    if (zgc->site->style_cb)
      zgc->site->style_cb(zgc->site->layout, zgc->style.name, g);
@@ -1134,6 +1141,16 @@ _gadget_act_resize_end(E_Object *obj, const char *params EINA_UNUSED, E_Binding_
    return EINA_TRUE;
 }
 
+static void
+_gadget_popups_clear(E_Gadget_Config *zgc)
+{
+   Eina_List *l, *ll;
+   Evas_Object *popup;
+
+   EINA_LIST_FOREACH_SAFE(zgc->popups, l, ll, popup)
+     evas_object_del(popup);
+}
+
 static Eina_Bool
 _gadget_act_move(E_Object *obj, const char *params EINA_UNUSED, E_Binding_Event_Mouse_Button *ev EINA_UNUSED)
 {
@@ -1160,6 +1177,7 @@ _gadget_act_move(E_Object *obj, const char *params EINA_UNUSED, E_Binding_Event_
         zgc->moving = 0;
         return EINA_TRUE;
      }
+   _gadget_popups_clear(zgc);
    z->moving = 1;
    evas_object_pass_events_set(zgc->site->layout, 1);
    evas_object_geometry_get(g, NULL, NULL, &w, &h);
@@ -1181,6 +1199,7 @@ _gadget_act_resize(E_Object *obj, const char *params EINA_UNUSED, E_Binding_Even
    g = e_object_data_get(obj);
    zgc = evas_object_data_get(g, "__e_gadget");
    if (zgc->site->orient) return EINA_FALSE;
+   _gadget_popups_clear(zgc);
    evas_object_geometry_get(g, &x, &y, &w, &h);
    if (ev->canvas.x < x + (w / 3))
      zgc->resizing = E_GADGET_SITE_ANCHOR_LEFT;
@@ -1277,6 +1296,7 @@ _gadget_act_menu(E_Object *obj, const char *params EINA_UNUSED, E_Binding_Event_
 
    g = e_object_data_get(obj);
    zgc = evas_object_data_get(g, "__e_gadget");
+   _gadget_popups_clear(zgc);
 
    zgc->menu = e_menu_new();
    evas_object_smart_callback_call(g, "gadget_menu", zgc->menu);
@@ -2238,7 +2258,8 @@ e_gadget_util_layout_style_init(Evas_Object *g, Evas_Object *style)
    evas_object_size_hint_min_get(style, &zgc->style.minw, &zgc->style.minh);
    evas_object_event_callback_add(style, EVAS_CALLBACK_CHANGED_SIZE_HINTS, _gadget_style_hints, zgc);
    evas_object_show(style);
-   evas_object_smart_callback_add(zgc->display, "gadget_popup", _gadget_popup, zgc->site);
+   if (zgc->display != zgc->gadget)
+     evas_object_smart_callback_add(zgc->display, "gadget_popup", _gadget_popup, zgc);
    return prev;
 }
 
