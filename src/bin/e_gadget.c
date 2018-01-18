@@ -2820,6 +2820,15 @@ _editor_gadget_del(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED
    elm_object_item_del(gi->it);
 }
 
+static int
+_editor_sort(Elm_Object_Item *ita, Elm_Object_Item *itb)
+{
+   Gadget_Item *a = elm_object_item_data_get(ita);
+   Gadget_Item *b = elm_object_item_data_get(itb);
+
+   return strcasecmp(e_gadget_type_get(a->gadget), e_gadget_type_get(b->gadget));
+}
+
 E_API Evas_Object *
 e_gadget_editor_add(Evas_Object *parent, Evas_Object *site)
 {
@@ -2907,9 +2916,9 @@ e_gadget_editor_add(Evas_Object *parent, Evas_Object *site)
         evas_object_pass_events_set(g, 1);
         evas_object_event_callback_add(g, EVAS_CALLBACK_DEL, _editor_gadget_del, gi);
         if (orient)
-          gi->it = elm_genlist_item_append(list, &gli, gi, NULL, 0, _editor_gadget_new, gi);
+          gi->it = elm_genlist_item_sorted_insert(list, &gli, gi, NULL, 0, (Eina_Compare_Cb)_editor_sort, _editor_gadget_new, gi);
         else
-          gi->it = elm_gengrid_item_append(list, &gli, gi, _editor_gadget_new, gi);
+          gi->it = elm_gengrid_item_sorted_insert(list, &gli, gi, (Eina_Compare_Cb)_editor_sort, _editor_gadget_new, gi);
      }
    evas_object_event_callback_add(list, EVAS_CALLBACK_DEL, _editor_del, parent);
    e_comp_object_util_del_list_append(list, tempsite);
