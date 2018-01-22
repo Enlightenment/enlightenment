@@ -764,6 +764,14 @@ runner_hints(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *event_info
 }
 
 static void
+runner_menu_bugreport(void *data, E_Menu *m EINA_UNUSED, E_Menu_Item *mi EINA_UNUSED)
+{
+   char *url = data;
+   e_util_open(url, NULL);
+   free(url);
+}
+
+static void
 runner_menu(void *data, Evas_Object *obj, void *event_info)
 {
    E_Menu *m = event_info;
@@ -771,8 +779,31 @@ runner_menu(void *data, Evas_Object *obj, void *event_info)
 
    if (inst->ci->sandbox)
      {
+        E_Menu_Item *mi;
+        E_Menu *subm;
         Efreet_Desktop *ed = eina_hash_find(sandbox_gadgets, e_gadget_type_get(obj));
+        char buf[1024];
+
         e_menu_title_set(m, ed->name);
+
+        subm = e_menu_new();
+        snprintf(buf, sizeof(buf), _("Version: %s"), (char*)eina_hash_find(ed->x, "X-Gadget-Version"));
+        e_menu_title_set(subm, buf);
+
+        mi = e_menu_item_new(m);
+        e_menu_item_label_set(mi, _("Details"));
+        e_menu_item_submenu_set(mi, subm);
+        e_object_unref(E_OBJECT(subm));
+
+        mi = e_menu_item_new(subm);
+        snprintf(buf, sizeof(buf), "PID: %u", ecore_exe_pid_get(inst->exe));
+        e_menu_item_label_set(mi, buf);
+        e_menu_item_disabled_set(mi, 1);
+
+        mi = e_menu_item_new(subm);
+        e_menu_item_label_set(mi, _("Report bug"));
+        e_util_menu_item_theme_icon_set(mi, "dialog-error");
+        e_menu_item_callback_set(mi, runner_menu_bugreport, eina_strdup(eina_hash_find(ed->x, "X-Gadget-Bugreport")));
      }
    else
      {
@@ -997,6 +1028,17 @@ gadget_dir_add(const char *filename)
         char str[4096];
         snprintf(str, sizeof(str), _("A gadget .desktop file was found,</ps>"
                                      "but [X-Gadget-Version] is missing!</ps>"
+                                     "%s"), buf);
+        /* FIXME: maybe don't use notification here? T6630 */
+        e_notification_util_send(_("Gadget Error"), str);
+        efreet_desktop_free(ed);
+        return;
+     }
+   if (!eina_hash_find(ed->x, "X-Gadget-Bugreport"))
+     {
+        char str[4096];
+        snprintf(str, sizeof(str), _("A gadget .desktop file was found,</ps>"
+                                     "but [X-Gadget-Bugreport] is missing!</ps>"
                                      "%s"), buf);
         /* FIXME: maybe don't use notification here? T6630 */
         e_notification_util_send(_("Gadget Error"), str);
