@@ -1302,6 +1302,14 @@ _gadget_act_menu(E_Object *obj, const char *params EINA_UNUSED, E_Binding_Event_
    _gadget_popups_clear(zgc);
 
    zgc->menu = e_menu_new();
+   if (zgc->type)
+     {
+        char buf[1024];
+
+        strncpy(buf, zgc->type, sizeof(buf) - 1);
+        buf[0] = toupper(buf[0]);
+        e_menu_title_set(zgc->menu, buf);
+     }
    evas_object_smart_callback_call(g, "gadget_menu", zgc->menu);
    if (zgc->configure)
      {
