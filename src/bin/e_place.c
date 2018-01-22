@@ -418,9 +418,11 @@ done:
    E_FREE(a_x);
    E_FREE(a_y);
 
-   if ((*rx + w) > desk->zone->x + desk->zone->w) *rx = desk->zone->x + desk->zone->w - w;
+   e_zone_desk_useful_geometry_get(desk->zone, desk, &zx, &zy, &zw, &zh);
+
+   if ((*rx + w) > zx + zw) *rx = zx + zw - w;
    if (*rx < zx) *rx = zx;
-   if ((*ry + h) > desk->zone->y + desk->zone->h) *ry = desk->zone->y + desk->zone->h - h;
+   if ((*ry + h) > zy + zh) *ry = zy + zh - h;
    if (*ry < zy) *ry = zy;
 
 //   printf("0 - PLACE %i %i | %ix%i\n", *rx, *ry, w, h);
