@@ -103,8 +103,13 @@ static char *
 sandbox_name(const char *filename)
 {
    Efreet_Desktop *ed = eina_hash_find(sandbox_gadgets, filename);
+   char *version, buf[1024];
 
-   return strdup(ed->name);
+   if (!ed->x) return strdup(ed->name);
+   version = eina_hash_find(ed->x, "X-Gadget-Version");
+   if (!version) return strdup(ed->name);
+   snprintf(buf, sizeof(buf), "%s (v%s)", ed->name, version);
+   return strdup(buf);
 }
 
 static void
