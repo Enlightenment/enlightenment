@@ -81,7 +81,7 @@ E_API Evas_Object *e_notification_notify_raw_image_get(E_Notification_Notify *no
 //client
 typedef void (*E_Notification_Client_Send_Cb)(void *data, unsigned int id);
 E_API Eina_Bool e_notification_client_send(E_Notification_Notify *notify, E_Notification_Client_Send_Cb cb, const void *data);
-
+E_API Eina_Bool e_notification_util_send(const char *summary, const char *body);
 #endif
 
 #endif

@@ -579,3 +579,15 @@ e_notification_client_send(E_Notification_Notify *notify, E_Notification_Client_
    return EINA_TRUE;
 }
 
+E_API Eina_Bool
+e_notification_util_send(const char *summary, const char *body)
+{
+   E_Notification_Notify n;
+
+   memset(&n, 0, sizeof(E_Notification_Notify));
+   n.timeout = 3000;
+   n.summary = summary;
+   n.body = body;
+   n.urgency = E_NOTIFICATION_NOTIFY_URGENCY_NORMAL;
+   return e_notification_client_send(&n, NULL, NULL);
+}
