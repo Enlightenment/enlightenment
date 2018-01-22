@@ -561,7 +561,10 @@ e_notification_client_send(E_Notification_Notify *notify, E_Notification_Client_
    normalize_notify(notify);
 
    if (!n_data)
-     return notification_client_dbus_send(notify, cb, data);
+     {
+        fprintf(stderr, "UNHANDLED NOTIFICATION:\nSummary: %s\nBody: %s\n", notify->summary, notify->body);
+        return notification_client_dbus_send(notify, cb, data);
+     }
 
    //local
    copy = malloc(sizeof(E_Notification_Notify));
