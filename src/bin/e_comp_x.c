@@ -5376,9 +5376,10 @@ _e_comp_x_del(E_Comp *c)
 {
    unsigned int i;
 
-   ecore_x_window_key_ungrab(c->root, "F", ECORE_EVENT_MODIFIER_SHIFT |
-                             ECORE_EVENT_MODIFIER_CTRL |
-                             ECORE_EVENT_MODIFIER_ALT, 0);
+   if (!e_comp_wl)
+     ecore_x_window_key_ungrab(c->root, "F", ECORE_EVENT_MODIFIER_SHIFT |
+                               ECORE_EVENT_MODIFIER_CTRL |
+                               ECORE_EVENT_MODIFIER_ALT, 0);
    if (c->grabbed)
      {
         c->grabbed = 0;
@@ -5697,10 +5698,6 @@ _e_comp_x_setup(Ecore_X_Window root, int w, int h)
 
    ecore_x_composite_redirect_subwindows(root, ECORE_X_COMPOSITE_UPDATE_MANUAL);
 
-   ecore_x_window_key_grab(root, "F", ECORE_EVENT_MODIFIER_SHIFT |
-                           ECORE_EVENT_MODIFIER_CTRL |
-                           ECORE_EVENT_MODIFIER_ALT, 0);
-
    ecore_evas_data_set(e_comp->ee, "comp", e_comp);
    e_comp->bindings_grab_cb = _e_comp_x_bindings_grab_cb;
    e_comp->bindings_ungrab_cb = _e_comp_x_bindings_ungrab_cb;
@@ -5708,6 +5705,9 @@ _e_comp_x_setup(Ecore_X_Window root, int w, int h)
    if (e_comp->comp_type == E_PIXMAP_TYPE_NONE)
      {
         if (!e_comp_canvas_init(w, h)) return EINA_FALSE;
+        ecore_x_window_key_grab(root, "F", ECORE_EVENT_MODIFIER_SHIFT |
+                        ECORE_EVENT_MODIFIER_CTRL |
+                        ECORE_EVENT_MODIFIER_ALT, 0);
      }
 
    if (e_comp->comp_type == E_PIXMAP_TYPE_X)
