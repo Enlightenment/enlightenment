@@ -972,8 +972,19 @@ gadget_dir_add(const char *filename)
      {
         char str[4096];
         snprintf(str, sizeof(str), _("A gadget .desktop file was found,</ps>"
-                                                      "but no [Name] entry was specified!</ps>"
-                                                      "%s"), buf);
+                                     "but no [Name] entry was specified!</ps>"
+                                     "%s"), buf);
+        /* FIXME: maybe don't use notification here? T6630 */
+        e_notification_util_send(_("Gadget Error"), str);
+        efreet_desktop_free(ed);
+        return;
+     }
+   if (ed->type != EFREET_DESKTOP_TYPE_APPLICATION)
+     {
+        char str[4096];
+        snprintf(str, sizeof(str), _("A gadget .desktop file was found,</ps>"
+                                     "but [Type] is not set to Application!</ps>"
+                                     "%s"), buf);
         /* FIXME: maybe don't use notification here? T6630 */
         e_notification_util_send(_("Gadget Error"), str);
         efreet_desktop_free(ed);
