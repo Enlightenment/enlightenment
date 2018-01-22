@@ -98,6 +98,20 @@ typedef struct Wizard_Item
    Eina_Bool sandbox E_BITFIELD;
 } Wizard_Item;
 
+
+static char *
+sandbox_name(const char *filename)
+{
+   Efreet_Desktop *ed = eina_hash_find(sandbox_gadgets, filename);
+   const char *name = ed->name ?: ed->generic_name;
+   char buf[1024];
+
+   if (name) return strdup(name);
+   strncpy(buf, ed->orig_path, sizeof(buf) - 1);
+   buf[0] = toupper(buf[0]);
+   return strdup(buf);
+}
+
 static void
 runner_run(Instance *inst)
 {
@@ -752,6 +766,28 @@ runner_hints(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *event_info
    evas_object_size_hint_aspect_set(inst->box, aspect, w, h);
 }
 
+static void
+runner_menu(void *data, Evas_Object *obj, void *event_info)
+{
+   E_Menu *m = event_info;
+   Instance *inst = data;
+
+   if (inst->ci->sandbox)
+     {
+        Efreet_Desktop *ed = eina_hash_find(sandbox_gadgets, e_gadget_type_get(obj));
+        e_menu_title_set(m, ed->name);
+     }
+   else
+     {
+        char buf[1024], *p;
+
+        strncpy(buf, inst->ci->cmd, sizeof(buf) - 1);
+        p = strchr(buf, ' ');
+        if (p) p[0] = 0;
+        e_menu_title_set(m, ecore_file_file_get(buf));
+     }
+}
+
 static Evas_Object *
 gadget_create(Evas_Object *parent, Config_Item *ci, int *id, E_Gadget_Site_Orient orient EINA_UNUSED)
 {
@@ -785,6 +821,7 @@ gadget_create(Evas_Object *parent, Config_Item *ci, int *id, E_Gadget_Site_Orien
    ecore_exe_data_set(inst->exe, inst);
    inst->base.obj = inst->box = elm_box_add(e_comp->elm);
    evas_object_data_set(inst->box, "runner", inst);
+   evas_object_smart_callback_add(inst->box, "gadget_menu", runner_menu, inst);
    evas_object_event_callback_add(inst->box, EVAS_CALLBACK_DEL, runner_del, inst);
    evas_object_event_callback_add(inst->obj, EVAS_CALLBACK_CHANGED_SIZE_HINTS, runner_hints, inst);
    elm_box_homogeneous_set(inst->box, 1);
@@ -921,19 +958,6 @@ sandbox_create(Evas_Object *parent, const char *type, int *id, E_Gadget_Site_Ori
      }
    ci->sandbox = 1;
    return gadget_create(parent, ci, id, orient);
-}
-
-static char *
-sandbox_name(const char *filename)
-{
-   Efreet_Desktop *ed = eina_hash_find(sandbox_gadgets, filename);
-   const char *name = ed->name ?: ed->generic_name;
-   char buf[1024];
-
-   if (name) return strdup(name);
-   strncpy(buf, ed->orig_path, sizeof(buf) - 1);
-   buf[0] = toupper(buf[0]);
-   return strdup(buf);
 }
 
 ///////////////////////////////
