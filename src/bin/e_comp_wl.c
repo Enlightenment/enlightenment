@@ -1341,7 +1341,7 @@ _e_comp_wl_surface_state_commit(E_Client *ec, E_Comp_Wl_Surface_State *state)
      first = !e_pixmap_usable_get(e_comp_x_client_pixmap_get(ec));
 #endif
 
-   if (e_client_util_is_popup(ec) && (!ec->parent))
+   if (e_client_util_is_popup(ec) && (!ec->parent) && (!e_client_has_xwindow(ec)))
      {
         wl_resource_post_error(ec->comp_data->surface,
                                WL_DISPLAY_ERROR_INVALID_OBJECT,
