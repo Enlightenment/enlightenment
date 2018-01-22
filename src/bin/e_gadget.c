@@ -936,7 +936,10 @@ _site_layout(Evas_Object *o, Evas_Object_Box_Data *priv EINA_UNUSED, void *data)
 
         if (!zgc->display) continue;
         if (zgc->moving)
-          _site_gadget_resize(zgc->gadget, w, h, &ww, &hh, &ow, &oh);
+          {
+             if (zgs->layout != pointer_site) continue;
+             _site_gadget_resize(zgc->gadget, w, h, &ww, &hh, &ow, &oh);
+          }
         else
           {
              if (zgc->zone >= 0)
