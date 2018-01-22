@@ -622,7 +622,7 @@ _e_xsettings_stop(void)
    if (manager->timer_retry)
      ecore_timer_del(manager->timer_retry);
 
-   if (!stopping)
+   if ((!stopping) && (!x_fatal))
      _e_xsettings_deactivate(manager);
 
    E_FREE(manager);

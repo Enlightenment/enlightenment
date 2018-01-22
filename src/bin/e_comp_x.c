@@ -5380,23 +5380,26 @@ _e_comp_x_del(E_Comp *c)
      ecore_x_window_key_ungrab(c->root, "F", ECORE_EVENT_MODIFIER_SHIFT |
                                ECORE_EVENT_MODIFIER_CTRL |
                                ECORE_EVENT_MODIFIER_ALT, 0);
-   if (c->grabbed)
+   if (ecore_x_display_get())
      {
-        c->grabbed = 0;
-        ecore_x_ungrab();
+        if (c->grabbed)
+          {
+             c->grabbed = 0;
+             ecore_x_ungrab();
+          }
+
+        for (i = e_comp_canvas_layer_map(E_LAYER_CLIENT_DESKTOP); i <= e_comp_canvas_layer_map(E_LAYER_CLIENT_PRIO); i++)
+          ecore_x_window_free(c->layers[i].win);
+
+        ecore_x_composite_unredirect_subwindows
+          (c->root, ECORE_X_COMPOSITE_UPDATE_MANUAL);
+        if (c->block_win) ecore_x_window_free(c->block_win);
+        ecore_x_composite_render_window_disable(c->win);
+        e_alert_composite_win(c->root, 0);
+
+        ecore_x_window_free(c->cm_selection);
+        ecore_x_screen_is_composited_set(0, 0);
      }
-
-   for (i = e_comp_canvas_layer_map(E_LAYER_CLIENT_DESKTOP); i <= e_comp_canvas_layer_map(E_LAYER_CLIENT_PRIO); i++)
-     ecore_x_window_free(c->layers[i].win);
-
-   ecore_x_composite_unredirect_subwindows
-     (c->root, ECORE_X_COMPOSITE_UPDATE_MANUAL);
-   if (c->block_win) ecore_x_window_free(c->block_win);
-   ecore_x_composite_render_window_disable(c->win);
-   e_alert_composite_win(c->root, 0);
-
-   ecore_x_window_free(c->cm_selection);
-   ecore_x_screen_is_composited_set(0, 0);
 
    eina_list_free(c->x_comp_data->retry_clients);
    ecore_timer_del(c->x_comp_data->retry_timer);
@@ -5967,9 +5970,9 @@ e_comp_x_shutdown(void)
    E_FREE_FUNC(frame_extents, eina_hash_free);
    E_FREE_FUNC(mouse_in_fix_check_timer, ecore_timer_del);
    e_xsettings_shutdown();
+   if (x_fatal) return;
    if (e_comp->comp_type == E_PIXMAP_TYPE_X)
      ecore_x_screensaver_custom_blanking_disable();
-   if (x_fatal) return;
    e_atoms_shutdown();
    /* ecore_x_ungrab(); */
    ecore_x_focus_reset();
