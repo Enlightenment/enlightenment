@@ -103,13 +103,8 @@ static char *
 sandbox_name(const char *filename)
 {
    Efreet_Desktop *ed = eina_hash_find(sandbox_gadgets, filename);
-   const char *name = ed->name ?: ed->generic_name;
-   char buf[1024];
 
-   if (name) return strdup(name);
-   strncpy(buf, ed->orig_path, sizeof(buf) - 1);
-   buf[0] = toupper(buf[0]);
-   return strdup(buf);
+   return strdup(ed->name);
 }
 
 static void
@@ -973,6 +968,17 @@ gadget_dir_add(const char *filename)
    snprintf(buf, sizeof(buf), "%s/%s.desktop", filename, file);
    ed = efreet_desktop_new(buf);
    EINA_SAFETY_ON_NULL_RETURN(ed);
+   if (!ed->name)
+     {
+        char str[4096];
+        snprintf(str, sizeof(str), _("A gadget .desktop file was found,</ps>"
+                                                      "but no [Name] entry was specified!</ps>"
+                                                      "%s"), buf);
+        /* FIXME: maybe don't use notification here? T6630 */
+        e_notification_util_send(_("Gadget Error"), str);
+        efreet_desktop_free(ed);
+        return;
+     }
    eina_hash_add(sandbox_gadgets, filename, ed);
    e_gadget_external_type_add("runner_sandbox", filename, sandbox_create, NULL);
    e_gadget_external_type_name_cb_set("runner_sandbox", filename, sandbox_name);
