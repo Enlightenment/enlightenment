@@ -103,12 +103,9 @@ static char *
 sandbox_name(const char *filename)
 {
    Efreet_Desktop *ed = eina_hash_find(sandbox_gadgets, filename);
-   char *version, buf[1024];
+   char buf[1024];
 
-   if (!ed->x) return strdup(ed->name);
-   version = eina_hash_find(ed->x, "X-Gadget-Version");
-   if (!version) return strdup(ed->name);
-   snprintf(buf, sizeof(buf), "%s (v%s)", ed->name, version);
+   snprintf(buf, sizeof(buf), "%s (v%s)", ed->name, (char*)eina_hash_find(ed->x, "X-Gadget-Version"));
    return strdup(buf);
 }
 
@@ -989,6 +986,17 @@ gadget_dir_add(const char *filename)
         char str[4096];
         snprintf(str, sizeof(str), _("A gadget .desktop file was found,</ps>"
                                      "but [Type] is not set to Application!</ps>"
+                                     "%s"), buf);
+        /* FIXME: maybe don't use notification here? T6630 */
+        e_notification_util_send(_("Gadget Error"), str);
+        efreet_desktop_free(ed);
+        return;
+     }
+   if ((!ed->x) || (!eina_hash_find(ed->x, "X-Gadget-Version")))
+     {
+        char str[4096];
+        snprintf(str, sizeof(str), _("A gadget .desktop file was found,</ps>"
+                                     "but [X-Gadget-Version] is missing!</ps>"
                                      "%s"), buf);
         /* FIXME: maybe don't use notification here? T6630 */
         e_notification_util_send(_("Gadget Error"), str);
