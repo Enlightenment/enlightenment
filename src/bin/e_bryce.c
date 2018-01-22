@@ -770,6 +770,8 @@ _bryce_menu_populate(Bryce *b, E_Menu *m)
 {
    E_Menu_Item *mi;
 
+   e_menu_title_set(m, _("Gadget Bar"));
+
    mi = e_menu_item_new(m);
    e_menu_item_label_set(mi, _("Wizard"));
    e_menu_item_callback_set(mi, _bryce_wizard_menu, b);
