@@ -262,6 +262,7 @@ static void
 xwayland_fatal(void *d EINA_UNUSED)
 {
    /* on xwayland fatal, attempt to restart it */
+   x_fatal = 1;
    xwl_shutdown();
    xwl_init(NULL);
 }
@@ -359,6 +360,7 @@ xwl_init(void *d EINA_UNUSED)
 {
    char disp[8];
 
+   x_fatal = 0;
    /* make sure it's a wayland compositor */
    if (e_comp->comp_type == E_PIXMAP_TYPE_X) return EINA_FALSE;
 
