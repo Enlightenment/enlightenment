@@ -451,7 +451,8 @@ client_notify_cb(void *data, const Eldbus_Message *msg, Eldbus_Pending *pending)
    if (!eldbus_message_arguments_get(msg, "u", &id))
      goto end;
 end:
-   cb(data, id);
+   if (cb)
+     cb(data, id);
    eldbus_connection_unref(conn);
    eldbus_shutdown();
 }
@@ -532,7 +533,8 @@ notification_client_dbus_send(E_Notification_Notify *notify, E_Notification_Clie
 
    p = eldbus_connection_send(conn, msg, client_notify_cb, data, 5000);
    EINA_SAFETY_ON_NULL_GOTO(p, error);
-   eldbus_pending_data_set(p, "cb", cb);
+   if (cb)
+     eldbus_pending_data_set(p, "cb", cb);
    eldbus_pending_data_set(p, "conn", conn);
 
    return EINA_TRUE;
