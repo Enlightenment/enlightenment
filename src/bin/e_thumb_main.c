@@ -366,16 +366,7 @@ _e_thumb_generate(E_Thumb *eth)
 
         sortkey = EINA_FALSE;
 
-        if ((ext) &&
-            ((!strcasecmp(ext, ".mp4")) ||
-             (!strcasecmp(ext, ".m4a")) ||
-             (!strcasecmp(ext, ".m4v")) ||
-             (!strcasecmp(ext, ".mp3")) ||
-             (!strcasecmp(ext, ".ogg")) ||
-             (!strcasecmp(ext, ".ogv")) ||
-             (!strcasecmp(ext, ".aac")) ||
-             (!strcasecmp(ext, ".flac"))
-           ))
+        if (emotion_object_extension_may_play_get(eth->file))
           {
              Evas_Object *em;
 
