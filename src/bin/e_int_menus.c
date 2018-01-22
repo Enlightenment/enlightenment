@@ -44,6 +44,7 @@ static void         _e_int_menus_virtuals_pre_cb(void *data, E_Menu *m);
 static void         _e_int_menus_virtuals_item_cb(void *data, E_Menu *m, E_Menu_Item *mi);
 static void         _e_int_menus_virtuals_icon_cb(void *data, E_Menu *m, E_Menu_Item *mi);
 static void         _e_int_menus_themes_about(void *data, E_Menu *m, E_Menu_Item *mi);
+static void         _e_int_menus_report_bug(void *data, E_Menu *m, E_Menu_Item *mi);
 static void         _e_int_menus_lost_clients_pre_cb(void *data, E_Menu *m);
 static void         _e_int_menus_lost_clients_free_hook(void *obj);
 static void         _e_int_menus_lost_clients_item_cb(void *data, E_Menu *m, E_Menu_Item *mi);
@@ -250,6 +251,11 @@ e_int_menus_main_new(void)
    e_menu_item_label_set(mi, _("About Theme"));
    e_util_menu_item_theme_icon_set(mi, "preferences-desktop-theme");
    e_menu_item_callback_set(mi, _e_int_menus_themes_about, NULL);
+
+   mi = e_menu_item_new(subm);
+   e_menu_item_label_set(mi, _("Report Bug"));
+   e_util_menu_item_theme_icon_set(mi, "dialog-error");
+   e_menu_item_callback_set(mi, _e_int_menus_report_bug, NULL);
 
    l = _e_int_menus_augmentation_find("enlightenment/1");
    if (l) _e_int_menus_augmentation_add(subm, l);
@@ -636,6 +642,12 @@ _e_int_menus_themes_about(void *data EINA_UNUSED, E_Menu *m EINA_UNUSED, E_Menu_
 
    about = e_theme_about_new();
    if (about) e_theme_about_show(about);
+}
+
+static void
+_e_int_menus_report_bug(void *data EINA_UNUSED, E_Menu *m EINA_UNUSED, E_Menu_Item *mi EINA_UNUSED)
+{
+   e_util_open("https://www.enlightenment.org/contrib/report-bug.md", NULL);
 }
 
 /*
