@@ -285,6 +285,8 @@ struct _E_Comp_Wl_Data
    E_Client *drag_client;
    void *drag_source;
 
+   Eina_List *efl_wls;
+
    Eina_Bool dmabuf_disable E_BITFIELD;
    Eina_Bool dmabuf_proxy E_BITFIELD;
 };

@@ -389,6 +389,16 @@ _e_comp_wl_input_state_update(void)
 }
 
 static void
+nested_keymap_update(void)
+{
+   Eina_List *l;
+   Evas_Object *obj;
+
+   EINA_LIST_FOREACH(e_comp_wl->efl_wls, l, obj)
+     efl_wl_seat_keymap_set(obj, NULL, e_comp_wl->xkb.state, e_comp_wl->xkb.fd, e_comp_wl->xkb.size, &e_comp_wl->kbd.keys);
+}
+
+static void
 _e_comp_wl_input_keymap_update(struct xkb_keymap *keymap)
 {
    char *tmp;
@@ -447,6 +457,7 @@ _e_comp_wl_input_keymap_update(struct xkb_keymap *keymap)
 
    /* update modifiers */
    e_comp_wl_input_keyboard_modifiers_update();
+   nested_keymap_update();
 }
 
 EINTERN Eina_Bool
@@ -715,7 +726,7 @@ e_comp_wl_input_keymap_index_set(xkb_layout_index_t index)
         e_comp_wl->kbd.choosen_group = index;
         _e_comp_wl_input_state_update();
         e_comp_wl_input_keyboard_modifiers_update();
-
+        nested_keymap_update();
      }
    else
      choosen_group = index;
