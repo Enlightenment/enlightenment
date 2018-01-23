@@ -5,6 +5,7 @@
 #ifdef HAVE_WL_DRM
 #include <Ecore_Drm2.h>
 #endif
+#include <Efl_Wl.h>
 
 E_API int E_EVENT_TEXT_INPUT_PANEL_VISIBILITY_CHANGE = -1;
 static xkb_keycode_t (*_xkb_keymap_key_by_name)(void *, const char *);
