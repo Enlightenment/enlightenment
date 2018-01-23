@@ -84,9 +84,7 @@ config_h.set('_TANDEM_SOURCE'          , '1')
 config_h.set('__EXTENSIONS__'          , '1')
 config_h.set('E_RELEASE_BUILD'         , '1')
 
-if get_option('nls') == true
-  subdir('po')
-endif
+subdir('po')
 
 darwin = host_machine.system().startswith('darwin')
 if darwin == true
