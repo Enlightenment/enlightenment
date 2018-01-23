@@ -387,6 +387,8 @@ runner_del(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *event_info E
    Instance *inst = data;
    Evas_Object *site = e_gadget_site_get(obj);
 
+   if (e_comp->comp_type == E_PIXMAP_TYPE_WL)
+     e_comp_wl->efl_wls = eina_list_remove(e_comp_wl->efl_wls, inst->obj);
    evas_object_smart_callback_del_full(site, "gadget_removed", runner_removed, inst);
    evas_object_smart_callback_del_full(site, "gadget_site_anchor", runner_site_anchor, inst);
    evas_object_smart_callback_del_full(site, "gadget_site_gravity", runner_site_gravity, inst);
@@ -749,6 +751,13 @@ popup_added(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
 }
 
 static void
+seat_added(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
+{
+   efl_wl_seat_keymap_set(obj, NULL, e_comp_wl->xkb.state, e_comp_wl->xkb.fd, e_comp_wl->xkb.size, &e_comp_wl->kbd.keys);
+   efl_wl_seat_key_repeat_set(obj, NULL, e_config->keyboard.repeat_rate, e_config->keyboard.repeat_delay);
+}
+
+static void
 runner_hints(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
    Instance *inst = data;
@@ -830,6 +839,12 @@ gadget_create(Evas_Object *parent, Config_Item *ci, int *id, E_Gadget_Site_Orien
    inst->ci->inst = inst;
    inst->allowed_pids = eina_hash_int32_new(NULL);
    inst->obj = efl_wl_add(e_comp->evas);
+   if (e_comp->comp_type == E_PIXMAP_TYPE_WL)
+     {
+        efl_wl_seat_keymap_set(inst->obj, NULL, e_comp_wl->xkb.state, e_comp_wl->xkb.fd, e_comp_wl->xkb.size, &e_comp_wl->kbd.keys);
+        efl_wl_seat_key_repeat_set(inst->obj, NULL, e_config->keyboard.repeat_rate, e_config->keyboard.repeat_delay);
+        e_comp_wl->efl_wls = eina_list_append(e_comp_wl->efl_wls, inst->obj);
+     }
    E_EXPAND(inst->obj);
    E_FILL(inst->obj);
    evas_object_show(inst->obj);
@@ -838,6 +853,8 @@ gadget_create(Evas_Object *parent, Config_Item *ci, int *id, E_Gadget_Site_Orien
    efl_wl_global_add(inst->obj, &e_gadget_interface, 1, inst, gadget_bind);
    evas_object_smart_callback_add(inst->obj, "child_added", child_added, inst);
    evas_object_smart_callback_add(inst->obj, "popup_added", popup_added, inst);
+   if (e_comp->comp_type == E_PIXMAP_TYPE_WL)
+     evas_object_smart_callback_add(inst->obj, "seat_added", seat_added, inst);
    e_comp_wl_extension_action_route_interface_get(&ar_version);
    efl_wl_global_add(inst->obj, &action_route_interface, ar_version, inst, ar_bind);
    evas_object_event_callback_add(inst->obj, EVAS_CALLBACK_MOUSE_DOWN, mouse_down, inst);
