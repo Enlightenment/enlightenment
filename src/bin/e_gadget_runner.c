@@ -751,7 +751,7 @@ popup_added(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
 }
 
 static void
-seat_added(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
+seat_added(void *data EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
    efl_wl_seat_keymap_set(obj, NULL, e_comp_wl->xkb.state, e_comp_wl->xkb.fd, e_comp_wl->xkb.size, &e_comp_wl->kbd.keys);
    efl_wl_seat_key_repeat_set(obj, NULL, e_config->keyboard.repeat_rate, e_config->keyboard.repeat_delay);
