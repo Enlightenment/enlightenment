@@ -2550,8 +2550,8 @@ _e_comp_object_input_rect_update(E_Comp_Object *cw)
 
         E_RECTS_CLIP_TO_RECT(x, y, w, h, 0, 0, cw->ec->client.w, cw->ec->client.h);
         evas_object_geometry_set(o,
-            cw->ec->x + x + (!!cw->frame_object * cw->client_inset.l),
-            cw->ec->y + y + (!!cw->frame_object * cw->client_inset.t),
+            cw->x + x + (!!cw->frame_object * cw->client_inset.l),
+            cw->y + y + (!!cw->frame_object * cw->client_inset.t),
             w, h);
      }
    eina_iterator_free(it);
