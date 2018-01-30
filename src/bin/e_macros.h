@@ -100,6 +100,15 @@
        list = eina_list_append(list, _eh); \
     } \
   while (0)
+# define E_LIST_HANDLER_APPEND_PRE(list, type, callback, data) \
+  do \
+    { \
+       Ecore_Event_Handler *_eh; \
+       _eh = ecore_event_handler_prepend(type, (Ecore_Event_Handler_Cb)callback, data); \
+       assert(_eh); \
+       list = eina_list_append(list, _eh); \
+    } \
+  while (0)
 
 # define E_CLAMP(x, min, max) (x < min ? min : (x > max ? max : x))
 # define E_RECTS_CLIP_TO_RECT(_x, _y, _w, _h, _cx, _cy, _cw, _ch) \
