@@ -905,12 +905,12 @@ EINTERN void
 e_comp_canvas_intercept(void)
 {
    ecore_event_init();
-   E_LIST_HANDLER_APPEND(handlers, ECORE_EVENT_MOUSE_BUTTON_DOWN, _e_comp_cb_mouse_down, NULL);
-   E_LIST_HANDLER_APPEND(handlers, ECORE_EVENT_MOUSE_BUTTON_UP, _e_comp_cb_mouse_up, NULL);
-   E_LIST_HANDLER_APPEND(handlers, ECORE_EVENT_MOUSE_WHEEL, _e_comp_cb_mouse_wheel, NULL);
+   E_LIST_HANDLER_APPEND_PRE(handlers, ECORE_EVENT_MOUSE_BUTTON_DOWN, _e_comp_cb_mouse_down, NULL);
+   E_LIST_HANDLER_APPEND_PRE(handlers, ECORE_EVENT_MOUSE_BUTTON_UP, _e_comp_cb_mouse_up, NULL);
+   E_LIST_HANDLER_APPEND_PRE(handlers, ECORE_EVENT_MOUSE_WHEEL, _e_comp_cb_mouse_wheel, NULL);
 #ifdef HAVE_WAYLAND
-   E_LIST_HANDLER_APPEND(handlers, ECORE_EVENT_MOUSE_MOVE, _e_comp_cb_mouse_move, NULL);
+   E_LIST_HANDLER_APPEND_PRE(handlers, ECORE_EVENT_MOUSE_MOVE, _e_comp_cb_mouse_move, NULL);
 #endif
-   E_LIST_HANDLER_APPEND(handlers, ECORE_EVENT_KEY_DOWN, _e_comp_cb_key_down, NULL);
-   E_LIST_HANDLER_APPEND(handlers, ECORE_EVENT_KEY_UP, _e_comp_cb_key_up, NULL);
+   E_LIST_HANDLER_APPEND_PRE(handlers, ECORE_EVENT_KEY_DOWN, _e_comp_cb_key_down, NULL);
+   E_LIST_HANDLER_APPEND_PRE(handlers, ECORE_EVENT_KEY_UP, _e_comp_cb_key_up, NULL);
 }
