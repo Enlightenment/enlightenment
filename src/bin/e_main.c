@@ -3,6 +3,8 @@
 # include <sys/prctl.h>
 #endif
 
+#include "valgrind.h"
+
 #define MAX_LEVEL 80
 
 #define TS_DO
@@ -1283,7 +1285,7 @@ _e_main_parse_arguments(int argc, char **argv)
 
    /* we want to have been launched by enlightenment_start. there is a very */
    /* good reason we want to have been launched this way, thus check */
-   if (!getenv("E_START"))
+   if ((!getenv("E_START")) && (!RUNNING_ON_VALGRIND))
      {
         e_error_message_show(_("You are executing enlightenment directly. This is\n"
                                "bad. Please do not execute the \"enlightenment\"\n"

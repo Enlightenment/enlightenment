@@ -225,7 +225,8 @@ src = [
   'efx/efx_rotate.c',
   'efx/efx_spin.c',
   'efx/efx_util.c',
-  'efx/efx_zoom.c'
+  'efx/efx_zoom.c',
+  'valgrind.h'
 ]
 
 hdr = [
