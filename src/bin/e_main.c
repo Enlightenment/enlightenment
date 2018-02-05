@@ -212,9 +212,8 @@ _e_main_shelf_init_job(void *data EINA_UNUSED)
    return ECORE_CALLBACK_CANCEL;
 }
 
-/* externally accessible functions */
-int
-main(int argc, char **argv)
+EAPI_MAIN int
+elm_main(int argc, char **argv)
 {
    Eina_Bool nostartup = EINA_FALSE;
    Eina_Bool safe_mode = EINA_FALSE;
@@ -1819,3 +1818,5 @@ _e_main_cb_startup_fake_end(void *data EINA_UNUSED)
    e_init_done();
    return ECORE_CALLBACK_CANCEL;
 }
+
+ELM_MAIN()
