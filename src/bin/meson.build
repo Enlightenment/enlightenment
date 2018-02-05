@@ -61,7 +61,8 @@ requires_e = ' '.join([
   requires_eeze,
   'eldbus',
   'emotion',
-  'elementary'
+  'elementary',
+  'uuid'
 ])
 
 src = [
@@ -438,8 +439,8 @@ install_headers( hdr, subdir: 'enlightenment' )
 executable('enlightenment', src,
            include_directories: include_directories('.', 'efx', 'generated', '../..'),
            dependencies       : deps_e,
-           c_args             : '-DE_LOGGING=1',
-           link_args          : '-rdynamic',
+           c_args             : ['-DE_LOGGING=1', '-fPIE', '-fPIC'],
+           link_args          : ['-rdynamic', '-pie'],
            install_dir        : dir_bin,
            install            : true
           )
@@ -457,13 +458,25 @@ executable('enlightenment_imc',
            install            : true
           )
 
+if config_h.has('HAVE_WAYLAND') == true
 executable('enlightenment_start',
-           [ 'e_start_main.c' ],
+           [ 'e_start_quicklaunch.c' ],
            include_directories: include_directories('../..'),
-           dependencies       : dep_eina,
+           dependencies       : [deps_e],
+           c_args             : ['-fPIE', '-fPIC'],
+           link_args          : ['-rdynamic', '-pie'],
            install_dir        : dir_bin,
            install            : true
           )
+else
+executable('enlightenment_start',
+           [ 'e_start_main.c' ],
+           include_directories: include_directories('../..'),
+           dependencies       : [dep_eina],
+           install_dir        : dir_bin,
+           install            : true
+          )
+endif
 
 executable('enlightenment_filemanager',
            [ 'e_fm_cmdline.c' ],
