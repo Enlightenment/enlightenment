@@ -1032,7 +1032,7 @@ _e_kbd_int_layout_build(E_Kbd_Int *ki)
 
         if (icon)
           {
-             char buf[PATH_MAX], *p;
+             char buf[PATH_MAX];
 
              o2 = e_icon_add(e_comp->evas);
              e_icon_fill_inside_set(o2, 1);
@@ -1042,8 +1042,7 @@ _e_kbd_int_layout_build(E_Kbd_Int *ki)
              evas_object_show(o2);
 
              snprintf(buf, sizeof(buf), "%s/%s", ki->layout.directory, icon);
-             p = strrchr(icon, '.');
-             if (!strcmp(p, ".edj")) e_icon_file_edje_set(o2, buf, "icon");
+             if (eina_str_has_extension(icon, ".edj")) e_icon_file_edje_set(o2, buf, "icon");
              else e_icon_file_set(o2, buf);
           }
         evas_object_grid_pack(ki->layout_obj, o,
@@ -1101,7 +1100,7 @@ _e_kbd_int_layouts_list_update(E_Kbd_Int *ki)
 {
    Eina_List *files;
    Eina_List *l;
-   char buf[PATH_MAX], *p, *file, *path;
+   char buf[PATH_MAX], *file, *path;
    const char *fl;
    Eina_List *kbs = NULL, *layouts = NULL;
    int ok;
@@ -1117,8 +1116,7 @@ _e_kbd_int_layouts_list_update(E_Kbd_Int *ki)
 
    EINA_LIST_FREE(files, file)
      {
-        p = strrchr(file, '.');
-        if ((p) && (!strcmp(p, ".kbd")))
+        if (eina_str_has_extension(file, ".kbd"))
           {
              if (eina_strlcpy(buf + len, file, sizeof(buf) - len) >=
                  sizeof(buf) - len)
@@ -1138,8 +1136,7 @@ _e_kbd_int_layouts_list_update(E_Kbd_Int *ki)
 
    EINA_LIST_FREE(files, file)
      {
-        p = strrchr(file, '.');
-        if ((p) && (!strcmp(p, ".kbd")))
+        if (eina_str_has_extension(file, ".kbd"))
           {
              ok = 1;
              EINA_LIST_FOREACH(kbs, l, fl)
@@ -1177,7 +1174,7 @@ _e_kbd_int_layouts_list_update(E_Kbd_Int *ki)
              s = strdup(ecore_file_file_get(kil->path));
              if (s)
                {
-                  p = strrchr(s, '.');
+                  char *p = strrchr(s, '.');
                   if (p) *p = 0;
                   kil->name = eina_stringshare_add(s);
                   free(s);
