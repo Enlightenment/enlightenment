@@ -266,7 +266,7 @@ typedef struct Xfer_Data
 {
    EINA_INLIST;
    Eina_Binbuf *buf;
-   Eina_Bool xdnd E_BITFIELD;
+   Eina_Bool xdnd : 1;
    unsigned int offset;
    Ecore_Fd_Handler *fdh;
 } Xfer_Data;
