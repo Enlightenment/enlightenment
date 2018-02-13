@@ -34,6 +34,7 @@ typedef struct Tooltip
 
 typedef struct Instance
 {
+   E_Gadget_Site_Orient orient;
    Evas_Object *box;
    Evas_Object *obj;
    Ecore_Exe *exe;
@@ -101,7 +102,7 @@ runner_run(Instance *inst)
 
    snprintf(buf, sizeof(buf), "%d", inst->ci->id);
    e_util_env_set("E_GADGET_ID", buf);
-   switch (e_gadget_site_orient_get(e_gadget_site_get(inst->box)))
+   switch (inst->orient)
      {
       case E_GADGET_SITE_ORIENT_NONE:
         e_util_env_set("E_GADGET_ORIENTATION", "None");
@@ -820,7 +821,7 @@ runner_menu(void *data, Evas_Object *obj, void *event_info)
 }
 
 static Evas_Object *
-gadget_create(Evas_Object *parent, Config_Item *ci, int *id, E_Gadget_Site_Orient orient EINA_UNUSED)
+gadget_create(Evas_Object *parent, Config_Item *ci, int *id, E_Gadget_Site_Orient orient)
 {
    Instance *inst;
    int ar_version;
@@ -828,6 +829,7 @@ gadget_create(Evas_Object *parent, Config_Item *ci, int *id, E_Gadget_Site_Orien
    inst = E_NEW(Instance, 1);
    instances = eina_list_append(instances, inst);
    inst->ci = ci;
+   inst->orient = orient;
    if (!inst->ci)
      inst->ci = _conf_item_get(id);
    inst->ci->inst = inst;
