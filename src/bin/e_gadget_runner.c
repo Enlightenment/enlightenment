@@ -101,6 +101,19 @@ runner_run(Instance *inst)
 
    snprintf(buf, sizeof(buf), "%d", inst->ci->id);
    e_util_env_set("E_GADGET_ID", buf);
+   switch (e_gadget_site_orient_get(e_gadget_site_get(inst->box)))
+     {
+      case E_GADGET_SITE_ORIENT_NONE:
+        e_util_env_set("E_GADGET_ORIENTATION", "None");
+        break;
+      case E_GADGET_SITE_ORIENT_HORIZONTAL:
+        e_util_env_set("E_GADGET_ORIENTATION", "Horizontal");
+        break;
+      case E_GADGET_SITE_ORIENT_VERTICAL:
+        e_util_env_set("E_GADGET_ORIENTATION", "Vertical");
+        break;
+     }
+   e_util_env_set("E_GADGET_ID", buf);
 
    unshare(CLONE_NEWPID);
 
@@ -108,6 +121,7 @@ runner_run(Instance *inst)
 
    setns(ns_fd, CLONE_NEWPID);
 
+   e_util_env_set("E_GADGET_ORIENTATION", NULL);
    e_util_env_set("E_GADGET_ID", NULL);
    e_util_env_set("LD_PRELOAD", preload);
    free(preload);
