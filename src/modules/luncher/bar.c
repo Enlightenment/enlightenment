@@ -469,7 +469,7 @@ _bar_icon_mouse_out(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *eve
    elm_object_tooltip_hide(obj);
    E_FREE_FUNC(ic->mouse_in_timer, ecore_timer_del);
    E_FREE_FUNC(ic->mouse_out_timer, ecore_timer_del);
-   ic->mouse_out_timer = ecore_timer_loop_add(0.25, _bar_icon_preview_hide, ic);
+   ic->mouse_out_timer = ecore_timer_loop_add(.25, _bar_icon_preview_hide, ic);
 }
 
 static void
@@ -926,10 +926,11 @@ _bar_icon_mouse_in(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *even
      }
    E_FREE_FUNC(ic->mouse_out_timer, ecore_timer_del);
    E_FREE_FUNC(ic->mouse_in_timer, ecore_timer_del);
+   if (ic->inst->current_preview && (ic->preview == ic->inst->current_preview)) return;
    if (eina_list_count(ic->execs) || eina_list_count(ic->clients))
      clients = EINA_TRUE;
    if (clients && ic->inst->current_preview && !ic->inst->current_preview_menu)
-     _bar_icon_preview_show(ic);
+     ic->mouse_in_timer = ecore_timer_loop_add(0.2, _bar_icon_preview_show, ic);
    else if (clients && !ic->inst->current_preview)
      ic->mouse_in_timer = ecore_timer_loop_add(0.3, _bar_icon_preview_show, ic);
 }
@@ -1170,6 +1171,31 @@ _bar_icon_add(Instance *inst, Efreet_Desktop *desktop, E_Client *non_desktop_cli
    elm_layout_sizing_eval(ic->o_layout);
    _bar_aspect(inst);
    return ic;
+}
+
+static Eina_Bool
+_bar_cb_desk_switch(void *data EINA_UNUSED, int type EINA_UNUSED, E_Event_Client *ev EINA_UNUSED)
+{
+   Instance *inst = NULL;
+   Icon *ic = NULL;
+   Eina_List *l = NULL, *ll = NULL;
+
+
+   EINA_LIST_FOREACH(luncher_instances, l, inst)
+     {
+        if (inst->current_preview)
+          {
+             EINA_LIST_FOREACH(inst->icons, ll, ic)
+               {
+                  if (inst->current_preview && (inst->current_preview == ic->preview))
+                    {
+                       _bar_icon_preview_show(ic);
+                       return ECORE_CALLBACK_RENEW;
+                    }
+               }
+          }
+     }
+   return ECORE_CALLBACK_RENEW;
 }
 
 static Eina_Bool
@@ -2051,6 +2077,8 @@ bar_create(Evas_Object *parent, int *id, E_Gadget_Site_Orient orient EINA_UNUSED
                               _bar_cb_exec_del, NULL);
         E_LIST_HANDLER_APPEND(handlers, E_EVENT_CLIENT_REMOVE,
                               _bar_cb_client_remove, NULL);
+        E_LIST_HANDLER_APPEND(handlers, E_EVENT_DESK_SHOW,
+                              _bar_cb_desk_switch, NULL);
      }
    if (inst->cfg->id < 0) return inst->o_main;
    luncher_instances = eina_list_append(luncher_instances, inst);
