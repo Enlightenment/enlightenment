@@ -42,6 +42,8 @@ typedef struct
    Eina_Bool incr E_BITFIELD;
 } Pipe;
 
+static Ecore_X_Window owner_win;
+
 static void
 _pipe_free(Pipe *p)
 {
@@ -54,7 +56,7 @@ _pipe_free(Pipe *p)
 static void
 _xdnd_finish(Eina_Bool success)
 {
-   ecore_x_client_message32_send(e_client_util_win_get(e_comp_wl->drag_client), ECORE_X_ATOM_XDND_FINISHED, ECORE_X_EVENT_MASK_NONE,
+   ecore_x_client_message32_send(owner_win, ECORE_X_ATOM_XDND_FINISHED, ECORE_X_EVENT_MASK_NONE,
      e_comp->cm_selection, !!success, (!!success) * ECORE_X_ATOM_XDND_ACTION_COPY, 0, 0);
 }
 
@@ -117,7 +119,7 @@ static void
 _xwayland_target_send(E_Comp_Wl_Data_Source *source EINA_UNUSED, uint32_t serial EINA_UNUSED, const char* mime_type)
 {
    DBG("XWL Data Source Target Send");
-   ecore_x_client_message32_send(e_client_util_win_get(e_comp_wl->drag_client), ECORE_X_ATOM_XDND_STATUS, ECORE_X_EVENT_MASK_NONE,
+   ecore_x_client_message32_send(owner_win, ECORE_X_ATOM_XDND_STATUS, ECORE_X_EVENT_MASK_NONE,
      e_comp->cm_selection, 2 | !!mime_type, 0, 0, (!!mime_type) * ECORE_X_ATOM_XDND_ACTION_COPY);
 }
 
@@ -209,6 +211,7 @@ _xwl_fixes_selection_notify(void *d EINA_UNUSED, int t EINA_UNUSED, Ecore_X_Even
                }
              evas_pointer_canvas_xy_get(e_comp->evas, &x, &y);
              e_comp_wl->drag_client = e_pixmap_find_client(E_PIXMAP_TYPE_X, ev->owner);
+             if (!e_comp_wl->drag_client) e_comp_wl->drag_client = e_comp_wl->ptr.ec;
              e_comp_wl->drag = e_drag_new(x, y, (const char**)names, num, NULL, 0, NULL, _xwayland_drop);
              e_comp_wl->drag->button_mask = evas_pointer_button_down_mask_get(e_comp->evas);
              ecore_x_window_move_resize(e_comp->cm_selection, 0, 0, e_comp->w, e_comp->h);
@@ -237,6 +240,7 @@ _xwl_fixes_selection_notify(void *d EINA_UNUSED, int t EINA_UNUSED, Ecore_X_Even
                  e_client_has_xwindow(e_comp_wl->drag_client))
                e_object_del(E_OBJECT(e_comp_wl->drag));
           }
+        owner_win = ev->owner;
         e_screensaver_inhibit_toggle(!!ev->owner);
         return ECORE_CALLBACK_RENEW;
      }
