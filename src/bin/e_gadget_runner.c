@@ -35,6 +35,7 @@ typedef struct Tooltip
 typedef struct Instance
 {
    E_Gadget_Site_Orient orient;
+   E_Gadget_Site_Anchor anchor;
    Evas_Object *box;
    Evas_Object *obj;
    Ecore_Exe *exe;
@@ -114,6 +115,34 @@ runner_run(Instance *inst)
         e_util_env_set("E_GADGET_ORIENTATION", "Vertical");
         break;
      }
+   if (inst->anchor)
+     {
+        if (inst->anchor & E_GADGET_SITE_ANCHOR_TOP)
+          {
+             if (inst->anchor & E_GADGET_SITE_ANCHOR_LEFT)
+               e_util_env_set("E_GADGET_ANCHOR", "Top,Left");
+             else if (inst->anchor & E_GADGET_SITE_ANCHOR_RIGHT)
+               e_util_env_set("E_GADGET_ANCHOR", "Top,Right");
+             else
+               e_util_env_set("E_GADGET_ANCHOR", "Top");
+          }
+        else if (inst->anchor & E_GADGET_SITE_ANCHOR_BOTTOM)
+          {
+             if (inst->anchor & E_GADGET_SITE_ANCHOR_LEFT)
+               e_util_env_set("E_GADGET_ANCHOR", "Bottom,Left");
+             else if (inst->anchor & E_GADGET_SITE_ANCHOR_RIGHT)
+               e_util_env_set("E_GADGET_ANCHOR", "Bottom,Right");
+             else
+               e_util_env_set("E_GADGET_ANCHOR", "Bottom");
+          }
+        else
+          {
+             if (inst->anchor & E_GADGET_SITE_ANCHOR_LEFT)
+               e_util_env_set("E_GADGET_ANCHOR", "Left");
+             else if (inst->anchor & E_GADGET_SITE_ANCHOR_RIGHT)
+               e_util_env_set("E_GADGET_ANCHOR", "Right");
+          }
+     }
    e_util_env_set("E_GADGET_ID", buf);
 
    unshare(CLONE_NEWPID);
@@ -122,12 +151,14 @@ runner_run(Instance *inst)
 
    setns(ns_fd, CLONE_NEWPID);
 
+   e_util_env_set("E_GADGET_ANCHOR", NULL);
    e_util_env_set("E_GADGET_ORIENTATION", NULL);
    e_util_env_set("E_GADGET_ID", NULL);
    e_util_env_set("LD_PRELOAD", preload);
    free(preload);
    eina_hash_free_buckets(inst->allowed_pids);
    pid = ecore_exe_pid_get(inst->exe);
+   ecore_exe_data_set(inst->exe, inst);
    eina_hash_add(inst->allowed_pids, &pid, (void*)1);
 }
 
@@ -372,8 +403,9 @@ static void
 runner_site_anchor(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
    Instance *inst = data;
+   inst->anchor = e_gadget_site_anchor_get(obj);
    if (inst->gadget_resource)
-     e_gadget_send_gadget_anchor(inst->gadget_resource, e_gadget_site_anchor_get(obj));
+     e_gadget_send_gadget_anchor(inst->gadget_resource, inst->anchor);
 }
 
 static void
@@ -417,12 +449,14 @@ runner_created(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
    Instance *inst = data;
    if (inst->box != event_info) return;
+   inst->anchor = e_gadget_site_anchor_get(obj);
    e_gadget_configure_cb_set(inst->box, runner_gadget_configure);
    evas_object_smart_callback_del_full(obj, "gadget_created", runner_created, data);
    if (e_gadget_site_is_desklock(obj))
      evas_object_show(inst->obj);
    else if (!e_desklock_state_get())
      evas_object_show(inst->obj);
+   runner_run(inst);
 }
 
 
@@ -861,8 +895,6 @@ gadget_create(Evas_Object *parent, Config_Item *ci, int *id, E_Gadget_Site_Orien
    evas_object_smart_callback_add(parent, "gadget_removed", runner_removed, inst);
    evas_object_smart_callback_add(parent, "gadget_site_anchor", runner_site_anchor, inst);
    evas_object_smart_callback_add(parent, "gadget_site_gravity", runner_site_gravity, inst);
-   runner_run(inst);
-   ecore_exe_data_set(inst->exe, inst);
    inst->base.obj = inst->box = elm_box_add(e_comp->elm);
    evas_object_data_set(inst->box, "runner", inst);
    evas_object_smart_callback_add(inst->box, "gadget_menu", runner_menu, inst);
@@ -904,10 +936,7 @@ runner_exe_del(void *d EINA_UNUSED, int t EINA_UNUSED, Ecore_Exe_Event_Del *ev)
         if (ev->exit_code == 255) //exec error
           e_gadget_del(inst->box);
         else
-          {
-             runner_run(inst);
-             ecore_exe_data_set(inst->exe, inst);
-          }
+          runner_run(inst);
         break;
       case EXIT_MODE_DELETE:
         e_gadget_del(inst->box);
