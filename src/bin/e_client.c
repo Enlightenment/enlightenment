@@ -5144,12 +5144,9 @@ e_client_icon_add(E_Client *ec, Evas *evas)
      {
         if ((ec->desktop) && (ec->icon_preference != E_ICON_PREF_NETWM))
           {
-             o = e_icon_add(evas);
+             o = e_util_desktop_icon_add(ec->desktop, 64, evas);
              if (o)
-               {
-                  e_icon_fdo_icon_set(o, ec->desktop->icon);
-                  return o;
-               }
+               return o;
           }
 #ifndef HAVE_WAYLAND_ONLY
         else if (ec->netwm.icons)
