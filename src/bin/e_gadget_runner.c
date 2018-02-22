@@ -419,6 +419,10 @@ runner_created(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
    if (inst->box != event_info) return;
    e_gadget_configure_cb_set(inst->box, runner_gadget_configure);
    evas_object_smart_callback_del_full(obj, "gadget_created", runner_created, data);
+   if (e_gadget_site_is_desklock(obj))
+     evas_object_show(inst->obj);
+   else if (!e_desklock_state_get())
+     evas_object_show(inst->obj);
 }
 
 
@@ -843,7 +847,6 @@ gadget_create(Evas_Object *parent, Config_Item *ci, int *id, E_Gadget_Site_Orien
      }
    E_EXPAND(inst->obj);
    E_FILL(inst->obj);
-   evas_object_show(inst->obj);
    efl_wl_aspect_set(inst->obj, 1);
    efl_wl_minmax_set(inst->obj, 1);
    efl_wl_global_add(inst->obj, &e_gadget_interface, 1, inst, gadget_bind);
@@ -1120,6 +1123,32 @@ list_error_cb(void *d EINA_UNUSED, Eio_File *ls EINA_UNUSED, int error EINA_UNUS
    gadget_lister = NULL;
 }
 
+static Ecore_Job *desklock_job;
+
+static void
+desklock_job_cb()
+{
+   Eina_List *l;
+   Instance *inst;
+
+   EINA_LIST_FOREACH(instances, l, inst)
+     {
+        if (e_gadget_site_is_desklock(e_gadget_site_get(inst->box))) continue;
+        if (e_desklock_state_get())
+          evas_object_hide(inst->obj);
+        else
+          evas_object_show(inst->obj);
+     }
+   desklock_job = NULL;
+}
+
+static Eina_Bool
+desklock_event()
+{
+   if (!desklock_job) desklock_job = ecore_job_add(desklock_job_cb, NULL);
+   return ECORE_CALLBACK_RENEW;
+}
+
 EINTERN void
 e_gadget_runner_init(void)
 {
@@ -1157,6 +1186,7 @@ e_gadget_runner_init(void)
    E_LIST_HANDLER_APPEND(handlers, EIO_MONITOR_DIRECTORY_CREATED, monitor_dir_create, NULL);
    E_LIST_HANDLER_APPEND(handlers, EIO_MONITOR_DIRECTORY_DELETED, monitor_dir_del, NULL);
    E_LIST_HANDLER_APPEND(handlers, EIO_MONITOR_ERROR, monitor_error, NULL);
+   E_LIST_HANDLER_APPEND(handlers, E_EVENT_DESKLOCK, desklock_event, NULL);
 
    sandbox_gadgets = eina_hash_string_superfast_new((Eina_Free_Cb)efreet_desktop_free);
    {
@@ -1195,6 +1225,7 @@ e_gadget_runner_shutdown(void)
    E_FREE_LIST(handlers, ecore_event_handler_del);
    E_FREE_FUNC(sandbox_gadgets, eina_hash_free);
    E_FREE_FUNC(gadget_lister, eio_file_cancel);
+   E_FREE_FUNC(desklock_job, ecore_job_del);
    close(ns_fd);
    ns_fd = -1;
 }
