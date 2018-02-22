@@ -1,16 +1,14 @@
 #include "batman.h"
 
-Eina_Bool upower;
-Eina_List *batman_device_batteries;
-Eina_List *batman_device_ac_adapters;
-double batman_init_time;
+EINTERN Eina_Bool upower;
+EINTERN Eina_List *batman_device_batteries;
+EINTERN Eina_List *batman_device_ac_adapters;
+EINTERN double batman_init_time;
 
 static Eina_Bool _batman_cb_warning_popup_timeout(void *data);
 static void      _batman_cb_warning_popup_hide(void *data, Evas *e, Evas_Object *obj, void *event);
 static void      _batman_warning_popup_destroy(Instance *inst);
 static void      _batman_warning_popup(Instance *inst, int time, double percent);
-
-static Ecore_Event_Handler *_handler = NULL;
 
 Eina_List *
 _batman_battery_find(const char *udi)
@@ -575,8 +573,6 @@ _batman_removed_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_data)
    Ecore_Event_Handler *handler;
 
    if (inst->o_main != event_data) return;
-   if (_handler)
-     ecore_event_handler_del(_handler);
    if (inst->cfg->batman.popup)
      E_FREE_FUNC(inst->cfg->batman.popup, evas_object_del);
    if (inst->cfg->batman.configure)
@@ -658,13 +654,13 @@ _batman_created_cb(void *data, Evas_Object *obj, void *event_data EINA_UNUSED)
                                   EVAS_CALLBACK_MOUSE_DOWN,
                                   _batman_mouse_down_cb, inst);
    evas_object_event_callback_add(inst->cfg->batman.o_gadget, EVAS_CALLBACK_RESIZE, _batman_resize_cb, inst);
-   _handler = ecore_event_handler_add(E_EVENT_POWERSAVE_CONFIG_UPDATE,
-                                      _powersave_cb_config_update, inst);
    evas_object_show(inst->cfg->batman.o_gadget);
    evas_object_smart_callback_del_full(obj, "gadget_created", _batman_created_cb, data);
 
    E_LIST_HANDLER_APPEND(inst->cfg->batman.handlers, E_EVENT_SCREENSAVER_ON, _screensaver_on, inst);
-   E_LIST_HANDLER_APPEND(inst->cfg->batman.handlers, E_EVENT_SCREENSAVER_OFF, _screensaver_off, inst);
+   E_LIST_HANDLER_APPEND(inst->cfg->batman.handlers, E_EVENT_SCREENSAVER_ON, _screensaver_on, inst);
+   E_LIST_HANDLER_APPEND(inst->cfg->batman.handlers, E_EVENT_POWERSAVE_CONFIG_UPDATE,
+                                      _powersave_cb_config_update, inst);
 
    _batman_config_updated(inst);
 }
@@ -686,12 +682,12 @@ sysinfo_batman_create(Evas_Object *parent, Instance *inst)
                                   EVAS_CALLBACK_MOUSE_DOWN,
                                   _batman_mouse_down_cb, inst);
    evas_object_event_callback_add(inst->cfg->batman.o_gadget, EVAS_CALLBACK_RESIZE, _batman_resize_cb, inst);
-   _handler = ecore_event_handler_add(E_EVENT_POWERSAVE_CONFIG_UPDATE,
-                                      _powersave_cb_config_update, inst);
    evas_object_show(inst->cfg->batman.o_gadget);
 
    E_LIST_HANDLER_APPEND(inst->cfg->batman.handlers, E_EVENT_SCREENSAVER_ON, _screensaver_on, inst);
    E_LIST_HANDLER_APPEND(inst->cfg->batman.handlers, E_EVENT_SCREENSAVER_OFF, _screensaver_off, inst);
+   E_LIST_HANDLER_APPEND(inst->cfg->batman.handlers, E_EVENT_POWERSAVE_CONFIG_UPDATE,
+                                      _powersave_cb_config_update, inst);
 
    _batman_config_updated(inst);
 
@@ -761,4 +757,3 @@ batman_create(Evas_Object *parent, int *id, E_Gadget_Site_Orient orient EINA_UNU
 
    return inst->o_main;
 }
-
