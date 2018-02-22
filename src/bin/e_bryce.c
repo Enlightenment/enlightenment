@@ -875,11 +875,13 @@ _bryce_orient(Bryce *b)
      {
         elm_layout_signal_emit(b->layout, "e,state,orient,horizontal", "e");
         elm_layout_signal_emit(b->scroller, "e,state,orient,horizontal", "e");
+        elm_scroller_policy_set(b->scroller, ELM_SCROLLER_POLICY_AUTO, ELM_SCROLLER_POLICY_OFF);
      }
    else
      {
         elm_layout_signal_emit(b->layout, "e,state,orient,vertical", "e");
         elm_layout_signal_emit(b->scroller, "e,state,orient,vertical", "e");
+        elm_scroller_policy_set(b->scroller, ELM_SCROLLER_POLICY_OFF, ELM_SCROLLER_POLICY_AUTO);
      }
    evas_object_event_callback_add(b->site, EVAS_CALLBACK_CHANGED_SIZE_HINTS, _bryce_site_hints, b);
    evas_object_smart_callback_add(b->site, "gadget_site_anchor", _bryce_site_anchor, b);
@@ -920,6 +922,7 @@ _bryce_create(Bryce *b, Evas_Object *parent)
    _bryce_style_apply(b);
 
    b->scroller = scr = elm_scroller_add(ly);
+   elm_scroller_bounce_set(scr, 0, 0);
    elm_object_style_set(scr, "bryce");
    _bryce_orient(b);
    elm_object_part_content_set(ly, "e.swallow.content", scr);
