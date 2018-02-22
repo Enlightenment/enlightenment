@@ -152,6 +152,7 @@ E_API E_Action   *e_bindings_mouse_down_ecore_event_handle(E_Binding_Context ctx
 E_API E_Action   *e_bindings_mouse_up_event_handle(E_Binding_Context ctxt, E_Object *obj, E_Binding_Event_Mouse_Button *ev);
 E_API E_Action   *e_bindings_mouse_up_evas_event_handle(E_Binding_Context ctxt, E_Object *obj, Evas_Event_Mouse_Up *ev);
 E_API E_Action   *e_bindings_mouse_up_ecore_event_handle(E_Binding_Context ctxt, E_Object *obj, Ecore_Event_Mouse_Button *ev);
+E_API char       *e_bindings_mouse_action_modifiers_text_generate(E_Binding_Context ctxt, const char *action, unsigned int *modifiers, unsigned int *button);
 
 E_API void        e_bindings_key_add(E_Binding_Context ctxt, const char *key, E_Binding_Modifier mod, int any_mod, const char *action, const char *params);
 E_API void        e_bindings_key_del(E_Binding_Context ctxt, const char *key, E_Binding_Modifier mod, int any_mod, const char *action, const char *params);

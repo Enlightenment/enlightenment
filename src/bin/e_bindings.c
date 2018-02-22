@@ -455,6 +455,66 @@ e_bindings_mouse_button_find(E_Binding_Context ctxt, E_Binding_Event_Mouse_Butto
    return act;
 }
 
+E_API char *
+e_bindings_mouse_action_modifiers_text_generate(E_Binding_Context ctxt, const char *action, unsigned int *modifiers, unsigned int *button)
+{
+   Eina_Strbuf *sbuf;
+   Eina_Bool shift;
+   Eina_Bool ctrl;
+   Eina_Bool alt;
+   Eina_Bool win;
+   Eina_Bool altgr;
+   static const char *names[] =
+   {
+      "Shift",
+      "Control",
+      "Alt",
+      "Win",
+      "AltGr",
+   };
+
+   struct
+   {
+      Eina_Bool *val;
+      const char *name;
+   } keys[5];
+   unsigned int current, i;
+   Eina_Bool found = EINA_FALSE;
+   Eina_List *l;
+   char *ret;
+   E_Config_Binding_Mouse *ebm;
+
+   keys[0].val = &shift;
+   keys[1].val = &ctrl;
+   keys[2].val = &alt;
+   keys[3].val = &win;
+   keys[4].val = &altgr;
+   
+   EINA_LIST_FOREACH(e_bindings->mouse_bindings, l, ebm)
+     if ((ebm->context == (int)ctxt) && eina_streq(ebm->action, action))
+       {
+          current = ebm->modifiers;
+          if (modifiers) *modifiers = current;
+          if (button) *button = ebm->button;
+          found = EINA_TRUE;
+          break;
+       }
+   if (!found) return NULL;
+   sbuf = eina_strbuf_new();
+   for (i = 0; i < 5; i++)
+     {
+        keys[i].name = names[i];
+        *keys[i].val = (current & (1 << i));
+        if (!*keys[i].val) continue;
+        if (eina_strbuf_length_get(sbuf))
+          eina_strbuf_append_char(sbuf, '+');
+        eina_strbuf_append_printf(sbuf, "<hilight>%s</hilight>", _(keys[i].name));
+     }
+   ret = eina_strbuf_string_steal(sbuf);
+   eina_strbuf_free(sbuf);
+   return ret;
+}
+
 E_API E_Action *
 e_bindings_mouse_down_event_handle(E_Binding_Context ctxt, E_Object *obj, E_Binding_Event_Mouse_Button *ev)
 {
@@ -1523,4 +1583,3 @@ _e_bindings_edge_cb_timer(void *data)
 
    return ECORE_CALLBACK_CANCEL;
 }
-
