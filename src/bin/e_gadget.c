@@ -2946,6 +2946,13 @@ e_gadget_editor_add(Evas_Object *parent, Evas_Object *site)
    return list;
 }
 
+static void
+_editor_show(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
+{
+   if (obj == desktop_editor)
+     evas_object_pass_events_set(desktop_editor, 0);
+}
+
 E_API Evas_Object *
 e_gadget_site_edit(Evas_Object *site)
 {
@@ -2988,6 +2995,7 @@ e_gadget_site_edit(Evas_Object *site)
    comp_object = e_comp_object_util_add(popup, E_COMP_OBJECT_TYPE_NONE);
    evas_object_layer_set(comp_object, E_LAYER_POPUP);
    evas_object_show(comp_object);
+   evas_object_event_callback_add(comp_object, EVAS_CALLBACK_SHOW, _editor_show, NULL);
    evas_object_resize(comp_object, zone->w / 2, zone->h / 2);
    e_comp_object_util_center_on_zone(comp_object, zone);
 
