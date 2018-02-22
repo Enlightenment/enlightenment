@@ -2778,7 +2778,6 @@ _editor_gadget_new(void *data, Evas_Object *obj, void *event_info)
    evas_object_pass_events_set(desktop_editor, 1);
    orient = e_gadget_site_orient_get(gi->site);
    _editor_pointer_site_init(orient, gi->site, gi->editor, 0);
-   e_comp_object_util_del_list_append(gi->editor, pointer_site);
 
    if (zgc->external.domain)
      e_gadget_site_gadget_external_add(pointer_site, zgc->external.domain, e_gadget_type_get(gi->gadget), 1);
