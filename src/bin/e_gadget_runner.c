@@ -994,9 +994,12 @@ sandbox_create(Evas_Object *parent, const char *type, int *id, E_Gadget_Site_Ori
    if (!ci)
      {
         ci = _conf_item_get(id);
-        ci->cmd = eina_stringshare_add(ed->exec);
         ci->exit_mode = EXIT_MODE_RESTART;
      }
+   if (ci->id > 0)
+     if (!eina_streq(ci->cmd, ed->exec))
+       e_config_save_queue();
+   eina_stringshare_replace(&ci->cmd, ed->exec);
    ci->sandbox = 1;
    return gadget_create(parent, ci, id, orient);
 }
