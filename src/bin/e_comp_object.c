@@ -2816,6 +2816,7 @@ _e_comp_object_util_show(void *data EINA_UNUSED, Evas_Object *obj)
         evas_object_data_set(obj, "comp_ref", (void*)1);
      }
    edje_object_signal_emit(obj, "e,state,visible", "e");
+   edje_object_message_signal_process(obj);
    evas_object_data_set(obj, "comp_showing", (void*)1);
    if (e_comp_util_object_is_above_nocomp(obj))
      {
@@ -2844,6 +2845,7 @@ _e_comp_object_util_hide(void *data EINA_UNUSED, Evas_Object *obj)
         evas_object_data_set(obj, "comp_ref", (void*)1);
      }
    edje_object_signal_emit(obj, "e,state,hidden", "e");
+   edje_object_message_signal_process(obj);
    evas_object_data_set(obj, "comp_hiding", (void*)1);
 
    if (evas_object_data_del(obj, "comp_override"))
