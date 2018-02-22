@@ -84,7 +84,7 @@ _e_comp_wl_surface_outputs_update(E_Client *ec)
    E_Zone *zone;
    int32_t obits = 0;
 
-   if (ec->visible)
+   if (ec->visible && (ec->comp_data->force_visible || (!ec->iconic)))
      EINA_LIST_FOREACH(e_comp->zones, l, zone)
        if (E_INTERSECTS(zone->x, zone->y, zone->w, zone->h,
                         ec->x, ec->y, ec->w, ec->h)) obits |= 1 << zone->id;
@@ -1015,6 +1015,28 @@ _e_comp_wl_buffer_cb_destroy(struct wl_listener *listener, void *data EINA_UNUSE
 }
 
 static void
+_e_comp_wl_evas_mirror_hidden(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   E_Client *ec = data;
+
+   if (e_object_is_del(data)) return;
+   ec->comp_data->force_visible = 0;
+   if (!ec->iconic) return;
+   _e_comp_wl_surface_outputs_update(ec);
+}
+
+static void
+_e_comp_wl_evas_mirror_visible(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   E_Client *ec = data;
+
+   if (e_object_is_del(data)) return;
+   ec->comp_data->force_visible = 1;
+   if (!ec->iconic) return;
+   _e_comp_wl_surface_outputs_update(ec);
+}
+
+static void
 _e_comp_wl_client_evas_init(E_Client *ec)
 {
    if (ec->comp_data->evas_init) return;
@@ -1081,6 +1103,10 @@ _e_comp_wl_client_evas_init(E_Client *ec)
                                        _e_comp_wl_evas_cb_maximize_done, ec);
         evas_object_smart_callback_add(ec->frame, "fullscreen",
                                        _e_comp_wl_evas_cb_state_update, ec);
+        evas_object_smart_callback_add(ec->frame, "visibility_force",
+                                       _e_comp_wl_evas_mirror_visible, ec);
+        evas_object_smart_callback_add(ec->frame, "visibility_normal",
+                                       _e_comp_wl_evas_mirror_hidden, ec);
      }
    evas_object_event_callback_priority_add(ec->frame, EVAS_CALLBACK_MOVE,
                                            EVAS_CALLBACK_PRIORITY_AFTER,
