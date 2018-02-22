@@ -3111,12 +3111,161 @@ _gadget_moved()
    added = 1;
 }
 
+static Eina_List *desktop_editor_move_handlers;
+static Evas_Point desktop_editor_move_point;
+static E_Zone *desktop_editor_move_zone;
+
+static void
+_desktop_editor_mouse_up_job(void *d)
+{
+   evas_object_repeat_events_set(d, 1);
+}
+
+static Eina_Bool
+_desktop_editor_mouse_up(void *d, int t EINA_UNUSED, Ecore_Event_Mouse_Button *ev)
+{
+   E_FREE_LIST(desktop_editor_move_handlers, ecore_event_handler_del);
+   evas_object_pointer_mode_set(d, EVAS_OBJECT_POINTER_MODE_NOGRAB);
+   ecore_job_add(_desktop_editor_mouse_up_job, d);
+   return ECORE_CALLBACK_RENEW;
+}
+
+static Eina_Bool
+_desktop_editor_mouse_move(void *d EINA_UNUSED, int t EINA_UNUSED, Ecore_Event_Mouse_Move *ev)
+{
+   int x, y, w, h;
+   int nx, ny;
+
+   evas_object_geometry_get(desktop_editor, &x, &y, &w, &h);
+   nx = x + ev->x - desktop_editor_move_point.x;
+   ny = y + ev->y - desktop_editor_move_point.y;
+   desktop_editor_move_point.x = ev->x;
+   desktop_editor_move_point.y = ev->y;
+   if (!E_CONTAINS(desktop_editor_move_zone->x, desktop_editor_move_zone->y, desktop_editor_move_zone->w, desktop_editor_move_zone->h,
+                   nx, ny, w, h))
+     {
+        if (nx < desktop_editor_move_zone->x) nx = desktop_editor_move_zone->x;
+        if (ny < desktop_editor_move_zone->y) ny = desktop_editor_move_zone->y;
+        if (nx + w > desktop_editor_move_zone->x + desktop_editor_move_zone->w)
+          nx = desktop_editor_move_zone->x + desktop_editor_move_zone->w - w;
+        if (ny + h > desktop_editor_move_zone->y + desktop_editor_move_zone->h)
+          ny = desktop_editor_move_zone->y + desktop_editor_move_zone->h - h;
+     }
+   evas_object_move(desktop_editor, nx, ny);
+   return ECORE_CALLBACK_RENEW;
+}
+
+static void
+_desktop_editor_mouse_down(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *event_info)
+{
+   Evas_Event_Mouse_Down *ev = event_info;
+   uintptr_t button = (uintptr_t)(uintptr_t*)data;
+   uintptr_t modifiers = button % 10000;
+   int i;
+   const char *names[] =
+   {
+      "Shift",
+      "Control",
+      "Alt",
+      "Win",
+      "AltGr",
+   };
+
+   button = (button - modifiers) / 10000;
+   if (button != (unsigned int)ev->button) return;
+   for (i = 0; modifiers && i < 5; i++)
+     {
+        if (!(modifiers & (1 << i))) continue;
+        if (evas_key_modifier_is_set(ev->modifiers, names[i]))
+          modifiers &= ~(1 << i);
+     }
+   if (modifiers) return;
+   desktop_editor_move_point.x = ev->output.x;
+   desktop_editor_move_point.y = ev->output.y;
+   desktop_editor_move_zone = e_comp_object_util_zone_get(obj);
+   evas_object_pointer_mode_set(obj, EVAS_OBJECT_POINTER_MODE_NOGRAB_NO_REPEAT_UPDOWN);
+   evas_object_repeat_events_set(obj, 0);
+   E_LIST_HANDLER_APPEND(desktop_editor_move_handlers, ECORE_EVENT_MOUSE_MOVE, _desktop_editor_mouse_move, obj);
+   E_LIST_HANDLER_APPEND(desktop_editor_move_handlers, ECORE_EVENT_MOUSE_BUTTON_UP, _desktop_editor_mouse_up, obj);
+}
+
+static void
+_desktop_editor_restack(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
+{
+   evas_object_layer_set(data, evas_object_layer_get(obj));
+}
+
+static void
+_desktop_editor_moveresize(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
+{
+   int x, y, w, h;
+
+   evas_object_geometry_get(obj, &x, &y, &w, &h);
+   evas_object_geometry_set(data, x, y, w, h);
+}
+
+static void
+_desktop_editor_del(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   evas_object_del(data);
+   E_FREE_LIST(desktop_editor_move_handlers, ecore_event_handler_del);
+}
+
+static void
+_desktop_editor_visibility(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
+{
+   if (evas_object_visible_get(obj))
+     {
+        evas_object_show(data);
+        evas_object_pointer_mode_set(data, EVAS_OBJECT_POINTER_MODE_NOGRAB);
+     }
+   else
+     {
+        evas_object_hide(data);
+        evas_object_pointer_mode_set(data, EVAS_OBJECT_POINTER_MODE_NOGRAB_NO_REPEAT_UPDOWN);
+     }
+}
+
 static void
 _desktop_editor_text_add(void)
 {
    Evas_Object *txt, *tb, *popup = e_comp_object_util_get(desktop_editor);
+   unsigned int button, modifiers;
+   char *hotkeys;
 
+   hotkeys = e_bindings_mouse_action_modifiers_text_generate(E_BINDING_CONTEXT_ANY, "gadget_move", &modifiers, &button);
    tb = elm_object_content_get(popup);
+   if (hotkeys)
+     {
+        char buf[4096];
+        Evas_Object *bx, *r;
+
+        elm_object_content_unset(popup);
+        r = evas_object_rectangle_add(e_comp->evas);
+        evas_object_repeat_events_set(r, 1);
+        _desktop_rect_obj_add(r);
+        evas_object_layer_set(r, evas_object_layer_get(desktop_editor));
+        evas_object_color_set(r, 0, 0, 0, 0);
+        evas_object_show(r);
+        bx = elm_box_add(popup);
+        evas_object_event_callback_add(bx, EVAS_CALLBACK_MOVE, _desktop_editor_moveresize, r);
+        evas_object_event_callback_add(bx, EVAS_CALLBACK_RESIZE, _desktop_editor_moveresize, r);
+        evas_object_event_callback_add(desktop_editor, EVAS_CALLBACK_RESTACK, _desktop_editor_restack, r);
+        evas_object_event_callback_add(desktop_editor, EVAS_CALLBACK_DEL, _desktop_editor_del, r);
+        evas_object_event_callback_add(desktop_editor, EVAS_CALLBACK_SHOW, _desktop_editor_visibility, r);
+        evas_object_event_callback_add(desktop_editor, EVAS_CALLBACK_HIDE, _desktop_editor_visibility, r);
+        evas_object_show(bx);
+        elm_object_content_set(popup, bx);
+        elm_box_pack_end(bx, tb);
+        txt = elm_label_add(tb);
+        elm_box_pack_start(bx, txt);
+        evas_object_show(txt);
+        snprintf(buf, sizeof(buf), _("The current binding to move gadgets and this dialog is %s+<hilight>Mouse %d</hilight>"), hotkeys, button);
+        elm_object_text_set(txt, buf);
+        evas_object_pointer_mode_set(r, EVAS_OBJECT_POINTER_MODE_NOGRAB);
+        button = (button * 10000) + modifiers;
+        evas_object_event_callback_add(r, EVAS_CALLBACK_MOUSE_DOWN, _desktop_editor_mouse_down, (uintptr_t*)(uintptr_t)button);
+     }
    txt = elm_label_add(tb);
    evas_object_show(txt);
    elm_object_text_set(txt, _("Press <hilight>Escape</hilight> or click the background to exit.<ps/>"
