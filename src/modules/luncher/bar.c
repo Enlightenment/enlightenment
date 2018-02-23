@@ -1634,13 +1634,14 @@ static Eina_Bool
 _bar_cb_update_icons(EINA_UNUSED void *data, EINA_UNUSED int ev_type, EINA_UNUSED void *ev)
 {
    Instance *inst = NULL;
-   Eina_List *l = NULL;
+   Eina_List *l, *ll;
+   Icon *ic;
 
    EINA_LIST_FOREACH(luncher_instances, l, inst)
      {
         if (!inst->bar) continue;
-        if (inst->resize_job) return ECORE_CALLBACK_RENEW;
-        inst->resize_job = ecore_job_add(_bar_resize_job, inst);
+        EINA_LIST_FOREACH(inst->icons, ll, ic)
+          _bar_icon_file_set(ic, ic->desktop, eina_list_data_get(ic->clients));
      }
    return ECORE_CALLBACK_PASS_ON;
 }
