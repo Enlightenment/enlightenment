@@ -57,7 +57,7 @@ if get_option(m) == true
   suid_exes += join_paths(_dir_bin, 'cpuclock_sysfs')
 endif
 
-if get_option(m) == true
+if get_option(m) == true and host_os.startswith('freebsd') or host_os.startswith('dragonfly')
    executable('cpuclock_sysctl',
               'cpuclock/cpuclock_sysctl.c',
               c_args    : suid_cflags,
