@@ -590,7 +590,7 @@ cpuclock_configure(Instance *inst)
                         frequency / 1000000.);
 #endif
              elm_object_text_set(o, buf);
-             evas_object_data_set(o, "frequency", (void *) (int) frequency);
+             evas_object_data_set(o, "frequency", (void *) (long) frequency);
              elm_box_pack_end(box, o);
              evas_object_smart_callback_add(o, "changed", _frequency_changed, cc);
              evas_object_show(o);
