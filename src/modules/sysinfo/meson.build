@@ -56,3 +56,14 @@ if get_option(m) == true
             )
   suid_exes += join_paths(_dir_bin, 'cpuclock_sysfs')
 endif
+
+if get_option(m) == true
+   executable('cpuclock_sysctl',
+              'cpuclock/cpuclock_sysctl.c',
+              c_args    : suid_cflags,
+              link_args : suid_ldflags,
+              install_dir : _dir_bin,
+              install     : true
+              )
+   suid_exes += join_paths(_dir_bin, 'cpuclock_sysctl')
+endif

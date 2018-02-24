@@ -56,6 +56,7 @@ _cpuclock_status_free(Cpu_Status *s)
    E_FREE(s);
 }
 
+#if defined(__linux__)
 static int
 _cpuclock_cb_sort(const void *item1, const void *item2)
 {
@@ -69,27 +70,11 @@ _cpuclock_cb_sort(const void *item1, const void *item2)
    return 0;
 }
 
-#if defined(__FreeBSD__) || defined(__DragonFly__) || defined(__OpenBSD__)
-static void
-_cpuclock_set_thread_frequency(void *data, Ecore_Thread *th EINA_UNUSED)
-{
-   const char *freq = data;
-   int frequency = atoi(freq);
-   _cpuclock_sysctl_frequency(frequency);
-}
-
-static void
-_cpuclock_set_thread_done(void *data EINA_UNUSED, Ecore_Thread *th EINA_UNUSED)
-{
-   return;
-}
-
 #endif
-
 void
 _cpuclock_set_governor(const char *governor)
 {
-#if defined(__FreeBSD__) || defined(__OpenBSD__)
+#if defined(__FreeBSD__) || defined(__DragonFly__) || defined(__OpenBSD__)
    return;
 #endif
    char buf[4096], exe[4096];
@@ -107,20 +92,20 @@ _cpuclock_set_governor(const char *governor)
 void
 _cpuclock_set_frequency(int frequency)
 {
-   char buf[4096];
+   char buf[4096], exe[4096];
+   struct stat st;
 
-#if defined(__FreeBSD__)
+#if defined(__FreeBSD__) || defined(__DragonFly__)
    frequency /= 1000;
 #endif
 
-   snprintf(buf, sizeof(buf), "%i", frequency);
 #if defined(__FreeBSD__) || defined(__DragonFly__) || defined(__OpenBSD__)
-   const char *freq;
-   freq = eina_stringshare_add(buf);
-   ecore_thread_run(_cpuclock_set_thread_frequency, _cpuclock_set_thread_done, NULL, freq);
+   snprintf(exe, sizeof(exe), "%s/%s/cpuclock_sysctl",
+            e_module_dir_get(sysinfo_config->module), MODULE_ARCH);
+   if (stat(exe, &st) < 0) return;
+   snprintf(buf, sizeof(buf), "%s %d", exe, frequency);
+   system(buf);
 #else
-   struct stat st;
-   char exe[4096];
    snprintf(exe, 4096, "%s/%s/cpuclock_sysfs",
             e_module_dir_get(sysinfo_config->module), MODULE_ARCH);
    if (stat(exe, &st) < 0) return;
@@ -133,7 +118,7 @@ _cpuclock_set_frequency(int frequency)
 void
 _cpuclock_set_pstate(int min, int max, int turbo)
 {
-#if defined(__FreeBSD__) || defined(__OpenBSD__)
+#if defined(__FreeBSD__) || defined(__DragonFly__) || defined(__OpenBSD__)
    return;
 #endif
    char buf[4096], exe[4096];
@@ -456,6 +441,11 @@ _cpuclock_face_update_current(Instance *inst)
      }
    else
      inst->cfg->cpuclock.percent = 0;
+
+#if defined(__FreeBSD__) || defined(__DragonFly__) || defined(__OpenBSD__)
+     inst->cfg->cpuclock.percent = inst->cfg->cpuclock.status->cur_percent;
+#endif
+
    /* BSD crashes here without the if-condition
     * since it has no governors (yet) */
    if (inst->cfg->cpuclock.status->cur_governor)
@@ -517,7 +507,7 @@ _cpuclock_status_check_available(Cpu_Status *s)
    s->frequencies = eina_list_append(s->frequencies, (void *)(long int)p);
    p = 25;
    s->frequencies = eina_list_append(s->frequencies, (void *)(long int)p);
-#elif defined(__FreeBSD__)
+#elif defined(__FreeBSD__) || defined(__DragonFly__)
    int freq;
    size_t len = sizeof(buf);
    char *pos, *q;
@@ -542,8 +532,8 @@ _cpuclock_status_check_available(Cpu_Status *s)
              *q = '\0';
              freq = atoi(pos);
              freq *= 1000;
-             s->frequencies = eina_list_append(s->frequencies, (void *)(long)freq);
 
+             s->frequencies = eina_list_append(s->frequencies, (void *)(long)freq);
              pos = q + 1;
              pos = strchr(pos, ' ');
           }
@@ -711,21 +701,33 @@ _cpuclock_status_check_current(Cpu_Status *s)
    s->can_set_frequency = 1;
    s->cur_governor = NULL;
 
-#elif defined(__FreeBSD__)
+#elif defined(__FreeBSD__) || defined(__DragonFly__)
+   float ratio;
    size_t len = sizeof(frequency);
    s->active = 0;
+
+   _cpuclock_status_check_available(s);
+
+   s->can_set_frequency = eina_list_count(s->frequencies);
 
    /* frequency is stored in dev.cpu.0.freq */
    if (sysctlbyname("dev.cpu.0.freq", &frequency, &len, NULL, 0) == 0)
      {
         frequency *= 1000;
         if (frequency != s->cur_frequency) ret = 1;
+        if (!frequency) frequency = 1;
         s->cur_frequency = frequency;
         s->active = 1;
+        if (s->can_set_frequency)
+          {
+             s->cur_max_frequency = (int) eina_list_nth(s->frequencies, 0);
+             if (!s->cur_max_frequency) s->cur_max_frequency = 1;
+             s->cur_min_frequency = (int) eina_list_nth(s->frequencies, eina_list_count(s->frequencies) - 1);
+             ratio = (s->cur_max_frequency) / 100.0;
+             s->cur_percent = s->cur_frequency / ratio;
+          }
      }
 
-   /* hardcoded for testing */
-   s->can_set_frequency = 1;
    s->cur_governor = NULL;
 
 #else
@@ -903,7 +905,7 @@ _cpuclock_cb_frequency_check_notify(void *data,
 
    if ((thc->inst->cfg->cpuclock.status) && (status) &&
        (
-#if defined(__OpenBSD__)
+#if defined(__FreeBSD__) || defined(__DragonFly__) || defined(__OpenBSD__)
          (status->cur_percent != thc->inst->cfg->cpuclock.status->cur_percent) ||
 #endif
          (status->cur_frequency != thc->inst->cfg->cpuclock.status->cur_frequency) ||
