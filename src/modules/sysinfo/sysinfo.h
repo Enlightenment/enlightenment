@@ -88,7 +88,7 @@ struct _Cpu_Status
    Eina_List     *frequencies;
    Eina_List     *governors;
    int            cur_frequency;
-#if defined(__OpenBSD__)
+#if defined(__FreeBSD__) || defined(__DragonFly__) || defined(__OpenBSD__)
    int            cur_percent;
 #endif
    int            cur_min_frequency;

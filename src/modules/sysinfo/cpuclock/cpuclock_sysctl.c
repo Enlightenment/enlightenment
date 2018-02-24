@@ -1,4 +1,6 @@
-#include "cpuclock.h"
+#include <stdio.h>
+#include <stdlib.h>
+
 #if defined(__FreeBSD__) || defined(__DragonFly__)
 # include <sys/sysctl.h>
 #endif
@@ -31,5 +33,14 @@ _cpuclock_sysctl_frequency(int new_perf)
 
    return 0;
 }
+#endif
 
+#if defined(__FreeBSD__) || defined(__DragonFly__) || defined(__OpenBSD__)
+int main(int argc, char **argv)
+{
+   if (argc != 2)
+     exit(1 << 0);
+
+   return _cpuclock_sysctl_frequency(atoi(argv[1]));
+}
 #endif

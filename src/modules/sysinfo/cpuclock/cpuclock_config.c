@@ -145,6 +145,9 @@ _frequency_changed(void *data EINA_UNUSED, Evas_Object *obj, void *event_info EI
    const char *value = elm_object_text_get(obj);
    int frequency = atol(value);
 
+#if defined(__FreeBSD__) || defined(__DragonFly__) || defined(__OpenBSD__)
+   frequency = (int) evas_object_data_get(obj, "frequency");
+#endif
    if (frequency > 0)
      _cpuclock_set_frequency(frequency);
 }
@@ -587,6 +590,7 @@ cpuclock_configure(Instance *inst)
                         frequency / 1000000.);
 #endif
              elm_object_text_set(o, buf);
+             evas_object_data_set(o, "frequency", (void *) (int) frequency);
              elm_box_pack_end(box, o);
              evas_object_smart_callback_add(o, "changed", _frequency_changed, cc);
              evas_object_show(o);
