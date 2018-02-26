@@ -35,8 +35,14 @@ deps_e = [
   dep_intl
 ]
 
+deps_ckpass = [ ]
+
+if freebsd == true
+  deps_ckpass += dep_crypt
+endif
+
 if config_h.has('HAVE_PAM') == true
-  deps_e += dep_pam
+  deps_ckpass += dep_pam
 endif
 
 requires_e = ' '.join([
@@ -553,16 +559,15 @@ executable('enlightenment_sys',
           )
 suid_exes += join_paths(dir_e_utils, 'enlightenment_sys')
 
-if freebsd == true
-  executable('enlightenment_ckpasswd',
-             'e_ckpasswd_main.c',
-             dependencies : [ dep_crypt ],
-             c_args       : suid_cflags,
-             link_args    : suid_ldflags,
-             install_dir  : dir_e_utils,
-             install      : true
-            )
-  suid_exes += join_paths(dir_e_utils, 'enlightenment_ckpasswd')
-endif
+executable('enlightenment_ckpasswd',
+           'e_ckpasswd_main.c',
+           include_directories: include_directories('../..'),
+           dependencies : deps_ckpass,
+           c_args       : suid_cflags,
+           link_args    : suid_ldflags,
+           install_dir  : dir_e_utils,
+           install      : true
+          )
+suid_exes += join_paths(dir_e_utils, 'enlightenment_ckpasswd')
 
 subdir('e_fm')
