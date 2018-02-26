@@ -268,16 +268,6 @@ e_desklock_show(Eina_Bool suspend)
         return 1;
      }
 
-#if ! defined(HAVE_PAM) && ! defined(__OpenBSD__)
-   if (e_desklock_is_system())
-     {
-        e_util_dialog_show(_("Error - no PAM support"),
-                           _("No PAM support was built into Enlightenment, so<ps/>"
-                             "desk locking is disabled."));
-        return 0;
-     }
-#endif
-
    if (e_desklock_is_personal())
      {
         if (!e_config->desklock_passwd)
