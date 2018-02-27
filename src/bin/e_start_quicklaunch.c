@@ -2,6 +2,7 @@
 
 #include <Elementary.h>
 #include <sys/prctl.h>
+# include <uuid.h>
 # ifdef E_API
 #  undef E_API
 # endif
@@ -37,9 +38,10 @@ static Ecore_Event_Handler *signal_handler;
 static void env_set(const char *var, const char *val);
 E_API int    prefix_determine(char *argv0);
 
-static int e_pid = -1;
+E_API int e_pid = -1;
 static Ecore_Exe *crash_exe;
 static Ecore_Exe *bt_exe;
+static Ecore_Wl2_Display *disp;
 
 static void
 env_set(const char *var, const char *val)
@@ -255,16 +257,19 @@ _sig_continue(int sig)
            sig != SIGABRT);
 }
 
-static void
+__attribute__((visibility("hidden"))) void
 post_fork()
 {
    ecore_event_handler_del(exit_handler);
    ecore_event_handler_del(signal_handler);
+   ecore_wl2_display_destroy(disp);
+   disp = NULL;
    e_pid = -1;
    e_args = NULL;
    e_argc = -1;
    prctl(PR_SET_NAME, "enlightenment", NULL, NULL, NULL);
    prctl(PR_SET_PDEATHSIG, SIGKILL);
+   e_start_ql_postfork();
 }
 
 static void
@@ -554,7 +559,18 @@ main(int argc, char **argv)
    ecore_job_add(_e_start_child, NULL);
    exit_handler = ecore_event_handler_add(ECORE_EXE_EVENT_DEL, (Ecore_Event_Handler_Cb)e_exited, NULL);
    signal_handler = ecore_event_handler_add(ECORE_EVENT_SIGNAL_USER, (Ecore_Event_Handler_Cb)e_signal, NULL);
+   {
+      uuid_t u;
+      char uuid[37];
+      uuid_generate(u);
+      uuid_unparse_lower(u, uuid);
+      setenv("E_QUICKLAUNCH", uuid, 1);
+   }
+   disp = ecore_wl2_display_manual_create(ql_domain);
+   e_start_ql_impl_init(disp);
    ecore_main_loop_begin();
+   ecore_wl2_display_unlink(disp);
+   ecore_wl2_display_destroy(disp);
 
    return 0;
 }

@@ -1,0 +1,56 @@
+<protocol name="zwp_quicklaunch">
+  <interface name="quicklaunch" version="1">
+    <request name="create">
+      <arg name="id" type="new_id" interface="quicklaunch_instance"/>
+      <arg name="cmd" type="string"/>
+    </request>
+  </interface>
+  <interface name="quicklaunch_instance" version="1">
+    <enum name="flags">
+      <description summary="launch flags; see ecore-exe docs"/>
+      <entry name="none" value="0"/>
+      <entry name="pipe_read" value="1"/>
+      <entry name="pipe_write" value="2"/>
+      <entry name="pipe_error" value="4"/>
+      <entry name="pipe_read_line_buffered" value="8"/>
+      <entry name="pipe_error_line_buffered" value="16"/>
+      <entry name="pipe_auto" value="32"/>
+      <entry name="respawn" value="64"/>
+      <entry name="use_sh" value="128"/>
+      <entry name="use_sh" value="256"/>
+      <entry name="term_with_parent" value="512"/>
+      <entry name="isolate_io" value="1024"/>
+    </enum>
+    <request name="set_flags">
+     <arg name="flags" type="uint"/>
+    </request>
+    <request name="set_cwd">
+     <arg name="cwd" type="string"/>
+    </request>
+    <request name="run">
+      <arg name="id" type="new_id" interface="quicklaunch_exe"/>
+      <arg name="env" type="string"/>
+      <arg name="envc" type="uint"/>
+      <arg name="envoffsets" type="array"/>
+    </request>
+    <request name="destroy" type="destructor"/>
+  </interface>
+  <interface name="quicklaunch_exe" version="1">
+    <event name="started">
+       <arg name="pid" type="int"/>
+       <arg name="read_fd" type="fd"/>
+       <arg name="write_fd" type="fd"/>
+       <arg name="error_fd" type="fd"/>
+    </event>
+    <event name="exit_signal">
+     <arg name="signal" type="int"/>
+     <arg name="code" type="int"/>
+     <arg name="timestamp" type="uint"/>
+     <arg name="errno" type="int"/>
+    </event>
+    <event name="exit_code">
+     <arg name="code" type="int"/>
+     <arg name="timestamp" type="uint"/>
+    </event>
+  </interface>
+</protocol>
