@@ -109,19 +109,31 @@ _e_mod_menu_populate_filter(void *data EINA_UNUSED, Eio_File *handler, const Ein
    struct stat st;
    long count;
 
-   count = (long)eio_file_associate_find(handler, "count");
+   if (!handler) return EINA_FALSE;
+
+   if (eio_file_check(handler)) return EINA_FALSE;
+
+#if defined(__FreeBSD__) || defined(__DragonFly__)
+/* XXX: Accessing tmp is causing SIGBUS issues. */
+   if (!strncmp(info->path, "/tmp", 3)) return EINA_FALSE;
+#endif
+
+   count = (long) eio_file_associate_find(handler, "count");
    if (count > 100)
      {
         eio_file_cancel(handler);
         return EINA_FALSE;
      }
    count++;
+
    eio_file_associate_add(handler, "count", (void*)count, NULL);
    /* don't show .dotfiles */
    if (fileman_config->view.menu_shows_files)
      return (info->path[info->name_start] != '.');
+
    if (lstat(info->path, &st)) return EINA_FALSE;
    /* don't show links to prevent infinite submenus */
+
    return (info->path[info->name_start] != '.') &&
           ((info->type == EINA_FILE_DIR) || eina_str_has_extension(info->path + info->name_start, "desktop")) &&
           (!S_ISLNK(st.st_mode));
@@ -134,6 +146,8 @@ _e_mod_menu_populate_item(void *data, Eio_File *handler EINA_UNUSED, const Eina_
    E_Menu_Item *mi;
    const char *dev, *path;
    Efreet_Desktop *ed = NULL;
+
+   if (handler && eio_file_check(handler)) return;
 
    mi = m->parent_item;
    dev = e_object_data_get(E_OBJECT(m));
@@ -271,7 +285,7 @@ _e_mod_menu_populate_done(void *data, Eio_File *handler EINA_UNUSED)
 static void
 _e_mod_menu_populate_err(void *data, Eio_File *handler, int error EINA_UNUSED)
 {
-   _e_mod_menu_populate_done(data, handler);
+   (void) data; (void) handler;
 }
 
 static void
@@ -290,7 +304,7 @@ _e_mod_menu_populate(void *d, E_Menu *m EINA_UNUSED, E_Menu_Item *mi)
    if (!subm)
      {
         subm = e_menu_new();
-        e_object_data_set(E_OBJECT(subm), d);
+        e_object_data_set(E_OBJECT(subm), eina_stringshare_add(dev));
         e_object_free_attach_func_set(E_OBJECT(subm), _e_mod_menu_cleanup_cb);
         e_menu_item_submenu_set(mi, subm);
         e_menu_freeze(subm);
