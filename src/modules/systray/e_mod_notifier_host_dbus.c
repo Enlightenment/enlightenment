@@ -75,17 +75,35 @@ icon_pixmap_deserialize(Eldbus_Message_Iter *variant, uint32_t **data, int *w, i
              int len;
 
              //only take this img if it has a higher resolution
-             if (tmpw > *w || tmph > *h)
+             if ((tmpw > *w) || (tmph > *h))
                {
-                  *w = tmpw;
-                  *h = tmph;
                   if (eldbus_message_iter_fixed_array_get(imgdata, 'y', &img, &len))
                     {
-                       unsigned int pos;
+                       unsigned int sz;
 
-                       *data = malloc(len * sizeof(int));
-                       for (pos = 0; pos < (unsigned int)len; pos++)
-                         (*data)[pos] = eina_swap32(img[pos]);
+                       sz = tmpw * tmph;
+                       if ((unsigned int)len == (sz * 4))
+                         {
+                            uint32_t *tmp;
+
+                            tmp = malloc(tmpw * tmph * 4);
+                            if (tmp)
+                              {
+                                 uint32_t *s, *d, *e;
+
+                                 if (*data) free(*data);
+                                 *data = tmp;
+                                 *w = tmpw;
+                                 *h = tmph;
+                                 for (s = img, e = img + sz, d = *data;
+                                      s < e; s++, d++)
+#if (defined __BYTE_ORDER && __BYTE_ORDER == __LITTLE_ENDIAN) || (__BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__)
+                                 *d = eina_swap32(*s);
+#else
+                                 *d = *s;
+#endif
+                              }
+                         }
                     }
                }
           }
