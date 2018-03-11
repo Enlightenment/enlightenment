@@ -29,43 +29,35 @@ struct _Systray_Context
 
 struct _Instance
 {
-   E_Gadcon_Client *gcc;
-   Evas            *evas;
+   E_Gadcon_Client        *gcc;
+   Evas                   *evas;
    Instance_Notifier_Host *notifier;
-   struct
-   {
-      Evas_Object *gadget;
+   Eina_List              *icons;
+   struct {
+      Evas_Object         *gadget;
    } ui;
-   struct
-   {
-      Ecore_Job *size_apply;
+   struct {
+      Ecore_Job           *size_apply;
    } job;
 };
 
 typedef struct Notifier_Item_Cache
 {
-   Eina_Stringshare *path;
+   Eina_Stringshare       *path;
 } Notifier_Item_Cache;
 
 struct Systray_Config
 {
-   Eina_Stringshare *dbus;
-   Eina_Hash *items;
+   Eina_Stringshare       *dbus;
+   Eina_Hash              *items;
 };
 
-E_Gadcon_Orient systray_orient_get(const Instance *inst);
 const E_Gadcon *systray_gadcon_get(const Instance *inst);
-E_Gadcon_Client *systray_gadcon_client_get(const Instance *inst);
-const char *systray_style_get(const Instance *inst);
 void systray_size_updated(Instance *inst);
-Evas *systray_evas_get(const Instance *inst);
 Evas_Object *systray_edje_get(const Instance *inst);
-const Evas_Object *systray_box_get(const Instance *inst);
-void systray_edje_box_append(const Instance *inst, Evas_Object *child);
-void systray_edje_box_remove(const Instance *inst, Evas_Object *child);
-void systray_edje_box_prepend(const Instance *inst, Evas_Object *child);
-
-Ecore_X_Window systray_root_get(const Instance *inst);
+void systray_edje_box_append(Instance *inst, Evas_Object *child);
+void systray_edje_box_remove(Instance *inst, Evas_Object *child);
+void systray_edje_box_prepend(Instance *inst, Evas_Object *child);
 
 Instance_Notifier_Host *systray_notifier_host_new(Instance *inst, E_Gadcon *gadcon);
 void systray_notifier_host_free(Instance_Notifier_Host *notifier);
