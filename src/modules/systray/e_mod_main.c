@@ -90,6 +90,50 @@ _cb_menu_cfg(void *data, E_Menu *m EINA_UNUSED, E_Menu_Item *mi EINA_UNUSED)
                        NULL, 0, v, data);
 }
 #endif
+static Eina_Bool
+_is_horiz(Instance *inst)
+{
+   switch (inst->gcc->gadcon->orient)
+     {
+      case E_GADCON_ORIENT_FLOAT:
+      case E_GADCON_ORIENT_HORIZ:
+      case E_GADCON_ORIENT_TOP:
+      case E_GADCON_ORIENT_BOTTOM:
+      case E_GADCON_ORIENT_CORNER_TL:
+      case E_GADCON_ORIENT_CORNER_TR:
+      case E_GADCON_ORIENT_CORNER_BL:
+      case E_GADCON_ORIENT_CORNER_BR:
+        return EINA_TRUE;
+        break;
+      case E_GADCON_ORIENT_VERT:
+      case E_GADCON_ORIENT_LEFT:
+      case E_GADCON_ORIENT_RIGHT:
+      case E_GADCON_ORIENT_CORNER_LT:
+      case E_GADCON_ORIENT_CORNER_RT:
+      case E_GADCON_ORIENT_CORNER_LB:
+      case E_GADCON_ORIENT_CORNER_RB:
+      default:
+        return EINA_FALSE;
+        break;
+     }
+   return EINA_TRUE;
+}
+
+static void
+_redo_sizing(Instance *inst)
+{
+   Eina_List *l;
+   Evas_Object *o;
+   Evas_Coord w, h;
+
+   evas_object_geometry_get(inst->ui.gadget, NULL, NULL, &w, &h);
+   EINA_LIST_FOREACH(inst->icons, l, o)
+     {
+        if (_is_horiz(inst)) evas_object_size_hint_min_set(o, h, 0);
+        else evas_object_size_hint_min_set(o, 0, w);
+     }
+}
+
 static void
 _systray_menu_new(Instance *inst, Evas_Event_Mouse_Down *ev)
 {
@@ -121,6 +165,14 @@ _systray_cb_mouse_down(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj EINA
 
    if (ev->button == 3)
      _systray_menu_new(inst, ev);
+}
+
+static void
+_systray_cb_resize(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
+{
+   Instance *inst = data;
+   _redo_sizing(inst);
+   systray_size_updated(inst);
 }
 
 static void
@@ -181,6 +233,8 @@ _gc_init(E_Gadcon *gc, const char *name, const char *id, const char *style)
      }
 
    inst->ui.gadget = edje_object_add(inst->evas);
+   evas_object_event_callback_add(inst->ui.gadget, EVAS_CALLBACK_RESIZE,
+                                  _systray_cb_resize, inst);
 
    _systray_theme(inst->ui.gadget, gc->shelf ? gc->shelf->style : NULL, style);
 
@@ -225,6 +279,7 @@ _gc_shutdown(E_Gadcon_Client *gcc)
    if (inst->job.size_apply)
      ecore_job_del(inst->job.size_apply);
 
+   inst->icons = eina_list_free(inst->icons);
    E_FREE(inst);
    gcc->data = NULL;
 }
@@ -306,6 +361,8 @@ _gc_orient(E_Gadcon_Client *gcc, E_Gadcon_Orient orient)
 
    edje_object_signal_emit(inst->ui.gadget, sig, _sig_source);
    edje_object_message_signal_process(inst->ui.gadget);
+   _redo_sizing(inst);
+   systray_size_updated(inst);
 }
 
 static const char *
@@ -395,44 +452,11 @@ e_modapi_save(E_Module *m EINA_UNUSED)
    return 1;
 }
 
-E_Gadcon_Orient
-systray_orient_get(const Instance *inst)
-{
-   EINA_SAFETY_ON_NULL_RETURN_VAL(inst, E_GADCON_ORIENT_HORIZ);
-   return inst->gcc->gadcon->orient;
-}
-
 const E_Gadcon *
 systray_gadcon_get(const Instance *inst)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(inst, NULL);
    return inst->gcc->gadcon;
-}
-
-E_Gadcon_Client *
-systray_gadcon_client_get(const Instance *inst)
-{
-   EINA_SAFETY_ON_NULL_RETURN_VAL(inst, NULL);
-   return inst->gcc;
-}
-
-const char *
-systray_style_get(const Instance *inst)
-{
-   const char *style;
-
-   EINA_SAFETY_ON_NULL_RETURN_VAL(inst, NULL);
-   style = inst->gcc->style;
-   if (!style)
-     style = "default";
-   return style;
-}
-
-Evas *
-systray_evas_get(const Instance *inst)
-{
-   EINA_SAFETY_ON_NULL_RETURN_VAL(inst, NULL);
-   return inst->evas;
 }
 
 Evas_Object *
@@ -442,36 +466,37 @@ systray_edje_get(const Instance *inst)
    return inst->ui.gadget;
 }
 
-const Evas_Object *
-systray_box_get(const Instance *inst)
-{
-   EINA_SAFETY_ON_NULL_RETURN_VAL(inst, NULL);
-   return edje_object_part_object_get(inst->ui.gadget, "box");
-}
-
 void
-systray_edje_box_append(const Instance *inst, Evas_Object *child)
+systray_edje_box_append(Instance *inst, Evas_Object *child)
 {
+   Evas_Coord w, h;
+
+   inst->icons = eina_list_append(inst->icons, child);
+   evas_object_size_hint_aspect_set(child, EVAS_ASPECT_CONTROL_BOTH, 1.0, 1.0);
+   evas_object_geometry_get(inst->ui.gadget, NULL, NULL, &w, &h);
+   if (_is_horiz(inst)) evas_object_size_hint_min_set(child, h, 0);
+   else evas_object_size_hint_min_set(child, 0, w);
    edje_object_part_box_append(inst->ui.gadget, "box", child);
 }
 
 void
-systray_edje_box_prepend(const Instance *inst, Evas_Object *child)
+systray_edje_box_prepend(Instance *inst, Evas_Object *child)
 {
+   Evas_Coord w, h;
+
+   inst->icons = eina_list_prepend(inst->icons, child);
+   evas_object_size_hint_aspect_set(child, EVAS_ASPECT_CONTROL_BOTH, 1.0, 1.0);
+   evas_object_geometry_get(inst->ui.gadget, NULL, NULL, &w, &h);
+   if (_is_horiz(inst)) evas_object_size_hint_min_set(child, h, 0);
+   else evas_object_size_hint_min_set(child, 0, w);
    edje_object_part_box_prepend(inst->ui.gadget, "box", child);
 }
 
 void
-systray_edje_box_remove(const Instance *inst, Evas_Object *child)
+systray_edje_box_remove(Instance *inst, Evas_Object *child)
 {
+   inst->icons = eina_list_remove(inst->icons, child);
    edje_object_part_box_remove(inst->ui.gadget, "box", child);
-}
-
-Ecore_X_Window
-systray_root_get(const Instance *inst)
-{
-   EINA_SAFETY_ON_NULL_RETURN_VAL(inst, 0);
-   return e_comp->root;
 }
 
 static void
