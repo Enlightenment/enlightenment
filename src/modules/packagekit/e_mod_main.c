@@ -26,7 +26,7 @@ _mouse_down_cb(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
         if (inst->popup)
           packagekit_popup_del(inst);
         else
-          packagekit_popup_new(inst);
+          packagekit_popup_new(inst, EINA_TRUE);
      }
    else if (ev->button == 2)
      {
@@ -74,6 +74,76 @@ _refresh_timer_cb(void *data)
         packagekit_create_transaction_and_exec(ctxt, packagekit_refresh_cache);
      }
    return ECORE_CALLBACK_RENEW;
+}
+
+
+/* Gadget Api Functions */
+static void
+_gadget_mouse_down_cb(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event)
+{
+   E_PackageKit_Instance *inst = data;
+   E_PackageKit_Module_Context *ctxt = packagekit_mod->data;
+   Evas_Event_Mouse_Down *ev = event;
+
+   if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return;
+   ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
+
+   if (ev->button == 1)
+     {
+        if (inst->ctxpopup)
+          packagekit_popup_del(inst);
+        else
+          packagekit_popup_new(inst, EINA_FALSE);
+     }
+   else if (ev->button == 2)
+     {
+        packagekit_create_transaction_and_exec(ctxt, packagekit_get_updates);
+     }
+   else if (ev->button == 3)
+     {
+        if (inst->ctxpopup)
+          packagekit_popup_del(inst);
+        packagekit_config_show(inst->ctxt);
+     }
+}
+
+static void
+_gadget_del_cb(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
+{
+   E_PackageKit_Instance *inst = data;
+   E_PackageKit_Module_Context *ctxt = packagekit_mod->data;
+
+   if (inst->ctxpopup) packagekit_popup_del(inst);
+   ctxt->instances = eina_list_remove(ctxt->instances, inst);
+   free(inst);
+}
+
+EINTERN Evas_Object *
+_gadget_create_cb(Evas_Object *parent, int *id, E_Gadget_Site_Orient orient)
+{
+   E_PackageKit_Instance *inst;
+   E_PackageKit_Module_Context *ctxt = packagekit_mod->data;
+
+   inst = E_NEW(E_PackageKit_Instance, 1);
+   inst->ctxt = ctxt;
+   inst->gadget = edje_object_add(evas_object_evas_get(parent));
+   e_theme_edje_object_set(inst->gadget, "base/theme/modules/packagekit",
+                                         "e/modules/packagekit/main");
+   evas_object_event_callback_add(inst->gadget, EVAS_CALLBACK_DEL,
+                                 _gadget_del_cb, inst);
+   ctxt->instances = eina_list_append(ctxt->instances, inst);
+   if (*id >= 0)
+     {  // normal mode
+        evas_object_event_callback_add(inst->gadget, EVAS_CALLBACK_MOUSE_DOWN,
+                                       _gadget_mouse_down_cb, inst);
+        packagekit_icon_update(ctxt, EINA_FALSE);
+     }
+   else
+     {  // demo mode
+        edje_object_signal_emit(inst->gadget, "packagekit,state,updated", "e");
+     }
+
+   return inst->gadget;
 }
 
 
@@ -185,9 +255,17 @@ e_modapi_init(E_Module *m)
         ctxt->config->update_interval = 60 * 24;  // once a day
         ctxt->config->show_description = 1;  // extended list
      }
+   m->data = ctxt;
    ctxt->module = m;
    packagekit_mod = m;
+
+   // add the gadget to the new E gadgets system
+   // TODO should this name be translated? also on type_del??
+   e_gadget_type_add("PackageKit", _gadget_create_cb, NULL);
+
+   // add the gadget to the old E gadcon system
    e_gadcon_provider_register(&_gc_class);
+
    packagekit_dbus_connect(ctxt);
    ctxt->refresh_timer = ecore_timer_loop_add(60.0, _refresh_timer_cb, ctxt);
    return ctxt;
@@ -207,6 +285,10 @@ e_modapi_shutdown(E_Module *m)
    E_FREE(ctxt->config);
    E_CONFIG_DD_FREE(ctxt->conf_edd);
 
+   // remove the gadget from the new E gadgets system
+   e_gadget_type_del("PackageKit");
+
+   // remove the gadget from the old E gadcon system
    e_gadcon_provider_unregister(&_gc_class);
 
    E_PackageKit_Package *pkg;

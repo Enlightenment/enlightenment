@@ -15,6 +15,9 @@ packagekit_icon_update(E_PackageKit_Module_Context *ctxt,
    char buf[16];
    Eina_List *l;
 
+   if (!ctxt->instances)
+     return;
+
    if (working)
      state = "packagekit,state,working";
    else if (ctxt->error)
@@ -426,16 +429,34 @@ _genlist_selunsel_cb(void *data, Evas_Object *obj EINA_UNUSED,
    packagekit_popup_update(data, EINA_FALSE);
 }
 
+static void
+_ctxpopup_dismissed(void *data, Evas_Object *obj, void *info EINA_UNUSED)
+{
+   E_PackageKit_Instance *inst = data;
+
+   evas_object_del(obj);
+   inst->ctxpopup = NULL;
+}
+
 void
-packagekit_popup_new(E_PackageKit_Instance *inst)
+packagekit_popup_new(E_PackageKit_Instance *inst, Eina_Bool is_gadcon)
 {
    Evas_Object *table, *bt, *ic, *lb, *li, *pb, *fr, *bx, *size_rect;
    const char *p;
 
-   inst->popup = e_gadcon_popup_new(inst->gcc, EINA_FALSE);
-
-   // main table
-   table = elm_table_add(e_comp->elm);
+   if (is_gadcon)
+     {
+        inst->popup = e_gadcon_popup_new(inst->gcc, EINA_FALSE);
+        table = elm_table_add(e_comp->elm);
+     }
+   else
+     {
+        inst->ctxpopup = elm_ctxpopup_add(e_comp->elm);
+        elm_object_style_set(inst->ctxpopup, "noblock");
+        evas_object_smart_callback_add(inst->ctxpopup, "dismissed",
+                                       _ctxpopup_dismissed, inst);
+        table = elm_table_add(inst->ctxpopup);
+     }
    evas_object_show(table);
 
    // horiz box for title and buttons
@@ -478,7 +499,7 @@ packagekit_popup_new(E_PackageKit_Instance *inst)
    evas_object_show(bt);
 
    // central area (sizer)
-   size_rect = evas_object_rectangle_add(e_comp->evas);
+   size_rect = evas_object_rectangle_add(evas_object_evas_get(table));
    evas_object_size_hint_min_set(size_rect, 300 * elm_config_scale_get(),
                                             300 * elm_config_scale_get());
    elm_table_pack(table, size_rect, 0, 1, 1, 1);
@@ -549,10 +570,19 @@ packagekit_popup_new(E_PackageKit_Instance *inst)
      }
 
    // setup and show the popup
-   e_gadcon_popup_content_set(inst->popup, table);
-   e_object_data_set(E_OBJECT(inst->popup), inst);
-   E_OBJECT_DEL_SET(inst->popup, _popup_del_cb);
-   e_gadcon_popup_show(inst->popup);
+   if (is_gadcon)
+     {
+        e_gadcon_popup_content_set(inst->popup, table);
+        e_object_data_set(E_OBJECT(inst->popup), inst);
+        E_OBJECT_DEL_SET(inst->popup, _popup_del_cb);
+        e_gadcon_popup_show(inst->popup);
+     }
+   else
+     {
+        elm_object_content_set(inst->ctxpopup, table);
+        e_gadget_util_ctxpopup_place(inst->gadget, inst->ctxpopup, NULL);
+        evas_object_show(inst->ctxpopup);
+     }
 
    // update the popup state and contents
    packagekit_popup_update(inst, EINA_TRUE);
@@ -561,7 +591,11 @@ packagekit_popup_new(E_PackageKit_Instance *inst)
 void
 packagekit_popup_del(E_PackageKit_Instance *inst)
 {
-   E_FREE_FUNC(inst->popup, e_object_del);
+   if (inst->popup)
+     E_FREE_FUNC(inst->popup, e_object_del);
+   if (inst->ctxpopup)
+     elm_ctxpopup_dismiss(inst->ctxpopup);
+
    inst->popup_genlist = inst->popup_title_entry = inst->popup_progressbar = NULL;
    if (inst->popup_genlist_itc)
      {
