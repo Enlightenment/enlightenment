@@ -1,3 +1,91 @@
+Release 0.22.2:
+---------------------
+Al Poole (5):
+      conf_theme: show appropriate background list.
+      build: fix meson build on FreeBSD.
+      luncher: fix slider on mouse scroll.
+      sysinfo: fix cpuclock for BSD.
+      sysinfo: fix linux build.
+
+Andy Williams (1):
+      Remove E_BITFIELD as it is not present on this branch
+
+Carsten Haitzler (6):
+      e client - fix initial placement of override redirect windows in x....
+      e come client - actually set placed more generally...
+      init anim - fix sudden vanish of init splash in some cases
+      e auth - move all auth to child process only (e_ckpasswd).
+      e systray/indicator protocol pixmap data fetch fix
+      systray - fix sizing of tray so you can see the icons
+
+Christopher Michael (5):
+      conf-randr: No need to set this variable twice
+      vkbd: Remove whitespace
+      vkbd: Fix null pointer dereference
+      wl-drm: get screen geometry after e_comp_wl_init is called
+      wl-drm: sort screen modes and assign zone->output
+
+Derek Foreman (1):
+      Fix potential NULL pointer dereference
+
+Marcel Hollerbach (5):
+      libtool: uninstall: rm -f /home/simon/src/devel/enlightenment/enlightenment-0.22.2/_inst/lib64/enlightenment/modules/conf_shelves/linux-gnu-x86_64-0.22/modul      meson: fix build
+      meson: wl_drm now requires libdrm
+      build: enable -lintl if we find it
+      build: fix build on picky systems
+      build: enter po subdir
+
+Massimo Maiurana (2):
+      Give to gettext correct options to make it able to run.
+      Updating italian translation
+
+Mike Blumenkrantz (31):
+      simplify icon suffix detection in vkbd module
+      refactor E_Storage finding for efm/eeze volumes in backend
+      protect against null deref when emitting efm/eeze error messages
+      print error when failing to unlink efm/eeze mount point after unmount
+      protect against null deref when setting proxy vars in connman module
+      make xwl data offer writing async
+      use e_zone_desk_useful_geometry_get() for all client maximize geometry fetching
+      unset E_Client->changes.pos when attempting to maximize a new re_manage client
+      add a lot of null checks to wayland egl init
+      sort gadgets alphabetically in gadget editor
+      consider gadget ctxpopups as normal popups for callback purposes
+      clear visible gadget popups when triggering a gadget action
+      fix some crashes with start gadget deletion
+      block gadget site layouts on moving gadgets which are not on the pointer site
+      clamp large windows to desk's useful geometry if smart placement fails
+      use normal emotion function to determine playability of e_thumb files
+      add menu item for reporting bugs
+      fix notification crashes when a callback isn't specified
+      don't do x11 window grab for fps counter when running in wayland mode
+      toggle x_fatal variable when xwayland crashes
+      further protect against crashes when xwayland crashes
+      print notifications to stderr if a notification handler doesn't exist
+      resolve even more null derefs from string parsing in vkbd
+      use the current pointer client for the xwayland drag client if owner is unmapped
+      disable bounce for gadget bar scrollers
+      use per-instance event handler for batman powersave eventing
+      process comp object hide/show signals immediately during intercept
+      do not add gadget editor pointer site to editor del_list
+      always unset pass_events on desktop editor when it is shown
+      fix luncher efreet event handling
+      remove adding theme extension for "default" theme on startup
+
+Ross Vandegrift (1):
+      clean up .desktop files and misc typos
+
+Samuel F. Baggen (1):
+      Fix for window borders to accept edje icons
+
+Stefan Schmidt (3):
+      README: no need to mention elementary as dependency
+      meson: make it possible to set the path for eldbus-codegen
+      meson: make it possible to set the path for eet
+
+Stephen Houston (1):
+      Luncher: Add a timeout for mousing out when preview already exists. Update preview on deskswitch.
+
 Release 0.22.1:
 ---------------------
 Carsten Haitzler (4):
