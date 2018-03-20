@@ -191,6 +191,10 @@ if get_option('pam') == true
   if cc.has_header('security/pam_appl.h')
     config_h.set('HAVE_PAM', '1')
     dep_pam = cc.find_library('pam', required: true)
+  else
+    if openbsd == false and freebsd == false
+      error('PAM is not disabled and not found on non-free+open BSD platforms')
+    endif
   endif
 endif
 
