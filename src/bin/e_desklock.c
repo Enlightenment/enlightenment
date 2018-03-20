@@ -248,13 +248,13 @@ e_desklock_show(Eina_Bool suspend)
    E_Zone *zone;
 
 #if !defined(HAVE_PAM) && !defined(__FreeBSD__)  && !defined(__OpenBSD__)
-   e_util_dialog_show(_("Cannot use password authentication"),
-                      _("Enlightenment was built without PAM support.<br>"
-                        "This means Enlightenment cannot authenticate<br>"
-                        "your password. This means locking makes no<br>"
-                        "sense because we have no other way to authenticate<br>"
-                        "you as a user."));
-   return EINA_FALSE;
+   if (!e_desklock_is_personal())
+     {
+        e_util_dialog_show(_("Error - no PAM support"),
+                           _("No PAM support was built into Enlightenment, so<ps/>"
+                             "desk locking is disabled."));
+        return EINA_FALSE;
+     }
 #endif
    if (_e_desklock_state) return EINA_TRUE;
 
