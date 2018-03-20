@@ -1238,8 +1238,8 @@ _e_fwin_suggested_apps_list_sort(const char *mime, Eina_List *desktops, Eina_Boo
    Eina_List *order, *l;
    Efreet_Desktop *desktop;
 
-   snprintf(path, sizeof(path), "%s/applications/defaults.list",
-            efreet_data_home_get());
+   snprintf(path, sizeof(path), "%s/mimeapps.list",
+            efreet_config_home_get());
    order = _e_fwin_defaults_apps_get(mime, path);
 
    if (!order)
