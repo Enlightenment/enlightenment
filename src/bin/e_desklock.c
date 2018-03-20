@@ -247,6 +247,15 @@ e_desklock_show(Eina_Bool suspend)
    E_Desklock_Hide_Cb hide_cb;
    E_Zone *zone;
 
+#if !defined(HAVE_PAM) && !defined(__FreeBSD__)  && !defined(__OpenBSD__)
+   e_util_dialog_show(_("Cannot use password authentication"),
+                      _("Enlightenment was built without PAM support.<br>"
+                        "This means Enlightenment cannot authenticate<br>"
+                        "your password. This means locking makes no<br>"
+                        "sense because we have no other way to authenticate<br>"
+                        "you as a user."));
+   return EINA_FALSE;
+#endif
    if (_e_desklock_state) return EINA_TRUE;
 
    if (e_desklock_is_external() && e_config->desklock_custom_desklock_cmd && e_config->desklock_custom_desklock_cmd[0])
