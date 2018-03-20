@@ -1151,7 +1151,8 @@ e_util_terminal_desktop_get(void)
    s = efreet_data_home_get();
    if (s)
      {
-        snprintf(buf, sizeof(buf), "%s/applications/defaults.list", s);
+        snprintf(buf, sizeof(buf), "%s/mimeapps.list",
+                 efreet_config_home_get());
         tdesktop = _e_util_default_terminal_get(buf);
      }
    if (tdesktop) return tdesktop;
