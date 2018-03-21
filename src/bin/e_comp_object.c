@@ -959,7 +959,6 @@ _e_comp_object_pixels_get(void *data, Evas_Object *obj)
    E_Comp_Object *cw = data;
    E_Client *ec = cw->ec;
    int pw, ph;
-   int bx, by, bxx, byy;
 
    if ((!ec->pixmap) || (!e_pixmap_size_get(ec->pixmap, &pw, &ph)))
      {
@@ -967,37 +966,6 @@ _e_comp_object_pixels_get(void *data, Evas_Object *obj)
         return;
      }
    //INF("PIXEL GET %p: %dx%d || %dx%d", ec, ec->w, ec->h, pw, ph);
-   e_pixmap_image_opaque_get(cw->ec->pixmap, &bx, &by, &bxx, &byy);
-   if (bxx && byy)
-     {
-        bxx = pw - (bx + bxx), byy = ph - (by + byy);
-        evas_object_image_border_set(cw->obj, bx, bxx, by, byy);
-     }
-   else
-     {
-        bx = by = bxx = byy = 0;
-        evas_object_image_border_set(cw->obj, bx, bxx, by, byy);
-        if (cw->client_inset.calc && (!cw->frame_object)) //CSD
-          {
-             bx = -cw->client_inset.l + 4, by = -cw->client_inset.t + 4;
-             bxx = -cw->client_inset.r, byy = -cw->client_inset.b;
-          }
-     }
-   {
-      Edje_Message_Int_Set *msg;
-      Edje_Message_Int msg2;
-      Eina_Bool id = (bx || by || bxx || byy);
-
-      msg = alloca(sizeof(Edje_Message_Int_Set) + (sizeof(int) * 3));
-      msg->count = 4;
-      msg->val[0] = bx;
-      msg->val[1] = by;
-      msg->val[2] = bxx;
-      msg->val[3] = byy;
-      edje_object_message_send(cw->shobj, EDJE_MESSAGE_INT_SET, 1, msg);
-      msg2.val = id;
-      edje_object_message_send(cw->shobj, EDJE_MESSAGE_INT, 0, &msg2);
-   }
 
    /* queue another render if client is still dirty; cannot refresh here. */
    if (e_pixmap_dirty_get(ec->pixmap) && e_pixmap_size_get(ec->pixmap, &pw, &ph))
@@ -4116,6 +4084,7 @@ e_comp_object_dirty(Evas_Object *obj)
    Evas_Object *o;
    int w, h;
    Eina_Bool dirty, visible, alpha;
+   int bx, by, bxx, byy;
 
    API_ENTRY;
    /* only actually dirty if pixmap is available */
@@ -4149,6 +4118,39 @@ e_comp_object_dirty(Evas_Object *obj)
           ERR("ERROR FETCHING PIXMAP FOR %p", cw->ec);
         return;
      }
+
+   e_pixmap_image_opaque_get(cw->ec->pixmap, &bx, &by, &bxx, &byy);
+   if (bxx && byy)
+     {
+        bxx = w - (bx + bxx), byy = h - (by + byy);
+        evas_object_image_border_set(cw->obj, bx, bxx, by, byy);
+     }
+   else
+     {
+        bx = by = bxx = byy = 0;
+        evas_object_image_border_set(cw->obj, bx, bxx, by, byy);
+        if (cw->client_inset.calc && (!cw->frame_object)) //CSD
+          {
+             bx = -cw->client_inset.l + 4, by = -cw->client_inset.t + 4;
+             bxx = -cw->client_inset.r, byy = -cw->client_inset.b;
+          }
+     }
+   {
+      Edje_Message_Int_Set *msg;
+      Edje_Message_Int msg2;
+      Eina_Bool id = (bx || by || bxx || byy);
+
+      msg = alloca(sizeof(Edje_Message_Int_Set) + (sizeof(int) * 3));
+      msg->count = 4;
+      msg->val[0] = bx;
+      msg->val[1] = by;
+      msg->val[2] = bxx;
+      msg->val[3] = byy;
+      edje_object_message_send(cw->shobj, EDJE_MESSAGE_INT_SET, 1, msg);
+      msg2.val = id;
+      edje_object_message_send(cw->shobj, EDJE_MESSAGE_INT, 0, &msg2);
+   }
+
    e_comp_object_native_surface_set(obj, 1);
    it = eina_tiler_iterator_new(cw->updates);
    EINA_ITERATOR_FOREACH(it, rect)
