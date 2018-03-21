@@ -949,7 +949,6 @@ _e_comp_object_mirror_pixels_get(void *data, Evas_Object *obj)
 
    evas_object_image_data_set(obj, e_pixmap_image_data_get(cw->ec->pixmap));
    evas_object_image_alpha_set(obj, evas_object_image_alpha_get(cw->obj));
-   evas_object_image_pixels_dirty_set(obj, EINA_FALSE);
 }
 
 /////////////////////////////////////////////
