@@ -948,7 +948,6 @@ _e_comp_object_mirror_pixels_get(void *data, Evas_Object *obj)
    if (cw->native) return;
 
    evas_object_image_data_set(obj, e_pixmap_image_data_get(cw->ec->pixmap));
-   evas_object_image_alpha_set(obj, evas_object_image_alpha_get(cw->obj));
 }
 
 /////////////////////////////////////////////
@@ -4116,7 +4115,7 @@ e_comp_object_dirty(Evas_Object *obj)
    Eina_List *ll;
    Evas_Object *o;
    int w, h;
-   Eina_Bool dirty, visible;
+   Eina_Bool dirty, visible, alpha;
 
    API_ENTRY;
    /* only actually dirty if pixmap is available */
@@ -4131,11 +4130,14 @@ e_comp_object_dirty(Evas_Object *obj)
    RENDER_DEBUG("SIZE [%p]: %dx%d", cw->ec, w, h);
    if (cw->pending_updates)
      eina_tiler_area_size_set(cw->pending_updates, w, h);
+
+   alpha = evas_object_image_alpha_get(cw->obj);
    EINA_LIST_FOREACH(cw->obj_mirror, ll, o)
      {
         //evas_object_image_border_set(o, bx, by, bxx, byy);
         //evas_object_image_border_center_fill_set(o, EVAS_BORDER_FILL_SOLID);
         evas_object_image_pixels_dirty_set(o, dirty);
+        evas_object_image_alpha_set(obj, alpha);
         if (!dirty)
           evas_object_image_data_set(o, NULL);
         evas_object_image_size_set(o, w, h);
