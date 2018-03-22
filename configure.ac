@@ -116,6 +116,8 @@ fi
 
 AC_SUBST([fnmatch_libs])
 
+CKPASSWD_LIBS=""
+
 have_pam=no
 AC_ARG_ENABLE(pam,
   AS_HELP_STRING([--enable-pam], [enable PAM support @<:@default=detect@:>@]),
@@ -125,6 +127,7 @@ AC_ARG_ENABLE(pam,
 if test "x$want_pam" != "xno" ; then
   AC_CHECK_HEADERS(security/pam_appl.h, [
     LIBS="$LIBS -lpam"
+    CKPASSWD_LIBS="$CKPASSWD_LIBS -lpam"
     have_pam=yes
     AC_DEFINE(HAVE_PAM, 1, [PAM Authentication Support])])
     if test "x$want_pam$have_pam" = "xyesno" ; then
@@ -1029,6 +1032,7 @@ SUID_CFLAGS=
 SUID_LDFLAGS=
 case "$host_os" in
    freebsd*|pcbsd*)
+      CKPASSWD_LIBS="$CKPASSWD_LIBS -lcrypt"
       ;;
    *)
       if test -n "$GCC"; then
@@ -1051,6 +1055,7 @@ case "$host_os" in
       fi
       ;;
 esac
+AC_SUBST([CKPASSWD_LIBS])
 AC_SUBST([SUID_CFLAGS])
 AC_SUBST([SUID_LDFLAGS])
 
