@@ -1,3 +1,15 @@
+Release 0.22.3:
+---------------------
+Carsten Haitzler (5):
+      fix autofoo build to match e auth patch backport
+      desklock - make it fail to lock on non-bsd platforms if no pam support
+      e desklock pam error - go back to previous text
+      move from data_home/apps/defaults.list to config_home/mimeapps.list
+      build - make pam a requirement on non-bsd unless disabled
+
+Derek Foreman (1):
+      Revert no-longer required pulseaudio hack for wayland
+
 Release 0.22.2:
 ---------------------
 Al Poole (5):
