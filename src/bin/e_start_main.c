@@ -276,6 +276,32 @@ _sigusr1(int x EINA_UNUSED, siginfo_t *info EINA_UNUSED, void *data EINA_UNUSED)
 }
 
 static void
+_sigusr2(int x EINA_UNUSED, siginfo_t *info EINA_UNUSED, void *data EINA_UNUSED)
+{
+   struct sigaction action;
+
+   putenv("E_DESKLOCK_LOCKED=locked");
+
+   action.sa_sigaction = _sigusr2;
+   action.sa_flags = SA_RESETHAND;
+   sigemptyset(&action.sa_mask);
+   sigaction(SIGUSR2, &action, NULL);
+}
+
+static void
+_sighup(int x EINA_UNUSED, siginfo_t *info EINA_UNUSED, void *data EINA_UNUSED)
+{
+   struct sigaction action;
+
+   putenv("E_DESKLOCK_LOCKED=no");
+
+   action.sa_sigaction = _sighup;
+   action.sa_flags = SA_RESETHAND;
+   sigemptyset(&action.sa_mask);
+   sigaction(SIGHUP, &action, NULL);
+}
+
+static void
 _print_usage(const char *hstr)
 {
    printf("Options:\n"
@@ -540,6 +566,18 @@ main(int argc, char **argv)
    sigemptyset(&action.sa_mask);
    sigaction(SIGUSR1, &action, NULL);
 
+   /* Setup USR2 to go into "lock down" mode */
+   action.sa_sigaction = _sigusr2;
+   action.sa_flags = SA_RESETHAND;
+   sigemptyset(&action.sa_mask);
+   sigaction(SIGUSR2, &action, NULL);
+
+   /* Setup HUP to go exit "lock down" mode */
+   action.sa_sigaction = _sighup;
+   action.sa_flags = SA_RESETHAND;
+   sigemptyset(&action.sa_mask);
+   sigaction(SIGHUP, &action, NULL);
+
    eina_init();
 
    /* reexcute myself with dbus-launch if dbus-launch is not running yet */
@@ -559,6 +597,7 @@ main(int argc, char **argv)
    prefix_determine(argv[0]);
 
    env_set("E_START", argv[0]);
+   env_set("E_START_MANAGER", "1");
 
    for (i = 1; i < argc; i++)
      {

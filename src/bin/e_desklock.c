@@ -81,7 +81,7 @@ e_desklock_shutdown(void)
    if (!x_fatal)
      e_desklock_hide();
 
-   if (waslocked) e_util_env_set("E_DESKLOCK_LOCKED", "locked");
+//   if (waslocked) e_util_env_set("E_DESKLOCK_LOCKED", "locked");
 
    ecore_event_handler_del(_e_desklock_run_handler);
    _e_desklock_run_handler = NULL;
@@ -353,8 +353,7 @@ e_desklock_show(Eina_Bool suspend)
    ev->suspend = suspend;
    ecore_event_add(E_EVENT_DESKLOCK, ev, NULL, NULL);
 
-   e_util_env_set("E_DESKLOCK_UNLOCKED", NULL);
-   e_util_env_set("E_DESKLOCK_LOCKED", "locked");
+   if (getenv("E_START_MANAGER")) kill(getppid(), SIGUSR2);
    _e_desklock_state = EINA_TRUE;
    e_bindings_disabled_set(1);
    e_screensaver_update();
@@ -457,8 +456,7 @@ e_desklock_hide(void)
 
         _e_desklock_autolock_time = 0.0;
      }
-   e_util_env_set("E_DESKLOCK_LOCKED", "freefreefree");
-   e_util_env_set("E_DESKLOCK_UNLOCKED", "happened");
+   if (getenv("E_START_MANAGER")) kill(getppid(), SIGHUP);
 }
 
 E_API Eina_Bool

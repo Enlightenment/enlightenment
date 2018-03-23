@@ -818,7 +818,7 @@ main(int argc, char **argv)
    TS("E_Desklock Init Done");
    _e_main_shutdown_push(e_desklock_shutdown);
 
-   if (waslocked || (locked && ((!after_restart) || (!getenv("E_DESKLOCK_UNLOCKED")))))
+   if (waslocked || (locked && ((!after_restart))))
      {
         e_desklock_show(EINA_TRUE);
         e_screensaver_update();
