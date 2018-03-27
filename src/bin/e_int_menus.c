@@ -694,6 +694,80 @@ _e_int_menus_main_exit(void *data EINA_UNUSED, E_Menu *m EINA_UNUSED, E_Menu_Ite
    if ((a) && (a->func.go)) a->func.go(NULL, NULL);
 }
 
+static char *
+_e_int_menus_app_exe_get(const char *exec)
+{
+   char *real, *d;
+   const char *s;
+   Eina_Bool in_quote_dbl = EINA_FALSE;
+   Eina_Bool in_quote = EINA_FALSE;
+
+   real = malloc(strlen(exec) + 1);
+   if (!real) return NULL;
+   for (d = real, s = exec; *s; s++)
+     {
+        if (in_quote_dbl)
+          {
+             switch (*s)
+               {
+                case '\"':
+                  in_quote_dbl = EINA_FALSE;
+                  break;
+                case '\\':
+                  s++;
+                  EINA_FALLTHROUGH
+                default:
+                  *d = *s;
+                  d++;
+                  break;
+               }
+          }
+        else if (in_quote)
+          {
+             switch (*s)
+               {
+                case '\'':
+                  in_quote = EINA_FALSE;
+                  break;
+                case '\\':
+                  s++;
+                  EINA_FALLTHROUGH
+                default:
+                  *d = *s;
+                  d++;
+                  break;
+               }
+          }
+        else
+          {
+             switch (*s)
+               {
+                case ' ':
+                case '\t':
+                case '\r':
+                case '\n':
+                  goto done;
+                  break;
+                case '\"':
+                  in_quote_dbl = EINA_TRUE;
+                  break;
+                case '\'':
+                  in_quote = EINA_TRUE;
+                  break;
+                case '\\':
+                  s++;
+                  EINA_FALLTHROUGH
+                default:
+                  *d = *s;
+                  d++;
+                  break;
+               }
+          }
+     }
+done:
+   *d = 0;
+   return real;
+}
 /*
  * This function searches $PATH for try_exec or exec
  * return true if try_exec or exec is found!
@@ -705,23 +779,31 @@ _e_int_menus_app_finder(const char *exec)
    char **split, buf[PATH_MAX];
    Eina_Bool exec_found = EINA_FALSE;
    int i = 0;
+   char *real = NULL;
 
-   if (strchr(exec, '/'))
+   if (!exec) return EINA_FALSE;
+   real = _e_int_menus_app_exe_get(exec);
+   if (!real) return EINA_FALSE;
+   if (strchr(real, '/'))
      {
-        if (ecore_file_exists(exec) && ecore_file_can_exec(exec))
-          return EINA_TRUE;
+        if (ecore_file_exists(real) && ecore_file_can_exec(real))
+          {
+             free(real);
+             return EINA_TRUE;
+          }
      }
 
    if (!env)
      {
         WRN("Unable to $PATH, Returning TRUE for every .desktop");
+        free(real);
         return EINA_TRUE;
      }
 
    split = eina_str_split(env, ":", 0);
    for (i = 0; split[i] != NULL; i++)
      {
-        snprintf(buf, sizeof(buf), "%s/%s", split[i], exec);
+        snprintf(buf, sizeof(buf), "%s/%s", split[i], real);
 
         if (ecore_file_exists(buf) && ecore_file_can_exec(buf))
           {
@@ -735,6 +817,7 @@ _e_int_menus_app_finder(const char *exec)
    if (!exec_found)
      WRN("Unable to find: [%s] I searched $PATH=%s", exec, env);
 
+   free(real);
    return exec_found;
 }
 
@@ -795,16 +878,7 @@ _e_int_menus_app_config_append(Efreet_Desktop *desktop)
      }
    else if (cma->exec)
      {
-        if (!strchr(cma->exec, ' '))
-          cma->exec_valid = _e_int_menus_app_finder(cma->exec);
-        else
-          {
-             char **split;
-             split = eina_str_split(cma->exec, " ", 0);
-             cma->exec_valid = _e_int_menus_app_finder(split[0]);
-             free(split[0]);
-             free(split);
-          }
+        cma->exec_valid = _e_int_menus_app_finder(cma->exec);
      }
 
    e_config->menu_applications = eina_list_append(e_config->menu_applications, cma);
