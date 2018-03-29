@@ -523,10 +523,189 @@ _drm2_output_primary_set(const Eina_List *outputs, Ecore_Drm2_Output *output)
      }
 }
 
+static Eina_Bool
+_drm2_rotation_exists(Ecore_Drm2_Output *output, int rot)
+{
+   int rots;
+
+   rots = ecore_drm2_output_supported_rotations_get(output);
+   if (rots >= 0)
+     {
+        if ((rot == 0) && (rots & ECORE_DRM2_ROTATION_NORMAL))
+          return EINA_TRUE;
+        if ((rot == 90) && (rots & ECORE_DRM2_ROTATION_90))
+          return EINA_TRUE;
+        if ((rot == 180) && (rots & ECORE_DRM2_ROTATION_180))
+          return EINA_TRUE;
+        if ((rot == 270) && (rots & ECORE_DRM2_ROTATION_270))
+          return EINA_TRUE;
+     }
+
+   return EINA_FALSE;
+}
+
 static void
 _drm2_randr_apply(void)
 {
+   Ecore_Drm2_Device *dev;
+   Ecore_Drm2_Output **outconf, *out;
+   int nw = 0, nh = 0;
+   int minw, minh, maxw, maxh;
+   unsigned int *crtcs = NULL;
+   int num_crtcs = 0, numout = 0;
+   const Eina_List *outputs = NULL;
+   E_Randr2_Screen **screenconf;
 
+   /* get drm device */
+   dev = ecore_evas_data_get(e_comp->ee, "device");
+   if (!dev) return;
+
+   nw = e_randr2->w;
+   nh = e_randr2->h;
+
+   /* get screen size range */
+   ecore_drm2_device_screen_size_range_get(dev, &minw, &minh, &maxw, &maxh);
+   printf("RRR: size range: %ix%i -> %ix%i\n", minw, minh, maxw, maxh);
+
+   crtcs = ecore_drm2_device_crtcs_get(dev, &num_crtcs);
+   outputs = ecore_drm2_outputs_get(dev);
+
+   if ((crtcs) && (outputs))
+     {
+        E_Randr2_Screen *s;
+        Eina_List *l;
+        int top_priority = 0, i;
+
+        outconf = alloca(num_crtcs * sizeof(Ecore_Drm2_Output *));
+        screenconf = alloca(num_crtcs * sizeof(E_Randr2_Screen *));
+        memset(outconf, 0, num_crtcs * sizeof(Ecore_Drm2_Output *));
+        memset(screenconf, 0, num_crtcs * sizeof(E_Randr2_Screen *));
+
+        /* decide which outputs gets which crtcs */
+        EINA_LIST_FOREACH(e_randr2->screens, l, s)
+          {
+             printf("RRR: find output for '%s'\n", s->info.name);
+
+             if (s->config.configured)
+               {
+                  out = _drm2_output_find(outputs, s->info.name);
+                  if (out)
+                    {
+                       printf("RRR:   enabled: %i\n", s->config.enabled);
+                       if (s->config.enabled)
+                         {
+                            if (s->config.priority > top_priority)
+                              top_priority = s->config.priority;
+
+                            for (i = 0; i < num_crtcs; i++)
+                              {
+                                 if (!outconf[i])
+                                   {
+                                      printf("RRR:   crtc slot empty: %i\n", i);
+                                      if (ecore_drm2_output_possible_crtc_get(out, crtcs[i]))
+                                        {
+                                           if (_drm2_rotation_exists(out, s->config.rotation))
+                                             {
+                                                printf("RRR:   assign slot out: %p\n", out);
+                                                outconf[i] = out;
+                                                screenconf[i] = s;
+                                                break;
+                                             }
+                                        }
+                                   }
+                              }
+                         }
+                    }
+               }
+          }
+
+        numout = 0;
+        for (i = 0; i < num_crtcs; i++)
+          if (outconf[i]) numout++;
+
+        if (numout)
+          {
+             for (i = 0; i < num_crtcs; i++)
+               {
+                  if (outconf[i])
+                    {
+                       Ecore_Drm2_Output_Mode *mode;
+                       Ecore_Drm2_Rotation orient = ECORE_DRM2_ROTATION_NORMAL;
+
+                       mode = _drm2_mode_screen_find(screenconf[i], outconf[i]);
+                       if (screenconf[i]->config.rotation == 0)
+                         orient = ECORE_DRM2_ROTATION_NORMAL;
+                       else if (screenconf[i]->config.rotation == 90)
+                         orient = ECORE_DRM2_ROTATION_90;
+                       else if (screenconf[i]->config.rotation == 180)
+                         orient = ECORE_DRM2_ROTATION_180;
+                       else if (screenconf[i]->config.rotation == 270)
+                         orient = ECORE_DRM2_ROTATION_270;
+
+                       printf("RRR: crtc on: %i = '%s'     @ %i %i    - %ix%i orient %i mode %p out %p\n",
+                              i, screenconf[i]->info.name,
+                              screenconf[i]->config.geom.x,
+                              screenconf[i]->config.geom.y,
+                              screenconf[i]->config.geom.w,
+                              screenconf[i]->config.geom.h,
+                              orient, mode, outconf[i]);
+
+                       ecore_drm2_output_mode_set(outconf[i], mode,
+                                                  screenconf[i]->config.geom.x,
+                                                  screenconf[i]->config.geom.y);
+                       ecore_drm2_output_rotation_set(outconf[i], orient);
+
+                       ecore_drm2_output_relative_to_set(outconf[i],
+                                                         screenconf[i]->config.relative.to);
+                       ecore_drm2_output_relative_mode_set(outconf[i],
+                                                           screenconf[i]->config.relative.mode);
+
+                       if (screenconf[i]->config.priority == top_priority)
+                         {
+                            _drm2_output_primary_set(outputs, outconf[i]);
+                            top_priority = -1;
+                         }
+
+                       ecore_drm2_output_enabled_set(outconf[i],
+                                                     screenconf[i]->config.enabled);
+
+                       if ((screenconf[i]->config.relative.to) &&
+                           (screenconf[i]->config.relative.mode ==
+                               E_RANDR2_RELATIVE_CLONE))
+                         {
+                            Ecore_Drm2_Output *clone;
+
+                            clone = _drm2_output_find(outputs,
+                                                     screenconf[i]->config.relative.to);
+                            ecore_evas_output_clone_set(e_comp->ee, outconf[i],
+                                                        clone);
+                         }
+                       else
+                         ecore_evas_output_clone_set(e_comp->ee, outconf[i],
+                                                     NULL);
+                         /* ecore_drm2_output_cloned_set(dev, outconf[i], EINA_TRUE); */
+                       /* else */
+                         /* ecore_drm2_output_cloned_set(dev, outconf[i], EINA_FALSE); */
+                    }
+                  else
+                    {
+                       printf("RRR: crtc off: %i\n", i);
+                    }
+               }
+          }
+     }
+
+   /* free(outputs); */
+   /* free(crtcs); */
+
+   if (nw > maxw) nw = maxw;
+   if (nh > maxh) nh = maxh;
+   if (nw < minw) nw = minw;
+   if (nh < minh) nh = minh;
+   printf("RRR: set vsize: %ix%i\n", nw, nh);
+   ecore_drm2_device_calibrate(dev, nw, nh);
+   ecore_drm2_device_pointer_max_set(dev, nw, nh);
+   ecore_drm2_device_pointer_warp(dev, nw / 2, nh / 2);
 }
 
 static void
