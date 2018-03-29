@@ -571,12 +571,11 @@ _cb_rel_to_set(void *data, Evas_Object *obj, void *event)
                   E_Randr2_Screen *s = _screen_config_id_find(cs2->id);
                   if (s)
                     {
-                       printf("SEt to %p [%s]\n", cs, cs->id);
+                       printf("Set to %p [%s]\n", cs, cs->id);
                        printf("find s = %p\n", s);
                        printf("s id = %s\n", s->id);
                        elm_object_text_set(obj, s->info.name);
-                       eina_stringshare_del(cs->rel_to);
-                       cs->rel_to = eina_stringshare_add(s->id);
+                       eina_stringshare_replace(&cs->rel_to, s->id);
                     }
                }
              e_config_dialog_changed_set(cfdata->cfd, EINA_TRUE);
