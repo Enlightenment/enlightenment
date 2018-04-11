@@ -15,7 +15,7 @@ static Eina_Bool _e_startup_time_exceeded(void *data);
 static E_Order *startup_apps = NULL;
 static int start_app_pos = -1;
 static Ecore_Event_Handler *desktop_cache_update_handler = NULL;
-static Ecore_Timer *timer;
+static Ecore_Timer *timer = NULL;
 static Eina_Bool desktop_cache_update = EINA_FALSE;
 static Eina_Bool started = EINA_FALSE;
 
@@ -43,6 +43,7 @@ e_startup_mode_set(E_Startup_Mode mode)
      ecore_event_handler_add(EFREET_EVENT_DESKTOP_CACHE_BUILD,
                              _e_startup_event_cb,
                              strdup(buf));
+   if (timer) ecore_timer_del(timer);
    timer = ecore_timer_add(5.0, _e_startup_time_exceeded, NULL);
    e_init_undone();
 }
@@ -113,7 +114,7 @@ _e_startup_event_cb(void *data, int ev_type EINA_UNUSED, void *ev)
    char *buf;
    Efreet_Event_Cache_Update *e;
 
-   ecore_timer_del(timer);
+   if (timer) ecore_timer_del(timer);
    timer = NULL;
 
    e = ev;
@@ -141,5 +142,6 @@ _e_startup_time_exceeded(void *data EINA_UNUSED)
    fprintf(stderr, "E: efreet didn't notify about cache update\n");
    _e_startup_error_dialog("E: Efreet did not update cache. "
                            "Please check your Efreet setup");
+   timer = NULL;
    return ECORE_CALLBACK_CANCEL;
 }
