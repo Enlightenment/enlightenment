@@ -516,7 +516,7 @@ _e_thumb_cb_exe_event_del(void *data EINA_UNUSED, int type EINA_UNUSED, void *ev
 
              snprintf(buf, sizeof(buf), "%s/enlightenment/utils/enlightenment_thumb --nice=%d", e_prefix_lib_get(),
                       e_config->thumb_nice);
-             exe_thumb = ecore_exe_run(buf, NULL);
+             exe_thumb = e_util_exe_safe_run(buf, NULL);
              _thumbnailers_exe = eina_list_append(_thumbnailers_exe, exe_thumb);
           }
      }
