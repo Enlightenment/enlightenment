@@ -100,12 +100,17 @@ _e_fm2_device_volume_setup(E_Volume *v)
           icon = "media-floppy";
         else if (!strcmp(v->storage->drive_type, "tape"))
           icon = "media-tape";
+        else if (!strcmp(v->storage->drive_type, "thumb"))
+          // XXX: maybe a spcial type?
+          icon = "drive-removable-media";
         else if (!strcmp(v->storage->drive_type, "compact_flash")
                  || !strcmp(v->storage->drive_type, "memory_stick")
                  || !strcmp(v->storage->drive_type, "smart_media")
                  || !strcmp(v->storage->drive_type, "sd_mmc")
                  || !strncmp(v->storage->drive_type, "flash", 5))
           icon = "media-flash";
+        else // XXX: fallback if we don't know
+          icon = "media-floppy";
      }
    if (icon) eina_stringshare_replace(&v->icon, icon);
 

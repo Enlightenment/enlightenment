@@ -4561,7 +4561,7 @@ _e_fm2_uri_selected_icon_list_get(Eina_List *uri)
              if (eina_list_data_find(ic->sd->selected_icons, ic)) break;
              ic = NULL;
           }
-        icons = eina_list_append(icons, ic);
+        if (ic) icons = eina_list_append(icons, ic);
      }
    return icons;
 }

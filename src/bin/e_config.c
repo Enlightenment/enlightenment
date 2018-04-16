@@ -1505,6 +1505,26 @@ e_config_load(void)
                if (!elm_config_profile_exists(_e_config_profile))
                  elm_config_profile_save(_e_config_profile);
             }
+          CONFIG_VERSION_CHECK(25)
+            {
+               Eina_List *l;
+               E_Config_Binding_Edge *ebe;
+
+               EINA_LIST_FOREACH(e_bindings->edge_bindings, l, ebe)
+                 {
+                    if ((ebe->context == E_BINDING_CONTEXT_ZONE) &&
+                        (ebe->modifiers == 0) &&
+                        (ebe->edge >= 1) && (ebe->edge <= 4) &&
+                        (!ebe->any_mod) &&
+                        (ebe->action) &&
+                        (!strcmp(ebe->action, "desk_flip_in_direction")))
+                      {
+                         ebe->any_mod = 1;
+                      }
+                 }
+               CONFIG_VERSION_UPDATE_INFO(25);
+               e_config_save_queue();
+            }
      }
    elm_config_profile_set(_e_config_profile);
    if (!e_config->remember_internal_fm_windows)

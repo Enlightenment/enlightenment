@@ -545,7 +545,7 @@ group "E_Config_Bindings" struct {
             value "modifiers" int: 0;
             value "action" string: "desk_flip_in_direction";
             value "edge" uchar: 1;
-            value "any_mod" uchar: 0;
+            value "any_mod" uchar: 1;
             value "delay" float: 0.3000000119209289550781250;
         }
         group "E_Config_Binding_Edge" struct {
@@ -553,7 +553,7 @@ group "E_Config_Bindings" struct {
             value "modifiers" int: 0;
             value "action" string: "desk_flip_in_direction";
             value "edge" uchar: 2;
-            value "any_mod" uchar: 0;
+            value "any_mod" uchar: 1;
             value "delay" float: 0.3000000119209289550781250;
         }
         group "E_Config_Binding_Edge" struct {
@@ -561,7 +561,7 @@ group "E_Config_Bindings" struct {
             value "modifiers" int: 0;
             value "action" string: "desk_flip_in_direction";
             value "edge" uchar: 3;
-            value "any_mod" uchar: 0;
+            value "any_mod" uchar: 1;
             value "delay" float: 0.3000000119209289550781250;
         }
         group "E_Config_Binding_Edge" struct {
@@ -569,7 +569,7 @@ group "E_Config_Bindings" struct {
             value "modifiers" int: 0;
             value "action" string: "desk_flip_in_direction";
             value "edge" uchar: 4;
-            value "any_mod" uchar: 0;
+            value "any_mod" uchar: 1;
             value "delay" float: 0.3000000119209289550781250;
         }
     }

@@ -733,7 +733,7 @@ static void
 _e_smart_scrollbar_read(E_Smart_Data *sd)
 {
    Evas_Coord x, y, mx = 0, my = 0;
-   double vx, vy;
+   double vx = 0.0, vy = 0.0;
 
    edje_object_part_drag_value_get(sd->edje_obj, "e.dragable.vbar", NULL, &vy);
    edje_object_part_drag_value_get(sd->edje_obj, "e.dragable.hbar", &vx, NULL);
@@ -915,7 +915,7 @@ _e_smart_scrollbar_size_adjust(E_Smart_Data *sd)
    if ((sd->child_obj) || (sd->extern_pan))
      {
         Evas_Coord x = 0, y = 0, w = 0, h = 0, mx = 0, my = 0, vw = 0, vh = 0;
-        double vx, vy, size;
+        double vx = 0.0, vy = 0.0, size = 0.0;
 
         edje_object_calc_force(sd->edje_obj);
         edje_object_part_geometry_get(sd->edje_obj, "e.swallow.content",
