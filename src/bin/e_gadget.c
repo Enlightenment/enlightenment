@@ -3122,7 +3122,7 @@ _desktop_editor_mouse_up_job(void *d)
 }
 
 static Eina_Bool
-_desktop_editor_mouse_up(void *d, int t EINA_UNUSED, Ecore_Event_Mouse_Button *ev)
+_desktop_editor_mouse_up(void *d, int t EINA_UNUSED, Ecore_Event_Mouse_Button *ev EINA_UNUSED)
 {
    E_FREE_LIST(desktop_editor_move_handlers, ecore_event_handler_del);
    evas_object_pointer_mode_set(d, EVAS_OBJECT_POINTER_MODE_NOGRAB);

@@ -119,7 +119,7 @@ _gadget_del_cb(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
 }
 
 EINTERN Evas_Object *
-_gadget_create_cb(Evas_Object *parent, int *id, E_Gadget_Site_Orient orient)
+_gadget_create_cb(Evas_Object *parent, int *id, E_Gadget_Site_Orient orient EINA_UNUSED)
 {
    E_PackageKit_Instance *inst;
    E_PackageKit_Module_Context *ctxt = packagekit_mod->data;

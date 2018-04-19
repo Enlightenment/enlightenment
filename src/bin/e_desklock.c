@@ -72,7 +72,6 @@ e_desklock_init(void)
 EINTERN int
 e_desklock_shutdown(void)
 {
-   Eina_Bool waslocked = _e_desklock_state;
    E_Desklock_Run *task;
    Eina_List *l;
    E_Config_Desklock_Background *bg;
