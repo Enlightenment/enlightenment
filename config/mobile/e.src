@@ -1,5 +1,5 @@
 group "E_Config" struct {
-    value "config_version" int: 1000025;
+    value "config_version" int: 1000014;
     value "config_type" uint: 1;
     value "show_splash" int: 1;
     value "desktop_default_name" string: "%i-%i";
