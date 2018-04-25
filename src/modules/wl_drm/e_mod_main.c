@@ -866,7 +866,7 @@ _drm_device_del(void *data EINA_UNUSED, const Efl_Event *event)
 }
 
 EFL_CALLBACKS_ARRAY_DEFINE(_drm_device_del_cb,
-                           { EFL_CANVAS_EVENT_DEVICE_REMOVED, _drm_device_del });
+                           { EFL_CANVAS_SCENE_EVENT_DEVICE_REMOVED, _drm_device_del });
 
 E_API void *
 e_modapi_init(E_Module *m)
