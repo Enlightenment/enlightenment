@@ -779,13 +779,12 @@ _drm_device_del(void *data EINA_UNUSED, const Efl_Event *event)
      ecore_evas_cursor_device_unset(e_comp->ee, event->info);
 }
 
-EFL_CALLBACKS_ARRAY_DEFINE(_drm_device_del_cb,
-                           { EFL_CANVAS_SCENE_EVENT_DEVICE_REMOVED, _drm_device_del });
-
 E_API void *
 e_modapi_init(E_Module *m)
 {
    int w = 0, h = 0;
+
+   static Efl_Callback_Array_Item arr[2] = { { 0, _drm_device_del } };
 
    printf("LOAD WL_DRM MODULE\n");
 
@@ -832,6 +831,14 @@ e_modapi_init(E_Module *m)
    ecore_evas_screen_geometry_get(e_comp->ee, NULL, NULL, &w, &h);
    if (!e_comp_canvas_init(w, h)) return NULL;
 
+#ifdef EFL_VERSION_1_21
+   arr[0].desc = EFL_CANVAS_SCENE_EVENT_DEVICE_REMOVED;
+#else
+   if (E_EFL_VERSION_MINIMUM(1, 20, 99))
+     arr[0].desc = dlsym(NULL, "_EFL_CANVAS_SCENE_EVENT_DEVICE_REMOVED");
+   if (!arr[0].desc)
+     arr[0].desc = dlsym(NULL, "_EFL_CANVAS_EVENT_DEVICE_REMOVED");
+#endif
    ecore_evas_pointer_xy_get(e_comp->ee, &e_comp_wl->ptr.x,
                              &e_comp_wl->ptr.y);
    evas_event_feed_mouse_in(e_comp->evas, 0, NULL);
@@ -855,7 +862,7 @@ e_modapi_init(E_Module *m)
      ecore_event_handler_add(ELPUT_EVENT_POINTER_MOTION,
                              (Ecore_Event_Handler_Cb)_pointer_motion, NULL);
 
-   efl_event_callback_array_priority_add(e_comp->evas, _drm_device_del_cb(),
+   efl_event_callback_array_priority_add(e_comp->evas, arr,
                                          EFL_CALLBACK_PRIORITY_BEFORE, NULL);
 
    return m;
