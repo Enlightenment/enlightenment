@@ -1525,6 +1525,44 @@ e_config_load(void)
                CONFIG_VERSION_UPDATE_INFO(25);
                e_config_save_queue();
             }
+          CONFIG_VERSION_CHECK(26)
+            {
+               // move from bluez4 to bluez5 automatically. you can manually
+               // move back if that works better for you...
+               Eina_List *l, *ll;
+               E_Config_Module *em;
+               E_Config_Gadcon *gc;
+               E_Config_Gadcon_Client *gcc;
+
+               EINA_LIST_FOREACH(e_config->modules, l, em)
+                 {
+                    if (!em->enabled) continue;
+                    if (!em->name) continue;
+                    if (eina_streq(em->name, "bluez4"))
+                      {
+                         eina_stringshare_replace(&(em->name), "bluez5");
+                      }
+                 }
+               EINA_LIST_FOREACH(e_config->gadcons, l, gc)
+                 {
+                    EINA_LIST_FOREACH(gc->clients, ll, gcc)
+                      {
+                         if (!gcc->name) continue;
+                         if (!strncmp(gcc->name, "bluez4", 6))
+                           {
+                              char *tmp = strdup(gcc->name);
+                              if (tmp)
+                                {
+                                   tmp[5] = '5';
+                                   eina_stringshare_replace(&(gcc->name), tmp);
+                                   free(tmp);
+                                }
+                           }
+                      }
+                 }
+               CONFIG_VERSION_UPDATE_INFO(26);
+               e_config_save_queue();
+            }
      }
    elm_config_profile_set(_e_config_profile);
    if (!e_config->remember_internal_fm_windows)

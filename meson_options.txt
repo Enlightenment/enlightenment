@@ -111,6 +111,10 @@ option('bluez4',
 	type: 'boolean',
 	value: true,
 	description: 'enable bluez4 module: (default=true)')
+option('bluez5',
+	type: 'boolean',
+	value: true,
+	description: 'enable bluez5 module: (default=true)')
 option('clock',
 	type: 'boolean',
 	value: true,
