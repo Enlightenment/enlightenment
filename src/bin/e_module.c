@@ -392,7 +392,7 @@ e_module_new(const char *name)
         m->error = 1;
         goto init_done;
      }
-   m->handle = dlopen(modpath, (RTLD_NOW | RTLD_GLOBAL));
+   m->handle = dlopen(modpath, (RTLD_NOW | RTLD_LOCAL));
    if (!m->handle)
      {
         snprintf(body, sizeof(body),
