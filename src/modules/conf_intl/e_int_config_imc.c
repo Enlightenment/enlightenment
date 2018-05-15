@@ -350,10 +350,43 @@ _basic_create_widgets(E_Config_Dialog *cfd EINA_UNUSED, Evas *evas, E_Config_Dia
                     {
                        Efreet_Desktop *desktop;
 
-                       if (!ecore_file_exists(imc->e_im_setup_exec))
+                       if (imc->e_im_setup_exec[0] == '/')
                          {
-                            e_intl_input_method_config_free(imc);
-                            goto out;
+                            if (!ecore_file_exists(imc->e_im_setup_exec))
+                              {
+                                 e_intl_input_method_config_free(imc);
+                                 goto out;
+                              }
+                         }
+                       else
+                         {
+                            const char *env = getenv("PATH");
+                            char **split, buf[PATH_MAX];
+                            Eina_Bool exec_found = EINA_FALSE;
+
+                            if (!env)
+                              {
+                                 e_intl_input_method_config_free(imc);
+                                 goto out;
+                              }
+                            split = eina_str_split(env, ":", 0);
+                            for (i = 0; split[i] != NULL; i++)
+                              {
+                                 snprintf(buf, sizeof(buf), "%s/%s", split[i], imc->e_im_setup_exec);
+
+                                 if (ecore_file_exists(buf) && ecore_file_can_exec(buf))
+                                   {
+                                      exec_found = EINA_TRUE;
+                                      break;
+                                   }
+                              }
+                            free(split[0]);
+                            free(split);
+                            if (!exec_found)
+                              {
+                                 e_intl_input_method_config_free(imc);
+                                 goto out;
+                              }
                          }
                        desktop = efreet_util_desktop_exec_find(imc->e_im_setup_exec);
                        if (desktop)
