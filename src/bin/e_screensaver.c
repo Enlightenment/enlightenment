@@ -31,6 +31,7 @@ static Eina_Bool _e_screensaver_inhibited = EINA_FALSE;
 #endif
 
 static Eina_Bool _screensaver_ignore = EINA_FALSE;
+static Eina_Bool _screensaver_now = EINA_FALSE;
 
 E_API int E_EVENT_SCREENSAVER_ON = -1;
 E_API int E_EVENT_SCREENSAVER_OFF = -1;
@@ -51,6 +52,7 @@ e_screensaver_timeout_get(Eina_Bool use_idle)
 {
    int timeout = 0, count = (1 + _e_screensaver_ask_presentation_count);
 
+   if (_screensaver_now) return 1;
    if ((e_config->screensaver_enable) && (!e_config->mode.presentation))
      {
         if ((e_desklock_state_get()) &&
@@ -138,7 +140,23 @@ e_screensaver_update(void)
    if (e_comp->comp_type != E_PIXMAP_TYPE_WL)
      {
         if (changed)
-          ecore_x_screensaver_set(timeout, interval, blanking, expose);
+          {
+             // this toggling of dpms is a bug workaround in x that i found
+             // where if we change screensaver timeouts and force a manual
+             // wake of the screen e.g. on lid open/close we have to toggle
+             // it for x to stop thinking the monitor is off when it's
+             // actually on and this causes later dpms issues where the
+             // screen doesnt turn off at all because x thinks interanlly
+             // that the monitor is still off... so this is odd, but it's
+             // necessary on some hardware.
+             int enabled;
+
+             enabled = ((e_config->screensaver_enable) &&
+                        (!e_config->mode.presentation));
+             ecore_x_dpms_enabled_set(!enabled);
+             ecore_x_dpms_enabled_set(enabled);
+             ecore_x_screensaver_set(timeout, interval, blanking, expose);
+          }
      }
 #endif
 #ifdef HAVE_WAYLAND
@@ -519,6 +537,12 @@ e_screensaver_deactivate(void)
 }
 
 E_API void
+e_screensaver_now_set(Eina_Bool now)
+{
+   _screensaver_now = now;
+}
+
+E_API void
 e_screensaver_eval(Eina_Bool saver_on)
 {
    if (saver_on)
@@ -529,6 +553,7 @@ e_screensaver_eval(Eina_Bool saver_on)
                e_config->backlight.timer;
 
              if (t < 1.0) t = 1.0;
+             if (_screensaver_now) t = 1.0;
              E_FREE_FUNC(screensaver_idle_timer, ecore_timer_del);
              if (!_screensaver_ignore)
                {

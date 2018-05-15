@@ -36,6 +36,8 @@ static E_Dialog *_e_sys_logout_confirm_dialog = NULL;
 static Ecore_Timer *_e_sys_susp_hib_check_timer = NULL;
 static double _e_sys_susp_hib_check_last_tick = 0.0;
 static Ecore_Timer *_e_sys_phantom_wake_check_timer = NULL;
+static Ecore_Timer *_e_sys_resume_delay_timer = NULL;
+static Eina_Bool _e_sys_suspended = EINA_FALSE;
 
 static Ecore_Event_Handler *_e_sys_acpi_handler = NULL;
 
@@ -254,6 +256,7 @@ _e_sys_comp_resume2(void *data EINA_UNUSED)
         _e_sys_phantom_wake_check_timer =
           ecore_timer_add(1.0, _e_sys_phantom_wake_check_cb, NULL);
      }
+   printf("SSS: sys resume2 @ %1.8f\n", ecore_time_get());
    return EINA_FALSE;
 }
 
@@ -284,6 +287,7 @@ _e_sys_comp_resume(void)
    _e_sys_screensaver_unignore_timer =
      ecore_timer_add(0.3, _e_sys_screensaver_unignore_delay, NULL);
    ecore_timer_add(0.6, _e_sys_comp_resume2, NULL);
+   printf("SSS: sys resume @ %1.8f\n", ecore_time_get());
 }
 
 static void
@@ -293,7 +297,7 @@ _e_sys_systemd_signal_prepare_shutdown(void *data EINA_UNUSED, const Eldbus_Mess
    Eina_Bool b = EINA_FALSE;
 
    if (!eldbus_message_arguments_get(msg, "b", &b)) return;
-   fprintf(stderr, "SSS: systemd said to prepare for shutdown! bool=%i @%1.8f\n", (int)b, ecore_time_get());
+   printf("SSS: systemd said to prepare for shutdown! bool=%i @%1.8f\n", (int)b, ecore_time_get());
 }
 
 static void
@@ -305,12 +309,17 @@ _e_sys_systemd_signal_prepare_sleep(void *data EINA_UNUSED, const Eldbus_Message
    if (!eldbus_message_arguments_get(msg, "b", &b)) return;
    // b == 1 -> suspending
    // b == 0 -> resuming
-   fprintf(stderr, "SSS: systemd said to prepare for sleep! bool=%i @%1.8f\n", (int)b, ecore_time_get());
+   printf("SSS: systemd said to prepare for sleep! bool=%i @%1.8f\n", (int)b, ecore_time_get());
    if (b == EINA_FALSE)
      {
-        ecore_event_add(E_EVENT_SYS_RESUME, NULL, NULL, NULL);
-        _e_sys_comp_resume();
+        if (_e_sys_suspended)
+          {
+             _e_sys_suspended = EINA_FALSE;
+             ecore_event_add(E_EVENT_SYS_RESUME, NULL, NULL, NULL);
+             _e_sys_comp_resume();
+          }
      }
+   else _e_sys_suspended = EINA_TRUE;
 }
 
 /* externally accessible functions */
@@ -347,12 +356,15 @@ e_sys_init(void)
 EINTERN int
 e_sys_shutdown(void)
 {
+   if (_e_sys_resume_delay_timer)
+     ecore_timer_del(_e_sys_resume_delay_timer);
    if (_e_sys_screensaver_unignore_timer)
      ecore_timer_del(_e_sys_screensaver_unignore_timer);
    if (_e_sys_acpi_handler)
      ecore_event_handler_del(_e_sys_acpi_handler);
    if (_e_sys_exe_exit_handler)
      ecore_event_handler_del(_e_sys_exe_exit_handler);
+   _e_sys_resume_delay_timer = NULL;
    _e_sys_screensaver_unignore_timer = NULL;
    _e_sys_acpi_handler = NULL;
    _e_sys_exe_exit_handler = NULL;
@@ -612,8 +624,13 @@ _e_sys_systemd_hibernate(void)
 static Eina_Bool
 _e_sys_resume_delay(void *d EINA_UNUSED)
 {
-   ecore_event_add(E_EVENT_SYS_RESUME, NULL, NULL, NULL);
-   _e_sys_comp_resume();
+   _e_sys_resume_delay_timer = NULL;
+   if (_e_sys_suspended)
+     {
+        _e_sys_suspended = EINA_FALSE;
+        ecore_event_add(E_EVENT_SYS_RESUME, NULL, NULL, NULL);
+        _e_sys_comp_resume();
+     }
    return EINA_FALSE;
 }
 
@@ -622,10 +639,14 @@ _e_sys_susp_hib_check_timer_cb(void *data EINA_UNUSED)
 {
    double t = ecore_time_unix_get();
 
+   printf("SSS: hib check @%1.8f (unix %1.8f, delt %1.8f)\n", ecore_time_get(), t, t -  _e_sys_susp_hib_check_last_tick);
    if ((t - _e_sys_susp_hib_check_last_tick) > 0.5)
      {
         _e_sys_susp_hib_check_timer = NULL;
-        ecore_timer_add(0.2, _e_sys_resume_delay, NULL);
+        if (_e_sys_resume_delay_timer)
+          ecore_timer_del(_e_sys_resume_delay_timer);
+        _e_sys_resume_delay_timer = 
+          ecore_timer_add(0.2, _e_sys_resume_delay, NULL);
         return EINA_FALSE;
      }
    _e_sys_susp_hib_check_last_tick = t;
@@ -640,6 +661,7 @@ _e_sys_susp_hib_check(void)
    _e_sys_susp_hib_check_last_tick = ecore_time_unix_get();
    _e_sys_susp_hib_check_timer =
      ecore_timer_loop_add(0.1, _e_sys_susp_hib_check_timer_cb, NULL);
+   printf("SSS: hib check begin @%1.8f (unix %1.8f)\n", ecore_time_get(), _e_sys_susp_hib_check_last_tick);
 }
 
 /* local subsystem functions */
@@ -1163,17 +1185,18 @@ _e_sys_action_do(E_Sys_Action a, char *param EINA_UNUSED, Eina_Bool raw)
              _e_sys_phantom_wake_check_timer = NULL;
              if (raw)
                {
+                  _e_sys_suspended = EINA_TRUE;
                   if (e_config->desklock_on_suspend)
                   // XXX: this desklock - ensure its instant
                     e_desklock_show(EINA_TRUE);
                   _e_sys_begin_time = ecore_time_get();
                   if (e_config->suspend_connected_standby == 0)
                     {
-                       _e_sys_susp_hib_check();
                        if (systemd_works)
                          _e_sys_systemd_suspend();
                        else
                          {
+                            _e_sys_susp_hib_check();
                             _e_sys_exe = ecore_exe_run(buf, NULL);
                             ret = 1;
                          }
@@ -1223,7 +1246,7 @@ _e_sys_action_do(E_Sys_Action a, char *param EINA_UNUSED, Eina_Bool raw)
              _e_sys_phantom_wake_check_timer = NULL;
              if (raw)
                {
-                  _e_sys_susp_hib_check();
+                  _e_sys_suspended = EINA_TRUE;
                   if (e_config->desklock_on_suspend)
                   // XXX: this desklock - ensure its instant
                     e_desklock_show(EINA_TRUE);
@@ -1232,6 +1255,7 @@ _e_sys_action_do(E_Sys_Action a, char *param EINA_UNUSED, Eina_Bool raw)
                     _e_sys_systemd_hibernate();
                   else
                     {
+                       _e_sys_susp_hib_check();
                        _e_sys_exe = ecore_exe_run(buf, NULL);
                        ret = 1;
                     }

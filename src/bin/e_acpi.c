@@ -344,7 +344,7 @@ _e_acpi_cb_server_data(void *data EINA_UNUSED, int type EINA_UNUSED, void *event
                 case E_ACPI_TYPE_LID:
                   acpi_event->status =
                     _e_acpi_lid_status_get(device, bus);
-                  printf("RRR: acpi event\n");
+                  printf("RRR: acpi event @%1.8f\n", ecore_time_get());
                   /* no change in lid state */
                   if (lid_is_closed == (acpi_event->status == E_ACPI_LID_CLOSED)) break;
                   lid_is_closed = (acpi_event->status == E_ACPI_LID_CLOSED);

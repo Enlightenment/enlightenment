@@ -582,8 +582,10 @@ _screens_fingerprint(E_Randr2 *r)
              eina_strbuf_append(buf, ":");
              eina_strbuf_append(buf, s->id);
              eina_strbuf_append(buf, ":");
-             if (s->info.lid_closed) eina_strbuf_append(buf, ":LC:");
-             else eina_strbuf_append(buf, ":LO:");
+// Don't do this asbecause this forces a screen replug when you open and
+// close your laptop lid and if that is the only thing you open or close...
+//             if (s->info.lid_closed) eina_strbuf_append(buf, ":LC:");
+//             else eina_strbuf_append(buf, ":LO:");
           }
      }
    str = eina_strbuf_string_steal(buf);
@@ -598,6 +600,7 @@ _screens_differ(E_Randr2 *r1, E_Randr2 *r2)
    Eina_Bool changed = EINA_FALSE;
    Eina_List *l, *ll;
    E_Randr2_Screen *s, *ss;
+   int r1_screen_num = 0, r2_screen_num = 0;
 
    // check monitor outputs and edids, plugged in things
    s1 = _screens_fingerprint(r1);
@@ -609,6 +612,26 @@ _screens_differ(E_Randr2 *r1, E_Randr2 *r2)
    free(s1);
    free(s2);
    // check screen config
+   printf("RRR: screens lists %i -> %i\n", eina_list_count(r1->screens), eina_list_count(r2->screens));
+   printf("RRR: --------\n");
+   EINA_LIST_FOREACH(r1->screens, l, s)
+     {
+        if (!s->id) continue;
+        if ((s->info.connected) &&
+            (!((s->info.is_lid) && (s->info.lid_closed))))
+          r1_screen_num++;
+     }
+   printf("RRR: --------\n");
+   EINA_LIST_FOREACH(r2->screens, l, s)
+     {
+        if (!s->id) continue;
+        if ((s->info.connected) &&
+            (!((s->info.is_lid) && (s->info.lid_closed))))
+          r2_screen_num++;
+     }
+   printf("RRR: --------\n");
+   printf("RRR: screens %i -> %i\n", r1_screen_num, r2_screen_num);
+   printf("RRR: --------\n");
    EINA_LIST_FOREACH(r2->screens, l, s)
      {
         if (!s->id) continue;
@@ -625,12 +648,60 @@ _screens_differ(E_Randr2 *r1, E_Randr2 *r2)
                  (s->config.mode.w != ss->config.mode.w) ||
                  (s->config.mode.h != ss->config.mode.h) ||
                  (s->config.enabled != ss->config.enabled) ||
-                 (s->config.rotation != ss->config.rotation) ||
-                 (s->info.lid_closed != ss->info.lid_closed))
+                 (s->config.rotation != ss->config.rotation))
           changed = EINA_TRUE;
+        else
+          {
+             if (r1_screen_num != r2_screen_num)
+               {
+                  printf("RRR: do change because screen count changed\n");
+                  changed = EINA_TRUE;
+               }
+             else
+               {
+                  if ((r2_screen_num != 1) &&
+                      (s->info.lid_closed != ss->info.lid_closed))
+                    {
+                       printf("RRR: change because laptop lid open/close and number of screens > 1\n");
+                       changed = EINA_TRUE;
+                    }
+                  else
+                    printf("RRR: skip change because of single laptop lid\n");
+               }
+          }
      }
+   printf("RRR: --------\n");
    printf("RRR: changed = %i\n", changed);
    return changed;
+}
+
+static Eina_Bool
+_cb_deferred_suspend_screen_change(void *data EINA_UNUSED)
+{
+   Eina_List *l;
+   E_Randr2_Screen *s;
+   int lids = 0;
+   int ext_screens = 0;
+
+   EINA_LIST_FOREACH(e_randr2->screens, l, s)
+     {
+        if (s->info.is_lid) lids++;
+        else if ((s->config.enabled) &&
+                 (s->config.geom.w > 0) &&
+                 (s->config.geom.h > 0))
+          ext_screens++;
+     }
+   printf("RRR: =========================== deferred suspend.... %i %i\n", lids, ext_screens);
+   if ((lids > 0) && (ext_screens == 0))
+     {
+        if ((e_config->screensaver_suspend_on_ac) ||
+            (e_powersave_mode_get() > E_POWERSAVE_MODE_LOW))
+          {
+             printf("RRR: =========================== powermd low / suspend on ac");
+             e_sys_action_do(E_SYS_SUSPEND, NULL);
+          }
+     }
+   return EINA_FALSE;
 }
 
 static Eina_Bool
@@ -642,6 +713,11 @@ _cb_screen_change_delay(void *data EINA_UNUSED)
    // if we had a screen plug/unplug etc. event and we shouldnt ignore it...
    if ((event_screen) && (!event_ignore))
      {
+        Eina_List *l;
+        E_Randr2_Screen *s;
+        int lid_screens = 0;
+        int close_lid_screens = 0;
+        int external_screens = 0;
         E_Randr2 *rtemp;
 
         printf("RRR: reconfigure screens due to event...\n");
@@ -658,12 +734,74 @@ _cb_screen_change_delay(void *data EINA_UNUSED)
                          change = EINA_TRUE;
                     }
                }
+             EINA_LIST_FOREACH(rtemp->screens, l, s)
+               {
+//                  if (!s->id) continue;
+                  if (s->info.is_lid)
+                    {
+                       lid_screens++;
+                       if (s->info.lid_closed) close_lid_screens++;
+                    }
+                  else
+                    {
+                       if ((s->info.connected) && (s->config.enabled))
+                         external_screens++;
+                    }
+               }
+             printf("RRR: lids=%i closed=%i ext=%i\n", lid_screens, close_lid_screens, external_screens);
              _info_free(rtemp);
           }
         printf("RRR: change = %i\n", change);
         // we plugged or unplugged some monitor - re-apply config so
         // known screens can be configured
-        if (change) e_randr2_config_apply();
+        if (change)
+          {
+             if ((lid_screens > 0) && (close_lid_screens == lid_screens) &&
+                 (external_screens == 0))
+               {
+                  printf("RRR: skip change with all lids closed and no ext\n");
+                  change = EINA_FALSE;
+                  e_screensaver_now_set(EINA_TRUE);
+                  e_screensaver_attrs_set
+                    (1, e_config->screensaver_blanking,
+                     e_config->screensaver_expose);
+                  e_screensaver_update();
+                  e_dpms_force_update();
+                  e_screensaver_activate();
+                  e_screensaver_eval(EINA_TRUE);
+                  // force dpms...
+               }
+             if ((lid_screens > 0) && (close_lid_screens < lid_screens) &&
+                 (external_screens == 0))
+               {
+                  printf("RRR: skip change with lid screens open and no ext\n");
+                  change = EINA_FALSE;
+                  e_screensaver_now_set(EINA_FALSE);
+                  e_screensaver_attrs_set
+                    (e_config->screensaver_timeout,
+                     e_config->screensaver_blanking,
+                     e_config->screensaver_expose);
+                  e_screensaver_update();
+                  e_dpms_force_update();
+                  e_screensaver_deactivate();
+               }
+             if (change)
+               e_randr2_config_apply();
+          }
+        if (change)
+          {
+             if ((lid_screens > 0) && (close_lid_screens == lid_screens) &&
+                 (external_screens == 0))
+               {
+                  printf("RRR: have all closed laptop screens and no external\n");
+                  if ((e_config->screensaver_suspend_on_ac) ||
+                      (e_powersave_mode_get() > E_POWERSAVE_MODE_LOW))
+                    {
+                       printf("RRR: we should try and suspend now because on ac or suspend on ac is on\n");
+                       ecore_timer_add(1.0, _cb_deferred_suspend_screen_change, NULL);
+                    }
+               }
+          }
      }
    // update screen info after the above apply or due to external changes
    e_randr2_screeninfo_update();
