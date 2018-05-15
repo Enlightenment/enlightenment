@@ -346,9 +346,9 @@ subdir('src/bin')
 
 subdir('src/modules')
 
-subdir('config')
 
 subdir('data/backgrounds')
+subdir('data/config')
 subdir('data/desktop')
 subdir('data/etc')
 subdir('data/favorites')
