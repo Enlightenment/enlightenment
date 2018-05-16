@@ -47,6 +47,10 @@ dir_module_e  = join_paths(dir_lib, proj, 'modules')
 dir_util_e    = join_paths(dir_lib, proj, 'utils')
 dir_pc        = join_paths(dir_data, 'pkgconfig')
 
+if dir_sysconf == 'etc'
+  dir_sysconf = join_paths(dir_prefix, dir_sysconf)
+endif
+
 suid_exes = []
 
 pkgconfig = import('pkgconfig')
