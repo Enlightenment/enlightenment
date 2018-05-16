@@ -66,6 +66,7 @@ main(int argc,
    Eina_Bool mnt = EINA_FALSE;
    const char *act = NULL;
 #endif
+   Eina_Bool rfkill = EINA_FALSE;
    gid_t gid, gl[65536], egid;
 
    for (i = 1; i < argc; i++)
@@ -88,11 +89,23 @@ main(int argc,
              test = 1;
              action = argv[2];
           }
-	else if (!strcmp(argv[1], "l2ping"))
-	  {
-	     action = argv[1];
-	     output = argv[2];
-	  }
+        else if (!strcmp(argv[1], "l2ping"))
+          {
+             action = argv[1];
+             output = argv[2];
+          }
+        else if (!strcmp(argv[1], "rfkill-unblock"))
+          {
+             rfkill = EINA_TRUE;
+             action = argv[1];
+             output = argv[2];
+          }
+        else if (!strcmp(argv[1], "rfkill-block"))
+          {
+             rfkill = EINA_TRUE;
+             action = argv[1];
+             output = argv[2];
+          }
 #ifdef HAVE_EEZE_MOUNT
         else
           {
@@ -281,6 +294,59 @@ main(int argc,
    /* pass 3 - set path and ifs to minimal defaults */
    putenv("PATH=/bin:/usr/bin:/sbin:/usr/sbin");
    putenv("IFS= \t\n");
+
+   if ((!test) && (rfkill))
+     {
+        Eina_Strbuf *buf = NULL;
+        const char *s;
+
+        buf = eina_strbuf_new();
+        if (!buf) exit(30);
+        for (s = output; *s; s++)
+          {
+             if (!(((*s >= 'a') && (*s <= 'z')) ||
+                   ((*s >= 'A') && (*s <= 'Z')) ||
+                   ((*s >= '0') && (*s <= '9')) ||
+                   (*s == '-') || (*s == '+') || (*s == ',') || (*s == '.') ||
+                   (*s == '/') || (*s == ':') || (*s == '=') || (*s == '@') ||
+                   (*s == '^')))
+               break;
+          }
+        if (*s == 0)
+          {
+             char *rfk = strdup(cmd);
+             if (rfk)
+               {
+                  char *pc = strchr(rfk, ' ');
+                  if (pc)
+                    {
+                       *pc = 0;
+                       FILE *p = popen(rfk, "r");
+                       if (p)
+                         {
+                            char lin[1024];
+                            char dev[1024];
+                            int id = -1;
+
+                            while (fgets(lin, sizeof(lin), p))
+                              {
+                                 lin[sizeof(lin) - 1] = 0;
+                                 if (sscanf(lin, "%i %*s %s %*s %*s", &id, dev) != 2)
+                                   id = -1;
+                                 else
+                                   {
+                                      if (!strcmp(dev, output)) break;
+                                   }
+                              }
+                            pclose(p);
+                            eina_strbuf_append_printf(buf, "%s %i", cmd, id);
+                            return system(eina_strbuf_string_get(buf));
+                         }
+                    }
+               }
+          }
+        exit(30);
+     }
 
    if ((!test)
 #ifdef HAVE_EEZE_MOUNT

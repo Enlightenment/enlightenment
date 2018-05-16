@@ -51,6 +51,8 @@ action:   /bin/mount     @MOUNT@
 action:   /bin/umount    @UMOUNT@
 action:   /usr/bin/eject @EJECT@
 action:   l2ping         /usr/bin/l2ping
+action:   rfkill-unblock /bin/rfkill unblock
+action:   rfkill-block   /bin/rfkill block
 
 # root is allowed to do anything - but it needs to be here explicitly anyway
 user:     root      allow: *
