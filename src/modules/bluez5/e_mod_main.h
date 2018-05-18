@@ -35,6 +35,7 @@ E_API int e_modapi_shutdown(E_Module *m);
 E_API int e_modapi_save(E_Module *m);
 
 void ebluez5_popups_show(void);
+void ebluez5_rfkill_unblock(const char *name);
 
 void ebluez5_popup_hide(Instance *inst);
 

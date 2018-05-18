@@ -52,7 +52,16 @@ static void
 _cb_power(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Obj *o = data;
-   if (elm_check_state_get(obj)) bz_obj_power_on(o);
+   if (elm_check_state_get(obj))
+     {
+        if (o->path)
+          {
+             const char *s = strrchr(o->path, '/');
+
+             if (s) ebluez5_rfkill_unblock(s + 1);
+          }
+        bz_obj_power_on(o);
+     }
    else bz_obj_power_off(o);
 }
 
@@ -467,7 +476,10 @@ static void
 _cb_settings(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Instance *inst = data;
+
    ebluez5_popup_hide(inst);
+   if (e_configure_registry_exists("extensions/bluez5"))
+      e_configure_registry_call("extensions/bluez5", NULL, NULL);
 }
 */
 
@@ -537,7 +549,7 @@ ebluez5_popup_content_add(Evas_Object *base, Instance *inst)
    evas_object_smart_callback_add(o, "clicked", _cb_settings, inst);
    elm_box_pack_end(box, o);
    evas_object_show(o);
-*/
+ */
    return box;
 }
 
@@ -704,9 +716,19 @@ ebluez5_popup_device_change(Obj *o)
           {
              if (o == elm_object_item_data_get(it))
                {
-                  elm_genlist_item_update(it);
+                  // if this is a change for the obj for an "initial"
+                  // request to the user for ok/pin etc. then change it
+                  // and do the updates
                   if (alert)
-                    elm_genlist_item_show(it, ELM_GENLIST_ITEM_SCROLLTO_MIDDLE);
+                    {
+                       elm_genlist_item_update(it);
+                       elm_genlist_item_show(it, ELM_GENLIST_ITEM_SCROLLTO_MIDDLE);
+                    }
+                  // otherwise only do changes to items with no agent
+                  // requests pending so we dont delete focused widgets
+                  // or entry widgets etc.
+                  else if (!o->agent_request)
+                    elm_genlist_item_update(it);
                   break;
                }
           }

@@ -1,4 +1,5 @@
 #include "bz.h"
+#include "e_mod_main.h"
 
 static Eldbus_Proxy *objman_proxy = NULL;
 static Eldbus_Signal_Handler *sig_ifadd = NULL;
@@ -262,6 +263,12 @@ cb_obj_prop(void *data, const Eldbus_Message *msg, Eldbus_Pending *pending EINA_
    if (eldbus_message_arguments_get(msg, "a{sv}", &array))
      eldbus_message_iter_dict_iterate(array, "sv", cb_obj_prop_entry, o);
    bz_obj_ref(o);
+   if ((o->powered) && (o->path))
+     {
+        const char *s = strrchr(o->path, '/');
+
+        if (s) ebluez5_rfkill_unblock(s + 1);
+     }
    if (!o->add_called)
      {
         o->add_called = EINA_TRUE;

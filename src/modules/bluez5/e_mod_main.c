@@ -251,6 +251,23 @@ ebluez5_popups_show(void)
      }
 }
 
+void
+ebluez5_rfkill_unblock(const char *name)
+{
+   Eina_Strbuf *buf;
+
+   // XXX: need config tp enable or disable this behavior
+   buf = eina_strbuf_new();
+   if (buf)
+     {
+        eina_strbuf_append_printf
+          (buf, "%s/enlightenment/utils/enlightenment_sys rfkill-unblock %s",
+           e_prefix_lib_get(), name);
+        ecore_exe_run(eina_strbuf_string_get(buf), NULL);
+        eina_strbuf_free(buf);
+     }
+}
+
 /////////////////////////////////////////////////////////////////////////////
 
 /* Module Functions */
