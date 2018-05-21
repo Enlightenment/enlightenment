@@ -10,9 +10,25 @@ static Eina_List *devices = NULL;
 static void
 _adapter_add(Evas_Object *gl, Obj *o)
 {
+   Eina_List *l;
+   Config_Adapter *ad;
    Elm_Object_Item *it = evas_object_data_get(gl, "adapters_item");;
    elm_genlist_item_append(gl, adapt_itc, o, it, ELM_GENLIST_ITEM_NONE,
                             NULL, NULL);
+   if ((ebluez5_config) && (o->address))
+     {
+        EINA_LIST_FOREACH(ebluez5_config->adapters, l, ad)
+          {
+             if (!ad->addr) continue;
+             if (!strcmp(ad->addr, o->address))
+               {
+                  if (ad->powered) bz_obj_power_on(o);
+                  else bz_obj_power_off(o);
+                  if (ad->pairable) bz_obj_pairable(o);
+                  else bz_obj_unpairable(o);
+               }
+          }
+     }
 }
 
 static int
@@ -654,6 +670,9 @@ ebluez5_popup_adapter_change(Obj *o)
              if (o == elm_object_item_data_get(it))
                {
                   elm_genlist_item_update(it);
+                  if (o->address)
+                    ebluez5_conf_adapter_add(o->address, o->powered,
+                                             o->pairable);
                   break;
                }
           }

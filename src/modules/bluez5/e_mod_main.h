@@ -22,8 +22,14 @@ struct _Instance
 typedef struct _Config Config;
 struct _Config
 {
-   const char *lock_dev_addr;
-   const char *unlock_dev_addr;
+   Eina_List *adapters;
+};
+typedef struct _Config_Adapter Config_Adapter;
+struct _Config_Adapter
+{
+   const char *addr;
+   Eina_Bool powered;
+   Eina_Bool pairable;
 };
 
 extern Config *ebluez5_config;
@@ -34,6 +40,7 @@ E_API void *e_modapi_init(E_Module *m);
 E_API int e_modapi_shutdown(E_Module *m);
 E_API int e_modapi_save(E_Module *m);
 
+void ebluez5_conf_adapter_add(const char *addr, Eina_Bool powered, Eina_Bool pairable);
 void ebluez5_popups_show(void);
 void ebluez5_rfkill_unblock(const char *name);
 

@@ -4,6 +4,7 @@ static Eina_List *instances = NULL;
 static E_Module *mod = NULL;
 
 /* Local config */
+static E_Config_DD *conf_adapter_edd = NULL;
 static E_Config_DD *conf_edd = NULL;
 Config *ebluez5_config = NULL;
 
@@ -232,6 +233,38 @@ static const E_Gadcon_Client_Class _gc_class = {
 };
 
 /////////////////////////////////////////////////////////////////////////////
+
+void
+ebluez5_conf_adapter_add(const char *addr, Eina_Bool powered, Eina_Bool pairable)
+{
+   Eina_List *l;
+   Config_Adapter *ad;
+
+   if (!ebluez5_config) ebluez5_config = E_NEW(Config, 1);
+   if (!ebluez5_config) return;
+   EINA_LIST_FOREACH(ebluez5_config->adapters, l, ad)
+     {
+        if (!ad->addr) continue;
+        if (!strcmp(addr, ad->addr))
+          {
+             if ((ad->powered == powered) && (ad->pairable == pairable)) return;
+             ad->powered = powered;
+             ad->pairable = pairable;
+             e_config_save_queue();
+             return;
+          }
+     }
+   ad = E_NEW(Config_Adapter, 1);
+   if (ad)
+     {
+        ad->addr = eina_stringshare_add(addr);
+        ad->powered = powered;
+        ad->pairable = pairable;
+        ebluez5_config->adapters = eina_list_append(ebluez5_config->adapters, ad);
+     }
+   e_config_save_queue();
+}
+
 void
 ebluez5_popups_show(void)
 {
@@ -276,13 +309,21 @@ e_modapi_init(E_Module *m)
 {
    mod = m;
 
+   conf_adapter_edd = E_CONFIG_DD_NEW("Config_Adapter", Config_Adapter);
+#undef T
+#undef D
+#define T Config_Adapter
+#define D conf_adapter_edd
+   E_CONFIG_VAL(D, T, addr, STR);
+   E_CONFIG_VAL(D, T, powered, UCHAR);
+   E_CONFIG_VAL(D, T, pairable, UCHAR);
+
    conf_edd = E_CONFIG_DD_NEW("Config", Config);
 #undef T
 #undef D
 #define T Config
 #define D conf_edd
-   E_CONFIG_VAL(D, T, lock_dev_addr, STR);
-   E_CONFIG_VAL(D, T, unlock_dev_addr, STR);
+   E_CONFIG_LIST(D, T, adapters, conf_adapter_edd);
 
    ebluez5_config = e_config_domain_load("module.ebluez5", conf_edd);
    if (!ebluez5_config) ebluez5_config = E_NEW(Config, 1);
@@ -299,10 +340,16 @@ e_modapi_init(E_Module *m)
 E_API int
 e_modapi_shutdown(E_Module *m EINA_UNUSED)
 {
-   E_CONFIG_DD_FREE(conf_edd);
+   Config_Adapter *ad;
 
-   eina_stringshare_del(ebluez5_config->lock_dev_addr);
-   eina_stringshare_del(ebluez5_config->unlock_dev_addr);
+   E_CONFIG_DD_FREE(conf_edd);
+   E_CONFIG_DD_FREE(conf_adapter_edd);
+
+   EINA_LIST_FREE(ebluez5_config->adapters, ad)
+     {
+        eina_stringshare_del(ad->addr);
+        free(ad);
+     }
    free(ebluez5_config);
    ebluez5_config = NULL;
 
