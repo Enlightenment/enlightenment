@@ -1,5 +1,6 @@
 /* Ask about updates checking */
 #include "e_wizard.h"
+#include "e_wizard_api.h"
 
 static Eina_Bool do_up = 1;
 /*
@@ -20,7 +21,7 @@ wizard_page_show(E_Wizard_Page *pg EINA_UNUSED)
 {
    Evas_Object *o, *of, *ob;
 
-   e_wizard_title_set(_("Updates"));
+   api->wizard_title_set(_("Updates"));
 
    of = elm_frame_add(e_comp->elm);
    elm_object_text_set(of, _("Check for available updates"));
@@ -62,7 +63,7 @@ wizard_page_show(E_Wizard_Page *pg EINA_UNUSED)
 
    evas_object_show(of);
 
-   e_wizard_page_show(of);
+   api->wizard_page_show(of);
    return 1; /* 1 == show ui, and wait for user, 0 == just continue */
 }
 

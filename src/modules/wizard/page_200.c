@@ -1,5 +1,6 @@
 /* Delete previous copy of config profile and save new one */
 #include "e_wizard.h"
+#include "e_wizard_api.h"
 
 #if 0
 E_API int

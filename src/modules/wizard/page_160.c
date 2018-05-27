@@ -1,5 +1,6 @@
 /* Setup favorites and desktop links */
 #include "e_wizard.h"
+#include "e_wizard_api.h"
 /*
 E_API int
 wizard_page_init(E_Wizard_Page *pg EINA_UNUSED, Eina_Bool *need_xdg_desktops EINA_UNUSED, Eina_Bool *need_xdg_icons EINA_UNUSED)
@@ -21,13 +22,13 @@ wizard_page_show(E_Wizard_Page *pg EINA_UNUSED)
 
    // make desktop dir
    ecore_file_mkpath(efreet_desktop_dir_get());
-   snprintf(buf, sizeof(buf), "%s/desktop", e_wizard_dir_get());
+   snprintf(buf, sizeof(buf), "%s/desktop", api->wizard_dir_get());
    files = ecore_file_ls(buf);
    if (!files) return 0;
    EINA_LIST_FREE(files, file)
      {
         snprintf(buf, sizeof(buf), "%s/desktop/%s",
-                 e_wizard_dir_get(), file);
+                 api->wizard_dir_get(), file);
         snprintf(buf2, sizeof(buf2), "%s/%s",
                  efreet_desktop_dir_get(), file);
         ecore_file_cp(buf, buf2);

@@ -1,5 +1,6 @@
 /* ask about policy mouse binding modifiers */
 #include "e_wizard.h"
+#include "e_wizard_api.h"
 
 static Eina_Bool shift;
 static Eina_Bool ctrl;
@@ -38,7 +39,7 @@ modifiers_changed(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
        binding |= (1 << i);
    if (binding == current) return;
    current = binding;
-   e_wizard_button_next_enable_set(!!current);
+   api->wizard_button_next_enable_set(!!current);
    if (!current) return;
    EINA_LIST_FOREACH(e_bindings->mouse_bindings, l, ebm)
      if (eina_streq(ebm->action, "window_move") ||
@@ -81,7 +82,7 @@ wizard_page_show(E_Wizard_Page *pg EINA_UNUSED)
           break;
        }
    if (!current) return 0;
-   e_wizard_title_set(_("Mouse Modifiers"));
+   api->wizard_title_set(_("Mouse Modifiers"));
 
    keys[0].val = &shift;
    keys[1].val = &ctrl;
@@ -134,7 +135,7 @@ wizard_page_show(E_Wizard_Page *pg EINA_UNUSED)
    for (i = 0; i < 5; i++)
      check_add(o, keys[i].name, keys[i].val);
 
-   e_wizard_page_show(of);
+   api->wizard_page_show(of);
 
    return 1; /* 1 == show ui, and wait for user, 0 == just continue */return 1;
 }

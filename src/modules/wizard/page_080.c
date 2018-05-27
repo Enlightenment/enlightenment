@@ -1,5 +1,6 @@
 /* Ibar setup */
 #include "e_wizard.h"
+#include "e_wizard_api.h"
 
 E_API int
 wizard_page_init(E_Wizard_Page *pg EINA_UNUSED, Eina_Bool *need_xdg_desktops, Eina_Bool *need_xdg_icons EINA_UNUSED)
@@ -20,7 +21,7 @@ wizard_page_show(E_Wizard_Page *pg EINA_UNUSED)
    FILE *f, *fin;
    char buf[PATH_MAX];
 
-   snprintf(buf, sizeof(buf), "%s/def-ibar.txt", e_wizard_dir_get());
+   snprintf(buf, sizeof(buf), "%s/def-ibar.txt", api->wizard_dir_get());
    fin = fopen(buf, "r");
    if (!fin) return 0;
    e_user_dir_concat_static(buf, "applications/bar/default");

@@ -1,5 +1,6 @@
 /* Language chooser */
 #include "e_wizard.h"
+#include "e_wizard_api.h"
 
 typedef struct _Layout Layout;
 
@@ -183,7 +184,7 @@ wizard_page_show(E_Wizard_Page *pg EINA_UNUSED)
       .version = ELM_GENLIST_ITEM_CLASS_VERSION
    };
 
-   e_wizard_title_set(_("Keyboard"));
+   api->wizard_title_set(_("Keyboard"));
    of = elm_frame_add(e_comp->elm);
    elm_object_text_set(of, _("Select one"));
    ob = elm_genlist_add(of);
@@ -210,7 +211,7 @@ wizard_page_show(E_Wizard_Page *pg EINA_UNUSED)
         elm_genlist_item_selected_set(sel_it, 1);
         elm_genlist_item_show(sel_it, ELM_GENLIST_ITEM_SCROLLTO_MIDDLE);
      }
-   e_wizard_page_show(of);
+   api->wizard_page_show(of);
    return 1; /* 1 == show ui, and wait for user, 0 == just continue */
 }
 

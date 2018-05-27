@@ -1,5 +1,6 @@
 /* Language chooser */
 #include "e_wizard.h"
+#include "e_wizard_api.h"
 
 typedef struct _E_Intl_Pair E_Intl_Pair;
 
@@ -210,7 +211,7 @@ wizard_page_show(E_Wizard_Page *pg EINA_UNUSED)
       .version = ELM_GENLIST_ITEM_CLASS_VERSION
    };
 
-   e_wizard_title_set(_("Language"));
+   api->wizard_title_set(_("Language"));
    of = elm_frame_add(e_comp->elm);
    elm_object_text_set(of, _("Select one"));
    ob = elm_genlist_add(of);
@@ -236,7 +237,7 @@ wizard_page_show(E_Wizard_Page *pg EINA_UNUSED)
    E_EXPAND(of);
    E_FILL(of);
    elm_genlist_item_show(elm_genlist_selected_item_get(ob), ELM_GENLIST_ITEM_SCROLLTO_MIDDLE);
-   e_wizard_page_show(of);
+   api->wizard_page_show(of);
 //   pg->data = o;
    return 1; /* 1 == show ui, and wait for user, 0 == just continue */
 }
@@ -251,9 +252,9 @@ wizard_page_hide(E_Wizard_Page *pg EINA_UNUSED)
     * This should be on lang select,
     * so if next page needs xdg we can't press next */
    if (lang)
-     e_wizard_xdg_desktops_reset();
+     api->wizard_xdg_desktops_reset();
    e_intl_language_set(e_config->language);
-   e_wizard_labels_update();
+   api->wizard_labels_update();
    return 1;
 }
 
@@ -263,7 +264,7 @@ wizard_page_apply(E_Wizard_Page *pg EINA_UNUSED)
    // do this again as we want it to apply to the new profile
    eina_stringshare_replace(&e_config->language, lang);
    e_intl_language_set(e_config->language);
-   e_wizard_labels_update();
+   api->wizard_labels_update();
    return 1;
 }
 

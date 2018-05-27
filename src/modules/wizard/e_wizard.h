@@ -5,6 +5,7 @@
 extern E_Module *wiz_module;
 
 typedef struct _E_Wizard_Page E_Wizard_Page;
+typedef struct _E_Wizard_Api E_Wizard_Api;
 
 typedef enum
 {
@@ -28,25 +29,26 @@ struct _E_Wizard_Page
    E_Wizard_Page_State state;
 };
 
-E_API int e_wizard_init(void);
-E_API int e_wizard_shutdown(void);
-E_API void e_wizard_go(void);
-E_API void e_wizard_apply(void);
-E_API void e_wizard_next(void);
-E_API void e_wizard_page_show(Evas_Object *obj);
-E_API E_Wizard_Page *e_wizard_page_add(void *handle, const char *name,
+struct _E_Wizard_Api
+{
+   void (*wizard_go) (void);
+   void (*wizard_apply) (void);
+   void (*wizard_next) (void);
+   void (*wizard_page_show) (Evas_Object *obj);
+   E_Wizard_Page *(*wizard_page_add) (void *handle, const char *name,
                                       int (*init)     (E_Wizard_Page *pg, Eina_Bool *need_xdg_desktops, Eina_Bool *need_xdg_icons),
                                       int (*shutdown) (E_Wizard_Page *pg),
                                       int (*show)     (E_Wizard_Page *pg),
                                       int (*hide)     (E_Wizard_Page *pg),
                                       int (*apply)    (E_Wizard_Page *pg)
                                      );
-E_API void e_wizard_page_del(E_Wizard_Page *pg);
-E_API void e_wizard_button_next_enable_set(int enable);
-E_API void e_wizard_title_set(const char *title);
-E_API void e_wizard_labels_update(void);
-E_API const char *e_wizard_dir_get(void);
-E_API void e_wizard_xdg_desktops_reset(void);
+   void (*wizard_page_del) (E_Wizard_Page *pg);
+   void (*wizard_button_next_enable_set) (int enable);
+   void (*wizard_title_set) (const char *title);
+   void (*wizard_labels_update) (void);
+   const char *(*wizard_dir_get) (void);
+   void (*wizard_xdg_desktops_reset) (void);
+};
 
 /**
  * @addtogroup Optional_Conf

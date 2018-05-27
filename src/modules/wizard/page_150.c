@@ -1,5 +1,6 @@
 /* Ask about compositing */
 #include "e_wizard.h"
+#include "e_wizard_api.h"
 #include <Evas_GL.h>
 
 static Eina_Bool do_gl = 0;
@@ -25,7 +26,7 @@ wizard_page_show(E_Wizard_Page *pg EINA_UNUSED)
 {
    Evas_Object *o, *of;
 
-   e_wizard_title_set(_("Compositing"));
+   api->wizard_title_set(_("Compositing"));
 
    of = elm_frame_add(e_comp->elm);
    elm_object_text_set(of, _("Settings"));
@@ -53,7 +54,7 @@ wizard_page_show(E_Wizard_Page *pg EINA_UNUSED)
    check_add(o, _("Disable composite effects"), &disable_effects);
 
    evas_object_show(of);
-   e_wizard_page_show(of);
+   api->wizard_page_show(of);
 
    return 1; /* 1 == show ui, and wait for user, 0 == just continue */
 }

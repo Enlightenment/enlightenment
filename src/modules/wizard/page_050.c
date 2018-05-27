@@ -1,5 +1,6 @@
 /* Ask about Scaling */
 #include "e_wizard.h"
+#include "e_wizard_api.h"
 
 static double scale = 1.0;
 static Eina_List *obs = NULL;
@@ -125,7 +126,7 @@ wizard_page_show(E_Wizard_Page *pg)
    Evas_Coord sw, sh;
 
    o = e_widget_list_add(pg->evas, 1, 0);
-   e_wizard_title_set(_("Sizing"));
+   api->wizard_title_set(_("Sizing"));
 
    of = e_widget_frametable_add(pg->evas, _("Select preferred size"), 1);
    e_widget_frametable_content_align_set(of, 0.5, 0.5);
@@ -165,9 +166,9 @@ wizard_page_show(E_Wizard_Page *pg)
    evas_object_show(ob);
    evas_object_show(of);
 
-   e_wizard_button_next_enable_set(1);
+   api->wizard_button_next_enable_set(1);
 
-   e_wizard_page_show(o);
+   api->wizard_page_show(o);
 //   pg->data = o;
    return 1; /* 1 == show ui, and wait for user, 0 == just continue */
 }

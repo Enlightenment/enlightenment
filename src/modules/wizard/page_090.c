@@ -1,5 +1,6 @@
 /* Setup if we need battery? */
 #include "e_wizard.h"
+#include "e_wizard_api.h"
 
 #ifdef __FreeBSD__
 # include <sys/ioctl.h>

@@ -1,5 +1,6 @@
 /* Ask about focus mode */
 #include "e_wizard.h"
+#include "e_wizard_api.h"
 
 static int focus_mode = 1;
 /*
@@ -22,7 +23,7 @@ wizard_page_show(E_Wizard_Page *pg EINA_UNUSED)
 
    if (e_config->focus_policy == E_FOCUS_CLICK) focus_mode = 0;
 
-   e_wizard_title_set(_("Window Focus"));
+   api->wizard_title_set(_("Window Focus"));
 
    of = elm_frame_add(e_comp->elm);
    elm_object_text_set(of, _("Focus:"));
@@ -46,7 +47,7 @@ wizard_page_show(E_Wizard_Page *pg EINA_UNUSED)
    elm_object_text_set(ob, _("Whenever the mouse enters a window"));
    elm_radio_state_value_set(ob, 1);
 
-   e_wizard_page_show(of);
+   api->wizard_page_show(of);
 //   pg->data = o;
    return 1; /* 1 == show ui, and wait for user, 0 == just continue */
 }

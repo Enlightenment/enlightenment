@@ -1,5 +1,6 @@
 /* Setup if we need temperature? */
 #include "e_wizard.h"
+#include "e_wizard_api.h"
 
 #ifdef __FreeBSD__
 # include <sys/types.h>

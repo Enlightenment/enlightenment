@@ -1,5 +1,6 @@
 /* Profile chooser */
 #include "e_wizard.h"
+#include "e_wizard_api.h"
 
 static const char *profile = NULL;
 static Evas_Object *textblock = NULL;
@@ -88,7 +89,7 @@ _profile_select(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_
      elm_object_text_set(textblock, _("Unknown"));
 
    // enable next once you choose a profile
-   e_wizard_button_next_enable_set(1);
+   api->wizard_button_next_enable_set(1);
 }
 
 E_API int
@@ -109,7 +110,7 @@ wizard_page_show(E_Wizard_Page *pg EINA_UNUSED)
       .version = ELM_GENLIST_ITEM_CLASS_VERSION
    };
 
-   e_wizard_title_set(_("Profile"));
+   api->wizard_title_set(_("Profile"));
    of = elm_frame_add(e_comp->elm);
    elm_object_text_set(of, _("Select one"));
 
@@ -166,10 +167,10 @@ wizard_page_show(E_Wizard_Page *pg EINA_UNUSED)
    evas_object_show(of);
    E_EXPAND(of);
    E_FILL(of);
-   e_wizard_page_show(of);
+   api->wizard_page_show(of);
 //   pg->data = o;
    if (!sel_it)
-     e_wizard_button_next_enable_set(0);
+     api->wizard_button_next_enable_set(0);
    return 1; /* 1 == show ui, and wait for user, 0 == just continue */
 }
 

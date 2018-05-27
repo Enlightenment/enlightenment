@@ -1,5 +1,6 @@
 /* Setup if we need backlight? */
 #include "e_wizard.h"
+#include "e_wizard_api.h"
 /*
 E_API int
 wizard_page_init(E_Wizard_Page *pg EINA_UNUSED, Eina_Bool *need_xdg_desktops EINA_UNUSED, Eina_Bool *need_xdg_icons EINA_UNUSED)

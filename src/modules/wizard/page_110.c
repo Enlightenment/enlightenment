@@ -1,12 +1,13 @@
 /* Setup if we need connman? */
 #include "e_wizard.h"
+#include "e_wizard_api.h"
 
 static void
 _recommend_connman(E_Wizard_Page *pg EINA_UNUSED)
 {
    Evas_Object *of, *ob;
 
-   e_wizard_title_set(_("Network Management"));
+   api->wizard_title_set(_("Network Management"));
 
    of = elm_frame_add(e_comp->elm);
    ob = elm_label_add(of);
@@ -23,10 +24,10 @@ _recommend_connman(E_Wizard_Page *pg EINA_UNUSED)
    evas_object_show(ob);
    evas_object_show(of);
 
-   e_wizard_page_show(of);
+   api->wizard_page_show(of);
 //   pg->data = o;
 
-   e_wizard_button_next_enable_set(1);
+   api->wizard_button_next_enable_set(1);
 }
 
 static Eldbus_Connection *conn;
@@ -63,7 +64,7 @@ _connman_fail(void *data)
 static Eina_Bool
 _page_next_call(void *data EINA_UNUSED)
 {
-   e_wizard_next();
+   api->wizard_next();
    return ECORE_CALLBACK_CANCEL;
 }
 
@@ -89,7 +90,7 @@ _check_connman_owner(void *data, const Eldbus_Message *msg,
    if (id[0] != ':')
      goto fail;
 
-   e_wizard_button_next_enable_set(1);
+   api->wizard_button_next_enable_set(1);
    ecore_idler_add(_page_next_call, NULL);
    return;
    
@@ -129,7 +130,7 @@ wizard_page_show(E_Wizard_Page *pg)
           ecore_timer_del(connman_timeout);
         connman_timeout = ecore_timer_loop_add(0.5, _connman_fail, pg);
         have_connman = EINA_TRUE;
-        e_wizard_button_next_enable_set(0);
+        api->wizard_button_next_enable_set(0);
      }
    if (!have_connman)
      {
@@ -150,7 +151,7 @@ wizard_page_show(E_Wizard_Page *pg)
         e_config_save_queue();
         _recommend_connman(pg);
      }
-   e_wizard_title_set(_("Checking to see if Connman exists"));
+   api->wizard_title_set(_("Checking to see if Connman exists"));
    return 1; /* 1 == show ui, and wait for user, 0 == just continue */
 }
 

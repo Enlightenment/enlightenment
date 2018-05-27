@@ -1,4 +1,5 @@
 #include "e_wizard.h"
+#include "e_wizard_priv.h"
 
 /* actual module specifics */
 E_Module *wiz_module = NULL;
@@ -36,6 +37,21 @@ E_API E_Module_Api e_modapi =
    "Wizard"
 };
 
+static const E_Wizard_Api api =
+{
+   wizard_go,
+   wizard_apply,
+   wizard_next,
+   wizard_page_show,
+   wizard_page_add,
+   wizard_page_del,
+   wizard_button_next_enable_set,
+   wizard_title_set,
+   wizard_labels_update,
+   wizard_dir_get,
+   wizard_xdg_desktops_reset
+};
+
 static int
 _cb_sort_files(char *f1, char *f2)
 {
@@ -51,7 +67,7 @@ e_modapi_init(E_Module *m)
    const char *src_path;
 
    wiz_module = m;
-   e_wizard_init();
+   wizard_init();
 
    src_path = getenv("E_MODULE_SRC_PATH");
    if (src_path)
@@ -77,12 +93,21 @@ e_modapi_init(E_Module *m)
              handle = dlopen(buf, RTLD_NOW | RTLD_LOCAL);
 #endif
              if (handle)
-               e_wizard_page_add(handle, file,
-                                 dlsym(handle, "wizard_page_init"),
-                                 dlsym(handle, "wizard_page_shutdown"),
-                                 dlsym(handle, "wizard_page_show"),
-                                 dlsym(handle, "wizard_page_hide"),
-                                 dlsym(handle, "wizard_page_apply"));
+               {
+                  void (*fn) (const E_Wizard_Api *a);
+
+                  fn = dlsym(handle, "wizard_api_set");
+                  if (fn)
+                    {
+                       fn(&api);
+                       wizard_page_add(handle, file,
+                                       dlsym(handle, "wizard_page_init"),
+                                       dlsym(handle, "wizard_page_shutdown"),
+                                       dlsym(handle, "wizard_page_show"),
+                                       dlsym(handle, "wizard_page_hide"),
+                                       dlsym(handle, "wizard_page_apply"));
+                    }
+               }
              else
                {
                   // if its an executable...
@@ -93,7 +118,7 @@ e_modapi_init(E_Module *m)
           }
         free(file);
      }
-   e_wizard_go();
+   wizard_go();
 
    return m;
 }
@@ -101,7 +126,7 @@ e_modapi_init(E_Module *m)
 E_API int
 e_modapi_shutdown(E_Module *m EINA_UNUSED)
 {
-   e_wizard_shutdown();
+   wizard_shutdown();
    wiz_module = NULL;
 // FIXME: wrong place
 //   e_module_disable(m); /* disable - on restart this won't be loaded now */

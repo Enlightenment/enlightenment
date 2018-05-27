@@ -1,5 +1,6 @@
 /* Extra desktop files setup */
 #include "e_wizard.h"
+#include "e_wizard_api.h"
 
 static Ecore_Timer *_next_timer = NULL;
 
@@ -20,8 +21,8 @@ static Eina_Bool
 _next_page(void *data EINA_UNUSED)
 {
    _next_timer = NULL;
-   e_wizard_button_next_enable_set(1);
-   e_wizard_next();
+   api->wizard_button_next_enable_set(1);
+   api->wizard_next();
    return ECORE_CALLBACK_CANCEL;
 }
 
@@ -33,11 +34,11 @@ wizard_page_show(E_Wizard_Page *pg EINA_UNUSED)
    char buf[PATH_MAX], *file;
    int found, copies = 0;
 
-   e_wizard_title_set(_("Adding missing App files"));
-   e_wizard_button_next_enable_set(0);
-   e_wizard_page_show(NULL);
+   api->wizard_title_set(_("Adding missing App files"));
+   api->wizard_button_next_enable_set(0);
+   api->wizard_page_show(NULL);
    
-   snprintf(buf, sizeof(buf), "%s/extra_desktops", e_wizard_dir_get());
+   snprintf(buf, sizeof(buf), "%s/extra_desktops", api->wizard_dir_get());
    extra_desks = ecore_file_ls(buf);
 
    /* advance in 1 sec */
@@ -46,7 +47,7 @@ wizard_page_show(E_Wizard_Page *pg EINA_UNUSED)
    EINA_LIST_FREE(extra_desks, file)
      {
         snprintf(buf, sizeof(buf), "%s/extra_desktops/%s",
-                 e_wizard_dir_get(), file);
+                 api->wizard_dir_get(), file);
         extra_desk = efreet_desktop_uncached_new(buf);
         if (extra_desk)
           {

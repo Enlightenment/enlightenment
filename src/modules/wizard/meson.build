@@ -1,7 +1,9 @@
 src = files(
   'e_mod_main.c',
   'e_wizard.c',
-  'e_wizard.h'
+  'e_wizard.h',
+  'e_wizard_api.h',
+  'e_wizard_priv.h'
  )
 
 if get_option(m) == true
