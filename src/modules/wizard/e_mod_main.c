@@ -71,7 +71,11 @@ e_modapi_init(E_Module *m)
              else
                snprintf(buf, sizeof(buf), "%s/%s/%s",
                         e_module_dir_get(m), MODULE_ARCH, file);
+#if defined(__FreeBSD__) || defined(__DragonFly__) || defined(__OpenBSD__) || defined(__NetBSD__)
+             handle = dlopen(buf, RTLD_NOW | RTLD_GLOBAL);
+#else
              handle = dlopen(buf, RTLD_NOW | RTLD_LOCAL);
+#endif
              if (handle)
                e_wizard_page_add(handle, file,
                                  dlsym(handle, "wizard_page_init"),

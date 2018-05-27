@@ -392,7 +392,11 @@ e_module_new(const char *name)
         m->error = 1;
         goto init_done;
      }
+#if defined(__FreeBSD__) || defined(__DragonFly__) || defined(__OpenBSD__) || defined(__NetBSD__)
+   m->handle = dlopen(modpath, (RTLD_NOW | RTLD_GLOBAL));
+#else
    m->handle = dlopen(modpath, (RTLD_NOW | RTLD_LOCAL));
+#endif
    if (!m->handle)
      {
         snprintf(body, sizeof(body),
