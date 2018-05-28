@@ -3552,6 +3552,8 @@ e_comp_object_frame_theme_set(Evas_Object *obj, const char *name)
              cw->ec->changes.size = 1;
              EC_CHANGED(cw->ec);
           }
+        if (cw->frame_object == edje_object_part_swallow_get(cw->shobj, "e.swallow.content"))
+          edje_object_part_unswallow(cw->frame_object);
         E_FREE_FUNC(cw->frame_object, evas_object_del);
         if (!name) goto reshadow;
      }
