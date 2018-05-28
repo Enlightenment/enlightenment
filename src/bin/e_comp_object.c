@@ -603,7 +603,7 @@ _e_comp_object_shadow_setup(E_Comp_Object *cw)
                  ((name) && (m->name) && (!e_util_glob_match(name, m->name))))
                continue;
              if (!_e_comp_object_shadow_client_match(cw->ec, m)) continue;
-             
+
              focus = m->focus;
              urgent = m->urgent;
              no_shadow = m->no_shadow;
@@ -1493,7 +1493,7 @@ _e_comp_intercept_stack_helper(E_Comp_Object *cw, Evas_Object *stack, E_Comp_Obj
           }
         if (!o)
           /* top client layer window hasn't been stacked yet. this probably shouldn't happen?
-           * return here since the top client layer window 
+           * return here since the top client layer window
            */
           {
              E_Client *ec;
@@ -2774,7 +2774,7 @@ _e_comp_object_util_show(void *data EINA_UNUSED, Evas_Object *obj)
      }
    else
      e_comp_shape_queue();
-   
+
    evas_object_show(obj);
    if (ref && (!stopping))
      {
@@ -2845,7 +2845,7 @@ _e_comp_object_util_moveresize(void *data, Evas *e EINA_UNUSED, Evas_Object *obj
         evas_object_geometry_get(obj, NULL, NULL, &w, &h);
         e_zoomap_child_resize(data, w, h);
      }
-     
+
    if (evas_object_visible_get(obj))
      e_comp_shape_queue();
 }
@@ -3552,8 +3552,10 @@ e_comp_object_frame_theme_set(Evas_Object *obj, const char *name)
              cw->ec->changes.size = 1;
              EC_CHANGED(cw->ec);
           }
-        if (cw->frame_object == edje_object_part_swallow_get(cw->shobj, "e.swallow.content"))
-          edje_object_part_unswallow(cw->frame_object);
+        edje_object_part_unswallow(cw->shobj, cw->frame_object);
+        edje_object_part_unswallow(cw->frame_object, cw->frame_icon);
+        edje_object_part_unswallow(cw->frame_object, cw->frame_volume);
+        edje_object_part_unswallow(cw->frame_object, cw->obj);
         E_FREE_FUNC(cw->frame_object, evas_object_del);
         if (!name) goto reshadow;
      }
