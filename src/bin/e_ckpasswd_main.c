@@ -26,7 +26,7 @@ _check_auth(uid_t uid, const char *guess)
    if (!pwent) return -1;
    if (!pwent->pw_passwd) return -1;
 
-   return crypt_checkpass(guess, pw_ent->pw_passwd);
+   return crypt_checkpass(guess, pwent->pw_passwd);
 }
 
 
