@@ -113,11 +113,6 @@ _e_mod_menu_populate_filter(void *data EINA_UNUSED, Eio_File *handler, const Ein
 
    if (eio_file_check(handler)) return EINA_FALSE;
 
-#if defined(__FreeBSD__) || defined(__DragonFly__)
-/* XXX: Accessing tmp is causing SIGBUS issues. */
-   if (!strncmp(info->path, "/tmp", 3)) return EINA_FALSE;
-#endif
-
    count = (long) eio_file_associate_find(handler, "count");
    if (count > 100)
      {
