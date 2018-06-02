@@ -810,7 +810,7 @@ _e_comp_x_post_client_idler_cb(void *d EINA_UNUSED)
 
              evas_object_color_get(ec->frame, NULL, NULL, NULL, &op);
              ec->netwm.opacity = op;
-             opacity = (op << 24);
+             opacity = (op << 24) | (op << 16) | (op << 8) | op;
              ecore_x_window_prop_card32_set(e_client_util_win_get(ec), ECORE_X_ATOM_NET_WM_WINDOW_OPACITY, &opacity, 1);
              /* flag gets unset in property cb to avoid fetching opacity after we just set it */
           }
@@ -4059,11 +4059,11 @@ _e_comp_x_hook_client_fetch(void *d EINA_UNUSED, E_Client *ec)
 
         if (ecore_x_netwm_opacity_get(win, &val))
           {
+             val >>= 24;
              if (ec->netwm.opacity != val)
                {
                   ec->netwm.opacity = val;
-                  evas_object_color_set(ec->frame,
-                    ec->netwm.opacity, ec->netwm.opacity, ec->netwm.opacity, ec->netwm.opacity);
+                  evas_object_color_set(ec->frame, val, val, val, val);
                   rem_change = 1;
                }
              ec->netwm.fetch.opacity = !ec->netwm.opacity;
