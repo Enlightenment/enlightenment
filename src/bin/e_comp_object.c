@@ -2536,8 +2536,8 @@ _e_comp_smart_move(Evas_Object *obj, int x, int y)
    EINA_LIST_FOREACH(cw->obj_agent, l, o)
      evas_object_move(o, cw->ec->x, cw->ec->x);
    cw->agent_updating = 0;
-   evas_object_move(cw->clip, 0, 0);
-   evas_object_move(cw->effect_obj, x, y);
+   if (cw->clip) evas_object_move(cw->clip, 0, 0);
+   if (cw->effect_obj) evas_object_move(cw->effect_obj, x, y);
    if (cw->input_area)
      _e_comp_object_input_rect_update(cw);
    /* this gets called once during setup to init coords offscreen and guarantee first move */
@@ -3284,7 +3284,7 @@ e_comp_object_input_area_set(Evas_Object *obj, const Eina_Tiler *area)
    if ((!area) && (!cw->input_area)) return;
    if (area && cw->input_area && eina_tiler_equal(area, cw->input_area)) return;
    _e_comp_input_objs_free(cw);
-   evas_object_pass_events_set(cw->obj, 1);
+   if (cw->obj) evas_object_pass_events_set(cw->obj, 1);
    if ((!area) || eina_tiler_empty(area))
      {
         E_FREE_FUNC(cw->input_area, eina_tiler_free);

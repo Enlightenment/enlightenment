@@ -292,12 +292,12 @@ e_bg_zone_update(E_Zone *zone, E_Bg_Transition transition)
         edje_object_part_swallow(zone->transition_object, "e.swallow.bg.new",
                                  zone->bg_object);
         edje_object_signal_emit(zone->transition_object, "e,action,start", "e");
+        evas_object_name_set(zone->transition_object, "zone->transition_object");
+        evas_object_move(zone->transition_object, zone->x, zone->y);
+        evas_object_resize(zone->transition_object, zone->w, zone->h);
      }
    if (zone->bg_object) evas_object_name_set(zone->bg_object, "zone->bg_object");
    if (zone->prev_bg_object) evas_object_name_set(zone->prev_bg_object, "zone->prev_bg_object");
-   if (zone->transition_object) evas_object_name_set(zone->transition_object, "zone->transition_object");
-   evas_object_move(zone->transition_object, zone->x, zone->y);
-   evas_object_resize(zone->transition_object, zone->w, zone->h);
    e_comp_canvas_zone_update(zone);
 end:
    eina_stringshare_del(bgfile);

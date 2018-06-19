@@ -2259,7 +2259,7 @@ e_gadget_util_layout_style_init(Evas_Object *g, Evas_Object *style)
           elm_box_unpack(zgc->site->layout, prev);
      }
    evas_object_raise(zgc->site->events);
-   evas_object_event_callback_del(prev, EVAS_CALLBACK_CHANGED_SIZE_HINTS, _gadget_style_hints);
+   if (prev) evas_object_event_callback_del(prev, EVAS_CALLBACK_CHANGED_SIZE_HINTS, _gadget_style_hints);
    if (!style) return prev;
 
    evas_object_data_set(style, "__e_gadget", zgc);

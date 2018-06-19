@@ -628,7 +628,7 @@ _e_client_del(E_Client *ec)
    if (!stopping)
      {
         e_client_comp_hidden_set(ec, 1);
-        evas_object_pass_events_set(ec->frame, 1);
+        if (ec->frame) evas_object_pass_events_set(ec->frame, 1);
      }
 
    E_FREE_FUNC(ec->border_locks_dialog, e_object_del);
@@ -644,7 +644,7 @@ _e_client_del(E_Client *ec)
 
    if (ec->focused)
      _e_client_revert_focus(ec);
-   evas_object_focus_set(ec->frame, 0);
+   if (ec->frame) evas_object_focus_set(ec->frame, 0);
 
    E_FREE_FUNC(ec->ping_poller, ecore_poller_del);
    eina_hash_del_by_key(clients_hash[e_pixmap_type_get(ec->pixmap)], &ec->pixmap);
@@ -674,7 +674,7 @@ _e_client_del(E_Client *ec)
      child->leader = NULL;
 
    e_comp->clients = eina_list_remove(e_comp->clients, ec);
-   e_comp_object_render_update_del(ec->frame);
+   if (ec->frame) e_comp_object_render_update_del(ec->frame);
 }
 
 ///////////////////////////////////////////
@@ -2267,7 +2267,6 @@ _e_client_eval(E_Client *ec)
                }
           }
 
-        e_comp_object_frame_icon_update(ec->frame);
         if (ec->desktop)
           {
              if (!ec->exe_inst)
@@ -2278,7 +2277,7 @@ _e_client_eval(E_Client *ec)
                   ec->exe_inst->desktop = ec->desktop;
                }
           }
-        ec->changes.icon = 0;
+        ec->changes.icon = !e_comp_object_frame_icon_update(ec->frame);
         prop |= E_CLIENT_PROPERTY_ICON;
      }
 

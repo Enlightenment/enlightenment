@@ -610,13 +610,16 @@ static void
 _ibar_orient_set(IBar *b, int horizontal)
 {
    Evas_Coord w, h;
-   
-   if (!horizontal)
-     e_theme_edje_object_set(b->o_sep, "base/theme/modules/ibar", "e/modules/ibar/separator/horizontal");
-   else
-     e_theme_edje_object_set(b->o_sep, "base/theme/modules/ibar", "e/modules/ibar/separator/default");
-   edje_object_size_min_calc(b->o_sep, &w, &h);
-   evas_object_size_hint_min_set(b->o_sep, w, h);
+
+   if (b->o_sep)
+     {
+        if (!horizontal)
+          e_theme_edje_object_set(b->o_sep, "base/theme/modules/ibar", "e/modules/ibar/separator/horizontal");
+        else
+          e_theme_edje_object_set(b->o_sep, "base/theme/modules/ibar", "e/modules/ibar/separator/default");
+        edje_object_size_min_calc(b->o_sep, &w, &h);
+        evas_object_size_hint_min_set(b->o_sep, w, h);
+     }
    elm_box_horizontal_set(b->o_box, horizontal);
    elm_box_horizontal_set(b->o_outerbox, horizontal);
 }
