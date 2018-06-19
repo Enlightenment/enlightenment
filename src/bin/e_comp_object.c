@@ -3446,18 +3446,20 @@ e_comp_object_frame_exists(Evas_Object *obj)
    return !!cw->frame_object;
 }
 
-E_API void
+E_API Eina_Bool
 e_comp_object_frame_icon_update(Evas_Object *obj)
 {
-   API_ENTRY;
+   API_ENTRY EINA_FALSE;
 
    E_FREE_FUNC(cw->frame_icon, evas_object_del);
+   if (!cw->frame_object) return EINA_FALSE;
    if (!edje_object_part_exists(cw->frame_object, "e.swallow.icon"))
-     return;
+     return EINA_TRUE;
    cw->frame_icon = e_client_icon_add(cw->ec, e_comp->evas);
-   if (!cw->frame_icon) return;
+   if (!cw->frame_icon) return EINA_TRUE;
    if (!edje_object_part_swallow(cw->frame_object, "e.swallow.icon", cw->frame_icon))
      E_FREE_FUNC(cw->frame_icon, evas_object_del);
+   return EINA_TRUE;
 }
 
 static void

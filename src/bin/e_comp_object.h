@@ -64,7 +64,7 @@ E_API void e_comp_object_frame_geometry_set(Evas_Object *obj, int l, int r, int 
 E_API void e_comp_object_frame_icon_geometry_get(Evas_Object *obj, int *x, int *y, int *w, int *h);
 E_API Eina_Bool e_comp_object_frame_title_set(Evas_Object *obj, const char *name);
 E_API Eina_Bool e_comp_object_frame_exists(Evas_Object *obj);
-E_API void e_comp_object_frame_icon_update(Evas_Object *obj);
+E_API Eina_Bool e_comp_object_frame_icon_update(Evas_Object *obj);
 E_API Eina_Bool e_comp_object_frame_theme_set(Evas_Object *obj, const char *name);
 E_API void e_comp_object_signal_emit(Evas_Object *obj, const char *sig, const char *src);
 E_API void e_comp_object_signal_callback_add(Evas_Object *obj, const char *sig, const char *src, Edje_Signal_Cb cb, const void *data);
