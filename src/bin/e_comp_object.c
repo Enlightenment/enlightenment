@@ -825,7 +825,7 @@ _e_comp_object_done_defer(void *data, Evas_Object *obj EINA_UNUSED, const char *
    /* hide only after animation finishes to guarantee a full run of the animation */
    if (cw->defer_hide && ((!strcmp(emission, "e,action,hide,done")) || (!strcmp(emission, "e,action,done"))))
      evas_object_hide(cw->smart_obj);
-   else
+   else if (!cw->deleted)
      {
         e_comp_shape_queue();
         if (cw->visible && cw->updates_exist)
