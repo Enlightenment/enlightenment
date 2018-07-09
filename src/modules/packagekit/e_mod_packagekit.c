@@ -258,10 +258,10 @@ packagekit_popup_update(E_PackageKit_Instance *inst, Eina_Bool rebuild_list)
         elm_genlist_clear(inst->popup_genlist);
         elm_progressbar_value_set(inst->popup_progressbar,
                                   ctxt->transaction_progress);
-        evas_object_show(inst->popup_progressbar);
+        evas_object_show(inst->popup_progressbar_frame);
      }
    else
-     evas_object_hide(inst->popup_progressbar);
+     evas_object_hide(inst->popup_progressbar_frame);
 
    // update title and error lables
    if (ctxt->transaction)
@@ -538,7 +538,7 @@ packagekit_popup_new(E_PackageKit_Instance *inst, Eina_Bool is_gadcon)
    evas_object_show(li);
 
    // central area (progress bar) (inside a padding frame)
-   fr = elm_frame_add(table);
+   fr = inst->popup_progressbar_frame = elm_frame_add(table);
    elm_object_style_set(fr, "pad_large");
    E_EXPAND(fr);
    E_FILL(fr);
@@ -596,7 +596,8 @@ packagekit_popup_del(E_PackageKit_Instance *inst)
    if (inst->ctxpopup)
      elm_ctxpopup_dismiss(inst->ctxpopup);
 
-   inst->popup_genlist = inst->popup_title_entry = inst->popup_progressbar = NULL;
+   inst->popup_genlist = inst->popup_title_entry = NULL;
+   inst->popup_progressbar = inst->popup_progressbar_frame = NULL;
    if (inst->popup_genlist_itc)
      {
         elm_genlist_item_class_free(inst->popup_genlist_itc);
