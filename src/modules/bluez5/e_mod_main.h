@@ -43,6 +43,7 @@ E_API int e_modapi_save(E_Module *m);
 void ebluez5_conf_adapter_add(const char *addr, Eina_Bool powered, Eina_Bool pairable);
 void ebluez5_popups_show(void);
 void ebluez5_rfkill_unblock(const char *name);
+void ebluez5_instances_update(void);
 
 void ebluez5_popup_hide(Instance *inst);
 
@@ -56,6 +57,7 @@ void ebluez5_popup_adapter_change(Obj *o);
 void ebluez5_popup_device_add(Obj *o);
 void ebluez5_popup_device_del(Obj *o);
 void ebluez5_popup_device_change(Obj *o);
+const Eina_List *ebluez5_popup_adapters_get(void);
 
 void ebluez5_agent_agent_release(void);
 void ebluez5_agent_agent_cancel(void);

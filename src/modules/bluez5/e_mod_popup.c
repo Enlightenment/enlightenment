@@ -631,6 +631,7 @@ ebluez5_popup_adapter_add(Obj *o)
      {
         _adapter_add(gl, o);
      }
+   ebluez5_instances_update();
 }
 
 void
@@ -653,6 +654,7 @@ ebluez5_popup_adapter_del(Obj *o)
           }
      }
    adapters = eina_list_remove(adapters, o);
+   ebluez5_instances_update();
 }
 
 void
@@ -677,6 +679,7 @@ ebluez5_popup_adapter_change(Obj *o)
                }
           }
      }
+   ebluez5_instances_update();
 }
 
 void
@@ -752,4 +755,10 @@ ebluez5_popup_device_change(Obj *o)
                }
           }
      }
+}
+
+const Eina_List *
+ebluez5_popup_adapters_get(void)
+{
+   return (const Eina_List *)adapters;
 }

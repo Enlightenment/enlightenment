@@ -301,6 +301,37 @@ ebluez5_rfkill_unblock(const char *name)
      }
 }
 
+void
+ebluez5_instances_update(void)
+{
+   const Eina_List *l;
+   Obj *o;
+   Instance *inst;
+   Eina_Bool exist = EINA_FALSE;
+   Eina_Bool on = EINA_FALSE;
+   Eina_Bool visible = EINA_FALSE;
+   Eina_Bool scanning = EINA_FALSE;
+
+   EINA_LIST_FOREACH(ebluez5_popup_adapters_get(), l, o)
+     {
+        exist = EINA_TRUE;
+        if (o->powered) on = EINA_TRUE;
+        if (o->discoverable) visible = EINA_TRUE;
+        if (o->discovering) scanning = EINA_TRUE;
+     }
+   EINA_LIST_FOREACH(instances, l, inst)
+     {
+        if (exist)    edje_object_signal_emit(inst->o_bluez5, "e,state,exist", "e");
+        else          edje_object_signal_emit(inst->o_bluez5, "e,state,noexist", "e");
+        if (on)       edje_object_signal_emit(inst->o_bluez5, "e,state,on", "e");
+        else          edje_object_signal_emit(inst->o_bluez5, "e,state,off", "e");
+        if (visible)  edje_object_signal_emit(inst->o_bluez5, "e,state,visible", "e");
+        else          edje_object_signal_emit(inst->o_bluez5, "e,state,invisible", "e");
+        if (scanning) edje_object_signal_emit(inst->o_bluez5, "e,state,scanning", "e");
+        else          edje_object_signal_emit(inst->o_bluez5, "e,state,unscanning", "e");
+     }
+}
+
 /////////////////////////////////////////////////////////////////////////////
 
 /* Module Functions */
