@@ -41,7 +41,12 @@ e_dpms_update(void)
         _e_dpms_enabled = enabled;
 #ifndef HAVE_WAYLAND_ONLY
         if (e_comp->comp_type == E_PIXMAP_TYPE_X)
-          ecore_x_dpms_enabled_set(enabled);
+          {
+             if (!e_config->screensaver_dpms_off)
+               ecore_x_dpms_enabled_set(enabled);
+             else
+               ecore_x_dpms_enabled_set(0);
+          }
 #endif
      }
    if (!enabled) return;
@@ -86,7 +91,12 @@ e_dpms_force_update(void)
               (!e_config->mode.presentation));
 #ifndef HAVE_WAYLAND_ONLY
    if (e_comp->comp_type == E_PIXMAP_TYPE_X)
-     ecore_x_dpms_enabled_set(enabled);
+     {
+        if (!e_config->screensaver_dpms_off)
+          ecore_x_dpms_enabled_set(enabled);
+        else
+          ecore_x_dpms_enabled_set(0);
+     }
 #endif
    if (!enabled) return;
 

@@ -149,12 +149,15 @@ e_screensaver_update(void)
              // screen doesnt turn off at all because x thinks interanlly
              // that the monitor is still off... so this is odd, but it's
              // necessary on some hardware.
-             int enabled;
+             if (!e_config->screensaver_dpms_off)
+               {
+                  int enabled;
 
-             enabled = ((e_config->screensaver_enable) &&
-                        (!e_config->mode.presentation));
-             ecore_x_dpms_enabled_set(!enabled);
-             ecore_x_dpms_enabled_set(enabled);
+                  enabled = ((e_config->screensaver_enable) &&
+                             (!e_config->mode.presentation));
+                  ecore_x_dpms_enabled_set(!enabled);
+                  ecore_x_dpms_enabled_set(enabled);
+               }
              ecore_x_screensaver_set(timeout, interval, blanking, expose);
           }
      }

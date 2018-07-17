@@ -219,6 +219,7 @@ struct _E_Config
    int                       screensaver_interval; // GUI
    int                       screensaver_blanking; // GUI
    int                       screensaver_expose; // GUI
+   unsigned char             screensaver_dpms_off; // GUI
    unsigned char             screensaver_ask_presentation; // GUI
    double                    screensaver_ask_presentation_timeout; // GUI
    int                       screensaver_desklock_timeout; // GUI

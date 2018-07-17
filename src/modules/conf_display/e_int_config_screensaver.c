@@ -32,6 +32,7 @@ struct _E_Config_Dialog_Data
    int wake_on_notify;
    int wake_on_urgent;
    int no_dpms_on_fullscreen;
+   int use_dpms;
 
    struct 
      {
@@ -77,6 +78,7 @@ _fill_data(E_Config_Dialog_Data *cfdata)
    cfdata->wake_on_notify = e_config->screensaver_wake_on_notify;
    cfdata->wake_on_urgent = e_config->screensaver_wake_on_urgent;
    cfdata->no_dpms_on_fullscreen = e_config->no_dpms_on_fullscreen;
+   cfdata->use_dpms = !e_config->screensaver_dpms_off;
 }
 
 static void *
@@ -133,6 +135,7 @@ _basic_apply(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfdata)
      }
    
    e_config->no_dpms_on_fullscreen = cfdata->no_dpms_on_fullscreen;
+   e_config->screensaver_dpms_off = !cfdata->use_dpms;
    
    /* Apply settings */
    e_screensaver_update();
@@ -172,6 +175,9 @@ _basic_create(E_Config_Dialog *cfd EINA_UNUSED, Evas *evas, E_Config_Dialog_Data
    oc = e_widget_check_add(evas, _("Enable screen blanking"),
                            &(cfdata->enable_screensaver));
    e_widget_list_object_append(ol, oc, 1, 1, 0.5);
+   oc2 = e_widget_check_add(evas, _("Use Power Saving (DPMS)"),
+                           &(cfdata->use_dpms));
+   e_widget_list_object_append(ol, oc2, 1, 1, 0.5);
    
    ow = e_widget_label_add(evas, _("Timeout"));
    e_widget_check_widget_disable_on_unchecked_add(oc, ow);

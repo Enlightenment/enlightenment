@@ -615,6 +615,7 @@ _e_config_edd_init(Eina_Bool old)
    E_CONFIG_VAL(D, T, screensaver_interval, INT);
    E_CONFIG_VAL(D, T, screensaver_blanking, INT);
    E_CONFIG_VAL(D, T, screensaver_expose, INT);
+   E_CONFIG_VAL(D, T, screensaver_dpms_off, UCHAR);
    E_CONFIG_VAL(D, T, screensaver_ask_presentation, UCHAR);
    E_CONFIG_VAL(D, T, screensaver_ask_presentation_timeout, DOUBLE);
    E_CONFIG_VAL(D, T, screensaver_desklock_timeout, INT);
