@@ -432,7 +432,8 @@ _config_update(E_Randr2 *r, E_Config_Randr2 *cfg, Eina_Bool update_only)
                     {
                        /* find right-most screen */
                        E_Zone *zone = eina_list_last_data_get(e_comp->zones);
-                       eina_stringshare_replace(&cs->rel_to, zone->randr2_id);
+                       if (zone)
+                         eina_stringshare_replace(&cs->rel_to, zone->randr2_id);
                     }
                   cs->rel_align = 0;
                }
