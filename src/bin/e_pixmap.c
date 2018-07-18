@@ -297,7 +297,28 @@ e_pixmap_free(E_Pixmap *cp)
    if (!cp) return 0;
    if (--cp->refcount) return cp->refcount;
    e_pixmap_image_clear(cp, EINA_FALSE);
-   eina_hash_del_by_key(pixmaps[cp->type], &cp->win);
+   switch (cp->type)
+     {
+      case E_PIXMAP_TYPE_X:
+#ifndef HAVE_WAYLAND_ONLY
+          {
+             Ecore_X_Window xwin = cp->win;
+             eina_hash_del_by_key(pixmaps[cp->type], &xwin);
+             eina_hash_del_by_key(aliases[cp->type], &xwin);
+          }
+#endif
+        break;
+      case E_PIXMAP_TYPE_WL:
+#ifdef HAVE_WAYLAND
+          {
+             int64_t id = cp->win;
+             eina_hash_del_by_key(pixmaps[cp->type], &id);
+             eina_hash_del_by_key(aliases[cp->type], &id);
+          }
+#endif
+        break;
+      default: break;
+     }
    return 0;
 }
 
