@@ -31,6 +31,7 @@ struct _E_Pixmap
    E_Pixmap_Type type;
 
    int64_t win;
+   int64_t alias;
    Ecore_Window parent;
 
    int w, h;
@@ -266,7 +267,7 @@ _e_pixmap_find(E_Pixmap_Type type, va_list *l)
    int64_t id;
 #endif
    E_Pixmap *cp;
-   
+
    if (!pixmaps[type]) return NULL;
    switch (type)
      {
@@ -294,27 +295,32 @@ _e_pixmap_find(E_Pixmap_Type type, va_list *l)
 E_API int
 e_pixmap_free(E_Pixmap *cp)
 {
+#ifndef HAVE_WAYLAND_ONLY
+   Ecore_X_Window xwin = cp ? cp->win : 0;
+   Ecore_X_Window alias_xwin = cp ? cp->alias : 0;
+#endif
+#ifdef HAVE_WAYLAND
+   int64_t id = cp ? cp->win : 0;
+   int64_t alias_id = cp ? cp->alias : 0;
+#endif
+   E_Pixmap_Type type;
+
    if (!cp) return 0;
    if (--cp->refcount) return cp->refcount;
+   type = cp->type;
    e_pixmap_image_clear(cp, EINA_FALSE);
-   switch (cp->type)
+   switch (type)
      {
       case E_PIXMAP_TYPE_X:
 #ifndef HAVE_WAYLAND_ONLY
-          {
-             Ecore_X_Window xwin = cp->win;
-             eina_hash_del_by_key(pixmaps[cp->type], &xwin);
-             eina_hash_del_by_key(aliases[cp->type], &xwin);
-          }
+        if (alias_xwin) eina_hash_del(aliases[type], &alias_xwin, cp);
+        eina_hash_del(pixmaps[type], &xwin, cp);
 #endif
         break;
       case E_PIXMAP_TYPE_WL:
 #ifdef HAVE_WAYLAND
-          {
-             int64_t id = cp->win;
-             eina_hash_del_by_key(pixmaps[cp->type], &id);
-             eina_hash_del_by_key(aliases[cp->type], &id);
-          }
+        if (alias_id) eina_hash_del(aliases[type], &alias_id, cp);
+        eina_hash_del(pixmaps[type], &id, cp);
 #endif
         break;
       default: break;
@@ -1095,6 +1101,7 @@ e_pixmap_image_opaque_get(E_Pixmap *cp, int *x, int *y, int *w, int *h)
 E_API void
 e_pixmap_alias(E_Pixmap *cp, E_Pixmap_Type type, ...)
 {
+   E_Pixmap *cp2;
    va_list l;
 #ifndef HAVE_WAYLAND_ONLY
    Ecore_X_Window xwin;
@@ -1111,6 +1118,9 @@ e_pixmap_alias(E_Pixmap *cp, E_Pixmap_Type type, ...)
         xwin = va_arg(l, uint32_t);
         if (!aliases[type])
           aliases[type] = eina_hash_int32_new(NULL);
+        cp2 = eina_hash_find(aliases[type], &xwin);
+        if ((cp2) && (!cp)) cp2->alias = 0;
+        else if (cp) cp->alias = xwin;
         eina_hash_set(aliases[type], &xwin, cp);
 #endif
         break;
@@ -1119,6 +1129,9 @@ e_pixmap_alias(E_Pixmap *cp, E_Pixmap_Type type, ...)
         id = va_arg(l, int64_t);
         if (!aliases[type])
           aliases[type] = eina_hash_int64_new(NULL);
+        cp2 = eina_hash_find(aliases[type], &xwin);
+        if ((cp2) && (!cp)) cp2->alias = 0;
+        else if (cp) cp->alias = id;
         eina_hash_set(aliases[type], &id, cp);
 #endif
         break;
