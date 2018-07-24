@@ -875,7 +875,6 @@ e_config_init(void)
         if (!getenv("E_CONF_PROFILE"))
           e_util_env_set("E_CONF_PROFILE", _e_config_profile);
      }
-   e_util_env_set("ELM_PROFILE", _e_config_profile);
 
    _e_config_bindings_mouse_edd = E_CONFIG_DD_NEW("E_Config_Binding_Mouse",
                                                   E_Config_Binding_Mouse);
