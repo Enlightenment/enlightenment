@@ -466,6 +466,7 @@ _basic_screen_info_fill(E_Config_Dialog_Data *cfdata, E_Config_Randr2_Screen *cs
      {
         elm_check_state_set(cfdata->use_profile_obj, EINA_TRUE);
         elm_object_disabled_set(cfdata->profile_list_obj, EINA_FALSE);
+        elm_object_disabled_set(cfdata->scale_custom_obj, EINA_FALSE);
 
         _basic_profile_list_fill(cfdata, cs->profile);
 
