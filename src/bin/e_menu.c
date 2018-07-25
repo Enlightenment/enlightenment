@@ -1176,10 +1176,14 @@ e_menu_idler_before(void)
    /* phase 4. de-activate... */
    EINA_LIST_REVERSE_FOREACH(_e_active_menus, l, m)
      {
-        if ((!m->active) && (!evas_object_visible_get(m->comp_object)))
+        if (!m->active)
           {
-             _e_menu_unrealize(m);
-             removals = eina_list_append(removals, m);
+             if ((m->realized) &&
+                 (!evas_object_visible_get(m->comp_object)))
+               {
+                  _e_menu_unrealize(m);
+                  removals = eina_list_append(removals, m);
+               }
           }
      }
    EINA_LIST_FREE(removals, m)
