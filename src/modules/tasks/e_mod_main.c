@@ -954,7 +954,6 @@ _tasks_cb_event_client_remove(void *data EINA_UNUSED, int type EINA_UNUSED, void
    Tasks *tasks;
    Eina_List *l;
 
-   if (e_client_util_ignored_get(ev->ec)) return ECORE_CALLBACK_RENEW;
    EINA_LIST_FOREACH(tasks_config->tasks, l, tasks)
      {
         tasks->clients = eina_list_remove(tasks->clients, ev->ec);
