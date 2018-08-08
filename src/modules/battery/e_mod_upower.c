@@ -6,6 +6,8 @@
 # define BUS "org.freedesktop.UPower"
 # define PATH "/org/freedesktop/UPower"
 # define IFACE "org.freedesktop.UPower"
+# define IFACE_DEVICE "org.freedesktop.UPower.Device"
+# define IFACE_PROPERTIES "org.freedesktop.DBus.Properties"
 
 extern Eina_List *device_batteries;
 extern Eina_List *device_ac_adapters;
@@ -13,6 +15,8 @@ extern double init_time;
 
 static Eldbus_Connection *conn;
 static Eldbus_Proxy *upower_proxy;
+static Eldbus_Proxy *upower_proxy_bat;
+static Eldbus_Proxy *upower_proxy_ac;
 
 static void
 _battery_free(Battery *bat)
@@ -85,7 +89,7 @@ _process_ac(Eldbus_Proxy *proxy)
    ac->proxy = proxy;
    ac->udi = eina_stringshare_add(eldbus_object_path_get(eldbus_proxy_object_get(proxy)));
    eldbus_proxy_property_get_all(proxy, _ac_get_all_cb, ac);
-   eldbus_proxy_signal_handler_add(proxy, "Changed", _ac_changed_cb, ac);
+   eldbus_proxy_signal_handler_add(upower_proxy_ac, "PropertiesChanged", _ac_changed_cb, ac);
    device_ac_adapters = eina_list_append(device_ac_adapters, ac);
    return;
 
@@ -215,7 +219,7 @@ _process_battery(Eldbus_Proxy *proxy)
    bat->proxy = proxy;
    bat->udi = eina_stringshare_add(eldbus_object_path_get(eldbus_proxy_object_get(proxy)));
    eldbus_proxy_property_get_all(proxy, _bat_get_all_cb, bat);
-   eldbus_proxy_signal_handler_add(proxy, "Changed", _bat_changed_cb, bat);
+   eldbus_proxy_signal_handler_add(upower_proxy_bat, "PropertiesChanged", _bat_changed_cb, bat);
    device_batteries = eina_list_append(device_batteries, bat);
    _battery_device_update();
 }
@@ -228,14 +232,25 @@ _device_type_cb(void *data, const Eldbus_Message *msg, Eldbus_Pending *pending E
    Eldbus_Object *obj;
    unsigned int type;
 
+   const char *path = eldbus_pending_path_get (pending);
    if (!eldbus_message_arguments_get(msg, "v", &variant))
      goto error;
 
    eldbus_message_iter_arguments_get(variant, "u", &type);
-   if (type == 1)
-     _process_ac(proxy);
-   else if (type == 2)
-     _process_battery(proxy);
+   if (type == 1) 
+     {
+        obj = eldbus_object_get(conn, BUS, path);
+        EINA_SAFETY_ON_FALSE_RETURN(obj);
+        upower_proxy_ac = eldbus_proxy_get(obj, IFACE_PROPERTIES);
+        _process_ac(proxy);
+     }
+   else if (type == 2) 
+     {
+        obj = eldbus_object_get(conn, BUS, path);
+        EINA_SAFETY_ON_FALSE_RETURN(obj);
+        upower_proxy_bat = eldbus_proxy_get(obj, IFACE_PROPERTIES);
+        _process_battery(proxy);
+     }
    else
      goto error;
 
@@ -256,7 +271,7 @@ _process_enumerate_path(const char *path)
 
    obj = eldbus_object_get(conn, BUS, path);
    EINA_SAFETY_ON_FALSE_RETURN(obj);
-   proxy = eldbus_proxy_get(obj, "org.freedesktop.UPower.Device");
+   proxy = eldbus_proxy_get(obj, IFACE_DEVICE);
    eldbus_proxy_property_get(proxy, "Type", _device_type_cb, proxy);
 }
 
@@ -312,6 +327,7 @@ _battery_upower_start(void)
 {
    Eldbus_Object *obj;
 
+   eldbus_init();
    conn = eldbus_connection_get(ELDBUS_CONNECTION_TYPE_SYSTEM);
    EINA_SAFETY_ON_NULL_RETURN_VAL(conn, 0);
 
@@ -320,9 +336,9 @@ _battery_upower_start(void)
    upower_proxy = eldbus_proxy_get(obj, IFACE);
    EINA_SAFETY_ON_NULL_GOTO(upower_proxy, proxy_error);
 
-   eldbus_proxy_call(upower_proxy, "EnumerateDevices", _enumerate_cb, NULL, -1, "");
    eldbus_proxy_signal_handler_add(upower_proxy, "DeviceAdded", _device_added_cb, NULL);
    eldbus_proxy_signal_handler_add(upower_proxy, "DeviceRemoved", _device_removed_cb, NULL);
+   eldbus_proxy_call(upower_proxy, "EnumerateDevices", _enumerate_cb, NULL, -1, "");
    return 1;
 
 proxy_error:
@@ -339,6 +355,8 @@ _battery_upower_stop(void)
    Battery *bat;
    Ac_Adapter *ac;
    Eldbus_Object *obj;
+   Eldbus_Object *obj_ac;
+   Eldbus_Object *obj_bat;
 
    EINA_LIST_FOREACH_SAFE(device_batteries, list, list2, bat)
      _battery_free(bat);
@@ -348,6 +366,21 @@ _battery_upower_stop(void)
    obj = eldbus_proxy_object_get(upower_proxy);
    eldbus_proxy_unref(upower_proxy);
    eldbus_object_unref(obj);
+   if (upower_proxy_ac) 
+     {
+        obj_ac = eldbus_proxy_object_get(upower_proxy_ac);
+        eldbus_proxy_unref(upower_proxy_ac);
+        eldbus_object_unref(obj_ac);
+        upower_proxy_ac = NULL;
+     }
+   if (upower_proxy_bat) 
+     {
+        obj_bat = eldbus_proxy_object_get(upower_proxy_bat);
+        eldbus_proxy_unref(upower_proxy_bat);
+        eldbus_object_unref(obj_bat);
+        upower_proxy_bat = NULL;
+     }
    eldbus_connection_unref(conn);
+   eldbus_shutdown();
 }
 #endif
