@@ -247,14 +247,14 @@ _device_type_cb(void *data, const Eldbus_Message *msg, Eldbus_Pending *pending)
         obj = eldbus_object_get(conn, BUS, path);
         EINA_SAFETY_ON_FALSE_RETURN(obj);
         upower_proxy_ac = eldbus_proxy_get(obj, IFACE_PROPERTIES);
-        _process_ac(proxy);
+        _process_ac(ud->proxy, ud->inst);
      }
    else if (type == 2) 
      {
         obj = eldbus_object_get(conn, BUS, path);
         EINA_SAFETY_ON_FALSE_RETURN(obj);
         upower_proxy_bat = eldbus_proxy_get(obj, IFACE_PROPERTIES);
-        _process_battery(proxy);
+        _process_battery(ud->proxy, ud->inst);
      }
    else
      goto error;
