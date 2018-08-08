@@ -67,13 +67,14 @@ _thermal_apply(Instance *inst, int temp)
         char buf[4096];
 
         if (inst->cfg->thermal.units == FAHRENHEIT)
-          snprintf(buf, sizeof(buf), "%d F (%d %%)",
+          snprintf(buf, sizeof(buf), "%d F (%d %%%%)",
                    (int)((inst->cfg->thermal.temp * 9.0 / 5.0) + 32),
                    inst->cfg->thermal.percent);
         else
-          snprintf(buf, sizeof(buf), "%d C (%d %%)",
+          snprintf(buf, sizeof(buf), "%d C (%d %%%%)",
                    (int)inst->cfg->thermal.temp,
                    inst->cfg->thermal.percent);
+        elm_progressbar_unit_format_set(inst->cfg->thermal.popup_pbar, buf);
         elm_progressbar_value_set(inst->cfg->thermal.popup_pbar,
                                   (float)inst->cfg->thermal.percent / 100);
      }
@@ -205,19 +206,19 @@ _thermal_popup_create(Instance *inst)
    evas_object_show(label);
 
    if (inst->cfg->thermal.units == FAHRENHEIT)
-     snprintf(buf, sizeof(buf), "%d F (%d %%)",
+     snprintf(buf, sizeof(buf), "%d F (%d %%%%)",
               (int)((inst->cfg->thermal.temp * 9.0 / 5.0) + 32),
               inst->cfg->thermal.percent);
    else
-     snprintf(buf, sizeof(buf), "%d C (%d %%)",
+     snprintf(buf, sizeof(buf), "%d C (%d %%%%)",
               (int)inst->cfg->thermal.temp,
               inst->cfg->thermal.percent);
 
    pbar = elm_progressbar_add(table);
    E_EXPAND(pbar); E_FILL(pbar);
    elm_progressbar_span_size_set(pbar, 200 * e_scale);
-   elm_progressbar_value_set(pbar, (float)inst->cfg->thermal.percent / 100);
    elm_progressbar_unit_format_set(pbar, buf);
+   elm_progressbar_value_set(pbar, (float)inst->cfg->thermal.percent / 100);
    elm_table_pack(table, pbar, 0, 1, 2, 1);
    evas_object_show(pbar);
    inst->cfg->thermal.popup_pbar = pbar;

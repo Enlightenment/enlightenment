@@ -42,19 +42,19 @@ _netstatus_face_update(Thread_Config *thc)
    if (thc->inst->cfg->netstatus.popup)
      {
         char buf[4096];
-        snprintf(buf, sizeof(buf), "%s (%d %%)",
+        snprintf(buf, sizeof(buf), "%s (%d %%%%)",
                 thc->inst->cfg->netstatus.instring,
                 thc->inst->cfg->netstatus.inpercent);
+        elm_progressbar_unit_format_set(thc->inst->cfg->netstatus.popup_inpbar, buf);
         elm_progressbar_value_set(thc->inst->cfg->netstatus.popup_inpbar,
                                   (float)thc->inst->cfg->netstatus.inpercent / 100);
-        elm_progressbar_unit_format_set(thc->inst->cfg->netstatus.popup_inpbar, buf);
         memset(buf, 0x00, sizeof(buf));
-        snprintf(buf, sizeof(buf), "%s (%d %%)",
+        snprintf(buf, sizeof(buf), "%s (%d %%%%)",
                 thc->inst->cfg->netstatus.outstring,
                 thc->inst->cfg->netstatus.outpercent);
+        elm_progressbar_unit_format_set(thc->inst->cfg->netstatus.popup_outpbar, buf);
         elm_progressbar_value_set(thc->inst->cfg->netstatus.popup_outpbar,
                                   (float)thc->inst->cfg->netstatus.outpercent / 100);
-        elm_progressbar_unit_format_set(thc->inst->cfg->netstatus.popup_outpbar, buf);
      }
 }
 
@@ -124,7 +124,7 @@ _netstatus_mouse_down_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_
         elm_table_pack(table, label, 0, 1, 1, 1);
         evas_object_show(label);
 
-        snprintf(buf, sizeof(buf), "%s (%d %%)",
+        snprintf(buf, sizeof(buf), "%s (%d %%%%)",
                 inst->cfg->netstatus.instring,
                 inst->cfg->netstatus.inpercent);
 
@@ -132,6 +132,7 @@ _netstatus_mouse_down_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_
         E_EXPAND(pbar);
         E_FILL(pbar);
         elm_progressbar_span_size_set(pbar, 200 * e_scale);
+        elm_progressbar_unit_format_set(pbar, buf);
         elm_progressbar_value_set(pbar, (float)inst->cfg->netstatus.inpercent / 100);
         elm_table_pack(table, pbar, 1, 1, 1, 1);
         evas_object_show(pbar);
@@ -144,7 +145,7 @@ _netstatus_mouse_down_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_
         evas_object_show(label);
 
         memset(buf, 0x00, sizeof(buf));
-        snprintf(buf, sizeof(buf), "%s (%d %%)",
+        snprintf(buf, sizeof(buf), "%s (%d %%%%)",
                 inst->cfg->netstatus.outstring,
                 inst->cfg->netstatus.outpercent);
 
@@ -152,8 +153,8 @@ _netstatus_mouse_down_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_
         E_EXPAND(pbar);
         E_FILL(pbar);
         elm_progressbar_span_size_set(pbar, 200 * e_scale);
-        elm_progressbar_value_set(pbar, (float)inst->cfg->netstatus.outpercent / 100);
         elm_progressbar_unit_format_set(pbar, buf);
+	elm_progressbar_value_set(pbar, (float)inst->cfg->netstatus.outpercent / 100);
         elm_table_pack(table, pbar, 1, 2, 1, 1);
         evas_object_show(pbar);
         inst->cfg->netstatus.popup_outpbar = pbar;

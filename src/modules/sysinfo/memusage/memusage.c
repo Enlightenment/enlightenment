@@ -34,33 +34,33 @@ _memusage_popup_update(Instance *inst)
         val_mb = inst->cfg->memusage.mem_used / 1024;
         val_perc = 100 * ((float)inst->cfg->memusage.mem_used /
                           (float)inst->cfg->memusage.mem_total);
-        snprintf(buf, sizeof(buf), "%d MB (%d %%)", val_mb, val_perc);
-        elm_progressbar_value_set(pbar, (float)val_perc / 100);
+        snprintf(buf, sizeof(buf), "%d MB (%d %%%%)", val_mb, val_perc);
         elm_progressbar_unit_format_set(pbar, buf);
+	elm_progressbar_value_set(pbar, (float)val_perc / 100);
 
         pbar = evas_object_data_get(inst->cfg->memusage.popup, "mem_buffers_pbar");
         val_mb = inst->cfg->memusage.mem_buffers / 1024;
         val_perc = 100 * ((float)inst->cfg->memusage.mem_buffers /
                           (float)inst->cfg->memusage.mem_total);
-        snprintf(buf, sizeof(buf), "%d MB (%d %%)", val_mb, val_perc);
-        elm_progressbar_value_set(pbar, (float)val_perc / 100);
+        snprintf(buf, sizeof(buf), "%d MB (%d %%%%)", val_mb, val_perc);
         elm_progressbar_unit_format_set(pbar, buf);
+	elm_progressbar_value_set(pbar, (float)val_perc / 100);
 
         pbar = evas_object_data_get(inst->cfg->memusage.popup, "mem_cached_pbar");
         val_mb = inst->cfg->memusage.mem_cached / 1024;
         val_perc = 100 * ((float)inst->cfg->memusage.mem_cached /
                           (float)inst->cfg->memusage.mem_total);
-        snprintf(buf, sizeof(buf), "%d MB (%d %%)", val_mb, val_perc);
-        elm_progressbar_value_set(pbar, (float)val_perc / 100);
+        snprintf(buf, sizeof(buf), "%d MB (%d %%%%)", val_mb, val_perc);
         elm_progressbar_unit_format_set(pbar, buf);
+	elm_progressbar_value_set(pbar, (float)val_perc / 100);
 
         pbar = evas_object_data_get(inst->cfg->memusage.popup, "mem_shared_pbar");
         val_mb = inst->cfg->memusage.mem_shared / 1024;
         val_perc = 100 * ((float)inst->cfg->memusage.mem_shared /
                           (float)inst->cfg->memusage.mem_total);
-        snprintf(buf, sizeof(buf), "%d MB (%d %%)", val_mb, val_perc);
-        elm_progressbar_value_set(pbar, (float)val_perc / 100);
+        snprintf(buf, sizeof(buf), "%d MB (%d %%%%)", val_mb, val_perc);
         elm_progressbar_unit_format_set(pbar, buf);
+	elm_progressbar_value_set(pbar, (float)val_perc / 100);
      }
 
    if (inst->cfg->memusage.swp_total)
@@ -69,9 +69,9 @@ _memusage_popup_update(Instance *inst)
         val_mb = inst->cfg->memusage.swp_used / 1024;
         val_perc = 100 * ((float)inst->cfg->memusage.swp_used /
                           (float)inst->cfg->memusage.swp_total);
-        snprintf(buf, sizeof(buf), "%d MB (%d %%)", val_mb, val_perc);
-        elm_progressbar_value_set(pbar, (float)val_perc / 100);
+        snprintf(buf, sizeof(buf), "%d MB (%d %%%%)", val_mb, val_perc);
         elm_progressbar_unit_format_set(pbar, buf);
+	elm_progressbar_value_set(pbar, (float)val_perc / 100);
      }
 }
 

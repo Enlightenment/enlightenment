@@ -310,15 +310,15 @@ _cpuclock_popup_create(Instance *inst)
    elm_table_pack(table, label, 0, 0, 2, 1);
    evas_object_show(label);    
 
-   snprintf(buf, sizeof(buf), "%1.1f %s (%d %%)", f, u,
+   snprintf(buf, sizeof(buf), "%1.1f %s (%d %%%%)", f, u,
                  inst->cfg->cpuclock.percent);
 
    pbar = elm_progressbar_add(table);
    E_EXPAND(pbar);
    E_FILL(pbar);
    elm_progressbar_span_size_set(pbar, 200 * e_scale);
-   elm_progressbar_value_set(pbar, (float)inst->cfg->cpuclock.percent / 100);
    elm_progressbar_unit_format_set(pbar, buf);
+   elm_progressbar_value_set(pbar, (float)inst->cfg->cpuclock.percent / 100);
    elm_table_pack(table, pbar, 0, 1, 2, 1);
    evas_object_show(pbar);
    inst->cfg->cpuclock.popup_pbar = pbar;
@@ -472,7 +472,7 @@ _cpuclock_face_update_current(Instance *inst)
              f /= 1000000;
              u = _("GHz");
           }
-        snprintf(buf, sizeof(buf), "%1.1f %s (%d %%)", f, u,
+        snprintf(buf, sizeof(buf), "%1.1f %s (%d %%%%)", f, u,
                  inst->cfg->cpuclock.percent);
         elm_progressbar_unit_format_set(inst->cfg->cpuclock.popup_pbar, buf);
         elm_progressbar_value_set(inst->cfg->cpuclock.popup_pbar,
