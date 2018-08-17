@@ -266,9 +266,8 @@ struct _E_Comp_Wl_Data
         struct xkb_keymap *keymap;
         struct xkb_context *context;
         struct xkb_state *state;
-        int fd;
-        size_t size;
-        char *area;
+        char *map_string;
+        int map_size;
      } xkb;
 
    E_Comp_Wl_Extension_Data *extensions;
@@ -446,6 +445,8 @@ e_policy_wl_aux_message_send(E_Client *ec,
                              const char *key,
                              const char *val,
                              Eina_List *options);
+
+E_API void e_comp_wl_input_keymap_send(struct wl_resource *res);
 
 # ifndef HAVE_WAYLAND_ONLY
 EINTERN void e_comp_wl_xwayland_client_queue(E_Client *ec);

@@ -227,8 +227,7 @@ _e_comp_wl_input_cb_keyboard_get(struct wl_client *client, struct wl_resource *r
      wl_keyboard_send_repeat_info(res, e_config->keyboard.repeat_rate, e_config->keyboard.repeat_delay);
 
    /* send current keymap */
-   wl_keyboard_send_keymap(res, WL_KEYBOARD_KEYMAP_FORMAT_XKB_V1,
-                           e_comp_wl->xkb.fd, e_comp_wl->xkb.size);
+   e_comp_wl_input_keymap_send(res);
 
    /* if the client owns the focused surface, we need to send an enter */
    focused = e_client_focused_get();
@@ -317,13 +316,14 @@ _e_comp_wl_input_cb_bind_seat(struct wl_client *client, void *data EINA_UNUSED, 
      wl_seat_send_name(res, e_comp_wl->seat.name);
 }
 
-static int
-_e_comp_wl_input_keymap_fd_get(off_t size)
+int
+_e_comp_wl_input_keymap_fd_get(void)
 {
    int fd = 0, blen = 0, len = 0;
    const char *path;
    char tmp[PATH_MAX];
    long flags;
+   void *mm;
 
    blen = sizeof(tmp) - 1;
 
@@ -354,13 +354,25 @@ _e_comp_wl_input_keymap_fd_get(off_t size)
         return -1;
      }
 
-   if (ftruncate(fd, size) < 0)
+   if (ftruncate(fd, e_comp_wl->xkb.map_size) < 0)
      {
         close(fd);
         return -1;
      }
 
    unlink(tmp);
+   mm = mmap(NULL, e_comp_wl->xkb.map_size, (PROT_READ | PROT_WRITE),
+             MAP_SHARED, fd, 0);
+   if (mm == MAP_FAILED)
+     {
+        ERR("Failed to mmap keymap area: %m");
+        close(fd);
+        return -1;
+     }
+
+   memcpy(mm, e_comp_wl->xkb.map_string, e_comp_wl->xkb.map_size);
+   munmap(mm, e_comp_wl->xkb.map_size);
+
    return fd;
 }
 
@@ -389,6 +401,21 @@ _e_comp_wl_input_state_update(void)
                          0, 0);
 }
 
+void
+e_comp_wl_input_keymap_send(struct wl_resource *res)
+{
+   int fd;
+
+   fd = _e_comp_wl_input_keymap_fd_get();
+   if (fd == -1)
+     return;
+
+   wl_keyboard_send_keymap(res, WL_KEYBOARD_KEYMAP_FORMAT_XKB_V1,
+                           fd, e_comp_wl->xkb.map_size);
+
+   close(fd);
+}
+
 static void
 nested_keymap_update(void)
 {
@@ -396,13 +423,12 @@ nested_keymap_update(void)
    Evas_Object *obj;
 
    EINA_LIST_FOREACH(e_comp_wl->efl_wls, l, obj)
-     efl_wl_seat_keymap_set(obj, NULL, e_comp_wl->xkb.state, e_comp_wl->xkb.fd, e_comp_wl->xkb.size, &e_comp_wl->kbd.keys);
+     efl_wl_seat_keymap_set(obj, NULL, e_comp_wl->xkb.state, e_comp_wl->xkb.map_string, &e_comp_wl->kbd.keys);
 }
 
 static void
 _e_comp_wl_input_keymap_update(struct xkb_keymap *keymap)
 {
-   char *tmp;
    struct wl_resource *res;
    Eina_List *l;
 
@@ -410,11 +436,9 @@ _e_comp_wl_input_keymap_update(struct xkb_keymap *keymap)
    if (e_comp_wl->xkb.keymap)
      xkb_map_unref(e_comp_wl->xkb.keymap);
 
-   /* unmap any existing keyboard area */
-   if (e_comp_wl->xkb.area)
-     munmap(e_comp_wl->xkb.area, e_comp_wl->xkb.size);
-   if (e_comp_wl->xkb.fd >= 0) close(e_comp_wl->xkb.fd);
-
+   /* free any existing keyboard map string */
+   free(e_comp_wl->xkb.map_string);
+   e_comp_wl->xkb.map_string = NULL;
 
    /* increment keymap reference */
    e_comp_wl->xkb.keymap = keymap;
@@ -422,39 +446,17 @@ _e_comp_wl_input_keymap_update(struct xkb_keymap *keymap)
    /* update the state */
    _e_comp_wl_input_state_update();
 
-   if (!(tmp = xkb_map_get_as_string(keymap)))
+   if (!(e_comp_wl->xkb.map_string = xkb_map_get_as_string(keymap)))
      {
         ERR("Could not get keymap string");
         return;
      }
 
-   e_comp_wl->xkb.size = strlen(tmp) + 1;
-   e_comp_wl->xkb.fd =
-     _e_comp_wl_input_keymap_fd_get(e_comp_wl->xkb.size);
-   if (e_comp_wl->xkb.fd < 0)
-     {
-        ERR("Could not create keymap file");
-        free(tmp);
-        return;
-     }
-
-   e_comp_wl->xkb.area =
-     mmap(NULL, e_comp_wl->xkb.size, (PROT_READ | PROT_WRITE),
-          MAP_SHARED, e_comp_wl->xkb.fd, 0);
-   if (e_comp_wl->xkb.area == MAP_FAILED)
-     {
-        ERR("Failed to mmap keymap area: %m");
-        free(tmp);
-        return;
-     }
-
-   strcpy(e_comp_wl->xkb.area, tmp);
-   free(tmp);
+   e_comp_wl->xkb.map_size = strlen(e_comp_wl->xkb.map_string) + 1;
 
    /* send updated keymap */
    EINA_LIST_FOREACH(e_comp_wl->kbd.resources, l, res)
-     wl_keyboard_send_keymap(res, WL_KEYBOARD_KEYMAP_FORMAT_XKB_V1,
-                             e_comp_wl->xkb.fd, e_comp_wl->xkb.size);
+     e_comp_wl_input_keymap_send(res);
 
    /* update modifiers */
    e_comp_wl_input_keyboard_modifiers_update();
@@ -467,8 +469,6 @@ e_comp_wl_input_init(void)
    /* set default seat name */
    if (!e_comp_wl->seat.name)
      e_comp_wl->seat.name = "seat0";
-
-   e_comp_wl->xkb.fd = -1;
 
    /* create the global resource for input seat */
    e_comp_wl->seat.global =
@@ -524,10 +524,8 @@ e_comp_wl_input_shutdown(void)
    /* destroy e_comp_wl->kbd.keys array */
    wl_array_release(&e_comp_wl->kbd.keys);
 
-   /* unmap any existing keyboard area */
-   if (e_comp_wl->xkb.area)
-     munmap(e_comp_wl->xkb.area, e_comp_wl->xkb.size);
-   if (e_comp_wl->xkb.fd >= 0) close(e_comp_wl->xkb.fd);
+   /* free the string copy of the keyboard map */
+   free(e_comp_wl->xkb.map_string);
 
    /* unreference any existing keyboard state */
    if (e_comp_wl->xkb.state)

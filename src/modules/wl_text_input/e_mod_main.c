@@ -324,9 +324,7 @@ _e_text_input_method_context_cb_keyboard_grab(struct wl_client *client, struct w
    wl_resource_set_implementation(new_resource, NULL, context,
                                   _e_text_input_method_context_keyboard_unbind);
 
-   wl_keyboard_send_keymap(new_resource, WL_KEYBOARD_KEYMAP_FORMAT_XKB_V1,
-                           e_comp_wl->xkb.fd,
-                           e_comp_wl->xkb.size);
+   e_comp_wl_input_keymap_send(new_resource);
 
    context->kbd.resource = new_resource;
 
