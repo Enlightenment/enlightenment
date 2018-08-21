@@ -1,3 +1,50 @@
+Release 0.22.4:
+---------------------
+Alastair Poole (1):
+      AUTHORS: use netstar's real name.
+      e_ckpasswd_main: Fix build on OpenBSD.
+
+Carsten Haitzler (17):
+      e menus - when filtering for exe handle quotes, escapes etc.
+      e mouse bindings - fix wheel conflict check to check only dir 0
+      edge flip while dragging with alt - fix to work again
+      efm - fill in some media icon blanks which lead to generic icons
+      startup - fix management of timer pointer for startup timeout
+      efm - dont add null icons to list ... fixes segv
+      e pan/scrollframe - fix garbage pan values that happen temporarily
+      e thumb - be consistent and use safe run for restarting thumbnailer
+      compile again after efl change interface names...
+      input method conf dialog - fix filtering of imc's to search path
+      meson - fix dir_sysconf to be under the prefix as it was not
+      emxier desktop - fix categories to match well known cat names
+      mixer - fix exe handler del and handle to stop crashes after mixer run
+      e randr - fix crash when no zones found
+      e randr screen setup - fix disabling of scale checkbox
+      e wl - fix e pixmap tracking to remove from both aliases and pixmaps
+      e pixmap - follow on from previous commit to finally fix pixmap tracking
+
+Christopher Michael (2):
+      conf_randr: Use eina_stringshare_replace
+      enlightenment: Ensure we have a valid menu comp object before calling
+
+Daniel Zaoui (1):
+      Battery: fix the battery status when some battery devices are not valid
+
+Derek Foreman (5):
+      Remove useless pixels_dirty_set from mirror_pixels_get
+      Move alpha set for mirrors out of pixels_get callback
+      Fix single frame broken render on wayland client opaque region change
+      Fix recent typo in mirror object alpha setting
+      compile against stable EFL again
+
+Massimo Maiurana (1):
+      Updating all po files
+
+Mike Blumenkrantz (3):
+      update arcconfig key:values for new phabricator api
+      move config/ to data/config/
+      avoid adding render updates for deleted clients after animation completes
+
 Release 0.22.3:
 ---------------------
 Carsten Haitzler (5):
