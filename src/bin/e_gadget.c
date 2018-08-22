@@ -578,16 +578,16 @@ _site_gadget_aspect(E_Gadget_Config *zgc, Evas_Coord *ww, Evas_Coord *hh, int ax
         switch (aspect)
           {
            case EVAS_ASPECT_CONTROL_HORIZONTAL:
-             *hh = (*ww * (double)ay / ax);
+             *hh = (*ww * (double)ay / ax) + 0.99999999;
              break;
            case EVAS_ASPECT_CONTROL_VERTICAL:
-             *ww = (*hh * (double)ax / ay);
+             *ww = (*hh * (double)ax / ay) + 0.99999999;
              break;
            default:
              if (IS_HORIZ(zgc->site->orient))
-               *ww = (*hh * (double)ax / ay);
+               *ww = (*hh * (double)ax / ay) + 0.99999999;
              else if (IS_VERT(zgc->site->orient))
-               *hh = (*ww * (double)ay / ax);
+               *hh = (*ww * (double)ay / ax) + 0.99999999;
              else if (aspect)
                {
                   double ar = ax / (double) ay;
@@ -600,9 +600,9 @@ _site_gadget_aspect(E_Gadget_Config *zgc, Evas_Coord *ww, Evas_Coord *hh, int ax
                          *ww = *hh;
                     }
                   else if (ar > 1.0)
-                    *hh = (*ww * (double)ay / ax);
+                    *hh = (*ww * (double)ay / ax) + 0.99999999;
                   else
-                    *ww = (*hh * (double)ax / ay);
+                    *ww = (*hh * (double)ax / ay) + 0.99999999;
                }
           }
      }

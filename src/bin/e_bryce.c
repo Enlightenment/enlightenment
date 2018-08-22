@@ -368,7 +368,7 @@ _bryce_style(Evas_Object *site, Eina_Stringshare *name, Evas_Object *g)
    char buf[1024];
 
    BRYCE_GET(site);
-   
+
    ly = elm_layout_add(b->site);
    snprintf(buf, sizeof(buf), "e/bryce/%s/%s", b->style ?: "default", name ?: "plain");
    if (!e_theme_edje_object_set(ly, NULL, buf))
@@ -376,6 +376,11 @@ _bryce_style(Evas_Object *site, Eina_Stringshare *name, Evas_Object *g)
         evas_object_del(ly);
         return;
      }
+   if (b->orient == E_GADGET_SITE_ORIENT_HORIZONTAL)
+     elm_layout_signal_emit(ly, "e,state,orient,horizontal", "e");
+   else
+     elm_layout_signal_emit(ly, "e,state,orient,vertical", "e");
+   edje_object_message_signal_process(elm_layout_edje_get(ly));
    prev = e_gadget_util_layout_style_init(g, ly);
    elm_object_part_content_set(ly, "e.swallow.content", g);
    evas_object_smart_callback_call(g, "gadget_reparent", ly);
