@@ -140,29 +140,18 @@ _batman_configure_cb(Evas_Object *g)
 }
 
 static void
-_batman_mouse_down_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_data)
+_batman_mouse_up_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_data)
 {
-   Evas_Event_Mouse_Down *ev = event_data;
+   Evas_Event_Mouse_Up *ev = event_data;
    Instance *inst = data;
 
    if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return;
-   if (ev->button != 3)
+   if (ev->button == 1)
      {
         if (inst->cfg->batman.popup)
           elm_ctxpopup_dismiss(inst->cfg->batman.popup);
         else
           inst->cfg->batman.popup = _batman_popup_create(inst);
-     }
-   else
-     {
-        if (inst->cfg->batman.popup)
-          elm_ctxpopup_dismiss(inst->cfg->batman.popup);
-        if (!sysinfo_config) return;
-        ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
-        if (inst->cfg->esm != E_SYSINFO_MODULE_BATMAN)
-          batman_configure(inst);
-        else
-          e_gadget_configure(inst->o_main);
      }
 }
 
@@ -536,7 +525,7 @@ _batman_warning_popup(Instance *inst, int t, double percent)
    evas_object_show(inst->warning);
 
    evas_object_geometry_get(inst->warning, &x, &y, &w, &h);
-   evas_object_event_callback_add(inst->warning, EVAS_CALLBACK_MOUSE_DOWN,
+   evas_object_event_callback_add(inst->warning, EVAS_CALLBACK_MOUSE_UP,
                                   _batman_cb_warning_popup_hide, inst);
 
    _batman_face_level_set(inst->popup_battery, percent);
@@ -651,8 +640,8 @@ _batman_created_cb(void *data, Evas_Object *obj, void *event_data EINA_UNUSED)
    E_FILL(inst->cfg->batman.o_gadget);
    elm_box_pack_end(inst->o_main, inst->cfg->batman.o_gadget);
    evas_object_event_callback_add(inst->cfg->batman.o_gadget,
-                                  EVAS_CALLBACK_MOUSE_DOWN,
-                                  _batman_mouse_down_cb, inst);
+                                  EVAS_CALLBACK_MOUSE_UP,
+                                  _batman_mouse_up_cb, inst);
    evas_object_event_callback_add(inst->cfg->batman.o_gadget, EVAS_CALLBACK_RESIZE, _batman_resize_cb, inst);
    evas_object_show(inst->cfg->batman.o_gadget);
    evas_object_smart_callback_del_full(obj, "gadget_created", _batman_created_cb, data);
@@ -679,8 +668,8 @@ sysinfo_batman_create(Evas_Object *parent, Instance *inst)
    E_EXPAND(inst->cfg->batman.o_gadget);
    E_FILL(inst->cfg->batman.o_gadget);
    evas_object_event_callback_add(inst->cfg->batman.o_gadget,
-                                  EVAS_CALLBACK_MOUSE_DOWN,
-                                  _batman_mouse_down_cb, inst);
+                                  EVAS_CALLBACK_MOUSE_UP,
+                                  _batman_mouse_up_cb, inst);
    evas_object_event_callback_add(inst->cfg->batman.o_gadget, EVAS_CALLBACK_RESIZE, _batman_resize_cb, inst);
    evas_object_show(inst->cfg->batman.o_gadget);
 

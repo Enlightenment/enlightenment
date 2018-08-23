@@ -120,19 +120,14 @@ _xkbg_popup_deleted(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSE
 }
 
 static void
-_xkbg_cb_mouse_down(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event)
+_xkbg_cb_mouse_up(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event)
 {
-   Evas_Event_Mouse_Down *ev = event;
+   Evas_Event_Mouse_Up *ev = event;
    Instance *inst = data;
 
    if (!inst) return;
    if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return;
-   if (ev->button == 3)
-     {
-        ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
-        e_gadget_configure(inst->o_main);
-     }
-   else if ((ev->button == 1) && (inst->popup))
+   if ((ev->button == 1) && (inst->popup))
      {
         elm_ctxpopup_dismiss(inst->popup);
         return;
@@ -253,8 +248,8 @@ _xkbg_gadget_created_cb(void *data, Evas_Object *obj, void *event_info EINA_UNUS
                                     inst->o_xkbflag);
           }
         else inst->o_xkbflag = NULL;
-        evas_object_event_callback_add(inst->o_xkbswitch, EVAS_CALLBACK_MOUSE_DOWN,
-                                       _xkbg_cb_mouse_down, inst);
+        evas_object_event_callback_add(inst->o_xkbswitch, EVAS_CALLBACK_MOUSE_UP,
+                                       _xkbg_cb_mouse_up, inst);
         evas_object_event_callback_add(inst->o_xkbswitch, EVAS_CALLBACK_RESIZE,
                                        _xkbg_resize_cb, inst);
         elm_box_pack_end(inst->o_main, inst->o_xkbswitch);

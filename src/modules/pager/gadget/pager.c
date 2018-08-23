@@ -1088,21 +1088,6 @@ _pager_gadget_configure(Evas_Object *g EINA_UNUSED)
    return config_pager(e_zone_current_get());
 }
 
-static void
-_button_cb_mouse_down(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info)
-{
-   Instance *inst = data;
-   Evas_Event_Mouse_Down *ev = event_info;
-
-   if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return;
-   if (_pager_check_modifiers(ev->modifiers)) return;
-   if (ev->button != 3) return;
-   if (!pager_config) return;
-   if (cfg_dialog) return;
-   ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
-   e_gadget_configure(inst->o_pager);
-}
-
 EINTERN void
 _pager_cb_config_gadget_updated(Eina_Bool style_changed)
 {
@@ -2973,8 +2958,6 @@ pager_create(Evas_Object *parent, int *id, E_Gadget_Site_Orient orient EINA_UNUS
    evas_object_smart_callback_add(parent, "gadget_created", _pager_gadget_created_cb, inst);
    evas_object_smart_callback_add(parent, "gadget_site_anchor", _pager_gadget_anchor_change_cb, inst);
    evas_object_event_callback_add(o, EVAS_CALLBACK_MOVE, _pager_cb_move, inst);
-   evas_object_event_callback_add(o, EVAS_CALLBACK_MOUSE_DOWN,
-                                  _button_cb_mouse_down, inst);
    evas_object_event_callback_add(o, EVAS_CALLBACK_SHOW,
                                   _pager_cb_obj_show, inst);
    evas_object_event_callback_add(o, EVAS_CALLBACK_HIDE,

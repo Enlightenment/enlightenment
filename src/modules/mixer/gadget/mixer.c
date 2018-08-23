@@ -538,11 +538,11 @@ _popup_new(Instance *inst)
 }
 
 static void
-_mouse_down_cb(void *data, Evas *evas EINA_UNUSED,
-               Evas_Object *obj EINA_UNUSED, void *event)
+_mouse_up_cb(void *data, Evas *evas EINA_UNUSED,
+             Evas_Object *obj EINA_UNUSED, void *event)
 {
    Instance *inst = data;
-   Evas_Event_Mouse_Down *ev = event;
+   Evas_Event_Mouse_Up *ev = event;
 
    if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return;
 
@@ -558,11 +558,6 @@ _mouse_down_cb(void *data, Evas *evas EINA_UNUSED,
    else if (ev->button == 2)
      {
         _volume_mute_cb(NULL, NULL);
-     }
-   else if (ev->button == 3)
-     {
-        ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
-        e_gadget_configure(inst->o_main);
      }
 }
 
@@ -620,8 +615,8 @@ _mixer_gadget_created_cb(void *data, Evas_Object *obj, void *event_info EINA_UNU
           e_theme_edje_object_set(inst->o_mixer,
                                   "base/theme/gadget/mixer",
                                   "e/gadget/mixer/main");
-        evas_object_event_callback_add(inst->o_mixer, EVAS_CALLBACK_MOUSE_DOWN,
-                                       _mouse_down_cb, inst);
+        evas_object_event_callback_add(inst->o_mixer, EVAS_CALLBACK_MOUSE_UP,
+                                       _mouse_up_cb, inst);
         evas_object_event_callback_add(inst->o_mixer, EVAS_CALLBACK_MOUSE_WHEEL,
                                        _mouse_wheel_cb, inst);
         evas_object_event_callback_add(inst->o_mixer, EVAS_CALLBACK_RESIZE,

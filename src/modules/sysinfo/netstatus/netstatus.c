@@ -84,15 +84,15 @@ _netstatus_popup_deleted(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_
 }
 
 static void
-_netstatus_mouse_down_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_data)
+_netstatus_mouse_up_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_data)
 {
    Evas_Object *label, *popup, *table, *pbar;
-   Evas_Event_Mouse_Down *ev = event_data;
+   Evas_Event_Mouse_Up *ev = event_data;
    Instance *inst = data;
    char text[4096], buf[4096];
 
    if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return;
-   if (ev->button != 3)
+   if (ev->button == 1)
      {
         if (inst->cfg->netstatus.popup)
           {
@@ -163,17 +163,6 @@ _netstatus_mouse_down_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_
                                      inst->cfg->netstatus.o_gadget);
         evas_object_show(popup);
         inst->cfg->netstatus.popup = popup;
-     }
-   else
-     {
-        if (inst->cfg->netstatus.popup)
-          elm_ctxpopup_dismiss(inst->cfg->netstatus.popup);
-        if (!sysinfo_config) return;
-        ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
-        if (inst->cfg->esm != E_SYSINFO_MODULE_NETSTATUS)
-          netstatus_configure(inst);
-        else
-          e_gadget_configure(inst->o_main);
      }
 }
 
@@ -423,7 +412,7 @@ _netstatus_created_cb(void *data, Evas_Object *obj, void *event_data EINA_UNUSED
    E_EXPAND(inst->cfg->netstatus.o_gadget);
    E_FILL(inst->cfg->netstatus.o_gadget);
    elm_box_pack_end(inst->o_main, inst->cfg->netstatus.o_gadget);
-   evas_object_event_callback_add(inst->cfg->netstatus.o_gadget, EVAS_CALLBACK_MOUSE_DOWN, _netstatus_mouse_down_cb, inst);
+   evas_object_event_callback_add(inst->cfg->netstatus.o_gadget, EVAS_CALLBACK_MOUSE_UP, _netstatus_mouse_up_cb, inst);
    evas_object_event_callback_add(inst->cfg->netstatus.o_gadget, EVAS_CALLBACK_RESIZE, _netstatus_resize_cb, inst);
    evas_object_show(inst->cfg->netstatus.o_gadget);
    evas_object_smart_callback_del_full(obj, "gadget_created", _netstatus_created_cb, data);
@@ -448,7 +437,7 @@ sysinfo_netstatus_create(Evas_Object *parent, Instance *inst)
                            "e/gadget/netstatus/main");
    E_EXPAND(inst->cfg->netstatus.o_gadget);
    E_FILL(inst->cfg->netstatus.o_gadget);
-   evas_object_event_callback_add(inst->cfg->netstatus.o_gadget, EVAS_CALLBACK_MOUSE_DOWN, _netstatus_mouse_down_cb, inst);
+   evas_object_event_callback_add(inst->cfg->netstatus.o_gadget, EVAS_CALLBACK_MOUSE_UP, _netstatus_mouse_up_cb, inst);
    evas_object_event_callback_add(inst->cfg->netstatus.o_gadget, EVAS_CALLBACK_RESIZE, _netstatus_resize_cb, inst);
    evas_object_show(inst->cfg->netstatus.o_gadget);
 

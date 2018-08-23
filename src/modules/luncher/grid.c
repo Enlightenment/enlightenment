@@ -145,7 +145,18 @@ _grid_icon_mouse_down(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNU
    Icon *ic = data;
    Evas_Event_Mouse_Up *ev = event_data;
 
-   if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return;
+   if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD)
+     {
+        if (ev->button == 1)
+          {
+             ic->drag.start = 0;
+             ic->drag.dnd = 0;
+             E_FREE_FUNC(ic->mouse_in_timer, ecore_timer_del);
+             E_FREE_FUNC(ic->mouse_out_timer, ecore_timer_del);
+             E_FREE_FUNC(ic->drag_timer, ecore_timer_del);
+          }
+        return;
+     }
    if (_grid_check_modifiers(ev->modifiers)) return;
 
    if (ev->button == 1)
@@ -154,10 +165,6 @@ _grid_icon_mouse_down(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNU
         ic->drag.y = ev->output.y;
         E_FREE_FUNC(ic->drag_timer, ecore_timer_del);
         ic->drag_timer = ecore_timer_loop_add(.35, _grid_drag_timer, ic);
-     }
-   if (ev->button == 3)
-     {
-        e_gadget_configure(ic->inst->o_main);
      }
 }
 

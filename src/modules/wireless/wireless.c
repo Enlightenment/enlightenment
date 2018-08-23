@@ -994,9 +994,9 @@ _wireless_popup_dismissed(void *data EINA_UNUSED, Evas_Object *obj, void *event_
 }
 
 static void
-_wireless_gadget_mouse_down(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *event_info)
+_wireless_gadget_mouse_up(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *event_info)
 {
-   Evas_Event_Mouse_Down *ev = event_info;
+   Evas_Event_Mouse_Up *ev = event_info;
    Instance *inst = data;
    Evas_Object *ctx, *tb, *list, *toggle;
    int type;
@@ -1182,7 +1182,7 @@ _wireless_gadget_icon_add(Instance *inst, int type)
         E_FILL(g);
         e_theme_edje_object_set(g, NULL, wireless_theme_groups[type]);
         elm_object_tooltip_content_cb_set(g, _wireless_tooltip, inst, NULL);
-        evas_object_event_callback_add(g, EVAS_CALLBACK_MOUSE_DOWN, _wireless_gadget_mouse_down, inst);
+        evas_object_event_callback_add(g, EVAS_CALLBACK_MOUSE_UP, _wireless_gadget_mouse_up, inst);
      }
    DBG("Updating icon for %d", type);
    _wifi_icon_init(inst->icon[type], wireless_current[type] ? wireless_current[type]->wn : NULL, type);

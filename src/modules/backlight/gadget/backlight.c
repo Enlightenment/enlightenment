@@ -109,10 +109,10 @@ _backlight_popup_new(Instance *inst)
 }
 
 static void
-_backlight_cb_mouse_down(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event)
+_backlight_cb_mouse_up(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event)
 {
    Instance *inst = data;
-   Evas_Event_Mouse_Down *ev = event;
+   Evas_Event_Mouse_Up *ev = event;
 
    if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return;
 
@@ -120,11 +120,6 @@ _backlight_cb_mouse_down(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj EI
      {
         if (inst->popup) elm_ctxpopup_dismiss(inst->popup);
         else _backlight_popup_new(inst);
-     }
-   else if (ev->button == 3)
-     {
-        ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
-        e_gadget_configure(inst->o_main);
      }
 }
 
@@ -235,8 +230,8 @@ _backlight_gadget_created_cb(void *data, Evas_Object *obj, void *event_info EINA
                                   "base/theme/gadget/backlight",
                                   "e/gadget/backlight/main");
         evas_object_event_callback_add(inst->o_backlight,
-                                       EVAS_CALLBACK_MOUSE_DOWN,
-                                       _backlight_cb_mouse_down,
+                                       EVAS_CALLBACK_MOUSE_UP,
+                                       _backlight_cb_mouse_up,
                                        inst);
         evas_object_event_callback_add(inst->o_backlight,
                                        EVAS_CALLBACK_MOUSE_WHEEL,

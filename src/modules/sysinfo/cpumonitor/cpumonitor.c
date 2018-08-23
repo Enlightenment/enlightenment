@@ -64,15 +64,15 @@ _cpumonitor_popup_deleted(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA
 }
 
 static void
-_cpumonitor_mouse_down_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_data)
+_cpumonitor_mouse_up_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_data)
 {
    Evas_Object *popup, *box, *pbar, *label;
-   Evas_Event_Mouse_Down *ev = event_data;
+   Evas_Event_Mouse_Up *ev = event_data;
    Instance *inst = data;
    char text[256];
 
    if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return;
-   if (ev->button != 3)
+   if (ev->button == 1)
      {
         if (inst->cfg->cpumonitor.popup)
           {
@@ -108,17 +108,6 @@ _cpumonitor_mouse_down_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA
                                      inst->cfg->cpumonitor.o_gadget);
         evas_object_show(popup);
         inst->cfg->cpumonitor.popup = popup;
-     }
-   else
-     {
-        if (inst->cfg->cpumonitor.popup)
-          elm_ctxpopup_dismiss(inst->cfg->cpumonitor.popup);
-        if (!sysinfo_config) return;
-        ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
-        if (inst->cfg->esm != E_SYSINFO_MODULE_CPUMONITOR)
-          cpumonitor_configure(inst);
-        else
-          e_gadget_configure(inst->o_main);
      }
 }
 
@@ -404,8 +393,8 @@ _cpumonitor_created_cb(void *data, Evas_Object *obj, void *event_data EINA_UNUSE
    E_EXPAND(inst->cfg->cpumonitor.o_gadget);
    E_FILL(inst->cfg->cpumonitor.o_gadget);
    elm_box_pack_end(inst->o_main, inst->cfg->cpumonitor.o_gadget);
-   evas_object_event_callback_add(inst->cfg->cpumonitor.o_gadget, EVAS_CALLBACK_MOUSE_DOWN,
-                                  _cpumonitor_mouse_down_cb, inst);
+   evas_object_event_callback_add(inst->cfg->cpumonitor.o_gadget, EVAS_CALLBACK_MOUSE_UP,
+                                  _cpumonitor_mouse_up_cb, inst);
    evas_object_show(inst->cfg->cpumonitor.o_gadget);
 
    inst->cfg->cpumonitor.o_gadget_box = elm_box_add(inst->cfg->cpumonitor.o_gadget);
@@ -439,8 +428,8 @@ sysinfo_cpumonitor_create(Evas_Object *parent, Instance *inst)
                            "e/gadget/cpumonitor/main");
    E_EXPAND(inst->cfg->cpumonitor.o_gadget);
    E_FILL(inst->cfg->cpumonitor.o_gadget);
-   evas_object_event_callback_add(inst->cfg->cpumonitor.o_gadget, EVAS_CALLBACK_MOUSE_DOWN,
-                                  _cpumonitor_mouse_down_cb, inst);
+   evas_object_event_callback_add(inst->cfg->cpumonitor.o_gadget, EVAS_CALLBACK_MOUSE_UP,
+                                  _cpumonitor_mouse_up_cb, inst);
    evas_object_show(inst->cfg->cpumonitor.o_gadget);
 
    inst->cfg->cpumonitor.o_gadget_box = elm_box_add(inst->cfg->cpumonitor.o_gadget);

@@ -68,11 +68,11 @@ _gad_popup_do(Instance *inst)
 }
 
 static void
-_gad_mouse_down(void *data, Evas *evas EINA_UNUSED,
-                Evas_Object *obj EINA_UNUSED, void *event)
+_gad_mouse_up(void *data, Evas *evas EINA_UNUSED,
+              Evas_Object *obj EINA_UNUSED, void *event)
 {
    Instance *inst = data;
-   Evas_Event_Mouse_Down *ev = event;
+   Evas_Event_Mouse_Up *ev = event;
 
    if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return;
    if (ev->button != 1) return;
@@ -113,7 +113,7 @@ _gad_create(Evas_Object *parent, int *id, E_Gadget_Site_Orient orient)
    evas_object_size_hint_aspect_set(o, EVAS_ASPECT_CONTROL_BOTH, 1, 1);
 // XXX: fill in later when we have gotten this far   
 //   e_gadget_configure_cb_set(o, _gad_config);
-   evas_object_event_callback_add(o, EVAS_CALLBACK_MOUSE_DOWN, _gad_mouse_down, inst);
+   evas_object_event_callback_add(o, EVAS_CALLBACK_MOUSE_UP, _gad_mouse_up, inst);
    if (*id != -1)
      evas_object_event_callback_add(o, EVAS_CALLBACK_DEL, _gad_del, inst);
    instances = eina_list_append(instances, inst);

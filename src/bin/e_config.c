@@ -1563,6 +1563,27 @@ e_config_load(void)
                CONFIG_VERSION_UPDATE_INFO(26);
                e_config_save_queue();
             }
+          CONFIG_VERSION_CHECK(28)
+            {
+               Eina_List *l, *ll;
+               E_Config_Binding_Mouse *ebm;
+
+               EINA_LIST_FOREACH_SAFE(e_bindings->mouse_bindings, l, ll, ebm)
+                 {
+                    if ((eina_streq(ebm->action, "gadget_menu")) ||
+                        (eina_streq(ebm->action, "bryce_menu")))
+                      {
+                         e_bindings->mouse_bindings =
+                           eina_list_remove_list
+                             (e_bindings->mouse_bindings, l);
+                         eina_stringshare_del(ebm->action);
+                         eina_stringshare_del(ebm->params);
+                         free(ebm);
+                      }
+                 }
+               CONFIG_VERSION_UPDATE_INFO(27);
+               e_config_save_queue();
+            }
      }
    elm_config_profile_set(_e_config_profile);
    if (!e_config->remember_internal_fm_windows)

@@ -237,13 +237,13 @@ _memusage_popup_create(Instance *inst)
 }
 
 static void
-_memusage_mouse_down_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_data)
+_memusage_mouse_up_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_data)
 {
-   Evas_Event_Mouse_Down *ev = event_data;
+   Evas_Event_Mouse_Up *ev = event_data;
    Instance *inst = data;
 
    if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return;
-   if (ev->button != 3)
+   if (ev->button == 1)
      {
         if (inst->cfg->memusage.popup)
           elm_ctxpopup_dismiss(inst->cfg->memusage.popup);
@@ -252,17 +252,6 @@ _memusage_mouse_down_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_U
              inst->cfg->memusage.popup = _memusage_popup_create(inst);
              _memusage_popup_update(inst);
           }
-     }
-   else
-     {
-        if (inst->cfg->memusage.popup)
-          elm_ctxpopup_dismiss(inst->cfg->memusage.popup);
-        if (!sysinfo_config) return;
-        ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
-        if (inst->cfg->esm != E_SYSINFO_MODULE_MEMUSAGE)
-          memusage_configure(inst);
-        else
-          e_gadget_configure(inst->o_main);
      }
 }
 
@@ -471,8 +460,8 @@ _memusage_created_cb(void *data, Evas_Object *obj, void *event_data EINA_UNUSED)
    E_FILL(inst->cfg->memusage.o_gadget);
    elm_box_pack_end(inst->o_main, inst->cfg->memusage.o_gadget);
    evas_object_event_callback_add(inst->cfg->memusage.o_gadget,
-                                  EVAS_CALLBACK_MOUSE_DOWN,
-                                  _memusage_mouse_down_cb, inst);
+                                  EVAS_CALLBACK_MOUSE_UP,
+                                  _memusage_mouse_up_cb, inst);
    evas_object_event_callback_add(inst->cfg->memusage.o_gadget,
                                   EVAS_CALLBACK_RESIZE,
                                   _memusage_resize_cb, inst);
@@ -507,8 +496,8 @@ sysinfo_memusage_create(Evas_Object *parent, Instance *inst)
    E_EXPAND(inst->cfg->memusage.o_gadget);
    E_FILL(inst->cfg->memusage.o_gadget);
    evas_object_event_callback_add(inst->cfg->memusage.o_gadget,
-                                  EVAS_CALLBACK_MOUSE_DOWN,
-                                  _memusage_mouse_down_cb, inst);
+                                  EVAS_CALLBACK_MOUSE_UP,
+                                  _memusage_mouse_up_cb, inst);
    evas_object_event_callback_add(inst->cfg->memusage.o_gadget,
                                   EVAS_CALLBACK_RESIZE,
                                   _memusage_resize_cb, inst);

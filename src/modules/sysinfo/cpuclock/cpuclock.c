@@ -331,29 +331,18 @@ _cpuclock_popup_create(Instance *inst)
 }
 
 static void
-_cpuclock_mouse_down_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_data)
+_cpuclock_mouse_up_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_data)
 {
-   Evas_Event_Mouse_Down *ev = event_data;
+   Evas_Event_Mouse_Up *ev = event_data;
    Instance *inst = data;
 
    if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return;
-   if (ev->button != 3)
+   if (ev->button == 1)
      {
         if (inst->cfg->cpuclock.popup)
           elm_ctxpopup_dismiss(inst->cfg->cpuclock.popup);
         else
           inst->cfg->cpuclock.popup = _cpuclock_popup_create(inst);
-     }
-   else
-     {
-        if (inst->cfg->cpuclock.popup)
-          elm_ctxpopup_dismiss(inst->cfg->cpuclock.popup);
-        if (!sysinfo_config) return;
-        ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
-        if (inst->cfg->esm != E_SYSINFO_MODULE_CPUCLOCK)
-          cpuclock_configure(inst);
-        else
-          e_gadget_configure(inst->o_main);
      }
 }
 
@@ -1084,8 +1073,8 @@ _cpuclock_created_cb(void *data, Evas_Object *obj, void *event_data EINA_UNUSED)
    evas_object_event_callback_add(inst->cfg->cpuclock.o_gadget, EVAS_CALLBACK_RESIZE, _cpuclock_resize_cb, inst);
    elm_box_pack_end(inst->o_main, inst->cfg->cpuclock.o_gadget);
    evas_object_event_callback_add(inst->cfg->cpuclock.o_gadget,
-                                  EVAS_CALLBACK_MOUSE_DOWN,
-                                  _cpuclock_mouse_down_cb, inst);
+                                  EVAS_CALLBACK_MOUSE_UP,
+                                  _cpuclock_mouse_up_cb, inst);
    evas_object_show(inst->cfg->cpuclock.o_gadget);
    evas_object_smart_callback_del_full(obj, "gadget_created", _cpuclock_created_cb, data);
 
@@ -1127,8 +1116,8 @@ sysinfo_cpuclock_create(Evas_Object *parent, Instance *inst)
    E_EXPAND(inst->cfg->cpuclock.o_gadget);
    E_FILL(inst->cfg->cpuclock.o_gadget);
    evas_object_event_callback_add(inst->cfg->cpuclock.o_gadget,
-                                  EVAS_CALLBACK_MOUSE_DOWN,
-                                  _cpuclock_mouse_down_cb, inst);
+                                  EVAS_CALLBACK_MOUSE_UP,
+                                  _cpuclock_mouse_up_cb, inst);
    edje_object_signal_callback_add(elm_layout_edje_get(inst->cfg->cpuclock.o_gadget), "e,action,governor,next", "*",
                                    _cpuclock_face_cb_set_governor, inst);
    edje_object_signal_callback_add(elm_layout_edje_get(inst->cfg->cpuclock.o_gadget), "e,action,frequency,increase", "*",

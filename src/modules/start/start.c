@@ -122,10 +122,10 @@ _menu_cb_post(void *data, E_Menu *m)
 }
 
 static void
-_button_cb_mouse_down(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info)
+_button_cb_mouse_up(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info)
 {
    Instance *inst = data;
-   Evas_Event_Mouse_Down *ev = event_info;
+   Evas_Event_Mouse_Up *ev = event_info;
    Evas_Coord x, y, w, h;
    E_Gadget_Site_Anchor an;
    int dir = E_MENU_POP_DIRECTION_AUTO;
@@ -216,8 +216,8 @@ start_create(Evas_Object *parent, int *id, E_Gadget_Site_Orient orient)
    inst->o_button = o;
    evas_object_size_hint_aspect_set(o, EVAS_ASPECT_CONTROL_BOTH, 1, 1);
 
-   evas_object_event_callback_add(o, EVAS_CALLBACK_MOUSE_DOWN,
-                                  _button_cb_mouse_down, inst);
+   evas_object_event_callback_add(o, EVAS_CALLBACK_MOUSE_UP,
+                                  _button_cb_mouse_up, inst);
    evas_object_event_callback_add(o, EVAS_CALLBACK_DEL, start_del, inst);
    evas_object_smart_callback_add(parent, "gadget_site_anchor", _anchor_change, inst);
    evas_object_smart_callback_add(parent, "gadget_created", _gadget_created, inst);

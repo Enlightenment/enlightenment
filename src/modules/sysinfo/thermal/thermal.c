@@ -231,29 +231,18 @@ _thermal_popup_create(Instance *inst)
 }
 
 static void
-_thermal_mouse_down_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_data)
+_thermal_mouse_up_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_data)
 {
-   Evas_Event_Mouse_Down *ev = event_data;
+   Evas_Event_Mouse_Up *ev = event_data;
    Instance *inst = data;
 
    if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return;
-   if (ev->button != 3)
+   if (ev->button == 1)
      {
         if (inst->cfg->thermal.popup)
           elm_ctxpopup_dismiss(inst->cfg->thermal.popup);
         else
           inst->cfg->thermal.popup = _thermal_popup_create(inst);
-     }
-   else
-     {
-        if (inst->cfg->thermal.popup)
-          elm_ctxpopup_dismiss(inst->cfg->thermal.popup);
-        if (!sysinfo_config) return;
-        ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
-        if (inst->cfg->esm != E_SYSINFO_MODULE_THERMAL)
-          thermal_configure(inst);
-        else
-          e_gadget_configure(inst->o_main);
      }
 }
 
@@ -426,8 +415,8 @@ _thermal_created_cb(void *data, Evas_Object *obj, void *event_data EINA_UNUSED)
    E_FILL(inst->cfg->thermal.o_gadget);
    elm_box_pack_end(inst->o_main, inst->cfg->thermal.o_gadget);
    evas_object_event_callback_add(inst->cfg->thermal.o_gadget,
-                                  EVAS_CALLBACK_MOUSE_DOWN,
-                                  _thermal_mouse_down_cb, inst);
+                                  EVAS_CALLBACK_MOUSE_UP,
+                                  _thermal_mouse_up_cb, inst);
    evas_object_event_callback_add(inst->cfg->thermal.o_gadget, EVAS_CALLBACK_RESIZE, _thermal_resize_cb, inst);
    evas_object_show(inst->cfg->thermal.o_gadget);
    evas_object_smart_callback_del_full(obj, "gadget_created", _thermal_created_cb, data);
@@ -451,8 +440,8 @@ sysinfo_thermal_create(Evas_Object *parent, Instance *inst)
    E_EXPAND(inst->cfg->thermal.o_gadget);
    E_FILL(inst->cfg->thermal.o_gadget);
    evas_object_event_callback_add(inst->cfg->thermal.o_gadget,
-                                  EVAS_CALLBACK_MOUSE_DOWN,
-                                  _thermal_mouse_down_cb, inst);
+                                  EVAS_CALLBACK_MOUSE_UP,
+                                  _thermal_mouse_up_cb, inst);
    evas_object_event_callback_add(inst->cfg->thermal.o_gadget, EVAS_CALLBACK_RESIZE, _thermal_resize_cb, inst);
    evas_object_show(inst->cfg->thermal.o_gadget);
 

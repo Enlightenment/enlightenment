@@ -79,11 +79,11 @@ _refresh_timer_cb(void *data)
 
 /* Gadget Api Functions */
 static void
-_gadget_mouse_down_cb(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event)
+_gadget_mouse_up_cb(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event)
 {
    E_PackageKit_Instance *inst = data;
    E_PackageKit_Module_Context *ctxt = packagekit_mod->data;
-   Evas_Event_Mouse_Down *ev = event;
+   Evas_Event_Mouse_Up *ev = event;
 
    if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return;
    ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
@@ -134,8 +134,8 @@ _gadget_create_cb(Evas_Object *parent, int *id, E_Gadget_Site_Orient orient EINA
    ctxt->instances = eina_list_append(ctxt->instances, inst);
    if (*id >= 0)
      {  // normal mode
-        evas_object_event_callback_add(inst->gadget, EVAS_CALLBACK_MOUSE_DOWN,
-                                       _gadget_mouse_down_cb, inst);
+        evas_object_event_callback_add(inst->gadget, EVAS_CALLBACK_MOUSE_UP,
+                                       _gadget_mouse_up_cb, inst);
         packagekit_icon_update(ctxt, EINA_FALSE);
      }
    else

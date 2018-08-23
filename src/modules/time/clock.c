@@ -274,10 +274,10 @@ clock_instances_redo(void)
 }
 
 static void
-_clock_cb_mouse_down(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event)
+_clock_cb_mouse_up(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event)
 {
    Instance *inst = data;
-   Evas_Event_Mouse_Down *ev = event;
+   Evas_Event_Mouse_Up *ev = event;
 
    if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return;
    ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
@@ -286,8 +286,6 @@ _clock_cb_mouse_down(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj EINA_U
         if (inst->popup) elm_ctxpopup_dismiss(inst->popup);
         else clock_popup_new(inst);
      }
-   else if (ev->button == 3)
-     e_gadget_configure(inst->o_clock);
 }
 
 static void
@@ -435,8 +433,8 @@ clock_create(Evas_Object *parent, Instance *inst, E_Gadget_Site_Orient orient)
    evas_object_data_set(o, "clock", inst);
 
    evas_object_event_callback_add(inst->o_clock,
-                                  EVAS_CALLBACK_MOUSE_DOWN,
-                                  _clock_cb_mouse_down,
+                                  EVAS_CALLBACK_MOUSE_UP,
+                                  _clock_cb_mouse_up,
                                   inst);
 
    if (inst->cfg->id < 0) return o;
