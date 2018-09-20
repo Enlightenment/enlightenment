@@ -106,9 +106,12 @@ e_winlist_show(E_Zone *zone, E_Winlist_Filter filter)
 #ifndef HAVE_WAYLAND_ONLY
    if (e_comp->comp_type == E_PIXMAP_TYPE_X)
      {
+        Ecore_X_Window mouse_grab = 0;
         _input_window = ecore_x_window_input_new(e_comp->root, 0, 0, 1, 1);
         ecore_x_window_show(_input_window);
-        if (!e_grabinput_get(_input_window, 0, _input_window))
+        if (_activate_type == E_WINLIST_ACTIVATE_TYPE_MOUSE)
+          mouse_grab = _input_window;
+        if (!e_grabinput_get(mouse_grab, 0, _input_window))
           {
              ecore_x_window_free(_input_window);
              _input_window = 0;
@@ -118,7 +121,10 @@ e_winlist_show(E_Zone *zone, E_Winlist_Filter filter)
 #endif
    if (e_comp->comp_type != E_PIXMAP_TYPE_X)
      {
-        if (!e_comp_grab_input(1, 1))
+        Eina_Bool mouse_grab = EINA_FALSE;
+        if (_activate_type == E_WINLIST_ACTIVATE_TYPE_MOUSE)
+          mouse_grab = EINA_TRUE;
+        if (!e_comp_grab_input(mouse_grab, EINA_TRUE))
           return 0;
         _input_window = e_comp->ee_win;
      }
@@ -551,7 +557,6 @@ e_winlist_direction_select(E_Zone *zone, int dir)
    _e_winlist_show_active();
    _e_winlist_activate();
 }
-
 
 void
 e_winlist_modifiers_set(int mod, E_Winlist_Activate_Type type)
