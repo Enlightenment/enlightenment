@@ -1316,6 +1316,7 @@ _gadget_menu(Evas_Object *g, unsigned int timestamp)
    _gadget_popups_clear(zgc);
 
    zgc->menu = e_menu_new();
+   e_menu_hold_mode_set(zgc->menu, EINA_FALSE);
    if (zgc->type)
      {
         char buf[1024];
@@ -1338,6 +1339,7 @@ _gadget_menu(Evas_Object *g, unsigned int timestamp)
         e_menu_item_separator_set(mi, 1);
      }
    subm = e_menu_new();
+   e_menu_hold_mode_set(subm, EINA_FALSE);
    evas_object_smart_callback_call(zgc->site->layout, "gadget_site_style_menu", subm);
    if (e_object_data_get(E_OBJECT(subm)))
      {

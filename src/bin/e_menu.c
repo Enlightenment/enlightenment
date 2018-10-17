@@ -210,7 +210,16 @@ e_menu_new(void)
    m->cur.w = 1;
    m->cur.h = 1;
    m->category = NULL;
+   m->hold_mode = EINA_TRUE;
    return m;
+}
+
+E_API void
+e_menu_hold_mode_set(E_Menu *m, Eina_Bool hold_mode)
+{
+   E_OBJECT_CHECK(m);
+   E_OBJECT_TYPE_CHECK(m, E_MENU_TYPE);
+   m->hold_mode = hold_mode;
 }
 
 E_API void
@@ -2780,12 +2789,26 @@ static Eina_Bool
 _e_menu_cb_mouse_up(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
 {
    Ecore_Event_Mouse_Button *ev;
+   E_Menu *m;
+   Eina_List *l;
    unsigned int t;
    int ret = 0;
 
    if (_e_menu_lock) return ECORE_CALLBACK_RENEW;
    ev = event;
    if (ev->window != _e_menu_win) return ECORE_CALLBACK_RENEW;
+
+   if (!_e_menu_activate_floating)
+     {
+        EINA_LIST_FOREACH(_e_active_menus, l, m)
+          {
+             if (!m->hold_mode)
+               {
+                  _e_menu_activate_floating = 1;
+                  return ECORE_CALLBACK_PASS_ON;
+               }
+          }
+     }
 
    t = ev->timestamp - _e_menu_activate_time;
    if ((_e_menu_activate_time != 0) &&

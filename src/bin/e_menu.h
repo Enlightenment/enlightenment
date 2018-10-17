@@ -71,6 +71,7 @@ struct _E_Menu
    Eina_Bool        pending_new_submenu E_BITFIELD;
    Eina_Bool        have_submenu E_BITFIELD;
    Eina_Bool        in_active_list E_BITFIELD;
+   Eina_Bool        hold_mode E_BITFIELD;
 };
 
 struct _E_Menu_Item
@@ -156,6 +157,7 @@ EINTERN int          e_menu_shutdown(void);
 
 E_API void         e_menu_hide_all(void);
 E_API E_Menu      *e_menu_new(void);
+E_API void         e_menu_hold_mode_set(E_Menu *m, Eina_Bool hold_mode);
 E_API void         e_menu_activate_key(E_Menu *m, E_Zone *zone, int x, int y, int w, int h, int dir);
 E_API void         e_menu_activate_mouse(E_Menu *m, E_Zone *zone, int x, int y, int w, int h, int dir, unsigned int activate_time);
 E_API void         e_menu_activate(E_Menu *m, E_Zone *zone, int x, int y, int w, int h, int dir);

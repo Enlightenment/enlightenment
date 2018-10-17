@@ -847,6 +847,7 @@ _bryce_owner_menu(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
    e_menu_item_label_set(mi, _("Gadget Bar"));
 
    subm = e_menu_new();
+   e_menu_hold_mode_set(subm, EINA_FALSE);
    e_menu_item_submenu_set(mi, subm);
    e_object_unref(E_OBJECT(subm));
 
@@ -1047,6 +1048,7 @@ _bryce_menu(Bryce *b, Evas_Object *g)
    int x = 0, y = 0, w = 1, h = 1;
 
    m = e_menu_new();
+   e_menu_hold_mode_set(m, EINA_FALSE);
    _bryce_menu_populate(b, m, g);
    if (g)
      evas_object_geometry_get(g, &x, &y, &w, &h);
