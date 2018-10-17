@@ -92,7 +92,7 @@
 typedef Evas_Object *(*E_Gadget_Create_Cb)(Evas_Object *parent, int *id, E_Gadget_Site_Orient orient);
 typedef Evas_Object *(*E_Gadget_External_Create_Cb)(Evas_Object *parent, const char *type, int *id, E_Gadget_Site_Orient orient);
 typedef Evas_Object *(*E_Gadget_Configure_Cb)(Evas_Object *gadget);
-typedef Evas_Object *(*E_Gadget_Menu_Populate_Cb)(Evas_Object *gadget, E_Menu *m);
+typedef void (*E_Gadget_Menu_Populate_Cb)(Evas_Object *gadget, E_Menu *m);
 typedef void (*E_Gadget_Context_Cb)(Evas_Object *site, Evas_Object *g, unsigned int timestamp);
 typedef void (*E_Gadget_Wizard_End_Cb)(void *data, int id);
 typedef Evas_Object *(*E_Gadget_Wizard_Cb)(E_Gadget_Wizard_End_Cb cb, void *data, Evas_Object *site);
