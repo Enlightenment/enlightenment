@@ -1463,10 +1463,32 @@ _site_mouse_up(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, vo
              E_Gadget_Config *zgc;
              Evas_Object *g = NULL;
 
-             zgc = _gadget_at_xy(zgs, ev->canvas.x, ev->canvas.y, NULL);
+             zgc = _gadget_at_xy(zgs, zgs->down_3_x, zgs->down_3_y, NULL);
              if (zgc) g = zgc->gadget;
              if (zgs->context_cb) zgs->context_cb(zgs->layout, g, ev->timestamp);
              ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
+          }
+     }
+}
+
+static void
+_site_mouse_move(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info)
+{
+   E_Gadget_Site *zgs = data;
+   Evas_Event_Mouse_Move *ev = event_info;
+
+   if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return;
+   if (zgs->longpressed) return;
+
+   if (zgs->down_timer)
+     {
+        Evas_Coord dx, dy;
+
+        dx = ev->cur.canvas.x - zgs->down_1_x;
+        dy = ev->cur.canvas.y - zgs->down_1_y;
+        if (((dx * dx) + (dy * dy)) >= (5 * 5))
+          {
+             E_FREE_FUNC(zgs->down_timer, ecore_timer_del);
           }
      }
 }
@@ -1749,6 +1771,7 @@ _site_create(E_Gadget_Site *zgs)
    evas_object_show(zgs->events);
    evas_object_event_callback_add(zgs->events, EVAS_CALLBACK_MOUSE_DOWN, _site_mouse_down, zgs);
    evas_object_event_callback_add(zgs->events, EVAS_CALLBACK_MOUSE_UP, _site_mouse_up, zgs);
+   evas_object_event_callback_add(zgs->events, EVAS_CALLBACK_MOUSE_MOVE, _site_mouse_move, zgs);
    if (!zgs->orient)
      {
         evas_object_event_callback_add(zgs->layout, EVAS_CALLBACK_SHOW, _site_visibility, zgs);
