@@ -1102,6 +1102,7 @@ e_menu_idler_before(void)
    /* level state machine */
    Eina_List *l, *removals = NULL, *tmp;
    E_Menu *m;
+   int active_count = 0;
 
    if (pending_feed)
      {
@@ -1207,7 +1208,11 @@ e_menu_idler_before(void)
    /* del refcount to all menus we worked with */
    _e_menu_list_free_unref(tmp);
 
-   if (!_e_active_menus)
+   EINA_LIST_FOREACH(_e_active_menus, l, m)
+     {
+        if (m->active) active_count++;
+     }
+   if (!active_count)
      {
         if (_e_menu_win == e_comp->ee_win)
           {
