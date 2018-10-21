@@ -120,9 +120,44 @@ _gadget_configure_cb(Evas_Object *gadget)
 }
 
 static void
-_gadget_menu_populate_cb(Evas_Object *g, E_Menu *m)
+_gadget_menu1_cb(void *data, E_Menu *m EINA_UNUSED, E_Menu_Item *mi EINA_UNUSED)
 {
-   DBG("PKIT: menu cb (TODO)\n");
+   E_PackageKit_Module_Context *ctxt = data;
+
+   e_exec(e_zone_current_get(), NULL,
+          ctxt->config->manager_command,
+          NULL, NULL);
+}
+
+static void
+_gadget_menu2_cb(void *data, E_Menu *m EINA_UNUSED, E_Menu_Item *mi EINA_UNUSED)
+{
+   E_PackageKit_Module_Context *ctxt = data;
+
+   packagekit_create_transaction_and_exec(ctxt, packagekit_refresh_cache);
+}
+
+static void
+_gadget_menu_populate_cb(Evas_Object *gadget, E_Menu *m)
+{
+   E_PackageKit_Instance *inst = evas_object_data_get(gadget, "pkit-inst");
+   E_Menu_Item *mi;
+
+   mi = e_menu_item_new(m);
+   e_menu_item_separator_set(mi, 1);
+
+   mi = e_menu_item_new(m);
+   e_menu_item_label_set(mi, _("Refresh package list"));
+   e_util_menu_item_theme_icon_set(mi, "view-refresh");
+   e_menu_item_callback_set(mi, _gadget_menu2_cb, inst->ctxt);
+
+   if (inst->ctxt->config->manager_command && inst->ctxt->config->manager_command[0])
+   {
+      mi = e_menu_item_new(m);
+      e_menu_item_label_set(mi, _("Run the package manager"));
+      e_util_menu_item_theme_icon_set(mi, "preferences-applications");
+      e_menu_item_callback_set(mi, _gadget_menu1_cb, inst->ctxt);
+   }
 }
 
 static void
