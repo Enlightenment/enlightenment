@@ -99,12 +99,6 @@ _gadget_mouse_up_cb(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj EINA_UN
      {
         packagekit_create_transaction_and_exec(ctxt, packagekit_get_updates);
      }
-   else if (ev->button == 3)
-     {
-        if (inst->ctxpopup)
-          packagekit_popup_del(inst);
-        packagekit_config_show(inst->ctxt);
-     }
 }
 
 static void
@@ -116,6 +110,36 @@ _gadget_del_cb(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
    if (inst->ctxpopup) packagekit_popup_del(inst);
    ctxt->instances = eina_list_remove(ctxt->instances, inst);
    free(inst);
+}
+
+static Evas_Object *
+_gadget_configure_cb(Evas_Object *gadget)
+{
+   E_PackageKit_Instance *inst = evas_object_data_get(gadget, "pkit-inst");
+
+   // TODO use new bryce dialog style
+   packagekit_config_show(inst->ctxt);
+   return NULL;
+}
+
+static void
+_gadget_menu_populate_cb(Evas_Object *g, E_Menu *m)
+{
+   DBG("PKIT: menu cb (TODO)\n");
+}
+
+static void
+_gadget_created_cb(void *data, Evas_Object *obj, void *event_data EINA_UNUSED)
+{
+   E_PackageKit_Instance *inst = data;
+
+   evas_object_smart_callback_del_full(obj, "gadget_created",
+                                       _gadget_created_cb, data);
+   evas_object_event_callback_add(inst->gadget, EVAS_CALLBACK_MOUSE_UP,
+                                  _gadget_mouse_up_cb, inst);
+   e_gadget_configure_cb_set(inst->gadget, _gadget_configure_cb);
+   e_gadget_menu_populate_cb_set(inst->gadget, _gadget_menu_populate_cb);
+   packagekit_icon_update(inst->ctxt, EINA_FALSE);
 }
 
 EINTERN Evas_Object *
@@ -131,12 +155,12 @@ _gadget_create_cb(Evas_Object *parent, int *id, E_Gadget_Site_Orient orient EINA
                                          "e/modules/packagekit/main");
    evas_object_event_callback_add(inst->gadget, EVAS_CALLBACK_DEL,
                                  _gadget_del_cb, inst);
+   evas_object_data_set(inst->gadget, "pkit-inst", inst);
    ctxt->instances = eina_list_append(ctxt->instances, inst);
    if (*id >= 0)
      {  // normal mode
-        evas_object_event_callback_add(inst->gadget, EVAS_CALLBACK_MOUSE_UP,
-                                       _gadget_mouse_up_cb, inst);
-        packagekit_icon_update(ctxt, EINA_FALSE);
+        evas_object_smart_callback_add(parent, "gadget_created",
+                                       _gadget_created_cb, inst);
      }
    else
      {  // demo mode
