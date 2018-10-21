@@ -517,7 +517,7 @@ _bar_gadget_menu_populate(Evas_Object *g, E_Menu *m)
      {
         Evas_Coord x, y, w, h;
 
-        evas_object_geometry_get(g, &x, &y, &w, &h);
+        evas_object_geometry_get(ic->o_icon, &x, &y, &w, &h);
         if (E_INSIDE(px, py, x, y, w, h)) break;
         ic = NULL;
      }
