@@ -210,7 +210,7 @@ _run_button_cb(void *data, Evas_Object *obj EINA_UNUSED,
    E_PackageKit_Instance *inst = data;
    packagekit_popup_del(inst);
 
-   e_exec(inst->gcc->gadcon->zone, NULL,
+   e_exec(e_zone_current_get(), NULL,
           inst->ctxt->config->manager_command,
           NULL, NULL);
 }
