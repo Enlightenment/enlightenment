@@ -4,7 +4,6 @@
 #include "e_mod_packagekit.h"
 
 
-void packagekit_config_show(E_PackageKit_Module_Context *ctxt);
-
+Evas_Object *packagekit_config_show(E_PackageKit_Module_Context *ctxt);
 
 #endif

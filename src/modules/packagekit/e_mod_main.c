@@ -116,10 +116,7 @@ static Evas_Object *
 _gadget_configure_cb(Evas_Object *gadget)
 {
    E_PackageKit_Instance *inst = evas_object_data_get(gadget, "pkit-inst");
-
-   // TODO use new bryce dialog style
-   packagekit_config_show(inst->ctxt);
-   return NULL;
+   return packagekit_config_show(inst->ctxt);
 }
 
 static void

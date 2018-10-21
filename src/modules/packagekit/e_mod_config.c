@@ -1,124 +1,143 @@
 #include "e_mod_config.h"
 #include "e_mod_packagekit.h"
 
-
-struct _E_Config_Dialog_Data
+static void
+_config_label_add(Evas_Object *tb, const char *txt, int row)
 {
-   int update_interval;
-   char *manager_command;
-   int show_description;
-};
+   Evas_Object *o;
 
-static void *
-_cfg_data_create(E_Config_Dialog *cfd)
-{
-   E_PackageKit_Module_Context *ctxt = cfd->data;
-
-   E_Config_Dialog_Data *cfdata = E_NEW(E_Config_Dialog_Data, 1);
-   cfdata->update_interval = ctxt->config->update_interval;
-   cfdata->show_description = ctxt->config->show_description;
-   if (ctxt->config->manager_command)
-      cfdata->manager_command = strdup(ctxt->config->manager_command);
-   else
-      cfdata->manager_command = strdup("");
-
-   return cfdata;
+   o = elm_label_add(tb);
+   E_ALIGN(o, 0, 0.5);
+   elm_object_text_set(o, txt);
+   evas_object_show(o);
+   elm_table_pack(tb, o, 0, row, 1, 1);
 }
 
 static void
-_cfg_data_free(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfdata)
+_config_refresh_changed(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
 {
-   E_FREE(cfdata->manager_command);
-   E_FREE(cfdata);
+   E_PackageKit_Module_Context *ctxt = data;
+   Elm_Object_Item *item = event_info;
+   int val = (int)(intptr_t)elm_object_item_data_get(item);
+
+   ctxt->config->update_interval = val;
+   e_config_save_queue();
 }
 
-static Evas_Object *
-_cfg_widgets_create(E_Config_Dialog *cfd, Evas *evas, E_Config_Dialog_Data *cfdata)
+static void
+_config_list_type_changed(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
 {
-   Evas_Object *list, *of, *ob;
-   E_Radio_Group *rg;
+   E_PackageKit_Module_Context *ctxt = data;
+   Elm_Object_Item *item = event_info;
+   int val = (int)(intptr_t)elm_object_item_data_get(item);
 
-   list = e_widget_list_add(evas, 0, 0);
-
-   of = e_widget_framelist_add(evas, _("Refresh Packages"), 0);
-   rg = e_widget_radio_group_new(&(cfdata->update_interval));
-   ob = e_widget_radio_add(evas, _("Never"), 0, rg);
-   e_widget_framelist_object_append(of, ob);
-   ob = e_widget_radio_add(evas, _("Hourly"), 60, rg);
-   e_widget_framelist_object_append(of, ob);
-   ob = e_widget_radio_add(evas, _("Daily"), 60 * 24, rg);
-   e_widget_framelist_object_append(of, ob);
-   ob = e_widget_radio_add(evas, _("Weekly"), 60 * 24 * 7, rg);
-   e_widget_framelist_object_append(of, ob);
-   e_widget_list_object_append(list, of, 1, 1, 0.5);
-
-   of = e_widget_framelist_add(evas, _("Package list"), 0);
-   rg = e_widget_radio_group_new(&(cfdata->show_description));
-   ob = e_widget_radio_add(evas, _("Compact (package name)"), 0, rg);
-   e_widget_framelist_object_append(of, ob);
-   ob = e_widget_radio_add(evas, _("Extended (name and description)"), 1, rg);
-   e_widget_framelist_object_append(of, ob);
-   e_widget_list_object_append(list, of, 1, 0, 0.5);
-
-   of = e_widget_framelist_add(evas, _("Package Manager"), 0);
-   ob = e_widget_entry_add(cfd->dia->win, &(cfdata->manager_command), NULL, NULL, NULL);
-   e_widget_framelist_object_append(of, ob);
-   e_widget_list_object_append(list, of, 1, 0, 0.5);
-
-   e_dialog_resizable_set(cfd->dia, 1);
-
-   return list;
+   ctxt->config->show_description = val;
+   e_config_save_queue();
 }
 
-static int
-_cfg_check_changed(E_Config_Dialog *cfd, E_Config_Dialog_Data *cfdata)
+static void
+_config_manager_changed(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
-   E_PackageKit_Module_Context *ctxt = cfd->data;
-
-   if (ctxt->config->update_interval != cfdata->update_interval)
-     return 1;
-
-   if (ctxt->config->show_description != cfdata->show_description)
-     return 1;
-
-   if ((ctxt->config->manager_command) && (cfdata->manager_command) &&
-       (strcmp(ctxt->config->manager_command, cfdata->manager_command)))
-     return 1;
-
-   if ((!ctxt->config->manager_command) && (cfdata->manager_command[0]))
-     return 1;
-
-   return 0;
-}
-
-static int
-_cfg_data_apply(E_Config_Dialog *cfd, E_Config_Dialog_Data *cfdata)
-{
-   E_PackageKit_Module_Context *ctxt = cfd->data;
-
-   ctxt->config->update_interval = cfdata->update_interval;
-   ctxt->config->show_description = cfdata->show_description;
+   E_PackageKit_Module_Context *ctxt = data;
+   const char *text = elm_object_text_get(obj);
 
    if (ctxt->config->manager_command)
-      eina_stringshare_replace(&ctxt->config->manager_command, cfdata->manager_command);
+      eina_stringshare_replace(&ctxt->config->manager_command, text);
    else
-      ctxt->config->manager_command = eina_stringshare_add(cfdata->manager_command);
-
-   return 1;
+      ctxt->config->manager_command = eina_stringshare_add(text);
+   e_config_save_queue();
 }
 
-void
+Evas_Object *
 packagekit_config_show(E_PackageKit_Module_Context *ctxt)
 {
-   E_Config_Dialog_View *v;
+   Evas_Object *popup, *table, *o;
+   int row = 0;
 
-   v = E_NEW(E_Config_Dialog_View, 1);
-   v->create_cfdata = _cfg_data_create;
-   v->free_cfdata = _cfg_data_free;
-   v->basic.create_widgets = _cfg_widgets_create;
-   v->basic.apply_cfdata = _cfg_data_apply;
-   v->basic.check_changed = _cfg_check_changed;
+   // Create the popup (this should be handled by the gadget system)
+   popup = elm_popup_add(e_comp->elm);
+   E_EXPAND(popup);
+   evas_object_layer_set(popup, E_LAYER_POPUP);
+   elm_popup_allow_events_set(popup, EINA_TRUE);
+   elm_popup_scrollable_set(popup, EINA_TRUE);
 
-   e_config_dialog_new(NULL, _("System Updates Settings"),
-                       "E", "_e_mod_packagekit_dialog", NULL, 0, v, ctxt);
+   // Create the content
+   table = elm_table_add(popup);
+   elm_table_padding_set(table, 10, 0);
+   E_EXPAND(table);
+   evas_object_show(table);
+   elm_object_content_set(popup, table);
+
+   // auto refresh frequency
+   _config_label_add(table, _("Refresh Packages"), row);
+   o = elm_hoversel_add(table);
+   E_FILL(o); E_EXPAND(o);
+   elm_table_pack(table, o, 1, row, 1, 1);
+   elm_hoversel_item_add(o, _("Never"), NULL, ELM_ICON_NONE, NULL,
+                         (uintptr_t*)(unsigned long) (0) );
+   elm_hoversel_item_add(o, _("Hourly"), NULL, ELM_ICON_NONE, NULL,
+                         (uintptr_t*)(unsigned long) (60) );
+   elm_hoversel_item_add(o, _("Daily"), NULL, ELM_ICON_NONE, NULL,
+                         (uintptr_t*)(unsigned long) (60 * 24));
+   elm_hoversel_item_add(o, _("Weekly"), NULL, ELM_ICON_NONE, NULL,
+                         (uintptr_t*)(unsigned long) (60 * 24 * 7));
+   switch (ctxt->config->update_interval)
+   {
+      case 0:           elm_object_text_set(o, _("Never"));  break;
+      case 60:          elm_object_text_set(o, _("Hourly")); break;
+      case 60 * 24:     elm_object_text_set(o, _("Daily"));  break;
+      case 60 * 24 * 7: elm_object_text_set(o, _("Weekly")); break;
+      default: break;
+   }
+   elm_hoversel_hover_parent_set(o, popup);
+   elm_hoversel_auto_update_set(o, EINA_TRUE);
+   evas_object_show(o);
+   evas_object_smart_callback_add(o, "selected", _config_refresh_changed, ctxt);
+   row++;
+
+   // list type (show description)
+   _config_label_add(table, _("Package list"), row);
+   o = elm_hoversel_add(table);
+   E_FILL(o); E_EXPAND(o);
+   elm_table_pack(table, o, 1, row, 1, 1);
+   elm_hoversel_item_add(o, _("Compact (package name)"), NULL,
+                         ELM_ICON_NONE, NULL, (uintptr_t*)(unsigned long) 0 );
+   elm_hoversel_item_add(o, _("Extended (name and description)"), NULL,
+                         ELM_ICON_NONE, NULL, (uintptr_t*)(unsigned long) 1 );
+   switch (ctxt->config->show_description)
+   {
+      case 0: elm_object_text_set(o, _("Compact (package name)"));  break;
+      case 1: elm_object_text_set(o, _("Extended (name and description)")); break;
+      default: break;
+   }
+   elm_hoversel_hover_parent_set(o, popup);
+   elm_hoversel_auto_update_set(o, EINA_TRUE);
+   evas_object_show(o);
+   evas_object_smart_callback_add(o, "selected", _config_list_type_changed, ctxt);
+   row++;
+
+   // package manager entry
+   _config_label_add(table, _("Package Manager"), row);
+   o = elm_entry_add(table);
+   elm_table_pack(table, o, 1, row, 1, 1);
+   elm_entry_scrollable_set(o, EINA_TRUE);
+   elm_entry_single_line_set(o, EINA_TRUE);
+   elm_object_text_set(o, ctxt->config->manager_command);
+   E_FILL(o); E_EXPAND(o);
+   evas_object_show(o);
+   evas_object_smart_callback_add(o, "changed,user", _config_manager_changed, ctxt);
+   row++;
+
+   // Show the popup (really! this should be handled by the gadget system)
+   E_Zone *zone = e_zone_current_get();
+   popup = e_comp_object_util_add(popup, E_COMP_OBJECT_TYPE_NONE);
+   evas_object_layer_set(popup, E_LAYER_POPUP);
+   evas_object_move(popup, zone->x, zone->y);
+   evas_object_resize(popup, zone->w / 4, zone->h / 3);
+   e_comp_object_util_center(popup);
+   evas_object_show(popup);
+   e_comp_object_util_autoclose(popup, NULL, e_comp_object_util_autoclose_on_escape, NULL);
+   //evas_object_event_callback_add(popup, EVAS_CALLBACK_DEL, _config_close, NULL);
+
+   return popup;
 }
