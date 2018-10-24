@@ -1419,13 +1419,50 @@ _site_longpress_menu(void *data)
    return EINA_FALSE;
 }
 
+static Eina_Bool
+_site_mouse_up_handle(E_Gadget_Site *zgs, int t EINA_UNUSED, Ecore_Event_Mouse_Button *ev)
+{
+   if (e_bindings_mouse_up_ecore_event_handle(E_BINDING_CONTEXT_ANY, zgs->action->e_obj_inherit, ev))
+     {
+        evas_object_pointer_mode_set(zgs->events, EVAS_OBJECT_POINTER_MODE_NOGRAB);
+        zgs->action = NULL;
+        E_FREE_FUNC(zgs->mouse_up_handler, ecore_event_handler_del);
+     }
+   return ECORE_CALLBACK_RENEW;
+}
+
 static void
 _site_mouse_down(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info)
 {
    E_Gadget_Site *zgs = data;
+   E_Gadget_Config *zgc;
    Evas_Event_Mouse_Down *ev = event_info;
+   E_Action *act;
 
    if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return;
+   zgc = _gadget_at_xy(zgs, ev->output.x, ev->output.y, NULL);
+   if (zgc)
+     {
+        ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
+        act = e_bindings_mouse_down_evas_event_handle(E_BINDING_CONTEXT_ANY, zgc->e_obj_inherit, event_info);
+        if (!act) ev->event_flags &= ~EVAS_EVENT_FLAG_ON_HOLD;
+	else if (act->func.end_mouse)
+          {
+             int x, y;
+
+             evas_object_pointer_mode_set(obj, EVAS_OBJECT_POINTER_MODE_NOGRAB_NO_REPEAT_UPDOWN);
+             zgs->action = zgc;
+             if (!zgs->mouse_up_handler)
+               zgs->mouse_up_handler = ecore_event_handler_add(ECORE_EVENT_MOUSE_BUTTON_UP, (Ecore_Event_Handler_Cb)_site_mouse_up_handle, zgs);
+
+             evas_object_geometry_get(zgc->display, &x, &y, NULL, NULL);
+             zgc->offset.x = ev->canvas.x - x;
+             zgc->offset.y = ev->canvas.y - y;
+             zgc->down.x = ev->canvas.x;
+             zgc->down.y = ev->canvas.y;
+          }
+	if (act) return;
+     }
    if (ev->button == 1)
      {
         zgs->longpressed = EINA_FALSE;
