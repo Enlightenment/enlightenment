@@ -1488,7 +1488,7 @@ _site_mouse_move(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, 
 
         dx = ev->cur.canvas.x - zgs->down_1_x;
         dy = ev->cur.canvas.y - zgs->down_1_y;
-        if (((dx * dx) + (dy * dy)) >= (5 * 5))
+        if (((dx * dx) >= 3) || ((dy * dy) >= 3))
           {
              E_FREE_FUNC(zgs->down_timer, ecore_timer_del);
           }
