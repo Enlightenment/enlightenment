@@ -909,6 +909,22 @@ _bryce_context(Evas_Object *site, Evas_Object *g, unsigned int timestamp)
 }
 
 static void
+_bryce_context_cancel(Evas_Object *site, Evas_Object *g, unsigned int timestamp)
+{
+   Bryce *b = evas_object_data_get(site, "__bryce");
+   if (b)
+     {
+        b->last_timestamp = timestamp;
+        if (b->menu)
+          {
+             e_menu_deactivate(b->menu);
+             e_object_del(E_OBJECT(b->menu));
+             b->menu = NULL;
+          }
+     }
+}
+
+static void
 _bryce_orient(Bryce *b)
 {
    char buf[1024];
@@ -921,7 +937,7 @@ _bryce_orient(Bryce *b)
    E_FILL(b->site);
    evas_object_data_set(b->site, "__bryce", b);
    elm_object_content_set(b->scroller, b->site);
-   e_gadget_site_owner_setup(b->site, b->anchor, _bryce_style, _bryce_context);
+   e_gadget_site_owner_setup(b->site, b->anchor, _bryce_style, _bryce_context, _bryce_context_cancel);
    if (b->orient == E_GADGET_SITE_ORIENT_HORIZONTAL)
      {
         elm_layout_signal_emit(b->layout, "e,state,orient,horizontal", "e");

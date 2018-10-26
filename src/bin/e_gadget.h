@@ -108,7 +108,7 @@ E_API Evas_Object *e_gadget_site_add(E_Gadget_Site_Orient orient, const char *na
 E_API Evas_Object *e_gadget_site_auto_add(E_Gadget_Site_Orient orient, const char *name);
 E_API void e_gadget_site_del(Evas_Object *obj);
 E_API E_Gadget_Site_Anchor e_gadget_site_anchor_get(Evas_Object *obj);
-E_API void e_gadget_site_owner_setup(Evas_Object *obj, E_Gadget_Site_Anchor an, E_Gadget_Style_Cb cb, E_Gadget_Context_Cb context_cb);
+E_API void e_gadget_site_owner_setup(Evas_Object *obj, E_Gadget_Site_Anchor an, E_Gadget_Style_Cb cb, E_Gadget_Context_Cb context_cb, E_Gadget_Context_Cb context_cancel_cb);
 E_API E_Gadget_Site_Orient e_gadget_site_orient_get(Evas_Object *obj);
 E_API E_Gadget_Site_Gravity e_gadget_site_gravity_get(Evas_Object *obj);
 E_API void e_gadget_site_gravity_set(Evas_Object *obj, E_Gadget_Site_Gravity gravity);

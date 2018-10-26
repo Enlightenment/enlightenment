@@ -34,6 +34,7 @@ typedef struct E_Gadget_Site
    Eina_Inlist *gadget_list;
 
    Eina_Bool longpressed : 1;
+   Eina_Bool dragged : 1;
    Evas_Coord down_1_x, down_1_y, down_3_x, down_3_y;
    Ecore_Timer *down_timer;
 
@@ -41,6 +42,7 @@ typedef struct E_Gadget_Site
    Evas_Object *events;
    E_Gadget_Style_Cb style_cb;
    E_Gadget_Context_Cb context_cb;
+   E_Gadget_Context_Cb context_cancel_cb;
    int cur_size;
    Ecore_Job *calc_job;
 
@@ -1178,7 +1180,7 @@ _gadget_act_move(E_Object *obj, const char *params EINA_UNUSED, E_Binding_Event_
    zgc = evas_object_data_get(g, "__e_gadget");
    zgc->moving = 1;
    _editor_pointer_site_init(zgc->site->orient, NULL, NULL, 1);
-   e_gadget_site_owner_setup(pointer_site, zgc->site->anchor, NULL, NULL);
+   e_gadget_site_owner_setup(pointer_site, zgc->site->anchor, NULL, NULL, NULL);
    ZGS_GET(pointer_site);
    if (zgc->external.domain)
      _gadget_util_add(zgs, zgc->external.domain, zgc->external.type, zgc->id);
@@ -1404,6 +1406,20 @@ _gadget_menu(Evas_Object *g, unsigned int timestamp)
    evas_object_smart_callback_call(zgc->site->layout, "gadget_site_popup", zgc->menu->comp_object);
 }
 
+static void
+_gadget_menu_cancel(Evas_Object *g, unsigned int timestamp EINA_UNUSED)
+{
+   E_Gadget_Config *zgc;
+
+   zgc = evas_object_data_get(g, "__e_gadget");
+   if (zgc->menu)
+     {
+        e_menu_deactivate(zgc->menu);
+        e_object_del(E_OBJECT(zgc->menu));
+        zgc->menu = NULL;
+     }
+}
+
 static Eina_Bool
 _site_longpress_menu(void *data)
 {
@@ -1466,6 +1482,7 @@ _site_mouse_down(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, 
    if (ev->button == 1)
      {
         zgs->longpressed = EINA_FALSE;
+        zgs->dragged = EINA_FALSE;
         zgs->down_1_x = ev->canvas.x;
         zgs->down_1_y = ev->canvas.y;
         E_FREE_FUNC(zgs->down_timer, ecore_timer_del);
@@ -1488,8 +1505,12 @@ _site_mouse_up(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, vo
    if (ev->button == 1)
      {
         E_FREE_FUNC(zgs->down_timer, ecore_timer_del);
-        if (zgs->longpressed)
-          ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
+        if ((zgs->longpressed) || (zgs->dragged))
+          {
+             ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
+             zgs->longpressed = EINA_FALSE;
+             zgs->dragged = EINA_FALSE;
+          }
      }
    else if (ev->button == 3)
      {
@@ -1517,9 +1538,8 @@ _site_mouse_move(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, 
    Evas_Event_Mouse_Move *ev = event_info;
 
    if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return;
-   if (zgs->longpressed) return;
 
-   if (zgs->down_timer)
+   if ((zgs->down_timer) || (zgs->longpressed))
      {
         Evas_Coord dx, dy;
 
@@ -1527,7 +1547,20 @@ _site_mouse_move(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, 
         dy = ev->cur.canvas.y - zgs->down_1_y;
         if (((dx * dx) >= 3) || ((dy * dy) >= 3))
           {
-             E_FREE_FUNC(zgs->down_timer, ecore_timer_del);
+             if (zgs->down_timer)
+               {
+                  E_FREE_FUNC(zgs->down_timer, ecore_timer_del);
+               }
+             if (!zgs->dragged)
+               {
+                  E_Gadget_Config *zgc;
+                  Evas_Object *g = NULL;
+
+                  zgs->dragged = EINA_TRUE;
+                  zgc = _gadget_at_xy(zgs, zgs->down_1_x, zgs->down_1_y, NULL);
+                  if (zgc) g = zgc->gadget;
+                  if (zgs->context_cancel_cb) zgs->context_cancel_cb(zgs->layout, g, ev->timestamp);
+               }
           }
      }
 }
@@ -2005,7 +2038,7 @@ e_gadget_site_anchor_get(Evas_Object *obj)
 }
 
 E_API void
-e_gadget_site_owner_setup(Evas_Object *obj, E_Gadget_Site_Anchor an, E_Gadget_Style_Cb cb, E_Gadget_Context_Cb context_cb)
+e_gadget_site_owner_setup(Evas_Object *obj, E_Gadget_Site_Anchor an, E_Gadget_Style_Cb cb, E_Gadget_Context_Cb context_cb, E_Gadget_Context_Cb context_cancel_cb)
 {
    Evas_Object *parent;
    ZGS_GET(obj);
@@ -2013,6 +2046,7 @@ e_gadget_site_owner_setup(Evas_Object *obj, E_Gadget_Site_Anchor an, E_Gadget_St
    zgs->anchor = an;
    zgs->style_cb = cb;
    zgs->context_cb = context_cb;
+   zgs->context_cancel_cb = context_cancel_cb;
    evas_object_smart_callback_call(zgs->layout, "gadget_site_anchor", NULL);
    parent = evas_object_smart_parent_get(obj);
    if (parent)
@@ -2588,6 +2622,12 @@ _desktop_gadget_context(Evas_Object *site EINA_UNUSED, Evas_Object *g, unsigned 
    if (g) _gadget_menu(g, timestamp);
 }
 
+static void
+_desktop_gadget_context_cancel(Evas_Object *site EINA_UNUSED, Evas_Object *g, unsigned int timestamp)
+{
+   if (g) _gadget_menu_cancel(g, timestamp);
+}
+
 EINTERN void
 e_gadget_init(void)
 {
@@ -2659,6 +2699,7 @@ e_gadget_init(void)
    evas_object_event_callback_add(e_comp->canvas->resize_object, EVAS_CALLBACK_RESIZE, _comp_site_resize, comp_site);
    ZGS_GET(comp_site);
    zgs->context_cb = _desktop_gadget_context;
+   zgs->context_cancel_cb = _desktop_gadget_context_cancel;
    evas_object_layer_set(comp_site, E_LAYER_DESKTOP);
    evas_object_resize(comp_site, e_comp->w, e_comp->h);
 #ifdef HAVE_WAYLAND
