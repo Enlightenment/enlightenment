@@ -29,7 +29,7 @@ struct _E_Config_Dialog_Data
       Evas_Object *ob1, *ob2, *ob3;
       Eina_List   *popup_list, *urgent_list;
    } gui;
-   int drag_resist, flip_desk, show_desk_names;
+   int flip_desk, show_desk_names;
    E_Config_Dialog *cfd;
 };
 
@@ -98,7 +98,6 @@ _fill_data(E_Config_Dialog_Data *cfdata)
    cfdata->popup.urgent_speed = pager_config->popup_urgent_speed;
    cfdata->popup.height = pager_config->popup_height;
    cfdata->popup.act_height = pager_config->popup_act_height;
-   cfdata->drag_resist = pager_config->drag_resist;
    cfdata->btn.drag = pager_config->btn_drag;
    cfdata->btn.noplace = pager_config->btn_noplace;
    cfdata->btn.desk = pager_config->btn_desk;
@@ -186,11 +185,6 @@ _adv_create(E_Config_Dialog *cfd, Evas *evas, E_Config_Dialog_Data *cfdata)
    e_widget_list_object_append(ol, ow, 1, 0, 0.5);
    ow = e_widget_check_add(evas, _("Always show desktop names"),
                            &(cfdata->show_desk_names));
-   e_widget_list_object_append(ol, ow, 1, 0, 0.5);
-   ow = e_widget_label_add(evas, _("Resistance to dragging"));
-   e_widget_list_object_append(ol, ow, 1, 0, 0.5);
-   ow = e_widget_slider_add(evas, 1, 0, _("%.0f pixels"), 0.0, 10.0, 1.0, 0, NULL,
-                            &(cfdata->drag_resist), 100);
    e_widget_list_object_append(ol, ow, 1, 0, 0.5);
 
 #if 0
@@ -302,7 +296,6 @@ _adv_apply(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfdata)
    pager_config->show_desk_names = cfdata->show_desk_names;
    pager_config->popup_height = cfdata->popup.height;
    pager_config->popup_act_height = cfdata->popup.act_height;
-   pager_config->drag_resist = cfdata->drag_resist;
    pager_config->btn_drag = cfdata->btn.drag;
    pager_config->btn_noplace = cfdata->btn.noplace;
    pager_config->btn_desk = cfdata->btn.desk;
@@ -328,7 +321,6 @@ _adv_check_changed(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfdat
    if ((int)pager_config->show_desk_names != cfdata->show_desk_names) return 1;
    if (pager_config->popup_height != cfdata->popup.height) return 1;
    if (pager_config->popup_act_height != cfdata->popup.act_height) return 1;
-   if ((int)pager_config->drag_resist != cfdata->drag_resist) return 1;
    if (pager_config->btn_drag != cfdata->btn.drag) return 1;
    if (pager_config->btn_noplace != cfdata->btn.noplace) return 1;
    if (pager_config->btn_desk != cfdata->btn.desk) return 1;

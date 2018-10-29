@@ -1514,11 +1514,8 @@ _site_mouse_up(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, vo
      }
    else if (ev->button == 3)
      {
-        Evas_Coord dx, dy;
-
-        dx = ev->canvas.x - zgs->down_3_x;
-        dy = ev->canvas.y - zgs->down_3_y;
-        if (((dx * dx) + (dy * dy)) < (5 * 5))
+        if (!is_dragged(ev->canvas.x - zgs->down_3_x,
+                        ev->canvas.y - zgs->down_3_y))
           {
              E_Gadget_Config *zgc;
              Evas_Object *g = NULL;
@@ -1541,11 +1538,8 @@ _site_mouse_move(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, 
 
    if ((zgs->down_timer) || (zgs->longpressed))
      {
-        Evas_Coord dx, dy;
-
-        dx = ev->cur.canvas.x - zgs->down_1_x;
-        dy = ev->cur.canvas.y - zgs->down_1_y;
-        if (((dx * dx) + (dy * dy)) >= (5 * 5))
+        if (is_dragged(ev->cur.canvas.x - zgs->down_1_x,
+                       ev->cur.canvas.y - zgs->down_1_y))
           {
              if (zgs->down_timer)
                {

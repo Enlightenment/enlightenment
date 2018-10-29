@@ -1162,8 +1162,6 @@ _pager_window_cb_mouse_move(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EI
    Evas_Coord x, y, w, h;
    const char *drag_types[] =
    { "enlightenment/pager_win", "enlightenment/border" };
-   Evas_Coord dx, dy;
-   unsigned int resist = 0;
 
    ev = event_info;
    pw = data;
@@ -1176,13 +1174,8 @@ _pager_window_cb_mouse_move(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EI
    /* prevent drag for a few pixels */
    if (!pw->drag.start) return;
 
-   dx = pw->drag.x - ev->cur.output.x;
-   dy = pw->drag.y - ev->cur.output.y;
-   if (pw->desk->pager)
-     resist = pager_config->drag_resist;
-
-   if (((unsigned int)(dx * dx) + (unsigned int)(dy * dy)) <=
-       (resist * resist)) return;
+   if (!is_dragged(pw->drag.x - ev->cur.output.x,
+                   pw->drag.y - ev->cur.output.y)) return;
 
    pw->desk->pager->dragging = 1;
    pw->drag.start = 0;
@@ -1581,8 +1574,6 @@ _pager_desk_cb_mouse_move(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA
 {
    Evas_Event_Mouse_Move *ev;
    Pager_Desk *pd;
-   Evas_Coord dx, dy;
-   unsigned int resist = 0;
    E_Drag *drag;
    Evas_Object *o;
    Evas_Coord x, y, w, h;
@@ -1595,13 +1586,8 @@ _pager_desk_cb_mouse_move(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA
    /* prevent drag for a few pixels */
    if (pd->drag.start)
      {
-        dx = pd->drag.x - ev->cur.output.x;
-        dy = pd->drag.y - ev->cur.output.y;
-        if ((pd->pager) && (pd->pager->inst))
-          resist = pager_config->drag_resist;
-
-        if (((unsigned int)(dx * dx) + (unsigned int)(dy * dy)) <=
-            (resist * resist)) return;
+        if (!is_dragged(pd->drag.x - ev->cur.output.x,
+                        pd->drag.y - ev->cur.output.y)) return;
 
         if (pd->pager) pd->pager->dragging = 1;
         pd->drag.start = 0;

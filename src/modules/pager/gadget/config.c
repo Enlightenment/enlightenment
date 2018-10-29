@@ -20,7 +20,6 @@ struct _Config_Objects
    Evas_Object   *o_show_desk_names;
    Evas_Object   *o_popup_act_height;
    Evas_Object   *o_popup_height;
-   Evas_Object   *o_drag_resist;
    Evas_Object   *o_btn_drag;
    Evas_Object   *o_btn_noplace;
    Evas_Object   *o_btn_desk;
@@ -101,8 +100,6 @@ _config_value_changed(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void
      elm_slider_value_get(pager_gadget_config_objects->o_popup_height);
    pager_config->popup_act_height =
      elm_slider_value_get(pager_gadget_config_objects->o_popup_act_height);
-   pager_config->drag_resist =
-     elm_slider_value_get(pager_gadget_config_objects->o_drag_resist);
    val = elm_check_state_get(pager_gadget_config_objects->o_permanent);
    if (val != pager_config->permanent_plain)
      changed = EINA_TRUE;
@@ -349,26 +346,6 @@ _config_create_pages(Evas_Object *parent)
                                   _config_value_changed, NULL);
    evas_object_show(ow);
    pager_gadget_config_objects->o_show_desk_names = ow;
-
-   ow = elm_label_add(m);
-   elm_object_text_set(ow, _("Resistance to dragging"));
-   elm_table_pack(tb, ow, 0, 3, 1, 1);
-   E_ALIGN(ow, 0.0, 0.0);
-   E_WEIGHT(ow, EVAS_HINT_EXPAND, 0);
-   evas_object_show(ow);
-
-   ow = elm_slider_add(tb);
-   elm_slider_min_max_set(ow, 0, 10);
-   elm_slider_step_set(ow, 1);
-   elm_slider_value_set(ow, pager_config->drag_resist);
-   elm_slider_unit_format_set(ow, _("%.0f pixels"));
-   elm_table_pack(tb, ow, 0, 4, 1, 1);
-   E_ALIGN(ow, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   E_WEIGHT(ow, EVAS_HINT_EXPAND, 0);
-   evas_object_smart_callback_add(ow, "delay,changed",
-                                  _config_value_changed, NULL);
-   evas_object_show(ow);
-   pager_gadget_config_objects->o_drag_resist = ow;
 
 #if 0
    ow = elm_label_add(m);
