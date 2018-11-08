@@ -262,6 +262,7 @@ _bar_icon_del(Instance *inst, Icon *ic)
    E_FREE(ic);
 }
 
+#if 0
 static void
 _bar_icon_menu_icon_mouse_out(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj, void *event_data EINA_UNUSED)
 {
@@ -357,6 +358,7 @@ _bar_icon_menu_item_new(Icon *ic, Evas_Object *popup, Evas_Object *parent, const
 
    return layout;
 }
+#endif
 
 static void
 _bar_icon_drag_done(E_Drag *drag, int dropped)
