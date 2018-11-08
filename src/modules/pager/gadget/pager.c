@@ -81,7 +81,6 @@ static void         _pager_cb_mirror_add(Pager_Desk *pd, Evas_Object *obj, Evas_
 
 static void         _pager_cb_obj_show(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED);
 static void         _pager_cb_obj_hide(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED);
-static void         _button_cb_mouse_down(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info);
 static Evas_Object *_pager_gadget_configure(Evas_Object *g);
 static Eina_Bool    _pager_cb_event_powersave_change(void *data EINA_UNUSED, int type EINA_UNUSED, void *event);
 static Eina_Bool    _pager_cb_event_desk_show(void *data EINA_UNUSED, int type EINA_UNUSED, void *event);
