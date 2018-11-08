@@ -909,7 +909,7 @@ _bryce_context(Evas_Object *site, Evas_Object *g, unsigned int timestamp)
 }
 
 static void
-_bryce_context_cancel(Evas_Object *site, Evas_Object *g, unsigned int timestamp)
+_bryce_context_cancel(Evas_Object *site, Evas_Object *g EINA_UNUSED, unsigned int timestamp)
 {
    Bryce *b = evas_object_data_get(site, "__bryce");
    if (b)
