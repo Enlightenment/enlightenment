@@ -7785,7 +7785,7 @@ _e_fm2_cb_icon_thumb_dnd_gen(void *data, Evas_Object *obj, void *event_info EINA
    have_alpha = e_icon_alpha_get(obj);
 //   if (_e_fm2_view_mode_get(ic->sd) == E_FM2_VIEW_MODE_LIST)
    {
-      edje_extern_object_aspect_set(obj, EDJE_ASPECT_CONTROL_BOTH, w, h);
+      evas_object_size_hint_aspect_set(obj, EVAS_ASPECT_CONTROL_BOTH, w, h);
    }
    edje_object_part_swallow(o, "e.swallow.icon", obj);
    if (have_alpha)
@@ -7816,8 +7816,7 @@ _e_fm2_cb_icon_thumb_gen(void *data, Evas_Object *obj, void *event_info EINA_UNU
              have_alpha = e_icon_alpha_get(obj);
      //	if (_e_fm2_view_mode_get(ic->sd) == E_FM2_VIEW_MODE_LIST)
              {
-                edje_extern_object_aspect_set(obj,
-                                              EDJE_ASPECT_CONTROL_BOTH, w, h);
+                evas_object_size_hint_aspect_set(obj, EVAS_ASPECT_CONTROL_BOTH, w, h);
              }
              edje_object_part_swallow(ic->obj, "e.swallow.icon", obj);
              if (have_alpha)
