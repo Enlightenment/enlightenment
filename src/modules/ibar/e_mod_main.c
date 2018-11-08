@@ -1357,7 +1357,7 @@ _ibar_icon_menu_client_add(IBar_Icon *ic, E_Client *ec)
    h = ec->client.h;
    e_comp_object_util_del_list_append(ic->menu->comp_object, img);
    evas_object_show(img);
-   edje_extern_object_aspect_set(img, EDJE_ASPECT_CONTROL_BOTH, w, h);
+   evas_object_size_hint_aspect_set(img, EVAS_ASPECT_CONTROL_BOTH, w, h);
    edje_object_part_swallow(it, "e.swallow.icon", img);
    edje_object_part_text_set(it, "e.text.title", txt);
    if (ec->focused)
