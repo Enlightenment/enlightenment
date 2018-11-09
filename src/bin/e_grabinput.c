@@ -14,6 +14,9 @@ static double last_focus_time = 0.0;
 static Ecore_Window focus_fix_win = 0;
 static E_Focus_Method focus_fix_method = E_FOCUS_METHOD_NO_INPUT;
 
+static void (*lost_cb) (void *data) = NULL;
+static void *lost_data = NULL;
+
 /* externally accessible functions */
 EINTERN int
 e_grabinput_init(void)
@@ -27,9 +30,18 @@ e_grabinput_shutdown(void)
    return 1;
 }
 
+E_API void
+e_grabinput_lost_cb_set(void (*cb) (void *data), void *data)
+{
+   lost_cb = cb;
+   lost_data = data;
+}
+
 E_API int
 e_grabinput_get(Ecore_Window mouse_win, int confine_mouse, Ecore_Window key_win)
 {
+   Eina_Bool ungrabbed = EINA_FALSE;
+
    if (grab_mouse_win)
      {
 #ifndef HAVE_WAYLAND_ONLY
@@ -37,6 +49,7 @@ e_grabinput_get(Ecore_Window mouse_win, int confine_mouse, Ecore_Window key_win)
           ecore_x_pointer_ungrab();
 #endif
         grab_mouse_win = 0;
+        ungrabbed = EINA_TRUE;
      }
    if (grab_key_win)
      {
@@ -47,6 +60,13 @@ e_grabinput_get(Ecore_Window mouse_win, int confine_mouse, Ecore_Window key_win)
 
         grab_key_win = 0;
         focus_win = 0;
+        ungrabbed = EINA_TRUE;
+     }
+   if (ungrabbed)
+     {
+        if (lost_cb) lost_cb(lost_data);
+        lost_cb = NULL;
+        lost_data = NULL;
      }
    if (mouse_win)
      {

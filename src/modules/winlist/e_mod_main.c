@@ -4,6 +4,7 @@
 /* actual module specifics */
 static void _e_mod_action_winlist_cb(E_Object *obj, const char *params);
 static Eina_Bool _e_mod_action_winlist_mouse_cb(E_Object *obj, const char *params, E_Binding_Event_Mouse_Button *ev);
+static Eina_Bool _e_mod_action_winlist_wheel_cb(E_Object *obj, const char *params, E_Binding_Event_Wheel *ev);
 static void _e_mod_action_winlist_key_cb(E_Object *obj, const char *params, Ecore_Event_Key *ev);
 static void _e_mod_action_winlist_edge_cb(E_Object *obj, const char *params, E_Event_Zone_Edge *ev);
 static void _e_mod_action_winlist_signal_cb(E_Object *obj, const char *params, const char *sig, const char *src);
@@ -34,6 +35,7 @@ e_modapi_init(E_Module *m)
      {
         _act_winlist->func.go = _e_mod_action_winlist_cb;
         _act_winlist->func.go_mouse = _e_mod_action_winlist_mouse_cb;
+        _act_winlist->func.go_wheel = _e_mod_action_winlist_wheel_cb;
         _act_winlist->func.go_key = _e_mod_action_winlist_key_cb;
         _act_winlist->func.go_edge = _e_mod_action_winlist_edge_cb;
         _act_winlist->func.go_signal = _e_mod_action_winlist_signal_cb;
@@ -113,7 +115,6 @@ _e_mod_action_winlist_cb_helper(E_Object *obj EINA_UNUSED, const char *params, i
    E_Winlist_Filter filter = E_WINLIST_FILTER_NONE;
    int direction = 0; // -1 for prev, 1 for next;
    int udlr = -1; // 0 for up, 1 for down, 2 for left, 3 for right
-   Eina_Bool ok = EINA_TRUE;
 
    zone = e_zone_current_get();
    if (!zone) return EINA_FALSE;
@@ -143,20 +144,11 @@ _e_mod_action_winlist_cb_helper(E_Object *obj EINA_UNUSED, const char *params, i
      }
    else
      direction = 1;
-   if (direction)
-     ok = !e_winlist_show(zone, filter);
-   if (!ok)
-     {
-        if (!type) return EINA_FALSE;
-        e_winlist_modifiers_set(modifiers, type);
-        return EINA_TRUE;
-     }
-   if (direction == 1)
-     e_winlist_next();
-   else if (direction == -1)
-     e_winlist_prev();
-   else
-     e_winlist_direction_select(zone, udlr);
+   e_winlist_modifiers_set(modifiers, type);
+   if (direction) e_winlist_show(zone, filter);
+   if (direction == 1) e_winlist_next();
+   else if (direction == -1) e_winlist_prev();
+   else e_winlist_direction_select(zone, udlr);
    return EINA_TRUE;
 }
 
@@ -168,6 +160,13 @@ _e_mod_action_winlist_cb(E_Object *obj, const char *params)
 
 static Eina_Bool
 _e_mod_action_winlist_mouse_cb(E_Object *obj, const char *params, E_Binding_Event_Mouse_Button *ev)
+{
+   return _e_mod_action_winlist_cb_helper(obj, params,
+     e_bindings_modifiers_to_ecore_convert(ev->modifiers), E_WINLIST_ACTIVATE_TYPE_MOUSE);
+}
+
+static Eina_Bool
+_e_mod_action_winlist_wheel_cb(E_Object *obj, const char *params, E_Binding_Event_Wheel *ev)
 {
    return _e_mod_action_winlist_cb_helper(obj, params,
      e_bindings_modifiers_to_ecore_convert(ev->modifiers), E_WINLIST_ACTIVATE_TYPE_MOUSE);

@@ -14,6 +14,7 @@ typedef enum _E_Focus_Method
 
 EINTERN int         e_grabinput_init(void);
 EINTERN int         e_grabinput_shutdown(void);
+E_API void           e_grabinput_lost_cb_set(void (*cb) (void *data), void *data);
 E_API int            e_grabinput_get(Ecore_Window mouse_win, int confine_mouse, Ecore_Window key_win);
 E_API void           e_grabinput_release(Ecore_Window mouse_win, Ecore_Window key_win);
 E_API void           e_grabinput_focus(Ecore_Window win, E_Focus_Method method);

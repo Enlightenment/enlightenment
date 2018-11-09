@@ -73,6 +73,12 @@ _wmclass_picked(const Eina_List *lst, const char *wmclass)
    return EINA_FALSE;
 }
 
+static void
+_cb_lost(void *data EINA_UNUSED)
+{
+   e_winlist_hide();
+}
+
 /* externally accessible functions */
 int
 e_winlist_init(void)
@@ -101,7 +107,7 @@ e_winlist_show(E_Zone *zone, E_Winlist_Filter filter)
    E_OBJECT_CHECK_RETURN(zone, 0);
    E_OBJECT_TYPE_CHECK_RETURN(zone, E_ZONE_TYPE, 0);
 
-   if (_winlist) return 0;
+   if (_winlist) return 1;
 
 #ifndef HAVE_WAYLAND_ONLY
    if (e_comp->comp_type == E_PIXMAP_TYPE_X)
@@ -117,6 +123,7 @@ e_winlist_show(E_Zone *zone, E_Winlist_Filter filter)
              _input_window = 0;
              return 0;
           }
+        e_grabinput_lost_cb_set(_cb_lost, NULL);
      }
 #endif
    if (e_comp->comp_type != E_PIXMAP_TYPE_X)
@@ -155,6 +162,7 @@ e_winlist_show(E_Zone *zone, E_Winlist_Filter filter)
 
    evas_event_freeze(e_comp->evas);
    o = edje_object_add(e_comp->evas);
+   evas_object_pass_events_set(o, EINA_TRUE);
    _winlist = e_comp_object_util_add(o, E_COMP_OBJECT_TYPE_POPUP);
    evas_object_layer_set(_winlist, E_LAYER_CLIENT_POPUP);
    evas_object_move(_winlist, x, y);
@@ -561,7 +569,6 @@ e_winlist_direction_select(E_Zone *zone, int dir)
 void
 e_winlist_modifiers_set(int mod, E_Winlist_Activate_Type type)
 {
-   if (!_winlist) return;
    _hold_mod = mod;
    _hold_count = 0;
    _activate_type = type;
