@@ -109,7 +109,7 @@ e_modapi_save(E_Module *m EINA_UNUSED)
 
 /* action callback */
 static Eina_Bool
-_e_mod_action_winlist_cb_helper(E_Object *obj EINA_UNUSED, const char *params, int modifiers, E_Winlist_Activate_Type type)
+_e_mod_action_winlist_cb_helper(E_Object *obj, const char *params, int modifiers, E_Winlist_Activate_Type type)
 {
    E_Zone *zone = NULL;
    E_Winlist_Filter filter = E_WINLIST_FILTER_NONE;
@@ -149,6 +149,8 @@ _e_mod_action_winlist_cb_helper(E_Object *obj EINA_UNUSED, const char *params, i
    if (direction == 1) e_winlist_next();
    else if (direction == -1) e_winlist_prev();
    else e_winlist_direction_select(zone, udlr);
+   if ((obj) && (obj->type == E_CLIENT_TYPE))
+     e_client_next_mouse_action_ignore((E_Client *)obj);
    return EINA_TRUE;
 }
 

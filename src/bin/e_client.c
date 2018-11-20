@@ -2134,6 +2134,8 @@ _e_client_eval(E_Client *ec)
              /* Set this window into moving state */
 
              ec->cur_mouse_action = e_action_find("window_move");
+             if (ec->next_mouse_action_ignore)
+               ec->cur_mouse_action = NULL;
              if (ec->cur_mouse_action)
                {
                   if ((!ec->cur_mouse_action->func.end_mouse) &&
@@ -3030,6 +3032,8 @@ e_client_mouse_down(E_Client *ec, int button, Evas_Point *output, E_Binding_Even
         ec->cur_mouse_action =
           e_bindings_mouse_down_event_handle(E_BINDING_CONTEXT_WINDOW,
                                              E_OBJECT(ec), ev);
+        if (ec->next_mouse_action_ignore)
+          ec->cur_mouse_action = NULL;
         if (ec->cur_mouse_action)
           {
              did_act = EINA_TRUE;
@@ -5605,6 +5609,15 @@ e_client_redirected_set(E_Client *ec, Eina_Bool set)
      }
    e_comp_object_redirected_set(ec->frame, set);
    ec->redirected = !!set;
+}
+
+////////////////////////////////////////////
+
+E_API void
+e_client_next_mouse_action_ignore(E_Client *ec)
+{
+   EINA_SAFETY_ON_NULL_RETURN(ec);
+   ec->next_mouse_action_ignore = EINA_TRUE;
 }
 
 ////////////////////////////////////////////

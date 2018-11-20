@@ -652,6 +652,8 @@ struct E_Client
    unsigned int       internal_no_remember E_BITFIELD;
    unsigned int       internal_no_reopen E_BITFIELD;
 
+   unsigned int       next_mouse_action_ignore E_BITFIELD;
+
    Evas_Object       *internal_elm_win;
 
    double             ping;
@@ -850,6 +852,7 @@ E_API E_Client *e_client_under_pointer_get(E_Desk *desk, E_Client *exclude);
 E_API int e_client_pointer_warp_to_center_now(E_Client *ec);
 E_API int e_client_pointer_warp_to_center(E_Client *ec);
 E_API void e_client_redirected_set(E_Client *ec, Eina_Bool set);
+E_API void e_client_next_mouse_action_ignore(E_Client *ec);
 E_API Eina_Bool e_client_is_stacking(const E_Client *ec);
 E_API Eina_Bool e_client_has_xwindow(const E_Client *ec);
 E_API Eina_Bool e_client_desk_window_profile_available_check(E_Client *ec, const char *profile);
