@@ -10,25 +10,9 @@ static Eina_List *devices = NULL;
 static void
 _adapter_add(Evas_Object *gl, Obj *o)
 {
-   Eina_List *l;
-   Config_Adapter *ad;
    Elm_Object_Item *it = evas_object_data_get(gl, "adapters_item");;
    elm_genlist_item_append(gl, adapt_itc, o, it, ELM_GENLIST_ITEM_NONE,
                             NULL, NULL);
-   if ((ebluez5_config) && (o->address))
-     {
-        EINA_LIST_FOREACH(ebluez5_config->adapters, l, ad)
-          {
-             if (!ad->addr) continue;
-             if (!strcmp(ad->addr, o->address))
-               {
-                  if (ad->powered) bz_obj_power_on(o);
-                  else bz_obj_power_off(o);
-                  if (ad->pairable) bz_obj_pairable(o);
-                  else bz_obj_unpairable(o);
-               }
-          }
-     }
 }
 
 static int
@@ -620,16 +604,56 @@ ebluze5_popup_clear(void)
      }
 }
 
+static Eina_Bool
+_cb_adapter_add_delayed_setup(void *data)
+{
+   char *path = data;
+   Obj *o;
+
+   if (!path) return EINA_FALSE;
+   o = bz_obj_find(path);
+   if ((o) && (o->address))
+     {
+        Eina_List *l;
+        Config_Adapter *ad;
+
+        EINA_LIST_FOREACH(ebluez5_config->adapters, l, ad)
+          {
+             if (!ad->addr) continue;
+             if (!strcmp(ad->addr, o->address))
+               {
+                  if (ad->powered) bz_obj_power_on(o);
+                  else bz_obj_power_off(o);
+                  if (ad->pairable) bz_obj_pairable(o);
+                  else bz_obj_unpairable(o);
+               }
+          }
+     }
+   free(path);
+   return EINA_FALSE;
+}
+
 void
 ebluez5_popup_adapter_add(Obj *o)
 {
    Eina_List *l;
+   Config_Adapter *ad;
    Evas_Object *gl;
 
    adapters = eina_list_append(adapters, o);
    EINA_LIST_FOREACH(lists, l, gl)
      {
         _adapter_add(gl, o);
+     }
+   if ((ebluez5_config) && (o->address))
+     {
+        EINA_LIST_FOREACH(ebluez5_config->adapters, l, ad)
+          {
+             if (!ad->addr) continue;
+             if (!strcmp(ad->addr, o->address))
+               ecore_timer_add(1.0, _cb_adapter_add_delayed_setup,
+                               strdup(o->path));
+          }
      }
    ebluez5_instances_update();
 }
