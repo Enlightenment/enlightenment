@@ -31,7 +31,7 @@
 extern char **environ;
 #endif
 
-double e_sys_l2ping(const char *bluetooth_mac);
+double e_sys_l2ping(const char *bluetooth_mac, int timeout_ms);
 
 /* local subsystem functions */
 #ifdef HAVE_EEZE_MOUNT
@@ -61,7 +61,7 @@ main(int argc,
    int i, gn;
    int test = 0;
    char *action = NULL, *cmd;
-   char *output = NULL;
+   char *output = NULL, *param = NULL;
 #ifdef HAVE_EEZE_MOUNT
    Eina_Bool mnt = EINA_FALSE;
    const char *act = NULL;
@@ -93,6 +93,7 @@ main(int argc,
           {
              action = argv[1];
              output = argv[2];
+             if (argc >= 4) param = argv[3];
           }
         else if (!strcmp(argv[1], "rfkill-unblock"))
           {
@@ -130,7 +131,6 @@ main(int argc,
         exit(1);
      }
    if (!action) exit(1);
-   fprintf(stderr, "action %s %i\n", action, argc);
 
    eina_init();
 
@@ -175,14 +175,18 @@ main(int argc,
    if (!test && !strcmp(action, "l2ping"))
      {
         char tmp[128];
-	double latency;
+        double latency;
+        int timeout = 10 * 1000;
 
-	latency = e_sys_l2ping(output);
+        if (param) timeout = atoi(param);
+        if (timeout < 1) timeout = 1;// min timeout 1ms
+        else if (timeout > (60 * 60 * 1000)) timeout = 60 * 60 * 1000;// max 1h
+        latency = e_sys_l2ping(output, timeout);
 
-	eina_convert_dtoa(latency, tmp);
-	fputs(tmp, stdout);
+        eina_convert_dtoa(latency, tmp);
+        fputs(tmp, stdout);
 
-	return (latency < 0) ? 1 : 0;
+        return (latency < 0) ? 1 : 0;
      }
    /* sanitize environment */
 #ifdef HAVE_UNSETENV
