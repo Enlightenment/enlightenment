@@ -2543,7 +2543,7 @@ ACT_FN_GO(desk_lock, EINA_UNUSED)
 
    zone = _e_actions_zone_get(obj);
    if (zone)*/
-   e_desklock_show(EINA_FALSE);
+   e_desklock_show_manual(EINA_FALSE);
 }
 
 /***************************************************************************/

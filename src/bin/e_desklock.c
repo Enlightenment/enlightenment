@@ -35,6 +35,10 @@ static Eina_List *desklock_ifaces = NULL;
 static E_Desklock_Interface *current_iface = NULL;
 static Eina_Bool demo = EINA_FALSE;
 
+static Eina_Bool _e_desklock_want = EINA_FALSE;
+static int _e_desklock_block = 0;
+static Eina_Bool desklock_manual = EINA_FALSE;
+
 /***********************************************************************/
 static Eina_Bool _e_desklock_cb_custom_desklock_exit(void *data EINA_UNUSED, int type EINA_UNUSED, void *event);
 static Eina_Bool _e_desklock_cb_idle_poller(void *data EINA_UNUSED);
@@ -237,8 +241,8 @@ e_desklock_demo(void)
    return EINA_FALSE;
 }
 
-E_API int
-e_desklock_show(Eina_Bool suspend)
+static int
+_desklock_show_internal(Eina_Bool suspend)
 {
    const Eina_List *l;
    E_Event_Desklock *ev;
@@ -372,8 +376,16 @@ fail:
    return 0;
 }
 
-E_API void
-e_desklock_hide(void)
+E_API int
+e_desklock_show(Eina_Bool suspend)
+{
+   _e_desklock_want = EINA_TRUE;
+   if ((_e_desklock_block > 0) && (!desklock_manual)) return;
+   return _desklock_show_internal(suspend);
+}
+
+static void
+_desklock_hide_internal(void)
 {
    Eina_List *l;
    E_Event_Desklock *ev;
@@ -458,10 +470,58 @@ e_desklock_hide(void)
    if (getenv("E_START_MANAGER")) kill(getppid(), SIGHUP);
 }
 
+E_API int
+e_desklock_show_manual(Eina_Bool suspend)
+{
+   desklock_manual = EINA_TRUE;
+   return e_desklock_show(suspend);
+}
+
+E_API Eina_Bool
+e_desklock_manual_get(void)
+{
+   return desklock_manual;
+}
+
+E_API void
+e_desklock_hide(void)
+{
+   desklock_manual = EINA_FALSE;
+   _e_desklock_want = EINA_FALSE;
+   _desklock_hide_internal();
+}
+
 E_API Eina_Bool
 e_desklock_state_get(void)
 {
    return _e_desklock_state;
+}
+
+E_API void
+e_desklock_block(void)
+{
+   _e_desklock_block++;
+   if (_e_desklock_block == 1)
+     {
+        if (!desklock_manual)
+          {
+             if (_e_desklock_state) _desklock_hide_internal();
+          }
+     }
+}
+
+E_API void
+e_desklock_unblock(void)
+{
+   _e_desklock_block--;
+   if (_e_desklock_block == 0)
+     {
+        if (_e_desklock_want) e_desklock_show(EINA_FALSE);
+     }
+   else if (_e_desklock_block < 0)
+     {
+        ERR("desklock block going below zero");
+     }
 }
 
 static Eina_Bool

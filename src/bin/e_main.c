@@ -820,7 +820,7 @@ main(int argc, char **argv)
 
    if (waslocked || (locked && ((!after_restart))))
      {
-        e_desklock_show(EINA_TRUE);
+        e_desklock_show_manual(EINA_TRUE);
         e_screensaver_update();
      }
 

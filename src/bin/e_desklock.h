@@ -49,8 +49,13 @@ EINTERN int e_desklock_shutdown(void);
 E_API Eina_Bool e_desklock_demo(void);
 E_API int e_desklock_show(Eina_Bool suspend);
 E_API int e_desklock_show_autolocked(void);
+E_API int e_desklock_show_manual(Eina_Bool suspend);
+E_API Eina_Bool e_desklock_manual_get(void);
 E_API void e_desklock_hide(void);
 E_API Eina_Bool e_desklock_state_get(void);
+
+E_API void e_desklock_block(void);
+E_API void e_desklock_unblock(void);
 
 E_API void e_desklock_interface_append(E_Desklock_Interface *iface);
 E_API void e_desklock_interface_remove(E_Desklock_Interface *iface);
