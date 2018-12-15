@@ -286,6 +286,12 @@ cb_obj_prop_changed(void *data EINA_UNUSED, const Eldbus_Message *msg EINA_UNUSE
    eldbus_proxy_property_get_all(o->proxy, cb_obj_prop, o);
 }
 
+static void
+cb_obj_discovery_filter(void *data EINA_UNUSED, const Eldbus_Message *msg, Eldbus_Pending *pending EINA_UNUSED)
+{
+   ERR_PRINT("Discovery Filter Clear");
+}
+
 Obj *
 bz_obj_add(const char *path)
 {
@@ -339,6 +345,9 @@ bz_obj_add(const char *path)
                o->prop_sig = eldbus_proxy_signal_handler_add(o->prop_proxy,
                                                              "PropertiesChanged",
                                                              cb_obj_prop_changed, o);
+             // disable the filter for discovery later
+             eldbus_proxy_call
+               (o->proxy, "SetDiscoveryFilter", cb_obj_discovery_filter, o, -1, "");
           }
         goto done;
      }
@@ -526,6 +535,157 @@ bz_obj_disconnect(Obj *o)
    eldbus_proxy_call
      (o->proxy, "Disconnect", cb_disconnect, o, -1, "");
 }
+
+static Eina_Bool
+cb_ping_exit(void *data, int type EINA_UNUSED, void *event)
+{
+   Obj *o = data;
+   Ecore_Exe_Event_Del *ev = event;
+
+   printf("@@@EXE EXIT.. %p == %p\n", ev->exe, o->ping_exe);
+   if (ev->exe != o->ping_exe) return ECORE_CALLBACK_PASS_ON;
+   printf("@@@PING RESULT... %i\n", ev->exit_code);
+   o->ping_exe = NULL;
+   if (ev->exit_code == 0)
+     {
+        if (!o->ping_ok)
+          {
+             printf("@@@PING SUCCEED\n");
+             o->ping_ok = EINA_TRUE;
+             if (o->fn_change) o->fn_change(o);
+          }
+     }
+   else
+     {
+        if (o->ping_ok)
+          {
+             printf("@@@PING FAIL\n");
+             o->ping_ok = EINA_FALSE;
+             if (o->fn_change) o->fn_change(o);
+          }
+     }
+   return ECORE_CALLBACK_PASS_ON;
+}
+
+static int
+ping_powersave_timeout_get(void)
+{
+   int timeout = 10;
+   E_Powersave_Mode pm = e_powersave_mode_get();
+
+   if      (pm <= E_POWERSAVE_MODE_LOW)     timeout = 5;
+   else if (pm <= E_POWERSAVE_MODE_MEDIUM)  timeout = 8;
+   else if (pm <= E_POWERSAVE_MODE_HIGH)    timeout = 12;
+   else if (pm <= E_POWERSAVE_MODE_EXTREME) timeout = 30;
+   return timeout;
+}
+
+static void
+ping_do(Obj *o)
+{
+   Eina_Strbuf *buf;
+
+   if (!o->ping_exe_handler)
+     o->ping_exe_handler = ecore_event_handler_add(ECORE_EXE_EVENT_DEL,
+                                                   cb_ping_exit, o);
+   buf = eina_strbuf_new();
+   if (buf)
+     {
+        int timeout = ping_powersave_timeout_get();
+
+        timeout *= 1000;
+        eina_strbuf_append_printf
+          (buf, "%s/enlightenment/utils/enlightenment_sys l2ping %s %i",
+           e_prefix_lib_get(), o->address, timeout);
+        o->ping_exe = ecore_exe_run(eina_strbuf_string_get(buf), NULL);
+        eina_strbuf_free(buf);
+        printf("@@@ run new ping %s %i = %p\n", o->address, timeout, o->ping_exe);
+     }
+}
+
+static Eina_Bool cb_ping_timer(void *data);
+
+static void
+ping_schedule(Obj *o)
+{
+   double timeout = ping_powersave_timeout_get() + 1.0;
+
+   if (o->ping_timer) ecore_timer_del(o->ping_timer);
+   o->ping_timer = ecore_timer_add(timeout, cb_ping_timer, o);
+}
+
+static Eina_Bool
+cb_ping_timer(void *data)
+{
+   Obj *o = data;
+
+   printf("@@@ ping timer %s\n", o->address);
+   if (o->ping_exe)
+     {
+        printf("@@@PING TIMEOUT\n");
+        ecore_exe_free(o->ping_exe);
+        o->ping_exe = NULL;
+        if (o->ping_ok)
+          {
+             o->ping_ok = EINA_FALSE;
+             if (o->fn_change) o->fn_change(o);
+          }
+     }
+   ping_do(o);
+   ping_schedule(o);
+   return EINA_TRUE;
+}
+
+void
+bz_obj_ping_begin(Obj *o)
+{
+   if (o->ping_timer) return;
+   if (o->ping_exe_handler)
+     {
+        ecore_event_handler_del(o->ping_exe_handler);
+        o->ping_exe_handler = NULL;
+     }
+   if (o->ping_exe)
+     {
+        ecore_exe_free(o->ping_exe);
+        o->ping_exe = NULL;
+     }
+   ping_do(o);
+   ping_schedule(o);
+ }
+
+void
+bz_obj_ping_end(Obj *o)
+{
+   if (o->ping_exe_handler)
+     {
+        ecore_event_handler_del(o->ping_exe_handler);
+        o->ping_exe_handler = NULL;
+     }
+   if (o->ping_timer)
+     {
+        ecore_timer_del(o->ping_timer);
+        o->ping_timer = NULL;
+     }
+   if (o->ping_exe)
+     {
+        ecore_exe_free(o->ping_exe);
+        o->ping_exe = NULL;
+     }
+   if (o->ping_ok)
+     {
+        printf("@@@PING END %s\n", o->address);
+        o->ping_ok = EINA_FALSE;
+        if (o->fn_change) o->fn_change(o);
+     }
+}
+
+static void
+cb_remove(void *data EINA_UNUSED, const Eldbus_Message *msg EINA_UNUSED, Eldbus_Pending *pending EINA_UNUSED)
+{
+   ERR_PRINT("Remove");
+}
+
 /*
 void
 bz_obj_profile_connect(Obj *o, const char *uuid)
@@ -541,11 +701,6 @@ bz_obj_profile_disconnect(Obj *o, const char *uuid)
    eldbus_proxy_call(o->proxy, "DisconnectProfile", NULL, NULL, -1, "s", uuid);
 }
 */
-static void
-cb_remove(void *data EINA_UNUSED, const Eldbus_Message *msg EINA_UNUSED, Eldbus_Pending *pending EINA_UNUSED)
-{
-   ERR_PRINT("Remove");
-}
 
 void
 bz_obj_remove(Obj *o)
@@ -614,6 +769,21 @@ bz_obj_unref(Obj *o)
      {
         bz_agent_msg_drop(o->agent_msg_ok);
         o->agent_msg_ok = NULL;
+     }
+   if (o->ping_exe_handler)
+     {
+        ecore_event_handler_del(o->ping_exe_handler);
+        o->ping_exe_handler = NULL;
+     }
+   if (o->ping_timer)
+     {
+        ecore_timer_del(o->ping_timer);
+        o->ping_timer = NULL;
+     }
+   if (o->ping_exe)
+     {
+        ecore_exe_free(o->ping_exe);
+        o->ping_exe = NULL;
      }
    free(o);
 }

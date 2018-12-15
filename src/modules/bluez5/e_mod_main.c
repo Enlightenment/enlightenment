@@ -5,6 +5,7 @@ static E_Module *mod = NULL;
 
 /* Local config */
 static E_Config_DD *conf_adapter_edd = NULL;
+static E_Config_DD *conf_device_edd = NULL;
 static E_Config_DD *conf_edd = NULL;
 Config *ebluez5_config = NULL;
 
@@ -332,6 +333,88 @@ ebluez5_instances_update(void)
      }
 }
 
+static void
+_device_prop_clean(Config_Device *dev)
+{
+   if ((!dev->unlock) && (!dev->force_connect))
+     {
+        ebluez5_config->devices = eina_list_remove(ebluez5_config->devices, dev);
+        eina_stringshare_del(dev->addr);
+        free(dev);
+     }
+}
+
+static Config_Device *
+_device_prop_new(const char *address)
+{
+   Config_Device *dev = calloc(1, sizeof(Config_Device));
+   if (!dev) return NULL;
+   dev->addr = eina_stringshare_add(address);
+   if (!dev->addr)
+     {
+        free(dev);
+        return NULL;
+     }
+   ebluez5_config->devices = eina_list_append(ebluez5_config->devices, dev);
+   return dev;
+}
+
+Config_Device *
+ebluez5_device_prop_find(const char *address)
+{
+   Config_Device *dev;
+   Eina_List *l;
+
+   if (!address) return NULL;
+   EINA_LIST_FOREACH(ebluez5_config->devices, l, dev)
+     {
+        if ((dev->addr) && (!strcmp(address, dev->addr)))
+          return dev;
+     }
+   return NULL;
+}
+
+
+void
+ebluez5_device_prop_force_connect_set(const char *address, Eina_Bool enable)
+{
+   Config_Device *dev;
+
+   if (!address) return;
+   dev = ebluez5_device_prop_find(address);
+   if (dev)
+     {
+        dev->force_connect = enable;
+        _device_prop_clean(dev);
+        return;
+     }
+   if (enable)
+     {
+        dev = _device_prop_new(address);
+        dev->force_connect = enable;
+     }
+}
+
+void
+ebluez5_device_prop_unlock_set(const char *address, Eina_Bool enable)
+{
+   Config_Device *dev;
+
+   if (!address) return;
+   dev = ebluez5_device_prop_find(address);
+   if (dev)
+     {
+        dev->unlock = enable;
+        _device_prop_clean(dev);
+        return;
+     }
+   if (enable)
+     {
+        dev = _device_prop_new(address);
+        dev->unlock = enable;
+     }
+}
+
 /////////////////////////////////////////////////////////////////////////////
 
 /* Module Functions */
@@ -349,12 +432,22 @@ e_modapi_init(E_Module *m)
    E_CONFIG_VAL(D, T, powered, UCHAR);
    E_CONFIG_VAL(D, T, pairable, UCHAR);
 
+   conf_device_edd = E_CONFIG_DD_NEW("Config_Device", Config_Device);
+#undef T
+#undef D
+#define T Config_Device
+#define D conf_device_edd
+   E_CONFIG_VAL(D, T, addr, STR);
+   E_CONFIG_VAL(D, T, force_connect, UCHAR);
+   E_CONFIG_VAL(D, T, unlock, UCHAR);
+
    conf_edd = E_CONFIG_DD_NEW("Config", Config);
 #undef T
 #undef D
 #define T Config
 #define D conf_edd
    E_CONFIG_LIST(D, T, adapters, conf_adapter_edd);
+   E_CONFIG_LIST(D, T, devices, conf_device_edd);
 
    ebluez5_config = e_config_domain_load("module.ebluez5", conf_edd);
    if (!ebluez5_config) ebluez5_config = E_NEW(Config, 1);
@@ -372,6 +465,7 @@ E_API int
 e_modapi_shutdown(E_Module *m EINA_UNUSED)
 {
    Config_Adapter *ad;
+   Config_Device *dev;
 
    E_CONFIG_DD_FREE(conf_edd);
    E_CONFIG_DD_FREE(conf_adapter_edd);
@@ -380,6 +474,11 @@ e_modapi_shutdown(E_Module *m EINA_UNUSED)
      {
         eina_stringshare_del(ad->addr);
         free(ad);
+     }
+   EINA_LIST_FREE(ebluez5_config->devices, dev)
+     {
+        eina_stringshare_del(dev->addr);
+        free(dev);
      }
    free(ebluez5_config);
    ebluez5_config = NULL;

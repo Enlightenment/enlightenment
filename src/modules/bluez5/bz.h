@@ -19,6 +19,10 @@ struct _Obj {
    unsigned int ref;
    Eina_Bool in_table : 1;
    Eina_Bool add_called : 1;
+   Eina_Bool ping_ok : 1;
+   Ecore_Timer *ping_timer;
+   Ecore_Exe *ping_exe;
+   Ecore_Event_Handler *ping_exe_handler;
    //// public data to read
    const char *path;
    Obj_Type type;
@@ -196,9 +200,11 @@ void  bz_obj_pair(Obj *o);
 void  bz_obj_pair_cancel(Obj *o);
 void  bz_obj_connect(Obj *o);
 void  bz_obj_disconnect(Obj *o);
+void  bz_obj_ping_begin(Obj *o);
+void  bz_obj_ping_end(Obj *o);
 void  bz_obj_remove(Obj *o);
-void  bz_obj_profile_connect(Obj *o, const char *uuid);
-void  bz_obj_profile_disconnect(Obj *o, const char *uuid);
+//void  bz_obj_profile_connect(Obj *o, const char *uuid);
+//void  bz_obj_profile_disconnect(Obj *o, const char *uuid);
 void  bz_obj_ref(Obj *o);
 void  bz_obj_unref(Obj *o);
 void  bz_obj_discover_start(Obj *o);

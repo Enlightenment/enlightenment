@@ -23,6 +23,7 @@ typedef struct _Config Config;
 struct _Config
 {
    Eina_List *adapters;
+   Eina_List *devices;
 };
 typedef struct _Config_Adapter Config_Adapter;
 struct _Config_Adapter
@@ -30,6 +31,13 @@ struct _Config_Adapter
    const char *addr;
    Eina_Bool powered;
    Eina_Bool pairable;
+};
+typedef struct _Config_Device Config_Device;
+struct _Config_Device
+{
+   const char *addr;
+   Eina_Bool force_connect;
+   Eina_Bool unlock;
 };
 
 extern Config *ebluez5_config;
@@ -44,6 +52,10 @@ void ebluez5_conf_adapter_add(const char *addr, Eina_Bool powered, Eina_Bool pai
 void ebluez5_popups_show(void);
 void ebluez5_rfkill_unblock(const char *name);
 void ebluez5_instances_update(void);
+
+void ebluez5_device_prop_force_connect_set(const char *address, Eina_Bool enable);
+void ebluez5_device_prop_unlock_set(const char *address, Eina_Bool enable);
+Config_Device *ebluez5_device_prop_find(const char *address);
 
 void ebluez5_popup_hide(Instance *inst);
 
