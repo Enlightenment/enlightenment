@@ -870,8 +870,16 @@ _cb_adapter_add_delayed_setup(void *data)
              if (!ad->addr) continue;
              if (!strcmp(ad->addr, o->address))
                {
-                  if (ad->powered) bz_obj_power_on(o);
-                  else bz_obj_power_off(o);
+                  if (ad->powered)
+                    {
+                       printf("==== BZ INIT REQ POWER ON %s\n", o->address);
+                       bz_obj_power_on(o);
+                    }
+                  else
+                    {
+                       printf("==== BZ INIT REQ POWER OFF %s\n", o->address);
+                       bz_obj_power_off(o);
+                    }
                   if (ad->pairable) bz_obj_pairable(o);
                   else bz_obj_unpairable(o);
                }
