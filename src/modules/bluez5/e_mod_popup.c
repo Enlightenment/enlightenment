@@ -873,6 +873,12 @@ _cb_adapter_add_delayed_setup(void *data)
                   if (ad->powered)
                     {
                        printf("==== BZ INIT REQ POWER ON %s\n", o->address);
+                       if (o->path)
+                         {
+                            const char *s = strrchr(o->path, '/');
+
+                            if (s) ebluez5_rfkill_unblock(s + 1);
+                         }
                        bz_obj_power_on(o);
                     }
                   else
