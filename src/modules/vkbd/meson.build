@@ -32,18 +32,20 @@ if get_option(m) == true
         ]
   edc = 'theme'
   custom_target(edc + '.edj',
-                input      : edc + '.edc',
-                output     : edc + '.edj',
-                command    : cmd,
-                install_dir: _dir,
-                install    : true
+                input        : edc + '.edc',
+                output       : edc + '.edj',
+                command      : cmd,
+                install_dir  : _dir,
+                install_mode : 'rw-r--r--',
+                install      : true
                )
   out = join_paths(_dir, edc + '.edj')
-  meson.add_install_script(chmod, 'a+r', out)
 
   install_data(['dicts/English_US_Small.dic',
                 'dicts/English_US.dic'],
-               install_dir: join_paths(_dir, 'dicts'))
+               install_dir  : join_paths(_dir, 'dicts'),
+               install_mode : 'rw-r--r--'
+               )
   install_data(['keyboards/Default.kbd',
                 'keyboards/Numbers.kbd',
                 'keyboards/Terminal.kbd',
@@ -59,5 +61,6 @@ if get_option(m) == true
                 'keyboards/spanner.png',
                 'keyboards/tab.png',
                 'keyboards/up.png'],
-               install_dir: join_paths(_dir, 'keyboards'))
+               install_dir  : join_paths(_dir, 'keyboards'),
+               install_mode : 'rw-r--r--')
 endif
