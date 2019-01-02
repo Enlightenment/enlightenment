@@ -217,7 +217,7 @@ _basic_create_widgets(E_Config_Dialog *cfd EINA_UNUSED, Evas *evas, E_Config_Dia
 #ifdef HAVE_WAYLAND
    if (e_comp->comp_type == E_PIXMAP_TYPE_WL)
      {
-        ob = e_widget_slider_add(evas, 1, 0, _("%1.0f"), -1.0, 1.0, 0.2, 0,
+        ob = e_widget_slider_add(evas, 1, 0, _("%1.1f"), -1.0, 1.0, 0.2, 0,
                                  &(cfdata->numerator), NULL, 100);
      }
 #endif
