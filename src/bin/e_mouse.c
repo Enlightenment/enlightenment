@@ -52,7 +52,10 @@ e_mouse_update(void)
 
         dev = ecore_evas_data_get(e_comp->ee, "device");
         if (dev)
-          ecore_drm2_device_pointer_left_handed_set(dev, (Eina_Bool)!e_config->mouse_hand);
+          {
+             ecore_drm2_device_pointer_left_handed_set(dev, (Eina_Bool)!e_config->mouse_hand);
+             ecore_drm2_device_pointer_accel_speed_set(dev, e_config->mouse_accel_numerator);
+          }
      }
 #endif
    return 1;

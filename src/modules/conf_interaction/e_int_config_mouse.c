@@ -207,8 +207,21 @@ _basic_create_widgets(E_Config_Dialog *cfd EINA_UNUSED, Evas *evas, E_Config_Dia
 
    ob = e_widget_label_add(evas, _("Acceleration"));
    e_widget_framelist_object_append(of, ob);
-   ob = e_widget_slider_add(evas, 1, 0, _("%1.0f"), 1.0, 30.0, 1.0, 0,
-			    &(cfdata->numerator), NULL, 100);
+#ifndef HAVE_WAYLAND_ONLY
+   if (e_comp->comp_type == E_PIXMAP_TYPE_X)
+     {
+        ob = e_widget_slider_add(evas, 1, 0, _("%1.0f"), 1.0, 30.0, 1.0, 0,
+                                 &(cfdata->numerator), NULL, 100);
+     }
+#endif
+#ifdef HAVE_WAYLAND
+   if (e_comp->comp_type == E_PIXMAP_TYPE_WL)
+     {
+        ob = e_widget_slider_add(evas, 1, 0, _("%1.0f"), -1.0, 1.0, 0.2, 0,
+                                 &(cfdata->numerator), NULL, 100);
+     }
+#endif
+
    e_widget_framelist_object_append(of, ob);
 
    ob = e_widget_label_add(evas, _("Threshold"));
