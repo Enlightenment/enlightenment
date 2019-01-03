@@ -2423,6 +2423,10 @@ _pager_desk_cb_mouse_up(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_U
    Pager_Desk *pd;
    Pager *p;
 
+   pd = data;
+
+   if (!pd) return;
+
    if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD)
      {
         pd->drag.start = 0;
@@ -2431,9 +2435,6 @@ _pager_desk_cb_mouse_up(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_U
      }
    if (_pager_check_modifiers(ev->modifiers)) return;
 
-   pd = data;
-
-   if (!pd) return;
    p = pd->pager;
 
    /* FIXME: pd->pager->dragging is 0 when finishing a drag from desk to desk */
