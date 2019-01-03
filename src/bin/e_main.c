@@ -380,6 +380,10 @@ main(int argc, char **argv)
    TS("EFX Init Done");
    _e_main_shutdown_push((void*)e_efx_shutdown);
 
+   /* Eio's eio_init internally calls efreet_init. Set XDG_MENU_PREFIX here      */
+   /* else efreet's efreet_menu_prefix symbol is set erroneously during eio_init. */
+   _xdg_data_dirs_augment();
+
    TS("EIO Init");
    if (!eio_init())
      {
@@ -443,8 +447,6 @@ main(int argc, char **argv)
    _e_main_shutdown_push(ecore_ipc_shutdown);
 
    _idle_before = ecore_idle_enterer_before_add(_e_main_cb_idle_before, NULL);
-
-   _xdg_data_dirs_augment();
 
    TS("Ecore_Evas Init");
    if (!ecore_evas_init())
