@@ -694,7 +694,7 @@ _cb_dev_content_get(void *data EINA_UNUSED, Evas_Object *obj,
           }
 
         bt = util_button_icon_add(obj, "view-more-horizontal",
-                                  _("Options for device like conneect, pair etc."));
+                                  _("Options for device like connect, pair etc."));
         evas_object_data_set(bt, "genlist", obj);
         evas_object_smart_callback_add(bt, "clicked", _cb_flip, o);
         elm_box_pack_end(bx, bt);
