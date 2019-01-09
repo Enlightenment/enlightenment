@@ -1149,7 +1149,6 @@ _e_fwin_page_create(E_Fwin *fwin)
 static void
 _e_fwin_page_free(E_Fwin_Page *page)
 {
-   if (page->fm_obj) evas_object_del(page->fm_obj);
    evas_object_del(page->flist);
    evas_object_del(page->flist_frame);
    if (page->tbar)
@@ -1159,6 +1158,8 @@ _e_fwin_page_free(E_Fwin_Page *page)
         e_object_del(E_OBJECT(page->tbar));
      }
    else evas_object_del(page->scrollframe_obj);
+
+   if (page->fm_obj) evas_object_del(page->fm_obj);
 
    if (page->fm_op_entry_add_handler)
      ecore_event_handler_del(page->fm_op_entry_add_handler);
