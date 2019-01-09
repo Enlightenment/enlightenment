@@ -102,7 +102,6 @@ e_exec_init(void)
 EINTERN int
 e_exec_shutdown(void)
 {
-   e_exehist_startup_id_set(startup_id);
    if (_e_exec_exit_handler) ecore_event_handler_del(_e_exec_exit_handler);
    if (_e_exec_desktop_update_handler)
      ecore_event_handler_del(_e_exec_desktop_update_handler);
