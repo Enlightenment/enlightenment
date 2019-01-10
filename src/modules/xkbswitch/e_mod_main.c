@@ -31,6 +31,8 @@ typedef struct _Instance
    Evas_Object     *o_xkbswitch;
    Evas_Object     *o_xkbflag;
    E_Config_XKB_Layout *layout;
+   unsigned int    lmenu_timestamp;
+   Ecore_Timer     *lmenu_timer;
 
    E_Menu          *lmenu;
 } Instance;
@@ -285,6 +287,139 @@ _xkb_changed_state(void *data EINA_UNUSED, int type EINA_UNUSED, void *event EIN
    return ECORE_CALLBACK_PASS_ON;
 }
 
+static Eina_Bool
+_e_xkb_cb_lmenu(void *data)
+{
+   Instance *inst;
+
+   Evas_Coord x, y, w, h;
+   int cx, cy, dir;
+   E_Menu_Item *mi;
+
+   inst = data;
+   inst->lmenu_timer = NULL;
+
+   /* Coordinates and sizing */
+   evas_object_geometry_get(inst->o_xkbswitch, &x, &y, &w, &h);
+   e_gadcon_canvas_zone_geometry_get(inst->gcc->gadcon, &cx, &cy,
+                                     NULL, NULL);
+   x += cx;
+   y += cy;
+
+   if (!inst->lmenu) inst->lmenu = e_menu_new();
+
+   mi = e_menu_item_new(inst->lmenu);
+
+   e_menu_item_label_set(mi, _("Settings"));
+   e_util_menu_item_theme_icon_set(mi, "preferences-system");
+   e_menu_item_callback_set(mi, _e_xkb_cb_menu_configure, NULL);
+
+   if (!e_config->xkb.dont_touch_my_damn_keyboard)
+     {
+        E_Config_XKB_Layout *cl, *cur;
+        Eina_List *l;
+        char buf[4096];
+
+        mi = e_menu_item_new(inst->lmenu);
+        e_menu_item_separator_set(mi, 1);
+        cur = e_xkb_layout_get();
+
+        /* Append all the layouts */
+        EINA_LIST_FOREACH(e_config->xkb.used_layouts, l, cl)
+          {
+             const char *name = cl->name;
+
+             mi = e_menu_item_new(inst->lmenu);
+
+             e_menu_item_radio_set(mi, 1);
+             e_menu_item_radio_group_set(mi, 1);
+             if (e_config_xkb_layout_eq(cur, cl))
+               e_menu_item_toggle_set(mi, 1);
+             e_xkb_flag_file_get(buf, sizeof(buf), name);
+             e_menu_item_icon_file_set(mi, buf);
+             if (cl->variant)
+               snprintf(buf, sizeof(buf), "%s (%s, %s)", cl->name, cl->model, cl->variant);
+             else
+               snprintf(buf, sizeof(buf), "%s (%s)", cl->name, cl->model);
+             e_menu_item_label_set(mi, buf);
+             e_menu_item_callback_set(mi, _e_xkb_cb_lmenu_set, cl);
+          }
+     }
+
+   /* Deactivate callback */
+   e_menu_post_deactivate_callback_set(inst->lmenu,
+                                       _e_xkb_cb_lmenu_post, inst);
+   /* Proper menu orientation */
+   switch (inst->gcc->gadcon->orient)
+     {
+      case E_GADCON_ORIENT_TOP:
+         dir = E_MENU_POP_DIRECTION_DOWN;
+         break;
+
+      case E_GADCON_ORIENT_BOTTOM:
+         dir = E_MENU_POP_DIRECTION_UP;
+         break;
+
+      case E_GADCON_ORIENT_LEFT:
+         dir = E_MENU_POP_DIRECTION_RIGHT;
+         break;
+
+      case E_GADCON_ORIENT_RIGHT:
+         dir = E_MENU_POP_DIRECTION_LEFT;
+         break;
+
+      case E_GADCON_ORIENT_CORNER_TL:
+         dir = E_MENU_POP_DIRECTION_DOWN;
+         break;
+
+      case E_GADCON_ORIENT_CORNER_TR:
+         dir = E_MENU_POP_DIRECTION_DOWN;
+         break;
+
+      case E_GADCON_ORIENT_CORNER_BL:
+         dir = E_MENU_POP_DIRECTION_UP;
+         break;
+
+      case E_GADCON_ORIENT_CORNER_BR:
+         dir = E_MENU_POP_DIRECTION_UP;
+         break;
+
+      case E_GADCON_ORIENT_CORNER_LT:
+         dir = E_MENU_POP_DIRECTION_RIGHT;
+         break;
+
+      case E_GADCON_ORIENT_CORNER_RT:
+         dir = E_MENU_POP_DIRECTION_LEFT;
+         break;
+
+      case E_GADCON_ORIENT_CORNER_LB:
+         dir = E_MENU_POP_DIRECTION_RIGHT;
+         break;
+
+      case E_GADCON_ORIENT_CORNER_RB:
+         dir = E_MENU_POP_DIRECTION_LEFT;
+         break;
+
+      case E_GADCON_ORIENT_FLOAT:
+      case E_GADCON_ORIENT_HORIZ:
+      case E_GADCON_ORIENT_VERT:
+      default:
+         dir = E_MENU_POP_DIRECTION_AUTO;
+         break;
+     }
+
+   e_gadcon_locked_set(inst->gcc->gadcon, 1);
+
+   /* We display not relatively to the gadget, but similarly to
+    * the start menu - thus the need for direction etc.
+    */
+   e_menu_activate_mouse(inst->lmenu,
+                         e_zone_current_get(),
+                         x, y, w, h, dir, inst->lmenu_timestamp);
+
+   return ECORE_CALLBACK_CANCEL;
+}
+
 static void
 _e_xkb_cb_mouse_down(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event)
 {
@@ -320,132 +455,34 @@ _e_xkb_cb_mouse_down(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj EINA_U
         evas_event_feed_mouse_up(inst->gcc->gadcon->evas, ev->button,
                                  EVAS_BUTTON_NONE, ev->timestamp, NULL);
      }
+
+   else if ((ev->button == 2) /* Middle click */
+            ||
+            ((ev->button == 1) && (ev->flags & EVAS_BUTTON_DOUBLE_CLICK)) /* double Left-click */
+           )
+     {
+        if (inst->lmenu_timer)
+          {
+             ecore_timer_del(inst->lmenu_timer);
+             inst->lmenu_timer = NULL;
+          }
+        e_xkb_layout_next();
+     }
    else if ((ev->button == 1) && (!inst->lmenu)) /* Left-click layout menu */
      {
-        Evas_Coord x, y, w, h;
-        int cx, cy, dir;
-        E_Menu_Item *mi;
-
-        /* Coordinates and sizing */
-        evas_object_geometry_get(inst->o_xkbswitch, &x, &y, &w, &h);
-        e_gadcon_canvas_zone_geometry_get(inst->gcc->gadcon, &cx, &cy,
-                                          NULL, NULL);
-        x += cx;
-        y += cy;
-
-        if (!inst->lmenu) inst->lmenu = e_menu_new();
-
-        mi = e_menu_item_new(inst->lmenu);
-
-        e_menu_item_label_set(mi, _("Settings"));
-        e_util_menu_item_theme_icon_set(mi, "preferences-system");
-        e_menu_item_callback_set(mi, _e_xkb_cb_menu_configure, NULL);
-
-        if (!e_config->xkb.dont_touch_my_damn_keyboard)
+        if (!inst->lmenu_timer)
           {
-             E_Config_XKB_Layout *cl, *cur;
-             Eina_List *l;
-             char buf[4096];
+             inst->lmenu_timestamp = ev->timestamp;
+#ifdef HAVE_WAYLAND_ONLY
+             inst->lmenu_timer = ecore_timer_add(0.25,
+                                                 _e_xkb_cb_lmenu, inst);
+#else
+             inst->lmenu_timer = ecore_timer_add(ecore_x_double_click_time_get(),
+                                                 _e_xkb_cb_lmenu, inst);
+#endif
 
-             mi = e_menu_item_new(inst->lmenu);
-             e_menu_item_separator_set(mi, 1);
-             cur = e_xkb_layout_get();
-
-             /* Append all the layouts */
-             EINA_LIST_FOREACH(e_config->xkb.used_layouts, l, cl)
-               {
-                  const char *name = cl->name;
-
-                  mi = e_menu_item_new(inst->lmenu);
-
-                  e_menu_item_radio_set(mi, 1);
-                  e_menu_item_radio_group_set(mi, 1);
-                  if (e_config_xkb_layout_eq(cur, cl))
-                    e_menu_item_toggle_set(mi, 1);
-                  e_xkb_flag_file_get(buf, sizeof(buf), name);
-                  e_menu_item_icon_file_set(mi, buf);
-                  if (cl->variant)
-                    snprintf(buf, sizeof(buf), "%s (%s, %s)", cl->name, cl->model, cl->variant);
-                  else
-                    snprintf(buf, sizeof(buf), "%s (%s)", cl->name, cl->model);
-                  e_menu_item_label_set(mi, buf);
-                  e_menu_item_callback_set(mi, _e_xkb_cb_lmenu_set, cl);
-               }
           }
-
-        /* Deactivate callback */
-        e_menu_post_deactivate_callback_set(inst->lmenu,
-                                            _e_xkb_cb_lmenu_post, inst);
-        /* Proper menu orientation */
-        switch (inst->gcc->gadcon->orient)
-          {
-           case E_GADCON_ORIENT_TOP:
-             dir = E_MENU_POP_DIRECTION_DOWN;
-             break;
-
-           case E_GADCON_ORIENT_BOTTOM:
-             dir = E_MENU_POP_DIRECTION_UP;
-             break;
-
-           case E_GADCON_ORIENT_LEFT:
-             dir = E_MENU_POP_DIRECTION_RIGHT;
-             break;
-
-           case E_GADCON_ORIENT_RIGHT:
-             dir = E_MENU_POP_DIRECTION_LEFT;
-             break;
-
-           case E_GADCON_ORIENT_CORNER_TL:
-             dir = E_MENU_POP_DIRECTION_DOWN;
-             break;
-
-           case E_GADCON_ORIENT_CORNER_TR:
-             dir = E_MENU_POP_DIRECTION_DOWN;
-             break;
-
-           case E_GADCON_ORIENT_CORNER_BL:
-             dir = E_MENU_POP_DIRECTION_UP;
-             break;
-
-           case E_GADCON_ORIENT_CORNER_BR:
-             dir = E_MENU_POP_DIRECTION_UP;
-             break;
-
-           case E_GADCON_ORIENT_CORNER_LT:
-             dir = E_MENU_POP_DIRECTION_RIGHT;
-             break;
-
-           case E_GADCON_ORIENT_CORNER_RT:
-             dir = E_MENU_POP_DIRECTION_LEFT;
-             break;
-
-           case E_GADCON_ORIENT_CORNER_LB:
-             dir = E_MENU_POP_DIRECTION_RIGHT;
-             break;
-
-           case E_GADCON_ORIENT_CORNER_RB:
-             dir = E_MENU_POP_DIRECTION_LEFT;
-             break;
-
-           case E_GADCON_ORIENT_FLOAT:
-           case E_GADCON_ORIENT_HORIZ:
-           case E_GADCON_ORIENT_VERT:
-           default:
-             dir = E_MENU_POP_DIRECTION_AUTO;
-             break;
-          }
-
-        e_gadcon_locked_set(inst->gcc->gadcon, 1);
-
-        /* We display not relatively to the gadget, but similarly to
-         * the start menu - thus the need for direction etc.
-         */
-        e_menu_activate_mouse(inst->lmenu,
-                              e_zone_current_get(),
-                              x, y, w, h, dir, ev->timestamp);
      }
-   else if (ev->button == 2) /* Middle click */
-     e_xkb_layout_next();
 }
 
 static void

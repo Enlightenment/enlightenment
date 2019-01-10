@@ -9,6 +9,8 @@ typedef struct _Instance
    Evas_Object         *popup;
    E_Gadget_Site_Orient orient;
    E_Config_XKB_Layout *layout;
+   Ecore_Timer         *menu_timer;
+   unsigned int         menu_timestamp;
 } Instance;
 
 static Eina_List *ginstances = NULL;
@@ -119,6 +121,63 @@ _xkbg_popup_deleted(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSE
    inst->popup = NULL;
 }
 
+static Eina_Bool
+_xkbg_popup_cb(void *data)
+{
+   Instance *inst;
+   E_Config_XKB_Layout *cl, *cur;
+   Eina_List *l;
+   Elm_Object_Item *mi;
+   char buf[4096], buf2[4096];
+
+   inst = data;
+   inst->menu_timer = NULL;
+   cur = e_xkb_layout_get();
+
+   inst->popup = elm_ctxpopup_add(e_comp->elm);
+   elm_object_style_set(inst->popup, "noblock");
+   evas_object_smart_callback_add(inst->popup, "dismissed", _xkbg_popup_dismissed, inst);
+   evas_object_event_callback_add(inst->popup, EVAS_CALLBACK_DEL, _xkbg_popup_deleted, inst);
+
+   inst->menu = elm_list_add(inst->popup);
+   elm_list_select_mode_set(inst->menu, ELM_OBJECT_SELECT_MODE_ALWAYS);
+   evas_object_data_set(inst->menu, "inst", inst);
+   elm_object_content_set(inst->popup, inst->menu);
+   E_EXPAND(inst->menu);
+   E_FILL(inst->menu);
+
+   /* Append all the layouts */
+   EINA_LIST_FOREACH(e_config->xkb.used_layouts, l, cl)
+     {
+        const char *name = cl->name;
+        Evas_Object *ic;
+
+        e_xkb_flag_file_get(buf, sizeof(buf), name);
+        if (cl->variant)
+          snprintf(buf2, sizeof(buf2), "%s (%s, %s)", cl->name, cl->model, cl->variant);
+        else
+          snprintf(buf2, sizeof(buf2), "%s (%s)", cl->name, cl->model);
+
+        ic = elm_icon_add(inst->menu);
+        E_EXPAND(ic);
+        E_FILL(ic);
+        elm_image_file_set(ic, buf, NULL);
+        evas_object_size_hint_aspect_set(ic, EVAS_ASPECT_CONTROL_VERTICAL, 1, 1);
+        evas_object_show(ic);
+
+        mi = elm_list_item_append(inst->menu, buf2, ic, NULL, _xkbg_cb_menu_set, cl);
+
+        if (e_config_xkb_layout_eq(cur, cl))
+          elm_list_item_selected_set(mi, EINA_TRUE);
+     }
+
+   evas_object_show(inst->menu);
+   evas_object_size_hint_min_set(inst->popup, 200 * e_scale, 100 * e_scale);
+   e_gadget_util_ctxpopup_place(inst->o_main, inst->popup, inst->o_xkbswitch);
+   evas_object_show(inst->popup);
+   return ECORE_CALLBACK_CANCEL;
+}
+
 static void
 _xkbg_cb_mouse_up(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event)
 {
@@ -132,62 +191,36 @@ _xkbg_cb_mouse_up(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj EINA_UNUS
         elm_ctxpopup_dismiss(inst->popup);
         return;
      }
+   else if ((ev->button == 2) /* Middle click */
+            ||
+            ((ev->button == 1) && (ev->flags & EVAS_BUTTON_DOUBLE_CLICK)) /* double Left-click */
+           )
+     {
+        if (inst->menu_timer)
+          {
+             ecore_timer_del(inst->menu_timer);
+             inst->menu_timer = NULL;
+          }
+        e_xkb_layout_next();
+     }
+
    else if ((ev->button == 1) && (!inst->popup)) /* Left-click layout menu */
      {
         if (!e_config->xkb.dont_touch_my_damn_keyboard)
           {
-             E_Config_XKB_Layout *cl, *cur;
-             Eina_List *l;
-             Elm_Object_Item *mi;
-             char buf[4096], buf2[4096];
-
-             cur = e_xkb_layout_get();
-
-             inst->popup = elm_ctxpopup_add(e_comp->elm);
-             elm_object_style_set(inst->popup, "noblock");
-             evas_object_smart_callback_add(inst->popup, "dismissed", _xkbg_popup_dismissed, inst);
-             evas_object_event_callback_add(inst->popup, EVAS_CALLBACK_DEL, _xkbg_popup_deleted, inst);
-
-             inst->menu = elm_list_add(inst->popup);
-             elm_list_select_mode_set(inst->menu, ELM_OBJECT_SELECT_MODE_ALWAYS);
-             evas_object_data_set(inst->menu, "inst", inst);
-             elm_object_content_set(inst->popup, inst->menu);
-             E_EXPAND(inst->menu);
-             E_FILL(inst->menu);
-
-             /* Append all the layouts */
-             EINA_LIST_FOREACH(e_config->xkb.used_layouts, l, cl)
+             if (!inst->menu_timer)
                {
-                  const char *name = cl->name;
-                  Evas_Object *ic;
-
-                  e_xkb_flag_file_get(buf, sizeof(buf), name);
-                  if (cl->variant)
-                    snprintf(buf2, sizeof(buf2), "%s (%s, %s)", cl->name, cl->model, cl->variant);
-                  else
-                    snprintf(buf2, sizeof(buf2), "%s (%s)", cl->name, cl->model);
-
-                  ic = elm_icon_add(inst->menu);
-                  E_EXPAND(ic);
-                  E_FILL(ic);
-                  elm_image_file_set(ic, buf, NULL);
-                  evas_object_size_hint_aspect_set(ic, EVAS_ASPECT_CONTROL_VERTICAL, 1, 1);
-                  evas_object_show(ic);
-
-                  mi = elm_list_item_append(inst->menu, buf2, ic, NULL, _xkbg_cb_menu_set, cl);
-
-                  if (e_config_xkb_layout_eq(cur, cl))
-                    elm_list_item_selected_set(mi, EINA_TRUE);
+                  inst->menu_timestamp = ev->timestamp;
+#ifdef HAVE_WAYLAND_ONLY
+                  inst->menu_timer = ecore_timer_add(0.25,
+                                                      _xkbg_popup_cb, inst);
+#else
+                  inst->menu_timer = ecore_timer_add(ecore_x_double_click_time_get(),
+                                                      _xkbg_popup_cb, inst);
+#endif
                }
-
-             evas_object_show(inst->menu);
-             evas_object_size_hint_min_set(inst->popup, 200 * e_scale, 100 * e_scale);
-             e_gadget_util_ctxpopup_place(inst->o_main, inst->popup, inst->o_xkbswitch);
-             evas_object_show(inst->popup);
           }
      }
-   else if (ev->button == 2)
-     e_xkb_layout_next();
 }
 
 static void
