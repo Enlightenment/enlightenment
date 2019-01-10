@@ -1351,6 +1351,44 @@ _client_mixer_del(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
 }
 
 static Eina_Bool
+_e_client_add(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
+{
+   E_Event_Client *ev;
+   Eina_List *l;
+   Emix_Sink_Input *input;
+   pid_t pid;
+   E_Client_Volume_Sink *sink;
+
+   ev = event;
+
+   if (ev->ec->parent) return ECORE_CALLBACK_PASS_ON;
+   EINA_LIST_FOREACH((Eina_List *)emix_sink_inputs_get(), l, input)
+     {
+        pid = input->pid;
+        while (42)
+          {
+             if (pid <= 1 || pid == getpid()) return ECORE_CALLBACK_PASS_ON;
+             if (ev->ec->netwm.pid == pid)
+               {
+                  DBG("Client(%s) found a sink input",
+                      e_client_util_name_get(ev->ec));
+                  sink = e_client_volume_sink_new(_sink_input_get,
+                                                  _sink_input_set,
+                                                  _sink_input_min_get,
+                                                  _sink_input_max_get,
+                                                  _sink_input_name_get,
+                                                  input);
+                  e_client_volume_sink_append(ev->ec, sink);
+                  _client_sinks = eina_list_append(_client_sinks, sink);
+                  return ECORE_CALLBACK_PASS_ON;
+               }
+             pid = _get_ppid(pid);
+          }
+     }
+   return ECORE_CALLBACK_PASS_ON;
+}
+
+static Eina_Bool
 _e_client_remove(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
 {
    E_Event_Client *ev;
@@ -1551,6 +1589,8 @@ e_modapi_init(E_Module *m)
                          _e_client_mute_changed, NULL);
    E_LIST_HANDLER_APPEND(_client_handlers, E_EVENT_CLIENT_UNMUTE,
                          _e_client_mute_changed, NULL);
+   E_LIST_HANDLER_APPEND(_client_handlers, E_EVENT_CLIENT_ADD,
+                         _e_client_add, NULL);
    E_LIST_HANDLER_APPEND(_client_handlers, E_EVENT_CLIENT_REMOVE,
                          _e_client_remove, NULL);
    E_LIST_HANDLER_APPEND(_client_handlers, E_EVENT_CLIENT_VOLUME_SINK_ADD,
