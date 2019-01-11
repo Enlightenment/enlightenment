@@ -11,7 +11,7 @@ temperature_get_bus_files(const char *bus)
 {
    Eina_List *result;
    Eina_List *therms;
-   char path[PATH_MAX];
+   char path[PATH_MAX + 3];
    char busdir[PATH_MAX];
    char *name;
 
