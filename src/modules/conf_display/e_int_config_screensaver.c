@@ -27,7 +27,9 @@ struct _E_Config_Dialog_Data
    
    int screensaver_suspend;
    int screensaver_suspend_on_ac;
-   double screensaver_suspend_delay;
+   double screensaver_suspend_delay_seconds;
+   double screensaver_suspend_delay_minutes;
+   double screensaver_suspend_delay_hours;
 
    int wake_on_notify;
    int wake_on_urgent;
@@ -37,6 +39,7 @@ struct _E_Config_Dialog_Data
    struct 
      {
         Evas_Object *ask_presentation_slider;
+        Evas_Object *slider_suspend_seconds;
      } gui;
 };
 
@@ -73,7 +76,9 @@ _fill_data(E_Config_Dialog_Data *cfdata)
    cfdata->ask_presentation_timeout = e_config->screensaver_ask_presentation_timeout;
    cfdata->screensaver_suspend = e_config->screensaver_suspend;
    cfdata->screensaver_suspend_on_ac = e_config->screensaver_suspend_on_ac;
-   cfdata->screensaver_suspend_delay = e_config->screensaver_suspend_delay;
+   cfdata->screensaver_suspend_delay_seconds = (int)e_config->screensaver_suspend_delay % 60;
+   cfdata->screensaver_suspend_delay_minutes = ((int)e_config->screensaver_suspend_delay % 3600) / 60;
+   cfdata->screensaver_suspend_delay_hours = (int)e_config->screensaver_suspend_delay / 3600;
 
    cfdata->wake_on_notify = e_config->screensaver_wake_on_notify;
    cfdata->wake_on_urgent = e_config->screensaver_wake_on_urgent;
@@ -108,7 +113,10 @@ _basic_apply(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfdata)
    e_config->screensaver_ask_presentation_timeout = cfdata->ask_presentation_timeout;
    e_config->screensaver_suspend = cfdata->screensaver_suspend;
    e_config->screensaver_suspend_on_ac = cfdata->screensaver_suspend_on_ac;
-   e_config->screensaver_suspend_delay = cfdata->screensaver_suspend_delay;
+   e_config->screensaver_suspend_delay =
+      (cfdata->screensaver_suspend_delay_seconds
+       + (cfdata->screensaver_suspend_delay_minutes * 60.0)
+       + (cfdata->screensaver_suspend_delay_hours * 3600.0));
 
    e_config->screensaver_wake_on_notify = cfdata->wake_on_notify;
    e_config->screensaver_wake_on_urgent = cfdata->wake_on_urgent;
@@ -148,18 +156,29 @@ _basic_apply(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfdata)
 static int
 _basic_check_changed(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfdata)
 {
+   double screensaver_suspend_delay = cfdata->screensaver_suspend_delay_seconds
+      + (cfdata->screensaver_suspend_delay_minutes * 60.0)
+      + (cfdata->screensaver_suspend_delay_hours * 3600.0);
+   if (screensaver_suspend_delay < 1.0)
+     {
+        screensaver_suspend_delay = 1.0;
+        cfdata->screensaver_suspend_delay_seconds = 1.0;
+        e_widget_slider_value_double_set(cfdata->gui.slider_suspend_seconds,
+                                         cfdata->screensaver_suspend_delay_seconds);
+
+     }
    return ((e_config->screensaver_enable != cfdata->enable_screensaver) ||
-	   (e_config->screensaver_timeout != lround(cfdata->timeout * 60.0)) ||
-	   (e_config->screensaver_desklock_timeout != lround(cfdata->desklock_timeout)) ||
-	   (e_config->screensaver_ask_presentation != cfdata->ask_presentation) ||
-	   (!EINA_DBL_EQ(e_config->screensaver_ask_presentation_timeout, cfdata->ask_presentation_timeout)) ||
-	   (e_config->screensaver_suspend != cfdata->screensaver_suspend) ||
-	   (e_config->screensaver_suspend_on_ac != cfdata->screensaver_suspend_on_ac) ||
-	   (!EINA_DBL_EQ(e_config->screensaver_suspend_delay, cfdata->screensaver_suspend_delay)) ||
-	   (e_config->screensaver_wake_on_notify != cfdata->wake_on_notify) ||
-	   (e_config->screensaver_wake_on_urgent != cfdata->wake_on_urgent) ||
-           (e_config->dpms_off_timeout != cfdata->no_dpms_on_fullscreen)
-    );
+          (e_config->screensaver_timeout != lround(cfdata->timeout * 60.0)) ||
+          (e_config->screensaver_desklock_timeout != lround(cfdata->desklock_timeout)) ||
+          (e_config->screensaver_ask_presentation != cfdata->ask_presentation) ||
+          (!EINA_DBL_EQ(e_config->screensaver_ask_presentation_timeout, cfdata->ask_presentation_timeout)) ||
+          (e_config->screensaver_suspend != cfdata->screensaver_suspend) ||
+          (e_config->screensaver_suspend_on_ac != cfdata->screensaver_suspend_on_ac) ||
+          (!EINA_DBL_EQ(e_config->screensaver_suspend_delay, screensaver_suspend_delay)) ||
+          (e_config->screensaver_wake_on_notify != cfdata->wake_on_notify) ||
+          (e_config->screensaver_wake_on_urgent != cfdata->wake_on_urgent) ||
+          (e_config->dpms_off_timeout != cfdata->no_dpms_on_fullscreen)
+   );
 }
 
 static Evas_Object *
@@ -207,10 +226,19 @@ _basic_create(E_Config_Dialog *cfd EINA_UNUSED, Evas *evas, E_Config_Dialog_Data
    ow = e_widget_label_add(evas, _("Suspend delay"));
    e_widget_check_widget_disable_on_unchecked_add(oc, ow);
    e_widget_list_object_append(ol, ow, 1, 1, 0.5);
-   ow = e_widget_slider_add(evas, 1, 0, _("%1.0f seconds"),
-			    1.0, 20.0, 1.0, 0, &(cfdata->screensaver_suspend_delay), NULL, 100);
+   ow = e_widget_slider_add(evas, 1, 0, _("%1.0f hours"),
+			    0.0, 23.0, 1.0, 0, &(cfdata->screensaver_suspend_delay_hours), NULL, 100);
    e_widget_check_widget_disable_on_unchecked_add(oc, ow);
    e_widget_list_object_append(ol, ow, 1, 1, 0.5);
+   ow = e_widget_slider_add(evas, 1, 0, _("%1.0f minutes"),
+			    0.0, 59.0, 1.0, 0, &(cfdata->screensaver_suspend_delay_minutes), NULL, 100);
+   e_widget_check_widget_disable_on_unchecked_add(oc, ow);
+   e_widget_list_object_append(ol, ow, 1, 1, 0.5);
+   ow = e_widget_slider_add(evas, 1, 0, _("%1.0f seconds"),
+			    0.0, 59.0, 1.0, 0, &(cfdata->screensaver_suspend_delay_seconds), NULL, 100);
+   e_widget_check_widget_disable_on_unchecked_add(oc, ow);
+   e_widget_list_object_append(ol, ow, 1, 1, 0.5);
+   cfdata->gui.slider_suspend_seconds = ow;
    
    oc = e_widget_check_add(evas, _("Disable blanking for Fullscreen Windows"),
                            &(cfdata->no_dpms_on_fullscreen));
