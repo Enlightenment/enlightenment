@@ -605,7 +605,7 @@ _fill_xdg_list(E_Config_App_List *apps)
    Efreet_Desktop *desk = NULL;
    const char *path;
    char *file, *ext;
-   char buf[PATH_MAX], pbuf[PATH_MAX];
+   char buf[PATH_MAX + PATH_MAX + 2], pbuf[PATH_MAX];
 
    dirs = eina_list_merge(eina_list_clone(efreet_config_dirs_get()), eina_list_clone(efreet_data_dirs_get()));
    dirs = eina_list_append(dirs, efreet_data_home_get());
