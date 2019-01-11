@@ -725,7 +725,7 @@ popup_added(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
           if (event_info == efl_wl_extracted_surface_object_find(surface))
             {
                Evas_Object *base = efl_wl_extracted_surface_extracted_parent_get(event_info);
-               Tooltip *tt;
+               Tooltip *tt = NULL;
 
                //FIXME: if (inst->tooltip_content) error
                if (base)
