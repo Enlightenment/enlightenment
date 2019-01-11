@@ -1146,7 +1146,7 @@ _e_fm_ipc_cb_fop_trash_idler(void *data)
    const char *filename;
    const char *escname = NULL;
    char *dest;
-   char buf[4096], trash_dir[4096];
+   char buf[PATH_MAX + PATH_MAX + 20], trash_dir[PATH_MAX];
    unsigned int i = 0;
    struct tm *lt;
    time_t t;
