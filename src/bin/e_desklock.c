@@ -380,7 +380,7 @@ E_API int
 e_desklock_show(Eina_Bool suspend)
 {
    _e_desklock_want = EINA_TRUE;
-   if ((_e_desklock_block > 0) && (!desklock_manual)) return;
+   if ((_e_desklock_block > 0) && (!desklock_manual)) return EINA_FALSE;
    return _desklock_show_internal(suspend);
 }
 
