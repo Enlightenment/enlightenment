@@ -715,7 +715,7 @@ _e_kbd_dict_matches_lookup_do(E_Kbd_Dict *kd, Eina_List *letters, char *buf, cha
           {
              kl = l->data;
              len = strlen(kl->letter);
-             strncpy(bufp, kl->letter, len);
+             memcpy(bufp, kl->letter, len);
              bufp[len] = 0;
              if (_e_kbd_dict_find(kd, buf))
                {
