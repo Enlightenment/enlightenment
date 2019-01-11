@@ -33,7 +33,7 @@ wizard_page_show(E_Wizard_Page *pg EINA_UNUSED)
         while (fgets(buf, sizeof(buf), fin))
           {
              Efreet_Desktop *desk;
-             char name[4096], buf2[PATH_MAX], *p;
+             char name[PATH_MAX], buf2[PATH_MAX + 100], *p;
              int n;
 
              if (buf[0] == '#') continue;
