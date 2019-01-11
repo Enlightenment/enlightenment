@@ -177,8 +177,8 @@ static Eina_Bool
 _cb_xserver_event(void *data EINA_UNUSED, Ecore_Fd_Handler *hdlr EINA_UNUSED)
 {
    int socks[2], wms[2], fd;
-   char disp[8], s[8], xserver[PATH_MAX];
-   char abs_fd[8], unx_fd[8], wm_fd[8];
+   char disp[8], s[12], xserver[PATH_MAX];
+   char abs_fd[12], unx_fd[12], wm_fd[12];
 
    if (socketpair(AF_UNIX, (SOCK_STREAM | SOCK_CLOEXEC), 0, socks) < 0)
      {
