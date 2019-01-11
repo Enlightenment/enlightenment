@@ -38,36 +38,26 @@ struct weekeyboard
 static char *
 _wkb_insert_text(const char *text, uint32_t offset, const char *insert)
 {
-   char *new_text = malloc(strlen(text) + strlen(insert) + 1);
-   uint32_t text_len = 0;
+   size_t insert_len, text_len;
+   char *new_text;
 
-   if (!new_text)
-     {
-        ERR("out of memory");
-        return NULL;
-     }
-
-   if ((!text) || (!insert))
-     {
-        free(new_text);
-        return NULL;
-     }
+   if ((!text) || (!insert)) return NULL;
 
    text_len = strlen(text);
-   if (offset > text_len)
-     offset = text_len;
-
-   new_text = malloc(text_len + strlen(insert) + 1);
+   insert_len = strlen(insert);
+   new_text = malloc(text_len +insert_len + 1);
    if (!new_text)
      {
         ERR("out of memory");
         return NULL;
      }
 
-   strncpy(new_text, text, offset);
+   if (offset > text_len) offset = text_len;
+
+   memcpy(new_text, text, offset);
    new_text[offset] = '\0';
-   strcat(new_text, insert);
-   strcat(new_text, text + offset);
+   memcpy(new_text, insert, insert_len);
+   strcpy(new_text + insert_len, text + offset);
 
    return new_text;
 }
