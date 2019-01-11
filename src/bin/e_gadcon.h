@@ -382,7 +382,7 @@ E_API Eina_Bool              e_gadcon_client_visible_get(const E_Gadcon_Client *
             _p = strrchr(_ci->id, '.');                                                     \
             if (_p) _num = atoi(_p + 1) + 1;                                                \
          }                                                                                  \
-       _buf = alloca(sizeof (char) * ((_gc_class.name ? strlen(_gc_class.name) : 6) + 11)); \
+       _buf = alloca(((_gc_class.name ? strlen(_gc_class.name) : 0) + 40));                 \
        sprintf(_buf, "%s.%d", _gc_class.name, _num);                                        \
        _id = _buf;                                                                          \
     }                                                                                       \
