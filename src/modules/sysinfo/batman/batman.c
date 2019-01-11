@@ -71,7 +71,7 @@ _batman_popup_create(Instance *inst)
    Evas_Object *popup, *box, *pbar, *label;
    Battery *bat;
    Eina_List *l;
-   char buf[128], buf2[128];
+   char buf[128], buf2[128 + 100];
    int hrs = 0, mins = 0;
    Eina_List *udis = NULL;
 
