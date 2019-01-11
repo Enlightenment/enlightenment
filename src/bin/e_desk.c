@@ -48,7 +48,7 @@ static void
 _do_profile(E_Desk *desk, E_Randr2_Screen *sc)
 {
    int scale = 100;
-   char buf[PATH_MAX], buf2[PATH_MAX];
+   char buf[PATH_MAX], buf2[PATH_MAX + 256];
 
    eina_stringshare_del(desk->window_profile);
    desk->window_profile = NULL;
