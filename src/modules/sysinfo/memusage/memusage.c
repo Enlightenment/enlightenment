@@ -129,7 +129,7 @@ static Evas_Object *
 _memusage_popup_create(Instance *inst)
 {
    Evas_Object *popup, *table, *label, *pbar;
-   char buf[128], buf2[128];
+   char buf[128], buf2[128 + 100];
 
    popup = elm_ctxpopup_add(e_comp->elm);
    elm_object_style_set(popup, "noblock");
