@@ -208,7 +208,7 @@ attempt_hacks(E_DBusMenu_Ctx *ctx)
    Eldbus_Connection *conn;
    const char *bus, *p;
    int n;
-   char buf[1024] = {0}, buf2[1024] = {0};
+   char buf[1024] = {0}, buf2[1024 + 12] = {0};
 
    if (ctx->hacks) return EINA_FALSE;
    obj = eldbus_proxy_object_get(ctx->proxy);
