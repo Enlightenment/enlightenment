@@ -77,7 +77,7 @@ _cpuclock_set_governor(const char *governor)
 #if defined(__FreeBSD__) || defined(__DragonFly__) || defined(__OpenBSD__)
    return;
 #endif
-   char buf[4096], exe[4096];
+   char buf[4096 + 100], exe[4096];
    struct stat st;
 
    snprintf(exe, 4096, "%s/%s/cpuclock_sysfs",
@@ -92,7 +92,7 @@ _cpuclock_set_governor(const char *governor)
 void
 _cpuclock_set_frequency(int frequency)
 {
-   char buf[4096], exe[4096];
+   char buf[4096 + 100], exe[4096];
    struct stat st;
 
 #if defined(__FreeBSD__) || defined(__DragonFly__)
@@ -121,7 +121,7 @@ _cpuclock_set_pstate(int min, int max, int turbo)
 #if defined(__FreeBSD__) || defined(__DragonFly__) || defined(__OpenBSD__)
    return;
 #endif
-   char buf[4096], exe[4096];
+   char buf[4096 + 100], exe[4096];
    struct stat st;
 
    snprintf(exe, 4096, "%s/%s/cpuclock_sysfs",
