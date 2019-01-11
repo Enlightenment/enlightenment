@@ -65,24 +65,22 @@ _emix_volume_convert(const Emix_Volume volume)
    return vol;
 }
 
-static Emix_Volume
-_pa_cvolume_convert(const pa_cvolume *volume)
+static void
+_pa_cvolume_convert(const pa_cvolume *volume, Emix_Volume *vol)
 {
-   Emix_Volume vol;
    int i;
 
-   vol.volumes = calloc(volume->channels, sizeof(int));
-   if (!vol.volumes)
+   if (vol->volumes) free(vol->volumes);
+   vol->volumes = calloc(volume->channels, sizeof(int));
+   if (!vol->volumes)
      {
         WRN("Could not allocate memory for volume");
-        vol.channel_count = 0;
-        return vol;
+        vol->channel_count = 0;
      }
 
-   vol.channel_count = volume->channels;
+   vol->channel_count = volume->channels;
    for (i = 0; i < volume->channels; i++)
-     vol.volumes[i] = PA_VOLUME_TO_INT(volume->values[i]);
-   return vol;
+     vol->volumes[i] = PA_VOLUME_TO_INT(volume->values[i]);
 }
 
 static void
@@ -150,7 +148,7 @@ _sink_cb(pa_context *c EINA_UNUSED, const pa_sink_info *info, int eol,
    sink = calloc(1, sizeof(Sink));
    sink->idx = info->index;
    sink->base.name = eina_stringshare_add(info->description);
-   sink->base.volume = _pa_cvolume_convert(&info->volume);
+   _pa_cvolume_convert(&info->volume, &sink->base.volume);
    sink->base.mute = !!info->mute;
 
    for (i = 0; i < info->n_ports; i++)
@@ -211,8 +209,8 @@ _sink_changed_cb(pa_context *c EINA_UNUSED, const pa_sink_info *info, int eol,
 
    EINA_SAFETY_ON_NULL_RETURN(sink);
 
-   sink->base.name = eina_stringshare_add(info->description);
-   sink->base.volume = _pa_cvolume_convert(&info->volume);
+   eina_stringshare_replace(&sink->base.name, info->description);
+   _pa_cvolume_convert(&info->volume, &sink->base.volume);
    sink->base.mute = !!info->mute;
 
    if (sink->base.ports)
@@ -347,7 +345,7 @@ _sink_input_cb(pa_context *c EINA_UNUSED, const pa_sink_input_info *info,
      }
    input->base.name = eina_stringshare_add(eina_strbuf_string_get(input_name));
    eina_strbuf_free(input_name);
-   input->base.volume = _pa_cvolume_convert(&info->volume);
+   _pa_cvolume_convert(&info->volume, &input->base.volume);
    input->base.mute = !!info->mute;
    EINA_LIST_FOREACH(ctx->sinks, l, s)
      {
@@ -408,7 +406,7 @@ _sink_input_changed_cb(pa_context *c EINA_UNUSED,
         ctx->inputs = eina_list_append(ctx->inputs, input);
      }
    input->idx = info->index;
-   input->base.volume = _pa_cvolume_convert(&info->volume);
+   _pa_cvolume_convert(&info->volume, &input->base.volume);
    input->base.mute = !!info->mute;
 
    EINA_LIST_FOREACH(ctx->sinks, l, s)
@@ -475,7 +473,7 @@ _source_cb(pa_context *c EINA_UNUSED, const pa_source_info *info,
 
    source->idx = info->index;
    source->base.name = eina_stringshare_add(info->name);
-   source->base.volume = _pa_cvolume_convert(&info->volume);
+   _pa_cvolume_convert(&info->volume, &source->base.volume);
    source->base.mute = !!info->mute;
 
    ctx->sources = eina_list_append(ctx->sources, source);
@@ -523,7 +521,7 @@ _source_changed_cb(pa_context *c EINA_UNUSED,
         ctx->sources = eina_list_append(ctx->sources, source);
      }
    source->idx= info->index;
-   source->base.volume = _pa_cvolume_convert(&info->volume);
+   _pa_cvolume_convert(&info->volume, &source->base.volume);
    source->base.mute = !!info->mute;
 
    if (ctx->cb)
