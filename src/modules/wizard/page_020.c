@@ -23,7 +23,7 @@ wizard_page_shutdown(E_Wizard_Page *pg EINA_UNUSED)
 static Evas_Object *
 _profile_content_get(char *prof, Evas_Object *obj, const char *part)
 {
-   char buf[PATH_MAX], buf2[PATH_MAX];
+   char buf[PATH_MAX + 100], buf2[PATH_MAX];
    Evas_Object *ic;
    Efreet_Desktop *desktop;
 
@@ -56,7 +56,7 @@ static char *
 _profile_text_get(char *prof, Evas_Object *obj EINA_UNUSED, const char *part)
 {
    char *label;
-   char buf[PATH_MAX], buf2[PATH_MAX];
+   char buf[PATH_MAX + 100], buf2[PATH_MAX];
    Efreet_Desktop *desktop;
 
    if (!eina_streq(part, "elm.text")) return NULL;
@@ -73,7 +73,7 @@ _profile_text_get(char *prof, Evas_Object *obj EINA_UNUSED, const char *part)
 static void
 _profile_select(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
-   char buf[PATH_MAX], buf2[PATH_MAX];
+   char buf[PATH_MAX + 100], buf2[PATH_MAX];
    Efreet_Desktop *desk = NULL;
    profile = data;
 
