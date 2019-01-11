@@ -1100,7 +1100,7 @@ _e_kbd_int_layouts_list_update(E_Kbd_Int *ki)
 {
    Eina_List *files;
    Eina_List *l;
-   char buf[PATH_MAX], *file, *path;
+   char buf[PATH_MAX + 100], *file, *path;
    const char *fl;
    Eina_List *kbs = NULL, *layouts = NULL;
    int ok;
@@ -1192,7 +1192,7 @@ _e_kbd_int_layouts_list_update(E_Kbd_Int *ki)
 
                   while (fgets(buf, sizeof(buf), f))
                     {
-                       char str[4096];
+                       char str[PATH_MAX];
 
                        if (!isok)
                          {
