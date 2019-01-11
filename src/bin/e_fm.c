@@ -5896,7 +5896,7 @@ _e_fm2_typebuf_match(Evas_Object *obj, int next)
    if (sd->typebuf.buf[tblen - 1] != '*')
      {
         tb = alloca(tblen + 2);
-        strncpy(tb, sd->typebuf.buf, tblen);
+        memcpy(tb, sd->typebuf.buf, tblen);
         tb[tblen] = '*';
         tb[tblen + 1] = '\0';
      }
