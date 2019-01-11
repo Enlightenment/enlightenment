@@ -574,7 +574,7 @@ static void
 _e_xsettings_cursor_path_set(void)
 {
    struct stat st;
-   char buf[PATH_MAX], env[4096], *path;
+   char buf[PATH_MAX], env[PATH_MAX + PATH_MAX + 100], *path;
 
    e_user_homedir_concat_static(buf, ".icons");
 
