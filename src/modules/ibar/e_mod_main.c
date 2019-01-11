@@ -1566,6 +1566,12 @@ _ibar_cb_icon_menu_cb(void *data)
 }
 
 static void
+_ibar_cb_icon_menu_job_cb(void *data)
+{
+   _ibar_cb_icon_menu_cb(data);
+}
+
+static void
 _ibar_cb_icon_mouse_down(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info)
 {
    Evas_Event_Mouse_Down *ev;
@@ -1807,7 +1813,7 @@ _ibar_icon_go(IBar_Icon *ic, Eina_Bool keep_going)
                   count++;
                   if (count > 1)
                     {
-                       ecore_job_add((Ecore_Cb)_ibar_cb_icon_menu_cb, ic);
+                       ecore_job_add((Ecore_Cb)_ibar_cb_icon_menu_job_cb, ic);
                        return;
                     }
                   eclast = ec;
