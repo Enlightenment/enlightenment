@@ -1834,10 +1834,8 @@ e_modapi_init(E_Module *m)
    _G.info_hash = eina_hash_pointer_new(_clear_info_hash);
    _G.client_extras = eina_hash_pointer_new(_clear_border_extras);
    _G.desk_type = eina_hash_pointer_new(_clear_desk_types);
-#define HANDLER(_h, _e, _f)                                \
-  _h = ecore_event_handler_add(E_EVENT_##_e,               \
-                               (Ecore_Event_Handler_Cb)_f, \
-                               NULL);
+#define HANDLER(_h, _e, _f) \
+  _h = ecore_event_handler_add(E_EVENT_##_e, (void *)_f, NULL)
 
    _G.handler_client_resize_begin =
       e_client_hook_add(E_CLIENT_HOOK_RESIZE_BEGIN, _resize_begin_hook, NULL);
