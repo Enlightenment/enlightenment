@@ -622,7 +622,7 @@ media_cleaner_cb(void *data)
         if (ic->timestamp >= now)
           {
              /* stop the idler for now to avoid pointless spinning */
-             ecore_timer_loop_add(24 * 60 * 60, (Ecore_Task_Cb)tw_idler_start, NULL);
+             ecore_timer_loop_add(24 * 60 * 60, (void *)tw_idler_start, NULL);
              media_cleaner[mcl->video] = NULL;
              tw_cache_list[mcl->video] = mcl;
              return EINA_FALSE;
