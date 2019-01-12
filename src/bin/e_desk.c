@@ -77,7 +77,8 @@ _do_profile(E_Desk *desk, E_Randr2_Screen *sc)
                       "%s/enlightenment/utils/enlightenment_elm_cfgtool "
                       "set %s %s 'scale-mul %i'",
                       e_prefix_lib_get(), sc->config.profile, buf, scale);
-             system(buf2);
+             if (system(buf2) != 0)
+               ERR("Error code from trying to run \"%s\"", buf2);
           }
      }
    desk->window_profile = eina_stringshare_add(buf);

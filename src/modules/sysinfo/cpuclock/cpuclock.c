@@ -86,7 +86,8 @@ _cpuclock_set_governor(const char *governor)
 
    snprintf(buf, sizeof(buf),
             "%s %s %s", exe, "governor", governor);
-   system(buf);
+   if (system(buf) != 0)
+     ERR("Error code from trying to run \"%s\"", buf);
 }
 
 void
@@ -104,14 +105,16 @@ _cpuclock_set_frequency(int frequency)
             e_module_dir_get(sysinfo_config->module), MODULE_ARCH);
    if (stat(exe, &st) < 0) return;
    snprintf(buf, sizeof(buf), "%s %d", exe, frequency);
-   system(buf);
+   if (system(buf) != 0)
+     ERR("Error code from trying to run \"%s\"", buf);
 #else
    snprintf(exe, 4096, "%s/%s/cpuclock_sysfs",
             e_module_dir_get(sysinfo_config->module), MODULE_ARCH);
    if (stat(exe, &st) < 0) return;
    snprintf(buf, sizeof(buf),
             "%s %s %i", exe, "frequency", frequency);
-   system(buf);
+   if (system(buf) != 0)
+     ERR("Error code from trying to run \"%s\"", buf);
 #endif
 }
 
@@ -129,7 +132,8 @@ _cpuclock_set_pstate(int min, int max, int turbo)
    if (stat(exe, &st) < 0) return;
    snprintf(buf, sizeof(buf),
             "%s %s %i %i %i", exe, "pstate", min, max, turbo);
-   system(buf);
+   if (system(buf) != 0)
+     ERR("Error code from trying to run \"%s\"", buf);
 }
 
 static void
