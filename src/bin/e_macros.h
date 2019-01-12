@@ -95,7 +95,7 @@
   do \
     { \
        Ecore_Event_Handler *_eh; \
-       _eh = ecore_event_handler_add(type, (Ecore_Event_Handler_Cb)callback, data); \
+       _eh = ecore_event_handler_add(type, (void *)callback, data); \
        assert(_eh); \
        list = eina_list_append(list, _eh); \
     } \
@@ -104,7 +104,7 @@
   do \
     { \
        Ecore_Event_Handler *_eh; \
-       _eh = ecore_event_handler_prepend(type, (Ecore_Event_Handler_Cb)callback, data); \
+       _eh = ecore_event_handler_prepend(type, (void *)callback, data); \
        assert(_eh); \
        list = eina_list_append(list, _eh); \
     } \
