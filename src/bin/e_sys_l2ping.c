@@ -167,7 +167,7 @@ e_sys_l2ping(const char *bluetooth_mac, int timeout_ms)
    return ecore_time_get() - start;
 #else
    (void) bluetooth_mac;
-   fprintf(stderr, "e_sys_l2ping nop %s\n", bluetooth_mac);
+   fprintf(stderr, "e_sys_l2ping nop mac=%s timeout=%ims\n", bluetooth_mac, timeout_ms);
    return -1;
 #endif
 }
