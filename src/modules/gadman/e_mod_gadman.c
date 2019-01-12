@@ -72,7 +72,7 @@ gadman_reset(void *d EINA_UNUSED)
    E_FREE_FUNC(Man->full_bg, evas_object_del);
    if (_gadman_gadgets)
      {
-        eina_hash_free_cb_set(_gadman_gadgets, EINA_FREE_CB(eina_list_free));
+        eina_hash_free_cb_set(_gadman_gadgets, (void *)eina_list_free);
         eina_hash_free(_gadman_gadgets);
      }
    /* iterating through zones - and making gadmans on each */
@@ -159,7 +159,7 @@ gadman_shutdown(void)
    E_FREE_FUNC(Man->overlay, evas_object_del);
    if (_gadman_gadgets)
      {
-        eina_hash_free_cb_set(_gadman_gadgets, EINA_FREE_CB(eina_list_free));
+        eina_hash_free_cb_set(_gadman_gadgets, (void *)eina_list_free);
         eina_hash_free(_gadman_gadgets);
      }
    _gadman_gadgets = NULL;
