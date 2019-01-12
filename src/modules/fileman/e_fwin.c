@@ -759,8 +759,8 @@ _e_fwin_icon_popup_handler(void *data)
      }
    if (fwin->win)
      {
-        evas_object_event_callback_del(fwin->win, EVAS_CALLBACK_MOUSE_IN, (Evas_Object_Event_Cb)_e_fwin_icon_popup_handler);
-        evas_object_event_callback_del(fwin->win, EVAS_CALLBACK_MOUSE_OUT, (Evas_Object_Event_Cb)_e_fwin_icon_popup_handler);
+        evas_object_event_callback_del(fwin->win, EVAS_CALLBACK_MOUSE_IN, (void *)_e_fwin_icon_popup_handler);
+        evas_object_event_callback_del(fwin->win, EVAS_CALLBACK_MOUSE_OUT, (void *)_e_fwin_icon_popup_handler);
      }
    E_FREE_LIST(fwin->popup_handlers, ecore_event_handler_del);
    if (fwin->over_file) eina_stringshare_del(fwin->over_file);
@@ -808,8 +808,8 @@ _e_fwin_free(E_Fwin *fwin)
    fwin->popup_timer = NULL;
    if (fwin->win)
      {
-        evas_object_event_callback_del(fwin->win, EVAS_CALLBACK_MOUSE_IN, (Evas_Object_Event_Cb)_e_fwin_icon_popup_handler);
-        evas_object_event_callback_del(fwin->win, EVAS_CALLBACK_MOUSE_OUT, (Evas_Object_Event_Cb)_e_fwin_icon_popup_handler);
+        evas_object_event_callback_del(fwin->win, EVAS_CALLBACK_MOUSE_IN, (void *)_e_fwin_icon_popup_handler);
+        evas_object_event_callback_del(fwin->win, EVAS_CALLBACK_MOUSE_OUT, (void *)_e_fwin_icon_popup_handler);
      }
    E_FREE_LIST(fwin->popup_handlers, ecore_event_handler_del);
    if (fwin->spring_parent) fwin->spring_parent->spring_child = NULL;
@@ -937,11 +937,11 @@ _e_fwin_icon_popup(void *data)
 #ifndef HAVE_WAYLAND_ONLY
    if (!fwin->popup_handlers)
      {
-        evas_object_event_callback_add(fwin->win, EVAS_CALLBACK_MOUSE_IN, (Evas_Object_Event_Cb)_e_fwin_icon_popup_handler, fwin);
-        evas_object_event_callback_add(fwin->win, EVAS_CALLBACK_MOUSE_OUT, (Evas_Object_Event_Cb)_e_fwin_icon_popup_handler, fwin);
+        evas_object_event_callback_add(fwin->win, EVAS_CALLBACK_MOUSE_IN, (void *)_e_fwin_icon_popup_handler, fwin);
+        evas_object_event_callback_add(fwin->win, EVAS_CALLBACK_MOUSE_OUT, (void *)_e_fwin_icon_popup_handler, fwin);
         if (e_comp_util_has_x())
-          E_LIST_HANDLER_APPEND(fwin->popup_handlers, ECORE_X_EVENT_XDND_POSITION, (Ecore_Event_Handler_Cb)_e_fwin_icon_popup_handler, fwin);
-        E_LIST_HANDLER_APPEND(fwin->popup_handlers, ECORE_EVENT_MOUSE_BUTTON_DOWN, (Ecore_Event_Handler_Cb)_e_fwin_icon_popup_handler, fwin);
+          E_LIST_HANDLER_APPEND(fwin->popup_handlers, ECORE_X_EVENT_XDND_POSITION, (void *)_e_fwin_icon_popup_handler, fwin);
+        E_LIST_HANDLER_APPEND(fwin->popup_handlers, ECORE_EVENT_MOUSE_BUTTON_DOWN, (void *)_e_fwin_icon_popup_handler, fwin);
      }
 #endif
    evas_object_show(fwin->popup);
@@ -983,12 +983,12 @@ _e_fwin_icon_mouse_in(void *data, Evas_Object *obj EINA_UNUSED, void *event_info
      {
         if (fwin->win)
           {
-             evas_object_event_callback_add(fwin->win, EVAS_CALLBACK_MOUSE_IN, (Evas_Object_Event_Cb)_e_fwin_icon_popup_handler, fwin);
-             evas_object_event_callback_add(fwin->win, EVAS_CALLBACK_MOUSE_OUT, (Evas_Object_Event_Cb)_e_fwin_icon_popup_handler, fwin);
+             evas_object_event_callback_add(fwin->win, EVAS_CALLBACK_MOUSE_IN, (void *)_e_fwin_icon_popup_handler, fwin);
+             evas_object_event_callback_add(fwin->win, EVAS_CALLBACK_MOUSE_OUT, (void *)_e_fwin_icon_popup_handler, fwin);
           }
         if (e_comp_util_has_x())
-          E_LIST_HANDLER_APPEND(fwin->popup_handlers, ECORE_X_EVENT_XDND_POSITION, (Ecore_Event_Handler_Cb)_e_fwin_icon_popup_handler, fwin);
-        E_LIST_HANDLER_APPEND(fwin->popup_handlers, ECORE_EVENT_MOUSE_BUTTON_DOWN, (Ecore_Event_Handler_Cb)_e_fwin_icon_popup_handler, fwin);
+          E_LIST_HANDLER_APPEND(fwin->popup_handlers, ECORE_X_EVENT_XDND_POSITION, (void *)_e_fwin_icon_popup_handler, fwin);
+        E_LIST_HANDLER_APPEND(fwin->popup_handlers, ECORE_EVENT_MOUSE_BUTTON_DOWN, (void *)_e_fwin_icon_popup_handler, fwin);
      }
 #endif
 }
