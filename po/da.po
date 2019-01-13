@@ -2,14 +2,14 @@
 # Copyright (C) YEAR Enlightenment development team
 # This file is distributed under the same license as the enlightenment package.
 # Martin Geisler <mgeisler@mgeisler.net>, 2005.
-# scootergrisen, 2017.
+# scootergrisen, 2017, 2019.
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: enlightenment 0.22.0-rc\n"
-"Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-04-01 18:48+0200\n"
-"PO-Revision-Date: 2017-10-23 17:00+0000\n"
+"Project-Id-Version: enlightenment 0.22.4\n"
+"Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
+"POT-Creation-Date: 2018-08-22 07:24+0930\n"
+"PO-Revision-Date: 2019-01-12 00:00+0000\n"
 "Last-Translator: scootergrisen\n"
 "Language-Team: Danish\n"
 "Language: da\n"
@@ -25,7 +25,7 @@ msgstr "Om Enlightenment"
 #: src/bin/e_about.c:20 src/bin/e_actions.c:2000 src/bin/e_actions.c:3292
 #: src/bin/e_config_dialog.c:284 src/bin/e_fm.c:1073
 #: src/bin/e_int_client_menu.c:244 src/bin/e_int_client_prop.c:81
-#: src/bin/e_startup.c:104 src/bin/e_theme_about.c:22
+#: src/bin/e_startup.c:105 src/bin/e_theme_about.c:22
 #: src/modules/conf/e_conf.c:158
 #: src/modules/conf_bindings/e_int_config_edgebindings.c:872
 #: src/modules/everything/evry_plug_windows.c:370
@@ -80,7 +80,7 @@ msgstr "Dræb"
 #: src/bin/e_actions.c:357 src/bin/e_actions.c:2117 src/bin/e_actions.c:2208
 #: src/bin/e_actions.c:2268 src/bin/e_actions.c:2325 src/bin/e_actions.c:2387
 #: src/bin/e_actions.c:2491 src/bin/e_confirm_dialog.c:53
-#: src/bin/e_desklock.c:614 src/bin/e_fm.c:10671 src/bin/e_fm.c:11024
+#: src/bin/e_desklock.c:616 src/bin/e_fm.c:10671 src/bin/e_fm.c:11024
 #: src/bin/e_screensaver.c:234 src/modules/quickaccess/e_mod_quickaccess.c:1308
 msgid "No"
 msgstr "Nej"
@@ -99,7 +99,7 @@ msgstr "Er du sikker på, at du vil afslutte Enlightenment?"
 
 #: src/bin/e_actions.c:2115 src/bin/e_actions.c:2206 src/bin/e_actions.c:2266
 #: src/bin/e_actions.c:2323 src/bin/e_actions.c:2385 src/bin/e_actions.c:2489
-#: src/bin/e_confirm_dialog.c:52 src/bin/e_desklock.c:612 src/bin/e_fm.c:10674
+#: src/bin/e_confirm_dialog.c:52 src/bin/e_desklock.c:614 src/bin/e_fm.c:10674
 #: src/bin/e_screensaver.c:232 src/modules/quickaccess/e_mod_quickaccess.c:1308
 msgid "Yes"
 msgstr "Ja"
@@ -167,7 +167,7 @@ msgstr "Mus til tast"
 #: src/bin/e_actions.c:3591 src/bin/e_actions.c:3596 src/bin/e_actions.c:3601
 #: src/bin/e_actions.c:3606 src/bin/e_actions.c:3611 src/bin/e_actions.c:3616
 #: src/bin/e_actions.c:3621 src/bin/e_actions.c:3627 src/bin/e_actions.c:3633
-#: src/bin/e_actions.c:3639 src/modules/shot/e_mod_main.c:1074
+#: src/bin/e_actions.c:3639 src/modules/shot/e_mod_main.c:1033
 msgid "Window : Actions"
 msgstr "Vindue : Handlinger"
 
@@ -335,7 +335,7 @@ msgstr "Fastgjort tilstand til/fra"
 #: src/bin/e_int_config_comp_match.c:83 src/bin/e_int_config_comp_match.c:418
 #: src/bin/e_int_menus.c:205 src/bin/e_int_shelf_config.c:283
 #: src/modules/conf_window_manipulation/e_int_config_clientlist.c:119
-#: src/modules/fileman/e_mod_menu.c:473 src/modules/gadman/e_mod_gadman.c:119
+#: src/modules/fileman/e_mod_menu.c:459 src/modules/gadman/e_mod_gadman.c:119
 #: src/modules/ibox/e_mod_config.c:151
 msgid "Desktop"
 msgstr "Skrivebord"
@@ -545,7 +545,7 @@ msgstr "Hop til vindue... eller start..."
 #: src/bin/e_actions.c:3585 src/modules/backlight/e_mod_main.c:483
 #: src/modules/conf_display/e_mod_main.c:17
 #: src/modules/conf_randr/e_mod_main.c:36 src/modules/ibox/e_mod_config.c:133
-#: src/modules/shot/e_mod_main.c:684 src/modules/shot/e_mod_main.c:1066
+#: src/modules/shot/e_mod_main.c:683 src/modules/shot/e_mod_main.c:1025
 msgid "Screen"
 msgstr "Skærm"
 
@@ -796,7 +796,7 @@ msgstr "Navngivne modul til/fra"
 #: src/bin/e_int_config_modules.c:52
 #: src/modules/conf_applications/e_int_config_apps.c:320
 #: src/modules/conf_display/e_int_config_desklock_fsel.c:99
-#: src/modules/conf_intl/e_int_config_imc.c:829
+#: src/modules/conf_intl/e_int_config_imc.c:856
 #: src/modules/conf_theme/e_int_config_theme.c:697
 #: src/modules/conf_theme/e_int_config_wallpaper.c:424
 #: src/modules/conf_theme/e_int_config_wallpaper.c:599
@@ -870,11 +870,11 @@ msgstr "Forrige tastaturlayout"
 msgid "Set As Background"
 msgstr "Sæt som baggrund"
 
-#: src/bin/e_client.c:4827
+#: src/bin/e_client.c:4826
 msgid "Client Error!"
 msgstr "Fejl ved klient!"
 
-#: src/bin/e_client.c:4827
+#: src/bin/e_client.c:4826
 msgid "Something has attempted to set a border when it shouldn't! Report this!"
 msgstr "Noget har forsøgt at sætte en kant når det ikke skulle! Rapportér det!"
 
@@ -903,7 +903,7 @@ msgstr "Vælg"
 #: src/modules/quickaccess/e_mod_quickaccess.c:334
 #: src/modules/quickaccess/e_mod_quickaccess.c:396
 #: src/modules/shot/e_mod_main.c:288 src/modules/shot/e_mod_main.c:535
-#: src/modules/shot/e_mod_main.c:563 src/modules/shot/e_mod_main.c:742
+#: src/modules/shot/e_mod_main.c:563 src/modules/shot/e_mod_main.c:741
 #: src/modules/syscon/e_syscon.c:92 src/modules/xkbswitch/e_mod_config.c:872
 #: src/modules/xkbswitch/e_mod_config.c:1003
 #: src/modules/xkbswitch/e_mod_config.c:1428
@@ -950,11 +950,11 @@ msgstr "Skjult"
 msgid "Title"
 msgstr "Titel"
 
-#: src/bin/e_comp_x.c:633
+#: src/bin/e_comp_x.c:586
 msgid "Compositor Warning"
 msgstr "Advarsel for kompositør"
 
-#: src/bin/e_comp_x.c:634
+#: src/bin/e_comp_x.c:587
 msgid ""
 "Your display driver does not support OpenGL, GLSL<ps/>shaders or no OpenGL "
 "engines were compiled or installed<ps/>for Evas or Ecore-Evas. Falling back "
@@ -967,11 +967,11 @@ msgstr ""
 "som formår OpenGL 2.0 (eller OpenGL ES 2.0)<ps/>for at bruge OpenGL med "
 "komposition."
 
-#: src/bin/e_comp_x.c:5636
+#: src/bin/e_comp_x.c:5637
 msgid "Lock Failed"
 msgstr "Lås mislykkedes"
 
-#: src/bin/e_comp_x.c:5637
+#: src/bin/e_comp_x.c:5638
 msgid ""
 "Locking the desktop failed because some application<ps/>has grabbed either "
 "the keyboard or the mouse or both<ps/>and their grab is unable to be broken."
@@ -979,11 +979,11 @@ msgstr ""
 "Låsning af skrivebordet mislykkedes, fordi et program<ps/>har grebet enten "
 "tastaturet eller musen eller begge dele<ps/>og grebet kan ikke brydes."
 
-#: src/bin/e_comp_x.c:5653
+#: src/bin/e_comp_x.c:5654
 msgid "Another compositor is already running on your display server."
 msgstr "Der kører allerede en anden kompositør på din display-server."
 
-#: src/bin/e_comp_x.c:5672
+#: src/bin/e_comp_x.c:5673
 msgid ""
 "Your display server does not support the compositor overlay window.\n"
 "This is needed for Enlightenment to function."
@@ -991,11 +991,11 @@ msgstr ""
 "Din display-server understøtter ikke kompositørens overlægningsvindue.\n"
 "Det behøves for at Enlightenment kan fungere."
 
-#: src/bin/e_comp_x.c:5799
+#: src/bin/e_comp_x.c:5800
 msgid "Enlightenment cannot initialize Ecore_X!\n"
 msgstr "Enlightenment kan ikke initialisere Ecore_X!\n"
 
-#: src/bin/e_comp_x.c:5811
+#: src/bin/e_comp_x.c:5812
 msgid ""
 "Your display server does not support XComposite, or Ecore-X was built "
 "without XComposite support. Note that for composite support you will also "
@@ -1005,7 +1005,7 @@ msgstr ""
 "bygget uden XComposite-understøttelse. Bemærk at du også behøver XRender- og "
 "XFixes-understøttelse i X11 og Ecore, for at få kompositionsunderstøttelse."
 
-#: src/bin/e_comp_x.c:5820
+#: src/bin/e_comp_x.c:5821
 msgid ""
 "Your display server does not support XDamage or Ecore was built without "
 "XDamage support."
@@ -1013,7 +1013,7 @@ msgstr ""
 "Din display-server understøtter ikke XDamage eller også blev Ecore bygget "
 "uden XDamage-understøttelse."
 
-#: src/bin/e_comp_x.c:5925
+#: src/bin/e_comp_x.c:5926
 msgid "Enlightenment cannot initialize the XSettings system.\n"
 msgstr "Enlightenment kan ikke initialisere XSettings-systemet.\n"
 
@@ -1201,7 +1201,7 @@ msgstr ""
 #: src/modules/conf/e_mod_main.c:284 src/modules/conf_bindings/e_mod_main.c:37
 #: src/modules/conf_paths/e_mod_main.c:17
 #: src/modules/conf_performance/e_mod_main.c:17
-#: src/modules/cpufreq/e_mod_main.c:1499 src/modules/mixer/e_mod_main.c:612
+#: src/modules/cpufreq/e_mod_main.c:1499 src/modules/mixer/e_mod_main.c:614
 #: src/modules/syscon/e_mod_main.c:36
 msgid "Advanced"
 msgstr "Avanceret"
@@ -1217,7 +1217,7 @@ msgstr "Anvend"
 
 #: src/bin/e_configure.c:29 src/modules/conf_shelves/e_mod_main.c:21
 #: src/modules/connman/e_mod_main.c:604 src/modules/gadman/e_mod_main.c:23
-#: src/modules/mixer/e_mod_main.c:1533
+#: src/modules/mixer/e_mod_main.c:1535
 #: src/modules/notification/e_mod_main.c:163
 msgid "Extensions"
 msgstr "Udvidelser"
@@ -1261,11 +1261,11 @@ msgstr ""
 "Der var ikke bygget PAM-understøttelse ind i Enlightenment, så<ps/"
 ">skrivebordslåsning er deaktiveret."
 
-#: src/bin/e_desklock.c:603 src/bin/e_screensaver.c:223
+#: src/bin/e_desklock.c:605 src/bin/e_screensaver.c:223
 msgid "Activate Presentation Mode?"
 msgstr "Aktivér præsentationstilstand?"
 
-#: src/bin/e_desklock.c:606
+#: src/bin/e_desklock.c:608
 msgid ""
 "You unlocked your desktop too fast.<ps/><ps/>Would you like to enable "
 "<b>presentation</b> mode and temporarily disable screen saver, lock and "
@@ -1275,11 +1275,11 @@ msgstr ""
 "<b>præsentationstilstand</b> og midlertidigt deaktivere pauseskærm, låsning "
 "og strømbesparelse?"
 
-#: src/bin/e_desklock.c:616 src/bin/e_screensaver.c:236
+#: src/bin/e_desklock.c:618 src/bin/e_screensaver.c:236
 msgid "No, but increase timeout"
 msgstr "Nej, men øg timeout"
 
-#: src/bin/e_desklock.c:618 src/bin/e_screensaver.c:238
+#: src/bin/e_desklock.c:620 src/bin/e_screensaver.c:238
 msgid "No, and stop asking"
 msgstr "Nej, og hold op med at spørge"
 
@@ -1306,7 +1306,7 @@ msgstr "Redigering af skrivebordspost"
 #: src/bin/e_desktop_editor.c:710 src/bin/e_int_client_prop.c:450
 #: src/bin/e_int_client_prop.c:504 src/bin/e_int_config_comp_match.c:380
 #: src/modules/conf_display/e_int_config_desk.c:144
-#: src/modules/conf_intl/e_int_config_imc.c:907
+#: src/modules/conf_intl/e_int_config_imc.c:934
 #: src/modules/conf_menus/e_int_config_menus.c:267
 #: src/modules/ibar/e_mod_config.c:134
 msgid "Name"
@@ -1388,8 +1388,8 @@ msgstr "Vælg en eksekverbar"
 
 #: src/bin/e_exec.c:445 src/bin/e_exec.c:453 src/bin/e_exec.c:464
 #: src/bin/e_exec.c:523 src/bin/e_remember.c:51
-#: src/modules/conf_intl/e_int_config_imc.c:274
-#: src/modules/conf_intl/e_int_config_imc.c:528
+#: src/modules/conf_intl/e_int_config_imc.c:271
+#: src/modules/conf_intl/e_int_config_imc.c:558
 msgid "Run Error"
 msgstr "Fejl ved kørsel"
 
@@ -1932,7 +1932,7 @@ msgstr "Flash-kort—%s"
 msgid "Unknown Volume"
 msgstr "Ukendt diskenhed"
 
-#: src/bin/e_fm_device.c:340
+#: src/bin/e_fm_device.c:345
 msgid "Removable Device"
 msgstr "Flytbar enhed"
 
@@ -2319,7 +2319,7 @@ msgid "Window"
 msgstr "Vindue"
 
 #: src/bin/e_int_client_menu.c:156
-#: src/modules/conf_randr/e_int_config_randr2.c:1016
+#: src/modules/conf_randr/e_int_config_randr2.c:1017
 msgid "Align"
 msgstr "Juster"
 
@@ -2609,8 +2609,8 @@ msgstr "Statisk"
 #: src/modules/conf_bindings/e_int_config_mousebindings.c:356
 #: src/modules/conf_performance/e_int_config_powermanagement.c:200
 #: src/modules/conf_randr/e_int_config_randr2.c:449
-#: src/modules/conf_randr/e_int_config_randr2.c:667
-#: src/modules/conf_randr/e_int_config_randr2.c:983
+#: src/modules/conf_randr/e_int_config_randr2.c:668
+#: src/modules/conf_randr/e_int_config_randr2.c:984
 #: src/modules/conf_theme/e_int_config_fonts.c:742
 #: src/modules/conf_theme/e_int_config_transitions.c:199
 #: src/modules/conf_theme/e_int_config_transitions.c:253
@@ -2623,15 +2623,15 @@ msgstr "Ingen"
 
 #: src/bin/e_int_client_prop.c:307
 #: src/modules/conf_randr/e_int_config_randr2.c:457
-#: src/modules/conf_randr/e_int_config_randr2.c:711
-#: src/modules/conf_randr/e_int_config_randr2.c:987
+#: src/modules/conf_randr/e_int_config_randr2.c:712
+#: src/modules/conf_randr/e_int_config_randr2.c:988
 msgid "Above"
 msgstr "Over på"
 
 #: src/bin/e_int_client_prop.c:311
 #: src/modules/conf_randr/e_int_config_randr2.c:459
-#: src/modules/conf_randr/e_int_config_randr2.c:722
-#: src/modules/conf_randr/e_int_config_randr2.c:988
+#: src/modules/conf_randr/e_int_config_randr2.c:723
+#: src/modules/conf_randr/e_int_config_randr2.c:989
 msgid "Below"
 msgstr "Neden under"
 
@@ -2758,7 +2758,7 @@ msgstr "Anmod om placering"
 #: src/modules/everything/evry_plug_settings.c:183
 #: src/modules/ibar/e_mod_main.c:497 src/modules/ibar/e_mod_main.c:1629
 #: src/modules/ibox/e_mod_main.c:356 src/modules/ibox/e_mod_main.c:722
-#: src/modules/mixer/e_mod_main.c:617 src/modules/music-control/ui.c:277
+#: src/modules/mixer/e_mod_main.c:619 src/modules/music-control/ui.c:277
 #: src/modules/packagekit/e_mod_main.c:47 src/modules/pager/e_mod_main.c:885
 #: src/modules/pager_plain/e_mod_main.c:870 src/modules/tasks/e_mod_main.c:813
 #: src/modules/temperature/e_mod_main.c:262
@@ -2849,14 +2849,14 @@ msgstr "Størrelse, placering og låsninger"
 
 #: src/bin/e_int_client_remember.c:663 src/bin/e_int_client_remember.c:801
 #: src/modules/conf_bindings/e_int_config_acpibindings.c:397
-#: src/modules/mixer/e_mod_main.c:1474
+#: src/modules/mixer/e_mod_main.c:1476
 msgid "Volume"
 msgstr "Lydstyrke"
 
 #: src/bin/e_int_client_remember.c:665 src/modules/conf/e_mod_main.c:252
 #: src/modules/everything/evry_gadget.c:628
 #: src/modules/everything/evry_plug_aggregator.c:313
-#: src/modules/everything/evry_view.c:1618 src/modules/shot/e_mod_main.c:688
+#: src/modules/everything/evry_view.c:1618 src/modules/shot/e_mod_main.c:687
 msgid "All"
 msgstr "Alt"
 
@@ -3289,7 +3289,7 @@ msgid "Types"
 msgstr "Typer"
 
 #: src/bin/e_int_config_comp_match.c:466
-#: src/modules/conf_randr/e_int_config_randr2.c:961
+#: src/modules/conf_randr/e_int_config_randr2.c:962
 msgid "On"
 msgstr "Til"
 
@@ -3446,7 +3446,7 @@ msgstr "Hyldeindhold"
 msgid "Toolbar Contents"
 msgstr "Værktøjslinjens indhold"
 
-#: src/bin/e_int_menus.c:154 src/modules/mixer/e_mod_main.c:1406
+#: src/bin/e_int_menus.c:154 src/modules/mixer/e_mod_main.c:1408
 #: src/modules/syscon/e_int_config_syscon.c:153
 msgid "Main"
 msgstr "Hoved"
@@ -3491,7 +3491,7 @@ msgstr "Om tema"
 
 #: src/bin/e_int_menus.c:256
 msgid "Report Bug"
-msgstr ""
+msgstr "Rapportér fejl"
 
 #: src/bin/e_int_menus.c:347
 msgid "Virtual"
@@ -3508,9 +3508,8 @@ msgid "Change Wallpaper"
 msgstr "Skift tapet"
 
 #: src/bin/e_int_menus.c:365
-#, fuzzy
-msgid "Add Gadget Bar"
-msgstr "Tilføj til ikonbjælke"
+msgid "Add Bryce"
+msgstr "Tilføj bryce"
 
 #: src/bin/e_int_menus.c:370
 msgid "Add Gadgets To Desktop"
@@ -3650,31 +3649,31 @@ msgstr ""
 "inputmetode-konfiguration<ps/>er korrekt, og<ps/>at din konfigurations <ps/"
 ">eksekverbar er i din PATH<ps/>"
 
-#: src/bin/e_main.c:291
+#: src/bin/e_main.c:289
 msgid "Enlightenment cannot initialize Eina!\n"
 msgstr "Enlightenment kan ikke initialisere Eina!\n"
 
-#: src/bin/e_main.c:297
+#: src/bin/e_main.c:295
 msgid "Enlightenment could not create a logging domain!\n"
 msgstr "Enlightenment kan ikke oprette et logningsdomæne!\n"
 
-#: src/bin/e_main.c:353
+#: src/bin/e_main.c:351
 msgid "Enlightenment cannot initialize Eet!\n"
 msgstr "Enlightenment kan ikke initialisere Eet!\n"
 
-#: src/bin/e_main.c:362
+#: src/bin/e_main.c:360
 msgid "Enlightenment cannot initialize Ecore!\n"
 msgstr "Enlightenment kan ikke initialisere Ecore!\n"
 
-#: src/bin/e_main.c:377
+#: src/bin/e_main.c:375
 msgid "Enlightenment cannot initialize EFX!\n"
 msgstr "Enlightenment kan ikke initialisere EFX!\n"
 
-#: src/bin/e_main.c:386
+#: src/bin/e_main.c:384
 msgid "Enlightenment cannot initialize EIO!\n"
 msgstr "Enlightenment kan ikke initialisere EIO!\n"
 
-#: src/bin/e_main.c:398
+#: src/bin/e_main.c:396
 msgid ""
 "Enlightenment cannot set up an exit signal handler.\n"
 "Perhaps you are out of memory?"
@@ -3682,7 +3681,7 @@ msgstr ""
 "Enlightenment kan ikke oprette et exit-signalhåndtag.\n"
 "Måske er du løbet tør for hukommelse?"
 
-#: src/bin/e_main.c:405
+#: src/bin/e_main.c:403
 msgid ""
 "Enlightenment cannot set up a HUP signal handler.\n"
 "Perhaps you are out of memory?"
@@ -3690,7 +3689,7 @@ msgstr ""
 "Enlightenment kan ikke oprette et HUP-signalhåndtag.\n"
 "Måske er du løbet tør for hukommelse?"
 
-#: src/bin/e_main.c:412
+#: src/bin/e_main.c:410
 msgid ""
 "Enlightenment cannot set up a USER signal handler.\n"
 "Perhaps you are out of memory?"
@@ -3698,31 +3697,31 @@ msgstr ""
 "Enlightenment kan ikke oprette et USER-signalhåndtag.\n"
 "Måske er du løbet tør for hukommelse?"
 
-#: src/bin/e_main.c:421
+#: src/bin/e_main.c:419
 msgid "Enlightenment cannot initialize Ecore_File!\n"
 msgstr "Enlightenment kan ikke initialisere Ecore_File!\n"
 
-#: src/bin/e_main.c:430
+#: src/bin/e_main.c:428
 msgid "Enlightenment cannot initialize Ecore_Con!\n"
 msgstr "Enlightenment kan ikke initialisere Ecore_Con!\n"
 
-#: src/bin/e_main.c:439
+#: src/bin/e_main.c:437
 msgid "Enlightenment cannot initialize Ecore_Ipc!\n"
 msgstr "Enlightenment kan ikke initialisere Ecore_Ipc!\n"
 
-#: src/bin/e_main.c:452
+#: src/bin/e_main.c:450
 msgid "Enlightenment cannot initialize Ecore_Evas!\n"
 msgstr "Enlightenment kan ikke initialisere Ecore_Evas!\n"
 
-#: src/bin/e_main.c:461
+#: src/bin/e_main.c:459
 msgid "Enlightenment cannot initialize Elementary!\n"
 msgstr "Enlightenment kan ikke initialisere Elementary!\n"
 
-#: src/bin/e_main.c:470
+#: src/bin/e_main.c:468
 msgid "Enlightenment cannot initialize Emotion!\n"
 msgstr "Enlightenment kan ikke initialisere Emotion!\n"
 
-#: src/bin/e_main.c:484
+#: src/bin/e_main.c:482
 msgid ""
 "Enlightenment found ecore_evas doesn't support the Wayland SHM\n"
 "rendering in Evas. Please check your installation of Evas and\n"
@@ -3732,7 +3731,7 @@ msgstr ""
 "i Evas. Tjek venligst din installation af Evas og Ecore, og\n"
 "tjek at de understøtter Wayland SHM-gengivelsesmotoren."
 
-#: src/bin/e_main.c:494
+#: src/bin/e_main.c:492
 msgid ""
 "Enlightenment found ecore_evas doesn't support the Software X11\n"
 "rendering in Evas. Please check your installation of Evas and\n"
@@ -3742,7 +3741,7 @@ msgstr ""
 "i Evas. Tjek venligst din installation af Evas og Ecore, og\n"
 "tjek at de understøtter software X11-gengivelsesmotoren."
 
-#: src/bin/e_main.c:503
+#: src/bin/e_main.c:501
 msgid ""
 "Enlightenment found ecore_evas doesn't support the Software Buffer\n"
 "rendering in Evas. Please check your installation of Evas and\n"
@@ -3753,11 +3752,11 @@ msgstr ""
 "i Evas. Tjek venligst din installation af Evas og Ecore, og\n"
 "tjek at de understøtter softwarebuffer-gengivelsesmotoren."
 
-#: src/bin/e_main.c:517
+#: src/bin/e_main.c:515
 msgid "Enlightenment cannot initialize E_Intl!\n"
 msgstr "Enlightenment kan ikke initialisere E_Intl!\n"
 
-#: src/bin/e_main.c:528
+#: src/bin/e_main.c:526
 msgid ""
 "Enlightenment cannot initialize its emergency alert system.\n"
 "Have you set your DISPLAY variable?"
@@ -3765,7 +3764,7 @@ msgstr ""
 "Enlightenment kan ikke initialisere sit nødalarmssystem.\n"
 "Har du sat din DISPLAY-variabel?"
 
-#: src/bin/e_main.c:540
+#: src/bin/e_main.c:538
 msgid ""
 "Enlightenment cannot create directories in your home directory.\n"
 "Perhaps you have no home directory or the disk is full?"
@@ -3773,19 +3772,19 @@ msgstr ""
 "Enlightenment kan ikke oprette mapper i din hjemmemappe.\n"
 "Måske har du ingen hjemmemappe eller disken er fuld?"
 
-#: src/bin/e_main.c:550
+#: src/bin/e_main.c:548
 msgid "Enlightenment cannot set up its file registry system.\n"
 msgstr "Enlightenment kan ikke opsætte sit registreringssystem.\n"
 
-#: src/bin/e_main.c:559
+#: src/bin/e_main.c:557
 msgid "Enlightenment cannot set up its config system.\n"
 msgstr "Enlightenment kan ikke opsætte sit konfigurationssystem.\n"
 
-#: src/bin/e_main.c:588
+#: src/bin/e_main.c:586
 msgid "Enlightenment cannot set up its environment.\n"
 msgstr "Enlightenment kan ikke opsætte sit miljø.\n"
 
-#: src/bin/e_main.c:605
+#: src/bin/e_main.c:603
 msgid ""
 "Enlightenment cannot set up paths for finding files.\n"
 "Perhaps you are out of memory?"
@@ -3793,19 +3792,19 @@ msgstr ""
 "Enlightenment kan ikke opsætte søgestier til at finde filer.\n"
 "Måske er du løbet tør for hukommelse?"
 
-#: src/bin/e_main.c:622
+#: src/bin/e_main.c:620
 msgid "Enlightenment cannot set up its font system.\n"
 msgstr "Enlightenment kan ikke opsætte sit skrifttypesystem.\n"
 
-#: src/bin/e_main.c:635
+#: src/bin/e_main.c:633
 msgid "Enlightenment cannot set up its theme system.\n"
 msgstr "Enlightenment kan ikke opsætte sit temasystem.\n"
 
-#: src/bin/e_main.c:647
+#: src/bin/e_main.c:645
 msgid "Setup Message Bus"
 msgstr "Opsæt meddelelsesbus"
 
-#: src/bin/e_main.c:653
+#: src/bin/e_main.c:651
 msgid ""
 "Enlightenment cannot create a dbus session connection.\n"
 "At best this will break many things, at worst it will hard lock your "
@@ -3818,7 +3817,7 @@ msgstr ""
 "Hvis du er sikker på hvad du foretager du, så brug eksport "
 "E_NO_DBUS_SESSION=1"
 
-#: src/bin/e_main.c:666
+#: src/bin/e_main.c:664
 msgid ""
 "Enlightenment cannot initialize the FDO desktop system.\n"
 "Perhaps you lack permissions on ~/.cache/efreet or are\n"
@@ -3828,39 +3827,39 @@ msgstr ""
 "Måske mangler du tilladelser på ~/.cache/efreet eller er\n"
 "måske er du løbet tør for diskplads?"
 
-#: src/bin/e_main.c:675
+#: src/bin/e_main.c:673
 msgid "Starting International Support"
 msgstr "Starter international understøttelse"
 
-#: src/bin/e_main.c:679
+#: src/bin/e_main.c:677
 msgid "Enlightenment cannot set up its intl system.\n"
 msgstr "Enlightenment kan ikke opsætte sit intl-system.\n"
 
-#: src/bin/e_main.c:692
+#: src/bin/e_main.c:690
 msgid "Setup Actions"
 msgstr "Opsæt handlinger"
 
-#: src/bin/e_main.c:696
+#: src/bin/e_main.c:694
 msgid "Enlightenment cannot set up its actions system.\n"
 msgstr "Enlightenment kan ikke opsætte sit handlingssystem.\n"
 
-#: src/bin/e_main.c:710
+#: src/bin/e_main.c:708
 msgid "Setup Powersave Modes"
 msgstr "Opsæt strømbesparelsestilstande"
 
-#: src/bin/e_main.c:714
+#: src/bin/e_main.c:712
 msgid "Enlightenment cannot set up its powersave modes.\n"
 msgstr "Enlightenment kan ikke opsætte sine strømbesparelsestilstande.\n"
 
-#: src/bin/e_main.c:721
+#: src/bin/e_main.c:719
 msgid "Setup Screensaver"
 msgstr "Opsæt pauseskærm"
 
-#: src/bin/e_main.c:724
+#: src/bin/e_main.c:722
 msgid "Setup Screens"
 msgstr "Opsæt skærme"
 
-#: src/bin/e_main.c:728
+#: src/bin/e_main.c:726
 msgid ""
 "Enlightenment set up window management for all the screens on your system\n"
 "failed. Perhaps another window manager is running?\n"
@@ -3868,204 +3867,204 @@ msgstr ""
 "Enlightenment kunne ikke blive opsat som vindueshåndtering på alle\n"
 "skærmene på dit system. Måske kører der en anden vindueshåndtering?\n"
 
-#: src/bin/e_main.c:738
+#: src/bin/e_main.c:736
 msgid "Enlightenment cannot set up its pointer system.\n"
 msgstr "Enlightenment kan ikke opsætte sit markørsystem.\n"
 
-#: src/bin/e_main.c:748
+#: src/bin/e_main.c:746
 msgid "Enlightenment cannot set up its scale system.\n"
 msgstr "Enlightenment kan ikke opsætte sit skaleringssystem.\n"
 
-#: src/bin/e_main.c:759
+#: src/bin/e_main.c:757
 msgid "Enlightenment cannot set up its init screen.\n"
 msgstr "Enlightenment kan ikke opsætte sit init-system.\n"
 
-#: src/bin/e_main.c:783
+#: src/bin/e_main.c:781
 msgid "Setup ACPI"
 msgstr "Opsæt ACPI"
 
-#: src/bin/e_main.c:790
+#: src/bin/e_main.c:788
 msgid "Setup Backlight"
 msgstr "Opsæt baggrundsbelysning"
 
-#: src/bin/e_main.c:794
+#: src/bin/e_main.c:792
 msgid "Enlightenment cannot configure the backlight.\n"
 msgstr "Enlightenment kan ikke initialisere baggrundsbelysningen.\n"
 
-#: src/bin/e_main.c:800
+#: src/bin/e_main.c:798
 msgid "Setup DPMS"
 msgstr "Opsæt DPMS"
 
-#: src/bin/e_main.c:804
+#: src/bin/e_main.c:802
 msgid "Enlightenment cannot configure the DPMS settings.\n"
 msgstr "Enlightenment kan ikke konfigurere DPMS-indstillingerne.\n"
 
-#: src/bin/e_main.c:811
+#: src/bin/e_main.c:809
 msgid "Setup Desklock"
 msgstr "Opsæt skrivebordslås"
 
-#: src/bin/e_main.c:815
+#: src/bin/e_main.c:813
 msgid "Enlightenment cannot set up its desk locking system.\n"
 msgstr "Enlightenment kan ikke opsætte sit skrivebordslåsningssystem.\n"
 
-#: src/bin/e_main.c:828
+#: src/bin/e_main.c:826
 msgid "Setup Paths"
 msgstr "Opsæt stier"
 
-#: src/bin/e_main.c:834
+#: src/bin/e_main.c:832
 msgid "Setup System Controls"
 msgstr "Opsæt systemstyringer"
 
-#: src/bin/e_main.c:838
+#: src/bin/e_main.c:836
 msgid "Enlightenment cannot initialize the System Command system.\n"
 msgstr "Enlightenment kan ikke initialisere systemkommandosystemet.\n"
 
-#: src/bin/e_main.c:845
+#: src/bin/e_main.c:843
 msgid "Setup Execution System"
 msgstr "Opsæt eksekveringssystem"
 
-#: src/bin/e_main.c:849
+#: src/bin/e_main.c:847
 msgid "Enlightenment cannot set up its exec system.\n"
 msgstr "Enlightenment kan ikke opsætte sit eksekveringssystem.\n"
 
-#: src/bin/e_main.c:859
+#: src/bin/e_main.c:857
 msgid "Setup Filemanager"
 msgstr "Opsæt filhåndtering"
 
-#: src/bin/e_main.c:863
+#: src/bin/e_main.c:861
 msgid "Enlightenment cannot initialize the File manager.\n"
 msgstr "Enlightenment kan ikke initialisere filhåndteringen.\n"
 
-#: src/bin/e_main.c:870
+#: src/bin/e_main.c:868
 msgid "Setup Message System"
 msgstr "Opsæt meddelelsessystem"
 
-#: src/bin/e_main.c:874
+#: src/bin/e_main.c:872
 msgid "Enlightenment cannot set up its msg system.\n"
 msgstr "Enlightenment kan ikke opsætte sit meddelelsessystem.\n"
 
-#: src/bin/e_main.c:881
+#: src/bin/e_main.c:879
 msgid "Setup Grab Input Handling"
 msgstr "Opsæt grip-input-håndtering"
 
-#: src/bin/e_main.c:885
+#: src/bin/e_main.c:883
 msgid "Enlightenment cannot set up its grab input handling system.\n"
 msgstr "Enlightenment kan ikke opsætte sit grib-input-håndteringssystem.\n"
 
-#: src/bin/e_main.c:892
+#: src/bin/e_main.c:890
 msgid "Setup Modules"
 msgstr "Opsæt moduler"
 
-#: src/bin/e_main.c:896 src/bin/e_main.c:1068
+#: src/bin/e_main.c:894 src/bin/e_main.c:1066
 msgid "Enlightenment cannot set up its module system.\n"
 msgstr "Enlightenment kan ikke opsætte sit modulsystem.\n"
 
-#: src/bin/e_main.c:903
+#: src/bin/e_main.c:901
 msgid "Setup Remembers"
 msgstr "Opsæt huskere"
 
-#: src/bin/e_main.c:907
+#: src/bin/e_main.c:905
 msgid "Enlightenment cannot setup remember settings.\n"
 msgstr "Enlightenment kan ikke opsætte husk indstillinger.\n"
 
-#: src/bin/e_main.c:914
+#: src/bin/e_main.c:912
 msgid "Setup Gadgets"
 msgstr "Opsæt gadgets"
 
-#: src/bin/e_main.c:921
+#: src/bin/e_main.c:919
 msgid "Setup Gadcon"
 msgstr "Opsæt Gadcon"
 
-#: src/bin/e_main.c:925
+#: src/bin/e_main.c:923
 msgid "Enlightenment cannot set up its gadget control system.\n"
 msgstr "Enlightenment kan ikke opsætte sit gadget kontrolsystem.\n"
 
-#: src/bin/e_main.c:932
+#: src/bin/e_main.c:930
 msgid "Setup Toolbars"
 msgstr "Opsæt værktøjslinjer"
 
-#: src/bin/e_main.c:936
+#: src/bin/e_main.c:934
 msgid "Enlightenment cannot set up its toolbars.\n"
 msgstr "Enlightenment kan ikke opsætte sine værktøjslinjer.\n"
 
-#: src/bin/e_main.c:943
+#: src/bin/e_main.c:941
 msgid "Setup Wallpaper"
 msgstr "Opsæt tapet"
 
-#: src/bin/e_main.c:947
+#: src/bin/e_main.c:945
 msgid "Enlightenment cannot set up its desktop background system.\n"
 msgstr "Enlightenment kan ikke opsætte sit skrivebordsbaggrundssystem.\n"
 
-#: src/bin/e_main.c:954
+#: src/bin/e_main.c:952
 msgid "Setup Mouse"
 msgstr "Opsæt mus"
 
-#: src/bin/e_main.c:958
+#: src/bin/e_main.c:956
 msgid "Enlightenment cannot configure the mouse settings.\n"
 msgstr "Enlightenment kan ikke konfigurere museindstillingerne.\n"
 
-#: src/bin/e_main.c:964
+#: src/bin/e_main.c:962
 msgid "Setup Bindings"
 msgstr "Opsæt bindinger"
 
-#: src/bin/e_main.c:968
+#: src/bin/e_main.c:966
 msgid "Enlightenment cannot set up its bindings system.\n"
 msgstr "Enlightenment kan ikke opsætte sit bindingssystem.\n"
 
-#: src/bin/e_main.c:975
+#: src/bin/e_main.c:973
 msgid "Setup Thumbnailer"
 msgstr "Opsæt miniatureskaber"
 
-#: src/bin/e_main.c:979
+#: src/bin/e_main.c:977
 msgid "Enlightenment cannot initialize the Thumbnailing system.\n"
 msgstr "Enlightenment kan ikke initialisere miniaturebilledsystemet.\n"
 
-#: src/bin/e_main.c:988
+#: src/bin/e_main.c:986
 msgid "Enlightenment cannot initialize the Icon Cache system.\n"
 msgstr "Enlightenment kan ikke initialisere miniaturebilledsystemet.\n"
 
-#: src/bin/e_main.c:997
+#: src/bin/e_main.c:995
 msgid "Enlightenment cannot initialize the Update system.\n"
 msgstr "Enlightenment kan ikke initialisere opdateringssystemet.\n"
 
-#: src/bin/e_main.c:1004
+#: src/bin/e_main.c:1002
 msgid "Setup Desktop Environment"
 msgstr "Opsæt skrivebordsmiljø"
 
-#: src/bin/e_main.c:1008
+#: src/bin/e_main.c:1006
 msgid "Enlightenment cannot initialize its desktop environment.\n"
 msgstr "Enlightenment kan ikke initialisere sit skrivebordsmiljø.\n"
 
-#: src/bin/e_main.c:1015
+#: src/bin/e_main.c:1013
 msgid "Setup File Ordering"
 msgstr "Opsæt filrækkefølge"
 
-#: src/bin/e_main.c:1019
+#: src/bin/e_main.c:1017
 msgid "Enlightenment cannot set up its order file system.\n"
 msgstr "Enlightenment kan ikke opsætte sit rækkefølgefilsystem.\n"
 
-#: src/bin/e_main.c:1030
+#: src/bin/e_main.c:1028
 msgid "Load Modules"
 msgstr "Indlæs moduler"
 
-#: src/bin/e_main.c:1056
+#: src/bin/e_main.c:1054
 msgid "Setup Bryces"
 msgstr "Opsæt bryces"
 
-#: src/bin/e_main.c:1064
+#: src/bin/e_main.c:1062
 msgid "Setup Shelves"
 msgstr "Opsæt hylder"
 
-#: src/bin/e_main.c:1078
+#: src/bin/e_main.c:1076
 msgid "Almost Done"
 msgstr "Næsten færdig"
 
-#: src/bin/e_main.c:1225
+#: src/bin/e_main.c:1223
 #, c-format
 msgid "Version: %s\n"
 msgstr "Version: %s\n"
 
-#: src/bin/e_main.c:1234
+#: src/bin/e_main.c:1232
 #, c-format
 msgid ""
 "Options:\n"
@@ -4120,7 +4119,7 @@ msgstr ""
 "\t\tHvis du har brug for hjælp her, så har du ikke brug for dette tilvalg.\n"
 "\t-version\n"
 
-#: src/bin/e_main.c:1288
+#: src/bin/e_main.c:1286
 msgid ""
 "You are executing enlightenment directly. This is\n"
 "bad. Please do not execute the \"enlightenment\"\n"
@@ -4136,11 +4135,11 @@ msgstr ""
 "og opstart af andre krævede tjenester osv.\n"
 "inden selve enlightenment begynder at kører.\n"
 
-#: src/bin/e_main.c:1549
+#: src/bin/e_main.c:1547
 msgid "Testing Format Support"
 msgstr "Tester understøttelse af format"
 
-#: src/bin/e_main.c:1553
+#: src/bin/e_main.c:1551
 msgid ""
 "Enlightenment found Evas can't create a buffer canvas. Please check\n"
 "Evas has Software Buffer engine support.\n"
@@ -4149,7 +4148,7 @@ msgstr ""
 "at\n"
 "Evas har understøttelse af softwarebuffer-motor.\n"
 
-#: src/bin/e_main.c:1578
+#: src/bin/e_main.c:1576
 #, c-format
 msgid ""
 "Enlightenment cannot access test image for '%s' filetype. Check your install "
@@ -4158,7 +4157,7 @@ msgstr ""
 "Enlightenment kan ikke tilgå test-aftryk for filtypen '%s'. Tjek din "
 "installation for opsætningsproblemer.\n"
 
-#: src/bin/e_main.c:1589
+#: src/bin/e_main.c:1587
 #, c-format
 msgid ""
 "Enlightenment found Evas can't load '%s' files. Check Evas has '%s' loader "
@@ -4167,7 +4166,7 @@ msgstr ""
 "Enlightenment fandt at Evas ikke kan indlæse '%s'-filer. Tjek at Evas har "
 "understøttelse af '%s'-indlæsning.\n"
 
-#: src/bin/e_main.c:1604
+#: src/bin/e_main.c:1602
 msgid ""
 "Enlightenment found Evas can't load the 'Sans' font. Check Evas has "
 "fontconfig\n"
@@ -4177,19 +4176,19 @@ msgstr ""
 "Evas har fontconfig-understøttelse\n"
 "og at systemets fontconfig definerer en 'Sans'-skrifttype.\n"
 
-#: src/bin/e_main.c:1626
+#: src/bin/e_main.c:1624
 msgid "Enlightenment cannot create a compositor.\n"
 msgstr "Enlightenment kan ikke oprette en kompositør.\n"
 
-#: src/bin/e_main.c:1634
+#: src/bin/e_main.c:1632
 msgid "Setup DND"
 msgstr "Opsæt DND"
 
-#: src/bin/e_main.c:1638
+#: src/bin/e_main.c:1636
 msgid "Enlightenment cannot set up its dnd system.\n"
 msgstr "Enlightenment kan ikke opsætte sit dnd-system.\n"
 
-#: src/bin/e_main.c:1756
+#: src/bin/e_main.c:1754
 #, c-format
 msgid ""
 "Enlightenment crashed early on start and has<ps/>been restarted. There was "
@@ -4200,11 +4199,11 @@ msgstr ""
 ">Der var en fejl ved indlæsningen af modulet ved navn:<ps/>%s. Dette modul "
 "er blevet deaktiveret og<ps/>vil ikke blive indlæst."
 
-#: src/bin/e_main.c:1761 src/bin/e_main.c:1777
+#: src/bin/e_main.c:1759 src/bin/e_main.c:1775
 msgid "Enlightenment crashed early on start and has been restarted"
 msgstr "Enlightenment holdt op med at virke ved start og er blevet genstartet"
 
-#: src/bin/e_main.c:1762
+#: src/bin/e_main.c:1760
 #, c-format
 msgid ""
 "Enlightenment crashed early on start and has been restarted.<ps/>There was "
@@ -4215,7 +4214,7 @@ msgstr ""
 ">Der var en fejl ved indlæsningen af modulet ved navn: %s<ps/><ps/>Dette "
 "modul er blevet deaktiveret og vil ikke blive indlæst."
 
-#: src/bin/e_main.c:1770
+#: src/bin/e_main.c:1768
 msgid ""
 "Enlightenment crashed early on start and has<ps/>been restarted. All modules "
 "have been disabled<ps/>and will not be loaded to help remove any problem<ps/"
@@ -4228,7 +4227,7 @@ msgstr ""
 "konfiguration. Modulkonfigurationsdialogen<ps/> burde lade dig vælge dine<ps/"
 ">moduler igen.\n"
 
-#: src/bin/e_main.c:1778
+#: src/bin/e_main.c:1776
 msgid ""
 "Enlightenment crashed early on start and has been restarted.<ps/>All modules "
 "have been disabled and will not be loaded to help<ps/>remove any problem "
@@ -4315,8 +4314,8 @@ msgstr "Ustabil modul-tainting"
 msgid "I know"
 msgstr "Jeg ved det"
 
-#: src/bin/e_remember.c:52 src/modules/conf_intl/e_int_config_imc.c:275
-#: src/modules/conf_intl/e_int_config_imc.c:529
+#: src/bin/e_remember.c:52 src/modules/conf_intl/e_int_config_imc.c:272
+#: src/modules/conf_intl/e_int_config_imc.c:559
 #, c-format
 msgid "Enlightenment was unable to fork a child process:<ps/><ps/>%s<ps/>"
 msgstr "Enlightenment kunne ikke forgrene en barneproces:<ps/><ps/>%s<ps/>"
@@ -4456,7 +4455,7 @@ msgstr "Skjul automatisk"
 msgid "Refresh"
 msgstr "Opdater"
 
-#: src/bin/e_startup.c:82
+#: src/bin/e_startup.c:83
 #, c-format
 msgid "Starting %s"
 msgstr "Starter %s"
@@ -4876,7 +4875,7 @@ msgstr "Tilføj til favoritter"
 
 #: src/bin/e_widget_fsel.c:339
 #: src/modules/conf_display/e_int_config_desklock_fsel.c:103
-#: src/modules/conf_intl/e_int_config_imc.c:836
+#: src/modules/conf_intl/e_int_config_imc.c:863
 #: src/modules/conf_theme/e_int_config_theme.c:704
 #: src/modules/gadman/e_mod_config.c:256
 msgid "Go up a Directory"
@@ -4888,7 +4887,7 @@ msgstr "Programmenu"
 
 #: src/modules/backlight/e_mod_main.c:355
 #: src/modules/conf_display/e_mod_main.c:36
-#: src/modules/conf_randr/e_int_config_randr2.c:929
+#: src/modules/conf_randr/e_int_config_randr2.c:930
 msgid "Backlight"
 msgstr "Baggrundsbelysning"
 
@@ -5521,8 +5520,8 @@ msgid "Vaio"
 msgstr "Vaio"
 
 #: src/modules/conf_bindings/e_int_config_acpibindings.c:395
-#: src/modules/mixer/e_mod_main.c:557 src/modules/mixer/e_mod_main.c:1233
-#: src/modules/mixer/e_mod_main.c:1428
+#: src/modules/mixer/e_mod_main.c:559 src/modules/mixer/e_mod_main.c:1235
+#: src/modules/mixer/e_mod_main.c:1430
 msgid "Mute"
 msgstr "Mute"
 
@@ -5853,7 +5852,7 @@ msgstr "Knap %i"
 #: src/modules/pager_plain/e_mod_config.c:389
 #, c-format
 msgid "Middle button"
-msgstr "Midterste knap"
+msgstr "Midterknap"
 
 #: src/modules/conf_bindings/e_int_config_mousebindings.c:1172
 #, c-format
@@ -6165,7 +6164,7 @@ msgid "Select a Background..."
 msgstr "Vælg en baggrund..."
 
 #: src/modules/conf_display/e_int_config_desklock_fsel.c:96
-#: src/modules/conf_intl/e_int_config_imc.c:824
+#: src/modules/conf_intl/e_int_config_imc.c:851
 #: src/modules/conf_theme/e_int_config_theme.c:693
 #: src/modules/conf_theme/e_int_config_wallpaper.c:420
 #: src/modules/conf_theme/e_int_config_wallpaper.c:595
@@ -6402,46 +6401,46 @@ msgstr "Mus"
 msgid "Touch"
 msgstr "Berøring"
 
-#: src/modules/conf_intl/e_int_config_imc.c:105
+#: src/modules/conf_intl/e_int_config_imc.c:103
 #: src/modules/conf_intl/e_mod_main.c:28
 msgid "Input Method Settings"
 msgstr "Indstillinger for inputmetode"
 
-#: src/modules/conf_intl/e_int_config_imc.c:292
+#: src/modules/conf_intl/e_int_config_imc.c:289
 msgid "Input Method Selector"
 msgstr "Vælger for inputmetode"
 
-#: src/modules/conf_intl/e_int_config_imc.c:295
-#: src/modules/conf_intl/e_int_config_imc.c:891
+#: src/modules/conf_intl/e_int_config_imc.c:292
+#: src/modules/conf_intl/e_int_config_imc.c:918
 msgid "Use No Input Method"
 msgstr "Brug ingen inputmetode"
 
-#: src/modules/conf_intl/e_int_config_imc.c:302
-#: src/modules/conf_intl/e_int_config_imc.c:964
+#: src/modules/conf_intl/e_int_config_imc.c:299
+#: src/modules/conf_intl/e_int_config_imc.c:983
 msgid "Setup Selected Input Method"
 msgstr "Opsæt valgte inputmetode"
 
-#: src/modules/conf_intl/e_int_config_imc.c:896
+#: src/modules/conf_intl/e_int_config_imc.c:923
 msgid "New"
 msgstr "Ny"
 
-#: src/modules/conf_intl/e_int_config_imc.c:900
+#: src/modules/conf_intl/e_int_config_imc.c:927
 msgid "Import..."
 msgstr "Importér..."
 
-#: src/modules/conf_intl/e_int_config_imc.c:904
+#: src/modules/conf_intl/e_int_config_imc.c:931
 msgid "Input Method Parameters"
 msgstr "Inputmetode-parametre"
 
-#: src/modules/conf_intl/e_int_config_imc.c:914
+#: src/modules/conf_intl/e_int_config_imc.c:941
 msgid "Execute Command"
 msgstr "Eksekver kommando"
 
-#: src/modules/conf_intl/e_int_config_imc.c:921
+#: src/modules/conf_intl/e_int_config_imc.c:948
 msgid "Setup Command"
 msgstr "Opsæt kommando"
 
-#: src/modules/conf_intl/e_int_config_imc.c:930
+#: src/modules/conf_intl/e_int_config_imc.c:957
 msgid "Exported Environment Variables"
 msgstr "Eksportér miljøvariabler"
 
@@ -6540,7 +6539,7 @@ msgid "Main Menu"
 msgstr "Primær menu"
 
 #: src/modules/conf_menus/e_int_config_menus.c:260
-#: src/modules/fileman/e_mod_menu.c:481
+#: src/modules/fileman/e_mod_menu.c:467
 msgid "Favorites"
 msgstr "Favoritter"
 
@@ -6748,12 +6747,12 @@ msgstr "%1.1f s"
 
 #: src/modules/conf_performance/e_int_config_powermanagement.c:239
 #: src/modules/notification/e_mod_config.c:102
-#: src/modules/shot/e_mod_main.c:670
+#: src/modules/shot/e_mod_main.c:669
 msgid "Low"
 msgstr "Lav"
 
 #: src/modules/conf_performance/e_int_config_powermanagement.c:278
-#: src/modules/shot/e_mod_main.c:668
+#: src/modules/shot/e_mod_main.c:667
 msgid "Medium"
 msgstr "Medium"
 
@@ -6765,7 +6764,7 @@ msgid "%.0f s"
 msgstr "%.0f s"
 
 #: src/modules/conf_performance/e_int_config_powermanagement.c:317
-#: src/modules/shot/e_mod_main.c:666
+#: src/modules/shot/e_mod_main.c:665
 msgid "High"
 msgstr "Høj"
 
@@ -6791,22 +6790,22 @@ msgid "Screen Setup"
 msgstr "Skærmopsætning"
 
 #: src/modules/conf_randr/e_int_config_randr2.c:451
-#: src/modules/conf_randr/e_int_config_randr2.c:678
-#: src/modules/conf_randr/e_int_config_randr2.c:755
-#: src/modules/conf_randr/e_int_config_randr2.c:984
-#: src/modules/conf_randr/e_int_config_randr2.c:1114
+#: src/modules/conf_randr/e_int_config_randr2.c:679
+#: src/modules/conf_randr/e_int_config_randr2.c:756
+#: src/modules/conf_randr/e_int_config_randr2.c:985
+#: src/modules/conf_randr/e_int_config_randr2.c:1115
 msgid "Clone"
 msgstr "Klon"
 
 #: src/modules/conf_randr/e_int_config_randr2.c:453
-#: src/modules/conf_randr/e_int_config_randr2.c:689
-#: src/modules/conf_randr/e_int_config_randr2.c:985
+#: src/modules/conf_randr/e_int_config_randr2.c:690
+#: src/modules/conf_randr/e_int_config_randr2.c:986
 msgid "Left of"
 msgstr "Til venstre for"
 
 #: src/modules/conf_randr/e_int_config_randr2.c:455
-#: src/modules/conf_randr/e_int_config_randr2.c:700
-#: src/modules/conf_randr/e_int_config_randr2.c:986
+#: src/modules/conf_randr/e_int_config_randr2.c:701
+#: src/modules/conf_randr/e_int_config_randr2.c:987
 msgid "Right of"
 msgstr "Til højre for"
 
@@ -6814,67 +6813,67 @@ msgstr "Til højre for"
 msgid "Unconfigured"
 msgstr "Ikke konfigureret"
 
-#: src/modules/conf_randr/e_int_config_randr2.c:753
-#: src/modules/conf_randr/e_int_config_randr2.c:1117
+#: src/modules/conf_randr/e_int_config_randr2.c:754
+#: src/modules/conf_randr/e_int_config_randr2.c:1118
 msgid "Ignore"
 msgstr "Ignorer"
 
-#: src/modules/conf_randr/e_int_config_randr2.c:754
-#: src/modules/conf_randr/e_int_config_randr2.c:1115
+#: src/modules/conf_randr/e_int_config_randr2.c:755
+#: src/modules/conf_randr/e_int_config_randr2.c:1116
 msgid "Extend"
 msgstr "Udvid"
 
-#: src/modules/conf_randr/e_int_config_randr2.c:756
-#: src/modules/conf_randr/e_int_config_randr2.c:1116
+#: src/modules/conf_randr/e_int_config_randr2.c:757
+#: src/modules/conf_randr/e_int_config_randr2.c:1117
 msgid "Ask"
 msgstr "Spørg"
 
-#: src/modules/conf_randr/e_int_config_randr2.c:759
+#: src/modules/conf_randr/e_int_config_randr2.c:760
 #, c-format
 msgid "Hotplug Policy (%s)"
 msgstr "Hotplug-politik (%s)"
 
-#: src/modules/conf_randr/e_int_config_randr2.c:836
+#: src/modules/conf_randr/e_int_config_randr2.c:837
 msgid "Outputs"
 msgstr "Outputs"
 
-#: src/modules/conf_randr/e_int_config_randr2.c:921
+#: src/modules/conf_randr/e_int_config_randr2.c:922
 msgid "Laptop lid"
 msgstr "Bærbarens låg"
 
-#: src/modules/conf_randr/e_int_config_randr2.c:970
+#: src/modules/conf_randr/e_int_config_randr2.c:971
 msgid "Priority"
 msgstr "Prioritet"
 
-#: src/modules/conf_randr/e_int_config_randr2.c:982
+#: src/modules/conf_randr/e_int_config_randr2.c:983
 msgid "Relative"
 msgstr "Relativ"
 
-#: src/modules/conf_randr/e_int_config_randr2.c:996
+#: src/modules/conf_randr/e_int_config_randr2.c:997
 msgid "To"
 msgstr "Til"
 
-#: src/modules/conf_randr/e_int_config_randr2.c:1036
+#: src/modules/conf_randr/e_int_config_randr2.c:1037
 msgid "Use Profile"
 msgstr "Brug profil"
 
-#: src/modules/conf_randr/e_int_config_randr2.c:1052
+#: src/modules/conf_randr/e_int_config_randr2.c:1053
 msgid "Custom Scale"
 msgstr "Brugerdefineret skala"
 
-#: src/modules/conf_randr/e_int_config_randr2.c:1061
+#: src/modules/conf_randr/e_int_config_randr2.c:1062
 msgid "Scale"
 msgstr "Skalér"
 
-#: src/modules/conf_randr/e_int_config_randr2.c:1086
+#: src/modules/conf_randr/e_int_config_randr2.c:1087
 msgid "Restore setup on start"
 msgstr "Gendan opsætning ved start"
 
-#: src/modules/conf_randr/e_int_config_randr2.c:1095
+#: src/modules/conf_randr/e_int_config_randr2.c:1096
 msgid "Monitor hotplug"
 msgstr "Hotplug af skærm"
 
-#: src/modules/conf_randr/e_int_config_randr2.c:1104
+#: src/modules/conf_randr/e_int_config_randr2.c:1105
 msgid "Lid Events"
 msgstr "Låg-begivenheder"
 
@@ -8818,27 +8817,27 @@ msgstr "Naviger"
 msgid "Fileman"
 msgstr "Filhåndtering"
 
-#: src/modules/fileman/e_mod_menu.c:271
+#: src/modules/fileman/e_mod_menu.c:257
 msgid "No listable items"
 msgstr "Ingen punkter at vise"
 
-#: src/modules/fileman/e_mod_menu.c:365
+#: src/modules/fileman/e_mod_menu.c:351
 msgid "GTK Bookmarks"
 msgstr "GTK-bogmærker"
 
-#: src/modules/fileman/e_mod_menu.c:459
+#: src/modules/fileman/e_mod_menu.c:445
 msgid "Current Directory"
 msgstr "Nuværende mappe"
 
-#: src/modules/fileman/e_mod_menu.c:465
+#: src/modules/fileman/e_mod_menu.c:451
 msgid "Home"
 msgstr "Hjem"
 
-#: src/modules/fileman/e_mod_menu.c:495
+#: src/modules/fileman/e_mod_menu.c:481
 msgid "Root"
 msgstr "Rod"
 
-#: src/modules/fileman/e_mod_menu.c:542
+#: src/modules/fileman/e_mod_menu.c:528
 msgid "Navigate..."
 msgstr "Naviger..."
 
@@ -9105,8 +9104,8 @@ msgstr ""
 msgid "New volume"
 msgstr "Ny lydstyrke"
 
-#: src/modules/mixer/e_mod_main.c:136 src/modules/mixer/e_mod_main.c:567
-#: src/modules/mixer/e_mod_main.c:1535
+#: src/modules/mixer/e_mod_main.c:136 src/modules/mixer/e_mod_main.c:569
+#: src/modules/mixer/e_mod_main.c:1537
 msgid "Mixer"
 msgstr "Mixer"
 
@@ -9346,80 +9345,80 @@ msgstr "Pakkehåndtering"
 msgid "System Updates Settings"
 msgstr "Indstillinger for systemopdateringer"
 
-#: src/modules/packagekit/e_mod_main.c:193
+#: src/modules/packagekit/e_mod_main.c:123
 msgid "System Updates"
 msgstr "Systemopdateringer"
 
-#: src/modules/packagekit/e_mod_packagekit.c:80
+#: src/modules/packagekit/e_mod_packagekit.c:77
 msgid "Low priority update"
 msgstr "Opdatering med lav prioritet"
 
-#: src/modules/packagekit/e_mod_packagekit.c:82
+#: src/modules/packagekit/e_mod_packagekit.c:79
 msgid "Enhancement update"
 msgstr "Opdatering med forbedring"
 
-#: src/modules/packagekit/e_mod_packagekit.c:84
+#: src/modules/packagekit/e_mod_packagekit.c:81
 msgid "Normal update"
 msgstr "Normal opdatering"
 
-#: src/modules/packagekit/e_mod_packagekit.c:86
+#: src/modules/packagekit/e_mod_packagekit.c:83
 msgid "Bugfix update"
 msgstr "Opdatering med fejlrettelse"
 
-#: src/modules/packagekit/e_mod_packagekit.c:88
+#: src/modules/packagekit/e_mod_packagekit.c:85
 msgid "High priority update"
 msgstr "Opdatering med høj prioritet"
 
-#: src/modules/packagekit/e_mod_packagekit.c:90
+#: src/modules/packagekit/e_mod_packagekit.c:87
 msgid "Security update"
 msgstr "Sikkerhedsopdatering"
 
-#: src/modules/packagekit/e_mod_packagekit.c:170
+#: src/modules/packagekit/e_mod_packagekit.c:167
 #, c-format
 msgid "Unknown PackageKit version"
 msgstr "Ukendt PackageKit-version"
 
-#: src/modules/packagekit/e_mod_packagekit.c:236
+#: src/modules/packagekit/e_mod_packagekit.c:233
 msgid "No information available"
 msgstr "Ingen information tilgængelig"
 
-#: src/modules/packagekit/e_mod_packagekit.c:268
+#: src/modules/packagekit/e_mod_packagekit.c:265
 #, c-format
 msgid "Operation in progress"
 msgstr "Handling i gang"
 
-#: src/modules/packagekit/e_mod_packagekit.c:270
+#: src/modules/packagekit/e_mod_packagekit.c:267
 #, c-format
 msgid "One update available"
 msgid_plural "%d updates available"
 msgstr[0] "En tilgængelig opdatering"
 msgstr[1] "%d tilgængelige opdateringer"
 
-#: src/modules/packagekit/e_mod_packagekit.c:272
+#: src/modules/packagekit/e_mod_packagekit.c:269
 #, c-format
 msgid "Your system is updated"
 msgstr "Dit system er opdateret"
 
-#: src/modules/packagekit/e_mod_packagekit.c:280
+#: src/modules/packagekit/e_mod_packagekit.c:277
 msgid "Please wait"
 msgstr "Vent venligst"
 
-#: src/modules/packagekit/e_mod_packagekit.c:285
+#: src/modules/packagekit/e_mod_packagekit.c:282
 msgid "Nothing to do"
 msgstr "Intet at gøre"
 
-#: src/modules/packagekit/e_mod_packagekit.c:291
+#: src/modules/packagekit/e_mod_packagekit.c:288
 msgid "Install all available updates"
 msgstr "Installer alle tilgængelige opdateringer"
 
-#: src/modules/packagekit/e_mod_packagekit.c:296
+#: src/modules/packagekit/e_mod_packagekit.c:293
 #, c-format
 msgid "Install the selected update"
 msgid_plural "Install %d selected updates"
 msgstr[0] "Installer den valgte opdatering"
 msgstr[1] "Installer de %d valgte opdateringer"
 
-#: src/modules/packagekit/e_mod_packagekit.c:566
+#: src/modules/packagekit/e_mod_packagekit.c:545
 msgid "Run the package manager"
 msgstr "Kør pakkehåndteringen"
 
@@ -9896,7 +9895,7 @@ msgstr ""
 msgid "Select screenshot save location"
 msgstr "Vælg placeringen hvor skærmbilledet skal gemmes"
 
-#: src/modules/shot/e_mod_main.c:286 src/modules/shot/e_mod_main.c:737
+#: src/modules/shot/e_mod_main.c:286 src/modules/shot/e_mod_main.c:736
 msgid "Save"
 msgstr "Gem"
 
@@ -9986,41 +9985,36 @@ msgstr ""
 "Dette billede vil blive uploadet<ps/>til enlightenment.org. Det vil kunne "
 "ses af offentligheden."
 
-#: src/modules/shot/e_mod_main.c:613
+#: src/modules/shot/e_mod_main.c:612
 msgid "Where to put Screenshot..."
 msgstr "Hvor skærmbilledet skal være..."
 
-#: src/modules/shot/e_mod_main.c:660
+#: src/modules/shot/e_mod_main.c:659
 msgid "Quality"
 msgstr "Kvalitet"
 
-#: src/modules/shot/e_mod_main.c:664
+#: src/modules/shot/e_mod_main.c:663
 msgid "Perfect"
 msgstr "Perfekt"
 
-#: src/modules/shot/e_mod_main.c:739
+#: src/modules/shot/e_mod_main.c:738
 msgid "Share"
 msgstr "Del"
 
-#: src/modules/shot/e_mod_main.c:1022 src/modules/shot/e_mod_main.c:1074
+#: src/modules/shot/e_mod_main.c:985 src/modules/shot/e_mod_main.c:1033
 msgid "Take Shot"
 msgstr "Tag billede"
 
-#: src/modules/shot/e_mod_main.c:1026
-#, fuzzy
-msgid "Take Padded Shot"
-msgstr "Tag billede"
-
-#: src/modules/shot/e_mod_main.c:1037 src/modules/shot/e_mod_main.c:1066
-#: src/modules/shot/e_mod_main.c:1079
+#: src/modules/shot/e_mod_main.c:996 src/modules/shot/e_mod_main.c:1025
+#: src/modules/shot/e_mod_main.c:1038
 msgid "Take Screenshot"
 msgstr "Tag billede"
 
-#: src/modules/shot/e_mod_main.c:1054
+#: src/modules/shot/e_mod_main.c:1013
 msgid "Shot Error"
 msgstr "Fejl ved indfangning"
 
-#: src/modules/shot/e_mod_main.c:1055
+#: src/modules/shot/e_mod_main.c:1014
 msgid "Cannot initialize network"
 msgstr "Kan ikke initialisere netværk"
 
@@ -10493,7 +10487,7 @@ msgstr "Muse-modifiers"
 
 #: src/modules/wizard/page_065.c:104
 msgid "Keys:"
-msgstr "Nøgler:"
+msgstr "Taster:"
 
 #: src/modules/wizard/page_065.c:110
 #, c-format
@@ -10519,7 +10513,7 @@ msgstr[1] ""
 "Enlightenment sætter standardmusebindinger for objekter.<ps/>Disse bindinger "
 "giver tre handinger ved klik:<ps/>* <b>Flyt</b> (venstre knap)<ps/>* "
 "<b>Tilpas størrelse</b> (miderste-/hjulknap)<ps/>* <b>Åbn menu</b> (højre "
-"knap)<ps/>Standardnøglerne som skal holdes nede for at aktivere disse "
+"knap)<ps/>Standardtasterne som skal holdes nede for at aktivere disse "
 "bindinger<ps/>er '%s'. Konfigurer modifierne for denne binding nedenfor."
 
 #: src/modules/wizard/page_110.c:9
@@ -10732,6 +10726,3 @@ msgstr "Variant"
 #: src/modules/xkbswitch/e_mod_main.c:197
 msgid "NONE"
 msgstr "INGEN"
-
-#~ msgid "Add Bryce"
-#~ msgstr "Tilføj bryce"
