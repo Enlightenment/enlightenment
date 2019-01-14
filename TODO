@@ -1,0 +1,19 @@
+TODO:
+* new gad usability: be able to move, resize etc. without alt
+  (needs old gadget move/resize mode enable/disable in the menu)
+* new gad usability: initial gadget bar setup dnd needs to be normal dnd
+* new gad usability: setup needs an obvious "add" button as dnd not obvious
+* efm: use elm for window
+* efm: use elm scroller for fm view
+* efm: use elm for file popup
+* efm: add disk space used bar for disk volume icons
+* efm: add space used "du -sh" summery for all folders
+* efm: add filesystem cache (all dirs cached in files and updated in bg)
+* efm: thumbs for music gettign album art like rage
+* efm: thumbs for videos with movie posters like rage
+* efm: show symlink info in icon
+* music-control: fix aspect ratio of album cover image
+* shot: add manual cropping ability
+* shot: add simple free draw, box, line and text on top of shot before save
+
+DONE:
