@@ -929,14 +929,15 @@ _sink_input_event(int type, Emix_Sink_Input *input)
    E_Client *ec;
    E_Client_Volume_Sink *sink;
    pid_t pid;
+   Eina_Bool found = EINA_FALSE;
 
    switch (type)
      {
       case EMIX_SINK_INPUT_ADDED_EVENT:
          pid = input->pid;
-        if ((pid <= 1) || (pid == getpid())) return;
-        else
+         for (;;)
            {
+              if ((pid <= 1) || (pid == getpid())) return;
               clients = e_client_focus_stack_get();
               EINA_LIST_FOREACH(clients, l, ec)
                 {
@@ -952,8 +953,10 @@ _sink_input_event(int type, Emix_Sink_Input *input)
                                                         input);
                         e_client_volume_sink_append(ec, sink);
                         _client_sinks = eina_list_append(_client_sinks, sink);
+                        found = EINA_TRUE;
                      }
                 }
+              if (found) break;
               pid = _get_ppid(pid);
            }
          break;
