@@ -519,5 +519,11 @@ _e_xkb_cb_lmenu_set(void *data, E_Menu *mn EINA_UNUSED, E_Menu_Item *mi EINA_UNU
    e_xkb_layout_set(cl);
    e_config_xkb_layout_free(e_config->xkb.sel_layout);
    e_config->xkb.sel_layout = e_config_xkb_layout_dup(cl);
+   if (e_comp->comp_type == E_PIXMAP_TYPE_WL)
+#ifdef HAVE_WAYLAND
+     e_comp_wl_input_keymap_index_set(cur_group);
+#else
+     (void)cur_group;
+#endif
 }
 

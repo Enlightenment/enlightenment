@@ -104,6 +104,12 @@ _xkbg_cb_menu_set(void *data, Evas_Object *obj, void *event_data EINA_UNUSED)
    e_xkb_layout_set(cl);
    e_config_xkb_layout_free(e_config->xkb.sel_layout);
    e_config->xkb.sel_layout = e_config_xkb_layout_dup(cl);
+   if (e_comp->comp_type == E_PIXMAP_TYPE_WL)
+#ifdef HAVE_WAYLAND
+     e_comp_wl_input_keymap_index_set(cur_group);
+#else
+     (void)cur_group;
+#endif
 }
 
 static void
