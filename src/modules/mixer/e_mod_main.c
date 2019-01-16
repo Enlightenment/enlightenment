@@ -925,7 +925,7 @@ _get_ppid(pid_t pid)
 static void
 _sink_input_event(int type, Emix_Sink_Input *input)
 {
-   Eina_List *clients, *l;
+   Eina_List *clients, *l, *ll;
    E_Client *ec;
    E_Client_Volume_Sink *sink;
    pid_t pid;
@@ -934,9 +934,9 @@ _sink_input_event(int type, Emix_Sink_Input *input)
      {
       case EMIX_SINK_INPUT_ADDED_EVENT:
          pid = input->pid;
-         while (42)
+        if ((pid <= 1) || (pid == getpid())) return;
+        else
            {
-              if (pid <= 1 || pid == getpid()) return;
               clients = e_client_focus_stack_get();
               EINA_LIST_FOREACH(clients, l, ec)
                 {
@@ -952,20 +952,18 @@ _sink_input_event(int type, Emix_Sink_Input *input)
                                                         input);
                         e_client_volume_sink_append(ec, sink);
                         _client_sinks = eina_list_append(_client_sinks, sink);
-                        return;
                      }
                 }
               pid = _get_ppid(pid);
            }
          break;
       case EMIX_SINK_INPUT_REMOVED_EVENT:
-         EINA_LIST_FOREACH(_client_sinks, l, sink)
+         EINA_LIST_FOREACH_SAFE(_client_sinks, l, ll, sink)
            {
               if (sink->data == input)
                 {
                    e_client_volume_sink_del(sink);
                    _client_sinks = eina_list_remove_list(_client_sinks, l);
-                   break;
                 }
            }
          break;
