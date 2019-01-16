@@ -33,6 +33,7 @@ typedef struct Context
    Eina_Array *backends;
    Eina_List *backends_names;
    Eina_List *callbacks;
+   Eina_List *configs;
 
    Emix_Backend *loaded;
 } Context;
@@ -168,6 +169,13 @@ emix_backends_available(void)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(ctx, NULL);
    return ctx->backends_names;
+}
+
+const Eina_List *
+emix_configs_available(void)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(ctx, NULL);
+   return ctx->configs;
 }
 
 int
@@ -402,3 +410,24 @@ emix_event_callback_del(Emix_Event_Cb cb)
 
    return EINA_FALSE;
 }
+
+const Eina_List*
+emix_cards_get(void)
+{
+   EINA_SAFETY_ON_FALSE_RETURN_VAL((ctx && ctx->loaded &&
+                                    ctx->loaded->ebackend_cards_get), NULL);
+
+   return ctx->loaded->ebackend_cards_get();
+}
+
+Eina_Bool
+emix_card_profile_set(Emix_Card *card, Emix_Profile *profile)
+{
+   EINA_SAFETY_ON_FALSE_RETURN_VAL((ctx && ctx->loaded &&
+                                    ctx->loaded->ebackend_card_profile_set &&
+                                    card && profile), EINA_FALSE);
+
+   return ctx->loaded->ebackend_card_profile_set(card, profile);
+}
+
+

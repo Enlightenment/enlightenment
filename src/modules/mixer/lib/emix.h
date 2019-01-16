@@ -36,7 +36,10 @@ enum Emix_Event {
    EMIX_SINK_INPUT_CHANGED_EVENT,
    EMIX_SOURCE_ADDED_EVENT,
    EMIX_SOURCE_REMOVED_EVENT,
-   EMIX_SOURCE_CHANGED_EVENT
+   EMIX_SOURCE_CHANGED_EVENT,
+   EMIX_CARD_ADDED_EVENT,
+   EMIX_CARD_REMOVED_EVENT,
+   EMIX_CARD_CHANGED_EVENT
 };
 
 typedef struct _Emix_Volume {
@@ -72,6 +75,18 @@ typedef struct _Emix_Source {
    Emix_Volume volume;
    Eina_Bool mute;
 } Emix_Source;
+
+typedef struct _Emix_Profile {
+   const char *name;
+   const char *description;
+   Eina_Bool plugged;
+   Eina_Bool active;
+} Emix_Profile;
+
+typedef struct _Emix_Card {
+   const char *name;
+   Eina_List *profiles;
+} Emix_Card;
 
 typedef void (*Emix_Event_Cb)(void *data, enum Emix_Event event,
                               void *event_info);
@@ -109,6 +124,8 @@ typedef struct _Emix_Backend {
                                                        Emix_Volume volume);
 
    Evas_Object*          (*ebackend_advanced_options_add)(Evas_Object *parent);
+   const Eina_List*      (*ebackend_cards_get)(void);
+   Eina_Bool             (*ebackend_card_profile_set)(Emix_Card *card, const Emix_Profile *profile);
 } Emix_Backend;
 
 //////////////////////////////////////////////////////////////////////////////
@@ -167,5 +184,8 @@ E_API void                emix_source_mute_set(Emix_Source *source,
 E_API void                emix_source_volume_set(Emix_Source *source,
                                                 Emix_Volume volume);
 E_API Evas_Object*        emix_advanced_options_add(Evas_Object *parent);
+
+E_API const Eina_List*    emix_cards_get(void);
+E_API Eina_Bool           emix_card_profile_set(Emix_Card *card, Emix_Profile *profile);
 
 #endif  /* EMIX_H */

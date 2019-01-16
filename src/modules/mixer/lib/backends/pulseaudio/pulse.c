@@ -27,7 +27,7 @@ typedef struct _Context
    Ecore_Timer *connect;
    int default_sink;
 
-   Eina_List *sinks, *sources, *inputs;
+   Eina_List *sinks, *sources, *inputs, *cards;
    Eina_Bool connected;
 } Context;
 
@@ -49,6 +49,18 @@ typedef struct _Source
    Emix_Source base;
    int idx;
 } Source;
+
+typedef struct _Profile
+{
+   Emix_Profile base;
+   uint32_t priority;
+} Profile;
+
+typedef struct _Card
+{
+   Emix_Card base;
+   int idx;
+} Card;
 
 static Context *ctx = NULL;
 extern pa_mainloop_api functable;
@@ -120,6 +132,22 @@ _source_del(Source *source)
    free(source->base.volume.volumes);
    eina_stringshare_del(source->base.name);
    free(source);
+}
+
+static void
+_card_del(Card *card)
+{
+   Profile *profile;
+   EINA_SAFETY_ON_NULL_RETURN(card);
+
+   EINA_LIST_FREE(card->base.profiles, profile)
+     {
+        eina_stringshare_del(profile->base.name);
+        eina_stringshare_del(profile->base.description);
+        free(profile);
+     }
+   eina_stringshare_del(card->base.name);
+   free(card);
 }
 
 static void
@@ -600,6 +628,179 @@ _server_info_cb(pa_context *c, const pa_server_info *info,
    pa_operation_unref(o);
 }
 
+static int
+_profile_sort_cb(const Profile *p1, const Profile *p2)
+{
+   if (p1->priority < p2->priority) return 1;
+   if (p1->priority > p2->priority) return -1;
+   return 0;
+}
+
+static void
+_card_cb(pa_context *c, const pa_card_info *info, int eol, void *userdata EINA_UNUSED)
+{
+     Card *card;
+     const char *description;
+     uint32_t i, j;
+     Profile *profile;
+
+     if (eol < 0) {
+          if (pa_context_errno(c) == PA_ERR_NOENTITY)
+            return;
+
+          ERR("Card callback failure: %d", pa_context_errno(c));
+          return;
+     }
+   if (eol > 0)
+      return;
+
+   card = calloc(1, sizeof(Card));
+   EINA_SAFETY_ON_NULL_RETURN(card);
+
+   card->idx = info->index;
+
+   description = pa_proplist_gets(info->proplist, PA_PROP_DEVICE_DESCRIPTION);
+   card->base.name = description
+      ? eina_stringshare_add(description)
+      : eina_stringshare_add(info->name);
+
+   for (i = 0; i < info->n_ports; ++i)
+     {
+        for (j = 0; j < info->ports[i]->n_profiles; ++j)
+          {
+             profile = calloc(1, sizeof(Profile));
+             profile->base.name = eina_stringshare_add(info->ports[i]->profiles[j]->name);
+             profile->base.description = eina_stringshare_add(info->ports[i]->profiles[j]->description);
+             profile->priority = info->ports[i]->profiles[j]->priority;
+             if ((info->ports[i]->available == PA_PORT_AVAILABLE_NO)
+               && ((strcmp("analog-output-speaker", profile->base.name))
+                   || (strcmp("analog-input-microphone-internal", profile->base.name))))
+                  profile->base.plugged = EINA_FALSE;
+             else
+               profile->base.plugged = EINA_TRUE;
+
+             if (info->active_profile)
+               {
+                  if (info->ports[i]->profiles[j]->name == info->active_profile->name)
+                    profile->base.active = EINA_TRUE;
+               }
+             card->base.profiles =
+                eina_list_sorted_insert(card->base.profiles,
+                                        (Eina_Compare_Cb)_profile_sort_cb,
+                                        profile);
+          }
+     }
+   ctx->cards = eina_list_append(ctx->cards, card);
+   if (ctx->cb)
+     ctx->cb((void *)ctx->userdata, EMIX_CARD_ADDED_EVENT,
+             (Emix_Card *)card);
+}
+
+static void
+_card_changed_cb(pa_context *c EINA_UNUSED, const pa_card_info *info, int eol,
+                 void *userdata EINA_UNUSED)
+{
+   Card *card = NULL, *ca;
+   Eina_List *l;
+   const char *description;
+   uint32_t i, j;
+   Profile *profile;
+
+   if (eol < 0)
+     {
+        if (pa_context_errno(c) == PA_ERR_NOENTITY)
+           return;
+
+        ERR("Card callback failure");
+        return;
+     }
+
+   if (eol > 0)
+      return;
+
+   DBG("card index: %d\n", info->index);
+
+   EINA_LIST_FOREACH(ctx->cards, l, ca)
+     {
+        if (ca->idx == (int)info->index)
+          {
+             card = ca;
+             break;
+          }
+     }
+
+   EINA_SAFETY_ON_NULL_RETURN(card);
+
+   description = pa_proplist_gets(info->proplist, PA_PROP_DEVICE_DESCRIPTION);
+   eina_stringshare_replace(&card->base.name,
+                            (description
+                             ? eina_stringshare_add(description)
+                             : eina_stringshare_add(info->name)));
+
+   EINA_LIST_FREE(card->base.profiles, profile)
+     {
+        eina_stringshare_del(profile->base.name);
+        eina_stringshare_del(profile->base.description);
+        free(profile);
+     }
+   for (i = 0; i < info->n_ports; ++i)
+     {
+        for (j = 0; j < info->ports[i]->n_profiles; ++j)
+          {
+             profile = calloc(1, sizeof(Profile));
+             profile->base.name = eina_stringshare_add(info->ports[i]->profiles[j]->name);
+             profile->base.description = eina_stringshare_add(info->ports[i]->profiles[j]->description);
+             profile->priority = info->ports[i]->profiles[j]->priority;
+             if ((info->ports[i]->available == PA_PORT_AVAILABLE_NO)
+               && ((strcmp("analog-output-speaker", profile->base.name))
+                   || (strcmp("analog-input-microphone-internal", profile->base.name))))
+                  profile->base.plugged = EINA_FALSE;
+             else
+               profile->base.plugged = EINA_TRUE;
+
+             if (info->active_profile)
+               {
+                  if (info->ports[i]->profiles[j]->name == info->active_profile->name)
+                    profile->base.active = EINA_TRUE;
+               }
+             card->base.profiles =
+                eina_list_sorted_insert(card->base.profiles,
+                                        (Eina_Compare_Cb)_profile_sort_cb,
+                                        profile);
+          }
+     }
+
+   if (ctx->cb)
+     ctx->cb((void *)ctx->userdata, EMIX_CARD_CHANGED_EVENT,
+                  (Emix_Card *)card);
+}
+
+static void
+_card_remove_cb(int index, void *data EINA_UNUSED)
+{
+   Card *card;
+   Eina_List *l;
+   EINA_SAFETY_ON_NULL_RETURN(ctx);
+
+   DBG("Removing card: %d", index);
+
+   EINA_LIST_FOREACH(ctx->cards, l, card)
+     {
+        if (card->idx == index)
+          {
+             ctx->cards = eina_list_remove_list(ctx->cards, l);
+             if (ctx->cb)
+               ctx->cb((void *)ctx->userdata,
+                       EMIX_CARD_REMOVED_EVENT,
+                       (Emix_Card *)card);
+             _card_del(card);
+
+             break;
+          }
+     }
+}
+
+
 static void
 _subscribe_cb(pa_context *c, pa_subscription_event_type_t t,
               uint32_t index, void *data)
@@ -699,6 +900,34 @@ _subscribe_cb(pa_context *c, pa_subscription_event_type_t t,
          }
        pa_operation_unref(o);
        break;
+
+    case PA_SUBSCRIPTION_EVENT_CARD:
+       if ((t & PA_SUBSCRIPTION_EVENT_TYPE_MASK) ==
+           PA_SUBSCRIPTION_EVENT_REMOVE)
+           _card_remove_cb(index, data);
+       else if ((t & PA_SUBSCRIPTION_EVENT_TYPE_MASK) ==
+                PA_SUBSCRIPTION_EVENT_NEW)
+         {
+            if (!(o = pa_context_get_card_info_by_index(c, index, _card_cb,
+                                                        data)))
+              {
+                 ERR("pa_context_get_card_info() failed");
+                 return;
+              }
+            pa_operation_unref(o);
+         }
+       else
+         {
+            if (!(o = pa_context_get_card_info_by_index(c, index, _card_changed_cb,
+                                                        data)))
+              {
+                 ERR("pa_context_get_card_info() failed");
+                 return;
+              }
+            pa_operation_unref(o);
+         }
+       break;
+
     default:
        WRN("Event not handled");
        break;
@@ -771,6 +1000,17 @@ _pulse_pa_state_cb(pa_context *context, void *data)
              return;
           }
         pa_operation_unref(o);
+
+        if (!(o = pa_context_get_card_info_list(context, _card_cb,
+                                             ctx)))
+          {
+             ERR("pa_context_get_server_info() failed");
+             return;
+          }
+        pa_operation_unref(o);
+
+
+
         break;
 
       case PA_CONTEXT_FAILED:
@@ -908,6 +1148,7 @@ _disconnect_cb()
    Source *source;
    Sink *sink;
    Sink_Input *input;
+   Card *card;
 
    if (ctx->cb)
       ctx->cb((void *)ctx->userdata, EMIX_DISCONNECTED_EVENT, NULL);
@@ -918,6 +1159,8 @@ _disconnect_cb()
       _sink_del(sink);
    EINA_LIST_FREE(ctx->inputs, input)
       _sink_input_del(input);
+   EINA_LIST_FREE(ctx->cards, card)
+      _card_del(card);
 }
 
 static void
@@ -1087,6 +1330,34 @@ _max_volume(void)
    return 150;
 }
 
+static const Eina_List *
+_cards_get(void)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(ctx, NULL);
+   return ctx->cards;
+}
+
+static Eina_Bool
+_card_profile_set(Emix_Card *card, const Emix_Profile *profile)
+{
+   pa_operation* o;
+   Card *c = (Card *)card;
+   Profile *p = (Profile *)profile;
+   EINA_SAFETY_ON_FALSE_RETURN_VAL(ctx && ctx->context &&
+                                   (c != NULL) && (p != NULL), EINA_FALSE);
+
+   if (!(o = pa_context_set_card_profile_by_index(ctx->context,
+                                                  c->idx, p->base.name, NULL,
+                                                  NULL)))
+     {
+        ERR("pa_context_set_card_profile_by_index() failed");
+        return EINA_FALSE;
+     }
+   pa_operation_unref(o);
+
+   return EINA_TRUE;
+}
+
 static Emix_Backend
 _pulseaudio_backend =
 {
@@ -1109,6 +1380,8 @@ _pulseaudio_backend =
    _source_mute_set,
    _source_volume_set,
    NULL,
+   _cards_get,
+   _card_profile_set
 };
 
 E_API Emix_Backend *

@@ -2,10 +2,10 @@
 #include "emix.h"
 
 Evas_Object *win;
-Evas_Object *source_scroller, *sink_input_scroller, *sink_scroller;
-Evas_Object *source_box, *sink_input_box, *sink_box;
+Evas_Object *source_scroller, *sink_input_scroller, *sink_scroller, *card_scroller;
+Evas_Object *source_box, *sink_input_box, *sink_box, *card_box;
 
-Eina_List *source_list = NULL, *sink_input_list = NULL, *sink_list = NULL;
+Eina_List *source_list = NULL, *sink_input_list = NULL, *sink_list = NULL, *card_list = NULL;
 
 //////////////////////////////////////////////////////////////////////////////
 
@@ -514,6 +514,117 @@ _emix_source_change(Emix_Source *source)
 }
 
 //////////////////////////////////////////////////////////////////////////////
+static void
+_cb_card_profile_change(void *data,
+                        Evas_Object *obj,
+                        void *event_info EINA_UNUSED)
+{
+   Emix_Profile *profile = data;
+   Evas_Object *bxv = evas_object_data_get(obj, "parent");
+   Emix_Card *card = evas_object_data_get(bxv, "card");
+   elm_object_text_set(obj, profile->description);
+   emix_card_profile_set(card, profile);
+}
+
+static void
+_emix_card_add(Emix_Card *card)
+{
+   Evas_Object *bxv, *bx, *lb, *hv, *sep;
+   Eina_List *l;
+   Emix_Profile *profile;
+
+   bxv = elm_box_add(win);
+   card_list = eina_list_append(card_list, bxv);
+   evas_object_data_set(bxv, "card", card);
+   evas_object_size_hint_weight_set(bxv, EVAS_HINT_EXPAND, 0.0);
+   evas_object_size_hint_align_set(bxv, EVAS_HINT_FILL, 0.0);
+
+   bx = elm_box_add(win);
+   elm_box_horizontal_set(bx, EINA_TRUE);
+   evas_object_size_hint_weight_set(bx, EVAS_HINT_EXPAND, 0.0);
+   evas_object_size_hint_align_set(bx, EVAS_HINT_FILL, 0.0);
+   elm_box_pack_end(bxv, bx);
+   evas_object_show(bx);
+
+   lb = elm_label_add(win);
+   elm_object_text_set(lb, card->name);
+   evas_object_size_hint_weight_set(lb, EVAS_HINT_EXPAND, 0.5);
+   evas_object_size_hint_align_set(lb, 0.0, 0.5);
+   elm_box_pack_end(bx, lb);
+   evas_object_show(lb);
+
+   hv = elm_hoversel_add(win);
+   evas_object_data_set(hv, "parent", bxv);
+   evas_object_data_set(bxv, "profile", hv);
+   elm_hoversel_hover_parent_set(hv, win);
+   EINA_LIST_FOREACH(card->profiles, l, profile)
+     {
+        if (!profile->plugged) continue;
+        elm_hoversel_item_add(hv, profile->description,
+                              NULL, ELM_ICON_NONE,
+                              _cb_card_profile_change, profile);
+        if (profile->active) elm_object_text_set(hv, profile->description);
+     }
+   evas_object_size_hint_weight_set(hv, 0.0, 0.5);
+   evas_object_size_hint_align_set(hv, EVAS_HINT_FILL, 0.5);
+   elm_box_pack_end(bx, hv);
+   evas_object_show(hv);
+
+   sep = elm_separator_add(win);
+   elm_separator_horizontal_set(sep, EINA_TRUE);
+   evas_object_size_hint_weight_set(sep, EVAS_HINT_EXPAND, 0.0);
+   evas_object_size_hint_align_set(sep, EVAS_HINT_FILL, 0.0);
+   elm_box_pack_end(bxv, sep);
+   evas_object_show(sep);
+
+   elm_box_pack_end(card_box, bxv);
+   evas_object_show(bxv);
+}
+
+static void
+_emix_card_change(Emix_Card *card)
+{
+   const Eina_List *l;
+   Evas_Object *bxv, *hv;
+   Emix_Profile *profile;
+
+   EINA_LIST_FOREACH(card_list, l, bxv)
+     {
+        if (evas_object_data_get(bxv, "card") == card) break;
+     }
+   if (!l) return;
+   hv = evas_object_data_get(bxv, "profile");
+   elm_hoversel_clear(hv);
+   EINA_LIST_FOREACH(card->profiles, l, profile)
+     {
+        if (!profile->plugged) continue;
+        elm_hoversel_item_add(hv, profile->description,
+                              NULL, ELM_ICON_NONE,
+                              _cb_card_profile_change, profile);
+        if (profile->active) elm_object_text_set(hv, profile->description);
+     }
+}
+
+
+static void
+_emix_card_del(Emix_Card *card)
+{
+   Eina_List *l;
+   Evas_Object *bxv;
+   EINA_LIST_FOREACH(card_list, l, bxv)
+     {
+        if (evas_object_data_get(bxv, "card") == card)
+          {
+             card_list = eina_list_remove_list(card_list, l);
+             evas_object_del(bxv);
+             return;
+          }
+     }
+}
+
+
+//////////////////////////////////////////////////////////////////////////////
+
 
 static void
 _cb_emix_event(void *data EINA_UNUSED, enum Emix_Event event, void *event_info)
@@ -552,6 +663,15 @@ _cb_emix_event(void *data EINA_UNUSED, enum Emix_Event event, void *event_info)
       case EMIX_SOURCE_CHANGED_EVENT:
         _emix_source_change(event_info);
         break;
+      case EMIX_CARD_ADDED_EVENT:
+        _emix_card_add(event_info);
+        break;
+      case EMIX_CARD_REMOVED_EVENT:
+        _emix_card_del(event_info);
+        break;
+      case EMIX_CARD_CHANGED_EVENT:
+        _emix_card_change(event_info);
+        break;
       default:
         break;
      }
@@ -567,6 +687,7 @@ _cb_playback(void *data EINA_UNUSED,
    evas_object_hide(source_scroller);
    evas_object_show(sink_input_scroller);
    evas_object_hide(sink_scroller);
+   evas_object_hide(card_scroller);
 }
 
 static void
@@ -577,6 +698,7 @@ _cb_outputs(void *data EINA_UNUSED,
    evas_object_hide(source_scroller);
    evas_object_hide(sink_input_scroller);
    evas_object_show(sink_scroller);
+   evas_object_hide(card_scroller);
 }
 
 static void
@@ -587,7 +709,20 @@ _cb_inputs(void *data EINA_UNUSED,
    evas_object_show(source_scroller);
    evas_object_hide(sink_input_scroller);
    evas_object_hide(sink_scroller);
+   evas_object_hide(card_scroller);
 }
+
+static void
+_cb_card(void *data EINA_UNUSED,
+           Evas_Object *obj EINA_UNUSED,
+           void *event_info EINA_UNUSED)
+{
+   evas_object_hide(source_scroller);
+   evas_object_hide(sink_input_scroller);
+   evas_object_hide(sink_scroller);
+   evas_object_show(card_scroller);
+}
+
 
 //////////////////////////////////////////////////////////////////////////////
 
@@ -633,6 +768,18 @@ _fill_sink(void)
      }
 }
 
+static void
+_fill_card(void)
+{
+   const Eina_List *l;
+   Emix_Card *card;
+
+   EINA_LIST_FOREACH(emix_cards_get(), l, card)
+     {
+        _emix_card_add(card);
+     }
+}
+
 //////////////////////////////////////////////////////////////////////////////
 
 EAPI_MAIN int
@@ -674,6 +821,7 @@ elm_main(int argc, char **argv)
    elm_toolbar_item_append(tbar, NULL, "Playback", _cb_playback, NULL);
    elm_toolbar_item_append(tbar, NULL, "Outputs", _cb_outputs, NULL);
    elm_toolbar_item_append(tbar, NULL, "Inputs", _cb_inputs, NULL);
+   elm_toolbar_item_append(tbar, NULL, "Cards", _cb_card, NULL);
 
    elm_table_pack(tb, tbar, 0, 0, 1, 1);
    evas_object_show(tbar);
@@ -693,6 +841,12 @@ elm_main(int argc, char **argv)
 
    sc = elm_scroller_add(win);
    sink_scroller = sc;
+   evas_object_size_hint_weight_set(sc, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(sc, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   elm_table_pack(tb, sc, 0, 1, 1, 1);
+
+   sc = elm_scroller_add(win);
+   card_scroller = sc;
    evas_object_size_hint_weight_set(sc, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(sc, EVAS_HINT_FILL, EVAS_HINT_FILL);
    elm_table_pack(tb, sc, 0, 1, 1, 1);
@@ -718,6 +872,13 @@ elm_main(int argc, char **argv)
    elm_object_content_set(sink_scroller, bx);
    evas_object_show(bx);
 
+   bx = elm_box_add(win);
+   card_box = bx;
+   evas_object_size_hint_weight_set(bx, EVAS_HINT_EXPAND, 0.0);
+   evas_object_size_hint_align_set(bx, EVAS_HINT_FILL, 0.0);
+   elm_object_content_set(card_scroller, bx);
+   evas_object_show(bx);
+
    rect = evas_object_rectangle_add(evas_object_evas_get(win));
    evas_object_size_hint_weight_set(rect, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(rect, EVAS_HINT_FILL, EVAS_HINT_FILL);
@@ -729,6 +890,7 @@ elm_main(int argc, char **argv)
    _fill_source();
    _fill_sink_input();
    _fill_sink();
+   _fill_card();
    evas_object_show(win);
 
    elm_run();
