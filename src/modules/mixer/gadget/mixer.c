@@ -260,52 +260,52 @@ _volume_mute_app_cb(E_Object *obj EINA_UNUSED, const char *params EINA_UNUSED)
 static void
 _actions_register(void)
 {
-   gmixer_context->actions.incr = e_action_add("volume_increase");
+   gmixer_context->actions.incr = e_action_add("gadget_volume_increase");
    if (gmixer_context->actions.incr)
      {
         gmixer_context->actions.incr->func.go = _volume_increase_cb;
-        e_action_predef_name_set("Mixer", _("Increase Volume"),
-                                 "volume_increase", NULL, NULL, 0);
+        e_action_predef_name_set("Mixer Gadget", _("Increase Volume"),
+                                 "gadget_volume_increase", NULL, NULL, 0);
      }
 
-   gmixer_context->actions.decr = e_action_add("volume_decrease");
+   gmixer_context->actions.decr = e_action_add("gadget_volume_decrease");
    if (gmixer_context->actions.decr)
      {
         gmixer_context->actions.decr->func.go = _volume_decrease_cb;
-        e_action_predef_name_set("Mixer", _("Decrease Volume"),
-                                 "volume_decrease", NULL, NULL, 0);
+        e_action_predef_name_set("Mixer Gadget", _("Decrease Volume"),
+                                 "gadget_volume_decrease", NULL, NULL, 0);
      }
 
-   gmixer_context->actions.mute = e_action_add("volume_mute");
+   gmixer_context->actions.mute = e_action_add("gadget_volume_mute");
    if (gmixer_context->actions.mute)
      {
         gmixer_context->actions.mute->func.go = _volume_mute_cb;
-        e_action_predef_name_set("Mixer", _("Mute volume"), "volume_mute",
+        e_action_predef_name_set("Mixer Gadget", _("Mute volume"), "gadget_volume_mute",
                                  NULL, NULL, 0);
      }
-   gmixer_context->actions.incr_app = e_action_add("volume_increase_app");
+   gmixer_context->actions.incr_app = e_action_add("gadget_volume_increase_app");
    if (gmixer_context->actions.incr_app)
      {
         gmixer_context->actions.incr_app->func.go = _volume_increase_app_cb;
-        e_action_predef_name_set("Mixer",
+        e_action_predef_name_set("Mixer Gadget",
                                  _("Increase Volume of Focused Application"),
-                                 "volume_increase_app", NULL, NULL, 0);
+                                 "gadget_volume_increase_app", NULL, NULL, 0);
      }
-   gmixer_context->actions.decr_app = e_action_add("volume_decrease_app");
+   gmixer_context->actions.decr_app = e_action_add("gadget_volume_decrease_app");
    if (gmixer_context->actions.decr_app)
      {
         gmixer_context->actions.decr_app->func.go = _volume_decrease_app_cb;
-        e_action_predef_name_set("Mixer",
+        e_action_predef_name_set("Mixer Gadget",
                                  _("Decrease Volume of Focused Application"),
-                                 "volume_decrease_app", NULL, NULL, 0);
+                                 "gadget_volume_decrease_app", NULL, NULL, 0);
      }
-   gmixer_context->actions.mute_app = e_action_add("volume_mute_app");
+   gmixer_context->actions.mute_app = e_action_add("gadget_volume_mute_app");
    if (gmixer_context->actions.mute_app)
      {
         gmixer_context->actions.mute_app->func.go = _volume_mute_app_cb;
-        e_action_predef_name_set("Mixer",
+        e_action_predef_name_set("Mixer Gadget",
                                  _("Mute Volume of Focused Application"),
-                                 "volume_mute_app", NULL, NULL, 0);
+                                 "gadget_volume_mute_app", NULL, NULL, 0);
      }
 
    e_comp_canvas_keys_ungrab();
@@ -317,46 +317,46 @@ _actions_unregister(void)
 {
    if (gmixer_context->actions.incr)
      {
-        e_action_predef_name_del("Mixer", _("Increase Volume"));
-        e_action_del("volume_increase");
+        e_action_predef_name_del("Mixer Gadget", _("Increase Volume"));
+        e_action_del("gadget_volume_increase");
         gmixer_context->actions.incr = NULL;
      }
 
    if (gmixer_context->actions.decr)
      {
-        e_action_predef_name_del("Mixer", _("Decrease Volume"));
-        e_action_del("volume_decrease");
+        e_action_predef_name_del("Mixer Gadget", _("Decrease Volume"));
+        e_action_del("gadget_volume_decrease");
         gmixer_context->actions.decr = NULL;
      }
 
    if (gmixer_context->actions.mute)
      {
-        e_action_predef_name_del("Mixer", _("Mute Volume"));
-        e_action_del("volume_mute");
+        e_action_predef_name_del("Mixer Gadget", _("Mute Volume"));
+        e_action_del("gadget_volume_mute");
         gmixer_context->actions.mute = NULL;
      }
 
    if (gmixer_context->actions.incr_app)
      {
-        e_action_predef_name_del("Mixer",
+        e_action_predef_name_del("Mixer Gadget",
                                  _("Increase Volume of Focuse Application"));
-        e_action_del("volume_increase_app");
+        e_action_del("gadget_volume_increase_app");
         gmixer_context->actions.incr_app = NULL;
      }
 
    if (gmixer_context->actions.decr_app)
      {
-        e_action_predef_name_del("Mixer",
+        e_action_predef_name_del("Mixer Gadget",
                                  _("Decrease Volume of Focuse Application"));
-        e_action_del("volume_decrease_app");
+        e_action_del("gadget_volume_decrease_app");
         gmixer_context->actions.decr_app = NULL;
      }
 
    if (gmixer_context->actions.mute_app)
      {
-        e_action_predef_name_del("Mixer",
+        e_action_predef_name_del("Mixer Gadget",
                                  _("Mute Volume of Focuse Application"));
-        e_action_del("volume_mute_app");
+        e_action_del("gadget_volume_mute_app");
         gmixer_context->actions.mute_app = NULL;
      }
 
