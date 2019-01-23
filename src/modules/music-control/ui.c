@@ -55,8 +55,11 @@ _metadata_update(E_Music_Control_Instance *inst)
      }
    if (inst->ctxt->meta_cover)
      {
-        img = evas_object_image_filled_add(evas_object_evas_get(inst->content_popup));
-        evas_object_image_file_set(img, inst->ctxt->meta_cover, NULL);
+        img = e_icon_add(evas_object_evas_get(inst->content_popup));
+        e_icon_scale_size_set(img, 512);
+        e_icon_scale_up_set(img, EINA_TRUE);
+        e_icon_fill_inside_set(img, EINA_FALSE);
+        e_icon_file_set(img, inst->ctxt->meta_cover);
         edje_object_part_swallow(inst->content_popup, "cover_swallow", img);
         e_comp_object_util_del_list_append(inst->popup->comp_object, img);
      }

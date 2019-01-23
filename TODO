@@ -13,7 +13,6 @@ TODO:
 * efm: thumbs for videos with movie posters like rage
 * efm: show symlink info in icon
 * efm: fuse support (mtp, sshfs, cifs/smb etc.)
-* music-control: fix aspect ratio of album cover image
 * shot: add manual cropping ability
 * shot: add simple free draw, box, line and text on top of shot before save
 * bz5: add icon set for actions/states per bt device (pair.unpair, etc.)
@@ -21,3 +20,4 @@ TODO:
   and downloads when received via obex bt (~/Downloads/...)
 
 DONE:
+* music-control: fix aspect ratio of album cover image
