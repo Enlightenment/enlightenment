@@ -182,7 +182,7 @@ _batman_udev_battery_del(const char *syspath, Instance *inst)
 
    EINA_LIST_FOREACH(batman_device_batteries, l, bat)
      {
-        if (inst == bat->inst)
+        if ((inst == bat->inst) && (eina_streq(bat->udi, syspath)))
           {
              batman_device_batteries = eina_list_remove_list(batman_device_batteries, l);
              eina_stringshare_del(bat->udi);
@@ -324,6 +324,11 @@ _batman_udev_battery_update(const char *syspath, Battery *bat, Instance *inst)
           bat->charging = 1;
         else if ((!strcmp(test, "Unknown")) && (bat->charge_rate > 0))
           bat->charging = 1;
+        else if ((!strcmp(test, "Unknown")) && (bat->charge_rate <= 0) && (bat->last_full_charge <= 0))
+          {
+             _batman_udev_battery_del(syspath, inst);
+             return;
+          }
         else
           bat->charging = 0;
         eina_stringshare_del(test);
