@@ -18,6 +18,9 @@ TODO:
 * bz5: add icon set for actions/states per bt device (pair.unpair, etc.)
 * bz5: add obex agent support integrated with efm for sharing via bt
   and downloads when received via obex bt (~/Downloads/...)
+* battery: redesign popup to list other battery details like the
+  charge if you have multiple batteries for real or separately the
+  battery levels of e.g. bt mice, kbd's and other such devices
 
 DONE:
 * music-control: fix aspect ratio of album cover image
