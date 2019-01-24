@@ -647,7 +647,7 @@ _batman_created_cb(void *data, Evas_Object *obj, void *event_data EINA_UNUSED)
    evas_object_smart_callback_del_full(obj, "gadget_created", _batman_created_cb, data);
 
    E_LIST_HANDLER_APPEND(inst->cfg->batman.handlers, E_EVENT_SCREENSAVER_ON, _screensaver_on, inst);
-   E_LIST_HANDLER_APPEND(inst->cfg->batman.handlers, E_EVENT_SCREENSAVER_ON, _screensaver_on, inst);
+   E_LIST_HANDLER_APPEND(inst->cfg->batman.handlers, E_EVENT_SCREENSAVER_OFF, _screensaver_off, inst);
    E_LIST_HANDLER_APPEND(inst->cfg->batman.handlers, E_EVENT_POWERSAVE_CONFIG_UPDATE,
                                       _powersave_cb_config_update, inst);
 
