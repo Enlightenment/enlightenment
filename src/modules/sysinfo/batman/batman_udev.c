@@ -327,6 +327,7 @@ _batman_udev_battery_update(const char *syspath, Battery *bat, Instance *inst)
         else if ((!strcmp(test, "Unknown")) && (bat->charge_rate <= 0) && (bat->last_full_charge <= 0))
           {
              _batman_udev_battery_del(syspath, inst);
+             eina_stringshare_del(test);
              return;
           }
         else
