@@ -72,6 +72,7 @@ static Eina_List *wireless_auth_pending;
 static Wireless_Auth_Popup *wireless_auth_popup;
 static Eina_Bool wireless_offline;
 static Evas_Object *wireless_edit_popup;
+static Evas_Object *menu_icon;
 static Wireless_Connection *wireless_edit[2];
 static unsigned int wireless_network_count[WIRELESS_SERVICE_TYPE_LAST];
 
@@ -799,7 +800,7 @@ _wireless_gadget_edit_select_services(void *data EINA_UNUSED, Evas_Object *obj E
    _wireless_gadget_edit_services();
 }
 
-static void
+static Evas_Object *
 _wireless_gadget_edit(int type)
 {
    Evas_Object *popup, *entry, *box1, *box, *list, *lbl, *bt;
@@ -810,7 +811,7 @@ _wireless_gadget_edit(int type)
    Wireless_Connection *wc = wireless_current[type];
    Wireless_Network *wn;
 
-   if (!wc) return;
+   if (!wc) return NULL;
    if (wireless_popup.popup)
      {
         evas_object_hide(wireless_popup.popup);
@@ -938,6 +939,8 @@ _wireless_gadget_edit(int type)
    e_comp_object_util_autoclose(wireless_edit_popup, NULL, _wireless_edit_key, NULL);
    evas_object_event_callback_add(wireless_edit_popup, EVAS_CALLBACK_DEL, _wireless_edit_del, NULL);
    elm_object_focus_set(entry, 1);
+
+   return wireless_popup.popup;
 }
 
 static void
@@ -993,6 +996,37 @@ _wireless_popup_dismissed(void *data EINA_UNUSED, Evas_Object *obj, void *event_
    evas_object_del(obj);
 }
 
+static Evas_Object *
+_wireless_gadget_configure_cb(Evas_Object *g)
+{
+   Instance *inst = evas_object_data_get(g, "Instance");
+   int type;
+
+   if (!menu_icon)
+     return NULL;
+   for (type = 0; type < WIRELESS_SERVICE_TYPE_LAST; type++)
+     if (inst->icon[type] == menu_icon)
+       break;
+
+   return _wireless_gadget_edit(type);
+}
+
+static void
+_wireless_gadget_menu_populate_cb(Evas_Object *g, E_Menu *m EINA_UNUSED)
+{
+   Instance *inst = evas_object_data_get(g, "Instance");
+   Evas_Coord px, py, x, y, w, h;
+   int type;
+
+   evas_pointer_canvas_xy_get(evas_object_evas_get(g), &px, &py);
+   for (type = 0; type < WIRELESS_SERVICE_TYPE_LAST; type++)
+     {
+        evas_object_geometry_get(inst->icon[type], &x, &y, &w, &h);
+        if (E_INSIDE(px, py, x, y, w, h)) break;
+     }
+   menu_icon = inst->icon[type];
+}
+
 static void
 _wireless_gadget_mouse_up(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *event_info)
 {
@@ -1016,11 +1050,6 @@ _wireless_gadget_mouse_up(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, voi
      if (obj == inst->icon[type])
        break;
    if (ev->button == 2) connman_technology_enabled_set(type, !wireless_type_enabled[type]);
-   if (ev->button == 3)
-     {
-        ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
-        _wireless_gadget_edit(type);
-     }
    if (ev->button != 1) return;
    if (wireless_popup.popup)
      {
@@ -1255,6 +1284,16 @@ _wireless_gadget_refresh(Instance *inst)
      evas_object_size_hint_aspect_set(inst->box, EVAS_ASPECT_CONTROL_BOTH, avail, 1);
 }
 
+static void
+_wireless_created_cb(void *data, Evas_Object *obj, void *event_data EINA_UNUSED)
+{
+   Instance *inst = data;
+   evas_object_data_set(inst->box, "Instance", inst);
+   e_gadget_configure_cb_set(inst->box, _wireless_gadget_configure_cb);
+   e_gadget_menu_populate_cb_set(inst->box, _wireless_gadget_menu_populate_cb);
+   evas_object_smart_callback_del_full(obj, "gadget_created", _wireless_created_cb, data);
+}
+
 static Evas_Object *
 wireless_create(Evas_Object *parent, int *id, E_Gadget_Site_Orient orient)
 {
@@ -1267,9 +1306,12 @@ wireless_create(Evas_Object *parent, int *id, E_Gadget_Site_Orient orient)
    inst->id = *id;
    inst->orient = orient;
    wireless_popup.type = inst->tooltip.type = -1;
+   menu_icon = NULL;
+
    inst->box = elm_box_add(parent);
    elm_box_horizontal_set(inst->box, orient != E_GADGET_SITE_ORIENT_VERTICAL);
    elm_box_homogeneous_set(inst->box, 1);
+   evas_object_smart_callback_add(parent, "gadget_created", _wireless_created_cb, inst);
    evas_object_event_callback_add(inst->box, EVAS_CALLBACK_DEL, wireless_del, inst);
 
    if (*id < 0)
