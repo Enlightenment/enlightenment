@@ -21,6 +21,10 @@ TODO:
 * battery: redesign popup to list other battery details like the
   charge if you have multiple batteries for real or separately the
   battery levels of e.g. bt mice, kbd's and other such devices
+* randr: get auto layout to handle screens laid out like:
+  [dp2-2][dp2-1] <- 2 external monitors
+      [edp-1] <- laptop main display
+
 
 DONE:
 * music-control: fix aspect ratio of album cover image
