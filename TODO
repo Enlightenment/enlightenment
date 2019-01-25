@@ -24,7 +24,20 @@ TODO:
 * randr: get auto layout to handle screens laid out like:
   [dp2-2][dp2-1] <- 2 external monitors
       [edp-1] <- laptop main display
-
+* battery: on click display popup like wireless/bluez5
+  in popup show detailed list of battery devices and data per device
+    like bluez5 use genlist with groups for core batteris vs other misc devices
+  filter out hid devices with batteries from core battery state
+    display other devices in above list separately
+  handle string capacity values like Full, High, Normal, Low, Critical...
+* device manager: new tool to browser /sys etc. and display nicely present
+  hardware and device drivers and state
+* sys top: new tool displays cpu/mem "top" - evisum. we want it to be shipped
+  with e though so it's always there guaranteed have back-end system status
+  logging to files all day long that always starts with e. gui is a front-end
+  view to this back-end data log and follows it as it updates.
+    can go back in time then to previous logs
+    should have the ability to draw nice graphs etc.
 
 DONE:
 * music-control: fix aspect ratio of album cover image
