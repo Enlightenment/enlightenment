@@ -755,7 +755,7 @@ _pager_popup_new(E_Zone *zone, int keyaction)
    /* Show popup */
 
    pp->pager = _pager_new(e_comp->evas, zone, NULL);
-   
+
    pp->pager->popup = pp;
    pp->urgent = 0;
 
@@ -1329,10 +1329,11 @@ _pager_update_drop_position(Pager *p, Evas_Coord x, Evas_Coord y)
    if (!pw) return;
    if (pd)
      {
-        int zx, zy, zw, zh, vx, vy;
+        int zx, zy, zw, zh, vx, vy, offx, offy;
         E_Client *ec = pw->client;
         E_Desk *old_desk = ec->desk;
         Eina_Bool was_focused = e_client_stack_focused_get(ec);
+        E_Drag *drag = e_drag_current_get();
 
         pw->drag.in_pager = 1;
         //makes drags look weird
@@ -1340,12 +1341,18 @@ _pager_update_drop_position(Pager *p, Evas_Coord x, Evas_Coord y)
         zx = pd->desk->zone->x, zy = pd->desk->zone->y;
         zw = pd->desk->zone->w, zh = pd->desk->zone->h;
         e_deskmirror_coord_canvas_to_virtual(pd->o_layout,
-                                         x + pw->drag.dx,
-                                         y + pw->drag.dy, &vx, &vy);
+                                             x, y, &vx, &vy);
         ec->hidden = !pd->desk->visible;
         e_client_desk_set(ec, pd->desk);
-        x = E_CLAMP(vx + zx, zx, zx + zw - ec->w);
-        y = E_CLAMP(vy + zy, zy, zy + zh - ec->h);
+        offx = (ec->w / 2);
+        offy = (ec->h / 2);
+        if (drag)
+          {
+             if (drag->w > 0) offx = ((drag->dx) * ec->w) / drag->w;
+             if (drag->h > 0) offy = ((drag->dy) * ec->h) / drag->h;
+          }
+        x = E_CLAMP(vx + zx - offx, zx, zx + zw - ec->w);
+        y = E_CLAMP(vy + zy - offy, zy, zy + zh - ec->h);
         evas_object_move(ec->frame, x, y);
         if (was_focused)
           e_desk_last_focused_focus(old_desk);
@@ -1414,7 +1421,6 @@ _pager_drop_cb_drop(void *data, const char *type, void *event_info)
    Pager_Desk *pd2 = NULL;
    E_Client *ec = NULL;
    Eina_List *l;
-   int dx = 0, dy = 0;
    Pager_Win *pw = NULL;
    Evas_Coord wx, wy, wx2, wy2;
    Evas_Coord nx, ny;
@@ -1434,19 +1440,15 @@ _pager_drop_cb_drop(void *data, const char *type, void *event_info)
              if (pw)
                {
                   ec = pw->client;
-                  dx = pw->drag.dx;
-                  dy = pw->drag.dy;
                }
           }
         else if (!strcmp(type, "enlightenment/border"))
           {
              ec = ev->data;
              e_deskmirror_coord_virtual_to_canvas(pd->o_layout, ec->x, ec->y,
-                                              &wx, &wy);
+                                                  &wx, &wy);
              e_deskmirror_coord_virtual_to_canvas(pd->o_layout, ec->x + ec->w,
-                                              ec->y + ec->h, &wx2, &wy2);
-             dx = (wx - wx2) / 2;
-             dy = (wy - wy2) / 2;
+                                                  ec->y + ec->h, &wx2, &wy2);
           }
         else if (!strcmp(type, "enlightenment/vdesktop"))
           {
@@ -1477,17 +1479,23 @@ _pager_drop_cb_drop(void *data, const char *type, void *event_info)
 
              if ((!max) && (!fullscreen))
                {
-                  int zx, zy, zw, zh, mx, my;
+                  E_Drag *drag = e_drag_current_get();
+                  int zx, zy, zw, zh, mx, my, offx, offy;
 
                   e_deskmirror_coord_canvas_to_virtual(pd->o_layout,
-                                                   ev->x + dx,
-                                                   ev->y + dy,
-                                                   &nx, &ny);
+                                                       ev->x, ev->y,
+                                                       &nx, &ny);
                   e_zone_useful_geometry_get(pd->desk->zone,
                                              &zx, &zy, &zw, &zh);
-
-                  mx = E_CLAMP(nx + zx, zx, zx + zw - ec->w);
-                  my = E_CLAMP(ny + zy, zy, zy + zh - ec->h);
+                  offx = (ec->w / 2);
+                  offy = (ec->h / 2);
+                  if (drag)
+                    {
+                       if (drag->w > 0) offx = ((drag->dx) * ec->w) / drag->w;
+                       if (drag->h > 0) offy = ((drag->dy) * ec->h) / drag->h;
+                    }
+                  mx = E_CLAMP(nx + zx - offx, zx, zx + zw - ec->w);
+                  my = E_CLAMP(ny + zy - offy, zy, zy + zh - ec->h);
                   evas_object_move(ec->frame, mx, my);
                }
              if (max) e_client_maximize(ec, max);
@@ -1600,7 +1608,7 @@ _pager_desk_cb_mouse_move(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA
         drag = e_drag_new(x, y, drag_types, 1, pd, -1,
                           NULL, _pager_desk_cb_drag_finished);
         drag->button_mask = evas_pointer_button_down_mask_get(e_comp->evas);
-        
+
         /* redraw the desktop theme above */
         o = e_comp_object_util_mirror_add(pd->o_layout);
         e_drag_object_set(drag, o);
