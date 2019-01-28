@@ -31,6 +31,7 @@ typedef struct E_Smart_Data
    Eina_Bool taskbar E_BITFIELD;
 
    Eina_Bool resize E_BITFIELD;
+   Eina_Bool force E_BITFIELD;
 } E_Smart_Data;
 
 typedef struct Mirror
@@ -95,9 +96,13 @@ static void
 _mirror_visible_apply(Mirror *m)
 {
    if (_e_deskmirror_visible_get(m->sd, m))
-     evas_object_show(m->mirror);
+     {
+        evas_object_show(m->mirror);
+     }
    else
-     evas_object_hide(m->mirror);
+     {
+        evas_object_hide(m->mirror);
+     }
 }
 
 static void
@@ -509,11 +514,14 @@ static void
 _e_deskmirror_mirror_reconfigure(Mirror *m)
 {
    _e_deskmirror_mirror_geometry_get(m);
-   e_layout_child_move(m->mirror, m->x, m->y);
-   e_layout_child_resize(m->mirror, m->w, m->h);
-   /* assume that anything happening here is the result of a drag */
-   if (!e_drag_current_get())
-     _mirror_visible_apply(m);
+   if (m->mirror)
+     {
+        e_layout_child_move(m->mirror, m->x, m->y);
+        e_layout_child_resize(m->mirror, m->w, m->h);
+        /* assume that anything happening here is the result of a drag */
+        if (((!m->sd->force) && (!e_drag_current_get())) || (m->sd->force))
+          _mirror_visible_apply(m);
+     }
 }
 
 static void
@@ -771,6 +779,7 @@ _client_desk_set(E_Smart_Data *sd, int type EINA_UNUSED, E_Event_Client_Desk_Set
         /* ev->desk is previous desk */
         if (!e_client_util_desk_visible(ev->ec, sd->desk))
           eina_hash_del_by_key(sd->mirror_hash, &ev->ec->frame);
+        _mirror_visible_apply(m);
      }
    if ((!m) && (sd->desk == ev->ec->desk))
      _e_deskmirror_mirror_add(sd, ev->ec->frame);
@@ -975,4 +984,18 @@ e_deskmirror_util_wins_print(Evas_Object *obj)
         else
           fprintf(stderr, "MIRROR OBJ: %p\n", m->comp_object);
      }
+}
+
+E_API void
+e_deskmirror_update_force(Evas_Object *obj)
+{
+   API_ENTRY(obj);
+
+   e_layout_freeze(sd->layout);
+   sd->force = EINA_TRUE;
+   _e_deskmirror_smart_hide(obj);
+   _e_deskmirror_smart_reconfigure(sd);
+   _e_deskmirror_smart_show(obj);
+   sd->force = EINA_FALSE;
+   e_layout_thaw(sd->layout);
 }

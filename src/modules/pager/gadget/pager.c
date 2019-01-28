@@ -782,6 +782,8 @@ _pager_desk_switch(Pager_Desk *pd1, Pager_Desk *pd2)
         pw->client->hidden = 0;
         e_client_desk_set(pw->client, desk1);
      }
+   e_deskmirror_update_force(pd1->o_layout);
+   e_deskmirror_update_force(pd2->o_layout);
 
    /* Modify desktop names in the config */
    for (l = e_config->desktop_names, c = 0; l && c < 2; l = l->next)
@@ -2136,6 +2138,7 @@ _pager_window_cb_drag_finished(E_Drag *drag, int dropped)
         /* be helpful */
         if (pw->client->desk->visible && (!e_client_focused_get()))
           evas_object_focus_set(pw->client->frame, 1);
+        e_deskmirror_update_force(pw->desk->o_layout);
      }
    else
      {
@@ -2171,6 +2174,7 @@ _pager_window_cb_drag_finished(E_Drag *drag, int dropped)
 
         if (!(ec->lock_user_stacking)) evas_object_raise(ec->frame);
         evas_object_focus_set(ec->frame, 1);
+        e_deskmirror_update_force(pw->desk->o_layout);
      }
    edje_object_signal_emit(pw->desk->o_desk, "e,action,drag,out", "e");
    if (!pw->drag.from_pager)
@@ -2388,6 +2392,7 @@ _pager_drop_cb_drop(void *data, const char *type, void *event_info)
                }
              if (max) e_client_maximize(ec, max);
              if (fullscreen) e_client_fullscreen(ec, fs);
+             e_deskmirror_update_force(pd->o_layout);
           }
         EINA_LIST_FOREACH(pd->pager->desks, l, pdd)
           {

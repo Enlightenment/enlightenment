@@ -9,6 +9,7 @@ E_API void e_deskmirror_coord_canvas_to_virtual(Evas_Object *obj, Evas_Coord cx,
 E_API void e_deskmirror_coord_virtual_to_canvas(Evas_Object *obj, Evas_Coord vx, Evas_Coord vy, Evas_Coord *cx, Evas_Coord *cy);
 E_API E_Desk *e_deskmirror_desk_get(Evas_Object *obj);
 E_API void e_deskmirror_util_wins_print(Evas_Object *obj);
+E_API void e_deskmirror_update_force(Evas_Object *obj);
 //#define DESKMIRROR_TEST
 
 #endif
