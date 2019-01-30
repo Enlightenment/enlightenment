@@ -135,10 +135,27 @@ _e_comp_x_focus_check(void)
      {
         focus_canvas_time = ecore_x_current_time_get();
         focus_time = 0;
-        if (e_comp->comp_type == E_PIXMAP_TYPE_X)
-          e_grabinput_focus(e_comp->ee_win, E_FOCUS_METHOD_PASSIVE);
-        else
+        if (e_comp->comp_type != E_PIXMAP_TYPE_X)
           e_grabinput_focus(e_comp->root, E_FOCUS_METHOD_PASSIVE);
+// this breaks Qt because it seems to create override-redirect popup windows
+// that it FOCUSES instead of grabbking the kbd like most other menu windows
+// so this causes the parent window to lose focus in a way that then causes
+// the popups to dismiss instantly
+//             e_grabinput_focus(e_comp->ee_win, E_FOCUS_METHOD_PASSIVE);
+// This might be more specific a workaround bit might miss other cases, so keep
+// here as an idea and for future reference
+/*
+        else
+          {
+             Ecore_X_Window *focus_win = ecore_x_window_focus_get();
+             if (focus_win)
+               {
+                  if ((ecore_x_window_root_get(focus_win) == focus_win) ||
+                      (!ecore_x_icccm_transient_for_get(focus_win)))
+                    e_grabinput_focus(e_comp->ee_win, E_FOCUS_METHOD_PASSIVE);
+               }
+          }
+ */
      }
 }
 
