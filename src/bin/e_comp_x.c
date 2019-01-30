@@ -144,18 +144,18 @@ _e_comp_x_focus_check(void)
 //             e_grabinput_focus(e_comp->ee_win, E_FOCUS_METHOD_PASSIVE);
 // This might be more specific a workaround bit might miss other cases, so keep
 // here as an idea and for future reference
-/*
         else
           {
-             Ecore_X_Window *focus_win = ecore_x_window_focus_get();
+             Ecore_X_Window focus_win = ecore_x_window_focus_get();
              if (focus_win)
                {
                   if ((ecore_x_window_root_get(focus_win) == focus_win) ||
                       (!ecore_x_icccm_transient_for_get(focus_win)))
                     e_grabinput_focus(e_comp->ee_win, E_FOCUS_METHOD_PASSIVE);
                }
+             else
+               e_grabinput_focus(e_comp->ee_win, E_FOCUS_METHOD_PASSIVE);
           }
- */
      }
 }
 
