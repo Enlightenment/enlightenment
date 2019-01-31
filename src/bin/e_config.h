@@ -255,6 +255,7 @@ struct _E_Config
    int                       mouse_accel_numerator; // GUI
    int                       mouse_accel_denominator; // GUI
    int                       mouse_accel_threshold; // GUI
+   unsigned char             touch_tap_to_click; // GUI
 
    int                       border_raise_on_mouse_action; // GUI
    int                       border_raise_on_focus; // GUI

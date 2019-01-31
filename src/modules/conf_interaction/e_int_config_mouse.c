@@ -24,6 +24,7 @@ struct _E_Config_Dialog_Data
    double numerator;
    double denominator;
    double threshold;
+   int tap_to_click;
 };
 
 E_Config_Dialog *
@@ -61,6 +62,7 @@ _fill_data(E_Config_Dialog_Data *cfdata)
    cfdata->numerator = e_config->mouse_accel_numerator;
    cfdata->denominator = e_config->mouse_accel_denominator;
    cfdata->threshold = e_config->mouse_accel_threshold;
+   cfdata->tap_to_click = e_config->touch_tap_to_click;
 }
 
 static void *
@@ -83,6 +85,7 @@ _basic_check_changed(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfd
 	    (cfdata->use_e_cursor == e_config->use_e_cursor) &&
 	    (cfdata->cursor_size == e_config->cursor_size) &&
 	    (cfdata->mouse_hand == e_config->mouse_hand) &&
+	    (cfdata->tap_to_click == e_config->touch_tap_to_click) &&
 	    EINA_DBL_EQ(cfdata->numerator, e_config->mouse_accel_numerator) &&
 	    EINA_DBL_EQ(cfdata->denominator, e_config->mouse_accel_denominator) &&
 	    EINA_DBL_EQ(cfdata->threshold, e_config->mouse_accel_threshold));
@@ -108,6 +111,7 @@ _basic_apply_data(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfdata
    e_config->mouse_accel_numerator = cfdata->numerator;
    e_config->mouse_accel_denominator = cfdata->denominator;
    e_config->mouse_accel_threshold = cfdata->threshold;
+   e_config->touch_tap_to_click = cfdata->tap_to_click;
    e_config_save_queue();
 
    /* Apply the above settings */
@@ -229,6 +233,9 @@ _basic_create_widgets(E_Config_Dialog *cfd EINA_UNUSED, Evas *evas, E_Config_Dia
    ob = e_widget_slider_add(evas, 1, 0, _("%1.0f"), 0.0, 10.0, 1.0, 0,
 			    &(cfdata->threshold), NULL, 100);
    e_widget_framelist_object_append(of, ob);
+
+   oc = e_widget_check_add(evas, _("Tap to click"), &(cfdata->tap_to_click));
+   e_widget_framelist_object_append(of, oc);
 
    e_widget_list_object_append(ol, of, 1, 0, 0.5);
    e_widget_toolbook_page_append(otb, NULL, _("Mouse"), ol, 

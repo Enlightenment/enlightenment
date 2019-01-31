@@ -713,6 +713,7 @@ _drm2_cb_seat_caps(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
      }
    else if (ev->pointer_count > 0)
      {
+        e_mouse_update();
         e_comp_wl_input_pointer_enabled_set(EINA_TRUE);
         e_pointer_show(e_comp->pointer);
      }

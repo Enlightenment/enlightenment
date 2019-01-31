@@ -55,6 +55,7 @@ e_mouse_update(void)
           {
              ecore_drm2_device_pointer_left_handed_set(dev, (Eina_Bool)!e_config->mouse_hand);
              ecore_drm2_device_pointer_accel_speed_set(dev, e_config->mouse_accel_numerator);
+             ecore_drm2_device_touch_tap_to_click_enabled_set(dev, e_config->touch_tap_to_click);
           }
      }
 #endif

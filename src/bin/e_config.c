@@ -651,6 +651,7 @@ _e_config_edd_init(Eina_Bool old)
    E_CONFIG_VAL(D, T, mouse_accel_numerator, INT);
    E_CONFIG_VAL(D, T, mouse_accel_denominator, INT);
    E_CONFIG_VAL(D, T, mouse_accel_threshold, INT);
+   E_CONFIG_VAL(D, T, touch_tap_to_click, UCHAR);
 
    E_CONFIG_VAL(D, T, border_raise_on_mouse_action, INT);
    E_CONFIG_VAL(D, T, border_raise_on_focus, INT);
@@ -1732,6 +1733,7 @@ e_config_load(void)
    E_CONFIG_LIMIT(e_config->mouse_accel_numerator, 1, 30);
    E_CONFIG_LIMIT(e_config->mouse_accel_denominator, 1, 10);
    E_CONFIG_LIMIT(e_config->mouse_accel_threshold, 0, 10);
+   E_CONFIG_LIMIT(e_config->touch_tap_to_click, 0, 3);
 
    E_CONFIG_LIMIT(e_config->menu_favorites_show, 0, 1);
    E_CONFIG_LIMIT(e_config->menu_apps_show, 0, 1);
