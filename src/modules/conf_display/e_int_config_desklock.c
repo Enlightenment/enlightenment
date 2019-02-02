@@ -659,7 +659,6 @@ _cb_method_change(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EIN
         if (e_config->desktop_backgrounds)
           {
              E_Config_Desktop_Background *cdb;
-             int y = 0;
              if (eina_str_has_extension(e_config->desktop_default_background, "edj"))
                {
                   EINA_LIST_FOREACH(cfdata->gui.bgs, l, bg)
@@ -669,8 +668,6 @@ _cb_method_change(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EIN
                        eina_stringshare_del(cbg->file);
                        free(cbg);
                     }
-                  for (y = 0; y < cfdata->zone_count; y++)
-                    cfdata->bgs = eina_list_append(cfdata->bgs, desklock_bg_dup(NULL, "user_background"));
                }
              /* attempt to set wallpaper from desktop 0,0 on each zone as a desklock bg */
              EINA_LIST_FOREACH(e_config->desktop_backgrounds, l, cdb)
@@ -695,9 +692,14 @@ _cb_method_change(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EIN
                   eina_stringshare_del(cbg->file);
                   free(cbg);
                }
-             for (x = 0; x < cfdata->zone_count; x++)
-               cfdata->bgs = eina_list_append(cfdata->bgs, desklock_bg_dup(NULL, "user_background"));
           }
+        EINA_LIST_FREE(cfdata->bgs, cbg)
+          {
+             eina_stringshare_del(cbg->file);
+             free(cbg);
+          }
+        for (x = 0; x < cfdata->zone_count; x++)
+          cfdata->bgs = eina_list_append(cfdata->bgs, desklock_bg_dup(NULL, "user_background"));
         break;
 
       case E_DESKLOCK_BACKGROUND_METHOD_CUSTOM:

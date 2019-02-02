@@ -347,6 +347,7 @@ static void
 _lokker_popup_add(E_Zone *zone)
 {
    E_Zone *current_zone;
+   Evas_Object *o = NULL;
    int total_zone_num;
    Lokker_Popup *lp;
    E_Config_Desklock_Background *cbg;
@@ -361,19 +362,19 @@ _lokker_popup_add(E_Zone *zone)
    lp->zone = zone;
    evas = e_comp->evas;
    evas_event_freeze(evas);
-   lp->bg_object = edje_object_add(evas);
-   evas_object_name_set(lp->bg_object, "desklock->bg_object");
 
    if ((!bg) || (!strcmp(bg, "theme_desklock_background")))
      {
-        e_theme_edje_object_set(lp->bg_object,
-                                "base/theme/desklock",
+        o = edje_object_add(evas);
+        evas_object_data_set(o, "is_edje", o);
+        e_theme_edje_object_set(o, "base/theme/desklock",
                                 "e/desklock/background");
      }
    else if (!strcmp(bg, "theme_background"))
      {
-        e_theme_edje_object_set(lp->bg_object,
-                                "base/theme/backgrounds",
+        o = edje_object_add(evas);
+        evas_object_data_set(o, "is_edje", o);
+        e_theme_edje_object_set(o, "base/theme/backgrounds",
                                 "e/desktop/background");
      }
    else
@@ -385,44 +386,66 @@ _lokker_popup_add(E_Zone *zone)
         else
           f = bg;
 
-        if (e_util_edje_collection_exists(f, "e/desklock/background"))
+        if (eina_str_has_extension(f, ".edj"))
           {
-             edje_object_file_set(lp->bg_object, f, "e/desklock/background");
-          }
-        else
-          {
-             if (!edje_object_file_set(lp->bg_object,
-                                       f, "e/desktop/background"))
+             o = edje_object_add(evas);
+             evas_object_data_set(o, "is_edje", o);
+             if (e_util_edje_collection_exists(f, "e/desklock/background"))
                {
-                  edje_object_file_set(lp->bg_object,
-                                       e_theme_edje_file_get("base/theme/desklock",
-                                                             "e/desklock/background"),
-                                       "e/desklock/background");
+                  edje_object_file_set(o, f, "e/desklock/background");
+               }
+             else
+               {
+                  if (!edje_object_file_set(o, f, "e/desktop/background"))
+                    {
+                       edje_object_file_set
+                         (o, e_theme_edje_file_get("base/theme/desklock",
+                                                   "e/desklock/background"),
+                          "e/desklock/background");
+                    }
                }
           }
+        else if ((eina_str_has_extension(f, ".gif")) ||
+                 (eina_str_has_extension(f, ".png")) ||
+                 (eina_str_has_extension(f, ".jpg")) ||
+                 (eina_str_has_extension(f, ".jpeg")) ||
+                 (eina_str_has_extension(f, ".bmp")))
+             {
+                o = e_icon_add(evas);
+                e_icon_file_key_set(o, f, NULL);
+                e_icon_scale_size_set(o, 0);
+                e_icon_fill_inside_set(o, 0);
+             }
+        else
+          {
+             o = e_video_add(evas, f, EINA_FALSE);
+          }
      }
+   lp->bg_object = o;
+   evas_object_name_set(lp->bg_object, "desklock->bg_object");
 
    evas_object_move(lp->bg_object, zone->x, zone->y);
    evas_object_resize(lp->bg_object, zone->w, zone->h);
    evas_object_show(lp->bg_object);
-   {
-      const char *s;
-      s = edje_object_data_get(lp->bg_object, "show_signal");
-      lp->show_anim = s && (atoi(s) == 1);
-      e_desklock_zone_block_set(zone, !lp->show_anim);
-      if (lp->show_anim)
-        edje_object_signal_callback_add(lp->bg_object, "e,action,show,done", "e",
-                                        _lokker_cb_show_done, lp);
-      s = edje_object_data_get(lp->bg_object, "hide_signal");
-      lp->hide_anim = s && (atoi(s) == 1);
-   }
+     {
+        const char *s = edje_object_data_get(lp->bg_object, "show_signal");
+        lp->show_anim = s && (atoi(s) == 1);
+        e_desklock_zone_block_set(zone, !lp->show_anim);
+        if ((lp->show_anim) &&
+            (evas_object_data_get(lp->bg_object, "is_edje")))
+          edje_object_signal_callback_add(lp->bg_object,
+                                          "e,action,show,done", "e",
+                                          _lokker_cb_show_done, lp);
+        s = edje_object_data_get(lp->bg_object, "hide_signal");
+        lp->hide_anim = s && (atoi(s) == 1);
+     }
    lp->comp_object = e_comp_object_util_add(lp->bg_object, 0);
-   {
-      char buf[1024];
+     {
+        char buf[1024];
 
-      snprintf(buf, sizeof(buf), "desklock.%d", zone->id);
-      evas_object_name_set(lp->comp_object, buf);
-   }
+        snprintf(buf, sizeof(buf), "desklock.%d", zone->id);
+        evas_object_name_set(lp->comp_object, buf);
+     }
    evas_object_layer_set(lp->comp_object, E_LAYER_DESKLOCK);
    evas_object_clip_set(lp->comp_object, lp->zone->bg_clip_object);
 
