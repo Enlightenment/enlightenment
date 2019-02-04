@@ -234,8 +234,13 @@ _basic_create_widgets(E_Config_Dialog *cfd EINA_UNUSED, Evas *evas, E_Config_Dia
 			    &(cfdata->threshold), NULL, 100);
    e_widget_framelist_object_append(of, ob);
 
-   oc = e_widget_check_add(evas, _("Tap to click"), &(cfdata->tap_to_click));
-   e_widget_framelist_object_append(of, oc);
+#ifdef HAVE_WAYLAND
+   if (e_comp->comp_type == E_PIXMAP_TYPE_WL)
+     {
+        oc = e_widget_check_add(evas, _("Tap to click"), &(cfdata->tap_to_click));
+        e_widget_framelist_object_append(of, oc);
+     }
+#endif
 
    e_widget_list_object_append(ol, of, 1, 0, 0.5);
    e_widget_toolbook_page_append(otb, NULL, _("Mouse"), ol, 
