@@ -227,14 +227,8 @@ e_winlist_show(E_Zone *zone, E_Winlist_Filter filter)
      ecore_evas_pointer_xy_get(e_comp->ee,
                             &_last_pointer_x, &_last_pointer_y);
 
-   _e_winlist_activate_nth(1);
+   _e_winlist_activate_nth(0);
 
-   if ((eina_list_count(_wins) > 1))
-     {
-        ww = eina_list_data_get(_win_selected);
-        if (ww && (ww->client == _last_client))
-          e_winlist_next();
-     }
    evas_event_thaw(e_comp->evas);
    _e_winlist_size_adjust();
 
@@ -345,6 +339,7 @@ void
 e_winlist_next(void)
 {
    if (!_winlist) return;
+   printf("WL Next\n");
    if (eina_list_count(_wins) == 1)
      {
         if (!_win_selected)
