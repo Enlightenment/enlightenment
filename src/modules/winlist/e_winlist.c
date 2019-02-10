@@ -339,7 +339,6 @@ void
 e_winlist_next(void)
 {
    if (!_winlist) return;
-   printf("WL Next\n");
    if (eina_list_count(_wins) == 1)
      {
         if (!_win_selected)
