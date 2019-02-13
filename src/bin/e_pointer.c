@@ -11,6 +11,8 @@ struct _E_Pointer_Stack
 static Eina_List *_hdlrs = NULL;
 static Eina_List *_ptrs = NULL;
 
+static Eina_Bool init = EINA_FALSE;
+
 static inline void
 _e_pointer_theme_buf(E_Pointer *ptr, char cursor[1024])
 {
@@ -375,6 +377,12 @@ _e_pointer_x11_setup(E_Pointer *ptr, const char *cursor)
           {
              e_theme_edje_object_set(ptr->buffer_o_ptr, "base/theme/pointer", cursor);
              edje_object_part_swallow(ptr->buffer_o_ptr, "e.swallow.hotspot", ptr->buffer_o_hot);
+             if (!init)
+               {
+                  edje_object_signal_emit(ptr->o_ptr, "e,state,init", "e");
+                  edje_object_message_signal_process(ptr->o_ptr);
+                  init = EINA_TRUE;
+               }
           }
         return;
      }
@@ -457,6 +465,12 @@ _e_pointer_type_set(E_Pointer *ptr, const char *type)
         /* try to set the edje object theme */
         if (!e_theme_edje_object_set(ptr->o_ptr, "base/theme/pointer", cursor))
           cursor[0] = 0;
+        if (!init)
+          {
+             edje_object_signal_emit(ptr->o_ptr, "e,state,init", "e");
+             edje_object_message_signal_process(ptr->o_ptr);
+             init = EINA_TRUE;
+          }
         _e_pointer_x11_setup(ptr, cursor);
         if (!cursor[0]) return;
 
@@ -484,6 +498,7 @@ e_pointer_init(void)
                          _e_pointer_cb_mouse_move, NULL);
    E_LIST_HANDLER_APPEND(_hdlrs, ECORE_EVENT_MOUSE_WHEEL, 
                          _e_pointer_cb_mouse_wheel, NULL);
+   init = EINA_FALSE;
    return 1;
 }
 
@@ -491,6 +506,7 @@ EINTERN int
 e_pointer_shutdown(void)
 {
    E_FREE_LIST(_hdlrs, ecore_event_handler_del);
+   init = EINA_FALSE;
    return 1;
 }
 
