@@ -686,7 +686,6 @@ _drm2_randr_apply(void)
                        ecore_drm2_output_mode_set(outconf[i], mode,
                                                   screenconf[i]->config.geom.x,
                                                   screenconf[i]->config.geom.y);
-                       ecore_drm2_output_rotation_set(outconf[i], orient);
 
                        ecore_drm2_output_relative_to_set(outconf[i],
                                                          screenconf[i]->config.relative.to);
@@ -702,23 +701,26 @@ _drm2_randr_apply(void)
                        ecore_drm2_output_enabled_set(outconf[i],
                                                      screenconf[i]->config.enabled);
 
+                       ecore_evas_rotation_with_resize_set(e_comp->ee,
+                                                           screenconf[i]->config.rotation);
+
                        if ((screenconf[i]->config.relative.to) &&
                            (screenconf[i]->config.relative.mode ==
                                E_RANDR2_RELATIVE_CLONE))
                          {
                             Ecore_Drm2_Output *clone;
 
-                            clone = _drm2_output_find(outputs,
-                                                     screenconf[i]->config.relative.to);
-                            ecore_evas_output_clone_set(e_comp->ee, outconf[i],
-                                                        clone);
+                            clone =
+                              _drm2_output_find(outputs,
+                                                screenconf[i]->config.relative.to);
+                            fprintf(stderr, "WL_DRM: SET OUTPUT CLONED !!\n");
+                            ecore_evas_output_clone_set(e_comp->ee, outconf[i], clone);
                          }
                        else
-                         ecore_evas_output_clone_set(e_comp->ee, outconf[i],
-                                                     NULL);
-                         /* ecore_drm2_output_cloned_set(dev, outconf[i], EINA_TRUE); */
-                       /* else */
-                         /* ecore_drm2_output_cloned_set(dev, outconf[i], EINA_FALSE); */
+                         {
+                            fprintf(stderr, "WL_DRM: SET OUTPUT NOT CLONED !!\n");
+                            ecore_evas_output_clone_set(e_comp->ee, outconf[i], NULL);
+                         }
                     }
                   else
                     {
@@ -738,7 +740,6 @@ _drm2_randr_apply(void)
    printf("RRR: set vsize: %ix%i\n", nw, nh);
    ecore_drm2_device_calibrate(dev, nw, nh);
    ecore_drm2_device_pointer_max_set(dev, nw, nh);
-   ecore_drm2_device_pointer_warp(dev, nw / 2, nh / 2);
 }
 
 static void
