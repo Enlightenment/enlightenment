@@ -13,6 +13,8 @@ void (*sym_ecore_drm2_device_free_120)(Ecore_Drm2_Device *device);
 void (*sym_ecore_drm2_output_info_get_121)(Ecore_Drm2_Output *output, int *x, int *y, int *w, int *h, unsigned int *refresh);
 Ecore_Drm2_Fb *(*sym_ecore_drm2_fb_create_120)(int fd, int width, int height, int depth, int bpp, unsigned int format);
 Ecore_Drm2_Fb *(*sym_ecore_drm2_fb_create_121)(Ecore_Drm2_Device *dev, int width, int height, int depth, int bpp, unsigned int format);
+int (*sym_ecore_drm2_output_rotation_get_122)(Ecore_Drm2_Output *output);
+Eina_Bool (*sym_ecore_drm2_output_rotation_set_122)(Ecore_Drm2_Output *output, int rotation);
 
 #define E_DRM2_EFL_VERSION_MINIMUM(MAJ, MIN, MIC) \
   ((eina_version->major > MAJ) || (eina_version->minor > MIN) ||\
@@ -30,6 +32,13 @@ e_drm2_compat_init(void)
      }
 
    e_drm2_lib = dlopen("libecore_drm2.so", RTLD_NOW | RTLD_LOCAL);
+
+   if (E_DRM2_EFL_VERSION_MINIMUM(1, 21, 99))
+     {
+        EDRM2SYM(ecore_drm2_output_rotation_get, 122);
+        EDRM2SYM(ecore_drm2_output_rotation_set, 122);
+     }
+
    if (E_DRM2_EFL_VERSION_MINIMUM(1, 20, 99))
      {
         EDRM2SYM(ecore_drm2_device_open, 121);
@@ -110,6 +119,26 @@ e_drm2_fb_create(Ecore_Drm2_Device *device, int width, int height, int depth, in
         return sym_ecore_drm2_fb_create_121(device, width, height, depth, bpp, format);
      }
    return sym_ecore_drm2_fb_create_120(crude_hack_fd, width, height, depth, bpp, format);
+}
+
+static int
+e_drm2_output_rotation_get(Ecore_Drm2_Output *output)
+{
+   if (E_DRM2_EFL_VERSION_MINIMUM(1, 21, 99))
+     {
+        return sym_ecore_drm2_output_rotation_get_122(output);
+     }
+   return 0;
+}
+
+static Eina_Bool
+e_drm2_output_rotation_set(Ecore_Drm2_Output *output, int rotation)
+{
+   if (E_DRM2_EFL_VERSION_MINIMUM(1, 21, 99))
+     {
+        return sym_ecore_drm2_output_rotation_set_122(output, rotation);
+     }
+   return EINA_FALSE;
 }
 
 #undef E_DRM2_EFL_VERSION_MINIMUM
