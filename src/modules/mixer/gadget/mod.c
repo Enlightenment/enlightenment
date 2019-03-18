@@ -1,10 +1,13 @@
 #include "mixer.h"
+#include "backend.h"
 
 EINTERN int _e_gemix_log_domain;
 
 EINTERN void *
 e_modapi_gadget_init(E_Module *m)
 {
+   if (!backend_init()) return NULL;
+
    _e_gemix_log_domain = eina_log_domain_register("mixer_gadget", EINA_COLOR_RED);
 
    e_gadget_type_add("Mixer", mixer_gadget_create, NULL);
@@ -19,7 +22,7 @@ e_modapi_gadget_shutdown(E_Module *m EINA_UNUSED)
 
    e_gadget_type_del("Mixer");
 
-   emix_shutdown();
+   backend_shutdown();
 
    return 1;
 }
