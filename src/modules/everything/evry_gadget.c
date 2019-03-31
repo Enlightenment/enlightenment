@@ -14,7 +14,8 @@ struct _Instance
    Gadget_Config   *cfg;
    E_Config_Dialog *cfd;
 
-   int              mouse_down;
+   Eina_Bool        mouse_down E_BITFIELD;
+   Evas_Coord       mouse_down_x, mouse_down_y;
 
    double           hide_start;
    int              hide_x, hide_y;
@@ -26,8 +27,8 @@ struct _Instance
    Eina_Bool        illume_mode;
 };
 
-/* static void _button_cb_mouse_up(void *data, Evas *e, Evas_Object *obj, void *event_info); */
 static void             _button_cb_mouse_down(void *data, Evas *e, Evas_Object *obj, void *event_info);
+static void             _button_cb_mouse_up(void *data, Evas *e, Evas_Object *obj, void *event_info);
 static Eina_Bool        _cb_focus_out(void *data, int type EINA_UNUSED, void *event);
 static void _del_func(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED);
 
@@ -103,11 +104,10 @@ _gc_init(E_Gadcon *gc, const char *name, const char *id, const char *style)
    inst->gcc = gcc;
    inst->o_button = o;
 
-   /* evas_object_event_callback_add(o, EVAS_CALLBACK_MOUSE_UP,
-    *           _button_cb_mouse_up, inst); */
-
    evas_object_event_callback_add(o, EVAS_CALLBACK_MOUSE_DOWN,
                                   _button_cb_mouse_down, inst);
+   evas_object_event_callback_add(o, EVAS_CALLBACK_MOUSE_UP,
+                                  _button_cb_mouse_up, inst);
 
    if (_illume_running())
      {
@@ -429,13 +429,28 @@ static void
 _button_cb_mouse_down(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info)
 {
    Instance *inst;
-   Evas_Event_Mouse_Down *ev;
+   Evas_Event_Mouse_Down *ev = event_info;
 
    inst = data;
-   /* if (!inst->mouse_down)
-    *   return; */
+   inst->mouse_down = EINA_TRUE;
+   inst->mouse_down_x = ev->canvas.x;
+   inst->mouse_down_y = ev->canvas.y;
+}
 
-   inst->mouse_down = 0;
+static void
+_button_cb_mouse_up(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info)
+{
+   Instance *inst;
+   Evas_Event_Mouse_Up *ev = event_info;
+   Evas_Coord dx, dy;
+
+   inst = data;
+   if (!inst->mouse_down) return;
+
+   inst->mouse_down = EINA_FALSE;
+   dx = ev->canvas.x - inst->mouse_down_x;
+   dy = ev->canvas.y - inst->mouse_down_y;
+   if (((dx * dx) + (dy * dy)) > (5 * 5)) return;
 
    ev = event_info;
    if (ev->button == 1)
@@ -473,7 +488,6 @@ _button_cb_mouse_down(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNU
         inst->win = win;
         win->data = inst;
 
-        ecore_evas_name_class_set(e_win_ee_get(win->ewin), "E", "everything-window");
 
         if (inst->illume_mode)
           _gadget_window_show(inst);
@@ -510,16 +524,6 @@ _button_cb_mouse_down(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNU
                                  EVAS_BUTTON_NONE, ev->timestamp, NULL);
      }
 }
-
-/* static void
- * _button_cb_mouse_down(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info)
- * {
- *    Instance *inst;
- *    Evas_Event_Mouse_Down *ev;
- *
- *    inst = data;
- *    inst->mouse_down = 1;
- * } */
 
 int
 evry_gadget_init(void)
