@@ -1054,7 +1054,7 @@ _tiling_split_type_changed_popup(void)
      {
         _G.split_popup.obj = o = edje_object_add(e_comp->evas);
         if (!e_theme_edje_object_set(o, "base/theme/modules/tiling",
-                 "modules/tiling/main"))
+                 "e/modules/tiling/main"))
            edje_object_file_set(o, _G.edj_path, "modules/tiling/main");
         evas_object_resize(o, TILING_POPUP_SIZE, TILING_POPUP_SIZE);
 
@@ -1680,7 +1680,7 @@ _client_drag_mouse_move(void *data, int event EINA_UNUSED, void *event_info)
         extra->drag.hint = edje_object_add(e_comp->evas);
         if (!e_theme_edje_object_set(extra->drag.hint,
                                      "base/theme/modules/tiling",
-                                     "modules/tiling/indicator"))
+                                     "e/modules/tiling/indicator"))
           edje_object_file_set(extra->drag.hint, _G.edj_path, "modules/tiling/indicator");
         evas_object_layer_set(extra->drag.hint, E_LAYER_CLIENT_DRAG);
         evas_object_show(extra->drag.hint);
@@ -2171,7 +2171,7 @@ _gc_init(E_Gadcon *gc, const char *name, const char *id, const char *style)
 
    o = edje_object_add(gc->evas);
    if (!e_theme_edje_object_set(o, "base/theme/modules/tiling",
-                                "modules/tiling/main"))
+                                "e/modules/tiling/main"))
      edje_object_file_set(o, _G.edj_path, "modules/tiling/main");
    evas_object_show(o);
 
