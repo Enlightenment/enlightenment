@@ -23,7 +23,7 @@ e_about_new(void)
    snprintf
      (buf, sizeof(buf), "%s%s",
      _(
-       "<title>Copyright &copy; 2000-2017, by the Enlightenment "
+       "<title>Copyright &copy; 2000-2019, by the Enlightenment "
        "Development Team</><ps/>"
        "<ps/>"
        "We hope you enjoy using this software as much as we enjoyed "
