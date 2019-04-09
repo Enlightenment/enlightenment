@@ -208,87 +208,116 @@ _cb_visible(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUS
 }
 
 static void
-_cb_pairable(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+_unflip(Obj *o, Evas_Object *obj)
+{
+   Evas_Object *gl = evas_object_data_get(obj, "genlist");
+   Elm_Object_Item *it;
+
+   for (it = elm_genlist_first_item_get(gl); it;
+        it = elm_genlist_item_next_get(it))
+     {
+        if (o == elm_object_item_data_get(it))
+          {
+             if (elm_genlist_item_flip_get(it))
+               elm_genlist_item_flip_set(it, EINA_FALSE);
+             break;
+          }
+     }
+}
+
+static void
+_cb_pairable(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
    Obj *o = data;
    if (elm_check_state_get(obj)) bz_obj_pairable(o);
    else bz_obj_unpairable(o);
+   _unflip(o, obj);
 }
 
 static void
-_cb_connect(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+_cb_connect(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
    Obj *o = data;
    bz_obj_connect(o);
+   _unflip(o, obj);
 }
 
 static void
-_cb_disconnect(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+_cb_disconnect(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
    Obj *o = data;
    bz_obj_disconnect(o);
+   _unflip(o, obj);
 }
 
 static void
-_cb_trust(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+_cb_trust(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
    Obj *o = data;
    bz_obj_trust(o);
+   _unflip(o, obj);
 }
 
 static void
-_cb_distrust(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+_cb_distrust(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
    Obj *o = data;
    bz_obj_distrust(o);
+   _unflip(o, obj);
 }
 
 static void
-_cb_pair(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+_cb_pair(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
    Obj *o = data;
    bz_obj_pair(o);
+   _unflip(o, obj);
 }
 
 static void
-_cb_unpair(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+_cb_unpair(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
    Obj *o = data;
    bz_obj_remove(o);
+   _unflip(o, obj);
 }
 
 static void
-_cb_unlock_start(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+_cb_unlock_start(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
    Obj *o = data;
    printf("unlock start %s\n", o->address);
    ebluez5_device_prop_unlock_set(o->address, EINA_TRUE);
    ebluez5_popup_device_change(o);
+   _unflip(o, obj);
 }
 
 static void
-_cb_unlock_stop(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+_cb_unlock_stop(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
    Obj *o = data;
    printf("unlock stop %s\n", o->address);
    ebluez5_device_prop_unlock_set(o->address, EINA_FALSE);
    ebluez5_popup_device_change(o);
+   _unflip(o, obj);
 }
 
 static void
-_cb_force_connect_start(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+_cb_force_connect_start(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
    Obj *o = data;
    ebluez5_device_prop_force_connect_set(o->address, EINA_TRUE);
    ebluez5_popup_adapter_change(o);
+   _unflip(o, obj);
 }
 
 static void
-_cb_force_connect_stop(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+_cb_force_connect_stop(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
    Obj *o = data;
    ebluez5_device_prop_force_connect_set(o->address, EINA_FALSE);
    ebluez5_popup_adapter_change(o);
+   _unflip(o, obj);
 }
 
 static void
@@ -485,7 +514,7 @@ _cb_dev_text_get(void *data, Evas_Object *obj EINA_UNUSED,
 }
 
 static Evas_Object *
-_cb_dev_content_get(void *data EINA_UNUSED, Evas_Object *obj,
+_cb_dev_content_get(void *data, Evas_Object *obj,
                     const char *part)
 {
    Obj *o = data;
@@ -540,12 +569,14 @@ _cb_dev_content_get(void *data EINA_UNUSED, Evas_Object *obj,
                     {
                        bt = util_button_icon_add(obj, "changes-allow-symbolic",
                                                  _("Stop this from being an unlock device"));
+                       evas_object_data_set(bt, "genlist", obj);
                        evas_object_smart_callback_add(bt, "clicked", _cb_unlock_stop, o);
                     }
                   else
                     {
                        bt = util_button_icon_add(obj, "channel-insecure-symbolic",
                                                  _("Make this auto unlock when detected (and lock when not)"));
+                       evas_object_data_set(bt, "genlist", obj);
                        evas_object_smart_callback_add(bt, "clicked", _cb_unlock_start, o);
                     }
                   elm_box_pack_end(bx, bt);
@@ -555,12 +586,14 @@ _cb_dev_content_get(void *data EINA_UNUSED, Evas_Object *obj,
                     {
                        bt = util_button_icon_add(obj, "checkbox-symbolic",
                                                  _("Stop this device from being forcefullty connected"));
+                       evas_object_data_set(bt, "genlist", obj);
                        evas_object_smart_callback_add(bt, "clicked", _cb_force_connect_stop, o);
                     }
                   else
                     {
                        bt = util_button_icon_add(obj, "checkbox-checked-symbolic",
                                                  _("Force this device to be connected when detected"));
+                       evas_object_data_set(bt, "genlist", obj);
                        evas_object_smart_callback_add(bt, "clicked", _cb_force_connect_start, o);
                     }
                   elm_box_pack_end(bx, bt);
@@ -570,12 +603,14 @@ _cb_dev_content_get(void *data EINA_UNUSED, Evas_Object *obj,
                {
                   bt = util_button_icon_add(obj, "network-offline",
                                             _("Disconnect this device"));
+                  evas_object_data_set(bt, "genlist", obj);
                   evas_object_smart_callback_add(bt, "clicked", _cb_disconnect, o);
                }
              else
                {
                   bt = util_button_icon_add(obj, "network-transmit-receive",
                                             _("Connect this device"));
+                  evas_object_data_set(bt, "genlist", obj);
                   evas_object_smart_callback_add(bt, "clicked", _cb_connect, o);
                }
              elm_box_pack_end(bx, bt);
@@ -585,12 +620,14 @@ _cb_dev_content_get(void *data EINA_UNUSED, Evas_Object *obj,
                {
                   bt = util_button_icon_add(obj, "security-low",
                                             _("Disrust this device"));
+                  evas_object_data_set(bt, "genlist", obj);
                   evas_object_smart_callback_add(bt, "clicked", _cb_distrust, o);
                }
              else
                {
                   bt = util_button_icon_add(obj, "security-high",
                                             _("Trust this device"));
+                  evas_object_data_set(bt, "genlist", obj);
                   evas_object_smart_callback_add(bt, "clicked", _cb_trust, o);
                }
              elm_box_pack_end(bx, bt);
@@ -602,6 +639,7 @@ _cb_dev_content_get(void *data EINA_UNUSED, Evas_Object *obj,
                {
                   bt = util_button_icon_add(obj, "list-add",
                                             _("Pair with this device"));
+                  evas_object_data_set(bt, "genlist", obj);
                   evas_object_smart_callback_add(bt, "clicked", _cb_pair, o);
                   elm_box_pack_end(bx, bt);
                   evas_object_show(bt);
@@ -611,6 +649,7 @@ _cb_dev_content_get(void *data EINA_UNUSED, Evas_Object *obj,
           {
              bt = util_button_icon_add(obj, "list-remove",
                                         _("Unpair with this device"));
+             evas_object_data_set(bt, "genlist", obj);
              evas_object_smart_callback_add(bt, "clicked", _cb_unpair, o);
              elm_box_pack_end(bx, bt);
              evas_object_show(bt);
@@ -661,6 +700,7 @@ _cb_dev_content_get(void *data EINA_UNUSED, Evas_Object *obj,
 
                   bt = util_button_icon_add(obj, "list-add",
                                             _("Pair with this device"));
+                  evas_object_data_set(bt, "genlist", obj);
                   evas_object_data_set(bt, "entry", en);
                   evas_object_smart_callback_add(bt, "clicked", _cb_agent_ok, o);
                   elm_box_pack_end(bx, bt);
@@ -668,6 +708,7 @@ _cb_dev_content_get(void *data EINA_UNUSED, Evas_Object *obj,
 
                   bt = util_button_icon_add(obj, "list-remove",
                                             _("Reject pairing"));
+                  evas_object_data_set(bt, "genlist", obj);
                   evas_object_smart_callback_add(bt, "clicked", _cb_agent_cancel, o);
                   elm_box_pack_end(bx, bt);
                   evas_object_show(bt);
@@ -681,12 +722,14 @@ _cb_dev_content_get(void *data EINA_UNUSED, Evas_Object *obj,
 
                   bt = util_button_icon_add(obj, "list-add",
                                             _("Pair with this device"));
+                  evas_object_data_set(bt, "genlist", obj);
                   evas_object_smart_callback_add(bt, "clicked", _cb_agent_ok, o);
                   elm_box_pack_end(bx, bt);
                   evas_object_show(bt);
 
                   bt = util_button_icon_add(obj, "list-remove",
                                             _("Reject pairing"));
+                  evas_object_data_set(bt, "genlist", obj);
                   evas_object_smart_callback_add(bt, "clicked", _cb_agent_cancel, o);
                   elm_box_pack_end(bx, bt);
                   evas_object_show(bt);
