@@ -1134,6 +1134,7 @@ e_comp_wl_extension_pointer_constraints_commit(E_Client *ec)
    Eina_List *l;
    Constraint *c;
 
+   if ((!ec) || (!ec->comp_data)) return;
    EINA_LIST_FOREACH(ec->comp_data->constraints, l, c)
      {
         if (c->pending)
@@ -1271,6 +1272,7 @@ e_comp_wl_extension_pointer_constraints_update(E_Client *ec, int x, int y)
    Eina_Bool inside;
    int px, py;
 
+   if ((!ec) || (!ec->comp_data)) return EINA_FALSE;
    inside = e_comp_object_coords_inside_input_area(ec->frame, x, y);
    evas_pointer_canvas_xy_get(e_comp->evas, &px, &py);
 
