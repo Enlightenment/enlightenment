@@ -99,13 +99,21 @@ typedef enum
    E_FWIN_EXEC_DESKTOP
 } E_Fwin_Exec_Type;
 
+typedef enum
+{
+   E_FWIN_WIN_AUTO,
+   E_FWIN_WIN_FORCE_INLINE,
+   E_FWIN_WIN_FORCE_WIN
+} E_Fwin_Win_Mode;
+
+
 /* local subsystem prototypes */
 static int _e_fwin_cb_dir_handler_test(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, const char *path);
 static void _e_fwin_cb_dir_handler(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, const char *path);
 static void _e_fwin_page_favorites_add(E_Fwin_Page *page);
 static void _e_fwin_icon_mouse_out(void *data, Evas_Object *obj EINA_UNUSED, void *event_info);
 static void _e_fwin_icon_mouse_in(void *data, Evas_Object *obj EINA_UNUSED, void *event_info);
-static E_Fwin *_e_fwin_open(E_Fwin_Page *page, E_Fm2_Icon_Info *ici, Eina_Bool force, int *need_dia);
+static E_Fwin *_e_fwin_open(E_Fwin_Page *page, E_Fm2_Icon_Info *ici, E_Fwin_Win_Mode win_mode, int *need_dia);
 static E_Fwin          *_e_fwin_new(const char *dev, const char *path);
 static void             _e_fwin_free(E_Fwin *fwin);
 static E_Fwin_Page     *_e_fwin_page_create(E_Fwin *fwin);
@@ -313,7 +321,7 @@ _e_fwin_spring_cb(E_Fwin *fwin)
    while (ici)
      {
         /* FIXME: could use an animation here */
-        f = _e_fwin_open(fwin->cur_page, ici, EINA_TRUE, NULL);
+        f = _e_fwin_open(fwin->cur_page, ici, E_FWIN_WIN_FORCE_WIN, NULL);
         if (!f) break;
         f->spring_parent = fwin;
         fwin->spring_child = f;
@@ -1878,7 +1886,7 @@ _e_fwin_favorite_selected(void *data,
    selected = e_fm2_selected_list_get(page->flist);
    if (!selected) return;
    page->setting = 1;
-   _e_fwin_file_open_dialog(page, selected, 0);
+   _e_fwin_file_open_dialog(page, selected, -1);
    eina_list_free(selected);
    page->setting = 0;
 }
@@ -2367,13 +2375,16 @@ _e_fwin_border_set(E_Fwin_Page *page, E_Fwin *fwin, E_Fm2_Icon_Info *ici)
 }
 
 static E_Fwin *
-_e_fwin_open(E_Fwin_Page *page, E_Fm2_Icon_Info *ici, Eina_Bool force, int *need_dia)
+_e_fwin_open(E_Fwin_Page *page, E_Fm2_Icon_Info *ici, E_Fwin_Win_Mode win_mode, int *need_dia)
 {
    E_Fwin *fwin = NULL;
    char buf[PATH_MAX + sizeof("removable:")];
    Eina_Bool new_fwin;
 
-   new_fwin = (force || ((!fileman_config->view.open_dirs_in_place || page->fwin->zone)));
+   new_fwin =
+     ((win_mode == E_FWIN_WIN_FORCE_WIN) ||
+      ((!fileman_config->view.open_dirs_in_place ||
+        page->fwin->zone))) && (win_mode != E_FWIN_WIN_FORCE_INLINE);
 
    if ((ici->link) && (ici->mount))
      {
@@ -2493,14 +2504,21 @@ _e_fwin_file_open_dialog(E_Fwin_Page *page,
         e_object_del(E_OBJECT(fwin->fad->dia));
         fwin->fad = NULL;
      }
-   if (!always)
+   if ((!always) || (always == -1))
      {
-        if ((fileman_config->view.open_dirs_in_place) && (!page->fwin->zone))
-          _e_fwin_open(page, eina_list_data_get(files), EINA_FALSE, &need_dia);
+        if (((fileman_config->view.open_dirs_in_place) && (!page->fwin->zone)) ||
+            (always == -1))
+          {
+             _e_fwin_open(page, eina_list_data_get(files),
+                          (always == -1) ?
+                          E_FWIN_WIN_FORCE_INLINE :
+                          E_FWIN_WIN_AUTO,
+                          &need_dia);
+          }
         else
           {
              EINA_LIST_FOREACH(files, l, ici)
-               _e_fwin_open(page, ici, EINA_FALSE, &need_dia);
+               _e_fwin_open(page, ici, E_FWIN_WIN_AUTO, &need_dia);
           }
         if (!need_dia) return;
      }
