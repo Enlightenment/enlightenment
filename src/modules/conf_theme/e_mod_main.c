@@ -68,9 +68,11 @@ e_modapi_init(E_Module *m)
    e_configure_registry_item_add("appearance/xsettings", 20, _("Application Theme"), NULL,
                                  "preferences-desktop-theme",
                                  e_int_config_xsettings);
-   e_configure_registry_item_add("appearance/colors", 30, _("Colors"), NULL,
-                                 "preferences-desktop-color",
-                                 e_int_config_color_classes);
+// This is currently broken and does nothing other than list colorclasses
+// so no point having a broken dialog in E
+//   e_configure_registry_item_add("appearance/colors", 30, _("Colors"), NULL,
+//                                 "preferences-desktop-color",
+//                                 e_int_config_color_classes);
    e_configure_registry_item_add("appearance/fonts", 40, _("Fonts"), NULL,
                                  "preferences-desktop-font",
                                  e_int_config_fonts);

@@ -1,5 +1,9 @@
 #include "e.h"
 
+/*
+ * This is currently broken and does nothing other than list colorclasses
+ * so no point having a broken dialog in E.
+
 static char *
 _translate(char *str)
 {
@@ -59,3 +63,4 @@ e_int_config_color_classes(Evas_Object *parent EINA_UNUSED, const char *params E
                              "preferences-desktop-color", 0, v, NULL);
    return cfd;
 }
+*/
