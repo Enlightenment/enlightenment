@@ -1,4 +1,17 @@
 TODO:
+* console logger much like quake console like dropdown for logging etc
+  (api to append logs. always stores to disk to specific file.
+   add button to explicitly share like screenshots. add higher level
+   logging like tables, icons, timelines and graphs that can be output
+   in text emulation and to screen - change eina log to go into here
+   with eina_log_print_cb_set() )
+* alert - use full fat efl stack and remove xcb/ecore_drm2 stuff
+  (supply custom theme to guarantee theme is not an issue. create text
+   mode fallback with detection for crashes in crash handler. turtles
+   all the way down - a crash handler for our crash handler)
+* start - add watchdog handling to e_start to detect a hung e
+* config dialog redo and simplification
+* remove e_dnd and use elm's dnd instead
 * new gad usability: be able to move, resize etc. without alt
   (needs old gadget move/resize mode enable/disable in the menu)
 * new gad usability: initial gadget bar setup dnd needs to be normal dnd
