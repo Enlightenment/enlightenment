@@ -28,7 +28,7 @@ endif
 e_version_rev = '.'.join([ver, git_version])
 #e_version_rev = e_version
 
-efl_version = '>= 1.20.99'
+efl_version = '>= 1.22.2'
 
 release = 'ver-0.23'
 #for releases
