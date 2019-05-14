@@ -407,6 +407,14 @@ _e_alert_drm_connect(void)
    output = ecore_drm2_output_find(dev, 0, 0);
    if (output) e_drm2_output_info_get(output, NULL, NULL, &sw, &sh, NULL);
    fprintf(stderr, "\tOutput Size: %d %d\n", sw, sh);
+   // force symbol usage to get rid of warnings for release.
+   // i think we'll replace all the x and drm2 stuff in e_alert with normal
+   // full fat efl stuff. it'll reduce duplication and simplify this
+   // e_alert stuff a lot with the downside of a broken efl breaking
+   // e_alert, but then a broken efl will affect it already. i'll look into
+   // a text mode fallback - so a crash handler for the crash handler... :)
+   // turtles all the way down.
+   e_drm2_output_rotation_set(output, e_drm2_output_rotation_get(output));
 
    ecore_event_handler_add(ECORE_EVENT_KEY_DOWN,
                            _e_alert_drm_cb_key_down, NULL);
