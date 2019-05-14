@@ -767,7 +767,7 @@ not_done:
                   /* kill e */
                   kill(child, SIGKILL);
 
-                  if (WEXITSTATUS(r) != 1)
+                  if (WEXITSTATUS(r) == 1)
                     restart = EINA_FALSE;
                }
              else if (!WIFEXITED(status) || stop_ptrace)

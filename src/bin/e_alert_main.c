@@ -131,12 +131,12 @@ _e_alert_drm_cb_key_down(void *data EINA_UNUSED, int type EINA_UNUSED, void *eve
    ev = event;
    if (!strcmp(ev->key, "F12"))
      {
-        ret = 2;
+        ret = 1;
         ecore_main_loop_quit();
      }
    else if (!strcmp(ev->key, "F1"))
      {
-        ret = 1;
+        ret = 2;
         ecore_main_loop_quit();
      }
 
@@ -589,8 +589,8 @@ main(int argc, char **argv)
 #endif
    ecore_shutdown();
 
-   /* ret == 1 => restart e => exit code 1 */
-   /* ret == 2 => exit e => any code will do that */
+   /* ret == 1 => exit e => exit code 1 */
+   /* ret == 2 => restart e => any code will do that */
    return ret;
 }
 #ifndef HAVE_WAYLAND_ONLY
@@ -922,9 +922,9 @@ _e_alert_handle_key_press(xcb_generic_event_t *event)
    key = xcb_key_symbols_get_keysym(symbols, ev->detail, 0);
 
    if (key == XK_F1)
-     r = 1;
-   else if (key == XK_F12)
      r = 2;
+   else if (key == XK_F12)
+     r = 1;
 
    xcb_key_symbols_free(symbols);
 
