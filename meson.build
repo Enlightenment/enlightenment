@@ -2,7 +2,7 @@
 project('enlightenment', 'c',
         version        : '0.22.99',
         license        : 'BSD 2 clause',
-        default_options: [ 'c_std=gnu99', 'warning_level=2' ],
+        default_options: [ 'buildtype=plain', 'c_std=gnu99', 'warning_level=2' ],
         meson_version  : '>= 0.47.0')
 
 ##### convenience variables for later
