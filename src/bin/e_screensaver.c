@@ -278,7 +278,12 @@ _e_screensaver_suspend_cb(void *data EINA_UNUSED)
      {
         if ((e_config->screensaver_suspend_on_ac) ||
             (e_powersave_mode_get() > E_POWERSAVE_MODE_LOW))
-          e_sys_action_do(E_SYS_SUSPEND, NULL);
+          {
+             if (e_config->screensaver_hibernate)
+               e_sys_action_do(E_SYS_HIBERNATE, NULL);
+             else
+               e_sys_action_do(E_SYS_SUSPEND, NULL);
+          }
      }
    return EINA_FALSE;
 }
