@@ -9,7 +9,6 @@ e_fm_shared_types.set10('DBUS_MOUNT_CONFIG', config_h.has('HAVE_UDISKS_MOUNT'))
 configure_file(input        : 'e_fm_shared_types.h.in',
                output       : 'e_fm_shared_types.h',
                configuration: e_fm_shared_types,
-               install      : true,
                install_dir  : dir_include_e)
 
 deps_e = [
