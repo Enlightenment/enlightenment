@@ -15,24 +15,30 @@ if clean_check.returncode() == 0
   error('Meson build requires a clean source tree')
 endif
 
-e_version   = ver.split('.')
-git_version = '0'
-git         = find_program('git', required: false)
-if git.found() == true
-  git_cmd = run_command(git.path(), 'rev-list', '--count', 'HEAD')
-  if git_cmd.returncode() == 0
-    git_version = git_cmd.stdout().strip()
-  endif
-endif
+config_h = configuration_data()
 
-e_version_rev = '.'.join([ver, git_version])
-#e_version_rev = e_version
+e_version   = ver.split('.')
+
+#### FOR RELEASE
+e_version_rev = '.'.join([ver, 'alpha'])
+release = '@0@.@1@.@2@'.format(e_version[0], e_version[1], e_version[2])
+config_h.set('E_RELEASE_BUILD'         , '1')
+####
+
+#### FOR DEVELOPMENT
+#git_version = '0'
+#git         = find_program('git', required: false)
+#if git.found() == true
+#  git_cmd = run_command(git.path(), 'rev-list', '--count', 'HEAD')
+#  if git_cmd.returncode() == 0
+#    git_version = git_cmd.stdout().strip()
+#  endif
+#endif
+#e_version_rev = '.'.join([ver, git_version])
+#release = 'ver-0.23'
+####
 
 efl_version = '>= 1.22.2'
-
-release = 'ver-0.23'
-#for releases
-#release = '@0@.@1@.@2@'.format(e_version[0], e_version[1], e_version[2])
 
 add_global_arguments('-DHAVE_CONFIG_H=1', language: 'c')
 dir_prefix    = get_option('prefix')
@@ -78,14 +84,12 @@ foreach cf: dev_cflags_try
 endforeach
 add_global_arguments(dev_cflags, language: 'c')
 
-config_h = configuration_data()
 config_h.set('E_INTERNAL'              , '1')
 config_h.set('_GNU_SOURCE'             , '1')
 config_h.set('_ALL_SOURCE'             , '1')
 config_h.set('_POSIX_PTHREAD_SEMANTICS', '1')
 config_h.set('_TANDEM_SOURCE'          , '1')
 config_h.set('__EXTENSIONS__'          , '1')
-#config_h.set('E_RELEASE_BUILD'         , '1')
 
 subdir('po')
 
