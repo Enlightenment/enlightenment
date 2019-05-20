@@ -2,7 +2,7 @@
 project('enlightenment', 'c',
         version        : '0.22.99',
         license        : 'BSD 2 clause',
-        default_options: [ 'buildtype=plain', 'c_std=gnu99', 'warning_level=2' ],
+        default_options: [ 'buildtype=release', 'c_std=gnu99', 'warning_level=2' ],
         meson_version  : '>= 0.47.0')
 
 ##### convenience variables for later
@@ -374,8 +374,8 @@ if config_h.has('HAVE_WAYLAND') == true
 endif
 
 configure_file(output       : 'config.h',
-               install      : false,
-               configuration: config_h)
+               configuration: config_h,
+               install_dir  : dir_include_e)
 
 pkgconfig.generate(name             : proj,
                    description      : 'Enlightenment Window Manager',
