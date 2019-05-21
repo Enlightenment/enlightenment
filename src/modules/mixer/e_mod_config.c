@@ -347,7 +347,7 @@ emix_config_save_state_restore(void)
              v.channel_count = emsink->volume.channel_count;
              for (i = 0; i < v.channel_count; i++)
                v.volumes[i] = sink->volume;
-             emix_sink_volume_set(emsink, v);
+             emix_sink_volume_set(emsink, &v);
              free(v.volumes);
           }
         emix_sink_mute_set(emsink, sink->mute);
@@ -373,7 +373,7 @@ emix_config_save_state_restore(void)
              v.channel_count = emsource->volume.channel_count;
              for (i = 0; i < v.channel_count; i++)
                v.volumes[i] = source->volume;
-             emix_source_volume_set(emsource, v);
+             emix_source_volume_set(emsource, &v);
              free(v.volumes);
           }
         emix_source_mute_set(emsource, source->mute);

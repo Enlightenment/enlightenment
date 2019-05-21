@@ -158,7 +158,7 @@ _volume_increase_cb(E_Object *obj EINA_UNUSED, const char *params EINA_UNUSED)
           volume.volumes[i] = s->volume.volumes[i];
      }
 
-   emix_sink_volume_set(s, volume);
+   emix_sink_volume_set(s, &volume);
    emix_config_save_state_get();
    if (emix_config_save_get()) e_config_save_queue();
    free(volume.volumes);
@@ -184,7 +184,7 @@ _volume_decrease_cb(E_Object *obj EINA_UNUSED, const char *params EINA_UNUSED)
           volume.volumes[i] = s->volume.volumes[i];
      }
 
-   emix_sink_volume_set((Emix_Sink *)_sink_default, volume);
+   emix_sink_volume_set((Emix_Sink *)_sink_default, &volume);
    emix_config_save_state_get();
    if (emix_config_save_get()) e_config_save_queue();
    free(volume.volumes);

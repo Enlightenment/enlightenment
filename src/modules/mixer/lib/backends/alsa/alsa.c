@@ -408,25 +408,25 @@ _alsa_sources_mute_set(Emix_Source *source, Eina_Bool mute)
 }
 
 static void
-_alsa_sources_volume_set(Emix_Source *source, Emix_Volume v)
+_alsa_sources_volume_set(Emix_Source *source, Emix_Volume *v)
 {
    Alsa_Emix_Source *s = (Alsa_Emix_Source*) source;
    unsigned int i;
    snd_mixer_elem_t *elem;
 
-   EINA_SAFETY_ON_FALSE_RETURN((ctx && source));
+   EINA_SAFETY_ON_FALSE_RETURN((ctx && source && v));
 
-   if (v.channel_count != eina_list_count(s->channels))
+   if (v->channel_count != eina_list_count(s->channels))
      {
         ERR("Volume struct doesn't have the same length than the channels");
         return;
      }
 
-   for (i = 0; i < v.channel_count; i++ )
+   for (i = 0; i < v->channel_count; i++ )
      {
         elem = eina_list_nth(s->channels, i);
-        _alsa_channel_volume_set(elem, v.volumes[i], EINA_FALSE);
-        s->source.volume.volumes[i] = v.volumes[i];
+        _alsa_channel_volume_set(elem, v->volumes[i], EINA_FALSE);
+        s->source.volume.volumes[i] = v->volumes[i];
      }
    if (ctx->cb)
      ctx->cb((void *)ctx->userdata, EMIX_SOURCE_CHANGED_EVENT,
@@ -480,25 +480,25 @@ _alsa_sink_mute_set(Emix_Sink *sink, Eina_Bool mute)
 }
 
 static void
-_alsa_sink_volume_set(Emix_Sink *sink, Emix_Volume v)
+_alsa_sink_volume_set(Emix_Sink *sink, Emix_Volume *v)
 {
    Alsa_Emix_Sink *s = (Alsa_Emix_Sink *)sink;
    unsigned int i;
    snd_mixer_elem_t *elem;
 
-   EINA_SAFETY_ON_FALSE_RETURN((ctx && sink));
+   EINA_SAFETY_ON_FALSE_RETURN((ctx && sink && v));
 
-   if (v.channel_count != eina_list_count(s->channels))
+   if (v->channel_count != eina_list_count(s->channels))
      {
         ERR("Volume struct doesn't have the same length than the channels");
         return;
      }
 
-   for (i = 0; i < v.channel_count; i++ )
+   for (i = 0; i < v->channel_count; i++ )
      {
         elem = eina_list_nth(s->channels, i);
-        _alsa_channel_volume_set(elem, v.volumes[i], EINA_FALSE);
-        s->sink.volume.volumes[i] = v.volumes[i];
+        _alsa_channel_volume_set(elem, v->volumes[i], EINA_FALSE);
+        s->sink.volume.volumes[i] = v->volumes[i];
      }
    if (ctx->cb)
      ctx->cb((void *)ctx->userdata, EMIX_SINK_CHANGED_EVENT,

@@ -282,7 +282,7 @@ emix_sink_mute_set(Emix_Sink *sink, Eina_Bool mute)
 }
 
 void
-emix_sink_volume_set(Emix_Sink *sink, Emix_Volume volume)
+emix_sink_volume_set(Emix_Sink *sink, Emix_Volume *volume)
 {
    EINA_SAFETY_ON_FALSE_RETURN((ctx && ctx->loaded &&
                                 ctx->loaded->ebackend_sink_volume_set &&
@@ -320,7 +320,7 @@ emix_sink_input_mute_set(Emix_Sink_Input *input, Eina_Bool mute)
 }
 
 void
-emix_sink_input_volume_set(Emix_Sink_Input *input, Emix_Volume volume)
+emix_sink_input_volume_set(Emix_Sink_Input *input, Emix_Volume *volume)
 {
    EINA_SAFETY_ON_FALSE_RETURN((ctx && ctx->loaded &&
                                 ctx->loaded->ebackend_sink_input_volume_set &&
@@ -359,7 +359,7 @@ emix_source_mute_set(Emix_Source *source, Eina_Bool mute)
 }
 
 void
-emix_source_volume_set(Emix_Source *source, Emix_Volume volume)
+emix_source_volume_set(Emix_Source *source, Emix_Volume *volume)
 {
    EINA_SAFETY_ON_FALSE_RETURN((ctx && ctx->loaded &&
                                 ctx->loaded->ebackend_source_volume_set &&

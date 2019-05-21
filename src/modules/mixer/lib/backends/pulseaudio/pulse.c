@@ -66,14 +66,14 @@ static Context *ctx = NULL;
 extern pa_mainloop_api functable;
 
 static pa_cvolume
-_emix_volume_convert(const Emix_Volume volume)
+_emix_volume_convert(const Emix_Volume *volume)
 {
    pa_cvolume vol;
    unsigned int i;
 
-   vol.channels = volume.channel_count;
-   for (i = 0; i < volume.channel_count; i++)
-     vol.values[i] = INT_TO_PA_VOLUME(volume.volumes[i]);
+   vol.channels = volume->channel_count;
+   for (i = 0; i < volume->channel_count; i++)
+     vol.values[i] = INT_TO_PA_VOLUME(volume->volumes[i]);
    return vol;
 }
 
@@ -98,6 +98,7 @@ _pa_cvolume_convert(const pa_cvolume *volume, Emix_Volume *vol)
 static void
 _sink_del(Sink *sink)
 {
+   unsigned int i;
    Emix_Port *port;
 
    EINA_SAFETY_ON_NULL_RETURN(sink);
@@ -109,6 +110,9 @@ _sink_del(Sink *sink)
      }
 
    free(sink->base.volume.volumes);
+   for(i = 0; i < sink->base.volume.channel_count; ++i)
+     eina_stringshare_del(sink->base.volume.channel_names[i]);
+   free(sink->base.volume.channel_names);
    eina_stringshare_del(sink->base.name);
    free(sink);
 }
@@ -116,9 +120,13 @@ _sink_del(Sink *sink)
 static void
 _sink_input_del(Sink_Input *input)
 {
+   unsigned int i;
    EINA_SAFETY_ON_NULL_RETURN(input);
 
    free(input->base.volume.volumes);
+   for(i = 0; i < input->base.volume.channel_count; ++i)
+     eina_stringshare_del(input->base.volume.channel_names[i]);
+   free(input->base.volume.channel_names);
    eina_stringshare_del(input->base.name);
    eina_stringshare_del(input->icon);
    free(input);
@@ -127,9 +135,13 @@ _sink_input_del(Sink_Input *input)
 static void
 _source_del(Source *source)
 {
+   unsigned int i;
    EINA_SAFETY_ON_NULL_RETURN(source);
 
    free(source->base.volume.volumes);
+   for(i = 0; i < source->base.volume.channel_count; ++i)
+     eina_stringshare_del(source->base.volume.channel_names[i]);
+   free(source->base.volume.channel_names);
    eina_stringshare_del(source->base.name);
    free(source);
 }
@@ -177,6 +189,9 @@ _sink_cb(pa_context *c EINA_UNUSED, const pa_sink_info *info, int eol,
    sink->idx = info->index;
    sink->base.name = eina_stringshare_add(info->description);
    _pa_cvolume_convert(&info->volume, &sink->base.volume);
+   sink->base.volume.channel_names = calloc(sink->base.volume.channel_count, sizeof(Emix_Channel));
+   for (i = 0; i < sink->base.volume.channel_count; ++i)
+     sink->base.volume.channel_names[i] = eina_stringshare_add(pa_channel_position_to_pretty_string(info->channel_map.map[i]));
    sink->base.mute = !!info->mute;
 
    for (i = 0; i < info->n_ports; i++)
@@ -238,7 +253,18 @@ _sink_changed_cb(pa_context *c EINA_UNUSED, const pa_sink_info *info, int eol,
    EINA_SAFETY_ON_NULL_RETURN(sink);
 
    eina_stringshare_replace(&sink->base.name, info->description);
+
+   if (sink->base.volume.channel_count != info->volume.channels)
+     {
+        for (i = 0; i < sink->base.volume.channel_count; ++i)
+          eina_stringshare_del(sink->base.volume.channel_names[i]);
+        free(sink->base.volume.channel_names);
+        sink->base.volume.channel_names = calloc(info->volume.channels, sizeof(Emix_Channel));
+     }
    _pa_cvolume_convert(&info->volume, &sink->base.volume);
+   for (i = 0; i < sink->base.volume.channel_count; ++i)
+     eina_stringshare_replace(&sink->base.volume.channel_names[i],
+                              pa_channel_position_to_pretty_string(info->channel_map.map[i]));
    sink->base.mute = !!info->mute;
 
    if (sink->base.ports)
@@ -335,6 +361,7 @@ _sink_input_cb(pa_context *c EINA_UNUSED, const pa_sink_input_info *info,
    Eina_List *l;
    Sink *s;
    const char *t;
+   unsigned int i;
    EINA_SAFETY_ON_NULL_RETURN(ctx);
 
    if (eol < 0)
@@ -374,6 +401,9 @@ _sink_input_cb(pa_context *c EINA_UNUSED, const pa_sink_input_info *info,
    input->base.name = eina_stringshare_add(eina_strbuf_string_get(input_name));
    eina_strbuf_free(input_name);
    _pa_cvolume_convert(&info->volume, &input->base.volume);
+   input->base.volume.channel_names = calloc(input->base.volume.channel_count, sizeof(Emix_Channel));
+   for (i = 0; i < input->base.volume.channel_count; ++i)
+     input->base.volume.channel_names[i] = eina_stringshare_add(pa_channel_position_to_pretty_string(info->channel_map.map[i]));
    input->base.mute = !!info->mute;
    EINA_LIST_FOREACH(ctx->sinks, l, s)
      {
@@ -398,10 +428,11 @@ _sink_input_changed_cb(pa_context *c EINA_UNUSED,
                        const pa_sink_input_info *info, int eol,
                        void *userdata EINA_UNUSED)
 {
-   Sink_Input *input = NULL, *i;
+   Sink_Input *input = NULL, *si;
    Sink *s = NULL;
    Eina_List *l;
    const char *t;
+   unsigned int i;
 
    EINA_SAFETY_ON_NULL_RETURN(ctx);
    if (eol < 0)
@@ -416,11 +447,11 @@ _sink_input_changed_cb(pa_context *c EINA_UNUSED,
    if (eol > 0)
       return;
 
-   EINA_LIST_FOREACH(ctx->inputs, l, i)
+   EINA_LIST_FOREACH(ctx->inputs, l, si)
      {
-        if (i->idx == (int)info->index)
+        if (si->idx == (int)info->index)
           {
-            input = i;
+            input = si;
             break;
           }
      }
@@ -434,7 +465,18 @@ _sink_input_changed_cb(pa_context *c EINA_UNUSED,
         ctx->inputs = eina_list_append(ctx->inputs, input);
      }
    input->idx = info->index;
+   if (input->base.volume.channel_count != info->volume.channels)
+     {
+        for (i = 0; i < input->base.volume.channel_count; ++i)
+          eina_stringshare_del(input->base.volume.channel_names[i]);
+        free(input->base.volume.channel_names);
+        input->base.volume.channel_names = calloc(info->volume.channels, sizeof(Emix_Channel));
+     }
    _pa_cvolume_convert(&info->volume, &input->base.volume);
+   for (i = 0; i < input->base.volume.channel_count; ++i)
+     eina_stringshare_replace(&input->base.volume.channel_names[i],
+                              pa_channel_position_to_pretty_string(info->channel_map.map[i]));
+
    input->base.mute = !!info->mute;
 
    EINA_LIST_FOREACH(ctx->sinks, l, s)
@@ -482,6 +524,7 @@ _source_cb(pa_context *c EINA_UNUSED, const pa_source_info *info,
            int eol, void *userdata EINA_UNUSED)
 {
    Source *source;
+   unsigned int i;
    EINA_SAFETY_ON_NULL_RETURN(ctx);
 
    if (eol < 0)
@@ -502,6 +545,9 @@ _source_cb(pa_context *c EINA_UNUSED, const pa_source_info *info,
    source->idx = info->index;
    source->base.name = eina_stringshare_add(info->name);
    _pa_cvolume_convert(&info->volume, &source->base.volume);
+   source->base.volume.channel_names = calloc(source->base.volume.channel_count, sizeof(Emix_Channel));
+   for (i = 0; i < source->base.volume.channel_count; ++i)
+     source->base.volume.channel_names[i] = eina_stringshare_add(pa_channel_position_to_pretty_string(info->channel_map.map[i]));
    source->base.mute = !!info->mute;
 
    ctx->sources = eina_list_append(ctx->sources, source);
@@ -517,6 +563,7 @@ _source_changed_cb(pa_context *c EINA_UNUSED,
 {
    Source *source = NULL, *s;
    Eina_List *l;
+   unsigned int i;
    EINA_SAFETY_ON_NULL_RETURN(ctx);
 
    if (eol < 0)
@@ -549,7 +596,17 @@ _source_changed_cb(pa_context *c EINA_UNUSED,
         ctx->sources = eina_list_append(ctx->sources, source);
      }
    source->idx= info->index;
+   if (source->base.volume.channel_count != info->volume.channels)
+     {
+        for (i = 0; i < source->base.volume.channel_count; ++i)
+          eina_stringshare_del(source->base.volume.channel_names[i]);
+        free(source->base.volume.channel_names);
+        source->base.volume.channel_names = calloc(info->volume.channels, sizeof(Emix_Channel));
+     }
    _pa_cvolume_convert(&info->volume, &source->base.volume);
+   for (i = 0; i < source->base.volume.channel_count; ++i)
+     eina_stringshare_replace(&source->base.volume.channel_names[i],
+                              pa_channel_position_to_pretty_string(info->channel_map.map[i]));
    source->base.mute = !!info->mute;
 
    if (ctx->cb)
@@ -1164,7 +1221,7 @@ _disconnect_cb()
 }
 
 static void
-_source_volume_set(Emix_Source *source, Emix_Volume volume)
+_source_volume_set(Emix_Source *source, Emix_Volume *volume)
 {
    pa_operation* o;
    pa_cvolume vol = _emix_volume_convert(volume);
@@ -1211,7 +1268,7 @@ _sink_inputs_get(void)
 }
 
 static void
-_sink_volume_set(Emix_Sink *sink, Emix_Volume volume)
+_sink_volume_set(Emix_Sink *sink, Emix_Volume *volume)
 {
    pa_operation* o;
    Sink *s = (Sink *)sink;
@@ -1236,7 +1293,7 @@ _sink_mute_set(Emix_Sink *sink, Eina_Bool mute)
 }
 
 static void
-_sink_input_volume_set(Emix_Sink_Input *input, Emix_Volume volume)
+_sink_input_volume_set(Emix_Sink_Input *input, Emix_Volume *volume)
 {
    pa_operation* o;
    Sink_Input *sink_input = (Sink_Input *)input;
