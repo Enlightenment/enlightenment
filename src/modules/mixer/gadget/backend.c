@@ -315,7 +315,7 @@ _actions_unregister(void)
    if (_action_incr_app)
      {
         e_action_predef_name_del("Mixer",
-                                 _("Increase Volume of Focuse Application"));
+                                 _("Increase Volume of Focused Application"));
         e_action_del("volume_increase_app");
         _action_incr_app = NULL;
      }
@@ -323,7 +323,7 @@ _actions_unregister(void)
    if (_action_decr_app)
      {
         e_action_predef_name_del("Mixer",
-                                 _("Decrease Volume of Focuse Application"));
+                                 _("Decrease Volume of Focused Application"));
         e_action_del("volume_decrease_app");
         _action_decr_app = NULL;
      }
@@ -331,7 +331,7 @@ _actions_unregister(void)
    if (_action_mute_app)
      {
         e_action_predef_name_del("Mixer",
-                                 _("Mute Volume of Focuse Application"));
+                                 _("Mute Volume of Focused Application"));
         e_action_del("volume_mute_app");
         _action_mute_app = NULL;
      }
