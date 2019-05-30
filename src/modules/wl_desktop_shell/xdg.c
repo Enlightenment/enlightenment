@@ -693,22 +693,40 @@ _apply_positioner_x(int x, Positioner *p, Eina_Bool invert)
         grav = p->gravity;
      }
 
-   /* left edge */
-   if (an == XDG_POSITIONER_ANCHOR_LEFT)
-     x += p->anchor_rect.x;
-   /* right edge */
-   else if (an == XDG_POSITIONER_ANCHOR_RIGHT)
-     x += p->anchor_rect.x + p->anchor_rect.w;
-   /* center */
-   else
-     x += p->anchor_rect.x + (p->anchor_rect.w / 2);
+   switch (an)
+     {
+      case XDG_POSITIONER_ANCHOR_LEFT:
+      case XDG_POSITIONER_ANCHOR_TOP_LEFT:
+      case XDG_POSITIONER_ANCHOR_BOTTOM_LEFT:
+        x += p->anchor_rect.x;
+        break;
+      case XDG_POSITIONER_ANCHOR_RIGHT:
+      case XDG_POSITIONER_ANCHOR_TOP_RIGHT:
+      case XDG_POSITIONER_ANCHOR_BOTTOM_RIGHT:
+        x += p->anchor_rect.x + p->anchor_rect.w;
+        break;
+      default:
+        x += p->anchor_rect.x + (p->anchor_rect.w / 2);
+        break;
+     }
 
-   /* flip left over anchor */
-   if (grav & XDG_POSITIONER_GRAVITY_LEFT)
-     x -= p->size.w;
-   /* center on anchor */
-   else if (!(grav & XDG_POSITIONER_GRAVITY_RIGHT))
-     x -= p->size.w / 2;
+   switch (grav)
+     {
+      case XDG_POSITIONER_GRAVITY_LEFT:
+      case XDG_POSITIONER_GRAVITY_TOP_LEFT:
+      case XDG_POSITIONER_GRAVITY_BOTTOM_LEFT:
+        x -= p->size.w;
+        break;
+      case XDG_POSITIONER_GRAVITY_RIGHT:
+      case XDG_POSITIONER_GRAVITY_TOP_RIGHT:
+      case XDG_POSITIONER_GRAVITY_BOTTOM_RIGHT:
+        x = x;
+        break;
+      default:
+        x -= p->size.w / 2;
+        break;
+     }
+
    return x;
 }
 
@@ -735,22 +753,39 @@ _apply_positioner_y(int y, Positioner *p, Eina_Bool invert)
         grav = p->gravity;
      }
 
-   /* up edge */
-   if (an == XDG_POSITIONER_ANCHOR_TOP)
-     y += p->anchor_rect.y;
-   /* bottom edge */
-   else if (an == XDG_POSITIONER_ANCHOR_BOTTOM)
-     y += p->anchor_rect.y + p->anchor_rect.h;
-   /* center */
-   else
-     y += p->anchor_rect.y + (p->anchor_rect.h / 2);
+   switch (an)
+     {
+      case XDG_POSITIONER_ANCHOR_TOP:
+      case XDG_POSITIONER_ANCHOR_TOP_LEFT:
+      case XDG_POSITIONER_ANCHOR_TOP_RIGHT:
+        y += p->anchor_rect.y;
+        break;
+      case XDG_POSITIONER_ANCHOR_BOTTOM:
+      case XDG_POSITIONER_ANCHOR_BOTTOM_LEFT:
+      case XDG_POSITIONER_ANCHOR_BOTTOM_RIGHT:
+        y += p->anchor_rect.y + p->anchor_rect.h;
+        break;
+      default:
+        y += p->anchor_rect.y + (p->anchor_rect.h / 2);
+        break;
+     }
 
-   /* flip up over anchor */
-   if (grav & XDG_POSITIONER_GRAVITY_TOP)
-     y -= p->size.h;
-   /* center on anchor */
-   else if (!(grav & XDG_POSITIONER_GRAVITY_BOTTOM))
-     y -= p->size.h / 2;
+   switch (grav)
+     {
+      case XDG_POSITIONER_GRAVITY_TOP:
+      case XDG_POSITIONER_GRAVITY_TOP_LEFT:
+      case XDG_POSITIONER_GRAVITY_TOP_RIGHT:
+        y -= p->size.h;
+        break;
+      case XDG_POSITIONER_GRAVITY_BOTTOM:
+      case XDG_POSITIONER_GRAVITY_BOTTOM_LEFT:
+      case XDG_POSITIONER_GRAVITY_BOTTOM_RIGHT:
+        y = y;
+        break;
+      default:
+        y -= (p->size.h / 2);
+     }
+
    return y;
 }
 
@@ -810,6 +845,7 @@ _apply_positioner(E_Client *ec, Positioner *p)
 {
    int x, y;
    int zx, zy, zw, zh;
+
    /* apply base geometry:
     * coords are relative to parent
     */
@@ -827,8 +863,8 @@ _apply_positioner(E_Client *ec, Positioner *p)
     - gravity (perform flips if gravity is not right|bottom)
     - constrain (adjust if popup does not fit)
     */
-   ec->x = _apply_positioner_x(ec->x, p, 0);
-   ec->y = _apply_positioner_y(ec->y, p, 0);
+   ec->x = _apply_positioner_x(x, p, 0);
+   ec->y = _apply_positioner_y(y, p, 0);
 
    e_zone_useful_geometry_get(ec->parent->zone, &zx, &zy, &zw, &zh);
 
