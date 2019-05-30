@@ -677,14 +677,10 @@ _apply_positioner_x(int x, Positioner *p, Eina_Bool invert)
 
    switch (an)
      {
-      case XDG_POSITIONER_ANCHOR_LEFT:
-      case XDG_POSITIONER_ANCHOR_TOP_LEFT:
-      case XDG_POSITIONER_ANCHOR_BOTTOM_LEFT:
+      case ZXDG_POSITIONER_V6_ANCHOR_LEFT:
         x += p->anchor_rect.x;
         break;
-      case XDG_POSITIONER_ANCHOR_RIGHT:
-      case XDG_POSITIONER_ANCHOR_TOP_RIGHT:
-      case XDG_POSITIONER_ANCHOR_BOTTOM_RIGHT:
+      case ZXDG_POSITIONER_V6_ANCHOR_RIGHT:
         x += p->anchor_rect.x + p->anchor_rect.w;
         break;
       default:
@@ -694,14 +690,10 @@ _apply_positioner_x(int x, Positioner *p, Eina_Bool invert)
 
    switch (grav)
      {
-      case XDG_POSITIONER_GRAVITY_LEFT:
-      case XDG_POSITIONER_GRAVITY_TOP_LEFT:
-      case XDG_POSITIONER_GRAVITY_BOTTOM_LEFT:
+      case ZXDG_POSITIONER_V6_GRAVITY_LEFT:
         x -= p->size.w;
         break;
-      case XDG_POSITIONER_GRAVITY_RIGHT:
-      case XDG_POSITIONER_GRAVITY_TOP_RIGHT:
-      case XDG_POSITIONER_GRAVITY_BOTTOM_RIGHT:
+      case ZXDG_POSITIONER_V6_GRAVITY_RIGHT:
         x = x;
         break;
       default:
@@ -737,14 +729,10 @@ _apply_positioner_y(int y, Positioner *p, Eina_Bool invert)
 
    switch (an)
      {
-      case XDG_POSITIONER_ANCHOR_TOP:
-      case XDG_POSITIONER_ANCHOR_TOP_LEFT:
-      case XDG_POSITIONER_ANCHOR_TOP_RIGHT:
+      case ZXDG_POSITIONER_V6_ANCHOR_TOP:
         y += p->anchor_rect.y;
         break;
-      case XDG_POSITIONER_ANCHOR_BOTTOM:
-      case XDG_POSITIONER_ANCHOR_BOTTOM_LEFT:
-      case XDG_POSITIONER_ANCHOR_BOTTOM_RIGHT:
+      case ZXDG_POSITIONER_V6_ANCHOR_BOTTOM:
         y += p->anchor_rect.y + p->anchor_rect.h;
         break;
       default:
@@ -754,14 +742,10 @@ _apply_positioner_y(int y, Positioner *p, Eina_Bool invert)
 
    switch (grav)
      {
-      case XDG_POSITIONER_GRAVITY_TOP:
-      case XDG_POSITIONER_GRAVITY_TOP_LEFT:
-      case XDG_POSITIONER_GRAVITY_TOP_RIGHT:
+      case ZXDG_POSITIONER_V6_GRAVITY_TOP:
         y -= p->size.h;
         break;
-      case XDG_POSITIONER_GRAVITY_BOTTOM:
-      case XDG_POSITIONER_GRAVITY_BOTTOM_LEFT:
-      case XDG_POSITIONER_GRAVITY_BOTTOM_RIGHT:
+      case ZXDG_POSITIONER_V6_GRAVITY_BOTTOM:
         y = y;
         break;
       default:
