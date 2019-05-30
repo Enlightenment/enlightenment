@@ -56,7 +56,7 @@ _validate_size(struct wl_resource *resource, int32_t value)
 static void
 _validate_size_negative(struct wl_resource *resource, int32_t value)
 {
-   if (value <= 0)
+   if (value < 0)
      wl_resource_post_error(resource, XDG_POSITIONER_ERROR_INVALID_INPUT, "Invalid size passed");
 }
 
