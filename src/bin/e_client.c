@@ -5718,7 +5718,7 @@ E_API void
 e_client_transients_restack(E_Client *ec)
 {
    Eina_List *list;
-   E_Client *child, *below = NULL;
+   E_Client *child, *below = NULL, *last;
 
    E_OBJECT_CHECK(ec);
    E_OBJECT_TYPE_CHECK(ec, E_CLIENT_TYPE);
@@ -5732,7 +5732,19 @@ e_client_transients_restack(E_Client *ec)
          */
         if (child->iconic) continue;
         if (below)
-          evas_object_stack_below(child->frame, below->frame);
+          {
+             if (below->transients)
+               {
+                  e_client_transients_restack(below);
+                  last = eina_list_last_data_get(below->transients);
+                  if (last)
+                    evas_object_stack_above(child->frame, last->frame);
+                  else
+                    evas_object_stack_above(child->frame, below->frame);
+               }
+             else
+               evas_object_stack_above(child->frame, below->frame);
+          }
         else
           evas_object_stack_above(child->frame, ec->frame);
         below = child;
