@@ -7,6 +7,7 @@
 #endif
 
 #if defined(__OpenBSD__)
+# include <sys/sched.h>
 # include <sys/sysctl.h>
 # define CPU_STATES 6
 #endif
@@ -78,71 +79,42 @@ _cpumonitor_sysctl_getusage(unsigned long *prev_total, unsigned long *prev_idle,
    *prev_percent = (int)(percent_all / ncpu);
 #elif defined(__OpenBSD__)
    int ncpu = _cpumonitor_sysctl_getcores();
+   struct cpustats cpu_times[CPU_STATES];
+   memset(&cpu_times, 0, CPU_STATES * sizeof(struct cpustats));
    if (!ncpu) return;
-   if (ncpu == 1)
+   for (i = 0; i < ncpu; i++)
      {
-        unsigned long cpu_times[CPU_STATES];
-        int cpu_time_mib[] = { CTL_KERN, KERN_CPTIME };
-        size = CPU_STATES * sizeof(unsigned long);
-        if (sysctl(cpu_time_mib, 2, &cpu_times, &size, NULL, 0) < 0)
+        unsigned long total =  0, idle;
+        int diff_total, diff_idle;
+        int cpu_time_mib[] = { CTL_KERN, KERN_CPUSTATS, 0 };
+
+        size = sizeof(struct cpustats);
+        cpu_time_mib[2] = i;
+        if (sysctl(cpu_time_mib, 3, &cpu_times[i], &size, NULL, 0) < 0)
           return;
 
-        unsigned long total = 0;
-        for (j = 0; j < CPU_STATES - 1; j++)
-          total += cpu_times[j];
+        for (j = 0; j < CPU_STATES; j++)
+          total += cpu_times[i].cs_time[j];
 
-        unsigned long idle = cpu_times[4];
+        idle = cpu_times[i].cs_time[CP_IDLE];
+        core = eina_list_nth(cores, i);
+        diff_total = total - core->total;
+        diff_idle = idle - core->idle;
 
-        int diff_total = total - *prev_total;
-        int diff_idle = idle - *prev_idle;
+        core->total = total;
+        core->idle = idle;
 
         if (diff_total == 0) diff_total = 1;
 
-        double ratio = diff_total / 100.0;
+        double ratio = diff_total / 100;
         unsigned long used = diff_total - diff_idle;
         int percent = used / ratio;
-        if (percent > 100)
-          percent = 100;
-        else if (percent < 0)
-          percent = 0;
 
-        *prev_total = total;
-        *prev_idle = idle; // cpu_times[3];
-        *prev_percent = (int)percent;
-     }
-   else if (ncpu > 1)
-     {
-        for (i = 0; i < ncpu; i++)
-          {
-             unsigned long cpu_times[CPU_STATES];
-             size = CPU_STATES * sizeof(unsigned long);
-             int cpu_time_mib[] = { CTL_KERN, KERN_CPTIME2, 0 };
-             cpu_time_mib[2] = i;
-             if (sysctl(cpu_time_mib, 3, &cpu_times, &size, NULL, 0) < 0)
-               return;
+        core->percent = percent;
 
-             unsigned long total = 0;
-             for (j = 0; j < CPU_STATES - 1; j++)
-               total += cpu_times[j];
-
-             core = eina_list_nth(cores, i);
-             int diff_total = total - core->total;
-             int diff_idle = cpu_times[4] - core->idle;
-
-             core->total = total;
-             core->idle = cpu_times[4];
-
-             if (diff_total == 0) diff_total = 1;
-             double ratio = diff_total / 100;
-             unsigned long used = diff_total - diff_idle;
-             int percent = used / ratio;
-
-             core->percent = percent;
-
-             percent_all += (int)percent;
-             total_all += total;
-             idle_all += core->idle;
-          }
+        percent_all += (int)percent;
+        total_all += total;
+        idle_all += core->idle;
 
         *prev_total = (total_all / ncpu);
         *prev_idle = (idle_all / ncpu);
