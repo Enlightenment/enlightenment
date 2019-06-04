@@ -457,9 +457,9 @@ _cb_sink_input_lock_change(void *data,
 static void
 _emix_sink_input_volume_fill(Emix_Sink_Input *input, Evas_Object *bxv, Evas_Object *bx, Eina_Bool locked)
 {
-   Evas_Object *bxhv, *lb, *sl, *ck;
+   Evas_Object *bxhv, *lb, *sl = NULL, *ck;
    unsigned int i;
-   Eina_List *sls = NULL;
+   Eina_List *sls = NULL, *l;
 
    eina_list_free(evas_object_data_get(bxv, "volumes"));
    elm_box_clear(bx);
@@ -527,6 +527,7 @@ _emix_sink_input_volume_fill(Emix_Sink_Input *input, Evas_Object *bxv, Evas_Obje
              elm_object_disabled_set(sl, input->mute);
              sls = eina_list_append(sls, sl);
           }
+        sl = NULL;
      }
    evas_object_data_set(bxv, "volumes", sls);
 
@@ -538,7 +539,14 @@ _emix_sink_input_volume_fill(Emix_Sink_Input *input, Evas_Object *bxv, Evas_Obje
    evas_object_data_set(bxv, "mute", ck);
    elm_object_text_set(ck, "Mute");
    elm_check_state_set(ck, input->mute);
-   elm_object_disabled_set(sl, input->mute);
+   if (sl) elm_object_disabled_set(sl, input->mute);
+   else if (sls)
+     {
+        EINA_LIST_FOREACH(sls, l, sl)
+          {
+             elm_object_disabled_set(sl, input->mute);
+          }
+     }
    elm_box_pack_end(bxhv, ck);
    evas_object_show(ck);
    evas_object_smart_callback_add(ck, "changed",
