@@ -64,6 +64,8 @@ static Ecore_Timer *_e_sys_screensaver_unignore_timer = NULL;
 
 static double resume_backlight;
 
+static Eina_Bool on_the_way_out = EINA_FALSE;
+
 E_API int E_EVENT_SYS_SUSPEND = -1;
 E_API int E_EVENT_SYS_HIBERNATE = -1;
 E_API int E_EVENT_SYS_RESUME = -1;
@@ -298,6 +300,10 @@ _e_sys_systemd_signal_prepare_shutdown(void *data EINA_UNUSED, const Eldbus_Mess
 
    if (!eldbus_message_arguments_get(msg, "b", &b)) return;
    printf("SSS: systemd said to prepare for shutdown! bool=%i @%1.8f\n", (int)b, ecore_time_get());
+   if (b)
+     {
+        if (!e_sys_on_the_way_out_get()) e_sys_action_do(E_SYS_LOGOUT, NULL);
+     }
 }
 
 static void
@@ -441,14 +447,18 @@ e_sys_action_do(E_Sys_Action a, char *param)
       case E_SYS_RESTART:
       case E_SYS_EXIT_NOW:
       case E_SYS_LOGOUT:
+      case E_SYS_HALT_NOW:
+        on_the_way_out = EINA_TRUE;
+        EINA_FALLTHROUGH;
+
       case E_SYS_SUSPEND:
       case E_SYS_HIBERNATE:
-      case E_SYS_HALT_NOW:
         ret = _e_sys_action_do(a, param, EINA_FALSE);
         break;
 
       case E_SYS_HALT:
       case E_SYS_REBOOT:
+        on_the_way_out = EINA_TRUE;
         if (!e_util_immortal_check())
           ret = _e_sys_action_do(a, param, EINA_FALSE);
         break;
@@ -520,6 +530,12 @@ E_API const Eina_List *
 e_sys_con_extra_action_list_get(void)
 {
    return extra_actions;
+}
+
+E_API Eina_Bool
+e_sys_on_the_way_out_get(void)
+{
+   return on_the_way_out;
 }
 
 static void

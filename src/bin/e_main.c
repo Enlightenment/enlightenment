@@ -1317,10 +1317,21 @@ _e_main_cb_signal_exit(void *data EINA_UNUSED, int ev_type EINA_UNUSED, void *ev
    return ECORE_CALLBACK_RENEW;
 }
 
+static Ecore_Timer *hup_timer = NULL;
+
+static Eina_Bool
+_cb_hup_timer(void *data EINA_UNUSED)
+{
+   hup_timer = NULL;
+   if (!e_sys_on_the_way_out_get()) e_sys_action_do(E_SYS_RESTART, NULL);
+   return EINA_FALSE;
+}
+
 static Eina_Bool
 _e_main_cb_signal_hup(void *data EINA_UNUSED, int ev_type EINA_UNUSED, void *ev EINA_UNUSED)
 {
-   e_sys_action_do(E_SYS_RESTART, NULL);
+   if (hup_timer) ecore_timer_del(hup_timer);
+   hup_timer = ecore_timer_add(0.5, _cb_hup_timer, NULL);
    return ECORE_CALLBACK_RENEW;
 }
 
