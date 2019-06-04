@@ -5813,7 +5813,7 @@ e_comp_x_init(void)
    Eina_List *h = NULL;
    if (!ecore_x_init(NULL))
      {
-        e_error_message_show(_("Enlightenment cannot initialize Ecore_X!\n"));
+        fprintf(stderr, _("Enlightenment cannot initialize X Connection...\n"));
         return EINA_FALSE;
      }
 
