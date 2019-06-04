@@ -75,10 +75,13 @@ env_set(const char *var, const char *val)
         char *buf;
         size_t size = strlen(var) + 1 + strlen(val) + 1;
 
-        buf = alloca(size);
+        // yes - this does leak. we know. intentional if we set the same
+        // env multiple times because we likely won't and alloca is wrong
+        // as we lose the env content on the stack. but becomes part of
+        // the environment so it has to stay around after putenv is called
+        buf = malloc(size);
         sprintf(buf, "%s=%s", var, val);
-        if (getenv(var)) putenv(buf);
-        else putenv(strdup(buf));
+        putenv(buf);
 #endif
      }
    else
