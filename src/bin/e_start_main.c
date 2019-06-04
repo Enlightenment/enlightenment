@@ -600,7 +600,7 @@ main(int argc, char **argv)
    prefix_determine(argv[0]);
 
    env_set("E_START", argv[0]);
-   env_set("E_START_MANAGER", "1");
+   putenv("E_START_MANAGER=1");
 
    for (i = 1; i < argc; i++)
      {
@@ -724,7 +724,7 @@ main(int argc, char **argv)
           return _e_start_child(args, really_know);
 
         /* in the parent - ptrace attach and continue */
-        env_set("E_RESTART", "1");
+        putenv("E_RESTART=1");
         _e_ptrace_attach(child, &status, really_know);
 
         /* now loop until done */
