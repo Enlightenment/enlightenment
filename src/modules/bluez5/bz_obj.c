@@ -286,11 +286,11 @@ cb_obj_prop_changed(void *data EINA_UNUSED, const Eldbus_Message *msg EINA_UNUSE
    eldbus_proxy_property_get_all(o->proxy, cb_obj_prop, o);
 }
 
-static void
-cb_obj_discovery_filter(void *data EINA_UNUSED, const Eldbus_Message *msg, Eldbus_Pending *pending EINA_UNUSED)
-{
-   ERR_PRINT("Discovery Filter Clear");
-}
+//static void
+//cb_obj_discovery_filter(void *data EINA_UNUSED, const Eldbus_Message *msg, Eldbus_Pending *pending EINA_UNUSED)
+//{
+//   ERR_PRINT("Discovery Filter Clear");
+//}
 
 Obj *
 bz_obj_add(const char *path)
