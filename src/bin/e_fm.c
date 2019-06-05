@@ -479,6 +479,7 @@ static void          _e_fm2_thread_cleanup_cb(void *d, Ecore_Thread *et);
 
 static void _e_fm2_new_file(void *data, E_Menu *m, E_Menu_Item *mi);
 
+static Ecore_Exe *_e_fm2_exe = NULL;
 static char *_e_fm2_meta_path = NULL;
 static Evas_Smart *_e_fm2_smart = NULL;
 static Eina_List *_e_fm2_list = NULL;
@@ -751,6 +752,14 @@ _e_fm2_op_registry_entry_print(const E_Fm2_Op_Registry_Entry *ere)
 }
 
 static Eina_Bool
+_e_fm2_exe_del(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
+{
+   Ecore_Exe_Event_Del *ev = event;
+   if (ev->exe == _e_fm2_exe) _e_fm2_exe = NULL;
+   return ECORE_CALLBACK_RENEW;
+}
+
+static Eina_Bool
 _e_fm2_op_registry_entry_add_cb(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
 {
    const E_Fm2_Op_Registry_Entry *ere = event;
@@ -840,6 +849,7 @@ e_fm2_init(void)
                                               _e_fm2_thread_cleanup_cb,
                                               _e_fm2_thread_cleanup_cb, NULL);
 
+   E_LIST_HANDLER_APPEND(_e_fm_handlers, ECORE_EXE_EVENT_DEL, _e_fm2_exe_del, NULL);
    /// DBG
    E_LIST_HANDLER_APPEND(_e_fm_handlers, E_EVENT_FM_OP_REGISTRY_ADD, _e_fm2_op_registry_entry_add_cb, NULL);
    E_LIST_HANDLER_APPEND(_e_fm_handlers, E_EVENT_FM_OP_REGISTRY_DEL, _e_fm2_op_registry_entry_del_cb, NULL);
@@ -854,6 +864,8 @@ e_fm2_init(void)
 EINTERN int
 e_fm2_shutdown(void)
 {
+   e_fm2_die();
+
    E_FREE_LIST(_e_fm2_list, evas_object_del);
 
    eina_stringshare_replace(&_e_fm2_icon_desktop_str, NULL);
@@ -885,6 +897,17 @@ e_fm2_shutdown(void)
    ecore_shutdown();
    eina_shutdown();
    return 1;
+}
+
+E_API void
+e_fm2_die(void)
+{
+   if (_e_fm2_exe)
+     {
+        ecore_exe_kill(_e_fm2_exe);
+        ecore_exe_free(_e_fm2_exe);
+        _e_fm2_exe = NULL;
+     }
 }
 
 E_API Evas_Object *
@@ -2391,8 +2414,10 @@ _e_fm2_client_spawn(void)
    char buf[4096];
 
    if (_e_fm2_client_spawning) return;
+   if (e_sys_on_the_way_out_get()) return;
    snprintf(buf, sizeof(buf), "%s/enlightenment/utils/enlightenment_fm", e_prefix_lib_get());
-   ecore_exe_run(buf, NULL);
+   if (_e_fm2_exe) e_fm2_die();
+   _e_fm2_exe = ecore_exe_pipe_run(buf, ECORE_EXE_NOT_LEADER | ECORE_EXE_TERM_WITH_PARENT, NULL);
    _e_fm2_client_spawning = 1;
 }
 

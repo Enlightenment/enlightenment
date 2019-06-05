@@ -654,7 +654,7 @@ _scanner_run(void)
 {
    static int count;
 
-   scanner = ecore_exe_pipe_run("eeze_scanner", ECORE_EXE_NOT_LEADER, pfx);
+   scanner = ecore_exe_pipe_run("eeze_scanner", ECORE_EXE_NOT_LEADER | ECORE_EXE_TERM_WITH_PARENT, pfx);
    if (!scanner)
      if (++count == 3)
        _e_fm_main_catch(EFM_MODE_USING_RASTER_MOUNT);

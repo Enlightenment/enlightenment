@@ -150,6 +150,7 @@ typedef void (*E_Fm_Cb)(void *data, Evas_Object *obj, E_Menu *m, E_Fm2_Icon_Info
 
 EINTERN int           e_fm2_init(void);
 EINTERN int           e_fm2_shutdown(void);
+E_API void             e_fm2_die(void);
 E_API Evas_Object     *e_fm2_add(Evas *evas);
 E_API void             e_fm2_path_set(Evas_Object *obj, const char *dev, const char *path);
 E_API void             e_fm2_custom_theme_set(Evas_Object *obj, const char *path);

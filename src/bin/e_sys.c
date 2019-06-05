@@ -1079,7 +1079,10 @@ _e_sys_action_do(E_Sys_Action a, char *param EINA_UNUSED, Eina_Bool raw)
       case E_SYS_EXIT:
         // XXX TODO: check for e_fm_op_registry entries and confirm
         if (!e_util_immortal_check())
-          ecore_main_loop_quit();
+          {
+             e_fm2_die();
+             ecore_main_loop_quit();
+          }
         else
           return 0;
         break;
@@ -1088,10 +1091,11 @@ _e_sys_action_do(E_Sys_Action a, char *param EINA_UNUSED, Eina_Bool raw)
         // XXX TODO: check for e_fm_op_registry entries and confirm
         // FIXME: we don't share out immortal info to restarted e. :(
 //	if (!e_util_immortal_check())
-      {
-         restart = 1;
-         ecore_main_loop_quit();
-      }
+          {
+             e_fm2_die();
+             restart = 1;
+             ecore_main_loop_quit();
+          }
 //        else
 //          return 0;
       break;
@@ -1104,6 +1108,7 @@ _e_sys_action_do(E_Sys_Action a, char *param EINA_UNUSED, Eina_Bool raw)
         // XXX TODO: check for e_fm_op_registry entries and confirm
         if (raw)
           {
+             e_fm2_die();
              _e_sys_logout_after();
           }
         else if (!_e_sys_comp_waiting)
@@ -1116,6 +1121,7 @@ _e_sys_action_do(E_Sys_Action a, char *param EINA_UNUSED, Eina_Bool raw)
       case E_SYS_HALT_NOW:
         /* shutdown -h now */
         if (e_util_immortal_check()) return 0;
+        e_fm2_die();
         snprintf(buf, sizeof(buf),
                  "%s/enlightenment/utils/enlightenment_sys halt",
                  e_prefix_lib_get());
@@ -1151,6 +1157,7 @@ _e_sys_action_do(E_Sys_Action a, char *param EINA_UNUSED, Eina_Bool raw)
       case E_SYS_REBOOT:
         /* shutdown -r now */
         if (e_util_immortal_check()) return 0;
+        e_fm2_die();
         snprintf(buf, sizeof(buf),
                  "%s/enlightenment/utils/enlightenment_sys reboot",
                  e_prefix_lib_get());
