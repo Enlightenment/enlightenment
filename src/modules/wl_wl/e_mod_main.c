@@ -56,7 +56,7 @@ e_modapi_init(E_Module *m)
           }
         else
           {
-             fprintf(stderr, "Could not create wayland canvas");
+             fprintf(stderr, "Could not create wayland canvas\n");
              return NULL;
           }
      }
