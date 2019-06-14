@@ -1,4 +1,4 @@
-# French translation for Enlightenment DR 0.17 to DR 0.23 series.
+# French translation for Enlightenment DR 0.23 series.
 # This file is put in the public domain.
 #
 # Vincent 'Caro' Torri <vtorri at univ-evry dot fr>, 2005.
@@ -18,7 +18,7 @@ msgstr ""
 "Project-Id-Version: Enlightenment DR17\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-04-01 18:48+0200\n"
-"PO-Revision-Date: 2019-06-12 09:25+0200\n"
+"PO-Revision-Date: 2019-06-14 07:40+0200\n"
 "Last-Translator: Philippe Jean Guillaumie <similar@orange.fr>\n"
 "Language-Team: French\n"
 "Language: fr\n"
@@ -1411,25 +1411,22 @@ msgstr "Erreur d'exécution"
 
 #: src/bin/e_exec.c:446
 msgid "Enlightenment was unable to get current directory"
-msgstr "Enlightenment est dans l'incapacité de déterminer le dossier courant"
+msgstr "Enlightenment est incapable de déterminer le dossier courant"
 
 #: src/bin/e_exec.c:454
 #, c-format
 msgid "Enlightenment was unable to change to directory:<ps/><ps/>%s"
-msgstr ""
-"Enlightenment est dans l'incapacité de changer de dossier vers :<ps/><ps/>%s"
+msgstr "Enlightenment est incapable de changer de dossier vers :<ps/><ps/>%s"
 
 #: src/bin/e_exec.c:465
 #, c-format
 msgid "Enlightenment was unable to restore to directory:<ps/><ps/>%s"
-msgstr ""
-"Enlightenment est dans l'incapacité de revenir au dossier :<ps/><ps/>%s"
+msgstr "Enlightenment est incapable de revenir au dossier :<ps/><ps/>%s"
 
 #: src/bin/e_exec.c:524
 #, c-format
 msgid "Enlightenment was unable to fork a child process:<ps/><ps/>%s"
-msgstr ""
-"Enlightenment est dans l'incapacité de cloner un processus fils :<ps/><ps/>%s"
+msgstr "Enlightenment est incapable de cloner un processus fils :<ps/><ps/>%s"
 
 #: src/bin/e_exec.c:713
 msgid "Application run error"
@@ -1441,8 +1438,8 @@ msgid ""
 "Enlightenment was unable to run the application:<ps/><ps/>%s<ps/><ps/>The "
 "application failed to start."
 msgstr ""
-"Enlightenment est dans l'incapacité d'exécuter l'application :<ps/><ps/>"
-"%s<ps/><ps/>Son lancement a échoué."
+"Enlightenment est incapable d'exécuter l'application :<ps/><ps/>%s<ps/><ps/"
+">Son lancement a échoué."
 
 #: src/bin/e_exec.c:853
 msgid "Application Execution Error"
@@ -3367,7 +3364,7 @@ msgstr "Ajouter"
 #: src/bin/e_int_config_comp_match.c:747
 #: src/modules/xkbswitch/e_mod_config.c:682
 msgid "Del"
-msgstr "Effacer"
+msgstr "Supprimer"
 
 #: src/bin/e_int_config_comp_match.c:749
 #: src/modules/conf_window_remembers/e_int_config_remembers.c:185
@@ -3507,7 +3504,7 @@ msgstr "À propos"
 
 #: src/bin/e_int_menus.c:251 src/bin/e_theme_about.c:19
 msgid "About Theme"
-msgstr "À propos de ce thème"
+msgstr "À propos du thème"
 
 #: src/bin/e_int_menus.c:256
 msgid "Report Bug"
@@ -3572,7 +3569,7 @@ msgstr "Supprimer un rayon"
 #: src/bin/e_int_shelf_config.c:46
 #: src/modules/conf_shelves/e_int_config_shelf.c:55
 msgid "Shelf Settings"
-msgstr "Paramètres du rayon"
+msgstr "Paramètres du rayon (shelf)"
 
 #: src/bin/e_int_shelf_config.c:157
 msgid "Above Everything"
@@ -3637,7 +3634,7 @@ msgstr "Ne pas ajuster les fenêtres lors du recouvrement du rayon"
 
 #: src/bin/e_int_shelf_config.c:268
 msgid "Auto Hide"
-msgstr "Masquage automatique"
+msgstr "Auto-masquage"
 
 #: src/bin/e_int_shelf_config.c:274
 msgid "Show on all Desktops"
@@ -3794,8 +3791,7 @@ msgid ""
 "Enlightenment cannot create directories in your home directory.\n"
 "Perhaps you have no home directory or the disk is full?"
 msgstr ""
-"Enlightenment ne parvient pas à créer aucun dossier dans votre dossier "
-"personnel.\n"
+"Enlightenment ne peut créer aucun dossier dans votre dossier personnel.\n"
 "Peut-être n'avez-vous pas de dossier personnel,\n"
 "ou que votre disque dur est plein ?"
 
@@ -3913,7 +3909,7 @@ msgstr ""
 #: src/bin/e_main.c:759
 msgid "Enlightenment cannot set up its init screen.\n"
 msgstr ""
-"Enlightenment ne parvient pas à initialiser son écran d'initialisation.\n"
+"Enlightenment ne parvient pas à configurer son écran d'initialisation.\n"
 
 #: src/bin/e_main.c:783
 msgid "Setup ACPI"
@@ -4469,7 +4465,7 @@ msgstr "Il existe déjà un rayon avec ce nom !"
 
 #: src/bin/e_shelf.c:1596 src/bin/e_shelf.c:2403
 msgid "Stop Moving Gadgets"
-msgstr "Fixer les gadgets"
+msgstr "Figer les gadgets"
 
 #: src/bin/e_shelf.c:1598 src/bin/e_shelf.c:2405
 msgid "Begin Moving Gadgets"
@@ -4506,7 +4502,7 @@ msgstr "Orientation"
 
 #: src/bin/e_shelf.c:2372 src/modules/quickaccess/e_mod_quickaccess.c:833
 msgid "Autohide"
-msgstr "Masquer automatiquement"
+msgstr "Auto-masquage"
 
 #: src/bin/e_shelf.c:2379
 msgid "Refresh"
@@ -5352,12 +5348,12 @@ msgstr "Applications du lanceur"
 #: src/modules/conf_applications/e_int_config_apps.c:116
 #: src/modules/conf_applications/e_mod_main.c:49
 msgid "Startup Applications"
-msgstr "Applications au démarrage"
+msgstr "Applications à l'ouverture de session"
 
 #: src/modules/conf_applications/e_int_config_apps.c:132
 #: src/modules/conf_applications/e_mod_main.c:45
 msgid "Restart Applications"
-msgstr "Applications au redémarrage"
+msgstr "Applications à relancer"
 
 #: src/modules/conf_applications/e_int_config_apps.c:147
 #: src/modules/conf_applications/e_mod_main.c:37
@@ -5751,7 +5747,7 @@ msgstr "Majuscule"
 #: src/modules/conf_bindings/e_int_config_edgebindings.c:1383
 #: src/modules/conf_bindings/e_int_config_keybindings.c:1137
 msgid "WIN"
-msgstr "Logo"
+msgstr "Win"
 
 #: src/modules/conf_bindings/e_int_config_edgebindings.c:1393
 msgid "Left Edge"
@@ -6264,7 +6260,7 @@ msgstr "Basculer lors du glissement d'éléments au bord de l'écran"
 
 #: src/modules/conf_display/e_int_config_desks.c:200
 msgid "Wrap desktops around when flipping"
-msgstr "Navigation circulaire entre le bureaux"
+msgstr "Navigation circulaire entre les bureaux"
 
 #: src/modules/conf_display/e_int_config_desks.c:204
 msgid "Animation"
@@ -6932,7 +6928,7 @@ msgstr "Échelle"
 
 #: src/modules/conf_randr/e_int_config_randr2.c:1086
 msgid "Restore setup on start"
-msgstr "Restaurer la configuration au démarrage"
+msgstr "Restaurer la configuration au lancement"
 
 #: src/modules/conf_randr/e_int_config_randr2.c:1095
 msgid "Monitor hotplug"
@@ -8685,7 +8681,7 @@ msgstr "Déplacement de %s (reste %s)"
 #: src/modules/fileman_opinfo/e_mod_main.c:147
 #, c-format
 msgid "Delete done"
-msgstr "Suppression accomplie"
+msgstr "Suppression terminée"
 
 #: src/modules/fileman/e_fwin.c:3063
 #: src/modules/fileman_opinfo/e_mod_main.c:149
@@ -8889,7 +8885,7 @@ msgstr "EFM"
 
 #: src/modules/fileman/e_mod_menu.c:271
 msgid "No listable items"
-msgstr "Aucun élément à lister"
+msgstr "Afficher"
 
 #: src/modules/fileman/e_mod_menu.c:365
 msgid "GTK Bookmarks"
@@ -8909,7 +8905,7 @@ msgstr "Racine"
 
 #: src/modules/fileman/e_mod_menu.c:542
 msgid "Navigate..."
-msgstr "Naviguer…"
+msgstr "Naviguer vers…"
 
 #: src/modules/fileman_opinfo/e_mod_main.c:341
 #, c-format
@@ -9022,7 +9018,7 @@ msgstr "Afficher les étiquettes des icônes"
 
 #: src/modules/ibar/e_mod_config.c:149
 msgid "Lock icon move"
-msgstr "Fixer les icônes"
+msgstr "Figer les icônes"
 
 #: src/modules/ibar/e_mod_config.c:151
 msgid "Don't add items on launch"
@@ -9254,7 +9250,7 @@ msgstr "Urgence"
 
 #: src/modules/notification/e_mod_config.c:100
 msgid "Levels of urgency to display:"
-msgstr "Niveaux d'urgence à afficher:"
+msgstr "Niveaux d'urgence à afficher :"
 
 #: src/modules/notification/e_mod_config.c:106
 msgid "Critical"
@@ -10223,7 +10219,7 @@ msgstr "Désactiver les prévisualisations vidéo"
 
 #: src/modules/teamwork/e_mod_config.c:110
 msgid "Mouse-out hide delay"
-msgstr "Délai de masquage de la souris"
+msgstr "Délai du masquage de la souris"
 
 #: src/modules/teamwork/e_mod_config.c:116
 msgid "Maximum size (Percentage of screens size)"
@@ -10596,14 +10592,14 @@ msgstr[0] ""
 "<b>Déplacer</b> (bouton gauche)<ps/>* <b>Redimensionner</b> (bouton du "
 "milieu / molette )<ps/>* <b>Afficher le menu</b> (bouton droit)<ps/>La "
 "touche par défaut qu'il faut maintenir pour activer ces raccourcis<ps/>est « "
-"%s ». Configurez le modificateur ci-dessous."
+"%s ». Configurez les modificateurs si nécessaire."
 msgstr[1] ""
 "Enlightenment définit des raccourcis souris par défaut pour les objets.<ps/"
 ">Ces raccourcis fournissent trois opérations pour le clic :<ps/>* "
 "<b>Déplacer</b> (bouton gauche)<ps/>* <b>Redimensionner</b> (bouton du "
 "milieu / molette )<ps/>* <b>Afficher le menu</b> (bouton droit)<ps/>Les "
 "touches par défaut qu'il faut maintenir pour activer ces raccourcis<ps/>sont "
-"« %s ». Configurez les modificateurs ci-dessous."
+"« %s ». Configurez les modificateurs si nécessaire."
 
 #: src/modules/wizard/page_110.c:9
 msgid "Network Management"
@@ -10747,7 +10743,7 @@ msgstr "Capitales"
 
 #: src/modules/xkbswitch/e_mod_config.c:782
 msgid "Alt win"
-msgstr "Alt+Logo"
+msgstr "Alt+Win"
 
 #: src/modules/xkbswitch/e_mod_config.c:783
 #: src/modules/xkbswitch/e_mod_config.c:1131
@@ -10796,7 +10792,7 @@ msgstr "Changer d'agencement"
 
 #: src/modules/xkbswitch/e_mod_config.c:1120
 msgid "Alternate win key"
-msgstr "Touche Logo alternative"
+msgstr "Touche Win alternative"
 
 #: src/modules/xkbswitch/e_mod_config.c:1362
 msgid "Add New Configuration"
