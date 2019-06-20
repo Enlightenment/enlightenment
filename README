@@ -1,24 +1,44 @@
-Please report bugs and send patches to phab.enlightenment.org
-
 Enlightenment
-
-Requirements:
 -------------
 
-Must:
-  efl
-  libc libm libX11 libXext
-  xcb xcb-shape xcb-keysyms
+Please report bugs and submit patches at https://phab.enlightenment.org
 
-Heavily suggested:
-  evas_generic_loaders (all loaders)
+Requirements
+------------
+
+Must:
+  * efl
+  * xcb
+  * xcb-shape
+  * xcb-keysyms
+  * libpam (On Linux)
+
+Highly suggested:
+  * evas_generic_loaders (All loaders)
+  * bluez5 (BT support and l2ping tool)
+  * connman
+  * bc (For everything calculator)
+  * pulseaudio
+  * acpid (Unless your system doesn't have ACPI at all)
+  * packagekit (For packagekit module updates status)
+  * udisks2
+  * gdb (If you want automatic bactraces in ~/.e-crashdump.txt)
 
 NOTE: Users of DR16 will need to rename the $prefix/bin/enlightenment
 file prior to installing this release or it will be overwritten.
 
-NOTES:
+Please see the INSTALL file for now to compile and install it.
 
-* if you do not want security issues make sure sysactions.conf is in
+NOTE: If you do not want security issues make sure sysactions.conf is in
 /etc/enlightenment (not PREFIX/etc/enlightenment) as this is the first place
 it looks at. This file is intended to be customized by packagers and
 system integrators to match your policies and scripts/tools.
+
+NOTE: To enable wayland support (still considered experimental and not for
+regular end users) use the meson -Dwayland=true option. To run
+enlightenment in wayland mode, just log on on ant vt and run
+enlightenment_start. If you wish to debug and see all the output try
+using something like screen then attaching to the remote screen
+session by sshing in etc.
+
+
